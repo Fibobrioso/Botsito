@@ -176,7 +176,33 @@ def knowledge_validate(repo: Path) -> int:
         print(f"ERROR: {fallo}")
     if fallos:
         return 1
+    from botsito.evidence.historial import DIRECTORIO_FEEDBACK, commits_sin_fuente
+    from botsito.feedback.modelo import FeedbackError, cargar_feedback, validar_contra_contexto
+
+    try:
+        registros_fb = cargar_feedback(repo / "knowledge" / "feedback")
+    except FeedbackError as exc:
+        print(f"ERROR: feedback: {exc}")
+        return 1
+    temas = {c["tema"] for c in contradicciones.detectar(items)}
+    rutas_corpus: set[str] | None = None
+    if ruta_manifiesto.exists():
+        rutas_corpus = {f["ruta"] for f in cargar_manifiesto(ruta_manifiesto).get("ficheros", [])}
+    fallos_fb = validar_contra_contexto(
+        registros_fb, {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
+    )
+    fallos_fb += [
+        f"feedback modificado en el historial: {h}"
+        for h in modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK) or []
+    ]
+    ids_validos = {i.id for i in items} | {r.id for r in registros_fb}
+    fallos_fb += commits_sin_fuente(repo, "stable/F06", ids_validos=ids_validos) or []
+    for fallo in fallos_fb:
+        print(f"ERROR: {fallo}")
+    if fallos_fb:
+        return 1
     abiertas = len(contradicciones.detectar(items))
+    print(f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente")
     print(
         f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas, "
         "historial intacto"
@@ -288,6 +314,61 @@ def evidence_contradictions(repo: Path) -> int:
     return 0
 
 
+def feedback_new(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.feedback.modelo import FeedbackError, escribir_registro
+
+    campos = {
+        "sesion": args.sesion,
+        "fecha": args.fecha,
+        "medio": args.medio,
+        "grabacion": args.grabacion,
+        "t0": args.t0,
+        "t1": args.t1,
+        "objetivo": {"tipo": args.objetivo_tipo, "id": args.objetivo_id},
+        "accion": args.accion,
+        "respuesta_literal": args.respuesta,
+        "valor_resultante": args.valor,
+        "registrado_por": args.registrado_por,
+        "supersede": args.supersede,
+        "notas": args.notas,
+    }
+    try:
+        ruta = escribir_registro(repo / "knowledge" / "feedback", campos)
+    except FeedbackError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"OK: {ruta.relative_to(repo).as_posix()}")
+    return 0
+
+
+def feedback_trace(repo: Path, identificador: str) -> int:
+    from botsito.feedback.modelo import FeedbackError, cargar_feedback, trazar
+
+    try:
+        registros = cargar_feedback(repo / "knowledge" / "feedback")
+    except FeedbackError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    for linea in trazar(identificador, registros):
+        print(linea)
+    return 0
+
+
+def feedback_pending(repo: Path) -> int:
+    """Registros activos cuyo objetivo todavia no esta reflejado en la spec (todos, hasta F11)."""
+    from botsito.feedback.modelo import FeedbackError, activos, cargar_feedback
+
+    try:
+        registros = activos(cargar_feedback(repo / "knowledge" / "feedback"))
+    except FeedbackError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    for r in sorted(registros, key=lambda r: (r.fecha, r.id)):
+        print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id}")
+    print(f"{len(registros)} registros activos pendientes de reflejar en la spec (F11)")
+    return 0
+
+
 def config_validate(repo: Path) -> int:
     """Los ficheros de ajustes reales no contienen claves del registro ni secciones ajenas."""
     from botsito.config.ajustes import AjustesError, cargar_ajustes
@@ -360,6 +441,26 @@ def build_parser() -> argparse.ArgumentParser:
     nuevo.add_argument("--supersede")
     nuevo.add_argument("--notas")
     ev_sub.add_parser("contradictions", help="regenera knowledge/evidence/_contradicciones.yaml")
+    fb = sub.add_parser("feedback", help="registros del trader")
+    fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
+    fbn = fb_sub.add_parser("new", help="crea un registro de feedback con id calculado")
+    fbn.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
+    fbn.add_argument("--fecha", required=True)
+    fbn.add_argument("--medio", required=True, choices=["replay", "audio", "video", "escrito"])
+    fbn.add_argument("--grabacion", help="ruta en el corpus (obligatoria salvo escrito)")
+    fbn.add_argument("--t0")
+    fbn.add_argument("--t1")
+    fbn.add_argument("--objetivo-tipo", required=True, dest="objetivo_tipo")
+    fbn.add_argument("--objetivo-id", required=True, dest="objetivo_id")
+    fbn.add_argument("--accion", required=True)
+    fbn.add_argument("--respuesta", required=True, help="respuesta literal del trader")
+    fbn.add_argument("--valor", help="valor resultante")
+    fbn.add_argument("--registrado-por", required=True, dest="registrado_por")
+    fbn.add_argument("--supersede")
+    fbn.add_argument("--notas")
+    fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
+    fbt.add_argument("identificador")
+    fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
     conf = sub.add_parser("config", help="ajustes de entorno")
     conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
     conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
@@ -377,6 +478,12 @@ def main(argv: list[str] | None = None) -> int:
         return knowledge_validate(args.repo)
     if args.cmd == "config" and args.config_cmd == "validate":
         return config_validate(args.repo)
+    if args.cmd == "feedback" and args.feedback_cmd == "new":
+        return feedback_new(args.repo, args)
+    if args.cmd == "feedback" and args.feedback_cmd == "trace":
+        return feedback_trace(args.repo, args.identificador)
+    if args.cmd == "feedback" and args.feedback_cmd == "pending":
+        return feedback_pending(args.repo)
     if args.cmd == "evidence" and args.evidence_cmd == "new":
         return evidence_new(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "contradictions":
