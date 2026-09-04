@@ -33,22 +33,22 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 0 · Fundamentos
 
 ## Current Feature
-F01 · project-scaffold
+— (F01 integrada; F02 pendiente de abrir)
 
 ## Current Branch
-feature/F01-project-scaffold
+main
 
 ## Stable Main State
-Punto cero: documentación (README, PROJECT_STATE, plan, investigación). Sin código.
+85cedc4 · merge de F01 (project-scaffold). make check verde: 26 tests, 3 contratos, mypy strict, state check. CI Ubuntu verde. Tag stable/F01.
 
 ## Completed Phases
 —
 
 ## Completed Features
-—
+- F01 · project-scaffold · validada por el usuario el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
 
 ## Features Waiting for Validation
-- F01 · project-scaffold · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F01-project-scaffold.md
+—
 
 ## Existing Components
 - Paquete `botsito` con subpaquetes vacios documentados; CLI `state check` y `knowledge validate` (no-op).
@@ -115,12 +115,13 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F02 · config-and-parameter-registry (`feature/F02-config-and-parameter-registry`)
 
 ## Next Action
-Usuario valida F01 (con correcciones de la auditoria) -> re-ejecutar make check -> merge --no-ff a main con BOTSITO_ALLOW_MAIN=1 -> tests desde main -> tag stable/F01 -> abrir feature/F02-config-and-parameter-registry.
+Abrir feature/F02-config-and-parameter-registry, escribir docs/plan/features/F02-config-and-parameter-registry.md e implementar segun MASTER_PLAN F02 + seccion H.
 
 ## Last Stable Commit
-7baa27d · docs(state): registra el commit del punto cero (main)
+85cedc4 · merge: F01 project-scaffold validado por el usuario · tag stable/F01
 
 ## Change Log
+- 2026-09-04 · F01 VALIDADA por el usuario; merge --no-ff a main (85cedc4); tag stable/F01; push de main
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
 - 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
 - 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
