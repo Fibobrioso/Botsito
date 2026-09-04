@@ -50,7 +50,10 @@ tests/{integration,golden,regression,differential}/README.md
 - `docs/plan/MASTER_PLAN.html` marcado como instantanea congelada; `MASTER_PLAN.md` es la fuente viva,
   con la seccion H (salvaguardas aprobadas) y Change Log.
 - `docs/plan/AUDITORIA_FASES_2026-09-04.html` versionada como referencia.
-- `tests/`, `tests/unit/`, `tests/contract/` son paquetes (necesario para compartir constantes entre tests).
+- `tests/`, `tests/unit/`, `tests/contract/` son paquetes (necesario para compartir constantes entre tests);
+  mypy strict cubre tambien `tests/`.
+- Tercera auditoria: hook con modo ejecutable en el indice (100755), README en todas las carpetas sin
+  exenciones, `knowledge/cases/holdout/{1,2,3}/` fisico segun la decision de tres particiones.
 
 ## Archivos modificados
 `README.md` (arranque, nombre del paquete, enlace al plan en Markdown), `PROJECT_STATE.md`,

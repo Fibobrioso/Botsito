@@ -8,7 +8,7 @@ La base de conocimiento del proyecto. Son DATOS versionados, no codigo, y se val
 | feedback/ | FeedbackRecord del trader, por sesion (F09) | SOLO ANADIR |
 | spec/ | strategy_spec.yaml, glossary.yaml (F11) | versionado; cada cambio cita evidence-id o feedback-id |
 | cases/dev/ | casos ejecutables usados para cerrar reglas (F14) | versionado con cita |
-| cases/holdout/ | casos reservados: src/botsito/spec y src/botsito/domain NO pueden leerlos | versionado con cita |
+| cases/holdout/{1,2,3}/ | tres particiones reservadas (F26, cifra final, fase 7): src/botsito/spec y src/botsito/domain NO pueden leerlas; cada una se abre una sola vez | versionado con cita |
 | cases/fixtures/ | instantaneas OHLC/ticks de cada caso, con hash | inmutable |
 
 Ver ADR-0001.

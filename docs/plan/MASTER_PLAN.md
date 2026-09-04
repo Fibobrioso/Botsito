@@ -31,7 +31,7 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | `knowledge/evidence` | `EvidenceItem` inmutables (F06) |
 | `knowledge/feedback` | `FeedbackRecord` solo-anadir (F09) |
 | `knowledge/spec` | `strategy_spec.yaml`, glosario (F11) |
-| `knowledge/cases/{dev,holdout,fixtures}` | casos ejecutables; holdout ilegible para spec/domain (F14) |
+| `knowledge/cases/{dev,holdout/1,holdout/2,holdout/3,fixtures}` | casos ejecutables; tres particiones reservadas ilegibles para spec/domain (F14) |
 | `src/botsito/{corpus,evidence,feedback,spec,cases,data,domain,engine,validation,viewer,mql5bridge}` | paquete Python; ver docstring de cada subpaquete |
 | `mql5/` | EA, includes (Params.mqh generado), RunCases, tester (fase 6) |
 | `tests/{unit,contract,integration,golden,regression,differential}` | por capa de validacion |

@@ -48,7 +48,7 @@ select = ["E", "F", "I", "B", "UP", "N", "SIM"]
 python_version = "3.12"
 strict = true
 mypy_path = "src"
-packages = ["botsito"]
+packages = ["botsito", "tests"]
 
 # Contratos de importacion: se hacen cumplir con `lint-imports` (make check) y con
 # tests/contract/test_import_contracts.py (AST). Ver ADR-0001.

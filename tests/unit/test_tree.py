@@ -14,8 +14,12 @@ DOC_DIRS = [
     "knowledge/evidence",
     "knowledge/feedback",
     "knowledge/spec",
+    "knowledge/cases",
     "knowledge/cases/dev",
     "knowledge/cases/holdout",
+    "knowledge/cases/holdout/1",
+    "knowledge/cases/holdout/2",
+    "knowledge/cases/holdout/3",
     "knowledge/cases/fixtures",
     "mql5",
     "mql5/Experts",
@@ -25,7 +29,8 @@ DOC_DIRS = [
     "scripts",
     "data/manifests",
 ]
-README_EXEMPT = {"docs/plan", "docs/plan/features", "docs/validation"}
+# Ninguna carpeta queda exenta: toda carpeta declara su responsabilidad.
+README_EXEMPT: set[str] = set()
 PACKAGES = [
     "corpus",
     "evidence",
