@@ -2,16 +2,17 @@ name: ci
 on:
   push:
     branches: ["main", "feature/**"]
-  pull_request:
+  # Sin `pull_request`: cada push ya ejecuta el job; con ambos disparadores corria dos veces.
 jobs:
   python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # los tests de integridad leen el historial (desde F06)
+      - run: git fetch --tags --force   # la trazabilidad se ancla en stable/F06 (y en su SHA)
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg   # F03: tests de ffprobe
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
       - run: uv python install 3.12
       - run: uv sync --locked --group dev
       - run: make check

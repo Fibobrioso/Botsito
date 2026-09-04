@@ -11,8 +11,10 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
   echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
   exit 1
 fi
+# Rutas sin entrecomillar (core.quotepath=false) y separadas por tabulador: un nombre con
+# acento o espacio no se cuela.
 for dir in knowledge/evidence knowledge/feedback; do
-  cambios=$(git diff --cached --name-status -- "$dir" | awk '$1 ~ /^[MDRCT]/ && $2 ~ /\.yaml$/ && $2 !~ /\/_[^\/]*\.yaml$/ {print}')
+  cambios=$(git -c core.quotepath=false diff --cached --name-status -- "$dir" | awk -F'\t' '$1 ~ /^[MDRCT]/ && ($2 ~ /\.yaml$/ || $3 ~ /\.yaml$/) && $2 !~ /\/_[^\/]*\.yaml$/ {print}')
   if [ -n "$cambios" ]; then
     echo "pre-commit: $dir es inmutable. Crea un registro nuevo con supersede en vez de editar:" >&2
     echo "$cambios" >&2
