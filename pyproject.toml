@@ -42,7 +42,8 @@ target-version = "py312"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "N", "SIM"]
+preview = true
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "PLW1514"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -62,7 +63,7 @@ type = "forbidden"
 source_modules = ["botsito.domain"]
 forbidden_modules = [
   "botsito.engine", "botsito.data", "botsito.mql5bridge", "botsito.corpus",
-  "botsito.viewer", "botsito.validation", "botsito.cli",
+  "botsito.viewer", "botsito.validation", "botsito.cli", "botsito.config",
   "MetaTrader5", "pandas", "polars", "numpy", "requests", "asyncio", "threading",
   "datetime", "time", "random", "os", "pathlib", "io",
 ]
@@ -79,6 +80,6 @@ type = "layers"
 layers = [
   "botsito.cli",
   "botsito.validation | botsito.engine | botsito.viewer | botsito.mql5bridge",
-  "botsito.cases | botsito.spec | botsito.feedback | botsito.evidence | botsito.corpus | botsito.data",
+  "botsito.cases | botsito.spec | botsito.feedback | botsito.evidence | botsito.corpus | botsito.data | botsito.config",
   "botsito.domain",
 ]

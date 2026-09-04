@@ -1,0 +1,29 @@
+# Registro de parametros de negocio: LA UNICA PUERTA (F02, ADR-0002).
+#
+# Vacio de valores a proposito: los valores llegan en F11 citando evidencia o feedback.
+# Ningun numero de negocio (0,75, 1:3, 07:00, 3 cartuchos...) puede vivir fuera de este fichero;
+# tests/contract/test_no_business_literals.py lo comprueba.
+#
+# Esquema de cada entrada:
+#   nombre:        identificador en snake_case (p. ej. stop_fraccion_caja)
+#   tipo:          fraccion | porcentaje | decimal | entero | hora | texto
+#   unidad:        texto libre pero obligatorio (p. ej. "fraccion de la distancia completa")
+#   descripcion:   una frase
+#   estado:        CONFIRMED | DEFAULT_AMBIGUOUS | UNKNOWN
+#   valor:         entre comillas para fraccion/porcentaje/decimal ("0.75"); ausente si UNKNOWN
+#   fuente:        {tipo: evidence|feedback|decision, id: ...}; obligatoria salvo UNKNOWN
+#   ambiguedad_id: solo si DEFAULT_AMBIGUOUS (p. ej. A-1)
+#   minimo/maximo: opcionales, para fraccion/porcentaje/decimal/entero
+#
+# Ejemplo (NO es un valor real; los reales se anaden en F11):
+#   - nombre: ejemplo_stop_fraccion
+#     tipo: fraccion
+#     unidad: fraccion de la distancia completa nivel 0 -> nivel 1
+#     descripcion: donde va el stop dentro de la caja
+#     estado: CONFIRMED
+#     valor: "0.75"
+#     fuente: {tipo: evidence, id: ev-v4-001230-stop}
+#     minimo: "0"
+#     maximo: "1"
+
+parametros: []
