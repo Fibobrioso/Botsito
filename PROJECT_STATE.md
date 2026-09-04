@@ -113,13 +113,13 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 ").
 
 ## Next Feature
-F01 · project-scaffold (`feature/F01-project-scaffold`)
+F02 · config-and-parameter-registry (`feature/F02-config-and-parameter-registry`)
 
 ## Next Action
 Usuario valida F01 (con correcciones de la auditoria) -> re-ejecutar make check -> merge --no-ff a main con BOTSITO_ALLOW_MAIN=1 -> tests desde main -> tag stable/F01 -> abrir feature/F02-config-and-parameter-registry.
 
 ## Last Stable Commit
-0b43244 · docs(state): punto cero
+7baa27d · docs(state): registra el commit del punto cero (main)
 
 ## Change Log
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
@@ -127,3 +127,4 @@ Usuario valida F01 (con correcciones de la auditoria) -> re-ejecutar make check 
 - 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · auditoria de fases (docs/plan/AUDITORIA_FASES_2026-09-04.html): 4 criticos, 19 huecos; plan ampliado (MASTER_PLAN.md seccion H)
 - 2026-09-04 · F01 corregida: .gitattributes, tests de integridad del indice, hook anti-main, uv --locked; 26 tests; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · segunda auditoria: Last Stable Commit corregido (era 0b43244, main esta en 7baa27d), Next Feature = F02, brief de F01 y README actualizados

@@ -49,7 +49,7 @@ def state_check(repo: Path) -> int:
     declared = _read_section(text, "Current Branch")
     actual = _current_branch(repo)
     if not actual:
-        print("AVISO: no se pudo determinar la rama (sin git); se omite la comprobacion")
+        print("AVISO: sin rama activa (HEAD separado o sin git); se omite la comprobacion")
         return 0
     if declared != actual:
         print(f"ERROR: PROJECT_STATE declara la rama '{declared}'; la rama actual es '{actual}'")

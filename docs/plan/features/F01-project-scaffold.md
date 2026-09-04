@@ -11,6 +11,7 @@ antes de la primera funcionalidad de conocimiento.
 - Arbol de MASTER_PLAN §B con README de responsabilidad por carpeta.
 - `pyproject.toml` (uv, ruff, mypy strict, pytest, hypothesis, import-linter), `Makefile`, CI Linux.
 - Contratos de importacion declarados y verificados (import-linter + test AST).
+- `.gitattributes` (LF), hook local anti-main (`scripts/git-hooks/`), `uv sync --locked` en CI.
 - CLI minima: `botsito --version`, `botsito state check`, `botsito knowledge validate` (no-op).
 - ADR-0001, plantillas, MASTER_PLAN.md en Markdown.
 - Tests de estructura de documentos y de arbol.
@@ -32,6 +33,8 @@ Ver `docs/validation/F01-project-scaffold.md`, seccion "Archivos creados".
 - `tests/unit/test_cli.py` — `state check` coherente con la rama.
 - `tests/contract/test_import_contracts.py` — pureza de `domain` y `spec` por AST; config de import-linter presente.
 - `tests/contract/test_no_business_literals.py` — esqueleto (lista vacia) que F02 puebla.
+- `tests/contract/test_repository_integrity.py` — ficheros esperados en `git ls-files`, sin CRLF, ignorados
+  previstos, `.gitignore` anclado (anadido tras la auditoria de fases).
 
 ## Criterio de aceptacion
 `make check` verde; arbol identico a §B; PROJECT_STATE completo; ADR-0001 con formato completo; sin

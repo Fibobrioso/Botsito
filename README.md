@@ -17,7 +17,7 @@ contra sus decisiones y ejecutable en MetaTrader 5. Sin IA en ejecución.
 ## Arranque
 
 ```
-uv sync --group dev
+make sync    # uv sync --locked + instala los hooks de scripts/git-hooks
 make check
 ```
 

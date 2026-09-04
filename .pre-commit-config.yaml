@@ -1,4 +1,6 @@
-# Instalar con: uv run pre-commit install (pre-commit se anade al grupo dev cuando se use).
+# OPCIONAL. Los hooks activos del proyecto son los de scripts/git-hooks/ (core.hooksPath, via make sync).
+# Este fichero describe los mismos pasos para quien prefiera el framework pre-commit; si se instala,
+# hay que desactivar core.hooksPath (git config --unset core.hooksPath). Decision pendiente en F02.
 repos:
   - repo: local
     hooks:
