@@ -27,17 +27,17 @@ cuando el usuario lo pide.
 - knowledge/evidence/  → INMUTABLE tras commit (hook). Corrección = nuevo item que supersede.
 - knowledge/feedback/  → SOLO AÑADIR. Nunca editar un registro.
 - knowledge/spec/, knowledge/cases/ → versionados; cada cambio de valor cita evidence-id o feedback-id.
-- knowledge/cases/holdout/ → prohibido leer desde src/<paquete>/spec y src/<paquete>/domain (guarda en tests).
-- src/<paquete>/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
+- knowledge/cases/holdout/ → prohibido leer desde src/botsito/spec y src/botsito/domain (guarda en tests).
+- src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
 FASE 0 · Fundamentos
 
 ## Current Feature
-— (plan publicado, pendiente de validación del usuario; F01 no abierta)
+F01 · project-scaffold
 
 ## Current Branch
-main
+feature/F01-project-scaffold
 
 ## Stable Main State
 Punto cero: documentación (README, PROJECT_STATE, plan, investigación). Sin código.
@@ -49,19 +49,23 @@ Punto cero: documentación (README, PROJECT_STATE, plan, investigación). Sin c�
 —
 
 ## Features Waiting for Validation
-- Master Development Plan (docs/plan/MASTER_PLAN.html) · WAITING_FOR_USER_VALIDATION
+- F01 · project-scaffold · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F01-project-scaffold.md
 
 ## Existing Components
-—
+- Paquete `botsito` con subpaquetes vacios documentados; CLI `state check` y `knowledge validate` (no-op).
+- Contratos de importacion (import-linter + test AST). Makefile, CI Linux, pre-commit config.
+- Plantillas: brief, ADR, informe de validacion. ADR-0001.
 
 ## Important Files
-- PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.html · docs/research/2026-09-03-del-corpus-al-bot.html
+- PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md · docs/plan/features/F01-project-scaffold.md
+- docs/adr/0001-repository-structure-and-change-regimes.md · pyproject.toml · Makefile · src/botsito/cli.py
+- docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (plan completo)
 
 ## Tests Currently Passing
-—
+21 (tests/unit: project_state, adr, tree, cli · tests/contract: import_contracts, no_business_literals) · 3 contratos import-linter KEPT · mypy strict OK
 
 ## Architectural Decisions (index)
-- (ADR-0001 estructura del repositorio y regímenes de cambio se redacta en F01)
+- ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decisión:
@@ -94,9 +98,9 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 - MASTER_PLAN existe en HTML; la versión Markdown se genera en F01.
 
 ## Open Questions
-- Nombre del paquete Python (`botsito` propuesto) — decidir antes del merge de F01.
-- Fuente de ticks históricos — decidir en F16.
-- Ruta local de trabajo — actual: C:\Users\USER\Desktop\Bot v3.
+- Nombre del paquete `botsito`: confirmar antes del merge de F01.
+- Fuente de ticks historicos: decidir en F16.
+- Ruta local de trabajo: C:/Users/USER/Desktop/Bot v3.
 
 ## Things That Must Not Be Changed
 - Regímenes de cambio de knowledge/. · Pureza de domain/. · Parámetros no se optimizan contra resultados.
@@ -106,10 +110,12 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F01 · project-scaffold (`feature/F01-project-scaffold`)
 
 ## Next Action
-Usuario valida el Master Development Plan → abrir rama F01 → implementar según docs/plan/features/F01 → VALIDATION REPORT → parar.
+Usuario valida F01 -> re-ejecutar make check -> merge --no-ff a main -> tests desde main -> tag stable/F01 -> abrir feature/F02-config-and-parameter-registry.
 
 ## Last Stable Commit
 0b43244 · docs(state): punto cero
 
 ## Change Log
-- 2026-09-03 · repositorio inicializado en local · punto cero con documentación · plan pendiente de validación
+- 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
+- 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
+- 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
