@@ -76,11 +76,17 @@ source_modules = ["botsito.spec"]
 forbidden_modules = ["botsito.engine", "botsito.data", "botsito.mql5bridge", "MetaTrader5", "pandas", "polars"]
 
 [[tool.importlinter.contracts]]
-name = "capas: cli -> validacion/motor/visor/puente -> conocimiento/datos -> domain"
+name = "capas: cli -> validacion/motor -> cases -> spec -> feedback -> evidencia/corpus/datos/config -> domain"
 type = "layers"
+# Dentro del conocimiento hay jerarquia: la evidencia es la base; el feedback la cita; la spec
+# deriva de evidencia y feedback; los casos referencian spec y feedback. Los hermanos con `|`
+# son independientes entre si.
 layers = [
   "botsito.cli",
   "botsito.validation | botsito.engine | botsito.viewer | botsito.mql5bridge",
-  "botsito.cases | botsito.spec | botsito.feedback | botsito.evidence | botsito.corpus | botsito.data | botsito.config",
+  "botsito.cases",
+  "botsito.spec",
+  "botsito.feedback",
+  "botsito.evidence | botsito.corpus | botsito.data | botsito.config",
   "botsito.domain",
 ]
