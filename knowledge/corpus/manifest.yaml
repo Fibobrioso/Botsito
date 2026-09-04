@@ -1,6 +1,78 @@
 # GENERADO por `botsito corpus inventory`. No editar a mano. Ver fuentes.yaml.
-ffprobe: ffprobe version 9.0.1-full_build-www.gyan.dev
+ffprobe: 9.0.1
 ficheros:
+- bytes: 162226
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
+  sha256: 157eca0c00a3e436cd9083986b06dabd6638cd30ed87975c6891c7f02b5c9334
+- bytes: 120259
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.47 PM.jpeg
+  sha256: 3149e363f4818130c2ac656ba928adc55430a3bfbafd6e2c8c1184d61af67af4
+- bytes: 94467
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.58 PM.jpeg
+  sha256: e77fa8a2063ef95e042b893c27c3f2b59ec9eefd8b6ca974665d25e528ddd6e2
+- bytes: 129447
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.09 PM.jpeg
+  sha256: de2ca75bb083a5b1368e34e9849a2943fb1109f6317adbe2c62ad92a895cb971
+- bytes: 139690
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.18 PM.jpeg
+  sha256: 7a3a228965f5255dd3d11f65fc703a0e3e14ec0c4fa2f8f2079c728832271317
+- bytes: 145755
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.28 PM.jpeg
+  sha256: 0d765697d8754c94c8bae3a2f27d8ba21ace3a3bcf619c9c4e990ef6659cbb63
+- bytes: 168980
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.36 PM.jpeg
+  sha256: 430fcffc3bfe3b3962c2891414294f757fa67e7d7d47039f3b44091d883ac2c6
+- bytes: 133757
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.57.01 PM.jpeg
+  sha256: 0070e7e767762045fe1a457e74a3b0d1303f4ba1db2369764d50033df6f8a6bd
+- bytes: 74053
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.57.15 PM.jpeg
+  sha256: 388164cff0af861213bb7abb2f13eee39fc35aecc9abd0d21160d053903f4acb
+- bytes: 150909
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.20.33 AM.jpeg
+  sha256: ca9dd35d1914af3decc529ea62b6202cddabb8ac6876c27f7ea7eeb43b6baf85
+- bytes: 160920
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.06 AM.jpeg
+  sha256: a99bcd7b31097ce97e725bbec95f600a60262cf5665e9bf4baac3a8db4ac779f
+- bytes: 99078
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.22 AM.jpeg
+  sha256: d7f6084e6840baf4db5170a61f92eab3418030a0a88a3c71f00588796d46325a
+- bytes: 130079
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.33 AM.jpeg
+  sha256: bf602f9387ef9407288b4e1bd7c848754698d5cac9b01b543835e5537e9c56df
+- bytes: 134563
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.42 AM.jpeg
+  sha256: 921201c73d4eb84f880dbd6b1e6c0a7f8094c0870b6eeb1d736d87799d9b39d5
+- bytes: 136161
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.52 AM.jpeg
+  sha256: 623e5f573fb53d4ce835e58655430811b0e81e7018c7f8f7f58c851cd5c8eb3e
+- bytes: 10765
+  papel: material_adicional
+  ruta: Material adicional de su operativa/backtesting-analytics AGOSTO 2026.xlsx
+  sha256: 33a01f1d81246417548663ec43752f3eb952b983175016ca3318044d5b090f45
+- bytes: 11991
+  papel: material_adicional
+  ruta: Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx
+  sha256: ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86
+- bytes: 2020
+  papel: heredado_v2
+  ruta: _procesado/README.md
+  sha256: 95426f99b2167ab02439cfcdc4a56e456395301a571a3a19f36209a8d997c5dc
 - bytes: 126422
   papel: heredado_v2
   ruta: _procesado/frames/v1_1200.jpg
@@ -61,14 +133,14 @@ ficheros:
   papel: heredado_v2
   ruta: _procesado/frames/v3_2610.jpg
   sha256: 45446216d56c157999a40afb8ea25e3a75f21a10e69f7e49495939e20ce73786
-- bytes: 4812
-  papel: heredado_v2
-  ruta: _procesado/herramientas/chunk_transcribe.py
-  sha256: ae45df31ba02fa296610bd010dc24b958e99502deb21b7e3efaf321d9eb43ec1
 - bytes: 1372
   papel: heredado_v2
   ruta: _procesado/herramientas/README.md
   sha256: 2d574fbde0a23aaaf4578e286f6559d35a47ef9d69bfef45cfd990b3953c25f3
+- bytes: 4812
+  papel: heredado_v2
+  ruta: _procesado/herramientas/chunk_transcribe.py
+  sha256: ae45df31ba02fa296610bd010dc24b958e99502deb21b7e3efaf321d9eb43ec1
 - bytes: 9918
   papel: heredado_v2
   ruta: _procesado/informes_fotogramas/Ficha_del_trader_transcrita.md
@@ -125,10 +197,6 @@ ficheros:
   papel: heredado_v2
   ruta: _procesado/informes_fotogramas/V4_fotogramas_06.md
   sha256: 924b6a35e9879c2278c02774acaefe6d8c73ae3274c37005fca96a853c079554
-- bytes: 2020
-  papel: heredado_v2
-  ruta: _procesado/README.md
-  sha256: 95426f99b2167ab02439cfcdc4a56e456395301a571a3a19f36209a8d997c5dc
 - bytes: 26726
   papel: heredado_v2
   ruta: _procesado/transcripciones/Transcripcion_V1_recap_20ago.txt
@@ -1909,74 +1977,6 @@ ficheros:
   papel: heredado_v2
   ruta: _procesado/vid3.mp3
   sha256: 542da880194ce9404c6f84b5ce4c0fdd20656b329b05056a45520c82748c53cf
-- bytes: 10765
-  papel: material_adicional
-  ruta: Material adicional de su operativa/backtesting-analytics AGOSTO 2026.xlsx
-  sha256: 33a01f1d81246417548663ec43752f3eb952b983175016ca3318044d5b090f45
-- bytes: 11991
-  papel: material_adicional
-  ruta: Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx
-  sha256: ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86
-- bytes: 162226
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
-  sha256: 157eca0c00a3e436cd9083986b06dabd6638cd30ed87975c6891c7f02b5c9334
-- bytes: 120259
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.47 PM.jpeg
-  sha256: 3149e363f4818130c2ac656ba928adc55430a3bfbafd6e2c8c1184d61af67af4
-- bytes: 94467
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.58 PM.jpeg
-  sha256: e77fa8a2063ef95e042b893c27c3f2b59ec9eefd8b6ca974665d25e528ddd6e2
-- bytes: 129447
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.09 PM.jpeg
-  sha256: de2ca75bb083a5b1368e34e9849a2943fb1109f6317adbe2c62ad92a895cb971
-- bytes: 139690
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.18 PM.jpeg
-  sha256: 7a3a228965f5255dd3d11f65fc703a0e3e14ec0c4fa2f8f2079c728832271317
-- bytes: 145755
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.28 PM.jpeg
-  sha256: 0d765697d8754c94c8bae3a2f27d8ba21ace3a3bcf619c9c4e990ef6659cbb63
-- bytes: 168980
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.56.36 PM.jpeg
-  sha256: 430fcffc3bfe3b3962c2891414294f757fa67e7d7d47039f3b44091d883ac2c6
-- bytes: 133757
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.57.01 PM.jpeg
-  sha256: 0070e7e767762045fe1a457e74a3b0d1303f4ba1db2369764d50033df6f8a6bd
-- bytes: 74053
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.57.15 PM.jpeg
-  sha256: 388164cff0af861213bb7abb2f13eee39fc35aecc9abd0d21160d053903f4acb
-- bytes: 150909
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.20.33 AM.jpeg
-  sha256: ca9dd35d1914af3decc529ea62b6202cddabb8ac6876c27f7ea7eeb43b6baf85
-- bytes: 160920
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.06 AM.jpeg
-  sha256: a99bcd7b31097ce97e725bbec95f600a60262cf5665e9bf4baac3a8db4ac779f
-- bytes: 99078
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.22 AM.jpeg
-  sha256: d7f6084e6840baf4db5170a61f92eab3418030a0a88a3c71f00588796d46325a
-- bytes: 130079
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.33 AM.jpeg
-  sha256: bf602f9387ef9407288b4e1bd7c848754698d5cac9b01b543835e5537e9c56df
-- bytes: 134563
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.42 AM.jpeg
-  sha256: 921201c73d4eb84f880dbd6b1e6c0a7f8094c0870b6eeb1d736d87799d9b39d5
-- bytes: 136161
-  papel: material_adicional
-  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.52 AM.jpeg
-  sha256: 623e5f573fb53d4ce835e58655430811b0e81e7018c7f8f7f58c851cd5c8eb3e
 indices_heredados:
 - fotogramas: 29
   huecos: []
