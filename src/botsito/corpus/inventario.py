@@ -21,6 +21,7 @@ import yaml
 
 PAPELES_CARPETA = ("heredado_v2", "material_adicional")
 VERSION_MANIFIESTO = 1
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _LINEA_INDICE = re.compile(r"^(\S+)\s+(\d+:\d{2}:\d{2})\s+([\d.]+)\s*$")
 
 
@@ -121,7 +122,10 @@ def ffprobe_version() -> str:
     if exe is None:
         raise InventarioError("ffprobe no esta en PATH")
     salida = subprocess.run([exe, "-version"], capture_output=True, text=True, check=True).stdout
-    return salida.splitlines()[0].split("Copyright")[0].strip()
+    m = re.search(r"ffprobe version (\d+(?:\.\d+)*)", salida)
+    if m is None:
+        raise InventarioError(f"no se pudo leer la version de ffprobe: {salida[:80]!r}")
+    return m.group(1)
 
 
 def ffprobe_info(ruta: Path) -> InfoVideo:
@@ -234,8 +238,10 @@ def inventariar(raiz_repo: Path, fuentes: Fuentes, hashear: bool = True) -> dict
     ficheros: list[dict[str, Any]] = []
     indices: list[dict[str, Any]] = []
     videos_set = {v.fichero for v in fuentes.videos}
-    for ruta in sorted(p for p in raiz.rglob("*") if p.is_file()):
-        relativa = ruta.relative_to(raiz).as_posix()
+    # Orden por la cadena POSIX de la ruta: Path compara sin distinguir mayusculas en Windows y
+    # con ellas en Linux, y el manifiesto debe ser identico en ambos.
+    candidatos = sorted((p.relative_to(raiz).as_posix(), p) for p in raiz.rglob("*") if p.is_file())
+    for relativa, ruta in candidatos:
         if relativa in videos_set:
             continue
         papel = clasificar(relativa, fuentes)
@@ -321,9 +327,24 @@ def validar_manifiesto(manifiesto: dict[str, Any], fuentes: Fuentes) -> list[str
                 problemas.append(f"{fuente.video_id}: falta {campo}")
         if v.get("audio") is not True:
             problemas.append(f"{fuente.video_id}: sin pista de audio")
+    rutas_vistas: set[str] = set()
     for f in manifiesto.get("ficheros", []):
+        ruta = str(f.get("ruta", ""))
+        if not ruta or ruta in rutas_vistas:
+            problemas.append(f"fichero sin ruta o duplicado: {ruta!r}")
+        rutas_vistas.add(ruta)
         if f.get("papel") == "sin_clasificar":
-            problemas.append(f"fichero sin clasificar: {f.get('ruta')}")
+            problemas.append(f"fichero sin clasificar: {ruta}")
+        elif f.get("papel") not in PAPELES_CARPETA:
+            problemas.append(f"papel invalido {f.get('papel')!r}: {ruta}")
+        if not isinstance(f.get("bytes"), int) or f["bytes"] < 0:
+            problemas.append(f"bytes invalidos: {ruta}")
+        h = f.get("sha256")
+        if h is not None and not _SHA256.match(str(h)):
+            problemas.append(f"sha256 invalido: {ruta}")
+    rutas = [str(f.get("ruta", "")) for f in manifiesto.get("ficheros", [])]
+    if rutas != sorted(rutas):
+        problemas.append("los ficheros no estan en orden POSIX (manifiesto no determinista)")
     return problemas
 
 
@@ -343,4 +364,9 @@ def comprobar_contra_disco(
             problemas.append(f"tamano distinto: {relativa}")
         elif hashes and e.get("sha256") and sha256_fichero(ruta) != e["sha256"]:
             problemas.append(f"hash distinto: {relativa}")
-    return problemas
+    conocidas = {relativa for relativa, _ in entradas}
+    if raiz.is_dir():
+        for p in raiz.rglob("*"):
+            if p.is_file() and p.relative_to(raiz).as_posix() not in conocidas:
+                problemas.append(f"no inventariado: {p.relative_to(raiz).as_posix()}")
+    return sorted(problemas)
