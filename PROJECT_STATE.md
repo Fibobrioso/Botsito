@@ -33,10 +33,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08)
 
 ## Current Feature
-— (F03 integrada; F06 pendiente de abrir)
+F06 · evidence-model
 
 ## Current Branch
-main
+feature/F06-evidence-model
 
 ## Stable Main State
 77fdd44 · merge de F03. make check verde: 78 casos (76 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu con ffmpeg verde. Tag stable/F03.
@@ -50,18 +50,20 @@ main
 - F03 · corpus-inventory · validada el 2026-09-04 · docs/validation/F03-corpus-inventory.md · tag stable/F03
 
 ## Features Waiting for Validation
-—
+- F06 · evidence-model · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F06-evidence-model.md
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
 - CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro + manifiesto del corpus), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
+- `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
+- knowledge/evidence/README.md (esquema de EvidenceItem) · src/botsito/evidence/modelo.py
 - knowledge/corpus/fuentes.yaml (fuentes esperadas, ids de Drive) · knowledge/corpus/manifest.yaml (GENERADO) · src/botsito/corpus/inventario.py
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; vacio hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
@@ -70,7 +72,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-76 funciones de test (una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+92 funciones de test (una parametrizada x3, otra x11) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence · contract: import_contracts, no_business_literals, repository_integrity, evidence_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -88,6 +90,28 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - Sesión 2 (tras F26): discrepancias + ronda 2 (κ) · pendiente
 - Sesión 3 (tras F32): divergencias de ejecución · pendiente
 - Mensual (F34): discrepancias en vivo · pendiente
+
+## Lineamientos recibidos del usuario (pendientes de formalizar como evidencia/feedback)
+Lo que el usuario (consultor) aporta por escrito sobre la operativa. NO es evidencia (no es cita del
+corpus) ni feedback del trader: se convierte en items de evidencia en F07 cuando se re-cite sobre la
+transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y su mapeo.
+
+- **2026-09-04 · Geometria del riesgo y gestion del stop.** "Se traza un 1:3 inicialmente; con eso
+  se calcula el lotaje y todo. Una vez se mete la operativa, se baja el SL hasta el 0,75 del trade
+  o hasta el 0,8; el TP sigue donde estaba inicialmente."
+  - Estado en el plan: CONTEMPLADO. MASTER_PLAN F21 (caja 0/0,25/0,5/0,75/1, lotaje sobre la
+    distancia completa, stop en 0,75 con colchon de spread, objetivo 1:3 sobre la distancia completa)
+    y la investigacion (tres confirmaciones aritmeticas: ratio 4,08/3,94 = 3/0,75; Excel con -0,75).
+  - Citas del corpus a re-citar en F07: V2 0:31:59-0:33:53 ("calculo mi lotaje desde aqui... luego
+    apenas se da inicio la entrada lo pongo en 0,75... el objetivo sigue en 1:3"), V1 0:06:19-0:06:34
+    ("no olvidarse de poner el cuadro de Gann en 0,75, proteger el trade apenas se genera la entrada"),
+    V4 0:08:39-0:08:50 ("dar un pequeno respiro: de 0,75 a 0,80" por el spread).
+  - Lectura: el 0,8 es el colchon de spread sobre el 0,75, no un nivel alternativo libre.
+  - Preguntas abiertas para el trader (sesion 1): (a) ¿el 0,8 es fijo o "0,75 mas el spread del
+    momento"? (b) ¿el stop se coloca en el 0,75 al enviar la orden limite o solo tras el llenado?
+    Para el bot es equivalente y mas seguro adjuntar el SL al 0,75 en la propia orden pendiente
+    (F22/F31); confirmar que el trader no ve inconveniente.
+  - Consecuencia para F21: el TP nunca se recalcula al mover el SL (invariante a probar).
 
 ## Expert Validations
 —
@@ -123,12 +147,18 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F06 · evidence-model (`feature/F06-evidence-model`)
 
 ## Next Action
-Abrir feature/F06-evidence-model -> brief (EvidenceItem inmutable con cita verificable contra el manifiesto; test de inmutabilidad contra el historial de git; contradicciones regeneradas) -> implementar -> informe -> WAITING_FOR_USER_VALIDATION.
+Usuario valida F06 -> merge --no-ff a main -> tag stable/F06 -> push -> abrir feature/F09-expert-feedback-model (orden E: F03, F06, F09 antes de F15 y F04/F05).
 
 ## Last Stable Commit
 77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
 
 ## Change Log
+- 2026-09-04 · lineamiento del usuario registrado: SL a 0,75/0,8 tras la entrada con TP fijo (contemplado en F21; dos preguntas abiertas para el trader)
+- 2026-09-04 · push F06 tras auditoria global; CI Ubuntu verde (run 33893230602)
+- 2026-09-04 · auditoria global: la guardia de historial no detectaba ediciones dentro de un merge (ahora compara blobs con el primer commit); make check ejecuta knowledge validate; coma decimal normalizada en contradicciones; 92 funciones de test
+- 2026-09-04 · push F06; CI Ubuntu verde (run 33892467496); hook de evidencia probado en 5 escenarios
+- 2026-09-04 · F06 construida: modelo de evidencia inmutable, contradicciones regeneradas, guardia de historial, hook; 89 funciones de test; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · rama feature/F06-evidence-model abierta; brief escrito
 - 2026-09-04 · F03 VALIDADA por el usuario; merge --no-ff a main (77fdd44); tag stable/F03
 - 2026-09-04 · push F03 tras auditoria; CI Ubuntu verde con ffmpeg (run 33891193380)
 - 2026-09-04 · auditoria de F03: orden POSIX del manifiesto (Windows ordenaba sin mayusculas), corpus check detecta ficheros no inventariados, esquema de ficheros validado, ffmpeg en CI, xlsx/pdf binarios; 76 funciones de test

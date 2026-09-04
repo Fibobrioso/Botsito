@@ -1,13 +1,20 @@
 #!/bin/sh
-# Hook local (instalado por `make sync` via core.hooksPath).
+# Hook local (copiado a .git/hooks por `make sync`, ADR-0003).
 # 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
-# 2. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
+# 2. La evidencia es inmutable: modificar, renombrar o borrar knowledge/evidence/**/*.yaml se rechaza.
+# 3. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
 # Nota: la salida se captura por tuberia, no con >/dev/null: en Git Bash de Windows,
 # lint-imports devuelve 1 al escribir en /dev/null.
 branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
   echo "pre-commit: commit directo en main rechazado. Usa una rama feature/F##-nombre." >&2
   echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
+  exit 1
+fi
+cambios=$(git diff --cached --name-status -- knowledge/evidence | awk '$1 ~ /^[MDRCT]/ && $2 ~ /\.yaml$/ && $2 !~ /\/_[^\/]*\.yaml$/ {print}')
+if [ -n "$cambios" ]; then
+  echo "pre-commit: la evidencia es inmutable. Crea un item nuevo con supersede en vez de editar:" >&2
+  echo "$cambios" >&2
   exit 1
 fi
 root=$(git rev-parse --show-toplevel 2>/dev/null)
