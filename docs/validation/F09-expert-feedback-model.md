@@ -76,6 +76,7 @@ temporal: acepta anadir feedback, rechaza editar y borrar.
 - pytest: 131 passed (106 funciones; 14 rechazos parametrizados; property de estabilidad del id;
   historial con modificar/borrar; trailers validos, invalidos e inexistentes).
 - `state`, `config`, `knowledge validate` (0 registros, historial intacto, commits con Fuente): OK.
+- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33894611220.
 
 ## Que deberia observar el usuario
 `knowledge/feedback/README.md` con esquema y plantilla de sesion; `feedback pending` vacio;
@@ -87,7 +88,6 @@ Todo el alcance del brief salvo `feedback apply`, diferido a F11 por diseno.
 ## Que casos todavia no funcionan
 - No hay registros reales: la sesion 1 con el trader va tras F10 y F15.
 - Objetivos `regla`, `ambiguedad` y `caso` se validan solo por formato hasta F11/F14.
-- CI de GitHub para esta rama: pendiente del push.
 
 ## Limitaciones
 El trailer `Fuente:` se exige por commit, no por linea cambiada: un commit que mezcle un cambio

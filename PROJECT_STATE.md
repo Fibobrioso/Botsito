@@ -156,6 +156,7 @@ Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir fe
 b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
 
 ## Change Log
+- 2026-09-04 · push F09; CI Ubuntu verde (run 33894611220); hook de feedback probado
 - 2026-09-04 · F09 construida: FeedbackRecord solo-anadir, guardia de historial generalizada, trailer Fuente en commits de spec/cases, capas refinadas; 106 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F09-expert-feedback-model abierta; brief escrito (feedback apply diferido a F11 por falta de esquema de spec)
 - 2026-09-04 · F06 VALIDADA por el usuario; merge --no-ff a main (b6b82f2); tag stable/F06
