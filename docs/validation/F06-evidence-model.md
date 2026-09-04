@@ -86,10 +86,10 @@ acepta anadir, rechaza editar, acepta regenerar `_contradicciones.yaml`, rechaza
 
 ## Resultados
 - ruff, mypy strict (43 ficheros), 3 contratos KEPT.
-- pytest: 105 passed (92 funciones; 11 rechazos parametrizados; property test de estabilidad del id).
+- pytest: 104 passed (92 funciones; 11 rechazos parametrizados; property test de estabilidad del id).
 - `state check`, `config validate`, `knowledge validate` (0 items, 0 contradicciones, historial
   intacto): OK.
-- CI GitHub Actions (ubuntu-latest, con historial completo): verde, run 33892467496.
+- CI GitHub Actions (ubuntu-latest, con historial completo): verde, run 33892467496 y, tras la auditoria global, run 33893230602.
 
 ## Que deberia observar el usuario
 `knowledge/evidence/README.md` con el esquema; `_contradicciones.yaml` vacio y generado;
