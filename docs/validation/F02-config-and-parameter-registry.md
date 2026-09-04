@@ -29,6 +29,20 @@ desactualizado. Registro vacio de valores hasta F11.
 - ruff en modo preview con `PLW1514` (encoding obligatorio). ADR-0002 y ADR-0003.
   `.pre-commit-config.yaml` retirado (ADR-0003).
 
+## Correcciones aplicadas tras la auditoria de F02 (2026-09-04)
+Encontradas sondeando el cargador con entradas de borde (no las cubrian los tests):
+- Mensaje de error con prefijo duplicado (`n: n: entero invalido`): `RegistroError` hereda de
+  `ValueError` y se re-envolvia a si mismo. Ahora se propaga sin re-envolver; test anadido.
+- `minimo`/`maximo` aceptaban `float` aunque `valor` lo rechaza. Ahora se rechazan; test anadido.
+- Accesores tipados (`fraccion()`, `porcentaje()`, `decimal()`, `entero()`, `hora()`, `texto()`) con
+  `TipoDeParametroError`: el dominio (F18) lee un tipo concreto, nunca la union. Tests anadidos.
+- `sin_fuente_confirmada()` renombrado a `no_confirmados()` (el nombre no describia lo que hacia).
+- Property test de ida y vuelta por YAML (`Decimal` -> texto -> registro -> `Fraccion`) que el brief
+  prometia y no existia. Hallazgo de paso: `@given` posicional se asigna al ultimo parametro; se usa
+  `@given(d=...)`.
+- Cabecera de `parametros.yaml`: entero sin comillas, hora/texto con comillas, limites sin float.
+  `knowledge/spec/README.md` menciona el registro.
+
 ## Archivos creados
 ```
 src/botsito/domain/valores.py  src/botsito/config/{__init__,registro,ajustes}.py
@@ -50,8 +64,8 @@ docs/validation/F02-config-and-parameter-registry.md
 ## Decisiones tomadas
 - **Excepciones con sufijo `Error`** (`RegistroError`, `ParametroDesconocidoError`,
   `AmbiguedadNoDeclaradaError`, `AjustesError`) por la convencion N818 de ruff.
-- **`state check` cuenta funciones de test, no casos de pytest.** Con una parametrizacion x3 hay 59
-  funciones y 61 casos; PROJECT_STATE declara 59 y lo aclara. Se prefirio el AST porque no ejecuta
+- **`state check` cuenta funciones de test, no casos de pytest.** Con una parametrizacion x3 hay 63
+  funciones y 65 casos; PROJECT_STATE declara 63 y lo aclara. Se prefirio el AST porque no ejecuta
   nada y no depende de plugins.
 - **Sin framework pre-commit** (ADR-0003): los hooks son la copia de `scripts/git-hooks/`.
 - **Valores YAML entre comillas.** Un `0.75` sin comillas llega como float y se rechaza: evita que
@@ -67,7 +81,7 @@ uv run botsito state check
 
 ## Como probarlo
 - Anadir al YAML un parametro con `estado: UNKNOWN` y `valor: 3` → `knowledge validate` falla.
-- Cambiar el `59` de "Tests Currently Passing" por otro numero → `state check` falla nombrando la
+- Cambiar el `63` de "Tests Currently Passing" por otro numero → `state check` falla nombrando la
   diferencia (ocurrio de verdad durante la construccion: el estado decia 26).
 - `Fraccion("0.5") + Porcentaje("50")` → `TypeError`.
 - Anadir `stop = 0.75` a `config/settings.example.toml` bajo `[entorno]` → `test_ajustes` falla.
@@ -79,7 +93,7 @@ uv run botsito state check
 ## Resultados
 - ruff (preview, PLW1514): sin errores. mypy strict: 35 ficheros (src + tests), sin incidencias.
 - import-linter: 3 contratos KEPT.
-- pytest: 61 passed (59 funciones; property test con hypothesis incluido).
+- pytest: 65 passed (63 funciones; dos property tests con hypothesis).
 - `state check`: OK. `knowledge validate`: OK, registro con 0 parametros.
 - CI GitHub Actions (ubuntu-latest): verde, run 33883045053.
 
