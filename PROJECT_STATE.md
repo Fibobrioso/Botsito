@@ -30,7 +30,7 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
-FASE 2 · Retroalimentacion del experto (F09-F10)
+FASE 2 · Feedback del experto (F09-F10)
 
 ## Current Feature
 F09 · expert-feedback-model
@@ -55,13 +55,13 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
-- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro + manifiesto del corpus), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
+- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion, main sin cambios tras el tag), `knowledge validate` (registro, manifiesto, evidencia, contradicciones, feedback, historial de git y trailers `Fuente:`), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
 - `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
-- `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad); CLI `feedback new/trace/pending`; `commits_sin_fuente` exige trailer `Fuente:` en commits que tocan spec/cases desde stable/F06.
+- `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad, supersede del mismo objetivo sin ciclos); CLI `feedback new` (valida contexto antes de escribir), `trace`, `pending` (filtra parametros no `estrategia`); `commits_sin_fuente` exige trailer `Fuente:` con ids existentes (evidencia, feedback, ADR) en commits que tocan spec/cases desde el SHA de stable/F06; `historial_evaluable` marca clon superficial o repo anidado como no evaluable.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
-- `yaml_estricto.py` (claves duplicadas rechazadas, fechas como texto) usado por registro, corpus, evidencia y feedback. `scripts/instalar_hooks.py` (make hooks portable).
+- `yaml_estricto.py` (claves duplicadas y no hashables rechazadas, fechas como texto) usado por registro, corpus, evidencia y feedback. `scripts/instalar_hooks.py` (make hooks portable; destino `git rev-parse --git-path hooks`; aborta con `core.hooksPath` global). `.python-version` = 3.12 (local y CI).
 - Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004. `.gitattributes` con LF.
 
 ## Important Files
@@ -76,7 +76,7 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-122 funciones de test (parametrizadas x3, x13, x15 y x18) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence, feedback, yaml_estricto · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+149 funciones de test (parametrizadas x3, x8, x13, x15 y x18) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence, feedback, yaml_estricto · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -122,12 +122,26 @@ transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y
 —
 
 ## Known Ambiguities
-A-1 sesgo H4 · A-2 tercer cartucho · A-3 salida sin ruptura · A-4 BE al tocar/cierre ·
-A-5 cadencia de reubicación · A-6 cierre 15:00 · A-7 stop del 2.º esquema · A-8 "dos velas como
-una" en mapeo · A-9 anclaje de la vela H4 (huso del gráfico del trader) · A-10 stop a 0,8: ¿fijo o
-0,75 + colchón de spread? · A-11 SL en la orden o tras el llenado (lineamiento del usuario)
-(todas: ABIERTA hasta registro de feedback del trader; el esquema de feedback solo acepta ids A-N,
-por eso todas llevan número desde la auditoría extrema del 2026-09-04)
+Todas ABIERTAS hasta un registro de feedback del trader (sesion 1, tras F10 + F15). El esquema de
+feedback solo acepta ids `A-N`. Columna "resuelve en": la funcionalidad que convierte la respuesta
+en regla o parametro; "pregunta": lo que se le plantea al trader.
+
+| Id | Ambiguedad | Resuelve en | Pregunta de la sesion 1 |
+|---|---|---|---|
+| A-1 | sesgo H4 | F11 (regla), F18 (motor de sesgo) | ¿que vela H4 fija el sesgo y cuando cambia? |
+| A-2 | tercer cartucho | F11, F21 | ¿2 o 3 intentos por zona? (contradiccion ficha vs V4 0:48:41) |
+| A-3 | salida sin ruptura | F11, F23 | ¿se cierra si no rompe? ¿cuando? |
+| A-4 | BE al tocar o al cierre | F11, F23 | ¿break-even al tocar el nivel o al cierre de vela? (V4 0:44:56) |
+| A-5 | cadencia de reubicacion | F11, F22 | ¿cada cuanto se reubica la orden pendiente? |
+| A-6 | cierre 15:00 | F11, F23 | ¿cierre forzoso a las 15:00 y en que huso? |
+| A-7 | stop del 2.o esquema | F11, F21 | ¿donde va el stop en el segundo esquema de entrada? |
+| A-8 | "dos velas como una" en mapeo | F11, F18 | ¿cuando dos velas cuentan como una estructura? |
+| A-9 | anclaje de la vela H4 (huso del grafico) | F07 (captura), F15 (parametro `anclaje_h4`) | ¿a que hora abre su H4? (se resuelve viendo su grafico) |
+| A-10 | stop a 0,8: fijo o 0,75 + spread | F21 | ¿el 0,8 es fijo o "0,75 mas el spread del momento"? |
+| A-11 | SL en la orden o tras el llenado | F22, F31 | ¿el SL va en la orden pendiente o se pone tras el llenado? |
+
+Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los
+casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
 
 ## Known Contradictions
 Cartuchos 2 (ficha) vs 3 (V4 0:48:41) · parciales 30–40 % (ficha) vs "sin parciales" (respuesta) ·
@@ -140,8 +154,13 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   cientos de items; `escribir_item` trata la colision como "mismo contenido" (revisar en F07).
 
 ## Technical Debt
-- Transcripciones previas con Whisper tiny: no usar para extracción hasta F04.
-- MASTER_PLAN existe en HTML; la versión Markdown se genera en F01.
+- Transcripciones previas con Whisper tiny: no usar para extraccion hasta F04.
+- `test_fichero_real_vacio_de_valores` (registro) y `test_directorio_real_valida` (feedback)
+  afirman que el repo esta vacio de valores/registros: se retiran en F11 y en la sesion 1.
+- Ramas `feature/F01`, `F02`, `F03`, `F06` ya fusionadas siguen en local y en `origin`
+  (borrarlas cuando el usuario lo autorice; los tags `stable/*` conservan los puntos).
+- Sin proteccion de rama en GitHub: `--no-verify` + force-push a `main` saltaria las guardias
+  locales (la CI las detectaria, pero no lo impediria). Recomendado al abrir F15.
 
 ## Open Questions
 - Fuente de ticks historicos: decidir en F16.
@@ -165,6 +184,7 @@ Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir fe
 b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
 
 ## Change Log
+- 2026-09-04 · AUDITORIA DE CIERRE de F09 (3 agentes: codigo, plan/docs, infraestructura), antes de la validacion del usuario. Corregido: campos en blanco rompian el id de feedback/evidencia; `Fuente: ADR-9999` pasaba; detector de literales de negocio eludible; KeyError con `--sesion ""`; `feedback new`/`evidence new` validan contexto antes de escribir; fechas imposibles y digitos Unicode; supersede cruzado y ciclos; ficheros no-yaml; tracebacks con manifiesto/TOML/YAML corruptos; ancla por SHA con tag vigilado; clon superficial y repo anidado no evaluables; registro estricto (texto vacio, claves ajenas, limites en hora); instalador de hooks (worktree, hooksPath global, .bak, git ausente); hook con `uv run --locked`; `.python-version` 3.12; CI con permisos, concurrencia, timeout y ffprobe obligatorio; tests de integridad no eludibles; `feedback pending` filtra por `estrategia` (ADR-0004); docs coherentes (ejemplo del informe, H.2 anclaje H4, mapa de ambiguedades, READMEs). Un agente ejecuto por error una prueba en el repo real (rama `prueba/soft`, creada y borrada; solo quedan entradas de reflog)
 - 2026-09-04 · push de la auditoria extrema (8 commits); CI Ubuntu verde (run 33909186793, d217a11); clon sin tags OK por ancla SHA, clon superficial ERROR explicito
 - 2026-09-04 · AUDITORIA EXTREMA (3 agentes: codigo, plan/ejecucion, repositorio). Corregido: git decodificado en UTF-8 con quotepath=false (un commit con mayuscula acentuada anulaba la guardia de trailers en Windows); adiciones en commits de merge protegidas (`git log -m`); video_id y formato de id validados, `evidence new` contra fuentes.yaml; hook con rutas sin entrecomillar y tabulador; cargador YAML estricto (claves duplicadas, fechas como texto, tipos texto exigidos); InvalidOperation/NaN/Infinity/25:99 rechazados; guardias no evaluables son ERROR y el ancla de trazabilidad tiene tag + SHA; `state check` vigila que main solo cambie PROJECT_STATE tras el tag; corpus check sin KeyError; `make hooks` portable (Python) desde PowerShell; CI sin doble disparo, tags forzados, actions al dia; ADR-0004 (categorias de parametro, horas con huso, tzdata); lecturas ambiguas sin crecer por tick; contradicciones con Decimal; feedback con fecha = sesion y t0/t1 siempre validados; MASTER_PLAN H.2 con los riesgos de ejecucion absorbidos por funcionalidad; ambiguedades numeradas A-1..A-11; docs incoherentes corregidos. 122 funciones / 167 casos
 - 2026-09-04 · push F09; CI Ubuntu verde (run 33894611220); hook de feedback probado

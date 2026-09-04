@@ -23,3 +23,8 @@ def test_resto_de_tipos_como_pyyaml() -> None:
 def test_yaml_roto() -> None:
     with pytest.raises(YamlError, match="YAML invalido"):
         cargar_yaml("a: [1,\n")
+
+
+def test_clave_no_hashable_es_yaml_error() -> None:
+    with pytest.raises(YamlError, match="clave no admitida"):
+        cargar_yaml("? [1, 2]\n: x\n")

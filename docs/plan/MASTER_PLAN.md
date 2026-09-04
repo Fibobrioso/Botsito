@@ -5,6 +5,9 @@ Version Markdown del plan (la version completa con detalle de cada funcionalidad
 `docs/research/2026-09-03-del-corpus-al-bot.html` y no redefine el metodo: lo convierte en
 funcionalidades, ramas, tests y criterios de aceptacion.
 
+Las letras de las secciones (0, B, A, D, E, F, G, H) siguen la numeracion del HTML original para
+que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion C.
+
 ## 0 · Principios
 
 - Una funcionalidad = una rama `feature/F##-nombre` = un `FUNCTIONALITY VALIDATION REPORT` = un
@@ -30,7 +33,7 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | `knowledge/corpus` | manifiesto con hash y huecos (F03) |
 | `knowledge/evidence` | `EvidenceItem` inmutables (F06) |
 | `knowledge/feedback` | `FeedbackRecord` solo-anadir (F09) |
-| `knowledge/spec` | `strategy_spec.yaml`, glosario (F11) |
+| `knowledge/spec` | `parametros.yaml` (F02, ADR-0002/0004), `strategy_spec.yaml`, glosario (F11) |
 | `knowledge/cases/{dev,holdout/1,holdout/2,holdout/3,fixtures}` | casos ejecutables; tres particiones reservadas ilegibles para spec/domain (F14) |
 | `src/botsito/{corpus,evidence,feedback,spec,cases,data,domain,engine,validation,viewer,mql5bridge}` | paquete Python; ver docstring de cada subpaquete |
 | `mql5/` | EA, includes (Params.mqh generado), RunCases, tester (fase 6) |
@@ -61,7 +64,7 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | F13 | `feature/F13-spec-documents` | Docs y hoja del trader generados | F11 | anti-deriva | docs = generado |
 | F14 | `feature/F14-case-library` | Casos ejecutables con tres particiones reservadas (holdout-1/2/3) | F09, F11, F15 | guarda de holdout por audit hook | runner independiente |
 | **Fase 4 · Datos** | | | | | |
-| F15 | `feature/F15-market-data-ohlc` | OHLC y agregacion con anclaje y huso | F02 | DST; anclaje; golden | H4 = las del trader |
+| F15 | `feature/F15-market-data-ohlc` | OHLC y agregacion con anclaje y huso | F02 | DST; anclaje; golden | H4 reproducible para cualquier `anclaje_h4`; golden del trader en F07 |
 | F16 | `feature/F16-market-data-ticks` | Ticks a Parquet con calidad | F15 | comprobaciones | M1 desde ticks coincide |
 | F17 | `feature/F17-demo-tick-recorder` | Grabar ticks y spread de la demo | F16 | rotacion | perfil de spread |
 | **Fase 5 · Motor y fidelidad** | | | | | |
@@ -87,6 +90,9 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | F35 | `feature/F35-go-live-gate` | Memorando de decision | F27, F34 | reproducibilidad | decision humana |
 
 ## D · Grafo de dependencias
+
+Grafo simplificado: la tabla A es la fuente de las dependencias. No se dibujan, por legibilidad,
+F15 → F14 (fixtures OHLC), F10 → F26 y F14 → F26 (validacion de fidelidad).
 
 ```
 F01 ── F02 ── F15 ── F16 ── F17
@@ -114,7 +120,7 @@ Estructura de documentos → esquema de knowledge → regimenes de cambio → se
 causalidad → invariantes → casos dorados → determinismo → fidelidad en holdout → diferencial
 Python/MQL5 → paridad con tester → paridad en vivo → validacion humana (usuario y trader).
 
-Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##.md` con estado
+Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##-nombre.md` con estado
 `WAITING_FOR_USER_VALIDATION` → parada → tras validacion: re-ejecucion, docs, commits, merge
 `--no-ff`, tests desde `main`, etiqueta `stable/F##`, `PROJECT_STATE.md`.
 
@@ -122,7 +128,7 @@ Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##.md`
 
 | Cuando | Que valida | Objeto que crea | Que modifica (via diff propuesto) |
 |---|---|---|---|
-| Sesion 1 (tras F10 + F15) | 3 preguntas bloqueantes sobre casos; ronda 1 de etiquetado; hoja de reglas | FeedbackRecord | spec (F11), casos dev/holdout |
+| Sesion 1 (tras F10 + F15) | 3 preguntas bloqueantes sobre casos (se eligen en el brief de F10 entre A-1..A-11 por impacto en el kit de casos; ver mapeo en `PROJECT_STATE.md`, Known Ambiguities); ronda 1 de etiquetado; hoja de reglas | FeedbackRecord | spec (F11), casos dev/holdout |
 | Sesion 2 (tras F26) | discrepancias en el visor; FP/FN; fronterizos; ronda 2 (kappa) | FeedbackRecord | reglas, tablas de decision, casos; posible ACP de respaldo |
 | Sesion 3 (tras F32) | divergencias de ejecucion | FeedbackRecord | reglas de ejecucion |
 | Mensual (F34) | discrepancias en vivo | FeedbackRecord | igual |
@@ -141,7 +147,7 @@ una se incorpora al brief de la funcionalidad indicada cuando se abra.
 | Tres particiones reservadas: `holdout-1` (se abre en F26, sesion 2), `holdout-2` (cifra final de fidelidad, una sola apertura), `holdout-3` (correcciones de fase 7). La asignacion se commitea con seed ANTES de la sesion de etiquetado; un test comprueba la fecha del commit | F10, F14, F26, F34, F35 | Medir la fidelidad final sobre casos ya vistos al corregir |
 | Pre-registro: `docs/validation/PREREGISTRO.md` con umbrales de fidelidad, kappa, paridad y DSR, commiteado antes de abrir cualquier holdout; los informes citan su hash | F26, F27, F32, F35 | Ajustar el umbral a la cifra |
 | Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 | Editar evidencia o feedback saltando los hooks |
-| Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 previo entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
+| Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 de Bot v2 (no existe en este repositorio) entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
 | Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
 | Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 | Reescribir lo que dijo el trader |
 | Modelo de llenado como parametro declarado; informe de ventaja con dos modelos (al tocar / cruce + latencia) | F24, F27 | Un modelo optimista que infla resultados |
@@ -178,7 +184,7 @@ en su brief al abrirla. Ninguna fila se cierra sin cita en el informe de validac
 | Riesgo | Funcionalidad | Que debe hacer |
 |---|---|---|
 | Tres relojes (trader Europe/Madrid, servidor GMT+2/+3, datos UTC) con desfase variable; el dia de riesgo de la prop firm es el del servidor | F15, F17, F28, F31, F33 | F15: `huso_datos` y `huso_operativa` como parametros (`hora` ya exige huso, ADR-0004). F17: desfase servidor-UTC en cada evento. F28: exportar tabla de transiciones DST del horizonte, no un offset fijo. F31: dia de riesgo = dia de servidor. F33: pre-vuelo compara offset real con la tabla y aborta |
-| Anclaje de la vela H4 (00:00 Madrid, 00:00 servidor o 17:00 NY) cambia el sesgo la mitad de los dias; MQL5 `PERIOD_H4` nativo divergiria de Python | F07, F15, F29, F30, F33 | Parametro `anclaje_h4` en estado UNKNOWN/DEFAULT_AMBIGUOUS (A-9) hasta evidencia `modalidad: pantalla` de la configuracion del grafico (F07). F15: golden contra esa captura. F29: H4 agregada desde M1 con el mismo anclaje; prohibido `iTime/iClose(PERIOD_H4)`. F33: comparar ultima H4 cerrada EA vs Python |
+| Anclaje de la vela H4 (00:00 Madrid, 00:00 servidor o 17:00 NY) cambia el sesgo la mitad de los dias; MQL5 `PERIOD_H4` nativo divergiria de Python | F07, F15, F29, F30, F33 | Parametro `anclaje_h4` en estado UNKNOWN/DEFAULT_AMBIGUOUS (A-9) hasta evidencia `modalidad: pantalla` de la configuracion del grafico (F07). F15 (antes que F07 por el orden E): agregacion parametrizada por `anclaje_h4`, reproducible para cualquier anclaje declarado; el golden contra la captura del trader se anade en F07 como test de regresion sobre F15. F29: H4 agregada desde M1 con el mismo anclaje; prohibido `iTime/iClose(PERIOD_H4)`. F33: comparar ultima H4 cerrada EA vs Python |
 | Parametros de instrumento, broker, prop firm y ejecucion sin hogar | F11, F24, F28, F31, F33 | Categorias del ADR-0004 (hecho). F11 los puebla citando ADR. F24 simula `stops_level`, `freeze_level`, comision y modo de llenado desde `instrumento`/`broker`. F28: `Params.mqh` (estrategia+instrumento+ejecucion) y `Risk.mqh` (prop_firm) con dos hashes en el journal. F33: `[broker]` en settings, entorno `real`, pre-vuelo contra `SymbolInfo*`/`AccountInfo*` |
 | Veto de riesgo solo en MQL5: el backtest Python del mismo dia ejecutaria lo que el EA veto y F34 lo contaria como divergencia | F21, F22, F24, F30 | El veto (5 % diario sobre equity a medianoche de servidor, 10 % total, lote maximo, presupuesto de mensajes) es regla pura del dominio con `equity`, `balance_inicio_dia_servidor`, `mensajes_enviados_hoy`; F24 la ejecuta; F28 la exporta; F30 la cubre; el journal registra cada veto como abstencion |
 | Redondeo fraccion → puntos (0,75 × 137 = 102,75) y lotaje al paso: `Decimal` no lo resuelve frente a MQL5 | F18, F21, F28, F29 | F18: tipo `Puntos(int)`, regla escrita (stop al lado conservador; lote hacia abajo al paso), test AST que prohibe `float`/`Decimal` en `domain/` salvo `valores.py`. F21: golden con residuo ,5. F28: fracciones como racionales `num/den`; F29: aritmetica en `long` |

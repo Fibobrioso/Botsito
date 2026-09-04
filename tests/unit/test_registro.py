@@ -276,3 +276,19 @@ def test_hora_unknown_puede_declarar_huso(tmp_path: Path) -> None:
     assert contenido != BASE
     r = cargar_registro(_escribir(tmp_path, contenido))
     assert r.parametros["inicio"].estado is Estado.UNKNOWN
+
+
+def test_texto_vacio_y_claves_ajenas_y_limites_en_hora(tmp_path: Path) -> None:
+    texto = BASE.replace(
+        "    estado: UNKNOWN\n",
+        '    estado: CONFIRMED\n    valor: ""\n    fuente: {tipo: decision, id: ADR-0001}\n',
+    ).replace("tipo: entero", "tipo: texto")
+    with pytest.raises(RegistroError, match="vacio"):
+        cargar_registro(_escribir(tmp_path, texto))
+    with pytest.raises(RegistroError, match="nivel superior"):
+        cargar_registro(_escribir(tmp_path, BASE + "otra_clave: 1\n"))
+    con_limite = BASE.replace(
+        "    huso: Europe/Madrid\n", '    huso: Europe/Madrid\n    minimo: "0"\n'
+    )
+    with pytest.raises(RegistroError, match="no se aplican"):
+        cargar_registro(_escribir(tmp_path, con_limite))

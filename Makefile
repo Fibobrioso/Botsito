@@ -8,9 +8,9 @@ sync:
 	$(UV) sync --locked --group dev
 	$(MAKE) hooks
 
-# Los hooks se COPIAN a .git/hooks: asi protegen tambien al cambiar a una rama que no los tenga
-# (con core.hooksPath relativo, git omite en silencio el hook si el fichero no existe en la rama).
-# Script Python y no cp/chmod: el make de Windows ejecuta las recetas con cmd.exe desde PowerShell.
+# Los hooks se COPIAN al directorio de hooks de git: asi protegen tambien al cambiar a una rama
+# que no los tenga (con core.hooksPath relativo, git omite en silencio el hook si el fichero no
+# existe en la rama). Script Python y no cp/chmod: no depende del shell que make encuentre.
 hooks:
 	$(UV) run python scripts/instalar_hooks.py
 

@@ -26,6 +26,13 @@ es del contenido: editar un item rompe su id, y el historial de git se vigila
 | `supersede` | no | id del item al que corrige |
 | `notas` | no | texto libre |
 
+Reglas adicionales que el cargador hace cumplir: `cita_literal` de al menos 5 caracteres;
+`afirmacion` no mas larga que `2 x cita + 40`; tiempos e ids solo con digitos ASCII; un campo en
+blanco cuenta como ausente y no entra en el id; `supersede` apunta a un item del MISMO `tema` y no
+puede formar ciclos; en la carpeta solo hay `*.yaml` (cualquier otro fichero es error).
+`botsito evidence new` comprueba contra el manifiesto ANTES de escribir (duracion del video,
+fotogramas inventariados, supersede existente): si algo falla, no crea el fichero.
+
 `_contradicciones.yaml` es GENERADO (`botsito evidence contradictions`) y `knowledge validate` falla
 si no coincide con la regeneracion. Las inferencias del equipo NO son evidencia: van a la
 especificacion como ambiguedad o regla `DEFAULT` (seccion H del plan).

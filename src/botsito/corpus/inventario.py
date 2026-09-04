@@ -78,7 +78,7 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
                 video_id=str(v["video_id"]),
                 fichero=str(v["fichero"]),
                 drive_id=str(v["drive_id"]),
-                bytes=int(v["bytes"]),
+                bytes=_entero(v["bytes"], "bytes"),
                 fecha_grabacion=str(v["fecha_grabacion"]),
                 naturaleza=str(v["naturaleza"]).strip(),
             )
@@ -92,7 +92,7 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
             raiz=str(doc["raiz"]),
             videos=videos,
             carpetas=carpetas,
-            umbral_hueco_segundos=int(doc.get("umbral_hueco_segundos", 180)),
+            umbral_hueco_segundos=_entero(doc.get("umbral_hueco_segundos", 180), "umbral"),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise InventarioError(f"{ruta}: esquema invalido ({exc})") from exc
@@ -105,6 +105,13 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
     if fuentes.umbral_hueco_segundos <= 0:
         raise InventarioError("umbral_hueco_segundos debe ser positivo")
     return fuentes
+
+
+def _entero(valor: object, campo: str) -> int:
+    """Un entero de verdad: `1.5` no se trunca y `true` no vale 1."""
+    if isinstance(valor, bool) or not isinstance(valor, int):
+        raise ValueError(f"{campo} debe ser un entero, no {valor!r}")
+    return valor
 
 
 def sha256_fichero(ruta: Path, bloque: int = 8 * 1024 * 1024) -> str:
@@ -126,7 +133,12 @@ def ffprobe_version() -> str:
     exe = ffprobe_disponible()
     if exe is None:
         raise InventarioError("ffprobe no esta en PATH")
-    salida = subprocess.run([exe, "-version"], capture_output=True, text=True, check=True).stdout
+    resultado = subprocess.run(
+        [exe, "-version"], capture_output=True, encoding="utf-8", errors="replace", check=False
+    )
+    if resultado.returncode != 0:
+        raise InventarioError(f"ffprobe -version fallo: {resultado.stderr.strip()[:80]}")
+    salida = resultado.stdout
     m = re.search(r"ffprobe version (\d+(?:\.\d+)*)", salida)
     if m is None:
         raise InventarioError(f"no se pudo leer la version de ffprobe: {salida[:80]!r}")
@@ -147,10 +159,15 @@ def ffprobe_info(ruta: Path) -> InfoVideo:
         "json",
         str(ruta),
     ]
-    resultado = subprocess.run(args, capture_output=True, text=True, check=False)
+    resultado = subprocess.run(
+        args, capture_output=True, encoding="utf-8", errors="replace", check=False
+    )
     if resultado.returncode != 0:
         raise InventarioError(f"ffprobe fallo sobre {ruta.name}: {resultado.stderr.strip()}")
-    doc = json.loads(resultado.stdout)
+    try:
+        doc = json.loads(resultado.stdout)
+    except json.JSONDecodeError as exc:
+        raise InventarioError(f"{ruta.name}: ffprobe no devolvio JSON ({exc})") from exc
     video = next((s for s in doc.get("streams", []) if s.get("codec_type") == "video"), None)
     if video is None:
         raise InventarioError(f"{ruta.name}: sin pista de video")
@@ -329,7 +346,14 @@ def validar_manifiesto(manifiesto: dict[str, Any], fuentes: Fuentes) -> list[str
         problemas.append(f"version {manifiesto.get('version')!r}, esperada {VERSION_MANIFIESTO}")
     if manifiesto.get("raiz") != fuentes.raiz:
         problemas.append("la raiz del manifiesto no coincide con fuentes.yaml")
-    videos = {v.get("video_id"): v for v in manifiesto.get("videos", [])}
+    for clave in ("videos", "ficheros"):
+        lista = manifiesto.get(clave)
+        if lista is not None and (
+            not isinstance(lista, list) or not all(isinstance(x, dict) for x in lista)
+        ):
+            problemas.append(f"'{clave}' debe ser una lista de mapas")
+            return problemas
+    videos = {v.get("video_id"): v for v in manifiesto.get("videos") or []}
     for fuente in fuentes.videos:
         v = videos.get(fuente.video_id)
         if v is None:
@@ -340,10 +364,13 @@ def validar_manifiesto(manifiesto: dict[str, Any], fuentes: Fuentes) -> list[str
         for campo in ("sha256", "duracion_s", "ancho", "alto"):
             if not v.get(campo):
                 problemas.append(f"{fuente.video_id}: falta {campo}")
+        d = v.get("duracion_s")
+        if d is not None and (isinstance(d, bool) or not isinstance(d, int | float)):
+            problemas.append(f"{fuente.video_id}: duracion_s debe ser numerica, no {d!r}")
         if v.get("audio") is not True:
             problemas.append(f"{fuente.video_id}: sin pista de audio")
     rutas_vistas: set[str] = set()
-    for f in manifiesto.get("ficheros", []):
+    for f in manifiesto.get("ficheros") or []:
         ruta = str(f.get("ruta", ""))
         if not ruta or ruta in rutas_vistas:
             problemas.append(f"fichero sin ruta o duplicado: {ruta!r}")
@@ -352,12 +379,13 @@ def validar_manifiesto(manifiesto: dict[str, Any], fuentes: Fuentes) -> list[str
             problemas.append(f"fichero sin clasificar: {ruta}")
         elif f.get("papel") not in PAPELES_CARPETA:
             problemas.append(f"papel invalido {f.get('papel')!r}: {ruta}")
-        if not isinstance(f.get("bytes"), int) or f["bytes"] < 0:
+        b = f.get("bytes")
+        if isinstance(b, bool) or not isinstance(b, int) or b < 0:
             problemas.append(f"bytes invalidos: {ruta}")
         h = f.get("sha256")
         if h is not None and not _SHA256.match(str(h)):
             problemas.append(f"sha256 invalido: {ruta}")
-    rutas = [str(f.get("ruta", "")) for f in manifiesto.get("ficheros", [])]
+    rutas = [str(f.get("ruta", "")) for f in manifiesto.get("ficheros") or []]
     if rutas != sorted(rutas):
         problemas.append("los ficheros no estan en orden POSIX (manifiesto no determinista)")
     return problemas
@@ -368,8 +396,8 @@ def comprobar_contra_disco(
 ) -> list[str]:
     raiz = raiz_repo / str(manifiesto["raiz"])
     problemas: list[str] = []
-    entradas = [(v["fichero"], v) for v in manifiesto.get("videos", [])]
-    entradas += [(f["ruta"], f) for f in manifiesto.get("ficheros", [])]
+    entradas = [(v["fichero"], v) for v in manifiesto.get("videos") or []]
+    entradas += [(f["ruta"], f) for f in manifiesto.get("ficheros") or []]
     for relativa, e in entradas:
         ruta = raiz / relativa
         if not ruta.is_file():

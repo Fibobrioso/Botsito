@@ -10,9 +10,11 @@ import pytest
 from botsito.evidence.historial import (
     ANCLA_FUENTE,
     DIRECTORIO_FEEDBACK,
+    ancla_desviada,
     commits_sin_fuente,
     fuentes_de_mensaje,
     hay_git,
+    historial_evaluable,
     modificaciones_en_historial,
     modificaciones_preparadas,
     resolver,
@@ -67,8 +69,11 @@ def test_trailer_fuente(tmp_path: Path) -> None:
     spec.write_text("reglas: [1]\n", encoding="utf-8")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-q", "-m", "spec con fuente\n\nFuente: ev-v4-001533-1a2b3c4d, ADR-0002")
-    problemas = commits_sin_fuente(repo, None, ids_validos={"ev-v4-001533-1a2b3c4d"})
+    problemas = commits_sin_fuente(repo, None, ids_validos={"ev-v4-001533-1a2b3c4d", "ADR-0002"})
     assert len(problemas or []) == 1 and "sin trailer" in (problemas or [""])[0]
+    # Un ADR que no existe no es una fuente, aunque tenga formato de ADR.
+    solo_ev = commits_sin_fuente(repo, None, ids_validos={"ev-v4-001533-1a2b3c4d"}) or []
+    assert any("fuente inexistente ADR-0002" in p for p in solo_ev)
     spec.write_text("reglas: [2]\n", encoding="utf-8")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-q", "-m", "mala\n\nFuente: ev-v4-000000-00000000 basura")
@@ -90,6 +95,75 @@ def test_trailer_fuente(tmp_path: Path) -> None:
 def test_fuentes_de_mensaje() -> None:
     assert fuentes_de_mensaje("x\n\nFuente: a, b c\nFuente: d") == ["a", "b", "c", "d"]
     assert fuentes_de_mensaje("sin trailer") == []
+    # El asunto no es un trailer.
+    assert fuentes_de_mensaje("Fuente: ADR-0001") == []
+    assert fuentes_de_mensaje("Fuente: ADR-0001\n\nFuente: ADR-0002") == ["ADR-0002"]
+
+
+@pytest.mark.contract
+def test_digitos_unicode_no_son_fuente(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    spec = repo / "knowledge" / "spec" / "s.yaml"
+    spec.parent.mkdir(parents=True)
+    spec.write_text("a: 1\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "x\n\nFuente: ADR-\u0660\u0660\u0660\u0661")
+    problemas = commits_sin_fuente(repo, None, ids_validos={"ADR-0001"}) or []
+    assert any("formato invalido" in p for p in problemas)
+
+
+@pytest.mark.contract
+def test_tag_movido_se_detecta(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, encoding="utf-8", check=True
+    ).stdout.strip()
+    assert ancla_desviada(repo, "stable/F06", sha) is None  # sin tag: nada que comprobar
+    _git(repo, "tag", "stable/F06")
+    assert ancla_desviada(repo, "stable/F06", sha) is None
+    (repo / "x.txt").write_text("x", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "otro")
+    _git(repo, "tag", "-f", "stable/F06")
+    desviado = ancla_desviada(repo, "stable/F06", sha)
+    assert desviado is not None and "alguien lo movio" in desviado
+
+
+@pytest.mark.contract
+def test_clon_superficial_no_es_evaluable(tmp_path: Path) -> None:
+    (tmp_path / "origen").mkdir()
+    origen = _repo(tmp_path / "origen")
+    (origen / FB).write_text("id: y\n", encoding="utf-8")  # edicion commiteada en el origen
+    _git(origen, "commit", "-q", "-am", "edit")
+    (origen / "k.txt").write_text("k", encoding="utf-8")
+    _git(origen, "add", "-A")
+    _git(origen, "commit", "-q", "-m", "otro")
+    assert modificaciones_en_historial(origen, DIRECTORIO_FEEDBACK)
+    clon = tmp_path / "clon"
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", f"file://{origen.as_posix()}", str(clon)],
+        check=True,
+        capture_output=True,
+    )
+    motivo = historial_evaluable(clon)
+    assert motivo is not None and "superficial" in motivo
+    # "No evaluable" y no "sin violaciones": el clon superficial no ve la edicion.
+    assert modificaciones_en_historial(clon, DIRECTORIO_FEEDBACK) is None
+    assert commits_sin_fuente(clon, None) is None
+
+
+@pytest.mark.contract
+def test_proyecto_anidado_en_otro_repo_no_es_evaluable(tmp_path: Path) -> None:
+    exterior = _repo(tmp_path)
+    interior = exterior / "proyecto"
+    (interior / FB).parent.mkdir(parents=True)
+    (interior / FB).write_text("id: x\n", encoding="utf-8")
+    _git(exterior, "add", "-A")
+    _git(exterior, "commit", "-q", "-m", "anidado")
+    motivo = historial_evaluable(interior)
+    assert motivo is not None and "no es la raiz" in motivo
+    assert modificaciones_en_historial(interior, DIRECTORIO_FEEDBACK) is None
+    assert historial_evaluable(exterior) is None
 
 
 @pytest.mark.contract

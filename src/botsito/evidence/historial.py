@@ -17,6 +17,7 @@ quien llama decide si eso es un error.
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -29,7 +30,9 @@ DIRECTORIOS_CON_FUENTE = ("knowledge/spec/", "knowledge/cases/")
 EXENTOS = (FICHERO_CONTRADICCIONES, "README.md")
 # Ancla de la trazabilidad: el tag es legible; el SHA sobrevive a un clon sin tags.
 ANCLA_FUENTE = ("stable/F06", "b6b82f2f164c5ca48bde692467b55f1267cf992b")
-_ID_FUENTE = re.compile(r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$")
+_ID_FUENTE = re.compile(
+    r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$", re.ASCII
+)
 _TRAILER = re.compile(r"^Fuente:\s*(.+?)\s*$", re.M)
 
 
@@ -59,6 +62,32 @@ def hay_git(repo: Path) -> bool:
     return _git(repo, "rev-parse", "--verify", "-q", "HEAD") is not None
 
 
+def historial_evaluable(repo: Path) -> str | None:
+    """Motivo por el que las guardias de historial NO se pueden evaluar, o None si se puede.
+
+    Un clon superficial no tiene el commit que anadio cada fichero (todo pareceria intacto) y un
+    proyecto que no es la raiz del repositorio git recibe rutas con otro prefijo (nada pareceria
+    protegido). En ambos casos la respuesta correcta es "no evaluable", no "sin violaciones".
+    """
+    superficial = _git(repo, "rev-parse", "--is-shallow-repository")
+    if superficial is not None and superficial.strip() == "true":
+        return "clon superficial: haz git fetch --unshallow"
+    raiz = _git(repo, "rev-parse", "--show-toplevel")
+    if raiz is not None and os.path.normcase(str(Path(raiz.strip()).resolve())) != os.path.normcase(
+        str(repo.resolve())
+    ):
+        return f"el proyecto no es la raiz del repositorio git ({raiz.strip()})"
+    return None
+
+
+def ancla_desviada(repo: Path, tag: str, sha: str) -> str | None:
+    """Si el tag existe y no apunta al SHA del ancla, alguien lo movio: eso es un error."""
+    real = _git(repo, "rev-parse", "--verify", "-q", f"{tag}^{{commit}}")
+    if real is None or real.strip() == sha:
+        return None
+    return f"el tag {tag} apunta a {real.strip()[:7]}, no al ancla {sha[:7]}: alguien lo movio"
+
+
 def resolver(repo: Path, *candidatos: str) -> str | None:
     """Primera referencia (tag, rama o SHA) que existe en este clon."""
     for ref in candidatos:
@@ -79,6 +108,8 @@ def modificaciones_en_historial(
 
     None si no hay git. Incluye el arbol de trabajo: una edicion sin commitear tambien cuenta.
     """
+    if historial_evaluable(repo) is not None:
+        return None
     historico = _git(
         repo,
         "log",
@@ -143,9 +174,13 @@ def modificaciones_preparadas(
 
 
 def fuentes_de_mensaje(mensaje: str) -> list[str]:
-    """Ids declarados en trailers `Fuente:` (separados por comas o espacios)."""
+    """Ids declarados en trailers `Fuente:` (separados por comas o espacios).
+
+    Solo cuenta el cuerpo: un asunto `Fuente: ADR-0001` no es un trailer.
+    """
     ids: list[str] = []
-    for m in _TRAILER.finditer(mensaje):
+    cuerpo = mensaje.split("\n", 1)[1] if "\n" in mensaje else ""
+    for m in _TRAILER.finditer(cuerpo):
         ids.extend(x for x in re.split(r"[,\s]+", m.group(1)) if x)
     return ids
 
@@ -158,11 +193,14 @@ def commits_sin_fuente(
 ) -> list[str] | None:
     """Commits (desde `desde`, exclusivo) que tocan `rutas` sin un trailer `Fuente:` valido.
 
-    `ids_validos`, si se da, exige ademas que cada id exista (los ADR se comprueban por formato).
-    None si no hay git o `desde` no existe.
+    `ids_validos`, si se da, exige ademas que cada id exista: evidencia, feedback y ADR por igual
+    (un `ADR-9999` que no existe no es una fuente). None si no hay git, `desde` no existe o el
+    historial no es evaluable (clon superficial).
     """
     rango = f"{desde}..HEAD" if desde else "HEAD"
     if desde and _git(repo, "rev-parse", "--verify", "-q", f"{desde}^{{commit}}") is None:
+        return None
+    if historial_evaluable(repo) is not None:
         return None
     salida = _git(repo, "log", "--format=%H%x1f%B%x1e", rango, "--", *rutas)
     if salida is None:
@@ -182,6 +220,6 @@ def commits_sin_fuente(
         for i in ids:
             if not _ID_FUENTE.match(i):
                 problemas.append(f"{sha[:7]}: fuente con formato invalido {i!r}")
-            elif ids_validos is not None and not i.startswith("ADR-") and i not in ids_validos:
+            elif ids_validos is not None and i not in ids_validos:
                 problemas.append(f"{sha[:7]}: fuente inexistente {i}")
     return problemas

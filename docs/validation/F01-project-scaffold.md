@@ -52,8 +52,9 @@ tests/{integration,golden,regression,differential}/README.md
 - `docs/plan/AUDITORIA_FASES_2026-09-04.html` versionada como referencia.
 - `tests/`, `tests/unit/`, `tests/contract/` son paquetes (necesario para compartir constantes entre tests);
   mypy strict cubre tambien `tests/`.
-- Tercera auditoria: hook con modo ejecutable en el indice (100755), README en todas las carpetas sin
-  exenciones, `knowledge/cases/holdout/{1,2,3}/` fisico segun la decision de tres particiones.
+- Tercera auditoria: hook con modo ejecutable en el indice (100755), README en todas las carpetas
+  versionadas (`data/` queda fuera: git la ignora salvo `data/manifests/`),
+  `knowledge/cases/holdout/{1,2,3}/` fisico segun la decision de tres particiones.
 
 ## Archivos modificados
 `README.md` (arranque, nombre del paquete, enlace al plan en Markdown), `PROJECT_STATE.md`,
@@ -73,7 +74,7 @@ tests/{integration,golden,regression,differential}/README.md
 
 ## Como ejecutarlo
 ```
-make sync    # uv sync --locked + instala hooks (core.hooksPath)
+make sync    # uv sync --locked + copia los hooks a .git/hooks (ADR-0003)
 make check
 uv run botsito --help
 uv run botsito state check

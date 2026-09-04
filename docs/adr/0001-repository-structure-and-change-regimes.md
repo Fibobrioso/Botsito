@@ -11,8 +11,9 @@ Un solo repositorio con cuatro zonas: `knowledge/` (datos versionados: evidencia
 especificacion, casos), `src/botsito/` (Python de referencia con `domain/` puro), `mql5/`
 (ejecucion, con parametros generados desde `knowledge/spec/`) y `docs/` (plan, ADR, informes de
 validacion, especificacion generada). Tres regimenes de cambio, cada uno con un mecanismo que lo hace
-cumplir: evidencia inmutable (hook), feedback solo-anadir (hook), spec y casos versionados con cita
-obligatoria (test sobre el diff). `knowledge/cases/holdout/` es ilegible para `spec/` y `domain/`
+cumplir: evidencia inmutable y feedback solo-anadir (test en CI contra el historial de git; el hook
+es la comodidad local, ver ADR-0003), spec y casos versionados con cita obligatoria (test sobre el
+historial). `knowledge/cases/holdout/` es ilegible para `spec/` y `domain/`
 (guarda en tests). `domain/` no importa IO, reloj ni MetaTrader (import-linter + test AST).
 
 ## Problema que resuelve

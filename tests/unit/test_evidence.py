@@ -198,3 +198,58 @@ def test_fichero_con_clave_duplicada_es_corrupto(tmp_path: Path) -> None:
     ruta.write_text(texto + "valor: mecha\n", encoding="utf-8")
     with pytest.raises(EvidenciaError, match="clave duplicada"):
         cargar_item(ruta)
+
+
+def test_campos_en_blanco_no_rompen_el_id(tmp_path: Path) -> None:
+    ruta = escribir_item(tmp_path, base(valor="   ", notas="\t"))
+    item = cargar_item(ruta)
+    assert item.valor is None and item.notas is None
+    with pytest.raises(EvidenciaError, match="obligatorios"):
+        escribir_item(tmp_path, base(afirmacion="   "))
+    with pytest.raises(EvidenciaError, match="obligatorios"):
+        escribir_item(tmp_path, base(t0=""))
+    with pytest.raises(EvidenciaError):
+        calcular_id({"video_id": "v4"})
+
+
+def test_digitos_unicode_rechazados() -> None:
+    campos = base(t0="\u0660:\u0660\u0660:\u0660\u0667")
+    campos["id"] = "ev-v4-000007-00000000"
+    with pytest.raises(EvidenciaError, match="tiempo invalido"):
+        item_desde_dict(campos)
+
+
+def test_manifiesto_corrupto_es_problema_no_traceback(tmp_path: Path) -> None:
+    escribir_item(tmp_path, base())
+    items = cargar_evidencia(tmp_path)
+    p1 = validar_contra_manifiesto(items, {"videos": [{"video_id": "v4", "duracion_s": "abc"}]})
+    assert any("no numerica" in p for p in p1)
+    p2 = validar_contra_manifiesto(items, {"videos": None, "ficheros": None})
+    assert any("no esta en el manifiesto" in p for p in p2)
+    p3 = validar_contra_manifiesto(items, {"videos": [1]})
+    assert any("invalida" in p for p in p3)
+
+
+def test_supersede_cruzado_de_tema(tmp_path: Path) -> None:
+    a = cargar_item(escribir_item(tmp_path, base()))
+    escribir_item(tmp_path, base(tema="otro.tema", supersede=a.id))
+    problemas = validar_contra_manifiesto(cargar_evidencia(tmp_path), MANIFIESTO)
+    assert any("mismo tema" in p for p in problemas)
+    from botsito.evidence.modelo import ciclos_de_supersede
+
+    assert ciclos_de_supersede({"a": "b", "b": "a"}) == ["ciclo de supersede: a -> b -> a"]
+
+
+def test_fichero_inesperado_y_directorio_ausente(tmp_path: Path) -> None:
+    escribir_item(tmp_path, base())
+    (tmp_path / "v4" / "roto.yml").write_text("{", encoding="utf-8")
+    with pytest.raises(EvidenciaError, match="inesperado"):
+        cargar_evidencia(tmp_path)
+    with pytest.raises(EvidenciaError, match="no existe"):
+        cargar_evidencia(tmp_path / "nada")
+
+
+def test_comprobar_impide_escribir(tmp_path: Path) -> None:
+    with pytest.raises(EvidenciaError, match="fotograma"):
+        escribir_item(tmp_path, base(), lambda i: [f"{i.id}: fotograma no inventariado"])
+    assert not list(tmp_path.rglob("*.yaml"))

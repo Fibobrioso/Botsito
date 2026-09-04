@@ -8,9 +8,11 @@ contenido y el historial de git se vigila igual que el de la evidencia.
 
 from __future__ import annotations
 
+import datetime
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -45,17 +47,19 @@ OBJETIVOS_POR_ACCION: dict[str, tuple[str, ...]] = {
     "BORDERLINE": ("caso",),
 }
 EXIGEN_VALOR = ("CORRECT", "RESOLVE_UNKNOWN", "RESOLVE_CONTRADICTION", "LABEL_CASE")
+# re.ASCII: sin el, `\d` acepta digitos arabigos u otros Unicode, y un id con ellos no se puede
+# citar desde el registro ni supersederse.
 FORMATO_ID_OBJETIVO: dict[str, re.Pattern[str]] = {
-    "evidence": re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$"),
-    "regla": re.compile(r"^RN-\d{3}$"),
-    "parametro": re.compile(r"^[a-z][a-z0-9_]*$"),
-    "ambiguedad": re.compile(r"^A-\d+$"),
-    "caso": re.compile(r"^caso-[a-z0-9][a-z0-9-]*$"),
-    "contradiccion": re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$"),
+    "evidence": re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$", re.ASCII),
+    "regla": re.compile(r"^RN-\d{3}$", re.ASCII),
+    "parametro": re.compile(r"^[a-z][a-z0-9_]*$", re.ASCII),
+    "ambiguedad": re.compile(r"^A-\d+$", re.ASCII),
+    "caso": re.compile(r"^caso-[a-z0-9][a-z0-9-]*$", re.ASCII),
+    "contradiccion": re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$", re.ASCII),
 }
-_SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$")
-_FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-_ID = re.compile(r"^fb-[0-9a-z-]+-[0-9a-f]{8}$")
+_SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
+_FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
+_ID = re.compile(r"^fb-[0-9a-z-]+-[0-9a-f]{8}$", re.ASCII)
 CAMPOS_OBLIGATORIOS = (
     "sesion",
     "fecha",
@@ -113,8 +117,8 @@ class FeedbackRecord:
 def contenido_canonico(campos: dict[str, Any]) -> str:
     limpio: dict[str, Any] = {}
     for clave in (*CAMPOS_OBLIGATORIOS, *CAMPOS_OPCIONALES):
-        if clave not in campos or campos[clave] is None:
-            continue
+        if clave not in campos or _vacio(campos[clave]):
+            continue  # un campo en blanco no forma parte del contenido (ni del id)
         v = campos[clave]
         if clave == "objetivo" and isinstance(v, dict):
             limpio[clave] = {str(k): _normalizar_texto(x) for k, x in sorted(v.items())}
@@ -125,13 +129,54 @@ def contenido_canonico(campos: dict[str, Any]) -> str:
     return json.dumps(limpio, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
 
 
+def _vacio(valor: object) -> bool:
+    """None, texto en blanco o coleccion vacia: no cuenta como campo presente."""
+    if valor is None:
+        return True
+    if isinstance(valor, str):
+        return not _normalizar_texto(valor)
+    if isinstance(valor, dict | list | tuple):
+        return len(valor) == 0
+    return False
+
+
+def limpiar_campos(campos: dict[str, Any]) -> dict[str, Any]:
+    """Textos normalizados y campos vacios fuera, ANTES de calcular el id.
+
+    Si el id se calculara con un campo en blanco que luego no se escribe, el fichero naceria con
+    un id que no coincide con su contenido y nadie podria cargarlo.
+    """
+    limpio: dict[str, Any] = {}
+    for k, v in campos.items():
+        if k == "objetivo" and isinstance(v, dict):
+            v = {str(a): _normalizar_texto(b) for a, b in v.items() if not _vacio(b)}
+        elif isinstance(v, str):
+            v = _normalizar_texto(v)
+        if not _vacio(v):
+            limpio[k] = v
+    return limpio
+
+
 def calcular_id(campos: dict[str, Any]) -> str:
+    if _vacio(campos.get("sesion")):
+        raise FeedbackError("sesion es obligatoria para calcular el id")
     h = hashlib.sha256(contenido_canonico(campos).encode("utf-8")).hexdigest()[:8]
-    return f"fb-{campos['sesion']}-{h}"
+    esperado = f"fb-{campos['sesion']}-{h}"
+    if not _ID.match(esperado):
+        raise FeedbackError(f"id calculado {esperado!r} fuera de formato")
+    return esperado
+
+
+def _fecha_real(texto: str) -> bool:
+    try:
+        datetime.date.fromisoformat(texto)
+    except ValueError:
+        return False
+    return True
 
 
 def _validar(campos: dict[str, Any], origen: str) -> None:
-    faltan = [c for c in CAMPOS_OBLIGATORIOS if c not in campos or campos[c] in (None, "")]
+    faltan = [c for c in CAMPOS_OBLIGATORIOS if _vacio(campos.get(c))]
     if faltan:
         raise FeedbackError(f"{origen}: faltan campos obligatorios {faltan}")
     desconocidos = set(campos) - set(CAMPOS_OBLIGATORIOS) - set(CAMPOS_OPCIONALES) - {"id"}
@@ -143,7 +188,7 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
             raise FeedbackError(f"{origen}: {clave} debe ser texto entre comillas, no {tipo_real}")
     if not _SESION.match(str(campos["sesion"])):
         raise FeedbackError(f"{origen}: sesion invalida (formato AAAA-MM-DD-sesion-NN)")
-    if not _FECHA.match(str(campos["fecha"])):
+    if not _FECHA.match(str(campos["fecha"])) or not _fecha_real(str(campos["fecha"])):
         raise FeedbackError(f"{origen}: fecha invalida (AAAA-MM-DD)")
     if not str(campos["sesion"]).startswith(str(campos["fecha"])):
         raise FeedbackError(f"{origen}: la fecha debe ser la de la sesion {campos['sesion']}")
@@ -242,10 +287,19 @@ def cargar_registro(ruta: Path) -> FeedbackRecord:
 
 
 def cargar_feedback(directorio: Path) -> list[FeedbackRecord]:
+    """Todos los registros bajo `directorio`.
+
+    Un fichero que no sea `*.yaml` (salvo README y `_*`) es error: un `.yml` corrupto o un
+    `.YAML` no pueden pasar en silencio.
+    """
+    if not directorio.is_dir():
+        raise FeedbackError(f"no existe el directorio de feedback {directorio}")
     registros: list[FeedbackRecord] = []
-    for ruta in sorted(directorio.rglob("*.yaml")):
-        if ruta.name.startswith("_"):
+    for ruta in sorted(p for p in directorio.rglob("*") if p.is_file()):
+        if ruta.name == "README.md" or ruta.name.startswith("_"):
             continue
+        if ruta.suffix != ".yaml":
+            raise FeedbackError(f"fichero inesperado en feedback: {ruta.name} (solo *.yaml)")
         registros.append(cargar_registro(ruta))
     ids = [r.id for r in registros]
     repetidos = sorted({i for i in ids if ids.count(i) > 1})
@@ -266,7 +320,8 @@ def validar_contra_contexto(
     Regla, ambiguedad y caso se comprueban solo por formato hasta F11/F14.
     """
     problemas: list[str] = []
-    ids = {r.id for r in registros}
+    por_id = {r.id: r for r in registros}
+    ids = set(por_id)
     for r in registros:
         t, i = r.objetivo.tipo, r.objetivo.id
         if t == "evidence" and i not in ids_evidencia:
@@ -279,8 +334,31 @@ def validar_contra_contexto(
             problemas.append(f"{r.id}: supersede a {r.supersede}, que no existe")
         if r.supersede == r.id:
             problemas.append(f"{r.id}: no puede supersederse a si mismo")
+        elif r.supersede in por_id and por_id[r.supersede].objetivo != r.objetivo:
+            anterior = por_id[r.supersede].objetivo
+            problemas.append(
+                f"{r.id}: supersede a {r.supersede}, que trata de {anterior.tipo}:{anterior.id}, "
+                f"no de {t}:{i}; una correccion habla del mismo objetivo"
+            )
         if rutas_corpus is not None and r.grabacion and r.grabacion not in rutas_corpus:
             problemas.append(f"{r.id}: grabacion {r.grabacion!r} no esta inventariada en el corpus")
+    problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
+    return problemas
+
+
+def ciclos_de_supersede(sucesor: dict[str, str | None]) -> list[str]:
+    """Un ciclo A->B->A desactivaria ambos sin que nadie lo pidiera."""
+    problemas: list[str] = []
+    for inicio in sorted(sucesor):
+        vistos = [inicio]
+        actual = sucesor.get(inicio)
+        while actual is not None and actual in sucesor:
+            if actual in vistos:
+                if actual == inicio and inicio == min(vistos):  # un aviso por ciclo
+                    problemas.append(f"ciclo de supersede: {' -> '.join([*vistos, actual])}")
+                break
+            vistos.append(actual)
+            actual = sucesor.get(actual)
     return problemas
 
 
@@ -289,10 +367,24 @@ def activos(registros: list[FeedbackRecord]) -> list[FeedbackRecord]:
     return [r for r in registros if r.id not in superseded]
 
 
-def escribir_registro(directorio: Path, campos: dict[str, Any]) -> Path:
-    campos = {k: v for k, v in campos.items() if v not in (None, "", [], ())}
+def escribir_registro(
+    directorio: Path,
+    campos: dict[str, Any],
+    comprobar: Callable[[FeedbackRecord], list[str]] | None = None,
+) -> Path:
+    """Crea el fichero de un registro nuevo. Nunca sobreescribe.
+
+    `comprobar` recibe el registro ya validado y devuelve problemas de contexto (objetivo
+    inexistente, grabacion no inventariada...). Si hay alguno, no se escribe nada: un registro
+    es inmutable y un error solo se arreglaria con otro registro que lo supersede.
+    """
+    campos = limpiar_campos(campos)
+    _validar(campos, "nuevo")
     campos["id"] = calcular_id(campos)
     r = registro_desde_dict(campos, "nuevo")
+    problemas = comprobar(r) if comprobar else []
+    if problemas:
+        raise FeedbackError("; ".join(problemas))
     carpeta = directorio / r.sesion
     carpeta.mkdir(parents=True, exist_ok=True)
     ruta = carpeta / f"{r.id}.yaml"
@@ -308,6 +400,11 @@ def escribir_registro(directorio: Path, campos: dict[str, Any]) -> Path:
         encoding="utf-8",
         newline="\n",
     )
+    try:
+        cargar_registro(ruta)  # invariante: lo escrito se puede volver a cargar
+    except FeedbackError:
+        ruta.unlink()
+        raise
     return ruta
 
 

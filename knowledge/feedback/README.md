@@ -26,9 +26,20 @@ Un fichero escrito a mano se carga con el cargador estricto: claves duplicadas r
 se rechaza ("debe ser texto entre comillas"). La `fecha` es la de la `sesion`.
 
 Coherencia exigida: `RESOLVE_CONTRADICTION` solo sobre un tema con contradiccion abierta;
-`LABEL_CASE`, `MARK_*` y `BORDERLINE` solo sobre casos; `CONFIRM/CORRECT/REJECT` sobre evidencia,
-regla o parametro. Todo cambio en `knowledge/spec/` o `knowledge/cases/` cita en el commit un
-trailer `Fuente: <ids>` de evidencia, feedback o ADR (`knowledge validate` lo comprueba).
+`RESOLVE_UNKNOWN` sobre parametro, ambiguedad o evidencia; `LABEL_CASE`, `MARK_*` y `BORDERLINE`
+solo sobre casos; `CONFIRM/CORRECT/REJECT` sobre evidencia, regla o parametro. Ademas:
+`respuesta_literal` tiene al menos 5 caracteres (no es un placeholder); `t0 < t1`; la `fecha` es
+una fecha real y la de la `sesion`; los ids y tiempos solo admiten digitos ASCII; un campo en
+blanco (`"   "`) cuenta como ausente y no entra en el id; `supersede` apunta a un registro del
+MISMO objetivo y no puede formar ciclos; en la carpeta solo hay `*.yaml` (un `.yml` o cualquier
+otro fichero es error). `botsito feedback new` comprueba el contexto ANTES de escribir (evidencia,
+parametro del registro, contradiccion abierta, grabacion inventariada): si algo falla, no crea el
+fichero, porque un registro es inmutable y un error solo se arreglaria con otro registro.
+
+Todo cambio en `knowledge/spec/` o `knowledge/cases/` cita en el commit un trailer
+`Fuente: <ids>` de evidencia, feedback o ADR EXISTENTES (`knowledge validate` lo comprueba; el
+asunto del commit no cuenta como trailer). `feedback pending` omite los parametros que no son de
+categoria `estrategia` (ADR-0004: no se le preguntan al trader).
 
 ## Plantilla de sesion
 1. Grabar la sesion y anadir la grabacion al corpus (manifiesto). F10 anade el papel
@@ -40,3 +51,7 @@ trailer `Fuente: <ids>` de evidencia, feedback o ADR (`knowledge validate` lo co
    --objetivo-tipo evidence --objetivo-id ev-v4-001533-… --accion CONFIRM
    --respuesta "si, con cuerpo, siempre" --registrado-por aleks`
 3. `botsito knowledge validate`; commit con `Fuente:` si toca spec o casos (F11+).
+
+Hasta F11 el registro de parametros esta vacio: un `--objetivo-tipo parametro` se rechaza por
+contexto. Para probar el flujo hoy, usar una ambiguedad: `--objetivo-tipo ambiguedad
+--objetivo-id A-10 --accion RESOLVE_UNKNOWN --valor "0,75 + spread"`.

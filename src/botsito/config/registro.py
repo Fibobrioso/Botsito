@@ -194,8 +194,8 @@ def _convertir(tipo: str, bruto: object, huso: object, nombre: str) -> Valor:
                 raise RegistroError(f"{nombre}: hora invalida {bruto!r} (formato HH:MM, 00-23)")
             return HoraLocal(bruto, _huso(huso, nombre))
         if tipo == "texto":
-            if not isinstance(bruto, str):
-                raise RegistroError(f"{nombre}: texto invalido {bruto!r}")
+            if not isinstance(bruto, str) or not bruto.strip():
+                raise RegistroError(f"{nombre}: texto invalido o vacio {bruto!r}")
             return bruto
     except RegistroError:
         raise
@@ -317,6 +317,10 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
     ):
         raise RegistroError(f"{nombre}: ambiguedad_id {ambiguedad_id!r} no tiene formato A-N")
 
+    if tipo in ("hora", "texto") and (
+        bruto.get("minimo") is not None or bruto.get("maximo") is not None
+    ):
+        raise RegistroError(f"{nombre}: minimo/maximo no se aplican a un parametro de tipo {tipo}")
     minimo = _limite(bruto.get("minimo"), nombre, "minimo")
     maximo = _limite(bruto.get("maximo"), nombre, "maximo")
     if minimo is not None and maximo is not None and minimo > maximo:
@@ -354,6 +358,9 @@ def cargar_registro(ruta: Path = RUTA_POR_DEFECTO) -> Registro:
         raise RegistroError(f"{ruta}: {exc}") from exc
     if not isinstance(documento, dict) or "parametros" not in documento:
         raise RegistroError(f"{ruta}: se esperaba un mapa con la clave 'parametros'")
+    ajenas = sorted(str(k) for k in documento if k != "parametros")
+    if ajenas:
+        raise RegistroError(f"{ruta}: claves de nivel superior desconocidas {ajenas}")
     lista = documento["parametros"] or []
     if not isinstance(lista, list):
         raise RegistroError(f"{ruta}: 'parametros' debe ser una lista")

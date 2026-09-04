@@ -28,9 +28,11 @@ poder reconstruirse (`botsito feedback trace`).
 - Trazabilidad de cambios en la especificacion: todo commit posterior a `stable/F06` que toque
   `knowledge/spec/` o `knowledge/cases/` debe llevar un trailer `Fuente: <ids>` con ids de evidencia
   o de feedback existentes (`historial.commits_sin_fuente`); `knowledge validate` lo comprueba.
-- CLI: `botsito feedback new`, `botsito feedback trace <id>` (cadena evidencia → feedback →
-  supersedes), `botsito feedback pending` (registros cuyo objetivo aun no tiene regla: todos, hasta
-  F11); `knowledge validate` cubre feedback, historial y trailers.
+- CLI: `botsito feedback new` (valida contra el contexto antes de escribir), `botsito feedback
+  trace <id>` (el item de evidencia si `<id>` lo es, y los registros de feedback sobre ese id con
+  sus supersedes), `botsito feedback pending` (registros activos; hasta F11 todos salvo los de
+  parametros que no son de `estrategia`); `knowledge validate` cubre feedback, historial y
+  trailers.
 - `knowledge/feedback/README.md` con el esquema y la plantilla de sesion.
 
 ## Fuera de alcance (que NO)

@@ -134,8 +134,41 @@ def state_check(repo: Path) -> int:
     return 0
 
 
+def ids_de_adr(repo: Path) -> set[str]:
+    """`ADR-NNNN` por cada docs/adr/NNNN-*.md real (la plantilla 0000 no es una decision)."""
+    return {
+        f"ADR-{p.name[:4]}"
+        for p in (repo / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
+        if p.name[:4] != "0000"
+    }
+
+
+def _contexto_feedback(repo: Path) -> tuple[set[str], set[str], set[str], set[str] | None]:
+    """Lo que un registro de feedback puede citar: evidencia, parametros, contradicciones, corpus.
+
+    Lanza el error de dominio del componente que falle; el llamador lo convierte en ERROR.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.corpus.inventario import cargar_manifiesto
+    from botsito.evidence import contradicciones
+    from botsito.evidence.modelo import cargar_evidencia
+
+    items = cargar_evidencia(repo / "knowledge" / "evidence")
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    temas = {c["tema"] for c in contradicciones.detectar(items)}
+    ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
+    rutas_corpus: set[str] | None = None
+    if ruta_manifiesto.exists():
+        manifiesto = cargar_manifiesto(ruta_manifiesto)
+        rutas_corpus = {
+            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
+        }
+    return {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
+
+
 def knowledge_validate(repo: Path) -> int:
-    """Valida lo que ya existe en knowledge/: en F02, el registro de parametros."""
+    """Valida todo lo que existe en knowledge/: registro, manifiesto, evidencia, feedback,
+    historial de git y trailers `Fuente:` de spec/cases."""
     if not (repo / "knowledge").is_dir():
         print("ERROR: falta knowledge/")
         return 2
@@ -173,7 +206,11 @@ def knowledge_validate(repo: Path) -> int:
         print(f"ERROR: fuentes del corpus: {exc}")
         return 1
     from botsito.evidence import contradicciones
-    from botsito.evidence.historial import hay_git, modificaciones_en_historial
+    from botsito.evidence.historial import (
+        hay_git,
+        historial_evaluable,
+        modificaciones_en_historial,
+    )
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto
 
     directorio = repo / "knowledge" / "evidence"
@@ -183,13 +220,16 @@ def knowledge_validate(repo: Path) -> int:
         print(f"ERROR: evidencia: {exc}")
         return 1
     fallos: list[str] = []
-    if ruta_manifiesto.exists():
-        fallos += validar_contra_manifiesto(items, cargar_manifiesto(ruta_manifiesto))
+    manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
+    if manifiesto is not None:
+        fallos += validar_contra_manifiesto(items, manifiesto)
     fallos += contradicciones.validar_fichero(directorio, items)
     con_git = hay_git(repo)
+    no_evaluable = historial_evaluable(repo) if con_git else None
     historial = modificaciones_en_historial(repo)
     if historial is None and con_git:
-        fallos.append("la guardia de historial de evidencia no se pudo evaluar (git fallo)")
+        motivo = no_evaluable or "git fallo"
+        fallos.append(f"la guardia de historial de evidencia no se pudo evaluar ({motivo})")
     elif historial:
         fallos += [f"evidencia modificada en el historial: {h}" for h in historial]
     for fallo in fallos:
@@ -199,6 +239,7 @@ def knowledge_validate(repo: Path) -> int:
     from botsito.evidence.historial import (
         ANCLA_FUENTE,
         DIRECTORIO_FEEDBACK,
+        ancla_desviada,
         commits_sin_fuente,
         resolver,
     )
@@ -211,25 +252,34 @@ def knowledge_validate(repo: Path) -> int:
         return 1
     temas = {c["tema"] for c in contradicciones.detectar(items)}
     rutas_corpus: set[str] | None = None
-    if ruta_manifiesto.exists():
-        rutas_corpus = {f["ruta"] for f in cargar_manifiesto(ruta_manifiesto).get("ficheros", [])}
+    if manifiesto is not None:
+        rutas_corpus = {
+            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
+        }
     fallos_fb = validar_contra_contexto(
         registros_fb, {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
     )
     historial_fb = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
     if historial_fb is None and con_git:
-        fallos_fb.append("la guardia de historial de feedback no se pudo evaluar (git fallo)")
+        motivo = no_evaluable or "git fallo"
+        fallos_fb.append(f"la guardia de historial de feedback no se pudo evaluar ({motivo})")
     fallos_fb += [f"feedback modificado en el historial: {h}" for h in historial_fb or []]
-    ids_validos = {i.id for i in items} | {r.id for r in registros_fb}
-    ancla = resolver(repo, *ANCLA_FUENTE) if con_git else None
+    ids_validos = {i.id for i in items} | {r.id for r in registros_fb} | ids_de_adr(repo)
+    # El ancla es el SHA: un tag se puede mover; si el tag existe y no coincide, es un error.
+    tag, sha = ANCLA_FUENTE
+    ancla = resolver(repo, sha) if con_git else None
     if con_git and ancla is None:
         fallos_fb.append(
-            f"no se resuelve el ancla de trazabilidad {ANCLA_FUENTE[0]} ({ANCLA_FUENTE[1][:7]}): "
+            f"no se resuelve el ancla de trazabilidad {tag} ({sha[:7]}): "
             "clon superficial o sin historial; haz git fetch --unshallow --tags"
         )
+    desviado = ancla_desviada(repo, tag, sha) if con_git else None
+    if desviado:
+        fallos_fb.append(desviado)
     sin_fuente = commits_sin_fuente(repo, ancla, ids_validos=ids_validos) if ancla else None
     if sin_fuente is None and con_git and ancla is not None:
-        fallos_fb.append("la comprobacion de trailers Fuente: no se pudo evaluar (git fallo)")
+        motivo = no_evaluable or "git fallo"
+        fallos_fb.append(f"la comprobacion de trailers Fuente: no se pudo evaluar ({motivo})")
     fallos_fb += sin_fuente or []
     for fallo in fallos_fb:
         print(f"ERROR: {fallo}")
@@ -301,21 +351,49 @@ def corpus_check(repo: Path, hashes: bool) -> int:
 
 
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
-    """Crea un item de evidencia con su id calculado (nunca sobreescribe)."""
-    from botsito.corpus.inventario import InventarioError, cargar_fuentes
-    from botsito.evidence.modelo import EvidenciaError, escribir_item
+    """Crea un item de evidencia con su id calculado (nunca sobreescribe).
 
+    Antes de escribir se comprueba contra el manifiesto (duracion, fotogramas, supersede): un
+    item es inmutable, asi que un error no se corrige, se evita.
+    """
+    from botsito.corpus.inventario import InventarioError, cargar_fuentes, cargar_manifiesto
+    from botsito.evidence.modelo import (
+        EvidenceItem,
+        EvidenciaError,
+        cargar_evidencia,
+        escribir_item,
+        validar_contra_manifiesto,
+    )
+
+    if not (repo / "knowledge").is_dir():
+        print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
+        return 2
     try:
         conocidos = {
             v.video_id
             for v in cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml").videos
         }
+        ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
+        manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
     except InventarioError as exc:
         print(f"ERROR: fuentes del corpus: {exc}")
         return 1
     if args.video not in conocidos:
         print(f"ERROR: video {args.video!r} no esta en fuentes.yaml ({sorted(conocidos)})")
         return 1
+    directorio = repo / "knowledge" / "evidence"
+    try:
+        existentes = cargar_evidencia(directorio)
+    except EvidenciaError as exc:
+        print(f"ERROR: evidencia existente: {exc}")
+        return 1
+
+    def comprobar(item: EvidenceItem) -> list[str]:
+        if manifiesto is None:
+            return []
+        todos = [*existentes, item]
+        return [p for p in validar_contra_manifiesto(todos, manifiesto) if p.startswith(item.id)]
+
     campos = {
         "video_id": args.video,
         "t0": args.t0,
@@ -335,7 +413,7 @@ def evidence_new(repo: Path, args: argparse.Namespace) -> int:
         "notas": args.notas,
     }
     try:
-        ruta = escribir_item(repo / "knowledge" / "evidence", campos)
+        ruta = escribir_item(directorio, campos, comprobar)
     except EvidenciaError as exc:
         print(f"ERROR: {exc}")
         return 1
@@ -361,7 +439,34 @@ def evidence_contradictions(repo: Path) -> int:
 
 
 def feedback_new(repo: Path, args: argparse.Namespace) -> int:
-    from botsito.feedback.modelo import FeedbackError, escribir_registro
+    """Crea un registro de feedback. Se valida contra el contexto (evidencia, registro,
+    contradicciones, corpus) ANTES de escribir: un registro es inmutable."""
+    from botsito.config.registro import RegistroError
+    from botsito.corpus.inventario import InventarioError
+    from botsito.evidence.modelo import EvidenciaError
+    from botsito.feedback.modelo import (
+        FeedbackError,
+        FeedbackRecord,
+        cargar_feedback,
+        escribir_registro,
+        validar_contra_contexto,
+    )
+
+    if not (repo / "knowledge").is_dir():
+        print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
+        return 2
+    directorio = repo / "knowledge" / "feedback"
+    try:
+        existentes = cargar_feedback(directorio)
+        ids_ev, nombres, temas, rutas_corpus = _contexto_feedback(repo)
+    except (FeedbackError, EvidenciaError, RegistroError, InventarioError) as exc:
+        print(f"ERROR: contexto de knowledge/: {exc}")
+        return 1
+
+    def comprobar(r: FeedbackRecord) -> list[str]:
+        todos = [*existentes, r]
+        problemas = validar_contra_contexto(todos, ids_ev, nombres, temas, rutas_corpus)
+        return [p for p in problemas if p.startswith(r.id) or p.startswith("ciclo")]
 
     campos = {
         "sesion": args.sesion,
@@ -379,7 +484,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         "notas": args.notas,
     }
     try:
-        ruta = escribir_registro(repo / "knowledge" / "feedback", campos)
+        ruta = escribir_registro(directorio, campos, comprobar)
     except FeedbackError as exc:
         print(f"ERROR: {exc}")
         return 1
@@ -388,27 +493,46 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
 
 
 def feedback_trace(repo: Path, identificador: str) -> int:
+    """Cadena de un objeto: el item de evidencia (si lo es) y los registros de feedback."""
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
     from botsito.feedback.modelo import FeedbackError, cargar_feedback, trazar
 
     try:
         registros = cargar_feedback(repo / "knowledge" / "feedback")
-    except FeedbackError as exc:
+        items = cargar_evidencia(repo / "knowledge" / "evidence")
+    except (FeedbackError, EvidenciaError) as exc:
         print(f"ERROR: {exc}")
         return 1
+    for it in items:
+        if it.id == identificador:
+            print(f"evidencia {it.id} [{it.video_id} {it.t0}-{it.t1}] {it.tema}: {it.cita_literal}")
     for linea in trazar(identificador, registros):
         print(linea)
     return 0
 
 
 def feedback_pending(repo: Path) -> int:
-    """Registros activos cuyo objetivo todavia no esta reflejado en la spec (todos, hasta F11)."""
+    """Registros activos cuyo objetivo todavia no esta reflejado en la spec (todos, hasta F11).
+
+    Un parametro que no sea de categoria `estrategia` no se le pregunta al trader (ADR-0004):
+    un registro sobre el no aparece como pendiente.
+    """
+    from botsito.config.registro import RegistroError, cargar_registro
     from botsito.feedback.modelo import FeedbackError, activos, cargar_feedback
 
     try:
         registros = activos(cargar_feedback(repo / "knowledge" / "feedback"))
-    except FeedbackError as exc:
+        parametros = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml").parametros
+    except (FeedbackError, RegistroError) as exc:
         print(f"ERROR: {exc}")
         return 1
+    registros = [
+        r
+        for r in registros
+        if r.objetivo.tipo != "parametro"
+        or r.objetivo.id not in parametros
+        or parametros[r.objetivo.id].categoria == "estrategia"
+    ]
     for r in sorted(registros, key=lambda r: (r.fecha, r.id)):
         print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id}")
     print(f"{len(registros)} registros activos pendientes de reflejar en la spec (F11)")
@@ -455,7 +579,11 @@ def build_parser() -> argparse.ArgumentParser:
     corpus = sub.add_parser("corpus", help="inventario del corpus")
     corpus_sub = corpus.add_subparsers(dest="corpus_cmd", required=True)
     inv = corpus_sub.add_parser("inventory", help="genera knowledge/corpus/manifest.yaml")
-    inv.add_argument("--sin-hash", action="store_true", help="no calcular SHA-256 (rapido)")
+    inv.add_argument(
+        "--sin-hash",
+        action="store_true",
+        help="no calcular SHA-256 (rapido; el manifiesto resultante NO pasa knowledge validate)",
+    )
     chk = corpus_sub.add_parser("check", help="compara el manifiesto con el disco")
     chk.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
     ev = sub.add_parser("evidence", help="evidencia del corpus")

@@ -213,3 +213,86 @@ def test_fichero_escrito_a_mano_sin_comillas(tmp_path: Path) -> None:
 
 def test_directorio_real_valida(repo: Path) -> None:
     assert cargar_feedback(repo / "knowledge" / "feedback") == []
+
+
+def test_campos_en_blanco_no_rompen_el_id(tmp_path: Path) -> None:
+    """Un `--valor "   "` no puede producir un fichero cuyo id no coincida con su contenido."""
+    ruta = escribir_registro(
+        tmp_path,
+        base(medio="escrito", grabacion="  ", t0=None, t1=None, valor_resultante="   ", notas="\t"),
+    )
+    r = cargar_registro(ruta)
+    assert r.valor_resultante is None and r.notas is None and r.grabacion is None
+    assert calcular_id(base(notas="  ")) == calcular_id(base())
+
+
+def test_sesion_vacia_es_error_de_dominio(tmp_path: Path) -> None:
+    with pytest.raises(FeedbackError, match="obligatorios"):
+        escribir_registro(tmp_path, base(sesion=""))
+    with pytest.raises(FeedbackError):
+        calcular_id({})
+
+
+@pytest.mark.parametrize(
+    ("cambio", "mensaje"),
+    [
+        ({"sesion": "\u0662\u0660\u0662\u0666-09-20-sesion-01"}, "sesion invalida"),
+        ({"fecha": "\u0662\u0660\u0662\u0666-09-20"}, "fecha invalida"),
+        ({"sesion": "2026-13-45-sesion-01", "fecha": "2026-13-45"}, "fecha invalida"),
+        ({"sesion": "2026-02-30-sesion-01", "fecha": "2026-02-30"}, "fecha invalida"),
+        ({"objetivo": {"tipo": "regla", "id": "RN-\u0660\u0660\u0661"}}, "formato"),
+        ({"t0": "\u0660:00:07"}, "t0: tiempo invalido"),
+        ({"respuesta_literal": "     "}, "obligatorios"),
+        ({"registrado_por": " "}, "obligatorios"),
+    ],
+)
+def test_rechazos_unicode_y_fechas(cambio: dict[str, Any], mensaje: str) -> None:
+    campos = base(**cambio)
+    campos["id"] = "fb-2026-09-20-sesion-01-00000000"
+    with pytest.raises(FeedbackError, match=mensaje):
+        registro_desde_dict(campos)
+
+
+def test_supersede_cruzado_y_ciclo(tmp_path: Path) -> None:
+    a = cargar_registro(escribir_registro(tmp_path, base()))
+    otro_objetivo = escribir_registro(
+        tmp_path,
+        base(
+            objetivo={"tipo": "parametro", "id": "stop_fraccion"},
+            supersede=a.id,
+            respuesta_literal="esto va de otra cosa",
+        ),
+    )
+    problemas = validar_contra_contexto(
+        cargar_feedback(tmp_path), {EV}, {"stop_fraccion"}, set(), None
+    )
+    assert any("mismo objetivo" in p for p in problemas)
+    otro_objetivo.unlink()
+    b = escribir_registro(tmp_path, base(supersede=a.id, notas="b"))
+    id_b = cargar_registro(b).id
+    # Un ciclo requiere un fichero forjado: se simula con el detector directamente.
+    from botsito.feedback.modelo import ciclos_de_supersede
+
+    menor, mayor = sorted([a.id, id_b])
+    assert ciclos_de_supersede({a.id: id_b, id_b: a.id}) == [
+        f"ciclo de supersede: {menor} -> {mayor} -> {menor}"
+    ]
+    assert ciclos_de_supersede({a.id: None, id_b: a.id}) == []
+
+
+def test_fichero_inesperado_no_pasa_en_silencio(tmp_path: Path) -> None:
+    escribir_registro(tmp_path, base())
+    (tmp_path / "2026-09-20-sesion-01" / "roto.yml").write_text("{", encoding="utf-8")
+    with pytest.raises(FeedbackError, match="inesperado"):
+        cargar_feedback(tmp_path)
+    (tmp_path / "2026-09-20-sesion-01" / "roto.yml").unlink()
+    (tmp_path / "README.md").write_text("x", encoding="utf-8")
+    assert len(cargar_feedback(tmp_path)) == 1
+    with pytest.raises(FeedbackError, match="no existe"):
+        cargar_feedback(tmp_path / "nada")
+
+
+def test_comprobar_impide_escribir(tmp_path: Path) -> None:
+    with pytest.raises(FeedbackError, match="no existe"):
+        escribir_registro(tmp_path, base(), lambda r: [f"{r.id}: evidencia objetivo no existe"])
+    assert not list(tmp_path.rglob("*.yaml"))

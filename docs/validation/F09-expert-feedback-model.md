@@ -52,10 +52,11 @@ docs/plan/features/F09-expert-feedback-model.md  docs/validation/F09-expert-feed
 ## Como ejecutarlo
 ```
 make check
+# El registro de parametros esta vacio hasta F11: un objetivo `parametro` se rechaza por contexto.
 uv run botsito feedback new --sesion 2026-09-20-sesion-01 --fecha 2026-09-20 --medio escrito \
-  --objetivo-tipo parametro --objetivo-id stop_fraccion --accion CONFIRM \
-  --respuesta "si, el stop va al 0,75 siempre" --registrado-por aleks
-uv run botsito feedback trace stop_fraccion
+  --objetivo-tipo ambiguedad --objetivo-id A-10 --accion RESOLVE_UNKNOWN \
+  --valor "0,75 + spread" --respuesta "el 0,8 es el 0,75 mas el spread" --registrado-por aleks
+uv run botsito feedback trace A-10
 uv run botsito feedback pending
 uv run botsito knowledge validate
 ```
@@ -68,15 +69,17 @@ uv run botsito knowledge validate
 - Un `LABEL_CASE` con objetivo `evidence`: rechazado por coherencia.
 
 ## Tests ejecutados
-`make check` en `feature/F09-expert-feedback-model`, Windows 11. Hook probado en repositorio
+`make check` en `feature/F09-expert-feedback-model`, Windows 11, Python 3.12 (`.python-version`). Hook probado en repositorio
 temporal: acepta anadir feedback, rechaza editar y borrar.
 
 ## Resultados
 - ruff, mypy strict (48 ficheros), 3 contratos KEPT con la jerarquia nueva.
-- pytest: 167 passed (122 funciones tras la auditoria extrema; rechazos parametrizados de
+- pytest: 208 passed (149 funciones tras la auditoria de cierre; rechazos parametrizados de
   evidencia, feedback y registro; property de estabilidad del id; historial con modificar,
-  borrar, anadir en merge y rutas con acento; trailers validos, invalidos, inexistentes y con
-  mensaje acentuado).
+  borrar, anadir en merge, rutas con acento, clon superficial, repo anidado y tag movido;
+  trailers validos, invalidos, inexistentes, con ADR inexistente, con digitos Unicode y con
+  mensaje acentuado; detector de literales con 8 formas de elusion; CLI de feedback y evidencia
+  con contexto en un knowledge/ temporal).
 - `state`, `config`, `knowledge validate` (0 registros, historial intacto, commits con Fuente): OK.
 - CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33894611220 (01477bf) y,
   tras la auditoria extrema, run 33909186793 (d217a11).
@@ -104,7 +107,44 @@ Hallazgos corregidos en esta rama (cada uno con test o prueba manual):
   `docs(state)` tras el tag sin que `state check` lo vigilara; CI corria dos veces por PR.
 - Diseno · ADR-0004: categorias de parametro y horas con huso (`tzdata` anadido: Windows no
   tenia base de husos, `ZoneInfo("Europe/Madrid")` fallaba). Resto de riesgos de ejecucion en
-  MASTER_PLAN H.2, absorbidos por F10, F11, F15, F18, F21–F24, F28–F31, F33.
+  MASTER_PLAN H.2, absorbidos por F07, F10, F11, F15, F17, F18, F21–F24, F28–F31, F33.
+
+## Auditoria de cierre (2026-09-04, tres agentes: codigo, plan/docs, infraestructura)
+Segunda pasada antes de la validacion del usuario. Todo corregido en esta rama, con test:
+- ALTO · `feedback new` / `evidence new` con un campo en blanco (`--valor "   "`) escribian un
+  fichero cuyo id no coincidia con su contenido (nadie podia cargarlo). Ahora los textos se
+  normalizan y los vacios se descartan ANTES de calcular el id; lo escrito se recarga como
+  invariante y, si fallara, se borra.
+- ALTO · `Fuente: ADR-9999` pasaba (los ADR se comprobaban solo por formato). Ahora los ids de ADR
+  reales (`docs/adr/NNNN-*.md`) entran en `ids_validos` como cualquier otra fuente.
+- ALTO · `test_no_business_literals` no veia `Decimal("0.75")`, `"0.5"`, `3 / 4`, `"07" + ":00"`
+  ni f-strings, y excluia todo `config/`. Ahora evalua constantes de texto numericas y expresiones
+  formadas solo por constantes, y excluye unicamente `config/registro.py`.
+- MEDIO · `--sesion ""` y `--t0 ""` daban `KeyError`; ahora error de dominio. `feedback new` y
+  `evidence new` validan contra el contexto (evidencia, registro, contradicciones, manifiesto)
+  antes de escribir. Fechas imposibles (`2026-13-45`) y digitos Unicode en ids/tiempos rechazados
+  (`re.ASCII`). Supersede cruzado (otro objetivo/tema) y ciclos detectados. Un fichero que no sea
+  `*.yaml` en evidencia/feedback es error. Manifiesto con `ficheros: null`, `duracion_s: abc` o
+  entradas no-mapa, TOML roto o UTF-16, YAML con clave no hashable: errores de dominio, no
+  tracebacks. `bytes: 1.5` o `true` en fuentes rechazados. ffprobe leido en UTF-8 sin `check`.
+- MEDIO · El ancla de trazabilidad es siempre el SHA; si el tag `stable/F06` existe y apunta a otro
+  commit, `knowledge validate` lo denuncia. Clon superficial o proyecto anidado en otro repo:
+  "no evaluable" (ERROR), no "sin violaciones". El asunto del commit no cuenta como trailer.
+- MEDIO · Registro: `texto` vacio, claves de nivel superior ajenas y `minimo/maximo` en `hora` o
+  `texto` rechazados.
+- MEDIO (infra) · `instalar_hooks.py` instalaba en `--git-dir/hooks`, que un worktree no lee
+  (ahora `--git-path hooks`); no detectaba `core.hooksPath` global (ahora aborta); sobrescribia un
+  hook ajeno (ahora `.bak`); git ausente daba traceback. El hook ejecuta `uv run --locked` (no
+  reescribe `uv.lock` dentro de un commit) y rechaza el commit si `uv` no esta en PATH; la exencion
+  `_*.yaml` exige que TODAS las rutas de un rename sean exentas. `.python-version` fija 3.12 en
+  local y en CI (antes local 3.13 y CI 3.12). CI con `permissions`, `concurrency`, `timeout` y
+  `BOTSITO_EXIGE_FFPROBE` (sin ffprobe los tests de video fallan en CI, no se omiten).
+- Tests · `_git` de integridad solo omite si no hay git (antes cualquier fallo era skip verde);
+  allowlist de ignorados por componente; `**/` en `.gitignore` cubierto; `state check` en HEAD
+  separado es skip explicito; `evidence new` ya no se prueba contra el repo real.
+- Docs · ADR-0004 (`feedback pending` filtra por `estrategia`: ahora implementado), ejemplo de este
+  informe (usaba un parametro inexistente), H.2 anclaje H4 coherente con el orden E, dueno por
+  ambiguedad en PROJECT_STATE, READMEs de `docs/`, `docs/research/`, `tests/` y `scripts/`.
 
 ## Que deberia observar el usuario
 `knowledge/feedback/README.md` con esquema y plantilla de sesion; `feedback pending` vacio;
@@ -116,6 +156,8 @@ Todo el alcance del brief salvo `feedback apply`, diferido a F11 por diseno.
 ## Que casos todavia no funcionan
 - No hay registros reales: la sesion 1 con el trader va tras F10 y F15.
 - Objetivos `regla`, `ambiguedad` y `caso` se validan solo por formato hasta F11/F14.
+- `feedback trace` muestra el item de evidencia y los registros de feedback; la cadena hasta la
+  regla de la spec llega con F11.
 
 ## Limitaciones
 El trailer `Fuente:` se exige por commit, no por linea cambiada: un commit que mezcle un cambio

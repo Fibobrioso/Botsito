@@ -46,3 +46,5 @@ def cargar_yaml(texto: str) -> Any:
         return yaml.load(texto, Loader=_Cargador)  # noqa: S506  # SafeLoader derivado
     except yaml.YAMLError as exc:
         raise YamlError(f"YAML invalido: {exc}") from exc
+    except TypeError as exc:  # clave no hashable (`? [1, 2]`): PyYAML la deja escapar
+        raise YamlError(f"YAML invalido: clave no admitida ({exc})") from exc

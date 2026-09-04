@@ -33,6 +33,13 @@ hook local igualmente. (2) Falla en silencio al cambiar de rama (verificado el 2
 `Makefile` (`hooks`), `scripts/git-hooks/README.md`, eliminacion de `.pre-commit-config.yaml` y
 de su entrada en `tests/unit/test_tree.py`.
 
+## Limites (auditoria del 2026-09-04)
+- El destino es `git rev-parse --git-path hooks` (en un worktree, `--git-dir/hooks` no se lee).
+- Un `core.hooksPath` global o de sistema anula el hook: `instalar_hooks.py` aborta si lo detecta.
+- `--no-verify` y reescribir el historial (`reset --soft`) saltan el hook. La garantia real es el
+  test de historial en CI; una proteccion de rama en GitHub (sin force-push a `main`) cerraria el
+  ultimo hueco y queda como recomendacion al abrir F15.
+
 ## Fecha / fase
 2026-09-04 · F02
 

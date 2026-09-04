@@ -55,3 +55,12 @@ def test_entorno_invalido(tmp_path: Path) -> None:
 def test_falta_ruta(tmp_path: Path) -> None:
     with pytest.raises(AjustesError, match="falta"):
         cargar_ajustes(_w(tmp_path, OK.replace('data = "data"\n', "")))
+
+
+def test_toml_roto_es_error_de_dominio(tmp_path: Path) -> None:
+    with pytest.raises(AjustesError, match="TOML invalido"):
+        cargar_ajustes(_w(tmp_path, "[entorno\nnombre = "))
+    ruta = tmp_path / "utf16.toml"
+    ruta.write_bytes('[entorno]\nnombre = "backtest"\n'.encode("utf-16"))
+    with pytest.raises(AjustesError, match="TOML invalido"):
+        cargar_ajustes(ruta)

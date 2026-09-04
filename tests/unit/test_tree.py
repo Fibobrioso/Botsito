@@ -3,6 +3,8 @@ from pathlib import Path
 # Arbol de MASTER_PLAN seccion B. Cada carpeta debe existir y tener un README de
 # responsabilidad (o ser un paquete Python con docstring en __init__.py).
 DOC_DIRS = [
+    "docs",
+    "docs/research",
     "docs/plan",
     "docs/plan/features",
     "docs/adr",
@@ -28,6 +30,7 @@ DOC_DIRS = [
     "mql5/tester",
     "scripts",
     "data/manifests",
+    "tests",
 ]
 # Ninguna carpeta queda exenta: toda carpeta declara su responsabilidad.
 README_EXEMPT: set[str] = set()
