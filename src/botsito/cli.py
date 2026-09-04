@@ -137,6 +137,30 @@ def knowledge_validate(repo: Path) -> int:
     return 0
 
 
+def config_validate(repo: Path) -> int:
+    """Los ficheros de ajustes reales no contienen claves del registro ni secciones ajenas."""
+    from botsito.config.ajustes import AjustesError, cargar_ajustes
+    from botsito.config.registro import RegistroError, cargar_registro
+
+    try:
+        nombres = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml").nombres()
+    except RegistroError as exc:
+        print(f"ERROR: registro de parametros: {exc}")
+        return 1
+    ficheros = [repo / "config" / "settings.example.toml"]
+    ficheros += sorted((repo / "config").glob("settings*.local.toml"))
+    errores = 0
+    for fichero in ficheros:
+        try:
+            ajustes = cargar_ajustes(fichero, nombres)
+        except AjustesError as exc:
+            print(f"ERROR: {fichero.name}: {exc}")
+            errores += 1
+            continue
+        print(f"OK: {fichero.name} (entorno {ajustes.entorno})")
+    return 1 if errores else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="botsito")
     parser.add_argument("--version", action="version", version=f"botsito {__version__}")
@@ -148,6 +172,9 @@ def build_parser() -> argparse.ArgumentParser:
     know = sub.add_parser("knowledge", help="base de conocimiento")
     know_sub = know.add_subparsers(dest="knowledge_cmd", required=True)
     know_sub.add_parser("validate", help="valida knowledge/ (registro de parametros en F02)")
+    conf = sub.add_parser("config", help="ajustes de entorno")
+    conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
+    conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
     return parser
 
 
@@ -160,6 +187,8 @@ def main(argv: list[str] | None = None) -> int:
         return state_check(args.repo)
     if args.cmd == "knowledge" and args.knowledge_cmd == "validate":
         return knowledge_validate(args.repo)
+    if args.cmd == "config" and args.config_cmd == "validate":
+        return config_validate(args.repo)
     parser.print_help()
     return 0
 

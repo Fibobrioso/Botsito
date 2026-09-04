@@ -21,4 +21,5 @@ make sync    # uv sync --locked + instala los hooks de scripts/git-hooks
 make check
 ```
 
-Paquete Python: `botsito` (`src/botsito`). CLI: `uv run botsito --help`.
+Paquete Python: `botsito` (`src/botsito`). CLI: `uv run botsito --help`
+(`state check`, `knowledge validate`, `config validate`).
