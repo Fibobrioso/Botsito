@@ -33,13 +33,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Feedback del experto (F09-F10)
 
 ## Current Feature
-F09 · expert-feedback-model
+— (F09 integrada; F15 pendiente de abrir)
 
 ## Current Branch
-feature/F09-expert-feedback-model
+main
 
 ## Stable Main State
-b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu verde. Tag stable/F06.
+2ff6450 · merge de F09. make check verde: 208 casos (149 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu verde (run 33912550454). Tag stable/F09. Rama main protegida en GitHub (sin force-push ni borrado, tambien para administradores).
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -49,9 +49,10 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - F02 · config-and-parameter-registry · validada el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
 - F03 · corpus-inventory · validada el 2026-09-04 · docs/validation/F03-corpus-inventory.md · tag stable/F03
 - F06 · evidence-model · validada el 2026-09-04 · docs/validation/F06-evidence-model.md · tag stable/F06
+- F09 · expert-feedback-model · validada el 2026-09-04 · docs/validation/F09-expert-feedback-model.md · tag stable/F09
 
 ## Features Waiting for Validation
-- F09 · expert-feedback-model · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F09-expert-feedback-model.md
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -159,8 +160,9 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   afirman que el repo esta vacio de valores/registros: se retiran en F11 y en la sesion 1.
 - Ramas `feature/F01`, `F02`, `F03`, `F06` ya fusionadas siguen en local y en `origin`
   (borrarlas cuando el usuario lo autorice; los tags `stable/*` conservan los puntos).
-- Sin proteccion de rama en GitHub: `--no-verify` + force-push a `main` saltaria las guardias
-  locales (la CI las detectaria, pero no lo impediria). Recomendado al abrir F15.
+- Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
+  checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
+  cuando el merge pase por PR.
 
 ## Open Questions
 - Fuente de ticks historicos: decidir en F16.
@@ -178,12 +180,13 @@ F15 · market-data-ohlc (tras validar F09; orden E). F10 absorbe: parametros UNK
 ids de caso + particion + seed, papel `sesion_feedback` en el corpus (ver MASTER_PLAN H.2).
 
 ## Next Action
-Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir feature/F15-market-data-ohlc (orden E: F15 antes de F04/F05 porque F10 y F14 necesitan datos reales).
+Abrir feature/F15-market-data-ohlc (orden E: F15 antes de F04/F05 porque F10 y F14 necesitan datos reales): brief, construccion supervisada, auditoria con agentes, informe WAITING_FOR_USER_VALIDATION.
 
 ## Last Stable Commit
-b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
+2ff6450 · merge: F09 expert-feedback-model validado por el usuario · tag stable/F09
 
 ## Change Log
+- 2026-09-04 · F09 VALIDADA por el usuario; merge --no-ff a main (2ff6450); tag stable/F09; proteccion de rama main activada en GitHub (enforce_admins, sin force-push ni borrado)
 - 2026-09-04 · push de la auditoria de cierre (e99afba, con trailer Fuente: ADR-0002, ADR-0004 por tocar el comentario de parametros.yaml); CI Ubuntu verde (run 33912550454); Python 3.12 en local y CI
 - 2026-09-04 · AUDITORIA DE CIERRE de F09 (3 agentes: codigo, plan/docs, infraestructura), antes de la validacion del usuario. Corregido: campos en blanco rompian el id de feedback/evidencia; `Fuente: ADR-9999` pasaba; detector de literales de negocio eludible; KeyError con `--sesion ""`; `feedback new`/`evidence new` validan contexto antes de escribir; fechas imposibles y digitos Unicode; supersede cruzado y ciclos; ficheros no-yaml; tracebacks con manifiesto/TOML/YAML corruptos; ancla por SHA con tag vigilado; clon superficial y repo anidado no evaluables; registro estricto (texto vacio, claves ajenas, limites en hora); instalador de hooks (worktree, hooksPath global, .bak, git ausente); hook con `uv run --locked`; `.python-version` 3.12; CI con permisos, concurrencia, timeout y ffprobe obligatorio; tests de integridad no eludibles; `feedback pending` filtra por `estrategia` (ADR-0004); docs coherentes (ejemplo del informe, H.2 anclaje H4, mapa de ambiguedades, READMEs). Un agente ejecuto por error una prueba en el repo real (rama `prueba/soft`, creada y borrada; solo quedan entradas de reflog)
 - 2026-09-04 · push de la auditoria extrema (8 commits); CI Ubuntu verde (run 33909186793, d217a11); clon sin tags OK por ancla SHA, clon superficial ERROR explicito
