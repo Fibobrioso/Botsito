@@ -43,6 +43,14 @@ Encontradas sondeando el cargador con entradas de borde (no las cubrian los test
 - Cabecera de `parametros.yaml`: entero sin comillas, hora/texto con comillas, limites sin float.
   `knowledge/spec/README.md` menciona el registro.
 
+### Segunda auditoria (fidelidad al brief y a la seccion H)
+- `preview = true` en ruff activaba implicitamente todas las reglas preview de los prefijos
+  seleccionados, no solo `PLW1514`; un cambio de version podia romper el lint sin tocar codigo.
+  Ahora `explicit-preview-rules = true`.
+- El brief exige que `settings.toml` no admita claves del registro, pero ningun comando lo
+  comprobaba sobre los ficheros reales. Nuevo `botsito config validate` (example + locales) dentro de
+  `make check`; tests que lo demuestran.
+
 ## Archivos creados
 ```
 src/botsito/domain/valores.py  src/botsito/config/{__init__,registro,ajustes}.py
@@ -64,8 +72,8 @@ docs/validation/F02-config-and-parameter-registry.md
 ## Decisiones tomadas
 - **Excepciones con sufijo `Error`** (`RegistroError`, `ParametroDesconocidoError`,
   `AmbiguedadNoDeclaradaError`, `AjustesError`) por la convencion N818 de ruff.
-- **`state check` cuenta funciones de test, no casos de pytest.** Con una parametrizacion x3 hay 63
-  funciones y 65 casos; PROJECT_STATE declara 63 y lo aclara. Se prefirio el AST porque no ejecuta
+- **`state check` cuenta funciones de test, no casos de pytest.** Con una parametrizacion x3 hay 65
+  funciones y 67 casos; PROJECT_STATE declara 65 y lo aclara. Se prefirio el AST porque no ejecuta
   nada y no depende de plugins.
 - **Sin framework pre-commit** (ADR-0003): los hooks son la copia de `scripts/git-hooks/`.
 - **Valores YAML entre comillas.** Un `0.75` sin comillas llega como float y se rechaza: evita que
@@ -76,12 +84,13 @@ docs/validation/F02-config-and-parameter-registry.md
 make sync
 make check
 uv run botsito knowledge validate
+uv run botsito config validate
 uv run botsito state check
 ```
 
 ## Como probarlo
 - Anadir al YAML un parametro con `estado: UNKNOWN` y `valor: 3` → `knowledge validate` falla.
-- Cambiar el `63` de "Tests Currently Passing" por otro numero → `state check` falla nombrando la
+- Cambiar el `65` de "Tests Currently Passing" por otro numero → `state check` falla nombrando la
   diferencia (ocurrio de verdad durante la construccion: el estado decia 26).
 - `Fraccion("0.5") + Porcentaje("50")` → `TypeError`.
 - Anadir `stop = 0.75` a `config/settings.example.toml` bajo `[entorno]` → `test_ajustes` falla.
@@ -93,8 +102,8 @@ uv run botsito state check
 ## Resultados
 - ruff (preview, PLW1514): sin errores. mypy strict: 35 ficheros (src + tests), sin incidencias.
 - import-linter: 3 contratos KEPT.
-- pytest: 65 passed (63 funciones; dos property tests con hypothesis).
-- `state check`: OK. `knowledge validate`: OK, registro con 0 parametros.
+- pytest: 67 passed (65 funciones; dos property tests con hypothesis).
+- `state check`: OK. `knowledge validate`: OK, registro con 0 parametros. `config validate`: OK.
 - CI GitHub Actions (ubuntu-latest): verde, run 33883045053.
 
 ## Que deberia observar el usuario

@@ -24,7 +24,8 @@ VACIO de valores: los valores llegan en F11 citando evidencia.
 - `state check` ampliado: recuento de tests declarado = tests reales (AST de `tests/`); `Last Stable
   Commit` = commit del ultimo tag `stable/*`; toda funcionalidad en "Completed Features" tiene informe
   en `docs/validation/`.
-- ruff: regla de `encoding` obligatorio (`PLW1514`).
+- ruff: regla de `encoding` obligatorio (`PLW1514`) con `explicit-preview-rules`.
+- `botsito config validate`: comprueba los ficheros de ajustes reales contra el registro; en `make check`.
 - Decision sobre el framework pre-commit (ADR-0003): se retira `.pre-commit-config.yaml`; los hooks
   son la copia de `scripts/git-hooks/`.
 - `botsito.config` entra en los contratos de importacion: `domain` no puede importarlo.

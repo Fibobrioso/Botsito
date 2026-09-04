@@ -52,7 +52,7 @@ feature/F02-config-and-parameter-registry
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
-- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion) y `knowledge validate` (valida el registro).
+- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro) y `config validate` (ajustes contra el registro).
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
@@ -66,7 +66,7 @@ feature/F02-config-and-parameter-registry
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-63 funciones de test (65 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+65 funciones de test (65 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -125,6 +125,7 @@ Usuario valida F02 -> make check -> merge --no-ff a main (BOTSITO_ALLOW_MAIN=1) 
 85cedc4 · merge: F01 project-scaffold validado por el usuario · tag stable/F01
 
 ## Change Log
+- 2026-09-04 · segunda auditoria de F02: explicit-preview-rules; botsito config validate en make check; 65 funciones / 67 casos
 - 2026-09-04 · auditoria de F02: prefijo duplicado en errores, limites con float, accesores tipados, property YAML; 63 funciones / 65 casos
 - 2026-09-04 · push de la rama F02; CI Ubuntu verde (run 33883045053)
 - 2026-09-04 · F02 construida: valores.py, registro.py, ajustes.py, parametros.yaml vacio, state check ampliado, test de literales real, ADR-0002/0003, sin .pre-commit-config; 59 tests; WAITING_FOR_USER_VALIDATION
