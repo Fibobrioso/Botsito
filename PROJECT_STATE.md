@@ -69,7 +69,7 @@ dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos,
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-74 funciones de test (una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+76 funciones de test (una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -128,6 +128,7 @@ Usuario valida F03 -> merge --no-ff a main -> tag stable/F03 -> push -> abrir fe
 dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
 
 ## Change Log
+- 2026-09-04 · auditoria de F03: orden POSIX del manifiesto (Windows ordenaba sin mayusculas), corpus check detecta ficheros no inventariados, esquema de ficheros validado, ffmpeg en CI, xlsx/pdf binarios; 76 funciones de test
 - 2026-09-04 · push de la rama F03; CI Ubuntu verde (run 33890615366)
 - 2026-09-04 · F03 construida: fuentes.yaml, inventario.py, manifest.yaml real (4 videos con hash y duracion, 477 heredados, 17 adicionales), corpus inventory/check; 74 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · corpus recibido en local (4 videos identicos a Drive, _procesado heredado, material adicional: 2 xlsx FXReplay + 15 capturas); movido a corpus/ (gitignored); ffmpeg 9 instalado; rama feature/F03-corpus-inventory abierta

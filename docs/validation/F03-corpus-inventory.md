@@ -38,6 +38,19 @@ Material adicional: `backtesting-analytics ENERO 2026.xlsx`, `backtesting-analyt
 (exportaciones de FXReplay pedidas en el informe de investigacion) y 15 capturas de balance
 (2026-09-03). Inventariadas; su contenido se lee en F07 y F26.
 
+## Correcciones aplicadas tras la auditoria de F03 (2026-09-04)
+- **Determinismo entre sistemas operativos.** `Path` ordena sin distinguir mayusculas en Windows y
+  con ellas en Linux: el manifiesto generado aqui habria cambiado de orden al regenerarlo en CI.
+  Ahora se ordena por la cadena POSIX de la ruta; `validar_manifiesto` falla si el orden no es ese.
+  El manifiesto real cambio de orden en 77 lineas (mismo contenido).
+- **Ficheros no inventariados.** `corpus check` no detectaba un fichero nuevo en disco. Ahora lo
+  nombra (`no inventariado: ...`).
+- **Esquema de `ficheros`.** Se valida ruta unica, papel conocido, bytes entero y sha256 hexadecimal.
+- **Version de ffprobe** reducida al numero (9.0.1): la cadena completa del build difiere por
+  maquina y ensuciaba el determinismo.
+- **CI instala ffmpeg** en Ubuntu: el test de ffprobe se ejecuta de verdad en vez de saltarse.
+- `.gitattributes`: `xlsx`, `pdf`, `woff2` binarios. `make corpus` (check con hashes) para uso local.
+
 ## Archivos creados
 ```
 knowledge/corpus/fuentes.yaml  knowledge/corpus/manifest.yaml
@@ -81,10 +94,10 @@ sobre el corpus real: OK.
 
 ## Resultados
 - ruff, mypy strict (38 ficheros), 3 contratos KEPT.
-- pytest: 76 passed (74 funciones); el test de ffprobe se salta con aviso si no hay ffprobe.
+- pytest: 78 passed (76 funciones); el test de ffprobe se salta con aviso solo si no hay ffprobe.
 - `state check`, `config validate`, `knowledge validate` (registro + manifiesto): OK.
 - Manifiesto regenerado dos veces: identico.
-- CI GitHub Actions (ubuntu-latest): verde, run 33890615366 (test de ffprobe omitido con aviso).
+- CI GitHub Actions (ubuntu-latest): verde, run 33890615366 (antes de instalar ffmpeg); ver run posterior con ffmpeg.
 
 ## Que deberia observar el usuario
 `knowledge/corpus/manifest.yaml` con los 4 videos y sus hashes; `corpus check --hashes` OK;
@@ -99,8 +112,8 @@ Todo el alcance del brief.
   introduce con los manifiestos de datos (F15) segun la seccion H.
 
 ## Limitaciones
-`ffprobe` debe estar en PATH; en CI (ubuntu) no lo esta y el test de video se salta con aviso.
-Anadir `ffmpeg` al workflow es tarea de F04, que lo necesita de verdad.
+`ffprobe` debe estar en PATH (en CI se instala con apt). El manifiesto real solo se regenera donde
+exista el corpus; en CI se valida su esquema y coherencia, no se regenera.
 
 ## Riesgos
 Perdida del unico ejemplar local del corpus: `fuentes.yaml` guarda los ids de Drive para
