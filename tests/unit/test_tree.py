@@ -32,6 +32,7 @@ DOC_DIRS = [
 # Ninguna carpeta queda exenta: toda carpeta declara su responsabilidad.
 README_EXEMPT: set[str] = set()
 PACKAGES = [
+    "config",
     "corpus",
     "evidence",
     "feedback",
@@ -51,9 +52,10 @@ ROOT_FILES = [
     "pyproject.toml",
     "Makefile",
     ".gitignore",
-    ".pre-commit-config.yaml",
     ".github/workflows/ci.yml",
     "config/settings.example.toml",
+    "knowledge/spec/parametros.yaml",
+    "scripts/git-hooks/pre-commit",
     "docs/plan/MASTER_PLAN.md",
     "docs/adr/0000-template.md",
     "docs/plan/features/_template.md",
