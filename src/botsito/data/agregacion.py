@@ -4,8 +4,10 @@ Regla: los limites de vela de periodo P se calculan por dia local del huso del a
 `anclaje + k*P` (k tal que no pase de 24 h) y se convierten a UTC. Un instante local inexistente
 (salto de primavera) se omite; uno ambiguo (repeticion de otono) produce los dos limites (ambos
 pliegues). Una M1 pertenece al ultimo limite menor o igual que su inicio. No se inventan velas:
-un limite sin M1 no produce vela. Es lo que dibujan TradingView (huso del grafico) y MT5 (hora
-de servidor): la vela que cruza un cambio de hora dura 3 h o 5 h.
+un limite sin M1 no produce vela. En M1 continuo la vela que cruza un cambio de hora dura P-d,
+P+d o d, con d el salto del huso (60 min en Madrid y Nueva York; 30 en Lord Howe) y, si P = 1440
+y el anclaje cae en el salto, 2P-d; en divisas reales el cambio cae con el mercado cerrado y lo
+que se observa es que los limites UTC se desplazan una hora entre semanas (ADR-0005).
 
 `huecos()` describe los minutos sin vela dentro de una sesion y sirve para el manifiesto; no
 decide nada de negocio.
@@ -16,7 +18,7 @@ from __future__ import annotations
 import bisect
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError, available_timezones
 
 from botsito.data.velas import a_datetime, a_minuto
 from botsito.domain.valores import HoraLocal
@@ -34,7 +36,17 @@ class Hueco:
     minutos: int
 
 
+_HUSOS_CONOCIDOS: frozenset[str] = frozenset()
+
+
 def _huso(nombre: str) -> ZoneInfo:
+    """Huso por su nombre IANA exacto. En Windows `ZoneInfo("Europe/madrid")` resuelve (sistema
+    de ficheros sin mayusculas) y en Linux no: se exige el nombre canonico en ambos."""
+    global _HUSOS_CONOCIDOS
+    if not _HUSOS_CONOCIDOS:
+        _HUSOS_CONOCIDOS = frozenset(available_timezones())
+    if nombre not in _HUSOS_CONOCIDOS:
+        raise AnclajeError(f"huso desconocido {nombre!r} (nombre IANA exacto)")
     try:
         return ZoneInfo(nombre)
     except (ZoneInfoNotFoundError, ValueError) as exc:

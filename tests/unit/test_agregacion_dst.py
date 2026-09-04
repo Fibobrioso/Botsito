@@ -144,12 +144,27 @@ def test_inicio_de_dataset_deja_una_vela_de_borde_incompleta() -> None:
     assert cerrada[-1].completa is True
 
 
-def test_duraciones_admisibles_en_un_ano_completo() -> None:
-    """Sobre 24/7 sintetico, un ano con los cuatro cambios: solo 240, 180, 300 y 60 minutos,
-    limites estrictamente crecientes y cada M1 en exactamente una vela."""
+def test_duraciones_admisibles_en_un_semestre_con_los_cuatro_cambios() -> None:
+    """Sobre 24/7 sintetico, octubre 2025 a abril 2026 (los cuatro cambios): solo 240, 180, 300
+    y 60 minutos, limites estrictamente crecientes y cada M1 en exactamente una vela."""
     velas = continuo("2025-10-01T00:00Z", "2026-04-10T00:00Z")
     for anclaje in (MADRID, SERVIDOR):
         salida = agregar(velas, H4, anclaje)
         assert {v.duracion_min for v in salida} <= {240, 180, 300, 60}
         assert sum(v.n_m1 for v in salida) == len(velas)
         assert all(a.fin == b.inicio for a, b in zip(salida, salida[1:], strict=False))
+
+
+def test_huso_con_salto_de_30_min_y_periodo_diario() -> None:
+    """Las invariantes generales (cada M1 una vez, limites contiguos) valen para husos exoticos;
+    las duraciones son P-d, P, P+d o d con d el salto del huso, y 2P-d si P = 1440 y el anclaje
+    cae en el salto."""
+    lord_howe = HoraLocal("00:00", "Australia/Lord_Howe")  # DST de 30 min, primer domingo de abril
+    velas = continuo("2026-04-03T00:00Z", "2026-04-07T00:00Z")
+    salida = agregar(velas, H4, lord_howe)
+    assert {v.duracion_min for v in salida} <= {240, 210, 270}
+    assert sum(v.n_m1 for v in salida) == len(velas)
+    assert all(a.fin == b.inicio for a, b in zip(salida, salida[1:], strict=False))
+    diario = agregar(continuo("2026-03-27T00:00Z", "2026-04-01T00:00Z"), 1440, MADRID)
+    assert {v.duracion_min for v in diario} <= {1440, 1380}
+    assert sum(v.n_m1 for v in diario) == 5 * 1440

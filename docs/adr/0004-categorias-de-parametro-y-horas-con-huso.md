@@ -48,8 +48,8 @@ global se pierde en cuanto hay una hora del servidor y otra del trader en la mis
 ## Impacto
 `config/registro.py` (campo `categoria`, `huso`, `por_categoria()`, formato de ids de fuente,
 `HoraLocal`), `domain/valores.py`, `knowledge/spec/parametros.yaml` (esquema), `pyproject.toml`
-(`tzdata`). F11 puebla las categorias de entorno citando este ADR; F15 declara `huso_datos` y
-`huso_operativa`; F28 exporta `estrategia + instrumento + ejecucion` a `Params.mqh` y `prop_firm`
+(`tzdata`). F11 puebla las categorias de entorno citando este ADR; F15 declara `huso_operativa`
+(`huso_datos` quedo fuera del registro por ADR-0005: lo declara cada manifiesto de datos); F28 exporta `estrategia + instrumento + ejecucion` a `Params.mqh` y `prop_firm`
 a `Risk.mqh` con dos hashes; F33 compara `instrumento` y `broker` con `SymbolInfo*` y
 `AccountInfo*` y aborta si difieren.
 

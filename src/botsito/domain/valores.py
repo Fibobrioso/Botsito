@@ -7,6 +7,7 @@ convierten de forma explicita. Los valores son `Decimal`; un `float` se rechaza 
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from typing import NewType, Self
@@ -15,6 +16,7 @@ CIEN = Decimal(100)
 # Precio o distancia en puntos del instrumento (enteros; la escala la declara la serie o el
 # registro). F18 anade la regla de redondeo fraccion -> puntos (H.2).
 Puntos = NewType("Puntos", int)
+_HORA_HHMM = re.compile(r"^([01][0-9]|2[0-3]):[0-5][0-9]$", re.ASCII)
 
 
 def _a_decimal(valor: Decimal | int | str) -> Decimal:
@@ -112,6 +114,13 @@ class HoraLocal:
 
     hora: str
     huso: str
+
+    def __post_init__(self) -> None:
+        # Solo texto (sin datetime): HH:MM de 00:00 a 23:59 y un nombre de huso no vacio.
+        if not isinstance(self.hora, str) or not _HORA_HHMM.match(self.hora):
+            raise ValueError(f"hora invalida {self.hora!r} (formato HH:MM, 00-23)")
+        if not isinstance(self.huso, str) or not self.huso.strip() or " " in self.huso:
+            raise ValueError(f"huso invalido {self.huso!r}")
 
     @property
     def minutos_del_dia(self) -> int:

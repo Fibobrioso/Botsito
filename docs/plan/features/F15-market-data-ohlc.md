@@ -32,7 +32,7 @@ casos con datos reales (F10, F14), del motor (F18+) y de la paridad con MQL5 (F2
   por dia (mes en base 0, LZMA, 24 bytes `>iiiiif` = `t_s, abierta, cierre, minima, maxima,
   volumen`), funcion de red **inyectada**, reintentos con espera creciente, `User-Agent`
   obligatorio; velas planas de volumen cero (sin ticks; MT5 tampoco las construye) descartadas y
-  contadas, con recuento aparte de las descartadas en laborable y de las de volumen cero no
+  contadas, con recuento aparte de las descartadas dentro de sesion y de las de volumen cero no
   planas (conservadas); volumen float32 -> entero en milesimas (`escala_volumen = 1000`);
   `filtro_planas` y `decodificador_version` en el manifiesto.
 - `src/botsito/data/dataset.py`: `data/ohlc/<dataset_id>/<SIMBOLO>_M1_<AAAA-MM>.csv` (ignorado)
@@ -84,7 +84,10 @@ Dukascopy datafeed (publico, sin cuenta), `HoraLocal` y `zoneinfo` (ADR-0004), `
 `scripts/git-hooks/pre-commit` (data/manifests inmutable), `tests/unit/test_velas.py`,
 `test_agregacion.py`, `test_agregacion_dst.py`, `test_dukascopy.py`, `test_dataset.py`,
 `test_cli_data.py`, `test_golden_ohlc.py`, `tests/contract/test_data_manifest_history.py`,
-`tests/fixtures/ohlc/*.bi5` (+ README con sha256), `tests/golden/ohlc/*.csv`.
+`tests/fixtures/ohlc/*.bi5` (+ README con sha256), `tests/golden/ohlc/*.csv`, `.gitattributes`
+(`*.bi5`), `tests/contract/test_no_business_literals.py` (husos prohibidos),
+`tests/unit/test_registro.py` (sin valores de estrategia), `data/manifests/README.md`,
+`docs/plan/MASTER_PLAN.md` (H.2), `PROJECT_STATE.md`.
 
 ## Tests
 - Unit: invariantes de `Vela` y `SerieVelas`; CSV ida y vuelta determinista (M1 y agregado; CR,
@@ -94,11 +97,13 @@ Dukascopy datafeed (publico, sin cuenta), `HoraLocal` y `zoneinfo` (ADR-0004), `
   agregada = max de las M1, minima = min, abierta = primera, cierre = ultima, volumen = suma; sin
   velas inventadas; causalidad (truncar la serie no cambia las velas cerradas anteriores).
 - DST con datos reales: limites UTC esperados a mano para viernes y lunes de las cuatro semanas
-  de cambio con ambos anclajes; desplazamiento semanal (primera H4 del domingo X vs. X+7 se
-  mueve una hora solo para el anclaje cuyo huso cambio); semana completa sin duplicar limites.
+  de cambio con ambos anclajes (16 casos sobre 10 dias, mas los dos del domingo 2026-03-08);
+  desplazamiento semanal (8 pares de domingos: la primera H4 se mueve una hora solo para el
+  anclaje cuyo huso cambio); semana completa sin duplicar limites.
 - DST con M1 sintetico 24/7: vela de 3 h (primavera, ambos husos), 5 h (otono UE), 1 h + 4 h
   (otono EE. UU. con anclaje de servidor), M15 sin vela de 75 min en la hora repetida, vela de
-  borde incompleta al inicio de un dataset, y un semestre entero con las duraciones admisibles.
+  borde incompleta al inicio de un dataset, y un semestre con los cuatro cambios (octubre 2025 a
+  abril 2026) con las duraciones admisibles.
 - Asociatividad: `M1->M15->H4 == M1->H4` y `M1->H1->H4 == M1->H4` sobre el dia real.
 - Golden: H4 del 2026-07-02 con ambos anclajes, fichero esperado versionado (dos velas
   comprobadas a mano en el informe).
@@ -121,8 +126,9 @@ con su captura.
 ## Riesgos
 - Dukascopy es un proveedor distinto del broker (FundedNext): precios BID y horario de mercado
   pueden diferir en minutos aislados. Se declara en el manifiesto; F16/F33 comparan con la demo.
-- El servidor exige `User-Agent` y a veces tarda >15 s: reintentos con espera creciente y
-  descarga por dias con reanudacion (los ficheros ya presentes con hash correcto no se repiten).
+- El servidor exige `User-Agent` y a veces tarda hasta un minuto por dia: reintentos con espera
+  creciente y cache por dia del fichero crudo en `<datos>/raw/<SIMBOLO>/` (un 404 se recuerda),
+  asi que una descarga interrumpida se reanuda sin repetir dias.
 - Un anclaje a una hora inexistente o ambigua del dia de cambio: regla explicita arriba y test.
 - El reloj de servidor como `17:00 America/New_York` es una aproximacion: F11 declara
   `dst_servidor` y `offset_base_servidor` (categoria `broker`, por ADR) y F17 registra el offset

@@ -64,7 +64,7 @@ feature/F15-market-data-ohlc
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - `domain/velas.py` (F15): `Vela` (MinutoUtc, Puntos, volumen entero, duracion, n_m1, completa), `SerieVelas`, `combinar`; sin datetime/float/Decimal. `data/velas.py` (CSV determinista), `data/agregacion.py` (particion UTC por reloj de pared, ADR-0005), `data/dukascopy.py` (bi5, red inyectada, planas descartadas), `data/dataset.py` (dataset congelado, manifiesto inmutable con id por hash, `cargar_serie` con ventana). CLI `data download/check/aggregate`. Hook y `knowledge validate` protegen `data/manifests/`.
 - `yaml_estricto.py` (claves duplicadas y no hashables rechazadas, fechas como texto) usado por registro, corpus, evidencia, feedback y manifiestos de datos. `scripts/instalar_hooks.py` (make hooks portable; destino `git rev-parse --git-path hooks`; aborta con `core.hooksPath` global). `.python-version` = 3.12 (local y CI).
-- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004. `.gitattributes` con LF.
+- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004, 0005. `.gitattributes` con LF (`*.bi5` binario).
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
@@ -79,7 +79,7 @@ feature/F15-market-data-ohlc
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-198 funciones de test (parametrizadas x3, x7, x8, x9, x11, x13, x15 y x18) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+203 funciones de test (parametrizadas x3, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -140,7 +140,7 @@ en regla o parametro; "pregunta": lo que se le plantea al trader.
 | A-6 | cierre 15:00 | F11, F23 | ¿cierre forzoso a las 15:00 y en que huso? |
 | A-7 | stop del 2.o esquema | F11, F21 | ¿donde va el stop en el segundo esquema de entrada? |
 | A-8 | "dos velas como una" en mapeo | F11, F18 | ¿cuando dos velas cuentan como una estructura? |
-| A-9 | anclaje de la vela H4 (huso del grafico) | F07 (captura), F15 (parametro `anclaje_h4`) | ¿a que hora abre su H4? (se resuelve viendo su grafico) |
+| A-9 | anclaje de la vela H4 (hora y huso del grafico) | F07 (captura), F11 (valor y `huso` de `anclaje_h4`, creado UNKNOWN en F15) | ¿a que hora y en que huso del grafico abre su H4? (se resuelve viendo su grafico) |
 | A-10 | stop a 0,8: fijo o 0,75 + spread | F21 | ¿el 0,8 es fijo o "0,75 mas el spread del momento"? |
 | A-11 | SL en la orden o tras el llenado | F22, F31 | ¿el SL va en la orden pendiente o se pone tras el llenado? |
 
@@ -182,17 +182,18 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F15 · market-data-ohlc (tras validar F09; orden E). F10 absorbe: parametros UNKNOWN pre-poblados,
-ids de caso + particion + seed, papel `sesion_feedback` en el corpus (ver MASTER_PLAN H.2).
+F04 · transcripcion (orden E: F15 -> F04, F05, F07, F08 -> F10). F10 absorbe: parametros UNKNOWN
+pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
+casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Abrir feature/F15-market-data-ohlc (orden E: F15 antes de F04/F05 porque F10 y F14 necesitan datos reales): brief, construccion supervisada, auditoria con agentes, informe WAITING_FOR_USER_VALIDATION.
+F15: congelar los datasets reales de enero, julio y agosto de 2026 (manifiestos en data/manifests), aplicar la auditoria de cierre, completar el informe y dejarlo WAITING_FOR_USER_VALIDATION. Tras validar: merge --no-ff, tag stable/F15, abrir F04.
 
 ## Last Stable Commit
 2ff6450 · merge: F09 expert-feedback-model validado por el usuario · tag stable/F09
 
 ## Change Log
-- 2026-09-04 · F15 construida con revision de diseno previa por agente (brief corregido: sin velas de 3/5 h en datos reales, Vela en domain sin Decimal, huso_datos fuera del registro, id de dataset por hash, velas de borde `completa`); domain/velas, data/{velas,agregacion,dukascopy,dataset}, CLI data, 15 fixtures reales bi5, goldens H4 del 2026-07-02, hook y validate sobre data/manifests; ADR-0005; parametros huso_operativa (CONFIRMED) y anclaje_h4 (UNKNOWN, A-9)
+- 2026-09-04 · F15 construida con revision de diseno previa por agente (brief corregido: sin velas de 3/5 h en datos reales, Vela en domain sin Decimal, huso_datos fuera del registro, id de dataset por hash, velas de borde `completa`); domain/velas, data/{velas,agregacion,dukascopy,dataset}, CLI data, 16 fixtures reales bi5, goldens H4 del 2026-07-02, hook y validate sobre data/manifests; ADR-0005; parametros huso_operativa (CONFIRMED) y anclaje_h4 (UNKNOWN, A-9)
 - 2026-09-04 · rama feature/F15-market-data-ohlc abierta; brief y ADR-0005 (fuente Dukascopy M1 publica, precios enteros en puntos, tres relojes, anclaje por reloj de pared)
 - 2026-09-04 · F09 VALIDADA por el usuario; merge --no-ff a main (2ff6450); tag stable/F09; proteccion de rama main activada en GitHub (enforce_admins, sin force-push ni borrado)
 - 2026-09-04 · push de la auditoria de cierre (e99afba, con trailer Fuente: ADR-0002, ADR-0004 por tocar el comentario de parametros.yaml); CI Ubuntu verde (run 33912550454); Python 3.12 en local y CI

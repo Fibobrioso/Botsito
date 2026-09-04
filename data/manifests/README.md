@@ -17,8 +17,8 @@ re-descarga que cambie datos es un `dataset_id` nuevo.
 | `filtro_planas`, `decodificador_version` | version de la regla de descarte y del decodificador |
 | `desde`, `hasta`, `descargado_el` | rango inclusivo (`hasta` < dia de descarga) y fecha de descarga |
 | `generado_por`, `reemplaza_a` | commit de botsito (opcional) y dataset al que sustituye (opcional) |
-| `ficheros[]` | `ruta` (relativa a `data/`), `bytes`, `sha256`, `filas`, `primera`, `ultima` |
-| `dias` | `presentes`, `ausentes[]` (404), `sin_datos[]` (cuerpo vacio), `registros`, `descartadas_planas_sin_volumen`, `descartadas_en_laborable`, `volumen_cero_no_planas`, `velas` |
+| `ficheros[]` | `ruta` (relativa a la carpeta `[rutas].data` de settings, por defecto `data/`), `bytes`, `sha256`, `filas`, `primera`, `ultima` |
+| `dias` | `presentes`, `ausentes[]` (404), `sin_datos[]` (cuerpo vacio), `registros`, `descartadas_planas_sin_volumen`, `descartadas_dentro_de_sesion`, `volumen_cero_no_planas`, `velas` |
 | `huecos` | `menores_de_60_min` (recuento) y `mayores[]` con `desde`, `hasta`, `minutos` (fines de semana, festivos, caidas) |
 
 CSV M1: `ts_utc,abierta,maxima,minima,cierre,volumen`, LF sin BOM, ascendente, sin duplicados,
@@ -35,4 +35,6 @@ botsito data aggregate --dataset eurusd-m1-2026-07 --periodo 240 --anclaje "00:0
 ```
 `--anclaje` es obligatorio mientras `anclaje_h4` siga UNKNOWN en el registro (A-9). El reloj de
 servidor de un broker MT5 tipico se expresa como `17:00 America/New_York`. Las velas de borde sin
-cerrar se omiten salvo `--incluir-incompletas`. Commit del manifiesto con `Fuente: ADR-0005`.
+cerrar se omiten salvo `--incluir-incompletas`. Por convencion, el commit del manifiesto cita
+`Fuente: ADR-0005` (la guardia de trailers solo vigila `knowledge/spec` y `knowledge/cases`). La
+descarga cachea cada dia crudo en `<datos>/raw/<SIMBOLO>/` y se reanuda si se interrumpe.

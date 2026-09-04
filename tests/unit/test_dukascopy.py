@@ -39,10 +39,14 @@ def test_decodifica_y_descarta_planas() -> None:
     assert [es_plana_sin_volumen(v) for v in velas] == [True, False, True]
     dia = descargar_dia("XXXYYY", date(2026, 7, 2), lambda _url: cuerpo)  # jueves
     assert dia.presente and dia.registros == 3 and dia.descartadas == 2 and len(dia.velas) == 1
-    assert dia.descartadas_en_laborable == 2 and dia.volumen_cero_no_planas == 0
+    # Las planas del principio y del final del dia no estan "dentro de sesion".
+    assert dia.descartadas_dentro_de_sesion == 0 and dia.volumen_cero_no_planas == 0
+    con_hueco = bi5((0, 5, 6, 4, 7, 1.0), (60, 6, 6, 6, 6, 0.0), (120, 6, 6, 5, 7, 1.0))
+    dia_hueco = descargar_dia("XXXYYY", date(2026, 7, 2), lambda _url: con_hueco)
+    assert dia_hueco.descartadas == 1 and dia_hueco.descartadas_dentro_de_sesion == 1
     dudosa = bi5((0, 5, 6, 4, 7, 0.0))  # precio se movio sin volumen: se conserva y se cuenta
     dia2 = descargar_dia("XXXYYY", date(2026, 7, 5), lambda _url: dudosa)  # domingo
-    assert dia2.volumen_cero_no_planas == 1 and dia2.descartadas_en_laborable == 0
+    assert dia2.volumen_cero_no_planas == 1 and dia2.descartadas_dentro_de_sesion == 0
 
 
 def test_dia_sin_fichero_y_vacio() -> None:
@@ -62,6 +66,10 @@ def test_dia_sin_fichero_y_vacio() -> None:
         (bi5((60, 1, 1, 1, 1, 0.0), (60, 1, 1, 1, 1, 0.0)), "duplicados"),
         (bi5((120, 1, 1, 1, 1, 0.0), (60, 1, 1, 1, 1, 0.0)), "desordenados"),
         (bi5((0, 9, 1, 1, 1, 0.0)), "fuera de rango"),
+        (bi5((0, 5, 6, 4, 7, float("nan"))), "volumen invalido"),
+        (bi5((0, 5, 6, 4, 7, float("inf"))), "volumen invalido"),
+        (bi5((0, 5, 6, 4, 7, -1.0)), "volumen invalido"),
+        (lzma.compress(b"\x00" * (24 * 1441)), "mas de 1440"),
     ],
 )
 def test_formato_invalido(cuerpo: bytes, mensaje: str) -> None:
@@ -105,3 +113,42 @@ def test_descarga_http_reintenta_y_falla_cerrado(monkeypatch: pytest.MonkeyPatch
     with pytest.raises(DescargaError, match="lento"):
         descarga_http("http://x", intentos=3, espera_s=0)
     assert len(llamadas) == 3
+
+
+def test_cache_por_dia_reanuda(tmp_path: Path) -> None:
+    from botsito.data.dukascopy import con_cache
+
+    llamadas: list[str] = []
+
+    def red(url: str) -> bytes | None:
+        llamadas.append(url)
+        return None if "/2026/02/01/" in url else b"cuerpo"
+
+    d = con_cache(tmp_path / "raw", red)
+    u1, u2 = url_dia("XXXYYY", date(2026, 3, 2)), url_dia("XXXYYY", date(2026, 3, 1))
+    assert d(u1) == b"cuerpo" and d(u1) == b"cuerpo" and len(llamadas) == 1
+    assert d(u2) is None and d(u2) is None and len(llamadas) == 2
+    assert (tmp_path / "raw" / "XXXYYY" / "2026-03-02.bi5").read_bytes() == b"cuerpo"
+    assert (tmp_path / "raw" / "XXXYYY" / "2026-03-01.404").exists()
+    # Otra instancia sobre el mismo disco no vuelve a la red.
+    assert con_cache(tmp_path / "raw", red)(u1) == b"cuerpo" and len(llamadas) == 2
+
+
+def test_descarga_http_404_y_500(monkeypatch: pytest.MonkeyPatch) -> None:
+    import urllib.error
+    import urllib.request
+
+    def responde(codigo: int) -> object:
+        def f(*_a: object, **_k: object) -> object:
+            raise urllib.error.HTTPError("http://x", codigo, "msg", {}, None)  # type: ignore[arg-type]
+
+        return f
+
+    esperas: list[float] = []
+    monkeypatch.setattr("botsito.data.dukascopy.time.sleep", esperas.append)
+    monkeypatch.setattr(urllib.request, "urlopen", responde(404))
+    assert descarga_http("http://x", intentos=3, espera_s=1) is None and esperas == []
+    monkeypatch.setattr(urllib.request, "urlopen", responde(503))
+    with pytest.raises(DescargaError, match="503"):
+        descarga_http("http://x", intentos=3, espera_s=1)
+    assert esperas == [1, 2]  # no se duerme tras el ultimo intento

@@ -93,6 +93,14 @@ def test_periodo_y_huso_invalidos() -> None:
         limites_del_dia(date(2026, 7, 2), 7, MADRID)
     with pytest.raises(AnclajeError, match="huso desconocido"):
         limites_del_dia(date(2026, 7, 2), H4, HoraLocal("00:00", "Marte/Olympus"))
+    with pytest.raises(AnclajeError, match="nombre IANA exacto"):  # en Windows resolveria
+        limites_del_dia(date(2026, 7, 2), H4, HoraLocal("00:00", "Europe/madrid"))
+    with pytest.raises(ValueError, match="hora invalida"):
+        HoraLocal("25:00", "UTC")
+    with pytest.raises(ValueError, match="hora invalida"):
+        HoraLocal("0700", "UTC")
+    with pytest.raises(ValueError, match="huso invalido"):
+        HoraLocal("07:00", "")
     with pytest.raises(AnclajeError, match="desordenadas"):
         agregar([m1("2026-07-02T09:01Z"), m1("2026-07-02T09:00Z")], M15, UTC0)
 
@@ -128,6 +136,22 @@ def test_limites_entre_incluye_el_anterior() -> None:
         "2026-07-02T09:15Z",
         "2026-07-02T09:30Z",
     ]
+
+
+def _cada_4h(primero: str, n: int) -> list[tuple[str, int]]:
+    """n limites de 4 h a partir del primero (derivacion independiente de la agregacion)."""
+    m = parse_ts(primero)
+    return [(formato_ts(m + 240 * k), 240) for k in range(n)]
+
+
+def _dia_completo(primer_limite: str, dia: str) -> list[tuple[str, int]]:
+    """Sesion 00:00Z-23:59Z: 6 velas desde el limite anterior a medianoche + la de las 2x:00Z."""
+    return _cada_4h(primer_limite, 7)
+
+
+def _viernes(primer_limite: str, dia: str) -> list[tuple[str, int]]:
+    """Sesion 00:00Z hasta el cierre (17:00 NY): 6 velas."""
+    return _cada_4h(primer_limite, 6)
 
 
 @pytest.mark.parametrize(
@@ -216,6 +240,22 @@ def test_limites_entre_incluye_el_anterior() -> None:
                 ("2025-10-27T23:00Z", 240),
             ],
         ),
+        ("2025-10-27", SERVIDOR, _dia_completo("2025-10-26T21:00Z", "2025-10-27")),
+        # Viernes 2025-10-24 (CEST, EDT): sesion hasta 20:59Z.
+        ("2025-10-24", MADRID, _viernes("2025-10-23T22:00Z", "2025-10-24")),
+        ("2025-10-24", SERVIDOR, _viernes("2025-10-23T21:00Z", "2025-10-24")),
+        # Viernes 2025-10-31 (CET; EE. UU. aun EDT hasta el 2 nov).
+        ("2025-10-31", MADRID, _viernes("2025-10-30T23:00Z", "2025-10-31")),
+        ("2025-10-31", SERVIDOR, _viernes("2025-10-30T21:00Z", "2025-10-31")),
+        # Lunes 2025-11-03 (CET, EST).
+        ("2025-11-03", MADRID, _dia_completo("2025-11-02T23:00Z", "2025-11-03")),
+        # Viernes 2026-03-06 (CET, EST): sesion hasta 21:59Z, cierre 22:00Z = 17:00 EST.
+        ("2026-03-06", MADRID, _viernes("2026-03-05T23:00Z", "2026-03-06")),
+        # Lunes 2026-03-09 (CET; EE. UU. ya EDT): semana de desfase.
+        ("2026-03-09", MADRID, _dia_completo("2026-03-08T23:00Z", "2026-03-09")),
+        ("2026-03-09", SERVIDOR, _dia_completo("2026-03-08T21:00Z", "2026-03-09")),
+        # Lunes 2026-03-30 (CEST, EDT).
+        ("2026-03-30", SERVIDOR, _dia_completo("2026-03-29T21:00Z", "2026-03-30")),
     ],
 )
 def test_h4_reales_en_las_semanas_de_cambio_de_hora(
@@ -301,4 +341,5 @@ def test_propiedades_de_agregacion(
     for a, b in zip(salida, salida[1:], strict=False):
         assert a.fin <= b.inicio
     for v in salida:
-        assert (int(v.inicio) - int(anclaje.minutos_del_dia)) % periodo == 0 or anclaje is not UTC0
+        if anclaje is UTC0:
+            assert (int(v.inicio) - anclaje.minutos_del_dia) % periodo == 0

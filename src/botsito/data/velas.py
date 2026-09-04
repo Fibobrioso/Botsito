@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -50,17 +51,24 @@ def formato_ts(minuto: MinutoUtc | int) -> str:
 
 def parse_ts(texto: str) -> MinutoUtc:
     try:
+        if not _TS_CANONICO.match(texto):
+            raise ValueError("formato")
         return a_minuto(datetime.strptime(texto, _FORMATO_TS).replace(tzinfo=UTC))
     except ValueError as exc:
         raise VelasCsvError(f"ts_utc invalido {texto!r} (formato AAAA-MM-DDTHH:MMZ)") from exc
 
 
-def escribir_csv(velas: list[Vela], agregadas: bool = False) -> str:
+def escribir_csv(velas: list[Vela], agregadas: bool = False, comentario: str | None = None) -> str:
     """Texto CSV determinista. Exige orden ascendente estricto (sin duplicados).
 
-    Sin `agregadas`, todas las velas deben ser M1 completas.
+    Sin `agregadas`, todas las velas deben ser M1 completas. `comentario` (una linea `# ...` antes
+    de la cabecera) registra el anclaje y el periodo de una agregacion.
     """
     salida = io.StringIO()
+    if comentario is not None:
+        if "\n" in comentario or "\r" in comentario:
+            raise VelasCsvError("el comentario ocupa una sola linea")
+        salida.write(f"# {comentario}\n")
     w = csv.writer(salida, lineterminator="\n")
     w.writerow(COLUMNAS_AGREGADAS if agregadas else COLUMNAS)
     anterior: int | None = None
@@ -78,15 +86,21 @@ def escribir_csv(velas: list[Vela], agregadas: bool = False) -> str:
     return salida.getvalue()
 
 
+_ENTERO_CANONICO = re.compile(r"^-?(0|[1-9][0-9]*)$", re.ASCII)
+_TS_CANONICO = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$", re.ASCII)
+
+
 def _entero_estricto(texto: str) -> int:
-    """`int()` sin tolerancias: ni espacios, ni signo mas, ni guiones bajos."""
-    if not texto or not (texto.isdigit() or (texto[0] == "-" and texto[1:].isdigit())):
-        raise ValueError(f"no es un entero: {texto!r}")
+    """Entero canonico: ni espacios, ni signo mas, ni ceros a la izquierda, ni digitos Unicode."""
+    if not _ENTERO_CANONICO.match(texto):
+        raise ValueError(f"no es un entero canonico: {texto!r}")
     return int(texto)
 
 
 def leer_csv(texto: str) -> list[Vela]:
     """Lee M1 o velas agregadas; la cabecera decide."""
+    if texto.startswith("# "):
+        texto = texto.split("\n", 1)[1] if "\n" in texto else ""
     filas = list(csv.reader(io.StringIO(texto)))
     cabecera = tuple(filas[0]) if filas else ()
     if cabecera not in (COLUMNAS, COLUMNAS_AGREGADAS):
@@ -128,9 +142,11 @@ def leer_csv(texto: str) -> list[Vela]:
     return velas
 
 
-def escribir_fichero(ruta: Path, velas: list[Vela], agregadas: bool = False) -> None:
+def escribir_fichero(
+    ruta: Path, velas: list[Vela], agregadas: bool = False, comentario: str | None = None
+) -> None:
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(escribir_csv(velas, agregadas), encoding="utf-8", newline="\n")
+    ruta.write_text(escribir_csv(velas, agregadas, comentario), encoding="utf-8", newline="\n")
 
 
 def leer_fichero(ruta: Path) -> list[Vela]:

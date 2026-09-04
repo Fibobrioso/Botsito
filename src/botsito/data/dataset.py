@@ -37,14 +37,22 @@ from botsito.data.dukascopy import (
     DiaDescargado,
     descargar_dia,
 )
-from botsito.data.velas import a_datetime, escribir_csv, formato_ts, leer_fichero
+from botsito.data.velas import (
+    VelasCsvError,
+    a_datetime,
+    escribir_csv,
+    formato_ts,
+    leer_fichero,
+    parse_ts,
+)
 from botsito.domain.velas import SerieVelas, Vela
 from botsito.yaml_estricto import YamlError, cargar_yaml
 
 SCHEMA_VERSION = 1
 DIRECTORIO_MANIFIESTOS = "data/manifests"
 CARPETA_OHLC = "ohlc"
-_NOMBRE = re.compile(r"^[a-z0-9][a-z0-9-]{1,47}$", re.ASCII)
+_NOMBRE = re.compile(r"^(?=.{2,48}$)[a-z0-9]+(-[a-z0-9]+)*$", re.ASCII)
+_SUFIJO_HEX = re.compile(r"^[0-9a-f]{8}$", re.ASCII)
 _ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,47}-[0-9a-f]{8}$", re.ASCII)
 _SIMBOLO = re.compile(r"^[A-Z0-9]{3,12}$", re.ASCII)
 _SHA256 = re.compile(r"^[0-9a-f]{64}$", re.ASCII)
@@ -126,8 +134,11 @@ def congelar(
 
     `hasta` debe ser anterior a `hoy`: el dia en curso llegaria parcial y quedaria congelado.
     """
-    if not _NOMBRE.match(nombre):
-        raise DatasetError(f"nombre {nombre!r} invalido (minusculas, digitos y guiones, 2-48)")
+    if not _NOMBRE.match(nombre) or _SUFIJO_HEX.match(nombre.rsplit("-", 1)[-1]):
+        raise DatasetError(
+            f"nombre {nombre!r} invalido (minusculas, digitos y guiones interiores, 2-48; "
+            "el ultimo tramo no puede ser 8 hex)"
+        )
     if not _SIMBOLO.match(simbolo):
         raise DatasetError(f"simbolo {simbolo!r} invalido (mayusculas y digitos)")
     if isinstance(escala, bool) or escala <= 0:
@@ -141,7 +152,7 @@ def congelar(
     por_mes: dict[str, list[Vela]] = {}
     ausentes: list[str] = []
     sin_datos: list[str] = []
-    registros = descartadas = presentes = dudosas = planas_laborables = 0
+    registros = descartadas = presentes = dudosas = planas_sesion = 0
     for dia in dias_entre(desde, hasta):
         resultado = descargar(simbolo, dia, descarga)
         if not resultado.presente:
@@ -151,7 +162,7 @@ def congelar(
         registros += resultado.registros
         descartadas += resultado.descartadas
         dudosas += resultado.volumen_cero_no_planas
-        planas_laborables += resultado.descartadas_en_laborable
+        planas_sesion += resultado.descartadas_dentro_de_sesion
         if not resultado.velas:
             sin_datos.append(dia.isoformat())
             continue
@@ -211,7 +222,7 @@ def congelar(
             "sin_datos": sin_datos,
             "registros": registros,
             "descartadas_planas_sin_volumen": descartadas,
-            "descartadas_en_laborable": planas_laborables,
+            "descartadas_dentro_de_sesion": planas_sesion,
             "volumen_cero_no_planas": dudosas,
             "velas": len(todas),
         },
@@ -285,15 +296,30 @@ def validar_manifiesto(doc: dict[str, Any], origen: str) -> dict[str, Any]:
         raise DatasetError(f"{origen}: el fichero debe llamarse {dataset_id}.yaml")
     for campo in ("proveedor", "tipo_precio", "simbolo", "simbolo_proveedor", "huso_datos"):
         _texto(doc, campo, origen)
-    if doc["huso_datos"] != HUSO_DATOS:
-        raise DatasetError(f"{origen}: huso_datos debe ser {HUSO_DATOS}")
+    # Los valores que dan significado a los datos se validan, no solo se aceptan: el id cubre los
+    # bytes de los CSV, no el manifiesto.
+    fijos = {
+        "huso_datos": HUSO_DATOS,
+        "proveedor": PROVEEDOR,
+        "tipo_precio": TIPO_PRECIO,
+        "escala_volumen": ESCALA_VOLUMEN,
+        "periodo_min": 1,
+    }
+    for campo, valor in fijos.items():
+        if doc[campo] != valor:
+            raise DatasetError(f"{origen}: {campo} debe ser {valor!r}")
+    if not _SIMBOLO.match(doc["simbolo"]):
+        raise DatasetError(f"{origen}: simbolo invalido")
+    fechas: dict[str, date] = {}
     for campo in ("desde", "hasta", "descargado_el"):
         try:
-            date.fromisoformat(_texto(doc, campo, origen))
+            fechas[campo] = date.fromisoformat(_texto(doc, campo, origen))
         except ValueError as exc:
             raise DatasetError(f"{origen}: {campo} no es una fecha AAAA-MM-DD") from exc
-    if doc["hasta"] < doc["desde"]:
+    if fechas["hasta"] < fechas["desde"]:
         raise DatasetError(f"{origen}: hasta anterior a desde")
+    if fechas["descargado_el"] <= fechas["hasta"]:
+        raise DatasetError(f"{origen}: descargado_el debe ser posterior a hasta")
     for campo in (
         "escala",
         "escala_volumen",
@@ -302,6 +328,8 @@ def validar_manifiesto(doc: dict[str, Any], origen: str) -> dict[str, Any]:
         "decodificador_version",
     ):
         _entero_positivo(doc, campo, origen)
+    if "generado_por" in doc and not isinstance(doc["generado_por"], str):
+        raise DatasetError(f"{origen}: generado_por debe ser texto")
     ficheros = doc["ficheros"]
     if not isinstance(ficheros, list) or not ficheros:
         raise DatasetError(f"{origen}: ficheros debe ser una lista no vacia")
@@ -325,8 +353,18 @@ def validar_manifiesto(doc: dict[str, Any], origen: str) -> dict[str, Any]:
         hashes.append(f["sha256"])
         for campo in ("bytes", "filas"):
             v = f.get(campo)
-            if isinstance(v, bool) or not isinstance(v, int) or v < 0:
+            if isinstance(v, bool) or not isinstance(v, int) or v < 1:
                 raise DatasetError(f"{origen}: {campo} invalido en {ruta}")
+        try:
+            primera, ultima = parse_ts(str(f.get("primera"))), parse_ts(str(f.get("ultima")))
+        except VelasCsvError as exc:
+            raise DatasetError(f"{origen}: primera/ultima invalidas en {ruta} ({exc})") from exc
+        if not (
+            fechas["desde"] <= a_datetime(primera).date()
+            and a_datetime(ultima).date() <= fechas["hasta"]
+            and primera <= ultima
+        ):
+            raise DatasetError(f"{origen}: primera/ultima fuera de [desde, hasta] en {ruta}")
     nombre = dataset_id.rsplit("-", 1)[0]
     if id_desde_hashes(nombre, hashes) != dataset_id:
         raise DatasetError(f"{origen}: el sufijo del dataset_id no coincide con los hashes")
@@ -366,6 +404,8 @@ def cargar_serie(
     Con `desde`/`hasta` (dias UTC inclusivos) solo se leen los ficheros mensuales necesarios y se
     devuelve la ventana: F10 y F14 cargan la ventana de un caso, no meses enteros.
     """
+    if desde and hasta and hasta < desde:
+        raise DatasetError(f"ventana invalida: {desde} > {hasta}")
     velas: list[Vela] = []
     for f in manifiesto["ficheros"]:
         mes = str(f["ruta"]).rsplit("_", 1)[-1].removesuffix(".csv")
@@ -379,6 +419,11 @@ def cargar_serie(
         parte = leer_fichero(ruta)
         if len(parte) != f["filas"]:
             raise DatasetError(f"{f['ruta']}: {len(parte)} filas, el manifiesto dice {f['filas']}")
+        if (
+            formato_ts(parte[0].inicio) != f["primera"]
+            or formato_ts(parte[-1].inicio) != f["ultima"]
+        ):
+            raise DatasetError(f"{f['ruta']}: primera/ultima no coinciden con el manifiesto")
         if velas and parte and parte[0].inicio <= velas[-1].inicio:
             raise DatasetError(f"{f['ruta']}: ficheros desordenados en el manifiesto")
         velas.extend(parte)

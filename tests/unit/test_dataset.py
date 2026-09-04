@@ -77,7 +77,7 @@ def test_congelar_escribe_csv_y_manifiesto(tmp_path: Path) -> None:
         "sin_datos": ["2026-01-05"],
         "registros": 5760,
         "descartadas_planas_sin_volumen": 840,
-        "descartadas_en_laborable": 840,
+        "descartadas_dentro_de_sesion": 0,
         "volumen_cero_no_planas": 0,
         "velas": 4920,
     }
@@ -115,6 +115,8 @@ def test_congelar_es_determinista_e_inmutable(tmp_path: Path) -> None:
     ("extra", "mensaje"),
     [
         ({"nombre": "Prueba"}, "nombre"),
+        ({"nombre": "prueba-"}, "nombre"),
+        ({"nombre": "x-deadbeef"}, "8 hex"),
         ({"simbolo": "eurusd"}, "simbolo"),
         ({"escala": 0}, "escala"),
         ({"escala": True}, "escala"),
@@ -156,6 +158,35 @@ def test_cargar_serie_y_ventana(tmp_path: Path) -> None:
     assert formato_ts(ventana.velas[-1].inicio) == "2026-01-02T23:59Z"
     fuera = cargar_serie(c.manifiesto, tmp_path / "data", date(2026, 3, 1), date(2026, 3, 2))
     assert fuera.velas == ()
+    with pytest.raises(DatasetError, match="ventana invalida"):
+        cargar_serie(c.manifiesto, tmp_path / "data", date(2026, 1, 3), date(2026, 1, 2))
+
+
+def test_dataset_de_dos_meses_y_ventana_que_cruza(tmp_path: Path) -> None:
+    def descarga(url: str) -> bytes | None:
+        return bi5_dia(100000)
+
+    c = congelar(
+        tmp_path,
+        tmp_path / "data",
+        "dos",
+        "XXXYYY",
+        100000,
+        date(2026, 1, 30),
+        date(2026, 2, 2),
+        descarga,
+        HOY,
+    )
+    assert [f.name for f in c.ficheros] == ["XXXYYY_M1_2026-01.csv", "XXXYYY_M1_2026-02.csv"]
+    serie = cargar_serie(c.manifiesto, tmp_path / "data", date(2026, 1, 31), date(2026, 2, 1))
+    assert len(serie.velas) == 2880
+    assert formato_ts(serie.velas[0].inicio) == "2026-01-31T00:00Z"
+    assert formato_ts(serie.velas[-1].inicio) == "2026-02-01T23:59Z"
+    # Un manifiesto cuyo primera/ultima no cuadran con el CSV se rechaza al cargar.
+    doc = dict(c.manifiesto)
+    doc["ficheros"] = [dict(doc["ficheros"][0], ultima="2026-01-30T00:00Z"), doc["ficheros"][1]]
+    with pytest.raises(DatasetError, match="primera/ultima no coinciden"):
+        cargar_serie(doc, tmp_path / "data")
 
 
 def test_manifiesto_editado_o_corrupto(tmp_path: Path) -> None:
@@ -163,6 +194,15 @@ def test_manifiesto_editado_o_corrupto(tmp_path: Path) -> None:
     doc = yaml.safe_load(c.ruta_manifiesto.read_text(encoding="utf-8"))
     casos: list[tuple[dict[str, Any], str]] = [
         ({"huso_datos": "Europe/Madrid"}, "huso_datos"),
+        ({"proveedor": "otro"}, "proveedor"),
+        ({"escala_volumen": 7}, "escala_volumen"),
+        ({"periodo_min": 5}, "periodo_min"),
+        ({"simbolo": "eur usd"}, "simbolo"),
+        ({"descargado_el": "2026-01-06"}, "posterior a hasta"),
+        ({"generado_por": 123}, "generado_por"),
+        ({"ficheros": [dict(doc["ficheros"][0], filas=0)]}, "filas"),
+        ({"ficheros": [dict(doc["ficheros"][0], primera="2025-12-31T00:00Z")]}, "primera/ultima"),
+        ({"ficheros": [dict(doc["ficheros"][0], ultima="x")]}, "primera/ultima"),
         ({"schema_version": 2}, "schema_version"),
         ({"escala": "100000"}, "escala"),
         ({"hasta": "2025-12-31"}, "hasta anterior"),

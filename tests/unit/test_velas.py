@@ -103,6 +103,12 @@ def test_csv_ida_y_vuelta_determinista(tmp_path: Path) -> None:
     assert leer_csv(texto_agg) == [agregada]
     with pytest.raises(VelasCsvError, match="no es M1"):
         escribir_csv([agregada])
+    # Un comentario de una linea antes de la cabecera registra el anclaje; se ignora al leer.
+    con_comentario = escribir_csv([agregada], agregadas=True, comentario="anclaje=00:00 UTC")
+    assert con_comentario.startswith("# anclaje=00:00 UTC\nts_utc,")
+    assert leer_csv(con_comentario) == [agregada]
+    with pytest.raises(VelasCsvError, match="una sola linea"):
+        escribir_csv([agregada], agregadas=True, comentario="a\nb")
 
 
 @pytest.mark.parametrize(
@@ -128,6 +134,18 @@ def test_csv_ida_y_vuelta_determinista(tmp_path: Path) -> None:
         ("ts_utc,abierta,maxima,minima,cierre,volumen\n2026-07-02T09:30Z,1,2,0,1,x\n", "invalido"),
         ("ts_utc,abierta,maxima,minima,cierre,volumen\n2026-07-02T09:30Z, 1,2,0,1,1\n", "invalido"),
         ("ts_utc,abierta,maxima,minima,cierre,volumen\n2026-07-02T09:30Z,+1,2,0,1,1\n", "invalido"),
+        (
+            "ts_utc,abierta,maxima,minima,cierre,volumen\n2026-07-02T09:30Z,007,2,0,1,1\n",
+            "invalido",
+        ),
+        (
+            "ts_utc,abierta,maxima,minima,cierre,volumen\n2026-07-02T09:30Z,\u0663,2,0,1,1\n",
+            "invalido",
+        ),
+        (
+            "ts_utc,abierta,maxima,minima,cierre,volumen\n2026-7-2T9:30Z,1,2,0,1,1\n",
+            "ts_utc invalido",
+        ),
         (
             "ts_utc,abierta,maxima,minima,cierre,volumen,duracion_min,n_m1,completa\n"
             "2026-07-02T09:30Z,1,2,0,1,1,15,1,2\n",

@@ -592,7 +592,7 @@ def data_download(repo: Path, args: argparse.Namespace) -> int:
     from datetime import UTC, date, datetime
 
     from botsito.data.dataset import DatasetError, congelar
-    from botsito.data.dukascopy import DescargaError, FormatoBi5Error, descarga_http
+    from botsito.data.dukascopy import DescargaError, FormatoBi5Error, con_cache, descarga_http
 
     if not (repo / "knowledge").is_dir():
         print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
@@ -603,16 +603,17 @@ def data_download(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: fechas AAAA-MM-DD: {exc}")
         return 1
     commit = _git(repo, "rev-parse", "--short", "HEAD")
+    carpeta_datos = _carpeta_datos(repo)
     try:
         congelado = congelar(
             repo,
-            _carpeta_datos(repo),
+            carpeta_datos,
             args.dataset,
             args.simbolo,
             args.escala,
             desde,
             hasta,
-            descarga_http,
+            con_cache(carpeta_datos / "raw", descarga_http),
             hoy=datetime.now(UTC).date(),
             reemplaza_a=args.reemplaza_a,
             generado_por=commit,
@@ -627,7 +628,8 @@ def data_download(repo: Path, args: argparse.Namespace) -> int:
         f"  {d['velas']} velas M1 en {len(m['ficheros'])} ficheros; dias presentes "
         f"{d['presentes']}, ausentes {len(d['ausentes'])}, sin datos {len(d['sin_datos'])}; "
         f"planas descartadas "
-        f"{d['descartadas_planas_sin_volumen']} ({d['descartadas_en_laborable']} en laborable); "
+        f"{d['descartadas_planas_sin_volumen']} ({d['descartadas_dentro_de_sesion']} dentro de "
+        f"sesion); "
         f"huecos >= 60 min: {len(m['huecos']['mayores'])}"
     )
     print("Commit del manifiesto con Fuente: ADR-0005 (es inmutable: no se edita)")
@@ -642,9 +644,10 @@ def data_check(repo: Path, args: argparse.Namespace) -> int:
     except DatasetError as exc:
         print(f"ERROR: {exc}")
         return 1
-    problemas = comprobar(manifiesto, _carpeta_datos(repo), hashes=args.hashes)
+    carpeta = _carpeta_datos(repo)
+    problemas = comprobar(manifiesto, carpeta, hashes=args.hashes)
     for p in problemas:
-        print(f"ERROR: {p}")
+        print(f"ERROR: {p} (carpeta de datos: {carpeta})")
     if not problemas:
         modo = "hashes" if args.hashes else "tamanos"
         print(f"OK: {manifiesto['dataset_id']} coincide con el disco ({modo})")
@@ -674,6 +677,8 @@ def data_aggregate(repo: Path, args: argparse.Namespace) -> int:
     try:
         desde = date.fromisoformat(args.desde) if args.desde else None
         hasta = date.fromisoformat(args.hasta) if args.hasta else None
+        if desde and hasta and hasta < desde:
+            raise ValueError(f"--hasta {hasta} anterior a --desde {desde}")
         manifiesto = cargar_manifiesto(buscar_manifiesto(repo, args.dataset))
         serie = cargar_serie(manifiesto, _carpeta_datos(repo), desde, hasta)
         velas = agregar(list(serie.velas), args.periodo, anclaje)
@@ -683,9 +688,19 @@ def data_aggregate(repo: Path, args: argparse.Namespace) -> int:
     omitidas = [v for v in velas if not v.completa]
     if not args.incluir_incompletas:
         velas = [v for v in velas if v.completa]
-    texto = escribir_csv(velas, agregadas=True)
+    comentario = (
+        f"dataset={manifiesto['dataset_id']} periodo_min={args.periodo} "
+        f"anclaje={anclaje.hora} {anclaje.huso} escala={manifiesto['escala']}"
+    )
+    texto = escribir_csv(velas, agregadas=True, comentario=comentario)
     if args.salida:
-        Path(args.salida).write_text(texto, encoding="utf-8", newline="\n")
+        try:
+            destino = Path(args.salida)
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            destino.write_text(texto, encoding="utf-8", newline="\n")
+        except OSError as exc:
+            print(f"ERROR: no se pudo escribir {args.salida}: {exc}")
+            return 1
         print(f"OK: {len(velas)} velas de {args.periodo} min en {args.salida}")
     else:
         sys.stdout.write(texto)
@@ -824,8 +839,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    if hasattr(sys.stdout, "reconfigure"):  # consolas Windows en cp1252
-        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stdout, "reconfigure"):  # consolas Windows en cp1252 y con CRLF
+        sys.stdout.reconfigure(encoding="utf-8", newline="\n")
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.cmd == "state" and args.state_cmd == "check":

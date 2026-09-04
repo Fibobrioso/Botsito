@@ -21,7 +21,9 @@ phase: F15
 3. **Tres relojes explicitos** (ADR-0004): los datos van en UTC (`huso_datos: UTC` es un campo
    fijo y validado de cada manifiesto, NO un parametro: una sola puerta por valor, ADR-0002);
    `huso_operativa = Europe/Madrid` (el trader; huso de informes, journal y "dia del trader") es
-   un parametro `texto` de categoria `ejecucion` CONFIRMED por este ADR; el reloj del servidor del
+   un parametro `texto` de categoria `ejecucion` CONFIRMED por este ADR (esto amplia `ejecucion`,
+   definida en ADR-0004 como magic number, llenado y latencia, a los hechos del entorno del
+   trader que no se le preguntan); el reloj del servidor del
    broker se representa como `17:00 America/New_York` = 00:00 de servidor (convencion de los
    brokers MT5 con GMT+2/+3 que siguen el DST de Nueva York), **aproximacion declarada** que solo
    F17 puede verificar contra el terminal (H.2). El anclaje de la vela H4 (`anclaje_h4`, tipo
@@ -40,13 +42,15 @@ phase: F15
    reloj de servidor durante el cierre. La regla reproduce ambos comportamientos observables.
 5. **Velas planas de volumen cero** (sin ticks: el proveedor rellena los 1440 minutos, tambien
    dentro de la sesion) se descartan al descargar y se cuentan en el manifiesto, con recuento
-   aparte de las descartadas en dia laborable y de las de volumen cero no planas (conservadas,
+   aparte de las descartadas dentro de sesion (entre la primera y la ultima vela activa del dia) y de las de volumen cero no planas (conservadas,
    dato dudoso). La regla lleva version (`filtro_planas`), como el decodificador.
 6. **Manifiestos de datos inmutables** en `data/manifests/<dataset_id>.yaml` (versionados; los
    datos no). `dataset_id = <nombre>-<8 hex del sha256 de los sha256 de los ficheros>`: bytes
    distintos son otro dataset, `reemplaza_a` enlaza con el anterior y el anterior no se edita.
    `hasta` es anterior al dia de descarga (el dia en curso llegaria parcial). Campos en
-   `data/manifests/README.md`.
+   `data/manifests/README.md`. La descarga guarda el fichero crudo de cada dia en
+   `<datos>/raw/<SIMBOLO>/` (y recuerda los 404): una descarga interrumpida se reanuda sin
+   repetir dias.
 
 ## Problema que resuelve
 El plan exige velas reproducibles con el anclaje H4 y el huso del trader antes de construir casos
