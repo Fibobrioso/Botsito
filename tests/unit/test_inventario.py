@@ -72,6 +72,9 @@ def test_huecos_en_indice() -> None:
     assert huecos_en_indice("basura\n", 5, duracion_s=10) == [
         {"desde_s": 0.0, "hasta_s": 10.0, "segundos": 10.0}
     ]
+    assert huecos_en_indice("a.jpg 0:00:10 1.2.3\n", 5, duracion_s=10) == [
+        {"desde_s": 0.0, "hasta_s": 10.0, "segundos": 10.0}
+    ]
 
 
 def test_sha256_igual_a_hashlib(tmp_path: Path) -> None:

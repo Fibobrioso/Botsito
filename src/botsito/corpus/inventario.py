@@ -19,6 +19,8 @@ from typing import Any
 
 import yaml
 
+from botsito.yaml_estricto import YamlError, cargar_yaml
+
 PAPELES_CARPETA = ("heredado_v2", "material_adicional")
 VERSION_MANIFIESTO = 1
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -66,7 +68,10 @@ class InfoVideo:
 def cargar_fuentes(ruta: Path) -> Fuentes:
     if not ruta.exists():
         raise InventarioError(f"no existe {ruta}")
-    doc = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
+    try:
+        doc = cargar_yaml(ruta.read_text(encoding="utf-8")) or {}
+    except YamlError as exc:
+        raise InventarioError(f"{ruta}: {exc}") from exc
     try:
         videos = tuple(
             FuenteVideo(
@@ -150,8 +155,12 @@ def ffprobe_info(ruta: Path) -> InfoVideo:
     if video is None:
         raise InventarioError(f"{ruta.name}: sin pista de video")
     audio = any(s.get("codec_type") == "audio" for s in doc.get("streams", []))
+    try:
+        duracion = float(doc["format"]["duration"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise InventarioError(f"{ruta.name}: ffprobe no devolvio una duracion numerica") from exc
     return InfoVideo(
-        duracion_s=float(doc["format"]["duration"]),
+        duracion_s=duracion,
         ancho=int(video["width"]),
         alto=int(video["height"]),
         fps=str(video.get("r_frame_rate", "")),
@@ -181,7 +190,10 @@ def huecos_en_indice(
     for linea in texto.splitlines():
         m = _LINEA_INDICE.match(linea.strip())
         if m:
-            marcas.append(float(m.group(3)))
+            try:
+                marcas.append(float(m.group(3)))
+            except ValueError:
+                continue  # linea corrupta del indice heredado: se ignora, no se inventa
     marcas.sort()
     puntos = [0.0, *marcas]
     if duracion_s is not None:
@@ -301,7 +313,10 @@ def escribir_manifiesto(manifiesto: dict[str, Any], ruta: Path) -> None:
 def cargar_manifiesto(ruta: Path) -> dict[str, Any]:
     if not ruta.exists():
         raise InventarioError(f"no existe {ruta}")
-    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    try:
+        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+    except YamlError as exc:
+        raise InventarioError(f"{ruta}: {exc}") from exc
     if not isinstance(doc, dict):
         raise InventarioError(f"{ruta}: no es un mapa")
     return doc
