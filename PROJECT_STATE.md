@@ -33,10 +33,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 0 · Fundamentos
 
 ## Current Feature
-— (F01 integrada; F02 pendiente de abrir)
+F02 · config-and-parameter-registry
 
 ## Current Branch
-main
+feature/F02-config-and-parameter-registry
 
 ## Stable Main State
 85cedc4 · merge de F01 (project-scaffold). make check verde: 26 tests, 3 contratos, mypy strict, state check. CI Ubuntu verde. Tag stable/F01.
@@ -48,25 +48,30 @@ main
 - F01 · project-scaffold · validada por el usuario el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
 
 ## Features Waiting for Validation
-—
+- F02 · config-and-parameter-registry · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F02-config-and-parameter-registry.md
 
 ## Existing Components
-- Paquete `botsito` con subpaquetes vacios documentados; CLI `state check` y `knowledge validate` (no-op).
-- Contratos de importacion (import-linter + test AST). Tests de integridad del indice (tracked, CRLF, ignorados, gitignore anclado).
+- Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
+- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro) y `config validate` (ajustes contra el registro).
+- Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
-- Plantillas: brief, ADR, informe de validacion. ADR-0001. `.gitattributes` con LF.
+- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
-- docs/plan/AUDITORIA_FASES_2026-09-04.html · docs/plan/features/F01-project-scaffold.md · docs/validation/F01-project-scaffold.md
-- docs/adr/0001-repository-structure-and-change-regimes.md · pyproject.toml · Makefile · src/botsito/cli.py · scripts/git-hooks/pre-commit
+- knowledge/spec/parametros.yaml (LA puerta de los parametros; vacio hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
+- docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
+- docs/adr/0002-registro-de-parametros-una-sola-puerta.md · docs/adr/0003-hooks-copiados-sin-framework-pre-commit.md
+- docs/plan/AUDITORIA_FASES_2026-09-04.html · pyproject.toml · Makefile · src/botsito/cli.py · scripts/git-hooks/pre-commit
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-26 (unit: project_state, adr, tree, cli · contract: import_contracts, no_business_literals, repository_integrity) · 3 contratos import-linter KEPT · mypy strict OK
+65 funciones de test (65 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
+- ADR-0002 registro de parametros: una sola puerta, tipos no intercambiables, lectura estricta — ACTIVE
+- ADR-0003 hooks copiados desde scripts/git-hooks; sin framework pre-commit — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -100,7 +105,6 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 - MASTER_PLAN existe en HTML; la versión Markdown se genera en F01.
 
 ## Open Questions
-- Nombre del paquete `botsito`: confirmar antes del merge de F01.
 - Fuente de ticks historicos: decidir en F16.
 - Ruta local de trabajo: C:/Users/USER/Desktop/Bot v3.
 
@@ -115,12 +119,17 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F02 · config-and-parameter-registry (`feature/F02-config-and-parameter-registry`)
 
 ## Next Action
-Abrir feature/F02-config-and-parameter-registry, escribir docs/plan/features/F02-config-and-parameter-registry.md e implementar segun MASTER_PLAN F02 + seccion H.
+Usuario valida F02 -> make check -> merge --no-ff a main (BOTSITO_ALLOW_MAIN=1) -> tests desde main -> tag stable/F02 sobre el merge -> push -> cerrar FASE 0 (puerta) -> abrir feature/F03-corpus-inventory.
 
 ## Last Stable Commit
 85cedc4 · merge: F01 project-scaffold validado por el usuario · tag stable/F01
 
 ## Change Log
+- 2026-09-04 · segunda auditoria de F02: explicit-preview-rules; botsito config validate en make check; 65 funciones / 67 casos
+- 2026-09-04 · auditoria de F02: prefijo duplicado en errores, limites con float, accesores tipados, property YAML; 63 funciones / 65 casos
+- 2026-09-04 · push de la rama F02; CI Ubuntu verde (run 33883045053)
+- 2026-09-04 · F02 construida: valores.py, registro.py, ajustes.py, parametros.yaml vacio, state check ampliado, test de literales real, ADR-0002/0003, sin .pre-commit-config; 59 tests; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · rama feature/F02-config-and-parameter-registry abierta; brief escrito
 - 2026-09-04 · F01 VALIDADA por el usuario; merge --no-ff a main (85cedc4); tag stable/F01; push de main
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
 - 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito

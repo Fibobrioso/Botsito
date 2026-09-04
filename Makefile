@@ -2,7 +2,7 @@
 UV ?= uv
 export PYTHONHASHSEED = 0
 
-.PHONY: sync hooks check lint types test contracts regress state
+.PHONY: sync hooks check lint types test contracts regress state config
 
 sync:
 	$(UV) sync --locked --group dev
@@ -31,7 +31,10 @@ test:
 state:
 	$(UV) run botsito state check
 
-check: lint types contracts test state
+config:
+	$(UV) run botsito config validate
+
+check: lint types contracts test state config
 
 # Regresion completa: en F01 equivale a check; desde F14 anade la biblioteca de casos.
 regress: check

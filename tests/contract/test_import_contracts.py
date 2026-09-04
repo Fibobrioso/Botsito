@@ -18,6 +18,7 @@ FORBIDDEN_FOR_DOMAIN = {
     "botsito.viewer",
     "botsito.validation",
     "botsito.cli",
+    "botsito.config",
     "MetaTrader5",
     "pandas",
     "polars",

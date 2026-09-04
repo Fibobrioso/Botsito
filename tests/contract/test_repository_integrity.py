@@ -37,6 +37,7 @@ IGNORED_ALLOWLIST = (
     ".mypy_cache/",
     ".ruff_cache/",
     ".import_linter_cache/",
+    ".hypothesis/",
     ".coverage",
 )
 
@@ -60,7 +61,6 @@ def _expected_files(repo: Path) -> list[str]:
         "src/botsito/__init__.py",
         "src/botsito/cli.py",
         ".gitattributes",
-        "scripts/git-hooks/pre-commit",
     ]
     return files
 
