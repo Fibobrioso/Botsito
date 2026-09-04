@@ -72,7 +72,7 @@ feature/F06-evidence-model
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-89 funciones de test (una parametrizada x3, otra x11) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence · contract: import_contracts, no_business_literals, repository_integrity, evidence_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+92 funciones de test (una parametrizada x3, otra x11) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence · contract: import_contracts, no_business_literals, repository_integrity, evidence_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -131,6 +131,7 @@ Usuario valida F06 -> merge --no-ff a main -> tag stable/F06 -> push -> abrir fe
 77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
 
 ## Change Log
+- 2026-09-04 · auditoria global: la guardia de historial no detectaba ediciones dentro de un merge (ahora compara blobs con el primer commit); make check ejecuta knowledge validate; coma decimal normalizada en contradicciones; 92 funciones de test
 - 2026-09-04 · push F06; CI Ubuntu verde (run 33892467496); hook de evidencia probado en 5 escenarios
 - 2026-09-04 · F06 construida: modelo de evidencia inmutable, contradicciones regeneradas, guardia de historial, hook; 89 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F06-evidence-model abierta; brief escrito

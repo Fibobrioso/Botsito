@@ -27,6 +27,17 @@ hook local y test contra el historial de git. Las contradicciones se regeneran, 
   afirmacion no mas larga que 2x la cita + 40, `revisado_por` obligatorio, `provenance` en
   `botsito | bot-v2`.
 
+## Correcciones aplicadas tras la auditoria global (2026-09-04)
+- **Edicion escondida en un commit de merge no se detectaba.** `git log --name-status` omite los
+  diffs de los merges; una simulacion lo demostro. La guardia ahora compara, para cada fichero de
+  evidencia que alguna vez se anadio, el blob de HEAD con el blob del commit que lo anadio, y exige
+  que siga existiendo; tambien detecta ediciones sin commitear. Cinco escenarios en tests
+  (modificar, borrar, renombrar, editar en merge, editar sin commit).
+- **`make check` no ejecutaba `knowledge validate` de forma explicita** (solo a traves de un test).
+  Ahora es un paso propio.
+- **`0,75` y `0.75` habrian sido una contradiccion.** Los valores numericos con coma se normalizan
+  antes de comparar; las mayusculas tambien.
+
 ## Archivos creados
 ```
 src/botsito/evidence/{modelo,contradicciones,historial}.py
@@ -75,7 +86,7 @@ acepta anadir, rechaza editar, acepta regenerar `_contradicciones.yaml`, rechaza
 
 ## Resultados
 - ruff, mypy strict (43 ficheros), 3 contratos KEPT.
-- pytest: 101 passed (89 funciones; 11 rechazos parametrizados; property test de estabilidad del id).
+- pytest: 105 passed (92 funciones; 11 rechazos parametrizados; property test de estabilidad del id).
 - `state check`, `config validate`, `knowledge validate` (0 items, 0 contradicciones, historial
   intacto): OK.
 - CI GitHub Actions (ubuntu-latest, con historial completo): verde, run 33892467496.
