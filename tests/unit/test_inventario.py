@@ -152,6 +152,12 @@ def test_validar_y_comprobar_detectan(tmp_path: Path) -> None:
     m["ficheros"].append({"ruta": "nuevo.txt", "papel": "sin_clasificar", "bytes": 1})
     assert any("sin clasificar" in p for p in validar_manifiesto(m, fuentes))
     assert any("falta en disco" in p for p in comprobar_contra_disco(m, repo))
+    (repo / "corpus" / "Material adicional" / "nuevo.jpeg").write_bytes(b"x")
+    assert any("no inventariado" in p for p in comprobar_contra_disco(m, repo))
+    m["ficheros"] = list(reversed(m["ficheros"]))
+    assert any("orden POSIX" in p for p in validar_manifiesto(m, fuentes))
+    m["ficheros"][0]["sha256"] = "zz"
+    assert any("sha256 invalido" in p for p in validar_manifiesto(m, fuentes))
 
 
 def test_fuentes_y_manifiesto_reales_coherentes(repo: Path) -> None:
@@ -161,3 +167,22 @@ def test_fuentes_y_manifiesto_reales_coherentes(repo: Path) -> None:
     if not ruta.exists():
         pytest.skip("manifiesto real todavia no generado")
     assert validar_manifiesto(cargar_manifiesto(ruta), fuentes) == []
+
+
+def test_orden_posix_independiente_del_sistema(tmp_path: Path) -> None:
+    """En Windows `Path` ordena sin distinguir mayusculas; el manifiesto no puede heredarlo."""
+    _requiere_ffprobe()
+    repo, ruta_fuentes = _corpus_tmp(tmp_path)
+    (repo / "corpus" / "_procesado" / "Zeta.md").write_text("z", encoding="utf-8")
+    (repo / "corpus" / "_procesado" / "alfa.md").write_text("a", encoding="utf-8")
+    m = inventariar(repo, cargar_fuentes(ruta_fuentes), hashear=False)
+    rutas = [f["ruta"] for f in m["ficheros"]]
+    assert rutas == sorted(rutas)  # orden por cadena: mayusculas antes que minusculas
+    assert rutas.index("_procesado/Zeta.md") < rutas.index("_procesado/alfa.md")
+
+
+def test_version_ffprobe_es_numero() -> None:
+    _requiere_ffprobe()
+    from botsito.corpus.inventario import ffprobe_version
+
+    assert ffprobe_version()[0].isdigit()
