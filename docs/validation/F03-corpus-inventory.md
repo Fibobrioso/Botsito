@@ -84,6 +84,7 @@ sobre el corpus real: OK.
 - pytest: 76 passed (74 funciones); el test de ffprobe se salta con aviso si no hay ffprobe.
 - `state check`, `config validate`, `knowledge validate` (registro + manifiesto): OK.
 - Manifiesto regenerado dos veces: identico.
+- CI GitHub Actions (ubuntu-latest): verde, run 33890615366 (test de ffprobe omitido con aviso).
 
 ## Que deberia observar el usuario
 `knowledge/corpus/manifest.yaml` con los 4 videos y sus hashes; `corpus check --hashes` OK;
@@ -96,7 +97,6 @@ Todo el alcance del brief.
 - Los huecos se calculan solo sobre los indices heredados; la cobertura nueva la produce F05.
 - El manifiesto es regenerable (no inmutable): la inmutabilidad contra el historial de git se
   introduce con los manifiestos de datos (F15) segun la seccion H.
-- CI de GitHub para esta rama: pendiente del push.
 
 ## Limitaciones
 `ffprobe` debe estar en PATH; en CI (ubuntu) no lo esta y el test de video se salta con aviso.

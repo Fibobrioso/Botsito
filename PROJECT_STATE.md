@@ -128,6 +128,7 @@ Usuario valida F03 -> merge --no-ff a main -> tag stable/F03 -> push -> abrir fe
 dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
 
 ## Change Log
+- 2026-09-04 · push de la rama F03; CI Ubuntu verde (run 33890615366)
 - 2026-09-04 · F03 construida: fuentes.yaml, inventario.py, manifest.yaml real (4 videos con hash y duracion, 477 heredados, 17 adicionales), corpus inventory/check; 74 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · corpus recibido en local (4 videos identicos a Drive, _procesado heredado, material adicional: 2 xlsx FXReplay + 15 capturas); movido a corpus/ (gitignored); ffmpeg 9 instalado; rama feature/F03-corpus-inventory abierta
 - 2026-09-04 · F02 VALIDADA por el usuario; merge --no-ff a main (dc3384d); tag stable/F02; FASE 0 CERRADA
