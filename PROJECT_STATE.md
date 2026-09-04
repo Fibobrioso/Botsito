@@ -91,6 +91,28 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - Sesión 3 (tras F32): divergencias de ejecución · pendiente
 - Mensual (F34): discrepancias en vivo · pendiente
 
+## Lineamientos recibidos del usuario (pendientes de formalizar como evidencia/feedback)
+Lo que el usuario (consultor) aporta por escrito sobre la operativa. NO es evidencia (no es cita del
+corpus) ni feedback del trader: se convierte en items de evidencia en F07 cuando se re-cite sobre la
+transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y su mapeo.
+
+- **2026-09-04 · Geometria del riesgo y gestion del stop.** "Se traza un 1:3 inicialmente; con eso
+  se calcula el lotaje y todo. Una vez se mete la operativa, se baja el SL hasta el 0,75 del trade
+  o hasta el 0,8; el TP sigue donde estaba inicialmente."
+  - Estado en el plan: CONTEMPLADO. MASTER_PLAN F21 (caja 0/0,25/0,5/0,75/1, lotaje sobre la
+    distancia completa, stop en 0,75 con colchon de spread, objetivo 1:3 sobre la distancia completa)
+    y la investigacion (tres confirmaciones aritmeticas: ratio 4,08/3,94 = 3/0,75; Excel con -0,75).
+  - Citas del corpus a re-citar en F07: V2 0:31:59-0:33:53 ("calculo mi lotaje desde aqui... luego
+    apenas se da inicio la entrada lo pongo en 0,75... el objetivo sigue en 1:3"), V1 0:06:19-0:06:34
+    ("no olvidarse de poner el cuadro de Gann en 0,75, proteger el trade apenas se genera la entrada"),
+    V4 0:08:39-0:08:50 ("dar un pequeno respiro: de 0,75 a 0,80" por el spread).
+  - Lectura: el 0,8 es el colchon de spread sobre el 0,75, no un nivel alternativo libre.
+  - Preguntas abiertas para el trader (sesion 1): (a) ¿el 0,8 es fijo o "0,75 mas el spread del
+    momento"? (b) ¿el stop se coloca en el 0,75 al enviar la orden limite o solo tras el llenado?
+    Para el bot es equivalente y mas seguro adjuntar el SL al 0,75 en la propia orden pendiente
+    (F22/F31); confirmar que el trader no ve inconveniente.
+  - Consecuencia para F21: el TP nunca se recalcula al mover el SL (invariante a probar).
+
 ## Expert Validations
 —
 
@@ -131,6 +153,7 @@ Usuario valida F06 -> merge --no-ff a main -> tag stable/F06 -> push -> abrir fe
 77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
 
 ## Change Log
+- 2026-09-04 · lineamiento del usuario registrado: SL a 0,75/0,8 tras la entrada con TP fijo (contemplado en F21; dos preguntas abiertas para el trader)
 - 2026-09-04 · push F06 tras auditoria global; CI Ubuntu verde (run 33893230602)
 - 2026-09-04 · auditoria global: la guardia de historial no detectaba ediciones dentro de un merge (ahora compara blobs con el primer commit); make check ejecuta knowledge validate; coma decimal normalizada en contradicciones; 92 funciones de test
 - 2026-09-04 · push F06; CI Ubuntu verde (run 33892467496); hook de evidencia probado en 5 escenarios
