@@ -13,3 +13,6 @@
 *.bin binary
 *.ex5 binary
 *.zip binary
+*.xlsx binary
+*.pdf binary
+*.woff2 binary
