@@ -7,6 +7,7 @@ registro de feedback (F09) supersede a uno de los items, no editandolos.
 
 from __future__ import annotations
 
+import re
 from itertools import groupby
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,15 @@ from typing import Any
 import yaml
 
 from botsito.evidence.modelo import FICHERO_CONTRADICCIONES, EvidenceItem, activos
+
+_NUMERO_CON_COMA = re.compile(r"^-?\d+,\d+$")
+
+
+def normalizar_valor(valor: str) -> str:
+    """'0,75' y '0.75' son el mismo valor; el resto se compara tal cual (ya sin espacios)."""
+    v = valor.strip().lower()
+    return v.replace(",", ".") if _NUMERO_CON_COMA.match(v) else v
+
 
 CABECERA = (
     "# GENERADO por `botsito evidence contradictions`. No editar a mano.\n"
@@ -26,7 +36,7 @@ def detectar(items: list[EvidenceItem]) -> list[dict[str, Any]]:
     salida: list[dict[str, Any]] = []
     for tema, grupo in groupby(con_valor, key=lambda i: i.tema):
         lista = sorted(grupo, key=lambda i: i.id)
-        valores = sorted({i.valor for i in lista if i.valor is not None})
+        valores = sorted({normalizar_valor(i.valor) for i in lista if i.valor is not None})
         if len(valores) < 2:
             continue
         salida.append(
