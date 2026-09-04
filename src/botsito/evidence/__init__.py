@@ -1,1 +1,2 @@
-"""Modelo de evidencia inmutable, cargador, validador, contradicciones, busqueda (F06-F08)."""
+"""Modelo de evidencia inmutable, contradicciones regeneradas, guardia de historial (F06);
+cargador, validador y busqueda (F07-F08)."""
