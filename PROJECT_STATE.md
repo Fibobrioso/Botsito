@@ -125,6 +125,7 @@ Usuario valida F02 -> make check -> merge --no-ff a main (BOTSITO_ALLOW_MAIN=1) 
 85cedc4 · merge: F01 project-scaffold validado por el usuario · tag stable/F01
 
 ## Change Log
+- 2026-09-04 · push de la rama F02; CI Ubuntu verde (run 33883045053)
 - 2026-09-04 · F02 construida: valores.py, registro.py, ajustes.py, parametros.yaml vacio, state check ampliado, test de literales real, ADR-0002/0003, sin .pre-commit-config; 59 tests; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F02-config-and-parameter-registry abierta; brief escrito
 - 2026-09-04 · F01 VALIDADA por el usuario; merge --no-ff a main (85cedc4); tag stable/F01; push de main

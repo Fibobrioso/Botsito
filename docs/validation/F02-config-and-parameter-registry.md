@@ -81,6 +81,7 @@ uv run botsito state check
 - import-linter: 3 contratos KEPT.
 - pytest: 61 passed (59 funciones; property test con hypothesis incluido).
 - `state check`: OK. `knowledge validate`: OK, registro con 0 parametros.
+- CI GitHub Actions (ubuntu-latest): verde, run 33883045053.
 
 ## Que deberia observar el usuario
 `make check` verde; `knowledge/spec/parametros.yaml` sin valores; `uv run botsito state check`
@@ -92,7 +93,6 @@ Todo el alcance del brief.
 ## Que casos todavia no funcionan
 - El registro no tiene valores (por diseno: F11).
 - La anotacion de lecturas ambiguas existe pero nadie la consume hasta el journal (F23).
-- El CI de GitHub no se ha ejecutado para esta rama (sin push todavia).
 
 ## Limitaciones
 `state check` no verifica el contenido de "Completed Phases" (se anade cuando se cierre la fase 0).
