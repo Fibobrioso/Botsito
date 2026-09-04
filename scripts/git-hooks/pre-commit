@@ -1,0 +1,22 @@
+#!/bin/sh
+# Hook local (instalado por `make sync` via core.hooksPath).
+# 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
+# 2. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
+# Nota: la salida se captura por tuberia, no con >/dev/null: en Git Bash de Windows,
+# lint-imports devuelve 1 al escribir en /dev/null.
+branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
+  echo "pre-commit: commit directo en main rechazado. Usa una rama feature/F##-nombre." >&2
+  echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
+  exit 1
+fi
+root=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -f "$root/pyproject.toml" ] && command -v uv >/dev/null 2>&1; then
+  out=$(cd "$root" && uv run lint-imports 2>&1)
+  if [ $? -ne 0 ]; then
+    echo "$out" >&2
+    echo "pre-commit: contrato de importacion roto (uv run lint-imports)" >&2
+    exit 1
+  fi
+fi
+exit 0

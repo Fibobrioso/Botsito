@@ -1,0 +1,15 @@
+# Todo texto se guarda con LF en el indice (los hashes de knowledge/ no dependen del SO).
+* text=auto eol=lf
+
+# Binarios: nunca normalizar
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.mp3 binary
+*.mp4 binary
+*.wav binary
+*.parquet binary
+*.bin binary
+*.ex5 binary
+*.zip binary

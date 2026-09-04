@@ -1,0 +1,239 @@
+<title>Auditoría de Fases · Botsito</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{--paper:#f7f8fa;--paper-2:#eef1f5;--ink:#1b2430;--ink-2:#465262;--ink-3:#7a8797;--rule:#d5dbe3;--accent:#23507a;--accent-soft:#dfe9f3;--ok:#0f766e;--ok-soft:#d9efeb;--warn:#8a6d1d;--warn-soft:#f3ead0;--bad:#b4532a;--bad-soft:#f5e1d7;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--serif:"Fraunces",Georgia,serif;--sans:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#151a21;--paper-2:#1d242d;--ink:#e6eaef;--ink-2:#b6bfca;--ink-3:#8593a3;--rule:#2f3843;--accent:#8fb6dc;--accent-soft:#213244;--ok:#5fcbbd;--ok-soft:#173a36;--warn:#dcb85a;--warn-soft:#3b3218;--bad:#e8906a;--bad-soft:#42261a}}
+:root[data-theme="dark"]{--paper:#151a21;--paper-2:#1d242d;--ink:#e6eaef;--ink-2:#b6bfca;--ink-3:#8593a3;--rule:#2f3843;--accent:#8fb6dc;--accent-soft:#213244;--ok:#5fcbbd;--ok-soft:#173a36;--warn:#dcb85a;--warn-soft:#3b3218;--bad:#e8906a;--bad-soft:#42261a}
+*{box-sizing:border-box}body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;margin:0}
+.wrap{display:grid;grid-template-columns:1fr;max-width:1180px;margin:0 auto;padding:0 20px 80px}@media(min-width:1000px){.wrap{grid-template-columns:230px minmax(0,1fr);gap:48px}}
+nav.toc{display:none}@media(min-width:1000px){nav.toc{display:block;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:36px 0;font-size:13.5px}nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--rule)}nav.toc a:hover{color:var(--accent);border-left-color:var(--accent)}nav.toc .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 6px}}
+main{min-width:0;max-width:84ch}header.hero{padding:56px 0 28px;border-bottom:1px solid var(--rule);margin-bottom:36px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-family:var(--serif);font-weight:700;font-size:40px;line-height:1.08;margin:0 0 16px;text-wrap:balance}
+.lede{font-size:19px;color:var(--ink-2);margin:0 0 20px}
+h2{font-family:var(--serif);font-weight:700;font-size:28px;line-height:1.15;margin:52px 0 12px;padding-top:12px;border-top:1px solid var(--rule)}
+h3{font-family:var(--serif);font-weight:500;font-size:21px;margin:30px 0 10px}
+p{margin:0 0 14px}ul,ol{margin:0 0 16px;padding-left:22px}li{margin:0 0 6px}strong{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
+pre{font-family:var(--mono);font-size:13px;line-height:1.5;background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;overflow-x:auto}
+.tablewrap{overflow-x:auto;margin:14px 0 24px;border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.4;min-width:900px}
+th,td{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--paper-2);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.v{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:2px 7px;border-radius:3px;white-space:nowrap;font-weight:600}
+.v-ok{background:var(--ok-soft);color:var(--ok)}.v-gap{background:var(--warn-soft);color:var(--warn)}.v-crit{background:var(--bad-soft);color:var(--bad)}
+.callout{border-left:3px solid var(--accent);background:var(--paper-2);padding:14px 18px;margin:18px 0 22px;border-radius:0 6px 6px 0}.callout.bad{border-left-color:var(--bad)}.callout.warn{border-left-color:var(--warn)}.callout p:last-child{margin-bottom:0}
+.gate{border:1px solid var(--rule);border-radius:6px;padding:12px 16px;margin:12px 0 22px;background:var(--paper)}
+.gate h4{margin:0 0 8px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.gate ul{margin:0}.small{font-size:14px;color:var(--ink-2)}
+.footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-3)}
+</style>
+<div class="wrap">
+<nav class="toc"><div class="lbl">Auditoría</div>
+<a href="#resumen">Resumen</a><a href="#metodo">Método y criterio</a><a href="#transversal">Riesgos transversales</a>
+<a href="#f0">Fase 0</a><a href="#f1">Fase 1</a><a href="#f2">Fase 2</a><a href="#f3">Fase 3</a><a href="#f4">Fase 4</a><a href="#f5">Fase 5</a><a href="#f6">Fase 6</a><a href="#f7">Fase 7</a>
+<div class="lbl">Acciones</div><a href="#f01">Correcciones a F01</a><a href="#plan">Cambios al plan</a><a href="#gates">Puertas de fase</a></nav>
+<main>
+<header class="hero">
+<p class="eyebrow">Botsito · Auditoría de integridad del plan · 4 de septiembre de 2026</p>
+<h1>Auditoría de fases: qué puede corromperse en cada una y qué lo impide</h1>
+<p class="lede">Revisión del Master Development Plan, fase por fase, buscando vectores de corrupción de los ocho activos del proyecto: evidencia, feedback del trader, especificación, biblioteca de casos, datos de mercado, código de decisión, historial de git y estado del proyecto. Cada hallazgo indica la salvaguarda prevista, el hueco y la funcionalidad que debe absorber la corrección.</p>
+</header>
+
+<section id="resumen">
+<h2>Resumen</h2>
+<p>El plan tiene buenas defensas donde más importa (regímenes de cambio, causalidad, holdout, determinismo), pero la auditoría encontró <strong>4 huecos críticos</strong>, <strong>19 huecos</strong> que conviene cerrar en la funcionalidad que los origina, y <strong>5 correcciones inmediatas a F01</strong>, dos de ellas descubiertas al construirla.</p>
+<div class="callout bad"><p><strong>Críticos.</strong> (1) El holdout se "quema" al abrirlo en F26: no hay un segundo conjunto reservado para evaluar el sistema <em>después</em> de corregirlo con la sesión 2, así que la fidelidad final se mediría sobre casos ya vistos. (2) Los umbrales de fidelidad y de ventaja no están pre-registrados en un lugar inmutable antes de mirar resultados; sin pre-registro, "≥ 85 %" puede acabar siendo "≥ 78 % porque casi". (3) Los hooks de inmutabilidad y solo-añadir se saltan con <code>--no-verify</code>; la única defensa real es un test en CI que compare cada fichero de evidencia y feedback con su primera versión en el historial de git, y el plan no lo nombra. (4) La evidencia importada de Bot v2 (30 reglas, 6 ambigüedades) nació de transcripciones con Whisper <code>tiny</code> y de interpretaciones del equipo; si entra como evidencia sin re-cita sobre la nueva transcripción, la base de conocimiento arranca contaminada.</p></div>
+<div class="callout"><p><strong>Lo descubierto al construir F01.</strong> Un <code>.gitignore</code> sin anclar excluyó en silencio cinco ficheros del paquete y de <code>knowledge/</code>; nadie lo habría visto porque <code>git status</code> no muestra ignorados. Y dos ficheros entraron al índice con finales de línea CRLF porque no existe <code>.gitattributes</code>. Ambos son vectores de corrupción del historial y ambos tienen test posible. Se proponen como correcciones de F01 antes del merge.</p></div>
+</section>
+
+<section id="metodo">
+<h2>Método y criterio</h2>
+<p>Para cada fase se enumeran los activos que toca, y para cada activo los vectores por los que puede corromperse. Se distinguen tres clases: <strong>corrupción de datos</strong> (el contenido cambia o se pierde sin registro), <strong>contaminación</strong> (información que no debería influir influye: futuro, holdout, interpretación disfrazada de evidencia, optimización disfrazada de validación) y <strong>corrupción de proceso</strong> (se salta una puerta, un default se vuelve regla, el estado del proyecto miente). Cada hallazgo se califica:</p>
+<p><span class="v v-ok">OK</span> salvaguarda prevista y suficiente · <span class="v v-gap">HUECO</span> salvaguarda parcial o no nombrada; se cierra en la funcionalidad indicada · <span class="v v-crit">CRÍTICO</span> sin salvaguarda y con impacto en la validez del resultado.</p>
+</section>
+
+<section id="transversal">
+<h2>Riesgos transversales (todas las fases)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda prevista</th><th>Hallazgo</th><th>Acción · dónde</th></tr>
+<tr><td>Historial git</td><td>Ficheros excluidos en silencio por <code>.gitignore</code> (ocurrió en F01)</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Test <code>test_tracked_files</code>: todo fichero que el test de árbol espera debe aparecer en <code>git ls-files</code>; CI falla si <code>git status --ignored</code> lista algo fuera de una lista blanca · <strong>F01</strong></td></tr>
+<tr><td>Historial git</td><td>Finales de línea CRLF/LF mezclados (2 ficheros ya en el índice) → diffs falsos, hashes de knowledge distintos entre Windows y Linux</td><td><code>core.autocrlf false</code> solo local</td><td><span class="v v-gap">HUECO</span></td><td><code>.gitattributes</code> con <code>* text=auto eol=lf</code> y binarios declarados; renormalizar; test de que ningún fichero de texto tiene CRLF · <strong>F01</strong></td></tr>
+<tr><td>Historial git</td><td>Commit directo en <code>main</code> o merge sin validación</td><td>Disciplina; sin protección de rama (trabajo local)</td><td><span class="v v-gap">HUECO</span></td><td>Hook local <code>pre-commit</code> que rechaza commits en <code>main</code> salvo variable <code>BOTSITO_ALLOW_MAIN=1</code> (se usa solo en el ritual de merge); documentar en ESTANDARES · <strong>F01</strong></td></tr>
+<tr><td>Historial git</td><td>Hooks saltados con <code>--no-verify</code></td><td>Hooks (F06, F09)</td><td><span class="v v-crit">CRÍTICO</span></td><td>La defensa real es CI: test que recorre <code>git log</code> y comprueba que cada fichero de <code>knowledge/evidence/</code> y <code>knowledge/feedback/</code> es byte-idéntico a su primera versión commiteada · <strong>F06, F09</strong></td></tr>
+<tr><td>Estado del proyecto</td><td><code>PROJECT_STATE.md</code> desactualizado o falso (rama, tests, commit estable)</td><td><code>state check</code> comprueba solo la rama</td><td><span class="v v-gap">HUECO</span></td><td>Ampliar <code>state check</code>: "Tests Currently Passing" = recuento real de pytest; "Last Stable Commit" = commit al que apunta el último tag <code>stable/*</code>; toda funcionalidad en "Completed" tiene informe en <code>docs/validation/</code> · <strong>F02</strong> (pequeño) </td></tr>
+<tr><td>Documentación</td><td>Dos fuentes del plan (HTML y Markdown) que derivan</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Declarar el HTML como instantánea congelada de 2026-09-03 (cabecera) y el Markdown como fuente viva; cambios de plan solo en Markdown con línea en Change Log · <strong>F01</strong></td></tr>
+<tr><td>Todos los ficheros de texto</td><td>Codificación: lectura con cp1252 por defecto en Windows (ya apareció en la consola)</td><td><code>encoding="utf-8"</code> explícito en el código escrito</td><td><span class="v v-gap">HUECO</span></td><td>Regla de ruff que prohíba <code>open()</code>/<code>read_text()</code> sin <code>encoding</code> (plugin <code>PLW1514</code> vía <code>pylint</code> rules de ruff) · <strong>F02</strong></td></tr>
+<tr><td>Corpus y datos (gitignored)</td><td>Pérdida del único ejemplar local; nadie sabría qué hash tenía</td><td>Manifiestos con hash</td><td><span class="v v-gap">HUECO</span></td><td>El manifiesto de F03 registra también la fuente de origen (id de Drive, tamaño) para poder re-descargar y verificar; copia de seguridad fuera de la máquina como tarea del usuario · <strong>F03</strong></td></tr>
+<tr><td>Secretos</td><td>Credenciales de la demo en config o en scripts</td><td><code>settings.local.toml</code> ignorado</td><td><span class="v v-ok">OK</span></td><td>Añadir a CI un escaneo simple de patrones (login/password/token) sobre ficheros versionados · <strong>F17</strong></td></tr>
+<tr><td>Uso de LLM en desarrollo</td><td>Salida del LLM entra en <code>knowledge/</code> sin rastro de qué modelo, prompt y revisión humana</td><td>"El LLM nunca escribe en knowledge"</td><td><span class="v v-gap">HUECO</span></td><td>Carpeta <code>knowledge/_proposals/</code> (no evidencia) con prompt, modelo, salida y decisión humana; cada item de evidencia con <code>extractor</code> y <code>reviewed_by</code> obligatorios · <strong>F07</strong></td></tr>
+<tr><td>Alcance</td><td>Una rama toca ficheros fuera de su brief ("ya que estamos")</td><td>Brief con alcance cerrado</td><td><span class="v v-gap">HUECO</span></td><td>El informe de validación lista los ficheros tocados y el auditor los compara con el brief; añadir al ritual una línea "ficheros fuera de brief: ninguno" · <strong>proceso</strong></td></tr>
+</table></div>
+</section>
+
+<section id="f0">
+<h2>Fase 0 · Fundamentos (F01, F02)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Contratos de importación</td><td>Contrato declarado pero no ejecutado si alguien quita <code>lint-imports</code> del Makefile</td><td>Doble capa (import-linter + test AST)</td><td><span class="v v-ok">OK</span></td><td>El test AST no depende del Makefile</td></tr>
+<tr><td>Parámetros (F02)</td><td>Un parámetro con default silencioso usado por <code>domain</code> aunque su estado sea <code>UNKNOWN</code></td><td>Modo estricto</td><td><span class="v v-gap">HUECO</span></td><td>En F02: leer un parámetro <code>UNKNOWN</code> lanza error siempre; <code>DEFAULT_AMBIGUOUS</code> solo se lee si el interruptor de ambigüedad está declarado en la spec (F11) y el journal registra qué lectura se usó</td></tr>
+<tr><td>Parámetros (F02)</td><td>Unidades: 0,5 % escrito como 0,5 o como 0,005 (error de factor 100); 0,75 como fracción o como porcentaje</td><td>Unidad en el nombre del campo (idea del plan previo)</td><td><span class="v v-gap">HUECO</span></td><td>F02: tipo <code>Porcentaje</code> y <code>Fraccion</code> distintos, no intercambiables; valores en <code>Decimal</code>, nunca <code>float</code>; test de literales rellenado con 0.75, 0.5, 3, 0.4, 0.5 (riesgo), 7, 11, 15</td></tr>
+<tr><td>Parámetros (F02)</td><td>Dos puertas: el mismo parámetro en <code>settings.toml</code> y en <code>strategy_spec.yaml</code></td><td>Test de literales</td><td><span class="v v-gap">HUECO</span></td><td>F02: <code>settings.toml</code> solo puede contener claves de entorno y rutas; un validador rechaza cualquier clave que coincida con un parámetro del registro</td></tr>
+<tr><td>Entorno</td><td><code>uv.lock</code> desactualizado respecto a <code>pyproject</code></td><td><code>uv sync</code> en CI</td><td><span class="v v-ok">OK</span></td><td>CI usa <code>uv sync --locked</code> para fallar si el lock no coincide · <strong>F01</strong></td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 0</h4><ul><li><code>make check</code> verde en <code>main</code> tras merge de F02, incluyendo <code>test_tracked_files</code>, test de CRLF y <code>state check</code> ampliado.</li><li>Registro de parámetros vacío de valores, con tipos <code>Decimal</code>, <code>Porcentaje</code> y <code>Fraccion</code>, y lectura de <code>UNKNOWN</code> que falla.</li><li><code>.gitattributes</code> presente; cero ficheros con CRLF en el índice.</li><li>Hook local que impide commits en <code>main</code>.</li></ul></div>
+</section>
+
+<section id="f1">
+<h2>Fase 1 · Base de conocimiento (F03–F08)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Corpus (F03)</td><td>Descarga corrupta o incompleta desde Drive (ficheros de 4–5 GB)</td><td>Hash</td><td><span class="v v-gap">HUECO</span></td><td>El manifiesto guarda el tamaño exacto conocido de Drive (V1 205 388 829 B; V2 4 523 658 893 B; V3 3 936 315 562 B; V4 5 128 057 400 B) y el inventario falla si el fichero local difiere; el hash se calcula una vez y se congela</td></tr>
+<tr><td>Corpus (F03)</td><td>Duración de ffprobe distinta de la que asumen las marcas de tiempo de las transcripciones previas</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>El manifiesto registra duración por ffprobe y toda cita posterior se valida contra ella (ya previsto en F06); las citas heredadas de Bot v2 se revalidan en F07</td></tr>
+<tr><td>Transcripciones (F04)</td><td>Sobrescribir la transcripción <code>tiny</code> con la <code>large-v3</code> y perder la trazabilidad de citas antiguas</td><td>"El original de tiny se conserva"</td><td><span class="v v-ok">OK</span></td><td>Nombrar por modelo: <code>v3.whisper-tiny.jsonl</code>, <code>v3.whisper-large-v3.jsonl</code>; ambos en el manifiesto con hash</td></tr>
+<tr><td>Transcripciones (F04)</td><td>"Limpieza" de jerga que reescribe lo que el trader dijo (por ejemplo, un LLM "mejorando" el texto)</td><td>Glosario versionado</td><td><span class="v v-gap">HUECO</span></td><td>Dos capas obligatorias: texto crudo del ASR (inmutable) y texto corregido con lista de sustituciones aplicadas; prohibido cualquier corrección que no sea una sustitución del glosario; test de que <code>crudo → glosario = corregido</code></td></tr>
+<tr><td>Fotogramas (F05)</td><td>Marca de tiempo por número de secuencia en vez de por <code>pts</code> real → citas desplazadas</td><td>Índice con marcas</td><td><span class="v v-gap">HUECO</span></td><td>El índice toma <code>pts_time</code> de ffmpeg, nunca <code>n × intervalo</code>; test con clip fixture con fotogramas descartados</td></tr>
+<tr><td>Evidencia (F06)</td><td>Hook de inmutabilidad saltado o no instalado en otra máquina</td><td>Hook</td><td><span class="v v-crit">CRÍTICO</span></td><td>Test en CI contra historial git (byte-idéntico a la primera versión); id que incluye hash corto del contenido, de modo que editar el fichero rompe la referencia</td></tr>
+<tr><td>Evidencia (F06)</td><td>Item de tipo <code>RULE_STATEMENT</code> que en realidad es una interpretación del equipo</td><td>Campo <code>extractor</code></td><td><span class="v v-crit">CRÍTICO</span></td><td>Prohibir inferencias en <code>evidence/</code>: la cita literal es obligatoria y la "afirmación normalizada" no puede añadir condiciones que no estén en la cita (revisión humana con checklist); las inferencias viven en la spec como ambigüedad o como regla <code>DEFAULT</code></td></tr>
+<tr><td>Evidencia (F06)</td><td>Contradicción generada automáticamente que alguien edita o borra</td><td>Generación automática</td><td><span class="v v-gap">HUECO</span></td><td>Los items <code>CONTRADICTION</code> se regeneran en CI desde los items base; un fichero de contradicción que no coincida con la regeneración falla</td></tr>
+<tr><td>Evidencia (F07)</td><td>Importar las 30 reglas y 6 ambigüedades de Bot v2 con sus citas de transcripción <code>tiny</code> y con sus defaults</td><td>"cada una con su cita"</td><td><span class="v v-crit">CRÍTICO</span></td><td>Cada regla importada se re-cita sobre la transcripción <code>large-v3</code> y un fotograma; si no se encuentra la cita, entra como <code>UNKNOWN</code>, no como regla; los seis defaults del ADR-0015 previo entran como ambigüedades abiertas, nunca como evidencia; campo <code>provenance: "bot-v2"</code></td></tr>
+<tr><td>Evidencia (F07)</td><td>El LLM rellena el campo obligatorio con algo plausible</td><td>Campo "no consta"</td><td><span class="v v-ok">OK</span></td><td>Además, medir y publicar precisión/recall sobre un tramo manual (ya previsto)</td></tr>
+<tr><td>Índice (F08)</td><td>Índice commiteado y desactualizado</td><td>"Regenerable"</td><td><span class="v v-gap">HUECO</span></td><td>El índice no se versiona (gitignored) o se regenera en CI y se compara; elegir lo primero</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 1</h4><ul><li>Manifiesto con tamaño, hash y duración de los cuatro vídeos; los cuatro coinciden con Drive.</li><li>Transcripciones crudas y corregidas, ambas con hash; glosario con cada sustitución.</li><li>Cero items de evidencia sin cita verificada; cero items con procedencia Bot v2 sin re-cita.</li><li>Test de inmutabilidad contra historial git en verde.</li><li>Lista de <code>UNKNOWN</code> y <code>CONTRADICTION</code> publicada: es la entrada de la sesión 1.</li></ul></div>
+</section>
+
+<section id="f2">
+<h2>Fase 2 · Retroalimentación del experto (F09, F10)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Feedback (F09)</td><td>Registro editado tras el commit (corregir "lo que quiso decir")</td><td>Solo-añadir por hook</td><td><span class="v v-crit">CRÍTICO</span></td><td>Mismo test de CI contra historial que en evidencia; una corrección es un registro nuevo con <code>supersedes</code></td></tr>
+<tr><td>Feedback (F09)</td><td>Transcribir mal la respuesta del trader (el intermediario interpreta)</td><td>Respuesta literal + medio</td><td><span class="v v-gap">HUECO</span></td><td>Cada sesión se graba; el registro cita minuto de la grabación y la grabación entra en el manifiesto con hash; sin grabación, el registro lleva <code>medium: written</code> y el texto exacto del trader (captura del mensaje), no una paráfrasis</td></tr>
+<tr><td>Feedback (F09)</td><td>Aplicar feedback directamente a la spec sin diff revisado</td><td><code>feedback apply</code> produce diff</td><td><span class="v v-ok">OK</span></td><td>Además: el diff se adjunta al commit que lo aplica (trailer <code>Feedback: id</code>) y un test comprueba que todo commit que toca <code>spec/</code> lleva ese trailer o un <code>Evidence:</code></td></tr>
+<tr><td>Etiquetado ciego (F10)</td><td>Ventanas de etiquetado que solapan con fechas de los vídeos o con casos dev → el trader "recuerda" la respuesta</td><td>"fechas no vistas"</td><td><span class="v v-gap">HUECO</span></td><td>Lista de exclusión explícita (todas las fechas citadas en evidencia y en sus backtests: ene 2026, jul 2026, ago 2026) verificada por test al generar el paquete</td></tr>
+<tr><td>Etiquetado ciego (F10)</td><td>La ronda 2 muestra o deja inferir la respuesta de la ronda 1; orden idéntico</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Orden barajado con seed distinto por ronda; el paquete no contiene ids visibles; el trader no recibe κ ni sus respuestas anteriores hasta terminar la ronda 2</td></tr>
+<tr><td>Partición (F10/F14)</td><td>Asignar dev/holdout después de ver las etiquetas (elegir los "fáciles" para holdout)</td><td>"por seed, no por elección"</td><td><span class="v v-crit">CRÍTICO</span></td><td>La asignación se genera y commitea <em>antes</em> de la sesión, en un fichero con hash; el test verifica que la fecha del commit de la partición es anterior a la del primer registro de feedback de esa sesión</td></tr>
+<tr><td>Consistencia (F10)</td><td>κ calculado sobre ventanas no idénticas o con clases desbalanceadas que inflan el acuerdo</td><td>"κ sobre fixtures"</td><td><span class="v v-gap">HUECO</span></td><td>κ solo sobre la intersección exacta; reportar también acuerdo bruto y prevalencia; 40 ventanas con proporción 20/10/10 (setup / sin setup / fronterizo) fijada de antemano</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 2</h4><ul><li>Cada registro de feedback tiene sesión, medio, cita literal y objetivo válido; test de solo-añadir contra historial en verde.</li><li>Partición dev/holdout commiteada antes de la sesión 1, con seed y fecha.</li><li>Paquete de 40 ventanas generado con lista de exclusión verificada.</li><li>Ninguna ambigüedad cerrada "por interpretación": todas las cerradas citan un registro.</li></ul></div>
+</section>
+
+<section id="f3">
+<h2>Fase 3 · Formalización (F11–F14)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Spec (F11)</td><td>Regla <code>CONFIRMED</code> sin test que la ejerza (regla decorativa)</td><td>Derivación de estado por referencias</td><td><span class="v v-gap">HUECO</span></td><td>Campo <code>test_ref</code> obligatorio en reglas <code>CONFIRMED</code>; F12 falla si el test no existe (el plan previo ya tenía este mecanismo: recuperarlo)</td></tr>
+<tr><td>Spec (F11)</td><td>Predicado en pseudocódigo que el código implementa de otra forma sin que nadie lo note</td><td>Casos</td><td><span class="v v-gap">HUECO</span></td><td>Cada regla con al menos un caso <code>POSITIVE</code> y uno <code>NEGATIVE</code> en dev; F12 lo comprueba</td></tr>
+<tr><td>Spec (F11)</td><td>Cambio de valor sin versión: nadie sabe qué spec produjo qué backtest</td><td>Git</td><td><span class="v v-gap">HUECO</span></td><td>Campo <code>spec_version</code> (semver) y hash del fichero incluidos en todo journal, informe y export MQL5; un informe con hash distinto al de la spec actual se marca "obsoleto"</td></tr>
+<tr><td>Spec (F12)</td><td>Regla que cita evidencia superseded sin feedback que la respalde</td><td>Validador</td><td><span class="v v-ok">OK</span></td><td>Añadir explícitamente esa comprobación a la lista de F12</td></tr>
+<tr><td>Docs (F13)</td><td>Hoja del trader sin ids → su respuesta no se puede mapear a la regla</td><td>Generada</td><td><span class="v v-gap">HUECO</span></td><td>Cada fila lleva el id de regla y el id de evidencia principal</td></tr>
+<tr><td>Casos (F14)</td><td>Guarda de holdout implementada como "no importar el módulo" y burlada leyendo el fichero por ruta</td><td>Fixture en tests</td><td><span class="v v-gap">HUECO</span></td><td>Implementar con <code>sys.addaudithook("open")</code> activo en toda la sesión de pytest: cualquier apertura de ruta bajo <code>cases/holdout/</code> desde un frame cuyo módulo empiece por <code>botsito.spec</code> o <code>botsito.domain</code> falla; además grep en CI</td></tr>
+<tr><td>Casos (F14)</td><td>Fixture OHLC de un caso regenerada con otro proveedor → el caso cambia de resultado en silencio</td><td>Hash de fixture</td><td><span class="v v-ok">OK</span></td><td>El caso referencia además el <code>dataset_id</code> del manifiesto de F15</td></tr>
+<tr><td>Casos (F14)</td><td>Etiqueta editada (mismo régimen que feedback)</td><td>"nadie edita una etiqueta"</td><td><span class="v v-gap">HUECO</span></td><td>Las etiquetas viven como registros de feedback (<code>LABEL_CASE</code>); el caso solo referencia el registro vigente; test contra historial</td></tr>
+<tr><td>Holdout (F14/F26)</td><td>Un solo holdout que se abre en F26 y luego se usa para evaluar el sistema ya corregido con lo aprendido al abrirlo</td><td>Flag registrado</td><td><span class="v v-crit">CRÍTICO</span></td><td>Dos particiones reservadas: <code>holdout-1</code> (se abre en F26, sesión 2) y <code>holdout-2</code> (se abre una sola vez, tras la corrección, para la cifra final de fidelidad; después queda "quemado" y se reserva <code>holdout-3</code> de las sesiones mensuales)</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 3</h4><ul><li><code>botsito spec validate</code> verde con las comprobaciones ampliadas (test_ref, caso positivo y negativo por regla, evidencia superseded).</li><li><code>spec_version</code> y hash presentes.</li><li>Guarda de holdout por audit hook activa y probada con un test que intenta burlarla.</li><li>Dos particiones reservadas commiteadas con seed antes de cualquier ejecución del motor.</li></ul></div>
+</section>
+
+<section id="f4">
+<h2>Fase 4 · Datos de mercado (F15–F17)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>OHLC (F15)</td><td>Re-descarga que cambia datos ya congelados (el proveedor revisa histórico) y el manifiesto se sobrescribe</td><td>Hash</td><td><span class="v v-gap">HUECO</span></td><td>Los manifiestos son inmutables (mismo test contra historial); una re-descarga crea <code>dataset_id</code> nuevo; los casos y backtests nombran el suyo</td></tr>
+<tr><td>OHLC (F15)</td><td>Huso o anclaje H4 distintos del trader → sesgo calculado sobre la vela equivocada parte del año</td><td>Comparación con captura</td><td><span class="v v-ok">OK</span></td><td>Además: test golden de los dos cambios de hora de 2026 y de un lunes de apertura</td></tr>
+<tr><td>Ticks (F16)</td><td>Ticks fuera de orden, duplicados, bid &gt; ask, spread negativo, huecos de fin de semana leídos como huecos</td><td>Comprobaciones</td><td><span class="v v-ok">OK</span></td><td>Enumerar las 11 comprobaciones del plan de datos previo (<code>fxqc.py</code>) como lista cerrada con umbrales</td></tr>
+<tr><td>Ticks (F16)</td><td>Esquema Parquet que cambia entre versiones y rompe lecturas antiguas</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td><code>schema_version</code> en el manifiesto; lector que rechaza versiones desconocidas</td></tr>
+<tr><td>Demo (F17)</td><td>Grabador que escribe ficheros truncados al cerrarse el terminal; días con menos ticks de los esperados pasan inadvertidos</td><td>Rotación y reintento</td><td><span class="v v-gap">HUECO</span></td><td>Escritura atómica (temporal + rename); informe diario con recuento por hora y alerta si un bloque horario de la ventana tiene cero ticks</td></tr>
+<tr><td>Demo (F17)</td><td>Hora de servidor del broker vs hora local: el "día de riesgo" de FundedNext se cuenta mal</td><td>Spec 06 previo</td><td><span class="v v-gap">HUECO</span></td><td>El grabador registra el desfase servidor-UTC en cada fichero; F31 lo usa</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 4</h4><ul><li>Manifiestos inmutables con <code>dataset_id</code>, proveedor, fecha de descarga, hash y <code>schema_version</code>.</li><li>H4 agregada verificada contra una captura del trader en dos meses con DST distinto.</li><li>Grabador de demo con escritura atómica y al menos 10 días de datos verificados.</li></ul></div>
+</section>
+
+<section id="f5">
+<h2>Fase 5 · Motor de referencia y fidelidad (F18–F27)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Dominio (F18)</td><td><code>float</code> en precios → dos implementaciones discrepan por redondeo</td><td>Enteros de ticks + lint</td><td><span class="v v-ok">OK</span></td><td>Lint concreto: prohibir <code>float</code> en anotaciones de <code>domain/</code> (test AST)</td></tr>
+<tr><td>Dominio (F19, F20)</td><td>Lookahead sutil: usar el swing provisional para la zona; test de causalidad muestral en vez de exhaustivo</td><td>Tripleta + test exhaustivo</td><td><span class="v v-ok">OK</span></td><td>El test recorre <em>todos</em> los <code>t</code> de todas las fixtures; se ejecuta en <code>make regress</code>, no solo en unit</td></tr>
+<tr><td>Dominio (F20)</td><td>Convertir un caso <code>BORDERLINE</code> abierto ("dos velas como una") en regla porque el código lo necesita</td><td>Ambigüedad declarada</td><td><span class="v v-gap">HUECO</span></td><td>Test que falla si el código contiene un comentario <code>AMBIGUA A-n</code> cuyo id no está en la tabla de la spec, y viceversa (mecanismo del ADR-0015 previo; recuperarlo)</td></tr>
+<tr><td>Dominio (F21)</td><td>Parámetros leídos como constantes locales "temporalmente"</td><td>Test de literales</td><td><span class="v v-ok">OK</span></td><td>Lista rellenada en F02</td></tr>
+<tr><td>Statecharts (F22)</td><td>Estado mutable compartido entre jornada y ciclo; replay que no reconstruye</td><td>Decider puro, property tests</td><td><span class="v v-ok">OK</span></td><td>Property: para toda secuencia de eventos, <code>fold</code> desde inicial = estado final guardado</td></tr>
+<tr><td>Motor (F23)</td><td>Determinismo roto por orden de diccionarios, <code>set</code>, semillas, versión de <code>tzdata</code></td><td>Lista de rompedores</td><td><span class="v v-ok">OK</span></td><td>Fijar <code>tzdata</code> en <code>uv.lock</code> y <code>PYTHONHASHSEED=0</code> en Makefile y CI</td></tr>
+<tr><td>Backtest (F24)</td><td>Modelo de llenado optimista (límite llenada al tocar, sin cola ni latencia) que infla resultados</td><td>"defendible tick a tick"</td><td><span class="v v-gap">HUECO</span></td><td>Declarar el modelo de llenado en la spec como parámetro con estado y ejecutar F27 con dos modelos (al tocar / cruce completo + latencia fija) y reportar ambos</td></tr>
+<tr><td>Backtest (F24)</td><td>Zona ciega inicial no descartada → primeros swings inventados</td><td>Descarte explícito</td><td><span class="v v-ok">OK</span></td><td>—</td></tr>
+<tr><td>Visor (F25)</td><td>El visor dibuja desde una fuente distinta del journal</td><td>Test de igualdad</td><td><span class="v v-ok">OK</span></td><td>—</td></tr>
+<tr><td>Fidelidad (F26)</td><td>Umbral de aceptación decidido después de ver la cifra</td><td>"≥ 85 %" en el informe</td><td><span class="v v-crit">CRÍTICO</span></td><td>Pre-registro: los umbrales (fidelidad, κ mínimo, paridad, DSR) se escriben en <code>docs/validation/PREREGISTRO.md</code> y se commitean antes de abrir cualquier holdout; el informe de fidelidad cita el hash de ese commit</td></tr>
+<tr><td>Fidelidad (F26)</td><td>Importación de las operaciones exportadas del trader con horas en otro huso o con precios de otro feed</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Reconciliar cada operación importada contra el OHLC congelado (el precio de entrada debe caer dentro del rango de la vela declarada); las que no cuadren se marcan y se preguntan, no se ajustan</td></tr>
+<tr><td>Fidelidad (F26)</td><td>Analizar discrepancias de holdout y "arreglar" reglas mirando esos mismos casos</td><td>Holdout único</td><td><span class="v v-crit">CRÍTICO</span></td><td>Cubierto por la doble partición (F14) y por el registro del flag de apertura en <code>PROJECT_STATE.md</code></td></tr>
+<tr><td>Ventaja (F27)</td><td>Barrido de ambigüedades usado para elegir la lectura más rentable</td><td>"si es indistinguible se cierra sola"</td><td><span class="v v-gap">HUECO</span></td><td>Regla escrita: la lectura de una ambigüedad la cierra el trader; el barrido solo informa de si importa. El informe de F27 no puede recomendar un valor</td></tr>
+<tr><td>Ventaja (F27)</td><td>N declarado incompleto (no cuenta los barridos ni las pruebas manuales del trader)</td><td>Deflated Sharpe</td><td><span class="v v-gap">HUECO</span></td><td>Contador automático: cada ejecución de backtest incrementa <code>N</code> en un fichero versionado; el informe lo lee de ahí</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 5</h4><ul><li><code>PREREGISTRO.md</code> commiteado antes de F26; el informe de fidelidad lo cita.</li><li>Fidelidad sobre <code>holdout-1</code> y decisión (reglas solas / respaldo) registrada como ADR.</li><li>Test de causalidad exhaustivo y determinismo (sha256) en <code>make regress</code>.</li><li>Informe de ventaja con dos modelos de llenado, N automático y DSR.</li></ul></div>
+</section>
+
+<section id="f6">
+<h2>Fase 6 · MQL5 y pruebas diferenciales (F28–F32)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Params.mqh (F28)</td><td>Edición a mano del fichero generado</td><td>Cabecera + test de regeneración</td><td><span class="v v-ok">OK</span></td><td>El fichero incluye <code>spec_version</code> y hash; el EA los registra en el journal al arrancar</td></tr>
+<tr><td>Dominio MQL5 (F29)</td><td>MQL5 trabaja en <code>double</code>: 1,19537 no es exactamente representable → comparaciones <code>==</code> fallan o discrepan con Python</td><td>Tolerancia ≤ 1 tick</td><td><span class="v v-gap">HUECO</span></td><td>En MQL5 convertir a enteros de puntos (<code>long</code>) en la entrada del dominio, igual que Python; prohibir comparaciones de <code>double</code> en <code>Domain/*.mqh</code> (revisión)</td></tr>
+<tr><td>Diferencial (F30)</td><td>"Arreglar" Python para que coincida con MQL5 (o al revés) en vez de volver a la spec</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Regla escrita: toda divergencia se resuelve citando la regla de la spec; si la spec no decide, es una ambigüedad nueva (registro), no un parche</td></tr>
+<tr><td>EA (F31)</td><td>Cuenta en modo hedging vs netting; el EA asume uno</td><td>Pre-vuelo (F33)</td><td><span class="v v-gap">HUECO</span></td><td>El EA lee <code>ACCOUNT_MARGIN_MODE</code> al iniciar y aborta si no es el declarado en la spec</td></tr>
+<tr><td>EA (F31)</td><td>Reintento ciego tras respuesta ambigua → posición duplicada</td><td>Idempotencia por journal</td><td><span class="v v-ok">OK</span></td><td>Tabla de 30 retcodes con acción; test de escenario por retcode</td></tr>
+<tr><td>EA (F31)</td><td>Veto de riesgo dentro del mismo fichero que la estrategia → una edición lo desactiva</td><td><code>Risk.mqh</code> separado</td><td><span class="v v-ok">OK</span></td><td>El veto lee equity, no balance; sus parámetros no salen de <code>Params.mqh</code> sino de un fichero propio con hash registrado</td></tr>
+<tr><td>EA (F31)</td><td>Journal en fichero que se corrompe al cerrar el terminal</td><td>Ninguna</td><td><span class="v v-gap">HUECO</span></td><td>Una línea por evento, <code>FileFlush</code> tras cada escritura, hash encadenado por línea para detectar truncado</td></tr>
+<tr><td>Tester (F32)</td><td>Comparar contra el tester con datos de otro proveedor y atribuir la diferencia al código</td><td>Umbrales</td><td><span class="v v-gap">HUECO</span></td><td>Importar el mismo dataset congelado en el tester (ticks personalizados) antes de comparar; separar "divergencia de datos" de "divergencia de lógica"</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 6</h4><ul><li>100 % de casos idénticos en decisión entre Python y MQL5 sobre dev y sobre <code>holdout-2</code> (sin mirar etiquetas: solo igualdad entre implementaciones).</li><li>Tabla de retcodes cubierta por tests; modo de cuenta verificado al arrancar.</li><li>Paridad con tester sobre el dataset congelado importado, con divergencias clasificadas.</li></ul></div>
+</section>
+
+<section id="f7">
+<h2>Fase 7 · Demo y sombra (F33–F35)</h2>
+<div class="tablewrap"><table>
+<tr><th>Activo</th><th>Vector</th><th>Salvaguarda</th><th>Hallazgo</th><th>Acción</th></tr>
+<tr><td>Demo (F33)</td><td>El EA arranca con una spec distinta de la validada (fichero viejo en la carpeta del terminal)</td><td>Pre-vuelo</td><td><span class="v v-gap">HUECO</span></td><td>Pre-vuelo compara el hash de <code>Params.mqh</code> y de <code>Risk</code> con el del tag <code>stable/*</code> vigente; si no coincide, no opera</td></tr>
+<tr><td>Demo (F33)</td><td>Kill-switch que nadie ha probado</td><td>Runbook</td><td><span class="v v-gap">HUECO</span></td><td>Simulacro obligatorio y registrado antes del primer día de demo</td></tr>
+<tr><td>Sombra (F34)</td><td>Reconciliación que compara con un backtest ejecutado con otra versión de la spec</td><td>—</td><td><span class="v v-ok">OK</span></td><td>Cubierto por <code>spec_version</code> en journal e informes</td></tr>
+<tr><td>Sombra (F34)</td><td>Discrepancias en vivo que se corrigen en la spec sin pasar por el trader ni por una partición reservada</td><td>Sesiones mensuales</td><td><span class="v v-gap">HUECO</span></td><td>Toda corrección en fase 7 sigue el mismo circuito (feedback → diff → validador → casos) y se evalúa sobre <code>holdout-3</code></td></tr>
+<tr><td>Cuenta real (F35)</td><td>Memorando generado con umbrales relajados a posteriori</td><td>Criterios</td><td><span class="v v-ok">OK</span></td><td>Cubierto por el pre-registro; el memorando cita su hash</td></tr>
+<tr><td>Cuenta real</td><td>Credenciales o número de cuenta real en el repositorio</td><td>gitignore</td><td><span class="v v-ok">OK</span></td><td>Escaneo de secretos en CI (transversal)</td></tr>
+</table></div>
+<div class="gate"><h4>Puerta de salida de la fase 7</h4><ul><li>Pre-vuelo con verificación de hash contra el tag estable; simulacro de kill-switch registrado.</li><li>Tres meses de reconciliación dentro de umbrales pre-registrados.</li><li>Memorando de F35 citando pre-registro, fidelidad sobre <code>holdout-2</code>, paridad y DSR.</li></ul></div>
+</section>
+
+<section id="f01">
+<h2>Correcciones propuestas a F01 antes del merge</h2>
+<p>Todas son de fundamentos, sin lógica de negocio, y encajan en el alcance de F01. Requieren tu aprobación para aplicarse en la rama actual.</p>
+<ol>
+<li><strong><code>.gitattributes</code></strong> con <code>* text=auto eol=lf</code> y binarios (<code>*.jpg *.png *.mp3 *.mp4 *.parquet</code>) marcados; renormalizar los dos ficheros con CRLF; test que falla si algún fichero de texto del índice tiene CRLF.</li>
+<li><strong><code>test_tracked_files</code></strong>: cada fichero que el test de árbol espera debe estar en <code>git ls-files</code>; y una comprobación en <code>make check</code> de que <code>git status --ignored</code> no lista nada fuera de <code>.venv</code> y cachés.</li>
+<li><strong>Hook local anti-<code>main</code></strong> (<code>pre-commit</code> de git, instalado por <code>make sync</code>): rechaza commits en <code>main</code> salvo <code>BOTSITO_ALLOW_MAIN=1</code>.</li>
+<li><strong><code>uv sync --locked</code></strong> en CI y en <code>make sync</code>.</li>
+<li><strong>Cabecera en <code>docs/plan/MASTER_PLAN.html</code></strong> declarándolo instantánea congelada; el Markdown es la fuente viva.</li>
+</ol>
+<p class="small">Diferido a F02 (pequeño y coherente con su objetivo): <code>state check</code> ampliado (recuento de tests, tag estable, informes de validación) y regla de ruff para <code>encoding</code> obligatorio.</p>
+</section>
+
+<section id="plan">
+<h2>Cambios al plan que requieren tu aprobación</h2>
+<div class="tablewrap"><table>
+<tr><th>Cambio</th><th>Afecta a</th><th>Motivo</th></tr>
+<tr><td>Tres particiones reservadas (<code>holdout-1</code>, <code>-2</code>, <code>-3</code>) en vez de una</td><td>F10, F14, F26, F34, F35</td><td>Evitar medir la fidelidad final sobre casos ya vistos al corregir</td></tr>
+<tr><td>Pre-registro de umbrales en <code>docs/validation/PREREGISTRO.md</code> antes de F26</td><td>F26, F27, F32, F35</td><td>Impedir que el umbral se ajuste a la cifra</td></tr>
+<tr><td>Test de inmutabilidad y solo-añadir contra el historial git, en CI</td><td>F06, F09, F14, F15</td><td>Los hooks se saltan; el historial no</td></tr>
+<tr><td>Prohibición de inferencias en <code>evidence/</code>; re-cita obligatoria de todo lo importado de Bot v2</td><td>F06, F07</td><td>No arrancar la base de conocimiento contaminada</td></tr>
+<tr><td>Modelo de llenado como parámetro declarado y doble informe de ventaja</td><td>F24, F27</td><td>Un solo modelo optimista infla resultados sin que se note</td></tr>
+<tr><td>Contador automático de N (ejecuciones de backtest) versionado</td><td>F24, F27</td><td>Deflated Sharpe con N honesto</td></tr>
+<tr><td>Regla escrita: divergencias Python/MQL5 se resuelven citando la spec</td><td>F30</td><td>Evitar parches que alineen implementaciones sin fuente</td></tr>
+</table></div>
+<p>Ninguno cambia la arquitectura aprobada; añaden salvaguardas. Si los apruebas, se incorporan al <code>MASTER_PLAN.md</code> con una línea en el Change Log y a los briefs correspondientes cuando se abran.</p>
+</section>
+
+<section id="gates">
+<h2>Puertas de fase: cómo se usan</h2>
+<p>Cada fase termina con la lista de su puerta (arriba) verificada y registrada en <code>PROJECT_STATE.md</code> bajo "Completed Phases" con fecha y commit. Una funcionalidad de la fase siguiente no se abre hasta que la puerta está cerrada. Las puertas no sustituyen la validación por funcionalidad: la complementan comprobando los activos que cruzan funcionalidades (manifiestos, particiones, pre-registro, hashes).</p>
+</section>
+
+<div class="footer">Auditoría realizada sobre el Master Development Plan (docs/plan/MASTER_PLAN.md) y el estado real del repositorio en la rama feature/F01-project-scaffold (7 commits locales). Sin cambios aplicados.</div>
+</main></div>

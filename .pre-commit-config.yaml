@@ -1,0 +1,26 @@
+# OPCIONAL. Los hooks activos del proyecto son la copia de scripts/git-hooks/ en .git/hooks (make sync).
+# Este fichero describe los mismos pasos para quien prefiera el framework pre-commit; instalarlo
+# sobrescribe .git/hooks/pre-commit. Decision pendiente en F02.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: import-contracts
+        name: contratos de importacion
+        entry: uv run lint-imports
+        language: system
+        pass_filenames: false
+      - id: knowledge-validate
+        name: validar knowledge/ (no-op hasta F06)
+        entry: uv run botsito knowledge validate
+        language: system
+        pass_filenames: false

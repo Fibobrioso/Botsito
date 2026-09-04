@@ -1,0 +1,10 @@
+# Copiar a config/settings.local.toml (ignorado por git). Sin secretos aqui.
+# Los parametros de negocio NO viven en este fichero: pasan por el registro de F02
+# y toman su valor de knowledge/spec/strategy_spec.yaml.
+[entorno]
+nombre = "backtest"   # backtest | tester | demo
+
+[rutas]
+corpus = "corpus"
+data = "data"
+knowledge = "knowledge"
