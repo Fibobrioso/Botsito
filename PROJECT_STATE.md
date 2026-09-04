@@ -30,25 +30,26 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
-FASE 0 · Fundamentos
+FASE 1 · Base de conocimiento (F03-F08) — no abierta todavia
 
 ## Current Feature
-F02 · config-and-parameter-registry
+— (F02 integrada; F03 pendiente de abrir: requiere los videos en corpus/)
 
 ## Current Branch
-feature/F02-config-and-parameter-registry
+main
 
 ## Stable Main State
-85cedc4 · merge de F01 (project-scaffold). make check verde: 26 tests, 3 contratos, mypy strict, state check. CI Ubuntu verde. Tag stable/F01.
+dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos, mypy strict, state check, config validate. CI Ubuntu verde. Tag stable/F02.
 
 ## Completed Phases
-—
+- FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
 
 ## Completed Features
 - F01 · project-scaffold · validada por el usuario el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
+- F02 · config-and-parameter-registry · validada por el usuario el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
 
 ## Features Waiting for Validation
-- F02 · config-and-parameter-registry · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F02-config-and-parameter-registry.md
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -116,15 +117,16 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 ").
 
 ## Next Feature
-F02 · config-and-parameter-registry (`feature/F02-config-and-parameter-registry`)
+F03 · corpus-inventory (`feature/F03-corpus-inventory`)
 
 ## Next Action
-Usuario valida F02 -> make check -> merge --no-ff a main (BOTSITO_ALLOW_MAIN=1) -> tests desde main -> tag stable/F02 sobre el merge -> push -> cerrar FASE 0 (puerta) -> abrir feature/F03-corpus-inventory.
+Usuario descarga los 4 videos a corpus/ -> abrir feature/F03-corpus-inventory -> brief -> implementar (manifiesto con tamano, hash, duracion ffprobe, huecos de fotogramas) -> informe -> WAITING_FOR_USER_VALIDATION.
 
 ## Last Stable Commit
-85cedc4 · merge: F01 project-scaffold validado por el usuario · tag stable/F01
+dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
 
 ## Change Log
+- 2026-09-04 · F02 VALIDADA por el usuario; merge --no-ff a main (dc3384d); tag stable/F02; FASE 0 CERRADA
 - 2026-09-04 · segunda auditoria de F02: explicit-preview-rules; botsito config validate en make check; 65 funciones / 67 casos
 - 2026-09-04 · auditoria de F02: prefijo duplicado en errores, limites con float, accesores tipados, property YAML; 63 funciones / 65 casos
 - 2026-09-04 · push de la rama F02; CI Ubuntu verde (run 33883045053)
