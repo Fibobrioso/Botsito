@@ -113,3 +113,30 @@ def test_knowledge_validate_detecta_registro_roto(tmp_path: Path) -> None:
 
 def test_cli_entrypoint_runs(repo: Path) -> None:
     assert cli.main(["--repo", str(repo), "knowledge", "validate"]) == 0
+
+
+def test_config_validate_real_repo(repo: Path) -> None:
+    assert cli.config_validate(repo) == 0
+
+
+def test_config_validate_detecta_clave_del_registro(tmp_path: Path) -> None:
+    (tmp_path / "knowledge" / "spec").mkdir(parents=True)
+    (tmp_path / "knowledge" / "spec" / "parametros.yaml").write_text(
+        "parametros:\n  - nombre: stop_fraccion\n    tipo: fraccion\n    unidad: u\n"
+        '    descripcion: d\n    estado: CONFIRMED\n    valor: "0.75"\n'
+        "    fuente: {tipo: decision, id: x}\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "settings.example.toml").write_text(
+        '[entorno]\nnombre = "backtest"\nstop_fraccion = "0.5"\n\n'
+        '[rutas]\ncorpus = "c"\ndata = "d"\nknowledge = "k"\n',
+        encoding="utf-8",
+    )
+    assert cli.config_validate(tmp_path) == 1
+    (tmp_path / "config" / "settings.example.toml").write_text(
+        '[entorno]\nnombre = "backtest"\n\n[rutas]\ncorpus = "c"\ndata = "d"\nknowledge = "k"\n',
+        encoding="utf-8",
+    )
+    assert cli.config_validate(tmp_path) == 0
+    assert cli.main(["--repo", str(tmp_path), "config", "validate"]) == 0
