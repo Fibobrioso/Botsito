@@ -53,24 +53,27 @@ Punto cero: documentación (README, PROJECT_STATE, plan, investigación). Sin c�
 
 ## Existing Components
 - Paquete `botsito` con subpaquetes vacios documentados; CLI `state check` y `knowledge validate` (no-op).
-- Contratos de importacion (import-linter + test AST). Makefile, CI Linux, pre-commit config.
-- Plantillas: brief, ADR, informe de validacion. ADR-0001.
+- Contratos de importacion (import-linter + test AST). Tests de integridad del indice (tracked, CRLF, ignorados, gitignore anclado).
+- Makefile (`sync` instala hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
+- Plantillas: brief, ADR, informe de validacion. ADR-0001. `.gitattributes` con LF.
 
 ## Important Files
-- PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md · docs/plan/features/F01-project-scaffold.md
-- docs/adr/0001-repository-structure-and-change-regimes.md · pyproject.toml · Makefile · src/botsito/cli.py
-- docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (plan completo)
+- PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
+- docs/plan/AUDITORIA_FASES_2026-09-04.html · docs/plan/features/F01-project-scaffold.md · docs/validation/F01-project-scaffold.md
+- docs/adr/0001-repository-structure-and-change-regimes.md · pyproject.toml · Makefile · src/botsito/cli.py · scripts/git-hooks/pre-commit
+- docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-21 (tests/unit: project_state, adr, tree, cli · tests/contract: import_contracts, no_business_literals) · 3 contratos import-linter KEPT · mypy strict OK
+26 (unit: project_state, adr, tree, cli · contract: import_contracts, no_business_literals, repository_integrity) · 3 contratos import-linter KEPT · mypy strict OK
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
 
 ## Decisions and Rationale
-Formato obligatorio por decisión:
-Decisión: · Problema que resuelve: · Alternativas consideradas: · Por qué elegimos esta opción: ·
-Por qué descartamos las demás: · Impacto: · Fecha / fase: · Estado: ACTIVE / SUPERSEDED
+Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
+- 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
+- 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
+- 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
 
 ## Expert Entry Points
 - Sesión 1 (tras F10+F15): 3 preguntas bloqueantes + ronda 1 de etiquetado · pendiente
@@ -103,14 +106,17 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 - Ruta local de trabajo: C:/Users/USER/Desktop/Bot v3.
 
 ## Things That Must Not Be Changed
-- Regímenes de cambio de knowledge/. · Pureza de domain/. · Parámetros no se optimizan contra resultados.
-- La validación de fidelidad (F26) precede a cualquier MQL5.
+- Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
+- La validacion de fidelidad (F26) precede a cualquier MQL5.
+- Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado.
+- Ficheros de texto siempre con LF y UTF-8 (escribir con newline="
+").
 
 ## Next Feature
 F01 · project-scaffold (`feature/F01-project-scaffold`)
 
 ## Next Action
-Usuario valida F01 -> re-ejecutar make check -> merge --no-ff a main -> tests desde main -> tag stable/F01 -> abrir feature/F02-config-and-parameter-registry.
+Usuario valida F01 (con correcciones de la auditoria) -> re-ejecutar make check -> merge --no-ff a main con BOTSITO_ALLOW_MAIN=1 -> tests desde main -> tag stable/F01 -> abrir feature/F02-config-and-parameter-registry.
 
 ## Last Stable Commit
 0b43244 · docs(state): punto cero
@@ -119,3 +125,5 @@ Usuario valida F01 -> re-ejecutar make check -> merge --no-ff a main -> tests de
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
 - 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
 - 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · auditoria de fases (docs/plan/AUDITORIA_FASES_2026-09-04.html): 4 criticos, 19 huecos; plan ampliado (MASTER_PLAN.md seccion H)
+- 2026-09-04 · F01 corregida: .gitattributes, tests de integridad del indice, hook anti-main, uv --locked; 26 tests; WAITING_FOR_USER_VALIDATION
