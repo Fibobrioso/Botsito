@@ -78,7 +78,10 @@ temporal: acepta anadir feedback, rechaza editar y borrar.
   borrar, anadir en merge y rutas con acento; trailers validos, invalidos, inexistentes y con
   mensaje acentuado).
 - `state`, `config`, `knowledge validate` (0 registros, historial intacto, commits con Fuente): OK.
-- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33894611220.
+- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33894611220 (01477bf) y,
+  tras la auditoria extrema, run 33909186793 (d217a11).
+- Pruebas cruzadas tras la auditoria: clon sin tags valida por el ancla SHA; clon superficial
+  falla con ERROR explicito; `make hooks` desde PowerShell; hook con rutas con acento y espacio.
 
 ## Auditoria extrema (2026-09-04, tres agentes: codigo, plan/ejecucion, repositorio)
 Hallazgos corregidos en esta rama (cada uno con test o prueba manual):
