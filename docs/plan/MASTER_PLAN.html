@@ -1,0 +1,850 @@
+<title>Master Development Plan · Bot v3</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#f7f8fa; --paper-2:#eef1f5; --ink:#1b2430; --ink-2:#465262; --ink-3:#7a8797;
+  --rule:#d5dbe3; --accent:#23507a; --accent-soft:#dfe9f3;
+  --ok:#0f766e; --ok-soft:#d9efeb; --warn:#8a6d1d; --warn-soft:#f3ead0; --bad:#b4532a; --bad-soft:#f5e1d7; --hold:#5b5f9e; --hold-soft:#e3e3f3;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace; --serif:"Fraunces",Georgia,serif; --sans:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151a21; --paper-2:#1d242d; --ink:#e6eaef; --ink-2:#b6bfca; --ink-3:#8593a3;
+    --rule:#2f3843; --accent:#8fb6dc; --accent-soft:#213244;
+    --ok:#5fcbbd; --ok-soft:#173a36; --warn:#dcb85a; --warn-soft:#3b3218; --bad:#e8906a; --bad-soft:#42261a; --hold:#a9acdf; --hold-soft:#2a2b47;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151a21; --paper-2:#1d242d; --ink:#e6eaef; --ink-2:#b6bfca; --ink-3:#8593a3;
+  --rule:#2f3843; --accent:#8fb6dc; --accent-soft:#213244;
+  --ok:#5fcbbd; --ok-soft:#173a36; --warn:#dcb85a; --warn-soft:#3b3218; --bad:#e8906a; --bad-soft:#42261a; --hold:#a9acdf; --hold-soft:#2a2b47;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;margin:0}
+.wrap{display:grid;grid-template-columns:1fr;max-width:1180px;margin:0 auto;padding:0 20px 80px}
+@media(min-width:1000px){.wrap{grid-template-columns:230px minmax(0,1fr);gap:48px}}
+nav.toc{display:none}
+@media(min-width:1000px){
+  nav.toc{display:block;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:36px 0;font-size:13.5px}
+  nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--rule)}
+  nav.toc a:hover,nav.toc a:focus{color:var(--accent);border-left-color:var(--accent);outline:none}
+  nav.toc .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 6px}
+}
+main{min-width:0;max-width:82ch}
+header.hero{padding:56px 0 28px;border-bottom:1px solid var(--rule);margin-bottom:36px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-family:var(--serif);font-weight:700;font-size:42px;line-height:1.08;margin:0 0 16px;text-wrap:balance;letter-spacing:-.01em}
+.lede{font-size:20px;color:var(--ink-2);margin:0 0 20px;text-wrap:pretty}
+.meta{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:var(--mono);font-size:12.5px;color:var(--ink-3)}
+h2{font-family:var(--serif);font-weight:700;font-size:30px;line-height:1.15;margin:56px 0 14px;padding-top:12px;border-top:1px solid var(--rule);text-wrap:balance}
+h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:32px 0 10px;text-wrap:balance}
+h4{font-size:16px;font-weight:600;margin:22px 0 6px}
+p{margin:0 0 14px;text-wrap:pretty}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin:0 0 6px}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
+pre{font-family:var(--mono);font-size:13px;line-height:1.5;background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:12px 0 22px}
+pre code{background:none;padding:0;white-space:pre}
+.tablewrap{overflow-x:auto;margin:14px 0 24px;border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.4}
+th,td{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--paper-2);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.id{font-family:var(--mono);font-size:12.5px;white-space:nowrap;color:var(--accent)}
+.phase{border:1px solid var(--rule);border-radius:6px;margin:18px 0 26px;overflow:hidden}
+.phase>.ph{background:var(--paper-2);padding:12px 18px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;border-bottom:1px solid var(--rule)}
+.phase>.ph .n{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.08em}
+.phase>.ph h3{margin:0;font-size:20px}
+.phase>.ph .goal{font-size:14px;color:var(--ink-2);flex-basis:100%}
+.feat{padding:14px 18px;border-bottom:1px solid var(--rule)}
+.feat:last-child{border-bottom:none}
+.feat .fh{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin-bottom:6px}
+.feat .fid{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.feat .branch{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
+.feat .fname{font-weight:600}
+.feat dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:6px 0 0;font-size:14.5px}
+.feat dt{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);padding-top:3px;letter-spacing:.04em}
+.feat dd{margin:0}
+.callout{border-left:3px solid var(--accent);background:var(--paper-2);padding:14px 18px;margin:18px 0 22px;border-radius:0 6px 6px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout p:last-child{margin-bottom:0}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;vertical-align:middle}
+.t-ok{background:var(--ok-soft);color:var(--ok)} .t-warn{background:var(--warn-soft);color:var(--warn)} .t-bad{background:var(--bad-soft);color:var(--bad)} .t-hold{background:var(--hold-soft);color:var(--hold)} .t-acc{background:var(--accent-soft);color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr;gap:14px;margin:12px 0 22px}
+@media(min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+.box{border:1px solid var(--rule);border-radius:6px;padding:14px 16px}
+.box h4{margin-top:0}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.small{font-size:14px;color:var(--ink-2)}
+.footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Índice">
+  <div class="lbl">Plan</div>
+  <a href="#principios">0 · Principios de trabajo</a>
+  <a href="#estructura">B · Estructura del repositorio</a>
+  <a href="#plan">A · Master Development Plan</a>
+  <a href="#mapa">C · Mapa de ramas</a>
+  <a href="#grafo">D · Grafo de dependencias</a>
+  <a href="#orden">E · Orden de desarrollo</a>
+  <a href="#validacion">F · Estrategia de validación</a>
+  <a href="#experto">G · Bucle del experto</a>
+  <a href="#state">H · PROJECT_STATE.md inicial</a>
+  <a href="#primera">I · Primera funcionalidad</a>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="eyebrow">Bot v3 · Plan de desarrollo técnico · 3 de septiembre de 2026</p>
+  <h1>Master Development Plan: de repositorio vacío a bot en demo</h1>
+  <p class="lede">Traduce la arquitectura aprobada (evidencia → elicitación → especificación ejecutable + biblioteca de casos → motor de referencia → EA MQL5 → pruebas diferenciales → demo) en 35 funcionalidades pequeñas, cada una con rama, tests y criterio de aceptación. Ninguna se integra a <code>main</code> sin tu validación.</p>
+  <div class="meta"><span>8 fases · 35 funcionalidades · 35 ramas</span><span>Python (referencia y validación) + MQL5 (ejecución)</span><span>Sin código todavía</span></div>
+</header>
+
+<section id="principios">
+<h2>0 · Principios de trabajo que gobiernan todo el plan</h2>
+<ul>
+<li><strong>Una funcionalidad = una rama = un informe de validación = un merge.</strong> Ramas <code>feature/&lt;id&gt;-&lt;nombre&gt;</code> desde <code>main</code>; merge con <code>--no-ff</code>; cada merge etiqueta un punto estable <code>stable/&lt;id&gt;</code>.</li>
+<li><strong>Tres tipos de contenido, tres regímenes de cambio.</strong> Evidencia del corpus: inmutable (hash). Retroalimentación del experto: solo se añade, nunca se edita. Especificación y casos: versionados y derivados, cada cambio cita una evidencia o un registro de feedback.</li>
+<li><strong>El núcleo de decisión es puro.</strong> <code>domain/</code> no importa red, reloj, ficheros ni MetaTrader. Se hace cumplir con <code>import-linter</code> en CI y en hook local, no con buena voluntad.</li>
+<li><strong>Causalidad en los tipos y en los tests.</strong> Todo detector devuelve índice de confirmación además de índice de extremo; el test de truncado es exhaustivo.</li>
+<li><strong>Parámetros congelados por argumento.</strong> Cada parámetro lleva valor, fuente (cita o feedback) y estado. Ningún parámetro se optimiza contra resultados.</li>
+<li><strong>Validación de fidelidad antes del EA.</strong> El motor de referencia se compara con las decisiones del trader (fase 5) antes de escribir una línea de MQL5 (fase 6).</li>
+<li><strong>Sesión nueva de IA:</strong> lee <code>PROJECT_STATE.md</code>, después <code>docs/plan/features/&lt;actual&gt;.md</code>, después los ficheros de esa funcionalidad. Nada más salvo razón técnica.</li>
+<li><strong>Cambios de arquitectura</strong> solo mediante <em>ARCHITECTURE CHANGE PROPOSAL</em> y tu aprobación; se registran como ADR con estado <code>ACTIVE</code>/<code>SUPERSEDED</code>.</li>
+</ul>
+<div class="callout"><p><strong>Sobre el código de Bot v2.</strong> El plan asume repositorio vacío, como pediste. El código previo (237 tests) no se copia en bloque: si una funcionalidad de este plan puede reutilizar una pieza concreta, se propone en su brief como decisión explícita, se porta con sus tests y se registra en el ADR de esa funcionalidad. Así <code>main</code> nunca contiene nada que no haya pasado por el flujo de validación de este proyecto.</p></div>
+</section>
+
+<section id="estructura">
+<h2>B · Estructura inicial del repositorio</h2>
+<p>Diseñada alrededor de la distinción que exige la arquitectura: <strong>conocimiento versionado</strong> (evidencia, feedback, especificación, casos) separado del <strong>código</strong> que lo procesa, y <strong>dos implementaciones</strong> (Python de referencia, MQL5 de ejecución) que leen la misma fuente. Los datos pesados no entran en git; sus manifiestos con hash sí.</p>
+<pre><code>botv3/
+├── PROJECT_STATE.md          memoria operativa: dónde estamos, qué funciona, qué viene
+├── README.md                 cómo arrancar en 5 minutos; apunta a PROJECT_STATE.md
+├── pyproject.toml            paquete, dependencias, ruff, mypy, pytest, import-linter
+├── Makefile                  make check / test / lint / regress / report
+├── .pre-commit-config.yaml   lint + import-linter + validador de knowledge/ antes de commit
+├── .github/workflows/ci.yml  Linux: Python. Windows: compilación MQL5 y tester (fase 6+)
+│
+├── docs/
+│   ├── plan/
+│   │   ├── MASTER_PLAN.md          este documento, en Markdown
+│   │   └── features/F##-*.md       brief de cada funcionalidad: objetivo, alcance cerrado, aceptación
+│   ├── adr/                        decisiones: 0000-template.md, NNNN-*.md con estado ACTIVE/SUPERSEDED
+│   ├── validation/                 FUNCTIONALITY VALIDATION REPORT de cada rama + informes de fidelidad
+│   ├── spec/                       versión legible de la especificación, GENERADA desde knowledge/spec (F13)
+│   └── runbooks/                   operación: demo, incidentes, kill-switch (fase 7)
+│
+├── knowledge/                 ← la base de conocimiento. Datos, no código. Validada en CI.
+│   ├── corpus/manifest.yaml        inventario de vídeos y derivados con hash, duración, huecos (F03)
+│   ├── evidence/                   EvidenceItem en YAML, uno por fichero, INMUTABLES tras commit (F06)
+│   │   ├── v1/ v2/ v3/ v4/         por vídeo, nombrados por marca de tiempo
+│   │   └── index.jsonl             índice generado, no editado a mano
+│   ├── feedback/                   FeedbackRecord del trader, SOLO AÑADIR, por sesión (F09)
+│   │   └── 2026-09-xx-sesion-01/
+│   ├── spec/
+│   │   ├── strategy_spec.yaml      reglas, parámetros congelados, ambigüedades, tablas de decisión, statecharts (F11)
+│   │   └── glossary.yaml           vocabulario del trader ↔ vocabulario del código
+│   └── cases/                      biblioteca de casos ejecutables (F14)
+│       ├── dev/                    casos usados para cerrar reglas
+│       ├── holdout/                casos reservados: el código de spec NO puede leerlos (guarda en tests)
+│       └── fixtures/               instantáneas OHLC/ticks de cada caso, con hash
+│
+├── src/botv3/                 paquete Python
+│   ├── corpus/                     inventario, transcripción por fragmentos, extracción de fotogramas, alineación
+│   ├── evidence/                   modelo de evidencia, cargador, validador, contradicciones, búsqueda por tiempo
+│   ├── feedback/                   modelo de feedback, aplicación trazable a spec y casos, kit de elicitación
+│   ├── spec/                       esquema StrategySpec, cargador, validador semántico, generación de docs
+│   ├── cases/                      modelo de caso, cargador, guarda de holdout, runner
+│   ├── data/                       descarga OHLC/ticks, agregación con anclaje y huso, congelación, calidad
+│   ├── domain/                     NÚCLEO PURO: precios enteros, velas, sesgo H4, zonas M15, breaker M1,
+│   │                               geometría de riesgo, statecharts (Decider: decidir/evolucionar)
+│   ├── engine/                     reloj determinista, bucle de eventos, journal, simulación sobre ticks
+│   ├── validation/                 comparador de fidelidad, causalidad, sensibilidad, Deflated Sharpe, paridad
+│   ├── viewer/                     visor de tres marcos para auditoría del trader (HTML estático)
+│   ├── mql5bridge/                 exporta spec → .mqh, casos → CSV; lanza compilación y tester; parsea resultados
+│   └── cli.py                      `botv3 kb find`, `botv3 spec validate`, `botv3 cases run`, `botv3 backtest`…
+│
+├── mql5/                      ejecución en MetaTrader 5 (fase 6)
+│   ├── Experts/BotV3.mq5           el EA
+│   ├── Include/BotV3/              Params.mqh (GENERADO), Domain/*.mqh, StateMachine.mqh, Risk.mqh, Journal.mqh
+│   ├── Scripts/RunCases.mq5        ejecuta la biblioteca de casos dentro de MT5 (pruebas diferenciales)
+│   └── tester/                     .ini y sets del Strategy Tester, resultados parseables
+│
+├── tests/
+│   ├── unit/  integration/  contract/  golden/  regression/  differential/
+│   └── conftest.py                 fixtures compartidas; guarda que prohíbe leer knowledge/cases/holdout
+│
+├── scripts/                   operaciones puntuales: ingest_video.py, record_demo_ticks.py, export_fxreplay.py
+├── config/                    settings.toml por entorno (backtest / tester / demo); nunca secretos
+├── corpus/                    (gitignored) vídeos, audio, fotogramas. Solo el manifiesto va a git
+└── data/                      (gitignored) ticks y velas en Parquet. Solo manifests/*.yaml con hash va a git</code></pre>
+<h3>Por qué esta forma y no otra</h3>
+<ul>
+<li><strong><code>knowledge/</code> fuera de <code>src/</code></strong> porque lo editan personas y lo alimenta el trader; se valida como datos (esquema + semántica) y su historial en git es la trazabilidad que pediste. Un <code>diff</code> de <code>strategy_spec.yaml</code> es un cambio de negocio visible.</li>
+<li><strong><code>evidence/</code>, <code>feedback/</code> y <code>spec/</code> separados</strong> porque tienen regímenes distintos: inmutable, solo-añadir, versionado. Un hook impide modificar un fichero de evidencia ya commiteado y un test impide que <code>spec/</code> cite un id que no exista.</li>
+<li><strong><code>cases/holdout/</code> aislado</strong> porque la fidelidad se mide sobre lo que nadie miró al escribir reglas; una fixture de <code>conftest.py</code> falla si cualquier módulo de <code>spec/</code> o <code>domain/</code> lo abre.</li>
+<li><strong><code>domain/</code> sin dependencias</strong> porque es lo que se replica en MQL5: cuanto más puro, más pequeña la superficie de divergencia.</li>
+<li><strong><code>mql5/Include/BotV3/Params.mqh</code> generado</strong> desde <code>knowledge/spec</code> para que las dos implementaciones no puedan discrepar en un parámetro.</li>
+<li><strong>Un solo repositorio</strong> porque el contrato entre Python y MQL5 (casos y parámetros) debe cambiar en el mismo commit.</li>
+</ul>
+</section>
+
+<section id="plan">
+<h2>A · Master Development Plan</h2>
+<p>Ocho fases, 35 funcionalidades. Cada funcionalidad cabe en una o dos sesiones y termina con un informe de validación. Las entradas y salidas nombran ficheros reales del árbol anterior. Los tests se listan por tipo; el detalle exacto va en el brief <code>docs/plan/features/F##.md</code> que se escribe al abrir cada rama.</p>
+
+<!-- FASE 0 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 0</span><h3>Fundamentos</h3><span class="goal">Objetivo: que exista un repositorio donde toda regla posterior se pueda hacer cumplir mecánicamente. Habilita: todo lo demás.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F01</span><span class="branch">feature/F01-project-scaffold</span><span class="fname">Andamiaje del proyecto</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Repositorio con paquete, CI, contratos de importación, plantillas de ADR y brief, y <code>PROJECT_STATE.md</code> desde el primer commit.</dd>
+<dt>Entradas</dt><dd>Este plan; la plantilla de §H.</dd>
+<dt>Salidas</dt><dd>Árbol de §B con carpetas y README de responsabilidad; <code>pyproject.toml</code>; <code>Makefile</code>; CI verde; ADR-0001 (estructura y regímenes de cambio); <code>docs/plan/MASTER_PLAN.md</code>.</dd>
+<dt>Dependencias</dt><dd>Ninguna.</dd>
+<dt>Módulos</dt><dd><code>src/botv3/__init__.py</code>, <code>tests/conftest.py</code>, <code>tests/unit/test_scaffold.py</code>.</dd>
+<dt>Aceptación</dt><dd><code>make check</code> verde en local y en CI; test que verifica que <code>PROJECT_STATE.md</code> tiene todas las secciones; test que verifica que cada ADR tiene estado y secciones; contrato <code>domain</code>-no-importa-IO definido y en verde (aunque <code>domain/</code> esté vacío).</dd>
+<dt>Tests</dt><dd>Unit: estructura de documentos. Contract: import-linter.</dd>
+<dt>Riesgos</dt><dd>Sobre-ingeniería inicial. Mitigación: nada que no use la F02.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F02</span><span class="branch">feature/F02-config-and-parameter-registry</span><span class="fname">Configuración tipada y registro de parámetros con procedencia</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Un solo lugar por el que pasa cada parámetro, con valor, unidad, fuente (cita de evidencia o id de feedback) y estado <code>CONFIRMED / DEFAULT_AMBIGUOUS / UNKNOWN</code>.</dd>
+<dt>Entradas</dt><dd><code>config/settings.toml</code>; el esquema de parámetros (vacío de valores de negocio hasta F11).</dd>
+<dt>Salidas</dt><dd><code>src/botv3/config/</code> con carga, validación y reporte "parámetros sin fuente".</dd>
+<dt>Dependencias</dt><dd>F01.</dd>
+<dt>Aceptación</dt><dd>Un parámetro sin fuente hace fallar la carga en modo estricto; un valor fuera de rango falla; dos puertas para el mismo parámetro son imposibles (test que recorre el árbol buscando literales de negocio fuera del registro).</dd>
+<dt>Tests</dt><dd>Unit: validación, rangos, unidades. Negativos: sin fuente, duplicados.</dd>
+<dt>Riesgos</dt><dd>Registrar parámetros antes de tener evidencia. Mitigación: en F02 el registro está vacío de valores; los valores llegan en F11 citando evidencia.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 1 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 1</span><h3>Base de conocimiento: del corpus a la evidencia</h3><span class="goal">Objetivo: que cada afirmación sobre la estrategia sea un objeto con cita verificable. Habilita: elicitación con preguntas concretas (fase 2) y formalización con trazabilidad (fase 3).</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F03</span><span class="branch">feature/F03-corpus-inventory</span><span class="fname">Inventario del corpus con hash y huecos</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Manifiesto de los cuatro vídeos y derivados: hash, duración real (ffprobe), resolución, pista de audio, y cobertura de fotogramas con huecos calculados.</dd>
+<dt>Entradas</dt><dd>Vídeos originales en <code>corpus/</code> (descargados a mano desde Drive; Drive no se modifica).</dd>
+<dt>Salidas</dt><dd><code>knowledge/corpus/manifest.yaml</code>; <code>botv3 corpus inventory</code>.</dd>
+<dt>Dependencias</dt><dd>F01.</dd>
+<dt>Aceptación</dt><dd>Manifiesto regenerable y determinista; huecos &gt; 3 min listados por vídeo; hash verificado contra el fichero.</dd>
+<dt>Tests</dt><dd>Unit: cálculo de huecos sobre índices sintéticos; esquema. Integration: ffprobe sobre un clip fixture de 10 s.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F04</span><span class="branch">feature/F04-transcription-pipeline</span><span class="fname">Transcripción por fragmentos con desfase absoluto</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Retranscribir con Whisper large-v3 en fragmentos cortados en silencios, sumando el desfase absoluto, para que cada segmento tenga <code>t0/t1</code> fiables (sin la deriva de un minuto del material previo).</dd>
+<dt>Entradas</dt><dd>Audio extraído; manifiesto F03.</dd>
+<dt>Salidas</dt><dd><code>corpus/transcripts/&lt;video&gt;.jsonl</code> (gitignored) + hash en el manifiesto; glosario de correcciones de jerga aplicadas y registradas, nunca silenciosas.</dd>
+<dt>Dependencias</dt><dd>F03.</dd>
+<dt>Aceptación</dt><dd>Sobre 50 citas ya usadas en la investigación, la nueva transcripción conserva o mejora el sentido (revisión manual documentada en el informe de validación); ningún segmento con <code>t1</code> fuera de la duración del vídeo.</dd>
+<dt>Tests</dt><dd>Unit: aritmética de desfases, fusión de fragmentos, glosario. Integration: clip fixture.</dd>
+<dt>Riesgos</dt><dd>Coste de cómputo; jerga. Mitigación: glosario versionado; el original de <code>tiny</code> se conserva como evidencia histórica.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F05</span><span class="branch">feature/F05-frame-extraction</span><span class="fname">Extracción de fotogramas por escena y a 1 fps en tramos con decisión</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Índice de fotogramas con marca de tiempo; extracción densa (1 fps) en intervalos declarados como "tramo con decisión" en el manifiesto.</dd>
+<dt>Salidas</dt><dd><code>corpus/frames/&lt;video&gt;/</code> + <code>index.jsonl</code>; comando <code>botv3 corpus frames --dense 0:14:00-0:24:00</code>.</dd>
+<dt>Dependencias</dt><dd>F03.</dd>
+<dt>Aceptación</dt><dd>Cada fotograma tiene marca dentro del vídeo; en un tramo denso no hay huecos &gt; 2 s.</dd>
+<dt>Tests</dt><dd>Unit: integridad del índice. Integration: clip fixture.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F06</span><span class="branch">feature/F06-evidence-model</span><span class="fname">Modelo de evidencia inmutable</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Definir <code>EvidenceItem</code>: id, fuente (vídeo, <code>t0</code>, <code>t1</code>, fotogramas), modalidad, cita literal, afirmación normalizada, tipo (<code>RULE_STATEMENT · PARAMETER · EXAMPLE_TRADE · NO_TRADE · MANAGEMENT · CONTRADICTION · UNKNOWN</code>), extractor (humano/LLM), confianza, y hash de contenido. Inmutable tras commit.</dd>
+<dt>Salidas</dt><dd><code>src/botv3/evidence/model.py</code>, cargador, validador; hook que rechaza modificar un fichero de <code>knowledge/evidence/</code> ya commiteado (solo se puede añadir uno nuevo que lo <em>supersede</em>).</dd>
+<dt>Dependencias</dt><dd>F03 (referencias al manifiesto).</dd>
+<dt>Aceptación</dt><dd>Un item sin cita válida es rechazado; dos items con misma afirmación y valores distintos generan automáticamente un item <code>CONTRADICTION</code>; el hook de inmutabilidad funciona.</dd>
+<dt>Tests</dt><dd>Unit: esquema, hash, detección de contradicción. Negativos: cita fuera de duración, id duplicado. Invariante: inmutabilidad.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F07</span><span class="branch">feature/F07-evidence-extraction</span><span class="fname">Extracción de evidencia (humano primero, LLM como proponente)</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Poblar <code>knowledge/evidence/</code>: (a) importar como evidencia las 30 reglas y 6 ambigüedades ya identificadas, cada una con su cita; (b) herramienta que, sobre segmentos de transcripción, propone items con esquema restringido que <em>permite</em> <code>UNKNOWN</code> y "no consta"; toda propuesta la acepta o rechaza una persona antes de commit.</dd>
+<dt>Salidas</dt><dd>≥ 80 items de evidencia; <code>botv3 kb propose --video v3 --from 0:14:00 --to 0:24:00</code>.</dd>
+<dt>Dependencias</dt><dd>F04, F05, F06.</dd>
+<dt>Aceptación</dt><dd>100 % de items con cita verificada por fotograma o audio; sobre un tramo de 10 min, precisión y recall de las propuestas del LLM medidos contra extracción manual y reportados (no hay umbral: es información).</dd>
+<dt>Tests</dt><dd>Unit: validación de salida del LLM contra esquema; rechazo de items sin cita. Golden: items importados coinciden con las citas del informe de investigación.</dd>
+<dt>Riesgos</dt><dd>Alucinación de reglas no dichas. Mitigación: campo "no consta" obligatorio en el esquema; revisión humana; el LLM nunca escribe en <code>knowledge/</code>.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F08</span><span class="branch">feature/F08-evidence-retrieval</span><span class="fname">Búsqueda por texto y por tiempo sobre la evidencia</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>botv3 kb find "break even"</code> devuelve items con cita, transcripción alineada y fotograma más cercano; <code>botv3 kb at v4 0:44:56</code> devuelve todo lo que ocurre en ese instante.</dd>
+<dt>Dependencias</dt><dd>F07.</dd>
+<dt>Aceptación</dt><dd>Toda respuesta lleva fuente; búsqueda determinista; índice regenerable.</dd>
+<dt>Tests</dt><dd>Unit: índice, consultas, ausencia de items sin fuente.</dd>
+<dt>Nota</dt><dd>Es recuperación de desarrollo. No hay embeddings salvo que la búsqueda léxica demuestre ser insuficiente (decisión registrada).</dd>
+</dl></div>
+</div>
+
+<!-- FASE 2 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 2</span><h3>Retroalimentación del experto</h3><span class="goal">Objetivo: que cada aportación del trader sea un registro trazable que modifica la especificación sin tocar la evidencia. Habilita: cerrar reglas con firma (fase 3) y medir fidelidad (fase 5).</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F09</span><span class="branch">feature/F09-expert-feedback-model</span><span class="fname">Modelo de feedback, solo-añadir, con procedencia</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>FeedbackRecord</code>: id, sesión, fecha, medio (replay / audio / escrito), objetivo (id de evidencia, regla, parámetro, ambigüedad, caso), acción (<code>CONFIRM · CORRECT · REJECT · RESOLVE_UNKNOWN · RESOLVE_CONTRADICTION · LABEL_CASE · MARK_FALSE_POSITIVE · MARK_FALSE_NEGATIVE · BORDERLINE</code>), respuesta literal, valor resultante, y cita del artefacto (grabación, minuto). Solo se añade; una corrección de una corrección es otro registro.</dd>
+<dt>Salidas</dt><dd><code>src/botv3/feedback/</code>; aplicación trazable: <code>botv3 feedback apply</code> produce el diff propuesto sobre <code>strategy_spec.yaml</code> y <code>cases/</code>, nunca lo escribe solo.</dd>
+<dt>Dependencias</dt><dd>F06.</dd>
+<dt>Aceptación</dt><dd>Hook de solo-añadir funciona; todo cambio en <code>spec/</code> o <code>cases/</code> que altere valor o etiqueta debe citar un id de feedback o de evidencia (test recorre el diff de git); cadena evidencia → feedback → regla reconstruible con <code>botv3 kb trace RN-023</code>.</dd>
+<dt>Tests</dt><dd>Unit: esquema, acciones. Invariantes: solo-añadir; ningún registro sin objetivo válido. Integration: trazabilidad completa sobre un caso sintético.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F10</span><span class="branch">feature/F10-elicitation-kit</span><span class="fname">Kit de elicitación: preguntas desde UNKNOWN y paquetes de etiquetado ciego</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Generar automáticamente (a) el cuestionario con caso concreto por cada item <code>UNKNOWN</code> o <code>CONTRADICTION</code> abierto, (b) paquetes de 40 ventanas de replay (fechas no vistas) para etiquetado ciego, (c) cálculo de κ entre dos rondas.</dd>
+<dt>Dependencias</dt><dd>F09; F15 para las ventanas con datos reales (hasta entonces, ventanas sintéticas).</dd>
+<dt>Aceptación</dt><dd>Paquete determinista dado un seed; κ correcto sobre fixtures conocidas; cada pregunta enlaza el item que la origina.</dd>
+<dt>Tests</dt><dd>Unit: κ de Cohen, generación, determinismo.</dd>
+<dt>Punto de entrada del experto</dt><dd><strong>Sesión 1</strong> (después de F10 y F15): las tres preguntas bloqueantes sobre casos concretos + ronda 1 de etiquetado. Produce registros F09.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 3 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 3</span><h3>Formalización: StrategySpec y biblioteca de casos</h3><span class="goal">Objetivo: una especificación que se pueda validar semánticamente y una verdad de referencia ejecutable. Habilita: el motor (fase 5) y el EA (fase 6) leen la misma fuente.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F11</span><span class="branch">feature/F11-strategy-spec-schema</span><span class="fname">Esquema y cargador de StrategySpec</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>strategy_spec.yaml</code> con: reglas (id, enunciado, predicado formal en pseudocódigo, parámetros, refs de evidencia y feedback, estado), parámetros congelados (vía F02), ambigüedades (default + interruptor), tablas de decisión para el residuo discrecional (filas que elige el trader, no el código), y dos statecharts (jornada, ciclo de operación) como datos.</dd>
+<dt>Salidas</dt><dd><code>src/botv3/spec/</code>; primera versión poblada con las reglas de fase 1 y los registros de la sesión 1.</dd>
+<dt>Dependencias</dt><dd>F02, F07, F09.</dd>
+<dt>Aceptación</dt><dd>Carga estricta; cada regla con ≥ 1 referencia; estados de regla derivados de las referencias (una regla con solo evidencia contradictoria no puede ser <code>CONFIRMED</code>).</dd>
+<dt>Tests</dt><dd>Unit: esquema, referencias, derivación de estado. Negativos: regla sin referencia, parámetro no registrado.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F12</span><span class="branch">feature/F12-spec-semantic-validator</span><span class="fname">Validador semántico de la especificación</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Comprobaciones que un esquema no puede hacer: dos reglas activas no se contradicen; toda evidencia <code>RULE_STATEMENT</code> está mapeada a una regla o explícitamente rechazada con feedback; los statecharts son alcanzables y sin estados huérfanos; ninguna ambigüedad abierta afecta a una regla <code>CONFIRMED</code>; los parámetros de una tabla de decisión cubren todas las filas.</dd>
+<dt>Dependencias</dt><dd>F11.</dd>
+<dt>Aceptación</dt><dd><code>botv3 spec validate</code> falla con mensaje que nombra el id; corre en pre-commit y CI.</dd>
+<dt>Tests</dt><dd>Unit por comprobación, con specs sintéticas válidas e inválidas. Regresión: la spec real siempre valida en <code>main</code>.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F13</span><span class="branch">feature/F13-spec-documents</span><span class="fname">Documentos generados desde la especificación</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Generar <code>docs/spec/*.md</code> (legible) y la hoja de revisión para el trader (español, una fila por regla, columna "¿confirmas?") desde el YAML. Nunca al revés.</dd>
+<dt>Dependencias</dt><dd>F11.</dd>
+<dt>Aceptación</dt><dd>Test que falla si <code>docs/spec/</code> no coincide con lo generado (anti-deriva documento-código).</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F14</span><span class="branch">feature/F14-case-library</span><span class="fname">Biblioteca de casos ejecutables con partición reservada</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>Case</code>: id, ventana temporal, fixture OHLC/ticks con hash, decisión esperada (operar / no operar, lado, vela de entrada, precio, stop, objetivo, evento de BE), tipo (<code>POSITIVE · NEGATIVE · BORDERLINE · COUNTERFACTUAL</code>), fuente de la etiqueta (evidencia o feedback), partición (<code>dev</code> / <code>holdout</code>). Runner que ejecuta cualquier implementación sobre los casos.</dd>
+<dt>Salidas</dt><dd>Primeros casos desde el corpus: 2 de julio de 2026 (dos operaciones con cifras exactas), 30 de enero de 2026 (caja con precios), no-trades citados; <code>botv3 cases run --impl python</code>.</dd>
+<dt>Dependencias</dt><dd>F09, F11, F15 (fixtures reales).</dd>
+<dt>Aceptación</dt><dd>Guarda de holdout activa (ningún módulo de <code>spec/</code> ni <code>domain/</code> puede abrirlo; los tests de fidelidad sí, mediante fixture autorizada); cada caso cita su etiqueta; runner independiente de la implementación.</dd>
+<dt>Tests</dt><dd>Unit: esquema, hash de fixtures. Invariante: guarda de holdout. Contract: interfaz del runner.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 4 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 4</span><h3>Datos de mercado</h3><span class="goal">Objetivo: velas y ticks reproducibles, con el anclaje H4 y el huso que usa el trader, congelados por hash. Habilita: casos con datos reales, motor y backtest.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F15</span><span class="branch">feature/F15-market-data-ohlc</span><span class="fname">OHLC M1 y agregación M15/H4 con anclaje y huso</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Descarga de M1 EURUSD para las fechas de los casos y del backtest del trader (enero 2026, julio 2026, agosto 2026); agregación a M15 y H4 con anclaje configurable y huso <code>Europe/Madrid</code>; manifiesto con hash.</dd>
+<dt>Dependencias</dt><dd>F02.</dd>
+<dt>Aceptación</dt><dd>Las H4 agregadas coinciden barra a barra con una captura del trader en un mes (verificación en informe); DST correcto en ambos cambios de hora; dataset congelado.</dd>
+<dt>Tests</dt><dd>Unit: agregación, anclaje, DST. Golden: un día conocido. Negativos: hueco de datos detectado.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F16</span><span class="branch">feature/F16-market-data-ticks</span><span class="fname">Ticks a Parquet con control de calidad</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Ingesta de ticks bid/ask (proveedor histórico) a Parquet particionado; comprobaciones: huecos, spreads anómalos, ticks fuera de orden, duplicados; manifiesto con hash.</dd>
+<dt>Dependencias</dt><dd>F15.</dd>
+<dt>Aceptación</dt><dd>Informe de calidad por mes; M1 reconstruido desde ticks coincide con el M1 descargado dentro de tolerancia declarada.</dd>
+<dt>Tests</dt><dd>Unit: cada comprobación con fixtures sintéticas. Integration: un día real.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F17</span><span class="branch">feature/F17-demo-tick-recorder</span><span class="fname">Grabador diario de ticks y spread de la cuenta demo</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Script que vuelca ticks de la demo de FundedNext a disco cada día (lo irrecuperable a posteriori); perfil de spread por hora.</dd>
+<dt>Dependencias</dt><dd>F16; cuenta demo abierta (acción tuya).</dd>
+<dt>Aceptación</dt><dd>Rotación diaria, reintento ante desconexión, manifiesto actualizado; perfil de spread reproducible.</dd>
+<dt>Tests</dt><dd>Unit: rotación y perfil sobre datos sintéticos. La conexión real se valida en el informe, no en CI.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 5 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 5</span><h3>Motor de referencia y validación de fidelidad</h3><span class="goal">Objetivo: una implementación pura de la especificación, un backtest determinista sobre ticks, un visor para el trader y la medición de fidelidad antes de escribir MQL5. Habilita: la decisión de seguir con reglas solas o activar el respaldo.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F18</span><span class="branch">feature/F18-domain-types-and-h4-bias</span><span class="fname">Tipos del dominio y sesgo H4</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Precios como enteros de ticks, <code>Candle</code>, <code>Timeframe</code>, series inmutables; regla del sesgo H4 con el interruptor de la ambigüedad A-1.</dd>
+<dt>Dependencias</dt><dd>F11, F14.</dd>
+<dt>Aceptación</dt><dd>Casos de sesgo de la biblioteca en verde; ninguna operación con <code>float</code> en precios (lint).</dd>
+<dt>Tests</dt><dd>Unit; property (conmutación de tipos); golden desde casos.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F19</span><span class="branch">feature/F19-domain-m15-zones</span><span class="fname">Zonas de liquidez M15 y mitigación</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Extremo de tramo con mecha hasta la primera vela contraria; solo estructura reciente; mitigación con cuerpo en M15. Toda salida lleva índice de confirmación.</dd>
+<dt>Dependencias</dt><dd>F18.</dd>
+<dt>Aceptación</dt><dd>Test de causalidad exhaustivo (serie truncada en cada t = serie completa hasta t); casos de zona en verde.</dd>
+<dt>Tests</dt><dd>Unit; invariante de causalidad; golden.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F20</span><span class="branch">feature/F20-domain-m1-breaker-and-control-zones</span><span class="fname">Mapeo M1, breaker y zonas de control</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Zigzag M1 sobre mechas, breaker con mecha o cuerpo, primera y segunda zona de control, invalidación por segunda zona antes del llenado, mitigación con mecha en M1.</dd>
+<dt>Dependencias</dt><dd>F19.</dd>
+<dt>Aceptación</dt><dd>Causalidad exhaustiva; casos de entrada y de no-entrada en verde; el "mapeo de dos velas como una" queda como caso <code>BORDERLINE</code> abierto, no como regla inventada.</dd>
+<dt>Tests</dt><dd>Unit; invariante; golden; negativos (dos zonas de control → no entrada).</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F21</span><span class="branch">feature/F21-domain-risk-geometry</span><span class="fname">Geometría del riesgo</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Caja 0/0,25/0,5/0,75/1, stop en 0,75 con colchón de spread, lotaje sobre distancia completa truncado hacia abajo, objetivo 1:3, evento de break even, tabla de decisión del stop del segundo esquema.</dd>
+<dt>Dependencias</dt><dd>F18.</dd>
+<dt>Aceptación</dt><dd>Reproduce los ratios 4,08 y 3,94 del caso del 2 de julio; una operación stopeada pierde exactamente 0,75 R.</dd>
+<dt>Tests</dt><dd>Unit; property (monotonía del lotaje); golden.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F22</span><span class="branch">feature/F22-domain-state-machines</span><span class="fname">Statecharts de jornada y ciclo de operación (patrón Decider)</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>decidir(estado, evento) → comandos</code> y <code>evolucionar(estado, evento) → estado</code>, puras. Jornada: ventana, tres cartuchos (BE no consume), parada en la primera ganadora, cierre a las 15:00. Ciclo: una sola posición, reentrada tras stop o profit, reubicación de la límite al cierre de M1, expiración.</dd>
+<dt>Dependencias</dt><dd>F20, F21.</dd>
+<dt>Aceptación</dt><dd>Invariantes probadas por propiedad: nunca dos posiciones; nunca orden viva fuera de ventana; nunca cuarto cartucho; replay de eventos reconstruye el estado.</dd>
+<dt>Tests</dt><dd>Property (hypothesis); unit por transición; golden.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F23</span><span class="branch">feature/F23-engine-event-loop</span><span class="fname">Bucle de eventos, reloj determinista y journal</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Reloj como entrada; precedencia fija entre eventos del mismo instante; journal secuenciado; replay.</dd>
+<dt>Dependencias</dt><dd>F22.</dd>
+<dt>Aceptación</dt><dd>Dos ejecuciones idénticas producen el mismo <code>sha256</code> del journal; lista de rompedores de determinismo comprobada (orden de <code>set</code>, semillas, <code>tzdata</code>).</dd>
+<dt>Tests</dt><dd>Determinismo; ordering; replay.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F24</span><span class="branch">feature/F24-engine-tick-backtest</span><span class="fname">Simulación sobre ticks con modelo de llenado</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Órdenes límite llenadas contra ticks reales; stop y objetivo resueltos en el mismo minuto por orden de ticks; spread y comisión del broker; zona ciega inicial descartada.</dd>
+<dt>Dependencias</dt><dd>F16, F23.</dd>
+<dt>Aceptación</dt><dd>Cada llenado es defendible tick a tick en el journal; casos de la biblioteca reproducen resultado en R.</dd>
+<dt>Tests</dt><dd>Unit del modelo de llenado; golden; determinismo.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F25</span><span class="branch">feature/F25-viewer</span><span class="fname">Visor de tres marcos para auditoría del trader</span></div>
+<dl>
+<dt>Objetivo</dt><dd>HTML estático con H4, M15 y M1, zonas, breaker, orden, stop, objetivo y eventos del journal; navegación por caso.</dd>
+<dt>Dependencias</dt><dd>F24.</dd>
+<dt>Aceptación</dt><dd>Lo que dibuja es exactamente lo que el motor tiene en memoria (test de igualdad entre la capa de datos del visor y el journal); el trader lo usa en la sesión 2.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F26</span><span class="branch">feature/F26-fidelity-validator</span><span class="fname">Validador de fidelidad contra las decisiones del trader</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Importar las operaciones exportadas del trader (FXReplay, Excel); ejecutar el motor sobre el mismo periodo; comparar operación a operación (día, lado, vela ±1, R ±0,1); informe de discrepancias; distribución de causas de abstención; κ de las rondas de etiquetado; partición dev/holdout respetada.</dd>
+<dt>Dependencias</dt><dd>F10, F14, F24.</dd>
+<dt>Aceptación</dt><dd>Informe reproducible; cada discrepancia enlaza al caso y al visor; el holdout solo se abre con flag explícito registrado en <code>PROJECT_STATE.md</code>.</dd>
+<dt>Tests</dt><dd>Unit del comparador; integration sobre casos sintéticos; guarda de holdout.</dd>
+<dt>Punto de entrada del experto</dt><dd><strong>Sesión 2</strong>: revisión de discrepancias en el visor + ronda 2 de etiquetado (κ). Produce registros F09 que, vía F12, se aplican a la spec. <strong>Punto de decisión (§11 del informe):</strong> seguir con reglas solas o activar el respaldo.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F27</span><span class="branch">feature/F27-sensitivity-and-edge-report</span><span class="fname">Sensibilidad y ventaja con N declarado</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Barrido de las ambigüedades (interruptores), sensibilidad al detector y al feed, backtest multianual con parámetros congelados, Deflated Sharpe y probabilidad de sobreajuste con N declarado.</dd>
+<dt>Dependencias</dt><dd>F24, F26.</dd>
+<dt>Aceptación</dt><dd>Informe de ventaja separado del de fidelidad; N incluye las pruebas manuales del trader; ninguna optimización.</dd>
+<dt>Tests</dt><dd>Unit de DSR contra valores publicados; determinismo del barrido.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 6 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 6</span><h3>MQL5 y pruebas diferenciales</h3><span class="goal">Objetivo: un EA que lea la misma especificación y demuestre equivalencia con la referencia. Habilita: demo.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F28</span><span class="branch">feature/F28-mql5-spec-export</span><span class="fname">Exportación de parámetros y casos a MQL5</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Generar <code>Params.mqh</code> (parámetros congelados e interruptores de ambigüedad) y fixtures CSV de los casos desde <code>knowledge/</code>. Prohibido editar a mano (cabecera + test).</dd>
+<dt>Dependencias</dt><dd>F11, F14.</dd>
+<dt>Aceptación</dt><dd>Regenerar no produce diff; un valor en <code>.mqh</code> siempre coincide con el YAML.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F29</span><span class="branch">feature/F29-mql5-domain</span><span class="fname">Dominio en MQL5</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>Include/BotV3/Domain/*.mqh</code> espejo de F18–F21, escrito desde la especificación (no traducido línea a línea), compilable con MetaEditor por línea de comandos.</dd>
+<dt>Dependencias</dt><dd>F28; F18–F21 como referencia.</dd>
+<dt>Aceptación</dt><dd>Compila sin warnings; <code>Scripts/RunCases.mq5</code> ejecuta la biblioteca de casos y produce CSV de decisiones.</dd>
+<dt>Tests</dt><dd>Compilación en CI Windows; diferencial en F30.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F30</span><span class="branch">feature/F30-differential-testing</span><span class="fname">Harness diferencial Python ↔ MQL5</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Ejecutar cada caso por ambas implementaciones y comparar decisión, niveles y eventos; informe de divergencias con el caso y el visor.</dd>
+<dt>Dependencias</dt><dd>F29, F26.</dd>
+<dt>Aceptación</dt><dd>100 % de casos idénticos en decisión; niveles con diferencia ≤ 1 tick; el harness corre en CI Windows.</dd>
+<dt>Tests</dt><dd>El harness es el test; unit del comparador y del parser de CSV.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F31</span><span class="branch">feature/F31-mql5-expert-advisor</span><span class="fname">EA: statecharts, órdenes idempotentes, veto de riesgo, journal</span></div>
+<dl>
+<dt>Objetivo</dt><dd><code>Experts/BotV3.mq5</code>: statecharts espejo de F22; envío idempotente con reconciliación ante respuestas ambiguas; expiración en el propio envío; reubicación solo al cierre de M1 con banda muerta; <code>Risk.mqh</code> separado con límites de FundedNext en hora de servidor y kill-switch; journal a fichero con la regla que motivó cada comando y la condición fallida en cada abstención.</dd>
+<dt>Dependencias</dt><dd>F29, F30.</dd>
+<dt>Aceptación</dt><dd>Ante cada retcode de una tabla de 30, el EA hace lo correcto y nunca duplica una posición (tests con broker simulado en script); presupuesto de mensajes contado.</dd>
+<dt>Tests</dt><dd>Scripts MQL5 de escenario; diferencial extendido a eventos de gestión.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F32</span><span class="branch">feature/F32-strategy-tester-parity</span><span class="fname">Paridad con el Strategy Tester sobre ticks reales</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Correr el EA en "cada tick basado en ticks reales" sobre el periodo congelado y comparar con el backtest Python del mismo periodo: operaciones, entradas, R.</dd>
+<dt>Dependencias</dt><dd>F24, F31.</dd>
+<dt>Aceptación</dt><dd>&gt; 95 % de coincidencia de operaciones; diferencia mediana de entrada &lt; 0,3 pips; &lt; 15 % de diferencia de expectativa; cada divergencia explicada (feed, modelo de llenado) o corregida.</dd>
+</dl></div>
+</div>
+
+<!-- FASE 7 -->
+<div class="phase">
+<div class="ph"><span class="n">FASE 7</span><h3>Demo y modo sombra</h3><span class="goal">Objetivo: el EA opera en demo, sus decisiones se reconcilian a diario con el backtest del mismo periodo y las discrepancias vuelven al trader. Habilita: la decisión de cuenta real, que no forma parte de este plan.</span></div>
+
+<div class="feat"><div class="fh"><span class="fid">F33</span><span class="branch">feature/F33-demo-deployment</span><span class="fname">Despliegue en demo y runbooks</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Configuración de terminal/VPS, arranque, pre-vuelo (anclaje H4 verificado contra el broker, huso, símbolo), envío del journal, runbook de incidentes y kill-switch.</dd>
+<dt>Dependencias</dt><dd>F17, F31.</dd>
+<dt>Aceptación</dt><dd>Pre-vuelo automatizado que aborta si algo no cuadra; runbooks probados en simulacro.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F34</span><span class="branch">feature/F34-shadow-reconciliation</span><span class="fname">Reconciliación diaria demo ↔ backtest y paquete de discrepancias</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Cada día: backtest Python sobre los ticks grabados del propio día vs journal del EA; triage de divergencias; generación de paquete de revisión para el trader (casos nuevos → F09).</dd>
+<dt>Dependencias</dt><dd>F32, F33.</dd>
+<dt>Aceptación</dt><dd>Paridad diaria dentro de umbrales durante ≥ 3 meses; toda divergencia clasificada.</dd>
+<dt>Punto de entrada del experto</dt><dd><strong>Sesiones mensuales</strong> sobre discrepancias en vivo.</dd>
+</dl></div>
+
+<div class="feat"><div class="fh"><span class="fid">F35</span><span class="branch">feature/F35-go-live-gate</span><span class="fname">Memorando de decisión para cuenta real</span></div>
+<dl>
+<dt>Objetivo</dt><dd>Generador del memorando con los criterios: fidelidad ≥ 85 %, κ reportado, paridad dentro de umbrales, ventaja con DSR y N declarados, checklist de reglas de la prop firm. No ejecuta nada.</dd>
+<dt>Dependencias</dt><dd>F27, F34.</dd>
+<dt>Aceptación</dt><dd>Memorando reproducible desde los informes; la decisión es tuya y del trader.</dd>
+</dl></div>
+</div>
+</section>
+
+<section id="mapa">
+<h2>C · Mapa funcionalidad → rama</h2>
+<div class="tablewrap"><table>
+<tr><th>Id</th><th>Rama</th><th>Objetivo</th><th>Depende de</th><th>Pruebas clave</th><th>Aceptación en una línea</th></tr>
+<tr><td class="id">F01</td><td><code>feature/F01-project-scaffold</code></td><td>Andamiaje y contratos</td><td>—</td><td>Estructura de docs; import-linter</td><td>CI verde; PROJECT_STATE completo</td></tr>
+<tr><td class="id">F02</td><td><code>feature/F02-config-and-parameter-registry</code></td><td>Parámetros con procedencia</td><td>F01</td><td>Sin fuente = error</td><td>Una sola puerta por parámetro</td></tr>
+<tr><td class="id">F03</td><td><code>feature/F03-corpus-inventory</code></td><td>Manifiesto con hash y huecos</td><td>F01</td><td>Huecos sintéticos</td><td>Manifiesto determinista</td></tr>
+<tr><td class="id">F04</td><td><code>feature/F04-transcription-pipeline</code></td><td>Transcripción alineada</td><td>F03</td><td>Desfases; clip fixture</td><td>50 citas conservan sentido</td></tr>
+<tr><td class="id">F05</td><td><code>feature/F05-frame-extraction</code></td><td>Fotogramas densos</td><td>F03</td><td>Integridad del índice</td><td>Sin huecos &gt; 2 s en tramos densos</td></tr>
+<tr><td class="id">F06</td><td><code>feature/F06-evidence-model</code></td><td>Evidencia inmutable</td><td>F03</td><td>Inmutabilidad; contradicción</td><td>Sin cita = rechazado</td></tr>
+<tr><td class="id">F07</td><td><code>feature/F07-evidence-extraction</code></td><td>Poblar evidencia</td><td>F04, F05, F06</td><td>Esquema LLM; golden</td><td>100 % citas verificadas</td></tr>
+<tr><td class="id">F08</td><td><code>feature/F08-evidence-retrieval</code></td><td>Búsqueda por texto y tiempo</td><td>F07</td><td>Índice; fuentes</td><td>Toda respuesta con fuente</td></tr>
+<tr><td class="id">F09</td><td><code>feature/F09-expert-feedback-model</code></td><td>Feedback solo-añadir</td><td>F06</td><td>Solo-añadir; trazabilidad</td><td>Cambio de spec sin id = error</td></tr>
+<tr><td class="id">F10</td><td><code>feature/F10-elicitation-kit</code></td><td>Preguntas y etiquetado ciego</td><td>F09 (F15)</td><td>κ; determinismo</td><td>Paquete reproducible</td></tr>
+<tr><td class="id">F11</td><td><code>feature/F11-strategy-spec-schema</code></td><td>StrategySpec</td><td>F02, F07, F09</td><td>Referencias; estados</td><td>Carga estricta</td></tr>
+<tr><td class="id">F12</td><td><code>feature/F12-spec-semantic-validator</code></td><td>Validación semántica</td><td>F11</td><td>Por comprobación</td><td>Falla nombrando el id</td></tr>
+<tr><td class="id">F13</td><td><code>feature/F13-spec-documents</code></td><td>Docs generados</td><td>F11</td><td>Anti-deriva</td><td>docs = generado</td></tr>
+<tr><td class="id">F14</td><td><code>feature/F14-case-library</code></td><td>Casos ejecutables</td><td>F09, F11, F15</td><td>Guarda de holdout</td><td>Runner independiente</td></tr>
+<tr><td class="id">F15</td><td><code>feature/F15-market-data-ohlc</code></td><td>OHLC y agregación</td><td>F02</td><td>DST; anclaje; golden</td><td>H4 = las del trader</td></tr>
+<tr><td class="id">F16</td><td><code>feature/F16-market-data-ticks</code></td><td>Ticks con calidad</td><td>F15</td><td>Comprobaciones</td><td>M1 desde ticks coincide</td></tr>
+<tr><td class="id">F17</td><td><code>feature/F17-demo-tick-recorder</code></td><td>Grabar demo</td><td>F16</td><td>Rotación</td><td>Perfil de spread</td></tr>
+<tr><td class="id">F18</td><td><code>feature/F18-domain-types-and-h4-bias</code></td><td>Tipos y sesgo</td><td>F11, F14</td><td>Golden; lint</td><td>Casos de sesgo verdes</td></tr>
+<tr><td class="id">F19</td><td><code>feature/F19-domain-m15-zones</code></td><td>Zonas M15</td><td>F18</td><td>Causalidad</td><td>Truncado = completo</td></tr>
+<tr><td class="id">F20</td><td><code>feature/F20-domain-m1-breaker-and-control-zones</code></td><td>Breaker y control</td><td>F19</td><td>Causalidad; negativos</td><td>Casos de entrada verdes</td></tr>
+<tr><td class="id">F21</td><td><code>feature/F21-domain-risk-geometry</code></td><td>Geometría</td><td>F18</td><td>Golden 4,08 / 3,94</td><td>Stop = −0,75 R</td></tr>
+<tr><td class="id">F22</td><td><code>feature/F22-domain-state-machines</code></td><td>Statecharts</td><td>F20, F21</td><td>Property</td><td>Invariantes probadas</td></tr>
+<tr><td class="id">F23</td><td><code>feature/F23-engine-event-loop</code></td><td>Bucle y reloj</td><td>F22</td><td>Determinismo</td><td>Mismo sha256</td></tr>
+<tr><td class="id">F24</td><td><code>feature/F24-engine-tick-backtest</code></td><td>Simulación ticks</td><td>F16, F23</td><td>Llenado; golden</td><td>Llenado defendible</td></tr>
+<tr><td class="id">F25</td><td><code>feature/F25-viewer</code></td><td>Visor</td><td>F24</td><td>Igualdad con journal</td><td>Dibuja lo que hay en memoria</td></tr>
+<tr><td class="id">F26</td><td><code>feature/F26-fidelity-validator</code></td><td>Fidelidad</td><td>F10, F14, F24</td><td>Comparador; holdout</td><td>Informe reproducible</td></tr>
+<tr><td class="id">F27</td><td><code>feature/F27-sensitivity-and-edge-report</code></td><td>Sensibilidad y ventaja</td><td>F24, F26</td><td>DSR</td><td>N declarado</td></tr>
+<tr><td class="id">F28</td><td><code>feature/F28-mql5-spec-export</code></td><td>Exportación a MQL5</td><td>F11, F14</td><td>Roundtrip</td><td>Regenerar sin diff</td></tr>
+<tr><td class="id">F29</td><td><code>feature/F29-mql5-domain</code></td><td>Dominio MQL5</td><td>F28</td><td>Compilación</td><td>RunCases produce CSV</td></tr>
+<tr><td class="id">F30</td><td><code>feature/F30-differential-testing</code></td><td>Diferencial</td><td>F29, F26</td><td>Harness</td><td>100 % decisiones iguales</td></tr>
+<tr><td class="id">F31</td><td><code>feature/F31-mql5-expert-advisor</code></td><td>EA</td><td>F29, F30</td><td>Retcodes</td><td>Nunca duplica</td></tr>
+<tr><td class="id">F32</td><td><code>feature/F32-strategy-tester-parity</code></td><td>Paridad tester</td><td>F24, F31</td><td>Comparación</td><td>&gt; 95 % operaciones</td></tr>
+<tr><td class="id">F33</td><td><code>feature/F33-demo-deployment</code></td><td>Demo</td><td>F17, F31</td><td>Pre-vuelo</td><td>Aborta si no cuadra</td></tr>
+<tr><td class="id">F34</td><td><code>feature/F34-shadow-reconciliation</code></td><td>Sombra</td><td>F32, F33</td><td>Triage</td><td>3 meses en umbral</td></tr>
+<tr><td class="id">F35</td><td><code>feature/F35-go-live-gate</code></td><td>Memorando</td><td>F27, F34</td><td>Reproducibilidad</td><td>Decisión humana</td></tr>
+</table></div>
+</section>
+
+<section id="grafo">
+<h2>D · Grafo de dependencias</h2>
+<pre><code>F01 scaffold
+ ├── F02 config/params ──────────────────────────┐
+ └── F03 corpus inventory                         │
+      ├── F04 transcription ─┐                    │
+      ├── F05 frames ────────┼── F07 extraction ── F08 retrieval
+      └── F06 evidence model ┘        │
+                │                     │
+                └── F09 feedback model ┴──────────┐
+                         │                         │
+                         ├── F10 elicitation kit   │
+                         │        (usa F15)        │
+                         └────────── F11 StrategySpec ◄── F02
+                                       ├── F12 semantic validator
+                                       ├── F13 spec documents
+                                       └── F14 case library ◄── F15
+
+F02 ── F15 OHLC ── F16 ticks ── F17 demo recorder
+
+F11 + F14 ── F18 types & H4 bias
+               ├── F19 M15 zones ── F20 M1 breaker ─┐
+               └── F21 risk geometry ───────────────┴── F22 state machines
+                                                         └── F23 event loop
+                                                              └── F24 tick backtest ◄── F16
+                                                                   ├── F25 viewer
+                                                                   ├── F26 fidelity ◄── F10, F14
+                                                                   │     └── F27 sensitivity & edge
+                                                                   │
+F11 + F14 ── F28 mql5 export ── F29 mql5 domain ── F30 differential ◄── F26
+                                                     └── F31 EA ── F32 tester parity ◄── F24
+                                                           │              │
+                                             F17 ── F33 demo deployment ── F34 shadow ── F35 gate ◄── F27</code></pre>
+<p class="small">Las flechas ◄── marcan una dependencia que llega desde otra rama del grafo. Tres caminos son independientes hasta la fase 5 y pueden alternarse sin bloquearse: conocimiento (F03→F08), feedback y spec (F09→F14) y datos (F15→F17).</p>
+</section>
+
+<section id="orden">
+<h2>E · Orden de desarrollo recomendado</h2>
+<ol>
+<li><strong>F01, F02</strong>. Sin contratos mecánicos, cada regla posterior depende de la memoria de la sesión.</li>
+<li><strong>F03, F06, F09</strong>. Los tres modelos de datos (manifiesto, evidencia, feedback) antes de poblar nada: definen los regímenes de cambio y son baratos.</li>
+<li><strong>F15</strong>. Los datos OHLC entran pronto porque F10 (ventanas de etiquetado) y F14 (fixtures) los necesitan, y verificar el anclaje H4 contra una captura del trader es la comprobación más barata y más silenciosa de todo el proyecto.</li>
+<li><strong>F04, F05, F07, F08</strong>. Poblar la evidencia. Aquí se materializa la deuda de la transcripción <code>tiny</code>.</li>
+<li><strong>F10</strong> y, con ella, la <strong>sesión 1 con el trader</strong>: tres preguntas bloqueantes sobre casos + ronda 1 de etiquetado. Es la primera dependencia de una persona externa; cuanto antes se pida, antes llega.</li>
+<li><strong>F11, F12, F13, F14</strong>. La especificación se escribe después de la sesión 1, no antes, para que las tres preguntas bloqueantes entren como feedback y no como default.</li>
+<li><strong>F16, F17</strong>. Ticks históricos y grabador de demo (la demo se abre en cuanto tú lo apruebes; el grabador puede ser un script provisional desde el día uno).</li>
+<li><strong>F18 → F22</strong>. Dominio, de dentro hacia fuera, cada pieza contra sus casos.</li>
+<li><strong>F23, F24, F25</strong>. Motor y visor.</li>
+<li><strong>F26</strong> y la <strong>sesión 2</strong>. Punto de decisión: reglas solas o respaldo. Si respaldo, se abre una <em>ARCHITECTURE CHANGE PROPOSAL</em> antes de F28.</li>
+<li><strong>F27</strong>. Ventaja, separada.</li>
+<li><strong>F28 → F32</strong>. MQL5 solo cuando la referencia ya es fiel: escribir el EA antes es escribir dos veces.</li>
+<li><strong>F33, F34, F35</strong>. Demo, sombra, memorando.</li>
+</ol>
+</section>
+
+<section id="validacion">
+<h2>F · Estrategia de validación</h2>
+<p>Capas acumulativas. Cada funcionalidad añade su capa y no puede retirar ninguna anterior. Antes de cada merge corren todas.</p>
+<div class="tablewrap"><table>
+<tr><th>Capa</th><th>Qué demuestra</th><th>Desde</th><th>Herramienta</th></tr>
+<tr><td>1 · Estructura</td><td>Documentos, ADR y estado con sus secciones; contratos de importación</td><td>F01</td><td>pytest, import-linter, pre-commit</td></tr>
+<tr><td>2 · Esquema de conocimiento</td><td>Evidencia, feedback, spec y casos bien formados y con referencias válidas</td><td>F06</td><td>validadores de <code>knowledge/</code> en CI</td></tr>
+<tr><td>3 · Regímenes de cambio</td><td>Evidencia inmutable; feedback solo-añadir; spec cita su origen</td><td>F06, F09</td><td>hooks de git + test sobre el diff</td></tr>
+<tr><td>4 · Semántica de la spec</td><td>Sin contradicciones activas; cobertura de evidencia; statecharts sanos</td><td>F12</td><td><code>botv3 spec validate</code></td></tr>
+<tr><td>5 · Causalidad</td><td>Ningún detector usa el futuro</td><td>F19</td><td>test de truncado exhaustivo</td></tr>
+<tr><td>6 · Invariantes</td><td>Una posición, tres cartuchos, ventana, replay</td><td>F22</td><td>property-based (hypothesis)</td></tr>
+<tr><td>7 · Casos dorados</td><td>La implementación hace lo que el trader hizo en casos conocidos</td><td>F14/F18</td><td>runner de casos, partición dev</td></tr>
+<tr><td>8 · Determinismo</td><td>Mismo input, mismo journal</td><td>F23</td><td>sha256</td></tr>
+<tr><td>9 · Fidelidad en reservado</td><td>Coincidencia con decisiones no vistas</td><td>F26</td><td>informe de fidelidad; κ</td></tr>
+<tr><td>10 · Diferencial</td><td>Python y MQL5 deciden igual</td><td>F30</td><td>harness CI Windows</td></tr>
+<tr><td>11 · Paridad con tester</td><td>Simulación propia ≈ Strategy Tester</td><td>F32</td><td>comparador</td></tr>
+<tr><td>12 · Paridad en vivo</td><td>Demo ≈ backtest del mismo día</td><td>F34</td><td>reconciliación diaria</td></tr>
+<tr><td>13 · Validación humana</td><td>Tú aceptas cada funcionalidad; el trader confirma reglas y casos</td><td>F01</td><td>FUNCTIONALITY VALIDATION REPORT; registros F09</td></tr>
+</table></div>
+<h3>Ritual de cierre de cada rama</h3>
+<ol>
+<li>Tests de la funcionalidad + todos los existentes + regresión (<code>make regress</code> ejecuta la biblioteca de casos completa y el validador de knowledge).</li>
+<li>Informe <em>FUNCTIONALITY VALIDATION REPORT</em> en <code>docs/validation/F##.md</code>, estado <code>WAITING_FOR_USER_VALIDATION</code>; <code>PROJECT_STATE.md</code> actualizado. Parada.</li>
+<li>Tras tu validación: re-ejecución completa, documentación, commits <code>feat/fix/test/docs</code>, push, merge <code>--no-ff</code> a <code>main</code>, tests desde <code>main</code>, etiqueta <code>stable/F##</code>, <code>PROJECT_STATE.md</code> con el nuevo commit estable. Solo entonces se abre la siguiente rama.</li>
+</ol>
+</section>
+
+<section id="experto">
+<h2>G · Bucle de retroalimentación del experto</h2>
+<p>No es una mejora futura: son las funcionalidades F09 y F10, más tres puntos de entrada fijos y uno recurrente.</p>
+<div class="tablewrap"><table>
+<tr><th>Cuándo</th><th>Qué valida</th><th>Objeto técnico que crea</th><th>Qué modifica después (siempre vía diff propuesto)</th><th>Cómo se prueba que no rompe nada</th></tr>
+<tr><td><strong>Sesión 1</strong> · tras F10 y F15</td><td>Las tres preguntas bloqueantes sobre casos concretos; ronda 1 de etiquetado ciego (40 ventanas); hoja de revisión de reglas</td><td>Registros <code>RESOLVE_UNKNOWN</code>, <code>RESOLVE_CONTRADICTION</code>, <code>CONFIRM/CORRECT/REJECT</code> por regla, <code>LABEL_CASE</code> por ventana</td><td>Estado y valores en <code>strategy_spec.yaml</code> (F11); casos nuevos en <code>cases/dev</code> y <code>cases/holdout</code> (asignación por seed, no por elección)</td><td>F12 valida la spec; todos los casos previamente <code>CONFIRMED</code> siguen en verde o se re-etiquetan con un registro nuevo que lo explique</td></tr>
+<tr><td><strong>Sesión 2</strong> · tras F26</td><td>Discrepancias bot ↔ trader en el visor; falsos positivos y negativos; casos fronterizos; ronda 2 de etiquetado (κ)</td><td><code>MARK_FALSE_POSITIVE</code>, <code>MARK_FALSE_NEGATIVE</code>, <code>BORDERLINE</code>, <code>CORRECT</code></td><td>Reglas o tablas de decisión; casos; posible activación del respaldo (ACP)</td><td>Igual; además el informe de fidelidad se regenera y se compara con el anterior (no puede empeorar en dev sin explicación)</td></tr>
+<tr><td><strong>Sesión 3</strong> · tras F32</td><td>Divergencias entre referencia y tester que dependan de interpretación (por ejemplo, llenado en el mismo minuto)</td><td><code>CONFIRM/CORRECT</code> sobre reglas de ejecución</td><td>Reglas de ejecución; parámetros de reubicación</td><td>Diferencial F30 y paridad F32</td></tr>
+<tr><td><strong>Mensual</strong> · durante F34</td><td>Discrepancias en vivo</td><td>Todos los tipos</td><td>Igual</td><td>Igual, más la reconciliación diaria</td></tr>
+</table></div>
+<h3>Invariantes del bucle</h3>
+<ul>
+<li>La evidencia original nunca cambia. Una corrección del trader que contradiga un vídeo crea un registro de feedback que <em>supersede</em> el item de evidencia; ambos quedan; <code>botv3 kb trace</code> muestra la cadena.</li>
+<li>Toda etiqueta de caso tiene autor y fecha; nadie edita una etiqueta, se añade otra.</li>
+<li>Una decisión del sistema y una del experto sobre el mismo caso se guardan como dos hechos distintos; la comparación es un informe, no una sobreescritura.</li>
+<li>Un <code>UNKNOWN</code> se cierra solo con registro del trader o con grabación en vivo que lo resuelva; nunca con "seguramente era esto".</li>
+</ul>
+</section>
+
+<section id="state">
+<h2>H · <code>PROJECT_STATE.md</code> inicial</h2>
+<p>Se incluye tal cual en el primer commit de F01. Añade a tu estructura tres secciones: "Cómo empezar una sesión", "Puntos de entrada del experto" y "Regímenes de cambio", porque son las que una sesión nueva necesita antes de tocar nada.</p>
+<pre><code># PROJECT STATE
+
+> Memoria operativa. Una sesión nueva lee este fichero, luego `docs/plan/features/&lt;Current Feature&gt;.md`,
+> luego los ficheros de esa funcionalidad. Nada más salvo razón técnica registrada aquí.
+
+## Project Goal
+Bot fiel a la estrategia de un trader concreto (EURUSD, H4→M15→M1), verificable caso a caso contra sus
+decisiones, ejecutable en MetaTrader 5 (FundedNext), sin IA en ejecución. Fidelidad y rentabilidad se
+miden por separado.
+
+## Approved Architecture
+Evidencia inmutable del corpus → elicitación con el trader (feedback solo-añadir) → StrategySpec ejecutable
++ biblioteca de casos → motor de referencia Python (núcleo puro, backtest sobre ticks, visor) → validación
+de fidelidad → EA MQL5 (misma spec) → pruebas diferenciales → paridad con Strategy Tester → demo/sombra.
+Referencia: docs/plan/MASTER_PLAN.md · informe de investigación (artifact "Del Corpus al Bot", 2026-09-03).
+
+## Development Strategy
+Una funcionalidad = una rama `feature/F##-nombre` = un FUNCTIONALITY VALIDATION REPORT = un merge --no-ff
+tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`.
+
+## How to Start a Session
+1. Leer este fichero. 2. Leer `docs/plan/features/&lt;Current Feature&gt;.md`. 3. `make check`.
+4. Si `Current Feature` está WAITING_FOR_USER_VALIDATION: no avanzar; preguntar.
+
+## Change Regimes (must be respected)
+- knowledge/evidence/  → INMUTABLE tras commit (hook). Corrección = nuevo item que supersede.
+- knowledge/feedback/  → SOLO AÑADIR. Nunca editar un registro.
+- knowledge/spec/, knowledge/cases/ → versionados; cada cambio de valor cita evidence-id o feedback-id.
+- knowledge/cases/holdout/ → prohibido leer desde src/botv3/spec y src/botv3/domain (guarda en tests).
+- src/botv3/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
+
+## Current Phase
+FASE 0 · Fundamentos
+
+## Current Feature
+F01 · project-scaffold
+
+## Current Branch
+feature/F01-project-scaffold
+
+## Stable Main State
+(vacío — sin commit estable todavía)
+
+## Completed Phases
+—
+
+## Completed Features
+—
+
+## Features Waiting for Validation
+—
+
+## Existing Components
+—
+
+## Important Files
+- PROJECT_STATE.md · docs/plan/MASTER_PLAN.md · docs/adr/README.md · Makefile · pyproject.toml
+
+## Tests Currently Passing
+—
+
+## Architectural Decisions (index)
+- ADR-0001 estructura del repositorio y regímenes de cambio — ACTIVE
+
+## Decisions and Rationale
+(Formato obligatorio por decisión:)
+Decisión: · Problema que resuelve: · Alternativas consideradas: · Por qué elegimos esta opción: ·
+Por qué descartamos las demás: · Impacto: · Fecha / fase: · Estado: ACTIVE / SUPERSEDED
+
+## Expert Entry Points
+- Sesión 1 (tras F10+F15): 3 preguntas bloqueantes + ronda 1 de etiquetado · pendiente
+- Sesión 2 (tras F26): discrepancias + ronda 2 (κ) · pendiente
+- Sesión 3 (tras F32): divergencias de ejecución · pendiente
+- Mensual (F34): discrepancias en vivo · pendiente
+
+## Expert Validations
+(una línea por sesión: fecha · registros creados · reglas afectadas · casos añadidos)
+
+## Known Ambiguities
+A-1 sesgo H4 · A-3 salida sin ruptura · A-4 BE al tocar/cierre · A-5 cadencia de reubicación ·
+A-6 cierre 15:00 · tercer cartucho · stop del 2.º esquema · "dos velas como una" en mapeo
+(todas: estado ABIERTA hasta registro de feedback)
+
+## Known Contradictions
+Cartuchos 2 (ficha) vs 3 (V4 0:48:41) · parciales 30–40 % (ficha) vs "sin parciales" (respuesta) ·
+BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 1:08:30)
+
+## Known Issues
+—
+
+## Technical Debt
+- Transcripciones previas con Whisper tiny: no usar para extracción hasta F04.
+
+## Open Questions
+- Fuente de ticks históricos (proveedor) — decidir en F16.
+- Nombre definitivo del paquete (`botv3` provisional) — decidir antes del merge de F01.
+
+## Things That Must Not Be Changed
+- Regímenes de cambio de knowledge/. · Pureza de domain/. · Parámetros no se optimizan contra resultados.
+- La validación de fidelidad (F26) precede a cualquier MQL5.
+
+## Next Feature
+F02 · config-and-parameter-registry
+
+## Next Action
+Implementar F01 según docs/plan/features/F01-project-scaffold.md; emitir el VALIDATION REPORT; parar.
+
+## Last Stable Commit
+—
+
+## Change Log
+- 2026-09-03 · plan aprobado (pendiente) · F01 abierta</code></pre>
+</section>
+
+<section id="primera">
+<h2>I · Primera funcionalidad: F01 · project-scaffold</h2>
+<p><strong>Por qué esta y no "inventario del corpus":</strong> todas las garantías del plan (inmutabilidad de la evidencia, pureza del dominio, trazabilidad de cambios en la spec, guarda del holdout) son mecanismos, no intenciones. Si el andamiaje que los hace cumplir no existe en el primer commit, la primera funcionalidad de conocimiento se escribiría sin red. F01 es pequeña, no contiene lógica de negocio y deja el proyecto listo para que F02 y F03 empiecen el mismo día.</p>
+<dl class="kv" style="display:grid;grid-template-columns:max-content 1fr;gap:6px 18px">
+<dt style="font-family:var(--mono);font-size:12.5px;color:var(--ink-3)">Rama</dt><dd><code>feature/F01-project-scaffold</code></dd>
+<dt style="font-family:var(--mono);font-size:12.5px;color:var(--ink-3)">Objetivo</dt><dd>Repositorio inicial con estructura de §B, paquete instalable, CI, contratos de importación, hooks de regímenes de cambio (en modo aviso hasta F06/F09, que los activan), plantillas y <code>PROJECT_STATE.md</code>.</dd>
+</dl>
+<h3>Archivos esperados</h3>
+<pre><code>PROJECT_STATE.md                          (§H, tal cual)
+README.md                                 arranque en 5 minutos; enlaza PROJECT_STATE y MASTER_PLAN
+pyproject.toml                            paquete botv3; ruff, mypy strict, pytest, hypothesis, import-linter
+Makefile                                  check (lint+types+tests+knowledge-validate), test, regress, report
+.pre-commit-config.yaml                   ruff, import-linter, validador de knowledge (no-op hasta F06)
+.gitignore                                corpus/, data/, .venv, caches
+.github/workflows/ci.yml                  job linux: make check. (job windows para MQL5 se añade en F29)
+docs/plan/MASTER_PLAN.md                  este plan en Markdown
+docs/plan/features/F01-project-scaffold.md brief de F01 (alcance cerrado)
+docs/plan/features/_template.md           plantilla de brief
+docs/adr/README.md                        índice de ADR
+docs/adr/0000-template.md                 plantilla con el formato de §11 del encargo
+docs/adr/0001-repository-structure-and-change-regimes.md   ACTIVE
+docs/validation/_template.md              plantilla de FUNCTIONALITY VALIDATION REPORT
+knowledge/README.md · knowledge/{corpus,evidence,feedback,spec,cases/dev,cases/holdout,cases/fixtures}/README.md
+src/botv3/__init__.py                     versión
+src/botv3/{corpus,evidence,feedback,spec,cases,data,domain,engine,validation,viewer,mql5bridge}/__init__.py
+src/botv3/cli.py                          `botv3 --version`, `botv3 state check`
+tests/conftest.py                         fixture `holdout_guard` (activa en F14) y utilidades de árbol
+tests/unit/test_scaffold.py
+tests/contract/test_import_contracts.py
+scripts/README.md · config/settings.example.toml · mql5/README.md</code></pre>
+<h3>Tests</h3>
+<ul>
+<li><code>test_project_state_has_required_sections</code>: todas las secciones de §H presentes y en orden.</li>
+<li><code>test_every_adr_has_status_and_sections</code>: cada ADR declara <code>ACTIVE</code> o <code>SUPERSEDED</code> y las ocho secciones del formato.</li>
+<li><code>test_tree_matches_master_plan</code>: las carpetas de §B existen con su README de responsabilidad.</li>
+<li><code>test_import_contracts</code>: <code>domain</code> no importa <code>engine</code>, <code>data</code>, <code>mql5bridge</code>, <code>MetaTrader5</code>, <code>pandas</code>, <code>datetime</code>, <code>time</code>, <code>random</code>, <code>requests</code>; <code>spec</code> y <code>domain</code> no importan nada bajo <code>knowledge/cases/holdout</code> (contrato declarado, verificado aunque hoy no haya código).</li>
+<li><code>test_cli_state_check</code>: <code>botv3 state check</code> falla si <code>Current Feature</code> no coincide con la rama actual.</li>
+<li><code>test_no_business_literals_outside_registry</code>: esqueleto del test (lista vacía) que F02 poblará.</li>
+</ul>
+<h3>Criterio de aceptación</h3>
+<ul>
+<li><code>make check</code> verde en local y en CI sobre la rama.</li>
+<li>Árbol idéntico a §B; cada carpeta con README de una frase de responsabilidad.</li>
+<li><code>PROJECT_STATE.md</code> completo, con <code>Current Feature = F01</code> y <code>Next Feature = F02</code>.</li>
+<li>ADR-0001 redactado con el formato completo (problema, alternativas, descartes, impacto, estado).</li>
+<li>Ninguna lógica de negocio, ningún parámetro, ninguna evidencia: si aparece, el alcance se desbordó.</li>
+<li>Informe <em>FUNCTIONALITY VALIDATION REPORT</em> emitido y estado <code>WAITING_FOR_USER_VALIDATION</code>.</li>
+</ul>
+<div class="callout warn"><p><strong>Parada.</strong> No se implementa nada hasta que revises y valides este plan. Dos decisiones te corresponden antes de F01: el nombre definitivo del paquete (propongo <code>botv3</code> como provisional) y confirmar que el repositorio que me proporcionarás empieza vacío.</p></div>
+</section>
+
+<div class="footer">Plan derivado del informe "Del Corpus al Bot" (3 sep 2026). No redefine el método ni la arquitectura; los convierte en funcionalidades, ramas, tests y criterios de aceptación.</div>
+</main>
+</div>

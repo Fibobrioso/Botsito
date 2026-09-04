@@ -1,0 +1,18 @@
+# datos pesados: solo manifiestos con hash entran en git
+corpus/
+data/
+!data/manifests/
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+# entornos y secretos
+.env
+config/*.local.toml
+# so
+.DS_Store
+Thumbs.db

@@ -1,0 +1,657 @@
+<title>Del Corpus al Bot</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#f7f8fa; --paper-2:#eef1f5; --ink:#1b2430; --ink-2:#465262; --ink-3:#7a8797;
+  --rule:#d5dbe3; --accent:#23507a; --accent-soft:#dfe9f3;
+  --ok:#0f766e; --ok-soft:#d9efeb; --warn:#8a6d1d; --warn-soft:#f3ead0; --bad:#b4532a; --bad-soft:#f5e1d7; --hold:#5b5f9e; --hold-soft:#e3e3f3; --none:#5f6b78; --none-soft:#e6e9ee;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace; --serif:"Fraunces",Georgia,"Times New Roman",serif; --sans:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151a21; --paper-2:#1d242d; --ink:#e6eaef; --ink-2:#b6bfca; --ink-3:#8593a3;
+    --rule:#2f3843; --accent:#8fb6dc; --accent-soft:#213244;
+    --ok:#5fcbbd; --ok-soft:#173a36; --warn:#dcb85a; --warn-soft:#3b3218; --bad:#e8906a; --bad-soft:#42261a; --hold:#a9acdf; --hold-soft:#2a2b47; --none:#a4aeb9; --none-soft:#2a313a;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151a21; --paper-2:#1d242d; --ink:#e6eaef; --ink-2:#b6bfca; --ink-3:#8593a3;
+  --rule:#2f3843; --accent:#8fb6dc; --accent-soft:#213244;
+  --ok:#5fcbbd; --ok-soft:#173a36; --warn:#dcb85a; --warn-soft:#3b3218; --bad:#e8906a; --bad-soft:#42261a; --hold:#a9acdf; --hold-soft:#2a2b47; --none:#a4aeb9; --none-soft:#2a313a;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;margin:0}
+.wrap{display:grid;grid-template-columns:1fr;max-width:1180px;margin:0 auto;padding:0 20px 80px}
+@media(min-width:1000px){.wrap{grid-template-columns:230px minmax(0,1fr);gap:48px}}
+nav.toc{display:none}
+@media(min-width:1000px){
+  nav.toc{display:block;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:36px 0 36px;font-size:13.5px}
+  nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--rule)}
+  nav.toc a:hover,nav.toc a:focus{color:var(--accent);border-left-color:var(--accent);outline:none}
+  nav.toc .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 6px}
+}
+main{min-width:0;max-width:78ch}
+header.hero{padding:56px 0 28px;border-bottom:1px solid var(--rule);margin-bottom:36px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-family:var(--serif);font-weight:700;font-size:44px;line-height:1.08;margin:0 0 16px;text-wrap:balance;letter-spacing:-.01em}
+.lede{font-size:20px;color:var(--ink-2);margin:0 0 20px;text-wrap:pretty}
+.meta{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:var(--mono);font-size:12.5px;color:var(--ink-3)}
+h2{font-family:var(--serif);font-weight:700;font-size:30px;line-height:1.15;margin:56px 0 14px;text-wrap:balance;padding-top:12px;border-top:1px solid var(--rule)}
+h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:32px 0 10px;text-wrap:balance}
+h4{font-size:16px;font-weight:600;margin:22px 0 6px;letter-spacing:.01em}
+p{margin:0 0 14px;text-wrap:pretty}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin:0 0 6px}
+strong{font-weight:600}
+code,.ts{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
+.ts{color:var(--accent)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.t-hecho{background:var(--ok-soft);color:var(--ok)}
+.t-hip{background:var(--hold-soft);color:var(--hold)}
+.t-inf{background:var(--warn-soft);color:var(--warn)}
+.t-dec{background:var(--accent-soft);color:var(--accent)}
+.verdict{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;padding:3px 8px;border-radius:3px;white-space:nowrap;font-weight:600}
+.v-main{background:var(--ok-soft);color:var(--ok)}
+.v-comp{background:var(--accent-soft);color:var(--accent)}
+.v-hold{background:var(--hold-soft);color:var(--hold)}
+.v-drop{background:var(--bad-soft);color:var(--bad)}
+.v-none{background:var(--none-soft);color:var(--none)}
+.callout{border-left:3px solid var(--accent);background:var(--paper-2);padding:14px 18px;margin:18px 0 22px;border-radius:0 6px 6px 0}
+.callout p:last-child{margin-bottom:0}
+.callout.warn{border-left-color:var(--warn)}
+.callout.bad{border-left-color:var(--bad)}
+.tablewrap{overflow-x:auto;margin:14px 0 24px;border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.4}
+th,td{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--paper-2);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px;white-space:nowrap}
+.matrix table{font-size:13.5px;min-width:1100px}
+.matrix td{min-width:120px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:12px 0 20px;font-size:15.5px}
+.kv dt{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);padding-top:3px}
+.kv dd{margin:0}
+.grid2{display:grid;grid-template-columns:1fr;gap:14px;margin:12px 0 22px}
+@media(min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+.box{border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--paper)}
+.box h4{margin-top:0}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.who{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+figure{margin:18px 0 24px}
+figcaption{font-size:13.5px;color:var(--ink-3);margin-top:6px}
+.arch{width:100%;height:auto;display:block}
+.small{font-size:14px;color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+hr{border:0;border-top:1px solid var(--rule);margin:36px 0}
+a{color:var(--accent)}
+.q{font-family:var(--serif);font-weight:500;font-size:19px;margin:26px 0 6px}
+.footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Índice">
+  <div class="lbl">Informe</div>
+  <a href="#resumen">Resumen ejecutivo</a>
+  <a href="#alcance">1 · Alcance real</a>
+  <a href="#fuentes">2 · Fuentes y precedentes</a>
+  <a href="#mapa">3 · Mapa de métodos</a>
+  <a href="#corpus">4 · Evaluación del corpus</a>
+  <a href="#datos">5 · Necesidades de datos</a>
+  <a href="#comparacion">6 · Comparación y falsación</a>
+  <a href="#experimentos">7 · Experimentos</a>
+  <a href="#metodo">8 · Método recomendado</a>
+  <a href="#porque">9 · Por qué gana</a>
+  <a href="#respaldo">10 · Alternativa de respaldo</a>
+  <a href="#condiciones">11 · Qué cambiaría la decisión</a>
+  <a href="#tecnologias">12 · Papel de cada tecnología</a>
+  <a href="#confianza">13 · Nivel de confianza</a>
+  <a href="#preguntas">14 · Preguntas al trader</a>
+  <a href="#validacion">15 · Plan de validación</a>
+  <a href="#implementacion">16 · Implementación por etapas</a>
+  <div class="lbl">Anexos</div>
+  <a href="#catorce">Las 14 preguntas centrales</a>
+  <a href="#previo">Auditoría del trabajo previo</a>
+  <a href="#refs">Referencias</a>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="eyebrow">Investigación de método · Bot v3 · 3 de septiembre de 2026</p>
+  <h1>Del corpus al bot: qué hacer con cuatro grabaciones y un trader disponible</h1>
+  <p class="lede">Cómo convertir 4 h 29 min de vídeo y el acceso al trader en un bot fiel, verificable y ejecutable en MetaTrader 5. Resultado de siete rondas de investigación, revisión del corpus y auditoría del trabajo previo. Se detiene antes de programar.</p>
+  <div class="meta">
+    <span>Corpus: 4 vídeos · 13,8 GB · 4 h 29 min</span>
+    <span>Familias evaluadas: 9 · Alternativas: 26</span>
+    <span>Precedentes inspeccionados: 8 repos + 24 fuentes</span>
+  </div>
+  <div class="legend" style="margin-top:18px">
+    <span class="tag t-hecho">Hecho</span><span class="tag t-hip">Hipótesis</span><span class="tag t-inf">Inferencia</span><span class="tag t-dec">Decisión de diseño</span>
+  </div>
+</header>
+
+<section id="resumen">
+<h2>Resumen ejecutivo</h2>
+<p><strong>Los vídeos no son un conjunto de datos de entrenamiento. Son evidencia.</strong> Contienen entre 25 y 35 decisiones de trading completas (contexto, acción, resultado) y unos 15 casos explícitos de no operar. Ningún método que aprenda una política desde datos (clonación de comportamiento, aprendizaje por imitación, refuerzo offline, clasificador supervisado) tiene con eso ni el uno por ciento de lo que necesita. Eso descarta la familia E y pospone la F, y no es una preferencia: es aritmética.</p>
+<p><strong>Lo que sí contienen es una estrategia con un núcleo explicitable y un residuo discrecional acotado.</strong> El trader describe una única operativa (sesgo H4 → liquidez M15 → gatillo M1 con orden límite → stop en el 0,75 de la caja → objetivo 1:3 → break even en la segunda zona de control → máximo tres intentos → el día termina con la primera ganadora), la repite en los cuatro vídeos, y él mismo dice que la construyó para que "cuando se pase a código, sea lo más objetivo posible" (<span class="ts">V2 0:05:22</span>). Todas las variables que observa son geometría de velas (mecha, cuerpo, cierre) reconstruible desde OHLC. El residuo discrecional existe y él lo nombra ("aquí entra un poco lo discrecional", <span class="ts">V4 0:47:47</span>): el tercer intento, la extensión del objetivo "por lectura de mercado", la reducción del stop a 0,50 en el segundo esquema.</p>
+<div class="callout">
+<p><strong>Método recomendado.</strong> Ingeniería del conocimiento con el trader como fuente primaria y los vídeos como evidencia citada, que produce dos artefactos: <em>una especificación ejecutable</em> (reglas deterministas con parámetros congelados y ambigüedades declaradas) y <em>una biblioteca de casos etiquetados por el trader</em> (operar / no operar / dónde va el stop) usada como verdad de referencia. El bot es un programa determinista sin ningún modelo de IA en ejecución, con abstención por defecto y veto de riesgo independiente. La fidelidad se demuestra caso a caso contra las decisiones del trader; la rentabilidad, por separado, sobre ticks históricos y demo, con parámetros fijados antes de mirar resultados.</p>
+</div>
+<p><strong>Papel de la IA:</strong> únicamente en desarrollo. Un LLM como asistente de indexación y como generador de código bajo pruebas deterministas. Ningún RAG, VLM, YOLO ni agente durante la operación. Un VLM no es fiable para leer velas (benchmarks 2026) y la localización temporal en vídeos de una hora colapsa (mIoU 0,11); ambos quedan descartados como fuente de verdad.</p>
+<p><strong>Lo que más mejora el resultado no es más tecnología sino más datos del trader:</strong> la exportación de sus sesiones de FXReplay (cada operación con hora, precio, stop, objetivo y resultado), dos sesiones de etiquetado ciego sobre replay y sus grabaciones operando en vivo, que ya se ofreció a hacer (<span class="ts">V4 1:28:41</span>).</p>
+<p><strong>Confianza:</strong> alta en que el método es el correcto para este corpus; media en que el residuo discrecional sea pequeño; nula, y deliberadamente separada, sobre la rentabilidad futura.</p>
+</section>
+
+<section id="alcance">
+<h2>1 · Alcance real de la investigación</h2>
+<h3>Qué se revisó y cómo</h3>
+<div class="tablewrap"><table>
+<tr><th>Modalidad</th><th>Cobertura</th><th>Método</th><th>Limitación</th></tr>
+<tr><td>Audio (transcripciones)</td><td>100 % de los cuatro vídeos, leído íntegro</td><td>Lectura completa de los cinco ficheros <code>.txt</code> con marcas de tiempo</td><td>ASR con modelo Whisper <code>tiny</code>: errores sistemáticos de jerga ("M15"→"M5", "break even"→"brequiven", "FXReplay"→"FVG") y deriva de hasta 1 min en V1–V3. Ninguna cita se usa sin contrastar con contexto o fotograma</td></tr>
+<tr><td>Pantalla (fotogramas)</td><td>V2: 118 · V3: 78 · V4: 112 · V1: 15 muestreados cada ≈5 min</td><td>Índices <code>index.txt</code> completos; informes previos de fotogramas leídos (V2 íntegro, V4 lote 1, ficha V3); cuatro fotogramas verificados visualmente por mí</td><td>Extracción por cambio de escena &gt;10 %: un tramo donde el trader dibuja sobre el mismo gráfico sin cambiar de ventana no genera fotogramas. Huecos de 5 a 11 min en V3 (<span class="ts">0:12:26→0:23:49</span>, <span class="ts">0:48:29→0:57:40</span>) y de 4 a 6 min en V2 y V4</td></tr>
+<tr><td>Vídeo original</td><td>0 % del flujo continuo</td><td>No descargable por el conector (3,9 a 5,1 GB por fichero)</td><td>Movimiento del cursor, dibujo en curso y orden temporal fino de "aquí / esta zona" no verificados. Ver riesgo en §4</td></tr>
+<tr><td>Materiales previos</td><td>Plan (18 pasos), manual de arquitectura, 18 ADR, índice de 30 reglas, trazabilidad, auditorías</td><td>Leídos como hipótesis; no se aceptó ninguna conclusión sin contraste con el corpus</td><td><code>Operativa_Cerrada.md</code> y <code>Preguntas_para_el_trader.md</code> no están en Drive; se reconstruyó su contenido desde el índice de reglas y los ADR</td></tr>
+</table></div>
+<p class="small">Esto <strong>no</strong> es una revisión visual completa. Es una revisión completa del audio y una revisión muestreada de la pantalla. La sección 4 cuantifica qué se pierde.</p>
+
+<h3>Rondas y criterio de parada</h3>
+<ol>
+<li><strong>Mapa del espacio</strong> (nueve familias, 26 alternativas).</li>
+<li><strong>Precedentes</strong>: ocho repositorios exigidos más BacktestBench, VideoRAG-MRR, Video2GUI, yt-strategy-agent, Rogue Quant, smartmoneyconcepts, SmartMoney.MQ5.</li>
+<li><strong>Requisitos de datos</strong> por familia (§5).</li>
+<li><strong>Confrontación con el corpus</strong> (§4).</li>
+<li><strong>Falsación</strong> de los tres candidatos que sobrevivieron (§6).</li>
+<li><strong>Contraevidencia</strong> deliberada: VLM sobre velas (Do VLMs Truly Read Candlesticks, FinChart-Bench), agentes LLM en trading (TradeTrap, Agentic Trading, "LLM Agents Do Not Replicate Human Traders"), grounding temporal en vídeos largos (ExtremeWhenBench), cuello de botella de adquisición de conocimiento en sistemas expertos, subjetividad entre traders en patrones.</li>
+<li><strong>Reevaluación</strong>: la contraevidencia reforzó el descarte de IA en ejecución y añadió una condición al candidato principal (la consistencia del propio trader debe medirse, no asumirse).</li>
+</ol>
+<p><strong>Saturación:</strong> las rondas 6 y 7 no produjeron ninguna familia nueva ni cambiaron la clasificación; solo añadieron condiciones. Se detuvo ahí. No se afirma haber revisado "todo lo existente": no se inspeccionó código fuente de Vibe-Trading ni de Lean más allá de su documentación, y las mediciones sobre <code>smartmoneyconcepts</code> (ventana asimétrica, lookahead en <code>liquidity()</code>) se toman del informe previo sin reproducirlas.</p>
+</section>
+
+<section id="fuentes">
+<h2>2 · Fuentes y precedentes relevantes</h2>
+<p>Separados por tipo de evidencia. Ninguno de los ocho repositorios exigidos aborda el problema real de este proyecto: convertir demostraciones de <em>un</em> trader concreto en un bot fiel a <em>ese</em> trader.</p>
+<div class="tablewrap"><table>
+<tr><th>Fuente</th><th>Tipo</th><th>Qué aporta a este caso</th><th>Qué no</th></tr>
+<tr><td>NautilusTrader (LGPL, 28k★)</td><td>Proyecto maduro</td><td>Patrón de referencia: mismo código en backtest y en vivo, reloj determinista, motor de eventos con ticks</td><td>Sin adaptador MT5. Motor completo desproporcionado para un símbolo y una estrategia</td></tr>
+<tr><td>QuantConnect Lean (Apache, 21k★)</td><td>Proyecto maduro</td><td>Separación investigación / backtest / vivo; framework alpha-portfolio-execution-risk como vocabulario</td><td>Sin MT5; nube; orientado a portfolios</td></tr>
+<tr><td>Freqtrade (54k★)</td><td>Proyecto maduro</td><td><code>lookahead-analysis</code> y <code>recursive-analysis</code>: la idea de test automático de causalidad es trasladable</td><td>Solo cripto; documenta falsos positivos con órdenes límite y precios calculados, que es exactamente este caso</td></tr>
+<tr><td>EA31337 (GPLv3, 1,3k★)</td><td>Proyecto experimental maduro</td><td>Demuestra que un EA MQL5 con estrategias como clases, filtros de riesgo y SET files es viable y testeable en el Strategy Tester</td><td>Su lógica es de indicadores clásicos; no aporta primitivas de estructura de mercado</td></tr>
+<tr><td>Vibe-Trading (MIT, 32k★)</td><td>Producto/agente</td><td>Confirma el patrón "el agente genera código, un sandbox lo ejecuta"; corrigió su propio lookahead (fill en barra siguiente, PR #1299)</td><td>LLM en ejecución; sin MT5; nada sobre demostraciones</td></tr>
+<tr><td>HKUDS/VideoRAG (Apache, KDD 2026)</td><td>Investigación</td><td>Estado del arte en QA sobre vídeos largos: 60,2 % en Video-MME largo</td><td>Es recuperación para preguntas, no razonamiento sobre decisiones. Requiere GPU 24 GB. Para 4,5 h de vídeo con transcripción, un índice por marcas de tiempo hace lo mismo</td></tr>
+<tr><td>kdr/videorag-mrr2024</td><td>Demostración académica</td><td>Hallazgo útil: embeddings de <em>texto</em> sobre transcripción alineada superan a los multimodales (Hit@1 0,74 vs 0,55)</td><td>Refuerza que la modalidad rica aquí es el audio, no la imagen</td></tr>
+<tr><td>yt-strategy-agent (MIT, 21★)</td><td>Demostración</td><td>El único precedente directo "vídeo de trader → reglas JSON con confianza y detección de contradicciones". Descarta reglas con confianza &lt;0,30 y marca cambios de estrategia</td><td>Solo transcripción, sin visión, sin backtest, sin validación contra el autor. Es un índice, no un bot</td></tr>
+<tr><td>BacktestBench (arXiv 2605.17937)</td><td>Investigación</td><td>Mide la traducción lenguaje natural → backtest: el mejor modelo acierta 67 % global y ≈52 % en cálculo de métricas; código que compila pero está mal (99 % ejecución, 0,2 % acierto en un modelo)</td><td>Cierra la puerta a "el LLM traduce las reglas y ya": cada traducción necesita verificación determinista</td></tr>
+<tr><td>Video2GUI / VideoGUI / Sharingan (2025)</td><td>Investigación</td><td>Extracción de acciones desde grabaciones de pantalla existe y es investigación activa</td><td>Necesita decenas de miles de vídeos y aun así extrae <em>clics</em>, no <em>razones</em>. Detectar el cursor no equivale a comprender la decisión</td></tr>
+<tr><td>ExtremeWhenBench (arXiv 2606.12300)</td><td>Investigación</td><td>Colapso de Video-LLM en vídeos de una hora: mIoU 0,58 en clips cortos → 0,11 en hora larga; 85 % de fallos son de búsqueda</td><td>Descarta usar un Video-LLM para localizar "el momento en que decide" sin índice previo</td></tr>
+<tr><td>Do VLMs Truly Read Candlesticks (2604.12659), FinChart-Bench, ChartBench</td><td>Investigación</td><td>Los VLM solo funcionan en tendencias persistentes; caídas de 40 a 60 % en extracción numérica sobre gráficos sin etiquetas</td><td>Descarta el VLM como lector de gráficos en ejecución y lo limita a OCR asistido en desarrollo</td></tr>
+<tr><td>TradeTrap (2512.02261), Agentic Trading (2605.19337), LLM Agents Do Not Replicate Human Traders (2502.15800)</td><td>Investigación</td><td>Agentes LLM: no deterministas entre ejecuciones, vulnerables a corrupción de estado (drawdown 92 %), memorización de historia de mercado que infla backtests, y no reproducen el comportamiento de traders humanos</td><td>Descarta LLM en el bucle de decisión</td></tr>
+<tr><td>Klein, Calderwood & Hoffman: Critical Decision Method; Cognitive Task Analysis</td><td>Metodología consolidada</td><td>Protocolo probado para extraer conocimiento tácito de expertos mediante incidentes concretos y sondas ("qué señal viste", "qué opción descartaste"). Encaja con un trader que ya graba sus sesiones</td><td>Ninguna aplicación publicada a traders discrecionales de este tipo; hay que adaptar las sondas</td></tr>
+<tr><td>Bailey & López de Prado: Deflated Sharpe, PBO</td><td>Metodología consolidada</td><td>Con N configuraciones probadas la mejor muestra Sharpe alto sin ventaja real. El manual previo cuenta 3,8 × 10⁹ combinaciones frente a un máximo prudente de 45</td><td>Impone congelar parámetros por argumento, no por optimización</td></tr>
+<tr><td>Trading via Selective Classification (2110.14914), reject option, conformal</td><td>Investigación</td><td>Formaliza la abstención: un clasificador que no opera cuando la incertidumbre es alta</td><td>Relevante solo para la alternativa de respaldo (§10)</td></tr>
+<tr><td>Snorkel / supervisión débil programática</td><td>Metodología consolidada</td><td>Reglas del experto como funciones de etiquetado que se combinan con pocas etiquetas reales</td><td>Componente de la alternativa de respaldo, no del método principal</td></tr>
+<tr><td>joshyattridge/smart-money-concepts, SmartMoney.MQ5, VelmoPk SMC MT5</td><td>Repos experimentales</td><td>Vocabulario de primitivas (swing, BOS, barrido, order block). MQL5 nativos sin repintado existen</td><td>La librería Python de referencia repinta (ventana de 50 barras hacia el futuro) y su detector de liquidez tiene lookahead global. Solo sirve como oráculo de tests</td></tr>
+</table></div>
+<p><strong>¿Existe un precedente verdaderamente comparable?</strong> No. Lo más cercano es yt-strategy-agent (transcripción → JSON de reglas) y, en la otra punta, Video2GUI (vídeo → trayectoria de acciones). El primero no valida; el segundo necesita órdenes de magnitud más datos. La combinación "elicitación estructurada + especificación ejecutable + biblioteca de casos del propio experto" tiene precedente en ingeniería del conocimiento clásica (sistemas expertos de los 80 y 90, con su cuello de botella documentado) pero no en trading discrecional con MT5.</p>
+</section>
+
+<section id="mapa">
+<h2>3 · Mapa completo de métodos considerados</h2>
+<p>Antes de comparar se fijaron los 18 criterios del encargo y se distinguieron cinco preguntas que admiten respuestas distintas. El mapa siguiente da el veredicto por alternativa; la matriz de §6 lo justifica.</p>
+<div class="legend">
+<span class="verdict v-main">CANDIDATO PRINCIPAL</span><span class="verdict v-comp">COMPONENTE POSIBLE</span><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span><span class="verdict v-none">NO HAY EVIDENCIA SUFICIENTE</span>
+</div>
+<div class="tablewrap"><table>
+<tr><th>Familia</th><th>Alternativa</th><th>Veredicto</th><th>En una línea</th></tr>
+<tr><td rowspan="4">A · Ingeniería manual del conocimiento</td><td>Critical Decision Method sobre las operaciones reales del trader (replay)</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>La única forma de convertir "aquí" en un nivel de precio con fecha</td></tr>
+<tr><td>Think-aloud en vivo (grabar mientras opera)</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>Él ya lo propuso; captura lo que hace, no lo que cree que hace</td></tr>
+<tr><td>Etiquetado ciego de casos positivos, negativos, fronterizos y contrafactuales</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>Produce la verdad de referencia y mide la consistencia del propio trader</td></tr>
+<tr><td>Entrevista estructurada por cuestionario (lo hecho hasta ahora)</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Útil para reglas explícitas; produjo contradicciones sin resolver (A-1, A-3, A-4) porque pregunta en abstracto</td></tr>
+<tr><td rowspan="6">B · Sistemas simbólicos</td><td>Reglas deterministas + máquina de estados (ciclo de operación y jornada)</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>La estrategia tiene estado explícito (cartuchos, posición única, ventana) y reglas sobre cierres de vela</td></tr>
+<tr><td>Especificación ejecutable (casos YAML = documento = test)</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>Evita la deriva documento-código; ya existe el mecanismo en el esqueleto previo</td></tr>
+<tr><td>Tablas de decisión para el residuo discrecional</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Para "tercer cartucho sí/no" y "stop 0,75 o 0,50 en segundo esquema": el trader elige la fila, no el código</td></tr>
+<tr><td>DSL / IR intermedia compilada a MQL5 y Python</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Con una estrategia y 30 reglas, un compilador propio cuesta más que dos implementaciones con test de equivalencia. Reconsiderar si aparecen más esquemas o más traders</td></tr>
+<tr><td>Síntesis de programas desde ejemplos</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Con 30 ejemplos y 20 grados de libertad hay infinitos programas consistentes</td></tr>
+<tr><td>Sistema experto con motor de inferencia genérico</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>El orden de evaluación aquí es fijo (H4→M15→M1); un motor de reglas genérico añade indeterminismo sin comprar nada</td></tr>
+<tr><td rowspan="6">C · Recuperación y memoria</td><td>Índice textual con marcas de tiempo sobre transcripciones (RAG textual de desarrollo)</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Sirve para citar; 4,5 h caben en contexto o en <code>grep</code>. Ya se usa así</td></tr>
+<tr><td>RAG multimodal / Video RAG</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Resuelve QA sobre vídeo, no decisión. Coste GPU sin beneficio sobre el índice textual</td></tr>
+<tr><td>GraphRAG / knowledge graph</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Treinta reglas y seis ambigüedades caben en una tabla</td></tr>
+<tr><td>Base relacional de casos y operaciones</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td><td>La biblioteca de casos <em>es</em> una tabla: fecha, velas, decisión del trader, decisión del bot, discrepancia</td></tr>
+<tr><td>Razonamiento basado en casos como motor de decisión en ejecución</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Similitud entre gráficos no está definida; con 30 casos, cualquier vecino más cercano es ruido</td></tr>
+<tr><td>Memoria episódica del bot en ejecución</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>La estrategia solo mira la vela H4 previa y la estructura reciente (RN-011). No hay memoria que modelar</td></tr>
+<tr><td rowspan="7">D · Comprensión visual y de vídeo</td><td>VLM / Video-LLM para inferir decisiones</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>No leen velas con fiabilidad; alucinan niveles; localización temporal colapsa en vídeo largo</td></tr>
+<tr><td>OCR + visión clásica sobre fotogramas para leer precios, horas, etiquetas de herramienta</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Ya funcionó: ratio 4,08 / 3,94 y niveles 1,19537 / 1,19502 se leyeron así. Solo en desarrollo, siempre verificado por humano</td></tr>
+<tr><td>Detección de cambios / muestreo de fotogramas</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Necesario pero el umbral actual pierde los tramos de dibujo. Reextraer a 1 fps en los tramos con decisión</td></tr>
+<tr><td>Tracking del cursor / dibujos</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Solo compensaría si el trader no estuviera disponible; una sesión de replay con él resuelve lo mismo en una hora</td></tr>
+<tr><td>YOLO / detección de objetos / open-vocabulary / segmentación</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Detectar "una caja de Gann" no dice dónde está el 0,75 ni por qué. Sin dataset de entrenamiento</td></tr>
+<tr><td>Alineación audio-pantalla-tiempo</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Imprescindible para citar: transcripción por fragmentos con desfase absoluto (ya hecho en V4) debe repetirse en V1–V3 con Whisper large-v3</td></tr>
+<tr><td>Comprensión de gráficos financieros en ejecución (el bot "ve" el gráfico)</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>El bot recibe OHLC y ticks; la imagen es una proyección con pérdida de lo que ya tiene</td></tr>
+<tr><td rowspan="7">E · Aprendizaje desde demostraciones</td><td>Behavior cloning</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>≈30 pares estado-acción; errores compuestos; no auditable; no abstiene</td></tr>
+<tr><td>Learning from observation / acciones latentes desde vídeo</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Necesita miles de horas; las acciones aquí ya son conocidas (poner orden límite)</td></tr>
+<tr><td>Inverse RL / reward modeling</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>La recompensa ya está declarada: R fijo 1:3, riesgo 0,75 R. No hay recompensa oculta que inferir</td></tr>
+<tr><td>Offline RL</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Sin cobertura del espacio de estados; sin contrafactuales</td></tr>
+<tr><td>DAgger / aprendizaje interactivo</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Como <em>proceso</em>, no como modelo: el bot corre sobre replay, el trader corrige las discrepancias, la corrección se convierte en regla o en caso. Es exactamente el bucle de validación de §15</td></tr>
+<tr><td>Preference learning (pares de setups)</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Útil para ordenar setups si algún día hay más de un candidato por sesión; hoy la regla es "el más reciente"</td></tr>
+<tr><td>Modelos de secuencia sobre estados y acciones</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Misma razón de datos</td></tr>
+<tr><td rowspan="5">F · Aprendizaje supervisado</td><td>Clasificador long / short / no-trade</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>La dirección la fija una regla (H4). No hay nada que aprender</td></tr>
+<tr><td>Clasificador de calidad del setup con abstención (filtro sobre las señales de las reglas)</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Candidato de respaldo si el residuo discrecional resulta grande. Necesita ≥300 setups etiquetados por el trader; hoy hay ≈30</td></tr>
+<tr><td>Detector de régimen</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>El régimen es la vela H4 previa. Ya es una regla</td></tr>
+<tr><td>Modelo sobre imágenes de gráfico</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Pierde información respecto al OHLC que lo genera</td></tr>
+<tr><td>Supervisión débil (reglas como funciones de etiquetado)</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Solo dentro de la alternativa de respaldo</td></tr>
+<tr><td rowspan="6">G · Modelos generativos y agentes</td><td>LLM como parser semántico transcripción → reglas candidatas con cita</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Acelera; nunca decide. Cada regla candidata la confirma el trader (cf. yt-strategy-agent)</td></tr>
+<tr><td>LLM que genera MQL5 / Python desde la especificación</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Solo con casos ejecutables, test de causalidad y test de equivalencia entre implementaciones</td></tr>
+<tr><td>Agente que genera y prueba estrategias iterando con backtests</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Es multiple testing automatizado: la estrategia que sale es la más sobreajustada, no la del trader</td></tr>
+<tr><td>Agente que razona durante la operación</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>No determinista, no auditable, lookahead por memorización, coste, latencia, riesgo prop firm</td></tr>
+<tr><td>Generación restringida por gramática / JSON Schema</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>Garantiza sintaxis, no semántica: el campo vacío se rellena con una alucinación plausible. Obliga a permitir "no consta"</td></tr>
+<tr><td>Productor–crítico con validadores deterministas</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>El crítico es la suite de tests; el productor puede ser un LLM o una persona</td></tr>
+<tr><td rowspan="4">H · Combinaciones</td><td>Reglas + clasificador de filtro</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td><td>Es la alternativa de respaldo; se activa por condición de §11</td></tr>
+<tr><td>Visión solo en desarrollo + representación simbólica</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td><td>OCR de fotogramas para fechar y valorar operaciones, nada más</td></tr>
+<tr><td>Modelo aprendido + límites de riesgo</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>El límite de riesgo no arregla un modelo sin datos</td></tr>
+<tr><td>Varias estrategias seleccionadas por régimen</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td><td>Hay una estrategia. El "segundo esquema" y el "tercero" son variantes de entrada dentro de la misma, con gestión idéntica (<span class="ts">V4 1:31:16</span>)</td></tr>
+</table></div>
+</section>
+
+<section id="corpus">
+<h2>4 · Evaluación del corpus disponible</h2>
+<h3>Inventario</h3>
+<div class="tablewrap"><table>
+<tr><th>Vídeo</th><th>Fecha</th><th>Duración</th><th>Tamaño</th><th>Naturaleza</th><th>Fotogramas</th><th>Resolución observada</th></tr>
+<tr><td>V2 · Grabación 2026-08-03 091221</td><td class="num">2026-08-03</td><td class="num">≈1 h 09 min</td><td class="num">4,52 GB</td><td>Llamada de descubrimiento por Discord. Trader explica el modelo; consultor comparte propuesta en PDF. Dos escritorios alternos</td><td class="num">118</td><td>Stream 720p30 dentro de Discord; capturas a 1200 px</td></tr>
+<tr><td>V3 · Grabación 2026-08-06 160450</td><td class="num">2026-08-06</td><td class="num">≈1 h 18 min</td><td class="num">3,94 GB</td><td>El trader responde en voz alta la ficha de 12 reglas (Word) y dibuja ejemplos en TradingView replay</td><td class="num">78</td><td>1200 × 602 en captura; original mayor</td></tr>
+<tr><td>V1 · 2026-08-20 22-33-04</td><td class="num">2026-08-20</td><td class="num">≈29 min</td><td class="num">205 MB</td><td>Monólogo: recap de las operaciones del día y del anterior sobre TradingView replay</td><td class="num">15 (cada ≈5 min) + lote <code>fr</code></td><td>1600 × 900 nativo (verificado)</td></tr>
+<tr><td>V4 · Grabación 2026-08-30 170429</td><td class="num">2026-08-30</td><td class="num">≈1 h 33 min</td><td class="num">5,13 GB</td><td>Entrevista con dos cuestionarios (14 y 20 preguntas) sobre el backtest de enero en FXReplay</td><td class="num">112</td><td>Stream 720p30; capturas a 1200 px</td></tr>
+</table></div>
+<p>Audio: los cuatro tienen pista de voz utilizable, extraída a MP3 (V4 en dos mitades). Transcripciones con Whisper <code>tiny</code>. No hay intervalos sin transcribir; sí hay intervalos con audio inutilizable por música o solapamiento (V2 <span class="ts">0:38:48→0:53:14</span>, marcado <code>[MÚSICA]</code>; V2 <span class="ts">0:59:01→0:59:52</span> bucle de ASR).</p>
+
+<h3>Lo que el corpus permite afirmar</h3>
+<dl class="kv">
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Existe una sola estrategia</strong>, con dos esquemas de entrada y un tercero propuesto (<span class="ts">V4 1:30:09</span>). El trader la repite con la misma estructura en los cuatro vídeos.</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Hay jerarquía de temporalidades fija</strong>: H4 sesgo, M15 liquidez, M1 gatillo. M5 fuera por escrito (ficha fila 3).</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Todo lo que observa es geometría de velas</strong>: mechas, cuerpos, cierres, extremos de tramo. No usa los indicadores que aparecen en su pantalla (LuxAlgo Sessions, ICT HTF Candles, RSI). Ficha fila 4: "Si, solo velas japonesas".</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>La geometría del riesgo está confirmada por tres vías independientes</strong>: el dibujo de la caja (nivel 0,75 = 1,19537, nivel 0 = 1,19502, <span class="ts">V4 0:12:30</span>, fotograma verificado), la herramienta de posición con ratios 4,08 y 3,94 = 3 ÷ 0,75 (<span class="ts">V2 0:33:21</span>, verificado), y el Excel con pérdidas de −0,75 y −0,50 (V3).</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Hay ejemplos de no operar</strong>, abundantes y razonados: "todo lo que se desarrolla por debajo de la liquidez de M15 es ruido" (<span class="ts">V3 0:16:05</span>), "aquí no hay entrada porque genera dos zonas de control" (<span class="ts">V4 0:19:21</span>), "aquí no hay entrada, mucho ruido, no mapeo así" (<span class="ts">V3 0:51:46</span>).</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Lo que dice y lo que hace coinciden donde se pudo comprobar</strong>: 2 de julio, perdedora 12:24 → ganadora 12:41 → se acaba el día (<span class="ts">V2 0:33:21</span>). Su Excel muestra "2,3 / −0,75 / 3,23 / −0,5" por sesión (<span class="ts">V3 0:28:56</span>).</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Se contradice en seis puntos</strong>, a veces en la misma frase: qué vuelve alcista una H4 (tres formulaciones), 2 vs 3 cartuchos (ficha fila 6 dice 2; <span class="ts">V4 0:48:41</span> dice 3), parciales 30–40 % (ficha) vs "probar sin parciales" (su respuesta), break even al tocar o al cierre (<span class="ts">V4 0:44:56</span>), salida anticipada si la límite se activa sin ruptura (<span class="ts">V4 1:08:18</span> vs <span class="ts">1:08:30</span>).</dd>
+<dt><span class="tag t-hecho">Hecho</span></dt><dd><strong>Él mismo pide automatizar para aumentar la muestra</strong>: "soy humano, no puedo procesar muchos datos" (<span class="ts">V4 0:22:27</span>); ha backtesteado a mano "más de 250" operaciones (<span class="ts">V4 0:05:42</span>); enero 2026: 53 operaciones, 30 % de acierto, 13 BE, profit factor 2,07 (fotograma verificado en el informe V4).</dd>
+<dt><span class="tag t-inf">Inferencia</span></dt><dd><strong>Decisiones automatizables sin pérdida:</strong> sesgo H4, zona M15 (extremo del tramo con mecha hasta la primera vela contraria), mitigación con cuerpo en M15 y con mecha en M1, breaker M1, orden límite en la mecha, lotaje sobre la distancia completa, stop 0,75, objetivo 1:3, break even en la segunda zona de control, un solo trade abierto, tres cartuchos, parada en la primera ganadora, ventana 07–15 y cierre a las 15:00.</dd>
+<dt><span class="tag t-inf">Inferencia</span></dt><dd><strong>Decisiones que siguen siendo ambiguas o discrecionales:</strong> (1) el tercer cartucho ("un poco discrecional"); (2) extender el objetivo más allá de 1:3 "por lectura de mercado" (<span class="ts">V1 0:07:52</span>, <span class="ts">V3 0:31:28</span>); (3) proteger a 0,50 "cuando ha pasado más del 40 % de la vela" (<span class="ts">V1 0:15:58</span>) o cuando el retroceso es complejo (<span class="ts">V3 0:59:56</span>); (4) el stop del segundo esquema en el mínimo estructural en vez de 0,75 (<span class="ts">V4 0:21:41</span>); (5) dar "respiro" de unos pips al 0,75 por spread; (6) qué es exactamente "una zona de control" a nivel de vela: él la define como evento estructural (rompe, retrocede, rompe) y la regla RN-023 lo formaliza, pero nunca la mostró vela a vela sobre un caso límite.</dd>
+<dt><span class="tag t-inf">Inferencia</span></dt><dd><strong>Cuánto depende de interpretación visual:</strong> poco en las entradas, más en la gestión. Su "mapeo" de M1 es un zigzag manual sobre mechas; lo describe como determinista ("apenas inicia una vela contraria en un flujo de órdenes ya marco", <span class="ts">V4 0:58:05</span>), pero en <span class="ts">V3 1:06:48</span> muestra que a veces trata dos velas como una porque "el precio se apoya", que es un juicio, no una regla.</dd>
+<dt><span class="tag t-hip">Hipótesis</span></dt><dd><strong>El residuo discrecional afecta a menos del 15 % de las decisiones de entrada y a más del 30 % de las de gestión.</strong> Es una hipótesis a medir con el experimento E2 de §7, no un dato.</dd>
+</dl>
+
+<h3>"Aquí", "esto", "esta zona": qué tecnología resuelve el deíctico</h3>
+<p>Se contaron los deícticos en un tramo de 10 minutos de V3 (<span class="ts">0:14:00→0:24:00</span>): más de 60 ocurrencias de "aquí / esto / esta zona / allí". El fotograma más cercano existe en menos de la mitad. Cuatro opciones se compararon sobre este tramo:</p>
+<div class="tablewrap"><table>
+<tr><th>Opción</th><th>Resuelve el deíctico</th><th>Coste</th><th>Riesgo</th></tr>
+<tr><td>Solo transcripción</td><td>No. "Protejo aquí" no tiene nivel de precio</td><td>Nulo</td><td>Inventar la regla</td></tr>
+<tr><td>Transcripción + fotogramas por cambio de escena</td><td>Parcial: sí cuando cambia de ventana, no cuando dibuja sobre el mismo gráfico</td><td>Bajo</td><td>Sesgo: se ve lo que ya estaba dibujado, no el orden en que lo decidió</td></tr>
+<tr><td>Transcripción + vídeo continuo a 1 fps con OCR de eje de precio</td><td>Casi siempre, con trabajo humano de lectura</td><td>Medio (horas)</td><td>Errores de OCR en cifras de 5 decimales a 720p</td></tr>
+<tr><td>OHLC reconstruido de la fecha mostrada + sesión de replay con el trader señalando la vela</td><td>Sí, y produce el caso etiquetado directamente</td><td>Una hora del trader por cada 10 a 15 casos</td><td>Depende de su disponibilidad; mide lo que cree que hace salvo que se use su propio replay</td></tr>
+</table></div>
+<p><strong>Conclusión:</strong> no hace falta tecnología visual nueva. Las fechas están en pantalla (30 ene 2026 13:52, 2 jul 2026 12:24, 20 ago 2026 13:08), el OHLC de EURUSD de esas fechas es descargable, y con el trader delante cada "aquí" se convierte en una vela concreta. La visión queda para lo que ya hizo bien: leer números de la herramienta de posición y fechar operaciones.</p>
+
+<h3>Riesgo producido por los huecos de revisión</h3>
+<ul>
+<li><strong>Orden temporal de decisiones no verificado.</strong> En los fotogramas se ve el dibujo terminado. Si el trader coloca la orden límite y después mueve el nivel (lo describe en <span class="ts">V4 1:07:33</span>: "la orden se va actualizando conforme se desarrolla el flujo"), la regla de reubicación tiene una cadencia que solo el vídeo continuo muestra. Impacto: RN-036 (reubicación al cierre de M1) es un supuesto, no una observación.</li>
+<li><strong>Casos límite no vistos.</strong> Los tramos sin fotogramas de V3 (11 min) contienen, por la transcripción, ejemplos de "aquí no hay entrada" cuya razón no se puede confirmar visualmente.</li>
+<li><strong>Vocabulario mal transcrito.</strong> "Cartucho" aparece como "cargo chuto"; "FXReplay" como "FVG". Una regla extraída por LLM de esta transcripción heredaría esos errores. Se recomienda retranscribir con large-v3 (WER en español 5–7 % frente a &gt;20 % típico de tiny) antes de cualquier extracción automática.</li>
+</ul>
+
+<h3>Cuántos ejemplos hay, contados</h3>
+<div class="tablewrap"><table>
+<tr><th>Tipo</th><th>Aprox.</th><th>Dónde</th><th>Calidad de la etiqueta</th></tr>
+<tr><td>Operación completa observada (contexto + entrada + gestión + resultado)</td><td class="num">25–35</td><td>V1 (día y víspera), V2 (2 jul), V3 (dibujados), V4 (enero en FXReplay)</td><td>Media: en V3 y V4 muchos son esquemas dibujados a mano, no velas reales</td></tr>
+<tr><td>No-trade razonado</td><td class="num">≈15</td><td>V3, V4</td><td>Buena: la razón se dice en voz alta</td></tr>
+<tr><td>Operaciones con cifras exactas (hora, precio, stop, resultado)</td><td class="num">2</td><td>V2 <span class="ts">0:33:21</span></td><td>Excelente</td></tr>
+<tr><td>Operaciones en tabla agregada (Excel, FXReplay analytics)</td><td class="num">53 + ≈30</td><td>V4 (enero), V3 (Excel)</td><td>Sin contexto de velas; útiles para reconciliar</td></tr>
+<tr><td>Operaciones en vivo con dinero real</td><td class="num">0</td><td>—</td><td>El trader dice haber empezado la prueba de fondeo (<span class="ts">V1 0:00:00</span>)</td></tr>
+</table></div>
+<p>Para aprender una política con un modelo hacen falta miles de pares estado-acción cubriendo el espacio de estados; para verificar una especificación con reglas bastan decenas si están bien elegidas. El corpus tiene decenas. Esa es la asimetría que decide el método.</p>
+</section>
+
+<section id="datos">
+<h2>5 · Necesidades de datos de cada alternativa</h2>
+<div class="tablewrap"><table>
+<tr><th>Alternativa</th><th>Qué necesita</th><th>¿Lo contienen los vídeos?</th><th>Qué falta</th><th>¿Lo da el trader?</th><th>¿Histórico de mercado?</th><th>Cantidad razonable</th></tr>
+<tr><td>Elicitación + reglas + casos</td><td>Reglas explícitas, casos concretos con fecha, resolución de contradicciones</td><td>Reglas sí; casos con fecha parcialmente; contradicciones sí (sin resolver)</td><td>Casos límite; respuestas cerradas a 6 ambigüedades; sus operaciones exportadas</td><td>Sí, todo</td><td>OHLC de las fechas mostradas + ticks para backtest</td><td>60–120 casos etiquetados (30 hoy)</td></tr>
+<tr><td>Clasificador de filtro con abstención</td><td>Setups que las reglas generan, etiquetados bueno/malo por el trader</td><td>No</td><td>Todo el conjunto de etiquetas</td><td>Sí, a 3–4 min por setup</td><td>Sí, para generar los setups</td><td>≥300 etiquetas, ≥500 para abstención calibrada</td></tr>
+<tr><td>Behavior cloning / IL</td><td>Pares estado-acción con cobertura del espacio de estados</td><td>≈30</td><td>Miles</td><td>No a ese volumen</td><td>Sí</td><td>&gt;5.000</td></tr>
+<tr><td>Offline RL / IRL</td><td>Trayectorias, recompensa, contrafactuales</td><td>No hay contrafactuales</td><td>Todo</td><td>No</td><td>Sí</td><td>Decenas de miles</td></tr>
+<tr><td>LLM parser de reglas</td><td>Transcripción limpia y alineada</td><td>Sí, con ruido</td><td>Retranscripción large-v3</td><td>Valida la salida</td><td>No</td><td>—</td></tr>
+<tr><td>LLM generador de código</td><td>Especificación cerrada + casos ejecutables</td><td>No aplica</td><td>La especificación</td><td>Indirectamente</td><td>Para tests</td><td>—</td></tr>
+<tr><td>VLM / Video-LLM</td><td>Vídeo + preguntas</td><td>Sí</td><td>Fiabilidad</td><td>—</td><td>No</td><td>—</td></tr>
+<tr><td>Video RAG</td><td>Vídeo segmentado, GPU</td><td>Sí</td><td>Justificación</td><td>—</td><td>No</td><td>—</td></tr>
+</table></div>
+<p><strong>Datos adicionales que producirían la mayor mejora, en orden:</strong></p>
+<ol>
+<li><strong>Exportación de sus sesiones de FXReplay y TradingView</strong> (enero 2026, agosto 2026, sesión del 2 de julio): cada operación con hora de entrada, precio, stop, objetivo, resultado y motivo de salida. Convierte 53 filas agregadas en 53 casos etiquetados con velas.</li>
+<li><strong>Dos sesiones de etiquetado ciego</strong> sobre 40 ventanas de replay preparadas por nosotros (20 con setup según las reglas, 10 sin setup, 10 fronterizas), separadas dos semanas, mismas ventanas. Mide su consistencia y da la verdad de referencia.</li>
+<li><strong>Grabaciones operando en vivo</strong> con voz, que él ofreció. Resuelven la cadencia de reubicación y el orden real de sus acciones.</li>
+<li><strong>Ticks de la cuenta demo de FundedNext</strong> desde hoy: el spread por hora es irrecuperable a posteriori y condiciona el "respiro" del 0,75.</li>
+<li><strong>Ticks históricos de EURUSD</strong> (Dukascopy o similar) de 2 a 3 años, congelados por hash, para el backtest de ventaja.</li>
+</ol>
+</section>
+
+<section id="comparacion">
+<h2>6 · Comparación y falsación de candidatos</h2>
+<h3>Cinco preguntas, cinco respuestas</h3>
+<div class="tablewrap"><table>
+<tr><th>Pregunta</th><th>Mejor método</th><th>Segunda opción</th><th>Por qué difieren</th></tr>
+<tr><td>Comprender al trader</td><td>Critical Decision Method sobre sus propias operaciones en replay + think-aloud en vivo</td><td>Cuestionario escrito</td><td>El cuestionario produce respuestas en abstracto que se contradicen; el incidente concreto no</td></tr>
+<tr><td>Representar su conocimiento</td><td>Especificación ejecutable (reglas + parámetros congelados + ambigüedades declaradas + tablas de decisión para el residuo) más biblioteca de casos</td><td>Solo reglas</td><td>Sin casos, la especificación no se puede falsar</td></tr>
+<tr><td>Generar el bot</td><td>Escritura directa desde la especificación, con LLM como asistente y tests de causalidad y equivalencia como jueces</td><td>Generación LLM de extremo a extremo</td><td>BacktestBench: el código que compila no es el código correcto</td></tr>
+<tr><td>Ejecutar operaciones</td><td>EA en MQL5 nativo, determinista, sin red durante la decisión, con veto de riesgo y expiración de órdenes en el propio envío</td><td>Núcleo Python + adaptador <code>MetaTrader5</code> (el plan previo)</td><td>Ver §8: el EA nativo corre en el Strategy Tester con ticks reales y en VPS sin puente; el Python sirve para investigación</td></tr>
+<tr><td>Validar rentabilidad</td><td>Backtest sobre ticks con parámetros fijados a priori, Deflated Sharpe con N declarado, sensibilidad a detector y feed, demo forward</td><td>Sus backtests manuales</td><td>53 operaciones no separan ventaja de suerte; y la fidelidad no implica ventaja</td></tr>
+</table></div>
+
+<h3>Matriz comparativa</h3>
+<p class="small">Solo las siete alternativas que llegaron a la ronda de falsación. Las 19 restantes se descartaron o pospusieron en §3 por razones de datos o de precedente.</p>
+<div class="tablewrap matrix"><table>
+<tr><th>Alternativa</th><th>Problema que resuelve</th><th>Uso de los vídeos</th><th>Datos requeridos</th><th>Compatibilidad con datos disponibles</th><th>Dependencia del trader</th><th>Conocimiento tácito</th><th>Fidelidad esperada</th><th>Auditabilidad</th><th>Seguridad</th><th>Coste</th><th>Riesgo de sobreajuste</th><th>Principales fallos</th><th>Experimento para validarla</th><th>MT5</th><th>Decisión</th></tr>
+<tr><td><strong>1. Elicitación estructurada + especificación ejecutable + biblioteca de casos</strong></td><td>Convertir conocimiento explícito y parte del tácito en reglas verificables</td><td>Evidencia citada por marca de tiempo; fuente de casos</td><td>30–120 casos, respuestas a 6 ambigüedades</td><td>Alta</td><td>Alta pero acotada (6–10 h)</td><td>Parcial: captura lo que él puede reconocer en un caso, no lo que no sabe que hace</td><td>Alta en entradas; media en gestión</td><td>Total: cada decisión cita una regla y un caso</td><td>Alta: determinista, abstiene por defecto</td><td>Bajo-medio</td><td>Bajo si los parámetros se congelan por argumento</td><td>Residuo discrecional mayor de lo previsto; trader inconsistente consigo mismo</td><td>E1 consistencia, E2 expresabilidad</td><td>Sí</td><td><span class="verdict v-main">CANDIDATO PRINCIPAL</span></td></tr>
+<tr><td>2. Reglas + clasificador de filtro con abstención</td><td>Absorber el residuo discrecional</td><td>Como 1</td><td>≥300 setups etiquetados</td><td>Baja hoy</td><td>Muy alta (horas de etiquetado)</td><td>Mejor que 1 para el residuo</td><td>Alta si hay datos</td><td>Parcial: la regla se explica, el filtro no</td><td>Media: el filtro puede fallar en régimen no visto; la abstención lo mitiga</td><td>Medio</td><td>Medio-alto</td><td>Aprender el ruido del etiquetador</td><td>Validación cruzada por fechas, cobertura de abstención</td><td>Sí, si el modelo se exporta a tabla o a ONNX en MQL5</td><td><span class="verdict v-hold">POSPONER HASTA TENER MÁS DATOS</span></td></tr>
+<tr><td>3. LLM parser transcripción → reglas candidatas</td><td>Acelerar la extracción y detectar contradicciones</td><td>Fuente directa</td><td>Transcripción limpia</td><td>Media (ASR ruidoso)</td><td>Valida cada regla</td><td>No</td><td>—</td><td>Alta si cada regla lleva cita</td><td>No aplica (desarrollo)</td><td>Bajo</td><td>Alucinación de reglas no dichas</td><td>Rellenar campos vacíos con plausibles</td><td>Recall/precisión contra extracción manual de un vídeo</td><td>—</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td></tr>
+<tr><td>4. LLM generador de MQL5/Python bajo tests</td><td>Reducir coste de implementación</td><td>No</td><td>Especificación + casos</td><td>Alta</td><td>No</td><td>No</td><td>La de la especificación</td><td>Alta si los tests son la fuente de verdad</td><td>Alta si no hay red en ejecución</td><td>Bajo</td><td>Bajo</td><td>Lógica sutilmente incorrecta que pasa tests débiles (BacktestBench)</td><td>Equivalencia Python↔MQL5 sobre la biblioteca de casos</td><td>Sí</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td></tr>
+<tr><td>5. OCR y visión clásica sobre fotogramas</td><td>Fechar y valorar operaciones mostradas</td><td>Fuente directa</td><td>Fotogramas a 1 fps en tramos con decisión</td><td>Alta</td><td>Verifica lecturas</td><td>No</td><td>—</td><td>Alta</td><td>No aplica</td><td>Bajo</td><td>—</td><td>Errores en dígitos a 720p</td><td>Comparar lecturas con OHLC descargado</td><td>—</td><td><span class="verdict v-comp">COMPONENTE POSIBLE</span></td></tr>
+<tr><td>6. Behavior cloning sobre las demostraciones</td><td>Aprender la política sin formalizar</td><td>Datos de entrenamiento</td><td>Miles de pares</td><td>Nula</td><td>Sí, para etiquetar miles</td><td>En teoría sí</td><td>Impredecible</td><td>Nula</td><td>Baja: no abstiene, errores compuestos</td><td>Alto</td><td>Muy alto</td><td>Sin datos; sin explicación; sin corrección puntual</td><td>—</td><td>Difícil</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td></tr>
+<tr><td>7. Agente LLM en ejecución con RAG sobre los vídeos</td><td>"Razonar como el trader" en vivo</td><td>Memoria consultable</td><td>Vídeos indexados</td><td>Alta</td><td>Baja</td><td>Simulación de tácito, no captura</td><td>Baja: no replica traders humanos (2502.15800)</td><td>Baja: no determinista</td><td>Baja: TradeTrap</td><td>Alto y recurrente</td><td>Alto: memorización de mercado</td><td>Latencia, coste, prop firm, dos ejecuciones distintas</td><td>—</td><td>Solo vía puente</td><td><span class="verdict v-drop">DESCARTAR PARA ESTE CASO</span></td></tr>
+</table></div>
+
+<h3>Falsación del candidato principal</h3>
+<div class="grid2">
+<div class="box"><h4>¿En qué caso fallaría?</h4><p>Si el trader toma decisiones que no puede reconocer ni siquiera cuando se le enseña el caso concreto, o si las toma de forma distinta cada vez. Entonces no hay "trader al que ser fiel", solo una distribución de comportamientos.</p></div>
+<div class="box"><h4>¿Qué supuesto puede ser falso?</h4><p>Que el residuo discrecional es pequeño. Y que "zona de control" es un evento estructural bien definido y no un juicio de forma.</p></div>
+<div class="box"><h4>¿Cómo comprobaríamos el supuesto?</h4><p>E1: mismas 40 ventanas etiquetadas dos veces, κ de Cohen. E2: bot con las reglas actuales sobre su sesión de enero, comparación operación a operación con sus 53.</p></div>
+<div class="box"><h4>¿Qué error parecería correcto en un backtest?</h4><p>Un swing detectado con barras futuras (repintado): el barrido parece anticipado y el backtest se infla justo en el instante de la señal. Se impide con el test de causalidad exhaustivo: la serie truncada en t y la completa deben dar los mismos swings confirmados hasta t.</p></div>
+<div class="box"><h4>¿Cómo distinguir comprensión de coincidencia?</h4><p>Reservando casos: la especificación se cierra sobre los vídeos y la mitad de sus operaciones exportadas; se juzga sobre la otra mitad, que nadie ha mirado al escribir reglas.</p></div>
+<div class="box"><h4>¿Cómo impedir inventar una regla no mostrada?</h4><p>Toda regla lleva cita (vídeo, minuto) o firma del trader. Sin una de las dos, es una ambigüedad declarada con default parametrizado, nunca una constante (el ADR-0015 previo ya lo exige; se mantiene).</p></div>
+<div class="box"><h4>¿Qué pasa ante un mercado no visto?</h4><p>Nada: el bot no opera. Todas las condiciones son conjuntivas; si una no se cumple, no hay orden. La abstención es el estado por defecto, no una excepción.</p></div>
+<div class="box"><h4>¿Qué pasaría si es fiel y no rentable?</h4><p>Es un resultado válido y separado. La fidelidad se demuestra sobre las decisiones; la ventaja, sobre ticks. Un bot fiel a un trader sin ventaja es un instrumento de medida honesto, que es lo que el trader pidió ("validar el sistema", <span class="ts">V2 0:37:08</span>).</p></div>
+</div>
+
+<h3>Contraevidencia incorporada en la ronda 7</h3>
+<ul>
+<li><strong>Cuello de botella de adquisición de conocimiento.</strong> Los sistemas expertos fracasaron cuando el conocimiento era pattern recognition no verbalizable. Aquí el trader construyó la estrategia para ser codificable y describe sus condiciones como predicados sobre cierres. Se acepta el riesgo y se mide (E1, E2) en vez de asumirlo resuelto.</li>
+<li><strong>Subjetividad entre traders en patrones.</strong> Documentada en general. Mitigación: no se busca consenso entre traders, sino consistencia de uno consigo mismo, que es medible.</li>
+<li><strong>Lo, Mamaysky y Wang (Journal of Finance) fijaron su parámetro de suavizado "a ojo".</strong> Ningún método elimina la arbitrariedad del parámetro; solo la documenta. Por eso los parámetros se congelan por argumento y se reporta la sensibilidad, no el óptimo.</li>
+</ul>
+</section>
+
+<section id="experimentos">
+<h2>7 · Experimentos realizados y propuestos</h2>
+<h3>Realizados durante esta investigación</h3>
+<div class="tablewrap"><table>
+<tr><th>Experimento</th><th>Método</th><th>Resultado</th><th>Consecuencia</th></tr>
+<tr><td>X1 · Transcripción sola vs transcripción + fotogramas</td><td>Tres hechos comprobados por ambas vías</td><td>La fila 5 de la ficha (entrada por orden límite) está <em>vacía</em>: solo lo muestra el fotograma. La corrección de 2 a 3 cartuchos: solo el audio. La orientación de la caja (0 arriba, 1 abajo en largos): solo el fotograma</td><td>Ninguna modalidad basta sola. La extracción debe cruzar ambas</td></tr>
+<tr><td>X2 · Densidad de fotogramas por cambio de escena</td><td>Análisis de los tres <code>index.txt</code></td><td>Huecos de 4 a 11 min en los tres vídeos largos, coincidentes con tramos de dibujo sobre el mismo gráfico</td><td>Reextraer a 1 fps en los tramos con decisión antes de cerrar casos</td></tr>
+<tr><td>X3 · Censo de contradicciones</td><td>Lectura cruzada de ficha, transcripciones y ADR-0015</td><td>Seis ambigüedades con default; dos cerradas por interpretación ("el sentido del audio es inequívoco"), no por el trader</td><td>A-1 y A-6 vuelven a la lista de preguntas: un default interpretado no es una respuesta</td></tr>
+<tr><td>X4 · Aritmética de fidelidad geométrica</td><td>Ratios de la herramienta de posición vs regla</td><td>4,08 y 3,94 ≈ 3 ÷ 0,75; pérdida A = exactamente el stop</td><td>La geometría del riesgo es un hecho, no una hipótesis</td></tr>
+<tr><td>X5 · Precedente directo</td><td>Inspección de yt-strategy-agent y Rogue Quant</td><td>Ambos extraen reglas de transcripción; ninguno valida contra el autor ni contra datos</td><td>El vacío que este proyecto llena es la validación, no la extracción</td></tr>
+</table></div>
+
+<h3>Propuestos, en orden de ejecución</h3>
+<div class="tablewrap"><table>
+<tr><th>Id</th><th>Pregunta</th><th>Diseño</th><th>Criterio</th><th>Coste</th></tr>
+<tr><td class="num">E0</td><td>¿La transcripción actual soporta extracción automática?</td><td>Retranscribir V3 con Whisper large-v3; comparar 50 citas ya usadas</td><td>Si &gt;10 % de las citas cambian de sentido, retranscribir todo antes de seguir</td><td>Horas de máquina</td></tr>
+<tr><td class="num">E1</td><td>¿El trader es consistente consigo mismo?</td><td>40 ventanas M1/M15/H4 de fechas que no ha visto (2024–2025), etiqueta: opera / no opera / dónde entra / dónde stop. Repetición ciega a las dos semanas</td><td>κ ≥ 0,75 en operar/no operar; diferencia de nivel de stop ≤ 1 pip en el 80 % de casos</td><td>2 × 60 min del trader</td></tr>
+<tr><td class="num">E2</td><td>¿Las reglas actuales reproducen sus decisiones?</td><td>Implementar la especificación de 30 reglas en Python sobre OHLC de enero 2026; comparar con sus 53 operaciones exportadas (mitad reservada)</td><td>≥ 85 % de coincidencia en operar/no operar y lado sobre la mitad reservada; cada discrepancia explicada con él</td><td>1–2 semanas</td></tr>
+<tr><td class="num">E3</td><td>¿Cuánto cambia el resultado con la interpretación?</td><td>Barrer las 6 ambigüedades (2⁶ = 64 combinaciones) sobre el mismo periodo</td><td>Si dos lecturas dan operaciones distintas en &gt;5 % de sesiones, la ambigüedad es material y se pregunta; si no, se cierra sola</td><td>Horas</td></tr>
+<tr><td class="num">E4</td><td>¿Depende la señal del detector?</td><td>Extremo-de-tramo (su método) vs fractal N=1,2,3 sobre el mismo periodo</td><td>Si el método del trader y el fractal no coinciden en &gt;90 % de zonas M15, el "mapeo" tiene un juicio oculto</td><td>Horas</td></tr>
+<tr><td class="num">E5</td><td>¿Depende del feed?</td><td>Mismo backtest con ticks de dos proveedores y con el broker demo</td><td>&gt;2 % de barridos que cambian de signo = resultado dependiente del proveedor</td><td>Días</td></tr>
+<tr><td class="num">E6</td><td>¿Coinciden especificación, Python y MT5?</td><td>Biblioteca de casos ejecutada en Python y en el EA MQL5 dentro del Strategy Tester con "cada tick basado en ticks reales"</td><td>100 % de casos idénticos en decisión; diferencia mediana de entrada &lt; 0,3 pips</td><td>Semanas (paso 8 de §16)</td></tr>
+<tr><td class="num">E7</td><td>¿Con qué frecuencia abstiene el bot y por qué?</td><td>Registro de la condición que falla en cada sesión sin operación</td><td>Distribución de causas de abstención revisada con el trader</td><td>Incluido en E2</td></tr>
+</table></div>
+</section>
+
+<section id="metodo">
+<h2>8 · Método finalmente recomendado</h2>
+<p><span class="tag t-dec">Decisión de diseño</span> Se nombra por lo que hace cada componente, sin la palabra "híbrido".</p>
+<figure>
+<svg class="arch" viewBox="0 0 900 470" role="img" aria-label="Arquitectura: desarrollo a la izquierda, ejecución a la derecha">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink-3)"/></marker></defs>
+  <rect x="10" y="10" width="520" height="450" rx="8" fill="var(--paper-2)" stroke="var(--rule)"/>
+  <text x="26" y="36" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--ink-3)" letter-spacing="1.5">DESARROLLO · CON IA COMO ASISTENTE · SIN IA EN LA DECISIÓN</text>
+  <rect x="26" y="56" width="150" height="66" rx="5" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="101" y="82" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Vídeos + transcripción</text>
+  <text x="101" y="100" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">evidencia citada</text>
+  <rect x="196" y="56" width="150" height="66" rx="5" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="271" y="82" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Trader</text>
+  <text x="271" y="100" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">CDM · replay · etiquetado</text>
+  <rect x="366" y="56" width="150" height="66" rx="5" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="441" y="82" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Sus operaciones</text>
+  <text x="441" y="100" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">FXReplay · TV · en vivo</text>
+  <line x1="101" y1="122" x2="150" y2="170" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <line x1="271" y1="122" x2="271" y2="170" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <line x1="441" y1="122" x2="392" y2="170" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <rect x="26" y="172" width="240" height="84" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="146" y="198" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Especificación ejecutable</text>
+  <text x="146" y="216" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">reglas · parámetros congelados</text>
+  <text x="146" y="232" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">ambigüedades declaradas · tablas de decisión</text>
+  <rect x="286" y="172" width="230" height="84" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="401" y="198" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Biblioteca de casos</text>
+  <text x="401" y="216" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">velas + decisión del trader</text>
+  <text x="401" y="232" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">positivos · negativos · fronterizos</text>
+  <line x1="146" y1="256" x2="146" y2="300" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <line x1="401" y1="256" x2="401" y2="300" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <rect x="26" y="302" width="240" height="70" rx="5" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="146" y="326" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Implementación de referencia</text>
+  <text x="146" y="344" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">Python · backtest sobre ticks · visor</text>
+  <text x="146" y="360" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">LLM escribe, los tests juzgan</text>
+  <rect x="286" y="302" width="230" height="70" rx="5" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="401" y="326" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Validación de fidelidad</text>
+  <text x="401" y="344" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">bot vs trader, caso a caso</text>
+  <text x="401" y="360" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">discrepancia → regla o caso nuevo</text>
+  <path d="M401 372 C401 400 401 400 380 400 L 300 400 C 275 400 275 400 275 256" fill="none" stroke="var(--ink-3)" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text x="300" y="418" font-family="Source Sans 3, sans-serif" font-size="11.5" fill="var(--ink-3)">bucle con el trader (DAgger como proceso)</text>
+  <line x1="266" y1="337" x2="590" y2="337" stroke="var(--ink-3)" stroke-width="1.5" marker-end="url(#ar)"/>
+  <text x="430" y="452" font-family="Source Sans 3, sans-serif" font-size="11.5" fill="var(--ink-3)">equivalencia sobre la biblioteca de casos (E6)</text>
+  <rect x="560" y="10" width="330" height="450" rx="8" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="576" y="36" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--ink-3)" letter-spacing="1.5">EJECUCIÓN · MT5 · DETERMINISTA</text>
+  <rect x="576" y="56" width="298" height="60" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+  <text x="725" y="80" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Datos: ticks y velas del broker</text>
+  <text x="725" y="98" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">H4 anclada por configuración, no por servidor</text>
+  <line x1="725" y1="116" x2="725" y2="150" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <rect x="576" y="152" width="298" height="120" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="725" y="176" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">EA MQL5: la misma especificación</text>
+  <text x="725" y="196" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">sesgo H4 → zona M15 → breaker M1 → límite en mecha</text>
+  <text x="725" y="214" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">máquina de estados: jornada y ciclo de operación</text>
+  <text x="725" y="232" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">abstención por defecto: sin condición, sin orden</text>
+  <text x="725" y="256" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--accent)">sin red · sin modelo · sin LLM</text>
+  <line x1="725" y1="272" x2="725" y2="306" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <rect x="576" y="308" width="298" height="60" rx="5" fill="var(--bad-soft)" stroke="var(--bad)"/>
+  <text x="725" y="332" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Veto de riesgo independiente</text>
+  <text x="725" y="350" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="12" fill="var(--ink-2)">5 % día · 10 % total · lotaje · ventana · kill-switch</text>
+  <line x1="725" y1="368" x2="725" y2="402" stroke="var(--ink-3)" marker-end="url(#ar)"/>
+  <rect x="576" y="404" width="298" height="44" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+  <text x="725" y="431" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">Broker (demo → FundedNext) + journal auditable</text>
+</svg>
+<figcaption>Quién decide qué: el trader decide las reglas y etiqueta los casos; la especificación decide qué es una señal; el EA decide cuándo enviar la orden; el veto de riesgo decide si se puede enviar; ninguna pieza de IA decide nada en ejecución.</figcaption>
+</figure>
+
+<h3>Componentes y responsable de cada decisión</h3>
+<div class="tablewrap"><table>
+<tr><th>Componente</th><th>Decisión que controla</th><th>Cuándo actúa</th><th>Quién puede cambiarlo</th></tr>
+<tr><td>Protocolo de elicitación (CDM sobre replay, think-aloud, etiquetado ciego)</td><td>Qué es una regla, qué es un caso, qué sigue siendo ambiguo</td><td>Desarrollo, en sesiones con el trader</td><td>El trader</td></tr>
+<tr><td>Especificación ejecutable (reglas RN, parámetros congelados, tablas de decisión, ambigüedades con default)</td><td>Qué configuración de velas es una señal y dónde van entrada, stop y objetivo</td><td>Desarrollo; es el contrato de las dos implementaciones</td><td>Solo con cita de vídeo o firma del trader</td></tr>
+<tr><td>Biblioteca de casos (tabla relacional + YAML ejecutable)</td><td>Qué debe hacer el bot en cada caso conocido; es la verdad de referencia</td><td>Desarrollo y regresión continua</td><td>El trader etiqueta; nadie edita una etiqueta</td></tr>
+<tr><td>Implementación de referencia en Python (núcleo puro, ticks, visor)</td><td>Backtest de fidelidad y de ventaja; visor para que el trader audite sin leer código</td><td>Desarrollo y validación</td><td>Cualquiera, con tests verdes</td></tr>
+<tr><td>EA MQL5</td><td>Envío, reubicación, expiración y cierre de órdenes; máquina de estados de jornada y ciclo</td><td>Ejecución (Strategy Tester, demo, real)</td><td>Solo tras equivalencia E6</td></tr>
+<tr><td>Veto de riesgo</td><td>Si una orden puede salir: límites de FundedNext en hora de servidor, lotaje máximo, ventana, kill-switch</td><td>Ejecución, antes de cada envío</td><td>Parámetros fuera del alcance del EA de estrategia</td></tr>
+<tr><td>Journal</td><td>Nada; registra estado, condición fallida en cada abstención, y cada envío con su regla</td><td>Ejecución</td><td>—</td></tr>
+<tr><td>LLM (desarrollo)</td><td>Nada. Propone reglas con cita y escribe código que los tests juzgan</td><td>Desarrollo</td><td>—</td></tr>
+</table></div>
+
+<h3>Python o MQL5 para ejecutar: la decisión y sus condiciones</h3>
+<p>El plan previo eligió un núcleo Python con adaptador al paquete <code>MetaTrader5</code>. Es viable y ya tiene 237 tests. Esta investigación recomienda <strong>que la ejecución final sea un EA MQL5 nativo</strong> y que el Python quede como implementación de referencia y motor de validación, por cuatro razones concretas: FundedNext exige MT5 y limita a 2.000 mensajes diarios (un bucle Python de sondeo consume presupuesto; un EA reacciona a <code>OnTick</code>); el Strategy Tester con "cada tick basado en ticks reales" es el único sitio donde la simulación usa exactamente el modelo de ejecución del broker; el EA corre en VPS del broker sin puente ni Windows propio; y la equivalencia entre dos implementaciones (E6) es un test de fidelidad más fuerte que la paridad de una sola. El coste es mantener dos código base pequeños. Si el trader o el equipo prefiere una sola, la elección debe ser la que pueda demostrar E6 contra el Strategy Tester; hoy eso es MQL5.</p>
+</section>
+
+<section id="porque">
+<h2>9 · Por qué gana</h2>
+<ul>
+<li><strong>Es el único método cuyos requisitos de datos el corpus cumple.</strong> Decenas de casos bastan para falsar reglas; no bastan para nada más.</li>
+<li><strong>Es el único que produce decisiones auditables una a una.</strong> Cada orden cita una regla y un caso; cada abstención cita la condición que falló. Es lo que el trader necesita para corregir ("una discrepancia es información, no un problema que se tapa").</li>
+<li><strong>Convierte la disponibilidad del trader en el activo principal</strong> en vez de intentar sustituirla con inferencia automática sobre vídeos ruidosos.</li>
+<li><strong>Respeta lo que él mismo diseñó:</strong> una estrategia hecha para ser objetiva, sin indicadores, con pocos grados de libertad.</li>
+<li><strong>Separa fidelidad de rentabilidad</strong> por construcción: la primera se mide contra sus decisiones; la segunda contra ticks con parámetros congelados.</li>
+<li><strong>Abstiene por defecto</strong>, que es la propiedad de seguridad que ningún modelo aprendido con 30 ejemplos puede garantizar.</li>
+<li><strong>No depende de servicios externos en ejecución.</strong> Reproducible: dos ejecuciones sobre los mismos ticks dan el mismo journal.</li>
+</ul>
+</section>
+
+<section id="respaldo">
+<h2>10 · Alternativa de respaldo</h2>
+<p><strong>Reglas deterministas + filtro supervisado con abstención sobre las señales que las reglas generan.</strong> Se activa solo si E2 demuestra que el residuo discrecional es grande (§11). La reglas siguen decidiendo dirección, entrada, stop y objetivo; el filtro decide únicamente "esta señal sí / esta señal no / no sé" y el "no sé" se trata como no operar. Necesita que el trader etiquete ≥300 señales generadas por el bot sobre replay (a 3–4 minutos por señal, unas 20 horas). El modelo se exportaría como tabla o como ONNX (MQL5 lo soporta) para que la ejecución siga siendo determinista y sin red. Se validaría con partición por fechas, nunca aleatoria, y con cobertura de abstención reportada.</p>
+<p>Lo que <em>no</em> es respaldo: un agente LLM, un RAG en ejecución o un modelo de visión. La contraevidencia de §6 no cambia con más datos del trader.</p>
+</section>
+
+<section id="condiciones">
+<h2>11 · Condiciones que cambiarían la decisión</h2>
+<div class="tablewrap"><table>
+<tr><th>Si se observa…</th><th>Entonces…</th></tr>
+<tr><td>E1: κ &lt; 0,6 en operar/no operar</td><td>"Fidelidad al trader" queda mal definida. Se redefine el objetivo como "fidelidad al reglamento que el trader firma", y se documenta la diferencia. Ningún método estadístico arregla esto</td></tr>
+<tr><td>E2: coincidencia &lt; 70 % tras dos rondas de elicitación y corrección</td><td>El residuo discrecional es grande. Se activa la alternativa de respaldo y empieza el etiquetado masivo</td></tr>
+<tr><td>E2: coincidencia ≥ 85 % pero las discrepancias se concentran en la gestión (BE, stop a 0,50, objetivo extendido)</td><td>Se congela la gestión en la versión conservadora (0,75 fijo, 1:3 fijo, BE en 2.ª zona) y se documenta como pérdida de fidelidad aceptada, con el trader</td></tr>
+<tr><td>E3: dos lecturas de una ambigüedad producen operaciones distintas en &gt;5 % de sesiones</td><td>Esa ambigüedad bloquea; se pregunta con caso concreto antes de seguir</td></tr>
+<tr><td>E4: el extremo-de-tramo del trader y un fractal discrepan en &gt;10 % de zonas</td><td>Su "mapeo" contiene un juicio oculto; sesión de CDM específica sobre mapeo</td></tr>
+<tr><td>Más de 500 casos etiquetados disponibles</td><td>El filtro supervisado pasa de respaldo a componente evaluable, siempre como filtro sobre reglas, nunca como sustituto</td></tr>
+<tr><td>El trader añade esquemas con frecuencia (ya anunció el tercero)</td><td>La DSL/IR intermedia pasa de pospuesta a componente: compensa cuando hay N esquemas que comparten gestión</td></tr>
+<tr><td>Aparece un segundo trader o un segundo instrumento</td><td>Reevaluar todo: este informe es específico de un trader, un par y una estrategia</td></tr>
+</table></div>
+</section>
+
+<section id="tecnologias">
+<h2>12 · Papel exacto de cada tecnología</h2>
+<div class="tablewrap"><table>
+<tr><th>Tecnología</th><th>Papel</th><th>Momento</th><th>Nunca</th></tr>
+<tr><td>Reglas + máquina de estados</td><td>Representación y ejecución de la estrategia</td><td>Desarrollo y ejecución</td><td>—</td></tr>
+<tr><td>Biblioteca de casos (tabla + YAML ejecutable)</td><td>Verdad de referencia; tests de regresión; instrumento de auditoría del trader</td><td>Desarrollo y validación</td><td>Como motor de decisión por similitud</td></tr>
+<tr><td>RAG</td><td>Índice textual por marcas de tiempo para citar reglas y contradicciones. Función real: recuperación, no razonamiento</td><td>Desarrollo</td><td>En ejecución; multimodal; sobre vídeo</td></tr>
+<tr><td>Visión</td><td>OCR y lectura asistida de fotogramas para fechar y valorar operaciones mostradas; reextracción a 1 fps donde haga falta. Función real: leer números, no decisiones</td><td>Desarrollo</td><td>VLM como intérprete; detección de objetos; en ejecución</td></tr>
+<tr><td>LLM</td><td>Parser de transcripción a reglas candidatas con cita y campo "no consta"; asistente de código bajo tests; redactor de preguntas al trader. Función real: acelerar trabajo verificable</td><td>Desarrollo</td><td>Decidir; operar; validar por sí solo</td></tr>
+<tr><td>Whisper large-v3</td><td>Retranscripción alineada por fragmentos</td><td>Desarrollo, antes de E0</td><td>—</td></tr>
+<tr><td>Backtest sobre ticks (Python) y Strategy Tester (MQL5)</td><td>Fidelidad y ventaja, respectivamente y también cruzados</td><td>Validación</td><td>Optimizar parámetros</td></tr>
+<tr><td>Deflated Sharpe / PBO</td><td>Reportar la ventaja con N declarado</td><td>Validación</td><td>—</td></tr>
+<tr><td>Modelo supervisado con abstención</td><td>Solo en la alternativa de respaldo</td><td>Condicional</td><td>Sin ≥300 etiquetas</td></tr>
+<tr><td>YOLO, Video-LLM, GraphRAG, IL/RL, agentes</td><td>Ninguno</td><td>—</td><td>—</td></tr>
+</table></div>
+</section>
+
+<section id="confianza">
+<h2>13 · Nivel de confianza</h2>
+<div class="tablewrap"><table>
+<tr><th>Afirmación</th><th>Confianza</th><th>Base</th></tr>
+<tr><td>Los vídeos deben usarse como evidencia y fuente de casos, no como datos de entrenamiento</td><td>Alta</td><td>Recuento de ejemplos; literatura de IL; precedentes</td></tr>
+<tr><td>El núcleo de entradas es formalizable con reglas sobre OHLC</td><td>Alta</td><td>Tres confirmaciones aritméticas; el trader lo diseñó así; coincidencia dicho/hecho donde se comprobó</td></tr>
+<tr><td>El residuo discrecional es pequeño en entradas</td><td>Media</td><td>Hipótesis explícita; se mide en E1/E2</td></tr>
+<tr><td>El residuo discrecional es relevante en gestión (BE, stop reducido, objetivo)</td><td>Media-alta</td><td>El trader lo dice cinco veces con ejemplos</td></tr>
+<tr><td>Ningún modelo de IA debe operar en ejecución</td><td>Alta</td><td>Contraevidencia de 2025–2026; requisitos de prop firm; reproducibilidad</td></tr>
+<tr><td>MQL5 nativo para ejecutar</td><td>Media</td><td>Razones técnicas sólidas; coste de dos implementaciones es real</td></tr>
+<tr><td>La estrategia tiene ventaja después de costes</td><td>Sin opinión</td><td>Es una pregunta separada que se contesta con datos, no con este informe</td></tr>
+</table></div>
+</section>
+
+<section id="preguntas">
+<h2>14 · Preguntas que deben resolverse con el trader</h2>
+<p>Formuladas para responderse sobre un caso concreto en replay, no en abstracto. Las tres primeras bloquean la especificación; las demás afectan a gestión o a datos.</p>
+<ol>
+<li><strong>Sesgo H4 (A-1).</strong> Sobre cinco velas H4 elegidas por nosotros (verde sin superar el máximo previo, roja con mecha por encima, doji…): ¿la siguiente operativa es alcista o bajista en cada una? Cierra las tres formulaciones incompatibles con una tabla firmada.</li>
+<li><strong>Zona de control, vela a vela.</strong> Sobre tres casos límite en M1: ¿en cuál de estas velas dirías "ya está, break even"? ¿Al cierre o al tocar? (<span class="ts">V4 0:44:56</span> dice ambas.)</li>
+<li><strong>Tercer cartucho.</strong> ¿Cuándo lo tomas y cuándo esperas otra zona M15? Si la respuesta es "depende", ¿de qué exactamente? Si no hay criterio, ¿prefieres que el bot fije 2 o 3?</li>
+<li><strong>Salida anticipada si la límite se activa sin ruptura (A-3).</strong> Un caso, una respuesta.</li>
+<li><strong>Stop del segundo esquema.</strong> ¿0,75 fijo o mínimo estructural? ¿Y cuándo baja a 0,50 "porque el retroceso es complejo"? (<span class="ts">V3 0:59:56</span>)</li>
+<li><strong>Objetivo extendido "por lectura de mercado".</strong> ¿Aceptas que el bot no lo haga nunca y que la fidelidad se mida sin eso?</li>
+<li><strong>"Respiro" del 0,75 por spread.</strong> ¿Cuántos pips, o "el spread del momento más uno"?</li>
+<li><strong>Mapeo con dos velas como una</strong> (<span class="ts">V3 1:06:48</span>). ¿Es una regla (qué condición) o una excepción que aceptas perder?</li>
+<li><strong>Cierre a las 15:00 (A-6).</strong> Confirmación explícita; el audio es de mala calidad.</li>
+<li><strong>Reubicación de la límite.</strong> ¿La mueves cada vela M1, solo cuando aparece un nuevo mínimo, o a ojo?</li>
+<li><strong>Zona horaria de tu gráfico.</strong> Captura de la configuración de TradingView y de FXReplay (se vio UTC+2 y UTC−4 en la misma sesión).</li>
+<li><strong>Datos.</strong> Exportación de FXReplay (enero, agosto), Excel, y calendario de las grabaciones en vivo que ofreciste.</li>
+</ol>
+</section>
+
+<section id="validacion">
+<h2>15 · Plan de validación</h2>
+<h3>Fidelidad (¿reproduce al trader?)</h3>
+<ol>
+<li><strong>Partición ciega:</strong> las reglas se cierran con los vídeos y la mitad de sus operaciones exportadas. La otra mitad no se abre hasta E2.</li>
+<li><strong>Coincidencia operación a operación</strong> sobre la mitad reservada: mismo día, mismo lado, misma vela de entrada (±1 M1), mismo resultado en R (±0,1). Umbral de aceptación ≥ 85 %; cada discrepancia se explica con el trader y se convierte en regla, en caso o en ambigüedad documentada. Nunca se promedia.</li>
+<li><strong>Abstención explicada:</strong> para cada sesión sin operación, la condición que falló, revisada con él en muestra.</li>
+<li><strong>Consistencia del trader (E1)</strong> reportada junto al resultado: la fidelidad máxima alcanzable es la consistencia del propio trader.</li>
+<li><strong>Bucle de corrección</strong> (DAgger como proceso): el bot corre sobre periodos nuevos de replay, el trader marca discrepancias, se repite. Se detiene cuando dos rondas consecutivas no producen reglas nuevas.</li>
+</ol>
+<h3>Ventaja (¿conserva expectativa positiva tras costes?)</h3>
+<ol>
+<li><strong>Parámetros congelados por argumento antes de mirar resultados</strong> y N de configuraciones declarado, incluyendo las pruebas manuales del trader.</li>
+<li><strong>Backtest sobre ticks reales</strong> de 2 a 3 años con spread y comisión del broker objetivo; test de causalidad exhaustivo; zona ciega inicial descartada.</li>
+<li><strong>Sensibilidad</strong> a detector (E4), feed (E5) y a las seis ambigüedades (E3). Meseta, no pico.</li>
+<li><strong>Deflated Sharpe</strong> y probabilidad de sobreajuste reportados; expectativa por operación en R con intervalo.</li>
+<li><strong>Equivalencia E6</strong> entre Python y EA en Strategy Tester; después demo FundedNext ≥ 3 meses comparando decisión a decisión con el backtest del mismo periodo (paridad).</li>
+<li><strong>Criterio de parada honesto:</strong> si no hay ventaja con costes, el resultado se comunica como tal. El bot fiel sigue siendo útil para que el trader amplíe su muestra, que fue su petición original.</li>
+</ol>
+</section>
+
+<section id="implementacion">
+<h2>16 · Plan de implementación por etapas</h2>
+<p>Reordena el plan previo de 18 pasos poniendo la validación de fidelidad al principio, no en el paso 15. Cada etapa termina con algo que el trader puede juzgar sin leer código.</p>
+<div class="tablewrap"><table>
+<tr><th>Etapa</th><th>Qué se hace</th><th>Entregable auditable</th><th>Con el trader</th><th>Duración orientativa</th></tr>
+<tr><td class="num">0</td><td>Retranscribir con large-v3 alineado por fragmentos; reextraer fotogramas a 1 fps en tramos con decisión; pedir exportaciones; abrir demo FundedNext y grabar ticks desde hoy</td><td>Transcripciones nuevas; tabla de operaciones exportadas; ticks demo acumulándose</td><td>Solo pedir datos</td><td>1 semana</td></tr>
+<tr><td class="num">1</td><td>Especificación v1 desde lo existente (30 reglas, ADR-0015), con cada regla citada y las 12 preguntas abiertas marcadas</td><td>Documento de reglas con citas y tabla de ambigüedades</td><td>No</td><td>3 días</td></tr>
+<tr><td class="num">2</td><td>Sesión CDM 1: las tres preguntas bloqueantes sobre casos concretos en replay; etiquetado ciego ronda 1 (E1)</td><td>40 casos etiquetados; tabla del sesgo H4 firmada</td><td>90 min</td><td>1 semana</td></tr>
+<tr><td class="num">3</td><td>Implementación de referencia en Python sobre OHLC y ticks (reutilizando el esqueleto previo: dominio puro, casos YAML, test de causalidad) + visor de tres marcos</td><td>Visor con las zonas y señales del bot sobre enero 2026</td><td>Revisión de 30 min del visor</td><td>2–3 semanas</td></tr>
+<tr><td class="num">4</td><td>E2 sobre la mitad reservada; E3 y E4; etiquetado ciego ronda 2 (κ)</td><td>Informe de fidelidad: coincidencia, discrepancias explicadas, κ</td><td>Sesión CDM 2 sobre discrepancias, 90 min</td><td>2 semanas</td></tr>
+<tr><td class="num">5</td><td>Decisión: continuar con reglas solas o activar respaldo (§11). Congelar especificación v2 y parámetros por argumento</td><td>Especificación v2 firmada; N declarado</td><td>Firma</td><td>2 días</td></tr>
+<tr><td class="num">6</td><td>Backtest de ventaja sobre ticks multianuales; E5; Deflated Sharpe</td><td>Informe de ventaja con sensibilidades</td><td>Lectura</td><td>2 semanas</td></tr>
+<tr><td class="num">7</td><td>EA MQL5 desde la especificación; veto de riesgo separado; journal; expiración de órdenes; idempotencia ante retcodes</td><td>EA compilado con tests sobre la biblioteca de casos en Strategy Tester</td><td>No</td><td>3–4 semanas</td></tr>
+<tr><td class="num">8</td><td>E6 equivalencia Python↔EA; demo FundedNext; paridad demo↔backtest</td><td>Informe de paridad; journal de demo</td><td>Revisión mensual de discrepancias</td><td>3 meses de demo</td></tr>
+<tr><td class="num">9</td><td>Decisión de cuenta real: solo si fidelidad ≥ 85 %, paridad dentro de umbrales y ventaja positiva con DSR reportado</td><td>Memorando de decisión</td><td>Decisión conjunta</td><td>—</td></tr>
+</table></div>
+<div class="callout warn"><p><strong>Este informe se detiene aquí.</strong> No se ha escrito código, no se ha generado ningún EA, no se ha conectado ninguna cuenta y no se ha modificado Google Drive. La etapa 0 necesita tu aprobación y la del trader para pedir datos y abrir la demo.</p></div>
+</section>
+
+<hr>
+
+<section id="catorce">
+<h2>Anexo · Las 14 preguntas centrales, respondidas</h2>
+<p class="q">1. ¿Cuál es la mejor forma de aprovechar estos vídeos?</p><p>Como evidencia citable de reglas y como cantera de casos con fecha que el trader confirma en replay. No como dataset.</p>
+<p class="q">2. ¿Evidencia, conocimiento, demostraciones, datos de entrenamiento o combinación?</p><p>Evidencia y conocimiento explícito, sobre todo. Demostraciones solo en el sentido de "ejemplos para verificar", no "ejemplos para aprender". Datos de entrenamiento: no.</p>
+<p class="q">3. ¿Es viable aprender directamente una política?</p><p>No. Entre 25 y 35 pares estado-acción frente a miles necesarios; sin contrafactuales; sin auditabilidad; sin abstención.</p>
+<p class="q">4. ¿Es viable formalizar el comportamiento mediante reglas?</p><p>Sí para el núcleo de entradas, con tres confirmaciones independientes de la geometría. Parcialmente para la gestión, donde el trader mismo declara discreción. La hipótesis "residuo pequeño" se mide en E1/E2, no se asume.</p>
+<p class="q">5. ¿Qué se automatiza y qué requiere al trader?</p><p>Se automatiza toda la cadena sesgo → zona → gatillo → orden → stop → objetivo → break even → parada diaria. Requiere al trader: cerrar las doce preguntas, etiquetar casos, revisar discrepancias, y decidir qué discreción se pierde a cambio de reproducibilidad.</p>
+<p class="q">6. ¿Qué datos adicionales producen la mayor mejora?</p><p>Sus operaciones exportadas con velas; dos rondas de etiquetado ciego; grabaciones en vivo; ticks demo desde hoy; ticks históricos multianuales.</p>
+<p class="q">7. ¿Debe existir un modelo de IA durante la operación?</p><p>No. Ninguna evidencia lo justifica y mucha lo desaconseja.</p>
+<p class="q">8. ¿Qué función real tendría un RAG?</p><p>Índice textual con marcas de tiempo para citar. Recuperación en desarrollo. No razona ni decide.</p>
+<p class="q">9. ¿Qué función real tendría la visión?</p><p>Leer números y fechas de fotogramas en desarrollo, con verificación humana. Nada en ejecución.</p>
+<p class="q">10. ¿Qué función real tendría un LLM?</p><p>Parser asistido de transcripciones a reglas candidatas con cita y opción "no consta"; asistente de código cuya salida juzgan tests deterministas; redactor de preguntas. Nunca decisor.</p>
+<p class="q">11. ¿Existe un precedente verdaderamente comparable?</p><p>No. Existen mitades: extracción de reglas desde transcripciones sin validación (yt-strategy-agent) y motores deterministas maduros sin origen en un trader (Nautilus, EA31337). La pieza nueva es la validación de fidelidad caso a caso contra el autor.</p>
+<p class="q">12. ¿Cómo demostraríamos que el bot reproduce al trader?</p><p>Coincidencia operación a operación sobre una mitad reservada de sus operaciones, con discrepancias explicadas una a una, junto a la consistencia del propio trader como cota superior.</p>
+<p class="q">13. ¿Cómo demostraríamos, por separado, la ventaja tras costes?</p><p>Backtest sobre ticks con parámetros congelados a priori, N declarado, Deflated Sharpe, sensibilidad a detector, feed y ambigüedades, y tres meses de demo con paridad.</p>
+<p class="q">14. ¿Qué arquitectura es la mejor y cuándo dejaría de serlo?</p><p>Especificación ejecutable + biblioteca de casos + EA determinista con abstención y veto de riesgo. Deja de serlo si el trader no es consistente consigo mismo (κ &lt; 0,6), si tras dos rondas de corrección la coincidencia sigue por debajo del 70 %, o si aparecen más de 500 casos etiquetados y múltiples esquemas, en cuyo caso se añaden un filtro con abstención y una representación intermedia.</p>
+</section>
+
+<section id="previo">
+<h2>Anexo · Auditoría del trabajo previo (Bot v2)</h2>
+<p>El proyecto anterior eligió un núcleo Python hexagonal con statechart, 30 reglas, 18 ADR y un plan de 18 pasos, con los pasos 1 y 2 ejecutados. Se revisó como hipótesis. Veredicto: <strong>converge con el método recomendado en la representación (reglas ejecutables, ambigüedades declaradas, causalidad en los tipos) y diverge en el orden y en dos supuestos.</strong></p>
+<div class="grid2">
+<div class="box"><h4>Lo que se mantiene</h4><ul><li>Reglas RN con cita y test de cobertura.</li><li>ADR-0015: ambigüedad = default parametrizado y marcado.</li><li>ADR-0006: tripleta (extremo, confirmación, precio) y test de causalidad exhaustivo.</li><li>Casos YAML como documento y test.</li><li>Parámetros congelados por argumento; Deflated Sharpe.</li></ul></div>
+<div class="box"><h4>Lo que cambia</h4><ul><li><strong>La validación contra el trader era el paso 15 de 18.</strong> Aquí es la etapa 4 de 9, antes del EA y del backtest de ventaja.</li><li><strong>No existía una biblioteca de casos etiquetados por el trader</strong>, solo casos escritos por el equipo. Sin ella la especificación no se puede falsar.</li><li><strong>Dos ambigüedades se cerraron por interpretación</strong> ("el sentido del audio es inequívoco"), no por el trader. Vuelven a la lista.</li><li><strong>Ejecución final en MQL5</strong> en vez de Python con adaptador, por las razones de §8; el Python se conserva como referencia.</li><li><strong>El residuo discrecional se trata como hipótesis medible</strong>, no como resuelto por defaults.</li></ul></div>
+</div>
+<p class="small">El código existente (237 tests, cobertura 100 % en dominio) es reutilizable como implementación de referencia. No se recomienda descartarlo.</p>
+</section>
+
+<section id="refs">
+<h2>Referencias</h2>
+<ul class="small">
+<li>Repositorios: <a href="https://github.com/HKUDS/Vibe-Trading">HKUDS/Vibe-Trading</a> · <a href="https://github.com/EA31337/EA31337">EA31337</a> · <a href="https://github.com/freqtrade/freqtrade">freqtrade</a> · <a href="https://github.com/QuantConnect/Lean">QuantConnect/Lean</a> · <a href="https://github.com/nautechsystems/nautilus_trader">nautilus_trader</a> · <a href="https://github.com/kdr/videorag-mrr2024">videorag-mrr2024</a> · <a href="https://github.com/HKUDS/VideoRAG">HKUDS/VideoRAG</a> · <a href="https://github.com/jackson-video-resources/yt-strategy-agent">yt-strategy-agent</a> · <a href="https://github.com/joshyattridge/smart-money-concepts">smart-money-concepts</a> · <a href="https://github.com/SiyabongaDlamini/SmartMoney.MQ5">SmartMoney.MQ5</a> · <a href="https://github.com/VelmoPk/Smart-Money-Concepts-indicator-MT5">SMC indicator MT5</a></li>
+<li>Traducción lenguaje→código: <a href="https://arxiv.org/html/2605.17937">BacktestBench</a> · <a href="https://arxiv.org/pdf/2501.10868">JSONSchemaBench</a> · <a href="https://towardsdatascience.com/your-json-is-valid-but-your-data-is-wrong-five-failure-modes-llm-structured-outputs-wont-catch/">Cinco fallos de salidas estructuradas</a></li>
+<li>Agentes LLM en trading: <a href="https://arxiv.org/html/2512.02261v1">TradeTrap</a> · <a href="https://arxiv.org/html/2605.19337v1">Agentic Trading</a> · <a href="https://arxiv.org/pdf/2502.15800">LLM Agents Do Not Replicate Human Market Traders</a> · <a href="https://arxiv.org/pdf/2512.23847">Detecting Lookahead Bias in LLM Forecasts</a> · <a href="https://arxiv.org/pdf/2606.08285">Execution Assumptions and Reproducibility</a></li>
+<li>Visión y vídeo: <a href="https://arxiv.org/abs/2604.12659">Do VLMs Truly Read Candlesticks?</a> · <a href="https://arxiv.org/pdf/2507.14823">FinChart-Bench</a> · <a href="https://arxiv.org/pdf/2606.12300">ExtremeWhenBench</a> · <a href="https://arxiv.org/pdf/2605.14747">Video2GUI</a> · <a href="https://arxiv.org/pdf/2411.08768">Sharingan</a></li>
+<li>Imitación y demostraciones: <a href="https://arxiv.org/abs/1810.02890">HG-DAgger</a> · <a href="https://arxiv.org/pdf/2408.10932">RL in Quantitative Finance survey</a> · <a href="https://www.alphaxiv.org/abs/2312.10812">Learning to Act without Actions</a></li>
+<li>Elicitación: <a href="https://www.semanticscholar.org/paper/Critical-decision-method-for-eliciting-knowledge-Klein-Calderwood/3069088b452ca5b02df350619524f5f7f7bd7cc6">Critical Decision Method (Klein, Calderwood)</a> · <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8903544/">Cognitive Task Analysis, revisión sistemática</a> · <a href="https://jameshoward.us/2026/05/20/the-rule-based-interregnum/">El cuello de botella de los sistemas expertos</a></li>
+<li>Validación estadística: <a href="https://www.davidhbailey.com/dhbpapers/deflated-sharpe.pdf">Deflated Sharpe Ratio</a> · <a href="https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf">Probability of Backtest Overfitting</a> · <a href="https://arxiv.org/pdf/2110.14914">Trading via Selective Classification</a></li>
+<li>Prop firm y MT5: <a href="https://www.simtrade.io/prop-firms/fundednext">Reglas FundedNext 2026</a> · <a href="https://www.metatrader5.com/en/releasenotes/terminal/2085">MT5 build 2085, integración Python</a> · <a href="https://www.mql5.com/en/articles/20569">Liquidity sweep en MQL5</a></li>
+<li>ASR: <a href="https://huggingface.co/adriszmar/whisper-large-v3-turbo-es">Whisper large-v3-turbo en español</a></li>
+</ul>
+</section>
+
+<div class="footer">Informe elaborado el 3 de septiembre de 2026 a partir del Drive del proyecto (carpetas Estrategia del trader, Arquitectura, Plan, Datos). Ningún fichero fue modificado. Las citas <span class="ts">Vn h:mm:ss</span> remiten a las transcripciones; las marcadas "verificado" se contrastaron con fotograma.</div>
+</main>
+</div>
