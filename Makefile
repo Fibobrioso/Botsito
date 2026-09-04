@@ -1,10 +1,15 @@
 # Tareas del proyecto. `make check` es lo que corre el CI y lo que se exige antes de cada informe.
 UV ?= uv
+export PYTHONHASHSEED = 0
 
-.PHONY: sync check lint types test contracts regress state
+.PHONY: sync hooks check lint types test contracts regress state
 
 sync:
-	$(UV) sync --group dev
+	$(UV) sync --locked --group dev
+	$(MAKE) hooks
+
+hooks:
+	git config core.hooksPath scripts/git-hooks
 
 lint:
 	$(UV) run ruff check src tests
