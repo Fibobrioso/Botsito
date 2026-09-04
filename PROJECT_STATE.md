@@ -109,7 +109,7 @@ F01 · project-scaffold (`feature/F01-project-scaffold`)
 Usuario valida el Master Development Plan → abrir rama F01 → implementar según docs/plan/features/F01 → VALIDATION REPORT → parar.
 
 ## Last Stable Commit
-(se rellena tras el primer commit)
+0b43244 · docs(state): punto cero
 
 ## Change Log
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentación · plan pendiente de validación
