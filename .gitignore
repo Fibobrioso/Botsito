@@ -1,7 +1,7 @@
-# datos pesados: solo manifiestos con hash entran en git
-corpus/
-data/
-!data/manifests/
+# datos pesados en la raiz: solo manifiestos con hash entran en git
+/corpus/
+/data/*
+!/data/manifests/
 # python
 .venv/
 __pycache__/
@@ -12,7 +12,7 @@ __pycache__/
 .coverage
 # entornos y secretos
 .env
-config/*.local.toml
+/config/*.local.toml
 # so
 .DS_Store
 Thumbs.db
