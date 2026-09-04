@@ -70,13 +70,15 @@ uv run botsito knowledge validate
 
 ## Tests ejecutados
 `make check` en `feature/F06-evidence-model`, Windows 11. Hook probado en un repositorio temporal:
-acepta anadir, rechaza editar, acepta regenerar `_contradicciones.yaml`, rechaza borrar.
+acepta anadir, rechaza editar, acepta regenerar `_contradicciones.yaml`, rechaza borrar, rechaza renombrar.
+(Una primera pasada dio un falso fallo por un error del guion de prueba: la edicion rechazada seguia en el indice.)
 
 ## Resultados
 - ruff, mypy strict (43 ficheros), 3 contratos KEPT.
 - pytest: 101 passed (89 funciones; 11 rechazos parametrizados; property test de estabilidad del id).
 - `state check`, `config validate`, `knowledge validate` (0 items, 0 contradicciones, historial
   intacto): OK.
+- CI GitHub Actions (ubuntu-latest, con historial completo): verde, run 33892467496.
 
 ## Que deberia observar el usuario
 `knowledge/evidence/README.md` con el esquema; `_contradicciones.yaml` vacio y generado;
@@ -89,7 +91,6 @@ Todo el alcance del brief.
 - No hay items reales todavia: los crea F07 (extraccion) sobre la transcripcion nueva (F04) y los
   fotogramas nuevos (F05); hasta entonces solo se pueden citar fotogramas heredados del manifiesto.
 - La busqueda (F08) y el feedback que supersede items (F09) llegan despues.
-- CI de GitHub para esta rama: pendiente del push.
 
 ## Limitaciones
 La heuristica de longitud no detecta una inferencia corta; la garantia es la revision humana y, en

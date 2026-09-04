@@ -131,6 +131,7 @@ Usuario valida F06 -> merge --no-ff a main -> tag stable/F06 -> push -> abrir fe
 77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
 
 ## Change Log
+- 2026-09-04 · push F06; CI Ubuntu verde (run 33892467496); hook de evidencia probado en 5 escenarios
 - 2026-09-04 · F06 construida: modelo de evidencia inmutable, contradicciones regeneradas, guardia de historial, hook; 89 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F06-evidence-model abierta; brief escrito
 - 2026-09-04 · F03 VALIDADA por el usuario; merge --no-ff a main (77fdd44); tag stable/F03
