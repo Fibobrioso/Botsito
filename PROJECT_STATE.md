@@ -33,13 +33,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08)
 
 ## Current Feature
-F06 · evidence-model
+— (F06 integrada; F09 pendiente de abrir)
 
 ## Current Branch
-feature/F06-evidence-model
+main
 
 ## Stable Main State
-77fdd44 · merge de F03. make check verde: 78 casos (76 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu con ffmpeg verde. Tag stable/F03.
+b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu verde. Tag stable/F06.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -48,9 +48,10 @@ feature/F06-evidence-model
 - F01 · project-scaffold · validada el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
 - F02 · config-and-parameter-registry · validada el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
 - F03 · corpus-inventory · validada el 2026-09-04 · docs/validation/F03-corpus-inventory.md · tag stable/F03
+- F06 · evidence-model · validada el 2026-09-04 · docs/validation/F06-evidence-model.md · tag stable/F06
 
 ## Features Waiting for Validation
-- F06 · evidence-model · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F06-evidence-model.md
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -144,15 +145,16 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 ").
 
 ## Next Feature
-F06 · evidence-model (`feature/F06-evidence-model`)
+F09 · expert-feedback-model (`feature/F09-expert-feedback-model`)
 
 ## Next Action
-Usuario valida F06 -> merge --no-ff a main -> tag stable/F06 -> push -> abrir feature/F09-expert-feedback-model (orden E: F03, F06, F09 antes de F15 y F04/F05).
+Abrir feature/F09-expert-feedback-model -> brief (FeedbackRecord solo-anadir con procedencia; acciones CONFIRM/CORRECT/REJECT/RESOLVE_UNKNOWN/RESOLVE_CONTRADICTION/LABEL_CASE/MARK_FP/MARK_FN/BORDERLINE; diff propuesto sobre spec y casos; trazabilidad evidencia->feedback->regla; guardia de historial) -> implementar -> informe -> WAITING_FOR_USER_VALIDATION.
 
 ## Last Stable Commit
-77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
+b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
 
 ## Change Log
+- 2026-09-04 · F06 VALIDADA por el usuario; merge --no-ff a main (b6b82f2); tag stable/F06
 - 2026-09-04 · lineamiento del usuario registrado: SL a 0,75/0,8 tras la entrada con TP fijo (contemplado en F21; dos preguntas abiertas para el trader)
 - 2026-09-04 · push F06 tras auditoria global; CI Ubuntu verde (run 33893230602)
 - 2026-09-04 · auditoria global: la guardia de historial no detectaba ediciones dentro de un merge (ahora compara blobs con el primer commit); make check ejecuta knowledge validate; coma decimal normalizada en contradicciones; 92 funciones de test
