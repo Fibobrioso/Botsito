@@ -8,11 +8,14 @@ from pathlib import Path
 import pytest
 
 from botsito.evidence.historial import (
+    ANCLA_FUENTE,
     DIRECTORIO_FEEDBACK,
     commits_sin_fuente,
     fuentes_de_mensaje,
+    hay_git,
     modificaciones_en_historial,
     modificaciones_preparadas,
+    resolver,
 )
 
 FB = "knowledge/feedback/2026-09-20-sesion-01/fb-2026-09-20-sesion-01-aaaaaaaa.yaml"
@@ -76,6 +79,12 @@ def test_trailer_fuente(tmp_path: Path) -> None:
         "formato invalido" in p for p in ultimos
     )
     assert commits_sin_fuente(repo, "no-existe") is None
+    # Un mensaje con mayuscula acentuada (bytes fuera de cp1252) no anula la comprobacion.
+    spec.write_text("reglas: [3]\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "\u00cdNDICE de la spec, sin Fuente \u00c1vila")
+    ultimos = [p for p in commits_sin_fuente(repo, None) or [] if _head(repo) in p]
+    assert ultimos == [f"{_head(repo)}: toca spec/cases sin trailer 'Fuente:'"]
 
 
 def test_fuentes_de_mensaje() -> None:
@@ -87,10 +96,14 @@ def test_fuentes_de_mensaje() -> None:
 def test_repositorio_real(repo: Path) -> None:
     v = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
     if v is None:
+        assert not hay_git(repo), "hay git pero la guardia no se pudo evaluar"
         pytest.skip("sin git")
     assert v == []
-    sin_fuente = commits_sin_fuente(repo, "stable/F06")
-    assert sin_fuente in (None, []), "\n".join(sin_fuente or [])
+    ancla = resolver(repo, *ANCLA_FUENTE)
+    assert ancla is not None, "ni el tag stable/F06 ni su SHA existen: clon superficial o sin tags"
+    sin_fuente = commits_sin_fuente(repo, ancla)
+    assert sin_fuente is not None, "la comprobacion de trailers no se pudo evaluar"
+    assert sin_fuente == [], "\n".join(sin_fuente)
 
 
 def _primero(repo: Path, ruta: str) -> str:
@@ -98,7 +111,7 @@ def _primero(repo: Path, ruta: str) -> str:
         ["git", "log", "--format=%H", "--diff-filter=A", "--", ruta],
         cwd=repo,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         check=True,
     ).stdout.split()
     return out[-1][:7]
@@ -109,6 +122,6 @@ def _head(repo: Path) -> str:
         ["git", "rev-parse", "--short=7", "HEAD"],
         cwd=repo,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         check=True,
     ).stdout.strip()

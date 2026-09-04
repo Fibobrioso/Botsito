@@ -82,6 +82,10 @@ def test_carpeta_de_sesion(tmp_path: Path) -> None:
         ({"t1": "0:12:10"}, "t0 debe ser menor"),
         ({"supersede": "x"}, "supersede"),
         ({"extra": 1}, "desconocidos"),
+        ({"fecha": "2026-09-21"}, "fecha debe ser la de la sesion"),
+        ({"t0": 3900}, "t0 debe ser texto entre comillas"),
+        ({"medio": "escrito", "grabacion": None, "t0": "basura"}, "t0: tiempo invalido"),
+        ({"accion": "CORRECT", "valor_resultante": True}, "valor_resultante debe ser texto"),
     ],
 )
 def test_rechazos(cambio: dict[str, Any], mensaje: str) -> None:
@@ -168,6 +172,7 @@ def test_supersede_y_traza(tmp_path: Path) -> None:
             valor_resultante="mecha",
             respuesta_literal="perdon, en M1 vale con mecha",
             supersede=primero.id,
+            sesion="2026-09-21-sesion-02",
             fecha="2026-09-21",
         ),
     )
@@ -189,6 +194,21 @@ def test_id_estable_y_sensible(espacios: str, extra: str) -> None:
         == ref
     )
     assert calcular_id(base(respuesta_literal=base()["respuesta_literal"] + " " + extra)) != ref
+
+
+def test_fichero_escrito_a_mano_sin_comillas(tmp_path: Path) -> None:
+    """`fecha: 2026-09-20` sin comillas sigue siendo texto; `t0: 1:05:00` sin comillas no lo es."""
+    ruta = escribir_registro(tmp_path, base(medio="escrito", grabacion=None, t0=None, t1=None))
+    texto = ruta.read_text(encoding="utf-8").replace("fecha: '2026-09-20'", "fecha: 2026-09-20")
+    assert "fecha: 2026-09-20\n" in texto
+    ruta.write_text(texto, encoding="utf-8")
+    assert cargar_registro(ruta).fecha == "2026-09-20"
+    ruta.write_text(texto + "t0: 1:05:00\nt1: 1:06:00\n", encoding="utf-8")
+    with pytest.raises(FeedbackError, match="t0 debe ser texto entre comillas"):
+        cargar_registro(ruta)
+    ruta.write_text(texto + "notas: a\nnotas: b\n", encoding="utf-8")
+    with pytest.raises(FeedbackError, match="clave duplicada"):
+        cargar_registro(ruta)
 
 
 def test_directorio_real_valida(repo: Path) -> None:

@@ -17,7 +17,8 @@ from typing import Any
 
 import yaml
 
-from botsito.evidence.modelo import _normalizar_texto, parse_tiempo
+from botsito.evidence.modelo import EvidenciaError, _normalizar_texto, parse_tiempo
+from botsito.yaml_estricto import YamlError, cargar_yaml
 
 ACCIONES = (
     "CONFIRM",
@@ -65,6 +66,20 @@ CAMPOS_OBLIGATORIOS = (
     "registrado_por",
 )
 CAMPOS_OPCIONALES = ("grabacion", "t0", "t1", "valor_resultante", "supersede", "notas")
+CAMPOS_TEXTO = (
+    "sesion",
+    "fecha",
+    "medio",
+    "accion",
+    "respuesta_literal",
+    "registrado_por",
+    "grabacion",
+    "t0",
+    "t1",
+    "valor_resultante",
+    "supersede",
+    "notas",
+)
 
 
 class FeedbackError(ValueError):
@@ -122,10 +137,16 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
     desconocidos = set(campos) - set(CAMPOS_OBLIGATORIOS) - set(CAMPOS_OPCIONALES) - {"id"}
     if desconocidos:
         raise FeedbackError(f"{origen}: campos desconocidos {sorted(desconocidos)}")
+    for clave in CAMPOS_TEXTO:
+        if campos.get(clave) is not None and not isinstance(campos[clave], str):
+            tipo_real = type(campos[clave]).__name__
+            raise FeedbackError(f"{origen}: {clave} debe ser texto entre comillas, no {tipo_real}")
     if not _SESION.match(str(campos["sesion"])):
         raise FeedbackError(f"{origen}: sesion invalida (formato AAAA-MM-DD-sesion-NN)")
     if not _FECHA.match(str(campos["fecha"])):
         raise FeedbackError(f"{origen}: fecha invalida (AAAA-MM-DD)")
+    if not str(campos["sesion"]).startswith(str(campos["fecha"])):
+        raise FeedbackError(f"{origen}: la fecha debe ser la de la sesion {campos['sesion']}")
     if campos["medio"] not in MEDIOS:
         raise FeedbackError(f"{origen}: medio {campos['medio']!r} no esta en {MEDIOS}")
     if campos["accion"] not in ACCIONES:
@@ -160,8 +181,15 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
                     f"{origen}: medio {campos['medio']} exige grabacion, t0 y t1 "
                     "(la sesion se graba)"
                 )
-        if not parse_tiempo(str(campos["t0"])) < parse_tiempo(str(campos["t1"])):
-            raise FeedbackError(f"{origen}: t0 debe ser menor que t1")
+    tiempos: dict[str, float] = {}
+    for c in ("t0", "t1"):
+        if campos.get(c) is not None:
+            try:
+                tiempos[c] = parse_tiempo(str(campos[c]))
+            except EvidenciaError as exc:
+                raise FeedbackError(f"{origen}: {c}: {exc}") from exc
+    if len(tiempos) == 2 and not tiempos["t0"] < tiempos["t1"]:
+        raise FeedbackError(f"{origen}: t0 debe ser menor que t1")
     if campos.get("supersede") is not None and not _ID.match(str(campos["supersede"])):
         raise FeedbackError(f"{origen}: supersede debe ser un id de feedback")
 
@@ -199,7 +227,10 @@ def registro_desde_dict(campos: dict[str, Any], origen: str = "registro") -> Fee
 
 
 def cargar_registro(ruta: Path) -> FeedbackRecord:
-    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    try:
+        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+    except YamlError as exc:
+        raise FeedbackError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):
         raise FeedbackError(f"{ruta.name}: no es un mapa YAML")
     r = registro_desde_dict(doc, ruta.name)
