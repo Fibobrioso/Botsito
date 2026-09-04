@@ -59,7 +59,7 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | F11 | `feature/F11-strategy-spec-schema` | StrategySpec (reglas, parametros, ambiguedades, tablas, statecharts) | F02, F07, F09 | referencias; estados | carga estricta |
 | F12 | `feature/F12-spec-semantic-validator` | Validacion semantica | F11 | por comprobacion | falla nombrando el id |
 | F13 | `feature/F13-spec-documents` | Docs y hoja del trader generados | F11 | anti-deriva | docs = generado |
-| F14 | `feature/F14-case-library` | Casos ejecutables con holdout | F09, F11, F15 | guarda de holdout | runner independiente |
+| F14 | `feature/F14-case-library` | Casos ejecutables con tres particiones reservadas (holdout-1/2/3) | F09, F11, F15 | guarda de holdout por audit hook | runner independiente |
 | **Fase 4 · Datos** | | | | | |
 | F15 | `feature/F15-market-data-ohlc` | OHLC y agregacion con anclaje y huso | F02 | DST; anclaje; golden | H4 = las del trader |
 | F16 | `feature/F16-market-data-ticks` | Ticks a Parquet con calidad | F15 | comprobaciones | M1 desde ticks coincide |
@@ -73,7 +73,7 @@ funcionalidades, ramas, tests y criterios de aceptacion.
 | F23 | `feature/F23-engine-event-loop` | Bucle, reloj determinista, journal | F22 | determinismo | mismo sha256 |
 | F24 | `feature/F24-engine-tick-backtest` | Simulacion sobre ticks | F16, F23 | llenado; golden | llenado defendible |
 | F25 | `feature/F25-viewer` | Visor de tres marcos | F24 | igualdad con journal | dibuja lo que hay en memoria |
-| F26 | `feature/F26-fidelity-validator` | Fidelidad contra el trader (holdout) | F10, F14, F24 | comparador; holdout | informe reproducible |
+| F26 | `feature/F26-fidelity-validator` | Fidelidad contra el trader (holdout-1; umbrales pre-registrados) | F10, F14, F24 | comparador; holdout; pre-registro | informe reproducible que cita PREREGISTRO.md |
 | F27 | `feature/F27-sensitivity-and-edge-report` | Sensibilidad y ventaja (DSR, N declarado) | F24, F26 | DSR | N declarado |
 | **Fase 6 · MQL5 y diferencial** | | | | | |
 | F28 | `feature/F28-mql5-spec-export` | Params.mqh y fixtures generados | F11, F14 | roundtrip | regenerar sin diff |
@@ -130,3 +130,38 @@ Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##.md`
 Invariantes: la evidencia nunca cambia; toda etiqueta tiene autor y fecha; decision del sistema y del
 experto se guardan como hechos distintos; un UNKNOWN se cierra solo con registro del trader o
 grabacion en vivo.
+
+## H · Salvaguardas anadidas por la auditoria de fases (2026-09-04)
+
+Fuente: `docs/plan/AUDITORIA_FASES_2026-09-04.html` (instantanea). Aprobadas por el usuario. Cada
+una se incorpora al brief de la funcionalidad indicada cuando se abra.
+
+| Salvaguarda | Funcionalidades | Que impide |
+|---|---|---|
+| Tres particiones reservadas: `holdout-1` (se abre en F26, sesion 2), `holdout-2` (cifra final de fidelidad, una sola apertura), `holdout-3` (correcciones de fase 7). La asignacion se commitea con seed ANTES de la sesion de etiquetado; un test comprueba la fecha del commit | F10, F14, F26, F34, F35 | Medir la fidelidad final sobre casos ya vistos al corregir |
+| Pre-registro: `docs/validation/PREREGISTRO.md` con umbrales de fidelidad, kappa, paridad y DSR, commiteado antes de abrir cualquier holdout; los informes citan su hash | F26, F27, F32, F35 | Ajustar el umbral a la cifra |
+| Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 | Editar evidencia o feedback saltando los hooks |
+| Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 previo entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
+| Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
+| Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 | Reescribir lo que dijo el trader |
+| Modelo de llenado como parametro declarado; informe de ventaja con dos modelos (al tocar / cruce + latencia) | F24, F27 | Un modelo optimista que infla resultados |
+| Contador automatico y versionado de N (ejecuciones de backtest) para el Deflated Sharpe | F24, F27 | N declarado incompleto |
+| Regla: toda divergencia Python/MQL5 se resuelve citando la spec; si la spec no decide, es una ambiguedad nueva | F30 | Parches que alinean implementaciones sin fuente |
+| `spec_version` y hash en journal, informes y `Params.mqh`; pre-vuelo de la demo compara el hash con el tag `stable/*` vigente | F11, F28, F33 | Operar con una spec distinta de la validada |
+| Parametros con tipos `Porcentaje` y `Fraccion` no intercambiables, valores `Decimal`; leer un parametro `UNKNOWN` falla siempre; `settings.toml` no puede contener claves del registro | F02 | Error de factor 100 y dobles puertas |
+| `state check` ampliado: recuento real de tests, tag estable, informe de validacion por funcionalidad completada | F02 | PROJECT_STATE que miente |
+| Manifiestos de datos inmutables con `dataset_id`, proveedor, fecha, `schema_version`; escritura atomica en el grabador de demo; desfase servidor-UTC registrado | F15, F16, F17 | Re-descargas que cambian datos congelados; ficheros truncados |
+| MQL5: enteros de puntos en el dominio; verificacion de `ACCOUNT_MARGIN_MODE` al arrancar; journal con flush y hash encadenado; veto de riesgo con parametros propios | F29, F31 | Discrepancias por redondeo; posicion duplicada; journal truncado |
+
+### Puertas de fase
+
+Cada fase termina con su lista de comprobacion (en la auditoria) verificada y registrada en
+`PROJECT_STATE.md` bajo "Completed Phases" con fecha y commit. Ninguna funcionalidad de la fase
+siguiente se abre antes.
+
+## Change Log del plan
+
+- 2026-09-03 · version inicial (35 funcionalidades, 8 fases).
+- 2026-09-04 · auditoria de fases: seccion H, tres particiones reservadas, pre-registro, tests contra
+  historial; F01 amplia su alcance con `.gitattributes`, tests de integridad del indice, hook anti-main,
+  `uv sync --locked`.

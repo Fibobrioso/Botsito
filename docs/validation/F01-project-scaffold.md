@@ -40,12 +40,25 @@ tests/contract/test_import_contracts.py  tests/contract/test_no_business_literal
 tests/{integration,golden,regression,differential}/README.md
 ```
 
+## Correcciones aplicadas tras la auditoria de fases (2026-09-04)
+- `.gitattributes` (`* text=auto eol=lf`, binarios declarados); indice renormalizado: cero ficheros con CRLF.
+- `tests/contract/test_repository_integrity.py`: ficheros esperados presentes en `git ls-files`, sin CRLF,
+  sin rutas ignoradas imprevistas, patrones de `.gitignore` anclados. Nacio de dos incidentes reales.
+- Hook local `scripts/git-hooks/pre-commit` (instalado por `make sync` via `core.hooksPath`): rechaza
+  commits directos en `main` salvo `BOTSITO_ALLOW_MAIN=1`; comprueba contratos de importacion.
+- CI y `make sync` con `uv sync --locked`; `PYTHONHASHSEED=0` exportado por el Makefile.
+- `docs/plan/MASTER_PLAN.html` marcado como instantanea congelada; `MASTER_PLAN.md` es la fuente viva,
+  con la seccion H (salvaguardas aprobadas) y Change Log.
+- `docs/plan/AUDITORIA_FASES_2026-09-04.html` versionada como referencia.
+- `tests/`, `tests/unit/`, `tests/contract/` son paquetes (necesario para compartir constantes entre tests).
+
 ## Archivos modificados
-`README.md` (arranque, nombre del paquete, enlace al plan en Markdown), `PROJECT_STATE.md`.
+`README.md` (arranque, nombre del paquete, enlace al plan en Markdown), `PROJECT_STATE.md`,
+`Makefile`, `.github/workflows/ci.yml`, `docs/plan/MASTER_PLAN.md`, `docs/plan/MASTER_PLAN.html`.
 
 ## Decisiones tomadas
-- **Nombre del paquete: `botsito`**, coherente con el repositorio. Pendiente de tu confirmacion antes del
-  merge (es lo unico que costaria renombrar despues).
+- **Nombre del paquete: `botsito`**, coherente con el repositorio. Confirmado implicitamente al aprobar la
+  ejecucion del plan; renombrar despues costaria.
 - **Contratos de importacion en dos capas** (import-linter + test AST) para que el contrato exista y se
   verifique aunque los paquetes esten vacios. Registrado en ADR-0001.
 - **`state check` usa `git symbolic-ref`** en vez de `rev-parse`: el test de desajuste descubrio que
@@ -57,7 +70,7 @@ tests/{integration,golden,regression,differential}/README.md
 
 ## Como ejecutarlo
 ```
-uv sync --group dev
+make sync    # uv sync --locked + instala hooks (core.hooksPath)
 make check
 uv run botsito --help
 uv run botsito state check
@@ -71,13 +84,15 @@ uv run botsito state check
 
 ## Tests ejecutados
 `make check` completo en `feature/F01-project-scaffold`, Windows 11, Python 3.12.10, uv 0.12.7.
+Hook anti-main probado en un repositorio temporal (ver seccion Resultados).
 
 ## Resultados
 - ruff: sin errores; 22 ficheros formateados.
 - mypy strict: 13 ficheros, sin incidencias.
 - import-linter: 3 contratos, 3 KEPT, 0 rotos.
-- pytest: 21 passed.
+- pytest: 26 passed (5 nuevos de integridad del indice).
 - `botsito state check`: OK sobre la rama actual.
+- Hook pre-commit: rechaza commit en `main` de un repositorio temporal; acepta con `BOTSITO_ALLOW_MAIN=1`.
 
 ## Que deberia observar el usuario
 `make check` termina en verde; el arbol coincide con MASTER_PLAN seccion B; `PROJECT_STATE.md` declara
@@ -90,8 +105,9 @@ Todos los del alcance: estructura, CLI, contratos declarados y verificados, docu
 ## Que casos todavia no funcionan
 - CI en GitHub no se ha ejecutado (no hay push por decision del usuario). El workflow es el mismo
   `make check`; se verificara en el primer push.
-- `pre-commit` no esta instalado en la maquina; el fichero de configuracion existe y se activa con
-  `uv run pre-commit install` cuando se anada al grupo dev.
+- `.pre-commit-config.yaml` (framework pre-commit) queda como opcion; los hooks activos son los de
+  `scripts/git-hooks/` via `core.hooksPath`. Si se instala el framework, ambos no pueden coexistir
+  sin ajustar `hooksPath`: decision para F02.
 
 ## Limitaciones
 `botsito knowledge validate` no valida contenido (no hay contenido). El job de Windows para MQL5 no
