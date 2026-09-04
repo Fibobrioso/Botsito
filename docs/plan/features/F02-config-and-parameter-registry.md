@@ -47,7 +47,8 @@ MASTER_PLAN F02 y seccion H (filas F02); ADR-0001.
 - Unit `test_ajustes.py`: secciones permitidas; clave que colisiona con el registro falla.
 - Unit `test_cli.py` ampliado: recuento de tests, tag estable, informes de validacion.
 - Contract `test_no_business_literals.py` con la lista real; contract de importacion con `config`.
-- Property (hypothesis): Decimal de ida y vuelta por YAML sin perdida.
+- Property (hypothesis): Decimal de ida y vuelta por YAML sin perdida; Porcentaje<->Fraccion sin perdida.
+- Unit: accesores tipados (`fraccion()`, `porcentaje()`, `hora()`...) y `TipoDeParametroError`.
 
 ## Criterio de aceptacion
 `make check` verde; registro vacio de valores; leer `UNKNOWN` falla; `Porcentaje` y `Fraccion` no

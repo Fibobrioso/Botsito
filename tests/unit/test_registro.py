@@ -8,6 +8,7 @@ from botsito.config.registro import (
     Estado,
     ParametroDesconocidoError,
     RegistroError,
+    TipoDeParametroError,
     cargar_registro,
 )
 from botsito.domain.valores import Fraccion, Porcentaje
@@ -57,7 +58,7 @@ def test_carga_valida_y_tipos(tmp_path: Path) -> None:
     assert r.obtener("stop_fraccion") == Fraccion("0.75")
     assert isinstance(r.obtener("inicio"), str)
     assert r.parametros["riesgo_pct"].estado is Estado.DEFAULT_AMBIGUOUS
-    assert set(r.sin_fuente_confirmada()) == {"riesgo_pct", "cartuchos"}
+    assert set(r.no_confirmados()) == {"riesgo_pct", "cartuchos"}
 
 
 def test_unknown_falla_siempre(tmp_path: Path) -> None:
@@ -152,3 +153,32 @@ def test_decimal_no_es_float(tmp_path: Path) -> None:
     r = cargar_registro(_escribir(tmp_path, BASE))
     v = r.obtener("stop_fraccion")
     assert isinstance(v, Fraccion) and isinstance(v.valor, Decimal)
+
+
+def test_accesores_tipados(tmp_path: Path) -> None:
+    r = cargar_registro(_escribir(tmp_path, BASE))
+    assert r.fraccion("stop_fraccion") == Fraccion("0.75")
+    assert r.porcentaje("riesgo_pct") == Porcentaje("0.5")
+    assert r.hora("inicio") == "07:00"
+    with pytest.raises(TipoDeParametroError):
+        r.porcentaje("stop_fraccion")
+    with pytest.raises(TipoDeParametroError):
+        r.texto("inicio")
+    with pytest.raises(ParametroDesconocidoError):
+        r.entero("cartuchos")
+
+
+def test_mensaje_de_error_sin_prefijo_duplicado(tmp_path: Path) -> None:
+    contenido = BASE.replace(
+        "    estado: UNKNOWN\n",
+        '    estado: CONFIRMED\n    valor: "3"\n    fuente: {tipo: decision, id: x}\n',
+    )
+    with pytest.raises(RegistroError) as exc:
+        cargar_registro(_escribir(tmp_path, contenido))
+    assert str(exc.value).count("cartuchos:") == 1
+
+
+def test_limites_no_admiten_float(tmp_path: Path) -> None:
+    contenido = BASE.replace('minimo: "0"', "minimo: 0.1")
+    with pytest.raises(RegistroError, match="minimo"):
+        cargar_registro(_escribir(tmp_path, contenido))

@@ -4,6 +4,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
+from botsito.config.registro import cargar_registro
 from botsito.domain.valores import Fraccion, Porcentaje
 
 
@@ -44,3 +45,16 @@ def test_inmutable() -> None:
 @given(st.decimals(min_value=Decimal("-1000"), max_value=Decimal("1000"), places=6))
 def test_ida_y_vuelta_porcentaje_fraccion(d: Decimal) -> None:
     assert Porcentaje(d).como_fraccion().como_porcentaje() == Porcentaje(d)
+
+
+@given(d=st.decimals(min_value=Decimal("0"), max_value=Decimal("1"), places=8))
+def test_ida_y_vuelta_por_yaml_sin_perdida(
+    d: Decimal, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    ruta = tmp_path_factory.mktemp("yaml") / "p.yaml"
+    ruta.write_text(
+        "parametros:\n  - nombre: x\n    tipo: fraccion\n    unidad: u\n    descripcion: d\n"
+        f'    estado: CONFIRMED\n    valor: "{d}"\n    fuente: {{tipo: decision, id: t}}\n',
+        encoding="utf-8",
+    )
+    assert cargar_registro(ruta).fraccion("x") == Fraccion(d)

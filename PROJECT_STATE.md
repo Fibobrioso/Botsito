@@ -66,7 +66,7 @@ feature/F02-config-and-parameter-registry
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-59 funciones de test (61 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+63 funciones de test (65 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE

@@ -10,10 +10,11 @@
 #   unidad:        texto libre pero obligatorio (p. ej. "fraccion de la distancia completa")
 #   descripcion:   una frase
 #   estado:        CONFIRMED | DEFAULT_AMBIGUOUS | UNKNOWN
-#   valor:         entre comillas para fraccion/porcentaje/decimal ("0.75"); ausente si UNKNOWN
+#   valor:         entre comillas para fraccion/porcentaje/decimal/hora/texto ("0.75", "07:00");
+#                  entero SIN comillas (3); ausente si UNKNOWN
 #   fuente:        {tipo: evidence|feedback|decision, id: ...}; obligatoria salvo UNKNOWN
 #   ambiguedad_id: solo si DEFAULT_AMBIGUOUS (p. ej. A-1)
-#   minimo/maximo: opcionales, para fraccion/porcentaje/decimal/entero
+#   minimo/maximo: opcionales, entre comillas o entero; para fraccion/porcentaje/decimal/entero
 #
 # Ejemplo (NO es un valor real; los reales se anaden en F11):
 #   - nombre: ejemplo_stop_fraccion

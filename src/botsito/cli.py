@@ -129,7 +129,7 @@ def knowledge_validate(repo: Path) -> int:
     except RegistroError as exc:
         print(f"ERROR: registro de parametros: {exc}")
         return 1
-    pendientes = registro.sin_fuente_confirmada()
+    pendientes = registro.no_confirmados()
     print(
         f"OK: registro con {len(registro.parametros)} parametros"
         f" ({len(pendientes)} sin confirmar) (validadores de evidencia desde F06)"

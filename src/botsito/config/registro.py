@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal
@@ -107,9 +107,43 @@ class Registro:
     def nombres(self) -> frozenset[str]:
         return frozenset(self.parametros)
 
-    def sin_fuente_confirmada(self) -> tuple[str, ...]:
+    def no_confirmados(self) -> tuple[str, ...]:
         """Parametros que todavia no estan CONFIRMED: lo que falta cerrar con el trader."""
         return tuple(n for n, p in self.parametros.items() if p.estado is not Estado.CONFIRMED)
+
+    # Accesores tipados: el dominio lee un tipo concreto, nunca la union `Valor`.
+
+    def fraccion(self, nombre: str) -> Fraccion:
+        return self._tipado(nombre, Fraccion)
+
+    def porcentaje(self, nombre: str) -> Porcentaje:
+        return self._tipado(nombre, Porcentaje)
+
+    def decimal(self, nombre: str) -> Decimal:
+        return self._tipado(nombre, Decimal)
+
+    def entero(self, nombre: str) -> int:
+        return self._tipado(nombre, int)
+
+    def hora(self, nombre: str) -> str:
+        return self._texto(nombre, "hora")
+
+    def texto(self, nombre: str) -> str:
+        return self._texto(nombre, "texto")
+
+    def _tipado[T](self, nombre: str, clase: type[T]) -> T:
+        valor = self.obtener(nombre)
+        if type(valor) is not clase:
+            raise TipoDeParametroError(
+                f"{nombre} es {type(valor).__name__}, se esperaba {clase.__name__}"
+            )
+        return valor
+
+    def _texto(self, nombre: str, tipo: str) -> str:
+        valor = self.obtener(nombre)
+        if self.parametros[nombre].tipo != tipo or not isinstance(valor, str):
+            raise TipoDeParametroError(f"{nombre} no es de tipo {tipo}")
+        return valor
 
 
 def _convertir(tipo: str, bruto: object, nombre: str) -> Valor:
@@ -134,6 +168,8 @@ def _convertir(tipo: str, bruto: object, nombre: str) -> Valor:
             if not isinstance(bruto, str):
                 raise RegistroError(f"{nombre}: texto invalido {bruto!r}")
             return bruto
+    except RegistroError:
+        raise
     except (ValueError, TypeError) as exc:
         raise RegistroError(f"{nombre}: {exc}") from exc
     raise RegistroError(f"{nombre}: tipo desconocido {tipo!r}")
@@ -147,6 +183,21 @@ def _magnitud(valor: Valor) -> Decimal | None:
     if isinstance(valor, int):
         return Decimal(valor)
     return None
+
+
+def _limite(bruto: object, nombre: str, campo: str) -> Decimal | None:
+    if bruto is None:
+        return None
+    if isinstance(bruto, bool | float):
+        raise RegistroError(f"{nombre}: {campo} debe escribirse entre comillas o como entero")
+    try:
+        return Decimal(str(bruto))
+    except InvalidOperation as exc:
+        raise RegistroError(f"{nombre}: {campo} invalido {bruto!r}") from exc
+
+
+class TipoDeParametroError(TypeError):
+    """El parametro existe pero no es del tipo que el codigo esperaba."""
 
 
 def _parametro(bruto: dict[str, object]) -> Parametro:
@@ -197,8 +248,8 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
     if estado is not Estado.DEFAULT_AMBIGUOUS and ambiguedad_id:
         raise RegistroError(f"{nombre}: solo DEFAULT_AMBIGUOUS lleva ambiguedad_id")
 
-    minimo = Decimal(str(bruto["minimo"])) if bruto.get("minimo") is not None else None
-    maximo = Decimal(str(bruto["maximo"])) if bruto.get("maximo") is not None else None
+    minimo = _limite(bruto.get("minimo"), nombre, "minimo")
+    maximo = _limite(bruto.get("maximo"), nombre, "maximo")
     if valor is not None:
         magnitud = _magnitud(valor)
         if magnitud is not None:
