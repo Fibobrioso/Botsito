@@ -166,3 +166,11 @@ def test_directorio_real_valida(repo: Path) -> None:
     manifiesto = cargar_manifiesto(repo / "knowledge" / "corpus" / "manifest.yaml")
     assert validar_contra_manifiesto(items, manifiesto) == []
     assert contradicciones.validar_fichero(repo / "knowledge" / "evidence", items) == []
+
+
+def test_coma_decimal_no_es_contradiccion(tmp_path: Path) -> None:
+    escribir_item(tmp_path, base(valor="0,75", tema="stop.nivel"))
+    escribir_item(tmp_path, base(valor="0.75", tema="stop.nivel", t0="0:20:00", t1="0:20:10"))
+    escribir_item(tmp_path, base(valor="Cuerpo", tema="x.y", t0="0:21:00", t1="0:21:10"))
+    escribir_item(tmp_path, base(valor="cuerpo", tema="x.y", t0="0:22:00", t1="0:22:10"))
+    assert contradicciones.detectar(cargar_evidencia(tmp_path)) == []
