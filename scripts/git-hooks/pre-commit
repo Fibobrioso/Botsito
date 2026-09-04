@@ -1,7 +1,7 @@
 #!/bin/sh
 # Hook local (copiado a .git/hooks por `make sync`, ADR-0003).
 # 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
-# 2. La evidencia es inmutable: modificar, renombrar o borrar knowledge/evidence/**/*.yaml se rechaza.
+# 2. Evidencia y feedback son inmutables: modificar, renombrar o borrar sus *.yaml se rechaza.
 # 3. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
 # Nota: la salida se captura por tuberia, no con >/dev/null: en Git Bash de Windows,
 # lint-imports devuelve 1 al escribir en /dev/null.
@@ -11,12 +11,14 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
   echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
   exit 1
 fi
-cambios=$(git diff --cached --name-status -- knowledge/evidence | awk '$1 ~ /^[MDRCT]/ && $2 ~ /\.yaml$/ && $2 !~ /\/_[^\/]*\.yaml$/ {print}')
-if [ -n "$cambios" ]; then
-  echo "pre-commit: la evidencia es inmutable. Crea un item nuevo con supersede en vez de editar:" >&2
-  echo "$cambios" >&2
-  exit 1
-fi
+for dir in knowledge/evidence knowledge/feedback; do
+  cambios=$(git diff --cached --name-status -- "$dir" | awk '$1 ~ /^[MDRCT]/ && $2 ~ /\.yaml$/ && $2 !~ /\/_[^\/]*\.yaml$/ {print}')
+  if [ -n "$cambios" ]; then
+    echo "pre-commit: $dir es inmutable. Crea un registro nuevo con supersede en vez de editar:" >&2
+    echo "$cambios" >&2
+    exit 1
+  fi
+done
 root=$(git rev-parse --show-toplevel 2>/dev/null)
 if [ -f "$root/pyproject.toml" ] && command -v uv >/dev/null 2>&1; then
   out=$(cd "$root" && uv run lint-imports 2>&1)
