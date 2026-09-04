@@ -105,7 +105,7 @@ Hook anti-main probado en un repositorio temporal (ver seccion Resultados).
 | HEAD separado (checkout de CI en pull request) | `state check` avisa y devuelve 0; tests de CLI verdes |
 | PowerShell 7 en vez de Git Bash | ruff, mypy, contratos, pytest, `state check` y `make check` verdes |
 | Python 3.13 (entorno aislado) ademas de 3.12 | pytest, mypy y contratos verdes |
-| Linux (ubuntu del CI) | NO probado localmente: sin WSL, Docker ni `act`. Se verifica en el primer push |
+| Linux (ubuntu-latest, GitHub Actions) | verde: run 33880866257 sobre la rama (push autorizado el 2026-09-04); `uv sync --locked` + `make check` |
 
 ## Que deberia observar el usuario
 `make check` termina en verde; el arbol coincide con MASTER_PLAN seccion B; `PROJECT_STATE.md` declara
@@ -116,8 +116,6 @@ secciones del formato acordado.
 Todos los del alcance: estructura, CLI, contratos declarados y verificados, documentos con formato.
 
 ## Que casos todavia no funcionan
-- CI en GitHub no se ha ejecutado (no hay push por decision del usuario). El workflow es el mismo
-  `make check`; se verificara en el primer push.
 - `.pre-commit-config.yaml` (framework pre-commit) queda como opcion; los hooks activos son la copia de
   `scripts/git-hooks/` en `.git/hooks/`. Instalar el framework sobrescribiria esa copia: decision para F02.
 
