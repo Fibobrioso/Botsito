@@ -22,4 +22,5 @@ make check
 ```
 
 Paquete Python: `botsito` (`src/botsito`). CLI: `uv run botsito --help`
-(`state check`, `knowledge validate`, `config validate`).
+(`state check`, `knowledge validate`, `config validate`, `corpus inventory|check`,
+`evidence new|contradictions`, `feedback new|trace|pending`).

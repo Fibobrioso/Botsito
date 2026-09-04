@@ -1,6 +1,6 @@
 # Copiar a config/settings.local.toml (ignorado por git). Sin secretos aqui.
-# Los parametros de negocio NO viven en este fichero: pasan por el registro de F02
-# y toman su valor de knowledge/spec/strategy_spec.yaml.
+# Los parametros de negocio NO viven en este fichero: viven en knowledge/spec/parametros.yaml
+# (la unica puerta, ADR-0002) y se leen por botsito.config.registro.
 [entorno]
 nombre = "backtest"   # backtest | tester | demo
 

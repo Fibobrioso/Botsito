@@ -12,7 +12,7 @@ miden por separado.
 Evidencia inmutable del corpus → elicitación con el trader (feedback solo-añadir) → StrategySpec ejecutable
 + biblioteca de casos → motor de referencia Python (núcleo puro, backtest sobre ticks, visor) → validación
 de fidelidad → EA MQL5 (misma spec) → pruebas diferenciales → paridad con Strategy Tester → demo/sombra.
-Referencia: `docs/plan/MASTER_PLAN.html` · `docs/research/2026-09-03-del-corpus-al-bot.html`.
+Referencia: `docs/plan/MASTER_PLAN.md` (plan vivo; el `.html` es la instantanea congelada) · `docs/research/2026-09-03-del-corpus-al-bot.html`.
 
 ## Development Strategy
 Una funcionalidad = una rama `feature/F##-nombre` = un FUNCTIONALITY VALIDATION REPORT = un merge --no-ff
@@ -54,14 +54,15 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - F09 · expert-feedback-model · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F09-expert-feedback-model.md
 
 ## Existing Components
-- Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
+- Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
 - CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro + manifiesto del corpus), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
 - `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
 - `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad); CLI `feedback new/trace/pending`; `commits_sin_fuente` exige trailer `Fuente:` en commits que tocan spec/cases desde stable/F06.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
-- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
+- `yaml_estricto.py` (claves duplicadas rechazadas, fechas como texto) usado por registro, corpus, evidencia y feedback. `scripts/instalar_hooks.py` (make hooks portable).
+- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004. `.gitattributes` con LF.
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
@@ -75,12 +76,13 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-106 funciones de test (parametrizadas x3, x11 y x14) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence, feedback · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+122 funciones de test (parametrizadas x3, x13, x15 y x18) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence, feedback, yaml_estricto · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
 - ADR-0002 registro de parametros: una sola puerta, tipos no intercambiables, lectura estricta — ACTIVE
 - ADR-0003 hooks copiados desde scripts/git-hooks; sin framework pre-commit — ACTIVE
+- ADR-0004 categorias de parametro y horas con huso — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -120,16 +122,22 @@ transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y
 —
 
 ## Known Ambiguities
-A-1 sesgo H4 · A-3 salida sin ruptura · A-4 BE al tocar/cierre · A-5 cadencia de reubicación ·
-A-6 cierre 15:00 · tercer cartucho · stop del 2.º esquema · "dos velas como una" en mapeo
-(todas: ABIERTA hasta registro de feedback del trader)
+A-1 sesgo H4 · A-2 tercer cartucho · A-3 salida sin ruptura · A-4 BE al tocar/cierre ·
+A-5 cadencia de reubicación · A-6 cierre 15:00 · A-7 stop del 2.º esquema · A-8 "dos velas como
+una" en mapeo · A-9 anclaje de la vela H4 (huso del gráfico del trader) · A-10 stop a 0,8: ¿fijo o
+0,75 + colchón de spread? · A-11 SL en la orden o tras el llenado (lineamiento del usuario)
+(todas: ABIERTA hasta registro de feedback del trader; el esquema de feedback solo acepta ids A-N,
+por eso todas llevan número desde la auditoría extrema del 2026-09-04)
 
 ## Known Contradictions
 Cartuchos 2 (ficha) vs 3 (V4 0:48:41) · parciales 30–40 % (ficha) vs "sin parciales" (respuesta) ·
 BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 1:08:30)
 
 ## Known Issues
-—
+- El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor
+  cita ambas fuentes.
+- El hash de 8 hex en los ids de evidencia/feedback (32 bits) se considera suficiente para
+  cientos de items; `escribir_item` trata la colision como "mismo contenido" (revisar en F07).
 
 ## Technical Debt
 - Transcripciones previas con Whisper tiny: no usar para extracción hasta F04.
@@ -143,11 +151,12 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 - Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
 - La validacion de fidelidad (F26) precede a cualquier MQL5.
 - Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado.
-- Ficheros de texto siempre con LF y UTF-8 (escribir con newline="
-").
+- Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
+  decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F09 · expert-feedback-model (`feature/F09-expert-feedback-model`)
+F15 · market-data-ohlc (tras validar F09; orden E). F10 absorbe: parametros UNKNOWN pre-poblados,
+ids de caso + particion + seed, papel `sesion_feedback` en el corpus (ver MASTER_PLAN H.2).
 
 ## Next Action
 Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir feature/F15-market-data-ohlc (orden E: F15 antes de F04/F05 porque F10 y F14 necesitan datos reales).
@@ -156,6 +165,7 @@ Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir fe
 b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
 
 ## Change Log
+- 2026-09-04 · AUDITORIA EXTREMA (3 agentes: codigo, plan/ejecucion, repositorio). Corregido: git decodificado en UTF-8 con quotepath=false (un commit con mayuscula acentuada anulaba la guardia de trailers en Windows); adiciones en commits de merge protegidas (`git log -m`); video_id y formato de id validados, `evidence new` contra fuentes.yaml; hook con rutas sin entrecomillar y tabulador; cargador YAML estricto (claves duplicadas, fechas como texto, tipos texto exigidos); InvalidOperation/NaN/Infinity/25:99 rechazados; guardias no evaluables son ERROR y el ancla de trazabilidad tiene tag + SHA; `state check` vigila que main solo cambie PROJECT_STATE tras el tag; corpus check sin KeyError; `make hooks` portable (Python) desde PowerShell; CI sin doble disparo, tags forzados, actions al dia; ADR-0004 (categorias de parametro, horas con huso, tzdata); lecturas ambiguas sin crecer por tick; contradicciones con Decimal; feedback con fecha = sesion y t0/t1 siempre validados; MASTER_PLAN H.2 con los riesgos de ejecucion absorbidos por funcionalidad; ambiguedades numeradas A-1..A-11; docs incoherentes corregidos. 122 funciones / 167 casos
 - 2026-09-04 · push F09; CI Ubuntu verde (run 33894611220); hook de feedback probado
 - 2026-09-04 · F09 construida: FeedbackRecord solo-anadir, guardia de historial generalizada, trailer Fuente en commits de spec/cases, capas refinadas; 106 funciones de test; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F09-expert-feedback-model abierta; brief escrito (feedback apply diferido a F11 por falta de esquema de spec)

@@ -72,11 +72,36 @@ uv run botsito knowledge validate
 temporal: acepta anadir feedback, rechaza editar y borrar.
 
 ## Resultados
-- ruff, mypy strict (46 ficheros), 3 contratos KEPT con la jerarquia nueva.
-- pytest: 131 passed (106 funciones; 14 rechazos parametrizados; property de estabilidad del id;
-  historial con modificar/borrar; trailers validos, invalidos e inexistentes).
+- ruff, mypy strict (48 ficheros), 3 contratos KEPT con la jerarquia nueva.
+- pytest: 167 passed (122 funciones tras la auditoria extrema; rechazos parametrizados de
+  evidencia, feedback y registro; property de estabilidad del id; historial con modificar,
+  borrar, anadir en merge y rutas con acento; trailers validos, invalidos, inexistentes y con
+  mensaje acentuado).
 - `state`, `config`, `knowledge validate` (0 registros, historial intacto, commits con Fuente): OK.
 - CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33894611220.
+
+## Auditoria extrema (2026-09-04, tres agentes: codigo, plan/ejecucion, repositorio)
+Hallazgos corregidos en esta rama (cada uno con test o prueba manual):
+- CRITICO · `subprocess` decodificaba git en cp1252: un mensaje de commit con `Í`/`Á` dejaba la
+  salida en `None` y `knowledge validate` lo leia como "sin problemas" (solo Windows). Ahora UTF-8
+  con `core.quotepath=false`; test con mensaje acentuado; `None` con git presente es ERROR.
+- ALTO · Ficheros anadidos dentro de un commit de merge quedaban fuera de la guardia para siempre
+  (`git log` sin `-m`). Test `test_adicion_escondida_en_un_merge_queda_protegida`.
+- ALTO · `evidence new --video V1` creaba ids fuera de formato y rutas que el hook no veia (awk por
+  espacios, rutas entrecomilladas). `video_id` validado (`^[a-z0-9]+$`) y contra `fuentes.yaml`;
+  hook con `-F'\t'` y sin entrecomillar; test con ruta `vídeo 1`.
+- ALTO (repo) · Sin el tag `stable/F06` la comprobacion de trailers pasaba en silencio. Ancla
+  tag + SHA; clon superficial = ERROR; CI hace `git fetch --tags --force`.
+- MEDIO · `fecha: 2026-09-20` sin comillas reventaba con `TypeError`; `t0: 1:05:00` se cargaba
+  como 3900; `valor_resultante: yes` era `"True"`; claves YAML duplicadas ganaba la ultima.
+  Cargador estricto `yaml_estricto.py` + tipos texto exigidos + `fecha` = fecha de la `sesion`.
+- MEDIO · `decimal.InvalidOperation`, `NaN`, `Infinity`, `25:99` y `minimo > maximo` en el
+  registro; `lecturas_ambiguas()` crecia una entrada por lectura (por tick en F24).
+- MEDIO (repo) · `make hooks` fallaba desde PowerShell (`cmd.exe`); `main` con un commit
+  `docs(state)` tras el tag sin que `state check` lo vigilara; CI corria dos veces por PR.
+- Diseno · ADR-0004: categorias de parametro y horas con huso (`tzdata` anadido: Windows no
+  tenia base de husos, `ZoneInfo("Europe/Madrid")` fallaba). Resto de riesgos de ejecucion en
+  MASTER_PLAN H.2, absorbidos por F10, F11, F15, F18, F21–F24, F28–F31, F33.
 
 ## Que deberia observar el usuario
 `knowledge/feedback/README.md` con esquema y plantilla de sesion; `feedback pending` vacio;

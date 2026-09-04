@@ -21,15 +21,22 @@ rechazan modificarlo o borrarlo. Una correccion es un registro nuevo con `supers
 | `supersede` | no | id del registro que corrige |
 | `notas` | no | texto libre |
 
+Un fichero escrito a mano se carga con el cargador estricto: claves duplicadas rechazadas,
+`fecha` sin comillas sigue siendo texto, pero `t0: 1:05:00` sin comillas es un entero para YAML y
+se rechaza ("debe ser texto entre comillas"). La `fecha` es la de la `sesion`.
+
 Coherencia exigida: `RESOLVE_CONTRADICTION` solo sobre un tema con contradiccion abierta;
 `LABEL_CASE`, `MARK_*` y `BORDERLINE` solo sobre casos; `CONFIRM/CORRECT/REJECT` sobre evidencia,
 regla o parametro. Todo cambio en `knowledge/spec/` o `knowledge/cases/` cita en el commit un
 trailer `Fuente: <ids>` de evidencia, feedback o ADR (`knowledge validate` lo comprueba).
 
 ## Plantilla de sesion
-1. Grabar la sesion y anadir la grabacion al corpus (manifiesto).
+1. Grabar la sesion y anadir la grabacion al corpus (manifiesto). F10 anade el papel
+   `sesion_feedback` en `fuentes.yaml` para que una grabacion local sin `drive_id` sea
+   inventariable.
 2. Por cada respuesta: `botsito feedback new --sesion 2026-09-20-sesion-01 --fecha 2026-09-20
-   --medio replay --grabacion "Material adicional/sesion-01.mp4" --t0 0:12:10 --t1 0:12:40
+   --medio replay --grabacion "Material adicional de su operativa/sesion-01.mp4" \
+   --t0 0:12:10 --t1 0:12:40
    --objetivo-tipo evidence --objetivo-id ev-v4-001533-… --accion CONFIRM
    --respuesta "si, con cuerpo, siempre" --registrado-por aleks`
 3. `botsito knowledge validate`; commit con `Fuente:` si toca spec o casos (F11+).
