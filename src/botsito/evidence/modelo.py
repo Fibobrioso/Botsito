@@ -18,6 +18,8 @@ from typing import Any
 
 import yaml
 
+from botsito.yaml_estricto import YamlError, cargar_yaml
+
 TIPOS = ("RULE_STATEMENT", "PARAMETER", "EXAMPLE_TRADE", "NO_TRADE", "MANAGEMENT", "UNKNOWN")
 MODALIDADES = ("audio", "pantalla", "ambas")
 CONFIANZAS = ("alta", "media", "baja")
@@ -26,6 +28,19 @@ PROVENANCES = ("botsito", "bot-v2")
 FICHERO_CONTRADICCIONES = "_contradicciones.yaml"
 TOLERANCIA_DURACION_S = 1  # redondeo de ffprobe; no es un valor de negocio
 _ID = re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$")
+_VIDEO_ID = re.compile(r"^[a-z0-9]+$")
+CAMPOS_TEXTO = (
+    "video_id",
+    "t0",
+    "t1",
+    "cita_literal",
+    "afirmacion",
+    "tema",
+    "revisado_por",
+    "valor",
+    "supersede",
+    "notas",
+)
 _TIEMPO = re.compile(r"^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$")
 _TEMA = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$")
 CAMPOS_OBLIGATORIOS = (
@@ -129,6 +144,14 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
     desconocidos = set(campos) - set(CAMPOS_OBLIGATORIOS) - set(CAMPOS_OPCIONALES) - {"id"}
     if desconocidos:
         raise EvidenciaError(f"{origen}: campos desconocidos {sorted(desconocidos)}")
+    for clave in CAMPOS_TEXTO:
+        if campos.get(clave) is not None and not isinstance(campos[clave], str):
+            tipo_real = type(campos[clave]).__name__
+            raise EvidenciaError(f"{origen}: {clave} debe ser texto entre comillas, no {tipo_real}")
+    if not _VIDEO_ID.match(str(campos["video_id"])):
+        raise EvidenciaError(
+            f"{origen}: video_id {campos['video_id']!r} invalido (minusculas y digitos, p. ej. v4)"
+        )
     for clave, permitidos in (
         ("tipo", TIPOS),
         ("modalidad", MODALIDADES),
@@ -161,8 +184,6 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
         not isinstance(fotos, list) or not all(isinstance(x, str) and x for x in fotos)
     ):
         raise EvidenciaError(f"{origen}: fotogramas debe ser una lista de rutas")
-    if campos.get("valor") is not None and not isinstance(campos["valor"], str):
-        raise EvidenciaError(f"{origen}: valor debe ser texto entre comillas")
     if campos.get("supersede") is not None and not _ID.match(str(campos["supersede"])):
         raise EvidenciaError(f"{origen}: supersede debe ser un id de evidencia")
 
@@ -170,6 +191,8 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
 def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceItem:
     _validar_campos(campos, origen)
     esperado = calcular_id(campos)
+    if not _ID.match(esperado):
+        raise EvidenciaError(f"{origen}: id calculado {esperado!r} fuera de formato")
     declarado = campos.get("id")
     if declarado != esperado:
         raise EvidenciaError(
@@ -198,7 +221,10 @@ def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceIte
 
 
 def cargar_item(ruta: Path) -> EvidenceItem:
-    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    try:
+        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+    except YamlError as exc:
+        raise EvidenciaError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):
         raise EvidenciaError(f"{ruta.name}: no es un mapa YAML")
     item = item_desde_dict(doc, ruta.name)

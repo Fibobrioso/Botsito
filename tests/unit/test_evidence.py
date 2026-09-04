@@ -90,7 +90,11 @@ def test_nombre_de_fichero_distinto_del_id(tmp_path: Path) -> None:
         ({"tema": "Stop Nivel"}, "tema"),
         ({"t1": "0:15:33"}, "t0 debe ser menor"),
         ({"afirmacion": "x" * 400}, "mucho mas larga"),
-        ({"valor": 0.75}, "valor debe ser texto"),
+        ({"valor": 0.75}, "valor debe ser texto entre comillas"),
+        ({"video_id": "V1"}, "video_id"),
+        ({"video_id": "video 1"}, "video_id"),
+        ({"t0": 3900}, "t0 debe ser texto entre comillas"),
+        ({"notas": True}, "notas debe ser texto"),
         ({"supersede": "abc"}, "supersede"),
         ({"inventado": 1}, "desconocidos"),
         ({"provenance": "otro"}, "provenance"),
@@ -174,3 +178,23 @@ def test_coma_decimal_no_es_contradiccion(tmp_path: Path) -> None:
     escribir_item(tmp_path, base(valor="Cuerpo", tema="x.y", t0="0:21:00", t1="0:21:10"))
     escribir_item(tmp_path, base(valor="cuerpo", tema="x.y", t0="0:22:00", t1="0:22:10"))
     assert contradicciones.detectar(cargar_evidencia(tmp_path)) == []
+
+
+def test_valores_numericos_equivalentes_no_son_contradiccion(tmp_path: Path) -> None:
+    escribir_item(tmp_path, base(valor="0.75", tema="stop.nivel"))
+    escribir_item(tmp_path, base(valor="0.750", tema="stop.nivel", t0="0:20:00", t1="0:20:10"))
+    escribir_item(tmp_path, base(valor="75 %", tema="riesgo", t0="0:21:00", t1="0:21:10"))
+    escribir_item(tmp_path, base(valor="75%", tema="riesgo", t0="0:22:00", t1="0:22:10"))
+    escribir_item(tmp_path, base(valor="75", tema="otro", t0="0:23:00", t1="0:23:10"))
+    escribir_item(tmp_path, base(valor="75%", tema="otro", t0="0:24:00", t1="0:24:10"))
+    detectadas = contradicciones.detectar(cargar_evidencia(tmp_path))
+    assert [c["tema"] for c in detectadas] == ["otro"]
+    assert contradicciones.normalizar_valor("0,750") == "0.75"
+
+
+def test_fichero_con_clave_duplicada_es_corrupto(tmp_path: Path) -> None:
+    ruta = escribir_item(tmp_path, base())
+    texto = ruta.read_text(encoding="utf-8")
+    ruta.write_text(texto + "valor: mecha\n", encoding="utf-8")
+    with pytest.raises(EvidenciaError, match="clave duplicada"):
+        cargar_item(ruta)

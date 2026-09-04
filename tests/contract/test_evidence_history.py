@@ -11,7 +11,11 @@ from pathlib import Path
 
 import pytest
 
-from botsito.evidence.historial import modificaciones_en_historial, modificaciones_preparadas
+from botsito.evidence.historial import (
+    hay_git,
+    modificaciones_en_historial,
+    modificaciones_preparadas,
+)
 
 EV = "knowledge/evidence/v1/ev-v1-000001-aaaaaaaa.yaml"
 
@@ -89,19 +93,60 @@ def test_edicion_escondida_en_un_merge_se_detecta(tmp_path: Path) -> None:
 
 
 @pytest.mark.contract
+def test_adicion_escondida_en_un_merge_queda_protegida(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    _git(repo, "checkout", "-q", "-b", "feature/z")
+    (repo / "o.txt").write_text("o\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "otro")
+    _git(repo, "checkout", "-q", "main")
+    (repo / "m.txt").write_text("m\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "m")
+    subprocess.run(["git", "merge", "--no-commit", "feature/z"], cwd=repo, capture_output=True)
+    nuevo = EV.replace("aaaaaaaa", "cccccccc")
+    (repo / nuevo).write_text("id: nuevo\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "merge con adicion")
+    assert modificaciones_en_historial(repo) == []
+    (repo / nuevo).write_text("id: editado\n", encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "edita lo anadido en el merge")
+    assert modificaciones_en_historial(repo) == [
+        f"modificado desde {_primero(repo, nuevo)}: {nuevo}"
+    ]
+    _git(repo, "rm", "-q", nuevo)
+    _git(repo, "commit", "-q", "-m", "borra lo anadido en el merge")
+    assert modificaciones_en_historial(repo) == [f"borrado o renombrado: {nuevo}"]
+
+
+@pytest.mark.contract
+def test_rutas_con_acento_y_espacio_se_vigilan(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    raro = "knowledge/evidence/v\u00eddeo 1/ev-x.yaml"
+    (repo / raro).parent.mkdir()
+    (repo / raro).write_text("id: a\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "a\u00f1ade \u00cdNDICE raro")
+    (repo / raro).write_text("id: b\n", encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "edita")
+    assert modificaciones_en_historial(repo) == [f"modificado desde {_primero(repo, raro)}: {raro}"]
+
+
+@pytest.mark.contract
 def test_repositorio_real_sin_modificaciones(repo: Path) -> None:
     violaciones = modificaciones_en_historial(repo)
     if violaciones is None:
+        assert not hay_git(repo), "hay git pero la guardia no se pudo evaluar"
         pytest.skip("sin git")
     assert violaciones == [], "\n".join(violaciones)
 
 
-def _primero(repo: Path) -> str:
+def _primero(repo: Path, ruta: str = EV) -> str:
     salida = subprocess.run(
-        ["git", "log", "--format=%H", "--diff-filter=A", "--", EV],
+        ["git", "log", "-m", "--format=%H", "--diff-filter=A", "--", ruta],
         cwd=repo,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         check=True,
     ).stdout.split()
     return salida[-1][:7]

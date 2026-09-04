@@ -4,10 +4,15 @@ Los hooks se saltan con --no-verify; el historial no. Dos guardias:
 
 1. Inmutabilidad por contenido: para cada fichero protegido que alguna vez se anadio bajo un
    directorio (evidencia, feedback), su blob en HEAD debe ser identico al del commit que lo anadio y
-   el fichero debe seguir existiendo. Cubre ediciones escondidas en commits de merge, que
-   `git log --name-status` no muestra.
+   el fichero debe seguir existiendo. Cubre ediciones y adiciones escondidas en commits de merge
+   (`git log -m`), que sin `-m` no se muestran.
 2. Trazabilidad: todo commit posterior a un punto dado que toque la especificacion o los casos debe
    llevar un trailer `Fuente:` con ids de evidencia, de feedback o de ADR.
+
+Toda salida de git se decodifica como UTF-8 con `core.quotepath=false`: en Windows la consola es
+cp1252 y un mensaje de commit con una mayuscula acentuada dejaba la salida en `None`, que se leia
+como "sin problemas". `None` significa ahora una sola cosa: no hay git o la referencia no existe;
+quien llama decide si eso es un error.
 """
 
 from __future__ import annotations
@@ -22,6 +27,8 @@ DIRECTORIO_EVIDENCIA = "knowledge/evidence"
 DIRECTORIO_FEEDBACK = "knowledge/feedback"
 DIRECTORIOS_CON_FUENTE = ("knowledge/spec/", "knowledge/cases/")
 EXENTOS = (FICHERO_CONTRADICCIONES, "README.md")
+# Ancla de la trazabilidad: el tag es legible; el SHA sobrevive a un clon sin tags.
+ANCLA_FUENTE = ("stable/F06", "b6b82f2f164c5ca48bde692467b55f1267cf992b")
 _ID_FUENTE = re.compile(r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$")
 _TRAILER = re.compile(r"^Fuente:\s*(.+?)\s*$", re.M)
 
@@ -37,9 +44,27 @@ def _es_protegido(ruta: str, directorio: str) -> bool:
 
 def _git(repo: Path, *args: str) -> str | None:
     resultado = subprocess.run(
-        ["git", *args], cwd=repo, capture_output=True, text=True, check=False
+        ["git", "-c", "core.quotepath=false", *args],
+        cwd=repo,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
     )
     return resultado.stdout if resultado.returncode == 0 else None
+
+
+def hay_git(repo: Path) -> bool:
+    """True si `repo` esta dentro de un repositorio git con al menos un commit."""
+    return _git(repo, "rev-parse", "--verify", "-q", "HEAD") is not None
+
+
+def resolver(repo: Path, *candidatos: str) -> str | None:
+    """Primera referencia (tag, rama o SHA) que existe en este clon."""
+    for ref in candidatos:
+        if _git(repo, "rev-parse", "--verify", "-q", f"{ref}^{{commit}}") is not None:
+            return ref
+    return None
 
 
 def _blob(repo: Path, revision: str, ruta: str) -> str | None:
@@ -55,7 +80,15 @@ def modificaciones_en_historial(
     None si no hay git. Incluye el arbol de trabajo: una edicion sin commitear tambien cuenta.
     """
     historico = _git(
-        repo, "log", "--format=", "--name-only", "--diff-filter=A", "--no-renames", "--", directorio
+        repo,
+        "log",
+        "-m",
+        "--format=",
+        "--name-only",
+        "--diff-filter=A",
+        "--no-renames",
+        "--",
+        directorio,
     )
     if historico is None:
         return None
@@ -70,7 +103,8 @@ def modificaciones_en_historial(
             violaciones.append(f"borrado o renombrado: {ruta}")
             continue
         primero = (
-            _git(repo, "log", "--format=%H", "--diff-filter=A", "--no-renames", "--", ruta) or ""
+            _git(repo, "log", "-m", "--format=%H", "--diff-filter=A", "--no-renames", "--", ruta)
+            or ""
         )
         commits = primero.split()
         if not commits:
@@ -128,7 +162,7 @@ def commits_sin_fuente(
     None si no hay git o `desde` no existe.
     """
     rango = f"{desde}..HEAD" if desde else "HEAD"
-    if desde and _git(repo, "rev-parse", "--verify", "-q", desde) is None:
+    if desde and _git(repo, "rev-parse", "--verify", "-q", f"{desde}^{{commit}}") is None:
         return None
     salida = _git(repo, "log", "--format=%H%x1f%B%x1e", rango, "--", *rutas)
     if salida is None:
