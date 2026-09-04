@@ -30,7 +30,14 @@ def _read_section(text: str, title: str) -> str:
 
 
 def _git(repo: Path, *args: str) -> str | None:
-    result = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=False)
+    result = subprocess.run(
+        ["git", "-c", "core.quotepath=false", *args],
+        cwd=repo,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
     return result.stdout.strip() if result.returncode == 0 else None
 
 
@@ -69,6 +76,8 @@ def state_check(repo: Path) -> int:
     2. `Tests Currently Passing` empieza por el recuento real de funciones de test.
     3. `Last Stable Commit` empieza por el commit del ultimo tag `stable/*` (si hay tags).
     4. Toda funcionalidad en `Completed Features` tiene su informe en docs/validation/.
+    5. En `main`, lo commiteado despues del ultimo tag estable solo puede tocar PROJECT_STATE.md
+       (el ritual de merge deja un commit docs(state) tras el tag; nada mas entra sin tag).
     """
     state_path = repo / STATE_FILE
     if not state_path.exists():
@@ -102,6 +111,14 @@ def state_check(repo: Path) -> int:
             errores.append(
                 f"'Last Stable Commit' dice '{declarado}'; el tag {tag} apunta a {commit}"
             )
+
+        if actual == "main":
+            tocados = _git(repo, "diff", "--name-only", f"{tag}..HEAD") or ""
+            ajenos = sorted(f for f in tocados.splitlines() if f.strip() and f != STATE_FILE)
+            if ajenos:
+                errores.append(
+                    f"main tiene cambios sin tag estable desde {tag}: {', '.join(ajenos)}"
+                )
 
     for line in _read_section(text, "Completed Features").splitlines():
         mm = re.match(r"-\s*(F\d{2})\b", line)
@@ -156,7 +173,7 @@ def knowledge_validate(repo: Path) -> int:
         print(f"ERROR: fuentes del corpus: {exc}")
         return 1
     from botsito.evidence import contradicciones
-    from botsito.evidence.historial import modificaciones_en_historial
+    from botsito.evidence.historial import hay_git, modificaciones_en_historial
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto
 
     directorio = repo / "knowledge" / "evidence"
@@ -169,14 +186,22 @@ def knowledge_validate(repo: Path) -> int:
     if ruta_manifiesto.exists():
         fallos += validar_contra_manifiesto(items, cargar_manifiesto(ruta_manifiesto))
     fallos += contradicciones.validar_fichero(directorio, items)
+    con_git = hay_git(repo)
     historial = modificaciones_en_historial(repo)
-    if historial:
+    if historial is None and con_git:
+        fallos.append("la guardia de historial de evidencia no se pudo evaluar (git fallo)")
+    elif historial:
         fallos += [f"evidencia modificada en el historial: {h}" for h in historial]
     for fallo in fallos:
         print(f"ERROR: {fallo}")
     if fallos:
         return 1
-    from botsito.evidence.historial import DIRECTORIO_FEEDBACK, commits_sin_fuente
+    from botsito.evidence.historial import (
+        ANCLA_FUENTE,
+        DIRECTORIO_FEEDBACK,
+        commits_sin_fuente,
+        resolver,
+    )
     from botsito.feedback.modelo import FeedbackError, cargar_feedback, validar_contra_contexto
 
     try:
@@ -191,12 +216,21 @@ def knowledge_validate(repo: Path) -> int:
     fallos_fb = validar_contra_contexto(
         registros_fb, {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
     )
-    fallos_fb += [
-        f"feedback modificado en el historial: {h}"
-        for h in modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK) or []
-    ]
+    historial_fb = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
+    if historial_fb is None and con_git:
+        fallos_fb.append("la guardia de historial de feedback no se pudo evaluar (git fallo)")
+    fallos_fb += [f"feedback modificado en el historial: {h}" for h in historial_fb or []]
     ids_validos = {i.id for i in items} | {r.id for r in registros_fb}
-    fallos_fb += commits_sin_fuente(repo, "stable/F06", ids_validos=ids_validos) or []
+    ancla = resolver(repo, *ANCLA_FUENTE) if con_git else None
+    if con_git and ancla is None:
+        fallos_fb.append(
+            f"no se resuelve el ancla de trazabilidad {ANCLA_FUENTE[0]} ({ANCLA_FUENTE[1][:7]}): "
+            "clon superficial o sin historial; haz git fetch --unshallow --tags"
+        )
+    sin_fuente = commits_sin_fuente(repo, ancla, ids_validos=ids_validos) if ancla else None
+    if sin_fuente is None and con_git and ancla is not None:
+        fallos_fb.append("la comprobacion de trailers Fuente: no se pudo evaluar (git fallo)")
+    fallos_fb += sin_fuente or []
     for fallo in fallos_fb:
         print(f"ERROR: {fallo}")
     if fallos_fb:
@@ -256,9 +290,9 @@ def corpus_check(repo: Path, hashes: bool) -> int:
     except InventarioError as exc:
         print(f"ERROR: {exc}")
         return 1
-    problemas = validar_manifiesto(manifiesto, fuentes) + comprobar_contra_disco(
-        manifiesto, repo, hashes=hashes
-    )
+    problemas = validar_manifiesto(manifiesto, fuentes)
+    if not problemas:
+        problemas = comprobar_contra_disco(manifiesto, repo, hashes=hashes)
     for p in problemas:
         print(f"ERROR: {p}")
     if not problemas:
@@ -268,8 +302,20 @@ def corpus_check(repo: Path, hashes: bool) -> int:
 
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un item de evidencia con su id calculado (nunca sobreescribe)."""
+    from botsito.corpus.inventario import InventarioError, cargar_fuentes
     from botsito.evidence.modelo import EvidenciaError, escribir_item
 
+    try:
+        conocidos = {
+            v.video_id
+            for v in cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml").videos
+        }
+    except InventarioError as exc:
+        print(f"ERROR: fuentes del corpus: {exc}")
+        return 1
+    if args.video not in conocidos:
+        print(f"ERROR: video {args.video!r} no esta en fuentes.yaml ({sorted(conocidos)})")
+        return 1
     campos = {
         "video_id": args.video,
         "t0": args.t0,
@@ -403,7 +449,9 @@ def build_parser() -> argparse.ArgumentParser:
     state_sub.add_parser("check", help="comprueba PROJECT_STATE.md contra el repositorio")
     know = sub.add_parser("knowledge", help="base de conocimiento")
     know_sub = know.add_subparsers(dest="knowledge_cmd", required=True)
-    know_sub.add_parser("validate", help="valida knowledge/ (registro de parametros en F02)")
+    know_sub.add_parser(
+        "validate", help="valida knowledge/: registro, manifiesto, evidencia, feedback, historial"
+    )
     corpus = sub.add_parser("corpus", help="inventario del corpus")
     corpus_sub = corpus.add_subparsers(dest="corpus_cmd", required=True)
     inv = corpus_sub.add_parser("inventory", help="genera knowledge/corpus/manifest.yaml")

@@ -122,9 +122,9 @@ def test_config_validate_real_repo(repo: Path) -> None:
 def test_config_validate_detecta_clave_del_registro(tmp_path: Path) -> None:
     (tmp_path / "knowledge" / "spec").mkdir(parents=True)
     (tmp_path / "knowledge" / "spec" / "parametros.yaml").write_text(
-        "parametros:\n  - nombre: stop_fraccion\n    tipo: fraccion\n    unidad: u\n"
-        '    descripcion: d\n    estado: CONFIRMED\n    valor: "0.75"\n'
-        "    fuente: {tipo: decision, id: x}\n",
+        "parametros:\n  - nombre: stop_fraccion\n    categoria: estrategia\n    tipo: fraccion\n"
+        '    unidad: u\n    descripcion: d\n    estado: CONFIRMED\n    valor: "0.75"\n'
+        "    fuente: {tipo: decision, id: ADR-0001}\n",
         encoding="utf-8",
     )
     (tmp_path / "config").mkdir()
@@ -140,3 +140,54 @@ def test_config_validate_detecta_clave_del_registro(tmp_path: Path) -> None:
     )
     assert cli.config_validate(tmp_path) == 0
     assert cli.main(["--repo", str(tmp_path), "config", "validate"]) == 0
+
+
+def test_main_no_admite_cambios_sin_tag_salvo_el_estado(tmp_path: Path) -> None:
+    r = _repo_tmp(tmp_path)
+    _state(r)
+    subprocess.run(["git", "add", "-A"], cwd=r, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "x"], cwd=r, check=True)
+    subprocess.run(["git", "tag", "-a", "stable/F99", "-m", "t"], cwd=r, check=True)
+    real = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"], cwd=r, capture_output=True, text=True, check=True
+    ).stdout.strip()
+    _state(r, stable=f"{real} · merge")
+    subprocess.run(["git", "commit", "-q", "-am", "docs(state)"], cwd=r, check=True)
+    assert cli.state_check(r) == 0
+    (r / "src.py").write_text("x = 1\n", encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=r, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "colado en main"], cwd=r, check=True)
+    assert cli.state_check(r) == 1
+
+
+def test_evidence_new_rechaza_video_fuera_de_fuentes(repo: Path) -> None:
+    args = [
+        "--repo",
+        str(repo),
+        "evidence",
+        "new",
+        "--video",
+        "V1",
+        "--t0",
+        "0:00:01",
+        "--t1",
+        "0:00:02",
+        "--modalidad",
+        "audio",
+        "--tipo",
+        "UNKNOWN",
+        "--cita",
+        "cita de prueba",
+        "--afirmacion",
+        "x",
+        "--tema",
+        "x",
+        "--confianza",
+        "baja",
+        "--extractor",
+        "humano",
+        "--revisado-por",
+        "t",
+    ]
+    assert cli.main(args) == 1
+    assert not (repo / "knowledge" / "evidence" / "V1").exists()
