@@ -128,6 +128,7 @@ Usuario valida F03 -> merge --no-ff a main -> tag stable/F03 -> push -> abrir fe
 dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
 
 ## Change Log
+- 2026-09-04 · push F03 tras auditoria; CI Ubuntu verde con ffmpeg (run 33891193380)
 - 2026-09-04 · auditoria de F03: orden POSIX del manifiesto (Windows ordenaba sin mayusculas), corpus check detecta ficheros no inventariados, esquema de ficheros validado, ffmpeg en CI, xlsx/pdf binarios; 76 funciones de test
 - 2026-09-04 · push de la rama F03; CI Ubuntu verde (run 33890615366)
 - 2026-09-04 · F03 construida: fuentes.yaml, inventario.py, manifest.yaml real (4 videos con hash y duracion, 477 heredados, 17 adicionales), corpus inventory/check; 74 funciones de test; WAITING_FOR_USER_VALIDATION

@@ -97,7 +97,7 @@ sobre el corpus real: OK.
 - pytest: 78 passed (76 funciones); el test de ffprobe se salta con aviso solo si no hay ffprobe.
 - `state check`, `config validate`, `knowledge validate` (registro + manifiesto): OK.
 - Manifiesto regenerado dos veces: identico.
-- CI GitHub Actions (ubuntu-latest): verde, run 33890615366 (antes de instalar ffmpeg); ver run posterior con ffmpeg.
+- CI GitHub Actions (ubuntu-latest): verde, run 33890615366 (antes de instalar ffmpeg) y run 33891193380 (con ffmpeg instalado en Ubuntu).
 
 ## Que deberia observar el usuario
 `knowledge/corpus/manifest.yaml` con los 4 videos y sus hashes; `corpus check --hashes` OK;
