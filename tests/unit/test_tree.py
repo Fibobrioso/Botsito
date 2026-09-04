@@ -57,6 +57,7 @@ ROOT_FILES = [
     "knowledge/spec/parametros.yaml",
     "knowledge/corpus/fuentes.yaml",
     "knowledge/corpus/manifest.yaml",
+    "knowledge/evidence/_contradicciones.yaml",
     "tests/fixtures/clip_2s.mp4",
     "tests/fixtures/README.md",
     "scripts/git-hooks/pre-commit",

@@ -58,6 +58,7 @@ def _expected_files(repo: Path) -> list[str]:
     files += [f"{d}/README.md" for d in DOC_DIRS if d not in README_EXEMPT]
     files += [f"src/botsito/{p}/__init__.py" for p in PACKAGES]
     files += [
+        "knowledge/evidence/README.md",
         "src/botsito/__init__.py",
         "src/botsito/cli.py",
         ".gitattributes",
