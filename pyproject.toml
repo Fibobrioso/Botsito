@@ -43,6 +43,7 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 preview = true
+explicit-preview-rules = true  # solo las reglas preview nombradas en select (PLW1514)
 select = ["E", "F", "I", "B", "UP", "N", "SIM", "PLW1514"]
 
 [tool.mypy]
