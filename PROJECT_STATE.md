@@ -30,13 +30,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
-FASE 1 · Base de conocimiento (F03-F08)
+FASE 2 · Retroalimentacion del experto (F09-F10)
 
 ## Current Feature
-— (F06 integrada; F09 pendiente de abrir)
+F09 · expert-feedback-model
 
 ## Current Branch
-main
+feature/F09-expert-feedback-model
 
 ## Stable Main State
 b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu verde. Tag stable/F06.
@@ -51,13 +51,14 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - F06 · evidence-model · validada el 2026-09-04 · docs/validation/F06-evidence-model.md · tag stable/F06
 
 ## Features Waiting for Validation
-—
+- F09 · expert-feedback-model · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F09-expert-feedback-model.md
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
 - CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro + manifiesto del corpus), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
-- `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia.
+- `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
+- `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad); CLI `feedback new/trace/pending`; `commits_sin_fuente` exige trailer `Fuente:` en commits que tocan spec/cases desde stable/F06.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
@@ -65,6 +66,7 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
 - knowledge/evidence/README.md (esquema de EvidenceItem) · src/botsito/evidence/modelo.py
+- knowledge/feedback/README.md (esquema de FeedbackRecord y plantilla de sesion) · src/botsito/feedback/modelo.py · src/botsito/evidence/historial.py
 - knowledge/corpus/fuentes.yaml (fuentes esperadas, ids de Drive) · knowledge/corpus/manifest.yaml (GENERADO) · src/botsito/corpus/inventario.py
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; vacio hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
@@ -73,7 +75,7 @@ b6b82f2 · merge de F06. make check verde: 104 casos (92 funciones), 3 contratos
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-92 funciones de test (una parametrizada x3, otra x11) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence · contract: import_contracts, no_business_literals, repository_integrity, evidence_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+106 funciones de test (parametrizadas x3, x11 y x14) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario, evidence, feedback · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -148,12 +150,14 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F09 · expert-feedback-model (`feature/F09-expert-feedback-model`)
 
 ## Next Action
-Abrir feature/F09-expert-feedback-model -> brief (FeedbackRecord solo-anadir con procedencia; acciones CONFIRM/CORRECT/REJECT/RESOLVE_UNKNOWN/RESOLVE_CONTRADICTION/LABEL_CASE/MARK_FP/MARK_FN/BORDERLINE; diff propuesto sobre spec y casos; trazabilidad evidencia->feedback->regla; guardia de historial) -> implementar -> informe -> WAITING_FOR_USER_VALIDATION.
+Usuario valida F09 -> merge --no-ff a main -> tag stable/F09 -> push -> abrir feature/F15-market-data-ohlc (orden E: F15 antes de F04/F05 porque F10 y F14 necesitan datos reales).
 
 ## Last Stable Commit
 b6b82f2 · merge: F06 evidence-model validado por el usuario · tag stable/F06
 
 ## Change Log
+- 2026-09-04 · F09 construida: FeedbackRecord solo-anadir, guardia de historial generalizada, trailer Fuente en commits de spec/cases, capas refinadas; 106 funciones de test; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · rama feature/F09-expert-feedback-model abierta; brief escrito (feedback apply diferido a F11 por falta de esquema de spec)
 - 2026-09-04 · F06 VALIDADA por el usuario; merge --no-ff a main (b6b82f2); tag stable/F06
 - 2026-09-04 · lineamiento del usuario registrado: SL a 0,75/0,8 tras la entrada con TP fijo (contemplado en F21; dos preguntas abiertas para el trader)
 - 2026-09-04 · push F06 tras auditoria global; CI Ubuntu verde (run 33893230602)
