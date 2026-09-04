@@ -33,23 +33,24 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08)
 
 ## Current Feature
-F03 · corpus-inventory
+— (F03 integrada; F06 pendiente de abrir)
 
 ## Current Branch
-feature/F03-corpus-inventory
+main
 
 ## Stable Main State
-dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos, mypy strict, state check, config validate. CI Ubuntu verde. Tag stable/F02.
+77fdd44 · merge de F03. make check verde: 78 casos (76 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu con ffmpeg verde. Tag stable/F03.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
 
 ## Completed Features
-- F01 · project-scaffold · validada por el usuario el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
-- F02 · config-and-parameter-registry · validada por el usuario el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
+- F01 · project-scaffold · validada el 2026-09-04 · docs/validation/F01-project-scaffold.md · tag stable/F01
+- F02 · config-and-parameter-registry · validada el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
+- F03 · corpus-inventory · validada el 2026-09-04 · docs/validation/F03-corpus-inventory.md · tag stable/F03
 
 ## Features Waiting for Validation
-- F03 · corpus-inventory · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F03-corpus-inventory.md
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -119,15 +120,16 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 ").
 
 ## Next Feature
-F03 · corpus-inventory (`feature/F03-corpus-inventory`)
+F06 · evidence-model (`feature/F06-evidence-model`)
 
 ## Next Action
-Usuario valida F03 -> merge --no-ff a main -> tag stable/F03 -> push -> abrir feature/F06-evidence-model (orden E: F03, F06, F09 antes de F04/F05).
+Abrir feature/F06-evidence-model -> brief (EvidenceItem inmutable con cita verificable contra el manifiesto; test de inmutabilidad contra el historial de git; contradicciones regeneradas) -> implementar -> informe -> WAITING_FOR_USER_VALIDATION.
 
 ## Last Stable Commit
-dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
+77fdd44 · merge: F03 corpus-inventory validado por el usuario · tag stable/F03
 
 ## Change Log
+- 2026-09-04 · F03 VALIDADA por el usuario; merge --no-ff a main (77fdd44); tag stable/F03
 - 2026-09-04 · push F03 tras auditoria; CI Ubuntu verde con ffmpeg (run 33891193380)
 - 2026-09-04 · auditoria de F03: orden POSIX del manifiesto (Windows ordenaba sin mayusculas), corpus check detecta ficheros no inventariados, esquema de ficheros validado, ffmpeg en CI, xlsx/pdf binarios; 76 funciones de test
 - 2026-09-04 · push de la rama F03; CI Ubuntu verde (run 33890615366)
