@@ -6,25 +6,40 @@
 #
 # Esquema de cada entrada:
 #   nombre:        identificador en snake_case (p. ej. stop_fraccion_caja)
+#   categoria:     estrategia | instrumento | broker | prop_firm | ejecucion (ADR-0004).
+#                  Solo `estrategia` se cita por evidence/feedback y se le pregunta al trader;
+#                  las demas se citan por decision (ADR-NNNN) y se verifican en el pre-vuelo.
 #   tipo:          fraccion | porcentaje | decimal | entero | hora | texto
+#   huso:          obligatorio si tipo es hora: nombre IANA (Europe/Madrid, UTC, ...)
 #   unidad:        texto libre pero obligatorio (p. ej. "fraccion de la distancia completa")
 #   descripcion:   una frase
 #   estado:        CONFIRMED | DEFAULT_AMBIGUOUS | UNKNOWN
 #   valor:         entre comillas para fraccion/porcentaje/decimal/hora/texto ("0.75", "07:00");
 #                  entero SIN comillas (3); ausente si UNKNOWN
-#   fuente:        {tipo: evidence|feedback|decision, id: ...}; obligatoria salvo UNKNOWN
+#   fuente:        {tipo: evidence|feedback|decision, id: ...}; obligatoria salvo UNKNOWN;
+#                  id con formato ev-…, fb-… o ADR-NNNN
 #   ambiguedad_id: solo si DEFAULT_AMBIGUOUS (p. ej. A-1)
-#   minimo/maximo: opcionales, entre comillas o entero; para fraccion/porcentaje/decimal/entero
+#   minimo/maximo: opcionales, entre comillas o entero; SOLO para fraccion/porcentaje/decimal/
+#                  entero (en hora o texto se rechazan). No se admiten claves de nivel superior
+#                  distintas de `parametros`.
 #
 # Ejemplo (NO es un valor real; los reales se anaden en F11):
 #   - nombre: ejemplo_stop_fraccion
+#     categoria: estrategia
 #     tipo: fraccion
 #     unidad: fraccion de la distancia completa nivel 0 -> nivel 1
 #     descripcion: donde va el stop dentro de la caja
 #     estado: CONFIRMED
 #     valor: "0.75"
-#     fuente: {tipo: evidence, id: ev-v4-001230-stop}
+#     fuente: {tipo: evidence, id: ev-v4-001230-1a2b3c4d}
 #     minimo: "0"
 #     maximo: "1"
+#   - nombre: ejemplo_inicio_ventana
+#     categoria: estrategia
+#     tipo: hora
+#     huso: Europe/Madrid
+#     unidad: hora de reloj del trader
+#     descripcion: inicio de la ventana operativa
+#     estado: UNKNOWN
 
 parametros: []

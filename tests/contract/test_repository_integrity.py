@@ -43,9 +43,24 @@ IGNORED_ALLOWLIST = (
 
 
 def _git(repo: Path, *args: str) -> str:
-    result = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=False)
-    if result.returncode != 0:
-        pytest.skip(f"git no disponible o no es un repositorio: {result.stderr.strip()}")
+    """Salida de git. Solo se omite el test si NO hay git o NO es un repositorio; cualquier otro
+    fallo de git es un fallo del test, no un skip verde."""
+    try:
+        dentro = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        pytest.skip("git no esta en PATH")
+    if dentro.returncode != 0 or dentro.stdout.strip() != "true":
+        pytest.skip(f"no es un repositorio git: {dentro.stderr.strip()}")
+    result = subprocess.run(
+        ["git", *args], cwd=repo, capture_output=True, encoding="utf-8", check=False
+    )
+    assert result.returncode == 0, f"git {' '.join(args)} fallo: {result.stderr.strip()}"
     return result.stdout
 
 
@@ -95,7 +110,13 @@ def test_gitattributes_normalizes_text(repo: Path) -> None:
 def test_no_unexpected_ignored_paths(repo: Path) -> None:
     out = _git(repo, "status", "--ignored", "--porcelain")
     ignored = [line[3:] for line in out.splitlines() if line.startswith("!! ")]
-    unexpected = [p for p in ignored if not any(a in p for a in IGNORED_ALLOWLIST)]
+
+    def permitido(p: str) -> bool:
+        # Por componente de ruta, no por subcadena: `foo.venv/` o `x.coverage/` no cuelan.
+        partes = p.rstrip("/").split("/")
+        return any(a.rstrip("/") in partes for a in IGNORED_ALLOWLIST)
+
+    unexpected = [p for p in ignored if not permitido(p)]
     # corpus/ y data/ (salvo manifests) se ignoran a proposito: son datos pesados
     unexpected = [p for p in unexpected if not p.startswith(("corpus/", "data/"))]
     assert unexpected == [], f"rutas ignoradas no previstas: {unexpected}"
@@ -110,7 +131,7 @@ def test_gitignore_patterns_are_anchored(repo: Path) -> None:
         if line.strip() and not line.startswith("#")
     ]
     for pattern in ("corpus", "data"):
-        matching = [line for line in lines if line.lstrip("!/").rstrip("/*") == pattern]
+        matching = [line for line in lines if line.lstrip("!").lstrip("*/").rstrip("/*") == pattern]
         assert matching, f"falta el patron para {pattern}/"
         assert all(line.startswith(("/", "!/")) for line in matching), (
             f"patron sin anclar para {pattern}: {matching}"

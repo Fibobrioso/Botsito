@@ -17,12 +17,13 @@ CIEN = Decimal(100)
 def _a_decimal(valor: Decimal | int | str) -> Decimal:
     if isinstance(valor, bool | float):
         raise TypeError("float y bool no son valores admitidos; usa Decimal, int o str")
-    if isinstance(valor, Decimal):
-        return valor
     try:
-        return Decimal(valor)
+        resultado = valor if isinstance(valor, Decimal) else Decimal(valor)
     except InvalidOperation as exc:
         raise ValueError(f"valor decimal invalido: {valor!r}") from exc
+    if not resultado.is_finite():
+        raise ValueError(f"valor no finito: {valor!r}")
+    return resultado
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,3 +96,24 @@ def _misma_clase(a: object, b: object) -> None:
             f"no se puede operar {type(a).__name__} con {type(b).__name__}: "
             "convierte explicitamente con como_fraccion() o como_porcentaje()"
         )
+
+
+@dataclass(frozen=True, slots=True)
+class HoraLocal:
+    """Hora de reloj `HH:MM` en un huso IANA concreto (ADR-0004).
+
+    Una hora sin huso no significa nada en un sistema con tres relojes (trader en Madrid, servidor
+    del broker, datos en UTC). El dominio no resuelve el huso (no importa `datetime`): lo hace la
+    capa de datos o el motor con `zoneinfo`; aqui solo viaja junto a la hora.
+    """
+
+    hora: str
+    huso: str
+
+    @property
+    def minutos_del_dia(self) -> int:
+        hh, mm = self.hora.split(":")
+        return int(hh) * 60 + int(mm)
+
+    def __str__(self) -> str:
+        return f"{self.hora} {self.huso}"

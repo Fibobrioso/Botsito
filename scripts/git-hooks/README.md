@@ -7,7 +7,13 @@ commit pasa. Se comprobo en una prueba cruzada el 2026-09-04. Tras cambiar el ho
 ejecutar `make hooks`.
 
 - `pre-commit`: rechaza commits directos en `main` (salvo `BOTSITO_ALLOW_MAIN=1`, que solo usa el
-  ritual de merge) y comprueba los contratos de importacion si hay `pyproject.toml`.
+  ritual de merge); rechaza modificar, renombrar o borrar `*.yaml` bajo `knowledge/evidence/` y
+  `knowledge/feedback/` (salvo `_*.yaml` generados), con rutas sin entrecomillar
+  (`core.quotepath=false`) para que un nombre con acento o espacio no se cuele; y comprueba los
+  contratos de importacion si hay `pyproject.toml`.
+
+La copia la hace `scripts/instalar_hooks.py` (Python, no `cp`/`chmod`): el `make` de Windows
+ejecuta las recetas con `cmd.exe` desde PowerShell.
 
 Los hooks son una comodidad local, no una garantia: se saltan con `--no-verify`. La garantia son los
 tests en CI (`tests/contract/`), que comprueban el indice y, desde F06/F09, el historial de git.

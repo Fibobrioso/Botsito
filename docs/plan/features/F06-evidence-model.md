@@ -19,8 +19,8 @@ escriben: se regeneran desde los items.
   `tipo` en `RULE_STATEMENT | PARAMETER | EXAMPLE_TRADE | NO_TRADE | MANAGEMENT | UNKNOWN`.
   `CONTRADICTION` solo existe en el fichero generado. `provenance` en `botsito | bot-v2`.
 - Regla de la seccion H: sin inferencias. `cita_literal` no puede estar vacia; `afirmacion` no puede
-  ser mas larga que 2x la cita (heuristica que obliga a mantenerse cerca del texto) y el revisor es
-  obligatorio.
+  ser mas larga que 2x la cita (heuristica que obliga a mantenerse cerca del texto; ajustada a
+  `2x + 40` durante la construccion para citas muy cortas) y el revisor es obligatorio.
 - `src/botsito/evidence/contradicciones.py`: items activos (no superseded) con el mismo `tema` y
   `valor` distinto generan `knowledge/evidence/_contradicciones.yaml`; el validador falla si el
   fichero no coincide con la regeneracion.

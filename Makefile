@@ -8,12 +8,11 @@ sync:
 	$(UV) sync --locked --group dev
 	$(MAKE) hooks
 
-# Los hooks se COPIAN a .git/hooks: asi protegen tambien al cambiar a una rama que no los tenga
-# (con core.hooksPath relativo, git omite en silencio el hook si el fichero no existe en la rama).
+# Los hooks se COPIAN al directorio de hooks de git: asi protegen tambien al cambiar a una rama
+# que no los tenga (con core.hooksPath relativo, git omite en silencio el hook si el fichero no
+# existe en la rama). Script Python y no cp/chmod: no depende del shell que make encuentre.
 hooks:
-	git config --unset core.hooksPath || true
-	cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
+	$(UV) run python scripts/instalar_hooks.py
 
 lint:
 	$(UV) run ruff check src tests

@@ -1,18 +1,27 @@
 name: ci
 on:
   push:
-    branches: ["main", "feature/**"]
-  pull_request:
+    branches: ["main", "feature/**", "fix/**"]
+  # Sin `pull_request`: cada push ya ejecuta el job; con ambos disparadores corria dos veces.
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true   # dos pushes seguidos: solo cuenta el ultimo
 jobs:
   python:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BOTSITO_EXIGE_FFPROBE: "1"   # en CI, sin ffprobe los tests de video fallan (no se omiten)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # los tests de integridad leen el historial (desde F06)
+      - run: git fetch --tags --force   # la trazabilidad se ancla en stable/F06 (y en su SHA)
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg   # F03: tests de ffprobe
-      - uses: astral-sh/setup-uv@v5
-      - run: uv python install 3.12
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install   # la version la fija .python-version (la misma que en local)
       - run: uv sync --locked --group dev
       - run: make check
   # El job de Windows (compilacion MQL5 y Strategy Tester) se anade en F29.

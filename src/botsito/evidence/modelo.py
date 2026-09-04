@@ -12,11 +12,14 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+from botsito.yaml_estricto import YamlError, cargar_yaml
 
 TIPOS = ("RULE_STATEMENT", "PARAMETER", "EXAMPLE_TRADE", "NO_TRADE", "MANAGEMENT", "UNKNOWN")
 MODALIDADES = ("audio", "pantalla", "ambas")
@@ -25,9 +28,23 @@ EXTRACTORES = ("humano", "llm")
 PROVENANCES = ("botsito", "bot-v2")
 FICHERO_CONTRADICCIONES = "_contradicciones.yaml"
 TOLERANCIA_DURACION_S = 1  # redondeo de ffprobe; no es un valor de negocio
-_ID = re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$")
-_TIEMPO = re.compile(r"^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$")
-_TEMA = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$")
+# re.ASCII: sin el, `\d` y `[a-z]` no bastan para excluir digitos Unicode en tiempos e ids.
+_ID = re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$", re.ASCII)
+_VIDEO_ID = re.compile(r"^[a-z0-9]+$", re.ASCII)
+CAMPOS_TEXTO = (
+    "video_id",
+    "t0",
+    "t1",
+    "cita_literal",
+    "afirmacion",
+    "tema",
+    "revisado_por",
+    "valor",
+    "supersede",
+    "notas",
+)
+_TIEMPO = re.compile(r"^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$", re.ASCII)
+_TEMA = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$", re.ASCII)
 CAMPOS_OBLIGATORIOS = (
     "video_id",
     "t0",
@@ -68,6 +85,30 @@ def _normalizar_texto(valor: object) -> str:
     return " ".join(str(valor).split())
 
 
+def _vacio(valor: object) -> bool:
+    """None, texto en blanco o coleccion vacia: no cuenta como campo presente."""
+    if valor is None:
+        return True
+    if isinstance(valor, str):
+        return not _normalizar_texto(valor)
+    if isinstance(valor, dict | list | tuple):
+        return len(valor) == 0
+    return False
+
+
+def limpiar_campos(campos: dict[str, Any]) -> dict[str, Any]:
+    """Textos normalizados y campos vacios fuera, ANTES de calcular el id (ver feedback)."""
+    limpio: dict[str, Any] = {}
+    for k, v in campos.items():
+        if k == "fotogramas" and isinstance(v, list | tuple):
+            v = [_normalizar_texto(x) for x in v if not _vacio(x)]
+        elif isinstance(v, str):
+            v = _normalizar_texto(v)
+        if not _vacio(v):
+            limpio[k] = v
+    return limpio
+
+
 @dataclass(frozen=True, slots=True)
 class EvidenceItem:
     id: str
@@ -101,8 +142,8 @@ def contenido_canonico(campos: dict[str, Any]) -> str:
     """Representacion estable del contenido (sin `id`): claves ordenadas, textos normalizados."""
     limpio: dict[str, Any] = {}
     for clave in (*CAMPOS_OBLIGATORIOS, *CAMPOS_OPCIONALES):
-        if clave not in campos or campos[clave] is None:
-            continue
+        if clave not in campos or _vacio(campos[clave]):
+            continue  # un campo en blanco no forma parte del contenido (ni del id)
         v = campos[clave]
         if clave == "fotogramas":
             limpio[clave] = sorted(_normalizar_texto(x) for x in v)
@@ -118,17 +159,27 @@ def hash_contenido(campos: dict[str, Any]) -> str:
 
 
 def calcular_id(campos: dict[str, Any]) -> str:
+    if _vacio(campos.get("t0")) or _vacio(campos.get("video_id")):
+        raise EvidenciaError("video_id y t0 son obligatorios para calcular el id")
     marca = formato_hhmmss(parse_tiempo(campos["t0"]))
     return f"ev-{campos['video_id']}-{marca}-{hash_contenido(campos)}"
 
 
 def _validar_campos(campos: dict[str, Any], origen: str) -> None:
-    faltan = [c for c in CAMPOS_OBLIGATORIOS if c not in campos or campos[c] in (None, "")]
+    faltan = [c for c in CAMPOS_OBLIGATORIOS if _vacio(campos.get(c))]
     if faltan:
         raise EvidenciaError(f"{origen}: faltan campos obligatorios {faltan}")
     desconocidos = set(campos) - set(CAMPOS_OBLIGATORIOS) - set(CAMPOS_OPCIONALES) - {"id"}
     if desconocidos:
         raise EvidenciaError(f"{origen}: campos desconocidos {sorted(desconocidos)}")
+    for clave in CAMPOS_TEXTO:
+        if campos.get(clave) is not None and not isinstance(campos[clave], str):
+            tipo_real = type(campos[clave]).__name__
+            raise EvidenciaError(f"{origen}: {clave} debe ser texto entre comillas, no {tipo_real}")
+    if not _VIDEO_ID.match(str(campos["video_id"])):
+        raise EvidenciaError(
+            f"{origen}: video_id {campos['video_id']!r} invalido (minusculas y digitos, p. ej. v4)"
+        )
     for clave, permitidos in (
         ("tipo", TIPOS),
         ("modalidad", MODALIDADES),
@@ -161,8 +212,6 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
         not isinstance(fotos, list) or not all(isinstance(x, str) and x for x in fotos)
     ):
         raise EvidenciaError(f"{origen}: fotogramas debe ser una lista de rutas")
-    if campos.get("valor") is not None and not isinstance(campos["valor"], str):
-        raise EvidenciaError(f"{origen}: valor debe ser texto entre comillas")
     if campos.get("supersede") is not None and not _ID.match(str(campos["supersede"])):
         raise EvidenciaError(f"{origen}: supersede debe ser un id de evidencia")
 
@@ -170,6 +219,8 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
 def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceItem:
     _validar_campos(campos, origen)
     esperado = calcular_id(campos)
+    if not _ID.match(esperado):
+        raise EvidenciaError(f"{origen}: id calculado {esperado!r} fuera de formato")
     declarado = campos.get("id")
     if declarado != esperado:
         raise EvidenciaError(
@@ -198,7 +249,10 @@ def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceIte
 
 
 def cargar_item(ruta: Path) -> EvidenceItem:
-    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    try:
+        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+    except YamlError as exc:
+        raise EvidenciaError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):
         raise EvidenciaError(f"{ruta.name}: no es un mapa YAML")
     item = item_desde_dict(doc, ruta.name)
@@ -208,10 +262,16 @@ def cargar_item(ruta: Path) -> EvidenceItem:
 
 
 def cargar_evidencia(directorio: Path) -> list[EvidenceItem]:
+    """Todos los items bajo `directorio`. Un fichero que no sea `*.yaml` (salvo README y `_*`)
+    es error: un `.yml` corrupto no puede pasar en silencio."""
+    if not directorio.is_dir():
+        raise EvidenciaError(f"no existe el directorio de evidencia {directorio}")
     items: list[EvidenceItem] = []
-    for ruta in sorted(directorio.rglob("*.yaml")):
-        if ruta.name == FICHERO_CONTRADICCIONES or ruta.name.startswith("_"):
+    for ruta in sorted(p for p in directorio.rglob("*") if p.is_file()):
+        if ruta.name == "README.md" or ruta.name.startswith("_"):
             continue
+        if ruta.suffix != ".yaml":
+            raise EvidenciaError(f"fichero inesperado en evidencia: {ruta.name} (solo *.yaml)")
         items.append(cargar_item(ruta))
     ids = [i.id for i in items]
     repetidos = sorted({i for i in ids if ids.count(i) > 1})
@@ -223,9 +283,19 @@ def cargar_evidencia(directorio: Path) -> list[EvidenceItem]:
 def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, Any]) -> list[str]:
     """La cita apunta a un video real, dentro de su duracion, y a fotogramas inventariados."""
     problemas: list[str] = []
-    duraciones = {v["video_id"]: float(v["duracion_s"]) for v in manifiesto.get("videos", [])}
-    rutas = {f["ruta"] for f in manifiesto.get("ficheros", [])}
-    ids = {i.id for i in items}
+    duraciones: dict[str, float] = {}
+    for v in manifiesto.get("videos") or []:
+        if not isinstance(v, dict):
+            problemas.append(f"manifiesto: entrada de video invalida {v!r}")
+            continue
+        d = v.get("duracion_s")
+        if isinstance(d, bool) or not isinstance(d, int | float):
+            problemas.append(f"manifiesto: duracion_s no numerica en {v.get('video_id')!r}")
+            continue
+        duraciones[str(v.get("video_id"))] = float(d)
+    rutas = {str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)}
+    por_id = {i.id: i for i in items}
+    ids = set(por_id)
     for it in items:
         if it.video_id not in duraciones:
             problemas.append(f"{it.id}: video {it.video_id!r} no esta en el manifiesto")
@@ -241,6 +311,28 @@ def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, A
             problemas.append(f"{it.id}: supersede a {it.supersede}, que no existe")
         if it.supersede == it.id:
             problemas.append(f"{it.id}: no puede supersederse a si mismo")
+        elif it.supersede in por_id and por_id[it.supersede].tema != it.tema:
+            problemas.append(
+                f"{it.id}: supersede a {it.supersede}, de tema {por_id[it.supersede].tema!r}, "
+                f"no {it.tema!r}; una correccion habla del mismo tema"
+            )
+    problemas += ciclos_de_supersede({i.id: i.supersede for i in items})
+    return problemas
+
+
+def ciclos_de_supersede(sucesor: dict[str, str | None]) -> list[str]:
+    """Un ciclo A->B->A desactivaria ambos sin que nadie lo pidiera."""
+    problemas: list[str] = []
+    for inicio in sorted(sucesor):
+        vistos = [inicio]
+        actual = sucesor.get(inicio)
+        while actual is not None and actual in sucesor:
+            if actual in vistos:
+                if actual == inicio and inicio == min(vistos):  # un aviso por ciclo
+                    problemas.append(f"ciclo de supersede: {' -> '.join([*vistos, actual])}")
+                break
+            vistos.append(actual)
+            actual = sucesor.get(actual)
     return problemas
 
 
@@ -250,11 +342,23 @@ def activos(items: list[EvidenceItem]) -> list[EvidenceItem]:
     return [i for i in items if i.id not in superseded]
 
 
-def escribir_item(directorio: Path, campos: dict[str, Any]) -> Path:
-    """Crea el fichero de un item nuevo con su id calculado. Nunca sobreescribe."""
-    campos = {k: v for k, v in campos.items() if v not in (None, "", [], ())}
+def escribir_item(
+    directorio: Path,
+    campos: dict[str, Any],
+    comprobar: Callable[[EvidenceItem], list[str]] | None = None,
+) -> Path:
+    """Crea el fichero de un item nuevo con su id calculado. Nunca sobreescribe.
+
+    `comprobar` recibe el item validado y devuelve problemas de contexto (video fuera del
+    manifiesto, fotograma no inventariado...). Con alguno, no se escribe nada.
+    """
+    campos = limpiar_campos(campos)
+    _validar_campos(campos, "nuevo")
     campos["id"] = calcular_id(campos)
     item = item_desde_dict(campos, "nuevo")
+    problemas = comprobar(item) if comprobar else []
+    if problemas:
+        raise EvidenciaError("; ".join(problemas))
     carpeta = directorio / item.video_id
     carpeta.mkdir(parents=True, exist_ok=True)
     ruta = carpeta / f"{item.id}.yaml"
@@ -270,4 +374,9 @@ def escribir_item(directorio: Path, campos: dict[str, Any]) -> Path:
         encoding="utf-8",
         newline="\n",
     )
+    try:
+        cargar_item(ruta)  # invariante: lo escrito se puede volver a cargar
+    except EvidenciaError:
+        ruta.unlink()
+        raise
     return ruta

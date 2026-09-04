@@ -1,1 +1,2 @@
-"""Feedback del trader (solo-anadir), aplicacion trazable, kit de elicitacion (F09-F10)."""
+"""Feedback del trader (solo-anadir) con procedencia y trazabilidad (F09); kit de
+elicitacion (F10)."""

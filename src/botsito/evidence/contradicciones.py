@@ -8,6 +8,7 @@ registro de feedback (F09) supersede a uno de los items, no editandolos.
 from __future__ import annotations
 
 import re
+from decimal import Decimal, InvalidOperation
 from itertools import groupby
 from pathlib import Path
 from typing import Any
@@ -16,13 +17,24 @@ import yaml
 
 from botsito.evidence.modelo import FICHERO_CONTRADICCIONES, EvidenceItem, activos
 
-_NUMERO_CON_COMA = re.compile(r"^-?\d+,\d+$")
+_NUMERO = re.compile(r"^(-?\d+(?:[.,]\d+)?)\s*(%?)$")
 
 
 def normalizar_valor(valor: str) -> str:
-    """'0,75' y '0.75' son el mismo valor; el resto se compara tal cual (ya sin espacios)."""
-    v = valor.strip().lower()
-    return v.replace(",", ".") if _NUMERO_CON_COMA.match(v) else v
+    """'0,75', '0.75' y '0.750' son el mismo valor; '75 %' y '75%' tambien.
+
+    El resto se compara en minusculas y sin espacios sobrantes.
+    """
+    v = " ".join(valor.split()).lower()
+    m = _NUMERO.match(v)
+    if not m:
+        return v
+    try:
+        numero = Decimal(m.group(1).replace(",", ".")).normalize()
+    except InvalidOperation:
+        return v
+    texto = format(numero, "f")
+    return f"{texto}%" if m.group(2) else texto
 
 
 CABECERA = (

@@ -53,8 +53,15 @@ def test_ida_y_vuelta_por_yaml_sin_perdida(
 ) -> None:
     ruta = tmp_path_factory.mktemp("yaml") / "p.yaml"
     ruta.write_text(
-        "parametros:\n  - nombre: x\n    tipo: fraccion\n    unidad: u\n    descripcion: d\n"
-        f'    estado: CONFIRMED\n    valor: "{d}"\n    fuente: {{tipo: decision, id: t}}\n',
+        "parametros:\n  - nombre: x\n    categoria: estrategia\n    tipo: fraccion\n    unidad: u\n"
+        f'    descripcion: d\n    estado: CONFIRMED\n    valor: "{d}"\n'
+        "    fuente: {tipo: decision, id: ADR-0001}\n",
         encoding="utf-8",
     )
     assert cargar_registro(ruta).fraccion("x") == Fraccion(d)
+
+
+def test_no_finito_rechazado() -> None:
+    for texto in ("NaN", "Infinity", "-Infinity", "sNaN"):
+        with pytest.raises(ValueError, match="no finito"):
+            Fraccion(texto)

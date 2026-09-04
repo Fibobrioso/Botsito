@@ -32,7 +32,10 @@ class Ajustes:
 def cargar_ajustes(ruta: Path, nombres_de_parametros: frozenset[str] = frozenset()) -> Ajustes:
     if not ruta.exists():
         raise AjustesError(f"no existe {ruta}")
-    documento = tomllib.loads(ruta.read_text(encoding="utf-8"))
+    try:
+        documento = tomllib.loads(ruta.read_text(encoding="utf-8"))
+    except (tomllib.TOMLDecodeError, UnicodeDecodeError) as exc:
+        raise AjustesError(f"{ruta.name}: TOML invalido ({exc})") from exc
     for seccion, contenido in documento.items():
         if seccion not in CLAVES_PERMITIDAS:
             raise AjustesError(f"seccion no permitida en ajustes: [{seccion}]")

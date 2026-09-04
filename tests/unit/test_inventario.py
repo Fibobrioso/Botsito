@@ -1,4 +1,5 @@
 import hashlib
+import os
 import shutil
 import warnings
 from pathlib import Path
@@ -44,6 +45,8 @@ umbral_hueco_segundos: 1
 
 def _requiere_ffprobe() -> None:
     if ffprobe_disponible() is None:
+        if os.environ.get("CI") or os.environ.get("BOTSITO_EXIGE_FFPROBE"):
+            pytest.fail("ffprobe no esta en PATH y en CI es obligatorio (instala ffmpeg)")
         warnings.warn("ffprobe no esta en PATH: test de video omitido", stacklevel=2)
         pytest.skip("ffprobe no disponible")
 
@@ -70,6 +73,9 @@ def test_huecos_en_indice() -> None:
     assert [(h["desde_s"], h["hasta_s"]) for h in huecos] == [(20.0, 300.0), (300.0, 600.0)]
     assert huecos_en_indice(texto, 1000) == []
     assert huecos_en_indice("basura\n", 5, duracion_s=10) == [
+        {"desde_s": 0.0, "hasta_s": 10.0, "segundos": 10.0}
+    ]
+    assert huecos_en_indice("a.jpg 0:00:10 1.2.3\n", 5, duracion_s=10) == [
         {"desde_s": 0.0, "hasta_s": 10.0, "segundos": 10.0}
     ]
 
@@ -186,3 +192,32 @@ def test_version_ffprobe_es_numero() -> None:
     from botsito.corpus.inventario import ffprobe_version
 
     assert ffprobe_version()[0].isdigit()
+
+
+def test_manifiesto_corrupto_es_problema_no_traceback(tmp_path: Path) -> None:
+    fuentes_ruta = tmp_path / "fuentes.yaml"
+    fuentes_ruta.write_text(FUENTES.format(bytes=1), encoding="utf-8")
+    fuentes = cargar_fuentes(fuentes_ruta)
+    problemas = validar_manifiesto({"version": 1, "raiz": "corpus", "ficheros": None}, fuentes)
+    assert any("falta v1" in p for p in problemas)
+    problemas = validar_manifiesto({"version": 1, "raiz": "corpus", "videos": [1]}, fuentes)
+    assert any("lista de mapas" in p for p in problemas)
+    problemas = validar_manifiesto(
+        {
+            "version": 1,
+            "raiz": "corpus",
+            "videos": [{"video_id": "v1", "bytes": 1, "duracion_s": "abc", "audio": True}],
+            "ficheros": [{"ruta": "a", "papel": "heredado_v2", "bytes": True}],
+        },
+        fuentes,
+    )
+    assert any("duracion_s debe ser numerica" in p for p in problemas)
+    assert any("bytes invalidos" in p for p in problemas)
+
+
+def test_fuentes_con_bytes_no_enteros(tmp_path: Path) -> None:
+    for bruto in ("1.5", "true"):
+        ruta = tmp_path / f"f_{bruto}.yaml"
+        ruta.write_text(FUENTES.format(bytes=bruto), encoding="utf-8")
+        with pytest.raises(InventarioError, match="entero"):
+            cargar_fuentes(ruta)

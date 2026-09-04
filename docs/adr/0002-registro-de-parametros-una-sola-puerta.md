@@ -27,8 +27,10 @@ que divergen sin que nadie lo vea.
 
 ## Por que elegimos esta opcion
 El estado del parametro es informacion de negocio (que sabe el trader, que es default) y debe viajar
-con el valor; el tipo evita el error de unidad en compilacion y en revision; el `Decimal` hace que
-Python y MQL5 (enteros de puntos) coincidan sin redondeo.
+con el valor; el tipo evita el error de unidad en compilacion y en revision; el `Decimal` evita el error
+binario del `float` en Python. No elimina el redondeo frente a MQL5: la regla de redondeo
+fraccion → puntos (0,75 × 137 puntos) se define en F18 y se exporta como racional en F28
+(auditoria extrema 2026-09-04).
 
 ## Por que descartamos las demas
 (1) Un comentario no falla en rojo. (2) Mezcla regimenes de cambio y crea dos puertas. (3) `float`
