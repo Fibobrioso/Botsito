@@ -285,6 +285,28 @@ def knowledge_validate(repo: Path) -> int:
         print(f"ERROR: {fallo}")
     if fallos_fb:
         return 1
+    from botsito.data.dataset import DIRECTORIO_MANIFIESTOS, DatasetError, cargar_manifiesto
+    from botsito.data.dataset import manifiestos as listar_manifiestos
+
+    fallos_datos: list[str] = []
+    try:
+        rutas_manifiestos = listar_manifiestos(repo)
+        for ruta in rutas_manifiestos:
+            cargar_manifiesto(ruta)
+    except DatasetError as exc:
+        fallos_datos.append(f"manifiesto de datos: {exc}")
+    historial_datos = modificaciones_en_historial(repo, DIRECTORIO_MANIFIESTOS)
+    if historial_datos is None and con_git:
+        motivo = no_evaluable or "git fallo"
+        fallos_datos.append(f"la guardia de historial de manifiestos no se pudo evaluar ({motivo})")
+    fallos_datos += [
+        f"manifiesto de datos modificado en el historial: {h}" for h in historial_datos or []
+    ]
+    for fallo in fallos_datos:
+        print(f"ERROR: {fallo}")
+    if fallos_datos:
+        return 1
+    print(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
     abiertas = len(contradicciones.detectar(items))
     print(f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente")
     print(
@@ -539,6 +561,139 @@ def feedback_pending(repo: Path) -> int:
     return 0
 
 
+def _carpeta_datos(repo: Path) -> Path:
+    """`[rutas].data` de settings.local.toml si existe; si no, la del ejemplo."""
+    from botsito.config.ajustes import AjustesError, cargar_ajustes
+
+    for nombre in ("settings.local.toml", "settings.example.toml"):
+        ruta = repo / "config" / nombre
+        if ruta.exists():
+            try:
+                return repo / cargar_ajustes(ruta).data
+            except AjustesError as exc:
+                raise SystemExit(f"ERROR: {nombre}: {exc}") from exc
+    return repo / "data"
+
+
+def _parse_anclaje(texto: str) -> object:
+    """`HH:MM Zona/IANA` -> HoraLocal. La zona la valida la agregacion."""
+    import re as _re
+
+    from botsito.domain.valores import HoraLocal
+
+    m = _re.fullmatch(r"\s*([01]\d|2[0-3]):([0-5]\d)\s+(\S+)\s*", texto, _re.ASCII)
+    if not m:
+        raise SystemExit(f"ERROR: --anclaje debe ser 'HH:MM Zona/IANA', no {texto!r}")
+    return HoraLocal(f"{m.group(1)}:{m.group(2)}", m.group(3))
+
+
+def data_download(repo: Path, args: argparse.Namespace) -> int:
+    """Congela un dataset M1 (descarga por dias, CSV por mes, manifiesto inmutable)."""
+    from datetime import UTC, date, datetime
+
+    from botsito.data.dataset import DatasetError, congelar
+    from botsito.data.dukascopy import DescargaError, FormatoBi5Error, descarga_http
+
+    if not (repo / "knowledge").is_dir():
+        print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
+        return 2
+    try:
+        desde, hasta = date.fromisoformat(args.desde), date.fromisoformat(args.hasta)
+    except ValueError as exc:
+        print(f"ERROR: fechas AAAA-MM-DD: {exc}")
+        return 1
+    commit = _git(repo, "rev-parse", "--short", "HEAD")
+    try:
+        congelado = congelar(
+            repo,
+            _carpeta_datos(repo),
+            args.dataset,
+            args.simbolo,
+            args.escala,
+            desde,
+            hasta,
+            descarga_http,
+            hoy=datetime.now(UTC).date(),
+            reemplaza_a=args.reemplaza_a,
+            generado_por=commit,
+        )
+    except (DatasetError, DescargaError, FormatoBi5Error) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    m = congelado.manifiesto
+    print(f"OK: {congelado.ruta_manifiesto.relative_to(repo).as_posix()} ({m['dataset_id']})")
+    d = m["dias"]
+    print(
+        f"  {d['velas']} velas M1 en {len(m['ficheros'])} ficheros; dias presentes "
+        f"{d['presentes']}, ausentes {len(d['ausentes'])}, sin datos {len(d['sin_datos'])}; "
+        f"planas descartadas "
+        f"{d['descartadas_planas_sin_volumen']} ({d['descartadas_en_laborable']} en laborable); "
+        f"huecos >= 60 min: {len(m['huecos']['mayores'])}"
+    )
+    print("Commit del manifiesto con Fuente: ADR-0005 (es inmutable: no se edita)")
+    return 0
+
+
+def data_check(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.data.dataset import DatasetError, buscar_manifiesto, cargar_manifiesto, comprobar
+
+    try:
+        manifiesto = cargar_manifiesto(buscar_manifiesto(repo, args.dataset))
+    except DatasetError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    problemas = comprobar(manifiesto, _carpeta_datos(repo), hashes=args.hashes)
+    for p in problemas:
+        print(f"ERROR: {p}")
+    if not problemas:
+        modo = "hashes" if args.hashes else "tamanos"
+        print(f"OK: {manifiesto['dataset_id']} coincide con el disco ({modo})")
+    return 1 if problemas else 0
+
+
+def data_aggregate(repo: Path, args: argparse.Namespace) -> int:
+    """Agrega M1 de un dataset a `--periodo` minutos con `--anclaje` explicito.
+
+    El anclaje va por argumento y no del registro: `anclaje_h4` sigue UNKNOWN (A-9). Las velas
+    de borde no cerradas se omiten salvo `--incluir-incompletas`.
+    """
+    from datetime import date
+
+    from botsito.data.agregacion import AnclajeError, agregar
+    from botsito.data.dataset import (
+        DatasetError,
+        buscar_manifiesto,
+        cargar_manifiesto,
+        cargar_serie,
+    )
+    from botsito.data.velas import VelasCsvError, escribir_csv
+    from botsito.domain.valores import HoraLocal
+
+    anclaje = _parse_anclaje(args.anclaje)
+    assert isinstance(anclaje, HoraLocal)
+    try:
+        desde = date.fromisoformat(args.desde) if args.desde else None
+        hasta = date.fromisoformat(args.hasta) if args.hasta else None
+        manifiesto = cargar_manifiesto(buscar_manifiesto(repo, args.dataset))
+        serie = cargar_serie(manifiesto, _carpeta_datos(repo), desde, hasta)
+        velas = agregar(list(serie.velas), args.periodo, anclaje)
+    except (DatasetError, VelasCsvError, AnclajeError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    omitidas = [v for v in velas if not v.completa]
+    if not args.incluir_incompletas:
+        velas = [v for v in velas if v.completa]
+    texto = escribir_csv(velas, agregadas=True)
+    if args.salida:
+        Path(args.salida).write_text(texto, encoding="utf-8", newline="\n")
+        print(f"OK: {len(velas)} velas de {args.periodo} min en {args.salida}")
+    else:
+        sys.stdout.write(texto)
+    if omitidas and not args.incluir_incompletas:
+        print(f"AVISO: {len(omitidas)} velas de borde sin cerrar omitidas", file=sys.stderr)
+    return 0
+
+
 def config_validate(repo: Path) -> int:
     """Los ficheros de ajustes reales no contienen claves del registro ni secciones ajenas."""
     from botsito.config.ajustes import AjustesError, cargar_ajustes
@@ -637,6 +792,31 @@ def build_parser() -> argparse.ArgumentParser:
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
     fbt.add_argument("identificador")
     fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
+    datos = sub.add_parser("data", help="datasets de velas congelados (F15)")
+    datos_sub = datos.add_subparsers(dest="data_cmd", required=True)
+    dl = datos_sub.add_parser("download", help="descarga M1 por dias y congela un dataset")
+    dl.add_argument("--dataset", required=True, help="nombre (el id anade -hash8)")
+    dl.add_argument("--simbolo", required=True, help="simbolo del proveedor (mayusculas)")
+    dl.add_argument("--escala", required=True, type=int, help="puntos por unidad de precio")
+    dl.add_argument("--desde", required=True, help="AAAA-MM-DD")
+    dl.add_argument("--hasta", required=True, help="AAAA-MM-DD (anterior a hoy)")
+    dl.add_argument("--reemplaza-a", dest="reemplaza_a", help="dataset_id que este sustituye")
+    dc = datos_sub.add_parser("check", help="compara un dataset con el disco")
+    dc.add_argument("--dataset", required=True, help="dataset_id o nombre")
+    dc.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
+    da = datos_sub.add_parser("aggregate", help="agrega M1 con anclaje de reloj de pared")
+    da.add_argument("--dataset", required=True, help="dataset_id o nombre")
+    da.add_argument("--periodo", required=True, type=int, help="minutos (divisor de 1440)")
+    da.add_argument("--anclaje", required=True, help="'HH:MM Zona/IANA' (A-9 sigue abierta)")
+    da.add_argument("--desde", help="AAAA-MM-DD (dia UTC inclusive)")
+    da.add_argument("--hasta", help="AAAA-MM-DD (dia UTC inclusive)")
+    da.add_argument("--salida", help="fichero CSV; sin el, escribe en la salida estandar")
+    da.add_argument(
+        "--incluir-incompletas",
+        dest="incluir_incompletas",
+        action="store_true",
+        help="no omitir las velas de borde sin cerrar",
+    )
     conf = sub.add_parser("config", help="ajustes de entorno")
     conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
     conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
@@ -668,6 +848,12 @@ def main(argv: list[str] | None = None) -> int:
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":
         return corpus_check(args.repo, args.hashes)
+    if args.cmd == "data" and args.data_cmd == "download":
+        return data_download(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "check":
+        return data_check(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "aggregate":
+        return data_aggregate(args.repo, args)
     parser.print_help()
     return 0
 

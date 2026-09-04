@@ -9,9 +9,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
-from typing import Self
+from typing import NewType, Self
 
 CIEN = Decimal(100)
+# Precio o distancia en puntos del instrumento (enteros; la escala la declara la serie o el
+# registro). F18 anade la regla de redondeo fraccion -> puntos (H.2).
+Puntos = NewType("Puntos", int)
 
 
 def _a_decimal(valor: Decimal | int | str) -> Decimal:

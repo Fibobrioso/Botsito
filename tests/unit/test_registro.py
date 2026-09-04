@@ -150,9 +150,15 @@ def test_hora_invalida(tmp_path: Path) -> None:
         cargar_registro(_escribir(tmp_path, contenido))
 
 
-def test_fichero_real_vacio_de_valores(repo: Path) -> None:
+def test_fichero_real_sin_valores_de_estrategia(repo: Path) -> None:
+    """Hasta F11 ningun parametro de estrategia tiene valor: todo lo que el trader debe confirmar
+    sigue UNKNOWN. Los de entorno (F15: husos) se citan por ADR."""
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    assert r.parametros == {}, "en F02 el registro no puede contener valores"
+    for nombre in r.por_categoria("estrategia"):
+        assert r.parametros[nombre].estado is Estado.UNKNOWN, f"{nombre} tiene valor antes de F11"
+    for nombre, p in r.parametros.items():
+        if p.categoria != "estrategia":
+            assert p.fuente is not None and p.fuente.tipo == "decision", nombre
 
 
 def test_decimal_no_es_float(tmp_path: Path) -> None:

@@ -27,6 +27,8 @@ TEXTOS_PROHIBIDOS: dict[re.Pattern[str], str] = {
     re.compile(r"\b(07|11|15):00\b"): "ventana operativa (RN-002)",
     re.compile(r"\b1:3\b"): "objetivo riesgo/beneficio (RN-024)",
     re.compile(r"\bEURUSD\b"): "instrumento",
+    re.compile(r"Europe/Madrid"): "huso del trader (huso_operativa en el registro)",
+    re.compile(r"America/New_York"): "reloj de servidor (anclaje por parametro, ADR-0005)",
 }
 
 
