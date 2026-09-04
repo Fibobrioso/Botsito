@@ -131,10 +131,88 @@ def knowledge_validate(repo: Path) -> int:
         return 1
     pendientes = registro.no_confirmados()
     print(
-        f"OK: registro con {len(registro.parametros)} parametros"
-        f" ({len(pendientes)} sin confirmar) (validadores de evidencia desde F06)"
+        f"OK: registro con {len(registro.parametros)} parametros ({len(pendientes)} sin confirmar)"
     )
+    from botsito.corpus.inventario import (
+        InventarioError,
+        cargar_fuentes,
+        cargar_manifiesto,
+        validar_manifiesto,
+    )
+
+    try:
+        fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
+        ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
+        if ruta_manifiesto.exists():
+            problemas = validar_manifiesto(cargar_manifiesto(ruta_manifiesto), fuentes)
+            for p in problemas:
+                print(f"ERROR: manifiesto: {p}")
+            if problemas:
+                return 1
+            print(f"OK: manifiesto del corpus coherente con {len(fuentes.videos)} videos esperados")
+        else:
+            print("AVISO: knowledge/corpus/manifest.yaml no existe (botsito corpus inventory)")
+    except InventarioError as exc:
+        print(f"ERROR: fuentes del corpus: {exc}")
+        return 1
+    print("(validadores de evidencia desde F06)")
     return 0
+
+
+def corpus_inventory(repo: Path, sin_hash: bool) -> int:
+    """Genera knowledge/corpus/manifest.yaml desde fuentes.yaml y el disco."""
+    from botsito.corpus.inventario import (
+        InventarioError,
+        cargar_fuentes,
+        escribir_manifiesto,
+        inventariar,
+        validar_manifiesto,
+    )
+
+    try:
+        fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
+        manifiesto = inventariar(repo, fuentes, hashear=not sin_hash)
+    except InventarioError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    problemas = validar_manifiesto(manifiesto, fuentes)
+    escribir_manifiesto(manifiesto, repo / "knowledge" / "corpus" / "manifest.yaml")
+    for p in problemas:
+        print(f"AVISO: {p}")
+    r = manifiesto["resumen"]
+    print(
+        "OK: manifiesto escrito · "
+        + " · ".join(f"{k}: {v['ficheros']} ficheros, {v['bytes']:,} bytes" for k, v in r.items())
+    )
+    for i in manifiesto["indices_heredados"]:
+        print(f"  {i['ruta']}: {i['fotogramas']} fotogramas, {len(i['huecos'])} huecos > umbral")
+    return 1 if problemas else 0
+
+
+def corpus_check(repo: Path, hashes: bool) -> int:
+    """Compara el manifiesto con el disco (tamanos; con --hashes tambien SHA-256)."""
+    from botsito.corpus.inventario import (
+        InventarioError,
+        cargar_fuentes,
+        cargar_manifiesto,
+        comprobar_contra_disco,
+        validar_manifiesto,
+    )
+
+    try:
+        fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
+        manifiesto = cargar_manifiesto(repo / "knowledge" / "corpus" / "manifest.yaml")
+    except InventarioError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    problemas = validar_manifiesto(manifiesto, fuentes) + comprobar_contra_disco(
+        manifiesto, repo, hashes=hashes
+    )
+    for p in problemas:
+        print(f"ERROR: {p}")
+    if not problemas:
+        print(f"OK: el corpus coincide con el manifiesto ({'hashes' if hashes else 'tamanos'})")
+    return 1 if problemas else 0
 
 
 def config_validate(repo: Path) -> int:
@@ -172,6 +250,12 @@ def build_parser() -> argparse.ArgumentParser:
     know = sub.add_parser("knowledge", help="base de conocimiento")
     know_sub = know.add_subparsers(dest="knowledge_cmd", required=True)
     know_sub.add_parser("validate", help="valida knowledge/ (registro de parametros en F02)")
+    corpus = sub.add_parser("corpus", help="inventario del corpus")
+    corpus_sub = corpus.add_subparsers(dest="corpus_cmd", required=True)
+    inv = corpus_sub.add_parser("inventory", help="genera knowledge/corpus/manifest.yaml")
+    inv.add_argument("--sin-hash", action="store_true", help="no calcular SHA-256 (rapido)")
+    chk = corpus_sub.add_parser("check", help="compara el manifiesto con el disco")
+    chk.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
     conf = sub.add_parser("config", help="ajustes de entorno")
     conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
     conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
@@ -189,6 +273,10 @@ def main(argv: list[str] | None = None) -> int:
         return knowledge_validate(args.repo)
     if args.cmd == "config" and args.config_cmd == "validate":
         return config_validate(args.repo)
+    if args.cmd == "corpus" and args.corpus_cmd == "inventory":
+        return corpus_inventory(args.repo, args.sin_hash)
+    if args.cmd == "corpus" and args.corpus_cmd == "check":
+        return corpus_check(args.repo, args.hashes)
     parser.print_help()
     return 0
 
