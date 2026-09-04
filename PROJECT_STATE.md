@@ -30,13 +30,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
-FASE 1 · Base de conocimiento (F03-F08) — no abierta todavia
+FASE 1 · Base de conocimiento (F03-F08)
 
 ## Current Feature
-— (F02 integrada; F03 pendiente de abrir: requiere los videos en corpus/)
+F03 · corpus-inventory
 
 ## Current Branch
-main
+feature/F03-corpus-inventory
 
 ## Stable Main State
 dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos, mypy strict, state check, config validate. CI Ubuntu verde. Tag stable/F02.
@@ -49,17 +49,19 @@ dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos,
 - F02 · config-and-parameter-registry · validada por el usuario el 2026-09-04 · docs/validation/F02-config-and-parameter-registry.md · tag stable/F02
 
 ## Features Waiting for Validation
-—
+- F03 · corpus-inventory · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F03-corpus-inventory.md
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables); `config/registro.py` (registro de parametros con procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
-- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro) y `config validate` (ajustes contra el registro).
+- CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion), `knowledge validate` (registro + manifiesto del corpus), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
+- `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003. `.gitattributes` con LF.
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
+- knowledge/corpus/fuentes.yaml (fuentes esperadas, ids de Drive) · knowledge/corpus/manifest.yaml (GENERADO) · src/botsito/corpus/inventario.py
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; vacio hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
 - docs/adr/0002-registro-de-parametros-una-sola-puerta.md · docs/adr/0003-hooks-copiados-sin-framework-pre-commit.md
@@ -67,7 +69,7 @@ dc3384d · merge de F02. make check verde: 67 casos (65 funciones), 3 contratos,
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-65 funciones de test (65 casos de pytest: una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+76 funciones de test (una parametrizada x3) · unit: project_state, adr, tree, cli, valores, registro, ajustes, inventario · contract: import_contracts, no_business_literals, repository_integrity · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -120,12 +122,17 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 F03 · corpus-inventory (`feature/F03-corpus-inventory`)
 
 ## Next Action
-Usuario descarga los 4 videos a corpus/ -> abrir feature/F03-corpus-inventory -> brief -> implementar (manifiesto con tamano, hash, duracion ffprobe, huecos de fotogramas) -> informe -> WAITING_FOR_USER_VALIDATION.
+Usuario valida F03 -> merge --no-ff a main -> tag stable/F03 -> push -> abrir feature/F06-evidence-model (orden E: F03, F06, F09 antes de F04/F05).
 
 ## Last Stable Commit
 dc3384d · merge: F02 config-and-parameter-registry validado por el usuario · tag stable/F02
 
 ## Change Log
+- 2026-09-04 · push F03 tras auditoria; CI Ubuntu verde con ffmpeg (run 33891193380)
+- 2026-09-04 · auditoria de F03: orden POSIX del manifiesto (Windows ordenaba sin mayusculas), corpus check detecta ficheros no inventariados, esquema de ficheros validado, ffmpeg en CI, xlsx/pdf binarios; 76 funciones de test
+- 2026-09-04 · push de la rama F03; CI Ubuntu verde (run 33890615366)
+- 2026-09-04 · F03 construida: fuentes.yaml, inventario.py, manifest.yaml real (4 videos con hash y duracion, 477 heredados, 17 adicionales), corpus inventory/check; 74 funciones de test; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · corpus recibido en local (4 videos identicos a Drive, _procesado heredado, material adicional: 2 xlsx FXReplay + 15 capturas); movido a corpus/ (gitignored); ffmpeg 9 instalado; rama feature/F03-corpus-inventory abierta
 - 2026-09-04 · F02 VALIDADA por el usuario; merge --no-ff a main (dc3384d); tag stable/F02; FASE 0 CERRADA
 - 2026-09-04 · segunda auditoria de F02: explicit-preview-rules; botsito config validate en make check; 65 funciones / 67 casos
 - 2026-09-04 · auditoria de F02: prefijo duplicado en errores, limites con float, accesores tipados, property YAML; 63 funciones / 65 casos

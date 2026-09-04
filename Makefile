@@ -2,7 +2,7 @@
 UV ?= uv
 export PYTHONHASHSEED = 0
 
-.PHONY: sync hooks check lint types test contracts regress state config
+.PHONY: sync hooks check lint types test contracts regress state config corpus
 
 sync:
 	$(UV) sync --locked --group dev
@@ -33,6 +33,10 @@ state:
 
 config:
 	$(UV) run botsito config validate
+
+# Solo donde exista el corpus (no en CI): compara el manifiesto con el disco.
+corpus:
+	$(UV) run botsito corpus check --hashes
 
 check: lint types contracts test state config
 

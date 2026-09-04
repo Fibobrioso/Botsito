@@ -1,0 +1,44 @@
+# Fuentes esperadas del corpus (F03). Escrito a mano; es el ancla para re-descargar y verificar.
+# `botsito corpus inventory` falla si un video original falta o su tamano en disco no coincide.
+# Los ids y tamanos proceden de los metadatos de Google Drive (carpeta "Estrategia del trader",
+# id 1rjIf-ADQ8Rqy7zLjM3j8AlSYT94LlQ0e) leidos el 2026-09-03.
+
+raiz: "corpus/Estrategia del trader"
+
+videos:
+  - video_id: v1
+    fichero: "2026-08-20 22-33-04.mp4"
+    drive_id: 1zgq2HLBxUbUDdVt6a1mslZpbmC-7RZSh
+    bytes: 205388829
+    fecha_grabacion: "2026-08-20"
+    naturaleza: recap del dia y de la vispera, monologo del trader sobre TradingView replay
+  - video_id: v2
+    fichero: "Grabación de pantalla 2026-08-03 091221.mp4"
+    drive_id: 1gjQSLfQxHIPi0vNZM_t94Wf-YhGuz9jy
+    bytes: 4523658893
+    fecha_grabacion: "2026-08-03"
+    naturaleza: llamada de descubrimiento por Discord; el trader explica el modelo
+  - video_id: v3
+    fichero: "Grabación de pantalla 2026-08-06 160450.mp4"
+    drive_id: 1Lc9TcLfNzPkDnvEvVxHu3FX8tDs2nQ84
+    bytes: 3936315562
+    fecha_grabacion: "2026-08-06"
+    naturaleza: el trader responde la ficha de 12 reglas y dibuja ejemplos
+  - video_id: v4
+    fichero: "Grabación de pantalla 2026-08-30 170429.mp4"
+    drive_id: 1qR3gxygeZ76KD6f47E4aSHZMKqsRTDsL
+    bytes: 5128057400
+    fecha_grabacion: "2026-08-30"
+    naturaleza: entrevista con dos cuestionarios sobre el backtest de enero en FXReplay
+
+carpetas:
+  - ruta: "_procesado"
+    papel: heredado_v2
+    descripcion: material procesado por el proyecto anterior (transcripciones Whisper tiny, fotogramas
+      por cambio de escena, informes). Solo indice de navegacion y control de calidad; nunca se cita.
+  - ruta: "Material adicional de su operativa"
+    papel: material_adicional
+    descripcion: exportaciones de FXReplay (enero y agosto 2026) y capturas de balance enviadas por
+      el trader el 2026-09-03. Entrada de F07 (evidencia) y F26 (fidelidad).
+
+umbral_hueco_segundos: 180
