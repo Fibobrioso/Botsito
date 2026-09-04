@@ -44,7 +44,7 @@ tests/{integration,golden,regression,differential}/README.md
 - `.gitattributes` (`* text=auto eol=lf`, binarios declarados); indice renormalizado: cero ficheros con CRLF.
 - `tests/contract/test_repository_integrity.py`: ficheros esperados presentes en `git ls-files`, sin CRLF,
   sin rutas ignoradas imprevistas, patrones de `.gitignore` anclados. Nacio de dos incidentes reales.
-- Hook local `scripts/git-hooks/pre-commit` (instalado por `make sync` via `core.hooksPath`): rechaza
+- Hook local `scripts/git-hooks/pre-commit` (copiado a `.git/hooks/` por `make sync`; no se usa `core.hooksPath`): rechaza
   commits directos en `main` salvo `BOTSITO_ALLOW_MAIN=1`; comprueba contratos de importacion.
 - CI y `make sync` con `uv sync --locked`; `PYTHONHASHSEED=0` exportado por el Makefile.
 - `docs/plan/MASTER_PLAN.html` marcado como instantanea congelada; `MASTER_PLAN.md` es la fuente viva,
@@ -101,7 +101,7 @@ Hook anti-main probado en un repositorio temporal (ver seccion Resultados).
 | Entorno | Resultado |
 |---|---|
 | Clon limpio desde el repo local, `autocrlf=false`, `uv sync --locked`, `make sync`, `make check` | verde (26 tests, 3 contratos, mypy 28 ficheros) |
-| Clon limpio con `core.autocrlf=true` (Windows por defecto) | copia de trabajo sin CRLF gracias a `.gitattributes`; tests verdes; hook con LF, acepta en feature y rechaza `main` |
+| Clon limpio con `core.autocrlf=true` (Windows por defecto) | copia de trabajo sin CRLF gracias a `.gitattributes`; tests verdes; hook con LF. **Hallazgo:** con `core.hooksPath` relativo el hook no existia en `main` (punto cero) y git lo omitio en silencio: el commit en `main` fue aceptado. Corregido: `make hooks` copia a `.git/hooks/`. Reprobado: rechaza `main`, acepta con `BOTSITO_ALLOW_MAIN=1`, acepta en feature |
 | HEAD separado (checkout de CI en pull request) | `state check` avisa y devuelve 0; tests de CLI verdes |
 | PowerShell 7 en vez de Git Bash | ruff, mypy, contratos, pytest, `state check` y `make check` verdes |
 | Python 3.13 (entorno aislado) ademas de 3.12 | pytest, mypy y contratos verdes |
@@ -118,9 +118,8 @@ Todos los del alcance: estructura, CLI, contratos declarados y verificados, docu
 ## Que casos todavia no funcionan
 - CI en GitHub no se ha ejecutado (no hay push por decision del usuario). El workflow es el mismo
   `make check`; se verificara en el primer push.
-- `.pre-commit-config.yaml` (framework pre-commit) queda como opcion; los hooks activos son los de
-  `scripts/git-hooks/` via `core.hooksPath`. Si se instala el framework, ambos no pueden coexistir
-  sin ajustar `hooksPath`: decision para F02.
+- `.pre-commit-config.yaml` (framework pre-commit) queda como opcion; los hooks activos son la copia de
+  `scripts/git-hooks/` en `.git/hooks/`. Instalar el framework sobrescribiria esa copia: decision para F02.
 
 ## Limitaciones
 `botsito knowledge validate` no valida contenido (no hay contenido). El job de Windows para MQL5 no

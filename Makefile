@@ -8,8 +8,12 @@ sync:
 	$(UV) sync --locked --group dev
 	$(MAKE) hooks
 
+# Los hooks se COPIAN a .git/hooks: asi protegen tambien al cambiar a una rama que no los tenga
+# (con core.hooksPath relativo, git omite en silencio el hook si el fichero no existe en la rama).
 hooks:
-	git config core.hooksPath scripts/git-hooks
+	git config --unset core.hooksPath || true
+	cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
 
 lint:
 	$(UV) run ruff check src tests

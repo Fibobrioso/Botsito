@@ -1,6 +1,6 @@
-# OPCIONAL. Los hooks activos del proyecto son los de scripts/git-hooks/ (core.hooksPath, via make sync).
-# Este fichero describe los mismos pasos para quien prefiera el framework pre-commit; si se instala,
-# hay que desactivar core.hooksPath (git config --unset core.hooksPath). Decision pendiente en F02.
+# OPCIONAL. Los hooks activos del proyecto son la copia de scripts/git-hooks/ en .git/hooks (make sync).
+# Este fichero describe los mismos pasos para quien prefiera el framework pre-commit; instalarlo
+# sobrescribe .git/hooks/pre-commit. Decision pendiente en F02.
 repos:
   - repo: local
     hooks:
