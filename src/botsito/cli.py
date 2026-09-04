@@ -155,7 +155,32 @@ def knowledge_validate(repo: Path) -> int:
     except InventarioError as exc:
         print(f"ERROR: fuentes del corpus: {exc}")
         return 1
-    print("(validadores de evidencia desde F06)")
+    from botsito.evidence import contradicciones
+    from botsito.evidence.historial import modificaciones_en_historial
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto
+
+    directorio = repo / "knowledge" / "evidence"
+    try:
+        items = cargar_evidencia(directorio)
+    except EvidenciaError as exc:
+        print(f"ERROR: evidencia: {exc}")
+        return 1
+    fallos: list[str] = []
+    if ruta_manifiesto.exists():
+        fallos += validar_contra_manifiesto(items, cargar_manifiesto(ruta_manifiesto))
+    fallos += contradicciones.validar_fichero(directorio, items)
+    historial = modificaciones_en_historial(repo)
+    if historial:
+        fallos += [f"evidencia modificada en el historial: {h}" for h in historial]
+    for fallo in fallos:
+        print(f"ERROR: {fallo}")
+    if fallos:
+        return 1
+    abiertas = len(contradicciones.detectar(items))
+    print(
+        f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas, "
+        "historial intacto"
+    )
     return 0
 
 
@@ -215,6 +240,54 @@ def corpus_check(repo: Path, hashes: bool) -> int:
     return 1 if problemas else 0
 
 
+def evidence_new(repo: Path, args: argparse.Namespace) -> int:
+    """Crea un item de evidencia con su id calculado (nunca sobreescribe)."""
+    from botsito.evidence.modelo import EvidenciaError, escribir_item
+
+    campos = {
+        "video_id": args.video,
+        "t0": args.t0,
+        "t1": args.t1,
+        "modalidad": args.modalidad,
+        "tipo": args.tipo,
+        "cita_literal": args.cita,
+        "afirmacion": args.afirmacion,
+        "tema": args.tema,
+        "valor": args.valor,
+        "confianza": args.confianza,
+        "extractor": args.extractor,
+        "revisado_por": args.revisado_por,
+        "provenance": args.provenance,
+        "fotogramas": args.fotograma or [],
+        "supersede": args.supersede,
+        "notas": args.notas,
+    }
+    try:
+        ruta = escribir_item(repo / "knowledge" / "evidence", campos)
+    except EvidenciaError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"OK: {ruta.relative_to(repo).as_posix()}")
+    print("Regenera las contradicciones: botsito evidence contradictions")
+    return 0
+
+
+def evidence_contradictions(repo: Path) -> int:
+    from botsito.evidence import contradicciones
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
+
+    directorio = repo / "knowledge" / "evidence"
+    try:
+        items = cargar_evidencia(directorio)
+    except EvidenciaError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    ruta = contradicciones.escribir(directorio, items)
+    n = len(contradicciones.detectar(items))
+    print(f"OK: {ruta.relative_to(repo).as_posix()} con {n} contradicciones abiertas")
+    return 0
+
+
 def config_validate(repo: Path) -> int:
     """Los ficheros de ajustes reales no contienen claves del registro ni secciones ajenas."""
     from botsito.config.ajustes import AjustesError, cargar_ajustes
@@ -256,6 +329,37 @@ def build_parser() -> argparse.ArgumentParser:
     inv.add_argument("--sin-hash", action="store_true", help="no calcular SHA-256 (rapido)")
     chk = corpus_sub.add_parser("check", help="compara el manifiesto con el disco")
     chk.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
+    ev = sub.add_parser("evidence", help="evidencia del corpus")
+    ev_sub = ev.add_subparsers(dest="evidence_cmd", required=True)
+    nuevo = ev_sub.add_parser("new", help="crea un item de evidencia con id calculado")
+    nuevo.add_argument("--video", required=True)
+    nuevo.add_argument("--t0", required=True, help="h:mm:ss[.d]")
+    nuevo.add_argument("--t1", required=True, help="h:mm:ss[.d]")
+    nuevo.add_argument("--modalidad", required=True, choices=["audio", "pantalla", "ambas"])
+    nuevo.add_argument(
+        "--tipo",
+        required=True,
+        choices=[
+            "RULE_STATEMENT",
+            "PARAMETER",
+            "EXAMPLE_TRADE",
+            "NO_TRADE",
+            "MANAGEMENT",
+            "UNKNOWN",
+        ],
+    )
+    nuevo.add_argument("--cita", required=True, help="cita literal")
+    nuevo.add_argument("--afirmacion", required=True)
+    nuevo.add_argument("--tema", required=True, help="p. ej. stop.nivel")
+    nuevo.add_argument("--valor")
+    nuevo.add_argument("--confianza", required=True, choices=["alta", "media", "baja"])
+    nuevo.add_argument("--extractor", required=True, choices=["humano", "llm"])
+    nuevo.add_argument("--revisado-por", required=True, dest="revisado_por")
+    nuevo.add_argument("--provenance", default="botsito", choices=["botsito", "bot-v2"])
+    nuevo.add_argument("--fotograma", action="append", help="ruta del manifiesto; repetible")
+    nuevo.add_argument("--supersede")
+    nuevo.add_argument("--notas")
+    ev_sub.add_parser("contradictions", help="regenera knowledge/evidence/_contradicciones.yaml")
     conf = sub.add_parser("config", help="ajustes de entorno")
     conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
     conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
@@ -273,6 +377,10 @@ def main(argv: list[str] | None = None) -> int:
         return knowledge_validate(args.repo)
     if args.cmd == "config" and args.config_cmd == "validate":
         return config_validate(args.repo)
+    if args.cmd == "evidence" and args.evidence_cmd == "new":
+        return evidence_new(args.repo, args)
+    if args.cmd == "evidence" and args.evidence_cmd == "contradictions":
+        return evidence_contradictions(args.repo)
     if args.cmd == "corpus" and args.corpus_cmd == "inventory":
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":
