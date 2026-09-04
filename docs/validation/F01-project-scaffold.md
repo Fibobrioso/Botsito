@@ -97,6 +97,16 @@ Hook anti-main probado en un repositorio temporal (ver seccion Resultados).
 - `botsito state check`: OK sobre la rama actual.
 - Hook pre-commit: rechaza commit en `main` de un repositorio temporal; acepta con `BOTSITO_ALLOW_MAIN=1`.
 
+## Pruebas cruzadas (2026-09-04)
+| Entorno | Resultado |
+|---|---|
+| Clon limpio desde el repo local, `autocrlf=false`, `uv sync --locked`, `make sync`, `make check` | verde (26 tests, 3 contratos, mypy 28 ficheros) |
+| Clon limpio con `core.autocrlf=true` (Windows por defecto) | copia de trabajo sin CRLF gracias a `.gitattributes`; tests verdes; hook con LF, acepta en feature y rechaza `main` |
+| HEAD separado (checkout de CI en pull request) | `state check` avisa y devuelve 0; tests de CLI verdes |
+| PowerShell 7 en vez de Git Bash | ruff, mypy, contratos, pytest, `state check` y `make check` verdes |
+| Python 3.13 (entorno aislado) ademas de 3.12 | pytest, mypy y contratos verdes |
+| Linux (ubuntu del CI) | NO probado localmente: sin WSL, Docker ni `act`. Se verifica en el primer push |
+
 ## Que deberia observar el usuario
 `make check` termina en verde; el arbol coincide con MASTER_PLAN seccion B; `PROJECT_STATE.md` declara
 `Current Feature = F01` y `Current Branch = feature/F01-project-scaffold`; ADR-0001 tiene las ocho
