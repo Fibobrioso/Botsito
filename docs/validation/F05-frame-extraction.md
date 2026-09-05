@@ -2,7 +2,8 @@
 
 **Funcionalidad:** F05 · frame-extraction
 **Rama:** `feature/F05-frame-extraction`
-**Objetivo:** fotogramas con marca de tiempo de los cuatro videos del corpus, indexados y
+**Objetivo:** fotogramas con marca de tiempo de los videos del corpus (cuatro al abrir la rama;
+cinco tras el material del 2026-09-05, ver seccion propia), indexados y
 reproducibles, para que F07 cite lo que se ve en pantalla (Excel, herramienta de posicion, caja,
 configuracion del grafico) igual que F04 cita lo que se oye, y F08 responda "que hay en V4
 0:44:56" con audio y fotograma. Instruccion del usuario (2026-09-05): maxima eficacia y
@@ -205,6 +206,69 @@ sizing 1 % cuenta propia, 0,50-0,75 % en fondeo "si"; break-even tecnico al conf
 frente a sin parciales" YA constan en PROJECT_STATE (Known Contradictions, heredadas de Bot v2);
 lo nuevo es que ahora existe un fotograma citable de la ficha. No se registra aqui.
 
+## Material adicional recibido el 2026-09-05 (carpeta "Info extra de backtesting")
+Instruccion del usuario: analizarlo y anadirlo donde sea pertinente antes de validar F05. Se
+integro en el corpus con los mismos regimenes que el resto (hechos; la evidencia la registra F07):
+
+- **Video v5** `2026-09-05 21-03-59.mkv` (121,5 MB, 1280x720, 30 fps, H.264 + AAC, 365,0 s,
+  `start_time` 0; no esta en Drive: `drive_id` lo declara en `fuentes.yaml`). El trader graba su
+  pantalla en FXReplay (sesion "Backtest ABRIL 2026", EURUSD M1, 29 de abril de 2026, reloj del
+  grafico en UTC+2 segun la exportacion) mientras explica. Transcrito con el pipeline de F04:
+  `tr-v5-large-v3-int8-float16-01a1ae03` (99 segmentos, 318 s con habla, sin huecos >= 30 s) y
+  extraido con el de F05: `fr-v5-718ecabb` (366 fotogramas, `huecos: []`, sin segundos
+  ausentes). Lo que dice (cruda, hechos con marca; sin inferir reglas):
+  - 0:00:01 "estoy bacteseando [backtesteando] el mes de abril de este ano... queria agregar
+    algunas cosas, yo lo habia comentado con anterioridad".
+  - 0:00:39-0:00:53 "aqui no hay entrada... porque no me genera el esquema 2 de entrada... sino
+    que genera un flujo de ordenes, entonces esa entrada queda descartada".
+  - 0:01:05-0:01:13 "aqui se cumple todas las condiciones, quita liquidez por encima de ese alto,
+    lo hace con cuerpo".
+  - 0:01:27-0:01:50 "yo lo marcaria desde aqui... si es desde aqui pues igual se toma la entrada
+    y no pasa nada, se gana, se va a cumplir 13 [1:3]... pero yo lo tomaria desde aqui por el
+    hecho de que al hacer mapeo estructural".
+  - 0:01:56-0:02:58 "este decisional seria suficiente para validar una entrada aqui, pero ocurre
+    que el precio llega, activa la entrada y se regresa... hay casos donde no llega hasta el 0.80
+    ... en la mayoria de casos suele retroceder... no llega a romper ese nivel que seria el tope
+    ... luego cae... cuando hay un equal [igual] que no lo vamos a poder anticipar porque se va a
+    activar la entrada como tal, es una reentrada... contarlo como perdida, pero reentrar
+    nuevamente si el precio te llega a romper nuevamente esta zona".
+  - 0:03:21-0:03:30 "si yo protejo a 0.80, que es el SL por defecto, que no me permite dejarlo".
+  - 0:03:34-0:04:23 "se activa la entrada... continua desarrollandose... nos mitiga y nuevamente
+    seria cuestion de poner otra reentrada... lo validan los datos, no porque yo lo diga".
+  - 0:04:27-0:04:47 "se cumplen las condiciones para poner break even... el precio sigue asi por
+    caida ya lo podemos poner en BE... manejamos el calculo del RR en base al 1 %".
+  - 0:04:56-0:05:23 "yo todo lo backtestee buscando el 1.3 [1:3]... existe la posibilidad de
+    amplificar a 1.4 [1:4] el RR, pero creo que eso ya lo veremos mas adelante si es factible".
+  - 0:05:27-0:05:59 "como esto es un igual... esperariamos a que el precio rompa por arriba para
+    poder nosotros en la reentrada... sabemos de un flujo bajista... entrariamos aqui".
+  Pantalla (fotogramas `fr-v5-718ecabb/240000` y `/355000`): caja con niveles 0 / 0,25 / 0,5 /
+  **0,8** / 1 (no 0,75) sobre una vela bajista; lineas horizontales de liquidez en M1; zigzag de
+  mapeo estructural dibujado a mano. Relacion con ambiguedades abiertas: A-10 (0,8 fijo frente a
+  0,75 + spread: aqui dice "0.80, que es el SL por defecto"), A-7 (reentrada tras un igual /
+  equal: contar la primera como perdida y reentrar si rompe de nuevo), A-4 (BE "cuando se cumplen
+  las condiciones"), objetivo 1:3 con 1:4 como posibilidad futura (F21). No se decide nada aqui.
+- **`backtesting-analytics ABRIL 2026.xlsx`** (papel `material_adicional`; misma estructura de
+  22 columnas que enero y agosto): 38 operaciones EURUSD (OANDA) del 2026-04-01 al 2026-04-29,
+  17 ganadoras, 19 perdedoras, 2 en cero; PnL +872 sobre 100 000; RR medio de las ganadoras
+  3,64; 3 filas sin `initialSL`; horas de inicio entre las 05 y las 12 UTC. Para comparar: enero
+  58 operaciones (18/36/4, +1102, RR 3,72), agosto 47 (20/22/5, +853, RR 3,33). Entrada de F07 y
+  golden de F26 (fidelidad caso a caso), igual que los otros dos meses.
+- **6 capturas** `WhatsApp Image 2026-09-05 at 2.30.5x PM*.jpeg` (papel `material_adicional`):
+  pestana Analytics de FXReplay del "Backtest ABRIL 2026 - b7cd" (filtros long/short, wins/losses,
+  Etc/UTC, 00:00-23:59): Total PnL $872, balance $100 872, win rate 47,22 %, 38 trades (17/19),
+  breakeven 2; Average RR 3,64, Max RR 5,05, Ideal Average RR 19,88; Expectancy $22,95 (+30,58 /
+  -7,63), Profit factor 4,01; ganadoras: mejor 0,14 %, media 0,07 %, duracion media 13 min, 5
+  consecutivas; perdedoras: peor -0,05 %, media -0,01 %, duracion media 3 min, 6 consecutivas;
+  por lado 47,4 % buy / 52,6 % sell; por hora (UTC) 5:00-12:00 con maximos a las 6:00 y 12:00;
+  por dia: lunes 50 %, martes 25 %, miercoles 71,43 %, jueves 25 %, viernes 55,56 %; calendario
+  con 2,37 trades/dia, 7,6/semana. Las cifras coinciden con el xlsx (38, 17/19/2, 872, 3,64).
+- Cambios en el repo: `fuentes.yaml` (v5 y descripcion de la carpeta), `manifest.yaml`
+  regenerado con `corpus inventory` (5 videos, 25 ficheros de material adicional),
+  `knowledge/corpus/transcripciones/tr-v5-*.yaml`, `knowledge/corpus/fotogramas/fr-v5-*.yaml`,
+  test de regresion del corpus real actualizado. `knowledge validate`, `transcript check` y
+  `frames check` en verde con 5 videos. Deuda: v5 no esta en Drive (subirlo junto a los otros
+  cuatro; `fuentes.yaml` lo declara) y su cruda entra en la copia pendiente de F07.
+
 ## Que deberia observar el usuario
 `frames check` y `knowledge validate` en verde; `frames show --video v3 --t 0:28:56` devuelve
 la referencia y la ruta del PNG; abrir ese PNG y leer `2,83` en la barra de formulas; los
@@ -320,4 +384,5 @@ maquina: `frames show` sobre cualquier instante y abrir los tres PNG de la tabla
 `make hooks` (el hook nuevo protege `knowledge/corpus/fotogramas/`).
 
 ## Estado
-WAITING_FOR_USER_VALIDATION
+WAITING_FOR_USER_VALIDATION (ampliado el 2026-09-05 con el material adicional: v5 transcrito y
+extraido, xlsx y capturas de abril en el corpus)

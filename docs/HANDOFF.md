@@ -8,6 +8,10 @@
   `fr-v1-5a2a42c3`, `fr-v2-c5a09508`, `fr-v3-982da728`, `fr-v4-9ad0ebb8` (un activo por video).
 - Informe: `docs/validation/F05-frame-extraction.md` (obligatorios leidos, candidatos A-9, ficha
   de reglas en Word en `fr-v3-982da728/101000`, dos auditorias aplicadas).
+- Material del 2026-09-05 integrado por instruccion del usuario: v5 (`2026-09-05 21-03-59.mkv`, 6 min,
+  FXReplay abril; `tr-v5-...-01a1ae03`, `fr-v5-718ecabb`; NO esta en Drive), xlsx abril 2026 y 6
+  capturas en `Material adicional de su operativa`. Hechos en PROJECT_STATE (Lineamientos): 0,8 "SL por
+  defecto", reentrada tras equal, RR sobre 1 %, 1:3 con 1:4 futuro, backtest abril 47 %/PF 4,01.
 - Inmutables ahora: evidence, feedback, data/manifests, corpus/transcripciones, corpus/fotogramas
   (`make hooks` para instalar el hook nuevo).
 - Siguiente tras validar: ritual de merge (tag `stable/F05`) y abrir F07 con `referencias_conocidas`

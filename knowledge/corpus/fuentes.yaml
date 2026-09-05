@@ -30,6 +30,14 @@ videos:
     bytes: 5128057400
     fecha_grabacion: "2026-08-30"
     naturaleza: entrevista con dos cuestionarios sobre el backtest de enero en FXReplay
+  - video_id: v5
+    fichero: "2026-09-05 21-03-59.mkv"
+    drive_id: "no esta en Drive: entregado en local por el usuario el 2026-09-05 (carpeta 'Info extra de backtesting')"
+    bytes: 121528349
+    fecha_grabacion: "2026-09-05"
+    naturaleza: >-
+      el trader graba su pantalla en FXReplay (sesion Backtest ABRIL 2026, dia 29 de abril, EURUSD M1)
+      mapeando la estructura y colocando la caja de niveles 0 / 0,25 / 0,5 / 0,8 / 1 mientras explica
 
 carpetas:
   - ruta: "_procesado"
@@ -38,7 +46,9 @@ carpetas:
       por cambio de escena, informes). Solo indice de navegacion y control de calidad; nunca se cita.
   - ruta: "Material adicional de su operativa"
     papel: material_adicional
-    descripcion: exportaciones de FXReplay (enero y agosto 2026) y capturas de balance enviadas por
-      el trader el 2026-09-03. Entrada de F07 (evidencia) y F26 (fidelidad).
+    descripcion: >-
+      exportaciones de FXReplay (enero, abril y agosto 2026) y capturas de balance y de analiticas
+      enviadas por el trader el 2026-09-03 y el 2026-09-05 (abril, 38 operaciones y 6 capturas de la
+      pestana Analytics). Entrada de F07 (evidencia) y F26 (fidelidad).
 
 umbral_hueco_segundos: 180
