@@ -18,4 +18,7 @@
 
 ## Riesgos
 
+## Revision de diseno (agente, antes de programar)
+Hallazgos aceptados / descartados con motivo.
+
 ## Que habilita

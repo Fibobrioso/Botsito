@@ -13,6 +13,11 @@ dependencies = [
 botsito = "botsito.cli:main"
 
 [dependency-groups]
+asr = [
+    "faster-whisper>=1.2",
+    "nvidia-cublas-cu12>=12.9.2.10",
+    "nvidia-cudnn-cu12>=9.25.1.1",
+]
 dev = [
   "pytest>=8.3",
   "hypothesis>=6.115",
@@ -71,6 +76,14 @@ forbidden_modules = [
   "MetaTrader5", "pandas", "polars", "numpy", "requests", "asyncio", "threading",
   "datetime", "time", "random", "os", "pathlib", "io",
 ]
+
+[[tool.importlinter.contracts]]
+name = "faster-whisper y ctranslate2 solo entran por corpus.motor_whisper (grupo asr opcional)"
+type = "forbidden"
+source_modules = ["botsito"]
+# motor_whisper los carga con importlib (import perezoso): ningun modulo los importa
+# estaticamente; tests/contract/test_import_contracts.py vigila tambien el import dinamico.
+forbidden_modules = ["faster_whisper", "ctranslate2", "nvidia"]
 
 [[tool.importlinter.contracts]]
 name = "spec no depende del motor ni de los datos"

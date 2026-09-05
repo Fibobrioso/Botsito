@@ -1,0 +1,89 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v3/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 4676.395
+duracion_wav_s: 4676.395
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-08-06 160450.mp4
+fragmentos:
+- fin_m: 9623375
+  indice: 0
+  inicio_m: 0
+- fin_m: 19262127
+  indice: 1
+  inicio_m: 9623375
+- fin_m: 28892022
+  indice: 2
+  inicio_m: 19262127
+- fin_m: 38472659
+  indice: 3
+  inicio_m: 28892022
+- fin_m: 48084410
+  indice: 4
+  inicio_m: 38472659
+- fin_m: 57720838
+  indice: 5
+  inicio_m: 48084410
+- fin_m: 67333467
+  indice: 6
+  inicio_m: 57720838
+- fin_m: 74822314
+  indice: 7
+  inicio_m: 67333467
+generado_el: '2026-09-05T05:50:05Z'
+glosario_sha256_inicial: 266716c4ee347eadcae43fa1d2d03eb6de6bd6ad83a32221821a3c12646a2ab7
+hueco_transcripcion_s: 30.0
+huecos:
+- desde_ms: 2106461
+  hasta_ms: 2141841
+  ms: 35380
+- desde_ms: 3485105
+  hasta_ms: 3536395
+  ms: 51290
+- desde_ms: 3950422
+  hasta_ms: 3982762
+  ms: 32340
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  idioma: es
+  initial_prompt_sha256: 83a84c5c7c8ee2d9ee296f99ff9591fd2e9c0c6b168a6a5bdbbf1554e9841277
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 3998570
+muestras: 74822314
+recortados: 0
+schema_version: 1
+segmentos: 1031
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 54
+  repeticion: 1
+sha256_cruda: 570a315fc645b4bbbac0f9b4f55c20e6fab9779d95f30cd65430ff2b98856a51
+sha256_video: 0109332a9cc08f150f381e78ab189fdc6d6afe886fb27dfbfabd58b7c49a8146
+sha256_wav: cc198b1e8daea9f1a7f5ba8133990d469c6b2fa855cf070226e8af82f47f8810
+silencios_detectados: 966
+transcripcion_id: tr-v3-large-v3-int8-float16-570a315f
+video_id: v3

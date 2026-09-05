@@ -10,6 +10,19 @@ from __future__ import annotations
 from pathlib import Path
 
 
+def _carpeta_datos(repo: Path) -> Path:
+    from botsito.config.ajustes import AjustesError, cargar_ajustes
+
+    for nombre in ("settings.local.toml", "settings.example.toml"):
+        ruta = repo / "config" / nombre
+        if ruta.exists():
+            try:
+                return repo / cargar_ajustes(ruta).data
+            except AjustesError:
+                break
+    return repo / "data"
+
+
 def ids_de_adr(repo: Path) -> set[str]:
     """`ADR-NNNN` por cada docs/adr/NNNN-*.md real (la plantilla 0000 no es una decision)."""
     return {
@@ -183,10 +196,43 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     fallos_datos += [
         f"manifiesto de datos modificado en el historial: {h}" for h in historial_datos or []
     ]
+    from botsito.comun.historial import DIRECTORIO_TRANSCRIPCIONES
+    from botsito.corpus.glosario import GlosarioError, cargar_glosario
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        cargar_todos,
+    )
+    from botsito.corpus.manifiestos_transcripcion import comprobar as comprobar_transcripciones
+    from botsito.corpus.transcripcion import TranscripcionError
+
+    try:
+        ruta_glosario = repo / "knowledge" / "corpus" / "glosario_asr.yaml"
+        glosario = cargar_glosario(ruta_glosario) if ruta_glosario.exists() else None
+        transcripciones = cargar_todos(repo)
+        errores_tr, avisos_tr = comprobar_transcripciones(
+            transcripciones, _carpeta_datos(repo), glosario
+        )
+        if transcripciones and glosario is None:
+            errores_tr.append("hay transcripciones registradas pero falta glosario_asr.yaml")
+    except (GlosarioError, ManifiestoTranscripcionError, TranscripcionError) as exc:
+        errores_tr, avisos_tr, transcripciones = [f"transcripciones: {exc}"], [], []
+    historial_tr = modificaciones_en_historial(repo, DIRECTORIO_TRANSCRIPCIONES)
+    if historial_tr is None and con_git:
+        motivo = no_evaluable or "git fallo"
+        errores_tr.append(
+            f"la guardia de historial de transcripciones no se pudo evaluar ({motivo})"
+        )
+    errores_tr += [
+        f"manifiesto de transcripcion modificado en el historial: {h}" for h in historial_tr or []
+    ]
+    for a in avisos_tr:
+        salida.append(f"AVISO: {a}")
+    fallos_datos += errores_tr
     for fallo in fallos_datos:
         salida.append(f"ERROR: {fallo}")
     if fallos_datos:
         return 1, salida
+    salida.append(f"OK: {len(transcripciones)} transcripciones registradas, historial intacto")
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
     abiertas = len(contradicciones.detectar(items))
     salida.append(

@@ -1,0 +1,31 @@
+# Glosario del ASR (F04, ADR-0007): la UNICA forma de tocar una transcripcion.
+#
+# vocabulario: terminos del dominio que el motor recibe como initial_prompt (mejora la jerga) y
+#   que ninguna sustitucion global puede casar. Su hash queda en cada manifiesto.
+# sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (brequiven,
+#   cargo chuto); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
+#   ambiguedades reales (M5/M15, FVG/FTMO). Patron Unicode con limites \b en ambos extremos, sin
+#   comodines sin limite; motivo y ejemplo real (video y minuto) obligatorios. Una correccion
+#   sin ejemplo real no entra. `corpus glossary apply` regenera corregida.jsonl = cruda + esto.
+vocabulario:
+  - EURUSD
+  - M1
+  - M15
+  - H4
+  - break even
+  - cartucho
+  - FTMO
+  - FundedNext
+  - fondeo
+  - mitigacion
+  - breaker
+  - zona de control
+  - orden limite
+  - stop loss
+  - take profit
+  - lotaje
+  - spread
+  - FXReplay
+  - TradingView
+  - MetaTrader
+sustituciones: []

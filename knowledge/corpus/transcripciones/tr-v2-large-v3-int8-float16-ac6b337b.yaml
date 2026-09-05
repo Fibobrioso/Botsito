@@ -1,0 +1,98 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v2/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 4134.4
+duracion_wav_s: 4134.4
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-08-03 091221.mp4
+fragmentos:
+- fin_m: 9550723
+  indice: 0
+  inicio_m: 0
+- fin_m: 19160952
+  indice: 1
+  inicio_m: 9550723
+- fin_m: 28771949
+  indice: 2
+  inicio_m: 19160952
+- fin_m: 38393450
+  indice: 3
+  inicio_m: 28771949
+- fin_m: 47979769
+  indice: 4
+  inicio_m: 38393450
+- fin_m: 57542202
+  indice: 5
+  inicio_m: 47979769
+- fin_m: 66150400
+  indice: 6
+  inicio_m: 57542202
+generado_el: '2026-09-05T05:32:56Z'
+glosario_sha256_inicial: 266716c4ee347eadcae43fa1d2d03eb6de6bd6ad83a32221821a3c12646a2ab7
+hueco_transcripcion_s: 30.0
+huecos:
+- desde_ms: 2308016
+  hasta_ms: 2344666
+  ms: 36650
+- desde_ms: 2397396
+  hasta_ms: 2436080
+  ms: 38684
+- desde_ms: 2547210
+  hasta_ms: 2579700
+  ms: 32490
+- desde_ms: 2635490
+  hasta_ms: 2693260
+  ms: 57770
+- desde_ms: 2806320
+  hasta_ms: 2869730
+  ms: 63410
+- desde_ms: 3069515
+  hasta_ms: 3110555
+  ms: 41040
+- desde_ms: 3333925
+  hasta_ms: 3364335
+  ms: 30410
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  idioma: es
+  initial_prompt_sha256: 83a84c5c7c8ee2d9ee296f99ff9591fd2e9c0c6b168a6a5bdbbf1554e9841277
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 3381510
+muestras: 66150400
+recortados: 0
+schema_version: 1
+segmentos: 854
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 339
+  repeticion: 2
+sha256_cruda: ac6b337b3f485a8ed089babb8cfd8299c9c022643b14b1f94e5c3d1b73bae580
+sha256_video: 65478cd12fff3c40736415ab175d2ba369f20882065d634c07d73915877eb209
+sha256_wav: 1a0bb016c27e9b1702e0f2ea4b1512dcd03eed568e9a0956695fea4a2934389c
+silencios_detectados: 672
+transcripcion_id: tr-v2-large-v3-int8-float16-ac6b337b
+video_id: v2
