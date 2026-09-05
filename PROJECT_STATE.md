@@ -33,13 +33,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 4 · Datos de mercado (F15-F17), abierta por el orden E antes de cerrar la fase 1
 
 ## Current Feature
-F15 · market-data-ohlc
+— (F15 integrada; F04 pendiente de abrir)
 
 ## Current Branch
-feature/F15-market-data-ohlc
+main
 
 ## Stable Main State
-2ff6450 · merge de F09. make check verde: 208 casos (149 funciones), 3 contratos, mypy strict, state/config/knowledge validate. CI Ubuntu verde (run 33912550454). Tag stable/F09. Rama main protegida en GitHub (sin force-push ni borrado, tambien para administradores).
+11ee1ac · merge de F15. make check verde: 324 casos (210 funciones), 3 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos). CI Ubuntu verde (run 33937716849). Tag stable/F15. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -50,9 +50,10 @@ feature/F15-market-data-ohlc
 - F03 · corpus-inventory · validada el 2026-09-04 · docs/validation/F03-corpus-inventory.md · tag stable/F03
 - F06 · evidence-model · validada el 2026-09-04 · docs/validation/F06-evidence-model.md · tag stable/F06
 - F09 · expert-feedback-model · validada el 2026-09-04 · docs/validation/F09-expert-feedback-model.md · tag stable/F09
+- F15 · market-data-ohlc · validada el 2026-09-04 · docs/validation/F15-market-data-ohlc.md · tag stable/F15
 
 ## Features Waiting for Validation
-- F15 · market-data-ohlc · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F15-market-data-ohlc.md
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -190,12 +191,13 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Usuario valida F15 -> en main: merge --no-ff (BOTSITO_ALLOW_MAIN=1) -> tag stable/F15 sobre el merge -> commit docs(state) solo PROJECT_STATE -> make check -> push main y tag -> abrir feature/F04 (orden E: F04, F05, F07, F08, luego F10 + sesion 1).
+Abrir feature/F04-transcription (orden E: F04, F05, F07, F08, luego F10 + sesion 1) con el metodo supervisado: brief -> revision de diseno por agente -> construccion -> auditoria de cierre -> informe WAITING_FOR_USER_VALIDATION.
 
 ## Last Stable Commit
-2ff6450 · merge: F09 expert-feedback-model validado por el usuario · tag stable/F09
+11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
 
 ## Change Log
+- 2026-09-04 · F15 VALIDADA por el usuario (con auditoria de arquitectura y de proceso previas); merge --no-ff a main (11ee1ac); tag stable/F15
 - 2026-09-04 · F15 auditoria de arquitectura (agente) antes de fusionar: ADR-0006 (contrato de capas revisado para F25/F26/F30/F32, paquete comun con yaml_estricto/historial/documentos/ids/husos, accesores del registro por tipo declarado, SerieVelas.origen + ventana por instante + agregar_serie, validador de knowledge fuera del CLI, test AST sin float/Decimal en domain, test de accesores del registro); auditoria de proceso (agente): ritual de cierre reescrito con el orden real, cifras del informe corregidas, seccion "que debe decidir el usuario". 324 casos, 210 funciones
 - 2026-09-04 · F15: auditoria de cierre aplicada (2 agentes), tres datasets reales congelados (ene/jul/ago 2026: 30150/32774/30257 velas M1) con manifiestos inmutables; H4 real del 2026-07-02 = goldens; CI verde (runs 33917006801, 33918894784); WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · REVISION GLOBAL de alineacion con las 8 fases (tras F15): sin bloqueos hacia F04-F33. Verificado: contrato de capas admite engine->data/domain, spec->config, cases->data; domain/velas.py sin float/Decimal (F18); tipos del registro y papeles del corpus ampliables sin romper (F10/F11); commits_sin_fuente listo para F11; cargar_serie con ventana para F14; regla de anclaje escrita en ADR-0005 para exportar en F29; ritual de merge/tag coincide con git log; main cumple state check. Pendientes conocidos: retirar en F11/sesion 1 los tests que afirman registro sin valores y feedback vacio; borrar ramas feature/F01-F09 fusionadas (decision del usuario); reloj de servidor aproximado hasta F17
