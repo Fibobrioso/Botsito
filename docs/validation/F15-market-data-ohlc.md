@@ -43,7 +43,7 @@ docs/plan/features/F15-market-data-ohlc.md  docs/validation/F15-market-data-ohlc
 tests/unit/test_{velas,dukascopy,agregacion,agregacion_dst,dataset,cli_data,golden_ohlc}.py
 tests/contract/test_data_manifest_history.py  tests/fixtures/ohlc/*.bi5 (+ README)
 tests/golden/ohlc/EURUSD_2026-07-02_H4_{madrid,servidor}.csv
-data/manifests/eurusd-m1-2026-{01,07,08}-<hash>.yaml
+data/manifests/eurusd-m1-2026-01-e37291d4.yaml, eurusd-m1-2026-07-aa162170.yaml, eurusd-m1-2026-08-0d42230e.yaml
 ```
 
 ## Archivos modificados
@@ -112,8 +112,20 @@ Git Bash y desde PowerShell 7 (ambos verdes).
   h=114727 l=113953 c=114512).
 - `state`, `config`, `knowledge validate` (2 parametros, 1 sin confirmar; manifiestos de datos
   validos, historial intacto): OK.
-- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33917006801 (fa2eefa).
-- Datasets reales: PENDIENTE DE ANOTAR (enero, julio y agosto de 2026; `data check --hashes`).
+- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33917006801 (fa2eefa) y, tras la auditoria de cierre, run 33918894784 (6d05179).
+- Datasets reales (Dukascopy BID, escala 100000, descargados el 2026-09-04, `data check --hashes`
+  OK en los tres, `knowledge validate`: 3 manifiestos validos):
+  | dataset_id | velas M1 | dias presentes / sin datos | planas descartadas (dentro de sesion) | huecos >= 60 min |
+  |---|---|---|---|---|
+  | eurusd-m1-2026-01-e37291d4 | 30150 | 31 / 5 | 14490 (85) | 4 |
+  | eurusd-m1-2026-07-aa162170 | 32774 | 31 / 4 | 11866 (165) | 4 |
+  | eurusd-m1-2026-08-0d42230e | 30257 | 31 / 5 | 14383 (163) | 4 |
+  Los dias "sin datos" son sabados (el proveedor entrega 1440 velas planas). Enero se descargo dos
+  veces (antes y despues de la auditoria) y produjo el mismo id: la congelacion es determinista.
+  La H4 del 2026-07-02 agregada desde `eurusd-m1-2026-07` con ambos anclajes es identica a los
+  goldens de `tests/golden/ohlc/` (diff vacio). La primera descarga de julio y agosto fallo por
+  errores 503 y cortes del proveedor: la cache por dia y los reintentos ampliados (hallazgos de la
+  auditoria) permitieron reanudar sin repetir dias.
 
 ## Que deberia observar el usuario
 Los tres manifiestos en `data/manifests/` con sus recuentos (dias ausentes = fines de semana,

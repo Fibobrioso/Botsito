@@ -1,0 +1,52 @@
+# GENERADO por `botsito data download`. INMUTABLE: no editar; un cambio es otro dataset.
+dataset_id: eurusd-m1-2026-07-aa162170
+decodificador_version: 1
+descargado_el: '2026-09-05'
+desde: '2026-07-01'
+dias:
+  ausentes: []
+  descartadas_dentro_de_sesion: 165
+  descartadas_planas_sin_volumen: 11866
+  presentes: 31
+  registros: 44640
+  sin_datos:
+  - '2026-07-04'
+  - '2026-07-11'
+  - '2026-07-18'
+  - '2026-07-25'
+  velas: 32774
+  volumen_cero_no_planas: 0
+escala: 100000
+escala_volumen: 1000
+ficheros:
+- bytes: 1712579
+  filas: 32774
+  primera: 2026-07-01T00:00Z
+  ruta: ohlc/eurusd-m1-2026-07-aa162170/EURUSD_M1_2026-07.csv
+  sha256: d50c8d335bf1cc7a0695585477ceea2b4f95c55d79dd40585f741a2b6dda1b4c
+  ultima: 2026-07-31T20:59Z
+filtro_planas: 1
+generado_por: 6d05179
+hasta: '2026-07-31'
+huecos:
+  mayores:
+  - desde: 2026-07-03T21:00Z
+    hasta: 2026-07-05T21:00Z
+    minutos: 2880
+  - desde: 2026-07-10T21:00Z
+    hasta: 2026-07-12T21:00Z
+    minutos: 2880
+  - desde: 2026-07-17T21:00Z
+    hasta: 2026-07-19T21:00Z
+    minutos: 2880
+  - desde: 2026-07-24T21:00Z
+    hasta: 2026-07-26T21:01Z
+    minutos: 2881
+  menores_de_60_min: 122
+huso_datos: UTC
+periodo_min: 1
+proveedor: dukascopy
+schema_version: 1
+simbolo: EURUSD
+simbolo_proveedor: EURUSD
+tipo_precio: BID

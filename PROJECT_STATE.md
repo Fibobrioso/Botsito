@@ -52,7 +52,7 @@ feature/F15-market-data-ohlc
 - F09 · expert-feedback-model · validada el 2026-09-04 · docs/validation/F09-expert-feedback-model.md · tag stable/F09
 
 ## Features Waiting for Validation
-—
+- F15 · market-data-ohlc · WAITING_FOR_USER_VALIDATION · informe: docs/validation/F15-market-data-ohlc.md
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -187,12 +187,14 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-F15: congelar los datasets reales de enero, julio y agosto de 2026 (manifiestos en data/manifests), aplicar la auditoria de cierre, completar el informe y dejarlo WAITING_FOR_USER_VALIDATION. Tras validar: merge --no-ff, tag stable/F15, abrir F04.
+Usuario valida F15 -> merge --no-ff a main -> tag stable/F15 -> push -> abrir feature/F04 (orden E: F04, F05, F07, F08, luego F10 + sesion 1).
 
 ## Last Stable Commit
 2ff6450 · merge: F09 expert-feedback-model validado por el usuario · tag stable/F09
 
 ## Change Log
+- 2026-09-04 · F15: auditoria de cierre aplicada (2 agentes), tres datasets reales congelados (ene/jul/ago 2026: 30150/32774/30257 velas M1) con manifiestos inmutables; H4 real del 2026-07-02 = goldens; CI verde (runs 33917006801, 33918894784); WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · REVISION GLOBAL de alineacion con las 8 fases (tras F15): sin bloqueos hacia F04-F33. Verificado: contrato de capas admite engine->data/domain, spec->config, cases->data; domain/velas.py sin float/Decimal (F18); tipos del registro y papeles del corpus ampliables sin romper (F10/F11); commits_sin_fuente listo para F11; cargar_serie con ventana para F14; regla de anclaje escrita en ADR-0005 para exportar en F29; ritual de merge/tag coincide con git log; main cumple state check. Pendientes conocidos: retirar en F11/sesion 1 los tests que afirman registro sin valores y feedback vacio; borrar ramas feature/F01-F09 fusionadas (decision del usuario); reloj de servidor aproximado hasta F17
 - 2026-09-04 · F15 construida con revision de diseno previa por agente (brief corregido: sin velas de 3/5 h en datos reales, Vela en domain sin Decimal, huso_datos fuera del registro, id de dataset por hash, velas de borde `completa`); domain/velas, data/{velas,agregacion,dukascopy,dataset}, CLI data, 16 fixtures reales bi5, goldens H4 del 2026-07-02, hook y validate sobre data/manifests; ADR-0005; parametros huso_operativa (CONFIRMED) y anclaje_h4 (UNKNOWN, A-9)
 - 2026-09-04 · rama feature/F15-market-data-ohlc abierta; brief y ADR-0005 (fuente Dukascopy M1 publica, precios enteros en puntos, tres relojes, anclaje por reloj de pared)
 - 2026-09-04 · F09 VALIDADA por el usuario; merge --no-ff a main (2ff6450); tag stable/F09; proteccion de rama main activada en GitHub (enforce_admins, sin force-push ni borrado)
