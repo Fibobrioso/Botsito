@@ -3,12 +3,20 @@
 Este fichero resume la conversacion que construyo F04 y deja el estado exacto para retomar.
 Lee primero `PROJECT_STATE.md`; esto es el contexto humano que ahi no cabe.
 
-## Estado
-- Rama: `feature/F04-transcription-pipeline` (pusheada; CI verde). Main: `1c8346b`; tag
-  `stable/F15` en `11ee1ac` (el merge). Protegida en GitHub (sin force-push, sin checks requeridos).
-- F04 esta en WAITING_FOR_USER_VALIDATION: `docs/validation/F04-transcription-pipeline.md`.
-- Cerradas y en main: F01, F02, F03, F06, F09, F15. Ramas fusionadas ya borradas (local y origin).
-- Siguiente orden (E): F04 -> F05 -> F07 -> F08 -> F10 + sesion 1 con el trader.
+## Estado (actualizado al cerrar F04, 2026-09-05)
+- Rama actual: `main` en `415f496` (docs(state)); merge de F04 `a7f8b4b` con tag `stable/F04`;
+  CI verde en main (run 33987802513). Protegida en GitHub (sin force-push, sin checks requeridos).
+- F04 VALIDADA por el usuario el 2026-09-05. Decisiones: A-12 (40/50 % de la vela) queda como
+  pregunta al trader; glosario v2 se aplica como paso previo a F07 (retranscribir los 4 videos con
+  `--reemplaza-a`, luego copia de cruda/WAV en Drive); constantes de corte son tecnicas; lo
+  heredado de Whisper tiny no se cita.
+- Cerradas y en main: F01, F02, F03, F04, F06, F09, F15. Ramas fusionadas borradas (local y origin).
+- SIGUIENTE: abrir `feature/F05-frame-extraction`. Brief desde MASTER_PLAN tabla A (F05 depende
+  de F03 y F04) y H.2 fila F05: tramos con decision derivados de la transcripcion activa `tr-*`
+  mas huecos heredados de F03; fotogramas obligatorios V3 0:28:56 (Excel 2,3/3,23 vs 2.83/3.33),
+  V2 0:33:21 (4,08/3,94), V4 0:12:30 (1,19537) y configuracion del grafico para A-9. Metodo:
+  brief -> revision de diseno por agente -> construir -> auditoria de cierre (2 agentes) -> informe.
+- Orden (E) restante: F05 -> F07 -> F08 -> F10 + sesion 1 con el trader.
 
 ## Metodo de trabajo acordado con el usuario
 1. Brief en `docs/plan/features/F##-*.md` -> revision de diseno por un agente ANTES de programar.
@@ -42,11 +50,17 @@ Lee primero `PROJECT_STATE.md`; esto es el contexto humano que ahi no cabe.
 - Datos pesados en `data/transcripciones/` (no en git): si se cambia de maquina, copiar esa
   carpeta o retranscribir (~1 h de GPU); sin ella, `knowledge validate` solo avisa.
 
-## Que debe decidir el usuario para cerrar F04 (detalle en el informe)
-1. 40 % frente a 50 % de la vela (queda como pregunta al trader).
-2. Entradas propuestas para el glosario (con ejemplo real; cambian la huella, no se aplican solas).
-3. Constantes de corte como hechos tecnicos, no de negocio.
-4. Lo heredado de Whisper tiny no se cita.
+## Auditoria final de F04 (2 agentes, 2026-09-05, antes de validar)
+- Codigo (`b1a7107`): `video.sha256` por carpeta de trabajo (video cambiado -> otra carpeta antes
+  de la GPU), cita de un instante en el borde de un segmento, glosario rechaza `\w+`/`\d+`/`[..]+`,
+  `glossary apply --video` inexistente es error, temporal `_<id>.yaml.tmp`, 1 ms de redondeo no
+  es recorte, `cargar_todos` detecta ids repetidos y ciclos.
+- Plan (`75c9dda`): regla de cita de F07 contra la CRUDA (MASTER_PLAN H, ADR-0007 §7), secuencia
+  glosario v2 -> retranscribir -> Drive -> F07, F05 depende de F04 (fila H.2 nueva), plantillas
+  de brief e informe con revision de diseno / auditoria de cierre / decisiones del usuario,
+  regimenes de cambio completos, A-1..A-12, 33 marcas.
+- Incidente: el commit de docs toco `knowledge/spec/README.md` sin trailer `Fuente:`; la CI lo
+  detecto (make check local corrio ANTES del commit). Se reescribio con `Fuente: ADR-0005`.
 
 ## Comandos utiles
 ```
@@ -58,6 +72,12 @@ uv run botsito corpus transcribe --video v1        # reanudable; no llama al mod
 ```
 
 ## Lecciones operativas
+- `knowledge validate` (guardia del trailer `Fuente:`) solo ve commits existentes: correrlo
+  DESPUES de commitear cuando el commit toque `knowledge/spec` o `knowledge/cases` (README incluido).
+- El clasificador del modo automatico de Claude Code bloquea `rebase`, `cherry-pick`, `branch -f`
+  y el merge a `main` con `BOTSITO_ALLOW_MAIN=1`: el usuario ejecuta esos comandos con `!`.
+- La CI se consulta sin `gh`: `curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/<sha>/check-runs`
+  (los logs del job requieren el token de `git credential fill`).
 - Heredocs bash con comillas triples o barras invertidas fallan en Git Bash: escribir el script a
   un fichero del scratchpad y ejecutarlo.
 - Escribir ficheros con `newline="\n"`; git en UTF-8 con `core.quotepath=false`.
