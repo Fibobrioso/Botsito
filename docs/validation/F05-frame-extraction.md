@@ -104,11 +104,11 @@ uv run botsito corpus frames check                     # manifiestos frente al d
 uv run botsito corpus frames show --video v3 --t 0:28:56 --n 3
 uv run botsito knowledge validate
 ```
-Los PNG viven en `data/fotogramas/<video>/png-1fps/` (9,1 GiB en total, fuera de git); si no
+Los PNG viven en `data/fotogramas/<video>/png-1fps/` (8,9 GiB = 9,5 GB en total, fuera de git); si no
 estan, `knowledge validate` avisa y `extract` los regenera en ~10 min con el mismo id.
 
 ## Como probarlo
-`make check` (lint, mypy strict, contratos, 259 funciones de test, state, config, knowledge).
+`make check` (lint, mypy strict, contratos, 264 funciones de test, state, config, knowledge).
 Los tests con ffmpeg usan `tests/fixtures/clip_2s.mp4` (10 fps, 2 s) copiado a un nombre con
 acento y `ñ`, y un clip sintetico con un salto real de 3 s (lavfi `testsrc` + `select`,
 codificado con `mpeg4`) para el test de huecos; en CI ffmpeg es obligatorio (nunca se salta en
@@ -153,9 +153,9 @@ entre dos ejecuciones en la misma maquina).
 | v1 | 1920x1080 | 1753 | 1 752 000 | ninguno | 795 MiB | 465 KiB | ~1,5 min |
 | v2 | 1898x1074 | 4135 | 4 134 000 | ninguno | 2538 MiB | 628 KiB | 2,9 min |
 | v3 | 1762x884 | 4677 | 4 676 000 | ninguno | 2326 MiB | 509 KiB | 3,0 min |
-| v4 | 1898x1074 | 5617 | 5 616 000 | ninguno | 3420 MiB | 624 KiB | 4,0 min |
+| v4 | 1778x952 | 5617 | 5 616 000 | ninguno | 3420 MiB | 624 KiB | 4,0 min |
 
-Total 16 182 fotogramas, 9,1 GiB, ~11 min. `ultimo_pts_ms` = `floor(duracion)` en los cuatro
+Total 16 182 fotogramas, 8,9 GiB (9,52 GB, `du -sb`), ~11 min. `ultimo_pts_ms` = `floor(duracion)` en los cuatro
 (existe fotograma en el ultimo segundo entero). Ningun extra: los tres obligatorios caen en
 segundo entero y son regulares. Ids: `fr-v1-5a2a42c3`, `fr-v2-c5a09508`, `fr-v3-982da728`,
 `fr-v4-9ad0ebb8`. `frames check` y `knowledge validate` en verde.
@@ -172,7 +172,7 @@ segundo entero y son regulares. Ids: `fr-v1-5a2a42c3`, `fr-v2-c5a09508`, `fr-v3-
 
 | Instante | Referencia | Que se ve |
 |---|---|---|
-| V3 0:28:56 | `fr-v3-982da728/1736000` | Excel del trader, celda C11 seleccionada, barra de formulas `2,83`. Fila 11 (23-abr-26): `2,83`, `-0,75`. Fila 12 (24-abr-26): `-0,5`, `3,3`, `-0,75`, `-0,5`. Fila 13: `-0,75`, `-0,75`, `9`. Es decir: la heredada (`2,3 / 3,23`) estaba mal en ambas cifras; large-v3 acierta `2.83` y dice `3.33` donde la pantalla dice `3,3`. Audio 0:28:51 "Aqui pueden ver como es los ratios de beneficios que he estado trabajando" |
+| V3 0:28:56 | `fr-v3-982da728/1736000` | Excel del trader, celda C11 seleccionada, barra de formulas `2,83`. Fila 11 (23-abr-26): `2,83`, `-0,75`. Fila 12 (24-abr-26): `-0,5`, `3,3`, `-0,75`, `-0,5`. Fila 13: `-0,75`, `-0,75`, `9`. Inferencia (no hecho): si la marca heredada describia este Excel, sus cifras `2,3 / 3,23` no coinciden con la pantalla; large-v3 (`2.83 ... 3.33`) coincide en la primera y no en la segunda (`3,3`). Audio 0:28:51 "Aqui pueden ver como es los ratios de beneficios que he estado trabajando" |
 | V2 0:33:21 | `fr-v2-c5a09508/2001000` | TradingView, EURUSD 1 min FXCM, dos herramientas de posicion: "Cerrado PyG: -0,00013, Cantidad: 7, ratio riesgo/beneficio: **4,08**" y "Cerrado PyG: 0,00063, Cantidad: 6, ratio riesgo/beneficio: **3,94**"; "Stop: 0,00013 (0,011 %) 1,3, Importe: 9900" y "Stop: 0,00016 (0,014 %) 1,6, Importe: 9900"; eje X con "jue 02 jul '26 12:24 / 12:41 / 13:10"; reloj del grafico **15:36:46 UTC+2**. Coincide con el golden de F21. Sin segmento de transcripcion en ese instante |
 | V4 0:12:30 | `fr-v4-9ad0ebb8/750000` | FXReplay, EUR/USD 1 min, caja de Gann con niveles 0 / 0,25 / 0,5 / 0,75 / 1 y el precio en el 0,75 = **1,19537** (etiqueta del eje); "Fri 30 Jan '26 14:29 / 15:00"; reloj **14:29:59 UTC+2**. Audio 0:12:24 "que este 0.75 se desplace lo suficiente como para que este de acuerdo al split [spread] del momento" |
 
@@ -201,8 +201,9 @@ el origen del quiebre (sin respuesta visible); limite estricto de 2 cartuchos po
 ratio minimo 1:3 "si"; parciales 30-40 % "Creo que lo ideal seria probar sin la toma de
 parciales, cumple objetivo o no de rr"; cierre agresivo opcional al vencimiento de la H4 "si";
 sizing 1 % cuenta propia, 0,50-0,75 % en fondeo "si"; break-even tecnico al confirmarse una
-2.a zona de control en M1 "Si"; caja de Gann nivel 0,75 "Si". Afecta a A-2 (2 cartuchos
-escrito frente a "limito a tres" en V4 0:48:41) y A-4. No se registra aqui.
+2.a zona de control en M1 "Si"; caja de Gann nivel 0,75 "Si". Las contradicciones "2 cartuchos (ficha) frente a 3 (V4 0:48:41)" y "parciales 30-40 %
+frente a sin parciales" YA constan en PROJECT_STATE (Known Contradictions, heredadas de Bot v2);
+lo nuevo es que ahora existe un fotograma citable de la ficha. No se registra aqui.
 
 ## Que deberia observar el usuario
 `frames check` y `knowledge validate` en verde; `frames show --video v3 --t 0:28:56` devuelve
@@ -222,7 +223,11 @@ transcripcion, guardias (activa unica, inmutabilidad, historial, hook), `validat
 - `show` no abre la imagen: imprime la ruta.
 
 ## Limitaciones
-9,1 GiB fuera de git: otra maquina valida esquema, historial y obligatorios pero no el indice
+Volver a un conjunto anterior de obligatorios (quitar uno con fraccion) reproduce el indice y el
+id de un manifiesto ya reemplazado y `extract` lo rechaza: dejar el obligatorio en la lista o
+aceptar que un `fr-*` reemplazado no vuelve a ser activo. `extraer_regulares` borra los PNG de la
+carpeta antes de decodificar: si ffmpeg falla a medias, la siguiente pasada rehace todo (2-4 min).
+8,9 GiB fuera de git: otra maquina valida esquema, historial y obligatorios pero no el indice
 salvo que copie `data/fotogramas/` o re-extraiga (~10 min, mismo id si la build de ffmpeg
 decodifica igual; si no, `extract` lo delata como error de inmutabilidad y la salida es otro
 manifiesto con `--reemplaza-a`). `duracion_video_s` viene de ffprobe (en V4 difiere 9 ms del
@@ -240,23 +245,79 @@ patrones; `tests/integration/` deja de estar vacio; el test AST de ffmpeg restri
 construye un argv de ffmpeg. Nada de F03/F04 cambia; la evidencia (F06) no cambia hasta F07.
 
 ## Auditoria de cierre (dos agentes: codigo/tests y docs/proceso)
-Pendiente (se anade antes de pedir la validacion).
+CI en la rama: run 33992054088 (Ubuntu, ffmpeg de apt) verde sobre `af4b980`: la regla `select`,
+`-copyts` y el clip con salto pasan en otra build de ffmpeg.
+
+### Docs y proceso (agente, 2026-09-05)
+Verifico contra los PNG y las crudas las cuatro lecturas de fotogramas y los siete pasajes de
+audio de A-9 (coinciden); `state check`, `knowledge validate` y `frames check` en verde; ningun
+commit toca `knowledge/spec` ni `knowledge/cases`; los cuatro `fr-*` con un solo commit; hook,
+instalador y `.gitignore` correctos. Hallazgos aplicados: resolucion de v4 copiada mal en la
+tabla (1898x1074 -> 1778x952); "9,1 GiB" era la suma de MiB dividida por 1000 (real: 8,9 GiB =
+9,52 GB; corregido aqui, en PROJECT_STATE y en el README de corpus, que decia la estimacion de
+7 GiB); `knowledge/corpus/fotogramas/` faltaba en Change Regimes de PROJECT_STATE; el brief
+conservaba el texto JPEG bajo la decision PNG (nota anadida al alcance) y decia
+`corpus.fotogramas.referencias_conocidas` y `<huella8>` donde el codigo tiene
+`manifiestos_fotogramas.referencias_conocidas` y `png-1fps[-<huella8>]`; cabecera de
+`fotogramas_obligatorios.yaml` sin `--reemplaza-a`; READMEs de tests y raiz sin `frames`; la
+fila del Excel mezclaba hecho e inferencia (separados); la ficha de Word ya constaba como
+contradiccion (dicho); "Que debe decidir" mezclaba ratificaciones con decisiones (etiquetado).
+Anotado y no aplicado en la rama: HANDOFF desactualizado (se actualiza en el cierre, como en
+F04); MASTER_PLAN H fila "cita de evidencia" no menciona `fr-<id>/<t_ms>` (lo trae el brief de
+F07). No verificable desde fuera: la reescritura de las cuatro `huella.txt` durante la
+construccion (declarada arriba).
+
+### Codigo y tests (agente, 2026-09-05)
+Leyo los modulos, ejecuto los tests, `lint-imports`, `validate`, `check` y siete experimentos
+con ffmpeg sobre el clip y clips sinteticos; verifico en los cuatro `index.jsonl` reales que
+`pts_ms == t_ms` en el 100 %, ningun segundo ausente y `n` consecutivos. Bugs confirmados y
+corregidos en la rama (todos con test nuevo):
+- A1 (alta) callejon sin salida en otra maquina u otra build: la carpeta de trabajo se elegia
+  solo por marcas locales que no viajan en git; tras el error de inmutabilidad, `--reemplaza-a`
+  chocaba con "no hay nada que reemplazar". Ahora `_carpeta_para` consulta ademas los
+  manifiestos (huella recomputada desde `ffmpeg` + `extra`, y `sha256_video`) y abre otra
+  carpeta; repetir la activa sin `--reemplaza-a` es idempotente y no error.
+- A2 (media) `referencias()` fabricaba `fr-<id>/<t_ms>` para segundos sin fotograma (un salto
+  de la fuente <= 2 s que se lleva un segundo entero no es hueco). Campo opcional
+  `segundos_ausentes_ms` en el manifiesto (recomputado en `check`/`validate`); sin el campo
+  el esquema exige cobertura densa (`n_regulares + ausentes == ultimo_pts_ms // 1000 + 1`),
+  que los cuatro manifiestos reales cumplen sin cambiar (mismo esquema aceptado, no se
+  editaron). Test con clip sintetico sin fotogramas entre 0,95 y 1,95 s.
+- A3 (media) con `start_time != 0` el `pts` de `-ss -copyts` (absoluto) y el `t` de `select`
+  (relativo) no comparten reloj: `extraer_video` lee `start_time` con ffprobe y rechaza el
+  video si no es 0 (los cuatro reales lo son). Test con `-output_ts_offset 0.5`.
+- A4/A5 (baja) traceback con un `fr-*.yaml` mal formado o un `index.jsonl` con un escalar:
+  ahora `FotogramasError` (YAML estricto en las guardias).
+- A7 (baja) `frames show` acotado por `duracion_video_s` del manifiesto.
+- B1/B2 tests corregidos: el "empate" de `mas_cercanos` no era empate (ahora 1533 frente a
+  1033/2033) y `show` con transcripcion prueba el borde exacto del segmento.
+Documentado, no cambiado: A6 (volver a un conjunto anterior de obligatorios reproduce el
+indice y el id de un manifiesto ya reemplazado: es una limitacion del id por indice; ver
+Limitaciones); `extraer_regulares` borra los PNG de la carpeta antes de lanzar ffmpeg (pasada
+no reanudable por diseno). Hipotesis no verificadas por el auditor: precision de `pts_time`
+en `showinfo` de ffmpeg < 7 con `t >= 1000 s` (posible desvio de ms en extra; en ffmpeg 9 son
+6 decimales); MP4 con `pts` negativo (fallaria ruidosamente).
+CI tras la auditoria: ver commit de cierre (run anotado en PROJECT_STATE).
 
 ## Que debe decidir el usuario
-1. Aceptar el cambio de plan ya aplicado (tabla A fila F05 y H.2): cobertura completa a 1 fps
-   sin perdida; el concepto "tramo con decision" desaparece.
-2. Que el hallazgo del Excel (pantalla `2,83 / 3,3`; heredada `2,3 / 3,23`; large-v3
+1. RATIFICAR (ya aplicado por su instruccion "maxima fidelidad sin restriccion de recursos";
+   interpretada por el constructor como cobertura completa) el cambio de plan (tabla A fila F05
+   y H.2): cobertura completa a 1 fps sin perdida; el concepto "tramo con decision" desaparece.
+2. DECISION que anticipa al brief de F07: que el hallazgo del Excel (pantalla `2,83 / 3,3`; heredada `2,3 / 3,23`; large-v3
    `2.83 / 3.33`) y la ficha de reglas en Word (V3 0:01:41) entren en F07 como evidencia
    `modalidad: pantalla` y, lo que contradiga (2 frente a 3 cartuchos), como pregunta de F10.
-3. Copia de `data/fotogramas/` (9,1 GiB) fuera de esta maquina: NO se propone (se regenera en
-   10 min desde los videos que si estan en Drive); confirmar.
-4. Los candidatos A-9 se quedan como lista de hechos para F07 (no se elige fotograma aqui).
+3. DECISION de respaldo: copia de `data/fotogramas/` (8,9 GiB) fuera de esta maquina NO se
+   propone (se regenera en ~11 min desde los videos, que si estan en Drive; sin los MP4 en
+   `corpus/` no se puede regenerar); confirmar.
+4. RATIFICAR: los candidatos A-9 se quedan como lista de hechos para F07 (el brief ya lo fijaba).
 
 ## Que puede comprobar sin recursos especiales
 `make check`; `uv run botsito knowledge validate` (los cuatro manifiestos validan por esquema,
 historial y obligatorios; sin `data/` avisa); `uv run botsito corpus frames check`; `git log --
 knowledge/corpus/fotogramas/` (un commit, nunca editados). Con `data/fotogramas/` de esta
-maquina: `frames show` sobre cualquier instante y abrir los tres PNG de la tabla.
+maquina: `frames show` sobre cualquier instante y abrir los tres PNG de la tabla; `frames extract
+--video v1` termina en segundos ("indice ya completo"). Antes de commitear en esta maquina,
+`make hooks` (el hook nuevo protege `knowledge/corpus/fotogramas/`).
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

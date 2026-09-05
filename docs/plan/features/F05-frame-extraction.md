@@ -51,6 +51,10 @@ video y el `t_ms` de la cruda comparten origen: es lo que hace comparable `fr-<i
 `t0/t1` de la evidencia (ADR-0007 punto 7). Va al ADR-0008.
 
 ## Alcance cerrado (que SI)
+Nota (auditoria de cierre): las menciones a JPEG `-q:v 2`, `%06d.jpg`, `<t_ms>.jpg`, "~2,5 GiB"
+y "si otro obligatorio no se lee, PNG solo ese" quedaron superadas por la decision del usuario
+(PNG sin perdida, 8,9 GiB reales; ver "Decisiones del usuario"). La funcion `referencias_conocidas`
+vive en `corpus/manifiestos_fotogramas.py` y la carpeta de trabajo es `png-1fps[-<huella8>]`.
 - `src/botsito/corpus/fotogramas.py` (puro salvo la llamada a ffmpeg, aislada):
   - Regla unica de seleccion, para regulares y obligatorios: "primer fotograma fuente con
     `t >= instante`". Regulares en una pasada con

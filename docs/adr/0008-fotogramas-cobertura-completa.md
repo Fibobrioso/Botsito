@@ -17,7 +17,8 @@ phase: F05
 2. **Sin perdida y bit a bit reproducible.** PNG con `-fflags +bitexact -flags +bitexact` (sin
    la etiqueta `Lavc`: el hash no depende de la version del codificador; si del decodificador
    H.264 de la build de ffmpeg, que se anota en el manifiesto). Medido en V3: 26 MiB por minuto
-   de video, unos 7 GiB y 10 minutos para los cuatro videos; dos extracciones dan el mismo sha256.
+   de video, unos 7 GiB y 10 minutos estimados para los cuatro videos (real: 8,9 GiB y ~11 min);
+   dos extracciones dan el mismo sha256.
 3. **Regla unica de seleccion: "primer fotograma fuente con `t >= instante`".** Regulares en una
    pasada con `select='isnan(prev_selected_t)+gte(floor(t),floor(prev_selected_t)+1)'` y
    `-fps_mode passthrough`, que conserva el `pts` original; `showinfo` DESPUES de `select` da el

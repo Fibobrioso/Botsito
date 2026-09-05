@@ -165,12 +165,132 @@ def test_extraccion_completa_determinista_idempotente_e_inmutable(tmp_path: Path
     (r3.carpeta / FICHERO_INDICE).unlink()
     with pytest.raises(FotogramasError, match="inmutables"):
         extraer_video(*args, [1250, 1500])
+
+
+def test_otra_build_exige_reemplaza_a_y_abre_otra_carpeta(tmp_path: Path) -> None:
+    """Otra maquina u otra build de ffmpeg: sin `data/` ni marcas locales, solo el manifiesto
+    sabe de que build salio la carpeta base `png-1fps`. La salida documentada (`--reemplaza-a`
+    la activa) debe abrir OTRA carpeta y no un callejon sin salida (auditoria de cierre, A1)."""
+    _requiere_ffmpeg()
+    repo, raiz, sha = _repo(tmp_path)
+    datos = repo / "data"
+    args = (repo, datos, raiz, "v1", NOMBRE_ACENTUADO, sha, 2.0)
+    r = extraer_video(*args, [])
+    doc = yaml.safe_load(r.manifiesto.read_text(encoding="utf-8"))
+    # Simular "otra build": el manifiesto de `r` registra la carpeta base con otro ffmpeg.
+    shutil.rmtree(datos)
+    texto = r.manifiesto.read_text(encoding="utf-8")
+    r.manifiesto.write_text(
+        texto.replace(f"ffmpeg: {doc['ffmpeg']}", "ffmpeg: otra-build"), encoding="utf-8"
+    )
+    with pytest.raises(FotogramasError, match="indica --reemplaza-a"):
+        extraer_video(*args, [])
+    with pytest.raises(FotogramasError, match="la extraccion activa"):
+        extraer_video(*args, [], reemplaza_a="fr-v1-00000000")
+    # Con la build de verdad el indice seria distinto; aqui se fuerza con un extra.
+    r2 = extraer_video(*args, [1250], reemplaza_a=r.fotogramas_id)
+    assert r2.carpeta.name.startswith("png-1fps-") and r2.fotogramas_id != r.fotogramas_id
+    assert not (datos / "fotogramas" / "v1" / "png-1fps").exists()
+    doc2 = yaml.safe_load(r2.manifiesto.read_text(encoding="utf-8"))
+    assert doc2["reemplaza_a"] == r.fotogramas_id
+    assert [t.id for t in cargar_todos(repo) if t.supersede is None] == [r.fotogramas_id]
+    # Repetir la activa sin `reemplaza_a`: idempotente (ni error ni manifiesto nuevo).
+    r3 = extraer_video(*args, [1250])
+    assert r3.fotogramas_id == r2.fotogramas_id
+    assert len(list((repo / "knowledge" / "corpus" / "fotogramas").glob("*.yaml"))) == 2
     # Video cambiado: sha256 distinto del manifiesto del corpus.
     with pytest.raises(FotogramasError, match="sha256"):
         extraer_video(repo, datos, raiz, "v1", NOMBRE_ACENTUADO, "0" * 64, 2.0, [])
     # Obligatorio fuera del video.
     with pytest.raises(FotogramasError, match="fuera del video"):
         extraer_video(repo, datos, raiz, "v1", NOMBRE_ACENTUADO, sha, 2.0, [9000])
+
+
+def test_start_time_distinto_de_cero_se_rechaza(tmp_path: Path) -> None:
+    """Con `start_time` != 0 el `pts` de `-ss -copyts` (absoluto) y el `t` de `select`
+    (relativo) no comparten reloj: extraer_video lo rechaza antes de decodificar."""
+    _requiere_ffmpeg()
+    repo, raiz, _ = _repo(tmp_path)
+    desplazado = raiz / "offset.mp4"
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-v",
+            "error",
+            "-y",
+            "-i",
+            str(CLIP),
+            "-output_ts_offset",
+            "0.5",
+            "-c",
+            "copy",
+            str(desplazado),
+        ],
+        check=True,
+    )
+    from botsito.corpus.fotogramas import inicio_video_ms
+
+    assert inicio_video_ms(CLIP) == 0 and 400 <= inicio_video_ms(desplazado) <= 500
+    sha = sha256_hex(desplazado.read_bytes())
+    with pytest.raises(FotogramasError, match=r"start_time \d+ ms"):
+        extraer_video(repo, repo / "data", raiz, "v1", "offset.mp4", sha, 2.0, [])
+
+
+def test_fuente_con_segundo_ausente_lo_declara(tmp_path: Path) -> None:
+    """Un salto de la fuente que se lleva un segundo entero (< 2 s, sin hueco) queda declarado
+    en `segundos_ausentes_ms`: `referencias()` no lo ofrece y un obligatorio ahi se reclama."""
+    _requiere_ffmpeg()
+    repo, raiz, _ = _repo(tmp_path)
+    video = raiz / "salto.mp4"
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-v",
+            "error",
+            "-y",
+            "-f",
+            "lavfi",
+            "-i",
+            "testsrc=duration=4:size=64x64:rate=10",
+            "-vf",
+            "select='lt(t,0.95)+gt(t,1.95)'",
+            "-fps_mode",
+            "passthrough",
+            "-c:v",
+            "mpeg4",
+            "-q:v",
+            "2",
+            str(video),
+        ],
+        check=True,
+    )
+    sha = sha256_hex(video.read_bytes())
+    r = extraer_video(repo, repo / "data", raiz, "v1", "salto.mp4", sha, 4.0, [])
+    assert [f.t_ms for f in r.fotogramas] == [0, 2000, 3000]
+    doc = yaml.safe_load(r.manifiesto.read_text(encoding="utf-8"))
+    assert doc["segundos_ausentes_ms"] == [1000] and doc["huecos"] == []
+    from botsito.corpus.fotogramas import Obligatorio
+    from botsito.corpus.manifiestos_fotogramas import comprobar_obligatorios
+
+    items = cargar_todos(repo)
+    assert f"{r.fotogramas_id}/1000" not in items[0].referencias()
+    assert f"{r.fotogramas_id}/2000" in items[0].referencias()
+    assert len(comprobar_obligatorios(items, [Obligatorio("v1", 1000, "m", None)])) == 1
+    assert comprobar(items, repo / "data") == ([], [])
+
+
+def test_manifiesto_roto_es_error_de_cli(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _requiere_ffmpeg()
+    repo, _, _ = _repo(tmp_path)
+    d = repo / "knowledge" / "corpus" / "fotogramas"
+    d.mkdir()
+    (d / "fr-v1-deadbeef.yaml").write_text("fotogramas_id: [\n", encoding="utf-8")
+    assert cli.main(["--repo", str(repo), "corpus", "frames", "extract", "--video", "v1"]) == 1
+    assert "ERROR: fr-v1-deadbeef.yaml" in capsys.readouterr().out
 
 
 def test_comprobar_detecta_alteraciones(tmp_path: Path) -> None:
@@ -303,5 +423,8 @@ def test_show_con_transcripcion_activa(tmp_path: Path, capsys: pytest.CaptureFix
     assert cli.main(base + ["frames", "show", "--video", "v1", "--t", "0:00:01"]) == 0
     salida = capsys.readouterr().out
     assert "(cruda):" in salida and "[0:00:00.000] texto falso" in salida
+    # Borde exacto del segmento falso (0-2 s): un instante en t1 tambien lo cita.
+    assert cli.main(base + ["frames", "show", "--video", "v1", "--t", "0:00:02"]) == 0
+    assert "[0:00:00.000] texto falso" in capsys.readouterr().out
     indice = cargar_indice(repo / "data" / "fotogramas" / "v1" / "png-1fps")
     assert len(indice) == 2

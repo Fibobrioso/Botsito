@@ -75,6 +75,18 @@ def test_plan_instantes_solo_fracciones_y_rechazos() -> None:
     assert plan_instantes([], 0) == []
 
 
+def test_segundos_ausentes() -> None:
+    from botsito.corpus.fotogramas import segundos_ausentes
+
+    assert segundos_ausentes([_f(0, 0), _f(1, 1000), _f(2, 2000)]) == []
+    assert segundos_ausentes([_f(0, 0), _f(1, 2000), _f(2, 3000, 3033)]) == [1000]
+    assert segundos_ausentes([_f(0, 0), _f(1, 1250, 1300, "obligatorio"), _f(2, 3000)]) == [
+        1000,
+        2000,
+    ]
+    assert segundos_ausentes([]) == []
+
+
 def test_huecos_sobre_pts_reales() -> None:
     assert huecos([_f(0, 0), _f(1, 1000), _f(2, 2000)], 2000) == []
     assert huecos([_f(0, 0), _f(1, 2000)], 2000) == []  # falta un segundo: no es hueco
@@ -98,6 +110,8 @@ def test_indice_ida_y_vuelta_y_rechazos() -> None:
         desde_jsonl(texto.replace('"n": 0', '"n": true', 1))
     with pytest.raises(FotogramasError, match="vacio"):
         desde_jsonl("")
+    with pytest.raises(FotogramasError, match="no es un objeto"):
+        desde_jsonl("5\n")
     with pytest.raises(FotogramasError, match="sha256"):
         _f(0, 0).__class__(0, 0, 0, "000000000.png", "zz", 1, "regular")
     with pytest.raises(FotogramasError, match="negativos"):
@@ -125,7 +139,11 @@ def test_validar_indice() -> None:
 
 def test_mas_cercanos() -> None:
     fs = [_f(0, 0), _f(1, 1000, 1033), _f(2, 2000, 2033)]
-    assert [f.t_ms for f in mas_cercanos(fs, 1500, 1)] == [1000]  # empate: el anterior
+    assert [f.t_ms for f in mas_cercanos(fs, 1533, 1)] == [1000]  # empate exacto: el anterior
+    assert [f.t_ms for f in mas_cercanos(fs, 1600, 1)] == [2000]
+    with pytest.raises(FotogramasError, match="fuera"):
+        mas_cercanos(fs, 2500, 1, fin_ms=2400)
+    assert [f.t_ms for f in mas_cercanos(fs, 2300, 1, fin_ms=2400)] == [2000]
     assert [f.t_ms for f in mas_cercanos(fs, 1900, 2)] == [1000, 2000]
     assert [f.t_ms for f in mas_cercanos(fs, 2900, 1)] == [2000]
     with pytest.raises(FotogramasError, match="fuera"):
@@ -194,6 +212,22 @@ def test_esquema_del_manifiesto() -> None:
     t = validar(_doc(), "manifiesto")
     assert t.id == "fr-v1-" + SHA[:8] and t.extra_ms == (1250,) and t.supersede is None
     assert t.referencias() == {f"fr-v1-{SHA[:8]}/{x}" for x in (0, 1000, 1250)}
+    # Sin `segundos_ausentes_ms` el manifiesto debe ser denso; con el, se restan.
+    with pytest.raises(ManifiestoFotogramasError, match="cobertura no densa"):
+        validar(_doc(n_fotogramas=3, n_regulares=2, ultimo_pts_ms=3000), "manifiesto")
+    con = validar(
+        _doc(n_fotogramas=4, n_regulares=3, ultimo_pts_ms=3000, segundos_ausentes_ms=[2000]),
+        "manifiesto",
+    )
+    assert con.ausentes_ms == (2000,)
+    assert con.referencias() == {f"fr-v1-{SHA[:8]}/{x}" for x in (0, 1000, 1250, 3000)}
+    assert f"fr-v1-{SHA[:8]}/2000" not in con.referencias()
+    for malo in ([2500], [2000, 2000], [9000], "x"):
+        with pytest.raises(ManifiestoFotogramasError, match="segundos_ausentes_ms"):
+            validar(
+                _doc(n_fotogramas=4, n_regulares=3, ultimo_pts_ms=3000, segundos_ausentes_ms=malo),
+                "manifiesto",
+            )
     validar(_doc(huecos=[{"desde_ms": 0, "hasta_ms": 3000, "ms": 3000}]), "manifiesto")
     validar(_doc(carpeta="fotogramas/v1/png-1fps-deadbeef"), "manifiesto")
     for cambios, msg in (
@@ -259,7 +293,7 @@ def test_cargar_todos_un_activo_por_video_y_reemplazos(tmp_path: Path) -> None:
 def test_referencias_conocidas_excluye_heredado_y_obligatorios(tmp_path: Path) -> None:
     t = validar(_doc(), "manifiesto")
     viejo = Fotogramas(
-        "fr-v1-" + "0" * 8, "v1", "fotogramas/v1/png-1fps", "0" * 64, 1, 0, (), None, {}
+        "fr-v1-" + "0" * 8, "v1", "fotogramas/v1/png-1fps", "0" * 64, 1, 0, (), (), None, {}
     )
     corpus = {
         "ficheros": [

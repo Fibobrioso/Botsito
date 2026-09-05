@@ -496,7 +496,8 @@ def corpus_frames_show(repo: Path, args: argparse.Namespace) -> int:
         carpeta = carpeta_de(_carpeta_datos(repo), fr)
         if not (carpeta / "index.jsonl").is_file():
             raise FotogramasError(f"{fr.id}: los fotogramas no estan en esta maquina ({carpeta})")
-        elegidos = mas_cercanos(cargar_indice(carpeta), t_ms, args.n)
+        fin_ms = round(float(fr.doc["duracion_video_s"]) * 1000)
+        elegidos = mas_cercanos(cargar_indice(carpeta), t_ms, args.n, fin_ms)
     except (ManifiestoFotogramasError, FotogramasError, TranscripcionError, OSError) as exc:
         print(f"ERROR: {exc}")
         return 1

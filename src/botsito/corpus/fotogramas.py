@@ -285,7 +285,9 @@ def desde_jsonl(texto: str) -> list[Fotograma]:
         except json.JSONDecodeError as exc:
             raise FotogramasError(f"indice linea {i + 1}: JSON invalido") from exc
         claves = {"n", "t_ms", "pts_ms", "fichero", "sha256", "bytes", "origen"}
-        if not isinstance(doc, dict) or set(doc) != claves:
+        if not isinstance(doc, dict):
+            raise FotogramasError(f"indice linea {i + 1}: no es un objeto")
+        if set(doc) != claves:
             raise FotogramasError(f"indice linea {i + 1}: claves {sorted(doc)!r}")
         for k in ("n", "t_ms", "pts_ms", "bytes"):
             if isinstance(doc[k], bool) or not isinstance(doc[k], int):
@@ -338,6 +340,16 @@ def huecos(
     return salida
 
 
+def segundos_ausentes(fotogramas: list[Fotograma]) -> list[int]:
+    """Segundos enteros hasta el ultimo `pts` sin fotograma regular (la fuente salto ese
+    segundo). Son referencias `fr-<id>/<t_ms>` que NO existen."""
+    if not fotogramas:
+        return []
+    presentes = {f.t_ms for f in fotogramas if f.origen == "regular"}
+    ultimo = max(f.pts_ms for f in fotogramas)
+    return [t for t in range(0, ultimo // 1000 * 1000 + 1, 1000) if t not in presentes]
+
+
 def plan_instantes(obligatorios_ms: list[int], fin_ms: int) -> list[int]:
     """Instantes obligatorios que necesitan extraccion propia (fraccion de segundo). Un instante
     en segundo entero ya es un regular. En o despues del fin del video, o repetido: error (si el
@@ -357,13 +369,17 @@ def plan_instantes(obligatorios_ms: list[int], fin_ms: int) -> list[int]:
     return sorted(extra)
 
 
-def mas_cercanos(fotogramas: list[Fotograma], t_ms: int, n: int = 1) -> list[Fotograma]:
-    """Los `n` fotogramas con `pts` mas cercano a `t_ms` (empate: el anterior), en orden de pts."""
+def mas_cercanos(
+    fotogramas: list[Fotograma], t_ms: int, n: int = 1, fin_ms: int | None = None
+) -> list[Fotograma]:
+    """Los `n` fotogramas con `pts` mas cercano a `t_ms` (empate: el anterior), en orden de pts.
+    `fin_ms` (duracion del video) acota la consulta; sin el, hasta un segundo tras el ultimo."""
     if n < 1:
         raise FotogramasError("n debe ser >= 1")
     if not fotogramas:
         raise FotogramasError("indice vacio")
-    if t_ms < 0 or t_ms > fotogramas[-1].pts_ms + 1000:
+    limite = fotogramas[-1].pts_ms + 1000 if fin_ms is None else fin_ms
+    if t_ms < 0 or t_ms > limite:
         raise FotogramasError(f"{formato_ms(t_ms)} esta fuera del video")
     elegidos = sorted(fotogramas, key=lambda f: (abs(f.pts_ms - t_ms), f.pts_ms))[:n]
     return sorted(elegidos, key=lambda f: f.pts_ms)
@@ -424,16 +440,21 @@ def _leer(ruta: Path) -> str:
         return ""
 
 
-def _carpeta_para(cv: Path, huella: str, sha256_video: str) -> Path:
+def _carpeta_para(cv: Path, huella: str, sha256_video: str, registrada_ajena: bool) -> Path:
     """`<nombre>` la primera vez; si esa carpeta pertenece a otra huella (otra build de ffmpeg,
     otra regla) o a otro video, `<nombre>-<hash8>`: una re-extraccion no pisa la anterior (su
-    manifiesto es inmutable y sigue apuntando a su carpeta)."""
+    manifiesto es inmutable y sigue apuntando a su carpeta). Lo decide tanto la marca local de la
+    carpeta como el manifiesto que la registra (`registrada_ajena`): en un clon sin `data/` no
+    hay marcas y solo el manifiesto sabe de que build salio `<nombre>`."""
     carpeta = cv / NOMBRE
     marca = carpeta / FICHERO_HUELLA
     marca_video = carpeta / FICHERO_VIDEO_CARPETA
-    ajena = carpeta.is_dir() and (
-        (marca.exists() and _leer(marca) != huella)
-        or (marca_video.exists() and _leer(marca_video) != sha256_video)
+    ajena = registrada_ajena or (
+        carpeta.is_dir()
+        and (
+            (marca.exists() and _leer(marca) != huella)
+            or (marca_video.exists() and _leer(marca_video) != sha256_video)
+        )
     )
     if ajena:
         carpeta = cv / f"{NOMBRE}-{hash_corto(huella + sha256_video)}"
@@ -511,8 +532,19 @@ def extraer_video(
     # La huella lleva los instantes extra: otro conjunto de obligatorios es otra carpeta (la
     # anterior sigue siendo verificable por su manifiesto inmutable).
     huella = huella_de(ffmpeg, extra_ms)
+    inicio = inicio_video_ms(video)
+    if inicio != 0:
+        raise FotogramasError(
+            f"{fichero_video}: start_time {inicio} ms; la regla de seleccion y `-ss -copyts` "
+            "solo comparten reloj con start_time 0 (ADR-0008)"
+        )
     cv = carpeta_video(carpeta_datos, video_id)
-    carpeta = _carpeta_para(cv, huella, sha256_video)
+    carpeta = _carpeta_para(
+        cv,
+        huella,
+        sha256_video,
+        _carpeta_base_registrada_ajena(repo, video_id, huella, sha256_video),
+    )
     carpeta_rel = f"{CARPETA_DATOS}/{video_id}/{carpeta.name}"
     _comprobar_activa(repo, video_id, carpeta_rel, reemplaza_a)
     previo = _indice_utilizable(carpeta, obligatorios_ms, fin_ms)
@@ -563,6 +595,7 @@ def extraer_video(
         "ultimo_pts_ms": ultimo_pts,
         "hueco_fotogramas_ms": HUECO_FOTOGRAMAS_MS,
         "huecos": huecos(fotogramas),
+        "segundos_ausentes_ms": segundos_ausentes(fotogramas),
         "extra": [
             {"t_ms": f.t_ms, "pts_ms": f.pts_ms, "sha256": f.sha256}
             for f in fotogramas
@@ -575,9 +608,14 @@ def extraer_video(
         manifiesto["reemplaza_a"] = reemplaza_a
     ruta_manifiesto = repo / DIRECTORIO_MANIFIESTOS / f"{fid}.yaml"
     if ruta_manifiesto.exists():
-        previo_doc = yaml.safe_load(ruta_manifiesto.read_text(encoding="utf-8"))
+        try:
+            previo_doc = cargar_yaml(ruta_manifiesto.read_text(encoding="utf-8"))
+        except YamlError as exc:
+            raise FotogramasError(f"{ruta_manifiesto.name}: {exc}") from exc
         anterior = previo_doc.get("reemplaza_a") if isinstance(previo_doc, dict) else None
-        if anterior != reemplaza_a:
+        # Repetir la extraccion activa sin `reemplaza_a` es idempotente; pedir otro
+        # `reemplaza_a` para un manifiesto que ya existe, no.
+        if reemplaza_a is not None and anterior != reemplaza_a:
             raise FotogramasError(
                 f"{ruta_manifiesto.name} ya existe con reemplaza_a={anterior!r}; un manifiesto es "
                 f"inmutable y no se puede cambiar a {reemplaza_a!r}"
@@ -593,8 +631,8 @@ def extraer_video(
 
 
 def _manifiestos_crudos(repo: Path) -> list[dict[str, Any]]:
-    """Manifiestos tal cual (sin validar): lo justo para las guardias previas a la extraccion.
-    (Este modulo no puede importar `manifiestos_fotogramas`, que lo importa a el.)"""
+    """Manifiestos tal cual (sin validar el esquema): lo justo para las guardias previas a la
+    extraccion. (Este modulo no puede importar `manifiestos_fotogramas`, que lo importa a el.)"""
     directorio = repo / DIRECTORIO_MANIFIESTOS
     if not directorio.is_dir():
         return []
@@ -602,10 +640,66 @@ def _manifiestos_crudos(repo: Path) -> list[dict[str, Any]]:
     for ruta in sorted(directorio.glob("*.yaml")):
         if ruta.name.startswith("_"):
             continue
-        doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+        try:
+            doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        except YamlError as exc:
+            raise FotogramasError(f"{ruta.name}: {exc}") from exc
         if isinstance(doc, dict):
             docs.append(doc)
     return docs
+
+
+def _carpeta_base_registrada_ajena(
+    repo: Path, video_id: str, huella: str, sha256_video: str
+) -> bool:
+    """True si un manifiesto registra `fotogramas/<video>/<NOMBRE>` con otra huella (otra build,
+    otros extra) o con otro video: la carpeta base pertenece a esa extraccion aunque en esta
+    maquina no haya marcas."""
+    base = f"{CARPETA_DATOS}/{video_id}/{NOMBRE}"
+    for doc in _manifiestos_crudos(repo):
+        if doc.get("carpeta") != base:
+            continue
+        extra = doc.get("extra") or []
+        try:
+            registrada = huella_de(str(doc.get("ffmpeg")), sorted(int(e["t_ms"]) for e in extra))
+        except (TypeError, KeyError, ValueError):
+            return True
+        if registrada != huella or doc.get("sha256_video") != sha256_video:
+            return True
+    return False
+
+
+def inicio_video_ms(video: Path) -> int:
+    """`start_time` del contenedor en ms (ffprobe). Debe ser 0: es lo que hace comparables el
+    `t` de `select` (relativo) y el `pts` de `-ss -copyts` (absoluto)."""
+    try:
+        resultado = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "format=start_time",
+                "-of",
+                "csv=p=0",
+                str(video),
+            ],
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+    except FileNotFoundError as exc:
+        raise FotogramasError("ffprobe no esta en PATH") from exc
+    if resultado.returncode != 0:
+        raise FotogramasError(f"ffprobe fallo: {resultado.stderr.strip()[-200:]}")
+    texto = resultado.stdout.strip()
+    if texto in ("", "N/A"):
+        return 0
+    try:
+        return round(float(texto) * 1000)
+    except ValueError as exc:
+        raise FotogramasError(f"ffprobe: start_time ilegible {texto!r}") from exc
 
 
 def _comprobar_activa(repo: Path, video_id: str, carpeta_rel: str, reemplaza_a: str | None) -> None:

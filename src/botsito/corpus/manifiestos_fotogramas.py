@@ -34,6 +34,7 @@ from botsito.corpus.fotogramas import (
     desde_jsonl,
     huecos,
     referencia,
+    segundos_ausentes,
 )
 from botsito.corpus.transcripcion import formato_ms
 
@@ -60,7 +61,10 @@ CAMPOS_OBLIGATORIOS = (
     "sha256_index",
     "generado_el",
 )
-CAMPOS_OPCIONALES = ("reemplaza_a",)
+# `segundos_ausentes_ms` (segundos enteros sin fotograma regular) es opcional: un manifiesto sin
+# el campo (los cuatro de F05) se exige DENSO (un regular por segundo hasta el ultimo pts); uno
+# con el campo los declara y `referencias()` los resta.
+CAMPOS_OPCIONALES = ("reemplaza_a", "segundos_ausentes_ms")
 PAPEL_CITABLE = "material_adicional"
 
 
@@ -77,13 +81,16 @@ class Fotogramas:
     n_fotogramas: int
     ultimo_pts_ms: int
     extra_ms: tuple[int, ...]
+    ausentes_ms: tuple[int, ...]
     supersede: str | None  # reemplaza_a (mismo nombre que evidencia/feedback para `activos`)
     doc: dict[str, Any]
 
     def referencias(self) -> set[str]:
-        """`fr-<id>/<t_ms>` de cada regular (un segundo entero hasta el ultimo pts) y extra."""
+        """`fr-<id>/<t_ms>` de cada regular que EXISTE (un segundo entero hasta el ultimo pts,
+        menos los ausentes) y de cada extra."""
         regulares = range(0, self.ultimo_pts_ms // 1000 * 1000 + 1, 1000)
-        return {referencia(self.id, t) for t in regulares} | {
+        ausentes = set(self.ausentes_ms)
+        return {referencia(self.id, t) for t in regulares if t not in ausentes} | {
             referencia(self.id, t) for t in self.extra_ms
         }
 
@@ -189,6 +196,24 @@ def validar(doc: dict[str, Any], origen: str) -> Fotogramas:
         raise ManifiestoFotogramasError(f"{origen}: extra repetido")
     if doc["n_fotogramas"] != doc["n_regulares"] + len(extra_ms):
         raise ManifiestoFotogramasError(f"{origen}: n_fotogramas != n_regulares + extra")
+    esperados = int(doc["ultimo_pts_ms"]) // 1000 + 1
+    ausentes: list[int] = []
+    if "segundos_ausentes_ms" in doc:
+        lista = doc["segundos_ausentes_ms"]
+        if not isinstance(lista, list) or any(
+            not _entero(a) or a % 1000 != 0 or a > doc["ultimo_pts_ms"] for a in lista
+        ):
+            raise ManifiestoFotogramasError(
+                f"{origen}: segundos_ausentes_ms deben ser segundos enteros dentro del video"
+            )
+        ausentes = sorted(int(a) for a in lista)
+        if len(set(ausentes)) != len(ausentes):
+            raise ManifiestoFotogramasError(f"{origen}: segundos_ausentes_ms repetidos")
+    if doc["n_regulares"] + len(ausentes) != esperados:
+        raise ManifiestoFotogramasError(
+            f"{origen}: {doc['n_regulares']} regulares + {len(ausentes)} ausentes != "
+            f"{esperados} segundos hasta ultimo_pts_ms (cobertura no densa sin declararlo)"
+        )
     if "reemplaza_a" in doc and not ids.es_id_de("fotogramas", doc["reemplaza_a"]):
         raise ManifiestoFotogramasError(f"{origen}: reemplaza_a debe ser un fotogramas_id")
     return Fotogramas(
@@ -199,6 +224,7 @@ def validar(doc: dict[str, Any], origen: str) -> Fotogramas:
         int(doc["n_fotogramas"]),
         int(doc["ultimo_pts_ms"]),
         tuple(sorted(extra_ms)),
+        tuple(ausentes),
         doc.get("reemplaza_a"),
         doc,
     )
@@ -325,6 +351,10 @@ def _recomputar(doc: dict[str, Any], fotogramas: list[Fotograma]) -> list[str]:
     ]
     if extra != doc["extra"]:
         fallos.append("extra no coincide con los obligatorios del indice")
+    ausentes = segundos_ausentes(fotogramas)
+    if ausentes != list(doc.get("segundos_ausentes_ms") or []):
+        declarados = doc.get("segundos_ausentes_ms", [])
+        fallos.append(f"segundos ausentes {ausentes}, el manifiesto dice {declarados}")
     return fallos
 
 

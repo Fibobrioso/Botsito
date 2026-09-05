@@ -13,6 +13,8 @@ Los ficheros pesados (WAV, fragmentos, `cruda.jsonl`, `corregida.jsonl`) viven e
 `data/transcripciones/` (ignorado por git) y se verifican por hash contra el manifiesto. La
 corregida es regenerable (`cruda + glosario`) y no lleva hash: `knowledge validate` la recomputa.
 Los fotogramas (PNG a 1 fps, `index.jsonl`) viven en `data/fotogramas/<video>/png-1fps/`
-(~7 GiB, regenerables en ~10 min con `corpus frames extract`); `knowledge validate` compara el
+(8,9 GiB medidos, regenerables en ~11 min con `corpus frames extract`); `knowledge validate` compara el
 sha256 de `index.jsonl` y recomputa recuentos y huecos; `corpus frames check` verifica ademas por
-hash los fotogramas extra y una muestra de 20 regulares. Una cita de pantalla es `fr-<id>/<t_ms>`.
+hash los fotogramas extra y una muestra de 20 regulares. Una cita de pantalla es `fr-<id>/<t_ms>`; `segundos_ausentes_ms` del manifiesto (opcional; sin
+el, cobertura densa obligatoria) lista los segundos que la fuente salto y que NO se pueden citar.
+Quitar un obligatorio con fraccion reproduce un manifiesto ya reemplazado y no se acepta.
