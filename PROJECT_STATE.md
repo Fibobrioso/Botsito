@@ -118,6 +118,9 @@ transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y
     ("no olvidarse de poner el cuadro de Gann en 0,75, proteger el trade apenas se genera la entrada"),
     V4 0:08:39-0:08:50 ("dar un pequeno respiro: de 0,75 a 0,80" por el spread).
   - Lectura: el 0,8 es el colchon de spread sobre el 0,75, no un nivel alternativo libre.
+  - Hallazgo F04 (2026-09-05, large-v3): en V1 0:15:59 el trader dice "ya ha pasado mas del 50%
+    de la vela" (la transcripcion heredada decia 40 %) y en V1 0:16:51 "de pasar de 0.75 es a
+    0.50". La cifra 40 % frente a 50 % queda como pregunta (c) para la sesion 1.
   - Preguntas abiertas para el trader (sesion 1): (a) ¿el 0,8 es fijo o "0,75 mas el spread del
     momento"? (b) ¿el stop se coloca en el 0,75 al enviar la orden limite o solo tras el llenado?
     Para el bot es equivalente y mas seguro adjuntar el SL al 0,75 en la propia orden pendiente
@@ -203,12 +206,13 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Abrir feature/F04-transcription (orden E: F04, F05, F07, F08, luego F10 + sesion 1) con el metodo supervisado: brief -> revision de diseno por agente -> construccion -> auditoria de cierre -> informe WAITING_FOR_USER_VALIDATION.
+F04 en WAITING_FOR_USER_VALIDATION: leer `docs/validation/F04-transcription-pipeline.md`, decidir los 4 puntos de "Que debe decidir el usuario" y, si valida, ritual de cierre (merge --no-ff, tag stable/F04, docs(state)). Despues F05 (fotogramas) con el mismo metodo supervisado.
 
 ## Last Stable Commit
 11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
 
 ## Change Log
+- 2026-09-05 · F04 construida y auditada: cuatro videos transcritos con large-v3 (403 + 854 + 1031 + 1645 segmentos, cero cortes forzados, cero recortes), manifiestos inmutables tr-v1-...-00fcaf53, tr-v2-...-ac6b337b, tr-v3-...-570a315f, tr-v4-...-3f8c826e; determinismo verificado retranscribiendo un fragmento; 33 marcas heredadas revisadas (28 coinciden, 3 eran fotogramas, 2 con cifra distinta: 40/50 % y 2,3/2.83); auditoria de cierre sin agentes (limite de sesion) con 5 correcciones; hook sin resync; informe WAITING_FOR_USER_VALIDATION
 - 2026-09-05 · F04 en construccion: brief revisado por agente (8 hallazgos de fondo aceptados: muestras enteras, corte con min/max y forzados, glosario Unicode de dos alcances, manifiesto inmutable por transcripcion, corregida por recomputo, data/ para lo pesado, VAD y senales, vocabulario como initial_prompt); ADR-0007; faster-whisper large-v3 en la GTX 1650 a 3,6x tiempo real (grupo de dependencias `asr`); pipeline reanudable con motor falso testeado de extremo a extremo
 - 2026-09-05 · ramas feature/F01-F15 fusionadas borradas (local y origin); rama feature/F04-transcription-pipeline abierta
 - 2026-09-05 · cuenta demo FundedNext conectada en el MT5 de esta maquina; lectura de solo consulta: reloj de servidor GMT+3 con cierre 17:00 NY (decision 2 de F15 verificada en el broker real), escala 100000, M1 del 2026-07-02 coincide con Dukascopy a 1-2 puntos, parametros de instrumento/broker anotados en Technical Debt para F11/F33
