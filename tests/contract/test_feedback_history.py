@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from botsito.evidence.historial import (
+from botsito.comun.historial import (
     ANCLA_FUENTE,
     DIRECTORIO_FEEDBACK,
     ancla_desviada,

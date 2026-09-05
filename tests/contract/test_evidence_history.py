@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from botsito.evidence.historial import (
+from botsito.comun.historial import (
     hay_git,
     modificaciones_en_historial,
     modificaciones_preparadas,

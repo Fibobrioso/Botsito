@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 from botsito import __version__
+from botsito.domain.valores import HoraLocal
 
 STATE_FILE = "PROJECT_STATE.md"
 
@@ -134,164 +135,14 @@ def state_check(repo: Path) -> int:
     return 0
 
 
-def ids_de_adr(repo: Path) -> set[str]:
-    """`ADR-NNNN` por cada docs/adr/NNNN-*.md real (la plantilla 0000 no es una decision)."""
-    return {
-        f"ADR-{p.name[:4]}"
-        for p in (repo / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
-        if p.name[:4] != "0000"
-    }
-
-
-def _contexto_feedback(repo: Path) -> tuple[set[str], set[str], set[str], set[str] | None]:
-    """Lo que un registro de feedback puede citar: evidencia, parametros, contradicciones, corpus.
-
-    Lanza el error de dominio del componente que falle; el llamador lo convierte en ERROR.
-    """
-    from botsito.config.registro import cargar_registro
-    from botsito.corpus.inventario import cargar_manifiesto
-    from botsito.evidence import contradicciones
-    from botsito.evidence.modelo import cargar_evidencia
-
-    items = cargar_evidencia(repo / "knowledge" / "evidence")
-    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    temas = {c["tema"] for c in contradicciones.detectar(items)}
-    ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
-    rutas_corpus: set[str] | None = None
-    if ruta_manifiesto.exists():
-        manifiesto = cargar_manifiesto(ruta_manifiesto)
-        rutas_corpus = {
-            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
-        }
-    return {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
-
-
 def knowledge_validate(repo: Path) -> int:
-    """Valida todo lo que existe en knowledge/: registro, manifiesto, evidencia, feedback,
-    historial de git y trailers `Fuente:` de spec/cases."""
-    if not (repo / "knowledge").is_dir():
-        print("ERROR: falta knowledge/")
-        return 2
-    from botsito.config.registro import RegistroError, cargar_registro
+    """Imprime `validation.knowledge.validar` (el orquestador vive alli, ADR-0006)."""
+    from botsito.validation.knowledge import validar
 
-    try:
-        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    except RegistroError as exc:
-        print(f"ERROR: registro de parametros: {exc}")
-        return 1
-    pendientes = registro.no_confirmados()
-    print(
-        f"OK: registro con {len(registro.parametros)} parametros ({len(pendientes)} sin confirmar)"
-    )
-    from botsito.corpus.inventario import (
-        InventarioError,
-        cargar_fuentes,
-        cargar_manifiesto,
-        validar_manifiesto,
-    )
-
-    try:
-        fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
-        ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
-        if ruta_manifiesto.exists():
-            problemas = validar_manifiesto(cargar_manifiesto(ruta_manifiesto), fuentes)
-            for p in problemas:
-                print(f"ERROR: manifiesto: {p}")
-            if problemas:
-                return 1
-            print(f"OK: manifiesto del corpus coherente con {len(fuentes.videos)} videos esperados")
-        else:
-            print("AVISO: knowledge/corpus/manifest.yaml no existe (botsito corpus inventory)")
-    except InventarioError as exc:
-        print(f"ERROR: fuentes del corpus: {exc}")
-        return 1
-    from botsito.evidence import contradicciones
-    from botsito.evidence.historial import (
-        hay_git,
-        historial_evaluable,
-        modificaciones_en_historial,
-    )
-    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto
-
-    directorio = repo / "knowledge" / "evidence"
-    try:
-        items = cargar_evidencia(directorio)
-    except EvidenciaError as exc:
-        print(f"ERROR: evidencia: {exc}")
-        return 1
-    fallos: list[str] = []
-    manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
-    if manifiesto is not None:
-        fallos += validar_contra_manifiesto(items, manifiesto)
-    fallos += contradicciones.validar_fichero(directorio, items)
-    con_git = hay_git(repo)
-    no_evaluable = historial_evaluable(repo) if con_git else None
-    historial = modificaciones_en_historial(repo)
-    if historial is None and con_git:
-        motivo = no_evaluable or "git fallo"
-        fallos.append(f"la guardia de historial de evidencia no se pudo evaluar ({motivo})")
-    elif historial:
-        fallos += [f"evidencia modificada en el historial: {h}" for h in historial]
-    for fallo in fallos:
-        print(f"ERROR: {fallo}")
-    if fallos:
-        return 1
-    from botsito.evidence.historial import (
-        ANCLA_FUENTE,
-        DIRECTORIO_FEEDBACK,
-        ancla_desviada,
-        commits_sin_fuente,
-        resolver,
-    )
-    from botsito.feedback.modelo import FeedbackError, cargar_feedback, validar_contra_contexto
-
-    try:
-        registros_fb = cargar_feedback(repo / "knowledge" / "feedback")
-    except FeedbackError as exc:
-        print(f"ERROR: feedback: {exc}")
-        return 1
-    temas = {c["tema"] for c in contradicciones.detectar(items)}
-    rutas_corpus: set[str] | None = None
-    if manifiesto is not None:
-        rutas_corpus = {
-            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
-        }
-    fallos_fb = validar_contra_contexto(
-        registros_fb, {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
-    )
-    historial_fb = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
-    if historial_fb is None and con_git:
-        motivo = no_evaluable or "git fallo"
-        fallos_fb.append(f"la guardia de historial de feedback no se pudo evaluar ({motivo})")
-    fallos_fb += [f"feedback modificado en el historial: {h}" for h in historial_fb or []]
-    ids_validos = {i.id for i in items} | {r.id for r in registros_fb} | ids_de_adr(repo)
-    # El ancla es el SHA: un tag se puede mover; si el tag existe y no coincide, es un error.
-    tag, sha = ANCLA_FUENTE
-    ancla = resolver(repo, sha) if con_git else None
-    if con_git and ancla is None:
-        fallos_fb.append(
-            f"no se resuelve el ancla de trazabilidad {tag} ({sha[:7]}): "
-            "clon superficial o sin historial; haz git fetch --unshallow --tags"
-        )
-    desviado = ancla_desviada(repo, tag, sha) if con_git else None
-    if desviado:
-        fallos_fb.append(desviado)
-    sin_fuente = commits_sin_fuente(repo, ancla, ids_validos=ids_validos) if ancla else None
-    if sin_fuente is None and con_git and ancla is not None:
-        motivo = no_evaluable or "git fallo"
-        fallos_fb.append(f"la comprobacion de trailers Fuente: no se pudo evaluar ({motivo})")
-    fallos_fb += sin_fuente or []
-    for fallo in fallos_fb:
-        print(f"ERROR: {fallo}")
-    if fallos_fb:
-        return 1
-    abiertas = len(contradicciones.detectar(items))
-    print(f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente")
-    print(
-        f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas, "
-        "historial intacto"
-    )
-    return 0
+    codigo, lineas = validar(repo)
+    for linea in lineas:
+        print(linea)
+    return codigo
 
 
 def corpus_inventory(repo: Path, sin_hash: bool) -> int:
@@ -451,6 +302,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         escribir_registro,
         validar_contra_contexto,
     )
+    from botsito.validation.knowledge import contexto_feedback
 
     if not (repo / "knowledge").is_dir():
         print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
@@ -458,7 +310,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     directorio = repo / "knowledge" / "feedback"
     try:
         existentes = cargar_feedback(directorio)
-        ids_ev, nombres, temas, rutas_corpus = _contexto_feedback(repo)
+        ids_ev, nombres, temas, rutas_corpus = contexto_feedback(repo)
     except (FeedbackError, EvidenciaError, RegistroError, InventarioError) as exc:
         print(f"ERROR: contexto de knowledge/: {exc}")
         return 1
@@ -536,6 +388,150 @@ def feedback_pending(repo: Path) -> int:
     for r in sorted(registros, key=lambda r: (r.fecha, r.id)):
         print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id}")
     print(f"{len(registros)} registros activos pendientes de reflejar en la spec (F11)")
+    return 0
+
+
+def _carpeta_datos(repo: Path) -> Path:
+    """`[rutas].data` de settings.local.toml si existe; si no, la del ejemplo."""
+    from botsito.config.ajustes import AjustesError, cargar_ajustes
+
+    for nombre in ("settings.local.toml", "settings.example.toml"):
+        ruta = repo / "config" / nombre
+        if ruta.exists():
+            try:
+                return repo / cargar_ajustes(ruta).data
+            except AjustesError as exc:
+                raise SystemExit(f"ERROR: {nombre}: {exc}") from exc
+    return repo / "data"
+
+
+def _parse_anclaje(texto: str) -> HoraLocal:
+    """`HH:MM Zona/IANA` -> HoraLocal. La zona la valida la agregacion."""
+    m = re.fullmatch(r"\s*([01]\d|2[0-3]):([0-5]\d)\s+(\S+)\s*", texto, re.ASCII)
+    if not m:
+        raise SystemExit(f"ERROR: --anclaje debe ser 'HH:MM Zona/IANA', no {texto!r}")
+    return HoraLocal(f"{m.group(1)}:{m.group(2)}", m.group(3))
+
+
+def data_download(repo: Path, args: argparse.Namespace) -> int:
+    """Congela un dataset M1 (descarga por dias, CSV por mes, manifiesto inmutable)."""
+    from datetime import UTC, date, datetime
+
+    from botsito.data.dataset import DatasetError, congelar
+    from botsito.data.dukascopy import DescargaError, FormatoBi5Error, con_cache, descarga_http
+
+    if not (repo / "knowledge").is_dir():
+        print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
+        return 2
+    try:
+        desde, hasta = date.fromisoformat(args.desde), date.fromisoformat(args.hasta)
+    except ValueError as exc:
+        print(f"ERROR: fechas AAAA-MM-DD: {exc}")
+        return 1
+    commit = _git(repo, "rev-parse", "--short", "HEAD")
+    carpeta_datos = _carpeta_datos(repo)
+    try:
+        congelado = congelar(
+            repo,
+            carpeta_datos,
+            args.dataset,
+            args.simbolo,
+            args.escala,
+            desde,
+            hasta,
+            con_cache(carpeta_datos / "raw", descarga_http),
+            hoy=datetime.now(UTC).date(),
+            reemplaza_a=args.reemplaza_a,
+            generado_por=commit,
+        )
+    except (DatasetError, DescargaError, FormatoBi5Error) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    m = congelado.manifiesto
+    print(f"OK: {congelado.ruta_manifiesto.relative_to(repo).as_posix()} ({m['dataset_id']})")
+    d = m["dias"]
+    print(
+        f"  {d['velas']} velas M1 en {len(m['ficheros'])} ficheros; dias presentes "
+        f"{d['presentes']}, ausentes {len(d['ausentes'])}, sin datos {len(d['sin_datos'])}; "
+        f"planas descartadas "
+        f"{d['descartadas_planas_sin_volumen']} ({d['descartadas_dentro_de_sesion']} dentro de "
+        f"sesion); "
+        f"huecos >= 60 min: {len(m['huecos']['mayores'])}"
+    )
+    print("Commit del manifiesto con Fuente: ADR-0005 (es inmutable: no se edita)")
+    return 0
+
+
+def data_check(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.data.dataset import DatasetError, buscar_manifiesto, cargar_manifiesto, comprobar
+
+    try:
+        manifiesto = cargar_manifiesto(buscar_manifiesto(repo, args.dataset))
+    except DatasetError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    carpeta = _carpeta_datos(repo)
+    problemas = comprobar(manifiesto, carpeta, hashes=args.hashes)
+    for p in problemas:
+        print(f"ERROR: {p} (carpeta de datos: {carpeta})")
+    if not problemas:
+        modo = "hashes" if args.hashes else "tamanos"
+        print(f"OK: {manifiesto['dataset_id']} coincide con el disco ({modo})")
+    return 1 if problemas else 0
+
+
+def data_aggregate(repo: Path, args: argparse.Namespace) -> int:
+    """Agrega M1 de un dataset a `--periodo` minutos con `--anclaje` explicito.
+
+    El anclaje va por argumento y no del registro: `anclaje_h4` sigue UNKNOWN (A-9). Las velas
+    de borde no cerradas se omiten salvo `--incluir-incompletas`.
+    """
+    from datetime import date
+
+    from botsito.data.agregacion import AnclajeError, agregar
+    from botsito.data.dataset import (
+        DatasetError,
+        buscar_manifiesto,
+        cargar_manifiesto,
+        cargar_serie,
+    )
+    from botsito.data.velas import VelasCsvError, escribir_csv
+
+    anclaje = _parse_anclaje(args.anclaje)
+    try:
+        desde = date.fromisoformat(args.desde) if args.desde else None
+        hasta = date.fromisoformat(args.hasta) if args.hasta else None
+        if desde and hasta and hasta < desde:
+            raise ValueError(f"--hasta {hasta} anterior a --desde {desde}")
+        manifiesto = cargar_manifiesto(buscar_manifiesto(repo, args.dataset))
+        serie = cargar_serie(manifiesto, _carpeta_datos(repo), desde, hasta)
+        velas = agregar(list(serie.velas), args.periodo, anclaje)
+    except (DatasetError, VelasCsvError, AnclajeError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    if not serie.velas:
+        print("AVISO: la ventana no contiene ninguna M1 del dataset", file=sys.stderr)
+    omitidas = [v for v in velas if not v.completa]
+    if not args.incluir_incompletas:
+        velas = [v for v in velas if v.completa]
+    comentario = (
+        f"dataset={manifiesto['dataset_id']} periodo_min={args.periodo} "
+        f"anclaje={anclaje.hora} {anclaje.huso} escala={manifiesto['escala']}"
+    )
+    texto = escribir_csv(velas, agregadas=True, comentario=comentario)
+    if args.salida:
+        try:
+            destino = Path(args.salida)
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            destino.write_text(texto, encoding="utf-8", newline="\n")
+        except OSError as exc:
+            print(f"ERROR: no se pudo escribir {args.salida}: {exc}")
+            return 1
+        print(f"OK: {len(velas)} velas de {args.periodo} min en {args.salida}")
+    else:
+        sys.stdout.write(texto)
+    if omitidas and not args.incluir_incompletas:
+        print(f"AVISO: {len(omitidas)} velas de borde sin cerrar omitidas", file=sys.stderr)
     return 0
 
 
@@ -637,6 +633,31 @@ def build_parser() -> argparse.ArgumentParser:
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
     fbt.add_argument("identificador")
     fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
+    datos = sub.add_parser("data", help="datasets de velas congelados (F15)")
+    datos_sub = datos.add_subparsers(dest="data_cmd", required=True)
+    dl = datos_sub.add_parser("download", help="descarga M1 por dias y congela un dataset")
+    dl.add_argument("--dataset", required=True, help="nombre (el id anade -hash8)")
+    dl.add_argument("--simbolo", required=True, help="simbolo del proveedor (mayusculas)")
+    dl.add_argument("--escala", required=True, type=int, help="puntos por unidad de precio")
+    dl.add_argument("--desde", required=True, help="AAAA-MM-DD")
+    dl.add_argument("--hasta", required=True, help="AAAA-MM-DD (anterior a hoy)")
+    dl.add_argument("--reemplaza-a", dest="reemplaza_a", help="dataset_id que este sustituye")
+    dc = datos_sub.add_parser("check", help="compara un dataset con el disco")
+    dc.add_argument("--dataset", required=True, help="dataset_id o nombre")
+    dc.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
+    da = datos_sub.add_parser("aggregate", help="agrega M1 con anclaje de reloj de pared")
+    da.add_argument("--dataset", required=True, help="dataset_id o nombre")
+    da.add_argument("--periodo", required=True, type=int, help="minutos (divisor de 1440)")
+    da.add_argument("--anclaje", required=True, help="'HH:MM Zona/IANA' (A-9 sigue abierta)")
+    da.add_argument("--desde", help="AAAA-MM-DD (dia UTC inclusive)")
+    da.add_argument("--hasta", help="AAAA-MM-DD (dia UTC inclusive)")
+    da.add_argument("--salida", help="fichero CSV; sin el, escribe en la salida estandar")
+    da.add_argument(
+        "--incluir-incompletas",
+        dest="incluir_incompletas",
+        action="store_true",
+        help="no omitir las velas de borde sin cerrar",
+    )
     conf = sub.add_parser("config", help="ajustes de entorno")
     conf_sub = conf.add_subparsers(dest="config_cmd", required=True)
     conf_sub.add_parser("validate", help="comprueba config/settings*.toml contra el registro")
@@ -644,8 +665,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    if hasattr(sys.stdout, "reconfigure"):  # consolas Windows en cp1252
-        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stdout, "reconfigure"):  # consolas Windows en cp1252 y con CRLF
+        sys.stdout.reconfigure(encoding="utf-8", newline="\n")
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.cmd == "state" and args.state_cmd == "check":
@@ -668,6 +689,12 @@ def main(argv: list[str] | None = None) -> int:
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":
         return corpus_check(args.repo, args.hashes)
+    if args.cmd == "data" and args.data_cmd == "download":
+        return data_download(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "check":
+        return data_check(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "aggregate":
+        return data_aggregate(args.repo, args)
     parser.print_help()
     return 0
 

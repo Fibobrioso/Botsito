@@ -1,6 +1,7 @@
 # Registro de parametros de negocio: LA UNICA PUERTA (F02, ADR-0002).
 #
-# Vacio de valores a proposito: los valores llegan en F11 citando evidencia o feedback.
+# Sin valores de ESTRATEGIA a proposito: llegan en F11 citando evidencia o feedback. Los
+# parametros de entorno (categoria distinta de estrategia) entran citando un ADR (ADR-0004).
 # Ningun numero de negocio (0,75, 1:3, 07:00, 3 cartuchos...) puede vivir fuera de este fichero;
 # tests/contract/test_no_business_literals.py lo comprueba.
 #
@@ -42,4 +43,21 @@
 #     descripcion: inicio de la ventana operativa
 #     estado: UNKNOWN
 
-parametros: []
+parametros:
+  # F15 (ADR-0005): el reloj del trader es un hecho del entorno; el anclaje de la vela H4 es de
+  # estrategia y sigue abierto (A-9: hora Y huso del grafico) hasta que el trader lo resuelva.
+  # El huso de los datos no es un parametro: lo declara cada manifiesto de dataset (UTC).
+  - nombre: huso_operativa
+    categoria: ejecucion
+    tipo: texto
+    unidad: nombre IANA de huso horario
+    descripcion: reloj del trader; las horas de la operativa se expresan en este huso
+    estado: CONFIRMED
+    valor: "Europe/Madrid"
+    fuente: {tipo: decision, id: ADR-0005}
+  - nombre: anclaje_h4
+    categoria: estrategia
+    tipo: hora
+    unidad: hora de reloj de pared; el huso se fija al resolver A-9 (es parte de la pregunta)
+    descripcion: hora local a la que abre la primera vela H4 del dia en el grafico del trader (A-9)
+    estado: UNKNOWN

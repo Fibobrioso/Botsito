@@ -1,6 +1,6 @@
 import pytest
 
-from botsito.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 
 
 def test_clave_duplicada_es_error() -> None:

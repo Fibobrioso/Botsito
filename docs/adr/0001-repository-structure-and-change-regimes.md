@@ -48,4 +48,5 @@ de holdout en F14.
 2026-09-03 · F01
 
 ## Estado
-ACTIVE
+ACTIVE (contrato de capas revisado y paquete `comun` anadidos por ADR-0006; ADR-0001 sigue
+vigente en todo lo demas)

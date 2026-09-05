@@ -10,7 +10,7 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-ENTORNOS = ("backtest", "tester", "demo")
+ENTORNOS = ("backtest", "tester", "demo", "real")  # `real` lo estrena F33 (pre-vuelo)
 CLAVES_PERMITIDAS: dict[str, frozenset[str]] = {
     "entorno": frozenset({"nombre"}),
     "rutas": frozenset({"corpus", "data", "knowledge"}),

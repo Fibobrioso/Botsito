@@ -22,11 +22,17 @@ NUMEROS_PROHIBIDOS: dict[Decimal, str] = {
     Decimal("0.40"): "riesgo por operacion",
     Decimal("0.45"): "riesgo por operacion",
     Decimal("2000"): "limite de mensajes de la prop firm",
+    Decimal(
+        "100000"
+    ): "escala (puntos por unidad) del instrumento: viene del dataset o del registro",
 }
 TEXTOS_PROHIBIDOS: dict[re.Pattern[str], str] = {
     re.compile(r"\b(07|11|15):00\b"): "ventana operativa (RN-002)",
+    re.compile(r"\b17:00\b"): "cierre de Nueva York / reloj de servidor (anclaje por parametro)",
     re.compile(r"\b1:3\b"): "objetivo riesgo/beneficio (RN-024)",
     re.compile(r"\bEURUSD\b"): "instrumento",
+    re.compile(r"Europe/Madrid"): "huso del trader (huso_operativa en el registro)",
+    re.compile(r"America/New_York"): "reloj de servidor (anclaje por parametro, ADR-0005)",
 }
 
 

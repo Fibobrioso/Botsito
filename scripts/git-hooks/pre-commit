@@ -1,7 +1,8 @@
 #!/bin/sh
 # Hook local (copiado a .git/hooks por `make sync`, ADR-0003).
 # 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
-# 2. Evidencia y feedback son inmutables: modificar, renombrar o borrar sus *.yaml se rechaza.
+# 2. Evidencia, feedback y manifiestos de datos son inmutables: modificar, renombrar o borrar
+#    sus *.yaml se rechaza.
 # 3. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
 #    `uv run --locked`: el hook nunca reescribe uv.lock ni el entorno dentro de un commit; si uv
 #    no esta en PATH, el commit se rechaza en vez de saltarse la comprobacion.
@@ -17,7 +18,7 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
 fi
 # Rutas sin entrecomillar (core.quotepath=false) y separadas por tabulador: un nombre con
 # acento o espacio no se cuela.
-for dir in knowledge/evidence knowledge/feedback; do
+for dir in knowledge/evidence knowledge/feedback data/manifests; do
   # Exento solo si TODAS las rutas implicadas son `_*.yaml` (renombrar `_tmp.yaml` a un id no lo es).
   cambios=$(git -c core.quotepath=false diff --cached --name-status -- "$dir" | awk -F'\t' '$1 ~ /^[MDRCT]/ && ($2 ~ /\.yaml$/ || $3 ~ /\.yaml$/) && !($2 ~ /\/_[^\/]*\.yaml$/ && ($3 == "" || $3 ~ /\/_[^\/]*\.yaml$/)) {print}')
   if [ -n "$cambios" ]; then
