@@ -1,0 +1,65 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v1/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 1752.299
+duracion_wav_s: 1752.299
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: 2026-08-20 22-33-04.mp4
+fragmentos:
+- fin_m: 9588768
+  indice: 0
+  inicio_m: 0
+- fin_m: 19172796
+  indice: 1
+  inicio_m: 9588768
+- fin_m: 28036779
+  indice: 2
+  inicio_m: 19172796
+generado_el: '2026-09-05T05:16:53Z'
+glosario_sha256_inicial: 266716c4ee347eadcae43fa1d2d03eb6de6bd6ad83a32221821a3c12646a2ab7
+hueco_transcripcion_s: 30.0
+huecos: []
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  idioma: es
+  initial_prompt_sha256: 83a84c5c7c8ee2d9ee296f99ff9591fd2e9c0c6b168a6a5bdbbf1554e9841277
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 1631210
+muestras: 28036779
+recortados: 0
+schema_version: 1
+segmentos: 403
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 0
+  repeticion: 0
+sha256_cruda: 00fcaf532231e2e3c471b26f162e1f51093d13d2ecea17472b0bfad78a298da5
+sha256_video: 5494034930bda3e0f40e081d6369935ce5230898e598712c5ddadfe615d5447e
+sha256_wav: 010fba003d484917c334410aa34968ce20843b9d1d6cccfa221c7d0dd3681548
+silencios_detectados: 746
+transcripcion_id: tr-v1-large-v3-int8-float16-00fcaf53
+video_id: v1

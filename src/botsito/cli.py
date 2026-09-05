@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 from botsito import __version__
 from botsito.domain.valores import HoraLocal
@@ -199,6 +200,176 @@ def corpus_check(repo: Path, hashes: bool) -> int:
     if not problemas:
         print(f"OK: el corpus coincide con el manifiesto ({'hashes' if hashes else 'tamanos'})")
     return 1 if problemas else 0
+
+
+def _video_del_corpus(repo: Path, video_id: str) -> tuple[Path, str, str, float]:
+    """(raiz del corpus, fichero, sha256, duracion) del video segun fuentes y manifiesto."""
+    from botsito.corpus.inventario import cargar_fuentes, cargar_manifiesto
+
+    fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
+    manifiesto = cargar_manifiesto(repo / "knowledge" / "corpus" / "manifest.yaml")
+    videos = {v["video_id"]: v for v in manifiesto.get("videos") or []}
+    if video_id not in videos:
+        from botsito.corpus.inventario import InventarioError
+
+        raise InventarioError(f"video {video_id!r} no esta en el manifiesto del corpus")
+    v = videos[video_id]
+    return repo / fuentes.raiz, str(v["fichero"]), str(v["sha256"]), float(v["duracion_s"])
+
+
+def _glosario(repo: Path) -> Any:
+    from botsito.corpus.glosario import cargar_glosario
+
+    return cargar_glosario(repo / "knowledge" / "corpus" / "glosario_asr.yaml")
+
+
+def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
+    """Transcribe un video del corpus por fragmentos con desfase absoluto (F04, ADR-0007)."""
+    from botsito.corpus.audio import AudioError, ParametrosCorte
+    from botsito.corpus.glosario import GlosarioError
+    from botsito.corpus.inventario import InventarioError
+    from botsito.corpus.pipeline_transcripcion import transcribir_video
+    from botsito.corpus.transcripcion import MotorAsr, MotorFalso, TranscripcionError
+
+    try:
+        raiz, fichero, sha, duracion = _video_del_corpus(repo, args.video)
+        glosario = _glosario(repo)
+    except (InventarioError, GlosarioError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    motor: MotorAsr
+    if args.motor == "falso":
+        motor = MotorFalso()
+    else:
+        from botsito.corpus.motor_whisper import ConfiguracionWhisper, MotorWhisper
+
+        motor = MotorWhisper(
+            ConfiguracionWhisper(
+                args.modelo, args.dispositivo, args.compute_type, glosario.prompt_inicial
+            )
+        )
+    parametros = ParametrosCorte(objetivo_s=args.objetivo_s, min_s=args.min_s, max_s=args.max_s)
+
+    def progreso(fragmento: object, n: int) -> None:
+        print(f"  fragmento {getattr(fragmento, 'indice', '?')}: {n} segmentos", flush=True)
+
+    try:
+        r = transcribir_video(
+            repo,
+            _carpeta_datos(repo),
+            raiz,
+            args.video,
+            fichero,
+            sha,
+            duracion,
+            motor,
+            glosario,
+            parametros,
+            progreso,
+            reemplaza_a=args.reemplaza_a,
+        )
+    except (AudioError, TranscripcionError, ImportError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"OK: {r.transcripcion_id} ({len(r.segmentos)} segmentos)")
+    print(f"  cruda: {r.cruda}")
+    print(
+        f"  manifiesto: {r.manifiesto.relative_to(repo).as_posix()} (INMUTABLE; commit sin editar)"
+    )
+    return 0
+
+
+def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
+    """Regenera corregida.jsonl y correcciones.jsonl de una o todas las transcripciones."""
+    from botsito.corpus.glosario import GlosarioError
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        cargar_todos,
+        carpeta_de,
+    )
+    from botsito.corpus.pipeline_transcripcion import cargar_cruda, corregir
+    from botsito.corpus.transcripcion import TranscripcionError
+
+    try:
+        glosario = _glosario(repo)
+        items = cargar_todos(repo)
+    except (GlosarioError, ManifiestoTranscripcionError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    datos = _carpeta_datos(repo)
+    n = 0
+    for t in items:
+        if args.video and t.video_id != args.video:
+            continue
+        carpeta = carpeta_de(datos, t)
+        if not (carpeta / "cruda.jsonl").is_file():
+            print(f"AVISO: {t.id}: cruda no esta en esta maquina")
+            continue
+        try:
+            cambios = corregir(carpeta, cargar_cruda(carpeta), glosario, t.id)
+        except TranscripcionError as exc:
+            print(f"ERROR: {t.id}: {exc}")
+            return 1
+        print(f"OK: {t.id}: {cambios} sustituciones (glosario {glosario.version})")
+        n += 1
+    print(f"{n} transcripciones corregidas")
+    return 0
+
+
+def corpus_transcript_check(repo: Path) -> int:
+    from botsito.corpus.glosario import GlosarioError
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        cargar_todos,
+        comprobar,
+    )
+
+    try:
+        items = cargar_todos(repo)
+        glosario = _glosario(repo)
+    except (GlosarioError, ManifiestoTranscripcionError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    errores, avisos = comprobar(items, _carpeta_datos(repo), glosario)
+    for a in avisos:
+        print(f"AVISO: {a}")
+    for e in errores:
+        print(f"ERROR: {e}")
+    if not errores:
+        print(f"OK: {len(items)} transcripciones coherentes con el disco y el glosario")
+    return 1 if errores else 0
+
+
+def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
+    """Cita literal con marcas: lo que F07 copia en `cita_literal`."""
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        activa_de,
+        cargar_todos,
+        carpeta_de,
+    )
+    from botsito.corpus.pipeline_transcripcion import cargar_corregida, cargar_cruda
+    from botsito.corpus.transcripcion import (
+        TranscripcionError,
+        a_texto_legible,
+        parse_ms,
+        texto_entre,
+    )
+
+    try:
+        t = activa_de(cargar_todos(repo), args.video, args.transcripcion)
+        carpeta = carpeta_de(_carpeta_datos(repo), t)
+        segmentos = cargar_cruda(carpeta) if args.capa == "cruda" else cargar_corregida(carpeta)
+        t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
+        if t1 <= t0:
+            raise TranscripcionError("--t1 debe ser posterior a --t0")
+        trozo = texto_entre(segmentos, t0, t1, round(args.margen_s * 1000))
+    except (ManifiestoTranscripcionError, TranscripcionError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"# {t.id} · capa {args.capa} · {args.t0}-{args.t1} (margen {args.margen_s:g} s)")
+    sys.stdout.write(a_texto_legible(trozo))
+    return 0
 
 
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
@@ -582,6 +753,30 @@ def build_parser() -> argparse.ArgumentParser:
     )
     chk = corpus_sub.add_parser("check", help="compara el manifiesto con el disco")
     chk.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
+    tr = corpus_sub.add_parser("transcribe", help="transcribe un video por fragmentos (F04)")
+    tr.add_argument("--video", required=True, help="video_id de fuentes.yaml (v1..v4)")
+    tr.add_argument("--motor", choices=["faster-whisper", "falso"], default="faster-whisper")
+    tr.add_argument("--modelo", default="large-v3")
+    tr.add_argument("--dispositivo", default="cuda", choices=["cuda", "cpu"])
+    tr.add_argument("--compute-type", dest="compute_type", default="int8_float16")
+    tr.add_argument("--objetivo-s", dest="objetivo_s", type=float, default=600.0)
+    tr.add_argument("--min-s", dest="min_s", type=float, default=420.0)
+    tr.add_argument("--max-s", dest="max_s", type=float, default=780.0)
+    tr.add_argument("--reemplaza-a", dest="reemplaza_a", help="transcripcion_id que sustituye")
+    ga = corpus_sub.add_parser("glossary", help="glosario de correcciones del ASR")
+    ga_sub = ga.add_subparsers(dest="glossary_cmd", required=True)
+    gap = ga_sub.add_parser("apply", help="regenera corregida.jsonl = cruda + glosario")
+    gap.add_argument("--video", help="solo este video_id")
+    ts = corpus_sub.add_parser("transcript", help="transcripciones registradas")
+    ts_sub = ts.add_subparsers(dest="transcript_cmd", required=True)
+    ts_sub.add_parser("check", help="manifiestos frente al disco y al glosario")
+    tss = ts_sub.add_parser("show", help="cita literal con marcas h:mm:ss.mmm")
+    tss.add_argument("--video", required=True)
+    tss.add_argument("--t0", required=True, help="h:mm:ss[.mmm]")
+    tss.add_argument("--t1", required=True, help="h:mm:ss[.mmm]")
+    tss.add_argument("--margen-s", dest="margen_s", type=float, default=0.0)
+    tss.add_argument("--capa", choices=["cruda", "corregida"], default="corregida")
+    tss.add_argument("--transcripcion", help="transcripcion_id (por defecto, la activa)")
     ev = sub.add_parser("evidence", help="evidencia del corpus")
     ev_sub = ev.add_subparsers(dest="evidence_cmd", required=True)
     nuevo = ev_sub.add_parser("new", help="crea un item de evidencia con id calculado")
@@ -689,6 +884,14 @@ def main(argv: list[str] | None = None) -> int:
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":
         return corpus_check(args.repo, args.hashes)
+    if args.cmd == "corpus" and args.corpus_cmd == "transcribe":
+        return corpus_transcribe(args.repo, args)
+    if args.cmd == "corpus" and args.corpus_cmd == "glossary" and args.glossary_cmd == "apply":
+        return corpus_glossary_apply(args.repo, args)
+    if args.cmd == "corpus" and args.corpus_cmd == "transcript" and args.transcript_cmd == "check":
+        return corpus_transcript_check(args.repo)
+    if args.cmd == "corpus" and args.corpus_cmd == "transcript" and args.transcript_cmd == "show":
+        return corpus_transcript_show(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "download":
         return data_download(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "check":

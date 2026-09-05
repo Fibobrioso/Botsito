@@ -1,11 +1,13 @@
 #!/bin/sh
 # Hook local (copiado a .git/hooks por `make sync`, ADR-0003).
 # 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
-# 2. Evidencia, feedback y manifiestos de datos son inmutables: modificar, renombrar o borrar
-#    sus *.yaml se rechaza.
+# 2. Evidencia, feedback, manifiestos de datos y de transcripciones son inmutables: modificar,
+#    renombrar o borrar sus *.yaml se rechaza.
 # 3. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
-#    `uv run --locked`: el hook nunca reescribe uv.lock ni el entorno dentro de un commit; si uv
-#    no esta en PATH, el commit se rechaza en vez de saltarse la comprobacion.
+#    `uv lock --check` + `uv run --no-sync`: el hook nunca reescribe uv.lock ni el entorno dentro
+#    de un commit (un `--locked` con sync falla si otro proceso del proyecto, p. ej. una
+#    transcripcion en la GPU, tiene abierto el ejecutable); si uv no esta en PATH, el commit se
+#    rechaza en vez de saltarse la comprobacion.
 # Este hook es defensa local: --no-verify o reescribir el historial lo saltan. La garantia real
 # son los tests de historial en CI (ADR-0003).
 # Nota: la salida se captura por tuberia, no con >/dev/null: en Git Bash de Windows,
@@ -18,7 +20,7 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
 fi
 # Rutas sin entrecomillar (core.quotepath=false) y separadas por tabulador: un nombre con
 # acento o espacio no se cuela.
-for dir in knowledge/evidence knowledge/feedback data/manifests; do
+for dir in knowledge/evidence knowledge/feedback data/manifests knowledge/corpus/transcripciones; do
   # Exento solo si TODAS las rutas implicadas son `_*.yaml` (renombrar `_tmp.yaml` a un id no lo es).
   cambios=$(git -c core.quotepath=false diff --cached --name-status -- "$dir" | awk -F'\t' '$1 ~ /^[MDRCT]/ && ($2 ~ /\.yaml$/ || $3 ~ /\.yaml$/) && !($2 ~ /\/_[^\/]*\.yaml$/ && ($3 == "" || $3 ~ /\/_[^\/]*\.yaml$/)) {print}')
   if [ -n "$cambios" ]; then
@@ -33,10 +35,16 @@ if [ -f "$root/pyproject.toml" ]; then
     echo "pre-commit: uv no esta en PATH; no se pueden comprobar los contratos de importacion" >&2
     exit 1
   fi
-  out=$(cd "$root" && uv run --locked lint-imports 2>&1)
+  out=$(cd "$root" && uv lock --check 2>&1)
   if [ $? -ne 0 ]; then
     echo "$out" >&2
-    echo "pre-commit: contrato de importacion roto o uv.lock desactualizado (uv run --locked lint-imports)" >&2
+    echo "pre-commit: uv.lock desactualizado (uv lock --check)" >&2
+    exit 1
+  fi
+  out=$(cd "$root" && uv run --no-sync lint-imports 2>&1)
+  if [ $? -ne 0 ]; then
+    echo "$out" >&2
+    echo "pre-commit: contrato de importacion roto (uv run --no-sync lint-imports)" >&2
     exit 1
   fi
 fi

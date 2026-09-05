@@ -30,13 +30,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 
 ## Current Phase
-FASE 4 · Datos de mercado (F15-F17), abierta por el orden E antes de cerrar la fase 1
+FASE 1 · Base de conocimiento (F03-F08); F15 (fase 4) ya integrada por el orden E
 
 ## Current Feature
-— (F15 integrada; F04 pendiente de abrir)
+F04 · transcription-pipeline
 
 ## Current Branch
-main
+feature/F04-transcription-pipeline
 
 ## Stable Main State
 11ee1ac · merge de F15. make check verde: 324 casos (210 funciones), 3 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos). CI Ubuntu verde (run 33937716849). Tag stable/F15. Rama main protegida en GitHub.
@@ -80,7 +80,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-210 funciones de test (parametrizadas x3, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+235 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, audio, transcripcion, pipeline_transcripcion · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history, transcripcion_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -209,6 +209,8 @@ Abrir feature/F04-transcription (orden E: F04, F05, F07, F08, luego F10 + sesion
 11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
 
 ## Change Log
+- 2026-09-05 · F04 en construccion: brief revisado por agente (8 hallazgos de fondo aceptados: muestras enteras, corte con min/max y forzados, glosario Unicode de dos alcances, manifiesto inmutable por transcripcion, corregida por recomputo, data/ para lo pesado, VAD y senales, vocabulario como initial_prompt); ADR-0007; faster-whisper large-v3 en la GTX 1650 a 3,6x tiempo real (grupo de dependencias `asr`); pipeline reanudable con motor falso testeado de extremo a extremo
+- 2026-09-05 · ramas feature/F01-F15 fusionadas borradas (local y origin); rama feature/F04-transcription-pipeline abierta
 - 2026-09-05 · cuenta demo FundedNext conectada en el MT5 de esta maquina; lectura de solo consulta: reloj de servidor GMT+3 con cierre 17:00 NY (decision 2 de F15 verificada en el broker real), escala 100000, M1 del 2026-07-02 coincide con Dukascopy a 1-2 puntos, parametros de instrumento/broker anotados en Technical Debt para F11/F33
 - 2026-09-05 · MT5 instalado en la maquina de desarrollo (terminal build 6180, demo MetaQuotes conectada); lectura de solo consulta confirma escala 100000 y reloj de servidor GMT+3 con cierre a las 17:00 NY (decision 2 de F15 verificada en MetaQuotes-Demo; FundedNext pendiente). El adaptador MT5 (F17/F33) puede desarrollarse aqui
 - 2026-09-04 · F15 VALIDADA por el usuario (con auditoria de arquitectura y de proceso previas); merge --no-ff a main (11ee1ac); tag stable/F15

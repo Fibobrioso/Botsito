@@ -99,12 +99,22 @@ def _valor_constante(node: ast.AST) -> object | None:
     return valor
 
 
+_EXENCION = re.compile(r"#\s*no-negocio:\s*\S.{4,}")
+
+
 def _ofensas(py: Path) -> list[str]:
-    tree = ast.parse(py.read_text(encoding="utf-8"))
+    fuente = py.read_text(encoding="utf-8")
+    tree = ast.parse(fuente)
     docstrings = _docstring_nodes(tree)
+    lineas = fuente.splitlines()
     out: list[str] = []
     for node in ast.walk(tree):
         if id(node) in docstrings:
+            continue
+        # Un hecho tecnico que coincide con un numero de negocio se exime con un comentario
+        # `# no-negocio: <motivo>` en la misma linea (el motivo es obligatorio).
+        linea = getattr(node, "lineno", 0)
+        if linea and _EXENCION.search(lineas[linea - 1]):
             continue
         v = _valor_constante(node)
         if v is None or isinstance(v, bool):
@@ -164,3 +174,13 @@ def test_el_detector_no_da_falsos_positivos(tmp_path: Path) -> None:
     py = tmp_path / "m.py"
     py.write_text('x = 1\ny = "a.b"\nz = 8 * 1024\nw = "0."\n', encoding="utf-8")
     assert _ofensas(py) == []
+
+
+@pytest.mark.contract
+def test_exencion_no_negocio_exige_motivo(tmp_path: Path) -> None:
+    py = tmp_path / "m.py"
+    con_motivo = "X = 0.5  # no-negocio: duracion minima de un silencio en segundos"
+    py.write_text(con_motivo + chr(10), encoding="utf-8")
+    assert _ofensas(py) == []
+    py.write_text("X = 0.5  # no-negocio:" + chr(10), encoding="utf-8")
+    assert len(_ofensas(py)) == 1

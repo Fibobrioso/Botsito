@@ -27,6 +27,7 @@ from botsito.comun import ids
 DIRECTORIO_EVIDENCIA = "knowledge/evidence"
 DIRECTORIO_FEEDBACK = "knowledge/feedback"
 DIRECTORIO_MANIFIESTOS = "data/manifests"
+DIRECTORIO_TRANSCRIPCIONES = "knowledge/corpus/transcripciones"
 DIRECTORIOS_CON_FUENTE = ("knowledge/spec/", "knowledge/cases/")
 # README y todo `_*.yaml` (p. ej. `_contradicciones.yaml`, GENERADO) quedan fuera de la guardia.
 EXENTOS = ("README.md",)
