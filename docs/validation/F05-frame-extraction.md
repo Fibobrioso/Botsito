@@ -1,0 +1,262 @@
+# FUNCTIONALITY VALIDATION REPORT
+
+**Funcionalidad:** F05 · frame-extraction
+**Rama:** `feature/F05-frame-extraction`
+**Objetivo:** fotogramas con marca de tiempo de los cuatro videos del corpus, indexados y
+reproducibles, para que F07 cite lo que se ve en pantalla (Excel, herramienta de posicion, caja,
+configuracion del grafico) igual que F04 cita lo que se oye, y F08 responda "que hay en V4
+0:44:56" con audio y fotograma. Instruccion del usuario (2026-09-05): maxima eficacia y
+fidelidad para extraer todo lo necesario, sin restriccion de tiempo ni recursos.
+
+## Que se construyo
+- `src/botsito/corpus/fotogramas.py` (ADR-0008): cobertura COMPLETA de cada video a 1 fps, sin
+  perdida (PNG, `-fflags +bitexact -flags +bitexact`), con una regla unica de seleccion "primer
+  fotograma fuente con `t >= instante`": regulares en una pasada con
+  `select='isnan(prev_selected_t)+gte(floor(t),floor(prev_selected_t)+1)'` y `-fps_mode
+  passthrough` (conserva el `pts` original), `showinfo` DESPUES de `select` para leer el
+  `pts_ms` real; obligatorios con fraccion de segundo con `-ss <t> -copyts` (misma regla). Un
+  obligatorio en segundo entero ES el regular (misma imagen, mismo hash). `index.jsonl` (`n`,
+  `t_ms` nominal, `pts_ms` real, fichero `<t_ms>.png`, sha256, bytes, origen) validado (n
+  consecutivos, t unicos y crecientes, pts crecientes, regulares en segundo entero). `huecos`
+  sobre `pts` consecutivos (> 2 s, constante tecnica). `plan_instantes` (obligatorios en o
+  despues del fin del video, o repetidos: error). `mas_cercanos` por `pts`. Idempotente: si el
+  indice esta completo en disco no se decodifica; indice escrito al final y atomico.
+  Carpeta de trabajo `data/fotogramas/<video>/png-1fps[-<huella8>]/` con `video.sha256` y
+  huella (build de ffmpeg + parametros + instantes extra): otra huella es otra carpeta, la
+  anterior nunca se pisa. Guardias previas a decodificar: un video tiene exactamente una
+  extraccion activa (extraer a otra carpeta exige `--reemplaza-a` = la activa; repetir la
+  misma carpeta no lleva `--reemplaza-a`); y si un manifiesto ya registra la carpeta, el
+  indice de hoy debe tener su sha256 (inmutabilidad; delata otra build de ffmpeg).
+- `src/botsito/corpus/manifiestos_fotogramas.py`: manifiesto INMUTABLE
+  `knowledge/corpus/fotogramas/fr-<video>-<hash8 del sha256 de index.jsonl>.yaml` (esquema:
+  video, sha256 del video, duracion, resolucion, build de ffmpeg, parametros con la regla de
+  seleccion, carpeta, recuentos, `ultimo_pts_ms`, `huecos` (el esquema los ACEPTA; la
+  aceptacion de F05 exige `[]`), `extra`, `sha256_index`, `reemplaza_a`); `cargar_todos`
+  (ids repetidos, `reemplaza_a` inexistente, de otro video o ciclico, y MAS DE UNA ACTIVA POR
+  VIDEO son error); `comprobar` (sha256 de `index.jsonl`, recuentos, ultimo pts, huecos y extra
+  recomputados desde el indice; existencia y tamano de cada fichero; hash de los extra y de una
+  muestra determinista de 20 regulares; carpeta ausente = aviso); `comprobar_obligatorios`
+  (cada instante de la lista existe en la extraccion activa); `referencias_conocidas`
+  (`fr-<id>/<t_ms>` de TODOS los manifiestos, activos o reemplazados, mas rutas del corpus con
+  papel `material_adicional`; `heredado_v2` excluido).
+- `knowledge/corpus/fotogramas_obligatorios.yaml` (manual, versionado): V3 0:28:56 (Excel),
+  V2 0:33:21 (herramienta de posicion 4,08/3,94), V4 0:12:30 (caja 0,75 = 1,19537).
+- CLI: `corpus frames extract --video v1 [--reemplaza-a fr-...]`, `corpus frames check`,
+  `corpus frames show --video v3 --t 0:28:56 [--n 3]` (referencia citable, `pts` real, ruta
+  y el segmento de la transcripcion activa que cubre el instante). `knowledge validate` suma
+  la capa de fotogramas (esquema, un activo por video, historial de git, `index.jsonl` por
+  hash y recomputo, obligatorios presentes; sin `data/fotogramas` avisa; NUNCA hashea los
+  16 182 PNG). Hook protege `knowledge/corpus/fotogramas/`. `comun/ids.py` gana `fotogramas`
+  (`fr-<video>-<hash8>`) y `referencia_fotograma` (`fr-<id>/<t_ms>`); `comun/historial.py`,
+  `DIRECTORIO_FOTOGRAMAS`.
+- ADR-0008; `knowledge/corpus/README.md` con los dos regimenes nuevos; MASTER_PLAN (tabla A
+  fila F05 reescrita, H.2 fila F05 resuelta, Change Log); `tests/integration/` estrenado.
+
+## Archivos creados
+```
+src/botsito/corpus/{fotogramas,manifiestos_fotogramas}.py
+knowledge/corpus/fotogramas_obligatorios.yaml
+knowledge/corpus/fotogramas/fr-v1-5a2a42c3.yaml  fr-v2-c5a09508.yaml  fr-v3-982da728.yaml  fr-v4-9ad0ebb8.yaml
+docs/adr/0008-fotogramas-cobertura-completa.md  docs/plan/features/F05-frame-extraction.md
+docs/validation/F05-frame-extraction.md
+tests/unit/test_fotogramas.py  tests/integration/{__init__,test_fotogramas_ffmpeg}.py
+tests/contract/test_fotogramas_history.py
+```
+
+## Archivos modificados
+`src/botsito/cli.py` (subcomando `frames`), `src/botsito/validation/knowledge.py` (capa),
+`src/botsito/comun/{ids,historial}.py`, `scripts/git-hooks/pre-commit`,
+`tests/contract/test_import_contracts.py` (test AST: argv que empiece por `ffmpeg`/`ffprobe`
+solo en `corpus/{audio,inventario,fotogramas}.py`), `knowledge/corpus/README.md`,
+`docs/adr/README.md`, `docs/plan/MASTER_PLAN.md`, `PROJECT_STATE.md`.
+
+## Decisiones tomadas
+1. **Cobertura completa, no "tramos con decision"** (cambio del plan, decidido por el usuario).
+   Medida sobre las cuatro crudas `tr-*` antes de fijar la regla que pedia H.2:
+
+   | Regla | v1 (29 min) | v2 (69 min) | v3 (78 min) | v4 (94 min) |
+   |---|---|---|---|---|
+   | 25 palabras del dominio, ±10 s, fusion 20 s | 75 % | 46 % | 83 % | 77 % |
+   | Misma lista, ±15 s, fusion 30 s | 86 % | 52 % | 90 % | 83 % |
+   | Deicticos (aqui, esto, este, mira, aca), ±10 s, fusion 20 s | 93 % | 56 % | 89 % | 85 % |
+   | Dominio + deicticos, ±15 s, fusion 30 s | 97 % | 79 % | 97 % | 99 % |
+
+   Ponderado por duracion, filtrar ahorraria del 7 % al 29 % del disco. El unico tramo sin
+   decision claro es la musica y el audio malo de V2 que F04 ya lista.
+2. **PNG sin perdida** en lugar de JPEG q=2 (instruccion de maxima fidelidad). Coste real
+   abajo. Bitexact: el hash no depende de la version del codificador; si del decodificador
+   H.264 de la build (no verificado entre builds).
+3. **Regla `select` con `pts` real; `fps=1` descartado** (revision de diseno, verificado
+   tambien sobre V3): `fps=1` elige el fotograma en `n + 0,47 s`, reescribe el `pts` a
+   `0, 1, 2...` y duplica fotogramas en los saltos de la fuente; los tests de `pts` habrian
+   pasado sin probar nada y `huecos` habria sido vacuo.
+4. **Un `fr-*` activo por video**; obligatorios fuera del manifiesto inmutable (lista mutable
+   validada contra el indice activo); `referencias_conocidas` sin `heredado_v2`.
+5. **A-9 sin instante inventado**: F05 entrega la cobertura y la lista de candidatos (abajo);
+   elegir el fotograma y registrar la evidencia es de F07.
+6. V3 0:12:26 (marca heredada "huecos de fotogramas") no entra en los obligatorios: era un
+   defecto de la extraccion antigua; la cobertura completa contiene ese segundo.
+
+## Como ejecutarlo
+```
+uv run botsito corpus frames extract --video v1        # idempotente; ~1,5 min por hora de video
+uv run botsito corpus frames check                     # manifiestos frente al disco y obligatorios
+uv run botsito corpus frames show --video v3 --t 0:28:56 --n 3
+uv run botsito knowledge validate
+```
+Los PNG viven en `data/fotogramas/<video>/png-1fps/` (9,1 GiB en total, fuera de git); si no
+estan, `knowledge validate` avisa y `extract` los regenera en ~10 min con el mismo id.
+
+## Como probarlo
+`make check` (lint, mypy strict, contratos, 259 funciones de test, state, config, knowledge).
+Los tests con ffmpeg usan `tests/fixtures/clip_2s.mp4` (10 fps, 2 s) copiado a un nombre con
+acento y `ñ`, y un clip sintetico con un salto real de 3 s (lavfi `testsrc` + `select`,
+codificado con `mpeg4`) para el test de huecos; en CI ffmpeg es obligatorio (nunca se salta en
+silencio). No hay goldens de sha256 (la CI usa el ffmpeg de apt; el determinismo se afirma
+entre dos ejecuciones en la misma maquina).
+
+## Tests ejecutados
+- Unit (puros): `parsear_showinfo` (orden, lineas ajenas, numeracion), nominal y referencias
+  (`ids`), `plan_instantes` (fraccion, fin del video, repetido), `huecos` sobre `pts` (falta
+  de un segundo no es hueco; de tres si; inicial), JSONL ida y vuelta y rechazos, `Fotograma`
+  (negativos, pts < t, nombre, origen), `validar_indice`, `mas_cercanos` (empate al anterior,
+  fuera de rango), `cargar_obligatorios` (formato, repetidos, vacios), esquema del manifiesto
+  (13 rechazos), `cargar_todos` (dos activas, `reemplaza_a` de otro video o inexistente),
+  `referencias_conocidas` (excluye `heredado_v2` y `video_original`, incluye reemplazados y
+  `material_adicional`), `comprobar_obligatorios`, `comprobar` sin datos = aviso.
+- Integracion (ffmpeg, clip con nombre acentuado): regulares con `pts_ms` EXACTOS (0, 1000),
+  obligatorio 0:00:01.250 con `pts_ms == 1300`, obligatorio 0:00:01 byte-identico al regular,
+  PNG sin etiqueta `Lavc`, fin del video y video inexistente como error, ffmpeg ausente como
+  error explicito; `extraer_video` (manifiesto, `extra`, resolucion, `video.sha256`),
+  determinismo (segunda extraccion, mismos sha256), idempotencia (mtime intacto, manifiesto
+  sin reescribir, "no se decodifica"), obligatorio nuevo con fraccion exige `--reemplaza-a`
+  (tres errores distintos) y con el crea otra carpeta y otro manifiesto dejando el anterior
+  intacto, manifiesto con otro `sha256_index` para la carpeta = error de inmutabilidad, video
+  cambiado, obligatorio fuera del video; `comprobar` detecta PNG alterado (mismo tamano),
+  tamano distinto, fichero borrado, `index.jsonl` editado, carpeta ausente (aviso); clip con
+  salto real produce hueco > 2 s; CLI `extract`, `check`, `show` (n=2, error fuera de video,
+  video inexistente, `--reemplaza-a` inexistente), obligatorio pendiente reclamado por `check`
+  y por `knowledge validate`, `knowledge validate` en verde con la capa y sin `data/` con
+  AVISO; `show` con transcripcion activa (`MotorFalso`) imprime el segmento que cubre el
+  instante.
+- Contrato: historial de git de `knowledge/corpus/fotogramas/` (modificar y borrar se
+  detectan; repositorio real intacto), hook protege el directorio, argv `ffmpeg`/`ffprobe`
+  solo en los tres modulos de corpus.
+- Real (esta maquina): cuatro videos; muestra determinista de 20 fotogramas por video
+  re-extraida con `-ss -copyts` y comparada por `pts` y sha256 con el indice.
+
+## Resultados
+### Extracciones reales (ffmpeg 9.0.1 gyan, Windows, CPU)
+
+| Video | Resolucion | Fotogramas | `ultimo_pts_ms` | Huecos > 2 s | Tamano | Por fotograma | Tiempo |
+|---|---|---|---|---|---|---|---|
+| v1 | 1920x1080 | 1753 | 1 752 000 | ninguno | 795 MiB | 465 KiB | ~1,5 min |
+| v2 | 1898x1074 | 4135 | 4 134 000 | ninguno | 2538 MiB | 628 KiB | 2,9 min |
+| v3 | 1762x884 | 4677 | 4 676 000 | ninguno | 2326 MiB | 509 KiB | 3,0 min |
+| v4 | 1898x1074 | 5617 | 5 616 000 | ninguno | 3420 MiB | 624 KiB | 4,0 min |
+
+Total 16 182 fotogramas, 9,1 GiB, ~11 min. `ultimo_pts_ms` = `floor(duracion)` en los cuatro
+(existe fotograma en el ultimo segundo entero). Ningun extra: los tres obligatorios caen en
+segundo entero y son regulares. Ids: `fr-v1-5a2a42c3`, `fr-v2-c5a09508`, `fr-v3-982da728`,
+`fr-v4-9ad0ebb8`. `frames check` y `knowledge validate` en verde.
+
+### Determinismo e idempotencia
+- 20 fotogramas por video (80 en total) re-extraidos con `-ss <t> -copyts` y la misma regla:
+  80/80 identicos en `pts` y sha256 (17 s).
+- Segunda ejecucion de `extract` en los cuatro videos: "indice ya completo, no se decodifica",
+  mismo id. (Durante la construccion la huella de la carpeta gano los instantes extra; las
+  marcas `huella.txt` de las cuatro carpetas se reescribieron al valor final y la re-ejecucion
+  devolvio los mismos cuatro ids: el contenido no cambio.)
+
+### Obligatorios (lo legible, hechos; registrar la evidencia es de F07)
+
+| Instante | Referencia | Que se ve |
+|---|---|---|
+| V3 0:28:56 | `fr-v3-982da728/1736000` | Excel del trader, celda C11 seleccionada, barra de formulas `2,83`. Fila 11 (23-abr-26): `2,83`, `-0,75`. Fila 12 (24-abr-26): `-0,5`, `3,3`, `-0,75`, `-0,5`. Fila 13: `-0,75`, `-0,75`, `9`. Es decir: la heredada (`2,3 / 3,23`) estaba mal en ambas cifras; large-v3 acierta `2.83` y dice `3.33` donde la pantalla dice `3,3`. Audio 0:28:51 "Aqui pueden ver como es los ratios de beneficios que he estado trabajando" |
+| V2 0:33:21 | `fr-v2-c5a09508/2001000` | TradingView, EURUSD 1 min FXCM, dos herramientas de posicion: "Cerrado PyG: -0,00013, Cantidad: 7, ratio riesgo/beneficio: **4,08**" y "Cerrado PyG: 0,00063, Cantidad: 6, ratio riesgo/beneficio: **3,94**"; "Stop: 0,00013 (0,011 %) 1,3, Importe: 9900" y "Stop: 0,00016 (0,014 %) 1,6, Importe: 9900"; eje X con "jue 02 jul '26 12:24 / 12:41 / 13:10"; reloj del grafico **15:36:46 UTC+2**. Coincide con el golden de F21. Sin segmento de transcripcion en ese instante |
+| V4 0:12:30 | `fr-v4-9ad0ebb8/750000` | FXReplay, EUR/USD 1 min, caja de Gann con niveles 0 / 0,25 / 0,5 / 0,75 / 1 y el precio en el 0,75 = **1,19537** (etiqueta del eje); "Fri 30 Jan '26 14:29 / 15:00"; reloj **14:29:59 UTC+2**. Audio 0:12:24 "que este 0.75 se desplace lo suficiente como para que este de acuerdo al split [spread] del momento" |
+
+### Candidatos para A-9 (configuracion del grafico), buscados en las crudas
+Palabras: zona horaria, huso, UTC, hora de, configur-, temporalidad, Nueva York, Londres,
+Madrid, sesion, GMT, medianoche. Hechos relevantes (F07 elige y registra):
+- **V3 0:01:41** "yo lo tengo configurado como utc mas 2 que son ahora ya madrid" (el fotograma
+  `fr-v3-982da728/101000` muestra la ficha de reglas del trader en Word, no el grafico: el
+  grafico esta en los segundos siguientes).
+- **V2 0:33:21** y **V4 0:12:30**: el reloj del grafico marca `UTC+2` en TradingView y en
+  FXReplay (fotogramas obligatorios de arriba).
+- V4 1:14:29-1:14:55 "3 pm en el horario UTC... de 7 a 3 pm utc mas 2"; V4 1:24:34 "UTC mas 2";
+  V1 0:00:54-0:00:56 "la zona horaria... en Peru no tengo ni idea... 7 de la manana"; V2
+  0:03:10 "22 [dos] sesiones que serian la de nueva york y londres"; V3 0:04:51 "9 y 45 horas
+  espana cierra... la bolsa de nueva york"; V3 0:05:39 "lo fija la vela de 4 previa cerrada".
+- Sin decidir aqui: que el grafico este en UTC+2 no dice por si solo a que hora abre su H4
+  (TradingView y FXReplay anclan la H4 segun el proveedor); es exactamente lo que A-9 pregunta.
+
+### Hallazgo colateral (hecho, para F07)
+`fr-v3-982da728/101000` (V3 0:01:41): documento Word "Ficha de especificaciones" con la tabla
+"Confirmaciones rapidas (reglas ya definidas)" y la columna "¿Confirmas? / Ajuste" rellenada
+por el trader: ventana operativa 07:00-15:00 hora Espana (Londres + Nueva York) "Si"; sesgo
+direccional lo fija la vela H4 previa ya cerrada (n-1) "Si"; marco H4/M15/M1/M5 "Ajuste:
+todavia no hay que anadir m5 por ahora"; solo velas japonesas "Si"; entrada por orden limite en
+el origen del quiebre (sin respuesta visible); limite estricto de 2 cartuchos por barrido "si";
+ratio minimo 1:3 "si"; parciales 30-40 % "Creo que lo ideal seria probar sin la toma de
+parciales, cumple objetivo o no de rr"; cierre agresivo opcional al vencimiento de la H4 "si";
+sizing 1 % cuenta propia, 0,50-0,75 % en fondeo "si"; break-even tecnico al confirmarse una
+2.a zona de control en M1 "Si"; caja de Gann nivel 0,75 "Si". Afecta a A-2 (2 cartuchos
+escrito frente a "limito a tres" en V4 0:48:41) y A-4. No se registra aqui.
+
+## Que deberia observar el usuario
+`frames check` y `knowledge validate` en verde; `frames show --video v3 --t 0:28:56` devuelve
+la referencia y la ruta del PNG; abrir ese PNG y leer `2,83` en la barra de formulas; los
+cuatro manifiestos con `huecos: []`.
+
+## Que casos funcionan
+Todo el alcance del brief: cuatro videos a 1 fps sin perdida, indice y manifiesto inmutable por
+video, obligatorios presentes y legibles, `show` con referencia citable y segmento de la
+transcripcion, guardias (activa unica, inmutabilidad, historial, hook), `validate` barato.
+
+## Que casos todavia no funcionan
+- La evidencia aun no acepta `fr-<id>/<t_ms>`: `validar_contra_manifiesto` y el `comprobar`
+  de `evidence new` siguen comparando contra las rutas de `manifest.yaml` (incluidas las
+  heredadas). F07 anade el parametro alimentado por `referencias_conocidas` en los dos puntos
+  y actualiza `knowledge/evidence/README.md`.
+- `show` no abre la imagen: imprime la ruta.
+
+## Limitaciones
+9,1 GiB fuera de git: otra maquina valida esquema, historial y obligatorios pero no el indice
+salvo que copie `data/fotogramas/` o re-extraiga (~10 min, mismo id si la build de ffmpeg
+decodifica igual; si no, `extract` lo delata como error de inmutabilidad y la salida es otro
+manifiesto con `--reemplaza-a`). `duracion_video_s` viene de ffprobe (en V4 difiere 9 ms del
+WAV; aqui no importa: el fin del video se usa solo para rechazar obligatorios imposibles).
+
+## Riesgos
+Un cambio de build de ffmpeg cambia los hashes de PNG aunque los pixeles sean iguales (el
+manifiesto lo delata). El hash de la etiqueta `Lavc` esta eliminado; el del decodificador no se
+ha comparado entre builds. Los fotogramas no son evidencia: lo que se lee en ellos entra en
+F07 con `extractor` y `reviewed_by`.
+
+## Impacto sobre funcionalidades anteriores
+`knowledge validate` suma una capa; el hook protege un directorio mas; `comun/ids.py` gana dos
+patrones; `tests/integration/` deja de estar vacio; el test AST de ffmpeg restringe donde se
+construye un argv de ffmpeg. Nada de F03/F04 cambia; la evidencia (F06) no cambia hasta F07.
+
+## Auditoria de cierre (dos agentes: codigo/tests y docs/proceso)
+Pendiente (se anade antes de pedir la validacion).
+
+## Que debe decidir el usuario
+1. Aceptar el cambio de plan ya aplicado (tabla A fila F05 y H.2): cobertura completa a 1 fps
+   sin perdida; el concepto "tramo con decision" desaparece.
+2. Que el hallazgo del Excel (pantalla `2,83 / 3,3`; heredada `2,3 / 3,23`; large-v3
+   `2.83 / 3.33`) y la ficha de reglas en Word (V3 0:01:41) entren en F07 como evidencia
+   `modalidad: pantalla` y, lo que contradiga (2 frente a 3 cartuchos), como pregunta de F10.
+3. Copia de `data/fotogramas/` (9,1 GiB) fuera de esta maquina: NO se propone (se regenera en
+   10 min desde los videos que si estan en Drive); confirmar.
+4. Los candidatos A-9 se quedan como lista de hechos para F07 (no se elige fotograma aqui).
+
+## Que puede comprobar sin recursos especiales
+`make check`; `uv run botsito knowledge validate` (los cuatro manifiestos validan por esquema,
+historial y obligatorios; sin `data/` avisa); `uv run botsito corpus frames check`; `git log --
+knowledge/corpus/fotogramas/` (un commit, nunca editados). Con `data/fotogramas/` de esta
+maquina: `frames show` sobre cualquier instante y abrir los tres PNG de la tabla.
+
+## Estado
+WAITING_FOR_USER_VALIDATION
