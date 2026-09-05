@@ -18,11 +18,12 @@ from __future__ import annotations
 import bisect
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError, available_timezones
+from zoneinfo import ZoneInfo
 
+from botsito.comun.husos import HusoDesconocidoError, huso_canonico
 from botsito.data.velas import a_datetime, a_minuto
 from botsito.domain.valores import HoraLocal
-from botsito.domain.velas import MINUTOS_POR_DIA, MinutoUtc, Vela, combinar
+from botsito.domain.velas import MINUTOS_POR_DIA, MinutoUtc, SerieVelas, Vela, combinar
 
 
 class AnclajeError(ValueError):
@@ -36,21 +37,11 @@ class Hueco:
     minutos: int
 
 
-_HUSOS_CONOCIDOS: frozenset[str] = frozenset()
-
-
 def _huso(nombre: str) -> ZoneInfo:
-    """Huso por su nombre IANA exacto. En Windows `ZoneInfo("Europe/madrid")` resuelve (sistema
-    de ficheros sin mayusculas) y en Linux no: se exige el nombre canonico en ambos."""
-    global _HUSOS_CONOCIDOS
-    if not _HUSOS_CONOCIDOS:
-        _HUSOS_CONOCIDOS = frozenset(available_timezones())
-    if nombre not in _HUSOS_CONOCIDOS:
-        raise AnclajeError(f"huso desconocido {nombre!r} (nombre IANA exacto)")
     try:
-        return ZoneInfo(nombre)
-    except (ZoneInfoNotFoundError, ValueError) as exc:
-        raise AnclajeError(f"huso desconocido {nombre!r}") from exc
+        return huso_canonico(nombre)
+    except HusoDesconocidoError as exc:
+        raise AnclajeError(str(exc)) from exc
 
 
 def _a_utc_ambos_pliegues(local: datetime, huso: ZoneInfo) -> list[MinutoUtc]:
@@ -143,3 +134,15 @@ def huecos(velas: list[Vela]) -> list[Hueco]:
         if b.inicio > a.fin:
             salida.append(Hueco(a.fin, b.inicio, int(b.inicio) - int(a.fin)))
     return salida
+
+
+def agregar_serie(serie: SerieVelas, periodo_min: int, anclaje: HoraLocal) -> SerieVelas:
+    """`agregar` conservando simbolo, escalas y procedencia: lo que el motor (F18+) recibe."""
+    return SerieVelas(
+        simbolo=serie.simbolo,
+        periodo_min=periodo_min,
+        escala=serie.escala,
+        escala_volumen=serie.escala_volumen,
+        velas=tuple(agregar(list(serie.velas), periodo_min, anclaje)),
+        origen=serie.origen,
+    )

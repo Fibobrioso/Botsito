@@ -121,8 +121,13 @@ causalidad → invariantes → casos dorados → determinismo → fidelidad en h
 Python/MQL5 → paridad con tester → paridad en vivo → validacion humana (usuario y trader).
 
 Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##-nombre.md` con estado
-`WAITING_FOR_USER_VALIDATION` → parada → tras validacion: re-ejecucion, docs, commits, merge
-`--no-ff`, tests desde `main`, etiqueta `stable/F##`, `PROJECT_STATE.md`.
+`WAITING_FOR_USER_VALIDATION` → parada → tras validacion: re-ejecucion, docs, commits, y en
+este orden exacto (el unico que `state check` acepta en verde): (1) `git merge --no-ff` en
+`main` con `BOTSITO_ALLOW_MAIN=1`; (2) `git tag -a stable/F##` sobre el commit de merge; (3)
+commit `docs(state)` que toca solo `PROJECT_STATE.md` (`Current Branch: main`, `Last Stable
+Commit: <sha del merge>`, `Completed Features`); (4) `make check` desde `main`; (5) push de
+`main` y del tag. Tras el merge y antes de (3), `state check` falla a proposito (rama declarada
+y cambios sin tag): no es un error del ritual.
 
 ## G · Bucle del experto
 
@@ -146,7 +151,7 @@ una se incorpora al brief de la funcionalidad indicada cuando se abra.
 |---|---|---|
 | Tres particiones reservadas: `holdout-1` (se abre en F26, sesion 2), `holdout-2` (cifra final de fidelidad, una sola apertura), `holdout-3` (correcciones de fase 7). La asignacion se commitea con seed ANTES de la sesion de etiquetado; un test comprueba la fecha del commit | F10, F14, F26, F34, F35 | Medir la fidelidad final sobre casos ya vistos al corregir |
 | Pre-registro: `docs/validation/PREREGISTRO.md` con umbrales de fidelidad, kappa, paridad y DSR, commiteado antes de abrir cualquier holdout; los informes citan su hash | F26, F27, F32, F35 | Ajustar el umbral a la cifra |
-| Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 | Editar evidencia o feedback saltando los hooks |
+| Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 (hecho: `tests/contract/test_data_manifest_history.py`) | Editar evidencia o feedback saltando los hooks |
 | Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 de Bot v2 (no existe en este repositorio) entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
 | Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
 | Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 | Reescribir lo que dijo el trader |
@@ -197,9 +202,12 @@ en su brief al abrirla. Ninguna fila se cierra sin cita en el informe de validac
 | Test de literales prohibe `0.5` y `2000` globalmente (chocara con punto medio de vela y timeouts) | F18 | Exenciones por linea `# no-negocio: motivo`, listadas en el informe de validacion |
 | Casos con datos reales: un caso debe citar de que dataset y ventana salen sus velas, y las velas no deben copiarse sin manifiesto | F10, F14 | F14: un caso referencia `dataset_id` + `desde/hasta` (ventana de `cargar_serie`, F15) y `knowledge/cases/fixtures/` guarda hashes, no copias sin manifiesto; F10 genera los casos desde los datasets congelados |
 | Proveedor publico (Dukascopy, BID) distinto del broker: minutos aislados, spread y volumen (milesimas del float del proveedor) pueden diferir; un cambio de `filtro_planas` o `decodificador_version` invalida datasets | F16, F17, F33 | F16: M1 reconstruido desde ticks comparado con el M1 congelado dentro de tolerancia declarada; decide si el volumen se compara o se ignora. F17: spread real de la demo por hora. F33: comparar las ultimas velas del terminal con el dataset; un cambio de version de filtro o decodificador exige `reemplaza_a` en todos los datasets afectados |
+| Esquema del manifiesto de datos atado a Dukascopy M1 (`proveedor`, `escala_volumen`, `periodo_min` fijos) | F16, F17 | `schema_version: 2` con campo `contenido: ohlc_m1 | ticks` y tabla `PROVEEDORES` (dukascopy, mt5_demo) al abrir F16; el validador acepta 1 y 2; los manifiestos de F15 no se editan |
+| Tipos monetarios y de tiempo que faltan en `domain/valores.py`: `Lotes`, `Dinero` (lotaje = riesgo x equity / valor del punto), `Minutos`, instante de tick | F21, F22, F24 | F21 anade `Lotes`/`Dinero` en `valores.py` (unico sitio con `Decimal`) antes de la geometria del riesgo; F22 define `MilisegundoUtc` para eventos de tick y una "hora de pared" resuelta por el motor (`comun/husos.py`), nunca por el dominio |
 | Detalle vivo de F15–F35 solo en `MASTER_PLAN.html` con nombres obsoletos (`botv3`) | F15 (hecho), F16+ | Trasladar el detalle por funcionalidad al Markdown al abrir cada una (el HTML queda como instantanea) |
 
 ## Change Log del plan
+- 2026-09-04 · F15: H.2 marca "hecho" tres relojes (ADR-0005: `huso_operativa` parametro, `huso_datos` campo del manifiesto), anclaje H4 (particion UTC por reloj de pared, `anclaje_h4` UNKNOWN/A-9), `Puntos(int)` y manifiestos inmutables; filas nuevas: casos con datos reales (F10/F14 citan `dataset_id` + ventana), proveedor Dukascopy vs broker (F16/F17/F33), esquema de manifiesto v2 (F16) y tipos monetarios (F21/F22); detalle de F15 trasladado del HTML al brief. ADR-0006: contrato de capas revisado (validation > viewer/mql5bridge > engine > cases > spec > feedback > evidencia/corpus/data/config > comun > domain), paquete `comun`, accesores del registro por tipo declarado; ritual de cierre con el orden real (merge, tag, docs(state), make check)
 
 - 2026-09-03 · version inicial (35 funcionalidades, 8 fases).
 - 2026-09-04 · auditoria de fases: seccion H, tres particiones reservadas, pre-registro, tests contra

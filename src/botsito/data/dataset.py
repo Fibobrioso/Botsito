@@ -16,16 +16,18 @@ Esta capa no importa el registro ni el historial (son hermanos): la CLI les pasa
 
 from __future__ import annotations
 
-import hashlib
 import re
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from botsito.comun import ids
+from botsito.comun.documentos import ficheros_de, sha256_hex
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.data.agregacion import huecos
 from botsito.data.dukascopy import (
     DECODIFICADOR_VERSION,
@@ -40,20 +42,20 @@ from botsito.data.dukascopy import (
 from botsito.data.velas import (
     VelasCsvError,
     a_datetime,
+    a_minuto,
     escribir_csv,
     formato_ts,
     leer_fichero,
     parse_ts,
 )
-from botsito.domain.velas import SerieVelas, Vela
-from botsito.yaml_estricto import YamlError, cargar_yaml
+from botsito.domain.velas import MinutoUtc, SerieVelas, Vela
 
 SCHEMA_VERSION = 1
 DIRECTORIO_MANIFIESTOS = "data/manifests"
 CARPETA_OHLC = "ohlc"
 _NOMBRE = re.compile(r"^(?=.{2,48}$)[a-z0-9]+(-[a-z0-9]+)*$", re.ASCII)
 _SUFIJO_HEX = re.compile(r"^[0-9a-f]{8}$", re.ASCII)
-_ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,47}-[0-9a-f]{8}$", re.ASCII)
+_ID = ids.DATASET
 _SIMBOLO = re.compile(r"^[A-Z0-9]{3,12}$", re.ASCII)
 _SHA256 = re.compile(r"^[0-9a-f]{64}$", re.ASCII)
 HUECO_RESENABLE_MIN = 60  # huecos menores se cuentan; mayores se listan (fines de semana, festivos)
@@ -92,7 +94,7 @@ class Congelado:
 
 
 def _sha256(datos: bytes) -> str:
-    return hashlib.sha256(datos).hexdigest()
+    return sha256_hex(datos)
 
 
 def dias_entre(desde: date, hasta: date) -> list[date]:
@@ -399,17 +401,38 @@ def cargar_serie(
     desde: date | None = None,
     hasta: date | None = None,
 ) -> SerieVelas:
-    """M1 del dataset en orden, comprobando el hash de cada fichero antes de leerlo.
-
-    Con `desde`/`hasta` (dias UTC inclusivos) solo se leen los ficheros mensuales necesarios y se
-    devuelve la ventana: F10 y F14 cargan la ventana de un caso, no meses enteros.
-    """
+    """Ventana por dias UTC inclusivos (envoltorio de `cargar_ventana` para la CLI)."""
     if desde and hasta and hasta < desde:
         raise DatasetError(f"ventana invalida: {desde} > {hasta}")
+    desde_min = a_minuto(datetime.combine(desde, time(), tzinfo=UTC)) if desde else None
+    hasta_min = (
+        a_minuto(datetime.combine(hasta + timedelta(days=1), time(), tzinfo=UTC)) if hasta else None
+    )
+    return cargar_ventana(manifiesto, carpeta_datos, desde_min, hasta_min)
+
+
+def cargar_ventana(
+    manifiesto: dict[str, Any],
+    carpeta_datos: Path,
+    desde_min: MinutoUtc | None = None,
+    hasta_min: MinutoUtc | None = None,
+) -> SerieVelas:
+    """M1 del dataset en `[desde_min, hasta_min)`, comprobando el hash de cada fichero leido.
+
+    Solo se leen los ficheros mensuales necesarios: F10 y F14 cargan la ventana de un caso, no
+    meses enteros. La ventana es por instante porque el "dia del trader" y una H4 anclada a
+    17:00 Nueva York cruzan la medianoche UTC (ADR-0006). La serie lleva `origen` = dataset_id.
+    """
+    if desde_min is not None and hasta_min is not None and hasta_min < desde_min:
+        raise DatasetError(f"ventana invalida: {desde_min} > {hasta_min}")
+    mes_desde = a_datetime(desde_min).strftime("%Y-%m") if desde_min is not None else None
+    mes_hasta = (
+        a_datetime(MinutoUtc(hasta_min - 1)).strftime("%Y-%m") if hasta_min is not None else None
+    )
     velas: list[Vela] = []
     for f in manifiesto["ficheros"]:
         mes = str(f["ruta"]).rsplit("_", 1)[-1].removesuffix(".csv")
-        if desde and mes < desde.strftime("%Y-%m") or hasta and mes > hasta.strftime("%Y-%m"):
+        if (mes_desde and mes < mes_desde) or (mes_hasta and mes > mes_hasta):
             continue
         ruta = carpeta_datos / str(f["ruta"])
         if not ruta.is_file():
@@ -427,12 +450,12 @@ def cargar_serie(
         if velas and parte and parte[0].inicio <= velas[-1].inicio:
             raise DatasetError(f"{f['ruta']}: ficheros desordenados en el manifiesto")
         velas.extend(parte)
-    if desde or hasta:
+    if desde_min is not None or hasta_min is not None:
         velas = [
             v
             for v in velas
-            if (desde is None or a_datetime(v.inicio).date() >= desde)
-            and (hasta is None or a_datetime(v.inicio).date() <= hasta)
+            if (desde_min is None or v.inicio >= desde_min)
+            and (hasta_min is None or v.inicio < hasta_min)
         ]
     return SerieVelas(
         simbolo=str(manifiesto["simbolo"]),
@@ -440,6 +463,7 @@ def cargar_serie(
         escala=int(manifiesto["escala"]),
         escala_volumen=int(manifiesto["escala_volumen"]),
         velas=tuple(velas),
+        origen=str(manifiesto["dataset_id"]),
     )
 
 
@@ -447,14 +471,8 @@ def manifiestos(repo: Path) -> list[Path]:
     carpeta = repo / DIRECTORIO_MANIFIESTOS
     if not carpeta.is_dir():
         return []
-    salida: list[Path] = []
-    for p in sorted(x for x in carpeta.iterdir() if x.is_file()):
-        if p.name == "README.md" or p.name.startswith("_"):
-            continue
-        if p.suffix != ".yaml":
-            raise DatasetError(f"fichero inesperado en {DIRECTORIO_MANIFIESTOS}: {p.name}")
-        salida.append(p)
-    return salida
+    ficheros = ficheros_de(carpeta, DatasetError, DIRECTORIO_MANIFIESTOS)
+    return [p for p in ficheros if p.parent == carpeta]
 
 
 def buscar_manifiesto(repo: Path, nombre_o_id: str) -> Path:

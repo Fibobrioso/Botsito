@@ -22,17 +22,17 @@ import re
 import subprocess
 from pathlib import Path
 
-from botsito.evidence.modelo import FICHERO_CONTRADICCIONES
+from botsito.comun import ids
 
 DIRECTORIO_EVIDENCIA = "knowledge/evidence"
 DIRECTORIO_FEEDBACK = "knowledge/feedback"
+DIRECTORIO_MANIFIESTOS = "data/manifests"
 DIRECTORIOS_CON_FUENTE = ("knowledge/spec/", "knowledge/cases/")
-EXENTOS = (FICHERO_CONTRADICCIONES, "README.md")
+# README y todo `_*.yaml` (p. ej. `_contradicciones.yaml`, GENERADO) quedan fuera de la guardia.
+EXENTOS = ("README.md",)
 # Ancla de la trazabilidad: el tag es legible; el SHA sobrevive a un clon sin tags.
 ANCLA_FUENTE = ("stable/F06", "b6b82f2f164c5ca48bde692467b55f1267cf992b")
-_ID_FUENTE = re.compile(
-    r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$", re.ASCII
-)
+_ID_FUENTE = ids.FUENTE
 _TRAILER = re.compile(r"^Fuente:\s*(.+?)\s*$", re.M)
 
 

@@ -84,6 +84,7 @@ class SerieVelas:
     escala: int
     escala_volumen: int
     velas: tuple[Vela, ...]
+    origen: str | None = None  # dataset_id del que salen (F14 lo cita; F23 lo registra)
 
     def __post_init__(self) -> None:
         for nombre in ("periodo_min", "escala", "escala_volumen"):

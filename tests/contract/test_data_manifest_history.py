@@ -7,12 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from botsito.data.dataset import DIRECTORIO_MANIFIESTOS
-from botsito.evidence.historial import (
+from botsito.comun.historial import (
     hay_git,
     modificaciones_en_historial,
     modificaciones_preparadas,
 )
+from botsito.data.dataset import DIRECTORIO_MANIFIESTOS
 
 MAN = f"{DIRECTORIO_MANIFIESTOS}/prueba-deadbeef.yaml"
 

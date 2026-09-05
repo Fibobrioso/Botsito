@@ -239,7 +239,9 @@ def _fb_args(repo: Path, **extra: str) -> list[str]:
 
 def test_ids_de_adr(tmp_path: Path) -> None:
     _knowledge_tmp(tmp_path)
-    assert cli.ids_de_adr(tmp_path) == {"ADR-0001"}
+    from botsito.validation.knowledge import ids_de_adr
+
+    assert ids_de_adr(tmp_path) == {"ADR-0001"}
 
 
 def test_evidence_new_valida_contra_el_manifiesto_antes_de_escribir(tmp_path: Path) -> None:

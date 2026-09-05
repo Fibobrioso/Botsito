@@ -23,10 +23,11 @@ from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from botsito.comun import ids
+from botsito.comun.husos import HusoDesconocidoError, huso_canonico
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.domain.valores import Fraccion, HoraLocal, Porcentaje
-from botsito.yaml_estricto import YamlError, cargar_yaml
 
 RUTA_POR_DEFECTO = Path("knowledge/spec/parametros.yaml")
 TIPOS = ("fraccion", "porcentaje", "decimal", "entero", "hora", "texto")
@@ -35,11 +36,7 @@ CATEGORIAS = ("estrategia", "instrumento", "broker", "prop_firm", "ejecucion")
 Categoria = Literal["estrategia", "instrumento", "broker", "prop_firm", "ejecucion"]
 TIPOS_FUENTE = ("evidence", "feedback", "decision")
 TipoFuente = Literal["evidence", "feedback", "decision"]
-FORMATO_ID_FUENTE: dict[str, re.Pattern[str]] = {
-    "evidence": re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$"),
-    "feedback": re.compile(r"^fb-[0-9a-z-]+-[0-9a-f]{8}$"),
-    "decision": re.compile(r"^ADR-\d{4}$"),
-}
+FORMATO_ID_FUENTE: dict[str, re.Pattern[str]] = {t: ids.POR_TIPO[t] for t in TIPOS_FUENTE}
 _HORA = re.compile(r"^([01][0-9]|2[0-3]):[0-5][0-9]$", re.ASCII)
 _NOMBRE = re.compile(r"^[a-z][a-z0-9_]*$", re.ASCII)
 _AMBIGUEDAD = re.compile(r"^A-\d+$", re.ASCII)
@@ -143,29 +140,31 @@ class Registro:
     # Accesores tipados: el dominio lee un tipo concreto, nunca la union `Valor`.
 
     def fraccion(self, nombre: str) -> Fraccion:
-        return self._tipado(nombre, Fraccion)
+        return self._tipado(nombre, "fraccion", Fraccion)
 
     def porcentaje(self, nombre: str) -> Porcentaje:
-        return self._tipado(nombre, Porcentaje)
+        return self._tipado(nombre, "porcentaje", Porcentaje)
 
     def decimal(self, nombre: str) -> Decimal:
-        return self._tipado(nombre, Decimal)
+        return self._tipado(nombre, "decimal", Decimal)
 
     def entero(self, nombre: str) -> int:
-        return self._tipado(nombre, int)
+        return self._tipado(nombre, "entero", int)
 
     def hora(self, nombre: str) -> HoraLocal:
-        return self._tipado(nombre, HoraLocal)
+        return self._tipado(nombre, "hora", HoraLocal)
 
     def texto(self, nombre: str) -> str:
-        return self._tipado(nombre, str)
+        return self._tipado(nombre, "texto", str)
 
-    def _tipado[T](self, nombre: str, clase: type[T]) -> T:
+    def _tipado[T](self, nombre: str, tipo: TipoParametro, clase: type[T]) -> T:
+        """Comprueba el tipo DECLARADO del parametro, no el tipo Python del valor: `Puntos`,
+        `Minutos` o `Lotes` (F11/F18) son `int`/`Decimal` en tiempo de ejecucion y no se
+        distinguirian (ADR-0006)."""
         valor = self.obtener(nombre)
-        if type(valor) is not clase:
-            raise TipoDeParametroError(
-                f"{nombre} es {type(valor).__name__}, se esperaba {clase.__name__}"
-            )
+        declarado = self.parametros[nombre].tipo
+        if declarado != tipo or type(valor) is not clase:
+            raise TipoDeParametroError(f"{nombre} es de tipo {declarado}, se esperaba {tipo}")
         return valor
 
 
@@ -208,9 +207,9 @@ def _huso(bruto: object, nombre: str) -> str:
     if not isinstance(bruto, str) or not bruto.strip():
         raise RegistroError(f"{nombre}: una hora exige 'huso' (nombre IANA, p. ej. Europe/Madrid)")
     try:
-        ZoneInfo(bruto)
-    except (ZoneInfoNotFoundError, ValueError) as exc:
-        raise RegistroError(f"{nombre}: huso desconocido {bruto!r}") from exc
+        huso_canonico(bruto)  # mismo criterio que la agregacion: nombre IANA exacto (ADR-0006)
+    except HusoDesconocidoError as exc:
+        raise RegistroError(f"{nombre}: {exc}") from exc
     return bruto
 
 

@@ -11,6 +11,15 @@ from pathlib import Path
 import pytest
 
 FORBIDDEN_FOR_DOMAIN = {
+    "botsito.comun",
+    "botsito.evidence",
+    "botsito.feedback",
+    "botsito.spec",
+    "botsito.cases",
+    "zoneinfo",
+    "subprocess",
+    "yaml",
+    "hashlib",
     "botsito.engine",
     "botsito.data",
     "botsito.mql5bridge",
@@ -87,3 +96,22 @@ def test_importlinter_contracts_declared(repo: Path) -> None:
     names = {c["name"] for c in contracts}
     assert any("domain es puro" in n for n in names)
     assert any(c["type"] == "layers" for c in contracts)
+
+
+@pytest.mark.contract
+def test_domain_sin_float_ni_decimal_fuera_de_valores(repo: Path) -> None:
+    """H.2 (F18): en `domain/` los precios son enteros en puntos; `float` y `Decimal` solo en
+    `valores.py`, donde viven Fraccion y Porcentaje."""
+    ofensas: list[str] = []
+    for py in sorted((repo / "src" / "botsito" / "domain").rglob("*.py")):
+        if py.name == "valores.py":
+            continue
+        tree = ast.parse(py.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and node.id in {"float", "Decimal"}:
+                ofensas.append(f"{py.name}:{node.lineno} {node.id}")
+            if isinstance(node, ast.Constant) and isinstance(node.value, float):
+                ofensas.append(f"{py.name}:{node.lineno} literal float {node.value}")
+            if isinstance(node, ast.ImportFrom) and node.module == "decimal":
+                ofensas.append(f"{py.name}:{node.lineno} import decimal")
+    assert ofensas == [], ofensas

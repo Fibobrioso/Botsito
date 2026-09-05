@@ -5,7 +5,7 @@ fase 1) · **Depende de:** F02
 
 ## Objetivo
 Velas M1 reproducibles del instrumento del trader, congeladas por hash, y su agregacion a M15 y H4
-con anclaje configurable y huso explicito, correcta en los dos cambios de hora. Es la base de los
+con anclaje configurable y huso explicito, correcta en los cuatro cambios de hora del ano. Es la base de los
 casos con datos reales (F10, F14), del motor (F18+) y de la paridad con MQL5 (F29, F33).
 
 ## Alcance cerrado (que SI)
@@ -97,7 +97,7 @@ Dukascopy datafeed (publico, sin cuenta), `HoraLocal` y `zoneinfo` (ADR-0004), `
   agregada = max de las M1, minima = min, abierta = primera, cierre = ultima, volumen = suma; sin
   velas inventadas; causalidad (truncar la serie no cambia las velas cerradas anteriores).
 - DST con datos reales: limites UTC esperados a mano para viernes y lunes de las cuatro semanas
-  de cambio con ambos anclajes (16 casos sobre 10 dias, mas los dos del domingo 2026-03-08);
+  de cambio con ambos anclajes (18 casos: 9 dias x 2 anclajes, domingo 2026-03-08 incluido);
   desplazamiento semanal (8 pares de domingos: la primera H4 se mueve una hora solo para el
   anclaje cuyo huso cambio); semana completa sin duplicar limites.
 - DST con M1 sintetico 24/7: vela de 3 h (primavera, ambos husos), 5 h (otono UE), 1 h + 4 h

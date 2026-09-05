@@ -51,7 +51,11 @@ data/manifests/eurusd-m1-2026-01-e37291d4.yaml, eurusd-m1-2026-07-aa162170.yaml,
 (`Puntos`), `knowledge/spec/parametros.yaml`, `scripts/git-hooks/pre-commit`, `.gitattributes`,
 `data/manifests/README.md`, `docs/adr/README.md`, `docs/plan/MASTER_PLAN.md` (H.2),
 `tests/contract/test_no_business_literals.py` (husos prohibidos), `tests/unit/test_registro.py`,
-`PROJECT_STATE.md`.
+`tests/contract/test_import_contracts.py`, `pyproject.toml` (contrato de capas, ADR-0006),
+`README.md`, `scripts/README.md`, `tests/README.md`, `tests/fixtures/README.md`,
+`tests/golden/README.md`, `docs/adr/0004-...md`, `docs/adr/0001-...md`, `PROJECT_STATE.md`.
+Movidos: `yaml_estricto.py` y `evidence/historial.py` a `comun/`; `knowledge_validate` a
+`validation/knowledge.py`.
 
 ## Decisiones tomadas
 - **Revision de diseno antes de programar** (agente revisor sobre el brief). Cambios aceptados:
@@ -83,15 +87,21 @@ uv run botsito knowledge validate
 ```
 
 ## Como probarlo
-- Comparar la salida de `aggregate` del 2026-07-02 con `tests/golden/ohlc/*.csv` (identica).
+- `uv run botsito data aggregate --dataset eurusd-m1-2026-07 --periodo 240 --anclaje "00:00 Europe/Madrid"
+  --desde 2026-07-02 --hasta 2026-07-02 --incluir-incompletas | grep -v '^#'` coincide byte a
+  byte con `tests/golden/ohlc/EURUSD_2026-07-02_H4_madrid.csv` (idem con `17:00 America/New_York`
+  y `_servidor.csv`). Sin `--incluir-incompletas` falta la vela de borde de las 22:00Z, y la
+  primera linea del CLI es un comentario con dataset, periodo y anclaje.
 - Editar a mano un manifiesto de `data/manifests/` e intentar commitear: el hook lo rechaza; con
   `--no-verify`, `knowledge validate` y el test de historial fallan. Probado en un repo temporal
   por la auditoria: anadir OK; editar, borrar, renombrar y renombrar `_tmp.yaml` a un id
   rechazados; README y `_tmp.yaml` exentos.
 - Cambiar un byte de un CSV de `data/ohlc/`: `data check --hashes` lo detecta; `aggregate`
   se niega a cargarlo ("dataset alterado").
-- `aggregate --anclaje "00:00 Europe/Madrid"` de la semana del 2026-03-29 frente a la del 22:
-  la primera H4 del domingo pasa de 19:00Z a 18:00Z; con `17:00 America/New_York` no se mueve.
+- El desplazamiento semanal de los limites en los cambios de hora no se puede reproducir con
+  los datasets (enero, julio, agosto): lo cubre `tests/unit/test_agregacion_dst.py::
+  test_desplazamiento_semanal_real` con 8 pares de domingos reales (`uv run pytest -q
+  tests/unit/test_agregacion_dst.py`).
 
 ## Tests ejecutados
 `make check` en `feature/F15-market-data-ohlc`, Windows 11, Python 3.12 (`.python-version`), desde
@@ -99,22 +109,25 @@ Git Bash y desde PowerShell 7 (ambos verdes).
 
 ## Resultados
 - ruff, mypy strict (63 ficheros), 3 contratos KEPT.
-- pytest: 317 passed (203 funciones). De F15: velas (invariantes, CSV, propiedad), dukascopy
+- pytest: 324 passed (210 funciones). De F15: velas (invariantes, CSV, propiedad), dukascopy
   (bi5 sintetico y real, planas, reintentos), agregacion (sintetico, propiedad hypothesis,
-  causalidad, limites por dia, 18 casos reales sobre 11 dias de las semanas de cambio con
-  limites derivados a mano), agregacion_dst (3 h, 5 h, 1 h + 4 h, M15 en la hora repetida,
+  causalidad, limites por dia, 18 casos reales (9 dias x 2 anclajes) de las semanas de cambio
+  con limites derivados a mano), agregacion_dst (3 h, 5 h, 1 h + 4 h, M15 en la hora repetida,
   desplazamiento semanal con 8 pares de domingos reales, asociatividad, borde incompleto,
   semestre con los cuatro cambios),
-  dataset (descarga simulada con 404/vacio/planas, inmutabilidad, comprobar, ventana, 12
-  manifiestos corruptos), cli_data, golden_ohlc, data_manifest_history.
+  dataset (descarga simulada con 404/vacio/planas, inmutabilidad, comprobar, ventana por dia y
+  por instante, dos meses, 26 rechazos de manifiesto), cli_data (incluida salida estandar por
+  subprocess), golden_ohlc, data_manifest_history, comun, registro_accessors.
 - Goldens: dos velas H4 del 2026-07-02 comprobadas a mano contra las M1 (Madrid 22:00Z-02:00Z:
   120 M1, o=113773 h=113857 l=113749 c=113814; servidor 09:00Z-13:00Z: 240 M1, o=114198
   h=114727 l=113953 c=114512).
 - `state`, `config`, `knowledge validate` (2 parametros, 1 sin confirmar; manifiestos de datos
   validos, historial intacto): OK.
-- CI GitHub Actions (ubuntu-latest, historial completo): verde, run 33917006801 (fa2eefa) y, tras la auditoria de cierre, run 33918894784 (6d05179).
-- Datasets reales (Dukascopy BID, escala 100000, descargados el 2026-09-04, `data check --hashes`
-  OK en los tres, `knowledge validate`: 3 manifiestos validos):
+- CI GitHub Actions (ubuntu-latest, historial completo): verde, runs 33917006801 (fa2eefa),
+  33918894784 (6d05179, auditoria de cierre) y 33936484649 (cce490c, datasets reales).
+- Datasets reales (Dukascopy BID, escala 100000, descargados el 2026-09-04 hora local;
+  `descargado_el` se toma en UTC y dice 2026-09-05; `data check --hashes` OK en los tres,
+  `knowledge validate`: 3 manifiestos validos):
   | dataset_id | velas M1 | dias presentes / sin datos | planas descartadas (dentro de sesion) | huecos >= 60 min |
   |---|---|---|---|---|
   | eurusd-m1-2026-01-e37291d4 | 30150 | 31 / 5 | 14490 (85) | 4 |
@@ -126,6 +139,39 @@ Git Bash y desde PowerShell 7 (ambos verdes).
   goldens de `tests/golden/ohlc/` (diff vacio). La primera descarga de julio y agosto fallo por
   errores 503 y cortes del proveedor: la cache por dia y los reintentos ampliados (hallazgos de la
   auditoria) permitieron reanudar sin repetir dias.
+
+## Auditoria de arquitectura previa a la fusion (2026-09-04, dos agentes)
+Hallazgos aplicados en esta rama (ADR-0006): el contrato de capas hacia hermanos independientes
+a `validation`, `engine`, `viewer` y `mql5bridge`, y F25/F26/F30/F32 necesitan que unos importen
+a otros (corregido: `validation` > `viewer | mql5bridge` > `engine`); los accesores del registro
+distinguian por tipo Python (`Puntos`, `Minutos`, `Lotes` serian `int`/`Decimal` en ejecucion) y
+ahora comprueban el tipo declarado, con un test de contrato que vigila cada
+`registro.<accesor>("nombre")` en `src/`; `yaml_estricto`, `historial` y los helpers duplicados
+entre evidencia, feedback y datos viven en `comun/` (ids en un solo sitio; husos con un solo
+criterio en registro y agregacion); `SerieVelas` lleva `origen` (dataset_id) y `cargar_ventana`
+acepta instantes (una H4 anclada a 17:00 Nueva York cruza la medianoche UTC); `agregar_serie`
+conserva escala y procedencia; el orquestador de `knowledge validate` esta en
+`validation/knowledge.py`; test AST que prohibe `float`/`Decimal` en `domain/` salvo
+`valores.py` (H.2, F18, ya se cumple); `real` entre los entornos (F33). Diferido con dueno en
+H.2: esquema de manifiesto v2 (F16), `Lotes`/`Dinero`/`Minutos`/tick (F21/F22). Los ids ya
+escritos no cambian (cada capa conserva su `contenido_canonico`).
+
+## Que debe decidir el usuario
+1. Dukascopy BID como fuente de M1 hasta que F17 grabe la demo (ADR-0005 §1).
+2. `17:00 America/New_York` como reloj de servidor del broker, aproximacion hasta F17 (ADR-0005 §3).
+3. Descartar las velas planas de volumen cero tambien dentro de la sesion (85, 165 y 163 por mes):
+   ¿coincide con lo que el trader ve en MT5, que tampoco dibuja un minuto sin ticks?
+4. `huso_operativa = Europe/Madrid` CONFIRMED por ADR y no preguntado al trader.
+5. Id de dataset con hash del contenido y manifiestos inmutables (`reemplaza_a` para cambios).
+
+## Que puede comprobar sin descargar nada
+`make check`, `uv run pytest -q -m golden`, `uv run botsito knowledge validate`, los sha256 de
+`tests/fixtures/ohlc/README.md` contra `sha256sum tests/fixtures/ohlc/*.bi5`, y que los goldens
+del 2026-07-02 salen de un fixture real. Los CSV de `data/ohlc/` no viajan en git: `data check`
+y `aggregate` sobre los datasets exigen descargarlos (93 dias, de 25 a 90 minutos) o copiar la
+carpeta `data/` de esta maquina; el id de enero se obtuvo dos veces identico. Nota honesta: los
+goldens los produce el mismo codigo que se valida; la comprobacion externa contra el grafico del
+trader es F07.
 
 ## Que deberia observar el usuario
 Los tres manifiestos en `data/manifests/` con sus recuentos (dias ausentes = fines de semana,

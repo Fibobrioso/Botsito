@@ -65,7 +65,9 @@ type = "forbidden"
 source_modules = ["botsito.domain"]
 forbidden_modules = [
   "botsito.engine", "botsito.data", "botsito.mql5bridge", "botsito.corpus",
-  "botsito.viewer", "botsito.validation", "botsito.cli", "botsito.config",
+  "botsito.viewer", "botsito.validation", "botsito.cli", "botsito.config", "botsito.comun",
+  "botsito.evidence", "botsito.feedback", "botsito.spec", "botsito.cases",
+  "zoneinfo", "subprocess", "yaml", "hashlib",
   "MetaTrader5", "pandas", "polars", "numpy", "requests", "asyncio", "threading",
   "datetime", "time", "random", "os", "pathlib", "io",
 ]
@@ -77,17 +79,22 @@ source_modules = ["botsito.spec"]
 forbidden_modules = ["botsito.engine", "botsito.data", "botsito.mql5bridge", "MetaTrader5", "pandas", "polars"]
 
 [[tool.importlinter.contracts]]
-name = "capas: cli -> validacion/motor -> cases -> spec -> feedback -> evidencia/corpus/datos/config -> domain"
+name = "capas: cli -> validation -> viewer/mql5bridge -> engine -> cases -> spec -> feedback -> evidencia/corpus/datos/config -> comun -> domain"
 type = "layers"
 # Dentro del conocimiento hay jerarquia: la evidencia es la base; el feedback la cita; la spec
 # deriva de evidencia y feedback; los casos referencian spec y feedback. Los hermanos con `|`
 # son independientes entre si.
+# ADR-0006: validation conduce motor y puente (F26, F30, F32); viewer lee el journal del motor
+# (F25); engine consume cases, spec y data (F23, F24). `comun` no tiene IO ni negocio.
 layers = [
   "botsito.cli",
-  "botsito.validation | botsito.engine | botsito.viewer | botsito.mql5bridge",
+  "botsito.validation",
+  "botsito.viewer | botsito.mql5bridge",
+  "botsito.engine",
   "botsito.cases",
   "botsito.spec",
   "botsito.feedback",
   "botsito.evidence | botsito.corpus | botsito.data | botsito.config",
+  "botsito.comun",
   "botsito.domain",
 ]

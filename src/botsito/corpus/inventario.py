@@ -19,7 +19,7 @@ from typing import Any
 
 import yaml
 
-from botsito.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 
 PAPELES_CARPETA = ("heredado_v2", "material_adicional")
 VERSION_MANIFIESTO = 1

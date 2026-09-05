@@ -9,9 +9,7 @@ id, y el historial de git se vigila (`historial.py`). Una correccion es un item 
 
 from __future__ import annotations
 
-import hashlib
 import json
-import re
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -19,7 +17,18 @@ from typing import Any
 
 import yaml
 
-from botsito.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun import ids
+from botsito.comun.documentos import (
+    activos,
+    cargar_directorio,
+    ciclos_de_supersede,
+    hash_corto,
+    normalizar_texto,
+    vacio,
+)
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+
+__all__ = ["activos", "ciclos_de_supersede"]
 
 TIPOS = ("RULE_STATEMENT", "PARAMETER", "EXAMPLE_TRADE", "NO_TRADE", "MANAGEMENT", "UNKNOWN")
 MODALIDADES = ("audio", "pantalla", "ambas")
@@ -28,8 +37,9 @@ EXTRACTORES = ("humano", "llm")
 PROVENANCES = ("botsito", "bot-v2")
 FICHERO_CONTRADICCIONES = "_contradicciones.yaml"
 TOLERANCIA_DURACION_S = 1  # redondeo de ffprobe; no es un valor de negocio
-# re.ASCII: sin el, `\d` y `[a-z]` no bastan para excluir digitos Unicode en tiempos e ids.
-_ID = re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$", re.ASCII)
+import re  # noqa: E402  # tiempos e ids de video: patrones locales de este modelo
+
+_ID = ids.EVIDENCIA
 _VIDEO_ID = re.compile(r"^[a-z0-9]+$", re.ASCII)
 CAMPOS_TEXTO = (
     "video_id",
@@ -44,7 +54,7 @@ CAMPOS_TEXTO = (
     "notas",
 )
 _TIEMPO = re.compile(r"^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$", re.ASCII)
-_TEMA = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$", re.ASCII)
+_TEMA = ids.TEMA
 CAMPOS_OBLIGATORIOS = (
     "video_id",
     "t0",
@@ -81,19 +91,8 @@ def formato_hhmmss(segundos: float) -> str:
     return f"{s // 3600:02d}{s % 3600 // 60:02d}{s % 60:02d}"
 
 
-def _normalizar_texto(valor: object) -> str:
-    return " ".join(str(valor).split())
-
-
-def _vacio(valor: object) -> bool:
-    """None, texto en blanco o coleccion vacia: no cuenta como campo presente."""
-    if valor is None:
-        return True
-    if isinstance(valor, str):
-        return not _normalizar_texto(valor)
-    if isinstance(valor, dict | list | tuple):
-        return len(valor) == 0
-    return False
+_normalizar_texto = normalizar_texto
+_vacio = vacio
 
 
 def limpiar_campos(campos: dict[str, Any]) -> dict[str, Any]:
@@ -155,7 +154,7 @@ def contenido_canonico(campos: dict[str, Any]) -> str:
 
 
 def hash_contenido(campos: dict[str, Any]) -> str:
-    return hashlib.sha256(contenido_canonico(campos).encode("utf-8")).hexdigest()[:8]
+    return hash_corto(contenido_canonico(campos))
 
 
 def calcular_id(campos: dict[str, Any]) -> str:
@@ -262,22 +261,9 @@ def cargar_item(ruta: Path) -> EvidenceItem:
 
 
 def cargar_evidencia(directorio: Path) -> list[EvidenceItem]:
-    """Todos los items bajo `directorio`. Un fichero que no sea `*.yaml` (salvo README y `_*`)
-    es error: un `.yml` corrupto no puede pasar en silencio."""
-    if not directorio.is_dir():
-        raise EvidenciaError(f"no existe el directorio de evidencia {directorio}")
-    items: list[EvidenceItem] = []
-    for ruta in sorted(p for p in directorio.rglob("*") if p.is_file()):
-        if ruta.name == "README.md" or ruta.name.startswith("_"):
-            continue
-        if ruta.suffix != ".yaml":
-            raise EvidenciaError(f"fichero inesperado en evidencia: {ruta.name} (solo *.yaml)")
-        items.append(cargar_item(ruta))
-    ids = [i.id for i in items]
-    repetidos = sorted({i for i in ids if ids.count(i) > 1})
-    if repetidos:
-        raise EvidenciaError(f"ids repetidos: {repetidos}")
-    return items
+    """Todos los items bajo `directorio`; un fichero que no sea `*.yaml` (salvo README y `_*`)
+    es error."""
+    return cargar_directorio(directorio, cargar_item, EvidenciaError, "evidencia", lambda i: i.id)
 
 
 def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, Any]) -> list[str]:
@@ -318,28 +304,6 @@ def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, A
             )
     problemas += ciclos_de_supersede({i.id: i.supersede for i in items})
     return problemas
-
-
-def ciclos_de_supersede(sucesor: dict[str, str | None]) -> list[str]:
-    """Un ciclo A->B->A desactivaria ambos sin que nadie lo pidiera."""
-    problemas: list[str] = []
-    for inicio in sorted(sucesor):
-        vistos = [inicio]
-        actual = sucesor.get(inicio)
-        while actual is not None and actual in sucesor:
-            if actual in vistos:
-                if actual == inicio and inicio == min(vistos):  # un aviso por ciclo
-                    problemas.append(f"ciclo de supersede: {' -> '.join([*vistos, actual])}")
-                break
-            vistos.append(actual)
-            actual = sucesor.get(actual)
-    return problemas
-
-
-def activos(items: list[EvidenceItem]) -> list[EvidenceItem]:
-    """Items no superseded por otro."""
-    superseded = {i.supersede for i in items if i.supersede}
-    return [i for i in items if i.id not in superseded]
 
 
 def escribir_item(

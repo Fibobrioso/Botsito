@@ -9,7 +9,6 @@ contenido y el historial de git se vigila igual que el de la evidencia.
 from __future__ import annotations
 
 import datetime
-import hashlib
 import json
 import re
 from collections.abc import Callable
@@ -19,8 +18,21 @@ from typing import Any
 
 import yaml
 
-from botsito.evidence.modelo import EvidenciaError, _normalizar_texto, parse_tiempo
-from botsito.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun import ids
+from botsito.comun.documentos import (
+    activos,
+    cargar_directorio,
+    ciclos_de_supersede,
+    hash_corto,
+    normalizar_texto,
+    vacio,
+)
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.evidence.modelo import EvidenciaError, parse_tiempo
+
+__all__ = ["activos", "ciclos_de_supersede"]
+_normalizar_texto = normalizar_texto
+_vacio = vacio
 
 ACCIONES = (
     "CONFIRM",
@@ -49,17 +61,10 @@ OBJETIVOS_POR_ACCION: dict[str, tuple[str, ...]] = {
 EXIGEN_VALOR = ("CORRECT", "RESOLVE_UNKNOWN", "RESOLVE_CONTRADICTION", "LABEL_CASE")
 # re.ASCII: sin el, `\d` acepta digitos arabigos u otros Unicode, y un id con ellos no se puede
 # citar desde el registro ni supersederse.
-FORMATO_ID_OBJETIVO: dict[str, re.Pattern[str]] = {
-    "evidence": re.compile(r"^ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}$", re.ASCII),
-    "regla": re.compile(r"^RN-\d{3}$", re.ASCII),
-    "parametro": re.compile(r"^[a-z][a-z0-9_]*$", re.ASCII),
-    "ambiguedad": re.compile(r"^A-\d+$", re.ASCII),
-    "caso": re.compile(r"^caso-[a-z0-9][a-z0-9-]*$", re.ASCII),
-    "contradiccion": re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$", re.ASCII),
-}
+FORMATO_ID_OBJETIVO: dict[str, re.Pattern[str]] = {t: ids.POR_TIPO[t] for t in TIPOS_OBJETIVO}
 _SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
-_ID = re.compile(r"^fb-[0-9a-z-]+-[0-9a-f]{8}$", re.ASCII)
+_ID = ids.FEEDBACK
 CAMPOS_OBLIGATORIOS = (
     "sesion",
     "fecha",
@@ -129,17 +134,6 @@ def contenido_canonico(campos: dict[str, Any]) -> str:
     return json.dumps(limpio, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
 
 
-def _vacio(valor: object) -> bool:
-    """None, texto en blanco o coleccion vacia: no cuenta como campo presente."""
-    if valor is None:
-        return True
-    if isinstance(valor, str):
-        return not _normalizar_texto(valor)
-    if isinstance(valor, dict | list | tuple):
-        return len(valor) == 0
-    return False
-
-
 def limpiar_campos(campos: dict[str, Any]) -> dict[str, Any]:
     """Textos normalizados y campos vacios fuera, ANTES de calcular el id.
 
@@ -160,8 +154,7 @@ def limpiar_campos(campos: dict[str, Any]) -> dict[str, Any]:
 def calcular_id(campos: dict[str, Any]) -> str:
     if _vacio(campos.get("sesion")):
         raise FeedbackError("sesion es obligatoria para calcular el id")
-    h = hashlib.sha256(contenido_canonico(campos).encode("utf-8")).hexdigest()[:8]
-    esperado = f"fb-{campos['sesion']}-{h}"
+    esperado = f"fb-{campos['sesion']}-{hash_corto(contenido_canonico(campos))}"
     if not _ID.match(esperado):
         raise FeedbackError(f"id calculado {esperado!r} fuera de formato")
     return esperado
@@ -287,25 +280,9 @@ def cargar_registro(ruta: Path) -> FeedbackRecord:
 
 
 def cargar_feedback(directorio: Path) -> list[FeedbackRecord]:
-    """Todos los registros bajo `directorio`.
-
-    Un fichero que no sea `*.yaml` (salvo README y `_*`) es error: un `.yml` corrupto o un
-    `.YAML` no pueden pasar en silencio.
-    """
-    if not directorio.is_dir():
-        raise FeedbackError(f"no existe el directorio de feedback {directorio}")
-    registros: list[FeedbackRecord] = []
-    for ruta in sorted(p for p in directorio.rglob("*") if p.is_file()):
-        if ruta.name == "README.md" or ruta.name.startswith("_"):
-            continue
-        if ruta.suffix != ".yaml":
-            raise FeedbackError(f"fichero inesperado en feedback: {ruta.name} (solo *.yaml)")
-        registros.append(cargar_registro(ruta))
-    ids = [r.id for r in registros]
-    repetidos = sorted({i for i in ids if ids.count(i) > 1})
-    if repetidos:
-        raise FeedbackError(f"ids repetidos: {repetidos}")
-    return registros
+    """Todos los registros bajo `directorio`; un fichero que no sea `*.yaml` (salvo README y
+    `_*`) es error."""
+    return cargar_directorio(directorio, cargar_registro, FeedbackError, "feedback", lambda r: r.id)
 
 
 def validar_contra_contexto(
@@ -344,27 +321,6 @@ def validar_contra_contexto(
             problemas.append(f"{r.id}: grabacion {r.grabacion!r} no esta inventariada en el corpus")
     problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
     return problemas
-
-
-def ciclos_de_supersede(sucesor: dict[str, str | None]) -> list[str]:
-    """Un ciclo A->B->A desactivaria ambos sin que nadie lo pidiera."""
-    problemas: list[str] = []
-    for inicio in sorted(sucesor):
-        vistos = [inicio]
-        actual = sucesor.get(inicio)
-        while actual is not None and actual in sucesor:
-            if actual in vistos:
-                if actual == inicio and inicio == min(vistos):  # un aviso por ciclo
-                    problemas.append(f"ciclo de supersede: {' -> '.join([*vistos, actual])}")
-                break
-            vistos.append(actual)
-            actual = sucesor.get(actual)
-    return problemas
-
-
-def activos(registros: list[FeedbackRecord]) -> list[FeedbackRecord]:
-    superseded = {r.supersede for r in registros if r.supersede}
-    return [r for r in registros if r.id not in superseded]
 
 
 def escribir_registro(

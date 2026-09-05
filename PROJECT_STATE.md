@@ -58,13 +58,13 @@ feature/F15-market-data-ohlc
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
 - CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion, main sin cambios tras el tag), `knowledge validate` (registro, manifiesto, evidencia, contradicciones, feedback, historial de git y trailers `Fuente:`), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
-- `evidence/{modelo,contradicciones,historial}.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
+- `evidence/{modelo,contradicciones}.py` + `comun/historial.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
 - `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad, supersede del mismo objetivo sin ciclos); CLI `feedback new` (valida contexto antes de escribir), `trace`, `pending` (filtra parametros no `estrategia`); `commits_sin_fuente` exige trailer `Fuente:` con ids existentes (evidencia, feedback, ADR) en commits que tocan spec/cases desde el SHA de stable/F06; `historial_evaluable` marca clon superficial o repo anidado como no evaluable.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - `domain/velas.py` (F15): `Vela` (MinutoUtc, Puntos, volumen entero, duracion, n_m1, completa), `SerieVelas`, `combinar`; sin datetime/float/Decimal. `data/velas.py` (CSV determinista), `data/agregacion.py` (particion UTC por reloj de pared, ADR-0005), `data/dukascopy.py` (bi5, red inyectada, planas descartadas), `data/dataset.py` (dataset congelado, manifiesto inmutable con id por hash, `cargar_serie` con ventana). CLI `data download/check/aggregate`. Hook y `knowledge validate` protegen `data/manifests/`.
-- `yaml_estricto.py` (claves duplicadas y no hashables rechazadas, fechas como texto) usado por registro, corpus, evidencia, feedback y manifiestos de datos. `scripts/instalar_hooks.py` (make hooks portable; destino `git rev-parse --git-path hooks`; aborta con `core.hooksPath` global). `.python-version` = 3.12 (local y CI).
-- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004, 0005. `.gitattributes` con LF (`*.bi5` binario).
+- Paquete `comun/` (ADR-0006, por encima de `domain`): `yaml_estricto.py` (claves duplicadas y no hashables rechazadas, fechas como texto), `historial.py` (guardia de git para evidencia, feedback y manifiestos; trailers Fuente), `documentos.py` (normalizacion, vacios, hash corto, directorios, supersede, activos), `ids.py` (todos los formatos de id), `husos.py` (nombre IANA canonico, un criterio para registro y datos). `validation/knowledge.py`: orquestador de `knowledge validate` (F12 y F14 anaden capas ahi); la CLI solo imprime. Registro: accesores por tipo declarado; test de contrato que vigila `registro.<accesor>("nombre")` en src/. Contrato de capas: cli > validation > viewer/mql5bridge > engine > cases > spec > feedback > evidencia/corpus/data/config > comun > domain. `scripts/instalar_hooks.py` (make hooks portable; destino `git rev-parse --git-path hooks`; aborta con `core.hooksPath` global). `.python-version` = 3.12 (local y CI).
+- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004, 0005, 0006. `.gitattributes` con LF (`*.bi5` binario).
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
@@ -79,7 +79,7 @@ feature/F15-market-data-ohlc
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-203 funciones de test (parametrizadas x3, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
+210 funciones de test (parametrizadas x3, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history · 3 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -87,6 +87,7 @@ feature/F15-market-data-ohlc
 - ADR-0003 hooks copiados desde scripts/git-hooks; sin framework pre-commit — ACTIVE
 - ADR-0004 categorias de parametro y horas con huso — ACTIVE
 - ADR-0005 datos de mercado: fuente publica, precios enteros en puntos, tres relojes y anclaje — ACTIVE
+- ADR-0006 capas revisadas, paquete `comun` y accesores del registro por tipo declarado — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -164,8 +165,10 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   sesion 1.
 - El reloj de servidor del broker es una aproximacion (`17:00 America/New_York`) hasta que F17
   lo mida contra el terminal; F11 debe declarar `dst_servidor` y `offset_base_servidor`.
-- Ramas `feature/F01`, `F02`, `F03`, `F06` ya fusionadas siguen en local y en `origin`
+- Ramas `feature/F01`, `F02`, `F03`, `F06`, `F09` ya fusionadas siguen en local y en `origin`
   (borrarlas cuando el usuario lo autorice; los tags `stable/*` conservan los puntos).
+- `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
+  stderr desde la auditoria); F14 debe tratar la ventana vacia como error del caso.
 - Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
@@ -187,12 +190,13 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Usuario valida F15 -> merge --no-ff a main -> tag stable/F15 -> push -> abrir feature/F04 (orden E: F04, F05, F07, F08, luego F10 + sesion 1).
+Usuario valida F15 -> en main: merge --no-ff (BOTSITO_ALLOW_MAIN=1) -> tag stable/F15 sobre el merge -> commit docs(state) solo PROJECT_STATE -> make check -> push main y tag -> abrir feature/F04 (orden E: F04, F05, F07, F08, luego F10 + sesion 1).
 
 ## Last Stable Commit
 2ff6450 · merge: F09 expert-feedback-model validado por el usuario · tag stable/F09
 
 ## Change Log
+- 2026-09-04 · F15 auditoria de arquitectura (agente) antes de fusionar: ADR-0006 (contrato de capas revisado para F25/F26/F30/F32, paquete comun con yaml_estricto/historial/documentos/ids/husos, accesores del registro por tipo declarado, SerieVelas.origen + ventana por instante + agregar_serie, validador de knowledge fuera del CLI, test AST sin float/Decimal en domain, test de accesores del registro); auditoria de proceso (agente): ritual de cierre reescrito con el orden real, cifras del informe corregidas, seccion "que debe decidir el usuario". 324 casos, 210 funciones
 - 2026-09-04 · F15: auditoria de cierre aplicada (2 agentes), tres datasets reales congelados (ene/jul/ago 2026: 30150/32774/30257 velas M1) con manifiestos inmutables; H4 real del 2026-07-02 = goldens; CI verde (runs 33917006801, 33918894784); WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · REVISION GLOBAL de alineacion con las 8 fases (tras F15): sin bloqueos hacia F04-F33. Verificado: contrato de capas admite engine->data/domain, spec->config, cases->data; domain/velas.py sin float/Decimal (F18); tipos del registro y papeles del corpus ampliables sin romper (F10/F11); commits_sin_fuente listo para F11; cargar_serie con ventana para F14; regla de anclaje escrita en ADR-0005 para exportar en F29; ritual de merge/tag coincide con git log; main cumple state check. Pendientes conocidos: retirar en F11/sesion 1 los tests que afirman registro sin valores y feedback vacio; borrar ramas feature/F01-F09 fusionadas (decision del usuario); reloj de servidor aproximado hasta F17
 - 2026-09-04 · F15 construida con revision de diseno previa por agente (brief corregido: sin velas de 3/5 h en datos reales, Vela en domain sin Decimal, huso_datos fuera del registro, id de dataset por hash, velas de borde `completa`); domain/velas, data/{velas,agregacion,dukascopy,dataset}, CLI data, 16 fixtures reales bi5, goldens H4 del 2026-07-02, hook y validate sobre data/manifests; ADR-0005; parametros huso_operativa (CONFIRMED) y anclaje_h4 (UNKNOWN, A-9)
