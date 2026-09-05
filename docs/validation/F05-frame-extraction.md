@@ -297,7 +297,7 @@ Limitaciones); `extraer_regulares` borra los PNG de la carpeta antes de lanzar f
 no reanudable por diseno). Hipotesis no verificadas por el auditor: precision de `pts_time`
 en `showinfo` de ffmpeg < 7 con `t >= 1000 s` (posible desvio de ms en extra; en ffmpeg 9 son
 6 decimales); MP4 con `pts` negativo (fallaria ruidosamente).
-CI tras la auditoria: ver commit de cierre (run anotado en PROJECT_STATE).
+CI tras la auditoria: run 33992911952 verde sobre `a118352` (Ubuntu, ffmpeg de apt).
 
 ## Que debe decidir el usuario
 1. RATIFICAR (ya aplicado por su instruccion "maxima fidelidad sin restriccion de recursos";
