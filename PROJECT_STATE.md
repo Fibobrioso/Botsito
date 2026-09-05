@@ -165,7 +165,11 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   (feedback) afirman que no hay valores de estrategia ni registros: se retiran en F11 y en la
   sesion 1.
 - El reloj de servidor del broker es una aproximacion (`17:00 America/New_York`) hasta que F17
-  lo mida contra el terminal; F11 debe declarar `dst_servidor` y `offset_base_servidor`.
+  lo mida contra el terminal de FundedNext; F11 debe declarar `dst_servidor` y `offset_base_servidor`.
+  Verificado el 2026-09-05 (lectura de solo consulta al terminal MT5 build 6180 instalado en la
+  maquina de desarrollo, cuenta demo MetaQuotes): EURUSD digits 5 / escala 100000; H4 de servidor
+  en 12:00, 16:00, 20:00; ultimo tick del viernes 23:59:55 de servidor = 20:59 UTC = 17:00 Nueva
+  York con GMT+3. La convencion se cumple en MetaQuotes-Demo; FundedNext pendiente de login.
 - Ramas `feature/F01`, `F02`, `F03`, `F06`, `F09` ya fusionadas siguen en local y en `origin`
   (borrarlas cuando el usuario lo autorice; los tags `stable/*` conservan los puntos).
 - `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
@@ -197,6 +201,7 @@ Abrir feature/F04-transcription (orden E: F04, F05, F07, F08, luego F10 + sesion
 11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
 
 ## Change Log
+- 2026-09-05 · MT5 instalado en la maquina de desarrollo (terminal build 6180, demo MetaQuotes conectada); lectura de solo consulta confirma escala 100000 y reloj de servidor GMT+3 con cierre a las 17:00 NY (decision 2 de F15 verificada en MetaQuotes-Demo; FundedNext pendiente). El adaptador MT5 (F17/F33) puede desarrollarse aqui
 - 2026-09-04 · F15 VALIDADA por el usuario (con auditoria de arquitectura y de proceso previas); merge --no-ff a main (11ee1ac); tag stable/F15
 - 2026-09-04 · F15 auditoria de arquitectura (agente) antes de fusionar: ADR-0006 (contrato de capas revisado para F25/F26/F30/F32, paquete comun con yaml_estricto/historial/documentos/ids/husos, accesores del registro por tipo declarado, SerieVelas.origen + ventana por instante + agregar_serie, validador de knowledge fuera del CLI, test AST sin float/Decimal en domain, test de accesores del registro); auditoria de proceso (agente): ritual de cierre reescrito con el orden real, cifras del informe corregidas, seccion "que debe decidir el usuario". 324 casos, 210 funciones
 - 2026-09-04 · F15: auditoria de cierre aplicada (2 agentes), tres datasets reales congelados (ene/jul/ago 2026: 30150/32774/30257 velas M1) con manifiestos inmutables; H4 real del 2026-07-02 = goldens; CI verde (runs 33917006801, 33918894784); WAITING_FOR_USER_VALIDATION
