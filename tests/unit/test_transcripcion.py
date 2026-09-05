@@ -73,6 +73,24 @@ def test_fusionar_aritmetica_exacta_recorte_y_descarte(tmp_path: Path) -> None:
         fusionar(
             [(f0, [SegmentoRelativo(0.0, 10.0, "a"), SegmentoRelativo(5.0, 12.0, "b")])], 900_000
         )
+    # Solape de milisegundos (Whisper lo hace): se recorta el segundo y se cuenta; palabra con
+    # fin < inicio se iguala en vez de abortar.
+    tol = fusionar(
+        [
+            (
+                f0,
+                [
+                    SegmentoRelativo(0.0, 10.005, "a", ((2.0, 1.9, "x", 0.5),)),
+                    SegmentoRelativo(10.0, 12.0, "b"),
+                    SegmentoRelativo(11.99, 12.0, "c"),
+                ],
+            )
+        ],
+        900_000,
+    )
+    assert [(s.t0_ms, s.t1_ms) for s in tol.segmentos] == [(0, 10005), (10005, 12000)]
+    assert tol.recortados == 2 and tol.descartados == 1
+    assert tol.segmentos[0].palabras == (Palabra(2000, 2000, "x", 0.5),)
     with pytest.raises(TranscripcionError, match="supera el fin"):
         fusionar([(frag(0, 0.0, 950.0, tmp_path), [SegmentoRelativo(0.0, 940.0, "a")])], 900_000)
 
@@ -257,7 +275,23 @@ def test_glosario_rechazos(entrada: str, mensaje: str) -> None:
 
 
 def test_glosario_unicode_respeta_limites() -> None:
-    entrada = _entrada(r"\ban\b").replace("reemplazo: y", "reemplazo: en")
+    # Con re.ASCII, `\bse\b` casaria dentro de "señal" (la ñ no seria \w); con Unicode no.
+    entrada = _entrada(r"\bse\b").replace("reemplazo: y", "reemplazo: SE")
     g = glosario_desde_texto("sustituciones:\n  - " + entrada + "\n")
-    corregida, registro, _ = aplicar([Segmento(0, 0, 1000, "cada año AN tal")], g)
-    assert corregida[0].texto == "cada año en tal" and len(registro) == 1
+    corregida, registro, _ = aplicar([Segmento(0, 0, 1000, "la señal se ve")], g)
+    assert corregida[0].texto == "la señal SE ve" and len(registro) == 1
+
+
+def test_glosario_reemplazo_literal_y_alternancia_con_limites() -> None:
+    # `\1` y `\b` en el reemplazo son texto, no plantilla de re.sub.
+    entrada = _entrada(r"\bfoo\b").replace("reemplazo: y", r"reemplazo: 'x\1\b'")
+    g = glosario_desde_texto("sustituciones:\n  - " + entrada + "\n")
+    corregida, registro, _ = aplicar([Segmento(0, 0, 1000, "un foo aqui")], g)
+    assert corregida[0].texto == "un x\\1\\b aqui" and registro[0].patron == r"\bfoo\b"
+    # Una alternancia no se salta los limites de palabra.
+    entrada = _entrada(r"\bfoo|bar\b").replace("reemplazo: y", "reemplazo: ZZ")
+    g = glosario_desde_texto("sustituciones:\n  - " + entrada + "\n")
+    corregida, _, _ = aplicar([Segmento(0, 0, 1000, "embarcar foobar foo bar")], g)
+    assert corregida[0].texto == "embarcar foobar ZZ ZZ"
+    with pytest.raises(GlosarioError, match="comodines"):
+        glosario_desde_texto("sustituciones:\n  - " + _entrada(r"\bx\S+\b") + "\n")

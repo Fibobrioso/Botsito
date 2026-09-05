@@ -25,4 +25,5 @@ Paquete Python: `botsito` (`src/botsito`). CLI: `uv run botsito --help`
 (`state check`, `knowledge validate`, `config validate`, `corpus inventory|check`,
 `evidence new|contradictions`, `feedback new|trace|pending`, `data download|check|aggregate`,
 `corpus transcribe|glossary apply|transcript check|transcript show`; la transcripcion con
-faster-whisper necesita `uv sync --group asr`, ffmpeg y la GPU local: ver ADR-0007).
+faster-whisper necesita `uv sync --locked --group dev --group asr`, ffmpeg y la GPU local: ver
+ADR-0007).

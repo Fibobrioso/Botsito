@@ -1,5 +1,6 @@
 """Pipeline completo con motor falso sobre el clip fixture, manifiestos inmutables, CLI (F04)."""
 
+import os
 import shutil
 from pathlib import Path
 from typing import Any
@@ -29,6 +30,12 @@ from botsito.corpus.transcripcion import MotorFalso, SegmentoRelativo
 CLIP = Path(__file__).resolve().parents[1] / "fixtures" / "clip_2s.mp4"
 
 
+class MotorNombreMalo(MotorFalso):
+    @property
+    def nombre(self) -> str:
+        return "Systran/Falso"
+
+
 class MotorVacio(MotorFalso):
     @property
     def nombre(self) -> str:
@@ -53,6 +60,8 @@ GLOSARIO = "vocabulario: [otro]\nsustituciones:\n" + _sust(r"\bfalso\b", "FALSO"
 
 def _requiere_ffmpeg() -> None:
     if shutil.which("ffmpeg") is None:
+        if os.environ.get("CI") or os.environ.get("BOTSITO_EXIGE_FFPROBE"):
+            pytest.fail("ffmpeg no esta en PATH y en CI es obligatorio")
         pytest.skip("ffmpeg no disponible")
 
 
@@ -103,9 +112,39 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
         .read_text(encoding="utf-8")
         .startswith("[0:00:00.000] texto falso")
     )
-    # Segunda ejecucion: mismo id, no reescribe el manifiesto, reutiliza parciales.
-    r2 = transcribir_video(repo, repo / "data", raiz, "v1", "clip.mp4", sha, 2.0, MotorFalso(), g)
-    assert r2.transcripcion_id == r.transcripcion_id
+    # Segunda ejecucion: mismo id, no reescribe el manifiesto, no llama al motor (parciales).
+    bytes_manifiesto = r.manifiesto.read_bytes()
+    llamadas: list[str] = []
+
+    def espia(wav: Path) -> list[SegmentoRelativo]:
+        llamadas.append(wav.name)
+        return MotorFalso().transcribir(wav)
+
+    r2 = transcribir_video(
+        repo, repo / "data", raiz, "v1", "clip.mp4", sha, 2.0, MotorFalso(espia), g
+    )
+    assert r2.transcripcion_id == r.transcripcion_id and llamadas == []
+    assert r.manifiesto.read_bytes() == bytes_manifiesto
+    assert (r.carpeta / "huella.txt").is_file() and (r.carpeta.parent / "audio.sha256_video")
+    # El mismo manifiesto con otro reemplaza_a no se reescribe: es inmutable.
+    with pytest.raises(Exception, match="inmutable"):
+        transcribir_video(
+            repo,
+            repo / "data",
+            raiz,
+            "v1",
+            "clip.mp4",
+            sha,
+            2.0,
+            MotorFalso(),
+            g,
+            reemplaza_a="tr-v1-falso-00000000",
+        )
+    # Un motor cuyo nombre no cabe en un id se rechaza antes de trabajar.
+    with pytest.raises(Exception, match="nombre de motor"):
+        transcribir_video(
+            repo, repo / "data", raiz, "v1", "clip.mp4", sha, 2.0, MotorNombreMalo(), g
+        )
     # Manifiesto valido y coherente con el disco y el glosario.
     items = cargar_todos(repo)
     assert [t.id for t in items] == [r.transcripcion_id]
@@ -165,6 +204,14 @@ def test_manifiesto_corrupto_rechazado(tmp_path: Path) -> None:
         ({"carpeta": "transcripciones/v2/falso"}, "carpeta"),
         ({"carpeta": "../x/transcripciones/v1/falso"}, "carpeta"),
         ({"transcripcion_id": "tr-v2-falso-" + doc["sha256_cruda"][:8]}, "empieza por"),
+        ({"fragmentos": ["x"]}, "fragmentos"),
+        ({"fragmentos": [{"indice": 0, "inicio_m": 0, "fin_m": 5}]}, "no cubren"),
+        ({"duracion_wav_s": "abc"}, "duracion_wav_s"),
+        ({"duracion_wav_s": 999.0}, "no coincide con muestras"),
+        ({"senales": {}}, "senales"),
+        ({"huecos": [{"desde_ms": 5, "hasta_ms": 1, "ms": -4}]}, "hueco invalido"),
+        ({"cortes_forzados_m": [7]}, "cortes_forzados_m"),
+        ({"carpeta": "transcripciones/v1/falso-zz"}, "carpeta"),
         ({"segmentos": 0}, "sin segmentos"),
         ({"extra": 1}, "desconocidos"),
         ({"reemplaza_a": "x"}, "reemplaza_a"),
@@ -176,6 +223,22 @@ def test_manifiesto_corrupto_rechazado(tmp_path: Path) -> None:
     (repo / DIRECTORIO_MANIFIESTOS / "otro.yaml").write_text(yaml.safe_dump(doc), encoding="utf-8")
     with pytest.raises(ManifiestoTranscripcionError, match="debe llamarse"):
         cargar_manifiesto(repo / DIRECTORIO_MANIFIESTOS / "otro.yaml")
+    (repo / DIRECTORIO_MANIFIESTOS / "otro.yaml").unlink()
+    # Con sufijo -<huella8> la carpeta es valida; reemplaza_a a otro video se rechaza.
+    validar({**doc, "carpeta": "transcripciones/v1/falso-0123abcd"}, "manifiesto")
+    tid2 = "tr-v2-falso-" + doc["sha256_cruda"][:8]
+    doc2 = {
+        **doc,
+        "video_id": "v2",
+        "transcripcion_id": tid2,
+        "carpeta": "transcripciones/v2/falso",
+    }
+    doc2["reemplaza_a"] = doc["transcripcion_id"]
+    (repo / DIRECTORIO_MANIFIESTOS / f"{tid2}.yaml").write_text(
+        yaml.safe_dump(doc2), encoding="utf-8"
+    )
+    with pytest.raises(ManifiestoTranscripcionError, match="otro video"):
+        cargar_todos(repo)
 
 
 def test_cli_transcribe_glossary_check_show(
@@ -238,6 +301,25 @@ def test_cli_transcribe_glossary_check_show(
         == 1
     )
     assert cli.main(base + ["transcribe", "--video", "v9", "--motor", "falso"]) == 1
+    # Parametros de corte invalidos y --reemplaza-a inexistente: error limpio, sin traceback.
+    assert (
+        cli.main(base + ["transcribe", "--video", "v1", "--motor", "falso", "--min-s", "700"]) == 1
+    )
+    assert (
+        cli.main(
+            base
+            + [
+                "transcribe",
+                "--video",
+                "v1",
+                "--motor",
+                "falso",
+                "--reemplaza-a",
+                "tr-v1-x-00000000",
+            ]
+        )
+        == 1
+    )
     # knowledge validate incluye la capa de transcripciones (sin git: guardias no evaluadas).
     (repo / "knowledge" / "spec" / "parametros.yaml").write_text(
         "parametros: []\n", encoding="utf-8"

@@ -39,6 +39,8 @@ de su entrada en `tests/unit/test_tree.py`.
 - `--no-verify` y reescribir el historial (`reset --soft`) saltan el hook. La garantia real es el
   test de historial en CI; una proteccion de rama en GitHub (sin force-push a `main`) cerraria el
   ultimo hueco y queda como recomendacion al abrir F15.
+- Nota (2026-09-05): la proteccion de rama esta activada (Change Log de PROJECT_STATE, 4 sep) y
+  el hook usa `uv lock --check` + `uv run --no-sync` para no tocar el entorno dentro de un commit.
 
 ## Fecha / fase
 2026-09-04 · F02

@@ -91,7 +91,7 @@ tests/contract/test_transcripcion_history.py  tests/fixtures/audio/tono_silencio
 ## Como ejecutarlo
 ```
 make check
-uv sync --group asr                               # faster-whisper + CUDA por pip (una vez)
+uv sync --locked --group dev --group asr          # faster-whisper + CUDA por pip (una vez; no reescribe uv.lock)
 uv run botsito corpus transcribe --video v1        # ~7 min en la GTX 1650; reanudable
 uv run botsito corpus transcript check
 uv run botsito corpus transcript show --video v1 --t0 0:06:19 --t1 0:06:19 --margen-s 30
@@ -117,10 +117,9 @@ uv run botsito knowledge validate
 
 ## Tests ejecutados
 `make check` equivalente (`ruff`, `mypy strict` src + tests, `lint-imports` 4 contratos, `pytest`
-235 funciones, `state check`) en `feature/F04-transcription-pipeline`, Windows 11, Python 3.12,
-con `uv run --no-sync` mientras la GPU transcribia. CI verde en `3f73813`
-(https://github.com/Fibobrioso/Botsito/actions/runs/33946879078); CI de `d1f3947` y del
-commit final: ver la rama.
+236 funciones, `state check`) en `feature/F04-transcription-pipeline`, Windows 11, Python 3.12,
+con `uv run --no-sync` mientras la GPU transcribia. CI verde en `3f73813` (run 33946879078),
+`d1f3947` (33948083299) y `69ea773` (33966530552); el commit de la auditoria general: ver la rama.
 
 ## Resultados
 ### Transcripciones reales (large-v3, int8_float16, GTX 1650, CUDA)
@@ -146,8 +145,10 @@ maquina y estas versiones (faster-whisper 1.2.1, ctranslate2 4.8.2, cuBLAS 12.9.
 9.25.1.1, driver 610.62).
 
 ### Revision de las 33 marcas heredadas (29 de la investigacion + 3 del lineamiento + V1 0:00:00)
-Leidas con `transcript show --margen-s 75` sobre la cruda. "Coincide" = la frase citada esta
-en la transcripcion nueva a menos de 15 s de la marca heredada.
+33 = las 32 del brief + V1 0:00:00 (inicio de la prueba de fondeo, anadida). Leidas con
+`transcript show --margen-s 75` sobre la cruda (el brief decia 90; bastaron 75 porque el desfase
+maximo fue 8 s). "Coincide" = la frase citada esta en la transcripcion nueva a menos de 15 s de
+la marca heredada.
 
 | Marca heredada | Que se citaba | Marca nueva | Veredicto |
 |---|---|---|---|
@@ -192,6 +193,26 @@ entre marca heredada y nueva: 8 s (V1 0:06:19). Ninguna cita cambia de sentido. 
 no citado antes: V4 1:28:20-1:28:37 "entrar con 0.50... 0.40 creo yo... estatico o escalado en
 base a la cuenta" (riesgo por operacion; para el registro en F07/F10).
 
+
+### Auditoria general (2 agentes, tras el informe)
+Codigo (7 bugs confirmados, corregidos y testeados): un solape de milisegundos entre segmentos
+consecutivos de Whisper abortaba toda la transcripcion despues de la GPU (el 70 % de los
+segmentos reales se tocan a 0 ms; ahora se recorta y se cuenta, y solo un retroceso > 500 ms
+aborta); palabra con fin < inicio abortaba (se iguala); el `reemplazo` del glosario se
+interpretaba como plantilla de `re.sub` (`\1` fallaba, `\b` metia un byte 0x08: ahora literal);
+`\bfoo|bar\b` se saltaba los limites de palabra (ahora toda sustitucion va envuelta en limites);
+un `--modelo` con `/` producia un id invalido tras la GPU (se valida antes); `--reemplaza-a` no
+se comprobaba (ahora: existe, es del mismo video, y un manifiesto existente no cambia de
+`reemplaza_a`); retranscribir con el mismo motor pisaba la cruda del manifiesto anterior (ahora
+la carpeta lleva sufijo `-<huella8>` cuando la huella cambia; el WAV se reextrae si el video
+cambia). Ademas: manifiesto escrito atomicamente; esquema valida fragmentos contiguos,
+duraciones, senales, huecos y cortes forzados; `comprobar` recomputa `ms_con_habla`, `senales` y
+`huecos` desde la cruda; sha256 del video por bloques; errores de CLI sin traceback; dos tests
+que no probaban lo que decian corregidos; ffmpeg obligatorio en CI (antes los tests se saltaban).
+Proceso: PROJECT_STATE, READMEs, MASTER_PLAN (tabla B y H.2 F07), brief e informe alineados
+(detalle en el Change Log). Pendientes declarados: excluir GPU/driver de la huella de reanudacion
+(cambiarla ahora invalidaria los parciales), truncado del `initial_prompt` a ~224 tokens sin
+aviso, `palabras` de la cruda bajo un texto corregido sin marcar.
 
 ### Auditoria de cierre (codigo y proceso)
 Hallazgos corregidos en `d1f3947`: un parcial JSON corrupto abortaba la transcripcion (ahora se
@@ -242,7 +263,10 @@ heredado (F03) cambia.
 
 ## Limitaciones
 Los ficheros pesados (WAV, cruda, corregida) no viajan en git: otra maquina valida esquema e
-historial pero no el hash de la cruda salvo que copie `data/transcripciones/`. Whisper marca
+historial pero no el hash de la cruda salvo que copie `data/transcripciones/` (deuda con dueno
+en PROJECT_STATE: copia en Drive antes de F07). En v4 `duracion_video_s` (ffprobe del MP4,
+5616,674 s) y `duracion_wav_s` (5616,683 s) difieren 9 ms: la aritmetica usa el WAV; en v1-v3
+coinciden. Whisper marca
 `no_habla` con frecuencia en tramos con dos voces o musica: es senal, no veredicto. El
 determinismo esta verificado en esta maquina y estas versiones; otra GPU o version puede dar
 otra cruda (seria otro manifiesto con `reemplaza_a`).

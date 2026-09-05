@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -31,7 +32,7 @@ CAMPOS_BASE = ("patron", "reemplazo", "alcance", "motivo", "ejemplo_video", "eje
 CAMPOS_SEGMENTO = ("transcripcion_id", "segmento", "verificado_por")
 _LIMITE_INICIO = (r"\b", r"(?<!\w)")
 _LIMITE_FIN = (r"\b", r"(?!\w)")
-_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^")
+_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^|\\S|\.\{")
 
 
 class GlosarioError(ValueError):
@@ -49,6 +50,7 @@ class Sustitucion:
     transcripcion_id: str | None = None
     segmento: int | None = None
     verificado_por: str | None = None
+    texto_patron: str = ""  # el patron tal como lo escribio el usuario (para el registro)
 
 
 @dataclass(frozen=True, slots=True)
@@ -114,7 +116,9 @@ def _sustitucion(bruto: object, origen: str, vocabulario: tuple[str, ...]) -> Su
             f"{origen}: el patron no puede contener comodines sin limite (.* .+ [^)"
         )
     try:
-        compilado = re.compile(patron, re.IGNORECASE)
+        # Envuelto en limites propios: una alternancia (`\bfoo|bar\b`) no puede saltarse la regla
+        # de "limites en ambos extremos".
+        compilado = re.compile(rf"(?<!\w)(?:{patron})(?!\w)", re.IGNORECASE)
     except re.error as exc:
         raise GlosarioError(f"{origen}: patron invalido ({exc})") from exc
     if alcance == "global":
@@ -131,6 +135,7 @@ def _sustitucion(bruto: object, origen: str, vocabulario: tuple[str, ...]) -> Su
             bruto["motivo"],
             bruto["ejemplo_video"],
             bruto["ejemplo_t0"],
+            texto_patron=patron,
         )
     if not ids.es_id_de("transcripcion", bruto["transcripcion_id"]):
         raise GlosarioError(f"{origen}: transcripcion_id invalido")
@@ -149,7 +154,12 @@ def _sustitucion(bruto: object, origen: str, vocabulario: tuple[str, ...]) -> Su
         bruto["transcripcion_id"],
         seg,
         bruto["verificado_por"],
+        patron,
     )
+
+
+def _literal(reemplazo: str) -> Callable[[re.Match[str]], str]:
+    return lambda _m: reemplazo
 
 
 @dataclass(frozen=True, slots=True)
@@ -179,9 +189,10 @@ def aplicar(
                 if not mia:
                     duda = duda or bool(sub.patron.search(texto))
                     continue
-            nuevo = sub.patron.sub(sub.reemplazo, texto)
+            # Reemplazo LITERAL (no plantilla de re.sub: `\1` o `\b` no se interpretan).
+            nuevo = sub.patron.sub(_literal(sub.reemplazo), texto)
             if nuevo != texto:
-                registro.append(Correccion(s.n, sub.patron.pattern, sub.alcance, texto, nuevo))
+                registro.append(Correccion(s.n, sub.texto_patron, sub.alcance, texto, nuevo))
                 texto = nuevo
         if duda:
             dudas.append(s.n)

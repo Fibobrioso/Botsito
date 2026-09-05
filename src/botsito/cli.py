@@ -248,7 +248,13 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
                 args.modelo, args.dispositivo, args.compute_type, glosario.prompt_inicial
             )
         )
-    parametros = ParametrosCorte(objetivo_s=args.objetivo_s, min_s=args.min_s, max_s=args.max_s)
+    try:
+        parametros = ParametrosCorte(objetivo_s=args.objetivo_s, min_s=args.min_s, max_s=args.max_s)
+        if args.reemplaza_a:
+            _comprobar_reemplaza_a(repo, args.video, args.reemplaza_a)
+    except (AudioError, TranscripcionError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
 
     def progreso(fragmento: object, n: int) -> None:
         print(f"  fragmento {getattr(fragmento, 'indice', '?')}: {n} segmentos", flush=True)
@@ -268,8 +274,8 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
             progreso,
             reemplaza_a=args.reemplaza_a,
         )
-    except (AudioError, TranscripcionError, ImportError, OSError) as exc:
-        print(f"ERROR: {exc}")
+    except (AudioError, TranscripcionError, ImportError, OSError, RuntimeError, ValueError) as exc:
+        print(f"ERROR: {exc}")  # RuntimeError/ValueError: faster-whisper, ctranslate2 y CUDA
         return 1
     print(f"OK: {r.transcripcion_id} ({len(r.segmentos)} segmentos)")
     print(f"  cruda: {r.cruda}")
@@ -277,6 +283,26 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
         f"  manifiesto: {r.manifiesto.relative_to(repo).as_posix()} (INMUTABLE; commit sin editar)"
     )
     return 0
+
+
+def _comprobar_reemplaza_a(repo: Path, video_id: str, tid: str) -> None:
+    """Antes de gastar GPU: la transcripcion reemplazada existe y es del mismo video."""
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        cargar_todos,
+    )
+    from botsito.corpus.transcripcion import TranscripcionError
+
+    try:
+        previas = {t.id: t for t in cargar_todos(repo)}
+    except ManifiestoTranscripcionError as exc:
+        raise TranscripcionError(str(exc)) from exc
+    if tid not in previas:
+        raise TranscripcionError(f"--reemplaza-a {tid}: no existe ese manifiesto")
+    if previas[tid].video_id != video_id:
+        raise TranscripcionError(
+            f"--reemplaza-a {tid}: es de {previas[tid].video_id}, no de {video_id}"
+        )
 
 
 def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:

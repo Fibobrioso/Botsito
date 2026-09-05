@@ -48,9 +48,10 @@ senales de alucinacion por segmento, vocabulario como `initial_prompt`). Detalle
   [--video]`, `corpus transcript check`, `corpus transcript show --video --t0 --t1 [--margen-s]
   [--capa cruda|corregida] [--transcripcion]`. `knowledge validate` valida manifiestos,
   historial de git, cruda por hash y corregida por recomputo. Hook protege el directorio.
-- Revision de citas: las 29 marcas unicas de la investigacion mas las 3 del lineamiento se leen
-  con `transcript show --margen-s 90` (las heredadas derivan hasta un minuto) y el informe lleva
-  la tabla `marca heredada -> marca nueva -> veredicto`. El plan decia "50 citas"; son 32.
+- Revision de citas: las 29 marcas unicas de la investigacion mas las 3 del lineamiento (y
+  V1 0:00:00, referencia al inicio de la prueba de fondeo: 33 en total) se leen con
+  `transcript show` con margen (75 s bastaron: el desfase maximo fue 8 s) y el informe lleva la
+  tabla `marca heredada -> marca nueva -> veredicto`. El plan decia "50 citas"; son 32 + 1.
 - Glosario inicial: vocabulario del dominio; sustituciones solo con ejemplo real de large-v3.
 ## Fuera de alcance (que NO)
 Fotogramas (F05). Extraccion de evidencia (F07). Diarizacion (quien habla): se anota como

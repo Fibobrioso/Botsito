@@ -1,5 +1,6 @@
 """Corte por muestras con silencios (F04): reglas puras, fixture sintetico y extraccion."""
 
+import os
 import shutil
 import wave
 from pathlib import Path
@@ -28,6 +29,8 @@ P = ParametrosCorte(objetivo_s=30.0, min_s=20.0, max_s=40.0)
 
 def _requiere_ffmpeg() -> None:
     if shutil.which("ffmpeg") is None:
+        if os.environ.get("CI") or os.environ.get("BOTSITO_EXIGE_FFPROBE"):
+            pytest.fail("ffmpeg no esta en PATH y en CI es obligatorio")
         pytest.skip("ffmpeg no disponible")
 
 

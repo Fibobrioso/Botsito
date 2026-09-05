@@ -53,7 +53,7 @@ feature/F04-transcription-pipeline
 - F15 · market-data-ohlc · validada el 2026-09-04 · docs/validation/F15-market-data-ohlc.md · tag stable/F15
 
 ## Features Waiting for Validation
-—
+- F04 · transcription-pipeline · docs/validation/F04-transcription-pipeline.md · WAITING_FOR_USER_VALIDATION (rama feature/F04-transcription-pipeline; CI verde)
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -65,7 +65,8 @@ feature/F04-transcription-pipeline
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
 - `domain/velas.py` (F15): `Vela` (MinutoUtc, Puntos, volumen entero, duracion, n_m1, completa), `SerieVelas`, `combinar`; sin datetime/float/Decimal. `data/velas.py` (CSV determinista), `data/agregacion.py` (particion UTC por reloj de pared, ADR-0005), `data/dukascopy.py` (bi5, red inyectada, planas descartadas), `data/dataset.py` (dataset congelado, manifiesto inmutable con id por hash, `cargar_serie` con ventana). CLI `data download/check/aggregate`. Hook y `knowledge validate` protegen `data/manifests/`.
 - Paquete `comun/` (ADR-0006, por encima de `domain`): `yaml_estricto.py` (claves duplicadas y no hashables rechazadas, fechas como texto), `historial.py` (guardia de git para evidencia, feedback y manifiestos; trailers Fuente), `documentos.py` (normalizacion, vacios, hash corto, directorios, supersede, activos), `ids.py` (todos los formatos de id), `husos.py` (nombre IANA canonico, un criterio para registro y datos). `validation/knowledge.py`: orquestador de `knowledge validate` (F12 y F14 anaden capas ahi); la CLI solo imprime. Registro: accesores por tipo declarado; test de contrato que vigila `registro.<accesor>("nombre")` en src/. Contrato de capas: cli > validation > viewer/mql5bridge > engine > cases > spec > feedback > evidencia/corpus/data/config > comun > domain. `scripts/instalar_hooks.py` (make hooks portable; destino `git rev-parse --git-path hooks`; aborta con `core.hooksPath` global). `.python-version` = 3.12 (local y CI).
-- Plantillas: brief, ADR, informe de validacion. ADR-0001, 0002, 0003, 0004, 0005, 0006. `.gitattributes` con LF (`*.bi5` binario).
+- `corpus/{audio,transcripcion,motor_whisper,glosario,pipeline_transcripcion,manifiestos_transcripcion}.py` (F04, ADR-0007): WAV por video y corte por muestras en silencios, segmentos en ms enteros con senales, faster-whisper solo en `motor_whisper`, glosario de dos alcances, pipeline reanudable con manifiesto INMUTABLE `tr-<video>-<motor>-<hash8>` en `knowledge/corpus/transcripciones/`, corregida = cruda + glosario verificada por recomputo. CLI `corpus transcribe | glossary apply | transcript check | transcript show`; capa en `knowledge validate`; hook protege el directorio.
+- Plantillas: brief, ADR, informe de validacion. ADR-0001 a 0007. `.gitattributes` con LF (`*.bi5` binario).
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
@@ -74,13 +75,14 @@ feature/F04-transcription-pipeline
 - knowledge/corpus/fuentes.yaml (fuentes esperadas, ids de Drive) · knowledge/corpus/manifest.yaml (GENERADO) · src/botsito/corpus/inventario.py
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; solo `huso_operativa` CONFIRMED por ADR-0005 y `anclaje_h4` UNKNOWN hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/adr/0005-datos-de-mercado-fuente-formato-y-relojes.md · data/manifests/README.md (esquema del manifiesto) · src/botsito/data/agregacion.py (regla de anclaje) · tests/fixtures/ohlc/README.md (fixtures reales con sha256)
+- docs/adr/0007-transcripcion-en-dos-capas.md · knowledge/corpus/glosario_asr.yaml (manual, versionado) · knowledge/corpus/transcripciones/ (INMUTABLE) · src/botsito/corpus/pipeline_transcripcion.py · docs/validation/F04-transcription-pipeline.md
 - docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
 - docs/adr/0002-registro-de-parametros-una-sola-puerta.md · docs/adr/0003-hooks-copiados-sin-framework-pre-commit.md
 - docs/plan/AUDITORIA_FASES_2026-09-04.html · pyproject.toml · Makefile · src/botsito/cli.py · scripts/git-hooks/pre-commit
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-235 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, audio, transcripcion, pipeline_transcripcion · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history, transcripcion_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+236 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, audio, transcripcion, pipeline_transcripcion · contract: import_contracts, no_business_literals, repository_integrity, evidence_history, feedback_history, data_manifest_history, transcripcion_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -89,6 +91,7 @@ feature/F04-transcription-pipeline
 - ADR-0004 categorias de parametro y horas con huso — ACTIVE
 - ADR-0005 datos de mercado: fuente publica, precios enteros en puntos, tres relojes y anclaje — ACTIVE
 - ADR-0006 capas revisadas, paquete `comun` y accesores del registro por tipo declarado — ACTIVE
+- ADR-0007 transcripcion en dos capas: cruda inmutable por muestras, corregida por glosario — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -120,7 +123,7 @@ transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y
   - Lectura: el 0,8 es el colchon de spread sobre el 0,75, no un nivel alternativo libre.
   - Hallazgo F04 (2026-09-05, large-v3): en V1 0:15:59 el trader dice "ya ha pasado mas del 50%
     de la vela" (la transcripcion heredada decia 40 %) y en V1 0:16:51 "de pasar de 0.75 es a
-    0.50". La cifra 40 % frente a 50 % queda como pregunta (c) para la sesion 1.
+    0.50". La cifra 40 % frente a 50 % es la ambiguedad A-12 (sesion 1).
   - Preguntas abiertas para el trader (sesion 1): (a) ¿el 0,8 es fijo o "0,75 mas el spread del
     momento"? (b) ¿el stop se coloca en el 0,75 al enviar la orden limite o solo tras el llenado?
     Para el bot es equivalente y mas seguro adjuntar el SL al 0,75 en la propia orden pendiente
@@ -148,6 +151,7 @@ en regla o parametro; "pregunta": lo que se le plantea al trader.
 | A-9 | anclaje de la vela H4 (hora y huso del grafico) | F07 (captura), F11 (valor y `huso` de `anclaje_h4`, creado UNKNOWN en F15) | ¿a que hora y en que huso del grafico abre su H4? (se resuelve viendo su grafico) |
 | A-10 | stop a 0,8: fijo o 0,75 + spread | F21 | ¿el 0,8 es fijo o "0,75 mas el spread del momento"? |
 | A-11 | SL en la orden o tras el llenado | F22, F31 | ¿el SL va en la orden pendiente o se pone tras el llenado? |
+| A-12 | porcentaje de vela transcurrido para bajar la proteccion a 0,50: 40 % (transcripcion heredada) o 50 % (large-v3, V1 0:15:59) | F21 | ¿a partir de que parte de la vela bajas el stop a 0,50? |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
@@ -163,7 +167,10 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   cientos de items; `escribir_item` trata la colision como "mismo contenido" (revisar en F07).
 
 ## Technical Debt
-- Transcripciones previas con Whisper tiny: no usar para extraccion hasta F04.
+- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, pendiente de validacion).
+- Copia de seguridad de `data/transcripciones/<v>/large-v3-int8-float16/cruda.jsonl` (y `audio.wav`) fuera de esta maquina (Drive) con su sha256 del manifiesto; dueno: usuario, antes de abrir F07. Sin ella, otra maquina solo valida esquema e historial (o retranscribe: ~1 h de GPU).
+- Glosario ASR v2: sustituciones e ids propuestos en el informe F04 ("Que debe decidir el usuario", punto 2). Cambiar `vocabulario` cambia el `initial_prompt` y la huella: exige retranscribir los 4 videos con ids nuevos (`reemplaza_a`), decidirlo ANTES de que F07 cite ids de transcripcion; las `sustituciones` no obligan a retranscribir (solo `corpus glossary apply`).
+- V3 0:28:56: las cifras del Excel (2,3/3,23 heredadas frente a 2.83/3.33 de large-v3) las decide el fotograma en F05.
 - `test_fichero_real_sin_valores_de_estrategia` (registro) y `test_directorio_real_valida`
   (feedback) afirman que no hay valores de estrategia ni registros: se retiran en F11 y en la
   sesion 1.
@@ -212,7 +219,8 @@ F04 en WAITING_FOR_USER_VALIDATION: leer `docs/validation/F04-transcription-pipe
 11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
 
 ## Change Log
-- 2026-09-05 · F04 construida y auditada: cuatro videos transcritos con large-v3 (403 + 854 + 1031 + 1645 segmentos, cero cortes forzados, cero recortes), manifiestos inmutables tr-v1-...-00fcaf53, tr-v2-...-ac6b337b, tr-v3-...-570a315f, tr-v4-...-3f8c826e; determinismo verificado retranscribiendo un fragmento; 33 marcas heredadas revisadas (28 coinciden, 3 eran fotogramas, 2 con cifra distinta: 40/50 % y 2,3/2.83); auditoria de cierre sin agentes (limite de sesion) con 5 correcciones; hook sin resync; informe WAITING_FOR_USER_VALIDATION
+- 2026-09-05 · F04 construida y auditada: cuatro videos transcritos con large-v3 (403 + 854 + 1031 + 1645 segmentos, cero cortes forzados, cero recortes), manifiestos inmutables tr-v1-...-00fcaf53, tr-v2-...-ac6b337b, tr-v3-...-570a315f, tr-v4-...-3f8c826e; determinismo verificado retranscribiendo un fragmento; 33 marcas heredadas revisadas (28 coinciden, 3 eran fotogramas, 2 con cifra distinta: 40/50 % y 2,3/2.83); auditoria de cierre sin agentes (limite de sesion) con 5 correcciones; hook sin resync; informe WAITING_FOR_USER_VALIDATION. CI verde: 3f73813 (run 33946879078), d1f3947 (33948083299), 69ea773 (33966530552)
+- 2026-09-05 · AUDITORIA GENERAL de F04 (2 agentes: codigo/tests y docs/proceso) aplicada en la misma rama. Codigo: solape de milisegundos entre segmentos de Whisper se recorta y cuenta (antes abortaba tras la GPU), palabra con fin < inicio se iguala, reemplazo del glosario LITERAL (no plantilla de re.sub), alternancias envueltas en limites de palabra, nombre de motor validado antes de trabajar, `--reemplaza-a` comprobado antes de la GPU y del mismo video, manifiesto escrito atomicamente y con `reemplaza_a` inmutable, esquema del manifiesto valida fragmentos contiguos, duraciones, senales, huecos y cortes forzados, `comprobar` recomputa ms_con_habla/senales/huecos desde la cruda, carpeta por huella (`<motor>-<huella8>`) para retranscribir sin pisar la cruda anterior, WAV reextraido si cambia el video, sha256 del video por bloques, errores de CLI sin traceback, tests que no probaban lo que decian corregidos, ffmpeg obligatorio en CI. Docs: PROJECT_STATE (waiting, componentes, ADR-0007, A-12, deuda), READMEs de knowledge/scripts/hooks, MASTER_PLAN (tabla B, H.2 F07), brief y informe coherentes (33 marcas, margen 75 s), notas en ADR-0003/0005.
 - 2026-09-05 · F04 en construccion: brief revisado por agente (8 hallazgos de fondo aceptados: muestras enteras, corte con min/max y forzados, glosario Unicode de dos alcances, manifiesto inmutable por transcripcion, corregida por recomputo, data/ para lo pesado, VAD y senales, vocabulario como initial_prompt); ADR-0007; faster-whisper large-v3 en la GTX 1650 a 3,6x tiempo real (grupo de dependencias `asr`); pipeline reanudable con motor falso testeado de extremo a extremo
 - 2026-09-05 · ramas feature/F01-F15 fusionadas borradas (local y origin); rama feature/F04-transcription-pipeline abierta
 - 2026-09-05 · cuenta demo FundedNext conectada en el MT5 de esta maquina; lectura de solo consulta: reloj de servidor GMT+3 con cierre 17:00 NY (decision 2 de F15 verificada en el broker real), escala 100000, M1 del 2026-07-02 coincide con Dukascopy a 1-2 puntos, parametros de instrumento/broker anotados en Technical Debt para F11/F33

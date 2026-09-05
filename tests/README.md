@@ -9,6 +9,7 @@
 - `fixtures/`: ficheros pequenos usados por los tests (`clip_2s.mp4`; `ohlc/`: dias reales de M1
   en formato bi5 con sha256 en su README; `audio/tono_silencio_tono_10s.wav`: tono, silencio
   3-5 s y tono, para el corte por silencios de F04). Los tests que necesitan ffmpeg se saltan sin
-  el; ninguno carga el modelo Whisper (`MotorFalso`).
+  el en local y FALLAN en CI (`BOTSITO_EXIGE_FFPROBE=1`); ninguno carga el modelo Whisper
+  (`MotorFalso`).
 
 `tests/` es un paquete (mypy strict lo cubre). `make check` ejecuta todo; `PYTHONHASHSEED=0`.

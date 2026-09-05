@@ -23,6 +23,7 @@ from typing import Any
 
 import yaml
 
+from botsito.comun import ids
 from botsito.comun.documentos import hash_corto, sha256_hex
 from botsito.corpus.audio import (
     MUESTRAS_S,
@@ -36,6 +37,7 @@ from botsito.corpus.audio import (
     version_ffmpeg,
 )
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
+from botsito.corpus.inventario import sha256_fichero
 from botsito.corpus.transcripcion import (
     HUECO_TRANSCRIPCION_S,
     MotorAsr,
@@ -56,6 +58,10 @@ FICHERO_CRUDA = "cruda.jsonl"
 FICHERO_CORREGIDA = "corregida.jsonl"
 FICHERO_CORRECCIONES = "correcciones.jsonl"
 FICHERO_LEGIBLE = "cruda.txt"
+FICHERO_HUELLA = (
+    "huella.txt"  # huella de motor + corte de la carpeta (elige carpeta antes de la GPU)
+)
+MARCA_WAV = "audio.sha256_video"  # el WAV se reextrae si el video cambio
 SCHEMA_VERSION = 1
 TOLERANCIA_DURACION_S = 1.0  # WAV frente a la duracion del manifiesto del corpus (como F06)
 
@@ -93,17 +99,23 @@ def transcribir_video(
     reemplaza_a: str | None = None,
 ) -> Resultado:
     parametros = parametros or ParametrosCorte()
+    if not ids.es_id_de("transcripcion", id_transcripcion(video_id, motor.nombre, "0" * 8)):
+        raise TranscripcionError(
+            f"el nombre de motor {motor.nombre!r} no sirve para un transcripcion_id "
+            "(minusculas, digitos, . _ -)"
+        )
     video = raiz_corpus / fichero_video
     if not video.is_file():
         raise AudioError(f"no existe el video {video}")
-    if comprobar_hash_video and sha256_hex(video.read_bytes()) != sha256_video:
+    if comprobar_hash_video and sha256_fichero(video) != sha256_video:
         raise AudioError(f"{fichero_video}: el sha256 no coincide con el manifiesto del corpus")
     cv = carpeta_video(carpeta_datos, video_id)
-    carpeta = cv / motor.nombre
-    carpeta.mkdir(parents=True, exist_ok=True)
+    cv.mkdir(parents=True, exist_ok=True)
     wav = cv / "audio.wav"
-    if not wav.exists():
+    marca_wav = cv / MARCA_WAV
+    if not wav.exists() or not marca_wav.exists() or _leer(marca_wav) != sha256_video:
         extraer_wav(video, wav)
+        escribir_atomico(marca_wav, sha256_video + "\n")
     n_muestras = muestras_wav(wav)
     duracion_wav_s = n_muestras / MUESTRAS_S
     if abs(duracion_wav_s - duracion_video_s) > TOLERANCIA_DURACION_S:
@@ -116,6 +128,7 @@ def transcribir_video(
     huella = hash_corto(
         json.dumps({"corte": parametros.como_dict(), "motor": descripcion_motor}, sort_keys=True)
     )
+    carpeta = _carpeta_para(cv, motor.nombre, huella)
     silencios = detectar_silencios(wav, parametros.umbral_db, parametros.silencio_minimo_s)
     cortes = puntos_de_corte(n_muestras, silencios, parametros)
     fragmentos = cortar_wav(wav, cortes.puntos_m, carpeta / "fragmentos")
@@ -131,8 +144,8 @@ def transcribir_video(
     cruda = carpeta / FICHERO_CRUDA
     if cruda.exists() and sha256_hex(cruda.read_bytes()) != sha_cruda:
         raise TranscripcionError(
-            f"{cruda} ya existe con otro contenido: una cruda es inmutable (borra la carpeta "
-            "para retranscribir o usa otro nombre de motor)"
+            f"{cruda} ya existe con otro contenido: una cruda es inmutable y el motor no fue "
+            "determinista (mismos parametros, otra salida); revisa versiones antes de seguir"
         )
     escribir_atomico(cruda, texto_cruda)
     escribir_atomico(carpeta / FICHERO_LEGIBLE, a_texto_legible(fusion.segmentos))
@@ -147,7 +160,7 @@ def transcribir_video(
         "duracion_video_s": round(duracion_video_s, 3),
         "duracion_wav_s": round(duracion_wav_s, 3),
         "muestras": n_muestras,
-        "carpeta": f"{CARPETA_DATOS}/{video_id}/{motor.nombre}",
+        "carpeta": f"{CARPETA_DATOS}/{video_id}/{carpeta.name}",
         "motor": descripcion_motor,
         "ffmpeg": version_ffmpeg(),
         "corte": parametros.como_dict(),
@@ -173,16 +186,45 @@ def transcribir_video(
     if reemplaza_a:
         manifiesto["reemplaza_a"] = reemplaza_a
     ruta_manifiesto = repo / DIRECTORIO_MANIFIESTOS / f"{tid}.yaml"
-    if not ruta_manifiesto.exists():
-        ruta_manifiesto.parent.mkdir(parents=True, exist_ok=True)
-        ruta_manifiesto.write_text(
+    if ruta_manifiesto.exists():
+        previo = yaml.safe_load(ruta_manifiesto.read_text(encoding="utf-8"))
+        anterior = previo.get("reemplaza_a") if isinstance(previo, dict) else None
+        if anterior != reemplaza_a:
+            raise TranscripcionError(
+                f"{ruta_manifiesto.name} ya existe con reemplaza_a={anterior!r}; un manifiesto es "
+                f"inmutable y no se puede cambiar a {reemplaza_a!r}"
+            )
+    else:
+        escribir_atomico(
+            ruta_manifiesto,
             "# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion "
             "es otro manifiesto con reemplaza_a.\n"
             + yaml.safe_dump(manifiesto, allow_unicode=True, sort_keys=True, width=100),
-            encoding="utf-8",
-            newline="\n",
         )
     return Resultado(tid, carpeta, cruda, ruta_manifiesto, fusion.segmentos)
+
+
+def _leer(ruta: Path) -> str:
+    try:
+        return ruta.read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+def _carpeta_para(cv: Path, nombre: str, huella: str) -> Path:
+    """`<nombre>` la primera vez; si esa carpeta ya pertenece a otra huella (otro vocabulario,
+    otra version del motor), `<nombre>-<huella8>`: una retranscripcion no pisa la cruda anterior
+    (su manifiesto es inmutable y sigue apuntando a su carpeta). La huella se decide ANTES de la
+    GPU."""
+    carpeta = cv / nombre
+    marca = carpeta / FICHERO_HUELLA
+    if carpeta.is_dir() and marca.exists() and _leer(marca) != huella:
+        carpeta = cv / f"{nombre}-{huella[:8]}"
+        marca = carpeta / FICHERO_HUELLA
+    carpeta.mkdir(parents=True, exist_ok=True)
+    if not marca.exists():
+        escribir_atomico(marca, huella + "\n")
+    return carpeta
 
 
 def corregir(carpeta: Path, cruda: list[Segmento], glosario: Glosario, tid: str) -> int:

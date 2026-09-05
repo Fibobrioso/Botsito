@@ -25,6 +25,9 @@ HUECO_TRANSCRIPCION_S = 30.0  # tramos sin segmento >= esto se listan (silencio 
 COMPRESION_MAX = 2.4
 LOGPROB_MIN = -1.0
 NO_HABLA_MAX = 0.6
+# Whisper devuelve a veces segmentos consecutivos que se pisan unos milisegundos: se recorta el
+# segundo y se cuenta. Un solape mayor es un motor que va hacia atras y se rechaza.
+SOLAPE_MAX_MS = 500
 SENALES = ("repeticion", "baja_prob", "compresion", "no_habla")
 
 
@@ -170,19 +173,18 @@ def fusionar(
             if t1 > fin_wav_ms:
                 raise TranscripcionError(f"segmento {t0}-{t1} supera el fin del audio {fin_wav_ms}")
             if salida and t0 < salida[-1].t1_ms:
-                raise TranscripcionError(
-                    f"segmentos solapados: {salida[-1].t1_ms} > {t0} (fragmento {fragmento.indice})"
-                )
-            palabras = tuple(
-                Palabra(
-                    min(max(base + round(a * 1000), t0), t1),
-                    min(max(base + round(b * 1000), t0), t1),
-                    " ".join(w.split()),
-                    min(max(prob, 0.0), 1.0),
-                )
-                for a, b, w, prob in r.palabras
-                if base + round(a * 1000) < t1 and w.strip()
-            )
+                if salida[-1].t1_ms - t0 > SOLAPE_MAX_MS:
+                    raise TranscripcionError(
+                        f"segmentos solapados: {salida[-1].t1_ms} > {t0} "
+                        f"(fragmento {fragmento.indice})"
+                    )
+                t0 = salida[-1].t1_ms
+                recortados += 1
+                if t1 <= t0:
+                    descartados += 1
+                    continue
+            candidatas = [_palabra(base, a, b, w, prob, t0, t1) for a, b, w, prob in r.palabras]
+            palabras = tuple(p for p in candidatas if p is not None)
             texto = " ".join(unicodedata.normalize("NFC", r.texto).split())
             if not texto:
                 descartados += 1
@@ -202,6 +204,17 @@ def fusionar(
             )
             anterior = normalizar_para_comparar(texto)
     return Fusion(salida, recortados, descartados)
+
+
+def _palabra(
+    base: int, a: float, b: float, w: str, prob: float, t0: int, t1: int
+) -> Palabra | None:
+    """Palabra recortada al segmento; `fin < inicio` (lo devuelve el motor a veces) se iguala."""
+    if not w.strip() or base + round(a * 1000) >= t1:
+        return None
+    pa = min(max(base + round(a * 1000), t0), t1)
+    pb = min(max(base + round(b * 1000), pa), t1)
+    return Palabra(pa, pb, " ".join(w.split()), min(max(prob, 0.0), 1.0))
 
 
 def huecos(

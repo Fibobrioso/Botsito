@@ -30,7 +30,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | `docs/validation/` | informes de validacion por rama, informes de fidelidad |
 | `docs/spec/` | especificacion legible GENERADA (F13) |
 | `docs/runbooks/` | operacion demo/real (F33) |
-| `knowledge/corpus` | manifiesto con hash y huecos (F03) |
+| `knowledge/corpus` | manifiesto con hash y huecos (F03); glosario del ASR y manifiestos inmutables de transcripcion (F04) |
 | `knowledge/evidence` | `EvidenceItem` inmutables (F06) |
 | `knowledge/feedback` | `FeedbackRecord` solo-anadir (F09) |
 | `knowledge/spec` | `parametros.yaml` (F02, ADR-0002/0004), `strategy_spec.yaml`, glosario (F11) |
@@ -154,6 +154,7 @@ una se incorpora al brief de la funcionalidad indicada cuando se abra.
 | Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 (hecho: `tests/contract/test_data_manifest_history.py`) | Editar evidencia o feedback saltando los hooks |
 | Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 de Bot v2 (no existe en este repositorio) entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
 | Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
+| Cita de evidencia con id de transcripcion y verificada contra la cruda: campo opcional `transcripcion` (id `tr-*`) en EvidenceItem sin alterar ids existentes; `evidence new` comprueba `cita_literal` contra `transcript show` de la transcripcion activa; atribucion de voz por contexto (sin diarizacion, riesgo del brief F04) | F07 | Citas que no se pueden localizar ni reproducir |
 | Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 (hecho: `corpus/manifiestos_transcripcion.comprobar` recomputa `cruda + glosario` en `knowledge validate`; manifiesto inmutable por transcripcion `tr-<video>-<motor>-<hash8>` vigilado por `tests/contract/test_transcripcion_history.py`, ADR-0007) | Reescribir lo que dijo el trader |
 | Modelo de llenado como parametro declarado; informe de ventaja con dos modelos (al tocar / cruce + latencia) | F24, F27 | Un modelo optimista que infla resultados |
 | Contador automatico y versionado de N (ejecuciones de backtest) para el Deflated Sharpe | F24, F27 | N declarado incompleto |

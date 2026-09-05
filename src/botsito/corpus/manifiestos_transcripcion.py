@@ -9,6 +9,7 @@ cruda en disco debe tener el sha256 del manifiesto y `corregida.jsonl` debe ser 
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ from botsito.comun import ids
 from botsito.comun.documentos import activos as _activos
 from botsito.comun.documentos import ficheros_de, sha256_hex
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.corpus.audio import MUESTRAS_S
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
 from botsito.corpus.pipeline_transcripcion import (
     CARPETA_DATOS,
@@ -26,7 +28,9 @@ from botsito.corpus.pipeline_transcripcion import (
     FICHERO_CRUDA,
     SCHEMA_VERSION,
 )
-from botsito.corpus.transcripcion import a_jsonl, desde_jsonl
+from botsito.corpus.transcripcion import SENALES, TranscripcionError, a_jsonl, desde_jsonl, huecos
+
+_SUFIJO_CARPETA = re.compile(r"^-[0-9a-f]{8}$")
 
 CAMPOS_OBLIGATORIOS = (
     "schema_version",
@@ -115,9 +119,11 @@ def validar(doc: dict[str, Any], origen: str) -> Transcripcion:
         raise ManifiestoTranscripcionError(f"{origen}: el id no empieza por {prefijo}")
     nombre = tid[len(prefijo) : -9]
     esperada = f"{CARPETA_DATOS}/{doc['video_id']}/{nombre}"
-    if not nombre or doc["carpeta"] != esperada:
+    carpeta = str(doc["carpeta"])
+    sufijo = carpeta[len(esperada) :] if carpeta.startswith(esperada) else None
+    if not nombre or sufijo is None or (sufijo and not _SUFIJO_CARPETA.match(sufijo)):
         raise ManifiestoTranscripcionError(
-            f"{origen}: carpeta {doc['carpeta']!r} debe ser {esperada!r}"
+            f"{origen}: carpeta {carpeta!r} debe ser {esperada!r} (o con sufijo -<huella8>)"
         )
     for c in (
         "muestras",
@@ -142,6 +148,26 @@ def validar(doc: dict[str, Any], origen: str) -> Transcripcion:
     for c in ("fragmentos", "cortes_forzados_m", "huecos"):
         if not isinstance(doc[c], list):
             raise ManifiestoTranscripcionError(f"{origen}: {c} debe ser una lista")
+    for c in ("duracion_video_s", "duracion_wav_s", "hueco_transcripcion_s"):
+        if isinstance(doc[c], bool) or not isinstance(doc[c], int | float) or doc[c] < 0:
+            raise ManifiestoTranscripcionError(f"{origen}: {c} debe ser un numero >= 0")
+    if abs(float(doc["duracion_wav_s"]) - doc["muestras"] / MUESTRAS_S) > 0.001:
+        raise ManifiestoTranscripcionError(f"{origen}: duracion_wav_s no coincide con muestras")
+    _validar_fragmentos(doc, origen)
+    if set(doc["senales"]) != set(SENALES) or any(
+        isinstance(v, bool) or not isinstance(v, int) or v < 0 for v in doc["senales"].values()
+    ):
+        raise ManifiestoTranscripcionError(f"{origen}: senales debe contar {SENALES}")
+    for h in doc["huecos"]:
+        bien = (
+            isinstance(h, dict)
+            and set(h) == {"desde_ms", "hasta_ms", "ms"}
+            and all(_entero(h[k]) for k in h)
+            and h["desde_ms"] < h["hasta_ms"]
+            and h["ms"] == h["hasta_ms"] - h["desde_ms"]
+        )
+        if not bien:
+            raise ManifiestoTranscripcionError(f"{origen}: hueco invalido {h!r}")
     if "reemplaza_a" in doc and not ids.es_id_de("transcripcion", doc["reemplaza_a"]):
         raise ManifiestoTranscripcionError(f"{origen}: reemplaza_a debe ser un transcripcion_id")
     return Transcripcion(
@@ -156,6 +182,36 @@ def validar(doc: dict[str, Any], origen: str) -> Transcripcion:
     )
 
 
+def _entero(v: object) -> bool:
+    return isinstance(v, int) and not isinstance(v, bool) and v >= 0
+
+
+def _validar_fragmentos(doc: dict[str, Any], origen: str) -> None:
+    """Fragmentos contiguos, crecientes, desde 0 hasta `muestras`; cortes forzados en inicios."""
+    fragmentos = doc["fragmentos"]
+    if not fragmentos:
+        raise ManifiestoTranscripcionError(f"{origen}: fragmentos vacio")
+    esperado = 0
+    inicios: set[int] = set()
+    for i, f in enumerate(fragmentos):
+        bien = (
+            isinstance(f, dict)
+            and set(f) == {"indice", "inicio_m", "fin_m"}
+            and all(_entero(f[k]) for k in f)
+            and f["indice"] == i
+            and f["inicio_m"] == esperado
+            and f["fin_m"] > f["inicio_m"]
+        )
+        if not bien:
+            raise ManifiestoTranscripcionError(f"{origen}: fragmentos no contiguos en {i}")
+        esperado = f["fin_m"]
+        inicios.add(f["inicio_m"])
+    if esperado != doc["muestras"]:
+        raise ManifiestoTranscripcionError(f"{origen}: los fragmentos no cubren las muestras")
+    if any(not _entero(c) or c not in inicios or c == 0 for c in doc["cortes_forzados_m"]):
+        raise ManifiestoTranscripcionError(f"{origen}: cortes_forzados_m no son inicios")
+
+
 def cargar_todos(repo: Path) -> list[Transcripcion]:
     carpeta = repo / DIRECTORIO_MANIFIESTOS
     if not carpeta.is_dir():
@@ -164,12 +220,17 @@ def cargar_todos(repo: Path) -> list[Transcripcion]:
         cargar_manifiesto(p)
         for p in ficheros_de(carpeta, ManifiestoTranscripcionError, DIRECTORIO_MANIFIESTOS)
     ]
-    conocidos = {t.id for t in items}
+    conocidos = {t.id: t for t in items}
     for t in items:
         if t.supersede and t.supersede not in conocidos:
             raise ManifiestoTranscripcionError(f"{t.id}: reemplaza_a {t.supersede} no existe")
         if t.supersede == t.id:
             raise ManifiestoTranscripcionError(f"{t.id}: no puede reemplazarse a si misma")
+        if t.supersede and conocidos[t.supersede].video_id != t.video_id:
+            raise ManifiestoTranscripcionError(
+                f"{t.id}: reemplaza_a {t.supersede} es de otro video "
+                f"({conocidos[t.supersede].video_id})"
+            )
     return items
 
 
@@ -219,9 +280,12 @@ def comprobar(
         if sha256_hex(datos) != t.sha256_cruda:
             errores.append(f"{t.id}: {FICHERO_CRUDA} alterada (sha256 distinto del manifiesto)")
             continue
-        segmentos = desde_jsonl(datos.decode("utf-8"))
-        if len(segmentos) != t.segmentos:
-            errores.append(f"{t.id}: {len(segmentos)} segmentos, el manifiesto dice {t.segmentos}")
+        try:
+            segmentos = desde_jsonl(datos.decode("utf-8"))
+        except (TranscripcionError, UnicodeDecodeError) as exc:
+            errores.append(f"{t.id}: {FICHERO_CRUDA} no se puede leer ({exc})")
+            continue
+        errores += [f"{t.id}: {e}" for e in _recomputar(t.doc, segmentos)]
         if glosario is None:
             continue
         corregida, registro, dudas = aplicar(segmentos, glosario, t.id)
@@ -238,6 +302,26 @@ def comprobar(
         ) != correcciones_jsonl(glosario, registro, dudas):
             errores.append(f"{t.id}: {FICHERO_CORRECCIONES} no coincide con el glosario actual")
     return errores, avisos
+
+
+def _recomputar(doc: dict[str, Any], segmentos: list[Any]) -> list[str]:
+    """Lo que el manifiesto afirma sobre la cruda se recalcula desde la cruda."""
+    fin_ms = int(doc["muestras"]) * 1000 // MUESTRAS_S
+    fallos: list[str] = []
+    if len(segmentos) != doc["segmentos"]:
+        fallos.append(f"{len(segmentos)} segmentos, el manifiesto dice {doc['segmentos']}")
+    if segmentos and segmentos[-1].t1_ms > fin_ms:
+        fallos.append(f"el ultimo segmento acaba en {segmentos[-1].t1_ms} ms, fuera del WAV")
+    habla = sum(s.t1_ms - s.t0_ms for s in segmentos)
+    if habla != doc["ms_con_habla"]:
+        fallos.append(f"ms_con_habla {habla}, el manifiesto dice {doc['ms_con_habla']}")
+    senales = {n: sum(1 for s in segmentos if n in s.senales) for n in SENALES}
+    if senales != doc["senales"]:
+        fallos.append(f"senales {senales}, el manifiesto dice {doc['senales']}")
+    esperados = huecos(segmentos, fin_ms, float(doc["hueco_transcripcion_s"]))
+    if esperados != doc["huecos"]:
+        fallos.append(f"huecos {esperados}, el manifiesto dice {doc['huecos']}")
+    return fallos
 
 
 def ruta_datos(carpeta_datos: Path, video_id: str, nombre: str) -> Path:

@@ -70,7 +70,8 @@ factor "una hora" en la mitad de los dias; la regla de reloj de pared coincide c
 ve en su grafico.
 
 ## Por que descartamos las demas
-(1) No hay terminal en la maquina de desarrollo y ata la reproducibilidad a una cuenta; se
+(1) No habia terminal en la maquina de desarrollo al decidirlo (nota 2026-09-05: ya hay MT5 con
+la demo de FundedNext; la decision se mantiene porque ata la reproducibilidad a una cuenta) y se
 anade cuando el terminal es obligatorio (F17). (2) Husos implicitos y ficheros mensuales sin hash
 por dia. (3) `float` no es admisible en precios (H.2) y `Decimal` obliga a redondear al exportar a
 MQL5; el entero en puntos es el tipo nativo del terminal. (4) Un anclaje UTC no reproduce las H4
