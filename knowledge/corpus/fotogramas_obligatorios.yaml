@@ -1,0 +1,18 @@
+# Instantes que la extraccion de fotogramas (F05) debe entregar con precision de fotograma.
+# Escrito a mano, versionado (no inmutable): anadir un instante en segundo entero no toca ningun
+# manifiesto (la cobertura completa a 1 fps ya lo contiene); uno con fraccion de segundo exige
+# re-extraer el video (`corpus frames extract`) y `knowledge validate` lo reclama hasta entonces.
+# Fuente de cada instante: tabla de 33 marcas del informe F04 (marcas no verificables por audio).
+fotogramas:
+  - video_id: v3
+    t: "0:28:56"
+    motivo: Excel del trader; decide 2,3/3,23 (heredado) frente a 2.83/3.33 (large-v3)
+    marca_heredada: V3 0:28:56
+  - video_id: v2
+    t: "0:33:21"
+    motivo: herramienta de posicion 4,08 / 3,94 (golden de F21)
+    marca_heredada: V2 0:33:21
+  - video_id: v4
+    t: "0:12:30"
+    motivo: caja con el nivel 0,75 = 1,19537
+    marca_heredada: V4 0:12:30

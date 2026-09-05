@@ -12,3 +12,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0005 | Datos de mercado: fuente publica, precios enteros en puntos, tres relojes y anclaje | ACTIVE |
 | 0006 | Capas revisadas, paquete `comun` y accesores del registro por tipo declarado | ACTIVE |
 | 0007 | Transcripcion en dos capas: cruda inmutable por muestras, corregida por glosario | ACTIVE |
+| 0008 | Fotogramas: cobertura completa a 1 fps sin perdida, regla de seleccion por `pts` y manifiesto inmutable | ACTIVE |

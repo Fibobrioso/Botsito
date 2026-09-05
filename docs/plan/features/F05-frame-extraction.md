@@ -83,7 +83,7 @@ video y el `t_ms` de la cruda comparten origen: es lo que hace comparable `fr-<i
     como en F04: un video cambiado va a otra carpeta antes de decodificar.
 - Manifiesto inmutable `knowledge/corpus/fotogramas/fr-<video>-<hash8>.yaml` (mismo regimen
   que `tr-*`: hook, `tests/contract`, `reemplaza_a`): `video_id`, `sha256_video`,
-  `duracion_video_s`, `ffmpeg`, parametros (`fps`, `calidad_jpeg`, escala nativa), resolucion,
+  `duracion_video_s`, `ffmpeg`, parametros (`fps`, `formato` (png), escala nativa), resolucion,
   `n_fotogramas`, `ultimo_pts_ms`, `sha256_index` (del `index.jsonl`, que vive en `data/`),
   `extra` (instantes con fraccion extraidos ademas de los regulares: `t_ms`, `pts_ms`, `sha256`),
   `huecos` (> 2 s sobre `pts`; el esquema los ACEPTA porque son un hecho medido, como
@@ -108,7 +108,7 @@ video y el `t_ms` de la cruda comparten origen: es lo que hace comparable `fr-<i
     obtenida buscando en las crudas `hora`, `zona horaria`, `UTC`, `huso`, `configur`,
     `temporalidad`, `sesion`, `New York`, `Londres`, `Madrid`. Elegir el fotograma y registrar
     la evidencia es de F07 (H.2, fila "anclaje de la vela H4").
-- CLI: `corpus frames extract --video v1 [--calidad 2] [--reemplaza-a fr-...]` (idempotente),
+- CLI: `corpus frames extract --video v1 [--reemplaza-a fr-...]` (idempotente),
   `corpus frames check` (manifiestos contra `data/`: `sha256_index`, hashes de los obligatorios
   y de una muestra determinista de regulares, huecos), `corpus frames show --video v3 --t
   0:28:56 [--n 3]` (rutas de los fotogramas mas cercanos por `pts_ms`, con el segmento `n` de la
@@ -254,7 +254,20 @@ Descartados: ninguno. No verificado por el revisor: las fracciones de la tabla d
 (script en el scratchpad de esta sesion; se reproducira en el informe), la legibilidad del Excel
 (vista en esta sesion), el determinismo del decodificador entre builds, el `MASTER_PLAN.html`.
 
-## Que debe decidir el usuario
+## Decisiones del usuario (2026-09-05)
+Instruccion literal: "aplica lo que tenga mayor eficacia y porcentaje de fidelidad para extraer
+todo lo necesario, no importa el tiempo o cantidad de recursos que demande". Se aplica asi:
+1. Cobertura completa a 1 fps (decision 1 aceptada; cambio de plan al Change Log).
+2. Formato SIN PERDIDA: PNG en lugar de JPEG q=2. Medido en V3 con la regla `select` y
+   bitexact: 60 fotogramas = 26 MiB en 1,4 s (~7 GiB y ~10 min para los cuatro videos; 179 GB
+   libres en disco); dos extracciones dan el mismo sha256. La legibilidad deja de depender de la
+   calidad JPEG y el riesgo "si otro obligatorio no se lee, PNG solo ese" desaparece.
+3. Decisiones 2, 3 y 4 (un `fr-*` activo por video, obligatorios en lista mutable, bitexact):
+   aceptadas tal como estan, porque ninguna reduce fidelidad y las tres la protegen.
+4. Instantes obligatorios con precision de fotograma (regla `select`, `-ss -copyts`).
+Lo que sigue abajo es la lista de decisiones tal como se planteo antes de la instruccion.
+
+## Que debe decidir el usuario (planteado antes de la instruccion anterior; resuelto)
 1. Cambio de plan: cobertura completa a 1 fps (~2,5 GiB fuera de git, ~10 min) en lugar de
    "tramos con decision" (tabla A fila F05 y H.2). Ahorro medido de la alternativa: 7-29 %.
    Si se acepta, entra en el Change Log de MASTER_PLAN.
