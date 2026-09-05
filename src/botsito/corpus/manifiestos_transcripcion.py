@@ -16,7 +16,7 @@ from typing import Any
 
 from botsito.comun import ids
 from botsito.comun.documentos import activos as _activos
-from botsito.comun.documentos import ficheros_de, sha256_hex
+from botsito.comun.documentos import cargar_directorio, ciclos_de_supersede, sha256_hex
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.corpus.audio import MUESTRAS_S
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
@@ -216,10 +216,13 @@ def cargar_todos(repo: Path) -> list[Transcripcion]:
     carpeta = repo / DIRECTORIO_MANIFIESTOS
     if not carpeta.is_dir():
         return []
-    items = [
-        cargar_manifiesto(p)
-        for p in ficheros_de(carpeta, ManifiestoTranscripcionError, DIRECTORIO_MANIFIESTOS)
-    ]
+    items = cargar_directorio(
+        carpeta,
+        cargar_manifiesto,
+        ManifiestoTranscripcionError,
+        DIRECTORIO_MANIFIESTOS,
+        lambda t: t.id,
+    )
     conocidos = {t.id: t for t in items}
     for t in items:
         if t.supersede and t.supersede not in conocidos:
@@ -231,6 +234,8 @@ def cargar_todos(repo: Path) -> list[Transcripcion]:
                 f"{t.id}: reemplaza_a {t.supersede} es de otro video "
                 f"({conocidos[t.supersede].video_id})"
             )
+    for problema in ciclos_de_supersede({t.id: t.supersede for t in items}):
+        raise ManifiestoTranscripcionError(problema)
     return items
 
 

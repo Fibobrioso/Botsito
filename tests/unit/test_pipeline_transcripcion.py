@@ -125,7 +125,33 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
     )
     assert r2.transcripcion_id == r.transcripcion_id and llamadas == []
     assert r.manifiesto.read_bytes() == bytes_manifiesto
-    assert (r.carpeta / "huella.txt").is_file() and (r.carpeta.parent / "audio.sha256_video")
+    assert (r.carpeta / "huella.txt").is_file()
+    assert (r.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == sha
+    assert (r.carpeta.parent / "audio.sha256_video").is_file()
+    # Un temporal huerfano del manifiesto (corte a mitad de escritura) no invalida el repo.
+    huerfano = r.manifiesto.with_name("_" + r.manifiesto.name + ".tmp")
+    huerfano.write_text("a medias", encoding="utf-8")
+    assert [t.id for t in cargar_todos(repo)] == [r.transcripcion_id]
+    huerfano.unlink()
+    # Si el video del corpus cambia (otro sha), la cruda anterior no se pisa: otra carpeta,
+    # decidida antes de llamar al motor (la carpeta `<nombre>` sigue siendo del video viejo).
+    otro_sha = "f" * 64
+    r3 = transcribir_video(
+        repo,
+        repo / "data",
+        raiz,
+        "v1",
+        "clip.mp4",
+        otro_sha,
+        2.0,
+        MotorFalso(),
+        g,
+        comprobar_hash_video=False,
+    )
+    assert r3.carpeta != r.carpeta and r3.carpeta.name.startswith("falso-")
+    assert (r3.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == otro_sha
+    assert (r.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == sha
+    assert cargar_cruda(r.carpeta) == cruda  # la cruda vieja sigue intacta
     # El mismo manifiesto con otro reemplaza_a no se reescribe: es inmutable.
     with pytest.raises(Exception, match="inmutable"):
         transcribir_video(

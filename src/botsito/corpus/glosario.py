@@ -32,7 +32,9 @@ CAMPOS_BASE = ("patron", "reemplazo", "alcance", "motivo", "ejemplo_video", "eje
 CAMPOS_SEGMENTO = ("transcripcion_id", "segmento", "verificado_por")
 _LIMITE_INICIO = (r"\b", r"(?<!\w)")
 _LIMITE_FIN = (r"\b", r"(?!\w)")
-_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^|\\S|\.\{")
+# Comodines o cuantificadores que casarian texto arbitrario aunque lleven \b en los extremos
+# (`\b\w+\b`, `\b\d+\b`, `[a-z]+`): solo entran literales, alternancias, grupos y `?`.
+_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^|\\[SsWwDd]|\.\{|(?<!\\)[+*{\[]")
 
 
 class GlosarioError(ValueError):
@@ -113,7 +115,8 @@ def _sustitucion(bruto: object, origen: str, vocabulario: tuple[str, ...]) -> Su
         raise GlosarioError(f"{origen}: el patron debe llevar limites de palabra en ambos extremos")
     if _SIN_LIMITE.search(patron):
         raise GlosarioError(
-            f"{origen}: el patron no puede contener comodines sin limite (.* .+ [^)"
+            f"{origen}: el patron no puede contener comodines ni cuantificadores sin limite "
+            "(.* .+ [^ \\w \\d \\s + * { [)"
         )
     try:
         # Envuelto en limites propios: una alternancia (`\bfoo|bar\b`) no puede saltarse la regla

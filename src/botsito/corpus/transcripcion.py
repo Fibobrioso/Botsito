@@ -165,8 +165,11 @@ def fusionar(
                 descartados += 1
                 continue
             if t1 > fragmento.fin_ms:
+                # 1 ms de mas es redondeo (fin del fragmento por floor, motor por round), no
+                # un recorte real.
+                if t1 - fragmento.fin_ms > 1:
+                    recortados += 1
                 t1 = fragmento.fin_ms
-                recortados += 1
             if t1 <= t0:
                 descartados += 1
                 continue
@@ -274,7 +277,9 @@ def desde_jsonl(texto: str) -> list[Segmento]:
 
 def escribir_atomico(ruta: Path, texto: str) -> None:
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    temporal = ruta.with_name(ruta.name + ".tmp")
+    # Prefijo `_`: un temporal huerfano en knowledge/corpus/transcripciones/ queda exento del
+    # listado de manifiestos (documentos.ficheros_de) en vez de invalidar el repo.
+    temporal = ruta.with_name("_" + ruta.name + ".tmp")
     temporal.write_text(texto, encoding="utf-8", newline="\n")
     temporal.replace(ruta)
 
@@ -371,6 +376,8 @@ def texto_entre(
 ) -> list[Segmento]:
     """Segmentos que tocan [t0 - margen, t1 + margen]: lo que F07 cita literalmente."""
     a, b = max(t0_ms - margen_ms, 0), t1_ms + margen_ms
+    if a == b:  # cita de un instante: tambien el segmento que empieza o acaba justo ahi
+        return [s for s in segmentos if s.t0_ms <= a <= s.t1_ms]
     return [s for s in segmentos if s.t1_ms > a and s.t0_ms < b]
 
 

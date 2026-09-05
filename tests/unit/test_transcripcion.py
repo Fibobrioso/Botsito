@@ -91,6 +91,12 @@ def test_fusionar_aritmetica_exacta_recorte_y_descarte(tmp_path: Path) -> None:
     assert [(s.t0_ms, s.t1_ms) for s in tol.segmentos] == [(0, 10005), (10005, 12000)]
     assert tol.recortados == 2 and tol.descartados == 1
     assert tol.segmentos[0].palabras == (Palabra(2000, 2000, "x", 0.5),)
+    # Fragmento cuyo fin en ms se trunca (floor) y motor que redondea: 1 ms de mas no es recorte.
+    f_imp = Fragmento(0, 0, 9_590_407, tmp_path / "fi.wav")  # 599400.4375 ms -> fin_ms 599400
+    borde = fusionar([(f_imp, [SegmentoRelativo(0.0, 599.4009, "a")])], 900_000)
+    assert (borde.segmentos[0].t1_ms, borde.recortados) == (599400, 0)
+    borde2 = fusionar([(f_imp, [SegmentoRelativo(0.0, 599.402, "a")])], 900_000)
+    assert (borde2.segmentos[0].t1_ms, borde2.recortados) == (599400, 1)
     with pytest.raises(TranscripcionError, match="supera el fin"):
         fusionar([(frag(0, 0.0, 950.0, tmp_path), [SegmentoRelativo(0.0, 940.0, "a")])], 900_000)
 
@@ -193,6 +199,12 @@ def test_transcribir_fragmentos_es_reanudable_y_sensible_a_parametros(tmp_path: 
     assert texto_entre(fusion, 4900, 5100) == fusion[1:]
     assert texto_entre(fusion, 4900, 5100, margen_ms=5000) == fusion
     assert texto_entre(fusion, 500, 800) == fusion[:1]
+    # Cita de un instante en el borde exacto entre dos segmentos: toca a ambos; en 0, al primero.
+    contiguos = [Segmento(0, 0, 2000, "a"), Segmento(1, 2000, 4000, "b")]
+    assert texto_entre(contiguos, 2000, 2000) == contiguos
+    assert texto_entre(contiguos, 0, 0) == contiguos[:1]
+    assert texto_entre(contiguos, 4000, 4000) == contiguos[1:]
+    assert texto_entre(contiguos, 2000, 2001) == contiguos[1:]
 
 
 GLOSARIO = r"""
@@ -264,6 +276,10 @@ def _entrada(patron: str, alcance: str = "global", **extra: str) -> str:
         (_entrada("M5"), "limites"),
         (_entrada(r"\bM5\b"), "vocabulario"),
         (_entrada(r"\b.*\b"), "comodines"),
+        (_entrada(r"\b\w+\b"), "comodines"),
+        (_entrada(r"\b\d+\b"), "comodines"),
+        (_entrada(r"\b[a-z]+\b"), "comodines"),
+        (_entrada(r"\bx{2,}\b"), "comodines"),
         (_entrada(r"\b(\b"), "invalido"),
         (_entrada(r"\bx\b", "segmento"), "campos esperados"),
         (_entrada(r"\bx\b", "otro"), "alcance"),

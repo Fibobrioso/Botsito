@@ -62,6 +62,7 @@ FICHERO_HUELLA = (
     "huella.txt"  # huella de motor + corte de la carpeta (elige carpeta antes de la GPU)
 )
 MARCA_WAV = "audio.sha256_video"  # el WAV se reextrae si el video cambio
+FICHERO_VIDEO_CARPETA = "video.sha256"  # video del que salio la cruda de esta carpeta
 SCHEMA_VERSION = 1
 TOLERANCIA_DURACION_S = 1.0  # WAV frente a la duracion del manifiesto del corpus (como F06)
 
@@ -128,7 +129,7 @@ def transcribir_video(
     huella = hash_corto(
         json.dumps({"corte": parametros.como_dict(), "motor": descripcion_motor}, sort_keys=True)
     )
-    carpeta = _carpeta_para(cv, motor.nombre, huella)
+    carpeta = _carpeta_para(cv, motor.nombre, huella, sha256_video)
     silencios = detectar_silencios(wav, parametros.umbral_db, parametros.silencio_minimo_s)
     cortes = puntos_de_corte(n_muestras, silencios, parametros)
     fragmentos = cortar_wav(wav, cortes.puntos_m, carpeta / "fragmentos")
@@ -211,19 +212,28 @@ def _leer(ruta: Path) -> str:
         return ""
 
 
-def _carpeta_para(cv: Path, nombre: str, huella: str) -> Path:
+def _carpeta_para(cv: Path, nombre: str, huella: str, sha256_video: str) -> Path:
     """`<nombre>` la primera vez; si esa carpeta ya pertenece a otra huella (otro vocabulario,
-    otra version del motor), `<nombre>-<huella8>`: una retranscripcion no pisa la cruda anterior
-    (su manifiesto es inmutable y sigue apuntando a su carpeta). La huella se decide ANTES de la
-    GPU."""
+    otra version del motor) o a otro video (el fichero del corpus cambio), `<nombre>-<hash8>`:
+    una retranscripcion no pisa la cruda anterior (su manifiesto es inmutable y sigue apuntando
+    a su carpeta). Se decide ANTES de la GPU. Una carpeta sin marca de video (anterior a esta
+    regla) se adopta y se marca."""
     carpeta = cv / nombre
     marca = carpeta / FICHERO_HUELLA
-    if carpeta.is_dir() and marca.exists() and _leer(marca) != huella:
-        carpeta = cv / f"{nombre}-{huella[:8]}"
+    marca_video = carpeta / FICHERO_VIDEO_CARPETA
+    ajena = carpeta.is_dir() and (
+        (marca.exists() and _leer(marca) != huella)
+        or (marca_video.exists() and _leer(marca_video) != sha256_video)
+    )
+    if ajena:
+        carpeta = cv / f"{nombre}-{hash_corto(huella + sha256_video)}"
         marca = carpeta / FICHERO_HUELLA
+        marca_video = carpeta / FICHERO_VIDEO_CARPETA
     carpeta.mkdir(parents=True, exist_ok=True)
     if not marca.exists():
         escribir_atomico(marca, huella + "\n")
+    if not marca_video.exists():
+        escribir_atomico(marca_video, sha256_video + "\n")
     return carpeta
 
 

@@ -323,6 +323,9 @@ def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: {exc}")
         return 1
     datos = _carpeta_datos(repo)
+    if args.video and not any(t.video_id == args.video for t in items):
+        print(f"ERROR: no hay ninguna transcripcion registrada del video {args.video!r}")
+        return 1
     n = 0
     for t in items:
         if args.video and t.video_id != args.video:

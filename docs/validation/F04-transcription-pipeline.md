@@ -119,7 +119,8 @@ uv run botsito knowledge validate
 `make check` equivalente (`ruff`, `mypy strict` src + tests, `lint-imports` 4 contratos, `pytest`
 236 funciones, `state check`) en `feature/F04-transcription-pipeline`, Windows 11, Python 3.12,
 con `uv run --no-sync` mientras la GPU transcribia. CI verde en `3f73813` (run 33946879078),
-`d1f3947` (33948083299) y `69ea773` (33966530552); el commit de la auditoria general: ver la rama.
+`d1f3947` (33948083299) y `69ea773` (33966530552); los commits de la auditoria general
+(`7f75f4d`) y de la auditoria final: ver la rama (el run id se anota en el `docs(state)` del cierre).
 
 ## Resultados
 ### Transcripciones reales (large-v3, int8_float16, GTX 1650, CUDA)
@@ -213,6 +214,28 @@ Proceso: PROJECT_STATE, READMEs, MASTER_PLAN (tabla B y H.2 F07), brief e inform
 (detalle en el Change Log). Pendientes declarados: excluir GPU/driver de la huella de reanudacion
 (cambiarla ahora invalidaria los parciales), truncado del `initial_prompt` a ~224 tokens sin
 aviso, `palabras` de la cruda bajo un texto corregido sin marcar.
+
+### Auditoria final previa a la validacion (2 agentes, 2026-09-05)
+Codigo (1 importante + 6 menores, todos corregidos y testeados): si un video del corpus
+cambiaba (otro sha256, misma duracion), la carpeta de trabajo se reutilizaba, el WAV
+compartido se reescribia y la transcripcion fallaba DESPUES de la GPU con el mensaje enganoso
+"motor no determinista" (reproducido por el auditor con un motor falso sensible al WAV); ahora
+cada carpeta lleva `video.sha256` y un video distinto va a `<motor>-<hash8>` antes de llamar al
+motor (las carpetas existentes se adoptan y marcan; la huella de reanudacion no cambia, asi que
+los parciales reales siguen validos). `texto_entre` con `t0 == t1` en el borde exacto de un
+segmento devolvia vacio (afectaba a "V1 0:00:00" sin margen). El filtro de comodines del
+glosario era una lista negra incompleta: `\b\w+\b` o `\b\d+\b` globales pasaban y habrian
+reescrito todo el corpus; ahora se rechazan cuantificadores y clases (`+ * { [ \w \d \s`).
+`glossary apply --video` con un video sin transcripcion devolvia 0; ahora es error. El temporal
+del manifiesto se llama `_<id>.yaml.tmp`: un huerfano por corte a mitad de escritura ya no
+invalida `check`/`validate`. Un segmento que acaba 1 ms despues del fin del fragmento (floor del
+fragmento frente a round del motor; 8 bordes asi en los 4 manifiestos reales) ya no cuenta como
+recorte. `cargar_todos` detecta ids repetidos y ciclos de `reemplaza_a`. Una asercion vacia de
+un test (`Path` siempre verdadero) corregida. Hipotesis del auditor registradas en PROJECT_STATE
+(Technical Debt): `initial_prompt` solo condiciona la primera ventana de cada fragmento con
+`condition_on_previous_text=False` (valorar `hotwords` en el glosario v2). Los 4 manifiestos
+reales siguen coherentes (`transcript check`, `knowledge validate`) tras los cambios.
+Plan/docs: ver Change Log de PROJECT_STATE y del MASTER_PLAN (2026-09-05, auditoria final).
 
 ### Auditoria de cierre (codigo y proceso)
 Hallazgos corregidos en `d1f3947`: un parcial JSON corrupto abortaba la transcripcion (ahora se
