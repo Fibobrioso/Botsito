@@ -203,6 +203,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         cargar_todos,
     )
     from botsito.corpus.manifiestos_transcripcion import comprobar as comprobar_transcripciones
+    from botsito.corpus.transcripcion import TranscripcionError
 
     try:
         ruta_glosario = repo / "knowledge" / "corpus" / "glosario_asr.yaml"
@@ -213,7 +214,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         )
         if transcripciones and glosario is None:
             errores_tr.append("hay transcripciones registradas pero falta glosario_asr.yaml")
-    except (GlosarioError, ManifiestoTranscripcionError) as exc:
+    except (GlosarioError, ManifiestoTranscripcionError, TranscripcionError) as exc:
         errores_tr, avisos_tr, transcripciones = [f"transcripciones: {exc}"], [], []
     historial_tr = modificaciones_en_historial(repo, DIRECTORIO_TRANSCRIPCIONES)
     if historial_tr is None and con_git:

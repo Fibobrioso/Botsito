@@ -50,7 +50,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | F02 | `feature/F02-config-and-parameter-registry` | Parametros con procedencia | F01 | sin fuente = error | una sola puerta por parametro |
 | **Fase 1 · Base de conocimiento** | | | | | |
 | F03 | `feature/F03-corpus-inventory` | Manifiesto con hash y huecos | F01 | huecos sinteticos | manifiesto determinista |
-| F04 | `feature/F04-transcription-pipeline` | Transcripcion alineada (large-v3) | F03 | desfases; clip fixture | 50 citas conservan sentido |
+| F04 | `feature/F04-transcription-pipeline` | Transcripcion alineada (large-v3) | F03 | desfases; clip fixture | las citas de la investigacion (32 marcas unicas, no 50) conservan sentido |
 | F05 | `feature/F05-frame-extraction` | Fotogramas densos en tramos con decision | F03 | integridad del indice | sin huecos > 2 s |
 | F06 | `feature/F06-evidence-model` | Evidencia inmutable | F03 | inmutabilidad; contradiccion | sin cita = rechazado |
 | F07 | `feature/F07-evidence-extraction` | Poblar evidencia (humano; LLM propone) | F04, F05, F06 | esquema LLM; golden | 100 % citas verificadas |
@@ -154,7 +154,7 @@ una se incorpora al brief de la funcionalidad indicada cuando se abra.
 | Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 (hecho: `tests/contract/test_data_manifest_history.py`) | Editar evidencia o feedback saltando los hooks |
 | Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 de Bot v2 (no existe en este repositorio) entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
 | Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
-| Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 | Reescribir lo que dijo el trader |
+| Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 (hecho: `corpus/manifiestos_transcripcion.comprobar` recomputa `cruda + glosario` en `knowledge validate`; manifiesto inmutable por transcripcion `tr-<video>-<motor>-<hash8>` vigilado por `tests/contract/test_transcripcion_history.py`, ADR-0007) | Reescribir lo que dijo el trader |
 | Modelo de llenado como parametro declarado; informe de ventaja con dos modelos (al tocar / cruce + latencia) | F24, F27 | Un modelo optimista que infla resultados |
 | Contador automatico y versionado de N (ejecuciones de backtest) para el Deflated Sharpe | F24, F27 | N declarado incompleto |
 | Regla: toda divergencia Python/MQL5 se resuelve citando la spec; si la spec no decide, es una ambiguedad nueva | F30 | Parches que alinean implementaciones sin fuente |

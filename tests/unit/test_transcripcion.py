@@ -167,6 +167,10 @@ def test_transcribir_fragmentos_es_reanudable_y_sensible_a_parametros(tmp_path: 
     (tmp_path / "f0.wav").write_bytes(b"RIFF cambiado")  # otro WAV: se retranscribe
     transcribir_fragmentos(fragmentos, motor, tmp_path / "parciales", "h2")
     assert llamadas[-1:] == ["f0.wav"] and llamadas.count("f1.wav") == 2
+    # Un parcial corrupto es cache invalida: se retranscribe en vez de abortar.
+    (tmp_path / "parciales" / "fragmento_001.json").write_text("{corrupto", encoding="utf-8")
+    transcribir_fragmentos(fragmentos, motor, tmp_path / "parciales", "h2")
+    assert llamadas[-1:] == ["f1.wav"]
     fusion = fusionar(r2, 10_000).segmentos
     assert texto_entre(fusion, 4900, 5100) == fusion[1:]
     assert texto_entre(fusion, 4900, 5100, margen_ms=5000) == fusion

@@ -110,10 +110,14 @@ def validar(doc: dict[str, Any], origen: str) -> Transcripcion:
         raise ManifiestoTranscripcionError(
             f"{origen}: el sufijo del id no coincide con sha256_cruda"
         )
-    nombre = tid[len(f"tr-{doc['video_id']}-") : -9]
-    if not nombre or not str(doc["carpeta"]).endswith(f"/{doc['video_id']}/{nombre}"):
+    prefijo = f"tr-{doc['video_id']}-"
+    if not tid.startswith(prefijo):
+        raise ManifiestoTranscripcionError(f"{origen}: el id no empieza por {prefijo}")
+    nombre = tid[len(prefijo) : -9]
+    esperada = f"{CARPETA_DATOS}/{doc['video_id']}/{nombre}"
+    if not nombre or doc["carpeta"] != esperada:
         raise ManifiestoTranscripcionError(
-            f"{origen}: carpeta {doc['carpeta']!r} no coincide con el id"
+            f"{origen}: carpeta {doc['carpeta']!r} debe ser {esperada!r}"
         )
     for c in (
         "muestras",
@@ -177,6 +181,10 @@ def activa_de(items: list[Transcripcion], video_id: str, tid: str | None = None)
     if tid is not None:
         for t in items:
             if t.id == tid:
+                if t.video_id != video_id:
+                    raise ManifiestoTranscripcionError(
+                        f"{tid} es de {t.video_id}, no de {video_id}"
+                    )
                 return t
         raise ManifiestoTranscripcionError(f"no existe la transcripcion {tid}")
     vivas = [t for t in activos(items) if t.video_id == video_id]

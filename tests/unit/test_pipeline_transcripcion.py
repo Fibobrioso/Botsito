@@ -163,6 +163,8 @@ def test_manifiesto_corrupto_rechazado(tmp_path: Path) -> None:
     casos: list[tuple[dict[str, Any], str]] = [
         ({"transcripcion_id": "tr-v1-falso-00000000"}, "sufijo"),
         ({"carpeta": "transcripciones/v2/falso"}, "carpeta"),
+        ({"carpeta": "../x/transcripciones/v1/falso"}, "carpeta"),
+        ({"transcripcion_id": "tr-v2-falso-" + doc["sha256_cruda"][:8]}, "empieza por"),
         ({"segmentos": 0}, "sin segmentos"),
         ({"extra": 1}, "desconocidos"),
         ({"reemplaza_a": "x"}, "reemplaza_a"),
@@ -216,6 +218,22 @@ def test_cli_transcribe_glossary_check_show(
     assert (
         cli.main(
             base + ["transcript", "show", "--video", "v1", "--t0", "0:00:05", "--t1", "0:00:01"]
+        )
+        == 1
+    )
+    # Un instante (t0 == t1) es una cita valida; --transcripcion de otro video se rechaza.
+    assert (
+        cli.main(
+            base + ["transcript", "show", "--video", "v1", "--t0", "0:00:01", "--t1", "0:00:01"]
+        )
+        == 0
+    )
+    tid = next((repo / DIRECTORIO_MANIFIESTOS).glob("tr-*.yaml")).stem
+    assert (
+        cli.main(
+            base
+            + ["transcript", "show", "--video", "v2", "--t0", "0:00:01", "--t1", "0:00:01"]
+            + ["--transcripcion", tid]
         )
         == 1
     )

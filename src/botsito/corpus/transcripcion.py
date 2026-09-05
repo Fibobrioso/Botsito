@@ -280,28 +280,7 @@ def transcribir_fragmentos(
     for f in fragmentos:
         parcial = carpeta / f"fragmento_{f.indice:03d}.json"
         huella_wav = sha256_hex(f.ruta.read_bytes())
-        relativos: list[SegmentoRelativo] | None = None
-        if parcial.exists():
-            d = json.loads(parcial.read_text(encoding="utf-8"))
-            if (
-                d.get("sha256_wav") == huella_wav
-                and d.get("huella_parametros") == huella_parametros
-            ):
-                relativos = [
-                    SegmentoRelativo(
-                        float(x["t0_s"]),
-                        float(x["t1_s"]),
-                        str(x["texto"]),
-                        tuple(
-                            (float(p[0]), float(p[1]), str(p[2]), float(p[3]))
-                            for p in x["palabras"]
-                        ),
-                        float(x["no_speech_prob"]),
-                        float(x["compression_ratio"]),
-                        float(x["avg_logprob"]),
-                    )
-                    for x in d["segmentos"]
-                ]
+        relativos = _leer_parcial(parcial, huella_wav, huella_parametros)
         if relativos is None:
             relativos = motor.transcribir(f.ruta)
             escribir_atomico(
@@ -321,6 +300,33 @@ def transcribir_fragmentos(
             progreso(f, len(relativos))
         salida.append((f, relativos))
     return salida
+
+
+def _leer_parcial(
+    parcial: Path, huella_wav: str, huella_parametros: str
+) -> list[SegmentoRelativo] | None:
+    """None si no existe, es de otro WAV, de otros parametros o esta corrupto: se retranscribe
+    (un parcial es cache, no verdad)."""
+    if not parcial.exists():
+        return None
+    try:
+        d = json.loads(parcial.read_text(encoding="utf-8"))
+        if d.get("sha256_wav") != huella_wav or d.get("huella_parametros") != huella_parametros:
+            return None
+        return [
+            SegmentoRelativo(
+                float(x["t0_s"]),
+                float(x["t1_s"]),
+                str(x["texto"]),
+                tuple((float(q[0]), float(q[1]), str(q[2]), float(q[3])) for q in x["palabras"]),
+                float(x["no_speech_prob"]),
+                float(x["compression_ratio"]),
+                float(x["avg_logprob"]),
+            )
+            for x in d["segmentos"]
+        ]
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, IndexError):
+        return None
 
 
 def formato_ms(ms: int) -> str:

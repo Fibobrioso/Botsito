@@ -361,8 +361,8 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
         carpeta = carpeta_de(_carpeta_datos(repo), t)
         segmentos = cargar_cruda(carpeta) if args.capa == "cruda" else cargar_corregida(carpeta)
         t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
-        if t1 <= t0:
-            raise TranscripcionError("--t1 debe ser posterior a --t0")
+        if t1 < t0:
+            raise TranscripcionError("--t1 no puede ser anterior a --t0")
         trozo = texto_entre(segmentos, t0, t1, round(args.margen_s * 1000))
     except (ManifiestoTranscripcionError, TranscripcionError, OSError) as exc:
         print(f"ERROR: {exc}")
