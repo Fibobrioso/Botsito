@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-F04 · transcription-pipeline
+— (F04 integrada; F05 pendiente de abrir)
 
 ## Current Branch
-feature/F04-transcription-pipeline
+main
 
 ## Stable Main State
-11ee1ac · merge de F15. make check verde: 324 casos (210 funciones), 3 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos). CI Ubuntu verde (run 33937716849). Tag stable/F15. Rama main protegida en GitHub.
+a7f8b4b · merge de F04. make check verde: 359 casos (236 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 4 de transcripcion). CI Ubuntu verde en la rama (run 33986995223). Tag stable/F04. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -52,9 +52,10 @@ feature/F04-transcription-pipeline
 - F06 · evidence-model · validada el 2026-09-04 · docs/validation/F06-evidence-model.md · tag stable/F06
 - F09 · expert-feedback-model · validada el 2026-09-04 · docs/validation/F09-expert-feedback-model.md · tag stable/F09
 - F15 · market-data-ohlc · validada el 2026-09-04 · docs/validation/F15-market-data-ohlc.md · tag stable/F15
+- F04 · transcription-pipeline · validada el 2026-09-05 · docs/validation/F04-transcription-pipeline.md · tag stable/F04
 
 ## Features Waiting for Validation
-- F04 · transcription-pipeline · docs/validation/F04-transcription-pipeline.md · WAITING_FOR_USER_VALIDATION (rama feature/F04-transcription-pipeline; CI verde)
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -168,7 +169,7 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   cientos de items; `escribir_item` trata la colision como "mismo contenido" (revisar en F07).
 
 ## Technical Debt
-- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, pendiente de validacion).
+- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
 - Copia de seguridad de `data/transcripciones/<v>/large-v3-int8-float16/cruda.jsonl` (y `audio.wav`) fuera de esta maquina (Drive) con su sha256 del manifiesto; dueno: usuario, antes de abrir F07. Sin ella, otra maquina solo valida esquema e historial (o retranscribe: ~1 h de GPU).
 - Glosario ASR v2: sustituciones e ids propuestos en el informe F04 ("Que debe decidir el usuario", punto 2). Cambiar `vocabulario` cambia el `initial_prompt` y la huella: exige retranscribir los 4 videos con ids nuevos (`reemplaza_a`), decidirlo ANTES de que F07 cite ids de transcripcion; las `sustituciones` no obligan a retranscribir (solo `corpus glossary apply`).
 - V3 0:28:56: las cifras del Excel (2,3/3,23 heredadas frente a 2.83/3.33 de large-v3) las decide el fotograma en F05; igual V2 0:33:21 (4,08/3,94) y V4 0:12:30 (1,19537): las tres marcas "no verificables por audio" del informe F04 son fotogramas obligatorios de F05.
@@ -210,17 +211,18 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F04 · transcripcion (orden E: F15 -> F04, F05, F07, F08 -> F10). F10 absorbe: parametros UNKNOWN
+F05 · frame-extraction (orden E: F04 -> F05, F07, F08 -> F10). F10 absorbe: parametros UNKNOWN
 pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-F04 en WAITING_FOR_USER_VALIDATION: leer `docs/validation/F04-transcription-pipeline.md`, decidir los 4 puntos de "Que debe decidir el usuario" y, si valida, ritual de cierre (merge --no-ff, tag stable/F04, docs(state) con el run id de CI). Despues F05 (fotogramas) con el mismo metodo supervisado; su brief nace de MASTER_PLAN H.2 (fila F05). Antes de abrir F07: glosario v2 decidido y retranscripcion hecha, copia de `data/transcripciones/*/cruda.jsonl` y `audio.wav` en Drive.
+Abrir feature/F05-frame-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila F05 y tabla A -> revision de diseno por agente -> construccion -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Insumo: transcripcion activa `tr-*` de F04 mas huecos heredados de F03; fotogramas obligatorios V3 0:28:56, V2 0:33:21, V4 0:12:30 y configuracion del grafico (A-9). Antes de abrir F07: glosario v2 decidido y retranscripcion hecha, copia de `data/transcripciones/*/cruda.jsonl` y `audio.wav` en Drive.
 
 ## Last Stable Commit
-11ee1ac · merge: F15 market-data-ohlc validado por el usuario · tag stable/F15
+a7f8b4b · merge: F04 transcription-pipeline validado por el usuario · tag stable/F04
 
 ## Change Log
+- 2026-09-05 · F04 VALIDADA por el usuario (decisiones: A-12 queda como pregunta al trader; glosario v2 como paso previo a F07 con retranscripcion de los 4 videos; constantes de corte tecnicas; lo heredado de Whisper tiny no se cita). Commit de docs de la auditoria final reescrito con trailer `Fuente: ADR-0005` (tocaba knowledge/spec/README.md; CI lo detecto: run 33985993346 rojo, 33986995223 verde). merge --no-ff a main (a7f8b4b); tag stable/F04
 - 2026-09-05 · AUDITORIA FINAL previa a validar F04 (2 agentes: bugs de codigo y estructura del plan). Codigo: `sha256_video` entra en la huella de la carpeta de trabajo (un video cambiado ya no reescribe el WAV ni falla tras la GPU con "motor no determinista"), cita de un instante en el borde exacto de un segmento, comodines cuantificados (`\\w+`, `\\d+`) rechazados en el glosario, `glossary apply --video` con video inexistente es error, temporal del manifiesto con prefijo `_` (no rompe `check` si queda huerfano), borde de fragmento con 1 ms de redondeo no cuenta como recorte, `cargar_todos` detecta ids repetidos y ciclos, asercion vacia de un test corregida. Docs: regimenes de cambio completos (manifiestos de datos y transcripciones), deuda tecnica de F04 con dueno (huella GPU, initial_prompt, palabras bajo corregida, hallazgo V4 1:28:20, fotogramas obligatorios de F05), regla de cita de F07 contra la cruda y secuencia glosario v2 -> retranscribir -> Drive -> F07, F05 depende de F04, plantillas de brief e informe con revision de diseno, auditoria de cierre y decisiones del usuario, MASTER_PLAN §F con el metodo supervisado, A-1..A-12, 33 marcas, Change Log del plan al dia; HANDOFF y READMEs alineados
 - 2026-09-05 · F04 construida y auditada: cuatro videos transcritos con large-v3 (403 + 854 + 1031 + 1645 segmentos, cero cortes forzados, cero recortes), manifiestos inmutables tr-v1-...-00fcaf53, tr-v2-...-ac6b337b, tr-v3-...-570a315f, tr-v4-...-3f8c826e; determinismo verificado retranscribiendo un fragmento; 33 marcas heredadas revisadas (28 coinciden, 3 eran fotogramas, 2 con cifra distinta: 40/50 % y 2,3/2.83); auditoria de cierre sin agentes (limite de sesion) con 5 correcciones; hook sin resync; informe WAITING_FOR_USER_VALIDATION. CI verde: 3f73813 (run 33946879078), d1f3947 (33948083299), 69ea773 (33966530552)
 - 2026-09-05 · AUDITORIA GENERAL de F04 (2 agentes: codigo/tests y docs/proceso) aplicada en la misma rama. Codigo: solape de milisegundos entre segmentos de Whisper se recorta y cuenta (antes abortaba tras la GPU), palabra con fin < inicio se iguala, reemplazo del glosario LITERAL (no plantilla de re.sub), alternancias envueltas en limites de palabra, nombre de motor validado antes de trabajar, `--reemplaza-a` comprobado antes de la GPU y del mismo video, manifiesto escrito atomicamente y con `reemplaza_a` inmutable, esquema del manifiesto valida fragmentos contiguos, duraciones, senales, huecos y cortes forzados, `comprobar` recomputa ms_con_habla/senales/huecos desde la cruda, carpeta por huella (`<motor>-<huella8>`) para retranscribir sin pisar la cruda anterior, WAV reextraido si cambia el video, sha256 del video por bloques, errores de CLI sin traceback, tests que no probaban lo que decian corregidos, ffmpeg obligatorio en CI. Docs: PROJECT_STATE (waiting, componentes, ADR-0007, A-12, deuda), READMEs de knowledge/scripts/hooks, MASTER_PLAN (tabla B, H.2 F07), brief y informe coherentes (33 marcas, margen 75 s), notas en ADR-0003/0005.
