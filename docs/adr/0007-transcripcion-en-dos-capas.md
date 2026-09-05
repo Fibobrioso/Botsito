@@ -40,7 +40,9 @@ phase: F04
    declara sus tres regimenes en su README.
 7. **Cita desde la evidencia** (F07): `video_id + t0 + t1` sigue siendo la referencia (el video
    es la verdad y sobrevive a retranscribir); `transcript show` entrega la cita literal de la
-   transcripcion activa con marcas `h:mm:ss.mmm` y senales.
+   transcripcion activa con marcas `h:mm:ss.mmm` y senales. La verificacion de `cita_literal`
+   se hace contra la capa cruda (la corregida cambia con el glosario bajo el mismo id); la
+   corregida es ayuda de lectura (decidido en la auditoria del 2026-09-05; F07 lo implementa).
 
 ## Problema que resuelve
 Las transcripciones heredadas (Whisper tiny) derivan hasta un minuto y confunden la jerga; F07

@@ -95,7 +95,7 @@ pipeline_transcripcion}.py`, `tests/contract/test_transcripcion_history.py`,
 ## Criterio de aceptacion
 `make check` verde; los cuatro videos transcritos con large-v3 en esta maquina, cada uno con su
 manifiesto inmutable versionado; ningun segmento fuera del WAV; cortes forzados y huecos >= 30 s
-listados y justificados en el informe; las 32 citas revisadas con veredicto por cita; glosario
+listados y justificados en el informe; las 33 citas revisadas con veredicto por cita; glosario
 con cada entrada justificada por un ejemplo real; material heredado intacto.
 
 ## Riesgos

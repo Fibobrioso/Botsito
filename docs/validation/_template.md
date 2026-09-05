@@ -18,6 +18,9 @@
 ## Limitaciones
 ## Riesgos
 ## Impacto sobre funcionalidades anteriores
+## Auditoria de cierre (dos agentes: codigo/tests y docs/proceso)
+## Que debe decidir el usuario
+## Que puede comprobar sin recursos especiales
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

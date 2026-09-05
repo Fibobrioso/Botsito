@@ -4,8 +4,8 @@ Este fichero resume la conversacion que construyo F04 y deja el estado exacto pa
 Lee primero `PROJECT_STATE.md`; esto es el contexto humano que ahi no cabe.
 
 ## Estado
-- Rama: `feature/F04-transcription-pipeline` (pusheada; CI verde). Main: `1c8346b` (tag
-  `stable/F15`). Protegida en GitHub (sin force-push, sin checks requeridos).
+- Rama: `feature/F04-transcription-pipeline` (pusheada; CI verde). Main: `1c8346b`; tag
+  `stable/F15` en `11ee1ac` (el merge). Protegida en GitHub (sin force-push, sin checks requeridos).
 - F04 esta en WAITING_FOR_USER_VALIDATION: `docs/validation/F04-transcription-pipeline.md`.
 - Cerradas y en main: F01, F02, F03, F06, F09, F15. Ramas fusionadas ya borradas (local y origin).
 - Siguiente orden (E): F04 -> F05 -> F07 -> F08 -> F10 + sesion 1 con el trader.
@@ -36,7 +36,7 @@ Lee primero `PROJECT_STATE.md`; esto es el contexto humano que ahi no cabe.
   capa en `knowledge validate`, hook protege el directorio.
 - Cuatro videos transcritos (ids 00fcaf53, ac6b337b, 570a315f, 3f8c826e); determinismo verificado
   (fragmento retranscrito identico); 33 marcas heredadas revisadas (tabla en el informe).
-- Hallazgo: V1 0:15:59 dice "50 % de la vela" (la heredada decia 40 %). Pregunta (c) sesion 1.
+- Hallazgo: V1 0:15:59 dice "50 % de la vela" (la heredada decia 40 %). Ambiguedad A-12 (sesion 1).
 - Hook: `uv lock --check` + `uv run --no-sync` (con `--locked` fallaba mientras la GPU usaba el
   ejecutable). Detector de literales admite `# no-negocio: <motivo>`.
 - Datos pesados en `data/transcripciones/` (no en git): si se cambia de maquina, copiar esa
