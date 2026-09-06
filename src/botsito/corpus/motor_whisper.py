@@ -5,12 +5,13 @@ cuBLAS y cuDNN llegan como paquetes de pip y hay que anadir sus `bin/` al buscad
 de cargar el modelo. Parametros fijos y anotados en el manifiesto: `temperature=0` (sin cascada),
 `beam_size=5`, `condition_on_previous_text=False` (evita bucles de repeticion entre fragmentos),
 `vad_filter=True` con parametros por defecto (faster-whisper devuelve los tiempos en el eje del
-fragmento), `hotwords` = vocabulario del glosario (medido el 2026-09-06 sobre faster-whisper
-1.2.1: `initial_prompt` solo condiciona la PRIMERA ventana de cada fragmento cuando
-`condition_on_previous_text=False`, porque `prompt_reset_since` avanza tras cada ventana;
-`hotwords` se antepone a todas las ventanas y se trunca en silencio a 223 tokens, de ahi la
-guardia `LIMITE_HOTWORDS_TOKENS`). Determinismo prometido: misma maquina y mismas versiones ->
-misma cruda; el informe lo verifica una vez.
+fragmento), `initial_prompt` = vocabulario del glosario. Medido el 2026-09-06 (ADR-0007,
+enmienda): con `condition_on_previous_text=False` el `initial_prompt` solo condiciona la PRIMERA
+ventana de cada fragmento; `hotwords` condicionaria todas, pero sobre v5 alargo los segmentos
+hasta 40 s (mas que la ventana de 30 s), perdio ~10 s de habla con un hecho clave y sesgo
+"sell" -> "SL": descartado por fidelidad. faster-whisper trunca el prompt a 223 tokens sin
+avisar, de ahi la guardia `LIMITE_PROMPT_TOKENS`. Determinismo prometido: misma maquina y
+mismas versiones -> misma cruda; el informe lo verifica una vez.
 """
 
 from __future__ import annotations
@@ -31,9 +32,9 @@ from botsito.corpus.transcripcion import MotorAsr, SegmentoRelativo, Transcripci
 IDIOMA = "es"
 BEAM = 5
 TEMPERATURA = 0.0
-# faster-whisper recorta `hotwords` a `max_length // 2 - 1` tokens (448 // 2 - 1) sin avisar:
+# faster-whisper recorta el prompt a `max_length // 2 - 1` tokens (448 // 2 - 1) sin avisar:
 # un vocabulario mas largo entraria a medias y el manifiesto mentiria sobre lo que vio el motor.
-LIMITE_HOTWORDS_TOKENS = 223
+LIMITE_PROMPT_TOKENS = 223
 
 
 def _anadir_dlls_cuda() -> list[str]:
@@ -75,16 +76,16 @@ def _gpu() -> str:
     return "?"
 
 
-def comprobar_hotwords(tokenizador: Any, hotwords: str) -> int:
+def comprobar_prompt(tokenizador: Any, prompt: str) -> int:
     """Tokens que ocupa el vocabulario tal como lo codifica faster-whisper (`" " + texto`).
     Error de dominio si el motor lo truncaria."""
-    if not hotwords:
+    if not prompt:
         return 0
-    n = len(tokenizador.encode(" " + hotwords.strip()).ids)
-    if n > LIMITE_HOTWORDS_TOKENS:
+    n = len(tokenizador.encode(" " + prompt.strip()).ids)
+    if n > LIMITE_PROMPT_TOKENS:
         raise TranscripcionError(
-            f"el vocabulario del glosario ocupa {n} tokens y faster-whisper trunca hotwords a "
-            f"{LIMITE_HOTWORDS_TOKENS}: acorta el vocabulario antes de transcribir"
+            f"el vocabulario del glosario ocupa {n} tokens y faster-whisper trunca el prompt a "
+            f"{LIMITE_PROMPT_TOKENS}: acorta el vocabulario antes de transcribir"
         )
     return n
 
@@ -94,7 +95,7 @@ class ConfiguracionWhisper:
     modelo: str = "large-v3"
     dispositivo: str = "cuda"
     compute_type: str = "int8_float16"
-    hotwords: str = ""
+    prompt_inicial: str = ""
 
     @property
     def nombre(self) -> str:
@@ -107,7 +108,7 @@ class MotorWhisper(MotorAsr):
         self.configuracion = configuracion or ConfiguracionWhisper()
         self._modelo: Any = None
         self._ruta_modelo: Path | None = None
-        self._hotwords_tokens: int | None = None
+        self._prompt_tokens: int | None = None
 
     @property
     def nombre(self) -> str:
@@ -124,8 +125,8 @@ class MotorWhisper(MotorAsr):
                 device=self.configuracion.dispositivo,
                 compute_type=self.configuracion.compute_type,
             )
-            self._hotwords_tokens = comprobar_hotwords(
-                self._modelo.hf_tokenizer, self.configuracion.hotwords
+            self._prompt_tokens = comprobar_prompt(
+                self._modelo.hf_tokenizer, self.configuracion.prompt_inicial
             )
         return self._modelo
 
@@ -152,9 +153,9 @@ class MotorWhisper(MotorAsr):
             "word_timestamps": True,
             "vad_filter": True,
             "condition_on_previous_text": False,
-            "initial_prompt": None,
-            "hotwords_sha256": sha256_hex(self.configuracion.hotwords.encode("utf-8")),
-            "hotwords_tokens": self._hotwords_tokens,
+            "initial_prompt_sha256": sha256_hex(self.configuracion.prompt_inicial.encode("utf-8")),
+            "initial_prompt_tokens": self._prompt_tokens,
+            "hotwords": None,
         }
 
     def transcribir(self, wav: Path) -> list[SegmentoRelativo]:
@@ -167,7 +168,7 @@ class MotorWhisper(MotorAsr):
             word_timestamps=True,
             vad_filter=True,
             condition_on_previous_text=False,
-            hotwords=self.configuracion.hotwords or None,
+            initial_prompt=self.configuracion.prompt_inicial or None,
         )
         salida: list[SegmentoRelativo] = []
         for s in segmentos:

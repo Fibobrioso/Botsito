@@ -249,7 +249,7 @@ sustituciones:
 
 def test_glosario_dos_alcances_y_dudas() -> None:
     g = glosario_desde_texto(GLOSARIO)
-    assert g.hotwords == "M15, M5, FTMO, FVG, cartucho, break even"
+    assert g.prompt_inicial == "M15, M5, FTMO, FVG, cartucho, break even"
     cruda = [
         Segmento(0, 0, 1000, "hago Brequiven en M5 y otro cargo chuto"),
         Segmento(1, 1000, 2000, "en M5 miro la mitigación"),

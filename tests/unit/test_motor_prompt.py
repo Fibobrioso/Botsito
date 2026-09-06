@@ -1,12 +1,12 @@
-"""Huella de reanudacion sin GPU/driver y guardia del tamano de `hotwords` (previos de F07,
+"""Huella de reanudacion sin GPU/driver y guardia del tamano del `initial_prompt` (previos de F07,
 2026-09-06). `motor_whisper` se importa sin cargar faster-whisper (import perezoso)."""
 
 import pytest
 
 from botsito.corpus.motor_whisper import (
-    LIMITE_HOTWORDS_TOKENS,
+    LIMITE_PROMPT_TOKENS,
     ConfiguracionWhisper,
-    comprobar_hotwords,
+    comprobar_prompt,
 )
 from botsito.corpus.pipeline_transcripcion import CLAVES_FUERA_DE_HUELLA, huella_de
 from botsito.corpus.transcripcion import TranscripcionError
@@ -28,7 +28,7 @@ def test_huella_ignora_gpu_y_driver() -> None:
 
 def test_huella_cambia_con_lo_que_si_afecta_a_la_salida() -> None:
     assert huella_de(CORTE, MOTOR) != huella_de(CORTE, dict(MOTOR, ctranslate2="4.9.0"))
-    assert huella_de(CORTE, MOTOR) != huella_de(CORTE, dict(MOTOR, hotwords_sha256="x"))
+    assert huella_de(CORTE, MOTOR) != huella_de(CORTE, dict(MOTOR, initial_prompt_sha256="x"))
     assert huella_de(CORTE, MOTOR) != huella_de(dict(CORTE, max_s=600.0), MOTOR)
 
 
@@ -43,22 +43,22 @@ class _Tokenizador:
         return self._Codificado(list(range(len(texto))))
 
 
-def test_hotwords_vacio_no_cuenta_tokens() -> None:
-    assert comprobar_hotwords(_Tokenizador(), "") == 0
+def test_prompt_vacio_no_cuenta_tokens() -> None:
+    assert comprobar_prompt(_Tokenizador(), "") == 0
 
 
-def test_hotwords_dentro_del_limite_devuelve_su_tamano() -> None:
+def test_prompt_dentro_del_limite_devuelve_su_tamano() -> None:
     # faster-whisper codifica " " + texto.strip(): el espacio inicial cuenta.
-    assert comprobar_hotwords(_Tokenizador(), "M15, BOS") == len(" M15, BOS")
+    assert comprobar_prompt(_Tokenizador(), "M15, BOS") == len(" M15, BOS")
 
 
-def test_hotwords_que_el_motor_truncaria_es_error_de_dominio() -> None:
-    largo = "x" * LIMITE_HOTWORDS_TOKENS  # + el espacio inicial = LIMITE + 1
-    with pytest.raises(TranscripcionError, match="trunca hotwords"):
-        comprobar_hotwords(_Tokenizador(), largo)
+def test_prompt_que_el_motor_truncaria_es_error_de_dominio() -> None:
+    largo = "x" * LIMITE_PROMPT_TOKENS  # + el espacio inicial = LIMITE + 1
+    with pytest.raises(TranscripcionError, match="trunca el prompt"):
+        comprobar_prompt(_Tokenizador(), largo)
 
 
-def test_configuracion_lleva_hotwords_no_initial_prompt() -> None:
-    c = ConfiguracionWhisper(hotwords="M15, BOS")
-    assert c.hotwords == "M15, BOS"
-    assert not hasattr(c, "prompt_inicial")
+def test_configuracion_lleva_prompt_inicial_no_hotwords() -> None:
+    c = ConfiguracionWhisper(prompt_inicial="M15, BOS")
+    assert c.prompt_inicial == "M15, BOS"
+    assert not hasattr(c, "hotwords")

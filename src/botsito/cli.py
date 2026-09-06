@@ -251,7 +251,7 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
 
         motor = MotorWhisper(
             ConfiguracionWhisper(
-                args.modelo, args.dispositivo, args.compute_type, glosario.hotwords
+                args.modelo, args.dispositivo, args.compute_type, glosario.prompt_inicial
             )
         )
     try:

@@ -1,8 +1,8 @@
 # Glosario del ASR (F04, ADR-0007): la UNICA forma de tocar una transcripcion.
 #
-# vocabulario: terminos del dominio que el motor recibe como hotwords (en todas las ventanas;
-#   ADR-0007 enmienda 2026-09-06) y que ninguna sustitucion global puede casar. Su hash queda en
-#   cada manifiesto; cambiarlo obliga a retranscribir (otra huella, otro id con reemplaza_a).
+# vocabulario: terminos del dominio que el motor recibe como initial_prompt (hotwords medido y
+#   descartado el 2026-09-06, ADR-0007 enmienda) y que ninguna sustitucion global puede casar.
+#   Su hash queda en cada manifiesto; cambiarlo obliga a retranscribir (otra huella, otro id).
 # sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (store loss,
 #   rotaje); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
 #   ambiguedades reales o palabras corrientes (blog -> BOS, split -> spread). Patron Unicode con
