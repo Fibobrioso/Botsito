@@ -401,6 +401,139 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def _obligatorios(repo: Path) -> list[Any]:
+    from botsito.corpus.fotogramas import FICHERO_OBLIGATORIOS, cargar_obligatorios
+
+    return cargar_obligatorios(repo / FICHERO_OBLIGATORIOS)
+
+
+def corpus_frames_extract(repo: Path, args: argparse.Namespace) -> int:
+    """Cobertura completa a 1 fps sin perdida mas los obligatorios (F05, ADR-0008)."""
+    from botsito.corpus.fotogramas import FotogramasError, extraer_video
+    from botsito.corpus.inventario import InventarioError
+    from botsito.corpus.manifiestos_fotogramas import ManifiestoFotogramasError, cargar_todos
+
+    try:
+        raiz, fichero, sha, duracion = _video_del_corpus(repo, args.video)
+        obligatorios = [o.t_ms for o in _obligatorios(repo) if o.video_id == args.video]
+        if args.reemplaza_a:
+            previas = {t.id: t for t in cargar_todos(repo)}
+            if args.reemplaza_a not in previas:
+                raise FotogramasError(f"--reemplaza-a {args.reemplaza_a}: no existe ese manifiesto")
+            if previas[args.reemplaza_a].video_id != args.video:
+                raise FotogramasError(
+                    f"--reemplaza-a {args.reemplaza_a}: es de "
+                    f"{previas[args.reemplaza_a].video_id}, no de {args.video}"
+                )
+        r = extraer_video(
+            repo,
+            _carpeta_datos(repo),
+            raiz,
+            args.video,
+            fichero,
+            sha,
+            duracion,
+            obligatorios,
+            reemplaza_a=args.reemplaza_a,
+            progreso=lambda msg: print(f"  {msg}", flush=True),
+        )
+    except (InventarioError, FotogramasError, ManifiestoFotogramasError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    extra = sum(1 for f in r.fotogramas if f.origen == "obligatorio")
+    print(f"OK: {r.fotogramas_id} ({len(r.fotogramas)} fotogramas, {extra} extra)")
+    print(f"  indice: {r.indice}")
+    print(
+        f"  manifiesto: {r.manifiesto.relative_to(repo).as_posix()} (INMUTABLE; commit sin editar)"
+    )
+    return 0
+
+
+def corpus_frames_check(repo: Path) -> int:
+    from botsito.corpus.fotogramas import FotogramasError
+    from botsito.corpus.manifiestos_fotogramas import (
+        ManifiestoFotogramasError,
+        cargar_todos,
+        comprobar,
+        comprobar_obligatorios,
+    )
+
+    try:
+        items = cargar_todos(repo)
+        obligatorios = _obligatorios(repo)
+    except (FotogramasError, ManifiestoFotogramasError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    errores, avisos = comprobar(items, _carpeta_datos(repo))
+    errores += comprobar_obligatorios(items, obligatorios)
+    for a in avisos:
+        print(f"AVISO: {a}")
+    for e in errores:
+        print(f"ERROR: {e}")
+    if not errores:
+        print(
+            f"OK: {len(items)} extracciones coherentes con el disco; "
+            f"{len(obligatorios)} obligatorios presentes"
+        )
+    return 1 if errores else 0
+
+
+def corpus_frames_show(repo: Path, args: argparse.Namespace) -> int:
+    """Fotogramas mas cercanos a un instante, con la referencia citable `fr-<id>/<t_ms>` y el
+    segmento de la transcripcion activa que cubre ese instante (si la hay)."""
+    from botsito.corpus.fotogramas import FotogramasError, cargar_indice, mas_cercanos, referencia
+    from botsito.corpus.manifiestos_fotogramas import (
+        ManifiestoFotogramasError,
+        activa_de,
+        cargar_todos,
+        carpeta_de,
+    )
+    from botsito.corpus.transcripcion import TranscripcionError, formato_ms, parse_ms
+
+    try:
+        t_ms = parse_ms(args.t)
+        fr = activa_de(cargar_todos(repo), args.video)
+        carpeta = carpeta_de(_carpeta_datos(repo), fr)
+        if not (carpeta / "index.jsonl").is_file():
+            raise FotogramasError(f"{fr.id}: los fotogramas no estan en esta maquina ({carpeta})")
+        fin_ms = round(float(fr.doc["duracion_video_s"]) * 1000)
+        elegidos = mas_cercanos(cargar_indice(carpeta), t_ms, args.n, fin_ms)
+    except (ManifiestoFotogramasError, FotogramasError, TranscripcionError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"# {fr.id} · {args.t} ({t_ms} ms)")
+    for f in elegidos:
+        print(
+            f"{referencia(fr.id, f.t_ms)}\t{formato_ms(f.pts_ms)}\t{f.origen}\t"
+            f"{(carpeta / f.fichero).as_posix()}"
+        )
+    print(_segmento_en(repo, args.video, t_ms))
+    return 0
+
+
+def _segmento_en(repo: Path, video_id: str, t_ms: int) -> str:
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        activa_de,
+        cargar_todos,
+        carpeta_de,
+    )
+    from botsito.corpus.pipeline_transcripcion import cargar_cruda
+    from botsito.corpus.transcripcion import a_texto_legible, texto_entre
+
+    try:
+        tr = activa_de(cargar_todos(repo), video_id)
+        carpeta = carpeta_de(_carpeta_datos(repo), tr)
+        if not (carpeta / "cruda.jsonl").is_file():
+            return f"# transcripcion {tr.id}: cruda no esta en esta maquina"
+        trozo = texto_entre(cargar_cruda(carpeta), t_ms, t_ms, 0)
+    except (ManifiestoTranscripcionError, OSError, ValueError):
+        return "# sin transcripcion activa para este video"
+    if not trozo:
+        return f"# transcripcion {tr.id}: ningun segmento cubre este instante"
+    return f"# transcripcion {tr.id} (cruda):\n" + a_texto_legible(trozo).rstrip()
+
+
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un item de evidencia con su id calculado (nunca sobreescribe).
 
@@ -783,7 +916,7 @@ def build_parser() -> argparse.ArgumentParser:
     chk = corpus_sub.add_parser("check", help="compara el manifiesto con el disco")
     chk.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
     tr = corpus_sub.add_parser("transcribe", help="transcribe un video por fragmentos (F04)")
-    tr.add_argument("--video", required=True, help="video_id de fuentes.yaml (v1..v4)")
+    tr.add_argument("--video", required=True, help="video_id de fuentes.yaml (v1..v5)")
     tr.add_argument("--motor", choices=["faster-whisper", "falso"], default="faster-whisper")
     tr.add_argument("--modelo", default="large-v3")
     tr.add_argument("--dispositivo", default="cuda", choices=["cuda", "cpu"])
@@ -806,6 +939,16 @@ def build_parser() -> argparse.ArgumentParser:
     tss.add_argument("--margen-s", dest="margen_s", type=float, default=0.0)
     tss.add_argument("--capa", choices=["cruda", "corregida"], default="corregida")
     tss.add_argument("--transcripcion", help="transcripcion_id (por defecto, la activa)")
+    fr = corpus_sub.add_parser("frames", help="fotogramas del corpus (F05)")
+    fr_sub = fr.add_subparsers(dest="frames_cmd", required=True)
+    fre = fr_sub.add_parser("extract", help="cobertura completa a 1 fps sin perdida + obligatorios")
+    fre.add_argument("--video", required=True, help="video_id de fuentes.yaml (v1..v5)")
+    fre.add_argument("--reemplaza-a", dest="reemplaza_a", help="fotogramas_id que sustituye")
+    fr_sub.add_parser("check", help="manifiestos frente al disco y a los obligatorios")
+    frs = fr_sub.add_parser("show", help="fotogramas mas cercanos a un instante")
+    frs.add_argument("--video", required=True)
+    frs.add_argument("--t", required=True, help="h:mm:ss[.mmm]")
+    frs.add_argument("--n", type=int, default=1, help="cuantos fotogramas (por cercania)")
     ev = sub.add_parser("evidence", help="evidencia del corpus")
     ev_sub = ev.add_subparsers(dest="evidence_cmd", required=True)
     nuevo = ev_sub.add_parser("new", help="crea un item de evidencia con id calculado")
@@ -921,6 +1064,12 @@ def main(argv: list[str] | None = None) -> int:
         return corpus_transcript_check(args.repo)
     if args.cmd == "corpus" and args.corpus_cmd == "transcript" and args.transcript_cmd == "show":
         return corpus_transcript_show(args.repo, args)
+    if args.cmd == "corpus" and args.corpus_cmd == "frames" and args.frames_cmd == "extract":
+        return corpus_frames_extract(args.repo, args)
+    if args.cmd == "corpus" and args.corpus_cmd == "frames" and args.frames_cmd == "check":
+        return corpus_frames_check(args.repo)
+    if args.cmd == "corpus" and args.corpus_cmd == "frames" and args.frames_cmd == "show":
+        return corpus_frames_show(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "download":
         return data_download(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "check":

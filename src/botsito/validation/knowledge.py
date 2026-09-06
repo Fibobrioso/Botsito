@@ -228,11 +228,42 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     for a in avisos_tr:
         salida.append(f"AVISO: {a}")
     fallos_datos += errores_tr
+    from botsito.comun.historial import DIRECTORIO_FOTOGRAMAS
+    from botsito.corpus.fotogramas import FICHERO_OBLIGATORIOS, FotogramasError, cargar_obligatorios
+    from botsito.corpus.manifiestos_fotogramas import (
+        ManifiestoFotogramasError,
+        comprobar_obligatorios,
+    )
+    from botsito.corpus.manifiestos_fotogramas import cargar_todos as cargar_fotogramas
+    from botsito.corpus.manifiestos_fotogramas import comprobar as comprobar_fotogramas
+
+    try:
+        fotogramas = cargar_fotogramas(repo)
+        errores_fr, avisos_fr = comprobar_fotogramas(fotogramas, _carpeta_datos(repo))
+        errores_fr += comprobar_obligatorios(
+            fotogramas, cargar_obligatorios(repo / FICHERO_OBLIGATORIOS)
+        )
+    except (FotogramasError, ManifiestoFotogramasError) as exc:
+        errores_fr, avisos_fr, fotogramas = [f"fotogramas: {exc}"], [], []
+    historial_fr = modificaciones_en_historial(repo, DIRECTORIO_FOTOGRAMAS)
+    if historial_fr is None and con_git:
+        motivo = no_evaluable or "git fallo"
+        errores_fr.append(f"la guardia de historial de fotogramas no se pudo evaluar ({motivo})")
+    errores_fr += [
+        f"manifiesto de fotogramas modificado en el historial: {h}" for h in historial_fr or []
+    ]
+    for a in avisos_fr:
+        salida.append(f"AVISO: {a}")
+    fallos_datos += errores_fr
     for fallo in fallos_datos:
         salida.append(f"ERROR: {fallo}")
     if fallos_datos:
         return 1, salida
     salida.append(f"OK: {len(transcripciones)} transcripciones registradas, historial intacto")
+    salida.append(
+        f"OK: {len(fotogramas)} extracciones de fotogramas registradas, obligatorios presentes, "
+        "historial intacto"
+    )
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
     abiertas = len(contradicciones.detectar(items))
     salida.append(

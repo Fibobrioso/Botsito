@@ -144,3 +144,26 @@ def test_faster_whisper_solo_en_motor_whisper(repo: Path) -> None:
             ):
                 ofensas.append(f"{py.name}:{node.lineno} (importlib)")
     assert ofensas == [], ofensas
+
+
+@pytest.mark.contract
+def test_ffmpeg_solo_desde_corpus(repo: Path) -> None:
+    """ffmpeg y ffprobe se invocan solo desde `corpus/{audio,inventario,fotogramas}.py` (F05):
+    ninguna otra parte del paquete construye un argv que empiece por `"ffmpeg"`/`"ffprobe"`
+    (la clave `ffmpeg` de un manifiesto no cuenta). No se puede vigilar `subprocess`: cli,
+    comun.historial y motor_whisper tambien lo usan para git y CUDA."""
+    permitidos = {"audio.py", "inventario.py", "fotogramas.py"}
+    ofensas: list[str] = []
+    for py in sorted((repo / "src" / "botsito").rglob("*.py")):
+        if py.name in permitidos and py.parent.name == "corpus":
+            continue
+        tree = ast.parse(py.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.List)
+                and node.elts
+                and isinstance(node.elts[0], ast.Constant)
+                and node.elts[0].value in {"ffmpeg", "ffprobe"}
+            ):
+                ofensas.append(f"{py.name}:{node.lineno}")
+    assert ofensas == [], ofensas

@@ -1,0 +1,25 @@
+# GENERADO por `botsito corpus frames extract`. INMUTABLE: no editar; una re-extraccion es otro manifiesto con reemplaza_a.
+carpeta: fotogramas/v3/png-1fps
+duracion_video_s: 4676.395
+extra: []
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-08-06 160450.mp4
+fotogramas_id: fr-v3-982da728
+generado_el: '2026-09-05T20:54:44Z'
+hueco_fotogramas_ms: 2000
+huecos: []
+n_fotogramas: 4677
+n_regulares: 4677
+parametros:
+  bitexact: true
+  formato: png
+  fps: 1
+  seleccion: isnan(prev_selected_t)+gte(floor(t),floor(prev_selected_t)+1)
+resolucion:
+  alto: 884
+  ancho: 1762
+schema_version: 1
+sha256_index: 982da728ac2540091d379ae7cb129e71a0c785831b806c24d6282bbd548d340c
+sha256_video: 0109332a9cc08f150f381e78ab189fdc6d6afe886fb27dfbfabd58b7c49a8146
+ultimo_pts_ms: 4676000
+video_id: v3

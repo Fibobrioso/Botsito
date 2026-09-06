@@ -168,7 +168,7 @@ def test_validar_y_comprobar_detectan(tmp_path: Path) -> None:
 
 def test_fuentes_y_manifiesto_reales_coherentes(repo: Path) -> None:
     fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
-    assert [v.video_id for v in fuentes.videos] == ["v1", "v2", "v3", "v4"]
+    assert [v.video_id for v in fuentes.videos] == ["v1", "v2", "v3", "v4", "v5"]
     ruta = repo / "knowledge" / "corpus" / "manifest.yaml"
     if not ruta.exists():
         pytest.skip("manifiesto real todavia no generado")

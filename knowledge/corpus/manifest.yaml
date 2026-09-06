@@ -61,6 +61,34 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 6.21.52 AM.jpeg
   sha256: 623e5f573fb53d4ce835e58655430811b0e81e7018c7f8f7f58c851cd5c8eb3e
+- bytes: 118148
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.55 PM.jpeg
+  sha256: 54761fa65ad8158a89e64d59eb01c1ef461fe39bf3e0a95f1e9f7229ffd3ee12
+- bytes: 97091
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.56 PM (1).jpeg
+  sha256: 1bc101ac6301a6c3f0094ac75f586b320a04219c3f26a7d0ae2041ac8d5e5e39
+- bytes: 81462
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.56 PM (2).jpeg
+  sha256: 7206a67dd7e6084fcba9473707fcd810f60145614c639ee8b8d43d7b58a59681
+- bytes: 57521
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.56 PM (3).jpeg
+  sha256: e07ed92318b8d28c985d8c305edda7c8bc682c55cfd0469d4947fd0c3ebc3b47
+- bytes: 100063
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.56 PM (4).jpeg
+  sha256: f058c0a3d82163499ec414e421e70537d7e40d7df8cc96458e862e563b28d8c9
+- bytes: 80763
+  papel: material_adicional
+  ruta: Material adicional de su operativa/WhatsApp Image 2026-09-05 at 2.30.56 PM.jpeg
+  sha256: 0072e8873d7e04dde7e68e862117c6e26ce421f0549abdbde0dad27edc753120
+- bytes: 9878
+  papel: material_adicional
+  ruta: Material adicional de su operativa/backtesting-analytics ABRIL 2026.xlsx
+  sha256: 5e5d9b83dc12a15e111e63b274e315dc01f9b8b1187d6c2ee0efff71ab4c125b
 - bytes: 10765
   papel: material_adicional
   ruta: Material adicional de su operativa/backtesting-analytics AGOSTO 2026.xlsx
@@ -2036,11 +2064,11 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 2003100
-    ficheros: 17
+    bytes: 2548026
+    ficheros: 24
   video_original:
-    bytes: 13793420684
-    ficheros: 4
+    bytes: 13914949033
+    ficheros: 5
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2088,3 +2116,15 @@ videos:
   fps: 30/1
   sha256: 15fd268af931f4e220e8fd05af999ced62618f7c3200ff872955d5c1a6a97190
   video_id: v4
+- alto: 720
+  ancho: 1280
+  audio: true
+  bytes: 121528349
+  drive_id: 'no esta en Drive: entregado en local por el usuario el 2026-09-05 (carpeta ''Info extra de
+    backtesting'')'
+  duracion_s: 365.033
+  fecha_grabacion: '2026-09-05'
+  fichero: 2026-09-05 21-03-59.mkv
+  fps: 30/1
+  sha256: e7efcbef7adf8e79ec22cd571b3e1a9301af8dc9fb8efa3b281c5f86300877e7
+  video_id: v5
