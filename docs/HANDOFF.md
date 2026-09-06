@@ -1,16 +1,6 @@
 # HANDOFF · continuar Bot v3 desde otra terminal (2026-09-05, actualizado al cerrar F05)
 
-## Estado F05 (2026-09-05): VALIDADA y en main
-- El usuario valido F05 y acepto las cuatro decisiones. Merge `dd8de55` (--no-ff), tag `stable/F05`
-  sobre el merge, `docs(state)` `c97273f`, `make check` verde desde main (387 casos), main y tag
-  pusheados, rama borrada (local y origin). El commit docs(state) lo pudo hacer la sesion con
-  `BOTSITO_ALLOW_MAIN=1`; el merge y el tag los ejecuto el usuario con `!`.
-- SIGUIENTE: F07 evidence-extraction. Antes: glosario v2 (propuestas en el informe F04),
-  retranscribir los 5 videos con `--reemplaza-a`, copiar crudas y WAV a Drive, subir v5 a Drive.
-  F07 conecta `manifiestos_fotogramas.referencias_conocidas` a `validar_contra_manifiesto` y a
-  `evidence new`, y registra como evidencia los hechos anotados en PROJECT_STATE (Lineamientos).
-
-## Como se construyo F05 (rama ya fusionada)
+## Estado F05 (2026-09-05, rama `feature/F05-frame-extraction`, WAITING_FOR_USER_VALIDATION)
 - Fotogramas de TODO el corpus a 1 fps en PNG sin perdida (ADR-0008): decision del usuario
   ("maxima fidelidad, sin restriccion de recursos") tras medir que una regla de tramos marca el
   46-99 % de cada video. 16 182 fotogramas, 8,9 GiB en `data/fotogramas/` (solo en esta
