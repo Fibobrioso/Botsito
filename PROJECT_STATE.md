@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-Auditoria global de la estructura · WAITING_FOR_USER_VALIDATION (rama `feature/F05-auditoria-estructura`; informe `docs/validation/AUDITORIA-2026-09-05-estructura.md`; cierre con tag `stable/F05-auditoria-1`)
+— (auditoria global integrada en main con tag `stable/F05-auditoria-1`; F07 pendiente de abrir tras sus previos)
 
 ## Current Branch
-feature/F05-auditoria-estructura
+main
 
 ## Stable Main State
-dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 33999794218); en main, c97273f cancelado por concurrency y de42ec1 verde (run 34000499649). Tag stable/F05. Rama main protegida en GitHub.
+916d0d0 · merge de la auditoria global de la estructura (tras stable/F05). make check verde: 389 casos, 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 34001769701 sobre 6edf743). Tags stable/F05 y stable/F05-auditoria-1. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -54,9 +54,10 @@ dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contrato
 - F15 · market-data-ohlc · validada el 2026-09-04 · docs/validation/F15-market-data-ohlc.md · tag stable/F15
 - F04 · transcription-pipeline · validada el 2026-09-05 · docs/validation/F04-transcription-pipeline.md · tag stable/F04
 - F05 · frame-extraction · validada el 2026-09-05 · docs/validation/F05-frame-extraction.md · tag stable/F05
+- Auditoria global de la estructura · validada el 2026-09-06 · docs/validation/AUDITORIA-2026-09-05-estructura.md · tag stable/F05-auditoria-1
 
 ## Features Waiting for Validation
-- Auditoria global de la estructura (2026-09-05): `docs/validation/AUDITORIA-2026-09-05-estructura.md`; 3 ratificaciones del usuario; tag de cierre `stable/F05-auditoria-1`
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -247,12 +248,13 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Abrir F07 con el metodo supervisado (brief -> revision de diseno -> construir -> auditoria de cierre -> informe). Antes: decidir el glosario v2 (propuestas en el informe F04), retranscribir los 5 videos con `--reemplaza-a`, copiar `data/transcripciones/*/cruda.jsonl` y `audio.wav` a Drive y subir v5 a Drive.
+Ejecutar los previos de F07 en el orden ratificado por el usuario el 2026-09-06 (MASTER_PLAN H.2, fila "Previos y entradas de F07"): decidir el glosario v2 (propuestas en el informe F04), retranscribir los 5 videos con `--reemplaza-a`, copiar `data/transcripciones/*/cruda.jsonl` y `audio.wav` a Drive y subir v5 a Drive.
 
 ## Last Stable Commit
-dd8de55 · merge: F05 frame-extraction validado por el usuario · tag stable/F05
+916d0d0 · merge: auditoria global de la estructura validada por el usuario · tag stable/F05-auditoria-1
 
 ## Change Log
+- 2026-09-06 · AUDITORIA GLOBAL VALIDADA por el usuario (ratifico las tres: regla del HANDOFF en la rama y nunca en main tras el tag; cierre de la auditoria como rama con tag `stable/F05-auditoria-1`; orden de los previos de F07: glosario v2 -> retranscribir 5 videos -> copia de crudas y WAV en Drive -> v5 en Drive -> abrir F07). merge --no-ff a main (916d0d0); tag stable/F05-auditoria-1.
 - 2026-09-05 · AUDITORIA GLOBAL de la estructura (rama `feature/F05-auditoria-estructura`, 2 agentes) aplicada: codigo (`corpus/trabajo.py` con las guardias de F05 tambien en `corpus transcribe`: sin ella retranscribir en un clon sin `data/` pisaba la cruda; una transcripcion activa por video; `parse_ms` estricto; glosario rechaza `.` sin escapar; WAV/YAML corruptos y `corpus check` sin `fichero` ya no dan traceback; `carpeta_datos` unica; `--margen-s` negativo; `TOLERANCIA_DURACION_S` unica; mensaje de `state check` con el ritual) y docs/proceso (regla del HANDOFF en la rama, incidente de CI registrado, fila H.2 "Previos y entradas de F07", 5 videos, fotogramas en §0/B/ADR-0001/READMEs, lineamientos separados de hechos, Change Logs ordenados, `ci.yml` sin cancelar en main, test de rutas de Important Files). 389 casos, make check verde. Informe `docs/validation/AUDITORIA-2026-09-05-estructura.md`.
 - 2026-09-05 · Incidente de CI en main: el commit `docs(handoff)` f452e6f (tras `stable/F05`) puso `state check` y la CI en rojo (run 34000376588) porque en main solo puede cambiar PROJECT_STATE.md tras el tag; revertido en de42ec1 (run 34000499649 verde). El `docs(state)` c97273f quedo cancelado por `cancel-in-progress` (run 34000351246) y su `make check` es local. El `docs(handoff)` de F04 (3b754f1) tambien estaba en rojo (run 33988126976) sin registro: main estuvo en rojo del 2026-09-05 19:46Z al 2026-09-06 00:08Z. Regla escrita en MASTER_PLAN §F: el HANDOFF se actualiza en la rama. Rama `feature/F05-auditoria-estructura` abierta a peticion del usuario para una auditoria global antes de F07.
 - 2026-09-05 · F05 VALIDADA por el usuario (acepto las cuatro decisiones: cobertura completa a 1 fps sin perdida, Excel y ficha de Word hacia F07 y F10, sin copia de fotogramas en Drive, candidatos A-9 hacia F07). merge --no-ff a main (dd8de55); tag stable/F05. Pregunta del usuario respondida: las decisiones y la lista de obligatorios son modificables; los manifiestos no se editan, se reemplazan.
