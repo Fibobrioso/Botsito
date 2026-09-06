@@ -1,8 +1,8 @@
 """Glosario del ASR (F04, ADR-0007): vocabulario para el motor y correcciones de dos alcances.
 
 `knowledge/corpus/glosario_asr.yaml`:
-- `vocabulario`: terminos del dominio que se pasan al motor como `initial_prompt` (mejora la
-  jerga) y que ninguna sustitucion global puede tocar.
+- `vocabulario`: terminos del dominio que se pasan al motor como `hotwords` (mejora la jerga
+  en todas las ventanas; ver motor_whisper) y que ninguna sustitucion global puede tocar.
 - `sustituciones`: `alcance: global` solo para "antes" que NO son palabra del dominio
   ("brequiven", "cargo chuto"); `alcance: segmento` (con `transcripcion_id` y `segmento`) para
   ambiguedades reales (M5/M15, FVG/FTMO), con `verificado_por`. Ambas exigen `motivo` y ejemplo.
@@ -64,7 +64,8 @@ class Glosario:
     sustituciones: tuple[Sustitucion, ...]
 
     @property
-    def prompt_inicial(self) -> str:
+    def hotwords(self) -> str:
+        """El vocabulario como lo recibe el motor (`hotwords`); su sha256 va al manifiesto."""
         return ", ".join(self.vocabulario)
 
 

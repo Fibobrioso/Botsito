@@ -75,8 +75,24 @@ manifiestos_transcripcion}.py`, `src/botsito/cli.py` (`corpus transcribe|glossar
 y contrato: `faster_whisper` solo en `motor_whisper`), fixtures de audio. F07 anade a la evidencia
 el campo opcional `transcripcion` (id) sin alterar ids existentes.
 
+## Enmienda 2026-09-06 (previos de F07, glosario v2)
+- El vocabulario del glosario se pasa al motor como `hotwords`, no como `initial_prompt`.
+  Leido en el codigo de faster-whisper 1.2.1 (`generate_segments`, `get_prompt`): con
+  `condition_on_previous_text=False`, `prompt_reset_since` avanza tras cada ventana y el
+  `initial_prompt` solo condiciona la PRIMERA ventana de 30 s de cada fragmento; `hotwords` se
+  antepone a todas las ventanas (tras `sot_prev`) y se trunca en silencio a 223 tokens.
+  `motor_whisper.comprobar_hotwords` rechaza un vocabulario que el motor truncaria; el manifiesto
+  anota `hotwords_sha256`, `hotwords_tokens` e `initial_prompt: null`. Medicion sobre v5 en el
+  informe `docs/validation/F07-previos.md`.
+- La huella de reanudacion (carpeta de trabajo y parciales) excluye `gpu` (nombre y driver;
+  `pipeline_transcripcion.CLAVES_FUERA_DE_HUELLA`): un cambio de driver no altera la salida
+  prometida (ctranslate2, cuBLAS, cuDNN y pesos siguen en la huella) y antes invalidaba todos
+  los parciales. El manifiesto sigue anotando la GPU.
+- Las transcripciones `tr-*` anteriores a esta enmienda (vocabulario v1 como `initial_prompt`)
+  quedan reemplazadas por las del glosario v2 via `reemplaza_a`; sus manifiestos no cambian.
+
 ## Fecha / fase
-2026-09-05 · F04
+2026-09-05 · F04 (enmienda 2026-09-06, previos de F07)
 
 ## Estado
 ACTIVE

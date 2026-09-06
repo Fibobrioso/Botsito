@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-— (auditoria global integrada en main con tag `stable/F05-auditoria-1`; F07 pendiente de abrir tras sus previos)
+Previos de F07 (glosario v2, hotwords y huella sin GPU, retranscripcion v1-v5, copia en Drive) · EN CONSTRUCCION (rama `feature/F07-previos`; informe `docs/validation/F07-previos.md`)
 
 ## Current Branch
-main
+feature/F07-previos
 
 ## Stable Main State
 916d0d0 · merge de la auditoria global de la estructura (tras stable/F05). make check verde: 389 casos, 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 34001769701 sobre 6edf743). Tags stable/F05 y stable/F05-auditoria-1. Rama main protegida en GitHub.
@@ -90,7 +90,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-266 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+272 funciones de test (pytest); `make check` verde en la rama
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE

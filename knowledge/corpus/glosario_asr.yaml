@@ -1,12 +1,18 @@
 # Glosario del ASR (F04, ADR-0007): la UNICA forma de tocar una transcripcion.
 #
-# vocabulario: terminos del dominio que el motor recibe como initial_prompt (mejora la jerga) y
-#   que ninguna sustitucion global puede casar. Su hash queda en cada manifiesto.
-# sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (brequiven,
-#   cargo chuto); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
-#   ambiguedades reales (M5/M15, FVG/FTMO). Patron Unicode con limites \b en ambos extremos, sin
-#   comodines sin limite; motivo y ejemplo real (video y minuto) obligatorios. Una correccion
-#   sin ejemplo real no entra. `corpus glossary apply` regenera corregida.jsonl = cruda + esto.
+# vocabulario: terminos del dominio que el motor recibe como hotwords (en todas las ventanas;
+#   ADR-0007 enmienda 2026-09-06) y que ninguna sustitucion global puede casar. Su hash queda en
+#   cada manifiesto; cambiarlo obliga a retranscribir (otra huella, otro id con reemplaza_a).
+# sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (store loss,
+#   rotaje); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
+#   ambiguedades reales o palabras corrientes (blog -> BOS, split -> spread). Patron Unicode con
+#   limites \b en ambos extremos, sin comodines sin limite; motivo y ejemplo real (video y
+#   minuto) obligatorios. Una correccion sin ejemplo real no entra. `corpus glossary apply`
+#   regenera corregida.jsonl = cruda + esto.
+#
+# v2 (2026-09-06, aprobado por el usuario): entradas propuestas en el informe F04 con ejemplo
+# real de large-v3. Las de alcance segmento se anaden despues de retranscribir, cuando existan
+# los transcripcion_id nuevos (segmento y verificado_por obligatorios).
 vocabulario:
   - EURUSD
   - M1
@@ -17,10 +23,10 @@ vocabulario:
   - FTMO
   - FundedNext
   - fondeo
-  - mitigacion
+  - mitigación
   - breaker
   - zona de control
-  - orden limite
+  - orden límite
   - stop loss
   - take profit
   - lotaje
@@ -28,4 +34,49 @@ vocabulario:
   - FXReplay
   - TradingView
   - MetaTrader
-sustituciones: []
+  - BOS
+  - order flow
+  - order block
+  - complex pullback
+  - backtesting
+  - Gann
+  - TP
+  - SL
+  - RR
+sustituciones:
+  - patron: '\bstore loss\b'
+    reemplazo: stop loss
+    alcance: global
+    motivo: el motor oye "store" donde el trader dice "stop"; "store loss" no es palabra del dominio
+    ejemplo_video: v2
+    ejemplo_t0: "0:05:41"
+  - patron: '\borden flow\b'
+    reemplazo: order flow
+    alcance: global
+    motivo: castellanizacion de "order flow"; "orden flow" no existe en el dominio
+    ejemplo_video: v2
+    ejemplo_t0: "0:32:26"
+  - patron: '\bcuadro de (?:GAN|gam)\b'
+    reemplazo: cuadro de Gann
+    alcance: global
+    motivo: el cuadro de Gann (herramienta de TradingView) sale como GAN o gam
+    ejemplo_video: v1
+    ejemplo_t0: "0:06:22"
+  - patron: '\brotaje\b'
+    reemplazo: lotaje
+    alcance: global
+    motivo: rotaje no es palabra; el trader dice lotaje (tamano de la posicion)
+    ejemplo_video: v4
+    ejemplo_t0: "1:31:40"
+  - patron: '\bbacteseando\b'
+    reemplazo: backtesteando
+    alcance: global
+    motivo: gerundio castellanizado de backtesting mal oido
+    ejemplo_video: v3
+    ejemplo_t0: "0:14:18"
+  - patron: '\btepes\b'
+    reemplazo: TPs
+    alcance: global
+    motivo: tepes es la lectura fonetica de TPs (take profits)
+    ejemplo_video: v3
+    ejemplo_t0: "0:32:20"

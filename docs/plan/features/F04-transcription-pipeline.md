@@ -17,6 +17,7 @@ lugar de `ffmpeg -ss` por fragmento, corte con minimo y maximo y cortes forzados
 solape, glosario Unicode con dos alcances, manifiesto inmutable por transcripcion en vez de un
 registro solo-anadir, corregida verificada por recomputo, ficheros pesados bajo `data/`, VAD y
 senales de alucinacion por segmento, vocabulario como `initial_prompt`). Detalle en ADR-0007.
+> Nota 2026-09-06: el vocabulario pasa a `hotwords` y la huella excluye la GPU (ADR-0007, enmienda; previos de F07).
 - `src/botsito/corpus/audio.py`: un WAV por video (PCM 16 kHz mono, `+bitexact`, reproducible
   byte a byte), `silencedetect` en muestras, `puntos_de_corte(n, silencios, ParametrosCorte)`
   con `OBJETIVO_S=600`, `MIN_S=420`, `MAX_S=780`, `UMBRAL_SILENCIO_DB=-35`,
