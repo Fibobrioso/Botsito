@@ -167,9 +167,22 @@ def test_jsonl_ida_y_vuelta_y_rechazos() -> None:
 def test_tiempos_h_mm_ss() -> None:
     assert formato_ms(3723456) == "1:02:03.456" and parse_ms("1:02:03.456") == 3723456
     assert parse_ms("0:31:59") == 1919000 and parse_ms("0:00:01.5") == 1500
-    for malo in ("31:59", "0:61:00", "0:00:60", "x:00:00"):
+    for malo in (
+        "31:59",
+        "0:61:00",
+        "0:00:60",
+        "x:00:00",
+        "-1:00:00",
+        "-0:00:01",
+        "+0:00:01",
+        "1_0:00:00",
+        "0:00:01.1234",
+        "0: 0:01",
+        "0:0:01",
+    ):
         with pytest.raises(TranscripcionError):
             parse_ms(malo)
+    assert parse_ms(" 0:00:01.25 ") == 1250
 
 
 def test_transcribir_fragmentos_es_reanudable_y_sensible_a_parametros(tmp_path: Path) -> None:
@@ -311,3 +324,15 @@ def test_glosario_reemplazo_literal_y_alternancia_con_limites() -> None:
     assert corregida[0].texto == "embarcar foobar ZZ ZZ"
     with pytest.raises(GlosarioError, match="comodines"):
         glosario_desde_texto("sustituciones:\n  - " + _entrada(r"\bx\S+\b") + "\n")
+
+
+def test_glosario_rechaza_punto_sin_escapar() -> None:
+    """Un punto sin escapar casaria `m1` y `m5` a la vez: solo entra escapado."""
+    cabecera = "vocabulario: [M5]\nsustituciones:\n"
+    resto = (
+        ", reemplazo: Z, alcance: global, motivo: m, ejemplo_video: v1, ejemplo_t0: '0:00:01'}\n"
+    )
+    with pytest.raises(GlosarioError):
+        glosario_desde_texto(cabecera + "  - {patron: '\\bm.\\b'" + resto)
+    g = glosario_desde_texto(cabecera + "  - {patron: '\\bm\\.5\\b'" + resto)
+    assert len(g.sustituciones) == 1

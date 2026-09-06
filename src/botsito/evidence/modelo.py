@@ -10,6 +10,7 @@ id, y el historial de git se vigila (`historial.py`). Una correccion es un item 
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -19,6 +20,7 @@ import yaml
 
 from botsito.comun import ids
 from botsito.comun.documentos import (
+    TOLERANCIA_DURACION_S,
     activos,
     cargar_directorio,
     ciclos_de_supersede,
@@ -36,8 +38,6 @@ CONFIANZAS = ("alta", "media", "baja")
 EXTRACTORES = ("humano", "llm")
 PROVENANCES = ("botsito", "bot-v2")
 FICHERO_CONTRADICCIONES = "_contradicciones.yaml"
-TOLERANCIA_DURACION_S = 1  # redondeo de ffprobe; no es un valor de negocio
-import re  # noqa: E402  # tiempos e ids de video: patrones locales de este modelo
 
 _ID = ids.EVIDENCIA
 _VIDEO_ID = re.compile(r"^[a-z0-9]+$", re.ASCII)

@@ -9,7 +9,6 @@ cruda en disco debe tener el sha256 del manifiesto y `corregida.jsonl` debe ser 
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -28,9 +27,8 @@ from botsito.corpus.pipeline_transcripcion import (
     FICHERO_CRUDA,
     SCHEMA_VERSION,
 )
+from botsito.corpus.trabajo import SUFIJO_CARPETA
 from botsito.corpus.transcripcion import SENALES, TranscripcionError, a_jsonl, desde_jsonl, huecos
-
-_SUFIJO_CARPETA = re.compile(r"^-[0-9a-f]{8}$")
 
 CAMPOS_OBLIGATORIOS = (
     "schema_version",
@@ -121,7 +119,7 @@ def validar(doc: dict[str, Any], origen: str) -> Transcripcion:
     esperada = f"{CARPETA_DATOS}/{doc['video_id']}/{nombre}"
     carpeta = str(doc["carpeta"])
     sufijo = carpeta[len(esperada) :] if carpeta.startswith(esperada) else None
-    if not nombre or sufijo is None or (sufijo and not _SUFIJO_CARPETA.match(sufijo)):
+    if not nombre or sufijo is None or (sufijo and not SUFIJO_CARPETA.match(sufijo)):
         raise ManifiestoTranscripcionError(
             f"{origen}: carpeta {carpeta!r} debe ser {esperada!r} (o con sufijo -<huella8>)"
         )
@@ -236,6 +234,15 @@ def cargar_todos(repo: Path) -> list[Transcripcion]:
             )
     for problema in ciclos_de_supersede({t.id: t.supersede for t in items}):
         raise ManifiestoTranscripcionError(problema)
+    por_video: dict[str, list[str]] = {}
+    for t in activos(items):
+        por_video.setdefault(t.video_id, []).append(t.id)
+    for video_id, lista in sorted(por_video.items()):
+        if len(lista) > 1:
+            raise ManifiestoTranscripcionError(
+                f"{video_id} tiene {len(lista)} transcripciones activas {lista}: exactamente una "
+                "por video (marca reemplaza_a)"
+            )
     return items
 
 

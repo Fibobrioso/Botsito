@@ -8,10 +8,14 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 from botsito import __version__
 from botsito.domain.valores import HoraLocal
+
+if TYPE_CHECKING:
+    from botsito.corpus.fotogramas import Obligatorio
+    from botsito.corpus.glosario import Glosario
 
 STATE_FILE = "PROJECT_STATE.md"
 
@@ -119,7 +123,9 @@ def state_check(repo: Path) -> int:
             ajenos = sorted(f for f in tocados.splitlines() if f.strip() and f != STATE_FILE)
             if ajenos:
                 errores.append(
-                    f"main tiene cambios sin tag estable desde {tag}: {', '.join(ajenos)}"
+                    f"main tiene cambios sin tag estable desde {tag}: {', '.join(ajenos)} "
+                    "(en main, tras el tag, solo puede cambiar PROJECT_STATE.md; el HANDOFF y "
+                    "cualquier otro fichero entran por una rama con su tag: MASTER_PLAN §F)"
                 )
 
     for line in _read_section(text, "Completed Features").splitlines():
@@ -217,7 +223,7 @@ def _video_del_corpus(repo: Path, video_id: str) -> tuple[Path, str, str, float]
     return repo / fuentes.raiz, str(v["fichero"]), str(v["sha256"]), float(v["duracion_s"])
 
 
-def _glosario(repo: Path) -> Any:
+def _glosario(repo: Path) -> Glosario:
     from botsito.corpus.glosario import cargar_glosario
 
     return cargar_glosario(repo / "knowledge" / "corpus" / "glosario_asr.yaml")
@@ -392,6 +398,8 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
         t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
         if t1 < t0:
             raise TranscripcionError("--t1 no puede ser anterior a --t0")
+        if args.margen_s < 0:
+            raise TranscripcionError("--margen-s no puede ser negativo")
         trozo = texto_entre(segmentos, t0, t1, round(args.margen_s * 1000))
     except (ManifiestoTranscripcionError, TranscripcionError, OSError) as exc:
         print(f"ERROR: {exc}")
@@ -401,7 +409,7 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
-def _obligatorios(repo: Path) -> list[Any]:
+def _obligatorios(repo: Path) -> list[Obligatorio]:
     from botsito.corpus.fotogramas import FICHERO_OBLIGATORIOS, cargar_obligatorios
 
     return cargar_obligatorios(repo / FICHERO_OBLIGATORIOS)
@@ -725,17 +733,13 @@ def feedback_pending(repo: Path) -> int:
 
 
 def _carpeta_datos(repo: Path) -> Path:
-    """`[rutas].data` de settings.local.toml si existe; si no, la del ejemplo."""
-    from botsito.config.ajustes import AjustesError, cargar_ajustes
+    """`[rutas].data` (config/ajustes.carpeta_datos); un TOML roto aborta con ERROR."""
+    from botsito.config.ajustes import AjustesError, carpeta_datos
 
-    for nombre in ("settings.local.toml", "settings.example.toml"):
-        ruta = repo / "config" / nombre
-        if ruta.exists():
-            try:
-                return repo / cargar_ajustes(ruta).data
-            except AjustesError as exc:
-                raise SystemExit(f"ERROR: {nombre}: {exc}") from exc
-    return repo / "data"
+    try:
+        return carpeta_datos(repo)
+    except AjustesError as exc:
+        raise SystemExit(f"ERROR: {exc}") from exc
 
 
 def _parse_anclaje(texto: str) -> HoraLocal:

@@ -10,6 +10,7 @@ import yaml
 
 from botsito import cli
 from botsito.comun.documentos import sha256_hex
+from botsito.corpus.audio import AudioError
 from botsito.corpus.glosario import glosario_desde_texto
 from botsito.corpus.manifiestos_transcripcion import (
     ManifiestoTranscripcionError,
@@ -25,7 +26,7 @@ from botsito.corpus.pipeline_transcripcion import (
     cargar_cruda,
     transcribir_video,
 )
-from botsito.corpus.transcripcion import MotorFalso, SegmentoRelativo
+from botsito.corpus.transcripcion import MotorFalso, SegmentoRelativo, TranscripcionError
 
 CLIP = Path(__file__).resolve().parents[1] / "fixtures" / "clip_2s.mp4"
 
@@ -136,6 +137,22 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
     # Si el video del corpus cambia (otro sha), la cruda anterior no se pisa: otra carpeta,
     # decidida antes de llamar al motor (la carpeta `<nombre>` sigue siendo del video viejo).
     otro_sha = "f" * 64
+    # Un video distinto da otra cruda (aqui se fuerza con un motor que dice otra cosa).
+    motor_otro = MotorFalso(lambda wav: [SegmentoRelativo(0.0, 1.0, "otra cruda")])
+    # Otra carpeta = otra transcripcion: exige reemplazar a la activa (auditoria 2026-09-05).
+    with pytest.raises(TranscripcionError, match="indica --reemplaza-a"):
+        transcribir_video(
+            repo,
+            repo / "data",
+            raiz,
+            "v1",
+            "clip.mp4",
+            otro_sha,
+            2.0,
+            motor_otro,
+            g,
+            comprobar_hash_video=False,
+        )
     r3 = transcribir_video(
         repo,
         repo / "data",
@@ -144,16 +161,17 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
         "clip.mp4",
         otro_sha,
         2.0,
-        MotorFalso(),
+        motor_otro,
         g,
         comprobar_hash_video=False,
+        reemplaza_a=r.transcripcion_id,
     )
     assert r3.carpeta != r.carpeta and r3.carpeta.name.startswith("falso-")
     assert (r3.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == otro_sha
     assert (r.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == sha
     assert cargar_cruda(r.carpeta) == cruda  # la cruda vieja sigue intacta
-    # El mismo manifiesto con otro reemplaza_a no se reescribe: es inmutable.
-    with pytest.raises(Exception, match="inmutable"):
+    # Reemplazar a un id que no es la activa: error antes del motor.
+    with pytest.raises(TranscripcionError, match="la transcripcion activa de v1 es"):
         transcribir_video(
             repo,
             repo / "data",
@@ -166,22 +184,64 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
             g,
             reemplaza_a="tr-v1-falso-00000000",
         )
+    # El mismo manifiesto (misma cruda, mismo id) con otro reemplaza_a no se reescribe.
+    with pytest.raises(TranscripcionError, match="inmutable"):
+        transcribir_video(
+            repo,
+            repo / "data",
+            raiz,
+            "v1",
+            "clip.mp4",
+            sha,
+            2.0,
+            MotorFalso(),
+            g,
+            reemplaza_a=r3.transcripcion_id,
+        )
+    # En un clon sin data/ (sin marcas), el manifiesto de `r` sigue diciendo de que video salio
+    # la carpeta base `falso`: con otro video no se pisa aunque no haya marcas.
+    shutil.rmtree(repo / "data")
+    r4 = transcribir_video(
+        repo,
+        repo / "data",
+        raiz,
+        "v1",
+        "clip.mp4",
+        otro_sha,
+        2.0,
+        motor_otro,
+        g,
+        comprobar_hash_video=False,
+    )
+    assert r4.carpeta.name.startswith("falso-") and r4.transcripcion_id == r3.transcripcion_id
     # Un motor cuyo nombre no cabe en un id se rechaza antes de trabajar.
-    with pytest.raises(Exception, match="nombre de motor"):
+    with pytest.raises(TranscripcionError, match="nombre de motor"):
         transcribir_video(
             repo, repo / "data", raiz, "v1", "clip.mp4", sha, 2.0, MotorNombreMalo(), g
         )
     # Manifiesto valido y coherente con el disco y el glosario.
     items = cargar_todos(repo)
-    assert [t.id for t in items] == [r.transcripcion_id]
-    assert comprobar(items, repo / "data", g) == ([], [])
-    assert activa_de(items, "v1").id == r.transcripcion_id
+    assert sorted(t.id for t in items) == sorted([r.transcripcion_id, r3.transcripcion_id])
+    errores, avisos = comprobar(items, repo / "data", g)
+    assert errores == [] and len(avisos) == 1 and r.transcripcion_id in avisos[0]
+    assert activa_de(items, "v1").id == r3.transcripcion_id
     # Un motor sin segmentos no registra nada.
     otro = MotorVacio()
-    with pytest.raises(Exception, match="ningun segmento"):
-        transcribir_video(repo, repo / "data", raiz, "v1", "clip.mp4", sha, 2.0, otro, g)
+    with pytest.raises(TranscripcionError, match="ningun segmento"):
+        transcribir_video(
+            repo,
+            repo / "data",
+            raiz,
+            "v1",
+            "clip.mp4",
+            sha,
+            2.0,
+            otro,
+            g,
+            reemplaza_a=r3.transcripcion_id,
+        )
     # Video con hash distinto del manifiesto del corpus: rechazado.
-    with pytest.raises(Exception, match="sha256"):
+    with pytest.raises(AudioError, match="sha256"):
         transcribir_video(
             repo, repo / "data", raiz, "v1", "clip.mp4", "0" * 64, 2.0, MotorFalso(), g
         )

@@ -13,7 +13,6 @@ heredado de Bot v2 queda fuera.
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -36,9 +35,9 @@ from botsito.corpus.fotogramas import (
     referencia,
     segundos_ausentes,
 )
+from botsito.corpus.trabajo import SUFIJO_CARPETA
 from botsito.corpus.transcripcion import formato_ms
 
-_SUFIJO_CARPETA = re.compile(r"^-[0-9a-f]{8}$")
 MUESTRA_REGULARES = 20  # no-negocio: fotogramas regulares verificados por hash en `check`
 
 CAMPOS_OBLIGATORIOS = (
@@ -140,7 +139,7 @@ def validar(doc: dict[str, Any], origen: str) -> Fotogramas:
     esperada = f"{CARPETA_DATOS}/{doc['video_id']}/{NOMBRE}"
     carpeta = str(doc["carpeta"])
     sufijo = carpeta[len(esperada) :] if carpeta.startswith(esperada) else None
-    if sufijo is None or (sufijo and not _SUFIJO_CARPETA.match(sufijo)):
+    if sufijo is None or (sufijo and not SUFIJO_CARPETA.match(sufijo)):
         raise ManifiestoFotogramasError(
             f"{origen}: carpeta {carpeta!r} debe ser {esperada!r} (o con sufijo -<huella8>)"
         )

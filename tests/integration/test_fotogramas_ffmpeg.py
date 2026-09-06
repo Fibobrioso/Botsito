@@ -163,7 +163,7 @@ def test_extraccion_completa_determinista_idempotente_e_inmutable(tmp_path: Path
     texto = r3.manifiesto.read_text(encoding="utf-8")
     r3.manifiesto.write_text(texto.replace(doc3["sha256_index"], "0" * 64), encoding="utf-8")
     (r3.carpeta / FICHERO_INDICE).unlink()
-    with pytest.raises(FotogramasError, match="inmutables"):
+    with pytest.raises(FotogramasError, match="inmutable"):
         extraer_video(*args, [1250, 1500])
 
 

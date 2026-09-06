@@ -7,6 +7,9 @@ Disposicion bajo la carpeta de datos (`[rutas].data`, ignorada por git):
     data/transcripciones/<video_id>/<nombre>/parciales/*.json         (estado de reanudacion)
     data/transcripciones/<video_id>/<nombre>/cruda.jsonl              (INMUTABLE, hash)
     data/transcripciones/<video_id>/<nombre>/{corregida,correcciones}.jsonl, cruda.txt
+    data/transcripciones/<video_id>/audio.sha256_video  (marca: video del que salio el WAV)
+    data/transcripciones/<video_id>/<nombre>/{huella.txt,video.sha256}  (marcas de la carpeta;
+                                                        ver corpus/trabajo.py)
 
 y el manifiesto INMUTABLE, versionado, en `knowledge/corpus/transcripciones/<transcripcion_id>.yaml`
 con `transcripcion_id = tr-<video_id>-<nombre>-<hash8 del sha256 de cruda.jsonl>`. `<nombre>` es
@@ -16,6 +19,7 @@ el del motor (modelo + compute) y `reemplaza_a` enlaza retranscripciones.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -24,7 +28,8 @@ from typing import Any
 import yaml
 
 from botsito.comun import ids
-from botsito.comun.documentos import hash_corto, sha256_hex
+from botsito.comun.documentos import TOLERANCIA_DURACION_S, hash_corto, sha256_hex
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.corpus.audio import (
     MUESTRAS_S,
     AudioError,
@@ -38,6 +43,13 @@ from botsito.corpus.audio import (
 )
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
 from botsito.corpus.inventario import sha256_fichero
+from botsito.corpus.trabajo import (
+    carpeta_para,
+    comprobar_activa,
+    comprobar_inmutabilidad,
+    manifiestos_crudos,
+    reemplaza_a_previo,
+)
 from botsito.corpus.transcripcion import (
     HUECO_TRANSCRIPCION_S,
     MotorAsr,
@@ -58,13 +70,8 @@ FICHERO_CRUDA = "cruda.jsonl"
 FICHERO_CORREGIDA = "corregida.jsonl"
 FICHERO_CORRECCIONES = "correcciones.jsonl"
 FICHERO_LEGIBLE = "cruda.txt"
-FICHERO_HUELLA = (
-    "huella.txt"  # huella de motor + corte de la carpeta (elige carpeta antes de la GPU)
-)
 MARCA_WAV = "audio.sha256_video"  # el WAV se reextrae si el video cambio
-FICHERO_VIDEO_CARPETA = "video.sha256"  # video del que salio la cruda de esta carpeta
 SCHEMA_VERSION = 1
-TOLERANCIA_DURACION_S = 1.0  # WAV frente a la duracion del manifiesto del corpus (como F06)
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,7 +102,7 @@ def transcribir_video(
     motor: MotorAsr,
     glosario: Glosario,
     parametros: ParametrosCorte | None = None,
-    progreso: Any = None,
+    progreso: Callable[[Any, int], None] | None = None,
     comprobar_hash_video: bool = True,
     reemplaza_a: str | None = None,
 ) -> Resultado:
@@ -117,7 +124,11 @@ def transcribir_video(
     if not wav.exists() or not marca_wav.exists() or _leer(marca_wav) != sha256_video:
         extraer_wav(video, wav)
         escribir_atomico(marca_wav, sha256_video + "\n")
-    n_muestras = muestras_wav(wav)
+    try:
+        n_muestras = muestras_wav(wav)
+    except AudioError:  # WAV ilegible (copia truncada): se reextrae una vez
+        extraer_wav(video, wav)
+        n_muestras = muestras_wav(wav)
     duracion_wav_s = n_muestras / MUESTRAS_S
     if abs(duracion_wav_s - duracion_video_s) > TOLERANCIA_DURACION_S:
         raise AudioError(
@@ -126,10 +137,25 @@ def transcribir_video(
         )
     fin_ms = n_muestras * 1000 // MUESTRAS_S
     descripcion_motor = motor.describir()
-    huella = hash_corto(
-        json.dumps({"corte": parametros.como_dict(), "motor": descripcion_motor}, sort_keys=True)
+    huella = huella_de(parametros.como_dict(), descripcion_motor)
+    registrados = manifiestos_crudos(repo / DIRECTORIO_MANIFIESTOS, TranscripcionError)
+    carpeta = carpeta_para(
+        cv,
+        motor.nombre,
+        huella,
+        sha256_video,
+        _carpeta_base_registrada_ajena(registrados, video_id, motor.nombre, huella, sha256_video),
     )
-    carpeta = _carpeta_para(cv, motor.nombre, huella, sha256_video)
+    carpeta_rel = f"{CARPETA_DATOS}/{video_id}/{carpeta.name}"
+    comprobar_activa(
+        registrados,
+        "transcripcion_id",
+        video_id,
+        carpeta_rel,
+        reemplaza_a,
+        TranscripcionError,
+        "transcripcion",
+    )
     silencios = detectar_silencios(wav, parametros.umbral_db, parametros.silencio_minimo_s)
     cortes = puntos_de_corte(n_muestras, silencios, parametros)
     fragmentos = cortar_wav(wav, cortes.puntos_m, carpeta / "fragmentos")
@@ -143,6 +169,15 @@ def transcribir_video(
     sha_cruda = sha256_hex(texto_cruda.encode("utf-8"))
     tid = id_transcripcion(video_id, motor.nombre, sha_cruda)
     cruda = carpeta / FICHERO_CRUDA
+    comprobar_inmutabilidad(
+        registrados,
+        "transcripcion_id",
+        "sha256_cruda",
+        carpeta_rel,
+        sha_cruda,
+        TranscripcionError,
+        "cruda",
+    )
     if cruda.exists() and sha256_hex(cruda.read_bytes()) != sha_cruda:
         raise TranscripcionError(
             f"{cruda} ya existe con otro contenido: una cruda es inmutable y el motor no fue "
@@ -161,7 +196,7 @@ def transcribir_video(
         "duracion_video_s": round(duracion_video_s, 3),
         "duracion_wav_s": round(duracion_wav_s, 3),
         "muestras": n_muestras,
-        "carpeta": f"{CARPETA_DATOS}/{video_id}/{carpeta.name}",
+        "carpeta": carpeta_rel,
         "motor": descripcion_motor,
         "ffmpeg": version_ffmpeg(),
         "corte": parametros.como_dict(),
@@ -188,13 +223,11 @@ def transcribir_video(
         manifiesto["reemplaza_a"] = reemplaza_a
     ruta_manifiesto = repo / DIRECTORIO_MANIFIESTOS / f"{tid}.yaml"
     if ruta_manifiesto.exists():
-        previo = yaml.safe_load(ruta_manifiesto.read_text(encoding="utf-8"))
-        anterior = previo.get("reemplaza_a") if isinstance(previo, dict) else None
-        if anterior != reemplaza_a:
-            raise TranscripcionError(
-                f"{ruta_manifiesto.name} ya existe con reemplaza_a={anterior!r}; un manifiesto es "
-                f"inmutable y no se puede cambiar a {reemplaza_a!r}"
-            )
+        try:
+            previo = cargar_yaml(ruta_manifiesto.read_text(encoding="utf-8"))
+        except YamlError as exc:
+            raise TranscripcionError(f"{ruta_manifiesto.name}: {exc}") from exc
+        reemplaza_a_previo(previo, reemplaza_a, ruta_manifiesto.name, TranscripcionError)
     else:
         escribir_atomico(
             ruta_manifiesto,
@@ -212,29 +245,29 @@ def _leer(ruta: Path) -> str:
         return ""
 
 
-def _carpeta_para(cv: Path, nombre: str, huella: str, sha256_video: str) -> Path:
-    """`<nombre>` la primera vez; si esa carpeta ya pertenece a otra huella (otro vocabulario,
-    otra version del motor) o a otro video (el fichero del corpus cambio), `<nombre>-<hash8>`:
-    una retranscripcion no pisa la cruda anterior (su manifiesto es inmutable y sigue apuntando
-    a su carpeta). Se decide ANTES de la GPU. Una carpeta sin marca de video (anterior a esta
-    regla) se adopta y se marca."""
-    carpeta = cv / nombre
-    marca = carpeta / FICHERO_HUELLA
-    marca_video = carpeta / FICHERO_VIDEO_CARPETA
-    ajena = carpeta.is_dir() and (
-        (marca.exists() and _leer(marca) != huella)
-        or (marca_video.exists() and _leer(marca_video) != sha256_video)
-    )
-    if ajena:
-        carpeta = cv / f"{nombre}-{hash_corto(huella + sha256_video)}"
-        marca = carpeta / FICHERO_HUELLA
-        marca_video = carpeta / FICHERO_VIDEO_CARPETA
-    carpeta.mkdir(parents=True, exist_ok=True)
-    if not marca.exists():
-        escribir_atomico(marca, huella + "\n")
-    if not marca_video.exists():
-        escribir_atomico(marca_video, sha256_video + "\n")
-    return carpeta
+def huella_de(corte: dict[str, float], motor: dict[str, Any]) -> str:
+    """Huella de una carpeta de trabajo: parametros de corte y descripcion del motor. Se
+    recomputa desde un manifiesto (`corte`, `motor`) para saber a que huella pertenece."""
+    return hash_corto(json.dumps({"corte": corte, "motor": motor}, sort_keys=True))
+
+
+def _carpeta_base_registrada_ajena(
+    registrados: list[dict[str, Any]], video_id: str, nombre: str, huella: str, sha256_video: str
+) -> bool:
+    """True si un manifiesto registra `transcripciones/<video>/<nombre>` con otra huella (otro
+    motor, otro corte, otro vocabulario) o con otro video: la carpeta base pertenece a esa
+    transcripcion aunque en esta maquina no haya marcas (clon sin data/)."""
+    base = f"{CARPETA_DATOS}/{video_id}/{nombre}"
+    for doc in registrados:
+        if doc.get("carpeta") != base:
+            continue
+        try:
+            registrada = huella_de(doc["corte"], doc["motor"])
+        except (TypeError, KeyError, ValueError):
+            return True
+        if registrada != huella or doc.get("sha256_video") != sha256_video:
+            return True
+    return False
 
 
 def corregir(carpeta: Path, cruda: list[Segmento], glosario: Glosario, tid: str) -> int:

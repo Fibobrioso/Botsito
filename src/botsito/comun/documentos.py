@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any, Protocol
 
 HASH_CORTO = 8
+# Redondeo de ffprobe frente a la duracion real (WAV, evidencia): no es un valor de negocio.
+TOLERANCIA_DURACION_S = 1.0
 
 
 class Supersedible(Protocol):

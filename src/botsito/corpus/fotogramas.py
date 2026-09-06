@@ -31,6 +31,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -43,14 +44,19 @@ from botsito.comun.documentos import hash_corto, sha256_hex
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.corpus.audio import version_ffmpeg
 from botsito.corpus.inventario import sha256_fichero
+from botsito.corpus.trabajo import (
+    carpeta_para,
+    comprobar_activa,
+    comprobar_inmutabilidad,
+    manifiestos_crudos,
+    reemplaza_a_previo,
+)
 from botsito.corpus.transcripcion import escribir_atomico, formato_ms, parse_ms
 
 CARPETA_DATOS = "fotogramas"
 DIRECTORIO_MANIFIESTOS = "knowledge/corpus/fotogramas"
 FICHERO_OBLIGATORIOS = "knowledge/corpus/fotogramas_obligatorios.yaml"
 FICHERO_INDICE = "index.jsonl"
-FICHERO_HUELLA = "huella.txt"
-FICHERO_VIDEO_CARPETA = "video.sha256"
 SCHEMA_VERSION = 1
 FPS = 1
 FORMATO = "png"
@@ -433,41 +439,6 @@ def carpeta_video(carpeta_datos: Path, video_id: str) -> Path:
     return carpeta_datos / CARPETA_DATOS / video_id
 
 
-def _leer(ruta: Path) -> str:
-    try:
-        return ruta.read_text(encoding="utf-8").strip()
-    except OSError:
-        return ""
-
-
-def _carpeta_para(cv: Path, huella: str, sha256_video: str, registrada_ajena: bool) -> Path:
-    """`<nombre>` la primera vez; si esa carpeta pertenece a otra huella (otra build de ffmpeg,
-    otra regla) o a otro video, `<nombre>-<hash8>`: una re-extraccion no pisa la anterior (su
-    manifiesto es inmutable y sigue apuntando a su carpeta). Lo decide tanto la marca local de la
-    carpeta como el manifiesto que la registra (`registrada_ajena`): en un clon sin `data/` no
-    hay marcas y solo el manifiesto sabe de que build salio `<nombre>`."""
-    carpeta = cv / NOMBRE
-    marca = carpeta / FICHERO_HUELLA
-    marca_video = carpeta / FICHERO_VIDEO_CARPETA
-    ajena = registrada_ajena or (
-        carpeta.is_dir()
-        and (
-            (marca.exists() and _leer(marca) != huella)
-            or (marca_video.exists() and _leer(marca_video) != sha256_video)
-        )
-    )
-    if ajena:
-        carpeta = cv / f"{NOMBRE}-{hash_corto(huella + sha256_video)}"
-        marca = carpeta / FICHERO_HUELLA
-        marca_video = carpeta / FICHERO_VIDEO_CARPETA
-    carpeta.mkdir(parents=True, exist_ok=True)
-    if not marca.exists():
-        escribir_atomico(marca, huella + "\n")
-    if not marca_video.exists():
-        escribir_atomico(marca_video, sha256_video + "\n")
-    return carpeta
-
-
 def parametros() -> dict[str, Any]:
     return {"fps": FPS, "formato": FORMATO, "seleccion": SELECCION, "bitexact": True}
 
@@ -516,7 +487,7 @@ def extraer_video(
     obligatorios_ms: list[int],
     reemplaza_a: str | None = None,
     comprobar_hash_video: bool = True,
-    progreso: Any = None,
+    progreso: Callable[[str], None] | None = None,
 ) -> Resultado:
     """Cobertura completa a 1 fps mas los obligatorios con fraccion; indice y manifiesto."""
     video = raiz_corpus / fichero_video
@@ -539,8 +510,9 @@ def extraer_video(
             "solo comparten reloj con start_time 0 (ADR-0008)"
         )
     cv = carpeta_video(carpeta_datos, video_id)
-    carpeta = _carpeta_para(
+    carpeta = carpeta_para(
         cv,
+        NOMBRE,
         huella,
         sha256_video,
         _carpeta_base_registrada_ajena(repo, video_id, huella, sha256_video),
@@ -612,14 +584,7 @@ def extraer_video(
             previo_doc = cargar_yaml(ruta_manifiesto.read_text(encoding="utf-8"))
         except YamlError as exc:
             raise FotogramasError(f"{ruta_manifiesto.name}: {exc}") from exc
-        anterior = previo_doc.get("reemplaza_a") if isinstance(previo_doc, dict) else None
-        # Repetir la extraccion activa sin `reemplaza_a` es idempotente; pedir otro
-        # `reemplaza_a` para un manifiesto que ya existe, no.
-        if reemplaza_a is not None and anterior != reemplaza_a:
-            raise FotogramasError(
-                f"{ruta_manifiesto.name} ya existe con reemplaza_a={anterior!r}; un manifiesto es "
-                f"inmutable y no se puede cambiar a {reemplaza_a!r}"
-            )
+        reemplaza_a_previo(previo_doc, reemplaza_a, ruta_manifiesto.name, FotogramasError)
     else:
         escribir_atomico(
             ruta_manifiesto,
@@ -631,22 +596,7 @@ def extraer_video(
 
 
 def _manifiestos_crudos(repo: Path) -> list[dict[str, Any]]:
-    """Manifiestos tal cual (sin validar el esquema): lo justo para las guardias previas a la
-    extraccion. (Este modulo no puede importar `manifiestos_fotogramas`, que lo importa a el.)"""
-    directorio = repo / DIRECTORIO_MANIFIESTOS
-    if not directorio.is_dir():
-        return []
-    docs: list[dict[str, Any]] = []
-    for ruta in sorted(directorio.glob("*.yaml")):
-        if ruta.name.startswith("_"):
-            continue
-        try:
-            doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
-        except YamlError as exc:
-            raise FotogramasError(f"{ruta.name}: {exc}") from exc
-        if isinstance(doc, dict):
-            docs.append(doc)
-    return docs
+    return manifiestos_crudos(repo / DIRECTORIO_MANIFIESTOS, FotogramasError)
 
 
 def _carpeta_base_registrada_ajena(
@@ -703,42 +653,27 @@ def inicio_video_ms(video: Path) -> int:
 
 
 def _comprobar_activa(repo: Path, video_id: str, carpeta_rel: str, reemplaza_a: str | None) -> None:
-    """Un video tiene exactamente una extraccion activa: extraer a OTRA carpeta (otros
-    obligatorios, otra build) exige `reemplaza_a` = la activa; repetir la misma carpeta es una
-    ejecucion idempotente y no lleva `reemplaza_a`."""
-    docs = [d for d in _manifiestos_crudos(repo) if d.get("video_id") == video_id]
-    reemplazados = {d.get("reemplaza_a") for d in docs if d.get("reemplaza_a")}
-    activas = [d for d in docs if d.get("fotogramas_id") not in reemplazados]
-    misma = [d for d in activas if d.get("carpeta") == carpeta_rel]
-    if misma and reemplaza_a:
-        raise FotogramasError(
-            f"{misma[0].get('fotogramas_id')} ya es la extraccion activa de {video_id} con estos "
-            "parametros: no hay nada que reemplazar"
-        )
-    otras = [d for d in activas if d.get("carpeta") != carpeta_rel]
-    if otras and reemplaza_a is None:
-        raise FotogramasError(
-            f"{video_id} ya tiene la extraccion activa {otras[0].get('fotogramas_id')}; "
-            "indica --reemplaza-a con ese id (exactamente una activa por video)"
-        )
-    if otras and reemplaza_a not in {d.get("fotogramas_id") for d in otras}:
-        raise FotogramasError(
-            f"--reemplaza-a {reemplaza_a}: la extraccion activa de {video_id} es "
-            f"{otras[0].get('fotogramas_id')}"
-        )
+    comprobar_activa(
+        _manifiestos_crudos(repo),
+        "fotogramas_id",
+        video_id,
+        carpeta_rel,
+        reemplaza_a,
+        FotogramasError,
+        "extraccion",
+    )
 
 
 def _comprobar_inmutabilidad(repo: Path, carpeta_rel: str, sha_index: str) -> None:
-    """Si ya hay un manifiesto para esta carpeta, el indice de hoy debe ser el suyo."""
-    for doc in _manifiestos_crudos(repo):
-        if doc.get("carpeta") != carpeta_rel:
-            continue
-        if doc.get("sha256_index") != sha_index:
-            raise FotogramasError(
-                f"{doc.get('fotogramas_id')} ya registra la carpeta {carpeta_rel} con otro "
-                "index.jsonl: los fotogramas de un manifiesto son inmutables; revisa la build de "
-                "ffmpeg antes de seguir"
-            )
+    comprobar_inmutabilidad(
+        _manifiestos_crudos(repo),
+        "fotogramas_id",
+        "sha256_index",
+        carpeta_rel,
+        sha_index,
+        FotogramasError,
+        "extraccion",
+    )
 
 
 def _resolucion_de(png: Path) -> tuple[int, int]:
