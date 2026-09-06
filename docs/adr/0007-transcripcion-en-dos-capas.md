@@ -87,8 +87,11 @@ el campo opcional `transcripcion` (id) sin alterar ids existentes.
   Fidelidad manda (instruccion del usuario): `initial_prompt`, con `sustituciones` del glosario
   para la jerga. Medicion completa en `docs/validation/F07-previos.md`.
 - faster-whisper trunca el prompt a `max_length // 2 - 1 = 223` tokens sin avisar:
-  `motor_whisper.comprobar_prompt` rechaza un vocabulario mas largo (el v2 ocupa 99); el
-  manifiesto anota `initial_prompt_tokens` y `hotwords: null`.
+  `motor_whisper.comprobar_prompt` rechaza un vocabulario mas largo (el v2 ocupa 96, contados
+  como el motor con `add_special_tokens=False`; los 5 manifiestos del 2026-09-06 anotan 99 por
+  contar los 3 especiales, corregido tras la auditoria de cierre); el manifiesto anota
+  `initial_prompt_tokens` (fuera de la huella de reanudacion) y `hotwords: null` (constancia de
+  la configuracion con la que se genero la cruda, no un campo funcional).
 - La huella de reanudacion (carpeta de trabajo y parciales) excluye `gpu` (nombre y driver;
   `pipeline_transcripcion.CLAVES_FUERA_DE_HUELLA`): un cambio de driver no altera la salida
   prometida (ctranslate2, cuBLAS, cuDNN y pesos siguen en la huella) y antes invalidaba todos

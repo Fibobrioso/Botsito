@@ -12,7 +12,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15 y la auditoria global. Rama
   `feature/F05-auditoria-estructura` fusionada (pendiente de borrar por el usuario).
 - Rama actual: `feature/F07-previos` (informe `docs/validation/F07-previos.md`, estado
-  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F07-previos`). Hecho: glosario v2
+  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F05-previos-F07`, ver §F). Hecho: glosario v2
   (29 terminos, 6 sustituciones globales + 6 de segmento), `hotwords` medido y DESCARTADO
   (perdida de habla y sesgo "sell" -> "SL"; ADR-0007 enmienda), guardia de 223 tokens del
   prompt, huella de reanudacion sin GPU, los 5 videos retranscritos (ids activos:
@@ -26,6 +26,17 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `drive_id` en `knowledge/corpus/fuentes.yaml`.
 - SIGUIENTE: abrir F07 evidence-extraction (entradas en MASTER_PLAN H.2, fila "Previos y
   entradas de F07"; la cita se verifica contra la CRUDA de la transcripcion activa).
+- Lecciones tecnicas (previos de F07): con `condition_on_previous_text=False` el
+  `initial_prompt` solo condiciona la primera ventana de 30 s de cada fragmento; `hotwords`
+  entra en todas pero alarga los segmentos mas alla de la ventana (hasta 40 s) y Whisper salta
+  audio (~10 s perdidos en v5, "sell" -> "SL"); faster-whisper trunca el prompt a 223 tokens
+  sin avisar (guardia `comprobar_prompt`, contar con `add_special_tokens=False`); medir SIEMPRE
+  con la pasada oficial (`corpus transcribe`), no solo con un script suelto (el paso 1 no
+  mostro la perdida, el paso 2 si); el YAML estricto rechaza un valor que empieza por comillas
+  y sigue texto (`motivo: "x" ...`): sin comillas o todo entrecomillado; `write_text` sin
+  `newline="\n"` mete CRLF en Windows y rompe `test_repository_integrity`; las herramientas de
+  la sesion no suben binarios grandes a Drive (API: texto/base64 en el mensaje; navegador:
+  dialogo nativo; `file_upload`: 10 MB).
 
 ## F05 (validada el 2026-09-05)
 - Fotogramas de TODO el corpus a 1 fps en PNG sin perdida (ADR-0008), decision del usuario
@@ -38,7 +49,8 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   de reglas en Word (`fr-v3-982da728/101000`), material del 2026-09-05 (v5, xlsx abril, capturas),
   dos auditorias de cierre aplicadas.
 - Material del 2026-09-05 ("Info extra de backtesting"): v5 `2026-09-05 21-03-59.mkv` (6 min,
-  FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos; NO esta en Drive), xlsx
+  FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos, reemplazada el 2026-09-06
+  por `tr-v5-...-3c6fbb57`, 80; NO esta en Drive), xlsx
   abril 2026 (38 operaciones) y 6 capturas de Analytics en `Material adicional de su operativa`.
   Hechos en PROJECT_STATE (seccion "Hechos del corpus pendientes de evidencia").
 - Lecciones tecnicas: `fps=1` de ffmpeg NO da el fotograma del segundo exacto ni conserva el

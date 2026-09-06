@@ -1,0 +1,104 @@
+{
+ "sin_prompt": {
+  "s": 81.0,
+  "chars": 4277,
+  "buenos": {
+   "stop loss": 0,
+   "take profit": 0,
+   "break even": 1,
+   "spread": 0,
+   "lotaje": 0,
+   "BOS": 0,
+   "order flow": 0,
+   "order block": 0,
+   "backtest": 1,
+   "TP": 0,
+   "SL": 1,
+   "RR": 2,
+   "Gann": 0,
+   "mitigaci": 1,
+   "FXReplay": 0
+  },
+  "malos": {
+   "store loss": 0,
+   "orden flow": 0,
+   "gan ": 0,
+   "boss": 0,
+   "voz": 0,
+   "blog": 0,
+   "split": 0,
+   "sprint": 0,
+   "rotaje": 0,
+   "tepes": 0,
+   "bacteseando": 1
+  }
+ },
+ "initial_prompt": {
+  "s": 79.3,
+  "chars": 4341,
+  "buenos": {
+   "stop loss": 0,
+   "take profit": 0,
+   "break even": 0,
+   "spread": 0,
+   "lotaje": 0,
+   "BOS": 0,
+   "order flow": 0,
+   "order block": 0,
+   "backtest": 1,
+   "TP": 0,
+   "SL": 1,
+   "RR": 2,
+   "Gann": 0,
+   "mitigaci": 1,
+   "FXReplay": 0
+  },
+  "malos": {
+   "store loss": 0,
+   "orden flow": 0,
+   "gan ": 0,
+   "boss": 0,
+   "voz": 0,
+   "blog": 0,
+   "split": 0,
+   "sprint": 0,
+   "rotaje": 0,
+   "tepes": 0,
+   "bacteseando": 0
+  }
+ },
+ "hotwords": {
+  "s": 82.8,
+  "chars": 4409,
+  "buenos": {
+   "stop loss": 0,
+   "take profit": 0,
+   "break even": 1,
+   "spread": 0,
+   "lotaje": 0,
+   "BOS": 0,
+   "order flow": 0,
+   "order block": 0,
+   "backtest": 2,
+   "TP": 0,
+   "SL": 2,
+   "RR": 2,
+   "Gann": 0,
+   "mitigaci": 1,
+   "FXReplay": 0
+  },
+  "malos": {
+   "store loss": 0,
+   "orden flow": 0,
+   "gan ": 0,
+   "boss": 0,
+   "voz": 0,
+   "blog": 0,
+   "split": 0,
+   "sprint": 0,
+   "rotaje": 0,
+   "tepes": 0,
+   "bacteseando": 0
+  }
+ }
+}

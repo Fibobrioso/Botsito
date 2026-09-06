@@ -105,7 +105,7 @@ sustituciones:
     alcance: segmento
     motivo: blogs es palabra corriente; aqui son BOS (me toco estos BOS)
     ejemplo_video: v4
-    ejemplo_t0: "0:46:59"
+    ejemplo_t0: "0:46:58"
     transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
     segmento: 789
     verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)

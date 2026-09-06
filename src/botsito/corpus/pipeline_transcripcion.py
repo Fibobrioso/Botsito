@@ -248,8 +248,10 @@ def _leer(ruta: Path) -> str:
 # Claves de la descripcion del motor que se anotan en el manifiesto pero NO entran en la huella
 # de reanudacion: la GPU y su driver no cambian la salida prometida (misma version de
 # ctranslate2/cuBLAS/cuDNN y mismo modelo) y un cambio de driver invalidaba todos los parciales
-# (deuda declarada en el informe F04, resuelta el 2026-09-06 con el glosario v2).
-CLAVES_FUERA_DE_HUELLA = ("gpu",)
+# (deuda declarada en el informe F04, resuelta el 2026-09-06 con el glosario v2);
+# `initial_prompt_tokens` es un derivado del prompt (cuyo sha256 si esta en la huella) y de como
+# se cuenta: cambiar el recuento no cambia lo que ve el motor.
+CLAVES_FUERA_DE_HUELLA = ("gpu", "initial_prompt_tokens")
 
 
 def huella_de(corte: dict[str, float], motor: dict[str, Any]) -> str:

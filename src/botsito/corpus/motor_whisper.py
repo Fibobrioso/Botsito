@@ -77,11 +77,12 @@ def _gpu() -> str:
 
 
 def comprobar_prompt(tokenizador: Any, prompt: str) -> int:
-    """Tokens que ocupa el vocabulario tal como lo codifica faster-whisper (`" " + texto`).
-    Error de dominio si el motor lo truncaria."""
+    """Tokens que ocupa el vocabulario tal como lo codifica faster-whisper (`" " + texto`,
+    `add_special_tokens=False`: sin <|startoftranscript|> ni <|notimestamps|>). Error de
+    dominio si el motor lo truncaria."""
     if not prompt:
         return 0
-    n = len(tokenizador.encode(" " + prompt.strip()).ids)
+    n = len(tokenizador.encode(" " + prompt.strip(), add_special_tokens=False).ids)
     if n > LIMITE_PROMPT_TOKENS:
         raise TranscripcionError(
             f"el vocabulario del glosario ocupa {n} tokens y faster-whisper trunca el prompt a "
@@ -110,6 +111,12 @@ class MotorWhisper(MotorAsr):
         self._ruta_modelo: Path | None = None
         self._prompt_tokens: int | None = None
 
+    def _comprobar_prompt(self, ruta_modelo: Path) -> int:
+        """Antes de cargar los pesos en la GPU: el tokenizador del modelo basta."""
+        tokenizers = importlib.import_module("tokenizers")
+        tokenizador = tokenizers.Tokenizer.from_file(str(ruta_modelo / "tokenizer.json"))
+        return comprobar_prompt(tokenizador, self.configuracion.prompt_inicial)
+
     @property
     def nombre(self) -> str:
         return self.configuracion.nombre
@@ -120,13 +127,11 @@ class MotorWhisper(MotorAsr):
             fw = importlib.import_module("faster_whisper")
             utils = importlib.import_module("faster_whisper.utils")
             self._ruta_modelo = Path(utils.download_model(self.configuracion.modelo))
+            self._prompt_tokens = self._comprobar_prompt(self._ruta_modelo)
             self._modelo = fw.WhisperModel(
                 str(self._ruta_modelo),
                 device=self.configuracion.dispositivo,
                 compute_type=self.configuracion.compute_type,
-            )
-            self._prompt_tokens = comprobar_prompt(
-                self._modelo.hf_tokenizer, self.configuracion.prompt_inicial
             )
         return self._modelo
 
