@@ -359,6 +359,10 @@ def validar_manifiesto(manifiesto: dict[str, Any], fuentes: Fuentes) -> list[str
         if v is None:
             problemas.append(f"falta {fuente.video_id} en el manifiesto")
             continue
+        if v.get("fichero") != fuente.fichero:
+            problemas.append(
+                f"{fuente.video_id}: fichero {v.get('fichero')!r} != {fuente.fichero!r} (fuentes)"
+            )
         if v.get("bytes") != fuente.bytes:
             problemas.append(f"{fuente.video_id}: bytes {v.get('bytes')} != {fuente.bytes}")
         for campo in ("sha256", "duracion_s", "ancho", "alto"):

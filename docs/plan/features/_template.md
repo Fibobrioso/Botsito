@@ -19,6 +19,7 @@
 ## Riesgos
 
 ## Revision de diseno (agente, antes de programar)
-Hallazgos aceptados / descartados con motivo.
+Hallazgos aceptados / descartados con motivo. (Seccion obligatoria desde F05; los briefs
+anteriores registran su revision en PROJECT_STATE / Change Log.)
 
 ## Que habilita

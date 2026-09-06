@@ -148,10 +148,18 @@ def extraer_wav(video: Path, destino: Path) -> Path:
 
 
 def muestras_wav(ruta: Path) -> int:
-    with wave.open(str(ruta), "rb") as w:
-        if w.getframerate() != MUESTRAS_S or w.getnchannels() != CANALES or w.getsampwidth() != 2:
-            raise AudioError(f"{ruta.name}: se esperaba PCM 16 bit, {MUESTRAS_S} Hz, mono")
-        return w.getnframes()
+    """Numero de muestras del WAV; un fichero ilegible o truncado es `AudioError`, no traceback."""
+    try:
+        with wave.open(str(ruta), "rb") as w:
+            if (
+                w.getframerate() != MUESTRAS_S
+                or w.getnchannels() != CANALES
+                or w.getsampwidth() != 2
+            ):
+                raise AudioError(f"{ruta.name}: se esperaba PCM 16 bit, {MUESTRAS_S} Hz, mono")
+            return w.getnframes()
+    except (wave.Error, EOFError, OSError) as exc:
+        raise AudioError(f"{ruta.name}: WAV ilegible ({exc})") from exc
 
 
 def duracion_wav_s(ruta: Path) -> float:

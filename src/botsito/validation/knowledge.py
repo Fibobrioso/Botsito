@@ -11,16 +11,9 @@ from pathlib import Path
 
 
 def _carpeta_datos(repo: Path) -> Path:
-    from botsito.config.ajustes import AjustesError, cargar_ajustes
+    from botsito.config.ajustes import carpeta_datos
 
-    for nombre in ("settings.local.toml", "settings.example.toml"):
-        ruta = repo / "config" / nombre
-        if ruta.exists():
-            try:
-                return repo / cargar_ajustes(ruta).data
-            except AjustesError:
-                break
-    return repo / "data"
+    return carpeta_datos(repo)
 
 
 def ids_de_adr(repo: Path) -> set[str]:
@@ -62,8 +55,14 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     if not (repo / "knowledge").is_dir():
         salida.append("ERROR: falta knowledge/")
         return 2, salida
+    from botsito.config.ajustes import AjustesError
     from botsito.config.registro import RegistroError, cargar_registro
 
+    try:
+        _carpeta_datos(repo)
+    except AjustesError as exc:
+        salida.append(f"ERROR: ajustes: {exc}")
+        return 1, salida
     try:
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
     except RegistroError as exc:

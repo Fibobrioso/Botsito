@@ -8,7 +8,8 @@ ejecutar `make hooks`.
 
 - `pre-commit`: rechaza commits directos en `main` (salvo `BOTSITO_ALLOW_MAIN=1`, que solo usa el
   ritual de merge); rechaza modificar, renombrar o borrar `*.yaml` bajo `knowledge/evidence/`,
-  `knowledge/feedback/`, `data/manifests/` (F15) y `knowledge/corpus/transcripciones/` (F04)
+  `knowledge/feedback/`, `data/manifests/` (F15), `knowledge/corpus/transcripciones/` (F04) y
+  `knowledge/corpus/fotogramas/` (F05)
   (salvo `_*.yaml` generados), con rutas sin entrecomillar (`core.quotepath=false`) para que un
   nombre con acento o espacio no se cuele; exige `uv.lock` al dia (`uv lock --check`) y comprueba
   los contratos de importacion con `uv run --no-sync lint-imports` (sin tocar el entorno: un

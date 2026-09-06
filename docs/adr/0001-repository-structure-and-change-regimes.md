@@ -49,5 +49,6 @@ de holdout en F14.
 
 ## Estado
 ACTIVE (contrato de capas revisado y paquete `comun` anadidos por ADR-0006; manifiestos
-inmutables de datos y de transcripcion anadidos como cuarto regimen por ADR-0005 y ADR-0007;
+inmutables de datos, de transcripcion y de fotogramas anadidos como cuarto regimen por ADR-0005,
+ADR-0007 y ADR-0008;
 ADR-0001 sigue vigente en todo lo demas)

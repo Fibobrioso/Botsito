@@ -11,6 +11,7 @@ es JSONL, una linea por segmento con indice `n` (id estable), claves ordenadas, 
 from __future__ import annotations
 
 import json
+import re
 import unicodedata
 from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass, field
@@ -354,21 +355,18 @@ def formato_ms(ms: int) -> str:
     return f"{h}:{m:02d}:{seg:02d}.{mil:03d}"
 
 
+_TIEMPO = re.compile(r"(\d+):([0-5]\d):([0-5]\d)(?:\.(\d{1,3}))?", re.ASCII)
+
+
 def parse_ms(texto: str) -> int:
-    """`h:mm:ss[.mmm]` -> milisegundos (mismo formato que la evidencia, F06)."""
-    partes = texto.strip().split(":")
-    if len(partes) != 3:
+    """`h:mm:ss[.mmm]` -> milisegundos (mismo formato estricto que la evidencia, F06): sin
+    signo, sin espacios ni separadores raros, como mucho tres decimales."""
+    m = _TIEMPO.fullmatch(texto.strip())
+    if m is None:
         raise TranscripcionError(f"tiempo invalido {texto!r} (h:mm:ss[.mmm])")
-    try:
-        h, m = int(partes[0]), int(partes[1])
-        seg_txt, _, frac = partes[2].partition(".")
-        seg = int(seg_txt)
-        mil = int((frac + "000")[:3]) if frac else 0
-    except ValueError as exc:
-        raise TranscripcionError(f"tiempo invalido {texto!r}") from exc
-    if not (0 <= m < 60 and 0 <= seg < 60):
-        raise TranscripcionError(f"tiempo invalido {texto!r}")
-    return ((h * 60 + m) * 60 + seg) * 1000 + mil
+    h, mi, seg = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    mil = int((m.group(4) + "000")[:3]) if m.group(4) else 0
+    return ((h * 60 + mi) * 60 + seg) * 1000 + mil
 
 
 def texto_entre(

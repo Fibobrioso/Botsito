@@ -62,3 +62,18 @@ def cargar_ajustes(ruta: Path, nombres_de_parametros: frozenset[str] = frozenset
         data=Path(str(rutas["data"])),
         knowledge=Path(str(rutas["knowledge"])),
     )
+
+
+def carpeta_datos(repo: Path) -> Path:
+    """`[rutas].data` de `config/settings.local.toml` si existe, si no la de
+    `settings.example.toml`, si no `repo/data`. Un TOML ilegible es `AjustesError`: nadie debe
+    seguir con `repo/data` en silencio (una validacion diria "no esta en esta maquina" en vez de
+    senalar el fichero roto)."""
+    for nombre in ("settings.local.toml", "settings.example.toml"):
+        ruta = repo / "config" / nombre
+        if ruta.exists():
+            try:
+                return repo / cargar_ajustes(ruta).data
+            except AjustesError as exc:
+                raise AjustesError(f"{nombre}: {exc}") from exc
+    return repo / "data"

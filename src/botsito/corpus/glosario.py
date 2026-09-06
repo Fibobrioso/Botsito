@@ -33,8 +33,9 @@ CAMPOS_SEGMENTO = ("transcripcion_id", "segmento", "verificado_por")
 _LIMITE_INICIO = (r"\b", r"(?<!\w)")
 _LIMITE_FIN = (r"\b", r"(?!\w)")
 # Comodines o cuantificadores que casarian texto arbitrario aunque lleven \b en los extremos
-# (`\b\w+\b`, `\b\d+\b`, `[a-z]+`): solo entran literales, alternancias, grupos y `?`.
-_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^|\\[SsWwDd]|\.\{|(?<!\\)[+*{\[]")
+# (`\b\w+\b`, `\b\d+\b`, `[a-z]+`, `m.`): solo entran literales (con `\.` escapado),
+# alternancias, grupos y `?`.
+_SIN_LIMITE = re.compile(r"\.\*|\.\+|\[\^|\\[SsWwDd]|\.\{|(?<!\\)[+*{\[.]")
 
 
 class GlosarioError(ValueError):
