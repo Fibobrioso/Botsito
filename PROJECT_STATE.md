@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-F05 · frame-extraction · WAITING_FOR_USER_VALIDATION (informe en docs/validation/F05-frame-extraction.md)
+— (F05 integrada; F07 pendiente de abrir)
 
 ## Current Branch
-feature/F05-frame-extraction
+main
 
 ## Stable Main State
-a7f8b4b · merge de F04. make check verde: 359 casos (236 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 4 de transcripcion). CI Ubuntu verde en la rama (run 33986995223). Tag stable/F04. Rama main protegida en GitHub.
+dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 33999794218). Tag stable/F05. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -53,9 +53,9 @@ a7f8b4b · merge de F04. make check verde: 359 casos (236 funciones), 4 contrato
 - F09 · expert-feedback-model · validada el 2026-09-04 · docs/validation/F09-expert-feedback-model.md · tag stable/F09
 - F15 · market-data-ohlc · validada el 2026-09-04 · docs/validation/F15-market-data-ohlc.md · tag stable/F15
 - F04 · transcription-pipeline · validada el 2026-09-05 · docs/validation/F04-transcription-pipeline.md · tag stable/F04
+- F05 · frame-extraction · validada el 2026-09-05 · docs/validation/F05-frame-extraction.md · tag stable/F05
 
 ## Features Waiting for Validation
-- F05 · frame-extraction (rama `feature/F05-frame-extraction`; informe `docs/validation/F05-frame-extraction.md`; 4 manifiestos `fr-*`; 8,9 GiB de PNG en `data/fotogramas/` de esta maquina)
 —
 
 ## Existing Components
@@ -236,17 +236,18 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F05 · frame-extraction (orden E: F04 -> F05, F07, F08 -> F10). F10 absorbe: parametros UNKNOWN
+F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H): glosario v2 aprobado, los 5 videos retranscritos con `--reemplaza-a`, copia de crudas y WAV en Drive, v5 subido a Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
 pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-El usuario valida F05 (informe `docs/validation/F05-frame-extraction.md`, seccion "Que debe decidir el usuario"); tras validar, ritual de merge (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff`, tag `stable/F05`, `docs(state)`, `make check`, push). Despues: F07 (evidence-extraction) con la secuencia previa glosario v2 -> retranscribir -> copia en Drive, y con `referencias_conocidas` de F05 en la evidencia.
+Abrir F07 con el metodo supervisado (brief -> revision de diseno -> construir -> auditoria de cierre -> informe). Antes: decidir el glosario v2 (propuestas en el informe F04), retranscribir los 5 videos con `--reemplaza-a`, copiar `data/transcripciones/*/cruda.jsonl` y `audio.wav` a Drive y subir v5 a Drive.
 
 ## Last Stable Commit
-a7f8b4b · merge: F04 transcription-pipeline validado por el usuario · tag stable/F04
+dd8de55 · merge: F05 frame-extraction validado por el usuario · tag stable/F05
 
 ## Change Log
+- 2026-09-05 · F05 VALIDADA por el usuario (acepto las cuatro decisiones: cobertura completa a 1 fps sin perdida, Excel y ficha de Word hacia F07 y F10, sin copia de fotogramas en Drive, candidatos A-9 hacia F07). merge --no-ff a main (dd8de55); tag stable/F05. Pregunta del usuario respondida: las decisiones y la lista de obligatorios son modificables; los manifiestos no se editan, se reemplazan.
 - 2026-09-05 · Material adicional del usuario ("Info extra de backtesting") integrado en el corpus por su instruccion antes de validar F05: v5 (`2026-09-05 21-03-59.mkv`, 365 s, FXReplay abril; transcrito `tr-v5-...-01a1ae03`, 99 segmentos; fotogramas `fr-v5-718ecabb`, 366), xlsx abril 2026 (38 operaciones) y 6 capturas de Analytics como `material_adicional`; `fuentes.yaml` y `manifest.yaml` (5 videos); hechos en Lineamientos (0,8 "SL por defecto", reentrada tras equal, RR sobre 1 %, 1:3 con 1:4 futuro, backtest abril 47 %/PF 4,01). Deuda: subir v5 a Drive.
 - 2026-09-05 · F05 construida (ADR-0008): brief con revision de diseno por agente (7 bloqueantes aplicados: `fps=1` elegia el fotograma en n+0,47 s y reescribia el `pts`; `huecos` vacuo; referencias heredadas citables; "cinco obligatorios"; salidas incompletas; test AST inviable) y decision del usuario (maxima fidelidad sin restriccion de recursos: cobertura completa a 1 fps en PNG sin perdida, cambio de la tabla A). Cuatro videos extraidos (16 182 fotogramas, 8,9 GiB, ~11 min, `huecos: []`), determinismo 80/80 por `-ss -copyts`, obligatorios legibles (Excel 2,83/3,3; 4,08/3,94; 1,19537), candidatos A-9 y ficha de reglas en Word (V3 0:01:41) como hechos para F07. Informe WAITING_FOR_USER_VALIDATION. Auditoria de cierre (2 agentes) aplicada: A1 carpeta de trabajo decidida tambien por los manifiestos (otra build/maquina ya no es callejon sin salida), A2 `segundos_ausentes_ms` (referencias solo a fotogramas que existen; sin el campo, cobertura densa obligatoria), A3 `start_time != 0` rechazado, YAML estricto en guardias, `show` acotado por duracion; docs: resolucion v4, 8,9 GiB, Change Regimes con corpus/fotogramas, brief anotado, READMEs. CI rama: run 33992054088 verde (pre-auditoria) y run 33992911952 verde sobre a118352 (cierre).
 - 2026-09-05 · F04 VALIDADA por el usuario (decisiones: A-12 queda como pregunta al trader; glosario v2 como paso previo a F07 con retranscripcion de los 4 videos; constantes de corte tecnicas; lo heredado de Whisper tiny no se cita). Commit de docs de la auditoria final reescrito con trailer `Fuente: ADR-0005` (tocaba knowledge/spec/README.md; CI lo detecto: run 33985993346 rojo, 33986995223 verde). merge --no-ff a main (a7f8b4b); tag stable/F04
