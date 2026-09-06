@@ -53,10 +53,46 @@ Whisper), sesga hacia el vocabulario y no es estable; `initial_prompt` no mostro
 Decision: `initial_prompt` (ADR-0007 sin cambio de motor) + sustituciones del glosario.
 
 ## Retranscripcion (v1-v5)
-PENDIENTE DE COMPLETAR
+Los cinco videos con `corpus transcribe --reemplaza-a <id anterior>` (glosario v2 como
+`initial_prompt`, 99 tokens; misma GPU, versiones y corte que F04; ~1 h 5 min de GPU en total).
+Cada uno en carpeta nueva `large-v3-int8-float16-<huella8>` (la huella cambio por el prompt);
+las carpetas y crudas anteriores siguen en `data/` sin tocar. Comparacion cruda nueva frente a
+cruda reemplazada (palabras normalizadas, `difflib`; script `comparar.py` en el scratchpad):
+
+| Video | Id activo (reemplaza a) | Segmentos | Palabras | Ratio | Habla (s) | `no_habla` | Hechos clave comprobados |
+|---|---|---|---|---|---|---|---|
+| v1 | `tr-v1-...-bbd8a931` (00fcaf53) | 403 -> 405 | 4552 -> 4552 | 1,000 | 1631 -> 1631 | 0 -> 0 | 0,75; 50 % (V1 0:15:59) |
+| v2 | `tr-v2-...-28391c2c` (ac6b337b) | 854 -> 806 | 8671 -> 8693 | 0,958 | 3382 -> 3419 | 339 -> 342 | stop loss; order flow |
+| v3 | `tr-v3-...-270a4851` (570a315f) | 1031 -> 1020 | 10668 -> 10727 | 0,987 | 3999 -> 3993 | 54 -> 36 | 2.83; 3.3; "utc" |
+| v4 | `tr-v4-...-a8d1bccc` (3f8c826e) | 1645 -> 1625 | 14257 -> 14256 | 0,978 | 4945 -> 4923 | 441 -> 457 | 0.50 / 0.40; spread; lotaje; "tres" |
+| v5 | `tr-v5-...-3c6fbb57` (01a1ae03) | 99 -> 80 | 814 -> 805 | 0,968 | 318 -> 336 | 0 -> 0 | 0.80; "SL por defecto"; "sell"; 1.3; 1.4 |
+
+Huecos (> 30 s sin habla) identicos a los anteriores (v2: 7, v3: 3, resto 0); `repeticion`
+baja (v2 2 -> 1, v3 1 -> 0, v4 3 -> 0). Bloques de mas de 6 palabras distintos: 0 en v1 y v5,
+2 en v2 y v4, 4 en v3, todos en tramos de charla cruzada o musica (por ejemplo v2 "eres mi
+amigo desde que somos ninos", v3 "la mayoria de veces no hace eso"): son lecturas distintas de
+audio ambiguo, no perdida de un tramo con decision. Segmento mas largo: 30,4 / 55,0 / 42,0 /
+47,5 / 39,6 s (v1..v5). `transcript check` y `knowledge validate` en verde con 10 manifiestos
+(5 activos, 5 reemplazados).
+
+Sustituciones aplicadas por `glossary apply` sobre las activas (glosario `e55d5a2c`): v1 2,
+v2 5, v3 4, v4 6, v5 0. Las 6 de alcance segmento: `boss` -> BOS (v3 seg 126, 0:11:29),
+`voz` -> BOS (v2 seg 275, 0:31:20), `blogs` -> BOS (v4 seg 789, 0:46:59), `split` -> spread
+(v4 seg 57, 0:06:06 y seg 131, 0:09:09), `sprint` -> spread (v4 seg 109, 0:08:27). Las demas
+apariciones de esos patrones quedan como `dudas` en `correcciones.jsonl` (v2: 8, v3: 13,
+v4: 4): F07 decide segmento a segmento ("un orden blog" en v2 0:08:05 es order block, no BOS).
 
 ## Copia fuera de esta maquina
-PENDIENTE DE COMPLETAR
+- Drive: subcarpeta "transcripciones (crudas, Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`)
+  dentro de "Estrategia del trader", creada por API con `SHA256SUMS.txt`, `LEEME.txt` y los 5
+  manifiestos activos (texto, subidos por API en esta sesion).
+- PENDIENTE del usuario (las herramientas de la sesion no suben binarios de ese tamano: el API
+  del conector solo admite texto o base64 en el propio mensaje, y el navegador exige un dialogo
+  nativo): arrastrar a esa carpeta el contenido de `data/drive_staging/` (21 ficheros, 625 MiB:
+  5 `cruda.jsonl` + 5 `cruda.txt` + 5 manifiestos + 5 WAV + `2026-09-05 21-03-59.mkv`), cuyos
+  sha256 estan en `SHA256SUMS.txt` y coinciden con `sha256_cruda`/`sha256_wav` de los
+  manifiestos (comprobado por el script `staging.py` al copiar). Luego anotar el `drive_id` de
+  v5 en `knowledge/corpus/fuentes.yaml` (hoy es una nota).
 
 ## Archivos creados
 `tests/unit/test_motor_prompt.py`, `docs/validation/F07-previos.md`, manifiestos
@@ -87,6 +123,44 @@ uv run botsito knowledge validate
 validate. Nuevos: huella sin GPU (igual con otra GPU, distinta con otro ctranslate2/prompt/
 corte), guardia del prompt (vacio, dentro del limite, truncado = error de dominio),
 configuracion sin `hotwords`.
+
+## Que deberia observar el usuario
+`knowledge validate` en verde con 10 manifiestos de transcripcion; `transcript show --video v5
+--t0 0:03:22 --t1 0:03:34` con la frase del 0,80 y el SL por defecto; el glosario con 12
+sustituciones; la carpeta de Drive con SHA256SUMS y los 5 manifiestos.
+
+## Que casos funcionan
+Todo el alcance de la fila H.2 salvo la subida de binarios a Drive (queda en `drive_staging/`).
+
+## Que casos todavia no funcionan / limitaciones
+- `initial_prompt` solo condiciona la primera ventana de cada fragmento: la jerga del resto
+  la corrige el glosario (sustituciones con ejemplo real), no el motor. Alternativa medida y
+  descartada (`hotwords`). Otra alternativa no medida: `condition_on_previous_text=True` (fue
+  descartada en F04 por bucles de repeticion).
+- Segmentos de hasta 55 s (v2) tambien con `initial_prompt`: la cita fina usa `palabras` (F07).
+- Las `dudas` del glosario (25 segmentos) no se resuelven aqui: F07 las mira al citar.
+- `drive_id` de v5 y la copia de crudas/WAV dependen del usuario.
+
+## Riesgos
+Si el usuario no sube `drive_staging/`, otra maquina no puede verificar `sha256_cruda` (solo
+esquema e historial) ni regenerar sin ~1 h de GPU. Si F07 cita un segmento con `duda`, debe
+mirar el audio.
+
+## Impacto sobre funcionalidades anteriores
+Los ids `tr-*` de F04 quedan reemplazados (nadie los citaba aun: F07 no ha empezado). El
+esquema del manifiesto no cambia (campos nuevos dentro de `motor`, que es libre salvo
+`modelo`). `huella_de` cambia para TODAS las carpetas: las de F04 pasan a ser "ajenas" por
+manifiesto (`_carpeta_base_registrada_ajena`), lo que ya se comprobo al abrir carpetas nuevas.
+
+## Que debe decidir el usuario
+1. Ratificar que `hotwords` queda descartado y el motor sigue con `initial_prompt` (ADR-0007
+   enmienda), con las sustituciones del glosario como via para la jerga.
+2. Ratificar las 6 sustituciones de alcance segmento (BOS x3, spread x3) con
+   `verificado_por: usuario (aprobacion del 2026-09-06 ...)`; si prefiere verificarlas oyendo
+   el audio, los minutos estan en el glosario.
+3. Subir `data/drive_staging/` a la carpeta de Drive y anotar el `drive_id` de v5 (dueno:
+   usuario). Puede hacerse despues del merge (solo cambia `fuentes.yaml`, regimen manual).
+4. Cierre como rama con tag `stable/F07-previos` (misma regla que la auditoria global).
 
 ## Estado
 WAITING_FOR_USER_VALIDATION
