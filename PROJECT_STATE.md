@@ -19,7 +19,7 @@ Una funcionalidad = una rama `feature/F##-nombre` = un FUNCTIONALITY VALIDATION 
 tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. Push autorizado por el usuario el 2026-09-04; `main` solo recibe merges validados.
 
 ## How to Start a Session
-1. Leer este fichero. 2. Leer `docs/plan/features/<Current Feature>.md` y `docs/HANDOFF.md` (contexto humano de la ultima sesion). 3. `make check` (desde F01).
+1. Leer este fichero. 2. Leer `docs/plan/features/<Current Feature>.md` y `docs/HANDOFF.md` (contexto humano de la ultima sesion; si contradice este fichero, manda este fichero). 3. `make check` (desde F01).
 4. Si `Current Feature` está WAITING_FOR_USER_VALIDATION: no avanzar; preguntar.
 
 ## Change Regimes (must be respected)
@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-— (F05 integrada; F07 pendiente de abrir)
+Auditoria global de la estructura (rama `feature/F05-auditoria-estructura`, pedida por el usuario el 2026-09-05 antes de abrir F07): corregir lo dejado en el camino; todo en verde antes de proseguir
 
 ## Current Branch
-main
+feature/F05-auditoria-estructura
 
 ## Stable Main State
-dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 33999794218). Tag stable/F05. Rama main protegida en GitHub.
+dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 33999794218); en main, c97273f cancelado por concurrency y de42ec1 verde (run 34000499649). Tag stable/F05. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -76,7 +76,7 @@ dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contrato
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
 - knowledge/evidence/README.md (esquema de EvidenceItem) · src/botsito/evidence/modelo.py
-- knowledge/feedback/README.md (esquema de FeedbackRecord y plantilla de sesion) · src/botsito/feedback/modelo.py · src/botsito/evidence/historial.py
+- knowledge/feedback/README.md (esquema de FeedbackRecord y plantilla de sesion) · src/botsito/feedback/modelo.py · src/botsito/comun/historial.py
 - knowledge/corpus/fuentes.yaml (fuentes esperadas, ids de Drive) · knowledge/corpus/manifest.yaml (GENERADO) · src/botsito/corpus/inventario.py
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; solo `huso_operativa` CONFIRMED por ADR-0005 y `anclaje_h4` UNKNOWN hasta F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/adr/0005-datos-de-mercado-fuente-formato-y-relojes.md · data/manifests/README.md (esquema del manifiesto) · src/botsito/data/agregacion.py (regla de anclaje) · tests/fixtures/ohlc/README.md (fixtures reales con sha256)
@@ -88,7 +88,7 @@ dd8de55 · merge de F05. make check verde: 387 casos (264 funciones), 4 contrato
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-264 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+265 funciones de test (parametrizadas x3, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -112,10 +112,14 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - Sesión 3 (tras F32): divergencias de ejecución · pendiente
 - Mensual (F34): discrepancias en vivo · pendiente
 
-## Lineamientos recibidos del usuario (pendientes de formalizar como evidencia/feedback)
-Lo que el usuario (consultor) aporta por escrito sobre la operativa. NO es evidencia (no es cita del
-corpus) ni feedback del trader: se convierte en items de evidencia en F07 cuando se re-cite sobre la
-transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y su mapeo.
+## Lineamientos recibidos del usuario y hechos del corpus pendientes de evidencia (F07)
+Dos fuentes distintas, separadas a proposito: (a) lo que el usuario (consultor) aporta por escrito
+sobre la operativa (lineamiento, NO es evidencia ni feedback del trader) y (b) hechos leidos en el
+corpus (crudas y fotogramas, con marca y referencia) que aun no son items de evidencia. Ambos se
+convierten en evidencia en F07 (citando la cruda o `fr-<id>/<t_ms>`) y en reglas en F11; ninguna
+inferencia de regla se hace aqui.
+
+### (a) Lineamientos del usuario
 
 - **2026-09-04 · Geometria del riesgo y gestion del stop.** "Se traza un 1:3 inicialmente; con eso
   se calcula el lotaje y todo. Una vez se mete la operativa, se baja el SL hasta el 0,75 del trade
@@ -141,6 +145,7 @@ transcripcion nueva, y en reglas en F11. Hasta entonces vive aqui con su fecha y
     backtestee buscando el 1:3... posibilidad de amplificar a 1:4, lo veremos mas adelante"; la
     caja en pantalla (`fr-v5-718ecabb/240000`) tiene el nivel 0,8, no 0,75. Refuerza la pregunta (a)
     de A-10. Hechos para F07; no se decide aqui.
+### (b) Hechos del corpus pendientes de evidencia (F07)
 - **2026-09-05 · Reentrada tras un "igual" (equal) y descarte por flujo de ordenes** (v5, hechos de
   la cruda, sin inferir regla): 0:00:39 "no hay entrada porque no me genera el esquema 2 de entrada,
   sino que genera un flujo de ordenes, esa entrada queda descartada"; 0:01:56-0:02:58 "el precio
@@ -193,14 +198,14 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
 ## Technical Debt
 - Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
 - Copia de seguridad de `data/transcripciones/<v>/large-v3-int8-float16/cruda.jsonl` (y `audio.wav`) fuera de esta maquina (Drive) con su sha256 del manifiesto; dueno: usuario, antes de abrir F07. Sin ella, otra maquina solo valida esquema e historial (o retranscribe: ~1 h de GPU).
-- Glosario ASR v2: sustituciones e ids propuestos en el informe F04 ("Que debe decidir el usuario", punto 2). Cambiar `vocabulario` cambia el `initial_prompt` y la huella: exige retranscribir los 4 videos con ids nuevos (`reemplaza_a`), decidirlo ANTES de que F07 cite ids de transcripcion; las `sustituciones` no obligan a retranscribir (solo `corpus glossary apply`).
+- Glosario ASR v2: sustituciones e ids propuestos en el informe F04 ("Que debe decidir el usuario", punto 2). Cambiar `vocabulario` cambia el `initial_prompt` y la huella: exige retranscribir los 5 videos (v1-v5) con ids nuevos (`reemplaza_a`), decidirlo ANTES de que F07 cite ids de transcripcion; las `sustituciones` no obligan a retranscribir (solo `corpus glossary apply`).
 - Fotogramas obligatorios de F05 LEIDOS (hechos, informe F05; la evidencia la registra F07): V3 0:28:56 el Excel muestra `2,83 / -0,75 / 3,3 / -0,75 / -0,5` (inferencia: la heredada `2,3 / 3,23` no coincide con la pantalla; large-v3 coincide en 2.83 y dice 3.33 donde hay 3,3); V2 0:33:21 herramienta de posicion `4,08` y `3,94` (golden F21 confirmado); V4 0:12:30 caja 0,75 = `1,19537`. Relojes de grafico en `UTC+2` en V2 (TradingView) y V4 (FXReplay); V3 0:01:41 "lo tengo configurado como utc mas 2": candidatos de A-9 para F07. Hallazgo: `fr-v3-982da728/101000` es la ficha de reglas en Word con las confirmaciones del trader (2 cartuchos "si" frente a "limito a tres" en V4 0:48:41: A-2; "probar sin parciales").
 - F07 debe anadir a `validar_contra_manifiesto` y al `comprobar` de `evidence new` el parametro de referencias conocidas (`corpus.manifiestos_fotogramas.referencias_conocidas`, que excluye `heredado_v2`) y actualizar `knowledge/evidence/README.md` (fila `fotogramas`: `fr-<id>/<t_ms>` o `material_adicional`).
 - v5 (`corpus/Estrategia del trader/2026-09-05 21-03-59.mkv`, 121,5 MB) NO esta en Drive: subirlo a la carpeta "Estrategia del trader" y anotar su `drive_id` en `fuentes.yaml` (dueno: usuario). Su cruda entra en la copia de `data/transcripciones` pendiente antes de F07.
-- `data/fotogramas/` (9,0 GiB con v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
+- `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
 - F04, pendientes tecnicos declarados en el informe: (i) la huella de reanudacion incluye GPU/driver (excluirlos al retranscribir para el glosario v2; cambiarla ahora invalidaria los parciales); (ii) faster-whisper trunca el `initial_prompt` a ~224 tokens sin aviso y, con `condition_on_previous_text=False`, solo condiciona la primera ventana de cada fragmento (medir y valorar `hotwords` antes del glosario v2; cambia la huella); (iii) `palabras` de la cruda quedan bajo un texto corregido sin marcar (F07 cita palabras solo desde la capa cruda). Dueno: (i) y (ii) la retranscripcion del glosario v2; (iii) F07.
 - Hallazgo F04 sin registrar aun: V4 1:28:20-1:28:37 "entrar con 0.50... 0.40 creo yo... estatico o escalado en base a la cuenta" (riesgo por operacion). Entra como evidencia en F07 y como pregunta candidata en F10.
-- Regla de cita para F07 (decidida en la auditoria del 2026-09-05, ver MASTER_PLAN H fila F07): `cita_literal` se verifica contra la capa CRUDA (la que forma el id `tr-*`); la corregida es ayuda de lectura. Secuencia obligatoria: glosario v2 aprobado -> retranscribir los 4 videos (`--reemplaza-a`) -> copia en Drive -> primera evidencia con `transcripcion:`.
+- Regla de cita para F07 (decidida en la auditoria del 2026-09-05, ver MASTER_PLAN H fila F07): `cita_literal` se verifica contra la capa CRUDA (la que forma el id `tr-*`); la corregida es ayuda de lectura. Secuencia obligatoria: glosario v2 aprobado -> retranscribir los 5 videos (v1-v5) (`--reemplaza-a`) -> copia en Drive -> primera evidencia con `transcripcion:`.
 - `test_fichero_real_sin_valores_de_estrategia` (registro) y `test_directorio_real_valida`
   (feedback) afirman que no hay valores de estrategia ni registros: se retiran en F11 y en la
   sesion 1.
@@ -247,6 +252,7 @@ Abrir F07 con el metodo supervisado (brief -> revision de diseno -> construir ->
 dd8de55 · merge: F05 frame-extraction validado por el usuario · tag stable/F05
 
 ## Change Log
+- 2026-09-05 · Incidente de CI en main: el commit `docs(handoff)` f452e6f (tras `stable/F05`) puso `state check` y la CI en rojo (run 34000376588) porque en main solo puede cambiar PROJECT_STATE.md tras el tag; revertido en de42ec1 (run 34000499649 verde). El `docs(state)` c97273f quedo cancelado por `cancel-in-progress` (run 34000351246) y su `make check` es local. El `docs(handoff)` de F04 (3b754f1) tambien estaba en rojo (run 33988126976) sin registro: main estuvo en rojo del 2026-09-05 19:46Z al 2026-09-06 00:08Z. Regla escrita en MASTER_PLAN §F: el HANDOFF se actualiza en la rama. Rama `feature/F05-auditoria-estructura` abierta a peticion del usuario para una auditoria global antes de F07.
 - 2026-09-05 · F05 VALIDADA por el usuario (acepto las cuatro decisiones: cobertura completa a 1 fps sin perdida, Excel y ficha de Word hacia F07 y F10, sin copia de fotogramas en Drive, candidatos A-9 hacia F07). merge --no-ff a main (dd8de55); tag stable/F05. Pregunta del usuario respondida: las decisiones y la lista de obligatorios son modificables; los manifiestos no se editan, se reemplazan.
 - 2026-09-05 · Material adicional del usuario ("Info extra de backtesting") integrado en el corpus por su instruccion antes de validar F05: v5 (`2026-09-05 21-03-59.mkv`, 365 s, FXReplay abril; transcrito `tr-v5-...-01a1ae03`, 99 segmentos; fotogramas `fr-v5-718ecabb`, 366), xlsx abril 2026 (38 operaciones) y 6 capturas de Analytics como `material_adicional`; `fuentes.yaml` y `manifest.yaml` (5 videos); hechos en Lineamientos (0,8 "SL por defecto", reentrada tras equal, RR sobre 1 %, 1:3 con 1:4 futuro, backtest abril 47 %/PF 4,01). Deuda: subir v5 a Drive.
 - 2026-09-05 · F05 construida (ADR-0008): brief con revision de diseno por agente (7 bloqueantes aplicados: `fps=1` elegia el fotograma en n+0,47 s y reescribia el `pts`; `huecos` vacuo; referencias heredadas citables; "cinco obligatorios"; salidas incompletas; test AST inviable) y decision del usuario (maxima fidelidad sin restriccion de recursos: cobertura completa a 1 fps en PNG sin perdida, cambio de la tabla A). Cuatro videos extraidos (16 182 fotogramas, 8,9 GiB, ~11 min, `huecos: []`), determinismo 80/80 por `-ss -copyts`, obligatorios legibles (Excel 2,83/3,3; 4,08/3,94; 1,19537), candidatos A-9 y ficha de reglas en Word (V3 0:01:41) como hechos para F07. Informe WAITING_FOR_USER_VALIDATION. Auditoria de cierre (2 agentes) aplicada: A1 carpeta de trabajo decidida tambien por los manifiestos (otra build/maquina ya no es callejon sin salida), A2 `segundos_ausentes_ms` (referencias solo a fotogramas que existen; sin el campo, cobertura densa obligatoria), A3 `start_time != 0` rechazado, YAML estricto en guardias, `show` acotado por duracion; docs: resolucion v4, 8,9 GiB, Change Regimes con corpus/fotogramas, brief anotado, READMEs. CI rama: run 33992054088 verde (pre-auditoria) y run 33992911952 verde sobre a118352 (cierre).
@@ -292,12 +298,12 @@ dd8de55 · merge: F05 frame-extraction validado por el usuario · tag stable/F05
 - 2026-09-04 · F02 construida: valores.py, registro.py, ajustes.py, parametros.yaml vacio, state check ampliado, test de literales real, ADR-0002/0003, sin .pre-commit-config; 59 tests; WAITING_FOR_USER_VALIDATION
 - 2026-09-04 · rama feature/F02-config-and-parameter-registry abierta; brief escrito
 - 2026-09-04 · F01 VALIDADA por el usuario; merge --no-ff a main (85cedc4); tag stable/F01; push de main
-- 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
-- 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
-- 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
-- 2026-09-04 · auditoria de fases (docs/plan/AUDITORIA_FASES_2026-09-04.html): 4 criticos, 19 huecos; plan ampliado (MASTER_PLAN.md seccion H)
-- 2026-09-04 · F01 corregida: .gitattributes, tests de integridad del indice, hook anti-main, uv --locked; 26 tests; WAITING_FOR_USER_VALIDATION
-- 2026-09-04 · push de la rama F01 autorizado; CI Ubuntu verde (run 33880866257). Linux verificado
-- 2026-09-04 · pruebas cruzadas: clon limpio, autocrlf=true, HEAD separado, PowerShell 7, Python 3.13 verdes; Linux pendiente del primer push. HALLAZGO: core.hooksPath relativo omitia el hook en main (sin el fichero); make hooks ahora copia a .git/hooks. Reprobado OK
-- 2026-09-04 · tercera auditoria: hook con modo 100755 en el indice, READMEs en todas las carpetas (sin exenciones), holdout/{1,2,3} fisico, mypy strict sobre tests
 - 2026-09-04 · segunda auditoria: Last Stable Commit corregido (era 0b43244, main esta en 7baa27d), Next Feature = F02, brief de F01 y README actualizados
+- 2026-09-04 · tercera auditoria: hook con modo 100755 en el indice, READMEs en todas las carpetas (sin exenciones), holdout/{1,2,3} fisico, mypy strict sobre tests
+- 2026-09-04 · pruebas cruzadas: clon limpio, autocrlf=true, HEAD separado, PowerShell 7, Python 3.13 verdes; Linux pendiente del primer push. HALLAZGO: core.hooksPath relativo omitia el hook en main (sin el fichero); make hooks ahora copia a .git/hooks. Reprobado OK
+- 2026-09-04 · push de la rama F01 autorizado; CI Ubuntu verde (run 33880866257). Linux verificado
+- 2026-09-04 · F01 corregida: .gitattributes, tests de integridad del indice, hook anti-main, uv --locked; 26 tests; WAITING_FOR_USER_VALIDATION
+- 2026-09-04 · auditoria de fases (docs/plan/AUDITORIA_FASES_2026-09-04.html): 4 criticos, 19 huecos; plan ampliado (MASTER_PLAN.md seccion H)
+- 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
+- 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
+- 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion

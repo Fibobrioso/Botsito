@@ -7,7 +7,9 @@ permissions:
   contents: read
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true   # dos pushes seguidos: solo cuenta el ultimo
+  # Dos pushes seguidos en una rama: solo cuenta el ultimo. En main NO se cancela: cada commit de
+  # main es un estado citado en PROJECT_STATE y necesita su propio veredicto (c97273f quedo sin el).
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
   python:
     runs-on: ubuntu-latest

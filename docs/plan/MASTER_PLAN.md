@@ -13,8 +13,8 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 - Una funcionalidad = una rama `feature/F##-nombre` = un `FUNCTIONALITY VALIDATION REPORT` = un
   merge `--no-ff` tras validacion del usuario. `main` siempre estable, etiquetado `stable/F##`.
 - Regimenes de contenido: evidencia inmutable; feedback del trader solo-anadir; especificacion
-  y casos versionados citando evidencia o feedback; manifiestos de datos y de transcripcion
-  inmutables (ADR-0005, ADR-0007).
+  y casos versionados citando evidencia o feedback; manifiestos de datos, de transcripcion y de
+  fotogramas inmutables (ADR-0005, ADR-0007, ADR-0008).
 - `domain/` puro (sin IO, reloj ni MetaTrader), impuesto por import-linter y test AST.
 - Causalidad en tipos y tests; parametros congelados por argumento, nunca optimizados.
 - Validacion de fidelidad (F26) antes de cualquier MQL5.
@@ -31,7 +31,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | `docs/validation/` | informes de validacion por rama, informes de fidelidad |
 | `docs/spec/` | especificacion legible GENERADA (F13) |
 | `docs/runbooks/` | operacion demo/real (F33) |
-| `knowledge/corpus` | manifiesto con hash y huecos (F03); glosario del ASR y manifiestos inmutables de transcripcion (F04) |
+| `knowledge/corpus` | manifiesto con hash y huecos (F03); glosario del ASR y manifiestos inmutables de transcripcion (F04); obligatorios y manifiestos inmutables de fotogramas (F05) |
 | `knowledge/evidence` | `EvidenceItem` inmutables (F06) |
 | `knowledge/feedback` | `FeedbackRecord` solo-anadir (F09) |
 | `knowledge/spec` | `parametros.yaml` (F02, ADR-0002/0004), `strategy_spec.yaml`, glosario (F11) |
@@ -134,7 +134,13 @@ este orden exacto (el unico que `state check` acepta en verde): (1) `git merge -
 commit `docs(state)` que toca solo `PROJECT_STATE.md` (`Current Branch: main`, `Last Stable
 Commit: <sha del merge>`, `Completed Features`); (4) `make check` desde `main`; (5) push de
 `main` y del tag. Tras el merge y antes de (3), `state check` falla a proposito (rama declarada
-y cambios sin tag): no es un error del ritual.
+y cambios sin tag): no es un error del ritual. `docs/HANDOFF.md` se actualiza DENTRO de la rama,
+antes del merge (citando el tag `stable/F##` futuro, no el SHA): en `main`, tras el tag, solo
+puede cambiar `PROJECT_STATE.md`; un commit `docs(handoff)` en `main` pone `state check` y la CI
+en rojo (paso con F04 3b754f1 y F05 f452e6f, revertido). El run de CI que se anota es el del
+`docs(state)` (el merge se pushea junto y no tiene run propio). Una rama de auditoria global (sin
+numero F) sigue el mismo ritual con tag `stable/F##-auditoria-N` (F## = ultima funcionalidad) y
+un informe `docs/validation/AUDITORIA-<fecha>-<tema>.md`.
 
 ## G · Bucle del experto
 
@@ -158,10 +164,10 @@ una se incorpora al brief de la funcionalidad indicada cuando se abra.
 |---|---|---|
 | Tres particiones reservadas: `holdout-1` (se abre en F26, sesion 2), `holdout-2` (cifra final de fidelidad, una sola apertura), `holdout-3` (correcciones de fase 7). La asignacion se commitea con seed ANTES de la sesion de etiquetado; un test comprueba la fecha del commit | F10, F14, F26, F34, F35 | Medir la fidelidad final sobre casos ya vistos al corregir |
 | Pre-registro: `docs/validation/PREREGISTRO.md` con umbrales de fidelidad, kappa, paridad y DSR, commiteado antes de abrir cualquier holdout; los informes citan su hash | F26, F27, F32, F35 | Ajustar el umbral a la cifra |
-| Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 (hecho: `tests/contract/test_data_manifest_history.py`) | Editar evidencia o feedback saltando los hooks |
+| Test en CI contra el historial de git: cada fichero de `knowledge/evidence/`, `knowledge/feedback/`, etiquetas de casos y manifiestos de datos es byte-identico a su primera version commiteada | F06, F09, F14, F15 (hecho: `tests/contract/test_data_manifest_history.py`), F04 (hecho: `test_transcripcion_history.py`), F05 (hecho: `test_fotogramas_history.py`) | Editar evidencia o feedback saltando los hooks |
 | Prohibicion de inferencias en `evidence/` (cita literal obligatoria; la afirmacion no anade condiciones); todo lo importado de Bot v2 se re-cita sobre la transcripcion large-v3 o entra como UNKNOWN; los defaults del ADR-0015 de Bot v2 (no existe en este repositorio) entran como ambiguedades abiertas | F06, F07 | Arrancar la base de conocimiento contaminada |
 | Propuestas de LLM en `knowledge/_proposals/` con prompt, modelo, salida y decision humana; `extractor` y `reviewed_by` obligatorios en evidencia | F07 | Perder el rastro de que propuso la IA |
-| Cita de evidencia con id de transcripcion y verificada contra la CRUDA: campo opcional `transcripcion` (id `tr-*`) en EvidenceItem sin alterar ids existentes; `evidence new` comprueba `cita_literal` contra `transcript show --capa cruda` de la transcripcion activa (la corregida cambia con cada edicion del glosario bajo el mismo id, asi que no sirve de referencia; las `palabras` solo se citan desde la cruda); condicion previa a la primera evidencia con `transcripcion:`: glosario v2 aprobado, los 4 videos retranscritos con `--reemplaza-a` y copia de `cruda.jsonl`/`audio.wav` en Drive; atribucion de voz por contexto (sin diarizacion, riesgo del brief F04) | F07 | Citas que no se pueden localizar ni reproducir |
+| Cita de evidencia con id de transcripcion y verificada contra la CRUDA: campo opcional `transcripcion` (id `tr-*`) en EvidenceItem sin alterar ids existentes; `evidence new` comprueba `cita_literal` contra `transcript show --capa cruda` de la transcripcion activa (la corregida cambia con cada edicion del glosario bajo el mismo id, asi que no sirve de referencia; las `palabras` solo se citan desde la cruda); condicion previa a la primera evidencia con `transcripcion:`: glosario v2 aprobado, los 5 videos (v1-v5) retranscritos con `--reemplaza-a`, copia de `cruda.jsonl`/`audio.wav` en Drive y v5 subido a Drive con su `drive_id` en `fuentes.yaml`; atribucion de voz por contexto (sin diarizacion, riesgo del brief F04) | F07 | Citas que no se pueden localizar ni reproducir |
 | Transcripciones en dos capas: cruda del ASR (inmutable) y corregida solo por sustituciones del glosario; test `cruda + glosario = corregida`; nombradas por modelo | F04 (hecho: `corpus/manifiestos_transcripcion.comprobar` recomputa `cruda + glosario` en `knowledge validate`; manifiesto inmutable por transcripcion `tr-<video>-<motor>-<hash8>` vigilado por `tests/contract/test_transcripcion_history.py`, ADR-0007) | Reescribir lo que dijo el trader |
 | Modelo de llenado como parametro declarado; informe de ventaja con dos modelos (al tocar / cruce + latencia) | F24, F27 | Un modelo optimista que infla resultados |
 | Contador automatico y versionado de N (ejecuciones de backtest) para el Deflated Sharpe | F24, F27 | N declarado incompleto |
@@ -213,16 +219,19 @@ en su brief al abrirla. Ninguna fila se cierra sin cita en el informe de validac
 | Esquema del manifiesto de datos atado a Dukascopy M1 (`proveedor`, `escala_volumen`, `periodo_min` fijos) | F16, F17 | `schema_version: 2` con campo `contenido: ohlc_m1 | ticks` y tabla `PROVEEDORES` (dukascopy, mt5_demo) al abrir F16; el validador acepta 1 y 2; los manifiestos de F15 no se editan |
 | Tipos monetarios y de tiempo que faltan en `domain/valores.py`: `Lotes`, `Dinero` (lotaje = riesgo x equity / valor del punto), `Minutos`, instante de tick | F21, F22, F24 | F21 anade `Lotes`/`Dinero` en `valores.py` (unico sitio con `Decimal`) antes de la geometria del riesgo; F22 define `MilisegundoUtc` para eventos de tick y una "hora de pared" resuelta por el motor (`comun/husos.py`), nunca por el dominio |
 | F05 sin insumo definido: "tramo con decision" no dice quien lo declara; el HTML habla de intervalos del manifiesto y el brief F04 de la transcripcion | F05 (hecho, ADR-0008) | RESUELTO midiendo: cualquier regla de palabras clave sobre las crudas marca el 46-99 % de cada video (ahorro 7-29 %), asi que F05 extrae TODO el video a 1 fps sin perdida (decision del usuario 2026-09-05: maxima fidelidad sin restriccion de recursos) y el concepto "tramo con decision" desaparece. Obligatorios en `knowledge/corpus/fotogramas_obligatorios.yaml` (V3 0:28:56, V2 0:33:21, V4 0:12:30; validados contra el indice activo). Configuracion del grafico (A-9): sin instante conocido; el informe de F05 lista candidatos buscados en las crudas y F07 elige el fotograma |
-| Detalle vivo de F05–F35 solo en `MASTER_PLAN.html` con nombres obsoletos (`botv3 corpus frames --dense`, `botv3 kb ...`) | F04 (hecho), F05+ | Trasladar el detalle por funcionalidad al Markdown al abrir cada una (el HTML queda como instantanea) |
+| Detalle vivo de F05–F35 solo en `MASTER_PLAN.html` con nombres obsoletos (`botv3 corpus frames --dense`, `botv3 kb ...`) | F04, F05 (hecho), F07+ | Trasladar el detalle por funcionalidad al Markdown al abrir cada una (el HTML queda como instantanea) |
+
+| Previos y entradas de F07 (evidence-extraction), reunidos aqui por la auditoria global del 2026-09-05 | F07 | Previos (dueno usuario salvo que se diga): (1) glosario v2 aprobado (propuestas en el informe F04) y, antes de retranscribir, excluir GPU/driver de la huella de reanudacion y medir el truncado del `initial_prompt` / `hotwords`; (2) retranscribir los 5 videos con `--reemplaza-a` (sesion); (3) copia de `cruda.jsonl` + `audio.wav` de los 5 en Drive; (4) v5 subido a Drive y `drive_id` en `fuentes.yaml`. Entradas de F07: cita de audio contra la CRUDA (`transcript show --capa cruda`, ADR-0007 §7; `palabras` solo desde la cruda), cita de pantalla `fr-<id>/<t_ms>` o `material_adicional` via `manifiestos_fotogramas.referencias_conocidas` conectada a `validar_contra_manifiesto` y al `comprobar` de `evidence new` (ADR-0008 §6) y `knowledge/evidence/README.md` actualizado (`video_id` v1..v5); `knowledge/_proposals/` con `extractor`/`reviewed_by` (fila H); lo heredado (`heredado_v2`, Whisper tiny) no se cita. Hechos ya leidos que F07 registra: obligatorios de F05 (Excel V3 0:28:56 `2,83 / 3,3`; ratios 4,08 / 3,94 V2 0:33:21; caja 0,75 = 1,19537 V4 0:12:30), candidatos A-9 (relojes UTC+2, V3 0:01:41), ficha de reglas en Word `fr-v3-982da728/101000`, v5 (0,8 "SL por defecto", reentrada tras equal, RR sobre 1 %, 1:3 con 1:4 futuro), backtest de abril (38 operaciones), V4 1:28:20 (riesgo por operacion): todo en PROJECT_STATE "Hechos del corpus pendientes de evidencia". Golden H4 del trader como test de regresion sobre F15 (fila anclaje H4) |
 
 ## Change Log del plan
+- 2026-09-05 · auditoria global de la estructura (rama `feature/F05-auditoria-estructura`): §0 y B con fotogramas (ADR-0008); §F con la regla del HANDOFF (en la rama, nunca en main tras el tag), el run de CI que se anota y el ritual de una rama de auditoria; H con F04/F05 en la fila de tests de historial y 5 videos + v5 en Drive en la fila de cita; H.2 con F05 hecho y fila nueva "Previos y entradas de F07"; Change Log reordenado
 - 2026-09-05 · F05: tabla A fila F05 reescrita (cobertura completa a 1 fps sin perdida en lugar de tramos con decision; ADR-0008) tras medir sobre las crudas que una regla de tramos no filtra (46-99 % marcado) y por instruccion del usuario (maxima fidelidad sin restriccion de recursos); H.2 fila F05 resuelta; brief con revision de diseno por agente (7 bloqueantes: `fps=1` elegia el fotograma equivocado y reescribia el `pts`, huecos vacuos, referencias heredadas citables, etc.), todos aplicados
 - 2026-09-05 · F04: tabla B (transcripcion en dos capas), tabla A (33 marcas; F05 depende de F04; F08 y F10 con dependencias explicitas), fila H "dos capas" hecho (pendiente de validacion del usuario) y fila H cita de evidencia decidida contra la cruda con la secuencia glosario v2 -> retranscribir -> Drive -> F07; H.2: fila nueva para F05 (insumo y fotogramas obligatorios) y F07 ampliada; §0 regimenes con manifiestos inmutables; §F con el metodo supervisado (revision de diseno, auditoria de cierre con dos agentes, decisiones del usuario); G con A-12; grafo D con F04 -> F05
 - 2026-09-04 · F15: H.2 marca "hecho" tres relojes (ADR-0005: `huso_operativa` parametro, `huso_datos` campo del manifiesto), anclaje H4 (particion UTC por reloj de pared, `anclaje_h4` UNKNOWN/A-9), `Puntos(int)` y manifiestos inmutables; filas nuevas: casos con datos reales (F10/F14 citan `dataset_id` + ventana), proveedor Dukascopy vs broker (F16/F17/F33), esquema de manifiesto v2 (F16) y tipos monetarios (F21/F22); detalle de F15 trasladado del HTML al brief. ADR-0006: contrato de capas revisado (validation > viewer/mql5bridge > engine > cases > spec > feedback > evidencia/corpus/data/config > comun > domain), paquete `comun`, accesores del registro por tipo declarado; ritual de cierre con el orden real (merge, tag, docs(state), make check)
 
-- 2026-09-03 · version inicial (35 funcionalidades, 8 fases).
 - 2026-09-04 · auditoria de fases: seccion H, tres particiones reservadas, pre-registro, tests contra
   historial; F01 amplia su alcance con `.gitattributes`, tests de integridad del indice, hook anti-main,
   `uv sync --locked`.
 - 2026-09-04 · auditoria extrema previa a F15: puertas por dependencia, trailer `Fuente:`
   documentado, seccion H.2 con los riesgos de ejecucion absorbidos por funcionalidad, ADR-0004.
+- 2026-09-03 · version inicial (35 funcionalidades, 8 fases).

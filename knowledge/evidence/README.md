@@ -10,7 +10,7 @@ es del contenido: editar un item rompe su id, y el historial de git se vigila
 | Campo | Obligatorio | Valores |
 |---|---|---|
 | `id` | si (calculado) | `ev-v4-001533-1a2b3c4d` |
-| `video_id` | si | `v1..v4` segun `knowledge/corpus/fuentes.yaml` |
+| `video_id` | si | `v1..v5` segun `knowledge/corpus/fuentes.yaml` |
 | `t0`, `t1` | si | `h:mm:ss[.d]`, `t0 < t1 <= duracion del video` |
 | `modalidad` | si | `audio` · `pantalla` · `ambas` |
 | `tipo` | si | `RULE_STATEMENT` · `PARAMETER` · `EXAMPLE_TRADE` · `NO_TRADE` · `MANAGEMENT` · `UNKNOWN` |
