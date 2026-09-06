@@ -80,3 +80,59 @@ sustituciones:
     motivo: tepes es la lectura fonetica de TPs (take profits)
     ejemplo_video: v3
     ejemplo_t0: "0:32:20"
+  # Alcance segmento (v2, 2026-09-06): ejemplos del informe F04 localizados en las
+  # transcripciones nuevas; el resto de apariciones quedan como `dudas` para F07.
+  - patron: '\bboss\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: el trader dice BOS (break of structure) y el motor escribe boss
+    ejemplo_video: v3
+    ejemplo_t0: "0:11:29"
+    transcripcion_id: tr-v3-large-v3-int8-float16-270a4851
+    segmento: 126
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bvoz\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: voz es palabra corriente; aqui es BOS (se genera el BOS)
+    ejemplo_video: v2
+    ejemplo_t0: "0:31:20"
+    transcripcion_id: tr-v2-large-v3-int8-float16-28391c2c
+    segmento: 275
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bblogs\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: blogs es palabra corriente; aqui son BOS (me toco estos BOS)
+    ejemplo_video: v4
+    ejemplo_t0: "0:46:59"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 789
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsplit\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: split es palabra corriente; aqui es spread (calculo del riesgo)
+    ejemplo_video: v4
+    ejemplo_t0: "0:06:06"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 57
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsprint\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: sprint es palabra corriente; aqui es spread
+    ejemplo_video: v4
+    ejemplo_t0: "0:08:27"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 109
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsplit\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: split es palabra corriente; aqui es spread (el spread aumenta)
+    ejemplo_video: v4
+    ejemplo_t0: "0:09:09"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 131
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)

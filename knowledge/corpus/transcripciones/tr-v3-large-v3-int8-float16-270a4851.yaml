@@ -1,0 +1,92 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v3/large-v3-int8-float16-ca689414
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 4676.395
+duracion_wav_s: 4676.395
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-08-06 160450.mp4
+fragmentos:
+- fin_m: 9623375
+  indice: 0
+  inicio_m: 0
+- fin_m: 19262127
+  indice: 1
+  inicio_m: 9623375
+- fin_m: 28892022
+  indice: 2
+  inicio_m: 19262127
+- fin_m: 38472659
+  indice: 3
+  inicio_m: 28892022
+- fin_m: 48084410
+  indice: 4
+  inicio_m: 38472659
+- fin_m: 57720838
+  indice: 5
+  inicio_m: 48084410
+- fin_m: 67333467
+  indice: 6
+  inicio_m: 57720838
+- fin_m: 74822314
+  indice: 7
+  inicio_m: 67333467
+generado_el: '2026-09-06T23:03:58Z'
+glosario_sha256_inicial: ed56441c1dead53adb26acba45a832c37d7677d2c7b0a9731a4443c4384e4a19
+hueco_transcripcion_s: 30.0
+huecos:
+- desde_ms: 2106461
+  hasta_ms: 2141841
+  ms: 35380
+- desde_ms: 3485105
+  hasta_ms: 3536395
+  ms: 51290
+- desde_ms: 3950422
+  hasta_ms: 3982762
+  ms: 32340
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  hotwords: null
+  idioma: es
+  initial_prompt_sha256: 327e1ef9ad176500d2878faf7776199a3dec1cfda445f516f23c1edda48ee120
+  initial_prompt_tokens: 99
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 3993400
+muestras: 74822314
+recortados: 0
+reemplaza_a: tr-v3-large-v3-int8-float16-570a315f
+schema_version: 1
+segmentos: 1020
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 36
+  repeticion: 0
+sha256_cruda: 270a48517e6f57f5449913091937a95e5a3e4f4d32b771aaa8f690078975902e
+sha256_video: 0109332a9cc08f150f381e78ab189fdc6d6afe886fb27dfbfabd58b7c49a8146
+sha256_wav: cc198b1e8daea9f1a7f5ba8133990d469c6b2fa855cf070226e8af82f47f8810
+silencios_detectados: 966
+transcripcion_id: tr-v3-large-v3-int8-float16-270a4851
+video_id: v3
