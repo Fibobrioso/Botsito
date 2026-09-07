@@ -5,7 +5,7 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-06, previos de F07 construidos)
+## Estado (2026-09-06, previos de F07 en main; F07 ronda 1 hecha)
 - `main`: merge de la auditoria global `916d0d0` con tag `stable/F05-auditoria-1` (las tres
   ratificaciones del usuario el 2026-09-06); `docs(state)` `76060c9`; CI verde (run
   34044627478). Protegida en GitHub (sin force-push, sin checks requeridos).
@@ -18,14 +18,32 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   prompt, huella de reanudacion sin GPU, los 5 videos retranscritos (ids activos:
   `tr-v1-...-bbd8a931`, `tr-v2-...-28391c2c`, `tr-v3-...-270a4851`, `tr-v4-...-a8d1bccc`,
   `tr-v5-...-3c6fbb57`; los anteriores quedan reemplazados, sus carpetas siguen en `data/`).
-- Copia fuera de la maquina COMPLETA (2026-09-07): carpeta de Drive "transcripciones (crudas,
+- Copia fuera de la maquina COMPLETA (2026-09-06): carpeta de Drive "transcripciones (crudas,
   Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`, dentro de "Estrategia del trader") con
   SHA256SUMS, LEEME, 5 manifiestos, 5 crudas, 5 WAV y el video v5 (`drive_id`
   `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, anotado en `fuentes.yaml`). Los binarios los subio el
   usuario a mano desde `data/drive_staging/` (las herramientas de la sesion no suben binarios
   de ese tamano); una retranscripcion futura repite `staging.py` y la subida.
-- SIGUIENTE: abrir F07 evidence-extraction (entradas en MASTER_PLAN H.2, fila "Previos y
-  entradas de F07"; la cita se verifica contra la CRUDA de la transcripcion activa).
+- F07 evidence-extraction, RONDA 1 HECHA (2026-09-06, rama `feature/F07-evidence-extraction`,
+  informe `docs/validation/F07-evidence-extraction.md`, ADR-0009): herramientas (cita por
+  tokens en la cruda con tiempo por palabras; `evidence` no importa `corpus`; propuestas en
+  `knowledge/_proposals/` con sello) y 20 propuestas (341 items, 91 `no_consta`) para los 5
+  videos, todas con `--check` en verde. NINGUN item en `knowledge/evidence/` hasta que el
+  usuario decida sobre la hoja `docs/validation/anexos/F07-evidence-extraction/revision.html`
+  (aceptar por lotes, rechazar con motivo, `fotograma visto` en los 7 de pantalla/ambas).
+- SIGUIENTE (ronda 2 de F07): `botsito evidence accept --propuesta <pr> --item n
+  --revisado-por "Aleks · hoja F07 <fecha> · cruda leida" --metodo cruda_leida` (o
+  `fotograma_visto`) por cada aceptado, `reject` por cada rechazado, commit de la evidencia,
+  `evidence contradictions`, `pytest tests/contract/test_golden_citas_f07.py`, PROJECT_STATE
+  (hechos -> ids, ambiguedades con ids), auditoria de cierre con dos agentes, informe final,
+  parada corta, ritual §F con tag `stable/F07`. Para rellenar propuestas nuevas: esqueleto con
+  `evidence propose --video --t0 --t1 --modelo <quien> --tema-buscado <raiz>...`, rellenar
+  `items`/`no_consta` (la cita se COPIA de la cruda, con sus repeticiones de borde), `--check`.
+- Lecciones tecnicas (F07): el ASR repite palabras en los bordes de segmento ("tiene tiene",
+  "no no"): la cita literal las incluye; los segmentos con `boss/voz/blog/split` fuera de las 6
+  sustituciones quedan como `dudas` y obligan `confianza: media`; la ventana `t0/t1` debe cubrir
+  las palabras localizadas (+-2 s), el `--check` dice donde estan; una cita de <4 tokens o con
+  `0,75` donde la cruda dice `0.75` no se localiza a proposito.
 - Lecciones tecnicas (previos de F07): con `condition_on_previous_text=False` el
   `initial_prompt` solo condiciona la primera ventana de 30 s de cada fragmento; `hotwords`
   entra en todas pero alarga los segmentos mas alla de la ventana (hasta 40 s) y Whisper salta
@@ -50,7 +68,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   dos auditorias de cierre aplicadas.
 - Material del 2026-09-05 ("Info extra de backtesting"): v5 `2026-09-05 21-03-59.mkv` (6 min,
   FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos, reemplazada el 2026-09-06
-  por `tr-v5-...-3c6fbb57`, 80; en Drive desde el 2026-09-07), xlsx
+  por `tr-v5-...-3c6fbb57`, 80; en Drive desde el 2026-09-06), xlsx
   abril 2026 (38 operaciones) y 6 capturas de Analytics en `Material adicional de su operativa`.
   Hechos en PROJECT_STATE (seccion "Hechos del corpus pendientes de evidencia").
 - Lecciones tecnicas: `fps=1` de ffmpeg NO da el fotograma del segundo exacto ni conserva el
