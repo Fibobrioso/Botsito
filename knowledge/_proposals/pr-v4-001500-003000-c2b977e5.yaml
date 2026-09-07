@@ -1,0 +1,1503 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v4-001500-003000-c2b977e5
+video_id: v4
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc
+t0: 0:15:00
+t1: 0:30:00
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:12Z'
+contexto:
+  segmentos:
+  - n: 269
+    t0_ms: 907487
+    t1_ms: 907967
+    texto: mira
+    senales:
+    - no_habla
+  - n: 270
+    t0_ms: 910647
+    t1_ms: 915307
+    texto: cuando hacer una entrada cuando estamos en un desplazamiento grande o sea mira por ejemplo
+    senales:
+    - no_habla
+  - n: 271
+    t0_ms: 915307
+    t1_ms: 922187
+    texto: el contexto es este si estamos en un máximo anterior y el precio de lo paso es un rompimiento
+    senales:
+    - no_habla
+  - n: 272
+    t0_ms: 923447
+    t1_ms: 925147
+    texto: Por ejemplo, en este caso de aquí
+    senales:
+    - no_habla
+  - n: 273
+    t0_ms: 926667
+    t1_ms: 927027
+    texto: Vale
+    senales:
+    - no_habla
+  - n: 274
+    t0_ms: 927467
+    t1_ms: 927827
+    texto: Claro
+    senales:
+    - no_habla
+  - n: 275
+    t0_ms: 929807
+    t1_ms: 931267
+    texto: Algo que te quería comentar es
+    senales:
+    - no_habla
+  - n: 276
+    t0_ms: 931847
+    t1_ms: 933647
+    texto: Que claro, no sé si el bot lo podrá
+    senales:
+    - no_habla
+  - n: 277
+    t0_ms: 933647
+    t1_ms: 935587
+    texto: Definir como tal, pero es muy
+    senales:
+    - no_habla
+  - n: 278
+    t0_ms: 935587
+    t1_ms: 937407
+    texto: Importante que lo rompa con cuerpo
+    senales:
+    - no_habla
+  - n: 279
+    t0_ms: 937407
+    t1_ms: 939567
+    texto: Y cierre con cuerpo por encima de la zona de liquidez
+    senales:
+    - no_habla
+  - n: 280
+    t0_ms: 939567
+    t1_ms: 941847
+    texto: Es algo que me había olvidado comentar
+    senales:
+    - no_habla
+  - n: 281
+    t0_ms: 942267
+    t1_ms: 943807
+    texto: Ya, no, sí, eso sí se puede
+    senales:
+    - no_habla
+  - n: 282
+    t0_ms: 943807
+    t1_ms: 944687
+    texto: Cuantificar, de hecho
+    senales:
+    - no_habla
+  - n: 283
+    t0_ms: 945307
+    t1_ms: 946727
+    texto: Ah, perfecto, perfecto, sí, porque
+    senales:
+    - no_habla
+  - n: 284
+    t0_ms: 946727
+    t1_ms: 949267
+    texto: Por ejemplo, hay muchos trades
+    senales:
+    - no_habla
+  - n: 285
+    t0_ms: 949267
+    t1_ms: 951507
+    texto: Por lo general, que si tú te vas
+    senales:
+    - no_habla
+  - n: 286
+    t0_ms: 952547
+    t1_ms: 957527
+    texto: suponiendo que a ver suponiendo que eso es con mecha y el precio llega y te rompe aquí abajo
+    senales: []
+  - n: 287
+    t0_ms: 957527
+    t1_ms: 965887
+    texto: a bueno a ver esto es un claro ejemplo mira te digo a ver romper con no cierra con cuerpo por
+    senales: []
+  - n: 288
+    t0_ms: 965887
+    t1_ms: 971587
+    texto: encima de la zona de liquidez sino que cierra con una mecha o sea se contra el precio luego
+      cae aquí
+    senales: []
+  - n: 289
+    t0_ms: 971587
+    t1_ms: 977487
+    texto: activaría una entrada como tal vale que obviamente y claramente te sería nuestro blog es por
+      eso que
+    senales: []
+  - n: 290
+    t0_ms: 977487
+    t1_ms: 983107
+    texto: o sea no se considera allá si profundizamos a lo mejor hay un número de contratos y demás son
+    senales: []
+  - n: 291
+    t0_ms: 983107
+    t1_ms: 988567
+    texto: intercambios que hacen que todavía es una zona débil y por eso ocurre ese rechazo como tal
+      y
+    senales: []
+  - n: 292
+    t0_ms: 988567
+    t1_ms: 995287
+    texto: es muy diferente a que cuando cierra por encima con cuerpo o sea haga una estructura más clara
+    senales: []
+  - n: 293
+    t0_ms: 995287
+    t1_ms: 1001747
+    texto: después entonces es clave y muy importante que sea cuando el precio va a romper o sea por lo
+    senales: []
+  - n: 294
+    t0_ms: 1001747
+    t1_ms: 1008767
+    texto: lo general es se cierra con cuerpo no con mecha por ejemplo aquí lo tenemos aquí el precio
+      cierra
+    senales: []
+  - n: 295
+    t0_ms: 1008767
+    t1_ms: 1014547
+    texto: con cuerpo ya después o sea al cerrar con cuerpo ya puede ser la estructura suponiendo que
+      hubiera
+    senales: []
+  - n: 296
+    t0_ms: 1014547
+    t1_ms: 1020147
+    texto: hecho esto de aquí o sea te va a generar una mayor estructura para que tengas un mayor control
+      sobre
+    senales: []
+  - n: 297
+    t0_ms: 1020147
+    t1_ms: 1025307
+    texto: sobre el trade por ejemplo en este caso se hubiera puesto break even si esto hubiera terminado
+      por
+    senales: []
+  - n: 298
+    t0_ms: 1025307
+    t1_ms: 1026467
+    texto: encima y ya
+    senales:
+    - no_habla
+  - n: 299
+    t0_ms: 1027587
+    t1_ms: 1028687
+    texto: y es eso
+    senales:
+    - no_habla
+  - n: 300
+    t0_ms: 1029427
+    t1_ms: 1031147
+    texto: Ok, ok, entonces lo que iba con la
+    senales:
+    - no_habla
+  - n: 301
+    t0_ms: 1031147
+    t1_ms: 1032987
+    texto: pregunta era justamente por ese lado, imagina
+    senales:
+    - no_habla
+  - n: 302
+    t0_ms: 1032987
+    t1_ms: 1035187
+    texto: que estás en esa velita roja antes de que cruce
+    senales:
+    - no_habla
+  - n: 303
+    t0_ms: 1035187
+    t1_ms: 1036027
+    texto: y rompa con cuerpo
+    senales:
+    - no_habla
+  - n: 304
+    t0_ms: 1036647
+    t1_ms: 1038967
+    texto: ya, hace el rompimiento, ¿en qué punto
+    senales:
+    - no_habla
+  - n: 305
+    t0_ms: 1038967
+    t1_ms: 1041267
+    texto: o sea, bueno, qué señales tú tienes para considerar
+    senales:
+    - no_habla
+  - n: 306
+    t0_ms: 1041267
+    t1_ms: 1042887
+    texto: que eso no es simplemente un barrio de
+    senales:
+    - no_habla
+  - n: 307
+    t0_ms: 1042887
+    t1_ms: 1044607
+    texto: liquidez y ya es como propiamente dicho
+    senales:
+    - no_habla
+  - n: 308
+    t0_ms: 1044607
+    t1_ms: 1046947
+    texto: una continuación de tendencia o en el
+    senales:
+    - no_habla
+  - n: 309
+    t0_ms: 1046947
+    t1_ms: 1048807
+    texto: escenario opuesto un cambio de tendencia, o sea
+    senales:
+    - no_habla
+  - n: 310
+    t0_ms: 1049987
+    t1_ms: 1050427
+    texto: ¿cómo
+    senales:
+    - no_habla
+  - n: 311
+    t0_ms: 1051127
+    t1_ms: 1052207
+    texto: podríamos parametrizar eso?
+    senales:
+    - no_habla
+  - n: 312
+    t0_ms: 1052987
+    t1_ms: 1054927
+    texto: ¿distinguir de un simple barrio de liquidez
+    senales:
+    - no_habla
+  - n: 313
+    t0_ms: 1054927
+    t1_ms: 1056967
+    texto: a un cambio de tendencia
+    senales: []
+  - n: 314
+    t0_ms: 1056967
+    t1_ms: 1058707
+    texto: y ya como absterse de entrar
+    senales: []
+  - n: 315
+    t0_ms: 1058707
+    t1_ms: 1060907
+    texto: porque ya no hay forma de trazar
+    senales: []
+  - n: 316
+    t0_ms: 1060907
+    t1_ms: 1061547
+    texto: una entrada ahí
+    senales: []
+  - n: 317
+    t0_ms: 1064087
+    t1_ms: 1066407
+    texto: vale, como a tu pregunta
+    senales: []
+  - n: 318
+    t0_ms: 1066407
+    t1_ms: 1068147
+    texto: por lo que yo he entendido
+    senales: []
+  - n: 319
+    t0_ms: 1068147
+    t1_ms: 1069927
+    texto: como yo validaría
+    senales: []
+  - n: 320
+    t0_ms: 1069927
+    t1_ms: 1071167
+    texto: que después por encima
+    senales: []
+  - n: 321
+    t0_ms: 1071167
+    t1_ms: 1074167
+    texto: el movimiento que estamos
+    senales: []
+  - n: 322
+    t0_ms: 1074167
+    t1_ms: 1076207
+    texto: buscando se va a dar, entre comillas
+    senales: []
+  - n: 323
+    t0_ms: 1076207
+    t1_ms: 1078267
+    texto: va a ser correcto
+    senales: []
+  - n: 324
+    t0_ms: 1078927
+    t1_ms: 1079207
+    texto: pues
+    senales: []
+  - n: 325
+    t0_ms: 1079207
+    t1_ms: 1082127
+    texto: eso es algo que como tal no podemos
+    senales: []
+  - n: 326
+    t0_ms: 1082127
+    t1_ms: 1082647
+    texto: o sea
+    senales: []
+  - n: 327
+    t0_ms: 1083687
+    t1_ms: 1086027
+    texto: aquí no juega la probabilidad, no hay nada de
+    senales: []
+  - n: 328
+    t0_ms: 1086027
+    t1_ms: 1091687
+    texto: certeza como te das cuenta o sea hay escenarios o sea por lo que yo he visto o sea ya si usamos
+    senales: []
+  - n: 329
+    t0_ms: 1091687
+    t1_ms: 1097407
+    texto: volumen creo yo vemos el mercado profundo sería mucho más interesante porque creo yo que podríamos
+    senales: []
+  - n: 330
+    t0_ms: 1097407
+    t1_ms: 1103007
+    texto: gestionar inclusive este trade no tomarlo tal cual yo estoy muy seguro pero sabes que volumen
+    senales: []
+  - n: 331
+    t0_ms: 1103007
+    t1_ms: 1109467
+    texto: como tal o mercado profundo no lo manejo al 100 entonces a lo mejor te podrías ahorrar esto
+    senales: []
+  - n: 332
+    t0_ms: 1109467
+    t1_ms: 1115187
+    texto: podrías hacer muchas cosas pero yo saco con volumen pero ya como tal o sea si esto es un
+    senales: []
+  - n: 333
+    t0_ms: 1115187
+    t1_ms: 1116747
+    texto: la condicional es
+    senales: []
+  - n: 334
+    t0_ms: 1116747
+    t1_ms: 1119247
+    texto: número uno, que el precio por encima
+    senales: []
+  - n: 335
+    t0_ms: 1119247
+    t1_ms: 1121227
+    texto: de liquidez me tiene que cerrar con cuerpo
+    senales: []
+  - n: 336
+    t0_ms: 1121227
+    t1_ms: 1123227
+    texto: y después lo que tenga que hacer
+    senales: []
+  - n: 337
+    t0_ms: 1123227
+    t1_ms: 1124807
+    texto: pues que haga, o sea, obviamente
+    senales: []
+  - n: 338
+    t0_ms: 1124807
+    t1_ms: 1127107
+    texto: aquí si queremos buscar una entrada, aquí no hay entrada
+    senales: []
+  - n: 339
+    t0_ms: 1127107
+    t1_ms: 1128827
+    texto: por el hecho de que el precio
+    senales: []
+  - n: 340
+    t0_ms: 1128827
+    t1_ms: 1130667
+    texto: no genera el esquema de entrada que
+    senales: []
+  - n: 341
+    t0_ms: 1130667
+    t1_ms: 1133407
+    texto: ya sabemos cuál es, a ver lo voy a dibujar
+    senales: []
+  - n: 342
+    t0_ms: 1133407
+    t1_ms: 1135247
+    texto: aquí, que sería este de aquí
+    senales: []
+  - n: 343
+    t0_ms: 1135247
+    t1_ms: 1136007
+    texto: un breaker
+    senales: []
+  - n: 344
+    t0_ms: 1139147
+    t1_ms: 1146517
+    texto: o este de aquí, o sea cualquiera
+    senales: []
+  - n: 345
+    t0_ms: 1146517
+    t1_ms: 1147217
+    texto: de estos dos de aquí
+    senales: []
+  - n: 346
+    t0_ms: 1147997
+    t1_ms: 1149597
+    texto: otro punto a destacar también
+    senales: []
+  - n: 347
+    t0_ms: 1149597
+    t1_ms: 1157557
+    texto: porque es que es muy diferente por ejemplo a ver claro mira aquí no habría un trade porque
+      no habría
+    senales: []
+  - n: 348
+    t0_ms: 1157557
+    t1_ms: 1162997
+    texto: un trade aquí aquí no habría un trade usando este modelo aquí por el hecho de que te genera
+      dos
+    senales: []
+  - n: 349
+    t0_ms: 1162997
+    t1_ms: 1173237
+    texto: zonas de control o sea si te haces un mapeo el precio te hace esto y al hacer el mapeo pues
+      te
+    senales: []
+  - n: 350
+    t0_ms: 1173237
+    t1_ms: 1178697
+    texto: está generando uno más entonces es lo más probable que el precio rompa la zona de abajo y se
+      revierta
+    senales: []
+  - n: 351
+    t0_ms: 1178697
+    t1_ms: 1194557
+    texto: entonces por lo general sólo buscamos uno como a ver otro ejemplo no se los tres que
+    senales: []
+  - n: 352
+    t0_ms: 1194557
+    t1_ms: 1199797
+    texto: han terminado el profit bueno este es cumple el primer esquema que es flujo de órdenes tata
+      tata
+    senales: []
+  - n: 353
+    t0_ms: 1200755
+    t1_ms: 1248225
+    texto: y entrada, después el otro, vale, por ejemplo aquí es uno claro, ah no, es lo mismo, el esquema
+      1, y también, vale, aquí es uno muy claro, por ejemplo aquí, el precio, por ejemplo, mira, te rompe,
+      marcamos la zona de liquidez, cierra con cuerpo por debajo, pero nosotros lo que buscamos es eso,
+      o sea, el precio llega, hace esto aquí, y luego rompe, o sea, llega a concretar,
+    senales: []
+  - n: 354
+    t0_ms: 1248485
+    t1_ms: 1250185
+    texto: a desarrollar esta zona de control
+    senales: []
+  - n: 355
+    t0_ms: 1250865
+    t1_ms: 1252865
+    texto: y pues luego se protege la entrada
+    senales: []
+  - n: 356
+    t0_ms: 1252865
+    t1_ms: 1253305
+    texto: break-even
+    senales: []
+  - n: 357
+    t0_ms: 1254825
+    t1_ms: 1255865
+    texto: y ya
+    senales: []
+  - n: 358
+    t0_ms: 1256465
+    t1_ms: 1258445
+    texto: inclusive un punto muy importante también
+    senales: []
+  - n: 359
+    t0_ms: 1258445
+    t1_ms: 1260905
+    texto: que es lo que a veces yo hago también
+    senales: []
+  - n: 360
+    t0_ms: 1260905
+    t1_ms: 1262485
+    texto: si sé que me va a generar
+    senales: []
+  - n: 361
+    t0_ms: 1262485
+    t1_ms: 1264225
+    texto: este segundo esquema de entrada
+    senales: []
+  - n: 362
+    t0_ms: 1265065
+    t1_ms: 1266985
+    texto: yo protejo por debajo
+    senales: []
+  - n: 363
+    t0_ms: 1266985
+    t1_ms: 1269005
+    texto: de este, o sea, hay algunos momentos
+    senales: []
+  - n: 364
+    t0_ms: 1269005
+    t1_ms: 1270485
+    texto: donde inclusive esta protección
+    senales: []
+  - n: 365
+    t0_ms: 1270485
+    t1_ms: 1272305
+    texto: te puede llegar no a 0.75
+    senales: []
+  - n: 366
+    t0_ms: 1272305
+    t1_ms: 1274225
+    texto: sino protege ya inmediatamente
+    senales: []
+  - n: 367
+    t0_ms: 1274225
+    t1_ms: 1275985
+    texto: entre un 0.50 y así
+    senales: []
+  - n: 368
+    t0_ms: 1275985
+    t1_ms: 1283405
+    texto: sí entonces yo lo gestionó de esa manera como tal entonces manualmente lo gestiona de esa manera
+    senales: []
+  - n: 369
+    t0_ms: 1284005
+    t1_ms: 1293265
+    texto: cuando se va si por ejemplo nosotros tenemos este segundo esquema de entrada vale ajá entonces
+      en
+    senales: []
+  - n: 370
+    t0_ms: 1293985
+    t1_ms: 1299025
+    texto: este esquema de entrada por ejemplo a veces el precio que puede generar el segundo es que me
+    senales: []
+  - n: 371
+    t0_ms: 1299025
+    t1_ms: 1308125
+    texto: entrada un poco más arriba así entonces tú tu stop loss o sea en vez de proteger a 0.75 en
+      lugar de
+    senales: []
+  - n: 372
+    t0_ms: 1308125
+    t1_ms: 1313685
+    texto: eso pues lo protege es o sea por el punto más bajo en este caso como estamos de bajista alcista
+    senales: []
+  - n: 373
+    t0_ms: 1314745
+    t1_ms: 1323865
+    texto: protege es allí en ese nivel pues en este caso sería proteger a este nivel aquí sabes el segundo
+    senales: []
+  - n: 374
+    t0_ms: 1325725
+    t1_ms: 1330585
+    texto: vemos el precio llega rompe con cuerpo cierra con cuerpo por debajo de la zona de liquidez
+      y
+    senales:
+    - no_habla
+  - n: 375
+    t0_ms: 1330585
+    t1_ms: 1338225
+    texto: te genera la entrada y bueno en este caso no llega algún 13 pero es así o sea todo lo que
+    senales:
+    - no_habla
+  - n: 376
+    t0_ms: 1338225
+    t1_ms: 1345005
+    texto: buscaba todos los tres son así por ejemplo aquí en verdad hubiera sido un break y bien claro
+      por
+    senales:
+    - no_habla
+  - n: 377
+    t0_ms: 1345005
+    t1_ms: 1351045
+    texto: ejemplo podemos que lo mira soy humano o sea no puedo procesar muchos datos pero creo que
+    senales:
+    - no_habla
+  - n: 378
+    t0_ms: 1351045
+    t1_ms: 1355865
+    texto: buscando la manera de automatizar y demás podemos buscar a lo mejor inclusive mejores
+    senales: []
+  - n: 379
+    t0_ms: 1355865
+    t1_ms: 1361705
+    texto: configuraciones o sea mejores configuraciones a lo mejor el rr ideal no es el 13 puede ser
+      el
+    senales: []
+  - n: 380
+    t0_ms: 1361705
+    t1_ms: 1369245
+    texto: 2.5 y obviamente o sea tienes inclusive menos tres perdedores o demás o sea claro te cambia
+    senales: []
+  - n: 381
+    t0_ms: 1369245
+    t1_ms: 1377925
+    texto: todas las estadísticas pero pero es eso por ejemplo aquí habría aquí tendría dentro mira
+    senales: []
+  - n: 382
+    t0_ms: 1377925
+    t1_ms: 1388925
+    texto: Mira, bueno, aquí hay una entrada que me sacó en B, o sea, me sacaría en B porque no llega
+      al 1.3 tampoco, por eso lo puse B y así.
+    senales: []
+  - n: 383
+    t0_ms: 1389685
+    t1_ms: 1391665
+    texto: Ah, por cierto, también me olvidé mencionarte.
+    senales: []
+  - n: 384
+    t0_ms: 1391765
+    t1_ms: 1398505
+    texto: Mira, un punto muy importante también, que es que, por ejemplo, nosotros aquí tenemos marcado
+      la zona de liquidez, ¿vale?
+    senales: []
+  - n: 385
+    t0_ms: 1398805
+    t1_ms: 1407265
+    texto: Pero suponiendo que aquí se genera un trade erróneo, o sea, perdemos el trade aquí, o sea,
+      y luego sigue nuevamente el flujo, o sea, el flujo bajista,
+    senales: []
+  - n: 386
+    t0_ms: 1407265
+    t1_ms: 1409525
+    texto: y nuevamente nos da otra entrada
+    senales: []
+  - n: 387
+    t0_ms: 1409525
+    t1_ms: 1411725
+    texto: pero esa entrada se pierde
+    senales: []
+  - n: 388
+    t0_ms: 1411725
+    t1_ms: 1412445
+    texto: entonces
+    senales: []
+  - n: 389
+    t0_ms: 1413565
+    t1_ms: 1415745
+    texto: lo que yo hago, o sea, como yo
+    senales: []
+  - n: 390
+    t0_ms: 1415745
+    t1_ms: 1417705
+    texto: gestiono es que, vale
+    senales: []
+  - n: 391
+    t0_ms: 1417705
+    t1_ms: 1419985
+    texto: tengo 1, 2, 3 perdidos
+    senales: []
+  - n: 392
+    t0_ms: 1419985
+    t1_ms: 1421005
+    texto: pues lo que hago es
+    senales: []
+  - n: 393
+    t0_ms: 1421845
+    t1_ms: 1423785
+    texto: no operar, bueno, hasta
+    senales: []
+  - n: 394
+    t0_ms: 1423785
+    t1_ms: 1425725
+    texto: un tercer trade suelo hacer
+    senales: []
+  - n: 395
+    t0_ms: 1425725
+    t1_ms: 1428065
+    texto: o sea, suelo hacer hasta un tercer trade
+    senales: []
+  - n: 396
+    t0_ms: 1428065
+    t1_ms: 1429945
+    texto: vale, suponiendo que
+    senales: []
+  - n: 397
+    t0_ms: 1429945
+    t1_ms: 1430905
+    texto: de aquí tengo
+    senales: []
+  - n: 398
+    t0_ms: 1432545
+    t1_ms: 1433105
+    texto: una
+    senales: []
+  - n: 399
+    t0_ms: 1433985
+    t1_ms: 1435745
+    texto: pérdida, otra pérdida
+    senales: []
+  - n: 400
+    t0_ms: 1435745
+    t1_ms: 1441425
+    texto: porque no se cumplió y otra pérdida entonces yo me detengo allí vale me detengo allí y espero
+    senales: []
+  - n: 401
+    t0_ms: 1441425
+    t1_ms: 1447385
+    texto: que espero que haga el precio espero que en m15 me genere otras cosas si se da obviamente otra
+    senales: []
+  - n: 402
+    t0_ms: 1447385
+    t1_ms: 1455965
+    texto: zona o sea otro esquema de liquidez en m15 para nuevamente poder entrar o sea bajistas o sea
+      para
+    senales: []
+  - n: 403
+    t0_ms: 1455965
+    t1_ms: 1477215
+    texto: poder entrar en m15 esperaría no a ver no sé si yo con aquí alex tú recomiendas alguna calculadora
+    senales: []
+  - n: 404
+    t0_ms: 1477215
+    t1_ms: 1477575
+    texto: como tal
+    senales: []
+  - n: 405
+    t0_ms: 1479955
+    t1_ms: 1481175
+    texto: para cuenta de fondeo
+    senales: []
+  - n: 406
+    t0_ms: 1482235
+    t1_ms: 1482775
+    texto: ¿calcula ahora?
+    senales: []
+  - n: 407
+    t0_ms: 1483495
+    t1_ms: 1484495
+    texto: sí, del lotaje
+    senales: []
+  - n: 408
+    t0_ms: 1485755
+    t1_ms: 1486755
+    texto: ¿has visto alguna?
+    senales: []
+  - n: 409
+    t0_ms: 1488035
+    t1_ms: 1489135
+    texto: no, pero o sea
+    senales: []
+  - n: 410
+    t0_ms: 1489135
+    t1_ms: 1490695
+    texto: te podría programar una
+    senales: []
+  - n: 411
+    t0_ms: 1491635
+    t1_ms: 1492075
+    texto: ¿sí?
+    senales: []
+  - n: 412
+    t0_ms: 1492715
+    t1_ms: 1494075
+    texto: ah, vale, pues perfecto
+    senales: []
+  - n: 413
+    t0_ms: 1495315
+    t1_ms: 1497295
+    texto: no sé cuándo te parece
+    senales: []
+  - n: 414
+    t0_ms: 1497295
+    t1_ms: 1498955
+    texto: bien, es que yo ya estoy tomando la prueba de fondeo
+    senales: []
+  - n: 415
+    t0_ms: 1498955
+    t1_ms: 1500775
+    texto: pero claro, he entrado sin lotaje
+    senales: []
+  - n: 416
+    t0_ms: 1500775
+    t1_ms: 1502995
+    texto: o sea, han sido 3
+    senales: []
+  - n: 417
+    t0_ms: 1502995
+    t1_ms: 1505135
+    texto: que como tal no he entrado con el porcentaje
+    senales: []
+  - n: 418
+    t0_ms: 1505135
+    t1_ms: 1506715
+    texto: de la cuenta, entonces
+    senales: []
+  - n: 419
+    t0_ms: 1506715
+    t1_ms: 1509175
+    texto: Entonces, claro, si no yo lo hubiera pasado la prueba.
+    senales: []
+  - n: 420
+    t0_ms: 1510395
+    t1_ms: 1512015
+    texto: Entonces, nada, busco una...
+    senales: []
+  - n: 421
+    t0_ms: 1512015
+    t1_ms: 1516175
+    texto: Estaba buscando unas calculadoras, pero hace tiempo recuerdo una
+    senales: []
+  - n: 422
+    t0_ms: 1516175
+    t1_ms: 1518215
+    texto: que la he estado buscando por internet, pero no la encuentro.
+    senales: []
+  - n: 423
+    t0_ms: 1518295
+    t1_ms: 1521635
+    texto: O sea, te estoy hablando de hace tres años, aprox, y no la encuentro.
+    senales: []
+  - n: 424
+    t0_ms: 1522115
+    t1_ms: 1525235
+    texto: Mira, te pones en tu búsqueda y en unas dos o tres horas
+    senales: []
+  - n: 425
+    t0_ms: 1525235
+    t1_ms: 1528115
+    texto: mientras estés durmiendo tú, te puedo pasar los resultados que encuentre
+    senales: []
+  - n: 426
+    t0_ms: 1528115
+    t1_ms: 1531135
+    texto: y si ninguno te llama la atención o algo, normal se puede programar.
+    senales: []
+  - n: 427
+    t0_ms: 1531195
+    t1_ms: 1532375
+    texto: Porque esa es una herramienta fácil.
+    senales: []
+  - n: 428
+    t0_ms: 1532515
+    t1_ms: 1534075
+    texto: Es como conmigo, es una calculadora.
+    senales: []
+  - n: 429
+    t0_ms: 1534075
+    t1_ms: 1542875
+    texto: a perfecto porque mira la idea es un poco del tema es esta por ejemplo yo tengo
+    senales: []
+  - n: 430
+    t0_ms: 1542875
+    t1_ms: 1555515
+    texto: una operativa ya realizada vale suponiendo este aquí perfecto si yo quiero o sea aquí
+    senales: []
+  - n: 431
+    t0_ms: 1555515
+    t1_ms: 1562615
+    texto: supongamos que para que sea la calculadora entonces una opción en la cual yo sólo con
+    senales: []
+  - n: 432
+    t0_ms: 1562615
+    t1_ms: 1563295
+    texto: con plantear
+    senales: []
+  - n: 433
+    t0_ms: 1563895
+    t1_ms: 1565875
+    texto: la posición
+    senales: []
+  - n: 434
+    t0_ms: 1567775
+    t1_ms: 1569095
+    texto: con la herramienta
+    senales: []
+  - n: 435
+    t0_ms: 1569855
+    t1_ms: 1570455
+    texto: automáticamente
+    senales: []
+  - n: 436
+    t0_ms: 1570455
+    t1_ms: 1571755
+    texto: pues me calcule el lotaje
+    senales: []
+  - n: 437
+    t0_ms: 1571755
+    t1_ms: 1576105
+    texto: pero en el mismo
+    senales: []
+  - n: 438
+    t0_ms: 1576105
+    t1_ms: 1578005
+    texto: TradingView no se puede, o bueno
+    senales: []
+  - n: 439
+    t0_ms: 1578005
+    t1_ms: 1579545
+    texto: ¿en qué plataforma sueles analizar en vivo?
+    senales: []
+  - n: 440
+    t0_ms: 1580885
+    t1_ms: 1581905
+    texto: bueno, suelo usar
+    senales: []
+  - n: 441
+    t0_ms: 1581905
+    t1_ms: 1584185
+    texto: para analizar, suelo usar el TradingView
+    senales: []
+  - n: 442
+    t0_ms: 1584885
+    t1_ms: 1585485
+    texto: pero
+    senales: []
+  - n: 443
+    t0_ms: 1585485
+    t1_ms: 1586825
+    texto: ya no tengo la
+    senales: []
+  - n: 444
+    t0_ms: 1586825
+    t1_ms: 1590145
+    texto: no puedo conectarlos, uso MetaTrader
+    senales: []
+  - n: 445
+    t0_ms: 1590145
+    t1_ms: 1591585
+    texto: para la prueba
+    senales: []
+  - n: 446
+    t0_ms: 1591585
+    t1_ms: 1592525
+    texto: ya
+    senales: []
+  - n: 447
+    t0_ms: 1592525
+    t1_ms: 1602445
+    texto: Ya, ya, sí, o sea, te lo digo porque creo que el propio TradingView tiene su propia simulación
+      de cuenta, o sea, en el sentido de que introduces un capital inicial y con eso ya te calcula el
+      lotaje.
+    senales: []
+  - n: 448
+    t0_ms: 1604385
+    t1_ms: 1607405
+    texto: No, no, sí, no, no, sí, pero yo me refiero, o sea, para el MetaTrader.
+    senales: []
+  - n: 449
+    t0_ms: 1607765
+    t1_ms: 1611485
+    texto: Ah, ya, ok, ok, una calculadora de lotaje para el propio MetaTrader.
+    senales: []
+  - n: 450
+    t0_ms: 1611845
+    t1_ms: 1612165
+    texto: Claro, claro.
+    senales: []
+  - n: 451
+    t0_ms: 1612165
+    t1_ms: 1613605
+    texto: ¿Lo usas desde el celular o desde el laptop?
+    senales: []
+  - n: 452
+    t0_ms: 1615065
+    t1_ms: 1620505
+    texto: bueno es que pasa que a ver tengo la computadora aquí pero se me han llevado mi cable hdmi
+      entonces
+    senales:
+    - no_habla
+  - n: 453
+    t0_ms: 1620505
+    t1_ms: 1628615
+    texto: no lo estoy usando ahora en el apto entonces pero sí o sea a ver la laptop es la herramienta
+      con la
+    senales:
+    - no_habla
+  - n: 454
+    t0_ms: 1628615
+    t1_ms: 1633655
+    texto: cual yo sólo utiliza para que más calculadores de los trajes para cuentas para meta trader
+      45
+    senales:
+    - no_habla
+  - n: 455
+    t0_ms: 1635315
+    t1_ms: 1644855
+    texto: 5 ya perfecto en los puntos y la idea es que claro por ejemplo no sirve a ti ya a ti a mí
+    senales:
+    - no_habla
+  - n: 456
+    t0_ms: 1644855
+    t1_ms: 1650575
+    texto: mí también o sea hay también por el hecho de que más factible es nosotros automáticamente pues
+    senales: []
+  - n: 457
+    t0_ms: 1650575
+    t1_ms: 1655995
+    texto: ponemos usamos la herramienta o sea había yo sé que hay porque le estaba buscando pero no
+    senales: []
+  - n: 458
+    t0_ms: 1655995
+    t1_ms: 1661795
+    texto: le ha encontrado con la que sólo bastaba que pongas o sea definas tú tú por ejemplo el precio
+    senales: []
+  - n: 459
+    t0_ms: 1666535
+    t1_ms: 1671275
+    texto: no importa aquí está el progreso
+    senales: []
+  - n: 460
+    t0_ms: 1674755
+    t1_ms: 1681315
+    texto: simulando vale entonces tú sabes que aquí el precio te genera un flujo de órdenes bajista
+    senales: []
+  - n: 461
+    t0_ms: 1681315
+    t1_ms: 1687735
+    texto: está bajista trata entonces ya sabes que aquí la vela contraria pues ya te está diciendo que
+    senales: []
+  - n: 462
+    t0_ms: 1687735
+    t1_ms: 1694395
+    texto: ese es ese nivel de allí este nivel aquí pues es muy posible o sea yo lo que suelo hacer manualmente
+    senales: []
+  - n: 463
+    t0_ms: 1694395
+    t1_ms: 1702315
+    texto: es claro una orden un buen límite y voy ahí bajando bajando bajando pero claro para entrar
+    senales: []
+  - n: 464
+    t0_ms: 1702315
+    t1_ms: 1706075
+    texto: con lotaje pues te tienes que poner a calcular o buscar una calculara y es todo un lío porque
+    senales: []
+  - n: 465
+    t0_ms: 1706075
+    t1_ms: 1713015
+    texto: es como un scalp y literal o sea tiene que ser rápido con la terminadora en segundo claro
+    senales: []
+  - n: 466
+    t0_ms: 1713015
+    t1_ms: 1719715
+    texto: entonces defines ahí y allí entonces ya tiene la vela cerrada o sea te da tiempo para pensar
+      y
+    senales: []
+  - n: 467
+    t0_ms: 1719715
+    t1_ms: 1726155
+    texto: demás entonces bueno entonces no te lo tomaría obviamente o sea pero ya vas como que vale pues
+    senales: []
+  - n: 468
+    t0_ms: 1726155
+    t1_ms: 1732335
+    texto: siguen manteniendo allí siguen manteniendo allí y obviamente la calculadora esa calculadora
+      lo que
+    senales: []
+  - n: 469
+    t0_ms: 1732335
+    t1_ms: 1738515
+    texto: hacía es que si tú lo movía para allí pues ya te calculaba o sea conforme tú ibas moviéndole
+    senales: []
+  - n: 470
+    t0_ms: 1738515
+    t1_ms: 1739315
+    texto: y además el stop loss
+    senales: []
+  - n: 471
+    t0_ms: 1739815
+    t1_ms: 1741515
+    texto: se iba configurando, el lotaje
+    senales: []
+  - n: 472
+    t0_ms: 1741515
+    t1_ms: 1744055
+    texto: el tamaño también de la posición de tu cuenta
+    senales: []
+  - n: 473
+    t0_ms: 1744055
+    t1_ms: 1746215
+    texto: 1%, ponías 1%
+    senales: []
+  - n: 474
+    t0_ms: 1747235
+    t1_ms: 1748175
+    texto: y ahí lo
+    senales: []
+  - n: 475
+    t0_ms: 1748695
+    t1_ms: 1750235
+    texto: moviendo el SL pues se calculaba
+    senales: []
+  - n: 476
+    t0_ms: 1750235
+    t1_ms: 1752255
+    texto: entonces ya sé que allí, o sea aquí
+    senales: []
+  - n: 477
+    t0_ms: 1752255
+    t1_ms: 1753755
+    texto: ya me va a tomar el trade, o sea
+    senales: []
+  - n: 478
+    t0_ms: 1753755
+    t1_ms: 1755355
+    texto: estaba aquí, de aquí a aquí
+    senales: []
+  - n: 479
+    t0_ms: 1755355
+    t1_ms: 1756755
+    texto: esta es la última
+    senales: []
+  - n: 480
+    t0_ms: 1758095
+    t1_ms: 1760155
+    texto: zona de liquidez o de control
+    senales: []
+  - n: 481
+    t0_ms: 1760155
+    t1_ms: 1761675
+    texto: en la cual busco el breaker
+    senales: []
+  - n: 482
+    t0_ms: 1762535
+    t1_ms: 1764095
+    texto: y pues ya, o sea
+    senales: []
+  - n: 483
+    t0_ms: 1764555
+    t1_ms: 1766395
+    texto: aquí está la vela roja, la vela verde
+    senales: []
+  - n: 484
+    t0_ms: 1766395
+    t1_ms: 1768695
+    texto: Puedo dar el click derecho ahí? Ahí no se puede configurar
+    senales: []
+  - n: 485
+    t0_ms: 1768695
+    t1_ms: 1768995
+    texto: Ahí mismo
+    senales: []
+  - n: 486
+    t0_ms: 1770175
+    t1_ms: 1772135
+    texto: Ah, no, es que este es el FX Replay
+    senales: []
+  - n: 487
+    t0_ms: 1772135
+    t1_ms: 1773195
+    texto: No, no es el MetaTrader
+    senales: []
+  - n: 488
+    t0_ms: 1773595
+    t1_ms: 1775775
+    texto: Ah, ya, ya, dale, sí, sí, perdón
+    senales: []
+  - n: 489
+    t0_ms: 1775775
+    t1_ms: 1776535
+    texto: Entonces, sí
+    senales: []
+  - n: 490
+    t0_ms: 1777595
+    t1_ms: 1778295
+    texto: Sí, entonces
+    senales: []
+  - n: 491
+    t0_ms: 1779115
+    t1_ms: 1780275
+    texto: No, no me permite
+    senales: []
+  - n: 492
+    t0_ms: 1780835
+    t1_ms: 1782215
+    texto: Ok, ok, ya
+    senales: []
+  - n: 493
+    t0_ms: 1782935
+    t1_ms: 1784375
+    texto: Será la chamba para ahorita
+    senales: []
+  - n: 494
+    t0_ms: 1785235
+    t1_ms: 1785995
+    texto: Ya, entonces
+    senales: []
+  - n: 495
+    t0_ms: 1787035
+    t1_ms: 1787615
+    texto: Siete puntos
+    senales: []
+  - n: 496
+    t0_ms: 1789175
+    t1_ms: 1791095
+    texto: Justo de lo que tú último mencionaste
+    senales: []
+  - n: 497
+    t0_ms: 1791095
+    t1_ms: 1793475
+    texto: ¿Quieres que sea sí o sí dos entradas?
+    senales: []
+  - n: 498
+    t0_ms: 1793555
+    t1_ms: 1794755
+    texto: ¿O tener permiso por una tres?
+    senales: []
+  - n: 499
+    t0_ms: 1794755
+    t1_ms: 1796695
+    texto: porque creo que sí deberíamos tener el parámetro
+    senales: []
+  - n: 500
+    t0_ms: 1796695
+    t1_ms: 1798675
+    texto: estático, porque finalmente creo que es
+    senales: []
+  - n: 501
+    t0_ms: 1798675
+    t1_ms: 1800475
+    texto: proteger el capital, más allá de buscar
+    senales: []
+  referencias:
+  - 'fr-v4-9ad0ebb8/<t_ms>: 901 fotogramas regulares, uno por segundo, de 900000 a 1800000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:15:33
+  t1: 0:15:39
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: es muy Importante que lo rompa con cuerpo Y cierre con cuerpo por encima de la zona de
+    liquidez
+  afirmacion: la liquidez de M15 debe romperse con cuerpo y cerrar con cuerpo por encima
+  tema: liquidez.m15.romper_y_cerrar_con_cuerpo
+  valor: cuerpo
+  confianza: media
+  notas: segmentos con senal no_habla
+  n: 1
+- t0: 0:15:57
+  t1: 0:16:48
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: no cierra con cuerpo por encima de la zona de liquidez sino que cierra con una mecha o
+    sea se contra el precio luego cae aquí activaría una entrada como tal vale que obviamente y claramente
+    te sería nuestro blog [...] es clave y muy importante que sea cuando el precio va a romper o sea por
+    lo lo general es se cierra con cuerpo no con mecha
+  afirmacion: 'un cierre con mecha (no con cuerpo) por encima de la liquidez es una zona debil que se
+    rechaza: la rotura valida cierra con cuerpo'
+  tema: liquidez.m15.cierre_mecha_es_trampa
+  confianza: media
+  notas: blog = BOS o bloque en la lectura del ASR (duda del glosario)
+  n: 2
+- t0: 0:18:35
+  t1: 0:18:41
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: la condicional es número uno, que el precio por encima de liquidez me tiene que cerrar
+    con cuerpo
+  afirmacion: 'condicion numero uno: el precio cierra con cuerpo por encima de la liquidez'
+  tema: liquidez.m15.condicion_uno_cuerpo
+  valor: cuerpo
+  confianza: alta
+  n: 3
+- t0: 0:18:44
+  t1: 0:19:07
+  modalidad: audio
+  tipo: NO_TRADE
+  cita_literal: aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que
+    ya sabemos cuál es [...] un breaker o este de aquí, o sea cualquiera de estos dos de aquí
+  afirmacion: sin uno de los dos esquemas de entrada (breaker o el segundo) no hay entrada
+  tema: no_trade.sin_esquema_de_entrada
+  confianza: alta
+  n: 4
+- t0: 0:19:09
+  t1: 0:19:54
+  modalidad: audio
+  tipo: NO_TRADE
+  cita_literal: aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
+    de control [...] es lo más probable que el precio rompa la zona de abajo y se revierta entonces por
+    lo general sólo buscamos uno
+  afirmacion: 'con dos zonas de control no hay trade: lo probable es que rompa la de abajo y se revierta;
+    solo se busca una'
+  tema: no_trade.dos_zonas_de_control
+  confianza: alta
+  marca_heredada: V4 0:19:21
+  n: 5
+- t0: 0:19:54
+  t1: 0:20:54
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: cumple el primer esquema que es flujo de órdenes tata tata y entrada [...] el precio llega,
+    hace esto aquí, y luego rompe, o sea, llega a concretar, a desarrollar esta zona de control y pues
+    luego se protege la entrada break-even
+  afirmacion: 'esquema 1: flujo de ordenes y entrada; esquema 2: el precio desarrolla la zona de control,
+    rompe y la entrada se protege en break even'
+  tema: entrada.esquemas_y_break_even_resumen
+  confianza: alta
+  n: 6
+- t0: 0:20:56
+  t1: 0:21:24
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: si sé que me va a generar este segundo esquema de entrada yo protejo por debajo de este,
+    o sea, hay algunos momentos donde inclusive esta protección te puede llegar no a 0.75 sino protege
+    ya inmediatamente entre un 0.50 y así
+  afirmacion: en el segundo esquema protege por debajo de la zona de control; a veces eso es 0,50 en vez
+    de 0,75
+  tema: stop.segundo_esquema_proteccion_050
+  confianza: alta
+  notas: A-7
+  n: 7
+- t0: 0:21:39
+  t1: 0:22:05
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: en vez de proteger a 0.75 en lugar de eso pues lo protege es o sea por el punto más bajo
+    en este caso como estamos de bajista alcista protege es allí en ese nivel
+  afirmacion: en el segundo esquema el stop va en el punto mas bajo de la estructura en vez de en 0,75
+  tema: stop.segundo_esquema_punto_mas_bajo
+  confianza: alta
+  marca_heredada: V4 0:21:41
+  n: 8
+- t0: 0:22:05
+  t1: 0:22:18
+  modalidad: audio
+  tipo: EXAMPLE_TRADE
+  cita_literal: el precio llega rompe con cuerpo cierra con cuerpo por debajo de la zona de liquidez y
+    te genera la entrada
+  afirmacion: 'ejemplo: rompe y cierra con cuerpo por debajo de la liquidez y genera la entrada'
+  tema: liquidez.m15.ejemplo_cierre_cuerpo_entrada
+  confianza: media
+  notas: segmento con senal no_habla
+  n: 9
+- t0: 0:22:25
+  t1: 0:22:49
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: mira soy humano o sea no puedo procesar muchos datos pero creo que buscando la manera
+    de automatizar y demás podemos buscar a lo mejor inclusive mejores configuraciones [...] el rr ideal
+    no es el 13 puede ser el 2.5
+  afirmacion: automatizar permitiria buscar mejores configuraciones, por ejemplo un RR de 2,5 en vez de
+    1:3
+  tema: meta.automatizar_para_mejores_configuraciones
+  confianza: media
+  marca_heredada: V4 0:22:27
+  notas: segmento con senal no_habla; 13 = 1 a 3
+  n: 10
+- t0: 0:22:57
+  t1: 0:23:09
+  modalidad: audio
+  tipo: EXAMPLE_TRADE
+  cita_literal: aquí hay una entrada que me sacó en B, o sea, me sacaría en B porque no llega al 1.3 tampoco
+  afirmacion: 'ejemplo: entrada que sale en break even (B) por no llegar al 1:3'
+  tema: break_even.ejemplo_saca_en_b
+  confianza: alta
+  n: 11
+- t0: 0:23:33
+  t1: 0:24:01
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: tengo 1, 2, 3 perdidos pues lo que hago es no operar, bueno, hasta un tercer trade suelo
+    hacer o sea, suelo hacer hasta un tercer trade [...] otra pérdida entonces yo me detengo allí
+  afirmacion: suele hacer hasta un tercer trade; con tres perdidas se detiene
+  tema: cartuchos.hasta_tercer_trade
+  valor: '3'
+  confianza: alta
+  notas: A-2 (2 en la ficha frente a 3 aqui)
+  n: 12
+- t0: 0:24:01
+  t1: 0:24:15
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: espero que en m15 me genere otras cosas si se da obviamente otra zona o sea otro esquema
+    de liquidez en m15 para nuevamente poder entrar
+  afirmacion: tras detenerse espera otra zona de liquidez en M15 para volver a entrar
+  tema: cartuchos.tras_tres_espera_liquidez_m15
+  confianza: alta
+  n: 13
+- t0: 0:24:57
+  t1: 0:25:10
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: yo ya estoy tomando la prueba de fondeo pero claro, he entrado sin lotaje o sea, han sido
+    3 que como tal no he entrado con el porcentaje de la cuenta
+  afirmacion: en la prueba de fondeo ha entrado tres veces sin calcular el lotaje
+  tema: riesgo.fondeo.sin_lotaje
+  confianza: alta
+  n: 14
+- t0: 0:28:07
+  t1: 0:28:26
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: yo lo que suelo hacer manualmente es claro una orden un buen límite y voy ahí bajando
+    bajando bajando pero claro para entrar con lotaje pues te tienes que poner a calcular
+  afirmacion: coloca una orden limite y la va bajando manualmente; calcular el lotaje a mano es un lio
+  tema: entrada.orden_limite.bajando_manual
+  confianza: alta
+  notas: A-5
+  n: 15
+- t0: 0:29:01
+  t1: 0:29:10
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: el tamaño también de la posición de tu cuenta 1%, ponías 1% y ahí lo moviendo el SL pues
+    se calculaba
+  afirmacion: la calculadora que busca recalcula el lotaje con el 1 % de la cuenta al mover el stop
+  tema: lotaje.calculadora_1_por_ciento
+  valor: '1'
+  confianza: alta
+  n: 16
+- t0: 0:29:15
+  t1: 0:29:22
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: esta es la última zona de liquidez o de control en la cual busco el breaker
+  afirmacion: busca el breaker en la ultima zona de liquidez o de control
+  tema: zona_control.ultima_zona_busca_breaker
+  confianza: alta
+  n: 17
+- t0: 0:29:51
+  t1: 0:30:00
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: ¿Quieres que sea sí o sí dos entradas? ¿O tener permiso por una tres? porque creo que
+    sí deberíamos tener el parámetro estático
+  afirmacion: 'pregunta del consultor: dos entradas fijas o permiso para una tercera, con parametro estatico'
+  tema: cartuchos.pregunta_dos_o_tres
+  confianza: alta
+  notas: habla el consultor; A-2
+  n: 18
+no_consta:
+- tema: sesgo
+  motivo: no habla del sesgo en el tramo
+- tema: mapeo
+  motivo: solo 'si te haces un mapeo' dentro del caso de dos zonas de control (0:19:22)
+- tema: objetivo
+  motivo: solo la idea de un RR de 2,5 (0:22:41), citada en meta
+salida_sha256: 58b4d1ba4f74bd2964b146905c88ae2774f9563cd6da580d8b2446162bfc2ee1
+comprobado_el: '2026-09-07T02:21:54Z'

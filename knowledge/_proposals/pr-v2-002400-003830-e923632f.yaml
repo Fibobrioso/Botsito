@@ -1,0 +1,1125 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v2-002400-003830-e923632f
+video_id: v2
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c
+t0: 0:24:00
+t1: 0:38:30
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:07Z'
+contexto:
+  segmentos:
+  - n: 207
+    t0_ms: 1430549
+    t1_ms: 1440669
+    texto: eso también sería nuestro los vale pero después tienes este último breaker o sea este último
+    senales: []
+  - n: 208
+    t0_ms: 1440669
+    t1_ms: 1446309
+    texto: break eres el último voz que te genera pues el otro movimiento y en este caso le entre o sea
+    senales: []
+  - n: 209
+    t0_ms: 1447489
+    t1_ms: 1452449
+    texto: objetivamente yo no tomaría todo ese movimiento de aquí o sea entonces el movimiento de aquí
+      no
+    senales: []
+  - n: 210
+    t0_ms: 1452449
+    t1_ms: 1459369
+    texto: lo tomaría tomaría este de aquí o hasta esta zona para maximizar o sea si sé que este es el
+    senales: []
+  - n: 211
+    t0_ms: 1459369
+    t1_ms: 1465069
+    texto: movimiento más potencial o sea es esta zona aquí aquí si llegaría a tomar parciales entre un
+      40 a
+    senales: []
+  - n: 212
+    t0_ms: 1465069
+    t1_ms: 1474609
+    texto: un 30 por ciento y luego pues lo subiría aquí que sería un 343 ahora esto ya sería un poco
+    senales: []
+  - n: 213
+    t0_ms: 1474609
+    t1_ms: 1479309
+    texto: más discrecional si tú sabes que te genera te va a generar toda esta vez bueno no puedes saberlo
+      pero
+    senales: []
+  - n: 214
+    t0_ms: 1481209
+    t1_ms: 1488329
+    texto: si eres más agresivo digámoslo así pues vas a dejar a que la operativa se cierre cuando la
+    senales: []
+  - n: 215
+    t0_ms: 1488329
+    t1_ms: 1495329
+    texto: la vela o sea la vela de cuatro horas finalice entiendes si llegas tú a cerrar o sea si se
+      llega
+    senales: []
+  - n: 216
+    t0_ms: 1495329
+    t1_ms: 1499629
+    texto: a cerrar la operativa cuando la vela finalice obviamente pues capturar ya esto todo el
+    senales: []
+  - n: 217
+    t0_ms: 1499629
+    t1_ms: 1513269
+    texto: movimiento no me suelta la verdad o no sé si tengo que activar lo de las noticias
+    senales: []
+  - n: 218
+    t0_ms: 1517249
+    t1_ms: 1517769
+    texto: claro
+    senales: []
+  - n: 219
+    t0_ms: 1519489
+    t1_ms: 1520009
+    texto: objetivamente
+    senales: []
+  - n: 220
+    t0_ms: 1521189
+    t1_ms: 1522449
+    texto: como te digo
+    senales: []
+  - n: 221
+    t0_ms: 1522449
+    t1_ms: 1525049
+    texto: no trato de meterle las noticias
+    senales: []
+  - n: 222
+    t0_ms: 1525049
+    t1_ms: 1525609
+    texto: porque
+    senales: []
+  - n: 223
+    t0_ms: 1526309
+    t1_ms: 1528829
+    texto: en el sentido de que claro, se puede poner
+    senales: []
+  - n: 224
+    t0_ms: 1529649
+    t1_ms: 1530889
+    texto: pero yo no
+    senales: []
+  - n: 225
+    t0_ms: 1530889
+    t1_ms: 1532849
+    texto: lo he bacteceado, o sea, he bacteceado sin ver
+    senales: []
+  - n: 226
+    t0_ms: 1532849
+    t1_ms: 1533649
+    texto: las noticias
+    senales: []
+  - n: 227
+    t0_ms: 1533649
+    t1_ms: 1536549
+    texto: lo he bacteceado así, full price
+    senales: []
+  - n: 228
+    t0_ms: 1536549
+    t1_ms: 1537049
+    texto: 'no'
+    senales: []
+  - n: 229
+    t0_ms: 1538589
+    t1_ms: 1540289
+    texto: pero claro, se podría, sí
+    senales: []
+  - n: 230
+    t0_ms: 1540289
+    t1_ms: 1542509
+    texto: se podría, pero es eso
+    senales: []
+  - n: 231
+    t0_ms: 1542509
+    t1_ms: 1544189
+    texto: yo lo he bacteceado así nomás
+    senales: []
+  - n: 232
+    t0_ms: 1544189
+    t1_ms: 1549449
+    texto: pero claro como digo si tú esperas a que bueno el robot llega a cerrar la operativa cuando
+      la
+    senales: []
+  - n: 233
+    t0_ms: 1549449
+    t1_ms: 1557389
+    texto: vela de cuatro horas finalice pues capturaría su mayor margen de beneficio ampliaría su radio
+    senales: []
+  - n: 234
+    t0_ms: 1557389
+    t1_ms: 1564129
+    texto: radio beneficio pero es así después lo que sigue es eso tengo más que estaba deseando lo último
+      que
+    senales: []
+  - n: 235
+    t0_ms: 1564129
+    t1_ms: 1570509
+    texto: estaba haciendo es para tratar de capturar o sea porque sólo usando el modelo de 4 de 4 horas
+      m 15
+    senales: []
+  - n: 236
+    t0_ms: 1570509
+    t1_ms: 1577189
+    texto: y m1 que son las temporadas m1 es el marco de ejecución donde el robot o el humano buscaría
+    senales: []
+  - n: 237
+    t0_ms: 1577189
+    t1_ms: 1586609
+    texto: el breaker para dar continuidad a la operativa es en m1 vale direccionalidad es en h4 y m15
+      es
+    senales: []
+  - n: 238
+    t0_ms: 1586609
+    t1_ms: 1592889
+    texto: para el marco de marco de liquidez es el precio genera liquidez en este caso bajista genera
+      un
+    senales: []
+  - n: 239
+    t0_ms: 1592889
+    t1_ms: 1600169
+    texto: breaker en el que apenas generó el breaker te diriges a m1 y buscas lo que sería el boss pero
+    senales: []
+  - n: 240
+    t0_ms: 1600169
+    t1_ms: 1606949
+    texto: contemplando la direccionalidad como esta vez la terminó en cuatro horas o sea yo solo decir
+    senales: []
+  - n: 241
+    t0_ms: 1606949
+    t1_ms: 1613569
+    texto: eso estadísticamente o sea que tampoco es 100% certeza hay una alta probabilidad de que el
+      precio
+    senales: []
+  - n: 242
+    t0_ms: 1613569
+    t1_ms: 1620589
+    texto: o sea continúe ese flujo entiendes o sea esa direccionalidad en algunos casos y vamos más
+    senales: []
+  - n: 243
+    t0_ms: 1620589
+    t1_ms: 1625169
+    texto: más adelante a lo mejor te encuentres te suele generar incluso entradas y la vela de cuatro
+    senales: []
+  - n: 244
+    t0_ms: 1625169
+    t1_ms: 1630809
+    texto: horas termina bajista te suele generar entradas que terminan tomándote el ratio riesgo-beneficio
+    senales: []
+  - n: 245
+    t0_ms: 1630809
+    t1_ms: 1637389
+    texto: de 1 a 3 que es lo que yo busco claro si tienes si a lo mejor nos basamos en que reducimos
+      el
+    senales: []
+  - n: 246
+    t0_ms: 1637389
+    t1_ms: 1644409
+    texto: ratio riesgo-beneficio a un 1 a 2 aumentaría lo que sería el win rate pero pero claro está
+    senales: []
+  - n: 247
+    t0_ms: 1644409
+    t1_ms: 1649729
+    texto: reduciendo el beneficio entonces yo al menos yo prefiero tener un ratio riesgo-beneficio
+    senales: []
+  - n: 248
+    t0_ms: 1649729
+    t1_ms: 1658189
+    texto: mayor con un 1 a 3 que me dan mayores posibilidades de perder que tener un radio
+    senales: []
+  - n: 249
+    t0_ms: 1658189
+    t1_ms: 1673119
+    texto: rico beneficio menor entonces es eso solo trabajando un vale en cuanto a gestión de
+    senales: []
+  - n: 250
+    t0_ms: 1673119
+    t1_ms: 1678739
+    texto: riesgo yo lo estaba viendo creo que lo más óptimo sería si uno quiere escalar la cuenta rápido
+      rápido
+    senales: []
+  - n: 251
+    t0_ms: 1678739
+    t1_ms: 1687959
+    texto: que sea un crecimiento geométrico o sea no fijo o aritmético sino geométrico en el cual pues
+      por
+    senales: []
+  - n: 252
+    t0_ms: 1687959
+    t1_ms: 1694779
+    texto: ejemplo si estás es un de 10.000 haces un bueno manejas en porcentajes en términos simples
+      se
+    senales: []
+  - n: 253
+    t0_ms: 1694779
+    t1_ms: 1701099
+    texto: manejan porcentajes vale crecimiento geométrico en porcentajes entonces es eso no es una cuantía
+    senales: []
+  - n: 254
+    t0_ms: 1701099
+    t1_ms: 1707419
+    texto: fija si no es porcentajes porcentaje un 1% de la cuenta entonces va creciendo geométricamente
+      pues
+    senales: []
+  - n: 255
+    t0_ms: 1707419
+    t1_ms: 1713699
+    texto: así se crece más rápido también creo yo y aparte de que en un crecimiento geométrico yo lo
+      veo más
+    senales: []
+  - n: 256
+    t0_ms: 1713699
+    t1_ms: 1719999
+    texto: óptimo por el hecho de que cuando llegue un punto donde tienes una racha perdedora se suele
+      gestionar
+    senales: []
+  - n: 257
+    t0_ms: 1719999
+    t1_ms: 1725439
+    texto: mejor o sea y automáticamente sin que tú tengas que modificar algo o sea porcentualmente pues
+    senales: []
+  - n: 258
+    t0_ms: 1725439
+    t1_ms: 1732479
+    texto: eso se suele disminuir el riesgo entonces el porcentaje que puedes manejar es un 1% aunque
+    senales: []
+  - n: 259
+    t0_ms: 1732479
+    t1_ms: 1740679
+    texto: para la prueba de fondeo que yo lo tengo planteado sería manejarlo con un 0.50 0.50 o un 0.75
+      para
+    senales: []
+  - n: 260
+    t0_ms: 1740679
+    t1_ms: 1749099
+    texto: que tengas mayores tiros y claro exacto exacto qué empresa te interesa o sea con qué empresa
+    senales: []
+  - n: 261
+    t0_ms: 1749099
+    t1_ms: 1765449
+    texto: estás planeando fundarte a vale vale pues creo que tienen las mismas condiciones no claro claro
+    senales: []
+  - n: 262
+    t0_ms: 1768649
+    t1_ms: 1789029
+    texto: Claro, por eso también más o menos que, o sea, yo trato de, o sea, si tú te das cuenta y ves
+      en las imágenes, los puntos de equilibrio en los trades se combina tanto como perdedoras y ganadoras,
+      pero yo prefiero honestamente tener un punto de equilibrio, o sea, un break even, que a que la operación
+      me sea indecisa, o sea, que se pierda o se gane, ¿entiendes?
+    senales: []
+  - n: 263
+    t0_ms: 1789029
+    t1_ms: 1793069
+    texto: más que nada también por el hecho de proteger o sea lo que sería o sea
+    senales: []
+  - n: 264
+    t0_ms: 1793849
+    t1_ms: 1797549
+    texto: esa curva de drawdown que te termina afectando la cuenta
+    senales: []
+  - n: 265
+    t0_ms: 1798266
+    t1_ms: 1815186
+    texto: Porque claro, si es con cuenta propia, como que puedes arriesgarte mucho más, o sea, puedes
+      gestionar mejores riesgos y todo eso, pero como tienes limitaciones, que es el enfoque que también
+      voy, entonces es eso, o sea, yo prefiero tener un break even que tener una entrada positiva o una
+      perdedora.
+    senales: []
+  - n: 266
+    t0_ms: 1815186
+    t1_ms: 1828586
+    texto: Pero que yo estoy muy seguro, por lo que he bacteseado, que lo más probable es que sea perdedora.
+      Aunque así teniendo un ratio de riesgo-beneficio de 1 a 3, no te salva, por ejemplo, de las rachas
+      perdedoras.
+    senales: []
+  - n: 267
+    t0_ms: 1828586
+    t1_ms: 1832886
+    texto: que si tú tienes una racha perdedora que estadísticamente matemáticamente no tienes
+    senales: []
+  - n: 268
+    t0_ms: 1832886
+    t1_ms: 1840846
+    texto: no sabes con certeza qué día se te va a ocurrir eso entonces imagínate por ejemplo tienes un
+    senales: []
+  - n: 269
+    t0_ms: 1840846
+    t1_ms: 1847506
+    texto: buen rey de un 55 por ciento a un 40 por ciento pero las dos primas las dos primeras bueno
+      los
+    senales: []
+  - n: 270
+    t0_ms: 1847506
+    t1_ms: 1853966
+    texto: diez primeros trades son negativos entonces lo positivo todavía estaría en las siguientes
+    senales: []
+  - n: 271
+    t0_ms: 1853966
+    t1_ms: 1858386
+    texto: operaciones pero no llegas porque ya tienes quemada la cuenta entiendes entonces ese es
+    senales:
+    - no_habla
+  - n: 272
+    t0_ms: 1858386
+    t1_ms: 1863706
+    texto: el chiste también por eso es tratado de como que ser lo más objetivo posible en cuanto a
+    senales:
+    - no_habla
+  - n: 273
+    t0_ms: 1863706
+    t1_ms: 1868026
+    texto: la gestión de estos blogs entonces el break even yo creo que es fundamental o sea que apenas
+      el
+    senales:
+    - no_habla
+  - n: 274
+    t0_ms: 1868026
+    t1_ms: 1880076
+    texto: precio suele generar ese movimiento de aquí en esta o sea aquí hay un flujo de órdenes y luego
+    senales:
+    - no_habla
+  - n: 275
+    t0_ms: 1880076
+    t1_ms: 1884196
+    texto: genera el break que los hasta rompe ese flujo de ese flujo de órdenes o se genera el voz como
+      lo
+    senales:
+    - no_habla
+  - n: 276
+    t0_ms: 1884196
+    t1_ms: 1892036
+    texto: lo conoces te genera este bloque de orden alcista entonces ahí o sea apenas genera aquí ya
+      la
+    senales: []
+  - n: 277
+    t0_ms: 1892036
+    t1_ms: 1896356
+    texto: entrada se pone automáticamente en solos que lo puedes hacer manualmente también o sea yo lo
+    senales: []
+  - n: 278
+    t0_ms: 1896356
+    t1_ms: 1902616
+    texto: estaba haciendo manualmente y es importante también otra cosa que nos ha olvidando bueno
+    senales: []
+  - n: 279
+    t0_ms: 1902616
+    t1_ms: 1910236
+    texto: sólo es el cuadro de gam más o menos porque yo suelo a ver yo cuando suelo medir lo que sería
+    senales: []
+  - n: 280
+    t0_ms: 1910236
+    t1_ms: 1919476
+    texto: sería la entrada, lo suelo medir normalmente así, o sea, desde el punto anterior, bueno, anterior
+      y el final, o sea, inicio y final, ¿vale?
+    senales: []
+  - n: 281
+    t0_ms: 1921116
+    t1_ms: 1933136
+    texto: Pero, por ejemplo, pongo unos aquí, ¿vale? Pero al final lo suelo poner en 0.75, o sea, 0.75,
+      entonces no estás arriesgando el 100% de la entrada, ¿vale?
+    senales: []
+  - n: 282
+    t0_ms: 1933136
+    t1_ms: 1946336
+    texto: Vale, esto estadísticamente que lo puedes ver tú también, o sea, si te pones a backtestear,
+      se suele dar la mayoría de veces que si el precio usualmente suele retroceder hasta un 0.75, hay
+      una alta probabilidad de que caiga.
+    senales: []
+  - n: 283
+    t0_ms: 1946336
+    t1_ms: 1954056
+    texto: o sea el precio continúe su orden flow bajista pero en 0.75 lo que tú haces estás ya protegiendo
+    senales: []
+  - n: 284
+    t0_ms: 1954056
+    t1_ms: 1961496
+    texto: un 0.25 del capital cuida también lo que sería tu curva de drawdown porque ya no es lo mismo
+      perder
+    senales: []
+  - n: 285
+    t0_ms: 1961496
+    t1_ms: 1972256
+    texto: un 1% a perder solo 0.75 entonces te da pues bueno se ve visiblemente una mejora curva de drawdown
+      y
+    senales: []
+  - n: 286
+    t0_ms: 1972256
+    t1_ms: 1976456
+    texto: Y también, pues, protege mejor tu capital y nada, arriesgas menos, literal.
+    senales: []
+  - n: 287
+    t0_ms: 1976936
+    t1_ms: 1980296
+    texto: Y al final, igual tienes planteado tu objetivo a 1 a 3.
+    senales: []
+  - n: 288
+    t0_ms: 1980536
+    t1_ms: 1987316
+    texto: No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí.
+    senales: []
+  - n: 289
+    t0_ms: 1988616
+    t1_ms: 1990376
+    texto: Porque, claro, suele...
+    senales: []
+  - n: 290
+    t0_ms: 1991096
+    t1_ms: 1993456
+    texto: Bueno, no lo he intentado, la verdad, pero...
+    senales: []
+  - n: 291
+    t0_ms: 1994976
+    t1_ms: 1996576
+    texto: No, o sea, no lo veo viable.
+    senales: []
+  - n: 292
+    t0_ms: 1996896
+    t1_ms: 2000256
+    texto: No lo veo viable porque en algunos casos...
+    senales: []
+  - n: 293
+    t0_ms: 2002296
+    t1_ms: 2003476
+    texto: que lo he intentado
+    senales: []
+  - n: 294
+    t0_ms: 2003476
+    t1_ms: 2004936
+    texto: bueno, si lo he intentado
+    senales: []
+  - n: 295
+    t0_ms: 2004936
+    t1_ms: 2006736
+    texto: no me fue muy bien
+    senales: []
+  - n: 296
+    t0_ms: 2006736
+    t1_ms: 2009356
+    texto: no me fue muy bien por el hecho del
+    senales: []
+  - n: 297
+    t0_ms: 2009356
+    t1_ms: 2011376
+    texto: drawdown, o sea, es como si estuvieras perdiendo
+    senales: []
+  - n: 298
+    t0_ms: 2011376
+    t1_ms: 2012616
+    texto: un 1% nuevamente
+    senales: []
+  - n: 299
+    t0_ms: 2014716
+    t1_ms: 2015156
+    texto: entonces
+    senales: []
+  - n: 300
+    t0_ms: 2016456
+    t1_ms: 2018796
+    texto: es eso, yo calculo mi lotaje
+    senales: []
+  - n: 301
+    t0_ms: 2018796
+    t1_ms: 2021076
+    texto: desde aquí, o sea, como si fuera lo básico
+    senales: []
+  - n: 302
+    t0_ms: 2021076
+    t1_ms: 2022556
+    texto: un bot normal, pero luego
+    senales: []
+  - n: 303
+    t0_ms: 2023116
+    t1_ms: 2025076
+    texto: automáticamente, se de inicio
+    senales: []
+  - n: 304
+    t0_ms: 2025076
+    t1_ms: 2026536
+    texto: la entrada, lo pongo en 0.75
+    senales: []
+  - n: 305
+    t0_ms: 2027656
+    t1_ms: 2028296
+    texto: y estoy
+    senales: []
+  - n: 306
+    t0_ms: 2028956
+    t1_ms: 2030456
+    texto: guardándome 0.25
+    senales: []
+  - n: 307
+    t0_ms: 2030456
+    t1_ms: 2036856
+    texto: 25 que si lo agrega también a la operativa sería finalizando con un 3 con 25 no sólo un 3 un
+      radio
+    senales: []
+  - n: 308
+    t0_ms: 2036856
+    t1_ms: 2047196
+    texto: rego beneficio de una traducción o con un 3 con 25 y es eso bueno después creo que a lo mejor
+      en
+    senales: []
+  - n: 309
+    t0_ms: 2047196
+    t1_ms: 2052276
+    texto: otra charla pues podemos tocarlo o podemos irlo viendo porque es lo que he estado viendo
+    senales: []
+  - n: 310
+    t0_ms: 2052276
+    t1_ms: 2057056
+    texto: recientemente como se me suelen ir las entradas como te digo o sea no aplicando este modelo
+    senales: []
+  - n: 311
+    t0_ms: 2057056
+    t1_ms: 2064436
+    texto: lo que sería tomar esta zona de aquí o sea la redistribución porque si tú te das cuenta al
+    senales: []
+  - n: 312
+    t0_ms: 2064436
+    t1_ms: 2070896
+    texto: final de cabo pues en la redistribución si nos vamos a cuatro horas lo que se está tomando
+      el
+    senales: []
+  - n: 313
+    t0_ms: 2070896
+    t1_ms: 2077656
+    texto: triste está tomando en el punto casi más bajo de la operativa o sea casi más bajo es por eso
+      que
+    senales: []
+  - n: 314
+    t0_ms: 2077656
+    t1_ms: 2083776
+    texto: tú puedes aprovechar todo ese movimiento si se da entiendes pero después existe la posibilidad
+      de
+    senales: []
+  - n: 315
+    t0_ms: 2083776
+    t1_ms: 2085456
+    texto: que te deje la operativa, entonces
+    senales: []
+  - n: 316
+    t0_ms: 2085456
+    t1_ms: 2087596
+    texto: para eso, o sea, lo que
+    senales: []
+  - n: 317
+    t0_ms: 2087596
+    t1_ms: 2089416
+    texto: he tratado de buscar es el flujo de órdenes
+    senales: []
+  - n: 318
+    t0_ms: 2089416
+    t1_ms: 2091556
+    texto: donde se rompe y donde el
+    senales: []
+  - n: 319
+    t0_ms: 2091556
+    t1_ms: 2092496
+    texto: precio suele generar
+    senales: []
+  - n: 320
+    t0_ms: 2093056
+    t1_ms: 2095056
+    texto: ese flujo de órdenes natural
+    senales: []
+  - n: 321
+    t0_ms: 2095056
+    t1_ms: 2097736
+    texto: digámoslo también así, no muy ruidoso
+    senales: []
+  - n: 322
+    t0_ms: 2097736
+    t1_ms: 2099396
+    texto: en el cual si
+    senales: []
+  - n: 323
+    t0_ms: 2099396
+    t1_ms: 2100596
+    texto: lo pasas a código
+    senales: []
+  - n: 324
+    t0_ms: 2100596
+    t1_ms: 2103616
+    texto: y está operando el robot, te está comprando y vendiendo
+    senales: []
+  - n: 325
+    t0_ms: 2103616
+    t1_ms: 2105716
+    texto: a los locos, no, entonces es eso
+    senales: []
+  - n: 326
+    t0_ms: 2105716
+    t1_ms: 2107476
+    texto: o sea, bueno, M5 es otra historia
+    senales: []
+  - n: 327
+    t0_ms: 2108596
+    t1_ms: 2109696
+    texto: pero es eso
+    senales: []
+  - n: 328
+    t0_ms: 2112906
+    t1_ms: 2113866
+    texto: ¿Tienes alguna duda?
+    senales: []
+  - n: 329
+    t0_ms: 2114966
+    t1_ms: 2115866
+    texto: ¿O me he liado en algo?
+    senales: []
+  - n: 330
+    t0_ms: 2129266
+    t1_ms: 2145926
+    texto: Vale, es una muy buena pregunta. Yo principalmente como objetivo tengo pues, a ver, un modelo
+      más robusto a un mayor número de muestras, ¿vale? Entonces lo que me gustaría es, claro, yo supongamos
+      me pongo a bacteciar 1000 trades.
+    senales: []
+  - n: 331
+    t0_ms: 2146686
+    t1_ms: 2153406
+    texto: aparte de que es muy cansado o sea psicológicamente y demás tampoco tengo el tiempo está suficiente
+    senales: []
+  - n: 332
+    t0_ms: 2153406
+    t1_ms: 2159566
+    texto: como para abastecer a ser mil 2003 que ya estadísticamente también daría una gran
+    senales: []
+  - n: 333
+    t0_ms: 2159566
+    t1_ms: 2164286
+    texto: validación de decir pues esto funciona entiendes como te digo en este modelo no lo ha aplicado
+    senales: []
+  - n: 334
+    t0_ms: 2164286
+    t1_ms: 2170466
+    texto: todavía real tengo planeado ya tengo la cuenta de fondeo también de probable en estas la próxima
+    senales: []
+  - n: 335
+    t0_ms: 2170466
+    t1_ms: 2176226
+    texto: semana lo más probable no sea sólo usando este modelo aquí porque el de m5 es otra historia
+    senales: []
+  - n: 336
+    t0_ms: 2177166
+    t1_ms: 2183306
+    texto: pero es eso y bueno esos son con los tres que tengo más trades pero no llevado a sacar el
+    senales: []
+  - n: 337
+    t0_ms: 2183306
+    t1_ms: 2190206
+    texto: captura pantallas o sea está en otra cuenta pero o sea llegue casi a los 200 trades entonces
+      yo
+    senales: []
+  - n: 338
+    t0_ms: 2190206
+    t1_ms: 2197886
+    texto: creo que para intentarlo pues viene bien o sea no tampoco pierdo nada entiendes bueno perderé
+    senales: []
+  - n: 339
+    t0_ms: 2197886
+    t1_ms: 2203206
+    texto: la cuenta de fondeo y está pero claro si es la hay la posibilidad de automatizarlo entonces
+      puedes
+    senales: []
+  - n: 340
+    t0_ms: 2203206
+    t1_ms: 2213546
+    texto: tener un mayor número de muestras porque después esos esos 203 lo pasé por el nombre
+    senales: []
+  - n: 341
+    t0_ms: 2215506
+    t1_ms: 2223246
+    texto: monte carlos desde monte carlos y bueno los números dan positivo pero al final es eso
+    senales: []
+  - n: 342
+    t0_ms: 2223246
+    t1_ms: 2230526
+    texto: o sea el mercado dice otra cosa entiendes entonces nada pues es eso lo que busco es aumentar
+      mi
+    senales: []
+  - n: 343
+    t0_ms: 2230526
+    t1_ms: 2236286
+    texto: número muestras o sea como objetivo principal y validar el sistema y ya y si hay posibilidad
+      de
+    senales: []
+  - n: 344
+    t0_ms: 2236286
+    t1_ms: 2241486
+    texto: automatizarlo en el sentido de que trabaje solo pues aquí no le gustaría no o sea te evitarías
+    senales: []
+  - n: 345
+    t0_ms: 2241486
+    t1_ms: 2247106
+    texto: estar a lo mejor cuatro horas buscando en alguna sesión la entrada que en total serían ocho
+      horas
+    senales: []
+  - n: 346
+    t0_ms: 2247106
+    t1_ms: 2251826
+    texto: aunque tan fácilmente también puedes trabajar en una sesión de cuatro horas y buscar la entrada
+    senales:
+    - no_habla
+  - n: 347
+    t0_ms: 2251826
+    t1_ms: 2258406
+    texto: y ya o sea o que el robot también a lo mejor pues te indique hay rompimiento aquí que se yo
+    senales:
+    - no_habla
+  - n: 348
+    t0_ms: 2258406
+    t1_ms: 2265686
+    texto: aún eso sería algo más que nada algo híbrido pero si existe posibilidad de automatizar al 100%
+      pues
+    senales:
+    - no_habla
+  - n: 349
+    t0_ms: 2265686
+    t1_ms: 2272406
+    texto: genial creo yo o cualquiera de las dos sea híbrido o automatizar el 100% hay varios aspectos
+      son
+    senales:
+    - no_habla
+  - n: 350
+    t0_ms: 2272406
+    t1_ms: 2277326
+    texto: realidad son varios que pueden hacer o sea el principal lo que primero lo primero que
+    senales: []
+  - n: 351
+    t0_ms: 2277326
+    t1_ms: 2283586
+    texto: quiero hacer es tratar de va a testear pues de manera robusta no sería tu primera prioridad
+    senales: []
+  - n: 352
+    t0_ms: 2283586
+    t1_ms: 2290246
+    texto: para validar la estrategia en cierto claro porque al final de cabo no se ha llegado a
+    senales: []
+  - n: 353
+    t0_ms: 2290246
+    t1_ms: 2291866
+    texto: a ver los backtestings que hicieron
+    senales:
+    - no_habla
+  - n: 354
+    t0_ms: 2291866
+    t1_ms: 2292606
+    texto: de ICT
+    senales:
+    - no_habla
+  - n: 355
+    t0_ms: 2294246
+    t1_ms: 2295486
+    texto: y no sé nada
+    senales:
+    - no_habla
+  - n: 356
+    t0_ms: 2296346
+    t1_ms: 2297246
+    texto: no, leí varias
+    senales:
+    - no_habla
+  - n: 357
+    t0_ms: 2301716
+    t1_ms: 2302196
+    texto: hola
+    senales:
+    - no_habla
+  - n: 358
+    t0_ms: 2303836
+    t1_ms: 2304416
+    texto: ah no
+    senales:
+    - no_habla
+  - n: 359
+    t0_ms: 2306116
+    t1_ms: 2308016
+    texto: has llegado tú a backtestar ICT
+    senales:
+    - no_habla
+  referencias:
+  - 'fr-v2-c5a09508/<t_ms>: 871 fotogramas regulares, uno por segundo, de 1440000 a 2310000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:24:19
+  t1: 0:24:41
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: si llegaría a tomar parciales entre un 40 a un 30 por ciento y luego pues lo subiría aquí
+    que sería un 343 ahora esto ya sería un poco más discrecional
+  afirmacion: si tomara parciales serian del 30 al 40 %, y eso ya seria discrecional
+  tema: parciales.30_40_discrecional
+  confianza: alta
+  n: 1
+- t0: 0:24:41
+  t1: 0:24:59
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: si eres más agresivo digámoslo así pues vas a dejar a que la operativa se cierre cuando
+    la la vela o sea la vela de cuatro horas finalice
+  afirmacion: 'opcion agresiva: dejar que la operativa se cierre al finalizar la vela de cuatro horas'
+  tema: objetivo.cierre_fin_vela_h4
+  confianza: alta
+  n: 2
+- t0: 0:25:22
+  t1: 0:25:36
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: no trato de meterle las noticias [...] he bacteceado sin ver las noticias
+  afirmacion: no usa las noticias; ha backtesteado sin verlas
+  tema: herramientas.sin_noticias
+  valor: 'no'
+  confianza: alta
+  n: 3
+- t0: 0:26:04
+  t1: 0:26:32
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: sólo usando el modelo de 4 de 4 horas m 15 [...] m1 es el marco de ejecución donde el
+    robot o el humano buscaría el breaker [...] direccionalidad es en h4 y m15 es para el marco de marco
+    de liquidez
+  afirmacion: H4 da la direccionalidad, M15 la liquidez y M1 es el marco de ejecucion donde se busca el
+    breaker
+  tema: entrada.marcos_h4_m15_m1
+  confianza: alta
+  n: 4
+- t0: 0:26:26
+  t1: 0:26:40
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: genera un breaker en el que apenas generó el breaker te diriges a m1 y buscas lo que sería
+    el boss
+  afirmacion: apenas M15 genera el breaker, se va a M1 a buscar el BOS
+  tema: entrada.secuencia_breaker_m15_bos_m1
+  confianza: media
+  notas: segmento con duda del glosario (boss/voz)
+  n: 5
+- t0: 0:27:05
+  t1: 0:27:38
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: te suele generar entradas que terminan tomándote el ratio riesgo-beneficio de 1 a 3 que
+    es lo que yo busco [...] yo prefiero tener un ratio riesgo-beneficio mayor con un 1 a 3
+  afirmacion: busca 1 a 3; prefiere un ratio mayor aunque pierda mas veces que un 1 a 2 con mas aciertos
+  tema: objetivo.rr_preferencia
+  confianza: alta
+  n: 6
+- t0: 0:27:53
+  t1: 0:28:27
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: lo más óptimo sería si uno quiere escalar la cuenta rápido rápido que sea un crecimiento
+    geométrico [...] porcentaje un 1% de la cuenta
+  afirmacion: 'riesgo en porcentaje de la cuenta (crecimiento geometrico): un 1 %'
+  tema: riesgo.crecimiento_geometrico
+  valor: '1'
+  confianza: alta
+  n: 7
+- t0: 0:28:45
+  t1: 0:29:00
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo
+    planteado sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros
+  afirmacion: en general 1 %; para la prueba de fondeo, 0,50 o 0,75 por operacion para tener mas tiros
+  tema: riesgo.fondeo.por_operacion
+  valor: '0.50'
+  confianza: alta
+  n: 8
+- t0: 0:29:28
+  t1: 0:29:49
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: yo prefiero honestamente tener un punto de equilibrio, o sea, un break even, que a que
+    la operación me sea indecisa
+  afirmacion: prefiere un break even a una operacion indecisa
+  tema: break_even.preferencia
+  confianza: alta
+  n: 9
+- t0: 0:30:15
+  t1: 0:30:28
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: teniendo un ratio de riesgo-beneficio de 1 a 3, no te salva, por ejemplo, de las rachas
+    perdedoras
+  afirmacion: el 1 a 3 no protege de las rachas perdedoras
+  tema: riesgo.rachas
+  confianza: alta
+  n: 10
+- t0: 0:31:03
+  t1: 0:31:36
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: el break even yo creo que es fundamental o sea que apenas el precio suele generar ese
+    movimiento [...] te genera este bloque de orden alcista entonces ahí o sea apenas genera aquí ya la
+    entrada se pone automáticamente en solos
+  afirmacion: 'el break even es fundamental: apenas el precio genera el bloque tras romper el flujo, la
+    entrada pasa automaticamente a break even'
+  tema: break_even.fundamental_bloque
+  confianza: media
+  notas: segmentos con senal no_habla y duda del glosario (voz = BOS en 0:31:20); solos = stop loss
+  n: 11
+- t0: 0:31:42
+  t1: 0:32:13
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: yo cuando suelo medir lo que sería sería la entrada, lo suelo medir normalmente así, o
+    sea, desde el punto anterior [...] al final lo suelo poner en 0.75, o sea, 0.75, entonces no estás
+    arriesgando el 100% de la entrada
+  afirmacion: 'mide la entrada desde el punto anterior y pone el stop en 0,75: no arriesga el 100 %'
+  tema: stop.nivel
+  valor: '0.75'
+  confianza: alta
+  marca_heredada: V2 0:31:59
+  n: 12
+- t0: 0:32:13
+  t1: 0:32:26
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: se suele dar la mayoría de veces que si el precio usualmente suele retroceder hasta un
+    0.75, hay una alta probabilidad de que caiga
+  afirmacion: si el precio retrocede hasta el 0,75 hay alta probabilidad de que caiga (justificacion estadistica
+    del nivel)
+  tema: stop.retroceso_075_probabilidad
+  confianza: alta
+  n: 13
+- t0: 0:32:26
+  t1: 0:32:52
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: en 0.75 lo que tú haces estás ya protegiendo un 0.25 del capital cuida también lo que
+    sería tu curva de drawdown [...] ya no es lo mismo perder un 1% a perder solo 0.75
+  afirmacion: con el stop en 0,75 se protege 0,25 del capital y se cuida la curva de drawdown
+  tema: stop.proteger_025_capital
+  valor: '0.25'
+  confianza: alta
+  marca_heredada: V2 0:32:26
+  n: 14
+- t0: 0:32:56
+  t1: 0:33:00
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: Y al final, igual tienes planteado tu objetivo a 1 a 3
+  afirmacion: el objetivo sigue planteado a 1 a 3 aunque el stop se mueva a 0,75
+  tema: objetivo.rr_fijo_tras_stop
+  confianza: alta
+  n: 15
+- t0: 0:33:00
+  t1: 0:33:34
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí [...] No
+    lo veo viable porque en algunos casos [...] no me fue muy bien por el hecho del drawdown
+  afirmacion: 'no calcula el lotaje desde el 0,75: lo probo y no le fue bien por el drawdown'
+  tema: lotaje.no_desde_075
+  confianza: media
+  notas: OTAG = lotaje en la lectura del ASR
+  n: 16
+- t0: 0:33:36
+  t1: 0:33:50
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: yo calculo mi lotaje desde aquí, o sea, como si fuera lo básico un bot normal, pero luego
+    automáticamente, se de inicio la entrada, lo pongo en 0.75 y estoy guardándome 0.25
+  afirmacion: el lotaje se calcula sobre la distancia completa; al iniciarse la entrada el stop pasa a
+    0,75 y guarda 0,25
+  tema: lotaje.distancia_completa
+  confianza: alta
+  n: 17
+- t0: 0:33:50
+  t1: 0:33:56
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: si lo agrega también a la operativa sería finalizando con un 3 con 25 no sólo un 3
+  afirmacion: sumando el 0,25 guardado, una ganadora acaba en 3,25 y no en 3
+  tema: objetivo.resultado_3_25
+  confianza: alta
+  n: 18
+- t0: 0:35:29
+  t1: 0:36:30
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: yo supongamos me pongo a bacteciar 1000 trades [...] tengo planeado ya tengo la cuenta
+    de fondeo [...] llegue casi a los 200 trades
+  afirmacion: quiere mas muestras (1000 trades); tiene la cuenta de fondeo y casi 200 trades backtesteados
+  tema: backtest.muestra_200
+  confianza: alta
+  n: 19
+- t0: 0:37:03
+  t1: 0:37:16
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: lo que busco es aumentar mi número muestras o sea como objetivo principal y validar el
+    sistema
+  afirmacion: 'objetivo principal: aumentar la muestra y validar el sistema'
+  tema: meta.validar_sistema
+  confianza: alta
+  marca_heredada: V2 0:37:08
+  n: 20
+- t0: 0:37:38
+  t1: 0:37:52
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: si existe posibilidad de automatizar al 100% pues genial creo yo o cualquiera de las dos
+    sea híbrido o automatizar el 100%
+  afirmacion: le vale un sistema hibrido o automatizado al 100 %
+  tema: meta.automatizar_o_hibrido
+  confianza: media
+  n: 21
+no_consta:
+- tema: sesgo
+  motivo: solo como marco (direccionalidad en H4, 0:26:17); la regla esta en 0:05:47-0:09:09
+- tema: liquidez
+  motivo: solo como marco (M15 es el marco de liquidez, 0:26:17)
+- tema: mapeo
+  motivo: no habla del mapeo en el tramo
+- tema: zona_control
+  motivo: no habla de la zona de control en el tramo
+- tema: cartuchos
+  motivo: no habla de intentos en el tramo
+- tema: no_trade
+  motivo: no razona ningun caso de no operar en el tramo
+salida_sha256: d75a4e932570ee01165d869bc60a67a9f1286c7d99448090218375aefcbe395e
+comprobado_el: '2026-09-07T01:44:04Z'

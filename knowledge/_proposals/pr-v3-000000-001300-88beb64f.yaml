@@ -1,0 +1,1032 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v3-000000-001300-88beb64f
+video_id: v3
+transcripcion: tr-v3-large-v3-int8-float16-270a4851
+t0: 0:00:00
+t1: 0:13:00
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:08Z'
+contexto:
+  segmentos:
+  - n: 0
+    t0_ms: 0
+    t1_ms: 5740
+    texto: Al final del cabo, pues la clave también está en preservar el capital, o sea, eso es clave,
+      porque a veces...
+    senales: []
+  - n: 1
+    t0_ms: 8800
+    t1_ms: 29580
+    texto: ¿Ya entró Alex? Ah, hola, ¿qué tal Alex? Nada, pues le estaba explicando un poco algunos conceptos,
+      como tú ya dominas a ICT, entonces le estaba explicando un poco a Javier cómo es la interpretación,
+      o sea, pero vamos, que de ICT marcar balances y demás, pues yo no lo suelo marcar, o sea, simplemente
+      es...
+    senales: []
+  - n: 2
+    t0_ms: 30000
+    t1_ms: 36700
+    texto: Un flujo de órdenes, o sea, mapeo del mercado, breaker y marco de liquidez y ya está, ¿vale?
+    senales: []
+  - n: 3
+    t0_ms: 37720
+    t1_ms: 42080
+    texto: Dale, mira, parece que empezamos de nuevo para que... Va a grabar Alex, ¿no?
+    senales: []
+  - n: 4
+    t0_ms: 42360
+    t1_ms: 42860
+    texto: Sí, sí.
+    senales: []
+  - n: 5
+    t0_ms: 42980
+    t1_ms: 45100
+    texto: Y bueno, ya vamos tema por tema a lo que hace falta.
+    senales: []
+  - n: 6
+    t0_ms: 45860
+    t1_ms: 54240
+    texto: Vale, perfecto. Voy a empezar primero, pues, respondiendo a esto. Aquí había marcado un sí,
+      pero quiero agregar algunos detalles, ¿vale?
+    senales: []
+  - n: 7
+    t0_ms: 55120
+    t1_ms: 55880
+    texto: ¿Ya están grabando?
+    senales: []
+  - n: 8
+    t0_ms: 56020
+    t1_ms: 56400
+    texto: No, no están grabando.
+    senales: []
+  - n: 9
+    t0_ms: 57980
+    t1_ms: 58620
+    texto: Vale, perfecto.
+    senales: []
+  - n: 10
+    t0_ms: 58620
+    t1_ms: 58920
+    texto: Dale, chévere.
+    senales: []
+  - n: 11
+    t0_ms: 58920
+    t1_ms: 73080
+    texto: Mira, como bien sabemos, nosotros tenemos tres temporalidades a trabajar, que serían H4, nuestra
+      temporalidad alta y es la que va a definir la operativa.
+    senales:
+    - no_habla
+  - n: 12
+    t0_ms: 73860
+    t1_ms: 82360
+    texto: Después tenemos M15, que es la temporalidad media donde marcamos nosotros la zona de liquidez,
+      sea un alto o un bajo desarrollado en M15.
+    senales:
+    - no_habla
+  - n: 13
+    t0_ms: 82360
+    t1_ms: 88300
+    texto: y luego tenemos la temporalidad de m1 que es nuestro marco de operativa donde vamos a buscar
+    senales: []
+  - n: 14
+    t0_ms: 88300
+    t1_ms: 96960
+    texto: el break que no lo buscamos en m15 lo buscamos en m1 vale ahora en esta pues bueno no es una
+    senales: []
+  - n: 15
+    t0_ms: 96960
+    t1_ms: 101780
+    texto: pregunta sino una posible regla que sería venta en operativa de 7 a 15 por españa que está
+      muy
+    senales: []
+  - n: 16
+    t0_ms: 101780
+    t1_ms: 109800
+    texto: bien aquí pues yo lo tengo configurado como utc más 2 que son ahora ya madrid vale claro porque
+    senales: []
+  - n: 17
+    t0_ms: 109800
+    t1_ms: 116620
+    texto: Porque es de 7 a 15 de la tarde, aunque creo que, a ver, si no me equivoco, o era hasta las
+      2, a ver, vamos a ver.
+    senales: []
+  - n: 18
+    t0_ms: 117780
+    t1_ms: 123820
+    texto: Aquí empieza a las 7, termina a las 11 y luego tenemos, sí, hasta las 3 de la tarde.
+    senales: []
+  - n: 19
+    t0_ms: 124620
+    t1_ms: 130320
+    texto: Porque, claro, la siguiente vela de H4 se desarrolla a las 7 de la mañana, finaliza a las 11,
+    senales: []
+  - n: 20
+    t0_ms: 130440
+    t1_ms: 133020
+    texto: luego la otra vela se desarrolla a las 11 y finaliza a las 3.
+    senales: []
+  - n: 21
+    t0_ms: 133200
+    t1_ms: 139560
+    texto: Por eso que definimos y diría que es un sí a la ventana operativa.
+    senales: []
+  - n: 22
+    t0_ms: 140540
+    t1_ms: 142340
+    texto: Aunque, a ver
+    senales: []
+  - n: 23
+    t0_ms: 142340
+    t1_ms: 144120
+    texto: Aunque, como digo
+    senales: []
+  - n: 24
+    t0_ms: 144120
+    t1_ms: 146360
+    texto: Yo defino esta ventana operativa
+    senales: []
+  - n: 25
+    t0_ms: 146360
+    t1_ms: 148240
+    texto: Porque claro, es donde suele
+    senales: []
+  - n: 26
+    t0_ms: 148240
+    t1_ms: 150640
+    texto: Haber liquidez, pero ojo
+    senales: []
+  - n: 27
+    t0_ms: 150640
+    t1_ms: 152240
+    texto: No sé si se han dado cuenta
+    senales: []
+  - n: 28
+    t0_ms: 152940
+    t1_ms: 154780
+    texto: Al menos aquí en España creo que
+    senales: []
+  - n: 29
+    t0_ms: 154780
+    t1_ms: 156620
+    texto: Me he confundido, Nueva York
+    senales: []
+  - n: 30
+    t0_ms: 156620
+    t1_ms: 158980
+    texto: Inicia algo de las 2 y finaliza por la tarde
+    senales: []
+  - n: 31
+    t0_ms: 158980
+    t1_ms: 160700
+    texto: 6 de la tarde, que en teoría habría
+    senales: []
+  - n: 32
+    t0_ms: 160700
+    t1_ms: 161440
+    texto: Mucha más liquidez
+    senales: []
+  - n: 33
+    t0_ms: 162100
+    t1_ms: 164660
+    texto: Aquí lo que haría sería una combinación entre Asia
+    senales: []
+  - n: 34
+    t0_ms: 164660
+    t1_ms: 165380
+    texto: Y Londres
+    senales: []
+  - n: 35
+    t0_ms: 166320
+    t1_ms: 168560
+    texto: Entonces, pero bueno, quitando un poco
+    senales: []
+  - n: 36
+    t0_ms: 168560
+    t1_ms: 175260
+    texto: de lado eso es eso o sea si alguno gusta porque es lo mismo operar desde las 3 de la tarde
+      hasta
+    senales:
+    - no_habla
+  - n: 37
+    t0_ms: 175260
+    t1_ms: 179580
+    texto: las 7 de la noche también se puede o sea es indiferente sólo que yo el marco de operativa
+    senales:
+    - no_habla
+  - n: 38
+    t0_ms: 179580
+    t1_ms: 184660
+    texto: lo tengo planteado en eso vale es indiferente trabajar a cualquier hora o sea o en el mercado
+    senales:
+    - no_habla
+  - n: 39
+    t0_ms: 184660
+    t1_ms: 192660
+    texto: asiático sólo que claro la cosa es definir como h 4 y como regla general que se nos va a marcar
+    senales:
+    - no_habla
+  - n: 40
+    t0_ms: 193680
+    t1_ms: 198140
+    texto: digamos el training o sea la tendencia principal ahora
+    senales: []
+  - n: 41
+    t0_ms: 207520
+    t1_ms: 217240
+    texto: exacto h4 si h4 aunque a ver yo lo tengo definido así en h4 pero ahora si nos vamos al spy
+      ojo que
+    senales: []
+  - n: 42
+    t0_ms: 228200
+    t1_ms: 235620
+    texto: si te das cuenta y nos vamos a h4 sólo hay que aproximadamente dos velas o sea que sería antes
+    senales: []
+  - n: 43
+    t0_ms: 235620
+    t1_ms: 244540
+    texto: desde él claro o sea si lo capturamos el tiempo en tiempo de esas cuatro horas sólo tendríamos
+    senales: []
+  - n: 44
+    t0_ms: 244540
+    t1_ms: 253400
+    texto: dos velas vale aunque es bueno en este caso yo lo estaba viendo trabajar con h1 y m5 pero para
+    senales: []
+  - n: 45
+    t0_ms: 253400
+    t1_ms: 261380
+    texto: forex o sea en general todos los activos de forex está bien o h4 usar h4 ahora lo que sería
+      en el
+    senales: []
+  - n: 46
+    t0_ms: 261380
+    t1_ms: 266640
+    texto: despacio sería trabajarlo con h1 o también podríamos intentarlo con h4 vale o sea no
+    senales: []
+  - n: 47
+    t0_ms: 266640
+    t1_ms: 272180
+    texto: hay ningún problema en un solo que claro buscaríamos por ejemplo no operar o sea
+    senales: []
+  - n: 48
+    t0_ms: 272180
+    t1_ms: 291870
+    texto: nuestro escenario de operativa sólo se sería desde las vale claro porque aquí finaliza a las
+    senales: []
+  - n: 49
+    t0_ms: 291870
+    t1_ms: 300310
+    texto: 9 y 45 horas españa cierra el mercado o sea la bolsa vale de nueva york entonces no tienes
+      mucho
+    senales: []
+  - n: 50
+    t0_ms: 300310
+    t1_ms: 304350
+    texto: tiempo desarrollo del precio aunque bien podrías capturar entradas y no hay mucho desarrollo
+      del
+    senales: []
+  - n: 51
+    t0_ms: 304350
+    t1_ms: 309830
+    texto: precio la idea principal sería pues tratar de capturar o sea a esto de aquí y para ello pues
+    senales: []
+  - n: 52
+    t0_ms: 309830
+    t1_ms: 318190
+    texto: sería cuestión de utilizar otro time frame como digamos así pues tendencia principal estaba
+      lo
+    senales: []
+  - n: 53
+    t0_ms: 318190
+    t1_ms: 325030
+    texto: estaba viendo entre h1 y 2 h que pero ya no siguiendo el flujo de m1 sino el flujo de m5
+    senales: []
+  - n: 54
+    t0_ms: 325030
+    t1_ms: 331990
+    texto: o sea como marco de operativa o de entrada eso lo podemos ver después la verdad pero bueno
+      regresando
+    senales: []
+  - n: 55
+    t0_ms: 331990
+    t1_ms: 339930
+    texto: a esto por lo general sería h4 está para todos los para todas las divisas sería h4 ahora dice
+    senales: []
+  - n: 56
+    t0_ms: 339930
+    t1_ms: 345610
+    texto: lo fija la vela de 4 previa cerrada en el menos uno es verdad o sea alcistas sólo compras bajistas
+    senales: []
+  - n: 57
+    t0_ms: 345610
+    t1_ms: 355110
+    texto: sólo ventas claro o sea en este caso en este caso quiero destacar algo también hasta aquí sabemos
+    senales: []
+  - n: 58
+    t0_ms: 355110
+    t1_ms: 366580
+    texto: que nosotros o sea si marcamos para eliminar todo esto vale si nosotros hacemos como un
+    senales: []
+  - n: 59
+    t0_ms: 366580
+    t1_ms: 381310
+    texto: mapeo rápido del precio o sea es una pregunta tú tomas en cuenta la mecha o solo el cuerpo
+    senales: []
+  - n: 60
+    t0_ms: 392950
+    t1_ms: 398610
+    texto: perfecto perfecto si está bien está bien concuerdo contigo si está bien vale yo también suelo
+    senales: []
+  - n: 61
+    t0_ms: 398610
+    t1_ms: 404810
+    texto: considerar eso sea las mechas por lo general o sea un break en para mí basta que rompa o sea
+    senales: []
+  - n: 62
+    t0_ms: 404810
+    t1_ms: 414370
+    texto: con lo mínimo un pib o sea ya es un voz o un bosque vale entonces pues considerando eso de
+      aquí
+    senales: []
+  - n: 63
+    t0_ms: 415930
+    t1_ms: 423310
+    texto: vale ahora dentro de esto dentro este flujo alcista que se usa como es h4 se ve muy corto
+    senales: []
+  - n: 64
+    t0_ms: 423310
+    t1_ms: 430330
+    texto: pero si nos dirigimos a m15 vamos a ver que hay o sea se suele haber como que un poco más de
+    senales: []
+  - n: 65
+    t0_ms: 430330
+    t1_ms: 436890
+    texto: volatilidad y un poco más ruidoso está el mercado entonces qué hacemos en este caso pues yo
+      lo que
+    senales: []
+  - n: 66
+    t0_ms: 436890
+    t1_ms: 443410
+    texto: suelo hacer es trabajar como que vela por vela vale para yo pues poder considerar que esta
+      vela
+    senales: []
+  - n: 67
+    t0_ms: 443410
+    t1_ms: 451810
+    texto: claro es bajista pero la siguiente operativa también va a ser bajista esto aquí o sea tiene
+    senales: []
+  - n: 68
+    t0_ms: 451810
+    t1_ms: 459970
+    texto: que estar cubierto por la vela anterior si hay una reversión vale o sea tiene que ser que rompa
+    senales: []
+  - n: 69
+    t0_ms: 459970
+    t1_ms: 462090
+    texto: con mecha y luego se regrese, pero si termina
+    senales: []
+  - n: 70
+    t0_ms: 462090
+    t1_ms: 464130
+    texto: de color roja, o sea, de manera bajista
+    senales: []
+  - n: 71
+    t0_ms: 464130
+    t1_ms: 465270
+    texto: pues la siguiente
+    senales: []
+  - n: 72
+    t0_ms: 465270
+    t1_ms: 467570
+    texto: hay una alta probabilidad de que sea bajista, ¿vale?
+    senales: []
+  - n: 73
+    t0_ms: 467750
+    t1_ms: 469870
+    texto: o sea, si siga ese order flow bajista
+    senales: []
+  - n: 74
+    t0_ms: 469870
+    t1_ms: 471710
+    texto: entonces, pero si no lo hace
+    senales: []
+  - n: 75
+    t0_ms: 471710
+    t1_ms: 473970
+    texto: que a ver, no sé si encuentro un... vale, por ejemplo
+    senales: []
+  - n: 76
+    t0_ms: 473970
+    t1_ms: 478420
+    texto: aquí, mira, nosotros tenemos
+    senales: []
+  - n: 77
+    t0_ms: 478860
+    t1_ms: 480700
+    texto: que aquí hay un flujo bajista
+    senales: []
+  - n: 78
+    t0_ms: 481120
+    t1_ms: 481960
+    texto: ¿vale? en H4
+    senales: []
+  - n: 79
+    t0_ms: 482380
+    t1_ms: 483280
+    texto: pero ¿qué pasa?
+    senales: []
+  - n: 80
+    t0_ms: 484220
+    t1_ms: 485160
+    texto: aquí el precio
+    senales: []
+  - n: 81
+    t0_ms: 486880
+    t1_ms: 493000
+    texto: o sea
+    senales: []
+  - n: 82
+    t0_ms: 493640
+    t1_ms: 495620
+    texto: si yo tuviera que tomar la operativa aquí
+    senales: []
+  - n: 83
+    t0_ms: 495620
+    t1_ms: 501220
+    texto: la seguiría tomando bajista vale y ahora qué pasa si yo tuviera que seguir
+    senales: []
+  - n: 84
+    t0_ms: 501220
+    t1_ms: 504880
+    texto: tomando la siguiente operativa tendría que seguirla tomando bajista no alcista
+    senales: []
+  - n: 85
+    t0_ms: 504880
+    t1_ms: 511280
+    texto: por el hecho de que esta vela sea verde para que yo tome alcista esta vela verde
+    senales: []
+  - n: 86
+    t0_ms: 511280
+    t1_ms: 517060
+    texto: debió de haber pues finalizado al menos con una mecha por encima de esto haberme
+    senales: []
+  - n: 87
+    t0_ms: 517060
+    t1_ms: 522620
+    texto: pues generado como que este breaker aquí y para poder validar la siguiente
+    senales: []
+  - n: 88
+    t0_ms: 523200
+    t1_ms: 532060
+    texto: operativa como alcista pero como en este caso no lo hace pues yo sigo con un flujo bajista
+      vale y
+    senales: []
+  - n: 89
+    t0_ms: 532060
+    t1_ms: 538220
+    texto: claro aquí si tú te das cuenta si tú lo operas desde esta zona de aquí dirás a vale todo esto
+    senales: []
+  - n: 90
+    t0_ms: 538220
+    t1_ms: 543460
+    texto: es verde verde verde serían pérdidas no es que hay entre el chiste porque si tú te vas aquí
+      a
+    senales: []
+  - n: 91
+    t0_ms: 543460
+    t1_ms: 550960
+    texto: m 15 hay entradas o sea está esto que sería una entrada si nosotros marcamos liquidez esto
+      que
+    senales: []
+  - n: 92
+    t0_ms: 550960
+    t1_ms: 554400
+    texto: que sería otra entrada, o sea, estaríamos operando contra tendencia,
+    senales: []
+  - n: 93
+    t0_ms: 554500
+    t1_ms: 559860
+    texto: pero ese es el, aquí otra entrada, y o sea, aquí tenemos desarrollo del precio.
+    senales: []
+  - n: 94
+    t0_ms: 560220
+    t1_ms: 564960
+    texto: O sea, tenemos desarrollo del precio aquí, desarrollo del precio aquí,
+    senales: []
+  - n: 95
+    t0_ms: 565080
+    t1_ms: 568160
+    texto: desarrollo del precio aquí, a pesar de que el flujo sea alcista.
+    senales: []
+  - n: 96
+    t0_ms: 568360
+    t1_ms: 572620
+    texto: O sea, es que a veces eso, se suele confundir si solo lo ves en H4,
+    senales: []
+  - n: 97
+    t0_ms: 572800
+    t1_ms: 575460
+    texto: pero es que ese es lo interesante, al menos yo lo he visto así.
+    senales: []
+  - n: 98
+    t0_ms: 575460
+    t1_ms: 588990
+    texto: o sea que ahora si nos dirigimos a m1 la idea principal sería capturar pues el precio aquí
+      o
+    senales: []
+  - n: 99
+    t0_ms: 588990
+    t1_ms: 600640
+    texto: sea entrada aquí en el punto más alto entrada bueno entrada por por aquí aquí hay otra entrada
+    senales: []
+  - n: 100
+    t0_ms: 601570
+    t1_ms: 631180
+    texto: Entraba por aquí, bueno aquí no sé si es M15 también, entraba por aquí y así, ¿entiendes? Y
+      es eso, o sea, por eso que independientemente de qué color sea la vela, pero nuestro cerco direccional
+      siempre cumpliendo las condiciones que les acabo de mostrar, nos lo va a dar la vela anterior, o
+      sea, la entrada por lo general, independientemente si la vela luego termina verde o qué sé yo, o
+      sea, eso es indiferente.
+    senales: []
+  - n: 101
+    t0_ms: 631180
+    t1_ms: 632240
+    texto: ahora
+    senales: []
+  - n: 102
+    t0_ms: 633980
+    t1_ms: 635420
+    texto: ¿me llegaron a entender esa parte?
+    senales: []
+  - n: 103
+    t0_ms: 640850
+    t1_ms: 642090
+    texto: vale, perfecto
+    senales: []
+  - n: 104
+    t0_ms: 643130
+    t1_ms: 643690
+    texto: nada
+    senales: []
+  - n: 105
+    t0_ms: 643690
+    t1_ms: 644450
+    texto: ¿qué más?
+    senales: []
+  - n: 106
+    t0_ms: 646070
+    t1_ms: 646830
+    texto: a ver
+    senales: []
+  - n: 107
+    t0_ms: 648130
+    t1_ms: 649590
+    texto: ¿Yair me llegó a entender?
+    senales: []
+  - n: 108
+    t0_ms: 651030
+    t1_ms: 651830
+    texto: estoy bien
+    senales: []
+  - n: 109
+    t0_ms: 651830
+    t1_ms: 652410
+    texto: estoy bien, brother
+    senales: []
+  - n: 110
+    t0_ms: 652410
+    t1_ms: 653810
+    texto: vale, vale
+    senales: []
+  - n: 111
+    t0_ms: 656690
+    t1_ms: 657750
+    texto: nada, ahora
+    senales: []
+  - n: 112
+    t0_ms: 657750
+    t1_ms: 659530
+    texto: ¿cuál era la siguiente pregunta?
+    senales: []
+  - n: 113
+    t0_ms: 663470
+    t1_ms: 664030
+    texto: Marco
+    senales: []
+  - n: 114
+    t0_ms: 664030
+    t1_ms: 667130
+    texto: vale, marco de trabajo, H4 sesgo
+    senales: []
+  - n: 115
+    t0_ms: 667770
+    t1_ms: 669430
+    texto: M15, liquidez, torture sub
+    senales: []
+  - n: 116
+    t0_ms: 669430
+    t1_ms: 671170
+    texto: yo quitaría
+    senales: []
+  - n: 117
+    t0_ms: 671170
+    t1_ms: 672230
+    texto: torture sub
+    senales: []
+  - n: 118
+    t0_ms: 672230
+    t1_ms: 675150
+    texto: yo lo suelo usar el término
+    senales: []
+  - n: 119
+    t0_ms: 675150
+    t1_ms: 677350
+    texto: para no liarme porque yo no suelo usar muchos términos
+    senales: []
+  - n: 120
+    t0_ms: 677350
+    t1_ms: 678870
+    texto: así que suelen poner en youtube
+    senales: []
+  - n: 121
+    t0_ms: 678870
+    t1_ms: 680850
+    texto: como power, value gap y demás
+    senales: []
+  - n: 122
+    t0_ms: 680850
+    t1_ms: 682310
+    texto: o sea yo suelo
+    senales: []
+  - n: 123
+    t0_ms: 682850
+    t1_ms: 684930
+    texto: al boss, lo suelo llamar boss como tal
+    senales: []
+  - n: 124
+    t0_ms: 684930
+    t1_ms: 686370
+    texto: para mi shot no hay
+    senales: []
+  - n: 125
+    t0_ms: 686370
+    t1_ms: 688270
+    texto: honestamente, o sea no trato de
+    senales: []
+  - n: 126
+    t0_ms: 689530
+    t1_ms: 691010
+    texto: suelo usar boss o breaker
+    senales: []
+  - n: 127
+    t0_ms: 691010
+    t1_ms: 691590
+    texto: y ya está
+    senales: []
+  - n: 128
+    t0_ms: 692590
+    t1_ms: 695010
+    texto: y para la liquidez suelo usar
+    senales: []
+  - n: 129
+    t0_ms: 695830
+    t1_ms: 696310
+    texto: LQM15
+    senales: []
+  - n: 130
+    t0_ms: 696310
+    t1_ms: 701250
+    texto: o sea con estas siglas o liquidez de m15 y está para identificar no no me suelo
+    senales: []
+  - n: 131
+    t0_ms: 701250
+    t1_ms: 706190
+    texto: liar en eso pero si la liquidez en m15 pues se marcaría de esta manera pues si
+    senales: []
+  - n: 132
+    t0_ms: 706190
+    t1_ms: 711570
+    texto: nosotros estamos por ejemplo la operativa por lo general es bajista en
+    senales: []
+  - n: 133
+    t0_ms: 711570
+    t1_ms: 719250
+    texto: h4 los h4 que pasa el precio de por sí va a retroceder y luego pues va a
+    senales: []
+  - n: 134
+    t0_ms: 719250
+    t1_ms: 723370
+    texto: descontar en alguno de estos niveles entonces pero si tú te das cuenta
+    senales: []
+  - n: 135
+    t0_ms: 724790
+    t1_ms: 731370
+    texto: si nos dirigimos en m15 hay un orden flow el orden flow más líquido y que yo considero que
+    senales: []
+  - n: 136
+    t0_ms: 731370
+    t1_ms: 737530
+    texto: se da es en la temporalidad de m15 vale o sea ese es el chiste al final tratar de saber correlacionar
+    senales: []
+  - n: 137
+    t0_ms: 737530
+    t1_ms: 743790
+    texto: las temporalidades para eliminar el ruido de mercado porque si tú te vas a m5 vas a ver o
+    senales: []
+  - n: 138
+    t0_ms: 743790
+    t1_ms: 749830
+    texto: sea más ruido de mercado o sea vas a ver esto el precio que hace eso eso eso y es un lío entonces
+    senales: []
+  - n: 139
+    t0_ms: 749830
+    t1_ms: 753450
+    texto: Entonces, el flujo que yo considero correcto es en M15.
+    senales: []
+  - n: 140
+    t0_ms: 754010
+    t1_ms: 758550
+    texto: Ahora, como el precio, esto es H4, está bajista,
+    senales: []
+  - n: 141
+    t0_ms: 758670
+    t1_ms: 762590
+    texto: entonces, aquí nosotros vamos marcando, en este caso,
+    senales: []
+  - n: 142
+    t0_ms: 762650
+    t1_ms: 766410
+    texto: como es un retroceso complejo, estaríamos marcando lo que sería
+    senales: []
+  - n: 143
+    t0_ms: 766410
+    t1_ms: 769130
+    texto: en este complex pullback alcista,
+    senales: []
+  - n: 144
+    t0_ms: 771230
+    t1_ms: 775290
+    texto: que yo no suelo usar el término higher, bueno, higher hike,
+    senales: []
+  - n: 145
+    t0_ms: 775290
+    t1_ms: 783630
+    texto: hay pero el alto más alto aquí alto más alto sería la liquidez esto es en m15 temporalidad
+      de m15 ya
+    senales: []
+  referencias:
+  - 'fr-v3-982da728/<t_ms>: 781 fotogramas regulares, uno por segundo, de 0 a 780000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:00:30
+  t1: 0:00:37
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Un flujo de órdenes, o sea, mapeo del mercado, breaker y marco de liquidez y ya está
+  afirmacion: 'el modelo son tres cosas: flujo de ordenes (mapeo), breaker y marco de liquidez'
+  tema: meta.componentes_del_modelo
+  confianza: alta
+  n: 1
+- t0: 0:00:58
+  t1: 0:01:36
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: nosotros tenemos tres temporalidades a trabajar, que serían H4, nuestra temporalidad alta
+    y es la que va a definir la operativa [...] M15, que es la temporalidad media donde marcamos nosotros
+    la zona de liquidez, sea un alto o un bajo desarrollado en M15 [...] m1 que es nuestro marco de operativa
+    donde vamos a buscar el break
+  afirmacion: H4 define la operativa, M15 marca la liquidez (un alto o un bajo) y M1 es el marco donde
+    se busca el break
+  tema: entrada.marcos_h4_m15_m1.ficha
+  confianza: media
+  notas: segmentos con senal no_habla (transicion del video)
+  n: 2
+- t0: 0:01:36
+  t1: 0:01:49
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: una posible regla que sería venta en operativa de 7 a 15 por españa que está muy bien
+    aquí pues yo lo tengo configurado como utc más 2 que son ahora ya madrid
+  afirmacion: la ventana es de 7 a 15 hora de Espana y su grafico esta configurado en UTC+2 (Madrid)
+  tema: reloj.grafico_utc_mas_2
+  confianza: alta
+  marca_heredada: V3 0:01:41
+  notas: 'candidato A-9 (anclaje de la vela H4): UTC+2 es el huso del grafico, no dice a que hora abre
+    su H4'
+  n: 3
+- t0: 0:01:38
+  t1: 0:01:44
+  modalidad: pantalla
+  tipo: RULE_STATEMENT
+  cita_literal: 'Ficha de especificaciones para código · 1 · Confirmaciones rápidas (reglas ya definidas)
+    · fila 1: Ventana operativa 07:00–15:00 hora España (Londres + Nueva York). | Si'
+  afirmacion: en la ficha de Word el trader confirma la ventana operativa de 07:00 a 15:00 hora de Espana
+  tema: ventana.ficha_fila_1
+  fotogramas:
+  - fr-v3-982da728/101000
+  confianza: media
+  marca_heredada: Ficha del trader (Word), fila 1
+  notas: lo que se lee en pantalla; el usuario decide fila a fila (brief F07, decision 14)
+  n: 4
+- t0: 0:01:38
+  t1: 0:01:44
+  modalidad: pantalla
+  tipo: RULE_STATEMENT
+  cita_literal: 'Ficha, fila 2: Sesgo direccional: lo fija la vela H4 previa ya cerrada (n-1). Alcista
+    → solo compras; bajista → solo ventas. | Si. Vela H4 previa ya cerrada fija la direccionalidad'
+  afirmacion: 'en la ficha de Word el trader confirma que la vela H4 previa cerrada fija el sesgo: alcista
+    solo compras, bajista solo ventas'
+  tema: sesgo.ficha_fila_2
+  fotogramas:
+  - fr-v3-982da728/101000
+  confianza: media
+  marca_heredada: Ficha del trader (Word), fila 2
+  n: 5
+- t0: 0:01:38
+  t1: 0:01:44
+  modalidad: pantalla
+  tipo: RULE_STATEMENT
+  cita_literal: 'Ficha, fila con el cursor: Límite estricto de 2 cartuchos | Si'
+  afirmacion: en la ficha de Word el trader confirma un limite estricto de 2 cartuchos
+  tema: cartuchos.ficha_limite_2
+  valor: '2'
+  fotogramas:
+  - fr-v3-982da728/101000
+  confianza: media
+  marca_heredada: Ficha del trader (Word), fila 6
+  notas: 'A-2: en V4 0:48:41 dice que limita a 3'
+  n: 6
+- t0: 0:01:57
+  t1: 0:02:20
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Aquí empieza a las 7, termina a las 11 y luego tenemos, sí, hasta las 3 de la tarde [...]
+    la siguiente vela de H4 se desarrolla a las 7 de la mañana, finaliza a las 11, luego la otra vela
+    se desarrolla a las 11 y finaliza a las 3 [...] diría que es un sí a la ventana operativa
+  afirmacion: 'confirma la ventana: dos velas H4, de 7 a 11 y de 11 a 3 (hora de su grafico)'
+  tema: ventana.velas_h4_7_11_15
+  confianza: alta
+  notas: 'candidato A-9: sus velas H4 abren a las 7 y a las 11 en el reloj del grafico (UTC+2)'
+  n: 7
+- t0: 0:02:34
+  t1: 0:02:40
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: Me he confundido, Nueva York inicia algo de las 2 y finaliza por la tarde 6 de la tarde
+  afirmacion: 'se corrige: Nueva York va de las 2 a las 6 de la tarde; su ventana combina Asia y Londres'
+  tema: ventana.nueva_york_corregido
+  confianza: alta
+  n: 8
+- t0: 0:02:48
+  t1: 0:03:04
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: es lo mismo operar desde las 3 de la tarde hasta las 7 de la noche también se puede o
+    sea es indiferente sólo que yo el marco de operativa lo tengo planteado en eso
+  afirmacion: operar en otras horas seria indiferente; su marco esta planteado en la ventana actual
+  tema: ventana.otras_horas_abierto
+  confianza: media
+  n: 9
+- t0: 0:05:31
+  t1: 0:05:55
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: sería h4 ahora dice lo fija la vela de 4 previa cerrada en el menos uno es verdad o sea
+    alcistas sólo compras bajistas sólo ventas
+  afirmacion: 'confirma la regla de la ficha: la vela H4 previa cerrada (n-1) fija el sesgo; alcista solo
+    compras, bajista solo ventas'
+  tema: sesgo.h4.vela_previa_cerrada
+  confianza: alta
+  n: 10
+- t0: 0:06:06
+  t1: 0:06:55
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: tú tomas en cuenta la mecha o solo el cuerpo [...] yo también suelo considerar eso sea
+    las mechas por lo general o sea un break en para mí basta que rompa o sea con lo mínimo un pib o sea
+    ya es un voz o un bosque
+  afirmacion: 'para el break cuenta la mecha: basta que rompa con lo minimo (un pip) para ser un BOS'
+  tema: mapeo.m1.mecha_rompe_break
+  valor: mecha
+  confianza: media
+  notas: pregunta del consultor y respuesta del trader; voz/bosque = BOS en la lectura del ASR
+  n: 11
+- t0: 0:07:16
+  t1: 0:07:47
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: trabajar como que vela por vela [...] tiene que estar cubierto por la vela anterior si
+    hay una reversión [...] si termina de color roja, o sea, de manera bajista pues la siguiente hay una
+    alta probabilidad de que sea bajista
+  afirmacion: 'se trabaja vela por vela en H4: una reversion debe quedar cubierta por la vela anterior;
+    si cierra bajista, la siguiente probablemente sea bajista'
+  tema: sesgo.h4.vela_por_vela
+  confianza: alta
+  n: 12
+- t0: 0:08:24
+  t1: 0:08:52
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: para que yo tome alcista esta vela verde debió de haber pues finalizado al menos con una
+    mecha por encima de esto haberme pues generado como que este breaker aquí y para poder validar la
+    siguiente operativa como alcista
+  afirmacion: una vela H4 verde no cambia el sesgo a alcista salvo que cierre con una mecha por encima
+    y genere el breaker
+  tema: sesgo.h4.cambio_exige_breaker
+  confianza: alta
+  notas: A-1 (que vuelve alcista una H4)
+  n: 13
+- t0: 0:10:01
+  t1: 0:10:31
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: nuestro cerco direccional siempre cumpliendo las condiciones que les acabo de mostrar,
+    nos lo va a dar la vela anterior [...] independientemente si la vela luego termina verde
+  afirmacion: la direccion la da la vela anterior cumpliendo las condiciones, independientemente del color
+    con que termine la vela actual
+  tema: sesgo.h4.vela_anterior_da_direccion
+  confianza: alta
+  n: 14
+- t0: 0:11:22
+  t1: 0:11:36
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: al boss, lo suelo llamar boss como tal [...] suelo usar boss o breaker y ya está y para
+    la liquidez suelo usar LQM15
+  afirmacion: 'terminologia del trader: BOS, breaker y LQM15 (liquidez de M15); no usa CHoCH'
+  tema: herramientas.terminologia_bos_breaker_lqm15
+  confianza: media
+  marca_heredada: V3 0:11:29
+  notas: segmentos con duda del glosario (boss); shot = CHoCH en la lectura del ASR
+  n: 15
+- t0: 0:12:04
+  t1: 0:12:34
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: el orden flow más líquido y que yo considero que se da es en la temporalidad de m15 [...]
+    el flujo que yo considero correcto es en M15
+  afirmacion: el flujo de ordenes correcto para la liquidez es el de M15
+  tema: liquidez.m15.flujo_correcto
+  confianza: alta
+  n: 16
+- t0: 0:12:42
+  t1: 0:13:00
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: como es un retroceso complejo, estaríamos marcando lo que sería en este complex pullback
+    alcista [...] el alto más alto aquí alto más alto sería la liquidez
+  afirmacion: en un complex pullback alcista la liquidez de M15 es el alto mas alto
+  tema: liquidez.m15.alto_mas_alto_en_pullback
+  confianza: alta
+  n: 17
+no_consta:
+- tema: stop
+  motivo: no habla del stop en el tramo
+- tema: objetivo
+  motivo: no habla del objetivo en el tramo
+- tema: break_even
+  motivo: no habla del break even en el tramo
+- tema: zona_control
+  motivo: no habla de la zona de control en el tramo
+- tema: no_trade
+  motivo: no razona un caso de no operar (lo hace en 0:16:00)
+salida_sha256: f16fb0a60a7a0998148aff20ab0192cdbcf0134d90a8af4dbb058e6256b12096
+comprobado_el: '2026-09-07T01:47:36Z'
