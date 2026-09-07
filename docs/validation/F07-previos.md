@@ -142,13 +142,14 @@ v4: 4): F07 decide segmento a segmento ("un orden blog" en v2 0:08:05 es order b
 - Drive: subcarpeta "transcripciones (crudas, Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`)
   dentro de "Estrategia del trader", creada por API con `SHA256SUMS.txt`, `LEEME.txt` y los 5
   manifiestos activos (texto, subidos por API en esta sesion).
-- PENDIENTE del usuario (las herramientas de la sesion no suben binarios de ese tamano: el API
-  del conector solo admite texto o base64 en el propio mensaje, y el navegador exige un dialogo
-  nativo): arrastrar a esa carpeta el contenido de `data/drive_staging/` (21 ficheros, 625 MiB:
+- HECHO por el usuario el 2026-09-07 (las herramientas de la sesion no suben binarios de ese
+  tamano): arrastro a esa carpeta el contenido de `data/drive_staging/` (21 ficheros, 625 MiB:
   5 `cruda.jsonl` + 5 `cruda.txt` + 5 manifiestos + 5 WAV + `2026-09-05 21-03-59.mkv`), cuyos
   sha256 estan en `SHA256SUMS.txt` y coinciden con `sha256_cruda`/`sha256_wav` de los
-  manifiestos (comprobado por `anexos/F07-previos/staging.py` al copiar). Luego anotar el
-  `drive_id` de v5 en `knowledge/corpus/fuentes.yaml` (hoy es una nota).
+  manifiestos (comprobado por `anexos/F07-previos/staging.py` al copiar). Verificado por API:
+  los 21 ficheros estan en la carpeta y `2026-09-05 21-03-59.mkv` (id
+  `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`) pesa 121 528 349 bytes, igual que `fuentes.yaml`;
+  `drive_id` de v5 anotado en `knowledge/corpus/fuentes.yaml`.
 
 ## Que deberia observar el usuario
 `knowledge validate` en verde con 10 manifiestos de transcripcion; `transcript show --video v5
@@ -157,7 +158,7 @@ defecto"; el glosario con 12 sustituciones; la carpeta de Drive con SHA256SUMS y
 manifiestos.
 
 ## Que casos funcionan
-Todo el alcance de la fila H.2 salvo la subida de binarios a Drive (queda en `drive_staging/`).
+Todo el alcance de la fila H.2, incluida la copia en Drive (subida por el usuario el 2026-09-07).
 
 ## Que casos todavia no funcionan
 - `initial_prompt` solo condiciona la primera ventana de cada fragmento: la jerga del resto
@@ -165,7 +166,6 @@ Todo el alcance de la fila H.2 salvo la subida de binarios a Drive (queda en `dr
   descartada (`hotwords`). Otra alternativa no medida: `condition_on_previous_text=True` (fue
   descartada en F04 por bucles de repeticion).
 - Las `dudas` del glosario (25 segmentos) no se resuelven aqui: F07 las mira al citar.
-- `drive_id` de v5 y la copia de crudas/WAV dependen del usuario.
 
 ## Limitaciones
 - Segmentos de hasta 55 s (v2) tambien con `initial_prompt`: la cita fina usa `palabras` (F07).
@@ -179,9 +179,8 @@ Todo el alcance de la fila H.2 salvo la subida de binarios a Drive (queda en `dr
   inmutables: el valor real es 96, documentado aqui y en el ADR.
 
 ## Riesgos
-Si el usuario no sube `drive_staging/`, otra maquina no puede verificar `sha256_cruda` (solo
-esquema e historial) ni regenerar sin ~1 h de GPU. Si F07 cita un segmento con `duda`, debe
-mirar el audio.
+Otra maquina verifica `sha256_cruda` descargando la copia de Drive (o regenera con ~1 h de
+GPU). Si F07 cita un segmento con `duda`, debe mirar el audio.
 
 ## Impacto sobre funcionalidades anteriores
 Los ids `tr-*` de F04 quedan reemplazados (nadie los citaba aun: F07 no ha empezado). El
@@ -218,8 +217,7 @@ tecnicas en PROJECT_STATE/HANDOFF; `hotwords: null` explicado en el ADR; "~1 h 5
    prefiere oirlos, los minutos estan en el glosario, y cambiar el texto de `verificado_por`
    es una edicion manual del glosario (version nueva, `glossary apply`, sin retranscribir).
 3. Subir `data/drive_staging/` a la carpeta de Drive y anotar el `drive_id` de v5 (dueno:
-   usuario). Puede hacerse antes o despues del merge (solo cambia `fuentes.yaml`, regimen
-   manual).
+   usuario). HECHO el 2026-09-07 antes del merge.
 4. Cierre como rama con tag `stable/F05-previos-F07`: §F solo contemplaba `stable/F##` y
    `stable/F##-auditoria-N` (F## = ultima funcionalidad cerrada), asi que esta rama amplia §F
    con "rama de trabajo sin numero propio: `stable/F##-<tema>`". Alternativa: `stable/F07-previos`,

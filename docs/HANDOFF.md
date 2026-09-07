@@ -18,12 +18,12 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   prompt, huella de reanudacion sin GPU, los 5 videos retranscritos (ids activos:
   `tr-v1-...-bbd8a931`, `tr-v2-...-28391c2c`, `tr-v3-...-270a4851`, `tr-v4-...-a8d1bccc`,
   `tr-v5-...-3c6fbb57`; los anteriores quedan reemplazados, sus carpetas siguen en `data/`).
-- Copia fuera de la maquina: carpeta de Drive "transcripciones (crudas, Bot v3)" (id
-  `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`, dentro de "Estrategia del trader") con SHA256SUMS,
-  LEEME y los manifiestos subidos por API; crudas, WAV y el video v5 (625 MiB en total)
-  estan preparados en `data/drive_staging/` para que el usuario los arrastre (las
-  herramientas de la sesion no suben binarios de ese tamano). Al subir v5, anotar su
-  `drive_id` en `knowledge/corpus/fuentes.yaml`.
+- Copia fuera de la maquina COMPLETA (2026-09-07): carpeta de Drive "transcripciones (crudas,
+  Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`, dentro de "Estrategia del trader") con
+  SHA256SUMS, LEEME, 5 manifiestos, 5 crudas, 5 WAV y el video v5 (`drive_id`
+  `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, anotado en `fuentes.yaml`). Los binarios los subio el
+  usuario a mano desde `data/drive_staging/` (las herramientas de la sesion no suben binarios
+  de ese tamano); una retranscripcion futura repite `staging.py` y la subida.
 - SIGUIENTE: abrir F07 evidence-extraction (entradas en MASTER_PLAN H.2, fila "Previos y
   entradas de F07"; la cita se verifica contra la CRUDA de la transcripcion activa).
 - Lecciones tecnicas (previos de F07): con `condition_on_previous_text=False` el
@@ -50,7 +50,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   dos auditorias de cierre aplicadas.
 - Material del 2026-09-05 ("Info extra de backtesting"): v5 `2026-09-05 21-03-59.mkv` (6 min,
   FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos, reemplazada el 2026-09-06
-  por `tr-v5-...-3c6fbb57`, 80; NO esta en Drive), xlsx
+  por `tr-v5-...-3c6fbb57`, 80; en Drive desde el 2026-09-07), xlsx
   abril 2026 (38 operaciones) y 6 capturas de Analytics en `Material adicional de su operativa`.
   Hechos en PROJECT_STATE (seccion "Hechos del corpus pendientes de evidencia").
 - Lecciones tecnicas: `fps=1` de ffmpeg NO da el fotograma del segundo exacto ni conserva el
