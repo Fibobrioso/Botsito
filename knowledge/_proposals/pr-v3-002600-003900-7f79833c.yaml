@@ -1102,17 +1102,16 @@ items:
   notas: 'fotograma obligatorio de F05: el Excel muestra 2,83 / -0,75 / 3,3 / -0,75 / -0,5; la heredada
     decia 2,3 / 3,23'
   n: 4
-- t0: 0:30:06
+- t0: 0:31:12
   t1: 0:31:41
   modalidad: audio
   tipo: MANAGEMENT
-  cita_literal: hay dos maneras en las que yo defino mi target [...] el profil máximo que suelo buscar
-    es en la liquidez de m15
-  afirmacion: define el target de dos maneras; el maximo que busca es la liquidez de M15
+  cita_literal: yo el profil máximo que suelo buscar es en la liquidez de m15
+  afirmacion: el profit maximo que busca es la liquidez de M15
   tema: objetivo.target_maximo_liquidez_m15
   confianza: media
   marca_heredada: V3 0:31:28
-  notas: segmento largo con senal no_habla; profil = profit en la lectura del ASR
+  notas: profil = profit en la lectura del ASR; en 0:30:06 dice que define el target de dos maneras
   n: 5
 - t0: 0:30:48
   t1: 0:31:12
@@ -1211,5 +1210,5 @@ no_consta:
   motivo: solo la proteccion progresiva del TP (0:32:43), citada en objetivo
 - tema: no_trade
   motivo: solo 'ya no hay entrada' al leer el Excel (0:29:11), sin razonamiento
-salida_sha256: 439d05def7c26e7aeaa87c08db7bf803e54f2e5fa67563f9e6990db79661254f
-comprobado_el: '2026-09-07T01:47:40Z'
+salida_sha256: 37dfc2deffdfbd948364b5330a31f04074b976dca1b797cd338ed5b064e67757
+comprobado_el: '2026-09-07T02:27:04Z'

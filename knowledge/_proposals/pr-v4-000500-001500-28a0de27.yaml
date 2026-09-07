@@ -1351,6 +1351,17 @@ items:
   confianza: media
   notas: habla el consultor leyendo la caja de Gann de la pantalla (FXReplay, 30 de enero)
   n: 9
+- t0: 0:08:25
+  t1: 0:08:33
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: Y se desplace un poco más en todo caso Si el sprint está influyendo O que se corte en
+    0.75
+  afirmacion: 'pregunta del consultor: desplazar el 0,75 si el spread influye, o cortar en 0,75'
+  tema: stop.desplazar_por_spread_pregunta
+  confianza: media
+  notas: habla el consultor; sprint = spread (duda del glosario); segmentos con senal no_habla
+  n: 10
 - t0: 0:08:35
   t1: 0:08:58
   modalidad: audio
@@ -1364,7 +1375,7 @@ items:
   confianza: media
   marca_heredada: V4 0:08:39
   notas: A-10; segmentos con senal no_habla; la ultima frase es la pregunta del consultor
-  n: 10
+  n: 11
 - t0: 0:08:58
   t1: 0:09:26
   modalidad: audio
@@ -1375,7 +1386,7 @@ items:
   tema: stop.respiro_con_noticias
   confianza: media
   notas: el consultor plantea, el trader confirma; split = spread (duda del glosario)
-  n: 11
+  n: 12
 - t0: 0:09:33
   t1: 0:09:36
   modalidad: audio
@@ -1385,7 +1396,7 @@ items:
   tema: stop.respiro_5_pips_abierto
   confianza: alta
   notas: no queda claro quien lo dice (consultor o trader)
-  n: 12
+  n: 13
 - t0: 0:09:53
   t1: 0:10:06
   modalidad: audio
@@ -1395,7 +1406,7 @@ items:
   afirmacion: ha operado trades con noticias y es independiente; a veces ayuda
   tema: herramientas.noticias_independiente
   confianza: alta
-  n: 13
+  n: 14
 - t0: 0:10:09
   t1: 0:10:21
   modalidad: audio
@@ -1406,7 +1417,7 @@ items:
     su regla)
   tema: ventana.fuera_horario_posible
   confianza: alta
-  n: 14
+  n: 15
 - t0: 0:10:27
   t1: 0:10:56
   modalidad: audio
@@ -1417,7 +1428,7 @@ items:
   tema: sesgo.h4.bias_anterior_ejemplo
   confianza: media
   notas: segmento con senal no_habla
-  n: 15
+  n: 16
 - t0: 0:10:27
   t1: 0:10:58
   modalidad: audio
@@ -1428,7 +1439,7 @@ items:
   tema: stop.075_come_trades_ganadores
   confianza: media
   notas: segmentos con senal no_habla
-  n: 16
+  n: 17
 - t0: 0:11:02
   t1: 0:11:20
   modalidad: audio
@@ -1440,7 +1451,7 @@ items:
   tema: stop.backtest_sin_proteger_abierto
   confianza: media
   notas: segmentos con senal no_habla
-  n: 17
+  n: 18
 - t0: 0:11:52
   t1: 0:12:00
   modalidad: audio
@@ -1450,7 +1461,7 @@ items:
   afirmacion: extender el margen del stop con noticias le parece bien
   tema: stop.margen_con_noticias_bien
   confianza: alta
-  n: 18
+  n: 19
 - t0: 0:12:07
   t1: 0:12:21
   modalidad: audio
@@ -1463,7 +1474,7 @@ items:
   confianza: alta
   marca_heredada: V4 0:12:30 (audio)
   notas: 'A-11: el consultor pregunta y el trader responde'
-  n: 19
+  n: 20
 - t0: 0:12:21
   t1: 0:12:45
   modalidad: ambas
@@ -1480,7 +1491,7 @@ items:
   marca_heredada: V4 0:12:30
   notas: habla el consultor y el trader acepta (me parece bien); en pantalla la caja con el 0,75 = 1,19537
     (fotograma obligatorio de F05); split = spread (duda del glosario)
-  n: 20
+  n: 21
 - t0: 0:13:46
   t1: 0:14:33
   modalidad: audio
@@ -1496,7 +1507,7 @@ items:
   marca_heredada: V4 0:13:46
   notas: A-4; segmentos con senal no_habla; la ultima frase la resume el consultor y el trader confirma
     (exacto)
-  n: 21
+  n: 22
 no_consta:
 - tema: liquidez
   motivo: no habla de la liquidez en el tramo
@@ -1510,5 +1521,5 @@ no_consta:
   motivo: no habla de cartuchos en el tramo
 - tema: no_trade
   motivo: no razona un caso de no operar en el tramo
-salida_sha256: 62ccd5fae48ba9aea2c5e9fed30c67124d3352978ada5be5609c1d1be3ec845e
-comprobado_el: '2026-09-07T01:55:41Z'
+salida_sha256: d0c781de7fe3cea21ed77e755d33518711bc300bc6a2fd1bd74857a54c6b83db
+comprobado_el: '2026-09-07T02:27:06Z'

@@ -736,11 +736,26 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: {exc}")
         return 1
     tramo = [s for s in segmentos if s.t1_ms > t0 and s.t0_ms < t1]
-    referencias = sorted(
-        r
-        for r in (entorno.contexto.referencias or set())
-        if video_de_referencia(r) == args.video and t0 <= t_ms_de_referencia(r) <= t1
-    )
+    # Referencias del tramo, compactas: la cobertura es 1 fps (ADR-0008), asi que se anota el
+    # manifiesto y el recuento por segundo, y solo los instantes con fraccion (obligatorios).
+    en_tramo = [
+        ref
+        for ref in (entorno.contexto.referencias or set())
+        if video_de_referencia(ref) == args.video and t0 <= t_ms_de_referencia(ref) <= t1
+    ]
+    por_manifiesto: dict[str, list[int]] = {}
+    for ref in en_tramo:
+        por_manifiesto.setdefault(ref.rsplit("/", 1)[0], []).append(t_ms_de_referencia(ref))
+    referencias: list[str] = []
+    for fid, instantes in sorted(por_manifiesto.items()):
+        regulares = sorted(t for t in instantes if t % 1000 == 0)
+        extras = sorted(t for t in instantes if t % 1000 != 0)
+        if regulares:
+            referencias.append(
+                f"{fid}/<t_ms>: {len(regulares)} fotogramas regulares, uno por segundo, "
+                f"de {regulares[0]} a {regulares[-1]} ms"
+            )
+        referencias += [f"{fid}/{t} (obligatorio)" for t in extras]
     try:
         doc = esqueleto(
             args.video,
