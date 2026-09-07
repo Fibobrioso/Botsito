@@ -1,10 +1,11 @@
 """EvidenceItem (F06): la unidad minima de conocimiento extraido del corpus.
 
-Un item es una cita verificable (video, t0, t1, fotogramas) con la cita literal, una afirmacion
-normalizada que no anade nada que la cita no diga, un tema, un valor opcional, y quien lo extrajo
-y quien lo reviso. Es INMUTABLE: su id incluye un hash del contenido, el nombre del fichero es el
-id, y el historial de git se vigila (`historial.py`). Una correccion es un item nuevo que
-`supersede` al anterior.
+Un item es una cita verificable (video, t0, t1, transcripcion, fotogramas) con la cita literal,
+una afirmacion normalizada que no anade nada que la cita no diga, un tema, un valor opcional, y
+quien lo extrajo y quien lo acepto. Es INMUTABLE: su id incluye un hash del contenido, el nombre
+del fichero es el id, y el historial de git se vigila (`historial.py`). Una correccion es un item
+nuevo que `supersede` al anterior. Desde F07 (ADR-0009) la cita de audio se localiza por maquina
+en la cruda de `transcripcion` y la de pantalla exige un fotograma real (`verificacion.py`).
 """
 
 from __future__ import annotations
@@ -29,6 +30,13 @@ from botsito.comun.documentos import (
     vacio,
 )
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.evidence.verificacion import (
+    CitaError,
+    ContextoEvidencia,
+    Localizacion,
+    comprobar_referencias,
+    localizar_cita,
+)
 
 __all__ = ["activos", "ciclos_de_supersede"]
 
@@ -52,6 +60,7 @@ CAMPOS_TEXTO = (
     "valor",
     "supersede",
     "notas",
+    "transcripcion",
 )
 _TIEMPO = re.compile(r"^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$", re.ASCII)
 _TEMA = ids.TEMA
@@ -69,7 +78,7 @@ CAMPOS_OBLIGATORIOS = (
     "revisado_por",
     "provenance",
 )
-CAMPOS_OPCIONALES = ("fotogramas", "valor", "supersede", "notas")
+CAMPOS_OPCIONALES = ("fotogramas", "valor", "supersede", "notas", "transcripcion")
 
 
 class EvidenciaError(ValueError):
@@ -127,6 +136,7 @@ class EvidenceItem:
     valor: str | None = None
     supersede: str | None = None
     notas: str | None = None
+    transcripcion: str | None = None
 
     @property
     def t0_s(self) -> float:
@@ -135,6 +145,18 @@ class EvidenceItem:
     @property
     def t1_s(self) -> float:
         return parse_tiempo(self.t1)
+
+    @property
+    def t0_ms(self) -> int:
+        return round(self.t0_s * 1000)
+
+    @property
+    def t1_ms(self) -> int:
+        return round(self.t1_s * 1000)
+
+    @property
+    def cita_de_audio(self) -> bool:
+        return self.modalidad in ("audio", "ambas")
 
 
 def contenido_canonico(campos: dict[str, Any]) -> str:
@@ -213,6 +235,20 @@ def _validar_campos(campos: dict[str, Any], origen: str) -> None:
         raise EvidenciaError(f"{origen}: fotogramas debe ser una lista de rutas")
     if campos.get("supersede") is not None and not _ID.match(str(campos["supersede"])):
         raise EvidenciaError(f"{origen}: supersede debe ser un id de evidencia")
+    transcripcion = campos.get("transcripcion")
+    modalidad = campos["modalidad"]
+    if transcripcion is not None and not ids.es_id_de("transcripcion", transcripcion):
+        raise EvidenciaError(f"{origen}: transcripcion {transcripcion!r} no es un id tr-*")
+    if modalidad in ("audio", "ambas") and transcripcion is None:
+        raise EvidenciaError(
+            f"{origen}: modalidad {modalidad} exige `transcripcion` (id tr-* de la cruda citada)"
+        )
+    if modalidad == "pantalla" and transcripcion is not None:
+        raise EvidenciaError(f"{origen}: modalidad pantalla no lleva `transcripcion`")
+    if modalidad == "audio" and fotos:
+        raise EvidenciaError(f"{origen}: modalidad audio no admite `fotogramas`")
+    if modalidad in ("pantalla", "ambas") and not fotos:
+        raise EvidenciaError(f"{origen}: modalidad {modalidad} exige al menos un fotograma")
 
 
 def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceItem:
@@ -244,6 +280,7 @@ def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceIte
         valor=_normalizar_texto(campos["valor"]) if campos.get("valor") is not None else None,
         supersede=str(campos["supersede"]) if campos.get("supersede") else None,
         notas=_normalizar_texto(campos["notas"]) if campos.get("notas") else None,
+        transcripcion=str(campos["transcripcion"]) if campos.get("transcripcion") else None,
     )
 
 
@@ -266,8 +303,14 @@ def cargar_evidencia(directorio: Path) -> list[EvidenceItem]:
     return cargar_directorio(directorio, cargar_item, EvidenciaError, "evidencia", lambda i: i.id)
 
 
-def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, Any]) -> list[str]:
-    """La cita apunta a un video real, dentro de su duracion, y a fotogramas inventariados."""
+def validar_contra_manifiesto(
+    items: list[EvidenceItem],
+    manifiesto: dict[str, Any],
+    contexto: ContextoEvidencia | None = None,
+) -> list[str]:
+    """La cita apunta a un video real, dentro de su duracion, a fotogramas conocidos
+    (`contexto.referencias`, ADR-0008 §6) y a una transcripcion conocida del mismo video.
+    Las citas de audio se verifican aparte (`verificar_citas`), porque necesitan la cruda."""
     problemas: list[str] = []
     duraciones: dict[str, float] = {}
     for v in manifiesto.get("videos") or []:
@@ -279,7 +322,8 @@ def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, A
             problemas.append(f"manifiesto: duracion_s no numerica en {v.get('video_id')!r}")
             continue
         duraciones[str(v.get("video_id"))] = float(d)
-    rutas = {str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)}
+    referencias = contexto.referencias if contexto is not None else None
+    transcripciones = contexto.transcripciones if contexto is not None else {}
     por_id = {i.id: i for i in items}
     ids = set(por_id)
     for it in items:
@@ -290,9 +334,24 @@ def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, A
                 f"{it.id}: t1 {it.t1} supera la duracion del video "
                 f"({duraciones[it.video_id]:.1f} s)"
             )
-        for foto in it.fotogramas:
-            if foto not in rutas:
-                problemas.append(f"{it.id}: fotograma no inventariado {foto!r}")
+        if it.fotogramas and referencias is None:
+            problemas.append(f"{it.id}: faltan referencias conocidas para validar fotogramas")
+        elif referencias is not None:
+            problemas += [
+                f"{it.id}: {p}"
+                for p in comprobar_referencias(
+                    it.video_id, it.t0_ms, it.t1_ms, it.modalidad, it.fotogramas, referencias
+                )
+            ]
+        if it.transcripcion and transcripciones:
+            video = transcripciones.get(it.transcripcion)
+            if video is None:
+                problemas.append(f"{it.id}: transcripcion {it.transcripcion} no existe")
+            elif video != it.video_id:
+                problemas.append(
+                    f"{it.id}: transcripcion {it.transcripcion} es de {video!r}, no de "
+                    f"{it.video_id!r}"
+                )
         if it.supersede and it.supersede not in ids:
             problemas.append(f"{it.id}: supersede a {it.supersede}, que no existe")
         if it.supersede == it.id:
@@ -304,6 +363,51 @@ def validar_contra_manifiesto(items: list[EvidenceItem], manifiesto: dict[str, A
             )
     problemas += ciclos_de_supersede({i.id: i.supersede for i in items})
     return problemas
+
+
+def verificar_citas(
+    items: list[EvidenceItem], contexto: ContextoEvidencia
+) -> tuple[list[str], list[str], dict[str, Localizacion]]:
+    """(problemas, avisos, localizaciones). Cada cita de audio se localiza en la CRUDA citada
+    (`contexto.crudas(tid)`); sin cruda en la maquina, un aviso agregado por transcripcion.
+    Una transcripcion citada que ya fue reemplazada da un aviso agregado, no un error."""
+    problemas: list[str] = []
+    avisos: list[str] = []
+    localizaciones: dict[str, Localizacion] = {}
+    sin_cruda: dict[str, int] = {}
+    reemplazadas: dict[str, list[str]] = {}
+    for it in items:
+        if not it.cita_de_audio or it.transcripcion is None:
+            continue
+        if it.transcripcion in contexto.reemplazadas:
+            reemplazadas.setdefault(it.transcripcion, []).append(it.id)
+        segmentos = contexto.crudas(it.transcripcion) if contexto.crudas else None
+        if segmentos is None:
+            sin_cruda[it.transcripcion] = sin_cruda.get(it.transcripcion, 0) + 1
+            continue
+        try:
+            localizaciones[it.id] = localizar_cita(segmentos, it.t0_ms, it.t1_ms, it.cita_literal)
+        except CitaError as exc:
+            problemas.append(f"{it.id}: {exc}")
+    for tid, n in sorted(sin_cruda.items()):
+        avisos.append(f"{n} citas sobre {tid} no verificables aqui (cruda ausente en data/)")
+    for tid, lista in sorted(reemplazadas.items()):
+        nueva = contexto.reemplazadas[tid]
+        tambien = 0
+        segmentos_nueva = contexto.crudas(nueva) if contexto.crudas else None
+        if segmentos_nueva is not None:
+            for iid in lista:
+                it = next(i for i in items if i.id == iid)
+                try:
+                    localizar_cita(segmentos_nueva, it.t0_ms, it.t1_ms, it.cita_literal)
+                    tambien += 1
+                except CitaError:
+                    pass
+        avisos.append(
+            f"{len(lista)} items citan {tid}, reemplazada por {nueva}; "
+            f"{tambien} se localizan tambien en la nueva"
+        )
+    return problemas, avisos, localizaciones
 
 
 def escribir_item(
@@ -327,7 +431,16 @@ def escribir_item(
     carpeta.mkdir(parents=True, exist_ok=True)
     ruta = carpeta / f"{item.id}.yaml"
     if ruta.exists():
-        raise EvidenciaError(f"ya existe {ruta.name}: mismo contenido, misma cita")
+        try:
+            previo = cargar_item(ruta)
+        except EvidenciaError as exc:
+            raise EvidenciaError(f"ya existe {ruta.name} y no se puede leer: {exc}") from exc
+        if contenido_canonico(asdict(previo)) == contenido_canonico(asdict(item)):
+            raise EvidenciaError(f"ya existe {ruta.name}: mismo contenido, misma cita")
+        raise EvidenciaError(
+            f"colision de hash: {ruta.name} existe con OTRO contenido; cambia la ventana o las "
+            "notas para obtener otro id"
+        )
     doc: dict[str, Any] = {"id": item.id}
     for k, v in asdict(item).items():
         if k == "id" or v in (None, (), ""):

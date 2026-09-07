@@ -98,7 +98,7 @@ reportados como informacion (sin umbral).
    cambiada despues del check ("crea otra propuesta"). Fuera del hash solo `decision`,
    `decidido_por`, `decidido_el`, `metodo_revision`, `motivo`, `evidence_id`.
 7. **Guardias mecanicas de calidad** en `--check` y en `accept`: cita >= 4 tokens; `tema` con
-   raiz en la taxonomia (`knowledge/evidence/temas.yaml`, manual y versionado; cerrada para F07,
+   raiz en la taxonomia (`knowledge/evidence/_temas.yaml`, manual y versionado; cerrada para F07,
    F11 la hara normativa); `valor` solo si su normalizacion coincide con un token numerico de
    la cita o con el vocabulario cerrado del fichero de temas (`cuerpo`, `cierre`, `toque`,
    `mecha`, `si`, `no`); dos items (en propuestas o evidencia) con la misma cita normalizada =
@@ -150,7 +150,7 @@ reportados como informacion (sin umbral).
     cada entrada no `descartada` un item activo cuya cita normalizada contenga el fragmento (o
     cuyos `fotogramas` citen el instante) con tramo localizado a <= 30 s del `t0` heredado.
     Ronda 1: se salta (0 items). Lo que el usuario rechace se marca `descartada: motivo`.
-13. **Taxonomia de `tema`** en `knowledge/evidence/temas.yaml` (raices: `ventana`, `sesgo`,
+13. **Taxonomia de `tema`** en `knowledge/evidence/_temas.yaml` (raices: `ventana`, `sesgo`,
     `liquidez`, `mapeo`, `entrada`, `zona_control`, `stop`, `objetivo`, `break_even`,
     `cartuchos`, `parciales`, `riesgo`, `lotaje`, `herramientas`, `reloj`, `backtest`,
     `no_trade`, `reentrada`, `meta`) con el vocabulario cerrado de `valor`. `valor` solo cuando
@@ -180,7 +180,7 @@ reportados como informacion (sin umbral).
   extendida; `validar_contra_manifiesto(items, manifiesto, contexto=None)`.
 - `src/botsito/evidence/propuestas.py`: esquema, carga estricta, `esqueleto()`, `comprobar()`
   (guardias, `salida_sha256`), `aceptar()`, `rechazar()`, ids `pr-*` (`comun/ids.py`);
-  `knowledge/evidence/temas.yaml` (taxonomia y vocabulario de `valor`).
+  `knowledge/evidence/_temas.yaml` (taxonomia y vocabulario de `valor`).
 - `src/botsito/validation/knowledge.py`: capa de evidencia con contexto (crudas, referencias,
   activas; avisos sin `data/`); `knowledge/_proposals/` validado (esquema y coherencia con la
   evidencia: un `evidence_id` anotado debe existir).

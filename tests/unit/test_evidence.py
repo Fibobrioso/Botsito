@@ -40,6 +40,7 @@ def base(**cambios: Any) -> dict[str, Any]:
         "extractor": "humano",
         "revisado_por": "aleks",
         "provenance": "botsito",
+        "transcripcion": "tr-v4-large-v3-int8-float16-a8d1bccc",
     }
     d.update(cambios)
     return d
@@ -111,14 +112,77 @@ def test_validacion_contra_manifiesto(tmp_path: Path) -> None:
     escribir_item(tmp_path, base())
     escribir_item(tmp_path, base(video_id="v9", tema="a.b"))
     escribir_item(tmp_path, base(t0="1:33:00", t1="1:34:30", tema="a.c"))
-    escribir_item(tmp_path, base(fotogramas=["_procesado/v4/fr/no_existe.jpg"], tema="a.d"))
+    escribir_item(
+        tmp_path,
+        base(
+            modalidad="pantalla",
+            transcripcion=None,
+            fotogramas=["_procesado/v4/fr/no_existe.jpg"],
+            tema="a.d",
+        ),
+    )
     escribir_item(tmp_path, base(supersede="ev-v4-000000-deadbeef", tema="a.e"))
     problemas = validar_contra_manifiesto(cargar_evidencia(tmp_path), MANIFIESTO)
     assert len(problemas) == 4
     assert any("v9" in p for p in problemas)
     assert any("supera la duracion" in p for p in problemas)
-    assert any("no inventariado" in p for p in problemas)
+    assert any("faltan referencias conocidas" in p for p in problemas)
     assert any("no existe" in p for p in problemas)
+    # Con referencias conocidas, una ruta heredada ya no es citable; una fr-* del tramo si.
+    from botsito.evidence.verificacion import ContextoEvidencia
+
+    ctx = ContextoEvidencia(referencias={"fr-v4-9ad0ebb8/933000"})
+    problemas = validar_contra_manifiesto(cargar_evidencia(tmp_path), MANIFIESTO, ctx)
+    assert any("no conocida" in p for p in problemas)
+    escribir_item(
+        tmp_path,
+        base(
+            modalidad="pantalla",
+            transcripcion=None,
+            fotogramas=["fr-v4-9ad0ebb8/933000"],
+            tema="a.f",
+        ),
+    )
+    problemas = validar_contra_manifiesto(cargar_evidencia(tmp_path), MANIFIESTO, ctx)
+    assert not any("a.f" in p or "933000" in p for p in problemas)
+
+
+@pytest.mark.parametrize(
+    ("cambio", "mensaje"),
+    [
+        ({"transcripcion": None}, "exige `transcripcion`"),
+        ({"transcripcion": "tr-mal"}, "no es un id tr-"),
+        ({"modalidad": "pantalla"}, "no lleva `transcripcion`"),
+        ({"fotogramas": ["fr-v4-9ad0ebb8/933000"]}, "no admite `fotogramas`"),
+        ({"modalidad": "ambas"}, "exige al menos un fotograma"),
+    ],
+)
+def test_reglas_de_modalidad(cambio: dict[str, Any], mensaje: str) -> None:
+    campos = base(**cambio)
+    campos["id"] = "ev-v4-001533-00000000"
+    with pytest.raises(EvidenciaError, match=mensaje):
+        item_desde_dict(campos)
+
+
+def test_transcripcion_de_otro_video_o_inexistente() -> None:
+    from botsito.evidence.verificacion import ContextoEvidencia
+
+    campos = base()
+    campos["id"] = calcular_id(campos)
+    item = item_desde_dict(campos)
+    ctx = ContextoEvidencia(transcripciones={"tr-v4-large-v3-int8-float16-a8d1bccc": "v1"})
+    assert any("no de 'v4'" in p for p in validar_contra_manifiesto([item], MANIFIESTO, ctx))
+    ctx = ContextoEvidencia(transcripciones={"tr-otra-x-00000000": "v4"})
+    assert any("no existe" in p for p in validar_contra_manifiesto([item], MANIFIESTO, ctx))
+
+
+def test_colision_de_hash_se_distingue_de_mismo_contenido(tmp_path: Path) -> None:
+    ruta = escribir_item(tmp_path, base())
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    doc["notas"] = "otro contenido bajo el mismo nombre"
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True), encoding="utf-8")
+    with pytest.raises(EvidenciaError, match="no se puede leer"):
+        escribir_item(tmp_path, base())
 
 
 def test_contradicciones_y_supersede(tmp_path: Path) -> None:

@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-— (previos de F07 integrados en main con tag `stable/F05-previos-F07`; F07 pendiente de abrir)
+F07 · evidence-extraction · EN CONSTRUCCION, ronda 1 (rama `feature/F07-evidence-extraction`; brief `docs/plan/features/F07-evidence-extraction.md` con revision de diseno aplicada; ADR-0009)
 
 ## Current Branch
-main
+feature/F07-evidence-extraction
 
 ## Stable Main State
 8cba5c5 · merge de los previos de F07 (tras stable/F05-auditoria-1). make check verde: 405 casos (278 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34067817093 sobre c17083f). Tags stable/F05, stable/F05-auditoria-1 y stable/F05-previos-F07. Rama main protegida en GitHub.
@@ -91,7 +91,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-278 funciones de test (405 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+307 funciones de test (452 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
