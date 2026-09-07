@@ -5,18 +5,38 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-05, tras validar F05 y abrir la auditoria global)
-- `main`: merge de F05 `dd8de55` con tag `stable/F05`; `docs(state)` `c97273f`; revert `de42ec1`
-  del HANDOFF que rompio la CI. CI de main verde en `de42ec1` (run 34000499649). Protegida en
-  GitHub (sin force-push, sin checks requeridos).
-- Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15. Ramas fusionadas borradas.
-- Rama actual: `feature/F05-auditoria-estructura` (auditoria global pedida por el usuario antes de
-  F07: dos agentes, codigo/tests y docs/proceso/CI; correcciones aplicadas; cierre con tag
-  `stable/F05-auditoria-1` e informe `docs/validation/AUDITORIA-2026-09-05-estructura.md`).
-- SIGUIENTE: F07 evidence-extraction. Sus previos y entradas estan reunidos en MASTER_PLAN H.2,
-  fila "Previos y entradas de F07": glosario v2, retranscribir los 5 videos, copia de crudas y
-  WAV en Drive, v5 subido a Drive, `referencias_conocidas` conectada a la evidencia, hechos ya
-  leidos (obligatorios, A-9, ficha en Word, v5, backtest de abril).
+## Estado (2026-09-06, previos de F07 construidos)
+- `main`: merge de la auditoria global `916d0d0` con tag `stable/F05-auditoria-1` (las tres
+  ratificaciones del usuario el 2026-09-06); `docs(state)` `76060c9`; CI verde (run
+  34044627478). Protegida en GitHub (sin force-push, sin checks requeridos).
+- Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15 y la auditoria global. Rama
+  `feature/F05-auditoria-estructura` fusionada (pendiente de borrar por el usuario).
+- Rama actual: `feature/F07-previos` (informe `docs/validation/F07-previos.md`, estado
+  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F05-previos-F07`, ver §F). Hecho: glosario v2
+  (29 terminos, 6 sustituciones globales + 6 de segmento), `hotwords` medido y DESCARTADO
+  (perdida de habla y sesgo "sell" -> "SL"; ADR-0007 enmienda), guardia de 223 tokens del
+  prompt, huella de reanudacion sin GPU, los 5 videos retranscritos (ids activos:
+  `tr-v1-...-bbd8a931`, `tr-v2-...-28391c2c`, `tr-v3-...-270a4851`, `tr-v4-...-a8d1bccc`,
+  `tr-v5-...-3c6fbb57`; los anteriores quedan reemplazados, sus carpetas siguen en `data/`).
+- Copia fuera de la maquina COMPLETA (2026-09-07): carpeta de Drive "transcripciones (crudas,
+  Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`, dentro de "Estrategia del trader") con
+  SHA256SUMS, LEEME, 5 manifiestos, 5 crudas, 5 WAV y el video v5 (`drive_id`
+  `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, anotado en `fuentes.yaml`). Los binarios los subio el
+  usuario a mano desde `data/drive_staging/` (las herramientas de la sesion no suben binarios
+  de ese tamano); una retranscripcion futura repite `staging.py` y la subida.
+- SIGUIENTE: abrir F07 evidence-extraction (entradas en MASTER_PLAN H.2, fila "Previos y
+  entradas de F07"; la cita se verifica contra la CRUDA de la transcripcion activa).
+- Lecciones tecnicas (previos de F07): con `condition_on_previous_text=False` el
+  `initial_prompt` solo condiciona la primera ventana de 30 s de cada fragmento; `hotwords`
+  entra en todas pero alarga los segmentos mas alla de la ventana (hasta 40 s) y Whisper salta
+  audio (~10 s perdidos en v5, "sell" -> "SL"); faster-whisper trunca el prompt a 223 tokens
+  sin avisar (guardia `comprobar_prompt`, contar con `add_special_tokens=False`); medir SIEMPRE
+  con la pasada oficial (`corpus transcribe`), no solo con un script suelto (el paso 1 no
+  mostro la perdida, el paso 2 si); el YAML estricto rechaza un valor que empieza por comillas
+  y sigue texto (`motivo: "x" ...`): sin comillas o todo entrecomillado; `write_text` sin
+  `newline="\n"` mete CRLF en Windows y rompe `test_repository_integrity`; las herramientas de
+  la sesion no suben binarios grandes a Drive (API: texto/base64 en el mensaje; navegador:
+  dialogo nativo; `file_upload`: 10 MB).
 
 ## F05 (validada el 2026-09-05)
 - Fotogramas de TODO el corpus a 1 fps en PNG sin perdida (ADR-0008), decision del usuario
@@ -29,7 +49,8 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   de reglas en Word (`fr-v3-982da728/101000`), material del 2026-09-05 (v5, xlsx abril, capturas),
   dos auditorias de cierre aplicadas.
 - Material del 2026-09-05 ("Info extra de backtesting"): v5 `2026-09-05 21-03-59.mkv` (6 min,
-  FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos; NO esta en Drive), xlsx
+  FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos, reemplazada el 2026-09-06
+  por `tr-v5-...-3c6fbb57`, 80; en Drive desde el 2026-09-07), xlsx
   abril 2026 (38 operaciones) y 6 capturas de Analytics en `Material adicional de su operativa`.
   Hechos en PROJECT_STATE (seccion "Hechos del corpus pendientes de evidencia").
 - Lecciones tecnicas: `fps=1` de ffmpeg NO da el fotograma del segundo exacto ni conserva el

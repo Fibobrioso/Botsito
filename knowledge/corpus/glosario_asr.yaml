@@ -1,12 +1,18 @@
 # Glosario del ASR (F04, ADR-0007): la UNICA forma de tocar una transcripcion.
 #
-# vocabulario: terminos del dominio que el motor recibe como initial_prompt (mejora la jerga) y
-#   que ninguna sustitucion global puede casar. Su hash queda en cada manifiesto.
-# sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (brequiven,
-#   cargo chuto); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
-#   ambiguedades reales (M5/M15, FVG/FTMO). Patron Unicode con limites \b en ambos extremos, sin
-#   comodines sin limite; motivo y ejemplo real (video y minuto) obligatorios. Una correccion
-#   sin ejemplo real no entra. `corpus glossary apply` regenera corregida.jsonl = cruda + esto.
+# vocabulario: terminos del dominio que el motor recibe como initial_prompt (hotwords medido y
+#   descartado el 2026-09-06, ADR-0007 enmienda) y que ninguna sustitucion global puede casar.
+#   Su hash queda en cada manifiesto; cambiarlo obliga a retranscribir (otra huella, otro id).
+# sustituciones: alcance `global` solo para "antes" que NO son palabra del dominio (store loss,
+#   rotaje); alcance `segmento` (con transcripcion_id, segmento y verificado_por) para
+#   ambiguedades reales o palabras corrientes (blog -> BOS, split -> spread). Patron Unicode con
+#   limites \b en ambos extremos, sin comodines sin limite; motivo y ejemplo real (video y
+#   minuto) obligatorios. Una correccion sin ejemplo real no entra. `corpus glossary apply`
+#   regenera corregida.jsonl = cruda + esto.
+#
+# v2 (2026-09-06, aprobado por el usuario): entradas propuestas en el informe F04 con ejemplo
+# real de large-v3. Las de alcance segmento se anaden despues de retranscribir, cuando existan
+# los transcripcion_id nuevos (segmento y verificado_por obligatorios).
 vocabulario:
   - EURUSD
   - M1
@@ -17,10 +23,10 @@ vocabulario:
   - FTMO
   - FundedNext
   - fondeo
-  - mitigacion
+  - mitigación
   - breaker
   - zona de control
-  - orden limite
+  - orden límite
   - stop loss
   - take profit
   - lotaje
@@ -28,4 +34,105 @@ vocabulario:
   - FXReplay
   - TradingView
   - MetaTrader
-sustituciones: []
+  - BOS
+  - order flow
+  - order block
+  - complex pullback
+  - backtesting
+  - Gann
+  - TP
+  - SL
+  - RR
+sustituciones:
+  - patron: '\bstore loss\b'
+    reemplazo: stop loss
+    alcance: global
+    motivo: el motor oye "store" donde el trader dice "stop"; "store loss" no es palabra del dominio
+    ejemplo_video: v2
+    ejemplo_t0: "0:05:41"
+  - patron: '\borden flow\b'
+    reemplazo: order flow
+    alcance: global
+    motivo: castellanizacion de "order flow"; "orden flow" no existe en el dominio
+    ejemplo_video: v2
+    ejemplo_t0: "0:32:26"
+  - patron: '\bcuadro de (?:GAN|gam)\b'
+    reemplazo: cuadro de Gann
+    alcance: global
+    motivo: el cuadro de Gann (herramienta de TradingView) sale como GAN o gam
+    ejemplo_video: v1
+    ejemplo_t0: "0:06:22"
+  - patron: '\brotaje\b'
+    reemplazo: lotaje
+    alcance: global
+    motivo: rotaje no es palabra; el trader dice lotaje (tamano de la posicion)
+    ejemplo_video: v4
+    ejemplo_t0: "1:31:40"
+  - patron: '\bbacteseando\b'
+    reemplazo: backtesteando
+    alcance: global
+    motivo: gerundio castellanizado de backtesting mal oido
+    ejemplo_video: v3
+    ejemplo_t0: "0:14:18"
+  - patron: '\btepes\b'
+    reemplazo: TPs
+    alcance: global
+    motivo: tepes es la lectura fonetica de TPs (take profits)
+    ejemplo_video: v3
+    ejemplo_t0: "0:32:20"
+  # Alcance segmento (v2, 2026-09-06): ejemplos del informe F04 localizados en las
+  # transcripciones nuevas; el resto de apariciones quedan como `dudas` para F07.
+  - patron: '\bboss\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: el trader dice BOS (break of structure) y el motor escribe boss
+    ejemplo_video: v3
+    ejemplo_t0: "0:11:29"
+    transcripcion_id: tr-v3-large-v3-int8-float16-270a4851
+    segmento: 126
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bvoz\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: voz es palabra corriente; aqui es BOS (se genera el BOS)
+    ejemplo_video: v2
+    ejemplo_t0: "0:31:20"
+    transcripcion_id: tr-v2-large-v3-int8-float16-28391c2c
+    segmento: 275
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bblogs\b'
+    reemplazo: BOS
+    alcance: segmento
+    motivo: blogs es palabra corriente; aqui son BOS (me toco estos BOS)
+    ejemplo_video: v4
+    ejemplo_t0: "0:46:58"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 789
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsplit\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: split es palabra corriente; aqui es spread (calculo del riesgo)
+    ejemplo_video: v4
+    ejemplo_t0: "0:06:06"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 57
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsprint\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: sprint es palabra corriente; aqui es spread
+    ejemplo_video: v4
+    ejemplo_t0: "0:08:27"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 109
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)
+  - patron: '\bsplit\b'
+    reemplazo: spread
+    alcance: segmento
+    motivo: split es palabra corriente; aqui es spread (el spread aumenta)
+    ejemplo_video: v4
+    ejemplo_t0: "0:09:09"
+    transcripcion_id: tr-v4-large-v3-int8-float16-a8d1bccc
+    segmento: 131
+    verificado_por: usuario (aprobacion del 2026-09-06 de la propuesta del informe F04)

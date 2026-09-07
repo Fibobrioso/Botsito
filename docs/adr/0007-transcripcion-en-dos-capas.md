@@ -75,8 +75,32 @@ manifiestos_transcripcion}.py`, `src/botsito/cli.py` (`corpus transcribe|glossar
 y contrato: `faster_whisper` solo en `motor_whisper`), fixtures de audio. F07 anade a la evidencia
 el campo opcional `transcripcion` (id) sin alterar ids existentes.
 
+## Enmienda 2026-09-06 (previos de F07, glosario v2)
+- `hotwords` medido y DESCARTADO; el vocabulario sigue como `initial_prompt`. Leido en el
+  codigo de faster-whisper 1.2.1 (`generate_segments`, `get_prompt`): con
+  `condition_on_previous_text=False`, `prompt_reset_since` avanza tras cada ventana y el
+  `initial_prompt` solo condiciona la PRIMERA ventana de 30 s de cada fragmento; `hotwords` se
+  antepone a todas. Pero sobre v5 (365 s) `hotwords` alargo los segmentos de 3,2 s a 15,8 s de
+  media (hasta 40 s, mas que la ventana), la pasada oficial perdio ~10 s de habla con el hecho
+  A-10 ("protejo a 0.80, que es el SL por defecto") y en 2 de 2 pasadas transcribio "sell" como
+  "SL" (sesgo hacia el vocabulario). `initial_prompt` no mostro ninguna de las tres cosas.
+  Fidelidad manda (instruccion del usuario): `initial_prompt`, con `sustituciones` del glosario
+  para la jerga. Medicion completa en `docs/validation/F07-previos.md`.
+- faster-whisper trunca el prompt a `max_length // 2 - 1 = 223` tokens sin avisar:
+  `motor_whisper.comprobar_prompt` rechaza un vocabulario mas largo (el v2 ocupa 96, contados
+  como el motor con `add_special_tokens=False`; los 5 manifiestos del 2026-09-06 anotan 99 por
+  contar los 3 especiales, corregido tras la auditoria de cierre); el manifiesto anota
+  `initial_prompt_tokens` (fuera de la huella de reanudacion) y `hotwords: null` (constancia de
+  la configuracion con la que se genero la cruda, no un campo funcional).
+- La huella de reanudacion (carpeta de trabajo y parciales) excluye `gpu` (nombre y driver;
+  `pipeline_transcripcion.CLAVES_FUERA_DE_HUELLA`): un cambio de driver no altera la salida
+  prometida (ctranslate2, cuBLAS, cuDNN y pesos siguen en la huella) y antes invalidaba todos
+  los parciales. El manifiesto sigue anotando la GPU.
+- Las transcripciones `tr-*` con el vocabulario v1 quedan reemplazadas por las del glosario v2
+  via `reemplaza_a`; sus manifiestos no cambian.
+
 ## Fecha / fase
-2026-09-05 · F04
+2026-09-05 · F04 (enmienda 2026-09-06, previos de F07)
 
 ## Estado
 ACTIVE

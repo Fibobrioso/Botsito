@@ -5,7 +5,12 @@ cuBLAS y cuDNN llegan como paquetes de pip y hay que anadir sus `bin/` al buscad
 de cargar el modelo. Parametros fijos y anotados en el manifiesto: `temperature=0` (sin cascada),
 `beam_size=5`, `condition_on_previous_text=False` (evita bucles de repeticion entre fragmentos),
 `vad_filter=True` con parametros por defecto (faster-whisper devuelve los tiempos en el eje del
-fragmento), `initial_prompt` = vocabulario del glosario. Determinismo prometido: misma maquina y
+fragmento), `initial_prompt` = vocabulario del glosario. Medido el 2026-09-06 (ADR-0007,
+enmienda): con `condition_on_previous_text=False` el `initial_prompt` solo condiciona la PRIMERA
+ventana de cada fragmento; `hotwords` condicionaria todas, pero sobre v5 alargo los segmentos
+hasta 40 s (mas que la ventana de 30 s), perdio ~10 s de habla con un hecho clave y sesgo
+"sell" -> "SL": descartado por fidelidad. faster-whisper trunca el prompt a 223 tokens sin
+avisar, de ahi la guardia `LIMITE_PROMPT_TOKENS`. Determinismo prometido: misma maquina y
 mismas versiones -> misma cruda; el informe lo verifica una vez.
 """
 
@@ -22,11 +27,14 @@ from pathlib import Path
 from typing import Any
 
 from botsito.comun.documentos import sha256_hex
-from botsito.corpus.transcripcion import MotorAsr, SegmentoRelativo
+from botsito.corpus.transcripcion import MotorAsr, SegmentoRelativo, TranscripcionError
 
 IDIOMA = "es"
 BEAM = 5
 TEMPERATURA = 0.0
+# faster-whisper recorta el prompt a `max_length // 2 - 1` tokens (448 // 2 - 1) sin avisar:
+# un vocabulario mas largo entraria a medias y el manifiesto mentiria sobre lo que vio el motor.
+LIMITE_PROMPT_TOKENS = 223
 
 
 def _anadir_dlls_cuda() -> list[str]:
@@ -68,6 +76,21 @@ def _gpu() -> str:
     return "?"
 
 
+def comprobar_prompt(tokenizador: Any, prompt: str) -> int:
+    """Tokens que ocupa el vocabulario tal como lo codifica faster-whisper (`" " + texto`,
+    `add_special_tokens=False`: sin <|startoftranscript|> ni <|notimestamps|>). Error de
+    dominio si el motor lo truncaria."""
+    if not prompt:
+        return 0
+    n = len(tokenizador.encode(" " + prompt.strip(), add_special_tokens=False).ids)
+    if n > LIMITE_PROMPT_TOKENS:
+        raise TranscripcionError(
+            f"el vocabulario del glosario ocupa {n} tokens y faster-whisper trunca el prompt a "
+            f"{LIMITE_PROMPT_TOKENS}: acorta el vocabulario antes de transcribir"
+        )
+    return n
+
+
 @dataclass(frozen=True, slots=True)
 class ConfiguracionWhisper:
     modelo: str = "large-v3"
@@ -86,6 +109,13 @@ class MotorWhisper(MotorAsr):
         self.configuracion = configuracion or ConfiguracionWhisper()
         self._modelo: Any = None
         self._ruta_modelo: Path | None = None
+        self._prompt_tokens: int | None = None
+
+    def _comprobar_prompt(self, ruta_modelo: Path) -> int:
+        """Antes de cargar los pesos en la GPU: el tokenizador del modelo basta."""
+        tokenizers = importlib.import_module("tokenizers")
+        tokenizador = tokenizers.Tokenizer.from_file(str(ruta_modelo / "tokenizer.json"))
+        return comprobar_prompt(tokenizador, self.configuracion.prompt_inicial)
 
     @property
     def nombre(self) -> str:
@@ -97,6 +127,7 @@ class MotorWhisper(MotorAsr):
             fw = importlib.import_module("faster_whisper")
             utils = importlib.import_module("faster_whisper.utils")
             self._ruta_modelo = Path(utils.download_model(self.configuracion.modelo))
+            self._prompt_tokens = self._comprobar_prompt(self._ruta_modelo)
             self._modelo = fw.WhisperModel(
                 str(self._ruta_modelo),
                 device=self.configuracion.dispositivo,
@@ -128,6 +159,8 @@ class MotorWhisper(MotorAsr):
             "vad_filter": True,
             "condition_on_previous_text": False,
             "initial_prompt_sha256": sha256_hex(self.configuracion.prompt_inicial.encode("utf-8")),
+            "initial_prompt_tokens": self._prompt_tokens,
+            "hotwords": None,
         }
 
     def transcribir(self, wav: Path) -> list[SegmentoRelativo]:
