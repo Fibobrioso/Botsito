@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-Previos de F07 (glosario v2, hotwords medido y descartado, huella sin GPU, retranscripcion v1-v5, copia en Drive) · WAITING_FOR_USER_VALIDATION (rama `feature/F07-previos`; informe `docs/validation/F07-previos.md`; cierre con tag `stable/F05-previos-F07`)
+— (previos de F07 integrados en main con tag `stable/F05-previos-F07`; F07 pendiente de abrir)
 
 ## Current Branch
-feature/F07-previos
+main
 
 ## Stable Main State
-916d0d0 · merge de la auditoria global de la estructura (tras stable/F05). make check verde: 389 casos, 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 5 de transcripcion, 5 de fotogramas). CI Ubuntu verde en la rama (run 34001769701 sobre 6edf743). Tags stable/F05 y stable/F05-auditoria-1. Rama main protegida en GitHub.
+8cba5c5 · merge de los previos de F07 (tras stable/F05-auditoria-1). make check verde: 405 casos (278 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34067817093 sobre c17083f). Tags stable/F05, stable/F05-auditoria-1 y stable/F05-previos-F07. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -55,9 +55,10 @@ feature/F07-previos
 - F04 · transcription-pipeline · validada el 2026-09-05 · docs/validation/F04-transcription-pipeline.md · tag stable/F04
 - F05 · frame-extraction · validada el 2026-09-05 · docs/validation/F05-frame-extraction.md · tag stable/F05
 - Auditoria global de la estructura · validada el 2026-09-06 · docs/validation/AUDITORIA-2026-09-05-estructura.md · tag stable/F05-auditoria-1
+- Previos de F07 · validados el 2026-09-07 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
 
 ## Features Waiting for Validation
-- Previos de F07 (2026-09-06): `docs/validation/F07-previos.md`; 5 manifiestos `tr-*` nuevos; copia en Drive completa y `drive_id` de v5 anotado (2026-09-07)
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -243,17 +244,18 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H): glosario v2 aprobado, los 5 videos retranscritos con `--reemplaza-a`, copia de crudas y WAV en Drive, v5 subido a Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
+F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H) CUMPLIDAS el 2026-09-07 (stable/F05-previos-F07): glosario v2, 5 videos retranscritos, crudas/WAV/v5 en Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
 pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Previos de F07 VALIDADOS por el usuario el 2026-09-07 (4 decisiones ratificadas; Drive completo): ritual de merge (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff`, tag `stable/F05-previos-F07`, `docs(state)`, `make check`, push). Despues: abrir F07 evidence-extraction con el metodo supervisado. Historial de la instruccion original: decidir el glosario v2 (propuestas en el informe F04), retranscribir los 5 videos con `--reemplaza-a`, copiar `data/transcripciones/*/cruda.jsonl` y `audio.wav` a Drive y subir v5 a Drive.
+Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
 
 ## Last Stable Commit
-916d0d0 · merge: auditoria global de la estructura validada por el usuario · tag stable/F05-auditoria-1
+8cba5c5 · merge: previos de F07 validados por el usuario · tag stable/F05-previos-F07
 
 ## Change Log
+- 2026-09-07 · PREVIOS DE F07 VALIDADOS por el usuario (ratifico las 4 decisiones: hotwords descartado, 6 sustituciones de segmento, Drive completo con drive_id de v5, tag stable/F05-previos-F07 con §F ampliado). merge --no-ff a main (8cba5c5); tag stable/F05-previos-F07. Siguiente: abrir F07.
 - 2026-09-06 · PREVIOS DE F07 construidos (rama `feature/F07-previos`, commits b9ffd0d, 13b4e40, 627d90d): glosario v2 aprobado por el usuario (29 terminos, 6 globales + 6 de segmento sobre los ids nuevos); huella de reanudacion sin GPU/driver; guardia de 223 tokens del prompt; `hotwords` MEDIDO y DESCARTADO (sobre v5 alargo los segmentos hasta 40 s, la pasada oficial perdio ~10 s con "protejo a 0.80, SL por defecto" y transcribio "sell" como "SL" en 2 de 2 pasadas; `initial_prompt` no mostro nada de eso; ADR-0007 enmienda); los 5 videos retranscritos (~1 h de GPU; ids `bbd8a931`, `28391c2c`, `270a4851`, `a8d1bccc`, `3c6fbb57`; contenido conservado: ratio de palabras 0,958-1,000, hechos clave presentes, senales comparables); Drive: carpeta `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` con SHA256SUMS/LEEME/manifiestos por API; crudas, WAV y v5 en `data/drive_staging/` pendientes del usuario. Auditoria de cierre (2 agentes) aplicada: recuento del prompt como el motor (96, no 99; `add_special_tokens=False`), `initial_prompt_tokens` fuera de la huella, guardia antes de cargar la GPU, tests de `_carpeta_base_registrada_ajena`, anexos de la medicion en `docs/validation/anexos/F07-previos/`, tag `stable/F05-previos-F07` y §F ampliado. Informe WAITING_FOR_USER_VALIDATION. 2026-09-07: el usuario subio los 21 ficheros de `drive_staging/` a Drive (verificado por API) y valido las 4 decisiones; `drive_id` de v5 anotado.
 - 2026-09-06 · AUDITORIA GLOBAL VALIDADA por el usuario (ratifico las tres: regla del HANDOFF en la rama y nunca en main tras el tag; cierre de la auditoria como rama con tag `stable/F05-auditoria-1`; orden de los previos de F07: glosario v2 -> retranscribir 5 videos -> copia de crudas y WAV en Drive -> v5 en Drive -> abrir F07). merge --no-ff a main (916d0d0); tag stable/F05-auditoria-1.
 - 2026-09-05 · AUDITORIA GLOBAL de la estructura (rama `feature/F05-auditoria-estructura`, 2 agentes) aplicada: codigo (`corpus/trabajo.py` con las guardias de F05 tambien en `corpus transcribe`: sin ella retranscribir en un clon sin `data/` pisaba la cruda; una transcripcion activa por video; `parse_ms` estricto; glosario rechaza `.` sin escapar; WAV/YAML corruptos y `corpus check` sin `fichero` ya no dan traceback; `carpeta_datos` unica; `--margen-s` negativo; `TOLERANCIA_DURACION_S` unica; mensaje de `state check` con el ritual) y docs/proceso (regla del HANDOFF en la rama, incidente de CI registrado, fila H.2 "Previos y entradas de F07", 5 videos, fotogramas en §0/B/ADR-0001/READMEs, lineamientos separados de hechos, Change Logs ordenados, `ci.yml` sin cancelar en main, test de rutas de Important Files). 389 casos, make check verde. Informe `docs/validation/AUDITORIA-2026-09-05-estructura.md`.
