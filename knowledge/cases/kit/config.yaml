@@ -1,0 +1,42 @@
+# Datos de negocio del kit de elicitacion (F10, ADR-0011). Manual, versionado; cada commit cita
+# `Fuente:`. Viven aqui como DATOS porque src/botsito no puede contener cifras de negocio
+# (tests/contract/test_no_business_literals.py): el paquete de cada sesion copia esta cabecera y
+# `botsito kit check` recompone desde ella. Las horas van en `huso_operativa` (registro).
+simbolo: EURUSD
+dataset_prefijo: eurusd-m1-
+# Dia operativo de un caso: contexto de mapeo desde medianoche hasta el cierre de la ventana
+# operativa (ev-v3-000138-567dc5d7, ev-v3-000157-b26147c7, ev-v4-011514-fe34ac7e).
+ventana_local:
+  desde: "00:00"
+  hasta: "15:00"
+# Unidades de etiqueta: las dos sesiones H4 que el trader declara (ev-v3-000157-b26147c7,
+# ev-v4-011425-ae028b78, ev-v1-000049-6a31caa6). La sesion 1 confirma si es su unidad.
+sesiones:
+  - nombre: "07-11"
+    desde: "07:00"
+    hasta: "11:00"
+  - nombre: "11-15"
+    desde: "11:00"
+    hasta: "15:00"
+# Anclajes candidatos de la vela H4 mientras A-9 siga abierta (MASTER_PLAN H.2, ADR-0005). Solo
+# el de Nueva York reproduce las H4 de 07/11/15 Madrid que el trader describe.
+anclajes_candidatos:
+  - etiqueta: madrid-00
+    hora: "00:00"
+    huso: Europe/Madrid
+    coincide_con_sesiones: false
+  - etiqueta: servidor-ny-17
+    hora: "17:00"
+    huso: America/New_York
+    coincide_con_sesiones: true
+# Un dia entra en el universo solo si su ventana completa esta dentro del dataset y tiene al
+# menos estas velas M1 (15 h = 900 minutos; el margen absorbe minutos sin ticks).
+min_velas_ventana: 850
+# Conjunto cerrado de decisiones por sesion (kappa).
+etiquetas: [compra, venta, no_trade]
+# Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
+particiones:
+  dev: 16
+  holdout-1: 8
+  holdout-2: 8
+  holdout-3: 8

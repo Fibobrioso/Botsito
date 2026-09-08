@@ -77,7 +77,7 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
             FuenteVideo(
                 video_id=str(v["video_id"]),
                 fichero=str(v["fichero"]),
-                drive_id=str(v["drive_id"]),
+                drive_id=str(v.get("drive_id") or ""),
                 bytes=_entero(v["bytes"], "bytes"),
                 fecha_grabacion=str(v["fecha_grabacion"]),
                 naturaleza=str(v["naturaleza"]).strip(),
@@ -96,6 +96,13 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise InventarioError(f"{ruta}: esquema invalido ({exc})") from exc
+    for v in fuentes.videos:
+        # Las grabaciones de sesion con el trader (F10, ADR-0011) pueden ser locales, sin Drive.
+        if not v.drive_id and not v.naturaleza.lower().startswith("sesion"):
+            raise InventarioError(
+                f"{ruta}: {v.video_id} sin drive_id (solo las grabaciones de sesion, naturaleza "
+                "'sesion...', pueden ir sin el)"
+            )
     ids = [v.video_id for v in fuentes.videos]
     if len(ids) != len(set(ids)):
         raise InventarioError("video_id duplicado en fuentes")

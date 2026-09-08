@@ -2,6 +2,8 @@
 
 - `parametros.yaml`: LA unica puerta de los valores de negocio (ADR-0002), con categoria por
   parametro y huso en las horas (ADR-0004). Sin valores de estrategia hasta F11 (`huso_operativa` y `anclaje_h4` desde F15).
+- `ambiguedades.yaml` (F10, ADR-0011): A-1..A-12 con pregunta, evidencia, parametros y estado;
+  fuente de la tabla de PROJECT_STATE y del cuestionario del kit; el feedback la cita.
 - `strategy_spec.yaml`, `glossary.yaml`: llegan en F11.
 
 Cada cambio de valor cita evidence-id o feedback-id.

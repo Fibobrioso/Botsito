@@ -996,6 +996,87 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
     return _kb_imprimir(respuesta, args.json, args.contexto)
 
 
+def _kit_errores() -> tuple[type[Exception], ...]:
+    from botsito.cases.paquete import KitError
+    from botsito.config.ajustes import AjustesError
+    from botsito.config.registro import RegistroError
+    from botsito.corpus.inventario import InventarioError
+    from botsito.data.dataset import DatasetError
+    from botsito.evidence.modelo import EvidenciaError
+    from botsito.feedback.modelo import FeedbackError
+    from botsito.retrieval.indice import RetrievalError
+
+    return (
+        KitError,
+        AjustesError,
+        RegistroError,
+        InventarioError,
+        DatasetError,
+        EvidenciaError,
+        FeedbackError,
+        RetrievalError,
+        OSError,
+    )
+
+
+def kit_build(repo: Path, args: argparse.Namespace) -> int:
+    """Genera el paquete de una sesion (F10, ADR-0011). Exige los datos en data/."""
+    from botsito.cases.paquete import construir, escribir
+
+    try:
+        paquete = construir(repo, _carpeta_datos(repo), args.sesion, args.seed)
+        carpeta = escribir(repo, paquete)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    dev = sum(1 for v in paquete.asignacion.values() if v == "dev")
+    print(
+        f"OK: {carpeta.relative_to(repo).as_posix()}: {len(paquete.preguntas)} preguntas, "
+        f"{len(paquete.casos)} casos ({dev} dev) de un universo de {paquete.universo} "
+        f"(+ {len(paquete.excluidos)} dias excluidos), seed {paquete.seed}"
+    )
+    return 0
+
+
+def kit_check(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.cases.paquete import comprobar
+
+    try:
+        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.sesion)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for a in avisos:
+        print(f"AVISO: {a}", file=sys.stderr)
+    for p in problemas:
+        print(f"ERROR: {p}", file=sys.stderr)
+    if problemas:
+        return 1
+    print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
+    return 0
+
+
+def kit_kappa(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.cases.paquete import kappa_entre_sesiones
+    from botsito.feedback.modelo import cargar_feedback
+
+    try:
+        registros = cargar_feedback(repo / "knowledge" / "feedback")
+        r = kappa_entre_sesiones(repo, registros, args.sesion_a, args.sesion_b)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for a in r.avisos:
+        print(f"AVISO: {a}", file=sys.stderr)
+    kappa = "indefinida" if r.kappa is None else f"{float(r.kappa):.3f}"
+    print(f"unidades: {r.unidades}  po: {float(r.po):.3f}  pe: {float(r.pe):.3f}  kappa: {kappa}")
+    for x, fila in r.matriz.items():
+        print(f"  {x:10s} " + " ".join(f"{fila[y]:4d}" for y in fila))
+    for x, v in r.acuerdo_por_categoria.items():
+        print(f"  acuerdo {x}: {float(v):.3f}")
+    return 0
+
+
 def evidence_contradictions(repo: Path) -> int:
     from botsito.evidence import contradicciones
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
@@ -1015,6 +1096,7 @@ def evidence_contradictions(repo: Path) -> int:
 def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un registro de feedback. Se valida contra el contexto (evidencia, registro,
     contradicciones, corpus) ANTES de escribir: un registro es inmutable."""
+    from botsito.cases.ambiguedades import AmbiguedadError
     from botsito.config.registro import RegistroError
     from botsito.corpus.inventario import InventarioError
     from botsito.evidence.modelo import EvidenciaError
@@ -1033,14 +1115,19 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     directorio = repo / "knowledge" / "feedback"
     try:
         existentes = cargar_feedback(directorio)
-        ids_ev, nombres, temas, rutas_corpus = contexto_feedback(repo)
-    except (FeedbackError, EvidenciaError, RegistroError, InventarioError) as exc:
+        ids_ev, nombres, temas, rutas_corpus, duraciones = contexto_feedback(repo)
+        from botsito.validation.knowledge import ids_ambiguedades
+
+        ids_amb = ids_ambiguedades(repo)
+    except (FeedbackError, EvidenciaError, RegistroError, InventarioError, AmbiguedadError) as exc:
         print(f"ERROR: contexto de knowledge/: {exc}")
         return 1
 
     def comprobar(r: FeedbackRecord) -> list[str]:
         todos = [*existentes, r]
-        problemas = validar_contra_contexto(todos, ids_ev, nombres, temas, rutas_corpus)
+        problemas = validar_contra_contexto(
+            todos, ids_ev, nombres, temas, rutas_corpus, ids_amb, duraciones
+        )
         return [p for p in problemas if p.startswith(r.id) or p.startswith("ciclo")]
 
     campos = {
@@ -1369,6 +1456,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--transcripcion", help="id tr-* de la cruda citada (por defecto la activa del video)"
     )
     ev_sub.add_parser("contradictions", help="regenera knowledge/evidence/_contradicciones.yaml")
+    kit = sub.add_parser(
+        "kit", help="kit de elicitacion: paquete de una sesion con el trader (F10)"
+    )
+    kit_sub = kit.add_subparsers(dest="kit_cmd", required=True)
+    kb_build = kit_sub.add_parser(
+        "build", help="genera knowledge/cases/kit/<sesion>/ (no sobreescribe)"
+    )
+    kb_build.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
+    kb_build.add_argument("--seed", required=True, type=int)
+    kb_check = kit_sub.add_parser("check", help="recompone el paquete y compara byte a byte")
+    kb_check.add_argument("--sesion", required=True)
+    kb_kappa = kit_sub.add_parser(
+        "kappa", help="kappa de Cohen entre los LABEL_CASE de dos sesiones"
+    )
+    kb_kappa.add_argument("--sesion-a", dest="sesion_a", required=True)
+    kb_kappa.add_argument("--sesion-b", dest="sesion_b", required=True)
     kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
     kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
     find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
@@ -1502,6 +1605,12 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_reject(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "list":
         return evidence_list(args.repo, args)
+    if args.cmd == "kit" and args.kit_cmd == "build":
+        return kit_build(args.repo, args)
+    if args.cmd == "kit" and args.kit_cmd == "check":
+        return kit_check(args.repo, args)
+    if args.cmd == "kit" and args.kit_cmd == "kappa":
+        return kit_kappa(args.repo, args)
     if args.cmd == "kb" and args.kb_cmd == "find":
         return kb_find(args.repo, args)
     if args.cmd == "kb" and args.kb_cmd == "at":

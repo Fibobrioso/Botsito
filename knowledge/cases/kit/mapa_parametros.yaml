@@ -1,0 +1,30 @@
+# Mapa parametro -> evidencia y ambiguedad (F10, ADR-0011). Manual, versionado con `Fuente:`.
+# El registro (knowledge/spec/parametros.yaml) no admite claves extra, asi que el enlace con la
+# evidencia vive aqui: `temas` son raices o temas de knowledge/evidence/_temas.yaml (lo que
+# `retrieval.buscar(tema=...)` acepta), `ambiguedad` la A-N que resuelve el mismo asunto (una
+# sola pregunta en el cuestionario), `opciones` las respuestas cerradas de un parametro `texto`.
+parametros:
+  ventana_inicio: {temas: [ventana.velas_h4_7_11_15, ventana.ficha_fila_1, ventana.sesiones, ventana.solo_londres], ambiguedad: null}
+  ventana_fin: {temas: [ventana], ambiguedad: A-6}
+  cierre_forzoso_fin_ventana: {temas: [ventana], ambiguedad: A-6, opciones: ["si", "no"]}
+  sesgo_h4_regla: {temas: [sesgo], ambiguedad: A-1, opciones: [vela_anterior_color, vela_anterior_cierre_mecha, otra]}
+  liquidez_m15_criterio_toma: {temas: [liquidez], ambiguedad: null, opciones: [cuerpo, mecha]}
+  stop_fraccion_caja: {temas: [stop.nivel, stop.075_suficiente, stop.introducido_en_operacion_075], ambiguedad: A-10}
+  stop_colchon_spread: {temas: [stop.colchon_spread_075_080, stop.acordado_075_mas_spread, stop.075_desplazado_por_spread_y_lotaje], ambiguedad: A-10, opciones: [fijo, spread]}
+  stop_reduccion_fraccion: {temas: [stop.bajar_050], ambiguedad: A-12}
+  stop_reduccion_umbral_vela: {temas: [stop.bajar_050], ambiguedad: A-12}
+  stop_proteccion_capital: {temas: [stop.proteger_025_capital, stop.proteger_inmediato_guarda_025, stop.reduccion_limite_025], ambiguedad: null}
+  stop_segundo_esquema: {temas: [stop.segundo_esquema_bajo_zona_control, stop.esquema2_depende_del_precio, stop.075_esquema1_variable_esquema2], ambiguedad: A-7}
+  stop_en_orden_pendiente: {temas: [stop.introducido_en_operacion_075, stop.proteger_al_entrar], ambiguedad: A-11, opciones: [en_la_orden, tras_el_llenado]}
+  break_even_condicion: {temas: [break_even], ambiguedad: A-4, opciones: [tocar, cierre]}
+  objetivo_rr: {temas: [objetivo.rr, objetivo.rr_fijo_tras_stop, objetivo.rr_minimo], ambiguedad: null}
+  objetivo_extension: {temas: [objetivo.maximizar_hasta_050_liquidez, objetivo.target_maximo_liquidez_m15, objetivo.extension_subjetiva], ambiguedad: null}
+  cartuchos_max: {temas: [cartuchos], ambiguedad: A-2}
+  reentrada_tras_equal: {temas: [reentrada], ambiguedad: null, opciones: ["si", "no"]}
+  reubicacion_cadencia: {temas: [entrada.orden_limite], ambiguedad: A-5, opciones: [cada_vela, al_romper, otra]}
+  salida_sin_ruptura: {temas: [entrada.equal_cierre_anticipado, entrada.equal_preferir_proteger], ambiguedad: A-3, opciones: [cerrar_al_cierre, proteger_y_dejar]}
+  mapeo_dos_velas: {temas: [mapeo.dos_velas_como_una, mapeo.m1.vela_contraria_marca_extremo], ambiguedad: A-8, opciones: [order_block_mayor, otra]}
+  parciales: {temas: [parciales], ambiguedad: null, opciones: ["si", "no"]}
+  riesgo_por_operacion: {temas: [riesgo.por_operacion, riesgo.fondeo.por_operacion, riesgo.crecimiento_geometrico], ambiguedad: null}
+  lotaje_base: {temas: [lotaje.distancia_completa, lotaje.no_desde_075, lotaje], ambiguedad: null, opciones: [distancia_completa, desde_075]}
+  anclaje_h4: {temas: [reloj, ventana.velas_h4_7_11_15], ambiguedad: A-9}

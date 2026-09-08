@@ -1,0 +1,48 @@
+asignacion:
+  caso-eurusd-2026-05-04: holdout-1
+  caso-eurusd-2026-05-05: holdout-3
+  caso-eurusd-2026-05-06: holdout-3
+  caso-eurusd-2026-05-07: holdout-2
+  caso-eurusd-2026-05-08: dev
+  caso-eurusd-2026-05-11: holdout-2
+  caso-eurusd-2026-05-12: dev
+  caso-eurusd-2026-05-13: holdout-2
+  caso-eurusd-2026-05-14: holdout-2
+  caso-eurusd-2026-05-15: dev
+  caso-eurusd-2026-05-18: dev
+  caso-eurusd-2026-05-19: holdout-1
+  caso-eurusd-2026-05-20: dev
+  caso-eurusd-2026-05-21: holdout-1
+  caso-eurusd-2026-05-22: holdout-1
+  caso-eurusd-2026-05-26: holdout-1
+  caso-eurusd-2026-05-27: holdout-3
+  caso-eurusd-2026-05-28: dev
+  caso-eurusd-2026-05-29: holdout-1
+  caso-eurusd-2026-06-01: holdout-2
+  caso-eurusd-2026-06-02: holdout-2
+  caso-eurusd-2026-06-03: dev
+  caso-eurusd-2026-06-04: holdout-3
+  caso-eurusd-2026-06-05: dev
+  caso-eurusd-2026-06-08: dev
+  caso-eurusd-2026-06-09: holdout-2
+  caso-eurusd-2026-06-10: dev
+  caso-eurusd-2026-06-11: holdout-3
+  caso-eurusd-2026-06-12: dev
+  caso-eurusd-2026-06-15: holdout-2
+  caso-eurusd-2026-06-16: holdout-3
+  caso-eurusd-2026-06-17: dev
+  caso-eurusd-2026-06-18: holdout-1
+  caso-eurusd-2026-06-19: dev
+  caso-eurusd-2026-06-22: holdout-3
+  caso-eurusd-2026-06-23: holdout-1
+  caso-eurusd-2026-06-24: dev
+  caso-eurusd-2026-06-25: dev
+  caso-eurusd-2026-06-26: dev
+  caso-eurusd-2026-06-30: holdout-3
+cupos:
+  dev: 16
+  holdout-1: 8
+  holdout-2: 8
+  holdout-3: 8
+seed: 20260915
+sesion: 2026-09-15-sesion-01
