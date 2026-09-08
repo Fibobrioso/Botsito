@@ -37,7 +37,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | `knowledge/feedback` | `FeedbackRecord` solo-anadir (F09) |
 | `knowledge/spec` | `parametros.yaml` (F02, ADR-0002/0004), `strategy_spec.yaml`, glosario (F11) |
 | `knowledge/cases/{dev,holdout/1,holdout/2,holdout/3,fixtures}` | casos ejecutables; tres particiones reservadas ilegibles para spec/domain (F14) |
-| `src/botsito/{corpus,evidence,feedback,spec,cases,data,domain,engine,validation,viewer,mql5bridge}` | paquete Python; ver docstring de cada subpaquete |
+| `src/botsito/{corpus,evidence,retrieval,feedback,spec,cases,data,domain,engine,validation,viewer,mql5bridge}` | paquete Python; ver docstring de cada subpaquete (`retrieval`: busqueda de desarrollo, F08, ADR-0010) |
 | `mql5/` | EA, includes (Params.mqh generado), RunCases, tester (fase 6) |
 | `tests/{unit,contract,integration,golden,regression,differential}` | por capa de validacion |
 | `scripts/`, `config/` | operaciones puntuales; settings sin secretos |

@@ -39,6 +39,7 @@ PACKAGES = [
     "config",
     "corpus",
     "evidence",
+    "retrieval",
     "feedback",
     "spec",
     "cases",

@@ -295,3 +295,36 @@ def cargar_cruda(carpeta: Path) -> list[Segmento]:
 
 def cargar_corregida(carpeta: Path) -> list[Segmento]:
     return desde_jsonl((carpeta / FICHERO_CORREGIDA).read_text(encoding="utf-8"))
+
+
+def dudas_de(carpeta: Path) -> set[int]:
+    """Segmentos marcados `dudas` en la cabecera de correcciones.jsonl (glosario, ADR-0007):
+    apariciones de un termino ambiguo fuera de las sustituciones verificadas. Vacio si no hay
+    fichero o la cabecera no se puede leer."""
+    fichero = carpeta / FICHERO_CORRECCIONES
+    if not fichero.is_file():
+        return set()
+    try:
+        cabecera = json.loads(fichero.read_text(encoding="utf-8").splitlines()[0])
+    except (OSError, ValueError, IndexError):
+        return set()
+    dudas = cabecera.get("dudas") if isinstance(cabecera, dict) else None
+    return {int(d) for d in dudas} if isinstance(dudas, list) else set()
+
+
+@dataclass(frozen=True)
+class Capas:
+    """Las capas de una transcripcion en disco (ADR-0007): la cruda manda; la corregida y las
+    dudas son ayuda de lectura y pueden faltar."""
+
+    cruda: list[Segmento]
+    corregida: list[Segmento] | None
+    dudas: frozenset[int]
+
+
+def cargar_capas(carpeta: Path) -> Capas:
+    """Cruda (obligatoria), corregida (si existe) y dudas del glosario de una carpeta de
+    transcripcion. Lo usan `validation` (contexto de la evidencia) y `retrieval` (indice)."""
+    cruda = cargar_cruda(carpeta)
+    corregida = cargar_corregida(carpeta) if (carpeta / FICHERO_CORREGIDA).is_file() else None
+    return Capas(cruda, corregida, frozenset(dudas_de(carpeta)))

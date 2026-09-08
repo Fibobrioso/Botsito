@@ -208,6 +208,33 @@ def _doc(**cambios: Any) -> dict[str, Any]:
     return doc
 
 
+def test_referencia_en_es_el_regular_anterior_existente() -> None:
+    from botsito.corpus.manifiestos_fotogramas import referencia_en
+
+    t = validar(
+        _doc(
+            ultimo_pts_ms=5300,
+            duracion_video_s=6.0,
+            n_fotogramas=6,
+            n_regulares=5,
+            segundos_ausentes_ms=[2000],
+        ),
+        "manifiesto",
+    )
+    fid = "fr-v1-" + SHA[:8]
+    assert referencia_en(t, 0) == f"{fid}/0" and referencia_en(t, 999) == f"{fid}/0"
+    assert referencia_en(t, 2500) == f"{fid}/1000"  # el segundo 2 esta ausente: el anterior
+    assert referencia_en(t, 1250) == f"{fid}/1000"  # los extras no entran
+    assert referencia_en(t, 5999) == f"{fid}/5000" and referencia_en(t, 6000) is None
+    assert referencia_en(t, -1) is None
+    sin_segundo_cero = validar(
+        _doc(ultimo_pts_ms=1300, n_fotogramas=1, n_regulares=1, segundos_ausentes_ms=[0], extra=[]),
+        "manifiesto",
+    )
+    assert referencia_en(sin_segundo_cero, 500) is None  # el unico anterior esta ausente
+    assert referencia_en(sin_segundo_cero, 1000) == f"{fid}/1000"
+
+
 def test_esquema_del_manifiesto() -> None:
     t = validar(_doc(), "manifiesto")
     assert t.id == "fr-v1-" + SHA[:8] and t.extra_ms == (1250,) and t.supersede is None

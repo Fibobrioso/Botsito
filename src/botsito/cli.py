@@ -8,7 +8,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from botsito import __version__
 from botsito.domain.valores import HoraLocal
@@ -918,6 +918,81 @@ def evidence_list(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def _kb_indice(repo: Path) -> Any:
+    from botsito.retrieval.indice import construir_indice
+
+    return construir_indice(repo, _carpeta_datos(repo))
+
+
+def _kb_errores() -> tuple[type[Exception], ...]:
+    from botsito.corpus.inventario import InventarioError
+    from botsito.corpus.manifiestos_fotogramas import ManifiestoFotogramasError
+    from botsito.corpus.manifiestos_transcripcion import ManifiestoTranscripcionError
+    from botsito.corpus.transcripcion import TranscripcionError
+    from botsito.evidence.modelo import EvidenciaError
+    from botsito.retrieval.indice import RetrievalError
+
+    return (
+        RetrievalError,
+        InventarioError,
+        ManifiestoFotogramasError,
+        ManifiestoTranscripcionError,
+        TranscripcionError,
+        EvidenciaError,
+        OSError,
+    )
+
+
+def _kb_imprimir(respuesta: Any, como_json: bool, contexto: bool) -> int:
+    from botsito.retrieval.salida import json_, tabla
+
+    for a in respuesta.avisos:
+        print(f"AVISO: {a}", file=sys.stderr)
+    sys.stdout.write(
+        json_(respuesta.resultados) if como_json else tabla(respuesta.resultados, contexto)
+    )
+    return 0
+
+
+def kb_find(repo: Path, args: argparse.Namespace) -> int:
+    """Busqueda lexica por texto sobre evidencia y crudas activas (F08, ADR-0010)."""
+    from botsito.corpus.transcripcion import parse_ms
+    from botsito.retrieval.consultas import Opciones, buscar
+
+    try:
+        opciones = Opciones(
+            video=args.video,
+            tema=args.tema,
+            desde_ms=parse_ms(args.desde) if args.desde else None,
+            hasta_ms=parse_ms(args.hasta) if args.hasta else None,
+            solo=args.solo,
+            frase=args.frase,
+            prefijo=args.prefijo,
+            top=args.top,
+        )
+        respuesta = buscar(_kb_indice(repo), args.texto, opciones)
+    except _kb_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    return _kb_imprimir(respuesta, args.json, args.contexto)
+
+
+def kb_at(repo: Path, args: argparse.Namespace) -> int:
+    """Todo lo que ocurre en un instante: evidencia, cruda, fotograma y contradicciones."""
+    from botsito.corpus.transcripcion import parse_ms
+    from botsito.retrieval.consultas import en_instante
+
+    errores: tuple[type[Exception], ...] = (*_kb_errores(), ValueError)
+    try:
+        respuesta = en_instante(
+            _kb_indice(repo), args.video, parse_ms(args.t), round(args.margen_s * 1000)
+        )
+    except errores as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    return _kb_imprimir(respuesta, args.json, args.contexto)
+
+
 def evidence_contradictions(repo: Path) -> int:
     from botsito.evidence import contradicciones
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
@@ -1291,6 +1366,30 @@ def build_parser() -> argparse.ArgumentParser:
         "--transcripcion", help="id tr-* de la cruda citada (por defecto la activa del video)"
     )
     ev_sub.add_parser("contradictions", help="regenera knowledge/evidence/_contradicciones.yaml")
+    kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
+    kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
+    find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
+    find.add_argument("texto")
+    find.add_argument("--video")
+    find.add_argument("--tema", help="raiz o tema completo; implica --solo evidencia")
+    find.add_argument("--desde", help="h:mm:ss[.d] (exige --video)")
+    find.add_argument("--hasta", help="h:mm:ss[.d] (exige --video)")
+    find.add_argument("--solo", choices=["evidencia", "cruda"])
+    find.add_argument("--frase", action="store_true", help="secuencia exacta con comodin [...]")
+    find.add_argument("--prefijo", action="store_true", help="cada termino casa por inicio")
+    find.add_argument(
+        "--top", type=int, help="corta por el orden temporal (sin limite por defecto)"
+    )
+    find.add_argument(
+        "--contexto", action="store_true", help="texto completo y afirmacion/corregida"
+    )
+    find.add_argument("--json", action="store_true")
+    at = kb_sub.add_parser("at", help="todo lo que ocurre en un instante de un video")
+    at.add_argument("--video", required=True)
+    at.add_argument("--t", required=True, help="h:mm:ss[.d]")
+    at.add_argument("--margen-s", dest="margen_s", type=float, default=10.0, help="0-120")
+    at.add_argument("--contexto", action="store_true")
+    at.add_argument("--json", action="store_true")
     prop = ev_sub.add_parser("propose", help="esqueleto de propuesta o --check de una rellena")
     prop.add_argument("--video")
     prop.add_argument("--t0")
@@ -1371,8 +1470,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    if hasattr(sys.stdout, "reconfigure"):  # consolas Windows en cp1252 y con CRLF
-        sys.stdout.reconfigure(encoding="utf-8", newline="\n")
+    for flujo in (sys.stdout, sys.stderr):  # consolas Windows en cp1252 y con CRLF
+        if hasattr(flujo, "reconfigure"):
+            flujo.reconfigure(encoding="utf-8", newline="\n")
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.cmd == "state" and args.state_cmd == "check":
@@ -1399,6 +1499,10 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_reject(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "list":
         return evidence_list(args.repo, args)
+    if args.cmd == "kb" and args.kb_cmd == "find":
+        return kb_find(args.repo, args)
+    if args.cmd == "kb" and args.kb_cmd == "at":
+        return kb_at(args.repo, args)
     if args.cmd == "corpus" and args.corpus_cmd == "inventory":
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":

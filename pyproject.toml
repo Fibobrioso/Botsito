@@ -92,13 +92,15 @@ source_modules = ["botsito.spec"]
 forbidden_modules = ["botsito.engine", "botsito.data", "botsito.mql5bridge", "MetaTrader5", "pandas", "polars"]
 
 [[tool.importlinter.contracts]]
-name = "capas: cli -> validation -> viewer/mql5bridge -> engine -> cases -> spec -> feedback -> evidencia/corpus/datos/config -> comun -> domain"
+name = "capas: cli -> validation -> viewer/mql5bridge -> engine -> cases -> spec -> retrieval -> feedback -> evidencia/corpus/datos/config -> comun -> domain"
 type = "layers"
 # Dentro del conocimiento hay jerarquia: la evidencia es la base; el feedback la cita; la spec
 # deriva de evidencia y feedback; los casos referencian spec y feedback. Los hermanos con `|`
 # son independientes entre si.
 # ADR-0006: validation conduce motor y puente (F26, F30, F32); viewer lee el journal del motor
 # (F25); engine consume cases, spec y data (F23, F24). `comun` no tiene IO ni negocio.
+# ADR-0010: retrieval (busqueda de desarrollo, F08) junta evidencia, corpus y, en el futuro,
+# feedback; cases (F10) y spec (F11) pueden usarlo.
 layers = [
   "botsito.cli",
   "botsito.validation",
@@ -106,6 +108,7 @@ layers = [
   "botsito.engine",
   "botsito.cases",
   "botsito.spec",
+  "botsito.retrieval",
   "botsito.feedback",
   "botsito.evidence | botsito.corpus | botsito.data | botsito.config",
   "botsito.comun",

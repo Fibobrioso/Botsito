@@ -60,6 +60,11 @@ test_import_contracts.py` (prohibiciones ampliadas, sin `float`/`Decimal` en `do
 `valores.py`, accesores del registro); ADR-0001 remite a este ADR. Los ids ya escritos no cambian
 (`contenido_canonico` sigue en cada capa, byte a byte).
 
+## Enmienda 2026-09-08 (F08, ADR-0010)
+Se inserta la capa `retrieval` entre `spec` y `feedback`: `... -> spec -> retrieval -> feedback ->
+evidence | corpus | data | config -> ...`. Junta evidencia y corpus para la busqueda de desarrollo;
+`cases` y `spec` pueden usarla; no importa `validation` ni `cli`.
+
 ## Fecha / fase
 2026-09-04 · F15
 

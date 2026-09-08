@@ -1,0 +1,71 @@
+# Golden de F08 (tabla A: "toda respuesta con fuente"; brief F08 decision 13). Lista cerrada el
+# 2026-09-08 en la revision de diseno, ANTES de programar: 15 consultas de desarrollo (frases del
+# informe de investigacion y de las ambiguedades A-1..A-12) con el item de evidencia que deben
+# devolver. `tests/contract/test_golden_consultas_f08.py` exige el `ev-*` SIEMPRE (el indice se
+# construye solo con evidencia cuando no hay `data/`) y, cuando las crudas estan en la maquina,
+# al menos `segmentos_min` segmentos. `nota` registra los fallos lexicos conocidos.
+consultas:
+  - consulta: break even
+    esperado: ev-v4-004447-bc2e74ee
+    ambiguedad: A-4
+    segmentos_min: 60
+    nota: "`breakeven` (5 segmentos) solo con --prefijo break; candidato al glosario"
+  - consulta: "0,75"
+    esperado: ev-v1-000448-346d6d90
+    ambiguedad: A-10
+    segmentos_min: 60
+    nota: "la cruda escribe 0.75; el token de busqueda normaliza coma y punto"
+  - consulta: "1:3"
+    esperado: ev-v1-000414-825d71a4
+    segmentos_min: 0
+    nota: "FALLO LEXICO conocido: la cruda escribe 1.3 (23 segmentos) y `1:3` tokeniza como 1, 3; solo sale por la afirmacion; candidato al glosario"
+  - consulta: cartuchos
+    esperado: ev-v3-004817-f2dfb955
+    ambiguedad: A-2
+    segmentos_min: 3
+    nota: "--prefijo cartucho suma los singulares"
+  - consulta: tres cartuchos
+    esperado: ev-v4-002333-8bf96363
+    ambiguedad: A-2
+    segmentos_min: 1
+  - consulta: liquidez de m15
+    esperado: ev-v1-000321-e3a35fe7
+    segmentos_min: 20
+  - consulta: spread
+    esperado: ev-v4-001221-1e66b5fd
+    ambiguedad: A-10
+    segmentos_min: 5
+    nota: "2 segmentos en la cruda y 5 con la corregida (glosario `split|sprint -> spread`)"
+  - consulta: utc
+    esperado: ev-v3-000136-6160fcea
+    ambiguedad: A-9
+    segmentos_min: 5
+  - consulta: cuadro de gann
+    esperado: ev-v1-000448-346d6d90
+    segmentos_min: 3
+    nota: "0 en la cruda (`cuadro de gam`), 3 con la corregida"
+  - consulta: equal
+    esperado: ev-v5-000246-17eff9e1
+    segmentos_min: 1
+  - consulta: 3 pm
+    esperado: ev-v4-011514-fe34ac7e
+    ambiguedad: A-6
+    segmentos_min: 4
+  - consulta: "0.50"
+    esperado: ev-v1-001643-47673889
+    ambiguedad: A-12
+    segmentos_min: 25
+    nota: "0.50 y 0.5 se unen por la normalizacion (26 + 6 - repetidos)"
+  - consulta: "0.80"
+    esperado: ev-v5-000312-f5062062
+    ambiguedad: A-10
+    segmentos_min: 2
+  - consulta: segundo esquema
+    esperado: ev-v3-004329-a16d379b
+    ambiguedad: A-7
+    segmentos_min: 14
+  - consulta: orden limite
+    esperado: ev-v1-001358-a2b8ec0d
+    ambiguedad: A-5
+    segmentos_min: 15
+    nota: "la cruda escribe `límite`; el token de busqueda pliega los acentos"

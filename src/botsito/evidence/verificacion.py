@@ -185,6 +185,43 @@ def _buscar(flujo: list[Token], trozo: list[str], desde: int) -> int | None:
     return None
 
 
+def buscar_secuencia(
+    textos: Sequence[str], trozos: Sequence[Sequence[str]]
+) -> list[tuple[int, int, list[tuple[int, int]]]]:
+    """TODAS las apariciones de una secuencia de trozos (en orden, con saltos libres entre
+    trozos) en un flujo de tokens ya normalizados. Devuelve `(inicio, fin, cortes)` por
+    aparicion, con `fin` exclusivo y `cortes` = `[(inicio_i, fin_i)]` de cada trozo. Sin minimos
+    de tokens: solo exige trozos no vacios. Lo usan `localizar_cita` (que anade sus minimos y su
+    ventana) y la busqueda por frase de F08 (ADR-0010). Cada aparicion arranca en una posicion
+    distinta del primer trozo; para cada arranque se toma el corte mas temprano de los trozos
+    siguientes."""
+    if not trozos or any(len(t) == 0 for t in trozos):
+        raise CitaError("la secuencia necesita trozos no vacios")
+    primero = trozos[0]
+    salida: list[tuple[int, int, list[tuple[int, int]]]] = []
+    for inicio in range(len(textos) - len(primero) + 1):
+        if any(textos[inicio + k] != primero[k] for k in range(len(primero))):
+            continue
+        fin = inicio + len(primero)
+        cortes = [(inicio, fin)]
+        ok = True
+        for trozo in trozos[1:]:
+            pos = None
+            n = len(trozo)
+            for i in range(fin, len(textos) - n + 1):
+                if all(textos[i + k] == trozo[k] for k in range(n)):
+                    pos = i
+                    break
+            if pos is None:
+                ok = False
+                break
+            fin = pos + n
+            cortes.append((pos, fin))
+        if ok:
+            salida.append((inicio, fin, cortes))
+    return salida
+
+
 def localizar_cita(
     segmentos: Sequence[SegmentoCitable],
     t0_ms: int,
@@ -206,30 +243,18 @@ def localizar_cita(
         if aviso:
             avisos.append(aviso)
     primero = trozos[0]
-    inicios = [
-        i
-        for i in range(len(flujo) - len(primero) + 1)
-        if all(flujo[i + k].texto == primero[k] for k in range(len(primero)))
-    ]
-    if not inicios:
+    textos = [t.texto for t in flujo]
+    hay_primero = any(
+        all(textos[i + k] == primero[k] for k in range(len(primero)))
+        for i in range(len(textos) - len(primero) + 1)
+    )
+    if not hay_primero:
         raise CitaError("la cita no se localiza en la cruda dentro de la ventana [t0, t1]")
-    # Se prueban TODAS las apariciones del primer trozo: la frase puede repetirse antes, en un
+    # Se prueban TODAS las apariciones (buscar_secuencia): la frase puede repetirse antes, en un
     # segmento que solo toca la ventana, y la aparicion valida ser una posterior.
     candidatos: list[tuple[list[Token], int]] = []
     fuera: tuple[int, int] | None = None
-    for inicio in inicios:
-        fin = inicio + len(primero)
-        cortes = [(inicio, fin)]
-        ok = True
-        for trozo in trozos[1:]:
-            pos = _buscar(flujo, trozo, fin)
-            if pos is None:
-                ok = False
-                break
-            fin = pos + len(trozo)
-            cortes.append((pos, fin))
-        if not ok:
-            continue
+    for inicio, fin, cortes in buscar_secuencia(textos, trozos):
         usados = flujo[inicio:fin]
         inicio_ms = min(t.t0_ms for t in usados)
         fin_ms = max(t.t1_ms for t in usados)

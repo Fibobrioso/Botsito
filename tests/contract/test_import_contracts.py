@@ -44,6 +44,16 @@ FORBIDDEN_FOR_DOMAIN = {
 }
 # ADR-0006/0009: evidence y corpus son capas hermanas e independientes (`|` en import-linter).
 FORBIDDEN_FOR_EVIDENCE = {"botsito.corpus", "botsito.data", "botsito.config", "botsito.validation"}
+# ADR-0010: retrieval junta evidence y corpus; nunca conduce nada ni conoce la CLI.
+FORBIDDEN_FOR_RETRIEVAL = {
+    "botsito.validation",
+    "botsito.cli",
+    "botsito.engine",
+    "botsito.viewer",
+    "botsito.mql5bridge",
+    "botsito.cases",
+    "botsito.spec",
+}
 FORBIDDEN_FOR_SPEC = {
     "botsito.engine",
     "botsito.data",
@@ -77,6 +87,11 @@ def _violations(pkg_dir: Path, forbidden: set[str]) -> list[str]:
 @pytest.mark.contract
 def test_domain_is_pure(repo: Path) -> None:
     assert _violations(repo / "src" / "botsito" / "domain", FORBIDDEN_FOR_DOMAIN) == []
+
+
+@pytest.mark.contract
+def test_retrieval_no_conduce_ni_conoce_la_cli(repo: Path) -> None:
+    assert _violations(repo / "src" / "botsito" / "retrieval", FORBIDDEN_FOR_RETRIEVAL) == []
 
 
 @pytest.mark.contract

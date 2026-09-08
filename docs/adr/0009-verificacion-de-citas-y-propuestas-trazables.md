@@ -76,6 +76,12 @@ reject | list`), `src/botsito/comun/ids.py` (`pr-*`), `knowledge/evidence/{READM
 `knowledge/_proposals/{README.md,PROMPT.md}`, `knowledge/README.md`, tests. Los items de F06 no
 existian; ningun id cambia. `test_import_contracts` prohibe `evidence -> corpus`.
 
+## Enmienda 2026-09-08 (F08, ADR-0010)
+§3: quienes componen crudas, referencias y evidencia son `validation` (contexto de verificacion) y
+`retrieval` (indice de busqueda); lo que es del corpus (`dudas_de`, `cargar_capas`) vive en
+`corpus.pipeline_transcripcion`. `buscar_secuencia` (todas las apariciones, sin minimos) es la
+base de `localizar_cita`, que conserva sus minimos y su ventana.
+
 ## Enmienda 2026-09-07 (auditoria de cierre de F07)
 - `localizar_cita` prueba TODAS las apariciones del primer trozo dentro de la ventana y se
   queda con la primera aparicion completa que cabe en `[t0 - 2 s, t1 + 2 s]`; `coincidencias`

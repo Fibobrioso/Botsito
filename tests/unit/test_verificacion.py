@@ -74,6 +74,23 @@ def test_hueco_entre_trozos_y_palabras_parciales() -> None:
     assert toks[2].t0_ms == 1_000 and toks[3].t0_ms == 1_500 and toks[3].t1_ms == 2_000
 
 
+def test_buscar_secuencia_todas_las_apariciones() -> None:
+    from botsito.evidence.verificacion import buscar_secuencia
+
+    flujo = ["a", "b", "c", "x", "a", "b", "c", "d", "a", "b"]
+    assert [(i, f) for i, f, _ in buscar_secuencia(flujo, [["a", "b"]])] == [
+        (0, 2),
+        (4, 6),
+        (8, 10),
+    ]
+    res = buscar_secuencia(flujo, [["a", "b"], ["d"]])
+    assert [(i, f, c) for i, f, c in res] == [(0, 8, [(0, 2), (7, 8)]), (4, 8, [(4, 6), (7, 8)])]
+    assert buscar_secuencia(flujo, [["d"], ["a", "b"]]) == [(7, 10, [(7, 8), (8, 10)])]
+    assert buscar_secuencia(flujo, [["z"]]) == []
+    with pytest.raises(CitaError, match="no vacios"):
+        buscar_secuencia(flujo, [["a"], []])
+
+
 def test_tokens_normaliza_como_el_brief() -> None:
     assert tokens("Break-even 0,75 1:3 M15 ¿vale? se... Ah 1.19537 33 9.65") == [
         "break",
