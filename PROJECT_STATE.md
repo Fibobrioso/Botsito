@@ -31,18 +31,19 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
 
 ## Current Phase
-FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
+FASE 1 CERRADA el 2026-09-08 (stable/F08). Siguiente por el orden E: F10 elicitation-kit + sesion 1 con el trader (fase 2; F09 y F15 ya integradas)
 
 ## Current Feature
-F08 · evidence-retrieval · WAITING_FOR_USER_VALIDATION (rama `feature/F08-evidence-retrieval`; informe `docs/validation/F08-evidence-retrieval.md`; ADR-0010; auditoria de cierre aplicada; cierre con tag `stable/F08`, que cierra la fase 1)
+— (F08 cerrada el 2026-09-08; siguiente: abrir F10 elicitation-kit)
 
 ## Current Branch
-feature/F08-evidence-retrieval
+main
 
 ## Stable Main State
-f0c280b · merge de F07 evidence-extraction (tras stable/F05-previos-F07). make check verde: 456 casos (311 funciones), 4 contratos, mypy strict, state/config/knowledge validate (341 items de evidencia, 1 contradiccion abierta = A-10, 20 propuestas sin pendientes, 3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34177563954 sobre 9c4c64b). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07 y stable/F07. Rama main protegida en GitHub.
+5d8cf3c · merge de F08 evidence-retrieval (tras stable/F07); fase 1 cerrada. make check verde: 471 casos (326 funciones), 4 contratos (capa `retrieval`), mypy strict, state/config/knowledge validate (341 items de evidencia, 1 contradiccion abierta = A-10, 20 propuestas sin pendientes, 3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34191751884 sobre 4071042). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07 y stable/F08. Rama main protegida en GitHub.
 
 ## Completed Phases
+- FASE 1 · Base de conocimiento (F03, F04, F05, F06, F07, F08) · cerrada el 2026-09-08 en 5d8cf3c · puerta: 5 videos inventariados, transcritos (large-v3, glosario v2) y con fotogramas a 1 fps; 341 items de evidencia verificables por maquina y trazables a su propuesta y decision; busqueda `kb find | at` con fuente en cada linea; make check verde en main
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
 
 ## Completed Features
@@ -57,9 +58,10 @@ f0c280b · merge de F07 evidence-extraction (tras stable/F05-previos-F07). make 
 - Auditoria global de la estructura · validada el 2026-09-06 · docs/validation/AUDITORIA-2026-09-05-estructura.md · tag stable/F05-auditoria-1
 - Previos de F07 · validados el 2026-09-06 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
 - F07 · evidence-extraction · validada el 2026-09-07 · docs/validation/F07-evidence-extraction.md · tag stable/F07
+- F08 · evidence-retrieval · validada el 2026-09-08 · docs/validation/F08-evidence-retrieval.md · tag stable/F08
 
 ## Features Waiting for Validation
-- F08 · evidence-retrieval (2026-09-08): `kb find | at` sobre 341 items + 3 936 segmentos; golden de 15 consultas 15/15; `kb find` 1,04 s; auditoria de cierre (codigo: 0 bloqueantes, 5 importantes, 6 menores, aplicados; docs: hecha por la sesion al cortarse el agente por limite) aplicada
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -314,14 +316,15 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-El usuario valida F08 (informe `docs/validation/F08-evidence-retrieval.md`) -> ritual §F: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff feature/F08-evidence-retrieval` -> `git tag -a stable/F08` (cierra la fase 1 F03-F08) -> `docs(state)` solo PROJECT_STATE.md -> `make check` -> push -> CI. Despues: abrir F10 elicitation-kit (brief desde MASTER_PLAN tabla A fila F10 y H.2; consume `kb find`/`kb at`). Pendiente del usuario: borrar la rama `feature/F07-evidence-extraction` (local y origin).
+Abrir F10 elicitation-kit con el metodo supervisado: rama `feature/F10-elicitation-kit` -> brief `docs/plan/features/F10-elicitation-kit.md` (entradas en "Next Feature", MASTER_PLAN tabla A fila F10, §G bucle del experto y H.2: parametros UNKNOWN pre-poblados, ids de caso + particion + seed, papel `sesion_feedback`, dos anclajes mientras A-9 siga abierta, 3 preguntas bloqueantes candidatas A-9/A-2/A-4) -> revision de diseno por agente antes de programar -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION. Pendiente del usuario: borrar la rama `feature/F08-evidence-retrieval` (local y origin); decidir si se aplican al glosario `1.3 -> 1:3` y `breakeven -> break even` (sustituciones: `corpus glossary apply`, sin retranscribir).
 
 Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto los 341). Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
 
 ## Last Stable Commit
-f0c280b · merge: F07 evidence-extraction validada por el usuario · tag stable/F07
+5d8cf3c · merge: F08 evidence-retrieval validada por el usuario · tag stable/F08
 
 ## Change Log
+- 2026-09-08 · F08 VALIDADA por el usuario (confirmo el cierre tras la auditoria). merge --no-ff a main (5d8cf3c); tag stable/F08. FASE 1 CERRADA (F03-F08). Siguiente: abrir F10 elicitation-kit.
 - 2026-09-08 · F08 abierta y construida (rama `feature/F08-evidence-retrieval`): brief con revision de diseno de agente (3 bloqueantes, 9 importantes, 9 menores aceptados: token de busqueda con acentos plegados y numeros normalizados, `buscar_secuencia` en vez de `localizar_cita` para la frase, `no_consta` fuera, capa `retrieval` entre `spec` y `feedback`, `dudas_de`/`cargar_capas` en `corpus`, `referencia_en` unica, rutas relativas, golden con y sin `data/`, fixture a mano, esquema JSON); ADR-0010 (+ enmiendas en ADR-0006 y ADR-0009); paquete `retrieval` y CLI `kb find | at`; golden de 15 consultas de referencia en verde (15/15 devuelven su item; `1:3` solo por la afirmacion: fallo lexico del ASR); `kb find` 1,04 s de pared. Auditoria de cierre aplicada (codigo: `--frase` acotada a 3 segmentos y buscando en cruda y corregida, `[corregida]` solo si difiere, `--margen-s inf` sin traceback, `dudas` no enteras ignoradas, `--frase`+`--prefijo` y `--tema`+`--solo cruda` son error, `--tema` contra `_temas.yaml`, `t0` real en contradicciones y fotograma, corregida ilegible = aviso, tests de supersede/carpeta fuera/determinismo de la CLI; docs: HANDOFF, MASTER_PLAN Change Log, deuda F04 iii cerrada, Next Feature F10). Informe WAITING_FOR_USER_VALIDATION.
 - 2026-09-07 · F07 VALIDADA por el usuario (acepto los 341 items sin modificaciones, `fotograma visto` en los 7 de pantalla/ambas, recall humano de V4 0:05-0:15 sin faltas, tag `stable/F07`, golden H4 a F10; confirmo el cierre tras la auditoria). merge --no-ff a main (f0c280b); tag stable/F07. Siguiente: abrir F08 evidence-retrieval.
 - 2026-09-07 · F07 ronda 2: el usuario acepto los 341 items sin modificaciones (7 de pantalla/ambas con `fotograma visto`; recall humano de V4 0:05-0:15: ninguna frase faltaba; tag `stable/F07`; golden H4 sobre F15 pasa a F10). `evidence accept` x341 (0 fallos; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida|fotograma visto"), evidencia commiteada (ff13e7a), 20 propuestas con decision (0 pendientes), `_contradicciones.yaml` regenerado (1 abierta: `stop.nivel` 0,75 vs 0,8 = A-10), golden `test_golden_citas_f07` 40/40 en verde, hechos y ambiguedades A-1..A-12 con ids de evidencia. Auditoria de cierre (2 agentes) aplicada: docs (HANDOFF, PROJECT_STATE, MASTER_PLAN filas H/H.2/tabla A y B, ADR-0009 en el indice, deuda de F07 cerrada o con dueno, hook local reinstalado con `make hooks`) y codigo/tests (1 bloqueante: `test_directorio_real_valida` sin contexto rompia con los 7 items de pantalla; localizacion que prueba todas las apariciones de la frase; `hueco_ms` con aviso a partir de 15 s (41 items aceptados lo superan, maximo 44 s); palabras parciales al final del segmento alineadas (1 item); sello ampliado a la cabecera y 20 propuestas re-selladas; `validate` cruza cada decision con la evidencia; `accept` atomico y sin manifiesto; cabecera invalida sin traceback; audio no admite `fotograma_visto`; 8 tests nuevos). 311 funciones / 456 casos. Informe WAITING_FOR_USER_VALIDATION (ronda 2: confirmacion de cierre).
