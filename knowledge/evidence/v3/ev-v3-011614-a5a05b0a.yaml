@@ -1,0 +1,16 @@
+id: ev-v3-011614-a5a05b0a
+video_id: v3
+t0: '1:16:14'
+t1: '1:16:29'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: también podría, se podría intentar, o sea, no considerar que a veces se envuelva [...] si
+  la vela anterior es bajista que la otra sea, exista una probabilidad que sea bajista
+afirmacion: 'simplificacion abierta del sesgo: ignorar las envolventes y tomar solo el color de la vela
+  anterior'
+tema: sesgo.h4.simplificacion_abierta
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

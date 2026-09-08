@@ -1,0 +1,18 @@
+id: ev-v4-011951-5fb49e03
+video_id: v4
+t0: '1:19:51'
+t1: '1:20:42'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: a lo mejor también es más factible si tú pones a un 2.5 el RR [...] si yo lo manejo con
+  1 con 3 o sea porque me da margen de beneficio también por el hecho de que si tengo 23 consecutivos
+  pérdidas pues uno tercero me lo puedo permitir
+afirmacion: 'mantiene 1:3 porque da margen: con dos perdidas consecutivas el tercero cubre; 2,5 queda
+  por probar'
+tema: objetivo.rr_13_margen_tres_perdidas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 23 = 2 o 3 en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

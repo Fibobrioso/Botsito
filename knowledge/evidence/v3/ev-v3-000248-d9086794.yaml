@@ -1,0 +1,15 @@
+id: ev-v3-000248-d9086794
+video_id: v3
+t0: 0:02:48
+t1: 0:03:04
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: es lo mismo operar desde las 3 de la tarde hasta las 7 de la noche también se puede o sea
+  es indiferente sólo que yo el marco de operativa lo tengo planteado en eso
+afirmacion: operar en otras horas seria indiferente; su marco esta planteado en la ventana actual
+tema: ventana.otras_horas_abierto
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

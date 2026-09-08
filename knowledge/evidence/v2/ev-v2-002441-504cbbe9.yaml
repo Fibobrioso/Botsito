@@ -1,0 +1,15 @@
+id: ev-v2-002441-504cbbe9
+video_id: v2
+t0: 0:24:41
+t1: 0:24:59
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si eres más agresivo digámoslo así pues vas a dejar a que la operativa se cierre cuando
+  la la vela o sea la vela de cuatro horas finalice
+afirmacion: 'opcion agresiva: dejar que la operativa se cierre al finalizar la vela de cuatro horas'
+tema: objetivo.cierre_fin_vela_h4
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,17 @@
+id: ev-v4-010731-bb8af97c
+video_id: v4
+t0: '1:07:31'
+t1: '1:07:59'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: la orden, tú, o sea, order limit, tú lo puedes ir moviendo conforme se va desarrollando
+  el flujo [...] seguimos usar nosotros la orden de orden límite lo seguimos moviendo para aquí abajo
+  hasta que se rompa
+afirmacion: la orden limite se va moviendo con el flujo hasta que se rompa
+tema: entrada.orden_limite.mover_hasta_rompa
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: segmentos con senal no_habla; A-5
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

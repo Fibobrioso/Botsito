@@ -1,0 +1,15 @@
+id: ev-v4-000133-01d2ca0a
+video_id: v4
+t0: 0:01:33
+t1: 0:02:00
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: También me he estado dando cuenta del break-even [...] son 13 break-evens [...] la condicional
+  de usar el break-even
+afirmacion: en enero hubo 13 break evens; mantiene la condicion de usar el break even
+tema: break_even.mantiene_condicional_pese_a_13
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

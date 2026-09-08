@@ -1,0 +1,17 @@
+id: ev-v3-000138-8399c18a
+video_id: v3
+t0: 0:01:38
+t1: 0:01:44
+modalidad: pantalla
+tipo: RULE_STATEMENT
+cita_literal: 'Ficha, fila 2: Sesgo direccional: lo fija la vela H4 previa ya cerrada (n-1). Alcista →
+  solo compras; bajista → solo ventas. | Si. Vela H4 previa ya cerrada fija la direccionalidad'
+afirmacion: 'en la ficha de Word el trader confirma que la vela H4 previa cerrada fija el sesgo: alcista
+  solo compras, bajista solo ventas'
+tema: sesgo.ficha_fila_2
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: bot-v2
+fotogramas:
+- fr-v3-982da728/101000

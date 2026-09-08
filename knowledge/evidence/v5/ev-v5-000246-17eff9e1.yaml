@@ -1,0 +1,16 @@
+id: ev-v5-000246-17eff9e1
+video_id: v5
+t0: 0:02:46
+t1: 0:03:02
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: cuando hay un equal que no lo vamos a poder anticipar [...] contarlo como pérdida pero reentrar
+  nuevamente si es que el precio
+afirmacion: un equal activa la entrada sin poder anticiparse; se cuenta como perdida y se reentra si el
+  precio rompe de nuevo la zona
+tema: reentrada.equal
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

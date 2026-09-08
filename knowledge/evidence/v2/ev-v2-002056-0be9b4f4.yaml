@@ -1,0 +1,16 @@
+id: ev-v2-002056-0be9b4f4
+video_id: v2
+t0: 0:20:56
+t1: 0:21:47
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: esa más o menos es la curva de drawdown [...] el RR promedio. El mínimo más o menos se termina
+  en un ponderado de 2,87 [...] un rr promedio de 4.45
+afirmacion: en sus backtests el RR promedio va de 2,87 (mercado volatil) a 4,45 (tendencial)
+tema: backtest.rr_promedio
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 2,87
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

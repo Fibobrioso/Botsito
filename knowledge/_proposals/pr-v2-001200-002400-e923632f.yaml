@@ -591,6 +591,11 @@ items:
   tema: entrada.m5_abierto
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:11Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001205-74ffbb74
 - t0: 0:13:29
   t1: 0:13:55
   modalidad: audio
@@ -602,6 +607,11 @@ items:
   confianza: media
   notas: segmento con duda del glosario (boss/voz)
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:12Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001329-e766675a
 - t0: 0:14:22
   t1: 0:14:40
   modalidad: audio
@@ -613,6 +623,11 @@ items:
   confianza: media
   notas: voto = bot en la lectura del ASR
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:14Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001422-aa30815e
 - t0: 0:15:24
   t1: 0:15:52
   modalidad: audio
@@ -626,6 +641,11 @@ items:
   tema: break_even.condicion_zona_control
   confianza: alta
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:15Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001524-898f3283
 - t0: 0:16:15
   t1: 0:16:32
   modalidad: audio
@@ -638,6 +658,11 @@ items:
   confianza: media
   notas: voz = BOS en la lectura del ASR; A-2 (2 frente a 3 cartuchos)
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:17Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001615-d96c699f
 - t0: 0:16:38
   t1: 0:16:49
   modalidad: audio
@@ -649,6 +674,11 @@ items:
   confianza: media
   notas: segmento con duda del glosario (boss/voz)
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:19Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001638-62789734
 - t0: 0:16:58
   t1: 0:17:02
   modalidad: audio
@@ -658,6 +688,11 @@ items:
   tema: objetivo.rr
   confianza: alta
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:20Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001658-d02fb71a
 - t0: 0:17:02
   t1: 0:17:16
   modalidad: audio
@@ -669,6 +704,11 @@ items:
   tema: break_even.definicion
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001702-5cb3bcb3
 - t0: 0:17:56
   t1: 0:18:07
   modalidad: audio
@@ -680,6 +720,11 @@ items:
   confianza: media
   notas: el consultor pregunta; radio = ratio en el ASR
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:23Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001756-fd878cfe
 - t0: 0:18:19
   t1: 0:18:26
   modalidad: audio
@@ -690,6 +735,11 @@ items:
   valor: 'no'
   confianza: alta
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001819-60a1b0f1
 - t0: 0:18:32
   t1: 0:18:48
   modalidad: audio
@@ -700,6 +750,11 @@ items:
   tema: parciales.efecto
   confianza: alta
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:26Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001832-c0ac9f90
 - t0: 0:20:56
   t1: 0:21:47
   modalidad: audio
@@ -711,6 +766,11 @@ items:
   valor: 2,87
   confianza: alta
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:28Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-002056-0be9b4f4
 - t0: 0:22:33
   t1: 0:22:48
   modalidad: audio
@@ -722,6 +782,11 @@ items:
   confianza: media
   notas: segmento con duda del glosario (boss/voz)
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:29Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-002233-29e441c8
 - t0: 0:22:56
   t1: 0:23:16
   modalidad: audio
@@ -733,6 +798,11 @@ items:
   tema: stop.fijo_sin_reducir
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-002256-b27a8fa6
 - t0: 0:23:34
   t1: 0:23:40
   modalidad: audio
@@ -743,6 +813,11 @@ items:
   tema: break_even.a_1a1_abierto
   confianza: alta
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:32Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-002334-d99390c0
 no_consta:
 - tema: sesgo
   motivo: no habla del sesgo en el tramo

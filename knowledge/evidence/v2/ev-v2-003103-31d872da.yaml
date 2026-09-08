@@ -1,0 +1,18 @@
+id: ev-v2-003103-31d872da
+video_id: v2
+t0: 0:31:03
+t1: 0:31:36
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: el break even yo creo que es fundamental o sea que apenas el precio suele generar ese movimiento
+  [...] te genera este bloque de orden alcista entonces ahí o sea apenas genera aquí ya la entrada se
+  pone automáticamente en solos
+afirmacion: 'el break even es fundamental: apenas el precio genera el bloque tras romper el flujo, la
+  entrada pasa automaticamente a break even'
+tema: break_even.fundamental_bloque
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla y duda del glosario (voz = BOS en 0:31:20); solos = stop loss
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

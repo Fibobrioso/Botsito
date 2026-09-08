@@ -345,6 +345,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla; rey = win rate, tres = trades en la lectura del ASR
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000016-8f6862dd
 - t0: 0:00:52
   t1: 0:01:23
   modalidad: audio
@@ -356,6 +361,11 @@ items:
   tema: backtest.enero_rr_promedio
   confianza: alta
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:32Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000052-61cf22a9
 - t0: 0:01:33
   t1: 0:02:00
   modalidad: audio
@@ -366,6 +376,11 @@ items:
   tema: break_even.mantiene_condicional_pese_a_13
   confianza: alta
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:34Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000133-01d2ca0a
 - t0: 0:02:00
   t1: 0:02:10
   modalidad: audio
@@ -375,6 +390,11 @@ items:
   tema: break_even.probar_sin_abierto
   confianza: alta
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:36Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000200-6b3eab8b
 - t0: 0:02:22
   t1: 0:02:43
   modalidad: audio
@@ -386,6 +406,11 @@ items:
   confianza: media
   notas: vallas = bias en la lectura del ASR
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:37Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000222-9275ac37
 - t0: 0:02:43
   t1: 0:03:15
   modalidad: audio
@@ -396,6 +421,11 @@ items:
   tema: no_trade.sin_escenario_30_enero
   confianza: alta
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:39Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000243-a1067c1c
 - t0: 0:02:43
   t1: 0:03:27
   modalidad: audio
@@ -408,6 +438,11 @@ items:
   tema: entrada.dos_esquemas.definicion
   confianza: alta
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:41Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000243-5f8875ce
 - t0: 0:03:53
   t1: 0:04:28
   modalidad: audio
@@ -419,6 +454,11 @@ items:
   tema: break_even.a_1a1_o_050_abierto
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:43Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000353-9ea3ce94
 - t0: 0:04:51
   t1: 0:04:58
   modalidad: audio
@@ -429,6 +469,11 @@ items:
   valor: '7'
   confianza: alta
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:44Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000451-97043d00
 no_consta:
 - tema: liquidez
   motivo: solo 'marcamos la liquidez en m15' (0:02:22) como paso del ejemplo

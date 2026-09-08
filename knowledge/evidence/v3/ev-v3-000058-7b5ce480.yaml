@@ -1,0 +1,19 @@
+id: ev-v3-000058-7b5ce480
+video_id: v3
+t0: 0:00:58
+t1: 0:01:36
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nosotros tenemos tres temporalidades a trabajar, que serían H4, nuestra temporalidad alta
+  y es la que va a definir la operativa [...] M15, que es la temporalidad media donde marcamos nosotros
+  la zona de liquidez, sea un alto o un bajo desarrollado en M15 [...] m1 que es nuestro marco de operativa
+  donde vamos a buscar el break
+afirmacion: H4 define la operativa, M15 marca la liquidez (un alto o un bajo) y M1 es el marco donde se
+  busca el break
+tema: entrada.marcos_h4_m15_m1.ficha
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla (transicion del video)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

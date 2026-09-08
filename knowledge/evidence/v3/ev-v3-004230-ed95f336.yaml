@@ -1,0 +1,15 @@
+id: ev-v3-004230-ed95f336
+video_id: v3
+t0: 0:42:30
+t1: 0:42:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el otro esquema es esto es este esquema aquí, donde el precio me genera como que este da
+  zona de control aquí y luego rompe
+afirmacion: 'esquema 2: el precio genera una zona de control y luego rompe'
+tema: entrada.esquema2_zona_control_rompe
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

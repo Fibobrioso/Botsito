@@ -1,0 +1,15 @@
+id: ev-v4-004222-a473c62e
+video_id: v4
+t0: 0:42:22
+t1: 0:42:40
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: aquí no hay entrada como tal o sea no hay entrada por el hecho de que te generado dos zonas
+  de control o sea no no está el esquema 2 de entrada entonces si eso no se opera
+afirmacion: 'dos zonas de control rompen el esquema 2: no se opera'
+tema: no_trade.dos_zonas_control_sin_esquema2
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,17 @@
+id: ev-v2-001615-d96c699f
+video_id: v2
+t0: 0:16:15
+t1: 0:16:32
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: te genera el otro voz que máximo suele ser dos entradas o sea después del rompimiento de
+  liquidez en este caso de m15 tienes máximo dos entradas
+afirmacion: tras el rompimiento de la liquidez de M15 hay como maximo dos entradas
+tema: cartuchos.maximo_por_liquidez
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: dos
+notas: voz = BOS en la lectura del ASR; A-2 (2 frente a 3 cartuchos)
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

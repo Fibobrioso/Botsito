@@ -1,0 +1,15 @@
+id: ev-v3-004353-b7661782
+video_id: v3
+t0: 0:43:53
+t1: 0:43:59
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo mi lotaje el lotaje se calcula desde el inicio desde el punto más alto hasta el punto
+  más bajo
+afirmacion: el lotaje se calcula sobre la distancia del punto mas alto al mas bajo
+tema: lotaje.punto_mas_alto_a_mas_bajo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

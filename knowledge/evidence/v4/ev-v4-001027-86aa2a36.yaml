@@ -1,0 +1,16 @@
+id: ev-v4-001027-86aa2a36
+video_id: v4
+t0: 0:10:27
+t1: 0:10:58
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: si yo no hubiera protegido a 0.75, el trade era ganador, o sea, ya de por sí, y hay muchos
+  trades, o sea, que a veces se me pasa por eso, Porque protejo en 0.75 y lo come
+afirmacion: 'ejemplo: proteger en 0,75 le saca de trades que habrian sido ganadores'
+tema: stop.075_come_trades_ganadores
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

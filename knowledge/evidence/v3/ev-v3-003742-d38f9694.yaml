@@ -1,0 +1,16 @@
+id: ev-v3-003742-d38f9694
+video_id: v3
+t0: 0:37:42
+t1: 0:38:30
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo por lo general no tengo una regla como tal. O sea, como te digo, yo defino lo principal
+  es mi 1 a 3. Ahora, si yo quiero maximizar lo que sería el profit, lo suelo manejar en M15 [...] entra
+  la subjetividad
+afirmacion: 'no tiene regla para maximizar el profit: lo principal es el 1 a 3; maximizar en M15 es subjetivo'
+tema: objetivo.sin_regla_de_maximizar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

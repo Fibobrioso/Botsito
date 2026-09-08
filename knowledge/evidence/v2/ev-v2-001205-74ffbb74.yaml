@@ -1,0 +1,16 @@
+id: ev-v2-001205-74ffbb74
+video_id: v2
+t0: 0:12:05
+t1: 0:12:46
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: el código va a testearlo de tal manera que aplicando solo trabajando en esas cuatro temporalidades
+  y quitar m5 de allí [...] en m5 se llega a capturar si te vas a m1 hay demasiado ruido
+afirmacion: primero se prueba el codigo sin M5; M5 capturaria continuidades que en M1 tienen demasiado
+  ruido
+tema: entrada.m5_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

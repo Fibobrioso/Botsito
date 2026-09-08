@@ -1,0 +1,15 @@
+id: ev-v3-011147-fa2e6984
+video_id: v3
+t0: '1:11:47'
+t1: '1:12:00'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ¿liquidez qué nivel es cuenta? ¿Cómo liquidez a barrer y con qué prioridad? Pues yo, como
+  digo, sería solo M15. M15 y ya
+afirmacion: la unica liquidez que cuenta es la de M15
+tema: liquidez.solo_m15
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

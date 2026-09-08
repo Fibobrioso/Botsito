@@ -800,6 +800,11 @@ items:
   tema: sesgo.h4.vela_envolvente
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:40Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001508-e1a49a38
 - t0: 0:15:31
   t1: 0:15:44
   modalidad: audio
@@ -810,6 +815,11 @@ items:
   tema: liquidez.m15.zona_mas_baja
   confianza: alta
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:42Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001531-1b12a896
 - t0: 0:16:00
   t1: 0:16:18
   modalidad: audio
@@ -821,6 +831,11 @@ items:
   confianza: alta
   marca_heredada: V3 0:16:05
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:44Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001600-ed45b091
 - t0: 0:16:30
   t1: 0:17:14
   modalidad: audio
@@ -834,6 +849,11 @@ items:
   confianza: media
   notas: voz = BOS en la lectura del ASR (duda del glosario)
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:45Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001630-a911f624
 - t0: 0:17:25
   t1: 0:18:06
   modalidad: audio
@@ -846,6 +866,11 @@ items:
   tema: liquidez.m15.nueva_zona_tras_bajar
   confianza: alta
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:47Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001725-bca9714b
 - t0: 0:18:27
   t1: 0:18:50
   modalidad: audio
@@ -856,6 +881,11 @@ items:
   tema: mapeo.estructural_con_mechas
   confianza: alta
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:49Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001827-72bc1e81
 - t0: 0:19:08
   t1: 0:19:47
   modalidad: audio
@@ -867,6 +897,11 @@ items:
   confianza: alta
   notas: A-5 (cadencia de reubicacion)
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:50Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001908-9fa09636
 - t0: 0:19:52
   t1: 0:20:26
   modalidad: audio
@@ -879,6 +914,11 @@ items:
   tema: break_even.regla_zona_control_inmediato
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:52Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001952-a3276d86
 - t0: 0:20:26
   t1: 0:21:17
   modalidad: audio
@@ -889,6 +929,11 @@ items:
   tema: break_even.a_1a1_abierto.v3
   confianza: alta
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:53Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002026-fa5295fa
 - t0: 0:21:30
   t1: 0:21:59
   modalidad: audio
@@ -901,6 +946,11 @@ items:
   tema: break_even.por_que_no_1a1
   confianza: alta
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:55Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002130-8617c40b
 - t0: 0:22:13
   t1: 0:22:58
   modalidad: audio
@@ -913,6 +963,11 @@ items:
   confianza: alta
   notas: gestion discrecional del stop (A-7 / A-12 relacionadas)
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:57Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002213-c6e9de69
 - t0: 0:23:18
   t1: 0:23:32
   modalidad: audio
@@ -925,6 +980,11 @@ items:
   confianza: media
   notas: 12 = 1 a 2, siglo = ciclo en la lectura del ASR
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:58Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002318-4df07d1f
 - t0: 0:24:05
   t1: 0:24:24
   modalidad: audio
@@ -937,6 +997,11 @@ items:
   tema: cartuchos.segundo_o_nueva_liquidez
   confianza: alta
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:04:00Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002405-a202dbf6
 - t0: 0:24:29
   t1: 0:24:54
   modalidad: audio
@@ -948,6 +1013,11 @@ items:
   tema: mapeo.m1.mecha_cubre_vela_anterior
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:04:02Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002429-6458d18c
 - t0: 0:25:11
   t1: 0:25:31
   modalidad: audio
@@ -959,6 +1029,11 @@ items:
   confianza: media
   notas: voz = BOS, orden link = order limit en la lectura del ASR
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:04:03Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-002511-b12d67be
 no_consta:
 - tema: zona_control
   motivo: definida como condicion del break even (0:19:52, 0:21:51); citada ahi

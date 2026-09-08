@@ -1,0 +1,14 @@
+id: ev-v3-003142-607674c3
+video_id: v3
+t0: 0:31:42
+t1: 0:31:45
+modalidad: audio
+tipo: PARAMETER
+cita_literal: en, bueno, 1 a 3 es lo mínimo
+afirmacion: 1 a 3 es el objetivo minimo
+tema: objetivo.rr_minimo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

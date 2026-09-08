@@ -1,0 +1,16 @@
+id: ev-v4-010857-5bc906c9
+video_id: v4
+t0: '1:08:57'
+t1: '1:09:04'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el límite se va actualizando o sea, el mismo límite se va moviendo a medida que no se activa
+  se va desarrollando el precio, sí
+afirmacion: mientras no se activa, la orden limite se actualiza con el precio
+tema: entrada.orden_limite.actualiza_mientras_no_activa
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el consultor resume y el trader confirma
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

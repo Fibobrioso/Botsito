@@ -1,0 +1,16 @@
+id: ev-v1-000620-0f7dea14
+video_id: v1
+t0: 0:06:20
+t1: 0:06:33
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: no olvidarse de poner el cuadro, bueno el cuadro de GAN [...] en 0.75 proteger el trade,
+  a inicio apenas se genere la entrada
+afirmacion: con el cuadro de Gann, proteger el trade en 0,75 apenas se genere la entrada
+tema: stop.proteger_al_entrar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.75'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

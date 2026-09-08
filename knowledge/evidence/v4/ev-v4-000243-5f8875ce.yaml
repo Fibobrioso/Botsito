@@ -1,0 +1,17 @@
+id: ev-v4-000243-5f8875ce
+video_id: v4
+t0: 0:02:43
+t1: 0:03:27
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien directamente
+  rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con un pequeño retroceso
+  pequeña zona de control y luego rompe
+afirmacion: 'dos esquemas: 1) el precio rompe directamente (solo velas rojas); 2) pequeno retroceso, pequena
+  zona de control y luego rompe'
+tema: entrada.dos_esquemas.definicion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

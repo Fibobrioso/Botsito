@@ -1,0 +1,18 @@
+id: ev-v3-004329-a16d379b
+video_id: v3
+t0: 0:43:29
+t1: 0:43:53
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: usualmente yo lo tengo en 0.75 o sea, 0.75 en la entrada [...] si se desarrolla más abajo
+  entonces yo protegería aquí o sea definiría aquí vale o sea definiría aquí lo que sería mi stop loss
+afirmacion: usualmente el stop va en 0,75; si la zona de control se desarrolla mas abajo, el stop se define
+  ahi
+tema: stop.segundo_esquema_bajo_zona_control
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+notas: A-7 (stop del segundo esquema)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

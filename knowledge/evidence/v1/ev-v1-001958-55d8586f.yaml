@@ -1,0 +1,17 @@
+id: ev-v1-001958-55d8586f
+video_id: v1
+t0: 0:19:58
+t1: 0:20:28
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: para poder poner en break even mi entrada, pues lo que haría es que el precio llegue hasta
+  aquí, y me genere una zona de control, o sea, mitigue esta zona de aquí, y automáticamente lo pongo
+  en break even
+afirmacion: el break even se pone automaticamente cuando el precio genera una zona de control que mitiga
+  la zona
+tema: break_even.mitigacion_zona
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

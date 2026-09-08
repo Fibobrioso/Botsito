@@ -1,0 +1,16 @@
+id: ev-v3-001001-b5a5aa23
+video_id: v3
+t0: 0:10:01
+t1: 0:10:31
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nuestro cerco direccional siempre cumpliendo las condiciones que les acabo de mostrar, nos
+  lo va a dar la vela anterior [...] independientemente si la vela luego termina verde
+afirmacion: la direccion la da la vela anterior cumpliendo las condiciones, independientemente del color
+  con que termine la vela actual
+tema: sesgo.h4.vela_anterior_da_direccion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

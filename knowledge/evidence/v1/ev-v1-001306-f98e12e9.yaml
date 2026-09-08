@@ -1,0 +1,15 @@
+id: ev-v1-001306-f98e12e9
+video_id: v1
+t0: 0:13:06
+t1: 0:13:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra
+  operativa tiene que estar por debajo
+afirmacion: la operativa tiene que estar por debajo de la liquidez, haga lo que haga el precio por arriba
+tema: entrada.por_debajo_liquidez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

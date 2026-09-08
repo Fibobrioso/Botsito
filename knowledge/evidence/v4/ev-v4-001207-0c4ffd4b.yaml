@@ -1,0 +1,17 @@
+id: ev-v4-001207-0c4ffd4b
+video_id: v4
+t0: 0:12:07
+t1: 0:12:21
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se arma un trade y el stop loss se pone hasta el final como del rango, ¿no? Al final del
+  rango. Pero el stop loss como tal que se va a introducir en la operación es hasta el 0.75
+afirmacion: el rango se mide hasta el final, pero el stop que se introduce en la operacion es el 0,75
+tema: stop.introducido_en_operacion_075
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.75'
+notas: 'A-11: el consultor pregunta y el trader responde'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

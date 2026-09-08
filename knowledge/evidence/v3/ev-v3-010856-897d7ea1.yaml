@@ -1,0 +1,15 @@
+id: ev-v3-010856-897d7ea1
+video_id: v3
+t0: '1:08:56'
+t1: '1:09:22'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: a veces te suele invalidar un bloque de órdenes es que si te fijas vas a ver que el el flujo
+  ya no está en M1, sino está en M5 [...] ya en M5 se ha roto el flujo de órdenes
+afirmacion: un bloque de ordenes se invalida cuando el flujo ya esta en M5 y se rompe ahi
+tema: mapeo.invalidacion_flujo_m5
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

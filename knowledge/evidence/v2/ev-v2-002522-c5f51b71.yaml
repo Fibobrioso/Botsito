@@ -1,0 +1,15 @@
+id: ev-v2-002522-c5f51b71
+video_id: v2
+t0: 0:25:22
+t1: 0:25:36
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no trato de meterle las noticias [...] he bacteceado sin ver las noticias
+afirmacion: no usa las noticias; ha backtesteado sin verlas
+tema: herramientas.sin_noticias
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 'no'
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

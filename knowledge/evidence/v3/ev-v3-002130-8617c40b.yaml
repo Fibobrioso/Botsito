@@ -1,0 +1,17 @@
+id: ev-v3-002130-8617c40b
+video_id: v3
+t0: 0:21:30
+t1: 0:21:59
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: yo creo que no le da tiempo para que el precio se desarrolle y a veces o sea te hace retroceso
+  te toma break even [...] yo espero que desarrolle una zona de control, o sea, que genere como que un
+  flujo bajista más, o sea, un bloque de orden
+afirmacion: el break even en 1 a 1 no deja desarrollarse al precio; espera la zona de control (un flujo
+  mas, un bloque)
+tema: break_even.por_que_no_1a1
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

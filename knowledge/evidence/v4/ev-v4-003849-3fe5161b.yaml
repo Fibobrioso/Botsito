@@ -1,0 +1,18 @@
+id: ev-v4-003849-3fe5161b
+video_id: v4
+t0: 0:38:49
+t1: 0:39:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en m1 o sea si contaría las mechas o sea ya no en m15 te tiene que la liquidez que tiene
+  la vela que tiene que cerrar con cuerpo pero en m15 en algunos casos basta con la mecha [...] mitigación
+  de liquidez, por ejemplo, en M1 se dé con mecha, pero en M15 no
+afirmacion: en M1 la mitigacion de liquidez vale con mecha; en M15 tiene que cerrar con cuerpo
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla; en medio dice 'en m15 en algunos casos basta con la mecha' y se corrige
+  en 0:39:24
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

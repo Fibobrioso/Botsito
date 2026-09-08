@@ -1,0 +1,16 @@
+id: ev-v3-010244-2edecd2d
+video_id: v3
+t0: '1:02:44'
+t1: '1:02:58'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la gestión que se podría aplicar sería esa creo yo, o sea, si es que se puede claro, si
+  no, se deja en 0.75 [...] la idea sería probar sin la toma de parciales, por el momento
+afirmacion: si la gestion no se puede automatizar, el stop se deja en 0,75; se prueba sin parciales por
+  el momento
+tema: parciales.probar_sin_parciales
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

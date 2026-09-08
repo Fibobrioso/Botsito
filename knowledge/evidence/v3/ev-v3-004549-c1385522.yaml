@@ -1,0 +1,16 @@
+id: ev-v3-004549-c1385522
+video_id: v3
+t0: 0:45:49
+t1: 0:46:04
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: la mayoría de tres dispositivos que se va a ver en el backtesting y demás, van a ser entradas
+  que a veces ni llega o sea, ni llega a retroceder, o sea son explosivas
+afirmacion: 'la mayoria de los trades positivos son explosivos: ni retroceden'
+tema: meta.entradas_explosivas
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: tres dispositivos = trades positivos en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

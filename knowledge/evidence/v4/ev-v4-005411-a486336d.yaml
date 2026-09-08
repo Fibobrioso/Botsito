@@ -1,0 +1,19 @@
+id: ev-v4-005411-a486336d
+video_id: v4
+t0: 0:54:11
+t1: 0:54:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si dejas correr inclusivos a dibujas el 137 al 13 o inclusive un poco más pero teniendo
+  como fijo el 13 [...] yo suelo usar tres cartuchos o sea sin esos tres cartuchos no se me me da, busco
+  que se desarrolle otra zona en M15
+afirmacion: objetivo fijo 1:3 (13 en la cruda); usa tres cartuchos y, si no se da, busca otra zona en
+  M15
+tema: cartuchos.tres_cartuchos_luego_otra_zona
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: tres
+notas: segmento con senal no_habla; A-2
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

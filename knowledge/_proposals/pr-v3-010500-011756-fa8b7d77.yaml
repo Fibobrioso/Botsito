@@ -977,6 +977,11 @@ items:
   valor: mecha
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:04Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010500-f3a1bebc
 - t0: '1:06:48'
   t1: '1:07:48'
   modalidad: audio
@@ -991,6 +996,11 @@ items:
   marca_heredada: V3 1:06:48
   notas: A-8 (dos velas como una)
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:06Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010648-0039e34d
 - t0: '1:07:41'
   t1: '1:08:04'
   modalidad: audio
@@ -1001,6 +1011,11 @@ items:
   tema: mapeo.limpio_objetivo_flujo_m5
   confianza: alta
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:08Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010741-526b98f4
 - t0: '1:08:18'
   t1: '1:08:39'
   modalidad: audio
@@ -1011,6 +1026,11 @@ items:
   tema: mapeo.m1.vela_contraria_marca
   confianza: media
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:10Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010818-010bd2b3
 - t0: '1:08:56'
   t1: '1:09:22'
   modalidad: audio
@@ -1021,6 +1041,11 @@ items:
   tema: mapeo.invalidacion_flujo_m5
   confianza: alta
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:11Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010856-897d7ea1
 - t0: '1:09:48'
   t1: '1:10:27'
   modalidad: audio
@@ -1034,6 +1059,11 @@ items:
   confianza: alta
   notas: A-1 (que cambia el sesgo H4); tambien responde al doji
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:13Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010948-331c69aa
 - t0: '1:10:45'
   t1: '1:11:21'
   modalidad: audio
@@ -1046,6 +1076,11 @@ items:
   tema: sesgo.h4.cambio_exige_cierre_encima
   confianza: alta
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:15Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011045-a185d2ba
 - t0: '1:11:47'
   t1: '1:12:00'
   modalidad: audio
@@ -1056,6 +1091,11 @@ items:
   tema: liquidez.solo_m15
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:17Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011147-fa2e6984
 - t0: '1:12:00'
   t1: '1:12:12'
   modalidad: audio
@@ -1067,6 +1107,11 @@ items:
   valor: mecha
   confianza: alta
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:18Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011200-f47758fb
 - t0: '1:12:12'
   t1: '1:12:38'
   modalidad: audio
@@ -1080,6 +1125,11 @@ items:
   confianza: media
   notas: shot = CHoCH, boss = BOS en la lectura del ASR (duda del glosario)
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:20Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011212-3a3ff23d
 - t0: '1:12:42'
   t1: '1:13:03'
   modalidad: audio
@@ -1090,6 +1140,11 @@ items:
   tema: entrada.m5_no_todavia
   confianza: alta
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011242-0be1bd36
 - t0: '1:13:45'
   t1: '1:13:59'
   modalidad: audio
@@ -1100,6 +1155,11 @@ items:
   tema: break_even.m5_no_definido
   confianza: alta
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:24Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011345-13e7ab31
 - t0: '1:15:40'
   t1: '1:16:00'
   modalidad: audio
@@ -1111,6 +1171,11 @@ items:
   tema: mapeo.m1.vela_contraria_marca_extremo
   confianza: alta
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011540-5425b533
 - t0: '1:16:14'
   t1: '1:16:29'
   modalidad: audio
@@ -1122,6 +1187,11 @@ items:
   tema: sesgo.h4.simplificacion_abierta
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011614-a5a05b0a
 - t0: '1:16:53'
   t1: '1:17:12'
   modalidad: audio
@@ -1134,6 +1204,11 @@ items:
   confianza: media
   notas: boss = BOS, shot = CHoCH en la lectura del ASR (duda del glosario)
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:29Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011653-38c712f3
 no_consta:
 - tema: stop
   motivo: no habla del stop en el tramo

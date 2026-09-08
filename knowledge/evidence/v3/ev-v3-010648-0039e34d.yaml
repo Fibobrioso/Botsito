@@ -1,0 +1,18 @@
+id: ev-v3-010648-0039e34d
+video_id: v3
+t0: '1:06:48'
+t1: '1:07:48'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Si tú lo mapeas de esta manera, es lo más probable que en una temporalidad mayor esto sea
+  una vela [...] esto de aquí sería tu order block [...] es por eso que se considera una vela y lo demás
+  sería ruido
+afirmacion: al mapear, un tramo que en una temporalidad mayor es una vela (un order block) se considera
+  una vela; lo demas es ruido
+tema: mapeo.dos_velas_como_una
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: A-8 (dos velas como una)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

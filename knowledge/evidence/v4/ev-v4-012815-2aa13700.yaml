@@ -1,0 +1,17 @@
+id: ev-v4-012815-2aa13700
+video_id: v4
+t0: '1:28:15'
+t1: '1:28:37'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: Entrar con 0.50 0.40, creo yo Ya, 0.5 0.40, estático o Escalado Escalado, en base a la cuenta
+  O sea, para buscar un Crecimiento geométrico, no aritmético
+afirmacion: riesgo por operacion de 0,40 (o 0,50), escalado sobre la cuenta (crecimiento geometrico)
+tema: riesgo.por_operacion.040_050_escalado
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.40'
+notas: el consultor pregunta estatico o escalado; el trader responde escalado
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

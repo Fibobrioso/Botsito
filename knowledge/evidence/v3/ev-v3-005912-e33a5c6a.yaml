@@ -1,0 +1,15 @@
+id: ev-v3-005912-e33a5c6a
+video_id: v3
+t0: 0:59:12
+t1: 0:59:25
+modalidad: audio
+tipo: PARAMETER
+cita_literal: lo usual es 0.75, o sea, pero también vas a ver 0.5
+afirmacion: lo usual es 0,75, pero tambien aparece 0,5
+tema: stop.usual_075_a_veces_05
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

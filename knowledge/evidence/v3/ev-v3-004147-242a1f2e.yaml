@@ -1,0 +1,16 @@
+id: ev-v3-004147-242a1f2e
+video_id: v3
+t0: 0:41:47
+t1: 0:42:03
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: haciendo un mapeo simple sería esto aquí por aquí me genera el bus y está ahora el otro
+  esquema que yo sigo es esto aquí
+afirmacion: 'esquema 1: un mapeo simple donde el precio genera el BOS; hay un segundo esquema'
+tema: entrada.esquema1_bos_simple
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: bus = BOS en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

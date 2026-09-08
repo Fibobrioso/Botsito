@@ -1,0 +1,15 @@
+id: ev-v4-004150-3c411cc8
+video_id: v4
+t0: 0:41:50
+t1: 0:42:09
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en m1 pues es indiferente la toma de liquidez porque lo que nosotros como tal buscamos es
+  que se rompa el flujo en este caso bajista porque buscamos una operación alcista en m1
+afirmacion: en M1 lo que se busca es la rotura del flujo, no la toma de liquidez
+tema: entrada.m1_busca_ruptura_flujo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

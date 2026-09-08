@@ -1,0 +1,16 @@
+id: ev-v2-000310-2fc6581b
+video_id: v2
+t0: 0:03:10
+t1: 0:03:38
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: hay 22 sesiones que serían la de nueva york y londres entonces usualmente comienza entre
+  las 7 y finalizaría a las 3 de la tarde esto es sobre españa
+afirmacion: 'dos sesiones (Londres y Nueva York): de las 7 a las 3 de la tarde, hora de Espana'
+tema: ventana.sesiones.londres_ny
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el ASR escribe 22 donde el trader dice dos
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,16 @@
+id: ev-v4-004351-99f50e4a
+video_id: v4
+t0: 0:43:51
+t1: 0:44:22
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Te genera el breaker en M1 O sea, la absorción de liquidez Te lo hace con mecha Pero eso
+  es indiferente eso es en M1, está por debajo de M15 [...] como es el segundo esquema pues proteges aquí
+  inclusive pues podrías proteger a 0.75
+afirmacion: en el segundo esquema protege en la zona de control, aunque tambien podria proteger en 0,75
+tema: stop.esquema2_proteger_o_075
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

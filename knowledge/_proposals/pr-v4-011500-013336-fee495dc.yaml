@@ -1887,6 +1887,11 @@ items:
   confianza: alta
   notas: A-6; el consultor pregunta y el trader responde
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:02Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011514-fe34ac7e
 - t0: '1:15:37'
   t1: '1:16:23'
   modalidad: audio
@@ -1898,6 +1903,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:04Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011537-edecaa68
 - t0: '1:16:45'
   t1: '1:16:59'
   modalidad: audio
@@ -1908,6 +1918,11 @@ items:
   tema: ventana.sesion_influye_liquidez
   confianza: alta
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:06Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011645-e4c76383
 - t0: '1:17:42'
   t1: '1:18:27'
   modalidad: audio
@@ -1920,6 +1935,11 @@ items:
   tema: backtest.agosto_11_a_15
   confianza: alta
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:08Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011742-3a6b5367
 - t0: '1:18:56'
   t1: '1:19:49'
   modalidad: audio
@@ -1932,6 +1952,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla; rey = win rate
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:10Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011856-52f0f859
 - t0: '1:19:51'
   t1: '1:20:42'
   modalidad: audio
@@ -1945,6 +1970,11 @@ items:
   confianza: alta
   notas: 23 = 2 o 3 en la lectura del ASR
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:12Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-011951-5fb49e03
 - t0: '1:20:49'
   t1: '1:21:08'
   modalidad: audio
@@ -1956,6 +1986,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:14Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012049-04c922c5
 - t0: '1:21:17'
   t1: '1:21:46'
   modalidad: audio
@@ -1967,6 +2002,11 @@ items:
   tema: ventana.nueva_york_no_operada_abierto
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012117-3da98cbc
 - t0: '1:24:01'
   t1: '1:24:23'
   modalidad: audio
@@ -1978,6 +2018,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:18Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012401-ebd1175d
 - t0: '1:24:32'
   t1: '1:24:50'
   modalidad: audio
@@ -1990,6 +2035,11 @@ items:
   marca_heredada: V4 1:24:34
   notas: segmentos con senal no_habla; el consultor cierra el punto; candidato A-9 (UTC+2)
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:20Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012432-cf7e96a9
 - t0: '1:25:24'
   t1: '1:25:49'
   modalidad: audio
@@ -2001,6 +2051,11 @@ items:
   confianza: alta
   notas: el consultor propone y el trader completa las cifras de memoria
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012524-0ef85a89
 - t0: '1:27:33'
   t1: '1:28:01'
   modalidad: audio
@@ -2015,6 +2070,11 @@ items:
   confianza: media
   notas: segmento con senal no_habla
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012733-0c8d7f1f
 - t0: '1:28:15'
   t1: '1:28:37'
   modalidad: audio
@@ -2028,6 +2088,11 @@ items:
   marca_heredada: V4 1:28:20
   notas: el consultor pregunta estatico o escalado; el trader responde escalado
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012815-2aa13700
 - t0: '1:28:44'
   t1: '1:28:52'
   modalidad: audio
@@ -2040,6 +2105,11 @@ items:
   marca_heredada: V4 1:28:41
   notas: habla el consultor; el trader acepta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:29Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012844-b0dcebb0
 - t0: '1:29:00'
   t1: '1:29:15'
   modalidad: audio
@@ -2050,6 +2120,11 @@ items:
   tema: lotaje.fijo_bajo_en_fondeo
   confianza: alta
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-012900-8ef676ed
 - t0: '1:30:08'
   t1: '1:30:59'
   modalidad: audio
@@ -2064,6 +2139,11 @@ items:
   confianza: alta
   marca_heredada: V4 1:30:09
   n: 16
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:33Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-013008-73dcd8c3
 - t0: '1:31:22'
   t1: '1:31:49'
   modalidad: audio
@@ -2079,6 +2159,11 @@ items:
   marca_heredada: V4 1:31:16
   notas: rotaje = lotaje (sustitucion global del glosario)
   n: 17
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:35Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-013122-d24f9c5e
 - t0: '1:32:20'
   t1: '1:32:55'
   modalidad: audio
@@ -2089,6 +2174,11 @@ items:
   tema: entrada.esquema3_pendiente_backtest
   confianza: alta
   n: 18
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:37Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-013220-96c774de
 no_consta:
 - tema: sesgo
   motivo: no habla del sesgo en el tramo

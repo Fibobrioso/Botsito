@@ -1,0 +1,15 @@
+id: ev-v1-000345-9f7391e3
+video_id: v1
+t0: 0:03:45
+t1: 0:03:59
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tenemos que ir anticipándonos e ir trabajando con orden orden es el límite
+afirmacion: se trabaja anticipandose con orden limite
+tema: entrada.orden_limite
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el ASR repite orden; el trader dice orden limite
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

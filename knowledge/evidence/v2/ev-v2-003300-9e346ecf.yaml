@@ -1,0 +1,16 @@
+id: ev-v2-003300-9e346ecf
+video_id: v2
+t0: 0:33:00
+t1: 0:33:34
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí [...] No lo
+  veo viable porque en algunos casos [...] no me fue muy bien por el hecho del drawdown
+afirmacion: 'no calcula el lotaje desde el 0,75: lo probo y no le fue bien por el drawdown'
+tema: lotaje.no_desde_075
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: OTAG = lotaje en la lectura del ASR
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

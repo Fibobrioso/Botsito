@@ -1,0 +1,15 @@
+id: ev-v1-001143-25b4a964
+video_id: v1
+t0: 0:11:43
+t1: 0:11:56
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nos vamos a cuatro horas entonces seguimos partiendo de que nuestro enfoque tiene tiene
+  que ser alcista
+afirmacion: el enfoque se toma de la vela de cuatro horas
+tema: sesgo.h4.enfoque
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

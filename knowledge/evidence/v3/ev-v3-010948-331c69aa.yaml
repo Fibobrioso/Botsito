@@ -1,0 +1,18 @@
+id: ev-v3-010948-331c69aa
+video_id: v3
+t0: '1:09:48'
+t1: '1:10:27'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nuestra operativa iría enfocada a alcista. ¿Por qué? Porque no hay una vela bajista [...]
+  tendría que terminar por debajo al menos su mecha por debajo para poder considerar nosotros pues ese
+  cambio de escenario si no operaríamos alcistas independientemente si aquí es rojo rojo rojo verde
+afirmacion: el sesgo sigue alcista mientras ninguna vela H4 termine por debajo (al menos con la mecha),
+  sea cual sea el color de las velas
+tema: sesgo.h4.cambio_exige_cierre_bajo_mecha
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: A-1 (que cambia el sesgo H4); tambien responde al doji
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

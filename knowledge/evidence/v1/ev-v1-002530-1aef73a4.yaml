@@ -1,0 +1,14 @@
+id: ev-v1-002530-1aef73a4
+video_id: v1
+t0: 0:25:30
+t1: 0:25:47
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo las de 7 a 11 lo que trabajo y de 11 a 3 de la tarde
+afirmacion: trabaja de 7 a 11 y de 11 a 3 de la tarde
+tema: ventana.sesiones.horas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

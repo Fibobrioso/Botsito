@@ -1,0 +1,16 @@
+id: ev-v4-001835-d7625013
+video_id: v4
+t0: 0:18:35
+t1: 0:18:41
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la condicional es número uno, que el precio por encima de liquidez me tiene que cerrar con
+  cuerpo
+afirmacion: 'condicion numero uno: el precio cierra con cuerpo por encima de la liquidez'
+tema: liquidez.m15.condicion_uno_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: cuerpo
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

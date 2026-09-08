@@ -1,0 +1,19 @@
+id: ev-v4-013122-d24f9c5e
+video_id: v4
+t0: '1:31:22'
+t1: '1:31:49'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo considero muy clave el break even cuando se desarrolle otra zona de control o sea ya
+  se habría dentro 2 entonces pero ya cuando se desarrolle ésta se pone en break y en la entrada [...]
+  se calcula el rotaje desde aquí hasta aquí y luego espera hasta que se desarrolle la otra zona de control
+  y pones en break y de la entrada
+afirmacion: 'en el tercer esquema la gestion es la misma: lotaje sobre la distancia y break even al desarrollarse
+  la otra zona de control'
+tema: break_even.segunda_zona_control_y_lotaje
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: rotaje = lotaje (sustitucion global del glosario)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v3-004751-8eb74667
+video_id: v3
+t0: 0:47:51
+t1: 0:48:01
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: planteándolo con 0.75 creo que vale, o sea, no es necesario ya más, o sea, con 0.75 vale,
+  para que también la prueba de drawdown no sea muy significativa
+afirmacion: con 0,75 basta; no hace falta mas, para que el drawdown no sea significativo
+tema: stop.075_suficiente
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

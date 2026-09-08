@@ -1,0 +1,21 @@
+id: ev-v4-001221-1e66b5fd
+video_id: v4
+t0: 0:12:21
+t1: 0:12:45
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: la opción que yo te de aquí es que se abra la operación pero que este 0.75 se desplace lo
+  suficiente como para que esté de acuerdo al split del momento [...] con ese porcentaje que igual va
+  a ser el 0.75, ya ahí se calcule el lotaje para arriesgar el porcentaje de la cuenta
+afirmacion: 'propuesta aceptada: abrir la operacion con el 0,75 desplazado segun el spread del momento
+  y calcular el lotaje sobre ese 0,75'
+tema: stop.075_desplazado_por_spread_y_lotaje
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: bot-v2
+fotogramas:
+- fr-v4-9ad0ebb8/750000
+notas: habla el consultor y el trader acepta (me parece bien); en pantalla la caja con el 0,75 = 1,19537
+  (fotograma obligatorio de F05); split = spread (duda del glosario)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

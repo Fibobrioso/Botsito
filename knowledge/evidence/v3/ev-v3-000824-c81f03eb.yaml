@@ -1,0 +1,18 @@
+id: ev-v3-000824-c81f03eb
+video_id: v3
+t0: 0:08:24
+t1: 0:08:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para que yo tome alcista esta vela verde debió de haber pues finalizado al menos con una
+  mecha por encima de esto haberme pues generado como que este breaker aquí y para poder validar la siguiente
+  operativa como alcista
+afirmacion: una vela H4 verde no cambia el sesgo a alcista salvo que cierre con una mecha por encima y
+  genere el breaker
+tema: sesgo.h4.cambio_exige_breaker
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: A-1 (que vuelve alcista una H4)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,15 @@
+id: ev-v4-005835-10135705
+video_id: v4
+t0: 0:58:35
+t1: 0:58:41
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: hay gente que, por ejemplo, mapea y busca entradas aquí, aquí, pero es que todo esto es
+  ruido
+afirmacion: las entradas dentro del rango son ruido
+tema: no_trade.entradas_dentro_son_ruido
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

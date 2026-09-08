@@ -1,0 +1,20 @@
+id: ev-v3-002856-bff84636
+video_id: v3
+t0: 0:28:56
+t1: 0:29:25
+modalidad: ambas
+tipo: EXAMPLE_TRADE
+cita_literal: el 23 de abril, 2.83 [...] Perdí Menos 0.75 [...] el 24 de abril La primera entrada fue
+  perdedora Pero la otra fue 3.33
+afirmacion: 'Excel de abril: el 23 la primera sesion dio 2,83 y la siguiente -0,75; el 24 una perdedora
+  y luego 3,3 (el trader lee 3.33)'
+tema: backtest.excel_abril_2026
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: bot-v2
+fotogramas:
+- fr-v3-982da728/1736000
+notas: 'fotograma obligatorio de F05: el Excel muestra 2,83 / -0,75 / 3,3 / -0,75 / -0,5; la heredada
+  decia 2,3 / 3,23'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

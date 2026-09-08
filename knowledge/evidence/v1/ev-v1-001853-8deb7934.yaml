@@ -1,0 +1,15 @@
+id: ev-v1-001853-8deb7934
+video_id: v1
+t0: 0:18:53
+t1: 0:19:08
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: sigo aquí no hay entrada todavía porque a veces puede ser que genere el retroceso siga cayendo
+  y nuevamente se genera la entrada
+afirmacion: no hay entrada mientras el retroceso pueda seguir cayendo y volver a generar la entrada
+tema: no_trade.esperar_retroceso
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

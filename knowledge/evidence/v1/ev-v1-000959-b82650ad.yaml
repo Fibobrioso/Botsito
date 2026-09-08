@@ -1,0 +1,14 @@
+id: ev-v1-000959-b82650ad
+video_id: v1
+t0: 0:09:59
+t1: 0:10:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: apenas tenemos el trade ya no operamos la segunda [...] cortar cuando se dé el trade ganador
+afirmacion: cuando se da el trade ganador se corta; no se opera la segunda sesion
+tema: cartuchos.dia_termina_con_ganadora
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

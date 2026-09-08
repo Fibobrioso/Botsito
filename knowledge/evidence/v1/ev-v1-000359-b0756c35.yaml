@@ -1,0 +1,14 @@
+id: ev-v1-000359-b0756c35
+video_id: v1
+t0: 0:03:59
+t1: 0:04:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esperarías el breaker de aquí para que puedas entrar
+afirmacion: se espera el breaker para entrar
+tema: entrada.gatillo_breaker
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

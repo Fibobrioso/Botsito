@@ -1,0 +1,17 @@
+id: ev-v4-000835-782cf2cc
+video_id: v4
+t0: 0:08:35
+t1: 0:08:58
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: darle un pequeño respiro, por ejemplo [...] Exactamente aquí sería 0.75 Pero le damos un
+  pequeño respiro De un par de pips O sea, uno o dos pips [...] de 0.75 a 0.80 o que sea fijo en 0.75
+afirmacion: al 0,75 se le da un pequeno respiro de uno o dos pips; queda abierto si es 0,75 a 0,80 o fijo
+  en 0,75
+tema: stop.colchon_spread_075_080
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: A-10; segmentos con senal no_habla; la ultima frase es la pregunta del consultor
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

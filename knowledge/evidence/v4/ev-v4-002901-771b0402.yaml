@@ -1,0 +1,16 @@
+id: ev-v4-002901-771b0402
+video_id: v4
+t0: 0:29:01
+t1: 0:29:10
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: el tamaño también de la posición de tu cuenta 1%, ponías 1% y ahí lo moviendo el SL pues
+  se calculaba
+afirmacion: la calculadora que busca recalcula el lotaje con el 1 % de la cuenta al mover el stop
+tema: lotaje.calculadora_1_por_ciento
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '1'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

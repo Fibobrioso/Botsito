@@ -1,0 +1,17 @@
+id: ev-v3-004617-a20e41ab
+video_id: v3
+t0: 0:46:17
+t1: 0:46:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si tú proteges en 0.75, tienes la posibilidad de que tu curva de drawdown, o sea, no sea
+  demasiado profunda si tienes una racha perdedora [...] es por eso que también calculo el lotaje desde
+  aquí pero luego protejo desde allí
+afirmacion: proteger en 0,75 limita la profundidad del drawdown; por eso calcula el lotaje desde el extremo
+  y protege en 0,75
+tema: stop.075_por_drawdown
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

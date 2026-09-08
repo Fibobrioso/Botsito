@@ -1,0 +1,17 @@
+id: ev-v4-001909-54ac2edd
+video_id: v4
+t0: 0:19:09
+t1: 0:19:54
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
+  de control [...] es lo más probable que el precio rompa la zona de abajo y se revierta entonces por
+  lo general sólo buscamos uno
+afirmacion: 'con dos zonas de control no hay trade: lo probable es que rompa la de abajo y se revierta;
+  solo se busca una'
+tema: no_trade.dos_zonas_de_control
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

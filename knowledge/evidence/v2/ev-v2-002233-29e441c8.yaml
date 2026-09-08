@@ -1,0 +1,16 @@
+id: ev-v2-002233-29e441c8
+video_id: v2
+t0: 0:22:33
+t1: 0:22:48
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: cuando el precio está ya a punto de generar un breaker o un boss el precio suele revertirse
+  entonces en este caso podría ser lo más óptimo cerrar la entrada aquí
+afirmacion: cerrar antes de que el precio genere un breaker o BOS contrario es una opcion (no una regla)
+tema: objetivo.cierre_anticipado_abierto
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmento con duda del glosario (boss/voz)
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

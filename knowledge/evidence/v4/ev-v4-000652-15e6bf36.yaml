@@ -1,0 +1,15 @@
+id: ev-v4-000652-15e6bf36
+video_id: v4
+t0: 0:06:52
+t1: 0:07:22
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: buscamos que se desarrolle de manera rápida [...] hay un flujo de órdenes que se respeta
+  el flujo de órdenes se rompe aquí que es lo que buscamos nosotros
+afirmacion: 'busca trades rapidos: un flujo de ordenes que se respeta y luego se rompe'
+tema: entrada.flujo_respetado_se_rompe
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

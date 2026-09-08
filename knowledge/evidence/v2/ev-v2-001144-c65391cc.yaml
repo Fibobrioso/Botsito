@@ -1,0 +1,15 @@
+id: ev-v2-001144-c65391cc
+video_id: v2
+t0: 0:11:44
+t1: 0:12:00
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: este orden flow se suele perder pero yendo a m5 trabajando en m5 pues tú puedes tomar este
+  orden flow de aquí
+afirmacion: trabajando en M5 se podrian tomar las continuidades que en M1 se pierden (idea abierta)
+tema: entrada.m5_continuidad_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

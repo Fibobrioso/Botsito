@@ -1,0 +1,18 @@
+id: ev-v4-000016-8f6862dd
+video_id: v4
+t0: 0:00:16
+t1: 0:00:45
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: He estado bacteseando lo que sería el mes de este mes cogido todo enero, en las cuales,
+  como tal, las métricas me saltaron las siguientes [...] un buen rey de un 30 por ciento un total de
+  tres de 53 13 break events 12 12 profits
+afirmacion: 'backtest de enero de 2026 en FXReplay: win rate 30 %, 53 trades, 13 break evens, 12 profits'
+tema: backtest.enero_2026_metricas
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '30'
+notas: segmentos con senal no_habla; rey = win rate, tres = trades en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,15 @@
+id: ev-v1-002608-7daa95ae
+video_id: v1
+t0: 0:26:08
+t1: 0:26:35
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo por lectura de mercado sé que me va a llegar aquí, esto es algo un poco subjetivo [...]
+  pues tendría un 1.5 pero objetivamente también se hubiera cumplido el 1.3
+afirmacion: extender el objetivo por lectura de mercado es subjetivo; objetivamente se cumplio el 1:3
+tema: objetivo.extension_lectura_mercado.ejemplo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

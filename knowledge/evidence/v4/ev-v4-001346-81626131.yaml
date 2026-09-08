@@ -1,0 +1,20 @@
+id: ev-v4-001346-81626131
+video_id: v4
+t0: 0:13:46
+t1: 0:14:33
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: una zona de control Es que cuando, o sea, el precio [...] llega apenas a romper aquí aunque
+  sea mínimo pues el precio automáticamente se proteja o sea se proteja a cero y puedes dejarlo correr
+  hasta 1.3 [...] cuando existe un rompimiento de estructura es que se va a trazar el break-even, no como
+  tal cuando llegue un porcentaje del trade, sino en el rompimiento de estructura
+afirmacion: el break even se pone al romperse la estructura de la zona de control, aunque sea por lo minimo,
+  no por un porcentaje del trade
+tema: break_even.rompimiento_estructura_no_porcentaje
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: A-4; segmentos con senal no_habla; la ultima frase la resume el consultor y el trader confirma
+  (exacto)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

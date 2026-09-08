@@ -1,0 +1,15 @@
+id: ev-v3-005223-d1f80d80
+video_id: v3
+t0: 0:52:23
+t1: 0:52:32
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ya tengo la condición de que ya se ha desarrollado en M15 la liquidez, entonces yo buscaría
+  por aquí mi entrada
+afirmacion: con la liquidez de M15 desarrollada, busca la entrada
+tema: entrada.condicion_liquidez_desarrollada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,14 @@
+id: ev-v3-003800-cd020732
+video_id: v3
+t0: 0:38:00
+t1: 0:38:30
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: suelo usar un mapa de calor también para ver si hay demasiados compradores o vendedores
+afirmacion: usa un mapa de calor para ver compradores y vendedores al valorar la liquidez
+tema: herramientas.mapa_de_calor
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,14 @@
+id: ev-v4-002257-5f8fb738
+video_id: v4
+t0: 0:22:57
+t1: 0:23:09
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: aquí hay una entrada que me sacó en B, o sea, me sacaría en B porque no llega al 1.3 tampoco
+afirmacion: 'ejemplo: entrada que sale en break even (B) por no llegar al 1:3'
+tema: break_even.ejemplo_saca_en_b
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

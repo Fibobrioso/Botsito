@@ -1,0 +1,16 @@
+id: ev-v4-012117-3da98cbc
+video_id: v4
+t0: '1:21:17'
+t1: '1:21:46'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: nueva york si te das cuenta no lo toma en cuenta porque no no se suele operar como tal nueva
+  york [...] hay mayor liquidez y transacciones y demás volumen entonces influye mucho yo creo que si
+  generaría un impacto
+afirmacion: no opera Nueva York; cree que probarla cambiaria las estadisticas (abierto)
+tema: ventana.nueva_york_no_operada_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

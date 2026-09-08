@@ -1,0 +1,15 @@
+id: ev-v4-000953-65eeb874
+video_id: v4
+t0: 0:09:53
+t1: 0:10:06
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: he operado 3 con noticias y es independiente, a veces inclusive sirve a tu favor no te llega
+  a sacar
+afirmacion: ha operado trades con noticias y es independiente; a veces ayuda
+tema: herramientas.noticias_independiente
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -645,6 +645,11 @@ items:
   tema: herramientas.velas_japonesas
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:49Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000106-71637b85
 - t0: 0:01:32
   t1: 0:01:41
   modalidad: audio
@@ -655,6 +660,11 @@ items:
   tema: backtest.otros_activos
   confianza: alta
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:51Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000132-f4809fad
 - t0: 0:01:45
   t1: 0:02:05
   modalidad: audio
@@ -666,6 +676,11 @@ items:
   tema: meta.objetividad_entrada
   confianza: alta
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:52Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000145-4f490d8e
 - t0: 0:01:57
   t1: 0:02:11
   modalidad: audio
@@ -677,6 +692,11 @@ items:
   confianza: media
   notas: rc = RSI en la lectura del ASR
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:54Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000157-68798be8
 - t0: 0:02:18
   t1: 0:02:31
   modalidad: audio
@@ -687,6 +707,11 @@ items:
   tema: herramientas.marcos_temporales
   confianza: alta
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:55Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000218-200c43b1
 - t0: 0:03:10
   t1: 0:03:38
   modalidad: audio
@@ -698,6 +723,11 @@ items:
   confianza: media
   notas: el ASR escribe 22 donde el trader dice dos
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:57Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000310-2fc6581b
 - t0: 0:03:38
   t1: 0:03:52
   modalidad: audio
@@ -709,6 +739,11 @@ items:
   tema: sesgo.h4.marco_alto
   confianza: media
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:59Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000338-e280dd87
 - t0: 0:05:21
   t1: 0:05:33
   modalidad: audio
@@ -720,6 +755,11 @@ items:
   confianza: alta
   marca_heredada: V2 0:05:22
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:00Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000521-d4387274
 - t0: 0:05:41
   t1: 0:05:46
   modalidad: audio
@@ -730,6 +770,11 @@ items:
   confianza: alta
   notas: store loss = stop loss (sustitucion global del glosario)
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:02Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000541-24f9c5e1
 - t0: 0:05:47
   t1: 0:06:23
   modalidad: audio
@@ -742,6 +787,11 @@ items:
   tema: sesgo.h4.continuacion
   confianza: alta
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:03Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000547-57cefd06
 - t0: 0:08:36
   t1: 0:09:09
   modalidad: audio
@@ -754,6 +804,11 @@ items:
   tema: sesgo.h4.vela_anterior
   confianza: alta
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:05Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000836-6dbfcd6b
 - t0: 0:09:54
   t1: 0:10:14
   modalidad: audio
@@ -764,6 +819,11 @@ items:
   tema: liquidez.m15.sopa_tortuga
   confianza: alta
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:06Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000954-27188514
 - t0: 0:11:14
   t1: 0:11:37
   modalidad: audio
@@ -775,6 +835,11 @@ items:
   confianza: media
   notas: el trader se corrige al definirla
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:08Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001114-336ab46a
 - t0: 0:11:44
   t1: 0:12:00
   modalidad: audio
@@ -785,6 +850,11 @@ items:
   tema: entrada.m5_continuidad_abierto
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:09Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001144-c65391cc
 no_consta:
 - tema: objetivo
   motivo: no habla del objetivo en el tramo (lo hace en 0:16:58)

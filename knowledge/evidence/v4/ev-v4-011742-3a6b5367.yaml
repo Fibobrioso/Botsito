@@ -1,0 +1,17 @@
+id: ev-v4-011742-3a6b5367
+video_id: v4
+t0: '1:17:42'
+t1: '1:18:27'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Solo operando de 11 a 3 de la tarde Estos son los resultados que me soltó 18 trades, 4 positivos
+  Y 9 negativos 5 break events [...] a final de mes se hubiera hecho un 5.25 [...] una pérdida máxima
+  de 3 trades
+afirmacion: 'backtest de agosto solo 11-15: 18 trades, 4 positivos, 9 negativos, 5 break evens, +5,25
+  %, racha maxima de 3'
+tema: backtest.agosto_11_a_15
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

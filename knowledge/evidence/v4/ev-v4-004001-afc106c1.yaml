@@ -1,0 +1,16 @@
+id: ev-v4-004001-afc106c1
+video_id: v4
+t0: 0:40:01
+t1: 0:40:36
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no es posible, mejor dicho, que haya dos entradas en el mismo caso, en el mismo trade, O
+  sea, 2.3 en la misma posición Por el hecho de que o bien te termina en profit O bien te saca en stop
+  loss
+afirmacion: 'no hay dos entradas en la misma posicion: la primera acaba en profit o en stop'
+tema: cartuchos.una_posicion_a_la_vez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v4-012401-ebd1175d
+video_id: v4
+t0: '1:24:01'
+t1: '1:24:23'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: podemos probarlo de 7 a a ver, si tú puedes extender o sea, el horario y demás, pues genial
+  [...] probarlo de 3 a 7 de la noche o sea, hora España
+afirmacion: 'idea abierta: probar el mismo modelo de 15 a 19 hora de Espana'
+tema: ventana.probar_15_a_19_abierto
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

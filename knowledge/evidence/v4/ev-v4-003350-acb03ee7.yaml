@@ -1,0 +1,16 @@
+id: ev-v4-003350-acb03ee7
+video_id: v4
+t0: 0:33:50
+t1: 0:34:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces en un día como máximo dos entradas ¿no? por separado es un buen punto sí, dos entradas
+afirmacion: 'confirma: como maximo dos entradas por dia, por separado'
+tema: cartuchos.dos_entradas_por_dia
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: dos
+notas: el consultor pregunta y el trader confirma; A-2
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v2-001702-5cb3bcb3
+video_id: v2
+t0: 0:17:02
+t1: 0:17:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: mi break-even se ha definido más que nada como te digo, por el desarrollo de una zona de
+  control, o sea que después del break el precio retroceda y rompa y me genera ese bloque
+afirmacion: 'el break even se define por el desarrollo de una zona de control: tras el break, el precio
+  retrocede y rompe generando un bloque'
+tema: break_even.definicion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

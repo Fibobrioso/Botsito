@@ -1,0 +1,16 @@
+id: ev-v2-002626-15a48f20
+video_id: v2
+t0: 0:26:26
+t1: 0:26:40
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: genera un breaker en el que apenas generó el breaker te diriges a m1 y buscas lo que sería
+  el boss
+afirmacion: apenas M15 genera el breaker, se va a M1 a buscar el BOS
+tema: entrada.secuencia_breaker_m15_bos_m1
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmento con duda del glosario (boss/voz)
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

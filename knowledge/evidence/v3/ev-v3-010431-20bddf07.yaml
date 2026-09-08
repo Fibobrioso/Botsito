@@ -1,0 +1,16 @@
+id: ev-v3-010431-20bddf07
+video_id: v3
+t0: '1:04:31'
+t1: '1:04:42'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: con el M1 hay mucho ruido, es por eso que yo no busco, o sea, yo lo que busco es un bus
+  en M1, no busco una entrada, o sea, tomar el flujo de órdenes aquí y demás
+afirmacion: en M1 solo busca el BOS, no opera el flujo de ordenes porque hay mucho ruido
+tema: entrada.m1_solo_bos
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: bus = BOS en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -825,6 +825,11 @@ items:
   tema: meta.componentes_del_modelo
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:13Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000030-94d71563
 - t0: 0:00:58
   t1: 0:01:36
   modalidad: audio
@@ -839,6 +844,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla (transicion del video)
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:14Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000058-7b5ce480
 - t0: 0:01:36
   t1: 0:01:49
   modalidad: audio
@@ -852,6 +862,11 @@ items:
   notas: 'candidato A-9 (anclaje de la vela H4): UTC+2 es el huso del grafico, no dice a que hora abre
     su H4'
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000136-6160fcea
 - t0: 0:01:38
   t1: 0:01:44
   modalidad: pantalla
@@ -866,6 +881,11 @@ items:
   marca_heredada: Ficha del trader (Word), fila 1
   notas: lo que se lee en pantalla; el usuario decide fila a fila (brief F07, decision 14)
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+  decidido_el: '2026-09-08T01:03:18Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v3-000138-567dc5d7
 - t0: 0:01:38
   t1: 0:01:44
   modalidad: pantalla
@@ -880,6 +900,11 @@ items:
   confianza: media
   marca_heredada: Ficha del trader (Word), fila 2
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+  decidido_el: '2026-09-08T01:03:19Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v3-000138-8399c18a
 - t0: 0:01:38
   t1: 0:01:44
   modalidad: pantalla
@@ -894,6 +919,11 @@ items:
   marca_heredada: Ficha del trader (Word), fila 6
   notas: 'A-2: en V4 0:48:41 dice que limita a 3'
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+  decidido_el: '2026-09-08T01:03:21Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v3-000138-fc8f7905
 - t0: 0:01:57
   t1: 0:02:20
   modalidad: audio
@@ -906,6 +936,11 @@ items:
   confianza: alta
   notas: 'candidato A-9: sus velas H4 abren a las 7 y a las 11 en el reloj del grafico (UTC+2)'
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000157-b26147c7
 - t0: 0:02:34
   t1: 0:02:40
   modalidad: audio
@@ -915,6 +950,11 @@ items:
   tema: ventana.nueva_york_corregido
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:24Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000234-f125ef6d
 - t0: 0:02:48
   t1: 0:03:04
   modalidad: audio
@@ -925,6 +965,11 @@ items:
   tema: ventana.otras_horas_abierto
   confianza: media
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:26Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000248-d9086794
 - t0: 0:05:31
   t1: 0:05:55
   modalidad: audio
@@ -936,6 +981,11 @@ items:
   tema: sesgo.h4.vela_previa_cerrada
   confianza: alta
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000531-4d6375b6
 - t0: 0:06:06
   t1: 0:06:55
   modalidad: audio
@@ -949,6 +999,11 @@ items:
   confianza: media
   notas: pregunta del consultor y respuesta del trader; voz/bosque = BOS en la lectura del ASR
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:29Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000606-f2aff599
 - t0: 0:07:16
   t1: 0:07:47
   modalidad: audio
@@ -961,6 +1016,11 @@ items:
   tema: sesgo.h4.vela_por_vela
   confianza: alta
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000716-85934bae
 - t0: 0:08:24
   t1: 0:08:52
   modalidad: audio
@@ -974,6 +1034,11 @@ items:
   confianza: alta
   notas: A-1 (que vuelve alcista una H4)
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:32Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-000824-c81f03eb
 - t0: 0:10:01
   t1: 0:10:31
   modalidad: audio
@@ -985,6 +1050,11 @@ items:
   tema: sesgo.h4.vela_anterior_da_direccion
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:34Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001001-b5a5aa23
 - t0: 0:11:22
   t1: 0:11:36
   modalidad: audio
@@ -997,6 +1067,11 @@ items:
   marca_heredada: V3 0:11:29
   notas: segmentos con duda del glosario (boss); shot = CHoCH en la lectura del ASR
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:35Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001122-364413bd
 - t0: 0:12:04
   t1: 0:12:34
   modalidad: audio
@@ -1007,6 +1082,11 @@ items:
   tema: liquidez.m15.flujo_correcto
   confianza: alta
   n: 16
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:37Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001204-889179d2
 - t0: 0:12:42
   t1: 0:13:00
   modalidad: audio
@@ -1017,6 +1097,11 @@ items:
   tema: liquidez.m15.alto_mas_alto_en_pullback
   confianza: alta
   n: 17
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:39Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-001242-cbe6bdc3
 no_consta:
 - tema: stop
   motivo: no habla del stop en el tramo

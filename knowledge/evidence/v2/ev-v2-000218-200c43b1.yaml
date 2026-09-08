@@ -1,0 +1,15 @@
+id: ev-v2-000218-200c43b1
+video_id: v2
+t0: 0:02:18
+t1: 0:02:31
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: hipótesis de multi temporalidad pues la integración de los marcos temporales de 4 horas
+  15 minutos y un minuto
+afirmacion: 'el modelo integra tres marcos temporales: 4 horas, 15 minutos y 1 minuto'
+tema: herramientas.marcos_temporales
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,16 @@
+id: ev-v1-001807-70c9ccfe
+video_id: v1
+t0: 0:18:07
+t1: 0:18:29
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Yo prefiero ser más conservador [...] que los trades sean rápidos [...] o que me genere
+  una zona de control para yo poner mi break even
+afirmacion: 'prefiere ser conservador: busca trades rapidos y pone el break even cuando se genera la zona
+  de control'
+tema: break_even.zona_control
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

@@ -1,0 +1,16 @@
+id: ev-v1-000448-346d6d90
+video_id: v1
+t0: 0:04:48
+t1: 0:04:58
+modalidad: audio
+tipo: PARAMETER
+cita_literal: trazar el cuadro de GAN para poder, desde aquí hasta aquí, para poder cubrir hasta un 0.75,
+  entonces aquí perderíamos menos un 0.75
+afirmacion: 'con el cuadro de Gann se cubre hasta el 0,75: la perdida es de -0,75'
+tema: stop.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

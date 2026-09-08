@@ -1,0 +1,14 @@
+id: ev-v4-005251-5cd62aaa
+video_id: v4
+t0: 0:52:51
+t1: 0:53:04
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aquí nuevamente tienes otra zona si está en el mismo en la misma sesión pues sigue buscando
+afirmacion: si aparece otra zona dentro de la misma sesion, sigue buscando
+tema: cartuchos.misma_sesion_sigue_buscando
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

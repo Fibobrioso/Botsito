@@ -1,0 +1,15 @@
+id: ev-v1-002334-df85531a
+video_id: v1
+t0: 0:23:34
+t1: 0:23:46
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: aquí no menos 0 75 aquí menos 0 50 vale y aquí pues menos 0 50
+afirmacion: 'segunda sesion del 20 de agosto: perdidas de -0,75, -0,50 y -0,50'
+tema: backtest.resultado_20260820_sesion2
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el ASR separa las cifras (0 75 = 0,75)
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

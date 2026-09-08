@@ -1,0 +1,16 @@
+id: ev-v3-005147-53e7d7e4
+video_id: v3
+t0: 0:51:47
+t1: 0:52:00
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: esta sería mi orden límite que no llega a romperlo entonces no hay entrada aquí no hay entrada
+  tampoco o sea por más que rompa eso no hay entrada porque como digo si lo mapeas de esta manera
+afirmacion: si la orden limite no llega a romperse no hay entrada, aunque el precio rompa mas tarde, porque
+  el mapeo rompe el esquema
+tema: no_trade.esquema_roto_por_mapeo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

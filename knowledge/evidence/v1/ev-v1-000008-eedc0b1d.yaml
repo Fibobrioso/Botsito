@@ -1,0 +1,14 @@
+id: ev-v1-000008-eedc0b1d
+video_id: v1
+t0: 0:00:08
+t1: 0:00:20
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: hoy día acabo de iniciar con lo de la prueba de fondeo
+afirmacion: el 20 de agosto de 2026 el trader acaba de iniciar la prueba de fondeo
+tema: riesgo.fondeo.inicio
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

@@ -1,0 +1,19 @@
+id: ev-v3-005735-f24a4bdf
+video_id: v3
+t0: 0:57:35
+t1: 0:58:56
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: límite estricto de dos cartuchos por barrido de liquidez es que es correcto si ambos se
+  pierden escenario invalidado y se espera el desarrollo nuevamente de liquidez para poder seguir operando
+  durante un beneficio objetivo mínimo 1 a 3 un rey esperado 40 55 si parciales del 30 40 por ciento de
+  volumen a llevar a la liquidez opuesta en m15
+afirmacion: 'lee la ficha: dos cartuchos por barrido de liquidez, correcto; objetivo minimo 1 a 3; win
+  rate esperado 40-55; parciales del 30-40 % hacia la liquidez opuesta en M15'
+tema: cartuchos.ficha_lectura_confirmada
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: lectura de la ficha en voz alta (rey = win rate); los parciales los matiza en 0:58:56 y 1:02:54
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

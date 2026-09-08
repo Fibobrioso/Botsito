@@ -1,0 +1,17 @@
+id: ev-v3-011045-a185d2ba
+video_id: v3
+t0: '1:10:45'
+t1: '1:11:21'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para yo puedo poder considerar alcista esta vela de h4 aquí esta vela de aquí me dio de
+  haber terminado por encima de esta y el color verde ahora está así la la siguiente sería alcista también
+  [...] como termina por debajo sería bajista y así continuamente
+afirmacion: para considerar alcista una vela H4 debe terminar por encima de la anterior; si termina por
+  debajo, bajista
+tema: sesgo.h4.cambio_exige_cierre_encima
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,16 @@
+id: ev-v3-005405-7f27c4ba
+video_id: v3
+t0: 0:54:05
+t1: 0:54:23
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Marcar, por ejemplo, si tengo esta zona de liquidez de aquí a aquí y veo que el precio me
+  va a este, puedo maximizarlo hasta 0.50. Suelo usar el 0.50
+afirmacion: para maximizar el objetivo usa el nivel 0,50 de la zona de liquidez
+tema: objetivo.maximizar_hasta_050_liquidez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

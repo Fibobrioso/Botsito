@@ -1,0 +1,16 @@
+id: ev-v4-001009-1d56317b
+video_id: v4
+t0: 0:10:09
+t1: 0:10:21
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: este trade está fuera de horario pero ya si, o sea, ya de por si también se puede tomar
+  o sea, tomas el como vayas lo que ha hecho la vela anterior y se opera
+afirmacion: un trade fuera de horario tambien se podria tomar con la vela anterior como sesgo (no es su
+  regla)
+tema: ventana.fuera_horario_posible
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

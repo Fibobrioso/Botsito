@@ -1,0 +1,15 @@
+id: ev-v1-001507-67aad703
+video_id: v1
+t0: 0:15:07
+t1: 0:15:30
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: El precio, cuando me genera estos dos esquemas que yo busco [...] genere rompimiento, retroceda
+afirmacion: busca dos esquemas de entrada; tras el rompimiento el precio suele retroceder
+tema: entrada.dos_esquemas
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: no describe aqui los dos esquemas
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

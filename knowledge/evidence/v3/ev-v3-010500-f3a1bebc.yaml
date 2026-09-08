@@ -1,0 +1,15 @@
+id: ev-v3-010500-f3a1bebc
+video_id: v3
+t0: '1:05:00'
+t1: '1:05:10'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: considerando las mechas, o sea, si parto desde aquí, sería, este es el punto más bajo
+afirmacion: el mapeo en M1 considera las mechas y parte del punto mas bajo
+tema: mapeo.m1.siempre_mechas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: mecha
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

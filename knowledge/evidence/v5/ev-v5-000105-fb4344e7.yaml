@@ -1,0 +1,15 @@
+id: ev-v5-000105-fb4344e7
+video_id: v5
+t0: 0:01:05
+t1: 0:01:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: quita liquidez por encima de ese alto de aquí, como lo hace con cuerpo
+afirmacion: la liquidez de M15 se toma por encima del alto y con cuerpo
+tema: liquidez.m15.toma_con_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: cuerpo
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

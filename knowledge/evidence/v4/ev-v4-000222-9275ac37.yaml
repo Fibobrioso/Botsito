@@ -1,0 +1,16 @@
+id: ev-v4-000222-9275ac37
+video_id: v4
+t0: 0:02:22
+t1: 0:02:43
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nos vamos a 4 h 4 había seguimos un flujo alcista o sea el vallas es directivo el vallas
+  es bajista en alcista perdón entonces para el primer la primera sesión que sería de 7 a 11
+afirmacion: en H4 el bias (alcista) dirige la primera sesion, de 7 a 11
+tema: sesgo.h4.bias_sesion
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: vallas = bias en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

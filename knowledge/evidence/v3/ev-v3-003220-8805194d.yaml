@@ -1,0 +1,16 @@
+id: ev-v3-003220-8805194d
+video_id: v3
+t0: 0:32:20
+t1: 0:32:48
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: yo trato de ser objetivo en los tepes que yo planteo [...] pero yo iría aquí si protegiendo
+  protegiendo diría poco a poco si veo que hay un flujo de velas alcistas
+afirmacion: plantea TPs objetivos; si quiere ir mas lejos, protege poco a poco siguiendo el flujo de velas
+tema: objetivo.tp_objetivo_y_proteccion_progresiva
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla; tepes = TPs (sustitucion global del glosario)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

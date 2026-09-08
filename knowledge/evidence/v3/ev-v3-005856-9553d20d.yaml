@@ -1,0 +1,14 @@
+id: ev-v3-005856-9553d20d
+video_id: v3
+t0: 0:58:56
+t1: 0:59:12
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: lo de toma de parciales es un buen punto pero creo que lo podríamos evaluar al final
+afirmacion: los parciales se evaluaran al final
+tema: parciales.evaluar_al_final
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

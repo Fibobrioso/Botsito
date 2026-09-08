@@ -1,0 +1,16 @@
+id: ev-v4-005151-9d01b060
+video_id: v4
+t0: 0:51:51
+t1: 0:52:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tenemos 12 no se decidimos detener en 23 esperaríamos a que se desarrolle otra otra zona
+  nuevamente digamos las y más limpia en m15 [...] ya tenemos 1, 2 stop loss hubiéramos esperado a que
+  el precio me desarrolle nuevamente en M15, otra zona de liquidez
+afirmacion: con dos stops se detiene y espera otra zona de liquidez mas limpia en M15
+tema: cartuchos.detener_y_esperar_zona_limpia
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

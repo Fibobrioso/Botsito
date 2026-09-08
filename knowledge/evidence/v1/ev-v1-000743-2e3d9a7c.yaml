@@ -1,0 +1,18 @@
+id: ev-v1-000743-2e3d9a7c
+video_id: v1
+t0: 0:07:43
+t1: 0:07:58
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: como objetivo fijo pues está el 13 que se cumplió rápidamente [...] me hubiera salido en
+  13 no por lectura de mercado
+afirmacion: el objetivo fijo es 1:3; salir mas alla seria por lectura de mercado, que el trader no aplica
+  como regla
+tema: objetivo.extension_lectura_mercado
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: 13 es la lectura del ASR de uno a tres; la extension queda como discrecional (A-3 / lista de ambiguedades
+  del informe)
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

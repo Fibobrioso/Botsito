@@ -1,0 +1,15 @@
+id: ev-v2-005910-d9cd4994
+video_id: v2
+t0: 0:59:10
+t1: 0:59:27
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: la última prueba de fondeo que la realice hace un par de años [...] me quedé en un 7% sano
+  me Me comí un drawdown terrible
+afirmacion: su ultima prueba de fondeo, hace un par de anos, acabo con un drawdown terrible
+tema: riesgo.fondeo.historial
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

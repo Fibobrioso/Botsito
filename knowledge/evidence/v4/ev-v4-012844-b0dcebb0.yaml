@@ -1,0 +1,16 @@
+id: ev-v4-012844-b0dcebb0
+video_id: v4
+t0: '1:28:44'
+t1: '1:28:52'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: cualquier día que opere Simplemente graba tu pantalla, no tienes que hablar Ni explicar
+  nada, solo graba tu pantalla Y que salga tu operativo en vivo
+afirmacion: el consultor pide grabar la pantalla en cada dia que opere
+tema: meta.grabar_operativa_en_vivo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: habla el consultor; el trader acepta
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

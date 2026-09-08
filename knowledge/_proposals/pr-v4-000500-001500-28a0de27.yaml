@@ -1259,6 +1259,11 @@ items:
   valor: '0.50'
   confianza: alta
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:46Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000508-0ce0adf1
 - t0: 0:05:30
   t1: 0:05:43
   modalidad: audio
@@ -1269,6 +1274,11 @@ items:
   tema: stop.proteger_050_apenas_abierto
   confianza: alta
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:48Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000530-c44e3210
 - t0: 0:05:43
   t1: 0:05:57
   modalidad: audio
@@ -1281,6 +1291,11 @@ items:
   marca_heredada: V4 0:05:42
   notas: un segmento con senal no_habla
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:50Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000543-e013f552
 - t0: 0:05:57
   t1: 0:06:11
   modalidad: audio
@@ -1292,6 +1307,11 @@ items:
   confianza: media
   notas: habla el consultor; split = spread (duda del glosario); segmentos con senal no_habla
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:52Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000557-48197c0f
 - t0: 0:06:11
   t1: 0:06:46
   modalidad: audio
@@ -1303,6 +1323,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:54Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000611-401b6978
 - t0: 0:06:52
   t1: 0:07:22
   modalidad: audio
@@ -1313,6 +1338,11 @@ items:
   tema: entrada.flujo_respetado_se_rompe
   confianza: alta
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:56Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000652-15e6bf36
 - t0: 0:07:25
   t1: 0:07:41
   modalidad: audio
@@ -1326,6 +1356,11 @@ items:
   valor: '0.75'
   confianza: alta
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:58Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000725-1dbe4a59
 - t0: 0:07:57
   t1: 0:08:06
   modalidad: audio
@@ -1336,6 +1371,11 @@ items:
   tema: stop.spread_no_influye
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:59Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000757-bdb9579b
 - t0: 0:08:13
   t1: 0:08:21
   modalidad: ambas
@@ -1351,6 +1391,11 @@ items:
   confianza: media
   notas: habla el consultor leyendo la caja de Gann de la pantalla (FXReplay, 30 de enero)
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+  decidido_el: '2026-09-08T01:07:01Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v4-000813-c916eac6
 - t0: 0:08:25
   t1: 0:08:33
   modalidad: audio
@@ -1362,6 +1407,11 @@ items:
   confianza: media
   notas: habla el consultor; sprint = spread (duda del glosario); segmentos con senal no_habla
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:03Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000825-8c52c220
 - t0: 0:08:35
   t1: 0:08:58
   modalidad: audio
@@ -1376,6 +1426,11 @@ items:
   marca_heredada: V4 0:08:39
   notas: A-10; segmentos con senal no_habla; la ultima frase es la pregunta del consultor
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:05Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000835-782cf2cc
 - t0: 0:08:58
   t1: 0:09:26
   modalidad: audio
@@ -1387,6 +1442,11 @@ items:
   confianza: media
   notas: el consultor plantea, el trader confirma; split = spread (duda del glosario)
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:07Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000858-4e50f00c
 - t0: 0:09:33
   t1: 0:09:36
   modalidad: audio
@@ -1397,6 +1457,11 @@ items:
   confianza: alta
   notas: no queda claro quien lo dice (consultor o trader)
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:11Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000933-dcb216d8
 - t0: 0:09:53
   t1: 0:10:06
   modalidad: audio
@@ -1407,6 +1472,11 @@ items:
   tema: herramientas.noticias_independiente
   confianza: alta
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:13Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000953-65eeb874
 - t0: 0:10:09
   t1: 0:10:21
   modalidad: audio
@@ -1418,6 +1488,11 @@ items:
   tema: ventana.fuera_horario_posible
   confianza: alta
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:15Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001009-1d56317b
 - t0: 0:10:27
   t1: 0:10:56
   modalidad: audio
@@ -1429,6 +1504,11 @@ items:
   confianza: media
   notas: segmento con senal no_habla
   n: 16
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001027-1b74d1a6
 - t0: 0:10:27
   t1: 0:10:58
   modalidad: audio
@@ -1440,6 +1520,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 17
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:18Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001027-86aa2a36
 - t0: 0:11:02
   t1: 0:11:20
   modalidad: audio
@@ -1452,6 +1537,11 @@ items:
   confianza: media
   notas: segmentos con senal no_habla
   n: 18
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:20Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001102-d3aba35e
 - t0: 0:11:52
   t1: 0:12:00
   modalidad: audio
@@ -1462,6 +1552,11 @@ items:
   tema: stop.margen_con_noticias_bien
   confianza: alta
   n: 19
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001152-6e644468
 - t0: 0:12:07
   t1: 0:12:21
   modalidad: audio
@@ -1475,6 +1570,11 @@ items:
   marca_heredada: V4 0:12:30 (audio)
   notas: 'A-11: el consultor pregunta y el trader responde'
   n: 20
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:24Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001207-0c4ffd4b
 - t0: 0:12:21
   t1: 0:12:45
   modalidad: ambas
@@ -1492,6 +1592,11 @@ items:
   notas: habla el consultor y el trader acepta (me parece bien); en pantalla la caja con el 0,75 = 1,19537
     (fotograma obligatorio de F05); split = spread (duda del glosario)
   n: 21
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+  decidido_el: '2026-09-08T01:07:25Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v4-001221-1e66b5fd
 - t0: 0:13:46
   t1: 0:14:33
   modalidad: audio
@@ -1508,6 +1613,11 @@ items:
   notas: A-4; segmentos con senal no_habla; la ultima frase la resume el consultor y el trader confirma
     (exacto)
   n: 22
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:07:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-001346-81626131
 no_consta:
 - tema: liquidez
   motivo: no habla de la liquidez en el tramo

@@ -1,0 +1,15 @@
+id: ev-v1-000414-825d71a4
+video_id: v1
+t0: 0:04:14
+t1: 0:04:31
+modalidad: audio
+tipo: PARAMETER
+cita_literal: planteas el 1.3, 1.3 como objetivo fijo, como objetivo fijo y mínimo
+afirmacion: el objetivo fijo y minimo es 1:3 (el ASR escribe 1.3)
+tema: objetivo.rr
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '1.3'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

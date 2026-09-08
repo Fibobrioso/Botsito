@@ -1,0 +1,17 @@
+id: ev-v3-001952-a3276d86
+video_id: v3
+t0: 0:19:52
+t1: 0:20:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo tengo una regla muy específica para poder definir lo que sería mi break even [...] una
+  vez roto el flujo de órdenes, pues me desarrolla una zona, yo los llamo zona de control [...] una vez
+  se complete esa, inmediatamente se tiene que poner en break even la entrada, inmediatamente
+afirmacion: 'regla del break even: roto el flujo de ordenes se desarrolla la zona de control; al completarse,
+  la entrada pasa inmediatamente a break even'
+tema: break_even.regla_zona_control_inmediato
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

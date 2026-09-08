@@ -1,0 +1,16 @@
+id: ev-v2-003226-b5a5c19e
+video_id: v2
+t0: 0:32:26
+t1: 0:32:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en 0.75 lo que tú haces estás ya protegiendo un 0.25 del capital cuida también lo que sería
+  tu curva de drawdown [...] ya no es lo mismo perder un 1% a perder solo 0.75
+afirmacion: con el stop en 0,75 se protege 0,25 del capital y se cuida la curva de drawdown
+tema: stop.proteger_025_capital
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.25'
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

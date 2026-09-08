@@ -1,0 +1,16 @@
+id: ev-v3-001908-9fa09636
+video_id: v3
+t0: 0:19:08
+t1: 0:19:47
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: tú vas marcando lo que sea al límite de mercado pues la posible entrada obviamente si tú
+  tratas de seguir el flujo [...] tú vas moviendo se va moviendo vamos viendo hasta que se rompa
+afirmacion: la orden limite se va moviendo siguiendo el flujo hasta que se rompa
+tema: entrada.orden_limite.sigue_flujo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: A-5 (cadencia de reubicacion)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

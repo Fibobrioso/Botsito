@@ -1,0 +1,16 @@
+id: ev-v1-001958-282fb666
+video_id: v1
+t0: 0:19:58
+t1: 0:20:28
+modalidad: audio
+tipo: PARAMETER
+cita_literal: voy reduciendo un poquito más, no lo dejo por encima del 0.25
+afirmacion: al reducir el stop no lo deja por encima del 0,25
+tema: stop.reduccion_limite_025
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.25'
+notas: frase suelta dentro de un segmento largo; el nivel 0,25 no se explica
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

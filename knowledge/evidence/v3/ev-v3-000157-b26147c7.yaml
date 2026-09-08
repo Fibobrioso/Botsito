@@ -1,0 +1,17 @@
+id: ev-v3-000157-b26147c7
+video_id: v3
+t0: 0:01:57
+t1: 0:02:20
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Aquí empieza a las 7, termina a las 11 y luego tenemos, sí, hasta las 3 de la tarde [...]
+  la siguiente vela de H4 se desarrolla a las 7 de la mañana, finaliza a las 11, luego la otra vela se
+  desarrolla a las 11 y finaliza a las 3 [...] diría que es un sí a la ventana operativa
+afirmacion: 'confirma la ventana: dos velas H4, de 7 a 11 y de 11 a 3 (hora de su grafico)'
+tema: ventana.velas_h4_7_11_15
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 'candidato A-9: sus velas H4 abren a las 7 y a las 11 en el reloj del grafico (UTC+2)'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

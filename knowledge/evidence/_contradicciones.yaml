@@ -1,3 +1,21 @@
 # GENERADO por `botsito evidence contradictions`. No editar a mano.
 # Se cierra una contradiccion con un registro de feedback que supersede a un item (F09).
-contradicciones: []
+contradicciones:
+- estado: ABIERTA
+  items:
+  - id: ev-v1-000448-346d6d90
+    t0: 0:04:48
+    valor: '0.75'
+    video_id: v1
+  - id: ev-v2-003142-beb4ad3c
+    t0: 0:31:42
+    valor: '0.75'
+    video_id: v2
+  - id: ev-v5-000312-f5062062
+    t0: 0:03:12
+    valor: '0.80'
+    video_id: v5
+  tema: stop.nivel
+  valores:
+  - '0.75'
+  - '0.8'

@@ -1,0 +1,15 @@
+id: ev-v4-004447-bc2e74ee
+video_id: v4
+t0: 0:44:47
+t1: 0:44:56
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: en el segundo esquema De entrada, si se da Lo respetas allí y te genera la otra zona de
+  control Y luego pones en break even Y te termina sacando en break even
+afirmacion: en el segundo esquema, cuando se genera la otra zona de control se pone el break even
+tema: break_even.otra_zona_control_esquema2
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

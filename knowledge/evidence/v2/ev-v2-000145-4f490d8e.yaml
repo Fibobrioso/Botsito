@@ -1,0 +1,16 @@
+id: ev-v2-000145-4f490d8e
+video_id: v2
+t0: 0:01:45
+t1: 0:02:05
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la subjetividad entra en lo que sería la gestión de riesgo pero en cuanto a la toma de entrada
+  [...] lo más objetivo posible
+afirmacion: la toma de entrada debe ser lo mas objetiva posible; la subjetividad queda en la gestion del
+  riesgo
+tema: meta.objetividad_entrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

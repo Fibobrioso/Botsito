@@ -1,0 +1,16 @@
+id: ev-v5-000219-bc86af3d
+video_id: v5
+t0: 0:02:19
+t1: 0:02:33
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: hay casos donde no llega hasta el 080 o sea sino que lo cae pero lo usual o sea en la mayoría
+  de casos pues suele retroceder
+afirmacion: lo usual es que el precio retroceda tras activar la entrada; a veces no llega hasta el 0,80
+tema: stop.retroceso_hasta_080
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el ASR escribe 080 donde el trader dice 0,80 (mismo nivel que el SL por defecto de 0:03:23)
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

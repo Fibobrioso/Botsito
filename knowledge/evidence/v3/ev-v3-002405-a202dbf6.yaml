@@ -1,0 +1,17 @@
+id: ev-v3-002405-a202dbf6
+video_id: v3
+t0: 0:24:05
+t1: 0:24:24
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nuevamente tiene todavía un gatillo, o sea, un cartucho, bueno, un cartucho, que sería esta
+  entrada de aquí y luego esperar a que si no sea esta entrada que desarrolle otra zona de liquidez en
+  M15 y nuevamente hacer lo mismo
+afirmacion: tras una perdida queda un cartucho; si tampoco se da, se espera otra zona de liquidez en M15
+  y se repite
+tema: cartuchos.segundo_o_nueva_liquidez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

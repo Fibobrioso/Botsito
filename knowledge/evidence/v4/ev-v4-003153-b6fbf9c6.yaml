@@ -1,0 +1,17 @@
+id: ev-v4-003153-b6fbf9c6
+video_id: v4
+t0: 0:31:53
+t1: 0:32:06
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: el stop loss estaría por aquí entonces no estamos ya protegiendo el 0.75 sino estamos protegiendo
+  bueno, que se yo casi mitad de la entrada o un poco más 0.60 por ahí
+afirmacion: 'ejemplo del segundo esquema: el stop queda protegiendo casi la mitad de la entrada, 0,60
+  aproximadamente'
+tema: stop.ejemplo_060_segundo_esquema
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

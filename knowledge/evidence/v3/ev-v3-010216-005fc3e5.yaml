@@ -1,0 +1,15 @@
+id: ev-v3-010216-005fc3e5
+video_id: v3
+t0: '1:02:16'
+t1: '1:02:28'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: prefiero perder 0.50 a que se yo a que sé que estadísticamente el trade se va a voltear
+afirmacion: prefiere perder 0,50 cuando estadisticamente el trade se va a dar la vuelta
+tema: stop.preferir_perder_050
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

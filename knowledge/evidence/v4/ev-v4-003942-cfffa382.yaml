@@ -1,0 +1,16 @@
+id: ev-v4-003942-cfffa382
+video_id: v4
+t0: 0:39:42
+t1: 0:40:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en M15 nosotros buscamos que la liquidez cuando Cuando hay el breaker de liquidez, o sea,
+  la mitigación de liquidez, sea con cuerpo [...] en M1 ya se trata de otra manera diferente
+afirmacion: en M15 la mitigacion de liquidez es con cuerpo; en M1 se trata de otra manera
+tema: liquidez.m15.mitigacion_con_cuerpo
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

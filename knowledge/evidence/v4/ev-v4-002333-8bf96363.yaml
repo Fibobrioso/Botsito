@@ -1,0 +1,17 @@
+id: ev-v4-002333-8bf96363
+video_id: v4
+t0: 0:23:33
+t1: 0:24:01
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tengo 1, 2, 3 perdidos pues lo que hago es no operar, bueno, hasta un tercer trade suelo
+  hacer o sea, suelo hacer hasta un tercer trade [...] otra pérdida entonces yo me detengo allí
+afirmacion: suele hacer hasta un tercer trade; con tres perdidas se detiene
+tema: cartuchos.hasta_tercer_trade
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '3'
+notas: A-2 (2 en la ficha frente a 3 aqui)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

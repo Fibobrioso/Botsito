@@ -1,0 +1,14 @@
+id: ev-v4-002915-cd7a198a
+video_id: v4
+t0: 0:29:15
+t1: 0:29:22
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta es la última zona de liquidez o de control en la cual busco el breaker
+afirmacion: busca el breaker en la ultima zona de liquidez o de control
+tema: zona_control.ultima_zona_busca_breaker
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

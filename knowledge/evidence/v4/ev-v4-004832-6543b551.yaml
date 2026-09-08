@@ -1,0 +1,18 @@
+id: ev-v4-004832-6543b551
+video_id: v4
+t0: 0:48:32
+t1: 0:48:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: los breakeven no se cuenta o sea, si te saca un breakeven es un trade que, o sea, es como,
+  por así decirlo tienes un cartucho todavía para poder seguir operando [...] yo sinceramente limito a
+  3 o sea, a 3, por ejemplo entonces, porque mi RR es de 1 a 3
+afirmacion: un break even no consume cartucho; limita a 3 intentos porque su RR es 1 a 3
+tema: cartuchos.limite_3_breakeven_no_cuenta
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '3'
+notas: 'A-2 (ficha: 2)'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

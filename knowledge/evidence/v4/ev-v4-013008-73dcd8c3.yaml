@@ -1,0 +1,18 @@
+id: ev-v4-013008-73dcd8c3
+video_id: v4
+t0: '1:30:08'
+t1: '1:30:59'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: solo sería agregar un modelo de entrada más, o sea, no un modelo, sino un esquema de entrada
+  más [...] el tercer esquema de entrada sería que el precio llegue aquí o sea tienes tu un flujo de órdenes
+  en m1 entonces tienes el desarrollo aquí de una zona de control antes que se desarrolle esta zona de
+  control pues operar
+afirmacion: 'propone un tercer esquema de entrada: operar en el flujo de M1 antes de que se desarrolle
+  la zona de control'
+tema: entrada.esquema3_propuesto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

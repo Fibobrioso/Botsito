@@ -1,0 +1,17 @@
+id: ev-v3-000138-fc8f7905
+video_id: v3
+t0: 0:01:38
+t1: 0:01:44
+modalidad: pantalla
+tipo: RULE_STATEMENT
+cita_literal: 'Ficha, fila con el cursor: Límite estricto de 2 cartuchos | Si'
+afirmacion: en la ficha de Word el trader confirma un limite estricto de 2 cartuchos
+tema: cartuchos.ficha_limite_2
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: bot-v2
+fotogramas:
+- fr-v3-982da728/101000
+valor: '2'
+notas: 'A-2: en V4 0:48:41 dice que limita a 3'

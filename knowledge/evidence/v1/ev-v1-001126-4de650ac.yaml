@@ -1,0 +1,15 @@
+id: ev-v1-001126-4de650ac
+video_id: v1
+t0: 0:11:26
+t1: 0:11:37
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si suelta que las dos sesiones se tiene que operar pues genial o si suelta que es mejor
+  cerrar cuando se opere
+afirmacion: operar las dos sesiones o cerrar tras la ganadora lo decidiran los datos
+tema: cartuchos.dos_sesiones_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

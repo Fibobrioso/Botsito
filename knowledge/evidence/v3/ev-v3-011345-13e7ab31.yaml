@@ -1,0 +1,15 @@
+id: ev-v3-011345-13e7ab31
+video_id: v3
+t0: '1:13:45'
+t1: '1:13:59'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: como tal no tengo definido todavía como plantear poner break even en M5 en caso de continuidad
+  no lo tengo definido entonces igual con M15 basta
+afirmacion: el break even en M5 no esta definido; con M15 basta
+tema: break_even.m5_no_definido
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

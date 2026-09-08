@@ -1158,6 +1158,11 @@ items:
   confianza: media
   notas: no describe aqui los dos esquemas
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:14Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001507-67aad703
 - t0: 0:15:57
   t1: 0:16:14
   modalidad: audio
@@ -1171,6 +1176,11 @@ items:
   marca_heredada: V1 0:15:58
   notas: 'A-12: la transcripcion heredada decia 40 %; large-v3 dice 50%'
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001557-1dd16e5c
 - t0: 0:16:27
   t1: 0:16:43
   modalidad: audio
@@ -1181,6 +1191,11 @@ items:
   tema: stop.nivel_abierto_a_datos
   confianza: alta
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:18Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001627-65f192bd
 - t0: 0:16:43
   t1: 0:16:59
   modalidad: audio
@@ -1192,6 +1207,11 @@ items:
   confianza: alta
   marca_heredada: V1 0:16:51
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:19Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001643-47673889
 - t0: 0:18:07
   t1: 0:18:29
   modalidad: audio
@@ -1203,6 +1223,11 @@ items:
   tema: break_even.zona_control
   confianza: alta
   n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:21Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001807-70c9ccfe
 - t0: 0:18:39
   t1: 0:18:53
   modalidad: audio
@@ -1214,6 +1239,11 @@ items:
   valor: '0.50'
   confianza: alta
   n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001839-ee94816a
 - t0: 0:18:53
   t1: 0:19:08
   modalidad: audio
@@ -1224,6 +1254,11 @@ items:
   tema: no_trade.esperar_retroceso
   confianza: alta
   n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:24Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001853-8deb7934
 - t0: 0:19:58
   t1: 0:20:28
   modalidad: audio
@@ -1236,6 +1271,11 @@ items:
   tema: break_even.mitigacion_zona
   confianza: alta
   n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001958-55d8586f
 - t0: 0:19:58
   t1: 0:20:28
   modalidad: audio
@@ -1247,6 +1287,11 @@ items:
   confianza: media
   notas: frase suelta dentro de un segmento largo; el nivel 0,25 no se explica
   n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-001958-282fb666
 - t0: 0:20:28
   t1: 0:20:51
   modalidad: audio
@@ -1257,6 +1302,11 @@ items:
   tema: meta.trades_rapidos
   confianza: alta
   n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:28Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002028-3cd144b1
 - t0: 0:21:10
   t1: 0:21:43
   modalidad: audio
@@ -1268,6 +1318,11 @@ items:
   confianza: alta
   notas: lo plantea como pregunta al consultor, no como regla
   n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:30Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002110-6ce6abaa
 - t0: 0:22:23
   t1: 0:22:30
   modalidad: audio
@@ -1278,6 +1333,11 @@ items:
   tema: meta.esquema_fijo
   confianza: alta
   n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002223-cc6d9345
 - t0: 0:23:13
   t1: 0:23:18
   modalidad: audio
@@ -1288,6 +1348,11 @@ items:
   valor: 'no'
   confianza: alta
   n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:33Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002313-6342a154
 - t0: 0:23:34
   t1: 0:23:46
   modalidad: audio
@@ -1298,6 +1363,11 @@ items:
   confianza: media
   notas: el ASR separa las cifras (0 75 = 0,75)
   n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:34Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002334-df85531a
 - t0: 0:24:47
   t1: 0:24:53
   modalidad: audio
@@ -1307,6 +1377,11 @@ items:
   tema: break_even.segunda_zona_control
   confianza: alta
   n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:36Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002447-d5075c9d
 - t0: 0:25:13
   t1: 0:25:36
   modalidad: audio
@@ -1317,6 +1392,11 @@ items:
   tema: ventana.fuera_de_sesion_abierto
   confianza: media
   n: 16
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:38Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002513-b04c3cba
 - t0: 0:25:30
   t1: 0:25:47
   modalidad: audio
@@ -1326,6 +1406,11 @@ items:
   tema: ventana.sesiones.horas
   confianza: alta
   n: 17
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:39Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002530-1aef73a4
 - t0: 0:26:08
   t1: 0:26:35
   modalidad: audio
@@ -1336,6 +1421,11 @@ items:
   tema: objetivo.extension_lectura_mercado.ejemplo
   confianza: alta
   n: 18
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:41Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002608-7daa95ae
 - t0: 0:27:07
   t1: 0:27:20
   modalidad: audio
@@ -1346,6 +1436,11 @@ items:
   tema: liquidez.m15.actualizar_linea
   confianza: alta
   n: 19
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:43Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002707-d1259f87
 - t0: 0:27:40
   t1: 0:27:44
   modalidad: audio
@@ -1355,6 +1450,11 @@ items:
   tema: entrada.gatillo_breaker.apenas
   confianza: alta
   n: 20
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:44Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002740-7c96436f
 - t0: 0:27:51
   t1: 0:28:00
   modalidad: audio
@@ -1366,6 +1466,11 @@ items:
   tema: entrada.esquema_resumen
   confianza: alta
   n: 21
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:46Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002751-02fb21ed
 - t0: 0:28:12
   t1: 0:28:30
   modalidad: audio
@@ -1376,6 +1481,11 @@ items:
   valor: 3,63
   confianza: alta
   n: 22
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:48Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v1-002812-6e3220b5
 no_consta:
 - tema: zona_control
   motivo: aparece solo como condicion del break even (0:18:07, 0:19:58, 0:24:47); no la define

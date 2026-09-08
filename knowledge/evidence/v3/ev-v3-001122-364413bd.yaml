@@ -1,0 +1,16 @@
+id: ev-v3-001122-364413bd
+video_id: v3
+t0: 0:11:22
+t1: 0:11:36
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: al boss, lo suelo llamar boss como tal [...] suelo usar boss o breaker y ya está y para
+  la liquidez suelo usar LQM15
+afirmacion: 'terminologia del trader: BOS, breaker y LQM15 (liquidez de M15); no usa CHoCH'
+tema: herramientas.terminologia_bos_breaker_lqm15
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: segmentos con duda del glosario (boss); shot = CHoCH en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

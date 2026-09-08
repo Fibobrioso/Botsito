@@ -1,0 +1,16 @@
+id: ev-v1-001839-ee94816a
+video_id: v1
+t0: 0:18:39
+t1: 0:18:53
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: ya estoy protegiendo a 0.50 el trade y mira me saca [...] yo ya protejo 0.50 no pierdo el
+  1% en total sino el 0.50
+afirmacion: 'ejemplo: protegido a 0,50, el stop le saca y pierde 0,50 en vez del 1 %'
+tema: stop.bajar_050.ejemplo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

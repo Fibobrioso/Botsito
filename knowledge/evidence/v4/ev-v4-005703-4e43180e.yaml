@@ -1,0 +1,15 @@
+id: ev-v4-005703-4e43180e
+video_id: v4
+t0: 0:57:03
+t1: 0:57:10
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: todo lo que hay es liquidez, o sea, yo lo considero liquidez y me es indiferente, o sea,
+  la zona de control se desarrolla tal cual así
+afirmacion: todo el rango de M15 lo considera liquidez
+tema: liquidez.m15.rango_completo_es_liquidez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

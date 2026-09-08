@@ -1,0 +1,16 @@
+id: ev-v3-005320-230888cd
+video_id: v3
+t0: 0:53:20
+t1: 0:53:45
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: como ya está el break even me sacaría de la entrada vale pero la entrada continuaría entonces
+  aquí también entra de ese dilema de o sea de break even porque si yo no hubiera puesto break even y
+  lo hubiera dejado en 0.75 existe la posibilidad de que pues hubiera obtenido el el RR
+afirmacion: 'dilema del break even: a veces saca de una entrada que luego habria llegado al RR objetivo'
+tema: break_even.dilema_saca_de_entrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

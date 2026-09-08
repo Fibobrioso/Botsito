@@ -1,0 +1,15 @@
+id: ev-v3-005634-fc8da7cf
+video_id: v3
+t0: 0:56:34
+t1: 0:56:42
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aquí me he salido un poco del horario, porque ya sería, o sea, finalizaría aquí, y ya no
+  habría entrada
+afirmacion: fuera del horario ya no hay entrada
+tema: ventana.fin_horario_sin_entrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851
