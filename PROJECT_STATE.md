@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto (F09 hecha, F10 cerrada el 2026-09-08 con stable/F10). Siguiente: SESION 1 con el trader (registros F09) y luego F11 strategy-spec-schema
 
 ## Current Feature
-— (F10 cerrada el 2026-09-08; siguiente: sesion 1 con el trader y despues F11 strategy-spec-schema)
+Hoja de respuestas de la sesion 1 en Word (rama `feature/F10-hoja-sesion-docx`, sobre F10): `knowledge/cases/kit/contexto_preguntas.yaml` y `scripts/hoja_sesion_docx.py`; el `.docx` se genera en la raiz y no se versiona. Cierre previsto con tag `stable/F10-hoja-sesion` (rama de trabajo sin numero propio, §F).
 
 ## Current Branch
-main
+feature/F10-hoja-sesion-docx
 
 ## Stable Main State
 4f8277e · merge de F10 elicitation-kit (tras stable/F08). make check verde: 489 casos (344 funciones), 4 contratos (capa `retrieval`), mypy strict, state/config/knowledge validate (25 parametros con 24 sin confirmar, 341 items de evidencia, 1 contradiccion abierta = A-10, 12 ambiguedades, 1 paquete de sesion valido, 5 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34244994126 sobre 396fda7). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07, stable/F08 y stable/F10. Rama main protegida en GitHub.
@@ -62,7 +62,7 @@ main
 - F10 · elicitation-kit · validada el 2026-09-08 · docs/validation/F10-elicitation-kit.md · tag stable/F10
 
 ## Features Waiting for Validation
-—
+- Hoja de respuestas en Word (2026-09-08): el documento esta generado en la raiz del repositorio; pendiente de que el usuario lo abra y confirme antes del merge
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -332,6 +332,7 @@ Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto lo
 4f8277e · merge: F10 elicitation-kit validada por el usuario · tag stable/F10
 
 ## Change Log
+- 2026-09-08 · Hoja de respuestas de la sesion 1 en Word (rama `feature/F10-hoja-sesion-docx`): contexto humano de cada pregunta como dato versionado (`contexto_preguntas.yaml`, con acentos porque lo lee el trader) y generador `.docx` sin dependencias (OOXML a mano) con la confirmacion previa, las 21 preguntas con sus citas y caja de respuesta, y la tabla de etiquetado de los 16 casos dev; el binario queda fuera de git y declarado en la guardia de rutas ignoradas.
 - 2026-09-08 · F10 VALIDADA por el usuario. merge --no-ff a main (4f8277e); tag stable/F10. Kit de la sesion 1 listo (paquete `2026-09-15-sesion-01`, fecha provisional). Siguiente: sesion 1 con el trader y despues F11.
 - 2026-09-08 · F10 abierta y construida (rama `feature/F10-elicitation-kit`): brief con revision de diseno de agente (3 bloqueantes: julio y agosto ya vistos por el trader -> meses limpios 2026-05/06 descargados y confirmacion escrita previa; cifras de negocio del kit como datos en `knowledge/cases/kit/config.yaml`; etiqueta por sesion H4 con gramatica; 9 importantes y 6 menores aceptados); ADR-0011; `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina, validadas contra evidencia y registro; test anti-deriva con esta tabla); registro pre-poblado con 23 parametros de estrategia mas en UNKNOWN (24 con `anclaje_h4`); paquete `cases` (ambiguedades, cuestionario con casos `ev-*`, ventanas de dias no vistos con hash y limites H4 por anclaje, particiones por hash con seed, kappa de Cohen desde los `LABEL_CASE`, paquete determinista); CLI `kit build|check|kappa`; `knowledge validate` capa kit (guardia de ancestro: particiones antes del primer LABEL_CASE); feedback valida `ambiguedad` contra el fichero y `t1` contra la duracion; grabaciones de sesion como videos sin `drive_id`. Paquete real `knowledge/cases/kit/2026-09-15-sesion-01/` (seed 20260915: 21 preguntas, 40 casos de un universo de 42 dias de mayo y junio de 2026 descargados hoy, 16 dev + 8 + 8 + 8); auditoria de cierre de codigo aplicada (asignacion inmutable tras el etiquetado, esquema estricto del paquete, huso validado, escritura atomica, build valida ambiguedades y usa items activos, mes anterior contiguo para el primer dia). Informe WAITING_FOR_USER_VALIDATION.
 - 2026-09-08 · F08 VALIDADA por el usuario (confirmo el cierre tras la auditoria). merge --no-ff a main (5d8cf3c); tag stable/F08. FASE 1 CERRADA (F03-F08). Siguiente: abrir F10 elicitation-kit.

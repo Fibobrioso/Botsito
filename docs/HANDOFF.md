@@ -115,6 +115,9 @@ uv run --no-sync python scripts/hoja_sesion_docx.py   # hoja de respuestas en Wo
 ```
 
 ## Lecciones operativas
+- `make check` mira la rama ACTUAL contra `Current Branch` de PROJECT_STATE: si creas la rama
+  despues de pasar `make check`, la CI falla aunque en local estuviera verde. Crea la rama, ajusta
+  PROJECT_STATE y luego valida.
 - `knowledge validate` (guardia del trailer `Fuente:`) solo ve commits existentes: correrlo
   DESPUES de commitear cuando el commit toque `knowledge/spec` o `knowledge/cases` (README incluido).
 - El clasificador del modo automatico de Claude Code bloquea `rebase`, `cherry-pick`, `branch -f`
