@@ -1,4 +1,4 @@
-# knowledge/evidence/ — evidencia INMUTABLE (F06)
+# knowledge/evidence/ — evidencia INMUTABLE (F06, F07)
 
 Un fichero por item, en `<video_id>/<id>.yaml`. El `id` es `ev-<video>-<hhmmss>-<hash8>` y el hash
 es del contenido: editar un item rompe su id, y el historial de git se vigila
@@ -20,7 +20,7 @@ pantalla exige un fotograma real `fr-<id>/<t_ms>` del tramo.
 | `cita_literal` | si | lo que se dice o se ve, tal cual; nunca una parafrasis |
 | `afirmacion` | si | normalizacion de la cita; no puede anadir condiciones que la cita no diga |
 | `tema` | si | clave jerarquica, p. ej. `stop.nivel`, `mitigacion.m15.cierre` |
-| `valor` | no | texto normalizado del valor (`"0.75"`, `"cuerpo"`); dos temas iguales con valor distinto = contradiccion |
+| `valor` | no | texto del valor tal como aparece en la cita o cerrado en `_temas.yaml` (`"0.75"`, `"4,08"`, `"cuerpo"`); la coma se conserva si la cita la trae; `evidence contradictions` compara valores normalizados: dos temas iguales con valor distinto = contradiccion |
 | `confianza` | si | `alta` · `media` · `baja` |
 | `extractor` | si | `humano` · `llm` (una propuesta de LLM aceptada por una persona) |
 | `revisado_por` | si | quien acepto el item y con que metodo (`"<persona> · hoja F07 <fecha> · cruda leida"` o `"... · fotograma visto"`); la cita de audio la verifica la maquina contra la cruda; la persona revisa que `afirmacion`, `tema` y `valor` no digan mas que la cita, y en pantalla que el fotograma muestre lo citado |

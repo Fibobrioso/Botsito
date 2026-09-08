@@ -76,6 +76,40 @@ reject | list`), `src/botsito/comun/ids.py` (`pr-*`), `knowledge/evidence/{READM
 `knowledge/_proposals/{README.md,PROMPT.md}`, `knowledge/README.md`, tests. Los items de F06 no
 existian; ningun id cambia. `test_import_contracts` prohibe `evidence -> corpus`.
 
+## Enmienda 2026-09-07 (auditoria de cierre de F07)
+- `localizar_cita` prueba TODAS las apariciones del primer trozo dentro de la ventana y se
+  queda con la primera aparicion completa que cabe en `[t0 - 2 s, t1 + 2 s]`; `coincidencias`
+  cuenta las apariciones completas que caben (antes, una frase repetida en un segmento que
+  solo tocaba la ventana hacia fallar una cita verdadera).
+- `Localizacion.hueco_ms`: mayor salto entre trozos consecutivos de una cita con comodin.
+  `propose --check` AVISA a partir de 15 s (`HUECO_AVISO_MS`); no es error: el revisor humano
+  decide si los trozos son una misma frase. De los 341 items aceptados, 41 tienen huecos de
+  15 a 44 s; el usuario los acepto leyendo la cruda del tramo.
+- Palabras incompletas al final de un segmento (el ASR omite la ultima palabra en `palabras`;
+  5 segmentos en las crudas activas): se alinea lo que hay y los tokens restantes llevan el
+  tramo `[fin de la ultima palabra, fin del segmento]`, con aviso `tiempos parciales`;
+  `knowledge validate` imprime el recuento agregado de citas con tiempos de segmento o
+  parciales (hoy 1: `ev-v3-000058-7b5ce480`).
+- El sello `salida_sha256` cubre tambien la cabecera que decide la evidencia: `video_id`,
+  `transcripcion`, `t0`, `t1`, `proponente` (las 20 propuestas se re-sellaron; decisiones y
+  `comprobado_el` intactos).
+- `knowledge validate` cruza cada decision con la evidencia: un `aceptado` anota un
+  `evidence_id` existente y unico cuyos campos (cita, afirmacion, tema, valor, modalidad, tipo,
+  t0/t1, confianza, fotogramas, `extractor` = `proponente`, `transcripcion`, `provenance`)
+  son los del item propuesto, con `metodo_revision` coherente con la modalidad (pantalla/ambas
+  exige `fotograma_visto`; audio exige `cruda_leida` o `audio_oido`); un rechazado o pendiente
+  no puede anotar `evidence_id`; evidencia `extractor: llm` sin propuesta que la respalde es
+  aviso.
+- `evidence accept` retira el item recien creado si no puede anotar la decision en la
+  propuesta; re-evalua cualquier problema del check que mencione el item (tambien los solapes);
+  sin `manifest.yaml`, las referencias de pantalla se comprueban igual. Una cabecera de
+  propuesta con tiempo invalido es `PropuestaError`, no traceback.
+- Fuera de F07 (para F11): `_contradicciones.yaml` agrupa por `tema` exacto; el mismo parametro
+  vive hoy bajo temas distintos elegidos por el proponente (`stop.nivel`, `stop.075_suficiente`,
+  `stop.introducido_en_operacion_075`...; `cartuchos.*` con `dos`/`2`/`3`/`tres`), asi que "1
+  contradiccion abierta" depende de esa granularidad. La taxonomia normativa de F11 decide
+  que temas comparten parametro.
+
 ## Fecha / fase
 2026-09-07 · F07
 

@@ -5,40 +5,38 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-06, previos de F07 en main; F07 ronda 1 hecha)
-- `main`: merge de la auditoria global `916d0d0` con tag `stable/F05-auditoria-1` (las tres
-  ratificaciones del usuario el 2026-09-06); `docs(state)` `76060c9`; CI verde (run
-  34044627478). Protegida en GitHub (sin force-push, sin checks requeridos).
-- Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15 y la auditoria global. Rama
-  `feature/F05-auditoria-estructura` fusionada (pendiente de borrar por el usuario).
-- Rama actual: `feature/F07-previos` (informe `docs/validation/F07-previos.md`, estado
-  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F05-previos-F07`, ver §F). Hecho: glosario v2
-  (29 terminos, 6 sustituciones globales + 6 de segmento), `hotwords` medido y DESCARTADO
-  (perdida de habla y sesgo "sell" -> "SL"; ADR-0007 enmienda), guardia de 223 tokens del
-  prompt, huella de reanudacion sin GPU, los 5 videos retranscritos (ids activos:
-  `tr-v1-...-bbd8a931`, `tr-v2-...-28391c2c`, `tr-v3-...-270a4851`, `tr-v4-...-a8d1bccc`,
-  `tr-v5-...-3c6fbb57`; los anteriores quedan reemplazados, sus carpetas siguen en `data/`).
+## Estado (2026-09-07, F07 ronda 2 hecha; parada corta antes del cierre)
+- `main`: merge de los previos de F07 `8cba5c5` con tag `stable/F05-previos-F07` (validados por
+  el usuario el 2026-09-06); CI verde. Protegida en GitHub (sin force-push, sin checks requeridos).
+- Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15, la auditoria global
+  (`stable/F05-auditoria-1`) y los previos de F07. Ramas fusionadas ya borradas (local y origin).
+- Rama actual: `feature/F07-evidence-extraction` (informe
+  `docs/validation/F07-evidence-extraction.md`, estado WAITING_FOR_USER_VALIDATION, ronda 2;
+  cierre con tag `stable/F07`). HECHO: ADR-0009 (cita de audio localizada por tokens en la cruda
+  con tiempo por `palabras`, comodin `[...]`, tolerancia 2 s; cita de pantalla anclada a un
+  `fr-*` real; `evidence` no importa `corpus`); propuestas trazables en `knowledge/_proposals/`
+  (20, selladas, con decision anotada, 0 pendientes; 91 `no_consta`); 341 items en
+  `knowledge/evidence/` (commit `ff13e7a`; 334 audio, 4 pantalla, 3 ambas; 42 `provenance:
+  bot-v2` por marca heredada; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida" o
+  "· fotograma visto"); `_contradicciones.yaml` con 1 abierta (`stop.nivel` 0,75 vs 0,8 =
+  A-10, se cierra con feedback tras la sesion 1); golden `tests/golden/f07_citas_referencia.yaml`
+  (40 referencias) en verde; PROJECT_STATE con hechos y ambiguedades A-1..A-12 enlazados a ids.
+- Decisiones del usuario (2026-09-07): acepto los 341 items sin modificaciones; `fotograma visto`
+  en los 7 de pantalla/ambas; recall humano de V4 0:05-0:15 sin frases que faltaran; tag
+  `stable/F07`; golden H4 sobre F15 pasa a F10 (ningun fotograma muestra la apertura de una H4).
 - Copia fuera de la maquina COMPLETA (2026-09-06): carpeta de Drive "transcripciones (crudas,
-  Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`, dentro de "Estrategia del trader") con
-  SHA256SUMS, LEEME, 5 manifiestos, 5 crudas, 5 WAV y el video v5 (`drive_id`
-  `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, anotado en `fuentes.yaml`). Los binarios los subio el
-  usuario a mano desde `data/drive_staging/` (las herramientas de la sesion no suben binarios
-  de ese tamano); una retranscripcion futura repite `staging.py` y la subida.
-- F07 evidence-extraction, RONDA 1 HECHA (2026-09-06, rama `feature/F07-evidence-extraction`,
-  informe `docs/validation/F07-evidence-extraction.md`, ADR-0009): herramientas (cita por
-  tokens en la cruda con tiempo por palabras; `evidence` no importa `corpus`; propuestas en
-  `knowledge/_proposals/` con sello) y 20 propuestas (341 items, 91 `no_consta`) para los 5
-  videos, todas con `--check` en verde. NINGUN item en `knowledge/evidence/` hasta que el
-  usuario decida sobre la hoja `docs/validation/anexos/F07-evidence-extraction/revision.html`
-  (aceptar por lotes, rechazar con motivo, `fotograma visto` en los 7 de pantalla/ambas).
-- SIGUIENTE (ronda 2 de F07): `botsito evidence accept --propuesta <pr> --item n
-  --revisado-por "Aleks · hoja F07 <fecha> · cruda leida" --metodo cruda_leida` (o
-  `fotograma_visto`) por cada aceptado, `reject` por cada rechazado, commit de la evidencia,
-  `evidence contradictions`, `pytest tests/contract/test_golden_citas_f07.py`, PROJECT_STATE
-  (hechos -> ids, ambiguedades con ids), auditoria de cierre con dos agentes, informe final,
-  parada corta, ritual §F con tag `stable/F07`. Para rellenar propuestas nuevas: esqueleto con
-  `evidence propose --video --t0 --t1 --modelo <quien> --tema-buscado <raiz>...`, rellenar
-  `items`/`no_consta` (la cita se COPIA de la cruda, con sus repeticiones de borde), `--check`.
+  Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`) con SHA256SUMS, LEEME, 5 manifiestos, 5
+  crudas, 5 WAV y el video v5 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`). Los binarios los
+  sube el usuario a mano desde `data/drive_staging/`; una retranscripcion futura repite
+  `staging.py` y la subida.
+- SIGUIENTE: el usuario confirma el cierre -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
+  feature/F07-evidence-extraction`, `git tag -a stable/F07` sobre el merge, commit `docs(state)`
+  que solo toca PROJECT_STATE.md, `make check`, push main + tag, CI verde) -> abrir F08
+  evidence-retrieval (busqueda por texto y tiempo sobre los 341 items y las crudas; toda
+  respuesta con fuente). Para anadir evidencia nueva: `evidence propose --video --t0 --t1
+  --modelo <quien> --tema-buscado <raiz>...` -> rellenar `items`/`no_consta` (la cita se COPIA de
+  la cruda, con sus repeticiones de borde) -> `--check` -> el usuario decide -> `evidence accept`
+  o `reject`. Tras cambiar `scripts/git-hooks/`, ejecutar `make hooks`.
 - Lecciones tecnicas (F07): el ASR repite palabras en los bordes de segmento ("tiene tiene",
   "no no"): la cita literal las incluye; los segmentos con `boss/voz/blog/split` fuera de las 6
   sustituciones quedan como `dudas` y obligan `confianza: media`; la ventana `t0/t1` debe cubrir
@@ -70,7 +68,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   FXReplay abril; `tr-v5-large-v3-int8-float16-01a1ae03`, 99 segmentos, reemplazada el 2026-09-06
   por `tr-v5-...-3c6fbb57`, 80; en Drive desde el 2026-09-06), xlsx
   abril 2026 (38 operaciones) y 6 capturas de Analytics en `Material adicional de su operativa`.
-  Hechos en PROJECT_STATE (seccion "Hechos del corpus pendientes de evidencia").
+  Hechos en PROJECT_STATE (seccion "Lineamientos recibidos del usuario y hechos del corpus", ya con ids de evidencia desde F07).
 - Lecciones tecnicas: `fps=1` de ffmpeg NO da el fotograma del segundo exacto ni conserva el
   `pts` (regla `select` + `-fps_mode passthrough`); `-ss` necesita `-copyts`; `showinfo` despues
   de `select`; `start_time` debe ser 0. Otra build de ffmpeg = otra carpeta y otro manifiesto con
