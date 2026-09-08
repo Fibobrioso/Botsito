@@ -20,6 +20,7 @@ from __future__ import annotations
 import os
 import re
 import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 
 from botsito.comun import ids
@@ -57,6 +58,42 @@ def _git(repo: Path, *args: str) -> str | None:
         check=False,
     )
     return resultado.stdout if resultado.returncode == 0 else None
+
+
+def commit_que_anadio(repo: Path, ruta: str) -> tuple[str, str] | None:
+    """(sha, fecha de committer en UTC ISO) del commit MAS ANTIGUO que anadio `ruta`; None si no
+    esta commiteado o no hay git. La fecha es informativa (falsificable, cambia con rebase): la
+    guardia real es `es_ancestro`."""
+    salida = _git(
+        repo, "log", "-m", "--format=%H %cI", "--diff-filter=A", "--no-renames", "--", ruta
+    )
+    if not salida:
+        return None
+    lineas = [ln for ln in salida.splitlines() if ln.strip()]
+    if not lineas:
+        return None
+    sha, fecha = lineas[-1].split()
+    try:
+        instante = datetime.fromisoformat(fecha).astimezone(UTC)
+    except ValueError:
+        return sha, fecha
+    return sha, instante.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def es_ancestro(repo: Path, a: str, b: str) -> bool | None:
+    """True si el commit `a` es ancestro de `b` (git merge-base --is-ancestor); None si git
+    falla o algun sha no existe."""
+    resultado = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", a, b],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+    )
+    if resultado.returncode == 0:
+        return True
+    if resultado.returncode == 1:
+        return False
+    return None
 
 
 def hay_git(repo: Path) -> bool:

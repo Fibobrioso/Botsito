@@ -1,0 +1,169 @@
+# Ambiguedades abiertas del modelo del trader (F10, ADR-0011). Manual, versionado; cada commit
+# cita `Fuente:` (evidencia o ADR). Es la version legible por maquina de la tabla "Known
+# Ambiguities" de PROJECT_STATE.md (un test exige que ids y titulos coincidan). F09 valida el
+# objetivo `ambiguedad` de un registro de feedback contra este fichero. Una ambiguedad se cierra
+# (`estado: RESUELTA`) SOLO con un registro de feedback del trader (RESOLVE_UNKNOWN) y el commit
+# que la cierra lo cita.
+#
+# Campos: id (A-N), titulo (el de PROJECT_STATE), pregunta (lo que se plantea al trader),
+# resuelve_en (funcionalidades), evidencia (ids ev-* existentes), parametros (nombres del
+# registro que la respuesta fija), contradiccion (tema con contradiccion mecanica, o null),
+# estado (ABIERTA | RESUELTA), bloqueante (las 3 de la sesion 1, MASTER_PLAN G).
+ambiguedades:
+  - id: A-1
+    titulo: sesgo H4
+    pregunta: "¿que vela H4 fija el sesgo y cuando cambia?"
+    resuelve_en: [F11, F18]
+    evidencia:
+      - ev-v2-000836-6dbfcd6b
+      - ev-v3-000531-4d6375b6
+      - ev-v3-000824-c81f03eb
+      - ev-v3-010948-331c69aa
+      - ev-v3-011045-a185d2ba
+      - ev-v3-011614-a5a05b0a
+      - ev-v4-004603-d0ffd4f2
+    parametros: [sesgo_h4_regla]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-2
+    titulo: tercer cartucho
+    pregunta: "¿2 o 3 intentos por zona? (contradiccion ficha vs V4 0:48:41)"
+    resuelve_en: [F11, F21]
+    evidencia:
+      - ev-v3-000138-fc8f7905
+      - ev-v3-004817-f2dfb955
+      - ev-v4-003350-acb03ee7
+      - ev-v4-002333-8bf96363
+      - ev-v4-004742-30c8d58a
+      - ev-v4-004832-6543b551
+      - ev-v4-005411-a486336d
+      - ev-v4-002951-d3132b3f
+    parametros: [cartuchos_max]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: true
+  - id: A-3
+    titulo: salida sin ruptura
+    pregunta: "¿se cierra si no rompe? ¿cuando?"
+    resuelve_en: [F11, F23]
+    evidencia:
+      - ev-v4-010759-514b5d7d
+      - ev-v4-010831-5f4a00ad
+    parametros: [salida_sin_ruptura]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-4
+    titulo: BE al tocar o al cierre
+    pregunta: "¿break-even al tocar el nivel o al cierre de vela? (V4 0:44:56)"
+    resuelve_en: [F11, F23]
+    evidencia:
+      - ev-v4-004447-bc2e74ee
+      - ev-v2-003103-31d872da
+      - ev-v5-000427-f8d5d36d
+    parametros: [break_even_condicion]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: true
+  - id: A-5
+    titulo: cadencia de reubicacion
+    pregunta: "¿cada cuanto se reubica la orden pendiente?"
+    resuelve_en: [F11, F22]
+    evidencia:
+      - ev-v1-001358-a2b8ec0d
+      - ev-v4-010731-bb8af97c
+      - ev-v4-010857-5bc906c9
+    parametros: [reubicacion_cadencia]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-6
+    titulo: cierre 15:00
+    pregunta: "¿cierre forzoso a las 15:00 y en que huso?"
+    resuelve_en: [F11, F23]
+    evidencia:
+      - ev-v4-011514-fe34ac7e
+    parametros: [ventana_fin, cierre_forzoso_fin_ventana]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-7
+    titulo: stop del 2.o esquema
+    pregunta: "¿donde va el stop en el segundo esquema de entrada?"
+    resuelve_en: [F11, F21]
+    evidencia:
+      - ev-v3-004329-a16d379b
+      - ev-v4-002056-5d25b29d
+      - ev-v4-002139-23e44f38
+      - ev-v4-003029-2ea7124e
+      - ev-v4-003102-1ddeeaa8
+      - ev-v4-003227-038864db
+      - ev-v4-003252-ef8d3139
+    parametros: [stop_segundo_esquema]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-8
+    titulo: '"dos velas como una" en mapeo'
+    pregunta: "¿cuando dos velas cuentan como una estructura?"
+    resuelve_en: [F11, F18]
+    evidencia:
+      - ev-v3-010648-0039e34d
+      - ev-v3-011540-5425b533
+    parametros: [mapeo_dos_velas]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-9
+    titulo: anclaje de la vela H4 (hora y huso del grafico)
+    pregunta: >-
+      ¿a que hora y en que huso del grafico abre su H4? (se resuelve viendo su grafico: captura
+      de la configuracion; y que ocurre en las semanas en que Europa y EE. UU. no coinciden en el
+      cambio de hora)
+    resuelve_en: [F11]
+    evidencia:
+      - ev-v3-000136-6160fcea
+      - ev-v3-000157-b26147c7
+    parametros: [anclaje_h4]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: true
+  - id: A-10
+    titulo: "stop a 0,8: fijo o 0,75 + spread"
+    pregunta: "¿el 0,8 es fijo o \"0,75 mas el spread del momento\"?"
+    resuelve_en: [F21]
+    evidencia:
+      - ev-v1-000448-346d6d90
+      - ev-v2-003142-beb4ad3c
+      - ev-v5-000312-f5062062
+      - ev-v4-000835-782cf2cc
+      - ev-v4-001221-1e66b5fd
+    parametros: [stop_fraccion_caja, stop_colchon_spread]
+    contradiccion: stop.nivel
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-11
+    titulo: SL en la orden o tras el llenado
+    pregunta: "¿el SL va en la orden pendiente o se pone tras el llenado?"
+    resuelve_en: [F22, F31]
+    evidencia:
+      - ev-v4-001207-0c4ffd4b
+      - ev-v1-000620-0f7dea14
+    parametros: [stop_en_orden_pendiente]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-12
+    titulo: >-
+      porcentaje de vela transcurrido para bajar la proteccion a 0,50: 40 % (transcripcion
+      heredada) o 50 % (large-v3, V1 0:15:59)
+    pregunta: "¿a partir de que parte de la vela bajas el stop a 0,50?"
+    resuelve_en: [F21]
+    evidencia:
+      - ev-v1-001557-1dd16e5c
+      - ev-v1-001643-47673889
+    parametros: [stop_reduccion_umbral_vela, stop_reduccion_fraccion]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false

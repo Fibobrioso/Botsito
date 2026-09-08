@@ -1,0 +1,16 @@
+# Fechas que el trader YA ha visto (backtest, operativa o ejemplos dibujados): quedan fuera del
+# universo de ventanas de etiquetado ciego (F10, ADR-0011). Manual, versionado con `Fuente:`.
+# Un mes entero se excluye cuando no se puede saber que dias vio (el xlsx de agosto no tiene
+# columna de fecha). Antes de cada sesion el trader confirma por escrito (registro F09) que no
+# ha operado ni backtesteado los meses del paquete; si lo ha hecho, se anaden aqui y se regenera.
+meses:
+  - mes: "2026-01"
+    motivo: backtest de enero recorrido en v4 (entrevista sobre FXReplay)
+    fuente: [ev-v4-000243-a1067c1c, ev-v4-001027-1b74d1a6]
+  - mes: "2026-07"
+    motivo: v3 dibuja los ejemplos sobre el grafico de julio y v2 muestra las operaciones del 2 de julio
+    fuente: [ev-v2-003320-a736fd37, ev-v3-002714-742f2589]
+  - mes: "2026-08"
+    motivo: dos backtests de agosto (7-11 y 11-15) y operativa real de fondeo desde el 20 de agosto
+    fuente: [ev-v4-011742-3a6b5367, ev-v4-011856-52f0f859, ev-v1-000633-686f20a1]
+dias: []

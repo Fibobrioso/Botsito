@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 CERRADA el 2026-09-08 (stable/F08). Siguiente por el orden E: F10 elicitation-kit + sesion 1 con el trader (fase 2; F09 y F15 ya integradas)
 
 ## Current Feature
-— (F08 cerrada el 2026-09-08; siguiente: abrir F10 elicitation-kit)
+F10 · elicitation-kit · EN CONSTRUCCION (rama `feature/F10-elicitation-kit`; brief `docs/plan/features/F10-elicitation-kit.md` con revision de diseno aplicada; ADR-0011)
 
 ## Current Branch
-main
+feature/F10-elicitation-kit
 
 ## Stable Main State
 5d8cf3c · merge de F08 evidence-retrieval (tras stable/F07); fase 1 cerrada. make check verde: 471 casos (326 funciones), 4 contratos (capa `retrieval`), mypy strict, state/config/knowledge validate (341 items de evidencia, 1 contradiccion abierta = A-10, 20 propuestas sin pendientes, 3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34191751884 sobre 4071042). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07 y stable/F08. Rama main protegida en GitHub.
@@ -95,7 +95,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-326 funciones de test (471 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+338 funciones de test (483 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval, kit · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`), kit_particiones (guardia de ancestro) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -196,6 +196,8 @@ las reglas se infieren en F11, no aqui.
 —
 
 ## Known Ambiguities
+Fuente legible por maquina desde F10: `knowledge/spec/ambiguedades.yaml` (ids, pregunta, evidencia,
+parametros, estado; un test exige que esta tabla coincida en id y titulo).
 Todas ABIERTAS hasta un registro de feedback del trader (sesion 1, tras F10 + F15). El esquema de
 feedback solo acepta ids `A-N`. Columna "resuelve en": la funcionalidad que convierte la respuesta
 en regla o parametro; "pregunta": lo que se le plantea al trader.
@@ -324,6 +326,7 @@ Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto lo
 5d8cf3c · merge: F08 evidence-retrieval validada por el usuario · tag stable/F08
 
 ## Change Log
+- 2026-09-08 · F10 abierta y construida (rama `feature/F10-elicitation-kit`): brief con revision de diseno de agente (3 bloqueantes: julio y agosto ya vistos por el trader -> meses limpios 2026-05/06 descargados y confirmacion escrita previa; cifras de negocio del kit como datos en `knowledge/cases/kit/config.yaml`; etiqueta por sesion H4 con gramatica; 9 importantes y 6 menores aceptados); ADR-0011; `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina, validadas contra evidencia y registro; test anti-deriva con esta tabla); registro pre-poblado con 23 parametros de estrategia mas en UNKNOWN (24 con `anclaje_h4`); paquete `cases` (ambiguedades, cuestionario con casos `ev-*`, ventanas de dias no vistos con hash y limites H4 por anclaje, particiones por hash con seed, kappa de Cohen desde los `LABEL_CASE`, paquete determinista); CLI `kit build|check|kappa`; `knowledge validate` capa kit (guardia de ancestro: particiones antes del primer LABEL_CASE); feedback valida `ambiguedad` contra el fichero y `t1` contra la duracion; grabaciones de sesion como videos sin `drive_id`. Pendiente: paquete real de la sesion 1, auditoria de cierre e informe.
 - 2026-09-08 · F08 VALIDADA por el usuario (confirmo el cierre tras la auditoria). merge --no-ff a main (5d8cf3c); tag stable/F08. FASE 1 CERRADA (F03-F08). Siguiente: abrir F10 elicitation-kit.
 - 2026-09-08 · F08 abierta y construida (rama `feature/F08-evidence-retrieval`): brief con revision de diseno de agente (3 bloqueantes, 9 importantes, 9 menores aceptados: token de busqueda con acentos plegados y numeros normalizados, `buscar_secuencia` en vez de `localizar_cita` para la frase, `no_consta` fuera, capa `retrieval` entre `spec` y `feedback`, `dudas_de`/`cargar_capas` en `corpus`, `referencia_en` unica, rutas relativas, golden con y sin `data/`, fixture a mano, esquema JSON); ADR-0010 (+ enmiendas en ADR-0006 y ADR-0009); paquete `retrieval` y CLI `kb find | at`; golden de 15 consultas de referencia en verde (15/15 devuelven su item; `1:3` solo por la afirmacion: fallo lexico del ASR); `kb find` 1,04 s de pared. Auditoria de cierre aplicada (codigo: `--frase` acotada a 3 segmentos y buscando en cruda y corregida, `[corregida]` solo si difiere, `--margen-s inf` sin traceback, `dudas` no enteras ignoradas, `--frase`+`--prefijo` y `--tema`+`--solo cruda` son error, `--tema` contra `_temas.yaml`, `t0` real en contradicciones y fotograma, corregida ilegible = aviso, tests de supersede/carpeta fuera/determinismo de la CLI; docs: HANDOFF, MASTER_PLAN Change Log, deuda F04 iii cerrada, Next Feature F10). Informe WAITING_FOR_USER_VALIDATION.
 - 2026-09-07 · F07 VALIDADA por el usuario (acepto los 341 items sin modificaciones, `fotograma visto` en los 7 de pantalla/ambas, recall humano de V4 0:05-0:15 sin faltas, tag `stable/F07`, golden H4 a F10; confirmo el cierre tras la auditoria). merge --no-ff a main (f0c280b); tag stable/F07. Siguiente: abrir F08 evidence-retrieval.

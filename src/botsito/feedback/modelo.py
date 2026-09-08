@@ -291,10 +291,14 @@ def validar_contra_contexto(
     nombres_parametros: set[str],
     temas_contradiccion: set[str],
     rutas_corpus: set[str] | None = None,
+    ids_ambiguedades: set[str] | None = None,
+    duraciones: dict[str, float] | None = None,
 ) -> list[str]:
     """Los objetivos existen donde ya hay contra que comprobar.
 
-    Regla, ambiguedad y caso se comprueban solo por formato hasta F11/F14.
+    `ambiguedad` se comprueba contra `knowledge/spec/ambiguedades.yaml` (F10) cuando se pasa el
+    conjunto; `caso` y `regla` solo por formato hasta F14/F11. `duraciones` (ruta de grabacion ->
+    segundos, F10) rechaza un `t1` mas alla del final de la grabacion.
     """
     problemas: list[str] = []
     por_id = {r.id: r for r in registros}
@@ -307,6 +311,18 @@ def validar_contra_contexto(
             problemas.append(f"{r.id}: parametro objetivo {i} no esta en el registro")
         elif t == "contradiccion" and i not in temas_contradiccion:
             problemas.append(f"{r.id}: no hay contradiccion abierta sobre {i}")
+        elif t == "ambiguedad" and ids_ambiguedades is not None and i not in ids_ambiguedades:
+            problemas.append(f"{r.id}: ambiguedad objetivo {i} no esta en ambiguedades.yaml")
+        if (
+            duraciones
+            and r.grabacion in duraciones
+            and r.t1
+            and parse_tiempo(r.t1) > duraciones[r.grabacion]
+        ):
+            problemas.append(
+                f"{r.id}: t1 {r.t1} supera la duracion de {r.grabacion} "
+                f"({duraciones[r.grabacion]:.0f} s)"
+            )
         if r.supersede and r.supersede not in ids:
             problemas.append(f"{r.id}: supersede a {r.supersede}, que no existe")
         if r.supersede == r.id:

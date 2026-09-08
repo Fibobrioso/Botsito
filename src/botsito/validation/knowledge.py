@@ -26,7 +26,9 @@ def ids_de_adr(repo: Path) -> set[str]:
     }
 
 
-def contexto_feedback(repo: Path) -> tuple[set[str], set[str], set[str], set[str] | None]:
+def contexto_feedback(
+    repo: Path,
+) -> tuple[set[str], set[str], set[str], set[str] | None, dict[str, float]]:
     """Lo que un registro de feedback puede citar: evidencia, parametros, contradicciones, corpus.
 
     Lanza el error de dominio del componente que falle; el llamador lo convierte en ERROR.
@@ -41,12 +43,36 @@ def contexto_feedback(repo: Path) -> tuple[set[str], set[str], set[str], set[str
     temas = {c["tema"] for c in contradicciones.detectar(items)}
     ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
     rutas_corpus: set[str] | None = None
+    duraciones: dict[str, float] = {}
     if ruta_manifiesto.exists():
         manifiesto = cargar_manifiesto(ruta_manifiesto)
-        rutas_corpus = {
-            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
-        }
-    return {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
+        rutas_corpus, duraciones = rutas_y_duraciones(manifiesto)
+    return {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus, duraciones
+
+
+def rutas_y_duraciones(manifiesto: dict[str, Any]) -> tuple[set[str], dict[str, float]]:
+    """Rutas citables como `grabacion` (ficheros del corpus Y videos de fuentes.yaml, F10) y la
+    duracion en segundos de cada video."""
+    rutas = {str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)}
+    duraciones: dict[str, float] = {}
+    for v in manifiesto.get("videos") or []:
+        if isinstance(v, dict) and v.get("fichero"):
+            rutas.add(str(v["fichero"]))
+            d = v.get("duracion_s")
+            if isinstance(d, int | float) and not isinstance(d, bool):
+                duraciones[str(v["fichero"])] = float(d)
+    return rutas, duraciones
+
+
+def ids_ambiguedades(repo: Path) -> set[str] | None:
+    """Ids de knowledge/spec/ambiguedades.yaml, o None si el fichero no existe (repos previos
+    a F10: la ambiguedad se valida solo por formato)."""
+    from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+
+    ruta = repo / FICHERO_AMBIGUEDADES
+    if not ruta.is_file():
+        return None
+    return {a.id for a in cargar_ambiguedades(ruta)}
 
 
 def validar(repo: Path) -> tuple[int, list[str]]:
@@ -184,12 +210,39 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         return 1, salida
     temas = {c["tema"] for c in contradicciones.detectar(items)}
     rutas_corpus: set[str] | None = None
+    duraciones: dict[str, float] = {}
     if manifiesto is not None:
-        rutas_corpus = {
-            str(f.get("ruta")) for f in (manifiesto.get("ficheros") or []) if isinstance(f, dict)
-        }
-    fallos_fb = validar_contra_contexto(
-        registros_fb, {i.id for i in items}, set(registro.nombres()), temas, rutas_corpus
+        rutas_corpus, duraciones = rutas_y_duraciones(manifiesto)
+    from botsito.cases.ambiguedades import (
+        FICHERO_AMBIGUEDADES,
+        AmbiguedadError,
+        cargar_ambiguedades,
+    )
+    from botsito.cases.ambiguedades import validar_contra_contexto as validar_ambiguedades
+
+    ambiguedades = []
+    ids_amb: set[str] | None = None
+    fallos_amb: list[str] = []
+    if (repo / FICHERO_AMBIGUEDADES).is_file():
+        try:
+            ambiguedades = cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES)
+            ids_amb = {a.id for a in ambiguedades}
+            fallos_amb = [
+                f"ambiguedades: {p}"
+                for p in validar_ambiguedades(
+                    ambiguedades, {i.id for i in items}, set(registro.nombres()), temas
+                )
+            ]
+        except AmbiguedadError as exc:
+            fallos_amb = [f"ambiguedades: {exc}"]
+    fallos_fb = fallos_amb + validar_contra_contexto(
+        registros_fb,
+        {i.id for i in items},
+        set(registro.nombres()),
+        temas,
+        rutas_corpus,
+        ids_amb,
+        duraciones,
     )
     historial_fb = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
     if historial_fb is None and con_git:
@@ -303,6 +356,28 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         "historial intacto"
     )
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
+    # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
+    from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes
+
+    ids_datasets = {cargar_manifiesto(r)["dataset_id"] for r in rutas_manifiestos}
+    try:
+        fallos_kit, avisos_kit = validar_paquetes(
+            repo, registros_fb, {i.id for i in items}, {str(d) for d in ids_datasets}
+        )
+    except KitError as exc:
+        fallos_kit, avisos_kit = [str(exc)], []
+    for a in avisos_kit:
+        salida.append(f"AVISO: {a}")
+    for f in fallos_kit:
+        salida.append(f"ERROR: kit: {f}")
+    if fallos_kit:
+        return 1, salida
+    n_sesiones = len(sesiones_del_kit(repo))
+    if ambiguedades or n_sesiones:
+        salida.append(
+            f"OK: {len(ambiguedades)} ambiguedades registradas; {n_sesiones} paquetes de sesion "
+            "validos, particiones anteriores al etiquetado"
+        )
     abiertas = len(contradicciones.detectar(items))
     salida.append(
         f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente"
