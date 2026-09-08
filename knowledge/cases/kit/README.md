@@ -22,7 +22,8 @@ resto es opcional y llega a F14 tal cual:
 07-11: venta@08:37 e=1.15364 sl=1.15420 tp=1.15200; 11-15: no_trade
 ```
 
-`<sesion>` es un `nombre` de `config.yaml` (`07-11`, `11-15`); `<decision>` una de `etiquetas`
+Deben aparecer TODAS las sesiones de `config.yaml`, cada una una vez; `@HH:MM` en 00-23:00-59; una
+clave `k=v` no se repite. `<sesion>` es un `nombre` de `config.yaml` (`07-11`, `11-15`); `<decision>` una de `etiquetas`
 (`compra`, `venta`, `no_trade`); `@HH:MM` hora de entrada en `huso_operativa`; `e=`, `sl=`,
 `tp=` precios; cualquier otro `clave=valor` se conserva. Cada sesion aparece una sola vez. El
 objetivo del registro es `{tipo: caso, id: caso-eurusd-AAAA-MM-DD}`. `botsito kit kappa

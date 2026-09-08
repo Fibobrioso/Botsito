@@ -259,6 +259,11 @@ def _hora_local(iso: str, huso: ZoneInfo) -> str:
     return a_datetime(parse_ts(iso)).astimezone(huso).strftime("%H:%M")
 
 
+def meses_del_paquete(casos: list[Caso]) -> list[str]:
+    """Meses (AAAA-MM) de los dias del paquete: lo que el trader debe confirmar que no ha visto."""
+    return sorted({c.dia[:7] for c in casos})
+
+
 def hoja_trader(
     sesion: str,
     config: Config,
@@ -275,8 +280,8 @@ def hoja_trader(
         f"# Sesion {sesion} · hoja del trader",
         "",
         "Condicion previa: el trader confirma por escrito que NO ha operado ni backtesteado los "
-        f"meses del paquete ({', '.join(sorted(meses)) or 'ninguno'}). Toda respuesta se anota "
-        "literal (registro F09).",
+        f"meses del paquete ({', '.join(meses_del_paquete(casos)) or 'ninguno'}). Toda "
+        "respuesta se anota literal (registro F09).",
         "",
         "## Preguntas",
         "",

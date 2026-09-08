@@ -25,6 +25,10 @@ Un fichero escrito a mano se carga con el cargador estricto: claves duplicadas r
 `fecha` sin comillas sigue siendo texto, pero `t0: 1:05:00` sin comillas es un entero para YAML y
 se rechaza ("debe ser texto entre comillas"). La `fecha` es la de la `sesion`.
 
+Desde F10 (ADR-0011): `ambiguedad` debe existir en `knowledge/spec/ambiguedades.yaml`; `grabacion`
+puede ser un video de `fuentes.yaml` y `t1` no supera su `duracion_s`; `LABEL_CASE` usa la gramatica
+de `knowledge/cases/kit/README.md` (`07-11: venta@08:37 e=...; 11-15: no_trade`).
+
 Coherencia exigida: `RESOLVE_CONTRADICTION` solo sobre un tema con contradiccion abierta;
 `RESOLVE_UNKNOWN` sobre parametro, ambiguedad o evidencia; `LABEL_CASE`, `MARK_*` y `BORDERLINE`
 solo sobre casos; `CONFIRM/CORRECT/REJECT` sobre evidencia, regla o parametro. Ademas:

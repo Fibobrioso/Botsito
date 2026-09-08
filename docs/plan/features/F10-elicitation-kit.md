@@ -92,7 +92,7 @@ motor, sin reglas, sin spec.
    `stop_colchon_spread`: tres origenes, una pregunta). Cada pregunta: `origenes`, `enunciado`,
    `respuesta_esperada` (tipo y opciones cerradas), `casos` = hasta 3 items elegidos con
    `retrieval.buscar(Opciones(tema=raiz, solo="evidencia"))` (los que tienen `valor` primero,
-   luego orden temporal) con `t0`, cita y `fr-*`. Bloqueantes y primero: A-9 (pide la CAPTURA de
+   luego orden temporal) con `t0`, cita y `fr-*`. Bloqueantes y primero (por numero: A-2, A-4, A-9): A-9 (pide la CAPTURA de
    la configuracion del grafico y que pasa en las semanas de cambio de hora = golden H4 sobre
    F15), A-2, A-4. Toda pregunta cita al menos un `ev-*` existente (error de generacion si no).
 6. **Caso, unidad de etiqueta y gramatica**: el CASO es el dia operativo (unidad de datos,

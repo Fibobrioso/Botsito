@@ -25,7 +25,8 @@ phase: F10
 4. **Ventanas de replay = dias operativos NO vistos** por el trader: `vistos.yaml` excluye meses
    enteros cuando no se puede saber que dias vio (enero, julio y agosto de 2026) y dias sueltos;
    el universo son los dias laborables de los datasets congelados cuya ventana completa cae
-   dentro del dataset y tiene suficientes velas M1. Cada caso: `caso-<simbolo>-<dia>`,
+   dentro del dataset y tiene suficientes velas M1 (el mes anterior congelado y contiguo aporta
+   el contexto de la vispera del primer dia; el caso cita el dataset de su dia). Cada caso: `caso-<simbolo>-<dia>`,
    `dataset_id`, ventana UTC, `n_velas`, `sha256` de las velas (recomputable con
    `cargar_ventana`) y los limites H4 de cada anclaje candidato (`limites_entre`). CONDICION de
    cada sesion: confirmacion escrita del trader (registro F09) de que no ha visto esos meses.
@@ -33,8 +34,9 @@ phase: F10
    Python), cupos dev / holdout-1 / holdout-2 / holdout-3 de `config.yaml`. `particiones.yaml`
    se commitea ANTES de la sesion; la guardia (`knowledge validate`) es de ANCESTRO en git: el
    commit que anadio `particiones.yaml` precede al que anadio el primer `LABEL_CASE` de esa
-   sesion (`git merge-base --is-ancestor`); la fecha de committer es solo informativa. La hoja
-   del trader solo lleva los casos `dev`.
+   sesion (`git merge-base --is-ancestor`); la fecha de committer es solo informativa; desde ese
+   momento `particiones.yaml` y `ventanas.yaml` son inmutables (`intacto_desde`). La hoja del
+   trader solo lleva los casos `dev`.
 6. **Etiqueta por SESION H4**, no por dia: `LABEL_CASE` con `valor_resultante` en la gramatica
    `07-11: venta@08:37 e=... sl=... tp=...; 11-15: no_trade` (una decision por sesion
    declarada, decision en `etiquetas`). F14 la formaliza.

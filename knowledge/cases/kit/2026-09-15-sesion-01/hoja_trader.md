@@ -1,6 +1,6 @@
 # Sesion 2026-09-15-sesion-01 · hoja del trader
 
-Condicion previa: el trader confirma por escrito que NO ha operado ni backtesteado los meses del paquete (2026-01, 2026-07, 2026-08). Toda respuesta se anota literal (registro F09).
+Condicion previa: el trader confirma por escrito que NO ha operado ni backtesteado los meses del paquete (2026-05, 2026-06). Toda respuesta se anota literal (registro F09).
 
 ## Preguntas
 

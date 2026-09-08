@@ -106,6 +106,11 @@ uv run botsito corpus transcribe --video v1        # reanudable; no llama al mod
 uv run botsito corpus frames check
 uv run botsito corpus frames show --video v3 --t 0:28:56 --n 3
 uv run botsito corpus frames extract --video v5    # idempotente
+uv run botsito kb find "break even" --top 10       # busqueda con fuente (F08)
+uv run botsito kb at --video v4 --t 0:44:56 --contexto
+uv run botsito kit build --sesion 2026-09-15-sesion-01 --seed 20260915   # paquete de sesion (F10)
+uv run botsito kit check --sesion 2026-09-15-sesion-01
+uv run botsito kit kappa --sesion-a 2026-09-15-sesion-01 --sesion-b 2026-09-22-sesion-02
 ```
 
 ## Lecciones operativas

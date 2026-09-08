@@ -383,6 +383,7 @@ def test_paquete_determinista_y_check(tmp_path: Path) -> None:
     assert {c["evidencia"] for c in p1.preguntas[3].casos} == {ids["c"], ids["d"]}
     hoja = p1.ficheros["hoja_trader.md"]
     assert "(BLOQUEANTE)" in hoja and "07:00 11:00 15:00" in hoja and "ev-v1-" not in hoja
+    assert "meses del paquete (2026-05)" in hoja  # los de los casos, no los de vistos.yaml
     assert hoja.count("| caso-xxxyyy-") == 2  # solo dev
     # escribir, no sobreescribir, check puro
     carpeta = escribir(repo, p1)
