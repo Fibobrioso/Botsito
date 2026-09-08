@@ -31,16 +31,16 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
 
 ## Current Phase
-FASE 1 CERRADA el 2026-09-08 (stable/F08). Siguiente por el orden E: F10 elicitation-kit + sesion 1 con el trader (fase 2; F09 y F15 ya integradas)
+FASE 2 · Retroalimentacion del experto (F09 hecha, F10 cerrada el 2026-09-08 con stable/F10). Siguiente: SESION 1 con el trader (registros F09) y luego F11 strategy-spec-schema
 
 ## Current Feature
-F10 · elicitation-kit · WAITING_FOR_USER_VALIDATION (rama `feature/F10-elicitation-kit`; informe `docs/validation/F10-elicitation-kit.md`; ADR-0011; auditoria de cierre con dos agentes aplicada; cierre con tag `stable/F10`)
+— (F10 cerrada el 2026-09-08; siguiente: sesion 1 con el trader y despues F11 strategy-spec-schema)
 
 ## Current Branch
-feature/F10-elicitation-kit
+main
 
 ## Stable Main State
-5d8cf3c · merge de F08 evidence-retrieval (tras stable/F07); fase 1 cerrada. make check verde: 471 casos (326 funciones), 4 contratos (capa `retrieval`), mypy strict, state/config/knowledge validate (341 items de evidencia, 1 contradiccion abierta = A-10, 20 propuestas sin pendientes, 3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34191751884 sobre 4071042). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07 y stable/F08. Rama main protegida en GitHub.
+4f8277e · merge de F10 elicitation-kit (tras stable/F08). make check verde: 489 casos (344 funciones), 4 contratos (capa `retrieval`), mypy strict, state/config/knowledge validate (25 parametros con 24 sin confirmar, 341 items de evidencia, 1 contradiccion abierta = A-10, 12 ambiguedades, 1 paquete de sesion valido, 5 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34244994126 sobre 396fda7). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07, stable/F08 y stable/F10. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 1 · Base de conocimiento (F03, F04, F05, F06, F07, F08) · cerrada el 2026-09-08 en 5d8cf3c · puerta: 5 videos inventariados, transcritos (large-v3, glosario v2) y con fotogramas a 1 fps; 341 items de evidencia verificables por maquina y trazables a su propuesta y decision; busqueda `kb find | at` con fuente en cada linea; make check verde en main
@@ -59,9 +59,10 @@ feature/F10-elicitation-kit
 - Previos de F07 · validados el 2026-09-06 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
 - F07 · evidence-extraction · validada el 2026-09-07 · docs/validation/F07-evidence-extraction.md · tag stable/F07
 - F08 · evidence-retrieval · validada el 2026-09-08 · docs/validation/F08-evidence-retrieval.md · tag stable/F08
+- F10 · elicitation-kit · validada el 2026-09-08 · docs/validation/F10-elicitation-kit.md · tag stable/F10
 
 ## Features Waiting for Validation
-- F10 · elicitation-kit (2026-09-08): paquete real de la sesion 1 (21 preguntas, 40 casos de mayo y junio de 2026, 16 dev), ambiguedades legibles por maquina, 24 UNKNOWN, kappa desde el feedback; pendiente solo la validacion del usuario (merge + tag `stable/F10`)
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -323,14 +324,15 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-El usuario valida F10 (informe `docs/validation/F10-elicitation-kit.md`) -> ritual §F: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff feature/F10-elicitation-kit` -> `git tag -a stable/F10` -> `docs(state)` solo PROJECT_STATE.md -> `make check` -> push -> CI. Despues: fijar la fecha de la sesion 1 (regenerar el paquete si no es 2026-09-15 y commitearlo ANTES de la sesion), obtener la confirmacion escrita del trader sobre mayo/junio, celebrar la sesion y registrar cada respuesta con `feedback new`. Pendiente del usuario: borrar la rama `feature/F08-evidence-retrieval` (local y origin).
+SESION 1 con el trader. Antes: (1) fijar la fecha real (si no es 2026-09-15, `uv run botsito kit build --sesion <fecha>-sesion-01 --seed 20260915` y commitear ANTES de la sesion, con `Fuente: ADR-0011`); (2) confirmacion escrita del trader de que no ha operado ni backtesteado mayo ni junio de 2026 (`feedback new --medio escrito`); si la niega, anadir el mes a `knowledge/cases/kit/vistos.yaml`, descargar otro con `data download` y regenerar. En la sesion: las 3 bloqueantes (A-2 cartuchos, A-4 break even, A-9 anclaje H4 CON CAPTURA del grafico), las otras 18 preguntas de `hoja_trader.md` y el etiquetado de los 16 casos `dev` por sesion H4 con la gramatica del kit. Cada respuesta = `botsito feedback new` (`RESOLVE_UNKNOWN` sobre ambiguedad o parametro, `LABEL_CASE` sobre caso). Despues: F11 strategy-spec-schema. Pendiente del usuario: borrar la rama `feature/F10-elicitation-kit` (local y origin).
 
 Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto los 341). Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
 
 ## Last Stable Commit
-5d8cf3c · merge: F08 evidence-retrieval validada por el usuario · tag stable/F08
+4f8277e · merge: F10 elicitation-kit validada por el usuario · tag stable/F10
 
 ## Change Log
+- 2026-09-08 · F10 VALIDADA por el usuario. merge --no-ff a main (4f8277e); tag stable/F10. Kit de la sesion 1 listo (paquete `2026-09-15-sesion-01`, fecha provisional). Siguiente: sesion 1 con el trader y despues F11.
 - 2026-09-08 · F10 abierta y construida (rama `feature/F10-elicitation-kit`): brief con revision de diseno de agente (3 bloqueantes: julio y agosto ya vistos por el trader -> meses limpios 2026-05/06 descargados y confirmacion escrita previa; cifras de negocio del kit como datos en `knowledge/cases/kit/config.yaml`; etiqueta por sesion H4 con gramatica; 9 importantes y 6 menores aceptados); ADR-0011; `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina, validadas contra evidencia y registro; test anti-deriva con esta tabla); registro pre-poblado con 23 parametros de estrategia mas en UNKNOWN (24 con `anclaje_h4`); paquete `cases` (ambiguedades, cuestionario con casos `ev-*`, ventanas de dias no vistos con hash y limites H4 por anclaje, particiones por hash con seed, kappa de Cohen desde los `LABEL_CASE`, paquete determinista); CLI `kit build|check|kappa`; `knowledge validate` capa kit (guardia de ancestro: particiones antes del primer LABEL_CASE); feedback valida `ambiguedad` contra el fichero y `t1` contra la duracion; grabaciones de sesion como videos sin `drive_id`. Paquete real `knowledge/cases/kit/2026-09-15-sesion-01/` (seed 20260915: 21 preguntas, 40 casos de un universo de 42 dias de mayo y junio de 2026 descargados hoy, 16 dev + 8 + 8 + 8); auditoria de cierre de codigo aplicada (asignacion inmutable tras el etiquetado, esquema estricto del paquete, huso validado, escritura atomica, build valida ambiguedades y usa items activos, mes anterior contiguo para el primer dia). Informe WAITING_FOR_USER_VALIDATION.
 - 2026-09-08 · F08 VALIDADA por el usuario (confirmo el cierre tras la auditoria). merge --no-ff a main (5d8cf3c); tag stable/F08. FASE 1 CERRADA (F03-F08). Siguiente: abrir F10 elicitation-kit.
 - 2026-09-08 · F08 abierta y construida (rama `feature/F08-evidence-retrieval`): brief con revision de diseno de agente (3 bloqueantes, 9 importantes, 9 menores aceptados: token de busqueda con acentos plegados y numeros normalizados, `buscar_secuencia` en vez de `localizar_cita` para la frase, `no_consta` fuera, capa `retrieval` entre `spec` y `feedback`, `dudas_de`/`cargar_capas` en `corpus`, `referencia_en` unica, rutas relativas, golden con y sin `data/`, fixture a mano, esquema JSON); ADR-0010 (+ enmiendas en ADR-0006 y ADR-0009); paquete `retrieval` y CLI `kb find | at`; golden de 15 consultas de referencia en verde (15/15 devuelven su item; `1:3` solo por la afirmacion: fallo lexico del ASR); `kb find` 1,04 s de pared. Auditoria de cierre aplicada (codigo: `--frase` acotada a 3 segmentos y buscando en cruda y corregida, `[corregida]` solo si difiere, `--margen-s inf` sin traceback, `dudas` no enteras ignoradas, `--frase`+`--prefijo` y `--tema`+`--solo cruda` son error, `--tema` contra `_temas.yaml`, `t0` real en contradicciones y fotograma, corregida ilegible = aviso, tests de supersede/carpeta fuera/determinismo de la CLI; docs: HANDOFF, MASTER_PLAN Change Log, deuda F04 iii cerrada, Next Feature F10). Informe WAITING_FOR_USER_VALIDATION.
