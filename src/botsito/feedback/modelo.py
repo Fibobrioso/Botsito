@@ -321,7 +321,7 @@ def validar_contra_contexto(
         ):
             problemas.append(
                 f"{r.id}: t1 {r.t1} supera la duracion de {r.grabacion} "
-                f"({duraciones[r.grabacion]:.0f} s)"
+                f"({duraciones[r.grabacion]:.3f} s)"
             )
         if r.supersede and r.supersede not in ids:
             problemas.append(f"{r.id}: supersede a {r.supersede}, que no existe")

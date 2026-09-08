@@ -5,37 +5,36 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-08, F07 en main; F08 construida y auditada, espera validacion)
-- `main`: merge de F07 `f0c280b` con tag `stable/F07` (el usuario acepto los 341 items el
-  2026-09-07 y confirmo el cierre); `docs(state)` `01d5630`; CI verde. Protegida en GitHub.
-- Cerradas y en main: F01, F02, F03, F04, F05, F06, F07, F09, F15, la auditoria global
-  (`stable/F05-auditoria-1`) y los previos de F07 (`stable/F05-previos-F07`). Ramas fusionadas
-  borradas (local y origin) salvo `feature/F07-evidence-extraction` (pendiente del usuario).
-- Rama actual: `feature/F08-evidence-retrieval` (informe
-  `docs/validation/F08-evidence-retrieval.md`, WAITING_FOR_USER_VALIDATION; cierre con tag
-  `stable/F08`, que cierra la fase 1 F03-F08). HECHO: ADR-0010; paquete `retrieval` entre
-  `spec` y `feedback` (indice en memoria regenerado en cada ejecucion: 341 items + 3 936
-  segmentos de las crudas activas con corregida y `dudas`; token de busqueda = tokens de F07 con
-  acentos plegados y numeros normalizados); `kb find <texto> [--video --tema --desde --hasta
-  --solo --frase --prefijo --top --contexto --json]` y `kb at --video --t [--margen-s]`; toda
-  linea con fuente (`ev-*`, `tr-*/n`, `fr-*/t_ms`, `contradiccion`); rutas relativas; avisos por
-  stderr; golden de 15 consultas (`tests/golden/f08_consultas_referencia.yaml`) 15/15; `kb find`
-  1,04 s de pared. Fallos lexicos conocidos y anotados (candidatos al glosario, no aplicados):
-  `1.3` -> `1:3`, `breakeven` -> `break even`.
-- Copia fuera de la maquina COMPLETA (2026-09-06): carpeta de Drive "transcripciones (crudas,
-  Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`) con SHA256SUMS, LEEME, 5 manifiestos, 5
-  crudas, 5 WAV y el video v5 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`). Una
-  retranscripcion futura repite `staging.py` y la subida a mano.
-- SIGUIENTE: el usuario valida F08 -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
-  feature/F08-evidence-retrieval`, `git tag -a stable/F08` sobre el merge, commit `docs(state)`
-  que solo toca PROJECT_STATE.md, `make check`, push main + tag, CI verde) -> abrir F10
-  elicitation-kit (brief desde MASTER_PLAN tabla A fila F10 y H.2; consume `kb find`/`kb at` y
-  los 341 items; parametros UNKNOWN pre-poblados, ids de caso + particion + seed, papel
-  `sesion_feedback` en el corpus, dos anclajes mientras A-9 siga abierta). Para consultar la base
-  de conocimiento: `botsito kb find "..."` / `botsito kb at --video v4 --t 0:44:56`. Para anadir
-  evidencia nueva: `evidence propose --video --t0 --t1 --modelo <quien> --tema-buscado <raiz>...`
-  -> rellenar `items`/`no_consta` -> `--check` -> el usuario decide -> `evidence accept|reject`.
-  Tras cambiar `scripts/git-hooks/`, ejecutar `make hooks`.
+## Estado (2026-09-08, fase 1 cerrada en main; F10 construida, espera validacion)
+- `main`: merge de F08 `5d8cf3c` con tag `stable/F08` (fase 1 F03-F08 cerrada); `docs(state)`
+  `645aac6`; CI verde. Protegida en GitHub.
+- Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
+  de F07. Ramas fusionadas borradas.
+- Rama actual: `feature/F10-elicitation-kit` (informe `docs/validation/F10-elicitation-kit.md`,
+  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F10`). HECHO: ADR-0011;
+  `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina); registro con 24
+  parametros de estrategia en UNKNOWN; `knowledge/cases/kit/{config,mapa_parametros,vistos}.yaml`
+  (cifras de negocio como datos; enero, julio y agosto VISTOS por el trader); paquete `cases`
+  (cuestionario de 21 preguntas con casos `ev-*`, ventanas de dias no vistos de mayo y junio de
+  2026 con hash y limites H4 por anclaje, particiones por hash con seed, kappa desde los
+  `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
+  ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
+  `knowledge/cases/kit/2026-09-15-sesion-01/` (fecha provisional).
+- SIGUIENTE: el usuario valida F10 -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
+  feature/F10-elicitation-kit`, `git tag -a stable/F10`, `docs(state)`, `make check`, push, CI)
+  -> SESION 1 con el trader: (1) confirmacion escrita de que no ha visto mayo/junio (registro
+  F09 `medio: escrito`), (2) las 3 preguntas bloqueantes (A-9 con captura del grafico, A-2, A-4)
+  y el resto de `hoja_trader.md`, (3) etiquetado de los 16 casos `dev` por sesion H4 con la
+  gramatica del kit; cada respuesta = `botsito feedback new` (`RESOLVE_UNKNOWN` sobre
+  `ambiguedad`/`parametro`, `LABEL_CASE` sobre `caso`); despues F11 strategy-spec-schema. Si la
+  fecha de la sesion no es 2026-09-15: `kit build --sesion <fecha>-sesion-01 --seed 20260915` y
+  commit ANTES de la sesion. Todo commit bajo `knowledge/spec` o `knowledge/cases` lleva
+  `Fuente:`.
+- Lecciones tecnicas (F10): Dukascopy devuelve 503 y resets a mitad de mes: `data download`
+  cachea por dia y se relanza hasta que el manifiesto existe; los literales de negocio no pueden
+  ir en `src/` (`config.yaml` del kit); `random.shuffle` no es estable entre versiones (orden por
+  hash); la guardia de fecha de commit se falsifica, la de ancestro no; el trader decide por
+  sesion H4, no por dia.
 - Lecciones tecnicas (F08): el token de CITA (F07, fiel a la cruda) y el token de BUSQUEDA (F08,
   acentos plegados y `0,75` = `0.75`) son distintos a proposito; `localizar_cita` no sirve para
   buscar frases (minimos de 4/3 tokens, una ventana, una localizacion): `buscar_secuencia` es la

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from datetime import UTC
+from datetime import date
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -18,12 +18,15 @@ from botsito.cases.ambiguedades import (
     AmbiguedadError,
     cargar_ambiguedades,
 )
+from botsito.cases.ambiguedades import validar_contra_contexto as validar_ambiguedades
 from botsito.cases.cuestionario import CuestionarioError, EntradaMapa, Pregunta, generar
 from botsito.cases.kappa import EtiquetaError
 from botsito.cases.particiones import PARTICIONES, ParticionError, asignar
 from botsito.cases.ventanas import Anclaje, Caso, Excluido, VentanaError, universo
 from botsito.comun import ids
-from botsito.comun.historial import commit_que_anadio, es_ancestro
+from botsito.comun.documentos import activos
+from botsito.comun.historial import commit_que_anadio, es_ancestro, intacto_desde
+from botsito.comun.husos import HusoDesconocidoError, huso_canonico
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml
 from botsito.config.registro import Registro, RegistroError, cargar_registro
 from botsito.data.dataset import DatasetError, cargar_manifiesto, manifiestos
@@ -103,6 +106,8 @@ def cargar_config(ruta: Path) -> Config:
         raise KitError(f"{ruta.name}: claves {sorted(esperadas)} exactamente")
     if not isinstance(doc["simbolo"], str) or not doc["simbolo"].isalnum():
         raise KitError(f"{ruta.name}: simbolo invalido")
+    if not isinstance(doc["dataset_prefijo"], str) or not doc["dataset_prefijo"].strip():
+        raise KitError(f"{ruta.name}: dataset_prefijo vacio")
     ventana = doc["ventana_local"]
     if not isinstance(ventana, dict) or set(ventana) != {"desde", "hasta"}:
         raise KitError(f"{ruta.name}: ventana_local necesita desde y hasta")
@@ -117,6 +122,8 @@ def cargar_config(ruta: Path) -> Config:
         if not isinstance(s, dict) or set(s) != {"nombre", "desde", "hasta"}:
             raise KitError(f"{ruta.name}: cada sesion tiene nombre, desde y hasta")
         nombre = str(s["nombre"])
+        if not re.match(r"^[a-z0-9-]+$", nombre):
+            raise KitError(f"{ruta.name}: nombre de sesion {nombre!r} (solo a-z, 0-9 y guion)")
         d, h = _hora(s["desde"], nombre), _hora(s["hasta"], nombre)
         if not (v_desde <= d < h <= v_hasta):
             raise KitError(f"{ruta.name}: la sesion {nombre} no cabe en ventana_local")
@@ -235,7 +242,10 @@ def cargar_vistos(ruta: Path) -> tuple[set[str], set[str], dict[str, Any]]:
     for d in doc["dias"] if isinstance(doc["dias"], list) else []:
         if not isinstance(d, dict) or not {"dia", "motivo"} <= set(d):
             raise KitError(f"{ruta.name}: cada dia tiene dia y motivo")
-        dias.add(str(d["dia"]))
+        try:
+            dias.add(date.fromisoformat(str(d["dia"])).isoformat())
+        except ValueError as exc:
+            raise KitError(f"{ruta.name}: dia {d['dia']!r} no es AAAA-MM-DD") from exc
     return meses, dias, doc
 
 
@@ -244,10 +254,6 @@ def _dump(doc: Any) -> str:
 
 
 def _hora_local(iso: str, huso: ZoneInfo) -> str:
-    return parse_ts_local(iso, huso)
-
-
-def parse_ts_local(iso: str, huso: ZoneInfo) -> str:
     from botsito.data.velas import a_datetime
 
     return a_datetime(parse_ts(iso)).astimezone(huso).strftime("%H:%M")
@@ -331,6 +337,7 @@ class Paquete:
     excluidos: list[Excluido]
     preguntas: list[Pregunta]
     asignacion: dict[str, str]
+    universo: int = 0
 
 
 def _cargar_todo(
@@ -381,14 +388,31 @@ def construir(
         raise KitError("el seed debe ser un entero >= 0")
     config, registro, ambiguedades, mapa, meses, dias, items = _cargar_todo(repo)
     huso = registro.texto("huso_operativa")
+    try:
+        huso_canonico(huso)
+    except HusoDesconocidoError as exc:
+        raise KitError(f"huso_operativa: {exc}") from exc
+    vivos = activos(list(items))
+    abiertas = contradicciones.detectar(vivos)
+    problemas_amb = validar_ambiguedades(
+        ambiguedades, {i.id for i in vivos}, set(registro.nombres()), {c["tema"] for c in abiertas}
+    )
+    if problemas_amb:
+        raise KitError("ambiguedades: " + "; ".join(problemas_amb))
+    ids_amb = {a.id for a in ambiguedades}
+    for nombre, e in mapa.items():
+        if e.ambiguedad is not None and e.ambiguedad not in ids_amb:
+            raise KitError(
+                f"mapa_parametros: {nombre} cita la ambiguedad {e.ambiguedad}, que no existe"
+            )
     indice = indice or construir_indice(repo, carpeta_datos)
     try:
         preguntas = generar(
             registro,
             ambiguedades,
             mapa,
-            contradicciones.detectar(list(items)),
-            items,
+            abiertas,
+            vivos,
             indice.fotograma_en,
         )
     except CuestionarioError as exc:
@@ -438,7 +462,7 @@ def construir(
         ),
         "hoja_trader.md": hoja_trader(sesion, config, huso, preguntas, elegidos, asignacion, meses),
     }
-    return Paquete(sesion, seed, ficheros, elegidos, excluidos, preguntas, asignacion)
+    return Paquete(sesion, seed, ficheros, elegidos, excluidos, preguntas, asignacion, len(casos))
 
 
 def escribir(repo: Path, paquete: Paquete) -> Path:
@@ -447,9 +471,19 @@ def escribir(repo: Path, paquete: Paquete) -> Path:
         raise KitError(
             f"ya existe {carpeta.relative_to(repo).as_posix()}: un paquete no se sobreescribe"
         )
-    carpeta.mkdir(parents=True)
-    for nombre, texto in paquete.ficheros.items():
-        (carpeta / nombre).write_text(texto, encoding="utf-8", newline="\n")
+    temporal = carpeta.with_name(f"_{carpeta.name}.tmp")
+    if temporal.exists():
+        raise KitError(f"queda un temporal {temporal.name}: borralo y repite")
+    temporal.mkdir(parents=True)
+    try:
+        for nombre, texto in paquete.ficheros.items():
+            (temporal / nombre).write_text(texto, encoding="utf-8", newline="\n")
+        temporal.rename(carpeta)
+    except OSError:
+        for f in temporal.glob("*"):
+            f.unlink()
+        temporal.rmdir()
+        raise
     return carpeta
 
 
@@ -476,7 +510,27 @@ def esquema_paquete(
         if not isinstance(doc, dict) or doc.get("sesion") != sesion:
             raise KitError(f"{sesion}/{nombre}: 'sesion' debe ser {sesion}")
         docs.append(doc)
-    return docs[0], docs[1], docs[2]
+    cuestionario, ventanas, particiones = docs
+    preguntas = cuestionario.get("preguntas")
+    if not isinstance(preguntas, list) or not all(isinstance(p, dict) for p in preguntas):
+        raise KitError(f"{sesion}/cuestionario.yaml: preguntas debe ser una lista de mapas")
+    for p in preguntas:
+        if not isinstance(p.get("casos"), list) or not all(isinstance(c, dict) for c in p["casos"]):
+            raise KitError(
+                f"{sesion}/cuestionario.yaml: {p.get('id')}: casos debe ser una lista de mapas"
+            )
+    casos = ventanas.get("casos")
+    if not isinstance(casos, list) or not all(isinstance(c, dict) for c in casos):
+        raise KitError(f"{sesion}/ventanas.yaml: casos debe ser una lista de mapas")
+    asignacion = particiones.get("asignacion")
+    if not isinstance(asignacion, dict) or not all(
+        isinstance(k, str) and isinstance(v, str) for k, v in asignacion.items()
+    ):
+        raise KitError(f"{sesion}/particiones.yaml: asignacion debe ser un mapa caso -> particion")
+    seed = particiones.get("seed")
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise KitError(f"{sesion}/particiones.yaml: seed invalido")
+    return cuestionario, ventanas, particiones
 
 
 def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], list[str]]:
@@ -485,9 +539,7 @@ def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], 
     problemas: list[str] = []
     avisos: list[str] = []
     cuestionario, ventanas, particiones = esquema_paquete(repo, sesion)
-    seed = particiones.get("seed")
-    if isinstance(seed, bool) or not isinstance(seed, int):
-        raise KitError(f"{sesion}: seed invalido")
+    seed = int(particiones["seed"])
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
     if ventanas.get("config") != config.doc:
         problemas.append(f"{sesion}: config.yaml cambio despues de generar el paquete")
@@ -571,6 +623,14 @@ def validar_paquetes(
         if alta is None:
             problemas.append(f"{sesion}: hay LABEL_CASE pero particiones.yaml no esta commiteado")
             continue
+        for nombre in ("particiones.yaml", "ventanas.yaml"):
+            ruta = f"{DIRECTORIO_KIT}/{sesion}/{nombre}"
+            origen = commit_que_anadio(repo, ruta)
+            if origen is not None and intacto_desde(repo, origen[0], ruta) is not True:
+                problemas.append(
+                    f"{sesion}: {nombre} cambio despues de su commit {origen[0][:7]} y ya hay "
+                    "LABEL_CASE de esa sesion (la asignacion es inmutable tras el etiquetado)"
+                )
         for r in etiquetas:
             ruta_fb = f"knowledge/feedback/{r.sesion}/{r.id}.yaml"
             alta_fb = commit_que_anadio(repo, ruta_fb)
@@ -594,6 +654,3 @@ def kappa_entre_sesiones(repo: Path, registros: list[FeedbackRecord], a: str, b:
         return calcular(ra, rb, config.etiquetas)
     except EtiquetaError as exc:
         raise KitError(str(exc)) from exc
-
-
-__all__ = ["UTC"]

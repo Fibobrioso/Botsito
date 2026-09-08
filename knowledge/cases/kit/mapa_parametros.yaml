@@ -4,7 +4,7 @@
 # `retrieval.buscar(tema=...)` acepta), `ambiguedad` la A-N que resuelve el mismo asunto (una
 # sola pregunta en el cuestionario), `opciones` las respuestas cerradas de un parametro `texto`.
 parametros:
-  ventana_inicio: {temas: [ventana], ambiguedad: null}
+  ventana_inicio: {temas: [ventana.velas_h4_7_11_15, ventana.ficha_fila_1, ventana.sesiones, ventana.solo_londres], ambiguedad: null}
   ventana_fin: {temas: [ventana], ambiguedad: A-6}
   cierre_forzoso_fin_ventana: {temas: [ventana], ambiguedad: A-6, opciones: ["si", "no"]}
   sesgo_h4_regla: {temas: [sesgo], ambiguedad: A-1, opciones: [vela_anterior_color, vela_anterior_cierre_mecha, otra]}
@@ -26,5 +26,5 @@ parametros:
   mapeo_dos_velas: {temas: [mapeo.dos_velas_como_una, mapeo.m1.vela_contraria_marca_extremo], ambiguedad: A-8, opciones: [order_block_mayor, otra]}
   parciales: {temas: [parciales], ambiguedad: null, opciones: ["si", "no"]}
   riesgo_por_operacion: {temas: [riesgo.por_operacion, riesgo.fondeo.por_operacion, riesgo.crecimiento_geometrico], ambiguedad: null}
-  lotaje_base: {temas: [lotaje], ambiguedad: null, opciones: [distancia_completa, desde_075]}
+  lotaje_base: {temas: [lotaje.distancia_completa, lotaje.no_desde_075, lotaje], ambiguedad: null, opciones: [distancia_completa, desde_075]}
   anclaje_h4: {temas: [reloj, ventana.velas_h4_7_11_15], ambiguedad: A-9}

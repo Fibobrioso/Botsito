@@ -140,6 +140,23 @@ def _blob(repo: Path, revision: str, ruta: str) -> str | None:
     return salida.strip() if salida else None
 
 
+def intacto_desde(repo: Path, sha: str, ruta: str) -> bool | None:
+    """True si el blob de `ruta` en `sha`, en HEAD y en el arbol de trabajo es el mismo (el
+    fichero no cambio desde ese commit); False si difiere; None si git no puede decirlo."""
+    origen = _blob(repo, sha, ruta)
+    cabeza = _blob(repo, "HEAD", ruta)
+    if origen is None or cabeza is None:
+        return None
+    if origen != cabeza:
+        return False
+    if (repo / ruta).exists():
+        actual = _git(repo, "hash-object", "--", ruta)
+        if actual is None:
+            return None
+        return actual.strip() == origen
+    return False
+
+
 def modificaciones_en_historial(
     repo: Path, directorio: str = DIRECTORIO_EVIDENCIA
 ) -> list[str] | None:

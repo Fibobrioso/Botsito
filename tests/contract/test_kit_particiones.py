@@ -107,3 +107,33 @@ def test_particiones_despues_del_etiquetado_falla(tmp_path: Path) -> None:
     problemas2, _ = validar_paquetes(repo2, registros2, {"ev-v1-000010-aaaaaaaa"}, {"prueba-1"})
     assert len(problemas2) == 1 and "no es anterior" in problemas2[0]
     assert es_ancestro(repo2, "HEAD", "0000000000000000000000000000000000000000") is None
+
+
+@pytest.mark.contract
+def test_particiones_inmutables_tras_el_etiquetado(tmp_path: Path) -> None:
+    """B-1 de la auditoria: reasignar despues del etiquetado, commiteado o solo en el arbol de
+    trabajo, es error; antes del etiquetado el paquete se puede regenerar."""
+    repo = _repo(tmp_path)
+    caso = "caso-xxxyyy-2026-05-06"
+    _paquete(repo, caso)
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "kit\n\nFuente: ADR-0011")
+    ruta = repo / KIT / "particiones.yaml"
+    ruta.write_text(ruta.read_text(encoding="utf-8").replace("dev", "holdout-1"), encoding="utf-8")
+    assert validar_paquetes(repo, [], {"ev-v1-000010-aaaaaaaa"}, {"prueba-1"}) == (
+        [],
+        [],
+    )  # sin etiquetas aun
+    ruta.write_text(ruta.read_text(encoding="utf-8").replace("holdout-1", "dev"), encoding="utf-8")
+    _etiqueta(repo, caso)
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "feedback")
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    assert validar_paquetes(repo, registros, {"ev-v1-000010-aaaaaaaa"}, {"prueba-1"}) == ([], [])
+    ruta.write_text(ruta.read_text(encoding="utf-8").replace("dev", "holdout-1"), encoding="utf-8")
+    problemas, _ = validar_paquetes(repo, registros, {"ev-v1-000010-aaaaaaaa"}, {"prueba-1"})
+    assert any("particiones.yaml cambio" in p for p in problemas)
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "reasignacion\n\nFuente: ADR-0011")
+    problemas, _ = validar_paquetes(repo, registros, {"ev-v1-000010-aaaaaaaa"}, {"prueba-1"})
+    assert any("particiones.yaml cambio" in p for p in problemas)

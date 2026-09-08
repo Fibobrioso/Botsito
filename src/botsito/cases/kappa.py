@@ -14,7 +14,9 @@ from fractions import Fraction
 
 from botsito.feedback.modelo import FeedbackRecord, activos
 
-_DECISION = re.compile(r"^(?P<decision>[a-z_]+)(?:@(?P<hora>\d{2}:\d{2}))?$", re.ASCII)
+_DECISION = re.compile(
+    r"^(?P<decision>[a-z_]+)(?:@(?P<hora>(?:[01]\d|2[0-3]):[0-5]\d))?$", re.ASCII
+)
 _PAR = re.compile(r"^(?P<clave>[a-z_][a-z0-9_]*)=(?P<valor>\S+)$", re.ASCII)
 
 
@@ -62,6 +64,8 @@ def parsear_etiqueta(
             mp = _PAR.match(p)
             if not mp:
                 raise EtiquetaError(f"{sesion}: {p!r} no es clave=valor")
+            if any(mp.group("clave") == c for c, _ in extras):
+                raise EtiquetaError(f"{sesion}: clave repetida {mp.group('clave')!r}")
             extras.append((mp.group("clave"), mp.group("valor")))
         salida[sesion] = Decision(sesion, m.group("decision"), m.group("hora"), tuple(extras))
     faltan = [s for s in sesiones if s not in salida]
@@ -111,7 +115,8 @@ def calcular(
     avisos: list[str] = []
     for x in etiquetas:
         presentes = fila[x] + columna[x] - matriz[x][x]
-        acuerdo[x] = Fraction(matriz[x][x], presentes) if presentes else Fraction(0)
+        if presentes:
+            acuerdo[x] = Fraction(matriz[x][x], presentes)
     dominante = max(etiquetas, key=lambda x: fila[x] + columna[x])
     if fila[dominante] + columna[dominante] >= Fraction(3, 2) * n:
         avisos.append(

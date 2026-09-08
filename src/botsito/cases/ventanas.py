@@ -158,10 +158,26 @@ def universo(
     los dias excluidos con motivo. Cada dataset se lee UNA vez (hash por fichero)."""
     casos: list[Caso] = []
     excluidos: list[Excluido] = []
-    for m in sorted(manifiestos, key=lambda x: str(x["dataset_id"])):
+    ordenados = sorted(manifiestos, key=lambda x: (str(x["desde"]), str(x["dataset_id"])))
+    series = {str(m["dataset_id"]): cargar_serie(m, carpeta_datos) for m in ordenados}
+    for k, m in enumerate(ordenados):
         desde = date.fromisoformat(str(m["desde"]))
         hasta = date.fromisoformat(str(m["hasta"]))
-        serie = cargar_serie(m, carpeta_datos)
+        serie = series[str(m["dataset_id"])]
+        # El dia operativo empieza la vispera a las 22:00/23:00Z: el mes anterior, si es
+        # contiguo, aporta esas velas al primer dia del mes (el caso sigue citando ESTE dataset).
+        if k > 0:
+            previo = ordenados[k - 1]
+            if date.fromisoformat(str(previo["hasta"])) + timedelta(days=1) == desde:
+                anterior = series[str(previo["dataset_id"])]
+                serie = SerieVelas(
+                    serie.simbolo,
+                    serie.periodo_min,
+                    serie.escala,
+                    serie.escala_volumen,
+                    tuple(anterior.velas) + tuple(serie.velas),
+                    serie.origen,
+                )
         for dia in dias_laborables(desde, hasta):
             if dia.isoformat()[:7] in meses_vistos:
                 excluidos.append(Excluido(dia.isoformat(), "mes visto por el trader"))

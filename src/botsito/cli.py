@@ -1032,9 +1032,8 @@ def kit_build(repo: Path, args: argparse.Namespace) -> int:
     dev = sum(1 for v in paquete.asignacion.values() if v == "dev")
     print(
         f"OK: {carpeta.relative_to(repo).as_posix()}: {len(paquete.preguntas)} preguntas, "
-        f"{len(paquete.casos)} casos ({dev} dev) de un universo de "
-        f"{len(paquete.casos) + sum(1 for _ in paquete.excluidos) - len(paquete.excluidos) + 0} "
-        f"+ {len(paquete.excluidos)} excluidos, seed {paquete.seed}"
+        f"{len(paquete.casos)} casos ({dev} dev) de un universo de {paquete.universo} "
+        f"(+ {len(paquete.excluidos)} dias excluidos), seed {paquete.seed}"
     )
     return 0
 
@@ -1050,7 +1049,7 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
     for a in avisos:
         print(f"AVISO: {a}", file=sys.stderr)
     for p in problemas:
-        print(f"ERROR: {p}")
+        print(f"ERROR: {p}", file=sys.stderr)
     if problemas:
         return 1
     print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
@@ -1097,6 +1096,7 @@ def evidence_contradictions(repo: Path) -> int:
 def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un registro de feedback. Se valida contra el contexto (evidencia, registro,
     contradicciones, corpus) ANTES de escribir: un registro es inmutable."""
+    from botsito.cases.ambiguedades import AmbiguedadError
     from botsito.config.registro import RegistroError
     from botsito.corpus.inventario import InventarioError
     from botsito.evidence.modelo import EvidenciaError
@@ -1119,7 +1119,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         from botsito.validation.knowledge import ids_ambiguedades
 
         ids_amb = ids_ambiguedades(repo)
-    except (FeedbackError, EvidenciaError, RegistroError, InventarioError) as exc:
+    except (FeedbackError, EvidenciaError, RegistroError, InventarioError, AmbiguedadError) as exc:
         print(f"ERROR: contexto de knowledge/: {exc}")
         return 1
 
