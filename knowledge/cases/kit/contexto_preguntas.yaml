@@ -18,6 +18,9 @@
 
 precondicion:
   titulo: "Confirmación previa sobre los meses del paquete"
+  # Donde aterriza la respuesta: CONFIRM (o REJECT, si los ha visto) sobre el paquete de la
+  # sesion. `{sesion}` lo sustituye el generador de la hoja.
+  objetivo: "paquete {sesion}"
   pregunta: >-
     Antes de empezar con las ventanas: ¿has operado, backtesteado o revisado en replay algún día
     de {meses} en EURUSD? Da igual si fue una sesión suelta o un backtest completo.
@@ -302,6 +305,75 @@ preguntas:
     respuesta_util: >-
       Distancia completa, o desde el 0,75.
 
+  dias_operables:
+    titulo: "Días en los que se opera"
+    pregunta: >-
+      De lunes a viernes, ¿hay días que evitas por norma? Por ejemplo el viernes por la tarde, el
+      lunes de apertura, o algún día concreto del mes.
+    porque: >-
+      En ningún momento de las grabaciones dices que excluyas días. Si no nos dices lo contrario,
+      el bot operará los cinco días, y queremos que eso sea una decisión tuya y no un descuido
+      nuestro.
+    respuesta_util: >-
+      Los días o momentos que se excluyen. Si no excluyes ninguno, dilo explícitamente.
+  filtro_noticias:
+    titulo: "Noticias de alto impacto"
+    pregunta: >-
+      ¿Miras el calendario económico antes de operar? ¿Dejas de operar antes o después de una
+      noticia fuerte, o te da igual y operas siempre?
+    porque: >-
+      Nos dijiste que no usas noticias, y a la vez que cuando hay noticias el spread aumenta y hay
+      que dar más respiro al trade. Para una persona eso se gestiona a ojo; un bot necesita una
+      regla o no hará nada. Sin filtro, entrará en pleno dato macro con el spread disparado.
+    respuesta_util: >-
+      O bien no hay filtro y lo confirmas, o bien una regla concreta: cuántos minutos antes y
+      después, y de qué tipo de noticia.
+  spread_maximo:
+    titulo: "Spread máximo aceptable"
+    pregunta: >-
+      ¿Hay un spread por encima del cual directamente no entras? ¿Y si ya estás dentro y el spread
+      se dispara, haces algo?
+    porque: >-
+      Hablas de dar un respiro de uno o dos pips por el spread, pero nunca de un techo. El bot va
+      a poder leer el spread en cada momento: si le das un límite, lo respeta; si no, entrará con
+      cualquier spread.
+    respuesta_util: >-
+      Un número en pips, o decirnos que no filtras por spread.
+  perdida_maxima_diaria:
+    titulo: "Tope de pérdida del día"
+    pregunta: >-
+      Aparte de los intentos por zona, ¿tienes un tope de pérdida acumulada que te hace cerrar el
+      día? ¿Y un tope de ganancia que te hace parar?
+    porque: >-
+      Contaste que en el peor mes hubo siete pérdidas seguidas y que con un 1 por ciento eso
+      quemaría la cuenta. El bot puede pararse solo, pero solo si le damos el número. Sin él
+      seguirá operando hasta que la cuenta salte.
+    respuesta_util: >-
+      Un porcentaje de la cuenta, o un número de pérdidas seguidas.
+  perdida_maxima_semanal:
+    titulo: "Tope de pérdida de la semana"
+    pregunta: >-
+      ¿Y a la semana? Si acumulas varias sesiones malas seguidas, ¿hay un punto en el que paras
+      hasta la semana siguiente?
+    porque: >-
+      La prop firm tiene un límite diario y otro total, y superarlo no es una mala racha: es
+      perder la cuenta. Si tienes un tope semanal propio, el bot lo respeta antes de acercarse al
+      de ellos.
+    respuesta_util: >-
+      Un porcentaje de la cuenta, o decirnos que no tienes tope semanal.
+  comportamiento_sin_regla:
+    titulo: "Qué hace el bot cuando la situación no encaja"
+    pregunta: >-
+      Cuando el mercado hace algo que no encaja con ninguna de tus reglas, tú usas criterio. El
+      bot no tiene criterio: hace exactamente lo que está escrito y nada más. ¿Prefieres que en
+      esos casos no opere, o que aplique la regla más parecida?
+    porque: >-
+      Queremos que esto quede dicho por ti y no supuesto por nosotros. Nuestra propuesta es que se
+      abstenga: es preferible perder una operación buena a inventarse una mala. Pero es tu método
+      y tu dinero.
+    respuesta_util: >-
+      Abstenerse, o la alternativa que prefieras explicada con un ejemplo.
+
 # ---------------------------------------------------------------------------------------------
 # Lo que se le explica al trader antes de empezar, para que sepa que se hace con sus respuestas.
 notas_para_el_trader:
@@ -323,54 +395,19 @@ notas_para_el_trader:
 # quedarian huecos que el bot tendria que rellenar por su cuenta. Se numeran E-01, E-02, ...
 preguntas_extra:
   - id: E-01
-    titulo: Instrumento y días que se operan
+    titulo: Instrumento que opera el bot
+    objetivo: parametro instrumento
     pregunta: >-
-      ¿El bot debe operar solo EURUSD, o también otros pares? Y de lunes a viernes, ¿hay días que
-      evitas por norma, como el viernes por la tarde o el lunes de apertura?
+      ¿El bot debe operar solo EURUSD, o también otros pares? Si son varios, ¿el método es el
+      mismo en todos o cambia algo?
     porque: >-
-      Todo lo que tenemos grabado es EURUSD y en ningún momento dices que excluyas días. Si no
-      nos dices lo contrario, el bot operará EURUSD todos los días laborables, y queremos que eso
-      sea una decisión tuya y no un descuido nuestro.
+      Todo lo que tenemos grabado es EURUSD, y el bot va a heredar esa suposición. Si operas más
+      pares, cada uno tiene su spread y su horario, y eso cambia el trabajo.
     respuesta_util: >-
-      El par o los pares, y la lista de días o momentos que se excluyen. Si no excluyes ninguno,
-      dilo explícitamente.
+      El par o los pares. Si es más de uno, cuál es el principal para empezar.
   - id: E-02
-    titulo: Noticias de alto impacto
-    pregunta: >-
-      ¿Miras el calendario económico antes de operar? ¿Dejas de operar antes o después de una
-      noticia fuerte, o te da igual y operas siempre?
-    porque: >-
-      Nos dijiste que no usas noticias, y a la vez que cuando hay noticias el spread aumenta y hay
-      que dar más respiro al trade. Para una persona eso se gestiona a ojo; un bot necesita una
-      regla o no hará nada. Sin filtro, entrará en pleno dato macro con el spread disparado.
-    respuesta_util: >-
-      O bien no hay filtro y lo confirmas, o bien una regla concreta: cuántos minutos antes y
-      después, y de qué tipo de noticia.
-  - id: E-03
-    titulo: Spread máximo aceptable
-    pregunta: >-
-      ¿Hay un spread por encima del cual directamente no entras? ¿Y si ya estás dentro y el spread
-      se dispara, haces algo?
-    porque: >-
-      Hablas de dar un respiro de uno o dos pips por el spread, pero nunca de un techo. El bot va
-      a poder leer el spread en cada momento: si le das un límite, lo respeta; si no, entrará con
-      cualquier spread.
-    respuesta_util: >-
-      Un número en pips, o decirnos que no filtras por spread.
-  - id: E-04
-    titulo: Tope de pérdida del día y de la semana
-    pregunta: >-
-      Aparte de los intentos por zona, ¿tienes un tope de pérdida que te hace cerrar el día o la
-      semana? ¿Y un tope de ganancia que te hace parar?
-    porque: >-
-      Contaste que en el peor mes hubo siete pérdidas seguidas y que con un 1 por ciento eso
-      quemaría la cuenta, y que la prop firm tiene un límite diario y otro total. El bot puede
-      pararse solo, pero solo si le damos el número. Sin él seguirá operando hasta que la cuenta
-      salte.
-    respuesta_util: >-
-      Un porcentaje o un número de pérdidas para el día, y otro para la semana si lo tienes.
-  - id: E-05
     titulo: Qué cuenta opera la primera versión
+    objetivo: parametro cuenta_objetivo
     pregunta: >-
       La primera versión del bot, ¿sobre qué cuenta debe funcionar: la de fondeo de FundedNext,
       una demo, o una cuenta tuya? ¿Con qué saldo de partida?
@@ -380,8 +417,9 @@ preguntas_extra:
       Necesitamos saber contra qué reglas juega el bot desde el primer día.
     respuesta_util: >-
       El tipo de cuenta, el saldo, y si aplican límites de prop firm, cuáles son exactamente.
-  - id: E-06
+  - id: E-03
     titulo: El tercer esquema de entrada
+    objetivo: evidence ev-v4-013008-73dcd8c3
     pregunta: >-
       En la entrevista propusiste un tercer esquema de entrada y dijiste que ibas a probarlo esa
       semana. ¿Lo probaste? ¿Entra en la primera versión del bot o lo dejamos fuera de momento?
@@ -392,18 +430,6 @@ preguntas_extra:
     respuesta_util: >-
       Dentro o fuera de la primera versión. Si entra, cuándo nos pasas el backtest que lo
       justifica.
-  - id: E-07
-    titulo: Qué hace el bot cuando la situación no encaja
-    pregunta: >-
-      Cuando el mercado hace algo que no encaja con ninguna de tus reglas, tú usas criterio. El
-      bot no tiene criterio: hace exactamente lo que está escrito y nada más. ¿Prefieres que en
-      esos casos no opere, o que aplique la regla más parecida?
-    porque: >-
-      Queremos que esto quede dicho por ti y no supuesto por nosotros. Nuestra propuesta es que se
-      abstenga: es preferible perder una operación buena a inventarse una mala. Pero es tu método
-      y tu dinero.
-    respuesta_util: >-
-      Abstenerse, o la alternativa que prefieras explicada con un ejemplo.
 
 # Afirmaciones que damos por buenas desde sus grabaciones y de las que depende el bot. Se le leen
 # para que las confirme o las corrija: si alguna esta mal entendida, es mejor saberlo hoy. El
@@ -444,7 +470,7 @@ cierre:
   - La grabación de la sesión existe y sabemos cómo se llama el fichero.
   - Tenemos la captura de pantalla de la configuración del gráfico (pregunta P-03).
   - Las tres preguntas bloqueantes están cerradas con un valor concreto, no con un quizá.
-  - El trader ha confirmado lo de los meses del paquete.
+  - El trader ha confirmado los meses del paquete, y queda registrado sobre `paquete <sesion>`.
   - Los días marcados como dev están etiquetados, o hay fecha acordada para hacerlo.
   - Las preguntas que quedan sin cerrar están anotadas abajo, con el motivo.
   - Las dudas nuevas que salieron durante la sesión están anotadas abajo.

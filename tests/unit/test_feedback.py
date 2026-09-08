@@ -296,3 +296,55 @@ def test_comprobar_impide_escribir(tmp_path: Path) -> None:
     with pytest.raises(FeedbackError, match="no existe"):
         escribir_registro(tmp_path, base(), lambda r: [f"{r.id}: evidencia objetivo no existe"])
     assert not list(tmp_path.rglob("*.yaml"))
+
+
+def test_precondicion_de_ceguera_sobre_el_paquete(tmp_path: Path) -> None:
+    """La confirmacion de que el trader no ha visto los meses del paquete es registrable.
+
+    Antes de F10 no habia ningun objeto al que apuntar: la respuesta se perdia en el video de la
+    sesion. Con el tipo `paquete` queda en el registro, y `vistos.yaml` puede citarla.
+    """
+    escribir_registro(
+        tmp_path,
+        base(
+            accion="CONFIRM",
+            objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+            respuesta_literal="no he tocado mayo ni junio",
+        ),
+    )
+    escribir_registro(
+        tmp_path,
+        base(
+            accion="REJECT",
+            objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+            respuesta_literal="mayo si lo backtestee entero",
+        ),
+    )
+    registros = cargar_feedback(tmp_path)
+    assert len(registros) == 2
+    assert validar_contra_contexto(registros, set(), set(), set()) == []
+
+
+def test_el_paquete_confirmado_es_el_de_la_sesion(tmp_path: Path) -> None:
+    escribir_registro(
+        tmp_path,
+        base(objetivo={"tipo": "paquete", "id": "2026-10-01-sesion-02"}),
+    )
+    (registro,) = cargar_feedback(tmp_path)
+    assert validar_contra_contexto([registro], set(), set(), set()) == [
+        f"{registro.id}: el paquete objetivo 2026-10-01-sesion-02 "
+        "no es la sesion 2026-09-20-sesion-01"
+    ]
+
+
+@pytest.mark.parametrize("accion", ["CORRECT", "RESOLVE_UNKNOWN", "LABEL_CASE"])
+def test_el_paquete_solo_se_confirma_o_se_rechaza(accion: str) -> None:
+    with pytest.raises(FeedbackError, match="exige objetivo de tipo"):
+        registro_desde_dict(
+            base(
+                accion=accion,
+                objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+                valor_resultante="lo que sea",
+            ),
+            "prueba",
+        )

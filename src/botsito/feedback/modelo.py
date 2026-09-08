@@ -45,12 +45,22 @@ ACCIONES = (
     "MARK_FALSE_NEGATIVE",
     "BORDERLINE",
 )
-TIPOS_OBJETIVO = ("evidence", "regla", "parametro", "ambiguedad", "caso", "contradiccion")
+TIPOS_OBJETIVO = (
+    "evidence",
+    "regla",
+    "parametro",
+    "ambiguedad",
+    "caso",
+    "contradiccion",
+    "paquete",
+)
 MEDIOS = ("replay", "audio", "video", "escrito")
 OBJETIVOS_POR_ACCION: dict[str, tuple[str, ...]] = {
-    "CONFIRM": ("evidence", "regla", "parametro"),
+    # `paquete` en CONFIRM/REJECT: la precondicion de ceguera de una sesion (F10). El trader
+    # confirma que no ha visto los meses de las ventanas, o la rechaza y hay que regenerar.
+    "CONFIRM": ("evidence", "regla", "parametro", "paquete"),
     "CORRECT": ("evidence", "regla", "parametro"),
-    "REJECT": ("evidence", "regla", "parametro"),
+    "REJECT": ("evidence", "regla", "parametro", "paquete"),
     "RESOLVE_UNKNOWN": ("parametro", "ambiguedad", "evidence"),
     "RESOLVE_CONTRADICTION": ("contradiccion",),
     "LABEL_CASE": ("caso",),
@@ -62,7 +72,7 @@ EXIGEN_VALOR = ("CORRECT", "RESOLVE_UNKNOWN", "RESOLVE_CONTRADICTION", "LABEL_CA
 # re.ASCII: sin el, `\d` acepta digitos arabigos u otros Unicode, y un id con ellos no se puede
 # citar desde el registro ni supersederse.
 FORMATO_ID_OBJETIVO: dict[str, re.Pattern[str]] = {t: ids.POR_TIPO[t] for t in TIPOS_OBJETIVO}
-_SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
+_SESION = ids.PAQUETE
 _FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 _ID = ids.FEEDBACK
 CAMPOS_OBLIGATORIOS = (
@@ -313,6 +323,10 @@ def validar_contra_contexto(
             problemas.append(f"{r.id}: no hay contradiccion abierta sobre {i}")
         elif t == "ambiguedad" and ids_ambiguedades is not None and i not in ids_ambiguedades:
             problemas.append(f"{r.id}: ambiguedad objetivo {i} no esta en ambiguedades.yaml")
+        elif t == "paquete" and i != r.sesion:
+            # Un paquete solo se confirma dentro de su propia sesion: si no, la precondicion de
+            # ceguera quedaria fechada en un dia que no es aquel en que se pregunto.
+            problemas.append(f"{r.id}: el paquete objetivo {i} no es la sesion {r.sesion}")
         if (
             duraciones
             and r.grabacion in duraciones

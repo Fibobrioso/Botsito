@@ -205,3 +205,54 @@ parametros:
     unidad: distancia_completa/desde_075
     descripcion: sobre que distancia se calcula el lotaje
     estado: UNKNOWN
+
+  # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
+  # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
+  - nombre: dias_operables
+    categoria: estrategia
+    tipo: texto
+    unidad: dias de la semana en que se opera
+    descripcion: dias en los que el bot busca entradas y dias que se excluyen por norma
+    estado: UNKNOWN
+  - nombre: filtro_noticias
+    categoria: estrategia
+    tipo: texto
+    unidad: regla de filtro, o no si no filtra
+    descripcion: si se deja de operar alrededor de noticias de alto impacto y con que margen
+    estado: UNKNOWN
+  - nombre: spread_maximo
+    categoria: estrategia
+    tipo: decimal
+    unidad: pips
+    descripcion: spread por encima del cual no se abre la operacion
+    estado: UNKNOWN
+  - nombre: perdida_maxima_diaria
+    categoria: estrategia
+    tipo: porcentaje
+    unidad: porcentaje de la cuenta
+    descripcion: perdida acumulada en el dia que detiene la operativa
+    estado: UNKNOWN
+  - nombre: perdida_maxima_semanal
+    categoria: estrategia
+    tipo: porcentaje
+    unidad: porcentaje de la cuenta
+    descripcion: perdida acumulada en la semana que detiene la operativa
+    estado: UNKNOWN
+  - nombre: comportamiento_sin_regla
+    categoria: estrategia
+    tipo: texto
+    unidad: abstenerse/regla_mas_parecida
+    descripcion: que hace el bot cuando la situacion no encaja con ninguna regla
+    estado: UNKNOWN
+  - nombre: instrumento
+    categoria: instrumento
+    tipo: texto
+    unidad: simbolo del instrumento
+    descripcion: instrumento sobre el que opera el bot
+    estado: UNKNOWN
+  - nombre: cuenta_objetivo
+    categoria: ejecucion
+    tipo: texto
+    unidad: tipo de cuenta
+    descripcion: cuenta sobre la que opera la primera version (fondeo, demo o propia)
+    estado: UNKNOWN

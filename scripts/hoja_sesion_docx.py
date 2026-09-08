@@ -36,6 +36,7 @@ from botsito.cases.paquete import (  # noqa: E402
 from botsito.comun.yaml_estricto import cargar_yaml  # noqa: E402
 from botsito.config.registro import cargar_registro  # noqa: E402
 from botsito.evidence.modelo import cargar_evidencia  # noqa: E402
+from botsito.feedback.modelo import TIPOS_OBJETIVO  # noqa: E402
 
 ANCHO = 9638  # A4 menos margenes de 2 cm, en twips
 GRIS = "595959"
@@ -239,7 +240,34 @@ def _cuerpo(
 
 def bloque_extra(e: dict[str, Any], n: int, n_total: int) -> str:
     """Pregunta adicional: no nace del registro ni de una ambiguedad, pero tapa un hueco."""
-    return _cuerpo(f"{e['id']} de {n_total}. {e['titulo']}", e, referencia="pregunta adicional")
+    return _cuerpo(f"{e['id']} de {n_total}. {e['titulo']}", e, referencia=str(e["objetivo"]))
+
+
+def comprobar_objetivos(ctx_doc: dict[str, Any], sesion: str, repo: Path) -> None:
+    """Toda pregunta de la hoja tiene que poder registrarse como feedback despues de la sesion.
+
+    Sin esta comprobacion se puede escribir una pregunta preciosa cuya respuesta no tenga ningun
+    objeto al que apuntar, y el hueco solo aparece al intentar registrarla, ya con el trader
+    delante. Aqui se cae antes, al generar el documento.
+    """
+    nombres = set(cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml").parametros)
+    evidencias = {i.id for i in cargar_evidencia(repo / "knowledge" / "evidence")}
+    declarados = [("precondicion", str(ctx_doc["precondicion"]["objetivo"]))]
+    declarados += [(str(e["id"]), str(e["objetivo"])) for e in ctx_doc.get("preguntas_extra") or []]
+    for quien, crudo in declarados:
+        objetivo = crudo.replace("{sesion}", sesion)
+        tipo, _, identificador = objetivo.partition(" ")
+        if tipo not in TIPOS_OBJETIVO:
+            raise SystemExit(f"{quien}: {tipo!r} no es un tipo de objetivo de feedback")
+        if tipo == "parametro" and identificador not in nombres:
+            raise SystemExit(
+                f"{quien}: el parametro {identificador!r} no esta en el registro, asi que la "
+                "respuesta no se podria registrar; anadelo a knowledge/spec/parametros.yaml"
+            )
+        if tipo == "evidence" and identificador not in evidencias:
+            raise SystemExit(f"{quien}: la evidencia {identificador!r} no existe")
+        if tipo == "paquete" and identificador != sesion:
+            raise SystemExit(f"{quien}: el paquete {identificador!r} no es la sesion {sesion!r}")
 
 
 def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any]) -> str:
@@ -441,6 +469,8 @@ def documento(repo: Path, sesion: str) -> str:
         for n in notas:
             partes.append(vineta(n))
 
+    comprobar_objetivos(ctx_doc, sesion, repo)
+
     prec = ctx_doc["precondicion"]
     partes.append(titulo(f"Antes de empezar. {prec['titulo']}", 1))
     partes.append(parrafo(run("Qué queremos saber", negrita=True, color=AZUL), espacio_despues=40))
@@ -460,6 +490,17 @@ def documento(repo: Path, sesion: str) -> str:
     )
     partes.append(texto_simple(prec["respuesta_util"]))
     partes.append(caja(2, "Respuesta literal del trader:"))
+    partes.append(
+        parrafo(
+            run(
+                "Referencia interna: " + str(prec["objetivo"]).replace("{sesion}", sesion),
+                sz=15,
+                color=GRIS,
+                cursiva=True,
+            ),
+            espacio_despues=240,
+        )
+    )
 
     partes.append(titulo("Primera parte: preguntas", 1))
     for p in preguntas:

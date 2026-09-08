@@ -157,7 +157,9 @@ def test_fichero_real_sin_valores_de_estrategia(repo: Path) -> None:
     for nombre in r.por_categoria("estrategia"):
         assert r.parametros[nombre].estado is Estado.UNKNOWN, f"{nombre} tiene valor antes de F11"
     for nombre, p in r.parametros.items():
-        if p.categoria != "estrategia":
+        # Un parametro de entorno sin valor todavia (UNKNOWN) no tiene nada que citar; la regla
+        # es que su VALOR venga de una decision, no de la evidencia ni del feedback.
+        if p.categoria != "estrategia" and p.estado is not Estado.UNKNOWN:
             assert p.fuente is not None and p.fuente.tipo == "decision", nombre
 
 
