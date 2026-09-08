@@ -1113,5 +1113,5 @@ no_consta:
   motivo: no habla de la zona de control en el tramo
 - tema: no_trade
   motivo: no razona un caso de no operar (lo hace en 0:16:00)
-salida_sha256: f16fb0a60a7a0998148aff20ab0192cdbcf0134d90a8af4dbb058e6256b12096
+salida_sha256: 0ce19a805d0aae4482b13a335611b6ee8d31e6af38f29f7e237f1411d4e2c00a
 comprobado_el: '2026-09-07T01:47:36Z'

@@ -389,6 +389,12 @@ def verificar_citas(
             localizaciones[it.id] = localizar_cita(segmentos, it.t0_ms, it.t1_ms, it.cita_literal)
         except CitaError as exc:
             problemas.append(f"{it.id}: {exc}")
+    parciales = sum(1 for loc in localizaciones.values() if loc.avisos)
+    if parciales:
+        avisos.append(
+            f"{parciales} citas localizadas con tiempos de segmento o parciales (las palabras "
+            "de la cruda no reproducen el texto del segmento)"
+        )
     for tid, n in sorted(sin_cruda.items()):
         avisos.append(f"{n} citas sobre {tid} no verificables aqui (cruda ausente en data/)")
     for tid, lista in sorted(reemplazadas.items()):

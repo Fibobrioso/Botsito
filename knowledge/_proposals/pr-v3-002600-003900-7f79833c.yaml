@@ -1275,5 +1275,5 @@ no_consta:
   motivo: solo la proteccion progresiva del TP (0:32:43), citada en objetivo
 - tema: no_trade
   motivo: solo 'ya no hay entrada' al leer el Excel (0:29:11), sin razonamiento
-salida_sha256: 37dfc2deffdfbd948364b5330a31f04074b976dca1b797cd338ed5b064e67757
+salida_sha256: 370f1de14c7f607e9570819c40dc6fd153f18e9b74e4a2b32a7562c4e6e77bf7
 comprobado_el: '2026-09-07T02:27:04Z'

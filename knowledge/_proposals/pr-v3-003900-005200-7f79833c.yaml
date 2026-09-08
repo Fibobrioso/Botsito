@@ -1266,5 +1266,5 @@ no_consta:
 - tema: mapeo
   motivo: solo el 'mapeo simple' como parte del esquema 1 (0:41:52) y el mapeo que rompe el esquema (0:51:55),
     citados en entrada y no_trade
-salida_sha256: f66ac48eea9d5a612272042ecf4f27d8d57d4a212835384aaf1b00e7ce9607ee
+salida_sha256: 3062dcfbae2b7de5380e0ab82b0fcc75fd728a94592ea0d8d13b45cb67d8f76d
 comprobado_el: '2026-09-07T01:55:33Z'

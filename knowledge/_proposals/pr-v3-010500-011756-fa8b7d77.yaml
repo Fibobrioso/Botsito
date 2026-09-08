@@ -1220,5 +1220,5 @@ no_consta:
   motivo: no habla de cartuchos en el tramo
 - tema: no_trade
   motivo: solo 'no habría entrada' al mapear mal (1:04:49), sin razonamiento propio
-salida_sha256: 625c135cf4ffbcc2800a2527f157a839266a2bbaf617cefed74bb9a0695abc00
+salida_sha256: 53ce154841ee2c9e685b9cda575e7ffcf7e63d249cb29a483e8eda2bd63fc10e
 comprobado_el: '2026-09-07T01:55:37Z'

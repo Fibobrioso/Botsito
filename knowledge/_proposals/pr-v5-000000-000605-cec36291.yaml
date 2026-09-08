@@ -664,5 +664,5 @@ no_consta:
   motivo: no define ni usa la zona de control en el tramo
 - tema: cartuchos
   motivo: no habla de intentos ni cartuchos
-salida_sha256: c67b58d3853483882ae9615b7d76effa28a78874adaed5a9a200c878736a1e1a
+salida_sha256: cbdea0996778f6d82bc54cca4eba7e3266caa2f9132432e1992124f8ee847f6c
 comprobado_el: '2026-09-07T01:38:41Z'

@@ -2004,5 +2004,5 @@ no_consta:
   motivo: no razona un caso de no operar en el tramo
 - tema: break_even
   motivo: solo 'break even y sin parciales' (1:12:04), citado en parciales
-salida_sha256: fa8a10434c5bedb71eaca4a96ce1b2c334ae2ced7ef4d1f149c078a3be99c2ae
+salida_sha256: 6e6e179a91227a6511aa4d796e6635618a7c3d9da12becffdcae815a4e9bd221
 comprobado_el: '2026-09-07T02:24:59Z'

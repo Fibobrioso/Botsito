@@ -829,5 +829,5 @@ no_consta:
   motivo: aparece como condicion del break even (0:15:24, 0:17:02); la definicion esta en 0:11:14
 - tema: no_trade
   motivo: no razona ningun caso de no operar en el tramo
-salida_sha256: 3c5f4d4ae6936c60ae5194fc2047a8b19629ff5d22b247367d439a2507476cf5
+salida_sha256: 09daa97ab7343642c8cd88b2cf95ec610b59139f3e0d965522798d8f87f909aa
 comprobado_el: '2026-09-07T01:44:02Z'

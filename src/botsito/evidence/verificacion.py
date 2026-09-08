@@ -82,6 +82,17 @@ class Localizacion:
     trozos: int
     senales: tuple[str, ...] = ()
     avisos: tuple[str, ...] = ()
+    hueco_ms: int = 0
+    """Mayor salto de tiempo entre dos trozos consecutivos de la cita (0 sin comodin)."""
+
+
+@dataclass(frozen=True)
+class _PalabraSintetica:
+    """Tramo de tiempo para los tokens cuya palabra falta al final de `palabras`."""
+
+    t0_ms: int
+    t1_ms: int
+    texto: str
 
 
 def _limpiar(texto: str) -> str:
@@ -114,7 +125,17 @@ def tokens_de_segmento(s: SegmentoCitable) -> tuple[list[Token], str | None]:
         for p in palabras:
             inicios.append(acumulado)
             acumulado += len(_sin_espacios(unicodedata.normalize("NFC", p.texto)))
-        if acumulado != len(_sin_espacios(nfc)):
+        compacto = _sin_espacios(nfc)
+        prefijo = "".join(_sin_espacios(unicodedata.normalize("NFC", p.texto)) for p in palabras)
+        if acumulado == len(compacto) and prefijo == compacto:
+            pass
+        elif acumulado < len(compacto) and compacto.startswith(prefijo):
+            # El ASR omite la(s) ultima(s) palabra(s) en `palabras`: se alinea lo que hay y el
+            # resto lleva el tramo [fin de la ultima palabra, fin del segmento].
+            aviso = f"segmento {s.n}: faltan palabras al final; tiempos parciales"
+            inicios.append(acumulado)
+            palabras.append(_PalabraSintetica(palabras[-1].t1_ms, s.t1_ms, ""))
+        else:
             aviso = f"segmento {s.n}: las palabras no reproducen el texto; tiempos del segmento"
             palabras = []
     else:
@@ -192,9 +213,13 @@ def localizar_cita(
     ]
     if not inicios:
         raise CitaError("la cita no se localiza en la cruda dentro de la ventana [t0, t1]")
-    hallado: tuple[int, int] | None = None
+    # Se prueban TODAS las apariciones del primer trozo: la frase puede repetirse antes, en un
+    # segmento que solo toca la ventana, y la aparicion valida ser una posterior.
+    candidatos: list[tuple[list[Token], int]] = []
+    fuera: tuple[int, int] | None = None
     for inicio in inicios:
         fin = inicio + len(primero)
+        cortes = [(inicio, fin)]
         ok = True
         for trozo in trozos[1:]:
             pos = _buscar(flujo, trozo, fin)
@@ -202,27 +227,36 @@ def localizar_cita(
                 ok = False
                 break
             fin = pos + len(trozo)
-        if ok:
-            hallado = (inicio, fin)
-            break
-    if hallado is None:
+            cortes.append((pos, fin))
+        if not ok:
+            continue
+        usados = flujo[inicio:fin]
+        inicio_ms = min(t.t0_ms for t in usados)
+        fin_ms = max(t.t1_ms for t in usados)
+        if inicio_ms < t0_ms - tol_ms or fin_ms > t1_ms + tol_ms:
+            fuera = fuera or (inicio_ms, fin_ms)
+            continue
+        hueco = 0
+        for (_a0, a1), (b0, _b1) in zip(cortes, cortes[1:], strict=False):
+            hueco = max(hueco, flujo[b0].t0_ms - flujo[a1 - 1].t1_ms)
+        candidatos.append((usados, hueco))
+    if not candidatos:
+        if fuera is not None:
+            raise CitaError(
+                f"la cita esta en {formato_ms(fuera[0])}-{formato_ms(fuera[1])}: ajusta t0/t1"
+            )
         raise CitaError("los trozos de la cita no aparecen en ese orden dentro de la ventana")
-    usados = flujo[hallado[0] : hallado[1]]
-    inicio_ms = min(t.t0_ms for t in usados)
-    fin_ms = max(t.t1_ms for t in usados)
-    if inicio_ms < t0_ms - tol_ms or fin_ms > t1_ms + tol_ms:
-        raise CitaError(
-            f"la cita esta en {formato_ms(inicio_ms)}-{formato_ms(fin_ms)}: ajusta t0/t1"
-        )
+    usados, hueco = candidatos[0]
     senales = tuple(sorted({x for t in usados for x in t.senales}))
     return Localizacion(
-        inicio_ms,
-        fin_ms,
+        min(t.t0_ms for t in usados),
+        max(t.t1_ms for t in usados),
         tuple(sorted({t.segmento for t in usados})),
-        len(inicios),
+        len(candidatos),
         len(trozos),
         senales,
         tuple(avisos),
+        hueco,
     )
 
 

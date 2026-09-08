@@ -231,6 +231,8 @@ def test_campos_de_item_y_metodos() -> None:
         campos_de_item(doc, 1, "t", "cruda_leida")
     with pytest.raises(PropuestaError, match="metodo_revision"):
         campos_de_item(doc, 2, "t", "otro")
+    with pytest.raises(PropuestaError, match="cruda_leida o audio_oido"):
+        campos_de_item(doc, 2, "t", "fotograma_visto")
     anotar_decision(doc, 2, "aceptado", "t", "x", "cruda_leida", None, "ev-v4-000006-deadbeef")
     with pytest.raises(PropuestaError, match="ya esta aceptado"):
         campos_de_item(doc, 2, "t", "cruda_leida")
@@ -262,21 +264,67 @@ def test_cargar_propuesta_estricta(tmp_path: Path) -> None:
     otro_nombre.write_text(ruta.read_text(encoding="utf-8"), encoding="utf-8")
     with pytest.raises(PropuestaError, match="nombre del fichero"):
         cargar_propuesta(otro_nombre)
+    # Cabecera con un tiempo invalido: error de propuesta, no traceback de EvidenciaError.
+    mal = dict(doc, t0="abc")
+    r3 = tmp_path / "sub" / f"{doc['propuesta_id']}.yaml"
+    escribir_propuesta(r3, mal)
+    with pytest.raises(PropuestaError, match="tiempo invalido"):
+        cargar_propuesta(r3)
+    # El sello cubre la cabecera (transcripcion, proponente): cambiarlas lo rompe.
+    sellado = _doc()
+    sellar(sellado, "x")
+    sellado["proponente"] = "humano"
+    assert comprobar_sello(sellado) is not None
 
 
 def test_validar_propuestas_para_knowledge_validate() -> None:
     doc = _doc()
     sellar(doc, "x")
     anotar_decision(doc, 1, "aceptado", "t", "x", "cruda_leida", None, "ev-v4-000000-deadbeef")
-    problemas, avisos = validar_propuestas([doc], set(), "otro-prompt")
+    problemas, avisos = validar_propuestas([doc], [], "otro-prompt")
     assert any("inexistente" in p for p in problemas)
     assert any("prompt distinto" in a for a in avisos)
+    # Evidencia coherente con el item aceptado: sin problemas; con un campo distinto, error.
+    campos = campos_de_item(_doc(), 1, "t", "cruda_leida")
+    from botsito.evidence.modelo import calcular_id
+
+    campos["id"] = calcular_id(campos)
+    ev = item_desde_dict(campos)
+    doc["items"][0]["evidence_id"] = ev.id
+    problemas, avisos = validar_propuestas([doc], [ev], None)
+    assert problemas == [] and avisos == []
+    doc["items"][0]["metodo_revision"] = "fotograma_visto"
+    problemas, _ = validar_propuestas([doc], [ev], None)
+    assert any("audio aceptado con fotograma_visto" in p for p in problemas)
+    doc["items"][0]["metodo_revision"] = "cruda_leida"
+    otro = dict(campos, tema="otro.tema")
+    otro["id"] = calcular_id(otro)
+    problemas, _ = validar_propuestas([doc], [item_desde_dict(otro)], None)
+    assert any("inexistente" in p for p in problemas)
+    doc["items"][0]["evidence_id"] = item_desde_dict(otro).id
+    problemas, _ = validar_propuestas([doc], [item_desde_dict(otro)], None)
+    assert any("no coincide con" in p and "'tema'" in p for p in problemas)
+    # Evidencia llm sin propuesta que la respalde: aviso.
+    _, avisos = validar_propuestas([], [ev], None)
+    assert any("sin propuesta" in a for a in avisos)
+    # Un rechazado no puede anotar evidence_id; el mismo id no puede anotarse dos veces.
+    doc2 = _doc()
+    sellar(doc2, "x")
+    anotar_decision(doc2, 1, "rechazado", "t", "x", None, "m", ev.id)
+    problemas, _ = validar_propuestas([doc2], [ev], None)
+    assert any("rechazado pero anota" in p for p in problemas)
+    doc["items"][0]["evidence_id"] = ev.id
+    doc["items"][1]["decision"] = "aceptado"
+    doc["items"][1]["metodo_revision"] = "cruda_leida"
+    doc["items"][1]["evidence_id"] = ev.id
+    problemas, _ = validar_propuestas([doc], [ev], None)
+    assert any("ya anotado" in p for p in problemas)
     doc["items"][1]["cita_literal"] = "cambiada"
-    problemas, _ = validar_propuestas([doc], {"ev-v4-000000-deadbeef"}, None)
+    problemas, _ = validar_propuestas([doc], [ev], None)
     assert any("cambio despues del check" in p for p in problemas)
     sin_sello = _doc()
     anotar_decision(sin_sello, 1, "rechazado", "t", "x", None, "m")
-    problemas, _ = validar_propuestas([sin_sello], set(), None)
+    problemas, _ = validar_propuestas([sin_sello], [], None)
     assert any("sin check" in p for p in problemas)
 
 

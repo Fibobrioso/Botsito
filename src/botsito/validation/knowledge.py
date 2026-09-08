@@ -150,7 +150,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             from botsito.comun.documentos import sha256_hex
 
             prompt_sha = sha256_hex(ruta_prompt.read_bytes().replace(b"\r\n", b"\n"))
-        problemas_pr, avisos_pr = validar_propuestas(propuestas, {i.id for i in items}, prompt_sha)
+        problemas_pr, avisos_pr = validar_propuestas(propuestas, items, prompt_sha)
         fallos += problemas_pr
         for a in avisos_pr:
             salida.append(f"AVISO: {a}")

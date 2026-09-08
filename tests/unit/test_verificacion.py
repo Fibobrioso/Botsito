@@ -44,6 +44,36 @@ def _seg(n: int, t0: int, texto: str, paso: int = 500, senales: tuple[str, ...] 
     return S(n, t0, t, texto, senales, tuple(palabras))
 
 
+def test_frase_repetida_antes_de_la_ventana_no_bloquea() -> None:
+    # La misma frase a 0 s (fuera) y a 38 s (dentro), en un segmento que toca la ventana.
+    texto = "no hay entrada vale " + "x " * 70 + "no hay entrada vale"
+    s = _seg(1, 0, texto)
+    loc = localizar_cita([s], 36_000, 40_000, "no hay entrada vale")
+    assert loc.t0_ms == 37_000 and loc.coincidencias == 1
+    # En dos segmentos: la frase en el anterior (que toca la ventana por la tolerancia) y en el
+    # citado; se elige la que cabe.
+    a = _seg(1, 0, "no hay entrada vale porque el precio sube")
+    b = _seg(2, 4_000, "y aqui no hay entrada vale porque cae")
+    loc = localizar_cita([a, b], 4_000, 8_000, "no hay entrada vale")
+    assert loc.segmentos == (2,) and loc.t0_ms == 5_000
+    with pytest.raises(CitaError, match="ajusta t0/t1"):
+        # Ventana [5,5 s, 11 s]: el segmento 2 la toca, pero la frase empieza en 5,0 s.
+        localizar_cita([a, b], 7_500, 9_000, "no hay entrada vale")
+
+
+def test_hueco_entre_trozos_y_palabras_parciales() -> None:
+    s = _seg(1, 0, "uno dos tres cuatro " + "x " * 40 + "cinco seis siete ocho")
+    loc = localizar_cita([s], 0, 30_000, "uno dos tres [...] seis siete ocho")
+    assert loc.hueco_ms == 21_000  # de 1,5 s (fin de 'tres') a 22,5 s (inicio de 'seis')
+    # Palabras que son un prefijo del texto: el resto lleva el tramo hasta el fin del segmento.
+    base = _seg(2, 0, "no no estan grabando")
+    parcial = S(2, 0, 2_000, "no no estan grabando", (), base.palabras[:3])
+    toks, aviso = tokens_de_segmento(parcial)
+    assert aviso is not None and "parciales" in aviso
+    assert [t.texto for t in toks] == ["no", "no", "estan", "grabando"]
+    assert toks[2].t0_ms == 1_000 and toks[3].t0_ms == 1_500 and toks[3].t1_ms == 2_000
+
+
 def test_tokens_normaliza_como_el_brief() -> None:
     assert tokens("Break-even 0,75 1:3 M15 ¿vale? se... Ah 1.19537 33 9.65") == [
         "break",
@@ -132,7 +162,11 @@ def test_elipsis_del_asr_y_guiones() -> None:
 def test_orden_estricto_y_coincidencias_multiples() -> None:
     segs = [_seg(0, 0, "vale vale vale vale mira esto vale vale vale vale mira esto")]
     loc = localizar_cita(segs, 0, 9000, "vale vale vale vale [...] mira esto vale")
-    assert loc.coincidencias == 2 and loc.trozos == 2
+    # `coincidencias` cuenta las apariciones COMPLETAS que caben en la ventana: la segunda
+    # "vale vale vale vale" no tiene "mira esto vale" detras.
+    assert loc.coincidencias == 1 and loc.trozos == 2
+    loc2 = localizar_cita(segs, 0, 9000, "vale vale vale vale mira esto")
+    assert loc2.coincidencias == 2
     with pytest.raises(CitaError, match="orden"):
         localizar_cita(segs, 0, 9000, "mira esto vale [...] vale vale vale vale")
 
@@ -142,7 +176,7 @@ def test_sin_palabras_cae_al_segmento_con_aviso_y_senales() -> None:
     loc = localizar_cita([s], 1000, 4000, "uno dos tres cuatro")
     assert loc.t0_ms == 1000 and loc.t1_ms == 4000 and loc.senales == ("no_habla",)
     assert loc.avisos and "sin palabras" in loc.avisos[0]
-    roto = S(4, 0, 2000, "uno dos tres cuatro", (), (P(0, 1000, "uno"),))
+    roto = S(4, 0, 2000, "uno dos tres cuatro", (), (P(0, 1000, "xxx"),))
     toks, aviso = tokens_de_segmento(roto)
     assert aviso and "no reproducen" in aviso and all(t.t0_ms == 0 for t in toks)
 

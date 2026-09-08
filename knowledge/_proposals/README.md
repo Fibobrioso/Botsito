@@ -10,9 +10,11 @@ activa).
 
 ## Regimen
 Manual y versionado (no inmutable, no solo-anadir). Tras `botsito evidence propose --check`, la
-salida queda sellada con `salida_sha256`; a partir de ahi solo pueden cambiar los campos de
+salida queda sellada con `salida_sha256` (cubre la cabecera `video_id`, `transcripcion`, `t0`,
+`t1`, `proponente`, el prompt, el modelo, el contexto, `temas_buscados`, `items` y `no_consta`);
+a partir de ahi solo pueden cambiar los campos de
 decision de cada item (`decision`, `decidido_por`, `decidido_el`, `metodo_revision`, `motivo`,
-`evidence_id`). `knowledge validate` recomputa el sello de cada propuesta y exige que todo
+`evidence_id`; `n` es el ultimo campo de cada item y `decidido_el` va en UTC, por eso puede ser el dia siguiente al de la hoja). `knowledge validate` recomputa el sello de cada propuesta y exige que todo
 `evidence_id` anotado exista. Una salida que cambio despues del check es error: se crea otra
 propuesta.
 

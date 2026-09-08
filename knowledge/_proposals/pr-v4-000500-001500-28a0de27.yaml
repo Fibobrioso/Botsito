@@ -1631,5 +1631,5 @@ no_consta:
   motivo: no habla de cartuchos en el tramo
 - tema: no_trade
   motivo: no razona un caso de no operar en el tramo
-salida_sha256: d0c781de7fe3cea21ed77e755d33518711bc300bc6a2fd1bd74857a54c6b83db
+salida_sha256: 398d005e9562e42f8133ef92085d60010574d37fcc563d6b5b0f697c7d6425f1
 comprobado_el: '2026-09-07T02:27:06Z'

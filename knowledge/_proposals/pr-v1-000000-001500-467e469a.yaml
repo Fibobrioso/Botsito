@@ -1418,5 +1418,5 @@ items:
 no_consta:
 - tema: break_even
   motivo: en este tramo no habla del break even (lo hace a partir de 0:18:07)
-salida_sha256: d6a4566d748420e2c87237055517a3de8efe21633a5ee095bcd0237da1621231
+salida_sha256: 117e25e721894e244aad045f0b56c8f82ac290e2fe9171f2b4ef3291af9c2d30
 comprobado_el: '2026-09-07T01:43:23Z'

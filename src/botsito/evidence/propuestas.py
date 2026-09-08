@@ -45,6 +45,8 @@ FICHERO_TEMAS = "knowledge/evidence/_temas.yaml"
 PROPONENTES = ("llm", "humano")
 DECISIONES = ("pendiente", "aceptado", "rechazado")
 METODOS_REVISION = ("cruda_leida", "audio_oido", "fotograma_visto")
+HUECO_AVISO_MS = 15_000
+"""Salto entre trozos de una cita con comodin a partir del cual `--check` avisa."""
 CAMPOS_PROPUESTA = (
     "propuesta_id",
     "video_id",
@@ -178,6 +180,11 @@ def _canonico_salida(doc: dict[str, Any]) -> str:
     for it in doc.get("items") or []:
         items.append({k: it[k] for k in sorted(it) if k not in CAMPOS_DECISION})
     cuerpo = {
+        "video_id": doc.get("video_id"),
+        "transcripcion": doc.get("transcripcion"),
+        "t0": doc.get("t0"),
+        "t1": doc.get("t1"),
+        "proponente": doc.get("proponente"),
         "prompt_sha256": doc.get("prompt_sha256"),
         "modelo": doc.get("modelo"),
         "contexto": doc.get("contexto"),
@@ -221,14 +228,17 @@ def cargar_propuesta(ruta: Path) -> dict[str, Any]:
             raise PropuestaError(f"{ruta.name}: {clave} vacio o no es texto")
     if sha256_hex(doc["prompt"].encode("utf-8")) != doc["prompt_sha256"]:
         raise PropuestaError(f"{ruta.name}: prompt_sha256 no coincide con el prompt")
-    esperado = id_propuesta(
-        doc["video_id"],
-        doc["t0"],
-        doc["t1"],
-        doc["prompt_sha256"],
-        doc["modelo"],
-        doc["generado_el"],
-    )
+    try:
+        esperado = id_propuesta(
+            doc["video_id"],
+            doc["t0"],
+            doc["t1"],
+            doc["prompt_sha256"],
+            doc["modelo"],
+            doc["generado_el"],
+        )
+    except EvidenciaError as exc:
+        raise PropuestaError(f"{ruta.name}: {exc}") from exc
     if esperado != doc["propuesta_id"]:
         raise PropuestaError(f"{ruta.name}: propuesta_id no coincide con su contenido ({esperado})")
     for clave in ("items", "no_consta", "temas_buscados"):
@@ -424,6 +434,11 @@ def comprobar(
                         avisos.append(
                             f"{pref}: la cita casa {loc.coincidencias} veces en la ventana"
                         )
+                    if loc.hueco_ms > HUECO_AVISO_MS:
+                        avisos.append(
+                            f"{pref}: el comodin salta {loc.hueco_ms / 1000:.0f} s entre trozos; "
+                            "confirma que es una misma frase"
+                        )
                     avisos += [f"{pref}: {a}" for a in loc.avisos]
             except CitaError as exc:
                 problemas.append(f"{pref}: {exc}")
@@ -481,6 +496,8 @@ def campos_de_item(doc: dict[str, Any], n: int, revisado_por: str, metodo: str) 
         raise PropuestaError(f"el item {n} ya esta {it['decision']}")
     if it["modalidad"] in ("pantalla", "ambas") and metodo != "fotograma_visto":
         raise PropuestaError(f"el item {n} es de pantalla: exige metodo_revision fotograma_visto")
+    if it["modalidad"] == "audio" and metodo == "fotograma_visto":
+        raise PropuestaError(f"el item {n} es de audio: exige cruda_leida o audio_oido")
     provenance = "bot-v2" if not vacio(it.get("marca_heredada")) else "botsito"
     campos: dict[str, Any] = {
         "video_id": doc["video_id"],
@@ -526,12 +543,52 @@ def anotar_decision(
         it["evidence_id"] = evidence_id
 
 
+def _discrepancias(doc: dict[str, Any], it: dict[str, Any], ev: EvidenceItem) -> list[str]:
+    """Campos del item aceptado que no coinciden con la evidencia que anota."""
+    malos: list[str] = []
+    pares = (
+        ("cita_literal", ev.cita_literal),
+        ("afirmacion", ev.afirmacion),
+        ("tema", ev.tema),
+        ("modalidad", ev.modalidad),
+        ("tipo", ev.tipo),
+        ("t0", ev.t0),
+        ("t1", ev.t1),
+        ("confianza", ev.confianza),
+    )
+    for clave, valor_ev in pares:
+        if str(it.get(clave)) != str(valor_ev):
+            malos.append(clave)
+    if (it.get("valor") if it.get("valor") is not None else None) != ev.valor:
+        malos.append("valor")
+    if list(it.get("fotogramas") or []) != list(ev.fotogramas):
+        malos.append("fotogramas")
+    if doc["video_id"] != ev.video_id:
+        malos.append("video_id")
+    if doc["proponente"] != ev.extractor:
+        malos.append("extractor")
+    esperada = None if it["modalidad"] == "pantalla" else doc["transcripcion"]
+    if esperada != ev.transcripcion:
+        malos.append("transcripcion")
+    provenance = "bot-v2" if not vacio(it.get("marca_heredada")) else "botsito"
+    if provenance != ev.provenance:
+        malos.append("provenance")
+    return malos
+
+
 def validar_propuestas(
-    docs: Sequence[dict[str, Any]], ids_evidencia: set[str], prompt_actual_sha: str | None
+    docs: Sequence[dict[str, Any]],
+    evidencia: Sequence[EvidenceItem],
+    prompt_actual_sha: str | None,
 ) -> tuple[list[str], list[str]]:
-    """Para `knowledge validate`: sello intacto, evidence_id existentes, prompt vigente."""
+    """Para `knowledge validate`: sello intacto, decisiones coherentes con la evidencia (cada
+    `aceptado` anota un item existente y unico cuyos campos son los del item propuesto; el metodo
+    de revision casa con la modalidad), prompt vigente. Avisa de evidencia `extractor: llm` que
+    ninguna propuesta respalda."""
     problemas: list[str] = []
     avisos: list[str] = []
+    por_id = {ev.id: ev for ev in evidencia}
+    anotados: dict[str, str] = {}
     for doc in docs:
         pid = doc["propuesta_id"]
         sello = doc.get("salida_sha256")
@@ -540,9 +597,40 @@ def validar_propuestas(
         if not sello and any(it.get("decision", "pendiente") != "pendiente" for it in doc["items"]):
             problemas.append(f"{pid}: decisiones sobre una propuesta sin check")
         for it in doc["items"]:
+            pref = f"{pid}: item {it['n']}"
             eid = it.get("evidence_id")
-            if eid and eid not in ids_evidencia:
-                problemas.append(f"{pid}: item {it['n']} anota evidence_id {eid} inexistente")
+            decision = it.get("decision", "pendiente")
+            metodo = it.get("metodo_revision")
+            if decision == "aceptado":
+                if not eid:
+                    problemas.append(f"{pref} aceptado sin evidence_id")
+                    continue
+                if eid in anotados:
+                    problemas.append(
+                        f"{pref} anota evidence_id {eid}, ya anotado en {anotados[eid]}"
+                    )
+                anotados[eid] = pref
+                ev = por_id.get(eid)
+                if ev is None:
+                    problemas.append(f"{pref} anota evidence_id {eid} inexistente")
+                    continue
+                malos = _discrepancias(doc, it, ev)
+                if malos:
+                    problemas.append(f"{pref} no coincide con {eid} en {malos}")
+                if metodo not in METODOS_REVISION:
+                    problemas.append(f"{pref} aceptado sin metodo_revision valido")
+                elif it["modalidad"] in ("pantalla", "ambas") and metodo != "fotograma_visto":
+                    problemas.append(f"{pref} de pantalla aceptado sin fotograma_visto")
+                elif it["modalidad"] == "audio" and metodo == "fotograma_visto":
+                    problemas.append(f"{pref} de audio aceptado con fotograma_visto")
+            elif eid:
+                problemas.append(f"{pref} {decision} pero anota evidence_id {eid}")
         if prompt_actual_sha and doc["prompt_sha256"] != prompt_actual_sha:
             avisos.append(f"{pid}: prompt distinto del PROMPT.md actual")
+    huerfanos = [ev.id for ev in evidencia if ev.extractor == "llm" and ev.id not in anotados]
+    if huerfanos:
+        avisos.append(
+            f"{len(huerfanos)} items de evidencia con extractor llm sin propuesta que los respalde "
+            f"(p. ej. {huerfanos[0]})"
+        )
     return problemas, avisos

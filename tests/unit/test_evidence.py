@@ -228,12 +228,19 @@ def test_id_estable_ante_espacios_y_cambia_con_contenido(espacios: str, extra: s
 
 
 def test_directorio_real_valida(repo: Path) -> None:
+    from botsito.config.ajustes import carpeta_datos
     from botsito.corpus.inventario import cargar_manifiesto
+    from botsito.validation.contexto_evidencia import construir_contexto
 
     items = cargar_evidencia(repo / "knowledge" / "evidence")
     manifiesto = cargar_manifiesto(repo / "knowledge" / "corpus" / "manifest.yaml")
-    assert validar_contra_manifiesto(items, manifiesto) == []
+    contexto, _temas = construir_contexto(repo, carpeta_datos(repo), manifiesto)
+    assert validar_contra_manifiesto(items, manifiesto, contexto) == []
     assert contradicciones.validar_fichero(repo / "knowledge" / "evidence", items) == []
+    # Sin referencias conocidas, los items de pantalla son error (no se aceptan rutas heredadas).
+    con_fotogramas = [i for i in items if i.fotogramas]
+    if con_fotogramas:
+        assert validar_contra_manifiesto(con_fotogramas, manifiesto) != []
 
 
 def test_coma_decimal_no_es_contradiccion(tmp_path: Path) -> None:

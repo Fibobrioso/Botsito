@@ -566,11 +566,28 @@ class _EntornoEvidencia:
     def comprobar(self, item: EvidenceItem) -> list[str]:
         """Problemas del item nuevo en el contexto real: manifiesto, referencias y cita."""
         from botsito.evidence.modelo import validar_contra_manifiesto, verificar_citas
+        from botsito.evidence.verificacion import comprobar_referencias
 
         todos = [*self.existentes, item]
         problemas: list[str] = []
         if self.manifiesto is not None:
             problemas += validar_contra_manifiesto(todos, self.manifiesto, self.contexto)
+        elif item.modalidad in ("pantalla", "ambas") or item.fotogramas:
+            # Sin manifiesto del corpus, las referencias se comprueban igual.
+            if self.contexto.referencias is None:
+                problemas.append(f"{item.id}: faltan referencias conocidas para validar fotogramas")
+            else:
+                problemas += [
+                    f"{item.id}: {p}"
+                    for p in comprobar_referencias(
+                        item.video_id,
+                        item.t0_ms,
+                        item.t1_ms,
+                        item.modalidad,
+                        list(item.fotogramas),
+                        self.contexto.referencias,
+                    )
+                ]
         if item.cita_de_audio and item.transcripcion:
             if self.contexto.activas.get(item.video_id) != item.transcripcion:
                 problemas.append(
@@ -819,7 +836,8 @@ def evidence_accept(repo: Path, args: argparse.Namespace) -> int:
             return 1
         otras = cargar_propuestas(repo / DIRECTORIO_PROPUESTAS)
         r = comprobar(doc, entorno.contexto, entorno.temas, entorno.existentes, otras)
-        mios = [p for p in r.problemas if p.startswith(f"item {args.item}:")]
+        patron = re.compile(rf"\bitem {args.item}\b")
+        mios = [p for p in r.problemas if patron.search(p)]
         globales = [p for p in r.problemas if not p.startswith("item ")]
         if mios or globales:
             for p in mios + globales:
@@ -836,7 +854,12 @@ def evidence_accept(repo: Path, args: argparse.Namespace) -> int:
         anotar_decision(
             doc, args.item, "aceptado", args.revisado_por, _ahora(), args.metodo, None, item.id
         )
-        escribir_propuesta(ruta, doc)
+        try:
+            escribir_propuesta(ruta, doc)
+        except OSError:
+            # Sin decision anotada el item recien creado quedaria huerfano: se retira.
+            ruta_item.unlink(missing_ok=True)
+            raise
     except errores as exc:
         print(f"ERROR: {exc}")
         return 1
