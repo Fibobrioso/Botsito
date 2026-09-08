@@ -1,0 +1,15 @@
+id: ev-v4-004936-d7004417
+video_id: v4
+t0: 0:49:36
+t1: 0:49:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo no lo hago, o sea, yo cierro la operación, apenas tengo el trade positivo ya no opero
+  más o sea, aunque después haya otros trades con la otra sesión, se den 3 ganadores no lo hago
+afirmacion: con el primer trade positivo deja de operar el dia, aunque la otra sesion de mas trades
+tema: cartuchos.dia_termina_con_ganadora.v4
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

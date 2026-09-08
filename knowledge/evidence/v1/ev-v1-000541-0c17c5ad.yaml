@@ -1,0 +1,15 @@
+id: ev-v1-000541-0c17c5ad
+video_id: v1
+t0: 0:05:41
+t1: 0:05:45
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta mecha yo considero también como parte de la estructura de mercado
+afirmacion: la mecha cuenta como parte de la estructura de mercado al mapear
+tema: mapeo.m1.mecha_estructura
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: mecha
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

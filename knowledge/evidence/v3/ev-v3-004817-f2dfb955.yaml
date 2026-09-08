@@ -1,0 +1,18 @@
+id: ev-v3-004817-f2dfb955
+video_id: v3
+t0: 0:48:17
+t1: 0:48:24
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: límite estricto de dos cartuchos por robar el barrio de liquidez exactamente si ambos pierden
+  escenario y escenario invaliado
+afirmacion: 'lee la ficha y confirma: limite estricto de dos cartuchos por barrido de liquidez; si ambos
+  pierden, escenario invalidado'
+tema: cartuchos.dos_por_barrido_liquidez
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: dos
+notas: A-2; lectura de la ficha con errores del ASR (robar el barrio = por el barrido)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,16 @@
+id: ev-v4-000858-4e50f00c
+video_id: v4
+t0: 0:08:58
+t1: 0:09:26
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: imagina que estamos operando a las 9 y le toca hablar [...] en esos momentos el split aumenta
+  [...] ahí sería cuestión de darle respiro al trade
+afirmacion: con noticias el spread aumenta y habria que dar mas respiro al trade
+tema: stop.respiro_con_noticias
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el consultor plantea, el trader confirma; split = spread (duda del glosario)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v1-000126-ffb9640c
+video_id: v1
+t0: 0:01:26
+t1: 0:01:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no ha mitigado esta zona aquí vale como no lo ha mitigado pues todavía tenemos un enfoque
+  alcista [...] sólo operaciones alcistas
+afirmacion: mientras la zona no este mitigada el enfoque sigue alcista y solo se buscan operaciones alcistas
+tema: sesgo.enfoque_por_mitigacion
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: no nombra la temporalidad de la zona en este tramo (en 0:11:43 dice cuatro horas)
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

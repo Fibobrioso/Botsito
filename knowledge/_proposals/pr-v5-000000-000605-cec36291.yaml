@@ -1,0 +1,668 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v5-000000-000605-cec36291
+video_id: v5
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57
+t0: 0:00:00
+t1: 0:06:05
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:14Z'
+contexto:
+  segmentos:
+  - n: 0
+    t0_ms: 980
+    t1_ms: 7620
+    texto: Hola, hola, pues bueno, estoy backtesteando el mes de abril de este año, ¿vale?
+    senales: []
+  - n: 1
+    t0_ms: 8440
+    t1_ms: 17040
+    texto: Quería agregar algunas cosas, yo lo había comentado con anterioridad, pero me gustaría volverlo
+      a recalcar, por si acaso, y sería lo siguiente.
+    senales: []
+  - n: 2
+    t0_ms: 18260
+    t1_ms: 24080
+    texto: Pasa que a veces, por ejemplo, aquí tenemos ya la mitigación de liquidez en M15, ¿vale?
+    senales: []
+  - n: 3
+    t0_ms: 24180
+    t1_ms: 27680
+    texto: A ver, me voy a dirigir a M15 y lo voy a trazar de manera más correcta.
+    senales: []
+  - n: 4
+    t0_ms: 28220
+    t1_ms: 29540
+    texto: Vale, lo tenemos aquí
+    senales: []
+  - n: 5
+    t0_ms: 29540
+    t1_ms: 33880
+    texto: O sea, aquí iniciaría
+    senales: []
+  - n: 6
+    t0_ms: 33880
+    t1_ms: 36560
+    texto: Y aquí, pero ¿qué pasa?
+    senales: []
+  - n: 7
+    t0_ms: 36640
+    t1_ms: 38700
+    texto: Claro, la mayoría de
+    senales: []
+  - n: 8
+    t0_ms: 38700
+    t1_ms: 40680
+    texto: Breaker, bueno, aquí no hay entrada
+    senales: []
+  - n: 9
+    t0_ms: 40680
+    t1_ms: 42880
+    texto: Obviamente, o sea, no hay entrada
+    senales: []
+  - n: 10
+    t0_ms: 42880
+    t1_ms: 44580
+    texto: No hay entrada
+    senales: []
+  - n: 11
+    t0_ms: 45080
+    t1_ms: 46700
+    texto: Porque no me genera el esquema
+    senales: []
+  - n: 12
+    t0_ms: 47740
+    t1_ms: 49100
+    texto: El esquema 2 de entrada
+    senales: []
+  - n: 13
+    t0_ms: 49100
+    t1_ms: 50520
+    texto: Que sería así, sino que
+    senales: []
+  - n: 14
+    t0_ms: 50520
+    t1_ms: 51800
+    texto: Genera un flujo de órdenes
+    senales: []
+  - n: 15
+    t0_ms: 53320
+    t1_ms: 55120
+    texto: Entonces esa entrada queda descartada
+    senales: []
+  - n: 16
+    t0_ms: 55120
+    t1_ms: 56940
+    texto: Vale, pero ¿qué pasa?
+    senales: []
+  - n: 17
+    t0_ms: 57080
+    t1_ms: 58840
+    texto: Bueno, elimino esto porque ya no tiene
+    senales: []
+  - n: 18
+    t0_ms: 58840
+    t1_ms: 65280
+    texto: tiene mucha importancia, me quedo con esa liquidez de aquí en M15, que continuamos todavía,
+      sería aquí, ¿vale?
+    senales: []
+  - n: 19
+    t0_ms: 65520
+    t1_ms: 74340
+    texto: Aquí se cumple todas las condiciones, quita liquidez por encima de ese alto de aquí, como lo
+      hace con cuerpo,
+    senales: []
+  - n: 20
+    t0_ms: 74560
+    t1_ms: 84060
+    texto: pero ¿qué pasa? Lo interesante es esto, si nosotros nos damos cuenta, el precio puede generar
+      flujo de órdenes aquí, aquí,
+    senales: []
+  - n: 21
+    t0_ms: 84060
+    t1_ms: 94620
+    texto: aquí y mira este sería la zona vale vale me acabo de dar cuenta de algo yo lo marcaría desde
+      aquí
+    senales: []
+  - n: 22
+    t0_ms: 94620
+    t1_ms: 101760
+    texto: vale yo lo marcaría desde aquí pero si es desde aquí pues igual se toma la entrada y no pasa
+      nada
+    senales: []
+  - n: 23
+    t0_ms: 101760
+    t1_ms: 107940
+    texto: se gana vale se va a cumplir 13 etcétera etcétera pero yo lo tomaría desde aquí por el hecho
+      de que
+    senales: []
+  - n: 24
+    t0_ms: 107940
+    t1_ms: 114760
+    texto: al hacer mapeo estructural o sea cuando hago un mapeo de estructura pues me quedaría algo así
+    senales: []
+  - n: 25
+    t0_ms: 115780
+    t1_ms: 123140
+    texto: vale entonces a ver por términos que ya conocemos por ejemplo este decisional o sea sería suficiente
+    senales: []
+  - n: 26
+    t0_ms: 123140
+    t1_ms: 131120
+    texto: para validar una entrada aquí pero qué pasa ocurre que el precio llega activa la entrada
+    senales: []
+  - n: 27
+    t0_ms: 131120
+    t1_ms: 139520
+    texto: y se regresa o sea y cuando se va y cuando se hace ese retroceso pues suele suele suceder y
+    senales: []
+  - n: 28
+    t0_ms: 139520
+    t1_ms: 147680
+    texto: hay casos donde no llega hasta el 080 o sea sino que lo cae pero lo usual o sea en la mayoría
+      de
+    senales: []
+  - n: 29
+    t0_ms: 147680
+    t1_ms: 153860
+    texto: casos pues suele retroceder o sea te activa la entrada suele retroceder hasta inclusive no
+      o
+    senales: []
+  - n: 30
+    t0_ms: 153860
+    t1_ms: 156140
+    texto: O sea, no llega a romper ese nivel aquí
+    senales: []
+  - n: 31
+    t0_ms: 156140
+    t1_ms: 157020
+    texto: Que sería el tope
+    senales: []
+  - n: 32
+    t0_ms: 158740
+    t1_ms: 159780
+    texto: El tope
+    senales: []
+  - n: 33
+    t0_ms: 159780
+    t1_ms: 161900
+    texto: Pero luego cae
+    senales: []
+  - n: 34
+    t0_ms: 161900
+    t1_ms: 164600
+    texto: O sea, estamos jugando nosotros una operación bajista
+    senales: []
+  - n: 35
+    t0_ms: 164600
+    t1_ms: 166020
+    texto: Cae y aquí
+    senales: []
+  - n: 36
+    t0_ms: 166020
+    t1_ms: 167740
+    texto: Entonces cuando hay un equal
+    senales: []
+  - n: 37
+    t0_ms: 167740
+    t1_ms: 169760
+    texto: Que no lo vamos a poder anticipar
+    senales: []
+  - n: 38
+    t0_ms: 169760
+    t1_ms: 171040
+    texto: Porque se va a activar la entrada como tal
+    senales: []
+  - n: 39
+    t0_ms: 171040
+    t1_ms: 173300
+    texto: Es reentrar como tal
+    senales: []
+  - n: 40
+    t0_ms: 173300
+    t1_ms: 175940
+    texto: Y eso lo otro
+    senales: []
+  - n: 41
+    t0_ms: 175940
+    t1_ms: 177120
+    texto: Contarlo como pérdida
+    senales: []
+  - n: 42
+    t0_ms: 177120
+    t1_ms: 179640
+    texto: Pero reentrar nuevamente si es que el precio
+    senales: []
+  - n: 43
+    t0_ms: 179640
+    t1_ms: 181600
+    texto: Pues te llega a romper nuevamente
+    senales: []
+  - n: 44
+    t0_ms: 181600
+    t1_ms: 182360
+    texto: Esta zona de aquí
+    senales: []
+  - n: 45
+    t0_ms: 182360
+    t1_ms: 192460
+    texto: o sea, si llega a romper esa zona de allí, entrarlo, o sea, sería algo así, vale, nosotros
+    senales: []
+  - n: 46
+    t0_ms: 192460
+    t1_ms: 203810
+    texto: vamos aquí, vale, yo activo la entrada aquí, mira, me activa la entrada y si yo protejo
+    senales: []
+  - n: 47
+    t0_ms: 203810
+    t1_ms: 215660
+    texto: a 0.80, que es el SL por defecto, que no me permite dejarlo, vale, la cosa es esa, si
+    senales: []
+  - n: 48
+    t0_ms: 215660
+    t1_ms: 255310
+    texto: Si nosotros protegemos, eh, espera, ah, es que le he dado buy creo, espera, sell, protejo aquí,
+      vale, mira, se activa la entrada como tal, vale, pero, bueno, continúa desarrollándose y eso es
+      lo que quiero llegar, o sea, nos mitiga y nuevamente, pues, sería cuestión de poner otra reentrada
+      aquí, si el precio va a seguir bajando lo va a hacer, o sea, es lo más probable, crean.
+    senales: []
+  - n: 49
+    t0_ms: 257310
+    t1_ms: 259530
+    texto: lo validan los datos, o sea, no porque yo lo diga
+    senales: []
+  - n: 50
+    t0_ms: 261230
+    t1_ms: 263630
+    texto: o sea, nuevamente se activó la entrada
+    senales: []
+  - n: 51
+    t0_ms: 263630
+    t1_ms: 265670
+    texto: y pues eso, dejarlo continuar
+    senales: []
+  - n: 52
+    t0_ms: 265670
+    t1_ms: 267810
+    texto: ya llegaría a un punto
+    senales: []
+  - n: 53
+    t0_ms: 267810
+    t1_ms: 269510
+    texto: también donde, o sea, se cumplen las condiciones
+    senales: []
+  - n: 54
+    t0_ms: 269510
+    t1_ms: 271250
+    texto: para poner break even, bueno, en ese caso
+    senales: []
+  - n: 55
+    t0_ms: 271250
+    t1_ms: 273310
+    texto: el precio sigue así por caída
+    senales: []
+  - n: 56
+    t0_ms: 273310
+    t1_ms: 275310
+    texto: ya lo podemos poner en B
+    senales: []
+  - n: 57
+    t0_ms: 275950
+    t1_ms: 282670
+    texto: bueno, yo lo calculo así, o sea
+    senales: []
+  - n: 58
+    t0_ms: 282670
+    t1_ms: 284530
+    texto: sabemos que manejamos
+    senales: []
+  - n: 59
+    t0_ms: 284530
+    t1_ms: 287150
+    texto: el cálculo del RR en base al 1%
+    senales: []
+  - n: 60
+    t0_ms: 287150
+    t1_ms: 287910
+    texto: que sería allí
+    senales: []
+  - n: 61
+    t0_ms: 296060
+    t1_ms: 298060
+    texto: yo todos los backtesting como tal, o sea
+    senales: []
+  - n: 62
+    t0_ms: 298060
+    t1_ms: 300040
+    texto: estaba buscando el 1.3
+    senales: []
+  - n: 63
+    t0_ms: 300040
+    t1_ms: 301700
+    texto: o sea, existe la posibilidad
+    senales: []
+  - n: 64
+    t0_ms: 301700
+    t1_ms: 303920
+    texto: como he comentado también, de que podamos
+    senales: []
+  - n: 65
+    t0_ms: 303920
+    t1_ms: 305060
+    texto: amplificar a 1.4
+    senales: []
+  - n: 66
+    t0_ms: 307300
+    t1_ms: 308680
+    texto: lo que sería
+    senales: []
+  - n: 67
+    t0_ms: 308680
+    t1_ms: 310440
+    texto: no me permite
+    senales: []
+  - n: 68
+    t0_ms: 310440
+    t1_ms: 315610
+    texto: lo voy a cerrar aquí
+    senales: []
+  - n: 69
+    t0_ms: 315610
+    t1_ms: 315910
+    texto: pero
+    senales: []
+  - n: 70
+    t0_ms: 315910
+    t1_ms: 319270
+    texto: o sea, existe la posibilidad de
+    senales: []
+  - n: 71
+    t0_ms: 319270
+    t1_ms: 321130
+    texto: amplificar a 1.4 el RR
+    senales: []
+  - n: 72
+    t0_ms: 321130
+    t1_ms: 323170
+    texto: pero creo que eso ya lo veremos más adelante
+    senales: []
+  - n: 73
+    t0_ms: 323170
+    t1_ms: 324210
+    texto: si es factible
+    senales: []
+  - n: 74
+    t0_ms: 325690
+    t1_ms: 327670
+    texto: y pues es eso, quería comentar eso
+    senales: []
+  - n: 75
+    t0_ms: 327670
+    t1_ms: 335430
+    texto: también existe bueno el otro caso sería por ejemplo como esto es un igual lo único lo hay
+    senales: []
+  - n: 76
+    t0_ms: 336330
+    t1_ms: 345550
+    texto: sería pues allí entonces nosotros esperaríamos a que por ejemplo el precio en este caso rompa
+      por
+    senales: []
+  - n: 77
+    t0_ms: 345550
+    t1_ms: 353210
+    texto: arriba vale se rompa por arriba para poder nosotros en la reentrada sabemos de un flujo bajista
+      vale
+    senales: []
+  - n: 78
+    t0_ms: 353210
+    t1_ms: 359190
+    texto: vale, se genera allí, la entrada, o sea, puede estar así, y luego el precio lo que
+    senales: []
+  - n: 79
+    t0_ms: 359190
+    t1_ms: 363610
+    texto: va a ser es esto, o sea, entraríamos aquí, vale, eso sería todo.
+    senales: []
+  referencias:
+  - 'fr-v5-718ecabb/<t_ms>: 366 fotogramas regulares, uno por segundo, de 0 a 365000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:00:00
+  t1: 0:00:07
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: estoy backtesteando el mes de abril de este año
+  afirmacion: el video es una sesion de backtest de abril de 2026
+  tema: backtest.sesion_abril_2026
+  confianza: alta
+  notas: contexto del video v5 (FXReplay, abril 2026); la exportacion xlsx de abril no aparece en pantalla
+    en este video
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:39Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000000-69774090
+- t0: 0:00:38
+  t1: 0:00:52
+  modalidad: audio
+  tipo: NO_TRADE
+  cita_literal: bueno aquí no hay entrada [...] porque no me genera el esquema [...] genera un flujo de
+    órdenes
+  afirmacion: no hay entrada cuando, en vez del esquema 2, el precio genera un flujo de ordenes
+  tema: no_trade.esquema2_flujo_ordenes
+  confianza: alta
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:41Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000038-6570a65f
+- t0: 0:01:05
+  t1: 0:01:14
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: quita liquidez por encima de ese alto de aquí, como lo hace con cuerpo
+  afirmacion: la liquidez de M15 se toma por encima del alto y con cuerpo
+  tema: liquidez.m15.toma_con_cuerpo
+  valor: cuerpo
+  confianza: alta
+  n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:43Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000105-fb4344e7
+- t0: 0:01:55
+  t1: 0:02:11
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: este decisional o sea sería suficiente para validar una entrada aquí
+  afirmacion: un decisional basta para validar la entrada en ese punto
+  tema: entrada.esquema2.decisional
+  confianza: media
+  notas: jerga del trader (decisional); el ASR no marca senales pero el termino no esta definido en el
+    tramo
+  n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:45Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000155-d079ac35
+- t0: 0:02:19
+  t1: 0:02:33
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: hay casos donde no llega hasta el 080 o sea sino que lo cae pero lo usual o sea en la
+    mayoría de casos pues suele retroceder
+  afirmacion: lo usual es que el precio retroceda tras activar la entrada; a veces no llega hasta el 0,80
+  tema: stop.retroceso_hasta_080
+  confianza: media
+  notas: el ASR escribe 080 donde el trader dice 0,80 (mismo nivel que el SL por defecto de 0:03:23)
+  n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:47Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000219-bc86af3d
+- t0: 0:02:46
+  t1: 0:03:02
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: cuando hay un equal que no lo vamos a poder anticipar [...] contarlo como pérdida pero
+    reentrar nuevamente si es que el precio
+  afirmacion: un equal activa la entrada sin poder anticiparse; se cuenta como perdida y se reentra si
+    el precio rompe de nuevo la zona
+  tema: reentrada.equal
+  confianza: alta
+  n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:49Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000246-17eff9e1
+- t0: 0:03:12
+  t1: 0:03:35
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: me activa la entrada y si yo protejo a 0.80, que es el SL por defecto
+  afirmacion: protege a 0,80, que es el SL por defecto
+  tema: stop.nivel
+  valor: '0.80'
+  confianza: alta
+  notas: 'hecho A-10: en v5 (abril 2026) el nivel por defecto es 0,80, no 0,75'
+  n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:51Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000312-f5062062
+- t0: 0:04:27
+  t1: 0:04:35
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: se cumplen las condiciones para poner break even, bueno, en ese caso el precio sigue así
+    por caída ya lo podemos poner en B
+  afirmacion: el break even se pone cuando se cumplen las condiciones (aqui, el precio sigue cayendo)
+  tema: break_even.condiciones
+  confianza: media
+  notas: no enuncia cuales son las condiciones (A-4); B = break even
+  n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:53Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000427-f8d5d36d
+- t0: 0:04:42
+  t1: 0:04:47
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: sabemos que manejamos el cálculo del RR en base al 1%
+  afirmacion: el RR se calcula sobre un riesgo del 1 %
+  tema: riesgo.por_operacion
+  valor: '1'
+  confianza: alta
+  n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:55Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000442-b13610fa
+- t0: 0:04:56
+  t1: 0:05:05
+  modalidad: audio
+  tipo: PARAMETER
+  cita_literal: yo todos los backtesting como tal, o sea estaba buscando el 1.3 [...] amplificar a 1.4
+  afirmacion: en todos los backtests busca 1:3 (escrito 1.3 por el ASR), con la posibilidad de ampliar
+    a 1:4
+  tema: objetivo.rr
+  valor: '1.3'
+  confianza: alta
+  notas: 1.3 y 1.4 son la lectura del ASR de uno a tres y uno a cuatro
+  n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:57Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000456-dfb95b24
+- t0: 0:05:15
+  t1: 0:05:24
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: existe la posibilidad de amplificar a 1.4 el RR pero creo que eso ya lo veremos más adelante
+    si es factible
+  afirmacion: ampliar el RR a 1:4 queda abierto para mas adelante
+  tema: objetivo.rr_ampliado
+  valor: '1.4'
+  confianza: alta
+  n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:10:59Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000515-02b5bc7a
+- t0: 0:05:27
+  t1: 0:05:53
+  modalidad: audio
+  tipo: MANAGEMENT
+  cita_literal: como esto es un igual [...] esperaríamos a que por ejemplo el precio en este caso rompa
+    por arriba
+  afirmacion: tras un equal se espera a que el precio rompa por arriba para la reentrada
+  tema: reentrada.equal.espera_ruptura
+  confianza: alta
+  n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:11:02Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v5-000527-c56ebe45
+no_consta:
+- tema: sesgo
+  motivo: no habla de la vela H4 ni del sesgo en el tramo
+- tema: mapeo
+  motivo: menciona el mapeo estructural (0:01:47) sin enunciar una regla
+- tema: zona_control
+  motivo: no define ni usa la zona de control en el tramo
+- tema: cartuchos
+  motivo: no habla de intentos ni cartuchos
+salida_sha256: cbdea0996778f6d82bc54cca4eba7e3266caa2f9132432e1992124f8ee847f6c
+comprobado_el: '2026-09-07T01:38:41Z'

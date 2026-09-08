@@ -1,0 +1,15 @@
+id: ev-v4-005953-aeb73c86
+video_id: v4
+t0: 0:59:53
+t1: 0:59:59
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cuando hay breaker De liquidez en M15 Tiene que ser con cuerpo en M1
+afirmacion: dice que el breaker de liquidez de M15 tiene que ser con cuerpo en M1 (contradice 0:59:20)
+tema: liquidez.breaker_m15_cuerpo_en_m1
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla; contradiccion aparente con la regla de 0:59:10-0:59:28
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v4-010921-31dd762d
+video_id: v4
+t0: '1:09:21'
+t1: '1:09:36'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Siempre se respeta la estructura más reciente [...] De hace 2 o 3 días Ese ahí no se toma
+  en cuenta Lo importante es los más próximos Exacto
+afirmacion: se respeta la estructura mas reciente; un maximo de hace dias no cuenta
+tema: liquidez.m15.estructura_mas_reciente
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el consultor pregunta y el trader confirma
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

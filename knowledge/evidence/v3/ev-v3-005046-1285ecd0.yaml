@@ -1,0 +1,15 @@
+id: ev-v3-005046-1285ecd0
+video_id: v3
+t0: 0:50:46
+t1: 0:51:05
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: tenemos una entrada invalidada aquí tendríamos un cartucho perdido vale y aquí suponiendo
+  que tenemos otro, porque llega el precio y hace esto. Simplemente está invalidado
+afirmacion: 'ejemplo: una entrada invalidada consume un cartucho; el segundo tambien queda invalidado'
+tema: cartuchos.invalidada_consume
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

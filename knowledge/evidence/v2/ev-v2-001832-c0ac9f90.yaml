@@ -1,0 +1,15 @@
+id: ev-v2-001832-c0ac9f90
+video_id: v2
+t0: 0:18:32
+t1: 0:18:48
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si tú, por ejemplo, tomas de toda la operación cuando llega a un 1 a 1 un 25% [...] no se
+  llega a completar ese 1 a 3
+afirmacion: un parcial del 25 % en 1 a 1 quita margen y el 1 a 3 no se completa (razonamiento, no regla)
+tema: parciales.efecto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

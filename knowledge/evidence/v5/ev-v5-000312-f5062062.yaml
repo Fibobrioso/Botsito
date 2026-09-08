@@ -1,0 +1,16 @@
+id: ev-v5-000312-f5062062
+video_id: v5
+t0: 0:03:12
+t1: 0:03:35
+modalidad: audio
+tipo: PARAMETER
+cita_literal: me activa la entrada y si yo protejo a 0.80, que es el SL por defecto
+afirmacion: protege a 0,80, que es el SL por defecto
+tema: stop.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.80'
+notas: 'hecho A-10: en v5 (abril 2026) el nivel por defecto es 0,80, no 0,75'
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

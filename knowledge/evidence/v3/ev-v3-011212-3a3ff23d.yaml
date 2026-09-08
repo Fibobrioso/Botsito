@@ -1,0 +1,18 @@
+id: ev-v3-011212-3a3ff23d
+video_id: v3
+t0: '1:12:12'
+t1: '1:12:38'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Como digo, no suele usar el shot, simplemente un boss o un breaker y ya está [...] el shot
+  era el giro, claro, y el boss continuación, pero como nosotros ya tenemos definido la continuación por
+  la vela anterior de H4
+afirmacion: 'no usa el CHoCH (giro): solo BOS o breaker, porque la continuacion ya la define la vela H4
+  anterior'
+tema: entrada.bos_continuacion_sin_choch
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: shot = CHoCH, boss = BOS en la lectura del ASR (duda del glosario)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

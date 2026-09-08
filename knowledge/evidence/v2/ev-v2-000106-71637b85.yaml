@@ -1,0 +1,14 @@
+id: ev-v2-000106-71637b85
+video_id: v2
+t0: 0:01:06
+t1: 0:01:19
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo suelo usar velas por el hecho de que te suele marcar tanto el máximo como el mínimo
+afirmacion: usa velas porque marcan el maximo y el minimo
+tema: herramientas.velas_japonesas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

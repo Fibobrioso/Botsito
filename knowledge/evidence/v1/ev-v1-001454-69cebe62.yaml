@@ -1,0 +1,14 @@
+id: ev-v1-001454-69cebe62
+video_id: v1
+t0: 0:14:54
+t1: 0:15:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: desde el punto más abajo te genera la vela contraria se puede definir, pues, el stop loss
+afirmacion: el stop loss se define desde el punto mas bajo donde se genera la vela contraria
+tema: stop.origen_vela_contraria
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

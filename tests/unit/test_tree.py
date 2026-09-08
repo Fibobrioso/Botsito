@@ -14,6 +14,7 @@ DOC_DIRS = [
     "knowledge",
     "knowledge/corpus",
     "knowledge/evidence",
+    "knowledge/_proposals",
     "knowledge/feedback",
     "knowledge/spec",
     "knowledge/cases",

@@ -1,0 +1,18 @@
+id: ev-v3-002714-742f2589
+video_id: v3
+t0: 0:27:14
+t1: 0:28:12
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como tenemos digamos así dos sesiones que serían de 7 a 11 y de 11 a 3 [...] tenemos por
+  lo general dos entradas vale porque nuestro ratio riesgo beneficio es de 1 a 3 si nosotros perdemos
+  2 pero la siguiente es ganadora [...] yo cortaría apenas se desarrolle, o sea, el 1 a 3 en una zona,
+  o sea, de 7 a 11, si ya se ha dado el 1 a 3, ya no operaría
+afirmacion: dos sesiones (7-11 y 11-3), por lo general dos entradas; con 1 a 3, perder dos y ganar la
+  siguiente sigue en positivo; tras el 1 a 3 corta y no sigue operando
+tema: cartuchos.dos_entradas_y_corte
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

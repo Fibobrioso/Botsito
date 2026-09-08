@@ -1,0 +1,15 @@
+id: ev-v4-004500-c7b7dfc5
+video_id: v4
+t0: 0:45:00
+t1: 0:45:06
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: ya vas a poner el break even allí o sea apenas rompe esto o cierra la vela pues ya proteges
+afirmacion: el break even se pone apenas rompe la zona de control o cierra la vela
+tema: break_even.apenas_rompe_o_cierra_vela
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: 'A-4: dice ambas cosas (al tocar o al cierre)'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

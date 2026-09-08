@@ -1,0 +1,15 @@
+id: ev-v3-004201-bfeb3734
+video_id: v3
+t0: 0:42:01
+t1: 0:42:30
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas
+  el breaker, o sea, marco mi orden limit y ya está
+afirmacion: 'en el esquema 1 no espera retroceso: con el breaker marca la orden limite'
+tema: entrada.esquema1_sin_retroceso
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

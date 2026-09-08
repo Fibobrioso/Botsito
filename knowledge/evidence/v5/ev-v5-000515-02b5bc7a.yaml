@@ -1,0 +1,16 @@
+id: ev-v5-000515-02b5bc7a
+video_id: v5
+t0: 0:05:15
+t1: 0:05:24
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: existe la posibilidad de amplificar a 1.4 el RR pero creo que eso ya lo veremos más adelante
+  si es factible
+afirmacion: ampliar el RR a 1:4 queda abierto para mas adelante
+tema: objetivo.rr_ampliado
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '1.4'
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

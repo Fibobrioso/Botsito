@@ -1,0 +1,15 @@
+id: ev-v2-002705-339efec7
+video_id: v2
+t0: 0:27:05
+t1: 0:27:38
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: te suele generar entradas que terminan tomándote el ratio riesgo-beneficio de 1 a 3 que
+  es lo que yo busco [...] yo prefiero tener un ratio riesgo-beneficio mayor con un 1 a 3
+afirmacion: busca 1 a 3; prefiere un ratio mayor aunque pierda mas veces que un 1 a 2 con mas aciertos
+tema: objetivo.rr_preferencia
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

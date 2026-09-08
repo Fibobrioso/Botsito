@@ -1,0 +1,16 @@
+id: ev-v4-000557-48197c0f
+video_id: v4
+t0: 0:05:57
+t1: 0:06:11
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: cuando tomamos en cuenta el 0.75, ¿dentro de esto se debe contemplar también el split que
+  se maneja? O sea, para el cálculo
+afirmacion: 'pregunta del consultor: si el spread debe entrar en el calculo del 0,75'
+tema: stop.spread_en_calculo_pregunta
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: habla el consultor; split = spread (duda del glosario); segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

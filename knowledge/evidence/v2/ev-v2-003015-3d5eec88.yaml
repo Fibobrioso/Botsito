@@ -1,0 +1,15 @@
+id: ev-v2-003015-3d5eec88
+video_id: v2
+t0: 0:30:15
+t1: 0:30:28
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: teniendo un ratio de riesgo-beneficio de 1 a 3, no te salva, por ejemplo, de las rachas
+  perdedoras
+afirmacion: el 1 a 3 no protege de las rachas perdedoras
+tema: riesgo.rachas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

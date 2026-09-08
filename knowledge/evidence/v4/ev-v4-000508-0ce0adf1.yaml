@@ -1,0 +1,17 @@
+id: ev-v4-000508-0ce0adf1
+video_id: v4
+t0: 0:05:08
+t1: 0:05:30
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege
+  si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar
+afirmacion: con 0,50 por operacion la racha de 7 costaria un 2,25 % aprox y no rompe las reglas del fondeo;
+  con el 1 % las sobrepasaria
+tema: riesgo.fondeo.050_protege
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

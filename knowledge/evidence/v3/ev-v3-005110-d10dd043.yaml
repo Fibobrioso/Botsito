@@ -1,0 +1,16 @@
+id: ev-v3-005110-d10dd043
+video_id: v3
+t0: 0:51:10
+t1: 0:51:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Yo esperaría, ahora, a que en M15 se desarrolle la liquidez para nuevamente operar [...]
+  cuando rompa por encima, nuevamente buscar una operativa bajista
+afirmacion: tras invalidar, espera a que M15 desarrolle nueva liquidez y su rompimiento para volver a
+  operar
+tema: liquidez.m15.esperar_nueva_para_operar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

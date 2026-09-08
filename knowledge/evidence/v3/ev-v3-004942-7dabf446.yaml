@@ -1,0 +1,17 @@
+id: ev-v3-004942-7dabf446
+video_id: v3
+t0: 0:49:42
+t1: 0:50:27
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: desarrolló un retroceso complejo más desarrollados hay demasiadas zonas de control y invalida
+  porque la única manera de poder tomar la entrada es que el precio llegue al menos me genere uno de estos
+  y luego me rompa [...] O ya hay un flujo de órdenes mal desarrollado, pues queda invalidado la entrada
+afirmacion: demasiadas zonas de control o un flujo mal desarrollado invalidan la entrada; solo vale una
+  zona y luego el rompimiento
+tema: no_trade.demasiadas_zonas_control
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

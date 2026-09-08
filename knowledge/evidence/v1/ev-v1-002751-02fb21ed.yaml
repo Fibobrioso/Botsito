@@ -1,0 +1,16 @@
+id: ev-v1-002751-02fb21ed
+video_id: v1
+t0: 0:27:51
+t1: 0:28:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Liquidez, rompimiento de liquidez en M15, operativa en M1 [...] desarrollo de la zona de
+  control entonces ahí ya nosotros ponemos en break
+afirmacion: 'esquema: liquidez y su rompimiento en M15, operativa en M1, break even al desarrollarse la
+  zona de control'
+tema: entrada.esquema_resumen
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

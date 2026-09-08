@@ -1,0 +1,17 @@
+id: ev-v4-010831-5f4a00ad
+video_id: v4
+t0: '1:08:31'
+t1: '1:08:52'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: pero va a haber momentos claros que si no protege si demás te lo va a quitar, pero también
+  existe la posibilidad de que se dé el trade [...] no llega a tocar al 0.75 y se dé el trade, yo prefiero
+  eso, entonces protejo
+afirmacion: pero tambien puede darse el trade sin tocar el 0,75; prefiere proteger y dejarlo
+tema: entrada.equal_preferir_proteger
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: 'A-3: contradice la frase anterior (cerrar frente a proteger)'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

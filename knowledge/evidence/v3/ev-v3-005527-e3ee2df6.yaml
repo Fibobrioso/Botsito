@@ -1,0 +1,17 @@
+id: ev-v3-005527-e3ee2df6
+video_id: v3
+t0: 0:55:27
+t1: 0:55:48
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si poner el break even cuando se desarrolle esta zona de control o sería lo ideal de 0.75
+  pasarlo a 0.50 cosa que tenemos margen para que se desarrolle el precio [...] con esa condicional de
+  que se desarrolle esta zona de control aquí para poner break even
+afirmacion: 'pregunta abierta: break even al desarrollarse la zona de control, o bajar el stop de 0,75
+  a 0,50 para dejar margen'
+tema: break_even.o_bajar_a_050_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

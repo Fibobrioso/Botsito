@@ -1,0 +1,17 @@
+id: ev-v1-001557-1dd16e5c
+video_id: v1
+t0: 0:15:57
+t1: 0:16:14
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: sé que cuando ya he entrado demasiado y ya ha pasado más del 50% de la vela [...] yo prefiero
+  reducir mi riesgo
+afirmacion: cuando ha pasado mas del 50 % de la vela tras entrar, prefiere reducir el riesgo
+tema: stop.bajar_050.condicion_vela
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '50'
+notas: 'A-12: la transcripcion heredada decia 40 %; large-v3 dice 50%'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

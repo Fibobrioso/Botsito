@@ -1,0 +1,15 @@
+id: ev-v4-000243-a1067c1c
+video_id: v4
+t0: 0:02:43
+t1: 0:03:15
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: operando manualmente no habría escenario por el hecho de que el precio te genera esto de
+  aquí, entonces no hay escenario
+afirmacion: 'ejemplo del 30 de enero: no hay escenario porque el precio no genera el esquema'
+tema: no_trade.sin_escenario_30_enero
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

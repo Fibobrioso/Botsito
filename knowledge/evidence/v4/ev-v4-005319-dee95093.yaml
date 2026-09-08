@@ -1,0 +1,16 @@
+id: ev-v4-005319-dee95093
+video_id: v4
+t0: 0:53:19
+t1: 0:53:31
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: el precio me rompe aquí con mecha no hay validez de poder yo seguir operando no de seguir
+  operando sino de tomar este 3d en caso se ve
+afirmacion: una rotura con mecha no valida el trade
+tema: no_trade.rompe_con_mecha_no_valida
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 3d = trade en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

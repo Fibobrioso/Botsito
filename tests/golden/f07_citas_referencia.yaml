@@ -1,0 +1,247 @@
+# Golden de F07 (tabla A: "items importados coinciden con las citas del informe de investigacion").
+# Lista CERRADA el 2026-09-07 ANTES de proponer: las citas del informe del 2026-09-03 y las marcas
+# de la tabla de F04 que coinciden sobre large-v3, con el fragmento tal como esta en la CRUDA
+# activa (glosario v2). `tests/contract/test_golden_citas_f07.py` exige, cuando hay evidencia, un
+# item activo por entrada (cita que contiene el fragmento, o fotograma que cita el instante) a
+# menos de 30 s del t0 heredado. Lo que el usuario rechace se marca `descartada: <motivo>`.
+referencias:
+  - marca: V1 0:00:00
+    video_id: v1
+    t0: "0:00:08"
+    modalidad: audio
+    fragmento: acabo de iniciar con lo de la prueba de fondeo
+    tema_raiz: riesgo
+  - marca: V1 0:06:19
+    video_id: v1
+    t0: "0:06:27"
+    modalidad: audio
+    fragmento: en 0.75 proteger el trade
+    tema_raiz: stop
+  - marca: V1 0:07:52
+    video_id: v1
+    t0: "0:07:51"
+    modalidad: audio
+    fragmento: me hubiera salido en 13 no por lectura de mercado
+    tema_raiz: objetivo
+  - marca: V1 0:15:58
+    video_id: v1
+    t0: "0:15:59"
+    modalidad: audio
+    fragmento: ya ha pasado más del 50% de la vela
+    tema_raiz: stop
+  - marca: V1 0:16:51
+    video_id: v1
+    t0: "0:16:51"
+    modalidad: audio
+    fragmento: de pasar de 0.75 es a 0.50
+    tema_raiz: stop
+  - marca: V2 0:05:22
+    video_id: v2
+    t0: "0:05:21"
+    modalidad: audio
+    fragmento: lo más simple posible
+    tema_raiz: meta
+  - marca: V2 0:31:59
+    video_id: v2
+    t0: "0:32:01"
+    modalidad: audio
+    fragmento: lo suelo poner en 0.75
+    tema_raiz: stop
+  - marca: V2 0:32:26
+    video_id: v2
+    t0: "0:32:26"
+    modalidad: audio
+    fragmento: protegiendo un 0.25 del capital
+    tema_raiz: stop
+  - marca: V2 0:33:21
+    video_id: v2
+    t0: "0:33:21"
+    modalidad: pantalla
+    referencia: fr-v2-c5a09508/2001000
+    tema_raiz: herramientas
+  - marca: V2 0:37:08
+    video_id: v2
+    t0: "0:37:10"
+    modalidad: audio
+    fragmento: validar el sistema
+    tema_raiz: meta
+  - marca: V3 0:01:41
+    video_id: v3
+    t0: "0:01:41"
+    modalidad: audio
+    fragmento: configurado como utc más 2
+    tema_raiz: reloj
+  - marca: V3 0:11:29
+    video_id: v3
+    t0: "0:11:29"
+    modalidad: audio
+    fragmento: suelo usar boss o breaker
+    tema_raiz: entrada
+  - marca: V3 0:16:05
+    video_id: v3
+    t0: "0:16:06"
+    modalidad: audio
+    fragmento: por debajo de esta liquidez de m15 es ruido
+    tema_raiz: liquidez
+  - marca: V3 0:28:56
+    video_id: v3
+    t0: "0:28:56"
+    modalidad: pantalla
+    referencia: fr-v3-982da728/1736000
+    tema_raiz: backtest
+  - marca: V3 0:31:28
+    video_id: v3
+    t0: "0:31:25"
+    modalidad: audio
+    fragmento: el profil máximo que suelo buscar es en la liquidez de m15
+    tema_raiz: objetivo
+  - marca: V3 0:51:46
+    video_id: v3
+    t0: "0:51:47"
+    modalidad: audio
+    fragmento: no hay entrada porque como digo si lo mapeas de esta manera
+    tema_raiz: no_trade
+  - marca: V3 0:59:56
+    video_id: v3
+    t0: "0:59:34"
+    modalidad: audio
+    fragmento: retroceso con complex pullback
+    tema_raiz: stop
+  - marca: V3 1:06:48
+    video_id: v3
+    t0: "1:06:48"
+    modalidad: audio
+    fragmento: en una temporalidad mayor esto sea una vela
+    tema_raiz: mapeo
+  - marca: V4 0:05:42
+    video_id: v4
+    t0: "0:05:43"
+    modalidad: audio
+    fragmento: más de 250 en trades
+    tema_raiz: backtest
+  - marca: V4 0:08:39
+    video_id: v4
+    t0: "0:08:39"
+    modalidad: audio
+    fragmento: darle un pequeño respiro
+    tema_raiz: stop
+  - marca: V4 0:12:30
+    video_id: v4
+    t0: "0:12:30"
+    modalidad: pantalla
+    referencia: fr-v4-9ad0ebb8/750000
+    tema_raiz: stop
+  - marca: V4 0:12:30 (audio)
+    video_id: v4
+    t0: "0:12:18"
+    modalidad: audio
+    fragmento: en la operación es hasta el 0.75
+    tema_raiz: stop
+  - marca: V4 0:19:21
+    video_id: v4
+    t0: "0:19:17"
+    modalidad: audio
+    fragmento: te genera dos zonas de control
+    tema_raiz: no_trade
+  - marca: V4 0:21:41
+    video_id: v4
+    t0: "0:21:39"
+    modalidad: audio
+    fragmento: en vez de proteger a 0.75
+    tema_raiz: stop
+  - marca: V4 0:22:27
+    video_id: v4
+    t0: "0:22:25"
+    modalidad: audio
+    fragmento: soy humano o sea no puedo procesar muchos datos
+    tema_raiz: meta
+  - marca: V4 0:44:56
+    video_id: v4
+    t0: "0:45:00"
+    modalidad: audio
+    fragmento: apenas rompe esto o cierra la vela pues ya proteges
+    tema_raiz: break_even
+  - marca: V4 0:47:47
+    video_id: v4
+    t0: "0:47:42"
+    modalidad: audio
+    fragmento: aquí entra un poco discrecional
+    tema_raiz: cartuchos
+  - marca: V4 0:48:41
+    video_id: v4
+    t0: "0:48:44"
+    modalidad: audio
+    fragmento: yo sinceramente limito a 3
+    tema_raiz: cartuchos
+  - marca: V4 0:58:05
+    video_id: v4
+    t0: "0:58:06"
+    modalidad: audio
+    fragmento: apenas se inicia una vela contraria en un flujo de órdenes
+    tema_raiz: mapeo
+  - marca: V4 1:07:33
+    video_id: v4
+    t0: "1:07:31"
+    modalidad: audio
+    fragmento: order limit tú lo puedes ir moviendo conforme se va desarrollando el flujo
+    tema_raiz: entrada
+  - marca: V4 1:08:18
+    video_id: v4
+    t0: "1:08:25"
+    modalidad: audio
+    fragmento: se cierra la vela y si no termina por debajo con un rompimiento cerrar la operación
+    tema_raiz: entrada
+  - marca: V4 1:14:29
+    video_id: v4
+    t0: "1:14:25"
+    modalidad: audio
+    fragmento: de 7 hasta 3 pm en el horario utc más 2
+    tema_raiz: ventana
+  - marca: V4 1:28:20
+    video_id: v4
+    t0: "1:28:18"
+    modalidad: audio
+    fragmento: entrar con 0.50 0.40 creo yo
+    tema_raiz: riesgo
+  - marca: V4 1:28:41
+    video_id: v4
+    t0: "1:28:44"
+    modalidad: audio
+    fragmento: simplemente graba tu pantalla
+    tema_raiz: meta
+  - marca: V4 1:30:09
+    video_id: v4
+    t0: "1:30:08"
+    modalidad: audio
+    fragmento: solo sería agregar un modelo de entrada más
+    tema_raiz: entrada
+  - marca: V4 1:31:16
+    video_id: v4
+    t0: "1:31:22"
+    modalidad: audio
+    fragmento: muy clave el break even cuando se desarrolle otra zona de control
+    tema_raiz: break_even
+  - marca: V5 0:00:39
+    video_id: v5
+    t0: "0:00:45"
+    modalidad: audio
+    fragmento: porque no me genera el esquema
+    tema_raiz: no_trade
+  - marca: V5 0:03:12
+    video_id: v5
+    t0: "0:03:23"
+    modalidad: audio
+    fragmento: a 0.80 que es el sl por defecto
+    tema_raiz: stop
+  - marca: V5 0:04:44
+    video_id: v5
+    t0: "0:04:44"
+    modalidad: audio
+    fragmento: el cálculo del rr en base al 1%
+    tema_raiz: riesgo
+  - marca: V5 0:05:03
+    video_id: v5
+    t0: "0:05:03"
+    modalidad: audio
+    fragmento: amplificar a 1.4
+    tema_raiz: objetivo

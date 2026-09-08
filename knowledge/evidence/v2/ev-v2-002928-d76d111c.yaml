@@ -1,0 +1,15 @@
+id: ev-v2-002928-d76d111c
+video_id: v2
+t0: 0:29:28
+t1: 0:29:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo prefiero honestamente tener un punto de equilibrio, o sea, un break even, que a que la
+  operación me sea indecisa
+afirmacion: prefiere un break even a una operacion indecisa
+tema: break_even.preferencia
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

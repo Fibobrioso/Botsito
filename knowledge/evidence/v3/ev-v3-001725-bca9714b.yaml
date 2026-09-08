@@ -1,0 +1,17 @@
+id: ev-v3-001725-bca9714b
+video_id: v3
+t0: 0:17:25
+t1: 0:18:06
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la operativa está por encima no por debajo todo lo que haya por debajo es ruido [...] A
+  menos que desarrolle liquidez [...] mi zona de liquidez de M15 y esperaría a que rompa para buscar una
+  operativa aquí
+afirmacion: si el precio sigue bajando sin entrada, solo interesa si desarrolla una nueva liquidez de
+  M15; entonces se marca y se espera su rompimiento
+tema: liquidez.m15.nueva_zona_tras_bajar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,16 @@
+id: ev-v4-004246-5f1dcac7
+video_id: v4
+t0: 0:42:46
+t1: 0:43:12
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ha perdido un trit se ha perdido un trit aquí otro trit aquí entonces tú espera a que en
+  m15 nuevamente pues el precio te genere esta zona aquí o sea otra zona de liquidez en m 15
+afirmacion: tras dos trades perdidos espera otra zona de liquidez en M15
+tema: cartuchos.dos_perdidas_esperar_liquidez_m15.v4
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: trit = trade en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

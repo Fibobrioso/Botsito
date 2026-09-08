@@ -1,0 +1,16 @@
+id: ev-v4-001533-73539d90
+video_id: v4
+t0: 0:15:33
+t1: 0:15:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es muy Importante que lo rompa con cuerpo Y cierre con cuerpo por encima de la zona de liquidez
+afirmacion: la liquidez de M15 debe romperse con cuerpo y cerrar con cuerpo por encima
+tema: liquidez.m15.romper_y_cerrar_con_cuerpo
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: cuerpo
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,17 @@
+id: ev-v3-000716-85934bae
+video_id: v3
+t0: 0:07:16
+t1: 0:07:47
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: trabajar como que vela por vela [...] tiene que estar cubierto por la vela anterior si hay
+  una reversión [...] si termina de color roja, o sea, de manera bajista pues la siguiente hay una alta
+  probabilidad de que sea bajista
+afirmacion: 'se trabaja vela por vela en H4: una reversion debe quedar cubierta por la vela anterior;
+  si cierra bajista, la siguiente probablemente sea bajista'
+tema: sesgo.h4.vela_por_vela
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

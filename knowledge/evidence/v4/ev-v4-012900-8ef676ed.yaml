@@ -1,0 +1,15 @@
+id: ev-v4-012900-8ef676ed
+video_id: v4
+t0: '1:29:00'
+t1: '1:29:15'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: a encontrar la calculadora esa [...] estaba operando con algo fijo es un lotaje fijo, muy
+  bajo
+afirmacion: en la prueba de fondeo opera con un lotaje fijo muy bajo por falta de calculadora
+tema: lotaje.fijo_bajo_en_fondeo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

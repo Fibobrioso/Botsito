@@ -1,0 +1,18 @@
+id: ev-v4-005114-3083299e
+video_id: v4
+t0: 0:51:14
+t1: 0:51:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: buscamos que el precio desarrolle primeramente una zona de m15 de liquidez para poder operar
+  si no se desarrolla pues no nos opera entonces pero una vez desarrollado o sea esperamos al que una
+  vez desarrollado esta zona de mx de liquidez se rompa con las condicionales que ya sabemos con cuerpo
+  en m1
+afirmacion: primero debe desarrollarse una zona de liquidez en M15; luego se espera su rompimiento con
+  cuerpo y se opera en M1
+tema: liquidez.m15.debe_desarrollarse_antes
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

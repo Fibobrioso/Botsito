@@ -1,0 +1,15 @@
+id: ev-v3-003318-f1a2d27d
+video_id: v3
+t0: 0:33:18
+t1: 0:33:52
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: el objetivo sería un 1 a 3. si tienes un 1 a 3 pero consideras que puede llegar a más entonces
+  en ese caso pues más protegiendo
+afirmacion: el objetivo es 1 a 3; si cree que llega a mas, sigue protegiendo el stop conforme sube
+tema: objetivo.mas_alla_1a3_protegiendo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

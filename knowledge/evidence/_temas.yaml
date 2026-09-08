@@ -1,0 +1,30 @@
+# Taxonomia de `tema` de la evidencia (F07). Manual, versionado. Cerrada para F07 (la raiz del
+# tema de cada item debe estar aqui); F11 la hara normativa y podra ampliarla con `Fuente:`.
+# `valores_cerrados`: lo unico que `valor` puede contener ademas de una cifra presente en la cita.
+raices:
+  - ventana        # horario operativo, dias, cierre forzoso
+  - sesgo          # vela H4, direccionalidad, cuando cambia
+  - liquidez       # liquidez de M15, turtle soup, ruido bajo la liquidez
+  - mapeo          # zigzag de M1, que cuenta como vela, flujo de ordenes
+  - entrada        # esquemas 1/2/3, orden limite, gatillo BOS/breaker
+  - zona_control   # definicion y uso de la zona de control
+  - stop           # nivel 0,75/0,8, colchon de spread, segundo esquema, bajar a 0,50
+  - objetivo       # 1:3, extension por lectura de mercado, liquidez de M15 como objetivo
+  - break_even     # cuando se protege: al tocar, al cierre, segunda zona de control
+  - cartuchos      # intentos por dia/zona, el dia termina con la primera ganadora
+  - parciales      # tomas parciales, o sin parciales
+  - riesgo         # riesgo por operacion, drawdown, fondeo
+  - lotaje         # como se calcula el lotaje
+  - herramientas   # cuadro de Gann, herramienta de posicion, plataforma, indicadores
+  - reloj          # huso del grafico, hora de apertura, UTC+2
+  - backtest       # muestras, resultados, FXReplay, Excel
+  - no_trade       # ejemplos razonados de no operar
+  - reentrada      # equal, reentrar tras romper de nuevo
+  - meta           # lo que el trader dice sobre el metodo, la automatizacion y las grabaciones
+valores_cerrados:
+  - cuerpo
+  - cierre
+  - toque
+  - mecha
+  - "si"
+  - "no"

@@ -1,0 +1,15 @@
+id: ev-v3-003048-610fbb7f
+video_id: v3
+t0: 0:30:48
+t1: 0:31:12
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si es una noticia que impacta en el precio y va a la direccionalidad, o sea, a tu favor,
+  pues podrías tú elevar tu TPA hasta aquí
+afirmacion: una noticia a favor permitiria elevar el TP (idea, no regla)
+tema: objetivo.extension_por_noticia_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,14 @@
+id: ev-v4-010127-42227135
+video_id: v4
+t0: '1:01:27'
+t1: '1:01:36'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la clave creo yo está en saber correlacionar las temporalidades y ya
+afirmacion: la clave del metodo es correlacionar las temporalidades
+tema: meta.clave_correlacionar_temporalidades
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

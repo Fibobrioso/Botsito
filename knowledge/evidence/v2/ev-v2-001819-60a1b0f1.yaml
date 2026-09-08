@@ -1,0 +1,15 @@
+id: ev-v2-001819-60a1b0f1
+video_id: v2
+t0: 0:18:19
+t1: 0:18:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo honestamente no lo he probado tomando parciales
+afirmacion: no ha probado a tomar parciales
+tema: parciales.no_probado
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 'no'
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,1224 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v3-010500-011756-fa8b7d77
+video_id: v3
+transcripcion: tr-v3-large-v3-int8-float16-270a4851
+t0: '1:05:00'
+t1: '1:17:56'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:10Z'
+contexto:
+  segmentos:
+  - n: 848
+    t0_ms: 3899232
+    t1_ms: 3902132
+    texto: pues es un mapeo, o sea, como siempre, considerando las mechas,
+    senales: []
+  - n: 849
+    t0_ms: 3902232
+    t1_ms: 3906332
+    texto: o sea, si parto desde aquí, sería, este es el punto más bajo,
+    senales: []
+  - n: 850
+    t0_ms: 3907972
+    t1_ms: 3910852
+    texto: bueno, este es el punto más bajo, consideraría esto,
+    senales: []
+  - n: 851
+    t0_ms: 3910852
+    t1_ms: 3928652
+    texto: esto, esto, esto, vale, luego tenemos esto aquí, esto aquí, ¿tú lo mapearías así o no?
+    senales: []
+  - n: 852
+    t0_ms: 3934042
+    t1_ms: 3944382
+    texto: Sí, claro, no, no, sí, no, no, claro, pero, o sea, ¿tú mapearías de esta manera?
+    senales: []
+  - n: 853
+    t0_ms: 3944422
+    t1_ms: 3950422
+    texto: O sea, ¿cómo lo estoy haciendo yo? O sea, considerando esos niveles, o sea, esas mechas y todo
+      eso.
+    senales: []
+  - n: 854
+    t0_ms: 3982762
+    t1_ms: 3987822
+    texto: es interesante esto
+    senales:
+    - no_habla
+  - n: 855
+    t0_ms: 3987822
+    t1_ms: 3989702
+    texto: porque claro, hay distintas maneras
+    senales:
+    - no_habla
+  - n: 856
+    t0_ms: 3989702
+    t1_ms: 3992042
+    texto: que la gente suele a veces marcar
+    senales:
+    - no_habla
+  - n: 857
+    t0_ms: 3992042
+    t1_ms: 3993302
+    texto: pero
+    senales:
+    - no_habla
+  - n: 858
+    t0_ms: 3993302
+    t1_ms: 3994542
+    texto: como le explicaba
+    senales:
+    - no_habla
+  - n: 859
+    t0_ms: 3994542
+    t1_ms: 3996982
+    texto: a mi hermano del alma
+    senales:
+    - no_habla
+  - n: 860
+    t0_ms: 3996982
+    t1_ms: 4002002
+    texto: que el mapeo
+    senales:
+    - no_habla
+  - n: 861
+    t0_ms: 4002002
+    t1_ms: 4006642
+    texto: O sea, si tú te das cuenta, esto de aquí, mira, te voy a mostrar algo, ¿vale?
+    senales: []
+  - n: 862
+    t0_ms: 4008962
+    t1_ms: 4013942
+    texto: Si tú lo mapeas de esta manera, es lo más probable que en una temporalidad mayor esto sea una
+      vela.
+    senales: []
+  - n: 863
+    t0_ms: 4013962
+    t1_ms: 4019082
+    texto: No sé si te has dado cuenta, o sea, anteriormente cuando marcabas, pero, a ver.
+    senales: []
+  - n: 864
+    t0_ms: 4022732
+    t1_ms: 4029612
+    texto: Bueno, en este caso, bueno, sí, esto es considerado una vela, o yo consideraría esto una vela,
+      ¿vale?
+    senales: []
+  - n: 865
+    t0_ms: 4029612
+    t1_ms: 4042282
+    texto: ¿vale? Porque en algunos casos, o sea, por ejemplo, esta zona de aquí también, esto aquí también
+      es
+    senales: []
+  - n: 866
+    t0_ms: 4042282
+    t1_ms: 4046282
+    texto: considerado una vela, pero no está explícitamente, sino implícitamente considerado una vela
+      donde el
+    senales: []
+  - n: 867
+    t0_ms: 4046282
+    t1_ms: 4055052
+    texto: precio se suele apoyar. Mira, si te das cuenta, si tú lo quieres, si lo vemos con los conceptos
+    senales: []
+  - n: 868
+    t0_ms: 4055052
+    t1_ms: 4061592
+    texto: de ICT, esto sería un order block. Esto de aquí sería tu order block. Esto sería tu bloque
+      de
+    senales: []
+  - n: 869
+    t0_ms: 4061592
+    t1_ms: 4068832
+    texto: de órdenes entonces es por eso que se considera una vela y lo demás sería ruido pero este es
+      un
+    senales: []
+  - n: 870
+    t0_ms: 4068832
+    t1_ms: 4077272
+    texto: orden block en m5 o sea el flujo de órdenes está desarrollando en m5 no en m1 por eso que yo
+      por
+    senales: []
+  - n: 871
+    t0_ms: 4077272
+    t1_ms: 4084552
+    texto: eso consideró tratar de mapear de la manera más limpia y más objetiva posible creo yo porque
+      de
+    senales: []
+  - n: 872
+    t0_ms: 4084552
+    t1_ms: 4089032
+    texto: esa manera también si lo quieres ver o sea con un flujo de ordenes y trazar tus orden block
+      esto
+    senales: []
+  - n: 873
+    t0_ms: 4089032
+    t1_ms: 4098432
+    texto: sería como tal entonces si yo yo considero esto aquí porque a veces si consideraría si lo haría
+    senales: []
+  - n: 874
+    t0_ms: 4098432
+    t1_ms: 4105592
+    texto: así podría ser que tampoco a veces no hay entrada entonces lo ideal sería considerar eso salto
+      a
+    senales: []
+  - n: 875
+    t0_ms: 4105592
+    t1_ms: 4112332
+    texto: ver la contra si hay un flujo bajista hay una vela contraria marcarlo acá y eso es ahora
+    senales: []
+  - n: 876
+    t0_ms: 4119612
+    t1_ms: 4129692
+    texto: pero si te sirve o sea yo honestamente si lo ves porque de la manera de city y demás te puede
+    senales: []
+  - n: 877
+    t0_ms: 4129692
+    t1_ms: 4136312
+    texto: servir creo yo ya te puede servir inclusive para que no te puedas no te puedes a entiendas
+      el por
+    senales: []
+  - n: 878
+    t0_ms: 4136312
+    t1_ms: 4143332
+    texto: qué a veces te suele invalidar un bloque de órdenes es que si te fijas vas a ver que el
+    senales: []
+  - n: 879
+    t0_ms: 4143332
+    t1_ms: 4145632
+    texto: el flujo ya no está en M1, sino está en M5
+    senales: []
+  - n: 880
+    t0_ms: 4145632
+    t1_ms: 4147592
+    texto: y así continuamente. Por ejemplo, si en M5
+    senales: []
+  - n: 881
+    t0_ms: 4147592
+    t1_ms: 4149772
+    texto: ya te genera nuevamente ese esquema
+    senales: []
+  - n: 882
+    t0_ms: 4149772
+    t1_ms: 4154352
+    texto: de aquí, si te genera
+    senales: []
+  - n: 883
+    t0_ms: 4154352
+    t1_ms: 4156532
+    texto: ese esquema en M5
+    senales: []
+  - n: 884
+    t0_ms: 4156532
+    t1_ms: 4158452
+    texto: pero se llega a romper así, es que
+    senales: []
+  - n: 885
+    t0_ms: 4158452
+    t1_ms: 4159992
+    texto: ya en M5 se ha roto el flujo
+    senales: []
+  - n: 886
+    t0_ms: 4159992
+    t1_ms: 4162332
+    texto: de órdenes. Si no está en, qué sé yo,
+    senales: []
+  - n: 887
+    t0_ms: 4162452
+    t1_ms: 4164352
+    texto: en 10 minutos o 15 minutos.
+    senales: []
+  - n: 888
+    t0_ms: 4165572
+    t1_ms: 4165972
+    texto: Bueno.
+    senales: []
+  - n: 889
+    t0_ms: 4167552
+    t1_ms: 4168412
+    texto: Luego, sé algo
+    senales: []
+  - n: 890
+    t0_ms: 4168412
+    t1_ms: 4169772
+    texto: que hace la vela previalcista,
+    senales: []
+  - n: 891
+    t0_ms: 4170792
+    t1_ms: 4172212
+    texto: pero, ¿respondo a esa pregunta o no?
+    senales: []
+  - n: 892
+    t0_ms: 4173612
+    t1_ms: 4174412
+    texto: Ah, perfecto.
+    senales: []
+  - n: 893
+    t0_ms: 4174412
+    t1_ms: 4175352
+    texto: Sí, ah, perfecto.
+    senales: []
+  - n: 894
+    t0_ms: 4178812
+    t1_ms: 4181632
+    texto: ¿Qué hace la vela previa alcista o bajista exactamente?
+    senales: []
+  - n: 895
+    t0_ms: 4182092
+    t1_ms: 4183952
+    texto: ¿Y si es un doji indecisa?
+    senales: []
+  - n: 896
+    t0_ms: 4186212
+    t1_ms: 4188232
+    texto: Vale, creo que eso ya lo hemos respondido.
+    senales: []
+  - n: 897
+    t0_ms: 4188292
+    t1_ms: 4198032
+    texto: Lo importante es que, por ejemplo, en este caso, nosotros estaríamos operando...
+    senales: []
+  - n: 898
+    t0_ms: 4198032
+    t1_ms: 4202952
+    texto: A ver, si lo vemos aquí, nuestra operativa iría enfocada a alcista.
+    senales: []
+  - n: 899
+    t0_ms: 4203132
+    t1_ms: 4203832
+    texto: ¿Por qué?
+    senales: []
+  - n: 900
+    t0_ms: 4204232
+    t1_ms: 4207352
+    texto: Porque no hay una vela bajista.
+    senales: []
+  - n: 901
+    t0_ms: 4208361
+    t1_ms: 4227561
+    texto: cualquiera de estas velas o las siguientes no sabemos si me va a cubrir aquí o sea tendría
+      que terminar por debajo al menos su mecha por debajo para poder considerar nosotros pues ese cambio
+      de escenario si no operaríamos alcistas independientemente si aquí es rojo rojo rojo verde rojo
+      rojo rojo
+    senales: []
+  - n: 902
+    t0_ms: 4227561
+    t1_ms: 4245101
+    texto: Por ejemplo, ya si aquí, ya, por ejemplo, aquí, esta aparición no la había mencionado. ¿Qué
+      consideraría aquí? Vale, la vela está bajista, pero esta termina así.
+    senales: []
+  - n: 903
+    t0_ms: 4245101
+    t1_ms: 4252381
+    texto: yo consideraría bajista vale por el hecho de que me haya sido alcista pero pasa que
+    senales: []
+  - n: 904
+    t0_ms: 4254061
+    t1_ms: 4258901
+    texto: para yo puedo poder considerar alcista esta vela de h4 aquí
+    senales: []
+  - n: 905
+    t0_ms: 4260161
+    t1_ms: 4269961
+    texto: esta vela de aquí me dio de haber terminado por encima de esta y el color verde ahora está
+      así la
+    senales: []
+  - n: 906
+    t0_ms: 4269961
+    t1_ms: 4277551
+    texto: la siguiente sería alcista también y así o sea se rompe o sea en ese caso como
+    senales: []
+  - n: 907
+    t0_ms: 4277551
+    t1_ms: 4280411
+    texto: termina por debajo sería bajista y así continuamente
+    senales: []
+  - n: 908
+    t0_ms: 4282291
+    t1_ms: 4287891
+    texto: por ejemplo si yo planteando de tal manera que aquí no o sea no tomar en
+    senales: []
+  - n: 909
+    t0_ms: 4287891
+    t1_ms: 4293351
+    texto: cuenta o no lo leyera así y diría que sería pues digamos alcista la siguiente
+    senales: []
+  - n: 910
+    t0_ms: 4293351
+    t1_ms: 4297951
+    texto: es una alta probabilidad pero no sigue bajista porque para que me termine o sea
+    senales: []
+  - n: 911
+    t0_ms: 4299631
+    t1_ms: 4303971
+    texto: O sea, para yo poder fijar mi operativa alcista, esta vela debía de haber terminado por arriba.
+    senales: []
+  - n: 912
+    t0_ms: 4304391
+    t1_ms: 4305631
+    texto: Y así continuamente.
+    senales: []
+  - n: 913
+    t0_ms: 4307801
+    t1_ms: 4311341
+    texto: Ahora, ¿liquidez qué nivel es cuenta? ¿Cómo liquidez a barrer y con qué prioridad?
+    senales: []
+  - n: 914
+    t0_ms: 4311601
+    t1_ms: 4315081
+    texto: Pues yo, como digo, sería solo M15.
+    senales: []
+  - n: 915
+    t0_ms: 4317461
+    t1_ms: 4318641
+    texto: M15 y ya.
+    senales: []
+  - n: 916
+    t0_ms: 4320401
+    t1_ms: 4322581
+    texto: ¿Sol, barrio, cuánto debe penetrar el nivel?
+    senales: []
+  - n: 917
+    t0_ms: 4323401
+    t1_ms: 4323881
+    texto: Vale.
+    senales: []
+  - n: 918
+    t0_ms: 4327681
+    t1_ms: 4330901
+    texto: Esto pasa con mecha. O sea, pasa con la mecha nomás.
+    senales: []
+  - n: 919
+    t0_ms: 4332121
+    t1_ms: 4337961
+    texto: Una mecha es esta baleada. Boss, Breaker y M1 que definen un boss o aliado y cómo distingue
+      el shot.
+    senales: []
+  - n: 920
+    t0_ms: 4338361
+    t1_ms: 4342841
+    texto: Como digo, no suele usar el shot, simplemente un boss o un breaker y ya está.
+    senales: []
+  - n: 921
+    t0_ms: 4343701
+    t1_ms: 4348921
+    texto: ¿Cómo se marca el bloque de origen por el orden? Como ya tenemos nosotros definido, el shot
+      era el giro, claro,
+    senales: []
+  - n: 922
+    t0_ms: 4349061
+    t1_ms: 4353961
+    texto: y el boss continuación, pero como nosotros ya tenemos definido la continuación por la vela
+      anterior de H4,
+    senales: []
+  - n: 923
+    t0_ms: 4354481
+    t1_ms: 4354961
+    texto: pues
+    senales: []
+  - n: 924
+    t0_ms: 4356141
+    t1_ms: 4358261
+    texto: vos echote lo mismo pero solo usar vos
+    senales: []
+  - n: 925
+    t0_ms: 4358261
+    t1_ms: 4359681
+    texto: o break it y ya
+    senales: []
+  - n: 926
+    t0_ms: 4362401
+    t1_ms: 4363621
+    texto: continuar en M5
+    senales: []
+  - n: 927
+    t0_ms: 4365061
+    t1_ms: 4366021
+    texto: como, bueno
+    senales: []
+  - n: 928
+    t0_ms: 4366021
+    t1_ms: 4368321
+    texto: esto todavía creo que no lo vamos a
+    senales: []
+  - n: 929
+    t0_ms: 4368321
+    t1_ms: 4370401
+    texto: trabajar por el hecho de que estoy tratando
+    senales: []
+  - n: 930
+    t0_ms: 4370401
+    t1_ms: 4372161
+    texto: de, o sea, de validar
+    senales: []
+  - n: 931
+    t0_ms: 4372901
+    t1_ms: 4374181
+    texto: tratando de correlacionar
+    senales: []
+  - n: 932
+    t0_ms: 4374181
+    t1_ms: 4376141
+    texto: M1 y M5 para poder definir
+    senales: []
+  - n: 933
+    t0_ms: 4376141
+    t1_ms: 4377361
+    texto: lo que sería mi
+    senales: []
+  - n: 934
+    t0_ms: 4378261
+    t1_ms: 4379821
+    texto: mi sub loss, o sea
+    senales: []
+  - n: 935
+    t0_ms: 4379821
+    t1_ms: 4382161
+    texto: un sub loss potencial y de esa manera
+    senales: []
+  - n: 936
+    t0_ms: 4382161
+    t1_ms: 4382521
+    texto: pues
+    senales: []
+  - n: 937
+    t0_ms: 4383421
+    t1_ms: 4388401
+    texto: pues tratar de que no sea factible, creo yo.
+    senales: []
+  - n: 938
+    t0_ms: 4388761
+    t1_ms: 4392421
+    texto: Pero ya lo compartiría a lo mejor a lo largo de esos días,
+    senales: []
+  - n: 939
+    t0_ms: 4392541
+    t1_ms: 4396521
+    texto: entre sábado y domingo, para definir la continuidad.
+    senales: []
+  - n: 940
+    t0_ms: 4396601
+    t1_ms: 4399941
+    texto: Porque sí, por ejemplo, aquí hay algunos backtesting que estaba haciendo.
+    senales: []
+  - n: 941
+    t0_ms: 4418581
+    t1_ms: 4420641
+    texto: A ver, ¿qué era? Mi 5, por ejemplo.
+    senales: []
+  - n: 942
+    t0_ms: 4421001
+    t1_ms: 4423541
+    texto: Aquí, que no se dio, igual ya hubiera estado definido.
+    senales: []
+  - n: 943
+    t0_ms: 4423681
+    t1_ms: 4425541
+    texto: O sea, todavía lo estoy viendo.
+    senales: []
+  - n: 944
+    t0_ms: 4425541
+    t1_ms: 4428301
+    texto: como tal no tengo
+    senales: []
+  - n: 945
+    t0_ms: 4428301
+    t1_ms: 4430041
+    texto: definido todavía como plantear
+    senales: []
+  - n: 946
+    t0_ms: 4430041
+    t1_ms: 4432341
+    texto: poner break even en M5 en caso
+    senales: []
+  - n: 947
+    t0_ms: 4432341
+    t1_ms: 4434001
+    texto: de continuidad no lo tengo definido
+    senales: []
+  - n: 948
+    t0_ms: 4434001
+    t1_ms: 4436581
+    texto: entonces igual con M15
+    senales: []
+  - n: 949
+    t0_ms: 4438001
+    t1_ms: 4438641
+    texto: basta
+    senales: []
+  - n: 950
+    t0_ms: 4438641
+    t1_ms: 4439181
+    texto: creo yo
+    senales: []
+  - n: 951
+    t0_ms: 4439181
+    t1_ms: 4441061
+    texto: y pues es eso
+    senales: []
+  - n: 952
+    t0_ms: 4441921
+    t1_ms: 4444261
+    texto: si, está respondido creo a todo
+    senales: []
+  - n: 953
+    t0_ms: 4444261
+    t1_ms: 4446221
+    texto: no sé si hay alguna
+    senales: []
+  - n: 954
+    t0_ms: 4446221
+    t1_ms: 4446701
+    texto: pregunta
+    senales: []
+  - n: 955
+    t0_ms: 4446701
+    t1_ms: 4452571
+    texto: si, o sea, ya estaría todo creo yo
+    senales: []
+  - n: 956
+    t0_ms: 4452571
+    t1_ms: 4453551
+    texto: o sea, yo
+    senales: []
+  - n: 957
+    t0_ms: 4455631
+    t1_ms: 4456851
+    texto: ¿quieres que lo responda?
+    senales: []
+  - n: 958
+    t0_ms: 4456851
+    t1_ms: 4459951
+    texto: le iba a enviar el video pero como
+    senales: []
+  - n: 959
+    t0_ms: 4459951
+    t1_ms: 4462351
+    texto: en mi ordenador no puedo abrir ningún programa
+    senales: []
+  - n: 960
+    t0_ms: 4462351
+    t1_ms: 4463391
+    texto: y como estoy en
+    senales: []
+  - n: 961
+    t0_ms: 4464031
+    t1_ms: 4466291
+    texto: casa de burgos y no en la principal
+    senales: []
+  - n: 962
+    t0_ms: 4466291
+    t1_ms: 4468291
+    texto: donde tengo el micrófono pues no
+    senales: []
+  - n: 963
+    t0_ms: 4468291
+    t1_ms: 4470051
+    texto: no puedo grabar el video
+    senales: []
+  - n: 964
+    t0_ms: 4470051
+    t1_ms: 4471051
+    texto: entonces
+    senales: []
+  - n: 965
+    t0_ms: 4472631
+    t1_ms: 4474111
+    texto: mediante este video
+    senales: []
+  - n: 966
+    t0_ms: 4474111
+    t1_ms: 4475891
+    texto: esta reunión he tratado de explicar
+    senales: []
+  - n: 967
+    t0_ms: 4477431
+    t1_ms: 4477991
+    texto: respondiendo
+    senales: []
+  - n: 968
+    t0_ms: 4477991
+    t1_ms: 4479411
+    texto: visualmente también como
+    senales: []
+  - n: 969
+    t0_ms: 4479411
+    t1_ms: 4481011
+    texto: a estas preguntas
+    senales: []
+  - n: 970
+    t0_ms: 4483891
+    t1_ms: 4484991
+    texto: dale Cristian mira
+    senales: []
+  - n: 971
+    t0_ms: 4487401
+    t1_ms: 4489701
+    texto: parece si los escribes cuando estés más libre
+    senales: []
+  - n: 972
+    t0_ms: 4489701
+    t1_ms: 4494641
+    texto: si no igual vamos a usar el vídeo para rellenar todos los vacíos, pero sería bueno que lo escribas
+    senales:
+    - no_habla
+  - n: 973
+    t0_ms: 4494641
+    t1_ms: 4501141
+    texto: por tu cuenta y dé ejemplos gráficos, un gráfico con justo lo que estás mostrando sería ideal
+    senales:
+    - no_habla
+  - n: 974
+    t0_ms: 4501141
+    t1_ms: 4511441
+    texto: para tenerlo en base de datos y como se llama poder simplemente pasarlo a código. Sí, sí vale
+    senales:
+    - no_habla
+  - n: 975
+    t0_ms: 4511441
+    t1_ms: 4540741
+    texto: Vale, entonces, si quieren que lo escriba, pues es eso, pero, o sea, aquí, o sea, yo lo hice
+      visualmente, o sea, en el video para más o menos que mediante su interpretación de ustedes, pues,
+      consideren cuál sería, o sea, la manera de decir eso, o sea, porque yo puedo poner cuántas velas
+      a cada lado y invalidar un máximo y decir, pues, yo lo que hago es mapear de tal manera la estructura,
+      o sea, como les he mostrado, o sea, como yo les he mostrado, y esta, o sea, un máximo, un mínimo,
+      pues,
+    senales: []
+  - n: 976
+    t0_ms: 4540741
+    t1_ms: 4559921
+    texto: O bueno, podría responder a esto, si hay un flujo alcista, una vela contraria, pues marca un
+      mínimo si es roja y eso, y al revés, si el flujo es bajista, una vela verde, pues una vela alcista
+      marca un retroceso y eso.
+    senales: []
+  - n: 977
+    t0_ms: 4560461
+    t1_ms: 4562061
+    texto: y aquí se busca hacer la vela
+    senales: []
+  - n: 978
+    t0_ms: 4562061
+    t1_ms: 4563441
+    texto: previa del sistema bajista, pues
+    senales: []
+  - n: 979
+    t0_ms: 4564941
+    t1_ms: 4566061
+    texto: ya lo he mostrado, o sea
+    senales: []
+  - n: 980
+    t0_ms: 4567001
+    t1_ms: 4568381
+    texto: aquí hay variaciones
+    senales: []
+  - n: 981
+    t0_ms: 4568381
+    t1_ms: 4569501
+    texto: o sea, aquí hay variaciones
+    senales: []
+  - n: 982
+    t0_ms: 4570461
+    t1_ms: 4572021
+    texto: pero si quieren hacerlo
+    senales: []
+  - n: 983
+    t0_ms: 4572021
+    t1_ms: 4573261
+    texto: más factible, o sea
+    senales: []
+  - n: 984
+    t0_ms: 4574601
+    t1_ms: 4576101
+    texto: también podría, se podría
+    senales: []
+  - n: 985
+    t0_ms: 4576101
+    t1_ms: 4578161
+    texto: intentar, o sea, no considerar
+    senales: []
+  - n: 986
+    t0_ms: 4578161
+    t1_ms: 4580201
+    texto: que a veces se envuelva y indirecto
+    senales: []
+  - n: 987
+    t0_ms: 4580201
+    t1_ms: 4581421
+    texto: o sea, simplemente
+    senales: []
+  - n: 988
+    t0_ms: 4581421
+    t1_ms: 4583881
+    texto: si la vela anterior es bajista
+    senales: []
+  - n: 989
+    t0_ms: 4583881
+    t1_ms: 4586201
+    texto: que la otra sea, exista una probabilidad que sea bajista
+    senales: []
+  - n: 990
+    t0_ms: 4586201
+    t1_ms: 4587541
+    texto: y así, o sea, plantearlo de esa manera
+    senales: []
+  - n: 991
+    t0_ms: 4587541
+    t1_ms: 4589381
+    texto: y ya, no
+    senales: []
+  - n: 992
+    t0_ms: 4589381
+    t1_ms: 4593861
+    texto: No tratar de buscar, claro, a ver si envuelve y todo eso para no liarse.
+    senales: []
+  - n: 993
+    t0_ms: 4594021
+    t1_ms: 4596121
+    texto: Porque también, o sea, en algunos casos se da baja.
+    senales: []
+  - n: 994
+    t0_ms: 4596581
+    t1_ms: 4597241
+    texto: Y es eso.
+    senales: []
+  - n: 995
+    t0_ms: 4599861
+    t1_ms: 4602701
+    texto: ¿Qué niveles cuentan como liquidez a ahorrar y con qué prioridad?
+    senales: []
+  - n: 996
+    t0_ms: 4603441
+    t1_ms: 4604581
+    texto: ¿Qué niveles cuentan?
+    senales: []
+  - n: 997
+    t0_ms: 4604601
+    t1_ms: 4611081
+    texto: Pues M15, o sea, M15, ¿cuánto debe penetrar esto con mecha?
+    senales: []
+  - n: 998
+    t0_ms: 4611261
+    t1_ms: 4612581
+    texto: O sea, basta con mecha.
+    senales: []
+  - n: 999
+    t0_ms: 4613501
+    t1_ms: 4624361
+    texto: Boss breaker que define cómo se marca el bloque de origen es eso. No uso lo que sería el shot
+      como
+    senales: []
+  - n: 1000
+    t0_ms: 4624361
+    t1_ms: 4631581
+    texto: giro como tal, o sea, uso el boss y ya, como lo he mostrado. En esos dos esquemas es lo que
+      manejo.
+    senales: []
+  - n: 1001
+    t0_ms: 4632781
+    t1_ms: 4640181
+    texto: Y M5, pues nada, todavía no lo tengo planteado, entonces no hay respuesta a esto. Pero igual
+      voy
+    senales: []
+  - n: 1002
+    t0_ms: 4640181
+    t1_ms: 4641721
+    texto: voy a enviar algunas capturas, algunos screenshots
+    senales:
+    - no_habla
+  - n: 1003
+    t0_ms: 4641721
+    t1_ms: 4643941
+    texto: de eso, ¿vale?
+    senales:
+    - no_habla
+  - n: 1004
+    t0_ms: 4646461
+    t1_ms: 4647341
+    texto: Dale, perfecto.
+    senales:
+    - no_habla
+  - n: 1005
+    t0_ms: 4647381
+    t1_ms: 4649281
+    texto: Si te puedes hacer igual algunos casos
+    senales:
+    - no_habla
+  - n: 1006
+    t0_ms: 4649281
+    t1_ms: 4650241
+    texto: así de...
+    senales:
+    - no_habla
+  - n: 1007
+    t0_ms: 4650241
+    t1_ms: 4652021
+    texto: Sí, sí, sí, sí.
+    senales:
+    - no_habla
+  - n: 1008
+    t0_ms: 4653901
+    t1_ms: 4655301
+    texto: Sí, sí, bro, ya
+    senales:
+    - no_habla
+  - n: 1009
+    t0_ms: 4655301
+    t1_ms: 4656661
+    texto: lo haré, lo haré.
+    senales:
+    - no_habla
+  - n: 1010
+    t0_ms: 4656721
+    t1_ms: 4659761
+    texto: Y ya lo subo ahí con su explicación y todo eso.
+    senales:
+    - no_habla
+  - n: 1011
+    t0_ms: 4660401
+    t1_ms: 4661681
+    texto: Y si no, nos vamos a ir trabajando
+    senales:
+    - no_habla
+  - n: 1012
+    t0_ms: 4661681
+    t1_ms: 4663501
+    texto: con este video y vamos a
+    senales:
+    - no_habla
+  - n: 1013
+    t0_ms: 4663501
+    t1_ms: 4664821
+    texto: tratar de avanzar todo lo que se pueda.
+    senales:
+    - no_habla
+  - n: 1014
+    t0_ms: 4664921
+    t1_ms: 4666441
+    texto: Si encontramos vacíos, te avisamos,
+    senales:
+    - no_habla
+  - n: 1015
+    t0_ms: 4666561
+    t1_ms: 4668761
+    texto: pero nada, descansa, bro.
+    senales:
+    - no_habla
+  - n: 1016
+    t0_ms: 4669001
+    t1_ms: 4669801
+    texto: Buenas noches.
+    senales:
+    - no_habla
+  - n: 1017
+    t0_ms: 4669801
+    t1_ms: 4670901
+    texto: Sí, chao. Buenas noches.
+    senales: []
+  - n: 1018
+    t0_ms: 4671301
+    t1_ms: 4673201
+    texto: Ya mañana me regreso a Soria.
+    senales: []
+  - n: 1019
+    t0_ms: 4673301
+    t1_ms: 4675001
+    texto: Ya ahí me conecto mejor con el metro.
+    senales: []
+  referencias:
+  - 'fr-v3-982da728/<t_ms>: 777 fotogramas regulares, uno por segundo, de 3900000 a 4676000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: '1:05:00'
+  t1: '1:05:10'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: considerando las mechas, o sea, si parto desde aquí, sería, este es el punto más bajo
+  afirmacion: el mapeo en M1 considera las mechas y parte del punto mas bajo
+  tema: mapeo.m1.siempre_mechas
+  valor: mecha
+  confianza: alta
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:04Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010500-f3a1bebc
+- t0: '1:06:48'
+  t1: '1:07:48'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Si tú lo mapeas de esta manera, es lo más probable que en una temporalidad mayor esto
+    sea una vela [...] esto de aquí sería tu order block [...] es por eso que se considera una vela y
+    lo demás sería ruido
+  afirmacion: al mapear, un tramo que en una temporalidad mayor es una vela (un order block) se considera
+    una vela; lo demas es ruido
+  tema: mapeo.dos_velas_como_una
+  confianza: alta
+  marca_heredada: V3 1:06:48
+  notas: A-8 (dos velas como una)
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:06Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010648-0039e34d
+- t0: '1:07:41'
+  t1: '1:08:04'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: este es un orden block en m5 o sea el flujo de órdenes está desarrollando en m5 no en
+    m1 por eso que yo por eso consideró tratar de mapear de la manera más limpia y más objetiva posible
+  afirmacion: cuando el flujo se desarrolla en M5 y no en M1, mapea de la manera mas limpia y objetiva
+  tema: mapeo.limpio_objetivo_flujo_m5
+  confianza: alta
+  n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:08Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010741-526b98f4
+- t0: '1:08:18'
+  t1: '1:08:39'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: lo ideal sería considerar eso salto a ver la contra si hay un flujo bajista hay una vela
+    contraria marcarlo acá
+  afirmacion: en un flujo bajista, una vela contraria marca el punto del mapeo
+  tema: mapeo.m1.vela_contraria_marca
+  confianza: media
+  n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:10Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010818-010bd2b3
+- t0: '1:08:56'
+  t1: '1:09:22'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: a veces te suele invalidar un bloque de órdenes es que si te fijas vas a ver que el el
+    flujo ya no está en M1, sino está en M5 [...] ya en M5 se ha roto el flujo de órdenes
+  afirmacion: un bloque de ordenes se invalida cuando el flujo ya esta en M5 y se rompe ahi
+  tema: mapeo.invalidacion_flujo_m5
+  confianza: alta
+  n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:11Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010856-897d7ea1
+- t0: '1:09:48'
+  t1: '1:10:27'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: nuestra operativa iría enfocada a alcista. ¿Por qué? Porque no hay una vela bajista [...]
+    tendría que terminar por debajo al menos su mecha por debajo para poder considerar nosotros pues ese
+    cambio de escenario si no operaríamos alcistas independientemente si aquí es rojo rojo rojo verde
+  afirmacion: el sesgo sigue alcista mientras ninguna vela H4 termine por debajo (al menos con la mecha),
+    sea cual sea el color de las velas
+  tema: sesgo.h4.cambio_exige_cierre_bajo_mecha
+  confianza: alta
+  notas: A-1 (que cambia el sesgo H4); tambien responde al doji
+  n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:13Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-010948-331c69aa
+- t0: '1:10:45'
+  t1: '1:11:21'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: para yo puedo poder considerar alcista esta vela de h4 aquí esta vela de aquí me dio de
+    haber terminado por encima de esta y el color verde ahora está así la la siguiente sería alcista también
+    [...] como termina por debajo sería bajista y así continuamente
+  afirmacion: para considerar alcista una vela H4 debe terminar por encima de la anterior; si termina
+    por debajo, bajista
+  tema: sesgo.h4.cambio_exige_cierre_encima
+  confianza: alta
+  n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:15Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011045-a185d2ba
+- t0: '1:11:47'
+  t1: '1:12:00'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: ¿liquidez qué nivel es cuenta? ¿Cómo liquidez a barrer y con qué prioridad? Pues yo, como
+    digo, sería solo M15. M15 y ya
+  afirmacion: la unica liquidez que cuenta es la de M15
+  tema: liquidez.solo_m15
+  confianza: alta
+  n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:17Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011147-fa2e6984
+- t0: '1:12:00'
+  t1: '1:12:12'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: ¿Sol, barrio, cuánto debe penetrar el nivel? Vale. Esto pasa con mecha. O sea, pasa con
+    la mecha nomás
+  afirmacion: el barrido de liquidez basta con la mecha
+  tema: liquidez.m15.barrido_con_mecha
+  valor: mecha
+  confianza: alta
+  n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:18Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011200-f47758fb
+- t0: '1:12:12'
+  t1: '1:12:38'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Como digo, no suele usar el shot, simplemente un boss o un breaker y ya está [...] el
+    shot era el giro, claro, y el boss continuación, pero como nosotros ya tenemos definido la continuación
+    por la vela anterior de H4
+  afirmacion: 'no usa el CHoCH (giro): solo BOS o breaker, porque la continuacion ya la define la vela
+    H4 anterior'
+  tema: entrada.bos_continuacion_sin_choch
+  confianza: media
+  notas: shot = CHoCH, boss = BOS en la lectura del ASR (duda del glosario)
+  n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:20Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011212-3a3ff23d
+- t0: '1:12:42'
+  t1: '1:13:03'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: continuar en M5 como, bueno esto todavía creo que no lo vamos a trabajar por el hecho
+    de que estoy tratando de, o sea, de validar tratando de correlacionar M1 y M5
+  afirmacion: la continuacion en M5 no se trabaja todavia; esta validando la correlacion M1-M5
+  tema: entrada.m5_no_todavia
+  confianza: alta
+  n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:22Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011242-0be1bd36
+- t0: '1:13:45'
+  t1: '1:13:59'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: como tal no tengo definido todavía como plantear poner break even en M5 en caso de continuidad
+    no lo tengo definido entonces igual con M15 basta
+  afirmacion: el break even en M5 no esta definido; con M15 basta
+  tema: break_even.m5_no_definido
+  confianza: alta
+  n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:24Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011345-13e7ab31
+- t0: '1:15:40'
+  t1: '1:16:00'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: si hay un flujo alcista, una vela contraria, pues marca un mínimo si es roja y eso, y
+    al revés, si el flujo es bajista, una vela verde, pues una vela alcista marca un retroceso
+  afirmacion: en un flujo alcista una vela roja marca un minimo; en un flujo bajista una vela verde marca
+    un retroceso
+  tema: mapeo.m1.vela_contraria_marca_extremo
+  confianza: alta
+  n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011540-5425b533
+- t0: '1:16:14'
+  t1: '1:16:29'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: también podría, se podría intentar, o sea, no considerar que a veces se envuelva [...]
+    si la vela anterior es bajista que la otra sea, exista una probabilidad que sea bajista
+  afirmacion: 'simplificacion abierta del sesgo: ignorar las envolventes y tomar solo el color de la vela
+    anterior'
+  tema: sesgo.h4.simplificacion_abierta
+  confianza: alta
+  n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011614-a5a05b0a
+- t0: '1:16:53'
+  t1: '1:17:12'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Boss breaker que define cómo se marca el bloque de origen es eso. No uso lo que sería
+    el shot como giro como tal, o sea, uso el boss y ya, como lo he mostrado. En esos dos esquemas es
+    lo que manejo
+  afirmacion: el bloque de origen lo definen el BOS y el breaker; no usa el CHoCH; maneja dos esquemas
+  tema: entrada.bloque_origen_bos_breaker
+  confianza: media
+  notas: boss = BOS, shot = CHoCH en la lectura del ASR (duda del glosario)
+  n: 15
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:29Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v3-011653-38c712f3
+no_consta:
+- tema: stop
+  motivo: no habla del stop en el tramo
+- tema: objetivo
+  motivo: no habla del objetivo en el tramo
+- tema: zona_control
+  motivo: no habla de la zona de control en el tramo
+- tema: cartuchos
+  motivo: no habla de cartuchos en el tramo
+- tema: no_trade
+  motivo: solo 'no habría entrada' al mapear mal (1:04:49), sin razonamiento propio
+salida_sha256: 53ce154841ee2c9e685b9cda575e7ffcf7e63d249cb29a483e8eda2bd63fc10e
+comprobado_el: '2026-09-07T01:55:37Z'

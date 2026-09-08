@@ -1,0 +1,15 @@
+id: ev-v4-002401-01dfabcc
+video_id: v4
+t0: 0:24:01
+t1: 0:24:15
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: espero que en m15 me genere otras cosas si se da obviamente otra zona o sea otro esquema
+  de liquidez en m15 para nuevamente poder entrar
+afirmacion: tras detenerse espera otra zona de liquidez en M15 para volver a entrar
+tema: cartuchos.tras_tres_espera_liquidez_m15
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

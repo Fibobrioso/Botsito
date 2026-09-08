@@ -1,0 +1,18 @@
+id: ev-v3-000606-f2aff599
+video_id: v3
+t0: 0:06:06
+t1: 0:06:55
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tú tomas en cuenta la mecha o solo el cuerpo [...] yo también suelo considerar eso sea las
+  mechas por lo general o sea un break en para mí basta que rompa o sea con lo mínimo un pib o sea ya
+  es un voz o un bosque
+afirmacion: 'para el break cuenta la mecha: basta que rompa con lo minimo (un pip) para ser un BOS'
+tema: mapeo.m1.mecha_rompe_break
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: mecha
+notas: pregunta del consultor y respuesta del trader; voz/bosque = BOS en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

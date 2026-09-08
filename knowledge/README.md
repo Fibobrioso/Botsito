@@ -4,7 +4,8 @@ La base de conocimiento del proyecto. Son DATOS versionados, no codigo, y se val
 | Carpeta | Contenido | Regimen de cambio |
 |---|---|---|
 | corpus/ | `fuentes.yaml` y `manifest.yaml` (F03), `glosario_asr.yaml` (F04, manual), `transcripciones/<id>.yaml` (F04, INMUTABLE por historial), `fotogramas_obligatorios.yaml` (F05, manual) y `fotogramas/<id>.yaml` (F05, INMUTABLE por historial) | mixto: ver knowledge/corpus/README.md |
-| evidence/ | EvidenceItem en YAML, uno por fichero, con cita verificable (F06) | INMUTABLE tras commit |
+| evidence/ | EvidenceItem en YAML, uno por fichero, con cita verificable por maquina (F06, F07: cita localizada en la cruda `transcripcion` o fotograma `fr-*` real); `_temas.yaml` (taxonomia, manual) y `_contradicciones.yaml` (generado) | INMUTABLE tras commit (items); manual (`_temas.yaml`); generado (`_contradicciones.yaml`) |
+| _proposals/ | propuestas de evidencia (F07, ADR-0009): prompt, modelo, contexto, salida y decision humana por item; `PROMPT.md` canonico | manual, versionado; la salida queda sellada tras `propose --check` y solo cambian los campos de decision |
 | feedback/ | FeedbackRecord del trader, por sesion (F09) | SOLO ANADIR |
 | spec/ | parametros.yaml (F02, ADR-0002/0004: LA puerta de los parametros), strategy_spec.yaml y glossary.yaml (F11) | versionado; cada commit cita `Fuente:` (evidence-id, feedback-id o ADR) |
 | cases/dev/ | casos ejecutables usados para cerrar reglas (F14) | versionado con cita |

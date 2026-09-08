@@ -1,0 +1,15 @@
+id: ev-v3-001827-72bc1e81
+video_id: v3
+t0: 0:18:27
+t1: 0:18:50
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es importante tratar de que el robot haga correctamente lo que sería el mapeo estructural
+  [...] lo mapeo, considerando las mechas y todo
+afirmacion: el robot debe hacer bien el mapeo estructural, considerando las mechas
+tema: mapeo.estructural_con_mechas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

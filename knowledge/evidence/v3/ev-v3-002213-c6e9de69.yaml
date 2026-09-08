@@ -1,0 +1,16 @@
+id: ev-v3-002213-c6e9de69
+video_id: v3
+t0: 0:22:13
+t1: 0:22:58
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: aquí ya es un 1 a 2, aquí ya se torna interesante [...] Si no se desarrolla la zona de control,
+  pues fácilmente yo podría poner en break-even o, como está en 0.75 la entrada, llevarlo a 0.50 o a 0.25
+afirmacion: en 1 a 2 sin zona de control, podria poner break even o bajar el stop de 0,75 a 0,50 o 0,25
+tema: stop.reducir_en_1a2
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: gestion discrecional del stop (A-7 / A-12 relacionadas)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,15 @@
+id: ev-v4-001844-93dcb658
+video_id: v4
+t0: 0:18:44
+t1: 0:19:07
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
+  sabemos cuál es [...] un breaker o este de aquí, o sea cualquiera de estos dos de aquí
+afirmacion: sin uno de los dos esquemas de entrada (breaker o el segundo) no hay entrada
+tema: no_trade.sin_esquema_de_entrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

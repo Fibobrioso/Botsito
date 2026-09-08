@@ -1,0 +1,15 @@
+id: ev-v1-001643-47673889
+video_id: v1
+t0: 0:16:43
+t1: 0:16:59
+modalidad: audio
+tipo: PARAMETER
+cita_literal: mi stop loss digamos máximo que yo puedo fijar o sea de pasar de 0.75 es a 0.50
+afirmacion: el stop como mucho se reduce de 0,75 a 0,50
+tema: stop.bajar_050.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.50'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

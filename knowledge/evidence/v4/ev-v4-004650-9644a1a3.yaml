@@ -1,0 +1,18 @@
+id: ev-v4-004650-9644a1a3
+video_id: v4
+t0: 0:46:50
+t1: 0:47:36
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: protegiendo 0.75 pues no llevo o sea no se cumple la condición entonces me toco estos blogs
+  luego baja si no hubiera protegido a un 0.75 era [...] aquí hay otros dos blogs también aquí hay otros
+  dos blogs menos 0.75
+afirmacion: 'ejemplo: al proteger en 0,75 el precio toca el stop (BOS) y luego baja; dos perdidas mas
+  de -0,75'
+tema: stop.ejemplo_075_toca_bos
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: blogs = BOS en la lectura del ASR (sustitucion de segmento en 0:46:58, dudas en el resto)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

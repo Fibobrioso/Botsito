@@ -1,0 +1,14 @@
+id: ev-v2-003703-531ebe79
+video_id: v2
+t0: 0:37:03
+t1: 0:37:16
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: lo que busco es aumentar mi número muestras o sea como objetivo principal y validar el sistema
+afirmacion: 'objetivo principal: aumentar la muestra y validar el sistema'
+tema: meta.validar_sistema
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,15 @@
+id: ev-v4-002457-5a2e88c6
+video_id: v4
+t0: 0:24:57
+t1: 0:25:10
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo ya estoy tomando la prueba de fondeo pero claro, he entrado sin lotaje o sea, han sido
+  3 que como tal no he entrado con el porcentaje de la cuenta
+afirmacion: en la prueba de fondeo ha entrado tres veces sin calcular el lotaje
+tema: riesgo.fondeo.sin_lotaje
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

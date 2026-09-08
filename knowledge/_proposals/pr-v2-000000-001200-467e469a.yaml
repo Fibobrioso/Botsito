@@ -1,0 +1,870 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v2-000000-001200-467e469a
+video_id: v2
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c
+t0: 0:00:00
+t1: 0:12:00
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:06Z'
+contexto:
+  segmentos:
+  - n: 0
+    t0_ms: 50
+    t1_ms: 29710
+    texto: Cabe sacar y pueden ver algunas cosas, por ejemplo, en lo que sería también robots de trading,
+      por ejemplo, la mayoría, como se lo comentaba Jair, suelen funcionar, pero cuando es, digamos, hay
+      una tendencia previa, o sea, ya hay una direccionalidad en el mercado, o sea, puede ser alcista,
+      si se identifica que es alcista, pues el algoritmo o el robot, pues va a tomar, en base a cómo esté
+      programado, por ejemplo, en rupturas o lo que sea, va a ir comprando, comprando, comprando en ciertas
+      partes,
+    senales: []
+  - n: 1
+    t0_ms: 29710
+    t1_ms: 35670
+    texto: cuando hay un breaker etcétera pero suelen fallar usualmente cuando hay volatilidad o sea cuando
+      el
+    senales: []
+  - n: 2
+    t0_ms: 35670
+    t1_ms: 42390
+    texto: mercado pues se torna volátil o sea no hay una direccionalidad en el precio o sea te suele
+    senales: []
+  - n: 3
+    t0_ms: 42390
+    t1_ms: 48770
+    texto: generar esto no es como o sea hay un flujo de órdenes o sea un order flow en el precio no si
+    senales: []
+  - n: 4
+    t0_ms: 48770
+    t1_ms: 55550
+    texto: no ocurre esto pues es donde se suele quemar las cuentas y demás vale entonces lo que he tratado
+      de
+    senales: []
+  - n: 5
+    t0_ms: 55550
+    t1_ms: 61750
+    texto: a buscar más que nada también con esta estrategia pues es que sea tanto para mercados volátiles
+      como
+    senales: []
+  - n: 6
+    t0_ms: 61750
+    t1_ms: 66870
+    texto: direccionalidad es como una lectura del precio o sea puedes usar o bien gráfico de barras bueno
+    senales: []
+  - n: 7
+    t0_ms: 66870
+    t1_ms: 72970
+    texto: digo velas o también puedes usar línea u otros pero yo suelo usar velas por el hecho de que
+      te
+    senales: []
+  - n: 8
+    t0_ms: 72970
+    t1_ms: 79290
+    texto: suele marcar tanto el máximo como el mínimo o sea un mínimo y un máximo entonces de esa manera
+      pues
+    senales: []
+  - n: 9
+    t0_ms: 79290
+    t1_ms: 83850
+    texto: pues cuando lo veamos más adelante en profundidad te vas a dar cuenta
+    senales: []
+  - n: 10
+    t0_ms: 83850
+    t1_ms: 87890
+    texto: qué criterios tenemos que usar.
+    senales: []
+  - n: 11
+    t0_ms: 89550
+    t1_ms: 92090
+    texto: Ahora, pues universalidad de diferentes activos,
+    senales: []
+  - n: 12
+    t0_ms: 92090
+    t1_ms: 98230
+    texto: lo he backtesteado en diferentes activos como el SPY, Forex y también en materias primas
+    senales: []
+  - n: 13
+    t0_ms: 98230
+    t1_ms: 101070
+    texto: y funciona, o sea, como es acción del precio,
+    senales: []
+  - n: 14
+    t0_ms: 101250
+    t1_ms: 105130
+    texto: o sea, se trata de ser lo más subjetivo posible,
+    senales: []
+  - n: 15
+    t0_ms: 105130
+    t1_ms: 111110
+    texto: a lo mejor la subjetividad entra en lo que sería la gestión de riesgo pero en cuanto a la toma
+      de
+    senales: []
+  - n: 16
+    t0_ms: 111110
+    t1_ms: 117910
+    texto: entrada o sea que es lo que queremos llegar o sea aplicarlo a código de lo bueno es lo más
+    senales: []
+  - n: 17
+    t0_ms: 117910
+    t1_ms: 125250
+    texto: objetivo posible vale no sé no suelo usar indicadores como el rc y entre otros no o
+    senales: []
+  - n: 18
+    t0_ms: 125250
+    t1_ms: 131770
+    texto: medias móviles no lo suelo usar pero a lo mejor pues claro en algunos casos agregar indicadores
+    senales: []
+  - n: 19
+    t0_ms: 131770
+    t1_ms: 138850
+    texto: como las medias móviles y demás pues no he intentado yo pero si alguno pues le interesa
+    senales: []
+  - n: 20
+    t0_ms: 138850
+    t1_ms: 145690
+    texto: pues lo puede intentar y a ver qué onda hipótesis de multi temporalidad pues la integración
+      de los
+    senales: []
+  - n: 21
+    t0_ms: 145690
+    t1_ms: 151930
+    texto: marcos temporales de 4 horas 15 minutos y un minuto vale aquí voy a profundizar lo que serían
+    senales: []
+  - n: 22
+    t0_ms: 151930
+    t1_ms: 160370
+    texto: bueno un punto clave las temporalidades ya que nosotros pues trabajamos en dos sesiones ahora
+    senales: []
+  - n: 23
+    t0_ms: 160370
+    t1_ms: 169150
+    texto: voy a por ejemplo voy a retroceder aquí este es el pequeño bate sin que estaba haciendo desde
+    senales: []
+  - n: 24
+    t0_ms: 169150
+    t1_ms: 176770
+    texto: desde el inicio de ver a lo que tenía un bote sin que era este mes no sé si está para que no
+    senales: []
+  - n: 25
+    t0_ms: 176770
+    t1_ms: 190560
+    texto: todavía no yo a la pieza este es el bates y que estaba siguiendo a inicios de este mes vale
+      en
+    senales: []
+  - n: 26
+    t0_ms: 190560
+    t1_ms: 197760
+    texto: cuatro horas que yo defino vale yo defino pues hay 22 sesiones que serían la de nueva york
+      y londres
+    senales: []
+  - n: 27
+    t0_ms: 197760
+    t1_ms: 212200
+    texto: entonces usualmente comienza entre las 7 y finalizaría a las 3 de la tarde esto es sobre
+    senales: []
+  - n: 28
+    t0_ms: 212200
+    t1_ms: 218440
+    texto: españa porque estoy en españa entonces bueno a lo mejor con un calendario de forex pues nos
+      podemos
+    senales: []
+  - n: 29
+    t0_ms: 218440
+    t1_ms: 225620
+    texto: guiar mejor pero es eso yo cuatro horas lo planteo como un horario de operativa más que nada
+      y de
+    senales:
+    - no_habla
+  - n: 30
+    t0_ms: 225620
+    t1_ms: 232620
+    texto: direccionalidad es muy importante vale cuatro horas que es el marco temporal alto o sea si
+    senales:
+    - no_habla
+  - n: 31
+    t0_ms: 232620
+    t1_ms: 249460
+    texto: lo definimos entre esto más o menos estrategia verdad que espera realmente a ver claro que
+    senales:
+    - no_habla
+  - n: 32
+    t0_ms: 249460
+    t1_ms: 250920
+    texto: Luego vamos a comunizar más.
+    senales: []
+  - n: 33
+    t0_ms: 251300
+    t1_ms: 252200
+    texto: Alto, medio.
+    senales: []
+  - n: 34
+    t0_ms: 253140
+    t1_ms: 254440
+    texto: Pero nada, chévere.
+    senales: []
+  - n: 35
+    t0_ms: 255400
+    t1_ms: 256020
+    texto: Y bajo.
+    senales: []
+  - n: 36
+    t0_ms: 258340
+    t1_ms: 260080
+    texto: Bueno, viene un poco relacionado a ICT,
+    senales: []
+  - n: 37
+    t0_ms: 260200
+    t1_ms: 263280
+    texto: pero no solo, por ejemplo, usar lo que sería bloque de órdenes.
+    senales: []
+  - n: 38
+    t0_ms: 264280
+    t1_ms: 267700
+    texto: A ver, yo he estudiado ICT y demás,
+    senales: []
+  - n: 39
+    t0_ms: 267860
+    t1_ms: 273760
+    texto: pero digamos que al final es lo mismo que aprenderte
+    senales: []
+  - n: 40
+    t0_ms: 273760
+    t1_ms: 275240
+    texto: la teoría de ondas de Elliot, ¿vale?
+    senales: []
+  - n: 41
+    t0_ms: 275340
+    t1_ms: 276620
+    texto: O la teoría de Wyckoff.
+    senales: []
+  - n: 42
+    t0_ms: 276760
+    t1_ms: 280180
+    texto: O sea, es la misma cosa que mucha gente.
+    senales: []
+  - n: 43
+    t0_ms: 280180
+    t1_ms: 287520
+    texto: O sea, trata de decir, oh, esto es, qué sé yo, lo último en el mundo y me va a ser rentable.
+    senales: []
+  - n: 44
+    t0_ms: 287720
+    t1_ms: 298260
+    texto: Y honestamente, yo confronto con algunas ideas de ICT porque, o sea, se ha vendido como que
+      si fuera lo máximo cuando es algo que literalmente está desde hace antes.
+    senales: []
+  - n: 45
+    t0_ms: 298420
+    t1_ms: 306320
+    texto: O sea, aparte creo yo desde Wyckoff, o sea, que es acumulación, distribución, redistribución
+      y demás, que es lo que ahora les voy a mostrar, ¿entiendes?
+    senales: []
+  - n: 46
+    t0_ms: 306320
+    t1_ms: 321940
+    texto: O sea, si tú quieres plantearlo como, digamos, solo teniendo ese pensamiento de acumulación,
+      distribución, te va a servir mucho mejor porque no me complico con usar conceptos que bloque de
+      órdenes, imbalances, entre otros, no. O sea, solo son un par de cosas.
+    senales: []
+  - n: 47
+    t0_ms: 321940
+    t1_ms: 329040
+    texto: O sea, lo que vamos a buscar es que, a ver, lo más simple posible, ¿vale?
+    senales: []
+  - n: 48
+    t0_ms: 329140
+    t1_ms: 331480
+    texto: Para que cuando se ponga el código, se haga como código.
+    senales: []
+  - n: 49
+    t0_ms: 331660
+    t1_ms: 333340
+    texto: O sea, hay una lógica y sea objetivo.
+    senales: []
+  - n: 50
+    t0_ms: 333500
+    t1_ms: 340700
+    texto: Porque la subjetividad, si no aplicas redes neuronales o IA, pues no se va a poder, digamos.
+    senales: []
+  - n: 51
+    t0_ms: 341080
+    t1_ms: 345360
+    texto: Pero la subjetividad entra más que nada en lo que sería la gestión del store loss.
+    senales: []
+  - n: 52
+    t0_ms: 346080
+    t1_ms: 347680
+    texto: Pero bueno, vamos por eso, ¿vale?
+    senales: []
+  - n: 53
+    t0_ms: 347840
+    t1_ms: 349940
+    texto: Obviamente trabajas por marcos temporales.
+    senales: []
+  - n: 54
+    t0_ms: 349940
+    t1_ms: 355920
+    texto: o sea el time frame alto que sería cuatro horas te indica la direccionalidad vale estadísticamente
+    senales: []
+  - n: 55
+    t0_ms: 357800
+    t1_ms: 363780
+    texto: estadísticamente según el back testing que yo hice usualmente se suele definir la tendencia
+    senales: []
+  - n: 56
+    t0_ms: 363780
+    t1_ms: 370360
+    texto: por así decirlo tú el inicio de sesión empieza a las siete de la mañana y la vela o el precio
+    senales: []
+  - n: 57
+    t0_ms: 370360
+    t1_ms: 377880
+    texto: termina alcista vale entonces es lo más probable que continúe o sea esa tendencia en las próximas
+    senales: []
+  - n: 58
+    t0_ms: 377880
+    t1_ms: 383580
+    texto: cuatro horas o sea también sea alcista entonces qué pasa pues tú vas a seguir buscando lo que
+      es
+    senales: []
+  - n: 59
+    t0_ms: 383580
+    t1_ms: 392850
+    texto: sería operativas alcistas entiendes porque nada cuenta que si has estudiado hay city vale vale
+    senales: []
+  - n: 60
+    t0_ms: 395630
+    t1_ms: 407650
+    texto: perfecto y qué tal te fue ya si suele pasarse le pasar es que pasa que a ver yo también soy
+    senales: []
+  - n: 61
+    t0_ms: 407650
+    t1_ms: 411930
+    texto: muy relacionado con esos marmón y demás que usar después de city salió es marmón y después
+      de
+    senales: []
+  - n: 62
+    t0_ms: 411930
+    t1_ms: 419350
+    texto: de marmón y salió algo y o sea es eso no entiendes bueno yo lo veo así o sea el que le funcione
+      y
+    senales: []
+  - n: 63
+    t0_ms: 419350
+    t1_ms: 427370
+    texto: demás pues genial creo yo pero pero yo lo veo como entonces o sea es mejor estudiarse white
+    senales: []
+  - n: 64
+    t0_ms: 427370
+    t1_ms: 434250
+    texto: cove o elliot y ya aunque yo pasa no suelo usar volumen no suelo usar volumen pero estaba hablando
+    senales: []
+  - n: 65
+    t0_ms: 434250
+    t1_ms: 439210
+    texto: con ellos también por ejemplo sería muy interesante porque es verdad o sea que funciona en
+      vivo porque
+    senales: []
+  - n: 66
+    t0_ms: 439210
+    t1_ms: 443950
+    texto: porque al menos, por ejemplo, tuve una charla en la universidad de un curso de bolsa
+    senales: []
+  - n: 67
+    t0_ms: 443950
+    t1_ms: 452610
+    texto: y fue un gestor y que suele usar el volumen como, digamos, un indicador para su toma de decisión.
+    senales: []
+  - n: 68
+    t0_ms: 453350
+    t1_ms: 454970
+    texto: Entonces, sería interesante agregarlo.
+    senales: []
+  - n: 69
+    t0_ms: 455050
+    t1_ms: 457490
+    texto: No lo tengo muy estudiado, o sea, el volumen como tal.
+    senales: []
+  - n: 70
+    t0_ms: 457510
+    t1_ms: 462070
+    texto: Bueno, está el volumen, el BWAP, el volumen profundo y demás, pero eso no lo tengo muy estudiado.
+    senales: []
+  - n: 71
+    t0_ms: 462110
+    t1_ms: 464890
+    texto: Pero para el que sepa y pues le interese, genial.
+    senales: []
+  - n: 72
+    t0_ms: 465230
+    t1_ms: 468350
+    texto: Pero como te digo, esto funciona así.
+    senales: []
+  - n: 73
+    t0_ms: 468350
+    t1_ms: 474190
+    texto: o sea 7 de la mañana inicia la sesión lo más probable que continúe la sesión en las próximas
+    senales: []
+  - n: 74
+    t0_ms: 474190
+    t1_ms: 480930
+    texto: en las próximas cuatro horas ahora podríamos profundizar más adelante porque hay yo lo que
+    senales: []
+  - n: 75
+    t0_ms: 480930
+    t1_ms: 485790
+    texto: trato de tratar de manejar es una correlación de temporalidades para tratar de eliminar ese
+    senales: []
+  - n: 76
+    t0_ms: 485790
+    t1_ms: 491890
+    texto: ruido y esas entradas falsas que suelen dar o sea por ejemplo cuando tú detrás un orden blog
+      en un
+    senales: []
+  - n: 77
+    t0_ms: 491890
+    t1_ms: 497010
+    texto: lado y en otro que genera lo que sería un smart trap si no te respeta el decisional supongamos
+    senales: []
+  - n: 78
+    t0_ms: 497010
+    t1_ms: 503310
+    texto: entonces pero tú no sabes si te va a respetar o no ese punto entonces está la cuestión porque
+    senales: []
+  - n: 79
+    t0_ms: 503310
+    t1_ms: 509230
+    texto: anteriormente ya está establecida una tendencia entonces si tú ya que ya tienes definido tu
+    senales: []
+  - n: 80
+    t0_ms: 509230
+    t1_ms: 515530
+    texto: tendencia o sea o a lo que tú quieres operar entonces es más factible por ejemplo aquí
+    senales: []
+  - n: 81
+    t0_ms: 516110
+    t1_ms: 521070
+    texto: partimos por ejemplo empieza a las siete de la mañana vale pero tú tomas como referencia la
+      vela
+    senales: []
+  - n: 82
+    t0_ms: 521070
+    t1_ms: 526490
+    texto: anterior más o menos ahí no sé si puedan seguir la lógica de aplicados en código sería como
+      que
+    senales: []
+  - n: 83
+    t0_ms: 526490
+    t1_ms: 530430
+    texto: Que tome de referencia la vela anterior a cuatro horas.
+    senales: []
+  - n: 84
+    t0_ms: 530670
+    t1_ms: 536990
+    texto: O sea, si es bajista, pues la siguiente operativa va a tener un enfoque principal, o sea, tendencial
+      bajista.
+    senales: []
+  - n: 85
+    t0_ms: 537110
+    t1_ms: 540550
+    texto: Pero si es alcista, si esta vela, como en este caso es alcista,
+    senales: []
+  - n: 86
+    t0_ms: 541170
+    t1_ms: 548090
+    texto: entonces el enfoque para la siguiente vela y tu marco de operativa y de ejecución va, o sea,
+      tiene que ser alcista, ¿vale?
+    senales: []
+  - n: 87
+    t0_ms: 549070
+    t1_ms: 555530
+    texto: Ahora, si nos dirigimos a 15 minutos, que es el escenario donde, bueno, este concepto se te
+      va a hacer muy relacionado,
+    senales: []
+  - n: 88
+    t0_ms: 555530
+    t1_ms: 560490
+    texto: que sería vamos a llamarlo liquidez vale o sea yo lo manejo con el término de liquidez
+    senales: []
+  - n: 89
+    t0_ms: 575200
+    t1_ms: 582200
+    texto: vale pues aquí ya está esta vela de aquí o sea está determinado existe entonces la siguiente
+    senales: []
+  - n: 90
+    t0_ms: 582200
+    t1_ms: 586260
+    texto: tu marco de operativa tiene que ser existe un enfoque alcista entonces lo que tú vas a hacer
+    senales: []
+  - n: 91
+    t0_ms: 586260
+    t1_ms: 594080
+    texto: es esto bueno vamos a dejar correr el precio que ya lo tengo aquí vale tú puedes bien definir
+      aquí
+    senales: []
+  - n: 92
+    t0_ms: 594080
+    t1_ms: 595940
+    texto: o sea marcar el mínimo
+    senales: []
+  - n: 93
+    t0_ms: 597190
+    t1_ms: 603610
+    texto: tratar de marcar los mínimos y esperar, o sea, que te genere una sopa de tortuga, ¿recuerdas
+      ese concepto?
+    senales: []
+  - n: 94
+    t0_ms: 605800
+    t1_ms: 612860
+    texto: Sí, vale, una sopa de tortuga, esperarías a que te genere una sopa de tortuga aquí, o sea,
+      que el precio llegue, caiga y suba, ¿vale?
+    senales: []
+  - n: 95
+    t0_ms: 614200
+    t1_ms: 624240
+    texto: Para que en esta zona de aquí, enfoque su operativa en M1, en este caso no lo da, porque el
+      precio sube, retrocede y sube,
+    senales: []
+  - n: 96
+    t0_ms: 624240
+    t1_ms: 633830
+    texto: y potencialmente pues termina la de se entienden ahora pero bueno es que no sé si me sigues
+      pero
+    senales: []
+  - n: 97
+    t0_ms: 633830
+    t1_ms: 638150
+    texto: aquí voy a liar un poco porque estaba estado tratando de buscar o sea en el desarrollo de
+    senales: []
+  - n: 98
+    t0_ms: 638150
+    t1_ms: 647620
+    texto: la vela es esto supongamos la vela es alcista entonces tienes esto esta sería la vela anterior
+    senales: []
+  - n: 99
+    t0_ms: 647620
+    t1_ms: 655120
+    texto: bueno este verde alcista alcista entonces el precio haría algo de esto sube sube sube sube
+    senales: []
+  - n: 100
+    t0_ms: 655120
+    t1_ms: 665500
+    texto: hasta aquí retrocede retrocede hasta aquí y sube y luego retrocede eso es lo básico y principal
+      que
+    senales: []
+  - n: 101
+    t0_ms: 665500
+    t1_ms: 674300
+    texto: lo ha hecho desde y desde desde años cientos de años atrás entiendes ya aquí el precio te genera
+    senales: []
+  - n: 102
+    t0_ms: 674300
+    t1_ms: 681960
+    texto: pues como lo no sé qué término le gustaría llamar o sea yo lo llamo pues con una zona de control
+      o
+    senales: []
+  - n: 103
+    t0_ms: 681960
+    t1_ms: 697840
+    texto: O sea, algo donde el precio genera y, o bueno, genera como una especie de, en este caso, llamémoslo
+      como una especie de distribución, no, distribución era aquí, acumulación, de reacumulación, ¿vale?
+    senales: []
+  - n: 104
+    t0_ms: 697840
+    t1_ms: 704980
+    texto: entonces hace una especie de reacumulación y luego sube entonces a veces el precio pues si
+      no te
+    senales: []
+  - n: 105
+    t0_ms: 704980
+    t1_ms: 711280
+    texto: genera esto de aquí o sea al inicio de la vela pues entonces va a ser una continuidad o sea
+      y
+    senales: []
+  - n: 106
+    t0_ms: 711280
+    t1_ms: 717980
+    texto: este orden flow se suele perder pero yendo a m5 trabajando en m5 pues tú puedes tomar este
+      orden
+    senales: []
+  - n: 107
+    t0_ms: 717980
+    t1_ms: 725140
+    texto: flow de aquí si te deja la entrada aquí pues lo tomas aquí le probamos a lo que por ahora quiero
+    senales: []
+  referencias:
+  - 'fr-v2-c5a09508/<t_ms>: 721 fotogramas regulares, uno por segundo, de 0 a 720000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:01:06
+  t1: 0:01:19
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: yo suelo usar velas por el hecho de que te suele marcar tanto el máximo como el mínimo
+  afirmacion: usa velas porque marcan el maximo y el minimo
+  tema: herramientas.velas_japonesas
+  confianza: alta
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:49Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000106-71637b85
+- t0: 0:01:32
+  t1: 0:01:41
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: lo he backtesteado en diferentes activos como el SPY, Forex y también en materias primas
+    y funciona
+  afirmacion: dice haber backtesteado el modelo en SPY, Forex y materias primas
+  tema: backtest.otros_activos
+  confianza: alta
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:51Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000132-f4809fad
+- t0: 0:01:45
+  t1: 0:02:05
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: la subjetividad entra en lo que sería la gestión de riesgo pero en cuanto a la toma de
+    entrada [...] lo más objetivo posible
+  afirmacion: la toma de entrada debe ser lo mas objetiva posible; la subjetividad queda en la gestion
+    del riesgo
+  tema: meta.objetividad_entrada
+  confianza: alta
+  n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:52Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000145-4f490d8e
+- t0: 0:01:57
+  t1: 0:02:11
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: no suelo usar indicadores como el rc y entre otros no o medias móviles no lo suelo usar
+  afirmacion: no usa indicadores (RSI, medias moviles)
+  tema: herramientas.sin_indicadores
+  valor: 'no'
+  confianza: media
+  notas: rc = RSI en la lectura del ASR
+  n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:54Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000157-68798be8
+- t0: 0:02:18
+  t1: 0:02:31
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: hipótesis de multi temporalidad pues la integración de los marcos temporales de 4 horas
+    15 minutos y un minuto
+  afirmacion: 'el modelo integra tres marcos temporales: 4 horas, 15 minutos y 1 minuto'
+  tema: herramientas.marcos_temporales
+  confianza: alta
+  n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:55Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000218-200c43b1
+- t0: 0:03:10
+  t1: 0:03:38
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: hay 22 sesiones que serían la de nueva york y londres entonces usualmente comienza entre
+    las 7 y finalizaría a las 3 de la tarde esto es sobre españa
+  afirmacion: 'dos sesiones (Londres y Nueva York): de las 7 a las 3 de la tarde, hora de Espana'
+  tema: ventana.sesiones.londres_ny
+  confianza: media
+  notas: el ASR escribe 22 donde el trader dice dos
+  n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:57Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000310-2fc6581b
+- t0: 0:03:38
+  t1: 0:03:52
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: yo cuatro horas lo planteo como un horario de operativa más que nada y de direccionalidad
+    es muy importante vale cuatro horas que es el marco temporal alto
+  afirmacion: la vela de cuatro horas marca el horario de operativa y la direccionalidad; es el marco
+    temporal alto
+  tema: sesgo.h4.marco_alto
+  confianza: media
+  n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:01:59Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000338-e280dd87
+- t0: 0:05:21
+  t1: 0:05:33
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: lo que vamos a buscar es que, a ver, lo más simple posible [...] Para que cuando se ponga
+    el código, se haga como código [...] hay una lógica y sea objetivo
+  afirmacion: el sistema se plantea lo mas simple posible para que al pasarlo a codigo sea logico y objetivo
+  tema: meta.simple_y_objetivo
+  confianza: alta
+  marca_heredada: V2 0:05:22
+  n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:00Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000521-d4387274
+- t0: 0:05:41
+  t1: 0:05:46
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: la subjetividad entra más que nada en lo que sería la gestión del store loss
+  afirmacion: la subjetividad esta en la gestion del stop loss
+  tema: stop.gestion_subjetiva
+  confianza: alta
+  notas: store loss = stop loss (sustitucion global del glosario)
+  n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:02Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000541-24f9c5e1
+- t0: 0:05:47
+  t1: 0:06:23
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: el time frame alto que sería cuatro horas te indica la direccionalidad [...] la vela o
+    el precio termina alcista vale entonces es lo más probable que continúe o sea esa tendencia en las
+    próximas cuatro horas
+  afirmacion: 'la vela de cuatro horas indica la direccionalidad: si termina alcista, lo mas probable
+    es que la tendencia continue las siguientes cuatro horas'
+  tema: sesgo.h4.continuacion
+  confianza: alta
+  n: 10
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:03Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000547-57cefd06
+- t0: 0:08:36
+  t1: 0:09:09
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: tú tomas como referencia la vela anterior [...] Que tome de referencia la vela anterior
+    a cuatro horas [...] si es bajista, pues la siguiente operativa va a tener un enfoque principal, o
+    sea, tendencial bajista
+  afirmacion: la vela anterior de cuatro horas fija el enfoque de la siguiente operativa (bajista si es
+    bajista, alcista si es alcista)
+  tema: sesgo.h4.vela_anterior
+  confianza: alta
+  n: 11
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:05Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000836-6dbfcd6b
+- t0: 0:09:54
+  t1: 0:10:14
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: tratar de marcar los mínimos y esperar, o sea, que te genere una sopa de tortuga [...]
+    que el precio llegue, caiga y suba
+  afirmacion: 'en M15 se marcan los minimos y se espera una sopa de tortuga: el precio llega, cae y sube'
+  tema: liquidez.m15.sopa_tortuga
+  confianza: alta
+  n: 12
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:06Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-000954-27188514
+- t0: 0:11:14
+  t1: 0:11:37
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: yo lo llamo pues con una zona de control [...] llamémoslo como una especie de distribución,
+    no, distribución era aquí, acumulación, de reacumulación
+  afirmacion: la zona de control es una reacumulacion (o redistribucion) del precio
+  tema: zona_control.definicion
+  confianza: media
+  notas: el trader se corrige al definirla
+  n: 13
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:08Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001114-336ab46a
+- t0: 0:11:44
+  t1: 0:12:00
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: este orden flow se suele perder pero yendo a m5 trabajando en m5 pues tú puedes tomar
+    este orden flow de aquí
+  afirmacion: trabajando en M5 se podrian tomar las continuidades que en M1 se pierden (idea abierta)
+  tema: entrada.m5_continuidad_abierto
+  confianza: alta
+  n: 14
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:02:09Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-001144-c65391cc
+no_consta:
+- tema: objetivo
+  motivo: no habla del objetivo en el tramo (lo hace en 0:16:58)
+- tema: break_even
+  motivo: no habla del break even en el tramo (lo hace desde 0:14:22)
+- tema: cartuchos
+  motivo: no habla de intentos en el tramo
+- tema: no_trade
+  motivo: no razona ningun caso de no operar en el tramo
+- tema: mapeo
+  motivo: no habla del mapeo en el tramo
+salida_sha256: 590e220e0e46042f2567b396df99b94e5b2c54fdf56765d0e166b15559c3765c
+comprobado_el: '2026-09-07T01:43:27Z'

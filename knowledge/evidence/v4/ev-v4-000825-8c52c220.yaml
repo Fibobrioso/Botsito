@@ -1,0 +1,15 @@
+id: ev-v4-000825-8c52c220
+video_id: v4
+t0: 0:08:25
+t1: 0:08:33
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Y se desplace un poco más en todo caso Si el sprint está influyendo O que se corte en 0.75
+afirmacion: 'pregunta del consultor: desplazar el 0,75 si el spread influye, o cortar en 0,75'
+tema: stop.desplazar_por_spread_pregunta
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: habla el consultor; sprint = spread (duda del glosario); segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,17 @@
+id: ev-v4-005910-d24c0345
+video_id: v4
+t0: 0:59:10
+t1: 0:59:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Yo suelo tomar en cuenta Para el mapeo es la mecha La mecha, o sea, el breaker Si el breaker
+  hay condicionales Claro, como te decía, en M1 Pues es válido con mecha o con cuerpo Pero en M15 Cuando
+  nos va a romper en M15 es con cuerpo Tiene que ser con cuerpo
+afirmacion: el breaker en M1 vale con mecha o cuerpo; la rotura de M15 tiene que ser con cuerpo
+tema: entrada.breaker_m1_mecha_m15_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: cuerpo
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

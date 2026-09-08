@@ -1,0 +1,17 @@
+id: ev-v4-003431-3968a5ca
+video_id: v4
+t0: 0:34:31
+t1: 0:34:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si nosotros tenemos el vallas bajista La vela anterior, o sea, voy a explicar ese trade
+  Tenemos el vallas salchista Porque la vela anterior no terminó por debajo entonces todavía buscamos
+  operativa alcista
+afirmacion: el bias sigue alcista porque la vela H4 anterior no termino por debajo
+tema: sesgo.h4.vela_no_termino_por_debajo
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: vallas = bias, salchista = alcista en la lectura del ASR
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

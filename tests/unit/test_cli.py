@@ -1,9 +1,14 @@
+import os
+import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 
 from botsito import __version__, cli
+
+CLIP = Path(__file__).resolve().parents[1] / "fixtures" / "clip_2s.mp4"
+TEMAS = Path(__file__).resolve().parents[2] / "knowledge" / "evidence" / "_temas.yaml"
 
 MINIMO = """# PROJECT STATE
 
@@ -192,10 +197,61 @@ def _knowledge_tmp(tmp_path: Path) -> Path:
     (tmp_path / "knowledge" / "spec" / "parametros.yaml").write_text(
         PARAMETROS_MIN, encoding="utf-8"
     )
+    shutil.copy(TEMAS, tmp_path / "knowledge" / "evidence" / "_temas.yaml")
     (tmp_path / "docs" / "adr").mkdir(parents=True)
     (tmp_path / "docs" / "adr" / "0001-x.md").write_text("# 1", encoding="utf-8")
     (tmp_path / "docs" / "adr" / "0000-template.md").write_text("# t", encoding="utf-8")
     return tmp_path
+
+
+def _knowledge_con_cruda(tmp_path: Path) -> tuple[Path, str, str]:
+    """knowledge/ minimo mas una transcripcion real del clip con el motor falso: devuelve
+    (repo, transcripcion_id, cita localizable en la cruda)."""
+    if shutil.which("ffmpeg") is None:
+        if os.environ.get("CI"):
+            pytest.fail("ffmpeg no esta en PATH y en CI es obligatorio")
+        pytest.skip("ffmpeg no disponible")
+    from botsito.comun.documentos import sha256_hex
+    from botsito.corpus.glosario import glosario_desde_texto
+    from botsito.corpus.pipeline_transcripcion import cargar_cruda, transcribir_video
+    from botsito.corpus.transcripcion import MotorFalso
+
+    repo = _knowledge_tmp(tmp_path)
+    raiz = repo / "corpus"
+    raiz.mkdir()
+    shutil.copy(CLIP, raiz / "clip.mp4")
+    sha = sha256_hex((raiz / "clip.mp4").read_bytes())
+    (repo / "knowledge" / "corpus" / "fuentes.yaml").write_text(
+        FUENTES_MIN.replace("bytes: 1", f"bytes: {(raiz / 'clip.mp4').stat().st_size}"),
+        encoding="utf-8",
+    )
+    (repo / "knowledge" / "corpus" / "manifest.yaml").write_text(
+        "version: 1\nraiz: corpus\nvideos:\n  - video_id: v1\n    fichero: clip.mp4\n"
+        f"    bytes: {(raiz / 'clip.mp4').stat().st_size}\n    sha256: {sha}\n"
+        "    duracion_s: 2.0\n    ancho: 1\n    alto: 1\n    audio: true\nficheros: []\n",
+        encoding="utf-8",
+    )
+    glosario = "vocabulario: [otro]\nsustituciones: []\n"
+    (repo / "knowledge" / "corpus" / "glosario_asr.yaml").write_text(glosario, encoding="utf-8")
+    (repo / "config").mkdir()
+    (repo / "config" / "settings.example.toml").write_text(
+        '[entorno]\nnombre = "backtest"\n\n'
+        '[rutas]\ncorpus = "corpus"\ndata = "data"\nknowledge = "knowledge"\n',
+        encoding="utf-8",
+    )
+    r = transcribir_video(
+        repo,
+        repo / "data",
+        raiz,
+        "v1",
+        "clip.mp4",
+        sha,
+        2.0,
+        MotorFalso(),
+        glosario_desde_texto(glosario),
+    )
+    cita = cargar_cruda(r.carpeta)[0].texto
+    return repo, r.transcripcion_id, cita
 
 
 def _ev_args(repo: Path, **extra: str) -> list[str]:
@@ -203,14 +259,15 @@ def _ev_args(repo: Path, **extra: str) -> list[str]:
         "video": "v1",
         "t0": "0:00:01",
         "t1": "0:00:02",
-        "modalidad": "audio",
+        "modalidad": "pantalla",
         "tipo": "UNKNOWN",
         "cita": "cita de prueba larga",
         "afirmacion": "x",
-        "tema": "x",
+        "tema": "meta.prueba",
         "confianza": "baja",
         "extractor": "humano",
         "revisado-por": "t",
+        "fotograma": "fr-v1-0123abcd/1000",
     }
     campos.update(extra)
     args = ["--repo", str(repo), "evidence", "new"]
@@ -246,13 +303,133 @@ def test_ids_de_adr(tmp_path: Path) -> None:
 
 def test_evidence_new_valida_contra_el_manifiesto_antes_de_escribir(tmp_path: Path) -> None:
     repo = _knowledge_tmp(tmp_path)
+    # Sin fotogramas registrados, ninguna referencia es conocida: el item de pantalla no entra.
     assert cli.main(_ev_args(repo, t1="0:05:00")) == 1  # supera la duracion (120 s)
     assert cli.main(_ev_args(repo, fotograma="no/existe.jpg")) == 1
     assert cli.main(_ev_args(repo, afirmacion="   ")) == 1
-    assert not list((repo / "knowledge" / "evidence").rglob("*.yaml"))
-    assert cli.main(_ev_args(repo)) == 0
-    assert len(list((repo / "knowledge" / "evidence").rglob("*.yaml"))) == 1
-    assert cli.main(_ev_args(repo)) == 1  # mismo contenido: ya existe
+    assert cli.main(_ev_args(repo)) == 1  # referencia no conocida
+    assert not list((repo / "knowledge" / "evidence").rglob("ev-*.yaml"))
+
+
+def test_evidence_new_de_audio_exige_cita_localizada_en_la_cruda(tmp_path: Path) -> None:
+    repo, tid, cita = _knowledge_con_cruda(tmp_path)
+    audio = {
+        "modalidad": "audio",
+        "fotograma": None,
+        "t0": "0:00:00",
+        "t1": "0:00:02",
+        "cita": cita,
+    }
+    args = {k: v for k, v in audio.items() if v is not None}
+    # Parafrasis: no se localiza; transcripcion que no es la activa: error. Todo antes de
+    # escribir.
+    assert cli.main(_ev_args_sin(repo, **dict(args, cita="esto no lo dice la cruda"))) == 1
+    assert cli.main(_ev_args_sin(repo, **args, transcripcion="tr-v1-falso-00000000")) == 1
+    assert not list((repo / "knowledge" / "evidence").rglob("ev-*.yaml"))
+    assert cli.main(_ev_args_sin(repo, **args)) == 0
+    ficheros = list((repo / "knowledge" / "evidence").rglob("ev-*.yaml"))
+    assert len(ficheros) == 1 and tid in ficheros[0].read_text(encoding="utf-8")
+    assert cli.main(_ev_args_sin(repo, **args)) == 1  # mismo contenido: ya existe
+    assert cli.main(["--repo", str(repo), "evidence", "list"]) == 0
+
+
+def _ev_args_sin(repo: Path, **extra: str) -> list[str]:
+    """Como `_ev_args` pero sin el fotograma por defecto (items de audio)."""
+    campos = {
+        "video": "v1",
+        "t0": "0:00:01",
+        "t1": "0:00:02",
+        "modalidad": "audio",
+        "tipo": "UNKNOWN",
+        "cita": "cita de prueba larga",
+        "afirmacion": "x",
+        "tema": "meta.prueba",
+        "confianza": "baja",
+        "extractor": "humano",
+        "revisado-por": "t",
+    }
+    campos.update(extra)
+    args = ["--repo", str(repo), "evidence", "new"]
+    for k, v in campos.items():
+        args += [f"--{k}", v]
+    return args
+
+
+def test_propose_check_accept_reject(tmp_path: Path) -> None:
+    import yaml
+
+    repo, tid, cita = _knowledge_con_cruda(tmp_path)
+    (repo / "knowledge" / "_proposals").mkdir()
+    (repo / "knowledge" / "_proposals" / "PROMPT.md").write_text("# prompt v1\n", encoding="utf-8")
+    base = ["--repo", str(repo), "evidence", "propose", "--video", "v1", "--t0", "0:00:00"]
+    assert cli.main([*base, "--t1", "0:00:02", "--modelo", "falso", "--tema-buscado", "meta"]) == 0
+    ficheros = list((repo / "knowledge" / "_proposals").glob("pr-*.yaml"))
+    assert len(ficheros) == 1
+    ruta = ficheros[0]
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert doc["items"] == [] and doc["temas_buscados"] == ["meta"]
+    assert doc["contexto"]["segmentos"][0]["texto"] == cita
+    check = ["--repo", str(repo), "evidence", "propose", "--check", str(ruta)]
+    assert cli.main(check) == 1  # tema buscado sin item ni no_consta
+    item = {
+        "n": 1,
+        "t0": "0:00:00",
+        "t1": "0:00:02",
+        "modalidad": "audio",
+        "tipo": "UNKNOWN",
+        "cita_literal": cita,
+        "afirmacion": "texto falso",
+        "tema": "meta.prueba",
+        "confianza": "baja",
+    }
+    doc["items"] = [item, dict(item, n=2, tema="fuera.taxonomia")]
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    assert cli.main(check) == 1  # misma cita dos veces y tema fuera de la taxonomia
+    doc["items"] = [item]
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    assert cli.main(check) == 0
+    sellada = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert sellada["salida_sha256"]
+    acc = [
+        "--repo",
+        str(repo),
+        "evidence",
+        "accept",
+        "--propuesta",
+        str(ruta),
+        "--item",
+        "1",
+        "--revisado-por",
+        "t · hoja · cruda leida",
+    ]
+    assert cli.main([*acc, "--metodo", "cruda_leida"]) == 0
+    assert len(list((repo / "knowledge" / "evidence").rglob("ev-*.yaml"))) == 1
+    assert cli.main([*acc, "--metodo", "cruda_leida"]) == 1  # ya aceptado
+    anotada = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert anotada["items"][0]["decision"] == "aceptado"
+    assert anotada["items"][0]["evidence_id"].startswith("ev-v1-")
+    # La salida esta sellada: cambiar la cita despues del check se detecta.
+    anotada["items"][0]["cita_literal"] = "otra cosa distinta ahora"
+    ruta.write_text(yaml.safe_dump(anotada, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    rej = [
+        "--repo",
+        str(repo),
+        "evidence",
+        "reject",
+        "--propuesta",
+        str(ruta),
+        "--item",
+        "1",
+        "--motivo",
+        "m",
+        "--decidido-por",
+        "t",
+    ]
+    assert cli.main(rej) == 1
+    from botsito.validation.knowledge import validar
+
+    codigo, lineas = validar(repo)
+    assert codigo == 1 and any("cambio despues del check" in x for x in lineas)
 
 
 def test_feedback_new_valida_contra_el_contexto_antes_de_escribir(tmp_path: Path) -> None:

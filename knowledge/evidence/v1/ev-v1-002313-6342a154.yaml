@@ -1,0 +1,15 @@
+id: ev-v1-002313-6342a154
+video_id: v1
+t0: 0:23:13
+t1: 0:23:18
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo no suelo tomar parciales por ahora no lo he intentado
+afirmacion: no toma parciales por ahora
+tema: parciales.sin_parciales
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 'no'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

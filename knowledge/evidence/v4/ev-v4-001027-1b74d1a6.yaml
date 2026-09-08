@@ -1,0 +1,16 @@
+id: ev-v4-001027-1b74d1a6
+video_id: v4
+t0: 0:10:27
+t1: 0:10:56
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: venimos ya de un flujo bajista, estamos buscando una operativa alcista, una reversión, el
+  bias anterior pues era alcista, es por eso que buscamos alcista
+afirmacion: el bias de la vela H4 anterior decide la direccion aunque el flujo previo sea contrario
+tema: sesgo.h4.bias_anterior_ejemplo
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmento con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

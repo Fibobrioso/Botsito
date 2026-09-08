@@ -1,0 +1,15 @@
+id: ev-v3-002026-fa5295fa
+video_id: v3
+t0: 0:20:26
+t1: 0:21:17
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: no suelo trabajar yo con el 1-1, pero creo yo, o sea, haciendo las pruebas, se podría ver
+  si es factible o no [...] Espero que se desarrolle una zona de control para poner recién break-even
+afirmacion: no usa el break even en 1 a 1; se podria probar; el espera la zona de control
+tema: break_even.a_1a1_abierto.v3
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

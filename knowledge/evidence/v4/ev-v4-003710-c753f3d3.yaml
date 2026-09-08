@@ -1,0 +1,17 @@
+id: ev-v4-003710-c753f3d3
+video_id: v4
+t0: 0:37:10
+t1: 0:37:24
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ya la respuesta es no o sea, por el hecho de que para que tú puedas entrar nuevamente o
+  bien te ha tocado stop loss o bien pues has tenido profit, pero con el profit ya no operas más
+afirmacion: 'no hay entradas en paralelo: para reentrar debe haber tocado el stop; con profit ya no se
+  opera'
+tema: cartuchos.sin_entradas_paralelas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 'no'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

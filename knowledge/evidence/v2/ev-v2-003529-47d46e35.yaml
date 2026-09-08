@@ -1,0 +1,15 @@
+id: ev-v2-003529-47d46e35
+video_id: v2
+t0: 0:35:29
+t1: 0:36:30
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo supongamos me pongo a bacteciar 1000 trades [...] tengo planeado ya tengo la cuenta de
+  fondeo [...] llegue casi a los 200 trades
+afirmacion: quiere mas muestras (1000 trades); tiene la cuenta de fondeo y casi 200 trades backtesteados
+tema: backtest.muestra_200
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

@@ -1,0 +1,16 @@
+id: ev-v3-002511-b12d67be
+video_id: v3
+t0: 0:25:11
+t1: 0:25:31
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: esperaría que me genera un voz aquí está mi orden link estaría ya predefinido aquí y esperaría
+  que me genera el breaker entonces nuevamente se activaría la entrada
+afirmacion: la orden limite queda predefinida esperando el BOS y el breaker para activarse de nuevo
+tema: entrada.orden_limite.predefinida
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: voz = BOS, orden link = order limit en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

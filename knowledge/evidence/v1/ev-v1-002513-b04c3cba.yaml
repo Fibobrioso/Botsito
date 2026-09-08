@@ -1,0 +1,15 @@
+id: ev-v1-002513-b04c3cba
+video_id: v1
+t0: 0:25:13
+t1: 0:25:36
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: se desarrolla una entrada independientemente o sea esto se puede operar independientemente
+  de de las zonas operativas que tú quieras [...] también sean buenos en asia
+afirmacion: el esquema tambien da entradas fuera de las sesiones (Asia), aunque no las opera
+tema: ventana.fuera_de_sesion_abierto
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

@@ -1,0 +1,15 @@
+id: ev-v3-001600-ed45b091
+video_id: v3
+t0: 0:16:00
+t1: 0:16:18
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: no hay entrada o sea yo no busco entrada aquí todo lo que se desarrolle dentro o sea por
+  debajo de m15 o sea por debajo de esta liquidez de m15 es ruido
+afirmacion: 'todo lo que se desarrolla por debajo de la liquidez de M15 es ruido: no hay entrada'
+tema: no_trade.ruido_bajo_liquidez_m15
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

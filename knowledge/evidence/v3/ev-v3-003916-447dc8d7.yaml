@@ -1,0 +1,15 @@
+id: ev-v3-003916-447dc8d7
+video_id: v3
+t0: 0:39:16
+t1: 0:39:32
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Coge SM15 y marcas tu zona de liquidez que tú consideres y ya. Esperar a que el precio llegue
+afirmacion: en M15 se marca la zona de liquidez y se espera a que el precio llegue
+tema: liquidez.m15.marcar_y_esperar
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: SM15 = M15 en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

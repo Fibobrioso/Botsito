@@ -1,0 +1,17 @@
+id: ev-v3-002318-4df07d1f
+video_id: v3
+t0: 0:23:18
+t1: 0:23:32
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: yo lo que haría o sea humanamente sería lleva un 12 como es el 0 75 moverlo a 0 con 50 vale
+  o un 0 25 porque ya ya de por sí el precio ya cumplió el siglo
+afirmacion: humanamente, llegando a 1 a 2 moveria el stop de 0,75 a 0,50 o 0,25 porque el precio ya cumplio
+  el ciclo
+tema: stop.reducir_en_1a2.humano
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 12 = 1 a 2, siglo = ciclo en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

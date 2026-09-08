@@ -1,0 +1,18 @@
+id: ev-v4-000725-1dbe4a59
+video_id: v4
+t0: 0:07:25
+t1: 0:07:41
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Yo suelo proteger en 0.75 como te dije Porque el número muestra, por lo que yo he manejado
+  El precio, si llega a pasar El 0.75 es que se va a revertir Entonces, ese margen Que protegemos nosotros,
+  pues Lo guardamos para tres posteriores
+afirmacion: protege en 0,75 porque la muestra dice que si el precio pasa el 0,75 se revierte; el margen
+  se guarda para trades posteriores
+tema: stop.075_estadistica_reversion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

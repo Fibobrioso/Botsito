@@ -1,0 +1,16 @@
+id: ev-v4-000052-61cf22a9
+video_id: v4
+t0: 0:00:52
+t1: 0:01:23
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: sería 12 por 3 que es el rr de promedio es sin maximizar [...] un promedio ideal de rr es
+  de 17 con 49
+afirmacion: en enero el RR promedio sin maximizar fue 3 (12 x 3); la plataforma sugiere un RR ideal de
+  17,49 dejando correr
+tema: backtest.enero_rr_promedio
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

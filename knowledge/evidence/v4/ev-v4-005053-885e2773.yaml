@@ -1,0 +1,15 @@
+id: ev-v4-005053-885e2773
+video_id: v4
+t0: 0:50:53
+t1: 0:50:58
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Claro, buscamos, o sea Por encima de este ya formado Buscamos por encima del tray
+afirmacion: la liquidez de M15 se toma sobre un pico ya formado, no sobre la vela en curso
+tema: liquidez.m15.pico_ya_formado
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla; responde a la pregunta del consultor
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

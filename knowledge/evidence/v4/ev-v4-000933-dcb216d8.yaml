@@ -1,0 +1,15 @@
+id: ev-v4-000933-dcb216d8
+video_id: v4
+t0: 0:09:33
+t1: 0:09:36
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Dale un 5 5 pips y demás, pues genial
+afirmacion: un respiro de 5 pips le parece bien
+tema: stop.respiro_5_pips_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: no queda claro quien lo dice (consultor o trader)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

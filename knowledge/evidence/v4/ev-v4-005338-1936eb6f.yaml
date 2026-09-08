@@ -1,0 +1,15 @@
+id: ev-v4-005338-1936eb6f
+video_id: v4
+t0: 0:53:38
+t1: 0:53:57
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: que no hay entrada porque la vela roja pues no sabe la verde debió de haber terminado por
+  encima entonces no hay entrada aquí ya es como tal un retroceso
+afirmacion: 'no hay entrada porque la vela verde no termino por encima: es un retroceso'
+tema: no_trade.vela_verde_no_cerro_encima
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

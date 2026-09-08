@@ -1,0 +1,15 @@
+id: ev-v3-001531-1b12a896
+video_id: v3
+t0: 0:15:31
+t1: 0:15:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aunque yo invadiría este alto, la verdad, o sea, suelo usar la zona, en este caso la zona
+  de liquidez más baja, que me deja el precio
+afirmacion: usa la zona de liquidez mas baja que deja el precio en M15
+tema: liquidez.m15.zona_mas_baja
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

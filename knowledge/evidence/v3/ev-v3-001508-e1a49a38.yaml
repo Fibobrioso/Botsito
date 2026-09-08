@@ -1,0 +1,15 @@
+id: ev-v3-001508-e1a49a38
+video_id: v3
+t0: 0:15:08
+t1: 0:15:22
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: número uno, se cumplen los criterios. Vela bajista envuelve a la vela anterior, por lo tanto,
+  valida que este tipo de órdenes de H4, existe una alta probabilidad de que continúen
+afirmacion: una vela H4 bajista que envuelve a la anterior valida la continuacion del flujo
+tema: sesgo.h4.vela_envolvente
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

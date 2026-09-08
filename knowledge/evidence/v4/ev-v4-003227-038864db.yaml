@@ -1,0 +1,16 @@
+id: ev-v4-003227-038864db
+video_id: v4
+t0: 0:32:27
+t1: 0:32:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: solo estarías arriesgando un 0.25 y lo demás pues ya, o sea, estás protegiendo entonces
+  en el segundo esquema se define la protección por el hecho de que, donde termina pues el desarrollo
+  de zona de control o sea, puede variar
+afirmacion: en el segundo esquema la proteccion la define donde termina la zona de control; puede variar
+tema: stop.esquema2_definido_por_zona_control
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

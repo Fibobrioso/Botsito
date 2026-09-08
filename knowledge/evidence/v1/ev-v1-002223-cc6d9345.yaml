@@ -1,0 +1,15 @@
+id: ev-v1-002223-cc6d9345
+video_id: v1
+t0: 0:22:23
+t1: 0:22:30
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: las reglas se mantienen como tal, como digo el esquema de entrada es el mismo, es algo que
+  no se va a cambiar
+afirmacion: el esquema de entrada no se cambia; solo se ajusta el riesgo
+tema: meta.esquema_fijo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

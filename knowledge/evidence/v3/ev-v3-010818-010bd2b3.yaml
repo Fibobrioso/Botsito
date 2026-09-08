@@ -1,0 +1,15 @@
+id: ev-v3-010818-010bd2b3
+video_id: v3
+t0: '1:08:18'
+t1: '1:08:39'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: lo ideal sería considerar eso salto a ver la contra si hay un flujo bajista hay una vela
+  contraria marcarlo acá
+afirmacion: en un flujo bajista, una vela contraria marca el punto del mapeo
+tema: mapeo.m1.vela_contraria_marca
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

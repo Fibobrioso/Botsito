@@ -1,0 +1,1523 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v2-005600-010854-88beb64f
+video_id: v2
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c
+t0: 0:56:00
+t1: '1:08:54'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:08Z'
+contexto:
+  segmentos:
+  - n: 559
+    t0_ms: 3332485
+    t1_ms: 3368555
+    texto: escribirlo ahí vale claro claro claro entonces yo lo que podría hacer también es en un paper
+    senales: []
+  - n: 560
+    t0_ms: 3369595
+    t1_ms: 3376835
+    texto: detalladamente también tratar de es bueno lo las cosas objetivas planteando en el paper y
+    senales: []
+  - n: 561
+    t0_ms: 3376835
+    t1_ms: 3381635
+    texto: enviárselo para que más o menos puedan seguir cuando estén plantea el código seguir la lógica
+    senales: []
+  - n: 562
+    t0_ms: 3381635
+    t1_ms: 3384055
+    texto: y pues lo planteen también como métrica
+    senales:
+    - no_habla
+  - n: 563
+    t0_ms: 3384055
+    t1_ms: 3385935
+    texto: por ejemplo las sesiones
+    senales:
+    - no_habla
+  - n: 564
+    t0_ms: 3385935
+    t1_ms: 3387535
+    texto: el marco de operativa
+    senales:
+    - no_habla
+  - n: 565
+    t0_ms: 3387535
+    t1_ms: 3388995
+    texto: los marcos temporales
+    senales:
+    - no_habla
+  - n: 566
+    t0_ms: 3388995
+    t1_ms: 3391835
+    texto: y más o menos que lo que tiene que ser el precio
+    senales:
+    - no_habla
+  - n: 567
+    t0_ms: 3393135
+    t1_ms: 3394135
+    texto: igual en el
+    senales:
+    - no_habla
+  - n: 568
+    t0_ms: 3394135
+    t1_ms: 3396055
+    texto: formulario que te vamos a enviar va a estar todo eso
+    senales:
+    - no_habla
+  - n: 569
+    t0_ms: 3396055
+    t1_ms: 3397495
+    texto: pero ya nos complementamos
+    senales:
+    - no_habla
+  - n: 570
+    t0_ms: 3397495
+    t1_ms: 3399515
+    texto: con los dos documentos y tal
+    senales:
+    - no_habla
+  - n: 571
+    t0_ms: 3399515
+    t1_ms: 3401095
+    texto: la cosa es alimentar el modelo
+    senales:
+    - no_habla
+  - n: 572
+    t0_ms: 3401095
+    t1_ms: 3403615
+    texto: es lo que más tiempo va a tomar alimentar
+    senales:
+    - no_habla
+  - n: 573
+    t0_ms: 3403615
+    t1_ms: 3405075
+    texto: y luego testear que funcione
+    senales:
+    - no_habla
+  - n: 574
+    t0_ms: 3406295
+    t1_ms: 3407775
+    texto: entonces sí, va a ser
+    senales:
+    - no_habla
+  - n: 575
+    t0_ms: 3407775
+    t1_ms: 3408515
+    texto: una construcción
+    senales:
+    - no_habla
+  - n: 576
+    t0_ms: 3408515
+    t1_ms: 3410835
+    texto: un poquito larga
+    senales:
+    - no_habla
+  - n: 577
+    t0_ms: 3411455
+    t1_ms: 3413295
+    texto: primero que no hemos hecho algo similar
+    senales:
+    - no_habla
+  - n: 578
+    t0_ms: 3413295
+    t1_ms: 3415555
+    texto: pero sí, sí estamos familiarizados con eso
+    senales:
+    - no_habla
+  - n: 579
+    t0_ms: 3415555
+    t1_ms: 3417175
+    texto: hemos tenido algunos proyectos
+    senales:
+    - no_habla
+  - n: 580
+    t0_ms: 3418715
+    t1_ms: 3419555
+    texto: entonces bueno
+    senales:
+    - no_habla
+  - n: 581
+    t0_ms: 3420535
+    t1_ms: 3421395
+    texto: hacemos eso
+    senales:
+    - no_habla
+  - n: 582
+    t0_ms: 3421395
+    t1_ms: 3422675
+    texto: y a partir de eso pues vamos
+    senales:
+    - no_habla
+  - n: 583
+    t0_ms: 3423195
+    t1_ms: 3425235
+    texto: conversando de vez en cuando, cuando ya tengamos
+    senales:
+    - no_habla
+  - n: 584
+    t0_ms: 3425235
+    t1_ms: 3427275
+    texto: entregables y tal, y enseñándote lo que hace
+    senales:
+    - no_habla
+  - n: 585
+    t0_ms: 3427275
+    t1_ms: 3428315
+    texto: falta, que podríamos
+    senales:
+    - no_habla
+  - n: 586
+    t0_ms: 3430095
+    t1_ms: 3430975
+    texto: claro, claro
+    senales:
+    - no_habla
+  - n: 587
+    t0_ms: 3430975
+    t1_ms: 3432015
+    texto: sí, me parece bien
+    senales:
+    - no_habla
+  - n: 588
+    t0_ms: 3432895
+    t1_ms: 3435075
+    texto: igual cualquier cosa o cualquier idea
+    senales:
+    - no_habla
+  - n: 589
+    t0_ms: 3435075
+    t1_ms: 3436935
+    texto: pues yo lo envío por aquí
+    senales:
+    - no_habla
+  - n: 590
+    t0_ms: 3436935
+    t1_ms: 3438115
+    texto: si tienen alguna pregunta
+    senales:
+    - no_habla
+  - n: 591
+    t0_ms: 3438115
+    t1_ms: 3452605
+    texto: pregunta, me lo dicen y a ver, ya. Normal, normal, comunicación. Pues por WhatsApp también
+      me vendría
+    senales:
+    - no_habla
+  - n: 592
+    t0_ms: 3452605
+    t1_ms: 3459685
+    texto: bien, creo yo, porque suelo usar más WhatsApp que Discord y eso. Claro, dale, yo creo el grupo
+      de
+    senales:
+    - no_habla
+  - n: 593
+    t0_ms: 3459685
+    t1_ms: 3464025
+    texto: WhatsApp en todo caso y ahí vamos actualizando, ¿no? O sea, en esta parte nos parece interesante
+    senales:
+    - no_habla
+  - n: 594
+    t0_ms: 3464025
+    t1_ms: 3470365
+    texto: el proyecto y sí, o sea, vamos a ver qué tanto tiempo le dedicamos, pero compromisos tenemos
+      y
+    senales:
+    - no_habla
+  - n: 595
+    t0_ms: 3470365
+    t1_ms: 3472645
+    texto: pues también nos sirve a nosotros, primero que aprendemos
+    senales: []
+  - n: 596
+    t0_ms: 3472645
+    t1_ms: 3474485
+    texto: tenemos un proyecto que podríamos
+    senales: []
+  - n: 597
+    t0_ms: 3474485
+    t1_ms: 3476365
+    texto: como que publicar también
+    senales: []
+  - n: 598
+    t0_ms: 3476365
+    t1_ms: 3477945
+    texto: y usar nosotros mismos también
+    senales: []
+  - n: 599
+    t0_ms: 3478525
+    t1_ms: 3480145
+    texto: ¿no? Sí, o sea, igual
+    senales: []
+  - n: 600
+    t0_ms: 3480145
+    t1_ms: 3482125
+    texto: como te digo yo, ese modelo pues
+    senales: []
+  - n: 601
+    t0_ms: 3483745
+    t1_ms: 3484685
+    texto: yo lo voy a
+    senales: []
+  - n: 602
+    t0_ms: 3484685
+    t1_ms: 3485945
+    texto: tratar de hacer manualmente
+    senales: []
+  - n: 603
+    t0_ms: 3485945
+    t1_ms: 3488425
+    texto: y qué onda, a ver, con los datos
+    senales: []
+  - n: 604
+    t0_ms: 3488425
+    t1_ms: 3490305
+    texto: que yo tengo, o sea, con las
+    senales: []
+  - n: 605
+    t0_ms: 3490305
+    t1_ms: 3492245
+    texto: operativas que realicé en Backtesting, voy a
+    senales: []
+  - n: 606
+    t0_ms: 3492245
+    t1_ms: 3494285
+    texto: tratar de aplicarlo en la cuenta de fondeo
+    senales: []
+  - n: 607
+    t0_ms: 3494285
+    t1_ms: 3496025
+    texto: y ya, entonces
+    senales: []
+  - n: 608
+    t0_ms: 3496025
+    t1_ms: 3497025
+    texto: a ver qué onda, pues
+    senales: []
+  - n: 609
+    t0_ms: 3497805
+    t1_ms: 3521945
+    texto: ¿por qué? Ah, no, sí, a ver
+    senales: []
+  - n: 610
+    t0_ms: 3521945
+    t1_ms: 3550415
+    texto: después claro pero has intentado con las pruebas de fondeo o era con capital propio soplaba
+      la vela
+    senales: []
+  - n: 611
+    t0_ms: 3550415
+    t1_ms: 3559555
+    texto: para que se va no a ver si la última prueba de fondeo que la realice hace un par de años porque
+    senales: []
+  - n: 612
+    t0_ms: 3559555
+    t1_ms: 3566055
+    texto: después con las cosas la universidad y todo esto ha estado petado pero me quedé en un 7% sano
+      me
+    senales: []
+  - n: 613
+    t0_ms: 3566055
+    t1_ms: 3567195
+    texto: Me comí un drawdown terrible.
+    senales: []
+  - n: 614
+    t0_ms: 3567535
+    t1_ms: 3572015
+    texto: Tampoco tenía, digamos, un plan de gestión de riesgo muy óptimo.
+    senales: []
+  - n: 615
+    t0_ms: 3572715
+    t1_ms: 3574095
+    texto: Entonces, es eso.
+    senales: []
+  - n: 616
+    t0_ms: 3574555
+    t1_ms: 3575615
+    texto: Pero, nada.
+    senales: []
+  - n: 617
+    t0_ms: 3577475
+    t1_ms: 3578815
+    texto: ¿Ahorita estás jodeando algo?
+    senales: []
+  - n: 618
+    t0_ms: 3579215
+    t1_ms: 3581115
+    texto: ¿Tienes alguna cripto jodeando?
+    senales: []
+  - n: 619
+    t0_ms: 3582755
+    t1_ms: 3584435
+    texto: Estoy jodeando, sí.
+    senales: []
+  - n: 620
+    t0_ms: 3584595
+    t1_ms: 3585975
+    texto: Tengo jodeando Bitcoin.
+    senales: []
+  - n: 621
+    t0_ms: 3586215
+    t1_ms: 3587415
+    texto: Tengo jodeando Ethereum.
+    senales: []
+  - n: 622
+    t0_ms: 3587795
+    t1_ms: 3591715
+    texto: Tengo jodeando algunas altcoins como...
+    senales: []
+  - n: 623
+    t0_ms: 3592335
+    t1_ms: 3593535
+    texto: Pucha, es que ya me olvidé del nombre.
+    senales: []
+  - n: 624
+    t0_ms: 3593615
+    t1_ms: 3595635
+    texto: No entro desde hace meses.
+    senales: []
+  - n: 625
+    t0_ms: 3596387
+    t1_ms: 3602767
+    texto: Yo tampoco he entrado, recién me acordé y tengo como 7.000 monedas creo holdeando actualmente.
+    senales: []
+  - n: 626
+    t0_ms: 3604747
+    t1_ms: 3606407
+    texto: ¿En qué más tienes? ¿En acciones, no?
+    senales: []
+  - n: 627
+    t0_ms: 3607427
+    t1_ms: 3613007
+    texto: Acciones, materias primas, acciones, ahora más que nada estoy por los semiconductores y todo
+      eso.
+    senales: []
+  - n: 628
+    t0_ms: 3614187
+    t1_ms: 3618527
+    texto: Te digo porque quiero volver a meterle a la inversión.
+    senales: []
+  - n: 629
+    t0_ms: 3618847
+    t1_ms: 3624167
+    texto: A ver, últimamente, pues como te digo, últimamente ha estado bueno.
+    senales: []
+  - n: 630
+    t0_ms: 3624167
+    t1_ms: 3625007
+    texto: Bueno, ha estado bueno.
+    senales: []
+  - n: 631
+    t0_ms: 3625247
+    t1_ms: 3627827
+    texto: Es un buen año, yo lo veo así.
+    senales: []
+  - n: 632
+    t0_ms: 3628067
+    t1_ms: 3629927
+    texto: Sí, sí, de todas maneras, está creciendo
+    senales: []
+  - n: 633
+    t0_ms: 3629927
+    t1_ms: 3631947
+    texto: demasiado. A ver, para las
+    senales: []
+  - n: 634
+    t0_ms: 3631947
+    t1_ms: 3633967
+    texto: inversiones no hay un timing perfecto, o sea,
+    senales: []
+  - n: 635
+    t0_ms: 3634547
+    t1_ms: 3635907
+    texto: yo lo que suelo hacer es
+    senales: []
+  - n: 636
+    t0_ms: 3635907
+    t1_ms: 3637347
+    texto: esperar más o menos
+    senales: []
+  - n: 637
+    t0_ms: 3637927
+    t1_ms: 3640227
+    texto: que caiga el activo
+    senales: []
+  - n: 638
+    t0_ms: 3640227
+    t1_ms: 3641487
+    texto: un porcentaje considerable,
+    senales: []
+  - n: 639
+    t0_ms: 3641967
+    t1_ms: 3642987
+    texto: aplico acción de precio,
+    senales: []
+  - n: 640
+    t0_ms: 3643607
+    t1_ms: 3644407
+    texto: y entro.
+    senales: []
+  - n: 641
+    t0_ms: 3645847
+    t1_ms: 3646247
+    texto: Claro.
+    senales: []
+  - n: 642
+    t0_ms: 3647907
+    t1_ms: 3648687
+    texto: Dale, bro, dale.
+    senales: []
+  - n: 643
+    t0_ms: 3648967
+    t1_ms: 3650207
+    texto: Ya bueno, en todo caso,
+    senales: []
+  - n: 644
+    t0_ms: 3650307
+    t1_ms: 3652647
+    texto: nos quedamos con esto, te vamos a enviar
+    senales: []
+  - n: 645
+    t0_ms: 3652647
+    t1_ms: 3654787
+    texto: el formulario, nos envías el paper que hagas
+    senales:
+    - no_habla
+  - n: 646
+    t0_ms: 3654787
+    t1_ms: 3656627
+    texto: y a partir de eso ya vamos a construir
+    senales:
+    - no_habla
+  - n: 647
+    t0_ms: 3656627
+    t1_ms: 3658907
+    texto: ¿no? vamos a empezar a construir
+    senales:
+    - no_habla
+  - n: 648
+    t0_ms: 3658907
+    t1_ms: 3660767
+    texto: vamos notificando nuestros avances
+    senales:
+    - no_habla
+  - n: 649
+    t0_ms: 3660767
+    t1_ms: 3662327
+    texto: pero cualquier cosa que tú investigues
+    senales:
+    - no_habla
+  - n: 650
+    t0_ms: 3662327
+    t1_ms: 3664627
+    texto: o que veas una herramienta o algo
+    senales:
+    - no_habla
+  - n: 651
+    t0_ms: 3664627
+    t1_ms: 3666527
+    texto: ¿no? mándalo por el WhatsApp que vamos a crear
+    senales:
+    - no_habla
+  - n: 652
+    t0_ms: 3667407
+    t1_ms: 3668247
+    texto: y nada
+    senales:
+    - no_habla
+  - n: 653
+    t0_ms: 3668247
+    t1_ms: 3670287
+    texto: vamos tomando ideas
+    senales:
+    - no_habla
+  - n: 654
+    t0_ms: 3670287
+    t1_ms: 3672567
+    texto: porque como te digo es como que
+    senales:
+    - no_habla
+  - n: 655
+    t0_ms: 3672567
+    t1_ms: 3674347
+    texto: un nuevo sector
+    senales:
+    - no_habla
+  - n: 656
+    t0_ms: 3674347
+    t1_ms: 3676367
+    texto: al que nos estamos metiendo y acá hay un mundazo
+    senales:
+    - no_habla
+  - n: 657
+    t0_ms: 3676367
+    t1_ms: 3677547
+    texto: de verdad es gigantesco
+    senales:
+    - no_habla
+  - n: 658
+    t0_ms: 3678127
+    t1_ms: 3679867
+    texto: por 100 Wall Street están haciendo locuras
+    senales:
+    - no_habla
+  - n: 659
+    t0_ms: 3679867
+    t1_ms: 3682127
+    texto: ¿no? entonces hay que
+    senales:
+    - no_habla
+  - n: 660
+    t0_ms: 3682127
+    t1_ms: 3683347
+    texto: hay que tratar de llegar a ese nivel, ¿no?
+    senales:
+    - no_habla
+  - n: 661
+    t0_ms: 3683627
+    t1_ms: 3685587
+    texto: Para eso hay que investigar bastante. Entonces,
+    senales:
+    - no_habla
+  - n: 662
+    t0_ms: 3685687
+    t1_ms: 3687687
+    texto: nada, nada, Maguín,
+    senales:
+    - no_habla
+  - n: 663
+    t0_ms: 3688327
+    t1_ms: 3689527
+    texto: gracias por el tiempo y
+    senales:
+    - no_habla
+  - n: 664
+    t0_ms: 3689527
+    t1_ms: 3692027
+    texto: la confianza también. Gracias por su tiempo,
+    senales:
+    - no_habla
+  - n: 665
+    t0_ms: 3692067
+    t1_ms: 3693687
+    texto: de verdad. De nada, un placer
+    senales:
+    - no_habla
+  - n: 666
+    t0_ms: 3693687
+    t1_ms: 3695387
+    texto: conocerte, Alex. Es un placer.
+    senales:
+    - no_habla
+  - n: 667
+    t0_ms: 3696527
+    t1_ms: 3697487
+    texto: Bueno, pues nada,
+    senales:
+    - no_habla
+  - n: 668
+    t0_ms: 3697667
+    t1_ms: 3699447
+    texto: que tengas un buen día, que aquí es tarde.
+    senales:
+    - no_habla
+  - n: 669
+    t0_ms: 3701707
+    t1_ms: 3703867
+    texto: Aquí estamos, ¿qué crees? Estamos en las
+    senales:
+    - no_habla
+  - n: 670
+    t0_ms: 3703867
+    t1_ms: 3704767
+    texto: nueve de la mañana.
+    senales:
+    - no_habla
+  - n: 671
+    t0_ms: 3705527
+    t1_ms: 3706607
+    texto: ¿Están despertadas, hermanito?
+    senales:
+    - no_habla
+  - n: 672
+    t0_ms: 3708857
+    t1_ms: 3709917
+    texto: Están de vacaciones, ¿no?
+    senales:
+    - no_habla
+  - n: 673
+    t0_ms: 3710777
+    t1_ms: 3711817
+    texto: Sí, sí, pero ya
+    senales:
+    - no_habla
+  - n: 674
+    t0_ms: 3711817
+    t1_ms: 3713817
+    texto: Ya la siguiente semana entramos ya a clases.
+    senales:
+    - no_habla
+  - n: 675
+    t0_ms: 3714057
+    t1_ms: 3715417
+    texto: Pero nada, sabemos que...
+    senales:
+    - no_habla
+  - n: 676
+    t0_ms: 3715417
+    t1_ms: 3717637
+    texto: El 7 inicia mis clases también.
+    senales:
+    - no_habla
+  - n: 677
+    t0_ms: 3718757
+    t1_ms: 3719977
+    texto: Pero tú lo has decidido.
+    senales:
+    - no_habla
+  - n: 678
+    t0_ms: 3720417
+    t1_ms: 3721537
+    texto: Honestamente me sorprende.
+    senales:
+    - no_habla
+  - n: 679
+    t0_ms: 3722857
+    t1_ms: 3724337
+    texto: Honestamente me sorprende
+    senales:
+    - no_habla
+  - n: 680
+    t0_ms: 3724337
+    t1_ms: 3725717
+    texto: porque no sé si son
+    senales:
+    - no_habla
+  - n: 681
+    t0_ms: 3725717
+    t1_ms: 3727397
+    texto: esos cursos que ustedes están llevando
+    senales:
+    - no_habla
+  - n: 682
+    t0_ms: 3727397
+    t1_ms: 3729897
+    texto: son no obligatorios.
+    senales:
+    - no_habla
+  - n: 683
+    t0_ms: 3730037
+    t1_ms: 3732137
+    texto: O sea, que me olvidé el término.
+    senales:
+    - no_habla
+  - n: 684
+    t0_ms: 3733137
+    t1_ms: 3734097
+    texto: Pero simplemente
+    senales:
+    - no_habla
+  - n: 685
+    t0_ms: 3734097
+    t1_ms: 3736317
+    texto: en esos cursos de Finance y demás
+    senales:
+    - no_habla
+  - n: 686
+    t0_ms: 3736317
+    t1_ms: 3737637
+    texto: está demasiado good.
+    senales:
+    - no_habla
+  - n: 687
+    t0_ms: 3738597
+    t1_ms: 3740497
+    texto: Por aquí tienes que hacerte un MBA
+    senales:
+    - no_habla
+  - n: 688
+    t0_ms: 3740497
+    t1_ms: 3742697
+    texto: una especialización o tomar
+    senales:
+    - no_habla
+  - n: 689
+    t0_ms: 3742697
+    t1_ms: 3743637
+    texto: otro curso, o sea
+    senales:
+    - no_habla
+  - n: 690
+    t0_ms: 3745517
+    t1_ms: 3746497
+    texto: buscarte el curso que
+    senales:
+    - no_habla
+  - n: 691
+    t0_ms: 3746497
+    t1_ms: 3748417
+    texto: no te lo da la universidad
+    senales:
+    - no_habla
+  - n: 692
+    t0_ms: 3748417
+    t1_ms: 3750497
+    texto: a menos que me vaya, qué sé yo
+    senales:
+    - no_habla
+  - n: 693
+    t0_ms: 3750497
+    t1_ms: 3751977
+    texto: a Madrid o a Barcelona
+    senales:
+    - no_habla
+  - n: 694
+    t0_ms: 3752757
+    t1_ms: 3754677
+    texto: pero es eso, o sea, pocas universidades
+    senales:
+    - no_habla
+  - n: 695
+    t0_ms: 3754677
+    t1_ms: 3755037
+    texto: tienen
+    senales:
+    - no_habla
+  - n: 696
+    t0_ms: 3756737
+    t1_ms: 3757477
+    texto: aquí en España
+    senales:
+    - no_habla
+  - n: 697
+    t0_ms: 3757477
+    t1_ms: 3760657
+    texto: es por el largo de la carrera
+    senales:
+    - no_habla
+  - n: 698
+    t0_ms: 3760657
+    t1_ms: 3762257
+    texto: también, ¿no? como que es más largo
+    senales:
+    - no_habla
+  - n: 699
+    t0_ms: 3762257
+    t1_ms: 3764597
+    texto: pues sí se da en el tiempo como que enseñaron más cosas
+    senales:
+    - no_habla
+  - n: 700
+    t0_ms: 3764597
+    t1_ms: 3765277
+    texto: creo yo, ¿no?
+    senales:
+    - no_habla
+  - n: 701
+    t0_ms: 3766697
+    t1_ms: 3768597
+    texto: más ajustados con una malla
+    senales:
+    - no_habla
+  - n: 702
+    t0_ms: 3768597
+    t1_ms: 3769157
+    texto: ya hecha, ¿no?
+    senales:
+    - no_habla
+  - n: 703
+    t0_ms: 3769717
+    t1_ms: 3770097
+    texto: Sí
+    senales:
+    - no_habla
+  - n: 704
+    t0_ms: 3771177
+    t1_ms: 3773497
+    texto: No, pero igual me interesa, o sea, yo me voy a involucrar
+    senales:
+    - no_habla
+  - n: 705
+    t0_ms: 3773497
+    t1_ms: 3775117
+    texto: También, porque hay cositas que
+    senales:
+    - no_habla
+  - n: 706
+    t0_ms: 3775937
+    t1_ms: 3776937
+    texto: Me llaman la atención
+    senales:
+    - no_habla
+  - n: 707
+    t0_ms: 3777777
+    t1_ms: 3779257
+    texto: Y como dice mi primo, o sea
+    senales:
+    - no_habla
+  - n: 708
+    t0_ms: 3779257
+    t1_ms: 3781397
+    texto: Todo economista ya en estos tiempos
+    senales:
+    - no_habla
+  - n: 709
+    t0_ms: 3781397
+    t1_ms: 3783097
+    texto: De manejar Python
+    senales:
+    - no_habla
+  - n: 710
+    t0_ms: 3783097
+    t1_ms: 3783617
+    texto: Al mínimo
+    senales:
+    - no_habla
+  - n: 711
+    t0_ms: 3785097
+    t1_ms: 3786897
+    texto: Sí, sí, yo también tengo el reto
+    senales:
+    - no_habla
+  - n: 712
+    t0_ms: 3786897
+    t1_ms: 3788357
+    texto: A aprender a manejar Python
+    senales:
+    - no_habla
+  - n: 713
+    t0_ms: 3788357
+    t1_ms: 3790477
+    texto: Tengo bases, se lleva un curso en Python, pero
+    senales:
+    - no_habla
+  - n: 714
+    t0_ms: 3791177
+    t1_ms: 3792057
+    texto: Quiero saber más, ¿no?
+    senales:
+    - no_habla
+  - n: 715
+    t0_ms: 3792177
+    t1_ms: 3795377
+    texto: Sobre todo para los modelos financieros, que últimamente están muy aplicados
+    senales:
+    - no_habla
+  - n: 716
+    t0_ms: 3796097
+    t1_ms: 3796877
+    texto: Pero nada, o sea
+    senales:
+    - no_habla
+  - n: 717
+    t0_ms: 3796877
+    t1_ms: 3798357
+    texto: Luego ya tendremos tiempo de conversar de eso
+    senales:
+    - no_habla
+  - n: 718
+    t0_ms: 3799497
+    t1_ms: 3800297
+    texto: Realmente Alex
+    senales:
+    - no_habla
+  - n: 719
+    t0_ms: 3800297
+    t1_ms: 3802037
+    texto: Este cabocita que tengo lo conozco
+    senales:
+    - no_habla
+  - n: 720
+    t0_ms: 3802037
+    t1_ms: 3803737
+    texto: Desde que tenemos 6 años
+    senales:
+    - no_habla
+  - n: 721
+    t0_ms: 3803737
+    t1_ms: 3805477
+    texto: Siempre he estado metido en estas cosas
+    senales:
+    - no_habla
+  - n: 722
+    t0_ms: 3806177
+    t1_ms: 3807477
+    texto: Y nada, le gusta la financiación
+    senales:
+    - no_habla
+  - n: 723
+    t0_ms: 3807477
+    t1_ms: 3808797
+    texto: ¿Desde hace 6 años o qué?
+    senales:
+    - no_habla
+  - n: 724
+    t0_ms: 3809897
+    t1_ms: 3811537
+    texto: No, desde los 6 años prácticamente
+    senales:
+    - no_habla
+  - n: 725
+    t0_ms: 3811537
+    t1_ms: 3813517
+    texto: O sea, de edad
+    senales:
+    - no_habla
+  - n: 726
+    t0_ms: 3814517
+    t1_ms: 3815737
+    texto: Claro, desde los 6 años
+    senales:
+    - no_habla
+  - n: 727
+    t0_ms: 3816717
+    t1_ms: 3818417
+    texto: Primero hace de primaria
+    senales:
+    - no_habla
+  - n: 728
+    t0_ms: 3818417
+    t1_ms: 3818737
+    texto: ¿Recuerdas?
+    senales:
+    - no_habla
+  - n: 729
+    t0_ms: 3820177
+    t1_ms: 3821097
+    texto: Y luego he dado
+    senales:
+    - no_habla
+  - n: 730
+    t0_ms: 3822617
+    t1_ms: 3824237
+    texto: Espera, o sea, yo conozco a él
+    senales:
+    - no_habla
+  - n: 731
+    t0_ms: 3824237
+    t1_ms: 3824977
+    texto: ¿Yo lo conozco a él?
+    senales:
+    - no_habla
+  - n: 732
+    t0_ms: 3825837
+    t1_ms: 3826997
+    texto: No, a mí, a mí
+    senales:
+    - no_habla
+  - n: 733
+    t0_ms: 3834597
+    t1_ms: 3836857
+    texto: es tu amigo desde que tenías 6 años
+    senales:
+    - no_habla
+  - n: 734
+    t0_ms: 3836857
+    t1_ms: 3839597
+    texto: tú eres mi amigo
+    senales:
+    - no_habla
+  - n: 735
+    t0_ms: 3839597
+    t1_ms: 3842277
+    texto: desde que somos niños
+    senales:
+    - no_habla
+  - n: 736
+    t0_ms: 3842277
+    t1_ms: 3843397
+    texto: desde hace 6 años
+    senales:
+    - no_habla
+  - n: 737
+    t0_ms: 3844557
+    t1_ms: 3846037
+    texto: no, no, tú hermano
+    senales:
+    - no_habla
+  - n: 738
+    t0_ms: 3846037
+    t1_ms: 3846837
+    texto: nosotros dos
+    senales:
+    - no_habla
+  - n: 739
+    t0_ms: 3846837
+    t1_ms: 3849477
+    texto: ah, estás hablando de mí, yo estoy hablando de Alex
+    senales:
+    - no_habla
+  - n: 740
+    t0_ms: 3850317
+    t1_ms: 3851117
+    texto: no, no, no
+    senales:
+    - no_habla
+  - n: 741
+    t0_ms: 3851117
+    t1_ms: 3852357
+    texto: no, no, no
+    senales:
+    - repeticion
+    - no_habla
+  - n: 742
+    t0_ms: 3852357
+    t1_ms: 3853777
+    texto: yo le decía a Alex
+    senales:
+    - no_habla
+  - n: 743
+    t0_ms: 3855357
+    t1_ms: 3863337
+    texto: si ya tenemos una historia así no así igual más que nada para mí también es eso irme más que
+      nada
+    senales: []
+  - n: 744
+    t0_ms: 3863337
+    t1_ms: 3871977
+    texto: por el lado de banca y finanzas y pues si me llama la atención lo que sería juan porque eso
+    senales: []
+  - n: 745
+    t0_ms: 3871977
+    t1_ms: 3878637
+    texto: es otro mundo como tal y aparte los juans suelen más que nada usar modelos matemáticos estadísticos
+    senales: []
+  - n: 746
+    t0_ms: 3879797
+    t1_ms: 3886597
+    texto: entonces es interesante también supongo que le debe gustar mucho a alex las mates de estadísticas
+    senales: []
+  - n: 747
+    t0_ms: 3886597
+    t1_ms: 3919107
+    texto: para que le entre allí también demasiado no hace todo esfuerzo tienes que estar muy bien está
+      muy
+    senales: []
+  - n: 748
+    t0_ms: 3919107
+    t1_ms: 3927687
+    texto: bien pues viene muy bien también y nada entonces es eso me envían el formulario como tal igual
+      yo
+    senales: []
+  - n: 749
+    t0_ms: 3927687
+    t1_ms: 3934467
+    texto: trataré de enviar algunos vídeos así matizando más detalladamente y con calma pues la operativa
+    senales: []
+  - n: 750
+    t0_ms: 3934467
+    t1_ms: 3940707
+    texto: para que puedan entenderlo y si gusten pues también va a testearlo o sea por su propia
+    senales: []
+  - n: 751
+    t0_ms: 3940707
+    t1_ms: 3951727
+    texto: cuenta ustedes y ver qué onda ya armamos eso y nada luego armamos una gestión será muy loco
+    senales: []
+  - n: 752
+    t0_ms: 3951727
+    t1_ms: 3952547
+    texto: ¿Te imaginas?
+    senales:
+    - no_habla
+  - n: 753
+    t0_ms: 3955757
+    t1_ms: 3958037
+    texto: Después de conseguir un millón de euros
+    senales:
+    - no_habla
+  - n: 754
+    t0_ms: 3958037
+    t1_ms: 3958917
+    texto: Después de
+    senales:
+    - no_habla
+  - n: 755
+    t0_ms: 3958917
+    t1_ms: 3961297
+    texto: A ver, de armarlo se puede
+    senales:
+    - no_habla
+  - n: 756
+    t0_ms: 3961297
+    t1_ms: 3963877
+    texto: La cosa sería buscar el financiamiento
+    senales:
+    - no_habla
+  - n: 757
+    t0_ms: 3965837
+    t1_ms: 3966917
+    texto: En España
+    senales:
+    - no_habla
+  - n: 758
+    t0_ms: 3967997
+    t1_ms: 3968537
+    texto: Claro
+    senales:
+    - no_habla
+  - n: 759
+    t0_ms: 3987127
+    t1_ms: 3989267
+    texto: En España he visto que hay una tendencia
+    senales:
+    - no_habla
+  - n: 760
+    t0_ms: 3989267
+    t1_ms: 3991087
+    texto: Tremenda por abrir este tipo de fondos
+    senales:
+    - no_habla
+  - n: 761
+    t0_ms: 3991087
+    t1_ms: 3991747
+    texto: O sea, en realidad
+    senales:
+    - no_habla
+  - n: 762
+    t0_ms: 3991747
+    t1_ms: 3994167
+    texto: Pero es que como te digo
+    senales:
+    - no_habla
+  - n: 763
+    t0_ms: 3994167
+    t1_ms: 3995267
+    texto: O sea, los
+    senales:
+    - no_habla
+  - n: 764
+    t0_ms: 3995267
+    t1_ms: 3997627
+    texto: Juan Fons, o sea, que realmente
+    senales: []
+  - n: 765
+    t0_ms: 3997627
+    t1_ms: 3999747
+    texto: valen la pena, creo que
+    senales: []
+  - n: 766
+    t0_ms: 3999747
+    t1_ms: 4001327
+    texto: son contados alrededor del mundo
+    senales: []
+  - n: 767
+    t0_ms: 4001327
+    t1_ms: 4003507
+    texto: porque como, claro, existe esa posibilidad
+    senales: []
+  - n: 768
+    t0_ms: 4003507
+    t1_ms: 4004047
+    texto: de que
+    senales: []
+  - n: 769
+    t0_ms: 4005067
+    t1_ms: 4007667
+    texto: si tú te das cuenta y revisas un poco la historia
+    senales: []
+  - n: 770
+    t0_ms: 4007667
+    t1_ms: 4009607
+    texto: la mayoría suele fracasar
+    senales: []
+  - n: 771
+    t0_ms: 4009607
+    t1_ms: 4012007
+    texto: porque aunque el modelo sea matemático
+    senales: []
+  - n: 772
+    t0_ms: 4012007
+    t1_ms: 4013587
+    texto: o sea, todo parte de su
+    senales: []
+  - n: 773
+    t0_ms: 4013587
+    t1_ms: 4014727
+    texto: ratio riesgo-beneficio, o sea
+    senales: []
+  - n: 774
+    t0_ms: 4016087
+    t1_ms: 4017707
+    texto: acierta, puedes tener tú un modelo
+    senales: []
+  - n: 775
+    t0_ms: 4017707
+    t1_ms: 4019307
+    texto: estadístico que acierta mucho, pero
+    senales: []
+  - n: 776
+    t0_ms: 4019307
+    t1_ms: 4021087
+    texto: ese acierto
+    senales: []
+  - n: 777
+    t0_ms: 4021087
+    t1_ms: 4023667
+    texto: tiene algo, ¿entiendes? A lo mejor su ratio
+    senales: []
+  - n: 778
+    t0_ms: 4023667
+    t1_ms: 4024807
+    texto: riesgo-beneficio es mínimo
+    senales: []
+  - n: 779
+    t0_ms: 4024807
+    t1_ms: 4030507
+    texto: o por ejemplo el arbitraje también bueno el arbitraje funciona funciona pero también es
+    senales:
+    - no_habla
+  - n: 780
+    t0_ms: 4030507
+    t1_ms: 4035547
+    texto: algo donde tienes que saber demasiado entiendes aunque no sé actualmente he escuchado poco
+      ya
+    senales:
+    - no_habla
+  - n: 781
+    t0_ms: 4035547
+    t1_ms: 4042507
+    texto: muy pocos lo hacen pero no se me refería justo esa tendencia no porque estoy viendo también
+      que
+    senales:
+    - no_habla
+  - n: 782
+    t0_ms: 4042507
+    t1_ms: 4052207
+    texto: se han creado un montón de fondos de hedge funds en europa y mucha de toda la mayoría está
+    senales:
+    - no_habla
+  - n: 783
+    t0_ms: 4052207
+    t1_ms: 4058007
+    texto: fracasando los cinco o seis años si por eso hay que diferenciarnos hay que diferenciarnos a
+      0
+    senales:
+    - no_habla
+  - n: 784
+    t0_ms: 4058007
+    t1_ms: 4067747
+    texto: sea un modelo que verdaderamente y estadísticamente pues se valide y para adelante no pero
+      normal se
+    senales:
+    - no_habla
+  - n: 785
+    t0_ms: 4067747
+    t1_ms: 4074967
+    texto: puede ver más adelante ya con más conocimiento se puede más que nada pues nos sirve a cada
+      uno
+    senales:
+    - no_habla
+  - n: 786
+    t0_ms: 4074967
+    t1_ms: 4080447
+    texto: de nosotros pero también porque al final estamos siguiendo casi la misma rama a finanzas algunos
+    senales:
+    - no_habla
+  - n: 787
+    t0_ms: 4080447
+    t1_ms: 4082067
+    texto: uno se irá por otros lados
+    senales:
+    - no_habla
+  - n: 788
+    t0_ms: 4082067
+    t1_ms: 4084347
+    texto: pero es eso, o sea, le sirve
+    senales:
+    - no_habla
+  - n: 789
+    t0_ms: 4084347
+    t1_ms: 4085987
+    texto: tanto para su currículum como
+    senales:
+    - no_habla
+  - n: 790
+    t0_ms: 4085987
+    t1_ms: 4087107
+    texto: experiencia en vida y demás
+    senales:
+    - no_habla
+  - n: 791
+    t0_ms: 4088127
+    t1_ms: 4090267
+    texto: Sí, ahorita me estoy alegrando
+    senales:
+    - no_habla
+  - n: 792
+    t0_ms: 4090267
+    t1_ms: 4092487
+    texto: un poco con sucesiones, patrimonio
+    senales:
+    - no_habla
+  - n: 793
+    t0_ms: 4092487
+    t1_ms: 4093767
+    texto: o sea, gestos de patrimonio
+    senales:
+    - no_habla
+  - n: 794
+    t0_ms: 4093767
+    t1_ms: 4095627
+    texto: pero más que nada
+    senales:
+    - no_habla
+  - n: 795
+    t0_ms: 4095627
+    t1_ms: 4098207
+    texto: marcos legales y negociación me está vacilando
+    senales:
+    - no_habla
+  - n: 796
+    t0_ms: 4098207
+    t1_ms: 4100127
+    texto: más que lo matemático, pero sí
+    senales:
+    - no_habla
+  - n: 797
+    t0_ms: 4100127
+    t1_ms: 4101987
+    texto: o sea, de todas maneras sirve conocer gente que
+    senales:
+    - no_habla
+  - n: 798
+    t0_ms: 4101987
+    t1_ms: 4104427
+    texto: le guste las modelos estadísticos
+    senales:
+    - no_habla
+  - n: 799
+    t0_ms: 4104427
+    t1_ms: 4105387
+    texto: y nada
+    senales:
+    - no_habla
+  - n: 800
+    t0_ms: 4105887
+    t1_ms: 4107007
+    texto: bueno, vamos conversando
+    senales:
+    - no_habla
+  - n: 801
+    t0_ms: 4107007
+    t1_ms: 4109227
+    texto: Sí, vamos conversando, pues nada chicos
+    senales:
+    - no_habla
+  - n: 802
+    t0_ms: 4109227
+    t1_ms: 4111027
+    texto: Un gusto Alex
+    senales: []
+  - n: 803
+    t0_ms: 4111027
+    t1_ms: 4113647
+    texto: Igualmente
+    senales: []
+  - n: 804
+    t0_ms: 4113647
+    t1_ms: 4114687
+    texto: Chao
+    senales: []
+  - n: 805
+    t0_ms: 4114687
+    t1_ms: 4131987
+    texto: Mucho que hacer
+    senales: []
+  referencias:
+  - 'fr-v2-c5a09508/<t_ms>: 775 fotogramas regulares, uno por segundo, de 3360000 a 4134000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:59:10
+  t1: 0:59:27
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: la última prueba de fondeo que la realice hace un par de años [...] me quedé en un 7%
+    sano me Me comí un drawdown terrible
+  afirmacion: su ultima prueba de fondeo, hace un par de anos, acabo con un drawdown terrible
+  tema: riesgo.fondeo.historial
+  confianza: alta
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:09Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-005910-d9cd4994
+- t0: '1:05:19'
+  t1: '1:05:34'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: trataré de enviar algunos vídeos así matizando más detalladamente y con calma pues la
+    operativa
+  afirmacion: promete enviar videos explicando la operativa con mas detalle
+  tema: meta.videos_prometidos
+  confianza: alta
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:03:11Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v2-010519-9798fded
+no_consta:
+- tema: sesgo
+  motivo: charla final (formulario, WhatsApp, universidad, hedge funds) sin contenido operativo
+- tema: liquidez
+  motivo: charla final sin contenido operativo
+- tema: mapeo
+  motivo: charla final sin contenido operativo
+- tema: entrada
+  motivo: charla final sin contenido operativo
+- tema: zona_control
+  motivo: charla final sin contenido operativo
+- tema: stop
+  motivo: charla final sin contenido operativo
+- tema: objetivo
+  motivo: charla final sin contenido operativo
+- tema: break_even
+  motivo: charla final sin contenido operativo
+- tema: cartuchos
+  motivo: charla final sin contenido operativo
+- tema: no_trade
+  motivo: charla final sin contenido operativo
+salida_sha256: 36f25c4f082c601c2d985609f9e32072b044a97ef3bf41c98986f6f9da491c40
+comprobado_el: '2026-09-07T01:43:33Z'

@@ -1,0 +1,16 @@
+id: ev-v1-002110-6ce6abaa
+video_id: v1
+t0: 0:21:10
+t1: 0:21:43
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si entrábamos, digamos así, en 0.75, configurando el lotaje a esta zona de aquí [...] el
+  lotaje calcularlo ya no en base a esto sino en base a esta zona de aquí o sea a 0 75
+afirmacion: 'propuesta abierta: calcular el lotaje sobre la distancia hasta el 0,75 en vez de la completa'
+tema: lotaje.base_075_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: lo plantea como pregunta al consultor, no como regla
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

@@ -1,0 +1,16 @@
+id: ev-v4-012524-0ef85a89
+video_id: v4
+t0: '1:25:24'
+t1: '1:25:49'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: La idea creo que sería Funded Next, porque creo que es la que tiene más recorrido [...]
+  5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8, sí
+afirmacion: 'cuenta de fondeo elegida: FundedNext (5 % diario, 8 % total segun recuerdan)'
+tema: riesgo.fondeo.fundednext_limites
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: el consultor propone y el trader completa las cifras de memoria
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

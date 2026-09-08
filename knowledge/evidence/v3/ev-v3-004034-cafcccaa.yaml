@@ -1,0 +1,14 @@
+id: ev-v3-004034-cafcccaa
+video_id: v3
+t0: 0:40:34
+t1: 0:40:47
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Al menos en Forex no sirve [...] en Forex no suele servir ese volumen que aparece aquí
+afirmacion: el volumen de la plataforma no sirve en Forex
+tema: herramientas.sin_volumen_forex
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

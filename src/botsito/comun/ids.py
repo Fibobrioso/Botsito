@@ -22,6 +22,8 @@ TRANSCRIPCION = re.compile(r"^tr-[a-z0-9]+-[a-z0-9][a-z0-9._-]{0,39}-[0-9a-f]{8}
 FOTOGRAMAS = re.compile(r"^fr-[a-z0-9]+-[0-9a-f]{8}$", re.ASCII)
 # Referencia citable a un fotograma: `<fotogramas_id>/<t_ms nominal>` (F05; la usa F07).
 REFERENCIA_FOTOGRAMA = re.compile(r"^fr-[a-z0-9]+-[0-9a-f]{8}/\d+$", re.ASCII)
+# Propuesta de evidencia (F07): `pr-<video>-<t0hhmmss>-<t1hhmmss>-<hash8>`.
+PROPUESTA = re.compile(r"^pr-[a-z0-9]+-\d{6}-\d{6}-[0-9a-f]{8}$", re.ASCII)
 FUENTE = re.compile(
     r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$", re.ASCII
 )
@@ -39,6 +41,7 @@ POR_TIPO: dict[str, re.Pattern[str]] = {
     "transcripcion": TRANSCRIPCION,
     "fotogramas": FOTOGRAMAS,
     "referencia_fotograma": REFERENCIA_FOTOGRAMA,
+    "propuesta": PROPUESTA,
 }
 
 

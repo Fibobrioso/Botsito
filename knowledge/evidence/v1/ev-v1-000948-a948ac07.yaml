@@ -1,0 +1,14 @@
+id: ev-v1-000948-a948ac07
+video_id: v1
+t0: 0:09:48
+t1: 0:09:59
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: tendríamos 3 menos 0.75 sería 2 con 25 y eso es lo que se dio pues en la primera sesión
+afirmacion: 'resultado de la primera sesion del 20 de agosto: 3 - 0,75 = 2,25 R'
+tema: backtest.resultado_20260820_sesion1
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

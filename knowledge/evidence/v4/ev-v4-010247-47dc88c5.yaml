@@ -1,0 +1,15 @@
+id: ev-v4-010247-47dc88c5
+video_id: v4
+t0: '1:02:47'
+t1: '1:03:05'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: son muy raros, o sea yo podría decirlo que contados, al mes son muy contados, suelen ser
+  3 o 2 o 4 no más de 10 creo yo [...] al menos en un mes que suele dar entre 48, 50, 60 trades
+afirmacion: los casos de activacion sin rotura son raros (2-4 al mes); un mes da entre 48 y 60 trades
+tema: backtest.trades_por_mes_48_60
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v2-002256-b27a8fa6
+video_id: v2
+t0: 0:22:56
+t1: 0:23:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: habría una operativa que sería un stop loss fijo que no buscamos reducir los stop loss o
+  sea para eso ya tenemos como que la condicional de el precio hace este movimiento y genera automáticamente
+  break even
+afirmacion: 'el stop es fijo: no se reduce; para eso esta la condicion que genera el break even'
+tema: stop.fijo_sin_reducir
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

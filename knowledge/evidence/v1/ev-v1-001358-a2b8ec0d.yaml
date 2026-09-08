@@ -1,0 +1,16 @@
+id: ev-v1-001358-a2b8ec0d
+video_id: v1
+t0: 0:13:58
+t1: 0:14:13
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: apenas se genera el rompimiento de la zona de liquidez pues nosotros vamos abarcando con
+  nuestro límite [...] vamos ahí bajando el límite bajando el límite
+afirmacion: tras romper la liquidez, la orden limite se va bajando conforme se desarrolla el precio
+tema: entrada.orden_limite.reubicacion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 'A-5 (cadencia de reubicacion): no dice cada cuanto'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

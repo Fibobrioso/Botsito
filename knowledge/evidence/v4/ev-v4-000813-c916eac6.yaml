@@ -1,0 +1,20 @@
+id: ev-v4-000813-c916eac6
+video_id: v4
+t0: 0:08:13
+t1: 0:08:21
+modalidad: ambas
+tipo: PARAMETER
+cita_literal: si el punto de entrada, por ejemplo ahí que tienes es en el nivel 1.19502 que sí o sí el
+  stop se marca en este caso
+afirmacion: en el ejemplo en pantalla el punto de entrada (nivel 0 de la caja) es 1,19502 y el stop se
+  marca desde ahi
+tema: herramientas.caja_nivel_entrada_119502
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v4-9ad0ebb8/495000
+valor: '1.19502'
+notas: habla el consultor leyendo la caja de Gann de la pantalla (FXReplay, 30 de enero)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,15 @@
+id: ev-v1-000321-e3a35fe7
+video_id: v1
+t0: 0:03:21
+t1: 0:03:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta zona de liquidez tiene que ser mitigada para que se desarrolle el esquema por debajo
+afirmacion: la liquidez de M15 debe quedar mitigada y el esquema de entrada se desarrolla por debajo de
+  ella
+tema: entrada.condicion.liquidez_mitigada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

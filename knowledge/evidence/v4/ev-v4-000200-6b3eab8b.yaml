@@ -1,0 +1,14 @@
+id: ev-v4-000200-6b3eab8b
+video_id: v4
+t0: 0:02:00
+t1: 0:02:10
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: hacer como que un muestreo sin usar el break-even
+afirmacion: plantea probar una muestra sin usar el break even
+tema: break_even.probar_sin_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,19 @@
+id: ev-v2-003320-a736fd37
+video_id: v2
+t0: 0:33:20
+t1: 0:33:22
+modalidad: pantalla
+tipo: EXAMPLE_TRADE
+cita_literal: 'TradingView, EURUSD 1 min, dos herramientas de posicion: Cerrado PyG -0,00013, Cantidad
+  7, ratio riesgo/beneficio 4,08; Cerrado PyG 0,00063, Cantidad 6, ratio riesgo/beneficio 3,94'
+afirmacion: en pantalla, las dos operaciones del 2 de julio muestran ratios riesgo/beneficio de 4,08 y
+  3,94 (= 3 / 0,75)
+tema: herramientas.posicion_ratios_408_394
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · fotograma visto
+provenance: bot-v2
+fotogramas:
+- fr-v2-c5a09508/2001000
+valor: 4,08
+notas: fotograma obligatorio de F05 (golden de F21); lo que se lee en pantalla, no lo que se oye

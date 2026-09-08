@@ -1,0 +1,14 @@
+id: ev-v2-003350-dbd9e3ad
+video_id: v2
+t0: 0:33:50
+t1: 0:33:56
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si lo agrega también a la operativa sería finalizando con un 3 con 25 no sólo un 3
+afirmacion: sumando el 0,25 guardado, una ganadora acaba en 3,25 y no en 3
+tema: objetivo.resultado_3_25
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

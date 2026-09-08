@@ -1,0 +1,16 @@
+id: ev-v3-005617-f9d41904
+video_id: v3
+t0: 0:56:17
+t1: 0:56:33
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: te marque perdices aquí dos para la operativa, no operas, pero pero ¿qué pasa? Que se desarrolla
+  la siguiente zona de liquidez de M15, se marque la liquidez de M15, y nuevamente opere, y así continuamente
+afirmacion: tras dos perdidas no se opera hasta que se desarrolle la siguiente liquidez de M15; entonces
+  se vuelve a operar
+tema: cartuchos.dos_perdidas_nueva_liquidez
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

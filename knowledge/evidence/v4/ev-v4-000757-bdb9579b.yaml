@@ -1,0 +1,15 @@
+id: ev-v4-000757-bdb9579b
+video_id: v4
+t0: 0:07:57
+t1: 0:08:06
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el spread, tomando en cuenta el spread no influye mucho, creo yo, o sea si va entre 0.2
+  o 0.1 no tiene mucha influencia en el trade
+afirmacion: un spread de 0,1 a 0,2 no influye mucho en el trade
+tema: stop.spread_no_influye
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

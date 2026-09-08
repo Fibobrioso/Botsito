@@ -1,0 +1,15 @@
+id: ev-v5-000155-d079ac35
+video_id: v5
+t0: 0:01:55
+t1: 0:02:11
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: este decisional o sea sería suficiente para validar una entrada aquí
+afirmacion: un decisional basta para validar la entrada en ese punto
+tema: entrada.esquema2.decisional
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: jerga del trader (decisional); el ASR no marca senales pero el termino no esta definido en el tramo
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

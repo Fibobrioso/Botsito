@@ -1,0 +1,15 @@
+id: ev-v3-001204-889179d2
+video_id: v3
+t0: 0:12:04
+t1: 0:12:34
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el orden flow más líquido y que yo considero que se da es en la temporalidad de m15 [...]
+  el flujo que yo considero correcto es en M15
+afirmacion: el flujo de ordenes correcto para la liquidez es el de M15
+tema: liquidez.m15.flujo_correcto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

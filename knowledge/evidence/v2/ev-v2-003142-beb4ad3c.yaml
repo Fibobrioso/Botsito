@@ -1,0 +1,17 @@
+id: ev-v2-003142-beb4ad3c
+video_id: v2
+t0: 0:31:42
+t1: 0:32:13
+modalidad: audio
+tipo: PARAMETER
+cita_literal: yo cuando suelo medir lo que sería sería la entrada, lo suelo medir normalmente así, o sea,
+  desde el punto anterior [...] al final lo suelo poner en 0.75, o sea, 0.75, entonces no estás arriesgando
+  el 100% de la entrada
+afirmacion: 'mide la entrada desde el punto anterior y pone el stop en 0,75: no arriesga el 100 %'
+tema: stop.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+valor: '0.75'
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

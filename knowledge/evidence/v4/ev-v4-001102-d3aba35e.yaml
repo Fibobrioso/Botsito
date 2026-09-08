@@ -1,0 +1,17 @@
+id: ev-v4-001102-d3aba35e
+video_id: v4
+t0: 0:11:02
+t1: 0:11:20
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: hacer backtest sin Calza también, entonces O sea, planteando esa condicional Es decir, no
+  protejo en 0.75 Pero, a ver, veo Qué tal va con, si no protejo La entrada, cómo van los resultados Un
+  robot, claro, lo haría Mucho más rápido
+afirmacion: quiere backtestear sin proteger en 0,75 para comparar; un robot lo haria rapido
+tema: stop.backtest_sin_proteger_abierto
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

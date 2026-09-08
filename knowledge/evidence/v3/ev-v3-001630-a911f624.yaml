@@ -1,0 +1,18 @@
+id: ev-v3-001630-a911f624
+video_id: v3
+t0: 0:16:30
+t1: 0:17:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para que tú puedas llegar a la entrada correcta se tiene que desarrollar por encima o sea
+  lo que tiene que hacer el precio es que se desarrolle un flujo de órdenes en m1 [...] m1 es el marco
+  de operativa ya que aquí nosotros esperaríamos el breaker o el voz vale de reversión
+afirmacion: la entrada correcta se desarrolla por encima de la liquidez con un flujo de ordenes en M1,
+  donde se espera el breaker o el BOS de reversion
+tema: entrada.flujo_m1_por_encima
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: voz = BOS en la lectura del ASR (duda del glosario)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

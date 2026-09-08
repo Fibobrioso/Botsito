@@ -1,0 +1,15 @@
+id: ev-v3-010333-46aa4ec4
+video_id: v3
+t0: '1:03:33'
+t1: '1:03:40'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Sizing geométrico porcentaje, sí, también 0.50 o 0.75 en fondeo, exacto
+afirmacion: 'confirma sizing geometrico en porcentaje: 0,50 o 0,75 en fondeo'
+tema: riesgo.ficha_sizing_geometrico
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

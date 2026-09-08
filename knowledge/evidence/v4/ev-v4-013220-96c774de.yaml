@@ -1,0 +1,15 @@
+id: ev-v4-013220-96c774de
+video_id: v4
+t0: '1:32:20'
+t1: '1:32:55'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo trataré de usar en esta semana que me queda a ver si incorporó eso [...] un tercer esquema
+  de entrada que es que tengo que batizarlo y ver si es viable o no incorporarlo
+afirmacion: el tercer esquema queda pendiente de backtest antes de incorporarlo
+tema: entrada.esquema3_pendiente_backtest
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

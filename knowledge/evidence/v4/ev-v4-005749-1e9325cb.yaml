@@ -1,0 +1,17 @@
+id: ev-v4-005749-1e9325cb
+video_id: v4
+t0: 0:57:49
+t1: 0:58:29
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: considera siempre consideró la mecha a veces en algunos casos supongamos que aquí su mente
+  es aquí entonces yo lo pongo allí no aquí entonces Entonces, la vela contraria para mí, apenas se inicia
+  una vela contraria en un flujo de órdenes, yo ya lo tomo como un punto en el cual yo ya voy marcando
+afirmacion: en el mapeo considera siempre la mecha; apenas se inicia una vela contraria en un flujo de
+  ordenes, marca un punto
+tema: mapeo.vela_contraria_marca_punto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

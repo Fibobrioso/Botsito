@@ -1,0 +1,15 @@
+id: ev-v3-003112-a3ae4fa9
+video_id: v3
+t0: 0:31:12
+t1: 0:31:41
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: yo el profil máximo que suelo buscar es en la liquidez de m15
+afirmacion: el profit maximo que busca es la liquidez de M15
+tema: objetivo.target_maximo_liquidez_m15
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: profil = profit en la lectura del ASR; en 0:30:06 dice que define el target de dos maneras
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

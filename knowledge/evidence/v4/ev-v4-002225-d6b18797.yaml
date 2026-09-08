@@ -1,0 +1,18 @@
+id: ev-v4-002225-d6b18797
+video_id: v4
+t0: 0:22:25
+t1: 0:22:49
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: mira soy humano o sea no puedo procesar muchos datos pero creo que buscando la manera de
+  automatizar y demás podemos buscar a lo mejor inclusive mejores configuraciones [...] el rr ideal no
+  es el 13 puede ser el 2.5
+afirmacion: automatizar permitiria buscar mejores configuraciones, por ejemplo un RR de 2,5 en vez de
+  1:3
+tema: meta.automatizar_para_mejores_configuraciones
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: segmento con senal no_habla; 13 = 1 a 3
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

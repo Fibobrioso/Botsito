@@ -1,0 +1,15 @@
+id: ev-v1-002812-6e3220b5
+video_id: v1
+t0: 0:28:12
+t1: 0:28:30
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: pero aquí entra la subjetividad [...] extenderías hasta un 3,50 bueno, un 3,63
+afirmacion: extender el objetivo hasta 3,50 o 3,63 es subjetivo
+tema: objetivo.extension_subjetiva
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 3,63
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

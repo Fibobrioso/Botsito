@@ -1,0 +1,15 @@
+id: ev-v1-002707-d1259f87
+video_id: v1
+t0: 0:27:07
+t1: 0:27:20
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: marco mi zona de liquidez, que esta es una zona de liquidez que el precio no llegó a romper,
+  pero actualizo mi zona lineal de liquidez
+afirmacion: la linea de liquidez de M15 se actualiza aunque la zona anterior no se haya roto
+tema: liquidez.m15.actualizar_linea
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

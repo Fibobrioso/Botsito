@@ -1,0 +1,16 @@
+id: ev-v4-011221-ac847257
+video_id: v4
+t0: '1:12:21'
+t1: '1:12:31'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el stop ya quedó que es en 0.75 Y este se va a mover Dependiendo del sprint del momento
+afirmacion: 'acordado: stop en 0,75 desplazado segun el spread del momento'
+tema: stop.acordado_075_mas_spread
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.75'
+notas: resumen del consultor; sprint = spread (duda del glosario); A-10
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,16 @@
+id: ev-v5-000427-f8d5d36d
+video_id: v5
+t0: 0:04:27
+t1: 0:04:35
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: se cumplen las condiciones para poner break even, bueno, en ese caso el precio sigue así
+  por caída ya lo podemos poner en B
+afirmacion: el break even se pone cuando se cumplen las condiciones (aqui, el precio sigue cayendo)
+tema: break_even.condiciones
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: no enuncia cuales son las condiciones (A-4); B = break even
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

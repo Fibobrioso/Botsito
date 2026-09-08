@@ -42,6 +42,8 @@ FORBIDDEN_FOR_DOMAIN = {
     "pathlib",
     "io",
 }
+# ADR-0006/0009: evidence y corpus son capas hermanas e independientes (`|` en import-linter).
+FORBIDDEN_FOR_EVIDENCE = {"botsito.corpus", "botsito.data", "botsito.config", "botsito.validation"}
 FORBIDDEN_FOR_SPEC = {
     "botsito.engine",
     "botsito.data",
@@ -167,3 +169,11 @@ def test_ffmpeg_solo_desde_corpus(repo: Path) -> None:
             ):
                 ofensas.append(f"{py.name}:{node.lineno}")
     assert ofensas == [], ofensas
+
+
+def test_evidence_no_importa_corpus() -> None:
+    """ADR-0009: la verificacion de citas recibe los segmentos por protocolo estructural."""
+    paquete = Path(__file__).resolve().parents[2] / "src" / "botsito" / "evidence"
+    for py in paquete.rglob("*.py"):
+        malos = {m for m in _imports(py) if any(m.startswith(f) for f in FORBIDDEN_FOR_EVIDENCE)}
+        assert not malos, f"{py.name} importa {sorted(malos)}"

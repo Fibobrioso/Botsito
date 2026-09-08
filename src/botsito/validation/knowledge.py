@@ -8,6 +8,7 @@ Devuelve (codigo, lineas): 0 OK, 1 error de contenido, 2 estructura ausente.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 
 def _carpeta_datos(repo: Path) -> Path:
@@ -114,9 +115,47 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         return 1, salida
     fallos: list[str] = []
     manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
+    # Contexto de verificacion (F07): crudas, referencias de fotogramas, transcripciones.
+    from botsito.corpus.manifiestos_fotogramas import ManifiestoFotogramasError
+    from botsito.corpus.manifiestos_transcripcion import ManifiestoTranscripcionError
+    from botsito.evidence.modelo import verificar_citas
+    from botsito.evidence.propuestas import (
+        DIRECTORIO_PROPUESTAS,
+        FICHERO_PROMPT,
+        PropuestaError,
+        cargar_propuestas,
+        validar_propuestas,
+    )
+    from botsito.validation.contexto_evidencia import construir_contexto
+
+    contexto = None
+    try:
+        contexto, _temas = construir_contexto(repo, _carpeta_datos(repo), manifiesto)
+    except (ManifiestoTranscripcionError, ManifiestoFotogramasError, PropuestaError) as exc:
+        fallos.append(f"contexto de evidencia: {exc}")
     if manifiesto is not None:
-        fallos += validar_contra_manifiesto(items, manifiesto)
+        fallos += validar_contra_manifiesto(items, manifiesto, contexto)
+    if contexto is not None:
+        problemas_citas, avisos_citas, _loc = verificar_citas(items, contexto)
+        fallos += problemas_citas
+        for a in avisos_citas:
+            salida.append(f"AVISO: {a}")
     fallos += contradicciones.validar_fichero(directorio, items)
+    propuestas: list[dict[str, Any]] = []
+    try:
+        propuestas = cargar_propuestas(repo / DIRECTORIO_PROPUESTAS)
+        ruta_prompt = repo / DIRECTORIO_PROPUESTAS / FICHERO_PROMPT
+        prompt_sha = None
+        if ruta_prompt.is_file():
+            from botsito.comun.documentos import sha256_hex
+
+            prompt_sha = sha256_hex(ruta_prompt.read_bytes().replace(b"\r\n", b"\n"))
+        problemas_pr, avisos_pr = validar_propuestas(propuestas, items, prompt_sha)
+        fallos += problemas_pr
+        for a in avisos_pr:
+            salida.append(f"AVISO: {a}")
+    except PropuestaError as exc:
+        fallos.append(f"propuestas: {exc}")
     con_git = hay_git(repo)
     no_evaluable = historial_evaluable(repo) if con_git else None
     historial = modificaciones_en_historial(repo)
@@ -268,8 +307,14 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     salida.append(
         f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente"
     )
+    items_pendientes = sum(
+        1
+        for p in propuestas
+        for it in (p.get("items") or [])
+        if isinstance(it, dict) and it.get("decision", "pendiente") == "pendiente"
+    )
     salida.append(
         f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas, "
-        "historial intacto"
+        f"historial intacto; {len(propuestas)} propuestas ({items_pendientes} items pendientes)"
     )
     return 0, salida

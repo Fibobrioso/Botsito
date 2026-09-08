@@ -1,0 +1,16 @@
+id: ev-v3-003709-cd9f5b74
+video_id: v3
+t0: 0:37:09
+t1: 0:37:20
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: nos va a ayudar a saber definir si no necesariamente tenemos que esperar en la zona de control
+  para poner el break-even, sino que inmediatamente tenemos que poner break-even
+afirmacion: con analisis de volumen (mercado profundo) se podria poner el break even sin esperar la zona
+  de control (idea)
+tema: break_even.con_volumen_abierto
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

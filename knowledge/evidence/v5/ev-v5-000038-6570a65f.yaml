@@ -1,0 +1,15 @@
+id: ev-v5-000038-6570a65f
+video_id: v5
+t0: 0:00:38
+t1: 0:00:52
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: bueno aquí no hay entrada [...] porque no me genera el esquema [...] genera un flujo de
+  órdenes
+afirmacion: no hay entrada cuando, en vez del esquema 2, el precio genera un flujo de ordenes
+tema: no_trade.esquema2_flujo_ordenes
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

@@ -1,0 +1,14 @@
+id: ev-v1-002740-7c96436f
+video_id: v1
+t0: 0:27:40
+t1: 0:27:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: lo ideal y lo lógico sería tomarlo desde aquí o sea, apenas se genere el breaker de allí
+afirmacion: lo ideal es tomar la entrada apenas se genera el breaker
+tema: entrada.gatillo_breaker.apenas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

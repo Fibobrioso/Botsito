@@ -1,0 +1,16 @@
+id: ev-v3-011200-f47758fb
+video_id: v3
+t0: '1:12:00'
+t1: '1:12:12'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ¿Sol, barrio, cuánto debe penetrar el nivel? Vale. Esto pasa con mecha. O sea, pasa con
+  la mecha nomás
+afirmacion: el barrido de liquidez basta con la mecha
+tema: liquidez.m15.barrido_con_mecha
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: mecha
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

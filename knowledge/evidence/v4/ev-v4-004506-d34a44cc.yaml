@@ -1,0 +1,15 @@
+id: ev-v4-004506-d34a44cc
+video_id: v4
+t0: 0:45:06
+t1: 0:45:33
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: luego pues se te devuelve no llega al 1.3 no llega al 1.3 entonces nada sé que este 3 no
+  se da por experiencia [...] manualmente no da muchos trades
+afirmacion: muchos trades no llegan al 1:3; manualmente el sistema da pocos trades
+tema: meta.pocos_trades
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

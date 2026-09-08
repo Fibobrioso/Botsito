@@ -1,0 +1,15 @@
+id: ev-v3-005254-96a862c8
+video_id: v3
+t0: 0:52:54
+t1: 0:53:04
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: la zona de control que se desarrolla es esta de aquí llega a desarrollarse aquí y aquí ya
+  me pondría el objetivo y la entrada
+afirmacion: al desarrollarse la zona de control fija el objetivo y la entrada
+tema: zona_control.marca_objetivo_y_entrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

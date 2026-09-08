@@ -1,0 +1,16 @@
+id: ev-v3-003352-bbcd6500
+video_id: v3
+t0: 0:33:52
+t1: 0:34:11
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: me daría una suma de de 40% o sea restando lo demás [...] aquí si consideré o sea todas
+  las pérdidas
+afirmacion: el recap del Excel de abril suma un 40 % contando todas las perdidas
+tema: backtest.abril_suma_40
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '40'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

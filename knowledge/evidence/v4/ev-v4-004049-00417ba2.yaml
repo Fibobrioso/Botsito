@@ -1,0 +1,16 @@
+id: ev-v4-004049-00417ba2
+video_id: v4
+t0: 0:40:49
+t1: 0:41:09
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: En M1 si es viable Por ejemplo, que Saca, o sea, mitiga esta liquidez Con cuerpo, no, perdón
+  con mecha o con cuerpo es indiferente y luego se regrese o sea, hay una vela bajista y tengo una mecha
+  aquí y luego una vela verde y se activa la entrada
+afirmacion: en M1 la mitigacion de liquidez con mecha o con cuerpo es indiferente
+tema: liquidez.m1_mecha_o_cuerpo_indiferente
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

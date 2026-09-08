@@ -1,0 +1,16 @@
+id: ev-v2-001422-aa30815e
+video_id: v2
+t0: 0:14:22
+t1: 0:14:40
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: cuando ya genere o sea automáticamente es que esto va a ser el reto o sea automáticamente
+  el voto algoritmo ponga en break even la entrada
+afirmacion: el reto es que el algoritmo ponga el break even automaticamente
+tema: break_even.automatico
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: voto = bot en la lectura del ASR
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

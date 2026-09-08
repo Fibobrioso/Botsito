@@ -1,0 +1,16 @@
+id: ev-v3-002815-64fbe91b
+video_id: v3
+t0: 0:28:15
+t1: 0:28:38
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: en una sesión te puede generar, qué sé yo, tres entradas de 1 a 3, que contando las posibles
+  pérdidas te puedes terminar con 1 a 4, o sea, 4% positivo. O bien también que puede ocurrir que termines
+  o menos 1%
+afirmacion: una sesion puede dar tres entradas; el resultado puede ir de +4 % a -1 %
+tema: cartuchos.mas_entradas_posibles
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

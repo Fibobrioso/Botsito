@@ -1,0 +1,18 @@
+id: ev-v4-010759-514b5d7d
+video_id: v4
+t0: '1:07:59'
+t1: '1:08:35'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: aquí hay un igual aquí se activaría la entrada [...] lo ideal sería proteger a 0.75 pero
+  bueno te come aquí [...] cerrar apenas la operación lo más rápido posible se cierra la vela y si no
+  termina por debajo con un rompimiento cerrar la operación
+afirmacion: si la limite se activa por un equal sin rotura, lo objetivo es cerrar la operacion cuando
+  cierre la vela sin romper
+tema: entrada.equal_cierre_anticipado
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: A-3 (salida sin ruptura)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

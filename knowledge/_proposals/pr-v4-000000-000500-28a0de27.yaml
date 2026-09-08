@@ -1,0 +1,491 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v4-000000-000500-28a0de27
+video_id: v4
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc
+t0: 0:00:00
+t1: 0:05:00
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-fable-5-1
+proponente: llm
+generado_el: '2026-09-07T01:34:11Z'
+contexto:
+  segmentos:
+  - n: 0
+    t0_ms: 0
+    t1_ms: 10360
+    texto: Entonces me salgo de la red sin hacer bulla. Y nada, continúan. O sea, no voy a comprarme tampoco
+      mucho tiempo, no mucho será 40 minutos, así que me actualizan si llego a volver, ¿ya?
+    senales: []
+  - n: 1
+    t0_ms: 10940
+    t1_ms: 11700
+    texto: Sí, perfecto, bro.
+    senales:
+    - no_habla
+  - n: 2
+    t0_ms: 11920
+    t1_ms: 12440
+    texto: Dale.
+    senales:
+    - no_habla
+  - n: 3
+    t0_ms: 12640
+    t1_ms: 13440
+    texto: Buen día, bro.
+    senales:
+    - no_habla
+  - n: 4
+    t0_ms: 14320
+    t1_ms: 14840
+    texto: Vale.
+    senales:
+    - no_habla
+  - n: 5
+    t0_ms: 16960
+    t1_ms: 22000
+    texto: He estado usando el FX Replay para poder bactesear.
+    senales:
+    - no_habla
+  - n: 6
+    t0_ms: 22020
+    t1_ms: 31280
+    texto: He estado bacteseando lo que sería el mes de este mes cogido todo enero, en las cuales, como
+      tal, las métricas me saltaron las siguientes.
+    senales:
+    - no_habla
+  - n: 7
+    t0_ms: 31280
+    t1_ms: 45290
+    texto: vale un buen rey de un 30 por ciento un total de tres de 53 13 break events 12 12 profits y
+      bueno
+    senales: []
+  - n: 8
+    t0_ms: 45290
+    t1_ms: 52950
+    texto: 28 estados entonces qué pasa pues claro aquí es esto es indiferente por el hecho de que no
+    senales: []
+  - n: 9
+    t0_ms: 52950
+    t1_ms: 59890
+    texto: he calculado el lotaje ni nada pero estás haciendo cálculos simples sería 12 por 3 que es el
+      rr
+    senales: []
+  - n: 10
+    t0_ms: 59890
+    t1_ms: 67470
+    texto: de promedio es sin maximizar porque claro hay cosas que me estaba dando cuenta y existe la
+    senales: []
+  - n: 11
+    t0_ms: 67470
+    t1_ms: 76310
+    texto: posibilidad también de poder maximizar en algunos escenarios el profe por ejemplo aquí o sea
+      según
+    senales: []
+  - n: 12
+    t0_ms: 76310
+    t1_ms: 83670
+    texto: los datos de la plataforma me suele soltar que un promedio ideal de rr es de 17 con 49 y claro
+    senales: []
+  - n: 13
+    t0_ms: 83670
+    t1_ms: 87990
+    texto: si lo dejas hasta el día siguiente pero creo que hay por ejemplo cuenta de fondeo que no permiten
+    senales: []
+  - n: 14
+    t0_ms: 88890
+    t1_ms: 90650
+    texto: Entonces, esto está de más, creo yo
+    senales: []
+  - n: 15
+    t0_ms: 90650
+    t1_ms: 91970
+    texto: Pero es eso
+    senales: []
+  - n: 16
+    t0_ms: 91970
+    t1_ms: 93810
+    texto: Después, otro punto interesante
+    senales: []
+  - n: 17
+    t0_ms: 93810
+    t1_ms: 97250
+    texto: También me he estado dando cuenta del break-even
+    senales: []
+  - n: 18
+    t0_ms: 97250
+    t1_ms: 101110
+    texto: Por ejemplo, aquí me suelta que 4 break-evens
+    senales: []
+  - n: 19
+    t0_ms: 101110
+    t1_ms: 103310
+    texto: Con un máximo potencial de RR
+    senales: []
+  - n: 20
+    t0_ms: 103830
+    t1_ms: 105370
+    texto: Llegó a 9.65
+    senales: []
+  - n: 21
+    t0_ms: 105370
+    t1_ms: 107950
+    texto: Pero creo que es un poco indiferente
+    senales: []
+  - n: 22
+    t0_ms: 107950
+    t1_ms: 111670
+    texto: Por el hecho de que, claro, son 13 break-evens
+    senales: []
+  - n: 23
+    t0_ms: 111670
+    t1_ms: 112510
+    texto: 13 menos 8, 9
+    senales: []
+  - n: 24
+    t0_ms: 113350
+    t1_ms: 114250
+    texto: Menos 4, digo
+    senales: []
+  - n: 25
+    t0_ms: 115850
+    t1_ms: 117490
+    texto: Yo todavía mantengo, o sea
+    senales: []
+  - n: 26
+    t0_ms: 117490
+    t1_ms: 120530
+    texto: o sea, la condicional de usar el break-even.
+    senales: []
+  - n: 27
+    t0_ms: 120730
+    t1_ms: 130050
+    texto: He planeado, sí, por ejemplo, porque va a desear, o sea, hacer como que un muestreo sin usar
+      el break-even,
+    senales: []
+  - n: 28
+    t0_ms: 130570
+    t1_ms: 135430
+    texto: porque hay momentos donde, o sea, nosotros lo que buscamos es, claro, el precio rompe,
+    senales: []
+  - n: 29
+    t0_ms: 135430
+    t1_ms: 141710
+    texto: se genera el escenario, por ejemplo, aquí tenemos el break-even, mira, esto es del día 30.
+    senales: []
+  - n: 30
+    t0_ms: 142910
+    t1_ms: 150750
+    texto: aquí marcamos la liquidez en m 15 tenemos bueno nos vamos a 4 h 4 había seguimos un flujo alcista
+    senales: []
+  - n: 31
+    t0_ms: 150750
+    t1_ms: 156150
+    texto: o sea el vallas es directivo el vallas es bajista en alcista perdón entonces para el primer
+      la
+    senales: []
+  - n: 32
+    t0_ms: 156150
+    t1_ms: 163730
+    texto: primera sesión que sería de 7 a 11 nos vamos a m 15 si marcamos la liquidez sería que genera
+    senales: []
+  - n: 33
+    t0_ms: 163730
+    t1_ms: 195270
+    texto: o sea, buscamos que el precio haga esto de aquí, o sea, marcamos la liquidez y todo lo que
+      haga aquí adentro, como vuelvo a decir, no importa, sino lo que haga externamente, o sea, nos vamos
+      a M1 y pues aquí ya de por sí, o sea, operando manualmente no habría escenario por el hecho de que
+      el precio te genera esto de aquí, entonces no hay escenario, si hubiera hecho esto, o sea, ya recordamos
+      los dos esquemas que era uno, o bien me hace esto de aquí,
+    senales: []
+  - n: 34
+    t0_ms: 195390
+    t1_ms: 201550
+    texto: rompe o bien directamente rompe el precio como tal o sea sólo con velas rojas y si hace el
+      otro
+    senales: []
+  - n: 35
+    t0_ms: 201550
+    t1_ms: 207410
+    texto: esquema pues con un pequeño retroceso pequeña zona de control y luego rompe o sea que no hay
+    senales: []
+  - n: 36
+    t0_ms: 207410
+    t1_ms: 213070
+    texto: entrada aquí tampoco aquí se abrió una entrada y sería donde sólo los como tal ya que sería
+    senales: []
+  - n: 37
+    t0_ms: 213070
+    t1_ms: 222530
+    texto: nuestro blog por el hecho de que haber gestionando el trade o sea sería de aquí hasta aquí
+      pero mira
+    senales: []
+  - n: 38
+    t0_ms: 222530
+    t1_ms: 226810
+    texto: era otro punto muy importante que te quería comentar alex no sé tú qué opinas por ejemplo
+    senales: []
+  - n: 39
+    t0_ms: 227530
+    t1_ms: 233230
+    texto: es entrada nosotros sería un solo o sea con las condicionales iniciales que tenemos serían
+      esos
+    senales: []
+  - n: 40
+    t0_ms: 233230
+    t1_ms: 240610
+    texto: los pero qué pasa poniendo el break even en un 1 a 1 1 con 5 que se yo se protegería y hay
+      muchas
+    senales: []
+  - n: 41
+    t0_ms: 240610
+    t1_ms: 246130
+    texto: entradas que si por eso que también quiero usar y automatizar para que en un gran muestre o
+      sea
+    senales: []
+  - n: 42
+    t0_ms: 246130
+    t1_ms: 251330
+    texto: en un gran número de datos ver más o menos como varía o sea si es factible que se yo a lo mejor
+    senales: []
+  - n: 43
+    t0_ms: 251330
+    t1_ms: 257730
+    texto: no poner break-even o también que se yo o en vez de o mantener el break-even pero también otra
+    senales: []
+  - n: 44
+    t0_ms: 257730
+    t1_ms: 263690
+    texto: manera de poner break-even otra condicional sería de que el r o sea cuando llegue a un 1-1
+      pues se
+    senales: []
+  - n: 45
+    t0_ms: 263690
+    t1_ms: 268510
+    texto: ponga en break-even la entrada o se proteja que se yo a 0.50 otro punto también que quería
+      destacar
+    senales: []
+  - n: 46
+    t0_ms: 268510
+    t1_ms: 276290
+    texto: antes de iniciar con las preguntas es que claro aquí si me voy a dar a las analíticas
+    senales: []
+  - n: 47
+    t0_ms: 277670
+    t1_ms: 284390
+    texto: que esto ha sido un mes heavy porque me ha soltado un buen rey muy bajo pero igual terminamos
+    senales: []
+  - n: 48
+    t0_ms: 284390
+    t1_ms: 291030
+    texto: positivos a la curva como tal el término positivo cogiendo de todos los 13 en pérdidas comiendo
+      de
+    senales: []
+  - n: 49
+    t0_ms: 291030
+    t1_ms: 298190
+    texto: todo lo que tenía que comer por ejemplo el la el número de pérdidas consecutivos fue de 7 entonces
+    senales: []
+  - n: 50
+    t0_ms: 298190
+    t1_ms: 305970
+    texto: claro como manejamos un digamos un rr bueno pero un solo de tres cuartos o sea 0 75 pros entonces
+    senales: []
+  referencias:
+  - 'fr-v4-9ad0ebb8/<t_ms>: 301 fotogramas regulares, uno por segundo, de 0 a 300000 ms'
+temas_buscados:
+- break_even
+- cartuchos
+- entrada
+- liquidez
+- mapeo
+- no_trade
+- objetivo
+- sesgo
+- stop
+- zona_control
+items:
+- t0: 0:00:16
+  t1: 0:00:45
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: He estado bacteseando lo que sería el mes de este mes cogido todo enero, en las cuales,
+    como tal, las métricas me saltaron las siguientes [...] un buen rey de un 30 por ciento un total de
+    tres de 53 13 break events 12 12 profits
+  afirmacion: 'backtest de enero de 2026 en FXReplay: win rate 30 %, 53 trades, 13 break evens, 12 profits'
+  tema: backtest.enero_2026_metricas
+  valor: '30'
+  confianza: media
+  notas: segmentos con senal no_habla; rey = win rate, tres = trades en la lectura del ASR
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:31Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000016-8f6862dd
+- t0: 0:00:52
+  t1: 0:01:23
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: sería 12 por 3 que es el rr de promedio es sin maximizar [...] un promedio ideal de rr
+    es de 17 con 49
+  afirmacion: en enero el RR promedio sin maximizar fue 3 (12 x 3); la plataforma sugiere un RR ideal
+    de 17,49 dejando correr
+  tema: backtest.enero_rr_promedio
+  confianza: alta
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:32Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000052-61cf22a9
+- t0: 0:01:33
+  t1: 0:02:00
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: También me he estado dando cuenta del break-even [...] son 13 break-evens [...] la condicional
+    de usar el break-even
+  afirmacion: en enero hubo 13 break evens; mantiene la condicion de usar el break even
+  tema: break_even.mantiene_condicional_pese_a_13
+  confianza: alta
+  n: 3
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:34Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000133-01d2ca0a
+- t0: 0:02:00
+  t1: 0:02:10
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: hacer como que un muestreo sin usar el break-even
+  afirmacion: plantea probar una muestra sin usar el break even
+  tema: break_even.probar_sin_abierto
+  confianza: alta
+  n: 4
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:36Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000200-6b3eab8b
+- t0: 0:02:22
+  t1: 0:02:43
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: nos vamos a 4 h 4 había seguimos un flujo alcista o sea el vallas es directivo el vallas
+    es bajista en alcista perdón entonces para el primer la primera sesión que sería de 7 a 11
+  afirmacion: en H4 el bias (alcista) dirige la primera sesion, de 7 a 11
+  tema: sesgo.h4.bias_sesion
+  confianza: media
+  notas: vallas = bias en la lectura del ASR
+  n: 5
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:37Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000222-9275ac37
+- t0: 0:02:43
+  t1: 0:03:15
+  modalidad: audio
+  tipo: NO_TRADE
+  cita_literal: operando manualmente no habría escenario por el hecho de que el precio te genera esto
+    de aquí, entonces no hay escenario
+  afirmacion: 'ejemplo del 30 de enero: no hay escenario porque el precio no genera el esquema'
+  tema: no_trade.sin_escenario_30_enero
+  confianza: alta
+  n: 6
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:39Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000243-a1067c1c
+- t0: 0:02:43
+  t1: 0:03:27
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien
+    directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con
+    un pequeño retroceso pequeña zona de control y luego rompe
+  afirmacion: 'dos esquemas: 1) el precio rompe directamente (solo velas rojas); 2) pequeno retroceso,
+    pequena zona de control y luego rompe'
+  tema: entrada.dos_esquemas.definicion
+  confianza: alta
+  n: 7
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:41Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000243-5f8875ce
+- t0: 0:03:53
+  t1: 0:04:28
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: poniendo el break even en un 1 a 1 1 con 5 que se yo se protegería y hay muchas entradas
+    [...] otra condicional sería de que el r o sea cuando llegue a un 1-1 pues se ponga en break-even
+    la entrada o se proteja que se yo a 0.50
+  afirmacion: 'idea abierta: break even o proteccion a 0,50 al llegar a 1 a 1 o 1 a 1,5'
+  tema: break_even.a_1a1_o_050_abierto
+  confianza: alta
+  n: 8
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:43Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000353-9ea3ce94
+- t0: 0:04:51
+  t1: 0:04:58
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: el número de pérdidas consecutivos fue de 7
+  afirmacion: en enero la racha de perdidas consecutivas fue de 7
+  tema: backtest.enero_racha_7
+  valor: '7'
+  confianza: alta
+  n: 9
+  decision: aceptado
+  decidido_por: Aleks · hoja F07 2026-09-07 · cruda leida
+  decidido_el: '2026-09-08T01:06:44Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v4-000451-97043d00
+no_consta:
+- tema: liquidez
+  motivo: solo 'marcamos la liquidez en m15' (0:02:22) como paso del ejemplo
+- tema: mapeo
+  motivo: no habla del mapeo en el tramo
+- tema: zona_control
+  motivo: solo como parte del esquema 2 (0:03:21), citada en entrada
+- tema: stop
+  motivo: solo 'tres cuartos' del riesgo (0:04:58) dentro de la racha, sin regla
+- tema: objetivo
+  motivo: no habla del objetivo en el tramo
+- tema: cartuchos
+  motivo: no habla de cartuchos en el tramo
+salida_sha256: bd8954917ad9d6d1c45101341a393bfec99aa0fd2db91a6ec65fce20d22009f1
+comprobado_el: '2026-09-07T01:55:39Z'

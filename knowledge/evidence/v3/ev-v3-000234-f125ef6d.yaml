@@ -1,0 +1,14 @@
+id: ev-v3-000234-f125ef6d
+video_id: v3
+t0: 0:02:34
+t1: 0:02:40
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Me he confundido, Nueva York inicia algo de las 2 y finaliza por la tarde 6 de la tarde
+afirmacion: 'se corrige: Nueva York va de las 2 a las 6 de la tarde; su ventana combina Asia y Londres'
+tema: ventana.nueva_york_corregido
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

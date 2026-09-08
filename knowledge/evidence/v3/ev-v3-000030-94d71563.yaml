@@ -1,0 +1,14 @@
+id: ev-v3-000030-94d71563
+video_id: v3
+t0: 0:00:30
+t1: 0:00:37
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Un flujo de órdenes, o sea, mapeo del mercado, breaker y marco de liquidez y ya está
+afirmacion: 'el modelo son tres cosas: flujo de ordenes (mapeo), breaker y marco de liquidez'
+tema: meta.componentes_del_modelo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

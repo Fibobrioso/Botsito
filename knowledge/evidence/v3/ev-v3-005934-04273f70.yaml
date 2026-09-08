@@ -1,0 +1,16 @@
+id: ev-v3-005934-04273f70
+video_id: v3
+t0: 0:59:34
+t1: '1:00:18'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: si llega a hacer un retroceso con complex pullback y todavía no te desarrolla la zona de
+  control, entonces lo más probable es que de 0.75 se pase a 0.50 para proteger mucho más [...] yo manualmente,
+  o sea, gestiono el stop loss de esa manera
+afirmacion: con un complex pullback sin zona de control, pasa el stop de 0,75 a 0,50
+tema: stop.bajar_050.complex_pullback
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

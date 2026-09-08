@@ -1,0 +1,16 @@
+id: ev-v3-004004-da90f1da
+video_id: v3
+t0: 0:40:04
+t1: 0:40:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo no suelo utilizar como indicadores. Y si alguna vez utilizara [...] usaría el bigwap
+  y eso
+afirmacion: no usa indicadores; si usara alguno seria el VWAP
+tema: herramientas.sin_indicadores.v3
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: 'no'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

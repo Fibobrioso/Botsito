@@ -1,0 +1,15 @@
+id: ev-v4-010953-d7999aa3
+video_id: v4
+t0: '1:09:53'
+t1: '1:10:17'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: puedes usar diario Era, entrar en M15 y H4 [...] no es necesario la toma de liquidez en
+  M1 y demás. O sea, más que nada en M15
+afirmacion: variante posible con diario, H4 y M15; la toma de liquidez es en M15, no en M1
+tema: liquidez.solo_m15_no_m1
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -1,0 +1,15 @@
+id: ev-v3-010741-526b98f4
+video_id: v3
+t0: '1:07:41'
+t1: '1:08:04'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: este es un orden block en m5 o sea el flujo de órdenes está desarrollando en m5 no en m1
+  por eso que yo por eso consideró tratar de mapear de la manera más limpia y más objetiva posible
+afirmacion: cuando el flujo se desarrolla en M5 y no en M1, mapea de la manera mas limpia y objetiva
+tema: mapeo.limpio_objetivo_flujo_m5
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

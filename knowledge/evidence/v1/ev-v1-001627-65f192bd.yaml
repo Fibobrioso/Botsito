@@ -1,0 +1,15 @@
+id: ev-v1-001627-65f192bd
+video_id: v1
+t0: 0:16:27
+t1: 0:16:43
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si en el bot sale que es más factible qué sé yo o sea no usar en 0.75 y mejor dejarlo en
+  1 pues ya es otra historia
+afirmacion: si los datos del bot dicen que es mejor no usar 0,75 y dejar el stop en 1, se cambiaria
+tema: stop.nivel_abierto_a_datos
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

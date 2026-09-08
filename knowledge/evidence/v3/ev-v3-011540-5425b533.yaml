@@ -1,0 +1,16 @@
+id: ev-v3-011540-5425b533
+video_id: v3
+t0: '1:15:40'
+t1: '1:16:00'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si hay un flujo alcista, una vela contraria, pues marca un mínimo si es roja y eso, y al
+  revés, si el flujo es bajista, una vela verde, pues una vela alcista marca un retroceso
+afirmacion: en un flujo alcista una vela roja marca un minimo; en un flujo bajista una vela verde marca
+  un retroceso
+tema: mapeo.m1.vela_contraria_marca_extremo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

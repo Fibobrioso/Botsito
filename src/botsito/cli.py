@@ -16,6 +16,7 @@ from botsito.domain.valores import HoraLocal
 if TYPE_CHECKING:
     from botsito.corpus.fotogramas import Obligatorio
     from botsito.corpus.glosario import Glosario
+    from botsito.evidence.modelo import EvidenceItem
 
 STATE_FILE = "PROJECT_STATE.md"
 
@@ -542,50 +543,109 @@ def _segmento_en(repo: Path, video_id: str, t_ms: int) -> str:
     return f"# transcripcion {tr.id} (cruda):\n" + a_texto_legible(trozo).rstrip()
 
 
+class _EntornoEvidencia:
+    """Lo que `evidence new|accept|propose` necesitan: fuentes, manifiesto, evidencia existente
+    y el contexto de verificacion (crudas, referencias, transcripciones)."""
+
+    def __init__(self, repo: Path) -> None:
+        from botsito.corpus.inventario import cargar_fuentes, cargar_manifiesto
+        from botsito.evidence.modelo import cargar_evidencia
+        from botsito.validation.contexto_evidencia import construir_contexto
+
+        self.repo = repo
+        self.videos = {
+            v.video_id
+            for v in cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml").videos
+        }
+        ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
+        self.manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
+        self.directorio = repo / "knowledge" / "evidence"
+        self.existentes = cargar_evidencia(self.directorio)
+        self.contexto, self.temas = construir_contexto(repo, _carpeta_datos(repo), self.manifiesto)
+
+    def comprobar(self, item: EvidenceItem) -> list[str]:
+        """Problemas del item nuevo en el contexto real: manifiesto, referencias y cita."""
+        from botsito.evidence.modelo import validar_contra_manifiesto, verificar_citas
+        from botsito.evidence.verificacion import comprobar_referencias
+
+        todos = [*self.existentes, item]
+        problemas: list[str] = []
+        if self.manifiesto is not None:
+            problemas += validar_contra_manifiesto(todos, self.manifiesto, self.contexto)
+        elif item.modalidad in ("pantalla", "ambas") or item.fotogramas:
+            # Sin manifiesto del corpus, las referencias se comprueban igual.
+            if self.contexto.referencias is None:
+                problemas.append(f"{item.id}: faltan referencias conocidas para validar fotogramas")
+            else:
+                problemas += [
+                    f"{item.id}: {p}"
+                    for p in comprobar_referencias(
+                        item.video_id,
+                        item.t0_ms,
+                        item.t1_ms,
+                        item.modalidad,
+                        list(item.fotogramas),
+                        self.contexto.referencias,
+                    )
+                ]
+        if item.cita_de_audio and item.transcripcion:
+            if self.contexto.activas.get(item.video_id) != item.transcripcion:
+                problemas.append(
+                    f"{item.id}: transcripcion {item.transcripcion} no es la activa de "
+                    f"{item.video_id} ({self.contexto.activas.get(item.video_id)})"
+                )
+            if self.contexto.crudas and self.contexto.crudas(item.transcripcion) is None:
+                problemas.append(
+                    f"{item.id}: la cruda de {item.transcripcion} no esta en data/: la cita no "
+                    "se puede verificar aqui"
+                )
+        p_citas, _avisos, _loc = verificar_citas([item], self.contexto)
+        problemas += p_citas
+        return [p for p in problemas if p.startswith(item.id)]
+
+
+def _errores_evidencia() -> tuple[type[Exception], ...]:
+    from botsito.corpus.inventario import InventarioError
+    from botsito.corpus.manifiestos_fotogramas import ManifiestoFotogramasError
+    from botsito.corpus.manifiestos_transcripcion import ManifiestoTranscripcionError
+    from botsito.evidence.modelo import EvidenciaError
+    from botsito.evidence.propuestas import PropuestaError
+
+    return (
+        InventarioError,
+        ManifiestoFotogramasError,
+        ManifiestoTranscripcionError,
+        EvidenciaError,
+        PropuestaError,
+    )
+
+
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un item de evidencia con su id calculado (nunca sobreescribe).
 
-    Antes de escribir se comprueba contra el manifiesto (duracion, fotogramas, supersede): un
-    item es inmutable, asi que un error no se corrige, se evita.
+    Antes de escribir se comprueba contra el manifiesto y el contexto (duracion, referencias de
+    fotogramas, transcripcion activa, cita localizada en la cruda): un item es inmutable, asi que
+    un error no se corrige, se evita.
     """
-    from botsito.corpus.inventario import InventarioError, cargar_fuentes, cargar_manifiesto
-    from botsito.evidence.modelo import (
-        EvidenceItem,
-        EvidenciaError,
-        cargar_evidencia,
-        escribir_item,
-        validar_contra_manifiesto,
-    )
+    from botsito.evidence.modelo import EvidenciaError, escribir_item
 
     if not (repo / "knowledge").is_dir():
         print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
         return 2
     try:
-        conocidos = {
-            v.video_id
-            for v in cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml").videos
-        }
-        ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
-        manifiesto = cargar_manifiesto(ruta_manifiesto) if ruta_manifiesto.exists() else None
-    except InventarioError as exc:
-        print(f"ERROR: fuentes del corpus: {exc}")
+        entorno = _EntornoEvidencia(repo)
+    except _errores_evidencia() as exc:
+        print(f"ERROR: {exc}")
         return 1
-    if args.video not in conocidos:
-        print(f"ERROR: video {args.video!r} no esta en fuentes.yaml ({sorted(conocidos)})")
+    if args.video not in entorno.videos:
+        print(f"ERROR: video {args.video!r} no esta en fuentes.yaml ({sorted(entorno.videos)})")
         return 1
-    directorio = repo / "knowledge" / "evidence"
-    try:
-        existentes = cargar_evidencia(directorio)
-    except EvidenciaError as exc:
-        print(f"ERROR: evidencia existente: {exc}")
-        return 1
-
-    def comprobar(item: EvidenceItem) -> list[str]:
-        if manifiesto is None:
-            return []
-        todos = [*existentes, item]
-        return [p for p in validar_contra_manifiesto(todos, manifiesto) if p.startswith(item.id)]
-
+    transcripcion = args.transcripcion
+    if transcripcion is None and args.modalidad in ("audio", "ambas"):
+        transcripcion = entorno.contexto.activas.get(args.video)
+        if transcripcion is None:
+            print(f"ERROR: {args.video} no tiene transcripcion activa; indica --transcripcion")
+            return 1
     campos = {
         "video_id": args.video,
         "t0": args.t0,
@@ -603,14 +663,258 @@ def evidence_new(repo: Path, args: argparse.Namespace) -> int:
         "fotogramas": args.fotograma or [],
         "supersede": args.supersede,
         "notas": args.notas,
+        "transcripcion": transcripcion,
     }
     try:
-        ruta = escribir_item(directorio, campos, comprobar)
+        ruta = escribir_item(entorno.directorio, campos, entorno.comprobar)
     except EvidenciaError as exc:
         print(f"ERROR: {exc}")
         return 1
     print(f"OK: {ruta.relative_to(repo).as_posix()}")
     print("Regenera las contradicciones: botsito evidence contradictions")
+    return 0
+
+
+def _ahora() -> str:
+    from datetime import UTC, datetime
+
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _prompt_canonico(repo: Path) -> str:
+    from botsito.evidence.propuestas import DIRECTORIO_PROPUESTAS, FICHERO_PROMPT
+
+    ruta = repo / DIRECTORIO_PROPUESTAS / FICHERO_PROMPT
+    return ruta.read_text(encoding="utf-8").replace("\r\n", "\n")
+
+
+def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
+    """Esqueleto de una propuesta (`--video --t0 --t1`) o comprobacion de una rellena
+    (`--check <fichero>`). Nunca escribe en knowledge/evidence/."""
+    from botsito.corpus.transcripcion import TranscripcionError, parse_ms
+    from botsito.evidence.propuestas import (
+        DIRECTORIO_PROPUESTAS,
+        PropuestaError,
+        cargar_propuesta,
+        cargar_propuestas,
+        comprobar,
+        escribir_propuesta,
+        esqueleto,
+        sellar,
+    )
+    from botsito.evidence.verificacion import t_ms_de_referencia, video_de_referencia
+
+    try:
+        entorno = _EntornoEvidencia(repo)
+    except _errores_evidencia() as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    if args.check:
+        ruta = Path(args.check)
+        try:
+            doc = cargar_propuesta(ruta)
+            otras = cargar_propuestas(repo / DIRECTORIO_PROPUESTAS)
+            r = comprobar(doc, entorno.contexto, entorno.temas, entorno.existentes, otras)
+        except (PropuestaError, OSError) as exc:
+            print(f"ERROR: {exc}")
+            return 1
+        for a in r.avisos:
+            print(f"AVISO: {a}")
+        for p in r.problemas:
+            print(f"ERROR: {p}")
+        for n, loc in sorted(r.localizaciones.items()):
+            print(
+                f"  item {n}: localizado en {_fmt_ms(loc.t0_ms)}-{_fmt_ms(loc.t1_ms)} "
+                f"(segmentos {list(loc.segmentos)})"
+            )
+        if r.problemas:
+            return 1
+        sellar(doc, _ahora())
+        escribir_propuesta(ruta, doc)
+        print(f"OK: {len(doc['items'])} items, {len(doc['no_consta'])} no_consta; salida sellada")
+        return 0
+    if not (args.video and args.t0 and args.t1):
+        print("ERROR: indica --video, --t0 y --t1 (o --check <fichero>)")
+        return 2
+    if args.video not in entorno.videos:
+        print(f"ERROR: video {args.video!r} no esta en fuentes.yaml")
+        return 1
+    tid = entorno.contexto.activas.get(args.video)
+    if tid is None:
+        print(f"ERROR: {args.video} no tiene transcripcion activa")
+        return 1
+    segmentos = entorno.contexto.crudas(tid) if entorno.contexto.crudas else None
+    if segmentos is None:
+        print(f"ERROR: la cruda de {tid} no esta en data/")
+        return 1
+    try:
+        t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
+    except TranscripcionError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    tramo = [s for s in segmentos if s.t1_ms > t0 and s.t0_ms < t1]
+    # Referencias del tramo, compactas: la cobertura es 1 fps (ADR-0008), asi que se anota el
+    # manifiesto y el recuento por segundo, y solo los instantes con fraccion (obligatorios).
+    en_tramo = [
+        ref
+        for ref in (entorno.contexto.referencias or set())
+        if video_de_referencia(ref) == args.video and t0 <= t_ms_de_referencia(ref) <= t1
+    ]
+    por_manifiesto: dict[str, list[int]] = {}
+    for ref in en_tramo:
+        por_manifiesto.setdefault(ref.rsplit("/", 1)[0], []).append(t_ms_de_referencia(ref))
+    referencias: list[str] = []
+    for fid, instantes in sorted(por_manifiesto.items()):
+        regulares = sorted(t for t in instantes if t % 1000 == 0)
+        extras = sorted(t for t in instantes if t % 1000 != 0)
+        if regulares:
+            referencias.append(
+                f"{fid}/<t_ms>: {len(regulares)} fotogramas regulares, uno por segundo, "
+                f"de {regulares[0]} a {regulares[-1]} ms"
+            )
+        referencias += [f"{fid}/{t} (obligatorio)" for t in extras]
+    try:
+        doc = esqueleto(
+            args.video,
+            tid,
+            args.t0,
+            args.t1,
+            tramo,
+            referencias,
+            _prompt_canonico(repo),
+            args.modelo,
+            args.proponente,
+            args.tema_buscado or [],
+            _ahora(),
+        )
+    except (PropuestaError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    salida = (
+        Path(args.salida)
+        if args.salida
+        else repo / DIRECTORIO_PROPUESTAS / (doc["propuesta_id"] + ".yaml")
+    )
+    if salida.exists():
+        print(f"ERROR: ya existe {salida}")
+        return 1
+    escribir_propuesta(salida, doc)
+    print(f"OK: {salida.relative_to(repo).as_posix() if salida.is_relative_to(repo) else salida}")
+    print(f"  {len(tramo)} segmentos de {tid}, {len(referencias)} referencias de fotogramas")
+    return 0
+
+
+def _fmt_ms(ms: int) -> str:
+    from botsito.evidence.verificacion import formato_ms
+
+    return formato_ms(ms)
+
+
+def evidence_accept(repo: Path, args: argparse.Namespace) -> int:
+    """Acepta un item propuesto: crea la evidencia (con todas las comprobaciones de `new`) y
+    anota la decision en la propuesta."""
+    from botsito.evidence.modelo import escribir_item
+    from botsito.evidence.propuestas import (
+        DIRECTORIO_PROPUESTAS,
+        anotar_decision,
+        campos_de_item,
+        cargar_propuesta,
+        cargar_propuestas,
+        comprobar,
+        comprobar_sello,
+        escribir_propuesta,
+    )
+
+    errores: tuple[type[Exception], ...] = (*_errores_evidencia(), OSError)
+    try:
+        entorno = _EntornoEvidencia(repo)
+        ruta = Path(args.propuesta)
+        doc = cargar_propuesta(ruta)
+        sello = comprobar_sello(doc)
+        if sello:
+            print(f"ERROR: {sello}")
+            return 1
+        otras = cargar_propuestas(repo / DIRECTORIO_PROPUESTAS)
+        r = comprobar(doc, entorno.contexto, entorno.temas, entorno.existentes, otras)
+        patron = re.compile(rf"\bitem {args.item}\b")
+        mios = [p for p in r.problemas if patron.search(p)]
+        globales = [p for p in r.problemas if not p.startswith("item ")]
+        if mios or globales:
+            for p in mios + globales:
+                print(f"ERROR: {p}")
+            return 1
+        campos = campos_de_item(doc, args.item, args.revisado_por, args.metodo)
+        if args.notas:
+            previas = str(campos.get("notas") or "").strip()
+            campos["notas"] = f"{previas} {args.notas}".strip()
+        ruta_item = escribir_item(entorno.directorio, campos, entorno.comprobar)
+        from botsito.evidence.modelo import cargar_item
+
+        item = cargar_item(ruta_item)
+        anotar_decision(
+            doc, args.item, "aceptado", args.revisado_por, _ahora(), args.metodo, None, item.id
+        )
+        try:
+            escribir_propuesta(ruta, doc)
+        except OSError:
+            # Sin decision anotada el item recien creado quedaria huerfano: se retira.
+            ruta_item.unlink(missing_ok=True)
+            raise
+    except errores as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"OK: {ruta_item.relative_to(repo).as_posix()} (item {args.item} aceptado)")
+    return 0
+
+
+def evidence_reject(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.evidence.propuestas import (
+        PropuestaError,
+        anotar_decision,
+        cargar_propuesta,
+        comprobar_sello,
+        escribir_propuesta,
+    )
+
+    try:
+        ruta = Path(args.propuesta)
+        doc = cargar_propuesta(ruta)
+        sello = comprobar_sello(doc)
+        if sello:
+            print(f"ERROR: {sello}")
+            return 1
+        it = next((i for i in doc["items"] if i["n"] == args.item), None)
+        if it is None:
+            print(f"ERROR: la propuesta no tiene el item {args.item}")
+            return 1
+        if it.get("decision", "pendiente") != "pendiente":
+            print(f"ERROR: el item {args.item} ya esta {it['decision']}")
+            return 1
+        anotar_decision(doc, args.item, "rechazado", args.decidido_por, _ahora(), None, args.motivo)
+        escribir_propuesta(ruta, doc)
+    except (PropuestaError, OSError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"OK: item {args.item} rechazado")
+    return 0
+
+
+def evidence_list(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
+
+    try:
+        items = cargar_evidencia(repo / "knowledge" / "evidence")
+    except EvidenciaError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    filas = sorted(items, key=lambda i: (i.video_id, i.t0_s, i.id))
+    if args.video:
+        filas = [i for i in filas if i.video_id == args.video]
+    if args.tema:
+        filas = [i for i in filas if i.tema == args.tema or i.tema.startswith(args.tema + ".")]
+    for i in filas:
+        print(f"{i.id}  {i.video_id}  {i.t0}-{i.t1}  {i.modalidad:8s}  {i.tipo:14s}  {i.tema}")
+    print(f"{len(filas)} items")
     return 0
 
 
@@ -983,7 +1287,38 @@ def build_parser() -> argparse.ArgumentParser:
     nuevo.add_argument("--fotograma", action="append", help="ruta del manifiesto; repetible")
     nuevo.add_argument("--supersede")
     nuevo.add_argument("--notas")
+    nuevo.add_argument(
+        "--transcripcion", help="id tr-* de la cruda citada (por defecto la activa del video)"
+    )
     ev_sub.add_parser("contradictions", help="regenera knowledge/evidence/_contradicciones.yaml")
+    prop = ev_sub.add_parser("propose", help="esqueleto de propuesta o --check de una rellena")
+    prop.add_argument("--video")
+    prop.add_argument("--t0")
+    prop.add_argument("--t1")
+    prop.add_argument("--modelo", default="pendiente", help="quien rellena la propuesta")
+    prop.add_argument("--proponente", default="llm", choices=["llm", "humano"])
+    prop.add_argument("--tema-buscado", dest="tema_buscado", action="append")
+    prop.add_argument("--salida", help="ruta del fichero (por defecto knowledge/_proposals/)")
+    prop.add_argument("--check", help="fichero de propuesta rellena a comprobar y sellar")
+    acc = ev_sub.add_parser("accept", help="crea la evidencia de un item propuesto")
+    acc.add_argument("--propuesta", required=True)
+    acc.add_argument("--item", required=True, type=int)
+    acc.add_argument("--revisado-por", required=True, dest="revisado_por")
+    acc.add_argument(
+        "--metodo",
+        required=True,
+        choices=["cruda_leida", "audio_oido", "fotograma_visto"],
+        help="como reviso la persona",
+    )
+    acc.add_argument("--notas")
+    rej = ev_sub.add_parser("reject", help="anota el rechazo de un item propuesto")
+    rej.add_argument("--propuesta", required=True)
+    rej.add_argument("--item", required=True, type=int)
+    rej.add_argument("--motivo", required=True)
+    rej.add_argument("--decidido-por", required=True, dest="decidido_por")
+    lst = ev_sub.add_parser("list", help="tabla estable de items (id, video, t0, tipo, tema)")
+    lst.add_argument("--video")
+    lst.add_argument("--tema")
     fb = sub.add_parser("feedback", help="registros del trader")
     fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
     fbn = fb_sub.add_parser("new", help="crea un registro de feedback con id calculado")
@@ -1056,6 +1391,14 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_new(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "contradictions":
         return evidence_contradictions(args.repo)
+    if args.cmd == "evidence" and args.evidence_cmd == "propose":
+        return evidence_propose(args.repo, args)
+    if args.cmd == "evidence" and args.evidence_cmd == "accept":
+        return evidence_accept(args.repo, args)
+    if args.cmd == "evidence" and args.evidence_cmd == "reject":
+        return evidence_reject(args.repo, args)
+    if args.cmd == "evidence" and args.evidence_cmd == "list":
+        return evidence_list(args.repo, args)
     if args.cmd == "corpus" and args.corpus_cmd == "inventory":
         return corpus_inventory(args.repo, args.sin_hash)
     if args.cmd == "corpus" and args.corpus_cmd == "check":

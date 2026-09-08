@@ -1,0 +1,16 @@
+id: ev-v2-002845-7c812ec4
+video_id: v2
+t0: 0:28:45
+t1: 0:29:00
+modalidad: audio
+tipo: PARAMETER
+cita_literal: el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo
+  planteado sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros
+afirmacion: en general 1 %; para la prueba de fondeo, 0,50 o 0,75 por operacion para tener mas tiros
+tema: riesgo.fondeo.por_operacion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.50'
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

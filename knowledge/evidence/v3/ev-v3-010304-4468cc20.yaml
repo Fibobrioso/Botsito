@@ -1,0 +1,18 @@
+id: ev-v3-010304-4468cc20
+video_id: v3
+t0: '1:03:04'
+t1: '1:03:30'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cierre agresivo opcional el vencimiento exacto de la vela H4 operativa este es un muy buen
+  punto y puse que sí o sea, lo ideal sería que cierra la vela de H4 operativa, se cierra el trade porque
+  ya la siguiente vela es otro movimiento
+afirmacion: 'confirma el cierre al vencer la vela H4 operativa: la siguiente vela es otro movimiento'
+tema: ventana.cierre_al_vencer_vela_h4
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: si
+notas: A-6 (cierre forzoso)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,16 @@
+id: ev-v4-002807-dd5f3718
+video_id: v4
+t0: 0:28:07
+t1: 0:28:26
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: yo lo que suelo hacer manualmente es claro una orden un buen límite y voy ahí bajando bajando
+  bajando pero claro para entrar con lotaje pues te tienes que poner a calcular
+afirmacion: coloca una orden limite y la va bajando manualmente; calcular el lotaje a mano es un lio
+tema: entrada.orden_limite.bajando_manual
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: A-5
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

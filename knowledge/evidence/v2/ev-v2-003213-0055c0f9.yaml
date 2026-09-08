@@ -1,0 +1,16 @@
+id: ev-v2-003213-0055c0f9
+video_id: v2
+t0: 0:32:13
+t1: 0:32:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se suele dar la mayoría de veces que si el precio usualmente suele retroceder hasta un 0.75,
+  hay una alta probabilidad de que caiga
+afirmacion: si el precio retrocede hasta el 0,75 hay alta probabilidad de que caiga (justificacion estadistica
+  del nivel)
+tema: stop.retroceso_075_probabilidad
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

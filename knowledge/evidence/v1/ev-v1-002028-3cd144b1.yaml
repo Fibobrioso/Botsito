@@ -1,0 +1,15 @@
+id: ev-v1-002028-3cd144b1
+video_id: v1
+t0: 0:20:28
+t1: 0:20:51
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: la mayoría de trades se dan en ese contexto, que llega, retrocede y automáticamente se dispara
+  [...] todos los tres ganadores son así
+afirmacion: la mayoria de los trades ganadores llegan, retroceden y se disparan
+tema: meta.trades_rapidos
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

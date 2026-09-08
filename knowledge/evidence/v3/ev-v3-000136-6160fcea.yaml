@@ -1,0 +1,17 @@
+id: ev-v3-000136-6160fcea
+video_id: v3
+t0: 0:01:36
+t1: 0:01:49
+modalidad: audio
+tipo: PARAMETER
+cita_literal: una posible regla que sería venta en operativa de 7 a 15 por españa que está muy bien aquí
+  pues yo lo tengo configurado como utc más 2 que son ahora ya madrid
+afirmacion: la ventana es de 7 a 15 hora de Espana y su grafico esta configurado en UTC+2 (Madrid)
+tema: reloj.grafico_utc_mas_2
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: 'candidato A-9 (anclaje de la vela H4): UTC+2 es el huso del grafico, no dice a que hora abre su
+  H4'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

@@ -1,0 +1,15 @@
+id: ev-v3-002429-6458d18c
+video_id: v3
+t0: 0:24:29
+t1: 0:24:54
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si nosotros hacemos un mapa estructural rápido [...] cuando una mecha, hay una continuidad,
+  pero la mecha cubre la vela anterior, dentro de ahí son zonas muy interesantes
+afirmacion: al mapear, una mecha que cubre la vela anterior dentro de una continuidad marca una zona valida
+tema: mapeo.m1.mecha_cubre_vela_anterior
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

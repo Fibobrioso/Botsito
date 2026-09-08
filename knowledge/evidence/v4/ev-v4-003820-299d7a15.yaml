@@ -1,0 +1,18 @@
+id: ev-v4-003820-299d7a15
+video_id: v4
+t0: 0:38:20
+t1: 0:38:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en 0.75 se corta la entrada ahí se corta la entrada ya no habría entrada aquí hasta que
+  te termine de cerrar este flujo de aquí o sea tenemos una entrada en pérdida pero no puedes volver a
+  entrar hasta que nuevamente pues o sea se cierre esta zona de control y te genere otra [...] tiene que
+  ser nuevamente afuera
+afirmacion: tras una perdida no se reentra hasta que se cierre el flujo y la zona de control y se genere
+  otra, fuera de la anterior
+tema: reentrada.tras_stop_esperar_cierre_flujo
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

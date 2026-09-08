@@ -1,0 +1,15 @@
+id: ev-v1-000151-46874fce
+video_id: v1
+t0: 0:01:51
+t1: 0:02:04
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: marcamos liquidez vale que tenemos como liquidez tenemos esta zona aquí que sería el bajo
+  anterior
+afirmacion: en M15 la liquidez que se marca es el bajo anterior
+tema: liquidez.m15.bajo_anterior
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

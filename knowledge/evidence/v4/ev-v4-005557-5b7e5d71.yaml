@@ -1,0 +1,16 @@
+id: ev-v4-005557-5b7e5d71
+video_id: v4
+t0: 0:55:57
+t1: 0:57:03
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: yo cuando mapeo hago mapeo de estructura suelo tomar las mechas en cuenta [...] en m15 pues
+  mi punto más alto en este caso no sé cuál es la tendencia la verdad y Y me es indiferente, o sea, según
+  el momento y la sesión, o sea, yo marco desde el punto anterior
+afirmacion: en M15 mapea la estructura con las mechas y marca desde el punto anterior, sin complicarse
+tema: mapeo.m15_desde_punto_anterior
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

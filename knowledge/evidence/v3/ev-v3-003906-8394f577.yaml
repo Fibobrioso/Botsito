@@ -1,0 +1,15 @@
+id: ev-v3-003906-8394f577
+video_id: v3
+t0: 0:39:06
+t1: 0:39:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: lo más objetivo es ponerlo a 13 y ver qué que onda
+afirmacion: lo mas objetivo es fijar el objetivo en 1:3 (13 en la cruda) y ver que pasa
+tema: objetivo.rr_fijo_13
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: 13 = 1 a 3 en la lectura del ASR
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

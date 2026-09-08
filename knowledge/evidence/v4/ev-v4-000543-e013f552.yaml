@@ -1,0 +1,16 @@
+id: ev-v4-000543-e013f552
+video_id: v4
+t0: 0:05:43
+t1: 0:05:57
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: haciendo que sin más de 250 en trades o sea así en número número de datos, mi muestra es
+  de esa cantidad
+afirmacion: su muestra de backtest supera los 250 trades
+tema: backtest.muestra_250
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: un segmento con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

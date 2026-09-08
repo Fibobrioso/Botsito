@@ -1,0 +1,14 @@
+id: ev-v2-003256-0197f4e1
+video_id: v2
+t0: 0:32:56
+t1: 0:33:00
+modalidad: audio
+tipo: PARAMETER
+cita_literal: Y al final, igual tienes planteado tu objetivo a 1 a 3
+afirmacion: el objetivo sigue planteado a 1 a 3 aunque el stop se mueva a 0,75
+tema: objetivo.rr_fijo_tras_stop
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v2-large-v3-int8-float16-28391c2c

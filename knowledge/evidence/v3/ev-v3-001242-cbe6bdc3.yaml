@@ -1,0 +1,15 @@
+id: ev-v3-001242-cbe6bdc3
+video_id: v3
+t0: 0:12:42
+t1: 0:13:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como es un retroceso complejo, estaríamos marcando lo que sería en este complex pullback
+  alcista [...] el alto más alto aquí alto más alto sería la liquidez
+afirmacion: en un complex pullback alcista la liquidez de M15 es el alto mas alto
+tema: liquidez.m15.alto_mas_alto_en_pullback
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

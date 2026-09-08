@@ -1,0 +1,15 @@
+id: ev-v3-005709-c8ad1ecb
+video_id: v3
+t0: 0:57:09
+t1: 0:57:27
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: Aquí se cumple el segundo esquema, como tal, desarrollo de zona de control, pero, nuevamente,
+  llega hasta aquí y retrocede. entonces habrá llegado a un 0.98 pero claro ya te sacan break even
+afirmacion: 'ejemplo: esquema 2 con zona de control, el precio llega a 0,98 y el break even saca'
+tema: break_even.ejemplo_saca_en_098
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

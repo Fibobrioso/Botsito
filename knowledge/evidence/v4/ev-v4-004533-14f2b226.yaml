@@ -1,0 +1,14 @@
+id: ev-v4-004533-14f2b226
+video_id: v4
+t0: 0:45:33
+t1: 0:45:50
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: manejando inclusive las dos zonas de sesión o sea de 4 de 7 am a 11 am y de 11 a 3
+afirmacion: 'dos sesiones: de 7 a 11 y de 11 a 3'
+tema: ventana.sesiones.v4
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

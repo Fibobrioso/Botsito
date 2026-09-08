@@ -1,0 +1,16 @@
+id: ev-v3-004527-0e4f4834
+video_id: v3
+t0: 0:45:27
+t1: 0:45:46
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: si tú ya proteges inmediatamente, que es lo que yo también haría en esta entrada, ya tienes
+  0.25 explícitamente, pues estás guardando
+afirmacion: proteger inmediatamente guarda 0,25
+tema: stop.proteger_inmediato_guarda_025
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '0.25'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

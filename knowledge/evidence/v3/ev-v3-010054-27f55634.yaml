@@ -1,0 +1,15 @@
+id: ev-v3-010054-27f55634
+video_id: v3
+t0: '1:00:54'
+t1: '1:01:09'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Stop loss va a estar predefinido aquí [...] cuando el precio ya esté desarrollando a veces
+  con 0.50 lo más probable es ir bajando o sea el stop loss
+afirmacion: el stop esta predefinido; segun se desarrolla el precio lo va bajando a 0,50
+tema: stop.predefinido_y_bajar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

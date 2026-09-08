@@ -1,0 +1,18 @@
+id: ev-v3-002617-f4d986af
+video_id: v3
+t0: 0:26:17
+t1: 0:26:54
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es por eso que yo voy a M1 [...] desde M1 yo considero que o sea, da tiempo para una toma
+  de decisiones correcta y maximizar lo que sería el ratio de beneficio [...] conforme una temporalidad
+  mayor pues es menor tu rr
+afirmacion: opera en M1 porque da tiempo para decidir y maximiza el RR; en temporalidades mayores el RR
+  es menor
+tema: entrada.por_que_m1
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: un segmento con duda del glosario (voz = BOS, 0:26:35)
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

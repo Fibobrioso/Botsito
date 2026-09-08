@@ -1,0 +1,18 @@
+id: ev-v4-003451-d750e553
+video_id: v4
+t0: 0:34:51
+t1: 0:35:26
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en m15 buscamos un rivers que de la siguiente manera que se desarrolla aquí en m15 o sea
+  tal cual y ya apenas una manera de identificarlos es la vela contraria o sea estas son un flujo bajista,
+  se desarrolla una vela alcista, entonces ya claramente tienes que, ya marcas la zona de M15 y te vas
+  a M1
+afirmacion: el reversal en M15 se identifica por la vela contraria al flujo; entonces se marca la zona
+  de M15 y se baja a M1
+tema: liquidez.m15.reversal_vela_contraria
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

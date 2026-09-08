@@ -1,0 +1,15 @@
+id: ev-v1-000049-6a31caa6
+video_id: v1
+t0: 0:00:49
+t1: 0:01:22
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la primera sesión empieza a partir de las 7 hora España [...] tenemos a las 7, primera sesión
+  y la segunda sesión a las 11
+afirmacion: 'dos sesiones: la primera empieza a las 7 y la segunda a las 11, hora de Espana'
+tema: ventana.sesiones
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931

@@ -1,0 +1,16 @@
+id: ev-v4-011351-74b8bb39
+video_id: v4
+t0: '1:13:51'
+t1: '1:14:22'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: supongamos que aquí se me hubiera dado la operativa ganadora [...] yo ya no opero más, no
+  busco más operaciones, aunque después haya operaciones positivas [...] yo me suelo detener en la primera
+  operación ganadora
+afirmacion: se detiene en la primera operacion ganadora del dia
+tema: cartuchos.detener_primera_ganadora
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

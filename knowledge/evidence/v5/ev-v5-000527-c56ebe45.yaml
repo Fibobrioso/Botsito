@@ -1,0 +1,15 @@
+id: ev-v5-000527-c56ebe45
+video_id: v5
+t0: 0:05:27
+t1: 0:05:53
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: como esto es un igual [...] esperaríamos a que por ejemplo el precio en este caso rompa
+  por arriba
+afirmacion: tras un equal se espera a que el precio rompa por arriba para la reentrada
+tema: reentrada.equal.espera_ruptura
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

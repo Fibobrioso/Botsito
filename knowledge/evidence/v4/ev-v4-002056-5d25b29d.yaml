@@ -1,0 +1,18 @@
+id: ev-v4-002056-5d25b29d
+video_id: v4
+t0: 0:20:56
+t1: 0:21:24
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: si sé que me va a generar este segundo esquema de entrada yo protejo por debajo de este,
+  o sea, hay algunos momentos donde inclusive esta protección te puede llegar no a 0.75 sino protege ya
+  inmediatamente entre un 0.50 y así
+afirmacion: en el segundo esquema protege por debajo de la zona de control; a veces eso es 0,50 en vez
+  de 0,75
+tema: stop.segundo_esquema_proteccion_050
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: A-7
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

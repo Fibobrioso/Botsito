@@ -1,0 +1,16 @@
+id: ev-v4-012432-cf7e96a9
+video_id: v4
+t0: '1:24:32'
+t1: '1:24:50'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: 7 UTC más 2 ok, ok, ok ya, pero en primera iteración esto con lo que te está funcionando
+  ahorita de 7 a 3, nos quedamos con eso
+afirmacion: 'primera iteracion: de 7 a 15 en UTC+2, lo que le funciona ahora'
+tema: ventana.acordado_7_a_15_primera_iteracion
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: bot-v2
+notas: segmentos con senal no_habla; el consultor cierra el punto; candidato A-9 (UTC+2)
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

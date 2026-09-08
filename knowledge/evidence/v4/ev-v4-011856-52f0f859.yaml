@@ -1,0 +1,17 @@
+id: ev-v4-011856-52f0f859
+video_id: v4
+t0: '1:18:56'
+t1: '1:19:49'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: este backtesting es solo operando desde las 7 de la mañana hasta las 11 de la mañana, hora
+  España entonces más 2 y estos son los datos que resultó 27 trades 57% de un rey [...] es casi más de
+  un 28% de la cuenta
+afirmacion: 'backtest de agosto solo 7-11: 27 trades, 57 % de win rate, unos +28 % con 1 % de riesgo'
+tema: backtest.agosto_7_a_11
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla; rey = win rate
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

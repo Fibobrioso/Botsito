@@ -1,0 +1,16 @@
+id: ev-v3-000531-4d6375b6
+video_id: v3
+t0: 0:05:31
+t1: 0:05:55
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: sería h4 ahora dice lo fija la vela de 4 previa cerrada en el menos uno es verdad o sea
+  alcistas sólo compras bajistas sólo ventas
+afirmacion: 'confirma la regla de la ficha: la vela H4 previa cerrada (n-1) fija el sesgo; alcista solo
+  compras, bajista solo ventas'
+tema: sesgo.h4.vela_previa_cerrada
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

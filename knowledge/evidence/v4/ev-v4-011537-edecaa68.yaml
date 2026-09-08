@@ -1,0 +1,16 @@
+id: ev-v4-011537-edecaa68
+video_id: v4
+t0: '1:15:37'
+t1: '1:16:23'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: estoy operando Londres Porque Porque el horario de Nueva York empieza aquí a las 2 [...]
+  en teoría estaríamos operando solo full Londres sí, exacto
+afirmacion: su ventana equivale a operar solo la sesion de Londres
+tema: ventana.solo_londres
+confianza: media
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+notas: segmentos con senal no_habla
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

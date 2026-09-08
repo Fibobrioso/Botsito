@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-— (previos de F07 integrados en main con tag `stable/F05-previos-F07`; F07 pendiente de abrir)
+F07 · evidence-extraction · WAITING_FOR_USER_VALIDATION, ronda 2 de 2 (rama `feature/F07-evidence-extraction`; 341 items de evidencia aceptados por el usuario el 2026-09-07; auditoria de cierre con dos agentes aplicada; informe `docs/validation/F07-evidence-extraction.md`; ADR-0009; parada corta antes del ritual §F con tag `stable/F07`)
 
 ## Current Branch
-main
+feature/F07-evidence-extraction
 
 ## Stable Main State
 8cba5c5 · merge de los previos de F07 (tras stable/F05-auditoria-1). make check verde: 405 casos (278 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34067817093 sobre c17083f). Tags stable/F05, stable/F05-auditoria-1 y stable/F05-previos-F07. Rama main protegida en GitHub.
@@ -55,16 +55,16 @@ main
 - F04 · transcription-pipeline · validada el 2026-09-05 · docs/validation/F04-transcription-pipeline.md · tag stable/F04
 - F05 · frame-extraction · validada el 2026-09-05 · docs/validation/F05-frame-extraction.md · tag stable/F05
 - Auditoria global de la estructura · validada el 2026-09-06 · docs/validation/AUDITORIA-2026-09-05-estructura.md · tag stable/F05-auditoria-1
-- Previos de F07 · validados el 2026-09-07 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
+- Previos de F07 · validados el 2026-09-06 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
 
 ## Features Waiting for Validation
-—
+- F07 · evidence-extraction, ronda 2 (2026-09-07): 341 items en `knowledge/evidence/` (334 audio, 4 pantalla, 3 ambas; 42 `provenance: bot-v2`; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida|fotograma visto"), 20 propuestas con decision anotada (0 pendientes), 1 contradiccion mecanica abierta (`stop.nivel`, A-10), golden 40/40 en verde; pendiente solo la confirmacion de cierre (merge + tag `stable/F07`)
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
 - CLI: `state check` (rama, recuento de tests, tag estable, informes de validacion, main sin cambios tras el tag), `knowledge validate` (registro, manifiesto, evidencia, contradicciones, feedback, historial de git y trailers `Fuente:`), `config validate` (ajustes contra el registro), `corpus inventory` y `corpus check`.
 - `corpus/inventario.py`: manifiesto del corpus con SHA-256, ffprobe, papel y huecos de fotogramas heredados. `knowledge/corpus/{fuentes,manifest}.yaml`.
-- `evidence/{modelo,contradicciones}.py` + `comun/historial.py`: EvidenceItem inmutable (id con hash), contradicciones regeneradas, guardia de historial de git. CLI `evidence new` / `evidence contradictions`. Hook rechaza editar o borrar evidencia y feedback.
+- `evidence/{modelo,contradicciones,verificacion,propuestas}.py` + `comun/historial.py` + `validation/contexto_evidencia.py` (ADR-0009): EvidenceItem inmutable (id con hash) con `transcripcion` y referencias `fr-*`; cita de audio localizada por tokens en la cruda citada con tiempo por palabras (`[t0 - 2 s, t1 + 2 s]`, comodin `[...]`); cita de pantalla anclada a un fotograma real del tramo; contradicciones regeneradas; propuestas trazables en `knowledge/_proposals/` (esqueleto, `--check` con guardias, sello `salida_sha256`, `accept`/`reject`); taxonomia `knowledge/evidence/_temas.yaml`. CLI `evidence new|propose|accept|reject|list|contradictions`. Hook rechaza editar o borrar evidencia y feedback.
 - `feedback/modelo.py`: FeedbackRecord solo-anadir (id por hash, coherencia accion/objetivo, trazabilidad, supersede del mismo objetivo sin ciclos); CLI `feedback new` (valida contexto antes de escribir), `trace`, `pending` (filtra parametros no `estrategia`); `commits_sin_fuente` exige trailer `Fuente:` con ids existentes (evidencia, feedback, ADR) en commits que tocan spec/cases desde el SHA de stable/F06; `historial_evaluable` marca clon superficial o repo anidado como no evaluable.
 - Contratos de importacion (import-linter + test AST; `domain` no importa `config`). Test de literales de negocio con lista real. Tests de integridad del indice.
 - Makefile (`sync` copia hooks a .git/hooks; `check`; `regress`), CI Linux con `uv sync --locked`, hook pre-commit anti-main.
@@ -74,7 +74,7 @@ main
 - Corpus: 5 videos (v5 = grabacion del trader del 2026-09-05 en FXReplay, 6 min, no esta en Drive) y material adicional de enero, abril y agosto 2026 (xlsx + capturas).
 - `corpus/trabajo.py` (auditoria 2026-09-05): guardias comunes a transcripciones y fotogramas: carpeta de trabajo decidida por marcas locales Y por los manifiestos registrados (clon sin `data/`), exactamente una extraccion activa por video y tipo, inmutabilidad del contenido por carpeta, manifiesto existente idempotente sin `reemplaza_a`. `config/ajustes.carpeta_datos` unica para CLI y `knowledge validate`.
 - `corpus/{fotogramas,manifiestos_fotogramas}.py` (F05, ADR-0008): cobertura completa de cada video a 1 fps sin perdida (PNG bitexact) con regla `select` "primer fotograma con t >= instante" y `pts` real de `showinfo`; `index.jsonl` en `data/fotogramas/<video>/png-1fps/`; manifiesto INMUTABLE `fr-<video>-<hash8 del indice>` en `knowledge/corpus/fotogramas/` (un activo por video, `reemplaza_a`, huecos sobre `pts`, extra); obligatorios en `knowledge/corpus/fotogramas_obligatorios.yaml` validados contra el indice activo; referencia citable `fr-<id>/<t_ms>` (`referencias_conocidas` excluye `heredado_v2`). CLI `corpus frames extract | check | show`; capa en `knowledge validate`; hook protege el directorio.
-- Plantillas: brief, ADR, informe de validacion. ADR-0001 a 0008. `.gitattributes` con LF (`*.bi5` binario).
+- Plantillas: brief, ADR, informe de validacion. ADR-0001 a 0009. `.gitattributes` con LF (`*.bi5` binario).
 
 ## Important Files
 - PROJECT_STATE.md · README.md · docs/plan/MASTER_PLAN.md (fuente viva; seccion H = salvaguardas de la auditoria)
@@ -91,7 +91,7 @@ main
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-278 funciones de test (405 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+311 funciones de test (456 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -102,6 +102,7 @@ main
 - ADR-0006 capas revisadas, paquete `comun` y accesores del registro por tipo declarado — ACTIVE
 - ADR-0007 transcripcion en dos capas: cruda inmutable por muestras, corregida por glosario — ACTIVE
 - ADR-0008 fotogramas: cobertura completa a 1 fps sin perdida, regla de seleccion por `pts` y manifiesto inmutable — ACTIVE
+- ADR-0009 verificacion mecanica de citas contra la cruda y propuestas de evidencia trazables y selladas — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -115,12 +116,12 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - Sesión 3 (tras F32): divergencias de ejecución · pendiente
 - Mensual (F34): discrepancias en vivo · pendiente
 
-## Lineamientos recibidos del usuario y hechos del corpus pendientes de evidencia (F07)
+## Lineamientos recibidos del usuario y hechos del corpus (evidencia en F07)
 Dos fuentes distintas, separadas a proposito: (a) lo que el usuario (consultor) aporta por escrito
 sobre la operativa (lineamiento, NO es evidencia ni feedback del trader) y (b) hechos leidos en el
-corpus (crudas y fotogramas, con marca y referencia) que aun no son items de evidencia. Ambos se
-convierten en evidencia en F07 (citando la cruda o `fr-<id>/<t_ms>`) y en reglas en F11; ninguna
-inferencia de regla se hace aqui.
+corpus (crudas y fotogramas). Desde F07 (2026-09-07) todo hecho del corpus tiene un item en
+`knowledge/evidence/` (id `ev-*` anotado aqui; la cita se verifica contra la cruda o el fotograma);
+las reglas se infieren en F11, no aqui.
 
 ### (a) Lineamientos del usuario
 
@@ -130,14 +131,18 @@ inferencia de regla se hace aqui.
   - Estado en el plan: CONTEMPLADO. MASTER_PLAN F21 (caja 0/0,25/0,5/0,75/1, lotaje sobre la
     distancia completa, stop en 0,75 con colchon de spread, objetivo 1:3 sobre la distancia completa)
     y la investigacion (tres confirmaciones aritmeticas: ratio 4,08/3,94 = 3/0,75; Excel con -0,75).
-  - Citas del corpus a re-citar en F07: V2 0:31:59-0:33:53 ("calculo mi lotaje desde aqui... luego
-    apenas se da inicio la entrada lo pongo en 0,75... el objetivo sigue en 1:3"), V1 0:06:19-0:06:34
-    ("no olvidarse de poner el cuadro de Gann en 0,75, proteger el trade apenas se genera la entrada"),
-    V4 0:08:39-0:08:50 ("dar un pequeno respiro: de 0,75 a 0,80" por el spread).
+  - Citas del corpus re-citadas en F07 (evidencia): V2 0:31:42-0:33:53 `ev-v2-003142-beb4ad3c`
+    (stop en 0,75), `ev-v2-003256-0197f4e1` (el objetivo sigue en 1:3), `ev-v2-003336-fc210a05`
+    (lotaje sobre la distancia completa), `ev-v2-003350-dbd9e3ad` (una ganadora acaba en 3,25);
+    V1 0:06:20 `ev-v1-000620-0f7dea14` (cuadro de Gann en 0,75 apenas se genera la entrada);
+    V4 0:08:35-0:09:09 `ev-v4-000835-782cf2cc` (respiro de 0,75 a 0,80 por el spread),
+    `ev-v4-000858-4e50f00c` (mas respiro con noticias), `ev-v4-001207-0c4ffd4b` y
+    `ev-v4-001221-1e66b5fd` (0,75 desplazado segun el spread del momento).
   - Lectura: el 0,8 es el colchon de spread sobre el 0,75, no un nivel alternativo libre.
   - Hallazgo F04 (2026-09-05, large-v3): en V1 0:15:59 el trader dice "ya ha pasado mas del 50%
     de la vela" (la transcripcion heredada decia 40 %) y en V1 0:16:51 "de pasar de 0.75 es a
-    0.50". La cifra 40 % frente a 50 % es la ambiguedad A-12 (sesion 1).
+    0.50". La cifra 40 % frente a 50 % es la ambiguedad A-12 (sesion 1). Evidencia:
+    `ev-v1-001557-1dd16e5c` (50 % de la vela) y `ev-v1-001643-47673889` (de 0,75 a 0,50).
   - Preguntas abiertas para el trader (sesion 1): (a) ¿el 0,8 es fijo o "0,75 mas el spread del
     momento"? (b) ¿el stop se coloca en el 0,75 al enviar la orden limite o solo tras el llenado?
     Para el bot es equivalente y mas seguro adjuntar el SL al 0,75 en la propia orden pendiente
@@ -147,10 +152,29 @@ inferencia de regla se hace aqui.
     0.80, que es el SL por defecto"; 0:04:44 "el calculo del RR en base al 1 %"; 0:04:56 "todo lo
     backtestee buscando el 1:3... posibilidad de amplificar a 1:4, lo veremos mas adelante"; la
     caja en pantalla (`fr-v5-718ecabb/240000`) tiene el nivel 0,8, no 0,75. Refuerza la pregunta (a)
-    de A-10. Hechos para F07; no se decide aqui.
-### (b) Hechos del corpus pendientes de evidencia (F07)
-- **2026-09-05 · Reentrada tras un "igual" (equal) y descarte por flujo de ordenes** (v5, hechos de
-  la cruda, sin inferir regla): 0:00:39 "no hay entrada porque no me genera el esquema 2 de entrada,
+    de A-10. Evidencia (F07): `ev-v5-000312-f5062062` (0,80 SL por defecto; contradiccion
+    mecanica `stop.nivel` con `ev-v1-000448-346d6d90` y `ev-v2-003142-beb4ad3c`, 0,75),
+    `ev-v5-000219-bc86af3d` (a veces no llega hasta el 0,80), `ev-v5-000442-b13610fa` (RR sobre
+    el 1 %), `ev-v5-000456-dfb95b24` y `ev-v5-000515-02b5bc7a` (1:3 con 1:4 abierto). No se
+    decide aqui.
+### (b) Hechos del corpus, ya como evidencia (F07, 2026-09-07)
+- **Obligatorios de F05 (pantalla):** Excel de abril V3 0:28:56 `ev-v3-002856-bff84636` (2,83 /
+  -0,75 / 3,3; `fr-v3-982da728/1736000`); ratios 4,08 / 3,94 V2 0:33:21 `ev-v2-003320-a736fd37`
+  (`fr-v2-c5a09508/2001000`); caja 0,75 = 1,19537 V4 0:12:30 (items de la caja en pantalla del
+  tramo V4 0:05-0:15: `ev-v4-000813-c916eac6` nivel de entrada 1,19502 y `ev-v4-001221-1e66b5fd`,
+  modalidad ambas, caja 0,75 = 1,19537).
+- **Candidatos A-9 (reloj del grafico):** V3 0:01:36 `ev-v3-000136-6160fcea` ("configurado como
+  UTC mas 2", Madrid). Ningun fotograma muestra la hora de apertura de una H4: el golden H4 sobre
+  F15 pasa a F10 (decision del usuario 2026-09-07).
+- **Ficha de reglas en Word (V3 0:01:38, `fr-v3-982da728/101000`):** `ev-v3-000138-567dc5d7`
+  (ventana 07-15), `ev-v3-000138-8399c18a` (sesgo por la H4 previa cerrada),
+  `ev-v3-000138-fc8f7905` (limite estricto de 2 cartuchos); lecturas confirmadas en
+  `ev-v3-004817-f2dfb955` y `ev-v3-005735-f24a4bdf`.
+- **V4 1:28:20 (riesgo por operacion):** `ev-v4-012815-2aa13700` (0,40 o 0,50 escalado sobre la
+  cuenta) y `ev-v4-012733-0c8d7f1f` (racha de 7 perdidas: 0,5 -> 3,5 % de drawdown).
+- **2026-09-05 · Reentrada tras un "igual" (equal) y descarte por flujo de ordenes** (v5; evidencia
+  `ev-v5-000038-6570a65f`, `ev-v5-000246-17eff9e1`, `ev-v5-000527-c56ebe45`,
+  `ev-v5-000427-f8d5d36d`; sin inferir regla): 0:00:39 "no hay entrada porque no me genera el esquema 2 de entrada,
   sino que genera un flujo de ordenes, esa entrada queda descartada"; 0:01:56-0:02:58 "el precio
   llega, activa la entrada y se regresa... cuando hay un equal que no lo vamos a poder anticipar...
   contarlo como perdida, pero reentrar nuevamente si el precio te llega a romper nuevamente esta
@@ -161,6 +185,8 @@ inferencia de regla se hace aqui.
   y 6 capturas de Analytics): 38 operaciones, 17/19/2, PnL +872, win rate 47,22 %, RR medio 3,64,
   profit factor 4,01, expectancy $22,95; horas 05-12 UTC; por dia lun 50 %, mar 25 %, mie 71 %,
   jue 25 %, vie 56 %. Tres meses exportados (enero 58, abril 38, agosto 47): golden de F26.
+  Evidencia del video v5: `ev-v5-000000-69774090` (sesion de backtest de abril de 2026); las
+  cifras del xlsx entran como `material_adicional` cuando F26 las cite desde un tramo de video.
 
 ## Expert Validations
 —
@@ -188,27 +214,64 @@ en regla o parametro; "pregunta": lo que se le plantea al trader.
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
 
+Evidencia por ambiguedad (F07, 2026-09-07; ids en `knowledge/evidence/`, `evidence list --tema`):
+- A-1 sesgo H4: `ev-v2-000836-6dbfcd6b`, `ev-v3-000531-4d6375b6`, `ev-v3-000824-c81f03eb`,
+  `ev-v3-010948-331c69aa`, `ev-v3-011045-a185d2ba`, `ev-v3-011614-a5a05b0a` (simplificacion
+  abierta), `ev-v4-004603-d0ffd4f2`.
+- A-2 tercer cartucho: ficha 2 `ev-v3-000138-fc8f7905`, `ev-v3-004817-f2dfb955`,
+  `ev-v4-003350-acb03ee7` frente a 3 `ev-v4-002333-8bf96363`, `ev-v4-004742-30c8d58a`,
+  `ev-v4-004832-6543b551`, `ev-v4-005411-a486336d`; pregunta del consultor `ev-v4-002951-d3132b3f`.
+- A-3 salida sin ruptura: `ev-v4-010759-514b5d7d` (cerrar al cierre de la vela sin rotura) frente
+  a `ev-v4-010831-5f4a00ad` (prefiere proteger y dejarlo).
+- A-4 BE al tocar o al cierre: `ev-v4-004447-bc2e74ee`, `ev-v2-003103-31d872da`,
+  `ev-v5-000427-f8d5d36d`.
+- A-5 cadencia de reubicacion: `ev-v1-001358-a2b8ec0d`, `ev-v4-010731-bb8af97c`,
+  `ev-v4-010857-5bc906c9` (se actualiza con el precio; sin cadencia explicita).
+- A-6 cierre 15:00: `ev-v4-011514-fe34ac7e` (se cierra en punto a las 3 PM); huso en A-9.
+- A-7 stop del 2.o esquema: `ev-v3-004329-a16d379b`, `ev-v4-002056-5d25b29d`,
+  `ev-v4-002139-23e44f38`, `ev-v4-003029-2ea7124e`, `ev-v4-003102-1ddeeaa8`,
+  `ev-v4-003227-038864db`, `ev-v4-003252-ef8d3139` (opcion simple: 0,75 estatico en los dos).
+- A-8 dos velas como una: `ev-v3-010648-0039e34d`, `ev-v3-011540-5425b533`.
+- A-9 anclaje H4: `ev-v3-000136-6160fcea` (grafico en UTC+2), `ev-v3-000157-b26147c7` (velas H4
+  de 7 a 11 y de 11 a 3 hora del grafico); la hora de apertura no aparece en ningun fotograma.
+- A-10 0,8 fijo o 0,75 + spread: contradiccion mecanica `stop.nivel` (`ev-v1-000448-346d6d90`,
+  `ev-v2-003142-beb4ad3c` = 0,75; `ev-v5-000312-f5062062` = 0,80); `ev-v4-000835-782cf2cc`,
+  `ev-v4-001221-1e66b5fd`.
+- A-11 SL en la orden o tras el llenado: `ev-v4-001207-0c4ffd4b` (el stop que se introduce en la
+  operacion es el 0,75), `ev-v1-000620-0f7dea14`; nada dice si va en la orden pendiente.
+- A-12 40 % o 50 % de la vela: `ev-v1-001557-1dd16e5c` (50 %), `ev-v1-001643-47673889`.
+
 ## Known Contradictions
-Cartuchos 2 (ficha) vs 3 (V4 0:48:41) · parciales 30–40 % (ficha) vs "sin parciales" (respuesta) ·
-BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 1:08:30)
+Mecanica (`knowledge/evidence/_contradicciones.yaml`, mismo tema con `valor` distinto): 1 ABIERTA,
+`stop.nivel` 0,75 (`ev-v1-000448-346d6d90`, `ev-v2-003142-beb4ad3c`) frente a 0,8
+(`ev-v5-000312-f5062062`) = A-10; se cierra con un registro de feedback (F09) tras la sesion 1.
+De lectura (temas distintos, sin `valor` comparable; abiertas como ambiguedades): cartuchos 2
+(ficha, `ev-v3-000138-fc8f7905`) vs 3 (`ev-v4-004832-6543b551`) = A-2 · parciales 30-40 %
+(`ev-v2-002419-4629d258`) vs sin parciales (`ev-v1-002313-6342a154`, `ev-v3-010244-2edecd2d`,
+`ev-v4-011112-17178b38`; idea del 50 % en 1:2 `ev-v4-011116-b0e6f3f5`) · BE al tocar vs al cierre
+(`ev-v4-004447-bc2e74ee`) = A-4 · salida anticipada si/no (`ev-v4-010759-514b5d7d` /
+`ev-v4-010831-5f4a00ad`) = A-3.
 
 ## Known Issues
 - El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor
   cita ambas fuentes.
 - El hash de 8 hex en los ids de evidencia/feedback (32 bits) se considera suficiente para
-  cientos de items; `escribir_item` trata la colision como "mismo contenido" (revisar en F07).
+  cientos de items; desde F07 `escribir_item` distingue "mismo contenido" (idempotente) de una
+  colision real (error). 341 items sin colision.
 
 ## Technical Debt
 - Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
-- Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA. Carpeta de Drive `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` ("transcripciones (crudas, Bot v3)") con SHA256SUMS, LEEME, 5 manifiestos, 5 crudas (jsonl y txt), 5 WAV y v5 (el usuario subio los binarios el 2026-09-07; verificado por API). Una retranscripcion futura exige repetir la copia (nuevo SHA256SUMS via `docs/validation/anexos/F07-previos/staging.py`).
-- Glosario ASR v2 APLICADO el 2026-09-06 (aprobado por el usuario): 29 terminos, 6 sustituciones globales y 6 de segmento; los 5 videos retranscritos con ids nuevos. Regla vigente: cambiar `vocabulario` cambia el `initial_prompt` y la huella y exige retranscribir; las `sustituciones` solo exigen `corpus glossary apply`. Las apariciones de `boss|voz|blog|blogs` y `split|sprint` fuera de los 6 segmentos verificados quedan como `dudas` en `correcciones.jsonl` (v2: 8, v3: 13, v4: 4) para que F07 las mire al citar.
-- Fotogramas obligatorios de F05 LEIDOS (hechos, informe F05; la evidencia la registra F07): V3 0:28:56 el Excel muestra `2,83 / -0,75 / 3,3 / -0,75 / -0,5` (inferencia: la heredada `2,3 / 3,23` no coincide con la pantalla; large-v3 coincide en 2.83 y dice 3.33 donde hay 3,3); V2 0:33:21 herramienta de posicion `4,08` y `3,94` (golden F21 confirmado); V4 0:12:30 caja 0,75 = `1,19537`. Relojes de grafico en `UTC+2` en V2 (TradingView) y V4 (FXReplay); V3 0:01:41 "lo tengo configurado como utc mas 2": candidatos de A-9 para F07. Hallazgo: `fr-v3-982da728/101000` es la ficha de reglas en Word con las confirmaciones del trader (2 cartuchos "si" frente a "limito a tres" en V4 0:48:41: A-2; "probar sin parciales").
-- F07 debe anadir a `validar_contra_manifiesto` y al `comprobar` de `evidence new` el parametro de referencias conocidas (`corpus.manifiestos_fotogramas.referencias_conocidas`, que excluye `heredado_v2`) y actualizar `knowledge/evidence/README.md` (fila `fotogramas`: `fr-<id>/<t_ms>` o `material_adicional`).
-- v5 (`corpus/Estrategia del trader/2026-09-05 21-03-59.mkv`, 121,5 MB) en Drive desde el 2026-09-07 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, en la subcarpeta de transcripciones, no en la raiz de "Estrategia del trader"; anotado en `fuentes.yaml`).
+- Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA. Carpeta de Drive `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` ("transcripciones (crudas, Bot v3)") con SHA256SUMS, LEEME, 5 manifiestos, 5 crudas (jsonl y txt), 5 WAV y v5 (el usuario subio los binarios el 2026-09-06; verificado por API). Una retranscripcion futura exige repetir la copia (nuevo SHA256SUMS via `docs/validation/anexos/F07-previos/staging.py`).
+- Glosario ASR v2 APLICADO el 2026-09-06 (aprobado por el usuario): 29 terminos, 6 sustituciones globales y 6 de segmento; los 5 videos retranscritos con ids nuevos. Regla vigente: cambiar `vocabulario` cambia el `initial_prompt` y la huella y exige retranscribir; las `sustituciones` solo exigen `corpus glossary apply`. Las apariciones de `boss|voz|blog|blogs` y `split|sprint` fuera de los 6 segmentos verificados quedan como `dudas` en `correcciones.jsonl` (v2: 8, v3: 13, v4: 4) para que F07 las mire al citar. HECHO en F07: los items que caen en esos segmentos llevan `confianza: media` y la nota lo dice (94 items).
+- Fotogramas obligatorios de F05 LEIDOS y REGISTRADOS como evidencia en F07 (`ev-v3-002856-bff84636`, `ev-v2-003320-a736fd37`, `ev-v4-001221-1e66b5fd`; ficha de Word `ev-v3-000138-*`; reloj `ev-v3-000136-6160fcea`): V3 0:28:56 el Excel muestra `2,83 / -0,75 / 3,3 / -0,75 / -0,5` (inferencia: la heredada `2,3 / 3,23` no coincide con la pantalla; large-v3 coincide en 2.83 y dice 3.33 donde hay 3,3); V2 0:33:21 herramienta de posicion `4,08` y `3,94` (golden F21 confirmado); V4 0:12:30 caja 0,75 = `1,19537`. Relojes de grafico en `UTC+2` en V2 (TradingView) y V4 (FXReplay); V3 0:01:41 "lo tengo configurado como utc mas 2": candidatos de A-9 para F07. Hallazgo: `fr-v3-982da728/101000` es la ficha de reglas en Word con las confirmaciones del trader (2 cartuchos "si" frente a "limito a tres" en V4 0:48:41: A-2; "probar sin parciales").
+- RESUELTO en F07 (ADR-0009 §3): `validar_contra_manifiesto` y el `comprobar` de `evidence new` reciben las referencias conocidas (`ContextoEvidencia.referencias`, sin `heredado_v2`); `knowledge/evidence/README.md` fila `fotogramas` actualizada.
+- v5 (`corpus/Estrategia del trader/2026-09-05 21-03-59.mkv`, 121,5 MB) en Drive desde el 2026-09-06 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, en la subcarpeta de transcripciones, no en la raiz de "Estrategia del trader"; anotado en `fuentes.yaml`).
 - `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
-- F04, pendientes tecnicos (i) y (ii) RESUELTOS el 2026-09-06 (previos de F07): huella sin GPU/driver (`CLAVES_FUERA_DE_HUELLA`), guardia de 223 tokens del prompt (`comprobar_prompt`), `hotwords` medido y descartado (ADR-0007 enmienda). Queda (iii): `palabras` de la cruda bajo un texto corregido sin marcar (F07 cita palabras solo desde la capa cruda).
-- Hallazgo F04 sin registrar aun: V4 1:28:20-1:28:37 "entrar con 0.50... 0.40 creo yo... estatico o escalado en base a la cuenta" (riesgo por operacion). Entra como evidencia en F07 y como pregunta candidata en F10.
-- Regla de cita para F07 (decidida en la auditoria del 2026-09-05, ver MASTER_PLAN H fila F07): `cita_literal` se verifica contra la capa CRUDA (la que forma el id `tr-*`); la corregida es ayuda de lectura. Secuencia obligatoria: glosario v2 aprobado -> retranscribir los 5 videos (v1-v5) (`--reemplaza-a`) -> copia en Drive -> primera evidencia con `transcripcion:`.
+- F04, pendientes tecnicos (i) y (ii) RESUELTOS el 2026-09-06 (previos de F07): huella sin GPU/driver (`CLAVES_FUERA_DE_HUELLA`), guardia de 223 tokens del prompt (`comprobar_prompt`), `hotwords` medido y descartado (ADR-0007 enmienda). Queda (iii): `palabras` de la cruda bajo un texto corregido sin marcar; no bloquea (F07 cita palabras solo desde la capa cruda); dueno: F08 si el indice de busqueda muestra la corregida con tiempos.
+- Hallazgo F04 V4 1:28:20-1:28:37 (riesgo por operacion 0,40 o 0,50, escalado) REGISTRADO en F07: `ev-v4-012815-2aa13700`, `ev-v4-012733-0c8d7f1f`. Queda como pregunta candidata en F10.
+- RESUELTA en F07 (ADR-0009; secuencia cumplida: glosario v2 -> retranscribir -> Drive -> evidencia). Regla de cita (decidida en la auditoria del 2026-09-05, ver MASTER_PLAN H fila F07): `cita_literal` se verifica contra la capa CRUDA (la que forma el id `tr-*`); la corregida es ayuda de lectura. Secuencia obligatoria: glosario v2 aprobado -> retranscribir los 5 videos (v1-v5) (`--reemplaza-a`) -> copia en Drive -> primera evidencia con `transcripcion:`.
+- F07, limitacion declarada: el proponente de las 20 propuestas, el autor de la lista de referencia (golden) y el primer filtro fueron la misma sesion (`claude-fable-5-1`); no hay cliente de API de LLM (sin clave). El control independiente es el usuario (acepto los 341 sin cambios; recall humano de V4 0:05-0:15 sin faltas). Dueno: si llega una clave, otro proponente rellena una propuesta del mismo tramo y se compara; mientras tanto no bloquea.
+- Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
 - `test_fichero_real_sin_valores_de_estrategia` (registro) y `test_directorio_real_valida`
   (feedback) afirman que no hay valores de estrategia ni registros: se retiran en F11 y en la
   sesion 1.
@@ -244,19 +307,23 @@ BE al tocar vs al cierre (V4 0:44:56) · salida anticipada sí/no (V4 1:08:18 / 
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H) CUMPLIDAS el 2026-09-07 (stable/F05-previos-F07): glosario v2, 5 videos retranscritos, crudas/WAV/v5 en Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
+F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H) CUMPLIDAS el 2026-09-06 (stable/F05-previos-F07): glosario v2, 5 videos retranscritos, crudas/WAV/v5 en Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
 pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
+Parada corta: el usuario confirma el cierre de F07 (merge + tag `stable/F07`). Ritual §F: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff feature/F07-evidence-extraction` -> `git tag -a stable/F07` sobre el merge -> commit `docs(state)` solo PROJECT_STATE.md (Completed Features, Last Stable Commit, Current Branch main) -> `make check` -> push main + tag -> CI verde. Despues: abrir F08 evidence-retrieval (brief desde MASTER_PLAN tabla A y H.2; busqueda por texto y tiempo sobre los 341 items y las crudas; toda respuesta con fuente).
+
+Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto los 341). Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
 
 ## Last Stable Commit
 8cba5c5 · merge: previos de F07 validados por el usuario · tag stable/F05-previos-F07
 
 ## Change Log
-- 2026-09-07 · PREVIOS DE F07 VALIDADOS por el usuario (ratifico las 4 decisiones: hotwords descartado, 6 sustituciones de segmento, Drive completo con drive_id de v5, tag stable/F05-previos-F07 con §F ampliado). merge --no-ff a main (8cba5c5); tag stable/F05-previos-F07. Siguiente: abrir F07.
-- 2026-09-06 · PREVIOS DE F07 construidos (rama `feature/F07-previos`, commits b9ffd0d, 13b4e40, 627d90d): glosario v2 aprobado por el usuario (29 terminos, 6 globales + 6 de segmento sobre los ids nuevos); huella de reanudacion sin GPU/driver; guardia de 223 tokens del prompt; `hotwords` MEDIDO y DESCARTADO (sobre v5 alargo los segmentos hasta 40 s, la pasada oficial perdio ~10 s con "protejo a 0.80, SL por defecto" y transcribio "sell" como "SL" en 2 de 2 pasadas; `initial_prompt` no mostro nada de eso; ADR-0007 enmienda); los 5 videos retranscritos (~1 h de GPU; ids `bbd8a931`, `28391c2c`, `270a4851`, `a8d1bccc`, `3c6fbb57`; contenido conservado: ratio de palabras 0,958-1,000, hechos clave presentes, senales comparables); Drive: carpeta `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` con SHA256SUMS/LEEME/manifiestos por API; crudas, WAV y v5 en `data/drive_staging/` pendientes del usuario. Auditoria de cierre (2 agentes) aplicada: recuento del prompt como el motor (96, no 99; `add_special_tokens=False`), `initial_prompt_tokens` fuera de la huella, guardia antes de cargar la GPU, tests de `_carpeta_base_registrada_ajena`, anexos de la medicion en `docs/validation/anexos/F07-previos/`, tag `stable/F05-previos-F07` y §F ampliado. Informe WAITING_FOR_USER_VALIDATION. 2026-09-07: el usuario subio los 21 ficheros de `drive_staging/` a Drive (verificado por API) y valido las 4 decisiones; `drive_id` de v5 anotado.
+- 2026-09-07 · F07 ronda 2: el usuario acepto los 341 items sin modificaciones (7 de pantalla/ambas con `fotograma visto`; recall humano de V4 0:05-0:15: ninguna frase faltaba; tag `stable/F07`; golden H4 sobre F15 pasa a F10). `evidence accept` x341 (0 fallos; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida|fotograma visto"), evidencia commiteada (ff13e7a), 20 propuestas con decision (0 pendientes), `_contradicciones.yaml` regenerado (1 abierta: `stop.nivel` 0,75 vs 0,8 = A-10), golden `test_golden_citas_f07` 40/40 en verde, hechos y ambiguedades A-1..A-12 con ids de evidencia. Auditoria de cierre (2 agentes) aplicada: docs (HANDOFF, PROJECT_STATE, MASTER_PLAN filas H/H.2/tabla A y B, ADR-0009 en el indice, deuda de F07 cerrada o con dueno, hook local reinstalado con `make hooks`) y codigo/tests (1 bloqueante: `test_directorio_real_valida` sin contexto rompia con los 7 items de pantalla; localizacion que prueba todas las apariciones de la frase; `hueco_ms` con aviso a partir de 15 s (41 items aceptados lo superan, maximo 44 s); palabras parciales al final del segmento alineadas (1 item); sello ampliado a la cabecera y 20 propuestas re-selladas; `validate` cruza cada decision con la evidencia; `accept` atomico y sin manifiesto; cabecera invalida sin traceback; audio no admite `fotograma_visto`; 8 tests nuevos). 311 funciones / 456 casos. Informe WAITING_FOR_USER_VALIDATION (ronda 2: confirmacion de cierre).
+- 2026-09-06 · F07 ronda 1 construida (rama `feature/F07-evidence-extraction`; brief con revision de diseno de agente: 6 bloqueantes aplicados, entre ellos `evidence` sin importar `corpus`, comodin `[...]` en vez de la elipsis del ASR, tiempo real por `palabras`, `material_adicional` solo desde un tramo de video, `revisado_por` con metodo, sello `salida_sha256`): verificacion mecanica de citas (tokens, TOL 2 s), campo `transcripcion`, referencias `fr-*` obligatorias en pantalla, contexto compuesto en `validation`, propuestas trazables con guardias de calidad, CLI `propose|--check|accept|reject|list`, `_temas.yaml`, `PROMPT.md`, ADR-0009, golden cerrado (40 referencias) y contrato; 20 propuestas para los 5 videos (341 items, 91 `no_consta`, 42 marcas heredadas re-citadas) con `--check` en verde; hoja de revision HTML por script. Medicion V4 0:05-0:15: 7 referencias cerradas, 7 cubiertas, 22 items, todos en verde; recall humano en la ronda 2. Ningun item escrito en `knowledge/evidence/`. Informe WAITING_FOR_USER_VALIDATION (ronda 1).
+- 2026-09-06 · PREVIOS DE F07 VALIDADOS por el usuario (ratifico las 4 decisiones: hotwords descartado, 6 sustituciones de segmento, Drive completo con drive_id de v5, tag stable/F05-previos-F07 con §F ampliado). merge --no-ff a main (8cba5c5); tag stable/F05-previos-F07. Siguiente: abrir F07.
+- 2026-09-06 · PREVIOS DE F07 construidos (rama `feature/F07-previos`, commits b9ffd0d, 13b4e40, 627d90d): glosario v2 aprobado por el usuario (29 terminos, 6 globales + 6 de segmento sobre los ids nuevos); huella de reanudacion sin GPU/driver; guardia de 223 tokens del prompt; `hotwords` MEDIDO y DESCARTADO (sobre v5 alargo los segmentos hasta 40 s, la pasada oficial perdio ~10 s con "protejo a 0.80, SL por defecto" y transcribio "sell" como "SL" en 2 de 2 pasadas; `initial_prompt` no mostro nada de eso; ADR-0007 enmienda); los 5 videos retranscritos (~1 h de GPU; ids `bbd8a931`, `28391c2c`, `270a4851`, `a8d1bccc`, `3c6fbb57`; contenido conservado: ratio de palabras 0,958-1,000, hechos clave presentes, senales comparables); Drive: carpeta `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` con SHA256SUMS/LEEME/manifiestos por API; crudas, WAV y v5 en `data/drive_staging/` pendientes del usuario. Auditoria de cierre (2 agentes) aplicada: recuento del prompt como el motor (96, no 99; `add_special_tokens=False`), `initial_prompt_tokens` fuera de la huella, guardia antes de cargar la GPU, tests de `_carpeta_base_registrada_ajena`, anexos de la medicion en `docs/validation/anexos/F07-previos/`, tag `stable/F05-previos-F07` y §F ampliado. Informe WAITING_FOR_USER_VALIDATION. 2026-09-06: el usuario subio los 21 ficheros de `drive_staging/` a Drive (verificado por API) y valido las 4 decisiones; `drive_id` de v5 anotado.
 - 2026-09-06 · AUDITORIA GLOBAL VALIDADA por el usuario (ratifico las tres: regla del HANDOFF en la rama y nunca en main tras el tag; cierre de la auditoria como rama con tag `stable/F05-auditoria-1`; orden de los previos de F07: glosario v2 -> retranscribir 5 videos -> copia de crudas y WAV en Drive -> v5 en Drive -> abrir F07). merge --no-ff a main (916d0d0); tag stable/F05-auditoria-1.
 - 2026-09-05 · AUDITORIA GLOBAL de la estructura (rama `feature/F05-auditoria-estructura`, 2 agentes) aplicada: codigo (`corpus/trabajo.py` con las guardias de F05 tambien en `corpus transcribe`: sin ella retranscribir en un clon sin `data/` pisaba la cruda; una transcripcion activa por video; `parse_ms` estricto; glosario rechaza `.` sin escapar; WAV/YAML corruptos y `corpus check` sin `fichero` ya no dan traceback; `carpeta_datos` unica; `--margen-s` negativo; `TOLERANCIA_DURACION_S` unica; mensaje de `state check` con el ritual) y docs/proceso (regla del HANDOFF en la rama, incidente de CI registrado, fila H.2 "Previos y entradas de F07", 5 videos, fotogramas en §0/B/ADR-0001/READMEs, lineamientos separados de hechos, Change Logs ordenados, `ci.yml` sin cancelar en main, test de rutas de Important Files). 389 casos, make check verde. Informe `docs/validation/AUDITORIA-2026-09-05-estructura.md`.
 - 2026-09-05 · Incidente de CI en main: el commit `docs(handoff)` f452e6f (tras `stable/F05`) puso `state check` y la CI en rojo (run 34000376588) porque en main solo puede cambiar PROJECT_STATE.md tras el tag; revertido en de42ec1 (run 34000499649 verde). El `docs(state)` c97273f quedo cancelado por `cancel-in-progress` (run 34000351246) y su `make check` es local. El `docs(handoff)` de F04 (3b754f1) tambien estaba en rojo (run 33988126976) sin registro: main estuvo en rojo del 2026-09-05 19:46Z al 2026-09-06 00:08Z. Regla escrita en MASTER_PLAN §F: el HANDOFF se actualiza en la rama. Rama `feature/F05-auditoria-estructura` abierta a peticion del usuario para una auditoria global antes de F07.

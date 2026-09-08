@@ -1,0 +1,16 @@
+id: ev-v3-004406-fc23c030
+video_id: v3
+t0: 0:44:06
+t1: 0:44:57
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si yo pongo aquí dibujo el 1 a 3 objetivamente desde allí hasta allí vale pero qué pasaría
+  si yo pongo desde aquí hasta aquí [...] es algo que yo lo tomo como un poco de dilema a mí mismo
+afirmacion: 'dilema abierto: calcular el 1 a 3 y el lotaje desde la zona de control en vez de desde el
+  extremo'
+tema: lotaje.dilema_calcular_desde_zona
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

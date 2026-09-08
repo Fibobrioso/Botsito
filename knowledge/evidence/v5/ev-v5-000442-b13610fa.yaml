@@ -1,0 +1,15 @@
+id: ev-v5-000442-b13610fa
+video_id: v5
+t0: 0:04:42
+t1: 0:04:47
+modalidad: audio
+tipo: PARAMETER
+cita_literal: sabemos que manejamos el cálculo del RR en base al 1%
+afirmacion: el RR se calcula sobre un riesgo del 1 %
+tema: riesgo.por_operacion
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+valor: '1'
+transcripcion: tr-v5-large-v3-int8-float16-3c6fbb57

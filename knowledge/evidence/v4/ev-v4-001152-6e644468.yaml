@@ -1,0 +1,15 @@
+id: ev-v4-001152-6e644468
+video_id: v4
+t0: 0:11:52
+t1: 0:12:00
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: tú consideras honestamente darle un margen, o sea, cuando hay noticias obviamente extender
+  un poco más a lo mejor, pues estaría bien, creo yo
+afirmacion: extender el margen del stop con noticias le parece bien
+tema: stop.margen_con_noticias_bien
+confianza: alta
+extractor: llm
+revisado_por: Aleks · hoja F07 2026-09-07 · cruda leida
+provenance: botsito
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc
