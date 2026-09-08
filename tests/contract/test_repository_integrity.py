@@ -40,6 +40,9 @@ IGNORED_ALLOWLIST = (
     ".hypothesis/",
     ".coverage",
 )
+# Hojas de sesion en Word, en la raiz: se generan con scripts/hoja_sesion_docx.py desde el kit
+# (F10) y se rellenan a mano; la fuente versionada es el paquete, no el binario.
+IGNORADOS_EN_RAIZ = (".docx",)
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -113,7 +116,11 @@ def test_no_unexpected_ignored_paths(repo: Path) -> None:
 
     def permitido(p: str) -> bool:
         # Por componente de ruta, no por subcadena: `foo.venv/` o `x.coverage/` no cuelan.
-        partes = p.rstrip("/").split("/")
+        # git entrecomilla las rutas con espacios en `status --porcelain`.
+        limpio = p.strip('"').rstrip("/")
+        partes = limpio.split("/")
+        if len(partes) == 1 and limpio.lower().endswith(IGNORADOS_EN_RAIZ):
+            return True
         return any(a.rstrip("/") in partes for a in IGNORED_ALLOWLIST)
 
     unexpected = [p for p in ignored if not permitido(p)]

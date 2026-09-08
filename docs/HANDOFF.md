@@ -111,6 +111,7 @@ uv run botsito kb at --video v4 --t 0:44:56 --contexto
 uv run botsito kit build --sesion 2026-09-15-sesion-01 --seed 20260915   # paquete de sesion (F10)
 uv run botsito kit check --sesion 2026-09-15-sesion-01
 uv run botsito kit kappa --sesion-a 2026-09-15-sesion-01 --sesion-b 2026-09-22-sesion-02
+uv run --no-sync python scripts/hoja_sesion_docx.py   # hoja de respuestas en Word (raiz)
 ```
 
 ## Lecciones operativas

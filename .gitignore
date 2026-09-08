@@ -12,6 +12,8 @@ __pycache__/
 .import_linter_cache/
 .hypothesis/
 .coverage
+# hojas de sesion en Word: regenerables con scripts/hoja_sesion_docx.py
+/*.docx
 # entornos y secretos
 .env
 /config/*.local.toml
