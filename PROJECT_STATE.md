@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 1 · Base de conocimiento (F03-F08); F09 (fase 2) y F15 (fase 4) ya integradas por el orden E
 
 ## Current Feature
-F07 · evidence-extraction · WAITING_FOR_USER_VALIDATION, ronda 2 de 2 (rama `feature/F07-evidence-extraction`; 341 items de evidencia aceptados por el usuario el 2026-09-07; auditoria de cierre con dos agentes aplicada; informe `docs/validation/F07-evidence-extraction.md`; ADR-0009; parada corta antes del ritual §F con tag `stable/F07`)
+— (F07 cerrada el 2026-09-07; siguiente: abrir F08 evidence-retrieval)
 
 ## Current Branch
-feature/F07-evidence-extraction
+main
 
 ## Stable Main State
-8cba5c5 · merge de los previos de F07 (tras stable/F05-auditoria-1). make check verde: 405 casos (278 funciones), 4 contratos, mypy strict, state/config/knowledge validate (3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34067817093 sobre c17083f). Tags stable/F05, stable/F05-auditoria-1 y stable/F05-previos-F07. Rama main protegida en GitHub.
+f0c280b · merge de F07 evidence-extraction (tras stable/F05-previos-F07). make check verde: 456 casos (311 funciones), 4 contratos, mypy strict, state/config/knowledge validate (341 items de evidencia, 1 contradiccion abierta = A-10, 20 propuestas sin pendientes, 3 manifiestos de datos, 10 de transcripcion con 5 activos, 5 de fotogramas). CI Ubuntu verde en la rama (run 34177563954 sobre 9c4c64b). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07 y stable/F07. Rama main protegida en GitHub.
 
 ## Completed Phases
 - FASE 0 · Fundamentos (F01, F02) · cerrada el 2026-09-04 en dc3384d · puerta: make check verde en main; registro de parametros con tipos y lectura estricta; .gitattributes y cero CRLF; hooks copiados por make sync; tags stable/F01 y stable/F02; CI Linux verde
@@ -56,9 +56,10 @@ feature/F07-evidence-extraction
 - F05 · frame-extraction · validada el 2026-09-05 · docs/validation/F05-frame-extraction.md · tag stable/F05
 - Auditoria global de la estructura · validada el 2026-09-06 · docs/validation/AUDITORIA-2026-09-05-estructura.md · tag stable/F05-auditoria-1
 - Previos de F07 · validados el 2026-09-06 · docs/validation/F07-previos.md · tag stable/F05-previos-F07
+- F07 · evidence-extraction · validada el 2026-09-07 · docs/validation/F07-evidence-extraction.md · tag stable/F07
 
 ## Features Waiting for Validation
-- F07 · evidence-extraction, ronda 2 (2026-09-07): 341 items en `knowledge/evidence/` (334 audio, 4 pantalla, 3 ambas; 42 `provenance: bot-v2`; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida|fotograma visto"), 20 propuestas con decision anotada (0 pendientes), 1 contradiccion mecanica abierta (`stop.nivel`, A-10), golden 40/40 en verde; pendiente solo la confirmacion de cierre (merge + tag `stable/F07`)
+—
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -307,19 +308,20 @@ De lectura (temas distintos, sin `valor` comparable; abiertas como ambiguedades)
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
 ## Next Feature
-F07 · evidence-extraction (orden E: F05 -> F07, F08 -> F10). Condiciones previas (MASTER_PLAN H) CUMPLIDAS el 2026-09-06 (stable/F05-previos-F07): glosario v2, 5 videos retranscritos, crudas/WAV/v5 en Drive. F07 conecta `referencias_conocidas` (fotogramas) a la evidencia. F10 absorbe: parametros UNKNOWN
+F08 · evidence-retrieval (orden E: F07 -> F08 -> F10). Entradas: 341 items de evidencia (F07, `stable/F07`) con `transcripcion` y localizacion por tokens (`evidence/verificacion.py`), 5 crudas activas con `palabras`, fotogramas `fr-*` a 1 fps; busqueda por texto y tiempo; toda respuesta con fuente (id `ev-*`, `tr-*/segmento` o `fr-*/<t_ms>`); indice reproducible desde `knowledge/` + `data/`. Deuda que absorbe: `palabras` bajo un texto corregido (F04 iii). F10 absorbe: parametros UNKNOWN
 pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corpus, y dibujar los
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-Parada corta: el usuario confirma el cierre de F07 (merge + tag `stable/F07`). Ritual §F: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff feature/F07-evidence-extraction` -> `git tag -a stable/F07` sobre el merge -> commit `docs(state)` solo PROJECT_STATE.md (Completed Features, Last Stable Commit, Current Branch main) -> `make check` -> push main + tag -> CI verde. Despues: abrir F08 evidence-retrieval (brief desde MASTER_PLAN tabla A y H.2; busqueda por texto y tiempo sobre los 341 items y las crudas; toda respuesta con fuente).
+Abrir F08 evidence-retrieval con el metodo supervisado: rama `feature/F08-evidence-retrieval` -> brief `docs/plan/features/F08-evidence-retrieval.md` (entradas en "Next Feature", MASTER_PLAN tabla A fila F08 y H.2) -> revision de diseno por agente antes de programar -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION. Pendiente del usuario: borrar la rama `feature/F07-evidence-extraction` (local y origin).
 
 Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto los 341). Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
 
 ## Last Stable Commit
-8cba5c5 · merge: previos de F07 validados por el usuario · tag stable/F05-previos-F07
+f0c280b · merge: F07 evidence-extraction validada por el usuario · tag stable/F07
 
 ## Change Log
+- 2026-09-07 · F07 VALIDADA por el usuario (acepto los 341 items sin modificaciones, `fotograma visto` en los 7 de pantalla/ambas, recall humano de V4 0:05-0:15 sin faltas, tag `stable/F07`, golden H4 a F10; confirmo el cierre tras la auditoria). merge --no-ff a main (f0c280b); tag stable/F07. Siguiente: abrir F08 evidence-retrieval.
 - 2026-09-07 · F07 ronda 2: el usuario acepto los 341 items sin modificaciones (7 de pantalla/ambas con `fotograma visto`; recall humano de V4 0:05-0:15: ninguna frase faltaba; tag `stable/F07`; golden H4 sobre F15 pasa a F10). `evidence accept` x341 (0 fallos; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida|fotograma visto"), evidencia commiteada (ff13e7a), 20 propuestas con decision (0 pendientes), `_contradicciones.yaml` regenerado (1 abierta: `stop.nivel` 0,75 vs 0,8 = A-10), golden `test_golden_citas_f07` 40/40 en verde, hechos y ambiguedades A-1..A-12 con ids de evidencia. Auditoria de cierre (2 agentes) aplicada: docs (HANDOFF, PROJECT_STATE, MASTER_PLAN filas H/H.2/tabla A y B, ADR-0009 en el indice, deuda de F07 cerrada o con dueno, hook local reinstalado con `make hooks`) y codigo/tests (1 bloqueante: `test_directorio_real_valida` sin contexto rompia con los 7 items de pantalla; localizacion que prueba todas las apariciones de la frase; `hueco_ms` con aviso a partir de 15 s (41 items aceptados lo superan, maximo 44 s); palabras parciales al final del segmento alineadas (1 item); sello ampliado a la cabecera y 20 propuestas re-selladas; `validate` cruza cada decision con la evidencia; `accept` atomico y sin manifiesto; cabecera invalida sin traceback; audio no admite `fotograma_visto`; 8 tests nuevos). 311 funciones / 456 casos. Informe WAITING_FOR_USER_VALIDATION (ronda 2: confirmacion de cierre).
 - 2026-09-06 · F07 ronda 1 construida (rama `feature/F07-evidence-extraction`; brief con revision de diseno de agente: 6 bloqueantes aplicados, entre ellos `evidence` sin importar `corpus`, comodin `[...]` en vez de la elipsis del ASR, tiempo real por `palabras`, `material_adicional` solo desde un tramo de video, `revisado_por` con metodo, sello `salida_sha256`): verificacion mecanica de citas (tokens, TOL 2 s), campo `transcripcion`, referencias `fr-*` obligatorias en pantalla, contexto compuesto en `validation`, propuestas trazables con guardias de calidad, CLI `propose|--check|accept|reject|list`, `_temas.yaml`, `PROMPT.md`, ADR-0009, golden cerrado (40 referencias) y contrato; 20 propuestas para los 5 videos (341 items, 91 `no_consta`, 42 marcas heredadas re-citadas) con `--check` en verde; hoja de revision HTML por script. Medicion V4 0:05-0:15: 7 referencias cerradas, 7 cubiertas, 22 items, todos en verde; recall humano en la ronda 2. Ningun item escrito en `knowledge/evidence/`. Informe WAITING_FOR_USER_VALIDATION (ronda 1).
 - 2026-09-06 · PREVIOS DE F07 VALIDADOS por el usuario (ratifico las 4 decisiones: hotwords descartado, 6 sustituciones de segmento, Drive completo con drive_id de v5, tag stable/F05-previos-F07 con §F ampliado). merge --no-ff a main (8cba5c5); tag stable/F05-previos-F07. Siguiente: abrir F07.
