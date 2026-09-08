@@ -35,6 +35,7 @@ from botsito.cases.paquete import (  # noqa: E402
 )
 from botsito.comun.yaml_estricto import cargar_yaml  # noqa: E402
 from botsito.config.registro import cargar_registro  # noqa: E402
+from botsito.evidence.modelo import cargar_evidencia  # noqa: E402
 
 ANCHO = 9638  # A4 menos margenes de 2 cm, en twips
 GRIS = "595959"
@@ -170,18 +171,17 @@ def hora_local(iso: str, huso: ZoneInfo) -> str:
     return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(huso).strftime("%H:%M")
 
 
-def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str:
-    origen = next((o for o in p["origenes"] if o["tipo"] == "ambiguedad"), p["origenes"][0])
-    clave = origen["id"]
-    entrada = ctx.get(clave)
-    if entrada is None:
-        raise SystemExit(
-            f"{p['id']}: falta el contexto de {clave!r} en contexto_preguntas.yaml "
-            "(anadelo antes de generar la hoja)"
-        )
-    marca = "   [BLOQUEANTE]" if p["bloqueante"] else ""
-    encabezado = str(entrada.get("titulo") or p["titulo"])
-    partes = [titulo(f"{p['id']} de {n_total}. {encabezado}{marca}", 2)]
+def _cuerpo(
+    encabezado: str,
+    entrada: dict[str, Any],
+    *,
+    casos: list[dict[str, Any]] | None = None,
+    opciones: list[str] | None = None,
+    tipos: list[str] | None = None,
+    referencia: str = "",
+) -> str:
+    """Un bloque de pregunta: que queremos saber, por que, citas, como responder y caja."""
+    partes = [titulo(encabezado, 2)]
     partes.append(parrafo(run("Qué queremos saber", negrita=True, color=AZUL), espacio_despues=40))
     partes.append(texto_simple(entrada["pregunta"]))
     partes.append(
@@ -192,20 +192,21 @@ def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str
         )
     )
     partes.append(texto_simple(entrada["porque"]))
-    partes.append(
-        parrafo(
-            run("Lo que dijiste en las grabaciones", negrita=True, color=AZUL),
-            espacio_antes=80,
-            espacio_despues=40,
+    if casos:
+        partes.append(
+            parrafo(
+                run("Lo que dijiste en las grabaciones", negrita=True, color=AZUL),
+                espacio_antes=80,
+                espacio_despues=40,
+            )
         )
-    )
-    for c in p["casos"]:
-        cita = " ".join(str(c["cita"]).split())
-        if len(cita) > 320:
-            cita = cita[:317] + "..."
-        partes.append(vineta(f"Video {c['video']}, minuto {c['t0']}: “{cita}”", sz=19))
-    opciones = p["respuesta_esperada"].get("opciones")
-    tipos = [TIPOS_LEGIBLES.get(t, t) for t in p["respuesta_esperada"].get("tipos") or []]
+        for c in casos:
+            cita = " ".join(str(c["cita"]).split())
+            if len(cita) > 320:
+                cita = cita[:317] + "..."
+            partes.append(
+                vineta(f"Video {c['video']}, minuto {c['t0']}: \u201c{cita}\u201d", sz=19)
+            )
     partes.append(
         parrafo(
             run("Cómo responder", negrita=True, color=AZUL), espacio_antes=80, espacio_despues=40
@@ -224,14 +225,110 @@ def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str
     if tipos:
         partes.append(vineta("Formato esperado: " + "; ".join(tipos) + ".", sz=19))
     partes.append(caja(3, "Respuesta literal del trader:"))
-    referencia = ", ".join(f"{o['tipo']} {o['id']}" for o in p["origenes"])
+    if referencia:
+        partes.append(
+            parrafo(
+                run(f"Referencia interna: {referencia}", sz=15, color=GRIS, cursiva=True),
+                espacio_despues=240,
+            )
+        )
+    else:
+        partes.append(texto_simple("", espacio_despues=240))
+    return "".join(partes)
+
+
+def bloque_extra(e: dict[str, Any], n: int, n_total: int) -> str:
+    """Pregunta adicional: no nace del registro ni de una ambiguedad, pero tapa un hueco."""
+    return _cuerpo(f"{e['id']} de {n_total}. {e['titulo']}", e, referencia="pregunta adicional")
+
+
+def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any]) -> str:
+    """Tabla de confirmacion rapida. El texto sale del item de evidencia, no de este fichero."""
+    partes = [titulo("Tercera parte: confirmaciones rápidas", 1)]
     partes.append(
-        parrafo(
-            run(f"Referencia interna: {referencia}", sz=15, color=GRIS, cursiva=True),
-            espacio_despues=240,
+        texto_simple(
+            "Esto es lo que hemos entendido de tus grabaciones y que el bot da por bueno. No hace "
+            "falta explicarlo otra vez: basta con decir si está bien o corregirlo. Si algo aquí "
+            "está mal, es lo más importante que puede salir de esta sesión."
         )
     )
+    anchos = [420, 5300, 900, 3018]
+    filas = [
+        [
+            parrafo(run(c, negrita=True, sz=17))
+            for c in ("#", "Lo que entendimos", "¿Correcto?", "Corrección")
+        ]
+    ]
+    for n, e in enumerate(entradas, 1):
+        item = items.get(e["evidencia"])
+        if item is None:
+            raise SystemExit(
+                f"reafirmacion {n}: la evidencia {e['evidencia']} no existe; corrige "
+                "contexto_preguntas.yaml"
+            )
+        celda = parrafo(run(item.afirmacion, sz=18))
+        celda += parrafo(
+            run(
+                f"Video {item.video_id}, minuto {item.t0}. Importa porque {e['nota']}.",
+                sz=15,
+                color=GRIS,
+                cursiva=True,
+            ),
+            espacio_despues=0,
+        )
+        filas.append(
+            [
+                parrafo(run(f"R-{n:02d}", sz=17)),
+                celda,
+                parrafo(run("", sz=17)),
+                parrafo(run("", sz=17)),
+            ]
+        )
+    partes.append(tabla(filas, anchos))
     return "".join(partes)
+
+
+def bloque_cierre(puntos: list[str]) -> str:
+    """Lo que se verifica antes de dar la sesion por cerrada."""
+    partes = [titulo("Cierre de la sesión", 1)]
+    partes.append(
+        texto_simple(
+            "Antes de despedirse, repasar esta lista. Lo que quede sin marcar se anota abajo con "
+            "su motivo: un hueco declarado es manejable, un hueco olvidado no."
+        )
+    )
+    filas = [[parrafo(run("[   ]", sz=18)), parrafo(run(p, sz=18))] for p in puntos]
+    partes.append(tabla(filas, [700, 8938], cabecera=False))
+    for etiqueta, lineas in (
+        ("Preguntas que quedan sin cerrar, y por qué:", 3),
+        ("Dudas nuevas que han salido hoy:", 4),
+        ("Compromisos y fecha de la siguiente sesión:", 2),
+    ):
+        partes.append(
+            parrafo(run(etiqueta, negrita=True, color=AZUL), espacio_antes=120, espacio_despues=40)
+        )
+        partes.append(caja(lineas))
+    return "".join(partes)
+
+
+def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str:
+    origen = next((o for o in p["origenes"] if o["tipo"] == "ambiguedad"), p["origenes"][0])
+    entrada = ctx.get(origen["id"])
+    if entrada is None:
+        raise SystemExit(
+            f"{p['id']}: falta el contexto de {origen['id']!r} en contexto_preguntas.yaml "
+            "(anadelo antes de generar la hoja)"
+        )
+    marca = "   [BLOQUEANTE]" if p["bloqueante"] else ""
+    encabezado = str(entrada.get("titulo") or p["titulo"])
+    return _cuerpo(
+        f"{p['id']} de {n_total}. {encabezado}{marca}",
+        entrada,
+        casos=p["casos"],
+        opciones=p["respuesta_esperada"].get("opciones"),
+        tipos=[TIPOS_LEGIBLES.get(x, x) for x in p["respuesta_esperada"].get("tipos") or []],
+        referencia=", ".join(f"{o['tipo']} {o['id']}" for o in p["origenes"]),
+    )
 
 
 def bloque_etiquetado(
@@ -242,7 +339,7 @@ def bloque_etiquetado(
     rejillas = {
         tuple(hora_local(t, huso) for t in c["limites_h4"].get(anclaje.etiqueta, [])) for c in dev
     }
-    partes = [titulo("Segunda parte: etiquetado de los días", 1)]
+    partes = [titulo("Cuarta parte: etiquetado de los días", 1)]
     partes.append(
         texto_simple(
             f"Son {len(dev)} días de EURUSD que no has visto nunca. Ábrelos en replay uno a uno y, "
@@ -297,11 +394,13 @@ def documento(repo: Path, sesion: str) -> str:
     preguntas = cuestionario["preguntas"]
 
     partes = [titulo("Sesión 1 con el trader. Hoja de respuestas", 1)]
+    n_dev = sum(1 for c in casos if particiones["asignacion"].get(c["id"]) == "dev")
     partes.append(
         texto_simple(
-            f"Paquete {sesion}. {len(preguntas)} preguntas y "
-            f"{sum(1 for c in casos if particiones['asignacion'].get(c['id']) == 'dev')} días para "
-            "etiquetar. Esta hoja se rellena durante la sesión y la sesión se graba en vídeo."
+            f"Paquete {sesion}. {len(preguntas)} preguntas del cuestionario, "
+            f"{len(ctx_doc.get('preguntas_extra') or [])} preguntas adicionales, "
+            f"{len(ctx_doc.get('reafirmaciones') or [])} confirmaciones rápidas y {n_dev} días "
+            "para etiquetar. Esta hoja se rellena durante la sesión y la sesión se graba en vídeo."
         )
     )
     partes.append(
@@ -336,6 +435,12 @@ def documento(repo: Path, sesion: str) -> str:
     ):
         partes.append(vineta(t))
 
+    notas = ctx_doc.get("notas_para_el_trader") or []
+    if notas:
+        partes.append(titulo("Lo que le decimos al trader antes de empezar", 2))
+        for n in notas:
+            partes.append(vineta(n))
+
     prec = ctx_doc["precondicion"]
     partes.append(titulo(f"Antes de empezar. {prec['titulo']}", 1))
     partes.append(parrafo(run("Qué queremos saber", negrita=True, color=AZUL), espacio_despues=40))
@@ -360,7 +465,27 @@ def documento(repo: Path, sesion: str) -> str:
     for p in preguntas:
         partes.append(bloque_pregunta(p, ctx_doc["preguntas"], len(preguntas)))
 
+    extras = ctx_doc.get("preguntas_extra") or []
+    if extras:
+        partes.append(titulo("Segunda parte: preguntas adicionales", 1))
+        partes.append(
+            texto_simple(
+                "Estas no salen de una contradicción en tus grabaciones, sino de cosas que el bot "
+                "necesita decidir y sobre las que nunca hemos hablado. Si no las cerramos, las "
+                "decidiríamos nosotros por ti."
+            )
+        )
+        for n, e in enumerate(extras, 1):
+            partes.append(bloque_extra(e, n, len(extras)))
+
+    reafirmaciones = ctx_doc.get("reafirmaciones") or []
+    if reafirmaciones:
+        items = {i.id: i for i in cargar_evidencia(repo / "knowledge" / "evidence")}
+        partes.append(bloque_reafirmaciones(reafirmaciones, items))
+
     partes.append(bloque_etiquetado(casos, particiones["asignacion"], config, huso))
+    if ctx_doc.get("cierre"):
+        partes.append(bloque_cierre(list(ctx_doc["cierre"])))
     cuerpo = "".join(partes)
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
@@ -421,6 +546,16 @@ RELS_DOC = (
 
 
 def escribir_docx(ruta: Path, document_xml: str) -> None:
+    try:
+        _escribir(ruta, document_xml)
+    except PermissionError as exc:
+        raise SystemExit(
+            f"ERROR: no se puede escribir {ruta.name}: seguramente esta abierto en Word. "
+            "Cierralo y repite el comando."
+        ) from exc
+
+
+def _escribir(ruta: Path, document_xml: str) -> None:
     with zipfile.ZipFile(ruta, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("[Content_Types].xml", CONTENT_TYPES)
         z.writestr("_rels/.rels", RELS)

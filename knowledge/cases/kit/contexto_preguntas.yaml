@@ -301,3 +301,151 @@ preguntas:
       sale el tamaño de cada operación y cualquier error se multiplica.
     respuesta_util: >-
       Distancia completa, o desde el 0,75.
+
+# ---------------------------------------------------------------------------------------------
+# Lo que se le explica al trader antes de empezar, para que sepa que se hace con sus respuestas.
+notas_para_el_trader:
+  - >-
+    Cada respuesta se guarda tal cual la digas, con la fecha y con quién la anotó. De ahí salen
+    las reglas del bot. Nada se inventa: si no lo has dicho, el bot no lo hace.
+  - >-
+    Si una respuesta es depende, dilo así y explica de qué depende. Es una respuesta válida y la
+    anotamos como tal. Es mucho peor darnos un número que no cumples: el bot lo aplicaría a
+    rajatabla y luego la comparación contigo saldría mal por culpa nuestra.
+  - >-
+    Si algo que damos por sabido está mal, corrígelo sin miedo. Preferimos rehacer una regla hoy
+    que descubrir dentro de dos meses que el bot opera distinto a ti.
+  - >-
+    Lo que no se cierre hoy no se pierde: queda anotado como duda abierta y vuelve en la
+    siguiente sesión.
+
+# Preguntas que no nacen de una ambiguedad ni de un parametro del registro, pero sin las cuales
+# quedarian huecos que el bot tendria que rellenar por su cuenta. Se numeran E-01, E-02, ...
+preguntas_extra:
+  - id: E-01
+    titulo: Instrumento y días que se operan
+    pregunta: >-
+      ¿El bot debe operar solo EURUSD, o también otros pares? Y de lunes a viernes, ¿hay días que
+      evitas por norma, como el viernes por la tarde o el lunes de apertura?
+    porque: >-
+      Todo lo que tenemos grabado es EURUSD y en ningún momento dices que excluyas días. Si no
+      nos dices lo contrario, el bot operará EURUSD todos los días laborables, y queremos que eso
+      sea una decisión tuya y no un descuido nuestro.
+    respuesta_util: >-
+      El par o los pares, y la lista de días o momentos que se excluyen. Si no excluyes ninguno,
+      dilo explícitamente.
+  - id: E-02
+    titulo: Noticias de alto impacto
+    pregunta: >-
+      ¿Miras el calendario económico antes de operar? ¿Dejas de operar antes o después de una
+      noticia fuerte, o te da igual y operas siempre?
+    porque: >-
+      Nos dijiste que no usas noticias, y a la vez que cuando hay noticias el spread aumenta y hay
+      que dar más respiro al trade. Para una persona eso se gestiona a ojo; un bot necesita una
+      regla o no hará nada. Sin filtro, entrará en pleno dato macro con el spread disparado.
+    respuesta_util: >-
+      O bien no hay filtro y lo confirmas, o bien una regla concreta: cuántos minutos antes y
+      después, y de qué tipo de noticia.
+  - id: E-03
+    titulo: Spread máximo aceptable
+    pregunta: >-
+      ¿Hay un spread por encima del cual directamente no entras? ¿Y si ya estás dentro y el spread
+      se dispara, haces algo?
+    porque: >-
+      Hablas de dar un respiro de uno o dos pips por el spread, pero nunca de un techo. El bot va
+      a poder leer el spread en cada momento: si le das un límite, lo respeta; si no, entrará con
+      cualquier spread.
+    respuesta_util: >-
+      Un número en pips, o decirnos que no filtras por spread.
+  - id: E-04
+    titulo: Tope de pérdida del día y de la semana
+    pregunta: >-
+      Aparte de los intentos por zona, ¿tienes un tope de pérdida que te hace cerrar el día o la
+      semana? ¿Y un tope de ganancia que te hace parar?
+    porque: >-
+      Contaste que en el peor mes hubo siete pérdidas seguidas y que con un 1 por ciento eso
+      quemaría la cuenta, y que la prop firm tiene un límite diario y otro total. El bot puede
+      pararse solo, pero solo si le damos el número. Sin él seguirá operando hasta que la cuenta
+      salte.
+    respuesta_util: >-
+      Un porcentaje o un número de pérdidas para el día, y otro para la semana si lo tienes.
+  - id: E-05
+    titulo: Qué cuenta opera la primera versión
+    pregunta: >-
+      La primera versión del bot, ¿sobre qué cuenta debe funcionar: la de fondeo de FundedNext,
+      una demo, o una cuenta tuya? ¿Con qué saldo de partida?
+    porque: >-
+      El riesgo por operación cambia según la cuenta, y si es la de fondeo hay límites que son
+      reglas duras: superar el máximo diario no es una mala racha, es perder la cuenta.
+      Necesitamos saber contra qué reglas juega el bot desde el primer día.
+    respuesta_util: >-
+      El tipo de cuenta, el saldo, y si aplican límites de prop firm, cuáles son exactamente.
+  - id: E-06
+    titulo: El tercer esquema de entrada
+    pregunta: >-
+      En la entrevista propusiste un tercer esquema de entrada y dijiste que ibas a probarlo esa
+      semana. ¿Lo probaste? ¿Entra en la primera versión del bot o lo dejamos fuera de momento?
+    porque: >-
+      Lo describiste con detalle, pero quedó pendiente de backtest y sin bautizar. Si entra,
+      cambia el alcance del trabajo; si no entra, lo dejamos anotado y no se toca. Lo que no
+      podemos es dejarlo a medias.
+    respuesta_util: >-
+      Dentro o fuera de la primera versión. Si entra, cuándo nos pasas el backtest que lo
+      justifica.
+  - id: E-07
+    titulo: Qué hace el bot cuando la situación no encaja
+    pregunta: >-
+      Cuando el mercado hace algo que no encaja con ninguna de tus reglas, tú usas criterio. El
+      bot no tiene criterio: hace exactamente lo que está escrito y nada más. ¿Prefieres que en
+      esos casos no opere, o que aplique la regla más parecida?
+    porque: >-
+      Queremos que esto quede dicho por ti y no supuesto por nosotros. Nuestra propuesta es que se
+      abstenga: es preferible perder una operación buena a inventarse una mala. Pero es tu método
+      y tu dinero.
+    respuesta_util: >-
+      Abstenerse, o la alternativa que prefieras explicada con un ejemplo.
+
+# Afirmaciones que damos por buenas desde sus grabaciones y de las que depende el bot. Se le leen
+# para que las confirme o las corrija: si alguna esta mal entendida, es mejor saberlo hoy. El
+# texto NO se escribe aqui: lo saca el generador del item de evidencia, para que no haya forma de
+# poner en su boca algo que no dijo. Aqui solo se elige cual y por que importa.
+reafirmaciones:
+  - evidencia: ev-v3-000030-94d71563
+    nota: es la definición del modelo entero, de la que cuelga todo lo demás
+  - evidencia: ev-v3-000058-7b5ce480
+    nota: fija qué temporalidad hace qué papel, y por tanto qué mira el bot en cada paso
+  - evidencia: ev-v4-001844-93dcb658
+    nota: es la condición que separa operar de no operar
+  - evidencia: ev-v2-003256-0197f4e1
+    nota: el objetivo no se recalcula al mover el stop; el bot debe respetarlo siempre
+  - evidencia: ev-v2-003336-fc210a05
+    nota: de aquí salen el tamaño del lote y el resultado de cada operación
+  - evidencia: ev-v1-000620-0f7dea14
+    nota: el momento exacto en que el bot protege la operación
+  - evidencia: ev-v4-004936-d7004417
+    nota: hace que el bot apague el día; si está mal entendido, operaría de más
+  - evidencia: ev-v4-003710-c753f3d3
+    nota: impide que el bot tenga dos operaciones abiertas a la vez
+  - evidencia: ev-v3-005617-f9d41904
+    nota: define cuándo el bot vuelve a mirar el mercado tras dos pérdidas
+  - evidencia: ev-v4-001909-54ac2edd
+    nota: es uno de los filtros que evitan entradas malas
+  - evidencia: ev-v3-001600-ed45b091
+    nota: descarta media sesión de señales; conviene confirmarlo
+  - evidencia: ev-v4-005319-dee95093
+    nota: distingue una rotura válida de una que no lo es
+  - evidencia: ev-v4-013008-73dcd8c3
+    nota: quedó pendiente de backtest y se decide en la pregunta E-06
+  - evidencia: ev-v4-012844-b0dcebb0
+    nota: cada día que grabe su pantalla es material con el que se mide el bot
+
+# Lo que hay que verificar antes de dar la sesion por cerrada.
+cierre:
+  - La grabación de la sesión existe y sabemos cómo se llama el fichero.
+  - Tenemos la captura de pantalla de la configuración del gráfico (pregunta P-03).
+  - Las tres preguntas bloqueantes están cerradas con un valor concreto, no con un quizá.
+  - El trader ha confirmado lo de los meses del paquete.
+  - Los días marcados como dev están etiquetados, o hay fecha acordada para hacerlo.
+  - Las preguntas que quedan sin cerrar están anotadas abajo, con el motivo.
+  - Las dudas nuevas que salieron durante la sesión están anotadas abajo.
+  - Hay fecha para la siguiente sesión.
