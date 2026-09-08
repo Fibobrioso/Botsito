@@ -281,6 +281,23 @@ def carpeta_de(carpeta_datos: Path, t: Fotogramas) -> Path:
     return carpeta_datos / Path(t.carpeta)
 
 
+def referencia_en(t: Fotogramas, t_ms: int) -> str | None:
+    """La referencia citable de "lo que ya estaba en pantalla en t_ms" (F08, ADR-0010): el mayor
+    instante regular <= t_ms que exista (saltando `ausentes_ms`), sin leer el indice. Los extras
+    no entran (solo se citan desde el campo `fotogramas` de un item). None si no hay ninguno
+    (t_ms negativo o todos los anteriores ausentes) o si t_ms supera el ultimo pts en mas de
+    un segundo. `corpus frames show` sigue siendo "el mas cercano por pts" (otra pregunta)."""
+    if t_ms < 0 or t_ms > t.ultimo_pts_ms // 1000 * 1000 + 999:
+        return None
+    ausentes = set(t.ausentes_ms)
+    instante = min(t_ms // 1000 * 1000, t.ultimo_pts_ms // 1000 * 1000)
+    while instante >= 0:
+        if instante not in ausentes:
+            return referencia(t.id, instante)
+        instante -= 1000
+    return None
+
+
 def _muestra(fotogramas: list[Fotograma], n: int) -> list[Fotograma]:
     """`n` regulares repartidos de forma determinista (mismo indice -> misma muestra)."""
     regulares = [f for f in fotogramas if f.origen == "regular"]

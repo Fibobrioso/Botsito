@@ -5,38 +5,43 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-07, F07 ronda 2 hecha; parada corta antes del cierre)
-- `main`: merge de los previos de F07 `8cba5c5` con tag `stable/F05-previos-F07` (validados por
-  el usuario el 2026-09-06); CI verde. Protegida en GitHub (sin force-push, sin checks requeridos).
-- Cerradas y en main: F01, F02, F03, F04, F05, F06, F09, F15, la auditoria global
-  (`stable/F05-auditoria-1`) y los previos de F07. Ramas fusionadas ya borradas (local y origin).
-- Rama actual: `feature/F07-evidence-extraction` (informe
-  `docs/validation/F07-evidence-extraction.md`, estado WAITING_FOR_USER_VALIDATION, ronda 2;
-  cierre con tag `stable/F07`). HECHO: ADR-0009 (cita de audio localizada por tokens en la cruda
-  con tiempo por `palabras`, comodin `[...]`, tolerancia 2 s; cita de pantalla anclada a un
-  `fr-*` real; `evidence` no importa `corpus`); propuestas trazables en `knowledge/_proposals/`
-  (20, selladas, con decision anotada, 0 pendientes; 91 `no_consta`); 341 items en
-  `knowledge/evidence/` (commit `ff13e7a`; 334 audio, 4 pantalla, 3 ambas; 42 `provenance:
-  bot-v2` por marca heredada; `revisado_por` "Aleks · hoja F07 2026-09-07 · cruda leida" o
-  "· fotograma visto"); `_contradicciones.yaml` con 1 abierta (`stop.nivel` 0,75 vs 0,8 =
-  A-10, se cierra con feedback tras la sesion 1); golden `tests/golden/f07_citas_referencia.yaml`
-  (40 referencias) en verde; PROJECT_STATE con hechos y ambiguedades A-1..A-12 enlazados a ids.
-- Decisiones del usuario (2026-09-07): acepto los 341 items sin modificaciones; `fotograma visto`
-  en los 7 de pantalla/ambas; recall humano de V4 0:05-0:15 sin frases que faltaran; tag
-  `stable/F07`; golden H4 sobre F15 pasa a F10 (ningun fotograma muestra la apertura de una H4).
+## Estado (2026-09-08, F07 en main; F08 construida y auditada, espera validacion)
+- `main`: merge de F07 `f0c280b` con tag `stable/F07` (el usuario acepto los 341 items el
+  2026-09-07 y confirmo el cierre); `docs(state)` `01d5630`; CI verde. Protegida en GitHub.
+- Cerradas y en main: F01, F02, F03, F04, F05, F06, F07, F09, F15, la auditoria global
+  (`stable/F05-auditoria-1`) y los previos de F07 (`stable/F05-previos-F07`). Ramas fusionadas
+  borradas (local y origin) salvo `feature/F07-evidence-extraction` (pendiente del usuario).
+- Rama actual: `feature/F08-evidence-retrieval` (informe
+  `docs/validation/F08-evidence-retrieval.md`, WAITING_FOR_USER_VALIDATION; cierre con tag
+  `stable/F08`, que cierra la fase 1 F03-F08). HECHO: ADR-0010; paquete `retrieval` entre
+  `spec` y `feedback` (indice en memoria regenerado en cada ejecucion: 341 items + 3 936
+  segmentos de las crudas activas con corregida y `dudas`; token de busqueda = tokens de F07 con
+  acentos plegados y numeros normalizados); `kb find <texto> [--video --tema --desde --hasta
+  --solo --frase --prefijo --top --contexto --json]` y `kb at --video --t [--margen-s]`; toda
+  linea con fuente (`ev-*`, `tr-*/n`, `fr-*/t_ms`, `contradiccion`); rutas relativas; avisos por
+  stderr; golden de 15 consultas (`tests/golden/f08_consultas_referencia.yaml`) 15/15; `kb find`
+  1,04 s de pared. Fallos lexicos conocidos y anotados (candidatos al glosario, no aplicados):
+  `1.3` -> `1:3`, `breakeven` -> `break even`.
 - Copia fuera de la maquina COMPLETA (2026-09-06): carpeta de Drive "transcripciones (crudas,
   Bot v3)" (id `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R`) con SHA256SUMS, LEEME, 5 manifiestos, 5
-  crudas, 5 WAV y el video v5 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`). Los binarios los
-  sube el usuario a mano desde `data/drive_staging/`; una retranscripcion futura repite
-  `staging.py` y la subida.
-- SIGUIENTE: el usuario confirma el cierre -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
-  feature/F07-evidence-extraction`, `git tag -a stable/F07` sobre el merge, commit `docs(state)`
-  que solo toca PROJECT_STATE.md, `make check`, push main + tag, CI verde) -> abrir F08
-  evidence-retrieval (busqueda por texto y tiempo sobre los 341 items y las crudas; toda
-  respuesta con fuente). Para anadir evidencia nueva: `evidence propose --video --t0 --t1
-  --modelo <quien> --tema-buscado <raiz>...` -> rellenar `items`/`no_consta` (la cita se COPIA de
-  la cruda, con sus repeticiones de borde) -> `--check` -> el usuario decide -> `evidence accept`
-  o `reject`. Tras cambiar `scripts/git-hooks/`, ejecutar `make hooks`.
+  crudas, 5 WAV y el video v5 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`). Una
+  retranscripcion futura repite `staging.py` y la subida a mano.
+- SIGUIENTE: el usuario valida F08 -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
+  feature/F08-evidence-retrieval`, `git tag -a stable/F08` sobre el merge, commit `docs(state)`
+  que solo toca PROJECT_STATE.md, `make check`, push main + tag, CI verde) -> abrir F10
+  elicitation-kit (brief desde MASTER_PLAN tabla A fila F10 y H.2; consume `kb find`/`kb at` y
+  los 341 items; parametros UNKNOWN pre-poblados, ids de caso + particion + seed, papel
+  `sesion_feedback` en el corpus, dos anclajes mientras A-9 siga abierta). Para consultar la base
+  de conocimiento: `botsito kb find "..."` / `botsito kb at --video v4 --t 0:44:56`. Para anadir
+  evidencia nueva: `evidence propose --video --t0 --t1 --modelo <quien> --tema-buscado <raiz>...`
+  -> rellenar `items`/`no_consta` -> `--check` -> el usuario decide -> `evidence accept|reject`.
+  Tras cambiar `scripts/git-hooks/`, ejecutar `make hooks`.
+- Lecciones tecnicas (F08): el token de CITA (F07, fiel a la cruda) y el token de BUSQUEDA (F08,
+  acentos plegados y `0,75` = `0.75`) son distintos a proposito; `localizar_cita` no sirve para
+  buscar frases (minimos de 4/3 tokens, una ventana, una localizacion): `buscar_secuencia` es la
+  base comun; los segmentos de Whisper son de 5-15 s, asi que el AND va por segmento y la frase
+  puede cruzar segmentos; `frames show` (mas cercano por pts) y `kb` (regular anterior
+  existente, `referencia_en`) responden preguntas distintas.
 - Lecciones tecnicas (F07): el ASR repite palabras en los bordes de segmento ("tiene tiene",
   "no no"): la cita literal las incluye; los segmentos con `boss/voz/blog/split` fuera de las 6
   sustituciones quedan como `dudas` y obligan `confianza: media`; la ventana `t0/t1` debe cubrir

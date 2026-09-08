@@ -13,3 +13,10 @@ La base de conocimiento del proyecto. Son DATOS versionados, no codigo, y se val
 | cases/fixtures/ | instantaneas OHLC/ticks de cada caso, con hash | inmutable |
 
 Ver ADR-0001.
+
+Consultar (F08, ADR-0010; lexico, determinista, toda linea con fuente, nada se escribe):
+`botsito kb find "break even" [--video v4] [--tema stop] [--desde 0:05:00 --hasta 0:15:00]
+[--solo evidencia|cruda] [--frase] [--prefijo] [--top N] [--contexto] [--json]` y
+`botsito kb at --video v4 --t 0:44:56 [--margen-s 10] [--contexto] [--json]`. Sin `data/` responde
+solo con evidencia (aviso en stderr). `0,75` = `0.75`; `limite` = `límite`; `1:3` no casa con el
+`1.3` del ASR (fallo lexico conocido).

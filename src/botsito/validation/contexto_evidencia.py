@@ -1,14 +1,13 @@
 """Composicion del contexto de verificacion de la evidencia (F07, ADR-0009).
 
-`evidence` y `corpus` son capas hermanas (ADR-0006): solo `validation` (y la CLI) pueden juntar
-las crudas y los fotogramas del corpus con los items de evidencia. Aqui se construye el
-`ContextoEvidencia` que consumen `evidence.modelo.validar_contra_manifiesto`,
+`evidence` y `corpus` son capas hermanas (ADR-0006): `validation` y `retrieval` (ADR-0010) son
+quienes juntan las crudas y los fotogramas del corpus con los items de evidencia. Aqui se
+construye el `ContextoEvidencia` que consumen `evidence.modelo.validar_contra_manifiesto`,
 `evidence.modelo.verificar_citas` y `evidence.propuestas.comprobar`.
 """
 
 from __future__ import annotations
 
-import json
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -22,7 +21,7 @@ from botsito.corpus.manifiestos_transcripcion import (
     cargar_todos,
     carpeta_de,
 )
-from botsito.corpus.pipeline_transcripcion import FICHERO_CORRECCIONES, cargar_cruda
+from botsito.corpus.pipeline_transcripcion import cargar_cruda, dudas_de
 from botsito.corpus.transcripcion import Segmento
 from botsito.evidence.propuestas import FICHERO_TEMAS, Temas, cargar_temas
 from botsito.evidence.verificacion import ContextoEvidencia, SegmentoCitable
@@ -32,18 +31,6 @@ from botsito.evidence.verificacion import ContextoEvidencia, SegmentoCitable
 class _Cache:
     crudas: dict[str, Sequence[SegmentoCitable] | None] = field(default_factory=dict)
     dudas: dict[str, set[int]] = field(default_factory=dict)
-
-
-def _dudas_de(carpeta: Path) -> set[int]:
-    fichero = carpeta / FICHERO_CORRECCIONES
-    if not fichero.is_file():
-        return set()
-    try:
-        cabecera = json.loads(fichero.read_text(encoding="utf-8").splitlines()[0])
-    except (OSError, ValueError, IndexError):
-        return set()
-    dudas = cabecera.get("dudas") if isinstance(cabecera, dict) else None
-    return {int(d) for d in dudas} if isinstance(dudas, list) else set()
 
 
 def construir_contexto(
@@ -76,7 +63,7 @@ def construir_contexto(
     def dudas(tid: str) -> set[int]:
         if tid not in cache.dudas:
             t = por_id.get(tid)
-            cache.dudas[tid] = _dudas_de(carpeta_de(carpeta_datos, t)) if t else set()
+            cache.dudas[tid] = dudas_de(carpeta_de(carpeta_datos, t)) if t else set()
         return cache.dudas[tid]
 
     ruta_temas = repo / FICHERO_TEMAS
