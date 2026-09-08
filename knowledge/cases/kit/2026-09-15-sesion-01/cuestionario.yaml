@@ -1,0 +1,969 @@
+preguntas:
+- bloqueante: true
+  casos:
+  - afirmacion: en la ficha de Word el trader confirma un limite estricto de 2 cartuchos
+    cita: 'Ficha, fila con el cursor: Límite estricto de 2 cartuchos | Si'
+    evidencia: ev-v3-000138-fc8f7905
+    fotograma: fr-v3-982da728/98000
+    t0: 0:01:38
+    t1: 0:01:44
+    tema: cartuchos.ficha_limite_2
+    valor: '2'
+    video: v3
+  - afirmacion: 'lee la ficha y confirma: limite estricto de dos cartuchos por barrido de liquidez; si
+      ambos pierden, escenario invalidado'
+    cita: límite estricto de dos cartuchos por robar el barrio de liquidez exactamente si ambos pierden
+      escenario y escenario invaliado
+    evidencia: ev-v3-004817-f2dfb955
+    fotograma: fr-v3-982da728/2897000
+    t0: 0:48:17
+    t1: 0:48:24
+    tema: cartuchos.dos_por_barrido_liquidez
+    valor: dos
+    video: v3
+  - afirmacion: 'confirma: como maximo dos entradas por dia, por separado'
+    cita: entonces en un día como máximo dos entradas ¿no? por separado es un buen punto sí, dos entradas
+    evidencia: ev-v4-003350-acb03ee7
+    fotograma: fr-v4-9ad0ebb8/2030000
+    t0: 0:33:50
+    t1: 0:34:00
+    tema: cartuchos.dos_entradas_por_dia
+    valor: dos
+    video: v4
+  enunciado: ¿2 o 3 intentos por zona? (contradiccion ficha vs V4 0:48:41)
+  id: P-01
+  origenes:
+  - id: A-2
+    tipo: ambiguedad
+  - id: cartuchos_max
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - cartuchos_max
+    tipos:
+    - entero
+  titulo: tercer cartucho
+- bloqueante: true
+  casos:
+  - afirmacion: en el segundo esquema, cuando se genera la otra zona de control se pone el break even
+    cita: en el segundo esquema De entrada, si se da Lo respetas allí y te genera la otra zona de control
+      Y luego pones en break even Y te termina sacando en break even
+    evidencia: ev-v4-004447-bc2e74ee
+    fotograma: fr-v4-9ad0ebb8/2687000
+    t0: 0:44:47
+    t1: 0:44:56
+    tema: break_even.otra_zona_control_esquema2
+    valor: null
+    video: v4
+  - afirmacion: 'el break even es fundamental: apenas el precio genera el bloque tras romper el flujo,
+      la entrada pasa automaticamente a break even'
+    cita: el break even yo creo que es fundamental o sea que apenas el precio suele generar ese movimiento
+      [...] te genera este bloque de orden alcista entonces ahí o sea apenas genera aquí ya la entrada
+      se pone automáticamente en solos
+    evidencia: ev-v2-003103-31d872da
+    fotograma: fr-v2-c5a09508/1863000
+    t0: 0:31:03
+    t1: 0:31:36
+    tema: break_even.fundamental_bloque
+    valor: null
+    video: v2
+  - afirmacion: el break even se pone cuando se cumplen las condiciones (aqui, el precio sigue cayendo)
+    cita: se cumplen las condiciones para poner break even, bueno, en ese caso el precio sigue así por
+      caída ya lo podemos poner en B
+    evidencia: ev-v5-000427-f8d5d36d
+    fotograma: fr-v5-718ecabb/267000
+    t0: 0:04:27
+    t1: 0:04:35
+    tema: break_even.condiciones
+    valor: null
+    video: v5
+  enunciado: ¿break-even al tocar el nivel o al cierre de vela? (V4 0:44:56)
+  id: P-02
+  origenes:
+  - id: A-4
+    tipo: ambiguedad
+  - id: break_even_condicion
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - tocar
+    - cierre
+    parametros:
+    - break_even_condicion
+    tipos:
+    - texto
+  titulo: BE al tocar o al cierre
+- bloqueante: true
+  casos:
+  - afirmacion: la ventana es de 7 a 15 hora de Espana y su grafico esta configurado en UTC+2 (Madrid)
+    cita: una posible regla que sería venta en operativa de 7 a 15 por españa que está muy bien aquí pues
+      yo lo tengo configurado como utc más 2 que son ahora ya madrid
+    evidencia: ev-v3-000136-6160fcea
+    fotograma: fr-v3-982da728/96000
+    t0: 0:01:36
+    t1: 0:01:49
+    tema: reloj.grafico_utc_mas_2
+    valor: null
+    video: v3
+  - afirmacion: 'confirma la ventana: dos velas H4, de 7 a 11 y de 11 a 3 (hora de su grafico)'
+    cita: Aquí empieza a las 7, termina a las 11 y luego tenemos, sí, hasta las 3 de la tarde [...] la
+      siguiente vela de H4 se desarrolla a las 7 de la mañana, finaliza a las 11, luego la otra vela se
+      desarrolla a las 11 y finaliza a las 3 [...] diría que es un sí a la ventana operativa
+    evidencia: ev-v3-000157-b26147c7
+    fotograma: fr-v3-982da728/117000
+    t0: 0:01:57
+    t1: 0:02:20
+    tema: ventana.velas_h4_7_11_15
+    valor: null
+    video: v3
+  enunciado: '¿a que hora y en que huso del grafico abre su H4? (se resuelve viendo su grafico: captura
+    de la configuracion; y que ocurre en las semanas en que Europa y EE. UU. no coinciden en el cambio
+    de hora)'
+  id: P-03
+  origenes:
+  - id: A-9
+    tipo: ambiguedad
+  - id: anclaje_h4
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - anclaje_h4
+    tipos:
+    - hora
+  titulo: anclaje de la vela H4 (hora y huso del grafico)
+- bloqueante: false
+  casos:
+  - afirmacion: la vela anterior de cuatro horas fija el enfoque de la siguiente operativa (bajista si
+      es bajista, alcista si es alcista)
+    cita: tú tomas como referencia la vela anterior [...] Que tome de referencia la vela anterior a cuatro
+      horas [...] si es bajista, pues la siguiente operativa va a tener un enfoque principal, o sea, tendencial
+      bajista
+    evidencia: ev-v2-000836-6dbfcd6b
+    fotograma: fr-v2-c5a09508/516000
+    t0: 0:08:36
+    t1: 0:09:09
+    tema: sesgo.h4.vela_anterior
+    valor: null
+    video: v2
+  - afirmacion: 'confirma la regla de la ficha: la vela H4 previa cerrada (n-1) fija el sesgo; alcista
+      solo compras, bajista solo ventas'
+    cita: sería h4 ahora dice lo fija la vela de 4 previa cerrada en el menos uno es verdad o sea alcistas
+      sólo compras bajistas sólo ventas
+    evidencia: ev-v3-000531-4d6375b6
+    fotograma: fr-v3-982da728/331000
+    t0: 0:05:31
+    t1: 0:05:55
+    tema: sesgo.h4.vela_previa_cerrada
+    valor: null
+    video: v3
+  - afirmacion: una vela H4 verde no cambia el sesgo a alcista salvo que cierre con una mecha por encima
+      y genere el breaker
+    cita: para que yo tome alcista esta vela verde debió de haber pues finalizado al menos con una mecha
+      por encima de esto haberme pues generado como que este breaker aquí y para poder validar la siguiente
+      operativa como alcista
+    evidencia: ev-v3-000824-c81f03eb
+    fotograma: fr-v3-982da728/504000
+    t0: 0:08:24
+    t1: 0:08:52
+    tema: sesgo.h4.cambio_exige_breaker
+    valor: null
+    video: v3
+  enunciado: ¿que vela H4 fija el sesgo y cuando cambia?
+  id: P-04
+  origenes:
+  - id: A-1
+    tipo: ambiguedad
+  - id: sesgo_h4_regla
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - vela_anterior_color
+    - vela_anterior_cierre_mecha
+    - otra
+    parametros:
+    - sesgo_h4_regla
+    tipos:
+    - texto
+  titulo: sesgo H4
+- bloqueante: false
+  casos:
+  - afirmacion: si la limite se activa por un equal sin rotura, lo objetivo es cerrar la operacion cuando
+      cierre la vela sin romper
+    cita: aquí hay un igual aquí se activaría la entrada [...] lo ideal sería proteger a 0.75 pero bueno
+      te come aquí [...] cerrar apenas la operación lo más rápido posible se cierra la vela y si no termina
+      por debajo con un rompimiento cerrar la operación
+    evidencia: ev-v4-010759-514b5d7d
+    fotograma: fr-v4-9ad0ebb8/4079000
+    t0: '1:07:59'
+    t1: '1:08:35'
+    tema: entrada.equal_cierre_anticipado
+    valor: null
+    video: v4
+  - afirmacion: pero tambien puede darse el trade sin tocar el 0,75; prefiere proteger y dejarlo
+    cita: pero va a haber momentos claros que si no protege si demás te lo va a quitar, pero también existe
+      la posibilidad de que se dé el trade [...] no llega a tocar al 0.75 y se dé el trade, yo prefiero
+      eso, entonces protejo
+    evidencia: ev-v4-010831-5f4a00ad
+    fotograma: fr-v4-9ad0ebb8/4111000
+    t0: '1:08:31'
+    t1: '1:08:52'
+    tema: entrada.equal_preferir_proteger
+    valor: null
+    video: v4
+  enunciado: ¿se cierra si no rompe? ¿cuando?
+  id: P-05
+  origenes:
+  - id: A-3
+    tipo: ambiguedad
+  - id: salida_sin_ruptura
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - cerrar_al_cierre
+    - proteger_y_dejar
+    parametros:
+    - salida_sin_ruptura
+    tipos:
+    - texto
+  titulo: salida sin ruptura
+- bloqueante: false
+  casos:
+  - afirmacion: tras romper la liquidez, la orden limite se va bajando conforme se desarrolla el precio
+    cita: apenas se genera el rompimiento de la zona de liquidez pues nosotros vamos abarcando con nuestro
+      límite [...] vamos ahí bajando el límite bajando el límite
+    evidencia: ev-v1-001358-a2b8ec0d
+    fotograma: fr-v1-5a2a42c3/838000
+    t0: 0:13:58
+    t1: 0:14:13
+    tema: entrada.orden_limite.reubicacion
+    valor: null
+    video: v1
+  - afirmacion: la orden limite se va moviendo con el flujo hasta que se rompa
+    cita: la orden, tú, o sea, order limit, tú lo puedes ir moviendo conforme se va desarrollando el flujo
+      [...] seguimos usar nosotros la orden de orden límite lo seguimos moviendo para aquí abajo hasta
+      que se rompa
+    evidencia: ev-v4-010731-bb8af97c
+    fotograma: fr-v4-9ad0ebb8/4051000
+    t0: '1:07:31'
+    t1: '1:07:59'
+    tema: entrada.orden_limite.mover_hasta_rompa
+    valor: null
+    video: v4
+  - afirmacion: mientras no se activa, la orden limite se actualiza con el precio
+    cita: el límite se va actualizando o sea, el mismo límite se va moviendo a medida que no se activa
+      se va desarrollando el precio, sí
+    evidencia: ev-v4-010857-5bc906c9
+    fotograma: fr-v4-9ad0ebb8/4137000
+    t0: '1:08:57'
+    t1: '1:09:04'
+    tema: entrada.orden_limite.actualiza_mientras_no_activa
+    valor: null
+    video: v4
+  enunciado: ¿cada cuanto se reubica la orden pendiente?
+  id: P-06
+  origenes:
+  - id: A-5
+    tipo: ambiguedad
+  - id: reubicacion_cadencia
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - cada_vela
+    - al_romper
+    - otra
+    parametros:
+    - reubicacion_cadencia
+    tipos:
+    - texto
+  titulo: cadencia de reubicacion
+- bloqueante: false
+  casos:
+  - afirmacion: un trade abierto a las 3 PM se cierra en punto
+    cita: Y si hay un trade que queda abierto Por ejemplo a las 3 PM se cierra automáticamente O se deja
+      correr hasta que llegue a su destino No, se cierra Ya, a las 3 PM en punto se cierra el trade Sí
+    evidencia: ev-v4-011514-fe34ac7e
+    fotograma: fr-v4-9ad0ebb8/4514000
+    t0: '1:15:14'
+    t1: '1:15:26'
+    tema: ventana.cierre_15_00_trade_abierto
+    valor: si
+    video: v4
+  - afirmacion: 'confirma el cierre al vencer la vela H4 operativa: la siguiente vela es otro movimiento'
+    cita: cierre agresivo opcional el vencimiento exacto de la vela H4 operativa este es un muy buen punto
+      y puse que sí o sea, lo ideal sería que cierra la vela de H4 operativa, se cierra el trade porque
+      ya la siguiente vela es otro movimiento
+    evidencia: ev-v3-010304-4468cc20
+    fotograma: fr-v3-982da728/3784000
+    t0: '1:03:04'
+    t1: '1:03:30'
+    tema: ventana.cierre_al_vencer_vela_h4
+    valor: si
+    video: v3
+  - afirmacion: 'dos sesiones: la primera empieza a las 7 y la segunda a las 11, hora de Espana'
+    cita: la primera sesión empieza a partir de las 7 hora España [...] tenemos a las 7, primera sesión
+      y la segunda sesión a las 11
+    evidencia: ev-v1-000049-6a31caa6
+    fotograma: fr-v1-5a2a42c3/49000
+    t0: 0:00:49
+    t1: 0:01:22
+    tema: ventana.sesiones
+    valor: null
+    video: v1
+  enunciado: ¿cierre forzoso a las 15:00 y en que huso?
+  id: P-07
+  origenes:
+  - id: A-6
+    tipo: ambiguedad
+  - id: ventana_fin
+    tipo: parametro
+  - id: cierre_forzoso_fin_ventana
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - si
+    - 'no'
+    parametros:
+    - ventana_fin
+    - cierre_forzoso_fin_ventana
+    tipos:
+    - hora
+    - texto
+  titulo: cierre 15:00
+- bloqueante: false
+  casos:
+  - afirmacion: usualmente el stop va en 0,75; si la zona de control se desarrolla mas abajo, el stop
+      se define ahi
+    cita: usualmente yo lo tengo en 0.75 o sea, 0.75 en la entrada [...] si se desarrolla más abajo entonces
+      yo protegería aquí o sea definiría aquí vale o sea definiría aquí lo que sería mi stop loss
+    evidencia: ev-v3-004329-a16d379b
+    fotograma: fr-v3-982da728/2609000
+    t0: 0:43:29
+    t1: 0:43:53
+    tema: stop.segundo_esquema_bajo_zona_control
+    valor: '0.75'
+    video: v3
+  - afirmacion: en el segundo esquema protege por debajo de la zona de control; a veces eso es 0,50 en
+      vez de 0,75
+    cita: si sé que me va a generar este segundo esquema de entrada yo protejo por debajo de este, o sea,
+      hay algunos momentos donde inclusive esta protección te puede llegar no a 0.75 sino protege ya inmediatamente
+      entre un 0.50 y así
+    evidencia: ev-v4-002056-5d25b29d
+    fotograma: fr-v4-9ad0ebb8/1256000
+    t0: 0:20:56
+    t1: 0:21:24
+    tema: stop.segundo_esquema_proteccion_050
+    valor: null
+    video: v4
+  - afirmacion: en el segundo esquema el stop va en el punto mas bajo de la estructura en vez de en 0,75
+    cita: en vez de proteger a 0.75 en lugar de eso pues lo protege es o sea por el punto más bajo en
+      este caso como estamos de bajista alcista protege es allí en ese nivel
+    evidencia: ev-v4-002139-23e44f38
+    fotograma: fr-v4-9ad0ebb8/1299000
+    t0: 0:21:39
+    t1: 0:22:05
+    tema: stop.segundo_esquema_punto_mas_bajo
+    valor: null
+    video: v4
+  enunciado: ¿donde va el stop en el segundo esquema de entrada?
+  id: P-08
+  origenes:
+  - id: A-7
+    tipo: ambiguedad
+  - id: stop_segundo_esquema
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - stop_segundo_esquema
+    tipos:
+    - fraccion
+  titulo: stop del 2.o esquema
+- bloqueante: false
+  casos:
+  - afirmacion: al mapear, un tramo que en una temporalidad mayor es una vela (un order block) se considera
+      una vela; lo demas es ruido
+    cita: Si tú lo mapeas de esta manera, es lo más probable que en una temporalidad mayor esto sea una
+      vela [...] esto de aquí sería tu order block [...] es por eso que se considera una vela y lo demás
+      sería ruido
+    evidencia: ev-v3-010648-0039e34d
+    fotograma: fr-v3-982da728/4008000
+    t0: '1:06:48'
+    t1: '1:07:48'
+    tema: mapeo.dos_velas_como_una
+    valor: null
+    video: v3
+  - afirmacion: en un flujo alcista una vela roja marca un minimo; en un flujo bajista una vela verde
+      marca un retroceso
+    cita: si hay un flujo alcista, una vela contraria, pues marca un mínimo si es roja y eso, y al revés,
+      si el flujo es bajista, una vela verde, pues una vela alcista marca un retroceso
+    evidencia: ev-v3-011540-5425b533
+    fotograma: fr-v3-982da728/4540000
+    t0: '1:15:40'
+    t1: '1:16:00'
+    tema: mapeo.m1.vela_contraria_marca_extremo
+    valor: null
+    video: v3
+  enunciado: ¿cuando dos velas cuentan como una estructura?
+  id: P-09
+  origenes:
+  - id: A-8
+    tipo: ambiguedad
+  - id: mapeo_dos_velas
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - order_block_mayor
+    - otra
+    parametros:
+    - mapeo_dos_velas
+    tipos:
+    - texto
+  titulo: '"dos velas como una" en mapeo'
+- bloqueante: false
+  casos:
+  - afirmacion: 'con el cuadro de Gann se cubre hasta el 0,75: la perdida es de -0,75'
+    cita: trazar el cuadro de GAN para poder, desde aquí hasta aquí, para poder cubrir hasta un 0.75,
+      entonces aquí perderíamos menos un 0.75
+    evidencia: ev-v1-000448-346d6d90
+    fotograma: fr-v1-5a2a42c3/288000
+    t0: 0:04:48
+    t1: 0:04:58
+    tema: stop.nivel
+    valor: '0.75'
+    video: v1
+  - afirmacion: 'mide la entrada desde el punto anterior y pone el stop en 0,75: no arriesga el 100 %'
+    cita: yo cuando suelo medir lo que sería sería la entrada, lo suelo medir normalmente así, o sea,
+      desde el punto anterior [...] al final lo suelo poner en 0.75, o sea, 0.75, entonces no estás arriesgando
+      el 100% de la entrada
+    evidencia: ev-v2-003142-beb4ad3c
+    fotograma: fr-v2-c5a09508/1902000
+    t0: 0:31:42
+    t1: 0:32:13
+    tema: stop.nivel
+    valor: '0.75'
+    video: v2
+  - afirmacion: protege a 0,80, que es el SL por defecto
+    cita: me activa la entrada y si yo protejo a 0.80, que es el SL por defecto
+    evidencia: ev-v5-000312-f5062062
+    fotograma: fr-v5-718ecabb/192000
+    t0: 0:03:12
+    t1: 0:03:35
+    tema: stop.nivel
+    valor: '0.80'
+    video: v5
+  enunciado: ¿el 0,8 es fijo o "0,75 mas el spread del momento"?
+  id: P-10
+  origenes:
+  - id: A-10
+    tipo: ambiguedad
+  - id: stop_fraccion_caja
+    tipo: parametro
+  - id: stop_colchon_spread
+    tipo: parametro
+  - id: stop.nivel
+    tipo: contradiccion
+  respuesta_esperada:
+    opciones:
+    - fijo
+    - spread
+    parametros:
+    - stop_fraccion_caja
+    - stop_colchon_spread
+    tipos:
+    - fraccion
+    - texto
+  titulo: 'stop a 0,8: fijo o 0,75 + spread'
+- bloqueante: false
+  casos:
+  - afirmacion: el rango se mide hasta el final, pero el stop que se introduce en la operacion es el 0,75
+    cita: se arma un trade y el stop loss se pone hasta el final como del rango, ¿no? Al final del rango.
+      Pero el stop loss como tal que se va a introducir en la operación es hasta el 0.75
+    evidencia: ev-v4-001207-0c4ffd4b
+    fotograma: fr-v4-9ad0ebb8/727000
+    t0: 0:12:07
+    t1: 0:12:21
+    tema: stop.introducido_en_operacion_075
+    valor: '0.75'
+    video: v4
+  - afirmacion: con el cuadro de Gann, proteger el trade en 0,75 apenas se genere la entrada
+    cita: no olvidarse de poner el cuadro, bueno el cuadro de GAN [...] en 0.75 proteger el trade, a inicio
+      apenas se genere la entrada
+    evidencia: ev-v1-000620-0f7dea14
+    fotograma: fr-v1-5a2a42c3/380000
+    t0: 0:06:20
+    t1: 0:06:33
+    tema: stop.proteger_al_entrar
+    valor: '0.75'
+    video: v1
+  enunciado: ¿el SL va en la orden pendiente o se pone tras el llenado?
+  id: P-11
+  origenes:
+  - id: A-11
+    tipo: ambiguedad
+  - id: stop_en_orden_pendiente
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - en_la_orden
+    - tras_el_llenado
+    parametros:
+    - stop_en_orden_pendiente
+    tipos:
+    - texto
+  titulo: SL en la orden o tras el llenado
+- bloqueante: false
+  casos:
+  - afirmacion: cuando ha pasado mas del 50 % de la vela tras entrar, prefiere reducir el riesgo
+    cita: sé que cuando ya he entrado demasiado y ya ha pasado más del 50% de la vela [...] yo prefiero
+      reducir mi riesgo
+    evidencia: ev-v1-001557-1dd16e5c
+    fotograma: fr-v1-5a2a42c3/957000
+    t0: 0:15:57
+    t1: 0:16:14
+    tema: stop.bajar_050.condicion_vela
+    valor: '50'
+    video: v1
+  - afirmacion: el stop como mucho se reduce de 0,75 a 0,50
+    cita: mi stop loss digamos máximo que yo puedo fijar o sea de pasar de 0.75 es a 0.50
+    evidencia: ev-v1-001643-47673889
+    fotograma: fr-v1-5a2a42c3/1003000
+    t0: 0:16:43
+    t1: 0:16:59
+    tema: stop.bajar_050.nivel
+    valor: '0.50'
+    video: v1
+  - afirmacion: 'ejemplo: protegido a 0,50, el stop le saca y pierde 0,50 en vez del 1 %'
+    cita: ya estoy protegiendo a 0.50 el trade y mira me saca [...] yo ya protejo 0.50 no pierdo el 1%
+      en total sino el 0.50
+    evidencia: ev-v1-001839-ee94816a
+    fotograma: fr-v1-5a2a42c3/1119000
+    t0: 0:18:39
+    t1: 0:18:53
+    tema: stop.bajar_050.ejemplo
+    valor: '0.50'
+    video: v1
+  enunciado: ¿a partir de que parte de la vela bajas el stop a 0,50?
+  id: P-12
+  origenes:
+  - id: A-12
+    tipo: ambiguedad
+  - id: stop_reduccion_umbral_vela
+    tipo: parametro
+  - id: stop_reduccion_fraccion
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - stop_reduccion_umbral_vela
+    - stop_reduccion_fraccion
+    tipos:
+    - porcentaje
+    - fraccion
+  titulo: 'porcentaje de vela transcurrido para bajar la proteccion a 0,50: 40 % (transcripcion heredada)
+    o 50 % (large-v3, V1 0:15:59)'
+- bloqueante: false
+  casos:
+  - afirmacion: 'dos sesiones: la primera empieza a las 7 y la segunda a las 11, hora de Espana'
+    cita: la primera sesión empieza a partir de las 7 hora España [...] tenemos a las 7, primera sesión
+      y la segunda sesión a las 11
+    evidencia: ev-v1-000049-6a31caa6
+    fotograma: fr-v1-5a2a42c3/49000
+    t0: 0:00:49
+    t1: 0:01:22
+    tema: ventana.sesiones
+    valor: null
+    video: v1
+  - afirmacion: trabaja de 7 a 11 y de 11 a 3 de la tarde
+    cita: yo las de 7 a 11 lo que trabajo y de 11 a 3 de la tarde
+    evidencia: ev-v1-002530-1aef73a4
+    fotograma: fr-v1-5a2a42c3/1530000
+    t0: 0:25:30
+    t1: 0:25:47
+    tema: ventana.sesiones.horas
+    valor: null
+    video: v1
+  - afirmacion: 'dos sesiones (Londres y Nueva York): de las 7 a las 3 de la tarde, hora de Espana'
+    cita: hay 22 sesiones que serían la de nueva york y londres entonces usualmente comienza entre las
+      7 y finalizaría a las 3 de la tarde esto es sobre españa
+    evidencia: ev-v2-000310-2fc6581b
+    fotograma: fr-v2-c5a09508/190000
+    t0: 0:03:10
+    t1: 0:03:38
+    tema: ventana.sesiones.londres_ny
+    valor: null
+    video: v2
+  enunciado: ¿inicio de la ventana operativa (primera sesion H4)? (hora de reloj del trader)
+  id: P-13
+  origenes:
+  - id: ventana_inicio
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - ventana_inicio
+    tipos:
+    - hora
+  titulo: ventana_inicio
+- bloqueante: false
+  casos:
+  - afirmacion: el barrido de liquidez basta con la mecha
+    cita: ¿Sol, barrio, cuánto debe penetrar el nivel? Vale. Esto pasa con mecha. O sea, pasa con la mecha
+      nomás
+    evidencia: ev-v3-011200-f47758fb
+    fotograma: fr-v3-982da728/4320000
+    t0: '1:12:00'
+    t1: '1:12:12'
+    tema: liquidez.m15.barrido_con_mecha
+    valor: mecha
+    video: v3
+  - afirmacion: la liquidez de M15 debe romperse con cuerpo y cerrar con cuerpo por encima
+    cita: es muy Importante que lo rompa con cuerpo Y cierre con cuerpo por encima de la zona de liquidez
+    evidencia: ev-v4-001533-73539d90
+    fotograma: fr-v4-9ad0ebb8/933000
+    t0: 0:15:33
+    t1: 0:15:39
+    tema: liquidez.m15.romper_y_cerrar_con_cuerpo
+    valor: cuerpo
+    video: v4
+  - afirmacion: 'condicion numero uno: el precio cierra con cuerpo por encima de la liquidez'
+    cita: la condicional es número uno, que el precio por encima de liquidez me tiene que cerrar con cuerpo
+    evidencia: ev-v4-001835-d7625013
+    fotograma: fr-v4-9ad0ebb8/1115000
+    t0: 0:18:35
+    t1: 0:18:41
+    tema: liquidez.m15.condicion_uno_cuerpo
+    valor: cuerpo
+    video: v4
+  enunciado: ¿si la liquidez de M15 se toma con cierre de cuerpo o basta la mecha? (cuerpo/mecha)
+  id: P-14
+  origenes:
+  - id: liquidez_m15_criterio_toma
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - cuerpo
+    - mecha
+    parametros:
+    - liquidez_m15_criterio_toma
+    tipos:
+    - texto
+  titulo: liquidez_m15_criterio_toma
+- bloqueante: false
+  casos:
+  - afirmacion: al reducir el stop no lo deja por encima del 0,25
+    cita: voy reduciendo un poquito más, no lo dejo por encima del 0.25
+    evidencia: ev-v1-001958-282fb666
+    fotograma: fr-v1-5a2a42c3/1198000
+    t0: 0:19:58
+    t1: 0:20:28
+    tema: stop.reduccion_limite_025
+    valor: '0.25'
+    video: v1
+  - afirmacion: con el stop en 0,75 se protege 0,25 del capital y se cuida la curva de drawdown
+    cita: en 0.75 lo que tú haces estás ya protegiendo un 0.25 del capital cuida también lo que sería
+      tu curva de drawdown [...] ya no es lo mismo perder un 1% a perder solo 0.75
+    evidencia: ev-v2-003226-b5a5c19e
+    fotograma: fr-v2-c5a09508/1946000
+    t0: 0:32:26
+    t1: 0:32:52
+    tema: stop.proteger_025_capital
+    valor: '0.25'
+    video: v2
+  - afirmacion: proteger inmediatamente guarda 0,25
+    cita: si tú ya proteges inmediatamente, que es lo que yo también haría en esta entrada, ya tienes
+      0.25 explícitamente, pues estás guardando
+    evidencia: ev-v3-004527-0e4f4834
+    fotograma: fr-v3-982da728/2727000
+    t0: 0:45:27
+    t1: 0:45:46
+    tema: stop.proteger_inmediato_guarda_025
+    valor: '0.25'
+    video: v3
+  enunciado: ¿parte del riesgo que se guarda al proteger el trade al entrar (0,25)? (fraccion de la distancia
+    completa)
+  id: P-15
+  origenes:
+  - id: stop_proteccion_capital
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - stop_proteccion_capital
+    tipos:
+    - fraccion
+  titulo: stop_proteccion_capital
+- bloqueante: false
+  casos:
+  - afirmacion: el objetivo fijo y minimo es 1:3 (el ASR escribe 1.3)
+    cita: planteas el 1.3, 1.3 como objetivo fijo, como objetivo fijo y mínimo
+    evidencia: ev-v1-000414-825d71a4
+    fotograma: fr-v1-5a2a42c3/254000
+    t0: 0:04:14
+    t1: 0:04:31
+    tema: objetivo.rr
+    valor: '1.3'
+    video: v1
+  - afirmacion: en todos los backtests busca 1:3 (escrito 1.3 por el ASR), con la posibilidad de ampliar
+      a 1:4
+    cita: yo todos los backtesting como tal, o sea estaba buscando el 1.3 [...] amplificar a 1.4
+    evidencia: ev-v5-000456-dfb95b24
+    fotograma: fr-v5-718ecabb/296000
+    t0: 0:04:56
+    t1: 0:05:05
+    tema: objetivo.rr
+    valor: '1.3'
+    video: v5
+  - afirmacion: el ratio riesgo-beneficio minimo es 1 a 3
+    cita: Suelo buscar yo como mínimo, o sea, el ratio de riesgo-beneficio de 1 a 3
+    evidencia: ev-v2-001658-d02fb71a
+    fotograma: fr-v2-c5a09508/1018000
+    t0: 0:16:58
+    t1: 0:17:02
+    tema: objetivo.rr
+    valor: null
+    video: v2
+  enunciado: ¿objetivo riesgo/beneficio fijo y minimo (1 a 3)? (multiplo del riesgo (1 a N))
+  id: P-16
+  origenes:
+  - id: objetivo_rr
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - objetivo_rr
+    tipos:
+    - decimal
+  titulo: objetivo_rr
+- bloqueante: false
+  casos:
+  - afirmacion: extender el objetivo hasta 3,50 o 3,63 es subjetivo
+    cita: pero aquí entra la subjetividad [...] extenderías hasta un 3,50 bueno, un 3,63
+    evidencia: ev-v1-002812-6e3220b5
+    fotograma: fr-v1-5a2a42c3/1692000
+    t0: 0:28:12
+    t1: 0:28:30
+    tema: objetivo.extension_subjetiva
+    valor: 3,63
+    video: v1
+  - afirmacion: para maximizar el objetivo usa el nivel 0,50 de la zona de liquidez
+    cita: Marcar, por ejemplo, si tengo esta zona de liquidez de aquí a aquí y veo que el precio me va
+      a este, puedo maximizarlo hasta 0.50. Suelo usar el 0.50
+    evidencia: ev-v3-005405-7f27c4ba
+    fotograma: fr-v3-982da728/3245000
+    t0: 0:54:05
+    t1: 0:54:23
+    tema: objetivo.maximizar_hasta_050_liquidez
+    valor: '0.50'
+    video: v3
+  - afirmacion: el profit maximo que busca es la liquidez de M15
+    cita: yo el profil máximo que suelo buscar es en la liquidez de m15
+    evidencia: ev-v3-003112-a3ae4fa9
+    fotograma: fr-v3-982da728/1872000
+    t0: 0:31:12
+    t1: 0:31:41
+    tema: objetivo.target_maximo_liquidez_m15
+    valor: null
+    video: v3
+  enunciado: ¿hasta donde se extiende el objetivo cuando se maximiza (0,50 de la liquidez)? (fraccion
+    de la distancia hasta la liquidez de M15)
+  id: P-17
+  origenes:
+  - id: objetivo_extension
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - objetivo_extension
+    tipos:
+    - fraccion
+  titulo: objetivo_extension
+- bloqueante: false
+  casos:
+  - afirmacion: tras una perdida no se reentra hasta que se cierre el flujo y la zona de control y se
+      genere otra, fuera de la anterior
+    cita: en 0.75 se corta la entrada ahí se corta la entrada ya no habría entrada aquí hasta que te termine
+      de cerrar este flujo de aquí o sea tenemos una entrada en pérdida pero no puedes volver a entrar
+      hasta que nuevamente pues o sea se cierre esta zona de control y te genere otra [...] tiene que
+      ser nuevamente afuera
+    evidencia: ev-v4-003820-299d7a15
+    fotograma: fr-v4-9ad0ebb8/2300000
+    t0: 0:38:20
+    t1: 0:38:49
+    tema: reentrada.tras_stop_esperar_cierre_flujo
+    valor: null
+    video: v4
+  - afirmacion: si la orden se activa sin romper y el precio genera un equal high, protege en 0,50 sin
+      complicarse
+    cita: llega a activar tu entrada o sea bueno tu orden límite [...] o bien se revierte o sea te genera
+      como un igual único el high [...] pongo en 0 75 solo proteger en 0.50 y ya
+    evidencia: ev-v4-010326-875c8067
+    fotograma: fr-v4-9ad0ebb8/3806000
+    t0: '1:03:26'
+    t1: '1:04:11'
+    tema: reentrada.equal_high_proteger_050
+    valor: null
+    video: v4
+  - afirmacion: un equal activa la entrada sin poder anticiparse; se cuenta como perdida y se reentra
+      si el precio rompe de nuevo la zona
+    cita: cuando hay un equal que no lo vamos a poder anticipar [...] contarlo como pérdida pero reentrar
+      nuevamente si es que el precio
+    evidencia: ev-v5-000246-17eff9e1
+    fotograma: fr-v5-718ecabb/166000
+    t0: 0:02:46
+    t1: 0:03:02
+    tema: reentrada.equal
+    valor: null
+    video: v5
+  enunciado: ¿si tras un equal (activacion sin rotura) se reentra al romper de nuevo? (si/no)
+  id: P-18
+  origenes:
+  - id: reentrada_tras_equal
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - si
+    - 'no'
+    parametros:
+    - reentrada_tras_equal
+    tipos:
+    - texto
+  titulo: reentrada_tras_equal
+- bloqueante: false
+  casos:
+  - afirmacion: no toma parciales por ahora
+    cita: yo no suelo tomar parciales por ahora no lo he intentado
+    evidencia: ev-v1-002313-6342a154
+    fotograma: fr-v1-5a2a42c3/1393000
+    t0: 0:23:13
+    t1: 0:23:18
+    tema: parciales.sin_parciales
+    valor: 'no'
+    video: v1
+  - afirmacion: no ha probado a tomar parciales
+    cita: yo honestamente no lo he probado tomando parciales
+    evidencia: ev-v2-001819-60a1b0f1
+    fotograma: fr-v2-c5a09508/1099000
+    t0: 0:18:19
+    t1: 0:18:26
+    tema: parciales.no_probado
+    valor: 'no'
+    video: v2
+  - afirmacion: 'los parciales quedan descartados por ahora: break even y sin parciales hasta tener muestra'
+    cita: Sí, sí, pero creo que he descartado eso, ¿verdad? [...] yo no lo haría, o sea, por ahora no
+      Hasta tener un número de muestras [...] Break even y sin parciales
+    evidencia: ev-v4-011112-17178b38
+    fotograma: fr-v4-9ad0ebb8/4272000
+    t0: '1:11:12'
+    t1: '1:12:05'
+    tema: parciales.descartados_por_ahora
+    valor: 'no'
+    video: v4
+  enunciado: ¿si se toman parciales? (si/no)
+  id: P-19
+  origenes:
+  - id: parciales
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - si
+    - 'no'
+    parametros:
+    - parciales
+    tipos:
+    - texto
+  titulo: parciales
+- bloqueante: false
+  casos:
+  - afirmacion: 'riesgo en porcentaje de la cuenta (crecimiento geometrico): un 1 %'
+    cita: lo más óptimo sería si uno quiere escalar la cuenta rápido rápido que sea un crecimiento geométrico
+      [...] porcentaje un 1% de la cuenta
+    evidencia: ev-v2-002753-859da37f
+    fotograma: fr-v2-c5a09508/1673000
+    t0: 0:27:53
+    t1: 0:28:27
+    tema: riesgo.crecimiento_geometrico
+    valor: '1'
+    video: v2
+  - afirmacion: en general 1 %; para la prueba de fondeo, 0,50 o 0,75 por operacion para tener mas tiros
+    cita: el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo planteado
+      sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros
+    evidencia: ev-v2-002845-7c812ec4
+    fotograma: fr-v2-c5a09508/1725000
+    t0: 0:28:45
+    t1: 0:29:00
+    tema: riesgo.fondeo.por_operacion
+    valor: '0.50'
+    video: v2
+  - afirmacion: con la racha de 7 perdidas, arriesgar 0,5 da un drawdown de 3,5 %; con 1 % seria 7 % y
+      quema la cuenta
+    cita: tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas,
+      un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5. Obviamente si inviertes
+      un 1% sería un 7%, entonces ahí sí te quema la cuenta
+    evidencia: ev-v4-012733-0c8d7f1f
+    fotograma: fr-v4-9ad0ebb8/5253000
+    t0: '1:27:33'
+    t1: '1:28:01'
+    tema: riesgo.por_operacion.calculo_racha
+    valor: 0,5
+    video: v4
+  enunciado: ¿riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo)? (porcentaje de la cuenta por operacion)
+  id: P-20
+  origenes:
+  - id: riesgo_por_operacion
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - riesgo_por_operacion
+    tipos:
+    - porcentaje
+  titulo: riesgo_por_operacion
+- bloqueante: false
+  casos:
+  - afirmacion: la calculadora que busca recalcula el lotaje con el 1 % de la cuenta al mover el stop
+    cita: el tamaño también de la posición de tu cuenta 1%, ponías 1% y ahí lo moviendo el SL pues se
+      calculaba
+    evidencia: ev-v4-002901-771b0402
+    fotograma: fr-v4-9ad0ebb8/1741000
+    t0: 0:29:01
+    t1: 0:29:10
+    tema: lotaje.calculadora_1_por_ciento
+    valor: '1'
+    video: v4
+  - afirmacion: 'propuesta abierta: calcular el lotaje sobre la distancia hasta el 0,75 en vez de la completa'
+    cita: si entrábamos, digamos así, en 0.75, configurando el lotaje a esta zona de aquí [...] el lotaje
+      calcularlo ya no en base a esto sino en base a esta zona de aquí o sea a 0 75
+    evidencia: ev-v1-002110-6ce6abaa
+    fotograma: fr-v1-5a2a42c3/1270000
+    t0: 0:21:10
+    t1: 0:21:43
+    tema: lotaje.base_075_abierto
+    valor: null
+    video: v1
+  - afirmacion: 'no calcula el lotaje desde el 0,75: lo probo y no le fue bien por el drawdown'
+    cita: No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí [...] No lo veo
+      viable porque en algunos casos [...] no me fue muy bien por el hecho del drawdown
+    evidencia: ev-v2-003300-9e346ecf
+    fotograma: fr-v2-c5a09508/1980000
+    t0: 0:33:00
+    t1: 0:33:34
+    tema: lotaje.no_desde_075
+    valor: null
+    video: v2
+  enunciado: ¿sobre que distancia se calcula el lotaje? (distancia_completa/desde_075)
+  id: P-21
+  origenes:
+  - id: lotaje_base
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - distancia_completa
+    - desde_075
+    parametros:
+    - lotaje_base
+    tipos:
+    - texto
+  titulo: lotaje_base
+sesion: 2026-09-15-sesion-01

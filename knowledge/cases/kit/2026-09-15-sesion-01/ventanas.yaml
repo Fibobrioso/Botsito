@@ -1,0 +1,971 @@
+casos:
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-03T22:00Z
+  dia: '2026-05-04'
+  hasta_utc: 2026-05-04T13:00Z
+  id: caso-eurusd-2026-05-04
+  limites_h4:
+    madrid-00:
+    - 2026-05-03T22:00Z
+    - 2026-05-04T02:00Z
+    - 2026-05-04T06:00Z
+    - 2026-05-04T10:00Z
+    - 2026-05-04T14:00Z
+    servidor-ny-17:
+    - 2026-05-03T21:00Z
+    - 2026-05-04T01:00Z
+    - 2026-05-04T05:00Z
+    - 2026-05-04T09:00Z
+    - 2026-05-04T13:00Z
+  n_velas: 899
+  sha256: 8c2149d50fa6014f202d00b4636ae6d9497589f9f31c2a015e5ed5822cf8e2fd
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-04T22:00Z
+  dia: '2026-05-05'
+  hasta_utc: 2026-05-05T13:00Z
+  id: caso-eurusd-2026-05-05
+  limites_h4:
+    madrid-00:
+    - 2026-05-04T22:00Z
+    - 2026-05-05T02:00Z
+    - 2026-05-05T06:00Z
+    - 2026-05-05T10:00Z
+    - 2026-05-05T14:00Z
+    servidor-ny-17:
+    - 2026-05-04T21:00Z
+    - 2026-05-05T01:00Z
+    - 2026-05-05T05:00Z
+    - 2026-05-05T09:00Z
+    - 2026-05-05T13:00Z
+  n_velas: 894
+  sha256: 1549592398beedf20dae749ee758624e0ad4a206767bcd995b0f61cc10730e74
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-05T22:00Z
+  dia: '2026-05-06'
+  hasta_utc: 2026-05-06T13:00Z
+  id: caso-eurusd-2026-05-06
+  limites_h4:
+    madrid-00:
+    - 2026-05-05T22:00Z
+    - 2026-05-06T02:00Z
+    - 2026-05-06T06:00Z
+    - 2026-05-06T10:00Z
+    - 2026-05-06T14:00Z
+    servidor-ny-17:
+    - 2026-05-05T21:00Z
+    - 2026-05-06T01:00Z
+    - 2026-05-06T05:00Z
+    - 2026-05-06T09:00Z
+    - 2026-05-06T13:00Z
+  n_velas: 899
+  sha256: 486e1762a7832831a2e890cf131352942be9f71ffdf300e895417af4233290f1
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-06T22:00Z
+  dia: '2026-05-07'
+  hasta_utc: 2026-05-07T13:00Z
+  id: caso-eurusd-2026-05-07
+  limites_h4:
+    madrid-00:
+    - 2026-05-06T22:00Z
+    - 2026-05-07T02:00Z
+    - 2026-05-07T06:00Z
+    - 2026-05-07T10:00Z
+    - 2026-05-07T14:00Z
+    servidor-ny-17:
+    - 2026-05-06T21:00Z
+    - 2026-05-07T01:00Z
+    - 2026-05-07T05:00Z
+    - 2026-05-07T09:00Z
+    - 2026-05-07T13:00Z
+  n_velas: 894
+  sha256: 57b69c91620d533419df89c645b214642a4222632f08c8ffe0ee3f0c1c4e0ae9
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-07T22:00Z
+  dia: '2026-05-08'
+  hasta_utc: 2026-05-08T13:00Z
+  id: caso-eurusd-2026-05-08
+  limites_h4:
+    madrid-00:
+    - 2026-05-07T22:00Z
+    - 2026-05-08T02:00Z
+    - 2026-05-08T06:00Z
+    - 2026-05-08T10:00Z
+    - 2026-05-08T14:00Z
+    servidor-ny-17:
+    - 2026-05-07T21:00Z
+    - 2026-05-08T01:00Z
+    - 2026-05-08T05:00Z
+    - 2026-05-08T09:00Z
+    - 2026-05-08T13:00Z
+  n_velas: 898
+  sha256: b3b96fd79d62453f8ea704216014215ec7526524992036f14ecea6a9234dc44c
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-10T22:00Z
+  dia: '2026-05-11'
+  hasta_utc: 2026-05-11T13:00Z
+  id: caso-eurusd-2026-05-11
+  limites_h4:
+    madrid-00:
+    - 2026-05-10T22:00Z
+    - 2026-05-11T02:00Z
+    - 2026-05-11T06:00Z
+    - 2026-05-11T10:00Z
+    - 2026-05-11T14:00Z
+    servidor-ny-17:
+    - 2026-05-10T21:00Z
+    - 2026-05-11T01:00Z
+    - 2026-05-11T05:00Z
+    - 2026-05-11T09:00Z
+    - 2026-05-11T13:00Z
+  n_velas: 899
+  sha256: 3b943670847303497443ecf3d6933e009b95a77ec36d8dc9f1445fbaea4472e7
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-11T22:00Z
+  dia: '2026-05-12'
+  hasta_utc: 2026-05-12T13:00Z
+  id: caso-eurusd-2026-05-12
+  limites_h4:
+    madrid-00:
+    - 2026-05-11T22:00Z
+    - 2026-05-12T02:00Z
+    - 2026-05-12T06:00Z
+    - 2026-05-12T10:00Z
+    - 2026-05-12T14:00Z
+    servidor-ny-17:
+    - 2026-05-11T21:00Z
+    - 2026-05-12T01:00Z
+    - 2026-05-12T05:00Z
+    - 2026-05-12T09:00Z
+    - 2026-05-12T13:00Z
+  n_velas: 898
+  sha256: 3e4e4aa60c7024ec2f18763572cbcb42fdbcdcec5e32c1f16bd78b90b23a96b3
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-12T22:00Z
+  dia: '2026-05-13'
+  hasta_utc: 2026-05-13T13:00Z
+  id: caso-eurusd-2026-05-13
+  limites_h4:
+    madrid-00:
+    - 2026-05-12T22:00Z
+    - 2026-05-13T02:00Z
+    - 2026-05-13T06:00Z
+    - 2026-05-13T10:00Z
+    - 2026-05-13T14:00Z
+    servidor-ny-17:
+    - 2026-05-12T21:00Z
+    - 2026-05-13T01:00Z
+    - 2026-05-13T05:00Z
+    - 2026-05-13T09:00Z
+    - 2026-05-13T13:00Z
+  n_velas: 896
+  sha256: d45ebb0e512c01ec1c649fa1b91b1de8f6d8e903b94d2d13f3db9ba51db044d2
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-13T22:00Z
+  dia: '2026-05-14'
+  hasta_utc: 2026-05-14T13:00Z
+  id: caso-eurusd-2026-05-14
+  limites_h4:
+    madrid-00:
+    - 2026-05-13T22:00Z
+    - 2026-05-14T02:00Z
+    - 2026-05-14T06:00Z
+    - 2026-05-14T10:00Z
+    - 2026-05-14T14:00Z
+    servidor-ny-17:
+    - 2026-05-13T21:00Z
+    - 2026-05-14T01:00Z
+    - 2026-05-14T05:00Z
+    - 2026-05-14T09:00Z
+    - 2026-05-14T13:00Z
+  n_velas: 899
+  sha256: 4078561d1ba70a0ae5c80a009210ac1896849b73ffc2b00735db041ccee0f2db
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-14T22:00Z
+  dia: '2026-05-15'
+  hasta_utc: 2026-05-15T13:00Z
+  id: caso-eurusd-2026-05-15
+  limites_h4:
+    madrid-00:
+    - 2026-05-14T22:00Z
+    - 2026-05-15T02:00Z
+    - 2026-05-15T06:00Z
+    - 2026-05-15T10:00Z
+    - 2026-05-15T14:00Z
+    servidor-ny-17:
+    - 2026-05-14T21:00Z
+    - 2026-05-15T01:00Z
+    - 2026-05-15T05:00Z
+    - 2026-05-15T09:00Z
+    - 2026-05-15T13:00Z
+  n_velas: 897
+  sha256: 5e50479a883cebb4cd5440fa2fc30c8f27671ecd8f6e24206b6a29616c946d6e
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-17T22:00Z
+  dia: '2026-05-18'
+  hasta_utc: 2026-05-18T13:00Z
+  id: caso-eurusd-2026-05-18
+  limites_h4:
+    madrid-00:
+    - 2026-05-17T22:00Z
+    - 2026-05-18T02:00Z
+    - 2026-05-18T06:00Z
+    - 2026-05-18T10:00Z
+    - 2026-05-18T14:00Z
+    servidor-ny-17:
+    - 2026-05-17T21:00Z
+    - 2026-05-18T01:00Z
+    - 2026-05-18T05:00Z
+    - 2026-05-18T09:00Z
+    - 2026-05-18T13:00Z
+  n_velas: 898
+  sha256: 8b78fec2a033d2728d4185741c707da8815c1f5ecb5aad6d846b94689ca9bd21
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-18T22:00Z
+  dia: '2026-05-19'
+  hasta_utc: 2026-05-19T13:00Z
+  id: caso-eurusd-2026-05-19
+  limites_h4:
+    madrid-00:
+    - 2026-05-18T22:00Z
+    - 2026-05-19T02:00Z
+    - 2026-05-19T06:00Z
+    - 2026-05-19T10:00Z
+    - 2026-05-19T14:00Z
+    servidor-ny-17:
+    - 2026-05-18T21:00Z
+    - 2026-05-19T01:00Z
+    - 2026-05-19T05:00Z
+    - 2026-05-19T09:00Z
+    - 2026-05-19T13:00Z
+  n_velas: 896
+  sha256: cb33a7daa86db54fc226a20f407103094af4b0fbc2472e58d7321205cd0922e2
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-19T22:00Z
+  dia: '2026-05-20'
+  hasta_utc: 2026-05-20T13:00Z
+  id: caso-eurusd-2026-05-20
+  limites_h4:
+    madrid-00:
+    - 2026-05-19T22:00Z
+    - 2026-05-20T02:00Z
+    - 2026-05-20T06:00Z
+    - 2026-05-20T10:00Z
+    - 2026-05-20T14:00Z
+    servidor-ny-17:
+    - 2026-05-19T21:00Z
+    - 2026-05-20T01:00Z
+    - 2026-05-20T05:00Z
+    - 2026-05-20T09:00Z
+    - 2026-05-20T13:00Z
+  n_velas: 900
+  sha256: bbd39bb79001805bf75e2eea7b0b70155b2ef5536634c9f52afe10726ece95b6
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-20T22:00Z
+  dia: '2026-05-21'
+  hasta_utc: 2026-05-21T13:00Z
+  id: caso-eurusd-2026-05-21
+  limites_h4:
+    madrid-00:
+    - 2026-05-20T22:00Z
+    - 2026-05-21T02:00Z
+    - 2026-05-21T06:00Z
+    - 2026-05-21T10:00Z
+    - 2026-05-21T14:00Z
+    servidor-ny-17:
+    - 2026-05-20T21:00Z
+    - 2026-05-21T01:00Z
+    - 2026-05-21T05:00Z
+    - 2026-05-21T09:00Z
+    - 2026-05-21T13:00Z
+  n_velas: 896
+  sha256: 35768692bb4276bc1d53186b67d1aa38ee2bac54cfff8024ab53c250b07dd2cd
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-21T22:00Z
+  dia: '2026-05-22'
+  hasta_utc: 2026-05-22T13:00Z
+  id: caso-eurusd-2026-05-22
+  limites_h4:
+    madrid-00:
+    - 2026-05-21T22:00Z
+    - 2026-05-22T02:00Z
+    - 2026-05-22T06:00Z
+    - 2026-05-22T10:00Z
+    - 2026-05-22T14:00Z
+    servidor-ny-17:
+    - 2026-05-21T21:00Z
+    - 2026-05-22T01:00Z
+    - 2026-05-22T05:00Z
+    - 2026-05-22T09:00Z
+    - 2026-05-22T13:00Z
+  n_velas: 889
+  sha256: 462bea7546bcfa5a41bc35924808f3ccb1060b52550c8b9894083393fbd4ab12
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-25T22:00Z
+  dia: '2026-05-26'
+  hasta_utc: 2026-05-26T13:00Z
+  id: caso-eurusd-2026-05-26
+  limites_h4:
+    madrid-00:
+    - 2026-05-25T22:00Z
+    - 2026-05-26T02:00Z
+    - 2026-05-26T06:00Z
+    - 2026-05-26T10:00Z
+    - 2026-05-26T14:00Z
+    servidor-ny-17:
+    - 2026-05-25T21:00Z
+    - 2026-05-26T01:00Z
+    - 2026-05-26T05:00Z
+    - 2026-05-26T09:00Z
+    - 2026-05-26T13:00Z
+  n_velas: 897
+  sha256: 9bd755a9083c19f74c47ab0c60d7145bca435a63e1f3230c6bd4270a6cac0577
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-26T22:00Z
+  dia: '2026-05-27'
+  hasta_utc: 2026-05-27T13:00Z
+  id: caso-eurusd-2026-05-27
+  limites_h4:
+    madrid-00:
+    - 2026-05-26T22:00Z
+    - 2026-05-27T02:00Z
+    - 2026-05-27T06:00Z
+    - 2026-05-27T10:00Z
+    - 2026-05-27T14:00Z
+    servidor-ny-17:
+    - 2026-05-26T21:00Z
+    - 2026-05-27T01:00Z
+    - 2026-05-27T05:00Z
+    - 2026-05-27T09:00Z
+    - 2026-05-27T13:00Z
+  n_velas: 892
+  sha256: c15e5dd31dc9caad38d13a4a5a4360c3cb91ca3557ebbdf7090be9e84b7a399f
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-27T22:00Z
+  dia: '2026-05-28'
+  hasta_utc: 2026-05-28T13:00Z
+  id: caso-eurusd-2026-05-28
+  limites_h4:
+    madrid-00:
+    - 2026-05-27T22:00Z
+    - 2026-05-28T02:00Z
+    - 2026-05-28T06:00Z
+    - 2026-05-28T10:00Z
+    - 2026-05-28T14:00Z
+    servidor-ny-17:
+    - 2026-05-27T21:00Z
+    - 2026-05-28T01:00Z
+    - 2026-05-28T05:00Z
+    - 2026-05-28T09:00Z
+    - 2026-05-28T13:00Z
+  n_velas: 897
+  sha256: 063a468799c4ac61c57a83bf7a8d5766570ace4918c513cb6faa71d5ff239eb6
+- dataset_id: eurusd-m1-2026-05-03d048ed
+  desde_utc: 2026-05-28T22:00Z
+  dia: '2026-05-29'
+  hasta_utc: 2026-05-29T13:00Z
+  id: caso-eurusd-2026-05-29
+  limites_h4:
+    madrid-00:
+    - 2026-05-28T22:00Z
+    - 2026-05-29T02:00Z
+    - 2026-05-29T06:00Z
+    - 2026-05-29T10:00Z
+    - 2026-05-29T14:00Z
+    servidor-ny-17:
+    - 2026-05-28T21:00Z
+    - 2026-05-29T01:00Z
+    - 2026-05-29T05:00Z
+    - 2026-05-29T09:00Z
+    - 2026-05-29T13:00Z
+  n_velas: 894
+  sha256: a3242e252ffe6908bd26035b13a32006a1586652b75976c43c80e281781b27b9
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-05-31T22:00Z
+  dia: '2026-06-01'
+  hasta_utc: 2026-06-01T13:00Z
+  id: caso-eurusd-2026-06-01
+  limites_h4:
+    madrid-00:
+    - 2026-05-31T22:00Z
+    - 2026-06-01T02:00Z
+    - 2026-06-01T06:00Z
+    - 2026-06-01T10:00Z
+    - 2026-06-01T14:00Z
+    servidor-ny-17:
+    - 2026-05-31T21:00Z
+    - 2026-06-01T01:00Z
+    - 2026-06-01T05:00Z
+    - 2026-06-01T09:00Z
+    - 2026-06-01T13:00Z
+  n_velas: 899
+  sha256: 1decac022f93a05c73b305076f1d4a79e845b4ed43953df5952e30d4270c1977
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-01T22:00Z
+  dia: '2026-06-02'
+  hasta_utc: 2026-06-02T13:00Z
+  id: caso-eurusd-2026-06-02
+  limites_h4:
+    madrid-00:
+    - 2026-06-01T22:00Z
+    - 2026-06-02T02:00Z
+    - 2026-06-02T06:00Z
+    - 2026-06-02T10:00Z
+    - 2026-06-02T14:00Z
+    servidor-ny-17:
+    - 2026-06-01T21:00Z
+    - 2026-06-02T01:00Z
+    - 2026-06-02T05:00Z
+    - 2026-06-02T09:00Z
+    - 2026-06-02T13:00Z
+  n_velas: 892
+  sha256: 31adce3ad238b624a62734e1c7c321ce8e2214c37e26dc339b7a64e058f3f390
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-02T22:00Z
+  dia: '2026-06-03'
+  hasta_utc: 2026-06-03T13:00Z
+  id: caso-eurusd-2026-06-03
+  limites_h4:
+    madrid-00:
+    - 2026-06-02T22:00Z
+    - 2026-06-03T02:00Z
+    - 2026-06-03T06:00Z
+    - 2026-06-03T10:00Z
+    - 2026-06-03T14:00Z
+    servidor-ny-17:
+    - 2026-06-02T21:00Z
+    - 2026-06-03T01:00Z
+    - 2026-06-03T05:00Z
+    - 2026-06-03T09:00Z
+    - 2026-06-03T13:00Z
+  n_velas: 899
+  sha256: 668d3f28cd5512ded13451ebfcde94eae24d7885f4404a250a8f167baf6ddbde
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-03T22:00Z
+  dia: '2026-06-04'
+  hasta_utc: 2026-06-04T13:00Z
+  id: caso-eurusd-2026-06-04
+  limites_h4:
+    madrid-00:
+    - 2026-06-03T22:00Z
+    - 2026-06-04T02:00Z
+    - 2026-06-04T06:00Z
+    - 2026-06-04T10:00Z
+    - 2026-06-04T14:00Z
+    servidor-ny-17:
+    - 2026-06-03T21:00Z
+    - 2026-06-04T01:00Z
+    - 2026-06-04T05:00Z
+    - 2026-06-04T09:00Z
+    - 2026-06-04T13:00Z
+  n_velas: 898
+  sha256: f7396b882135ad22ec9d44cf567347ce103f75f6c3c91e02db0f41bc82967cbd
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-04T22:00Z
+  dia: '2026-06-05'
+  hasta_utc: 2026-06-05T13:00Z
+  id: caso-eurusd-2026-06-05
+  limites_h4:
+    madrid-00:
+    - 2026-06-04T22:00Z
+    - 2026-06-05T02:00Z
+    - 2026-06-05T06:00Z
+    - 2026-06-05T10:00Z
+    - 2026-06-05T14:00Z
+    servidor-ny-17:
+    - 2026-06-04T21:00Z
+    - 2026-06-05T01:00Z
+    - 2026-06-05T05:00Z
+    - 2026-06-05T09:00Z
+    - 2026-06-05T13:00Z
+  n_velas: 896
+  sha256: 40933c5c4c0f09939284a3226978fb52f993cc8f65017d62a4898df9ce7c6b12
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-07T22:00Z
+  dia: '2026-06-08'
+  hasta_utc: 2026-06-08T13:00Z
+  id: caso-eurusd-2026-06-08
+  limites_h4:
+    madrid-00:
+    - 2026-06-07T22:00Z
+    - 2026-06-08T02:00Z
+    - 2026-06-08T06:00Z
+    - 2026-06-08T10:00Z
+    - 2026-06-08T14:00Z
+    servidor-ny-17:
+    - 2026-06-07T21:00Z
+    - 2026-06-08T01:00Z
+    - 2026-06-08T05:00Z
+    - 2026-06-08T09:00Z
+    - 2026-06-08T13:00Z
+  n_velas: 900
+  sha256: 496a8b2bfb9a9b57208ee61faaf2307d80529232e9014766708a9e2dc70e7746
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-08T22:00Z
+  dia: '2026-06-09'
+  hasta_utc: 2026-06-09T13:00Z
+  id: caso-eurusd-2026-06-09
+  limites_h4:
+    madrid-00:
+    - 2026-06-08T22:00Z
+    - 2026-06-09T02:00Z
+    - 2026-06-09T06:00Z
+    - 2026-06-09T10:00Z
+    - 2026-06-09T14:00Z
+    servidor-ny-17:
+    - 2026-06-08T21:00Z
+    - 2026-06-09T01:00Z
+    - 2026-06-09T05:00Z
+    - 2026-06-09T09:00Z
+    - 2026-06-09T13:00Z
+  n_velas: 892
+  sha256: 11e7952480f86a675f6651116b023deb61ae13ee71379dd8e4133c4a9c5f5dec
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-09T22:00Z
+  dia: '2026-06-10'
+  hasta_utc: 2026-06-10T13:00Z
+  id: caso-eurusd-2026-06-10
+  limites_h4:
+    madrid-00:
+    - 2026-06-09T22:00Z
+    - 2026-06-10T02:00Z
+    - 2026-06-10T06:00Z
+    - 2026-06-10T10:00Z
+    - 2026-06-10T14:00Z
+    servidor-ny-17:
+    - 2026-06-09T21:00Z
+    - 2026-06-10T01:00Z
+    - 2026-06-10T05:00Z
+    - 2026-06-10T09:00Z
+    - 2026-06-10T13:00Z
+  n_velas: 899
+  sha256: a938783ff088f4a136ee2016e2f605a30ff0f7670986a27961c252ff27de4d15
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-10T22:00Z
+  dia: '2026-06-11'
+  hasta_utc: 2026-06-11T13:00Z
+  id: caso-eurusd-2026-06-11
+  limites_h4:
+    madrid-00:
+    - 2026-06-10T22:00Z
+    - 2026-06-11T02:00Z
+    - 2026-06-11T06:00Z
+    - 2026-06-11T10:00Z
+    - 2026-06-11T14:00Z
+    servidor-ny-17:
+    - 2026-06-10T21:00Z
+    - 2026-06-11T01:00Z
+    - 2026-06-11T05:00Z
+    - 2026-06-11T09:00Z
+    - 2026-06-11T13:00Z
+  n_velas: 900
+  sha256: 0a0895cb95158deb8f95c730b7778113adcf35e5690b8bbb4337ddd2bce5490b
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-11T22:00Z
+  dia: '2026-06-12'
+  hasta_utc: 2026-06-12T13:00Z
+  id: caso-eurusd-2026-06-12
+  limites_h4:
+    madrid-00:
+    - 2026-06-11T22:00Z
+    - 2026-06-12T02:00Z
+    - 2026-06-12T06:00Z
+    - 2026-06-12T10:00Z
+    - 2026-06-12T14:00Z
+    servidor-ny-17:
+    - 2026-06-11T21:00Z
+    - 2026-06-12T01:00Z
+    - 2026-06-12T05:00Z
+    - 2026-06-12T09:00Z
+    - 2026-06-12T13:00Z
+  n_velas: 899
+  sha256: 6eb03a7a4f89f62e497081840bfdbe48f05201a7b8d5b1f1a553bcb25fef22d5
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-14T22:00Z
+  dia: '2026-06-15'
+  hasta_utc: 2026-06-15T13:00Z
+  id: caso-eurusd-2026-06-15
+  limites_h4:
+    madrid-00:
+    - 2026-06-14T22:00Z
+    - 2026-06-15T02:00Z
+    - 2026-06-15T06:00Z
+    - 2026-06-15T10:00Z
+    - 2026-06-15T14:00Z
+    servidor-ny-17:
+    - 2026-06-14T21:00Z
+    - 2026-06-15T01:00Z
+    - 2026-06-15T05:00Z
+    - 2026-06-15T09:00Z
+    - 2026-06-15T13:00Z
+  n_velas: 900
+  sha256: 6da8ccb8615974c59d32960a269e3193a47c39cbad7d24b7fb15f17c34eca212
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-15T22:00Z
+  dia: '2026-06-16'
+  hasta_utc: 2026-06-16T13:00Z
+  id: caso-eurusd-2026-06-16
+  limites_h4:
+    madrid-00:
+    - 2026-06-15T22:00Z
+    - 2026-06-16T02:00Z
+    - 2026-06-16T06:00Z
+    - 2026-06-16T10:00Z
+    - 2026-06-16T14:00Z
+    servidor-ny-17:
+    - 2026-06-15T21:00Z
+    - 2026-06-16T01:00Z
+    - 2026-06-16T05:00Z
+    - 2026-06-16T09:00Z
+    - 2026-06-16T13:00Z
+  n_velas: 896
+  sha256: 573ee500227ca6d701a25cdbb5adee148098010e515949e3717e23e909ac39b4
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-16T22:00Z
+  dia: '2026-06-17'
+  hasta_utc: 2026-06-17T13:00Z
+  id: caso-eurusd-2026-06-17
+  limites_h4:
+    madrid-00:
+    - 2026-06-16T22:00Z
+    - 2026-06-17T02:00Z
+    - 2026-06-17T06:00Z
+    - 2026-06-17T10:00Z
+    - 2026-06-17T14:00Z
+    servidor-ny-17:
+    - 2026-06-16T21:00Z
+    - 2026-06-17T01:00Z
+    - 2026-06-17T05:00Z
+    - 2026-06-17T09:00Z
+    - 2026-06-17T13:00Z
+  n_velas: 897
+  sha256: a5a721a079cca020c68070e4d384c724d58e287091ff64cb1e4e75e65727e3e7
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-17T22:00Z
+  dia: '2026-06-18'
+  hasta_utc: 2026-06-18T13:00Z
+  id: caso-eurusd-2026-06-18
+  limites_h4:
+    madrid-00:
+    - 2026-06-17T22:00Z
+    - 2026-06-18T02:00Z
+    - 2026-06-18T06:00Z
+    - 2026-06-18T10:00Z
+    - 2026-06-18T14:00Z
+    servidor-ny-17:
+    - 2026-06-17T21:00Z
+    - 2026-06-18T01:00Z
+    - 2026-06-18T05:00Z
+    - 2026-06-18T09:00Z
+    - 2026-06-18T13:00Z
+  n_velas: 899
+  sha256: 0c0dc66129f52b6b66a8ef19a0366be736bcda1b164b5c48cf10fc1f7e9cd376
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-18T22:00Z
+  dia: '2026-06-19'
+  hasta_utc: 2026-06-19T13:00Z
+  id: caso-eurusd-2026-06-19
+  limites_h4:
+    madrid-00:
+    - 2026-06-18T22:00Z
+    - 2026-06-19T02:00Z
+    - 2026-06-19T06:00Z
+    - 2026-06-19T10:00Z
+    - 2026-06-19T14:00Z
+    servidor-ny-17:
+    - 2026-06-18T21:00Z
+    - 2026-06-19T01:00Z
+    - 2026-06-19T05:00Z
+    - 2026-06-19T09:00Z
+    - 2026-06-19T13:00Z
+  n_velas: 898
+  sha256: aff9f7f62434da71495df6a04d03a3fb897ea416c9eed869d2404bf85b5e64ba
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-21T22:00Z
+  dia: '2026-06-22'
+  hasta_utc: 2026-06-22T13:00Z
+  id: caso-eurusd-2026-06-22
+  limites_h4:
+    madrid-00:
+    - 2026-06-21T22:00Z
+    - 2026-06-22T02:00Z
+    - 2026-06-22T06:00Z
+    - 2026-06-22T10:00Z
+    - 2026-06-22T14:00Z
+    servidor-ny-17:
+    - 2026-06-21T21:00Z
+    - 2026-06-22T01:00Z
+    - 2026-06-22T05:00Z
+    - 2026-06-22T09:00Z
+    - 2026-06-22T13:00Z
+  n_velas: 900
+  sha256: 9caf1382ae2bb1bddb12e32382c7105c83edfca5af740f9e299e5d39fd69afb2
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-22T22:00Z
+  dia: '2026-06-23'
+  hasta_utc: 2026-06-23T13:00Z
+  id: caso-eurusd-2026-06-23
+  limites_h4:
+    madrid-00:
+    - 2026-06-22T22:00Z
+    - 2026-06-23T02:00Z
+    - 2026-06-23T06:00Z
+    - 2026-06-23T10:00Z
+    - 2026-06-23T14:00Z
+    servidor-ny-17:
+    - 2026-06-22T21:00Z
+    - 2026-06-23T01:00Z
+    - 2026-06-23T05:00Z
+    - 2026-06-23T09:00Z
+    - 2026-06-23T13:00Z
+  n_velas: 896
+  sha256: 6b4d9be1e69ac59b6935196e3a84382e5f9ca59a73805a619db979c811ba27ef
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-23T22:00Z
+  dia: '2026-06-24'
+  hasta_utc: 2026-06-24T13:00Z
+  id: caso-eurusd-2026-06-24
+  limites_h4:
+    madrid-00:
+    - 2026-06-23T22:00Z
+    - 2026-06-24T02:00Z
+    - 2026-06-24T06:00Z
+    - 2026-06-24T10:00Z
+    - 2026-06-24T14:00Z
+    servidor-ny-17:
+    - 2026-06-23T21:00Z
+    - 2026-06-24T01:00Z
+    - 2026-06-24T05:00Z
+    - 2026-06-24T09:00Z
+    - 2026-06-24T13:00Z
+  n_velas: 897
+  sha256: 60bec2c70955031a6dde507acd87ad06d323936851e8d1b055ba40377b076074
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-24T22:00Z
+  dia: '2026-06-25'
+  hasta_utc: 2026-06-25T13:00Z
+  id: caso-eurusd-2026-06-25
+  limites_h4:
+    madrid-00:
+    - 2026-06-24T22:00Z
+    - 2026-06-25T02:00Z
+    - 2026-06-25T06:00Z
+    - 2026-06-25T10:00Z
+    - 2026-06-25T14:00Z
+    servidor-ny-17:
+    - 2026-06-24T21:00Z
+    - 2026-06-25T01:00Z
+    - 2026-06-25T05:00Z
+    - 2026-06-25T09:00Z
+    - 2026-06-25T13:00Z
+  n_velas: 899
+  sha256: 5b430462c91d7d04cdbc6630a4cca4788d10364c147223c721139392f6c24875
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-25T22:00Z
+  dia: '2026-06-26'
+  hasta_utc: 2026-06-26T13:00Z
+  id: caso-eurusd-2026-06-26
+  limites_h4:
+    madrid-00:
+    - 2026-06-25T22:00Z
+    - 2026-06-26T02:00Z
+    - 2026-06-26T06:00Z
+    - 2026-06-26T10:00Z
+    - 2026-06-26T14:00Z
+    servidor-ny-17:
+    - 2026-06-25T21:00Z
+    - 2026-06-26T01:00Z
+    - 2026-06-26T05:00Z
+    - 2026-06-26T09:00Z
+    - 2026-06-26T13:00Z
+  n_velas: 899
+  sha256: edb6eae6425ac01bdcca65d4ab7f624469b9be8cae3952401f32bd6878c25203
+- dataset_id: eurusd-m1-2026-06-9c45983f
+  desde_utc: 2026-06-29T22:00Z
+  dia: '2026-06-30'
+  hasta_utc: 2026-06-30T13:00Z
+  id: caso-eurusd-2026-06-30
+  limites_h4:
+    madrid-00:
+    - 2026-06-29T22:00Z
+    - 2026-06-30T02:00Z
+    - 2026-06-30T06:00Z
+    - 2026-06-30T10:00Z
+    - 2026-06-30T14:00Z
+    servidor-ny-17:
+    - 2026-06-29T21:00Z
+    - 2026-06-30T01:00Z
+    - 2026-06-30T05:00Z
+    - 2026-06-30T09:00Z
+    - 2026-06-30T13:00Z
+  n_velas: 896
+  sha256: 520b6883cbd8c42d5500c2c395d4a642ff8866e17d0eb7d7452969238618b2f7
+config:
+  anclajes_candidatos:
+  - coincide_con_sesiones: false
+    etiqueta: madrid-00
+    hora: 00:00
+    huso: Europe/Madrid
+  - coincide_con_sesiones: true
+    etiqueta: servidor-ny-17
+    hora: '17:00'
+    huso: America/New_York
+  dataset_prefijo: eurusd-m1-
+  etiquetas:
+  - compra
+  - venta
+  - no_trade
+  min_velas_ventana: 850
+  particiones:
+    dev: 16
+    holdout-1: 8
+    holdout-2: 8
+    holdout-3: 8
+  sesiones:
+  - desde: 07:00
+    hasta: '11:00'
+    nombre: 07-11
+  - desde: '11:00'
+    hasta: '15:00'
+    nombre: 11-15
+  simbolo: EURUSD
+  ventana_local:
+    desde: 00:00
+    hasta: '15:00'
+excluidos:
+- dia: '2026-01-01'
+  motivo: mes visto por el trader
+- dia: '2026-01-02'
+  motivo: mes visto por el trader
+- dia: '2026-01-05'
+  motivo: mes visto por el trader
+- dia: '2026-01-06'
+  motivo: mes visto por el trader
+- dia: '2026-01-07'
+  motivo: mes visto por el trader
+- dia: '2026-01-08'
+  motivo: mes visto por el trader
+- dia: '2026-01-09'
+  motivo: mes visto por el trader
+- dia: '2026-01-12'
+  motivo: mes visto por el trader
+- dia: '2026-01-13'
+  motivo: mes visto por el trader
+- dia: '2026-01-14'
+  motivo: mes visto por el trader
+- dia: '2026-01-15'
+  motivo: mes visto por el trader
+- dia: '2026-01-16'
+  motivo: mes visto por el trader
+- dia: '2026-01-19'
+  motivo: mes visto por el trader
+- dia: '2026-01-20'
+  motivo: mes visto por el trader
+- dia: '2026-01-21'
+  motivo: mes visto por el trader
+- dia: '2026-01-22'
+  motivo: mes visto por el trader
+- dia: '2026-01-23'
+  motivo: mes visto por el trader
+- dia: '2026-01-26'
+  motivo: mes visto por el trader
+- dia: '2026-01-27'
+  motivo: mes visto por el trader
+- dia: '2026-01-28'
+  motivo: mes visto por el trader
+- dia: '2026-01-29'
+  motivo: mes visto por el trader
+- dia: '2026-01-30'
+  motivo: mes visto por el trader
+- dia: '2026-05-01'
+  motivo: ventana [2026-04-30T22:00Z, 2026-05-01T13:00Z) fuera del dataset [2026-05-01T00:00Z, 2026-05-31T23:59Z]
+- dia: '2026-07-01'
+  motivo: mes visto por el trader
+- dia: '2026-07-02'
+  motivo: mes visto por el trader
+- dia: '2026-07-03'
+  motivo: mes visto por el trader
+- dia: '2026-07-06'
+  motivo: mes visto por el trader
+- dia: '2026-07-07'
+  motivo: mes visto por el trader
+- dia: '2026-07-08'
+  motivo: mes visto por el trader
+- dia: '2026-07-09'
+  motivo: mes visto por el trader
+- dia: '2026-07-10'
+  motivo: mes visto por el trader
+- dia: '2026-07-13'
+  motivo: mes visto por el trader
+- dia: '2026-07-14'
+  motivo: mes visto por el trader
+- dia: '2026-07-15'
+  motivo: mes visto por el trader
+- dia: '2026-07-16'
+  motivo: mes visto por el trader
+- dia: '2026-07-17'
+  motivo: mes visto por el trader
+- dia: '2026-07-20'
+  motivo: mes visto por el trader
+- dia: '2026-07-21'
+  motivo: mes visto por el trader
+- dia: '2026-07-22'
+  motivo: mes visto por el trader
+- dia: '2026-07-23'
+  motivo: mes visto por el trader
+- dia: '2026-07-24'
+  motivo: mes visto por el trader
+- dia: '2026-07-27'
+  motivo: mes visto por el trader
+- dia: '2026-07-28'
+  motivo: mes visto por el trader
+- dia: '2026-07-29'
+  motivo: mes visto por el trader
+- dia: '2026-07-30'
+  motivo: mes visto por el trader
+- dia: '2026-07-31'
+  motivo: mes visto por el trader
+- dia: '2026-08-03'
+  motivo: mes visto por el trader
+- dia: '2026-08-04'
+  motivo: mes visto por el trader
+- dia: '2026-08-05'
+  motivo: mes visto por el trader
+- dia: '2026-08-06'
+  motivo: mes visto por el trader
+- dia: '2026-08-07'
+  motivo: mes visto por el trader
+- dia: '2026-08-10'
+  motivo: mes visto por el trader
+- dia: '2026-08-11'
+  motivo: mes visto por el trader
+- dia: '2026-08-12'
+  motivo: mes visto por el trader
+- dia: '2026-08-13'
+  motivo: mes visto por el trader
+- dia: '2026-08-14'
+  motivo: mes visto por el trader
+- dia: '2026-08-17'
+  motivo: mes visto por el trader
+- dia: '2026-08-18'
+  motivo: mes visto por el trader
+- dia: '2026-08-19'
+  motivo: mes visto por el trader
+- dia: '2026-08-20'
+  motivo: mes visto por el trader
+- dia: '2026-08-21'
+  motivo: mes visto por el trader
+- dia: '2026-08-24'
+  motivo: mes visto por el trader
+- dia: '2026-08-25'
+  motivo: mes visto por el trader
+- dia: '2026-08-26'
+  motivo: mes visto por el trader
+- dia: '2026-08-27'
+  motivo: mes visto por el trader
+- dia: '2026-08-28'
+  motivo: mes visto por el trader
+- dia: '2026-08-31'
+  motivo: mes visto por el trader
+huso_operativa: Europe/Madrid
+sesion: 2026-09-15-sesion-01
+universo: 42
