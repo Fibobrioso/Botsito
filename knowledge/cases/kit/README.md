@@ -40,3 +40,15 @@ regenera cuando cambian el paquete o `contexto_preguntas.yaml`.
 ## Condicion previa de cada sesion
 El trader confirma por escrito (registro F09, `medio: escrito`) que no ha operado ni
 backtesteado los meses del paquete; si lo ha hecho, se anaden a `vistos.yaml` y se regenera.
+
+Esa confirmacion se registra como `CONFIRM` sobre un objetivo de tipo `paquete` cuyo id es la
+propia sesion (`--objetivo-tipo paquete --objetivo-id <sesion>`). Si el trader dice que si los ha
+visto, es un `REJECT` sobre el mismo objetivo: el mes se anade a `vistos.yaml` citando ese
+`fb-...` en `fuente`, y el paquete se regenera desde cero.
+
+## Si cambia la fecha de la sesion
+`kit build` no sobreescribe: se borra la carpeta del paquete viejo y se vuelve a construir con la
+fecha nueva. **Hay que reutilizar el mismo `--seed`.** El seed decide que dias caen en `dev` y
+cuales quedan en holdout; con otro seed el paquete sale con dias distintos, sin aviso y sin que
+nada falle. Cambiar el seed solo tiene sentido si se quiere un sorteo nuevo a proposito. Despues
+de reconstruir, regenerar la hoja en Word: es lo ultimo que se hace antes de imprimir.
