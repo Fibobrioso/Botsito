@@ -77,9 +77,11 @@ insuficiente, la decision de anadir otra cosa se registra en un ADR, no aqui.
    trozos) -> [(inicio, fin)]`, funcion NUEVA que devuelve TODAS las apariciones y no impone
    minimos de tokens (solo trozos no vacios); `localizar_cita` pasa a usarla (mismo resultado que
    hoy: sus minimos y la ventana se quedan en `localizar_cita`). En la cruda la frase se busca
-   sobre el flujo de tokens de toda la transcripcion y puede cruzar segmentos (se listan los
-   segmentos tocados, fuente `tr-*/n0-n1`); en los items, por campo. `--prefijo`: cada termino
-   casa con los tokens que empiezan por el. Sin sinonimos ni stemming.
+   sobre el flujo de tokens de toda la transcripcion (cruda Y corregida) y puede cruzar hasta 3
+   segmentos consecutivos (`MAX_SEGMENTOS_FRASE`; un salto mayor no es la misma frase); se listan
+   los segmentos tocados, fuente `tr-*/n0-n1`; en los items, por campo. `--prefijo`: cada termino
+   casa con los tokens que empiezan por el; no se combina con `--frase`. Sin sinonimos ni stemming.
+   (Ajustes de la auditoria de cierre I1/I2/M1.)
 7. **Filtros**: `--video`, `--tema` (raiz o tema completo; implica `--solo evidencia`: los
    segmentos no tienen tema), `--desde`/`--hasta` (exigen `--video`; `--desde` > `--hasta` es
    error), `--solo evidencia|cruda`, `--top N` (sin limite por defecto; `N < 1` es error).

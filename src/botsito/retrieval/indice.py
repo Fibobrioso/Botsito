@@ -29,10 +29,16 @@ from botsito.corpus.manifiestos_transcripcion import (
     cargar_todos,
     carpeta_de,
 )
-from botsito.corpus.pipeline_transcripcion import FICHERO_CRUDA, Capas, cargar_capas
-from botsito.corpus.transcripcion import Segmento
+from botsito.corpus.pipeline_transcripcion import (
+    FICHERO_CRUDA,
+    Capas,
+    cargar_capas,
+    cargar_cruda,
+)
+from botsito.corpus.transcripcion import Segmento, TranscripcionError
 from botsito.evidence import contradicciones
 from botsito.evidence.modelo import EvidenceItem, cargar_evidencia
+from botsito.evidence.propuestas import FICHERO_TEMAS, PropuestaError, cargar_temas
 from botsito.evidence.verificacion import tokens
 
 TIPO_EVIDENCIA = "evidencia"
@@ -96,6 +102,7 @@ class Indice:
     reemplazados: dict[str, str] = field(
         default_factory=dict
     )  # item viejo -> item que lo supersede
+    temas_raiz: frozenset[str] = frozenset()  # de _temas.yaml; vacio si no existe
 
     def ruta_fotograma(self, referencia: str) -> str | None:
         """Ruta POSIX relativa al repo del fichero del fotograma, si esta en la maquina y dentro
@@ -164,11 +171,17 @@ def _documento_segmento(
     return Documento(f"{tid}/{s.n}", TIPO_SEGMENTO, video, s.t0_ms, s.t1_ms, campos, s.texto, extra)
 
 
-def _capas_de(carpeta_datos: Path, t: Transcripcion) -> Capas | None:
+def _capas_de(carpeta_datos: Path, t: Transcripcion, avisos: list[str]) -> Capas | None:
+    """Cruda obligatoria; una corregida ilegible degrada a aviso (ADR-0007: es ayuda de lectura)."""
     carpeta = carpeta_de(carpeta_datos, t)
     if not (carpeta / FICHERO_CRUDA).is_file():
         return None
-    return cargar_capas(carpeta)
+    try:
+        return cargar_capas(carpeta)
+    except TranscripcionError as exc:
+        cruda = cargar_cruda(carpeta)  # si la cruda es la rota, esto lanza y la CLI lo captura
+        avisos.append(f"{t.id}: corregida ilegible ({exc}); se indexa solo la cruda")
+        return Capas(cruda, None, frozenset())
 
 
 def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
@@ -189,10 +202,12 @@ def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
     transcripciones: dict[str, str] = {}
     for t in activos(cargar_todos(repo)):
         transcripciones[t.video_id] = t.id
-        capas = _capas_de(carpeta_datos, t)
+        capas = _capas_de(carpeta_datos, t, avisos)
         if capas is None:
             avisos.append(f"cruda de {t.id} ausente en data/: {t.video_id} solo por evidencia")
             continue
+        if not capas.cruda:
+            avisos.append(f"{t.id}: la cruda no tiene segmentos")
         segmentos[t.video_id] = capas.cruda
         corregidas = {s.n: s.texto for s in capas.corregida or []}
         for s in capas.cruda:
@@ -203,6 +218,11 @@ def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
         if v not in transcripciones:
             avisos.append(f"{v} sin transcripcion activa: solo por evidencia")
     fotogramas = {f.video_id: f for f in fotogramas_activos(cargar_fotogramas(repo))}
+    ruta_temas = repo / FICHERO_TEMAS
+    try:
+        temas_raiz = cargar_temas(ruta_temas).raices if ruta_temas.is_file() else frozenset()
+    except PropuestaError as exc:
+        raise RetrievalError(str(exc)) from exc
     try:
         carpeta_datos.resolve().relative_to(repo.resolve())
     except ValueError:
@@ -219,4 +239,5 @@ def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
         contradicciones.detectar(items),
         avisos,
         reemplazados,
+        temas_raiz,
     )

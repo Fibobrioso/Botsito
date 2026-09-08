@@ -309,7 +309,9 @@ def dudas_de(carpeta: Path) -> set[int]:
     except (OSError, ValueError, IndexError):
         return set()
     dudas = cabecera.get("dudas") if isinstance(cabecera, dict) else None
-    return {int(d) for d in dudas} if isinstance(dudas, list) else set()
+    if not isinstance(dudas, list):
+        return set()
+    return {d for d in dudas if isinstance(d, int) and not isinstance(d, bool)}
 
 
 @dataclass(frozen=True)

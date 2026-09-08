@@ -254,6 +254,17 @@ def test_and_prefijo_y_frase(tmp_path: Path) -> None:
     frase = buscar(ind, "no hay entrada [...] porque cae", Opciones(frase=True)).resultados
     # dos apariciones: "no hay entrada" del segmento 3 con "porque cae" del 4, y la del 4 entera
     assert [x.fuente.rsplit("/", 1)[1] for x in frase] == ["3-4", "4"]
+    assert frase[0].extra["texto_corregido"] is None  # ningun segmento difiere: sin [corregida]
+    # el comodin no une frases lejanas (mas de MAX_SEGMENTOS_FRASE segmentos)
+    assert buscar(ind, "hola [...] porque cae", Opciones(frase=True)).resultados == []
+    # la frase literal de la CRUDA se encuentra aunque el glosario haya tocado el segmento
+    solo_cruda = Opciones(frase=True, solo="cruda")
+    assert len(buscar(ind, "el boss rompe", solo_cruda).resultados) == 1
+    assert len(buscar(ind, "el bos rompe", solo_cruda).resultados) == 1
+    cruzada_desde = buscar(
+        ind, "no hay entrada vale", Opciones(frase=True, video="v1", desde_ms=19000)
+    )
+    assert [x.extra["n"] for x in cruzada_desde.resultados] == [4]
     dos = buscar(ind, "no hay entrada vale", Opciones(frase=True)).resultados
     assert [x.fuente.rsplit("/", 1)[1] for x in dos] == ["3", "4"]
     cruzada = buscar(ind, "en el 0.75 el break even", Opciones(frase=True))
@@ -290,6 +301,8 @@ def test_filtros_orden_top_y_errores(tmp_path: Path) -> None:
         (Opciones(video="v1", desde_ms=5, hasta_ms=1), "posterior"),
         (Opciones(top=0), "top"),
         (Opciones(solo="x"), "solo"),
+        (Opciones(frase=True, prefijo=True), "no se combinan"),
+        (Opciones(tema="stop", solo="cruda"), "implica evidencia"),
     ):
         with pytest.raises(RetrievalError, match=msg):
             buscar(ind, "vale", opciones)
@@ -349,6 +362,7 @@ def test_sin_datos_solo_evidencia_con_avisos(tmp_path: Path) -> None:
     foto = r.resultados[0].fotograma
     assert foto is not None and foto["ruta"] is None
     assert buscar(ind, "vale", Opciones(solo="cruda")).resultados == []
+    assert en_instante(ind, "v1", 12000, 3000).resultados[-1].t0_ms == 0  # t0 del primer item
     assert [x.tipo for x in en_instante(ind, "v1", 1000, 0).resultados] == [
         "evidencia",
         "fotograma",
@@ -365,15 +379,57 @@ def test_salida_con_fuente_sin_rutas_absolutas_y_json(tmp_path: Path) -> None:
         if linea.startswith("#") or linea.startswith("    ") or linea.endswith(" resultados"):
             continue
         assert fuente.match(linea), linea
-    assert not re.search(r"^[A-Za-z]:/|/home/|/Users/", texto, re.M)
+    assert not re.search(r"^[A-Za-z]:[/\\]|/home/|/Users/", texto, re.M)
     doc = json.loads(json_(resultados))
     assert doc[0]["fuente"].startswith("tr-") and list(doc[0]) == sorted(doc[0])
     assert json.loads(json_([])) == []
 
 
+def test_superseded_temas_y_carpeta_fuera(tmp_path: Path) -> None:
+    repo, tid = construir_repo(tmp_path)
+    viejo = next((repo / "knowledge" / "evidence" / "v1").glob("ev-v1-000000-*.yaml")).stem
+    escribir_item(
+        repo / "knowledge" / "evidence",
+        _item(
+            t0="0:00:01",
+            t1="0:00:04",
+            afirmacion="version nueva",
+            supersede=viejo,
+            transcripcion=tid,
+        ),
+    )
+    (repo / "knowledge" / "evidence" / "_temas.yaml").write_text(
+        "raices: [stop, entrada, herramientas]\nvalores_cerrados: []\n", encoding="utf-8"
+    )
+    ind = construir_indice(repo, repo / "data")
+    salida = tabla(buscar(ind, "break even", Opciones(solo="evidencia")).resultados)
+    assert "[superseded por " in salida and "[supersede ev-v1-000000" in salida
+    with pytest.raises(RetrievalError, match="taxonomia"):
+        buscar(ind, "x", Opciones(tema="noexiste"))
+    # carpeta de datos fuera del repo: aviso y rutas None (la referencia sigue)
+    fuera = tmp_path.parent / f"{tmp_path.name}-datos"
+    (repo / "data").rename(fuera)
+    ind2 = construir_indice(repo, fuera)
+    assert any("fuera del repo" in a for a in ind2.avisos)
+    r = buscar(ind2, "bos").resultados[0]
+    assert r.fotograma is not None and r.fotograma["ruta"] is None
+    # correcciones.jsonl con dudas no enteras y corregida ilegible: avisos, no traceback
+    carpeta = fuera / "transcripciones" / "v1" / "falso"
+    (carpeta / "correcciones.jsonl").write_text('{"dudas": ["x", null, 3]}\n', encoding="utf-8")
+    (carpeta / "corregida.jsonl").write_text("{no json", encoding="utf-8")
+    ind3 = construir_indice(repo, fuera)
+    assert any("corregida ilegible" in a for a in ind3.avisos)
+    assert buscar(ind3, "aqui").resultados[0].extra["duda_glosario"] is False
+
+
 def test_cli_kb(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     repo, tid = construir_repo(tmp_path)
     base = ["--repo", str(repo), "kb"]
+    # determinismo de la CLI real: dos ejecuciones = mismos bytes
+    assert cli.main([*base, "at", "--video", "v1", "--t", "0:00:12", "--json"]) == 0
+    primera = capsys.readouterr().out
+    assert cli.main([*base, "at", "--video", "v1", "--t", "0:00:12", "--json"]) == 0
+    assert capsys.readouterr().out == primera
     assert cli.main([*base, "find", "orden limite", "--top", "1"]) == 0
     out = capsys.readouterr()
     assert out.out.startswith("# tiempos") and "ev-v1-000005" in out.out
@@ -400,6 +456,8 @@ def test_cli_kb(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
         (["find", "a [b", "--frase"], "corchetes"),
         (["at", "--video", "v1", "--t", "0:99:99"], "ERROR"),
         (["at", "--video", "v1", "--t", "0:00:01", "--margen-s", "121"], "margen"),
+        (["at", "--video", "v1", "--t", "0:00:01", "--margen-s", "inf"], "finito"),
+        (["find", "bre", "--frase", "--prefijo"], "no se combinan"),
     ):
         assert cli.main([*base, *argv]) == 1
         assert msg in capsys.readouterr().err

@@ -24,6 +24,9 @@ from botsito.retrieval.indice import (
 TIPO_FOTOGRAMA = "fotograma"
 TIPO_CONTRADICCION = "contradiccion"
 MARGEN_MAX_MS = 120_000
+MAX_SEGMENTOS_FRASE = 3
+"""Una frase con comodin puede cruzar como maximo este numero de segmentos consecutivos de la
+cruda (5-15 s cada uno); un salto mayor no es "la misma frase" (auditoria de cierre I1)."""
 _ORDEN_TIPO = {TIPO_EVIDENCIA: 0, TIPO_SEGMENTO: 1, TIPO_FOTOGRAMA: 2, TIPO_CONTRADICCION: 3}
 
 
@@ -90,6 +93,17 @@ def _comprobar_opciones(indice: Indice, opciones: Opciones) -> None:
         raise RetrievalError("--solo admite evidencia o cruda")
     if opciones.top is not None and opciones.top < 1:
         raise RetrievalError("--top debe ser >= 1")
+    if opciones.frase and opciones.prefijo:
+        raise RetrievalError("--frase y --prefijo no se combinan (la frase es literal)")
+    if opciones.tema and opciones.solo == "cruda":
+        raise RetrievalError("--tema implica evidencia: no se combina con --solo cruda")
+    if opciones.tema and indice.temas_raiz:
+        raiz = opciones.tema.split(".")[0]
+        if raiz not in indice.temas_raiz:
+            raise RetrievalError(
+                f"tema {opciones.tema!r} fuera de la taxonomia (raiz {raiz!r} no esta en "
+                "_temas.yaml)"
+            )
 
 
 def _trozos(texto: str) -> list[list[str]]:
@@ -155,20 +169,23 @@ def _frase_en_cruda(
     docs = {
         d.extra["n"]: d for d in indice.documentos if d.tipo == TIPO_SEGMENTO and d.video == video
     }
-    flujo: list[str] = []
-    dueno: list[int] = []
-    for s in segmentos:
-        capa = docs[s.n].campos.get("corregida") or docs[s.n].campos["cruda"]
-        flujo.extend(capa)
-        dueno.extend([s.n] * len(capa))
+    # Dos flujos: la cruda tal cual y la corregida donde exista (una frase literal de la cruda
+    # debe encontrarse aunque el glosario haya tocado el segmento; auditoria I2).
+    apariciones: set[tuple[int, int]] = set()
+    for capa in ("cruda", "corregida"):
+        flujo: list[str] = []
+        dueno: list[int] = []
+        for s in segmentos:
+            toks = docs[s.n].campos.get(capa) or docs[s.n].campos["cruda"]
+            flujo.extend(toks)
+            dueno.extend([s.n] * len(toks))
+        for inicio, fin, _cortes in buscar_secuencia(flujo, trozos):
+            apariciones.add((dueno[inicio], dueno[fin - 1]))
     salida: list[Resultado] = []
-    vistos: set[tuple[int, int]] = set()
     por_n = {s.n: s for s in segmentos}
-    for inicio, fin, _cortes in buscar_secuencia(flujo, trozos):
-        n0, n1 = dueno[inicio], dueno[fin - 1]
-        if (n0, n1) in vistos:
-            continue
-        vistos.add((n0, n1))
+    for n0, n1 in sorted(apariciones):
+        if n1 - n0 + 1 > MAX_SEGMENTOS_FRASE:
+            continue  # el comodin no une frases lejanas (I1)
         tocados = [por_n[n] for n in range(n0, n1 + 1) if n in por_n]
         if not tocados:
             continue
@@ -179,13 +196,12 @@ def _frase_en_cruda(
         extra["n_hasta"] = n1
         extra["senales"] = sorted({x for s in tocados for x in s.senales})
         extra["duda_glosario"] = any(docs[s.n].extra["duda_glosario"] for s in tocados)
+        difieren = any(docs[s.n].extra["texto_corregido"] is not None for s in tocados)
         extra["texto_corregido"] = (
-            None
-            if n0 == n1
-            else " ".join((docs[s.n].extra["texto_corregido"] or s.texto) for s in tocados)
+            " ".join((docs[s.n].extra["texto_corregido"] or s.texto) for s in tocados)
+            if difieren
+            else None
         )
-        if n0 == n1:
-            extra["texto_corregido"] = base.extra["texto_corregido"]
         r = Resultado(
             fuente,
             TIPO_SEGMENTO,
@@ -248,14 +264,16 @@ def _contradicciones_de(indice: Indice, ids: set[str], video: str, t_ms: int) ->
         implicados = [i["id"] for i in c["items"]]
         if not ids & set(implicados):
             continue
-        t0 = t_ms
+        por_id = {it.id: it for it in indice.items}
+        t0 = min((por_id[i].t0_ms for i in implicados if i in por_id), default=t_ms)
+        t1 = max((por_id[i].t1_ms for i in implicados if i in por_id), default=t_ms)
         salida.append(
             Resultado(
                 f"contradiccion {c['tema']}",
                 TIPO_CONTRADICCION,
                 video,
                 t0,
-                t0,
+                t1,
                 " frente a ".join(str(v) for v in c["valores"]),
                 None,
                 {"tema": c["tema"], "valores": list(c["valores"]), "items": implicados},
@@ -296,8 +314,8 @@ def en_instante(indice: Indice, video: str, t_ms: int, margen_ms: int = 10_000) 
                 foto["referencia"],
                 TIPO_FOTOGRAMA,
                 video,
-                t_ms // 1000 * 1000,
-                t_ms // 1000 * 1000,
+                int(str(foto["referencia"]).rpartition("/")[2]),
+                int(str(foto["referencia"]).rpartition("/")[2]),
                 "",
                 foto,
                 {},

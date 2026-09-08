@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import math
 import re
 import subprocess
 import sys
@@ -984,6 +985,8 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
 
     errores: tuple[type[Exception], ...] = (*_kb_errores(), ValueError)
     try:
+        if not math.isfinite(args.margen_s):
+            raise ValueError("el margen debe ser un numero finito")
         respuesta = en_instante(
             _kb_indice(repo), args.video, parse_ms(args.t), round(args.margen_s * 1000)
         )

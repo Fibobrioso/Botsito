@@ -25,12 +25,15 @@ phase: F08
    aplica al indice y a la consulta; `tokens()` de F07 NO cambia (las citas siguen siendo fieles a
    la cruda). Fallos lexicos conocidos y medidos: `1:3` es un token que no casa con el `1.3` que
    escribe el ASR; `breakeven` no casa con `break even`. No se cambia el glosario aqui (cambiar
-   `vocabulario` obliga a retranscribir).
+   `vocabulario` obliga a retranscribir). Tambien conocido: un numero con UN separador se
+   normaliza como decimal (`10,000` y `10.000` -> `10`; miles y decimales no se distinguen).
 4. **Consultas**: `kb find` = AND de tokens por documento (por campo en los items: cita,
    afirmacion, tema, valor, notas; por segmento en la cruda, con la corregida del mismo `n`);
    `--frase` = secuencia con comodin `[...]` via `evidence.verificacion.buscar_secuencia` (todas
    las apariciones, sin minimos de tokens; por campo en los items, sobre toda la cruda en los
-   segmentos, cruzando segmentos); `--prefijo` = cada termino casa por inicio. Orden fijo
+   segmentos, cruzando como maximo 3 segmentos consecutivos, `MAX_SEGMENTOS_FRASE`, y buscando
+   tanto en la cruda como en la corregida); `--prefijo` = cada termino casa por inicio (no se
+   combina con `--frase`). Orden fijo
    (video, t0, evidencia antes que segmento, fuente); `--top` corta por ese orden; SIN puntuacion
    de relevancia, sinonimos, stemming ni embeddings (MASTER_PLAN, nota de F08: solo si la lexica
    demuestra ser insuficiente, y con otro ADR).
