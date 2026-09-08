@@ -39,6 +39,12 @@ from botsito.evidence.modelo import cargar_evidencia  # noqa: E402
 from botsito.feedback.modelo import TIPOS_OBJETIVO  # noqa: E402
 
 ANCHO = 9638  # A4 menos margenes de 2 cm, en twips
+# La ambiguedad del anclaje de las velas H4: de ella salen la rejilla de horas que ensena la
+# hoja y la captura de pantalla que hay que pedirle al trader.
+ANCLAJE_H4 = "A-9"
+# Tope de una cita en la hoja. La mas larga de hoy son 313 caracteres: el margen existe para
+# que una cita literal que el trader tiene que confirmar no salga recortada.
+LIMITE_CITA = 700
 GRIS = "595959"
 AZUL = "1F3864"
 FONDO = "F2F2F2"
@@ -67,7 +73,7 @@ COLUMNAS_ETIQUETADO = [
 
 def x(texto: object) -> str:
     """Escapa texto para XML y quita los caracteres de control que Word rechaza."""
-    s = str(texto)
+    s = str(texto).replace("\r\n", " ").replace("\r", " ").replace("\n", " ")
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
     return "".join(c for c in s if c >= " " or c == "\t")
 
@@ -168,6 +174,11 @@ def caja(lineas: int = 3, etiqueta: str = "") -> str:
 # --------------------------------------------------------------------------- documento
 
 
+def ciudad(huso: str) -> str:
+    """El nombre legible de un huso: America/New_York -> New York. Sale del dato, no de aqui."""
+    return str(huso).split("/")[-1].replace("_", " ")
+
+
 def hora_local(iso: str, huso: ZoneInfo) -> str:
     return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(huso).strftime("%H:%M")
 
@@ -203,8 +214,8 @@ def _cuerpo(
         )
         for c in casos:
             cita = " ".join(str(c["cita"]).split())
-            if len(cita) > 320:
-                cita = cita[:317] + "..."
+            if len(cita) > LIMITE_CITA:
+                cita = cita[: LIMITE_CITA - 3] + "..."
             partes.append(
                 vineta(f"Video {c['video']}, minuto {c['t0']}: \u201c{cita}\u201d", sz=19)
             )
@@ -238,7 +249,7 @@ def _cuerpo(
     return "".join(partes)
 
 
-def bloque_extra(e: dict[str, Any], n: int, n_total: int) -> str:
+def bloque_extra(e: dict[str, Any], n_total: int) -> str:
     """Pregunta adicional: no nace del registro ni de una ambiguedad, pero tapa un hueco."""
     return _cuerpo(f"{e['id']} de {n_total}. {e['titulo']}", e, referencia=str(e["objetivo"]))
 
@@ -360,17 +371,27 @@ def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str
 
 
 def bloque_etiquetado(
-    casos: list[dict[str, Any]], asignacion: dict[str, str], config: Any, huso: ZoneInfo
+    casos: list[dict[str, Any]],
+    asignacion: dict[str, str],
+    config: Any,
+    huso: ZoneInfo,
+    ref_anclaje: str,
 ) -> str:
     dev = sorted((c for c in casos if asignacion.get(c["id"]) == "dev"), key=lambda c: c["dia"])
     anclaje = next(a for a in config.anclajes if a.coincide_con_sesiones)
     rejillas = {
         tuple(hora_local(t, huso) for t in c["limites_h4"].get(anclaje.etiqueta, [])) for c in dev
     }
+    if not dev:
+        raise SystemExit(
+            "el paquete no tiene ningun caso en la particion dev: la hoja no tendria nada que "
+            "etiquetar; revisa los cupos de config.yaml"
+        )
     partes = [titulo("Cuarta parte: etiquetado de los días", 1)]
     partes.append(
         texto_simple(
-            f"Son {len(dev)} días de EURUSD que no has visto nunca. Ábrelos en replay uno a uno y, "
+            f"Son {len(dev)} días de EURUSD que, según lo que has confirmado al principio de esta "
+            "hoja, no has visto. Ábrelos en replay uno a uno y, "
             "para cada una de tus dos sesiones, dinos qué habrías hecho: comprar, vender o no "
             "operar. "
             "Si operas, apunta la hora de entrada, el precio de entrada, el stop y el objetivo. "
@@ -381,13 +402,21 @@ def bloque_etiquetado(
     sesiones = ", ".join(f"{s.nombre} de {s.desde} a {s.hasta}" for s in config.sesiones)
     partes.append(
         vineta(
-            f"Día operativo: de {config.ventana_local[0]} a "
-            f"{config.ventana_local[1]}, hora tuya. Sesiones: {sesiones}."
+            f"Gráfico que verás: de {config.ventana_local[0]} a {config.ventana_local[1]}, "
+            "hora tuya, para que tengas contexto de la madrugada. Lo que etiquetas son solo tus "
+            f"dos sesiones: {sesiones}."
         )
     )
     if len(rejillas) == 1:
         horas = " · ".join(next(iter(rejillas)))
-        partes.append(vineta(f"En todos estos días tus velas de 4 horas abren a: {horas}."))
+        partes.append(
+            vineta(
+                f"Suponiendo que tu gráfico empieza la vela de 4 horas a las {anclaje.hora} de "
+                f"la hora de {ciudad(anclaje.huso)}, que es lo que creemos, en todos estos "
+                f"días tus velas de 4 horas abrirían a: {horas}. Es una suposición nuestra, y es "
+                f"justo lo que confirmas en la pregunta {ref_anclaje}."
+            )
+        )
     partes.append(vineta("Decisión: " + " / ".join(config.etiquetas) + "."))
     partes.append(texto_simple(""))
     cab = [parrafo(run(t, negrita=True, sz=17)) for t, _ in COLUMNAS_ETIQUETADO]
@@ -409,6 +438,18 @@ def bloque_etiquetado(
     return "".join(partes)
 
 
+def numero_de_pregunta(preguntas: list[dict[str, Any]], origen: str) -> str:
+    """El `P-NN` que le toco a un origen en ESTE paquete.
+
+    `kit build` renumera las preguntas cada vez, asi que escribir un `P-03` a mano en el texto
+    de la hoja es una referencia que se rompe en silencio al cambiar el cuestionario.
+    """
+    for p in preguntas:
+        if any(o["id"] == origen for o in p["origenes"]):
+            return str(p["id"])
+    raise SystemExit(f"ninguna pregunta del paquete nace de {origen!r}; revisa el cuestionario")
+
+
 def documento(repo: Path, sesion: str) -> str:
     cuestionario, ventanas, particiones = esquema_paquete(repo, sesion)
     config = cargar_config(repo / DIRECTORIO_KIT / "config.yaml")
@@ -420,6 +461,10 @@ def documento(repo: Path, sesion: str) -> str:
     casos = ventanas["casos"]
     meses = sorted({str(c["dia"])[:7] for c in casos})
     preguntas = cuestionario["preguntas"]
+    # Numeros y recuentos derivados del paquete: escribirlos a mano en el texto de la hoja los
+    # deja apuntando a otra pregunta en cuanto `kit build` renumera.
+    ref_anclaje = numero_de_pregunta(preguntas, ANCLAJE_H4)
+    bloqueantes = [str(p["id"]) for p in preguntas if p["bloqueante"]]
 
     partes = [titulo("Sesión 1 con el trader. Hoja de respuestas", 1)]
     n_dev = sum(1 for c in casos if particiones["asignacion"].get(c["id"]) == "dev")
@@ -453,11 +498,12 @@ def documento(repo: Path, sesion: str) -> str:
         "se apunta su respuesta con SUS palabras, no un resumen.",
         "Antes de cada pregunta, di en voz alta su número (por ejemplo, vamos con la P cero uno). "
         "Así se localiza después en el vídeo sin buscar a ciegas.",
-        "Las tres primeras están marcadas como bloqueantes: si no se cierran, el resto del "
-        "trabajo se queda parado. Van primero a propósito.",
+        f"Estas están marcadas como bloqueantes: {', '.join(bloqueantes)}. Si no se cierran, el "
+        "resto del trabajo se queda parado. Van primero a propósito.",
         "Si una respuesta abre una duda nueva, apúntala igual. Una duda registrada vale más que "
         "una regla inventada.",
-        "La pregunta P-03 necesita además una captura de pantalla de la configuración del gráfico.",
+        f"La pregunta {ref_anclaje} necesita además una captura de pantalla de la configuración "
+        "del gráfico.",
         "Las citas están tal como las transcribió el sistema desde el audio. Si alguna está mal "
         "transcrita, que lo diga: también es un dato y se corrige.",
     ):
@@ -516,15 +562,17 @@ def documento(repo: Path, sesion: str) -> str:
                 "decidiríamos nosotros por ti."
             )
         )
-        for n, e in enumerate(extras, 1):
-            partes.append(bloque_extra(e, n, len(extras)))
+        for e in extras:
+            partes.append(bloque_extra(e, len(extras)))
 
     reafirmaciones = ctx_doc.get("reafirmaciones") or []
     if reafirmaciones:
         items = {i.id: i for i in cargar_evidencia(repo / "knowledge" / "evidence")}
         partes.append(bloque_reafirmaciones(reafirmaciones, items))
 
-    partes.append(bloque_etiquetado(casos, particiones["asignacion"], config, huso))
+    partes.append(
+        bloque_etiquetado(casos, particiones["asignacion"], config, huso, ref_anclaje)
+    )
     if ctx_doc.get("cierre"):
         partes.append(bloque_cierre(list(ctx_doc["cierre"])))
     cuerpo = "".join(partes)
@@ -587,13 +635,19 @@ RELS_DOC = (
 
 
 def escribir_docx(ruta: Path, document_xml: str) -> None:
+    if ruta.is_dir():
+        raise SystemExit(f"{ruta} es una carpeta; --salida quiere la ruta de un fichero .docx")
     try:
         _escribir(ruta, document_xml)
     except PermissionError as exc:
         raise SystemExit(
-            f"ERROR: no se puede escribir {ruta.name}: seguramente esta abierto en Word. "
+            f"no se puede escribir {ruta.name}: seguramente esta abierto en Word. "
             "Cierralo y repite el comando."
         ) from exc
+    except FileNotFoundError as exc:
+        raise SystemExit(f"no existe la carpeta {ruta.parent}; creala o cambia --salida") from exc
+    except OSError as exc:
+        raise SystemExit(f"no se puede escribir {ruta}: {exc}") from exc
 
 
 def _escribir(ruta: Path, document_xml: str) -> None:
@@ -623,10 +677,33 @@ def main() -> int:
         if args.salida
         else RAIZ / f"Sesion 1 - hoja de respuestas ({sesion}).docx"
     )
-    escribir_docx(salida, documento(RAIZ, sesion))
+    try:
+        xml = documento(RAIZ, sesion)
+    except SystemExit:
+        raise
+    except (ValueError, LookupError, OSError, AttributeError, TypeError) as exc:
+        # El contexto y el paquete son ficheros que se editan a mano: un `porque` que falta o un
+        # YAML mal indentado tienen que salir como un error legible, no como un traceback.
+        print(
+            f"ERROR: no se puede componer la hoja de {sesion}: {type(exc).__name__}: {exc}. "
+            "Revisa knowledge/cases/kit/contexto_preguntas.yaml y el paquete.",
+            file=sys.stderr,
+        )
+        return 1
+    escribir_docx(salida, xml)
     print(f"OK: {salida}")
+    print(
+        "Recuerda: si vuelves a ejecutar `kit build`, esta hoja se queda vieja. Regenerala "
+        "siempre como ultimo paso antes de imprimir."
+    )
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except SystemExit as salida_:
+        if isinstance(salida_.code, str):  # los avisos del generador, con el mismo formato
+            print(f"ERROR: {salida_.code}", file=sys.stderr)
+            raise SystemExit(1) from None
+        raise

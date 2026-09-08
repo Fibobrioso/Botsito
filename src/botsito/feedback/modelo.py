@@ -27,7 +27,7 @@ from botsito.comun.documentos import (
     normalizar_texto,
     vacio,
 )
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.evidence.modelo import EvidenciaError, parse_tiempo
 
 __all__ = ["activos", "ciclos_de_supersede"]
@@ -276,7 +276,7 @@ def registro_desde_dict(campos: dict[str, Any], origen: str = "registro") -> Fee
 
 def cargar_registro(ruta: Path) -> FeedbackRecord:
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise FeedbackError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):
@@ -349,6 +349,23 @@ def validar_contra_contexto(
             )
         if rutas_corpus is not None and r.grabacion and r.grabacion not in rutas_corpus:
             problemas.append(f"{r.id}: grabacion {r.grabacion!r} no esta inventariada en el corpus")
+    # Dos registros que superseden al MISMO: el error natural de una ronda intensiva, cuando se
+    # corrige una respuesta y luego se vuelve a corregir apuntando por inercia al original. Sin
+    # esto quedan dos registros activos y contradictorios, y el fallo solo asoma mucho despues,
+    # al calcular el kappa. El mensaje empieza por el id del registro nuevo para que la CLI lo
+    # reconozca como suyo y `feedback new` lo rechace en el momento.
+    quien_supersede: dict[str, list[str]] = {}
+    for r in registros:
+        if r.supersede:
+            quien_supersede.setdefault(r.supersede, []).append(r.id)
+    for anulado, autores in sorted(quien_supersede.items()):
+        if len(autores) > 1:
+            for a in sorted(autores):
+                otros = ", ".join(x for x in sorted(autores) if x != a)
+                problemas.append(
+                    f"{a}: {anulado} ya esta superseded por {otros}; una correccion supersede al "
+                    "ultimo registro del objetivo, no al original"
+                )
     problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
     return problemas
 
@@ -374,18 +391,18 @@ def escribir_registro(
     carpeta = directorio / r.sesion
     carpeta.mkdir(parents=True, exist_ok=True)
     ruta = carpeta / f"{r.id}.yaml"
-    if ruta.exists():
-        raise FeedbackError(f"ya existe {ruta.name}: mismo contenido")
     doc: dict[str, Any] = {"id": r.id}
     for k, v in asdict(r).items():
         if k == "id" or v in (None, ""):
             continue
         doc[k] = v
-    ruta.write_text(
-        yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=100),
-        encoding="utf-8",
-        newline="\n",
-    )
+    texto = yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=100)
+    if ruta.exists():
+        # El id sale del contenido, asi que lo normal es que sea el mismo registro repetido; que
+        # NO lo sea significa que el fichero se edito a mano, y eso hay que mirarlo, no pisarlo.
+        que = "mismo contenido" if ruta.read_text(encoding="utf-8") == texto else "OTRO contenido"
+        raise FeedbackError(f"ya existe {ruta.name}: {que}")
+    ruta.write_text(texto, encoding="utf-8", newline="\n")
     try:
         cargar_registro(ruta)  # invariante: lo escrito se puede volver a cargar
     except FeedbackError:

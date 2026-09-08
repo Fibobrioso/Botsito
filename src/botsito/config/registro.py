@@ -26,7 +26,7 @@ from typing import Literal
 
 from botsito.comun import ids
 from botsito.comun.husos import HusoDesconocidoError, huso_canonico
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.domain.valores import Fraccion, HoraLocal, Porcentaje
 
 RUTA_POR_DEFECTO = Path("knowledge/spec/parametros.yaml")
@@ -38,6 +38,9 @@ TIPOS_FUENTE = ("evidence", "feedback", "decision")
 TipoFuente = Literal["evidence", "feedback", "decision"]
 FORMATO_ID_FUENTE: dict[str, re.Pattern[str]] = {t: ids.POR_TIPO[t] for t in TIPOS_FUENTE}
 _HORA = re.compile(r"^([01][0-9]|2[0-3]):[0-5][0-9]$", re.ASCII)
+# Numero tal como se escribe a mano en el registro. Sin guion bajo (`1_000`, que Decimal
+# acepta por herencia de Python) y con exponente acotado (`1E+999999999` es finito y absurdo).
+_NUMERO = re.compile(r"^[+-]?(\d+(\.\d+)?|\.\d+)([eE][+-]?\d{1,4})?$", re.ASCII)
 _NOMBRE = re.compile(r"^[a-z][a-z0-9_]*$", re.ASCII)
 _AMBIGUEDAD = re.compile(r"^A-\d+$", re.ASCII)
 
@@ -174,16 +177,33 @@ def _finito(valor: Decimal, nombre: str) -> Decimal:
     return valor
 
 
+def _numero(bruto: object, nombre: str) -> Decimal:
+    """Decimal desde el texto del fichero, con el mensaje que hace falta al escribirlo a mano.
+
+    `Decimal(str(...))` acepta el guion bajo de Python (`1_000`) y exponentes absurdos, y ante
+    `0,75` o `1%` (que es como responde una persona) contesta con las internals de `decimal`.
+    """
+    texto = str(bruto).strip()
+    if not _NUMERO.match(texto):
+        pista = ""
+        if "," in texto:
+            pista = "; el separador decimal es el punto, no la coma"
+        elif texto.endswith("%"):
+            pista = "; el porcentaje se escribe sin el signo %"
+        raise RegistroError(f"{nombre}: numero invalido {bruto!r}{pista}")
+    return _finito(Decimal(texto), nombre)
+
+
 def _convertir(tipo: str, bruto: object, huso: object, nombre: str) -> Valor:
     if isinstance(bruto, float):
         raise RegistroError(f"{nombre}: el valor debe escribirse entre comillas, no como float")
     try:
         if tipo == "fraccion":
-            return Fraccion(_finito(Decimal(str(bruto)), nombre))
+            return Fraccion(_numero(bruto, nombre))
         if tipo == "porcentaje":
-            return Porcentaje(_finito(Decimal(str(bruto)), nombre))
+            return Porcentaje(_numero(bruto, nombre))
         if tipo == "decimal":
-            return _finito(Decimal(str(bruto)), nombre)
+            return _numero(bruto, nombre)
         if tipo == "entero":
             if isinstance(bruto, bool) or not isinstance(bruto, int):
                 raise RegistroError(f"{nombre}: entero invalido {bruto!r}")
@@ -229,8 +249,8 @@ def _limite(bruto: object, nombre: str, campo: str) -> Decimal | None:
     if isinstance(bruto, bool | float):
         raise RegistroError(f"{nombre}: {campo} debe escribirse entre comillas o como entero")
     try:
-        return _finito(Decimal(str(bruto)), nombre)
-    except InvalidOperation as exc:
+        return _numero(bruto, nombre)
+    except (InvalidOperation, RegistroError) as exc:
         raise RegistroError(f"{nombre}: {campo} invalido {bruto!r}") from exc
 
 
@@ -352,7 +372,7 @@ def cargar_registro(ruta: Path = RUTA_POR_DEFECTO) -> Registro:
     if not ruta.exists():
         raise RegistroError(f"no existe {ruta}")
     try:
-        documento = cargar_yaml(ruta.read_text(encoding="utf-8")) or {}
+        documento = leer_yaml(ruta) or {}
     except YamlError as exc:
         raise RegistroError(f"{ruta}: {exc}") from exc
     if not isinstance(documento, dict) or "parametros" not in documento:

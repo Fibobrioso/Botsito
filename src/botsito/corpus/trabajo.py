@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from botsito.comun.documentos import hash_corto
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.transcripcion import escribir_atomico
 
 FICHERO_HUELLA = "huella.txt"
@@ -70,7 +70,7 @@ def manifiestos_crudos(directorio: Path, error: type[Exception]) -> list[dict[st
         if ruta.name.startswith("_"):
             continue
         try:
-            doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+            doc = leer_yaml(ruta)
         except YamlError as exc:
             raise error(f"{ruta.name}: {exc}") from exc
         if isinstance(doc, dict):

@@ -774,3 +774,40 @@ def test_feedback_ambiguedad_duracion_y_video_de_sesion(tmp_path: Path) -> None:
     )
     with pytest.raises(InventarioError, match="sin drive_id"):
         cargar_fuentes(ruta)
+
+
+def test_una_etiqueta_retirada_con_borderline_no_reaparece(tmp_path: Path) -> None:
+    """`activos` va sobre TODOS los registros, no sobre los `LABEL_CASE` ya filtrados.
+
+    `BORDERLINE`, `MARK_FALSE_POSITIVE` y `MARK_FALSE_NEGATIVE` tambien apuntan a un `caso` y por
+    tanto pueden retirar una etiqueta. Filtrando primero por accion, ese retiro desaparecia de la
+    lista y la etiqueta anulada volvia a contar en el kappa sin que nadie lo viera.
+    """
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "particiones.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    caso = sorted(doc["asignacion"])[0]
+    sesion = "2026-09-15-sesion-01"
+    etiqueta = _registro_label(repo, sesion, caso, "07-11: venta; 11-15: no_trade")
+    escribir_registro(
+        repo / "knowledge" / "feedback",
+        {
+            "sesion": sesion,
+            "fecha": sesion[:10],
+            "medio": "escrito",
+            "objetivo": {"tipo": "caso", "id": caso},
+            "accion": "BORDERLINE",
+            "respuesta_literal": "en este dia no me decido, retiro lo que dije",
+            "registrado_por": "aleks",
+            "supersede": etiqueta,
+        },
+    )
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    unidades = kp.etiquetas_de_registros(
+        registros, sesion, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+    )
+    assert unidades == {}, "la etiqueta retirada por el BORDERLINE seguia contando"

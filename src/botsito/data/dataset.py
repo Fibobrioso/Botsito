@@ -27,7 +27,7 @@ import yaml
 
 from botsito.comun import ids
 from botsito.comun.documentos import ficheros_de, sha256_hex
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.data.agregacion import huecos
 from botsito.data.dukascopy import (
     DECODIFICADOR_VERSION,
@@ -260,7 +260,7 @@ def cargar_manifiesto(ruta: Path) -> dict[str, Any]:
     if not ruta.exists():
         raise DatasetError(f"no existe {ruta}")
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise DatasetError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):

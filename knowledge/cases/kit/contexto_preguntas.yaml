@@ -447,7 +447,7 @@ reafirmaciones:
   - evidencia: ev-v2-003336-fc210a05
     nota: de aquí salen el tamaño del lote y el resultado de cada operación
   - evidencia: ev-v1-000620-0f7dea14
-    nota: el momento exacto en que el bot protege la operación
+    nota: fija el momento exacto en que el bot protege la operación
   - evidencia: ev-v4-004936-d7004417
     nota: hace que el bot apague el día; si está mal entendido, operaría de más
   - evidencia: ev-v4-003710-c753f3d3
@@ -461,7 +461,7 @@ reafirmaciones:
   - evidencia: ev-v4-005319-dee95093
     nota: distingue una rotura válida de una que no lo es
   - evidencia: ev-v4-013008-73dcd8c3
-    nota: quedó pendiente de backtest y se decide en la pregunta E-06
+    nota: quedó pendiente de backtest y se decide en la pregunta adicional sobre ese esquema
   - evidencia: ev-v4-012844-b0dcebb0
     nota: cada día que grabe su pantalla es material con el que se mide el bot
 
@@ -470,8 +470,8 @@ cierre:
   - La grabación de la sesión existe y sabemos cómo se llama el fichero.
   - Tenemos la captura de pantalla de la configuración del gráfico (pregunta P-03).
   - Las tres preguntas bloqueantes están cerradas con un valor concreto, no con un quizá.
-  - El trader ha confirmado los meses del paquete, y queda registrado sobre `paquete <sesion>`.
-  - Los días marcados como dev están etiquetados, o hay fecha acordada para hacerlo.
+  - El trader ha confirmado los meses del paquete, y su respuesta queda registrada como feedback sobre el paquete de esta sesión.
+  - Los días de la hoja están etiquetados, o hay fecha acordada para hacerlo.
   - Las preguntas que quedan sin cerrar están anotadas abajo, con el motivo.
   - Las dudas nuevas que salieron durante la sesión están anotadas abajo.
   - Hay fecha para la siguiente sesión.

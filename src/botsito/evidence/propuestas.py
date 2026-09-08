@@ -19,7 +19,7 @@ import yaml
 
 from botsito.comun import ids
 from botsito.comun.documentos import hash_corto, normalizar_texto, sha256_hex, vacio
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.evidence.modelo import (
     CONFIANZAS,
     MODALIDADES,
@@ -98,7 +98,7 @@ class Temas:
 
 def cargar_temas(ruta: Path) -> Temas:
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise PropuestaError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict) or set(doc) != {"raices", "valores_cerrados"}:
@@ -202,7 +202,7 @@ def salida_sha256(doc: dict[str, Any]) -> str:
 def cargar_propuesta(ruta: Path) -> dict[str, Any]:
     """Carga estricta: esquema del fichero, no de las citas (eso es `comprobar`)."""
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise PropuestaError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):

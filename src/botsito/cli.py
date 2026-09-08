@@ -1002,6 +1002,7 @@ def _kit_errores() -> tuple[type[Exception], ...]:
     from botsito.config.registro import RegistroError
     from botsito.corpus.inventario import InventarioError
     from botsito.data.dataset import DatasetError
+    from botsito.domain.velas import VelaInvalidaError
     from botsito.evidence.modelo import EvidenciaError
     from botsito.feedback.modelo import FeedbackError
     from botsito.retrieval.indice import RetrievalError
@@ -1012,6 +1013,7 @@ def _kit_errores() -> tuple[type[Exception], ...]:
         RegistroError,
         InventarioError,
         DatasetError,
+        VelaInvalidaError,
         EvidenciaError,
         FeedbackError,
         RetrievalError,

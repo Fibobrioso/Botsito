@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml, leer_yaml
 
 
 def test_clave_duplicada_es_error() -> None:
@@ -28,3 +30,17 @@ def test_yaml_roto() -> None:
 def test_clave_no_hashable_es_yaml_error() -> None:
     with pytest.raises(YamlError, match="clave no admitida"):
         cargar_yaml("? [1, 2]\n: x\n")
+
+
+def test_un_fichero_que_no_esta_en_utf8_es_error_de_dominio(tmp_path: Path) -> None:
+    """El Bloc de notas de Windows guarda en cp1252 o UTF-16 sin avisar. Ese fichero tiene que
+    salir como error legible y no como traceback en mitad de `knowledge validate`."""
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text("nombre: sesión\n", encoding="utf-16")
+    with pytest.raises(YamlError, match="UTF-8"):
+        leer_yaml(ruta)
+    ruta.write_bytes("nombre: sesión\n".encode("latin-1"))
+    with pytest.raises(YamlError, match="vuelve a guardarlo en UTF-8"):
+        leer_yaml(ruta)
+    ruta.write_text("nombre: sesión\n", encoding="utf-8")
+    assert leer_yaml(ruta) == {"nombre": "sesión"}

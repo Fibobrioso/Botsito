@@ -348,3 +348,36 @@ def test_el_paquete_solo_se_confirma_o_se_rechaza(accion: str) -> None:
             ),
             "prueba",
         )
+
+
+def test_dos_registros_no_pueden_superseder_al_mismo(tmp_path: Path) -> None:
+    """El error natural de una ronda intensiva: corriges, vuelves a corregir y por inercia
+    apuntas otra vez al original. Sin esta comprobacion quedan dos activos contradictorios y
+    el fallo no asoma hasta el calculo del kappa, semanas despues."""
+    original = escribir_registro(tmp_path, base(respuesta_literal="primera version"))
+    ido = original.stem
+    escribir_registro(tmp_path, base(respuesta_literal="segunda", supersede=ido))
+    escribir_registro(tmp_path, base(respuesta_literal="tercera", supersede=ido))
+    registros = cargar_feedback(tmp_path)
+    problemas = validar_contra_contexto(registros, {EV}, set(), set())
+    assert len(problemas) == 2
+    assert all(f"{ido} ya esta superseded por" in p for p in problemas)
+    assert all(p.startswith(tuple(r.id for r in registros)) for p in problemas)
+
+
+def test_una_cadena_de_supersede_no_da_falso_positivo(tmp_path: Path) -> None:
+    primero = escribir_registro(tmp_path, base(respuesta_literal="version una")).stem
+    segundo = escribir_registro(
+        tmp_path, base(respuesta_literal="version dos", supersede=primero)
+    ).stem
+    escribir_registro(tmp_path, base(respuesta_literal="version tres", supersede=segundo))
+    assert validar_contra_contexto(cargar_feedback(tmp_path), {EV}, set(), set()) == []
+
+
+def test_un_duplicado_a_mano_se_distingue_de_una_colision(tmp_path: Path) -> None:
+    ruta = escribir_registro(tmp_path, base())
+    with pytest.raises(FeedbackError, match="mismo contenido"):
+        escribir_registro(tmp_path, base())
+    ruta.write_text(ruta.read_text(encoding="utf-8") + "notas: a mano\n", encoding="utf-8")
+    with pytest.raises(FeedbackError, match="OTRO contenido"):
+        escribir_registro(tmp_path, base())

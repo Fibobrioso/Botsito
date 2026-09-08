@@ -16,7 +16,7 @@ from typing import Any
 from botsito.comun import ids
 from botsito.comun.documentos import activos as _activos
 from botsito.comun.documentos import cargar_directorio, ciclos_de_supersede, sha256_hex
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.audio import MUESTRAS_S
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
 from botsito.corpus.pipeline_transcripcion import (
@@ -79,7 +79,7 @@ class Transcripcion:
 
 def cargar_manifiesto(ruta: Path) -> Transcripcion:
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise ManifiestoTranscripcionError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):

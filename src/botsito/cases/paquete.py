@@ -27,11 +27,12 @@ from botsito.comun import ids
 from botsito.comun.documentos import activos
 from botsito.comun.historial import commit_que_anadio, es_ancestro, intacto_desde
 from botsito.comun.husos import HusoDesconocidoError, huso_canonico
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.config.registro import Registro, RegistroError, cargar_registro
 from botsito.data.dataset import DatasetError, cargar_manifiesto, manifiestos
 from botsito.data.velas import parse_ts
 from botsito.domain.valores import HoraLocal
+from botsito.domain.velas import VelaInvalidaError
 from botsito.evidence import contradicciones
 from botsito.evidence.modelo import EvidenceItem, cargar_evidencia
 from botsito.evidence.propuestas import FICHERO_TEMAS, cargar_temas
@@ -78,7 +79,7 @@ class Config:
 
 def _yaml(ruta: Path) -> Any:
     try:
-        return cargar_yaml(ruta.read_text(encoding="utf-8"))
+        return leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise KitError(f"{ruta.name}: {exc}") from exc
 
@@ -440,7 +441,7 @@ def construir(
             dias,
         )
         asignacion = asignar([c.id for c in casos], seed, config.particiones)
-    except (DatasetError, VentanaError, ParticionError) as exc:
+    except (DatasetError, VentanaError, ParticionError, VelaInvalidaError) as exc:
         raise KitError(str(exc)) from exc
     elegidos = [c for c in casos if c.id in asignacion]
     ficheros = {

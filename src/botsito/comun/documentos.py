@@ -49,13 +49,19 @@ def sha256_hex(datos: bytes) -> str:
     return hashlib.sha256(datos).hexdigest()
 
 
+# Ficheros que crean solos el Explorador de Windows y los clientes de sincronizacion de Drive
+# y OneDrive. No son contenido y nadie los pone a proposito: si fueran error, sincronizar la
+# carpeta dejaria el repositorio invalido sin que nadie haya tocado nada.
+BASURA = frozenset({"desktop.ini", "Thumbs.db", ".DS_Store", ".gitkeep"})
+
+
 def ficheros_de(directorio: Path, error: type[Exception], que: str) -> list[Path]:
-    """`*.yaml` bajo `directorio` (recursivo), exentos README.md y `_*`. Otro fichero es error."""
+    """`*.yaml` bajo `directorio` (recursivo), exentos README.md, `_*` y la basura del sistema."""
     if not directorio.is_dir():
         raise error(f"no existe el directorio de {que} {directorio}")
     salida: list[Path] = []
     for ruta in sorted(p for p in directorio.rglob("*") if p.is_file()):
-        if ruta.name == "README.md" or ruta.name.startswith("_"):
+        if ruta.name == "README.md" or ruta.name.startswith("_") or ruta.name in BASURA:
             continue
         if ruta.suffix != ".yaml":
             raise error(f"fichero inesperado en {que}: {ruta.name} (solo *.yaml)")
