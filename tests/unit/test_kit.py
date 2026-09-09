@@ -241,8 +241,11 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
-    assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, 13)]
-    assert sum(1 for a in ambs if a.bloqueante) == 3
+    # correlativas desde A-1, sin huecos: la sesion 1 añadio A-13..A-17 y seguira creciendo
+    assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, len(ambs) + 1)]
+    assert len(ambs) >= 17
+    assert sum(1 for a in ambs if a.bloqueante) == 3  # las tres que se llevaron a la sesion 1
+    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)}
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (
