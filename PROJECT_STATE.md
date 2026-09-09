@@ -31,10 +31,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
 
 ## Current Phase
-FASE 2 · Retroalimentacion del experto (F09 hecha, F10 cerrada el 2026-09-08 con stable/F10). Siguiente: SESION 1 con el trader (registros F09) y luego F11 strategy-spec-schema
+FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones respondidas, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. Falta el etiquetado de casos, que el trader entrega como backtest completo de mayo y junio con Excel. Siguiente: F11 strategy-spec-schema
 
 ## Current Feature
-Hoja de respuestas de la sesion 1 en Word (rama `feature/F10-hoja-sesion-docx`, sobre F10): `knowledge/cases/kit/contexto_preguntas.yaml` y `scripts/hoja_sesion_docx.py`; el `.docx` se genera en la raiz y no se versiona. Cierre previsto con tag `stable/F10-hoja-sesion` (rama de trabajo sin numero propio, §F).
+Hoja de respuestas de la sesion 1 en Word y PROCESADO DE LA SESION 1 (rama `feature/F10-hoja-sesion-docx`, sobre F10): `knowledge/cases/kit/contexto_preguntas.yaml` y `scripts/hoja_sesion_docx.py` (el `.docx` se genera en la raiz y no se versiona; la copia RELLENADA vive en `corpus/Estrategia del trader/Sesiones/2026-09-09-sesion-01/`), `scripts/mover_sesion.py`, el corpus con v6 (transcripcion y fotogramas), 72 registros de feedback, las doce ambiguedades cerradas, cinco propuestas de evidencia de v6 y la guardia de `knowledge/corpus/tramos_no_citables.yaml`. Cierre previsto con tag `stable/F10-sesion-01` (rama de trabajo sin numero propio, §F).
 
 ## Current Branch
 feature/F10-hoja-sesion-docx
@@ -91,6 +91,7 @@ feature/F10-hoja-sesion-docx
 - knowledge/spec/parametros.yaml (LA puerta de los parametros; 25 parametros: `huso_operativa` CONFIRMED por ADR-0005 y 24 de estrategia en UNKNOWN hasta la sesion 1 / F11) · src/botsito/config/registro.py · src/botsito/domain/valores.py
 - docs/adr/0005-datos-de-mercado-fuente-formato-y-relojes.md · data/manifests/README.md (esquema del manifiesto) · src/botsito/data/agregacion.py (regla de anclaje) · tests/fixtures/ohlc/README.md (fixtures reales con sha256)
 - docs/adr/0007-transcripcion-en-dos-capas.md · knowledge/corpus/glosario_asr.yaml (manual, versionado) · knowledge/corpus/transcripciones/ (INMUTABLE) · src/botsito/corpus/pipeline_transcripcion.py · docs/validation/F04-transcription-pipeline.md
+- knowledge/corpus/tramos_no_citables.yaml (manual; tramos de video que NO son especificacion: `evidence propose --check` y `evidence new` rechazan una cita que caiga dentro) · src/botsito/validation/contexto_evidencia.py
 - docs/adr/0008-fotogramas-cobertura-completa.md · knowledge/corpus/fotogramas_obligatorios.yaml (manual) · knowledge/corpus/fotogramas/ (INMUTABLE) · src/botsito/corpus/fotogramas.py · docs/validation/F05-frame-extraction.md
 - docs/plan/features/F02-config-and-parameter-registry.md · docs/validation/F02-config-and-parameter-registry.md
 - docs/adr/0002-registro-de-parametros-una-sola-puerta.md · docs/adr/0003-hooks-copiados-sin-framework-pre-commit.md
@@ -98,7 +99,7 @@ feature/F10-hoja-sesion-docx
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-367 funciones de test (522 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval, kit · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`), kit_particiones (guardia de ancestro), hoja_sesion_docx (OOXML valido, citas del paquete, sin fuga de holdout) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+373 funciones de test (538 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval, kit · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`), kit_particiones (guardia de ancestro), hoja_sesion_docx (OOXML valido, citas del paquete, sin fuga de holdout) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -203,9 +204,31 @@ las reglas se infieren en F11, no aqui.
 ## Known Ambiguities
 Fuente legible por maquina desde F10: `knowledge/spec/ambiguedades.yaml` (ids, pregunta, evidencia,
 parametros, estado; un test exige que esta tabla coincida en id y titulo).
-Todas ABIERTAS hasta un registro de feedback del trader (sesion 1, tras F10 + F15). El esquema de
-feedback solo acepta ids `A-N`. Columna "resuelve en": la funcionalidad que convierte la respuesta
-en regla o parametro; "pregunta": lo que se le plantea al trader.
+Las doce (A-1..A-12) quedaron RESUELTAS en la sesion 1 del 2026-09-09, cada una con su registro de
+feedback, su minuto y su cita en v6; la tabla se conserva porque es la pregunta que se llevo a la
+sesion y el test anti-deriva la compara con el YAML. El esquema de feedback solo acepta ids `A-N`.
+Columna "resuelve en": la funcionalidad que convierte la respuesta en regla o parametro.
+
+Lo que la sesion DEJA ABIERTO no esta en esta tabla todavia: son cinco dudas nuevas cuyas citas
+estan en propuestas de evidencia de v6 sin aceptar (`knowledge/_proposals/pr-v6-*`), y una
+ambiguedad se registra citando evidencia existente. En cuanto el consultor acepte esos 12 items
+entran aqui como A-13..A-17:
+1. break even: el trader responde "apenas toca" (0:57:01) pero doce minutos despues se plantea
+   exigir un rompimiento con cuerpo porque protegerlo al toque le hace perder movimientos
+   (1:09:27, 1:09:47). Decide F11/F23; se puede medir sobre los mismos dias.
+2. anclaje H4 fuera del verano: dice que en el cambio de horario mantiene "la misma hora" y acto
+   seguido que la apertura podria verse "a las 8, o [...] a las 6" (0:58:10). Con UTC+2 fijo el
+   anclaje es 21:00 UTC todo el año; con Madrid, en invierno se desplaza. Mayo y junio no se ven
+   afectados; enero si. Decide F11/F15.
+3. alcance de la ventana: deja abierto ampliar a la sesion de Nueva York, "puedes buscar las
+   operaciones donde sea" (1:46:10, 1:46:23), cuando toda su operativa grabada va de 07:00 a
+   15:00. Es decision del consultor, no suya.
+4. proveedor de datos: el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el proyecto
+   mide sobre Dukascopy (ADR-0005). Con reglas que dependen de romper "por una milesima", uno o
+   dos puntos de diferencia cambian un dia entero. Decide F26 (fidelidad).
+5. noticias y cuenta de fondeo: avisa de que la cuenta puede prohibir operar dos minutos antes y
+   despues de una noticia y cerrarla aunque acabes en profit (2:00:29, 2:01:14), y aun asi deciden
+   operar con noticias (2:02:00). Verificar la regla real antes de F33.
 
 | Id | Ambiguedad | Resuelve en | Pregunta de la sesion 1 |
 |---|---|---|---|
@@ -324,14 +347,16 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-SESION 1 con el trader. Antes: (1) fijar la fecha real (si no es 2026-09-15, `uv run botsito kit build --sesion <fecha>-sesion-01 --seed 20260915` y commitear ANTES de la sesion, con `Fuente: ADR-0011`); (2) confirmacion escrita del trader de que no ha operado ni backtesteado mayo ni junio de 2026 (`feedback new --medio escrito`); si la niega, anadir el mes a `knowledge/cases/kit/vistos.yaml`, descargar otro con `data download` y regenerar. En la sesion: las 3 bloqueantes (A-2 cartuchos, A-4 break even, A-9 anclaje H4 CON CAPTURA del grafico), las otras 18 preguntas de `hoja_trader.md` y el etiquetado de los 16 casos `dev` por sesion H4 con la gramatica del kit. Cada respuesta = `botsito feedback new` (`RESOLVE_UNKNOWN` sobre ambiguedad o parametro, `LABEL_CASE` sobre caso). Despues: F11 strategy-spec-schema. Pendiente del usuario: borrar la rama `feature/F10-elicitation-kit` (local y origin).
-
-Historial (F07 ronda 1): el usuario decidio sobre la hoja de revision (acepto los 341). Abrir F07 evidence-extraction con el metodo supervisado (brief desde MASTER_PLAN H.2 fila "Previos y entradas de F07" y tabla A -> revision de diseno por agente -> construir -> auditoria de cierre con dos agentes -> informe WAITING_FOR_USER_VALIDATION). Entradas: cita de audio contra la CRUDA activa (`transcript show --capa cruda`), cita de pantalla `fr-<id>/<t_ms>` via `referencias_conocidas` conectada a `validar_contra_manifiesto` y a `evidence new`, hechos ya leidos en "Hechos del corpus pendientes de evidencia", `dudas` del glosario (25 segmentos) revisadas al citar.
+1. Decidir sobre los 12 items de las cinco propuestas de evidencia de v6 (`knowledge/_proposals/pr-v6-*`): `botsito evidence accept` por lote. Al aceptarlos se registran A-13..A-17 en `knowledge/spec/ambiguedades.yaml` con su evidencia.
+2. Recibir del trader el backtest COMPLETO de mayo y junio de 2026 con el Excel (decision, hora, entrada, SL y TP por operacion). Se comprometio a enviarlo antes del sabado 2026-09-12 (v6 2:26:12). Eso sustituye al etiquetado a mano de los 16 dias `dev` de la hoja: son 40 casos sobre meses que NO ha visto (precondicion confirmada dos veces, 0:00:56 y 2:25:41). Ojo al matiz: los hara aplicando las reglas acordadas en la sesion, asi que sirven de patron oro para medir al bot, pero ya no miden si esas reglas capturan su juicio espontaneo.
+3. Abrir F11 strategy-spec-schema con los 26 parametros que la sesion deja fijados y con `feedback apply` (diferido desde F09): el registro sigue en UNKNOWN hasta que F11 lo aplique.
+4. Pendiente del usuario: borrar las ramas fusionadas `feature/F08-evidence-retrieval` y `feature/F10-elicitation-kit` con `!`.
 
 ## Last Stable Commit
 4f8277e · merge: F10 elicitation-kit validada por el usuario · tag stable/F10
 
 ## Change Log
+- 2026-09-09 · SESION 1 CON EL TRADER (2 h 27 min, video v6, paquete `2026-09-09-sesion-01`). El paquete se movio del 15 al 9 con `scripts/mover_sesion.py` (mismo seed, mismos 40 casos) y se commiteo ANTES de la sesion. Material: v6 inventariado, transcrito (tr-v6-...-7718b3f4, 2146 segmentos) y con fotogramas (fr-v6-22982c02, 8824), y la hoja de Word RELLENADA guardada en el corpus. 72 registros de feedback: 41 de la hoja, 5 aclaraciones del consultor y 26 con la voz del trader (minuto y cita). Las doce ambiguedades A-1..A-12 RESUELTAS, incluidas las tres bloqueantes: cartuchos 3 intentos (break even, entrada invalidada y reentrada no cuentan), break even al TOCAR, y anclaje H4 a las 23:00 de su grafico (UTC+2), verificado tambien en pantalla en fr-v6-22982c02/3585000. El stop queda en 0,8 FIJO de la caja con el lotaje sobre la caja completa (riesgo real 0,4 %), objetivo 1:3 sin extension, sin parciales, lunes a viernes, freno del dia por 3 perdidas y no por porcentaje. Correcciones del trader a lo que dabamos por sabido: NO deja de operar con el primer trade positivo, vuelve tras TRES perdidas, y no grabara su pantalla cada dia (pasara resumenes de backtest, lo que cambia la entrada de F26). Dos tramos de v6 declarados NO citables (0:41:00-0:50:11, acordado en voz que no va para la operativa; 1:53:30-1:57:31, video ajeno mientras el trader se ausenta) con guardia real en `evidence propose --check` y `evidence new`. Cinco propuestas de evidencia de v6 selladas (12 items) para las cinco dudas nuevas, pendientes de decision. Tests que afirmaban un estado ya superado, actualizados: feedback real vacio y corpus de cinco videos.
 - 2026-09-08 · `scripts/mover_sesion.py`: mover la fecha de una sesion del kit en una sola orden. El id del paquete lleva la fecha dentro y el registro de feedback exige que la fecha de cada respuesta sea la de su sesion, asi que si la reunion se mueve el paquete hay que rehacerlo. Hacerlo a mano tiene una trampa: `kit build` pide el seed, y con otro seed salen dias distintos sin aviso. El script lo lee del paquete existente, comprueba despues que casos, reparto y preguntas son identicos, restaura el original si algo falla y se niega a mover una sesion que ya tenga registros de feedback. Tres tests (identidad al mover y al volver, negativa con LABEL_CASE, restauracion tras fallo).
 - 2026-09-08 · Auditoria de codigo previa a la sesion 1, con dos agentes (generador de la hoja y kit; bugs latentes en todo el arbol). Bloqueantes de contenido en la hoja: la nota de una confirmacion rapida remitia a una pregunta `E-06` que ya no existia, y una linea del cierre imprimia `paquete <sesion>` sin sustituir. Bugs reales de codigo: (1) `kappa.etiquetas_de_registros` aplicaba `activos()` sobre los `LABEL_CASE` ya filtrados, asi que una etiqueta retirada con `BORDERLINE` o `MARK_FALSE_*` reaparecia viva y contaba en el kappa; (2) `validar_contra_contexto` no detectaba dos registros que superseden al MISMO registro, que deja dos activos contradictorios y solo asoma semanas despues al calcular el kappa. Endurecido ademas: `leer_yaml` centraliza la decodificacion (un .yaml guardado en cp1252 o UTF-16 sale como error de dominio, no como traceback; 16 cargadores migrados); `desktop.ini`, `Thumbs.db`, `.DS_Store` y `.gitkeep` dejan de invalidar knowledge/ (los crean solos Explorer y la sincronizacion de Drive); `_numero` acota los decimales del registro y explica `0,75` y `1%` en vez de ensenar las internals de `decimal`; `VelaInvalidaError` capturada en `kit build` y en la CLI; `cargar_manifiesto` del corpus ya no queda sombreado por el de datos en `knowledge validate`; el duplicado de feedback distingue mismo contenido de colision. Generador de la hoja: numeros de pregunta y bloqueantes derivados del paquete (los renumera `kit build`), la rejilla H4 se presenta como suposicion a confirmar, la ventana local se explica como grafico y no como horario de operativa, errores legibles en vez de traceback, saltos de linea que ya no pegan palabras, y un test de contrato nuevo (`test_hoja_sesion_docx`, 13 casos: OOXML valido, citas del paquete intactas, cada pregunta con caja, sin fuga de holdout).
 - 2026-09-08 · Auditoria previa a la sesion 1 (rama `feature/F10-hoja-sesion-docx`): una simulacion del registro posterior a la sesion (18 respuestas representativas de la hoja contra `feedback new` sobre una copia del repo) descubrio que 7 de ellas NO se podian registrar porque no habia objeto al que apuntar. Arreglado: 6 parametros de negocio nuevos en el registro en UNKNOWN (`dias_operables`, `filtro_noticias`, `spread_maximo`, `perdida_maxima_diaria`, `perdida_maxima_semanal`, `comportamiento_sin_regla`) mas `instrumento` y `cuenta_objetivo`, con su fila en `mapa_parametros.yaml` y su contexto; tipo de objetivo `paquete` en F09 (CONFIRM/REJECT) para la precondicion de ceguera, que antes solo quedaba en el video, con la guardia de que el paquete confirmado sea el de la propia sesion; el test del registro exige la fuente por decision al VALOR y no al hueco UNKNOWN; el generador de la hoja comprueba antes de escribir que toda pregunta declarada tenga objetivo resoluble (`comprobar_objetivos`). Cuestionario del paquete regenerado: 21 -> 27 preguntas (mismo seed, mismas ventanas y particiones). Simulacion repetida: 21 de 21 registrables. ADR-0011 y `vistos.yaml` actualizados.

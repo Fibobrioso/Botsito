@@ -212,7 +212,14 @@ def test_fichero_escrito_a_mano_sin_comillas(tmp_path: Path) -> None:
 
 
 def test_directorio_real_valida(repo: Path) -> None:
-    assert cargar_feedback(repo / "knowledge" / "feedback") == []
+    """Desde la sesion 1 (2026-09-09) el feedback real ya no esta vacio: lo que se exige es que
+    todo registro cargue, que los ids no se repitan y que cada `supersede` exista."""
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    ids = [r.id for r in registros]
+    assert len(ids) == len(set(ids))
+    for r in registros:
+        if r.supersede is not None:
+            assert r.supersede in set(ids), f"{r.id} supersede a un registro que no existe"
 
 
 def test_campos_en_blanco_no_rompen_el_id(tmp_path: Path) -> None:

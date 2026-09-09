@@ -567,10 +567,13 @@ class _EntornoEvidencia:
     def comprobar(self, item: EvidenceItem) -> list[str]:
         """Problemas del item nuevo en el contexto real: manifiesto, referencias y cita."""
         from botsito.evidence.modelo import validar_contra_manifiesto, verificar_citas
-        from botsito.evidence.verificacion import comprobar_referencias
+        from botsito.evidence.verificacion import comprobar_referencias, tramo_no_citable
 
         todos = [*self.existentes, item]
         problemas: list[str] = []
+        fuera = tramo_no_citable(self.contexto, item.video_id, item.t0_ms, item.t1_ms)
+        if fuera is not None:
+            problemas.append(f"{item.id}: el tramo no es especificacion, {fuera}")
         if self.manifiesto is not None:
             problemas += validar_contra_manifiesto(todos, self.manifiesto, self.contexto)
         elif item.modalidad in ("pantalla", "ambas") or item.fotogramas:

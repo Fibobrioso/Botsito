@@ -324,3 +324,69 @@ def test_comprobar_impide_escribir(tmp_path: Path) -> None:
     with pytest.raises(EvidenciaError, match="fotograma"):
         escribir_item(tmp_path, base(), lambda i: [f"{i.id}: fotograma no inventariado"])
     assert not list(tmp_path.rglob("*.yaml"))
+
+
+# --- tramos que no son especificacion (F07, sesion 1) ---
+
+
+def _escribir_tramos(repo: Path, cuerpo: str) -> Path:
+    (repo / "knowledge" / "corpus").mkdir(parents=True, exist_ok=True)
+    ruta = repo / "knowledge" / "corpus" / "tramos_no_citables.yaml"
+    ruta.write_text(cuerpo, encoding="utf-8", newline="\n")
+    return ruta
+
+
+def test_cargar_tramos_no_citables(tmp_path: Path) -> None:
+    from botsito.validation.contexto_evidencia import cargar_tramos_no_citables
+
+    _escribir_tramos(
+        tmp_path,
+        "tramos:\n"
+        '  - video_id: v6\n    t0: "0:41:00"\n    t1: "0:50:11"\n'
+        "    motivo: fuera de la operativa\n    acordado: lo dicen los dos\n"
+        '  - video_id: v6\n    t0: "1:53:30"\n    t1: "1:57:31"\n'
+        "    motivo: video ajeno\n    acordado: se ausenta\n",
+    )
+    tramos = cargar_tramos_no_citables(tmp_path)
+    assert tramos["v6"] == (
+        (2460000, 3011000, "fuera de la operativa"),
+        (6810000, 7051000, "video ajeno"),
+    )
+
+
+def test_sin_fichero_no_hay_tramos(tmp_path: Path) -> None:
+    from botsito.validation.contexto_evidencia import cargar_tramos_no_citables
+
+    assert cargar_tramos_no_citables(tmp_path) == {}
+
+
+@pytest.mark.parametrize(
+    ("cuerpo", "esperado"),
+    [
+        (
+            'tramos:\n  - video_id: v6\n    t0: "0:41:00"\n    t1: "0:41:00"\n'
+            "    motivo: x\n    acordado: y\n",
+            "posterior a t0",
+        ),
+        (
+            'tramos:\n  - video_id: v6\n    t0: "0:41:00"\n    t1: "0:50:00"\n'
+            '    motivo: "   "\n    acordado: y\n',
+            "motivo vacio",
+        ),
+        (
+            'tramos:\n  - video_id: v6\n    t0: "0:41:00"\n    t1: "0:50:00"\n    motivo: x\n',
+            "necesita video_id",
+        ),
+        ("tramos: {}\n", "debe ser una lista"),
+        ("otra_cosa: []\n", "unica clave"),
+    ],
+)
+def test_tramos_no_citables_mal_escritos(tmp_path: Path, cuerpo: str, esperado: str) -> None:
+    from botsito.validation.contexto_evidencia import (
+        TramosNoCitablesError,
+        cargar_tramos_no_citables,
+    )
+
+    _escribir_tramos(tmp_path, cuerpo)
+    with pytest.raises(TramosNoCitablesError, match=esperado):
+        cargar_tramos_no_citables(tmp_path)

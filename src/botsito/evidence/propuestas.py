@@ -37,6 +37,7 @@ from botsito.evidence.verificacion import (
     comprobar_referencias,
     localizar_cita,
     tokens,
+    tramo_no_citable,
 )
 
 DIRECTORIO_PROPUESTAS = "knowledge/_proposals"
@@ -400,6 +401,9 @@ def comprobar(
             it["t1"]
         ) > parse_tiempo(doc["t1"]):
             problemas.append(f"{pref}: fuera del tramo de la propuesta")
+        fuera = tramo_no_citable(contexto, video, _ms(it["t0"]), _ms(it["t1"]))
+        if fuera is not None:
+            problemas.append(f"{pref}: el tramo no es especificacion, {fuera}")
         modalidad = it["modalidad"]
         fotos = list(it.get("fotogramas") or [])
         if modalidad == "audio" and fotos:

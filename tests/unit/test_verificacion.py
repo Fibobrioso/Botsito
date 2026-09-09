@@ -9,10 +9,12 @@ import pytest
 from botsito.evidence.verificacion import (
     TOLERANCIA_CITA_MS,
     CitaError,
+    ContextoEvidencia,
     comprobar_referencias,
     localizar_cita,
     tokens,
     tokens_de_segmento,
+    tramo_no_citable,
     trozos_de_cita,
 )
 
@@ -235,3 +237,43 @@ def test_referencia_de_otro_video_y_fuera_del_tramo() -> None:
     assert any("es del video 'v1'" in x for x in p)
     p = comprobar_referencias("v4", 700000, 701000, "pantalla", ["fr-v4-9ad0ebb8/750000"], refs)
     assert any("fuera del tramo" in x for x in p)
+
+
+# --- tramos que no son especificacion (F07, sesion 1) ---
+
+
+def _contexto_con_tramos() -> ContextoEvidencia:
+    return ContextoEvidencia(
+        tramos_no_citables={
+            "v6": (
+                (2460000, 3011000, "no va para la operativa"),
+                (6810000, 7051000, "video ajeno"),
+            ),
+        }
+    )
+
+
+@pytest.mark.parametrize(
+    ("t0_ms", "t1_ms", "hay_motivo"),
+    [
+        (2500000, 2510000, True),  # dentro del tramo
+        (2450000, 2470000, True),  # empieza fuera y entra: tambien cuenta
+        (3000000, 3020000, True),  # empieza dentro y sale
+        (2400000, 2460000, False),  # termina justo donde empieza el tramo
+        (3011000, 3020000, False),  # empieza justo donde acaba
+        (6900000, 6910000, True),  # el segundo tramo
+        (1000000, 1010000, False),  # muy lejos
+    ],
+)
+def test_tramo_no_citable(t0_ms: int, t1_ms: int, hay_motivo: bool) -> None:
+    motivo = tramo_no_citable(_contexto_con_tramos(), "v6", t0_ms, t1_ms)
+    assert (motivo is not None) == hay_motivo
+
+
+def test_tramo_no_citable_es_por_video() -> None:
+    """Un tramo de v6 no silencia el mismo minuto de otro video."""
+    assert tramo_no_citable(_contexto_con_tramos(), "v4", 2500000, 2510000) is None
+
+
+def test_sin_tramos_declarados_todo_es_citable() -> None:
+    assert tramo_no_citable(ContextoEvidencia(), "v6", 2500000, 2510000) is None
