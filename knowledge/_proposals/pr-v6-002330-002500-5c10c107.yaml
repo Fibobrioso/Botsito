@@ -176,6 +176,11 @@ items:
     (ADR-0005), y con reglas que dependen de una ruptura 'por una milesima' la diferencia entre proveedores
     puede cambiar un dia entero.
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:05Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-002414-d59b1c82
 no_consta: []
 salida_sha256: 8d3eef24b2ac6f85e3089dc8b6b18e501d31d9ad012cc0ba754717a9b5a8eafa
 comprobado_el: '2026-09-09T21:32:23Z'

@@ -275,6 +275,11 @@ items:
   notas: el trader vuelve sobre P-02 por iniciativa propia, doce minutos despues de haberla respondido
     con 'apenas toca'. No cierra la duda.
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-010927-50b8d873
 - t0: '1:09:47'
   t1: '1:10:01'
   modalidad: audio
@@ -287,6 +292,11 @@ items:
   notas: es el argumento en contra de su propia respuesta a P-02; cuantificarlo exige medir las dos variantes
     sobre los mismos dias.
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:19Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-010947-8b4b485a
 no_consta: []
 salida_sha256: 82a5db2db820a99678a3e9c47383a7dabf3df03c480c0ec0d669509c6c0e0bc0
 comprobado_el: '2026-09-09T21:32:28Z'

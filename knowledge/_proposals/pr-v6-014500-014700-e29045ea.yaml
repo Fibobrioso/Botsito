@@ -247,6 +247,11 @@ items:
   notas: 'no es una regla suya: es permiso para ampliar el alcance. La decision es del consultor y afecta
     a que dias y horas mide el bot.'
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:21Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-014610-597e442a
 - t0: '1:46:23'
   t1: '1:46:29'
   modalidad: audio
@@ -258,6 +263,11 @@ items:
   notas: contrasta con toda su operativa grabada, que ocurre entre las 07:00 y las 15:00 de su reloj.
     Sin acotarlo, el bot no sabe donde parar.
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:23Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-014623-f23c5f63
 no_consta: []
 salida_sha256: 2bb054e3e6d70ab4f01fa5e47be0bf03747ec481aaaab2412d7aa011aa47d4f0
 comprobado_el: '2026-09-09T21:32:31Z'

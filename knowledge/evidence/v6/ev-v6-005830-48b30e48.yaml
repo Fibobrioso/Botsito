@@ -1,0 +1,19 @@
+id: ev-v6-005830-48b30e48
+video_id: v6
+t0: 0:58:30
+t1: 0:59:50
+modalidad: ambas
+tipo: PARAMETER
+cita_literal: la vela empieza a las 23, la primera vela de cuatro horas
+afirmacion: en su grafico la primera vela de 4 horas del dia abre a las 23:00
+tema: reloj.h4_abre_23
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v6-22982c02/3585000
+valor: '23'
+notas: el fotograma muestra TradingView en 4h con el reloj '20:48:30 UTC+2' y el eje en 07:00, 11:00,
+  15:00, 19:00 y 23:00. Responde la pregunta bloqueante P-03.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

@@ -1,0 +1,18 @@
+id: ev-v6-014610-597e442a
+video_id: v6
+t0: '1:46:10'
+t1: '1:46:19'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Por ahora vamos a trabajarlo en esas dos sesiones. Aunque si quieres incluir Nueva York
+  como te digo, pues lo puedes hacer. O sea, por mí no hay problema.
+afirmacion: la operativa son las dos sesiones de 07-11 y 11-15, y deja abierto incluir la sesion de Nueva
+  York
+tema: ventana.nueva_york_opcional
+confianza: alta
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: 'no es una regla suya: es permiso para ampliar el alcance. La decision es del consultor y afecta
+  a que dias y horas mide el bot.'
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

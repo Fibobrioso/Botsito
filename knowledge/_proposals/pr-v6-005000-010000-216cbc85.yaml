@@ -1157,6 +1157,11 @@ items:
     tres minutos despues, ya con el contexto delante, responde lo contrario (0:57:01, 'apenas toca').
     Se conservan las dos formulaciones porque se contradicen.
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:07Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005359-e00e4b0f
 - t0: 0:57:01
   t1: 0:57:20
   modalidad: audio
@@ -1169,6 +1174,11 @@ items:
   notas: respuesta definitiva a P-02, dada con el contexto de la pregunta delante y justificada por como
     opera ('siempre lo he estado trabajando'). Supersede en la practica a la de 0:53:59.
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:09Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005701-7ae2b8d3
 - t0: 0:58:30
   t1: 0:59:50
   modalidad: ambas
@@ -1183,6 +1193,11 @@ items:
   notas: el fotograma muestra TradingView en 4h con el reloj '20:48:30 UTC+2' y el eje en 07:00, 11:00,
     15:00, 19:00 y 23:00. Responde la pregunta bloqueante P-03.
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · fotograma visto
+  decidido_el: '2026-09-09T22:07:14Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v6-005830-48b30e48
 - t0: 0:58:10
   t1: 0:58:24
   modalidad: audio
@@ -1197,6 +1212,11 @@ items:
     las 8 o a las 6'' a un desplazamiento. De aqui sale la duda nueva sobre el anclaje H4 fuera del horario
     de verano.'
   n: 4
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:12Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005810-5cb1ef06
 no_consta: []
 salida_sha256: 9dfcfa3ec0809bfb1be0b7440162a795997e7dae92aecf5ba434fe0f225d2337
 comprobado_el: '2026-09-09T21:36:20Z'

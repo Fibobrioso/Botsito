@@ -1,0 +1,18 @@
+id: ev-v6-005359-e00e4b0f
+video_id: v6
+t0: 0:53:59
+t1: 0:54:05
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Tiene que ser con cuerpo el break even
+afirmacion: el break even se pone con cuerpo
+tema: break_even.disparador_cuerpo
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+valor: cuerpo
+notas: primera respuesta del trader a la pregunta P-02, antes de que el consultor le ensene el contexto;
+  tres minutos despues, ya con el contexto delante, responde lo contrario (0:57:01, 'apenas toca'). Se
+  conservan las dos formulaciones porque se contradicen.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

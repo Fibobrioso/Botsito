@@ -1,0 +1,19 @@
+id: ev-v6-002414-d59b1c82
+video_id: v6
+t0: 0:24:14
+t1: 0:24:42
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no sé de dónde sacará sus datos, pero no coincide mucho con Oanda o FXM, que por ejemplo,
+  FX Replay usa los datos de Oanda, entonces me es más factible, por eso suelo usar FX Replay
+afirmacion: backtestea en FX Replay, que usa datos de Oanda, y descarta Forex Tester porque sus datos
+  no le coinciden
+tema: herramientas.fxreplay_datos_oanda
+confianza: alta
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: sus decisiones y sus backtests estan tomados sobre velas de Oanda. El proyecto mide sobre Dukascopy
+  (ADR-0005), y con reglas que dependen de una ruptura 'por una milesima' la diferencia entre proveedores
+  puede cambiar un dia entero.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

@@ -448,6 +448,11 @@ items:
   notas: lo dice el trader sin estar seguro ('creo'). Es una regla del proveedor, no suya, y hay que verificarla
     en las condiciones reales de la cuenta.
   n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:25Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-020029-aa86963a
 - t0: '2:01:14'
   t1: '2:01:40'
   modalidad: audio
@@ -461,6 +466,11 @@ items:
   notas: el consultor es quien lo plantea y el trader lo confirma de oidas. Convierte el 'operamos con
     noticias' en un riesgo de cuenta, no solo de spread.
   n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:27Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-020114-a0e0b419
 - t0: '2:02:00'
   t1: '2:02:06'
   modalidad: audio
@@ -471,6 +481,11 @@ items:
   confianza: media
   notas: la decision se toma sin resolver la regla del proveedor que el mismo acaba de mencionar.
   n: 3
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:30Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-020200-a957aa03
 no_consta: []
 salida_sha256: 50cf905dc2a33514ec017efb7e7ef76e47b97c6947c9e3bc2c19710e77f6fdba
 comprobado_el: '2026-09-09T21:33:03Z'
