@@ -47,8 +47,15 @@ visto, es un `REJECT` sobre el mismo objetivo: el mes se anade a `vistos.yaml` c
 `fb-...` en `fuente`, y el paquete se regenera desde cero.
 
 ## Si cambia la fecha de la sesion
-`kit build` no sobreescribe: se borra la carpeta del paquete viejo y se vuelve a construir con la
-fecha nueva. **Hay que reutilizar el mismo `--seed`.** El seed decide que dias caen en `dev` y
-cuales quedan en holdout; con otro seed el paquete sale con dias distintos, sin aviso y sin que
-nada falle. Cambiar el seed solo tiene sentido si se quiere un sorteo nuevo a proposito. Despues
-de reconstruir, regenerar la hoja en Word: es lo ultimo que se hace antes de imprimir.
+    uv run --no-sync python scripts/mover_sesion.py --a AAAA-MM-DD
+    uv run --no-sync python scripts/hoja_sesion_docx.py
+
+El script reutiliza el seed del paquete que ya existe y despues comprueba que los casos, el
+reparto y las preguntas son los mismos que antes; si no lo son, restaura el paquete original y no
+mueve nada. Se niega a mover una sesion que ya tenga registros de feedback.
+
+A mano la trampa es el seed: `kit build` lo pide, el seed decide que dias caen en `dev` y cuales
+quedan en holdout, y con otro seed el paquete sale con dias distintos sin aviso y sin que nada
+falle. Cambiarlo solo tiene sentido si se quiere un sorteo nuevo a proposito.
+
+Regenerar la hoja en Word es siempre lo ultimo, justo antes de imprimir.
