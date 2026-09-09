@@ -20,16 +20,25 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
   `knowledge/cases/kit/2026-09-15-sesion-01/` (fecha provisional).
-- SIGUIENTE: el usuario valida F10 -> ritual §F (`BOTSITO_ALLOW_MAIN=1 git merge --no-ff
-  feature/F10-elicitation-kit`, `git tag -a stable/F10`, `docs(state)`, `make check`, push, CI)
-  -> SESION 1 con el trader: (1) confirmacion escrita de que no ha visto mayo/junio (registro
-  F09 `medio: escrito`), (2) las 3 preguntas bloqueantes (A-9 con captura del grafico, A-2, A-4)
-  y el resto de `hoja_trader.md`, (3) etiquetado de los 16 casos `dev` por sesion H4 con la
-  gramatica del kit; cada respuesta = `botsito feedback new` (`RESOLVE_UNKNOWN` sobre
-  `ambiguedad`/`parametro`, `LABEL_CASE` sobre `caso`); despues F11 strategy-spec-schema. Si la
-  fecha de la sesion no es 2026-09-15: `kit build --sesion <fecha>-sesion-01 --seed 20260915` y
-  commit ANTES de la sesion. Todo commit bajo `knowledge/spec` o `knowledge/cases` lleva
-  `Fuente:`.
+- SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6, paquete `2026-09-09-sesion-01`; el
+  paquete se movio del 15 al 9 con `scripts/mover_sesion.py`, mismo seed y mismos 40 casos, y se
+  commiteo ANTES). Procesada entera: v6 inventariado, transcrito (`tr-v6-...-7718b3f4`) y con
+  fotogramas (`fr-v6-22982c02`); 72 registros de feedback; las doce ambiguedades A-1..A-12
+  RESUELTAS; informe en `docs/validation/SESION-01-2026-09-09.md` (leelo: es el esquema completo
+  de la estrategia con la cita de cada decision). Las tres bloqueantes: cartuchos 3 intentos (BE,
+  entrada invalidada y reentrada no cuentan), break even al TOCAR, y H4 a las 23:00 de su grafico
+  en UTC+2, verificado tambien en pantalla (`fr-v6-22982c02/3585000`).
+- CUIDADO al citar v6: dos tramos NO son especificacion y la guardia los rechaza
+  (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que
+  lo que se explica "no va para la operativa" (tercer esquema), y 1:53:30-1:57:31, donde suena un
+  video ajeno mientras el trader se ausenta. Siguen en la cruda y `kb find` los encuentra; lo que
+  no pueden es entrar en evidencia.
+- SIGUIENTE: (1) decidir sobre los 12 items de `knowledge/_proposals/pr-v6-*` (`evidence accept`);
+  al aceptarlos se registran A-13..A-17, las cinco dudas que la sesion deja abiertas. (2) Recibir
+  el backtest COMPLETO de mayo y junio con Excel, que el trader se comprometio a enviar antes del
+  2026-09-12 y que sustituye al etiquetado a mano de los 16 dias `dev`. (3) Abrir F11
+  strategy-spec-schema: el registro sigue en UNKNOWN porque `feedback apply` se difirio desde F09.
+  Todo commit bajo `knowledge/spec` o `knowledge/cases` lleva `Fuente:`.
 - Lecciones tecnicas (F10): Dukascopy devuelve 503 y resets a mitad de mes: `data download`
   cachea por dia y se relanza hasta que el manifiesto existe; los literales de negocio no pueden
   ir en `src/` (`config.yaml` del kit); `random.shuffle` no es estable entre versiones (orden por
