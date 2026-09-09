@@ -34,9 +34,9 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones respondidas, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. Falta el etiquetado de casos, que el trader entrega como backtest completo de mayo y junio con Excel. Siguiente: F11 strategy-spec-schema
 
 ## Current Feature
-—  (main estable en stable/F10-sesion-01; siguiente F11)
+F11 strategy-spec-schema (rama `feature/F11-strategy-spec-schema`, brief en `docs/plan/features/F11-strategy-spec-schema.md`): `feedback apply` (la puerta diferida desde F09), `strategy_spec.yaml` que referencia parametros por nombre y nunca por valor, `glossary.yaml`, `spec_manifest.yaml` con semver y hash canonico, y los tipos que faltan en el registro (enum, booleano, puntos, minutos, lotes). EN BRIEF: seis puntos de forma pendientes de revision de diseno antes de programar (el huso del trader sin nombre IANA, cartuchos que cuentan perdidas y no intentos, la ausencia de valor en spread/extension, el riesgo real del 0,4 %, el instrumento como lista con prioridad y que hacer con un valor respondido que sigue bajo ambiguedad abierta).
 ## Current Branch
-main
+feature/F11-strategy-spec-schema
 
 ## Stable Main State
 1475956 · merge de la sesion 1 con el trader (tras stable/F10). make check verde: 538 casos (373 funciones), 4 contratos, mypy strict, state/config/knowledge validate (33 parametros con 30 sin confirmar, 353 items de evidencia, 1 contradiccion abierta, 17 ambiguedades con A-1..A-12 RESUELTAS, 1 paquete de sesion valido, 5 manifiestos de datos, 11 de transcripcion con 6 activos, 6 de fotogramas). Tags stable/F05, stable/F05-auditoria-1, stable/F05-previos-F07, stable/F07, stable/F08, stable/F10 y stable/F10-sesion-01. Rama main protegida en GitHub.
