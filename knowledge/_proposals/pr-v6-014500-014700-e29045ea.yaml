@@ -1,0 +1,263 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v6-014500-014700-e29045ea
+video_id: v6
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4
+t0: '1:45:00'
+t1: '1:47:00'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-opus-5 · sesion 1
+proponente: llm
+generado_el: '2026-09-09T21:28:54Z'
+contexto:
+  segmentos:
+  - n: 1409
+    t0_ms: 6298790
+    t1_ms: 6300690
+    texto: ¿Cuándo bajas la protección y hasta dónde?
+    senales: []
+  - n: 1410
+    t0_ms: 6301290
+    t1_ms: 6303570
+    texto: Dice que cuando has pasado buena parte de la vela
+    senales:
+    - no_habla
+  - n: 1411
+    t0_ms: 6303570
+    t1_ms: 6305670
+    texto: Sin que el precio avance, baja la protección
+    senales:
+    - no_habla
+  - n: 1412
+    t0_ms: 6305670
+    t1_ms: 6307130
+    texto: ¿A qué parte de la vela?
+    senales:
+    - no_habla
+  - n: 1413
+    t0_ms: 6327180
+    t1_ms: 6327920
+    texto: Ah, ya
+    senales:
+    - no_habla
+  - n: 1414
+    t0_ms: 6327920
+    t1_ms: 6329520
+    texto: Aquí ya entra un poco
+    senales:
+    - no_habla
+  - n: 1415
+    t0_ms: 6329520
+    t1_ms: 6331700
+    texto: El stop dinámico
+    senales:
+    - no_habla
+  - n: 1416
+    t0_ms: 6331700
+    t1_ms: 6333980
+    texto: Pero también con subjetividad, por así decirlo
+    senales:
+    - no_habla
+  - n: 1417
+    t0_ms: 6335040
+    t1_ms: 6335560
+    texto: ¿Incluimos?
+    senales:
+    - no_habla
+  - n: 1418
+    t0_ms: 6337340
+    t1_ms: 6339500
+    texto: No, mantenemos fijo a 0.80
+    senales:
+    - no_habla
+  - n: 1419
+    t0_ms: 6339500
+    t1_ms: 6339900
+    texto: Para
+    senales:
+    - no_habla
+  - n: 1420
+    t0_ms: 6341140
+    t1_ms: 6341920
+    texto: Descartar esto
+    senales:
+    - no_habla
+  - n: 1421
+    t0_ms: 6341920
+    t1_ms: 6342880
+    texto: Se mantiene
+    senales:
+    - no_habla
+  - n: 1422
+    t0_ms: 6343660
+    t1_ms: 6345660
+    texto: Eso de fijo a 0.80
+    senales:
+    - no_habla
+  - n: 1423
+    t0_ms: 6347100
+    t1_ms: 6347960
+    texto: Claro, sí
+    senales:
+    - no_habla
+  - n: 1424
+    t0_ms: 6347960
+    t1_ms: 6349560
+    texto: Sí, esa sería la respuesta.
+    senales: []
+  - n: 1425
+    t0_ms: 6350180
+    t1_ms: 6350620
+    texto: Ok.
+    senales: []
+  - n: 1426
+    t0_ms: 6351600
+    t1_ms: 6353220
+    texto: Ahora inicia la ventana operativa.
+    senales: []
+  - n: 1427
+    t0_ms: 6353240
+    t1_ms: 6355280
+    texto: Ahora empieza a buscar entradas cada día en tu reloj.
+    senales: []
+  - n: 1428
+    t0_ms: 6357620
+    t1_ms: 6359000
+    texto: Eso también está solucionado.
+    senales: []
+  - n: 1429
+    t0_ms: 6360960
+    t1_ms: 6362740
+    texto: Esto está en el video.
+    senales: []
+  - n: 1430
+    t0_ms: 6363460
+    t1_ms: 6364340
+    texto: Su operativa.
+    senales: []
+  - n: 1431
+    t0_ms: 6364740
+    t1_ms: 6366760
+    texto: Tu operativa inicia 7M, me dijiste, ¿no?
+    senales: []
+  - n: 1432
+    t0_ms: 6367480
+    t1_ms: 6367920
+    texto: Sí.
+    senales: []
+  - n: 1433
+    t0_ms: 6368720
+    t1_ms: 6370000
+    texto: O sea, bueno.
+    senales: []
+  - n: 1434
+    t0_ms: 6370560
+    t1_ms: 6372960
+    texto: Por ahora vamos a trabajarlo en esas dos sesiones.
+    senales: []
+  - n: 1435
+    t0_ms: 6373300
+    t1_ms: 6376540
+    texto: Aunque si quieres incluir Nueva York como te digo, pues lo puedes hacer.
+    senales: []
+  - n: 1436
+    t0_ms: 6376540
+    t1_ms: 6378120
+    texto: O sea, por mí no hay problema.
+    senales: []
+  - n: 1437
+    t0_ms: 6378360
+    t1_ms: 6381340
+    texto: O sea, ¿quiere que el bond también esté de cara a Nueva York?
+    senales: []
+  - n: 1438
+    t0_ms: 6383060
+    t1_ms: 6389720
+    texto: O sea, como te digo, bro, puedes buscar las operaciones donde sea, o sea, no hay problema.
+    senales: []
+  - n: 1439
+    t0_ms: 6389800
+    t1_ms: 6393300
+    texto: Claro, porque por ahí, quién sabe, hasta se duplica el retorno.
+    senales: []
+  - n: 1440
+    t0_ms: 6394400
+    t1_ms: 6396260
+    texto: No, no, claro, o sea, es que es eso.
+    senales: []
+  - n: 1441
+    t0_ms: 6396360
+    t1_ms: 6403620
+    texto: Al final y al cabo, a nosotros nos es indiferente como tal, o sea, por el manejo de riesgo
+      que tenemos,
+    senales: []
+  - n: 1442
+    t0_ms: 6403620
+    t1_ms: 6411220
+    texto: tener una racha de pérdidas largas porque en 33 de 13 lo recuperamos con ganancia inclusive
+    senales: []
+  - n: 1443
+    t0_ms: 6411220
+    t1_ms: 6422700
+    texto: ya tenemos nuestros blogs pero en 33 dispositivos se recupera y con ganancia entonces es eso
+      es que
+    senales: []
+  referencias:
+  - 'fr-v6-22982c02/<t_ms>: 121 fotogramas regulares, uno por segundo, de 6300000 a 6420000 ms'
+temas_buscados:
+- ventana
+items:
+- t0: '1:46:10'
+  t1: '1:46:19'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: Por ahora vamos a trabajarlo en esas dos sesiones. Aunque si quieres incluir Nueva York
+    como te digo, pues lo puedes hacer. O sea, por mí no hay problema.
+  afirmacion: la operativa son las dos sesiones de 07-11 y 11-15, y deja abierto incluir la sesion de
+    Nueva York
+  tema: ventana.nueva_york_opcional
+  confianza: alta
+  notas: 'no es una regla suya: es permiso para ampliar el alcance. La decision es del consultor y afecta
+    a que dias y horas mide el bot.'
+  n: 1
+- t0: '1:46:23'
+  t1: '1:46:29'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: como te digo, bro, puedes buscar las operaciones donde sea, o sea, no hay problema
+  afirmacion: no pone restriccion de horario a donde el bot busque operaciones
+  tema: ventana.sin_restriccion_de_sesion
+  confianza: media
+  notas: contrasta con toda su operativa grabada, que ocurre entre las 07:00 y las 15:00 de su reloj.
+    Sin acotarlo, el bot no sabe donde parar.
+  n: 2
+no_consta: []
+salida_sha256: 2bb054e3e6d70ab4f01fa5e47be0bf03747ec481aaaab2412d7aa011aa47d4f0
+comprobado_el: '2026-09-09T21:32:31Z'

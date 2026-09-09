@@ -1,0 +1,476 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v6-015930-020230-c2e79539
+video_id: v6
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4
+t0: '1:59:30'
+t1: '2:02:30'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-opus-5 · sesion 1
+proponente: llm
+generado_el: '2026-09-09T21:28:56Z'
+contexto:
+  segmentos:
+  - n: 1576
+    t0_ms: 7170505
+    t1_ms: 7172785
+    texto: Mides la distancia completa de la caja
+    senales: []
+  - n: 1577
+    t0_ms: 7172785
+    t1_ms: 7174245
+    texto: Claro, el lotaje
+    senales: []
+  - n: 1578
+    t0_ms: 7174825
+    t1_ms: 7176385
+    texto: Se pone sobre
+    senales: []
+  - n: 1579
+    t0_ms: 7176385
+    t1_ms: 7178245
+    texto: El completo, ¿no?
+    senales: []
+  - n: 1580
+    t0_ms: 7186145
+    t1_ms: 7186725
+    texto: Sí
+    senales: []
+  - n: 1581
+    t0_ms: 7190895
+    t1_ms: 7198055
+    texto: para que corra la operación
+    senales: []
+  - n: 1582
+    t0_ms: 7199555
+    t1_ms: 7201055
+    texto: básicamente lo que se busca acá
+    senales: []
+  - n: 1583
+    t0_ms: 7201055
+    t1_ms: 7203035
+    texto: es que se calcule el stop loss
+    senales: []
+  - n: 1584
+    t0_ms: 7203035
+    t1_ms: 7204515
+    texto: digamos, no sé, a 100 pips
+    senales: []
+  - n: 1585
+    t0_ms: 7205547
+    t1_ms: 7210967
+    texto: O sea, es un decir, ¿no? A 100 pips, pero se baja automáticamente a 0,8 una vez introducida
+      la operación.
+    senales: []
+  - n: 1586
+    t0_ms: 7212207
+    t1_ms: 7212607
+    texto: Exacto.
+    senales: []
+  - n: 1587
+    t0_ms: 7212987
+    t1_ms: 7213347
+    texto: Ok.
+    senales: []
+  - n: 1588
+    t0_ms: 7215307
+    t1_ms: 7216467
+    texto: ¿Días en los que se opera?
+    senales: []
+  - n: 1589
+    t0_ms: 7219707
+    t1_ms: 7220667
+    texto: De lunes a viernes.
+    senales: []
+  - n: 1590
+    t0_ms: 7221127
+    t1_ms: 7222687
+    texto: De lunes a viernes, ¿no? No hay excepciones.
+    senales: []
+  - n: 1591
+    t0_ms: 7223307
+    t1_ms: 7224607
+    texto: Claro, no hay excepciones.
+    senales: []
+  - n: 1592
+    t0_ms: 7225147
+    t1_ms: 7226367
+    texto: De lunes a viernes se opera.
+    senales: []
+  - n: 1593
+    t0_ms: 7227587
+    t1_ms: 7228627
+    texto: ah bro, por cierto
+    senales:
+    - no_habla
+  - n: 1594
+    t0_ms: 7229087
+    t1_ms: 7231387
+    texto: me puse a pensar y lo de las noticias
+    senales:
+    - no_habla
+  - n: 1595
+    t0_ms: 7231387
+    t1_ms: 7231867
+    texto: o sea
+    senales:
+    - no_habla
+  - n: 1596
+    t0_ms: 7233987
+    t1_ms: 7234707
+    texto: creo que
+    senales:
+    - no_habla
+  - n: 1597
+    t0_ms: 7234707
+    t1_ms: 7236927
+    texto: dos minutos antes y dos minutos después
+    senales:
+    - no_habla
+  - n: 1598
+    t0_ms: 7236927
+    t1_ms: 7238947
+    texto: no se puede operar, creo, o como es
+    senales:
+    - no_habla
+  - n: 1599
+    t0_ms: 7238947
+    t1_ms: 7241007
+    texto: depende del tipo de cuenta de fondeo que tienes
+    senales:
+    - no_habla
+  - n: 1600
+    t0_ms: 7242147
+    t1_ms: 7242967
+    texto: ah, vale, vale
+    senales:
+    - no_habla
+  - n: 1601
+    t0_ms: 7243387
+    t1_ms: 7245187
+    texto: depende del tipo de cuenta, incluso creo
+    senales:
+    - no_habla
+  - n: 1602
+    t0_ms: 7245187
+    t1_ms: 7247007
+    texto: que hay algunas cuentas de fondeo donde tú
+    senales:
+    - no_habla
+  - n: 1603
+    t0_ms: 7247007
+    t1_ms: 7249187
+    texto: pagas para que justamente te dejen operar
+    senales:
+    - no_habla
+  - n: 1604
+    t0_ms: 7249187
+    t1_ms: 7251207
+    texto: noticias, creo que son, digamos, si la cuenta
+    senales:
+    - no_habla
+  - n: 1605
+    t0_ms: 7251207
+    t1_ms: 7253127
+    texto: te va a costar, es que claro, eso es lo que yo no he
+    senales:
+    - no_habla
+  - n: 1606
+    t0_ms: 7253127
+    t1_ms: 7255087
+    texto: tomado en cuenta, o sea, a mí me es indiferente
+    senales:
+    - no_habla
+  - n: 1607
+    t0_ms: 7255087
+    t1_ms: 7256827
+    texto: si hay noticia o no, o sea
+    senales:
+    - no_habla
+  - n: 1608
+    t0_ms: 7258087
+    t1_ms: 7258667
+    texto: y ya
+    senales:
+    - no_habla
+  - n: 1609
+    t0_ms: 7260987
+    t1_ms: 7263007
+    texto: lo vamos testeando, pero yo creo que es normal
+    senales:
+    - no_habla
+  - n: 1610
+    t0_ms: 7263007
+    t1_ms: 7264267
+    texto: porque creo que son, digamos
+    senales:
+    - no_habla
+  - n: 1611
+    t0_ms: 7264987
+    t1_ms: 7267167
+    texto: 15 dólares extra que te piden por operar
+    senales:
+    - no_habla
+  - n: 1612
+    t0_ms: 7267167
+    t1_ms: 7267647
+    texto: noticias
+    senales:
+    - no_habla
+  - n: 1613
+    t0_ms: 7268527
+    t1_ms: 7269927
+    texto: ah vale, no hay problema
+    senales:
+    - no_habla
+  - n: 1614
+    t0_ms: 7270547
+    t1_ms: 7272027
+    texto: sí, sí, de lo que se ve no se opera
+    senales:
+    - no_habla
+  - n: 1615
+    t0_ms: 7272807
+    t1_ms: 7274247
+    texto: ah mira, justo lo que hablabas
+    senales:
+    - no_habla
+  - n: 1616
+    t0_ms: 7275007
+    t1_ms: 7275827
+    texto: noticias de alto impacto
+    senales:
+    - no_habla
+  - n: 1617
+    t0_ms: 7276447
+    t1_ms: 7278847
+    texto: no, yo lo digo, es que pasa que, o sea
+    senales:
+    - no_habla
+  - n: 1618
+    t0_ms: 7279687
+    t1_ms: 7281027
+    texto: cuando estás intentando pasar
+    senales:
+    - no_habla
+  - n: 1619
+    t0_ms: 7281027
+    t1_ms: 7282967
+    texto: la prueba de fondeo, o sea, es una de sus
+    senales:
+    - no_habla
+  - n: 1620
+    t0_ms: 7282967
+    t1_ms: 7284967
+    texto: sus reglas, creo, en algunas empresas, que si tú
+    senales:
+    - no_habla
+  - n: 1621
+    t0_ms: 7284967
+    t1_ms: 7286527
+    texto: vas en contra de eso,
+    senales:
+    - no_habla
+  - n: 1622
+    t0_ms: 7286987
+    t1_ms: 7288787
+    texto: pues te, o sea, a pesar de que
+    senales:
+    - no_habla
+  - n: 1623
+    t0_ms: 7288787
+    t1_ms: 7291027
+    texto: termines en profit, o no, o bien
+    senales:
+    - no_habla
+  - n: 1624
+    t0_ms: 7291027
+    t1_ms: 7292647
+    texto: no te pagan, o qué sé yo, o sea,
+    senales:
+    - no_habla
+  - n: 1625
+    t0_ms: 7292787
+    t1_ms: 7293747
+    texto: te cierran la cuenta.
+    senales:
+    - no_habla
+  - n: 1626
+    t0_ms: 7294547
+    t1_ms: 7295527
+    texto: Ah, mira tú.
+    senales:
+    - no_habla
+  - n: 1627
+    t0_ms: 7297127
+    t1_ms: 7297887
+    texto: ¿Sabías eso o no?
+    senales:
+    - no_habla
+  - n: 1628
+    t0_ms: 7298667
+    t1_ms: 7301007
+    texto: Sí, sí sabía. Justamente sabía por eso
+    senales:
+    - no_habla
+  - n: 1629
+    t0_ms: 7301007
+    t1_ms: 7302787
+    texto: que existía esta opción que te permitían pagar
+    senales:
+    - no_habla
+  - n: 1630
+    t0_ms: 7302787
+    t1_ms: 7304447
+    texto: para operar noticias.
+    senales:
+    - no_habla
+  - n: 1631
+    t0_ms: 7305007
+    t1_ms: 7306887
+    texto: Porque incluso hay algunas que se bloquean,
+    senales:
+    - no_habla
+  - n: 1632
+    t0_ms: 7306887
+    t1_ms: 7308647
+    texto: o sea, para de plano evitar que
+    senales:
+    - no_habla
+  - n: 1633
+    t0_ms: 7308647
+    t1_ms: 7311047
+    texto: alguien haga eso, se bloquean en esos momentos.
+    senales:
+    - no_habla
+  - n: 1634
+    t0_ms: 7312967
+    t1_ms: 7314987
+    texto: Sí, creo que sí, también he escuchado que se bloquea.
+    senales: []
+  - n: 1635
+    t0_ms: 7317027
+    t1_ms: 7318267
+    texto: Entonces, ¿cómo hacemos con esa parte?
+    senales: []
+  - n: 1636
+    t0_ms: 7320917
+    t1_ms: 7322337
+    texto: A ver, vamos a intentarlo, ¿vale?
+    senales: []
+  - n: 1637
+    t0_ms: 7322437
+    t1_ms: 7324397
+    texto: O sea, porque al final de todo, como digo, no sé.
+    senales: []
+  - n: 1638
+    t0_ms: 7325657
+    t1_ms: 7326877
+    texto: Sí, incluimos noticias.
+    senales: []
+  - n: 1639
+    t0_ms: 7326997
+    t1_ms: 7328397
+    texto: No sé si es indiferente al final, ¿no?
+    senales: []
+  - n: 1640
+    t0_ms: 7333687
+    t1_ms: 7334407
+    texto: Ok, next.
+    senales: []
+  - n: 1641
+    t0_ms: 7335887
+    t1_ms: 7337107
+    texto: Sprint máximo aceptable.
+    senales: []
+  - n: 1642
+    t0_ms: 7337167
+    t1_ms: 7339727
+    texto: Hay un sprint por encima del cual directamente no entras
+    senales: []
+  - n: 1643
+    t0_ms: 7339727
+    t1_ms: 7342267
+    texto: y estás dentro del sprint, se dispara, se salgo, o sea.
+    senales: []
+  - n: 1644
+    t0_ms: 7348037
+    t1_ms: 7349297
+    texto: Sprint máximo aceptable.
+    senales: []
+  - n: 1645
+    t0_ms: 7349457
+    t1_ms: 7351377
+    texto: El máximo creo que es de dos.
+    senales: []
+  referencias:
+  - 'fr-v6-22982c02/<t_ms>: 181 fotogramas regulares, uno por segundo, de 7170000 a 7350000 ms'
+temas_buscados:
+- riesgo
+items:
+- t0: '2:00:29'
+  t1: '2:00:42'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: me puse a pensar y lo de las noticias [...] dos minutos antes y dos minutos después no
+    se puede operar, creo, o como es, depende del tipo de cuenta de fondeo que tienes
+  afirmacion: recuerda que las cuentas de fondeo prohiben operar dos minutos antes y despues de una noticia,
+    segun el tipo de cuenta
+  tema: riesgo.noticias_regla_fondeo
+  confianza: media
+  notas: lo dice el trader sin estar seguro ('creo'). Es una regla del proveedor, no suya, y hay que verificarla
+    en las condiciones reales de la cuenta.
+  n: 1
+- t0: '2:01:14'
+  t1: '2:01:40'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: cuando estás intentando pasar la prueba de fondeo, o sea, es una de sus sus reglas, creo,
+    en algunas empresas, que si tú vas en contra de eso, pues te, o sea, a pesar de que termines en profit,
+    o no, o bien no te pagan, o qué sé yo, o sea, te cierran la cuenta
+  afirmacion: operar noticias puede costar la cuenta aunque la operacion termine en ganancia
+  tema: riesgo.noticias_penalizacion
+  confianza: media
+  notas: el consultor es quien lo plantea y el trader lo confirma de oidas. Convierte el 'operamos con
+    noticias' en un riesgo de cuenta, no solo de spread.
+  n: 2
+- t0: '2:02:00'
+  t1: '2:02:06'
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: A ver, vamos a intentarlo, ¿vale? O sea, porque al final de todo, como digo, no sé.
+  afirmacion: decide operar tambien durante las noticias, a modo de prueba
+  tema: riesgo.noticias_se_opera
+  confianza: media
+  notas: la decision se toma sin resolver la regla del proveedor que el mismo acaba de mencionar.
+  n: 3
+no_consta: []
+salida_sha256: 50cf905dc2a33514ec017efb7e7ef76e47b97c6947c9e3bc2c19710e77f6fdba
+comprobado_el: '2026-09-09T21:33:03Z'

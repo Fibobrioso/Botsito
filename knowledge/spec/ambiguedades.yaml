@@ -24,7 +24,7 @@ ambiguedades:
       - ev-v4-004603-d0ffd4f2
     parametros: [sesgo_h4_regla]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-2
     titulo: tercer cartucho
@@ -41,7 +41,7 @@ ambiguedades:
       - ev-v4-002951-d3132b3f
     parametros: [cartuchos_max]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-3
     titulo: salida sin ruptura
@@ -52,7 +52,7 @@ ambiguedades:
       - ev-v4-010831-5f4a00ad
     parametros: [salida_sin_ruptura]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-4
     titulo: BE al tocar o al cierre
@@ -64,7 +64,7 @@ ambiguedades:
       - ev-v5-000427-f8d5d36d
     parametros: [break_even_condicion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-5
     titulo: cadencia de reubicacion
@@ -76,7 +76,7 @@ ambiguedades:
       - ev-v4-010857-5bc906c9
     parametros: [reubicacion_cadencia]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-6
     titulo: cierre 15:00
@@ -86,7 +86,7 @@ ambiguedades:
       - ev-v4-011514-fe34ac7e
     parametros: [ventana_fin, cierre_forzoso_fin_ventana]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-7
     titulo: stop del 2.o esquema
@@ -102,7 +102,7 @@ ambiguedades:
       - ev-v4-003252-ef8d3139
     parametros: [stop_segundo_esquema]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-8
     titulo: '"dos velas como una" en mapeo'
@@ -113,7 +113,7 @@ ambiguedades:
       - ev-v3-011540-5425b533
     parametros: [mapeo_dos_velas]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-9
     titulo: anclaje de la vela H4 (hora y huso del grafico)
@@ -127,7 +127,7 @@ ambiguedades:
       - ev-v3-000157-b26147c7
     parametros: [anclaje_h4]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-10
     titulo: "stop a 0,8: fijo o 0,75 + spread"
@@ -141,7 +141,7 @@ ambiguedades:
       - ev-v4-001221-1e66b5fd
     parametros: [stop_fraccion_caja, stop_colchon_spread]
     contradiccion: stop.nivel
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-11
     titulo: SL en la orden o tras el llenado
@@ -152,7 +152,7 @@ ambiguedades:
       - ev-v1-000620-0f7dea14
     parametros: [stop_en_orden_pendiente]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-12
     titulo: >-
@@ -165,5 +165,5 @@ ambiguedades:
       - ev-v1-001643-47673889
     parametros: [stop_reduccion_umbral_vela, stop_reduccion_fraccion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
