@@ -1,0 +1,118 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v6/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 8824.022
+duracion_wav_s: 8824.021
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-09-09 151552.mp4
+fragmentos:
+- fin_m: 9644214
+  indice: 0
+  inicio_m: 0
+- fin_m: 19216443
+  indice: 1
+  inicio_m: 9644214
+- fin_m: 28846042
+  indice: 2
+  inicio_m: 19216443
+- fin_m: 38413180
+  indice: 3
+  inicio_m: 28846042
+- fin_m: 48177204
+  indice: 4
+  inicio_m: 38413180
+- fin_m: 57782691
+  indice: 5
+  inicio_m: 48177204
+- fin_m: 67412204
+  indice: 6
+  inicio_m: 57782691
+- fin_m: 76965443
+  indice: 7
+  inicio_m: 67412204
+- fin_m: 86504598
+  indice: 8
+  inicio_m: 76965443
+- fin_m: 96103691
+  indice: 9
+  inicio_m: 86504598
+- fin_m: 105676571
+  indice: 10
+  inicio_m: 96103691
+- fin_m: 115288763
+  indice: 11
+  inicio_m: 105676571
+- fin_m: 124929175
+  indice: 12
+  inicio_m: 115288763
+- fin_m: 134559700
+  indice: 13
+  inicio_m: 124929175
+- fin_m: 141184341
+  indice: 14
+  inicio_m: 134559700
+generado_el: '2026-09-09T21:19:09Z'
+glosario_sha256_inicial: 6a1da3cafac46e6b7b002adffac36a664fa0867e43d5a09d7bc174ccdd3cc743
+hueco_transcripcion_s: 30.0
+huecos:
+- desde_ms: 3265605
+  hasta_ms: 3327775
+  ms: 62170
+- desde_ms: 5072010
+  hasta_ms: 5104520
+  ms: 32510
+- desde_ms: 6770005
+  hasta_ms: 6824795
+  ms: 54790
+- desde_ms: 6860415
+  hasta_ms: 6903145
+  ms: 42730
+- desde_ms: 6982945
+  hasta_ms: 7051655
+  ms: 68710
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  hotwords: null
+  idioma: es
+  initial_prompt_sha256: 327e1ef9ad176500d2878faf7776199a3dec1cfda445f516f23c1edda48ee120
+  initial_prompt_tokens: 96
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 7025690
+muestras: 141184341
+recortados: 0
+schema_version: 1
+segmentos: 2146
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 586
+  repeticion: 4
+sha256_cruda: 7718b3f4b24f7005ea694879df39153264d19fc8d5771be12578b204fa589d30
+sha256_video: aec34fcece4667201b9abd5371e30acc81c2f17cc41f11c8299f62374769921d
+sha256_wav: ac1600c3df6003b28edcffba0fdb19c2cd492629b178cb3d8ef1c5b63cb0deae
+silencios_detectados: 1786
+transcripcion_id: tr-v6-large-v3-int8-float16-7718b3f4
+video_id: v6
