@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-2c92afe0
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: cartuchos_max
+accion: CORRECT
+respuesta_literal: El tope son 3 perdidas, el BE no cuenta como perdida.
+registrado_por: Aleks · aclaracion escrita del consultor tras la sesion 1
+valor_resultante: 3 perdidas
+supersede: fb-2026-09-09-sesion-01-846fb0d7
+notas: aclaracion del consultor, no cita del trader; se contrastara con la grabacion v6 cuando termine
+  la transcripcion. El parametro cuenta perdidas, no entradas.

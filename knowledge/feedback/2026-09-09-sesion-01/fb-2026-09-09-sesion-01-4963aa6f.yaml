@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-4963aa6f
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: perdida_maxima_diaria
+accion: CORRECT
+respuesta_literal: Solo fue un referente eso del 4.5% de limite, ya que con la gestion de riesgo no se
+  deberia de llegar a ese numero. Que siga con la regla de los cartuchos como metrica, ya que matematicamente
+  esto no dejaria que se llegue al 4.5% con la gestion de riesgo planteada.
+registrado_por: Aleks · aclaracion escrita del consultor tras la sesion 1
+valor_resultante: 4,5 % como referencia; el freno operativo son las 3 perdidas
+supersede: fb-2026-09-09-sesion-01-dfbcd9de
+notas: 'aclaracion del consultor, no cita del trader; se contrastara con la grabacion v6 cuando termine
+  la transcripcion. El bot no debe frenar por porcentaje sino por cartuchos: 3 perdidas de 0,4 % son ~1,2
+  %, muy por debajo del 4,5 %. El 4,5 % queda como red de seguridad, y conviene comprobarlo igualmente
+  contra las reglas reales de FundedNext, que suelen medir sobre el balance de inicio de dia y no sobre
+  el saldo del momento.'
