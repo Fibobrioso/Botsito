@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-1a3064b0
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: cartuchos_max
+accion: CORRECT
+respuesta_literal: se opera hasta el tercer trade [...] un intento no es considerado un break even
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: '3'
+valor_canonico: '3'
+supersede: fb-2026-09-09-sesion-01-66a1b63d
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  el tipo es entero: el registro lo quiere sin comillas.'

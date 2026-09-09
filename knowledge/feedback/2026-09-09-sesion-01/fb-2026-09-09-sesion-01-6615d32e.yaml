@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-6615d32e
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: anclaje_h4
+accion: RESOLVE_UNKNOWN
+respuesta_literal: la vela empieza a las 23, la primera vela de cuatro horas [...] entonces a las 7 sería
+  [...] la tercera vela
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 23:00 UTC+2 (21:00 UTC), sin ajuste por cambio de horario
+valor_canonico: '23:00'
+supersede: fb-2026-09-09-sesion-01-4855d566
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  la hora sola; el huso va en el parametro huso_grafico y el matiz del cambio de horario es A-14.'

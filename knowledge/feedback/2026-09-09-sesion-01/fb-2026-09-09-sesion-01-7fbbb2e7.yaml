@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-7fbbb2e7
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: objetivo_rr
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: '3'
+valor_canonico: '3'
+supersede: fb-2026-09-09-sesion-01-3add10a2
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  el 1:3 expresado como multiplo del riesgo.'

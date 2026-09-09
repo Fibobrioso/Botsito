@@ -1146,6 +1146,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         "accion": args.accion,
         "respuesta_literal": args.respuesta,
         "valor_resultante": args.valor,
+        "valor_canonico": getattr(args, "valor_canonico", None),
         "registrado_por": args.registrado_por,
         "supersede": args.supersede,
         "notas": args.notas,
@@ -1543,6 +1544,11 @@ def build_parser() -> argparse.ArgumentParser:
     fbn.add_argument("--accion", required=True)
     fbn.add_argument("--respuesta", required=True, help="respuesta literal del trader")
     fbn.add_argument("--valor", help="valor resultante")
+    fbn.add_argument(
+        "--valor-canonico",
+        dest="valor_canonico",
+        help="el mismo valor en el tipo que espera el registro (F11): '0,8' -> '0.8'",
+    )
     fbn.add_argument("--registrado-por", required=True, dest="registrado_por")
     fbn.add_argument("--supersede")
     fbn.add_argument("--notas")

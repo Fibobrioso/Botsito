@@ -12,6 +12,7 @@ from botsito.feedback.modelo import (
     calcular_id,
     cargar_feedback,
     cargar_registro,
+    contenido_canonico,
     escribir_registro,
     registro_desde_dict,
     trazar,
@@ -388,3 +389,33 @@ def test_un_duplicado_a_mano_se_distingue_de_una_colision(tmp_path: Path) -> Non
     ruta.write_text(ruta.read_text(encoding="utf-8") + "notas: a mano\n", encoding="utf-8")
     with pytest.raises(FeedbackError, match="OTRO contenido"):
         escribir_registro(tmp_path, base())
+
+
+# --- valor_canonico (F11): re-expresar el valor sin tocar el literal del trader ---
+
+
+def test_valor_canonico_es_opcional_y_no_cambia_el_id_de_los_registros_previos(
+    tmp_path: Path,
+) -> None:
+    """Un campo ausente no entra en `contenido_canonico`, asi que los registros escritos antes
+    de que existiera `valor_canonico` conservan su id."""
+    sin = base(medio="escrito", grabacion=None, t0=None, t1=None)
+    con = {**sin, "valor_canonico": None}
+    assert contenido_canonico(sin) == contenido_canonico(con)
+    r1 = cargar_registro(escribir_registro(tmp_path, sin))
+    assert r1.valor_canonico is None
+
+
+def test_valor_canonico_entra_en_el_id_cuando_tiene_contenido(tmp_path: Path) -> None:
+    """Pero si lleva valor, es contenido: dos registros que solo difieren en el canonico son
+    registros distintos, con ids distintos."""
+    a = base(medio="escrito", grabacion=None, t0=None, t1=None, valor_resultante="0,8")
+    b = {**a, "valor_canonico": "0.8"}
+    assert contenido_canonico(a) != contenido_canonico(b)
+    r = cargar_registro(escribir_registro(tmp_path, b))
+    assert r.valor_canonico == "0.8" and r.valor_resultante == "0,8"
+
+
+def test_valor_canonico_en_blanco_se_descarta(tmp_path: Path) -> None:
+    campos = base(medio="escrito", grabacion=None, t0=None, t1=None, valor_canonico="   ")
+    assert cargar_registro(escribir_registro(tmp_path, campos)).valor_canonico is None

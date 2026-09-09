@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-648ec915
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: riesgo_por_operacion
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Es en base al saldo actual de la cuenta, 0.5% del saldo actual de la cuenta.
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 0,5
+valor_canonico: '0.5'
+supersede: fb-2026-09-09-sesion-01-defc4133
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  coma decimal a punto; la base (saldo actual) va aparte.'
