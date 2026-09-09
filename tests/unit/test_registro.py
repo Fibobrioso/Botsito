@@ -1,12 +1,15 @@
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 import pytest
+import yaml
 
 from botsito.config.registro import (
     AmbiguedadNoDeclaradaError,
     Estado,
     ParametroDesconocidoError,
+    Registro,
     RegistroError,
     TipoDeParametroError,
     _convertir,
@@ -325,3 +328,79 @@ def test_los_numeros_validos_siguen_valiendo() -> None:
     assert _convertir("decimal", "0.75", None, "p") == Decimal("0.75")
     assert _convertir("decimal", " 3 ", None, "p") == Decimal("3")
     assert _convertir("decimal", 3, None, "p") == Decimal("3")
+
+
+# --- tipos que entran con F11: enum, booleano, puntos, minutos, lotes ---
+
+
+def _param(**cambios: Any) -> dict[str, Any]:
+    d: dict[str, Any] = {
+        "nombre": "ejemplo",
+        "categoria": "estrategia",
+        "tipo": "enum",
+        "unidad": "eleccion",
+        "descripcion": "un parametro de prueba",
+        "estado": "CONFIRMED",
+        "valor": "a",
+        "opciones": ["a", "b"],
+        "fuente": {"tipo": "feedback", "id": "fb-2026-09-09-sesion-01-846fb0d7"},
+    }
+    d.update(cambios)
+    return {k: v for k, v in d.items() if v is not _QUITAR}
+
+
+_QUITAR = object()
+
+
+def _cargar(tmp_path: Path, param: dict[str, Any]) -> Registro:
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(yaml.safe_dump({"parametros": [param]}), encoding="utf-8", newline="\n")
+    return cargar_registro(ruta)
+
+
+def test_enum_exige_opciones_y_el_valor_debe_estar_en_ellas(tmp_path: Path) -> None:
+    r = _cargar(tmp_path, _param())
+    assert r.opcion("ejemplo") == "a"
+    with pytest.raises(TipoDeParametroError):
+        r.texto("ejemplo")  # un enum no se lee como texto: el tipo declarado manda
+    with pytest.raises(RegistroError, match="no esta en las opciones"):
+        _cargar(tmp_path, _param(valor="c"))
+    with pytest.raises(RegistroError, match="al menos dos valores"):
+        _cargar(tmp_path, _param(opciones=["a"]))
+    with pytest.raises(RegistroError, match="opcion repetida"):
+        _cargar(tmp_path, _param(opciones=["a", "a"]))
+
+
+def test_solo_un_enum_lleva_opciones(tmp_path: Path) -> None:
+    with pytest.raises(RegistroError, match="solo un parametro de tipo enum"):
+        _cargar(tmp_path, _param(tipo="texto", valor="a", opciones=["a", "b"]))
+
+
+def test_booleano_no_admite_comillas(tmp_path: Path) -> None:
+    """`false` entre comillas es la cadena 'false', que es verdadera: por eso se rechaza."""
+    r = _cargar(tmp_path, _param(tipo="booleano", valor=False, opciones=_QUITAR))
+    assert r.booleano("ejemplo") is False
+    with pytest.raises(RegistroError, match="se escribe true o false"):
+        _cargar(tmp_path, _param(tipo="booleano", valor="false", opciones=_QUITAR))
+
+
+@pytest.mark.parametrize("tipo", ["puntos", "minutos"])
+def test_puntos_y_minutos_son_enteros_no_negativos(tmp_path: Path, tipo: str) -> None:
+    assert _cargar(tmp_path, _param(tipo=tipo, valor=20, opciones=_QUITAR)) is not None
+    with pytest.raises(RegistroError, match="exige un entero"):
+        _cargar(tmp_path, _param(tipo=tipo, valor="20", opciones=_QUITAR))
+    with pytest.raises(RegistroError, match="no puede ser negativo"):
+        _cargar(tmp_path, _param(tipo=tipo, valor=-1, opciones=_QUITAR))
+
+
+def test_lotes_admite_decimales_entre_comillas(tmp_path: Path) -> None:
+    r = _cargar(tmp_path, _param(tipo="lotes", valor="0.01", opciones=_QUITAR))
+    assert str(r.obtener("ejemplo")) == "0.01"
+
+
+@pytest.mark.parametrize("tipo", ["enum", "booleano"])
+def test_ni_enum_ni_booleano_admiten_minimo_o_maximo(tmp_path: Path, tipo: str) -> None:
+    valor = "a" if tipo == "enum" else True
+    ops = ["a", "b"] if tipo == "enum" else _QUITAR
+    with pytest.raises(RegistroError, match="minimo/maximo no se aplican"):
+        _cargar(tmp_path, _param(tipo=tipo, valor=valor, opciones=ops, minimo="0"))

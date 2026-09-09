@@ -10,7 +10,9 @@
 #   categoria:     estrategia | instrumento | broker | prop_firm | ejecucion (ADR-0004).
 #                  Solo `estrategia` se cita por evidence/feedback y se le pregunta al trader;
 #                  las demas se citan por decision (ADR-NNNN) y se verifican en el pre-vuelo.
-#   tipo:          fraccion | porcentaje | decimal | entero | hora | texto
+#   tipo:          fraccion | porcentaje | decimal | entero | hora | texto |
+#                  enum | booleano | puntos | minutos | lotes (F11)
+#   opciones:      obligatorio y exclusivo de `enum`: los valores que admite (>= 2)
 #   huso:          obligatorio si tipo es hora: nombre IANA (Europe/Madrid, UTC, ...)
 #   unidad:        texto libre pero obligatorio (p. ej. "fraccion de la distancia completa")
 #   descripcion:   una frase

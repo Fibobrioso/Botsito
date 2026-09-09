@@ -17,6 +17,12 @@ ACCESORES = {
     "entero": "entero",
     "hora": "hora",
     "texto": "texto",
+    # F11
+    "opcion": "enum",
+    "booleano": "booleano",
+    "puntos": "puntos",
+    "minutos": "minutos",
+    "lotes": "lotes",
 }
 
 

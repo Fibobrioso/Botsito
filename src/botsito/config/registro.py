@@ -30,8 +30,36 @@ from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.domain.valores import Fraccion, HoraLocal, Porcentaje
 
 RUTA_POR_DEFECTO = Path("knowledge/spec/parametros.yaml")
-TIPOS = ("fraccion", "porcentaje", "decimal", "entero", "hora", "texto")
-TipoParametro = Literal["fraccion", "porcentaje", "decimal", "entero", "hora", "texto"]
+TIPOS = (
+    "fraccion",
+    "porcentaje",
+    "decimal",
+    "entero",
+    "hora",
+    "texto",
+    # F11: `enum` cierra el conjunto de valores de un parametro (y sustituye al `texto` con
+    # opciones que vivia en el kit); `booleano` dice si una regla se aplica o no -que no es
+    # lo mismo que un umbral en cero-; `puntos`, `minutos` y `lotes` son las unidades con
+    # las que trabaja el broker.
+    "enum",
+    "booleano",
+    "puntos",
+    "minutos",
+    "lotes",
+)
+TipoParametro = Literal[
+    "fraccion",
+    "porcentaje",
+    "decimal",
+    "entero",
+    "hora",
+    "texto",
+    "enum",
+    "booleano",
+    "puntos",
+    "minutos",
+    "lotes",
+]
 CATEGORIAS = ("estrategia", "instrumento", "broker", "prop_firm", "ejecucion")
 Categoria = Literal["estrategia", "instrumento", "broker", "prop_firm", "ejecucion"]
 TIPOS_FUENTE = ("evidence", "feedback", "decision")
@@ -73,7 +101,7 @@ class Fuente:
     id: str
 
 
-Valor = Fraccion | Porcentaje | HoraLocal | Decimal | int | str
+Valor = Fraccion | Porcentaje | HoraLocal | Decimal | int | str | bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +117,7 @@ class Parametro:
     ambiguedad_id: str | None = None
     minimo: Decimal | None = None
     maximo: Decimal | None = None
+    opciones: tuple[str, ...] | None = None  # solo enum
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,6 +189,22 @@ class Registro:
     def texto(self, nombre: str) -> str:
         return self._tipado(nombre, "texto", str)
 
+    def opcion(self, nombre: str) -> str:
+        """Un `enum`. El valor ya se comprobo contra `opciones` al cargar el fichero."""
+        return self._tipado(nombre, "enum", str)
+
+    def booleano(self, nombre: str) -> bool:
+        return self._tipado(nombre, "booleano", bool)
+
+    def puntos(self, nombre: str) -> int:
+        return self._tipado(nombre, "puntos", int)
+
+    def minutos(self, nombre: str) -> int:
+        return self._tipado(nombre, "minutos", int)
+
+    def lotes(self, nombre: str) -> Decimal:
+        return self._tipado(nombre, "lotes", Decimal)
+
     def _tipado[T](self, nombre: str, tipo: TipoParametro, clase: type[T]) -> T:
         """Comprueba el tipo DECLARADO del parametro, no el tipo Python del valor: `Puntos`,
         `Minutos` o `Lotes` (F11/F18) son `int`/`Decimal` en tiempo de ejecucion y no se
@@ -216,11 +261,48 @@ def _convertir(tipo: str, bruto: object, huso: object, nombre: str) -> Valor:
             if not isinstance(bruto, str) or not bruto.strip():
                 raise RegistroError(f"{nombre}: texto invalido o vacio {bruto!r}")
             return bruto
+        if tipo == "enum":
+            if not isinstance(bruto, str) or not bruto.strip():
+                raise RegistroError(f"{nombre}: enum invalido o vacio {bruto!r}")
+            return bruto  # la pertenencia a `opciones` se comprueba en _parametro
+        if tipo == "booleano":
+            if not isinstance(bruto, bool):
+                raise RegistroError(
+                    f"{nombre}: booleano invalido {bruto!r}: se escribe true o false, sin comillas"
+                )
+            return bruto
+        if tipo in ("puntos", "minutos"):
+            if isinstance(bruto, bool) or not isinstance(bruto, int):
+                raise RegistroError(f"{nombre}: {tipo} exige un entero, no {bruto!r}")
+            if bruto < 0:
+                raise RegistroError(f"{nombre}: {tipo} no puede ser negativo ({bruto})")
+            return bruto
+        if tipo == "lotes":
+            return _numero(bruto, nombre)
     except RegistroError:
         raise
     except (ValueError, TypeError, InvalidOperation) as exc:
         raise RegistroError(f"{nombre}: valor invalido {bruto!r} ({exc})") from exc
     raise RegistroError(f"{nombre}: tipo desconocido {tipo!r}")
+
+
+def _opciones(bruto: object, tipo: str, nombre: str) -> tuple[str, ...] | None:
+    """Los valores que un `enum` admite. Solo un enum las lleva, y las exige: un enum sin
+    opciones seria un texto con otro nombre."""
+    if tipo != "enum":
+        if bruto is not None:
+            raise RegistroError(f"{nombre}: solo un parametro de tipo enum lleva 'opciones'")
+        return None
+    if not isinstance(bruto, list) or len(bruto) < 2:
+        raise RegistroError(f"{nombre}: un enum exige 'opciones' con al menos dos valores")
+    vistas: list[str] = []
+    for o in bruto:
+        if not isinstance(o, str) or not o.strip():
+            raise RegistroError(f"{nombre}: opcion invalida {o!r}")
+        if o in vistas:
+            raise RegistroError(f"{nombre}: opcion repetida {o!r}")
+        vistas.append(o)
+    return tuple(vistas)
 
 
 def _huso(bruto: object, nombre: str) -> str:
@@ -290,6 +372,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
             raise RegistroError(f"{nombre}: falta '{campo}'")
     if tipo != "hora" and bruto.get("huso") is not None:
         raise RegistroError(f"{nombre}: solo un parametro de tipo hora lleva 'huso'")
+    opciones = _opciones(bruto.get("opciones"), str(tipo), nombre)
     conocidos = {
         "nombre",
         "categoria",
@@ -303,6 +386,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
         "ambiguedad_id",
         "minimo",
         "maximo",
+        "opciones",
     }
     desconocidos = set(bruto) - conocidos
     if desconocidos:
@@ -313,6 +397,10 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
     valor: Valor | None = None
     if "valor" in bruto and bruto["valor"] is not None:
         valor = _convertir(str(tipo), bruto["valor"], bruto.get("huso"), nombre)
+        if tipo == "enum" and opciones is not None and valor not in opciones:
+            raise RegistroError(
+                f"{nombre}: {valor!r} no esta en las opciones declaradas {list(opciones)}"
+            )
     elif tipo == "hora" and bruto.get("huso") is not None:
         _huso(bruto.get("huso"), nombre)
 
@@ -336,7 +424,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
     ):
         raise RegistroError(f"{nombre}: ambiguedad_id {ambiguedad_id!r} no tiene formato A-N")
 
-    if tipo in ("hora", "texto") and (
+    if tipo in ("hora", "texto", "enum", "booleano") and (
         bruto.get("minimo") is not None or bruto.get("maximo") is not None
     ):
         raise RegistroError(f"{nombre}: minimo/maximo no se aplican a un parametro de tipo {tipo}")
@@ -364,6 +452,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
         ambiguedad_id=str(ambiguedad_id) if ambiguedad_id else None,
         minimo=minimo,
         maximo=maximo,
+        opciones=opciones,
     )
 
 
