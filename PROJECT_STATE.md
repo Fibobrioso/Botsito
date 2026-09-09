@@ -209,26 +209,23 @@ feedback, su minuto y su cita en v6; la tabla se conserva porque es la pregunta 
 sesion y el test anti-deriva la compara con el YAML. El esquema de feedback solo acepta ids `A-N`.
 Columna "resuelve en": la funcionalidad que convierte la respuesta en regla o parametro.
 
-Lo que la sesion DEJA ABIERTO no esta en esta tabla todavia: son cinco dudas nuevas cuyas citas
-estan en propuestas de evidencia de v6 sin aceptar (`knowledge/_proposals/pr-v6-*`), y una
-ambiguedad se registra citando evidencia existente. En cuanto el consultor acepte esos 12 items
-entran aqui como A-13..A-17:
-1. break even: el trader responde "apenas toca" (0:57:01) pero doce minutos despues se plantea
-   exigir un rompimiento con cuerpo porque protegerlo al toque le hace perder movimientos
-   (1:09:27, 1:09:47). Decide F11/F23; se puede medir sobre los mismos dias.
-2. anclaje H4 fuera del verano: dice que en el cambio de horario mantiene "la misma hora" y acto
-   seguido que la apertura podria verse "a las 8, o [...] a las 6" (0:58:10). Con UTC+2 fijo el
-   anclaje es 21:00 UTC todo el año; con Madrid, en invierno se desplaza. Mayo y junio no se ven
-   afectados; enero si. Decide F11/F15.
-3. alcance de la ventana: deja abierto ampliar a la sesion de Nueva York, "puedes buscar las
-   operaciones donde sea" (1:46:10, 1:46:23), cuando toda su operativa grabada va de 07:00 a
-   15:00. Es decision del consultor, no suya.
-4. proveedor de datos: el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el proyecto
-   mide sobre Dukascopy (ADR-0005). Con reglas que dependen de romper "por una milesima", uno o
-   dos puntos de diferencia cambian un dia entero. Decide F26 (fidelidad).
-5. noticias y cuenta de fondeo: avisa de que la cuenta puede prohibir operar dos minutos antes y
-   despues de una noticia y cerrarla aunque acabes en profit (2:00:29, 2:01:14), y aun asi deciden
-   operar con noticias (2:02:00). Verificar la regla real antes de F33.
+Lo que la sesion DEJA ABIERTO son A-13..A-17, registradas el 2026-09-09 con los doce items de
+evidencia de v6 que el consultor acepto:
+1. **A-13 break even**: responde "apenas toca" (0:57:01) y doce minutos despues se plantea exigir
+   un rompimiento con cuerpo, porque protegerlo al toque le hace perder movimientos (1:09:27,
+   1:09:47). No hace falta volver a preguntarselo: se mide sobre los mismos dias.
+2. **A-14 anclaje H4**: dice que en el cambio de horario mantiene "la misma hora" y acto seguido
+   que la apertura podria verse "a las 8, o [...] a las 6" (0:58:10). Con UTC+2 fijo el anclaje es
+   21:00 UTC todo el año; con Madrid, en invierno se desplaza. Mayo y junio no se ven afectados;
+   enero si.
+3. **A-15 alcance**: deja abierto ampliar a Nueva York, "puedes buscar las operaciones donde sea"
+   (1:46:23), cuando toda su operativa grabada va de 07:00 a 15:00. Decision del consultor.
+4. **A-16 proveedor de datos**: el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el
+   proyecto mide sobre Dukascopy (ADR-0005). Con reglas que dependen de romper "por una milesima",
+   uno o dos puntos cambian un dia entero.
+5. **A-17 noticias**: avisa de que la cuenta puede prohibir operar dos minutos antes y despues de
+   una noticia y cerrarla aunque acabes en profit (2:00:29, 2:01:14), y aun asi deciden operar con
+   noticias (2:02:00). Verificar la regla real antes de F33.
 
 | Id | Ambiguedad | Resuelve en | Pregunta de la sesion 1 |
 |---|---|---|---|
@@ -244,6 +241,11 @@ entran aqui como A-13..A-17:
 | A-10 | stop a 0,8: fijo o 0,75 + spread | F21 | ¿el 0,8 es fijo o "0,75 mas el spread del momento"? |
 | A-11 | SL en la orden o tras el llenado | F22, F31 | ¿el SL va en la orden pendiente o se pone tras el llenado? |
 | A-12 | porcentaje de vela transcurrido para bajar la proteccion a 0,50: 40 % (transcripcion heredada) o 50 % (large-v3, V1 0:15:59) | F21 | ¿a partir de que parte de la vela bajas el stop a 0,50? |
+| A-13 | break even al toque o con cuerpo | F11, F23, F26 | ¿el rompimiento que dispara el BE vale al toque o hay que esperar cuerpo? (v6 0:57:01 vs 1:09:27) |
+| A-14 | anclaje H4 fuera del horario de verano | F11, F15 | ¿UTC+2 fijo (21:00 UTC todo el año) o Madrid (en invierno se desplaza)? (v6 0:58:10) |
+| A-15 | alcance de la ventana operativa | F11 | ¿solo 07-11 y 11-15, o tambien Nueva York? (v6 1:46:10) |
+| A-16 | proveedor de datos para medir la fidelidad | F26 | ¿como se comparan decisiones sobre Oanda con un bot medido sobre Dukascopy? (v6 0:24:14) |
+| A-17 | noticias frente a la regla de la cuenta de fondeo | F11, F33 | ¿la cuenta prohibe operar dos minutos antes y despues de una noticia? (v6 2:00:29) |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
@@ -347,7 +349,7 @@ pre-poblados, ids de caso + particion + seed, papel `sesion_feedback` en el corp
 casos con dos anclajes mientras A-9 siga abierta (ver MASTER_PLAN H.2).
 
 ## Next Action
-1. Decidir sobre los 12 items de las cinco propuestas de evidencia de v6 (`knowledge/_proposals/pr-v6-*`): `botsito evidence accept` por lote. Al aceptarlos se registran A-13..A-17 en `knowledge/spec/ambiguedades.yaml` con su evidencia.
+1. Decidir las tres de A-13..A-17 que son del consultor y no del trader: A-15 (ampliar o no a Nueva York), A-16 (Oanda frente a Dukascopy para medir fidelidad) y A-17 (verificar la regla de noticias de FundedNext). A-13 y A-14 se MIDEN, no se preguntan.
 2. Recibir del trader el backtest COMPLETO de mayo y junio de 2026 con el Excel (decision, hora, entrada, SL y TP por operacion). Se comprometio a enviarlo antes del sabado 2026-09-12 (v6 2:26:12). Eso sustituye al etiquetado a mano de los 16 dias `dev` de la hoja: son 40 casos sobre meses que NO ha visto (precondicion confirmada dos veces, 0:00:56 y 2:25:41). Ojo al matiz: los hara aplicando las reglas acordadas en la sesion, asi que sirven de patron oro para medir al bot, pero ya no miden si esas reglas capturan su juicio espontaneo.
 3. Abrir F11 strategy-spec-schema con los 26 parametros que la sesion deja fijados y con `feedback apply` (diferido desde F09): el registro sigue en UNKNOWN hasta que F11 lo aplique.
 4. Pendiente del usuario: borrar las ramas fusionadas `feature/F08-evidence-retrieval` y `feature/F10-elicitation-kit` con `!`.
