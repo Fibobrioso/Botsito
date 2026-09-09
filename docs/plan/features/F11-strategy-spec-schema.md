@@ -128,6 +128,29 @@ ejecuta: el motor es F18–F23.
 20. **ADR-0012** (registro: tipos nuevos, categorías, huso del trader, ausencia de valor,
     `valor_canonico`) y **ADR-0013** (spec: manifiesto, hash canónico, semver, citas).
 
+21. **La ventana NO se amplía a Nueva York en esta fase** (A-15, decisión del consultor,
+    2026-09-09): "una vez todo funcione, lo ampliamos". La spec declara las dos sesiones del trader
+    y el bot no busca fuera de ellas.
+22. **El histórico sigue siendo Dukascopy** (A-16, decisión del consultor con la medición del
+    2026-09-09, `docs/validation/anexos/A-16-proveedor-de-datos-2026-09-09.md`): la demo de
+    FundedNext solo sirve M1 **desde el 3 de junio de 2026**, así que no cubre mayo ni la primera
+    semana de junio, que son casos del paquete. Donde sí se pueden comparar, los dos proveedores
+    coinciden a **2 puntos de mediana**. MT5 se reserva para spread, ejecución, reloj de servidor y
+    paridad (F17, F24, F30–F33), y los 2 puntos entran como margen declarado en F26.
+23. **Cuenta**: el objetivo es la **cuenta fondeada de 100 000 USD** y las pruebas de
+    funcionamiento se hacen en una **demo de FundedNext de 100 000 en MT5** (decisión del consultor).
+    Son dos parámetros distintos —`cuenta_objetivo` y `cuenta_pruebas`, ambos `prop_firm` por
+    ADR-0012— porque los límites que se juegan no son los mismos.
+24. **Se opera durante las noticias** (A-17, decisión del consultor): "más adelante veremos si es un
+    impedimento". Queda anotado como deuda con dueño: si lo fuera, el filtro se hace **bloqueante y
+    anclado a un calendario externo** (Investing o equivalente), lo que implica una fuente de datos
+    nueva y una funcionalidad propia, no un parámetro.
+
+**Nota sobre A-15, A-16 y A-17**: las tres las decide el consultor, no el trader, y
+`ambiguedades.yaml` dice que una ambigüedad se cierra SOLO con un registro de feedback del trader.
+Por eso quedan ABIERTAS hasta que ADR-0012/ADR-0013 las cierre por decisión, dentro de F11, y esa
+asimetría —ambigüedades del trader frente a decisiones del consultor— se documenta ahí.
+
 ## Alcance cerrado (que SI)
 
 - `botsito feedback apply --sesion <s> [--check]` con las decisiones 2, 3, 4, 13 y 17.

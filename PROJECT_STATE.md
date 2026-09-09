@@ -217,12 +217,12 @@ evidencia de v6 que el consultor acepto:
    que la apertura podria verse "a las 8, o [...] a las 6" (0:58:10). Con UTC+2 fijo el anclaje es
    21:00 UTC todo el año; con Madrid, en invierno se desplaza. Mayo y junio no se ven afectados;
    enero si.
-3. **A-15 alcance**: deja abierto ampliar a Nueva York, "puedes buscar las operaciones donde sea"
+3. **A-15 alcance** (DECIDIDA por el consultor el 2026-09-09: no se amplia en esta fase; se cierra por ADR en F11): deja abierto ampliar a Nueva York, "puedes buscar las operaciones donde sea"
    (1:46:23), cuando toda su operativa grabada va de 07:00 a 15:00. Decision del consultor.
-4. **A-16 proveedor de datos**: el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el
+4. **A-16 proveedor de datos** (DECIDIDA el 2026-09-09 con medicion, `docs/validation/anexos/A-16-proveedor-de-datos-2026-09-09.md`: el historico sigue siendo Dukascopy porque la demo de FundedNext solo sirve M1 desde el 2026-06-03 y no cubre el paquete; donde se pueden comparar coinciden a 2 puntos de mediana; MT5 queda para spread, ejecucion y paridad): el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el
    proyecto mide sobre Dukascopy (ADR-0005). Con reglas que dependen de romper "por una milesima",
    uno o dos puntos cambian un dia entero.
-5. **A-17 noticias**: avisa de que la cuenta puede prohibir operar dos minutos antes y despues de
+5. **A-17 noticias** (DECIDIDA por el consultor el 2026-09-09: se opera con noticias; si resulta un impedimento, el filtro se hara bloqueante y anclado a un calendario externo tipo Investing, que es funcionalidad nueva, no un parametro): avisa de que la cuenta puede prohibir operar dos minutos antes y despues de
    una noticia y cerrarla aunque acabes en profit (2:00:29, 2:01:14), y aun asi deciden operar con
    noticias (2:02:00). Verificar la regla real antes de F33.
 
