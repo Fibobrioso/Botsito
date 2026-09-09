@@ -1,0 +1,22 @@
+id: fb-2026-09-09-sesion-01-7fcb971c
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-4
+accion: RESOLVE_UNKNOWN
+respuesta_literal: cuando se refiere a tocar es cuando apenas se dé, o sea, por pip [...] Sí, o sea, apenas
+  toca [...] objetivamente, o sea, yo siempre lo he estado trabajando, o sea, apenas toca. Entonces sería
+  esa la respuesta
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:56:52
+t1: 0:57:20
+valor_resultante: tocar
+supersede: fb-2026-09-09-sesion-01-fdb589e3
+notas: 'Con una precision que la hoja no daba: el disparador no es un nivel de precio sino que tras la
+  entrada se desarrolle OTRA zona de control y se rompa (0:06:05, 1:21:24); ese rompimiento se toma al
+  toque, por un pip. El propio trader duda dos veces: en 0:53:59 dice ''tiene que ser con cuerpo el break
+  even'' antes de entender la pregunta, y en 1:09:25 vuelve sobre ello (''si fuera con cuerpo no te perderías
+  ese trade''). Queda abierto como ambiguedad nueva.'

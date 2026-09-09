@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-9626d3dd
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: salida_sin_ruptura
+accion: RESOLVE_UNKNOWN
+respuesta_literal: se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa
+  ya nos saca con menos 0.80
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:22:43'
+t1: '1:23:09'
+valor_resultante: proteger_y_dejar
+notas: Ver A-3.

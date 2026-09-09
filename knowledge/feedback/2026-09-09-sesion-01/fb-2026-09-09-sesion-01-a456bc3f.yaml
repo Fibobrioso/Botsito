@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-a456bc3f
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-5
+accion: RESOLVE_UNKNOWN
+respuesta_literal: como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento
+  [...] rompe el punto alto anterior con mecha, con mecha no importa [...] entonces mi order limit pues
+  estaría aquí [...] yo no podría actualizar mi order limit aquí porque todavía no me ha generado nada
+  [...] pero cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa aquí
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:25:36'
+t1: '1:26:25'
+valor_resultante: al completarse cada zona de control (ruptura del extremo anterior, con mecha basta);
+  no por tiempo ni por vela
+notas: 'Descarta ''cada_vela''. La cadencia es estructural: mientras la zona no se completa, el limite
+  no se mueve. Confirmado en 1:29:48: ''se actualiza cada nueva estructura''.'

@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-69711f67
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-11
+accion: RESOLVE_UNKNOWN
+respuesta_literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección [...]
+  del trade [...] entonces a 0.80
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:43:51'
+t1: '1:44:36'
+valor_resultante: el stop completo va en la orden y sirve para dimensionar el lote; tras el llenado se
+  mueve inmediatamente a 0,80
+notas: 'Confirmado en 2:00:01: ''que se calcule el stop loss, digamos, a 100 pips [...] pero se baja automáticamente
+  a 0,8 una vez introducida la operación''.'

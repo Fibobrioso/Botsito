@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-bb06f14c
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-9
+accion: RESOLVE_UNKNOWN
+respuesta_literal: me voy a cuatro horas [...] la vela empieza a las 23, la primera vela de cuatro horas
+  [...] entonces a las 7 sería la primera, segunda, la tercera vela
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:58:30
+t1: '1:00:05'
+valor_resultante: '23:00 en el huso del grafico (UTC+2): H4 abren 23, 03, 07, 11, 15 y 19'
+notas: 'Verificado en pantalla: fotograma fr-v6-22982c02/3585000 muestra TradingView en 4h con el reloj
+  ''20:48:30 UTC+2'' y el eje en 07:00, 11:00, 15:00, 19:00, 23:00. Preguntado por las semanas del cambio
+  de horario responde que no se ajusta (0:59:59): su reloj manda. Consecuencia: el anclaje es 21:00 UTC
+  fijo, que coincide con las 17:00 de Nueva York solo en horario de verano; en invierno divergen una hora.
+  Mayo y junio (el paquete) son verano.'

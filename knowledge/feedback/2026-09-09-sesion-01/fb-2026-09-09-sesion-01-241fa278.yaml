@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-241fa278
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: mapeo_dos_velas
+accion: RESOLVE_UNKNOWN
+respuesta_literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una
+  estructura
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:38:48'
+t1: '1:41:10'
+valor_resultante: order_block_mayor (el trader lo llama estructura)
+notas: Ver A-8.

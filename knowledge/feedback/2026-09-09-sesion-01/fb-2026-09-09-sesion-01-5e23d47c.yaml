@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-5e23d47c
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: perdida_maxima_diaria
+accion: CORRECT
+respuesta_literal: De la cuenta basado en el saldo, y que sea en el saldo inicial del día, por ejemplo,
+  imagina que si el día empieza, no sé, 104 [...] que a partir de eso se calcule menos un 4,5
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '2:05:24'
+t1: '2:05:38'
+valor_resultante: 4,5 % sobre el saldo INICIAL del dia
+supersede: fb-2026-09-09-sesion-01-4963aa6f
+notas: 'Corrige la base: la hoja decia ''saldo actual del momento'' y en el video acuerdan el saldo inicial
+  del dia, que ademas es como lo mide una cuenta de fondeo. Sigue siendo una red: el freno operativo son
+  las tres perdidas.'

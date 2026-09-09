@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-427282bb
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: reentrada_tras_equal
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar
+  [...] ¿y gastas tus intentos? Sí, esto no gasta intentos, me dijiste, ¿no? No
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:52:26'
+t1: '1:52:42'
+valor_resultante: si se reentra, y no gasta intento
+notas: 'Coherente con 1:23:53: tras un equal perdedor ''actualizamos al siguiente nivel [...] mantenemos
+  o abrimos otra orden límite para poder reentrar''.'

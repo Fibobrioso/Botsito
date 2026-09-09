@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-0ccafcba
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: break_even_condicion
+accion: CORRECT
+respuesta_literal: apenas toca [...] yo siempre lo he estado trabajando, o sea, apenas toca
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:56:52
+t1: 0:57:20
+valor_resultante: tocar
+supersede: fb-2026-09-09-sesion-01-01d4d267
+notas: Ver A-4.

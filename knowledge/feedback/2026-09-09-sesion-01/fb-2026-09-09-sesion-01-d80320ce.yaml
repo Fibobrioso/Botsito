@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-d80320ce
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-3
+accion: RESOLVE_UNKNOWN
+respuesta_literal: igual si se toma la entrada se mantiene las mismas consideraciones que veníamos manejándose
+  en cuanto a gestión del precio [...] se activa la entrada y apenas automáticamente en este caso ya no
+  sería 0.75 sino proteger a 0.80 [...] o continúa ya nos saca con menos 0.80
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:22:43'
+t1: '1:23:09'
+valor_resultante: 'proteger_y_dejar: se trata como una operativa mas, con el stop en 0,80'
+notas: 'El caso nace de un equal: el equal se valida como si fuera ruptura (1:15:02, ''no importa si es
+  con mecha o con cuerpo''), asi que la entrada es legitima y se gestiona igual que cualquier otra. No
+  hay cierre especial por falta de ruptura.'
