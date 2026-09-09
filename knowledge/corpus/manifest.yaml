@@ -97,6 +97,10 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx
   sha256: ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86
+- bytes: 49241
+  papel: material_adicional
+  ruta: Sesiones/2026-09-09-sesion-01/Sesion 1 - hoja de respuestas RELLENADA (2026-09-09).docx
+  sha256: f91a39ee9bd9aaf2532544dd6042fdac54f8e5abc0a8427d082fa1f455d3f1f6
 - bytes: 2020
   papel: heredado_v2
   ruta: _procesado/README.md
@@ -2064,11 +2068,11 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 2548026
-    ficheros: 24
+    bytes: 2597267
+    ficheros: 25
   video_original:
-    bytes: 13914949033
-    ficheros: 5
+    bytes: 23715506889
+    ficheros: 6
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2120,11 +2124,21 @@ videos:
   ancho: 1280
   audio: true
   bytes: 121528349
-  drive_id: 'no esta en Drive: entregado en local por el usuario el 2026-09-05 (carpeta ''Info extra de
-    backtesting'')'
+  drive_id: 1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS
   duracion_s: 365.033
   fecha_grabacion: '2026-09-05'
   fichero: 2026-09-05 21-03-59.mkv
   fps: 30/1
   sha256: e7efcbef7adf8e79ec22cd571b3e1a9301af8dc9fb8efa3b281c5f86300877e7
   video_id: v5
+- alto: 1078
+  ancho: 1920
+  audio: true
+  bytes: 9800557856
+  drive_id: ''
+  duracion_s: 8824.022
+  fecha_grabacion: '2026-09-09'
+  fichero: Grabación de pantalla 2026-09-09 151552.mp4
+  fps: 30/1
+  sha256: aec34fcece4667201b9abd5371e30acc81c2f17cc41f11c8299f62374769921d
+  video_id: v6

@@ -39,6 +39,16 @@ videos:
       el trader graba su pantalla en FXReplay (sesion Backtest ABRIL 2026, dia 29 de abril, EURUSD M1)
       mapeando la estructura y colocando la caja de niveles 0 / 0,25 / 0,5 / 0,8 / 1 mientras explica
 
+  - video_id: v6
+    fichero: "Grabación de pantalla 2026-09-09 151552.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 9800557856
+    fecha_grabacion: "2026-09-09"
+    naturaleza: >-
+      sesion 1 de elicitacion con el trader (paquete 2026-09-09-sesion-01): el trader responde en
+      voz las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones de la hoja
+      de respuestas, que se rellena en paralelo con la version sintetizada
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2
@@ -50,5 +60,12 @@ carpetas:
       exportaciones de FXReplay (enero, abril y agosto 2026) y capturas de balance y de analiticas
       enviadas por el trader el 2026-09-03 y el 2026-09-05 (abril, 38 operaciones y 6 capturas de la
       pestana Analytics). Entrada de F07 (evidencia) y F26 (fidelidad).
+
+  - ruta: "Sesiones"
+    papel: material_adicional
+    descripcion: >-
+      hojas de respuestas rellenadas durante las sesiones con el trader, una subcarpeta por sesion.
+      La del 2026-09-09 lleva las respuestas sintetizadas por el consultor durante la sesion 1; la
+      version literal esta en la grabacion v6. Entrada de F07 (evidencia) y F09 (feedback escrito).
 
 umbral_hueco_segundos: 180
