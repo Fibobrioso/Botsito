@@ -20,7 +20,7 @@ from typing import Any
 from botsito.comun import ids
 from botsito.comun.documentos import activos as _activos
 from botsito.comun.documentos import cargar_directorio, ciclos_de_supersede, sha256_hex
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.fotogramas import (
     CARPETA_DATOS,
     DIRECTORIO_MANIFIESTOS,
@@ -96,7 +96,7 @@ class Fotogramas:
 
 def cargar_manifiesto(ruta: Path) -> Fotogramas:
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise ManifiestoFotogramasError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):

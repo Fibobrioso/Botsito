@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from botsito.comun import ids
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 
 FICHERO_AMBIGUEDADES = "knowledge/spec/ambiguedades.yaml"
 ESTADOS = ("ABIERTA", "RESUELTA")
@@ -93,7 +93,7 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
 def cargar_ambiguedades(ruta: Path) -> list[Ambiguedad]:
     """Carga estricta; ids unicos y en orden numerico."""
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise AmbiguedadError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict) or set(doc) != {"ambiguedades"}:

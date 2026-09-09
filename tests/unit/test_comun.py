@@ -59,3 +59,15 @@ def test_husos() -> None:
     for malo in ("Europe/madrid", "utc", "Marte/Olympus", "", None):
         with pytest.raises(HusoDesconocidoError):
             huso_canonico(malo)
+
+
+def test_la_basura_de_windows_y_de_drive_no_invalida_una_carpeta(tmp_path: Path) -> None:
+    """El Explorador y los clientes de Drive y OneDrive dejan estos ficheros sin pedir permiso.
+    Si fueran error, sincronizar la carpeta dejaria el repositorio invalido sin tocar nada."""
+    (tmp_path / "a.yaml").write_text("a", encoding="utf-8")
+    for basura in ("desktop.ini", "Thumbs.db", ".DS_Store", ".gitkeep"):
+        (tmp_path / basura).write_text("x", encoding="utf-8")
+    assert [p.name for p in ficheros_de(tmp_path, ValueError, "x")] == ["a.yaml"]
+    (tmp_path / "notas.txt").write_text("x", encoding="utf-8")
+    with pytest.raises(ValueError, match="inesperado"):
+        ficheros_de(tmp_path, ValueError, "x")

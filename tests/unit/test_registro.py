@@ -9,6 +9,7 @@ from botsito.config.registro import (
     ParametroDesconocidoError,
     RegistroError,
     TipoDeParametroError,
+    _convertir,
     cargar_registro,
 )
 from botsito.domain.valores import Fraccion, HoraLocal, Porcentaje
@@ -157,7 +158,9 @@ def test_fichero_real_sin_valores_de_estrategia(repo: Path) -> None:
     for nombre in r.por_categoria("estrategia"):
         assert r.parametros[nombre].estado is Estado.UNKNOWN, f"{nombre} tiene valor antes de F11"
     for nombre, p in r.parametros.items():
-        if p.categoria != "estrategia":
+        # Un parametro de entorno sin valor todavia (UNKNOWN) no tiene nada que citar; la regla
+        # es que su VALOR venga de una decision, no de la evidencia ni del feedback.
+        if p.categoria != "estrategia" and p.estado is not Estado.UNKNOWN:
             assert p.fuente is not None and p.fuente.tipo == "decision", nombre
 
 
@@ -205,9 +208,10 @@ def test_limites_no_admiten_float(tmp_path: Path) -> None:
         ('valor: "07:00"', 'valor: "25:99"', "hora invalida"),
         ("    huso: Europe/Madrid\n", "", "exige 'huso'"),
         ("huso: Europe/Madrid", "huso: Marte/Olympus", "huso desconocido"),
-        ('valor: "0.75"', 'valor: "NaN"', "no finito"),
-        ('valor: "0.75"', 'valor: "Infinity"', "no finito"),
-        ('valor: "0.75"', 'valor: "abc"', "valor invalido"),
+        # NaN e Infinity los para ya el formato, antes de construir el Decimal.
+        ('valor: "0.75"', 'valor: "NaN"', "numero invalido"),
+        ('valor: "0.75"', 'valor: "Infinity"', "numero invalido"),
+        ('valor: "0.75"', 'valor: "abc"', "numero invalido"),
         (
             "categoria: estrategia\n    tipo: fraccion",
             "categoria: instrumento\n    tipo: fraccion",
@@ -298,3 +302,26 @@ def test_texto_vacio_y_claves_ajenas_y_limites_en_hora(tmp_path: Path) -> None:
     )
     with pytest.raises(RegistroError, match="no se aplican"):
         cargar_registro(_escribir(tmp_path, con_limite))
+
+
+@pytest.mark.parametrize(
+    ("bruto", "pista"),
+    [
+        ("0,75", "el separador decimal es el punto"),
+        ("1%", "el porcentaje se escribe sin el signo"),
+        ("1_000", "numero invalido"),
+        ("1E+999999999", "numero invalido"),
+        ("dos", "numero invalido"),
+    ],
+)
+def test_numeros_escritos_como_los_dice_una_persona(bruto: str, pista: str) -> None:
+    """La respuesta del trader se copia a mano al registro, y `0,75` o `1%` es como se dice.
+    El mensaje tiene que explicar como escribirlo, no ensenar las internals de `decimal`."""
+    with pytest.raises(RegistroError, match=pista):
+        _convertir("decimal", bruto, None, "p")
+
+
+def test_los_numeros_validos_siguen_valiendo() -> None:
+    assert _convertir("decimal", "0.75", None, "p") == Decimal("0.75")
+    assert _convertir("decimal", " 3 ", None, "p") == Decimal("3")
+    assert _convertir("decimal", 3, None, "p") == Decimal("3")

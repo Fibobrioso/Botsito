@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-8b76e13c
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: spread_maximo
+accion: RESOLVE_UNKNOWN
+respuesta_literal: No hay problema con el spread, no existe un limite.
+registrado_por: Aleks · hoja de respuestas de la sesion 1
+valor_resultante: sin limite
+notas: sintesis escrita por el consultor en la hoja durante la sesion; la version explicada esta en la
+  grabacion v6. Sin tope el bot puede entrar con el spread ensanchado en noticias; queda anotado como
+  riesgo a revisar con el trader, no como decision nuestra.

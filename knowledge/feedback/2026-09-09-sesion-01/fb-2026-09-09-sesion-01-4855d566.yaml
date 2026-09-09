@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-4855d566
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: anclaje_h4
+accion: RESOLVE_UNKNOWN
+respuesta_literal: la vela empieza a las 23, la primera vela de cuatro horas [...] entonces a las 7 sería
+  [...] la tercera vela
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:58:30
+t1: '1:00:05'
+valor_resultante: 23:00 UTC+2 (21:00 UTC), sin ajuste por cambio de horario
+notas: Leido tambien en pantalla (fr-v6-22982c02/3585000). Ver A-9 para el matiz de invierno.

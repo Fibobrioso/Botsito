@@ -350,3 +350,20 @@ class ContextoEvidencia:
     dudas: Callable[[str], set[int]] | None = None  # tid -> segmentos con duda del glosario
     temas_raiz: frozenset[str] | None = None
     valores_cerrados: frozenset[str] = frozenset()
+    # video_id -> tramos (t0_ms, t1_ms, motivo) que no son especificacion: una cita que caiga
+    # dentro se rechaza. Lo compone `validation` desde knowledge/corpus/tramos_no_citables.yaml.
+    tramos_no_citables: dict[str, tuple[tuple[int, int, str], ...]] = field(default_factory=dict)
+
+
+def tramo_no_citable(
+    contexto: ContextoEvidencia, video_id: str, t0_ms: int, t1_ms: int
+) -> str | None:
+    """El motivo por el que ese tramo del video no puede citarse, o None si puede.
+
+    Basta con que el item SOLAPE el tramo: una cita que empieza fuera y termina dentro sigue
+    metiendo en la especificacion palabras que se dijeron fuera de ella.
+    """
+    for inicio_ms, fin_ms, motivo in contexto.tramos_no_citables.get(video_id, ()):
+        if t0_ms < fin_ms and inicio_ms < t1_ms:
+            return f"{formato_ms(inicio_ms)}-{formato_ms(fin_ms)}: {motivo}"
+    return None

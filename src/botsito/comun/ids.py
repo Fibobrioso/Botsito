@@ -24,6 +24,9 @@ FOTOGRAMAS = re.compile(r"^fr-[a-z0-9]+-[0-9a-f]{8}$", re.ASCII)
 REFERENCIA_FOTOGRAMA = re.compile(r"^fr-[a-z0-9]+-[0-9a-f]{8}/\d+$", re.ASCII)
 # Propuesta de evidencia (F07): `pr-<video>-<t0hhmmss>-<t1hhmmss>-<hash8>`.
 PROPUESTA = re.compile(r"^pr-[a-z0-9]+-\d{6}-\d{6}-[0-9a-f]{8}$", re.ASCII)
+# Paquete de una sesion de elicitacion (F10): la carpeta de `knowledge/cases/kit/`. Es el
+# objeto sobre el que el trader confirma que no ha visto los meses de las ventanas.
+PAQUETE = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 FUENTE = re.compile(
     r"^(ev-[a-z0-9]+-\d{6}-[0-9a-f]{8}|fb-[0-9a-z-]+-[0-9a-f]{8}|ADR-\d{4})$", re.ASCII
 )
@@ -42,6 +45,7 @@ POR_TIPO: dict[str, re.Pattern[str]] = {
     "fotogramas": FOTOGRAMAS,
     "referencia_fotograma": REFERENCIA_FOTOGRAMA,
     "propuesta": PROPUESTA,
+    "paquete": PAQUETE,
 }
 
 

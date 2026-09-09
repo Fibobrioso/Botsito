@@ -10,6 +10,7 @@ donde corresponde y explica que el valor va entre comillas.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -48,3 +49,19 @@ def cargar_yaml(texto: str) -> Any:
         raise YamlError(f"YAML invalido: {exc}") from exc
     except TypeError as exc:  # clave no hashable (`? [1, 2]`): PyYAML la deja escapar
         raise YamlError(f"YAML invalido: clave no admitida ({exc})") from exc
+
+
+def leer_yaml(ruta: Path) -> Any:
+    """Como `cargar_yaml`, pero desde un fichero y con la decodificacion dentro del error.
+
+    El Bloc de notas de Windows y varios editores guardan en cp1252 o UTF-16 sin avisar. Leyendo
+    con `read_text` suelto, ese fichero sale como `UnicodeDecodeError` crudo y la CLI lo escupe
+    como traceback en vez de decir que hay que reguardarlo en UTF-8.
+    """
+    try:
+        texto = ruta.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise YamlError(
+            f"no esta en UTF-8 ({exc.reason} en el byte {exc.start}): vuelve a guardarlo en UTF-8"
+        ) from exc
+    return cargar_yaml(texto)

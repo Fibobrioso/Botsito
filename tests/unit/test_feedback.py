@@ -212,7 +212,14 @@ def test_fichero_escrito_a_mano_sin_comillas(tmp_path: Path) -> None:
 
 
 def test_directorio_real_valida(repo: Path) -> None:
-    assert cargar_feedback(repo / "knowledge" / "feedback") == []
+    """Desde la sesion 1 (2026-09-09) el feedback real ya no esta vacio: lo que se exige es que
+    todo registro cargue, que los ids no se repitan y que cada `supersede` exista."""
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    ids = [r.id for r in registros]
+    assert len(ids) == len(set(ids))
+    for r in registros:
+        if r.supersede is not None:
+            assert r.supersede in set(ids), f"{r.id} supersede a un registro que no existe"
 
 
 def test_campos_en_blanco_no_rompen_el_id(tmp_path: Path) -> None:
@@ -296,3 +303,88 @@ def test_comprobar_impide_escribir(tmp_path: Path) -> None:
     with pytest.raises(FeedbackError, match="no existe"):
         escribir_registro(tmp_path, base(), lambda r: [f"{r.id}: evidencia objetivo no existe"])
     assert not list(tmp_path.rglob("*.yaml"))
+
+
+def test_precondicion_de_ceguera_sobre_el_paquete(tmp_path: Path) -> None:
+    """La confirmacion de que el trader no ha visto los meses del paquete es registrable.
+
+    Antes de F10 no habia ningun objeto al que apuntar: la respuesta se perdia en el video de la
+    sesion. Con el tipo `paquete` queda en el registro, y `vistos.yaml` puede citarla.
+    """
+    escribir_registro(
+        tmp_path,
+        base(
+            accion="CONFIRM",
+            objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+            respuesta_literal="no he tocado mayo ni junio",
+        ),
+    )
+    escribir_registro(
+        tmp_path,
+        base(
+            accion="REJECT",
+            objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+            respuesta_literal="mayo si lo backtestee entero",
+        ),
+    )
+    registros = cargar_feedback(tmp_path)
+    assert len(registros) == 2
+    assert validar_contra_contexto(registros, set(), set(), set()) == []
+
+
+def test_el_paquete_confirmado_es_el_de_la_sesion(tmp_path: Path) -> None:
+    escribir_registro(
+        tmp_path,
+        base(objetivo={"tipo": "paquete", "id": "2026-10-01-sesion-02"}),
+    )
+    (registro,) = cargar_feedback(tmp_path)
+    assert validar_contra_contexto([registro], set(), set(), set()) == [
+        f"{registro.id}: el paquete objetivo 2026-10-01-sesion-02 "
+        "no es la sesion 2026-09-20-sesion-01"
+    ]
+
+
+@pytest.mark.parametrize("accion", ["CORRECT", "RESOLVE_UNKNOWN", "LABEL_CASE"])
+def test_el_paquete_solo_se_confirma_o_se_rechaza(accion: str) -> None:
+    with pytest.raises(FeedbackError, match="exige objetivo de tipo"):
+        registro_desde_dict(
+            base(
+                accion=accion,
+                objetivo={"tipo": "paquete", "id": "2026-09-20-sesion-01"},
+                valor_resultante="lo que sea",
+            ),
+            "prueba",
+        )
+
+
+def test_dos_registros_no_pueden_superseder_al_mismo(tmp_path: Path) -> None:
+    """El error natural de una ronda intensiva: corriges, vuelves a corregir y por inercia
+    apuntas otra vez al original. Sin esta comprobacion quedan dos activos contradictorios y
+    el fallo no asoma hasta el calculo del kappa, semanas despues."""
+    original = escribir_registro(tmp_path, base(respuesta_literal="primera version"))
+    ido = original.stem
+    escribir_registro(tmp_path, base(respuesta_literal="segunda", supersede=ido))
+    escribir_registro(tmp_path, base(respuesta_literal="tercera", supersede=ido))
+    registros = cargar_feedback(tmp_path)
+    problemas = validar_contra_contexto(registros, {EV}, set(), set())
+    assert len(problemas) == 2
+    assert all(f"{ido} ya esta superseded por" in p for p in problemas)
+    assert all(p.startswith(tuple(r.id for r in registros)) for p in problemas)
+
+
+def test_una_cadena_de_supersede_no_da_falso_positivo(tmp_path: Path) -> None:
+    primero = escribir_registro(tmp_path, base(respuesta_literal="version una")).stem
+    segundo = escribir_registro(
+        tmp_path, base(respuesta_literal="version dos", supersede=primero)
+    ).stem
+    escribir_registro(tmp_path, base(respuesta_literal="version tres", supersede=segundo))
+    assert validar_contra_contexto(cargar_feedback(tmp_path), {EV}, set(), set()) == []
+
+
+def test_un_duplicado_a_mano_se_distingue_de_una_colision(tmp_path: Path) -> None:
+    ruta = escribir_registro(tmp_path, base())
+    with pytest.raises(FeedbackError, match="mismo contenido"):
+        escribir_registro(tmp_path, base())
+    ruta.write_text(ruta.read_text(encoding="utf-8") + "notas: a mano\n", encoding="utf-8")
+    with pytest.raises(FeedbackError, match="OTRO contenido"):
+        escribir_registro(tmp_path, base())

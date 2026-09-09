@@ -241,8 +241,11 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
-    assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, 13)]
-    assert sum(1 for a in ambs if a.bloqueante) == 3
+    # correlativas desde A-1, sin huecos: la sesion 1 añadio A-13..A-17 y seguira creciendo
+    assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, len(ambs) + 1)]
+    assert len(ambs) >= 17
+    assert sum(1 for a in ambs if a.bloqueante) == 3  # las tres que se llevaron a la sesion 1
+    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)}
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (
@@ -774,3 +777,122 @@ def test_feedback_ambiguedad_duracion_y_video_de_sesion(tmp_path: Path) -> None:
     )
     with pytest.raises(InventarioError, match="sin drive_id"):
         cargar_fuentes(ruta)
+
+
+def test_una_etiqueta_retirada_con_borderline_no_reaparece(tmp_path: Path) -> None:
+    """`activos` va sobre TODOS los registros, no sobre los `LABEL_CASE` ya filtrados.
+
+    `BORDERLINE`, `MARK_FALSE_POSITIVE` y `MARK_FALSE_NEGATIVE` tambien apuntan a un `caso` y por
+    tanto pueden retirar una etiqueta. Filtrando primero por accion, ese retiro desaparecia de la
+    lista y la etiqueta anulada volvia a contar en el kappa sin que nadie lo viera.
+    """
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "particiones.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    caso = sorted(doc["asignacion"])[0]
+    sesion = "2026-09-15-sesion-01"
+    etiqueta = _registro_label(repo, sesion, caso, "07-11: venta; 11-15: no_trade")
+    escribir_registro(
+        repo / "knowledge" / "feedback",
+        {
+            "sesion": sesion,
+            "fecha": sesion[:10],
+            "medio": "escrito",
+            "objetivo": {"tipo": "caso", "id": caso},
+            "accion": "BORDERLINE",
+            "respuesta_literal": "en este dia no me decido, retiro lo que dije",
+            "registrado_por": "aleks",
+            "supersede": etiqueta,
+        },
+    )
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    unidades = kp.etiquetas_de_registros(
+        registros, sesion, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+    )
+    assert unidades == {}, "la etiqueta retirada por el BORDERLINE seguia contando"
+
+
+def _mover_sesion(repo: Path) -> Any:
+    """El script de scripts/, cargado apuntando a un repo de prueba."""
+    import importlib.util
+
+    ruta = Path(__file__).resolve().parents[2] / "scripts" / "mover_sesion.py"
+    spec = importlib.util.spec_from_file_location("mover_sesion", ruta)
+    assert spec is not None and spec.loader is not None
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    setattr(modulo, "RAIZ", repo)  # noqa: B010  # el script apunta a la raiz real
+    return modulo
+
+
+def test_mover_la_fecha_conserva_los_mismos_dias(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Mover la sesion reutiliza el seed del paquete: mismos casos y mismo reparto.
+
+    Tecleando el seed a mano se puede poner otro sin darse cuenta, y entonces salen dias
+    distintos sin que falle nada. Aqui el seed no se teclea.
+    """
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    antes = (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "particiones.yaml").read_text(
+        encoding="utf-8"
+    )
+    modulo = _mover_sesion(repo)
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-22"])
+    assert modulo.main() == 0
+    assert not (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01").exists()
+    despues = (repo / DIRECTORIO_KIT / "2026-09-22-sesion-01" / "particiones.yaml").read_text(
+        encoding="utf-8"
+    )
+    assert despues.replace("2026-09-22", "2026-09-15") == antes
+    # y la vuelta deja el paquete byte a byte como estaba
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-15"])
+    assert modulo.main() == 0
+    volvio = (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "particiones.yaml").read_text(
+        encoding="utf-8"
+    )
+    assert volvio == antes
+
+
+def test_no_se_mueve_una_sesion_ya_etiquetada(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Con etiquetas puestas, el reparto esta congelado: rehacer el paquete borraria la prueba
+    de que se asigno antes de etiquetar, que es lo unico que sostiene el etiquetado ciego."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "particiones.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    caso = sorted(doc["asignacion"])[0]
+    _registro_label(repo, "2026-09-15-sesion-01", caso, "07-11: venta; 11-15: no_trade")
+    modulo = _mover_sesion(repo)
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-22"])
+    with pytest.raises(SystemExit, match="LABEL_CASE"):
+        modulo.main()
+    assert (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01").is_dir()
+    assert not (repo / DIRECTORIO_KIT / "2026-09-22-sesion-01").exists()
+
+
+def test_si_la_reconstruccion_falla_el_paquete_original_vuelve(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """La red que justifica borrar una carpeta de knowledge/: si algo revienta, se restaura."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    carpeta = repo / DIRECTORIO_KIT / "2026-09-15-sesion-01"
+    original = {p.name: p.read_bytes() for p in carpeta.iterdir()}
+    modulo = _mover_sesion(repo)
+    monkeypatch.setattr(modulo, "construir", lambda *a, **k: (_ for _ in ()).throw(KitError("x")))
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-22"])
+    with pytest.raises(KitError):
+        modulo.main()
+    assert {p.name: p.read_bytes() for p in carpeta.iterdir()} == original
+    assert not (repo / DIRECTORIO_KIT / "2026-09-22-sesion-01").exists()

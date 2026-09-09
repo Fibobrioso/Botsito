@@ -1,0 +1,18 @@
+id: ev-v6-020029-aa86963a
+video_id: v6
+t0: '2:00:29'
+t1: '2:00:42'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: me puse a pensar y lo de las noticias [...] dos minutos antes y dos minutos después no se
+  puede operar, creo, o como es, depende del tipo de cuenta de fondeo que tienes
+afirmacion: recuerda que las cuentas de fondeo prohiben operar dos minutos antes y despues de una noticia,
+  segun el tipo de cuenta
+tema: riesgo.noticias_regla_fondeo
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: lo dice el trader sin estar seguro ('creo'). Es una regla del proveedor, no suya, y hay que verificarla
+  en las condiciones reales de la cuenta.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

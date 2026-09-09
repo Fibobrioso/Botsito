@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-d4ca9eff
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-2
+accion: RESOLVE_UNKNOWN
+respuesta_literal: El tope son 3 perdidas, el BE no cuenta como perdida.
+registrado_por: Aleks · aclaracion escrita del consultor tras la sesion 1
+valor_resultante: 3 perdidas; el break even no cuenta
+supersede: fb-2026-09-09-sesion-01-a8ba253d
+notas: 'aclaracion del consultor, no cita del trader; se contrastara con la grabacion v6. Corrige el matiz
+  que la hoja dejaba en ''BE si loes'': el limite del dia se cuenta en PERDIDAS, y un break even no es
+  una de ellas. Con 3 perdidas y 0,4 % de riesgo real, el peor dia son ~1,2 % del saldo.'

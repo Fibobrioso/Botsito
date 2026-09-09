@@ -1,0 +1,18 @@
+id: ev-v6-020114-a0e0b419
+video_id: v6
+t0: '2:01:14'
+t1: '2:01:40'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: cuando estás intentando pasar la prueba de fondeo, o sea, es una de sus sus reglas, creo,
+  en algunas empresas, que si tú vas en contra de eso, pues te, o sea, a pesar de que termines en profit,
+  o no, o bien no te pagan, o qué sé yo, o sea, te cierran la cuenta
+afirmacion: operar noticias puede costar la cuenta aunque la operacion termine en ganancia
+tema: riesgo.noticias_penalizacion
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: el consultor es quien lo plantea y el trader lo confirma de oidas. Convierte el 'operamos con noticias'
+  en un riesgo de cuenta, no solo de spread.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

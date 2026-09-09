@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-67e1dfb0
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_proteccion_capital
+accion: CONFIRM
+respuesta_literal: El SL siempre en 0.8 fijado con la regla de primero la caja completa. Manten eso. Si,
+  el riesgo real es ese de 0.4% como tal.
+registrado_por: Aleks · aclaracion escrita del consultor tras la sesion 1
+valor_resultante: 0,2 de la caja guardada; riesgo real 0,4 % del saldo
+notas: 'aclaracion del consultor, no cita del trader; se contrastara con la grabacion v6 cuando termine
+  la transcripcion. Confirmado que la diferencia entre el 0,5 % dimensionado y el 0,4 % real es deliberada,
+  no un descuadre: el lote se calcula sobre la caja completa a proposito.'

@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-6e15504f
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: liquidez_m15_criterio_toma
+accion: RESOLVE_UNKNOWN
+respuesta_literal: ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
+  o vale con que la mecha lo perfore? Con cuerpo. Ya, con cuerpo. Sí, perfecto
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:49:21'
+t1: '1:49:50'
+valor_resultante: cuerpo
+notas: 'Solo en M15. En M1 el rompimiento es indiferente: ''en M1 no sé si es indiferente si es con mecha
+  o sea, y demás'' (0:38:05), y para completar una zona de control ''con mecha no importa'' (1:25:47).'

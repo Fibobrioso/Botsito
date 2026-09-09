@@ -29,7 +29,7 @@ from botsito.comun.documentos import (
     normalizar_texto,
     vacio,
 )
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.evidence.verificacion import (
     CitaError,
     ContextoEvidencia,
@@ -286,7 +286,7 @@ def item_desde_dict(campos: dict[str, Any], origen: str = "item") -> EvidenceIte
 
 def cargar_item(ruta: Path) -> EvidenceItem:
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise EvidenciaError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict):

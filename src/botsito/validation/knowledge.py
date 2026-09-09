@@ -270,14 +270,17 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         salida.append(f"ERROR: {fallo}")
     if fallos_fb:
         return 1, salida
-    from botsito.data.dataset import DIRECTORIO_MANIFIESTOS, DatasetError, cargar_manifiesto
+    # Alias: `cargar_manifiesto` ya nombra aqui el del corpus, y sombrearlo hace que
+    # cualquier linea nueva de mas abajo use el de datos en silencio.
+    from botsito.data.dataset import DIRECTORIO_MANIFIESTOS, DatasetError
+    from botsito.data.dataset import cargar_manifiesto as cargar_manifiesto_dataset
     from botsito.data.dataset import manifiestos as listar_manifiestos
 
     fallos_datos: list[str] = []
     try:
         rutas_manifiestos = listar_manifiestos(repo)
         for ruta in rutas_manifiestos:
-            cargar_manifiesto(ruta)
+            cargar_manifiesto_dataset(ruta)
     except DatasetError as exc:
         fallos_datos.append(f"manifiesto de datos: {exc}")
     historial_datos = modificaciones_en_historial(repo, DIRECTORIO_MANIFIESTOS)
@@ -359,7 +362,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
     from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes
 
-    ids_datasets = {cargar_manifiesto(r)["dataset_id"] for r in rutas_manifiestos}
+    ids_datasets = {cargar_manifiesto_dataset(r)["dataset_id"] for r in rutas_manifiestos}
     try:
         fallos_kit, avisos_kit = validar_paquetes(
             repo, registros_fb, {i.id for i in items}, {str(d) for d in ids_datasets}

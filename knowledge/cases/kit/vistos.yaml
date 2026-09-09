@@ -2,7 +2,9 @@
 # universo de ventanas de etiquetado ciego (F10, ADR-0011). Manual, versionado con `Fuente:`.
 # Un mes entero se excluye cuando no se puede saber que dias vio (el xlsx de agosto no tiene
 # columna de fecha). Antes de cada sesion el trader confirma por escrito (registro F09) que no
-# ha operado ni backtesteado los meses del paquete; si lo ha hecho, se anaden aqui y se regenera.
+# ha operado ni backtesteado los meses del paquete: se registra en F09 como CONFIRM sobre el
+# objetivo `paquete <sesion>`. Si lo ha hecho, es un REJECT sobre el mismo objetivo, el mes se
+# anade aqui citando ese `fb-...` en `fuente` y se regenera el paquete.
 meses:
   - mes: "2026-01"
     motivo: backtest de enero recorrido en v4 (entrevista sobre FXReplay)

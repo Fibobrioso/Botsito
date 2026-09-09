@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-79cef2da
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: stop_en_orden_pendiente
+accion: RESOLVE_UNKNOWN
+respuesta_literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:43:51'
+t1: '1:44:36'
+valor_resultante: en_la_orden, y se mueve a 0,80 tras el llenado
+notas: Ver A-11.

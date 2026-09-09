@@ -1,0 +1,19 @@
+id: ev-v6-005810-5cb1ef06
+video_id: v6
+t0: 0:58:10
+t1: 0:58:24
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Es la misma hora [...] Si es una hora más, pues sería A las 8, o si es una hora menos, a
+  las 6
+afirmacion: en las semanas de cambio de horario dice que mantiene la misma hora, pero admite que la apertura
+  podria verse a las 8 o a las 6
+tema: reloj.cambio_horario
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: 'las dos mitades de la frase no dicen lo mismo: ''la misma hora'' apunta a un huso fijo y ''a las
+  8 o a las 6'' a un desplazamiento. De aqui sale la duda nueva sobre el anclaje H4 fuera del horario
+  de verano.'
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

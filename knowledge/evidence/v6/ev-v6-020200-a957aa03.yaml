@@ -1,0 +1,15 @@
+id: ev-v6-020200-a957aa03
+video_id: v6
+t0: '2:02:00'
+t1: '2:02:06'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: A ver, vamos a intentarlo, ¿vale? O sea, porque al final de todo, como digo, no sé.
+afirmacion: decide operar tambien durante las noticias, a modo de prueba
+tema: riesgo.noticias_se_opera
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: la decision se toma sin resolver la regla del proveedor que el mismo acaba de mencionar.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

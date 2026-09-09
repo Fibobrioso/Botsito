@@ -1,0 +1,17 @@
+id: ev-v6-010947-8b4b485a
+video_id: v6
+t0: '1:09:47'
+t1: '1:10:01'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: te pondría en B y te perderías todo ese movimiento de allí pero si fuera con cuerpo [...]
+  no te perderías ese trade
+afirmacion: protegerlo al toque le hace perder movimientos que un criterio de cuerpo conservaria
+tema: break_even.coste_del_toque
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: es el argumento en contra de su propia respuesta a P-02; cuantificarlo exige medir las dos variantes
+  sobre los mismos dias.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

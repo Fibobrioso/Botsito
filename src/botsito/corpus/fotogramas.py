@@ -41,7 +41,7 @@ import yaml
 
 from botsito.comun import ids
 from botsito.comun.documentos import hash_corto, sha256_hex
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.audio import version_ffmpeg
 from botsito.corpus.inventario import sha256_fichero
 from botsito.corpus.trabajo import (
@@ -400,7 +400,7 @@ def cargar_obligatorios(ruta: Path) -> list[Obligatorio]:
     if not ruta.is_file():
         return []
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise FotogramasError(f"{ruta.name}: {exc}") from exc
     if (
@@ -581,7 +581,7 @@ def extraer_video(
     ruta_manifiesto = repo / DIRECTORIO_MANIFIESTOS / f"{fid}.yaml"
     if ruta_manifiesto.exists():
         try:
-            previo_doc = cargar_yaml(ruta_manifiesto.read_text(encoding="utf-8"))
+            previo_doc = leer_yaml(ruta_manifiesto)
         except YamlError as exc:
             raise FotogramasError(f"{ruta_manifiesto.name}: {exc}") from exc
         reemplaza_a_previo(previo_doc, reemplaza_a, ruta_manifiesto.name, FotogramasError)

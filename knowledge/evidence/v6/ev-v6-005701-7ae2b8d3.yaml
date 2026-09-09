@@ -1,0 +1,17 @@
+id: ev-v6-005701-7ae2b8d3
+video_id: v6
+t0: 0:57:01
+t1: 0:57:20
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Sí, o sea, apenas toca. [...] yo siempre lo he estado trabajando, o sea, apenas toca
+afirmacion: el break even se pone apenas el precio toca, no al cierre
+tema: break_even.disparador_toque
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+valor: toque
+notas: respuesta definitiva a P-02, dada con el contexto de la pregunta delante y justificada por como
+  opera ('siempre lo he estado trabajando'). Supersede en la practica a la de 0:53:59.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

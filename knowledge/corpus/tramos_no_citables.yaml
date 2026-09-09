@@ -1,0 +1,32 @@
+# Tramos de un video que NO son especificacion (F07). Manual, versionado; cada commit cita
+# `Fuente:`. Una cita de evidencia que caiga dentro de uno de estos tramos se rechaza, tanto en
+# `evidence propose --check` como en `evidence new`.
+#
+# No es censura: el tramo sigue en la cruda y se puede leer y buscar con `kb find`. Lo que impide
+# es que entre en la cadena evidencia -> spec -> bot, que es donde el proyecto se juega decir que
+# el trader dijo algo que no dijo, o que dijo para la operativa algo que dijo fuera de ella.
+#
+# Campos: video_id, t0, t1 (h:mm:ss del video), motivo (por que no cuenta), acordado (como consta).
+
+tramos:
+  - video_id: v6
+    t0: "0:41:00"
+    t1: "0:50:11"
+    motivo: >-
+      el trader avisa de que lo que va a explicar no forma parte de la operativa (es el tercer
+      esquema de entrada, pendiente de backtest) y el consultor lo acepta en voz. Todo lo dicho
+      entre esas dos marcas queda fuera de la especificacion aunque suene a regla.
+    acordado: >-
+      0:41:03 "o sea lo que voy a comentar de ahora en adelante no va para la operativa" /
+      0:41:06 "lo que va de aqui en adelante hasta que lo mencione de nuevo no va para la
+      operativa" / 0:50:11 "y ahora si, a partir de aqui, volvemos a la operativa"
+  - video_id: v6
+    t0: "1:53:30"
+    t1: "1:57:31"
+    motivo: >-
+      el trader se ausenta y queda sonando un video ajeno (un tutorial sobre llaves rotas y
+      cerraduras). El texto transcrito ahi no es suyo y no es de trading: atribuirselo seria un
+      error de identidad, no de matiz.
+    acordado: >-
+      1:52:45 "bro, un momento, vale? voy a tomar agua, ahora vengo" / 1:57:31 "regrese. vale,
+      en que estabamos?"

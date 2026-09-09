@@ -24,7 +24,7 @@ ambiguedades:
       - ev-v4-004603-d0ffd4f2
     parametros: [sesgo_h4_regla]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-2
     titulo: tercer cartucho
@@ -41,7 +41,7 @@ ambiguedades:
       - ev-v4-002951-d3132b3f
     parametros: [cartuchos_max]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-3
     titulo: salida sin ruptura
@@ -52,7 +52,7 @@ ambiguedades:
       - ev-v4-010831-5f4a00ad
     parametros: [salida_sin_ruptura]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-4
     titulo: BE al tocar o al cierre
@@ -64,7 +64,7 @@ ambiguedades:
       - ev-v5-000427-f8d5d36d
     parametros: [break_even_condicion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-5
     titulo: cadencia de reubicacion
@@ -76,7 +76,7 @@ ambiguedades:
       - ev-v4-010857-5bc906c9
     parametros: [reubicacion_cadencia]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-6
     titulo: cierre 15:00
@@ -86,7 +86,7 @@ ambiguedades:
       - ev-v4-011514-fe34ac7e
     parametros: [ventana_fin, cierre_forzoso_fin_ventana]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-7
     titulo: stop del 2.o esquema
@@ -102,7 +102,7 @@ ambiguedades:
       - ev-v4-003252-ef8d3139
     parametros: [stop_segundo_esquema]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-8
     titulo: '"dos velas como una" en mapeo'
@@ -113,7 +113,7 @@ ambiguedades:
       - ev-v3-011540-5425b533
     parametros: [mapeo_dos_velas]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-9
     titulo: anclaje de la vela H4 (hora y huso del grafico)
@@ -127,7 +127,7 @@ ambiguedades:
       - ev-v3-000157-b26147c7
     parametros: [anclaje_h4]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: true
   - id: A-10
     titulo: "stop a 0,8: fijo o 0,75 + spread"
@@ -141,7 +141,7 @@ ambiguedades:
       - ev-v4-001221-1e66b5fd
     parametros: [stop_fraccion_caja, stop_colchon_spread]
     contradiccion: stop.nivel
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-11
     titulo: SL en la orden o tras el llenado
@@ -152,7 +152,7 @@ ambiguedades:
       - ev-v1-000620-0f7dea14
     parametros: [stop_en_orden_pendiente]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     bloqueante: false
   - id: A-12
     titulo: >-
@@ -164,6 +164,72 @@ ambiguedades:
       - ev-v1-001557-1dd16e5c
       - ev-v1-001643-47673889
     parametros: [stop_reduccion_umbral_vela, stop_reduccion_fraccion]
+    contradiccion: null
+    estado: RESUELTA
+    bloqueante: false
+  - id: A-13
+    titulo: break even al toque o con cuerpo
+    pregunta: >-
+      ¿el rompimiento de la zona de control que dispara el break even vale al toque (por un
+      pip) o hay que esperar a que la vela cierre con cuerpo?
+    resuelve_en: [F11, F23, F26]
+    evidencia:
+      - ev-v6-005359-e00e4b0f
+      - ev-v6-005701-7ae2b8d3
+      - ev-v6-010927-50b8d873
+      - ev-v6-010947-8b4b485a
+    parametros: [break_even_condicion]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-14
+    titulo: anclaje H4 fuera del horario de verano
+    pregunta: >-
+      ¿su grafico esta en UTC+2 fijo (la vela H4 abre a las 21:00 UTC todo el año) o sigue a
+      Madrid (en invierno la apertura se desplaza)?
+    resuelve_en: [F11, F15]
+    evidencia:
+      - ev-v6-005810-5cb1ef06
+      - ev-v6-005830-48b30e48
+    parametros: [anclaje_h4]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-15
+    titulo: alcance de la ventana operativa
+    pregunta: >-
+      ¿el bot busca solo en las dos sesiones de 07-11 y 11-15, o tambien en la de Nueva York?
+    resuelve_en: [F11]
+    evidencia:
+      - ev-v6-014610-597e442a
+      - ev-v6-014623-f23c5f63
+    parametros: [ventana_inicio, ventana_fin]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-16
+    titulo: proveedor de datos para medir la fidelidad
+    pregunta: >-
+      ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido
+      sobre Dukascopy, si la regla depende de romper por una milesima?
+    resuelve_en: [F26]
+    evidencia:
+      - ev-v6-002414-d59b1c82
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-17
+    titulo: noticias frente a la regla de la cuenta de fondeo
+    pregunta: >-
+      ¿la cuenta prohibe operar dos minutos antes y despues de una noticia, y que pasa si el
+      bot lo hace?
+    resuelve_en: [F11, F33]
+    evidencia:
+      - ev-v6-020029-aa86963a
+      - ev-v6-020114-a0e0b419
+      - ev-v6-020200-a957aa03
+    parametros: [filtro_noticias]
     contradiccion: null
     estado: ABIERTA
     bloqueante: false

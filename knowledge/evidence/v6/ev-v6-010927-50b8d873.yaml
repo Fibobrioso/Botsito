@@ -1,0 +1,18 @@
+id: ev-v6-010927-50b8d873
+video_id: v6
+t0: '1:09:27'
+t1: '1:09:35'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si digo que tiene que ser con rompimiento, o sea, cuando me genere la zona de control yo
+  valido para poner en B que aquí hay un rompimiento
+afirmacion: se plantea exigir un rompimiento de la zona de control para poner el break even, en vez de
+  protegerlo al toque
+tema: break_even.duda_rompimiento
+confianza: media
+extractor: llm
+revisado_por: Aleks · sesion 1 2026-09-09 · cruda leida
+provenance: botsito
+notas: el trader vuelve sobre P-02 por iniciativa propia, doce minutos despues de haberla respondido con
+  'apenas toca'. No cierra la duda.
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

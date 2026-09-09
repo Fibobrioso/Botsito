@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-8215bbbf
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: stop_segundo_esquema
+accion: RESOLVE_UNKNOWN
+respuesta_literal: tanto primero como segundo esquema de entrada en 0.80, ¿verdad? Sí
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:35:55'
+t1: '1:36:23'
+valor_resultante: 0,8
+notas: Ver A-7.

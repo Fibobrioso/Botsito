@@ -28,3 +28,9 @@ parametros:
   riesgo_por_operacion: {temas: [riesgo.por_operacion, riesgo.fondeo.por_operacion, riesgo.crecimiento_geometrico], ambiguedad: null}
   lotaje_base: {temas: [lotaje.distancia_completa, lotaje.no_desde_075, lotaje], ambiguedad: null, opciones: [distancia_completa, desde_075]}
   anclaje_h4: {temas: [reloj, ventana.velas_h4_7_11_15], ambiguedad: A-9}
+  dias_operables: {temas: [ventana.sesiones, ventana.velas_h4_7_11_15, ventana], ambiguedad: null}
+  filtro_noticias: {temas: [herramientas.sin_noticias, stop.respiro_con_noticias], ambiguedad: null, opciones: ["no", regla]}
+  spread_maximo: {temas: [stop.colchon_spread_075_080, stop.respiro_con_noticias, stop.075_desplazado_por_spread_y_lotaje], ambiguedad: null}
+  perdida_maxima_diaria: {temas: [riesgo.por_operacion.calculo_racha, riesgo.fondeo], ambiguedad: null}
+  perdida_maxima_semanal: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha], ambiguedad: null}
+  comportamiento_sin_regla: {temas: [no_trade], ambiguedad: null, opciones: [abstenerse, regla_mas_parecida]}

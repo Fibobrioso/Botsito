@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-5078f9b4
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-7
+accion: RESOLVE_UNKNOWN
+respuesta_literal: lo ideal creo yo, para evitar las complicaciones [...] pues manejarlo en 0.80, fijo
+  0.80, a pesar de que se desarrolle el segundo esquema de entrada [...] tanto primero como segundo esquema
+  de entrada en 0.80, ¿verdad? Sí
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:35:55'
+t1: '1:36:23'
+valor_resultante: 0,80 fijo tambien en el segundo esquema
+notas: 'Cierra la duda de proteger por encima de la zona de control o a 0,50 en el segundo esquema: lo
+  descarta a proposito, por simplicidad, y deja el stop dinamico como trabajo futuro.'

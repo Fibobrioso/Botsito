@@ -29,7 +29,7 @@ import yaml
 
 from botsito.comun import ids
 from botsito.comun.documentos import TOLERANCIA_DURACION_S, hash_corto, sha256_hex
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.audio import (
     MUESTRAS_S,
     AudioError,
@@ -224,7 +224,7 @@ def transcribir_video(
     ruta_manifiesto = repo / DIRECTORIO_MANIFIESTOS / f"{tid}.yaml"
     if ruta_manifiesto.exists():
         try:
-            previo = cargar_yaml(ruta_manifiesto.read_text(encoding="utf-8"))
+            previo = leer_yaml(ruta_manifiesto)
         except YamlError as exc:
             raise TranscripcionError(f"{ruta_manifiesto.name}: {exc}") from exc
         reemplaza_a_previo(previo, reemplaza_a, ruta_manifiesto.name, TranscripcionError)

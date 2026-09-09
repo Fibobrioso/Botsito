@@ -1,0 +1,1222 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v6-005000-010000-216cbc85
+video_id: v6
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4
+t0: 0:50:00
+t1: '1:00:00'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-opus-5 · sesion 1
+proponente: llm
+generado_el: '2026-09-09T21:27:45Z'
+contexto:
+  segmentos:
+  - n: 575
+    t0_ms: 2998843
+    t1_ms: 3001023
+    texto: Ya con tener un 33%, o sea
+    senales: []
+  - n: 576
+    t0_ms: 3001403
+    t1_ms: 3002643
+    texto: Supongamos, usando este esquema
+    senales: []
+  - n: 577
+    t0_ms: 3002643
+    t1_ms: 3004543
+    texto: De 40 trades
+    senales: []
+  - n: 578
+    t0_ms: 3004543
+    t1_ms: 3007083
+    texto: O sea, es más de un 30%
+    senales: []
+  - n: 579
+    t0_ms: 3007083
+    t1_ms: 3008543
+    texto: Approx, entonces
+    senales: []
+  - n: 580
+    t0_ms: 3008543
+    t1_ms: 3010283
+    texto: Y es dinero, entonces es eso
+    senales: []
+  - n: 581
+    t0_ms: 3010283
+    t1_ms: 3011023
+    texto: Gracias por ver el video.
+    senales:
+    - no_habla
+  - n: 582
+    t0_ms: 3011075
+    t1_ms: 3032935
+    texto: Y pues nada. Está buena. O sea, eso ya sería el tema de poder integrarlo más adelante cuando
+      tenga más pruebas. Sí, sí, exacto. Sí, sí. Ajá, claro. Y nada. Ok, ya. Y ahora sí, a partir de aquí,
+      volvemos a la operativa. ¿Te parece si pasamos al Q&A? Porque ya creo que está bien completa la
+      sesión que has hecho ya. A ver. Con tu gráfico abierto, creo, porque igual yo estoy grabando mi
+      pantalla. Ah, perfecto, perfecto.
+    senales: []
+  - n: 583
+    t0_ms: 3032935
+    t1_ms: 3036015
+    texto: Son básicamente preguntas operativas y reafirmativas
+    senales:
+    - no_habla
+  - n: 584
+    t0_ms: 3036015
+    t1_ms: 3037375
+    texto: Creo que algunas ya están contestadas
+    senales:
+    - no_habla
+  - n: 585
+    t0_ms: 3037375
+    t1_ms: 3039195
+    texto: Pero obviamente mientras más claros seamos
+    senales:
+    - no_habla
+  - n: 586
+    t0_ms: 3039195
+    t1_ms: 3040955
+    texto: Mejor va a poder cuantificarse todo
+    senales:
+    - no_habla
+  - n: 587
+    t0_ms: 3041775
+    t1_ms: 3042875
+    texto: Entonces ya, primero
+    senales:
+    - no_habla
+  - n: 588
+    t0_ms: 3043415
+    t1_ms: 3045195
+    texto: Igual voy a compartir pantalla, no hay que compartir
+    senales:
+    - no_habla
+  - n: 589
+    t0_ms: 3045195
+    t1_ms: 3047035
+    texto: Porque se pueden compartir dos en simultáneo
+    senales:
+    - no_habla
+  - n: 590
+    t0_ms: 3047035
+    t1_ms: 3048415
+    texto: Ah, perfecto
+    senales:
+    - no_habla
+  - n: 591
+    t0_ms: 3048415
+    t1_ms: 3050455
+    texto: O sea, ahí puedes ver mi pantalla
+    senales:
+    - no_habla
+  - n: 592
+    t0_ms: 3050455
+    t1_ms: 3053675
+    texto: Ya, vamos con lo primero
+    senales:
+    - no_habla
+  - n: 593
+    t0_ms: 3054375
+    t1_ms: 3055135
+    texto: No lo veo
+    senales:
+    - no_habla
+  - n: 594
+    t0_ms: 3055795
+    t1_ms: 3056735
+    texto: No se ve mi pantalla
+    senales:
+    - no_habla
+  - n: 595
+    t0_ms: 3057895
+    t1_ms: 3059995
+    texto: No, o será porque estoy compartiendo yo
+    senales:
+    - no_habla
+  - n: 596
+    t0_ms: 3059995
+    t1_ms: 3060815
+    texto: A ver, ahora mira
+    senales:
+    - no_habla
+  - n: 597
+    t0_ms: 3061935
+    t1_ms: 3062375
+    texto: Tampoco
+    senales:
+    - no_habla
+  - n: 598
+    t0_ms: 3063835
+    t1_ms: 3067655
+    texto: A ver, dejo de compartir
+    senales:
+    - no_habla
+  - n: 599
+    t0_ms: 3068055
+    t1_ms: 3069155
+    texto: Yo y a ver
+    senales:
+    - no_habla
+  - n: 600
+    t0_ms: 3069155
+    t1_ms: 3071595
+    texto: Si hay algo que tengas que hacer, una precisión en gráfico
+    senales:
+    - no_habla
+  - n: 601
+    t0_ms: 3071595
+    t1_ms: 3072515
+    texto: Comparte y dejo de compartir
+    senales:
+    - no_habla
+  - n: 602
+    t0_ms: 3072515
+    t1_ms: 3075535
+    texto: Ya, listo
+    senales:
+    - no_habla
+  - n: 603
+    t0_ms: 3075535
+    t1_ms: 3076195
+    texto: Este es el primero
+    senales:
+    - no_habla
+  - n: 604
+    t0_ms: 3077935
+    t1_ms: 3079335
+    texto: Acá, cartuchos por zona de liquidez
+    senales:
+    - no_habla
+  - n: 605
+    t0_ms: 3079335
+    t1_ms: 3081555
+    texto: O sea, que queremos saber, cuando el precio barra
+    senales:
+    - no_habla
+  - n: 606
+    t0_ms: 3081555
+    t1_ms: 3083495
+    texto: En la zona de liquidez de M15, si el esquema de entrada
+    senales:
+    - no_habla
+  - n: 607
+    t0_ms: 3083495
+    t1_ms: 3085295
+    texto: Cuántos intentos te permite en esa misma zona
+    senales:
+    - no_habla
+  - n: 608
+    t0_ms: 3085295
+    t1_ms: 3087355
+    texto: Antes de parar y esperar a que se forme otra
+    senales:
+    - no_habla
+  - n: 609
+    t0_ms: 3087995
+    t1_ms: 3089695
+    texto: Y acláranos que cuenta como intento
+    senales:
+    - no_habla
+  - n: 610
+    t0_ms: 3089695
+    t1_ms: 3091455
+    texto: Una salida en break even, gasta intento
+    senales:
+    - no_habla
+  - n: 611
+    t0_ms: 3091455
+    t1_ms: 3093195
+    texto: Y una entrada que es invalidada antes de activarse
+    senales: []
+  - n: 612
+    t0_ms: 3093195
+    t1_ms: 3095295
+    texto: Ah, perfecto, me gusta esa pregunta
+    senales: []
+  - n: 613
+    t0_ms: 3095295
+    t1_ms: 3097195
+    texto: Y acá está con texto y todo
+    senales: []
+  - n: 614
+    t0_ms: 3097195
+    t1_ms: 3098115
+    texto: Sí
+    senales: []
+  - n: 615
+    t0_ms: 3098875
+    t1_ms: 3101035
+    texto: Claro, dice la ficha que remarcaste
+    senales: []
+  - n: 616
+    t0_ms: 3101035
+    t1_ms: 3102535
+    texto: Es límite de dos cartuchos
+    senales: []
+  - n: 617
+    t0_ms: 3102535
+    t1_ms: 3105995
+    texto: No consume cartucho
+    senales: []
+  - n: 618
+    t0_ms: 3105995
+    t1_ms: 3107715
+    texto: Claro, son dos números distintos
+    senales: []
+  - n: 619
+    t0_ms: 3107715
+    t1_ms: 3108655
+    texto: Por la misma regla
+    senales: []
+  - n: 620
+    t0_ms: 3108655
+    t1_ms: 3109655
+    texto: El bot tiene que elegir uno
+    senales: []
+  - n: 621
+    t0_ms: 3109655
+    t1_ms: 3111475
+    texto: Con dos dejas de operar antes
+    senales: []
+  - n: 622
+    t0_ms: 3111475
+    t1_ms: 3114275
+    texto: Con tres arriesgas una vez más cada día
+    senales: []
+  - n: 623
+    t0_ms: 3114275
+    t1_ms: 3115395
+    texto: Las relaciones
+    senales: []
+  - n: 624
+    t0_ms: 3115395
+    t1_ms: 3117755
+    texto: Vale, mira
+    senales: []
+  - n: 625
+    t0_ms: 3120155
+    t1_ms: 3121555
+    texto: Ahora yo podría cambiar
+    senales:
+    - no_habla
+  - n: 626
+    t0_ms: 3121555
+    t1_ms: 3123675
+    texto: Porque como tal, mira, si tomamos
+    senales:
+    - no_habla
+  - n: 627
+    t0_ms: 3129175
+    t1_ms: 3130575
+    texto: Vale, estaría bien
+    senales:
+    - no_habla
+  - n: 628
+    t0_ms: 3130575
+    t1_ms: 3132475
+    texto: O sea, creo yo hasta el tercer
+    senales:
+    - no_habla
+  - n: 629
+    t0_ms: 3133255
+    t1_ms: 3134475
+    texto: Digámoslo así, el tercer
+    senales:
+    - no_habla
+  - n: 630
+    t0_ms: 3135175
+    t1_ms: 3137835
+    texto: ¿Cuál era lo que había planteado?
+    senales:
+    - no_habla
+  - n: 631
+    t0_ms: 3138415
+    t1_ms: 3139995
+    texto: O sea, lo que cuenta es
+    senales:
+    - no_habla
+  - n: 632
+    t0_ms: 3139995
+    t1_ms: 3141235
+    texto: Nos quedamos en
+    senales:
+    - no_habla
+  - n: 633
+    t0_ms: 3141235
+    t1_ms: 3143575
+    texto: Hasta un tercer trade
+    senales:
+    - no_habla
+  - n: 634
+    t0_ms: 3143575
+    t1_ms: 3144815
+    texto: Pues operaríamos
+    senales:
+    - no_habla
+  - n: 635
+    t0_ms: 3144815
+    t1_ms: 3147575
+    texto: O sea, se opera hasta el tercer trade
+    senales:
+    - no_habla
+  - n: 636
+    t0_ms: 3147575
+    t1_ms: 3148555
+    texto: Sí
+    senales:
+    - no_habla
+  - n: 637
+    t0_ms: 3149295
+    t1_ms: 3150495
+    texto: saber hasta un tercer
+    senales:
+    - no_habla
+  - n: 638
+    t0_ms: 3150495
+    t1_ms: 3151995
+    texto: trail, ajá
+    senales:
+    - no_habla
+  - n: 639
+    t0_ms: 3152775
+    t1_ms: 3153295
+    texto: listo
+    senales:
+    - no_habla
+  - n: 640
+    t0_ms: 3153955
+    t1_ms: 3156235
+    texto: entonces, ¿qué cuenta como intento? ¿break even, entrada
+    senales:
+    - no_habla
+  - n: 641
+    t0_ms: 3156235
+    t1_ms: 3157935
+    texto: invalidada o reentrada después de un equal?
+    senales:
+    - no_habla
+  - n: 642
+    t0_ms: 3159575
+    t1_ms: 3160315
+    texto: ¿cómo es eso?
+    senales:
+    - no_habla
+  - n: 643
+    t0_ms: 3160475
+    t1_ms: 3162095
+    texto: o sea, ah
+    senales:
+    - no_habla
+  - n: 644
+    t0_ms: 3162095
+    t1_ms: 3164335
+    texto: un intento, a ver
+    senales:
+    - no_habla
+  - n: 645
+    t0_ms: 3164335
+    t1_ms: 3166455
+    texto: un intento no es considerado un break even
+    senales:
+    - no_habla
+  - n: 646
+    t0_ms: 3166455
+    t1_ms: 3168515
+    texto: ¿vale? una entrada invalidada
+    senales:
+    - no_habla
+  - n: 647
+    t0_ms: 3168515
+    t1_ms: 3170415
+    texto: pues tampoco es considerado
+    senales:
+    - no_habla
+  - n: 648
+    t0_ms: 3170415
+    t1_ms: 3172215
+    texto: un intento, una reentrada
+    senales:
+    - no_habla
+  - n: 649
+    t0_ms: 3172215
+    t1_ms: 3174415
+    texto: después de un equal, si es
+    senales:
+    - no_habla
+  - n: 650
+    t0_ms: 3174415
+    t1_ms: 3175035
+    texto: considerado
+    senales:
+    - no_habla
+  - n: 651
+    t0_ms: 3176535
+    t1_ms: 3177635
+    texto: no, no es considerado
+    senales:
+    - no_habla
+  - n: 652
+    t0_ms: 3178095
+    t1_ms: 3179915
+    texto: reentrada después de equal, tampoco es considerado
+    senales:
+    - no_habla
+  - n: 653
+    t0_ms: 3179915
+    t1_ms: 3184765
+    texto: un intento. Ya, listo, perfecto.
+    senales:
+    - no_habla
+  - n: 654
+    t0_ms: 3185785
+    t1_ms: 3186325
+    texto: A ver,
+    senales:
+    - no_habla
+  - n: 655
+    t0_ms: 3187125
+    t1_ms: 3188545
+    texto: bloqueante queremos. Cuando el precio llega
+    senales:
+    - no_habla
+  - n: 656
+    t0_ms: 3188545
+    t1_ms: 3190345
+    texto: al nivel que te hace mover el stop a breakeven,
+    senales:
+    - no_habla
+  - n: 657
+    t0_ms: 3190445
+    t1_ms: 3192465
+    texto: lo mueves en el instante en el que el precio toca ese nivel
+    senales:
+    - no_habla
+  - n: 658
+    t0_ms: 3192465
+    t1_ms: 3194585
+    texto: o esperas a que la vela cierre por encima o por debajo
+    senales:
+    - no_habla
+  - n: 659
+    t0_ms: 3194585
+    t1_ms: 3196485
+    texto: de él. Si depende del esquema de entrada, dinos
+    senales:
+    - no_habla
+  - n: 660
+    t0_ms: 3196485
+    t1_ms: 3197265
+    texto: cuál es cuál.
+    senales:
+    - no_habla
+  - n: 661
+    t0_ms: 3199225
+    t1_ms: 3200785
+    texto: Que no se contradicen en sí,
+    senales:
+    - no_habla
+  - n: 662
+    t0_ms: 3200845
+    t1_ms: 3202365
+    texto: pero dejan el disparador definir.
+    senales:
+    - no_habla
+  - n: 663
+    t0_ms: 3202385
+    t1_ms: 3204545
+    texto: ¿Qué pones breakeven cuando se genera la zona de control?
+    senales:
+    - no_habla
+  - n: 664
+    t0_ms: 3204665
+    t1_ms: 3206365
+    texto: ¿Que la entrada se pone muy prima apenas o
+    senales:
+    - no_habla
+  - n: 665
+    t0_ms: 3206365
+    t1_ms: 3208685
+    texto: genera el bloque? ¿O lo pones cuando se cumplen
+    senales:
+    - no_habla
+  - n: 666
+    t0_ms: 3208685
+    t1_ms: 3210465
+    texto: en las condiciones, el bot necesita un disparador
+    senales: []
+  - n: 667
+    t0_ms: 3210465
+    t1_ms: 3212665
+    texto: exacto, si es el toque, protege antes, si te saca
+    senales: []
+  - n: 668
+    t0_ms: 3212665
+    t1_ms: 3213825
+    texto: más veces, si es el cierre
+    senales: []
+  - n: 669
+    t0_ms: 3214905
+    t1_ms: 3216665
+    texto: ajá, ¿cómo responder? una de las dos
+    senales: []
+  - n: 670
+    t0_ms: 3216665
+    t1_ms: 3218585
+    texto: palabras, tocar o cierre, si cambia
+    senales: []
+  - n: 671
+    t0_ms: 3218585
+    t1_ms: 3220225
+    texto: algún esquema, dilo, ya
+    senales: []
+  - n: 672
+    t0_ms: 3220225
+    t1_ms: 3222785
+    texto: entonces ya, ¿cómo hacemos esta distinción
+    senales: []
+  - n: 673
+    t0_ms: 3222785
+    t1_ms: 3224165
+    texto: en esquema 1 y esquema 2
+    senales: []
+  - n: 674
+    t0_ms: 3224165
+    t1_ms: 3226725
+    texto: respecto al cierre? porque me hablaste
+    senales: []
+  - n: 675
+    t0_ms: 3226725
+    t1_ms: 3228325
+    texto: que en M15 era con
+    senales: []
+  - n: 676
+    t0_ms: 3228325
+    t1_ms: 3230345
+    texto: cuerpo, pero en M1 era
+    senales: []
+  - n: 677
+    t0_ms: 3230345
+    t1_ms: 3233005
+    texto: no importa, con vela o algo, pero ¿es al consolidarse?
+    senales: []
+  - n: 678
+    t0_ms: 3233405
+    t1_ms: 3234705
+    texto: ¿o es apenas toco?
+    senales: []
+  - n: 679
+    t0_ms: 3239895
+    t1_ms: 3241315
+    texto: Tiene que ser con cuerpo el break even
+    senales: []
+  - n: 680
+    t0_ms: 3243075
+    t1_ms: 3243795
+    texto: Ya, entonces
+    senales: []
+  - n: 681
+    t0_ms: 3243795
+    t1_ms: 3245875
+    texto: A esto te refieres que la vela debe cerrar
+    senales: []
+  - n: 682
+    t0_ms: 3245875
+    t1_ms: 3247035
+    texto: O sea, imagina que se tiene un mechón
+    senales: []
+  - n: 683
+    t0_ms: 3247035
+    t1_ms: 3247495
+    texto: No, no, espera, espera
+    senales: []
+  - n: 684
+    t0_ms: 3249695
+    t1_ms: 3250215
+    texto: Espera, espera
+    senales: []
+  - n: 685
+    t0_ms: 3251395
+    t1_ms: 3252955
+    texto: Tranquilo, que ahorita respondo por whatsapp esto
+    senales: []
+  - n: 686
+    t0_ms: 3252955
+    t1_ms: 3256705
+    texto: O es urgente
+    senales: []
+  - n: 687
+    t0_ms: 3256705
+    t1_ms: 3257405
+    texto: 'No'
+    senales: []
+  - n: 688
+    t0_ms: 3260385
+    t1_ms: 3261445
+    texto: Ya, entonces me decías
+    senales: []
+  - n: 689
+    t0_ms: 3261445
+    t1_ms: 3262925
+    texto: Es con eso, ¿no?
+    senales: []
+  - n: 690
+    t0_ms: 3263765
+    t1_ms: 3265165
+    texto: Sí, bro, un rato voy al baño, ¿vale?
+    senales: []
+  - n: 691
+    t0_ms: 3265225
+    t1_ms: 3265605
+    texto: Un momento
+    senales: []
+  - n: 692
+    t0_ms: 3327775
+    t1_ms: 3328795
+    texto: Bro, ¿me escuchas?
+    senales: []
+  - n: 693
+    t0_ms: 3328955
+    t1_ms: 3331495
+    texto: Se me había caído la laptop
+    senales: []
+  - n: 694
+    t0_ms: 3332015
+    t1_ms: 3332415
+    texto: Y
+    senales: []
+  - n: 695
+    t0_ms: 3333675
+    t1_ms: 3335475
+    texto: Sí, casi se me jode, no sé
+    senales: []
+  - n: 696
+    t0_ms: 3340815
+    t1_ms: 3341335
+    texto: Todo bien
+    senales: []
+  - n: 697
+    t0_ms: 3342535
+    t1_ms: 3343455
+    texto: Sí, es que se me
+    senales: []
+  - n: 698
+    t0_ms: 3343455
+    t1_ms: 3344895
+    texto: Se me va la pantalla
+    senales: []
+  - n: 699
+    t0_ms: 3344895
+    t1_ms: 3345875
+    texto: No sé
+    senales: []
+  - n: 700
+    t0_ms: 3346715
+    t1_ms: 3349355
+    texto: Es que ya me pasó con una laptop que después la apagué
+    senales: []
+  - n: 701
+    t0_ms: 3349355
+    t1_ms: 3350375
+    texto: Y lo prendí y se jodió
+    senales: []
+  - n: 702
+    t0_ms: 3350375
+    t1_ms: 3351555
+    texto: Se me había caído también
+    senales: []
+  - n: 703
+    t0_ms: 3352195
+    t1_ms: 3353915
+    texto: Voy a reiniciarlo, ¿vale?
+    senales: []
+  - n: 704
+    t0_ms: 3354175
+    t1_ms: 3354795
+    texto: Dale, dale
+    senales: []
+  - n: 705
+    t0_ms: 3355795
+    t1_ms: 3357815
+    texto: Ya listo, nos quedamos en la 1
+    senales: []
+  - n: 706
+    t0_ms: 3357815
+    t1_ms: 3360455
+    texto: La 1 ya está respondida, la 2, el break even al tocar ya
+    senales: []
+  - n: 707
+    t0_ms: 3360915
+    t1_ms: 3361575
+    texto: Quedamos en
+    senales: []
+  - n: 708
+    t0_ms: 3361955
+    t1_ms: 3364015
+    texto: para ambos esquemas de entrada, ¿cómo vamos
+    senales:
+    - no_habla
+  - n: 709
+    t0_ms: 3364015
+    t1_ms: 3365475
+    texto: a estructurar este tema de
+    senales:
+    - no_habla
+  - n: 710
+    t0_ms: 3365475
+    t1_ms: 3367875
+    texto: trazar el break-even? O sea, que la
+    senales:
+    - no_habla
+  - n: 711
+    t0_ms: 3368615
+    t1_ms: 3369575
+    texto: mecha, o bueno, la
+    senales:
+    - no_habla
+  - n: 712
+    t0_ms: 3370535
+    t1_ms: 3371815
+    texto: vela ya esté consolidada
+    senales:
+    - no_habla
+  - n: 713
+    t0_ms: 3371815
+    t1_ms: 3373095
+    texto: ¿o quieres que sea apenas toque?
+    senales:
+    - no_habla
+  - n: 714
+    t0_ms: 3377445
+    t1_ms: 3378265
+    texto: ¿Cómo podría ser?
+    senales:
+    - no_habla
+  - n: 715
+    t0_ms: 3379125
+    t1_ms: 3380265
+    texto: Espera. O sea, acá tienes
+    senales:
+    - no_habla
+  - n: 716
+    t0_ms: 3380265
+    t1_ms: 3381745
+    texto: el contexto, por si no entiendes lo que explico.
+    senales:
+    - no_habla
+  - n: 717
+    t0_ms: 3382465
+    t1_ms: 3384425
+    texto: Has dicho tres cosas que no se contradicen
+    senales:
+    - no_habla
+  - n: 718
+    t0_ms: 3384425
+    t1_ms: 3385225
+    texto: entre sí, pero...
+    senales:
+    - no_habla
+  - n: 719
+    t0_ms: 3410235
+    t1_ms: 3411975
+    texto: Ah, vale, ya entendí. Claro.
+    senales:
+    - no_habla
+  - n: 720
+    t0_ms: 3412235
+    t1_ms: 3413355
+    texto: Es apenas, o sea,
+    senales:
+    - no_habla
+  - n: 721
+    t0_ms: 3414135
+    t1_ms: 3415835
+    texto: cuando se refiere a tocar es cuando
+    senales:
+    - no_habla
+  - n: 722
+    t0_ms: 3415835
+    t1_ms: 3419035
+    texto: Cuando apenas se dé, o sea, por pip, cerrar, ¿verdad?
+    senales:
+    - no_habla
+  - n: 723
+    t0_ms: 3419595
+    t1_ms: 3420795
+    texto: O sea, poner en break-even.
+    senales:
+    - no_habla
+  - n: 724
+    t0_ms: 3421135
+    t1_ms: 3422935
+    texto: Sí, o sea, apenas toca.
+    senales:
+    - no_habla
+  - n: 725
+    t0_ms: 3423375
+    t1_ms: 3426515
+    texto: Y claro, y el otro es el cierre.
+    senales:
+    - no_habla
+  - n: 726
+    t0_ms: 3429875
+    t1_ms: 3431275
+    texto: Esa es una muy buena pregunta.
+    senales:
+    - no_habla
+  - n: 727
+    t0_ms: 3431535
+    t1_ms: 3440355
+    texto: O sea, objetivamente, o sea, yo siempre lo he estado trabajando, o sea, apenas toca.
+    senales:
+    - no_habla
+  - n: 728
+    t0_ms: 3440715
+    t1_ms: 3442175
+    texto: Entonces sería esa la respuesta.
+    senales:
+    - no_habla
+  - n: 729
+    t0_ms: 3444395
+    t1_ms: 3446015
+    texto: Ya listo, vamos a la next.
+    senales:
+    - no_habla
+  - n: 730
+    t0_ms: 3447395
+    t1_ms: 3463555
+    texto: A ver, ¿a qué hora abre la primera vela de cuatro horas el día en tu gráfico y qué uso horario
+      está configurado ese gráfico? Necesitamos una captura de pantalla de esa configuración y una segunda
+      parte en las semanas de marzo y octubre que Europa y Estados Unidos cambian la hora en fechas distintas.
+      ¿Tus velas H4 se desplazan o siguen abriendo a la misma hora de tu reloj?
+    senales:
+    - no_habla
+  - n: 731
+    t0_ms: 3473155
+    t1_ms: 3477215
+    texto: Dice, ¿a qué hora abre la primera vela del día en tu gráfico? Ahora lo veo.
+    senales:
+    - no_habla
+  - n: 732
+    t0_ms: 3479815
+    t1_ms: 3481815
+    texto: O sea, porque existe este tema del desfase
+    senales:
+    - no_habla
+  - n: 733
+    t0_ms: 3481815
+    t1_ms: 3483715
+    texto: Cuando es el cambio de horario por invierno
+    senales:
+    - no_habla
+  - n: 734
+    t0_ms: 3483715
+    t1_ms: 3485215
+    texto: Si no, en Europa, Estados Unidos
+    senales:
+    - no_habla
+  - n: 735
+    t0_ms: 3485215
+    t1_ms: 3488115
+    texto: Entonces, ¿tú cambias la operativa en base a eso?
+    senales:
+    - no_habla
+  - n: 736
+    t0_ms: 3488195
+    t1_ms: 3489715
+    texto: ¿O siempre es como que abres a la misma hora?
+    senales:
+    - no_habla
+  - n: 737
+    t0_ms: 3490855
+    t1_ms: 3492035
+    texto: Es la misma hora
+    senales:
+    - no_habla
+  - n: 738
+    t0_ms: 3492035
+    t1_ms: 3493055
+    texto: Como tal, o sea
+    senales:
+    - no_habla
+  - n: 739
+    t0_ms: 3495675
+    t1_ms: 3496975
+    texto: Puede que sea, qué sé yo
+    senales:
+    - no_habla
+  - n: 740
+    t0_ms: 3496975
+    t1_ms: 3499395
+    texto: Si es una hora más, pues sería
+    senales:
+    - no_habla
+  - n: 741
+    t0_ms: 3499395
+    t1_ms: 3501695
+    texto: A las 8, o si es una hora menos, a las 6
+    senales:
+    - no_habla
+  - n: 742
+    t0_ms: 3504575
+    t1_ms: 3505375
+    texto: Pero idealmente
+    senales:
+    - no_habla
+  - n: 743
+    t0_ms: 3505375
+    t1_ms: 3506595
+    texto: ¿Nos mantenemos en qué horario?
+    senales:
+    - no_habla
+  - n: 744
+    t0_ms: 3506675
+    t1_ms: 3508415
+    texto: Porque en base a esto van a hacer el backtest
+    senales:
+    - no_habla
+  - n: 745
+    t0_ms: 3509595
+    t1_ms: 3510555
+    texto: Claro, a ver
+    senales:
+    - no_habla
+  - n: 746
+    t0_ms: 3510555
+    t1_ms: 3547455
+    texto: a ver, ahora lo veo, me voy a cuatro horas, vale, por ejemplo, lo que hago es, trazo aquí,
+      me voy a cuatro horas, vale, la vela empieza a las 23, la primera vela de cuatro horas, una, dos,
+      tres, cuatro, seis, claro, porque son seis velas como tal,
+    senales:
+    - no_habla
+  - n: 747
+    t0_ms: 3547455
+    t1_ms: 3549435
+    texto: voy a tomarle un pantallazo y pasarlo por acá
+    senales:
+    - no_habla
+  - n: 748
+    t0_ms: 3549435
+    t1_ms: 3551195
+    texto: para justamente pegarlo en el documento ahorita
+    senales:
+    - no_habla
+  - n: 749
+    t0_ms: 3552055
+    t1_ms: 3553535
+    texto: si, ¿estás grabando pantalla?
+    senales:
+    - no_habla
+  - n: 750
+    t0_ms: 3553635
+    t1_ms: 3555675
+    texto: o si quieres te lo muestro
+    senales:
+    - no_habla
+  - n: 751
+    t0_ms: 3555675
+    t1_ms: 3557295
+    texto: ah perfecto, si no comparte pantalla
+    senales:
+    - no_habla
+  - n: 752
+    t0_ms: 3557295
+    t1_ms: 3567635
+    texto: si, vale, ¿lo ves?
+    senales:
+    - no_habla
+  - n: 753
+    t0_ms: 3569235
+    t1_ms: 3569715
+    texto: espérame
+    senales:
+    - no_habla
+  - n: 754
+    t0_ms: 3572035
+    t1_ms: 3572895
+    texto: ya, ya estoy
+    senales:
+    - no_habla
+  - n: 755
+    t0_ms: 3573655
+    t1_ms: 3574335
+    texto: vale, mira
+    senales:
+    - no_habla
+  - n: 756
+    t0_ms: 3576455
+    t1_ms: 3577615
+    texto: suponiendo que no tenemos nada
+    senales:
+    - no_habla
+  - n: 757
+    t0_ms: 3577615
+    t1_ms: 3578695
+    texto: marcado aquí, entonces
+    senales:
+    - no_habla
+  - n: 758
+    t0_ms: 3579355
+    t1_ms: 3581335
+    texto: vas a conmarcar en diario
+    senales:
+    - no_habla
+  - n: 759
+    t0_ms: 3581335
+    t1_ms: 3582615
+    texto: y luego me voy a h4
+    senales:
+    - no_habla
+  - n: 760
+    t0_ms: 3582615
+    t1_ms: 3585215
+    texto: veo que la vela empieza a las 23
+    senales: []
+  - n: 761
+    t0_ms: 3585775
+    t1_ms: 3587395
+    texto: la primera vela de 4 horas
+    senales: []
+  - n: 762
+    t0_ms: 3587395
+    t1_ms: 3589255
+    texto: entonces a las 7
+    senales: []
+  - n: 763
+    t0_ms: 3589255
+    t1_ms: 3591215
+    texto: sería la
+    senales: []
+  - n: 764
+    t0_ms: 3591615
+    t1_ms: 3593275
+    texto: primera, segunda, la tercera vela
+    senales: []
+  - n: 765
+    t0_ms: 3593275
+    t1_ms: 3595355
+    texto: entonces sería ya de por sí la tercera
+    senales: []
+  - n: 766
+    t0_ms: 3595775
+    t1_ms: 3596395
+    texto: vela siempre
+    senales: []
+  - n: 767
+    t0_ms: 3597395
+    t1_ms: 3598335
+    texto: por así decirlo
+    senales: []
+  - n: 768
+    t0_ms: 3599195
+    t1_ms: 3601415
+    texto: ok, ok, ok, y las semanas de cambio
+    senales: []
+  referencias:
+  - 'fr-v6-22982c02/<t_ms>: 601 fotogramas regulares, uno por segundo, de 3000000 a 3600000 ms'
+temas_buscados:
+- reloj
+items:
+- t0: 0:53:59
+  t1: 0:54:05
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Tiene que ser con cuerpo el break even
+  afirmacion: el break even se pone con cuerpo
+  valor: cuerpo
+  tema: break_even.disparador_cuerpo
+  confianza: media
+  notas: primera respuesta del trader a la pregunta P-02, antes de que el consultor le ensene el contexto;
+    tres minutos despues, ya con el contexto delante, responde lo contrario (0:57:01, 'apenas toca').
+    Se conservan las dos formulaciones porque se contradicen.
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:07Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005359-e00e4b0f
+- t0: 0:57:01
+  t1: 0:57:20
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: Sí, o sea, apenas toca. [...] yo siempre lo he estado trabajando, o sea, apenas toca
+  afirmacion: el break even se pone apenas el precio toca, no al cierre
+  valor: toque
+  tema: break_even.disparador_toque
+  confianza: media
+  notas: respuesta definitiva a P-02, dada con el contexto de la pregunta delante y justificada por como
+    opera ('siempre lo he estado trabajando'). Supersede en la practica a la de 0:53:59.
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:09Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005701-7ae2b8d3
+- t0: 0:58:30
+  t1: 0:59:50
+  modalidad: ambas
+  tipo: PARAMETER
+  cita_literal: la vela empieza a las 23, la primera vela de cuatro horas
+  afirmacion: en su grafico la primera vela de 4 horas del dia abre a las 23:00
+  valor: '23'
+  tema: reloj.h4_abre_23
+  confianza: media
+  fotogramas:
+  - fr-v6-22982c02/3585000
+  notas: el fotograma muestra TradingView en 4h con el reloj '20:48:30 UTC+2' y el eje en 07:00, 11:00,
+    15:00, 19:00 y 23:00. Responde la pregunta bloqueante P-03.
+  n: 3
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · fotograma visto
+  decidido_el: '2026-09-09T22:07:14Z'
+  metodo_revision: fotograma_visto
+  evidence_id: ev-v6-005830-48b30e48
+- t0: 0:58:10
+  t1: 0:58:24
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: Es la misma hora [...] Si es una hora más, pues sería A las 8, o si es una hora menos,
+    a las 6
+  afirmacion: en las semanas de cambio de horario dice que mantiene la misma hora, pero admite que la
+    apertura podria verse a las 8 o a las 6
+  tema: reloj.cambio_horario
+  confianza: media
+  notas: 'las dos mitades de la frase no dicen lo mismo: ''la misma hora'' apunta a un huso fijo y ''a
+    las 8 o a las 6'' a un desplazamiento. De aqui sale la duda nueva sobre el anclaje H4 fuera del horario
+    de verano.'
+  n: 4
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:12Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-005810-5cb1ef06
+no_consta: []
+salida_sha256: 9dfcfa3ec0809bfb1be0b7440162a795997e7dae92aecf5ba434fe0f225d2337
+comprobado_el: '2026-09-09T21:36:20Z'

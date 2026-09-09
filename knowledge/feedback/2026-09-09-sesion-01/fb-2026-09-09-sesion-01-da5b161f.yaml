@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-da5b161f
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: paquete
+  id: 2026-09-09-sesion-01
+accion: CONFIRM
+respuesta_literal: ¿tú ya has backtesteado entre mayo y junio del EBRSD? [...] vale, no, no lo tengo backtesteado
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:00:26
+t1: 0:01:20
+valor_resultante: mayo y junio de 2026 no vistos
+supersede: fb-2026-09-09-sesion-01-c79021dc
+notas: 'Reconfirmado al cierre, en 2:25:41: ''¿tú me has pasado de mayo o junio?'' - ''No''. Matiz honesto:
+  en 0:01:09 dice ''a lo mejor lo hice tambien, pero no te lo envie'' antes de cerrar en que no lo tiene.
+  Lo dado por bueno es lo que afirma dos veces.'

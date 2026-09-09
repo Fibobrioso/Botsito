@@ -1,0 +1,477 @@
+# Contexto humano de cada pregunta del kit (F10, ADR-0011). Manual, versionado con `Fuente:`.
+#
+# El cuestionario generado (`<sesion>/cuestionario.yaml`) tiene el enunciado corto y las citas
+# exactas; aqui esta lo que el TRADER necesita para entender que le preguntamos y por que, y lo
+# que el consultor necesita para saber si una respuesta sirve. Lo consume
+# `scripts/hoja_sesion_docx.py` para generar la hoja de respuestas en Word.
+#
+# La clave es el ORIGEN de la pregunta: el id de la ambiguedad (`A-N`) cuando la pregunta nace de
+# una, o el nombre del parametro del registro cuando nace de un UNKNOWN suelto. Asi el contexto
+# sobrevive a que el cuestionario se regenere y cambien los numeros `P-NN`.
+#
+# EXCEPCION de estilo: este fichero es texto que LEE EL TRADER, asi que va con acentos, al
+# contrario que el resto del repositorio.
+#
+# Campos: `titulo` (encabezado corto para la hoja), `pregunta` (completa, en lenguaje del
+# trader), `porque` (que sabemos y que falta), `respuesta_util` (que forma tiene una respuesta
+# que podamos usar).
+
+precondicion:
+  titulo: "Confirmación previa sobre los meses del paquete"
+  # Donde aterriza la respuesta: CONFIRM (o REJECT, si los ha visto) sobre el paquete de la
+  # sesion. `{sesion}` lo sustituye el generador de la hoja.
+  objetivo: "paquete {sesion}"
+  pregunta: >-
+    Antes de empezar con las ventanas: ¿has operado, backtesteado o revisado en replay algún día
+    de {meses} en EURUSD? Da igual si fue una sesión suelta o un backtest completo.
+  porque: >-
+    Los días que vas a etiquetar salen de esos meses precisamente porque no aparecen en ninguna de
+    las grabaciones que tenemos. Si ya los has visto, tus decisiones serían recuerdos en vez de
+    decisiones, y la medida de fidelidad del bot saldría inflada. Preferimos cambiar de meses
+    antes que medir mal.
+  respuesta_util: >-
+    Un sí o un no claro. Si la respuesta es sí, dinos qué mes y con qué profundidad lo viste, y
+    cambiamos el paquete por otros meses antes de etiquetar nada.
+
+preguntas:
+  A-2:
+    titulo: "Cartuchos por zona de liquidez"
+    pregunta: >-
+      Cuando el precio barre una zona de liquidez de M15 y se te da el esquema de entrada,
+      ¿cuántos intentos te permites en esa misma zona antes de parar y esperar a que se forme
+      otra? Y acláranos qué cuenta como intento: ¿una salida en break even gasta intento?, ¿y una
+      entrada que se invalida antes de activarse?
+    porque: >-
+      En la ficha de reglas que respondiste marcaste límite estricto de dos cartuchos, y en la
+      entrevista del 30 de agosto dijiste que sueles hacer hasta un tercer trade y que un break
+      even no consume cartucho. Son dos números distintos para la misma regla. El bot tiene que
+      elegir uno: con dos deja de operar antes, con tres arriesga una vez más cada día.
+    respuesta_util: >-
+      Un número, 2 o 3, y una frase sobre qué cuenta como intento (break even, entrada invalidada,
+      reentrada después de un equal).
+  A-4:
+    titulo: "Break even: al tocar o al cierre"
+    pregunta: >-
+      Cuando el precio llega al nivel que te hace mover el stop a break even, ¿lo mueves en el
+      instante en que el precio toca ese nivel, o esperas a que la vela cierre por encima o por
+      debajo de él? Si depende del esquema de entrada, dinos cuál es cuál.
+    porque: >-
+      Has dicho tres cosas que no se contradicen entre sí pero que dejan el disparador sin
+      definir: que pones break even cuando se genera la otra zona de control, que la entrada se
+      pone en break even apenas se genera el bloque, y que lo pones cuando se cumplen las
+      condiciones. El bot necesita un disparador exacto: si es el toque, protege antes y te sacan
+      más veces; si es el cierre, aguanta las mechas y a veces pierde la protección.
+    respuesta_util: >-
+      Una de las dos palabras, tocar o cierre. Si cambia según el esquema, dilo así: esquema 1
+      tocar, esquema 2 cierre.
+  A-9:
+    titulo: "Anclaje de la vela de 4 horas"
+    pregunta: >-
+      ¿A qué hora abre la primera vela de 4 horas del día en tu gráfico, y en qué huso horario
+      está configurado ese gráfico? Necesitamos además una captura de pantalla de esa
+      configuración. Y una segunda parte: en las semanas de marzo y octubre en que Europa y
+      Estados Unidos cambian la hora en fechas distintas, ¿tus velas H4 se desplazan o siguen
+      abriendo a la misma hora de tu reloj?
+    porque: >-
+      Nos dijiste que tienes el gráfico en UTC+2 y que tus velas van de 7 a 11 y de 11 a 3. Si el
+      bot ancla las velas a medianoche de Madrid le salen a las 00, 04, 08, 12 y 16, que no es lo
+      que tú ves; si las ancla al cierre de Nueva York le salen a las 23, 03, 07, 11 y 15, que sí
+      coincide contigo. De esto depende qué vela fija el sesgo, o sea la dirección de la mitad de
+      los días. No se puede deducir mirando grabaciones: hay que ver tu configuración.
+    respuesta_util: >-
+      La hora de apertura y el huso tal como aparecen en tu plataforma, más la captura de
+      pantalla. Y una frase sobre qué pasa en las semanas del cambio de hora.
+  A-1:
+    titulo: "Qué vela H4 fija el sesgo"
+    pregunta: >-
+      ¿Qué vela de 4 horas te dice si hoy solo buscas compras o solo ventas, y qué tiene que pasar
+      exactamente para que ese sesgo cambie de dirección? ¿Basta con que la vela anterior cierre
+      en el color contrario, o hace falta que cierre por encima o por debajo de la anterior,
+      contando las mechas?
+    porque: >-
+      Sobre esto tenemos tres versiones tuyas: que la vela H4 previa cerrada fija el sesgo; que
+      una vela verde no lo cambia salvo que cierre con mecha por encima y genere el breaker; y que
+      el sesgo sigue alcista mientras ninguna vela termine por debajo, al menos con la mecha.
+      Además dejaste abierta una simplificación: ignorar las envolventes y quedarte solo con el
+      color de la vela anterior. El bot solo puede aplicar una regla.
+    respuesta_util: >-
+      La regla en una frase, con el criterio exacto de cambio. Si la simplificación de mirar solo
+      el color de la vela anterior te vale, dilo, porque es mucho más fácil de automatizar y de
+      auditar después.
+  A-3:
+    titulo: "Qué hacer si la entrada se activa sin ruptura"
+    pregunta: >-
+      Si tu orden límite se activa porque el precio llega al nivel, pero la estructura no llega a
+      romperse, ¿cierras esa operación o la dejas correr protegida? Si la cierras, ¿en qué momento
+      exacto: al cierre de esa vela, después de varias velas, o al llegar la hora de cierre?
+    porque: >-
+      En la misma entrevista dices que lo objetivo sería cerrar cuando la vela cierre sin rotura,
+      y poco después que también puede darse el trade sin tocar el 0,75 y que prefieres proteger y
+      dejarlo. Son dos comportamientos incompatibles y el bot solo puede hacer uno.
+    respuesta_util: >-
+      Cerrar o dejar. Si cierras, el momento exacto.
+  A-5:
+    titulo: "Cada cuánto se reubica la orden límite"
+    pregunta: >-
+      Mientras tu orden límite todavía no se ha activado y el precio se sigue desarrollando,
+      ¿cada cuánto la cambias de sitio? ¿En cada vela nueva de M1, solo cuando aparece una
+      estructura nueva, o cuando se rompe algo concreto?
+    porque: >-
+      Dices que la orden se va bajando conforme se desarrolla el precio y que se va moviendo con
+      el flujo hasta que se rompa, pero nunca dices con qué frecuencia. Un bot tiene que hacerlo
+      en un momento definido: si la mueve en cada vela persigue el precio, si solo la mueve al
+      aparecer una estructura se queda quieto mucho más tiempo, y el resultado no es el mismo.
+    respuesta_util: >-
+      Un disparador concreto: cada vela, cada nueva zona de control, cada nuevo mínimo o máximo
+      del flujo, u otro que nos digas.
+  A-6:
+    titulo: "Hora de cierre y cierre forzoso"
+    pregunta: >-
+      ¿A qué hora dejas de operar y qué haces con una operación que sigue abierta a esa hora: la
+      cierras en el momento o la dejas hasta que llegue a su objetivo o a su stop? Dinos también
+      en qué reloj está esa hora, el tuyo de España o el del bróker.
+    porque: >-
+      Dices que a las 3 de la tarde en punto se cierra el trade, y en otro momento hablas de dejar
+      correr hasta que venza la vela H4. El huso importa más de lo que parece: si tu reloj y el
+      del bróker se separan una semana al año por el cambio de hora, esa hora se mueve y el bot
+      cerraría a destiempo.
+    respuesta_util: >-
+      Una hora con su huso, y un sí o un no al cierre forzoso.
+  A-7:
+    titulo: "Dónde va el stop en el segundo esquema"
+    pregunta: >-
+      En el segundo esquema de entrada, ¿dónde colocas exactamente el stop? ¿En el mismo 0,75 de
+      la caja que usas en el primero, o por debajo de la zona de control aunque eso cambie la
+      distancia en cada operación? Si es lo segundo, ¿cómo decides el punto?
+    porque: >-
+      Aquí has dicho varias cosas: que usualmente va en 0,75; que proteges por debajo de la zona
+      de control y que a veces eso es 0,50; que puede quedar en 0,60 aproximadamente; y luego
+      aceptaste como opción simple dejarlo estático en 0,75 para los dos esquemas. Queremos saber
+      si esa opción simple te vale de verdad, porque la distancia del stop es lo que fija el
+      lotaje de cada operación.
+    respuesta_util: >-
+      O una fracción fija, o la regla para encontrar el punto. Si aceptas 0,75 fijo para empezar,
+      dilo explícitamente y lo anotamos como decisión tuya, no como suposición nuestra.
+  A-8:
+    titulo: "Cuándo dos velas cuentan como una"
+    pregunta: >-
+      Cuando mapeas la estructura en M1, a veces tratas dos velas seguidas como si fueran una
+      sola. ¿Cuál es la condición para agruparlas? ¿Que en una temporalidad mayor sean una única
+      vela, que juntas formen un order block, u otra cosa?
+    porque: >-
+      Dijiste que un tramo que en una temporalidad mayor es una vela se considera una vela, y que
+      en un flujo alcista una vela roja marca un mínimo. Para el bot esto es la diferencia entre
+      ver una estructura o ver dos, y de ahí sale dónde coloca la orden.
+    respuesta_util: >-
+      La condición exacta. Si te resulta más fácil, señálala sobre un ejemplo del gráfico durante
+      la sesión y lo grabamos.
+  A-10:
+    titulo: "El stop en 0,75 o en 0,80"
+    pregunta: >-
+      El stop dentro de la caja: ¿va en el 0,75 o en el 0,80? Y si es 0,80, ¿es un número fijo o
+      es el 0,75 más el spread que haya en ese momento? Si es lo segundo, ¿cuánto margen das y qué
+      haces cuando hay noticias y el spread se dispara?
+    porque: >-
+      En dos grabaciones dices 0,75 y en la de septiembre dices que proteges a 0,80 y que ese es
+      el SL por defecto. También hablas de dar un pequeño respiro de uno o dos pips. El sistema lo
+      ha marcado como contradicción abierta porque es el mismo parámetro con dos valores. Si es
+      fijo, el bot pone un número; si es spread, tiene que leerlo del bróker en cada operación y
+      el resultado cambia.
+    respuesta_util: >-
+      Una fracción, y la palabra fijo o spread. Si es spread, el margen en pips y qué se hace con
+      noticias.
+  A-11:
+    titulo: "El stop en la orden pendiente o después del llenado"
+    pregunta: >-
+      Cuando dejas la orden límite puesta esperando, ¿el stop loss ya va dentro de esa orden, o lo
+      colocas a mano después de que la orden se llene?
+    porque: >-
+      Dices que el stop que se introduce en la operación es el 0,75 y que hay que proteger el
+      trade apenas se genera la entrada, pero no queda claro si el stop viaja dentro de la orden
+      pendiente. Para el bot es una diferencia de seguridad: si va en la orden, una desconexión no
+      te deja desprotegido; si se pone después, hay un hueco de tiempo sin stop.
+    respuesta_util: >-
+      En la orden, o tras el llenado. Si te da igual, dinos que te da igual y lo ponemos en la
+      orden por seguridad.
+  A-12:
+    titulo: "Cuándo bajar la protección y hasta dónde"
+    pregunta: >-
+      Dices que cuando ha pasado buena parte de la vela sin que el precio avance bajas la
+      protección. ¿A partir de qué parte de la vela lo haces, y a qué nivel bajas el stop?
+    porque: >-
+      La transcripción antigua decía 40 por ciento de la vela y la transcripción nueva, mucho más
+      fiable, dice más del 50 por ciento. También dices que como mucho se reduce de 0,75 a 0,50.
+      Necesitamos el número que usas de verdad, porque el bot tiene que mirar el reloj de la vela
+      para aplicarlo.
+    respuesta_util: >-
+      Un porcentaje de la vela transcurrido y la fracción de la caja a la que bajas.
+  ventana_inicio:
+    titulo: "Hora de inicio de la ventana operativa"
+    pregunta: >-
+      ¿A qué hora empiezas a buscar entradas cada día, en tu reloj?
+    porque: >-
+      Todo lo que has dicho apunta a las 7 de la mañana hora de España, pero nunca lo hemos fijado
+      como dato con tu firma. Es la hora a la que el bot se despierta y empieza a mirar.
+    respuesta_util: >-
+      Una hora con su huso.
+  liquidez_m15_criterio_toma:
+    titulo: "Cómo se da por tomada la liquidez de M15"
+    pregunta: >-
+      Para dar por tomada la liquidez de M15, ¿hace falta que la vela cierre con el cuerpo por
+      encima del máximo o por debajo del mínimo, o basta con que la mecha lo perfore?
+    porque: >-
+      Dices que la liquidez de M15 se toma por encima del alto y con cuerpo, y en otros momentos
+      hablas de barridos con mecha. Es el disparador de todo el proceso que viene después: si vale
+      la mecha, hay bastantes más señales al día.
+    respuesta_util: >-
+      Cuerpo o mecha. Si depende de algo, dinos de qué.
+  stop_proteccion_capital:
+    titulo: "Cuánto riesgo se guarda al proteger"
+    pregunta: >-
+      Cuando mueves el stop nada más entrar, dices que guardas una parte del riesgo. ¿Qué parte
+      exactamente, y cómo se refleja en el resultado de una operación ganadora?
+    porque: >-
+      Hablas de proteger 0,25 del capital y de que una ganadora acaba en 3,25 en vez de 3 sumando
+      ese 0,25. Queremos confirmar el número y que la cuenta se hace así, porque es lo que el bot
+      va a registrar como resultado de cada trade.
+    respuesta_util: >-
+      Una fracción, y una frase confirmando el efecto en el resultado.
+  objetivo_rr:
+    titulo: "Objetivo de riesgo beneficio"
+    pregunta: >-
+      ¿Cuál es tu objetivo de riesgo beneficio, y es fijo o lo mueves según lo que veas? Si a
+      veces lo amplías, ¿bajo qué condición exacta?
+    porque: >-
+      Dices que 1 a 3 es lo mínimo y lo que buscas en todos los backtest, y también que existe la
+      posibilidad de ampliar a 1 a 4 más adelante. El bot necesita saber si el objetivo es un
+      número fijo o si hay una regla para extenderlo, porque una cosa se automatiza y la otra no.
+    respuesta_util: >-
+      Un número. Si hay extensión, la condición que la dispara.
+  objetivo_extension:
+    titulo: "Hasta dónde se extiende el objetivo"
+    pregunta: >-
+      Cuando decides ir a por más de tu objetivo normal, ¿hasta dónde llevas el objetivo? ¿Hasta
+      la liquidez de M15 entera, hasta la mitad de esa distancia, o hasta otro punto?
+    porque: >-
+      Dices que el profit máximo que sueles buscar es la liquidez de M15, y en otro momento hablas
+      de maximizar hasta el 0,50 de esa distancia. Si esto es puramente subjetivo, es mejor que
+      nos lo digas: lo dejamos fuera del bot en vez de inventar una regla que no cumples.
+    respuesta_util: >-
+      Una fracción de la distancia hasta la liquidez, o decirnos que es discrecional y que el bot
+      no debe hacerlo.
+  reentrada_tras_equal:
+    titulo: "Reentrada después de un equal"
+    pregunta: >-
+      Cuando el precio activa tu orden sin llegar a romper la estructura, lo que llamas un equal,
+      ¿vuelves a entrar si después rompe de verdad? ¿Y esa reentrada gasta uno de tus intentos del
+      día?
+    porque: >-
+      Dices que el equal se cuenta como pérdida, que se reentra si el precio rompe de nuevo la
+      zona y que hay que esperar a que rompa por arriba. Falta lo segundo: si la reentrada consume
+      cartucho, porque eso conecta directamente con la pregunta de los intentos por zona.
+    respuesta_util: >-
+      Un sí o un no a la reentrada, y un sí o un no a que gaste intento.
+  parciales:
+    titulo: "Parciales"
+    pregunta: >-
+      ¿Tomas parciales durante la operación? Si hoy no los tomas pero piensas hacerlo, dinos en
+      qué punto y qué porcentaje, para dejarlo anotado sin meterlo todavía.
+    porque: >-
+      Dices que no tomas parciales por ahora, que no los has probado, que si los tomaras serían
+      del 30 al 40 por ciento y que sería discrecional, y además lanzaste la idea de un 50 por
+      ciento al llegar a 1 a 2. Para la primera versión del bot necesitamos un sí o un no claro.
+    respuesta_util: >-
+      Sí o no. Si es no por ahora, dilo así y anotamos la idea aparte para probarla más adelante.
+  riesgo_por_operacion:
+    titulo: "Riesgo por operación"
+    pregunta: >-
+      ¿Qué porcentaje de la cuenta arriesgas por operación, y es el mismo en tu cuenta de fondeo
+      que en backtest? Si lo escalas sobre el saldo en vez de dejarlo fijo, dilo.
+    porque: >-
+      En backtest calculas el RR sobre el 1 por ciento, y para la cuenta de fondeo hablaste de
+      entrar con 0,50 o 0,40 escalado, porque con siete pérdidas seguidas un 1 por ciento quemaría
+      la cuenta. El bot necesita el número con el que va a operar de verdad, no el de las pruebas.
+    respuesta_util: >-
+      Un porcentaje, y la palabra fijo o escalado.
+  lotaje_base:
+    titulo: "Sobre qué distancia se calcula el lotaje"
+    pregunta: >-
+      Para calcular el lote, ¿mides la distancia completa de la caja, del nivel 0 al nivel 1, o
+      mides solo hasta el 0,75, que es donde acabará el stop?
+    porque: >-
+      Dices que el lotaje se calcula sobre la distancia completa y que probaste calcularlo desde
+      el 0,75 y no te fue bien por el drawdown. Queremos confirmarlo con tu firma, porque de aquí
+      sale el tamaño de cada operación y cualquier error se multiplica.
+    respuesta_util: >-
+      Distancia completa, o desde el 0,75.
+
+  dias_operables:
+    titulo: "Días en los que se opera"
+    pregunta: >-
+      De lunes a viernes, ¿hay días que evitas por norma? Por ejemplo el viernes por la tarde, el
+      lunes de apertura, o algún día concreto del mes.
+    porque: >-
+      En ningún momento de las grabaciones dices que excluyas días. Si no nos dices lo contrario,
+      el bot operará los cinco días, y queremos que eso sea una decisión tuya y no un descuido
+      nuestro.
+    respuesta_util: >-
+      Los días o momentos que se excluyen. Si no excluyes ninguno, dilo explícitamente.
+  filtro_noticias:
+    titulo: "Noticias de alto impacto"
+    pregunta: >-
+      ¿Miras el calendario económico antes de operar? ¿Dejas de operar antes o después de una
+      noticia fuerte, o te da igual y operas siempre?
+    porque: >-
+      Nos dijiste que no usas noticias, y a la vez que cuando hay noticias el spread aumenta y hay
+      que dar más respiro al trade. Para una persona eso se gestiona a ojo; un bot necesita una
+      regla o no hará nada. Sin filtro, entrará en pleno dato macro con el spread disparado.
+    respuesta_util: >-
+      O bien no hay filtro y lo confirmas, o bien una regla concreta: cuántos minutos antes y
+      después, y de qué tipo de noticia.
+  spread_maximo:
+    titulo: "Spread máximo aceptable"
+    pregunta: >-
+      ¿Hay un spread por encima del cual directamente no entras? ¿Y si ya estás dentro y el spread
+      se dispara, haces algo?
+    porque: >-
+      Hablas de dar un respiro de uno o dos pips por el spread, pero nunca de un techo. El bot va
+      a poder leer el spread en cada momento: si le das un límite, lo respeta; si no, entrará con
+      cualquier spread.
+    respuesta_util: >-
+      Un número en pips, o decirnos que no filtras por spread.
+  perdida_maxima_diaria:
+    titulo: "Tope de pérdida del día"
+    pregunta: >-
+      Aparte de los intentos por zona, ¿tienes un tope de pérdida acumulada que te hace cerrar el
+      día? ¿Y un tope de ganancia que te hace parar?
+    porque: >-
+      Contaste que en el peor mes hubo siete pérdidas seguidas y que con un 1 por ciento eso
+      quemaría la cuenta. El bot puede pararse solo, pero solo si le damos el número. Sin él
+      seguirá operando hasta que la cuenta salte.
+    respuesta_util: >-
+      Un porcentaje de la cuenta, o un número de pérdidas seguidas.
+  perdida_maxima_semanal:
+    titulo: "Tope de pérdida de la semana"
+    pregunta: >-
+      ¿Y a la semana? Si acumulas varias sesiones malas seguidas, ¿hay un punto en el que paras
+      hasta la semana siguiente?
+    porque: >-
+      La prop firm tiene un límite diario y otro total, y superarlo no es una mala racha: es
+      perder la cuenta. Si tienes un tope semanal propio, el bot lo respeta antes de acercarse al
+      de ellos.
+    respuesta_util: >-
+      Un porcentaje de la cuenta, o decirnos que no tienes tope semanal.
+  comportamiento_sin_regla:
+    titulo: "Qué hace el bot cuando la situación no encaja"
+    pregunta: >-
+      Cuando el mercado hace algo que no encaja con ninguna de tus reglas, tú usas criterio. El
+      bot no tiene criterio: hace exactamente lo que está escrito y nada más. ¿Prefieres que en
+      esos casos no opere, o que aplique la regla más parecida?
+    porque: >-
+      Queremos que esto quede dicho por ti y no supuesto por nosotros. Nuestra propuesta es que se
+      abstenga: es preferible perder una operación buena a inventarse una mala. Pero es tu método
+      y tu dinero.
+    respuesta_util: >-
+      Abstenerse, o la alternativa que prefieras explicada con un ejemplo.
+
+# ---------------------------------------------------------------------------------------------
+# Lo que se le explica al trader antes de empezar, para que sepa que se hace con sus respuestas.
+notas_para_el_trader:
+  - >-
+    Cada respuesta se guarda tal cual la digas, con la fecha y con quién la anotó. De ahí salen
+    las reglas del bot. Nada se inventa: si no lo has dicho, el bot no lo hace.
+  - >-
+    Si una respuesta es depende, dilo así y explica de qué depende. Es una respuesta válida y la
+    anotamos como tal. Es mucho peor darnos un número que no cumples: el bot lo aplicaría a
+    rajatabla y luego la comparación contigo saldría mal por culpa nuestra.
+  - >-
+    Si algo que damos por sabido está mal, corrígelo sin miedo. Preferimos rehacer una regla hoy
+    que descubrir dentro de dos meses que el bot opera distinto a ti.
+  - >-
+    Lo que no se cierre hoy no se pierde: queda anotado como duda abierta y vuelve en la
+    siguiente sesión.
+
+# Preguntas que no nacen de una ambiguedad ni de un parametro del registro, pero sin las cuales
+# quedarian huecos que el bot tendria que rellenar por su cuenta. Se numeran E-01, E-02, ...
+preguntas_extra:
+  - id: E-01
+    titulo: Instrumento que opera el bot
+    objetivo: parametro instrumento
+    pregunta: >-
+      ¿El bot debe operar solo EURUSD, o también otros pares? Si son varios, ¿el método es el
+      mismo en todos o cambia algo?
+    porque: >-
+      Todo lo que tenemos grabado es EURUSD, y el bot va a heredar esa suposición. Si operas más
+      pares, cada uno tiene su spread y su horario, y eso cambia el trabajo.
+    respuesta_util: >-
+      El par o los pares. Si es más de uno, cuál es el principal para empezar.
+  - id: E-02
+    titulo: Qué cuenta opera la primera versión
+    objetivo: parametro cuenta_objetivo
+    pregunta: >-
+      La primera versión del bot, ¿sobre qué cuenta debe funcionar: la de fondeo de FundedNext,
+      una demo, o una cuenta tuya? ¿Con qué saldo de partida?
+    porque: >-
+      El riesgo por operación cambia según la cuenta, y si es la de fondeo hay límites que son
+      reglas duras: superar el máximo diario no es una mala racha, es perder la cuenta.
+      Necesitamos saber contra qué reglas juega el bot desde el primer día.
+    respuesta_util: >-
+      El tipo de cuenta, el saldo, y si aplican límites de prop firm, cuáles son exactamente.
+  - id: E-03
+    titulo: El tercer esquema de entrada
+    objetivo: evidence ev-v4-013008-73dcd8c3
+    pregunta: >-
+      En la entrevista propusiste un tercer esquema de entrada y dijiste que ibas a probarlo esa
+      semana. ¿Lo probaste? ¿Entra en la primera versión del bot o lo dejamos fuera de momento?
+    porque: >-
+      Lo describiste con detalle, pero quedó pendiente de backtest y sin bautizar. Si entra,
+      cambia el alcance del trabajo; si no entra, lo dejamos anotado y no se toca. Lo que no
+      podemos es dejarlo a medias.
+    respuesta_util: >-
+      Dentro o fuera de la primera versión. Si entra, cuándo nos pasas el backtest que lo
+      justifica.
+
+# Afirmaciones que damos por buenas desde sus grabaciones y de las que depende el bot. Se le leen
+# para que las confirme o las corrija: si alguna esta mal entendida, es mejor saberlo hoy. El
+# texto NO se escribe aqui: lo saca el generador del item de evidencia, para que no haya forma de
+# poner en su boca algo que no dijo. Aqui solo se elige cual y por que importa.
+reafirmaciones:
+  - evidencia: ev-v3-000030-94d71563
+    nota: es la definición del modelo entero, de la que cuelga todo lo demás
+  - evidencia: ev-v3-000058-7b5ce480
+    nota: fija qué temporalidad hace qué papel, y por tanto qué mira el bot en cada paso
+  - evidencia: ev-v4-001844-93dcb658
+    nota: es la condición que separa operar de no operar
+  - evidencia: ev-v2-003256-0197f4e1
+    nota: el objetivo no se recalcula al mover el stop; el bot debe respetarlo siempre
+  - evidencia: ev-v2-003336-fc210a05
+    nota: de aquí salen el tamaño del lote y el resultado de cada operación
+  - evidencia: ev-v1-000620-0f7dea14
+    nota: fija el momento exacto en que el bot protege la operación
+  - evidencia: ev-v4-004936-d7004417
+    nota: hace que el bot apague el día; si está mal entendido, operaría de más
+  - evidencia: ev-v4-003710-c753f3d3
+    nota: impide que el bot tenga dos operaciones abiertas a la vez
+  - evidencia: ev-v3-005617-f9d41904
+    nota: define cuándo el bot vuelve a mirar el mercado tras dos pérdidas
+  - evidencia: ev-v4-001909-54ac2edd
+    nota: es uno de los filtros que evitan entradas malas
+  - evidencia: ev-v3-001600-ed45b091
+    nota: descarta media sesión de señales; conviene confirmarlo
+  - evidencia: ev-v4-005319-dee95093
+    nota: distingue una rotura válida de una que no lo es
+  - evidencia: ev-v4-013008-73dcd8c3
+    nota: quedó pendiente de backtest y se decide en la pregunta adicional sobre ese esquema
+  - evidencia: ev-v4-012844-b0dcebb0
+    nota: cada día que grabe su pantalla es material con el que se mide el bot
+
+# Lo que hay que verificar antes de dar la sesion por cerrada.
+cierre:
+  - La grabación de la sesión existe y sabemos cómo se llama el fichero.
+  - Tenemos la captura de pantalla de la configuración del gráfico (pregunta P-03).
+  - Las tres preguntas bloqueantes están cerradas con un valor concreto, no con un quizá.
+  - El trader ha confirmado los meses del paquete, y su respuesta queda registrada como feedback sobre el paquete de esta sesión.
+  - Los días de la hoja están etiquetados, o hay fecha acordada para hacerlo.
+  - Las preguntas que quedan sin cerrar están anotadas abajo, con el motivo.
+  - Las dudas nuevas que salieron durante la sesión están anotadas abajo.
+  - Hay fecha para la siguiente sesión.

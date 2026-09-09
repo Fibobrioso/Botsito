@@ -966,4 +966,273 @@ preguntas:
     tipos:
     - texto
   titulo: lotaje_base
-sesion: 2026-09-15-sesion-01
+- bloqueante: false
+  casos:
+  - afirmacion: 'confirma el cierre al vencer la vela H4 operativa: la siguiente vela es otro movimiento'
+    cita: cierre agresivo opcional el vencimiento exacto de la vela H4 operativa este es un muy buen punto
+      y puse que sí o sea, lo ideal sería que cierra la vela de H4 operativa, se cierra el trade porque
+      ya la siguiente vela es otro movimiento
+    evidencia: ev-v3-010304-4468cc20
+    fotograma: fr-v3-982da728/3784000
+    t0: '1:03:04'
+    t1: '1:03:30'
+    tema: ventana.cierre_al_vencer_vela_h4
+    valor: si
+    video: v3
+  - afirmacion: un trade abierto a las 3 PM se cierra en punto
+    cita: Y si hay un trade que queda abierto Por ejemplo a las 3 PM se cierra automáticamente O se deja
+      correr hasta que llegue a su destino No, se cierra Ya, a las 3 PM en punto se cierra el trade Sí
+    evidencia: ev-v4-011514-fe34ac7e
+    fotograma: fr-v4-9ad0ebb8/4514000
+    t0: '1:15:14'
+    t1: '1:15:26'
+    tema: ventana.cierre_15_00_trade_abierto
+    valor: si
+    video: v4
+  - afirmacion: 'dos sesiones: la primera empieza a las 7 y la segunda a las 11, hora de Espana'
+    cita: la primera sesión empieza a partir de las 7 hora España [...] tenemos a las 7, primera sesión
+      y la segunda sesión a las 11
+    evidencia: ev-v1-000049-6a31caa6
+    fotograma: fr-v1-5a2a42c3/49000
+    t0: 0:00:49
+    t1: 0:01:22
+    tema: ventana.sesiones
+    valor: null
+    video: v1
+  enunciado: ¿dias en los que el bot busca entradas y dias que se excluyen por norma? (dias de la semana
+    en que se opera)
+  id: P-22
+  origenes:
+  - id: dias_operables
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - dias_operables
+    tipos:
+    - texto
+  titulo: dias_operables
+- bloqueante: false
+  casos:
+  - afirmacion: no usa las noticias; ha backtesteado sin verlas
+    cita: no trato de meterle las noticias [...] he bacteceado sin ver las noticias
+    evidencia: ev-v2-002522-c5f51b71
+    fotograma: fr-v2-c5a09508/1522000
+    t0: 0:25:22
+    t1: 0:25:36
+    tema: herramientas.sin_noticias
+    valor: 'no'
+    video: v2
+  - afirmacion: con noticias el spread aumenta y habria que dar mas respiro al trade
+    cita: imagina que estamos operando a las 9 y le toca hablar [...] en esos momentos el split aumenta
+      [...] ahí sería cuestión de darle respiro al trade
+    evidencia: ev-v4-000858-4e50f00c
+    fotograma: fr-v4-9ad0ebb8/538000
+    t0: 0:08:58
+    t1: 0:09:26
+    tema: stop.respiro_con_noticias
+    valor: null
+    video: v4
+  enunciado: ¿si se deja de operar alrededor de noticias de alto impacto y con que margen? (regla de filtro,
+    o no si no filtra)
+  id: P-23
+  origenes:
+  - id: filtro_noticias
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - 'no'
+    - regla
+    parametros:
+    - filtro_noticias
+    tipos:
+    - texto
+  titulo: filtro_noticias
+- bloqueante: false
+  casos:
+  - afirmacion: al 0,75 se le da un pequeno respiro de uno o dos pips; queda abierto si es 0,75 a 0,80
+      o fijo en 0,75
+    cita: darle un pequeño respiro, por ejemplo [...] Exactamente aquí sería 0.75 Pero le damos un pequeño
+      respiro De un par de pips O sea, uno o dos pips [...] de 0.75 a 0.80 o que sea fijo en 0.75
+    evidencia: ev-v4-000835-782cf2cc
+    fotograma: fr-v4-9ad0ebb8/515000
+    t0: 0:08:35
+    t1: 0:08:58
+    tema: stop.colchon_spread_075_080
+    valor: null
+    video: v4
+  - afirmacion: con noticias el spread aumenta y habria que dar mas respiro al trade
+    cita: imagina que estamos operando a las 9 y le toca hablar [...] en esos momentos el split aumenta
+      [...] ahí sería cuestión de darle respiro al trade
+    evidencia: ev-v4-000858-4e50f00c
+    fotograma: fr-v4-9ad0ebb8/538000
+    t0: 0:08:58
+    t1: 0:09:26
+    tema: stop.respiro_con_noticias
+    valor: null
+    video: v4
+  - afirmacion: 'propuesta aceptada: abrir la operacion con el 0,75 desplazado segun el spread del momento
+      y calcular el lotaje sobre ese 0,75'
+    cita: la opción que yo te de aquí es que se abra la operación pero que este 0.75 se desplace lo suficiente
+      como para que esté de acuerdo al split del momento [...] con ese porcentaje que igual va a ser el
+      0.75, ya ahí se calcule el lotaje para arriesgar el porcentaje de la cuenta
+    evidencia: ev-v4-001221-1e66b5fd
+    fotograma: fr-v4-9ad0ebb8/741000
+    t0: 0:12:21
+    t1: 0:12:45
+    tema: stop.075_desplazado_por_spread_y_lotaje
+    valor: null
+    video: v4
+  enunciado: ¿spread por encima del cual no se abre la operacion? (pips)
+  id: P-24
+  origenes:
+  - id: spread_maximo
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - spread_maximo
+    tipos:
+    - decimal
+  titulo: spread_maximo
+- bloqueante: false
+  casos:
+  - afirmacion: en general 1 %; para la prueba de fondeo, 0,50 o 0,75 por operacion para tener mas tiros
+    cita: el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo planteado
+      sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros
+    evidencia: ev-v2-002845-7c812ec4
+    fotograma: fr-v2-c5a09508/1725000
+    t0: 0:28:45
+    t1: 0:29:00
+    tema: riesgo.fondeo.por_operacion
+    valor: '0.50'
+    video: v2
+  - afirmacion: con 0,50 por operacion la racha de 7 costaria un 2,25 % aprox y no rompe las reglas del
+      fondeo; con el 1 % las sobrepasaria
+    cita: si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege
+      si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar
+    evidencia: ev-v4-000508-0ce0adf1
+    fotograma: fr-v4-9ad0ebb8/308000
+    t0: 0:05:08
+    t1: 0:05:30
+    tema: riesgo.fondeo.050_protege
+    valor: '0.50'
+    video: v4
+  - afirmacion: con la racha de 7 perdidas, arriesgar 0,5 da un drawdown de 3,5 %; con 1 % seria 7 % y
+      quema la cuenta
+    cita: tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas,
+      un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5. Obviamente si inviertes
+      un 1% sería un 7%, entonces ahí sí te quema la cuenta
+    evidencia: ev-v4-012733-0c8d7f1f
+    fotograma: fr-v4-9ad0ebb8/5253000
+    t0: '1:27:33'
+    t1: '1:28:01'
+    tema: riesgo.por_operacion.calculo_racha
+    valor: 0,5
+    video: v4
+  enunciado: ¿perdida acumulada en el dia que detiene la operativa? (porcentaje de la cuenta)
+  id: P-25
+  origenes:
+  - id: perdida_maxima_diaria
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - perdida_maxima_diaria
+    tipos:
+    - porcentaje
+  titulo: perdida_maxima_diaria
+- bloqueante: false
+  casos:
+  - afirmacion: en general 1 %; para la prueba de fondeo, 0,50 o 0,75 por operacion para tener mas tiros
+    cita: el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo planteado
+      sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros
+    evidencia: ev-v2-002845-7c812ec4
+    fotograma: fr-v2-c5a09508/1725000
+    t0: 0:28:45
+    t1: 0:29:00
+    tema: riesgo.fondeo.por_operacion
+    valor: '0.50'
+    video: v2
+  - afirmacion: con 0,50 por operacion la racha de 7 costaria un 2,25 % aprox y no rompe las reglas del
+      fondeo; con el 1 % las sobrepasaria
+    cita: si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege
+      si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar
+    evidencia: ev-v4-000508-0ce0adf1
+    fotograma: fr-v4-9ad0ebb8/308000
+    t0: 0:05:08
+    t1: 0:05:30
+    tema: riesgo.fondeo.050_protege
+    valor: '0.50'
+    video: v4
+  - afirmacion: con la racha de 7 perdidas, arriesgar 0,5 da un drawdown de 3,5 %; con 1 % seria 7 % y
+      quema la cuenta
+    cita: tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas,
+      un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5. Obviamente si inviertes
+      un 1% sería un 7%, entonces ahí sí te quema la cuenta
+    evidencia: ev-v4-012733-0c8d7f1f
+    fotograma: fr-v4-9ad0ebb8/5253000
+    t0: '1:27:33'
+    t1: '1:28:01'
+    tema: riesgo.por_operacion.calculo_racha
+    valor: 0,5
+    video: v4
+  enunciado: ¿perdida acumulada en la semana que detiene la operativa? (porcentaje de la cuenta)
+  id: P-26
+  origenes:
+  - id: perdida_maxima_semanal
+    tipo: parametro
+  respuesta_esperada:
+    opciones: null
+    parametros:
+    - perdida_maxima_semanal
+    tipos:
+    - porcentaje
+  titulo: perdida_maxima_semanal
+- bloqueante: false
+  casos:
+  - afirmacion: con un flujo bajista sin esquema el modelo no da entrada
+    cita: aquí tenemos un flujo bajista que no hay entrada como tal o sea el modelo no no suelta ninguna
+      entrada
+    evidencia: ev-v1-001344-08ebe2c3
+    fotograma: fr-v1-5a2a42c3/824000
+    t0: 0:13:44
+    t1: 0:14:03
+    tema: no_trade.flujo_sin_esquema
+    valor: null
+    video: v1
+  - afirmacion: no hay entrada mientras el retroceso pueda seguir cayendo y volver a generar la entrada
+    cita: sigo aquí no hay entrada todavía porque a veces puede ser que genere el retroceso siga cayendo
+      y nuevamente se genera la entrada
+    evidencia: ev-v1-001853-8deb7934
+    fotograma: fr-v1-5a2a42c3/1133000
+    t0: 0:18:53
+    t1: 0:19:08
+    tema: no_trade.esperar_retroceso
+    valor: null
+    video: v1
+  - afirmacion: 'todo lo que se desarrolla por debajo de la liquidez de M15 es ruido: no hay entrada'
+    cita: no hay entrada o sea yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo
+      de m15 o sea por debajo de esta liquidez de m15 es ruido
+    evidencia: ev-v3-001600-ed45b091
+    fotograma: fr-v3-982da728/960000
+    t0: 0:16:00
+    t1: 0:16:18
+    tema: no_trade.ruido_bajo_liquidez_m15
+    valor: null
+    video: v3
+  enunciado: ¿que hace el bot cuando la situacion no encaja con ninguna regla? (abstenerse/regla_mas_parecida)
+  id: P-27
+  origenes:
+  - id: comportamiento_sin_regla
+    tipo: parametro
+  respuesta_esperada:
+    opciones:
+    - abstenerse
+    - regla_mas_parecida
+    parametros:
+    - comportamiento_sin_regla
+    tipos:
+    - texto
+  titulo: comportamiento_sin_regla
+sesion: 2026-09-09-sesion-01

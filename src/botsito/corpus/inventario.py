@@ -19,7 +19,7 @@ from typing import Any
 
 import yaml
 
-from botsito.comun.yaml_estricto import YamlError, cargar_yaml
+from botsito.comun.yaml_estricto import YamlError, leer_yaml
 
 PAPELES_CARPETA = ("heredado_v2", "material_adicional")
 VERSION_MANIFIESTO = 1
@@ -69,7 +69,7 @@ def cargar_fuentes(ruta: Path) -> Fuentes:
     if not ruta.exists():
         raise InventarioError(f"no existe {ruta}")
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8")) or {}
+        doc = leer_yaml(ruta) or {}
     except YamlError as exc:
         raise InventarioError(f"{ruta}: {exc}") from exc
     try:
@@ -338,7 +338,7 @@ def cargar_manifiesto(ruta: Path) -> dict[str, Any]:
     if not ruta.exists():
         raise InventarioError(f"no existe {ruta}")
     try:
-        doc = cargar_yaml(ruta.read_text(encoding="utf-8"))
+        doc = leer_yaml(ruta)
     except YamlError as exc:
         raise InventarioError(f"{ruta}: {exc}") from exc
     if not isinstance(doc, dict):

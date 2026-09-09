@@ -1,4 +1,4 @@
-# Sesion 2026-09-15-sesion-01 · hoja del trader
+# Sesion 2026-09-09-sesion-01 · hoja del trader
 
 Condicion previa: el trader confirma por escrito que NO ha operado ni backtesteado los meses del paquete (2026-05, 2026-06). Toda respuesta se anota literal (registro F09).
 
@@ -178,6 +178,55 @@ Casos:
 - v4 0:29:01: "el tamaño también de la posición de tu cuenta 1%, ponías 1% y ahí lo moviendo el SL pues se calculaba" · fotograma fr-v4-9ad0ebb8/1741000
 - v1 0:21:10: "si entrábamos, digamos así, en 0.75, configurando el lotaje a esta zona de aquí [...] el lotaje calcularlo ya no en base a esto sino en base a esta zona de aquí o sea a 0 75" · fotograma fr-v1-5a2a42c3/1270000
 - v2 0:33:00: "No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí [...] No lo veo viable porque en algunos casos [...] no me fue muy bien por el hecho del drawdown" · fotograma fr-v2-c5a09508/1980000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-22 · dias_operables
+Pregunta: ¿dias en los que el bot busca entradas y dias que se excluyen por norma? (dias de la semana en que se opera)
+Casos:
+- v3 1:03:04: "cierre agresivo opcional el vencimiento exacto de la vela H4 operativa este es un muy buen punto y puse que sí o sea, lo ideal sería que cierra la vela de H4 operativa, se cierra el trade porque ya la siguiente vela es otro movimiento" · fotograma fr-v3-982da728/3784000
+- v4 1:15:14: "Y si hay un trade que queda abierto Por ejemplo a las 3 PM se cierra automáticamente O se deja correr hasta que llegue a su destino No, se cierra Ya, a las 3 PM en punto se cierra el trade Sí" · fotograma fr-v4-9ad0ebb8/4514000
+- v1 0:00:49: "la primera sesión empieza a partir de las 7 hora España [...] tenemos a las 7, primera sesión y la segunda sesión a las 11" · fotograma fr-v1-5a2a42c3/49000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-23 · filtro_noticias
+Pregunta: ¿si se deja de operar alrededor de noticias de alto impacto y con que margen? (regla de filtro, o no si no filtra)
+Opciones: no / regla (u otra, literal)
+Casos:
+- v2 0:25:22: "no trato de meterle las noticias [...] he bacteceado sin ver las noticias" · fotograma fr-v2-c5a09508/1522000
+- v4 0:08:58: "imagina que estamos operando a las 9 y le toca hablar [...] en esos momentos el split aumenta [...] ahí sería cuestión de darle respiro al trade" · fotograma fr-v4-9ad0ebb8/538000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-24 · spread_maximo
+Pregunta: ¿spread por encima del cual no se abre la operacion? (pips)
+Casos:
+- v4 0:08:35: "darle un pequeño respiro, por ejemplo [...] Exactamente aquí sería 0.75 Pero le damos un pequeño respiro De un par de pips O sea, uno o dos pips [...] de 0.75 a 0.80 o que sea fijo en 0.75" · fotograma fr-v4-9ad0ebb8/515000
+- v4 0:08:58: "imagina que estamos operando a las 9 y le toca hablar [...] en esos momentos el split aumenta [...] ahí sería cuestión de darle respiro al trade" · fotograma fr-v4-9ad0ebb8/538000
+- v4 0:12:21: "la opción que yo te de aquí es que se abra la operación pero que este 0.75 se desplace lo suficiente como para que esté de acuerdo al split del momento [...] con ese porcentaje que igual va a ser el 0.75, ya ahí se calcule el lotaje para arriesgar el porcentaje de la cuenta" · fotograma fr-v4-9ad0ebb8/741000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-25 · perdida_maxima_diaria
+Pregunta: ¿perdida acumulada en el dia que detiene la operativa? (porcentaje de la cuenta)
+Casos:
+- v2 0:28:45: "el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo planteado sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros" · fotograma fr-v2-c5a09508/1725000
+- v4 0:05:08: "si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar" · fotograma fr-v4-9ad0ebb8/308000
+- v4 1:27:33: "tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas, un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5. Obviamente si inviertes un 1% sería un 7%, entonces ahí sí te quema la cuenta" · fotograma fr-v4-9ad0ebb8/5253000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-26 · perdida_maxima_semanal
+Pregunta: ¿perdida acumulada en la semana que detiene la operativa? (porcentaje de la cuenta)
+Casos:
+- v2 0:28:45: "el porcentaje que puedes manejar es un 1% aunque para la prueba de fondeo que yo lo tengo planteado sería manejarlo con un 0.50 0.50 o un 0.75 para que tengas mayores tiros" · fotograma fr-v2-c5a09508/1725000
+- v4 0:05:08: "si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar" · fotograma fr-v4-9ad0ebb8/308000
+- v4 1:27:33: "tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas, un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5. Obviamente si inviertes un 1% sería un 7%, entonces ahí sí te quema la cuenta" · fotograma fr-v4-9ad0ebb8/5253000
+Respuesta del trader: ______________________  ¿confirma? [ ]
+
+### P-27 · comportamiento_sin_regla
+Pregunta: ¿que hace el bot cuando la situacion no encaja con ninguna regla? (abstenerse/regla_mas_parecida)
+Opciones: abstenerse / regla_mas_parecida (u otra, literal)
+Casos:
+- v1 0:13:44: "aquí tenemos un flujo bajista que no hay entrada como tal o sea el modelo no no suelta ninguna entrada" · fotograma fr-v1-5a2a42c3/824000
+- v1 0:18:53: "sigo aquí no hay entrada todavía porque a veces puede ser que genere el retroceso siga cayendo y nuevamente se genera la entrada" · fotograma fr-v1-5a2a42c3/1133000
+- v3 0:16:00: "no hay entrada o sea yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 o sea por debajo de esta liquidez de m15 es ruido" · fotograma fr-v3-982da728/960000
 Respuesta del trader: ______________________  ¿confirma? [ ]
 
 ## Ventanas de etiquetado (solo `dev`)

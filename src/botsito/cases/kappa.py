@@ -135,8 +135,15 @@ def etiquetas_de_registros(
     etiquetas: Sequence[str],
 ) -> dict[str, str]:
     """Unidades (`caso|sesion_h4` -> decision) de los `LABEL_CASE` ACTIVOS de una sesion de
-    feedback. Dos registros activos sobre el mismo caso son error (uno debe superseder al otro)."""
-    vivos = activos([r for r in registros if r.sesion == sesion and r.accion == "LABEL_CASE"])
+    feedback. Dos registros activos sobre el mismo caso son error (uno debe superseder al otro).
+
+    `activos` se aplica a TODOS los registros antes de filtrar: un `BORDERLINE` o un
+    `MARK_FALSE_POSITIVE` tambien pueden superseder a un `LABEL_CASE` (los tres admiten objetivo
+    `caso`), y filtrando primero por accion ese retiro se perderia y la etiqueta retirada
+    reapareceria como viva. Una correccion hecha en otra sesion NO retira la etiqueta de esta:
+    cada sesion es una ronda, y comparar rondas es justo lo que mide el kappa.
+    """
+    vivos = [r for r in activos(list(registros)) if r.sesion == sesion and r.accion == "LABEL_CASE"]
     salida: dict[str, str] = {}
     vistos: dict[str, str] = {}
     for r in sorted(vivos, key=lambda x: x.id):

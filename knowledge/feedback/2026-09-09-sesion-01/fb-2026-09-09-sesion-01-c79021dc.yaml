@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-c79021dc
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: paquete
+  id: 2026-09-09-sesion-01
+accion: CONFIRM
+respuesta_literal: No ha visto esos meses aun, hara el backtest con todas las reglas discutidas ahora.
+registrado_por: Aleks · aclaracion escrita del consultor tras la sesion 1
+valor_resultante: mayo y junio de 2026 no vistos
+notas: 'confirmacion trasladada por el consultor tras la sesion; la respuesta del trader esta en la grabacion
+  v6 y se anadira con su minuto. Con ella los 40 casos del paquete siguen siendo prueba ciega. Matiz para
+  el analisis: el trader hara ese backtest aplicando las reglas acordadas hoy, asi que sirve como patron
+  oro para medir al bot, pero ya no mide si las reglas capturan su juicio espontaneo.'

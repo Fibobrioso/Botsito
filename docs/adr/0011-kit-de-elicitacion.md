@@ -14,8 +14,14 @@ phase: F10
    objetivo `ambiguedad` contra este fichero. Se cierra una ambiguedad solo con un registro del
    trader, en un commit con `Fuente:`.
 2. **Registro pre-poblado**: todo parametro de estrategia que la evidencia nombra existe en
-   `knowledge/spec/parametros.yaml` en `UNKNOWN` sin valor (24 con `anclaje_h4`), para que
-   `RESOLVE_UNKNOWN` tenga objetivo en la sesion 1 y F11 solo ponga valores con fuente. El
+   `knowledge/spec/parametros.yaml` en `UNKNOWN` sin valor (30), para que
+   `RESOLVE_UNKNOWN` tenga objetivo en la sesion 1 y F11 solo ponga valores con fuente. Aqui
+   entran tambien las decisiones que la evidencia NO nombra y que el bot tendria que tomar por su
+   cuenta (dias operables, filtro de noticias, spread maximo, topes de perdida diaria y semanal,
+   que hacer cuando ninguna regla encaja) y las de entorno que siguen sin valor (`instrumento`,
+   `cuenta_objetivo`): si no estan en el registro, la respuesta del trader no tiene donde
+   aterrizar. La regla de fuente por decision se exige al VALOR, no al hueco: un parametro que no
+   es de estrategia y sigue en `UNKNOWN` no tiene nada que citar todavia. El
    enlace parametro -> temas de evidencia, ambiguedad y opciones cerradas vive en
    `knowledge/cases/kit/mapa_parametros.yaml` (el esquema estricto del registro no admite claves
    extra).
@@ -29,7 +35,12 @@ phase: F10
    el contexto de la vispera del primer dia; el caso cita el dataset de su dia). Cada caso: `caso-<simbolo>-<dia>`,
    `dataset_id`, ventana UTC, `n_velas`, `sha256` de las velas (recomputable con
    `cargar_ventana`) y los limites H4 de cada anclaje candidato (`limites_entre`). CONDICION de
-   cada sesion: confirmacion escrita del trader (registro F09) de que no ha visto esos meses.
+   cada sesion: confirmacion escrita del trader de que no ha visto esos meses, registrada en F09
+   como `CONFIRM` (o `REJECT`, y entonces se anaden a `vistos.yaml` y se regenera el paquete)
+   sobre el objetivo de tipo `paquete`, cuyo id es la sesion; el registro comprueba que el
+   paquete confirmado es el de la propia sesion. Es el unico objetivo de feedback que no es una
+   pieza de conocimiento sino el paquete mismo, y existe para que esa condicion deje rastro en
+   vez de quedarse solo en el video de la sesion.
 5. **Seed y particiones**: orden por `sha256(f"{seed}:{caso}")` (independiente de la version de
    Python), cupos dev / holdout-1 / holdout-2 / holdout-3 de `config.yaml`. `particiones.yaml`
    se commitea ANTES de la sesion; la guardia (`knowledge validate`) es de ANCESTRO en git: el

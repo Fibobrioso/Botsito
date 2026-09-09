@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-66a1b63d
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: cartuchos_max
+accion: CORRECT
+respuesta_literal: se opera hasta el tercer trade [...] un intento no es considerado un break even
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: 0:52:19
+t1: 0:52:59
+valor_resultante: '3'
+supersede: fb-2026-09-09-sesion-01-2c92afe0
+notas: Ver A-2.

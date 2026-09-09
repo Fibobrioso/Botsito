@@ -1,0 +1,186 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v6-002330-002500-5c10c107
+video_id: v6
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4
+t0: 0:23:30
+t1: 0:25:00
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-opus-5 · sesion 1
+proponente: llm
+generado_el: '2026-09-09T21:28:55Z'
+contexto:
+  segmentos:
+  - n: 257
+    t0_ms: 1408237
+    t1_ms: 1422457
+    texto: y si lo demás está en ver vale ahora nos vamos a la sesión del día de hoy eso fue hoy estamos
+    senales: []
+  - n: 258
+    t0_ms: 1422457
+    t1_ms: 1424017
+    texto: estamos, creo que dio una
+    senales:
+    - no_habla
+  - n: 259
+    t0_ms: 1424017
+    t1_ms: 1425797
+    texto: entrada el lunes, pero ya no,
+    senales:
+    - no_habla
+  - n: 260
+    t0_ms: 1425857
+    t1_ms: 1428057
+    texto: el número de velas es demasiado y no me
+    senales:
+    - no_habla
+  - n: 261
+    t0_ms: 1428057
+    t1_ms: 1429777
+    texto: lo va a permitir, pues
+    senales:
+    - no_habla
+  - n: 262
+    t0_ms: 1429777
+    t1_ms: 1431997
+    texto: mostrarlo, entonces nos vamos al día
+    senales:
+    - no_habla
+  - n: 263
+    t0_ms: 1431997
+    t1_ms: 1436807
+    texto: 9. ¿Sabes, si quieres
+    senales:
+    - no_habla
+  - n: 264
+    t0_ms: 1436807
+    t1_ms: 1438987
+    texto: testear así, chévere y sin costos,
+    senales:
+    - no_habla
+  - n: 265
+    t0_ms: 1438987
+    t1_ms: 1440467
+    texto: podrías instalar tu Ducascopy,
+    senales:
+    - no_habla
+  - n: 266
+    t0_ms: 1440607
+    t1_ms: 1442907
+    texto: el, ese de ahí. Ah, no, espera,
+    senales:
+    - no_habla
+  - n: 267
+    t0_ms: 1443047
+    t1_ms: 1444867
+    texto: a ver, es que tengo uno que sería
+    senales:
+    - no_habla
+  - n: 268
+    t0_ms: 1444867
+    t1_ms: 1446827
+    texto: el, tengo una, yo me
+    senales:
+    - no_habla
+  - n: 269
+    t0_ms: 1446827
+    t1_ms: 1448427
+    texto: inicié de sesión, me lo guié cuando,
+    senales:
+    - no_habla
+  - n: 270
+    t0_ms: 1449947
+    t1_ms: 1450347
+    texto: ¿conoces
+    senales:
+    - no_habla
+  - n: 271
+    t0_ms: 1451127
+    t1_ms: 1452727
+    texto: ForexTest Online? Sí, sí.
+    senales:
+    - no_habla
+  - n: 272
+    t0_ms: 1452827
+    t1_ms: 1454487
+    texto: Bueno, ¿sí lo conoces?
+    senales:
+    - no_habla
+  - n: 273
+    t0_ms: 1454487
+    t1_ms: 1482567
+    texto: Sí. Ah, esa tengo la cuenta, pero es que honestamente me he dado cuenta de algo, no sé de dónde
+      sacará sus datos, pero no coincide mucho con Oanda o FXM, que por ejemplo, FX Replay usa los datos
+      de Oanda, entonces me es más factible, por eso suelo usar FX Replay y después tengo la de Forex
+      Tester.
+    senales: []
+  - n: 274
+    t0_ms: 1482567
+    t1_ms: 1488687
+    texto: ser pero hoy día lo veré porque ya no lo uso hace tres meses porque está usando lo de fx replay
+      y
+    senales: []
+  - n: 275
+    t0_ms: 1488687
+    t1_ms: 1499887
+    texto: nada si no pues ahí haré el backtesting vale continuando voy a eliminar esto porque no me
+    senales: []
+  - n: 276
+    t0_ms: 1499887
+    t1_ms: 1508647
+    texto: da mucha visión de lo que ha hecho el precio de las velas aquí vamos un rato vale vemos que
+    senales: []
+  referencias:
+  - 'fr-v6-22982c02/<t_ms>: 91 fotogramas regulares, uno por segundo, de 1410000 a 1500000 ms'
+temas_buscados:
+- herramientas
+items:
+- t0: 0:24:14
+  t1: 0:24:42
+  modalidad: audio
+  tipo: RULE_STATEMENT
+  cita_literal: no sé de dónde sacará sus datos, pero no coincide mucho con Oanda o FXM, que por ejemplo,
+    FX Replay usa los datos de Oanda, entonces me es más factible, por eso suelo usar FX Replay
+  afirmacion: backtestea en FX Replay, que usa datos de Oanda, y descarta Forex Tester porque sus datos
+    no le coinciden
+  tema: herramientas.fxreplay_datos_oanda
+  confianza: alta
+  notas: sus decisiones y sus backtests estan tomados sobre velas de Oanda. El proyecto mide sobre Dukascopy
+    (ADR-0005), y con reglas que dependen de una ruptura 'por una milesima' la diferencia entre proveedores
+    puede cambiar un dia entero.
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:05Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-002414-d59b1c82
+no_consta: []
+salida_sha256: 8d3eef24b2ac6f85e3089dc8b6b18e501d31d9ad012cc0ba754717a9b5a8eafa
+comprobado_el: '2026-09-09T21:32:23Z'

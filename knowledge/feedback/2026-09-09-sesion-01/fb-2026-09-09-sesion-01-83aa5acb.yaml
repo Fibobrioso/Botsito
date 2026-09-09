@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-83aa5acb
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-8
+accion: RESOLVE_UNKNOWN
+respuesta_literal: creo que no sería el término adecuado [...] sería considerado una estructura [...]
+  en el lenguaje del bot sería considerado una estructura [...] esta zona de aquí se consideraría [...]
+  como una estructura en el precio
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '1:38:48'
+t1: '1:41:10'
+valor_resultante: 'no son ''dos velas como una'': es una ESTRUCTURA (el order block de la temporalidad
+  mayor)'
+notas: El trader corrige su propio termino de v3. Lo que agrupa las velas es que en la temporalidad mayor
+  forman un solo order block; el resto es ruido. En 1:40:36 anade que el precio puede romper directamente
+  sin esperar una vela contraria y sigue siendo valido.

@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-a8ba253d
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-2
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Se opera hasta un tercer trade. Entrada invalidada no es considerado, reentrada tampoco
+  y BE si loes
+registrado_por: Aleks · hoja de respuestas de la sesion 1
+valor_resultante: '3'
+notas: sintesis escrita por el consultor en la hoja durante la sesion; la version explicada esta en v6
+  (transcripcion en curso). El trader anade que un break even SI consume cartucho, al reves de lo que
+  dijo en v4 0:48:41; una entrada invalidada y una reentrada no cuentan.

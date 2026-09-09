@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-62bd292e
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: filtro_noticias
+accion: CORRECT
+respuesta_literal: a mí me es indiferente si hay noticia o no [...] A ver, vamos a intentarlo, ¿vale?
+  [...] Sí, incluimos noticias
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '2:00:27'
+t1: '2:02:06'
+valor_resultante: no filtra; pendiente la regla de la cuenta de fondeo
+supersede: fb-2026-09-09-sesion-01-c1c55632
+notas: 'Matiz que la hoja no recogia: el propio trader avisa de que ''dos minutos antes y dos minutos
+  después no se puede operar, depende del tipo de cuenta de fondeo'', y de que algunas cierran la cuenta
+  si operas noticias aunque termines en profit. Deciden probar operando noticias, pero la regla real de
+  FundedNext hay que verificarla antes de poner el bot en la cuenta.'

@@ -1,0 +1,302 @@
+# Propuesta de evidencia (F07, ADR-0009). Editable SOLO en los campos de decision
+# (decision, decidido_por, decidido_el, metodo_revision, motivo, evidence_id): la salida
+# queda sellada por salida_sha256 tras `botsito evidence propose --check`.
+propuesta_id: pr-v6-010800-011030-cc689b83
+video_id: v6
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4
+t0: '1:08:00'
+t1: '1:10:30'
+prompt: "# Prompt canonico del proponente de evidencia · version 1 (2026-09-07, F07)\n\nEres el proponente\
+  \ de evidencia del proyecto Bot v3. Recibes el contexto de un tramo de la\ntranscripcion CRUDA de un\
+  \ video del trader (segmentos con `n`, `t0_ms`, `t1_ms`, `texto`,\n`senales`) y las referencias de fotogramas\
+  \ disponibles en ese tramo (`fr-<id>/<t_ms>`). Tu\nsalida son `items` y `no_consta` de una propuesta;\
+  \ una persona decidira sobre cada item y solo\nentonces se convertira en evidencia.\n\nReglas (seccion\
+  \ H del plan, ADR-0009):\n1. `cita_literal` se COPIA de la cruda tal cual, con sus errores de reconocimiento\
+  \ (`m 15`,\n   `breakeven`, `1.3` cuando el trader dice \"uno a tres\"). Nunca parafrasees. Puedes omitir\n\
+  \   palabras intermedias con el comodin `[...]` (maximo 2 por cita; cada trozo con 3 palabras o\n  \
+  \ mas; la cita completa con 4 palabras o mas). Nada de lo que la cruda no diga.\n2. `afirmacion` normaliza\
+  \ la cita sin anadir condiciones que la cita no diga. `valor` solo si la\n   cita contiene una cifra\
+  \ o una eleccion cerrada (`cuerpo`, `cierre`, `toque`, `mecha`, `si`,\n   `no`); escribe la cifra tal\
+  \ como esta en la cita.\n3. `t0`/`t1` acotan donde se dice la cita (con 2 s de holgura). `modalidad`:\
+  \ `audio` si es lo\n   que se oye; `pantalla` si es lo que se ve (exige `fotogramas` con al menos un\
+  \ `fr-*` del\n   tramo); `ambas` si la cita de audio necesita el fotograma para entenderse.\n4. `tipo`:\
+  \ `RULE_STATEMENT` (una regla dicha como regla), `PARAMETER` (una cifra o nivel),\n   `EXAMPLE_TRADE`\
+  \ (una operacion concreta), `NO_TRADE` (un caso razonado de no operar),\n   `MANAGEMENT` (gestion de\
+  \ una posicion abierta), `UNKNOWN` (el trader lo deja abierto).\n5. `tema`: raiz de `knowledge/evidence/_temas.yaml`\
+  \ y subtema en minusculas con puntos.\n6. `confianza`: `alta` solo si la cruda es limpia (sin `senales`)\
+  \ y la frase es inequivoca;\n   `media` si hay senales del ASR o el trader se corrige; `baja` si la\
+  \ lectura depende del\n   contexto o de la pantalla.\n7. Por cada `tema_buscado` que no encuentres en\
+  \ el tramo, escribe una entrada en `no_consta`\n   con el motivo. No inventes items para cubrir temas\
+  \ ni para llegar a una cifra.\n8. Un mismo hecho dicho dos veces en el tramo es UN item (cita la formulacion\
+  \ mas clara); dos\n   formulaciones que se contradicen son DOS items (con `valor` distinto si procede).\n\
+  9. Si el trader responde a una pregunta del consultor, cita SOLO la parte del trader y anota en\n  \
+  \ `notas` quien pregunta (no hay diarizacion: atribuye por contexto).\n10. No propongas reglas que el\
+  \ trader no dijo, ni completes numeros que no se oyen.\n"
+prompt_sha256: 98e2cadbd665a9550d9db0bef9c2a92b54e57fc84826ff1fb57b717cbba598fa
+modelo: claude-opus-5 · sesion 1
+proponente: llm
+generado_el: '2026-09-09T21:28:53Z'
+contexto:
+  segmentos:
+  - n: 864
+    t0_ms: 4078448
+    t1_ms: 4109598
+    texto: Luego tenemos ya estas zonas que en realidad no se importan, esta liquidez en M15, vemos que
+      ocurre por debajo y vemos que tampoco hay entrada aquí, tampoco hay entrada aquí, y aquí estaría
+      pues, justamente coincide por debajo con la otra zona de liquidez.
+    senales: []
+  - n: 865
+    t0_ms: 4111418
+    t1_ms: 4112898
+    texto: Termina con cuerpo
+    senales: []
+  - n: 866
+    t0_ms: 4112898
+    t1_ms: 4113758
+    texto: Cierra con cuerpo
+    senales: []
+  - n: 867
+    t0_ms: 4113758
+    t1_ms: 4116198
+    texto: Nunca llegó este alto de aquí
+    senales: []
+  - n: 868
+    t0_ms: 4116198
+    t1_ms: 4118918
+    texto: Nunca llegó a generar el breaker aquí
+    senales: []
+  - n: 869
+    t0_ms: 4118918
+    t1_ms: 4120738
+    texto: Entonces lo actualizamos aquí
+    senales: []
+  - n: 870
+    t0_ms: 4120738
+    t1_ms: 4121898
+    texto: Por cumplir todas las condiciones
+    senales: []
+  - n: 871
+    t0_ms: 4123398
+    t1_ms: 4125018
+    texto: Y ahí se activaría la entrada
+    senales: []
+  - n: 872
+    t0_ms: 4125018
+    t1_ms: 4135678
+    texto: Vamos a ver que hace el precio
+    senales: []
+  - n: 873
+    t0_ms: 4135678
+    t1_ms: 4137518
+    texto: Vale, el precio llega
+    senales: []
+  - n: 874
+    t0_ms: 4137518
+    t1_ms: 4139198
+    texto: Rompe, sube
+    senales: []
+  - n: 875
+    t0_ms: 4139198
+    t1_ms: 4141378
+    texto: Y aquí pues pondríamos
+    senales: []
+  - n: 876
+    t0_ms: 4141378
+    t1_ms: 4143138
+    texto: O sea, objetivamente
+    senales: []
+  - n: 877
+    t0_ms: 4143138
+    t1_ms: 4145698
+    texto: Se pondría en breaking aquí
+    senales: []
+  - n: 878
+    t0_ms: 4145698
+    t1_ms: 4147838
+    texto: Entonces este pequeño retroceso
+    senales: []
+  - n: 879
+    t0_ms: 4147838
+    t1_ms: 4149198
+    texto: que hace, te sacaría en B la entrada
+    senales: []
+  - n: 880
+    t0_ms: 4149978
+    t1_ms: 4151618
+    texto: ahora, pero si te das cuenta
+    senales: []
+  - n: 881
+    t0_ms: 4151618
+    t1_ms: 4153638
+    texto: también se dio
+    senales: []
+  - n: 882
+    t0_ms: 4153638
+    t1_ms: 4155278
+    texto: no sé si se dio, creo que no se dio
+    senales: []
+  - n: 883
+    t0_ms: 4155278
+    t1_ms: 4157478
+    texto: ah bueno, sí se dio, el 1-3 sí se dio
+    senales: []
+  - n: 884
+    t0_ms: 4158078
+    t1_ms: 4159458
+    texto: vale, es que es eso al final
+    senales: []
+  - n: 885
+    t0_ms: 4159458
+    t1_ms: 4161218
+    texto: también, o sea, hay cositas que
+    senales: []
+  - n: 886
+    t0_ms: 4162058
+    t1_ms: 4163358
+    texto: claro, ponerte a bactesear si
+    senales: []
+  - n: 887
+    t0_ms: 4163358
+    t1_ms: 4165298
+    texto: modificas algo, es un lío
+    senales: []
+  - n: 888
+    t0_ms: 4165738
+    t1_ms: 4167198
+    texto: pero a lo mejor, qué sé yo
+    senales: []
+  - n: 889
+    t0_ms: 4167198
+    t1_ms: 4169298
+    texto: si digo que tiene que ser con
+    senales: []
+  - n: 890
+    t0_ms: 4169298
+    t1_ms: 4171438
+    texto: rompimiento, o sea, cuando me genere la zona de control
+    senales: []
+  - n: 891
+    t0_ms: 4171438
+    t1_ms: 4173038
+    texto: yo valido para poner en B
+    senales: []
+  - n: 892
+    t0_ms: 4173038
+    t1_ms: 4175278
+    texto: que aquí hay un rompimiento, entonces
+    senales: []
+  - n: 893
+    t0_ms: 4175278
+    t1_ms: 4176098
+    texto: si te das cuenta
+    senales: []
+  - n: 894
+    t0_ms: 4177378
+    t1_ms: 4182218
+    texto: todo eso de aquí sería mecha mecha mecha mecha o sea ya una mecha como tal
+    senales: []
+  - n: 895
+    t0_ms: 4186478
+    t1_ms: 4191398
+    texto: variando como lo estamos haciendo ahora te pondría en B y te perderías todo ese
+    senales: []
+  - n: 896
+    t0_ms: 4191398
+    t1_ms: 4196338
+    texto: movimiento de allí pero si fuera con cuerpo a decir que se ve con un cuerpo pues vale si
+    senales: []
+  - n: 897
+    t0_ms: 4196918
+    t1_ms: 4203218
+    texto: no te comerías ese no te perderías ese trade pero es eso al final y al cabo creo que no dio
+      entrada
+    senales: []
+  - n: 898
+    t0_ms: 4206398
+    t1_ms: 4212758
+    texto: Porque, a ver, claro, mira, es que tratamos de capturar siempre desde ese movimiento de allí,
+      desde el inicio.
+    senales: []
+  - n: 899
+    t0_ms: 4213342
+    t1_ms: 4215042
+    texto: se desarrolló todo eso
+    senales: []
+  - n: 900
+    t0_ms: 4216322
+    t1_ms: 4217022
+    texto: y a ver
+    senales: []
+  - n: 901
+    t0_ms: 4218982
+    t1_ms: 4219382
+    texto: vale
+    senales: []
+  - n: 902
+    t0_ms: 4219382
+    t1_ms: 4220122
+    texto: siguiente
+    senales: []
+  - n: 903
+    t0_ms: 4220642
+    t1_ms: 4221042
+    texto: vamos
+    senales: []
+  - n: 904
+    t0_ms: 4226602
+    t1_ms: 4227802
+    texto: ya esto ya quedó
+    senales: []
+  - n: 905
+    t0_ms: 4227802
+    t1_ms: 4229702
+    texto: vamos con la siguiente que es esta
+    senales: []
+  - n: 906
+    t0_ms: 4229702
+    t1_ms: 4232682
+    texto: que tiene que ver con, ¿qué hacer si la entrada se activa sin ruptura?
+    senales: []
+  referencias:
+  - 'fr-v6-22982c02/<t_ms>: 151 fotogramas regulares, uno por segundo, de 4080000 a 4230000 ms'
+temas_buscados:
+- break_even
+items:
+- t0: '1:09:27'
+  t1: '1:09:35'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: si digo que tiene que ser con rompimiento, o sea, cuando me genere la zona de control
+    yo valido para poner en B que aquí hay un rompimiento
+  afirmacion: se plantea exigir un rompimiento de la zona de control para poner el break even, en vez
+    de protegerlo al toque
+  tema: break_even.duda_rompimiento
+  confianza: media
+  notas: el trader vuelve sobre P-02 por iniciativa propia, doce minutos despues de haberla respondido
+    con 'apenas toca'. No cierra la duda.
+  n: 1
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:16Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-010927-50b8d873
+- t0: '1:09:47'
+  t1: '1:10:01'
+  modalidad: audio
+  tipo: UNKNOWN
+  cita_literal: te pondría en B y te perderías todo ese movimiento de allí pero si fuera con cuerpo [...]
+    no te perderías ese trade
+  afirmacion: protegerlo al toque le hace perder movimientos que un criterio de cuerpo conservaria
+  tema: break_even.coste_del_toque
+  confianza: media
+  notas: es el argumento en contra de su propia respuesta a P-02; cuantificarlo exige medir las dos variantes
+    sobre los mismos dias.
+  n: 2
+  decision: aceptado
+  decidido_por: Aleks · sesion 1 2026-09-09 · cruda leida
+  decidido_el: '2026-09-09T22:07:19Z'
+  metodo_revision: cruda_leida
+  evidence_id: ev-v6-010947-8b4b485a
+no_consta: []
+salida_sha256: 82a5db2db820a99678a3e9c47383a7dabf3df03c480c0ec0d669509c6c0e0bc0
+comprobado_el: '2026-09-09T21:32:28Z'
