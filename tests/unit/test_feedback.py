@@ -527,14 +527,19 @@ def test_apply_conserva_los_comentarios_del_fichero(tmp_path: Path) -> None:
     from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
 
     ruta = _registro_minimo(tmp_path)
-    ruta.write_text("# cabecera que debe sobrevivir\n" + ruta.read_text(encoding="utf-8"),
-                    encoding="utf-8", newline="\n")
+    ruta.write_text(
+        "# cabecera que debe sobrevivir\n" + ruta.read_text(encoding="utf-8"),
+        encoding="utf-8",
+        newline="\n",
+    )
     campos = _fb(valor_canonico="0.8")
     r = registro_desde_dict({**campos, "id": calcular_id(campos)})
     registro = cargar_registro(ruta)
     texto = escribir_cambios(ruta, cambios_de_sesion(registro, [r], r.sesion))
     assert texto.startswith("# cabecera que debe sobrevivir")
-    assert "estado: CONFIRMED" in texto and 'valor: "0.8"' in texto and "tipo: feedback" in texto
+    assert "estado: CONFIRMED" in texto and "tipo: feedback" in texto
+    # las comillas las elige el serializador de YAML; importa el valor que se lee
+    assert "valor: '0.8'" in texto or 'valor: "0.8"' in texto
 
 
 def test_apply_retira_ambiguedad_id_al_escribir_un_valor_del_trader(tmp_path: Path) -> None:
@@ -567,3 +572,140 @@ def test_apply_retira_ambiguedad_id_al_escribir_un_valor_del_trader(tmp_path: Pa
     assert "ambiguedad_id" not in texto
     ruta.write_text(texto, encoding="utf-8", newline="\n")
     assert str(cargar_registro(ruta).fraccion("stop_fraccion_caja")) == "0.8 (fraccion)"
+
+
+def test_apply_es_idempotente(tmp_path: Path) -> None:
+    """Aplicar dos veces la misma sesion no cambia nada la segunda.
+
+    Sin esto, `apply --check` decia "9 cambian" sobre un registro recien aplicado, porque comparaba
+    el texto que iria al fichero contra el valor ya tipado que el registro devuelve. Un segundo
+    `apply` reescribia el fichero -la unica puerta de los valores- sin motivo.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(tmp_path)
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+
+    primero = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    assert [c.es_no_op for c in primero] == [False]
+    ruta.write_text(escribir_cambios(ruta, primero), encoding="utf-8", newline="\n")
+
+    segundo = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    assert [c.es_no_op for c in segundo] == [True], "la segunda pasada no cambia nada"
+    assert escribir_cambios(ruta, segundo) == ruta.read_text(encoding="utf-8")
+
+
+def test_apply_no_escribe_en_silencio_si_el_formato_no_es_el_que_sabe_editar(
+    tmp_path: Path,
+) -> None:
+    """Un fichero con el nombre entrecomillado devolvia el fichero INTACTO y la CLI decia OK."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        '  - nombre: "stop_fraccion_caja"\n'
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    cambios = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    with pytest.raises(AplicarError, match="no se encontro el bloque"):
+        escribir_cambios(ruta, cambios)
+
+
+@pytest.mark.parametrize(
+    # el salto de linea queda fuera: el registro normaliza espacios, asi que un valor
+    # con salto no se conserva por diseno y no es un caso real de un parametro
+    "valor",
+    ['lo que el llama "la caja"', "a\\\\b", "con: dos puntos", "- guion"],
+)
+def test_apply_escribe_el_valor_tal_cual_aunque_lleve_comillas_o_barras(
+    tmp_path: Path, valor: str
+) -> None:
+    """Se serializa con YAML, no con una f-string: `C:\nuevo` se leia como `C: uevo`."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: texto\n"
+        "    unidad: u\n"
+        "    descripcion: d\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico=valor)
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+    ruta.write_text(texto, encoding="utf-8", newline="\n")
+    assert cargar_registro(ruta).texto("stop_fraccion_caja") == valor
+
+
+def test_apply_denuncia_un_ciclo_de_supersede(tmp_path: Path) -> None:
+    """Un ciclo hace que `activos` descarte los dos extremos y el parametro desaparezca callando.
+
+    Los registros se construyen a mano: con ids calculados del contenido no se puede cerrar un
+    ciclo, pero un fichero editado a mano si puede tenerlo.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+    from botsito.feedback.modelo import FeedbackRecord, Objetivo
+
+    def crudo(ident: str, supersede: str) -> FeedbackRecord:
+        return FeedbackRecord(
+            id=f"fb-2026-09-09-sesion-01-{ident}",
+            sesion="2026-09-09-sesion-01",
+            fecha="2026-09-09",
+            medio="escrito",
+            objetivo=Objetivo("parametro", "stop_fraccion_caja"),
+            accion="RESOLVE_UNKNOWN",
+            respuesta_literal="lo dijo asi",
+            registrado_por="aleks",
+            valor_canonico="0.8",
+            supersede=f"fb-2026-09-09-sesion-01-{supersede}",
+        )
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    ciclo = [crudo("aaaaaaaa", "bbbbbbbb"), crudo("bbbbbbbb", "aaaaaaaa")]
+    with pytest.raises(AplicarError, match="ciclo de supersede"):
+        cambios_de_sesion(registro, ciclo, "2026-09-09-sesion-01")
+
+
+# `3\xa0` queda fuera a proposito: el espacio no separable lo quita `strip()` y el valor sigue
+# siendo 3, que es lo correcto. Lo que no puede pasar es que un digito arabigo cuele como cifra.
+@pytest.mark.parametrize("bruto", ["٣", "١٢٣", "+3", "0x10"])
+def test_apply_no_acepta_digitos_que_no_sean_ascii(tmp_path: Path, bruto: str) -> None:
+    """`٣` no es 3: aceptarlo seria interpretar, que es lo que este modulo promete no hacer."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: cartuchos_max\n"
+        "    categoria: estrategia\n"
+        "    tipo: entero\n"
+        "    unidad: intentos\n"
+        "    descripcion: d\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(objetivo={"tipo": "parametro", "id": "cartuchos_max"}, valor_canonico=bruto)
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    with pytest.raises(AplicarError, match="no es un entero"):
+        cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)

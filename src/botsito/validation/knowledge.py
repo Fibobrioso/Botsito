@@ -359,6 +359,32 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         "historial intacto"
     )
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
+    # Un parametro no puede tener dos registros vigentes que FIJEN su valor: no habria forma de
+    # saber cual manda. Lo comprobaba `feedback apply`, que solo se ejecuta cuando alguien lo
+    # llama; aqui se vigila siempre. Ojo al matiz: dos REJECT vigentes sobre el mismo parametro no
+    # son un problema -ninguno fija valor- y ademas no se pueden fusionar, porque un registro
+    # supersede a UNO y dos cadenas paralelas no convergen anadiendo registros.
+    from botsito.feedback.aplicar import ACCIONES_QUE_FIJAN
+
+    fijan: dict[str, list[str]] = {}
+    from botsito.comun.documentos import activos as _activos
+
+    for registro_fb in _activos(list(registros_fb)):
+        if registro_fb.objetivo.tipo != "parametro":
+            continue
+        if registro_fb.accion not in ACCIONES_QUE_FIJAN:
+            continue
+        if registro_fb.valor_resultante is None and registro_fb.valor_canonico is None:
+            continue
+        fijan.setdefault(registro_fb.objetivo.id, []).append(registro_fb.id)
+    for nombre, ids_fijan in sorted(fijan.items()):
+        if len(ids_fijan) > 1:
+            salida.append(
+                f"ERROR: feedback: {nombre} tiene {len(ids_fijan)} registros vigentes que fijan su "
+                f"valor ({', '.join(sorted(ids_fijan))}); uno debe superseder al otro"
+            )
+            return 1, salida
+
     # Capa spec (F11, ADR-0013): reglas, glosario y manifiesto.
     from botsito.spec.manifiesto import FICHERO_MANIFIESTO
     from botsito.spec.manifiesto import comprobar as comprobar_manifiesto_spec

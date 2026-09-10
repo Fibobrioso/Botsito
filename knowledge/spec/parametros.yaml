@@ -154,18 +154,24 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-d34a0222
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_reduccion_fraccion
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa
     descripcion: nivel al que se reduce el stop cuando la vela avanza (A-12)
     estado: UNKNOWN
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_reduccion_umbral_vela
     categoria: estrategia
     tipo: porcentaje
     unidad: porcentaje de la vela transcurrido
     descripcion: parte de la vela a partir de la cual se baja el stop (40 o 50; A-12)
     estado: UNKNOWN
+    minimo: "0"
+    maximo: "100"
   - nombre: stop_segundo_esquema
     categoria: estrategia
     tipo: fraccion
@@ -176,6 +182,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-85b30f66
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_en_orden_pendiente
     categoria: estrategia
     tipo: enum
@@ -208,6 +216,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-7fbbb2e7
+    minimo: "1"
+    maximo: "10"
   - nombre: objetivo_extension_activa
     categoria: estrategia
     tipo: booleano
@@ -236,6 +246,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-1a3064b0
+    minimo: 1
+    maximo: 10
   - nombre: reentrada_tras_equal
     categoria: estrategia
     tipo: enum
@@ -301,6 +313,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-648ec915
+    minimo: "0"
+    maximo: "5"
   - nombre: lotaje_base
     categoria: estrategia
     tipo: enum
@@ -363,6 +377,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-bff260ea
+    minimo: "0"
+    maximo: "20"
   - nombre: perdida_maxima_semanal
     categoria: estrategia
     tipo: porcentaje
@@ -373,6 +389,8 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-a85b6bc7
+    minimo: "0"
+    maximo: "20"
   - nombre: comportamiento_sin_regla
     categoria: estrategia
     tipo: enum
@@ -453,12 +471,15 @@ parametros:
     categoria: estrategia
     tipo: texto
     unidad: simbolo del instrumento
-    descripcion: instrumento sobre el que opera el bot
+    descripcion: >-
+      instrumento sobre el que opera la primera version. Sale de la evidencia, no de una respuesta:
+      es el unico instrumento de todo el corpus grabado y se lee en pantalla. Por donde ampliar
+      -NASDAQ, oro, pares sin gaps, futuros- lo dijo el trader y vive en fb-2026-09-09-sesion-01-6eceb844
     estado: CONFIRMED
     valor: "EURUSD"
     fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-6eceb844
+      tipo: evidence
+      id: ev-v2-003320-a736fd37
   - nombre: cuenta_objetivo
     categoria: prop_firm
     tipo: enum

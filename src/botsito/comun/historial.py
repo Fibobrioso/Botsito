@@ -60,7 +60,6 @@ def _git(repo: Path, *args: str) -> str | None:
     return resultado.stdout if resultado.returncode == 0 else None
 
 
-
 def contenido_en_head(repo: Path, ruta: str) -> str | None:
     """El contenido de un fichero tal como esta commiteado en HEAD, o None si no se puede leer.
 

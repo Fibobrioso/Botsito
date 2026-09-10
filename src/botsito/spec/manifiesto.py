@@ -38,6 +38,9 @@ CAMPOS_PARAMETRO = (
     "unidad",
     "estado",
     "valor",
+    # `huso` entra porque MUEVE la operativa: cambiar Etc/GMT-2 por UTC desplaza la ventana
+    # dos horas y, sin esto, la spec seguiria diciendo ser la misma version.
+    "huso",
     "fuente",
     "ambiguedad_id",
     "opciones",

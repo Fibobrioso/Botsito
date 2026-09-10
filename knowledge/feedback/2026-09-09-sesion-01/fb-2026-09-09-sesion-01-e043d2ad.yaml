@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-e043d2ad
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_proteccion_capital
+accion: REJECT
+respuesta_literal: La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve
+  el SL hasta el nivel 0.8 para todos los modelos de entrada.
+registrado_por: Aleks · correccion de trazabilidad (F11)
+supersede: fb-2026-09-09-sesion-01-a9630011
+notas: 'une las dos cadenas que quedaban vivas sobre este parametro: la sesion dejo dos registros que
+  no se supersedian entre si, y aunque ambos decian lo mismo -que el parametro es derivado y sale del
+  registro- dos vigentes a la vez sobre un mismo objetivo rompen el invariante que exige. Este supersede
+  a uno para que quede una sola cadena.'

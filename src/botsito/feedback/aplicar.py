@@ -20,6 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from botsito.config.registro import (
     Estado,
     Parametro,
@@ -50,10 +52,25 @@ class Cambio:
     canonico: bool
     estado_anterior: Estado
     valor_anterior: Any | None
+    # el mismo `valor_escrito` pasado por el conversor del registro, para poder compararlo
+    # con lo que el registro ya tiene sin repetir la conversion
+    valor_convertido: Any | None = None
 
     @property
     def es_no_op(self) -> bool:
-        return self.valor_anterior is not None and self.valor_anterior == self.valor_escrito
+        """Si el registro ya tiene ese valor escrito.
+
+        Se comparan los valores YA CONVERTIDOS, no el texto contra el objeto: `valor_anterior` es
+        lo que el registro devuelve (`Fraccion(Decimal("0.8"))`, `HoraLocal("07:00", ...)`) y
+        `valor_escrito` es el texto que iria al fichero (`"0.8"`). Compararlos crudos hacia que
+        todo parametro numerico o de hora pareciera cambiar siempre, y un segundo `apply`
+        reescribia el fichero sin que nada hubiera cambiado.
+        """
+        if self.valor_anterior is None:
+            return False
+        if self.valor_anterior == self.valor_escrito:
+            return True
+        return self.valor_convertido is not None and self.valor_anterior == self.valor_convertido
 
 
 def _valor_bruto(r: FeedbackRecord, p: Parametro) -> Any:
@@ -67,7 +84,9 @@ def _valor_bruto(r: FeedbackRecord, p: Parametro) -> Any:
     if bruto is None:
         raise AplicarError(f"{p.nombre}: el registro {r.id} no trae valor")
     if p.tipo in ("entero", "puntos", "minutos"):
-        if not re.fullmatch(r"-?\d+", bruto.strip()):
+        # re.ASCII: sin el, `٣` (tres arabigo) pasaria como 3. El mismo motivo por el que
+        # `feedback/modelo.py` lo usa en sus ids.
+        if not re.fullmatch(r"-?[0-9]+", bruto.strip(), re.ASCII):
             raise AplicarError(
                 f"{p.nombre}: {bruto!r} no es un {p.tipo} (el fichero lo escribe sin comillas); "
                 f"anade un registro con --valor-canonico"
@@ -92,6 +111,20 @@ def cambios_de_sesion(
     `CORRECT` vigente, y quedarse con el `RESOLVE_UNKNOWN` superseded escribiria el valor viejo
     (en `perdida_maxima_diaria`, "saldo del momento" en vez de "saldo inicial del dia").
     """
+    # Un ciclo de supersede (o un registro que se supersede a si mismo) hace que `activos`
+    # descarte los dos extremos y el parametro desaparezca sin que nadie diga nada.
+    for r_ciclo in feedback:
+        if r_ciclo.supersede == r_ciclo.id:
+            raise AplicarError(f"{r_ciclo.id} se supersede a si mismo")
+    por_id = {r_x.id: r_x for r_x in feedback}
+    for r_ciclo in feedback:
+        visto, actual_id = {r_ciclo.id}, r_ciclo.supersede
+        while actual_id is not None:
+            if actual_id in visto:
+                raise AplicarError(f"ciclo de supersede que pasa por {r_ciclo.id}")
+            visto.add(actual_id)
+            siguiente = por_id.get(actual_id)
+            actual_id = siguiente.supersede if siguiente else None
     vigentes: list[FeedbackRecord] = activos(list(feedback))
     por_parametro: dict[str, list[FeedbackRecord]] = {}
     for r in vigentes:
@@ -135,7 +168,7 @@ def cambios_de_sesion(
                     f"{nombre}: es de tipo hora y no declara 'huso' en el fichero; sin huso "
                     f"una hora no dice cuando ocurre"
                 )
-            _convertir(p.tipo, escrito, huso, p.nombre)
+            convertido = _convertir(p.tipo, escrito, huso, p.nombre)
             if p.tipo == "enum" and p.opciones is not None and escrito not in p.opciones:
                 # Se comprueba aqui y no solo al cargar el fichero: si no, `--check` diria que
                 # todo esta bien y el error saldria al escribir, con el registro ya tocado.
@@ -156,6 +189,7 @@ def cambios_de_sesion(
                 canonico=r.valor_canonico is not None,
                 estado_anterior=p.estado,
                 valor_anterior=p.valor,
+                valor_convertido=convertido,
             )
         )
 
@@ -189,33 +223,40 @@ def escribir_cambios(ruta: Path, cambios: Sequence[Cambio]) -> str:
             salida.extend(bloque)
             return
         nuevas: list[str] = []
+        saltando = False
         for linea in bloque:
             if re.match(r"^    (estado|valor|fuente):", linea):
+                # Se descarta la clave Y su continuacion: un `valor: >-` de dos lineas dejaba
+                # las lineas sueltas, que se pegaban a la `descripcion` anterior y producian un
+                # fichero que cargaba bien diciendo otra cosa.
+                saltando = True
                 continue
-            if re.match(r"^      (tipo|id): ", linea):  # cuerpo de `fuente` en varias lineas
+            if saltando and re.match(r"^      ", linea):
                 continue
+            saltando = False
             if re.match(r"^    ambiguedad_id:", linea):
                 # Un valor que llega del trader deja de ser un default nuestro, y el registro
                 # rechaza `ambiguedad_id` fuera de DEFAULT_AMBIGUOUS. Que la ambiguedad siga
                 # abierta se ve cruzando con ambiguedades.yaml (`spec status`), no aqui.
                 continue
             nuevas.append(linea)
-        valor = cambio.valor_escrito
-        texto = (
-            "true"
-            if valor is True
-            else "false"
-            if valor is False
-            else str(valor)
-            if isinstance(valor, int)
-            else f'"{valor}"'
-        )
+        # El escalar lo serializa YAML, no una f-string: un valor con comillas rompia el fichero
+        # y uno con una barra invertida producia OTRO valor que cargaba igual de bien
+        # ("C:\\nuevo" se leia como "C: uevo").
+        texto = yaml.safe_dump(
+            cambio.valor_escrito, default_flow_style=True, allow_unicode=True, width=10**6
+        ).strip()
+        if texto.endswith("\n..."):
+            texto = texto[: -len("\n...")].strip()
         nuevas.append("    estado: CONFIRMED")
         nuevas.append(f"    valor: {texto}")
         nuevas.append("    fuente:")
         nuevas.append("      tipo: feedback")
         nuevas.append(f"      id: {cambio.registro_id}")
         salida.extend(nuevas)
+        escritos.add(actual)
+
+    escritos: set[str] = set()
 
     for linea in lineas:
         m = _INICIO_PARAMETRO.match(linea)
@@ -228,4 +269,14 @@ def escribir_cambios(ruta: Path, cambios: Sequence[Cambio]) -> str:
         else:
             bloque.append(linea)
     volcar()
+    faltan = sorted({c.parametro for c in cambios} - escritos)
+    if faltan:
+        # Sin esto, un fichero con otro formato -el nombre entrecomillado, otra indentacion, un
+        # comentario al final de la linea- devolvia el fichero INTACTO, la validacion del temporal
+        # pasaba (es el mismo fichero) y la CLI decia "OK: escrito" saliendo con 0.
+        raise AplicarError(
+            "no se encontro el bloque de "
+            + ", ".join(faltan)
+            + " en el fichero: su formato no es el que `apply` sabe editar y no se ha escrito nada"
+        )
     return "\n".join(salida) + "\n"

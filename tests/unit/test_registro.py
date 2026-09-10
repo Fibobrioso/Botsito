@@ -417,3 +417,38 @@ def test_ni_enum_ni_booleano_admiten_minimo_o_maximo(tmp_path: Path, tipo: str) 
     ops = ["a", "b"] if tipo == "enum" else _QUITAR
     with pytest.raises(RegistroError, match="minimo/maximo no se aplican"):
         _cargar(tmp_path, _param(tipo=tipo, valor=valor, opciones=ops, minimo="0"))
+
+
+def test_el_huso_del_grafico_es_utc_mas_dos_todo_el_ano(repo: Path) -> None:
+    """`Etc/GMT-2` significa UTC+2: el signo va invertido en la nomenclatura IANA.
+
+    Es el error que este test existe para impedir. Si alguien "corrige" `Etc/GMT-2` por
+    `Etc/GMT+2` porque le parece mas natural, todas las horas de la operativa se desplazan cuatro
+    horas y el bot opera en otro momento del dia sin que nada mas falle.
+
+    Y se comprueba en enero y en julio a proposito: el trader dijo que NO se ajusta al cambio de
+    horario, asi que el desplazamiento tiene que ser el mismo en invierno y en verano -que es lo
+    que distingue `Etc/GMT-2` de `Europe/Madrid`-.
+    """
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    huso = ZoneInfo(r.texto("huso_grafico"))
+    for mes in (1, 7):
+        desfase = datetime(2026, mes, 15, 12, tzinfo=huso).utcoffset()
+        assert desfase is not None
+        assert desfase.total_seconds() == 2 * 3600, f"mes {mes}: {desfase}"
+    madrid = ZoneInfo("Europe/Madrid")
+    enero = datetime(2026, 1, 15, 12, tzinfo=madrid).utcoffset()
+    assert enero is not None and enero.total_seconds() == 3600, (
+        "Europe/Madrid da +1 en enero: por eso el reloj del trader no es Madrid"
+    )
+
+
+def test_las_horas_de_la_operativa_cuelgan_del_huso_del_grafico(repo: Path) -> None:
+    """Las tres horas declaran el mismo huso que `huso_grafico`, o dirian cosas distintas."""
+    r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    esperado = r.texto("huso_grafico")
+    for nombre in ("anclaje_h4", "ventana_inicio", "ventana_fin"):
+        assert r.hora(nombre).huso == esperado, nombre

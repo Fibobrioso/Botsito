@@ -21,7 +21,7 @@ NUMEROS_PROHIBIDOS: dict[Decimal, str] = {
     Decimal("0.8"): "stop en la caja, fijado en la sesion 1 (stop_fraccion_caja)",
     Decimal("0.2"): "lo que se conserva al proteger; es derivado, no un parametro",
     Decimal("4.5"): "tope de perdida diaria (perdida_maxima_diaria)",
-    Decimal("0.75"): "stop en la caja (RN-021)",
+    Decimal("0.75"): "stop en la caja antes de la sesion 1 (RN-023 lo descarta)",
     Decimal("0.5"): "stop reducido / riesgo en fondeo",
     Decimal("0.25"): "nivel de la caja",
     Decimal("0.40"): "riesgo por operacion",
@@ -32,12 +32,16 @@ NUMEROS_PROHIBIDOS: dict[Decimal, str] = {
     ): "escala (puntos por unidad) del instrumento: viene del dataset o del registro",
 }
 TEXTOS_PROHIBIDOS: dict[re.Pattern[str], str] = {
-    re.compile(r"\b(07|11|15):00\b"): "ventana operativa (RN-002)",
+    re.compile(r"\b(07|11|15):00\b"): "ventana operativa (RN-001) y cierre forzoso (RN-002)",
     re.compile(r"\b17:00\b"): "cierre de Nueva York / reloj de servidor (anclaje por parametro)",
-    re.compile(r"\b1:3\b"): "objetivo riesgo/beneficio (RN-024)",
+    re.compile(r"\b23:00\b"): "apertura de la vela H4 del trader (anclaje_h4, sesion 1)",
+    re.compile(r"\b1:3\b"): "objetivo riesgo/beneficio (RN-015)",
     re.compile(r"\bEURUSD\b"): "instrumento",
-    re.compile(r"Europe/Madrid"): "huso del trader (huso_operativa en el registro)",
-    re.compile(r"America/New_York"): "reloj de servidor (anclaje por parametro, ADR-0005)",
+    re.compile(r"\b(XAUUSD|NASDAQ)\b"): "hoja de ruta de instrumentos (instrumento)",
+    re.compile(r"\bFundedNext\b"): "la cuenta (cuenta_objetivo, cuenta_pruebas)",
+    re.compile(r"Europe/Madrid"): "huso del trader antes de la sesion 1 (huso_operativa)",
+    re.compile(r"America/New_York"): "reloj de servidor (anclaje por parametro, ADR-0005)",
+    re.compile(r"Etc/GMT-\d"): "huso del grafico del trader (huso_grafico, ADR-0012)",
 }
 
 
@@ -189,3 +193,41 @@ def test_exencion_no_negocio_exige_motivo(tmp_path: Path) -> None:
     assert _ofensas(py) == []
     py.write_text("X = 0.5  # no-negocio:" + chr(10), encoding="utf-8")
     assert len(_ofensas(py)) == 1
+
+
+def test_los_valores_confirmados_del_registro_estan_vigilados(repo: Path) -> None:
+    """La lista de arriba no puede quedarse atras del registro.
+
+    Antes de la sesion 1 vigilaba 0,75 y 0,5 -las hipotesis de entonces- y dejaba pasar 0,8 y 4,5,
+    que son los valores de verdad. Este test cierra ese hueco: cada numero de ESTRATEGIA que el
+    registro da por bueno tiene que estar prohibido en `src/`, porque su sitio es el registro.
+
+    Los enteros pequenos quedan fuera a proposito (`3` cartuchos, `9` % semanal): prohibir el 3 en
+    todo el codigo seria insufrible y para eso esta el contrato AST de accesores, que exige que
+    cada lectura del registro cite un parametro existente con su tipo.
+    """
+    from decimal import Decimal
+
+    from botsito.config.registro import Estado, cargar_registro
+    from botsito.domain.valores import Fraccion, Porcentaje
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    faltan: list[str] = []
+    for nombre in registro.por_categoria("estrategia"):
+        p = registro.parametros[nombre]
+        if p.estado is Estado.UNKNOWN or p.valor is None:
+            continue
+        if isinstance(p.valor, Fraccion | Porcentaje):
+            magnitud = p.valor.valor
+        elif isinstance(p.valor, Decimal):
+            magnitud = p.valor
+        else:
+            continue  # textos, enums, horas y booleanos: los vigila TEXTOS_PROHIBIDOS
+        if magnitud == magnitud.to_integral_value():
+            continue  # entero desnudo: ver el docstring
+        if magnitud not in NUMEROS_PROHIBIDOS:
+            faltan.append(f"{nombre} = {magnitud}")
+    assert not faltan, (
+        "valores de estrategia que el registro confirma y la lista no vigila: "
+        + ", ".join(sorted(faltan))
+    )

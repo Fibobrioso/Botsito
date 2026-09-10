@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-e3eedcaa
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: parametro
+  id: cartuchos_reinicio
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Bueno, en este caso sería 3 pérdidas [...] Tras 3 pérdidas Claro
+registrado_por: Aleks · grabacion de la sesion 1 (v6), cruda leida
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '2:21:05'
+t1: '2:21:20'
+valor_resultante: tras 3 perdidas se para hasta la siguiente liquidez de M15
+valor_canonico: siguiente_liquidez_m15
+supersede: fb-2026-09-09-sesion-01-dec10786
+notas: corrige el registro anterior, que llevaba una parafrasis del consultor en el campo del literal
+  -y ademas decia 'dos perdidas' cuando el trader remata en 'seria 3 perdidas'-. La condicion de reinicio
+  (la siguiente liquidez de M15) viene de R-09, ev-v3-005617-f9d41904, confirmada en esta misma respuesta.

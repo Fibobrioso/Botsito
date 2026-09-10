@@ -632,7 +632,11 @@ def spec_status(repo: Path) -> int:
     la ambiguedad sigue abierta porque hay algo que medir. Esto lo ensena junto en vez de
     degradar el estado del parametro.
     """
-    from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+    from botsito.cases.ambiguedades import (
+        FICHERO_AMBIGUEDADES,
+        AmbiguedadError,
+        cargar_ambiguedades,
+    )
     from botsito.config.registro import Estado, RegistroError, cargar_registro
     from botsito.spec.manifiesto import (
         FICHERO_MANIFIESTO,
@@ -648,7 +652,7 @@ def spec_status(repo: Path) -> int:
         reglas = cargar_reglas(repo / FICHERO_SPEC)
         manifiesto = cargar_manifiesto_spec(repo / FICHERO_MANIFIESTO)
         ambiguedades = cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES)
-    except (RegistroError, SpecError, ManifiestoSpecError) as exc:
+    except (RegistroError, SpecError, ManifiestoSpecError, AmbiguedadError, OSError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
@@ -708,14 +712,20 @@ def spec_manifest(repo: Path, escribir: bool) -> int:
             print(f"OK: hash al dia ({actual[:12]}…)")
             return 0
         doc = cargar_manifiesto_spec(ruta)
-    except ManifiestoSpecError as exc:
+    except (ManifiestoSpecError, OSError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     if doc["hash"] == actual:
         print(f"OK: el hash ya estaba al dia ({actual[:12]}…)")
         return 0
     texto = ruta.read_text(encoding="utf-8")
-    ruta.write_text(texto.replace(str(doc["hash"]), actual, 1), encoding="utf-8", newline="\n")
+    # Por la CLAVE, no por la primera aparicion del hash: si ese hash sale antes en un
+    # comentario, se actualizaba el comentario y `hash:` se quedaba viejo, con un OK enganoso.
+    nuevo_texto, sustituciones = re.subn(r"(?m)^hash: .*$", f"hash: {actual}", texto, count=1)
+    if sustituciones != 1:
+        print("ERROR: no se encontro la clave 'hash:' en el manifiesto", file=sys.stderr)
+        return 1
+    ruta.write_text(nuevo_texto, encoding="utf-8", newline="\n")
     print(f"OK: hash actualizado a {actual[:12]}…")
     print("Recuerda subir spec_version si la spec cambio de verdad")
     return 0
@@ -744,10 +754,20 @@ def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
             if isinstance(p, dict) and p.get("huso")
         }
         cambios = cambios_de_sesion(registro, feedback, sesion, husos)
-    except (RegistroError, FeedbackError, AplicarError) as exc:
+    except (RegistroError, FeedbackError, AplicarError, OSError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     if not cambios:
+        # Un typo en --sesion no puede parecer un exito: antes decia AVISO y salia con 0, asi que
+        # `apply --sesion 2026-09-09-sesion-99` "funcionaba".
+        sesiones = sorted({r.sesion for r in feedback})
+        if sesion not in sesiones:
+            print(
+                f"ERROR: no hay ningun registro de la sesion {sesion} (las que hay: "
+                f"{', '.join(sesiones) or 'ninguna'})",
+                file=sys.stderr,
+            )
+            return 1
         print(f"AVISO: la sesion {sesion} no propone ningun valor de parametro")
         return 0
 
