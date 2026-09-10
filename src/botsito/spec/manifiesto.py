@@ -111,6 +111,7 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
                     "entonces",
                     "parametros",
                     "clase",
+                    "complementa",
                     "cita",
                     "literal",
                     "notas",

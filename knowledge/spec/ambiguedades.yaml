@@ -100,7 +100,7 @@ ambiguedades:
       - ev-v4-003102-1ddeeaa8
       - ev-v4-003227-038864db
       - ev-v4-003252-ef8d3139
-    parametros: [stop_segundo_esquema]
+    parametros: [stop_fraccion_caja]
     contradiccion: null
     estado: RESUELTA
     bloqueante: false

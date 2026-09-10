@@ -26,7 +26,7 @@ ESTADOS_REGLA = ("VIGENTE", "DESCARTADA")
 # EDITORIAL -agrupado por tema, con comentarios, y RN-026/RN-027 viven bajo la cabecera "reglas
 # descartadas" siendo VIGENTES-, asi que tomarlo por semantica convertia un reagrupamiento
 # cosmetico en un cambio de comportamiento. De mas fuerte a mas debil.
-CLASES_REGLA = ("gate", "disparador", "terminal", "fallback")
+CLASES_REGLA = ("gate", "terminal", "disparador", "fallback")
 CAMPOS_REGLA = {
     "id",
     "titulo",
@@ -38,7 +38,7 @@ CAMPOS_REGLA = {
     "clase",
     "estado",
 }
-CAMPOS_REGLA_OPCIONALES = {"notas", "decision"}
+CAMPOS_REGLA_OPCIONALES = {"notas", "decision", "complementa"}
 CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 
@@ -57,6 +57,7 @@ _NUMEROS_EN_LETRAS = (
     "cero",
     "uno",
     "una",
+    "un",
     "dos",
     "tres",
     "cuatro",
@@ -107,10 +108,30 @@ _UNIDADES = (
     "zonas?",
     "esquemas?",
     "operacion(?:es)?",
-    "zonas? de control",
+    "cartuchos?",
 )
+# En LOS DOS ORDENES, y admitiendo hasta dos palabras en medio. La auditoria del 2026-09-10
+# encontro que esto solo casaba numero+unidad SEGUIDOS, asi que "las operaciones abiertas son
+# cero" pasaba -y esa frase la escribi yo, arreglando justamente este fallo- igual que "hay una
+# unica operacion abierta". Un valor de negocio no deja de serlo por el orden de las palabras.
+_NUM = "(?:" + "|".join(_NUMEROS_EN_LETRAS) + ")"
+_UNI = "(?:" + "|".join(_UNIDADES) + ")"
+_HUECO = r"(?:\s+\w+){0,2}"
+# La rama invertida admite UNA sola palabra en medio, no dos: con dos, "el lote calculado no es un
+# multiplo de instrumento_lote_paso" saltaba por "lote … no es un", que es espanol corriente.
+_HUECO_INV = r"(?:\s+\w+)?"
 _EN_LETRAS = re.compile(
-    r"\b(?:" + "|".join(_NUMEROS_EN_LETRAS) + r")\s+(?:" + "|".join(_UNIDADES) + r")\b",
+    r"\b(?:"
+    + _NUM
+    + _HUECO
+    + r"\s+"
+    + _UNI
+    + r"|"
+    + _UNI
+    + _HUECO_INV
+    + r"\s+(?:son|es|de)\s+"
+    + _NUM
+    + r")\b",
     re.IGNORECASE,
 )
 
@@ -143,6 +164,10 @@ class Regla:
     # El ADR que sostiene lo que la regla decide POR SU CUENTA. Obligatorio cuando la regla opera
     # sobre parametros de entorno: ahi no hay trader al que citar, hay una decision nuestra.
     decision: str | None = None
+    # Otra regla a la que esta REFINA en vez de competir con ella: un invariante, o el mismo
+    # efecto dicho para otro caso. Sin este campo, dos reglas que se solapan a proposito son
+    # indistinguibles de dos que se pisan por accidente.
+    complementa: tuple[str, ...] = ()
 
     @property
     def vigente(self) -> bool:
@@ -186,7 +211,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         raise SpecError(f"{ruta.name}: {exc}") from exc
     if not isinstance(doc, dict) or set(doc) != {"version_esquema", "reglas"}:
         raise SpecError(f"{ruta.name}: se esperan 'version_esquema' y 'reglas'")
-    if doc["version_esquema"] != 1:
+    if doc["version_esquema"] != 2:
         raise SpecError(f"{ruta.name}: version_esquema desconocida {doc['version_esquema']!r}")
     bruto = doc["reglas"]
     if not isinstance(bruto, list) or not bruto:
@@ -219,6 +244,9 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         cita = str(r["cita"])
         if not _cita_valida(cita):
             raise SpecError(f"{rid}: cita {cita!r} no es un id de evidencia ni de feedback")
+        comp = r.get("complementa") or []
+        if not isinstance(comp, list) or not all(ids.es_id_de("regla", str(c)) for c in comp):
+            raise SpecError(f"{rid}: 'complementa' debe ser una lista de ids RN-NNN")
         decision = r.get("decision")
         if decision is not None and not re.fullmatch(r"ADR-\d{4}", str(decision), re.ASCII):
             raise SpecError(f"{rid}: decision {decision!r} no tiene formato ADR-NNNN")
@@ -243,6 +271,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
                 clase=clase,
                 notas=" ".join(str(r["notas"]).split()) if r.get("notas") else None,
                 decision=str(r["decision"]).strip() if r.get("decision") else None,
+                complementa=tuple(str(c).strip() for c in comp),
             )
         )
     return reglas
@@ -394,10 +423,18 @@ def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
     - RN-019 (019) ganaba a RN-020 (020): se reentraba despues de tocar el tope diario.
     - RN-022 es la clausula `else` y estaba ANTES de RN-026 y RN-027, que son reglas reales.
 
-    Por eso la precedencia va por `clase` (ADR-0018). Aqui se comprueba lo unico que una maquina
-    puede comprobar sin ejecutar la estrategia: que haya exactamente un `fallback`, que sea el mas
-    debil, y que dos reglas de la MISMA clase no declaren la misma accion sobre el mismo disparo
-    sin que una de las dos lleve una precondicion que las distinga.
+    Por eso la precedencia va por `clase` (ADR-0018).
+
+    LO QUE ESTA FUNCION NO HACE, y conviene no creer que hace: NO habria cazado ninguno de esos
+    tres pares. Se comprobo ejecutandola sobre la spec anterior al arreglo y devolvio cero
+    hallazgos, porque RN-006 y RN-014 no comparten ningun parametro y RN-019 y RN-020 tampoco.
+    Decidir que dos reglas actuan "sobre el mismo evento" exige leer `cuando`, que hoy es prosa;
+    esa comprobacion es el trabajo de F12 y NO existe todavia.
+
+    Lo que si comprueba, que es poco pero es cierto: que haya exactamente un `fallback`; que dos
+    reglas de la misma clase no tengan exactamente los mismos parametros (un clon); y que los
+    parametros de una no sean un SUBCONJUNTO de los de otra de su clase, que es la forma en que
+    RN-017 se solapa con RN-016 y RN-013 con RN-011.
     """
     problemas: list[str] = []
     vigentes = [r for r in reglas if r.vigente]
@@ -424,4 +461,22 @@ def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
                 f"parametros ({params}); nada dice cual manda salvo el orden del fichero, que es "
                 f"editorial. Dale a una de las dos la precondicion que la distingue"
             )
+
+    # Y el solapamiento por subconjunto, que es como se tocan de verdad las reglas hermanas.
+    conjuntos = {r.id: (r.clase, frozenset(r.parametros)) for r in vigentes if r.parametros}
+    for a, (clase_a, pa) in sorted(conjuntos.items()):
+        for b, (clase_b, pb) in sorted(conjuntos.items()):
+            if a >= b or clase_a != clase_b or pa == pb:
+                continue
+            if pa < pb or pb < pa:
+                menor, mayor = (a, b) if pa < pb else (b, a)
+                por_id = {r.id: r for r in vigentes}
+                if mayor in por_id[menor].complementa or menor in por_id[mayor].complementa:
+                    continue  # se solapan A PROPOSITO y esta declarado
+                problemas.append(
+                    f"{menor} y {mayor}: misma clase ('{clase_a}') y los parametros de {menor} son "
+                    f"un subconjunto de los de {mayor}; se solapan y nada dice cual manda. Si es "
+                    f"a proposito -un invariante, o el mismo efecto para otro caso- declaralo con "
+                    f"`complementa: [{mayor}]`"
+                )
     return problemas

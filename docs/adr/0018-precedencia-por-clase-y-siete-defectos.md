@@ -9,7 +9,11 @@ phase: F12
 ## Decision
 
 1. **Campo `clase` obligatorio en cada regla**, de conjunto cerrado y con precedencia fija:
-   `gate` > `disparador` > `terminal` > `fallback`. Una prohibición gana siempre a un permiso.
+   `gate` > `terminal` > `disparador` > `fallback`. Una prohibición gana siempre; y en
+   `ventana_fin`, **cerrar la jornada gana a mover un stop o activar una entrada**.
+1 bis. **Campo `complementa`** (lista de ids): dos reglas que se solapan A PROPÓSITO —un
+   invariante, o el mismo efecto para otro caso— lo declaran. Sin él, un solape deliberado es
+   indistinguible de uno accidental.
 2. **El orden del fichero deja de tener semántica.** Es editorial y se queda así.
 3. **`clase` entra en el hash**: decide qué regla gana, o sea lo que el bot hace.
 4. **`stop_segundo_esquema` pasa a UNKNOWN a propósito.** Hay un único esquema de stop.
@@ -53,13 +57,20 @@ condición ejecutable; y RN-002 nombraba *"la hora del gráfico"* mientras sus `
 
 ## Por que elegimos esta opcion
 
-Porque **la clase dice el porqué y el entero no**. Seis reglas vigentes son prohibiciones puras y una
-es el freno del día: "una prohibición gana a un permiso" es una frase que un humano verifica de un
-vistazo, y resuelve los tres pares rotos sin tocar ninguna regla más.
+Porque **la clase dice el porqué y el entero no**. Nueve reglas vigentes frenan o prohíben, y "una
+prohibición gana a un permiso" es una frase que un humano verifica de un vistazo.
 
-Y porque hace la coherencia **mecanizable**: dos reglas de la misma clase con exactamente los mismos
-parámetros son ahora un error de `knowledge validate` con los dos ids en el mensaje, que es
-literalmente el criterio que MASTER_PLAN pide de F12 (*"falla nombrando el id"*).
+## Lo que esta decisión NO consigue, y conviene no creer que consigue
+
+La primera versión de este ADR afirmaba que la coherencia quedaba mecanizada. **Es falso, y la
+auditoría del arreglo lo demostró ejecutando la guardia sobre la spec anterior: devolvió cero
+hallazgos.** `comprobar_precedencia` no habría cazado ninguno de los tres pares que motivan este
+ADR, porque RN-006 y RN-014 no comparten ningún parámetro, y RN-019 y RN-020 tampoco.
+
+Decidir que dos reglas actúan *sobre el mismo evento* exige leer `cuando`, que hoy es prosa. **Esa
+comprobación es el trabajo de F12 y no existe todavía.** Lo que la guardia sí hace —clones, solapes
+por subconjunto y un único `fallback`— es poco, pero es cierto, y está escrito así en su docstring
+para que nadie se apoye en más de lo que sostiene.
 
 ## Por que descartamos las demas
 
@@ -95,6 +106,26 @@ literalmente el criterio que MASTER_PLAN pide de F12 (*"falla nombrando el id"*)
   buscado.
 - **Queda para F12**, no aquí: la forma ejecutable de las reglas. Este ADR arregla la spec que se va
   a formalizar; formalizarla con estos siete defectos dentro los habría horneado.
+
+## Corrección del propio arreglo (auditoría del 2026-09-10)
+
+Un agente auditó este ADR contra los ficheros y encontró que **el arreglo estaba parcialmente mal**:
+
+- **La aritmética de este ADR se contradecía con el fichero.** Decía "seis prohibiciones puras y una
+  es el freno del día" = siete `gate`; había **seis**. Faltaba **RN-016**, que dice *"al llegar a
+  `cartuchos_max` se deja de operar"* y quedó como `disparador`: el mismo defecto que este ADR
+  arregla para RN-019/RN-020, vivo en su gemelo. Igual **RN-001** (*"fuera de ese intervalo no
+  opera"*) y **RN-027**.
+- **La precondición de RN-006 usaba un proxy falso.** Se escribió "las operaciones abiertas son
+  cero", y tras un stop o un break even la cuenta vuelve a cero **mientras la orden límite ya no
+  existe, porque se llenó**. La condición es que la orden exista y siga pendiente.
+- **Y metía un número de negocio en un campo ejecutable** —"son cero"— que la guardia no veía:
+  `_EN_LETRAS` solo casaba número+unidad **en ese orden**. Ahora casa los dos, con hueco.
+- **RN-013 acabó citando un registro revocado** por el REJECT de este mismo commit. La guardia
+  gemela solo miraba `parametros.yaml`; ahora cubre reglas y glosario.
+- **A-7 estaba RESUELTA apuntando a un parámetro que este ADR dejó UNKNOWN.** Pasa a apuntar a
+  `stop_fraccion_caja`, que es donde vive la respuesta.
+- **`version_esquema` no se había subido** pese a añadir un campo obligatorio. Ahora es 2.
 
 ## Fecha / fase
 

@@ -375,6 +375,16 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     # iba la voz del trader -y que ademas decia "dos perdidas" donde el trader remata "serian 3
     # perdidas"-. Nada lo veia: `apply` comparaba valores y el valor no habia cambiado.
     revocados = {r.supersede: r.id for r in registros_fb if r.supersede}
+    # `ambiguedad_id` se validaba solo de FORMATO: un `A-200` inexistente pasaba entero.
+    ids_amb = ids_ambiguedades(repo)
+    if ids_amb is not None:
+        for nombre, p_amb in sorted(registro.parametros.items()):
+            if p_amb.ambiguedad_id and p_amb.ambiguedad_id not in ids_amb:
+                salida.append(
+                    f"ERROR: registro: {nombre} declara {p_amb.ambiguedad_id}, que no existe en "
+                    f"ambiguedades.yaml"
+                )
+                return 1, salida
     for nombre, p_reg in sorted(registro.parametros.items()):
         if p_reg.fuente is None or p_reg.fuente.tipo != "feedback":
             continue
@@ -457,6 +467,16 @@ def validar(repo: Path) -> tuple[int, list[str]]:
                         )
             # Y que la precedencia no la decida el orden del fichero, que es editorial.
             problemas_spec += comprobar_precedencia(reglas)
+            # Y que ni una regla ni un termino citen un registro revocado. La guardia gemela solo
+            # miraba `parametros.yaml`, asi que RN-013 acabo citando uno en el propio commit que
+            # arreglaba esto para los parametros.
+            for doc_id, cita_id in [(r.id, r.cita) for r in reglas] + [
+                (f"glosario {x.termino!r}", x.cita) for x in terminos
+            ]:
+                if cita_id in revocados:
+                    problemas_spec.append(
+                        f"{doc_id}: cita {cita_id}, que esta revocado por {revocados[cita_id]}"
+                    )
             problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
         except SpecError as exc:
             problemas_spec = [str(exc)]

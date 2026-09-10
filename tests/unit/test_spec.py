@@ -40,7 +40,7 @@ def _regla(**cambios: Any) -> dict[str, Any]:
 def _escribir(tmp_path: Path, reglas: list[dict[str, Any]]) -> Path:
     ruta = tmp_path / "strategy_spec.yaml"
     ruta.write_text(
-        yaml.safe_dump({"version_esquema": 1, "reglas": reglas}, allow_unicode=True),
+        yaml.safe_dump({"version_esquema": 2, "reglas": reglas}, allow_unicode=True),
         encoding="utf-8",
         newline="\n",
     )
@@ -425,8 +425,24 @@ def test_la_precedencia_no_la_decide_el_orden_del_fichero() -> None:
 
     por_id = {r.id: r for r in reglas}
     # los frenos son gates y ganan a los disparadores
-    for rid in ("RN-005", "RN-008", "RN-009", "RN-018", "RN-020", "RN-026"):
+    # RN-001 y RN-016 entraron en la auditoria del arreglo: las dos frenan -"fuera de ese
+    # intervalo no opera", "al llegar a cartuchos_max se deja de operar"- y estaban como
+    # disparador, que es el mismo defecto que ADR-0018 arreglo para RN-019/RN-020.
+    for rid in (
+        "RN-001",
+        "RN-005",
+        "RN-008",
+        "RN-009",
+        "RN-016",
+        "RN-018",
+        "RN-020",
+        "RN-026",
+        "RN-027",
+    ):
         assert por_id[rid].clase == "gate", rid
+    assert CLASES_REGLA.index("terminal") < CLASES_REGLA.index("disparador"), (
+        "cerrar la jornada tiene que ganar a mover un stop en ventana_fin"
+    )
     assert por_id["RN-002"].clase == "terminal"
     assert por_id["RN-022"].clase == "fallback", "la clausula else no puede ser un disparador"
     assert sum(1 for r in reglas if r.vigente and r.clase == "fallback") == 1
