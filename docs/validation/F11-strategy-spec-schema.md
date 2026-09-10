@@ -3,10 +3,29 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde: 573 casos (402 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde: 584 casos (408 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
+
+## 0. Los tres puntos críticos, cerrados
+
+Antes de dar F11 por terminada se revisaron sus puntos débiles. Tres eran reales:
+
+1. **Nadie comprobaba que la spec dijera lo que cita.** El brief lo pedía y no estaba
+   implementado. Al encender la comprobación, **diez de las veinticinco reglas fallaron**: sus
+   literales estaban escritos de memoria. Corregidas con el texto real de cada cita, y
+   `knowledge validate` lo vigila con el mismo criterio de tokens que ADR-0009 usa con la
+   evidencia.
+2. **Nada obligaba a subir `spec_version`.** El hash solo decía que el manifiesto estaba al día;
+   regenerarlo sin pensar dejaba dos specs distintas diciendo ser la misma. Ahora se compara con
+   HEAD y es error.
+3. **La guardia de números era sintáctica**: "el stop va al ochenta por ciento" pasaba. Ahora
+   también mira números en letras, pero solo con unidad, para no prohibir el español corriente.
+
+Y uno más, encontrado al revisarlos: `apply` dejaba `ambiguedad_id` junto a `CONFIRMED` si un
+parámetro venía de `DEFAULT_AMBIGUOUS`, produciendo un fichero que no carga. Abortaba sin
+corromper, pero sin salida posible. Arreglado con test.
 
 ## 1. Qué hace F11
 
@@ -121,6 +140,14 @@ cruzando con las ambigüedades abiertas, no degradando su estado.
 
 ## 8. Deuda que F11 deja anotada
 
+- **Las reglas son prosa, no código.** `cuando` y `entonces` son texto en español: nada garantiza
+  que el motor de F18–F23 implemente lo que la regla dice. Cerrar eso es el trabajo de F12, y
+  conviene no darlo por hecho.
+- **`apply` reescribe la única puerta de los valores** editando línea a línea para preservar
+  comentarios. Funciona y valida el resultado antes de reemplazar, pero es la pieza más frágil y
+  la que más vigilancia merece cuando el fichero crezca.
+- **Las cadenas de superseders son largas**: hay parámetros con tres registros encadenados. Se
+  comprueba que cada `supersede` exista, no que la cadena sea coherente.
 - `knowledge/cases/kit/mapa_parametros.yaml` conserva `temas` y `ambiguedad`; sus `opciones` ya
   bajaron al registro. Queda decidir dónde vive el resto (F13).
 - La tabla R-01..R-14 → `fb-…` no se ha escrito: las reglas citan directamente el registro de
