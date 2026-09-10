@@ -62,7 +62,9 @@ reglas:
       liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
     parametros: [liquidez_m15_criterio_toma]
     cita: fb-2026-09-09-sesion-01-6e15504f
-    literal: ¿Vale con que la vela cierre con el cuerpo por encima del máximo [...] Con cuerpo
+    literal: >-
+      ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
+      o vale con que la mecha lo perfore? Con cuerpo
     notas: solo en M15; en M1 el rompimiento es indiferente
     estado: VIGENTE
 
@@ -73,7 +75,8 @@ reglas:
     parametros: []
     cita: ev-v3-001600-ed45b091
     literal: >-
-      todo lo que se desarrolle dentro, o sea, por debajo de M15 [...] es ruido
+      yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...]
+      de esta liquidez de m15 es ruido
     estado: VIGENTE
 
   - id: RN-006
@@ -102,7 +105,9 @@ reglas:
     entonces: no se opera
     parametros: []
     cita: ev-v4-001844-93dcb658
-    literal: si no se da ninguno de los dos, no hay entrada
+    literal: >-
+      aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
+      sabemos cuál es [...] cualquiera de estos dos de aquí
     estado: VIGENTE
 
   - id: RN-009
@@ -111,7 +116,9 @@ reglas:
     entonces: no se opera
     parametros: []
     cita: ev-v4-001909-54ac2edd
-    literal: ya como me generó más de una zona de control dentro [...] no podemos entrar
+    literal: >-
+      aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
+      de control [...] por lo general sólo buscamos uno
     estado: VIGENTE
 
   - id: RN-010
@@ -121,8 +128,8 @@ reglas:
     parametros: [salida_sin_ruptura, stop_fraccion_caja]
     cita: fb-2026-09-09-sesion-01-9626d3dd
     literal: >-
-      igual si se toma la entrada se mantiene las mismas consideraciones que veníamos manejándose
-      en cuanto a gestión del precio
+      se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa ya
+      nos saca con menos 0.80
     estado: VIGENTE
 
   # ---------------------------------------------------------------- riesgo y gestion
@@ -175,7 +182,7 @@ reglas:
     entonces: el stop pasa a la entrada, en el instante del toque segun break_even_condicion
     parametros: [break_even_condicion]
     cita: fb-2026-09-09-sesion-01-0ccafcba
-    literal: Apenas toca
+    literal: yo siempre lo he estado trabajando, o sea, apenas toca
     notas: >-
       el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
       despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
@@ -189,7 +196,7 @@ reglas:
       (objetivo_extension_activa) ni se sacan parciales (parciales)
     parametros: [objetivo_rr, objetivo_extension_activa, parciales]
     cita: fb-2026-09-09-sesion-01-7fbbb2e7
-    literal: Siempre se fija el 1:3, no importa en qué escenario nos encontremos
+    literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
     estado: VIGENTE
 
   # ---------------------------------------------------------------- limites del dia
@@ -224,7 +231,9 @@ reglas:
     entonces: no se abre otra; para reentrar hay que haber salido antes
     parametros: []
     cita: ev-v4-003710-c753f3d3
-    literal: no hay entradas en paralelo
+    literal: >-
+      para que tú puedas entrar nuevamente o bien te ha tocado stop loss o bien pues has tenido
+      profit, pero con el profit ya no operas más
     estado: VIGENTE
 
   - id: RN-019
@@ -259,7 +268,8 @@ reglas:
     entonces: no se filtra (filtro_noticias, filtro_spread)
     parametros: [filtro_noticias, filtro_spread]
     cita: fb-2026-09-09-sesion-01-3565552d
-    literal: Que se opere con todo y noticias, la operativa es indiferente a esto.
+    literal: >-
+      a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
     notas: >-
       A-17: el propio trader avisa de que la cuenta de fondeo puede prohibirlo y cerrar la cuenta
       aunque se acabe en profit. Verificar antes de operar en real
@@ -306,7 +316,9 @@ reglas:
     entonces: no se entra
     parametros: []
     cita: ev-v4-013008-73dcd8c3
-    literal: El bot se queda con los 2 primeros esquemas de momento.
+    literal: >-
+      solo sería agregar un modelo de entrada más, o sea, no un modelo, sino un esquema de
+      entrada más [...] antes que se desarrolle esta zona de control pues operar
     notas: >-
       lo explico en v6 entre 0:41:00 y 0:50:11, tramo declarado fuera de la operativa por ambos y
       no citable (knowledge/corpus/tramos_no_citables.yaml)

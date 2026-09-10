@@ -130,12 +130,51 @@ def cargar_manifiesto(ruta: Path) -> dict[str, Any]:
     return doc
 
 
+def version_sin_subir(repo: Path, ruta: Path) -> str | None:
+    """El problema, si la spec cambio respecto a HEAD y `spec_version` sigue siendo la misma.
+
+    El hash solo dice que el manifiesto esta al dia con los ficheros; no impide regenerarlo sin
+    pensar. Sin esto, dos backtests con estrategias distintas podrian decir que corrieron con la
+    misma version de la spec, que es justo lo que el manifiesto existe para impedir.
+
+    Se compara con HEAD y no con el fichero anterior porque lo que importa es lo que quedo
+    registrado: un cambio sin commitear todavia no ha ocurrido para nadie mas.
+    """
+    from botsito.comun.historial import contenido_en_head
+    from botsito.comun.yaml_estricto import cargar_yaml
+
+    ruta_relativa = FICHERO_MANIFIESTO
+    anterior = contenido_en_head(repo, ruta_relativa)
+    if anterior is None:
+        return None  # sin git, sin commits o manifiesto nuevo: no hay con que comparar
+    try:
+        doc_anterior = cargar_yaml(anterior)
+        doc_actual = cargar_manifiesto(ruta)
+    except (YamlError, ManifiestoSpecError):
+        return None  # el manifiesto de HEAD no es legible: no es este el sitio para denunciarlo
+    if not isinstance(doc_anterior, dict):
+        return None
+    hash_anterior = str(doc_anterior.get("hash", ""))
+    version_anterior = str(doc_anterior.get("spec_version", ""))
+    cambio = bool(hash_anterior) and hash_anterior != str(doc_actual["hash"])
+    if cambio and version_anterior == str(doc_actual["spec_version"]):
+        return (
+            f"la spec cambio (hash {hash_anterior[:12]}… -> "
+            f"{str(doc_actual['hash'])[:12]}…) pero spec_version sigue en "
+            f"{version_anterior}: sube la version o dos specs distintas diran ser la misma"
+        )
+    return None
+
+
 def comprobar(repo: Path, ruta: Path) -> list[str]:
     """Problemas entre lo que dice el manifiesto y lo que hay en los ficheros."""
     try:
         doc = cargar_manifiesto(ruta)
     except ManifiestoSpecError as exc:
         return [str(exc)]
+    problema_version = version_sin_subir(repo, ruta)
+    if problema_version is not None:
+        return [f"{ruta.name}: {problema_version}"]
     actual = hash_de(repo)
     if doc["hash"] != actual:
         return [

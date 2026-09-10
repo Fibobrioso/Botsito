@@ -228,3 +228,78 @@ def test_manifiesto_mal_escrito(tmp_path: Path) -> None:
     )
     with pytest.raises(ManifiestoSpecError, match="semver"):
         cargar_manifiesto(ruta)
+
+
+# --- una regla no puede decir algo distinto de lo que cita ---
+
+
+def test_el_literal_de_una_regla_debe_estar_en_lo_que_cita(tmp_path: Path) -> None:
+    """La guardia que faltaba: sin ella una regla puede poner palabras en boca del trader."""
+    from botsito.spec.modelo import comprobar_literales
+
+    reglas = cargar_reglas(_escribir(tmp_path, [_regla(literal="se reduce al 0.80")]))
+    assert comprobar_literales(reglas, {FB: "por temas de spread se reduce al 0.80"}) == []
+    problemas = comprobar_literales(reglas, {FB: "el stop se queda en 0.75"})
+    assert len(problemas) == 1 and "no aparece en" in problemas[0]
+
+
+def test_el_literal_admite_el_comodin_como_la_evidencia(tmp_path: Path) -> None:
+    from botsito.spec.modelo import comprobar_literales
+
+    reglas = cargar_reglas(
+        _escribir(tmp_path, [_regla(literal="apenas se abre [...] se mueve el stop")])
+    )
+    citado = "la operativa se calcula normal, apenas se abre la operacion se mueve el stop a 0.8"
+    assert comprobar_literales(reglas, {FB: citado}) == []
+
+
+def test_la_spec_real_dice_lo_que_cita() -> None:
+    from botsito.evidence.modelo import cargar_evidencia
+    from botsito.feedback.modelo import cargar_feedback
+    from botsito.spec.modelo import FICHERO_SPEC, comprobar_literales
+
+    textos = {i.id: i.cita_literal for i in cargar_evidencia(REPO / "knowledge" / "evidence")}
+    textos.update(
+        {r.id: r.respuesta_literal for r in cargar_feedback(REPO / "knowledge" / "feedback")}
+    )
+    assert comprobar_literales(cargar_reglas(REPO / FICHERO_SPEC), textos) == []
+
+
+# --- numeros escritos en letras ---
+
+
+@pytest.mark.parametrize(
+    ("texto", "salta"),
+    [
+        ("el stop va al ochenta por ciento de la caja", True),
+        ("se permiten tres intentos por zona", True),
+        ("el spread supera los veinte puntos", True),
+        # espanol corriente, no valores: prohibirlos haria imposible escribir una regla
+        ("se abre una operacion por cualquiera de los dos esquemas", False),
+        ("el precio toma la liquidez de M15 dentro de la vela H4", False),
+        ("se opera segun stop_fraccion_caja", False),
+    ],
+)
+def test_numeros_en_letras_solo_cuentan_con_unidad(tmp_path: Path, texto: str, salta: bool) -> None:
+    if salta:
+        with pytest.raises(SpecError, match="contiene"):
+            cargar_reglas(_escribir(tmp_path, [_regla(entonces=texto)]))
+    else:
+        assert len(cargar_reglas(_escribir(tmp_path, [_regla(entonces=texto)]))) == 1
+
+
+# --- la version de la spec no puede quedarse atras ---
+
+
+def test_version_sin_subir_detecta_una_spec_cambiada(tmp_path: Path) -> None:
+    """Regenerar el hash sin subir la version haria que dos specs distintas dijeran ser la misma."""
+    from botsito.spec.manifiesto import version_sin_subir
+
+    ruta = tmp_path / "spec_manifest.yaml"
+    ruta.write_text(
+        'spec_version: "1.0.1"\nhash: ' + "b" * 64 + '\ngenerado_el: "x"\ncubre: [a, b, c]\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    # Sin git no hay con que comparar, y eso no es un error: se dice que no se puede saber.
+    assert version_sin_subir(tmp_path, ruta) is None

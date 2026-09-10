@@ -369,6 +369,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         Termino,
         cargar_reglas,
         comprobar_contra,
+        comprobar_literales,
     )
     from botsito.spec.modelo import (
         cargar_glosario as cargar_glosario_spec,
@@ -385,6 +386,12 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             )
             citas = {i.id for i in items} | {r.id for r in registros_fb}
             problemas_spec = comprobar_contra(reglas, terminos, set(registro.nombres()), citas)
+            # Y que cada regla diga lo que su cita dice: mismo criterio de tokens que ADR-0009
+            # usa con la evidencia. Sin esto, una regla podria poner palabras en boca del
+            # trader citando un registro que dice otra cosa.
+            textos_citados = {i.id: i.cita_literal for i in items}
+            textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
+            problemas_spec += comprobar_literales(reglas, textos_citados)
             # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
             # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
             for r in reglas:

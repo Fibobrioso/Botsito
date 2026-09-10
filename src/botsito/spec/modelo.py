@@ -15,6 +15,7 @@ from typing import Any
 
 from botsito.comun import ids
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
+from botsito.evidence.verificacion import CitaError, buscar_secuencia, tokens, trozos_de_cita
 
 FICHERO_SPEC = "knowledge/spec/strategy_spec.yaml"
 FICHERO_GLOSARIO = "knowledge/spec/glossary.yaml"
@@ -31,10 +32,71 @@ CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 # no. El lookbehind excluye tambien los digitos, o el `5` de `m15` contaria por su cuenta.
 _CIFRA = re.compile(r"(?<![A-Za-z_0-9])\d")
 
+# Y en letras, que es la via de escape obvia: "el stop va al ochenta por ciento de la caja"
+# pasaria la comprobacion de cifras y seria el mismo problema. Pero un numero en letras solo es
+# un VALOR cuando trae unidad: "se abre una operacion" o "los dos esquemas" son espanol, no
+# parametros, y prohibirlos haria imposible escribir una regla. Por eso se exige la pareja
+# numero + unidad, y `horas` queda fuera porque `vela de cuatro horas` es una temporalidad.
+_NUMEROS_EN_LETRAS = (
+    "cero",
+    "uno",
+    "una",
+    "dos",
+    "tres",
+    "cuatro",
+    "cinco",
+    "seis",
+    "siete",
+    "ocho",
+    "nueve",
+    "diez",
+    "once",
+    "doce",
+    "quince",
+    "veinte",
+    "veinticinco",
+    "treinta",
+    "cuarenta",
+    "cincuenta",
+    "sesenta",
+    "setenta",
+    "ochenta",
+    "noventa",
+    "cien",
+    "ciento",
+    "mil",
+    "medio",
+    "media",
+    "mitad",
+    "cuarto",
+    "tercio",
+    "doble",
+    "triple",
+)
+_UNIDADES = (
+    "por ciento",
+    "porciento",
+    "cartuchos?",
+    "intentos?",
+    "pips?",
+    "puntos?",
+    "lotes?",
+    "veces",
+    "minutos?",
+    "por mil",
+)
+_EN_LETRAS = re.compile(
+    r"\b(?:" + "|".join(_NUMEROS_EN_LETRAS) + r")\s+(?:" + "|".join(_UNIDADES) + r")\b",
+    re.IGNORECASE,
+)
+
 
 def _cifra_de_negocio(texto: str) -> str | None:
-    """La primera cifra que empieza palabra, o None si el texto solo nombra parametros."""
+    """El primer valor de negocio del texto -en cifra o en letra-, o None si solo hay nombres."""
     m = _CIFRA.search(texto)
+    if m:
+        return m.group(0)
+    m = _EN_LETRAS.search(texto)
     return m.group(0) if m else None
 
 
@@ -186,6 +248,38 @@ def cargar_glosario(ruta: Path) -> list[Termino]:
             )
         )
     return terminos
+
+
+def literal_coincide(literal: str, texto_citado: str) -> bool:
+    """Si el `literal` de una regla esta de verdad en el texto que la regla cita.
+
+    Mismo criterio que ADR-0009 usa con la evidencia: se comparan TOKENS normalizados, no cadenas,
+    y el comodin `[...]` permite saltar lo de en medio. Asi una regla no puede afirmar que el
+    trader dijo algo que no dijo, ni suavizar sus palabras para que encajen mejor.
+    """
+    try:
+        trozos = trozos_de_cita(literal)
+    except CitaError:
+        return False
+    return bool(buscar_secuencia(tokens(texto_citado), trozos))
+
+
+def comprobar_literales(reglas: list[Regla], textos: dict[str, str]) -> list[str]:
+    """Cada regla dice lo que dice su cita, o se nombra el problema.
+
+    `textos` es cita_id -> lo que se dijo (respuesta del trader o cita de la evidencia).
+    """
+    problemas: list[str] = []
+    for r in reglas:
+        citado = textos.get(r.cita)
+        if citado is None:
+            continue  # que la cita exista lo comprueba `comprobar_contra`
+        if not literal_coincide(r.literal, citado):
+            problemas.append(
+                f"{r.id}: su literal no aparece en {r.cita}; una regla no puede decir algo "
+                f"distinto de lo que cita"
+            )
+    return problemas
 
 
 def comprobar_contra(

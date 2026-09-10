@@ -60,6 +60,16 @@ def _git(repo: Path, *args: str) -> str | None:
     return resultado.stdout if resultado.returncode == 0 else None
 
 
+
+def contenido_en_head(repo: Path, ruta: str) -> str | None:
+    """El contenido de un fichero tal como esta commiteado en HEAD, o None si no se puede leer.
+
+    None cuando no hay git, no hay commits todavia o el fichero es nuevo: quien pregunte decide
+    si eso es un problema. Aqui no se inventa un contenido vacio, que se confundiria con "cambio".
+    """
+    return _git(repo, "show", f"HEAD:{ruta}")
+
+
 def commit_que_anadio(repo: Path, ruta: str) -> tuple[str, str] | None:
     """(sha, fecha de committer en UTC ISO) del commit MAS ANTIGUO que anadio `ruta`; None si no
     esta commiteado o no hay git. La fecha es informativa (falsificable, cambia con rebase): la
