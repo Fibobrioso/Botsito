@@ -663,7 +663,14 @@ def spec_status(repo: Path) -> int:
     )
     confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
     unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]
-    print(f"  {len(confirmados)} parametros con valor, {len(unknown)} sin el")
+    # Las tres cuentas, y no dos: mientras no hubo ningun DEFAULT_AMBIGUOUS, "con valor" y "sin
+    # el" parecian cubrir el registro y sumaban el total. En cuanto aparecio el primero dejaron de
+    # sumar, y ademas "sin valor" era falso -un default TIENE valor; lo que no tiene es respaldo-.
+    defaults = [n for n, p in registro.parametros.items() if p.estado is Estado.DEFAULT_AMBIGUOUS]
+    linea = f"  {len(confirmados)} parametros confirmados"
+    if defaults:
+        linea += f", {len(defaults)} con un default nuestro"
+    print(f"{linea}, {len(unknown)} sin valor a proposito ({len(registro.parametros)} en total)")
 
     abiertas = [a for a in ambiguedades if a.estado == "ABIERTA"]
     en_revision: dict[str, list[str]] = {}

@@ -3,7 +3,7 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 604 casos (422 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 606 casos (424 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
@@ -50,21 +50,22 @@ Todos verificados con su reproducción antes de tocar nada, y todos arreglados c
 ## 0 ter. La auditoría del consultor (2026-09-10), punto a punto
 
 Antes de validar F11 se auditó la rama otra vez, esta vez contra el negocio y no solo contra el
-código. Diez puntos, dos de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
+código. Once puntos, tres de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
 a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag.**
 
 | # | Qué era | Estado |
 |---|---|---|
 | **P1** | La base del 1:3 se contradecía entre `unidad` de `objetivo_rr` ("múltiplo del riesgo") y RN-015 ("sobre la caja completa"), y "riesgo" tiene dos valores en este registro. Un 25 % de distancia al TP dependía de cuál leyera F18 | **CERRADO** · ADR-0014, `base_calculo_objetivo`, A-18, spec 1.5.0 |
-| P2 | `huso_grafico = Etc/GMT-2` entra CONFIRMED con una cita que no lo dice, y choca con `broker_dst: us`, medido contra la demo. A-14 no contempla el calendario del servidor y no lista `huso_grafico` | ABIERTO |
-| P3 | Tras §5 bis, RN-020 es el único freno del día — pero no define qué reloj ni a qué hora empieza el día, y `perdida_maxima_semanal` no tiene base | ABIERTO |
-| P4 | La verificación comprueba `literal ⊆ cita`, nunca `regla ⊆ literal`: RN-026 y RN-027 son decisiones del consultor con citas que no las sostienen | ABIERTO |
-| P5 | El hash no cubre `titulo`, `literal` ni `notas` de las reglas. La corrección de riesgo de §5 bis vive solo en las `notas` de RN-020, y el `titulo` de RN-020 dice lo contrario que ellas | ABIERTO |
+| **P2** | `huso_grafico = Etc/GMT-2` entraba CONFIRMED con una cita que no lo dice, y chocaba con `broker_dst: us`, medido contra la demo. A-14 no contemplaba el calendario del servidor y no listaba `huso_grafico` | **CERRADO** · ADR-0015 |
+| **P3** | Tras §5 bis, RN-020 es el único freno del día — pero no definía qué reloj ni a qué hora empieza el día, y `perdida_maxima_semanal` no tenía base | **CERRADO** · ADR-0015 |
+| **P4** | La verificación comprobaba `literal ⊆ cita`, nunca `regla ⊆ literal`: RN-026 y RN-027 son decisiones del consultor con citas que no las sostienen | **CERRADO** · ADR-0016 |
+| **P5** | El hash no cubría `titulo`, `literal` ni `notas` de las reglas. La corrección de riesgo de §5 bis vivía solo en las `notas` de RN-020, y el `titulo` de RN-020 decía lo contrario que ellas | **CERRADO** · ADR-0016 |
 | **P6** | `kit check` con `celebrada=True` degradaba TODA diferencia a AVISO, `particiones.yaml` incluida, e imprimía "OK: se recompone igual" bajo sus propios avisos | **CERRADO** |
 | **P7** | `feedback apply` desplazaba comentarios de bloque: dos cabeceras de sección quedaron DENTRO de `anclaje_h4` y `lotaje_base`, diciendo lo contrario del parámetro que las contiene. El hash no puede verlo | **CERRADO** |
-| P8 | `PROJECT_STATE.md` y el §6 de este informe describen F11 con cifras de una versión anterior de la rama | ABIERTO |
+| **P8** | `PROJECT_STATE.md` y el §6 de este informe describían F11 con cifras de una versión anterior de la rama | **CERRADO** |
 | **P9** | `spec manifest --escribir` reescribía solo la línea `hash:`; `generado_el` no se actualizaba nunca (encontrado al cerrar P1) | **CERRADO** |
-| P10 | MASTER_PLAN da a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | ABIERTO |
+| **P10** | MASTER_PLAN daba a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | **CERRADO** |
+| **P11** | `spec status` contaba "con valor" y "sin él" como si cubrieran el registro; al aparecer los primeros `DEFAULT_AMBIGUOUS` dejó de sumar el total, y "sin valor" era falso para un default (encontrado al cerrar P2) | **CERRADO** |
 
 ### P1 · la base del objetivo (cerrado el 2026-09-10)
 
@@ -109,6 +110,65 @@ Reescribirlas después de ver las etiquetas solo producía un AVISO y el comando
 
 Ahora el perdón alcanza únicamente a `cuestionario.yaml`, `ventanas.yaml` y `hoja_trader.md`. Y el
 mensaje final deja de decir *"se recompone igual"* justo debajo de tres avisos que dicen que no.
+
+### P2 · el reloj del gráfico se afirmaba y no se había medido (cerrado el 2026-09-10)
+
+`huso_grafico = Etc/GMT-2` entraba **CONFIRMED** citando `fb-…-8384b085`, cuyo literal completo es
+*"la vela empieza a las 23, la primera vela de cuatro horas"*: no menciona ningún huso. El UTC+2
+salía de las `notas` de ese registro, de una lectura de pantalla.
+
+Y al ir al corpus, **todas las lecturas son de verano**:
+
+- `ev-v3-000136-6160fcea`, el trader: *"yo lo tengo configurado como **utc más 2 que son ahora ya
+  madrid**"*. Su propia frase ata el UTC+2 a Madrid, y "ahora" es verano.
+- `ev-v6-005830-48b30e48`: el fotograma es del 9 de septiembre y muestra `20:48:30 UTC+2`.
+  TradingView etiqueta igual un huso fijo que Madrid mientras el horario de verano esté activo.
+- `ev-v6-005810-5cb1ef06`, preguntado justo por esto: *"Es la misma hora [...] Si es una hora más,
+  pues sería a las 8, o si es una hora menos, a las 6"*. El propio ítem anota que las dos mitades
+  de la frase no dicen lo mismo.
+
+**`Etc/GMT-2` y `Europe/Madrid` son indistinguibles de mayo a octubre y no hay una sola observación
+de invierno.** De ahí sale la corrección más incómoda de esta auditoría: **ADR-0012 y el informe de
+la sesión afirmaban que "la sesión desmintió Europe/Madrid", y no lo desmintió.**
+
+Encima, el reloj del gráfico y el del servidor son **dos relojes distintos** —`broker_dst: us` y
+`broker_offset_base: 120`, medidos contra la demo real, dicen que el del servidor sí cambia— y
+nada lo decía en ninguna parte.
+
+`huso_grafico` baja a **`DEFAULT_AMBIGUOUS`** bajo A-14, que se reescribe con las tres opciones y
+pasa a listar los cuatro parámetros que cuelgan de ella. El registro de feedback mal apuntado queda
+revocado con un `REJECT` que lo supersede.
+
+### P3 · el único freno del día no decía qué es un día (cerrado el 2026-09-10)
+
+Tras la corrección de §5 bis, RN-020 es lo único que acota la jornada. Pero "el saldo inicial del
+día" no dice **cuándo empieza el día**, y la ficha de `broker_dst` ya avisaba: *"en verano el reloj
+va a GMT+3 y el día de riesgo se desplaza"*. Con 0,4 % de pérdida real por cartucho caben unas
+**once pérdidas seguidas** antes de tocar el 4,5 %; en cuenta fondeada, el corte no es un detalle.
+
+Nace `reloj_dia_riesgo` (`prop_firm`, `DEFAULT_AMBIGUOUS` en `servidor`, A-19), que **no se le
+pregunta al trader: se verifica en el panel de la cuenta**.
+
+Y al mirar el tope semanal apareció algo mejor: el trader **sí había dado su base** —*"9% de la
+cuenta actual."*— y no había parámetro donde guardarla, así que `perdida_maxima_semanal` declaraba
+"porcentaje de la cuenta" sin decir de cuál. `base_calculo_perdida_semanal` entra **CONFIRMED** en
+`saldo_actual`, y **no es la misma base que la diaria**.
+
+### P4 y P5 · lo que ninguna guardia miraba (cerrados el 2026-09-10)
+
+La verificación comprueba que el `literal` esté en su cita. No comprueba —ni puede, en general— que
+la regla no diga **más** que su literal. RN-026 (abstenerse por stops level) y RN-027 (redondear el
+lotaje a la baja) son decisiones de ingeniería correctas que **nadie dijo**, presentadas con citas
+genéricas del trader.
+
+Lo mecanizable es la señal: una regla construida sobre parámetros cuya `fuente` es `decision` está
+decidiendo por su cuenta. Campo `decision` obligatorio en ese caso. **La guardia encontró las dos
+en su primera ejecución**, y además RN-020, que acababa de heredar el problema.
+
+Y el hash cubría de cada regla solo los campos ejecutables: la corrección de riesgo de §5 bis vivía
+**solo en las `notas` de RN-020** y se podía borrar sin mover `spec_version`, mientras el `titulo`
+de esa misma regla decía lo contrario que ellas. Ahora entran `titulo`, `literal`, `notas` y
+`decision`, y el título dice lo que la regla hace. Por eso `spec_version` sube a **2.0.0**.
 
 ### P9 · `generado_el` nunca se actualizaba (cerrado el 2026-09-10)
 
@@ -217,23 +277,35 @@ Entran también el **estado** y la **fuente** de cada parámetro: pasar de `DEFA
 distinguirlo.
 
 Se hashea la **estructura re-serializada**, no los bytes: un comentario no cambia la spec. La
-guardia ya saltó una vez de verdad, al alinear `huso_operativa`, y obligó a subir la versión a 1.0.1.
+guardia ya saltó una vez de verdad, al alinear `huso_operativa`, y obligó a subir la versión.
 
 ## 6. Qué está corriendo y qué sigue en revisión
 
 ```
-spec 1.0.1 · 22 reglas vigentes, 3 descartadas · 36 parámetros con valor, 6 sin él
+spec 2.0.0 · hash 21e69c6f2548…
+  24 reglas vigentes, 3 descartadas
+  46 parametros confirmados, 2 con un default nuestro, 6 sin valor a proposito (54 en total)
 
-Corriendo con un valor que sigue en revisión:
-  anclaje_h4              23:00 Etc/GMT-2    A-14
-  break_even_condicion    tocar              A-13
-  filtro_noticias         no                 A-17
-  ventana_fin             15:00 Etc/GMT-2    A-15
-  ventana_inicio          07:00 Etc/GMT-2    A-15
+Corriendo con un valor que sigue en revision:
+  anclaje_h4                   23:00 Etc/GMT-2          A-14
+  base_calculo_objetivo        caja_completa            A-18
+  break_even_condicion         tocar                    A-13
+  filtro_noticias              no                       A-17
+  huso_grafico                 Etc/GMT-2                A-14
+  objetivo_rr                  3                        A-18
+  reloj_dia_riesgo             servidor                 A-19
+  ventana_fin                  15:00 Etc/GMT-2          A-14, A-15
+  ventana_inicio               07:00 Etc/GMT-2          A-14, A-15
 ```
 
-Los cinco entran **CONFIRMED**: lo dijo el trader, con minuto y cita. Que estén en revisión se ve
-cruzando con las ambigüedades abiertas, no degradando su estado.
+Esta salida es de la auditoría del 2026-09-10; la anterior llevaba tres versiones de retraso y es
+lo que P8 corrige. Los **nueve** en revisión, no cinco: `huso_grafico` es la raíz de la que cuelgan
+las tres horas y no aparecía, porque A-14 solo listaba `anclaje_h4`.
+
+Siete entran **CONFIRMED**: lo dijo el trader, con minuto y cita, y que estén en revisión se ve
+cruzando con las ambigüedades abiertas, no degradando su estado. Los otros dos —`huso_grafico` y
+`reloj_dia_riesgo`— son **`DEFAULT_AMBIGUOUS`**, que es distinto: ahí no hay palabra del trader que
+citar, hay una elección nuestra (ADR-0015).
 
 ## 7. Lo que el usuario debe decidir
 

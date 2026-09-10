@@ -183,15 +183,19 @@ ambiguedades:
     estado: ABIERTA
     bloqueante: false
   - id: A-14
-    titulo: anclaje H4 fuera del horario de verano
+    titulo: el reloj del grafico fuera del horario de verano
     pregunta: >-
-      ¿su grafico esta en UTC+2 fijo (la vela H4 abre a las 21:00 UTC todo el año) o sigue a
-      Madrid (en invierno la apertura se desplaza)?
+      ¿su grafico esta en UTC+2 FIJO (la H4 abre a las 21:00 UTC todo el año), sigue a MADRID (en
+      invierno la apertura se desplaza) o sigue al SERVIDOR del broker (GMT+2 en invierno y GMT+3
+      en verano, calendario de Nueva York, que es lo que declara broker_dst)? Las tres coinciden
+      en verano, que es cuando se tomaron todas las lecturas
     resuelve_en: [F11, F15]
     evidencia:
+      - ev-v3-000136-6160fcea
+      - ev-v4-011425-ae028b78
       - ev-v6-005810-5cb1ef06
       - ev-v6-005830-48b30e48
-    parametros: [anclaje_h4]
+    parametros: [huso_grafico, anclaje_h4, ventana_inicio, ventana_fin]
     contradiccion: null
     estado: ABIERTA
     bloqueante: false
@@ -244,6 +248,19 @@ ambiguedades:
       - ev-v4-011951-5fb49e03
       - ev-v3-003142-607674c3
     parametros: [base_calculo_objetivo, objetivo_rr]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-19
+    titulo: cuando empieza el dia y la semana de riesgo
+    pregunta: >-
+      ¿en que reloj cae la medianoche que reinicia el tope diario del 4,5 % y el domingo que
+      reinicia el semanal: el del servidor del broker, que cambia con el calendario de Nueva
+      York, o el del grafico? Hay que verificarlo en el panel de la cuenta, no suponerlo
+    resuelve_en: [F11, F33]
+    evidencia:
+      - ev-v6-020029-aa86963a
+    parametros: [reloj_dia_riesgo]
     contradiccion: null
     estado: ABIERTA
     bloqueante: false

@@ -395,6 +395,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         Termino,
         cargar_reglas,
         comprobar_contra,
+        comprobar_decisiones,
         comprobar_literales,
     )
     from botsito.spec.modelo import (
@@ -418,6 +419,13 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             textos_citados = {i.id: i.cita_literal for i in items}
             textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
             problemas_spec += comprobar_literales(reglas, textos_citados, terminos)
+            # Y que una regla construida sobre parametros de entorno declare el ADR que la
+            # decide: ahi no hay trader al que citar, y su cita no puede sostenerla.
+            problemas_spec += comprobar_decisiones(
+                reglas,
+                {n: p.fuente.tipo for n, p in registro.parametros.items() if p.fuente is not None},
+                ids_de_adr(repo),
+            )
             # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
             # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
             for r in reglas:

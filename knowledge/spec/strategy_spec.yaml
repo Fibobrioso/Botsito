@@ -262,13 +262,18 @@ reglas:
     estado: VIGENTE
 
   - id: RN-020
-    titulo: los topes porcentuales son una red, no el freno
-    cuando: la perdida acumulada alcanza perdida_maxima_diaria o perdida_maxima_semanal
-    entonces: se deja de operar
+    titulo: el tope porcentual es el unico freno del dia
+    cuando: >-
+      la perdida acumulada desde el corte que marca reloj_dia_riesgo alcanza perdida_maxima_diaria
+      sobre base_calculo_perdida_diaria, o perdida_maxima_semanal sobre
+      base_calculo_perdida_semanal
+    entonces: se deja de operar hasta el corte siguiente
     parametros:
       - perdida_maxima_diaria
-      - perdida_maxima_semanal
       - base_calculo_perdida_diaria
+      - perdida_maxima_semanal
+      - base_calculo_perdida_semanal
+      - reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-bff260ea
     literal: >-
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
@@ -277,7 +282,12 @@ reglas:
       tres perdidas, pero el contador NO es diario -se reinicia con la siguiente liquidez de M15
       (cartuchos_reinicio)-, asi que no hay cota diaria por esa via: son tres perdidas POR ZONA, y
       nada limita cuantas zonas se desarrollan entre la apertura y el cierre de la ventana. El
-      tope porcentual no es una red que nunca se toca: es el unico freno del dia que existe
+      tope porcentual no es una red que nunca se toca: es el unico freno del dia que existe, y el
+      titulo de esta regla decia lo contrario hasta la auditoria del 2026-09-10. Las dos bases NO
+      son la misma -el dia sobre el saldo inicial del dia, la semana sobre el saldo actual, que es
+      lo que dijo el trader en cada caso- y el corte lo marca reloj_dia_riesgo, que sigue siendo
+      un default nuestro (A-19)
+    decision: ADR-0015
     estado: VIGENTE
 
   - id: RN-021
@@ -356,7 +366,11 @@ reglas:
     notas: >-
       la decision explicita que pide MASTER_PLAN H.2: rechazo por stops level = abstencion. Mover
       el stop a donde el broker lo admite seria operar OTRA estrategia con el nombre de esta, y el
-      trader pidio fidelidad, no aproximacion
+      trader pidio fidelidad, no aproximacion. La cita sostiene el PRINCIPIO -ser fiel y no buscar
+      nada adicional-, no esta regla: el trader nunca hablo del stops level. Lo que la regla decide
+      lo decide ADR-0016. OJO: instrumento_stops_level vale 0 en la demo medida, asi que hoy esta
+      regla no llega a activarse; hay que volver a medirlo en la cuenta fondeada
+    decision: ADR-0016
     estado: VIGENTE
 
   - id: RN-027
@@ -372,5 +386,8 @@ reglas:
       misma para que corra la operacion.
     notas: >-
       a la baja y no al mas cercano: redondear hacia arriba haria arriesgar mas de lo que el
-      trader dijo, y el error se acumularia operacion tras operacion
+      trader dijo, y el error se acumularia operacion tras operacion. La cita sostiene que el
+      lotaje sale de la caja completa, no la DIRECCION del redondeo, de la que el trader nunca
+      hablo: eso lo decide ADR-0016
+    decision: ADR-0016
     estado: VIGENTE

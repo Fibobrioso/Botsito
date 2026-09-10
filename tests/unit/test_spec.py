@@ -356,3 +356,51 @@ def test_una_base_de_calculo_no_puede_vivir_en_la_prosa() -> None:
         if magnitud in r.parametros and base not in r.parametros
     ]
     assert not huerfanas, "; ".join(huerfanas)
+
+
+def test_una_regla_sobre_parametros_de_entorno_declara_su_adr() -> None:
+    """Lo que `comprobar_literales` no puede ver: una regla que dice mas que su cita.
+
+    No es mecanizable en general, pero si lo es la señal que lo acompaña: un parametro cuya
+    `fuente` es `decision` no lo dijo el trader -es la ficha del simbolo, el reloj del broker, la
+    cuenta-, asi que una regla construida sobre el decide por su cuenta y su cita no la sostiene.
+    RN-026 (abstenerse por stops level) y RN-027 (redondear el lotaje a la baja) eran justo eso.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, comprobar_decisiones
+
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    fuentes = {n: p.fuente.tipo for n, p in registro.parametros.items() if p.fuente is not None}
+    ids_adr = {
+        f"ADR-{f.name[:4]}"
+        for f in (REPO / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
+        if f.name[:4] != "0000"
+    }
+    assert comprobar_decisiones(reglas, fuentes, ids_adr) == []
+
+    # y la guardia denuncia de verdad: se le quita el ADR a la regla que lo necesita
+    sin_adr = [
+        (r if r.decision is None else __import__("dataclasses").replace(r, decision=None))
+        for r in reglas
+    ]
+    fallos = comprobar_decisiones(sin_adr, fuentes, ids_adr)
+    assert any("RN-026" in f for f in fallos) and any("RN-027" in f for f in fallos)
+
+
+def test_el_hash_cubre_el_texto_que_lee_una_persona() -> None:
+    """`titulo`, `literal` y `notas` no los ejecuta el motor, pero son lo que la spec afirma.
+
+    La correccion de riesgo mas cara de la fase -que el tope porcentual es el unico freno del dia
+    que existe- vive en las `notas` de RN-020. Con `notas` fuera del hash se podia borrar sin que
+    `spec_version` se moviera, y el `titulo` de esa misma regla decia lo contrario sin que nada lo
+    viera.
+    """
+    from botsito.spec.manifiesto import estructura_para_hash
+
+    estructura = estructura_para_hash(REPO)
+    rn020 = next(r for r in estructura["reglas"] if r["id"] == "RN-020")
+    for campo in ("titulo", "literal", "notas", "decision"):
+        assert campo in rn020, f"el hash no cubre '{campo}' de las reglas"
+    assert "unico freno del dia" in str(rn020["notas"])
+    assert all("literal" in t for t in estructura["terminos"])

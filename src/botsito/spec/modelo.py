@@ -9,6 +9,7 @@ mejor", la comprobacion falla. Es la misma idea que ADR-0009 aplica a la evidenc
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -22,7 +23,7 @@ FICHERO_GLOSARIO = "knowledge/spec/glossary.yaml"
 
 ESTADOS_REGLA = ("VIGENTE", "DESCARTADA")
 CAMPOS_REGLA = {"id", "titulo", "cuando", "entonces", "parametros", "cita", "literal", "estado"}
-CAMPOS_REGLA_OPCIONALES = {"notas"}
+CAMPOS_REGLA_OPCIONALES = {"notas", "decision"}
 CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 
@@ -115,6 +116,9 @@ class Regla:
     literal: str
     estado: str
     notas: str | None = None
+    # El ADR que sostiene lo que la regla decide POR SU CUENTA. Obligatorio cuando la regla opera
+    # sobre parametros de entorno: ahi no hay trader al que citar, hay una decision nuestra.
+    decision: str | None = None
 
     @property
     def vigente(self) -> bool:
@@ -188,6 +192,9 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         cita = str(r["cita"])
         if not _cita_valida(cita):
             raise SpecError(f"{rid}: cita {cita!r} no es un id de evidencia ni de feedback")
+        decision = r.get("decision")
+        if decision is not None and not re.fullmatch(r"ADR-\d{4}", str(decision), re.ASCII):
+            raise SpecError(f"{rid}: decision {decision!r} no tiene formato ADR-NNNN")
         for campo in ("cuando", "entonces"):
             texto = _texto(r, campo, rid)
             cifra = _cifra_de_negocio(texto)
@@ -207,6 +214,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
                 literal=_texto(r, "literal", rid),
                 estado=estado,
                 notas=" ".join(str(r["notas"]).split()) if r.get("notas") else None,
+                decision=str(r["decision"]).strip() if r.get("decision") else None,
             )
         )
     return reglas
@@ -311,4 +319,36 @@ def comprobar_contra(
     for t in terminos:
         if t.cita not in citas_conocidas:
             problemas.append(f"glosario {t.termino!r}: cita {t.cita}, que no existe")
+    return problemas
+
+
+def comprobar_decisiones(
+    reglas: list[Regla], fuentes: Mapping[str, str], ids_adr: set[str]
+) -> list[str]:
+    """Una regla que opera sobre parametros de ENTORNO declara el ADR que la decide.
+
+    `comprobar_literales` mira que el literal este de verdad en la cita, pero no puede mirar que la
+    regla no diga MAS que su literal: eso no es mecanizable en general. Lo que si es mecanizable es
+    el caso que importa. Un parametro cuya `fuente` es `decision` no lo dijo el trader -es la ficha
+    del simbolo, el reloj del servidor, la cuenta-, asi que una regla construida sobre el esta
+    decidiendo algo por su cuenta, y su `cita` del trader no puede sostenerlo.
+
+    Lo encontro la auditoria del 2026-09-10 con dos reglas reales: RN-026 decidia abstenerse cuando
+    el broker no admite el stop, y RN-027 redondear el lotaje a la baja. Ninguna de las dos cosas
+    esta en su literal; las dos citaban frases genericas del trader y pasaban la comprobacion.
+
+    `fuentes` es nombre de parametro -> tipo de fuente ("evidence" | "feedback" | "decision").
+    """
+    problemas: list[str] = []
+    for r in reglas:
+        if not r.vigente:
+            continue
+        de_entorno = sorted(p for p in r.parametros if fuentes.get(p) == "decision")
+        if de_entorno and r.decision is None:
+            problemas.append(
+                f"{r.id}: opera sobre {', '.join(de_entorno)}, que no los dijo el trader sino un "
+                f"ADR; una regla asi decide algo por su cuenta y tiene que declarar 'decision'"
+            )
+        elif r.decision is not None and r.decision not in ids_adr:
+            problemas.append(f"{r.id}: decision {r.decision}, que no existe")
     return problemas

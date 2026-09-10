@@ -19,3 +19,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0012 | El registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader | ACTIVE |
 | 0013 | StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace | ACTIVE |
 | 0014 | La base sobre la que se mide el objetivo: `base_calculo_objetivo` | ACTIVE |
+| 0015 | Los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo | ACTIVE |
+| 0016 | De donde sale cada regla: el campo `decision`, y un hash que cubre lo que un humano lee | ACTIVE |

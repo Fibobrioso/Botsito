@@ -74,7 +74,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | F18 | `feature/F18-domain-types-and-h4-bias` | Tipos y sesgo H4 | F11, F14 | golden; lint | casos de sesgo verdes |
 | F19 | `feature/F19-domain-m15-zones` | Zonas M15 y mitigacion | F18 | causalidad | truncado = completo |
 | F20 | `feature/F20-domain-m1-breaker-and-control-zones` | Mapeo M1, breaker, zonas de control | F19 | causalidad; negativos | casos de entrada verdes |
-| F21 | `feature/F21-domain-risk-geometry` | Caja, stop 0,75, lotaje, 1:3, BE | F18 | golden 4,08 / 3,94 | stop = −0,75 R |
+| F21 | `feature/F21-domain-risk-geometry` | Caja, stop y lotaje por parametro, objetivo, BE | F18 | golden 4,08 / 3,94 | el stop lo fija `stop_fraccion_caja` y el objetivo `objetivo_rr` sobre `base_calculo_objetivo`; ninguna cifra en el codigo (ADR-0002, ADR-0014) |
 | F22 | `feature/F22-domain-state-machines` | Statecharts jornada y ciclo (Decider) | F20, F21 | property | invariantes probadas |
 | F23 | `feature/F23-engine-event-loop` | Bucle, reloj determinista, journal | F22 | determinismo | mismo sha256 |
 | F24 | `feature/F24-engine-tick-backtest` | Simulacion sobre ticks | F16, F23 | llenado; golden | llenado defendible |

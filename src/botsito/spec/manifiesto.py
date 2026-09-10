@@ -12,10 +12,15 @@ Dos decisiones que valen mas que el codigo:
    bytes convertiria cada comentario y cada salto de linea en parte del contrato: reordenar un
    comentario cambiaria la version de la spec sin cambiar la spec.
 
-Por parametro entran nombre, categoria, tipo, unidad, estado, valor, fuente, ambiguedad_id,
-opciones y limites. El ESTADO y la FUENTE entran a proposito: pasar de DEFAULT_AMBIGUOUS a
-CONFIRMED no cambia el valor pero si cambia lo que la spec afirma, y quien mida fidelidad tiene
-que poder distinguirlo.
+Por parametro entran nombre, categoria, tipo, unidad, huso, estado, valor, fuente,
+ambiguedad_id, opciones y limites. El ESTADO y la FUENTE entran a proposito: pasar de
+DEFAULT_AMBIGUOUS a CONFIRMED no cambia el valor pero si cambia lo que la spec afirma, y quien
+mida fidelidad tiene que poder distinguirlo.
+
+Por regla entra TODO su texto, no solo los campos ejecutables. Un `titulo`, unas `notas` o un
+`literal` no los lee el motor, pero son lo que lee la persona que valida, y por tanto parte de lo
+que la spec afirma. Con `notas` fuera del hash, la correccion de riesgo de RN-020 se podia borrar
+sin mover `spec_version`.
 """
 
 from __future__ import annotations
@@ -91,7 +96,23 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
         reglas.append(
             {
                 c: _canonico(r.get(c))
-                for c in ("id", "cuando", "entonces", "parametros", "cita", "estado")
+                # `titulo`, `literal`, `notas` y `decision` entran desde la auditoria del
+                # 2026-09-10. No los ejecuta el motor, pero SON lo que la spec afirma: la
+                # correccion de riesgo de RN-020 -que el tope porcentual es el unico freno del
+                # dia- vivia solo en sus `notas` y se podia borrar sin mover spec_version, y el
+                # `titulo` de esa misma regla decia lo contrario que ellas sin que nada lo viera.
+                for c in (
+                    "id",
+                    "titulo",
+                    "cuando",
+                    "entonces",
+                    "parametros",
+                    "cita",
+                    "literal",
+                    "notas",
+                    "decision",
+                    "estado",
+                )
             }
         )
     reglas.sort(key=lambda r: str(r["id"]))
@@ -100,7 +121,9 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
     for t in glosario.get("terminos", []) if isinstance(glosario, dict) else []:
         if not isinstance(t, dict):
             continue
-        terminos.append({c: _canonico(t.get(c)) for c in ("termino", "definicion", "cita")})
+        terminos.append(
+            {c: _canonico(t.get(c)) for c in ("termino", "definicion", "cita", "literal")}
+        )
     terminos.sort(key=lambda t: str(t["termino"]))
 
     return {"parametros": parametros, "reglas": reglas, "terminos": terminos}

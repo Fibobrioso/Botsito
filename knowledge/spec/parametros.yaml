@@ -129,7 +129,10 @@ parametros:
     opciones: [us, eu, ninguno]
     descripcion: >-
       con que calendario cambia la hora el servidor. FundedNext sigue el de Nueva York, asi que
-      en verano el reloj va a GMT+3 y el dia de riesgo se desplaza
+      en verano el reloj va a GMT+3 y el dia de riesgo se desplaza. Este reloj y huso_grafico son
+      DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla
+      donde el trader decide. Coinciden en invierno y divergen una hora en verano, asi que las
+      horas de la operativa se interpretan SIEMPRE en huso_grafico y se convierten al ejecutar
     estado: CONFIRMED
     valor: "us"
     fuente:
@@ -164,24 +167,34 @@ parametros:
     tipo: texto
     unidad: nombre IANA del huso en el que se expresan las horas de la operativa
     descripcion: >-
-      reloj en el que se interpretan las horas de la operativa. ADR-0005 lo fijo en Europe/Madrid;
-      la sesion 1 lo desmintio (el trader trabaja en UTC+2 y no se ajusta al cambio de horario), y
-      ADR-0012 lo alinea con huso_grafico. Coinciden en verano y divergen en invierno
+      reloj en el que se interpretan las horas de la operativa. ADR-0005 lo fijo en Europe/Madrid
+      y ADR-0012 lo alineo con huso_grafico. ADR-0015 corrige el motivo que ADR-0012 daba: la
+      sesion NO desmintio Europe/Madrid, solo dejo sin resolver si el grafico es de offset fijo
+      (A-14). Sigue alineado con huso_grafico por decision, asi que lo que decida A-14 lo mueve
     estado: CONFIRMED
     valor: "Etc/GMT-2"
     fuente:
       tipo: decision
-      id: ADR-0012
+      id: ADR-0015
   - nombre: huso_grafico
     categoria: estrategia
     tipo: texto
     unidad: nombre IANA del huso configurado en el grafico del trader
-    descripcion: reloj del grafico del trader; el signo de Etc/* va invertido (Etc/GMT-2 = UTC+2)
-    estado: CONFIRMED
+    descripcion: >-
+      reloj del GRAFICO del trader, del que cuelgan anclaje_h4, ventana_inicio y ventana_fin. El
+      signo de Etc/* va invertido: Etc/GMT-2 = UTC+2. Es un DEFAULT NUESTRO, no un dato: todas
+      las lecturas del repositorio son de verano -el trader dice "utc mas 2 que son ahora ya
+      madrid" (ev-v3-000136) y el fotograma es del 9 de septiembre-, y Etc/GMT-2 y Europe/Madrid
+      son indistinguibles de mayo a octubre. Preguntado por el cambio de horario contesta las dos
+      cosas a la vez (ev-v6-005810). A-14 lo resuelve mirando su grafico en una fecha de invierno.
+      OJO: NO es el reloj del servidor del broker, que va aparte en broker_offset_base y
+      broker_dst y que si cambia con el horario de Nueva York
+    estado: DEFAULT_AMBIGUOUS
     valor: "Etc/GMT-2"
+    ambiguedad_id: A-14
     fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-8384b085
+      tipo: evidence
+      id: ev-v3-000136-6160fcea
   - nombre: anclaje_h4
     categoria: estrategia
     tipo: hora
@@ -483,8 +496,11 @@ parametros:
   - nombre: perdida_maxima_diaria
     categoria: estrategia
     tipo: porcentaje
-    unidad: porcentaje de la cuenta
-    descripcion: perdida acumulada en el dia que detiene la operativa
+    unidad: porcentaje del saldo que declara base_calculo_perdida_diaria
+    descripcion: >-
+      perdida acumulada en el dia que detiene la operativa; la base la fija
+      base_calculo_perdida_diaria y el corte, reloj_dia_riesgo. Tras corregir la aritmetica de
+      los cartuchos (ver RN-020) este es el UNICO freno del dia que existe
     estado: CONFIRMED
     valor: "4.5"
     fuente:
@@ -495,8 +511,10 @@ parametros:
   - nombre: perdida_maxima_semanal
     categoria: estrategia
     tipo: porcentaje
-    unidad: porcentaje de la cuenta
-    descripcion: perdida acumulada en la semana que detiene la operativa
+    unidad: porcentaje del saldo que declara base_calculo_perdida_semanal
+    descripcion: >-
+      perdida acumulada en la semana que detiene la operativa; la base la fija
+      base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
     estado: CONFIRMED
     valor: "9"
     fuente:
@@ -580,6 +598,40 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-462134c7
+  - nombre: base_calculo_perdida_semanal
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que saldo se calcula
+    opciones: [saldo_actual, saldo_inicial_semana, saldo_inicial_dia]
+    descripcion: >-
+      base del tope de perdida de la semana. NO es la misma que la diaria: el trader dijo "9% de
+      la cuenta actual" para la semana y "el saldo inicial del dia" para el dia. Estaba en el
+      literal desde la sesion y no habia parametro donde guardarlo, asi que perdida_maxima_semanal
+      declaraba "porcentaje de la cuenta" sin decir de cual
+    estado: CONFIRMED
+    valor: "saldo_actual"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a85b6bc7
+  - nombre: reloj_dia_riesgo
+    categoria: prop_firm
+    tipo: enum
+    unidad: que reloj marca el corte del dia (y de la semana) de riesgo
+    opciones: [servidor, grafico]
+    descripcion: >-
+      en que reloj cae la medianoche que reinicia el tope diario, y el domingo que reinicia el
+      semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. Importa porque
+      los dos relojes NO coinciden: el del servidor cambia con el calendario de Nueva York
+      (broker_offset_base + broker_dst) y el del grafico esta en discusion (A-14), asi que se
+      separan una hora buena parte del año. `servidor` es un DEFAULT NUESTRO: es como lo calculan
+      las cuentas de fondeo, pero no esta verificado contra el panel de FundedNext (A-19), y en
+      una cuenta fondeada equivocarse aqui es perder la cuenta, no perder un trade
+    estado: DEFAULT_AMBIGUOUS
+    valor: "servidor"
+    ambiguedad_id: A-19
+    fuente:
+      tipo: decision
+      id: ADR-0015
   - nombre: base_calculo_objetivo
     categoria: estrategia
     tipo: enum
