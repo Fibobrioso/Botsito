@@ -535,3 +535,35 @@ def test_apply_conserva_los_comentarios_del_fichero(tmp_path: Path) -> None:
     texto = escribir_cambios(ruta, cambios_de_sesion(registro, [r], r.sesion))
     assert texto.startswith("# cabecera que debe sobrevivir")
     assert "estado: CONFIRMED" in texto and 'valor: "0.8"' in texto and "tipo: feedback" in texto
+
+
+def test_apply_retira_ambiguedad_id_al_escribir_un_valor_del_trader(tmp_path: Path) -> None:
+    """Un valor que llega del trader deja de ser un default nuestro.
+
+    El registro rechaza `ambiguedad_id` fuera de DEFAULT_AMBIGUOUS, asi que dejarlo produciria un
+    fichero que no carga. Que la ambiguedad siga abierta se ve cruzando con ambiguedades.yaml.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: DEFAULT_AMBIGUOUS\n"
+        '    valor: "0.75"\n'
+        "    ambiguedad_id: A-10\n"
+        "    fuente: {tipo: decision, id: ADR-0005}\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+    assert "ambiguedad_id" not in texto
+    ruta.write_text(texto, encoding="utf-8", newline="\n")
+    assert str(cargar_registro(ruta).fraccion("stop_fraccion_caja")) == "0.8 (fraccion)"

@@ -192,7 +192,12 @@ def escribir_cambios(ruta: Path, cambios: Sequence[Cambio]) -> str:
         for linea in bloque:
             if re.match(r"^    (estado|valor|fuente):", linea):
                 continue
-            if re.match(r"^      (tipo|id): ", linea):  # cuerpo de `fuente`
+            if re.match(r"^      (tipo|id): ", linea):  # cuerpo de `fuente` en varias lineas
+                continue
+            if re.match(r"^    ambiguedad_id:", linea):
+                # Un valor que llega del trader deja de ser un default nuestro, y el registro
+                # rechaza `ambiguedad_id` fuera de DEFAULT_AMBIGUOUS. Que la ambiguedad siga
+                # abierta se ve cruzando con ambiguedades.yaml (`spec status`), no aqui.
                 continue
             nuevas.append(linea)
         valor = cambio.valor_escrito
