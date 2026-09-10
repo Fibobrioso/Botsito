@@ -419,3 +419,119 @@ def test_valor_canonico_entra_en_el_id_cuando_tiene_contenido(tmp_path: Path) ->
 def test_valor_canonico_en_blanco_se_descarta(tmp_path: Path) -> None:
     campos = base(medio="escrito", grabacion=None, t0=None, t1=None, valor_canonico="   ")
     assert cargar_registro(escribir_registro(tmp_path, campos)).valor_canonico is None
+
+
+# --- feedback apply (F11): la puerta que F09 dejo diferida ---
+
+
+def _registro_minimo(tmp_path: Path, extra: str = "") -> Path:
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: UNKNOWN\n" + extra,
+        encoding="utf-8",
+        newline="\n",
+    )
+    return ruta
+
+
+def _fb(**cambios: Any) -> dict[str, Any]:
+    d = base(
+        medio="escrito",
+        grabacion=None,
+        t0=None,
+        t1=None,
+        objetivo={"tipo": "parametro", "id": "stop_fraccion_caja"},
+        accion="RESOLVE_UNKNOWN",
+        valor_resultante="0,8",
+    )
+    d.update(cambios)
+    return d
+
+
+def test_apply_falla_sin_canonico_y_pasa_con_el(tmp_path: Path) -> None:
+    """La coma decimal la rechaza el registro a proposito; `apply` no la traduce, la denuncia."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    sin = registro_desde_dict({**_fb(), "id": calcular_id(_fb())})
+    with pytest.raises(AplicarError, match="numero invalido|invalido"):
+        cambios_de_sesion(registro, [sin], sin.sesion)
+
+    campos = _fb(valor_canonico="0.8")
+    con = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    cambios = cambios_de_sesion(registro, [con], con.sesion)
+    assert len(cambios) == 1 and cambios[0].valor_escrito == "0.8" and cambios[0].canonico
+
+
+def test_apply_aborta_con_dos_registros_vigentes_sobre_el_mismo_parametro(tmp_path: Path) -> None:
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    a = _fb(valor_canonico="0.8")
+    b = _fb(valor_canonico="0.75", respuesta_literal="otra cosa dijo")
+    regs = [
+        registro_desde_dict({**a, "id": calcular_id(a)}),
+        registro_desde_dict({**b, "id": calcular_id(b)}),
+    ]
+    with pytest.raises(AplicarError, match="vigentes a la vez"):
+        cambios_de_sesion(registro, regs, regs[0].sesion)
+
+
+def test_apply_ignora_lo_superseded_y_aplica_lo_vigente(tmp_path: Path) -> None:
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    viejo_campos = _fb(valor_canonico="0.75")
+    viejo = registro_desde_dict({**viejo_campos, "id": calcular_id(viejo_campos)})
+    nuevo_campos = _fb(valor_canonico="0.8", supersede=viejo.id)
+    nuevo = registro_desde_dict({**nuevo_campos, "id": calcular_id(nuevo_campos)})
+    cambios = cambios_de_sesion(registro, [viejo, nuevo], nuevo.sesion)
+    assert [c.valor_escrito for c in cambios] == ["0.8"]
+
+
+def test_apply_no_escribe_un_parametro_que_no_sea_de_estrategia(tmp_path: Path) -> None:
+    """Un parametro de entorno solo cambia por ADR (ADR-0004): el feedback no puede tocarlo."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: cuenta_objetivo\n"
+        "    categoria: prop_firm\n"
+        "    tipo: texto\n"
+        "    unidad: tipo de cuenta\n"
+        "    descripcion: cuenta\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(objetivo={"tipo": "parametro", "id": "cuenta_objetivo"}, valor_canonico="demo")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    with pytest.raises(AplicarError, match="solo se cambia por decision"):
+        cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+
+
+def test_apply_conserva_los_comentarios_del_fichero(tmp_path: Path) -> None:
+    """La cabecera de `parametros.yaml` documenta el esquema: un volcado la borraria."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(tmp_path)
+    ruta.write_text("# cabecera que debe sobrevivir\n" + ruta.read_text(encoding="utf-8"),
+                    encoding="utf-8", newline="\n")
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    registro = cargar_registro(ruta)
+    texto = escribir_cambios(ruta, cambios_de_sesion(registro, [r], r.sesion))
+    assert texto.startswith("# cabecera que debe sobrevivir")
+    assert "estado: CONFIRMED" in texto and 'valor: "0.8"' in texto and "tipo: feedback" in texto

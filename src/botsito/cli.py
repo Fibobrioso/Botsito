@@ -660,7 +660,10 @@ def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
         marca = "=" if c.es_no_op else ("+" if c.estado_anterior.value == "UNKNOWN" else "~")
         canon = " (canonico)" if c.canonico else ""
         print(f"  {marca} {c.parametro:28} {c.valor_escrito!r}{canon}  <- {c.registro_id}")
-    print(f"{len(cambios)} parametros; {len(nuevos)} cambian, {len(cambios) - len(nuevos)} ya estaban")
+    print(
+        f"{len(cambios)} parametros; {len(nuevos)} cambian, "
+        f"{len(cambios) - len(nuevos)} ya estaban"
+    )
     if solo_check:
         print("--check: no se ha escrito nada")
         return 0

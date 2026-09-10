@@ -154,12 +154,25 @@ def test_hora_invalida(tmp_path: Path) -> None:
         cargar_registro(_escribir(tmp_path, contenido))
 
 
-def test_fichero_real_sin_valores_de_estrategia(repo: Path) -> None:
-    """Hasta F11 ningun parametro de estrategia tiene valor: todo lo que el trader debe confirmar
-    sigue UNKNOWN. Los de entorno (F15: husos) se citan por ADR."""
+def test_fichero_real_cada_valor_de_estrategia_cita_al_trader(repo: Path) -> None:
+    """Desde F11 los parametros de estrategia SI tienen valor, y por eso lo que hay que vigilar
+    cambia: ninguno puede tenerlo sin citar al trader.
+
+    Antes de la sesion 1 este test afirmaba lo contrario -que todos seguian UNKNOWN-, que era la
+    guardia util mientras no habia respuestas. Ahora la guardia util es que nadie escriba un valor
+    de estrategia por decision propia: un numero de la operativa sale del trader (feedback) o de
+    una cita suya (evidence), nunca de un ADR nuestro.
+    """
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
     for nombre in r.por_categoria("estrategia"):
-        assert r.parametros[nombre].estado is Estado.UNKNOWN, f"{nombre} tiene valor antes de F11"
+        p = r.parametros[nombre]
+        if p.estado is Estado.UNKNOWN:
+            continue  # sin valor no hay nada que citar
+        assert p.fuente is not None, f"{nombre} tiene valor y no dice de donde sale"
+        assert p.fuente.tipo in ("feedback", "evidence"), (
+            f"{nombre} es de estrategia y su valor viene de {p.fuente.tipo}: "
+            f"un numero de la operativa lo dice el trader, no lo decidimos nosotros"
+        )
     for nombre, p in r.parametros.items():
         # Un parametro de entorno sin valor todavia (UNKNOWN) no tiene nada que citar; la regla
         # es que su VALOR venga de una decision, no de la evidencia ni del feedback.
