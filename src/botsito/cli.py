@@ -1219,9 +1219,17 @@ def kit_build(repo: Path, args: argparse.Namespace) -> int:
 
 def kit_check(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import comprobar
+    from botsito.feedback.modelo import cargar_feedback
 
     try:
-        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.sesion)
+        # Si la sesion ya se celebro, su paquete es historico y no tiene que reproducirse: el
+        # registro tiene ya las respuestas y el cuestionario de hoy preguntaria otra cosa.
+        directorio = repo / "knowledge" / "feedback"
+        celebrada = any(
+            r.sesion == args.sesion
+            for r in (cargar_feedback(directorio) if directorio.is_dir() else [])
+        )
+        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.sesion, celebrada)
     except _kit_errores() as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

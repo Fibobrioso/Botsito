@@ -330,3 +330,34 @@ reglas:
       lo explico en v6 entre 0:41:00 y 0:50:11, tramo declarado fuera de la operativa por ambos y
       no citable (knowledge/corpus/tramos_no_citables.yaml)
     estado: DESCARTADA
+
+  - id: RN-026
+    titulo: si el broker no admite el stop donde toca, el bot se abstiene
+    cuando: >-
+      el stop o el limite que pide la spec queda mas cerca del precio que instrumento_stops_level
+    entonces: >-
+      no se abre la operacion; nunca se aproxima el nivel al minimo que el broker admite
+    parametros: [instrumento_stops_level, comportamiento_sin_regla]
+    cita: fb-2026-09-09-sesion-01-c698bc6a
+    literal: Que sea fiel a la operativa y no busque nada adicional.
+    notas: >-
+      la decision explicita que pide MASTER_PLAN H.2: rechazo por stops level = abstencion. Mover
+      el stop a donde el broker lo admite seria operar OTRA estrategia con el nombre de esta, y el
+      trader pidio fidelidad, no aproximacion
+    estado: VIGENTE
+
+  - id: RN-027
+    titulo: el lotaje se redondea al escalon del broker, siempre a la baja
+    cuando: el lote calculado no es un multiplo de instrumento_lote_paso
+    entonces: >-
+      se redondea hacia abajo al escalon; si queda por debajo de instrumento_lote_minimo, no se
+      opera
+    parametros: [instrumento_lote_paso, instrumento_lote_minimo, instrumento_contrato]
+    cita: fb-2026-09-09-sesion-01-a089315e
+    literal: >-
+      El lotaje se pone sobre la caja completa de SL, pero automaticamente se mueve al 0.8 de la
+      misma para que corra la operacion.
+    notas: >-
+      a la baja y no al mas cercano: redondear hacia arriba haria arriesgar mas de lo que el
+      trader dijo, y el error se acumularia operacion tras operacion
+    estado: VIGENTE

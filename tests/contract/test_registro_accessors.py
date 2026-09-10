@@ -67,3 +67,37 @@ def test_el_detector_ve_los_usos(tmp_path: Path) -> None:
         ("m.py:1", "fraccion", "stop_fraccion"),
         ("m.py:2", "hora", "inicio"),
     ]
+
+
+def test_las_opciones_del_kit_y_del_registro_no_pueden_separarse(repo: Path) -> None:
+    """`mapa_parametros.yaml` (F10) y el registro (F11) declaran las mismas listas cerradas.
+
+    Las `opciones` deberian vivir solo en el registro, pero el paquete de la sesion 1 se genero
+    con las del kit y `kit check` exige que ese paquete se reproduzca byte a byte: es la prueba de
+    lo que se le pregunto al trader, y no puede cambiar. Asi que conviven, y esto impide lo unico
+    que importa: que una de las dos se quede atras y el kit pregunte por una opcion que el
+    registro rechaza. Deuda declarada para F13.
+    """
+    import yaml
+
+    from botsito.config.registro import cargar_registro
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    mapa = yaml.safe_load(
+        (repo / "knowledge" / "cases" / "kit" / "mapa_parametros.yaml").read_text(encoding="utf-8")
+    )
+    problemas: list[str] = []
+    for nombre, datos in (mapa.get("parametros") or {}).items():
+        opciones_kit = (datos or {}).get("opciones")
+        if opciones_kit is None:
+            continue
+        p = registro.parametros.get(nombre)
+        if p is None:
+            problemas.append(f"{nombre}: el kit lo nombra y el registro no lo tiene")
+            continue
+        if p.opciones is None:
+            problemas.append(f"{nombre}: el kit declara opciones y en el registro no es un enum")
+            continue
+        if list(p.opciones) != list(opciones_kit):
+            problemas.append(f"{nombre}: kit {list(opciones_kit)} != registro {list(p.opciones)}")
+    assert not problemas, "; ".join(problemas)

@@ -539,7 +539,9 @@ def esquema_paquete(
     return cuestionario, ventanas, particiones
 
 
-def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], list[str]]:
+def comprobar(
+    repo: Path, carpeta_datos: Path, sesion: str, celebrada: bool = False
+) -> tuple[list[str], list[str]]:
     """PURO: recompone el paquete y compara byte a byte (tras normalizar CRLF). Sin datos en
     `data/`, comprueba solo el esquema y avisa."""
     problemas: list[str] = []
@@ -563,8 +565,19 @@ def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], 
     nuevo = construir(repo, carpeta_datos, sesion, seed)
     carpeta = repo / DIRECTORIO_KIT / sesion
     for nombre, texto in nuevo.ficheros.items():
-        if _leer(carpeta, nombre) != texto:
-            problemas.append(f"{sesion}/{nombre}: difiere de lo que se genera hoy")
+        if _leer(carpeta, nombre) == texto:
+            continue
+        if celebrada:
+            # El paquete de una sesion ya celebrada es historico: dice lo que se le pregunto al
+            # trader ese dia. Regenerarlo hoy da otra cosa a proposito, porque el registro ya
+            # tiene las respuestas y el cuestionario ya no preguntaria lo mismo. Exigir que se
+            # reproduzca seria exigir que el proyecto no aprenda nada.
+            avisos.append(
+                f"{sesion}/{nombre}: ya no se genera igual, y es lo esperado: la sesion se "
+                f"celebro y sus respuestas estan en el registro"
+            )
+            continue
+        problemas.append(f"{sesion}/{nombre}: difiere de lo que se genera hoy")
     return problemas, avisos
 
 
