@@ -248,11 +248,24 @@ def escribir_cambios(ruta: Path, cambios: Sequence[Cambio]) -> str:
         ).strip()
         if texto.endswith("\n..."):
             texto = texto[: -len("\n...")].strip()
-        nuevas.append("    estado: CONFIRMED")
-        nuevas.append(f"    valor: {texto}")
-        nuevas.append("    fuente:")
-        nuevas.append("      tipo: feedback")
-        nuevas.append(f"      id: {cambio.registro_id}")
+        # El bloque de un parametro llega hasta el `- nombre:` siguiente, asi que arrastra las
+        # lineas en blanco y los COMENTARIOS DE CABECERA de la seccion que viene detras. Anadir
+        # las claves al final metia esos comentarios DENTRO del parametro: el fichero seguia
+        # cargando -YAML los ignora- y el hash no podia verlo -se hashea la estructura-, pero el
+        # comentario pasaba a decir lo contrario del parametro que lo contenia. Paso de verdad
+        # dos veces, con anclaje_h4 y lotaje_base. Se insertan tras la ultima clave real.
+        corte = len(nuevas)
+        while corte > 0 and (
+            not nuevas[corte - 1].strip() or nuevas[corte - 1].lstrip().startswith("#")
+        ):
+            corte -= 1
+        nuevas[corte:corte] = [
+            "    estado: CONFIRMED",
+            f"    valor: {texto}",
+            "    fuente:",
+            "      tipo: feedback",
+            f"      id: {cambio.registro_id}",
+        ]
         salida.extend(nuevas)
         escritos.add(actual)
 

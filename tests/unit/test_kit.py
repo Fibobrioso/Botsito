@@ -923,3 +923,28 @@ def test_el_paquete_de_una_sesion_celebrada_no_tiene_que_reproducirse(tmp_path: 
     problemas, avisos = comprobar(repo, repo / "data", sesion, celebrada=True)
     assert not any("hoja_trader" in p for p in problemas)
     assert any("la sesion se celebro" in a for a in avisos)
+
+
+def test_las_particiones_no_se_perdonan_ni_con_la_sesion_celebrada(tmp_path: Path) -> None:
+    """`particiones.yaml` no depende de las respuestas: sale de los hashes y del seed.
+
+    El perdon a una sesion celebrada se escribio para TODO el paquete, y eso incluia las
+    particiones, que son la prueba de que se fijaron antes de etiquetar (ADR-0011). Con ese
+    perdon, reescribirlas despues de ver las etiquetas solo producia un AVISO y `kit check`
+    seguia saliendo con 0.
+    """
+    repo, _ = repo_kit(tmp_path)
+    sesion = "2026-09-15-sesion-01"
+    escribir(repo, construir(repo, repo / "data", sesion, 3))
+    part = repo / DIRECTORIO_KIT / sesion / "particiones.yaml"
+    part.write_text(
+        part.read_text(encoding="utf-8").replace("seed: 3", "seed: 4"),
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    for celebrada in (False, True):
+        problemas, _ = comprobar(repo, repo / "data", sesion, celebrada=celebrada)
+        assert any("particiones.yaml" in p for p in problemas), (
+            f"con celebrada={celebrada} las particiones tienen que ser ERROR, no AVISO"
+        )

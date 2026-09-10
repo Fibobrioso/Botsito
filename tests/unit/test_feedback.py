@@ -709,3 +709,42 @@ def test_apply_no_acepta_digitos_que_no_sean_ascii(tmp_path: Path, bruto: str) -
     r = registro_desde_dict({**campos, "id": calcular_id(campos)})
     with pytest.raises(AplicarError, match="no es un entero"):
         cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+
+
+def test_apply_no_se_traga_el_comentario_de_la_seccion_siguiente(tmp_path: Path) -> None:
+    """Las claves nuevas van tras la ultima clave real, no al final del bloque.
+
+    El bloque de un parametro llega hasta el `- nombre:` siguiente, asi que arrastra la linea en
+    blanco y los comentarios de cabecera de la seccion que viene detras. Anadiendo al final, esos
+    comentarios acababan DENTRO del parametro editado: el fichero cargaba igual -YAML los ignora-
+    y el hash tampoco podia verlo -se hashea la estructura re-serializada-, pero el comentario
+    pasaba a decir lo contrario del parametro que lo contenia. Ocurrio dos veces de verdad, con
+    `anclaje_h4` y `lotaje_base`, y llego a `main` sin que nada lo denunciara.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(
+        tmp_path,
+        extra=(
+            "\n"
+            "  # CABECERA DE LA SECCION SIGUIENTE: no pertenece al parametro de arriba.\n"
+            "  - nombre: objetivo_rr\n"
+            "    categoria: estrategia\n"
+            "    tipo: decimal\n"
+            "    unidad: multiplo\n"
+            "    descripcion: objetivo\n"
+            "    estado: UNKNOWN\n"
+        ),
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+
+    lineas = texto.splitlines()
+    i_com = next(n for n, ln in enumerate(lineas) if "CABECERA DE LA SECCION" in ln)
+    i_est = next(n for n, ln in enumerate(lineas) if ln == "    estado: CONFIRMED")
+    assert i_est < i_com, "las claves nuevas quedaron DEBAJO del comentario de la seccion siguiente"
+    # y el comentario sigue pegado al parametro que encabeza, no al que se edito
+    i_sig = next(n for n, ln in enumerate(lineas) if ln == "  - nombre: objetivo_rr")
+    assert i_com == i_sig - 1

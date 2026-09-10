@@ -725,6 +725,18 @@ def spec_manifest(repo: Path, escribir: bool) -> int:
     if sustituciones != 1:
         print("ERROR: no se encontro la clave 'hash:' en el manifiesto", file=sys.stderr)
         return 1
+    from datetime import UTC, datetime
+
+    # `generado_el` acompana al hash o miente: se validaba su formato y no lo actualizaba
+    # nadie, asi que a partir de la segunda regeneracion databa una version anterior de la
+    # spec. Si falta la clave no se inventa el fichero: se dice y se sale.
+    sello = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    nuevo_texto, sellos = re.subn(
+        r"(?m)^generado_el: .*$", f'generado_el: "{sello}"', nuevo_texto, count=1
+    )
+    if sellos != 1:
+        print("ERROR: no se encontro la clave 'generado_el:' en el manifiesto", file=sys.stderr)
+        return 1
     ruta.write_text(nuevo_texto, encoding="utf-8", newline="\n")
     print(f"OK: hash actualizado a {actual[:12]}…")
     print("Recuerda subir spec_version si la spec cambio de verdad")
@@ -1239,7 +1251,10 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: {p}", file=sys.stderr)
     if problemas:
         return 1
-    print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
+    if avisos:
+        print(f"OK: {args.sesion} sin diferencias que no explique la sesion celebrada")
+    else:
+        print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
     return 0
 
 

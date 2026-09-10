@@ -3,7 +3,7 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 602 casos (420 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 604 casos (422 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
@@ -60,10 +60,10 @@ a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag
 | P3 | Tras §5 bis, RN-020 es el único freno del día — pero no define qué reloj ni a qué hora empieza el día, y `perdida_maxima_semanal` no tiene base | ABIERTO |
 | P4 | La verificación comprueba `literal ⊆ cita`, nunca `regla ⊆ literal`: RN-026 y RN-027 son decisiones del consultor con citas que no las sostienen | ABIERTO |
 | P5 | El hash no cubre `titulo`, `literal` ni `notas` de las reglas. La corrección de riesgo de §5 bis vive solo en las `notas` de RN-020, y el `titulo` de RN-020 dice lo contrario que ellas | ABIERTO |
-| P6 | `kit check` con `celebrada=True` degrada TODA diferencia a AVISO, `particiones.yaml` incluida, e imprime "OK: se recompone igual" bajo sus propios avisos | ABIERTO |
-| P7 | `feedback apply` desplaza comentarios de bloque: dos cabeceras de sección quedaron DENTRO de `anclaje_h4` y `lotaje_base`, diciendo lo contrario del parámetro que las contiene. El hash no puede verlo | ABIERTO |
+| **P6** | `kit check` con `celebrada=True` degradaba TODA diferencia a AVISO, `particiones.yaml` incluida, e imprimía "OK: se recompone igual" bajo sus propios avisos | **CERRADO** |
+| **P7** | `feedback apply` desplazaba comentarios de bloque: dos cabeceras de sección quedaron DENTRO de `anclaje_h4` y `lotaje_base`, diciendo lo contrario del parámetro que las contiene. El hash no puede verlo | **CERRADO** |
 | P8 | `PROJECT_STATE.md` y el §6 de este informe describen F11 con cifras de una versión anterior de la rama | ABIERTO |
-| P9 | `spec manifest --escribir` reescribe solo la línea `hash:`; `generado_el` no se actualiza nunca (encontrado al cerrar P1) | ABIERTO |
+| **P9** | `spec manifest --escribir` reescribía solo la línea `hash:`; `generado_el` no se actualizaba nunca (encontrado al cerrar P1) | **CERRADO** |
 | P10 | MASTER_PLAN da a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | ABIERTO |
 
 ### P1 · la base del objetivo (cerrado el 2026-09-10)
@@ -82,6 +82,40 @@ La guardia nueva (`test_una_base_de_calculo_no_puede_vivir_en_la_prosa`) **encon
 en RN-012** en su primera ejecución: nombraba `riesgo_por_operacion` sin nombrar su base. Corregido.
 
 Detalle completo en `docs/adr/0014-base-de-calculo-del-objetivo.md`.
+
+### P7 · `apply` se tragaba el comentario de la sección siguiente (cerrado el 2026-09-10)
+
+El bloque de un parámetro se acumula hasta el `- nombre:` siguiente, así que arrastra la línea en
+blanco y los comentarios de cabecera de la sección de detrás. `escribir_cambios` añadía
+`estado/valor/fuente` **al final** de ese bloque, o sea debajo de esos comentarios.
+
+Pasó dos veces de verdad y llegó a `main`:
+
+- las cinco líneas de la cabecera del bloque F10 quedaron dentro de `anclaje_h4`, diciendo
+  *"pre-poblados en UNKNOWN sin valor"* y *"las horas van sin `huso`"* sobre un parámetro
+  CONFIRMED, con valor y con `huso`;
+- las dos de la cabecera de la auditoría previa, dentro de `lotaje_base`.
+
+**Ninguna guardia podía verlo**: YAML ignora los comentarios y el hash se calcula sobre la
+estructura re-serializada. Habría seguido acumulándose en cada `apply`. Las claves se insertan
+ahora tras la última clave real; los dos comentarios están reparados y hay test.
+
+### P6 · `kit check` había dejado de poder denunciar nada (cerrado el 2026-09-10)
+
+El perdón a una sesión ya celebrada se escribió para **todo** el paquete. Pero de los cuatro
+ficheros solo tres dependen de las respuestas; `particiones.yaml` sale de los hashes de los casos y
+del seed, y es **la prueba de que las particiones se fijaron antes de etiquetar** (ADR-0011).
+Reescribirlas después de ver las etiquetas solo producía un AVISO y el comando salía con 0.
+
+Ahora el perdón alcanza únicamente a `cuestionario.yaml`, `ventanas.yaml` y `hoja_trader.md`. Y el
+mensaje final deja de decir *"se recompone igual"* justo debajo de tres avisos que dicen que no.
+
+### P9 · `generado_el` nunca se actualizaba (cerrado el 2026-09-10)
+
+`spec manifest --escribir` reescribía solo la línea `hash:` con una regex. El sello de tiempo se
+validaba en formato y no lo mantenía nadie, así que desde la segunda regeneración databa una
+versión anterior de la spec. Ahora se actualiza con el hash, y si la clave falta el comando falla
+en vez de escribir un manifiesto a medias.
 
 ---
 

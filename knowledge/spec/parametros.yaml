@@ -188,17 +188,16 @@ parametros:
     huso: Etc/GMT-2
     unidad: hora de reloj de pared; el huso se fija al resolver A-9 (es parte de la pregunta)
     descripcion: hora local a la que abre la primera vela H4 del dia en el grafico del trader (A-9)
-
-  # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
-  # UNKNOWN sin valor. Se cierran en F11 con un registro de feedback de la sesion 1 (o evidencia
-  # que baste). El enlace parametro -> evidencia/ambiguedad esta en knowledge/cases/kit/
-  # mapa_parametros.yaml (el esquema del registro no admite claves extra). Las horas van sin
-  # `huso` hasta que A-6/A-9 lo fijen.
     estado: CONFIRMED
     valor: "23:00"
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-6615d32e
+
+  # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
+  # UNKNOWN sin valor. Se cerraron en F11 con un registro de feedback de la sesion 1 (o evidencia
+  # que baste). El enlace parametro -> evidencia/ambiguedad esta en knowledge/cases/kit/
+  # mapa_parametros.yaml (el esquema del registro no admite claves extra).
   - nombre: ventana_inicio
     categoria: estrategia
     tipo: hora
@@ -435,14 +434,14 @@ parametros:
     unidad: distancia_completa/desde_075
     opciones: ["distancia_completa", "desde_075"]
     descripcion: sobre que distancia se calcula el lotaje
-
-  # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
-  # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
     estado: CONFIRMED
     valor: "distancia_completa"
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-a089315e
+
+  # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
+  # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
   - nombre: dias_operables
     categoria: estrategia
     tipo: texto
