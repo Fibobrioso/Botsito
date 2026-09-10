@@ -232,8 +232,11 @@ reglas:
     parametros: []
     cita: ev-v4-003710-c753f3d3
     literal: >-
-      para que tú puedas entrar nuevamente o bien te ha tocado stop loss o bien pues has tenido
-      profit, pero con el profit ya no operas más
+      para que tú puedas entrar nuevamente o bien te ha tocado stop loss
+    notas: >-
+      la cita sigue en el item hasta "con el profit ya no operas mas", pero ESA MITAD quedo
+      revocada en la sesion 1 (RN-017): el trader dijo que un ganador no apaga el dia. El literal
+      se corta donde sigue siendo cierto
     estado: VIGENTE
 
   - id: RN-019
@@ -257,9 +260,11 @@ reglas:
     literal: >-
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
     notas: >-
-      el freno operativo son los cartuchos: con el riesgo real por operacion, agotarlos queda muy
-      por debajo del tope diario. Estos topes existen para que no haya un camino por el que la
-      cuenta se acerque a su limite
+      OJO a la aritmetica, corregida en la auditoria del 2026-09-09: agotar los cartuchos cuesta
+      tres perdidas, pero el contador NO es diario -se reinicia con la siguiente liquidez de M15
+      (cartuchos_reinicio)-, asi que no hay cota diaria por esa via: son tres perdidas POR ZONA, y
+      nada limita cuantas zonas se desarrollan entre la apertura y el cierre de la ventana. El
+      tope porcentual no es una red que nunca se toca: es el unico freno del dia que existe
     estado: VIGENTE
 
   - id: RN-021
@@ -294,7 +299,9 @@ reglas:
     cita: fb-2026-09-09-sesion-01-08761847
     literal: Por temas de Spread ... se reduce al 0.8
     notas: >-
-      por eso `stop_colchon_spread` se queda UNKNOWN. Cierra A-10 y la contradiccion stop.nivel
+      por eso `stop_colchon_spread` se queda UNKNOWN. Cierra A-10. La contradiccion mecanica
+      `stop.nivel` sigue ABIERTA a proposito: los items que dicen 0,75 son citas ciertas de lo que
+      el trader hacia antes, y cerrarla exige superseder esos items (F06/F07), no una regla
     estado: DESCARTADA
 
   - id: RN-024

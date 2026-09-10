@@ -23,7 +23,7 @@ FICHERO_GLOSARIO = "knowledge/spec/glossary.yaml"
 ESTADOS_REGLA = ("VIGENTE", "DESCARTADA")
 CAMPOS_REGLA = {"id", "titulo", "cuando", "entonces", "parametros", "cita", "literal", "estado"}
 CAMPOS_REGLA_OPCIONALES = {"notas"}
-CAMPOS_TERMINO = {"termino", "definicion", "cita"}
+CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 
 # Un campo ejecutable no puede llevar un valor de negocio: el valor vive en el registro y aqui
@@ -126,6 +126,7 @@ class Termino:
     termino: str
     definicion: str
     cita: str
+    literal: str
     alias: tuple[str, ...] = ()
     visto_en: str | None = None
 
@@ -243,6 +244,7 @@ def cargar_glosario(ruta: Path) -> list[Termino]:
                 termino=nombre,
                 definicion=_texto(t, "definicion", nombre),
                 cita=cita,
+                literal=_texto(t, "literal", nombre),
                 alias=tuple(" ".join(a.split()) for a in alias),
                 visto_en=" ".join(str(t["visto_en"]).split()) if t.get("visto_en") else None,
             )
@@ -264,12 +266,22 @@ def literal_coincide(literal: str, texto_citado: str) -> bool:
     return bool(buscar_secuencia(tokens(texto_citado), trozos))
 
 
-def comprobar_literales(reglas: list[Regla], textos: dict[str, str]) -> list[str]:
-    """Cada regla dice lo que dice su cita, o se nombra el problema.
+def comprobar_literales(
+    reglas: list[Regla], textos: dict[str, str], terminos: list[Termino] | None = None
+) -> list[str]:
+    """Cada regla y cada termino dicen lo que dice su cita, o se nombra el problema.
 
-    `textos` es cita_id -> lo que se dijo (respuesta del trader o cita de la evidencia).
+    `textos` es cita_id -> lo que se dijo (respuesta del trader o cita de la evidencia). El
+    glosario entra aqui desde la auditoria del 2026-09-09, que encontro ocho definiciones que
+    decian mas que su cita o citaban otra cosa, sin que nada lo vigilara.
     """
     problemas: list[str] = []
+    for termino in terminos or []:
+        citado_t = textos.get(termino.cita)
+        if citado_t is not None and not literal_coincide(termino.literal, citado_t):
+            problemas.append(
+                f"glosario {termino.termino!r}: su literal no aparece en {termino.cita}"
+            )
     for r in reglas:
         citado = textos.get(r.cita)
         if citado is None:

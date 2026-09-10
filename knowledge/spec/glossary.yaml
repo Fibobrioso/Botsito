@@ -1,81 +1,95 @@
-# Glosario de la operativa (F11). Los terminos del trader, definidos una vez y usados por
-# `strategy_spec.yaml`. Manual, versionado; cada commit cita `Fuente:`.
+# Glosario de la operativa (F11, ADR-0013). Los terminos del trader, definidos una vez y usados
+# por `strategy_spec.yaml`. Manual, versionado; cada commit cita `Fuente:`.
 #
-# Regla: aqui se define QUE es cada cosa, no que se hace con ella. Lo segundo son reglas.
-# `cita` es el registro o item que sostiene la definicion; `visto_en` ayuda a encontrarlo.
+# Reglas del fichero, aprendidas de la auditoria del 2026-09-09, que encontro ocho definiciones
+# que decian mas que su cita o citaban otra cosa:
+#
+# 1. Aqui se define QUE es cada cosa, no que se hace con ella: lo segundo son reglas, y ademas
+#    meteria numeros de negocio en un sitio que no es el registro (ADR-0002).
+# 2. `literal` es la frase EXACTA que sostiene la definicion, y `knowledge validate` comprueba
+#    que aparece en lo que `cita` dice, con el mismo criterio de tokens que las reglas.
+# 3. La definicion no puede afirmar mas de lo que su literal sostiene. Si hace falta decir mas,
+#    se cita otra cosa o se dice menos.
 
 terminos:
   - termino: flujo de ordenes
-    alias: [order flow, orden flow]
+    alias: [order flow, mapeo]
     definicion: >-
-      la secuencia de impulsos y retrocesos que dibuja el precio en M1 y sobre la que se mapea la
-      estructura. Es el marco de ejecucion, no el que decide la direccion
+      una de las tres piezas del modelo, junto al breaker y al marco de liquidez; el trader lo usa
+      como sinonimo de mapear el mercado
     cita: ev-v3-000030-94d71563
+    literal: Un flujo de órdenes, o sea, mapeo del mercado, breaker y marco de liquidez
     visto_en: v3 0:00:30
 
   - termino: breaker
     definicion: >-
-      la zona que queda cuando el precio rompe el extremo anterior y vuelve sobre ella. Es el
-      primer esquema de entrada: se genera el flujo, rompe, y el limite espera en la zona
+      uno de los dos esquemas de entrada; sin el o sin el segundo esquema no hay entrada
     cita: ev-v4-001844-93dcb658
+    literal: >-
+      el precio no genera el esquema de entrada que ya sabemos cuál es [...] un breaker o este de
+      aquí, o sea cualquiera de estos dos de aquí
     visto_en: v4 0:18:44
 
   - termino: zona de control
     definicion: >-
-      el tramo de acumulacion que el precio deja antes de romper. Se da por COMPLETADA cuando el
-      precio rompe el extremo anterior, y basta con que lo rompa con mecha. Dos usos distintos:
-      completar una zona mueve la orden limite, y que se desarrolle otra DESPUES de la entrada es
-      lo que dispara el break even
-    cita: fb-2026-09-09-sesion-01-69711f67
+      el tramo que el precio deja antes de romper. Se da por COMPLETADA cuando rompe el punto
+      extremo anterior, y basta con que lo rompa con mecha
+    cita: fb-2026-09-09-sesion-01-a456bc3f
+    literal: >-
+      como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento
+      [...] rompe el punto alto anterior con mecha, con mecha no importa
     visto_en: v6 1:25:36
 
   - termino: estructura
     alias: ["dos velas como una"]
     definicion: >-
-      varias velas de M1 que en la temporalidad mayor forman un solo order block, y que por eso se
-      mapean como una sola unidad; lo demas es ruido. El trader lo llamaba "dos velas como una" y
-      corrigio el termino en la sesion 1
-    cita: fb-2026-09-09-sesion-01-241fa278
+      como el trader llama a lo que antes describia como "dos velas como una"; el termino lo
+      corrigio el mismo en la sesion 1
+    cita: fb-2026-09-09-sesion-01-7ee9cabc
+    literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
     visto_en: v6 1:38:48
 
   - termino: equal
     alias: [equal high, equal low, igual]
     definicion: >-
-      dos extremos al mismo precio, normalmente con mecha. No cambia el sesgo -para cambiarlo hace
-      falta romper, aunque sea por una milesima- pero SI vale como ruptura para activar una
-      entrada, y la reentrada posterior no gasta cartucho
-    cita: fb-2026-09-09-sesion-01-ff7fb765
-    visto_en: v6 1:03:01, 1:15:02
+      dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el
+      extremo anterior, aunque sea por una milesima
+    cita: fb-2026-09-09-sesion-01-8eccf5c0
+    literal: >-
+      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
+      entonces seguiríamos operando bajista
+    visto_en: v6 1:03:01
 
   - termino: cartucho
     alias: [intento]
     definicion: >-
-      cada operacion que gasta el cupo del dia. Solo suma una PERDIDA: ni el break even, ni una
-      entrada invalidada antes de activarse, ni la reentrada tras un equal
-    cita: fb-2026-09-09-sesion-01-2603c017
+      cada operacion que gasta el cupo. Ni el break even, ni una entrada invalidada, ni la
+      reentrada tras un equal cuentan como uno
+    cita: fb-2026-09-09-sesion-01-aa2abe65
+    literal: >-
+      un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es
+      considerado un intento [...] reentrada después de equal, tampoco es considerado un intento
     visto_en: v6 0:52:19
 
   - termino: caja
     alias: [cuadro de Gann, caja de niveles]
     definicion: >-
-      la distancia completa entre la entrada y el stop inicial, dividida en niveles 0 / 0,25 / 0,5
-      / 0,8 / 1. Es la unidad en la que se miden el stop y la proteccion: el lotaje se calcula
-      sobre la caja completa y el stop se mueve al 0,8 de la caja
+      la distancia entre la entrada y el stop inicial, dividida en niveles. Es la unidad en la que
+      se miden el lotaje y la proteccion: el lote se calcula sobre la caja entera y despues el stop
+      se mueve a uno de sus niveles
     cita: ev-v2-003336-fc210a05
+    literal: >-
+      yo calculo mi lotaje desde aquí, o sea, como si fuera lo básico un bot normal, pero luego
+      automáticamente, se de inicio la entrada
     visto_en: v2 0:33:36
 
   - termino: liquidez de M15
     alias: [LQ M15]
     definicion: >-
       el alto o el bajo de M15 que el precio busca. Se da por tomada solo si una vela cierra con
-      CUERPO al otro lado; una mecha que lo perfore no cuenta. Todo lo que ocurre por debajo (o por
-      encima, segun el sesgo) es ruido y no se opera
+      CUERPO al otro lado; una mecha que lo perfore no cuenta
     cita: fb-2026-09-09-sesion-01-6e15504f
+    literal: >-
+      ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o
+      vale con que la mecha lo perfore? Con cuerpo
     visto_en: v6 1:49:21
-
-  - termino: sesion operativa
-    definicion: >-
-      cada uno de los dos tramos de cuatro horas en los que el trader opera, alineados con sus
-      velas H4. La direccion se decide por separado en cada uno
-    cita: fb-2026-09-09-sesion-01-a4909ac5
-    visto_en: v6 1:45:51

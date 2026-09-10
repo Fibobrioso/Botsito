@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-fae74396
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: video
+objetivo:
+  tipo: evidence
+  id: ev-v4-003710-c753f3d3
+accion: CORRECT
+respuesta_literal: que siga operando, pero que respete la regla de los 3 cartuchos de perdida
+registrado_por: Aleks · correccion de la auditoria (F11)
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4
+t0: '2:20:14'
+t1: '2:20:52'
+valor_resultante: 'no hay entradas en paralelo: SI; con profit ya no se opera: NO'
+notas: el item afirma dos cosas y solo una sigue viva. 'No hay entradas en paralelo' y 'para reentrar
+  debe haber tocado el stop' siguen siendo ciertas; 'con profit ya no se opera' quedo revocada en la misma
+  sesion, cuando el trader corrigio R-07. El REJECT de fb-2026-09-09-sesion-01-af02495f iba sobre ev-v4-004936,
+  que decia lo mismo, y este item se quedo sin corregir.

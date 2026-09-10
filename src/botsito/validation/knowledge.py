@@ -417,7 +417,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             # trader citando un registro que dice otra cosa.
             textos_citados = {i.id: i.cita_literal for i in items}
             textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
-            problemas_spec += comprobar_literales(reglas, textos_citados)
+            problemas_spec += comprobar_literales(reglas, textos_citados, terminos)
             # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
             # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
             for r in reglas:
