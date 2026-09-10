@@ -1,0 +1,13 @@
+id: fb-2026-09-09-sesion-01-3fff2b3b
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: cuenta_objetivo
+accion: REJECT
+respuesta_literal: La cuenta demo de FundedNext de 100k de saldo inicial.
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-eca49a27
+notas: 'es decision del consultor, no respuesta del trader: entra por ADR-0012 en categoria prop_firm,
+  junto a cuenta_pruebas y saldo_inicial_cuenta. No cambia lo que dijo el trader: el literal es el suyo.'

@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-bff260ea
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: perdida_maxima_diaria
+accion: CORRECT
+respuesta_literal: De la cuenta basado en el saldo, y que sea en el saldo inicial del día, por ejemplo,
+  imagina que si el día empieza, no sé, 104 [...] que a partir de eso se calcule menos un 4,5
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 4,5 % sobre el saldo INICIAL del dia
+valor_canonico: '4.5'
+supersede: fb-2026-09-09-sesion-01-5e23d47c
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  la base -saldo INICIAL del dia- va en su propio parametro, no en el numero.'

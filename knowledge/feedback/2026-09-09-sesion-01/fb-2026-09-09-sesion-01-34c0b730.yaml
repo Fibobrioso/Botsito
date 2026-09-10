@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-34c0b730
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: huso_grafico
+accion: REJECT
+respuesta_literal: la vela empieza a las 23, la primera vela de cuatro horas
+registrado_por: Aleks · auditoria previa a la validacion de F11 (2026-09-10)
+supersede: fb-2026-09-09-sesion-01-8384b085
+notas: 'este registro no puede fijar el huso: su literal habla de la vela de las 23, no del reloj. El
+  UTC+2 salia de las notas -una lectura de pantalla, fr-v6-22982c02/3585000- y TODAS las lecturas del
+  repositorio son de verano: el trader dice ''utc mas 2 que son ahora ya madrid'' (ev-v3-000136-6160fcea)
+  y el fotograma es del 2026-09-09. Preguntado por el cambio de horario contesta las dos cosas a la vez
+  (ev-v6-005810-5cb1ef06). Etc/GMT-2 y Europe/Madrid son indistinguibles de mayo a octubre, asi que el
+  huso pasa a DEFAULT_AMBIGUOUS bajo A-14 y se cita la evidencia, no este registro.'

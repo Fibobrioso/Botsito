@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-c4922acb
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_proteccion_capital
+accion: REJECT
+respuesta_literal: La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve
+  el SL hasta el nivel 0.8 para todos los modelos de entrada.
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-ced73f4a
+notas: 'sale del registro: es derivado (1 - stop_fraccion_caja) y pasa a invariante de strategy_spec.
+  No cambia lo que dijo el trader: el literal es el suyo.'

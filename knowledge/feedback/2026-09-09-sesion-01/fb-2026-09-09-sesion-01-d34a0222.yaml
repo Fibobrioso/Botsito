@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-d34a0222
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_fraccion_caja
+accion: RESOLVE_UNKNOWN
+respuesta_literal: todo SL se marca completo para el lotaje pero se reduce al 0.8 para la operativa
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 0,8
+valor_canonico: '0.8'
+supersede: fb-2026-09-09-sesion-01-e2fce28e
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  coma decimal a punto.'

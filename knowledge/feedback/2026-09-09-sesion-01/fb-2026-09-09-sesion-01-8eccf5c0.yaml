@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-8eccf5c0
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: sesgo_h4_regla
+accion: RESOLVE_UNKNOWN
+respuesta_literal: si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de
+  pip, entonces seguiríamos operando bajista
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: vela_anterior_cierre_mecha (ruptura del extremo, mecha incluida; equal no cuenta)
+valor_canonico: vela_anterior_cierre_mecha
+supersede: fb-2026-09-09-sesion-01-ff7fb765
+notas: la eleccion, sin la aclaracion del criterio. El literal del trader queda intacto; el canonico es
+  lo que el registro puede leer.

@@ -12,6 +12,7 @@ from botsito.feedback.modelo import (
     calcular_id,
     cargar_feedback,
     cargar_registro,
+    contenido_canonico,
     escribir_registro,
     registro_desde_dict,
     trazar,
@@ -388,3 +389,397 @@ def test_un_duplicado_a_mano_se_distingue_de_una_colision(tmp_path: Path) -> Non
     ruta.write_text(ruta.read_text(encoding="utf-8") + "notas: a mano\n", encoding="utf-8")
     with pytest.raises(FeedbackError, match="OTRO contenido"):
         escribir_registro(tmp_path, base())
+
+
+# --- valor_canonico (F11): re-expresar el valor sin tocar el literal del trader ---
+
+
+def test_valor_canonico_es_opcional_y_no_cambia_el_id_de_los_registros_previos(
+    tmp_path: Path,
+) -> None:
+    """Un campo ausente no entra en `contenido_canonico`, asi que los registros escritos antes
+    de que existiera `valor_canonico` conservan su id."""
+    sin = base(medio="escrito", grabacion=None, t0=None, t1=None)
+    con = {**sin, "valor_canonico": None}
+    assert contenido_canonico(sin) == contenido_canonico(con)
+    r1 = cargar_registro(escribir_registro(tmp_path, sin))
+    assert r1.valor_canonico is None
+
+
+def test_valor_canonico_entra_en_el_id_cuando_tiene_contenido(tmp_path: Path) -> None:
+    """Pero si lleva valor, es contenido: dos registros que solo difieren en el canonico son
+    registros distintos, con ids distintos."""
+    a = base(medio="escrito", grabacion=None, t0=None, t1=None, valor_resultante="0,8")
+    b = {**a, "valor_canonico": "0.8"}
+    assert contenido_canonico(a) != contenido_canonico(b)
+    r = cargar_registro(escribir_registro(tmp_path, b))
+    assert r.valor_canonico == "0.8" and r.valor_resultante == "0,8"
+
+
+def test_valor_canonico_en_blanco_se_descarta(tmp_path: Path) -> None:
+    campos = base(medio="escrito", grabacion=None, t0=None, t1=None, valor_canonico="   ")
+    assert cargar_registro(escribir_registro(tmp_path, campos)).valor_canonico is None
+
+
+# --- feedback apply (F11): la puerta que F09 dejo diferida ---
+
+
+def _registro_minimo(tmp_path: Path, extra: str = "") -> Path:
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: UNKNOWN\n" + extra,
+        encoding="utf-8",
+        newline="\n",
+    )
+    return ruta
+
+
+def _fb(**cambios: Any) -> dict[str, Any]:
+    d = base(
+        medio="escrito",
+        grabacion=None,
+        t0=None,
+        t1=None,
+        objetivo={"tipo": "parametro", "id": "stop_fraccion_caja"},
+        accion="RESOLVE_UNKNOWN",
+        valor_resultante="0,8",
+    )
+    d.update(cambios)
+    return d
+
+
+def test_apply_falla_sin_canonico_y_pasa_con_el(tmp_path: Path) -> None:
+    """La coma decimal la rechaza el registro a proposito; `apply` no la traduce, la denuncia."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    sin = registro_desde_dict({**_fb(), "id": calcular_id(_fb())})
+    with pytest.raises(AplicarError, match="numero invalido|invalido"):
+        cambios_de_sesion(registro, [sin], sin.sesion)
+
+    campos = _fb(valor_canonico="0.8")
+    con = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    cambios = cambios_de_sesion(registro, [con], con.sesion)
+    assert len(cambios) == 1 and cambios[0].valor_escrito == "0.8" and cambios[0].canonico
+
+
+def test_apply_aborta_con_dos_registros_vigentes_sobre_el_mismo_parametro(tmp_path: Path) -> None:
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    a = _fb(valor_canonico="0.8")
+    b = _fb(valor_canonico="0.75", respuesta_literal="otra cosa dijo")
+    regs = [
+        registro_desde_dict({**a, "id": calcular_id(a)}),
+        registro_desde_dict({**b, "id": calcular_id(b)}),
+    ]
+    with pytest.raises(AplicarError, match="vigentes a la vez"):
+        cambios_de_sesion(registro, regs, regs[0].sesion)
+
+
+def test_apply_ignora_lo_superseded_y_aplica_lo_vigente(tmp_path: Path) -> None:
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    viejo_campos = _fb(valor_canonico="0.75")
+    viejo = registro_desde_dict({**viejo_campos, "id": calcular_id(viejo_campos)})
+    nuevo_campos = _fb(valor_canonico="0.8", supersede=viejo.id)
+    nuevo = registro_desde_dict({**nuevo_campos, "id": calcular_id(nuevo_campos)})
+    cambios = cambios_de_sesion(registro, [viejo, nuevo], nuevo.sesion)
+    assert [c.valor_escrito for c in cambios] == ["0.8"]
+
+
+def test_apply_no_escribe_un_parametro_que_no_sea_de_estrategia(tmp_path: Path) -> None:
+    """Un parametro de entorno solo cambia por ADR (ADR-0004): el feedback no puede tocarlo."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: cuenta_objetivo\n"
+        "    categoria: prop_firm\n"
+        "    tipo: texto\n"
+        "    unidad: tipo de cuenta\n"
+        "    descripcion: cuenta\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(objetivo={"tipo": "parametro", "id": "cuenta_objetivo"}, valor_canonico="demo")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    with pytest.raises(AplicarError, match="solo se cambia por decision"):
+        cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+
+
+def test_apply_conserva_los_comentarios_del_fichero(tmp_path: Path) -> None:
+    """La cabecera de `parametros.yaml` documenta el esquema: un volcado la borraria."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(tmp_path)
+    ruta.write_text(
+        "# cabecera que debe sobrevivir\n" + ruta.read_text(encoding="utf-8"),
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    registro = cargar_registro(ruta)
+    texto = escribir_cambios(ruta, cambios_de_sesion(registro, [r], r.sesion))
+    assert texto.startswith("# cabecera que debe sobrevivir")
+    assert "estado: CONFIRMED" in texto and "tipo: feedback" in texto
+    # las comillas las elige el serializador de YAML; importa el valor que se lee
+    assert "valor: '0.8'" in texto or 'valor: "0.8"' in texto
+
+
+def test_apply_retira_ambiguedad_id_al_escribir_un_valor_del_trader(tmp_path: Path) -> None:
+    """Un valor que llega del trader deja de ser un default nuestro.
+
+    El registro rechaza `ambiguedad_id` fuera de DEFAULT_AMBIGUOUS, asi que dejarlo produciria un
+    fichero que no carga. Que la ambiguedad siga abierta se ve cruzando con ambiguedades.yaml.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: DEFAULT_AMBIGUOUS\n"
+        '    valor: "0.75"\n'
+        "    ambiguedad_id: A-10\n"
+        "    fuente: {tipo: decision, id: ADR-0005}\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+    assert "ambiguedad_id" not in texto
+    ruta.write_text(texto, encoding="utf-8", newline="\n")
+    assert str(cargar_registro(ruta).fraccion("stop_fraccion_caja")) == "0.8 (fraccion)"
+
+
+def test_apply_es_idempotente(tmp_path: Path) -> None:
+    """Aplicar dos veces la misma sesion no cambia nada la segunda.
+
+    Sin esto, `apply --check` decia "9 cambian" sobre un registro recien aplicado, porque comparaba
+    el texto que iria al fichero contra el valor ya tipado que el registro devuelve. Un segundo
+    `apply` reescribia el fichero -la unica puerta de los valores- sin motivo.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(tmp_path)
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+
+    primero = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    assert [c.es_no_op for c in primero] == [False]
+    ruta.write_text(escribir_cambios(ruta, primero), encoding="utf-8", newline="\n")
+
+    segundo = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    assert [c.es_no_op for c in segundo] == [True], "la segunda pasada no cambia nada"
+    assert escribir_cambios(ruta, segundo) == ruta.read_text(encoding="utf-8")
+
+
+def test_apply_no_escribe_en_silencio_si_el_formato_no_es_el_que_sabe_editar(
+    tmp_path: Path,
+) -> None:
+    """Un fichero con el nombre entrecomillado devolvia el fichero INTACTO y la CLI decia OK."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        '  - nombre: "stop_fraccion_caja"\n'
+        "    categoria: estrategia\n"
+        "    tipo: fraccion\n"
+        "    unidad: fraccion de la caja\n"
+        "    descripcion: nivel del stop\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    cambios = cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+    with pytest.raises(AplicarError, match="no se encontro el bloque"):
+        escribir_cambios(ruta, cambios)
+
+
+@pytest.mark.parametrize(
+    # el salto de linea queda fuera: el registro normaliza espacios, asi que un valor
+    # con salto no se conserva por diseno y no es un caso real de un parametro
+    "valor",
+    ['lo que el llama "la caja"', "a\\\\b", "con: dos puntos", "- guion"],
+)
+def test_apply_escribe_el_valor_tal_cual_aunque_lleve_comillas_o_barras(
+    tmp_path: Path, valor: str
+) -> None:
+    """Se serializa con YAML, no con una f-string: `C:\nuevo` se leia como `C: uevo`."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: stop_fraccion_caja\n"
+        "    categoria: estrategia\n"
+        "    tipo: texto\n"
+        "    unidad: u\n"
+        "    descripcion: d\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(valor_canonico=valor)
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+    ruta.write_text(texto, encoding="utf-8", newline="\n")
+    assert cargar_registro(ruta).texto("stop_fraccion_caja") == valor
+
+
+def test_apply_denuncia_un_ciclo_de_supersede(tmp_path: Path) -> None:
+    """Un ciclo hace que `activos` descarte los dos extremos y el parametro desaparezca callando.
+
+    Los registros se construyen a mano: con ids calculados del contenido no se puede cerrar un
+    ciclo, pero un fichero editado a mano si puede tenerlo.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+    from botsito.feedback.modelo import FeedbackRecord, Objetivo
+
+    def crudo(ident: str, supersede: str) -> FeedbackRecord:
+        return FeedbackRecord(
+            id=f"fb-2026-09-09-sesion-01-{ident}",
+            sesion="2026-09-09-sesion-01",
+            fecha="2026-09-09",
+            medio="escrito",
+            objetivo=Objetivo("parametro", "stop_fraccion_caja"),
+            accion="RESOLVE_UNKNOWN",
+            respuesta_literal="lo dijo asi",
+            registrado_por="aleks",
+            valor_canonico="0.8",
+            supersede=f"fb-2026-09-09-sesion-01-{supersede}",
+        )
+
+    registro = cargar_registro(_registro_minimo(tmp_path))
+    ciclo = [crudo("aaaaaaaa", "bbbbbbbb"), crudo("bbbbbbbb", "aaaaaaaa")]
+    with pytest.raises(AplicarError, match="ciclo de supersede"):
+        cambios_de_sesion(registro, ciclo, "2026-09-09-sesion-01")
+
+
+# `3\xa0` queda fuera a proposito: el espacio no separable lo quita `strip()` y el valor sigue
+# siendo 3, que es lo correcto. Lo que no puede pasar es que un digito arabigo cuele como cifra.
+@pytest.mark.parametrize("bruto", ["٣", "١٢٣", "+3", "0x10"])
+def test_apply_no_acepta_digitos_que_no_sean_ascii(tmp_path: Path, bruto: str) -> None:
+    """`٣` no es 3: aceptarlo seria interpretar, que es lo que este modulo promete no hacer."""
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion
+
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(
+        "parametros:\n"
+        "  - nombre: cartuchos_max\n"
+        "    categoria: estrategia\n"
+        "    tipo: entero\n"
+        "    unidad: intentos\n"
+        "    descripcion: d\n"
+        "    estado: UNKNOWN\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    campos = _fb(objetivo={"tipo": "parametro", "id": "cartuchos_max"}, valor_canonico=bruto)
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    with pytest.raises(AplicarError, match="no es un entero"):
+        cambios_de_sesion(cargar_registro(ruta), [r], r.sesion)
+
+
+def test_apply_no_se_traga_el_comentario_de_la_seccion_siguiente(tmp_path: Path) -> None:
+    """Las claves nuevas van tras la ultima clave real, no al final del bloque.
+
+    El bloque de un parametro llega hasta el `- nombre:` siguiente, asi que arrastra la linea en
+    blanco y los comentarios de cabecera de la seccion que viene detras. Anadiendo al final, esos
+    comentarios acababan DENTRO del parametro editado: el fichero cargaba igual -YAML los ignora-
+    y el hash tampoco podia verlo -se hashea la estructura re-serializada-, pero el comentario
+    pasaba a decir lo contrario del parametro que lo contenia. Ocurrio dos veces de verdad, con
+    `anclaje_h4` y `lotaje_base`, y llego a `main` sin que nada lo denunciara.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion, escribir_cambios
+
+    ruta = _registro_minimo(
+        tmp_path,
+        extra=(
+            "\n"
+            "  # CABECERA DE LA SECCION SIGUIENTE: no pertenece al parametro de arriba.\n"
+            "  - nombre: objetivo_rr\n"
+            "    categoria: estrategia\n"
+            "    tipo: decimal\n"
+            "    unidad: multiplo\n"
+            "    descripcion: objetivo\n"
+            "    estado: UNKNOWN\n"
+        ),
+    )
+    campos = _fb(valor_canonico="0.8")
+    r = registro_desde_dict({**campos, "id": calcular_id(campos)})
+    texto = escribir_cambios(ruta, cambios_de_sesion(cargar_registro(ruta), [r], r.sesion))
+
+    lineas = texto.splitlines()
+    i_com = next(n for n, ln in enumerate(lineas) if "CABECERA DE LA SECCION" in ln)
+    i_est = next(n for n, ln in enumerate(lineas) if ln == "    estado: CONFIRMED")
+    assert i_est < i_com, "las claves nuevas quedaron DEBAJO del comentario de la seccion siguiente"
+    # y el comentario sigue pegado al parametro que encabeza, no al que se edito
+    i_sig = next(n for n, ln in enumerate(lineas) if ln == "  - nombre: objetivo_rr")
+    assert i_com == i_sig - 1
+
+
+def test_un_parametro_no_puede_citar_un_registro_revocado(tmp_path: Path) -> None:
+    """Un supersede existe porque el registro anterior decia algo que ya no vale.
+
+    `cartuchos_reinicio` cito durante toda F11 un registro revocado justamente por llevar una
+    parafrasis del consultor donde iba la voz del trader, y que ademas decia "dos perdidas" donde
+    el trader remata "serian 3 perdidas". Nada lo veia: `apply` comparaba VALORES, el valor no
+    habia cambiado, y la fuente se quedaba apuntando al muerto para siempre. El hash cubre la
+    fuente precisamente para que quien mida fidelidad la distinga, asi que una fuente revocada la
+    falsea.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion
+
+    ruta = _registro_minimo(tmp_path)
+    campos_viejo = _fb(valor_canonico="0.75")
+    viejo = registro_desde_dict({**campos_viejo, "id": calcular_id(campos_viejo)})
+    campos_nuevo = _fb(valor_canonico="0.75", supersede=viejo.id)
+    nuevo = registro_desde_dict({**campos_nuevo, "id": calcular_id(campos_nuevo)})
+
+    # el registro ya tiene el valor bueno, pero citando al muerto
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace(
+            "    estado: UNKNOWN",
+            f'    estado: CONFIRMED\n    valor: "0.75"\n    fuente:\n'
+            f"      tipo: feedback\n      id: {viejo.id}",
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cambios = cambios_de_sesion(cargar_registro(ruta), [viejo, nuevo], nuevo.sesion)
+    (c,) = cambios
+    assert c.registro_id == nuevo.id
+    assert not c.es_no_op, "el valor es el mismo, pero la fuente cita un registro revocado"

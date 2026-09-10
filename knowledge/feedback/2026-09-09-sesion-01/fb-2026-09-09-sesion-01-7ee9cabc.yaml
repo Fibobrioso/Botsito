@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-7ee9cabc
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: mapeo_dos_velas
+accion: RESOLVE_UNKNOWN
+respuesta_literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una
+  estructura
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: order_block_mayor (el trader lo llama estructura)
+valor_canonico: order_block_mayor
+supersede: fb-2026-09-09-sesion-01-241fa278
+notas: la eleccion, sin la aclaracion del termino. El literal del trader queda intacto; el canonico es
+  lo que el registro puede leer.

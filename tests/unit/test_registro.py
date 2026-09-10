@@ -1,12 +1,15 @@
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 import pytest
+import yaml
 
 from botsito.config.registro import (
     AmbiguedadNoDeclaradaError,
     Estado,
     ParametroDesconocidoError,
+    Registro,
     RegistroError,
     TipoDeParametroError,
     _convertir,
@@ -151,12 +154,25 @@ def test_hora_invalida(tmp_path: Path) -> None:
         cargar_registro(_escribir(tmp_path, contenido))
 
 
-def test_fichero_real_sin_valores_de_estrategia(repo: Path) -> None:
-    """Hasta F11 ningun parametro de estrategia tiene valor: todo lo que el trader debe confirmar
-    sigue UNKNOWN. Los de entorno (F15: husos) se citan por ADR."""
+def test_fichero_real_cada_valor_de_estrategia_cita_al_trader(repo: Path) -> None:
+    """Desde F11 los parametros de estrategia SI tienen valor, y por eso lo que hay que vigilar
+    cambia: ninguno puede tenerlo sin citar al trader.
+
+    Antes de la sesion 1 este test afirmaba lo contrario -que todos seguian UNKNOWN-, que era la
+    guardia util mientras no habia respuestas. Ahora la guardia util es que nadie escriba un valor
+    de estrategia por decision propia: un numero de la operativa sale del trader (feedback) o de
+    una cita suya (evidence), nunca de un ADR nuestro.
+    """
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
     for nombre in r.por_categoria("estrategia"):
-        assert r.parametros[nombre].estado is Estado.UNKNOWN, f"{nombre} tiene valor antes de F11"
+        p = r.parametros[nombre]
+        if p.estado is Estado.UNKNOWN:
+            continue  # sin valor no hay nada que citar
+        assert p.fuente is not None, f"{nombre} tiene valor y no dice de donde sale"
+        assert p.fuente.tipo in ("feedback", "evidence"), (
+            f"{nombre} es de estrategia y su valor viene de {p.fuente.tipo}: "
+            f"un numero de la operativa lo dice el trader, no lo decidimos nosotros"
+        )
     for nombre, p in r.parametros.items():
         # Un parametro de entorno sin valor todavia (UNKNOWN) no tiene nada que citar; la regla
         # es que su VALOR venga de una decision, no de la evidencia ni del feedback.
@@ -325,3 +341,135 @@ def test_los_numeros_validos_siguen_valiendo() -> None:
     assert _convertir("decimal", "0.75", None, "p") == Decimal("0.75")
     assert _convertir("decimal", " 3 ", None, "p") == Decimal("3")
     assert _convertir("decimal", 3, None, "p") == Decimal("3")
+
+
+# --- tipos que entran con F11: enum, booleano, puntos, minutos, lotes ---
+
+
+def _param(**cambios: Any) -> dict[str, Any]:
+    d: dict[str, Any] = {
+        "nombre": "ejemplo",
+        "categoria": "estrategia",
+        "tipo": "enum",
+        "unidad": "eleccion",
+        "descripcion": "un parametro de prueba",
+        "estado": "CONFIRMED",
+        "valor": "a",
+        "opciones": ["a", "b"],
+        "fuente": {"tipo": "feedback", "id": "fb-2026-09-09-sesion-01-846fb0d7"},
+    }
+    d.update(cambios)
+    return {k: v for k, v in d.items() if v is not _QUITAR}
+
+
+_QUITAR = object()
+
+
+def _cargar(tmp_path: Path, param: dict[str, Any]) -> Registro:
+    ruta = tmp_path / "p.yaml"
+    ruta.write_text(yaml.safe_dump({"parametros": [param]}), encoding="utf-8", newline="\n")
+    return cargar_registro(ruta)
+
+
+def test_enum_exige_opciones_y_el_valor_debe_estar_en_ellas(tmp_path: Path) -> None:
+    r = _cargar(tmp_path, _param())
+    assert r.opcion("ejemplo") == "a"
+    with pytest.raises(TipoDeParametroError):
+        r.texto("ejemplo")  # un enum no se lee como texto: el tipo declarado manda
+    with pytest.raises(RegistroError, match="no esta en las opciones"):
+        _cargar(tmp_path, _param(valor="c"))
+    with pytest.raises(RegistroError, match="al menos dos valores"):
+        _cargar(tmp_path, _param(opciones=["a"]))
+    with pytest.raises(RegistroError, match="opcion repetida"):
+        _cargar(tmp_path, _param(opciones=["a", "a"]))
+
+
+def test_solo_un_enum_lleva_opciones(tmp_path: Path) -> None:
+    with pytest.raises(RegistroError, match="solo un parametro de tipo enum"):
+        _cargar(tmp_path, _param(tipo="texto", valor="a", opciones=["a", "b"]))
+
+
+def test_booleano_no_admite_comillas(tmp_path: Path) -> None:
+    """`false` entre comillas es la cadena 'false', que es verdadera: por eso se rechaza."""
+    r = _cargar(tmp_path, _param(tipo="booleano", valor=False, opciones=_QUITAR))
+    assert r.booleano("ejemplo") is False
+    with pytest.raises(RegistroError, match="se escribe true o false"):
+        _cargar(tmp_path, _param(tipo="booleano", valor="false", opciones=_QUITAR))
+
+
+@pytest.mark.parametrize("tipo", ["puntos", "minutos"])
+def test_puntos_y_minutos_son_enteros_no_negativos(tmp_path: Path, tipo: str) -> None:
+    assert _cargar(tmp_path, _param(tipo=tipo, valor=20, opciones=_QUITAR)) is not None
+    with pytest.raises(RegistroError, match="exige un entero"):
+        _cargar(tmp_path, _param(tipo=tipo, valor="20", opciones=_QUITAR))
+    with pytest.raises(RegistroError, match="no puede ser negativo"):
+        _cargar(tmp_path, _param(tipo=tipo, valor=-1, opciones=_QUITAR))
+
+
+def test_lotes_admite_decimales_entre_comillas(tmp_path: Path) -> None:
+    r = _cargar(tmp_path, _param(tipo="lotes", valor="0.01", opciones=_QUITAR))
+    assert str(r.obtener("ejemplo")) == "0.01"
+
+
+@pytest.mark.parametrize("tipo", ["enum", "booleano"])
+def test_ni_enum_ni_booleano_admiten_minimo_o_maximo(tmp_path: Path, tipo: str) -> None:
+    valor = "a" if tipo == "enum" else True
+    ops = ["a", "b"] if tipo == "enum" else _QUITAR
+    with pytest.raises(RegistroError, match="minimo/maximo no se aplican"):
+        _cargar(tmp_path, _param(tipo=tipo, valor=valor, opciones=ops, minimo="0"))
+
+
+def test_los_relojes_de_la_operativa_se_mueven_con_el_horario_de_verano(repo: Path) -> None:
+    """El trader opera SIEMPRE a su hora, sea cual sea la fecha: eso es un reloj civil.
+
+    ADR-0012 lo escribio como un offset fijo (`Etc/GMT-2`) apoyandose en que la sesion habia
+    desmentido Madrid; ADR-0015 mostro que esa afirmacion no se sostiene y ADR-0017 lo revierte a
+    lo que ADR-0005 ya decia. Este test fija las dos mitades de la correccion:
+
+    1. Su horario es de pared: `huso_operativa` desfasa +1 en enero y +2 en julio. Con un offset
+       fijo desfasaria lo mismo los doce meses y el bot abriria una hora antes todo el invierno.
+    2. La rejilla H4 NO es su reloj: se ancla a la medianoche del servidor, escrita como
+       `17:00 America/New_York` (ADR-0005). Los dos relojes se separan 28 dias al año, porque la
+       UE y EE.UU. no cambian la hora el mismo dia, y ESE es el efecto que hay que conservar.
+    """
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    operativa = ZoneInfo(r.texto("huso_operativa"))
+    horas = {}
+    for mes in (1, 7):
+        desfase = datetime(2026, mes, 15, 12, tzinfo=operativa).utcoffset()
+        assert desfase is not None
+        horas[mes] = desfase.total_seconds() / 3600
+    assert horas == {1: 1.0, 7: 2.0}, f"huso_operativa no es un reloj civil: {horas}"
+
+    ancla = r.hora("anclaje_h4")
+    huso_ancla = ZoneInfo(ancla.huso)
+    assert huso_ancla is not ZoneInfo(r.texto("huso_grafico"))
+
+    def ancla_utc(mes: int, dia: int) -> int:
+        t = datetime(2026, mes, dia, 17, tzinfo=huso_ancla)
+        return t.astimezone(ZoneInfo("UTC")).hour
+
+    # sigue a Nueva York: 22:00 UTC en invierno, 21:00 en verano
+    assert ancla_utc(1, 15) == 22 and ancla_utc(7, 15) == 21
+    # y los 28 dias de desfase: la UE ya cambio o todavia no, y EE.UU. no
+    assert ancla_utc(3, 12) == 21, "del 8 al 28 de marzo el ancla se adelanta y la UE no"
+
+
+def test_la_ventana_y_la_rejilla_h4_no_cuelgan_del_mismo_reloj(repo: Path) -> None:
+    """Son dos relojes, y el test anterior exigia que fueran uno.
+
+    Hasta ADR-0017 este test obligaba a que las tres horas declararan `huso_grafico`, que es justo
+    la confusion que costo cinco meses de velas H4 mal repartidas. La ventana es el horario del
+    trader como persona (`huso_operativa`); la rejilla H4 es la medianoche del servidor. Que
+    coincidan 337 dias al año no los hace el mismo reloj.
+    """
+    r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    operativa = r.texto("huso_operativa")
+    for nombre in ("ventana_inicio", "ventana_fin"):
+        assert r.hora(nombre).huso == operativa, nombre
+    assert r.hora("anclaje_h4").huso != operativa, (
+        "el ancla H4 volvio a colgar del reloj del trader: en invierno partiria mal las velas"
+    )

@@ -359,6 +359,114 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         "historial intacto"
     )
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
+    # Un parametro no puede tener dos registros vigentes que FIJEN su valor: no habria forma de
+    # saber cual manda. Lo comprobaba `feedback apply`, que solo se ejecuta cuando alguien lo
+    # llama; aqui se vigila siempre. Ojo al matiz: dos REJECT vigentes sobre el mismo parametro no
+    # son un problema -ninguno fija valor- y ademas no se pueden fusionar, porque un registro
+    # supersede a UNO y dos cadenas paralelas no convergen anadiendo registros.
+    from botsito.feedback.aplicar import ACCIONES_QUE_FIJAN
+
+    fijan: dict[str, list[str]] = {}
+    from botsito.comun.documentos import activos as _activos
+
+    # Un parametro no puede citar un registro REVOCADO. Un supersede existe porque el registro
+    # anterior decia algo que ya no vale, y aqui el caso real fue el peor: `cartuchos_reinicio`
+    # cito durante toda F11 un registro revocado por llevar una parafrasis del consultor donde
+    # iba la voz del trader -y que ademas decia "dos perdidas" donde el trader remata "serian 3
+    # perdidas"-. Nada lo veia: `apply` comparaba valores y el valor no habia cambiado.
+    revocados = {r.supersede: r.id for r in registros_fb if r.supersede}
+    for nombre, p_reg in sorted(registro.parametros.items()):
+        if p_reg.fuente is None or p_reg.fuente.tipo != "feedback":
+            continue
+        if p_reg.fuente.id in revocados:
+            salida.append(
+                f"ERROR: registro: {nombre} cita {p_reg.fuente.id}, que esta revocado por "
+                f"{revocados[p_reg.fuente.id]}; un parametro cita lo que sigue vigente"
+            )
+            return 1, salida
+
+    for registro_fb in _activos(list(registros_fb)):
+        if registro_fb.objetivo.tipo != "parametro":
+            continue
+        if registro_fb.accion not in ACCIONES_QUE_FIJAN:
+            continue
+        if registro_fb.valor_resultante is None and registro_fb.valor_canonico is None:
+            continue
+        fijan.setdefault(registro_fb.objetivo.id, []).append(registro_fb.id)
+    for nombre, ids_fijan in sorted(fijan.items()):
+        if len(ids_fijan) > 1:
+            salida.append(
+                f"ERROR: feedback: {nombre} tiene {len(ids_fijan)} registros vigentes que fijan su "
+                f"valor ({', '.join(sorted(ids_fijan))}); uno debe superseder al otro"
+            )
+            return 1, salida
+
+    # Capa spec (F11, ADR-0013): reglas, glosario y manifiesto.
+    from botsito.spec.manifiesto import FICHERO_MANIFIESTO
+    from botsito.spec.manifiesto import comprobar as comprobar_manifiesto_spec
+    from botsito.spec.modelo import (
+        FICHERO_GLOSARIO,
+        FICHERO_SPEC,
+        SpecError,
+        Termino,
+        cargar_reglas,
+        comprobar_contra,
+        comprobar_decisiones,
+        comprobar_literales,
+    )
+    from botsito.spec.modelo import (
+        cargar_glosario as cargar_glosario_spec,
+    )
+
+    ruta_spec = repo / FICHERO_SPEC
+    if ruta_spec.is_file():
+        try:
+            reglas = cargar_reglas(ruta_spec)
+            terminos: list[Termino] = (
+                cargar_glosario_spec(repo / FICHERO_GLOSARIO)
+                if (repo / FICHERO_GLOSARIO).is_file()
+                else []
+            )
+            citas = {i.id for i in items} | {r.id for r in registros_fb}
+            problemas_spec = comprobar_contra(reglas, terminos, set(registro.nombres()), citas)
+            # Y que cada regla diga lo que su cita dice: mismo criterio de tokens que ADR-0009
+            # usa con la evidencia. Sin esto, una regla podria poner palabras en boca del
+            # trader citando un registro que dice otra cosa.
+            textos_citados = {i.id: i.cita_literal for i in items}
+            textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
+            problemas_spec += comprobar_literales(reglas, textos_citados, terminos)
+            # Y que una regla construida sobre parametros de entorno declare el ADR que la
+            # decide: ahi no hay trader al que citar, y su cita no puede sostenerla.
+            problemas_spec += comprobar_decisiones(
+                reglas,
+                {n: p.fuente.tipo for n, p in registro.parametros.items() if p.fuente is not None},
+                ids_de_adr(repo),
+            )
+            # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
+            # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
+            for r in reglas:
+                if not r.vigente:
+                    continue
+                for nombre in r.parametros:
+                    param = registro.parametros.get(nombre)
+                    if param is not None and param.estado.value == "UNKNOWN":
+                        problemas_spec.append(
+                            f"{r.id}: usa {nombre}, que sigue UNKNOWN: la regla esta vigente pero "
+                            f"no se puede ejecutar"
+                        )
+            problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
+        except SpecError as exc:
+            problemas_spec = [str(exc)]
+        for f in problemas_spec:
+            salida.append(f"ERROR: spec: {f}")
+        if problemas_spec:
+            return 1, salida
+        vigentes = sum(1 for r in reglas if r.vigente)
+        salida.append(
+            f"OK: {len(reglas)} reglas de spec ({vigentes} vigentes), {len(terminos)} terminos de "
+            f"glosario, hash del manifiesto al dia"
+        )
+
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
     from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes
 

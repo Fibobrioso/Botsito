@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-a85b6bc7
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: perdida_maxima_semanal
+accion: RESOLVE_UNKNOWN
+respuesta_literal: 9% de la cuenta actual.
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: '9'
+valor_canonico: '9'
+supersede: fb-2026-09-09-sesion-01-cf913a64
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  ya era un numero limpio; se fija para no depender del texto.'

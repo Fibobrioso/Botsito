@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-8741c388
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: ventana_inicio
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en
+  esas dos sesiones. Aunque si quieres incluir Nueva York como te digo, pues lo puedes hacer
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 07:00 en el huso del grafico; dos sesiones, 07-11 y 11-15
+valor_canonico: 07:00
+supersede: fb-2026-09-09-sesion-01-694ec50a
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  la hora sola; la frontera de las dos sesiones va aparte.'

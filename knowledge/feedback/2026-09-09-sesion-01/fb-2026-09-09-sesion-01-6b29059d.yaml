@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-6b29059d
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: reubicacion_cadencia
+accion: RESOLVE_UNKNOWN
+respuesta_literal: cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa
+  aquí
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: al_romper (cada zona de control completada)
+valor_canonico: al_romper
+supersede: fb-2026-09-09-sesion-01-69263ea9
+notas: la eleccion, sin la aclaracion. El literal del trader queda intacto; el canonico es lo que el registro
+  puede leer.

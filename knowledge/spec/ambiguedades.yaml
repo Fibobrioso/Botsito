@@ -183,15 +183,20 @@ ambiguedades:
     estado: ABIERTA
     bloqueante: false
   - id: A-14
-    titulo: anclaje H4 fuera del horario de verano
+    titulo: los 28 dias al año en que su horario y la rejilla H4 no cuadran
     pregunta: >-
-      ¿su grafico esta en UTC+2 fijo (la vela H4 abre a las 21:00 UTC todo el año) o sigue a
-      Madrid (en invierno la apertura se desplaza)?
-    resuelve_en: [F11, F15]
+      del 8 al 28 de marzo y del 25 al 31 de octubre, la UE y EE.UU. no cambian la hora el mismo
+      dia, asi que la primera H4 se ve a las 22:00 y no a las 23:00: sus dos sesiones dejan de
+      empezar en la apertura de una vela. ¿sigue operando de 7 a 15 igual, o esos dias se ajusta
+      a la vela? El consultor decidio el 2026-09-10 que manda su horario; falta que el trader lo
+      confirme, porque son unas 20 sesiones al año con otra geometria
+    resuelve_en: [F11, F15, F26]
     evidencia:
+      - ev-v3-000136-6160fcea
+      - ev-v4-011425-ae028b78
       - ev-v6-005810-5cb1ef06
       - ev-v6-005830-48b30e48
-    parametros: [anclaje_h4]
+    parametros: [ventana_inicio, ventana_fin]
     contradiccion: null
     estado: ABIERTA
     bloqueante: false
@@ -230,6 +235,33 @@ ambiguedades:
       - ev-v6-020114-a0e0b419
       - ev-v6-020200-a957aa03
     parametros: [filtro_noticias]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-18
+    titulo: base sobre la que se mide el objetivo 1:3
+    pregunta: >-
+      ¿el 1:3 se mide sobre la caja completa -la misma distancia que dimensiona el lote- o
+      sobre el riesgo real que queda tras mover el stop a 0,8?
+    resuelve_en: [F11, F26]
+    evidencia:
+      - ev-v2-003256-0197f4e1
+      - ev-v4-011951-5fb49e03
+      - ev-v3-003142-607674c3
+    parametros: [base_calculo_objetivo, objetivo_rr]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false
+  - id: A-19
+    titulo: cuando empieza el dia y la semana de riesgo
+    pregunta: >-
+      ¿en que reloj cae la medianoche que reinicia el tope diario del 4,5 % y el domingo que
+      reinicia el semanal: el del servidor del broker, que cambia con el calendario de Nueva
+      York, o el del grafico? Hay que verificarlo en el panel de la cuenta, no suponerlo
+    resuelve_en: [F11, F33]
+    evidencia:
+      - ev-v6-020029-aa86963a
+    parametros: [reloj_dia_riesgo]
     contradiccion: null
     estado: ABIERTA
     bloqueante: false

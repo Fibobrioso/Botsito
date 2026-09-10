@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-060cd801
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: reentrada_tras_equal
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar
+  [...] ¿y gastas tus intentos? Sí, esto no gasta intentos, me dijiste, ¿no? No
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: si se reentra, y no gasta intento
+valor_canonico: si
+supersede: fb-2026-09-09-sesion-01-427282bb
+notas: la eleccion; que no gaste intento lo fija cartucho_criterio. El literal del trader queda intacto;
+  el canonico es lo que el registro puede leer.

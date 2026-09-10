@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-479e68b9
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: anclaje_h4
+accion: CORRECT
+respuesta_literal: la vela empieza a las 23, la primera vela de cuatro horas [...] entonces a las 7 sería
+  [...] la tercera vela
+registrado_por: Aleks · re-expresion canonica del consultor (auditoria 2026-09-10)
+valor_resultante: 00:00 del reloj del servidor = 17:00 America/New_York
+valor_canonico: '17:00'
+supersede: fb-2026-09-09-sesion-01-6615d32e
+notas: 'no cambia lo que dijo el trader: el literal es el mismo. Lo que cambia es COMO se expresa. Las
+  23:00 son lo que el ve en pantalla, y es cierto 337 dias al año; pero la rejilla H4 se ancla a la medianoche
+  del servidor, que sigue el calendario de Nueva York (broker_dst: us, medido contra la demo). ADR-0005
+  ya fijaba esa convencion: 17:00 America/New_York = 00:00 de servidor. Escrito como 23:00 de un huso
+  fijo, el ancla caia una hora antes todo el invierno y repartia mal TODAS las velas H4, que es el sesgo.
+  Ver ADR-0017.'

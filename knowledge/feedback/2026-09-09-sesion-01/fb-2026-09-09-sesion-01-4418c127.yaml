@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-4418c127
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: instrumento
+accion: REJECT
+respuesta_literal: si la operativa se puede calcar tal cual, sería el NASDAQ [...] en cuanto a pares pues
+  puedes ponerle a todos los pares de forex
+registrado_por: Aleks · correccion de trazabilidad (F11)
+supersede: fb-2026-09-09-sesion-01-6eceb844
+notas: 'este registro NO fija el instrumento: el trader responde por donde ampliar (NASDAQ, oro, pares
+  sin gaps) y en ningun momento nombra EURUSD. Que la primera version opere EURUSD sale de la evidencia
+  -es el unico instrumento de todo el corpus grabado, visto en pantalla en ev-v2-003320-a736fd37-, y asi
+  queda citado en el registro. La hoja de ruta se conserva en el literal de este registro.'

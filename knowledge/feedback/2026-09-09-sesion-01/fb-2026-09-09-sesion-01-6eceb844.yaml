@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-6eceb844
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: instrumento
+accion: CORRECT
+respuesta_literal: si la operativa se puede calcar tal cual, sería el NASDAQ [...] en cuanto a pares pues
+  puedes ponerle a todos los pares de forex [...] materias primas como el oro [...] también [...] Después
+  lo otro sería trabajarlo en los futuros
+registrado_por: Aleks · reorganizacion del consultor (F11)
+valor_resultante: EURUSD en la primera version; el NASDAQ es el que mejor calca; despues FX sin gaps y
+  oro; futuros NQ y SP500
+valor_canonico: EURUSD
+supersede: fb-2026-09-09-sesion-01-37ae3711
+notas: el instrumento de la primera version; el NASDAQ, el oro y el resto de pares sin gaps quedan en
+  el literal como hoja de ruta

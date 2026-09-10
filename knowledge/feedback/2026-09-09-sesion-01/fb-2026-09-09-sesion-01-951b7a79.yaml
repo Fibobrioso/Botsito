@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-951b7a79
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: ventana_fin
+accion: RESOLVE_UNKNOWN
+respuesta_literal: la operativa se cierra a las 3pm en punto de dicho horario mostrado en el video
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: 15:00 (huso del grafico, pendiente de A-9)
+valor_canonico: '15:00'
+supersede: fb-2026-09-09-sesion-01-5054de89
+notas: 'no cambia lo que dijo el trader: el literal es el mismo del registro que este supersede. Anade
+  el valor en el tipo que espera el registro para que `feedback apply` no tenga que interpretar nada.
+  la hora sola.'

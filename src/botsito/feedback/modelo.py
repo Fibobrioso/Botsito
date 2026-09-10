@@ -84,7 +84,15 @@ CAMPOS_OBLIGATORIOS = (
     "respuesta_literal",
     "registrado_por",
 )
-CAMPOS_OPCIONALES = ("grabacion", "t0", "t1", "valor_resultante", "supersede", "notas")
+CAMPOS_OPCIONALES = (
+    "grabacion",
+    "t0",
+    "t1",
+    "valor_resultante",
+    "valor_canonico",
+    "supersede",
+    "notas",
+)
 CAMPOS_TEXTO = (
     "sesion",
     "fecha",
@@ -96,6 +104,7 @@ CAMPOS_TEXTO = (
     "t0",
     "t1",
     "valor_resultante",
+    "valor_canonico",
     "supersede",
     "notas",
 )
@@ -125,6 +134,10 @@ class FeedbackRecord:
     t0: str | None = None
     t1: str | None = None
     valor_resultante: str | None = None
+    # Re-expresion del valor en el tipo que espera el registro (F11): '0,8' -> '0.8'. La
+    # escribe el consultor en un registro que supersede, con el literal del trader intacto;
+    # `feedback apply` la usa tal cual y no interpreta nada.
+    valor_canonico: str | None = None
     supersede: str | None = None
     notas: str | None = None
 
@@ -269,6 +282,7 @@ def registro_desde_dict(campos: dict[str, Any], origen: str = "registro") -> Fee
         t0=txt("t0"),
         t1=txt("t1"),
         valor_resultante=txt("valor_resultante"),
+        valor_canonico=txt("valor_canonico"),
         supersede=txt("supersede"),
         notas=txt("notas"),
     )

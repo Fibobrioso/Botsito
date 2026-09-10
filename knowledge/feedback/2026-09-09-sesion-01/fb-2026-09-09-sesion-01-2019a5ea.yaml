@@ -1,0 +1,13 @@
+id: fb-2026-09-09-sesion-01-2019a5ea
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_reduccion_umbral_vela
+accion: REJECT
+respuesta_literal: Descartar esto, se mantiene el SL fijo de 0.8
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-766db637
+notas: 'regla descartada en la sesion (A-12): no hay reduccion por porcentaje de vela. No cambia lo que
+  dijo el trader: el literal es el suyo.'

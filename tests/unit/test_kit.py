@@ -896,3 +896,55 @@ def test_si_la_reconstruccion_falla_el_paquete_original_vuelve(
         modulo.main()
     assert {p.name: p.read_bytes() for p in carpeta.iterdir()} == original
     assert not (repo / DIRECTORIO_KIT / "2026-09-22-sesion-01").exists()
+
+
+def test_el_paquete_de_una_sesion_celebrada_no_tiene_que_reproducirse(tmp_path: Path) -> None:
+    """Tras aplicar las respuestas al registro, el cuestionario de hoy ya no es el de aquel dia.
+
+    `kit check` exigia que el paquete se recompusiera byte a byte, y esa exigencia se rompio en
+    cuanto F11 poblo el registro: el cuestionario se genera desde los parametros UNKNOWN, y ya no
+    lo estan. Exigir que se reproduzca seria exigir que el proyecto no aprenda nada. Con la sesion
+    ya celebrada la diferencia es un AVISO; sin celebrar sigue siendo un ERROR, porque entonces si
+    significa que alguien toco el paquete.
+    """
+    repo, _ = repo_kit(tmp_path)
+    sesion = "2026-09-15-sesion-01"
+    escribir(repo, construir(repo, repo / "data", sesion, 3))
+    hoja = repo / DIRECTORIO_KIT / sesion / "hoja_trader.md"
+    hoja.write_text(
+        hoja.read_text(encoding="utf-8") + "\nlinea de mas\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    problemas, _ = comprobar(repo, repo / "data", sesion, celebrada=False)
+    assert any("difiere de lo que se genera hoy" in p for p in problemas)
+
+    problemas, avisos = comprobar(repo, repo / "data", sesion, celebrada=True)
+    assert not any("hoja_trader" in p for p in problemas)
+    assert any("la sesion se celebro" in a for a in avisos)
+
+
+def test_las_particiones_no_se_perdonan_ni_con_la_sesion_celebrada(tmp_path: Path) -> None:
+    """`particiones.yaml` no depende de las respuestas: sale de los hashes y del seed.
+
+    El perdon a una sesion celebrada se escribio para TODO el paquete, y eso incluia las
+    particiones, que son la prueba de que se fijaron antes de etiquetar (ADR-0011). Con ese
+    perdon, reescribirlas despues de ver las etiquetas solo producia un AVISO y `kit check`
+    seguia saliendo con 0.
+    """
+    repo, _ = repo_kit(tmp_path)
+    sesion = "2026-09-15-sesion-01"
+    escribir(repo, construir(repo, repo / "data", sesion, 3))
+    part = repo / DIRECTORIO_KIT / sesion / "particiones.yaml"
+    part.write_text(
+        part.read_text(encoding="utf-8").replace("seed: 3", "seed: 4"),
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    for celebrada in (False, True):
+        problemas, _ = comprobar(repo, repo / "data", sesion, celebrada=celebrada)
+        assert any("particiones.yaml" in p for p in problemas), (
+            f"con celebrada={celebrada} las particiones tienen que ser ERROR, no AVISO"
+        )

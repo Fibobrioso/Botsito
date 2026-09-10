@@ -624,6 +624,203 @@ def _errores_evidencia() -> tuple[type[Exception], ...]:
     )
 
 
+def spec_status(repo: Path) -> int:
+    """Con que esta corriendo el bot y que sigue en revision (F11).
+
+    La sesion 1 dejo valores que el trader dijo con su voz y ambiguedades abiertas sobre esos
+    mismos valores. Las dos cosas son ciertas a la vez: el valor es CONFIRMED porque lo dijo el, y
+    la ambiguedad sigue abierta porque hay algo que medir. Esto lo ensena junto en vez de
+    degradar el estado del parametro.
+    """
+    from botsito.cases.ambiguedades import (
+        FICHERO_AMBIGUEDADES,
+        AmbiguedadError,
+        cargar_ambiguedades,
+    )
+    from botsito.config.registro import Estado, RegistroError, cargar_registro
+    from botsito.spec.manifiesto import (
+        FICHERO_MANIFIESTO,
+        ManifiestoSpecError,
+    )
+    from botsito.spec.manifiesto import (
+        cargar_manifiesto as cargar_manifiesto_spec,
+    )
+    from botsito.spec.modelo import FICHERO_SPEC, SpecError, cargar_reglas
+
+    try:
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        reglas = cargar_reglas(repo / FICHERO_SPEC)
+        manifiesto = cargar_manifiesto_spec(repo / FICHERO_MANIFIESTO)
+        ambiguedades = cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES)
+    except (RegistroError, SpecError, ManifiestoSpecError, AmbiguedadError, OSError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"spec {manifiesto['spec_version']} · hash {str(manifiesto['hash'])[:12]}…")
+    print(
+        f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
+        f"{sum(1 for r in reglas if not r.vigente)} descartadas"
+    )
+    confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
+    unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]
+    # Las tres cuentas, y no dos: mientras no hubo ningun DEFAULT_AMBIGUOUS, "con valor" y "sin
+    # el" parecian cubrir el registro y sumaban el total. En cuanto aparecio el primero dejaron de
+    # sumar, y ademas "sin valor" era falso -un default TIENE valor; lo que no tiene es respaldo-.
+    defaults = [n for n, p in registro.parametros.items() if p.estado is Estado.DEFAULT_AMBIGUOUS]
+    linea = f"  {len(confirmados)} parametros confirmados"
+    if defaults:
+        linea += f", {len(defaults)} con un default nuestro"
+    print(f"{linea}, {len(unknown)} sin valor a proposito ({len(registro.parametros)} en total)")
+
+    abiertas = [a for a in ambiguedades if a.estado == "ABIERTA"]
+    en_revision: dict[str, list[str]] = {}
+    for a in abiertas:
+        for nombre in a.parametros:
+            en_revision.setdefault(nombre, []).append(a.id)
+    if en_revision:
+        print("\nCorriendo con un valor que sigue en revision:")
+        for nombre in sorted(en_revision):
+            p = registro.parametros.get(nombre)
+            valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
+            print(f"  {nombre:28} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
+    sin_parametro = [a.id for a in abiertas if not a.parametros]
+    if sin_parametro:
+        print("\nAmbiguedades abiertas sin parametro asociado: " + ", ".join(sorted(sin_parametro)))
+    if unknown:
+        print("\nSin valor a proposito (leerlos falla):")
+        for nombre in sorted(unknown):
+            print(f"  {nombre}")
+    return 0
+
+
+def spec_manifest(repo: Path, escribir: bool) -> int:
+    """Comprueba el hash de la spec, o lo regenera con --escribir."""
+    from botsito.spec.manifiesto import (
+        FICHERO_MANIFIESTO,
+        ManifiestoSpecError,
+        hash_de,
+    )
+    from botsito.spec.manifiesto import (
+        cargar_manifiesto as cargar_manifiesto_spec,
+    )
+    from botsito.spec.manifiesto import (
+        comprobar as comprobar_manifiesto_spec,
+    )
+
+    ruta = repo / FICHERO_MANIFIESTO
+    try:
+        actual = hash_de(repo)
+        if not escribir:
+            problemas = comprobar_manifiesto_spec(repo, ruta)
+            for p in problemas:
+                print(f"ERROR: {p}", file=sys.stderr)
+            if problemas:
+                return 1
+            print(f"OK: hash al dia ({actual[:12]}…)")
+            return 0
+        doc = cargar_manifiesto_spec(ruta)
+    except (ManifiestoSpecError, OSError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    if doc["hash"] == actual:
+        print(f"OK: el hash ya estaba al dia ({actual[:12]}…)")
+        return 0
+    texto = ruta.read_text(encoding="utf-8")
+    # Por la CLAVE, no por la primera aparicion del hash: si ese hash sale antes en un
+    # comentario, se actualizaba el comentario y `hash:` se quedaba viejo, con un OK enganoso.
+    nuevo_texto, sustituciones = re.subn(r"(?m)^hash: .*$", f"hash: {actual}", texto, count=1)
+    if sustituciones != 1:
+        print("ERROR: no se encontro la clave 'hash:' en el manifiesto", file=sys.stderr)
+        return 1
+    from datetime import UTC, datetime
+
+    # `generado_el` acompana al hash o miente: se validaba su formato y no lo actualizaba
+    # nadie, asi que a partir de la segunda regeneracion databa una version anterior de la
+    # spec. Si falta la clave no se inventa el fichero: se dice y se sale.
+    sello = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    nuevo_texto, sellos = re.subn(
+        r"(?m)^generado_el: .*$", f'generado_el: "{sello}"', nuevo_texto, count=1
+    )
+    if sellos != 1:
+        print("ERROR: no se encontro la clave 'generado_el:' en el manifiesto", file=sys.stderr)
+        return 1
+    ruta.write_text(nuevo_texto, encoding="utf-8", newline="\n")
+    print(f"OK: hash actualizado a {actual[:12]}…")
+    print("Recuerda subir spec_version si la spec cambio de verdad")
+    return 0
+
+
+def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
+    """Lleva al registro los valores que el trader dio en una sesion (F11).
+
+    Con `--check` no escribe: lista lo que haria. Sin el, reescribe `parametros.yaml`
+    preservando comentarios y deja cada valor con la fuente `feedback` que lo respalda.
+    """
+    import yaml
+
+    from botsito.config.registro import RegistroError, cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion, escribir_cambios
+    from botsito.feedback.modelo import FeedbackError, cargar_feedback
+
+    ruta = repo / "knowledge" / "spec" / "parametros.yaml"
+    try:
+        registro = cargar_registro(ruta)
+        feedback = cargar_feedback(repo / "knowledge" / "feedback")
+        crudo = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+        husos = {
+            str(p["nombre"]): str(p["huso"])
+            for p in crudo.get("parametros", [])
+            if isinstance(p, dict) and p.get("huso")
+        }
+        cambios = cambios_de_sesion(registro, feedback, sesion, husos)
+    except (RegistroError, FeedbackError, AplicarError, OSError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    if not cambios:
+        # Un typo en --sesion no puede parecer un exito: antes decia AVISO y salia con 0, asi que
+        # `apply --sesion 2026-09-09-sesion-99` "funcionaba".
+        sesiones = sorted({r.sesion for r in feedback})
+        if sesion not in sesiones:
+            print(
+                f"ERROR: no hay ningun registro de la sesion {sesion} (las que hay: "
+                f"{', '.join(sesiones) or 'ninguna'})",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"AVISO: la sesion {sesion} no propone ningun valor de parametro")
+        return 0
+
+    nuevos = [c for c in cambios if not c.es_no_op]
+    for c in sorted(cambios, key=lambda c: c.parametro):
+        marca = "=" if c.es_no_op else ("+" if c.estado_anterior.value == "UNKNOWN" else "~")
+        canon = " (canonico)" if c.canonico else ""
+        print(f"  {marca} {c.parametro:28} {c.valor_escrito!r}{canon}  <- {c.registro_id}")
+    print(
+        f"{len(cambios)} parametros; {len(nuevos)} cambian, {len(cambios) - len(nuevos)} ya estaban"
+    )
+    if solo_check:
+        print("--check: no se ha escrito nada")
+        return 0
+    # Solo los que cambian de verdad. Pasando `cambios` entero, un parametro corregido
+    # reescribia el `valor:` de los otros veintinueve -el serializador elige otras comillas-
+    # y producia un diff de 42 lineas para un cambio de una, que es justo el diff ilegible
+    # que `escribir_cambios` existe para evitar.
+    texto = escribir_cambios(ruta, nuevos)
+    tmp = ruta.with_suffix(".yaml.tmp")
+    tmp.write_text(texto, encoding="utf-8", newline="\n")
+    try:
+        cargar_registro(tmp)  # no se pisa el fichero bueno si el resultado no carga
+    except RegistroError as exc:
+        tmp.unlink(missing_ok=True)
+        print(f"ERROR: el resultado no seria valido: {exc}", file=sys.stderr)
+        return 1
+    tmp.replace(ruta)
+    print(f"OK: {ruta} escrito")
+    print("Trailer para el commit:")
+    print("Fuente: " + ", ".join(sorted({c.registro_id for c in cambios})))
+    return 0
+
+
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un item de evidencia con su id calculado (nunca sobreescribe).
 
@@ -1045,9 +1242,17 @@ def kit_build(repo: Path, args: argparse.Namespace) -> int:
 
 def kit_check(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import comprobar
+    from botsito.feedback.modelo import cargar_feedback
 
     try:
-        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.sesion)
+        # Si la sesion ya se celebro, su paquete es historico y no tiene que reproducirse: el
+        # registro tiene ya las respuestas y el cuestionario de hoy preguntaria otra cosa.
+        directorio = repo / "knowledge" / "feedback"
+        celebrada = any(
+            r.sesion == args.sesion
+            for r in (cargar_feedback(directorio) if directorio.is_dir() else [])
+        )
+        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.sesion, celebrada)
     except _kit_errores() as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -1057,7 +1262,10 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: {p}", file=sys.stderr)
     if problemas:
         return 1
-    print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
+    if avisos:
+        print(f"OK: {args.sesion} sin diferencias que no explique la sesion celebrada")
+    else:
+        print(f"OK: {args.sesion} se recompone igual desde el repo y data/")
     return 0
 
 
@@ -1146,6 +1354,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         "accion": args.accion,
         "respuesta_literal": args.respuesta,
         "valor_resultante": args.valor,
+        "valor_canonico": getattr(args, "valor_canonico", None),
         "registrado_por": args.registrado_por,
         "supersede": args.supersede,
         "notas": args.notas,
@@ -1530,6 +1739,11 @@ def build_parser() -> argparse.ArgumentParser:
     lst.add_argument("--video")
     lst.add_argument("--tema")
     fb = sub.add_parser("feedback", help="registros del trader")
+    sp = sub.add_parser("spec", help="la especificacion ejecutable (F11)")
+    sp_sub = sp.add_subparsers(dest="spec_cmd", required=True)
+    sp_sub.add_parser("status", help="con que corre el bot y que sigue en revision")
+    spm = sp_sub.add_parser("manifest", help="comprueba el hash de la spec")
+    spm.add_argument("--escribir", action="store_true", help="regenera el hash")
     fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
     fbn = fb_sub.add_parser("new", help="crea un registro de feedback con id calculado")
     fbn.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
@@ -1543,12 +1757,20 @@ def build_parser() -> argparse.ArgumentParser:
     fbn.add_argument("--accion", required=True)
     fbn.add_argument("--respuesta", required=True, help="respuesta literal del trader")
     fbn.add_argument("--valor", help="valor resultante")
+    fbn.add_argument(
+        "--valor-canonico",
+        dest="valor_canonico",
+        help="el mismo valor en el tipo que espera el registro (F11): '0,8' -> '0.8'",
+    )
     fbn.add_argument("--registrado-por", required=True, dest="registrado_por")
     fbn.add_argument("--supersede")
     fbn.add_argument("--notas")
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
     fbt.add_argument("identificador")
     fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
+    fba = fb_sub.add_parser("apply", help="lleva los valores de una sesion al registro (F11)")
+    fba.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
+    fba.add_argument("--check", action="store_true", help="solo lista lo que haria; no escribe")
     datos = sub.add_parser("data", help="datasets de velas congelados (F15)")
     datos_sub = datos.add_subparsers(dest="data_cmd", required=True)
     dl = datos_sub.add_parser("download", help="descarga M1 por dias y congela un dataset")
@@ -1598,6 +1820,12 @@ def main(argv: list[str] | None = None) -> int:
         return feedback_trace(args.repo, args.identificador)
     if args.cmd == "feedback" and args.feedback_cmd == "pending":
         return feedback_pending(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "status":
+        return spec_status(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "manifest":
+        return spec_manifest(args.repo, args.escribir)
+    if args.cmd == "feedback" and args.feedback_cmd == "apply":
+        return feedback_apply(args.repo, args.sesion, args.check)
     if args.cmd == "evidence" and args.evidence_cmd == "new":
         return evidence_new(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "contradictions":

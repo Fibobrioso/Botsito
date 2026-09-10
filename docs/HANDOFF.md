@@ -20,25 +20,39 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
   `knowledge/cases/kit/2026-09-15-sesion-01/` (fecha provisional).
-- SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6, paquete `2026-09-09-sesion-01`; el
-  paquete se movio del 15 al 9 con `scripts/mover_sesion.py`, mismo seed y mismos 40 casos, y se
-  commiteo ANTES). Procesada entera: v6 inventariado, transcrito (`tr-v6-...-7718b3f4`) y con
-  fotogramas (`fr-v6-22982c02`); 72 registros de feedback; las doce ambiguedades A-1..A-12
-  RESUELTAS; informe en `docs/validation/SESION-01-2026-09-09.md` (leelo: es el esquema completo
-  de la estrategia con la cita de cada decision). Las tres bloqueantes: cartuchos 3 intentos (BE,
-  entrada invalidada y reentrada no cuentan), break even al TOCAR, y H4 a las 23:00 de su grafico
-  en UTC+2, verificado tambien en pantalla (`fr-v6-22982c02/3585000`).
+- SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 107 registros de
+  feedback; A-1..A-12 RESUELTAS). Informe: `docs/validation/SESION-01-2026-09-09.md`, que es el
+  esquema completo de la estrategia con la cita de cada decision. Cerrada en main con el tag
+  `stable/F10-sesion-01`.
 - CUIDADO al citar v6: dos tramos NO son especificacion y la guardia los rechaza
-  (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que
-  lo que se explica "no va para la operativa" (tercer esquema), y 1:53:30-1:57:31, donde suena un
-  video ajeno mientras el trader se ausenta. Siguen en la cruda y `kb find` los encuentra; lo que
-  no pueden es entrar en evidencia.
-- SIGUIENTE: (1) decidir sobre los 12 items de `knowledge/_proposals/pr-v6-*` (`evidence accept`);
-  al aceptarlos se registran A-13..A-17, las cinco dudas que la sesion deja abiertas. (2) Recibir
-  el backtest COMPLETO de mayo y junio con Excel, que el trader se comprometio a enviar antes del
-  2026-09-12 y que sustituye al etiquetado a mano de los 16 dias `dev`. (3) Abrir F11
-  strategy-spec-schema: el registro sigue en UNKNOWN porque `feedback apply` se difirio desde F09.
-  Todo commit bajo `knowledge/spec` o `knowledge/cases` lleva `Fuente:`.
+  (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que lo
+  que se explica "no va para la operativa", y 1:53:30-1:57:31, donde suena un video ajeno mientras
+  el trader se ausenta.
+- F11 strategy-spec-schema CONSTRUIDA (esta rama, `feature/F11-strategy-spec-schema`), cierre con
+  tag `stable/F11`. Lo que existe ahora:
+  - `botsito feedback apply --sesion <s> [--check]`: lleva los valores del feedback al registro.
+    NO interpreta: si un valor no encaja en el tipo, falla y dice cual. La re-expresion se hace
+    fuera, con un registro que supersede y lleva `valor_canonico` (campo opcional nuevo).
+  - `botsito spec status`: con que corre el bot y que sigue en revision (cruza el registro con las
+    ambiguedades ABIERTAS).
+  - `botsito spec manifest [--escribir]`: hash de la spec sobre los TRES ficheros. Si el hash
+    cambia y `spec_version` no, `knowledge validate` falla.
+  - `knowledge/spec/`: 52 parametros (46 con valor, 6 UNKNOWN a proposito), 27 reglas (24
+    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 3.0.0.
+  - ADR-0012 a ADR-0017. La enmienda a ADR-0005 del 2026-09-09 queda REVOCADA por ADR-0017:
+    `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
+    siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
+    La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
+- Lecciones tecnicas (F11):
+  - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
+    patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo
+    con dos patrones muertos sin que nadie lo viera. Escribir regex con Write o con `chr(92)`.
+  - `make check` incluye `ruff format --check`: filtrar su salida con grep por "All checks passed"
+    engana, porque esa linea la imprime `ruff check` y el format falla despues.
+  - `grep -c` sin coincidencias devuelve exit 1 y corta un `&&`.
+  - El paquete de una sesion ya celebrada NO se reproduce con `kit build`, y es correcto: el
+    cuestionario se genera desde los parametros UNKNOWN y ya no lo estan. `kit check` lo trata
+    como aviso si hay feedback de esa sesion.
 - Lecciones tecnicas (F10): Dukascopy devuelve 503 y resets a mitad de mes: `data download`
   cachea por dia y se relanza hasta que el manifiesto existe; los literales de negocio no pueden
   ir en `src/` (`config.yaml` del kit); `random.shuffle` no es estable entre versiones (orden por

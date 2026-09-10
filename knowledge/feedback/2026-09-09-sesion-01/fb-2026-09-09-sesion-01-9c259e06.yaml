@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-9c259e06
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: objetivo_extension_activa
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Se mantiene en un 1:3 para todos los modelos de entrada. Es decir, no se extiende
+registrado_por: Aleks · reorganizacion del consultor (F11)
+valor_resultante: 0 (sin extension)
+valor_canonico: 'false'
+notas: 'la misma respuesta del trader que objetivo_extension, expresada donde el registro puede leerla:
+  si no hay tope ni extension, el interruptor esta apagado.'

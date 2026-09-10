@@ -44,6 +44,10 @@ FICHERO_CONFIG = "config.yaml"
 FICHERO_MAPA = "mapa_parametros.yaml"
 FICHERO_VISTOS = "vistos.yaml"
 FICHEROS_PAQUETE = ("cuestionario.yaml", "ventanas.yaml", "particiones.yaml", "hoja_trader.md")
+# Lo que una sesion ya celebrada cambia legitimamente: el cuestionario ya no preguntaria lo
+# mismo, las ventanas se recortan con lo respondido y la hoja las refleja. `particiones.yaml`
+# NO esta aqui a proposito (ver `comprobar`).
+DEPENDEN_DE_LAS_RESPUESTAS = ("cuestionario.yaml", "ventanas.yaml", "hoja_trader.md")
 SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _MES = re.compile(r"^\d{4}-\d{2}$", re.ASCII)
 _HORA = re.compile(r"^\d{2}:\d{2}$", re.ASCII)
@@ -539,7 +543,9 @@ def esquema_paquete(
     return cuestionario, ventanas, particiones
 
 
-def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], list[str]]:
+def comprobar(
+    repo: Path, carpeta_datos: Path, sesion: str, celebrada: bool = False
+) -> tuple[list[str], list[str]]:
     """PURO: recompone el paquete y compara byte a byte (tras normalizar CRLF). Sin datos en
     `data/`, comprueba solo el esquema y avisa."""
     problemas: list[str] = []
@@ -563,8 +569,24 @@ def comprobar(repo: Path, carpeta_datos: Path, sesion: str) -> tuple[list[str], 
     nuevo = construir(repo, carpeta_datos, sesion, seed)
     carpeta = repo / DIRECTORIO_KIT / sesion
     for nombre, texto in nuevo.ficheros.items():
-        if _leer(carpeta, nombre) != texto:
-            problemas.append(f"{sesion}/{nombre}: difiere de lo que se genera hoy")
+        if _leer(carpeta, nombre) == texto:
+            continue
+        if celebrada and nombre in DEPENDEN_DE_LAS_RESPUESTAS:
+            # El paquete de una sesion ya celebrada es historico: dice lo que se le pregunto al
+            # trader ese dia. Regenerarlo hoy da otra cosa a proposito, porque el registro ya
+            # tiene las respuestas y el cuestionario ya no preguntaria lo mismo. Exigir que se
+            # reproduzca seria exigir que el proyecto no aprenda nada.
+            #
+            # Pero SOLO estos tres. `particiones.yaml` no depende de las respuestas -sale de los
+            # hashes de los casos y del seed-, asi que sigue teniendo que reproducirse byte a
+            # byte: es la prueba de que las particiones se fijaron antes de etiquetar, y bajarla
+            # a AVISO dejaba a `kit check` sin poder denunciar que alguien la reescribiera.
+            avisos.append(
+                f"{sesion}/{nombre}: ya no se genera igual, y es lo esperado: la sesion se "
+                f"celebro y sus respuestas estan en el registro"
+            )
+            continue
+        problemas.append(f"{sesion}/{nombre}: difiere de lo que se genera hoy")
     return problemas, avisos
 
 

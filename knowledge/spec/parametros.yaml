@@ -10,7 +10,9 @@
 #   categoria:     estrategia | instrumento | broker | prop_firm | ejecucion (ADR-0004).
 #                  Solo `estrategia` se cita por evidence/feedback y se le pregunta al trader;
 #                  las demas se citan por decision (ADR-NNNN) y se verifican en el pre-vuelo.
-#   tipo:          fraccion | porcentaje | decimal | entero | hora | texto
+#   tipo:          fraccion | porcentaje | decimal | entero | hora | texto |
+#                  enum | booleano | puntos | minutos | lotes (F11)
+#   opciones:      obligatorio y exclusivo de `enum`: los valores que admite (>= 2)
 #   huso:          obligatorio si tipo es hora: nombre IANA (Europe/Madrid, UTC, ...)
 #   unidad:        texto libre pero obligatorio (p. ej. "fraccion de la distancia completa")
 #   descripcion:   una frase
@@ -47,164 +49,424 @@ parametros:
   # F15 (ADR-0005): el reloj del trader es un hecho del entorno; el anclaje de la vela H4 es de
   # estrategia y sigue abierto (A-9: hora Y huso del grafico) hasta que el trader lo resuelva.
   # El huso de los datos no es un parametro: lo declara cada manifiesto de dataset (UTC).
+  # --- entorno: ficha del instrumento, reloj del broker y modelo de llenado (F11, ADR-0012).
+  # Medidos contra la cuenta demo real de FundedNext (34891752, FundedNext-Server 3) el
+  # 2026-09-05; el pre-vuelo de F33 los comprueba contra SymbolInfo*/AccountInfo* y aborta si
+  # el broker dice otra cosa. No se preguntan al trader: son del entorno (ADR-0004).
+  - nombre: instrumento_digitos
+    categoria: instrumento
+    tipo: entero
+    unidad: decimales de la cotizacion
+    descripcion: digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos
+    estado: CONFIRMED
+    valor: 5
+    minimo: 0
+    maximo: 8
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: instrumento_contrato
+    categoria: instrumento
+    tipo: decimal
+    unidad: unidades de la divisa base por lote
+    descripcion: tamano del contrato; con el se convierte el riesgo en lotes
+    estado: CONFIRMED
+    valor: "100000"
+    minimo: "1"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: instrumento_lote_minimo
+    categoria: instrumento
+    tipo: lotes
+    unidad: lotes
+    descripcion: lote minimo que admite el broker; por debajo, la operacion se rechaza
+    estado: CONFIRMED
+    valor: "0.01"
+    minimo: "0"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: instrumento_lote_paso
+    categoria: instrumento
+    tipo: lotes
+    unidad: lotes
+    descripcion: escalon del lote; el lotaje calculado se redondea a un multiplo de este paso
+    estado: CONFIRMED
+    valor: "0.01"
+    minimo: "0"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: instrumento_stops_level
+    categoria: instrumento
+    tipo: puntos
+    unidad: puntos de distancia minima a mercado
+    descripcion: >-
+      distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas
+      cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2)
+    estado: CONFIRMED
+    valor: 0
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: broker_offset_base
+    categoria: broker
+    tipo: minutos
+    unidad: minutos que el reloj del servidor va por delante de UTC en horario estandar
+    descripcion: >-
+      desfase base del reloj del servidor (GMT+2 en invierno, GMT+3 en verano de Nueva York);
+      medido en el terminal, no supuesto
+    estado: CONFIRMED
+    valor: 120
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: broker_dst
+    categoria: broker
+    tipo: enum
+    unidad: que calendario de cambio de hora sigue el servidor
+    opciones: [us, eu, ninguno]
+    descripcion: >-
+      con que calendario cambia la hora el servidor. FundedNext sigue el de Nueva York, asi que
+      en verano el reloj va a GMT+3 y el dia de riesgo se desplaza. Este reloj y huso_grafico son
+      DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla
+      donde el trader decide. Coinciden en invierno y divergen una hora en verano, asi que las
+      horas de la operativa se interpretan SIEMPRE en huso_grafico y se convierten al ejecutar
+    estado: CONFIRMED
+    valor: "us"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: modelo_llenado
+    categoria: ejecucion
+    tipo: enum
+    unidad: como se decide que una orden limite se ha llenado
+    opciones: [al_tocar, cruce_mas_latencia]
+    descripcion: >-
+      criterio de llenado en el motor de referencia. `al_tocar` es optimista y `cruce_mas_latencia`
+      exige que el precio cruce y pase `latencia_ms`; F27 mide las dos y la diferencia entre ellas
+      es una cota de cuanto depende el resultado del modelo, no de la estrategia
+    estado: CONFIRMED
+    valor: "al_tocar"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: latencia_ms
+    categoria: ejecucion
+    tipo: minutos
+    unidad: milisegundos de latencia supuesta entre senal y orden
+    descripcion: latencia que asume `cruce_mas_latencia`; con `al_tocar` no se usa
+    estado: CONFIRMED
+    valor: 0
+    fuente:
+      tipo: decision
+      id: ADR-0012
   - nombre: huso_operativa
     categoria: ejecucion
     tipo: texto
-    unidad: nombre IANA de huso horario
-    descripcion: reloj del trader; las horas de la operativa se expresan en este huso
+    unidad: nombre IANA del huso en el que se expresan las horas de la operativa
+    descripcion: >-
+      reloj del TRADER como persona: la hora a la que se sienta y a la que cierra, y de la que
+      cuelgan ventana_inicio y ventana_fin. Es su reloj civil y por tanto cambia con el horario
+      de verano. ADR-0005 lo fijo en Europe/Madrid, ADR-0012 lo cambio a un offset fijo apoyandose
+      en que "la sesion desmintio Madrid" -que no ocurrio, ver ADR-0015- y ADR-0017 lo revierte:
+      el trader opera siempre a la misma hora SUYA, sea cual sea la fecha
     estado: CONFIRMED
     valor: "Europe/Madrid"
-    fuente: {tipo: decision, id: ADR-0005}
+    fuente:
+      tipo: decision
+      id: ADR-0017
+  - nombre: huso_grafico
+    categoria: estrategia
+    tipo: texto
+    unidad: nombre IANA del huso configurado en el grafico del trader
+    descripcion: >-
+      como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de
+      huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para
+      traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las
+      21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las
+      horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el
+      reloj del servidor, que va en broker_offset_base + broker_dst y sigue a Nueva York
+    estado: CONFIRMED
+    valor: "Europe/Madrid"
+    fuente:
+      tipo: evidence
+      id: ev-v3-000136-6160fcea
   - nombre: anclaje_h4
     categoria: estrategia
     tipo: hora
-    unidad: hora de reloj de pared; el huso se fija al resolver A-9 (es parte de la pregunta)
-    descripcion: hora local a la que abre la primera vela H4 del dia en el grafico del trader (A-9)
-    estado: UNKNOWN
+    huso: America/New_York
+    unidad: hora de reloj de pared en el huso declarado; parte la recta UTC en velas H4
+    descripcion: >-
+      donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los
+      brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva
+      York, como confirma broker_dst medido contra la demo. El trader lo ve como las 23:00 en su
+      pantalla, y es cierto 337 dias al año; los otros 28 -8 a 28 de marzo y 25 a 31 de octubre,
+      cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una
+      hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas
+      las velas H4, que es de donde sale el sesgo (ADR-0017)
+    estado: CONFIRMED
+    valor: "17:00"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-479e68b9
 
   # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
-  # UNKNOWN sin valor. Se cierran en F11 con un registro de feedback de la sesion 1 (o evidencia
+  # UNKNOWN sin valor. Se cerraron en F11 con un registro de feedback de la sesion 1 (o evidencia
   # que baste). El enlace parametro -> evidencia/ambiguedad esta en knowledge/cases/kit/
-  # mapa_parametros.yaml (el esquema del registro no admite claves extra). Las horas van sin
-  # `huso` hasta que A-6/A-9 lo fijen.
+  # mapa_parametros.yaml (el esquema del registro no admite claves extra).
   - nombre: ventana_inicio
     categoria: estrategia
     tipo: hora
-    unidad: hora de reloj del trader
-    descripcion: inicio de la ventana operativa (primera sesion H4)
-    estado: UNKNOWN
+    huso: Europe/Madrid
+    unidad: hora de reloj de pared del trader (huso_operativa)
+    descripcion: >-
+      hora a la que el trader empieza a buscar entradas. Es SU horario como persona y no se mueve
+      con la fecha, asi que en UTC si se mueve con el cambio de hora (ADR-0017)
+    estado: CONFIRMED
+    valor: "07:00"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-8741c388
   - nombre: ventana_fin
     categoria: estrategia
     tipo: hora
-    unidad: hora de reloj del trader
-    descripcion: fin de la ventana operativa (cierre de la segunda sesion H4; A-6)
-    estado: UNKNOWN
+    huso: Europe/Madrid
+    unidad: hora de reloj de pared del trader (huso_operativa)
+    descripcion: >-
+      hora a la que el trader deja de operar y cierra lo que quede abierto. Es SU horario como
+      persona, igual que ventana_inicio (A-6, ADR-0017)
+    estado: CONFIRMED
+    valor: "15:00"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-951b7a79
   - nombre: cierre_forzoso_fin_ventana
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: si/no
+    opciones: ["si", "no"]
     descripcion: si un trade abierto se cierra en punto al terminar la ventana (A-6)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "si"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-ffb528d7
   - nombre: sesgo_h4_regla
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: opcion cerrada (mapa_parametros.yaml)
+    opciones: ["vela_anterior_color", "vela_anterior_cierre_mecha", "otra"]
     descripcion: que vela H4 fija el sesgo y cuando cambia (A-1)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "vela_anterior_cierre_mecha"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-8eccf5c0
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: cuerpo/mecha
+    opciones: ["cuerpo", "mecha"]
     descripcion: si la liquidez de M15 se toma con cierre de cuerpo o basta la mecha
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "cuerpo"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-6e15504f
   - nombre: stop_fraccion_caja
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa nivel 0 -> nivel 1
     descripcion: nivel de la caja donde va el stop tras la entrada (0,75 u 0,8; A-10)
-    estado: UNKNOWN
-  - nombre: stop_colchon_spread
-    categoria: estrategia
-    tipo: texto
-    unidad: fijo/spread
-    descripcion: si el stop es fijo en la fraccion o se desplaza con el spread del momento (A-10)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "0.8"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-d34a0222
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_reduccion_fraccion
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa
     descripcion: nivel al que se reduce el stop cuando la vela avanza (A-12)
     estado: UNKNOWN
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_reduccion_umbral_vela
     categoria: estrategia
     tipo: porcentaje
     unidad: porcentaje de la vela transcurrido
     descripcion: parte de la vela a partir de la cual se baja el stop (40 o 50; A-12)
     estado: UNKNOWN
-  - nombre: stop_proteccion_capital
-    categoria: estrategia
-    tipo: fraccion
-    unidad: fraccion de la distancia completa
-    descripcion: parte del riesgo que se guarda al proteger el trade al entrar (0,25)
-    estado: UNKNOWN
+    minimo: "0"
+    maximo: "100"
   - nombre: stop_segundo_esquema
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa
     descripcion: donde va el stop en el segundo esquema de entrada (0,75, 0,6, zona de control; A-7)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "0.8"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-85b30f66
+    minimo: "0"
+    maximo: "1"
   - nombre: stop_en_orden_pendiente
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: en_la_orden/tras_el_llenado
-    descripcion: si el SL viaja en la orden pendiente o se pone tras el llenado (A-11)
-    estado: UNKNOWN
+    opciones: ["en_la_orden", "tras_el_llenado"]
+    descripcion: >-
+      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). OJO, del barrido de
+      fidelidad del 2026-09-10: el literal de su cita -"el primer stop loss es para el calculo del
+      lotaje y el segundo es para proteccion"- establece que hay DOS stops y para que sirve cada
+      uno, pero no dice cual de los dos viaja en la orden. `en_la_orden` es una inferencia: el
+      lote se calcula antes de enviar la orden, y ev-v4-001207-0c4ffd4b habla del "stop loss que
+      se va a introducir en la operacion". Razonable, pero es nuestra, no suya
+    estado: CONFIRMED
+    valor: "en_la_orden"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-28440182
   - nombre: break_even_condicion
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: tocar/cierre
+    opciones: ["tocar", "cierre"]
     descripcion: si el break even se pone al tocar el nivel o al cierre de la vela (A-4)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "tocar"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-0ccafcba
   - nombre: objetivo_rr
     categoria: estrategia
     tipo: decimal
-    unidad: multiplo del riesgo (1 a N)
-    descripcion: objetivo riesgo/beneficio fijo y minimo (1 a 3)
-    estado: UNKNOWN
+    unidad: multiplo de la distancia que declara base_calculo_objetivo
+    descripcion: >-
+      objetivo fijo, en multiplos de la distancia que fija base_calculo_objetivo. "Riesgo" a
+      secas seria ambiguo: el lote se dimensiona sobre la caja completa y el stop acaba en
+      stop_fraccion_caja, asi que hay dos distancias y no son la misma (ADR-0014). El objetivo
+      es FIJO, no minimo: la sesion 1 cerro la extension en objetivo_extension_activa: false
+    estado: CONFIRMED
+    valor: "3"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-7fbbb2e7
+    minimo: "1"
+    maximo: "10"
+  - nombre: objetivo_extension_activa
+    categoria: estrategia
+    tipo: booleano
+    unidad: se aplica o no
+    descripcion: si el objetivo se extiende mas alla del 1:3 (el trader dice que no se extiende)
+    estado: CONFIRMED
+    valor: false
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-9c259e06
   - nombre: objetivo_extension
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia hasta la liquidez de M15
-    descripcion: hasta donde se extiende el objetivo cuando se maximiza (0,50 de la liquidez)
+    descripcion: hasta donde se extiende el objetivo; solo si objetivo_extension_activa
     estado: UNKNOWN
+    minimo: "0"
+    maximo: "1"
   - nombre: cartuchos_max
     categoria: estrategia
     tipo: entero
     unidad: intentos por zona de liquidez
     descripcion: numero maximo de intentos por barrido de liquidez (2 o 3; A-2)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: 3
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-1a3064b0
+    minimo: 1
+    maximo: 10
   - nombre: reentrada_tras_equal
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: si/no
+    opciones: ["si", "no"]
     descripcion: si tras un equal (activacion sin rotura) se reentra al romper de nuevo
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "si"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-060cd801
   - nombre: reubicacion_cadencia
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: opcion cerrada (mapa_parametros.yaml)
+    opciones: ["cada_vela", "al_romper", "otra"]
     descripcion: cada cuanto se reubica la orden limite mientras no se activa (A-5)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "al_romper"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-6b29059d
   - nombre: salida_sin_ruptura
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: cerrar_al_cierre/proteger_y_dejar
+    opciones: ["cerrar_al_cierre", "proteger_y_dejar"]
     descripcion: que se hace si la orden se activa sin ruptura (A-3)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "proteger_y_dejar"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-9626d3dd
   - nombre: mapeo_dos_velas
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: opcion cerrada (mapa_parametros.yaml)
+    opciones: ["order_block_mayor", "otra"]
     descripcion: cuando dos velas de M1 cuentan como una estructura al mapear (A-8)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "order_block_mayor"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-7ee9cabc
   - nombre: parciales
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: si/no
+    opciones: ["si", "no"]
     descripcion: si se toman parciales
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "no"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-0905fd59
   - nombre: riesgo_por_operacion
     categoria: estrategia
     tipo: porcentaje
     unidad: porcentaje de la cuenta por operacion
     descripcion: riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo)
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "0.5"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-648ec915
+    minimo: "0"
+    maximo: "5"
   - nombre: lotaje_base
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: distancia_completa/desde_075
+    opciones: ["distancia_completa", "desde_075"]
     descripcion: sobre que distancia se calcula el lotaje
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "distancia_completa"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a089315e
 
   # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
   # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
@@ -213,46 +475,237 @@ parametros:
     tipo: texto
     unidad: dias de la semana en que se opera
     descripcion: dias en los que el bot busca entradas y dias que se excluyen por norma
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "lunes a viernes"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-bf1a8442
   - nombre: filtro_noticias
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: regla de filtro, o no si no filtra
+    opciones: ["no", "regla"]
     descripcion: si se deja de operar alrededor de noticias de alto impacto y con que margen
-    estado: UNKNOWN
+    estado: CONFIRMED
+    valor: "no"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-3565552d
+  - nombre: filtro_spread
+    categoria: estrategia
+    tipo: booleano
+    unidad: se aplica o no
+    descripcion: si el bot descarta una entrada por spread alto (el trader dice que no filtra)
+    estado: CONFIRMED
+    valor: false
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-672262d5
   - nombre: spread_maximo
     categoria: estrategia
-    tipo: decimal
-    unidad: pips
-    descripcion: spread por encima del cual no se abre la operacion
+    tipo: puntos
+    unidad: puntos de spread
+    descripcion: spread por encima del cual no se abre la operacion; solo si filtro_spread
     estado: UNKNOWN
+    minimo: 0
   - nombre: perdida_maxima_diaria
     categoria: estrategia
     tipo: porcentaje
-    unidad: porcentaje de la cuenta
-    descripcion: perdida acumulada en el dia que detiene la operativa
-    estado: UNKNOWN
+    unidad: porcentaje del saldo que declara base_calculo_perdida_diaria
+    descripcion: >-
+      perdida acumulada en el dia que detiene la operativa; la base la fija
+      base_calculo_perdida_diaria y el corte, reloj_dia_riesgo. Tras corregir la aritmetica de
+      los cartuchos (ver RN-020) este es el UNICO freno del dia que existe
+    estado: CONFIRMED
+    valor: "4.5"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-bff260ea
+    minimo: "0"
+    maximo: "20"
   - nombre: perdida_maxima_semanal
     categoria: estrategia
     tipo: porcentaje
-    unidad: porcentaje de la cuenta
-    descripcion: perdida acumulada en la semana que detiene la operativa
-    estado: UNKNOWN
+    unidad: porcentaje del saldo que declara base_calculo_perdida_semanal
+    descripcion: >-
+      perdida acumulada en la semana que detiene la operativa; la base la fija
+      base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
+    estado: CONFIRMED
+    valor: "9"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a85b6bc7
+    minimo: "0"
+    maximo: "20"
   - nombre: comportamiento_sin_regla
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: abstenerse/regla_mas_parecida
+    opciones: ["abstenerse", "regla_mas_parecida"]
     descripcion: que hace el bot cuando la situacion no encaja con ninguna regla
+    estado: CONFIRMED
+    valor: "abstenerse"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-c698bc6a
+  - nombre: stop_colchon_spread
+    categoria: estrategia
+    tipo: enum
+    unidad: como se trata el colchon de spread
+    opciones: [fijo, spread]
+    descripcion: >-
+      si el 0,8 es fijo o es 0,75 mas un colchon variable. RESPONDIDO Y DESCARTADO en la sesion 1
+      (A-10): el 0,8 ya lleva el colchon dentro, asi que no hay parametro que fijar. Se queda
+      UNKNOWN a proposito -leerlo falla- y la regla vive en strategy_spec
     estado: UNKNOWN
+  - nombre: stop_proteccion_capital
+    categoria: estrategia
+    tipo: fraccion
+    unidad: fraccion de la caja que se conserva al proteger
+    descripcion: >-
+      cuanto se guarda al mover el stop. DERIVADO de stop_fraccion_caja (1 - 0,8 = 0,2), asi que
+      no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya
+      dos puertas para el mismo numero
+    estado: UNKNOWN
+    minimo: "0"
+    maximo: "1"
+  - nombre: cartucho_criterio
+    categoria: estrategia
+    tipo: enum
+    unidad: que suma al contador
+    opciones: [solo_perdida, todo_intento]
+    descripcion: "que cuenta como cartucho gastado; el trader dice que solo una perdida"
+    estado: CONFIRMED
+    valor: "solo_perdida"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-aa2abe65
+  - nombre: cartuchos_reinicio
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se pone a cero el contador
+    opciones: [siguiente_liquidez_m15, fin_de_dia, nunca]
+    descripcion: cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia)
+    estado: CONFIRMED
+    valor: siguiente_liquidez_m15
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-e3eedcaa
+  - nombre: base_calculo_riesgo
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que saldo se calcula
+    opciones: [saldo_actual, saldo_inicial_dia]
+    descripcion: "base del riesgo por operacion; el trader dice que el saldo actual"
+    estado: CONFIRMED
+    valor: "saldo_actual"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-2603c017
+  - nombre: base_calculo_perdida_diaria
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que saldo se calcula
+    opciones: [saldo_actual, saldo_inicial_dia]
+    descripcion: "base del tope de perdida del dia; el trader dice que el saldo inicial"
+    estado: CONFIRMED
+    valor: "saldo_inicial_dia"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-462134c7
+  - nombre: base_calculo_perdida_semanal
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que saldo se calcula
+    opciones: [saldo_actual, saldo_inicial_semana, saldo_inicial_dia]
+    descripcion: >-
+      base del tope de perdida de la semana. NO es la misma que la diaria: el trader dijo "9% de
+      la cuenta actual" para la semana y "el saldo inicial del dia" para el dia. Estaba en el
+      literal desde la sesion y no habia parametro donde guardarlo, asi que perdida_maxima_semanal
+      declaraba "porcentaje de la cuenta" sin decir de cual
+    estado: CONFIRMED
+    valor: "saldo_actual"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a85b6bc7
+  - nombre: reloj_dia_riesgo
+    categoria: prop_firm
+    tipo: enum
+    unidad: que reloj marca el corte del dia (y de la semana) de riesgo
+    opciones: [servidor, grafico]
+    descripcion: >-
+      en que reloj cae la medianoche que reinicia el tope diario, y el domingo que reinicia el
+      semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. Importa porque
+      los dos relojes NO coinciden: el del servidor cambia con el calendario de Nueva York
+      (broker_offset_base + broker_dst) y el del grafico esta en discusion (A-14), asi que se
+      separan una hora buena parte del año. `servidor` es un DEFAULT NUESTRO: es como lo calculan
+      las cuentas de fondeo, pero no esta verificado contra el panel de FundedNext (A-19), y en
+      una cuenta fondeada equivocarse aqui es perder la cuenta, no perder un trade
+    estado: DEFAULT_AMBIGUOUS
+    valor: "servidor"
+    ambiguedad_id: A-19
+    fuente:
+      tipo: decision
+      id: ADR-0015
+  - nombre: base_calculo_objetivo
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que distancia se multiplica objetivo_rr
+    opciones: ["caja_completa", "riesgo_real"]
+    descripcion: >-
+      distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 ->
+      nivel 1, la misma que dimensiona el lote (lotaje_base); `riesgo_real` seria la distancia
+      hasta stop_fraccion_caja. El objetivo se traza CON la orden, antes de que el stop se
+      mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR
+      realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
+    estado: CONFIRMED
+    valor: "caja_completa"
+    fuente:
+      tipo: evidence
+      id: ev-v2-003256-0197f4e1
   - nombre: instrumento
-    categoria: instrumento
+    categoria: estrategia
     tipo: texto
     unidad: simbolo del instrumento
-    descripcion: instrumento sobre el que opera el bot
-    estado: UNKNOWN
+    descripcion: >-
+      instrumento sobre el que opera la primera version. Sale de la evidencia, no de una respuesta:
+      es el unico instrumento de todo el corpus grabado y se lee en pantalla. Por donde ampliar
+      -NASDAQ, oro, pares sin gaps, futuros- lo dijo el trader y vive en fb-2026-09-09-sesion-01-6eceb844
+    estado: CONFIRMED
+    valor: "EURUSD"
+    fuente:
+      tipo: evidence
+      id: ev-v2-003320-a736fd37
   - nombre: cuenta_objetivo
-    categoria: ejecucion
-    tipo: texto
+    categoria: prop_firm
+    tipo: enum
     unidad: tipo de cuenta
-    descripcion: cuenta sobre la que opera la primera version (fondeo, demo o propia)
-    estado: UNKNOWN
+    opciones: [fondeada, demo, propia]
+    descripcion: cuenta a la que apunta el bot cuando este validado
+    estado: CONFIRMED
+    valor: "fondeada"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: cuenta_pruebas
+    categoria: prop_firm
+    tipo: enum
+    unidad: tipo de cuenta
+    opciones: [fondeada, demo, propia]
+    descripcion: cuenta en la que se prueba el funcionamiento antes de la fondeada
+    estado: CONFIRMED
+    valor: "demo"
+    fuente:
+      tipo: decision
+      id: ADR-0012
+  - nombre: saldo_inicial_cuenta
+    categoria: prop_firm
+    tipo: decimal
+    unidad: USD
+    descripcion: saldo con el que arranca la cuenta; base del lotaje y de los topes
+    estado: CONFIRMED
+    valor: "100000"
+    minimo: "0"
+    fuente:
+      tipo: decision
+      id: ADR-0012
