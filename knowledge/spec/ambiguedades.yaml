@@ -187,9 +187,11 @@ ambiguedades:
     pregunta: >-
       del 8 al 28 de marzo y del 25 al 31 de octubre, la UE y EE.UU. no cambian la hora el mismo
       dia, asi que la primera H4 se ve a las 22:00 y no a las 23:00: sus dos sesiones dejan de
-      empezar en la apertura de una vela. ¿sigue operando de 7 a 15 igual, o esos dias se ajusta
-      a la vela? El consultor decidio el 2026-09-10 que manda su horario; falta que el trader lo
-      confirme, porque son unas 20 sesiones al año con otra geometria
+      empezar en la apertura de una vela. RESPONDIDA de hecho el 2026-09-10: el consultor informa
+      de que el trader ES CONSCIENTE de ese cambio en la estructura de las velas, usa las velas tal
+      cual -no reancla la rejilla- y mantiene el mismo rango de horarios. Sigue ABIERTA solo por
+      forma: este fichero cierra con feedback del trader y esto lo cuenta el consultor. Falta su
+      frase, no la respuesta
     resuelve_en: [F11, F15, F26]
     evidencia:
       - ev-v3-000136-6160fcea

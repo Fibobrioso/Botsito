@@ -103,8 +103,11 @@ opera, y F26 mediria fidelidad contra sesiones que nunca existieron.
 - RN-003 deja de nombrar `huso_grafico`: la rejilla no depende del reloj de la pantalla.
 - `no_confirmados()` baja de 7 a 6: `huso_grafico` vuelve a `CONFIRMED`, esta vez con una cita que
   lo sostiene de verdad.
-- **A-14 sigue ABIERTA**, pero por fin con la pregunta util, que ademas es corta y se puede hacer
-  por escrito sin sesion.
+- **A-14 sigue ABIERTA**, pero por fin con la pregunta util, y de hecho ya respondida: el 2026-09-10
+  el consultor informa de que **el trader es consciente de ese cambio en la estructura de las velas**,
+  usa las velas tal cual -no reancla nada- y mantiene el mismo rango de horarios. La decision del
+  punto 5 deja de ser una suposicion nuestra y pasa a describir lo que el trader ya hace. Queda
+  abierta solo por forma: falta su frase, no la respuesta.
 
 ## Fecha / fase
 
