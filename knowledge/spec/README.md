@@ -1,8 +1,8 @@
 # knowledge/spec/ — StrategySpec (F11) y registro de parametros (F02).
 
 - `parametros.yaml`: LA unica puerta de los valores de negocio (ADR-0002), con categoria por
-  parametro y huso en las horas (ADR-0004, ADR-0012). Desde la sesion 1 (2026-09-09) tiene 51
-  parametros: 45 con valor y 6 UNKNOWN **a proposito**, cada uno de estos con un registro `REJECT`
+  parametro y huso en las horas (ADR-0004, ADR-0012). Desde la sesion 1 (2026-09-09) tiene 52
+  parametros: 46 con valor y 6 UNKNOWN **a proposito**, cada uno de estos con un registro `REJECT`
   que explica por que no existe ese numero. Un valor de `estrategia` cita SIEMPRE al trader
   (feedback o evidence); uno de entorno (instrumento, broker, prop_firm, ejecucion) cita un ADR.
 - `ambiguedades.yaml` (F10, ADR-0011): A-1..A-17 con pregunta, evidencia, parametros y estado.

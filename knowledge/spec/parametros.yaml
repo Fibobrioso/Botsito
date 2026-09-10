@@ -319,8 +319,12 @@ parametros:
   - nombre: objetivo_rr
     categoria: estrategia
     tipo: decimal
-    unidad: multiplo del riesgo (1 a N)
-    descripcion: objetivo riesgo/beneficio fijo y minimo (1 a 3)
+    unidad: multiplo de la distancia que declara base_calculo_objetivo
+    descripcion: >-
+      objetivo fijo, en multiplos de la distancia que fija base_calculo_objetivo. "Riesgo" a
+      secas seria ambiguo: el lote se dimensiona sobre la caja completa y el stop acaba en
+      stop_fraccion_caja, asi que hay dos distancias y no son la misma (ADR-0014). El objetivo
+      es FIJO, no minimo: la sesion 1 cerro la extension en objetivo_extension_activa: false
     estado: CONFIRMED
     valor: "3"
     fuente:
@@ -577,6 +581,22 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-462134c7
+  - nombre: base_calculo_objetivo
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que distancia se multiplica objetivo_rr
+    opciones: ["caja_completa", "riesgo_real"]
+    descripcion: >-
+      distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 ->
+      nivel 1, la misma que dimensiona el lote (lotaje_base); `riesgo_real` seria la distancia
+      hasta stop_fraccion_caja. El objetivo se traza CON la orden, antes de que el stop se
+      mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR
+      realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
+    estado: CONFIRMED
+    valor: "caja_completa"
+    fuente:
+      tipo: evidence
+      id: ev-v2-003256-0197f4e1
   - nombre: instrumento
     categoria: estrategia
     tipo: texto

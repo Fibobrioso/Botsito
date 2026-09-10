@@ -154,9 +154,10 @@ reglas:
     titulo: la perdida real es menor que el riesgo nominal, y es a proposito
     cuando: el stop salta
     entonces: >-
-      la perdida es riesgo_por_operacion multiplicado por stop_fraccion_caja, porque el lote se
-      dimensiono sobre la caja completa. Lo que se conserva es el resto de la caja
-    parametros: [riesgo_por_operacion, stop_fraccion_caja]
+      la perdida es riesgo_por_operacion -sobre base_calculo_riesgo- multiplicado por
+      stop_fraccion_caja, porque el lote se dimensiono sobre la caja completa. Lo que se
+      conserva es el resto de la caja
+    parametros: [riesgo_por_operacion, base_calculo_riesgo, stop_fraccion_caja]
     cita: fb-2026-09-09-sesion-01-c4922acb
     literal: >-
       La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve el SL
@@ -189,14 +190,24 @@ reglas:
     estado: VIGENTE
 
   - id: RN-015
-    titulo: el objetivo es fijo y no se mueve
+    titulo: el objetivo es fijo, se traza con la orden y no se mueve
     cuando: se abre una operacion
     entonces: >-
-      el objetivo se fija en objetivo_rr sobre la caja completa y no se extiende
+      el objetivo se fija en objetivo_rr sobre la distancia que declara base_calculo_objetivo,
+      en el mismo instante en que se traza la orden, y no se extiende
       (objetivo_extension_activa) ni se sacan parciales (parciales)
-    parametros: [objetivo_rr, objetivo_extension_activa, parciales]
+    parametros: [objetivo_rr, base_calculo_objetivo, objetivo_extension_activa, parciales]
     cita: fb-2026-09-09-sesion-01-7fbbb2e7
     literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
+    notas: >-
+      la BASE del 1:3 no la dice el literal, y por eso vive en base_calculo_objetivo y no en
+      esta frase (ADR-0014). El objetivo y el lote se trazan juntos sobre la caja completa;
+      despues el stop se mueve a stop_fraccion_caja y el RR REALIZADO pasa a ser
+      objetivo_rr / stop_fraccion_caja, no objetivo_rr. Quien mida fidelidad en F26 no debe
+      leer esa diferencia como un fallo del bot: es la mecanica. ev-v4-011951 empuja al otro
+      lado -el trader dice que un ganador cubre "2 o 3" perdidas, que cuadra mejor con medir
+      sobre el riesgo real-, pero es una estimacion redonda hablando de margenes, no una
+      descripcion del calculo; A-18 lo deja a la vista hasta ratificarlo
     estado: VIGENTE
 
   # ---------------------------------------------------------------- limites del dia

@@ -320,3 +320,39 @@ def test_el_hash_cubre_el_huso_de_las_horas(tmp_path: Path) -> None:
         newline="\n",
     )
     assert hash_de(repo) != antes
+
+
+def test_una_base_de_calculo_no_puede_vivir_en_la_prosa() -> None:
+    """Un `base_calculo_*` existe para sacar la base de la frase y meterla en el registro.
+
+    Sirve de poco si luego la regla que lo necesita no lo nombra: el motor lee `parametros`, no el
+    espanol de `entonces`. Es el fallo que ADR-0014 corrigio -RN-015 decia "sobre la caja completa"
+    mientras la `unidad` de `objetivo_rr` decia "multiplo del riesgo"-, y el mismo que ADR-0012 ya
+    habia corregido dos veces con `base_calculo_riesgo` y `base_calculo_perdida_diaria`.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC
+
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    bases = {n for n in registro.nombres() if n.startswith("base_calculo_")}
+    assert bases, "el registro deberia declarar sus bases de calculo como parametros"
+
+    # 1. Toda base la usa alguna regla vigente. Una base que nadie nombra no fija nada.
+    usadas = {p for r in reglas if r.vigente for p in r.parametros}
+    assert not (bases - usadas), f"bases que ninguna regla vigente nombra: {sorted(bases - usadas)}"
+
+    # 2. Y quien usa la magnitud, usa su base: si no, la base la vuelve a poner la prosa.
+    magnitudes = {
+        "objetivo_rr": "base_calculo_objetivo",
+        "riesgo_por_operacion": "base_calculo_riesgo",
+        "perdida_maxima_diaria": "base_calculo_perdida_diaria",
+    }
+    huerfanas = [
+        f"{r.id}: nombra {magnitud} sin nombrar {base}"
+        for r in reglas
+        if r.vigente
+        for magnitud, base in magnitudes.items()
+        if magnitud in r.parametros and base not in r.parametros
+    ]
+    assert not huerfanas, "; ".join(huerfanas)

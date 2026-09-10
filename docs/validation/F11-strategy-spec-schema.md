@@ -3,7 +3,7 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 601 casos (419 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 602 casos (420 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
@@ -47,6 +47,44 @@ uevo` se leía después como `C: uevo`: un valor distinto del que dijo el trader
 
 Todos verificados con su reproducción antes de tocar nada, y todos arreglados con test.
 
+## 0 ter. La auditoría del consultor (2026-09-10), punto a punto
+
+Antes de validar F11 se auditó la rama otra vez, esta vez contra el negocio y no solo contra el
+código. Diez puntos, dos de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
+a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag.**
+
+| # | Qué era | Estado |
+|---|---|---|
+| **P1** | La base del 1:3 se contradecía entre `unidad` de `objetivo_rr` ("múltiplo del riesgo") y RN-015 ("sobre la caja completa"), y "riesgo" tiene dos valores en este registro. Un 25 % de distancia al TP dependía de cuál leyera F18 | **CERRADO** · ADR-0014, `base_calculo_objetivo`, A-18, spec 1.5.0 |
+| P2 | `huso_grafico = Etc/GMT-2` entra CONFIRMED con una cita que no lo dice, y choca con `broker_dst: us`, medido contra la demo. A-14 no contempla el calendario del servidor y no lista `huso_grafico` | ABIERTO |
+| P3 | Tras §5 bis, RN-020 es el único freno del día — pero no define qué reloj ni a qué hora empieza el día, y `perdida_maxima_semanal` no tiene base | ABIERTO |
+| P4 | La verificación comprueba `literal ⊆ cita`, nunca `regla ⊆ literal`: RN-026 y RN-027 son decisiones del consultor con citas que no las sostienen | ABIERTO |
+| P5 | El hash no cubre `titulo`, `literal` ni `notas` de las reglas. La corrección de riesgo de §5 bis vive solo en las `notas` de RN-020, y el `titulo` de RN-020 dice lo contrario que ellas | ABIERTO |
+| P6 | `kit check` con `celebrada=True` degrada TODA diferencia a AVISO, `particiones.yaml` incluida, e imprime "OK: se recompone igual" bajo sus propios avisos | ABIERTO |
+| P7 | `feedback apply` desplaza comentarios de bloque: dos cabeceras de sección quedaron DENTRO de `anclaje_h4` y `lotaje_base`, diciendo lo contrario del parámetro que las contiene. El hash no puede verlo | ABIERTO |
+| P8 | `PROJECT_STATE.md` y el §6 de este informe describen F11 con cifras de una versión anterior de la rama | ABIERTO |
+| P9 | `spec manifest --escribir` reescribe solo la línea `hash:`; `generado_el` no se actualiza nunca (encontrado al cerrar P1) | ABIERTO |
+| P10 | MASTER_PLAN da a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | ABIERTO |
+
+### P1 · la base del objetivo (cerrado el 2026-09-10)
+
+Tres sitios decían cosas distintas sobre la misma cifra, y ninguna guardia podía verlo porque
+`comprobar_literales` mira la cita, no la coherencia entre la regla y la `unidad` del parámetro que
+nombra. La decisión —**el 1:3 se traza sobre la caja completa, con la orden, junto al lotaje**— la
+sostiene `ev-v2-003256-0197f4e1` ("el objetivo sigue planteado a 1 a 3 aunque el stop se mueva a
+0,75") y la mecánica de colocación: cuando se traza el TP, el stop todavía no se ha movido.
+
+La base **sale de la prosa y pasa a parámetro**, que es lo que ADR-0012 ya había hecho dos veces por
+el mismo motivo. Y el RR *realizado* queda escrito: `objetivo_rr / stop_fraccion_caja` = **3,75:1**,
+no 3:1. Quien mida fidelidad en F26 no debe leer esa diferencia como una desviación del bot.
+
+La guardia nueva (`test_una_base_de_calculo_no_puede_vivir_en_la_prosa`) **encontró el mismo defecto
+en RN-012** en su primera ejecución: nombraba `riesgo_por_operacion` sin nombrar su base. Corregido.
+
+Detalle completo en `docs/adr/0014-base-de-calculo-del-objetivo.md`.
+
+---
+
 ## 5 bis. Una corrección que cambia una decisión de riesgo
 
 El informe de la sesión y RN-020 afirmaban que **el freno del día son los tres cartuchos** y que
@@ -69,10 +107,10 @@ Convierte lo que el trader dijo el 9 de septiembre en una especificación que el
 | Pieza | Qué es |
 |---|---|
 | `botsito feedback apply` | la puerta que F09 dejó diferida: lleva los valores del feedback al registro, cada uno con su fuente |
-| `knowledge/spec/parametros.yaml` | 51 parámetros: **45 con valor, 6 UNKNOWN a propósito** |
+| `knowledge/spec/parametros.yaml` | 52 parámetros: **46 con valor, 6 UNKNOWN a propósito** |
 | `knowledge/spec/strategy_spec.yaml` | 27 reglas: 24 vigentes y 3 descartadas, todas con su cita |
 | `knowledge/spec/glossary.yaml` | 8 términos, cada uno con su literal verificado |
-| `knowledge/spec/spec_manifest.yaml` | `spec_version` 1.4.1 y hash sobre los tres ficheros |
+| `knowledge/spec/spec_manifest.yaml` | `spec_version` 1.5.0 y hash sobre los tres ficheros |
 | `botsito spec status` | con qué corre el bot y qué sigue en revisión |
 | `botsito spec manifest` | comprueba el hash; `--escribir` lo regenera |
 

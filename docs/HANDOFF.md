@@ -37,8 +37,8 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     ambiguedades ABIERTAS).
   - `botsito spec manifest [--escribir]`: hash de la spec sobre los TRES ficheros. Si el hash
     cambia y `spec_version` no, `knowledge validate` falla.
-  - `knowledge/spec/`: 51 parametros (45 con valor, 6 UNKNOWN a proposito), 27 reglas (24
-    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 1.4.0.
+  - `knowledge/spec/`: 52 parametros (46 con valor, 6 UNKNOWN a proposito), 27 reglas (24
+    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 1.5.0.
   - ADR-0012 (registro) y ADR-0013 (spec). ADR-0005 queda ENMENDADO: `huso_operativa` ya no es
     Europe/Madrid sino Etc/GMT-2, que la sesion demostro.
 - Lecciones tecnicas (F11):
