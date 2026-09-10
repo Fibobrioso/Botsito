@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-3565552d
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: filtro_noticias
+accion: CORRECT
+respuesta_literal: a mí me es indiferente si hay noticia o no [...] A ver, vamos a intentarlo, ¿vale?
+  [...] Sí, incluimos noticias
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: no filtra; pendiente la regla de la cuenta de fondeo
+valor_canonico: 'no'
+supersede: fb-2026-09-09-sesion-01-62bd292e
+notas: la eleccion es 'no filtra'; el pendiente de la regla del fondeo es A-17. El literal del trader
+  queda intacto; el canonico es lo que el registro puede leer.

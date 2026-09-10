@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-672262d5
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: filtro_spread
+accion: RESOLVE_UNKNOWN
+respuesta_literal: No hay problema con el spread, no existe un limite.
+registrado_por: Aleks · reorganizacion del consultor (F11)
+valor_resultante: sin limite
+valor_canonico: 'false'
+notas: 'la misma respuesta del trader que spread_maximo, expresada donde el registro puede leerla: si
+  no hay tope ni extension, el interruptor esta apagado.'

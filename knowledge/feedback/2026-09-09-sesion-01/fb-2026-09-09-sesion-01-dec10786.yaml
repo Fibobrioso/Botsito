@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-dec10786
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: cartuchos_reinicio
+accion: RESOLVE_UNKNOWN
+respuesta_literal: tras dos perdidas no se opera hasta que se desarrolle la siguiente liquidez de M15;
+  entonces se vuelve a operar
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: siguiente liquidez de M15
+valor_canonico: siguiente_liquidez_m15
+notas: 'v6 2:21:07 y R-09. El contador NO es diario: se reinicia con la siguiente liquidez de M15. Sin
+  este parametro, un bot que contase por dia dejaria de operar antes de tiempo.'

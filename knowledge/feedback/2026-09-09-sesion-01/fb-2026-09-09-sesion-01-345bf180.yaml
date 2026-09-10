@@ -1,0 +1,13 @@
+id: fb-2026-09-09-sesion-01-345bf180
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: spread_maximo
+accion: REJECT
+respuesta_literal: No hay problema con el spread, no existe un limite.
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-8b76e13c
+notas: 'el trader dice que no hay tope de spread, asi que el umbral no existe; lo accionable va a filtro_spread.
+  No cambia lo que dijo el trader: el literal es el suyo.'

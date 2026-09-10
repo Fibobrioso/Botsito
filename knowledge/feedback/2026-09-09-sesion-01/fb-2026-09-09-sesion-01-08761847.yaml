@@ -1,0 +1,13 @@
+id: fb-2026-09-09-sesion-01-08761847
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_colchon_spread
+accion: REJECT
+respuesta_literal: Por temas de Spread ... se reduce al 0.8
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-0aadc027
+notas: 'el colchon deja de ser un parametro que fijar: el 0,8 ya lo lleva dentro, que es lo que el trader
+  dice. El parametro se queda UNKNOWN a proposito y la regla vive en strategy_spec citando este registro.'

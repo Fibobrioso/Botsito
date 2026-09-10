@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-8384b085
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: huso_grafico
+accion: RESOLVE_UNKNOWN
+respuesta_literal: la vela empieza a las 23, la primera vela de cuatro horas
+registrado_por: Aleks · reorganizacion del consultor (F11)
+valor_resultante: 23:00 UTC+2
+valor_canonico: Etc/GMT-2
+notas: 'el reloj del grafico del trader, leido en pantalla (fr-v6-22982c02/3585000): UTC+2. En nombre
+  IANA el signo va invertido, de ahi Etc/GMT-2'

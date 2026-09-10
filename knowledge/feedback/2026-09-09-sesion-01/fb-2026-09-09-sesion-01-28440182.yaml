@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-28440182
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_en_orden_pendiente
+accion: RESOLVE_UNKNOWN
+respuesta_literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: en_la_orden, y se mueve a 0,80 tras el llenado
+valor_canonico: en_la_orden
+supersede: fb-2026-09-09-sesion-01-79cef2da
+notas: la eleccion; el movimiento a 0,8 tras el llenado es otra regla. El literal del trader queda intacto;
+  el canonico es lo que el registro puede leer.

@@ -1,0 +1,15 @@
+id: fb-2026-09-09-sesion-01-aa2abe65
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: cartucho_criterio
+accion: RESOLVE_UNKNOWN
+respuesta_literal: un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco
+  es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: solo cuenta una perdida
+valor_canonico: solo_perdida
+notas: 'v6 0:52:19. La sesion dejo claro QUE cuenta como cartucho, pero no habia parametro para guardarlo:
+  sin el, el bot leeria cartuchos_max como 3 entradas y operaria de menos.'

@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-462134c7
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: base_calculo_perdida_diaria
+accion: RESOLVE_UNKNOWN
+respuesta_literal: De la cuenta basado en el saldo, y que sea en el saldo inicial del día
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: saldo inicial del dia
+valor_canonico: saldo_inicial_dia
+notas: v6 2:05:24. Distinta de la del riesgo por operacion, y esa diferencia es la que se perdia cuando
+  ambos parametros declaraban 'porcentaje de la cuenta'. FundedNext mide asi.

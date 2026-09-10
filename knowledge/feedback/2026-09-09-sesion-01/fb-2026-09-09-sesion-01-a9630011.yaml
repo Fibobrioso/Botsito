@@ -1,0 +1,14 @@
+id: fb-2026-09-09-sesion-01-a9630011
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_proteccion_capital
+accion: REJECT
+respuesta_literal: El SL siempre en 0.8 fijado con la regla de primero la caja completa. Manten eso. Si,
+  el riesgo real es ese de 0.4% como tal.
+registrado_por: Aleks · reorganizacion del consultor (F11)
+supersede: fb-2026-09-09-sesion-01-67e1dfb0
+notas: 'sale del registro: es derivado (1 - stop_fraccion_caja) y pasa a invariante de strategy_spec.
+  No cambia lo que dijo el trader: el literal es el suyo.'

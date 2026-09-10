@@ -624,6 +624,62 @@ def _errores_evidencia() -> tuple[type[Exception], ...]:
     )
 
 
+
+def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
+    """Lleva al registro los valores que el trader dio en una sesion (F11).
+
+    Con `--check` no escribe: lista lo que haria. Sin el, reescribe `parametros.yaml`
+    preservando comentarios y deja cada valor con la fuente `feedback` que lo respalda.
+    """
+    import yaml
+
+    from botsito.config.registro import RegistroError, cargar_registro
+    from botsito.feedback.aplicar import AplicarError, cambios_de_sesion, escribir_cambios
+    from botsito.feedback.modelo import FeedbackError, cargar_feedback
+
+    ruta = repo / "knowledge" / "spec" / "parametros.yaml"
+    try:
+        registro = cargar_registro(ruta)
+        feedback = cargar_feedback(repo / "knowledge" / "feedback")
+        crudo = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+        husos = {
+            str(p["nombre"]): str(p["huso"])
+            for p in crudo.get("parametros", [])
+            if isinstance(p, dict) and p.get("huso")
+        }
+        cambios = cambios_de_sesion(registro, feedback, sesion, husos)
+    except (RegistroError, FeedbackError, AplicarError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    if not cambios:
+        print(f"AVISO: la sesion {sesion} no propone ningun valor de parametro")
+        return 0
+
+    nuevos = [c for c in cambios if not c.es_no_op]
+    for c in sorted(cambios, key=lambda c: c.parametro):
+        marca = "=" if c.es_no_op else ("+" if c.estado_anterior.value == "UNKNOWN" else "~")
+        canon = " (canonico)" if c.canonico else ""
+        print(f"  {marca} {c.parametro:28} {c.valor_escrito!r}{canon}  <- {c.registro_id}")
+    print(f"{len(cambios)} parametros; {len(nuevos)} cambian, {len(cambios) - len(nuevos)} ya estaban")
+    if solo_check:
+        print("--check: no se ha escrito nada")
+        return 0
+    texto = escribir_cambios(ruta, cambios)
+    tmp = ruta.with_suffix(".yaml.tmp")
+    tmp.write_text(texto, encoding="utf-8", newline="\n")
+    try:
+        cargar_registro(tmp)  # no se pisa el fichero bueno si el resultado no carga
+    except RegistroError as exc:
+        tmp.unlink(missing_ok=True)
+        print(f"ERROR: el resultado no seria valido: {exc}", file=sys.stderr)
+        return 1
+    tmp.replace(ruta)
+    print(f"OK: {ruta} escrito")
+    print("Trailer para el commit:")
+    print("Fuente: " + ", ".join(sorted({c.registro_id for c in cambios})))
+    return 0
+
+
 def evidence_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un item de evidencia con su id calculado (nunca sobreescribe).
 
@@ -1555,6 +1611,11 @@ def build_parser() -> argparse.ArgumentParser:
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
     fbt.add_argument("identificador")
     fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
+    fba = fb_sub.add_parser("apply", help="lleva los valores de una sesion al registro (F11)")
+    fba.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
+    fba.add_argument(
+        "--check", action="store_true", help="solo lista lo que haria; no escribe"
+    )
     datos = sub.add_parser("data", help="datasets de velas congelados (F15)")
     datos_sub = datos.add_subparsers(dest="data_cmd", required=True)
     dl = datos_sub.add_parser("download", help="descarga M1 por dias y congela un dataset")
@@ -1604,6 +1665,8 @@ def main(argv: list[str] | None = None) -> int:
         return feedback_trace(args.repo, args.identificador)
     if args.cmd == "feedback" and args.feedback_cmd == "pending":
         return feedback_pending(args.repo)
+    if args.cmd == "feedback" and args.feedback_cmd == "apply":
+        return feedback_apply(args.repo, args.sesion, args.check)
     if args.cmd == "evidence" and args.evidence_cmd == "new":
         return evidence_new(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "contradictions":

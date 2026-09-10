@@ -1,0 +1,13 @@
+id: fb-2026-09-09-sesion-01-2603c017
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: base_calculo_riesgo
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Es en base al saldo actual de la cuenta, 0.5% del saldo actual de la cuenta.
+registrado_por: Aleks · re-expresion canonica del consultor (F11)
+valor_resultante: saldo actual
+valor_canonico: saldo_actual
+notas: v6 1:58:55. La base estaba dentro del texto del riesgo y se perdia al quedarse con el numero.
