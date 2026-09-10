@@ -246,6 +246,36 @@ nada de fondo; C-6 era una confirmación, no un hallazgo. **Corrección al revis
 descargar un dataset de enero de 2026 para poder cerrar A-14, pero **ya existe**
 (`eurusd-m1-2026-01-e37291d4`, congelado en F15), así que A-14 es medible sin descargar nada.
 
+## Que paso con cada decision (anotado tras la auditoria del 2026-09-09)
+
+Cumplidas tal cual: 1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 14, 16, 17, 20, 21, 22, 23, 24.
+
+Cambiadas con motivo:
+
+- **8 (`stop_proteccion_capital` sale del registro)**: NO sale. Al borrarlo, su registro de feedback
+  quedaba apuntando al vacio y el sistema se negaba, con razon. Se queda UNKNOWN con un `REJECT` que
+  explica que es derivado, y el invariante vive en RN-012. Lo mismo con los otros descartados.
+  ADR-0012 lo documenta como alternativa D probada y revertida.
+- **11 (las `opciones` bajan del kit al registro)**: bajaron al registro, pero **siguen tambien en el
+  kit**: quitarlas rompe la reproducibilidad del paquete de la sesion 1, que es prueba historica de
+  lo que se le pregunto al trader. Hay un test que cruza las dos listas para que no se separen, y la
+  unificacion queda para F13.
+- **15 (`minimo`/`maximo` en todos los numericos)**: se cayo en la primera pasada y la auditoria lo
+  encontro. Aplicada despues: hoy no queda ningun numerico sin limites.
+- **18 (tabla R-01..R-14)**: escrita despues de la auditoria, como anexo del informe de la sesion;
+  la referencia colgante de RN-017 tambien se resolvio.
+
+No ejecutadas, y declaradas:
+
+- **La nota sobre A-15/A-16/A-17**: el brief planeaba cerrarlas por ADR dentro de F11. No se hizo:
+  las tres siguen ABIERTAS con la decision del consultor anotada en PROJECT_STATE, y la asimetria
+  -ambiguedades del trader frente a decisiones del consultor- sigue sin resolverse. Es una de las
+  tres cosas que el informe devuelve al usuario.
+
+Anadido que no estaba en el brief, porque la auditoria lo pidio: los nueve parametros de entorno
+(ficha del instrumento, reloj del broker, modelo de llenado) y las dos reglas de restricciones de
+ejecucion, que MASTER_PLAN H.2 asignaba a F11 y el brief no habia recogido.
+
 ## Que habilita
 
 F12 (validación semántica sobre un esquema ya estricto), F13 (documentos generados desde la spec),

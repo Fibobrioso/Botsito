@@ -222,7 +222,9 @@ reglas:
     cita: fb-2026-09-09-sesion-01-af02495f
     literal: >-
       que siga operando, pero que respete la regla de los 3 cartuchos de perdida
-    notas: corrige lo que se daba por sabido antes de la sesion (R-07)
+    notas: >-
+      corrige lo que se daba por sabido antes de la sesion: la confirmacion R-07 de la hoja,
+      que apunta a ev-v4-004936-d7004417 (ver el anexo del informe de la sesion)
     estado: VIGENTE
 
   - id: RN-018

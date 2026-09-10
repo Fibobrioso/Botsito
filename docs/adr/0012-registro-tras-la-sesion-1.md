@@ -9,8 +9,10 @@ phase: F11
 ## Decision
 
 1. **Cinco tipos nuevos**: `enum` (con `opciones`, al menos dos y sin repetir), `booleano`,
-   `puntos`, `minutos` y `lotes`, cada uno con su accesor tipado. Las `opciones` **bajan** desde
-   `knowledge/cases/kit/mapa_parametros.yaml` al registro. `booleano` se escribe sin comillas.
+   `puntos`, `minutos` y `lotes`, cada uno con su accesor tipado. Las `opciones` pasan a vivir en
+   el registro; siguen tambien en `knowledge/cases/kit/mapa_parametros.yaml` porque el paquete de
+   la sesion 1 se genero con ellas y es prueba historica, asi que un test cruza las dos listas
+   para que no se separen (deuda para F13). `booleano` se escribe sin comillas.
 2. **La ausencia de valor no es un valor**: un `booleano` dice si la regla se aplica
    (`filtro_spread`, `objetivo_extension_activa`) y el umbral **se queda UNKNOWN**. Una respuesta
    que descarta una regla se guarda como `REJECT` sobre el parametro, que sigue existiendo y sin
@@ -71,9 +73,21 @@ Y `CONFIRMED` para lo que el trader dijo es simplemente cierto: lo dijo, con min
 - **E**: marcaria como "default inventado" cinco parametros que sostienen sesgo, ventana y break
   even, y `feedback pending` volveria a preguntarle al trader lo que ya contesto.
 
+## Que sustituye de otros ADR
+
+- **ADR-0004** (categorias de parametro): se mantiene entero. Lo que cambia es DONDE encaja
+  cada parametro: `instrumento` pasa a `estrategia` porque elegir mercado es negocio, y la
+  categoria `instrumento` queda para la ficha del simbolo, que es justo lo que ADR-0004 dice.
+  Los tipos nuevos amplian su lista; no la contradicen.
+- **ADR-0005**: queda enmendado en su `huso_operativa` (ver la enmienda de 2026-09-09 alli).
+  El resto -Dukascopy, puntos enteros, los tres relojes, el anclaje por reloj de pared- sigue
+  vigente.
+
 ## Impacto
 
-- El registro pasa de 33 a 42 parametros: 36 con valor y 6 UNKNOWN a proposito.
+- El registro pasa de 33 a 51 parametros: 45 con valor y 6 UNKNOWN a proposito. Nueve de los
+  nuevos son de entorno (ficha del instrumento, reloj del broker, modelo de llenado), medidos
+  contra la cuenta demo real y citando este ADR.
 - Un valor de estrategia con `fuente: decision` es ahora un error, vigilado por test.
 - El `enum` hizo fallar seis valores que pasaban como texto porque traian la eleccion con una
   coletilla detras: ese es el efecto buscado.

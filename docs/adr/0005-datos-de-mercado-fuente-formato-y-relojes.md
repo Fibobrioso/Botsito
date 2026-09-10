@@ -91,5 +91,21 @@ el terminal.
 ## Fecha / fase
 2026-09-04 · F15
 
+## Enmienda 2026-09-09 (F11, ADR-0012)
+
+`huso_operativa` deja de valer `Europe/Madrid`. Este ADR lo fijo asi cuando era la suposicion
+razonable: el trader es de Madrid y sus horas cuadraban. La sesion 1 lo desmintio en pantalla
+(`fr-v6-22982c02/3585000`): su grafico esta en **UTC+2 y no se ajusta al cambio de horario**, asi
+que Madrid y su reloj coinciden en verano y divergen en invierno.
+
+Desde ADR-0012, `huso_operativa` vale `Etc/GMT-2` -que en nomenclatura IANA significa UTC+2- y las
+horas de la operativa cuelgan del parametro nuevo `huso_grafico`. Lo demas de este ADR sigue
+vigente: la fuente Dukascopy, los precios enteros en puntos, los tres relojes y el anclaje por
+reloj de pared.
+
+Queda abierta A-14: si su grafico es UTC+2 fijo o sigue a Madrid, algo que solo se distingue en
+una fecha de invierno. Mayo y junio -los meses del paquete de la sesion- son verano y dan las
+mismas velas con las dos hipotesis.
+
 ## Estado
 ACTIVE

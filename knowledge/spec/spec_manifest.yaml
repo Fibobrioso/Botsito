@@ -8,7 +8,7 @@
 #
 # Semver: mayor si una regla cambia de sentido o desaparece, menor si se anade una regla o un
 # parametro, parche si solo cambia un valor o una redaccion.
-spec_version: "1.4.0"
+spec_version: "1.4.1"
 hash: 4c6a7cf13e5943bfd0e6c130d2b50236f7751734d452bfeafe063cdfff14f0ba
 generado_el: "2026-09-10T00:21:00Z"
 cubre:

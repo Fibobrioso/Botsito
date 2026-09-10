@@ -3,7 +3,7 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde: 584 casos (408 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 601 casos (419 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
@@ -27,6 +27,41 @@ Y uno más, encontrado al revisarlos: `apply` dejaba `ambiguedad_id` junto a `CO
 parámetro venía de `DEFAULT_AMBIGUOUS`, produciendo un fichero que no carga. Abortaba sin
 corromper, pero sin salida posible. Arreglado con test.
 
+## 0 bis. La auditoría de cierre (tres agentes, 2026-09-09)
+
+Después de darla por terminada, tres agentes auditaron la rama: código, conocimiento y proceso.
+Encontraron **veinte hallazgos reales**. Los que más duelen:
+
+| Hallazgo | Por qué importaba |
+|---|---|
+| **`make check` NO estaba verde** | `ruff format --check` fallaba en dos ficheros. Yo lo daba por verde porque filtraba la salida con `grep`, y "All checks passed" lo imprime `ruff check`, no el format. La CI se habría puesto roja tras el tag |
+| **El `huso` no entraba en el hash de la spec** | cambiar `Etc/GMT-2` por `UTC` mueve la ventana operativa dos horas y el manifiesto seguía diciendo ser la misma versión |
+| **`apply` podía no escribir nada y decir `OK`** | con el nombre de un parámetro entrecomillado devolvía el fichero intacto, la validación pasaba (es el mismo fichero) y salía con 0 |
+| **`apply` no era idempotente** | `--check` decía "9 cambian" sobre un registro recién aplicado, porque comparaba texto contra valor tipado |
+| **El valor se escribía sin escapar** | `C:
+uevo` se leía después como `C: uevo`: un valor distinto del que dijo el trader, y el fichero cargaba igual de bien |
+| **La aritmética del "freno del día" era falsa** | ver §5 bis |
+| **8 de 9 definiciones del glosario decían más que su cita** | y nada lo vigilaba: la verificación de literales solo miraba las reglas |
+| **`test_no_business_literals` tenía caracteres backspace** | dos patrones (`Europe/Madrid`, `America/New_York`) no casaban con nada desde una edición anterior: la guardia llevaba rota sin que nadie lo viera |
+| **`kit check` llevaba roto desde que F11 pobló el registro** | y `make check` no lo ejecuta |
+
+Todos verificados con su reproducción antes de tocar nada, y todos arreglados con test.
+
+## 5 bis. Una corrección que cambia una decisión de riesgo
+
+El informe de la sesión y RN-020 afirmaban que **el freno del día son los tres cartuchos** y que
+"el peor día son ~1,2 % del saldo", muy por debajo del tope del 4,5 %. Sobre esa aritmética se
+decidió que el 4,5 % fuera "solo una referencia".
+
+**No se sostiene con los parámetros escritos.** El contador de cartuchos **no es diario**: se
+reinicia con la siguiente liquidez de M15 (`cartuchos_reinicio`, y así lo dijo el trader en v6
+2:21:07). Son tres pérdidas **por zona de liquidez**, y nada limita cuántas zonas se desarrollan
+entre las 07:00 y las 15:00. Los números sueltos son correctos (0,5 % × 0,8 = 0,4 %; 3 × 0,4 =
+1,2 %); lo que falla es el salto de "tres pérdidas" a "un día".
+
+Corregido en la regla y en el informe de la sesión. **El tope porcentual no es una red que nunca se
+toca: es el único freno del día que existe**, y conviene que el consultor lo sepa antes de F21.
+
 ## 1. Qué hace F11
 
 Convierte lo que el trader dijo el 9 de septiembre en una especificación que el bot puede leer:
@@ -34,10 +69,10 @@ Convierte lo que el trader dijo el 9 de septiembre en una especificación que el
 | Pieza | Qué es |
 |---|---|
 | `botsito feedback apply` | la puerta que F09 dejó diferida: lleva los valores del feedback al registro, cada uno con su fuente |
-| `knowledge/spec/parametros.yaml` | 42 parámetros: **36 con valor, 6 UNKNOWN a propósito** |
-| `knowledge/spec/strategy_spec.yaml` | 25 reglas: 22 vigentes y 3 descartadas, todas con su cita |
-| `knowledge/spec/glossary.yaml` | 9 términos del trader, definidos una vez |
-| `knowledge/spec/spec_manifest.yaml` | `spec_version` 1.0.1 y hash sobre los tres ficheros |
+| `knowledge/spec/parametros.yaml` | 51 parámetros: **45 con valor, 6 UNKNOWN a propósito** |
+| `knowledge/spec/strategy_spec.yaml` | 27 reglas: 24 vigentes y 3 descartadas, todas con su cita |
+| `knowledge/spec/glossary.yaml` | 8 términos, cada uno con su literal verificado |
+| `knowledge/spec/spec_manifest.yaml` | `spec_version` 1.4.1 y hash sobre los tres ficheros |
 | `botsito spec status` | con qué corre el bot y qué sigue en revisión |
 | `botsito spec manifest` | comprueba el hash; `--escribir` lo regenera |
 
