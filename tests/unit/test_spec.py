@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -213,7 +214,9 @@ def test_el_manifiesto_real_esta_al_dia() -> None:
 
     assert comprobar_manifiesto(REPO, REPO / FICHERO_MANIFIESTO) == []
     doc = cargar_manifiesto(REPO / FICHERO_MANIFIESTO)
-    assert doc["spec_version"] == "1.0.0" and len(doc["cubre"]) == 3
+    assert len(doc["cubre"]) == 3
+    # la version sube con cada cambio de la spec: se comprueba el formato, no el numero
+    assert re.fullmatch(r"\d+\.\d+\.\d+", str(doc["spec_version"]))
 
 
 def test_manifiesto_mal_escrito(tmp_path: Path) -> None:

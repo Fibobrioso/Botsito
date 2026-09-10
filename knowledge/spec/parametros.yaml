@@ -52,11 +52,16 @@ parametros:
   - nombre: huso_operativa
     categoria: ejecucion
     tipo: texto
-    unidad: nombre IANA de huso horario
-    descripcion: reloj del trader; las horas de la operativa se expresan en este huso
+    unidad: nombre IANA del huso en el que se expresan las horas de la operativa
+    descripcion: >-
+      reloj en el que se interpretan las horas de la operativa. ADR-0005 lo fijo en Europe/Madrid;
+      la sesion 1 lo desmintio (el trader trabaja en UTC+2 y no se ajusta al cambio de horario), y
+      ADR-0012 lo alinea con huso_grafico. Coinciden en verano y divergen en invierno
     estado: CONFIRMED
-    valor: "Europe/Madrid"
-    fuente: {tipo: decision, id: ADR-0005}
+    valor: "Etc/GMT-2"
+    fuente:
+      tipo: decision
+      id: ADR-0012
   - nombre: huso_grafico
     categoria: estrategia
     tipo: texto

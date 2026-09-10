@@ -16,6 +16,11 @@ from pathlib import Path
 import pytest
 
 NUMEROS_PROHIBIDOS: dict[Decimal, str] = {
+    # Los que fijo la sesion 1 (2026-09-09). La lista anterior recogia las HIPOTESIS previas
+    # (0,75 de stop, 0,5 de proteccion) y habria dejado pasar los valores de verdad.
+    Decimal("0.8"): "stop en la caja, fijado en la sesion 1 (stop_fraccion_caja)",
+    Decimal("0.2"): "lo que se conserva al proteger; es derivado, no un parametro",
+    Decimal("4.5"): "tope de perdida diaria (perdida_maxima_diaria)",
     Decimal("0.75"): "stop en la caja (RN-021)",
     Decimal("0.5"): "stop reducido / riesgo en fondeo",
     Decimal("0.25"): "nivel de la caja",

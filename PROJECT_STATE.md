@@ -98,7 +98,7 @@ feature/F11-strategy-spec-schema
 - docs/research/2026-09-03-del-corpus-al-bot.html (investigacion) · docs/plan/MASTER_PLAN.html (instantanea congelada del plan)
 
 ## Tests Currently Passing
-402 funciones de test (572 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval, kit · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`), kit_particiones (guardia de ancestro), hoja_sesion_docx (OOXML valido, citas del paquete, sin fuga de holdout) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
+402 funciones de test (573 casos; parametrizadas x3, x5, x6, x7, x8, x9, x11, x13, x15, x18, x19 y x22) · unit: project_state, project_state_rutas, adr, tree, cli, cli_data, valores, velas, registro, ajustes, inventario, evidence, feedback, yaml_estricto, dukascopy, agregacion, agregacion_dst, dataset, golden_ohlc, comun, audio, transcripcion, pipeline_transcripcion, motor_prompt, verificacion, propuestas, fotogramas, retrieval, kit · integration: fotogramas_ffmpeg · contract: import_contracts, no_business_literals, repository_integrity, registro_accessors, evidence_history, feedback_history, data_manifest_history, transcripcion_history, fotogramas_history, golden_citas_f07 (40 referencias contra la evidencia real), golden_consultas_f08 (15 consultas; con y sin `data/`), kit_particiones (guardia de ancestro), hoja_sesion_docx (OOXML valido, citas del paquete, sin fuga de holdout) · 4 contratos import-linter KEPT · mypy strict OK (src + tests)
 
 ## Architectural Decisions (index)
 - ADR-0001 estructura del repositorio y regimenes de cambio — ACTIVE
@@ -111,6 +111,8 @@ feature/F11-strategy-spec-schema
 - ADR-0008 fotogramas: cobertura completa a 1 fps sin perdida, regla de seleccion por `pts` y manifiesto inmutable — ACTIVE
 - ADR-0009 verificacion mecanica de citas contra la cruda y propuestas de evidencia trazables y selladas — ACTIVE
 - ADR-0010 busqueda de desarrollo: capa `retrieval`, indice en memoria, lexica y con fuente — ACTIVE
+- ADR-0012 el registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader — ACTIVE
+- ADR-0013 StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace — ACTIVE
 - ADR-0011 kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback — ACTIVE
 
 ## Decisions and Rationale
