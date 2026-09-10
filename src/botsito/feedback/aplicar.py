@@ -52,6 +52,8 @@ class Cambio:
     canonico: bool
     estado_anterior: Estado
     valor_anterior: Any | None
+    # el id de feedback que el registro cita HOY, para no dejarlo apuntando a un registro muerto
+    fuente_anterior: str | None = None
     # el mismo `valor_escrito` pasado por el conversor del registro, para poder compararlo
     # con lo que el registro ya tiene sin repetir la conversion
     valor_convertido: Any | None = None
@@ -67,6 +69,14 @@ class Cambio:
         reescribia el fichero sin que nada hubiera cambiado.
         """
         if self.valor_anterior is None:
+            return False
+        # Y la FUENTE tambien. Comparando solo el valor, un parametro podia quedarse citando un
+        # registro ya superseded para siempre: `apply` lo veia igual y no lo tocaba. Paso de
+        # verdad con `cartuchos_reinicio`, que cito durante toda F11 un registro revocado por
+        # llevar una parafrasis del consultor donde iba la voz del trader -y que ademas decia
+        # "dos perdidas" donde el trader remata "serian 3 perdidas"-. El hash cubre la fuente
+        # justo para que quien mida fidelidad la distinga, asi que una fuente muerta lo falsea.
+        if self.fuente_anterior is not None and self.fuente_anterior != self.registro_id:
             return False
         if self.valor_anterior == self.valor_escrito:
             return True
@@ -189,6 +199,9 @@ def cambios_de_sesion(
                 canonico=r.valor_canonico is not None,
                 estado_anterior=p.estado,
                 valor_anterior=p.valor,
+                fuente_anterior=(
+                    p.fuente.id if p.fuente is not None and p.fuente.tipo == "feedback" else None
+                ),
                 valor_convertido=convertido,
             )
         )

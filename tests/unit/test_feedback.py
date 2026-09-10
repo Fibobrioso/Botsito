@@ -748,3 +748,38 @@ def test_apply_no_se_traga_el_comentario_de_la_seccion_siguiente(tmp_path: Path)
     # y el comentario sigue pegado al parametro que encabeza, no al que se edito
     i_sig = next(n for n, ln in enumerate(lineas) if ln == "  - nombre: objetivo_rr")
     assert i_com == i_sig - 1
+
+
+def test_un_parametro_no_puede_citar_un_registro_revocado(tmp_path: Path) -> None:
+    """Un supersede existe porque el registro anterior decia algo que ya no vale.
+
+    `cartuchos_reinicio` cito durante toda F11 un registro revocado justamente por llevar una
+    parafrasis del consultor donde iba la voz del trader, y que ademas decia "dos perdidas" donde
+    el trader remata "serian 3 perdidas". Nada lo veia: `apply` comparaba VALORES, el valor no
+    habia cambiado, y la fuente se quedaba apuntando al muerto para siempre. El hash cubre la
+    fuente precisamente para que quien mida fidelidad la distinga, asi que una fuente revocada la
+    falsea.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion
+
+    ruta = _registro_minimo(tmp_path)
+    campos_viejo = _fb(valor_canonico="0.75")
+    viejo = registro_desde_dict({**campos_viejo, "id": calcular_id(campos_viejo)})
+    campos_nuevo = _fb(valor_canonico="0.75", supersede=viejo.id)
+    nuevo = registro_desde_dict({**campos_nuevo, "id": calcular_id(campos_nuevo)})
+
+    # el registro ya tiene el valor bueno, pero citando al muerto
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace(
+            "    estado: UNKNOWN",
+            f'    estado: CONFIRMED\n    valor: "0.75"\n    fuente:\n'
+            f"      tipo: feedback\n      id: {viejo.id}",
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cambios = cambios_de_sesion(cargar_registro(ruta), [viejo, nuevo], nuevo.sesion)
+    (c,) = cambios
+    assert c.registro_id == nuevo.id
+    assert not c.es_no_op, "el valor es el mismo, pero la fuente cita un registro revocado"

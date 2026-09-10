@@ -3,7 +3,7 @@
 **Estado:** WAITING_FOR_USER_VALIDATION · **Rama:** `feature/F11-strategy-spec-schema` ·
 **Fecha:** 2026-09-09 · **Cierre previsto:** tag `stable/F11`
 
-`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 606 casos (424 funciones), 4 contratos de capas, mypy strict sobre src y tests,
+`make check` verde de arriba abajo -los siete pasos, `ruff format --check` incluido-: 607 casos (425 funciones), 4 contratos de capas, mypy strict sobre src y tests,
 `state/config/knowledge validate` en verde.
 
 ---
@@ -50,7 +50,7 @@ Todos verificados con su reproducción antes de tocar nada, y todos arreglados c
 ## 0 ter. La auditoría del consultor (2026-09-10), punto a punto
 
 Antes de validar F11 se auditó la rama otra vez, esta vez contra el negocio y no solo contra el
-código. Doce puntos, cuatro de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
+código. Catorce puntos, seis de ellos encontrados al arreglar los primeros. Los dos ultimos salen de un barrido de fidelidad de los 54 parametros contra su cita, pedido por el consultor antes de validar: **fiel a lo que hay en los videos, siempre**. **Esta tabla se cierra fila
 a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag.**
 
 | # | Qué era | Estado |
@@ -67,6 +67,8 @@ a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag
 | **P10** | MASTER_PLAN daba a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | **CERRADO** |
 | **P11** | `spec status` contaba "con valor" y "sin él" como si cubrieran el registro; al aparecer los primeros `DEFAULT_AMBIGUOUS` dejó de sumar el total, y "sin valor" era falso para un default (encontrado al cerrar P2) | **CERRADO** |
 | **P12** | El reloj se había modelado como un offset fijo. El trader opera siempre a SU hora: es un reloj civil. Con `Etc/GMT-2` el ancla H4 caía una hora antes **todo el invierno** y repartía mal todas las velas, que es de donde sale el sesgo | **CERRADO** · ADR-0017 |
+| **P13** | `cartuchos_reinicio` citaba un registro **revocado** — revocado justamente por llevar una paráfrasis del consultor donde iba la voz del trader, y por decir "dos pérdidas" donde él remata "serían 3 pérdidas". `apply` comparaba valores, no fuentes, así que no podía corregirlo nunca | **CERRADO** |
+| **P14** | `apply` reescribía el `valor:` de los 30 parámetros para cambiar uno: 42 líneas de diff para 2 de cambio real, que es justo el diff ilegible que `escribir_cambios` existe para evitar | **CERRADO** |
 
 ### P1 · la base del objetivo (cerrado el 2026-09-10)
 
@@ -170,6 +172,36 @@ Y el hash cubría de cada regla solo los campos ejecutables: la corrección de r
 **solo en las `notas` de RN-020** y se podía borrar sin mover `spec_version`, mientras el `titulo`
 de esa misma regla decía lo contrario que ellas. Ahora entran `titulo`, `literal`, `notas` y
 `decision`, y el título dice lo que la regla hace. Por eso `spec_version` sube a **2.0.0**.
+
+### P13 y P14 · el barrido de fidelidad (cerrados el 2026-09-10)
+
+A petición del consultor —*"fiel a todo lo que tenemos en los vídeos siempre"*— se pasó cada uno de
+los 54 parámetros contra el literal de su cita, que es lo que la guardia de P4 hace con las reglas y
+el glosario y **nadie hacía con el registro**. Tres cosas salieron:
+
+**`cartuchos_reinicio` citaba un registro revocado.** `fb-…-dec10786` fue superseded por
+`fb-…-e3eedcaa` con este motivo escrito: *"corrige el registro anterior, que llevaba una paráfrasis
+del consultor en el campo del literal —y además decía 'dos pérdidas' cuando el trader remata en
+'sería 3 pérdidas'"*. El registro siguió apuntando al muerto toda F11.
+
+**Y no era corregible**: `apply` decidía si un parámetro había cambiado comparando **valores**. El
+valor era el mismo, así que la fuente se quedaba apuntando al registro revocado para siempre. El
+hash cubre la fuente precisamente para que quien mida fidelidad la distinga —lo dice el propio
+`manifiesto.py`— así que una fuente muerta la falsea. Ahora `es_no_op` compara también la fuente, y
+`knowledge validate` rechaza un parámetro que cite un registro revocado.
+
+**Al arreglarlo apareció P14**: `apply` pasaba a `escribir_cambios` los 30 parámetros de la sesión y
+no solo el que cambiaba, así que el serializador reescribía el `valor:` de los otros 29 eligiendo
+otras comillas. **42 líneas de diff para un cambio de 2** — justo el diff ilegible que la docstring
+de `escribir_cambios` dice que existe para evitar.
+
+**Lo que el barrido dejó anotado y no cerró.** `stop_en_orden_pendiente = en_la_orden` se apoya en
+*"el primer stop loss es para el cálculo del lotaje y el segundo es para protección"*, que establece
+que hay dos stops y para qué sirve cada uno, **pero no dice cuál viaja en la orden**. Es una
+inferencia razonable —el lote se calcula antes de enviar la orden, y `ev-v4-001207-0c4ffd4b` habla
+del *"stop loss que se va a introducir en la operación"*— pero es nuestra, no suya, y queda escrita
+como tal en la descripción del parámetro. A-11 está marcada RESUELTA; **decidir si se reabre es del
+consultor**.
 
 ### P12 · el reloj era civil, no un offset fijo (cerrado el 2026-09-10)
 

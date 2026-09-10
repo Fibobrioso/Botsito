@@ -320,7 +320,13 @@ parametros:
     tipo: enum
     unidad: en_la_orden/tras_el_llenado
     opciones: ["en_la_orden", "tras_el_llenado"]
-    descripcion: si el SL viaja en la orden pendiente o se pone tras el llenado (A-11)
+    descripcion: >-
+      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). OJO, del barrido de
+      fidelidad del 2026-09-10: el literal de su cita -"el primer stop loss es para el calculo del
+      lotaje y el segundo es para proteccion"- establece que hay DOS stops y para que sirve cada
+      uno, pero no dice cual de los dos viaja en la orden. `en_la_orden` es una inferencia: el
+      lote se calcula antes de enviar la orden, y ev-v4-001207-0c4ffd4b habla del "stop loss que
+      se va a introducir en la operacion". Razonable, pero es nuestra, no suya
     estado: CONFIRMED
     valor: "en_la_orden"
     fuente:
@@ -581,10 +587,10 @@ parametros:
     opciones: [siguiente_liquidez_m15, fin_de_dia, nunca]
     descripcion: cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia)
     estado: CONFIRMED
-    valor: "siguiente_liquidez_m15"
+    valor: siguiente_liquidez_m15
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-dec10786
+      id: fb-2026-09-09-sesion-01-e3eedcaa
   - nombre: base_calculo_riesgo
     categoria: estrategia
     tipo: enum

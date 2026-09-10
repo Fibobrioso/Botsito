@@ -369,6 +369,22 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     fijan: dict[str, list[str]] = {}
     from botsito.comun.documentos import activos as _activos
 
+    # Un parametro no puede citar un registro REVOCADO. Un supersede existe porque el registro
+    # anterior decia algo que ya no vale, y aqui el caso real fue el peor: `cartuchos_reinicio`
+    # cito durante toda F11 un registro revocado por llevar una parafrasis del consultor donde
+    # iba la voz del trader -y que ademas decia "dos perdidas" donde el trader remata "serian 3
+    # perdidas"-. Nada lo veia: `apply` comparaba valores y el valor no habia cambiado.
+    revocados = {r.supersede: r.id for r in registros_fb if r.supersede}
+    for nombre, p_reg in sorted(registro.parametros.items()):
+        if p_reg.fuente is None or p_reg.fuente.tipo != "feedback":
+            continue
+        if p_reg.fuente.id in revocados:
+            salida.append(
+                f"ERROR: registro: {nombre} cita {p_reg.fuente.id}, que esta revocado por "
+                f"{revocados[p_reg.fuente.id]}; un parametro cita lo que sigue vigente"
+            )
+            return 1, salida
+
     for registro_fb in _activos(list(registros_fb)):
         if registro_fb.objetivo.tipo != "parametro":
             continue

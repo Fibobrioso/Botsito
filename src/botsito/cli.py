@@ -801,7 +801,11 @@ def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
     if solo_check:
         print("--check: no se ha escrito nada")
         return 0
-    texto = escribir_cambios(ruta, cambios)
+    # Solo los que cambian de verdad. Pasando `cambios` entero, un parametro corregido
+    # reescribia el `valor:` de los otros veintinueve -el serializador elige otras comillas-
+    # y producia un diff de 42 lineas para un cambio de una, que es justo el diff ilegible
+    # que `escribir_cambios` existe para evitar.
+    texto = escribir_cambios(ruta, nuevos)
     tmp = ruta.with_suffix(".yaml.tmp")
     tmp.write_text(texto, encoding="utf-8", newline="\n")
     try:
