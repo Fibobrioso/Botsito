@@ -307,12 +307,13 @@ parametros:
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa
-    descripcion: donde va el stop en el segundo esquema de entrada (0,75, 0,6, zona de control; A-7)
-    estado: CONFIRMED
-    valor: "0.8"
-    fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-85b30f66
+    descripcion: >-
+      UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no hay un stop
+      del segundo esquema distinto del primero. El trader dijo que es el MISMO en los dos, asi
+      que un parametro aparte con el mismo valor son dos puertas para el mismo numero -lo que
+      RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo-. Hay un
+      unico esquema de stop y vive en stop_fraccion_caja. Leerlo falla, que es lo que debe pasar
+    estado: UNKNOWN
     minimo: "0"
     maximo: "1"
   - nombre: stop_en_orden_pendiente
@@ -377,6 +378,37 @@ parametros:
     estado: UNKNOWN
     minimo: "0"
     maximo: "1"
+  - nombre: zonas_control_max_por_esquema
+    categoria: estrategia
+    tipo: entero
+    unidad: zonas de control admitidas dentro de un mismo esquema
+    descripcion: >-
+      cuantas zonas de control puede desarrollar un esquema sin invalidarlo. Vivia en la prosa de
+      RN-009 -"se desarrolla mas de una zona de control"- y por tanto fuera de la unica puerta
+      (ADR-0002). OJO: el literal dice "por lo general solo buscamos uno", que no es una
+      prohibicion dura; se escribe 1 porque es lo que la regla afirma, y A-20 lo deja a la vista
+    estado: DEFAULT_AMBIGUOUS
+    valor: 1
+    ambiguedad_id: A-20
+    fuente:
+      tipo: evidence
+      id: ev-v4-001909-54ac2edd
+    minimo: "1"
+    maximo: "5"
+  - nombre: operaciones_simultaneas_max
+    categoria: estrategia
+    tipo: entero
+    unidad: operaciones abiertas a la vez
+    descripcion: >-
+      cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de RN-018 -"hay
+      una operacion abierta", "no se abre otra"- y por tanto fuera del registro
+    estado: CONFIRMED
+    valor: 1
+    fuente:
+      tipo: evidence
+      id: ev-v4-003710-c753f3d3
+    minimo: "1"
+    maximo: "10"
   - nombre: cartuchos_max
     categoria: estrategia
     tipo: entero
@@ -472,14 +504,17 @@ parametros:
   # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
   - nombre: dias_operables
     categoria: estrategia
-    tipo: texto
-    unidad: dias de la semana en que se opera
-    descripcion: dias en los que el bot busca entradas y dias que se excluyen por norma
+    tipo: enum
+    unidad: que dias de la semana se opera
+    opciones: ["lunes_a_viernes", "todos_los_dias"]
+    descripcion: >-
+      dias en los que el bot busca entradas. Era `texto` con el valor "lunes a viernes" y RN-001
+      lo usa como condicion EJECUTABLE, asi que el motor habria tenido que parsear espanol
     estado: CONFIRMED
-    valor: "lunes a viernes"
+    valor: lunes_a_viernes
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-bf1a8442
+      id: fb-2026-09-09-sesion-01-140d655c
   - nombre: filtro_noticias
     categoria: estrategia
     tipo: enum

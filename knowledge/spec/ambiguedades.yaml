@@ -267,3 +267,17 @@ ambiguedades:
     contradiccion: null
     estado: ABIERTA
     bloqueante: false
+  - id: A-20
+    titulo: cuantas zonas de control invalidan un esquema
+    pregunta: >-
+      RN-009 afirma que con mas de una zona de control no hay trade, pero el literal que la
+      sostiene dice "por lo general solo buscamos uno", que no es una prohibicion dura.
+      ¿es regla o es tendencia? ¿dos zonas invalidan SIEMPRE el esquema, o hay casos en que
+      opera igual? El valor 1 es un default nuestro hasta que lo diga
+    resuelve_en: [F12, F20, F26]
+    evidencia:
+      - ev-v4-001909-54ac2edd
+    parametros: [zonas_control_max_por_esquema]
+    contradiccion: null
+    estado: ABIERTA
+    bloqueante: false

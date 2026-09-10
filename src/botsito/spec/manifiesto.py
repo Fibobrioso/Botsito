@@ -17,6 +17,9 @@ ambiguedad_id, opciones y limites. El ESTADO y la FUENTE entran a proposito: pas
 DEFAULT_AMBIGUOUS a CONFIRMED no cambia el valor pero si cambia lo que la spec afirma, y quien
 mida fidelidad tiene que poder distinguirlo.
 
+`clase` entra desde ADR-0018: decide que regla gana cuando dos aplican a la vez, o sea lo que el
+bot hace.
+
 Por regla entra TODO su texto, no solo los campos ejecutables. Un `titulo`, unas `notas` o un
 `literal` no los lee el motor, pero son lo que lee la persona que valida, y por tanto parte de lo
 que la spec afirma. Con `notas` fuera del hash, la correccion de riesgo de RN-020 se podia borrar
@@ -107,6 +110,7 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
                     "cuando",
                     "entonces",
                     "parametros",
+                    "clase",
                     "cita",
                     "literal",
                     "notas",

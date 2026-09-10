@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-bc829942
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_segundo_esquema
+accion: REJECT
+respuesta_literal: tanto primero como segundo esquema de entrada en 0.80, ¿verdad? Sí
+registrado_por: Aleks · auditoria de F12 (2026-09-10)
+supersede: fb-2026-09-09-sesion-01-85b30f66
+notas: 'deja de ser un parametro que fijar. El trader dijo que el stop es el MISMO en los dos esquemas,
+  asi que un segundo parametro con el mismo valor son dos puertas para el mismo numero, que es lo que
+  RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo. Se queda UNKNOWN a proposito,
+  como stop_colchon_spread: hay un unico esquema de stop y vive en stop_fraccion_caja. RN-013 sigue vigente
+  diciendo que es el mismo en los dos esquemas, y ahora eso es cierto por construccion. Decision del consultor
+  del 2026-09-10.'

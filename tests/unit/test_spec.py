@@ -30,6 +30,7 @@ def _regla(**cambios: Any) -> dict[str, Any]:
         "parametros": ["stop_fraccion_caja"],
         "cita": FB,
         "literal": "lo dijo asi",
+        "clase": "disparador",
         "estado": "VIGENTE",
     }
     d.update(cambios)
@@ -274,8 +275,11 @@ def test_la_spec_real_dice_lo_que_cita() -> None:
         ("el stop va al ochenta por ciento de la caja", True),
         ("se permiten tres intentos por zona", True),
         ("el spread supera los veinte puntos", True),
-        # espanol corriente, no valores: prohibirlos haria imposible escribir una regla
-        ("se abre una operacion por cualquiera de los dos esquemas", False),
+        # Hasta ADR-0018 esto se daba por espanol corriente. NO lo era: "una operacion" y "los
+        # dos esquemas" son cardinalidades de negocio, y por creerlas prosa vivieron fuera del
+        # registro en RN-018 y RN-009. Ahora son operaciones_simultaneas_max y
+        # zonas_control_max_por_esquema, y esta redaccion tiene que saltar.
+        ("se abre una operacion por cualquiera de los dos esquemas", True),
         ("el precio toma la liquidez de M15 dentro de la vela H4", False),
         ("se opera segun stop_fraccion_caja", False),
     ],
@@ -404,3 +408,56 @@ def test_el_hash_cubre_el_texto_que_lee_una_persona() -> None:
         assert campo in rn020, f"el hash no cubre '{campo}' de las reglas"
     assert "unico freno del dia" in str(rn020["notas"])
     assert all("literal" in t for t in estructura["terminos"])
+
+
+def test_la_precedencia_no_la_decide_el_orden_del_fichero() -> None:
+    """Tres pares reales daban la respuesta equivocada con el orden del fichero (ADR-0018).
+
+    RN-006 (id 006) ganaba a RN-014 y a RN-018: con una operacion abierta, el bot reubicaba una
+    orden limite en paralelo en vez de poner el break even. RN-019 ganaba a RN-020: se reentraba
+    tras tocar el tope diario. Y RN-022, que es la clausula `else`, estaba ANTES de RN-026 y
+    RN-027, que son reglas reales.
+    """
+    from botsito.spec.modelo import CLASES_REGLA, FICHERO_SPEC, comprobar_precedencia
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    assert comprobar_precedencia(reglas) == []
+
+    por_id = {r.id: r for r in reglas}
+    # los frenos son gates y ganan a los disparadores
+    for rid in ("RN-005", "RN-008", "RN-009", "RN-018", "RN-020", "RN-026"):
+        assert por_id[rid].clase == "gate", rid
+    assert por_id["RN-002"].clase == "terminal"
+    assert por_id["RN-022"].clase == "fallback", "la clausula else no puede ser un disparador"
+    assert sum(1 for r in reglas if r.vigente and r.clase == "fallback") == 1
+    assert all(r.clase in CLASES_REGLA for r in reglas)
+
+    # y la guardia denuncia de verdad: dos reglas de la misma clase con los mismos parametros
+    import dataclasses
+
+    gemela = dataclasses.replace(por_id["RN-006"], id="RN-999")
+    fallos = comprobar_precedencia([*reglas, gemela])
+    assert any("RN-006" in f and "RN-999" in f for f in fallos)
+
+
+def test_las_cardinalidades_de_negocio_no_pueden_vivir_en_la_prosa(tmp_path: Path) -> None:
+    """ "mas de una zona" y "una operacion abierta" eran dos numeros fuera del registro.
+
+    La guardia de cifras estaba escrita para no verlos: su propio comentario declaraba que "se abre
+    una operacion" y "los dos esquemas" eran espanol y no parametros. Eran RN-009 y RN-018, y son
+    la razon de que las dos estuvieran sin ningun parametro (ADR-0018).
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import SpecError
+
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+    for nombre in ("operaciones_simultaneas_max", "zonas_control_max_por_esquema"):
+        assert registro.entero(nombre) == 1, nombre
+
+    for prosa, aguja in (
+        ("se desarrolla mas de una zona de control", "una zona"),
+        ("hay una operacion abierta", "una operacion"),
+        ("no se da ninguno de los dos esquemas", "dos esquemas"),
+    ):
+        with pytest.raises(SpecError, match=aguja):
+            cargar_reglas(_escribir(tmp_path, [_regla(cuando=prosa)]))

@@ -11,7 +11,21 @@
 # comprueba que coincide con el registro que declara.
 #
 # Campos: id (RN-NNN), titulo, cuando (condicion), entonces (accion), parametros (los que usa),
-# cita, literal, notas (opcional), estado (VIGENTE | DESCARTADA).
+# cita, literal, clase, estado (VIGENTE | DESCARTADA), notas y decision (opcionales).
+#
+# PRECEDENCIA por CLASE, no por orden del fichero (ADR-0018, 2026-09-10). El orden de este
+# fichero es EDITORIAL -esta agrupado por tema, con comentarios- y usarlo como semantica daba la
+# respuesta equivocada en tres pares reales: RN-006 ganaba a RN-014 y a RN-018, y RN-019 ganaba a
+# RN-020, o sea que se reentraba despues de tocar el tope diario. Las clases, de mas fuerte a mas
+# debil:
+#
+#   1. gate       prohibe o frena. Gana siempre a un disparador.
+#   2. disparador abre, mueve o modifica.
+#   3. terminal   cierra por fin de ventana.
+#   4. fallback   la clausula `else`: solo si no aplica ninguna otra.
+#
+# Y dos reglas de la MISMA clase que actuan sobre el mismo evento son un ERROR de validacion con
+# los dos ids en el mensaje, hasta que una de las dos gane su precondicion.
 
 version_esquema: 1
 
@@ -20,9 +34,10 @@ reglas:
   - id: RN-001
     titulo: la ventana operativa es el horario del trader, no el de las velas
     cuando: >-
-      la hora de pared en huso_operativa esta entre ventana_inicio y ventana_fin, en un dia de
+      la hora de pared en huso_operativa esta en el intervalo MEDIO ABIERTO que empieza en
+      ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
       dias_operables
-    entonces: el bot busca entradas; fuera de esa ventana no opera
+    entonces: el bot busca entradas; fuera de ese intervalo no opera
     parametros: [ventana_inicio, ventana_fin, huso_operativa, dias_operables]
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
@@ -35,11 +50,13 @@ reglas:
       la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual
       sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre
     decision: ADR-0017
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-002
     titulo: al llegar el fin de la ventana se cierra lo que quede abierto
-    cuando: la hora del grafico alcanza ventana_fin y hay una operacion abierta
+    cuando: >-
+      la hora de pared en huso_operativa alcanza ventana_fin y quedan operaciones abiertas
     entonces: se cierra a mercado si cierre_forzoso_fin_ventana
     parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_operativa]
     cita: fb-2026-09-09-sesion-01-ffb528d7
@@ -48,6 +65,7 @@ reglas:
       "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia con el horario de
       verano igual que la de cualquiera (ADR-0017)
     decision: ADR-0017
+    clase: terminal
     estado: VIGENTE
 
   - id: RN-003
@@ -65,6 +83,7 @@ reglas:
       el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
       deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO
       huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017)
+    clase: disparador
     estado: VIGENTE
 
   # ---------------------------------------------------------------- liquidez y entrada
@@ -80,6 +99,7 @@ reglas:
       ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
       o vale con que la mecha lo perfore? Con cuerpo
     notas: solo en M15; en M1 el rompimiento es indiferente
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-005
@@ -91,17 +111,27 @@ reglas:
     literal: >-
       yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...]
       de esta liquidez de m15 es ruido
+    clase: gate
     estado: VIGENTE
 
   - id: RN-006
     titulo: la orden limite se reubica al completarse cada zona de control
-    cuando: el precio rompe el extremo anterior y completa una zona de control
-    entonces: la orden limite se mueve a la nueva zona segun reubicacion_cadencia
-    parametros: [reubicacion_cadencia]
+    cuando: >-
+      la orden limite SIGUE PENDIENTE -las operaciones abiertas son cero, por debajo de
+      operaciones_simultaneas_max- y el precio rompe el extremo anterior, con lo que la zona de
+      control en curso queda completada
+    entonces: la orden limite se mueve a la zona recien completada segun reubicacion_cadencia
+    parametros: [reubicacion_cadencia, operaciones_simultaneas_max]
     cita: fb-2026-09-09-sesion-01-6b29059d
     literal: >-
       cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa aquí
-    notas: no es por vela ni por tiempo; mientras la zona no se completa, el limite no se mueve
+    notas: >-
+      no es por vela ni por tiempo; mientras la zona no se completa, el limite no se mueve. La
+      precondicion de que la orden siga pendiente se anadio el 2026-09-10: sin ella esta regla se
+      disparaba sobre EL MISMO evento que RN-014 -"se completa una zona de control"- y, con la
+      operacion ya abierta, reubicaba una limite en paralelo (lo que RN-018 prohibe) en vez de
+      poner el break even. El literal habla de una orden que aun no ha entrado
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-007
@@ -111,28 +141,33 @@ reglas:
     parametros: [mapeo_dos_velas]
     cita: fb-2026-09-09-sesion-01-7ee9cabc
     literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-008
     titulo: sin uno de los dos esquemas de entrada no hay entrada
-    cuando: no se da ni el breaker ni el segundo esquema
+    cuando: no se da el breaker ni el otro esquema de entrada
     entonces: no se opera
     parametros: []
     cita: ev-v4-001844-93dcb658
     literal: >-
       aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
       sabemos cuál es [...] cualquiera de estos dos de aquí
+    clase: gate
     estado: VIGENTE
 
   - id: RN-009
     titulo: con dos zonas de control no hay trade
-    cuando: se desarrolla mas de una zona de control dentro del mismo esquema
+    cuando: >-
+      dentro del mismo esquema se desarrollan mas zonas de control de las que admite
+      zonas_control_max_por_esquema
     entonces: no se opera
-    parametros: []
+    parametros: [zonas_control_max_por_esquema]
     cita: ev-v4-001909-54ac2edd
     literal: >-
       aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
       de control [...] por lo general sólo buscamos uno
+    clase: gate
     estado: VIGENTE
 
   - id: RN-010
@@ -144,6 +179,7 @@ reglas:
     literal: >-
       se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa ya
       nos saca con menos 0.80
+    clase: disparador
     estado: VIGENTE
 
   # ---------------------------------------------------------------- riesgo y gestion
@@ -162,6 +198,7 @@ reglas:
       - stop_fraccion_caja
     cita: fb-2026-09-09-sesion-01-28440182
     literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-012
@@ -180,15 +217,22 @@ reglas:
       INVARIANTE, no parametro: `stop_proteccion_capital` se queda UNKNOWN a proposito para que no
       haya dos puertas para el mismo numero. Un motor que guarde el riesgo real como dato aparte
       puede desincronizarlo del stop
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-013
-    titulo: el stop es el mismo en los dos esquemas de entrada
-    cuando: se abre una operacion por cualquiera de los dos esquemas
-    entonces: el stop va a stop_fraccion_caja, tambien en el segundo esquema (stop_segundo_esquema)
-    parametros: [stop_fraccion_caja, stop_segundo_esquema]
+    titulo: hay un unico esquema de stop, y vale para los dos esquemas de entrada
+    cuando: se abre la operacion, por el esquema de entrada que sea
+    entonces: el stop va a stop_fraccion_caja, sea cual sea el esquema
+    parametros: [stop_fraccion_caja]
     cita: fb-2026-09-09-sesion-01-85b30f66
     literal: tanto primero como segundo esquema de entrada en 0.80, ¿verdad? Sí
+    notas: >-
+      hasta el 2026-09-10 existia `stop_segundo_esquema` con el MISMO valor que
+      stop_fraccion_caja: dos puertas para el mismo numero, que es lo que RN-012 prohibe
+      expresamente y ADR-0002 para todo. Ahora es cierto por construccion, no por coincidencia:
+      el parametro del segundo esquema queda UNKNOWN a proposito
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-014
@@ -201,11 +245,12 @@ reglas:
     notas: >-
       el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
       despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-015
     titulo: el objetivo es fijo, se traza con la orden y no se mueve
-    cuando: se abre una operacion
+    cuando: se abre la operacion
     entonces: >-
       el objetivo se fija en objetivo_rr sobre la distancia que declara base_calculo_objetivo,
       en el mismo instante en que se traza la orden, y no se extiende
@@ -222,12 +267,13 @@ reglas:
       lado -el trader dice que un ganador cubre "2 o 3" perdidas, que cuadra mejor con medir
       sobre el riesgo real-, pero es una estimacion redonda hablando de margenes, no una
       descripcion del calculo; A-18 lo deja a la vista hasta ratificarlo
+    clase: disparador
     estado: VIGENTE
 
   # ---------------------------------------------------------------- limites del dia
   - id: RN-016
     titulo: el dia se limita por cartuchos, y solo una perdida gasta uno
-    cuando: una operacion se cierra
+    cuando: se cierra la operacion
     entonces: >-
       suma al contador solo si fue perdida (cartucho_criterio); al llegar a cartuchos_max se deja
       de operar hasta cartuchos_reinicio
@@ -237,11 +283,12 @@ reglas:
       un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es
       considerado un intento [...] reentrada después de equal, tampoco es considerado un intento
     notas: el contador NO es diario; se reinicia con la siguiente liquidez de M15
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-017
     titulo: un trade ganador no apaga el dia
-    cuando: una operacion cierra en positivo
+    cuando: la operacion cierra en positivo
     entonces: se sigue operando, con el limite de cartuchos intacto
     parametros: [cartuchos_max]
     cita: fb-2026-09-09-sesion-01-af02495f
@@ -250,13 +297,14 @@ reglas:
     notas: >-
       corrige lo que se daba por sabido antes de la sesion: la confirmacion R-07 de la hoja,
       que apunta a ev-v4-004936-d7004417 (ver el anexo del informe de la sesion)
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-018
     titulo: no hay operaciones en paralelo
-    cuando: hay una operacion abierta
-    entonces: no se abre otra; para reentrar hay que haber salido antes
-    parametros: []
+    cuando: el numero de operaciones abiertas alcanza operaciones_simultaneas_max
+    entonces: no se abre ninguna mas; para reentrar hay que haber salido antes
+    parametros: [operaciones_simultaneas_max]
     cita: ev-v4-003710-c753f3d3
     literal: >-
       para que tú puedas entrar nuevamente o bien te ha tocado stop loss
@@ -264,6 +312,7 @@ reglas:
       la cita sigue en el item hasta "con el profit ya no operas mas", pero ESA MITAD quedo
       revocada en la sesion 1 (RN-017): el trader dijo que un ganador no apaga el dia. El literal
       se corta donde sigue siendo cierto
+    clase: gate
     estado: VIGENTE
 
   - id: RN-019
@@ -273,6 +322,7 @@ reglas:
     parametros: [reentrada_tras_equal, cartucho_criterio]
     cita: fb-2026-09-09-sesion-01-060cd801
     literal: Sí, esto no gasta intentos, me dijiste, ¿no? No
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-020
@@ -302,6 +352,7 @@ reglas:
       lo que dijo el trader en cada caso- y el corte lo marca reloj_dia_riesgo, que sigue siendo
       un default nuestro (A-19)
     decision: ADR-0015
+    clase: gate
     estado: VIGENTE
 
   - id: RN-021
@@ -315,6 +366,7 @@ reglas:
     notas: >-
       A-17: el propio trader avisa de que la cuenta de fondeo puede prohibirlo y cerrar la cuenta
       aunque se acabe en profit. Verificar antes de operar en real
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-022
@@ -324,6 +376,7 @@ reglas:
     parametros: [comportamiento_sin_regla]
     cita: fb-2026-09-09-sesion-01-c698bc6a
     literal: Que sea fiel a la operativa y no busque nada adicional.
+    clase: fallback
     estado: VIGENTE
 
   # ---------------------------------------------------------------- reglas descartadas
@@ -339,6 +392,7 @@ reglas:
       por eso `stop_colchon_spread` se queda UNKNOWN. Cierra A-10. La contradiccion mecanica
       `stop.nivel` sigue ABIERTA a proposito: los items que dicen 0,75 son citas ciertas de lo que
       el trader hacia antes, y cerrarla exige superseder esos items (F06/F07), no una regla
+    clase: disparador
     estado: DESCARTADA
 
   - id: RN-024
@@ -352,6 +406,7 @@ reglas:
     notas: >-
       cierra A-12 y con ella la duda del 40 % / 50 % que arrastraba el corpus. `stop_reduccion_*`
       se quedan UNKNOWN
+    clase: disparador
     estado: DESCARTADA
 
   - id: RN-025
@@ -366,6 +421,7 @@ reglas:
     notas: >-
       lo explico en v6 entre 0:41:00 y 0:50:11, tramo declarado fuera de la operativa por ambos y
       no citable (knowledge/corpus/tramos_no_citables.yaml)
+    clase: disparador
     estado: DESCARTADA
 
   - id: RN-026
@@ -385,6 +441,7 @@ reglas:
       lo decide ADR-0016. OJO: instrumento_stops_level vale 0 en la demo medida, asi que hoy esta
       regla no llega a activarse; hay que volver a medirlo en la cuenta fondeada
     decision: ADR-0016
+    clase: gate
     estado: VIGENTE
 
   - id: RN-027
@@ -404,4 +461,5 @@ reglas:
       lotaje sale de la caja completa, no la DIRECCION del redondeo, de la que el trader nunca
       hablo: eso lo decide ADR-0016
     decision: ADR-0016
+    clase: disparador
     estado: VIGENTE

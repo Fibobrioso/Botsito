@@ -22,7 +22,22 @@ FICHERO_SPEC = "knowledge/spec/strategy_spec.yaml"
 FICHERO_GLOSARIO = "knowledge/spec/glossary.yaml"
 
 ESTADOS_REGLA = ("VIGENTE", "DESCARTADA")
-CAMPOS_REGLA = {"id", "titulo", "cuando", "entonces", "parametros", "cita", "literal", "estado"}
+# La precedencia entre reglas va por CLASE y no por orden del fichero (ADR-0018). El orden es
+# EDITORIAL -agrupado por tema, con comentarios, y RN-026/RN-027 viven bajo la cabecera "reglas
+# descartadas" siendo VIGENTES-, asi que tomarlo por semantica convertia un reagrupamiento
+# cosmetico en un cambio de comportamiento. De mas fuerte a mas debil.
+CLASES_REGLA = ("gate", "disparador", "terminal", "fallback")
+CAMPOS_REGLA = {
+    "id",
+    "titulo",
+    "cuando",
+    "entonces",
+    "parametros",
+    "cita",
+    "literal",
+    "clase",
+    "estado",
+}
 CAMPOS_REGLA_OPCIONALES = {"notas", "decision"}
 CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
@@ -85,6 +100,14 @@ _UNIDADES = (
     "veces",
     "minutos?",
     "por mil",
+    # Sustantivos de dominio, anadidos en la auditoria del 2026-09-10. El comentario de arriba
+    # declaraba que "se abre una operacion" y "los dos esquemas" eran espanol y no parametros;
+    # eran DOS CARDINALIDADES DE NEGOCIO viviendo fuera del registro, en RN-018 y RN-009. Ahora
+    # son `operaciones_simultaneas_max` y `zonas_control_max_por_esquema`.
+    "zonas?",
+    "esquemas?",
+    "operacion(?:es)?",
+    "zonas? de control",
 )
 _EN_LETRAS = re.compile(
     r"\b(?:" + "|".join(_NUMEROS_EN_LETRAS) + r")\s+(?:" + "|".join(_UNIDADES) + r")\b",
@@ -115,6 +138,7 @@ class Regla:
     cita: str
     literal: str
     estado: str
+    clase: str = "disparador"
     notas: str | None = None
     # El ADR que sostiene lo que la regla decide POR SU CUENTA. Obligatorio cuando la regla opera
     # sobre parametros de entorno: ahi no hay trader al que citar, hay una decision nuestra.
@@ -184,6 +208,9 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         estado = str(r["estado"])
         if estado not in ESTADOS_REGLA:
             raise SpecError(f"{rid}: estado {estado!r} no esta en {ESTADOS_REGLA}")
+        clase = str(r["clase"])
+        if clase not in CLASES_REGLA:
+            raise SpecError(f"{rid}: clase {clase!r} no esta en {CLASES_REGLA}")
         params = r["parametros"]
         if not isinstance(params, list) or not all(
             isinstance(p, str) and p.strip() for p in params
@@ -213,6 +240,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
                 cita=cita,
                 literal=_texto(r, "literal", rid),
                 estado=estado,
+                clase=clase,
                 notas=" ".join(str(r["notas"]).split()) if r.get("notas") else None,
                 decision=str(r["decision"]).strip() if r.get("decision") else None,
             )
@@ -351,4 +379,49 @@ def comprobar_decisiones(
             )
         elif r.decision is not None and r.decision not in ids_adr:
             problemas.append(f"{r.id}: decision {r.decision}, que no existe")
+    return problemas
+
+
+def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
+    """Que la precedencia no dependa del orden del fichero, y que no haya empates ciegos.
+
+    El orden de `strategy_spec.yaml` es EDITORIAL: esta agrupado por tema, con comentarios, y
+    RN-026 y RN-027 viven bajo la cabecera "reglas descartadas" siendo VIGENTES. Tomarlo por
+    semantica daba la respuesta equivocada en tres pares reales, encontrados el 2026-09-10:
+
+    - RN-006 (id 006) ganaba a RN-014 (014) y a RN-018 (018): con una operacion abierta el bot
+      reubicaba una orden limite en paralelo en vez de poner el break even.
+    - RN-019 (019) ganaba a RN-020 (020): se reentraba despues de tocar el tope diario.
+    - RN-022 es la clausula `else` y estaba ANTES de RN-026 y RN-027, que son reglas reales.
+
+    Por eso la precedencia va por `clase` (ADR-0018). Aqui se comprueba lo unico que una maquina
+    puede comprobar sin ejecutar la estrategia: que haya exactamente un `fallback`, que sea el mas
+    debil, y que dos reglas de la MISMA clase no declaren la misma accion sobre el mismo disparo
+    sin que una de las dos lleve una precondicion que las distinga.
+    """
+    problemas: list[str] = []
+    vigentes = [r for r in reglas if r.vigente]
+
+    fallbacks = [r.id for r in vigentes if r.clase == "fallback"]
+    if len(fallbacks) > 1:
+        problemas.append(
+            f"hay {len(fallbacks)} reglas 'fallback' ({', '.join(fallbacks)}); la clausula else "
+            f"es una, o no se sabe cual cierra"
+        )
+
+    # Dos reglas de la misma clase que actuan sobre el mismo parametro-disparador y declaran la
+    # misma accion: sin precondicion que las separe, cual gana lo decidiria el orden del fichero.
+    por_firma: dict[tuple[str, str], list[str]] = {}
+    for r in vigentes:
+        if not r.parametros:
+            continue
+        firma = (r.clase, " ".join(sorted(r.parametros)))
+        por_firma.setdefault(firma, []).append(r.id)
+    for (clase, params), rids in sorted(por_firma.items()):
+        if len(rids) > 1:
+            problemas.append(
+                f"{', '.join(sorted(rids))}: misma clase ('{clase}') y exactamente los mismos "
+                f"parametros ({params}); nada dice cual manda salvo el orden del fichero, que es "
+                f"editorial. Dale a una de las dos la precondicion que la distingue"
+            )
     return problemas

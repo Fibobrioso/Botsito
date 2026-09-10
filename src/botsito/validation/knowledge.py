@@ -413,6 +413,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         comprobar_contra,
         comprobar_decisiones,
         comprobar_literales,
+        comprobar_precedencia,
     )
     from botsito.spec.modelo import (
         cargar_glosario as cargar_glosario_spec,
@@ -454,6 +455,8 @@ def validar(repo: Path) -> tuple[int, list[str]]:
                             f"{r.id}: usa {nombre}, que sigue UNKNOWN: la regla esta vigente pero "
                             f"no se puede ejecutar"
                         )
+            # Y que la precedencia no la decida el orden del fichero, que es editorial.
+            problemas_spec += comprobar_precedencia(reglas)
             problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
         except SpecError as exc:
             problemas_spec = [str(exc)]

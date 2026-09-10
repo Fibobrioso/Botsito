@@ -1,0 +1,16 @@
+id: fb-2026-09-09-sesion-01-140d655c
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: dias_operables
+accion: CORRECT
+respuesta_literal: De lunes a viernes se opera.
+registrado_por: Aleks · re-expresion canonica del consultor (auditoria F12, 2026-09-10)
+valor_resultante: lunes a viernes
+valor_canonico: lunes_a_viernes
+supersede: fb-2026-09-09-sesion-01-bf1a8442
+notas: 'no cambia lo que dijo el trader: el literal es el mismo. El parametro era tipo texto con el valor
+  ''lunes a viernes'' y RN-001 lo usa como condicion EJECUTABLE, asi que el motor tendria que parsear
+  espanol. Pasa a enum con lista cerrada.'
