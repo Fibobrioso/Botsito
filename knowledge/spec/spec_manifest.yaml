@@ -1,0 +1,17 @@
+# Version y hash de la spec (F11, ADR-0013). Lo genera `botsito spec manifest`; no se edita a
+# mano. El hash cubre los TRES ficheros: si quedara fuera el registro, cambiar el stop no cambiaria
+# la version y el pre-vuelo de la demo daria verde con otra estrategia.
+#
+# Se hashea la ESTRUCTURA re-serializada, no los bytes: un comentario no cambia la spec. Por
+# parametro entran nombre, categoria, tipo, unidad, estado, valor, fuente, ambiguedad_id, opciones
+# y limites; el estado y la fuente cuentan, porque cambian lo que la spec afirma.
+#
+# Semver: mayor si una regla cambia de sentido o desaparece, menor si se anade una regla o un
+# parametro, parche si solo cambia un valor o una redaccion.
+spec_version: "1.0.0"
+hash: a1395e68787357ca829b8697230b1eba37025f43b09f1d8aa9e513a6350fb63c
+generado_el: "2026-09-10T00:21:00Z"
+cubre:
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/spec/glossary.yaml

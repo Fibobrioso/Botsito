@@ -624,6 +624,102 @@ def _errores_evidencia() -> tuple[type[Exception], ...]:
     )
 
 
+def spec_status(repo: Path) -> int:
+    """Con que esta corriendo el bot y que sigue en revision (F11).
+
+    La sesion 1 dejo valores que el trader dijo con su voz y ambiguedades abiertas sobre esos
+    mismos valores. Las dos cosas son ciertas a la vez: el valor es CONFIRMED porque lo dijo el, y
+    la ambiguedad sigue abierta porque hay algo que medir. Esto lo ensena junto en vez de
+    degradar el estado del parametro.
+    """
+    from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+    from botsito.config.registro import Estado, RegistroError, cargar_registro
+    from botsito.spec.manifiesto import (
+        FICHERO_MANIFIESTO,
+        ManifiestoSpecError,
+    )
+    from botsito.spec.manifiesto import (
+        cargar_manifiesto as cargar_manifiesto_spec,
+    )
+    from botsito.spec.modelo import FICHERO_SPEC, SpecError, cargar_reglas
+
+    try:
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        reglas = cargar_reglas(repo / FICHERO_SPEC)
+        manifiesto = cargar_manifiesto_spec(repo / FICHERO_MANIFIESTO)
+        ambiguedades = cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES)
+    except (RegistroError, SpecError, ManifiestoSpecError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"spec {manifiesto['spec_version']} · hash {str(manifiesto['hash'])[:12]}…")
+    print(
+        f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
+        f"{sum(1 for r in reglas if not r.vigente)} descartadas"
+    )
+    confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
+    unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]
+    print(f"  {len(confirmados)} parametros con valor, {len(unknown)} sin el")
+
+    abiertas = [a for a in ambiguedades if a.estado == "ABIERTA"]
+    en_revision: dict[str, list[str]] = {}
+    for a in abiertas:
+        for nombre in a.parametros:
+            en_revision.setdefault(nombre, []).append(a.id)
+    if en_revision:
+        print("\nCorriendo con un valor que sigue en revision:")
+        for nombre in sorted(en_revision):
+            p = registro.parametros.get(nombre)
+            valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
+            print(f"  {nombre:28} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
+    sin_parametro = [a.id for a in abiertas if not a.parametros]
+    if sin_parametro:
+        print("\nAmbiguedades abiertas sin parametro asociado: " + ", ".join(sorted(sin_parametro)))
+    if unknown:
+        print("\nSin valor a proposito (leerlos falla):")
+        for nombre in sorted(unknown):
+            print(f"  {nombre}")
+    return 0
+
+
+def spec_manifest(repo: Path, escribir: bool) -> int:
+    """Comprueba el hash de la spec, o lo regenera con --escribir."""
+    from botsito.spec.manifiesto import (
+        FICHERO_MANIFIESTO,
+        ManifiestoSpecError,
+        hash_de,
+    )
+    from botsito.spec.manifiesto import (
+        cargar_manifiesto as cargar_manifiesto_spec,
+    )
+    from botsito.spec.manifiesto import (
+        comprobar as comprobar_manifiesto_spec,
+    )
+
+    ruta = repo / FICHERO_MANIFIESTO
+    try:
+        actual = hash_de(repo)
+        if not escribir:
+            problemas = comprobar_manifiesto_spec(repo, ruta)
+            for p in problemas:
+                print(f"ERROR: {p}", file=sys.stderr)
+            if problemas:
+                return 1
+            print(f"OK: hash al dia ({actual[:12]}…)")
+            return 0
+        doc = cargar_manifiesto_spec(ruta)
+    except ManifiestoSpecError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    if doc["hash"] == actual:
+        print(f"OK: el hash ya estaba al dia ({actual[:12]}…)")
+        return 0
+    texto = ruta.read_text(encoding="utf-8")
+    ruta.write_text(texto.replace(str(doc["hash"]), actual, 1), encoding="utf-8", newline="\n")
+    print(f"OK: hash actualizado a {actual[:12]}…")
+    print("Recuerda subir spec_version si la spec cambio de verdad")
+    return 0
+
 
 def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
     """Lleva al registro los valores que el trader dio en una sesion (F11).
@@ -661,8 +757,7 @@ def feedback_apply(repo: Path, sesion: str, solo_check: bool) -> int:
         canon = " (canonico)" if c.canonico else ""
         print(f"  {marca} {c.parametro:28} {c.valor_escrito!r}{canon}  <- {c.registro_id}")
     print(
-        f"{len(cambios)} parametros; {len(nuevos)} cambian, "
-        f"{len(cambios) - len(nuevos)} ya estaban"
+        f"{len(cambios)} parametros; {len(nuevos)} cambian, {len(cambios) - len(nuevos)} ya estaban"
     )
     if solo_check:
         print("--check: no se ha escrito nada")
@@ -1590,6 +1685,11 @@ def build_parser() -> argparse.ArgumentParser:
     lst.add_argument("--video")
     lst.add_argument("--tema")
     fb = sub.add_parser("feedback", help="registros del trader")
+    sp = sub.add_parser("spec", help="la especificacion ejecutable (F11)")
+    sp_sub = sp.add_subparsers(dest="spec_cmd", required=True)
+    sp_sub.add_parser("status", help="con que corre el bot y que sigue en revision")
+    spm = sp_sub.add_parser("manifest", help="comprueba el hash de la spec")
+    spm.add_argument("--escribir", action="store_true", help="regenera el hash")
     fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
     fbn = fb_sub.add_parser("new", help="crea un registro de feedback con id calculado")
     fbn.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
@@ -1616,9 +1716,7 @@ def build_parser() -> argparse.ArgumentParser:
     fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
     fba = fb_sub.add_parser("apply", help="lleva los valores de una sesion al registro (F11)")
     fba.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
-    fba.add_argument(
-        "--check", action="store_true", help="solo lista lo que haria; no escribe"
-    )
+    fba.add_argument("--check", action="store_true", help="solo lista lo que haria; no escribe")
     datos = sub.add_parser("data", help="datasets de velas congelados (F15)")
     datos_sub = datos.add_subparsers(dest="data_cmd", required=True)
     dl = datos_sub.add_parser("download", help="descarga M1 por dias y congela un dataset")
@@ -1668,6 +1766,10 @@ def main(argv: list[str] | None = None) -> int:
         return feedback_trace(args.repo, args.identificador)
     if args.cmd == "feedback" and args.feedback_cmd == "pending":
         return feedback_pending(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "status":
+        return spec_status(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "manifest":
+        return spec_manifest(args.repo, args.escribir)
     if args.cmd == "feedback" and args.feedback_cmd == "apply":
         return feedback_apply(args.repo, args.sesion, args.check)
     if args.cmd == "evidence" and args.evidence_cmd == "new":

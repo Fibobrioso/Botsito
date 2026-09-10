@@ -1,0 +1,313 @@
+# StrategySpec: las reglas de la operativa (F11, ADR-0013). Manual, versionado; cada commit cita
+# `Fuente:`.
+#
+# LA REGLA DE ORO: aqui no hay ni un numero de negocio. Los campos ejecutables (`cuando`,
+# `entonces`, `parametros`) solo nombran parametros del registro; el valor lo pone
+# `knowledge/spec/parametros.yaml`, que es la unica puerta (ADR-0002). Asi, cambiar el stop de 0,8
+# a 0,75 se hace en un sitio y esta spec no se toca.
+#
+# `cita` es el registro de feedback o el item de evidencia que sostiene la regla, y `literal` la
+# frase del trader tal cual. El literal SI puede contener cifras: son sus palabras, y un test
+# comprueba que coincide con el registro que declara.
+#
+# Campos: id (RN-NNN), titulo, cuando (condicion), entonces (accion), parametros (los que usa),
+# cita, literal, notas (opcional), estado (VIGENTE | DESCARTADA).
+
+version_esquema: 1
+
+reglas:
+  # ---------------------------------------------------------------- marco y sesgo
+  - id: RN-001
+    titulo: la ventana operativa son dos sesiones alineadas con H4
+    cuando: la hora del grafico esta entre ventana_inicio y ventana_fin
+    entonces: el bot busca entradas; fuera de esa ventana no opera
+    parametros: [ventana_inicio, ventana_fin, huso_grafico, dias_operables]
+    cita: fb-2026-09-09-sesion-01-8741c388
+    literal: >-
+      Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
+      sesiones
+    estado: VIGENTE
+
+  - id: RN-002
+    titulo: al llegar el fin de la ventana se cierra lo que quede abierto
+    cuando: la hora del grafico alcanza ventana_fin y hay una operacion abierta
+    entonces: se cierra a mercado si cierre_forzoso_fin_ventana
+    parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_grafico]
+    cita: fb-2026-09-09-sesion-01-ffb528d7
+    literal: la operativa se cierra a las 3pm en punto
+    estado: VIGENTE
+
+  - id: RN-003
+    titulo: el sesgo lo fija la vela H4 previa, y solo cambia si rompe su extremo
+    cuando: abre una sesion operativa
+    entonces: >-
+      el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela
+      rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia
+    parametros: [sesgo_h4_regla, anclaje_h4, huso_grafico]
+    cita: fb-2026-09-09-sesion-01-8eccf5c0
+    literal: >-
+      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
+      entonces seguiríamos operando bajista
+    notas: >-
+      el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
+      deja el sesgo alcista
+    estado: VIGENTE
+
+  # ---------------------------------------------------------------- liquidez y entrada
+  - id: RN-004
+    titulo: la liquidez de M15 se toma con cuerpo
+    cuando: el precio alcanza el alto o el bajo de M15 marcado
+    entonces: >-
+      se da por tomada solo si una vela cierra con cuerpo al otro lado segun
+      liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
+    parametros: [liquidez_m15_criterio_toma]
+    cita: fb-2026-09-09-sesion-01-6e15504f
+    literal: ¿Vale con que la vela cierre con el cuerpo por encima del máximo [...] Con cuerpo
+    notas: solo en M15; en M1 el rompimiento es indiferente
+    estado: VIGENTE
+
+  - id: RN-005
+    titulo: lo que ocurre al otro lado de la liquidez de M15 es ruido
+    cuando: el precio se desarrolla por debajo de la liquidez de M15 en sesgo alcista, o al reves
+    entonces: no hay entrada
+    parametros: []
+    cita: ev-v3-001600-ed45b091
+    literal: >-
+      todo lo que se desarrolle dentro, o sea, por debajo de M15 [...] es ruido
+    estado: VIGENTE
+
+  - id: RN-006
+    titulo: la orden limite se reubica al completarse cada zona de control
+    cuando: el precio rompe el extremo anterior y completa una zona de control
+    entonces: la orden limite se mueve a la nueva zona segun reubicacion_cadencia
+    parametros: [reubicacion_cadencia]
+    cita: fb-2026-09-09-sesion-01-6b29059d
+    literal: >-
+      cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa aquí
+    notas: no es por vela ni por tiempo; mientras la zona no se completa, el limite no se mueve
+    estado: VIGENTE
+
+  - id: RN-007
+    titulo: varias velas de M1 que forman un order block mayor se mapean como una estructura
+    cuando: se mapea la estructura en M1
+    entonces: se agrupan segun mapeo_dos_velas y el resto se trata como ruido
+    parametros: [mapeo_dos_velas]
+    cita: fb-2026-09-09-sesion-01-7ee9cabc
+    literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
+    estado: VIGENTE
+
+  - id: RN-008
+    titulo: sin uno de los dos esquemas de entrada no hay entrada
+    cuando: no se da ni el breaker ni el segundo esquema
+    entonces: no se opera
+    parametros: []
+    cita: ev-v4-001844-93dcb658
+    literal: si no se da ninguno de los dos, no hay entrada
+    estado: VIGENTE
+
+  - id: RN-009
+    titulo: con dos zonas de control no hay trade
+    cuando: se desarrolla mas de una zona de control dentro del mismo esquema
+    entonces: no se opera
+    parametros: []
+    cita: ev-v4-001909-54ac2edd
+    literal: ya como me generó más de una zona de control dentro [...] no podemos entrar
+    estado: VIGENTE
+
+  - id: RN-010
+    titulo: una entrada activada sin ruptura se gestiona como cualquier otra
+    cuando: la orden se activa por un equal y la estructura no llega a romperse
+    entonces: se protege y se deja correr segun salida_sin_ruptura, con el stop en su nivel
+    parametros: [salida_sin_ruptura, stop_fraccion_caja]
+    cita: fb-2026-09-09-sesion-01-9626d3dd
+    literal: >-
+      igual si se toma la entrada se mantiene las mismas consideraciones que veníamos manejándose
+      en cuanto a gestión del precio
+    estado: VIGENTE
+
+  # ---------------------------------------------------------------- riesgo y gestion
+  - id: RN-011
+    titulo: el lote se dimensiona sobre la caja completa y el stop se mueve al abrir
+    cuando: se activa la entrada
+    entonces: >-
+      el lote sale de la distancia completa segun lotaje_base y riesgo_por_operacion sobre
+      base_calculo_riesgo; el stop, que viajaba en la orden segun stop_en_orden_pendiente, se
+      mueve inmediatamente a stop_fraccion_caja
+    parametros:
+      - lotaje_base
+      - riesgo_por_operacion
+      - base_calculo_riesgo
+      - stop_en_orden_pendiente
+      - stop_fraccion_caja
+    cita: fb-2026-09-09-sesion-01-28440182
+    literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección
+    estado: VIGENTE
+
+  - id: RN-012
+    titulo: la perdida real es menor que el riesgo nominal, y es a proposito
+    cuando: el stop salta
+    entonces: >-
+      la perdida es riesgo_por_operacion multiplicado por stop_fraccion_caja, porque el lote se
+      dimensiono sobre la caja completa. Lo que se conserva es el resto de la caja
+    parametros: [riesgo_por_operacion, stop_fraccion_caja]
+    cita: fb-2026-09-09-sesion-01-c4922acb
+    literal: >-
+      La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve el SL
+      hasta el nivel 0.8 para todos los modelos de entrada.
+    notas: >-
+      INVARIANTE, no parametro: `stop_proteccion_capital` se queda UNKNOWN a proposito para que no
+      haya dos puertas para el mismo numero. Un motor que guarde el riesgo real como dato aparte
+      puede desincronizarlo del stop
+    estado: VIGENTE
+
+  - id: RN-013
+    titulo: el stop es el mismo en los dos esquemas de entrada
+    cuando: se abre una operacion por cualquiera de los dos esquemas
+    entonces: el stop va a stop_fraccion_caja, tambien en el segundo esquema (stop_segundo_esquema)
+    parametros: [stop_fraccion_caja, stop_segundo_esquema]
+    cita: fb-2026-09-09-sesion-01-85b30f66
+    literal: tanto primero como segundo esquema de entrada en 0.80, ¿verdad? Sí
+    estado: VIGENTE
+
+  - id: RN-014
+    titulo: el break even se pone al romperse la zona de control posterior
+    cuando: tras la entrada se desarrolla otra zona de control y el precio la rompe
+    entonces: el stop pasa a la entrada, en el instante del toque segun break_even_condicion
+    parametros: [break_even_condicion]
+    cita: fb-2026-09-09-sesion-01-0ccafcba
+    literal: Apenas toca
+    notas: >-
+      el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
+      despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
+    estado: VIGENTE
+
+  - id: RN-015
+    titulo: el objetivo es fijo y no se mueve
+    cuando: se abre una operacion
+    entonces: >-
+      el objetivo se fija en objetivo_rr sobre la caja completa y no se extiende
+      (objetivo_extension_activa) ni se sacan parciales (parciales)
+    parametros: [objetivo_rr, objetivo_extension_activa, parciales]
+    cita: fb-2026-09-09-sesion-01-7fbbb2e7
+    literal: Siempre se fija el 1:3, no importa en qué escenario nos encontremos
+    estado: VIGENTE
+
+  # ---------------------------------------------------------------- limites del dia
+  - id: RN-016
+    titulo: el dia se limita por cartuchos, y solo una perdida gasta uno
+    cuando: una operacion se cierra
+    entonces: >-
+      suma al contador solo si fue perdida (cartucho_criterio); al llegar a cartuchos_max se deja
+      de operar hasta cartuchos_reinicio
+    parametros: [cartuchos_max, cartucho_criterio, cartuchos_reinicio]
+    cita: fb-2026-09-09-sesion-01-aa2abe65
+    literal: >-
+      un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es
+      considerado un intento [...] reentrada después de equal, tampoco es considerado un intento
+    notas: el contador NO es diario; se reinicia con la siguiente liquidez de M15
+    estado: VIGENTE
+
+  - id: RN-017
+    titulo: un trade ganador no apaga el dia
+    cuando: una operacion cierra en positivo
+    entonces: se sigue operando, con el limite de cartuchos intacto
+    parametros: [cartuchos_max]
+    cita: fb-2026-09-09-sesion-01-af02495f
+    literal: >-
+      que siga operando, pero que respete la regla de los 3 cartuchos de perdida
+    notas: corrige lo que se daba por sabido antes de la sesion (R-07)
+    estado: VIGENTE
+
+  - id: RN-018
+    titulo: no hay operaciones en paralelo
+    cuando: hay una operacion abierta
+    entonces: no se abre otra; para reentrar hay que haber salido antes
+    parametros: []
+    cita: ev-v4-003710-c753f3d3
+    literal: no hay entradas en paralelo
+    estado: VIGENTE
+
+  - id: RN-019
+    titulo: se puede reentrar tras un equal sin gastar cartucho
+    cuando: un equal cierra la operacion y el precio vuelve a dar el esquema
+    entonces: se reentra segun reentrada_tras_equal, y no suma al contador
+    parametros: [reentrada_tras_equal, cartucho_criterio]
+    cita: fb-2026-09-09-sesion-01-060cd801
+    literal: Sí, esto no gasta intentos, me dijiste, ¿no? No
+    estado: VIGENTE
+
+  - id: RN-020
+    titulo: los topes porcentuales son una red, no el freno
+    cuando: la perdida acumulada alcanza perdida_maxima_diaria o perdida_maxima_semanal
+    entonces: se deja de operar
+    parametros:
+      - perdida_maxima_diaria
+      - perdida_maxima_semanal
+      - base_calculo_perdida_diaria
+    cita: fb-2026-09-09-sesion-01-bff260ea
+    literal: >-
+      De la cuenta basado en el saldo, y que sea en el saldo inicial del día
+    notas: >-
+      el freno operativo son los cartuchos: con el riesgo real por operacion, agotarlos queda muy
+      por debajo del tope diario. Estos topes existen para que no haya un camino por el que la
+      cuenta se acerque a su limite
+    estado: VIGENTE
+
+  - id: RN-021
+    titulo: se opera durante las noticias y sin tope de spread
+    cuando: hay una noticia de alto impacto o el spread se ensancha
+    entonces: no se filtra (filtro_noticias, filtro_spread)
+    parametros: [filtro_noticias, filtro_spread]
+    cita: fb-2026-09-09-sesion-01-3565552d
+    literal: Que se opere con todo y noticias, la operativa es indiferente a esto.
+    notas: >-
+      A-17: el propio trader avisa de que la cuenta de fondeo puede prohibirlo y cerrar la cuenta
+      aunque se acabe en profit. Verificar antes de operar en real
+    estado: VIGENTE
+
+  - id: RN-022
+    titulo: cuando la situacion no encaja, el bot se abstiene
+    cuando: no se cumple ninguna regla de entrada
+    entonces: no se opera (comportamiento_sin_regla)
+    parametros: [comportamiento_sin_regla]
+    cita: fb-2026-09-09-sesion-01-c698bc6a
+    literal: Que sea fiel a la operativa y no busque nada adicional.
+    estado: VIGENTE
+
+  # ---------------------------------------------------------------- reglas descartadas
+  - id: RN-023
+    titulo: no hay colchon de spread separado del stop
+    cuando: se coloca el stop
+    entonces: >-
+      no se suma ningun margen; el nivel del stop ya lo incorpora
+    parametros: [stop_fraccion_caja]
+    cita: fb-2026-09-09-sesion-01-08761847
+    literal: Por temas de Spread ... se reduce al 0.8
+    notas: >-
+      por eso `stop_colchon_spread` se queda UNKNOWN. Cierra A-10 y la contradiccion stop.nivel
+    estado: DESCARTADA
+
+  - id: RN-024
+    titulo: no se baja la proteccion segun el porcentaje de vela transcurrido
+    cuando: pasa buena parte de la vela sin que el precio avance
+    entonces: >-
+      no se hace nada; el stop se queda donde esta
+    parametros: []
+    cita: fb-2026-09-09-sesion-01-728b68da
+    literal: Descartar esto, se mantiene el SL fijo de 0.8
+    notas: >-
+      cierra A-12 y con ella la duda del 40 % / 50 % que arrastraba el corpus. `stop_reduccion_*`
+      se quedan UNKNOWN
+    estado: DESCARTADA
+
+  - id: RN-025
+    titulo: el tercer esquema de entrada queda fuera de la primera version
+    cuando: el precio permite anticiparse al segundo esquema
+    entonces: no se entra
+    parametros: []
+    cita: ev-v4-013008-73dcd8c3
+    literal: El bot se queda con los 2 primeros esquemas de momento.
+    notas: >-
+      lo explico en v6 entre 0:41:00 y 0:50:11, tramo declarado fuera de la operativa por ambos y
+      no citable (knowledge/corpus/tramos_no_citables.yaml)
+    estado: DESCARTADA

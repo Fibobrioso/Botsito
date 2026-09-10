@@ -359,6 +359,57 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         "historial intacto"
     )
     salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
+    # Capa spec (F11, ADR-0013): reglas, glosario y manifiesto.
+    from botsito.spec.manifiesto import FICHERO_MANIFIESTO
+    from botsito.spec.manifiesto import comprobar as comprobar_manifiesto_spec
+    from botsito.spec.modelo import (
+        FICHERO_GLOSARIO,
+        FICHERO_SPEC,
+        SpecError,
+        Termino,
+        cargar_reglas,
+        comprobar_contra,
+    )
+    from botsito.spec.modelo import (
+        cargar_glosario as cargar_glosario_spec,
+    )
+
+    ruta_spec = repo / FICHERO_SPEC
+    if ruta_spec.is_file():
+        try:
+            reglas = cargar_reglas(ruta_spec)
+            terminos: list[Termino] = (
+                cargar_glosario_spec(repo / FICHERO_GLOSARIO)
+                if (repo / FICHERO_GLOSARIO).is_file()
+                else []
+            )
+            citas = {i.id for i in items} | {r.id for r in registros_fb}
+            problemas_spec = comprobar_contra(reglas, terminos, set(registro.nombres()), citas)
+            # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
+            # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
+            for r in reglas:
+                if not r.vigente:
+                    continue
+                for nombre in r.parametros:
+                    param = registro.parametros.get(nombre)
+                    if param is not None and param.estado.value == "UNKNOWN":
+                        problemas_spec.append(
+                            f"{r.id}: usa {nombre}, que sigue UNKNOWN: la regla esta vigente pero "
+                            f"no se puede ejecutar"
+                        )
+            problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
+        except SpecError as exc:
+            problemas_spec = [str(exc)]
+        for f in problemas_spec:
+            salida.append(f"ERROR: spec: {f}")
+        if problemas_spec:
+            return 1, salida
+        vigentes = sum(1 for r in reglas if r.vigente)
+        salida.append(
+            f"OK: {len(reglas)} reglas de spec ({vigentes} vigentes), {len(terminos)} terminos de "
+            f"glosario, hash del manifiesto al dia"
+        )
+
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
     from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes
 
