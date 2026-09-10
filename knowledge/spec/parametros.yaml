@@ -167,45 +167,50 @@ parametros:
     tipo: texto
     unidad: nombre IANA del huso en el que se expresan las horas de la operativa
     descripcion: >-
-      reloj en el que se interpretan las horas de la operativa. ADR-0005 lo fijo en Europe/Madrid
-      y ADR-0012 lo alineo con huso_grafico. ADR-0015 corrige el motivo que ADR-0012 daba: la
-      sesion NO desmintio Europe/Madrid, solo dejo sin resolver si el grafico es de offset fijo
-      (A-14). Sigue alineado con huso_grafico por decision, asi que lo que decida A-14 lo mueve
+      reloj del TRADER como persona: la hora a la que se sienta y a la que cierra, y de la que
+      cuelgan ventana_inicio y ventana_fin. Es su reloj civil y por tanto cambia con el horario
+      de verano. ADR-0005 lo fijo en Europe/Madrid, ADR-0012 lo cambio a un offset fijo apoyandose
+      en que "la sesion desmintio Madrid" -que no ocurrio, ver ADR-0015- y ADR-0017 lo revierte:
+      el trader opera siempre a la misma hora SUYA, sea cual sea la fecha
     estado: CONFIRMED
-    valor: "Etc/GMT-2"
+    valor: "Europe/Madrid"
     fuente:
       tipo: decision
-      id: ADR-0015
+      id: ADR-0017
   - nombre: huso_grafico
     categoria: estrategia
     tipo: texto
     unidad: nombre IANA del huso configurado en el grafico del trader
     descripcion: >-
-      reloj del GRAFICO del trader, del que cuelgan anclaje_h4, ventana_inicio y ventana_fin. El
-      signo de Etc/* va invertido: Etc/GMT-2 = UTC+2. Es un DEFAULT NUESTRO, no un dato: todas
-      las lecturas del repositorio son de verano -el trader dice "utc mas 2 que son ahora ya
-      madrid" (ev-v3-000136) y el fotograma es del 9 de septiembre-, y Etc/GMT-2 y Europe/Madrid
-      son indistinguibles de mayo a octubre. Preguntado por el cambio de horario contesta las dos
-      cosas a la vez (ev-v6-005810). A-14 lo resuelve mirando su grafico en una fecha de invierno.
-      OJO: NO es el reloj del servidor del broker, que va aparte en broker_offset_base y
-      broker_dst y que si cambia con el horario de Nueva York
-    estado: DEFAULT_AMBIGUOUS
-    valor: "Etc/GMT-2"
-    ambiguedad_id: A-14
+      como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de
+      huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para
+      traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las
+      21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las
+      horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el
+      reloj del servidor, que va en broker_offset_base + broker_dst y sigue a Nueva York
+    estado: CONFIRMED
+    valor: "Europe/Madrid"
     fuente:
       tipo: evidence
       id: ev-v3-000136-6160fcea
   - nombre: anclaje_h4
     categoria: estrategia
     tipo: hora
-    huso: Etc/GMT-2
-    unidad: hora de reloj de pared; el huso se fija al resolver A-9 (es parte de la pregunta)
-    descripcion: hora local a la que abre la primera vela H4 del dia en el grafico del trader (A-9)
+    huso: America/New_York
+    unidad: hora de reloj de pared en el huso declarado; parte la recta UTC en velas H4
+    descripcion: >-
+      donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los
+      brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva
+      York, como confirma broker_dst medido contra la demo. El trader lo ve como las 23:00 en su
+      pantalla, y es cierto 337 dias al año; los otros 28 -8 a 28 de marzo y 25 a 31 de octubre,
+      cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una
+      hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas
+      las velas H4, que es de donde sale el sesgo (ADR-0017)
     estado: CONFIRMED
-    valor: "23:00"
+    valor: "17:00"
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-6615d32e
+      id: fb-2026-09-09-sesion-01-479e68b9
 
   # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
   # UNKNOWN sin valor. Se cerraron en F11 con un registro de feedback de la sesion 1 (o evidencia
@@ -214,9 +219,11 @@ parametros:
   - nombre: ventana_inicio
     categoria: estrategia
     tipo: hora
-    huso: Etc/GMT-2
-    unidad: hora de reloj del trader
-    descripcion: inicio de la ventana operativa (primera sesion H4)
+    huso: Europe/Madrid
+    unidad: hora de reloj de pared del trader (huso_operativa)
+    descripcion: >-
+      hora a la que el trader empieza a buscar entradas. Es SU horario como persona y no se mueve
+      con la fecha, asi que en UTC si se mueve con el cambio de hora (ADR-0017)
     estado: CONFIRMED
     valor: "07:00"
     fuente:
@@ -225,9 +232,11 @@ parametros:
   - nombre: ventana_fin
     categoria: estrategia
     tipo: hora
-    huso: Etc/GMT-2
-    unidad: hora de reloj del trader
-    descripcion: fin de la ventana operativa (cierre de la segunda sesion H4; A-6)
+    huso: Europe/Madrid
+    unidad: hora de reloj de pared del trader (huso_operativa)
+    descripcion: >-
+      hora a la que el trader deja de operar y cierra lo que quede abierto. Es SU horario como
+      persona, igual que ventana_inicio (A-6, ADR-0017)
     estado: CONFIRMED
     valor: "15:00"
     fuente:

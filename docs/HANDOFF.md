@@ -38,9 +38,11 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   - `botsito spec manifest [--escribir]`: hash de la spec sobre los TRES ficheros. Si el hash
     cambia y `spec_version` no, `knowledge validate` falla.
   - `knowledge/spec/`: 52 parametros (46 con valor, 6 UNKNOWN a proposito), 27 reglas (24
-    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 1.5.0.
-  - ADR-0012 (registro) y ADR-0013 (spec). ADR-0005 queda ENMENDADO: `huso_operativa` ya no es
-    Europe/Madrid sino Etc/GMT-2, que la sesion demostro.
+    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 3.0.0.
+  - ADR-0012 a ADR-0017. La enmienda a ADR-0005 del 2026-09-09 queda REVOCADA por ADR-0017:
+    `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
+    siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
+    La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
 - Lecciones tecnicas (F11):
   - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
     patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo

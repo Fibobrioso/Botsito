@@ -419,36 +419,57 @@ def test_ni_enum_ni_booleano_admiten_minimo_o_maximo(tmp_path: Path, tipo: str) 
         _cargar(tmp_path, _param(tipo=tipo, valor=valor, opciones=ops, minimo="0"))
 
 
-def test_el_huso_del_grafico_es_utc_mas_dos_todo_el_ano(repo: Path) -> None:
-    """`Etc/GMT-2` significa UTC+2: el signo va invertido en la nomenclatura IANA.
+def test_los_relojes_de_la_operativa_se_mueven_con_el_horario_de_verano(repo: Path) -> None:
+    """El trader opera SIEMPRE a su hora, sea cual sea la fecha: eso es un reloj civil.
 
-    Es el error que este test existe para impedir. Si alguien "corrige" `Etc/GMT-2` por
-    `Etc/GMT+2` porque le parece mas natural, todas las horas de la operativa se desplazan cuatro
-    horas y el bot opera en otro momento del dia sin que nada mas falle.
+    ADR-0012 lo escribio como un offset fijo (`Etc/GMT-2`) apoyandose en que la sesion habia
+    desmentido Madrid; ADR-0015 mostro que esa afirmacion no se sostiene y ADR-0017 lo revierte a
+    lo que ADR-0005 ya decia. Este test fija las dos mitades de la correccion:
 
-    Y se comprueba en enero y en julio a proposito: el trader dijo que NO se ajusta al cambio de
-    horario, asi que el desplazamiento tiene que ser el mismo en invierno y en verano -que es lo
-    que distingue `Etc/GMT-2` de `Europe/Madrid`-.
+    1. Su horario es de pared: `huso_operativa` desfasa +1 en enero y +2 en julio. Con un offset
+       fijo desfasaria lo mismo los doce meses y el bot abriria una hora antes todo el invierno.
+    2. La rejilla H4 NO es su reloj: se ancla a la medianoche del servidor, escrita como
+       `17:00 America/New_York` (ADR-0005). Los dos relojes se separan 28 dias al año, porque la
+       UE y EE.UU. no cambian la hora el mismo dia, y ESE es el efecto que hay que conservar.
     """
     from datetime import datetime
     from zoneinfo import ZoneInfo
 
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    huso = ZoneInfo(r.texto("huso_grafico"))
+    operativa = ZoneInfo(r.texto("huso_operativa"))
+    horas = {}
     for mes in (1, 7):
-        desfase = datetime(2026, mes, 15, 12, tzinfo=huso).utcoffset()
+        desfase = datetime(2026, mes, 15, 12, tzinfo=operativa).utcoffset()
         assert desfase is not None
-        assert desfase.total_seconds() == 2 * 3600, f"mes {mes}: {desfase}"
-    madrid = ZoneInfo("Europe/Madrid")
-    enero = datetime(2026, 1, 15, 12, tzinfo=madrid).utcoffset()
-    assert enero is not None and enero.total_seconds() == 3600, (
-        "Europe/Madrid da +1 en enero: por eso el reloj del trader no es Madrid"
-    )
+        horas[mes] = desfase.total_seconds() / 3600
+    assert horas == {1: 1.0, 7: 2.0}, f"huso_operativa no es un reloj civil: {horas}"
+
+    ancla = r.hora("anclaje_h4")
+    huso_ancla = ZoneInfo(ancla.huso)
+    assert huso_ancla is not ZoneInfo(r.texto("huso_grafico"))
+
+    def ancla_utc(mes: int, dia: int) -> int:
+        t = datetime(2026, mes, dia, 17, tzinfo=huso_ancla)
+        return t.astimezone(ZoneInfo("UTC")).hour
+
+    # sigue a Nueva York: 22:00 UTC en invierno, 21:00 en verano
+    assert ancla_utc(1, 15) == 22 and ancla_utc(7, 15) == 21
+    # y los 28 dias de desfase: la UE ya cambio o todavia no, y EE.UU. no
+    assert ancla_utc(3, 12) == 21, "del 8 al 28 de marzo el ancla se adelanta y la UE no"
 
 
-def test_las_horas_de_la_operativa_cuelgan_del_huso_del_grafico(repo: Path) -> None:
-    """Las tres horas declaran el mismo huso que `huso_grafico`, o dirian cosas distintas."""
+def test_la_ventana_y_la_rejilla_h4_no_cuelgan_del_mismo_reloj(repo: Path) -> None:
+    """Son dos relojes, y el test anterior exigia que fueran uno.
+
+    Hasta ADR-0017 este test obligaba a que las tres horas declararan `huso_grafico`, que es justo
+    la confusion que costo cinco meses de velas H4 mal repartidas. La ventana es el horario del
+    trader como persona (`huso_operativa`); la rejilla H4 es la medianoche del servidor. Que
+    coincidan 337 dias al año no los hace el mismo reloj.
+    """
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    esperado = r.texto("huso_grafico")
-    for nombre in ("anclaje_h4", "ventana_inicio", "ventana_fin"):
-        assert r.hora(nombre).huso == esperado, nombre
+    operativa = r.texto("huso_operativa")
+    for nombre in ("ventana_inicio", "ventana_fin"):
+        assert r.hora(nombre).huso == operativa, nombre
+    assert r.hora("anclaje_h4").huso != operativa, (
+        "el ancla H4 volvio a colgar del reloj del trader: en invierno partiria mal las velas"
+    )

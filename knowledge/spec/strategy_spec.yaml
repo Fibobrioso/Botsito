@@ -18,23 +18,36 @@ version_esquema: 1
 reglas:
   # ---------------------------------------------------------------- marco y sesgo
   - id: RN-001
-    titulo: la ventana operativa son dos sesiones alineadas con H4
-    cuando: la hora del grafico esta entre ventana_inicio y ventana_fin
+    titulo: la ventana operativa es el horario del trader, no el de las velas
+    cuando: >-
+      la hora de pared en huso_operativa esta entre ventana_inicio y ventana_fin, en un dia de
+      dias_operables
     entonces: el bot busca entradas; fuera de esa ventana no opera
-    parametros: [ventana_inicio, ventana_fin, huso_grafico, dias_operables]
+    parametros: [ventana_inicio, ventana_fin, huso_operativa, dias_operables]
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
       sesiones
+    notas: >-
+      manda SU horario, no la rejilla. La ventana coincide con dos velas H4 completas 337 dias al
+      año; los otros 28 -del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no
+      cambian la hora el mismo dia- el ancla se ve a las 22:00 y el bot empieza una hora DENTRO de
+      la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual
+      sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre
+    decision: ADR-0017
     estado: VIGENTE
 
   - id: RN-002
     titulo: al llegar el fin de la ventana se cierra lo que quede abierto
     cuando: la hora del grafico alcanza ventana_fin y hay una operacion abierta
     entonces: se cierra a mercado si cierre_forzoso_fin_ventana
-    parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_grafico]
+    parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_operativa]
     cita: fb-2026-09-09-sesion-01-ffb528d7
     literal: la operativa se cierra a las 3pm en punto
+    notas: >-
+      "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia con el horario de
+      verano igual que la de cualquiera (ADR-0017)
+    decision: ADR-0017
     estado: VIGENTE
 
   - id: RN-003
@@ -43,14 +56,15 @@ reglas:
     entonces: >-
       el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia
-    parametros: [sesgo_h4_regla, anclaje_h4, huso_grafico]
+    parametros: [sesgo_h4_regla, anclaje_h4]
     cita: fb-2026-09-09-sesion-01-8eccf5c0
     literal: >-
       si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
       entonces seguiríamos operando bajista
     notas: >-
       el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
-      deja el sesgo alcista
+      deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO
+      huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017)
     estado: VIGENTE
 
   # ---------------------------------------------------------------- liquidez y entrada

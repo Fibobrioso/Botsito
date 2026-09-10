@@ -308,14 +308,14 @@ def test_version_sin_subir_detecta_una_spec_cambiada(tmp_path: Path) -> None:
 def test_el_hash_cubre_el_huso_de_las_horas(tmp_path: Path) -> None:
     """Cambiar el huso mueve la ventana operativa dos horas.
 
-    Sin `huso` en el hash, `Etc/GMT-2` -> `UTC` dejaba la spec diciendo ser la misma version con el
-    mismo hash, mientras el bot operaria de 07:00 a 15:00 UTC en vez de las del trader.
+    Sin `huso` en el hash, `Europe/Madrid` -> `UTC` dejaba la spec diciendo ser la misma version
+    con el mismo hash, mientras el bot operaria de 07:00 a 15:00 UTC en vez de las del trader.
     """
     repo = _copia_de_la_spec(tmp_path)
     antes = hash_de(repo)
     ruta = repo / "knowledge" / "spec" / "parametros.yaml"
     ruta.write_text(
-        ruta.read_text(encoding="utf-8").replace("huso: Etc/GMT-2", "huso: UTC"),
+        ruta.read_text(encoding="utf-8").replace("huso: Europe/Madrid", "huso: UTC"),
         encoding="utf-8",
         newline="\n",
     )

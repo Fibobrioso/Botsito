@@ -50,7 +50,7 @@ Todos verificados con su reproducción antes de tocar nada, y todos arreglados c
 ## 0 ter. La auditoría del consultor (2026-09-10), punto a punto
 
 Antes de validar F11 se auditó la rama otra vez, esta vez contra el negocio y no solo contra el
-código. Once puntos, tres de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
+código. Doce puntos, cuatro de ellos encontrados al arreglar los primeros. **Esta tabla se cierra fila
 a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag.**
 
 | # | Qué era | Estado |
@@ -66,6 +66,7 @@ a fila; mientras quede una fila ABIERTO, este informe no está listo para el tag
 | **P9** | `spec manifest --escribir` reescribía solo la línea `hash:`; `generado_el` no se actualizaba nunca (encontrado al cerrar P1) | **CERRADO** |
 | **P10** | MASTER_PLAN daba a F21 el criterio de aceptación `stop = −0,75 R`, pre-sesión: la spec validada dice 0,8, y la R no es la que ese criterio supone (encontrado al cerrar P1) | **CERRADO** |
 | **P11** | `spec status` contaba "con valor" y "sin él" como si cubrieran el registro; al aparecer los primeros `DEFAULT_AMBIGUOUS` dejó de sumar el total, y "sin valor" era falso para un default (encontrado al cerrar P2) | **CERRADO** |
+| **P12** | El reloj se había modelado como un offset fijo. El trader opera siempre a SU hora: es un reloj civil. Con `Etc/GMT-2` el ancla H4 caía una hora antes **todo el invierno** y repartía mal todas las velas, que es de donde sale el sesgo | **CERRADO** · ADR-0017 |
 
 ### P1 · la base del objetivo (cerrado el 2026-09-10)
 
@@ -169,6 +170,39 @@ Y el hash cubría de cada regla solo los campos ejecutables: la corrección de r
 **solo en las `notas` de RN-020** y se podía borrar sin mover `spec_version`, mientras el `titulo`
 de esa misma regla decía lo contrario que ellas. Ahora entran `titulo`, `literal`, `notas` y
 `decision`, y el título dice lo que la regla hace. Por eso `spec_version` sube a **2.0.0**.
+
+### P12 · el reloj era civil, no un offset fijo (cerrado el 2026-09-10)
+
+Al cerrar P2 quedaba A-14 como "medible". El consultor la cerró con una frase: **el trader opera
+siempre a la misma hora suya, sea cual sea la fecha, y no hay ninguna configuración deliberada de
+huso.** Eso es, por definición, un reloj civil — y `Etc/GMT-2` es un offset fijo, que dice lo
+contrario.
+
+Al separar el reloj del trader del reloj de la rejilla H4 salió la cuenta que nadie había hecho:
+
+| Fecha | Madrid | Nueva York | Primera H4 en su pantalla |
+|---|---|---|---|
+| 15 ene | UTC+1 | UTC−5 | **23:00** (22:00 UTC) |
+| 12 mar | UTC+1 | UTC−4 | **22:00** (21:00 UTC) |
+| 15 jul | UTC+2 | UTC−4 | **23:00** (21:00 UTC) |
+| 28 oct | UTC+1 | UTC−4 | **22:00** (21:00 UTC) |
+
+**337 días al año la ve a las 23:00** — por eso contestó *"es la misma hora"* y por eso parecía que
+no había pregunta. **28 días no**: del 8 al 28 de marzo y del 25 al 31 de octubre.
+
+Lo caro no era la ventana. En UTC el ancla es **21:00 en verano y 22:00 en invierno**: con un huso
+fijo el bot la habría calculado a las 21:00 UTC **los cinco meses de invierno**, una hora antes que
+la vela real, repartiendo mal **todas** las velas H4 — que es de donde sale el sesgo, lo primero de
+lo que cuelga la estrategia entera. **No habría fallado nada**: habría operado un mercado
+ligeramente distinto durante medio año.
+
+La solución no hubo que inventarla: **ADR-0005 ya la tenía escrita** — tres relojes,
+`huso_operativa = Europe/Madrid` y el reloj del servidor como `17:00 America/New_York`. ADR-0012 la
+rompió apoyándose en la afirmación que P2 desmontó. ADR-0017 la revierte.
+
+Y los 28 días de desfase son ahora una **decisión declarada**: manda su horario, el bot opera de
+07:00 a 15:00 de Madrid y esos días empieza una hora dentro de la vela. Por eso RN-001 cambia de
+título: afirmaba una alineación con H4 que no es cierta siempre.
 
 ### P9 · `generado_el` nunca se actualizaba (cerrado el 2026-09-10)
 

@@ -93,6 +93,8 @@ el terminal.
 
 ## Enmienda 2026-09-09 (F11, ADR-0012)
 
+**[REVOCADA el 2026-09-10 por ADR-0017: `huso_operativa` vuelve a `Europe/Madrid` y este ADR
+tenia razon. La enmienda de abajo se apoyaba en una afirmacion que no se sostiene; ver ADR-0015.]**
 `huso_operativa` deja de valer `Europe/Madrid`. Este ADR lo fijo asi cuando era la suposicion
 razonable: el trader es de Madrid y sus horas cuadraban. La sesion 1 lo desmintio en pantalla
 (`fr-v6-22982c02/3585000`): su grafico esta en **UTC+2 y no se ajusta al cambio de horario**, asi
