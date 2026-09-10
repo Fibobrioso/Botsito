@@ -113,15 +113,59 @@ reglas vigentes y los 54 parametros pasan enteros.
 PENDIENTE. Seccion obligatoria desde F05: no se programa hasta que este cerrada, con los hallazgos
 aceptados o descartados con su motivo.
 
-**Decisiones que hay que cerrar antes**, y que son del consultor:
+### Decisiones del consultor
 
-- **D1 · ¿Que forma ejecutable?** Tabla de decision (condicion -> accion, filas exhaustivas) frente a
-  predicados nombrados y compuestos, frente a dejarlo en prosa con una guardia de vocabulario cerrado.
-- **D2 · ¿F12 convierte las 24 reglas o solo define la forma y convierte un subconjunto piloto?**
-- **D3 · ¿Una regla vigente sin parametros (RN-005, RN-008, RN-009, RN-018) es legitima** o toda regla
-  tiene que nombrar al menos uno?
-- **D4 · Precedencia.** Si dos reglas aplican al mismo instante, ¿manda el orden del fichero, un campo
-  explicito, o es un error que dos apliquen a la vez?
+**D1 · PREDICADOS NOMBRADOS** (cerrada el 2026-09-10). `cuando` y `entonces` se componen de
+predicados con nombre, definidos UNA vez en su propio fichero y reutilizados por las reglas:
+
+```yaml
+# strategy_spec.yaml
+RN-004:
+  cuando:
+    - alcanza: liquidez_m15
+    - cierra_con_cuerpo_al_otro_lado: true
+  entonces:
+    - marcar: liquidez_tomada
+
+# predicados.yaml
+cierra_con_cuerpo_al_otro_lado:
+  parametros: [liquidez_m15_criterio_toma]
+  cita: fb-2026-09-09-sesion-01-6e15504f
+```
+
+Se descarta la **tabla de decision** -que es lo que MASTER_PLAN nombra literalmente- por el riesgo
+que este brief ya anotaba: la geometria de velas no cabe en columnas booleanas sin meter prosa dentro
+de las celdas, y entonces el problema solo cambia de sitio. Se descarta la **prosa con vocabulario
+cerrado** porque deja el peso real en F22 y no cierra la deuda del §8.
+
+Un predicado lleva su propia `cita` y sus propios `parametros`, asi que **hereda gratis las ocho
+guardias que la auditoria de F11 ya construyo**: literal contra cita, parametros que existen, ADR
+declarado si opera sobre entorno, y nada de cifras. F12 valida ademas que exista, que no se duplique
+y que no se contradiga con otro. **F22 implementa cada predicado**; ese es el limite entre las dos.
+
+**D2 · PILOTO DE CUATRO, luego el resto** (cerrada el 2026-09-10). Se convierten primero las cuatro
+mas dificiles, y solo si la forma las aguanta se hacen las veinte restantes:
+
+| Regla | Por que es dificil |
+|---|---|
+| RN-003 | sesgo por ruptura del extremo con **mecha**, y un equal no cuenta: geometria pura |
+| RN-006 | la orden se reubica **al completarse cada zona de control**: no es por vela ni por tiempo |
+| RN-014 | el break even lo dispara la ruptura de una zona que **se forma despues** de la entrada |
+| RN-020 | acumulacion con **dos bases distintas** y un corte de dia que es un default nuestro |
+
+Si la forma falla, se cambia habiendo gastado cuatro reglas y no veinticuatro.
+
+### Pendientes, a cerrar CON la evidencia del piloto
+
+- **D3 · ¿Una regla vigente sin parametros es legitima?** Son cuatro (RN-005, RN-008, RN-009,
+  RN-018) y todas son prohibiciones puras. Con predicados nombrados es probable que dejen de estar
+  vacias -pasan a nombrar predicados en vez de parametros-, asi que la pregunta puede disolverse
+  sola. Se decide al terminar el piloto, no antes.
+- **D4 · Precedencia** entre reglas que aplican al mismo instante: orden del fichero, campo
+  explicito, o error. El piloto incluye RN-020, que es la que mas probablemente choque con otra
+  (el freno del dia corta lo que las demas permiten), asi que dara el caso real sobre el que decidir.
+
+**Revision de diseno por agente: PENDIENTE.** El ritual la exige antes de programar.
 
 ## Que habilita
 
