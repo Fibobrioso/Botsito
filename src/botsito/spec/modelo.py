@@ -650,15 +650,42 @@ def comprobar_forma(
                         )
 
     # Un hecho que nadie consume es una regla que no sirve; uno que nadie produce, una inalcanzable.
+    # Y NO basta con mirar la declaracion: hay que compararla con lo que las formas hacen de verdad.
+    # Comprobando solo la declaracion, `operativa_detenida` decia "consume: [RN-001]" mientras
+    # RN-001 no lo leia, asi que el tope del 4,5 % prohibia abrir en el tick del evento y nada
+    # impedia abrir en el siguiente; y `operacion_abierta` decia producirse en RN-011 sin que nadie
+    # lo produjera, dejando el cierre forzoso y el break even INALCANZABLES. Los tres pasaban.
+    import json as _json
+
     ids_regla = {r.id for r in reglas}
+    reales: dict[str, dict[str, list[str]]] = {}
+    for nombre in hechos:
+        reales[nombre] = {"produce": [], "consume": []}
+        for r in reglas:
+            if not isinstance(r.forma, dict):
+                continue
+            for papel, rama in (("consume", "cuando"), ("produce", "entonces")):
+                if nombre in _json.dumps(r.forma.get(rama, {}), ensure_ascii=False):
+                    reales[nombre][papel].append(r.id)
+
     for nombre, h in sorted(hechos.items()):
         for papel in ("produce", "consume"):
-            lista = h.get(papel) or []
-            if not lista:
-                problemas.append(f"hecho '{nombre}': nadie lo {papel}")
-            for rid in lista:
+            declarado = sorted(h.get(papel) or [])
+            for rid in declarado:
                 if rid not in ids_regla:
                     problemas.append(f"hecho '{nombre}': {papel} {rid}, que no existe")
+            real = sorted(reales[nombre][papel])
+            if not real:
+                motivo = (
+                    "nadie lo establece y quien lo lee es inalcanzable"
+                    if papel == "produce"
+                    else "quien lo establece no frena nada"
+                )
+                problemas.append(f"hecho '{nombre}': NINGUNA regla lo {papel} de verdad; {motivo}")
+            elif real != declarado:
+                problemas.append(
+                    f"hecho '{nombre}': declara {papel}={declarado} y en las formas es {real}"
+                )
 
     for nombre, a in sorted(acumuladores.items()):
         for campo in ("base", "reinicia_con"):

@@ -639,3 +639,51 @@ def test_los_dos_esquemas_de_entrada_estan_definidos(repo: Path) -> None:
         if r.vigente and isinstance(r.forma, dict) and r.forma.get("pendiente_definicion")
     ]
     assert pendientes == [], f"reglas vigentes declaradas no ejecutables: {pendientes}"
+
+
+def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:
+    """La guardia miraba la DECLARACION y no la realidad, y pasaban tres fallos caros.
+
+    `operativa_detenida` declaraba `consume: [RN-001]` mientras RN-001 no lo leia: el tope diario
+    del 4,5 %, el semanal y el corte por cartuchos prohibian abrir EN EL TICK DEL EVENTO y nada
+    impedia abrir en el siguiente. En cuenta fondeada eso no cuesta un trade.
+
+    `operacion_abierta` declaraba producirse en RN-011 -que solo coloca la orden- asi que NADIE lo
+    producia, y RN-002 (cierre forzoso a las 15:00) y RN-014 (break even) eran INALCANZABLES.
+
+    Y `operaciones_abiertas` se invocaba como acumulador sin estar declarado como tal.
+    """
+    import json
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+    assert comprobar_forma(reglas, vocabulario, parametros) == []
+
+    # los dos frenos DURAN: quien los fija tambien los lee, o solo valdrian un instante
+    for freno in ("detenido_por_tope", "detenido_por_cartuchos"):
+        h = vocabulario["hechos"][freno]
+        assert h["produce"], freno
+        assert "RN-001" in h["consume"], f"{freno}: el gate maestro tiene que leerlo"
+        assert set(h["produce"]) <= set(h["consume"]), (
+            f"{freno}: quien lo fija tiene que seguir viendolo, o el freno dura un tick"
+        )
+
+    # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion
+    por_id = {r.id: r for r in reglas}
+    productor = next(
+        r.id
+        for r in reglas
+        if isinstance(r.forma, dict)
+        and "operacion_abierta" in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
+    )
+    assert productor == "RN-013"
+    for consumidor in ("RN-002", "RN-014"):
+        forma = por_id[consumidor].forma
+        assert isinstance(forma, dict)
+        assert "operacion_abierta" in json.dumps(forma.get("cuando", {}), ensure_ascii=False), (
+            consumidor
+        )

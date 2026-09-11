@@ -63,6 +63,13 @@ predicados:
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
       sesiones
+  operaciones_abiertas_alcanzan:
+    descripcion: el numero de posiciones vivas llega al tope declarado
+    argumentos: [tope]
+    cita: ev-v4-003710-c753f3d3
+    literal: >-
+      ya la respuesta es no o sea, por el hecho de que para que tú puedas entrar nuevamente o
+      bien te ha tocado stop loss
   alcanza_tope:
     descripcion: un acumulador llega al tope declarado
     argumentos: [acumulador, tope]
@@ -232,19 +239,28 @@ hechos:
   sesgo:
     descripcion: el sentido en el que se busca entrada
     produce: [RN-003]
-    consume: [RN-005]
+    consume: [RN-003, RN-005]
   orden_limite_pendiente:
     descripcion: hay una orden colocada y todavia sin llenar
-    produce: [RN-011]
+    produce: [RN-011, RN-013]
     consume: [RN-006]
   operacion_abierta:
     descripcion: hay una posicion viva
-    produce: [RN-011]
-    consume: [RN-014, RN-018]
-  operativa_detenida:
-    descripcion: el bot deja de abrir hasta el corte siguiente
+    produce: [RN-013]
+    consume: [RN-002, RN-014]
+  detenido_por_tope:
+    descripcion: >-
+      el tope porcentual -diario o semanal- esta alcanzado y no se abre hasta el corte siguiente.
+      Es un HECHO que dura, no un instante: sin el, la prohibicion de RN-020 solo valia en el tick
+      del evento y nada impedia abrir en el siguiente
     produce: [RN-020]
-    consume: [RN-001]
+    consume: [RN-001, RN-020]
+  detenido_por_cartuchos:
+    descripcion: >-
+      los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope
+      porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia
+    produce: [RN-016]
+    consume: [RN-001, RN-016]
 
 # Lo que se suma o se cuenta, con su BASE y su REINICIO explicitos. Sin esto, que agotar los
 # cartuchos NO acote el dia -porque su reinicio no es diario- solo se puede descubrir leyendo
@@ -289,12 +305,15 @@ reglas:
     decision: ADR-0017
     forma:
       cuando:
-        ninguno_de:
-          - en_ventana:
-              inicio: ventana_inicio
-              fin: ventana_fin
-              huso: huso_operativa
-              dias: dias_operables
+        cualquiera_de:
+          - ninguno_de:
+              - en_ventana:
+                  inicio: ventana_inicio
+                  fin: ventana_fin
+                  huso: huso_operativa
+                  dias: dias_operables
+          - hecho: detenido_por_tope
+          - hecho: detenido_por_cartuchos
       entonces:
         prohibe: [buscar_entradas, abrir_operacion]
     clase: gate
@@ -605,7 +624,9 @@ reglas:
           - se_activa_entrada: {por: cualquier_esquema}
       entonces:
         hace:
-          - escribir_stop_en_la_orden: {nivel: stop_fraccion_caja}
+          - escribir_stop_en_la_orden: {donde: stop_en_orden_pendiente, nivel: stop_fraccion_caja}
+          - fijar: {hecho: operacion_abierta, a: si}
+          - fijar: {hecho: orden_limite_pendiente, a: no}
     clase: disparador
     estado: VIGENTE
 
@@ -683,13 +704,15 @@ reglas:
     notas: el contador NO es diario; se reinicia con la siguiente liquidez de M15
     forma:
       cuando:
-        todos_de:
-          - se_cierra_operacion: {resultado: perdida}
-          - alcanza_tope: {acumulador: cartuchos, tope: cartuchos_max}
+        cualquiera_de:
+          - todos_de:
+              - se_cierra_operacion: {resultado: perdida}
+              - alcanza_tope: {acumulador: cartuchos, tope: cartuchos_max}
+          - hecho: detenido_por_cartuchos
       entonces:
         prohibe: [abrir_operacion]
         hace:
-          - fijar: {hecho: operativa_detenida, a: hasta_cartuchos_reinicio}
+          - fijar: {hecho: detenido_por_cartuchos, a: hasta_cartuchos_reinicio}
     clase: gate
     estado: VIGENTE
 
@@ -728,7 +751,7 @@ reglas:
     forma:
       cuando:
         todos_de:
-          - alcanza_tope: {acumulador: operaciones_abiertas, tope: operaciones_simultaneas_max}
+          - operaciones_abiertas_alcanzan: {tope: operaciones_simultaneas_max}
       entonces:
         prohibe: [abrir_operacion]
     clase: gate
@@ -784,10 +807,11 @@ reglas:
         cualquiera_de:
           - alcanza_tope: {acumulador: perdida_dia, tope: perdida_maxima_diaria}
           - alcanza_tope: {acumulador: perdida_semana, tope: perdida_maxima_semanal}
+          - hecho: detenido_por_tope
       entonces:
         prohibe: [abrir_operacion]
         hace:
-          - fijar: {hecho: operativa_detenida, a: hasta_el_corte_siguiente}
+          - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
     clase: gate
     estado: VIGENTE
 
