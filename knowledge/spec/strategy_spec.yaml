@@ -28,7 +28,88 @@
 # Y dos reglas de la MISMA clase que actuan sobre el mismo evento son un ERROR de validacion con
 # los dos ids en el mensaje, hasta que una de las dos gane su precondicion.
 
-version_esquema: 2
+version_esquema: 3
+
+# ---------------------------------------------------------------------------------------------
+# FORMA EJECUTABLE (F12, ADR-0019). PILOTO: solo cuatro reglas la llevan todavia -RN-003, RN-006,
+# RN-014 y RN-020, las cuatro mas dificiles-. Las demas siguen en prosa y `spec status` dice
+# cuantas faltan. Si la forma no aguanta estas cuatro, se cambia habiendo gastado cuatro y no
+# veinticuatro.
+#
+# Un predicado NO lleva valores: lleva argumentos, y todo argumento de valor es el NOMBRE de un
+# parametro del registro. El ejemplo que se descarto -`cierra_con_cuerpo_al_otro_lado`- horneaba
+# el valor `cuerpo` en el nombre, y ese parametro admite tambien `mecha`: dos puertas para el
+# mismo hecho (ADR-0002).
+
+predicados:
+  rompe:
+    descripcion: el sujeto supera el extremo de la referencia, con el criterio declarado
+    argumentos: [que, contra, criterio]
+    cita: fb-2026-09-09-sesion-01-8eccf5c0
+    literal: >-
+      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
+      entonces seguiríamos operando bajista
+  se_completa_zona_de_control:
+    descripcion: el precio rompe el punto extremo anterior y deja la zona cerrada
+    argumentos: [criterio]
+    cita: fb-2026-09-09-sesion-01-a456bc3f
+    literal: >-
+      como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento
+      [...] rompe el punto alto anterior con mecha, con mecha no importa
+  abre_sesion_operativa:
+    descripcion: empieza una de las sesiones de la ventana
+    argumentos: []
+    cita: fb-2026-09-09-sesion-01-8741c388
+    literal: >-
+      Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
+      sesiones
+  alcanza_tope:
+    descripcion: un acumulador llega al tope declarado
+    argumentos: [acumulador, tope]
+    cita: fb-2026-09-09-sesion-01-bff260ea
+    literal: >-
+      De la cuenta basado en el saldo, y que sea en el saldo inicial del día
+
+# Estado del bot, no geometria del mercado. Cada hecho dice QUIEN lo produce y QUIEN lo consume:
+# un hecho que nadie consume es una regla que no sirve para nada, y uno que nadie produce es una
+# regla inalcanzable. La prosa no permitia ver ninguna de las dos cosas.
+hechos:
+  sesgo:
+    descripcion: el sentido en el que se busca entrada
+    produce: [RN-003]
+    consume: [RN-005]
+  orden_limite_pendiente:
+    descripcion: hay una orden colocada y todavia sin llenar
+    produce: [RN-011]
+    consume: [RN-006]
+  operacion_abierta:
+    descripcion: hay una posicion viva
+    produce: [RN-011]
+    consume: [RN-014, RN-018]
+  operativa_detenida:
+    descripcion: el bot deja de abrir hasta el corte siguiente
+    produce: [RN-020]
+    consume: [RN-001]
+
+# Lo que se suma o se cuenta, con su BASE y su REINICIO explicitos. Sin esto, que agotar los
+# cartuchos NO acote el dia -porque su reinicio no es diario- solo se puede descubrir leyendo
+# parrafos, que es como se descubrio: a mano, el 2026-09-09.
+acumuladores:
+  perdida_dia:
+    descripcion: perdida acumulada desde el corte del dia de riesgo
+    base: base_calculo_perdida_diaria
+    reinicia_con: reloj_dia_riesgo
+    cita: fb-2026-09-09-sesion-01-462134c7
+  perdida_semana:
+    descripcion: perdida acumulada desde el corte de la semana
+    base: base_calculo_perdida_semanal
+    reinicia_con: reloj_dia_riesgo
+    cita: fb-2026-09-09-sesion-01-a85b6bc7
+  cartuchos:
+    descripcion: perdidas que cuentan como intento
+    base: cartucho_criterio
+    reinicia_con: cartuchos_reinicio
+    cita: fb-2026-09-09-sesion-01-e3eedcaa
 
 reglas:
   # ---------------------------------------------------------------- marco y sesgo
@@ -84,6 +165,17 @@ reglas:
       el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
       deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO
       huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017)
+    forma:
+      cuando:
+        todos_de:
+          - abre_sesion_operativa: {}
+          - rompe:
+              que: vela_h4_previa
+              contra: extremo_de_la_h4_anterior
+              criterio: sesgo_h4_criterio_ruptura
+      entonces:
+        hace:
+          - fijar: {hecho: sesgo, a: sentido_de_la_ruptura}
     clase: disparador
     estado: VIGENTE
 
@@ -135,6 +227,16 @@ reglas:
       abiertas son cero", que es un PROXY FALSO -tras un stop o un break even la cuenta vuelve a
       cero y la orden limite ya no existe, porque se lleno-, y ademas metia un numero de negocio
       en un campo ejecutable. La condicion es que la orden exista y siga pendiente
+    forma:
+      cuando:
+        todos_de:
+          - hecho: orden_limite_pendiente
+          - se_completa_zona_de_control:
+              liga: Z
+              criterio: zona_control_criterio_completada
+      entonces:
+        hace:
+          - reubicar_orden_limite: {a: Z, cadencia: reubicacion_cadencia}
     clase: disparador
     estado: VIGENTE
 
@@ -261,6 +363,19 @@ reglas:
     notas: >-
       el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
       despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
+    forma:
+      cuando:
+        todos_de:
+          - hecho: operacion_abierta
+            liga: OP
+          - se_completa_zona_de_control:
+              liga: Z
+              criterio: break_even_criterio_ruptura
+              distinta_de: OP.zona_de_entrada
+              posterior_a: OP.instante_entrada
+      entonces:
+        hace:
+          - mover_stop: {de: OP, a: OP.precio_entrada, cuando: break_even_condicion}
     clase: disparador
     estado: VIGENTE
 
@@ -368,6 +483,15 @@ reglas:
       lo que dijo el trader en cada caso- y el corte lo marca reloj_dia_riesgo, que sigue siendo
       un default nuestro (A-19)
     decision: ADR-0015
+    forma:
+      cuando:
+        cualquiera_de:
+          - alcanza_tope: {acumulador: perdida_dia, tope: perdida_maxima_diaria}
+          - alcanza_tope: {acumulador: perdida_semana, tope: perdida_maxima_semanal}
+      entonces:
+        prohibe: [abrir_operacion]
+        hace:
+          - fijar: {hecho: operativa_detenida, a: hasta_el_corte_siguiente}
     clase: gate
     estado: VIGENTE
 

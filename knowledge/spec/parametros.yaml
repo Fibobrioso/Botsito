@@ -264,6 +264,52 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-8eccf5c0
+  - nombre: sesgo_h4_criterio_ruptura
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar por rota la vela H4 previa
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura del extremo de la H4 anterior, del que depende el sesgo. Vivia dentro
+      del nombre del enum `sesgo_h4_regla` (`vela_anterior_cierre_mecha`), que mezclaba sujeto y
+      criterio; la forma ejecutable de F12 lo separa porque el criterio es un ARGUMENTO del
+      predicado `rompe`, y escribirlo a pelo seria un valor de negocio en un campo ejecutable
+    estado: CONFIRMED
+    valor: "mecha"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-8eccf5c0
+  - nombre: zona_control_criterio_completada
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar una zona de control por completada
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura del punto extremo anterior que completa una zona de control. El trader
+      lo dice con todas las letras -"con mecha no importa"- y hasta ahora vivia solo en la
+      definicion del glosario
+    estado: CONFIRMED
+    valor: "mecha"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a456bc3f
+  - nombre: break_even_criterio_ruptura
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar por rota la zona que dispara el break even
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el
+      break even. Es exactamente lo que pregunta A-13, y sigue ABIERTA: el trader se desdice a los
+      doce minutos. Entra `mecha` por coherencia con los otros dos criterios, pero es un DEFAULT
+      NUESTRO. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
+      nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
+    estado: DEFAULT_AMBIGUOUS
+    valor: "mecha"
+    ambiguedad_id: A-13
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-0ccafcba
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum

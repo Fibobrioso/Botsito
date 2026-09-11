@@ -62,7 +62,7 @@ ambiguedades:
       - ev-v4-004447-bc2e74ee
       - ev-v2-003103-31d872da
       - ev-v5-000427-f8d5d36d
-    parametros: [break_even_condicion]
+    parametros: [break_even_condicion, break_even_criterio_ruptura]
     contradiccion: null
     estado: RESUELTA
     bloqueante: true

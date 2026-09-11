@@ -420,8 +420,10 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         SpecError,
         Termino,
         cargar_reglas,
+        cargar_vocabulario,
         comprobar_contra,
         comprobar_decisiones,
+        comprobar_forma,
         comprobar_literales,
         comprobar_precedencia,
     )
@@ -467,6 +469,11 @@ def validar(repo: Path) -> tuple[int, list[str]]:
                         )
             # Y que la precedencia no la decida el orden del fichero, que es editorial.
             problemas_spec += comprobar_precedencia(reglas)
+            # Y la forma ejecutable, donde la haya: vocabulario que existe y argumentos de valor
+            # que llevan el NOMBRE del parametro y no su valor (F12, ADR-0019).
+            problemas_spec += comprobar_forma(
+                reglas, cargar_vocabulario(ruta_spec), set(registro.nombres())
+            )
             # Y que ni una regla ni un termino citen un registro revocado. La guardia gemela solo
             # miraba `parametros.yaml`, asi que RN-013 acabo citando uno en el propio commit que
             # arreglaba esto para los parametros.
@@ -486,8 +493,9 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             return 1, salida
         vigentes = sum(1 for r in reglas if r.vigente)
         salida.append(
-            f"OK: {len(reglas)} reglas de spec ({vigentes} vigentes), {len(terminos)} terminos de "
-            f"glosario, hash del manifiesto al dia"
+            f"OK: {len(reglas)} reglas de spec ({vigentes} vigentes, "
+            f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable), "
+            f"{len(terminos)} terminos de glosario, hash del manifiesto al dia"
         )
 
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.

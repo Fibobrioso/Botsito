@@ -659,7 +659,9 @@ def spec_status(repo: Path) -> int:
     print(f"spec {manifiesto['spec_version']} · hash {str(manifiesto['hash'])[:12]}…")
     print(
         f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
-        f"{sum(1 for r in reglas if not r.vigente)} descartadas"
+        f"{sum(1 for r in reglas if not r.vigente)} descartadas; "
+        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable y "
+        f"{sum(1 for r in reglas if r.vigente and r.forma is None)} todavia en prosa"
     )
     confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
     unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]

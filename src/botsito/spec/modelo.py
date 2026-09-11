@@ -38,7 +38,7 @@ CAMPOS_REGLA = {
     "clase",
     "estado",
 }
-CAMPOS_REGLA_OPCIONALES = {"notas", "decision", "complementa"}
+CAMPOS_REGLA_OPCIONALES = {"notas", "decision", "complementa", "forma"}
 CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 
@@ -168,6 +168,9 @@ class Regla:
     # efecto dicho para otro caso. Sin este campo, dos reglas que se solapan a proposito son
     # indistinguibles de dos que se pisan por accidente.
     complementa: tuple[str, ...] = ()
+    # La forma ejecutable (F12, ADR-0019). `None` mientras la regla siga en prosa: el piloto son
+    # cuatro, y `spec status` dice cuantas faltan en vez de fingir que estan todas.
+    forma: Any | None = None
 
     @property
     def vigente(self) -> bool:
@@ -209,9 +212,10 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise SpecError(f"{ruta.name}: {exc}") from exc
-    if not isinstance(doc, dict) or set(doc) != {"version_esquema", "reglas"}:
-        raise SpecError(f"{ruta.name}: se esperan 'version_esquema' y 'reglas'")
-    if doc["version_esquema"] != 2:
+    esperadas = {"version_esquema", "reglas", "predicados", "hechos", "acumuladores"}
+    if not isinstance(doc, dict) or not {"version_esquema", "reglas"} <= set(doc) <= esperadas:
+        raise SpecError(f"{ruta.name}: se esperan {sorted(esperadas)}")
+    if doc["version_esquema"] != 3:
         raise SpecError(f"{ruta.name}: version_esquema desconocida {doc['version_esquema']!r}")
     bruto = doc["reglas"]
     if not isinstance(bruto, list) or not bruto:
@@ -272,6 +276,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
                 notas=" ".join(str(r["notas"]).split()) if r.get("notas") else None,
                 decision=str(r["decision"]).strip() if r.get("decision") else None,
                 complementa=tuple(str(c).strip() for c in comp),
+                forma=r.get("forma"),
             )
         )
     return reglas
@@ -484,5 +489,105 @@ def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
                     f"un subconjunto de los de {mayor}; se solapan y nada dice cual manda. Si es "
                     f"a proposito -un invariante, o el mismo efecto para otro caso- declaralo con "
                     f"`complementa: [{mayor}]`"
+                )
+    return problemas
+
+
+def cargar_vocabulario(ruta: Path) -> dict[str, dict[str, Any]]:
+    """Predicados, hechos y acumuladores: el vocabulario con el que se escribe una regla.
+
+    Viven en el MISMO fichero que las reglas y no en uno aparte. Un cuarto fichero rompia el
+    contrato del hash por las dos vias -`cargar_manifiesto` exige `len(cubre) == 3`, ADR-0013 §5
+    dice "los TRES ficheros" y MASTER_PLAN H.2 lo repite-, asi que habria obligado a enmendar los
+    dos documentos a cambio de que alguien pudiera hashear tres de cuatro (ADR-0019).
+    """
+    try:
+        doc = leer_yaml(ruta)
+    except (OSError, YamlError) as exc:
+        raise SpecError(f"{ruta.name}: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise SpecError(f"{ruta.name}: no es un mapa")
+    salida: dict[str, dict[str, Any]] = {}
+    for seccion in ("predicados", "hechos", "acumuladores"):
+        bruto = doc.get(seccion) or {}
+        if not isinstance(bruto, dict):
+            raise SpecError(f"{ruta.name}: '{seccion}' debe ser un mapa")
+        salida[seccion] = bruto
+    return salida
+
+
+def _invocaciones(nodo: Any) -> list[tuple[str, dict[str, Any]]]:
+    """Todas las llamadas a predicado que hay en un arbol `cuando`/`entonces`."""
+    fuera: list[tuple[str, dict[str, Any]]] = []
+    if isinstance(nodo, list):
+        for x in nodo:
+            fuera += _invocaciones(x)
+    elif isinstance(nodo, dict):
+        for clave, valor in nodo.items():
+            if clave in ("todos_de", "cualquiera_de", "ninguno_de", "cuando", "entonces", "hace"):
+                fuera += _invocaciones(valor)
+            elif isinstance(valor, dict):
+                fuera.append((str(clave), valor))
+    return fuera
+
+
+def comprobar_forma(
+    reglas: list[Regla], vocabulario: dict[str, dict[str, Any]], parametros: set[str]
+) -> list[str]:
+    """Que la forma ejecutable use vocabulario que existe y no esconda valores de negocio.
+
+    Es lo que F12 aporta y la prosa no permitia: un `cuando` en español se puede leer de dos
+    maneras y nadie lo nota; una invocacion a un predicado que no existe, o un argumento de valor
+    que no es el nombre de un parametro, se ven a la primera y se nombran por su id.
+    """
+    problemas: list[str] = []
+    predicados = vocabulario["predicados"]
+    hechos = vocabulario["hechos"]
+    acumuladores = vocabulario["acumuladores"]
+    # Los argumentos que NO nombran un parametro: ligaduras, referencias y sujetos de geometria.
+    estructurales = {"liga", "distinta_de", "posterior_a", "que", "contra", "a", "de", "acumulador"}
+
+    for r in reglas:
+        if r.forma is None:
+            continue
+        for nombre, args in _invocaciones(r.forma):
+            if nombre in ("hecho", "fijar", "prohibe", "permite"):
+                continue
+            if nombre in predicados:
+                declarados = set(predicados[nombre].get("argumentos") or [])
+                sobran = sorted(set(args) - declarados - estructurales)
+                if sobran:
+                    problemas.append(
+                        f"{r.id}: llama a '{nombre}' con argumentos que no declara: {sobran}"
+                    )
+            elif nombre not in ("reubicar_orden_limite", "mover_stop"):
+                problemas.append(f"{r.id}: invoca '{nombre}', que no esta en `predicados`")
+            for clave, valor in args.items():
+                if clave in estructurales or not isinstance(valor, str):
+                    continue
+                es_de_valor = clave in ("tope", "cadencia") or clave.endswith("criterio")
+                if es_de_valor and valor not in parametros:
+                    problemas.append(
+                        f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
+                        f"del registro; un argumento de valor lleva el NOMBRE, no el valor"
+                    )
+
+    # Un hecho que nadie consume es una regla que no sirve; uno que nadie produce, una inalcanzable.
+    ids_regla = {r.id for r in reglas}
+    for nombre, h in sorted(hechos.items()):
+        for papel in ("produce", "consume"):
+            lista = h.get(papel) or []
+            if not lista:
+                problemas.append(f"hecho '{nombre}': nadie lo {papel}")
+            for rid in lista:
+                if rid not in ids_regla:
+                    problemas.append(f"hecho '{nombre}': {papel} {rid}, que no existe")
+
+    for nombre, a in sorted(acumuladores.items()):
+        for campo in ("base", "reinicia_con"):
+            valor = a.get(campo)
+            if valor not in parametros:
+                problemas.append(
+                    f"acumulador '{nombre}': '{campo}' vale {valor!r}, que no es un parametro"
                 )
     return problemas

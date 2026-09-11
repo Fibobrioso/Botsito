@@ -112,6 +112,10 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
                     "parametros",
                     "clase",
                     "complementa",
+                    # `forma` es LO QUE EL MOTOR EJECUTA: si queda fuera, cambiar un predicado o un
+                    # argumento no moveria la version. Es el mismo fallo que P5 encontro con
+                    # `notas`, en el campo mas ejecutable de todos.
+                    "forma",
                     "cita",
                     "literal",
                     "notas",
@@ -131,7 +135,18 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
         )
     terminos.sort(key=lambda t: str(t["termino"]))
 
-    return {"parametros": parametros, "reglas": reglas, "terminos": terminos}
+    # El vocabulario con el que se escriben las reglas entra tambien: cambiar los argumentos de un
+    # predicado, la base de un acumulador o quien produce un hecho cambia lo que el bot hace.
+    vocabulario = {
+        seccion: _canonico(spec.get(seccion) or {})
+        for seccion in ("predicados", "hechos", "acumuladores")
+    }
+    return {
+        "parametros": parametros,
+        "reglas": reglas,
+        "terminos": terminos,
+        **vocabulario,
+    }
 
 
 def hash_de(repo: Path) -> str:

@@ -40,7 +40,7 @@ def _regla(**cambios: Any) -> dict[str, Any]:
 def _escribir(tmp_path: Path, reglas: list[dict[str, Any]]) -> Path:
     ruta = tmp_path / "strategy_spec.yaml"
     ruta.write_text(
-        yaml.safe_dump({"version_esquema": 2, "reglas": reglas}, allow_unicode=True),
+        yaml.safe_dump({"version_esquema": 3, "reglas": reglas}, allow_unicode=True),
         encoding="utf-8",
         newline="\n",
     )
@@ -477,3 +477,79 @@ def test_las_cardinalidades_de_negocio_no_pueden_vivir_en_la_prosa(tmp_path: Pat
     ):
         with pytest.raises(SpecError, match=aguja):
             cargar_reglas(_escribir(tmp_path, [_regla(cuando=prosa)]))
+
+
+def test_el_piloto_de_la_forma_ejecutable_carga_y_se_valida() -> None:
+    """Las cuatro reglas mas dificiles, en predicados con argumentos (ADR-0019).
+
+    La forma decidida en D1 -predicado = nombre + booleano- aguantaba UNA de ocho. El piloto son
+    RN-003 (sujeto, referencia y criterio distintos sobre la misma primitiva), RN-006 (ligadura:
+    "la zona recien completada"), RN-014 (ligadura + cuantificador: "otra zona POSTERIOR a la
+    entrada") y RN-020 (dos acumuladores con base y reinicio propios).
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+    parametros = set(registro.nombres())
+
+    con_forma = {r.id for r in reglas if r.forma is not None}
+    assert con_forma == {"RN-003", "RN-006", "RN-014", "RN-020"}
+    assert comprobar_forma(reglas, vocabulario, parametros) == []
+
+
+def test_la_forma_no_puede_esconder_un_valor_de_negocio() -> None:
+    """El fallo que hundio la primera version de D1, ahora mecanizado.
+
+    El ejemplo canonico del brief era `cierra_con_cuerpo_al_otro_lado`: el VALOR `cuerpo` horneado
+    en el NOMBRE de un predicado cuyo parametro admite tambien `mecha`. Dos puertas para el mismo
+    hecho (ADR-0002), y ninguna de las guardias heredadas lo veia.
+    """
+    import copy
+    import dataclasses
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+    base = next(r for r in reglas if r.id == "RN-003")
+
+    def falla(forma: dict[str, Any], aguja: str) -> None:
+        rota = dataclasses.replace(base, forma=forma)
+        assert any(aguja in p for p in comprobar_forma([rota], vocabulario, parametros)), aguja
+
+    # el valor en vez del nombre del parametro
+    falla(
+        {"cuando": {"todos_de": [{"rompe": {"que": "x", "criterio": "mecha"}}]}},
+        "lleva el NOMBRE, no el valor",
+    )
+    # un predicado que nadie declara
+    falla(
+        {"cuando": {"todos_de": [{"inventado": {"criterio": "sesgo_h4_criterio_ruptura"}}]}},
+        "que no esta en `predicados`",
+    )
+    # un argumento que el predicado no admite
+    falla({"cuando": {"todos_de": [{"rompe": {"inventado": True}}]}}, "que no declara")
+
+    # y un acumulador cuya base no es un parametro del registro
+    roto = copy.deepcopy(vocabulario)
+    roto["acumuladores"]["perdida_dia"]["base"] = "saldo_inicial_dia"
+    assert any("acumulador" in p for p in comprobar_forma([], roto, parametros))
+
+
+def test_el_hash_cubre_la_forma_y_el_vocabulario() -> None:
+    """`forma` es lo que el motor ejecuta: fuera del hash, cambiarla no moveria la version.
+
+    Es el mismo fallo que P5 encontro con `notas`, esta vez en el campo mas ejecutable de todos.
+    """
+    from botsito.spec.manifiesto import estructura_para_hash
+
+    estructura = estructura_para_hash(REPO)
+    assert {"predicados", "hechos", "acumuladores"} <= set(estructura)
+    rn003 = next(r for r in estructura["reglas"] if r["id"] == "RN-003")
+    assert rn003.get("forma") is not None, "el hash no cubre la forma ejecutable"
+    assert estructura["acumuladores"]["cartuchos"]["reinicia_con"] == "cartuchos_reinicio"
