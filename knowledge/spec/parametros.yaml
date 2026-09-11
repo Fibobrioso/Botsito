@@ -322,17 +322,17 @@ parametros:
     unidad: en_la_orden/tras_el_llenado
     opciones: ["en_la_orden", "tras_el_llenado"]
     descripcion: >-
-      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). OJO, del barrido de
-      fidelidad del 2026-09-10: el literal de su cita -"el primer stop loss es para el calculo del
-      lotaje y el segundo es para proteccion"- establece que hay DOS stops y para que sirve cada
-      uno, pero no dice cual de los dos viaja en la orden. `en_la_orden` es una inferencia: el
-      lote se calcula antes de enviar la orden, y ev-v4-001207-0c4ffd4b habla del "stop loss que
-      se va a introducir en la operacion". Razonable, pero es nuestra, no suya
+      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). RESPONDIDO por el
+      trader el 2026-09-10: "el SL se pone junto a la orden limite, no cuando se apertura recien".
+      Deja de ser la inferencia que el barrido de fidelidad habia marcado. Consecuencia para el
+      motor: la orden pendiente NACE con su stop, asi que no hay evento "mover el stop tras el
+      llenado" que implementar, y RN-026 tiene que comprobar instrumento_stops_level en el momento
+      de COLOCAR, no despues
     estado: CONFIRMED
-    valor: "en_la_orden"
+    valor: en_la_orden
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-28440182
+      id: fb-2026-09-09-sesion-01-76fd91ba
   - nombre: break_even_condicion
     categoria: estrategia
     tipo: enum

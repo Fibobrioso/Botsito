@@ -145,7 +145,11 @@ ambiguedades:
     bloqueante: false
   - id: A-11
     titulo: SL en la orden o tras el llenado
-    pregunta: "¿el SL va en la orden pendiente o se pone tras el llenado?"
+    pregunta: >-
+      ¿el SL va en la orden pendiente o se pone tras el llenado? RESPONDIDA por el trader el
+      2026-09-10: "el SL se pone junto a la orden limite, no cuando se apertura recien". Hasta
+      entonces figuraba RESUELTA pero su valor era una INFERENCIA nuestra, que el barrido de
+      fidelidad dejo anotada en la descripcion del parametro
     resuelve_en: [F22, F31]
     evidencia:
       - ev-v4-001207-0c4ffd4b

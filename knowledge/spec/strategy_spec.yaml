@@ -188,20 +188,30 @@ reglas:
 
   # ---------------------------------------------------------------- riesgo y gestion
   - id: RN-011
-    titulo: el lote se dimensiona sobre la caja completa y el stop se mueve al abrir
-    cuando: se activa la entrada
+    titulo: el lote se dimensiona sobre la caja completa y la orden nace con su stop
+    cuando: se coloca la orden limite
     entonces: >-
       el lote sale de la distancia completa segun lotaje_base y riesgo_por_operacion sobre
-      base_calculo_riesgo; el stop, que viajaba en la orden segun stop_en_orden_pendiente, se
-      mueve inmediatamente a stop_fraccion_caja
+      base_calculo_riesgo; el stop viaja EN LA ORDEN segun stop_en_orden_pendiente, ya en
+      stop_fraccion_caja, antes de que la entrada se active
     parametros:
       - lotaje_base
       - riesgo_por_operacion
       - base_calculo_riesgo
       - stop_en_orden_pendiente
       - stop_fraccion_caja
-    cita: fb-2026-09-09-sesion-01-28440182
-    literal: El primer stop loss es para el cálculo del lotaje y el segundo es para protección
+    cita: fb-2026-09-09-sesion-01-76fd91ba
+    literal: el SL se pone junto a la orden limite, no cuando se apertura recien
+    notas: >-
+      hasta el 2026-09-10 esta regla decia que el stop "se mueve inmediatamente" tras activarse la
+      entrada, citando "El primer stop loss es para el calculo del lotaje y el segundo es para
+      proteccion". El trader lo corrigio, y ese es el literal de ahora. Los dos stops de la frase
+      anterior son el del CALCULO -la caja completa, que dimensiona el lote- y el que
+      se ESCRIBE en la orden, que ya es stop_fraccion_caja. El corpus describe lo mismo desde el
+      lado del resultado -"me activa la entrada y si yo protejo a 0.80", ev-v5-000312- y por eso
+      parecia un movimiento posterior. Importa en un caso concreto: un hueco de precio que
+      atraviese la entrada NO puede saltar al stop de rango completo, porque ese nunca llega a
+      estar vivo en el mercado
     clase: disparador
     estado: VIGENTE
 

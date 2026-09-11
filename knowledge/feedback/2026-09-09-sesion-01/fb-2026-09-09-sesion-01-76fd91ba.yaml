@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-76fd91ba
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: stop_en_orden_pendiente
+accion: CONFIRM
+respuesta_literal: el SL se pone junto a la orden limite, no cuando se apertura recien
+registrado_por: Aleks · respuesta del trader del 2026-09-10, REFERIDA por el consultor (no es transcripcion)
+valor_resultante: en_la_orden
+valor_canonico: en_la_orden
+supersede: fb-2026-09-09-sesion-01-28440182
+notas: 'cierra A-11 y retira la advertencia que el barrido de fidelidad dejo en la descripcion del parametro:
+  en_la_orden era una INFERENCIA nuestra, porque el literal que lo sostenia -"el primer stop loss es para
+  el calculo del lotaje y el segundo es para proteccion"- dice que hay dos stops y para que sirve cada
+  uno, pero no cual viaja en la orden. Ahora lo dice el trader. OJO: la frase es la del consultor refiriendo
+  la respuesta el 2026-09-10, NO las palabras exactas del trader; se marca asi a proposito en vez de hacerla
+  pasar por cita textual.'
