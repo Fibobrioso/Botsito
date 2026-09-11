@@ -139,7 +139,7 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
     # predicado, la base de un acumulador o quien produce un hecho cambia lo que el bot hace.
     vocabulario = {
         seccion: _canonico(spec.get(seccion) or {})
-        for seccion in ("predicados", "hechos", "acumuladores")
+        for seccion in ("predicados", "acciones", "hechos", "acumuladores")
     }
     return {
         "parametros": parametros,

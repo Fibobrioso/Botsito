@@ -212,7 +212,14 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise SpecError(f"{ruta.name}: {exc}") from exc
-    esperadas = {"version_esquema", "reglas", "predicados", "hechos", "acumuladores"}
+    esperadas = {
+        "version_esquema",
+        "reglas",
+        "predicados",
+        "acciones",
+        "hechos",
+        "acumuladores",
+    }
     if not isinstance(doc, dict) or not {"version_esquema", "reglas"} <= set(doc) <= esperadas:
         raise SpecError(f"{ruta.name}: se esperan {sorted(esperadas)}")
     if doc["version_esquema"] != 3:
@@ -508,7 +515,7 @@ def cargar_vocabulario(ruta: Path) -> dict[str, dict[str, Any]]:
     if not isinstance(doc, dict):
         raise SpecError(f"{ruta.name}: no es un mapa")
     salida: dict[str, dict[str, Any]] = {}
-    for seccion in ("predicados", "hechos", "acumuladores"):
+    for seccion in ("predicados", "acciones", "hechos", "acumuladores"):
         bruto = doc.get(seccion) or {}
         if not isinstance(bruto, dict):
             raise SpecError(f"{ruta.name}: '{seccion}' debe ser un mapa")
@@ -524,11 +531,66 @@ def _invocaciones(nodo: Any) -> list[tuple[str, dict[str, Any]]]:
             fuera += _invocaciones(x)
     elif isinstance(nodo, dict):
         for clave, valor in nodo.items():
+            if clave == "pendiente_definicion":
+                continue
             if clave in ("todos_de", "cualquiera_de", "ninguno_de", "cuando", "entonces", "hace"):
                 fuera += _invocaciones(valor)
             elif isinstance(valor, dict):
                 fuera.append((str(clave), valor))
     return fuera
+
+
+# Argumentos que NO nombran un parametro: ligaduras, referencias y sujetos de geometria.
+_ESTRUCTURALES = frozenset(
+    {
+        "liga",
+        "distinta_de",
+        "posterior_a",
+        "que",
+        "contra",
+        "a",
+        "de",
+        "acumulador",
+        "cual",
+        "por",
+        "resultado",
+        "hecho",
+        "a_la_baja",
+    }
+)
+# Y los que SI: su valor tiene que ser el nombre de un parametro del registro. Cualquier otra cosa
+# seria un valor de negocio escondido en un campo ejecutable, que es el fallo que hundio la D1
+# original -el `cuerpo` horneado en el nombre de un predicado-.
+_ARGS_DE_VALOR = frozenset(
+    {
+        "tope",
+        "cadencia",
+        "hora",
+        "huso",
+        "inicio",
+        "fin",
+        "dias",
+        "nivel",
+        "donde",
+        "segun",
+        "si",
+        "cuando",
+        "multiplo",
+        "sobre",
+        "extension",
+        "parciales",
+        "riesgo",
+        "base",
+        "fraccion",
+        "paso",
+        "minimo",
+        "contrato",
+        "cuenta_como",
+        "noticias",
+        "spread",
+        "stop",
+    }
+)
 
 
 def comprobar_forma(
@@ -541,36 +603,51 @@ def comprobar_forma(
     que no es el nombre de un parametro, se ven a la primera y se nombran por su id.
     """
     problemas: list[str] = []
-    predicados = vocabulario["predicados"]
     hechos = vocabulario["hechos"]
     acumuladores = vocabulario["acumuladores"]
-    # Los argumentos que NO nombran un parametro: ligaduras, referencias y sujetos de geometria.
-    estructurales = {"liga", "distinta_de", "posterior_a", "que", "contra", "a", "de", "acumulador"}
 
     for r in reglas:
-        if r.forma is None:
+        if not isinstance(r.forma, dict):
+            if r.vigente:
+                problemas.append(
+                    f"{r.id}: es VIGENTE y no tiene forma ejecutable; el motor no puede "
+                    f"implementarla sin interpretar su prosa"
+                )
             continue
-        for nombre, args in _invocaciones(r.forma):
-            if nombre in ("hecho", "fijar", "prohibe", "permite"):
-                continue
-            if nombre in predicados:
-                declarados = set(predicados[nombre].get("argumentos") or [])
-                sobran = sorted(set(args) - declarados - estructurales)
-                if sobran:
-                    problemas.append(
-                        f"{r.id}: llama a '{nombre}' con argumentos que no declara: {sobran}"
-                    )
-            elif nombre not in ("reubicar_orden_limite", "mover_stop"):
-                problemas.append(f"{r.id}: invoca '{nombre}', que no esta en `predicados`")
-            for clave, valor in args.items():
-                if clave in estructurales or not isinstance(valor, str):
+        # Una regla puede estar VIGENTE -la prohibicion sigue en pie- y aun asi no ser ejecutable
+        # porque el corpus no define su condicion. Se declara, no se tapa: RN-008 depende de que
+        # es un breaker, y eso no esta en ningun sitio (A-21).
+        pendiente = r.forma.get("pendiente_definicion")
+        if pendiente is not None and not re.fullmatch(r"A-\d+", str(pendiente), re.ASCII):
+            problemas.append(f"{r.id}: pendiente_definicion {pendiente!r} no tiene formato A-N")
+        # Un predicado se EVALUA y una accion se EJECUTA: cada rama tiene su vocabulario. Meterlos
+        # en el mismo saco fue el hueco que la guardia encontro al escribir las veinte restantes.
+        for rama, catalogo, etiqueta in (
+            (r.forma.get("cuando"), vocabulario["predicados"], "predicados"),
+            (r.forma.get("entonces"), vocabulario["acciones"], "acciones"),
+        ):
+            for nombre, args in _invocaciones(rama):
+                if nombre == "hecho":
                     continue
-                es_de_valor = clave in ("tope", "cadencia") or clave.endswith("criterio")
-                if es_de_valor and valor not in parametros:
-                    problemas.append(
-                        f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
-                        f"del registro; un argumento de valor lleva el NOMBRE, no el valor"
-                    )
+                if nombre in catalogo:
+                    declarados = set(catalogo[nombre].get("argumentos") or [])
+                    sobran = sorted(set(args) - declarados - _ESTRUCTURALES)
+                    if sobran:
+                        problemas.append(
+                            f"{r.id}: llama a '{nombre}' con argumentos que no declara: {sobran}"
+                        )
+                else:
+                    problemas.append(f"{r.id}: invoca '{nombre}', que no esta en `{etiqueta}`")
+                for clave, valor in args.items():
+                    if clave in _ESTRUCTURALES or not isinstance(valor, str):
+                        continue
+                    if (clave in _ARGS_DE_VALOR or clave.endswith("criterio")) and (
+                        valor not in parametros
+                    ):
+                        problemas.append(
+                            f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
+                            f"del registro; un argumento de valor lleva el NOMBRE, no el valor"
+                        )
 
     # Un hecho que nadie consume es una regla que no sirve; uno que nadie produce, una inalcanzable.
     ids_regla = {r.id for r in reglas}

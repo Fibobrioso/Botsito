@@ -496,8 +496,17 @@ def test_el_piloto_de_la_forma_ejecutable_carga_y_se_valida() -> None:
     parametros = set(registro.nombres())
 
     con_forma = {r.id for r in reglas if r.forma is not None}
-    assert con_forma == {"RN-003", "RN-006", "RN-014", "RN-020"}
+    # El piloto ya no es lo unico que tiene forma -las 24 vigentes la tienen- pero estas cuatro
+    # siguen siendo las que la decidieron, y por eso se comprueban por su nombre.
+    assert {"RN-003", "RN-006", "RN-014", "RN-020"} <= con_forma
     assert comprobar_forma(reglas, vocabulario, parametros) == []
+
+    # y cada una conserva lo que la hacia dificil
+    por_id = {r.id: r for r in reglas}
+    assert "criterio" in str(por_id["RN-003"].forma), "RN-003: el criterio es un argumento"
+    assert "liga" in str(por_id["RN-006"].forma), "RN-006: la zona se liga a una variable"
+    assert "posterior_a" in str(por_id["RN-014"].forma), "RN-014: el cuantificador temporal"
+    assert str(por_id["RN-020"].forma).count("alcanza_tope") == 2, "RN-020: dos acumuladores"
 
 
 def test_la_forma_no_puede_esconder_un_valor_de_negocio() -> None:
@@ -553,3 +562,72 @@ def test_el_hash_cubre_la_forma_y_el_vocabulario() -> None:
     rn003 = next(r for r in estructura["reglas"] if r["id"] == "RN-003")
     assert rn003.get("forma") is not None, "el hash no cubre la forma ejecutable"
     assert estructura["acumuladores"]["cartuchos"]["reinicia_con"] == "cartuchos_reinicio"
+
+
+def test_toda_regla_vigente_tiene_forma_ejecutable() -> None:
+    """La deuda del §8 de F11, cerrada: ninguna regla vigente se queda en prosa.
+
+    El motor de F18-F23 lee `forma`, no el español de `cuando`. Una regla VIGENTE sin forma es una
+    que el motor tendria que interpretar, que es exactamente lo que F12 existe para impedir.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+
+    sin_forma = [r.id for r in reglas if r.vigente and r.forma is None]
+    assert sin_forma == [], f"reglas vigentes todavia en prosa: {sin_forma}"
+    assert comprobar_forma(reglas, vocabulario, parametros) == []
+
+
+def test_un_predicado_se_evalua_y_una_accion_se_ejecuta() -> None:
+    """Dos vocabularios, no uno. Meterlos en el mismo saco era el hueco de ADR-0019.
+
+    Lo encontro la propia guardia al escribir las veinte reglas restantes: `cerrar_a_mercado`,
+    `dimensionar_lote` o `abstenerse` no son condiciones que se evaluen, son cosas que el motor
+    hace, y no tenian donde declararse.
+    """
+    import dataclasses
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+    assert vocabulario["acciones"] and vocabulario["predicados"]
+    assert not (set(vocabulario["acciones"]) & set(vocabulario["predicados"])), (
+        "un nombre no puede ser a la vez predicado y accion"
+    )
+
+    base = next(r for r in reglas if r.id == "RN-013")
+    # una accion en la rama de las condiciones
+    cruzada = dataclasses.replace(
+        base,
+        forma={"cuando": {"todos_de": [{"abstenerse": {"segun": "comportamiento_sin_regla"}}]}},
+    )
+    fallos = comprobar_forma([cruzada], vocabulario, parametros)
+    assert any("no esta en `predicados`" in f for f in fallos)
+
+
+def test_rn008_declara_que_le_falta_la_definicion(repo: Path) -> None:
+    """El corpus nunca define que es un breaker, y eso se escribe en vez de taparse.
+
+    El glosario lo define como "uno de los dos esquemas de entrada; sin el no hay entrada"
+    -circular- y la cita del predicado dice "el esquema de entrada QUE YA SABEMOS CUAL ES". Un
+    predicado con nombre convincente y definicion vacia pasaria las guardias heredadas y `make
+    check` en verde, porque comprueban PROCEDENCIA y no DEFINICION (ADR-0019).
+    """
+    from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+    from botsito.spec.modelo import FICHERO_SPEC
+
+    rn008 = next(r for r in cargar_reglas(repo / FICHERO_SPEC) if r.id == "RN-008")
+    assert rn008.vigente, "la prohibicion sigue en pie aunque falte la definicion"
+    assert isinstance(rn008.forma, dict)
+    pendiente = rn008.forma.get("pendiente_definicion")
+    assert pendiente == "A-21"
+
+    a21 = next(a for a in cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES) if a.id == "A-21")
+    assert a21.estado == "ABIERTA" and a21.bloqueante
