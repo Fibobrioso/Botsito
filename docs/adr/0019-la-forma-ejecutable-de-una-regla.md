@@ -75,13 +75,40 @@ predicados entran en el hash **por construcción** y ADR-0013 sigue siendo ciert
 - **B**: la geometría de velas no cabe en columnas booleanas sin meter prosa en las celdas. El plan
   la nombra, y este ADR lo enmienda con su motivo, que es lo que exige MASTER_PLAN §F.
 - **C**: ver arriba. Coste alto, beneficio negativo.
-- **D**: **RN-008 no se puede formalizar, y no por la forma**: el corpus nunca define qué es un
-  breaker. El glosario dice *"uno de los dos esquemas de entrada; sin él no hay entrada"* —circular—
+- **D**: ~~RN-008 no se puede formalizar: el corpus nunca define qué es un breaker.~~
+  **CORREGIDO el mismo día, ver abajo.** Se mantiene el estado `PENDIENTE_DEFINICION` en el
+  esquema, porque el caso que describe es real; lo que era falso es que RN-008 fuera ese caso. El glosario dice *"uno de los dos esquemas de entrada; sin él no hay entrada"* —circular—
   y la cita del propio predicado sería `ev-v4-001844-93dcb658`, cuyo literal dice *"el esquema de
   entrada **que ya sabemos cuál es**"*. Un predicado con nombre convincente y definición vacía
   **pasaría las ocho guardias heredadas y `make check` en verde**, porque comprueban PROCEDENCIA, no
   DEFINICIÓN. Por eso existe `PENDIENTE_DEFINICION`: mejor una regla que dice que le falta la
   definición, que un nombre bonito que la tapa.
+
+## Corrección: la definición SÍ estaba en el corpus
+
+Este ADR afirmó que *"el corpus nunca define qué es un breaker"* y marcó RN-008 como
+`pendiente_definicion`. **Era un error de búsqueda, señalado por el consultor el mismo día.**
+
+Lo que se comprobó fue el **glosario** —cuya definición era circular— y **una** cita
+(`ev-v4-001844`, *"el esquema de entrada que ya sabemos cuál es"*). Lo que no se comprobó fue el
+corpus. Y ahí está, repartida en una docena de ítems:
+
+| Ítem | Lo que define |
+|---|---|
+| `ev-v4-000243-5f8875ce` | los **dos** esquemas: *"o bien directamente rompe el precio […] sólo con velas rojas […] o […] con un pequeño retroceso pequeña zona de control y luego rompe"* |
+| `ev-v3-004201-bfeb3734` | el primero no espera retroceso: *"Con el breaker ya me basta […] marco mi orden limit y ya está"* |
+| `ev-v3-004230-ed95f336` | el segundo: *"genera como que este da zona de control aquí y luego rompe"* |
+| `ev-v3-011653-38c712f3` | el breaker marca el bloque de origen y **no se usa el CHoCH** |
+| `ev-v4-005910-d24c0345` | criterio: en M1 vale mecha o cuerpo; **la de M15 tiene que ser cuerpo** |
+| `ev-v1-001435-f0586d02` | la zona tiene que ser *"limpia"*, sin ruido |
+
+**La lección, que vale más que la corrección**: toda esta sesión ha ido de que nada afirme más de
+lo que su cita sostiene. Afirmar una **ausencia** es una afirmación como cualquier otra, y exige
+buscar en la **fuente** —las transcripciones, con `kb find`— y no en el índice. El glosario es un
+índice.
+
+Lo que sí queda abierto, y por eso A-21 se reformula en vez de borrarse: **qué es una zona de
+control "limpia, sin ruido"**. Es lo único de la geometría de entrada que sigue siendo cualitativo.
 
 ## Impacto
 

@@ -612,22 +612,30 @@ def test_un_predicado_se_evalua_y_una_accion_se_ejecuta() -> None:
     assert any("no esta en `predicados`" in f for f in fallos)
 
 
-def test_rn008_declara_que_le_falta_la_definicion(repo: Path) -> None:
-    """El corpus nunca define que es un breaker, y eso se escribe en vez de taparse.
+def test_los_dos_esquemas_de_entrada_estan_definidos(repo: Path) -> None:
+    """Afirmar una ausencia exige buscarla en la FUENTE, no en el indice.
 
-    El glosario lo define como "uno de los dos esquemas de entrada; sin el no hay entrada"
-    -circular- y la cita del predicado dice "el esquema de entrada QUE YA SABEMOS CUAL ES". Un
-    predicado con nombre convincente y definicion vacia pasaria las guardias heredadas y `make
-    check` en verde, porque comprueban PROCEDENCIA y no DEFINICION (ADR-0019).
+    El 2026-09-10 marque RN-008 como `pendiente_definicion` porque el glosario definia breaker de
+    forma circular -"uno de los dos esquemas de entrada; sin el no hay entrada"- y su cita dice "el
+    esquema de entrada que ya sabemos cual es". Era un error de busqueda: la definicion estaba en
+    el corpus, repartida en una docena de items, y lo que faltaba era recogerla en el glosario.
+
+    Este test fija las dos mitades: que la definicion esta, y que ninguna regla vigente se queda
+    marcada como no ejecutable por una ausencia que no existe.
     """
-    from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
-    from botsito.spec.modelo import FICHERO_SPEC
+    from botsito.spec.modelo import FICHERO_GLOSARIO, FICHERO_SPEC, cargar_glosario
 
-    rn008 = next(r for r in cargar_reglas(repo / FICHERO_SPEC) if r.id == "RN-008")
-    assert rn008.vigente, "la prohibicion sigue en pie aunque falte la definicion"
-    assert isinstance(rn008.forma, dict)
-    pendiente = rn008.forma.get("pendiente_definicion")
-    assert pendiente == "A-21"
+    terminos = {t.termino: t for t in cargar_glosario(repo / FICHERO_GLOSARIO)}
+    for nombre in ("breaker", "primer esquema de entrada", "segundo esquema de entrada"):
+        assert nombre in terminos, nombre
+    # y la definicion de breaker deja de nombrarse a si misma
+    assert "esquema de entrada" not in terminos["breaker"].definicion
+    assert "bloque de origen" in terminos["breaker"].definicion
 
-    a21 = next(a for a in cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES) if a.id == "A-21")
-    assert a21.estado == "ABIERTA" and a21.bloqueante
+    reglas = cargar_reglas(repo / FICHERO_SPEC)
+    pendientes = [
+        r.id
+        for r in reglas
+        if r.vigente and isinstance(r.forma, dict) and r.forma.get("pendiente_definicion")
+    ]
+    assert pendientes == [], f"reglas vigentes declaradas no ejecutables: {pendientes}"

@@ -286,18 +286,20 @@ ambiguedades:
     estado: ABIERTA
     bloqueante: false
   - id: A-21
-    titulo: que ES un breaker y que ES el segundo esquema de entrada
+    titulo: que es una zona de control limpia, sin ruido
     pregunta: >-
-      toda la operativa cuelga de que el precio "genere el esquema de entrada", y el corpus NUNCA
-      dice cual es la geometria. El glosario define breaker como "uno de los dos esquemas de
-      entrada; sin el no hay entrada" -circular- y la unica cita disponible dice "el esquema de
-      entrada QUE YA SABEMOS CUAL ES". Hace falta la definicion: que velas, que rupturas, que
-      orden. Sin ella RN-008 no se puede ejecutar, y un predicado con nombre convincente y
-      definicion vacia pasaria `make check` en verde
+      el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea
+      una zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin
+      retroceso, o pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo
+      unico de la geometria de entrada que sigue siendo cualitativo y que el motor no puede
+      evaluar. ¿cuantas velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa?
+      ESTA AMBIGUEDAD NACIO MAL el 2026-09-10, preguntando que es un breaker; la definicion ya
+      estaba en el corpus y lo que faltaba era recogerla en el glosario. Reformulada el mismo dia
     resuelve_en: [F12, F20, F26]
     evidencia:
-      - ev-v4-001844-93dcb658
-      - ev-v4-013008-73dcd8c3
+      - ev-v1-001435-f0586d02
+      - ev-v4-000243-5f8875ce
+      - ev-v3-004201-bfeb3734
     parametros: []
     contradiccion: null
     estado: ABIERTA

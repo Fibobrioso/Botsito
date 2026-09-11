@@ -110,13 +110,17 @@ predicados:
     literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
   se_da_esquema:
     descripcion: >-
-      el precio forma uno de los esquemas de entrada. PENDIENTE DE DEFINICION: el corpus no dice
-      que ES un breaker; el glosario es circular y la cita dice "el que ya sabemos cual es"
+      el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada.
+      `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta.
+      `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos
+      marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. En M1 la ruptura vale
+      con mecha o con cuerpo; la de M15 tiene que ser con cuerpo (RN-004)
     argumentos: [cual]
-    cita: ev-v4-001844-93dcb658
+    cita: ev-v4-000243-5f8875ce
     literal: >-
-      el precio no genera el esquema de entrada que ya sabemos cuál es [...] un breaker o este de
-      aquí, o sea cualquiera de estos dos de aquí
+      ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien
+      directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema
+      pues con un pequeño retroceso pequeña zona de control y luego rompe
   zonas_desarrolladas_superan:
     descripcion: el esquema desarrolla mas zonas de control de las admitidas
     argumentos: [tope]
@@ -452,11 +456,18 @@ reglas:
     literal: >-
       aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
       sabemos cuál es [...] cualquiera de estos dos de aquí
+    notas: >-
+      el 2026-09-10 esta regla se marco `pendiente_definicion` porque el glosario definia breaker
+      de forma circular y su cita dice "el que ya sabemos cual es". ERA UN ERROR DE BUSQUEDA: la
+      definicion SI esta en el corpus, repartida en una docena de items -ev-v4-000243 (los dos
+      esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona
+      de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH),
+      ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en
+      el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice
     forma:
-      pendiente_definicion: A-21
       cuando:
         ninguno_de:
-          - se_da_esquema: {cual: breaker}
+          - se_da_esquema: {cual: primer_esquema}
           - se_da_esquema: {cual: segundo_esquema}
       entonces:
         prohibe: [abrir_operacion]
