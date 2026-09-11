@@ -43,18 +43,27 @@ broker_dst · broker_offset_base · cuenta_objetivo · cuenta_pruebas · huso_gr
 instrumento · instrumento_digitos · latencia_ms · modelo_llenado · saldo_inicial_cuenta
 ```
 
-Algunos es correcto que esten sueltos (`huso_grafico` es documental por ADR-0017; `latencia_ms` solo
-lo usa `modelo_llenado`), pero **nadie lo declara**, asi que no se distingue "suelto a proposito" de
-"nos hemos olvidado de una regla". F12 exige que cada parametro con valor este nombrado por una regla
-vigente **o** declare por que no.
+**Nueve de los diez ya tienen dueno en el plan**: MASTER_PLAN H.2:211 asigna la ficha del
+instrumento, el reloj del broker, la cuenta y el modelo de llenado a **F24, F28, F31 y F33**. El
+decimo, `huso_grafico`, es documental por ADR-0017. Asi que el punto no es inventarles reglas -eso
+seria justo lo que ADR-0016 acaba de impedir leer como palabra del trader- sino que **cada parametro
+con valor declare quien lo consume**: una regla vigente, o una funcionalidad posterior con su fila
+de H.2. Cinco faltan de verdad, segun la revision: `broker_dst` y `broker_offset_base` en RN-020,
+`instrumento_digitos` en RN-026, `modelo_llenado` en RN-011 y una regla de alcance para
+`instrumento`. Y el caso simetrico sale gratis: los 6 UNKNOWN explican su motivo en prosa
+(`stop_colchon_spread.descripcion` dice "se queda UNKNOWN a proposito"), sin campo que lo declare.
 
 **3. Coherencia entre reglas.** Cuatro reglas vigentes (`RN-005`, `RN-008`, `RN-009`, `RN-018`) no
 nombran ningun parametro: son prohibiciones puras. Hay que decidir si eso es legitimo y comprobar lo
 que hoy no comprueba nadie: reglas que se contradicen entre si, reglas inalcanzables, y el orden de
 precedencia cuando dos aplican al mismo instante.
 
-**4. La tabla `R-01..R-14` -> `fb-…`.** Deuda declarada en el §8 de F11: el informe de la sesion cita
-`R-03` y ninguna regla lo hace, asi que la correspondencia no esta escrita en ningun sitio legible.
+**4. La fragilidad de los `R-01..R-14`.** La tabla en si **ya estaba escrita** -anexo de
+`docs/validation/SESION-01-2026-09-09.md`-, asi que la deuda del §8 de F11 estaba obsoleta y este
+punto se reduce: el identificador es **posicional** (`scripts/hoja_sesion_docx.py` numera por indice
+sobre `contexto_preguntas.yaml`), vive fuera de `src/` y no tiene test. Insertar o reordenar una
+entrada renumera las catorce en silencio y deja el anexo mintiendo. Se arregla con un `id: R-NN`
+explicito y un test que lo ate al anexo.
 
 **5. Un comando que lo diga.** `botsito spec check` (o la capa spec de `knowledge validate`) que
 enumere los fallos **nombrando el id**, y salga con 1.
@@ -63,7 +72,8 @@ enumere los fallos **nombrando el id**, y salga con 1.
 
 - **Ejecutar** las tablas de decision: eso es F18-F23. F12 define y valida la forma.
 - Reabrir valores del registro. Un valor solo cambia por feedback o por ADR (ADR-0002).
-- Cerrar ambiguedades. A-11, A-13, A-14, A-15..A-19 se cierran con el trader o con una medicion.
+- Cerrar ambiguedades. A-13, A-14, A-15..A-20 se cierran con el trader o con una medicion (A-11
+  figura RESUELTA, aunque el barrido de fidelidad dejo anotado que su valor es una inferencia).
 - Los statecharts de jornada y ciclo: son F22.
 - `feedback pending` filtrando lo aplicado: deuda de F11, va a F13.
 - `mapa_parametros.yaml` y donde vive lo que queda de el: F13.
@@ -105,8 +115,10 @@ reglas vigentes y los 54 parametros pasan enteros.
 - **Duplicar F22.** El limite entre "forma comprobable" y "motor" es fino y el plan lo cruza en
   F12/F22. Si se difumina, F22 se encuentra el trabajo hecho a medias y con otra forma.
 - **Congelar una spec que aun se mueve.** A-11, A-13, A-14, A-18 y A-19 siguen abiertas; dos de ellas
-  (`base_calculo_objetivo`, `reloj_dia_riesgo`) corren con un default nuestro. Formalizar sobre eso es
-  legitimo, pero la forma tiene que admitir que una regla cambie sin reescribirla entera.
+  y tres parametros corren con un default nuestro (`reloj_dia_riesgo`,
+  `zonas_control_max_por_esquema` y, en cuanto lo cree el piloto, `break_even_criterio_ruptura`).
+  Formalizar sobre eso es legitimo, pero la forma tiene que admitir que una regla cambie sin
+  reescribirla entera.
 
 ## Revision de diseno (agente, antes de programar)
 
@@ -115,33 +127,52 @@ aceptados o descartados con su motivo.
 
 ### Decisiones del consultor
 
-**D1 · PREDICADOS NOMBRADOS** (cerrada el 2026-09-10). `cuando` y `entonces` se componen de
+**D1 · PREDICADOS NOMBRADOS, CON ARGUMENTOS** (cerrada el 2026-09-10; la forma concreta la fija
+ADR-0019 tras probarla contra las ocho reglas mas dificiles, donde la version sin argumentos aguanto
+UNA). `cuando` y `entonces` se componen de
 predicados con nombre, definidos UNA vez en su propio fichero y reutilizados por las reglas:
 
 ```yaml
-# strategy_spec.yaml
+# strategy_spec.yaml — TODO en el mismo fichero: un cuarto romperia el contrato del hash
 RN-004:
   cuando:
-    - alcanza: liquidez_m15
-    - cierra_con_cuerpo_al_otro_lado: true
+    todos_de:
+      - alcanza: {que: liquidez_m15}
+      - cruza:
+          que: liquidez_m15
+          criterio: liquidez_m15_criterio_toma   # el NOMBRE, nunca el valor
   entonces:
-    - marcar: liquidez_tomada
+    hace: [{marcar: liquidez_tomada}]
 
-# predicados.yaml
-cierra_con_cuerpo_al_otro_lado:
-  parametros: [liquidez_m15_criterio_toma]
-  cita: fb-2026-09-09-sesion-01-6e15504f
+predicados:
+  cruza:
+    argumentos: [que, criterio]
+    cita: fb-2026-09-09-sesion-01-6e15504f
+    literal: >-
+      ¿Vale con que la vela cierre con el cuerpo por encima del máximo [...] Con cuerpo
 ```
+
+El ejemplo anterior de este brief era `cierra_con_cuerpo_al_otro_lado`, y **estaba roto**:
+`liquidez_m15_criterio_toma` tiene `opciones: [cuerpo, mecha]`, asi que el VALOR quedaba horneado
+en el NOMBRE. Si el trader dice "mecha", o el predicado ignora el parametro que declara, o el nombre
+miente: dos puertas para el mismo hecho (ADR-0002). Lo encontro la revision de diseno.
 
 Se descarta la **tabla de decision** -que es lo que MASTER_PLAN nombra literalmente- por el riesgo
 que este brief ya anotaba: la geometria de velas no cabe en columnas booleanas sin meter prosa dentro
 de las celdas, y entonces el problema solo cambia de sitio. Se descarta la **prosa con vocabulario
 cerrado** porque deja el peso real en F22 y no cierra la deuda del §8.
 
-Un predicado lleva su propia `cita` y sus propios `parametros`, asi que **hereda gratis las ocho
-guardias que la auditoria de F11 ya construyo**: literal contra cita, parametros que existen, ADR
-declarado si opera sobre entorno, y nada de cifras. F12 valida ademas que exista, que no se duplique
-y que no se contradiga con otro. **F22 implementa cada predicado**; ese es el limite entre las dos.
+**Lo que NO hereda, corregido el 2026-09-10.** El brief afirmaba que un predicado "hereda gratis
+las ocho guardias". **Es falso**: no existe ningun tipo `Predicado`, y `comprobar_literales`,
+`comprobar_contra` y `comprobar_decisiones` iteran `list[Regla]` y `list[Termino]` y nada mas.
+**Cada una de las ocho hay que extenderla**, y eso es trabajo de F12 que el brief daba por hecho. Un
+predicado ademas necesita `literal` propio, o la guardia de cita no tendria nada que comparar.
+
+**F22 implementa cada predicado**; ese es el limite. Y tiene una pieza sin dueno que hay que
+asignar: F22 es capa `domain`, que no puede importar `botsito.spec` ni `yaml`, asi que **no puede
+leer los predicados**. La tabla nombre -> funcion va en `spec/` o en `engine`, y la guardia "todo
+predicado declarado tiene implementacion" no puede ser de F12 (la implementacion no existe aun): se
+decide si es de F23.
 
 **D2 · PILOTO DE CUATRO, luego el resto** (cerrada el 2026-09-10). Se convierten primero las cuatro
 mas dificiles, y solo si la forma las aguanta se hacen las veinte restantes:
