@@ -348,25 +348,19 @@ guardia ya saltó una vez de verdad, al alinear `huso_operativa`, y obligó a su
 ## 6. Qué está corriendo y qué sigue en revisión
 
 ```
-spec 2.0.0 · hash 21e69c6f2548…
-  24 reglas vigentes, 3 descartadas
-  46 parametros confirmados, 2 con un default nuestro, 6 sin valor a proposito (54 en total)
-
-Corriendo con un valor que sigue en revision:
-  anclaje_h4                   23:00 Etc/GMT-2          A-14
-  base_calculo_objetivo        caja_completa            A-18
-  break_even_condicion         tocar                    A-13
-  filtro_noticias              no                       A-17
-  huso_grafico                 Etc/GMT-2                A-14
-  objetivo_rr                  3                        A-18
-  reloj_dia_riesgo             servidor                 A-19
-  ventana_fin                  15:00 Etc/GMT-2          A-14, A-15
-  ventana_inicio               07:00 Etc/GMT-2          A-14, A-15
+$ botsito spec status
 ```
 
-Esta salida es de la auditoría del 2026-09-10; la anterior llevaba tres versiones de retraso y es
-lo que P8 corrige. Los **nueve** en revisión, no cinco: `huso_grafico` es la raíz de la que cuelgan
-las tres horas y no aparecía, porque A-14 solo listaba `anclaje_h4`.
+**Aquí ya no va pegada la salida.** Se pegó tres veces y las tres se quedó vieja en dos días: la
+original llevaba tres versiones de retraso (P8), la siguiente dejó de cuadrar al aparecer los
+primeros `DEFAULT_AMBIGUOUS` (P11), y la tercera nació desfasada porque `spec_version` subió dos
+veces más antes del merge. Una foto de un estado que cambia cada commit no es documentación: es una
+trampa. **El recuento vivo lo da el comando**, y un test vigila que los dos documentos que sí deben
+llevarlo —`docs/HANDOFF.md` y `knowledge/spec/README.md`— digan la verdad.
+
+Lo que sí es permanente y merece estar escrito: en revisión están **nueve** parámetros, no cinco.
+`huso_grafico` es la raíz de la que cuelgan las tres horas y no aparecía, porque A-14 solo listaba
+`anclaje_h4`.
 
 Siete entran **CONFIRMED**: lo dijo el trader, con minuto y cita, y que estén en revisión se ve
 cruzando con las ambigüedades abiertas, no degradando su estado. Los otros dos —`huso_grafico` y

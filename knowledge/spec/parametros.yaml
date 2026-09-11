@@ -737,7 +737,11 @@ parametros:
     categoria: prop_firm
     tipo: decimal
     unidad: USD
-    descripcion: saldo con el que arranca la cuenta; base del lotaje y de los topes
+    descripcion: >-
+      saldo con el que arranca la cuenta. NO es la base de ningun calculo: el lotaje va sobre
+      base_calculo_riesgo (saldo_actual), el tope diario sobre base_calculo_perdida_diaria
+      (saldo_inicial_dia) y el semanal sobre base_calculo_perdida_semanal (saldo_actual). Lo
+      decia y era falso; corregido en la auditoria del 2026-09-10
     estado: CONFIRMED
     valor: "100000"
     minimo: "0"

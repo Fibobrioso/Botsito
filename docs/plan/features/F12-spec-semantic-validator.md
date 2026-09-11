@@ -96,7 +96,7 @@ tabla R-NN.
 
 Por **comprobacion**, no por funcion: cada regla semantica nueva trae un caso que la dispara y otro
 que no, y el mensaje de error tiene que contener el id. Mas los goldens de la spec real: las 24
-reglas vigentes y los 54 parametros pasan enteros.
+reglas vigentes y todos los parametros del registro pasan enteros.
 
 ## Criterio de aceptacion
 

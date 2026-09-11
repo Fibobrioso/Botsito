@@ -682,7 +682,7 @@ def spec_status(repo: Path) -> int:
         for nombre in sorted(en_revision):
             p = registro.parametros.get(nombre)
             valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
-            print(f"  {nombre:28} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
+            print(f"  {nombre:32} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
     sin_parametro = [a.id for a in abiertas if not a.parametros]
     if sin_parametro:
         print("\nAmbiguedades abiertas sin parametro asociado: " + ", ".join(sorted(sin_parametro)))

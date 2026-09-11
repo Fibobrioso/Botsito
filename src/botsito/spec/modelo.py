@@ -350,7 +350,10 @@ def comprobar_literales(
     for r in reglas:
         citado = textos.get(r.cita)
         if citado is None:
-            continue  # que la cita exista lo comprueba `comprobar_contra`
+            # Que la cita exista lo comprueba `comprobar_contra`, asi que aqui saltarsela es
+            # correcto HOY. Se deja anotado porque el dia que algo con cita propia -un predicado,
+            # F12- no pase por `comprobar_contra`, esta guardia se apagaria sin avisar.
+            continue
         if not literal_coincide(r.literal, citado):
             problemas.append(
                 f"{r.id}: su literal no aparece en {r.cita}; una regla no puede decir algo "
@@ -398,6 +401,11 @@ def comprobar_decisiones(
     """
     problemas: list[str] = []
     for r in reglas:
+        # Tambien las DESCARTADAS: una regla descartada sigue afirmando algo -por que se descarto-
+        # y su `decision` entra en el hash. Solo se le exige que el ADR exista, no que lo declare.
+        if r.decision is not None and r.decision not in ids_adr:
+            problemas.append(f"{r.id}: decision {r.decision}, que no existe")
+            continue
         if not r.vigente:
             continue
         de_entorno = sorted(p for p in r.parametros if fuentes.get(p) == "decision")
@@ -406,8 +414,6 @@ def comprobar_decisiones(
                 f"{r.id}: opera sobre {', '.join(de_entorno)}, que no los dijo el trader sino un "
                 f"ADR; una regla asi decide algo por su cuenta y tiene que declarar 'decision'"
             )
-        elif r.decision is not None and r.decision not in ids_adr:
-            problemas.append(f"{r.id}: decision {r.decision}, que no existe")
     return problemas
 
 
