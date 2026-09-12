@@ -34,13 +34,13 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones respondidas, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-Rama de trabajo sin numero propio (MASTER_PLAN §F): QUE CUENTA COMO ABRIR UN HOLDOUT, y que se hace con la exposicion del P&L de mayo. Decidido por el consultor el 2026-09-12 tras la auditoria de proceso, que encontro que "abrir" no estaba definido en ninguna parte, que nadie decia quien autoriza, y que la guarda que PROJECT_STATE daba por viva es un stub de F14. Cierre con tag `stable/F12-holdout`.
+—  (main estable en stable/F12-holdout; siguiente F13)
 
 ## Current Branch
-trabajo/holdout-y-exposicion
+main
 
 ## Stable Main State
-77c7501 · merge de F12 spec-semantic-validator (tag stable/F12), validada tras dos auditorias de cierre (57 hallazgos) y una auditoria de orden. make check verde: 630 casos (448 funciones), 4 contratos, mypy strict, state/config/knowledge validate. spec 9.1.0 · 59 parametros (50 confirmados, 2 con un default nuestro, 7 sin valor a proposito) · 27 reglas (24 vigentes, las 24 con forma ejecutable) · 21 ambiguedades (8 abiertas).
+09d55f2 · merge de la rama de trabajo `trabajo/holdout-y-exposicion` (tag stable/F12-holdout), sobre el merge de F12 (77c7501, tag stable/F12). ADR-0021 define que cuenta como ABRIR un holdout y declara la exposicion del 2026-09-11; nacen `HOLDOUT-EXPOSICIONES.md` y `PREREGISTRO.md` -vacio a proposito-. make check verde: 630 casos (448 funciones), 4 contratos, mypy strict, state/config/knowledge validate. spec 9.1.0 · 59 parametros · 27 reglas (24 vigentes con forma) · 21 ambiguedades (8 abiertas).
 
 ## Completed Phases
 - FASE 1 · Base de conocimiento (F03, F04, F05, F06, F07, F08) · cerrada el 2026-09-08 en 5d8cf3c · puerta: 5 videos inventariados, transcritos (large-v3, glosario v2) y con fotogramas a 1 fps; 341 items de evidencia verificables por maquina y trazables a su propuesta y decision; busqueda `kb find | at` con fuente en cada linea; make check verde en main
@@ -62,9 +62,10 @@ trabajo/holdout-y-exposicion
 - F10 · elicitation-kit · validada el 2026-09-08 · docs/validation/F10-elicitation-kit.md · tag stable/F10
 - F11 · strategy-spec-schema · validada el 2026-09-10 · docs/validation/F11-strategy-spec-schema.md · tag stable/F11
 - F12 · spec-semantic-validator · validada el 2026-09-12 · docs/validation/F12-spec-semantic-validator.md · tag stable/F12
+- Holdout: que cuenta como abrirlo · validada el 2026-09-12 · docs/validation/HOLDOUT-2026-09-12.md · tag stable/F12-holdout
 
 ## Features Waiting for Validation
-- Rama de trabajo `trabajo/holdout-y-exposicion` · informe `docs/validation/HOLDOUT-2026-09-12.md` · WAITING_FOR_USER_VALIDATION · cierre con tag `stable/F12-holdout`
+— ninguna.
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -371,13 +372,12 @@ F13 / F14, que se abren con F11 igual que F12 (MASTER_PLAN §D). F14 (biblioteca
 
 ## Next Action
 1. PEDIRLE AL TRADER UN MES QUE NO HAYA TOCADO (ADR-0021 §7). Mayo ya esta expuesto -su PnL diario, los 19 dias- y junio quedo descartado, asi que hoy no existe ninguna particion limpia de verdad. No bloquea F13 ni F14, pero tiene semanas de plazo: cuanto antes se pida, antes hay material para que F26 mida sobre algo que nadie ha visto. Meses ya vistos y por tanto descartados: enero, abril, mayo, julio y agosto. Candidatos: febrero o marzo de 2026, que ademas exigen `botsito data download` porque no estan en el dataset.
-2. VALIDAR esta rama de trabajo (`trabajo/holdout-y-exposicion`, informe `docs/validation/HOLDOUT-2026-09-12.md`). Cierre con tag `stable/F12-holdout`.
 3. DECIDIR LAS DOS QUE QUEDAN del metodo, que van dentro de F13: (a) como se cierra una ambiguedad que decide el consultor y no el trader -A-15, A-16 y A-17 llevan decididas y ABIERTAS desde el 2026-09-09, ensuciando `spec status`; la propuesta es un estado `DECIDIDA` con su ADR-; y (b) si el registro de feedback necesita `recibido_el` y `procedencia` -los 116 registros se fechan el 2026-09-09 aunque tres son del 10 y del 11-.
 4. DECIDIR EL REPARTO DE MAYO para F14: 6 dias `dev` y 13 holdout (6/4/3) frente a los 16/8/8/8 que `config.yaml` pedia para 40 dias. Reparticionar es legitimo mientras no exista ningun LABEL_CASE y exige ADR.
 5. Verificar fuera del repositorio: A-19 (en que reloj cae la medianoche que reinicia el 4,5 %, en el panel de FundedNext) e `instrumento_stops_level` en la cuenta fondeada (vale 0, medido en demo, asi que RN-026 hoy no se activa nunca).
 
 ## Last Stable Commit
-77c7501 · merge: F12 spec-semantic-validator, auditada dos veces antes de validar · tag stable/F12
+09d55f2 · merge: que cuenta como abrir un holdout, y la exposicion de mayo declarada · tag stable/F12-holdout
 
 ## Change Log
 - 2026-09-12 (4) · QUE CUENTA COMO ABRIR UN HOLDOUT, decidido por el consultor (ADR-0021). El proyecto llevaba desde F01 diciendo "un holdout abierto queda quemado" sin definir que es abrir, sin decir quien autoriza y sin procedimiento para una exposicion accidental; la auditoria de proceso lo encontro y la exposicion YA HABIA OCURRIDO. Decidido: abrir es leer las etiquetas de esos dias o medir cualquier cifra del bot sobre ellos; ver el RESULTADO AGREGADO no abre -un PnL diario no contiene ninguna decision y no se puede invertir para deducirlas- pero SI se declara. La exposicion del 2026-09-11 -el calendario de PnL dia a dia de todo mayo, trece dias reservados- NO quema, queda registrada en `docs/validation/HOLDOUT-EXPOSICIONES.md` (nuevo) y F26 tendra que citarla en su informe: sin esa frase su cifra no es defendible. `holdout-1` se reserva intacto para la nota. Nace tambien `docs/validation/PREREGISTRO.md`, que `docs/validation/README.md` y MASTER_PLAN §G exigian en presente desde hace meses y no existia: va VACIO a proposito, y mientras lo este no se abre ningun holdout. Y queda pedido un mes nuevo al trader, que es la unica forma de tener una particion limpia de verdad. F14 hereda implementar la guarda de `tests/conftest.py`, que hoy es un stub pese a que PROJECT_STATE la daba por viva.
