@@ -2,159 +2,149 @@
 
 **Rama:** `feature/F13-spec-documents` · **Depende de:** F11 (y de F12, ya en main)
 **Fila del plan:** *"Docs y hoja del trader generados | F11 | anti-deriva | docs = generado"*
-**Estado del brief:** revisión de diseño por agente **PENDIENTE**. No se programa hasta cerrarla.
+**Revisión de diseño:** **CERRADA el 2026-09-12** (dos agentes). D1..D6 decididas abajo.
 
 ---
 
-## 1. Objetivo
+## 1. Objetivo, corregido por la revisión
 
-Que **la documentación legible de la estrategia se genere y no se escriba**. Hoy la spec vive en
-tres YAML que una máquina valida bien y una persona lee mal; y cada vez que alguien ha copiado a
-mano una cifra de ahí a un documento, esa copia se ha quedado vieja. Ha pasado **cinco veces en
-nueve días**, documentadas:
+La primera versión de este brief decía que F13 existe porque copiar cifras a mano falla, y ponía
+cinco ejemplos. La revisión comprobó los cinco —**son ciertos**— y encontró el fallo del
+razonamiento:
 
-| Cuándo | Qué se quedó viejo | Cómo se descubrió |
+> **Ninguna de esas copias viejas era una copia de `knowledge/spec/` a `docs/spec/`. Todas eran
+> prosa narrativa: el HANDOFF, `PROJECT_STATE`, los README, el acta de la sesión 1. Generar
+> `docs/spec/` no habría evitado ni una sola.**
+
+Y de paso: eran **seis** copias en **tres** días, no cinco en nueve, y el total documentado pasa de
+diez. Además había **cuatro vivas** en el momento de la revisión —incluida una de negocio, el ancla
+H4 en un offset fijo que ADR-0017 había revocado— corregidas en `3324e5e`.
+
+Así que el objetivo no es "generar un documento". Es **doble**, y el orden importa:
+
+| | Qué | Por qué |
 |---|---|---|
-| 2026-09-10 (P8, P11) | el recuento de la spec en el HANDOFF y en el §6 del informe de F11 | un script, no la lectura |
-| 2026-09-10 | una tercera copia nació desfasada porque `spec_version` subió dos veces antes del merge | ídem |
-| 2026-09-12 | `knowledge/spec/README.md` decía "A-1..A-17" cuando ya iban por A-21 | auditoría de consistencia |
-| 2026-09-12 | `knowledge/README.md` decía "24 de estrategia en UNKNOWN desde F10" | auditoría de consistencia |
-| 2026-09-12 | `PROJECT_STATE` decía `huso_operativa = Etc/GMT-2`, revertido dos días antes | auditoría de consistencia |
+| **A** | que el documento generado **sustituya** a lo que hoy se mantiene a mano | si solo se suma, F13 es coste; solo vale si mata al menos dos copias vivas |
+| **B** | extender la guardia anti-copia a los documentos que **sí** llevan cifras vivas | es lo que habría cazado las seis, y el mecanismo ya existe: `test_registro_accessors.py` lo hace con dos documentos desde el 2026-09-10 |
 
-La lección ya está escrita en el repositorio —*"el recuento vivo lo da `botsito spec status` y NO se
-copia aquí"*— pero es una regla de disciplina, no un mecanismo. F13 pone el mecanismo.
+## 2. Punto de partida
 
-## 2. Punto de partida: lo que ya existe
-
-**No se empieza en cero.** Conviene saber qué hay antes de diseñar:
-
-| Ya existe | Dónde | Qué aporta a F13 |
+| Ya existe | Dónde | Qué aporta |
 |---|---|---|
-| `botsito spec status` | `cli.py` | la vista viva de "con qué corre el bot y qué sigue en revisión" |
-| `botsito spec check` | `cli.py`, F12 | la capa semántica, con sus siete guardias |
-| `spec manifest` + hash sobre los tres ficheros | `spec/manifiesto.py` | cómo se detecta que la spec cambió |
-| `kit build` / `kit check` | `cases/paquete.py`, F10 | **el patrón exacto de "generado y comprobable"**: `check` recompone el paquete desde su fuente y lo compara |
-| `scripts/hoja_sesion_docx.py` | fuera de `src/` | genera la hoja del trader en Word; F12 le dio ids `R-NN` explícitos y un test de contrato |
-| `docs/spec/README.md` | escrito en F01 | ya declara *"Versión legible de `strategy_spec.yaml`, GENERADA por F13. No editar a mano"* |
+| `spec status` · `spec check` (7 guardias) | `cli.py`, `spec/modelo.py` | la vista viva y la capa semántica |
+| hash de la spec | `spec/manifiesto.py` | **cubre tres ficheros: NO cubre `ambiguedades.yaml`** |
+| `kit check` | `cases/paquete.py:549` | compara **byte a byte** tras normalizar CRLF, con exenciones nombradas (`DEPENDEN_DE_LAS_RESPUESTAS`, `:50`) |
+| **dos guardias anti-copia** | `test_registro_accessors.py:110` y `:170` | vigilan `knowledge/spec/README.md` y el HANDOFF. **El mecanismo existe; es estrecho, no inexistente** |
+| generador de la hoja | `scripts/hoja_sesion_docx.py` | ya genera; F12 le puso ids `R-NN` y un test |
 
-**El patrón a copiar es `kit check`**, no inventar otro: genera, compara con lo commiteado, y falla
-nombrando el fichero que no cuadra.
+**Conflicto de alcance a resolver**: `docs/spec/README.md` promete *"versión legible de
+**`strategy_spec.yaml`**"*; `docs/README.md:7` y `MASTER_PLAN:52` prometen *"generada desde
+**`knowledge/spec/`**"*. Son dos contratos incompatibles y hay que elegir uno y corregir el otro.
 
-## 3. Alcance cerrado (qué SÍ)
+## 3. Alcance cerrado
 
-### 3.1 · Generar `docs/spec/` desde `knowledge/spec/`
+### 3.1 · Generar `docs/spec/`, y que sustituya
 
-Un documento legible por una persona, con la spec entera: las 24 reglas vigentes con su condición,
-su acción, sus parámetros y su cita; los parámetros con su valor, estado y de dónde sale; el
-glosario; y las ambigüedades abiertas. Con `spec_version` y hash en la cabecera.
+Cuatro documentos, uno por fichero fuente (D1). Y **lo que muere**:
 
-**Guardia anti-deriva:** `make check` regenera y compara. Si el fichero commiteado no coincide con
-lo que sale de `knowledge/spec/`, falla y dice qué fichero. Es la fila del plan: **docs = generado**.
+| Muere / se reduce a un puntero | Por qué puede |
+|---|---|
+| `docs/validation/SESION-01-2026-09-09.md` §2 "La estrategia tal como queda especificada" | es lo que el HANDOFF llama *"el esquema completo de la estrategia"*, se mantiene a mano y **ya ha estado viejo dos veces en dos días** |
+| el recuento de `knowledge/spec/README.md:4-7` | hoy lo vigila una regex escrita a mano que ya falló una vez |
+| `docs/spec/README.md` | lo reemplaza el índice generado |
+
+**No se tocan**: los ADR y los informes de validación (artefactos fechados), el HANDOFF (narración
+con fechas, fuera de la guardia **a propósito**), `PROJECT_STATE` (lo único que puede cambiar en
+`main` tras el tag) y `hoja_trader.md` de cada sesión (ya generado e histórico).
 
 ### 3.2 · La hoja del trader
 
-`scripts/hoja_sesion_docx.py` vive fuera de `src/`, que es lo que el propio brief de F12 señaló y
-lo que hizo que sus ids fueran posicionales hasta que se arregló. F13 decide su hogar (ver D3).
+**Ya se genera.** Lo que falta es meterla bajo red: se mueve a `src/botsito/cases/hoja_docx.py`
+(D3), con lo que entra en `mypy --strict` y en los contratos de importación.
 
-### 3.3 · Las tres deudas heredadas
+### 3.3 · Las cuatro deudas heredadas
 
-| # | Deuda | De dónde viene | Qué hay que hacer |
+| # | Deuda | Enunciado correcto | De dónde |
 |---|---|---|---|
-| a | `mapa_parametros.yaml` duplica las `opciones` del registro | F10; la unificación se aplazó aquí | unificar, sin romper la reproducibilidad del paquete histórico de la sesión 1 |
-| b | `feedback pending` lista también lo ya aplicado | F11 | que filtre |
-| c | las cadenas de `supersede` se comprueban una a una, no como cadena completa | F11 | comprobar la cadena entera |
+| a | `mapa_parametros.yaml` | unificar `opciones` **y decidir dónde viven `temas` y `ambiguedad`**, que es la mitad grande | F10 · F11 §390 |
+| b | `feedback pending` | lista los 70 activos sin mirar si el valor ya llegó al registro | F11 |
+| c | cadenas de `supersede` | **la cadena SÍ se recorre entera** (`comun/documentos.py:87`). Lo que falta: `feedback/modelo.py:358` compara el objetivo solo con el **predecesor inmediato** | F11 §388 |
+| d | `_ARGS_DE_VALOR` | lista blanca a mano: un argumento fuera de ella admite un valor de negocio crudo (`sentido: alcista` pasa hoy) | F12 §204 |
 
-### 3.4 · Las dos decisiones de método que quedaron abiertas
+### 3.4 · Las dos decisiones de método → **ADR + lo mínimo, no reescribir la máquina**
 
-Vienen de la auditoría de proceso del 2026-09-12 y **no son cosméticas**: las dos afectan a lo que
-`spec status` enseña y a lo que F26 podrá demostrar.
+La revisión las acota: son **baratas de decidir y caras de implementar**. F13 construye el
+mecanismo; **usarlo sobre A-15/A-16/A-17 es una decisión del consultor y queda fuera** (§4).
 
-**(a) Una ambigüedad que decide el consultor no tiene forma de cerrarse.**
-Cuatro documentos dicen que sólo cierra el trader, el modelo sólo conoce `ABIERTA` y `RESUELTA`, y
-**A-15, A-16 y A-17 llevan decididas y abiertas desde el 2026-09-09**. Consecuencia hoy: `spec
-status` presenta como dudoso lo que está decidido. Propuesta del auditor: estados `DECIDIDA` (con
-su ADR y su fecha) y `OBSOLETA` (la pregunta dejó de tener sentido), cada uno con su guardia.
+## 4. Fuera de alcance
 
-**(b) El feedback no sabe CUÁNDO llegó cada respuesta.**
-Los 116 registros se fechan el 2026-09-09 porque el esquema exige que `fecha` sea la de la sesión —
-y eso está bien—, pero tres son del 10 y del 11, y el canal sólo vive en prosa libre dentro de
-`registrado_por`. Propuesta: `recibido_el` (obligatorio, `>= fecha`) y `procedencia` (enum cerrado:
-`trader_grabado` · `trader_hoja` · `trader_escrito` · `referido_por_consultor` ·
-`reexpresion_consultor`).
-**Cuidado, y es lo que hay que resolver en el diseño:** el id de un registro es el hash de su
-contenido y los 116 son inmutables. Un campo obligatorio nuevo cambiaría los ids de todos.
-
-## 4. Fuera de alcance (qué NO)
-
-- **Generar la spec en MQL5** (`Params.mqh`): es F28.
-- **Reabrir valores del registro.** Un valor sólo cambia por feedback o por ADR (ADR-0002).
-- **Cerrar A-15, A-16 o A-17.** F13 construye el mecanismo; usarlo es una decisión del consultor.
-- **La biblioteca de casos y el reparto de mayo**: es F14.
-- **Implementar la guarda real del holdout** (hoy stub en `tests/conftest.py`): ADR-0021 la asigna
-  a F14.
-- Un visor, un HTML, o cualquier cosa que no sea texto versionable y difundible en un `git diff`.
+- Generar MQL5 (`Params.mqh`): **F28**.
+- Reabrir valores del registro (ADR-0002).
+- **Cerrar A-15, A-16 o A-17**: F13 hace el mecanismo; el ADR que las cierra lo escribe el consultor.
+- La biblioteca de casos y el reparto de mayo: **F14**.
+- La guarda real del holdout (hoy stub): **F14**, por ADR-0021.
 
 ## 5. Entradas y salidas
 
-**Entradas:** `knowledge/spec/{strategy_spec,parametros,glossary,ambiguedades,spec_manifest}.yaml` ·
-`knowledge/feedback/**` · `knowledge/cases/kit/mapa_parametros.yaml` · `docs/adr/**`.
+**Entradas:** `knowledge/spec/*.yaml` · `knowledge/feedback/**` · `mapa_parametros.yaml` · `docs/adr/**`.
 
-**Salidas previstas:** `docs/spec/*.md` (generado) · `src/botsito/spec/documentos.py` ·
-cambios en `cli.py` · `knowledge/feedback/README.md` y el esquema · `docs/adr/00NN-*.md` con las dos
-decisiones de método · tests · `docs/validation/F13-spec-documents.md`.
+**Salidas:** `docs/spec/*.md` (generado) · `src/botsito/spec/generador.py` **(no `documentos.py`: ya
+existe `comun/documentos.py`)** · `src/botsito/cases/hoja_docx.py` · `cli.py` ·
+`knowledge/spec/ambiguedades.yaml` y su cargador · `knowledge/feedback/` esquema y README ·
+`docs/adr/0022-*.md` y `0023-*.md` · tests · `docs/validation/F13-spec-documents.md`.
 
-## 6. Decisiones a cerrar ANTES de programar
+## 6. Las seis decisiones, CERRADAS
 
-Esto es lo que la revisión de diseño tiene que responder, con evidencia y no con preferencia:
-
-| # | Decisión | Por qué no es obvia |
+| # | Decisión | Evidencia que la cierra |
 |---|---|---|
-| **D1** | ¿Un solo documento generado o varios? | Uno grande se lee peor pero se compara mejor; varios obligan a decidir qué va en cada uno |
-| **D2** | ¿Cómo se comprueba la anti-deriva: regenerar y comparar byte a byte, o comparar el hash? | `kit check` ya resolvió esto una vez y aprendió que "byte a byte" obliga a fijar el orden y el formato |
-| **D3** | ¿Dónde vive el generador de la hoja del trader? | Moverlo a `src/` lo mete en `mypy` y en los contratos de importación, pero `test_no_business_literals` prohíbe cifras de negocio en `src/` y la hoja las lleva |
-| **D4** | ¿`DECIDIDA` y `OBSOLETA` son estados de la ambigüedad, o un campo aparte (`decision: ADR-NNNN`)? | Un estado cambia la máquina y las guardias; un campo puede convivir con `ABIERTA` y ser más honesto |
-| **D5** | ¿`recibido_el` y `procedencia` obligatorios u opcionales? | Obligatorios cambian el id de los 116 registros inmutables. Opcionales dejan el hueco abierto para siempre |
-| **D6** | La unificación de `mapa_parametros.yaml`, ¿rompe la reproducción del paquete de la sesión 1? | Ese paquete es la prueba de lo que se le preguntó al trader y `kit check` lo compara |
+| **D1** | **Cuatro documentos**, uno por fichero fuente | los tamaños no se parecen (830 / 1.021 / 315 / 119 líneas) y, sobre todo, **el hash cubre tres ficheros y no `ambiguedades.yaml`**: una cabecera con hash mentiría sobre una cuarta parte |
+| **D2** | **Regenerar y comparar byte a byte**, con exenciones nombradas | es lo que `kit check` ya sostuvo en producción (`paquete.py:549`). El hash **no sirve**: no cubre las ambigüedades, se calcula sobre la estructura re-serializada y no sobre los bytes, y no dice nada del feedback |
+| **D3** | **`src/botsito/cases/hoja_docx.py`** | medido: **una** ofensa de literales (`EURUSD`, que debe leerse del registro), **cero** errores de `mypy --strict`, ruff ya la cubre. Pero importa `cases`, y las capas prohíben que un módulo de `spec/` lo haga |
+| **D4** | **Estado `DECIDIDA`** (no un campo), con `decision: ADR-NNNN` y `decidida_el`. **`OBSOLETA` no** | las dos revisiones discreparon y decide el código: `cuestionario.py:123` mete en el cuestionario de la sesión siguiente toda `ABIERTA`, así que un campo dejaría que **se le vuelva a preguntar al trader lo que el consultor ya decidió**. `OBSOLETA` no tendría ningún ocupante hoy |
+| **D5** | **Opcionales en el esquema, obligatorios por guardia desde `2026-09-13`** | medido sobre los 116 reales: **0 ids cambian** si son opcionales (`contenido_canonico` salta el campo ausente, igual que con `valor_canonico` en F11); **116 de 116 dejan de cargar** si son obligatorios, porque `_validar` revienta antes del hash |
+| **D6** | **Unificar es seguro. La premisa era falsa** | `cuestionario.yaml` y `hoja_trader.md` ya están exentos por "sesión celebrada"; `kit check` da exit 0 con dos AVISOS **hoy**, antes de tocar nada. El docstring que decía lo contrario está caduco. **Pero** al borrar `opciones` desaparece el test que las cruza: hay que reponerlo contra el paquete commiteado |
 
 ## 7. Tests
 
-Por **comportamiento**, no por función:
-
-- el documento generado coincide con lo commiteado (anti-deriva), y el mensaje dice qué fichero;
-- cambiar un valor en `parametros.yaml` **cambia** el documento generado (si no, la guardia es
-  decorativa);
-- `feedback pending` no lista lo ya aplicado, y sí lista lo pendiente;
-- una cadena de `supersede` con un eslabón roto se denuncia entera;
-- los goldens: la spec real entra completa, sin perder ninguna regla ni ningún parámetro.
+- el documento generado coincide con lo commiteado, y el mensaje dice **qué fichero**;
+- cambiar un valor en `parametros.yaml` **cambia** el generado (si no, la guardia es decorativa);
+- `feedback pending` no lista lo ya aplicado;
+- una cadena de `supersede` incoherente **más allá del predecesor inmediato** se denuncia;
+- `DECIDIDA` exige un ADR **que exista y que nombre el id**, y no vale sobre una `bloqueante`;
+- `recibido_el`/`procedencia` se exigen desde el corte y no antes; los 116 conservan su id;
+- goldens: la spec real entra entera.
 
 ## 8. Criterio de aceptación
 
 1. `make check` verde, `knowledge validate` y `spec check` incluidos.
-2. `docs/spec/` está **generado** y su guardia falla si alguien lo edita a mano o si la spec cambia
-   sin regenerarlo.
-3. Ninguna cifra viva de la spec se copia a mano en ningún documento nuevo.
-4. Las tres deudas heredadas (§3.3) están cerradas o explícitamente reasignadas con su motivo.
-5. Las dos decisiones de método (§3.4) tienen su ADR y su guardia, o quedan declaradas como
-   decisión pendiente del consultor con lo que eso impide.
-6. El paquete histórico de la sesión 1 sigue reproduciéndose igual que hoy.
+2. `docs/spec/` generado, con guardia que falla si se edita a mano o si la spec cambia sin regenerar.
+3. **Al menos dos copias vivas mueren** (§3.1): el §2 del acta y el recuento del README.
+4. Las **cuatro** deudas de §3.3 cerradas o reasignadas con su motivo.
+5. `DECIDIDA` y los dos campos del feedback existen **con su guardia**, no solo en el esquema.
+6. El paquete histórico de la sesión 1 sigue dando exit 0 en `kit check`.
+7. Los 116 registros de feedback conservan su id. Se comprueba.
 
 ## 9. Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
-| Un documento generado que nadie lee: coste sin beneficio | que sustituya a algo que hoy se mantiene a mano, no que se sume |
-| La guardia anti-deriva se vuelve ruidosa (falla por formato) y alguien la desactiva | D2; y la lección del repositorio: *"una guardia con falsos positivos se desactiva sola"* |
-| Tocar el esquema de feedback rompe los 116 registros inmutables | D5, y decidirlo **antes** de escribir código |
-| F13 se convierte en "arreglar todo lo que quedó suelto" | §4 y el criterio 4: lo que no entre, se reasigna con su motivo |
+| **Generar dentro de `docs/` choca con el ritual**: tras el tag, en `main` solo puede cambiar `PROJECT_STATE.md`, y un `docs(...)` en `main` ya puso la CI en rojo dos veces | regenerar **solo** dentro de la rama; la guardia comprueba, no escribe |
+| `make check` no tiene dónde colgar la guardia (no hay target `docs`) | test de contrato, que ya es un marcador declarado |
+| Un documento que nadie lee | criterio 3: si no mata dos copias vivas, F13 no está hecha |
+| La guardia se vuelve ruidosa y alguien la desactiva | exenciones **nombradas y razonadas**, como `paquete.py:574-588` |
+| Unificar `opciones` borra la única guardia cruzada | reponerla contra el paquete commiteado (D6) |
+| F13 se convierte en "arreglar todo lo suelto" | §4 y el criterio 4 |
 
 ## 10. Qué habilita
 
-**F14** (comparte el esquema de `knowledge/` y necesita `feedback pending` fiable), **F26** (medirá
-fidelidad contra una spec que una persona puede leer y auditar) y **F28** (exportará a MQL5 desde la
-misma fuente: si el documento legible y el `Params.mqh` salen del mismo sitio, no pueden decir cosas
-distintas).
+**F14** (comparte esquema y necesita `feedback pending` fiable), **F26** (medirá contra una spec
+auditable, y `recibido_el` le da la única frase que puede sostener mecánicamente: qué valores se
+fijaron **antes** de la exposición del holdout del 2026-09-11 y cuáles después) y **F28**.
 
-## 11. Revisión de diseño (agente, antes de programar)
+## 11. Fuera de F13, pero se hace antes: A-14
 
-**PENDIENTE.** Sección obligatoria desde F05: no se programa hasta que esté cerrada, con los
-hallazgos aceptados o descartados con su motivo.
+No necesita ninguna de las dos decisiones. Está **respondida de hecho** desde el 2026-09-10 —lo dice
+su propio texto: *"Sigue ABIERTA solo por forma: falta su frase, no la respuesta"*— y se cierra hoy
+con un `RESOLVE_UNKNOWN` referido, exactamente como se cerró A-11. Hacerlo primero deja el problema
+en su tamaño real (**tres** ambigüedades del consultor, no cuatro) y estrena la guardia de RESUELTA
+que se añadió el 2026-09-12.
