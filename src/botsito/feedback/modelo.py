@@ -446,6 +446,24 @@ def validar_contra_contexto(
                     f"{a}: {anulado} ya esta superseded por {otros}; una correccion supersede al "
                     "ultimo registro del objetivo, no al original"
                 )
+    # Y que una correccion no venga del pasado. Lo que F11 dejo anotado -"se comprueba que cada
+    # `supersede` exista, no que la cadena sea coherente"- no era lo que el brief de F13 decia:
+    # comparar el objetivo con el predecesor inmediato SI es transitivo, asi que la cadena entera
+    # habla del mismo objetivo por construccion. El hueco de verdad es el TIEMPO: nada impedia que
+    # un registro corrigiera a otro POSTERIOR, y con eso la cadena dice que lo viejo manda sobre lo
+    # nuevo. No se podia comprobar hasta que existio `recibido_el` (F13): con `fecha` sola, los 117
+    # de la sesion 1 son del mismo dia y la comprobacion no distinguia nada.
+    for r in registros:
+        if not r.supersede or r.supersede not in por_id:
+            continue
+        previo = por_id[r.supersede]
+        cuando_nuevo = r.recibido_el or r.fecha
+        cuando_viejo = previo.recibido_el or previo.fecha
+        if cuando_nuevo < cuando_viejo:
+            problemas.append(
+                f"{r.id} ({cuando_nuevo}) supersede a {previo.id} ({cuando_viejo}), que es "
+                f"POSTERIOR: una correccion no llega antes que lo que corrige"
+            )
     problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
     return problemas
 

@@ -206,26 +206,21 @@ def cargar_mapa(
     for nombre, e in doc["parametros"].items():
         if nombre not in registro.parametros:
             raise KitError(f"{ruta.name}: {nombre} no esta en el registro")
-        if (
-            not isinstance(e, dict)
-            or not {"temas", "ambiguedad"} <= set(e)
-            or set(e) - {"temas", "ambiguedad", "opciones"}
-        ):
-            raise KitError(f"{ruta.name}: {nombre}: claves temas, ambiguedad [, opciones]")
+        if not isinstance(e, dict) or set(e) != {"temas"}:
+            raise KitError(
+                f"{ruta.name}: {nombre}: la unica clave es `temas` (F13: `opciones` las da el "
+                f"registro y `ambiguedad` la da ambiguedades.yaml)"
+            )
         temas = e["temas"]
         if not isinstance(temas, list) or not temas or not all(isinstance(t, str) for t in temas):
             raise KitError(f"{ruta.name}: {nombre}: temas debe ser una lista no vacia")
         for t in temas:
             if temas_raiz and t.split(".")[0] not in temas_raiz:
                 raise KitError(f"{ruta.name}: {nombre}: tema {t!r} fuera de _temas.yaml")
-        amb = e["ambiguedad"]
-        if amb is not None and not ids.es_id_de("ambiguedad", str(amb)):
-            raise KitError(f"{ruta.name}: {nombre}: ambiguedad {amb!r} invalida (A-N o null)")
-        opciones = e.get("opciones") or []
-        if not isinstance(opciones, list) or not all(isinstance(o, str) and o for o in opciones):
-            raise KitError(f"{ruta.name}: {nombre}: opciones debe ser una lista de textos")
+        # Las respuestas cerradas las sostiene el registro, no el kit: si el parametro es un
+        # enum se le preguntan al trader sus opciones, y si no, la pregunta va abierta.
         salida[str(nombre)] = EntradaMapa(
-            tuple(temas), None if amb is None else str(amb), tuple(opciones)
+            tuple(temas), tuple(registro.parametros[str(nombre)].opciones or ())
         )
     return salida
 
@@ -409,12 +404,6 @@ def construir(
     )
     if problemas_amb:
         raise KitError("ambiguedades: " + "; ".join(problemas_amb))
-    ids_amb = {a.id for a in ambiguedades}
-    for nombre, e in mapa.items():
-        if e.ambiguedad is not None and e.ambiguedad not in ids_amb:
-            raise KitError(
-                f"mapa_parametros: {nombre} cita la ambiguedad {e.ambiguedad}, que no existe"
-            )
     indice = indice or construir_indice(repo, carpeta_datos)
     try:
         preguntas = generar(

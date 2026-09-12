@@ -9,7 +9,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from botsito.comun import ids
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
@@ -162,17 +161,3 @@ def validar_contra_contexto(
         if a.contradiccion and a.estado == "ABIERTA" and a.contradiccion not in temas_contradiccion:
             problemas.append(f"{a.id}: no hay contradiccion abierta sobre {a.contradiccion}")
     return problemas
-
-
-def como_dict(a: Ambiguedad) -> dict[str, Any]:
-    return {
-        "id": a.id,
-        "titulo": a.titulo,
-        "pregunta": a.pregunta,
-        "resuelve_en": list(a.resuelve_en),
-        "evidencia": list(a.evidencia),
-        "parametros": list(a.parametros),
-        "contradiccion": a.contradiccion,
-        "estado": a.estado,
-        "bloqueante": a.bloqueante,
-    }

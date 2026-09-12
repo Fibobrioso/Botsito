@@ -65,8 +65,9 @@ PARAMETROS = """parametros:
     estado: UNKNOWN
   - nombre: break_even_condicion
     categoria: estrategia
-    tipo: texto
+    tipo: enum
     unidad: tocar/cierre
+    opciones: ["tocar", "cierre"]
     descripcion: cuando se pone el break even
     estado: UNKNOWN
 """
@@ -109,9 +110,9 @@ etiquetas: [compra, venta, no_trade]
 particiones: {dev: 2, holdout-1: 1, holdout-2: 1, holdout-3: 1}
 """
 MAPA = """parametros:
-  cartuchos_max: {temas: [cartuchos], ambiguedad: A-1}
-  break_even_condicion: {temas: [break_even], ambiguedad: A-2, opciones: [tocar, cierre]}
-  anclaje_h4: {temas: [reloj], ambiguedad: null}
+  cartuchos_max: {temas: [cartuchos]}
+  break_even_condicion: {temas: [break_even]}
+  anclaje_h4: {temas: [reloj]}
 """
 VISTOS = 'meses: []\ndias:\n  - {dia: "2026-05-05", motivo: prueba}\n'
 AJUSTES = (
@@ -474,9 +475,7 @@ def test_config_y_mapa_estrictos(tmp_path: Path) -> None:
     mapa.write_text(MAPA.replace("anclaje_h4:", "inexistente:"), encoding="utf-8")
     with pytest.raises(KitError, match="no esta en el registro"):
         cargar_mapa(mapa, registro, frozenset())
-    mapa.write_text(
-        MAPA.replace("  anclaje_h4: {temas: [reloj], ambiguedad: null}\n", ""), encoding="utf-8"
-    )
+    mapa.write_text(MAPA.replace("  anclaje_h4: {temas: [reloj]}\n", ""), encoding="utf-8")
     with pytest.raises(KitError, match="sin entrada en mapa"):
         construir(repo, repo / "data", "2026-09-15-sesion-01", 1)
 
@@ -637,10 +636,20 @@ def test_paquete_malformado_huso_y_evidencia(tmp_path: Path) -> None:
     with pytest.raises(KitError, match="no existe"):
         construir(repo, repo / "data", "2026-09-15-sesion-02", 1)
     ruta_amb.write_text(AMBIGUEDADES.format(a=ids["a"], b=ids["b"]), encoding="utf-8")
+    # F13: el mapa ya no lleva `ambiguedad` ni `opciones`. Esta guardia dejo de vigilar que la
+    # A-N citada existiera -ya no se cita- y pasa a vigilar lo unico que puede pasar ahora: que
+    # alguien reponga la columna muerta y el fichero vuelva a tener dos fuentes para una arista.
     mapa = repo / DIRECTORIO_KIT / "mapa_parametros.yaml"
-    mapa.write_text(MAPA.replace("ambiguedad: A-2", "ambiguedad: A-77"), encoding="utf-8")
-    with pytest.raises(KitError, match="A-77"):
-        construir(repo, repo / "data", "2026-09-15-sesion-02", 1)
+    for resucitada in ("ambiguedad: A-2", "opciones: [tocar, cierre]"):
+        mapa.write_text(
+            MAPA.replace(
+                "break_even_condicion: {temas: [break_even]}",
+                "break_even_condicion: {temas: [break_even], " + resucitada + "}",
+            ),
+            encoding="utf-8",
+        )
+        with pytest.raises(KitError, match="la unica clave es"):
+            construir(repo, repo / "data", "2026-09-15-sesion-02", 1)
     mapa.write_text(MAPA, encoding="utf-8")
 
 

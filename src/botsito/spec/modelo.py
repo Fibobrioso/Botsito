@@ -631,39 +631,41 @@ _ESTRUCTURALES = frozenset(
         "a_la_baja",
     }
 )
-# Y los que SI: su valor tiene que ser el nombre de un parametro del registro. Cualquier otra cosa
-# seria un valor de negocio escondido en un campo ejecutable, que es el fallo que hundio la D1
-# original -el `cuerpo` horneado en el nombre de un predicado-.
-_ARGS_DE_VALOR = frozenset(
-    {
-        "tope",
-        "cadencia",
-        "hora",
-        "huso",
-        "inicio",
-        "fin",
-        "dias",
-        "nivel",
-        "donde",
-        "segun",
-        "si",
-        "cuando",
-        "multiplo",
-        "sobre",
-        "extension",
-        "parciales",
-        "riesgo",
-        "base",
-        "fraccion",
-        "paso",
-        "minimo",
-        "contrato",
-        "cuenta_como",
-        "noticias",
-        "spread",
-        "stop",
-    }
-)
+# NO hay lista de "argumentos de valor". Hasta F13 la habia -veinticinco nombres escritos a
+# mano- y era una lista blanca al reves: solo se comprobaban los argumentos que figuraran en
+# ella, asi que INVENTAR UN NOMBRE NUEVO bastaba para colar un valor de negocio crudo. Medido el
+# 2026-09-12 sobre la spec real: `sentido` no estaba en la lista, y `sentido: alcista` pasaba sin
+# una sola queja -que es exactamente el fallo que hundio la D1 original, el `cuerpo` horneado en
+# el nombre de un predicado (ADR-0002), entrando por la otra puerta-.
+#
+# Ahora se niega por defecto: todo argumento de texto que no sea estructural lleva el NOMBRE de un
+# parametro del registro o una LIGADURA del propio arbol. Anadir un argumento nuevo ya no es
+# gratis; o nombra un parametro, o hay que declararlo estructural aqui, a la vista.
+#
+# Lo que esto TODAVIA no cubre, y queda declarado: el valor de un argumento estructural no se
+# contrasta contra ningun catalogo -`que: liquidez_m15` y `que: cuerpo` son iguales para la
+# guardia- porque los sujetos de geometria no estan declarados en ninguna parte. El glosario
+# nombra "liquidez de M15" en prosa, no `liquidez_m15`, y cruzarlos seria inventar un contrato.
+
+
+def _ligaduras(nodo: Any) -> set[str]:
+    """Variables que el propio arbol ata con `liga:` (`hecho: sesgo, liga: S` -> {"S"}).
+
+    Una ligadura no es un valor de negocio ni un parametro: es un nombre que la regla se pone a
+    si misma y que otro nodo del mismo arbol usa (`sentido: S`). Sin esto, negar por defecto
+    denunciaria RN-005, que es correcta.
+    """
+    atadas: set[str] = set()
+    if isinstance(nodo, dict):
+        for clave, valor in nodo.items():
+            if clave == "liga" and isinstance(valor, str):
+                atadas.add(valor)
+            else:
+                atadas |= _ligaduras(valor)
+    elif isinstance(nodo, list):
+        for hijo in nodo:
+            atadas |= _ligaduras(hijo)
+    return atadas
 
 
 def comprobar_consumo(
@@ -820,6 +822,7 @@ def comprobar_forma(
                 problemas.append(f"{r.id}: permite o prohibe '{efecto}', que no esta en `efectos`")
         # Un predicado se EVALUA y una accion se EJECUTA: cada rama tiene su vocabulario. Meterlos
         # en el mismo saco fue el hueco que la guardia encontro al escribir las veinte restantes.
+        atadas = _ligaduras(r.forma)
         for rama, catalogo, etiqueta in (
             (r.forma.get("cuando"), vocabulario["predicados"], "predicados"),
             (r.forma.get("entonces"), vocabulario["acciones"], "acciones"),
@@ -839,13 +842,13 @@ def comprobar_forma(
                 for clave, valor in args.items():
                     if clave in _ESTRUCTURALES or not isinstance(valor, str):
                         continue
-                    if (clave in _ARGS_DE_VALOR or clave.endswith("criterio")) and (
-                        valor not in parametros
-                    ):
-                        problemas.append(
-                            f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
-                            f"del registro; un argumento de valor lleva el NOMBRE, no el valor"
-                        )
+                    if valor.split(".")[-1] in parametros or valor in atadas:
+                        continue
+                    problemas.append(
+                        f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
+                        f"del registro ni una ligadura del arbol; un argumento de valor lleva "
+                        f"el NOMBRE, no el valor"
+                    )
 
     # Lo que la forma USA tiene que estar DECLARADO en `parametros`. Si no, las guardias que leen
     # esa lista se vuelven ciegas justo donde importa: `comprobar_decisiones` no ve que la regla

@@ -550,6 +550,42 @@ def test_la_forma_no_puede_esconder_un_valor_de_negocio() -> None:
     assert any("acumulador" in p for p in comprobar_forma([], roto, parametros))
 
 
+def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
+    """La deuda (d) de F13, cerrada donde estaba: en la LISTA, no en la comprobacion.
+
+    Hasta hoy solo se miraban los argumentos que figurasen en `_ARGS_DE_VALOR`, veinticinco
+    nombres escritos a mano. Inventar uno bastaba para colar el valor crudo, y no era teorico:
+    `sentido` no estaba en la lista y RN-005 lo usa, asi que `sentido: alcista` -el mismo fallo
+    de ADR-0002 entrando por la otra puerta- pasaba sin una queja. Ahora se niega por defecto.
+
+    Y la contraparte, que es la que hace que la inversion sea usable: una LIGADURA sigue valiendo.
+    RN-005 ata `S` al hecho `sesgo` y se lo pasa a `esta_al_otro_lado_de`; si negar por defecto
+    denunciara eso, la guardia obligaria a romper una regla correcta.
+    """
+    import copy
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+
+    def sobre_argumentos(unas: list[Any]) -> list[str]:
+        # Pasar una sola regla despierta ademas las comprobaciones de coherencia global (un hecho
+        # que nadie produce, un efecto sin lector...), que aqui son ruido: se mira lo de siempre.
+        return [p for p in comprobar_forma(unas, vocabulario, parametros) if "vale " in p]
+
+    rn005 = next(r for r in reglas if r.id == "RN-005")
+    assert sobre_argumentos([rn005]) == [], "la ligadura S es legitima"
+
+    rota = copy.deepcopy(rn005)
+    assert rota.forma is not None
+    rota.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+    problemas = sobre_argumentos([rota])
+    assert any("lleva el NOMBRE, no el valor" in p and "alcista" in p for p in problemas), problemas
+
+
 def test_el_hash_cubre_la_forma_y_el_vocabulario() -> None:
     """`forma` es lo que el motor ejecuta: fuera del hash, cambiarla no moveria la version.
 

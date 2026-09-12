@@ -900,3 +900,34 @@ def test_una_respuesta_no_llega_antes_de_la_pregunta(tmp_path: Path) -> None:
     malo["recibido_el"] = "2026-09-19"
     with pytest.raises(FeedbackError, match="anterior a la fecha"):
         registro_desde_dict({**malo, "id": calcular_id(malo)})
+
+
+def test_una_correccion_no_llega_antes_que_lo_que_corrige() -> None:
+    """La coherencia de la cadena que faltaba, y no era la que el brief de F13 decia.
+
+    Comparar el objetivo con el predecesor inmediato SI es transitivo: la cadena entera habla del
+    mismo objetivo por construccion. El hueco de verdad era el TIEMPO, y no se podia comprobar
+    hasta que existio `recibido_el`: con `fecha` sola, los 117 registros de la sesion 1 son del
+    mismo dia y no habia nada que distinguir.
+    """
+    viejo = _fb(sesion="2026-09-20-sesion-02", fecha="2026-09-20", recibido_el="2026-09-25")
+    viejo_id = calcular_id(viejo)
+    nuevo = _fb(
+        sesion="2026-09-20-sesion-02",
+        fecha="2026-09-20",
+        recibido_el="2026-09-21",  # ANTES que el que corrige
+        supersede=viejo_id,
+        respuesta_literal="me desdigo, era al cierre de la vela",
+    )
+    registros = [
+        registro_desde_dict({**viejo, "id": viejo_id}),
+        registro_desde_dict({**nuevo, "id": calcular_id(nuevo)}),
+    ]
+    fallos = validar_contra_contexto(registros, set(), {"stop_fraccion_caja"}, set())
+    assert any("POSTERIOR" in f for f in fallos), fallos
+
+    # y al reves no salta
+    nuevo["recibido_el"] = "2026-09-26"
+    registros[1] = registro_desde_dict({**nuevo, "id": calcular_id(nuevo)})
+    fallos = validar_contra_contexto(registros, set(), {"stop_fraccion_caja"}, set())
+    assert not [f for f in fallos if "POSTERIOR" in f], fallos

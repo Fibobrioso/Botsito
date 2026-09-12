@@ -475,7 +475,9 @@ def test_feedback_pending_omite_parametros_que_no_son_de_estrategia(
     assert cli.feedback_pending(repo) == 0
     salida = capsys.readouterr().out
     assert "stop_fraccion" in salida and "spread_max" not in salida
-    assert "1 registros activos" in salida
+    # `spread_max` no desaparece por estar reflejado sino por su CATEGORIA (ADR-0004): cuenta
+    # entre los activos y entre los reflejados, y por eso el recuento dice 2 y no 1.
+    assert "1 pendientes de 2 activos" in salida
 
 
 def test_evidence_new_rechaza_video_fuera_de_fuentes(tmp_path: Path) -> None:
@@ -560,3 +562,36 @@ def test_spec_status_no_llama_a_proposito_a_lo_que_no_se_ha_preguntado(
     assert con_registro, "hoy hay parametros sin valor y rechazados por el trader"
     assert all(n in rechazados for n in con_registro), con_registro
     assert not [n for n in sin_registro if n in rechazados], sin_registro
+
+
+def test_pending_no_lista_lo_que_ya_esta_reflejado(
+    repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """La deuda (b) de F11: listaba los 70 activos sin mirar si el valor habia llegado.
+
+    Una lista que siempre esta llena no la mira nadie, que es la forma mas silenciosa de que una
+    guardia deje de servir. El criterio no es una aproximacion: un parametro refleja su registro
+    cuando lo CITA en su `fuente`, que es donde `feedback apply` escribe el id. Y un REJECT se
+    refleja al reves, cuando el parametro deja de citarlo: o se queda sin valor a proposito, o
+    toma su valor de otra fuente.
+    """
+    from botsito.config.registro import cargar_registro
+
+    capsys.readouterr()
+    assert cli.feedback_pending(repo) == 0
+    salida = capsys.readouterr().out
+    ultima = salida.strip().splitlines()[-1]
+    assert "pendientes de" in ultima and "ya reflejados" in ultima
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    citados = {p.fuente.id for p in registro.parametros.values() if p.fuente is not None}
+    listados = {linea.split()[1] for linea in salida.splitlines() if linea.startswith("2026-")}
+    assert not (listados & citados), (
+        f"lista como pendientes registros que el registro ya cita: {sorted(listados & citados)}"
+    )
+
+    # con --todos se ven tambien los reflejados, y dicen por que lo estan
+    capsys.readouterr()
+    assert cli.feedback_pending(repo, todos=True) == 0
+    completa = capsys.readouterr().out
+    assert "(ok)" in completa and "aplicado" in completa

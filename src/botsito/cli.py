@@ -752,6 +752,24 @@ def spec_check(repo: Path) -> int:
     return 0
 
 
+def spec_docs(repo: Path, escribir_docs: bool) -> int:
+    """Genera `docs/spec/` desde `knowledge/spec/`, o comprueba que lo commiteado cuadra (F13)."""
+    from botsito.cases.spec_docs import DIRECTORIO, comprobar
+    from botsito.cases.spec_docs import escribir as escribir_docs_fn
+
+    if escribir_docs:
+        for ruta in escribir_docs_fn(repo):
+            print(f"OK: {ruta.relative_to(repo).as_posix()}")
+        return 0
+    problemas = comprobar(repo)
+    for p in problemas:
+        print(f"ERROR: {p}")
+    if problemas:
+        return 1
+    print(f"OK: {DIRECTORIO} coincide con knowledge/spec/")
+    return 0
+
+
 def spec_manifest(repo: Path, escribir: bool) -> int:
     """Comprueba el hash de la spec, o lo regenera con --escribir."""
     from botsito.spec.manifiesto import (
@@ -1448,31 +1466,95 @@ def feedback_trace(repo: Path, identificador: str) -> int:
     return 0
 
 
-def feedback_pending(repo: Path) -> int:
-    """Registros activos cuyo objetivo todavia no esta reflejado en la spec (todos, hasta F11).
+def feedback_pending(repo: Path, todos: bool = False) -> int:
+    """Lo que el trader dijo y TODAVIA no esta reflejado. Y por que, uno a uno (F13).
 
-    Un parametro que no sea de categoria `estrategia` no se le pregunta al trader (ADR-0004):
-    un registro sobre el no aparece como pendiente.
+    Hasta F13 listaba los registros activos SIN MIRAR si su valor ya habia llegado: 70 de 117, casi
+    todos aplicados hace dias. Una lista que siempre esta llena no la mira nadie, que es la forma
+    mas silenciosa de que una guardia deje de servir.
+
+    Que cuenta como reflejado, por tipo de objetivo:
+      - `parametro`: el registro esta reflejado cuando el propio parametro lo CITA en su `fuente`.
+        Es la definicion exacta, no una aproximacion: `feedback apply` escribe ahi el id.
+      - `ambiguedad`: cuando deja de estar ABIERTA (RESUELTA por el trader o DECIDIDA por el
+        consultor, ADR-0022).
+      - `caso`: no se refleja en la spec sino en la biblioteca de casos, que es F14.
+      - el resto (`evidence`, `regla`, `contradiccion`, `paquete`): no hay nada que "aplicar".
+        Un CONFIRM sobre un item de evidencia lo confirma y ya esta.
+
+    Un parametro que no sea de categoria `estrategia` no se le pregunta al trader (ADR-0004).
     """
+    from botsito.cases.ambiguedades import (
+        FICHERO_AMBIGUEDADES,
+        AmbiguedadError,
+        cargar_ambiguedades,
+    )
     from botsito.config.registro import RegistroError, cargar_registro
     from botsito.feedback.modelo import FeedbackError, activos, cargar_feedback
 
     try:
         registros = activos(cargar_feedback(repo / "knowledge" / "feedback"))
         parametros = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml").parametros
-    except (FeedbackError, RegistroError) as exc:
+        # Ausente = repo anterior a F10, que es como lo trata `knowledge validate`
+        # (`validation/knowledge.py:83`). Roto es otra cosa y sigue siendo un error.
+        ruta_amb = repo / FICHERO_AMBIGUEDADES
+        estados: dict[str, str] | None = (
+            {a.id: a.estado for a in cargar_ambiguedades(ruta_amb)} if ruta_amb.is_file() else None
+        )
+    except (FeedbackError, RegistroError, AmbiguedadError) as exc:
         print(f"ERROR: {exc}")
         return 1
-    registros = [
-        r
-        for r in registros
-        if r.objetivo.tipo != "parametro"
-        or r.objetivo.id not in parametros
-        or parametros[r.objetivo.id].categoria == "estrategia"
-    ]
-    for r in sorted(registros, key=lambda r: (r.fecha, r.id)):
-        print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id}")
-    print(f"{len(registros)} registros activos pendientes de reflejar en la spec (F11)")
+
+    def situacion(r: Any) -> tuple[bool, str]:
+        """(esta pendiente, por que)."""
+        tipo, oid = r.objetivo.tipo, r.objetivo.id
+        if tipo == "parametro":
+            p = parametros.get(oid)
+            if p is None:
+                return True, "el parametro no esta en el registro"
+            if p.categoria != "estrategia":
+                return False, f"categoria {p.categoria}: no se le pregunta al trader (ADR-0004)"
+            if r.accion == "REJECT":
+                # Un REJECT dice que ese registro NO sostiene ese parametro, asi que se refleja
+                # cuando el parametro deja de citarlo. Son dos casos y los dos son correctos: el
+                # parametro se queda sin valor a proposito -los siete UNKNOWN con su REJECT- o
+                # toma su valor de otra fuente, que es lo que hicieron las correcciones de
+                # trazabilidad de F11 con `huso_grafico` y `instrumento`. Pedirle que lo CITE
+                # seria pedir lo contrario de lo que el registro significa.
+                cita = p.fuente.id if p.fuente is not None else None
+                if cita != r.id:
+                    donde = "sin valor a proposito" if p.valor is None else f"cita {cita}"
+                    return False, f"aplicado: el parametro ya no lo cita ({donde})"
+                return True, f"{oid} fue rechazado y sigue citandolo"
+            if p.fuente is not None and p.fuente.id == r.id:
+                return False, "aplicado: el parametro lo cita"
+            return True, f"{oid} no lo cita todavia (`botsito feedback apply`)"
+        if tipo == "ambiguedad":
+            if estados is None:
+                return True, "sin ambiguedades.yaml no se puede saber si sigue abierta"
+            estado = estados.get(oid)
+            if estado is None:
+                return True, "la ambiguedad no existe"
+            return (estado == "ABIERTA"), f"{oid} esta {estado}"
+        if tipo == "caso":
+            return True, "espera la biblioteca de casos (F14)"
+        return False, f"un {r.accion} sobre {tipo} no se aplica a la spec"
+
+    pendientes: list[tuple[Any, str]] = []
+    reflejados: list[tuple[Any, str]] = []
+    for r in registros:
+        pendiente, motivo = situacion(r)
+        (pendientes if pendiente else reflejados).append((r, motivo))
+
+    for r, motivo in sorted(pendientes, key=lambda x: (x[0].fecha, x[0].id)):
+        print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id} — {motivo}")
+    if todos:
+        for r, motivo in sorted(reflejados, key=lambda x: (x[0].fecha, x[0].id)):
+            print(f"  (ok) {r.id} {r.objetivo.tipo}:{r.objetivo.id} — {motivo}")
+    print(
+        f"{len(pendientes)} pendientes de {len(registros)} activos; {len(reflejados)} ya "
+        f"reflejados (--todos para verlos)"
+    )
     return 0
 
 
@@ -1806,6 +1888,8 @@ def build_parser() -> argparse.ArgumentParser:
     sp_sub = sp.add_subparsers(dest="spec_cmd", required=True)
     sp_sub.add_parser("status", help="con que corre el bot y que sigue en revision")
     sp_sub.add_parser("check", help="comprueba que la spec no se contradice (F12)")
+    spd = sp_sub.add_parser("docs", help="la spec legible, generada desde knowledge/spec/ (F13)")
+    spd.add_argument("--escribir", action="store_true", help="regenera los documentos")
     spm = sp_sub.add_parser("manifest", help="comprueba el hash de la spec")
     spm.add_argument("--escribir", action="store_true", help="regenera el hash")
     fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
@@ -1844,7 +1928,8 @@ def build_parser() -> argparse.ArgumentParser:
     fbn.add_argument("--notas")
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")
     fbt.add_argument("identificador")
-    fb_sub.add_parser("pending", help="registros activos pendientes de reflejar en la spec")
+    fbp = fb_sub.add_parser("pending", help="lo que el trader dijo y todavia no esta reflejado")
+    fbp.add_argument("--todos", action="store_true", help="ensena tambien los ya reflejados")
     fba = fb_sub.add_parser("apply", help="lleva los valores de una sesion al registro (F11)")
     fba.add_argument("--sesion", required=True, help="AAAA-MM-DD-sesion-NN")
     fba.add_argument("--check", action="store_true", help="solo lista lo que haria; no escribe")
@@ -1896,9 +1981,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "feedback" and args.feedback_cmd == "trace":
         return feedback_trace(args.repo, args.identificador)
     if args.cmd == "feedback" and args.feedback_cmd == "pending":
-        return feedback_pending(args.repo)
+        return feedback_pending(args.repo, args.todos)
     if args.cmd == "spec" and args.spec_cmd == "status":
         return spec_status(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "docs":
+        return spec_docs(args.repo, args.escribir)
     if args.cmd == "spec" and args.spec_cmd == "check":
         return spec_check(args.repo)
     if args.cmd == "spec" and args.spec_cmd == "manifest":
