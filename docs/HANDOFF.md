@@ -13,13 +13,13 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - F10 elicitation-kit CERRADA el 2026-09-08 (tag `stable/F10`). Lo que dejo: ADR-0011;
   `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina); registro con 24
   parametros de estrategia en UNKNOWN; `knowledge/cases/kit/{config,mapa_parametros,vistos}.yaml`
-  (cifras de negocio como datos; enero, julio y agosto VISTOS por el trader); paquete `cases`
+  (cifras de negocio como datos; meses VISTOS por el trader: enero, ABRIL -v5 es el, backtesteandolo-, julio y agosto. MAYO tambien lo esta desde que lo backtesteo entero el 2026-09-11, pero no se puede declarar en `vistos.yaml` sin invalidar el paquete de la sesion 1: el hueco esta escrito en el propio fichero); paquete `cases`
   (cuestionario de 21 preguntas con casos `ev-*`, ventanas de dias no vistos de mayo y junio de
   2026 con hash y limites H4 por anclaje, particiones por hash con seed, kappa desde los
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
   `knowledge/cases/kit/2026-09-09-sesion-01/` (nacio con la fecha provisional 2026-09-15 y se movio al celebrarse).
-- SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 107 registros de
+- SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 116 registros de
   feedback; A-1..A-12 RESUELTAS). Informe: `docs/validation/SESION-01-2026-09-09.md`, que es el
   esquema completo de la estrategia con la cita de cada decision. Cerrada en main con el tag
   `stable/F10-sesion-01`.
