@@ -18,8 +18,22 @@ rechazan modificarlo o borrarlo. Una correccion es un registro nuevo con `supers
 | `respuesta_literal` | si | lo que dijo o escribio el trader, tal cual |
 | `valor_resultante` | si para `CORRECT`, `RESOLVE_*`, `LABEL_CASE` | valor normalizado que queda |
 | `registrado_por` | si | quien transcribio la respuesta |
+| `recibido_el` | desde la sesion del 2026-09-13 | `AAAA-MM-DD` en que llego la RESPUESTA; `>= fecha`. `fecha` dice a que SESION pertenece el registro (es la de la sesion); esto dice CUANDO llego |
+| `procedencia` | desde la sesion del 2026-09-13 | `trader_grabado` · `trader_hoja` · `trader_escrito` · `referido_por_consultor` · `reexpresion_consultor` · `correccion_consultor` |
 | `supersede` | no | id del registro que corrige |
 | `notas` | no | texto libre |
+
+Los dos ultimos son **opcionales en el esquema y obligatorios por guardia desde la sesion del
+2026-09-13**. Los 117 registros anteriores no los llevan y NO se les anaden: el id es el hash del
+contenido, asi que anadirselos los renombraria, y eso es justo lo que el hook y
+`test_feedback_history.py` prohiben. Su canal vive en `registrado_por`, en prosa, y ahi se queda.
+Por que existen: `fecha` es la de la sesion -y esta bien asi, fecha la PREGUNTA-, pero tres
+registros de la sesion 1 llegaron despues (A-11 el 2026-09-10, el acuerdo del lotaje y el WhatsApp
+que cierra A-20 el 2026-09-11) y con `fecha` sola se leen como del 9. F26 necesita poder decir que
+valores se fijaron ANTES de la exposicion de holdout del 2026-09-11 y cuales despues (ADR-0021).
+Y `procedencia` no es decorativa: `trader_grabado` exige un medio grabado, `trader_escrito` y
+`referido_por_consultor` exigen `medio: escrito`, y `correccion_consultor` exige `supersede`,
+porque no trae respuesta nueva sino que retira lo que otro registro afirmaba.
 
 Un fichero escrito a mano se carga con el cargador estricto: claves duplicadas rechazadas,
 `fecha` sin comillas sigue siendo texto, pero `t0: 1:05:00` sin comillas es un entero para YAML y

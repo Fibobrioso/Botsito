@@ -1415,6 +1415,8 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         "valor_resultante": args.valor,
         "valor_canonico": getattr(args, "valor_canonico", None),
         "registrado_por": args.registrado_por,
+        "recibido_el": getattr(args, "recibido_el", None),
+        "procedencia": getattr(args, "procedencia", None),
         "supersede": args.supersede,
         "notas": args.notas,
     }
@@ -1639,6 +1641,8 @@ def config_validate(repo: Path) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    from botsito.feedback.modelo import PROCEDENCIAS
+
     parser = argparse.ArgumentParser(prog="botsito")
     parser.add_argument("--version", action="version", version=f"botsito {__version__}")
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="raiz del repositorio")
@@ -1823,6 +1827,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="el mismo valor en el tipo que espera el registro (F11): '0,8' -> '0.8'",
     )
     fbn.add_argument("--registrado-por", required=True, dest="registrado_por")
+    fbn.add_argument(
+        "--recibido-el",
+        dest="recibido_el",
+        help=(
+            "AAAA-MM-DD en que llego la RESPUESTA (`fecha` es la de la sesion, o sea la de la "
+            "pregunta). Obligatorio desde la sesion del 2026-09-13"
+        ),
+    )
+    fbn.add_argument(
+        "--procedencia",
+        choices=PROCEDENCIAS,
+        help="por donde llego la respuesta. Obligatorio desde la sesion del 2026-09-13",
+    )
     fbn.add_argument("--supersede")
     fbn.add_argument("--notas")
     fbt = fb_sub.add_parser("trace", help="cadena de feedback de un objeto")

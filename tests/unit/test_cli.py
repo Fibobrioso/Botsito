@@ -286,6 +286,9 @@ def _fb_args(repo: Path, **extra: str) -> list[str]:
         "accion": "CONFIRM",
         "respuesta": "si, el stop va al 0,75 siempre",
         "registrado-por": "aleks",
+        # La sesion es posterior al corte del 2026-09-13, asi que la guardia los exige.
+        "recibido-el": "2026-09-20",
+        "procedencia": "trader_hoja",
     }
     campos.update(extra)
     args = ["--repo", str(repo), "feedback", "new"]

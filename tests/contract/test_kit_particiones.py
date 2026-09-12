@@ -54,6 +54,8 @@ def _etiqueta(repo: Path, caso: str) -> None:
         {
             "sesion": SESION,
             "fecha": SESION[:10],
+            "recibido_el": SESION[:10],
+            "procedencia": "trader_hoja",
             "medio": "escrito",
             "objetivo": {"tipo": "caso", "id": caso},
             "accion": "LABEL_CASE",

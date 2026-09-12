@@ -19,6 +19,7 @@ from botsito.feedback.modelo import (
     validar_contra_contexto,
 )
 
+REPO = Path(__file__).resolve().parents[2]
 EV = "ev-v4-001533-1a2b3c4d"
 
 
@@ -34,6 +35,10 @@ def base(**cambios: Any) -> dict[str, Any]:
         "accion": "CONFIRM",
         "respuesta_literal": "si, con cuerpo, siempre con cuerpo en M15",
         "registrado_por": "aleks",
+        # La sesion de esta fixture es POSTERIOR al corte del 2026-09-13, asi que los lleva: es
+        # lo que la guardia exige y lo que tendra cualquier registro de la sesion 2 en adelante.
+        "recibido_el": "2026-09-20",
+        "procedencia": "trader_hoja",
     }
     d.update(cambios)
     return d
@@ -175,6 +180,7 @@ def test_supersede_y_traza(tmp_path: Path) -> None:
             supersede=primero.id,
             sesion="2026-09-21-sesion-02",
             fecha="2026-09-21",
+            recibido_el="2026-09-21",
         ),
     )
     registros = cargar_feedback(tmp_path)
@@ -818,3 +824,79 @@ def test_el_trader_ratificando_un_default_nuestro_no_es_un_no_op(tmp_path: Path)
         "el valor coincide, pero deja de ser un default nuestro y pasa a decirlo el trader"
     )
     assert c.estado_anterior.value == "DEFAULT_AMBIGUOUS"
+
+
+def test_los_campos_nuevos_no_mueven_ni_un_id_de_los_que_ya_existen() -> None:
+    """`recibido_el` y `procedencia` entran sin renombrar nada, y eso NO es casualidad.
+
+    El id es el hash del contenido y los ficheros son inmutables por historial, asi que un campo
+    obligatorio no "cambiaria los ids": dejaria sin CARGAR los 117 registros, porque `_validar`
+    revienta antes de calcularlos. Funciona porque `contenido_canonico` salta el campo ausente,
+    que es el mismo mecanismo con el que F11 anadio `valor_canonico` sin mover ninguno.
+    """
+    from botsito.feedback.modelo import limpiar_campos
+
+    directorio = REPO / "knowledge" / "feedback" / "2026-09-09-sesion-01"
+    cambian = []
+    for fichero in sorted(directorio.glob("*.yaml")):
+        campos = yaml.safe_load(fichero.read_text(encoding="utf-8"))
+        esperado = campos.pop("id")
+        if calcular_id(limpiar_campos(campos)) != esperado:
+            cambian.append(esperado)
+    assert not cambian, f"estos ids se moverian: {cambian}"
+
+
+def test_desde_el_corte_los_dos_campos_son_obligatorios(tmp_path: Path) -> None:
+    """Opcionales en el esquema, obligatorios por guardia. Y se comprueba AL CARGAR.
+
+    Si solo lo mirara `feedback new`, un fichero escrito a mano se lo saltaria: es la leccion que
+    `knowledge validate` ya aprendio con `feedback apply`.
+    """
+    from botsito.feedback.modelo import CORTE_PROCEDENCIA, FeedbackError, registro_desde_dict
+
+    antes = _fb(sesion="2026-09-09-sesion-01", fecha="2026-09-09")
+    antes.pop("recibido_el", None)
+    antes.pop("procedencia", None)
+    registro_desde_dict({**antes, "id": calcular_id(antes)})  # la sesion 1 no los lleva y carga
+
+    despues = _fb(sesion="2026-09-20-sesion-02", fecha="2026-09-20")
+    despues.pop("recibido_el", None)
+    despues.pop("procedencia", None)
+    assert CORTE_PROCEDENCIA <= "2026-09-20"
+    with pytest.raises(FeedbackError, match="son obligatorios"):
+        registro_desde_dict({**despues, "id": calcular_id(despues)})
+
+    completo = {**despues, "recibido_el": "2026-09-21", "procedencia": "trader_hoja"}
+    r = registro_desde_dict({**completo, "id": calcular_id(completo)})
+    assert r.recibido_el == "2026-09-21" and r.procedencia == "trader_hoja"
+
+
+def test_la_procedencia_tiene_que_cuadrar_con_el_resto_del_registro(tmp_path: Path) -> None:
+    """Un enum que no se cruza con nada es decorativo."""
+    from botsito.feedback.modelo import FeedbackError, registro_desde_dict
+
+    base = _fb(sesion="2026-09-20-sesion-02", fecha="2026-09-20")
+    base["recibido_el"] = "2026-09-20"
+    base.pop("procedencia", None)
+
+    malo = {**base, "procedencia": "trader_grabado"}  # medio escrito
+    with pytest.raises(FeedbackError, match="medio grabado"):
+        registro_desde_dict({**malo, "id": calcular_id(malo)})
+
+    malo = {**base, "procedencia": "correccion_consultor"}  # sin supersede
+    with pytest.raises(FeedbackError, match="exige `supersede`"):
+        registro_desde_dict({**malo, "id": calcular_id(malo)})
+
+    malo = {**base, "procedencia": "inventada"}
+    with pytest.raises(FeedbackError, match="no esta en"):
+        registro_desde_dict({**malo, "id": calcular_id(malo)})
+
+
+def test_una_respuesta_no_llega_antes_de_la_pregunta(tmp_path: Path) -> None:
+    from botsito.feedback.modelo import FeedbackError, registro_desde_dict
+
+    malo = _fb(sesion="2026-09-20-sesion-02", fecha="2026-09-20")
+    malo["procedencia"] = "trader_hoja"
+    malo["recibido_el"] = "2026-09-19"
+    with pytest.raises(FeedbackError, match="anterior a la fecha"):
+        registro_desde_dict({**malo, "id": calcular_id(malo)})

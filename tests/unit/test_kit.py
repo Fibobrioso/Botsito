@@ -491,6 +491,10 @@ def _registro_label(repo: Path, sesion: str, caso: str, valor: str, **extra: Any
         "respuesta_literal": f"etiqueta del trader para {caso}",
         "valor_resultante": valor,
         "registrado_por": "aleks",
+        # Las sesiones de estos tests son posteriores al corte del 2026-09-13, asi que llevan los
+        # dos campos que la guardia exige desde entonces.
+        "recibido_el": sesion[:10],
+        "procedencia": "trader_hoja",
     }
     campos.update(extra)
     return escribir_registro(repo / "knowledge" / "feedback", campos).stem
@@ -774,6 +778,8 @@ def test_feedback_ambiguedad_duracion_y_video_de_sesion(tmp_path: Path) -> None:
         "accion": "RESOLVE_UNKNOWN",
         "respuesta_literal": "mi grafico abre a las 7 hora de Madrid",
         "valor_resultante": "07:00 Europe/Madrid",
+        "recibido_el": "2026-09-15",
+        "procedencia": "trader_grabado",
         "registrado_por": "aleks",
     }
     campos["id"] = calcular_id(campos)
@@ -826,6 +832,8 @@ def test_una_etiqueta_retirada_con_borderline_no_reaparece(tmp_path: Path) -> No
             "accion": "BORDERLINE",
             "respuesta_literal": "en este dia no me decido, retiro lo que dije",
             "registrado_por": "aleks",
+            "recibido_el": sesion[:10],
+            "procedencia": "trader_hoja",
             "supersede": etiqueta,
         },
     )
