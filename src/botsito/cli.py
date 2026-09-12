@@ -1346,6 +1346,28 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def kit_hoja(repo: Path, args: argparse.Namespace) -> int:
+    """Compone la hoja de respuestas de la sesion en Word (F10; entra en el CLI en F13).
+
+    Vivia en `scripts/hoja_sesion_docx.py`, fuera de `mypy --strict` y de los contratos de
+    importacion: era el unico codigo que se ejecuta DELANTE DEL TRADER y el unico sin red.
+    """
+    from botsito.cases.hoja_docx import HojaError, componer, escribir_docx
+
+    try:
+        destino, xml = componer(repo, args.sesion, Path(args.salida) if args.salida else None)
+        escribir_docx(destino, xml)
+    except HojaError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(f"OK: {destino}")
+    print(
+        "Recuerda: si vuelves a ejecutar `kit build`, esta hoja se queda vieja. Regenerala "
+        "siempre como ultimo paso antes de imprimir."
+    )
+    return 0
+
+
 def kit_kappa(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import kappa_entre_sesiones
     from botsito.feedback.modelo import cargar_feedback
@@ -1831,6 +1853,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     kb_kappa.add_argument("--sesion-a", dest="sesion_a", required=True)
     kb_kappa.add_argument("--sesion-b", dest="sesion_b", required=True)
+    kb_hoja = kit_sub.add_parser("hoja", help="compone la hoja de respuestas en Word (.docx)")
+    kb_hoja.add_argument("--sesion", help="AAAA-MM-DD-sesion-NN (por defecto, la ultima del kit)")
+    kb_hoja.add_argument("--salida", help="ruta del .docx (por defecto, en la raiz del repo)")
     kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
     kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
     find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
@@ -2008,6 +2033,8 @@ def main(argv: list[str] | None = None) -> int:
         return kit_build(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "check":
         return kit_check(args.repo, args)
+    if args.cmd == "kit" and args.kit_cmd == "hoja":
+        return kit_hoja(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "kappa":
         return kit_kappa(args.repo, args)
     if args.cmd == "kb" and args.kb_cmd == "find":

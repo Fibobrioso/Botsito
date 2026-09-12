@@ -40,7 +40,7 @@ IGNORED_ALLOWLIST = (
     ".hypothesis/",
     ".coverage",
 )
-# Hojas de sesion en Word, en la raiz: se generan con scripts/hoja_sesion_docx.py desde el kit
+# Hojas de sesion en Word, en la raiz: las genera `botsito kit hoja` desde el paquete del kit
 # (F10) y se rellenan a mano; la fuente versionada es el paquete, no el binario.
 IGNORADOS_EN_RAIZ = (".docx",)
 

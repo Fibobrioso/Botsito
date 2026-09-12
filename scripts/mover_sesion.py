@@ -133,7 +133,7 @@ def main() -> int:
         viejo_docx.unlink()
         print(f"    borrada la hoja vieja: {viejo_docx.name}")
     print("\nAhora regenera la hoja y commitea el paquete ANTES de la sesion:")
-    print(f"    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion {nueva}")
+    print(f"    uv run botsito kit hoja --sesion {nueva}")
     return 0
 
 

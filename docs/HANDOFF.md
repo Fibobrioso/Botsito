@@ -201,7 +201,7 @@ uv run botsito spec check                              # la capa semantica sola 
 uv run botsito kit build --sesion 2026-09-20-sesion-02 --seed 20260920   # paquete de sesion (F10)
 uv run botsito kit check --sesion 2026-09-09-sesion-01   # el paquete real de la sesion 1
 uv run botsito kit kappa --sesion-a 2026-09-09-sesion-01 --sesion-b 2026-09-20-sesion-02
-uv run --no-sync python scripts/hoja_sesion_docx.py   # hoja de respuestas en Word (raiz)
+uv run botsito kit hoja                                # hoja de respuestas en Word (raiz)
 ```
 
 ## Lecciones operativas

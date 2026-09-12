@@ -3,7 +3,7 @@
 # El cuestionario generado (`<sesion>/cuestionario.yaml`) tiene el enunciado corto y las citas
 # exactas; aqui esta lo que el TRADER necesita para entender que le preguntamos y por que, y lo
 # que el consultor necesita para saber si una respuesta sirve. Lo consume
-# `scripts/hoja_sesion_docx.py` para generar la hoja de respuestas en Word.
+# `botsito kit hoja` (src/botsito/cases/hoja_docx.py) para generar la hoja en Word.
 #
 # La clave es el ORIGEN de la pregunta: el id de la ambiguedad (`A-N`) cuando la pregunta nace de
 # una, o el nombre del parametro del registro cuando nace de un UNKNOWN suelto. Asi el contexto

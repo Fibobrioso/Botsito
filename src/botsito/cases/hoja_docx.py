@@ -9,35 +9,39 @@ No inventa nada: las citas, los minutos, los fotogramas y los dias salen del cue
 genera `botsito kit build`. Sin dependencias externas: un .docx es un zip de XML y aqui se escribe
 a mano.
 
-Uso:
-    uv run --no-sync python scripts/hoja_sesion_docx.py
-    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion 2026-09-09-sesion-01
+Vivio en `scripts/` hasta F13 (D3), fuera de `mypy --strict` y de los contratos de importacion:
+era el unico codigo que se ejecuta DELANTE DEL TRADER y el unico sin red. Se compone con
+`botsito kit hoja`.
 """
 
 from __future__ import annotations
 
-import argparse
 import re
-import sys
 import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-RAIZ = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(RAIZ / "src"))
-
-from botsito.cases.paquete import (  # noqa: E402
+from botsito.cases.paquete import (
     DIRECTORIO_KIT,
     cargar_config,
     esquema_paquete,
     sesiones_del_kit,
 )
-from botsito.comun.yaml_estricto import cargar_yaml  # noqa: E402
-from botsito.config.registro import cargar_registro  # noqa: E402
-from botsito.evidence.modelo import cargar_evidencia  # noqa: E402
-from botsito.feedback.modelo import TIPOS_OBJETIVO  # noqa: E402
+from botsito.comun.yaml_estricto import cargar_yaml
+from botsito.config.registro import cargar_registro
+from botsito.evidence.modelo import cargar_evidencia
+from botsito.feedback.modelo import TIPOS_OBJETIVO
+
+
+class HojaError(ValueError):
+    """La hoja no se puede componer: el paquete, el contexto o el destino no dan.
+
+    Era `SystemExit` mientras esto vivia en `scripts/` (F10-F12). Un modulo de la biblioteca no
+    puede matar el proceso de quien lo llama: quien decide si eso termina el programa es el CLI.
+    """
+
 
 ANCHO = 9638  # A4 menos margenes de 2 cm, en twips
 # La ambiguedad del anclaje de las velas H4: de ella salen la rejilla de horas que ensena la
@@ -270,16 +274,16 @@ def comprobar_objetivos(ctx_doc: dict[str, Any], sesion: str, repo: Path) -> Non
         objetivo = crudo.replace("{sesion}", sesion)
         tipo, _, identificador = objetivo.partition(" ")
         if tipo not in TIPOS_OBJETIVO:
-            raise SystemExit(f"{quien}: {tipo!r} no es un tipo de objetivo de feedback")
+            raise HojaError(f"{quien}: {tipo!r} no es un tipo de objetivo de feedback")
         if tipo == "parametro" and identificador not in nombres:
-            raise SystemExit(
+            raise HojaError(
                 f"{quien}: el parametro {identificador!r} no esta en el registro, asi que la "
                 "respuesta no se podria registrar; anadelo a knowledge/spec/parametros.yaml"
             )
         if tipo == "evidence" and identificador not in evidencias:
-            raise SystemExit(f"{quien}: la evidencia {identificador!r} no existe")
+            raise HojaError(f"{quien}: la evidencia {identificador!r} no existe")
         if tipo == "paquete" and identificador != sesion:
-            raise SystemExit(f"{quien}: el paquete {identificador!r} no es la sesion {sesion!r}")
+            raise HojaError(f"{quien}: el paquete {identificador!r} no es la sesion {sesion!r}")
 
 
 def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any]) -> str:
@@ -307,16 +311,16 @@ def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any])
     for n, e in enumerate(entradas, 1):
         rid = str(e.get("id") or "")
         if not re.fullmatch(r"R-\d{2}", rid, re.ASCII):
-            raise SystemExit(
+            raise HojaError(
                 f"reafirmacion {n}: 'id' invalido {rid!r}; va un R-NN explicito en "
                 "contexto_preguntas.yaml"
             )
         if rid in vistos:
-            raise SystemExit(f"reafirmacion {n}: id repetido {rid}")
+            raise HojaError(f"reafirmacion {n}: id repetido {rid}")
         vistos.add(rid)
         item = items.get(e["evidencia"])
         if item is None:
-            raise SystemExit(
+            raise HojaError(
                 f"{rid}: la evidencia {e['evidencia']} no existe; corrige contexto_preguntas.yaml"
             )
         celda = parrafo(run(item.afirmacion, sz=18))
@@ -368,7 +372,7 @@ def bloque_pregunta(p: dict[str, Any], ctx: dict[str, Any], n_total: int) -> str
     origen = next((o for o in p["origenes"] if o["tipo"] == "ambiguedad"), p["origenes"][0])
     entrada = ctx.get(origen["id"])
     if entrada is None:
-        raise SystemExit(
+        raise HojaError(
             f"{p['id']}: falta el contexto de {origen['id']!r} en contexto_preguntas.yaml "
             "(anadelo antes de generar la hoja)"
         )
@@ -390,6 +394,7 @@ def bloque_etiquetado(
     config: Any,
     huso: ZoneInfo,
     ref_anclaje: str,
+    instrumento: str,
 ) -> str:
     dev = sorted((c for c in casos if asignacion.get(c["id"]) == "dev"), key=lambda c: c["dia"])
     anclaje = next(a for a in config.anclajes if a.coincide_con_sesiones)
@@ -397,14 +402,15 @@ def bloque_etiquetado(
         tuple(hora_local(t, huso) for t in c["limites_h4"].get(anclaje.etiqueta, [])) for c in dev
     }
     if not dev:
-        raise SystemExit(
+        raise HojaError(
             "el paquete no tiene ningun caso en la particion dev: la hoja no tendria nada que "
             "etiquetar; revisa los cupos de config.yaml"
         )
     partes = [titulo("Cuarta parte: etiquetado de los días", 1)]
     partes.append(
         texto_simple(
-            f"Son {len(dev)} días de EURUSD que, según lo que has confirmado al principio de esta "
+            f"Son {len(dev)} días de {instrumento} que, según lo que has confirmado al principio "
+            "de esta "
             "hoja, no has visto. Ábrelos en replay uno a uno y, "
             "para cada una de tus dos sesiones, dinos qué habrías hecho: comprar, vender o no "
             "operar. "
@@ -461,7 +467,7 @@ def numero_de_pregunta(preguntas: list[dict[str, Any]], origen: str) -> str:
     for p in preguntas:
         if any(o["id"] == origen for o in p["origenes"]):
             return str(p["id"])
-    raise SystemExit(f"ninguna pregunta del paquete nace de {origen!r}; revisa el cuestionario")
+    raise HojaError(f"ninguna pregunta del paquete nace de {origen!r}; revisa el cuestionario")
 
 
 def documento(repo: Path, sesion: str) -> str:
@@ -584,7 +590,18 @@ def documento(repo: Path, sesion: str) -> str:
         items = {i.id: i for i in cargar_evidencia(repo / "knowledge" / "evidence")}
         partes.append(bloque_reafirmaciones(reafirmaciones, items))
 
-    partes.append(bloque_etiquetado(casos, particiones["asignacion"], config, huso, ref_anclaje))
+    partes.append(
+        bloque_etiquetado(
+            casos,
+            particiones["asignacion"],
+            config,
+            huso,
+            ref_anclaje,
+            # El simbolo lo dice el registro. Estuvo horneado como literal mientras esto vivia en
+            # `scripts/`, fuera del alcance del contrato que lo habria denunciado (F13, D3).
+            registro.texto("instrumento"),
+        )
+    )
     if ctx_doc.get("cierre"):
         partes.append(bloque_cierre(list(ctx_doc["cierre"])))
     cuerpo = "".join(partes)
@@ -648,18 +665,18 @@ RELS_DOC = (
 
 def escribir_docx(ruta: Path, document_xml: str) -> None:
     if ruta.is_dir():
-        raise SystemExit(f"{ruta} es una carpeta; --salida quiere la ruta de un fichero .docx")
+        raise HojaError(f"{ruta} es una carpeta; --salida quiere la ruta de un fichero .docx")
     try:
         _escribir(ruta, document_xml)
     except PermissionError as exc:
-        raise SystemExit(
+        raise HojaError(
             f"no se puede escribir {ruta.name}: seguramente esta abierto en Word. "
             "Cierralo y repite el comando."
         ) from exc
     except FileNotFoundError as exc:
-        raise SystemExit(f"no existe la carpeta {ruta.parent}; creala o cambia --salida") from exc
+        raise HojaError(f"no existe la carpeta {ruta.parent}; creala o cambia --salida") from exc
     except OSError as exc:
-        raise SystemExit(f"no se puede escribir {ruta}: {exc}") from exc
+        raise HojaError(f"no se puede escribir {ruta}: {exc}") from exc
 
 
 def _escribir(ruta: Path, document_xml: str) -> None:
@@ -671,51 +688,27 @@ def _escribir(ruta: Path, document_xml: str) -> None:
         z.writestr("word/styles.xml", ESTILOS)
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--sesion", help="AAAA-MM-DD-sesion-NN (por defecto, la unica del kit)")
-    ap.add_argument("--salida", help="ruta del .docx (por defecto, en la raiz del repositorio)")
-    args = ap.parse_args()
-    sesiones = sesiones_del_kit(RAIZ)
+def componer(repo: Path, sesion: str | None, salida: Path | None) -> tuple[Path, str]:
+    """Elige la sesion, compone el XML y devuelve (ruta de salida, xml). NO escribe.
+
+    Separar componer de escribir es lo que permite que el test de contrato mire el XML sin
+    dejar un .docx en el repositorio, que es como se comprobaba hasta F13.
+    """
+    sesiones = sesiones_del_kit(repo)
     if not sesiones:
-        print("ERROR: no hay ningun paquete en knowledge/cases/kit/", file=sys.stderr)
-        return 1
-    sesion = args.sesion or sesiones[-1]
-    if sesion not in sesiones:
-        print(f"ERROR: no existe el paquete {sesion} (hay {sesiones})", file=sys.stderr)
-        return 1
-    salida = (
-        Path(args.salida)
-        if args.salida
-        else RAIZ / f"Sesion 1 - hoja de respuestas ({sesion}).docx"
-    )
+        raise HojaError("no hay ningun paquete en knowledge/cases/kit/")
+    elegida = sesion or sesiones[-1]
+    if elegida not in sesiones:
+        raise HojaError(f"no existe el paquete {elegida} (hay {sesiones})")
+    destino = salida or repo / f"Sesion 1 - hoja de respuestas ({elegida}).docx"
     try:
-        xml = documento(RAIZ, sesion)
-    except SystemExit:
+        return destino, documento(repo, elegida)
+    except HojaError:
         raise
     except (ValueError, LookupError, OSError, AttributeError, TypeError) as exc:
         # El contexto y el paquete son ficheros que se editan a mano: un `porque` que falta o un
         # YAML mal indentado tienen que salir como un error legible, no como un traceback.
-        print(
-            f"ERROR: no se puede componer la hoja de {sesion}: {type(exc).__name__}: {exc}. "
-            "Revisa knowledge/cases/kit/contexto_preguntas.yaml y el paquete.",
-            file=sys.stderr,
-        )
-        return 1
-    escribir_docx(salida, xml)
-    print(f"OK: {salida}")
-    print(
-        "Recuerda: si vuelves a ejecutar `kit build`, esta hoja se queda vieja. Regenerala "
-        "siempre como ultimo paso antes de imprimir."
-    )
-    return 0
-
-
-if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except SystemExit as salida_:
-        if isinstance(salida_.code, str):  # los avisos del generador, con el mismo formato
-            print(f"ERROR: {salida_.code}", file=sys.stderr)
-            raise SystemExit(1) from None
-        raise
+        raise HojaError(
+            f"no se puede componer la hoja de {elegida}: {type(exc).__name__}: {exc}. "
+            f"Revisa knowledge/cases/kit/contexto_preguntas.yaml y el paquete."
+        ) from exc
