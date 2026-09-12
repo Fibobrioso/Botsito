@@ -128,7 +128,9 @@ def main() -> int:
     dev = sum(1 for v in reparto.values() if v == "dev")
     print(f"OK: {vieja} -> {nueva} (seed {seed} reutilizado)")
     print(f"    {len(preguntas)} preguntas, {len(casos)} casos, {dev} dias para etiquetar: iguales")
-    viejo_docx = RAIZ / f"Sesion 1 - hoja de respuestas ({vieja}).docx"
+    from botsito.cases.hoja_docx import _nombre_de_hoja
+
+    viejo_docx = RAIZ / f"{_nombre_de_hoja(vieja)}.docx"
     if viejo_docx.exists():
         viejo_docx.unlink()
         print(f"    borrada la hoja vieja: {viejo_docx.name}")

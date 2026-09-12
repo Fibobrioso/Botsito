@@ -180,7 +180,18 @@ def test_el_readme_de_la_spec_no_puede_llevar_cifras_viejas(repo: Path) -> None:
     # mano cuadrara con el registro; ahora exige que NO HAYA recuento que cuadrar. El numero vive
     # en `docs/spec/parametros.md`, que se GENERA desde el registro y que `test_spec_docs_generados`
     # compara entero: una copia que no existe no se puede quedar vieja.
-    sospechosas = re.findall(r"\d+ parametros|\d+ confirmados|A-1\.\.A-\d+", texto)
+    # Mas ancha que la version que nacio en F13, y ademas VIVA: aquella llevaba tres BACKSPACE
+    # literales (0x08) donde alguien escribio \b, porque el heredoc que la creo se comio las
+    # barras. Un 0x08 no aparece en ningun README, asi que la guardia no podia saltar NUNCA:
+    # pasaba por decorativa sin que se notara. La encontro la auditoria de cierre de F13 al ir a
+    # ensancharla, y de paso: "hay 24 UNKNOWN", "59 parametros" con tilde o "A-1 a A-21" tampoco
+    # los cazaba la version estrecha.
+    sospechosas = re.findall(
+        r"\d+\s+(?:par[aá]metros?|confirmados?|UNKNOWN|reglas?|ambig[uü]edades|registros?)"
+        r"|A-\d+\s*(?:\.\.|a)\s*A-\d+",
+        texto,
+        re.IGNORECASE,
+    )
     assert not sospechosas, (
         f"el README de la spec volvio a pegar cifras vivas ({sospechosas}); el recuento lo dan "
         f"`botsito spec status` y `docs/spec/parametros.md`, que se genera"

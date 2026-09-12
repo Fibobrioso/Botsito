@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 10.0.0` · hash `f429867bee02…`
+`spec_version 10.1.1` · hash `f11b708ae3f8…`
 
-59 en total: 52 con valor y 7 sin el. Ninguna regla contiene numeros; todas nombran uno de estos (ADR-0002).
+59 en total: 52 con valor y 7 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -38,7 +38,7 @@
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
-| `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (mapa_parametros.yaml) |
+| `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
@@ -48,12 +48,12 @@
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `servidor` | DEFAULT_AMBIGUOUS · en revision por A-19 | prop_firm | `ADR-0015` | que reloj marca el corte del dia (y de la semana) de riesgo |
-| `reubicacion_cadencia` | `al_romper` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6b29059d` | opcion cerrada (mapa_parametros.yaml) |
+| `reubicacion_cadencia` | `al_romper` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6b29059d` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `riesgo_por_operacion` | `0.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-648ec915` | porcentaje de la cuenta por operacion |
 | `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0012` | USD |
 | `salida_sin_ruptura` | `proteger_y_dejar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9626d3dd` | cerrar_al_cierre/proteger_y_dejar |
 | `sesgo_h4_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | que hace falta para dar por rota la vela H4 previa |
-| `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (mapa_parametros.yaml) |
+| `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared del trader (huso_operativa) |

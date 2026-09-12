@@ -5,7 +5,7 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-12, fase 1 cerrada en main; F11 validada y cerrada; F12 CERRADA, esperando validacion)
+## Estado (2026-09-12, fase 1 cerrada en main; F11 y F12 validadas y cerradas; F13 CERRADA, esperando validacion)
 - `main`: merge de F11 `b62f4aa` con tag `stable/F11`; `docs(state)` `3597b3d`. La fase 1 (F03-F08)
   se cerro antes, en `5d8cf3c` con tag `stable/F08`. Protegida en GitHub.
 - Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
@@ -14,7 +14,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina); registro con 24
   parametros de estrategia en UNKNOWN; `knowledge/cases/kit/{config,mapa_parametros,vistos}.yaml`
   (cifras de negocio como datos; meses VISTOS por el trader: enero, ABRIL -v5 es el, backtesteandolo-, julio y agosto. MAYO tambien lo esta desde que lo backtesteo entero el 2026-09-11, pero no se puede declarar en `vistos.yaml` sin invalidar el paquete de la sesion 1: el hueco esta escrito en el propio fichero); paquete `cases`
-  (cuestionario de 21 preguntas con casos `ev-*`, ventanas de dias no vistos de mayo y junio de
+  (cuestionario con casos `ev-*` -el recuento lo da el propio paquete, no esta linea-, ventanas de dias no vistos de mayo y junio de
   2026 con hash y limites H4 por anclaje, particiones por hash con seed, kappa desde los
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
@@ -43,14 +43,25 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
     siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
     La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
-- F12 spec-semantic-validator CERRADA y esperando validacion (rama `feature/F12-spec-semantic-validator`). Lo
-  que ya existe: ADR-0018 (la precedencia va por CLASE), ADR-0019 (la forma ejecutable: predicados
-  con argumentos, ligadura, y `predicados`/`acciones`/`hechos`/`acumuladores` DENTRO de
-  strategy_spec.yaml) y ADR-0020 (la base del lotaje). Las 24 reglas vigentes tienen forma
-  ejecutable; `spec status` dice cuantas siguen en prosa (hoy, ninguna). CERRADA y a la espera de
-  validacion desde el 2026-09-12: los parametros sin lector declaran `consumido_por`, existe
-  `botsito spec check`, los `R-NN` son explicitos, la auditoria de cierre (dos agentes) esta
-  aplicada y el informe es `docs/validation/F12-spec-semantic-validator.md`.
+- F12 spec-semantic-validator VALIDADA y cerrada en `main` el 2026-09-12 (merge `77c7501`, tag
+  `stable/F12`; encima va `stable/F12-holdout`). Aporto ADR-0018 (la precedencia va por CLASE),
+  ADR-0019 (la forma ejecutable: predicados con argumentos, ligadura, y el vocabulario DENTRO de
+  strategy_spec.yaml) y ADR-0020 (la base del lotaje); los parametros sin lector declaran
+  `consumido_por`, existe `botsito spec check` y los `R-NN` son explicitos. **El recuento de
+  reglas no se pega aqui**: lo dan `botsito spec status` y `docs/spec/reglas.md`, que se genera.
+  Informe: `docs/validation/F12-spec-semantic-validator.md`.
+- F13 spec-documents CERRADA y esperando validacion (rama `feature/F13-spec-documents`).
+  `docs/spec/` se GENERA desde `knowledge/spec/` con `botsito spec docs` -cuatro documentos, uno
+  por fichero fuente- y un test de contrato regenera y compara el TEXTO ENTERO; mueren dos copias
+  vivas (el §2 del acta de la sesion 1 y el recuento del README de la spec). Cierra las cuatro
+  deudas heredadas, y tres estaban mal enunciadas: lo que faltaba en las cadenas de `supersede` no
+  era recorrerlas sino el TIEMPO, y `_ARGS_DE_VALOR` era una lista blanca AL REVES. Entran ademas
+  ADR-0022 (el bot no opera noticias; nace el estado `DECIDIDA`) y ADR-0023 (`recibido_el` y
+  `procedencia` en el feedback), la hoja del trader se muda a `src/botsito/cases/hoja_docx.py`
+  (`botsito kit hoja`) y el vocabulario de la forma gana `tokens`. La auditoria de cierre (dos
+  agentes) encontro SEIS formas de colar un valor de negocio en `forma` -incluida `tope: 9.5`- y
+  que `feedback pending` daba por reflejado un `RESOLVE_CONTRADICTION` con la contradiccion
+  todavia abierta. Informe: `docs/validation/F13-spec-documents.md`.
 - EL LOTAJE CAMBIO DE BASE el 2026-09-11 (ADR-0020) y es lo mas caro de este tramo: el 0,5 % de
   riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que `lotaje_base` vale
   `hasta_stop_fraccion`, el lote es un 25 % mayor y el stop cuesta el riesgo entero. RN-012 dice
@@ -98,11 +109,14 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     fuente anterior solo si era de tipo `feedback`, y un DEFAULT_AMBIGUOUS cita evidencia por
     definicion. Arreglado el 2026-09-11 con A-20. Si alguien anade un tipo de fuente, que mire
     esto.
-  - Al cerrar una ambiguedad hay que tocar CINCO sitios y solo dos los vigila una guardia:
-    el registro (via `apply`), `ambiguedades.yaml` (estado RESUELTA), la regla que la citaba
-    -que probablemente citaba la evidencia DEBIL que abrio la duda-, la tabla de PROJECT_STATE
-    y el recuento de `knowledge/spec/README.md`. Mas el test de `test_kit` que congela que
-    ambiguedades estan RESUELTAS.
+  - Al cerrar una ambiguedad hay que tocar CUATRO sitios y solo dos los vigila una guardia:
+    el registro (via `apply`), `ambiguedades.yaml`, la regla que la citaba -que probablemente
+    citaba la evidencia DEBIL que abrio la duda- y la tabla de PROJECT_STATE. Mas el test de
+    `test_kit` que congela que ambiguedades estan RESUELTAS. El quinto sitio era el recuento de
+    `knowledge/spec/README.md` y ya no existe: F13 lo mato y ahora lo da `spec status`.
+  - Y hay DOS formas de cerrarla, no una (ADR-0022): `RESUELTA` con un registro del trader que
+    apunte A LA AMBIGUEDAD -no al parametro: es la guardia que A-20 estreno-, o `DECIDIDA` por el
+    consultor con el ADR que la nombre, cuando lo que se decide es alcance, metodo o herramienta.
   - Una respuesta del trader POR ESCRITO fuera de sesion se registra con su captura en
     `Material adicional de su operativa/Mensajes del trader/`: asi el `respuesta_literal` son
     sus palabras y no una sintesis del consultor, que es la diferencia que A-11 y el lotaje

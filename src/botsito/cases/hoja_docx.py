@@ -688,6 +688,17 @@ def _escribir(ruta: Path, document_xml: str) -> None:
         z.writestr("word/styles.xml", ESTILOS)
 
 
+def _nombre_de_hoja(sesion: str) -> str:
+    """ "Sesion 2 - hoja de respuestas (2026-09-20-sesion-02)".
+
+    El ordinal salia FIJO ("Sesion 1") hasta la auditoria de cierre de F13, asi que la hoja de la
+    sesion 2 se habria llamado "Sesion 1" en la portada del fichero que se imprime y se lleva
+    delante del trader.
+    """
+    ordinal = sesion.rsplit("-", 1)[-1].lstrip("0") or "0"
+    return f"Sesion {ordinal} - hoja de respuestas ({sesion})"
+
+
 def componer(repo: Path, sesion: str | None, salida: Path | None) -> tuple[Path, str]:
     """Elige la sesion, compone el XML y devuelve (ruta de salida, xml). NO escribe.
 
@@ -700,7 +711,7 @@ def componer(repo: Path, sesion: str | None, salida: Path | None) -> tuple[Path,
     elegida = sesion or sesiones[-1]
     if elegida not in sesiones:
         raise HojaError(f"no existe el paquete {elegida} (hay {sesiones})")
-    destino = salida or repo / f"Sesion 1 - hoja de respuestas ({elegida}).docx"
+    destino = salida or repo / f"{_nombre_de_hoja(elegida)}.docx"
     try:
         return destino, documento(repo, elegida)
     except HojaError:

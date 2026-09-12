@@ -15,7 +15,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0008 | Fotogramas: cobertura completa a 1 fps sin perdida, regla de seleccion por `pts` y manifiesto inmutable | ACTIVE |
 | 0009 | Verificacion mecanica de citas y propuestas de evidencia trazables | ACTIVE |
 | 0010 | Busqueda de desarrollo: capa `retrieval`, indice en memoria, lexica y con fuente | ACTIVE |
-| 0011 | Kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback | ACTIVE |
+| 0011 | Kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback | ACTIVE (el esquema de ambiguedades gana el estado DECIDIDA en ADR-0022) |
 | 0012 | El registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader | ACTIVE (punto 5 revertido por ADR-0017) |
 | 0013 | StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace | ACTIVE |
 | 0014 | La base sobre la que se mide el objetivo: `base_calculo_objetivo` | ACTIVE (enmendado por ADR-0020) |
@@ -27,3 +27,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |
 | 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
 | 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE |
+| 0023 | El registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) | ACTIVE |

@@ -220,6 +220,7 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         "efectos",
         "hechos",
         "acumuladores",
+        "tokens",
     }
     if not isinstance(doc, dict) or not {"version_esquema", "reglas"} <= set(doc) <= esperadas:
         raise SpecError(f"{ruta.name}: se esperan {sorted(esperadas)}")
@@ -561,7 +562,7 @@ def cargar_vocabulario(ruta: Path) -> dict[str, dict[str, Any]]:
     if not isinstance(doc, dict):
         raise SpecError(f"{ruta.name}: no es un mapa")
     salida: dict[str, dict[str, Any]] = {}
-    for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores"):
+    for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores", "tokens"):
         bruto = doc.get(seccion) or {}
         if not isinstance(bruto, dict):
             raise SpecError(f"{ruta.name}: '{seccion}' debe ser un mapa")
@@ -589,7 +590,15 @@ def _invocaciones(nodo: Any) -> list[tuple[str, dict[str, Any]]]:
                 # Cualquier otra clave es una invocacion, LLEVE O NO un mapa de argumentos. Se
                 # exigia `isinstance(valor, dict)`, asi que `{predicado_que_no_existe: "loquesea"}`
                 # pasaba entero, sin vocabulario y sin argumentos que comprobar (F12, auditoria).
-                fuera.append((str(clave), valor if isinstance(valor, dict) else {}))
+                #
+                # Y la carga escalar NO se tira (F13, auditoria de cierre): se devolvia `{}`, o sea
+                # que `en_ventana: "07:00 a 15:00 hora de Madrid, lunes a viernes"` colaba la
+                # ventana entera como una frase en castellano dentro de la forma ejecutable y la
+                # guardia daba OK. Viaja bajo la clave vacia, que ninguna regla puede escribir.
+                if isinstance(valor, dict):
+                    fuera.append((str(clave), valor))
+                else:
+                    fuera.append((str(clave), {"": valor}))
     return fuera
 
 
@@ -648,6 +657,9 @@ _ESTRUCTURALES = frozenset(
 # nombra "liquidez de M15" en prosa, no `liquidez_m15`, y cruzarlos seria inventar un contrato.
 
 
+_ES_LIGADURA = re.compile(r"[A-Z][A-Z0-9_]{0,7}", re.ASCII)
+
+
 def _ligaduras(nodo: Any) -> set[str]:
     """Variables que el propio arbol ata con `liga:` (`hecho: sesgo, liga: S` -> {"S"}).
 
@@ -658,7 +670,10 @@ def _ligaduras(nodo: Any) -> set[str]:
     atadas: set[str] = set()
     if isinstance(nodo, dict):
         for clave, valor in nodo.items():
-            if clave == "liga" and isinstance(valor, str):
+            # Con FORMA, o el agujero se reabre con una linea: `liga: alcista` bastaba para que
+            # `sentido: alcista` volviera a pasar, que es justo el caso que esto existe para
+            # impedir (F13, auditoria de cierre). Una ligadura es un nombre corto en mayusculas.
+            if clave == "liga" and isinstance(valor, str) and _ES_LIGADURA.fullmatch(valor):
                 atadas.add(valor)
             else:
                 atadas |= _ligaduras(valor)
@@ -777,6 +792,62 @@ def _hechos_nombrados(nodo: object) -> list[str]:
     return fuera
 
 
+def _problemas_de_argumento(
+    rid: str,
+    invocacion: str,
+    clave: str,
+    valor: Any,
+    parametros: set[str],
+    atadas: set[str],
+    vocabulario: dict[str, dict[str, Any]],
+) -> list[str]:
+    """Un argumento lleva un NOMBRE: de parametro, de token declarado, de hecho, de acumulador o
+    una ligadura del arbol. Nunca un valor de negocio.
+
+    Antes de la auditoria de cierre de F13 esto tenia dos agujeros por los que cabia un valor
+    crudo, los dos medidos sobre la spec real:
+      - **el tipo**: se saltaba todo lo que no fuera texto, asi que cambiar `tope:
+        perdida_maxima_diaria` por `tope: 9.5` no producia una sola queja, y el tope de perdida
+        diaria pasaba de 4,5 a 9,5 sin pisar el registro;
+      - **la clave estructural**: `que`, `a`, `por`, `resultado` y `cual` no se miraban en
+        absoluto, asi que `que: cuerpo` valia lo mismo que `que: liquidez_m15`. Por eso nace
+        `tokens` en el vocabulario: ahora los sujetos de geometria y los estados estan declarados
+        y se contrastan como todo lo demas.
+    """
+    if not isinstance(valor, str):
+        # Un booleano tambien: `a: no` sin comillas es el FALSO de YAML 1.1 mientras que `a: si`
+        # es la cadena 'si', y RN-013 llevaba las dos formas en la misma casilla.
+        return [
+            f"{rid}: '{invocacion}.{clave}' vale {valor!r} ({type(valor).__name__}); un argumento "
+            f"lleva el NOMBRE de un parametro o de un token, no un valor"
+        ]
+    cabeza, _, cola = valor.partition(".")
+    conocidos = (
+        parametros
+        | atadas
+        | set(vocabulario.get("tokens") or {})
+        | set(vocabulario.get("hechos") or {})
+        | set(vocabulario.get("acumuladores") or {})
+    )
+    if cola:
+        # Notacion punteada: `OP.precio_entrada`, `OP.stop_fraccion_caja`. Las DOS mitades tienen
+        # que existir; antes solo se miraba la ultima, asi que `NO_LIGADA.stop_fraccion_caja`
+        # pasaba con un sujeto inventado.
+        malas = [x for x in (cabeza, cola) if x not in conocidos]
+        if malas:
+            return [
+                f"{rid}: '{invocacion}.{clave}' vale {valor!r} y {malas} no esta declarado "
+                f"(parametro, token, hecho, acumulador o ligadura)"
+            ]
+        return []
+    if valor in conocidos:
+        return []
+    return [
+        f"{rid}: '{invocacion}.{clave}' vale {valor!r}, que no es un parametro del registro, ni "
+        f"un token declarado, ni una ligadura del arbol; un argumento lleva el NOMBRE, no el valor"
+    ]
+
+
 def comprobar_forma(
     reglas: list[Regla],
     vocabulario: dict[str, dict[str, Any]],
@@ -830,24 +901,32 @@ def comprobar_forma(
             for nombre, args in _invocaciones(rama):
                 if nombre == "hecho":
                     continue
+                if "" in args:
+                    problemas.append(
+                        f"{r.id}: '{nombre}' lleva {args['']!r} en vez de un mapa de argumentos; "
+                        f"asi no hay nada que comprobar y ahi cabe cualquier cosa"
+                    )
                 if nombre in catalogo:
                     declarados = set(catalogo[nombre].get("argumentos") or [])
-                    sobran = sorted(set(args) - declarados - _ESTRUCTURALES)
+                    sobran = sorted(set(args) - declarados - _ESTRUCTURALES - {""})
                     if sobran:
                         problemas.append(
                             f"{r.id}: llama a '{nombre}' con argumentos que no declara: {sobran}"
                         )
+                    # Y los que FALTAN, que es la direccion que borra una cota: quitar `fin` de
+                    # `en_ventana` dejaba la ventana operativa sin final y todo en verde (F13,
+                    # auditoria de cierre). Un argumento que de verdad sobre se quita del
+                    # vocabulario, que para eso lo declara.
+                    faltan = sorted(declarados - set(args))
+                    if faltan and "" not in args:
+                        problemas.append(
+                            f"{r.id}: llama a '{nombre}' sin los argumentos que declara: {faltan}"
+                        )
                 else:
                     problemas.append(f"{r.id}: invoca '{nombre}', que no esta en `{etiqueta}`")
                 for clave, valor in args.items():
-                    if clave in _ESTRUCTURALES or not isinstance(valor, str):
-                        continue
-                    if valor.split(".")[-1] in parametros or valor in atadas:
-                        continue
-                    problemas.append(
-                        f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
-                        f"del registro ni una ligadura del arbol; un argumento de valor lleva "
-                        f"el NOMBRE, no el valor"
+                    problemas += _problemas_de_argumento(
+                        r.id, nombre, clave, valor, parametros, atadas, vocabulario
                     )
 
     # Lo que la forma USA tiene que estar DECLARADO en `parametros`. Si no, las guardias que leen

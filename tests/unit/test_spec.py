@@ -550,6 +550,105 @@ def test_la_forma_no_puede_esconder_un_valor_de_negocio() -> None:
     assert any("acumulador" in p for p in comprobar_forma([], roto, parametros))
 
 
+def test_por_ninguna_de_las_seis_puertas_entra_un_valor_de_negocio() -> None:
+    """La auditoria de cierre de F13 abrio SEIS puertas distintas en la forma ejecutable.
+
+    La inversion de `_ARGS_DE_VALOR` cerro la que el brief nombraba -un argumento inventado- y la
+    auditoria demostro, ejecutando sobre copias de la spec real, que quedaban cinco mas. Las tres
+    peores no necesitaban ni inventar un nombre:
+
+      - un NUMERO: la comprobacion se saltaba todo lo que no fuera texto, asi que `tope: 9.5` en
+        vez de `tope: perdida_maxima_diaria` subia el tope de perdida diaria de 4,5 a 9,5 sin
+        tocar el registro y sin una sola queja;
+      - una CARGA ESCALAR: `_invocaciones` devolvia `{}` cuando la invocacion no traia mapa, asi
+        que `en_ventana: "07:00 a 15:00 hora de Madrid, lunes a viernes"` metia la ventana entera
+        como una frase en castellano y la guardia daba OK;
+      - una CLAVE ESTRUCTURAL: `que`, `a`, `por`, `resultado` y `cual` no se miraban, asi que
+        `que: cuerpo` valia lo mismo que `que: liquidez_m15`. De ahi nace `tokens`.
+
+    Y tres mas que borran una cota o inventan un sujeto: quitar un argumento declarado, atar una
+    ligadura con el propio valor de negocio, y una notacion punteada con un prefijo que no existe.
+    """
+    import copy
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+
+    def regla(rs: list[Any], rid: str) -> Any:
+        return next(x for x in rs if x.id == rid)
+
+    def sin_fin(rs: list[Any]) -> None:
+        regla(rs, "RN-001").forma["cuando"]["cualquiera_de"][0]["ninguno_de"][0]["en_ventana"].pop(
+            "fin"
+        )
+
+    def frase_entera(rs: list[Any]) -> None:
+        regla(rs, "RN-001").forma["cuando"]["cualquiera_de"][0]["ninguno_de"][0] = {
+            "en_ventana": "07:00 a 15:00 hora de Madrid, lunes a viernes"
+        }
+
+    def numero_crudo(rs: list[Any]) -> None:
+        regla(rs, "RN-020").forma["cuando"]["cualquiera_de"][0]["alcanza_tope"]["tope"] = 9.5
+
+    def valor_en_clave_estructural(rs: list[Any]) -> None:
+        regla(rs, "RN-005").forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["que"] = "cuerpo"
+
+    def ligadura_inventada(rs: list[Any]) -> None:
+        r5 = regla(rs, "RN-005")
+        r5.forma["cuando"]["todos_de"][0]["liga"] = "alcista"
+        r5.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+
+    def prefijo_inventado(rs: list[Any]) -> None:
+        regla(rs, "RN-011").forma["entonces"]["hace"][1]["escribir_stop_en_la_orden"]["nivel"] = (
+            "NO_LIGADA.stop_fraccion_caja"
+        )
+
+    puertas = [
+        (numero_crudo, "9.5", "el tope de perdida diaria como numero crudo"),
+        (frase_entera, "mapa de argumentos", "la ventana entera como frase"),
+        (sin_fin, "sin los argumentos que declara", "la ventana sin final"),
+        (valor_en_clave_estructural, "'cuerpo'", "un valor de negocio en una clave estructural"),
+        (ligadura_inventada, "'alcista'", "una ligadura atada al propio valor"),
+        (prefijo_inventado, "NO_LIGADA", "un sujeto punteado que no existe"),
+    ]
+    assert comprobar_forma(reglas, vocabulario, parametros) == [], "la spec real esta limpia"
+    sin_saltar = []
+    for romper, aguja, que_es in puertas:
+        rotas = copy.deepcopy(reglas)
+        romper(rotas)
+        problemas = comprobar_forma(rotas, vocabulario, parametros)
+        if not any(aguja in p for p in problemas):
+            sin_saltar.append(f"{que_es}: {problemas}")
+    assert not sin_saltar, sin_saltar
+
+
+def test_ningun_argumento_de_la_spec_real_es_un_booleano_de_yaml_1_1() -> None:
+    """`a: no` SIN comillas es el booleano falso; `a: si` es la cadena 'si'.
+
+    RN-013 llevaba las dos formas en la misma casilla -`fijar: {hecho: operacion_abierta, a: si}` y
+    `fijar: {hecho: orden_limite_pendiente, a: no}`- desde el commit de cierre de la auditoria de
+    F12, y ninguna guardia lo veia porque `a` era "estructural" y los no-textos se saltaban. Un
+    motor que implementara `fijar` comparando con una cadena nunca habria apagado
+    `orden_limite_pendiente` al llenarse la orden, y RN-006 habria seguido reubicando una orden
+    que ya es una posicion viva.
+    """
+    from botsito.spec.modelo import FICHERO_SPEC, _invocaciones
+
+    malos = [
+        f"{r.id}: {nombre}.{clave} = {valor!r}"
+        for r in cargar_reglas(REPO / FICHERO_SPEC)
+        if r.forma is not None
+        for nombre, args in _invocaciones(r.forma)
+        for clave, valor in args.items()
+        if not isinstance(valor, str)
+    ]
+    assert not malos, f"argumentos que no son texto (¿un `si`/`no` sin comillas?): {malos}"
+
+
 def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
     """La deuda (d) de F13, cerrada donde estaba: en la LISTA, no en la comprobacion.
 

@@ -7,7 +7,7 @@ Regimen: versionado con `Fuente:` en cada commit (como todo `knowledge/cases/`).
 | Fichero | Que es | Regimen |
 |---|---|---|
 | `config.yaml` | datos de negocio del kit (simbolo, ventana del dia, sesiones, anclajes candidatos, etiquetas, particiones) | manual |
-| `mapa_parametros.yaml` | parametro del registro -> temas de evidencia, ambiguedad y opciones cerradas | manual |
+| `mapa_parametros.yaml` | parametro del registro -> temas de evidencia. **Solo eso desde F13**: las `opciones` las sostiene el registro y la `ambiguedad`, `ambiguedades.yaml` | manual |
 | `vistos.yaml` | meses y dias que el trader ya vio (fuera del universo de ventanas) | manual |
 | `<sesion>/cuestionario.yaml` | una pregunta por origen (parametro UNKNOWN, ambiguedad, contradiccion) con sus casos `ev-*` | generado; `kit check` lo recompone byte a byte |
 | `<sesion>/ventanas.yaml` | los casos: dia, `dataset_id`, ventana UTC, velas, sha256, limites H4 por anclaje; y los dias excluidos con motivo | generado |

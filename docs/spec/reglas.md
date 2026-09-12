@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 10.0.0` · hash `f429867bee02…`
+`spec_version 10.1.1` · hash `f11b708ae3f8…`
 
 25 vigentes y 3 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -499,7 +499,7 @@
       },
       {
         "fijar": {
-          "a": false,
+          "a": "no",
           "hecho": "orden_limite_pendiente"
         }
       }
@@ -976,7 +976,7 @@
 - **`alcanza_hora`** — la hora de pared llega al instante declarado Argumentos: `hora`, `huso`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
 - **`alcanza_nivel`** — el precio llega al nivel marcado Argumentos: `que`. Cita `ev-v3-001600-ed45b091`: *«yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...] de esta liquidez de m15 es ruido»*.
 - **`alcanza_tope`** — un acumulador llega al tope declarado Argumentos: `acumulador`, `tope`. Cita `fb-2026-09-09-sesion-01-bff260ea`: *«De la cuenta basado en el saldo, y que sea en el saldo inicial del día»*.
-- **`contexto_filtrable`** — hay noticia de alto impacto o el spread se ensancha Argumentos: `noticias`, `spread`. Cita `fb-2026-09-09-sesion-01-3565552d`: *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*.
+- **`contexto_filtrable`** — el spread se ensancha por encima de lo tolerable Argumentos: `spread`. Cita `fb-2026-09-09-sesion-01-3565552d`: *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*.
 - **`cruza`** — el precio pasa al otro lado del nivel con el criterio declarado Argumentos: `que`, `criterio`. Cita `fb-2026-09-09-sesion-01-6e15504f`: *«¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o vale con que la mecha lo perfore? Con cuerpo»*.
 - **`distancia_menor_que`** — el nivel que pide la spec queda mas cerca del precio que el minimo del broker Argumentos: `que`, `tope`. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
 - **`en_ventana`** — la hora de pared cae en el intervalo medio abierto [inicio, fin) Argumentos: `inicio`, `fin`, `huso`, `dias`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.

@@ -30,6 +30,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from botsito.spec.modelo import CLASES_REGLA
+
 FICHEROS = ("reglas.md", "parametros.md", "glosario.md", "ambiguedades.md")
 DIRECTORIO = "docs/spec"
 _AVISO = "<!-- GENERADO por `botsito spec docs`. No editar a mano: `make check` lo comprueba. -->"
@@ -60,8 +62,11 @@ def _reglas(reglas: list[Any], vocabulario: dict[str, dict[str, Any]], man: dict
     lineas = _cabecera("Reglas de la operativa", man, sellado=True)
     lineas += [
         f"{len(vigentes)} vigentes y {len(fuera)} descartadas. La precedencia va por CLASE y "
-        "no por el orden de este documento, que es editorial: `gate` > `terminal` > "
-        "`disparador` > `fallback` (ADR-0018).",
+        f"no por el orden de este documento, que es editorial: "
+        # De `CLASES_REGLA` y no escrita aqui: es la decision viva (ADR-0018), y ya se escribio
+        # AL REVES en dos documentos el 2026-09-12. Copiarla en el fichero cuyo trabajo es matar
+        # las copias seria gracioso si no fuera el mismo fallo.
+        f"{' > '.join(f'`{c}`' for c in CLASES_REGLA)} (ADR-0018).",
         "",
     ]
     for titulo, grupo in (("Vigentes", vigentes), ("Descartadas", fuera)):
@@ -123,7 +128,13 @@ def _parametros(registro: Any, man: dict[str, Any]) -> str:
     lineas = _cabecera("Parametros: la unica puerta de los valores", man, sellado=True)
     lineas += [
         f"{len(parametros)} en total: {len(con_valor)} con valor y {len(sin_valor)} sin el. "
-        "Ninguna regla contiene numeros; todas nombran uno de estos (ADR-0002).",
+        # "Ninguna regla contiene numeros" estuvo aqui escrito a mano hasta la auditoria de cierre
+        # de F13, que demostro que no era cierto: `tope: 9.5` pasaba. Ahora lo es -`comprobar_forma`
+        # exige que todo argumento sea un NOMBRE- y la frase dice quien lo sostiene, para que se
+        # caiga con la guardia el dia que alguien la quite.
+        "Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma "
+        "ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura "
+        "(ADR-0002, ADR-0019).",
         "",
         "| Parametro | Valor | Estado | Categoria | De donde sale | Unidad |",
         "|---|---|---|---|---|---|",

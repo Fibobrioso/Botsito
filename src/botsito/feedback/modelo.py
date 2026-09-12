@@ -94,9 +94,9 @@ CAMPOS_OPCIONALES = (
     "notas",
     # Opcionales EN EL ESQUEMA y obligatorios POR GUARDIA desde CORTE_PROCEDENCIA. El id de un
     # registro es el hash de su contenido y `contenido_canonico` SALTA el campo ausente, asi que
-    # los 116 de la sesion 1 conservan su id exacto -medido: cambian 0-. Hacerlos obligatorios no
-    # les cambiaria el id: los dejaria sin CARGAR, los 116, porque `_validar` revienta antes de
-    # calcularlo; y rellenarlos si moveria el id, o sea renombrar 116 ficheros inmutables.
+    # los 117 de la sesion 1 conservan su id exacto -medido: cambian 0-. Hacerlos obligatorios no
+    # les cambiaria el id: los dejaria sin CARGAR, los 117, porque `_validar` revienta antes de
+    # calcularlo; y rellenarlos si moveria el id, o sea renombrar 117 ficheros inmutables.
     "recibido_el",
     "procedencia",
 )
@@ -263,7 +263,7 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
         raise FeedbackError(f"{origen}: respuesta_literal es obligatoria y literal")
     if not _normalizar_texto(campos["registrado_por"]):
         raise FeedbackError(f"{origen}: registrado_por es obligatorio")
-    # `recibido_el` y `procedencia`: opcionales para no tocar los 116 de la sesion 1, obligatorios
+    # `recibido_el` y `procedencia`: opcionales para no tocar los 117 de la sesion 1, obligatorios
     # de CORTE_PROCEDENCIA en adelante. Se comprueba AL CARGAR y no solo en `feedback new`, o un
     # fichero escrito a mano se lo salta; es la leccion que `validation/knowledge.py` ya aprendio
     # con `feedback apply` ("solo se ejecuta cuando alguien lo llama; aqui se vigila siempre").

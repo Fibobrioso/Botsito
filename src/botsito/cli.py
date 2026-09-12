@@ -8,6 +8,8 @@ import math
 import re
 import subprocess
 import sys
+from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -657,12 +659,31 @@ def spec_status(repo: Path) -> int:
         return 1
 
     print(f"spec {manifiesto['spec_version']} · hash {str(manifiesto['hash'])[:12]}…")
-    print(
+
+    # Una regla con `pendiente_definicion` TIENE `forma` y NO se puede ejecutar: es el mecanismo
+    # que F12 creo para una regla vigente cuya condicion nadie ha definido. Contarla entre las
+    # ejecutables hacia que `spec status` dijera "0 todavia en prosa" mientras el documento
+    # generado decia de RN-028 "No es ejecutable todavia", y RN-028 es un `gate`: la maxima
+    # precedencia. Quien leyera el recuento concluia que la spec esta lista para F22 (F13,
+    # auditoria de cierre).
+    def _pendiente(r: Any) -> bool:
+        return isinstance(r.forma, dict) and r.forma.get("pendiente_definicion") is not None
+
+    ejecutables = [r for r in reglas if r.forma is not None and not _pendiente(r)]
+    a_medias = [r for r in reglas if _pendiente(r)]
+    linea_reglas = (
         f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
         f"{sum(1 for r in reglas if not r.vigente)} descartadas; "
-        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable y "
+        f"{len(ejecutables)} con forma ejecutable y "
         f"{sum(1 for r in reglas if r.vigente and r.forma is None)} todavia en prosa"
     )
+    if a_medias:
+        ids = ", ".join(
+            f"{r.id} ({(r.forma or {}).get('pendiente_definicion')})"
+            for r in sorted(a_medias, key=lambda x: x.id)
+        )
+        linea_reglas += f"; {len(a_medias)} vigente(s) SIN CONDICION definida todavia: {ids}"
+    print(linea_reglas)
     confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
     unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]
     # Las tres cuentas, y no dos: mientras no hubo ningun DEFAULT_AMBIGUOUS, "con valor" y "sin
@@ -1413,6 +1434,7 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     from botsito.corpus.inventario import InventarioError
     from botsito.evidence.modelo import EvidenciaError
     from botsito.feedback.modelo import (
+        CORTE_PROCEDENCIA,
         FeedbackError,
         FeedbackRecord,
         cargar_feedback,
@@ -1466,6 +1488,17 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         print(f"ERROR: {exc}")
         return 1
     print(f"OK: {ruta.relative_to(repo).as_posix()}")
+    # Un registro de una sesion ANTERIOR al corte no esta obligado a declarar cuando llego, y eso
+    # es correcto -no se puede inventar la fecha de llegada de 117 respuestas de hace dias-. Pero
+    # si se esta escribiendo HOY, si se sabe, y omitirlo vuelve a meter el dato en la prosa: paso
+    # con el cierre de A-14, escrito el 2026-09-12 y fechado el 9 (F13, auditoria de cierre).
+    if not campos["recibido_el"] and args.fecha < CORTE_PROCEDENCIA:
+        print(
+            f"AVISO: sesion anterior al {CORTE_PROCEDENCIA}, asi que `--recibido-el` no es "
+            f"obligatorio; pero si esta respuesta no llego el {args.fecha}, declaralo: es lo unico "
+            f"que F26 puede citar para ordenar los valores frente al holdout (ADR-0023)",
+            file=sys.stderr,
+        )
     return 0
 
 
@@ -1488,6 +1521,91 @@ def feedback_trace(repo: Path, identificador: str) -> int:
     return 0
 
 
+@dataclass(frozen=True, slots=True)
+class ContextoPendiente:
+    """Todo lo que hace falta para juzgar un registro, cargado una vez."""
+
+    parametros: Mapping[str, Any]
+    estados: Mapping[str, str] | None
+    reglas: Mapping[str, Any]
+    contradicciones_abiertas: frozenset[str]
+    citados_por_vistos: str
+
+
+# Los tres estados de `feedback pending`. SIN_MECANISMO no es un tercer color decorativo: es
+# la unica forma de no mentir sobre lo que no se puede comprobar (auditoria de cierre de F13).
+_PENDIENTE, _REFLEJADO, _SIN_MECANISMO = "pendiente", "reflejado", "sin mecanismo"
+
+
+def situacion_de(ctx: ContextoPendiente, r: Any) -> tuple[str, str]:
+    """(estado, por que) de UN registro. Estado en {_PENDIENTE, _REFLEJADO, _SIN_MECANISMO}.
+
+    Funcion de modulo y no un cierre dentro de `feedback_pending` para que se pueda probar un
+    registro suelto: hoy no existe ni un solo registro con objetivo `regla`, y los once REJECT
+    sobre parametro estan todos aplicados, asi que dos de los criterios no tendrian NINGUNA
+    prueba si solo se pudieran ejercitar a traves del repositorio real.
+    """
+    tipo, oid = r.objetivo.tipo, r.objetivo.id
+    if tipo == "parametro":
+        p = ctx.parametros.get(oid)
+        if p is None:
+            return _PENDIENTE, "el parametro no esta en el registro"
+        if p.categoria != "estrategia":
+            return _REFLEJADO, f"categoria {p.categoria}: no se pregunta (ADR-0004)"
+        cita = p.fuente.id if p.fuente is not None else None
+        if r.accion == "REJECT":
+            if not r.supersede:
+                return _PENDIENTE, "un REJECT sin `supersede` no dice que registro retira"
+            if cita == r.supersede:
+                return _PENDIENTE, f"{oid} sigue citando {r.supersede}, que esto rechaza"
+            donde = "sin valor a proposito" if p.valor is None else f"cita {cita}"
+            return _REFLEJADO, f"aplicado: el parametro ya no cita lo rechazado ({donde})"
+        if cita == r.id:
+            return _REFLEJADO, "aplicado: el parametro lo cita"
+        return _PENDIENTE, f"{oid} no lo cita todavia (`botsito feedback apply`)"
+    if tipo == "ambiguedad":
+        if ctx.estados is None:
+            return _SIN_MECANISMO, "no hay ambiguedades.yaml en este repositorio"
+        estado = ctx.estados.get(oid)
+        if estado is None:
+            return _PENDIENTE, "la ambiguedad no existe"
+        return (_PENDIENTE if estado == "ABIERTA" else _REFLEJADO), f"{oid} esta {estado}"
+    if tipo == "contradiccion":
+        if oid in ctx.contradicciones_abiertas:
+            return _PENDIENTE, (
+                f"{oid} sigue ABIERTA: los items que la sostienen siguen vivos, y "
+                f"_contradicciones.yaml se DERIVA de ellos"
+            )
+        return _REFLEJADO, f"aplicado: {oid} ya no es una contradiccion abierta"
+    if tipo == "evidence":
+        if r.accion == "CONFIRM":
+            return _REFLEJADO, "un CONFIRM confirma un item que ya vive: no deja trabajo"
+        return _SIN_MECANISMO, (
+            f"un {r.accion} sobre evidencia no supersede el item -{oid} cita bien lo que se "
+            f"dijo- y su efecto entra por el parametro, sin forma mecanica de cruzarlo"
+        )
+    if tipo == "regla":
+        regla = ctx.reglas.get(oid)
+        if regla is None:
+            return _PENDIENTE, f"la regla {oid} no esta en la spec"
+        if r.accion == "REJECT":
+            if regla.vigente:
+                return _PENDIENTE, f"{oid} sigue VIGENTE y el trader la rechazo"
+            return _REFLEJADO, f"aplicado: {oid} esta {regla.estado}"
+        if regla.cita == r.id:
+            return _REFLEJADO, "aplicado: la regla lo cita"
+        return _PENDIENTE, f"{oid} no lo cita todavia (cita {regla.cita})"
+    if tipo == "paquete":
+        if r.accion == "CONFIRM":
+            return _REFLEJADO, "precondicion de ceguera: no deja nada que aplicar"
+        if r.id in ctx.citados_por_vistos:
+            return _REFLEJADO, "aplicado: vistos.yaml lo cita"
+        return _PENDIENTE, "el mes visto entra en vistos.yaml citando este registro"
+    if tipo == "caso":
+        return _PENDIENTE, "espera la biblioteca de casos (F14)"
+    return _SIN_MECANISMO, f"no hay criterio para un {r.accion} sobre {tipo}: declaralo"
+
+
 def feedback_pending(repo: Path, todos: bool = False) -> int:
     """Lo que el trader dijo y TODAVIA no esta reflejado. Y por que, uno a uno (F13).
 
@@ -1495,14 +1613,39 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
     todos aplicados hace dias. Una lista que siempre esta llena no la mira nadie, que es la forma
     mas silenciosa de que una guardia deje de servir.
 
+    NUNCA AFIRMA MAS DE LO QUE PUEDE COMPROBAR, que es por lo que hay TRES estados y no dos. La
+    primera version de F13 cerraba con un `return False` -"el resto no se aplica a la spec"- y la
+    auditoria de cierre demostro que ese catch-all escondia casos, uno VIVO en el repositorio: el
+    `RESOLVE_CONTRADICTION` con el que el trader cerro el 0,75 vs 0,8 el 2026-09-09 salia como
+    reflejado mientras `_contradicciones.yaml` seguia -y sigue- diciendo que `stop.nivel` esta
+    ABIERTA. Pero negarlo todo por defecto habria mentido en el otro sentido: los ocho CORRECT y
+    REJECT sobre evidencia NO dejan trabajo pendiente, porque el item cita bien el video -v4 SI
+    contiene la propuesta de un tercer esquema; lo que el trader hace es no adoptarla- y su efecto
+    vive en el parametro. Asi que:
+      - PENDIENTE: se puede comprobar que falta.
+      - reflejado: se puede comprobar que esta.
+      - SIN MECANISMO: no hay forma mecanica de saberlo, y se dice en voz alta con su recuento en
+        vez de colarlo en una de las otras dos.
+
     Que cuenta como reflejado, por tipo de objetivo:
-      - `parametro`: el registro esta reflejado cuando el propio parametro lo CITA en su `fuente`.
-        Es la definicion exacta, no una aproximacion: `feedback apply` escribe ahi el id.
+      - `parametro` (CONFIRM/CORRECT/RESOLVE_UNKNOWN): el parametro lo CITA en su `fuente`. Es la
+        definicion exacta y no una aproximacion: `feedback apply` escribe ahi el id.
+      - `parametro` + REJECT: no se refleja citandolo -pedirle que cite al que lo rechaza seria lo
+        contrario de lo que el registro dice- sino RETIRANDO lo que rechaza. Los once REJECT reales
+        llevan `supersede`, asi que el criterio es exacto: el parametro ya no cita al registro
+        SUPERSEDIDO. Sin `supersede` no se sabe que retira, y entonces es pendiente.
       - `ambiguedad`: cuando deja de estar ABIERTA (RESUELTA por el trader o DECIDIDA por el
         consultor, ADR-0022).
+      - `contradiccion`: cuando el tema ya no figura entre las abiertas. `_contradicciones.yaml` se
+        DERIVA de los items vivos: un RESOLVE_CONTRADICTION no cierra nada por si mismo.
+      - `evidence`: un CONFIRM confirma un item que ya vive y no deja trabajo. Un CORRECT o un
+        REJECT quedan SIN MECANISMO: el item no se supersede -cita bien lo que se dijo en el
+        video- y su efecto entra por el parametro, sin forma mecanica de cruzarlo.
+      - `regla`: un REJECT esta reflejado cuando la regla deja de estar VIGENTE; un CONFIRM o un
+        CORRECT, cuando la regla lo CITA.
+      - `paquete`: un CONFIRM es la precondicion de ceguera y no deja trabajo; un REJECT obliga a
+        meter el mes en `vistos.yaml` citando el registro.
       - `caso`: no se refleja en la spec sino en la biblioteca de casos, que es F14.
-      - el resto (`evidence`, `regla`, `contradiccion`, `paquete`): no hay nada que "aplicar".
-        Un CONFIRM sobre un item de evidencia lo confirma y ya esta.
 
     Un parametro que no sea de categoria `estrategia` no se le pregunta al trader (ADR-0004).
     """
@@ -1512,7 +1655,10 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
         cargar_ambiguedades,
     )
     from botsito.config.registro import RegistroError, cargar_registro
+    from botsito.evidence.contradicciones import detectar
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
     from botsito.feedback.modelo import FeedbackError, activos, cargar_feedback
+    from botsito.spec.modelo import FICHERO_SPEC, SpecError, cargar_reglas
 
     try:
         registros = activos(cargar_feedback(repo / "knowledge" / "feedback"))
@@ -1523,61 +1669,54 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
         estados: dict[str, str] | None = (
             {a.id: a.estado for a in cargar_ambiguedades(ruta_amb)} if ruta_amb.is_file() else None
         )
-    except (FeedbackError, RegistroError, AmbiguedadError) as exc:
+        ruta_spec = repo / FICHERO_SPEC
+        reglas = {r.id: r for r in cargar_reglas(ruta_spec)} if ruta_spec.is_file() else {}
+        carpeta_ev = repo / "knowledge" / "evidence"
+        items = list(cargar_evidencia(carpeta_ev)) if carpeta_ev.is_dir() else []
+        # DERIVADAS y no leidas del fichero: `_contradicciones.yaml` es generado y `knowledge
+        # validate` exige que coincida, asi que derivar no puede decir otra cosa; y si alguien lo
+        # edita a mano, esto sigue diciendo la verdad.
+        abiertas_contra = {str(c["tema"]) for c in detectar(items)}
+    except (FeedbackError, RegistroError, AmbiguedadError, EvidenciaError, SpecError) as exc:
         print(f"ERROR: {exc}")
         return 1
 
-    def situacion(r: Any) -> tuple[bool, str]:
-        """(esta pendiente, por que)."""
-        tipo, oid = r.objetivo.tipo, r.objetivo.id
-        if tipo == "parametro":
-            p = parametros.get(oid)
-            if p is None:
-                return True, "el parametro no esta en el registro"
-            if p.categoria != "estrategia":
-                return False, f"categoria {p.categoria}: no se le pregunta al trader (ADR-0004)"
-            if r.accion == "REJECT":
-                # Un REJECT dice que ese registro NO sostiene ese parametro, asi que se refleja
-                # cuando el parametro deja de citarlo. Son dos casos y los dos son correctos: el
-                # parametro se queda sin valor a proposito -los siete UNKNOWN con su REJECT- o
-                # toma su valor de otra fuente, que es lo que hicieron las correcciones de
-                # trazabilidad de F11 con `huso_grafico` y `instrumento`. Pedirle que lo CITE
-                # seria pedir lo contrario de lo que el registro significa.
-                cita = p.fuente.id if p.fuente is not None else None
-                if cita != r.id:
-                    donde = "sin valor a proposito" if p.valor is None else f"cita {cita}"
-                    return False, f"aplicado: el parametro ya no lo cita ({donde})"
-                return True, f"{oid} fue rechazado y sigue citandolo"
-            if p.fuente is not None and p.fuente.id == r.id:
-                return False, "aplicado: el parametro lo cita"
-            return True, f"{oid} no lo cita todavia (`botsito feedback apply`)"
-        if tipo == "ambiguedad":
-            if estados is None:
-                return True, "sin ambiguedades.yaml no se puede saber si sigue abierta"
-            estado = estados.get(oid)
-            if estado is None:
-                return True, "la ambiguedad no existe"
-            return (estado == "ABIERTA"), f"{oid} esta {estado}"
-        if tipo == "caso":
-            return True, "espera la biblioteca de casos (F14)"
-        return False, f"un {r.accion} sobre {tipo} no se aplica a la spec"
+    ctx = ContextoPendiente(
+        parametros, estados, reglas, frozenset(abiertas_contra), _texto_de_vistos(repo)
+    )
 
-    pendientes: list[tuple[Any, str]] = []
-    reflejados: list[tuple[Any, str]] = []
+    def situacion(r: Any) -> tuple[str, str]:
+        return situacion_de(ctx, r)
+
+    cajones: dict[str, list[tuple[Any, str]]] = {_PENDIENTE: [], _REFLEJADO: [], _SIN_MECANISMO: []}
     for r in registros:
-        pendiente, motivo = situacion(r)
-        (pendientes if pendiente else reflejados).append((r, motivo))
+        estado, motivo = situacion(r)
+        cajones[estado].append((r, motivo))
 
-    for r, motivo in sorted(pendientes, key=lambda x: (x[0].fecha, x[0].id)):
-        print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id} — {motivo}")
+    def por_fecha(caja: list[tuple[Any, str]]) -> list[tuple[Any, str]]:
+        return sorted(caja, key=lambda x: (x[0].fecha, x[0].id))
+
+    for r, motivo in por_fecha(cajones[_PENDIENTE]):
+        print(f"{r.fecha} {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
+    # Los sin mecanismo se ENSENAN siempre, aunque no sean pendientes: esconderlos en `--todos`
+    # seria la misma mentira por omision que la auditoria encontro, con otra forma.
+    for r, motivo in por_fecha(cajones[_SIN_MECANISMO]):
+        print(f"  (?) {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
     if todos:
-        for r, motivo in sorted(reflejados, key=lambda x: (x[0].fecha, x[0].id)):
-            print(f"  (ok) {r.id} {r.objetivo.tipo}:{r.objetivo.id} — {motivo}")
+        for r, motivo in por_fecha(cajones[_REFLEJADO]):
+            print(f"  (ok) {r.id} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
     print(
-        f"{len(pendientes)} pendientes de {len(registros)} activos; {len(reflejados)} ya "
-        f"reflejados (--todos para verlos)"
+        f"{len(cajones[_PENDIENTE])} pendientes de {len(registros)} activos; "
+        f"{len(cajones[_REFLEJADO])} reflejados (--todos para verlos); "
+        f"{len(cajones[_SIN_MECANISMO])} sin forma mecanica de comprobarlo"
     )
     return 0
+
+
+def _texto_de_vistos(repo: Path) -> str:
+    """`vistos.yaml` entero: un REJECT sobre `paquete` se refleja citandose ahi (F10)."""
+    ruta = repo / "knowledge" / "cases" / "kit" / "vistos.yaml"
+    return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
 def _carpeta_datos(repo: Path) -> Path:

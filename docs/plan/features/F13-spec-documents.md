@@ -68,8 +68,8 @@ con fechas, fuera de la guardia **a propósito**), `PROJECT_STATE` (lo único qu
 |---|---|---|---|
 | a | `mapa_parametros.yaml` | unificar `opciones` **y decidir dónde viven `temas` y `ambiguedad`**, que es la mitad grande | F10 · F11 §390 |
 | b | `feedback pending` | lista los 70 activos sin mirar si el valor ya llegó al registro | F11 |
-| c | cadenas de `supersede` | **la cadena SÍ se recorre entera** (`comun/documentos.py:87`). Lo que falta: `feedback/modelo.py:358` compara el objetivo solo con el **predecesor inmediato** | F11 §388 |
-| d | `_ARGS_DE_VALOR` | lista blanca a mano: un argumento fuera de ella admite un valor de negocio crudo (`sentido: alcista` pasa hoy) | F12 §204 |
+| c | cadenas de `supersede` | ~~compara el objetivo solo con el predecesor inmediato~~ **ENUNCIADO FALSO, corregido al hacerlo**: comparar con el predecesor inmediato YA es transitivo, así que la cadena entera habla del mismo objetivo por construcción. El hueco real era el **TIEMPO**: nada impedía que un registro corrigiera a otro POSTERIOR | F11 §388 |
+| d | `_ARGS_DE_VALOR` | lista blanca a mano: un argumento fuera de ella admite un valor de negocio crudo (`sentido: alcista` pasa hoy). **Y no era la única puerta**: la auditoría de cierre encontró otras cinco, entre ellas un número crudo (`tope: 9.5`) y una clave estructural (`que: cuerpo`) | F12 §204 |
 
 ### 3.4 · Las dos decisiones de método → **ADR + lo mínimo, no reescribir la máquina**
 
@@ -79,7 +79,11 @@ mecanismo; **usarlo sobre A-15/A-16/A-17 es una decisión del consultor y queda 
 ## 4. Fuera de alcance
 
 - Generar MQL5 (`Params.mqh`): **F28**.
-- Reabrir valores del registro (ADR-0002).
+- Reabrir valores del registro (ADR-0002). **EXCEPCIÓN, decidida el 2026-09-12 y declarada
+  aquí**: `filtro_noticias` pasa de `no` a `regla`, cambia de categoría a `prop_firm` y su fuente
+  pasa del trader a ADR-0022. No es reabrir un valor del trader —lo que él dijo se conserva
+  intacto, y sigue siendo verdad sobre su operativa—: es una restricción de la cuenta a la que va
+  el bot, de la misma familia que RN-026 (stops level) y RN-027 (redondeo).
 - **Cerrar A-15, A-16 o A-17**: F13 hace el mecanismo; el ADR que las cierra lo escribe el consultor.
 - La biblioteca de casos y el reparto de mayo: **F14**.
 - La guarda real del holdout (hoy stub): **F14**, por ADR-0021.
@@ -88,8 +92,8 @@ mecanismo; **usarlo sobre A-15/A-16/A-17 es una decisión del consultor y queda 
 
 **Entradas:** `knowledge/spec/*.yaml` · `knowledge/feedback/**` · `mapa_parametros.yaml` · `docs/adr/**`.
 
-**Salidas:** `docs/spec/*.md` (generado) · `src/botsito/spec/generador.py` **(no `documentos.py`: ya
-existe `comun/documentos.py`)** · `src/botsito/cases/hoja_docx.py` · `cli.py` ·
+**Salidas:** `docs/spec/*.md` (generado) · `src/botsito/cases/spec_docs.py` **(no `spec/generador.py`: importa
+`cases` y las capas lo prohíben, D3; tampoco `documentos.py`, que ya existe en `comun/`)** · `src/botsito/cases/hoja_docx.py` · `cli.py` ·
 `knowledge/spec/ambiguedades.yaml` y su cargador · `knowledge/feedback/` esquema y README ·
 `docs/adr/0022-*.md` y `0023-*.md` · tests · `docs/validation/F13-spec-documents.md`.
 
@@ -109,7 +113,7 @@ existe `comun/documentos.py`)** · `src/botsito/cases/hoja_docx.py` · `cli.py` 
 - el documento generado coincide con lo commiteado, y el mensaje dice **qué fichero**;
 - cambiar un valor en `parametros.yaml` **cambia** el generado (si no, la guardia es decorativa);
 - `feedback pending` no lista lo ya aplicado;
-- una cadena de `supersede` incoherente **más allá del predecesor inmediato** se denuncia;
+- una corrección que llega **antes que lo que corrige** se denuncia (ver (c): el enunciado original de este punto era falso);
 - `DECIDIDA` exige un ADR **que exista y que nombre el id**, y no vale sobre una `bloqueante`;
 - `recibido_el`/`procedencia` se exigen desde el corte y no antes; los 116 conservan su id;
 - goldens: la spec real entra entera.

@@ -220,8 +220,10 @@ parametros:
 
   # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
   # UNKNOWN sin valor. Se cerraron en F11 con un registro de feedback de la sesion 1 (o evidencia
-  # que baste). El enlace parametro -> evidencia/ambiguedad esta en knowledge/cases/kit/
-  # mapa_parametros.yaml (el esquema del registro no admite claves extra).
+  # que baste). El enlace parametro -> EVIDENCIA esta en knowledge/cases/kit/mapa_parametros.yaml
+  # (el esquema del registro no admite claves extra); el enlace parametro -> AMBIGUEDAD lo sostiene
+  # knowledge/spec/ambiguedades.yaml, en el campo `parametros` de cada A-N. Estaban en los dos
+  # sitios hasta F13, y el del mapa llevaba parado desde F10.
   - nombre: ventana_inicio
     categoria: estrategia
     tipo: hora
@@ -262,7 +264,7 @@ parametros:
   - nombre: sesgo_h4_regla
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["vela_anterior_color", "vela_anterior_cierre_mecha", "otra"]
     descripcion: que vela H4 fija el sesgo y cuando cambia (A-1)
     estado: CONFIRMED
@@ -492,7 +494,7 @@ parametros:
   - nombre: reubicacion_cadencia
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["cada_vela", "al_romper", "otra"]
     descripcion: cada cuanto se reubica la orden limite mientras no se activa (A-5)
     estado: CONFIRMED
@@ -514,7 +516,7 @@ parametros:
   - nombre: mapeo_dos_velas
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["order_block_mayor", "otra"]
     descripcion: cuando dos velas de M1 cuentan como una estructura al mapear (A-8)
     estado: CONFIRMED
