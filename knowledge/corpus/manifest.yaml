@@ -45,6 +45,10 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest mayo 2026/mensaje-whatsapp-2026-09-11-1904-factible-promediando.png
   sha256: 0076e82738b4df0460830ece6670047be0865a89e0580ed46a94ae68ac8a2624
+- bytes: 12417
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-0208-zonas-de-control.png
+  sha256: b119cac7c49fa7df7606927ef750a2e0e248db950fd3f5ea417ebc7ea9003516
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2112,8 +2116,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 3283718
-    ficheros: 35
+    bytes: 3296135
+    ficheros: 36
   video_original:
     bytes: 23715506889
     ficheros: 6

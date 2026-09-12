@@ -251,7 +251,11 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
     assert abiertas == {"A-21"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
-    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)}
+    # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
+    # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
+    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
+        "A-20"
+    }
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (

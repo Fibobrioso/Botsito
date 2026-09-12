@@ -72,6 +72,19 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     `comprobar_citas_revocadas` en el mismo commit.
   - Las reglas no admiten cifras NI en un "nivel 0": `comprobar_contra` salta con el digito
     suelto. Se escribe "la entrada" y "el extremo de la caja".
+  - `feedback apply` daba por NO-OP que el trader ratificara un default nuestro: comparaba la
+    fuente anterior solo si era de tipo `feedback`, y un DEFAULT_AMBIGUOUS cita evidencia por
+    definicion. Arreglado el 2026-09-11 con A-20. Si alguien anade un tipo de fuente, que mire
+    esto.
+  - Al cerrar una ambiguedad hay que tocar CINCO sitios y solo dos los vigila una guardia:
+    el registro (via `apply`), `ambiguedades.yaml` (estado RESUELTA), la regla que la citaba
+    -que probablemente citaba la evidencia DEBIL que abrio la duda-, la tabla de PROJECT_STATE
+    y el recuento de `knowledge/spec/README.md`. Mas el test de `test_kit` que congela que
+    ambiguedades estan RESUELTAS.
+  - Una respuesta del trader POR ESCRITO fuera de sesion se registra con su captura en
+    `Material adicional de su operativa/Mensajes del trader/`: asi el `respuesta_literal` son
+    sus palabras y no una sintesis del consultor, que es la diferencia que A-11 y el lotaje
+    tuvieron que declarar en `registrado_por`.
 - Lecciones tecnicas (F11):
   - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
     patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo

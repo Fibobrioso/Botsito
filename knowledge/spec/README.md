@@ -2,7 +2,7 @@
 
 - `parametros.yaml`: LA unica puerta de los valores de negocio (ADR-0002), con categoria por
   parametro y huso en las horas (ADR-0004, ADR-0012). Desde la sesion 1 (2026-09-09) tiene 59
-  parametros: 49 confirmados, 3 con un default nuestro y 7 UNKNOWN **a proposito**, cada uno de estos con un registro `REJECT`
+  parametros: 50 confirmados, 2 con un default nuestro y 7 UNKNOWN **a proposito**, cada uno de estos con un registro `REJECT`
   que explica por que no existe ese numero. Un valor de `estrategia` cita SIEMPRE al trader
   (feedback o evidence); uno de entorno (instrumento, broker, prop_firm, ejecucion) cita un ADR.
 - `ambiguedades.yaml` (F10, ADR-0011): A-1..A-17 con pregunta, evidencia, parametros y estado.

@@ -67,6 +67,10 @@ carpetas:
       (`knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`) y 13 de sus 19 dias son
       holdout, asi que este material NO puede usarse para elegir ningun parametro: es entrada de
       F14 (biblioteca de casos) y F26 (fidelidad), con el regimen de holdout que les toque.
+      Subcarpeta "Mensajes del trader": capturas de respuestas suyas por escrito, fuera de sesion.
+      Son sus palabras, no una sintesis del consultor, y por eso el registro de feedback que las
+      recoge puede llevarlas como `respuesta_literal`. La primera cierra A-20 (una sola zona de
+      control).
 
   - ruta: "Sesiones"
     papel: material_adicional

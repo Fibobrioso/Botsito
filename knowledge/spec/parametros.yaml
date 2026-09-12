@@ -432,14 +432,15 @@ parametros:
     descripcion: >-
       cuantas zonas de control puede desarrollar un esquema sin invalidarlo. Vivia en la prosa de
       RN-009 -"se desarrolla mas de una zona de control"- y por tanto fuera de la unica puerta
-      (ADR-0002). OJO: el literal dice "por lo general solo buscamos uno", que no es una
-      prohibicion dura; se escribe 1 porque es lo que la regla afirma, y A-20 lo deja a la vista
-    estado: DEFAULT_AMBIGUOUS
+      (ADR-0002). Fue un default nuestro mientras la unica cita disponible decia "por lo general
+      solo buscamos uno", que no es una prohibicion dura. El 2026-09-11 el trader lo cierra por
+      escrito -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica las dos cosas: el
+      numero y el descarte. A-20 RESUELTA
+    estado: CONFIRMED
     valor: 1
-    ambiguedad_id: A-20
     fuente:
-      tipo: evidence
-      id: ev-v4-001909-54ac2edd
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-1b2203b0
     minimo: "1"
     maximo: "5"
   - nombre: operaciones_simultaneas_max

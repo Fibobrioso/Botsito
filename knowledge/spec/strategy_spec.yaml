@@ -500,10 +500,15 @@ reglas:
       zonas_control_max_por_esquema
     entonces: no se opera
     parametros: [zonas_control_max_por_esquema]
-    cita: ev-v4-001909-54ac2edd
-    literal: >-
-      aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
-      de control [...] por lo general sólo buscamos uno
+    cita: fb-2026-09-09-sesion-01-1b2203b0
+    literal: solo 1 zona control bro. si hay 2 se descarta
+    notas: >-
+      hasta el 2026-09-11 esta regla citaba `ev-v4-001909-54ac2edd` -"aqui no habria un trade
+      usando este modelo aqui por el hecho de que te genera dos zonas de control [...] por lo
+      general solo buscamos uno"-, que describe el caso pero remata con una TENDENCIA, no con una
+      prohibicion; de ahi A-20 y el default. El trader la cierra por escrito y en duro, asi que la
+      regla pasa a citar sus palabras y la evidencia se queda en A-20, que es donde documenta de
+      donde venia la duda
     forma:
       cuando:
         todos_de:

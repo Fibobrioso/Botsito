@@ -783,3 +783,38 @@ def test_un_parametro_no_puede_citar_un_registro_revocado(tmp_path: Path) -> Non
     (c,) = cambios
     assert c.registro_id == nuevo.id
     assert not c.es_no_op, "el valor es el mismo, pero la fuente cita un registro revocado"
+
+
+def test_el_trader_ratificando_un_default_nuestro_no_es_un_no_op(tmp_path: Path) -> None:
+    """El caso mas comun de preguntar: el trader dice lo que ya habiamos supuesto.
+
+    `fuente_anterior` solo se rellenaba cuando la fuente previa era de tipo `feedback`, asi que un
+    parametro DEFAULT_AMBIGUOUS -que por definicion cita EVIDENCIA, no al trader- pasaba por
+    no-op en cuanto el valor coincidia. Con `zonas_control_max_por_esquema` (A-20) el trader
+    respondio "solo 1 zona control bro. si hay 2 se descarta", que es el 1 que ya teniamos, y el
+    registro se habria quedado DEFAULT_AMBIGUOUS, con su `ambiguedad_id` puesto y la ambiguedad
+    ABIERTA, habiendola respondido.
+    """
+    from botsito.config.registro import cargar_registro
+    from botsito.feedback.aplicar import cambios_de_sesion
+
+    ruta = _registro_minimo(tmp_path)
+    campos = _fb(valor_canonico="0.75")
+    registro = registro_desde_dict({**campos, "id": calcular_id(campos)})
+
+    # el mismo valor, pero puesto por NOSOTROS y sostenido por evidencia, no por el trader
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace(
+            "    estado: UNKNOWN",
+            '    estado: DEFAULT_AMBIGUOUS\n    valor: "0.75"\n    ambiguedad_id: A-10\n'
+            "    fuente:\n      tipo: evidence\n      id: ev-v4-001909-54ac2edd",
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cambios = cambios_de_sesion(cargar_registro(ruta), [registro], registro.sesion)
+    (c,) = cambios
+    assert not c.es_no_op, (
+        "el valor coincide, pero deja de ser un default nuestro y pasa a decirlo el trader"
+    )
+    assert c.estado_anterior.value == "DEFAULT_AMBIGUOUS"
