@@ -25,6 +25,8 @@ ambiguedades:
     parametros: [sesgo_h4_regla]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-2
     titulo: tercer cartucho
@@ -42,6 +44,8 @@ ambiguedades:
     parametros: [cartuchos_max]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: true
   - id: A-3
     titulo: salida sin ruptura
@@ -53,6 +57,8 @@ ambiguedades:
     parametros: [salida_sin_ruptura]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-4
     titulo: BE al tocar o al cierre
@@ -65,6 +71,8 @@ ambiguedades:
     parametros: [break_even_condicion, break_even_criterio_ruptura]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: true
   - id: A-5
     titulo: cadencia de reubicacion
@@ -77,6 +85,8 @@ ambiguedades:
     parametros: [reubicacion_cadencia]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-6
     titulo: cierre 15:00
@@ -87,6 +97,8 @@ ambiguedades:
     parametros: [ventana_fin, cierre_forzoso_fin_ventana]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-7
     titulo: stop del 2.o esquema
@@ -103,6 +115,8 @@ ambiguedades:
     parametros: [stop_fraccion_caja]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-8
     titulo: '"dos velas como una" en mapeo'
@@ -114,6 +128,8 @@ ambiguedades:
     parametros: [mapeo_dos_velas]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-9
     titulo: anclaje de la vela H4 (hora y huso del grafico)
@@ -128,6 +144,8 @@ ambiguedades:
     parametros: [anclaje_h4]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: true
   - id: A-10
     titulo: "stop a 0,8: fijo o 0,75 + spread"
@@ -142,6 +160,8 @@ ambiguedades:
     parametros: [stop_fraccion_caja, stop_colchon_spread]
     contradiccion: stop.nivel
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-11
     titulo: SL en la orden o tras el llenado
@@ -157,6 +177,8 @@ ambiguedades:
     parametros: [stop_en_orden_pendiente]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-12
     titulo: >-
@@ -170,6 +192,8 @@ ambiguedades:
     parametros: [stop_reduccion_umbral_vela, stop_reduccion_fraccion]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-13
     titulo: break even al toque o con cuerpo
@@ -189,6 +213,8 @@ ambiguedades:
     parametros: [break_even_criterio_ruptura]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-14
     titulo: los 28 dias al año en que su horario y la rejilla H4 no cuadran
@@ -197,9 +223,9 @@ ambiguedades:
       dia, asi que la primera H4 se ve a las 22:00 y no a las 23:00: sus dos sesiones dejan de
       empezar en la apertura de una vela. RESPONDIDA de hecho el 2026-09-10: el consultor informa
       de que el trader ES CONSCIENTE de ese cambio en la estructura de las velas, usa las velas tal
-      cual -no reancla la rejilla- y mantiene el mismo rango de horarios. Sigue ABIERTA solo por
-      forma: este fichero cierra con feedback del trader y esto lo cuenta el consultor. Falta su
-      frase, no la respuesta
+      cual -no reancla la rejilla- y mantiene el mismo rango de horarios. CERRADA el 2026-09-12
+      con la frase que le faltaba: el consultor la confirma por escrito y queda registrada como
+      REFERIDA, igual que se cerro A-11
     resuelve_en: [F11, F15, F26]
     evidencia:
       - ev-v3-000136-6160fcea
@@ -208,7 +234,9 @@ ambiguedades:
       - ev-v6-005830-48b30e48
     parametros: [ventana_inicio, ventana_fin]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-15
     titulo: alcance de la ventana operativa
@@ -221,6 +249,8 @@ ambiguedades:
     parametros: [ventana_inicio, ventana_fin]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-16
     titulo: proveedor de datos para medir la fidelidad
@@ -233,12 +263,18 @@ ambiguedades:
     parametros: []
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-17
     titulo: noticias frente a la regla de la cuenta de fondeo
     pregunta: >-
-      ¿la cuenta prohibe operar dos minutos antes y despues de una noticia, y que pasa si el
-      bot lo hace?
+      ¿QUE prohibe exactamente el reglamento de FundedNext sobre operar en noticias: que eventos,
+      cuantos minutos antes y despues, y que sancion? Es un HECHO que se verifica en su reglamento,
+      no una decision. Partida en dos el 2026-09-12 (ADR-0022): la decision de alcance -el bot no
+      opera noticias en la v1 aunque la estrategia del trader si funcione dentro de ellas- se fue a
+      A-22 y esta DECIDIDA; aqui se queda lo que hay que leer y medir. Sin esta respuesta, RN-028
+      sabe QUE bloquea y no CON QUE VENTANA
     resuelve_en: [F11, F33]
     evidencia:
       - ev-v6-020029-aa86963a
@@ -247,6 +283,8 @@ ambiguedades:
     parametros: [filtro_noticias]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-18
     titulo: base sobre la que se mide el objetivo 1:3
@@ -264,6 +302,8 @@ ambiguedades:
     parametros: [base_calculo_objetivo, objetivo_rr]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-19
     titulo: cuando empieza el dia y la semana de riesgo
@@ -277,6 +317,8 @@ ambiguedades:
     parametros: [reloj_dia_riesgo]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-20
     titulo: cuantas zonas de control invalidan un esquema
@@ -293,6 +335,8 @@ ambiguedades:
     parametros: [zonas_control_max_por_esquema]
     contradiccion: null
     estado: RESUELTA
+    decision: null
+    decidida_el: null
     bloqueante: false
   - id: A-21
     titulo: que es una zona de control limpia, sin ruido
@@ -312,4 +356,26 @@ ambiguedades:
     parametros: []
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: true
+  - id: A-22
+    titulo: si el bot opera noticias, y que pasa con la capacidad para otras cuentas
+    pregunta: >-
+      el trader opera noticias en sus cuentas propias -que no lo prohiben- y su estrategia funciona
+      dentro de esos eventos. ¿el bot hace lo mismo? DECIDIDO por el consultor el 2026-09-12: NO en
+      la primera version, porque va a una cuenta fondeada que puede prohibirlo como norma y la
+      sancion es perder la cuenta aunque la operacion acabe en profit. La CAPACIDAD se conserva:
+      `filtro_noticias` mantiene la opcion `no`, asi que el dia que el bot corra en una cuenta que
+      lo permita se cambia el valor y nada mas. Lo que falta por saber -que ventana exacta- es A-17
+    resuelve_en: [F13, F22, F26, F33]
+    evidencia:
+      - ev-v6-020029-aa86963a
+      - ev-v6-020114-a0e0b419
+      - ev-v6-020200-a957aa03
+    parametros: [filtro_noticias]
+    contradiccion: null
+    estado: DECIDIDA
+    decision: ADR-0022
+    decidida_el: '2026-09-12'
+    bloqueante: false

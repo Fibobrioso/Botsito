@@ -26,3 +26,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0019 | La forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre (cinco desde F12: nace `efectos`) | ACTIVE |
 | 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |
 | 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
+| 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE |

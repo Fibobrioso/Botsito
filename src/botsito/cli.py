@@ -685,6 +685,13 @@ def spec_status(repo: Path) -> int:
             p = registro.parametros.get(nombre)
             valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
             print(f"  {nombre:32} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
+    # Sin esta linea, DECIDIDA seria invisible: `spec status` solo miraba las ABIERTAS, asi que
+    # una ambiguedad cerrada por decision del consultor desapareceria del informe entero.
+    decididas = [a for a in ambiguedades if a.estado == "DECIDIDA"]
+    if decididas:
+        print("\nCerradas por decision del consultor (no las respondio el trader):")
+        for a in sorted(decididas, key=lambda x: int(x.id[2:])):
+            print(f"  {a.id:6} {a.decision}  {a.decidida_el}  {a.titulo}")
     sin_parametro = [a.id for a in abiertas if not a.parametros]
     if sin_parametro:
         print("\nAmbiguedades abiertas sin parametro asociado: " + ", ".join(sorted(sin_parametro)))

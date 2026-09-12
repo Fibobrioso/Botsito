@@ -876,20 +876,23 @@ reglas:
     estado: VIGENTE
 
   - id: RN-021
-    titulo: se opera durante las noticias y sin tope de spread
-    cuando: hay una noticia de alto impacto o el spread se ensancha
-    entonces: no se filtra (filtro_noticias, filtro_spread)
-    parametros: [filtro_noticias, filtro_spread]
+    titulo: el spread no se filtra
+    cuando: el spread se ensancha
+    entonces: no se filtra (filtro_spread); se opera igual
+    parametros: [filtro_spread]
     cita: fb-2026-09-09-sesion-01-3565552d
     literal: >-
       a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
     notas: >-
-      A-17: el propio trader avisa de que la cuenta de fondeo puede prohibirlo y cerrar la cuenta
-      aunque se acabe en profit. Verificar antes de operar en real
+      HASTA EL 2026-09-12 esta regla decia tambien que se opera DURANTE LAS NOTICIAS, y para el
+      trader sigue siendo cierto: opera cuentas propias que no lo prohiben y su estrategia funciona
+      dentro de esos eventos. Para el BOT ya no, porque va a una cuenta fondeada que puede
+      prohibirlo: esa mitad se fue a RN-028 (ADR-0022). El propio trader lo habia avisado y el
+      aviso llevaba tres dias en estas notas sin que ninguna guardia lo mirara
     forma:
       cuando:
         todos_de:
-          - contexto_filtrable: {noticias: filtro_noticias, spread: filtro_spread}
+          - contexto_filtrable: {spread: filtro_spread}
       entonces:
         permite: [buscar_entradas, abrir_operacion]
     clase: disparador
@@ -1017,5 +1020,30 @@ reglas:
               paso: instrumento_lote_paso
               minimo: instrumento_lote_minimo
               contrato: instrumento_contrato
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-028
+    titulo: el bot no abre alrededor de una noticia de alto impacto, aunque el trader si lo haga
+    cuando: hay una noticia de alto impacto y filtro_noticias dice que se filtra
+    entonces: >-
+      no se abre ninguna operacion. NO es lo que hace el trader -el opera cuentas propias que no lo
+      prohiben y su estrategia funciona dentro de esos eventos-: es una restriccion de la cuenta a
+      la que va el bot
+    parametros: [filtro_noticias]
+    cita: fb-2026-09-09-sesion-01-3565552d
+    literal: >-
+      a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
+    notas: >-
+      La cita dice lo CONTRARIO de lo que esta regla hace, y por eso declara `decision`. Lo que el
+      trader dijo sigue siendo verdad sobre SU operativa y se conserva intacto en RN-021 y en la
+      descripcion de filtro_noticias. Lo que decide ADR-0022 es donde corre el bot: una cuenta
+      fondeada que puede prohibirlo como norma, con la cuenta como sancion aunque la operacion
+      acabe en profit. El propio trader lo aviso en la sesion 1. La CAPACIDAD se conserva: basta
+      poner filtro_noticias en `no` el dia que el bot opere donde se permita. F26 tiene que citar
+      esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot
+    decision: ADR-0022
+    forma:
+      pendiente_definicion: A-17
     clase: gate
     estado: VIGENTE

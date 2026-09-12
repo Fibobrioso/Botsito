@@ -633,12 +633,25 @@ def test_los_dos_esquemas_de_entrada_estan_definidos(repo: Path) -> None:
     assert "bloque de origen" in terminos["breaker"].definicion
 
     reglas = cargar_reglas(repo / FICHERO_SPEC)
-    pendientes = [
-        r.id
+    pendientes = {
+        r.id: str(r.forma["pendiente_definicion"])
         for r in reglas
         if r.vigente and isinstance(r.forma, dict) and r.forma.get("pendiente_definicion")
-    ]
-    assert pendientes == [], f"reglas vigentes declaradas no ejecutables: {pendientes}"
+    }
+    # RN-008 dejo de estarlo cuando A-21 se reformulo: la definicion de los esquemas SI estaba en
+    # el corpus. La unica que queda es RN-028, y esta declarada a proposito: el bot bloquea las
+    # noticias por ADR-0022 y nadie ha leido todavia el reglamento de la cuenta, asi que se sabe
+    # QUE bloquea y no CON QUE VENTANA. Lo que este test impide es que aparezca una pendiente
+    # SILENCIOSA, no que exista una declarada.
+    assert pendientes == {"RN-028": "A-17"}, f"pendientes inesperadas: {pendientes}"
+    from botsito.cases.ambiguedades import cargar_ambiguedades
+
+    abiertas = {
+        a.id
+        for a in cargar_ambiguedades(repo / "knowledge" / "spec" / "ambiguedades.yaml")
+        if a.estado == "ABIERTA"
+    }
+    assert set(pendientes.values()) <= abiertas, "una pendiente apunta a algo ya cerrado"
 
 
 def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:

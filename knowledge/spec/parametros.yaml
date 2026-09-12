@@ -582,17 +582,29 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-140d655c
+  # Cambia de `estrategia` a `prop_firm` el 2026-09-12 (ADR-0022), y el cambio lo forzo una
+  # guardia: `test_fichero_real_cada_valor_de_estrategia_cita_al_trader` rechaza que un valor de
+  # estrategia venga de una decision nuestra, y tiene razon. Esto no es un numero de la operativa
+  # -esa la dice el trader y dice que NO filtra-: es una NORMA DE LA CUENTA a la que va el bot,
+  # igual que `instrumento_stops_level` es una norma del broker.
   - nombre: filtro_noticias
-    categoria: estrategia
+    categoria: prop_firm
     tipo: enum
     unidad: regla de filtro, o no si no filtra
     opciones: ["no", "regla"]
-    descripcion: si se deja de operar alrededor de noticias de alto impacto y con que margen
+    descripcion: >-
+      si se deja de operar alrededor de noticias de alto impacto y con que margen. `no` es lo que
+      hace EL TRADER en sus cuentas propias, que no lo prohiben, y su estrategia funciona dentro de
+      esos eventos -"a mi me es indiferente si hay noticia o no", fb-2026-09-09-sesion-01-3565552d-.
+      El BOT corre con `regla` desde ADR-0022 porque va a una cuenta fondeada que puede prohibirlo
+      como norma, y la sancion es perder la cuenta aunque la operacion acabe en profit. La opcion
+      `no` se conserva a proposito: el dia que el bot corra donde se permita, se cambia el valor y
+      nada mas. CON QUE VENTANA se bloquea es A-17, que sigue abierta
     estado: CONFIRMED
-    valor: "no"
+    valor: "regla"
     fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-3565552d
+      tipo: decision
+      id: ADR-0022
   - nombre: filtro_spread
     categoria: estrategia
     tipo: booleano

@@ -80,6 +80,8 @@ AMBIGUEDADES = """ambiguedades:
     parametros: [cartuchos_max]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: true
   - id: A-2
     titulo: BE al tocar o al cierre
@@ -89,6 +91,8 @@ AMBIGUEDADES = """ambiguedades:
     parametros: [break_even_condicion]
     contradiccion: null
     estado: ABIERTA
+    decision: null
+    decidida_el: null
     bloqueante: false
 """
 CONFIG = """simbolo: XXXYYY
@@ -253,9 +257,14 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     assert abiertas == {"A-21"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
+    # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida
+    # de hecho el 2026-09-10 y cerrada con su frase referida el 2026-09-12, como se cerro A-11).
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
-        "A-20"
+        "A-14",
+        "A-20",
     }
+    # DECIDIDA nace con ADR-0022 y su primer ocupante: la decision de no operar noticias.
+    assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {"A-22"}
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (
@@ -263,7 +272,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         (AMBIGUEDADES.replace("id: A-1", "id: A-3"), "orden numerico"),
         (
             AMBIGUEDADES.replace(
-                "estado: ABIERTA\n    bloqueante: true", "estado: X\n    bloqueante: true"
+                "estado: ABIERTA\n    decision: null", "estado: X\n    decision: null"
             ),
             "estado",
         ),
@@ -637,7 +646,8 @@ def test_resuelta_min_velas_meses_vistos_y_universo(tmp_path: Path) -> None:
     ruta_amb = repo / "knowledge" / "spec" / "ambiguedades.yaml"
     ruta_amb.write_text(
         AMBIGUEDADES.format(a=ids["a"], b=ids["b"]).replace(
-            "estado: ABIERTA\n    bloqueante: false", "estado: RESUELTA\n    bloqueante: false"
+            "estado: ABIERTA\n    decision: null\n    decidida_el: null\n    bloqueante: false",
+            "estado: RESUELTA\n    decision: null\n    decidida_el: null\n    bloqueante: false",
         ),
         encoding="utf-8",
     )
@@ -958,3 +968,54 @@ def test_las_particiones_no_se_perdonan_ni_con_la_sesion_celebrada(tmp_path: Pat
         assert any("particiones.yaml" in p for p in problemas), (
             f"con celebrada={celebrada} las particiones tienen que ser ERROR, no AVISO"
         )
+
+
+def test_decidida_exige_un_adr_que_exista_y_que_la_nombre(tmp_path: Path) -> None:
+    """`DECIDIDA` nace con ADR-0022 para lo que el consultor cierra sin preguntar al trader.
+
+    Tiene que ser un ESTADO y no un campo junto a ABIERTA: `cases/cuestionario.py` mete toda
+    ABIERTA en el cuestionario de la sesion siguiente, asi que con un campo se le volveria a
+    preguntar al trader lo que el consultor ya decidio. Y el ADR no basta con que exista: tiene
+    que NOMBRARLA, o `decision: ADR-0002` pasaria entero, que es el defecto que F12 encontro dos
+    veces con `pendiente_definicion: A-999` y con `ambiguedad_id: A-200`.
+    """
+    from botsito.cases.ambiguedades import AmbiguedadError, cargar_ambiguedades
+
+    ruta = tmp_path / "amb.yaml"
+    base = AMBIGUEDADES.format(a="ev-v1-000100-aaaaaaaa", b="ev-v1-000200-bbbbbbbb")
+
+    # NO carga: DECIDIDA sin su ADR
+    ruta.write_text(
+        base.replace(
+            "estado: ABIERTA\n    decision: null", "estado: DECIDIDA\n    decision: null", 1
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(AmbiguedadError, match="DECIDIDA exige"):
+        cargar_ambiguedades(ruta)
+
+    # NO carga: decision sin ser DECIDIDA
+    ruta.write_text(base.replace("decision: null", "decision: ADR-0022", 1), encoding="utf-8")
+    with pytest.raises(AmbiguedadError, match="solo van en DECIDIDA"):
+        cargar_ambiguedades(ruta)
+
+    # SI carga: DECIDIDA completa
+    completa = base.replace(
+        "estado: ABIERTA\n    decision: null\n    decidida_el: null",
+        "estado: DECIDIDA\n    decision: ADR-0022\n    decidida_el: '2026-09-12'",
+        1,
+    )
+    ruta.write_text(completa, encoding="utf-8")
+    a = cargar_ambiguedades(ruta)[0]
+    assert a.estado == "DECIDIDA" and a.decision == "ADR-0022" and a.decidida_el == "2026-09-12"
+
+
+def test_una_decidida_no_entra_en_el_cuestionario_de_la_siguiente_sesion() -> None:
+    """El motivo por el que DECIDIDA es un estado y no un campo, comprobado sobre la spec real."""
+    from botsito.cases.ambiguedades import cargar_ambiguedades
+
+    ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
+    abiertas = {a.id for a in ambs if a.estado == "ABIERTA"}
+    decididas = {a.id for a in ambs if a.estado == "DECIDIDA"}
+    assert decididas, "hoy hay al menos una decidida (A-22)"
+    assert not (decididas & abiertas), "una decidida ya no se pregunta"
