@@ -25,3 +25,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0018 | La precedencia va por clase, no por orden del fichero; y los siete defectos que eso destapo | ACTIVE (con nota del 2026-09-11: A-20 cerrada) |
 | 0019 | La forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre (cinco desde F12: nace `efectos`) | ACTIVE |
 | 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |
+| 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
