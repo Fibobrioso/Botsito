@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones respondidas, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-—  (main estable en stable/F12-holdout; siguiente F13)
+F13 spec-documents (rama `feature/F13-spec-documents`, brief en `docs/plan/features/F13-spec-documents.md`): que la documentacion legible de la spec se GENERE y no se escriba, con guardia anti-deriva. ABIERTA el 2026-09-12. Hereda tres deudas de F10/F11 (`mapa_parametros.yaml` duplicando `opciones`, `feedback pending` listando lo ya aplicado, y las cadenas de supersede sin comprobar como cadena) y las DOS decisiones de metodo que la auditoria del 2026-09-12 dejo abiertas (el estado `DECIDIDA` para una ambiguedad que decide el consultor, y los campos `recibido_el`/`procedencia` del feedback). Revision de diseno por agente PENDIENTE: no se programa hasta cerrarla.
 
 ## Current Branch
-main
+feature/F13-spec-documents
 
 ## Stable Main State
 09d55f2 · merge de la rama de trabajo `trabajo/holdout-y-exposicion` (tag stable/F12-holdout), sobre el merge de F12 (77c7501, tag stable/F12). ADR-0021 define que cuenta como ABRIR un holdout y declara la exposicion del 2026-09-11; nacen `HOLDOUT-EXPOSICIONES.md` y `PREREGISTRO.md` -vacio a proposito-. make check verde: 630 casos (448 funciones), 4 contratos, mypy strict, state/config/knowledge validate. spec 9.1.0 · 59 parametros · 27 reglas (24 vigentes con forma) · 21 ambiguedades (8 abiertas).
