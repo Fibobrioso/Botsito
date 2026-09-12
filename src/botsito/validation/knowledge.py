@@ -368,6 +368,24 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             ]
         except AmbiguedadError as exc:
             fallos_amb = [f"ambiguedades: {exc}"]
+    # Una RESUELTA tiene que tener el registro que la cierra, y apuntando a ELLA. Su propio
+    # fichero lo exige desde F10 -"se cierra SOLO con un registro de feedback del trader
+    # (RESOLVE_UNKNOWN)"- y nadie lo comprobaba: A-20 se quedo RESUELTA el 2026-09-11 con el
+    # registro apuntando al PARAMETRO, que basta para escribir el valor y no para cerrar la
+    # pregunta. Lo encontro la auditoria de proceso del 2026-09-12.
+    if ambiguedades:
+        cerradas_por = {
+            r.objetivo.id
+            for r in registros_fb
+            if str(r.objetivo.tipo) == "ambiguedad" and str(r.accion) == "RESOLVE_UNKNOWN"
+        }
+        for amb in ambiguedades:
+            if amb.estado == "RESUELTA" and amb.id not in cerradas_por:
+                fallos_amb.append(
+                    f"ambiguedades: {amb.id} figura RESUELTA y ningun registro de feedback la "
+                    f"cierra (hace falta uno con objetivo ambiguedad/{amb.id} y accion "
+                    f"RESOLVE_UNKNOWN)"
+                )
     fallos_fb = fallos_amb + validar_contra_contexto(
         registros_fb,
         {i.id for i in items},

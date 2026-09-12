@@ -21,6 +21,26 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 - Sesion nueva de IA: `PROJECT_STATE.md` → brief de la funcionalidad actual → sus ficheros.
 - Cambios de arquitectura solo via ARCHITECTURE CHANGE PROPOSAL y ADR.
 
+## 0 bis · Quien decide que (escrito el 2026-09-12)
+
+Hasta hoy el plan solo conocia dos papeles, "usuario" y "trader", y la palabra **consultor** no
+aparecia ni una vez pese a ser quien mas decide. Esta tabla no inventa nada: recoge lo que se venia
+haciendo, y lo hace comprobable.
+
+| Objeto | Quien decide | Que lo sostiene |
+|---|---|---|
+| parametro de `categoria: estrategia` | el **trader** | un `ev-*` o un `fb-*` (ADR-0004) |
+| parametro de entorno (instrumento, broker, prop_firm, ejecucion) | el **consultor** | un `ADR-NNNN` en `fuente` (ADR-0004) |
+| regla construida sobre un parametro de entorno | el **consultor** | campo `decision` en la regla, y `knowledge validate` lo exige (ADR-0016) |
+| una ambiguedad que es juicio del trader | el **trader** | `estado: RESUELTA` con un registro `RESOLVE_UNKNOWN` cuyo objetivo sea la ambiguedad; hay guardia desde el 2026-09-12 |
+| una ambiguedad de alcance, metodo o herramienta | el **consultor** | **HUECO ABIERTO**: `ambiguedades.yaml` solo admite cerrar con feedback del trader, asi que A-15, A-16 y A-17 llevan decididas y abiertas desde el 2026-09-09. Falta decidir si nace un estado `DECIDIDA` con su ADR |
+| el reparto de particiones, el alcance de una fase, el metodo | el **consultor** | un ADR. Reparticionar es legitimo mientras no exista ningun `LABEL_CASE`; despues, no |
+| validar una rama y ordenar el merge | el **usuario** | el tag `stable/F##`. Los comandos sobre `main` los ejecuta el, no el agente |
+
+Corolario que ya costo dinero una vez (ADR-0016): cuando el consultor decide algo que el trader no
+dijo, **se declara**. Una regla que dice mas que su `literal` lleva `decision`; un registro que
+refiere una respuesta en vez de transcribirla lo dice en `registrado_por`.
+
 ## B · Estructura del repositorio
 
 | Ruta | Responsabilidad |
@@ -62,7 +82,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | F09 | `feature/F09-expert-feedback-model` | Feedback solo-anadir con procedencia | F06 | solo-anadir; trazabilidad | cambio de spec sin id = error |
 | F10 | `feature/F10-elicitation-kit` | Preguntas desde UNKNOWN; etiquetado ciego; kappa | F09, F15; fase 1 cerrada (F03-F08) | kappa; determinismo | paquete reproducible |
 | **Fase 3 · Formalizacion** | | | | | |
-| F11 | `feature/F11-strategy-spec-schema` | StrategySpec (reglas, parametros, ambiguedades; las tablas de decision y los statecharts pasan a F12/F22: F11 deja las reglas en prosa citada y validada) | F02, F07, F09 | referencias; estados | carga estricta |
+| F11 | `feature/F11-strategy-spec-schema` | StrategySpec (reglas, parametros, ambiguedades; los statecharts pasan a F22; la TABLA DE DECISION quedo DESCARTADA en F12, que en su lugar hizo la forma ejecutable de ADR-0019 -predicados con argumentos, acciones, efectos, hechos y acumuladores-. F11 deja las reglas en prosa citada y validada) | F02, F07, F09 | referencias; estados | carga estricta |
 | F12 | `feature/F12-spec-semantic-validator` | Validacion semantica | F11 | por comprobacion | falla nombrando el id |
 | F13 | `feature/F13-spec-documents` | Docs y hoja del trader generados | F11 | anti-deriva | docs = generado |
 | F14 | `feature/F14-case-library` | Casos ejecutables con tres particiones reservadas (holdout-1/2/3) | F09, F11, F15 | guarda de holdout por audit hook | runner independiente |
@@ -74,7 +94,7 @@ que las citas cruzadas (`seccion H`, `orden E`) valgan en ambos; no hay seccion 
 | F18 | `feature/F18-domain-types-and-h4-bias` | Tipos y sesgo H4 | F11, F14 | golden; lint | casos de sesgo verdes |
 | F19 | `feature/F19-domain-m15-zones` | Zonas M15 y mitigacion | F18 | causalidad | truncado = completo |
 | F20 | `feature/F20-domain-m1-breaker-and-control-zones` | Mapeo M1, breaker, zonas de control | F19 | causalidad; negativos | casos de entrada verdes |
-| F21 | `feature/F21-domain-risk-geometry` | Caja, stop y lotaje por parametro, objetivo, BE | F18 | golden 4,08 / 3,94 | el stop lo fija `stop_fraccion_caja` y el objetivo `objetivo_rr` sobre `base_calculo_objetivo`; ninguna cifra en el codigo (ADR-0002, ADR-0014) |
+| F21 | `feature/F21-domain-risk-geometry` | Caja, stop y lotaje por parametro, objetivo, BE | F18 | golden 4,08 / 3,94 | el stop lo fija `stop_fraccion_caja`, el objetivo `objetivo_rr` sobre `base_calculo_objetivo` y el LOTE la distancia hasta el stop (`lotaje_base: hasta_stop_fraccion`, ADR-0020, que invirtio la base el 2026-09-11); ninguna cifra en el codigo (ADR-0002, ADR-0014, ADR-0020) |
 | F22 | `feature/F22-domain-state-machines` | Statecharts jornada y ciclo (Decider) | F20, F21 | property | invariantes probadas |
 | F23 | `feature/F23-engine-event-loop` | Bucle, reloj determinista, journal | F22 | determinismo | mismo sha256 |
 | F24 | `feature/F24-engine-tick-backtest` | Simulacion sobre ticks | F16, F23 | llenado; golden | llenado defendible |
@@ -131,11 +151,20 @@ rama; (d) informe con seccion "Que debe decidir el usuario" y pasos concretos pa
 
 Ritual de cierre de rama: `make regress` → informe en `docs/validation/F##-nombre.md` con estado
 `WAITING_FOR_USER_VALIDATION` → parada → tras validacion: re-ejecucion, docs, commits, y en
-este orden exacto (el unico que `state check` acepta en verde): (1) `git merge --no-ff` en
-`main` con `BOTSITO_ALLOW_MAIN=1`; (2) `git tag -a stable/F##` sobre el commit de merge; (3)
+este orden exacto (el unico que `state check` acepta en verde), con `BOTSITO_ALLOW_MAIN=1`
+EXPORTADA durante toda la secuencia -quien la exige es el hook `pre-commit` en el paso (3), no el
+merge del (1): `git merge --no-ff` no dispara `pre-commit` y no existe ningun `pre-merge-commit`,
+asi que ponerla como prefijo de un solo comando hace fallar el ritual en el paso 3-: (1)
+`git merge --no-ff` en `main`; (2) `git tag -a stable/F##` sobre el commit de merge; (3)
 commit `docs(state)` que toca solo `PROJECT_STATE.md` (`Current Branch: main`, `Last Stable
 Commit: <sha del merge>`, `Completed Features`); (4) `make check` desde `main`; (5) push de
-`main` y del tag. Tras el merge y antes de (3), `state check` falla a proposito (rama declarada
+`main` y del tag. **Los comandos sobre `main` los ejecuta el usuario**: el clasificador del modo
+automatico bloquea el merge y el agente se detiene con la rama preparada. **Si tras el informe
+aparece un hallazgo** -otra auditoria, una revision del consultor, una guardia nueva-, la rama NO
+se cierra: se aplica en la rama, se anade al informe una fila fechada en su tabla de auditoria y
+el informe vuelve a `WAITING_FOR_USER_VALIDATION`. Ha pasado dos veces (F11, once puntos tras el
+informe; F12, 57 hallazgos), asi que es la regla y no la excepcion. Tras el merge y antes de (3),
+`state check` falla a proposito (rama declarada
 y cambios sin tag): no es un error del ritual. `docs/HANDOFF.md` se actualiza DENTRO de la rama,
 antes del merge (citando el tag `stable/F##` futuro, no el SHA): en `main`, tras el tag, solo
 puede cambiar `PROJECT_STATE.md`; un commit `docs(handoff)` en `main` pone `state check` y la CI
@@ -151,13 +180,16 @@ cerrada; por ejemplo `stable/F05-previos-F07`) y un informe `docs/validation/<te
 | Cuando | Que valida | Objeto que crea | Que modifica (via diff propuesto) |
 |---|---|---|---|
 | Sesion 1 (CELEBRADA 2026-09-09; ver docs/validation/SESION-01-2026-09-09.md) | 3 preguntas bloqueantes sobre casos: A-2, A-4 y A-9 (con captura del grafico), P-01..P-03 de `hoja_trader.md` (F10; ver mapeo en `PROJECT_STATE.md`, Known Ambiguities); ronda 1 de etiquetado; hoja de reglas | FeedbackRecord | spec (F11), casos dev/holdout |
-| Sesion 2 (tras F26) | discrepancias en el visor; FP/FN; fronterizos; ronda 2 (kappa) | FeedbackRecord | reglas, tablas de decision, casos; posible ACP de respaldo |
+| Sesion 2 (tras F26) | discrepancias en el visor; FP/FN; fronterizos; ronda 2 (kappa) | FeedbackRecord | reglas, su forma ejecutable, casos; posible ACP de respaldo |
 | Sesion 3 (tras F32) | divergencias de ejecucion | FeedbackRecord | reglas de ejecucion |
 | Mensual (F34) | discrepancias en vivo | FeedbackRecord | igual |
 
 Invariantes: la evidencia nunca cambia; toda etiqueta tiene autor y fecha; decision del sistema y del
-experto se guardan como hechos distintos; un UNKNOWN se cierra solo con registro del trader o
-grabacion en vivo.
+experto se guardan como hechos distintos; un UNKNOWN se cierra solo con un registro de feedback
+del trader -grabado, escrito o en la hoja de la sesion: "grabacion en vivo" no es una via aparte,
+es un medio de ese registro-. Una ambiguedad que NO decide el trader sino el consultor (alcance,
+herramienta, metodo) no tiene hoy forma de cerrarse: es el hueco que A-15, A-16 y A-17 llevan
+abierto desde el 2026-09-09, y se cierra con la decision pendiente del consultor.
 
 ## H · Salvaguardas anadidas por la auditoria de fases (2026-09-04)
 
@@ -228,6 +260,8 @@ en su brief al abrirla. Ninguna fila se cierra sin cita en el informe de validac
 | Previos y entradas de F07 (evidence-extraction), reunidos aqui por la auditoria global del 2026-09-05 | F07 | Previos, HECHOS el 2026-09-06/07 en `feature/F07-previos` (informe `docs/validation/F07-previos.md`): (1) glosario v2 aprobado por el usuario (29 terminos, 6 globales + 6 de segmento); huella sin GPU/driver; `initial_prompt` cabe (96 de 223 tokens, guardia `comprobar_prompt`); `hotwords` medido y DESCARTADO (ADR-0007 enmienda: segmentos de hasta 40 s, perdida de ~10 s con el hecho A-10, "sell" -> "SL"); (2) los 5 videos retranscritos (`tr-v1-...-bbd8a931`, `tr-v2-...-28391c2c`, `tr-v3-...-270a4851`, `tr-v4-...-a8d1bccc`, `tr-v5-...-3c6fbb57`; contenido conservado, ratio 0,958-1,000); (3) y (4) carpeta de Drive `1zYZjUAYMoine0RILKg2ZJyzcLz5-1p-R` con SHA256SUMS, manifiestos, crudas, WAV y v5 (subidos por el usuario el 2026-09-06; `drive_id` de v5 en `fuentes.yaml`). Entradas de F07: cita de audio contra la CRUDA (`transcript show --capa cruda`, ADR-0007 §7; `palabras` solo desde la cruda), cita de pantalla `fr-<id>/<t_ms>` o `material_adicional` via `manifiestos_fotogramas.referencias_conocidas` conectada a `validar_contra_manifiesto` y al `comprobar` de `evidence new` (ADR-0008 §6) y `knowledge/evidence/README.md` actualizado (`video_id` v1..v5); `knowledge/_proposals/` con `extractor`/`revisado_por` (fila H); lo heredado (`heredado_v2`, Whisper tiny) no se cita. Hechos ya leidos que F07 registra: obligatorios de F05 (Excel V3 0:28:56 `2,83 / 3,3`; ratios 4,08 / 3,94 V2 0:33:21; caja 0,75 = 1,19537 V4 0:12:30), candidatos A-9 (relojes UTC+2, V3 0:01:41), ficha de reglas en Word `fr-v3-982da728/101000`, v5 (0,8 "SL por defecto", reentrada tras equal, RR sobre 1 %, 1:3 con 1:4 futuro), backtest de abril (38 operaciones), V4 1:28:20 (riesgo por operacion): todo en PROJECT_STATE "Lineamientos recibidos del usuario y hechos del corpus". Golden H4 del trader como test de regresion sobre F15 (trasladado a F10). Entradas de F07: HECHAS el 2026-09-07 (F07, `stable/F07`; 341 items, hechos y ambiguedades enlazados a ids en PROJECT_STATE) |
 
 ## Change Log del plan
+- 2026-09-12 · F12 spec-semantic-validator CERRADA, esperando validacion. El plan cambia en tres sitios: la fila F11 deja de prometer la TABLA DE DECISION -descartada en F12, que en su lugar hizo la forma ejecutable de ADR-0019-; la fila F21 cita ADR-0020; y §F documenta que `BOTSITO_ALLOW_MAIN=1` va EXPORTADA (la exige el commit `docs(state)`, no el merge) y que un hallazgo posterior al informe devuelve la rama a WAITING_FOR_USER_VALIDATION en vez de cerrarse. ADR-0018, ADR-0019 y ADR-0020 nuevos.
+- 2026-09-11 · ADR-0020: EL LOTAJE CAMBIA DE BASE. El 0,5 % de riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que el lote sube un 25 %, el stop cuesta el riesgo entero y RN-012 dice lo contrario de lo que decia. Es la decision de negocio mas cara desde la sesion 1 y toca a F18, F21, F24, F26, F28 y F33. Ademas: el trader entrega el backtest de MAYO 2026 (68 operaciones), cierra A-20 por escrito, y JUNIO QUEDA DESCARTADO por el consultor el 2026-09-12: F14 se construye solo con mayo, 19 dias, 6 dev y 13 holdout.
 - 2026-09-09 · F11 strategy-spec-schema construida tras la sesion 1. Absorbidas las filas H.2 de spec_manifest, tipos que faltaban, parametros de instrumento/broker/prop_firm, restricciones de ejecucion y modelo de llenado; la del DST del servidor queda a medias (existen `broker_dst` y `broker_offset_base`; la tabla de transiciones para exportar sigue siendo de F28). Tres agentes auditaron la rama antes del merge y encontraron, entre otras cosas, que `make check` no estaba verde, que `apply` podia no escribir nada diciendo OK, que el huso no entraba en el hash de la spec, que ocho de nueve definiciones del glosario decian mas que su cita, y que la aritmetica del "freno del dia" era falsa porque el contador de cartuchos no es diario. Detalle en `docs/validation/F11-strategy-spec-schema.md`.
 - 2026-09-08 · F10 abierta y construida (rama `feature/F10-elicitation-kit`): brief con revision de diseno de agente (bloqueantes: julio y agosto vistos por el trader -> ventanas sobre 2026-05/06 con confirmacion escrita previa; cifras de negocio del kit como datos; etiqueta por sesion H4); ADR-0011; tabla B con `knowledge/cases/kit` y `knowledge/spec/ambiguedades.yaml`; filas H.2 "Sesion 1 sin registro..." (registro pre-poblado, ids de caso, seed y particiones con guardia de ancestro, grabaciones de sesion como videos) y "Tres particiones reservadas" (asignacion commiteada antes con test) cubiertas por F10
 - 2026-09-08 · F08 abierta y construida (rama `feature/F08-evidence-retrieval`): brief con revision de diseno de agente (3 bloqueantes: token de busqueda con acentos plegados y numeros normalizados, `--frase` via `buscar_secuencia` y no `localizar_cita`, `no_consta` fuera; capa `retrieval` entre `spec` y `feedback`); ADR-0010 con enmiendas en ADR-0006 y ADR-0009; tabla B con `retrieval`; golden de 15 consultas de referencia (tabla A fila F08: "toda respuesta con fuente") 15/15; `kb find` 1,04 s. Cierra la fase 1 (F03-F08) cuando el usuario valide

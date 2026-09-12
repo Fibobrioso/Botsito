@@ -9,6 +9,8 @@ phase: F11
 
 > **Enmienda (2026-09-11, ADR-0020).** La aritmetica de la seccion "Problema que resuelve" era la de la base vieja del lotaje: decia que cada perdida cuesta 0,4 % y que caben **once** antes de tocar el 4,5 %. Desde ADR-0020 el lote se dimensiona hasta el stop, cada perdida cuesta el **0,5 % entero** y el margen son **nueve**. Lo que este ADR decide -que el dia de riesgo necesita su propio reloj, `reloj_dia_riesgo`- no cambia; al contrario, con nueve perdidas el freno se toca antes.
 
+> **Enmienda (2026-09-10, ADR-0017).** Los puntos 1 y 4 quedan SUPERADOS: `huso_grafico` no bajo a `DEFAULT_AMBIGUOUS` bajo A-14, sino que es `CONFIRMED` en `Europe/Madrid`, y A-14 ya no pregunta por el reloj -pregunta por los 28 dias en que la UE y EE.UU. no cambian la hora el mismo dia- ni cuelga de ella `huso_grafico` ni `anclaje_h4`. Lo que este ADR decide y sigue vigente es que el dia de riesgo necesita su propio reloj (`reloj_dia_riesgo`).
+
 ## Decision
 
 1. **`huso_grafico` baja de `CONFIRMED` a `DEFAULT_AMBIGUOUS`** con `ambiguedad_id: A-14`. El valor

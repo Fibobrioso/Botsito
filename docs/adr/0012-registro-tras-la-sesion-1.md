@@ -6,6 +6,8 @@ phase: F11
 
 # 0012 · El registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader
 
+
+> **Enmienda (2026-09-10, ADR-0017).** El **punto 5 queda REVERTIDO**: `huso_grafico` NO es `Etc/GMT-2` sino `Europe/Madrid`, y `huso_operativa` vuelve a lo que ADR-0005 decia. El trader opera siempre a SU hora, sea cual sea la fecha: su reloj es civil, no un offset fijo. `anclaje_h4` se ancla aparte, en `17:00 America/New_York`. Lo demas de este ADR sigue en pie.
 ## Decision
 
 1. **Cinco tipos nuevos**: `enum` (con `opciones`, al menos dos y sin repetir), `booleano`,

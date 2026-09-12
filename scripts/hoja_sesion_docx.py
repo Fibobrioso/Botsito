@@ -11,7 +11,7 @@ a mano.
 
 Uso:
     uv run --no-sync python scripts/hoja_sesion_docx.py
-    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion 2026-09-15-sesion-01
+    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion 2026-09-09-sesion-01
 """
 
 from __future__ import annotations

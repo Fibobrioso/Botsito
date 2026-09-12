@@ -6,8 +6,10 @@ rama no contiene el fichero (por ejemplo `main` antes de integrar F01), git lo o
 commit pasa. Se comprobo en una prueba cruzada el 2026-09-04. Tras cambiar el hook hay que volver a
 ejecutar `make hooks`.
 
-- `pre-commit`: rechaza commits directos en `main` (salvo `BOTSITO_ALLOW_MAIN=1`, que solo usa el
-  ritual de merge); rechaza modificar, renombrar o borrar `*.yaml` bajo `knowledge/evidence/`,
+- `pre-commit`: rechaza commits directos en `main` (salvo `BOTSITO_ALLOW_MAIN=1`, que el ritual de
+  cierre EXPORTA para toda la secuencia; quien la necesita es el commit `docs(state)` sobre `main`,
+  NO el merge, porque `git merge --no-ff` no dispara este hook y no existe `pre-merge-commit`);
+  rechaza modificar, renombrar o borrar `*.yaml` bajo `knowledge/evidence/`,
   `knowledge/feedback/`, `data/manifests/` (F15), `knowledge/corpus/transcripciones/` (F04) y
   `knowledge/corpus/fotogramas/` (F05)
   (salvo `_*.yaml` generados), con rutas sin entrecomillar (`core.quotepath=false`) para que un

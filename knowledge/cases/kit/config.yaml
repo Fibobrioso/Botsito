@@ -35,6 +35,10 @@ min_velas_ventana: 850
 # Conjunto cerrado de decisiones por sesion (kappa).
 etiquetas: [compra, venta, no_trade]
 # Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
+# OJO: estos cupos se dimensionaron para los 40 dias de mayo+junio. JUNIO QUEDA DESCARTADO
+# (decision del consultor, 2026-09-12), asi que el reparto REAL de la sesion 1 es 6 dev y 13
+# holdout (6/4/3) sobre los 19 dias de mayo. Cambiar estos cupos es reparticionar y exige ADR;
+# mientras no exista ningun LABEL_CASE es legitimo, despues no.
 particiones:
   dev: 16
   holdout-1: 8

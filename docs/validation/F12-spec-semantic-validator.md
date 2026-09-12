@@ -82,11 +82,13 @@ dentro del hash:
 **La forma ejecutable de una regla (ADR-0019).** Las 24 reglas vigentes tienen `forma`: un árbol
 booleano `cuando` sobre **predicados con argumentos** y un `entonces` con `permite` / `prohibe` /
 `hace` sobre **acciones**. El vocabulario vive en `strategy_spec.yaml` —no en un cuarto fichero,
-que habría roto el contrato del hash— y son cuatro cosas con nombre: **21 predicados, 12 acciones,
-4 hechos** (cada uno con quién lo produce y quién lo consume) y **3 acumuladores** (con su base y
-su reinicio). Cada predicado y cada acción lleva su cita.
+que habría roto el contrato del hash— y son cinco cosas con nombre: **22 predicados, 13 acciones,
+2 efectos** (lo que una regla permite o prohíbe, sección nacida en la auditoría de cierre),
+**6 hechos** (cada uno con quién lo produce y quién lo consume) y **3 acumuladores** (con su base y
+su reinicio). Cada predicado lleva su cita, y desde la auditoría de cierre esas citas y sus
+literales se comprueban.
 
-**La precedencia por clase (ADR-0018).** `gate > disparador > terminal > fallback`, y no el orden
+**La precedencia por clase (ADR-0018).** `gate > terminal > disparador > fallback` (una prohibicion gana siempre, y a las 15:00 cerrar la jornada gana a activar una entrada), y no el orden
 del fichero, que es editorial: RN-026 y RN-027 son VIGENTES y viven bajo la cabecera "reglas
 descartadas". Dos reglas de la misma clase con los mismos parámetros son un error que nombra los
 dos ids.
@@ -110,11 +112,12 @@ así que no pueden divergir.
 
 ## 2. Los parámetros sin lector
 
-El brief pedía resolver diez parámetros con valor que ninguna regla nombraba. Al encender la
-guardia saltaron **doce**, y los tres de más fueron el hallazgo: `sesgo_h4_criterio_ruptura`,
-`zona_control_criterio_completada`, `break_even_criterio_ruptura` y `stop_en_orden_pendiente` sí se
-ejecutan —dentro de `forma`— pero sus reglas no los declaraban en `parametros`, que es justo la
-lista que leen las otras guardias.
+El brief pedía resolver **diez** parámetros con valor que ninguna regla nombraba. Al encender la
+guardia saltaron **catorce**: los diez del brief y **cuatro más** que fueron el hallazgo —
+`sesgo_h4_criterio_ruptura`, `zona_control_criterio_completada`, `break_even_criterio_ruptura` y
+`stop_en_orden_pendiente` sí se ejecutan, dentro de `forma`, pero sus reglas no los declaraban en
+`parametros`, que es justo la lista que leen las otras guardias. De los diez del brief, tres se
+cerraron nombrándolos en una regla y siete declaran `consumido_por`.
 
 De los que sí estaban huérfanos:
 
@@ -177,19 +180,16 @@ valor a propósito, 8 ambigüedades abiertas.
 
 ## 8. Deuda que F12 deja anotada
 
-1. **`PROJECT_STATE.md` arrastra ~320 líneas duplicadas** desde `a6fdcf1`: todo lo que va de
-   `## Completed Phases` en adelante está dos veces. Manda el bloque de arriba; el de abajo es la
-   copia vieja de `main` y solo el Change Log del final sigue vivo.
-2. **La guardia de consumo comprueba que la funcionalidad EXISTE, no que su fila de H.2 prometa
+1. **La guardia de consumo comprueba que la funcionalidad EXISTE, no que su fila de H.2 prometa
    consumir ese parámetro.** Eso lo sostiene la revisión humana; el texto de la guardia prometía lo
    segundo y se ha ajustado a lo que hace. Tres `consumido_por` (`cuenta_objetivo`,
    `cuenta_pruebas`, `saldo_inicial_cuenta`) se apoyaban en la *categoría* de H.2:211 y ahora están
    nombrados en esa fila, pero la relación sigue siendo editorial.
-3. **`_ARGS_DE_VALOR` sigue siendo una lista blanca escrita a mano.** Un argumento declarado que no
+2. **`_ARGS_DE_VALOR` sigue siendo una lista blanca escrita a mano.** Un argumento declarado que no
    esté en ella admite un valor de negocio crudo (`sentido: alcista` pasa hoy). Invertir la lista
    —todo argumento es de valor salvo los que el predicado marque como estructurales— es la forma
    correcta y no entra en esta entrega.
-4. **La `descripcion` de un parámetro estaba fuera del hash y ya no lo está**, pero el mismo repaso
+3. **La `descripcion` de un parámetro estaba fuera del hash y ya no lo está**, pero el mismo repaso
    dejó ver que nadie había auditado *qué más* queda fuera. Hoy el hash cubre todos los campos del
    registro, las reglas enteras y las cinco secciones del vocabulario.
 
@@ -201,8 +201,7 @@ valor a propósito, 8 ambigüedades abiertas.
    28,2 %) están contadas en cajas completas, que es la convención vieja del lotaje. Hay que
    ratificarle el acuerdo antes de que esto llegue a una cuenta real, y **no se puede ratificar
    midiendo mayo**: 13 de sus 19 días son holdout.
-3. **La deuda 1** (el duplicado de `PROJECT_STATE.md`): limpiarlo antes del merge o después.
-4. **La deuda 3** (`_ARGS_DE_VALOR` como lista blanca): arreglarla en F13 o dejarla anotada.
+3. **La deuda de `_ARGS_DE_VALOR`** (lista blanca a mano): arreglarla en F13 o dejarla anotada.
 
 ## 10. Qué puede comprobar sin recursos especiales
 

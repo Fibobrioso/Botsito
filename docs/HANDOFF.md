@@ -5,7 +5,7 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-11, fase 1 cerrada en main; F11 validada y cerrada; F12 en construccion)
+## Estado (2026-09-12, fase 1 cerrada en main; F11 validada y cerrada; F12 CERRADA, esperando validacion)
 - `main`: merge de F11 `b62f4aa` con tag `stable/F11`; `docs(state)` `3597b3d`. La fase 1 (F03-F08)
   se cerro antes, en `5d8cf3c` con tag `stable/F08`. Protegida en GitHub.
 - Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
@@ -18,7 +18,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   2026 con hash y limites H4 por anclaje, particiones por hash con seed, kappa desde los
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
-  `knowledge/cases/kit/2026-09-15-sesion-01/` (fecha provisional).
+  `knowledge/cases/kit/2026-09-09-sesion-01/` (nacio con la fecha provisional 2026-09-15 y se movio al celebrarse).
 - SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 107 registros de
   feedback; A-1..A-12 RESUELTAS). Informe: `docs/validation/SESION-01-2026-09-09.md`, que es el
   esquema completo de la estrategia con la cita de cada decision. Cerrada en main con el tag
@@ -41,7 +41,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
     siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
     La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
-- F12 spec-semantic-validator EN CONSTRUCCION (rama `feature/F12-spec-semantic-validator`). Lo
+- F12 spec-semantic-validator CERRADA y esperando validacion (rama `feature/F12-spec-semantic-validator`). Lo
   que ya existe: ADR-0018 (la precedencia va por CLASE), ADR-0019 (la forma ejecutable: predicados
   con argumentos, ligadura, y `predicados`/`acciones`/`hechos`/`acumuladores` DENTRO de
   strategy_spec.yaml) y ADR-0020 (la base del lotaje). Las 24 reglas vigentes tienen forma
@@ -61,8 +61,8 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   holdout-1/2/3 segun `knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`, asi que no
   puede usarse para elegir parametros; es entrada de F14 y F26.
 - Lecciones tecnicas (F12), y la mas cara es la primera:
-  - UNA GUARDIA NUEVA NO HEREDA NADA. El vocabulario de ADR-0019 (predicados, acciones, hechos,
-    acumuladores) lleva `cita` y `literal` propios desde el dia uno, y durante toda la
+  - UNA GUARDIA NUEVA NO HEREDA NADA. El vocabulario de ADR-0019 (predicados, acciones, efectos,
+    hechos, acumuladores) lleva `cita` y `literal` propios desde el dia uno, y durante toda la
     funcionalidad NADIE los comprobaba: se podia poner cualquier frase en boca del trader dentro
     de un predicado, o citar un `fb-...-deadbeef`. El comentario que habia en `comprobar_literales`
     lo predijo con esas palabras y aun asi paso. Al anadir un sitio con cita, amplia TODAS las
@@ -86,9 +86,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     `no_es_multiplo_de`) y dos textos quedaron afirmando algo falso (la nota de RN-015 y la
     descripcion de `base_calculo_objetivo` decian que el objetivo y el lote comparten distancia).
     Lo destaparon las guardias, no la lectura.
-  - La guardia de citas revocadas ha nacido corta TRES veces (parametros, luego reglas y
-    glosario, y ahora el vocabulario de F12). Al anadir un sitio con `cita` propia, amplia
-    `comprobar_citas_revocadas` en el mismo commit.
+  - La guardia de citas revocadas ha nacido corta CUATRO veces: parametros (P13), luego reglas y
+    glosario (RN-013), luego los predicados y acciones de F12, y en la auditoria de cierre se vio
+    que seguian fuera los ACUMULADORES, que tambien llevan cita. Al anadir un sitio con `cita`
+    propia, amplia `comprobar_citas_revocadas` en el mismo commit.
   - Las reglas no admiten cifras NI en un "nivel 0": `comprobar_contra` salta con el digito
     suelto. Se escribe "la entrada" y "el extremo de la caja".
   - `feedback apply` daba por NO-OP que el trader ratificara un default nuestro: comparaba la
@@ -169,7 +170,9 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 3. Auditoria de cierre con dos agentes en paralelo (codigo/tests y docs/proceso) -> aplicar
    correcciones -> informe WAITING_FOR_USER_VALIDATION -> decirle al usuario explicitamente que
    pasos seguir y que debe decidir.
-4. El usuario valida -> ritual: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff` -> `git tag -a stable/F##`
+4. El usuario valida -> ritual, con `BOTSITO_ALLOW_MAIN=1` EXPORTADA durante toda la secuencia
+   (la exige el hook `pre-commit` en el commit `docs(state)`, NO el merge: `git merge --no-ff`
+   no dispara `pre-commit` y no hay `pre-merge-commit`): `git merge --no-ff` -> `git tag -a stable/F##`
    sobre el merge -> commit `docs(state)` que solo toca PROJECT_STATE.md -> `make check` -> push
    main + tag. (`state check` falla a proposito entre el merge y el docs(state).) El HANDOFF ya
    vino actualizado en la rama.
@@ -192,9 +195,10 @@ uv run botsito corpus frames show --video v3 --t 0:28:56 --n 3
 uv run botsito corpus frames extract --video v5    # idempotente
 uv run botsito kb find "break even" --top 10       # busqueda con fuente (F08)
 uv run botsito kb at --video v4 --t 0:44:56 --contexto
-uv run botsito kit build --sesion 2026-09-15-sesion-01 --seed 20260915   # paquete de sesion (F10)
-uv run botsito kit check --sesion 2026-09-15-sesion-01
-uv run botsito kit kappa --sesion-a 2026-09-15-sesion-01 --sesion-b 2026-09-22-sesion-02
+uv run botsito spec check                              # la capa semantica sola (F12); sale con 1
+uv run botsito kit build --sesion 2026-09-20-sesion-02 --seed 20260920   # paquete de sesion (F10)
+uv run botsito kit check --sesion 2026-09-09-sesion-01   # el paquete real de la sesion 1
+uv run botsito kit kappa --sesion-a 2026-09-09-sesion-01 --sesion-b 2026-09-20-sesion-02
 uv run --no-sync python scripts/hoja_sesion_docx.py   # hoja de respuestas en Word (raiz)
 ```
 

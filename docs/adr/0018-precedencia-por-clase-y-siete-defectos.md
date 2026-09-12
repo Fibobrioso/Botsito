@@ -107,7 +107,7 @@ para que nadie se apoye en más de lo que sostiene.
 - **Queda para F12**, no aquí: la forma ejecutable de las reglas. Este ADR arregla la spec que se va
   a formalizar; formalizarla con estos siete defectos dentro los habría horneado.
 
-## Corrección del propio arreglo (auditoría del 2026-09-10)
+## Corrección del propio arreglo (auditoría del 2026-09-10, ampliada el 2026-09-11)
 
 > **A-20 duró un día.** Este ADR instaló `zonas_control_max_por_esquema` con un default nuestro (1) y abrió A-20 para preguntar si dos zonas invalidan SIEMPRE el esquema o era solo una tendencia. El trader lo cerró por escrito el 2026-09-11 -*"solo 1 zona control bro. si hay 2 se descarta"*, `fb-...-1b2203b0`-: es regla, el parámetro pasa a CONFIRMED y A-20 queda RESUELTA. Donde este ADR dice "default" y "A-20 abierta", hoy hay una respuesta.
 

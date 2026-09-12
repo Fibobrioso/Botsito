@@ -45,6 +45,27 @@ Todo cambio en `knowledge/spec/` o `knowledge/cases/` cita en el commit un trail
 asunto del commit no cuenta como trailer). `feedback pending` omite los parametros que no son de
 categoria `estrategia` (ADR-0004: no se le preguntan al trader).
 
+## Material que llega fuera de sesion
+
+El trader manda cosas por escrito entre sesiones: respuestas, capturas, backtests. Entra asi, en
+este orden, y el 2026-09-11 se hizo a ojo porque esto no estaba escrito:
+
+1. **Al corpus, nunca a la raiz**: `corpus/Estrategia del trader/Material adicional de su
+   operativa/<Mensajes del trader | Backtest <mes> <ano> | ...>/`. Un fichero suelto en la raiz no
+   tiene `papel` y `corpus check` lo rechaza con "no inventariado".
+2. **`knowledge/corpus/fuentes.yaml`** gana o amplia esa subcarpeta con su papel, la fecha de
+   entrega y LAS CAUTELAS: que holdout toca, en que convencion vienen sus cifras, que falta.
+3. **`botsito corpus inventory`**: el hash entra en git; el binario no (`/corpus/` esta ignorado).
+4. **Si trae una respuesta**, registro de feedback con `medio: escrito` y la ruta de la captura en
+   `notas`. Si son SUS palabras (una captura), el `respuesta_literal` es literal; si lo refiere el
+   consultor, el `registrado_por` tiene que decirlo -"REFERIDO por el consultor, no es
+   transcripcion"- y la regla que se apoye en el declara `decision`.
+5. **Si cierra una ambiguedad**, hace falta ADEMAS un registro con `objetivo: {tipo: ambiguedad}` y
+   `accion: RESOLVE_UNKNOWN`: el del parametro escribe el valor, pero no cierra la pregunta. Hay
+   guardia desde el 2026-09-12.
+6. **Si toca un holdout o cambia una convencion de negocio**, se anota en el ADR que corresponda
+   ANTES de citarlo en ningun sitio.
+
 ## Plantilla de sesion
 1. Grabar la sesion y anadir la grabacion al corpus (manifiesto). F10 anade el papel
    `sesion_feedback` en `fuentes.yaml` para que una grabacion local sin `drive_id` sea
@@ -56,6 +77,5 @@ categoria `estrategia` (ADR-0004: no se le preguntan al trader).
    --respuesta "si, con cuerpo, siempre" --registrado-por aleks`
 3. `botsito knowledge validate`; commit con `Fuente:` si toca spec o casos (F11+).
 
-Hasta F11 el registro de parametros esta vacio: un `--objetivo-tipo parametro` se rechaza por
-contexto. Para probar el flujo hoy, usar una ambiguedad: `--objetivo-tipo ambiguedad
---objetivo-id A-10 --accion RESOLVE_UNKNOWN --valor "0,75 + spread"`.
+Desde F11 el registro esta poblado: `--objetivo-tipo parametro` es la via normal, y `botsito
+feedback apply --sesion <s>` lleva los valores al registro sin interpretar nada.

@@ -61,7 +61,8 @@ carpetas:
       enviadas por el trader el 2026-09-03 y el 2026-09-05 (abril, 38 operaciones y 6 capturas de la
       pestana Analytics). Entrada de F07 (evidencia) y F26 (fidelidad).
       Subcarpeta "Backtest mayo 2026": entregado el 2026-09-11, el primero de los dos meses que el
-      trader se comprometio a backtestear (mayo y junio; junio NO ha llegado). Lleva la exportacion
+      trader se comprometio a backtestear. JUNIO QUEDA DESCARTADO por decision del consultor el
+      2026-09-12: la biblioteca de casos de F14 se construye SOLO con mayo. Lleva la exportacion
       de FXReplay del mes, 7 capturas de su pestana Analytics y 2 capturas de los mensajes de
       WhatsApp con los que lo entrego. CUIDADO: mayo esta particionado en dev y holdout-1/2/3
       (`knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`) y 13 de sus 19 dias son

@@ -1,3 +1,12 @@
+# QUIEN Y CUANDO lo actualiza: el consultor, en el commit que trae el material, ANTES de correr
+# ningun `kit build`. Tres disparadores, no uno:
+#   (a) el trader declara en la confirmacion previa que ya vio el mes -> REJECT sobre el objetivo
+#       `paquete <sesion>`, y se cita ese `fb-...` en `fuente`;
+#   (b) el trader entrega un backtest o una operativa de ese mes, AUNQUE se lo hayamos pedido
+#       nosotros -> se cita el commit del corpus y la fecha de entrega;
+#   (c) el corpus lo muestra recorriendo esos dias en video -> se citan los `ev-*`.
+# `dias:` para dias sueltos cuando se sepan; el mes entero solo cuando no se pueda saber.
+#
 # Fechas que el trader YA ha visto (backtest, operativa o ejemplos dibujados): quedan fuera del
 # universo de ventanas de etiquetado ciego (F10, ADR-0011). Manual, versionado con `Fuente:`.
 # Un mes entero se excluye cuando no se puede saber que dias vio (el xlsx de agosto no tiene
@@ -9,10 +18,24 @@ meses:
   - mes: "2026-01"
     motivo: backtest de enero recorrido en v4 (entrevista sobre FXReplay)
     fuente: [ev-v4-000243-a1067c1c, ev-v4-001027-1b74d1a6]
+  - mes: "2026-04"
+    motivo: >-
+      v5 ES el trader backtesteando abril en FXReplay -"estoy backtesteando el mes de abril de
+      este año"- y la exportacion xlsx de abril (38 operaciones) esta en el corpus desde el
+      2026-09-03. Faltaba aqui desde que v5 entro al corpus: un paquete futuro podia sortear dias
+      de abril como ciegos y no lo son (detectado el 2026-09-12)
+    fuente: [ev-v5-000000-69774090]
   - mes: "2026-07"
     motivo: v3 dibuja los ejemplos sobre el grafico de julio y v2 muestra las operaciones del 2 de julio
     fuente: [ev-v2-003320-a736fd37, ev-v3-002714-742f2589]
   - mes: "2026-08"
     motivo: dos backtests de agosto (7-11 y 11-15) y operativa real de fondeo desde el 20 de agosto
     fuente: [ev-v4-011742-3a6b5367, ev-v4-011856-52f0f859, ev-v1-000633-686f20a1]
+# HUECO DE PROCESO, detectado el 2026-09-12 y sin cerrar: MAYO 2026 deberia estar en esta lista
+# -el trader lo backtesteo entero y lo entrego el 2026-09-11-, pero anadirlo AQUI invalida el
+# paquete de la sesion 1, que se construyo cuando mayo era ciego y cuyo `kit check` exige que se
+# reproduzca: "se piden 40 casos y el universo tiene 22". Un mes visto DESPUES de construir un
+# paquete no puede borrar lo que ese paquete pregunto. Falta decidir el mecanismo (un `visto_el:`
+# por mes, comparado con la fecha del paquete, es la opcion evidente) antes de construir el
+# siguiente. Mientras tanto: MAYO NO ES CIEGO, no lo sortees.
 dias: []
