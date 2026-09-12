@@ -848,6 +848,19 @@ def _problemas_de_argumento(
     ]
 
 
+def es_ejecutable(regla: Any) -> bool:
+    """Tiene forma Y su condicion esta definida.
+
+    Una regla con `pendiente_definicion` TIENE `forma` y no se puede ejecutar. Contarla entre las
+    ejecutables hacia que `spec status` dijera "0 todavia en prosa" mientras `docs/spec/reglas.md`
+    decia de RN-028 "No es ejecutable todavia". Vive aqui y no en cada sitio que cuenta porque ya
+    se habia arreglado en uno solo, y `knowledge validate` y `spec status` acabaron diciendo
+    cifras distintas de la misma spec (F13, auditoria de cierre).
+    """
+    forma = getattr(regla, "forma", None)
+    return isinstance(forma, dict) and forma.get("pendiente_definicion") is None
+
+
 def comprobar_forma(
     reglas: list[Regla],
     vocabulario: dict[str, dict[str, Any]],

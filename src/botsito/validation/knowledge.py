@@ -199,10 +199,12 @@ def problemas_de_spec(
         problemas += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
     except SpecError as exc:
         return [str(exc)], ""
+    from botsito.spec.modelo import es_ejecutable
+
     vigentes = sum(1 for r in reglas if r.vigente)
     resumen = (
         f"{len(reglas)} reglas de spec ({vigentes} vigentes, "
-        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable), "
+        f"{sum(1 for r in reglas if es_ejecutable(r))} con forma ejecutable), "
         f"{len(terminos)} terminos de glosario, hash del manifiesto al dia"
     )
     return problemas, resumen

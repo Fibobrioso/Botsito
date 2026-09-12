@@ -647,7 +647,7 @@ def spec_status(repo: Path) -> int:
     from botsito.spec.manifiesto import (
         cargar_manifiesto as cargar_manifiesto_spec,
     )
-    from botsito.spec.modelo import FICHERO_SPEC, SpecError, cargar_reglas
+    from botsito.spec.modelo import FICHERO_SPEC, SpecError, cargar_reglas, es_ejecutable
 
     try:
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
@@ -666,11 +666,8 @@ def spec_status(repo: Path) -> int:
     # generado decia de RN-028 "No es ejecutable todavia", y RN-028 es un `gate`: la maxima
     # precedencia. Quien leyera el recuento concluia que la spec esta lista para F22 (F13,
     # auditoria de cierre).
-    def _pendiente(r: Any) -> bool:
-        return isinstance(r.forma, dict) and r.forma.get("pendiente_definicion") is not None
-
-    ejecutables = [r for r in reglas if r.forma is not None and not _pendiente(r)]
-    a_medias = [r for r in reglas if _pendiente(r)]
+    ejecutables = [r for r in reglas if es_ejecutable(r)]
+    a_medias = [r for r in reglas if r.forma is not None and not es_ejecutable(r)]
     linea_reglas = (
         f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
         f"{sum(1 for r in reglas if not r.vigente)} descartadas; "

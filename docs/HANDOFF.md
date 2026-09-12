@@ -61,7 +61,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   (`botsito kit hoja`) y el vocabulario de la forma gana `tokens`. La auditoria de cierre (dos
   agentes) encontro SEIS formas de colar un valor de negocio en `forma` -incluida `tope: 9.5`- y
   que `feedback pending` daba por reflejado un `RESOLVE_CONTRADICTION` con la contradiccion
-  todavia abierta. Informe: `docs/validation/F13-spec-documents.md`.
+  todavia abierta. Y la mitad B del objetivo, que la auditoria vio sin entregar: `test_documentos_vivos.py` prohibe pegar un recuento en los documentos que describen el presente, con exenciones por seccion nombradas y una por linea con motivo (`<!-- cifra-congelada: ... -->`). Informe: `docs/validation/F13-spec-documents.md`.
 - EL LOTAJE CAMBIO DE BASE el 2026-09-11 (ADR-0020) y es lo mas caro de este tramo: el 0,5 % de
   riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que `lotaje_base` vale
   `hasta_stop_fraccion`, el lote es un 25 % mayor y el stop cuesta el riesgo entero. RN-012 dice

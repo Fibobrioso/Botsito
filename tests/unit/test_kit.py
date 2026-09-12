@@ -1027,6 +1027,70 @@ def test_decidida_exige_un_adr_que_exista_y_que_la_nombre(tmp_path: Path) -> Non
     assert a.estado == "DECIDIDA" and a.decision == "ADR-0022" and a.decidida_el == "2026-09-12"
 
 
+def test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad(tmp_path: Path) -> None:
+    """El cargador solo mira el FORMATO. Lo que impide cerrar mal una ambiguedad esta en
+    `validation/knowledge.py`, y hasta la auditoria de cierre de F13 no lo probaba nada.
+
+    Son tres condiciones, y las tres importan por el mismo motivo: una decision del consultor no
+    puede tapar una pregunta que le toca al trader.
+      1. el ADR citado EXISTE (si no, `decision: ADR-9999` pasaria);
+      2. el ADR la NOMBRA (si no, `decision: ADR-0002` pasaria: es el defecto que F12 encontro dos
+         veces, con `pendiente_definicion: A-999` y con `ambiguedad_id: A-200`);
+      3. no vale sobre una `bloqueante` ni sobre una que sostenga el `ambiguedad_id` de un
+         parametro: si el bot corre con un default NUESTRO por culpa de esa pregunta, la respuesta
+         es del trader y no se cierra decidiendo.
+
+    Se prueba sobre una COPIA del repositorio real, no sobre un fixture: las guardias viven dentro
+    de `validar`, que lee el registro, los ADR y el feedback a la vez.
+    """
+    import shutil
+
+    from botsito.validation.knowledge import validar
+
+    def repo_copia() -> Path:
+        destino = tmp_path / f"repo{len(list(tmp_path.iterdir()))}"
+        destino.mkdir()
+        for carpeta in ("knowledge", "docs", "config"):
+            if (REPO / carpeta).is_dir():
+                shutil.copytree(REPO / carpeta, destino / carpeta)
+        return destino
+
+    def problemas_con(cambio: tuple[str, str]) -> list[str]:
+        destino = repo_copia()
+        ruta = destino / "knowledge" / "spec" / "ambiguedades.yaml"
+        texto = ruta.read_text(encoding="utf-8")
+        viejo, nuevo_txt = cambio
+        assert viejo in texto, viejo
+        ruta.write_text(texto.replace(viejo, nuevo_txt, 1), encoding="utf-8", newline="\n")
+        return validar(destino)[1]
+
+    # A-22 es la unica DECIDIDA hoy, y es la que se rompe de cuatro maneras.
+    casos = [
+        (("decision: ADR-0022", "decision: ADR-9999"), "que no existe"),
+        (("decision: ADR-0022", "decision: ADR-0002"), "no la nombra"),
+        (
+            (
+                "estado: DECIDIDA\n    decision: ADR-0022\n    decidida_el: '2026-09-12'\n"
+                "    bloqueante: false",
+                "estado: DECIDIDA\n    decision: ADR-0022\n    decidida_el: '2026-09-12'\n"
+                "    bloqueante: true",
+            ),
+            "no puede cerrarse por decision",
+        ),
+    ]
+    mudas = []
+    for cambio, aguja in casos:
+        salida = problemas_con(cambio)
+        if not any(aguja in linea for linea in salida):
+            mudas.append(f"{cambio[1][:40]!r} no produjo {aguja!r}")
+    assert not mudas, mudas
+
+    # Y con el fichero intacto, ninguna de las tres se queja (las demas quejas son de `data/`,
+    # que esta copia no tiene a proposito).
+    limpia = [x for x in validar(repo_copia())[1] if "ambiguedades:" in x]
+    assert not limpia, limpia
+
+
 def test_una_decidida_no_entra_en_el_cuestionario_de_la_siguiente_sesion() -> None:
     """El motivo por el que DECIDIDA es un estado y no un campo, comprobado sobre la spec real."""
     from botsito.cases.ambiguedades import cargar_ambiguedades
