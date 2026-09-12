@@ -7,6 +7,7 @@ Devuelve (codigo, lineas): 0 OK, 1 error de contenido, 2 estructura ausente.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,18 @@ def ids_de_adr(repo: Path) -> set[str]:
         for p in (repo / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
         if p.name[:4] != "0000"
     }
+
+
+def ids_de_funcionalidad(repo: Path) -> set[str]:
+    """`F##` por cada fila de la tabla de funcionalidades de MASTER_PLAN.
+
+    Un parametro que declara `consumido_por: [F24]` promete que F24 lo leera. Si F24 no existe en
+    el plan, la promesa no la puede cumplir nadie.
+    """
+    plan = repo / "docs" / "plan" / "MASTER_PLAN.md"
+    if not plan.is_file():
+        return set()
+    return set(re.findall(r"^\| (F\d{2}) \|", plan.read_text(encoding="utf-8"), re.M))
 
 
 def contexto_feedback(
@@ -73,6 +86,126 @@ def ids_ambiguedades(repo: Path) -> set[str] | None:
     if not ruta.is_file():
         return None
     return {a.id for a in cargar_ambiguedades(ruta)}
+
+
+def problemas_de_spec(
+    repo: Path,
+    registro: Any,
+    items: list[Any],
+    registros_fb: list[Any],
+) -> tuple[list[str], str]:
+    """Las comprobaciones semanticas de la spec, en UNA sola puerta.
+
+    Viven aparte de `validar` para que `botsito spec check` (F12) ejecute exactamente las mismas y
+    no una copia que se quede atras: dos listas de comprobaciones que hay que acordarse de
+    sincronizar acaban divergiendo, y la que se queda vieja es siempre la que alguien mira.
+
+    Devuelve los fallos -cada uno nombrando el id que lo causa- y la linea de resumen. Lista vacia
+    es que la spec es coherente consigo misma.
+    """
+    from botsito.spec.manifiesto import FICHERO_MANIFIESTO
+    from botsito.spec.manifiesto import comprobar as comprobar_manifiesto_spec
+    from botsito.spec.modelo import (
+        FICHERO_GLOSARIO,
+        FICHERO_SPEC,
+        SpecError,
+        Termino,
+        cargar_reglas,
+        cargar_vocabulario,
+        comprobar_citas_revocadas,
+        comprobar_consumo,
+        comprobar_contra,
+        comprobar_decisiones,
+        comprobar_forma,
+        comprobar_literales,
+        comprobar_precedencia,
+    )
+    from botsito.spec.modelo import (
+        cargar_glosario as cargar_glosario_spec,
+    )
+
+    ruta_spec = repo / FICHERO_SPEC
+    if not ruta_spec.is_file():
+        return [], ""
+    revocados = {r.supersede: r.id for r in registros_fb if r.supersede}
+    try:
+        reglas = cargar_reglas(ruta_spec)
+        terminos: list[Termino] = (
+            cargar_glosario_spec(repo / FICHERO_GLOSARIO)
+            if (repo / FICHERO_GLOSARIO).is_file()
+            else []
+        )
+        citas = {i.id for i in items} | {r.id for r in registros_fb}
+        vocabulario = cargar_vocabulario(ruta_spec)
+        problemas = comprobar_contra(reglas, terminos, set(registro.nombres()), citas, vocabulario)
+        # Y que cada regla diga lo que su cita dice: mismo criterio de tokens que ADR-0009
+        # usa con la evidencia. Sin esto, una regla podria poner palabras en boca del
+        # trader citando un registro que dice otra cosa.
+        textos_citados = {i.id: i.cita_literal for i in items}
+        textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
+        problemas += comprobar_literales(reglas, textos_citados, terminos, vocabulario)
+        # Y que una regla construida sobre parametros de entorno declare el ADR que la
+        # decide: ahi no hay trader al que citar, y su cita no puede sostenerla.
+        problemas += comprobar_decisiones(
+            reglas,
+            {n: p.fuente.tipo for n, p in registro.parametros.items() if p.fuente is not None},
+            ids_de_adr(repo),
+        )
+        # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
+        # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
+        for r in reglas:
+            if not r.vigente:
+                continue
+            for nombre in r.parametros:
+                param = registro.parametros.get(nombre)
+                if param is not None and param.estado.value == "UNKNOWN":
+                    problemas.append(
+                        f"{r.id}: usa {nombre}, que sigue UNKNOWN: la regla esta vigente pero "
+                        f"no se puede ejecutar"
+                    )
+        # Y que la precedencia no la decida el orden del fichero, que es editorial.
+        problemas += comprobar_precedencia(reglas)
+        # Y la forma ejecutable, donde la haya: vocabulario que existe, argumentos de valor
+        # que llevan el NOMBRE del parametro y no su valor, y `parametros` declarando lo que
+        # la forma usa de verdad (F12, ADR-0019).
+        try:
+            from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+
+            abiertas: set[str] | None = {
+                a.id
+                for a in cargar_ambiguedades(repo / FICHERO_AMBIGUEDADES)
+                if a.estado == "ABIERTA"
+            }
+        except (OSError, ValueError):
+            abiertas = None
+        problemas += comprobar_forma(reglas, vocabulario, set(registro.nombres()), abiertas)
+        # Y que todo parametro CON VALOR tenga un lector: una regla vigente que lo nombre, o una
+        # funcionalidad del plan. F11 dejo nueve valores que nadie leia y a los que ninguna
+        # guardia miraba. OJO a lo que esto NO comprueba: que la fila de MASTER_PLAN H.2 de esa
+        # funcionalidad diga de verdad que la consumira. Solo se comprueba que EXISTE.
+        ids_validos: dict[str, str] = {
+            **{f: "funcionalidad" for f in ids_de_funcionalidad(repo)},
+            **{a: "ADR" for a in ids_de_adr(repo)},
+            **{r.id: ("regla vigente" if r.vigente else "regla") for r in reglas},
+        }
+        problemas += comprobar_consumo(
+            reglas,
+            {n: p.consumido_por for n, p in registro.parametros.items()},
+            ids_validos,
+            {n for n, p in registro.parametros.items() if p.valor is not None},
+        )
+        # Y que nadie cite un registro revocado: reglas, glosario y vocabulario incluidos.
+        problemas += comprobar_citas_revocadas(reglas, terminos, vocabulario, revocados)
+        problemas += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
+    except SpecError as exc:
+        return [str(exc)], ""
+    vigentes = sum(1 for r in reglas if r.vigente)
+    resumen = (
+        f"{len(reglas)} reglas de spec ({vigentes} vigentes, "
+        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable), "
+        f"{len(terminos)} terminos de glosario, hash del manifiesto al dia"
+    )
+    return problemas, resumen
 
 
 def validar(repo: Path) -> tuple[int, list[str]]:
@@ -411,87 +544,15 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             )
             return 1, salida
 
-    # Capa spec (F11, ADR-0013): reglas, glosario y manifiesto.
-    from botsito.spec.manifiesto import FICHERO_MANIFIESTO
-    from botsito.spec.manifiesto import comprobar as comprobar_manifiesto_spec
-    from botsito.spec.modelo import (
-        FICHERO_GLOSARIO,
-        FICHERO_SPEC,
-        SpecError,
-        Termino,
-        cargar_reglas,
-        cargar_vocabulario,
-        comprobar_citas_revocadas,
-        comprobar_contra,
-        comprobar_decisiones,
-        comprobar_forma,
-        comprobar_literales,
-        comprobar_precedencia,
-    )
-    from botsito.spec.modelo import (
-        cargar_glosario as cargar_glosario_spec,
-    )
-
-    ruta_spec = repo / FICHERO_SPEC
-    if ruta_spec.is_file():
-        try:
-            reglas = cargar_reglas(ruta_spec)
-            terminos: list[Termino] = (
-                cargar_glosario_spec(repo / FICHERO_GLOSARIO)
-                if (repo / FICHERO_GLOSARIO).is_file()
-                else []
-            )
-            citas = {i.id for i in items} | {r.id for r in registros_fb}
-            problemas_spec = comprobar_contra(reglas, terminos, set(registro.nombres()), citas)
-            # Y que cada regla diga lo que su cita dice: mismo criterio de tokens que ADR-0009
-            # usa con la evidencia. Sin esto, una regla podria poner palabras en boca del
-            # trader citando un registro que dice otra cosa.
-            textos_citados = {i.id: i.cita_literal for i in items}
-            textos_citados |= {r.id: r.respuesta_literal for r in registros_fb}
-            problemas_spec += comprobar_literales(reglas, textos_citados, terminos)
-            # Y que una regla construida sobre parametros de entorno declare el ADR que la
-            # decide: ahi no hay trader al que citar, y su cita no puede sostenerla.
-            problemas_spec += comprobar_decisiones(
-                reglas,
-                {n: p.fuente.tipo for n, p in registro.parametros.items() if p.fuente is not None},
-                ids_de_adr(repo),
-            )
-            # Una regla vigente que nombra un parametro UNKNOWN no es un error de formato: es una
-            # regla que el motor no podria ejecutar, y conviene verlo aqui y no en F18.
-            for r in reglas:
-                if not r.vigente:
-                    continue
-                for nombre in r.parametros:
-                    param = registro.parametros.get(nombre)
-                    if param is not None and param.estado.value == "UNKNOWN":
-                        problemas_spec.append(
-                            f"{r.id}: usa {nombre}, que sigue UNKNOWN: la regla esta vigente pero "
-                            f"no se puede ejecutar"
-                        )
-            # Y que la precedencia no la decida el orden del fichero, que es editorial.
-            problemas_spec += comprobar_precedencia(reglas)
-            # Y la forma ejecutable, donde la haya: vocabulario que existe y argumentos de valor
-            # que llevan el NOMBRE del parametro y no su valor (F12, ADR-0019).
-            problemas_spec += comprobar_forma(
-                reglas, cargar_vocabulario(ruta_spec), set(registro.nombres())
-            )
-            # Y que nadie cite un registro revocado, reglas, glosario y vocabulario incluidos.
-            problemas_spec += comprobar_citas_revocadas(
-                reglas, terminos, cargar_vocabulario(ruta_spec), revocados
-            )
-            problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
-        except SpecError as exc:
-            problemas_spec = [str(exc)]
-        for f in problemas_spec:
-            salida.append(f"ERROR: spec: {f}")
-        if problemas_spec:
-            return 1, salida
-        vigentes = sum(1 for r in reglas if r.vigente)
-        salida.append(
-            f"OK: {len(reglas)} reglas de spec ({vigentes} vigentes, "
-            f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable), "
-            f"{len(terminos)} terminos de glosario, hash del manifiesto al dia"
-        )
+    # Capa spec (F11, ADR-0013 · F12): reglas, glosario, forma ejecutable y manifiesto. Las
+    # comprobaciones viven en `problemas_de_spec` para que `botsito spec check` use las mismas.
+    problemas_spec, resumen_spec = problemas_de_spec(repo, registro, items, registros_fb)
+    for f in problemas_spec:
+        salida.append(f"ERROR: spec: {f}")
+    if problemas_spec:
+        return 1, salida
+    if resumen_spec:
+        salida.append(f"OK: {resumen_spec}")
 
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
     from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes

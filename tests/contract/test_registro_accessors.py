@@ -148,4 +148,10 @@ def test_el_handoff_no_pega_un_recuento_que_caduca(repo: Path) -> None:
     """El HANDOFF llevaba la copia que se quedo vieja tres veces; ahora apunta al comando."""
     texto = (repo / "docs" / "HANDOFF.md").read_text(encoding="utf-8")
     assert "`botsito spec status`" in texto
-    assert "manifiesto 3.0.0" not in texto and "manifiesto 1.5.0" not in texto
+    import re as _re
+
+    pegados = _re.findall(r"manifiesto \d+\.\d+\.\d+", texto)
+    assert not pegados, (
+        f"el HANDOFF pega una version del manifiesto ({pegados}); esa foto caduca sola, "
+        "y por eso se apunta al comando en vez de copiarla"
+    )

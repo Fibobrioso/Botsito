@@ -7,8 +7,11 @@
 # a 0,75 se hace en un sitio y esta spec no se toca.
 #
 # `cita` es el registro de feedback o el item de evidencia que sostiene la regla, y `literal` la
-# frase del trader tal cual. El literal SI puede contener cifras: son sus palabras, y un test
-# comprueba que coincide con el registro que declara.
+# frase TAL CUAL del registro citado. Normalmente es del trader; cuando el registro dice en su
+# `registrado_por` que la refiere el consultor -pasa desde el 2026-09-11 en RN-012, RN-027 y el
+# predicado `no_es_multiplo_de`, que citan fb-...-17ed6193-, la regla declara ademas `decision`.
+# El literal SI puede contener cifras: son las palabras de quien las dijo, y un test comprueba que
+# coincide con el registro que declara.
 #
 # Campos: id (RN-NNN), titulo, cuando (condicion), entonces (accion), parametros (los que usa),
 # cita, literal, clase, estado (VIGENTE | DESCARTADA), notas y decision (opcionales).
@@ -123,6 +126,7 @@ predicados:
       marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. En M1 la ruptura vale
       con mecha o con cuerpo; la de M15 tiene que ser con cuerpo (RN-004)
     argumentos: [cual]
+    depende_de: [liquidez_tomada]
     cita: ev-v4-000243-5f8875ce
     literal: >-
       ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien
@@ -131,10 +135,12 @@ predicados:
   zonas_desarrolladas_superan:
     descripcion: el esquema desarrolla mas zonas de control de las admitidas
     argumentos: [tope]
-    cita: ev-v4-001909-54ac2edd
-    literal: >-
-      aquí no habría un trade usando este modelo aquí por el hecho de que te genera dos zonas
-      de control [...] por lo general sólo buscamos uno
+    cita: fb-2026-09-09-sesion-01-1b2203b0
+    literal: solo 1 zona control bro. si hay 2 se descarta
+    notas: >-
+      citaba `ev-v4-001909-54ac2edd`, que describe el caso pero remata con una tendencia -"por lo
+      general solo buscamos uno"- y de ahi salio A-20. El trader la cerro en duro el 2026-09-11 y
+      el predicado cita lo mismo que RN-009; la evidencia vieja se queda en A-20
   se_activa_entrada:
     descripcion: la orden limite se llena
     argumentos: [por]
@@ -154,6 +160,13 @@ predicados:
     literal: >-
       La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve el SL
       hasta el nivel 0.8 para todos los modelos de entrada.
+    notas: >-
+      LO QUE LA CITA SOSTIENE y lo que no: sostiene que hay un stop y en que nivel vive, no el
+      EVENTO de que el precio lo alcance, que es mecanico y el trader nunca describio. Y su frase
+      es del mundo anterior al 2026-09-10: dice que el SL "se mueve" al abrir, y A-11 cerro que
+      viaja en la orden limite desde el principio (RN-011). Se conserva porque es lo que el trader
+      dijo en la sesion y es el registro que fija el nivel; queda declarado para que nadie lo lea
+      como la mecanica vigente
   se_cierra_operacion:
     descripcion: la posicion deja de estar viva
     argumentos: [resultado]
@@ -207,6 +220,9 @@ acciones:
   mover_stop:
     descripcion: cambia el nivel del stop de una posicion viva
     argumentos: [de, a, cuando]
+  agrupar_estructura:
+    descripcion: mapea como una sola estructura las velas de M1 que forman un order block mayor
+    argumentos: [criterio]
   dimensionar_lote:
     descripcion: calcula el lote a partir del riesgo y la distancia declarada
     argumentos: [base, riesgo, sobre]
@@ -235,11 +251,22 @@ acciones:
 # Estado del bot, no geometria del mercado. Cada hecho dice QUIEN lo produce y QUIEN lo consume:
 # un hecho que nadie consume es una regla que no sirve para nada, y uno que nadie produce es una
 # regla inalcanzable. La prosa no permitia ver ninguna de las dos cosas.
+# Lo que una regla PERMITE o PROHIBE. No son acciones -nadie las "ejecuta"- sino capacidades con
+# nombre, y hasta la auditoria de cierre de F12 no se comprobaban contra nada: `abrir_operacionn`
+# con una ene de mas pasaba en once de las veinticuatro reglas vigentes.
+efectos:
+  abrir_operacion:
+    descripcion: colocar una orden o abrir una posicion nueva
+  buscar_entradas:
+    descripcion: mirar M1 en busca de un esquema de entrada
+
 hechos:
   sesgo:
     descripcion: el sentido en el que se busca entrada
     produce: [RN-003]
-    consume: [RN-003, RN-005]
+    # RN-003 lo PRODUCE, no lo consume. Declaraba las dos cosas y colaba porque la guardia casaba
+    # por subcadena: el `cuando` de RN-003 contiene `sesgo_h4_criterio_ruptura` (2026-09-11)
+    consume: [RN-005]
   orden_limite_pendiente:
     descripcion: hay una orden colocada y todavia sin llenar
     produce: [RN-011, RN-013]
@@ -261,6 +288,15 @@ hechos:
       porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia
     produce: [RN-016]
     consume: [RN-001, RN-016]
+  liquidez_tomada:
+    descripcion: >-
+      la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los
+      dos esquemas de entrada: sin ella no se mira M1. Hasta el 2026-09-11 esta condicion vivia
+      solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma leia: un
+      motor que implementara `forma` habria entrado sin esperar la toma. Lo consume el predicado
+      `se_da_esquema` (`depende_de`), no una regla
+    produce: [RN-004]
+    consume: [predicado se_da_esquema]
 
 # Lo que se suma o se cuenta, con su BASE y su REINICIO explicitos. Sin esto, que agotar los
 # cartuchos NO acote el dia -porque su reinicio no es diario- solo se puede descubrir leyendo
@@ -349,7 +385,7 @@ reglas:
     entonces: >-
       el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia
-    parametros: [sesgo_h4_regla, anclaje_h4]
+    parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura]
     cita: fb-2026-09-09-sesion-01-8eccf5c0
     literal: >-
       si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
@@ -422,7 +458,7 @@ reglas:
       hay una orden limite COLOCADA Y TODAVIA SIN LLENAR, y el precio rompe el extremo anterior,
       con lo que la zona de control en curso queda completada
     entonces: la orden limite se mueve a la zona recien completada segun reubicacion_cadencia
-    parametros: [reubicacion_cadencia]
+    parametros: [reubicacion_cadencia, zona_control_criterio_completada]
     cita: fb-2026-09-09-sesion-01-6b29059d
     literal: >-
       cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa aquí
@@ -462,7 +498,7 @@ reglas:
           - se_mapea_estructura: {criterio: mapeo_dos_velas}
       entonces:
         hace:
-          - fijar: {hecho: estructura_m1, a: agrupada}
+          - agrupar_estructura: {criterio: mapeo_dos_velas}
     clase: disparador
     estado: VIGENTE
 
@@ -626,7 +662,7 @@ reglas:
     titulo: hay un unico esquema de stop, y vale para cualquier esquema de entrada
     cuando: se abre la operacion, por el esquema de entrada que sea
     entonces: el stop va a stop_fraccion_caja, sea cual sea el esquema
-    parametros: [stop_fraccion_caja]
+    parametros: [stop_fraccion_caja, stop_en_orden_pendiente]
     cita: fb-2026-09-09-sesion-01-bc829942
     literal: tanto primero como segundo esquema de entrada en 0.80, ¿verdad? Sí
     notas: >-
@@ -651,7 +687,7 @@ reglas:
     titulo: el break even se pone al romperse la zona de control posterior
     cuando: tras la entrada se desarrolla otra zona de control y el precio la rompe
     entonces: el stop pasa a la entrada, en el instante del toque segun break_even_condicion
-    parametros: [break_even_condicion]
+    parametros: [break_even_condicion, break_even_criterio_ruptura]
     cita: fb-2026-09-09-sesion-01-0ccafcba
     literal: yo siempre lo he estado trabajando, o sea, apenas toca
     notas: >-
@@ -681,6 +717,9 @@ reglas:
       en el mismo instante en que se traza la orden, y no se extiende
       (objetivo_extension_activa) ni se sacan parciales (parciales)
     parametros: [objetivo_rr, base_calculo_objetivo, objetivo_extension_activa, parciales]
+    # Se disparan con el MISMO evento que RN-013 -activarse la entrada- y las dos ocurren: una
+    # escribe el stop y la otra el objetivo. Sin esto, cual gana lo decidiria el orden del fichero
+    complementa: [RN-013]
     cita: fb-2026-09-09-sesion-01-7fbbb2e7
     literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
     notas: >-
@@ -796,9 +835,10 @@ reglas:
   - id: RN-020
     titulo: el tope porcentual es el unico freno del dia
     cuando: >-
-      la perdida acumulada desde el corte que marca reloj_dia_riesgo alcanza perdida_maxima_diaria
-      sobre base_calculo_perdida_diaria, o perdida_maxima_semanal sobre
-      base_calculo_perdida_semanal
+      la perdida acumulada desde el corte que marca reloj_dia_riesgo -que cae en el reloj del
+      servidor, cuyo calendario declara broker_dst y cuyo desfase base declara
+      broker_offset_base- alcanza perdida_maxima_diaria sobre base_calculo_perdida_diaria, o
+      perdida_maxima_semanal sobre base_calculo_perdida_semanal
     entonces: se deja de operar hasta el corte siguiente
     parametros:
       - perdida_maxima_diaria
@@ -806,6 +846,8 @@ reglas:
       - perdida_maxima_semanal
       - base_calculo_perdida_semanal
       - reloj_dia_riesgo
+      - broker_dst
+      - broker_offset_base
     cita: fb-2026-09-09-sesion-01-bff260ea
     literal: >-
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
@@ -919,10 +961,11 @@ reglas:
   - id: RN-026
     titulo: si el broker no admite el stop donde toca, el bot se abstiene
     cuando: >-
-      el stop o el limite que pide la spec queda mas cerca del precio que instrumento_stops_level
+      el stop o el limite que pide la spec queda mas cerca del precio que instrumento_stops_level,
+      que viene en puntos y se traduce a precio con instrumento_digitos
     entonces: >-
       no se abre la operacion; nunca se aproxima el nivel al minimo que el broker admite
-    parametros: [instrumento_stops_level, comportamiento_sin_regla]
+    parametros: [instrumento_stops_level, comportamiento_sin_regla, instrumento_digitos]
     cita: fb-2026-09-09-sesion-01-c698bc6a
     literal: Que sea fiel a la operativa y no busque nada adicional.
     notas: >-

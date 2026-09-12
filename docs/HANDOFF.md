@@ -6,12 +6,11 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
 ## Estado (2026-09-11, fase 1 cerrada en main; F11 validada y cerrada; F12 en construccion)
-- `main`: merge de F08 `5d8cf3c` con tag `stable/F08` (fase 1 F03-F08 cerrada); `docs(state)`
-  `645aac6`; CI verde. Protegida en GitHub.
+- `main`: merge de F11 `b62f4aa` con tag `stable/F11`; `docs(state)` `3597b3d`. La fase 1 (F03-F08)
+  se cerro antes, en `5d8cf3c` con tag `stable/F08`. Protegida en GitHub.
 - Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
   de F07. Ramas fusionadas borradas.
-- Rama actual: `feature/F10-elicitation-kit` (informe `docs/validation/F10-elicitation-kit.md`,
-  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F10`). HECHO: ADR-0011;
+- F10 elicitation-kit CERRADA el 2026-09-08 (tag `stable/F10`). Lo que dejo: ADR-0011;
   `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina); registro con 24
   parametros de estrategia en UNKNOWN; `knowledge/cases/kit/{config,mapa_parametros,vistos}.yaml`
   (cifras de negocio como datos; enero, julio y agosto VISTOS por el trader); paquete `cases`
@@ -28,8 +27,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que lo
   que se explica "no va para la operativa", y 1:53:30-1:57:31, donde suena un video ajeno mientras
   el trader se ausenta.
-- F11 strategy-spec-schema CONSTRUIDA (esta rama, `feature/F11-strategy-spec-schema`), cierre con
-  tag `stable/F11`. Lo que existe ahora:
+- F11 strategy-spec-schema VALIDADA y cerrada en main el 2026-09-10 (tag `stable/F11`). Lo que dejo:
   - `botsito feedback apply --sesion <s> [--check]`: lleva los valores del feedback al registro.
     NO interpreta: si un valor no encaja en el tipo, falla y dice cual. La re-expresion se hace
     fuera, con un registro que supersede y lleva `valor_canonico` (campo opcional nuevo).
@@ -47,9 +45,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   que ya existe: ADR-0018 (la precedencia va por CLASE), ADR-0019 (la forma ejecutable: predicados
   con argumentos, ligadura, y `predicados`/`acciones`/`hechos`/`acumuladores` DENTRO de
   strategy_spec.yaml) y ADR-0020 (la base del lotaje). Las 24 reglas vigentes tienen forma
-  ejecutable; `spec status` dice cuantas siguen en prosa (hoy, ninguna). Falta para cerrarla: los
-  9 parametros con valor que ninguna regla nombra, el comando `spec check`, los ids `R-NN` de
-  `scripts/hoja_sesion_docx.py`, la auditoria de cierre y el informe de validacion.
+  ejecutable; `spec status` dice cuantas siguen en prosa (hoy, ninguna). CERRADA y a la espera de
+  validacion desde el 2026-09-12: los parametros sin lector declaran `consumido_por`, existe
+  `botsito spec check`, los `R-NN` son explicitos, la auditoria de cierre (dos agentes) esta
+  aplicada y el informe es `docs/validation/F12-spec-semantic-validator.md`.
 - EL LOTAJE CAMBIO DE BASE el 2026-09-11 (ADR-0020) y es lo mas caro de este tramo: el 0,5 % de
   riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que `lotaje_base` vale
   `hasta_stop_fraccion`, el lote es un 25 % mayor y el stop cuesta el riesgo entero. RN-012 dice
@@ -61,7 +60,27 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `Material adicional de su operativa/Backtest mayo 2026/`. OJO: 13 de los 19 dias de mayo son
   holdout-1/2/3 segun `knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`, asi que no
   puede usarse para elegir parametros; es entrada de F14 y F26.
-- Lecciones tecnicas (F12):
+- Lecciones tecnicas (F12), y la mas cara es la primera:
+  - UNA GUARDIA NUEVA NO HEREDA NADA. El vocabulario de ADR-0019 (predicados, acciones, hechos,
+    acumuladores) lleva `cita` y `literal` propios desde el dia uno, y durante toda la
+    funcionalidad NADIE los comprobaba: se podia poner cualquier frase en boca del trader dentro
+    de un predicado, o citar un `fb-...-deadbeef`. El comentario que habia en `comprobar_literales`
+    lo predijo con esas palabras y aun asi paso. Al anadir un sitio con cita, amplia TODAS las
+    guardias en el mismo commit: `comprobar_contra`, `comprobar_literales` y
+    `comprobar_citas_revocadas`.
+  - Casar por SUBCADENA en un JSON serializado es una trampa que bendice mentiras: `hechos.sesgo`
+    declaraba que RN-003 lo consume -lo produce- y colaba porque su `cuando` contiene
+    `sesgo_h4_criterio_ruptura`. Peor: corregir la declaracion hacia FALLAR la guardia. Se casa el
+    token exacto, o se recorre el arbol.
+  - Un hecho que se fija y nadie declara es invisible: `liquidez_tomada` (RN-004) y `estructura_m1`
+    (RN-007) se fijaban sin estar en `hechos:`, asi que la guardia -que iteraba los declarados- no
+    los veia. El primero es la precondicion de los dos esquemas de entrada: un motor que leyera
+    `forma` habria entrado sin esperar a que se tomara la liquidez de M15.
+  - `permite`/`prohibe` llevan LISTA, no mapa, asi que el recorrido de invocaciones los saltaba y
+    sus objetivos no se comprobaban contra nada en once de las veinticuatro reglas vigentes.
+  - Las cifras de un informe se verifican con la calculadora antes de escribirlas: 21, 27,6 y 28,2
+    salen de 18x3-33x1, 18x3-33x0,8 y 18x3,4-33x1, y eso es lo que dice en que convencion cuenta
+    el trader.
   - Cambiar un valor de negocio no es cambiar un valor: al superseder el registro del lotaje,
     dos citas quedaron apuntando a un registro revocado (RN-027 y el predicado
     `no_es_multiplo_de`) y dos textos quedaron afirmando algo falso (la nota de RN-015 y la

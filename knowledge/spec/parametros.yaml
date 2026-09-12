@@ -149,6 +149,8 @@ parametros:
       es una cota de cuanto depende el resultado del modelo, no de la estrategia
     estado: CONFIRMED
     valor: "al_tocar"
+    # MASTER_PLAN H.2: el modelo de llenado lo simula F24 y F27 informa de los dos
+    consumido_por: [F24, F27]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -159,6 +161,8 @@ parametros:
     descripcion: latencia que asume `cruce_mas_latencia`; con `al_tocar` no se usa
     estado: CONFIRMED
     valor: 0
+    # MASTER_PLAN H.2: el modelo de llenado lo simula F24 y F27 informa de los dos
+    consumido_por: [F24, F27]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -190,6 +194,8 @@ parametros:
       reloj del servidor, que va en broker_offset_base + broker_dst y sigue a Nueva York
     estado: CONFIRMED
     valor: "Europe/Madrid"
+    # documental por ADR-0017: traduce lo que el trader DICE a un instante, no lo ejecuta nadie
+    consumido_por: [ADR-0017]
     fuente:
       tipo: evidence
       id: ev-v3-000136-6160fcea
@@ -325,7 +331,10 @@ parametros:
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa nivel 0 -> nivel 1
-    descripcion: nivel de la caja donde va el stop tras la entrada (0,75 u 0,8; A-10)
+    descripcion: >-
+      nivel de la caja donde vive el stop. Se escribe EN la orden limite y no se mueve despues
+      (A-10 lo fijo en 0,8; A-11 cerro que viaja en la orden). Ademas es la distancia que
+      dimensiona el lote desde ADR-0020
     estado: CONFIRMED
     valor: "0.8"
     fuente:
@@ -656,9 +665,12 @@ parametros:
     tipo: fraccion
     unidad: fraccion de la caja que se conserva al proteger
     descripcion: >-
-      cuanto se guarda al mover el stop. DERIVADO de stop_fraccion_caja (1 - 0,8 = 0,2), asi que
-      no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya
-      dos puertas para el mismo numero
+      la fraccion de la caja que queda al otro lado del stop. DERIVADA de stop_fraccion_caja
+      (1 - 0,8 = 0,2), asi que no se fija aqui: se queda UNKNOWN y el invariante vive en
+      strategy_spec, para que no haya dos puertas para el mismo numero. OJO, dos cosas que esta
+      descripcion decia hasta el 2026-09-11: el stop no "se mueve" -nace en la orden, A-11- y ese
+      tramo no es presupuesto de riesgo que se "guarde", porque el lote ya no se dimensiona sobre
+      la caja entera; RN-012 dice que no se arriesga nunca
     estado: UNKNOWN
     minimo: "0"
     maximo: "1"
@@ -768,6 +780,8 @@ parametros:
       -NASDAQ, oro, pares sin gaps, futuros- lo dijo el trader y vive en fb-2026-09-09-sesion-01-6eceb844
     estado: CONFIRMED
     valor: "EURUSD"
+    # MASTER_PLAN H.2: la ficha del simbolo la consumen el motor, la exportacion, el EA y el pre-vuelo
+    consumido_por: [F24, F28, F31, F33]
     fuente:
       tipo: evidence
       id: ev-v2-003320-a736fd37
@@ -779,6 +793,8 @@ parametros:
     descripcion: cuenta a la que apunta el bot cuando este validado
     estado: CONFIRMED
     valor: "fondeada"
+    # la cuenta a la que se despliega; F33 la lee en el pre-vuelo
+    consumido_por: [F33]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -790,6 +806,8 @@ parametros:
     descripcion: cuenta en la que se prueba el funcionamiento antes de la fondeada
     estado: CONFIRMED
     valor: "demo"
+    # F17 mide el reloj del servidor contra este terminal y F33 despliega primero aqui
+    consumido_por: [F17, F33]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -805,6 +823,8 @@ parametros:
     estado: CONFIRMED
     valor: "100000"
     minimo: "0"
+    # no es base de ningun calculo: F24 arranca el backtest con el y F33 lo compara con la cuenta real
+    consumido_por: [F24, F33]
     fuente:
       tipo: decision
       id: ADR-0012

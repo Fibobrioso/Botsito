@@ -118,6 +118,10 @@ class Parametro:
     minimo: Decimal | None = None
     maximo: Decimal | None = None
     opciones: tuple[str, ...] | None = None  # solo enum
+    # Quien lo lee, cuando NINGUNA regla vigente lo nombra (F12): una regla `RN-NNN`, una
+    # funcionalidad posterior `F##` con su fila en MASTER_PLAN H.2, o un `ADR-NNNN` si es
+    # documental. Un parametro con valor y sin lector es un valor que nadie usa y nadie vigila.
+    consumido_por: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -286,6 +290,27 @@ def _convertir(tipo: str, bruto: object, huso: object, nombre: str) -> Valor:
     raise RegistroError(f"{nombre}: tipo desconocido {tipo!r}")
 
 
+_CONSUMIDOR = re.compile(r"^(RN-\d{3}|F\d{2}|ADR-\d{4})$", re.ASCII)
+
+
+def _consumido_por(bruto: object, nombre: str) -> tuple[str, ...] | None:
+    """Quien lee un parametro que ninguna regla nombra. Ids, no prosa: se comprueban."""
+    if bruto is None:
+        return None
+    if not isinstance(bruto, list) or not bruto:
+        raise RegistroError(f"{nombre}: 'consumido_por' es una lista con al menos un id")
+    vistos: list[str] = []
+    for c in bruto:
+        if not isinstance(c, str) or not _CONSUMIDOR.fullmatch(c):
+            raise RegistroError(
+                f"{nombre}: consumidor invalido {c!r}; va un id RN-NNN, F## o ADR-NNNN"
+            )
+        if c in vistos:
+            raise RegistroError(f"{nombre}: consumidor repetido {c!r}")
+        vistos.append(c)
+    return tuple(vistos)
+
+
 def _opciones(bruto: object, tipo: str, nombre: str) -> tuple[str, ...] | None:
     """Los valores que un `enum` admite. Solo un enum las lleva, y las exige: un enum sin
     opciones seria un texto con otro nombre."""
@@ -387,6 +412,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
         "minimo",
         "maximo",
         "opciones",
+        "consumido_por",
     }
     desconocidos = set(bruto) - conocidos
     if desconocidos:
@@ -453,6 +479,7 @@ def _parametro(bruto: dict[str, object]) -> Parametro:
         minimo=minimo,
         maximo=maximo,
         opciones=opciones,
+        consumido_por=_consumido_por(bruto.get("consumido_por"), nombre),
     )
 
 

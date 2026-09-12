@@ -102,8 +102,10 @@ reglas vigentes y todos los parametros del registro pasan enteros.
 
 1. `make check` verde, `knowledge validate` incluido.
 2. Toda regla vigente tiene forma ejecutable comprobable; ninguna se queda en prosa sin declararlo.
-3. Los 10 parametros huerfanos estan resueltos: nombrados por una regla o declarados sueltos con
-   motivo.
+3. Los parametros huerfanos estan resueltos: nombrados por una regla o declarados sueltos con
+   motivo. (Eran 10 al escribir el brief; tres se cerraron nombrandolos en una regla -RN-020
+   consume `broker_dst` y `broker_offset_base`, RN-026 consume `instrumento_digitos`- y los
+   siete restantes declaran `consumido_por`.)
 4. Cada fallo de esta capa nombra el id que lo causa.
 5. `spec_version` sube y el hash cubre la forma nueva.
 
@@ -122,8 +124,11 @@ reglas vigentes y todos los parametros del registro pasan enteros.
 
 ## Revision de diseno (agente, antes de programar)
 
-PENDIENTE. Seccion obligatoria desde F05: no se programa hasta que este cerrada, con los hallazgos
-aceptados o descartados con su motivo.
+CERRADA el 2026-09-10 (tres agentes, mas un auditor del arreglo). Produjo ADR-0018 -la precedencia
+va por clase- y ADR-0019 -la forma ejecutable-, cerro D1..D4, y encontro de paso SIETE DEFECTOS
+VIVOS en la spec ya validada de F11, dos capaces de costar dinero: arreglados en `36e4c65` y
+corregidos a su vez en `925d3f6` tras auditar el arreglo. Tambien encontro tres errores de hecho en
+la primera version de este brief.
 
 ### Decisiones del consultor
 
@@ -196,7 +201,8 @@ Si la forma falla, se cambia habiendo gastado cuatro reglas y no veinticuatro.
   explicito, o error. El piloto incluye RN-020, que es la que mas probablemente choque con otra
   (el freno del dia corta lo que las demas permiten), asi que dara el caso real sobre el que decidir.
 
-**Revision de diseno por agente: PENDIENTE.** El ritual la exige antes de programar.
+**Revision de diseno por agente: CERRADA el 2026-09-10**, antes de escribir las reglas. Ver la
+seccion "Revision de diseno" de arriba.
 
 ## Que habilita
 

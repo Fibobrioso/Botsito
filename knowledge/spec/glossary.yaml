@@ -96,9 +96,11 @@ terminos:
   - termino: caja
     alias: [cuadro de Gann, caja de niveles]
     definicion: >-
-      la distancia entre la entrada y el stop inicial, dividida en niveles. Es la unidad en la que
-      se miden el lotaje y la proteccion: el lote se calcula sobre la caja entera y despues el stop
-      se mueve a uno de sus niveles
+      la distancia entre la entrada y el extremo del stop inicial, dividida en niveles. Es la
+      unidad en la que se miden el objetivo y la proteccion. Dos cosas que esta definicion afirmo
+      hasta el 2026-09-11 y que hoy son falsas: el lote NO se dimensiona sobre la caja entera sino
+      sobre la distancia hasta stop_fraccion_caja (ADR-0020), y el stop NO se mueve despues, sino
+      que se escribe en la orden limite antes de que la entrada se active (A-11, RN-011)
     cita: ev-v2-003336-fc210a05
     literal: >-
       yo calculo mi lotaje desde aquí, o sea, como si fuera lo básico un bot normal, pero luego

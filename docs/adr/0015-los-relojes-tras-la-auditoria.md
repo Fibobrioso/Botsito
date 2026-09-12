@@ -6,6 +6,9 @@ phase: F11
 
 # 0015 · Los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo
 
+
+> **Enmienda (2026-09-11, ADR-0020).** La aritmetica de la seccion "Problema que resuelve" era la de la base vieja del lotaje: decia que cada perdida cuesta 0,4 % y que caben **once** antes de tocar el 4,5 %. Desde ADR-0020 el lote se dimensiona hasta el stop, cada perdida cuesta el **0,5 % entero** y el margen son **nueve**. Lo que este ADR decide -que el dia de riesgo necesita su propio reloj, `reloj_dia_riesgo`- no cambia; al contrario, con nueve perdidas el freno se toca antes.
+
 ## Decision
 
 1. **`huso_grafico` baja de `CONFIRMED` a `DEFAULT_AMBIGUOUS`** con `ambiguedad_id: A-14`. El valor

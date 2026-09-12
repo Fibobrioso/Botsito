@@ -558,7 +558,7 @@ def test_el_hash_cubre_la_forma_y_el_vocabulario() -> None:
     from botsito.spec.manifiesto import estructura_para_hash
 
     estructura = estructura_para_hash(REPO)
-    assert {"predicados", "hechos", "acumuladores"} <= set(estructura)
+    assert {"predicados", "acciones", "efectos", "hechos", "acumuladores"} <= set(estructura)
     rn003 = next(r for r in estructura["reglas"] if r["id"] == "RN-003")
     assert rn003.get("forma") is not None, "el hash no cubre la forma ejecutable"
     assert estructura["acumuladores"]["cartuchos"]["reinicia_con"] == "cartuchos_reinicio"
@@ -714,6 +714,16 @@ def test_el_vocabulario_tampoco_puede_citar_un_registro_revocado() -> None:
     assert fallos, "un predicado que cita un registro revocado tiene que saltar"
     assert all("predicados '" in f and "fb-el-que-lo-corrige" in f for f in fallos)
 
+    # Y los ACUMULADORES, que tambien llevan cita y se quedaron fuera hasta la auditoria de
+    # cierre de F12: era la cuarta vez que esta guardia nacia corta
+    cita_acc = next(
+        d["cita"]
+        for d in vocabulario["acumuladores"].values()
+        if isinstance(d, dict) and d.get("cita")
+    )
+    fallos = comprobar_citas_revocadas([], [], vocabulario, {cita_acc: "fb-el-que-lo-corrige"})
+    assert any("acumuladores '" in f for f in fallos), fallos
+
 
 def test_la_spec_real_no_cita_ningun_registro_revocado() -> None:
     """El golden: sobre la spec de verdad, con la cadena de supersede de verdad."""
@@ -734,3 +744,155 @@ def test_la_spec_real_no_cita_ningun_registro_revocado() -> None:
         revocados,
     )
     assert not fallos, "; ".join(fallos)
+
+
+def test_un_valor_sin_lector_salta_y_dice_cual() -> None:
+    """Un parametro con valor que ninguna regla nombra y que nadie declara leer.
+
+    F11 dejo nueve asi -la ficha del instrumento, el reloj del broker, las cuentas, el modelo de
+    llenado-: valores de negocio que ninguna guardia miraba, porque todas miran las reglas. No se
+    arreglan inventandoles una regla (ADR-0016): se declara quien los lee.
+    """
+    from botsito.spec.modelo import FICHERO_SPEC, comprobar_consumo
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    nombrado = next(p for r in reglas if r.vigente for p in r.parametros)
+
+    # NO salta: una regla vigente lo nombra
+    assert comprobar_consumo(reglas, {nombrado: None}, {}) == []
+    # NO salta: no lo nombra nadie, pero declara la funcionalidad que lo consumira
+    assert comprobar_consumo(reglas, {"suelto": ("F24",)}, {"F24": "funcionalidad"}) == []
+
+    # SALTA: ni regla ni declaracion
+    (fallo,) = comprobar_consumo(reglas, {"suelto": None}, {})
+    assert "suelto" in fallo and "consumido_por" in fallo
+    # SALTA: declara algo que no existe
+    (fallo,) = comprobar_consumo(reglas, {"suelto": ("F99",)}, {"F24": "funcionalidad"})
+    assert "F99" in fallo and "no existe" in fallo
+    # SALTA: declara una regla vigente que NO lo nombra, que es peor que no declarar nada
+    vigente = next(r for r in reglas if r.vigente)
+    (fallo,) = comprobar_consumo(reglas, {"suelto": (vigente.id,)}, {vigente.id: "regla vigente"})
+    assert vigente.id in fallo and "NO lo nombra" in fallo
+
+
+def test_la_forma_no_puede_usar_un_parametro_que_la_regla_no_declara() -> None:
+    """`parametros` y `forma` tienen que decir lo mismo.
+
+    Varias guardias leen la lista `parametros` -la del ADR de una regla de entorno, la de los
+    UNKNOWN- y se vuelven ciegas si la forma usa algo que la lista no menciona. Las cuatro reglas
+    del piloto estaban asi: RN-014 ejecutaba `break_even_criterio_ruptura`, DEFAULT_AMBIGUOUS bajo
+    A-13, sin declararlo.
+    """
+    import dataclasses
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+
+    base = next(r for r in reglas if r.id == "RN-014")
+    assert "break_even_criterio_ruptura" in base.parametros, "la regla real ya lo declara"
+    # Solo miramos esta comprobacion: pasar una regla suelta hace saltar la de los hechos, que
+    # necesita el conjunto entero para saber quien produce y quien consume.
+    assert not [f for f in comprobar_forma([base], vocabulario, parametros) if "no lo declara" in f]
+
+    mutilada = dataclasses.replace(
+        base, parametros=tuple(p for p in base.parametros if p != "break_even_criterio_ruptura")
+    )
+    fallos = comprobar_forma([mutilada], vocabulario, parametros)
+    assert any(
+        "RN-014" in f and "break_even_criterio_ruptura" in f and "no lo declara" in f
+        for f in fallos
+    ), fallos
+
+
+def test_el_vocabulario_no_puede_poner_palabras_en_boca_del_trader() -> None:
+    """Un predicado lleva `cita` y `literal` propios, y nadie los cruzaba.
+
+    El comentario que habia en `comprobar_literales` lo predijo con estas palabras: "el dia que
+    algo con cita propia -un predicado, F12- no pase por `comprobar_contra`, esta guardia se
+    apagaria sin avisar". Paso: se podia escribir cualquier frase como literal de un predicado.
+    """
+    from botsito.spec.modelo import (
+        FICHERO_GLOSARIO,
+        FICHERO_SPEC,
+        cargar_vocabulario,
+        comprobar_contra,
+        comprobar_literales,
+    )
+
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    terminos = cargar_glosario(REPO / FICHERO_GLOSARIO)
+    nombre, datos = next(
+        (n, d) for n, d in vocabulario["predicados"].items() if d.get("cita") and d.get("literal")
+    )
+
+    # NO salta: el literal real esta en lo que cita
+    textos = {str(datos["cita"]): str(datos["literal"])}
+    assert not comprobar_literales([], textos, [], vocabulario)
+
+    # SALTA: se le pone otra frase en la boca
+    mentira = {**vocabulario, "predicados": {nombre: {**datos, "literal": "esto no lo dijo nadie"}}}
+    (fallo,) = comprobar_literales([], textos, [], mentira)
+    assert nombre in fallo and str(datos["cita"]) in fallo
+
+    # Y la cita tiene que existir: antes un fb-...-deadbeef pasaba entero
+    inventada = {**vocabulario, "predicados": {nombre: {**datos, "cita": "fb-no-existe-deadbeef"}}}
+    fallos = comprobar_contra([], terminos, set(), set(textos), inventada)
+    assert any(nombre in f and "no existe" in f for f in fallos), fallos
+
+
+def test_lo_que_una_regla_prohibe_tiene_que_existir() -> None:
+    """`permite` y `prohibe` no se comprobaban contra nada: su valor es una lista.
+
+    Once de las veinticuatro reglas vigentes prohiben algo, y sus dos unicos objetivos
+    -`abrir_operacion` y `buscar_entradas`- no estaban declarados en ninguna seccion: una ene de
+    mas pasaba entera (F12, auditoria de cierre).
+    """
+    import dataclasses
+
+    from botsito.config.registro import cargar_registro
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_forma
+
+    reglas = cargar_reglas(REPO / FICHERO_SPEC)
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    parametros = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+    assert vocabulario["efectos"], "la seccion `efectos` tiene que existir"
+
+    base = next(r for r in reglas if r.forma and "prohibe" in str(r.forma))
+    torcida = dataclasses.replace(
+        base,
+        forma={**(base.forma or {}), "entonces": {"prohibe": ["abrir_operacionn"]}},
+    )
+    fallos = comprobar_forma([torcida], vocabulario, parametros)
+    assert any("abrir_operacionn" in f and base.id in f for f in fallos), fallos
+
+
+def test_la_puerta_de_spec_check_denuncia_y_nombra_ids() -> None:
+    """`spec check` y `knowledge validate` comparten `problemas_de_spec`: se prueba la puerta.
+
+    Solo se probaba el camino verde, asi que nada fijaba que la capa devuelva los fallos con su
+    id (criterio de aceptacion 4 del brief) ni que `spec check` pueda salir con 1.
+    """
+    from botsito.config.registro import Registro, cargar_registro
+    from botsito.evidence.modelo import cargar_evidencia
+    from botsito.feedback.modelo import cargar_feedback
+    from botsito.validation.knowledge import problemas_de_spec
+
+    items = cargar_evidencia(REPO / "knowledge" / "evidence")
+    fb = cargar_feedback(REPO / "knowledge" / "feedback")
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+
+    problemas, resumen = problemas_de_spec(REPO, registro, items, fb)
+    assert problemas == [], "la spec real tiene que estar limpia"
+    assert "reglas de spec" in resumen
+
+    # Un registro sin parametros: todas las reglas nombran cosas que no existen
+    problemas, _ = problemas_de_spec(REPO, Registro(parametros={}), items, fb)
+    assert problemas, "un registro vacio tiene que romper la capa"
+    assert all(
+        re.match(r"(RN-\d{3}|glosario |predicados |acciones |hecho |acumulador |\w+:)", p)
+        for p in problemas
+    ), problemas[:5]
