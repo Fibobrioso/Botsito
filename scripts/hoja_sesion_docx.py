@@ -11,12 +11,13 @@ a mano.
 
 Uso:
     uv run --no-sync python scripts/hoja_sesion_docx.py
-    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion 2026-09-15-sesion-01
+    uv run --no-sync python scripts/hoja_sesion_docx.py --sesion 2026-09-09-sesion-01
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 import zipfile
 from datetime import datetime
@@ -298,12 +299,25 @@ def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any])
             for c in ("#", "Lo que entendimos", "¿Correcto?", "Corrección")
         ]
     ]
+    # El id viene del fichero, NO de la posicion (F12). Numerarlo aqui con `enumerate` hacia que
+    # insertar o reordenar una entrada renumerase las catorce en silencio, y el anexo de
+    # docs/validation/SESION-01-2026-09-09.md las cita una a una por R-NN: se habria quedado
+    # apuntando a otra evidencia sin que nada fallara.
+    vistos: set[str] = set()
     for n, e in enumerate(entradas, 1):
+        rid = str(e.get("id") or "")
+        if not re.fullmatch(r"R-\d{2}", rid, re.ASCII):
+            raise SystemExit(
+                f"reafirmacion {n}: 'id' invalido {rid!r}; va un R-NN explicito en "
+                "contexto_preguntas.yaml"
+            )
+        if rid in vistos:
+            raise SystemExit(f"reafirmacion {n}: id repetido {rid}")
+        vistos.add(rid)
         item = items.get(e["evidencia"])
         if item is None:
             raise SystemExit(
-                f"reafirmacion {n}: la evidencia {e['evidencia']} no existe; corrige "
-                "contexto_preguntas.yaml"
+                f"{rid}: la evidencia {e['evidencia']} no existe; corrige contexto_preguntas.yaml"
             )
         celda = parrafo(run(item.afirmacion, sz=18))
         celda += parrafo(
@@ -317,7 +331,7 @@ def bloque_reafirmaciones(entradas: list[dict[str, Any]], items: dict[str, Any])
         )
         filas.append(
             [
-                parrafo(run(f"R-{n:02d}", sz=17)),
+                parrafo(run(rid, sz=17)),
                 celda,
                 parrafo(run("", sz=17)),
                 parrafo(run("", sz=17)),
@@ -570,9 +584,7 @@ def documento(repo: Path, sesion: str) -> str:
         items = {i.id: i for i in cargar_evidencia(repo / "knowledge" / "evidence")}
         partes.append(bloque_reafirmaciones(reafirmaciones, items))
 
-    partes.append(
-        bloque_etiquetado(casos, particiones["asignacion"], config, huso, ref_anclaje)
-    )
+    partes.append(bloque_etiquetado(casos, particiones["asignacion"], config, huso, ref_anclaje))
     if ctx_doc.get("cierre"):
         partes.append(bloque_cierre(list(ctx_doc["cierre"])))
     cuerpo = "".join(partes)

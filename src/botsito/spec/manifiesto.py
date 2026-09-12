@@ -17,6 +17,9 @@ ambiguedad_id, opciones y limites. El ESTADO y la FUENTE entran a proposito: pas
 DEFAULT_AMBIGUOUS a CONFIRMED no cambia el valor pero si cambia lo que la spec afirma, y quien
 mida fidelidad tiene que poder distinguirlo.
 
+`clase` entra desde ADR-0018: decide que regla gana cuando dos aplican a la vez, o sea lo que el
+bot hace.
+
 Por regla entra TODO su texto, no solo los campos ejecutables. Un `titulo`, unas `notas` o un
 `literal` no los lee el motor, pero son lo que lee la persona que valida, y por tanto parte de lo
 que la spec afirma. Con `notas` fuera del hash, la correccion de riesgo de RN-020 se podia borrar
@@ -51,6 +54,17 @@ CAMPOS_PARAMETRO = (
     "opciones",
     "minimo",
     "maximo",
+    # Quien lee un parametro que ninguna regla nombra (F12). Entra en el hash por lo mismo que
+    # `notas` en una regla: es lo que la spec AFIRMA sobre ese valor -que F24 lo consumira, que
+    # es documental- y sin esto se podria cambiar de dueno sin mover `spec_version`.
+    "consumido_por",
+    # `descripcion` era el UNICO campo del registro fuera del hash, y es donde vive el significado
+    # de un enum: `lotaje_base.descripcion` es el unico sitio que dice que `distancia_completa`
+    # deja la perdida por debajo del riesgo y `hasta_stop_fraccion` la deja entera. Reescribir esa
+    # frase cambia el lote un 25 % sin mover `spec_version`. Lo encontro la auditoria de cierre de
+    # F12, que es el mismo argumento por el que `titulo`, `literal` y `notas` de una regla entraron
+    # el 2026-09-10.
+    "descripcion",
 )
 
 
@@ -107,6 +121,12 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
                     "cuando",
                     "entonces",
                     "parametros",
+                    "clase",
+                    "complementa",
+                    # `forma` es LO QUE EL MOTOR EJECUTA: si queda fuera, cambiar un predicado o un
+                    # argumento no moveria la version. Es el mismo fallo que P5 encontro con
+                    # `notas`, en el campo mas ejecutable de todos.
+                    "forma",
                     "cita",
                     "literal",
                     "notas",
@@ -122,11 +142,27 @@ def estructura_para_hash(repo: Path) -> dict[str, Any]:
         if not isinstance(t, dict):
             continue
         terminos.append(
-            {c: _canonico(t.get(c)) for c in ("termino", "definicion", "cita", "literal")}
+            # `alias` entra porque es lo que mapea las palabras del trader al concepto, y
+            # `visto_en` porque dice donde se vio; sin ellos se podian cambiar sin mover la version
+            {
+                c: _canonico(t.get(c))
+                for c in ("termino", "alias", "definicion", "cita", "literal", "visto_en")
+            }
         )
     terminos.sort(key=lambda t: str(t["termino"]))
 
-    return {"parametros": parametros, "reglas": reglas, "terminos": terminos}
+    # El vocabulario con el que se escriben las reglas entra tambien: cambiar los argumentos de un
+    # predicado, la base de un acumulador o quien produce un hecho cambia lo que el bot hace.
+    vocabulario = {
+        seccion: _canonico(spec.get(seccion) or {})
+        for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores")
+    }
+    return {
+        "parametros": parametros,
+        "reglas": reglas,
+        "terminos": terminos,
+        **vocabulario,
+    }
 
 
 def hash_de(repo: Path) -> str:

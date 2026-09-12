@@ -22,8 +22,23 @@ FICHERO_SPEC = "knowledge/spec/strategy_spec.yaml"
 FICHERO_GLOSARIO = "knowledge/spec/glossary.yaml"
 
 ESTADOS_REGLA = ("VIGENTE", "DESCARTADA")
-CAMPOS_REGLA = {"id", "titulo", "cuando", "entonces", "parametros", "cita", "literal", "estado"}
-CAMPOS_REGLA_OPCIONALES = {"notas", "decision"}
+# La precedencia entre reglas va por CLASE y no por orden del fichero (ADR-0018). El orden es
+# EDITORIAL -agrupado por tema, con comentarios, y RN-026/RN-027 viven bajo la cabecera "reglas
+# descartadas" siendo VIGENTES-, asi que tomarlo por semantica convertia un reagrupamiento
+# cosmetico en un cambio de comportamiento. De mas fuerte a mas debil.
+CLASES_REGLA = ("gate", "terminal", "disparador", "fallback")
+CAMPOS_REGLA = {
+    "id",
+    "titulo",
+    "cuando",
+    "entonces",
+    "parametros",
+    "cita",
+    "literal",
+    "clase",
+    "estado",
+}
+CAMPOS_REGLA_OPCIONALES = {"notas", "decision", "complementa", "forma"}
 CAMPOS_TERMINO = {"termino", "definicion", "cita", "literal"}
 CAMPOS_TERMINO_OPCIONALES = {"alias", "visto_en"}
 
@@ -42,6 +57,7 @@ _NUMEROS_EN_LETRAS = (
     "cero",
     "uno",
     "una",
+    "un",
     "dos",
     "tres",
     "cuatro",
@@ -85,9 +101,37 @@ _UNIDADES = (
     "veces",
     "minutos?",
     "por mil",
+    # Sustantivos de dominio, anadidos en la auditoria del 2026-09-10. El comentario de arriba
+    # declaraba que "se abre una operacion" y "los dos esquemas" eran espanol y no parametros;
+    # eran DOS CARDINALIDADES DE NEGOCIO viviendo fuera del registro, en RN-018 y RN-009. Ahora
+    # son `operaciones_simultaneas_max` y `zonas_control_max_por_esquema`.
+    "zonas?",
+    "esquemas?",
+    "operacion(?:es)?",
+    "cartuchos?",
 )
+# En LOS DOS ORDENES, y admitiendo hasta dos palabras en medio. La auditoria del 2026-09-10
+# encontro que esto solo casaba numero+unidad SEGUIDOS, asi que "las operaciones abiertas son
+# cero" pasaba -y esa frase la escribi yo, arreglando justamente este fallo- igual que "hay una
+# unica operacion abierta". Un valor de negocio no deja de serlo por el orden de las palabras.
+_NUM = "(?:" + "|".join(_NUMEROS_EN_LETRAS) + ")"
+_UNI = "(?:" + "|".join(_UNIDADES) + ")"
+_HUECO = r"(?:\s+\w+){0,2}"
+# La rama invertida admite UNA sola palabra en medio, no dos: con dos, "el lote calculado no es un
+# multiplo de instrumento_lote_paso" saltaba por "lote … no es un", que es espanol corriente.
+_HUECO_INV = r"(?:\s+\w+)?"
 _EN_LETRAS = re.compile(
-    r"\b(?:" + "|".join(_NUMEROS_EN_LETRAS) + r")\s+(?:" + "|".join(_UNIDADES) + r")\b",
+    r"\b(?:"
+    + _NUM
+    + _HUECO
+    + r"\s+"
+    + _UNI
+    + r"|"
+    + _UNI
+    + _HUECO_INV
+    + r"\s+(?:son|es|de)\s+"
+    + _NUM
+    + r")\b",
     re.IGNORECASE,
 )
 
@@ -115,10 +159,18 @@ class Regla:
     cita: str
     literal: str
     estado: str
+    clase: str = "disparador"
     notas: str | None = None
     # El ADR que sostiene lo que la regla decide POR SU CUENTA. Obligatorio cuando la regla opera
     # sobre parametros de entorno: ahi no hay trader al que citar, hay una decision nuestra.
     decision: str | None = None
+    # Otra regla a la que esta REFINA en vez de competir con ella: un invariante, o el mismo
+    # efecto dicho para otro caso. Sin este campo, dos reglas que se solapan a proposito son
+    # indistinguibles de dos que se pisan por accidente.
+    complementa: tuple[str, ...] = ()
+    # La forma ejecutable (F12, ADR-0019). `None` mientras la regla siga en prosa: el piloto son
+    # cuatro, y `spec status` dice cuantas faltan en vez de fingir que estan todas.
+    forma: Any | None = None
 
     @property
     def vigente(self) -> bool:
@@ -160,9 +212,18 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         doc = leer_yaml(ruta)
     except (OSError, YamlError) as exc:
         raise SpecError(f"{ruta.name}: {exc}") from exc
-    if not isinstance(doc, dict) or set(doc) != {"version_esquema", "reglas"}:
-        raise SpecError(f"{ruta.name}: se esperan 'version_esquema' y 'reglas'")
-    if doc["version_esquema"] != 1:
+    esperadas = {
+        "version_esquema",
+        "reglas",
+        "predicados",
+        "acciones",
+        "efectos",
+        "hechos",
+        "acumuladores",
+    }
+    if not isinstance(doc, dict) or not {"version_esquema", "reglas"} <= set(doc) <= esperadas:
+        raise SpecError(f"{ruta.name}: se esperan {sorted(esperadas)}")
+    if doc["version_esquema"] != 3:
         raise SpecError(f"{ruta.name}: version_esquema desconocida {doc['version_esquema']!r}")
     bruto = doc["reglas"]
     if not isinstance(bruto, list) or not bruto:
@@ -184,6 +245,9 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         estado = str(r["estado"])
         if estado not in ESTADOS_REGLA:
             raise SpecError(f"{rid}: estado {estado!r} no esta en {ESTADOS_REGLA}")
+        clase = str(r["clase"])
+        if clase not in CLASES_REGLA:
+            raise SpecError(f"{rid}: clase {clase!r} no esta en {CLASES_REGLA}")
         params = r["parametros"]
         if not isinstance(params, list) or not all(
             isinstance(p, str) and p.strip() for p in params
@@ -192,6 +256,9 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
         cita = str(r["cita"])
         if not _cita_valida(cita):
             raise SpecError(f"{rid}: cita {cita!r} no es un id de evidencia ni de feedback")
+        comp = r.get("complementa") or []
+        if not isinstance(comp, list) or not all(ids.es_id_de("regla", str(c)) for c in comp):
+            raise SpecError(f"{rid}: 'complementa' debe ser una lista de ids RN-NNN")
         decision = r.get("decision")
         if decision is not None and not re.fullmatch(r"ADR-\d{4}", str(decision), re.ASCII):
             raise SpecError(f"{rid}: decision {decision!r} no tiene formato ADR-NNNN")
@@ -213,8 +280,11 @@ def cargar_reglas(ruta: Path) -> list[Regla]:
                 cita=cita,
                 literal=_texto(r, "literal", rid),
                 estado=estado,
+                clase=clase,
                 notas=" ".join(str(r["notas"]).split()) if r.get("notas") else None,
                 decision=str(r["decision"]).strip() if r.get("decision") else None,
+                complementa=tuple(str(c).strip() for c in comp),
+                forma=r.get("forma"),
             )
         )
     return reglas
@@ -275,7 +345,10 @@ def literal_coincide(literal: str, texto_citado: str) -> bool:
 
 
 def comprobar_literales(
-    reglas: list[Regla], textos: dict[str, str], terminos: list[Termino] | None = None
+    reglas: list[Regla],
+    textos: dict[str, str],
+    terminos: list[Termino] | None = None,
+    vocabulario: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> list[str]:
     """Cada regla y cada termino dicen lo que dice su cita, o se nombra el problema.
 
@@ -293,12 +366,25 @@ def comprobar_literales(
     for r in reglas:
         citado = textos.get(r.cita)
         if citado is None:
-            continue  # que la cita exista lo comprueba `comprobar_contra`
+            # Que la cita exista lo comprueba `comprobar_contra`, asi que aqui saltarsela es
+            # correcto: si no existe, ya lo denuncia aquella.
+            continue
         if not literal_coincide(r.literal, citado):
             problemas.append(
                 f"{r.id}: su literal no aparece en {r.cita}; una regla no puede decir algo "
                 f"distinto de lo que cita"
             )
+    # El vocabulario de F12 tambien lleva `cita` y `literal` propios, y nadie los cruzaba: el
+    # comentario que habia aqui predijo exactamente eso -"el dia que algo con cita propia no pase
+    # por comprobar_contra, esta guardia se apagaria sin avisar"- y es lo que paso. Se podia poner
+    # cualquier frase en boca del trader dentro de un predicado (auditoria de cierre de F12).
+    for seccion in ("predicados", "acciones", "hechos", "acumuladores"):
+        for nombre, datos in sorted((vocabulario or {}).get(seccion, {}).items()):
+            if not isinstance(datos, dict) or not datos.get("cita") or not datos.get("literal"):
+                continue
+            citado_v = textos.get(str(datos["cita"]))
+            if citado_v is not None and not literal_coincide(str(datos["literal"]), citado_v):
+                problemas.append(f"{seccion} '{nombre}': su literal no aparece en {datos['cita']}")
     return problemas
 
 
@@ -307,8 +393,14 @@ def comprobar_contra(
     terminos: list[Termino],
     parametros: set[str],
     citas_conocidas: set[str],
+    vocabulario: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> list[str]:
-    """Que cada regla nombre parametros que existen y cite algo que existe."""
+    """Que cada regla nombre parametros que existen y cite algo que existe.
+
+    El vocabulario entra desde la auditoria de cierre de F12: predicados y acumuladores llevan
+    `cita` propia desde ADR-0019 y nadie comprobaba que existiera, asi que un `fb-...-deadbeef`
+    pasaba entero.
+    """
     problemas: list[str] = []
     for r in reglas:
         for p in r.parametros:
@@ -319,6 +411,11 @@ def comprobar_contra(
     for t in terminos:
         if t.cita not in citas_conocidas:
             problemas.append(f"glosario {t.termino!r}: cita {t.cita}, que no existe")
+    for seccion in ("predicados", "acciones", "hechos", "acumuladores"):
+        for nombre, datos in sorted((vocabulario or {}).get(seccion, {}).items()):
+            cita_v = datos.get("cita") if isinstance(datos, dict) else None
+            if cita_v not in (None, "") and str(cita_v) not in citas_conocidas:
+                problemas.append(f"{seccion} '{nombre}': cita {cita_v}, que no existe")
     return problemas
 
 
@@ -341,6 +438,11 @@ def comprobar_decisiones(
     """
     problemas: list[str] = []
     for r in reglas:
+        # Tambien las DESCARTADAS: una regla descartada sigue afirmando algo -por que se descarto-
+        # y su `decision` entra en el hash. Solo se le exige que el ADR exista, no que lo declare.
+        if r.decision is not None and r.decision not in ids_adr:
+            problemas.append(f"{r.id}: decision {r.decision}, que no existe")
+            continue
         if not r.vigente:
             continue
         de_entorno = sorted(p for p in r.parametros if fuentes.get(p) == "decision")
@@ -349,6 +451,497 @@ def comprobar_decisiones(
                 f"{r.id}: opera sobre {', '.join(de_entorno)}, que no los dijo el trader sino un "
                 f"ADR; una regla asi decide algo por su cuenta y tiene que declarar 'decision'"
             )
-        elif r.decision is not None and r.decision not in ids_adr:
-            problemas.append(f"{r.id}: decision {r.decision}, que no existe")
+    return problemas
+
+
+def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
+    """Que la precedencia no dependa del orden del fichero, y que no haya empates ciegos.
+
+    El orden de `strategy_spec.yaml` es EDITORIAL: esta agrupado por tema, con comentarios, y
+    RN-026 y RN-027 viven bajo la cabecera "reglas descartadas" siendo VIGENTES. Tomarlo por
+    semantica daba la respuesta equivocada en tres pares reales, encontrados el 2026-09-10:
+
+    - RN-006 (id 006) ganaba a RN-014 (014) y a RN-018 (018): con una operacion abierta el bot
+      reubicaba una orden limite en paralelo en vez de poner el break even.
+    - RN-019 (019) ganaba a RN-020 (020): se reentraba despues de tocar el tope diario.
+    - RN-022 es la clausula `else` y estaba ANTES de RN-026 y RN-027, que son reglas reales.
+
+    Por eso la precedencia va por `clase` (ADR-0018).
+
+    LO QUE ESTA FUNCION NO HACIA: cazar ninguno de esos tres pares. Decidir que dos reglas actuan
+    "sobre el mismo evento" exigia leer `cuando`, que entonces era prosa. Desde que las 24
+    vigentes tienen `forma`, ya no: se comparan los disparadores EJECUTABLES, y ahi aparecio un
+    par que llevaba dias escondido -RN-013 y RN-015, las dos `disparador`, con el `forma.cuando`
+    identico byte a byte y sin `complementa` entre ellas-.
+
+    Lo que si comprueba, que es poco pero es cierto: que haya exactamente un `fallback`; que dos
+    reglas de la misma clase no tengan exactamente los mismos parametros (un clon); y que los
+    parametros de una no sean un SUBCONJUNTO de los de otra de su clase, que es la forma en que
+    RN-017 se solapa con RN-016 y RN-013 con RN-011.
+    """
+    problemas: list[str] = []
+    vigentes = [r for r in reglas if r.vigente]
+
+    fallbacks = [r.id for r in vigentes if r.clase == "fallback"]
+    if len(fallbacks) > 1:
+        problemas.append(
+            f"hay {len(fallbacks)} reglas 'fallback' ({', '.join(fallbacks)}); la clausula else "
+            f"es una, o no se sabe cual cierra"
+        )
+
+    # Mismo disparador EJECUTABLE y misma clase: o una declara que complementa a la otra, o cual
+    # gana lo decide el orden del fichero, que es justo lo que ADR-0018 prohibe.
+    import json as _json_pr
+
+    por_disparo: dict[tuple[str, str], list[Regla]] = {}
+    for r in vigentes:
+        if not isinstance(r.forma, dict) or "cuando" not in r.forma:
+            continue
+        clave = (r.clase, _json_pr.dumps(r.forma["cuando"], sort_keys=True, ensure_ascii=False))
+        por_disparo.setdefault(clave, []).append(r)
+    for (clase, _cuando), grupo in sorted(por_disparo.items(), key=lambda x: x[0][0]):
+        if len(grupo) < 2:
+            continue
+        ids = sorted(x.id for x in grupo)
+        declarados = {c for x in grupo for c in (x.complementa or ())}
+        if not any(x.id in declarados for x in grupo):
+            problemas.append(
+                f"{' y '.join(ids)}: misma clase '{clase}' y el MISMO disparador ejecutable, sin "
+                f"que ninguna declare `complementa`; cual gana lo decidiria el orden del fichero"
+            )
+
+    # Dos reglas de la misma clase que actuan sobre el mismo parametro-disparador y declaran la
+    # misma accion: sin precondicion que las separe, cual gana lo decidiria el orden del fichero.
+    por_firma: dict[tuple[str, str], list[str]] = {}
+    for r in vigentes:
+        if not r.parametros:
+            continue
+        firma = (r.clase, " ".join(sorted(r.parametros)))
+        por_firma.setdefault(firma, []).append(r.id)
+    for (clase, params), rids in sorted(por_firma.items()):
+        if len(rids) > 1:
+            problemas.append(
+                f"{', '.join(sorted(rids))}: misma clase ('{clase}') y exactamente los mismos "
+                f"parametros ({params}); nada dice cual manda salvo el orden del fichero, que es "
+                f"editorial. Dale a una de las dos la precondicion que la distingue"
+            )
+
+    # Y el solapamiento por subconjunto, que es como se tocan de verdad las reglas hermanas.
+    conjuntos = {r.id: (r.clase, frozenset(r.parametros)) for r in vigentes if r.parametros}
+    for a, (clase_a, pa) in sorted(conjuntos.items()):
+        for b, (clase_b, pb) in sorted(conjuntos.items()):
+            if a >= b or clase_a != clase_b or pa == pb:
+                continue
+            if pa < pb or pb < pa:
+                menor, mayor = (a, b) if pa < pb else (b, a)
+                por_id = {r.id: r for r in vigentes}
+                if mayor in por_id[menor].complementa or menor in por_id[mayor].complementa:
+                    continue  # se solapan A PROPOSITO y esta declarado
+                problemas.append(
+                    f"{menor} y {mayor}: misma clase ('{clase_a}') y los parametros de {menor} son "
+                    f"un subconjunto de los de {mayor}; se solapan y nada dice cual manda. Si es "
+                    f"a proposito -un invariante, o el mismo efecto para otro caso- declaralo con "
+                    f"`complementa: [{mayor}]`"
+                )
+    return problemas
+
+
+def cargar_vocabulario(ruta: Path) -> dict[str, dict[str, Any]]:
+    """Predicados, hechos y acumuladores: el vocabulario con el que se escribe una regla.
+
+    Viven en el MISMO fichero que las reglas y no en uno aparte. Un cuarto fichero rompia el
+    contrato del hash por las dos vias -`cargar_manifiesto` exige `len(cubre) == 3`, ADR-0013 §5
+    dice "los TRES ficheros" y MASTER_PLAN H.2 lo repite-, asi que habria obligado a enmendar los
+    dos documentos a cambio de que alguien pudiera hashear tres de cuatro (ADR-0019).
+    """
+    try:
+        doc = leer_yaml(ruta)
+    except (OSError, YamlError) as exc:
+        raise SpecError(f"{ruta.name}: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise SpecError(f"{ruta.name}: no es un mapa")
+    salida: dict[str, dict[str, Any]] = {}
+    for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores"):
+        bruto = doc.get(seccion) or {}
+        if not isinstance(bruto, dict):
+            raise SpecError(f"{ruta.name}: '{seccion}' debe ser un mapa")
+        salida[seccion] = bruto
+    return salida
+
+
+def _invocaciones(nodo: Any) -> list[tuple[str, dict[str, Any]]]:
+    """Todas las llamadas a predicado que hay en un arbol `cuando`/`entonces`."""
+    fuera: list[tuple[str, dict[str, Any]]] = []
+    if isinstance(nodo, list):
+        for x in nodo:
+            fuera += _invocaciones(x)
+    elif isinstance(nodo, dict):
+        for clave, valor in nodo.items():
+            if clave == "pendiente_definicion":
+                continue
+            if clave in ("todos_de", "cualquiera_de", "ninguno_de", "cuando", "entonces", "hace"):
+                fuera += _invocaciones(valor)
+            elif clave in ("permite", "prohibe"):
+                continue  # los mira `_efectos_invocados`: su contenido son nombres, no llamadas
+            elif clave in _ESTRUCTURALES:
+                continue  # `hecho`, `liga`, `distinta_de`...: son campos del nodo, no llamadas
+            else:
+                # Cualquier otra clave es una invocacion, LLEVE O NO un mapa de argumentos. Se
+                # exigia `isinstance(valor, dict)`, asi que `{predicado_que_no_existe: "loquesea"}`
+                # pasaba entero, sin vocabulario y sin argumentos que comprobar (F12, auditoria).
+                fuera.append((str(clave), valor if isinstance(valor, dict) else {}))
+    return fuera
+
+
+def _efectos_invocados(nodo: Any) -> list[str]:
+    """Lo que una regla PERMITE o PROHIBE. No son acciones: son capacidades con nombre.
+
+    No se comprobaban contra nada -`_invocaciones` los descartaba porque su valor es una lista-,
+    asi que un `abrir_operacionn` con una ene de mas pasaba en once de las veinticuatro reglas
+    vigentes (F12, auditoria de cierre).
+    """
+    fuera: list[str] = []
+    if isinstance(nodo, list):
+        for x in nodo:
+            fuera += _efectos_invocados(x)
+    elif isinstance(nodo, dict):
+        for clave, valor in nodo.items():
+            if clave in ("permite", "prohibe"):
+                fuera += [str(v) for v in valor] if isinstance(valor, list) else [str(valor)]
+            else:
+                fuera += _efectos_invocados(valor)
+    return fuera
+
+
+# Argumentos que NO nombran un parametro: ligaduras, referencias y sujetos de geometria.
+_ESTRUCTURALES = frozenset(
+    {
+        "liga",
+        "distinta_de",
+        "posterior_a",
+        "que",
+        "contra",
+        "a",
+        "de",
+        "acumulador",
+        "cual",
+        "por",
+        "resultado",
+        "hecho",
+        "a_la_baja",
+    }
+)
+# Y los que SI: su valor tiene que ser el nombre de un parametro del registro. Cualquier otra cosa
+# seria un valor de negocio escondido en un campo ejecutable, que es el fallo que hundio la D1
+# original -el `cuerpo` horneado en el nombre de un predicado-.
+_ARGS_DE_VALOR = frozenset(
+    {
+        "tope",
+        "cadencia",
+        "hora",
+        "huso",
+        "inicio",
+        "fin",
+        "dias",
+        "nivel",
+        "donde",
+        "segun",
+        "si",
+        "cuando",
+        "multiplo",
+        "sobre",
+        "extension",
+        "parciales",
+        "riesgo",
+        "base",
+        "fraccion",
+        "paso",
+        "minimo",
+        "contrato",
+        "cuenta_como",
+        "noticias",
+        "spread",
+        "stop",
+    }
+)
+
+
+def comprobar_consumo(
+    reglas: list[Regla],
+    consumidores: Mapping[str, tuple[str, ...] | None],
+    ids_validos: Mapping[str, str],
+    con_valor: set[str] | None = None,
+) -> list[str]:
+    """Todo parametro CON VALOR tiene un lector, y el lector existe.
+
+    Un valor que ninguna regla nombra y que nadie declara leer es un valor que nadie vigila: se
+    queda viejo sin que ninguna guardia lo note, porque las guardias miran las reglas. F11 dejo
+    nueve asi -la ficha del instrumento, el reloj del broker, las cuentas, el modelo de llenado-,
+    y no se arregla inventandoles una regla: eso seria hacer pasar por operativa del trader lo que
+    decide el plan (ADR-0016). Se arregla declarando quien los lee: una regla vigente que los
+    nombre, o la funcionalidad posterior que los consumira. Lo que se comprueba es que esa
+    funcionalidad EXISTA en el plan, no que su fila de H.2 prometa consumirla: eso lo sostiene
+    la revision humana, y conviene no creer que lo hace la maquina.
+
+    `consumidores` es nombre -> `consumido_por` del registro, de TODOS los parametros: los ids se
+    validan siempre, tambien en los que no tienen valor, que si no se quedaban sin comprobar.
+    `con_valor` son los que ademas exigen tener un lector. `ids_validos` es id -> que es ("regla
+    vigente", "regla", "funcionalidad", "ADR").
+    """
+    problemas: list[str] = []
+    nombrados = {p for r in reglas if r.vigente for p in r.parametros}
+    for nombre, declarados in sorted(consumidores.items()):
+        # Los ids se validan SIEMPRE, tambien si una regla ya lo nombra: de lo contrario un
+        # `consumido_por: [F99, RN-777]` colaba entero en cuanto cualquier regla mencionara el
+        # parametro (F12, auditoria de cierre).
+        for c in declarados or ():
+            que_es = ids_validos.get(c)
+            if que_es is None:
+                problemas.append(f"{nombre}: declara `consumido_por: {c}`, que no existe")
+            elif que_es == "regla":
+                problemas.append(
+                    f"{nombre}: declara `consumido_por: {c}`, que es una regla DESCARTADA; una "
+                    f"regla que no esta vigente no lee nada"
+                )
+        if nombre in nombrados or (con_valor is not None and nombre not in con_valor):
+            continue
+        if not declarados:
+            problemas.append(
+                f"{nombre}: tiene valor y NINGUNA regla vigente lo nombra; declara "
+                f"`consumido_por` con la regla, la funcionalidad (MASTER_PLAN H.2) o el ADR "
+                f"que lo lee"
+            )
+            continue
+        for c in declarados:
+            if ids_validos.get(c) == "regla vigente":
+                # Declarar una regla que no lo nombra es peor que no declarar nada: pone un id
+                # donde deberia haber un hueco, y la guardia de arriba ya no vuelve a mirar.
+                problemas.append(
+                    f"{nombre}: declara `consumido_por: {c}`, que es una regla vigente y NO lo "
+                    f"nombra; o la regla lo nombra, o el consumidor es otro"
+                )
+    return problemas
+
+
+def comprobar_citas_revocadas(
+    reglas: list[Regla],
+    terminos: list[Termino],
+    vocabulario: Mapping[str, Mapping[str, Any]],
+    revocados: Mapping[str, str],
+) -> list[str]:
+    """Nadie cita un registro de feedback que otro registro ya corrigio.
+
+    Es la guardia que mas veces ha nacido corta. Nacio en F11 mirando solo `parametros.yaml`
+    -P13: `cartuchos_reinicio` cito durante toda la funcionalidad un registro revocado por llevar
+    una parafrasis del consultor en el campo del literal-. Se amplio a reglas y glosario cuando
+    RN-013 acabo citando uno en el commit que arreglaba lo anterior. Y el 2026-09-11 se vio que el
+    vocabulario que estreno F12 -predicados y acciones, que tambien llevan `cita` propia- seguia
+    fuera: al cerrar el acuerdo del lotaje, `no_es_multiplo_de` se quedo citando el registro que
+    ese mismo acuerdo acababa de revocar, y nada lo dijo.
+
+    `revocados` es id revocado -> id que lo supersede.
+    """
+    citados: list[tuple[str, str]] = [(r.id, r.cita) for r in reglas]
+    citados += [(f"glosario {x.termino!r}", x.cita) for x in terminos]
+    for seccion in ("predicados", "acciones", "hechos", "acumuladores"):
+        for nombre, datos in sorted((vocabulario.get(seccion) or {}).items()):
+            if isinstance(datos, dict) and datos.get("cita"):
+                citados.append((f"{seccion} {nombre!r}", str(datos["cita"])))
+    return [
+        f"{doc_id}: cita {cita_id}, que esta revocado por {revocados[cita_id]}"
+        for doc_id, cita_id in citados
+        if cita_id in revocados
+    ]
+
+
+def _hechos_nombrados(nodo: object) -> list[str]:
+    """Los hechos que una rama de la forma nombra, por token exacto.
+
+    Se hacia con `nombre in json.dumps(rama)`, y una subcadena bastaba: `sesgo` casaba dentro de
+    `sesgo_h4_criterio_ruptura`, asi que `hechos.sesgo` podia declarar que RN-003 lo consume -no
+    lo consume, lo produce- y la guardia lo bendecia. Peor: corregir la declaracion la hacia
+    fallar, o sea que obligaba a mantener la mentira.
+    """
+    fuera: list[str] = []
+    if isinstance(nodo, dict):
+        for clave, valor in nodo.items():
+            if clave == "hecho" and isinstance(valor, str):
+                fuera.append(valor)
+            else:
+                fuera += _hechos_nombrados(valor)
+    elif isinstance(nodo, list):
+        for v in nodo:
+            fuera += _hechos_nombrados(v)
+    return fuera
+
+
+def comprobar_forma(
+    reglas: list[Regla],
+    vocabulario: dict[str, dict[str, Any]],
+    parametros: set[str],
+    ambiguedades_abiertas: set[str] | None = None,
+) -> list[str]:
+    """Que la forma ejecutable use vocabulario que existe y no esconda valores de negocio.
+
+    Es lo que F12 aporta y la prosa no permitia: un `cuando` en español se puede leer de dos
+    maneras y nadie lo nota; una invocacion a un predicado que no existe, o un argumento de valor
+    que no es el nombre de un parametro, se ven a la primera y se nombran por su id.
+    """
+    problemas: list[str] = []
+    hechos = vocabulario["hechos"]
+    acumuladores = vocabulario["acumuladores"]
+
+    for r in reglas:
+        if not isinstance(r.forma, dict):
+            if r.vigente:
+                problemas.append(
+                    f"{r.id}: es VIGENTE y no tiene forma ejecutable; el motor no puede "
+                    f"implementarla sin interpretar su prosa"
+                )
+            continue
+        # Una regla puede estar VIGENTE -la prohibicion sigue en pie- y aun asi no ser ejecutable
+        # porque el corpus no define su condicion. Se declara, no se tapa: RN-008 depende de que
+        # es un breaker, y eso no esta en ningun sitio (A-21).
+        pendiente = r.forma.get("pendiente_definicion")
+        if pendiente is not None:
+            # No basta el FORMATO: `A-999` pasaba, y ademas eximia a la regla de tener forma
+            # ejecutable. Es el mismo defecto que `ambiguedad_id` tenia en el registro y que ya
+            # se arreglo alli (F12, auditoria de cierre).
+            if not re.fullmatch(r"A-\d+", str(pendiente), re.ASCII):
+                problemas.append(f"{r.id}: pendiente_definicion {pendiente!r} no tiene formato A-N")
+            elif ambiguedades_abiertas is not None and str(pendiente) not in ambiguedades_abiertas:
+                problemas.append(
+                    f"{r.id}: pendiente_definicion {pendiente}, que no es una ambiguedad ABIERTA; "
+                    f"o la ambiguedad existe y sigue abierta, o la regla ya se puede ejecutar"
+                )
+        # Lo que se permite o se prohibe, contra su catalogo.
+        for efecto in _efectos_invocados(r.forma):
+            if efecto not in vocabulario.get("efectos", {}):
+                problemas.append(f"{r.id}: permite o prohibe '{efecto}', que no esta en `efectos`")
+        # Un predicado se EVALUA y una accion se EJECUTA: cada rama tiene su vocabulario. Meterlos
+        # en el mismo saco fue el hueco que la guardia encontro al escribir las veinte restantes.
+        for rama, catalogo, etiqueta in (
+            (r.forma.get("cuando"), vocabulario["predicados"], "predicados"),
+            (r.forma.get("entonces"), vocabulario["acciones"], "acciones"),
+        ):
+            for nombre, args in _invocaciones(rama):
+                if nombre == "hecho":
+                    continue
+                if nombre in catalogo:
+                    declarados = set(catalogo[nombre].get("argumentos") or [])
+                    sobran = sorted(set(args) - declarados - _ESTRUCTURALES)
+                    if sobran:
+                        problemas.append(
+                            f"{r.id}: llama a '{nombre}' con argumentos que no declara: {sobran}"
+                        )
+                else:
+                    problemas.append(f"{r.id}: invoca '{nombre}', que no esta en `{etiqueta}`")
+                for clave, valor in args.items():
+                    if clave in _ESTRUCTURALES or not isinstance(valor, str):
+                        continue
+                    if (clave in _ARGS_DE_VALOR or clave.endswith("criterio")) and (
+                        valor not in parametros
+                    ):
+                        problemas.append(
+                            f"{r.id}: '{nombre}.{clave}' vale {valor!r}, que no es un parametro "
+                            f"del registro; un argumento de valor lleva el NOMBRE, no el valor"
+                        )
+
+    # Lo que la forma USA tiene que estar DECLARADO en `parametros`. Si no, las guardias que leen
+    # esa lista se vuelven ciegas justo donde importa: `comprobar_decisiones` no ve que la regla
+    # opera sobre un parametro de entorno, y la comprobacion de UNKNOWN no ve que una regla
+    # VIGENTE ejecuta un valor que sigue en revision. Paso con las cuatro del piloto: RN-014
+    # ejecutaba `break_even_criterio_ruptura` -DEFAULT_AMBIGUOUS bajo A-13- sin declararlo.
+    for r in reglas:
+        if not isinstance(r.forma, dict):
+            continue
+        # Por el ARBOL, no por el JSON serializado. Buscar el nombre entrecomillado dentro del
+        # volcado daba falsos positivos -una CLAVE que se llama como un parametro (`parciales`),
+        # o una variable ligada- y un falso negativo que la propia spec ya usa: la notacion
+        # punteada `OP.stop_fraccion_caja` no casaba (F12, auditoria de cierre).
+        usados: set[str] = set()
+        for _nombre_inv, args in _invocaciones(r.forma):
+            for clave, valor in args.items():
+                if clave in _ESTRUCTURALES or not isinstance(valor, str):
+                    continue
+                raiz = valor.split(".")[-1]
+                if raiz in parametros:
+                    usados.add(raiz)
+        sin_declarar = sorted(usados - set(r.parametros))
+        if sin_declarar:
+            problemas.append(
+                f"{r.id}: su forma usa {', '.join(sin_declarar)} y no lo declara en `parametros`; "
+                f"las guardias que leen esa lista no lo verian"
+            )
+
+    # Un hecho que nadie consume es una regla que no sirve; uno que nadie produce, una inalcanzable.
+    # Y NO basta con mirar la declaracion: hay que compararla con lo que las formas hacen de verdad.
+    # Comprobando solo la declaracion, `operativa_detenida` decia "consume: [RN-001]" mientras
+    # RN-001 no lo leia, asi que el tope del 4,5 % prohibia abrir en el tick del evento y nada
+    # impedia abrir en el siguiente; y `operacion_abierta` decia producirse en RN-011 sin que nadie
+    # lo produjera, dejando el cierre forzoso y el break even INALCANZABLES. Los tres pasaban.
+    #
+    # Dos correcciones de la auditoria de cierre de F12 (2026-09-11):
+    #  - se miraban SOLO los hechos declarados, asi que `liquidez_tomada` (RN-004) y `estructura_m1`
+    #    (RN-007) se fijaban sin estar declarados y sin que nadie los leyera. El primero es la
+    #    precondicion de los dos esquemas de entrada: un motor que implementara `forma` habria
+    #    entrado sin esperar a que la liquidez de M15 se tomara.
+    #  - la comparacion casaba por SUBCADENA: `hechos.sesgo` declaraba `consume: [RN-003, RN-005]`
+    #    y colaba porque el `cuando` de RN-003 contiene `sesgo_h4_criterio_ruptura`. La guardia
+    #    obligaba a mantener la declaracion falsa. Ahora casa el token exacto.
+    ids_regla = {r.id for r in reglas}
+    hechos_usados: set[str] = set()
+    reales: dict[str, dict[str, list[str]]] = {}
+    for r in reglas:
+        if not isinstance(r.forma, dict):
+            continue
+        for papel, rama in (("consume", "cuando"), ("produce", "entonces")):
+            for nombre in _hechos_nombrados(r.forma.get(rama)):
+                hechos_usados.add(nombre)
+                reales.setdefault(nombre, {"produce": [], "consume": []})[papel].append(r.id)
+
+    # Un predicado tambien consume: `se_da_esquema` no se evalua sin `liquidez_tomada`. Lo declara
+    # con `depende_de` en vez de en su prosa, que es donde vivia y donde nadie podia comprobarlo.
+    for nombre_pred, datos in sorted(vocabulario["predicados"].items()):
+        if not isinstance(datos, dict):
+            continue
+        for nombre in datos.get("depende_de") or []:
+            hechos_usados.add(str(nombre))
+            reales.setdefault(str(nombre), {"produce": [], "consume": []})["consume"].append(
+                f"predicado {nombre_pred}"
+            )
+
+    for nombre in sorted(hechos_usados - set(hechos)):
+        problemas.append(
+            f"hecho '{nombre}': las formas lo usan y no esta declarado en `hechos`; nadie puede "
+            f"comprobar quien lo produce ni quien lo consume"
+        )
+
+    for nombre, h in sorted(hechos.items()):
+        real_de = reales.get(nombre, {"produce": [], "consume": []})
+        for papel in ("produce", "consume"):
+            declarado = sorted(h.get(papel) or [])
+            for rid in declarado:
+                if rid not in ids_regla and not rid.startswith("predicado "):
+                    problemas.append(f"hecho '{nombre}': {papel} {rid}, que no existe")
+            real = sorted(real_de[papel])
+            if not real:
+                motivo = (
+                    "nadie lo establece y quien lo lee es inalcanzable"
+                    if papel == "produce"
+                    else "quien lo establece no frena nada"
+                )
+                problemas.append(f"hecho '{nombre}': NINGUNA regla lo {papel} de verdad; {motivo}")
+            elif real != declarado:
+                problemas.append(
+                    f"hecho '{nombre}': declara {papel}={declarado} y en las formas es {real}"
+                )
+
+    for nombre, a in sorted(acumuladores.items()):
+        for campo in ("base", "reinicia_con"):
+            valor = a.get(campo)
+            if valor not in parametros:
+                problemas.append(
+                    f"acumulador '{nombre}': '{campo}' vale {valor!r}, que no es un parametro"
+                )
     return problemas

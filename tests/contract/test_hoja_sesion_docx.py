@@ -157,3 +157,62 @@ def test_toda_pregunta_declarada_tiene_objetivo_registrable(sesion: str) -> None
     roto = {**ctx, "precondicion": {**ctx["precondicion"], "objetivo": "parametro no_existe"}}
     with pytest.raises(SystemExit, match="no esta en el registro"):
         generador.comprobar_objetivos(roto, sesion, REPO)
+
+
+def test_los_ids_r_nn_no_son_posicionales_y_cuadran_con_el_anexo() -> None:
+    """`R-01`..`R-14` identifican confirmaciones que un informe cita una a una.
+
+    Se numeraban con `enumerate` sobre `contexto_preguntas.yaml`: insertar o reordenar una entrada
+    renumeraba las catorce en silencio y dejaba el anexo de `SESION-01-2026-09-09.md` apuntando a
+    otra evidencia, sin que fallara nada. Desde F12 el id es explicito, y esto lo ata al informe.
+    """
+    ctx = cargar_yaml(
+        (REPO / DIRECTORIO_KIT / "contexto_preguntas.yaml").read_text(encoding="utf-8")
+    )
+    entradas = ctx.get("reafirmaciones") or []
+    por_id = {str(e["id"]): str(e["evidencia"]) for e in entradas}
+    assert len(por_id) == len(entradas), "hay ids repetidos"
+    assert all(re.fullmatch(r"R-\d{2}", i) for i in por_id), sorted(por_id)
+
+    informe = (REPO / "docs" / "validation" / "SESION-01-2026-09-09.md").read_text(encoding="utf-8")
+    anexo = dict(re.findall(r"^\| (R-\d{2}) \| `(ev-[\w-]+)`", informe, re.M))
+    assert anexo, "el anexo R-NN del informe de la sesion 1 no se encuentra"
+    assert anexo == por_id, (
+        f"el anexo y el kit no dicen lo mismo: solo en el anexo {sorted(set(anexo) - set(por_id))},"
+        f" solo en el kit {sorted(set(por_id) - set(anexo))}, "
+        f"distintos {[k for k in anexo if k in por_id and anexo[k] != por_id[k]]}"
+    )
+
+
+def test_el_id_r_nn_viaja_con_su_evidencia_aunque_cambie_el_orden() -> None:
+    """El arreglo de F12 solo se nota si el orden del fichero deja de mandar.
+
+    Los ids explicitos coinciden HOY con el orden posicional (R-01..R-14), asi que un test que
+    solo lea el YAML pasaria igual con el `enumerate` de antes. Esto baraja las entradas y exige
+    que cada R-NN salga pegado a la afirmacion de SU evidencia.
+    """
+    generador = _generador()
+    ctx = cargar_yaml(
+        (REPO / DIRECTORIO_KIT / "contexto_preguntas.yaml").read_text(encoding="utf-8")
+    )
+    entradas = list(ctx["reafirmaciones"])
+    items = {
+        e["evidencia"]: type(
+            "It", (), {"afirmacion": f"AFIRMACION-DE-{e['id']}", "video_id": "v1", "t0": "0:00:01"}
+        )()
+        for e in entradas
+    }
+    barajadas = list(reversed(entradas))
+    xml = generador.bloque_reafirmaciones(barajadas, items)
+    for e in entradas:
+        i_id = xml.index(str(e["id"]))
+        i_af = xml.index(f"AFIRMACION-DE-{e['id']}")
+        assert 0 < i_af - i_id < 400, f"{e['id']} no sale junto a su afirmacion"
+
+    # Y un id ausente o repetido no se genera en silencio
+    with pytest.raises(SystemExit):
+        generador.bloque_reafirmaciones(
+            [{k: v for k, v in entradas[0].items() if k != "id"}], items
+        )
+    with pytest.raises(SystemExit):
+        generador.bloque_reafirmaciones([entradas[0], entradas[0]], items)

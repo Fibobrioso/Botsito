@@ -25,6 +25,9 @@ Paquete Python: `botsito` (`src/botsito`). CLI: `uv run botsito --help`
 (`state check`, `knowledge validate`, `config validate`, `corpus inventory|check`,
 `evidence new|contradictions`, `feedback new|trace|pending`, `data download|check|aggregate`,
 `corpus transcribe|glossary apply|transcript check|transcript show`,
-`corpus frames extract|check|show` (fotogramas a 1 fps sin perdida, ADR-0008); la transcripcion con
+`corpus frames extract|check|show` (fotogramas a 1 fps sin perdida, ADR-0008),
+`kb find|at` (busqueda con fuente, F08), `kit build|check|kappa` (paquetes de sesion, F10),
+`feedback apply` y `spec status|manifest` (F11), `spec check` (la capa semantica de la spec, F12);
+la transcripcion con
 faster-whisper necesita `uv sync --locked --group dev --group asr`, ffmpeg y la GPU local: ver
 ADR-0007).

@@ -244,8 +244,18 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # correlativas desde A-1, sin huecos: la sesion 1 añadio A-13..A-17 y seguira creciendo
     assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, len(ambs) + 1)]
     assert len(ambs) >= 17
-    assert sum(1 for a in ambs if a.bloqueante) == 3  # las tres que se llevaron a la sesion 1
-    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)}
+    # `bloqueante` marca lo que hay que llevar SI o SI a una sesion (MASTER_PLAN G). Las tres de
+    # la sesion 1 siguen marcadas y estan RESUELTAS; desde el 2026-09-10 hay una viva para la
+    # sesion 2: A-21, que el corpus nunca define que es un breaker y sin eso RN-008 no se ejecuta.
+    bloqueantes = [a for a in ambs if a.bloqueante]
+    assert len(bloqueantes) >= 3
+    abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
+    assert abiertas == {"A-21"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
+    # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
+    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
+        "A-20"
+    }
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (

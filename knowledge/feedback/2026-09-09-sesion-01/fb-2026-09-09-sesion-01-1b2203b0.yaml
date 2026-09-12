@@ -1,0 +1,18 @@
+id: fb-2026-09-09-sesion-01-1b2203b0
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: zonas_control_max_por_esquema
+accion: RESOLVE_UNKNOWN
+respuesta_literal: solo 1 zona control bro. si hay 2 se descarta
+registrado_por: Aleks · mensaje de WhatsApp del trader, captura entregada el 2026-09-11 (el mensaje marca
+  02:08); son SUS palabras, no una sintesis
+valor_resultante: '1'
+valor_canonico: '1'
+notas: 'cierra A-20, que preguntaba si una segunda zona de control invalida SIEMPRE el esquema o es solo
+  una tendencia. El valor 1 no cambia -era el default nuestro- pero deja de ser un default: lo dice el
+  trader, y ademas ratifica el DESCARTE, no solo el conteo. La evidencia que lo sostenia (ev-v4-001909-54ac2edd)
+  decia por lo general solo buscamos uno, que no es una prohibicion dura; esta frase si lo es. Captura
+  en corpus: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-0208-zonas-de-control.png'

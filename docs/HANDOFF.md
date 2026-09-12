@@ -5,13 +5,12 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-08, fase 1 cerrada en main; F10 construida, espera validacion)
-- `main`: merge de F08 `5d8cf3c` con tag `stable/F08` (fase 1 F03-F08 cerrada); `docs(state)`
-  `645aac6`; CI verde. Protegida en GitHub.
+## Estado (2026-09-12, fase 1 cerrada en main; F11 validada y cerrada; F12 CERRADA, esperando validacion)
+- `main`: merge de F11 `b62f4aa` con tag `stable/F11`; `docs(state)` `3597b3d`. La fase 1 (F03-F08)
+  se cerro antes, en `5d8cf3c` con tag `stable/F08`. Protegida en GitHub.
 - Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
   de F07. Ramas fusionadas borradas.
-- Rama actual: `feature/F10-elicitation-kit` (informe `docs/validation/F10-elicitation-kit.md`,
-  WAITING_FOR_USER_VALIDATION; cierre con tag `stable/F10`). HECHO: ADR-0011;
+- F10 elicitation-kit CERRADA el 2026-09-08 (tag `stable/F10`). Lo que dejo: ADR-0011;
   `knowledge/spec/ambiguedades.yaml` (A-1..A-12 legibles por maquina); registro con 24
   parametros de estrategia en UNKNOWN; `knowledge/cases/kit/{config,mapa_parametros,vistos}.yaml`
   (cifras de negocio como datos; enero, julio y agosto VISTOS por el trader); paquete `cases`
@@ -19,7 +18,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   2026 con hash y limites H4 por anclaje, particiones por hash con seed, kappa desde los
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
-  `knowledge/cases/kit/2026-09-15-sesion-01/` (fecha provisional).
+  `knowledge/cases/kit/2026-09-09-sesion-01/` (nacio con la fecha provisional 2026-09-15 y se movio al celebrarse).
 - SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 107 registros de
   feedback; A-1..A-12 RESUELTAS). Informe: `docs/validation/SESION-01-2026-09-09.md`, que es el
   esquema completo de la estrategia con la cita de cada decision. Cerrada en main con el tag
@@ -28,8 +27,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que lo
   que se explica "no va para la operativa", y 1:53:30-1:57:31, donde suena un video ajeno mientras
   el trader se ausenta.
-- F11 strategy-spec-schema CONSTRUIDA (esta rama, `feature/F11-strategy-spec-schema`), cierre con
-  tag `stable/F11`. Lo que existe ahora:
+- F11 strategy-spec-schema VALIDADA y cerrada en main el 2026-09-10 (tag `stable/F11`). Lo que dejo:
   - `botsito feedback apply --sesion <s> [--check]`: lleva los valores del feedback al registro.
     NO interpreta: si un valor no encaja en el tipo, falla y dice cual. La re-expresion se hace
     fuera, con un registro que supersede y lleva `valor_canonico` (campo opcional nuevo).
@@ -37,12 +35,76 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     ambiguedades ABIERTAS).
   - `botsito spec manifest [--escribir]`: hash de la spec sobre los TRES ficheros. Si el hash
     cambia y `spec_version` no, `knowledge validate` falla.
-  - `knowledge/spec/`: 52 parametros (46 con valor, 6 UNKNOWN a proposito), 27 reglas (24
-    vigentes, 3 descartadas con su cita), 8 terminos de glosario, manifiesto 3.0.0.
+  - `knowledge/spec/`: el recuento vivo lo da `botsito spec status` y NO se copia aqui: esa copia
+    se quedo vieja tres veces en dos dias (P8 y P11 de la auditoria). Un test lo vigila.
   - ADR-0012 a ADR-0017. La enmienda a ADR-0005 del 2026-09-09 queda REVOCADA por ADR-0017:
     `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
     siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
     La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
+- F12 spec-semantic-validator CERRADA y esperando validacion (rama `feature/F12-spec-semantic-validator`). Lo
+  que ya existe: ADR-0018 (la precedencia va por CLASE), ADR-0019 (la forma ejecutable: predicados
+  con argumentos, ligadura, y `predicados`/`acciones`/`hechos`/`acumuladores` DENTRO de
+  strategy_spec.yaml) y ADR-0020 (la base del lotaje). Las 24 reglas vigentes tienen forma
+  ejecutable; `spec status` dice cuantas siguen en prosa (hoy, ninguna). CERRADA y a la espera de
+  validacion desde el 2026-09-12: los parametros sin lector declaran `consumido_por`, existe
+  `botsito spec check`, los `R-NN` son explicitos, la auditoria de cierre (dos agentes) esta
+  aplicada y el informe es `docs/validation/F12-spec-semantic-validator.md`.
+- EL LOTAJE CAMBIO DE BASE el 2026-09-11 (ADR-0020) y es lo mas caro de este tramo: el 0,5 % de
+  riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que `lotaje_base` vale
+  `hasta_stop_fraccion`, el lote es un 25 % mayor y el stop cuesta el riesgo entero. RN-012 dice
+  ahora lo contrario de lo que decia. Si alguien lee material anterior al 2026-09-11 -incluidos
+  los mensajes del trader sobre la rentabilidad de mayo- lo encontrara contado en CAJAS
+  COMPLETAS, que es la convencion vieja: esta anotado en ADR-0020, con la pregunta pendiente de
+  ratificar con el trader.
+- BACKTEST DE MAYO 2026 recibido el 2026-09-11 (junio NO). Esta en el corpus, fuera de git, en
+  `Material adicional de su operativa/Backtest mayo 2026/`. OJO: 13 de los 19 dias de mayo son
+  holdout-1/2/3 segun `knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`, asi que no
+  puede usarse para elegir parametros; es entrada de F14 y F26.
+- Lecciones tecnicas (F12), y la mas cara es la primera:
+  - UNA GUARDIA NUEVA NO HEREDA NADA. El vocabulario de ADR-0019 (predicados, acciones, efectos,
+    hechos, acumuladores) lleva `cita` y `literal` propios desde el dia uno, y durante toda la
+    funcionalidad NADIE los comprobaba: se podia poner cualquier frase en boca del trader dentro
+    de un predicado, o citar un `fb-...-deadbeef`. El comentario que habia en `comprobar_literales`
+    lo predijo con esas palabras y aun asi paso. Al anadir un sitio con cita, amplia TODAS las
+    guardias en el mismo commit: `comprobar_contra`, `comprobar_literales` y
+    `comprobar_citas_revocadas`.
+  - Casar por SUBCADENA en un JSON serializado es una trampa que bendice mentiras: `hechos.sesgo`
+    declaraba que RN-003 lo consume -lo produce- y colaba porque su `cuando` contiene
+    `sesgo_h4_criterio_ruptura`. Peor: corregir la declaracion hacia FALLAR la guardia. Se casa el
+    token exacto, o se recorre el arbol.
+  - Un hecho que se fija y nadie declara es invisible: `liquidez_tomada` (RN-004) y `estructura_m1`
+    (RN-007) se fijaban sin estar en `hechos:`, asi que la guardia -que iteraba los declarados- no
+    los veia. El primero es la precondicion de los dos esquemas de entrada: un motor que leyera
+    `forma` habria entrado sin esperar a que se tomara la liquidez de M15.
+  - `permite`/`prohibe` llevan LISTA, no mapa, asi que el recorrido de invocaciones los saltaba y
+    sus objetivos no se comprobaban contra nada en once de las veinticuatro reglas vigentes.
+  - Las cifras de un informe se verifican con la calculadora antes de escribirlas: 21, 27,6 y 28,2
+    salen de 18x3-33x1, 18x3-33x0,8 y 18x3,4-33x1, y eso es lo que dice en que convencion cuenta
+    el trader.
+  - Cambiar un valor de negocio no es cambiar un valor: al superseder el registro del lotaje,
+    dos citas quedaron apuntando a un registro revocado (RN-027 y el predicado
+    `no_es_multiplo_de`) y dos textos quedaron afirmando algo falso (la nota de RN-015 y la
+    descripcion de `base_calculo_objetivo` decian que el objetivo y el lote comparten distancia).
+    Lo destaparon las guardias, no la lectura.
+  - La guardia de citas revocadas ha nacido corta CUATRO veces: parametros (P13), luego reglas y
+    glosario (RN-013), luego los predicados y acciones de F12, y en la auditoria de cierre se vio
+    que seguian fuera los ACUMULADORES, que tambien llevan cita. Al anadir un sitio con `cita`
+    propia, amplia `comprobar_citas_revocadas` en el mismo commit.
+  - Las reglas no admiten cifras NI en un "nivel 0": `comprobar_contra` salta con el digito
+    suelto. Se escribe "la entrada" y "el extremo de la caja".
+  - `feedback apply` daba por NO-OP que el trader ratificara un default nuestro: comparaba la
+    fuente anterior solo si era de tipo `feedback`, y un DEFAULT_AMBIGUOUS cita evidencia por
+    definicion. Arreglado el 2026-09-11 con A-20. Si alguien anade un tipo de fuente, que mire
+    esto.
+  - Al cerrar una ambiguedad hay que tocar CINCO sitios y solo dos los vigila una guardia:
+    el registro (via `apply`), `ambiguedades.yaml` (estado RESUELTA), la regla que la citaba
+    -que probablemente citaba la evidencia DEBIL que abrio la duda-, la tabla de PROJECT_STATE
+    y el recuento de `knowledge/spec/README.md`. Mas el test de `test_kit` que congela que
+    ambiguedades estan RESUELTAS.
+  - Una respuesta del trader POR ESCRITO fuera de sesion se registra con su captura en
+    `Material adicional de su operativa/Mensajes del trader/`: asi el `respuesta_literal` son
+    sus palabras y no una sintesis del consultor, que es la diferencia que A-11 y el lotaje
+    tuvieron que declarar en `registrado_por`.
 - Lecciones tecnicas (F11):
   - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
     patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo
@@ -108,7 +170,9 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 3. Auditoria de cierre con dos agentes en paralelo (codigo/tests y docs/proceso) -> aplicar
    correcciones -> informe WAITING_FOR_USER_VALIDATION -> decirle al usuario explicitamente que
    pasos seguir y que debe decidir.
-4. El usuario valida -> ritual: `BOTSITO_ALLOW_MAIN=1 git merge --no-ff` -> `git tag -a stable/F##`
+4. El usuario valida -> ritual, con `BOTSITO_ALLOW_MAIN=1` EXPORTADA durante toda la secuencia
+   (la exige el hook `pre-commit` en el commit `docs(state)`, NO el merge: `git merge --no-ff`
+   no dispara `pre-commit` y no hay `pre-merge-commit`): `git merge --no-ff` -> `git tag -a stable/F##`
    sobre el merge -> commit `docs(state)` que solo toca PROJECT_STATE.md -> `make check` -> push
    main + tag. (`state check` falla a proposito entre el merge y el docs(state).) El HANDOFF ya
    vino actualizado en la rama.
@@ -131,9 +195,10 @@ uv run botsito corpus frames show --video v3 --t 0:28:56 --n 3
 uv run botsito corpus frames extract --video v5    # idempotente
 uv run botsito kb find "break even" --top 10       # busqueda con fuente (F08)
 uv run botsito kb at --video v4 --t 0:44:56 --contexto
-uv run botsito kit build --sesion 2026-09-15-sesion-01 --seed 20260915   # paquete de sesion (F10)
-uv run botsito kit check --sesion 2026-09-15-sesion-01
-uv run botsito kit kappa --sesion-a 2026-09-15-sesion-01 --sesion-b 2026-09-22-sesion-02
+uv run botsito spec check                              # la capa semantica sola (F12); sale con 1
+uv run botsito kit build --sesion 2026-09-20-sesion-02 --seed 20260920   # paquete de sesion (F10)
+uv run botsito kit check --sesion 2026-09-09-sesion-01   # el paquete real de la sesion 1
+uv run botsito kit kappa --sesion-a 2026-09-09-sesion-01 --sesion-b 2026-09-20-sesion-02
 uv run --no-sync python scripts/hoja_sesion_docx.py   # hoja de respuestas en Word (raiz)
 ```
 

@@ -22,13 +22,35 @@ terminos:
     visto_en: v3 0:00:30
 
   - termino: breaker
+    alias: [BOS, bos]
     definicion: >-
-      uno de los dos esquemas de entrada; sin el o sin el segundo esquema no hay entrada
-    cita: ev-v4-001844-93dcb658
+      la ruptura que marca el bloque de origen en M1. Es lo que el trader usa para fijar la orden
+      limite, y no usa el CHoCH
+    cita: ev-v3-011653-38c712f3
     literal: >-
-      el precio no genera el esquema de entrada que ya sabemos cuál es [...] un breaker o este de
-      aquí, o sea cualquiera de estos dos de aquí
-    visto_en: v4 0:18:44
+      breaker que define cómo se marca el bloque de origen es eso. No uso lo que sería el
+      shot como giro como tal
+    visto_en: v3 1:16:53
+
+  - termino: primer esquema de entrada
+    alias: [esquema 1]
+    definicion: >-
+      el precio rompe directamente, sin retroceso: con el breaker basta para marcar la orden
+      limite
+    cita: ev-v3-004201-bfeb3734
+    literal: >-
+      Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...]
+      apenas el breaker, o sea, marco mi orden limit y ya está
+    visto_en: v3 0:42:01
+
+  - termino: segundo esquema de entrada
+    alias: [esquema 2]
+    definicion: >-
+      el precio hace un pequeno retroceso que deja una zona de control, y despues rompe
+    cita: ev-v4-000243-5f8875ce
+    literal: >-
+      si hace el otro esquema pues con un pequeño retroceso pequeña zona de control y luego rompe
+    visto_en: v4 0:02:43
 
   - termino: zona de control
     definicion: >-
@@ -74,9 +96,11 @@ terminos:
   - termino: caja
     alias: [cuadro de Gann, caja de niveles]
     definicion: >-
-      la distancia entre la entrada y el stop inicial, dividida en niveles. Es la unidad en la que
-      se miden el lotaje y la proteccion: el lote se calcula sobre la caja entera y despues el stop
-      se mueve a uno de sus niveles
+      la distancia entre la entrada y el extremo del stop inicial, dividida en niveles. Es la
+      unidad en la que se miden el objetivo y la proteccion. Dos cosas que esta definicion afirmo
+      hasta el 2026-09-11 y que hoy son falsas: el lote NO se dimensiona sobre la caja entera sino
+      sobre la distancia hasta stop_fraccion_caja (ADR-0020), y el stop NO se mueve despues, sino
+      que se escribe en la orden limite antes de que la entrada se active (A-11, RN-011)
     cita: ev-v2-003336-fc210a05
     literal: >-
       yo calculo mi lotaje desde aquí, o sea, como si fuera lo básico un bot normal, pero luego

@@ -149,6 +149,8 @@ parametros:
       es una cota de cuanto depende el resultado del modelo, no de la estrategia
     estado: CONFIRMED
     valor: "al_tocar"
+    # MASTER_PLAN H.2: el modelo de llenado lo simula F24 y F27 informa de los dos
+    consumido_por: [F24, F27]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -159,6 +161,8 @@ parametros:
     descripcion: latencia que asume `cruce_mas_latencia`; con `al_tocar` no se usa
     estado: CONFIRMED
     valor: 0
+    # MASTER_PLAN H.2: el modelo de llenado lo simula F24 y F27 informa de los dos
+    consumido_por: [F24, F27]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -190,6 +194,8 @@ parametros:
       reloj del servidor, que va en broker_offset_base + broker_dst y sigue a Nueva York
     estado: CONFIRMED
     valor: "Europe/Madrid"
+    # documental por ADR-0017: traduce lo que el trader DICE a un instante, no lo ejecuta nadie
+    consumido_por: [ADR-0017]
     fuente:
       tipo: evidence
       id: ev-v3-000136-6160fcea
@@ -264,6 +270,52 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-8eccf5c0
+  - nombre: sesgo_h4_criterio_ruptura
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar por rota la vela H4 previa
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura del extremo de la H4 anterior, del que depende el sesgo. Vivia dentro
+      del nombre del enum `sesgo_h4_regla` (`vela_anterior_cierre_mecha`), que mezclaba sujeto y
+      criterio; la forma ejecutable de F12 lo separa porque el criterio es un ARGUMENTO del
+      predicado `rompe`, y escribirlo a pelo seria un valor de negocio en un campo ejecutable
+    estado: CONFIRMED
+    valor: "mecha"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-8eccf5c0
+  - nombre: zona_control_criterio_completada
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar una zona de control por completada
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura del punto extremo anterior que completa una zona de control. El trader
+      lo dice con todas las letras -"con mecha no importa"- y hasta ahora vivia solo en la
+      definicion del glosario
+    estado: CONFIRMED
+    valor: "mecha"
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-a456bc3f
+  - nombre: break_even_criterio_ruptura
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar por rota la zona que dispara el break even
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el
+      break even. Es exactamente lo que pregunta A-13, y sigue ABIERTA: el trader se desdice a los
+      doce minutos. Entra `mecha` por coherencia con los otros dos criterios, pero es un DEFAULT
+      NUESTRO. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
+      nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
+    estado: DEFAULT_AMBIGUOUS
+    valor: "mecha"
+    ambiguedad_id: A-13
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-0ccafcba
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum
@@ -279,7 +331,10 @@ parametros:
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa nivel 0 -> nivel 1
-    descripcion: nivel de la caja donde va el stop tras la entrada (0,75 u 0,8; A-10)
+    descripcion: >-
+      nivel de la caja donde vive el stop. Se escribe EN la orden limite y no se mueve despues
+      (A-10 lo fijo en 0,8; A-11 cerro que viaja en la orden). Ademas es la distancia que
+      dimensiona el lote desde ADR-0020
     estado: CONFIRMED
     valor: "0.8"
     fuente:
@@ -307,12 +362,13 @@ parametros:
     categoria: estrategia
     tipo: fraccion
     unidad: fraccion de la distancia completa
-    descripcion: donde va el stop en el segundo esquema de entrada (0,75, 0,6, zona de control; A-7)
-    estado: CONFIRMED
-    valor: "0.8"
-    fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-85b30f66
+    descripcion: >-
+      UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no hay un stop
+      del segundo esquema distinto del primero. El trader dijo que es el MISMO en los dos, asi
+      que un parametro aparte con el mismo valor son dos puertas para el mismo numero -lo que
+      RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo-. Hay un
+      unico esquema de stop y vive en stop_fraccion_caja. Leerlo falla, que es lo que debe pasar
+    estado: UNKNOWN
     minimo: "0"
     maximo: "1"
   - nombre: stop_en_orden_pendiente
@@ -321,17 +377,17 @@ parametros:
     unidad: en_la_orden/tras_el_llenado
     opciones: ["en_la_orden", "tras_el_llenado"]
     descripcion: >-
-      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). OJO, del barrido de
-      fidelidad del 2026-09-10: el literal de su cita -"el primer stop loss es para el calculo del
-      lotaje y el segundo es para proteccion"- establece que hay DOS stops y para que sirve cada
-      uno, pero no dice cual de los dos viaja en la orden. `en_la_orden` es una inferencia: el
-      lote se calcula antes de enviar la orden, y ev-v4-001207-0c4ffd4b habla del "stop loss que
-      se va a introducir en la operacion". Razonable, pero es nuestra, no suya
+      si el SL viaja en la orden pendiente o se pone tras el llenado (A-11). RESPONDIDO por el
+      trader el 2026-09-10: "el SL se pone junto a la orden limite, no cuando se apertura recien".
+      Deja de ser la inferencia que el barrido de fidelidad habia marcado. Consecuencia para el
+      motor: la orden pendiente NACE con su stop, asi que no hay evento "mover el stop tras el
+      llenado" que implementar, y RN-026 tiene que comprobar instrumento_stops_level en el momento
+      de COLOCAR, no despues
     estado: CONFIRMED
-    valor: "en_la_orden"
+    valor: en_la_orden
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-28440182
+      id: fb-2026-09-09-sesion-01-76fd91ba
   - nombre: break_even_condicion
     categoria: estrategia
     tipo: enum
@@ -349,8 +405,9 @@ parametros:
     unidad: multiplo de la distancia que declara base_calculo_objetivo
     descripcion: >-
       objetivo fijo, en multiplos de la distancia que fija base_calculo_objetivo. "Riesgo" a
-      secas seria ambiguo: el lote se dimensiona sobre la caja completa y el stop acaba en
-      stop_fraccion_caja, asi que hay dos distancias y no son la misma (ADR-0014). El objetivo
+      secas seria ambiguo: hay dos distancias y no son la misma (ADR-0014). Desde ADR-0020 la
+      diferencia es mayor, porque el lote ya no se dimensiona sobre la caja entera sino hasta
+      stop_fraccion_caja, que es donde acaba el stop. El objetivo
       es FIJO, no minimo: la sesion 1 cerro la extension en objetivo_extension_activa: false
     estado: CONFIRMED
     valor: "3"
@@ -377,6 +434,38 @@ parametros:
     estado: UNKNOWN
     minimo: "0"
     maximo: "1"
+  - nombre: zonas_control_max_por_esquema
+    categoria: estrategia
+    tipo: entero
+    unidad: zonas de control admitidas dentro de un mismo esquema
+    descripcion: >-
+      cuantas zonas de control puede desarrollar un esquema sin invalidarlo. Vivia en la prosa de
+      RN-009 -"se desarrolla mas de una zona de control"- y por tanto fuera de la unica puerta
+      (ADR-0002). Fue un default nuestro mientras la unica cita disponible decia "por lo general
+      solo buscamos uno", que no es una prohibicion dura. El 2026-09-11 el trader lo cierra por
+      escrito -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica las dos cosas: el
+      numero y el descarte. A-20 RESUELTA
+    estado: CONFIRMED
+    valor: 1
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-1b2203b0
+    minimo: "1"
+    maximo: "5"
+  - nombre: operaciones_simultaneas_max
+    categoria: estrategia
+    tipo: entero
+    unidad: operaciones abiertas a la vez
+    descripcion: >-
+      cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de RN-018 -"hay
+      una operacion abierta", "no se abre otra"- y por tanto fuera del registro
+    estado: CONFIRMED
+    valor: 1
+    fuente:
+      tipo: evidence
+      id: ev-v4-003710-c753f3d3
+    minimo: "1"
+    maximo: "10"
   - nombre: cartuchos_max
     categoria: estrategia
     tipo: entero
@@ -448,7 +537,10 @@ parametros:
     categoria: estrategia
     tipo: porcentaje
     unidad: porcentaje de la cuenta por operacion
-    descripcion: riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo)
+    descripcion: >-
+      riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo). Desde ADR-0020 es lo que cuesta
+      el stop DE VERDAD, no un nominal: el lote se dimensiona sobre la distancia hasta
+      stop_fraccion_caja (lotaje_base)
     estado: CONFIRMED
     valor: "0.5"
     fuente:
@@ -459,27 +551,37 @@ parametros:
   - nombre: lotaje_base
     categoria: estrategia
     tipo: enum
-    unidad: distancia_completa/desde_075
-    opciones: ["distancia_completa", "desde_075"]
-    descripcion: sobre que distancia se calcula el lotaje
+    unidad: distancia que absorbe riesgo_por_operacion
+    opciones: ["distancia_completa", "hasta_stop_fraccion"]
+    descripcion: >-
+      sobre que distancia se dimensiona el lote. `distancia_completa` es la caja entera, del
+      nivel 0 al nivel 1, y deja la perdida del stop POR DEBAJO del riesgo nominal;
+      `hasta_stop_fraccion` es la distancia del nivel 0 a stop_fraccion_caja, asi que el stop
+      cuesta el riesgo ENTERO y el resto de la caja deja de ser presupuesto de riesgo. La
+      segunda opcion se llamaba `desde_075` hasta el 2026-09-11: nombraba un 0,75 que A-10
+      habia cerrado en 0,8, y un numero de negocio en el nombre de una opcion es la clase de
+      doble puerta que ADR-0002 prohibe. Ahora el nivel lo pone stop_fraccion_caja y solo el
     estado: CONFIRMED
-    valor: "distancia_completa"
+    valor: hasta_stop_fraccion
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-a089315e
+      id: fb-2026-09-09-sesion-01-17ed6193
 
   # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
   # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
   - nombre: dias_operables
     categoria: estrategia
-    tipo: texto
-    unidad: dias de la semana en que se opera
-    descripcion: dias en los que el bot busca entradas y dias que se excluyen por norma
+    tipo: enum
+    unidad: que dias de la semana se opera
+    opciones: ["lunes_a_viernes", "todos_los_dias"]
+    descripcion: >-
+      dias en los que el bot busca entradas. Era `texto` con el valor "lunes a viernes" y RN-001
+      lo usa como condicion EJECUTABLE, asi que el motor habria tenido que parsear espanol
     estado: CONFIRMED
-    valor: "lunes a viernes"
+    valor: lunes_a_viernes
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-bf1a8442
+      id: fb-2026-09-09-sesion-01-140d655c
   - nombre: filtro_noticias
     categoria: estrategia
     tipo: enum
@@ -563,9 +665,12 @@ parametros:
     tipo: fraccion
     unidad: fraccion de la caja que se conserva al proteger
     descripcion: >-
-      cuanto se guarda al mover el stop. DERIVADO de stop_fraccion_caja (1 - 0,8 = 0,2), asi que
-      no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya
-      dos puertas para el mismo numero
+      la fraccion de la caja que queda al otro lado del stop. DERIVADA de stop_fraccion_caja
+      (1 - 0,8 = 0,2), asi que no se fija aqui: se queda UNKNOWN y el invariante vive en
+      strategy_spec, para que no haya dos puertas para el mismo numero. OJO, dos cosas que esta
+      descripcion decia hasta el 2026-09-11: el stop no "se mueve" -nace en la orden, A-11- y ese
+      tramo no es presupuesto de riesgo que se "guarde", porque el lote ya no se dimensiona sobre
+      la caja entera; RN-012 dice que no se arriesga nunca
     estado: UNKNOWN
     minimo: "0"
     maximo: "1"
@@ -654,8 +759,10 @@ parametros:
     opciones: ["caja_completa", "riesgo_real"]
     descripcion: >-
       distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 ->
-      nivel 1, la misma que dimensiona el lote (lotaje_base); `riesgo_real` seria la distancia
-      hasta stop_fraccion_caja. El objetivo se traza CON la orden, antes de que el stop se
+      nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11
+      esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde
+      ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo
+      se mide sobre la caja entera. El objetivo se traza CON la orden, antes de que el stop se
       mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR
       realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
     estado: CONFIRMED
@@ -673,6 +780,8 @@ parametros:
       -NASDAQ, oro, pares sin gaps, futuros- lo dijo el trader y vive en fb-2026-09-09-sesion-01-6eceb844
     estado: CONFIRMED
     valor: "EURUSD"
+    # MASTER_PLAN H.2: la ficha del simbolo la consumen el motor, la exportacion, el EA y el pre-vuelo
+    consumido_por: [F24, F28, F31, F33]
     fuente:
       tipo: evidence
       id: ev-v2-003320-a736fd37
@@ -684,6 +793,8 @@ parametros:
     descripcion: cuenta a la que apunta el bot cuando este validado
     estado: CONFIRMED
     valor: "fondeada"
+    # la cuenta a la que se despliega; F33 la lee en el pre-vuelo
+    consumido_por: [F33]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -695,6 +806,8 @@ parametros:
     descripcion: cuenta en la que se prueba el funcionamiento antes de la fondeada
     estado: CONFIRMED
     valor: "demo"
+    # F17 mide el reloj del servidor contra este terminal y F33 despliega primero aqui
+    consumido_por: [F17, F33]
     fuente:
       tipo: decision
       id: ADR-0012
@@ -702,10 +815,16 @@ parametros:
     categoria: prop_firm
     tipo: decimal
     unidad: USD
-    descripcion: saldo con el que arranca la cuenta; base del lotaje y de los topes
+    descripcion: >-
+      saldo con el que arranca la cuenta. NO es la base de ningun calculo: el lotaje va sobre
+      base_calculo_riesgo (saldo_actual), el tope diario sobre base_calculo_perdida_diaria
+      (saldo_inicial_dia) y el semanal sobre base_calculo_perdida_semanal (saldo_actual). Lo
+      decia y era falso; corregido en la auditoria del 2026-09-10
     estado: CONFIRMED
     valor: "100000"
     minimo: "0"
+    # no es base de ningun calculo: F24 arranca el backtest con el y F33 lo compara con la cuenta real
+    consumido_por: [F24, F33]
     fuente:
       tipo: decision
       id: ADR-0012

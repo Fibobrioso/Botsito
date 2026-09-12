@@ -507,3 +507,53 @@ def test_evidence_new_rechaza_video_fuera_de_fuentes(tmp_path: Path) -> None:
     ]
     assert cli.main(args) == 1
     assert not (repo / "knowledge" / "evidence" / "V1").exists()
+
+
+def test_spec_check_corre_sobre_el_repo_real(repo: Path) -> None:
+    """`botsito spec check` (F12): la capa semantica sola, sin las otras nueve delante.
+
+    `knowledge validate` la corre tambien, pero DESPUES de corpus, evidencia y feedback, y
+    devuelve en cuanto una de esas falla: quien esta escribiendo reglas no llegaba a ver sus
+    fallos. Comparten `problemas_de_spec`, asi que no pueden divergir.
+    """
+    assert cli.spec_check(repo) == 0
+
+
+def test_spec_status_no_llama_a_proposito_a_lo_que_no_se_ha_preguntado(
+    repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Un parametro sin valor lo esta por dos motivos MUY distintos, y no valen lo mismo.
+
+    O el trader lo rechazo -y hay un registro REJECT que lo sostiene- o todavia no se le ha
+    preguntado, que es como nacieron los 24 parametros que F10 dejo en UNKNOWN. `spec status`
+    llamaba "a proposito" a los dos: una afirmacion que nadie habia comprobado. Esto no congela
+    cuantos hay -eso cambiaria con cada sesion- sino que cada uno este en la lista que le toca.
+    """
+    from botsito.feedback.modelo import cargar_feedback
+
+    capsys.readouterr()
+    assert cli.spec_status(repo) == 0
+    salida = capsys.readouterr().out
+
+    rechazados = {
+        r.objetivo.id
+        for r in cargar_feedback(repo / "knowledge" / "feedback")
+        if str(r.accion) == "REJECT" and str(r.objetivo.tipo) == "parametro"
+    }
+
+    def _bloque(cabecera: str) -> list[str]:
+        if cabecera not in salida:
+            return []
+        resto = salida.split(cabecera, 1)[1]
+        nombres = []
+        for linea in resto.splitlines()[1:]:
+            if not linea.startswith("  ") or not linea.strip():
+                break
+            nombres.append(linea.strip())
+        return nombres
+
+    con_registro = _bloque("Sin valor A PROPOSITO")
+    sin_registro = _bloque("Sin valor y SIN registro")
+    assert con_registro, "hoy hay parametros sin valor y rechazados por el trader"
+    assert all(n in rechazados for n in con_registro), con_registro
+    assert not [n for n in sin_registro if n in rechazados], sin_registro

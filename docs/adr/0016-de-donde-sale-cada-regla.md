@@ -28,6 +28,8 @@ sostiene. Dos reglas reales lo demostraban:
 | RN-026 | si el stop cae dentro de `instrumento_stops_level`, no se abre la operacion | *"Que sea fiel a la operativa y no busque nada adicional."* |
 | RN-027 | el lote se redondea al escalon del broker, **siempre a la baja** | *"El lotaje se pone sobre la caja completa de SL, pero automaticamente se mueve al 0.8..."* |
 
+> **Nota (2026-09-11).** El literal que esta tabla atribuye a RN-027 -*"El lotaje se pone sobre la caja completa de SL..."*- quedo **superseded** por `fb-...-17ed6193` al cerrarse el acuerdo del lotaje (ADR-0020), y RN-027 cita hoy ese registro nuevo. El argumento de este ADR no cambia: la cita sostiene de donde sale el lotaje, no la DIRECCION del redondeo.
+
 Las dos pasaban la comprobacion, porque sus literales existen en sus citas. Las dos son decisiones
 de ingenieria correctas y ninguna la dijo el trader. Presentadas asi, un lector futuro las lee como
 palabra del trader y no las revisa.

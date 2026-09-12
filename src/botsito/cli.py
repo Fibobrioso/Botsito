@@ -659,7 +659,9 @@ def spec_status(repo: Path) -> int:
     print(f"spec {manifiesto['spec_version']} · hash {str(manifiesto['hash'])[:12]}…")
     print(
         f"  {sum(1 for r in reglas if r.vigente)} reglas vigentes, "
-        f"{sum(1 for r in reglas if not r.vigente)} descartadas"
+        f"{sum(1 for r in reglas if not r.vigente)} descartadas; "
+        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable y "
+        f"{sum(1 for r in reglas if r.vigente and r.forma is None)} todavia en prosa"
     )
     confirmados = [n for n, p in registro.parametros.items() if p.estado is Estado.CONFIRMED]
     unknown = [n for n, p in registro.parametros.items() if p.estado is Estado.UNKNOWN]
@@ -682,14 +684,64 @@ def spec_status(repo: Path) -> int:
         for nombre in sorted(en_revision):
             p = registro.parametros.get(nombre)
             valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
-            print(f"  {nombre:28} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
+            print(f"  {nombre:32} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
     sin_parametro = [a.id for a in abiertas if not a.parametros]
     if sin_parametro:
         print("\nAmbiguedades abiertas sin parametro asociado: " + ", ".join(sorted(sin_parametro)))
     if unknown:
-        print("\nSin valor a proposito (leerlos falla):")
-        for nombre in sorted(unknown):
-            print(f"  {nombre}")
+        # "A proposito" no es una etiqueta que se pueda dar por buena: un parametro sin valor
+        # lo esta porque el trader lo RECHAZO -y entonces hay un registro REJECT que lo dice-
+        # o porque todavia no se le ha preguntado, que es como nacieron los 24 de F10.
+        # Llamar "a proposito" a los dos era afirmar algo que nadie habia comprobado (F12).
+        from botsito.feedback.modelo import cargar_feedback
+
+        try:
+            rechazados = {
+                r.objetivo.id
+                for r in cargar_feedback(repo / "knowledge" / "feedback")
+                if str(r.accion) == "REJECT" and str(r.objetivo.tipo) == "parametro"
+            }
+        except (OSError, ValueError):
+            rechazados = set()
+        a_proposito = sorted(x for x in unknown if x in rechazados)
+        sin_justificar = sorted(x for x in unknown if x not in rechazados)
+        if a_proposito:
+            print("\nSin valor A PROPOSITO, con su registro REJECT (leerlos falla):")
+            for nombre in a_proposito:
+                print(f"  {nombre}")
+        if sin_justificar:
+            print("\nSin valor y SIN registro que lo justifique (falta preguntarlo):")
+            for nombre in sin_justificar:
+                print(f"  {nombre}")
+    return 0
+
+
+def spec_check(repo: Path) -> int:
+    """Solo la capa semantica de la spec, y sale con 1 si algo no cuadra (F12).
+
+    `knowledge validate` la corre tambien, pero entre otras nueve capas y DESPUES de ellas: si el
+    corpus o la evidencia fallan, devuelve antes de llegar aqui y quien esta escribiendo reglas no
+    ve sus fallos. Esto es la misma puerta (`problemas_de_spec`), sin lo demas delante.
+    """
+    from botsito.config.registro import RegistroError, cargar_registro
+    from botsito.evidence.modelo import EvidenciaError, cargar_evidencia
+    from botsito.feedback.modelo import FeedbackError, cargar_feedback
+    from botsito.validation.knowledge import problemas_de_spec
+
+    try:
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        items = cargar_evidencia(repo / "knowledge" / "evidence")
+        registros_fb = cargar_feedback(repo / "knowledge" / "feedback")
+    except (RegistroError, EvidenciaError, FeedbackError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    problemas, resumen = problemas_de_spec(repo, registro, items, registros_fb)
+    for f in problemas:
+        print(f"ERROR: spec: {f}")
+    if problemas:
+        print(f"{len(problemas)} problemas; la spec no es coherente consigo misma")
+        return 1
+    print(f"OK: {resumen}" if resumen else "OK: no hay spec que comprobar")
     return 0
 
 
@@ -1742,6 +1794,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("spec", help="la especificacion ejecutable (F11)")
     sp_sub = sp.add_subparsers(dest="spec_cmd", required=True)
     sp_sub.add_parser("status", help="con que corre el bot y que sigue en revision")
+    sp_sub.add_parser("check", help="comprueba que la spec no se contradice (F12)")
     spm = sp_sub.add_parser("manifest", help="comprueba el hash de la spec")
     spm.add_argument("--escribir", action="store_true", help="regenera el hash")
     fb_sub = fb.add_subparsers(dest="feedback_cmd", required=True)
@@ -1822,6 +1875,8 @@ def main(argv: list[str] | None = None) -> int:
         return feedback_pending(args.repo)
     if args.cmd == "spec" and args.spec_cmd == "status":
         return spec_status(args.repo)
+    if args.cmd == "spec" and args.spec_cmd == "check":
+        return spec_check(args.repo)
     if args.cmd == "spec" and args.spec_cmd == "manifest":
         return spec_manifest(args.repo, args.escribir)
     if args.cmd == "feedback" and args.feedback_cmd == "apply":

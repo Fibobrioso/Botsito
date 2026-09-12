@@ -101,3 +101,57 @@ def test_las_opciones_del_kit_y_del_registro_no_pueden_separarse(repo: Path) -> 
         if list(p.opciones) != list(opciones_kit):
             problemas.append(f"{nombre}: kit {list(opciones_kit)} != registro {list(p.opciones)}")
     assert not problemas, "; ".join(problemas)
+
+
+def test_el_readme_de_la_spec_no_puede_llevar_cifras_viejas(repo: Path) -> None:
+    """Las cifras de la spec se quedaron viejas TRES veces en dos dias.
+
+    P8 las encontro desfasadas tres versiones, P11 vio que dejaron de cuadrar al aparecer el
+    primer `DEFAULT_AMBIGUOUS`, y la tercera copia nacio desfasada porque `spec_version` subio dos
+    veces mas antes del merge. La leccion no es "revisar mejor": una foto de un estado que cambia
+    en cada commit no se pega a mano.
+
+    De los documentos que las llevaban, solo UNO describe el presente sin mezcla: este README, que
+    dice que contiene `knowledge/spec/` AHORA. El HANDOFF es una narracion con fechas -su seccion
+    de F10 dice "registro con 24 parametros de estrategia en UNKNOWN", que era cierto entonces- asi
+    que ahi la cifra se quito y se apunta al comando; los informes de validacion y los ADR son
+    artefactos fechados y no se tocan.
+
+    La guardia es pequena a proposito. Una que cazara tambien la narracion historica daria falsos
+    positivos, y una guardia con falsos positivos se desactiva sola.
+    """
+    import re
+
+    from botsito.config.registro import cargar_registro
+
+    ruta = repo / "knowledge" / "spec" / "README.md"
+    texto = " ".join(ruta.read_text(encoding="utf-8").split())
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    reales = {
+        "": len(registro.parametros),
+        "confirmados": sum(
+            1 for p in registro.parametros.values() if p.estado.value == "CONFIRMED"
+        ),
+        "UNKNOWN": sum(1 for p in registro.parametros.values() if p.estado.value == "UNKNOWN"),
+    }
+
+    m = re.search(
+        r"tiene (\d+) parametros: (\d+) confirmados, \d+ con un default \w+ y (\d+) UNKNOWN", texto
+    )
+    assert m, "el README dejo de declarar el recuento en la forma que esta guardia sabe leer"
+    dichos = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    esperados = (reales[""], reales["confirmados"], reales["UNKNOWN"])
+    assert dichos == esperados, f"el README dice {dichos} y el registro tiene {esperados}"
+
+
+def test_el_handoff_no_pega_un_recuento_que_caduca(repo: Path) -> None:
+    """El HANDOFF llevaba la copia que se quedo vieja tres veces; ahora apunta al comando."""
+    texto = (repo / "docs" / "HANDOFF.md").read_text(encoding="utf-8")
+    assert "`botsito spec status`" in texto
+    import re as _re
+
+    pegados = _re.findall(r"manifiesto \d+\.\d+\.\d+", texto)
+    assert not pegados, (
+        f"el HANDOFF pega una version del manifiesto ({pegados}); esa foto caduca sola, "
+        "y por eso se apunta al comando en vez de copiarla"
+    )

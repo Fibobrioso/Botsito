@@ -199,9 +199,14 @@ def cambios_de_sesion(
                 canonico=r.valor_canonico is not None,
                 estado_anterior=p.estado,
                 valor_anterior=p.valor,
-                fuente_anterior=(
-                    p.fuente.id if p.fuente is not None and p.fuente.tipo == "feedback" else None
-                ),
+                # La fuente ANTERIOR, sea del tipo que sea. Mirando solo las de tipo `feedback`
+                # -como se escribio en F11- el caso mas comun de todos quedaba ciego: el trader
+                # RATIFICA un default nuestro. Ahi el valor no cambia (1 y 1), la fuente es
+                # `evidence` y no se comparaba, asi que `apply` lo daba por no-op y el registro
+                # se quedaba DEFAULT_AMBIGUOUS con su `ambiguedad_id` puesto y la ambiguedad
+                # abierta, habiendola respondido el trader. Paso con zonas_control_max_por_esquema
+                # (A-20) el 2026-09-11.
+                fuente_anterior=(p.fuente.id if p.fuente is not None else None),
                 valor_convertido=convertido,
             )
         )

@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-92fbb149
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-20
+accion: RESOLVE_UNKNOWN
+respuesta_literal: solo 1 zona control bro. si hay 2 se descarta
+registrado_por: Aleks · mensaje de WhatsApp del trader, captura entregada el 2026-09-11; son SUS palabras,
+  no una sintesis
+valor_resultante: 1 zona de control; con dos se descarta el esquema
+notas: 'cierra A-20 en el objetivo que la regla exige. El mismo mensaje se registro sobre el PARAMETRO
+  en fb-2026-09-09-sesion-01-1b2203b0, y eso bastaba para que apply escribiera el valor, pero NO para
+  cerrar la ambiguedad: ambiguedades.yaml dice que se cierra SOLO con un registro del trader, y ninguno
+  apuntaba a A-20. Lo encontro la auditoria de proceso del 2026-09-12, junto con que ninguna guardia lo
+  comprobaba'

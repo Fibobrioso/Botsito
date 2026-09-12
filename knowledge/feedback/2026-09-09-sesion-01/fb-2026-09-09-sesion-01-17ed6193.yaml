@@ -1,0 +1,20 @@
+id: fb-2026-09-09-sesion-01-17ed6193
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: lotaje_base
+accion: CORRECT
+respuesta_literal: el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el
+  acuerdo final
+registrado_por: Aleks · acuerdo final del 2026-09-11, REFERIDO por el consultor (no es transcripcion)
+valor_resultante: hasta_stop_fraccion
+valor_canonico: hasta_stop_fraccion
+supersede: fb-2026-09-09-sesion-01-a089315e
+notas: 'corrige el registro de la sesion 1, cuyo literal decia lo contrario: El lotaje se pone sobre la
+  caja completa de SL, pero automaticamente se mueve al 0.8 de la misma para que corra la operacion. Consecuencia:
+  la perdida al saltar el stop pasa de riesgo_por_operacion x stop_fraccion_caja (0,4 % con 0,5 y 0,8)
+  a riesgo_por_operacion entero (0,5 %), el lote sube un 25 % y RN-012 deja de decir que la perdida real
+  es menor que la nominal. Se decide en ADR-0020. OJO: la frase es la del consultor refiriendo el acuerdo
+  el 2026-09-11, NO las palabras exactas del trader'

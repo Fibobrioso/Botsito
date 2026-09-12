@@ -14,9 +14,12 @@ sync:
 hooks:
 	$(UV) run python scripts/instalar_hooks.py
 
+# `scripts/` entra desde F12: la hoja de la sesion vive ahi, fuera de `src/`, y era justo el
+# fichero que el brief senalaba por no tener red. Un `scripts/` sin lint deja sin vigilar el
+# unico codigo que se ejecuta delante del trader.
 lint:
-	$(UV) run ruff check src tests
-	$(UV) run ruff format --check src tests
+	$(UV) run ruff check src tests scripts
+	$(UV) run ruff format --check src tests scripts
 
 types:
 	$(UV) run mypy
