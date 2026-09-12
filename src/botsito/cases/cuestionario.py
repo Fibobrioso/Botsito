@@ -21,8 +21,13 @@ class CuestionarioError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class EntradaMapa:
+    """Lo que el mapa aporta y no esta en ningun otro sitio: que evidencia se ensena.
+
+    `opciones` NO sale del mapa desde F13: la pone `cargar_mapa` leyendo el registro, que es
+    quien sostiene el enum. Vive aqui porque la pregunta las necesita, no porque se declaren aqui.
+    """
+
     temas: tuple[str, ...]
-    ambiguedad: str | None
     opciones: tuple[str, ...]
 
 
@@ -127,9 +132,11 @@ def generar(
         temas: list[str] = []
         opciones: list[str] = []
         tipos: list[str] = []
+        # La arista ambiguedad->parametro tiene UNA casa: `parametros` de la propia A-N. Hasta
+        # F13 el mapa tenia una segunda columna que decia lo mismo, y se hacia la union de las
+        # dos; llevaba parada desde F10 -ninguna de las diez A-N posteriores figuraba en ella- y
+        # en A-7 decia otra cosa. La union tapaba la deriva en vez de denunciarla.
         params = [p for p in a.parametros if p in unknown]
-        # tambien los parametros cuyo mapa apunta a esta ambiguedad
-        params += [n for n in unknown if mapa[n].ambiguedad == a.id and n not in params]
         for n in params:
             origenes.append({"tipo": "parametro", "id": n})
             cubiertos_param.add(n)

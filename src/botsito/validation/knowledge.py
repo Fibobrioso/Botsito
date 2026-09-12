@@ -199,10 +199,12 @@ def problemas_de_spec(
         problemas += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
     except SpecError as exc:
         return [str(exc)], ""
+    from botsito.spec.modelo import es_ejecutable
+
     vigentes = sum(1 for r in reglas if r.vigente)
     resumen = (
         f"{len(reglas)} reglas de spec ({vigentes} vigentes, "
-        f"{sum(1 for r in reglas if r.forma is not None)} con forma ejecutable), "
+        f"{sum(1 for r in reglas if es_ejecutable(r))} con forma ejecutable), "
         f"{len(terminos)} terminos de glosario, hash del manifiesto al dia"
     )
     return problemas, resumen
@@ -380,6 +382,35 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             if str(r.objetivo.tipo) == "ambiguedad" and str(r.accion) == "RESOLVE_UNKNOWN"
         }
         for amb in ambiguedades:
+            # DECIDIDA: la cierra el consultor, y su ADR tiene que EXISTIR y NOMBRARLA. Sin lo
+            # segundo, `decision: ADR-0002` pasaria entero -es el mismo defecto que F12 encontro
+            # dos veces, con `pendiente_definicion: A-999` y con `ambiguedad_id: A-200`-.
+            if amb.estado == "DECIDIDA":
+                adr = repo / "docs" / "adr"
+                ficheros = list(adr.glob(f"{str(amb.decision)[4:]}-*.md")) if amb.decision else []
+                if not ficheros:
+                    fallos_amb.append(
+                        f"ambiguedades: {amb.id} es DECIDIDA y cita {amb.decision}, que no existe"
+                    )
+                elif amb.id not in ficheros[0].read_text(encoding="utf-8"):
+                    fallos_amb.append(
+                        f"ambiguedades: {amb.id} es DECIDIDA por {amb.decision} y ese ADR no la "
+                        f"nombra; un ADR que no habla de ella no la decide"
+                    )
+                if amb.bloqueante:
+                    fallos_amb.append(
+                        f"ambiguedades: {amb.id} es bloqueante y no puede cerrarse por decision "
+                        f"del consultor; eso lo responde el trader"
+                    )
+                declarantes = sorted(
+                    n for n, par in registro.parametros.items() if par.ambiguedad_id == amb.id
+                )
+                if declarantes:
+                    fallos_amb.append(
+                        f"ambiguedades: {amb.id} es DECIDIDA y {', '.join(declarantes)} la declara "
+                        f"en su `ambiguedad_id`: el bot corre con un default NUESTRO por culpa de "
+                        f"esa pregunta, asi que no la cierra una decision"
+                    )
             if amb.estado == "RESUELTA" and amb.id not in cerradas_por:
                 fallos_amb.append(
                     f"ambiguedades: {amb.id} figura RESUELTA y ningun registro de feedback la "

@@ -1,0 +1,19 @@
+id: fb-2026-09-09-sesion-01-722ba50a
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-14
+accion: RESOLVE_UNKNOWN
+respuesta_literal: El trader es consciente del cambio en la estructura de las velas esos 28 dias; usa
+  las velas tal cual, no reancla la rejilla, y mantiene el mismo rango de horarios
+registrado_por: Aleks · respuesta del trader REFERIDA por el consultor y confirmada por escrito el 2026-09-12
+  (no es transcripcion)
+valor_resultante: 'opera igual: mismo rango de horarios, sin reanclar la rejilla'
+notas: 'cierra A-14. Su propio texto decia desde el 2026-09-10 que estaba RESPONDIDA DE HECHO y que seguia
+  ABIERTA solo por forma -falta su frase, no la respuesta-. Mismo mecanismo con el que se cerro A-11:
+  una respuesta referida por el consultor, declarada como tal en registrado_por en vez de hacerla pasar
+  por cita textual. Consecuencia para F15 y F26: del 8 al 28 de marzo y del 25 al 31 de octubre la primera
+  H4 se ve a las 22:00 y sus sesiones no empiezan en apertura de vela; eso NO es una desviacion del bot,
+  es la mecanica, y quien mida fidelidad no debe leerlo como fallo'

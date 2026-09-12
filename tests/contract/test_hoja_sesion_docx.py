@@ -9,9 +9,7 @@ que no se escapa al papel nada de la particion oculta.
 
 from __future__ import annotations
 
-import importlib.util
 import re
-import sys
 import xml.dom.minidom
 import zipfile
 from pathlib import Path
@@ -19,11 +17,12 @@ from typing import Any
 
 import pytest
 
+from botsito.cases import hoja_docx
+from botsito.cases.hoja_docx import HojaError
 from botsito.cases.paquete import DIRECTORIO_KIT, esquema_paquete, sesiones_del_kit
 from botsito.comun.yaml_estricto import cargar_yaml
 
 REPO = Path(__file__).resolve().parents[2]
-GENERADOR = REPO / "scripts" / "hoja_sesion_docx.py"
 # Orden de hijos que el esquema exige dentro de cada contenedor (ECMA-376, parte 1). Word abre
 # igual documentos con otro orden, pero avisa de que hay que repararlos, y eso delante del
 # trader parece que el trabajo esta mal hecho.
@@ -37,12 +36,11 @@ ORDEN = {
 
 
 def _generador() -> Any:
-    spec = importlib.util.spec_from_file_location("hoja_sesion_docx", GENERADOR)
-    assert spec is not None and spec.loader is not None
-    modulo = importlib.util.module_from_spec(spec)
-    sys.modules["hoja_sesion_docx"] = modulo
-    spec.loader.exec_module(modulo)
-    return modulo
+    """Hasta F13 esto cargaba `scripts/hoja_sesion_docx.py` por ruta de fichero, porque el
+    generador vivia fuera del paquete. Ahora es un import normal, y con el entran `mypy --strict`,
+    los contratos de importacion y el contrato de literales de negocio -que denuncio el `EURUSD`
+    horneado en la cuarta parte de la hoja en cuanto el fichero quedo a su alcance-."""
+    return hoja_docx
 
 
 @pytest.fixture(scope="module")
@@ -141,11 +139,11 @@ def test_la_hoja_no_filtra_la_particion_oculta(xml_documento: str, sesion: str) 
 
 def test_el_generador_avisa_en_vez_de_reventar(tmp_path: Path, sesion: str) -> None:
     generador = _generador()
-    with pytest.raises(SystemExit, match="carpeta"):
+    with pytest.raises(HojaError, match="carpeta"):
         generador.escribir_docx(tmp_path, "<w:document/>")
-    with pytest.raises(SystemExit, match="no existe la carpeta"):
+    with pytest.raises(HojaError, match="no existe la carpeta"):
         generador.escribir_docx(tmp_path / "no" / "existe" / "x.docx", "<w:document/>")
-    with pytest.raises(SystemExit, match="ninguna pregunta del paquete nace"):
+    with pytest.raises(HojaError, match="ninguna pregunta del paquete nace"):
         generador.numero_de_pregunta([], "A-999")
 
 
@@ -155,7 +153,7 @@ def test_toda_pregunta_declarada_tiene_objetivo_registrable(sesion: str) -> None
     ctx = cargar_yaml((REPO / DIRECTORIO_KIT / "contexto_preguntas.yaml").read_text("utf-8"))
     generador.comprobar_objetivos(ctx, sesion, REPO)
     roto = {**ctx, "precondicion": {**ctx["precondicion"], "objetivo": "parametro no_existe"}}
-    with pytest.raises(SystemExit, match="no esta en el registro"):
+    with pytest.raises(HojaError, match="no esta en el registro"):
         generador.comprobar_objetivos(roto, sesion, REPO)
 
 
@@ -210,9 +208,9 @@ def test_el_id_r_nn_viaja_con_su_evidencia_aunque_cambie_el_orden() -> None:
         assert 0 < i_af - i_id < 400, f"{e['id']} no sale junto a su afirmacion"
 
     # Y un id ausente o repetido no se genera en silencio
-    with pytest.raises(SystemExit):
+    with pytest.raises(HojaError):
         generador.bloque_reafirmaciones(
             [{k: v for k, v in entradas[0].items() if k != "id"}], items
         )
-    with pytest.raises(SystemExit):
+    with pytest.raises(HojaError):
         generador.bloque_reafirmaciones([entradas[0], entradas[0]], items)

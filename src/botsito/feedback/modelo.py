@@ -92,7 +92,29 @@ CAMPOS_OPCIONALES = (
     "valor_canonico",
     "supersede",
     "notas",
+    # Opcionales EN EL ESQUEMA y obligatorios POR GUARDIA desde CORTE_PROCEDENCIA. El id de un
+    # registro es el hash de su contenido y `contenido_canonico` SALTA el campo ausente, asi que
+    # los 117 de la sesion 1 conservan su id exacto -medido: cambian 0-. Hacerlos obligatorios no
+    # les cambiaria el id: los dejaria sin CARGAR, los 117, porque `_validar` revienta antes de
+    # calcularlo; y rellenarlos si moveria el id, o sea renombrar 117 ficheros inmutables.
+    "recibido_el",
+    "procedencia",
 )
+# `fecha` es la de la SESION y esta bien asi: fecha la PREGUNTA. `recibido_el` fecha la RESPUESTA.
+# Tres registros de la sesion 1 llegaron despues -A-11 el 10, el acuerdo del lotaje y el WhatsApp
+# que cierra A-20 el 11- y con `fecha` sola se leen como del 9. Para F26 no es burocracia: es la
+# unica forma mecanica de decir que valores se fijaron ANTES de la exposicion de holdout del
+# 2026-09-11 y cuales despues (ADR-0021).
+PROCEDENCIAS = (
+    "trader_grabado",  # se oye en una grabacion inventariada; lleva grabacion/t0/t1
+    "trader_hoja",  # lo escribio el en la hoja de respuestas del paquete
+    "trader_escrito",  # mensaje suyo fuera de sesion, con la captura en el corpus
+    "referido_por_consultor",  # el consultor cuenta lo que respondio; NO es transcripcion
+    "reexpresion_consultor",  # sin respuesta nueva: lo mismo, en el tipo que espera el registro
+    "correccion_consultor",  # sin respuesta nueva: retira lo que otro registro afirmaba
+)
+# Literal y no `hoy`: `make check` no puede cambiar de resultado con el calendario.
+CORTE_PROCEDENCIA = "2026-09-13"
 CAMPOS_TEXTO = (
     "sesion",
     "fecha",
@@ -107,6 +129,8 @@ CAMPOS_TEXTO = (
     "valor_canonico",
     "supersede",
     "notas",
+    "recibido_el",
+    "procedencia",
 )
 
 
@@ -140,6 +164,10 @@ class FeedbackRecord:
     valor_canonico: str | None = None
     supersede: str | None = None
     notas: str | None = None
+    # Cuando llego la RESPUESTA y por donde. Opcionales para no mover el id de los 117 anteriores;
+    # obligatorios por guardia desde CORTE_PROCEDENCIA.
+    recibido_el: str | None = None
+    procedencia: str | None = None
 
 
 def contenido_canonico(campos: dict[str, Any]) -> str:
@@ -235,6 +263,42 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
         raise FeedbackError(f"{origen}: respuesta_literal es obligatoria y literal")
     if not _normalizar_texto(campos["registrado_por"]):
         raise FeedbackError(f"{origen}: registrado_por es obligatorio")
+    # `recibido_el` y `procedencia`: opcionales para no tocar los 117 de la sesion 1, obligatorios
+    # de CORTE_PROCEDENCIA en adelante. Se comprueba AL CARGAR y no solo en `feedback new`, o un
+    # fichero escrito a mano se lo salta; es la leccion que `validation/knowledge.py` ya aprendio
+    # con `feedback apply` ("solo se ejecuta cuando alguien lo llama; aqui se vigila siempre").
+    recibido, procedencia = campos.get("recibido_el"), campos.get("procedencia")
+    if str(campos["sesion"])[:10] >= CORTE_PROCEDENCIA:
+        faltan_nuevos = [c for c in ("recibido_el", "procedencia") if _vacio(campos.get(c))]
+        if faltan_nuevos:
+            raise FeedbackError(
+                f"{origen}: desde la sesion del {CORTE_PROCEDENCIA} son obligatorios "
+                f"{faltan_nuevos}: `fecha` dice a que sesion pertenece, no cuando llego"
+            )
+    if not _vacio(recibido):
+        if not _FECHA.match(str(recibido)) or not _fecha_real(str(recibido)):
+            raise FeedbackError(f"{origen}: recibido_el invalido (AAAA-MM-DD)")
+        if str(recibido) < str(campos["fecha"]):
+            raise FeedbackError(
+                f"{origen}: recibido_el {recibido} es anterior a la fecha de la sesion "
+                f"{campos['fecha']}: una respuesta no llega antes de la pregunta"
+            )
+    if not _vacio(procedencia):
+        if procedencia not in PROCEDENCIAS:
+            raise FeedbackError(f"{origen}: procedencia {procedencia!r} no esta en {PROCEDENCIAS}")
+        # El enum seria decorativo si no tuviera que cuadrar con el resto del registro.
+        if procedencia == "trader_grabado" and campos["medio"] == "escrito":
+            raise FeedbackError(f"{origen}: `trader_grabado` exige un medio grabado, no `escrito`")
+        if (
+            procedencia in ("trader_escrito", "referido_por_consultor")
+            and campos["medio"] != "escrito"
+        ):
+            raise FeedbackError(f"{origen}: {procedencia} exige `medio: escrito`")
+        if procedencia == "correccion_consultor" and _vacio(campos.get("supersede")):
+            raise FeedbackError(
+                f"{origen}: `correccion_consultor` retira lo que otro registro afirmaba, "
+                f"asi que exige `supersede`"
+            )
     if campos["medio"] != "escrito":
         for c in ("grabacion", "t0", "t1"):
             if not campos.get(c):
@@ -285,6 +349,8 @@ def registro_desde_dict(campos: dict[str, Any], origen: str = "registro") -> Fee
         valor_canonico=txt("valor_canonico"),
         supersede=txt("supersede"),
         notas=txt("notas"),
+        recibido_el=txt("recibido_el"),
+        procedencia=txt("procedencia"),
     )
 
 
@@ -380,6 +446,24 @@ def validar_contra_contexto(
                     f"{a}: {anulado} ya esta superseded por {otros}; una correccion supersede al "
                     "ultimo registro del objetivo, no al original"
                 )
+    # Y que una correccion no venga del pasado. Lo que F11 dejo anotado -"se comprueba que cada
+    # `supersede` exista, no que la cadena sea coherente"- no era lo que el brief de F13 decia:
+    # comparar el objetivo con el predecesor inmediato SI es transitivo, asi que la cadena entera
+    # habla del mismo objetivo por construccion. El hueco de verdad es el TIEMPO: nada impedia que
+    # un registro corrigiera a otro POSTERIOR, y con eso la cadena dice que lo viejo manda sobre lo
+    # nuevo. No se podia comprobar hasta que existio `recibido_el` (F13): con `fecha` sola, los 117
+    # de la sesion 1 son del mismo dia y la comprobacion no distinguia nada.
+    for r in registros:
+        if not r.supersede or r.supersede not in por_id:
+            continue
+        previo = por_id[r.supersede]
+        cuando_nuevo = r.recibido_el or r.fecha
+        cuando_viejo = previo.recibido_el or previo.fecha
+        if cuando_nuevo < cuando_viejo:
+            problemas.append(
+                f"{r.id} ({cuando_nuevo}) supersede a {previo.id} ({cuando_viejo}), que es "
+                f"POSTERIOR: una correccion no llega antes que lo que corrige"
+            )
     problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
     return problemas
 

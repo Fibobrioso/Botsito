@@ -14,9 +14,10 @@ sync:
 hooks:
 	$(UV) run python scripts/instalar_hooks.py
 
-# `scripts/` entra desde F12: la hoja de la sesion vive ahi, fuera de `src/`, y era justo el
-# fichero que el brief senalaba por no tener red. Un `scripts/` sin lint deja sin vigilar el
-# unico codigo que se ejecuta delante del trader.
+# `scripts/` entra desde F12. Entonces el motivo era la hoja de la sesion, que vivia ahi y era el
+# unico codigo que se ejecuta delante del trader sin red; en F13 se mudo a
+# `src/botsito/cases/hoja_docx.py` y ahora tiene `mypy --strict` y los contratos encima. El lint
+# se queda: `instalar_hooks.py` y `mover_sesion.py` siguen aqui y tocan el repositorio.
 lint:
 	$(UV) run ruff check src tests scripts
 	$(UV) run ruff format --check src tests scripts

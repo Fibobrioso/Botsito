@@ -220,8 +220,10 @@ parametros:
 
   # F10 (ADR-0011): todos los parametros de estrategia que la evidencia nombra, pre-poblados en
   # UNKNOWN sin valor. Se cerraron en F11 con un registro de feedback de la sesion 1 (o evidencia
-  # que baste). El enlace parametro -> evidencia/ambiguedad esta en knowledge/cases/kit/
-  # mapa_parametros.yaml (el esquema del registro no admite claves extra).
+  # que baste). El enlace parametro -> EVIDENCIA esta en knowledge/cases/kit/mapa_parametros.yaml
+  # (el esquema del registro no admite claves extra); el enlace parametro -> AMBIGUEDAD lo sostiene
+  # knowledge/spec/ambiguedades.yaml, en el campo `parametros` de cada A-N. Estaban en los dos
+  # sitios hasta F13, y el del mapa llevaba parado desde F10.
   - nombre: ventana_inicio
     categoria: estrategia
     tipo: hora
@@ -262,7 +264,7 @@ parametros:
   - nombre: sesgo_h4_regla
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["vela_anterior_color", "vela_anterior_cierre_mecha", "otra"]
     descripcion: que vela H4 fija el sesgo y cuando cambia (A-1)
     estado: CONFIRMED
@@ -492,7 +494,7 @@ parametros:
   - nombre: reubicacion_cadencia
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["cada_vela", "al_romper", "otra"]
     descripcion: cada cuanto se reubica la orden limite mientras no se activa (A-5)
     estado: CONFIRMED
@@ -514,7 +516,7 @@ parametros:
   - nombre: mapeo_dos_velas
     categoria: estrategia
     tipo: enum
-    unidad: opcion cerrada (mapa_parametros.yaml)
+    unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["order_block_mayor", "otra"]
     descripcion: cuando dos velas de M1 cuentan como una estructura al mapear (A-8)
     estado: CONFIRMED
@@ -582,17 +584,29 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-140d655c
+  # Cambia de `estrategia` a `prop_firm` el 2026-09-12 (ADR-0022), y el cambio lo forzo una
+  # guardia: `test_fichero_real_cada_valor_de_estrategia_cita_al_trader` rechaza que un valor de
+  # estrategia venga de una decision nuestra, y tiene razon. Esto no es un numero de la operativa
+  # -esa la dice el trader y dice que NO filtra-: es una NORMA DE LA CUENTA a la que va el bot,
+  # igual que `instrumento_stops_level` es una norma del broker.
   - nombre: filtro_noticias
-    categoria: estrategia
+    categoria: prop_firm
     tipo: enum
     unidad: regla de filtro, o no si no filtra
     opciones: ["no", "regla"]
-    descripcion: si se deja de operar alrededor de noticias de alto impacto y con que margen
+    descripcion: >-
+      si se deja de operar alrededor de noticias de alto impacto y con que margen. `no` es lo que
+      hace EL TRADER en sus cuentas propias, que no lo prohiben, y su estrategia funciona dentro de
+      esos eventos -"a mi me es indiferente si hay noticia o no", fb-2026-09-09-sesion-01-3565552d-.
+      El BOT corre con `regla` desde ADR-0022 porque va a una cuenta fondeada que puede prohibirlo
+      como norma, y la sancion es perder la cuenta aunque la operacion acabe en profit. La opcion
+      `no` se conserva a proposito: el dia que el bot corra donde se permita, se cambia el valor y
+      nada mas. CON QUE VENTANA se bloquea es A-17, que sigue abierta
     estado: CONFIRMED
-    valor: "no"
+    valor: "regla"
     fuente:
-      tipo: feedback
-      id: fb-2026-09-09-sesion-01-3565552d
+      tipo: decision
+      id: ADR-0022
   - nombre: filtro_spread
     categoria: estrategia
     tipo: booleano

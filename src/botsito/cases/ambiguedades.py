@@ -6,15 +6,23 @@ test lo exige). F09 valida el objetivo `ambiguedad` de un registro contra estos 
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from botsito.comun import ids
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 
+_ES_FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 FICHERO_AMBIGUEDADES = "knowledge/spec/ambiguedades.yaml"
-ESTADOS = ("ABIERTA", "RESUELTA")
+# ABIERTA es el unico estado que se SIGUE PREGUNTANDO: entra en el cuestionario de la sesion
+# siguiente (`cases/cuestionario.py`) y en "corriendo con un valor en revision" de `spec status`.
+# DECIDIDA nace el 2026-09-12 (ADR-0022) porque faltaba: una ambiguedad de alcance, metodo o
+# herramienta la cierra el CONSULTOR, no el trader, y hasta hoy no habia forma de cerrarla -A-15,
+# A-16 y A-17 llevaban decididas y abiertas desde el 2026-09-09-. Tiene que ser un ESTADO y no un
+# campo junto a ABIERTA: si fuera un campo, `cuestionario.py` le volveria a preguntar al trader lo
+# que el consultor ya decidio, que es justo lo que el kit existe para evitar.
+ESTADOS = ("ABIERTA", "RESUELTA", "DECIDIDA")
 CAMPOS = (
     "id",
     "titulo",
@@ -24,6 +32,10 @@ CAMPOS = (
     "parametros",
     "contradiccion",
     "estado",
+    # Obligatorios-nulables, como `contradiccion`: van en las 21 entradas, con null cuando no
+    # aplica. Solo DECIDIDA los lleva con valor, y la guardia lo exige en los dos sentidos.
+    "decision",
+    "decidida_el",
     "bloqueante",
 )
 
@@ -42,6 +54,8 @@ class Ambiguedad:
     parametros: tuple[str, ...]
     contradiccion: str | None
     estado: str
+    decision: str | None
+    decidida_el: str | None
     bloqueante: bool
 
 
@@ -71,6 +85,20 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
     contradiccion = bruto["contradiccion"]
     if contradiccion is not None and (not isinstance(contradiccion, str) or not contradiccion):
         raise AmbiguedadError(f"{aid}: contradiccion debe ser un tema o null")
+    decision, decidida_el = bruto["decision"], bruto["decidida_el"]
+    if bruto["estado"] == "DECIDIDA":
+        if not (isinstance(decision, str) and ids.es_id_de("decision", decision)):
+            raise AmbiguedadError(
+                f"{aid}: DECIDIDA exige `decision` con un ADR-NNNN, no {decision!r}"
+            )
+        if not (isinstance(decidida_el, str) and _ES_FECHA.match(decidida_el)):
+            raise AmbiguedadError(
+                f"{aid}: DECIDIDA exige `decidida_el` AAAA-MM-DD, no {decidida_el!r}"
+            )
+    elif decision is not None or decidida_el is not None:
+        raise AmbiguedadError(
+            f"{aid}: `decision` y `decidida_el` solo van en DECIDIDA; aqui esta {bruto['estado']}"
+        )
     evidencia = _lista_de_textos(bruto["evidencia"], "evidencia", aid)
     if not evidencia:
         raise AmbiguedadError(f"{aid}: una ambiguedad cita al menos un item de evidencia")
@@ -86,6 +114,8 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
         _lista_de_textos(bruto["parametros"], "parametros", aid),
         contradiccion,
         str(bruto["estado"]),
+        str(decision) if decision is not None else None,
+        str(decidida_el) if decidida_el is not None else None,
         bool(bruto["bloqueante"]),
     )
 
@@ -131,17 +161,3 @@ def validar_contra_contexto(
         if a.contradiccion and a.estado == "ABIERTA" and a.contradiccion not in temas_contradiccion:
             problemas.append(f"{a.id}: no hay contradiccion abierta sobre {a.contradiccion}")
     return problemas
-
-
-def como_dict(a: Ambiguedad) -> dict[str, Any]:
-    return {
-        "id": a.id,
-        "titulo": a.titulo,
-        "pregunta": a.pregunta,
-        "resuelve_en": list(a.resuelve_en),
-        "evidencia": list(a.evidencia),
-        "parametros": list(a.parametros),
-        "contradiccion": a.contradiccion,
-        "estado": a.estado,
-        "bloqueante": a.bloqueante,
-    }

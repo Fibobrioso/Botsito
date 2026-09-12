@@ -69,38 +69,89 @@ def test_el_detector_ve_los_usos(tmp_path: Path) -> None:
     ]
 
 
-def test_las_opciones_del_kit_y_del_registro_no_pueden_separarse(repo: Path) -> None:
-    """`mapa_parametros.yaml` (F10) y el registro (F11) declaran las mismas listas cerradas.
+# Renombres de opcion posteriores a una sesion ya celebrada. La clave es (parametro, opcion tal
+# como se le pregunto al trader) y el valor dice en que se convirtio y quien lo decidio. Van
+# nombradas y razonadas, como las exenciones de `paquete.py:574`: una lista vacia seria mas
+# comoda y no distinguiria un renombre acordado de una opcion que se perdio por el camino.
+RENOMBRADAS = {
+    ("lotaje_base", "desde_075"): "hasta_stop_fraccion (ADR-0020, 2026-09-11)",
+}
 
-    Las `opciones` deberian vivir solo en el registro, pero el paquete de la sesion 1 se genero
-    con las del kit y `kit check` exige que ese paquete se reproduzca byte a byte: es la prueba de
-    lo que se le pregunto al trader, y no puede cambiar. Asi que conviven, y esto impide lo unico
-    que importa: que una de las dos se quede atras y el kit pregunte por una opcion que el
-    registro rechaza. Deuda declarada para F13.
+
+@pytest.mark.contract
+def test_lo_que_se_le_pregunto_al_trader_sigue_teniendo_objeto_en_el_registro(repo: Path) -> None:
+    """Cada opcion cerrada del cuestionario COMMITEADO existe hoy en el registro, o esta declarada
+    como renombre.
+
+    Sustituye (F13) a la guardia que cruzaba las `opciones` del mapa con las del registro. Aquella
+    vigilaba que dos copias no se separaran; al unificarlas -las opciones las da ahora el registro-
+    se quedo sin las dos copias, pero lo que protegia sigue importando y no era la copia: era que
+    el paquete de una sesion celebrada es la PRUEBA de lo que se le pregunto al trader, y una
+    respuesta suya solo se puede aplicar si el registro todavia admite la opcion que eligio.
+
+    Es mas ancha que la que sustituye: mira el paquete real y no el fichero del que salio, asi que
+    tambien cubre las sesiones futuras sin tocar nada. En su primera ejecucion encontro el
+    renombre de `desde_075`, que la anterior no podia ver.
     """
     import yaml
 
-    from botsito.config.registro import cargar_registro
+    from botsito.cases.paquete import DIRECTORIO_KIT, sesiones_del_kit
 
     registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    mapa = yaml.safe_load(
-        (repo / "knowledge" / "cases" / "kit" / "mapa_parametros.yaml").read_text(encoding="utf-8")
-    )
     problemas: list[str] = []
-    for nombre, datos in (mapa.get("parametros") or {}).items():
-        opciones_kit = (datos or {}).get("opciones")
-        if opciones_kit is None:
-            continue
-        p = registro.parametros.get(nombre)
-        if p is None:
-            problemas.append(f"{nombre}: el kit lo nombra y el registro no lo tiene")
-            continue
-        if p.opciones is None:
-            problemas.append(f"{nombre}: el kit declara opciones y en el registro no es un enum")
-            continue
-        if list(p.opciones) != list(opciones_kit):
-            problemas.append(f"{nombre}: kit {list(opciones_kit)} != registro {list(p.opciones)}")
+    sesiones = sesiones_del_kit(repo)
+    assert sesiones, "no hay ningun paquete commiteado: la guardia no vigilaria nada"
+    for sesion in sesiones:
+        ruta = repo / DIRECTORIO_KIT / sesion / "cuestionario.yaml"
+        doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+        for q in doc["preguntas"]:
+            esperada = q["respuesta_esperada"]
+            nombres = esperada.get("parametros") or []
+            # Las opciones de una pregunta de contradiccion son VALORES vistos en el corpus, no
+            # un enum: no tienen por que estar en el registro y no se miran aqui.
+            if not esperada.get("opciones") or not nombres:
+                continue
+            admitidas: set[str] = set()
+            for n in nombres:
+                p = registro.parametros.get(n)
+                if p is None:
+                    problemas.append(f"{sesion}/{q['id']}: {n} ya no esta en el registro")
+                    continue
+                admitidas |= set(p.opciones or ())
+            for o in esperada["opciones"]:
+                if o in admitidas or (len(nombres) == 1 and (nombres[0], o) in RENOMBRADAS):
+                    continue
+                problemas.append(
+                    f"{sesion}/{q['id']}: se pregunto por {o!r} de {nombres} y el registro "
+                    f"admite {sorted(admitidas)}"
+                )
     assert not problemas, "; ".join(problemas)
+
+
+@pytest.mark.contract
+def test_la_guardia_de_las_opciones_ve_un_renombre_no_declarado(repo: Path) -> None:
+    """Si no cazara una opcion desaparecida, no vigilaria nada. Se comprueba sobre el renombre
+    real: `desde_075` sigue en el cuestionario commiteado, ya no esta en el registro, y lo unico
+    que impide que salte es su entrada en RENOMBRADAS."""
+    import yaml
+
+    from botsito.cases.paquete import DIRECTORIO_KIT
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    assert "desde_075" not in (registro.parametros["lotaje_base"].opciones or ())
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "cuestionario.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    preguntadas = {
+        o
+        for q in doc["preguntas"]
+        if (q["respuesta_esperada"].get("parametros") or []) == ["lotaje_base"]
+        for o in q["respuesta_esperada"]["opciones"]
+    }
+    assert "desde_075" in preguntadas
+    assert ("lotaje_base", "desde_075") in RENOMBRADAS
 
 
 def test_el_readme_de_la_spec_no_puede_llevar_cifras_viejas(repo: Path) -> None:
@@ -122,26 +173,30 @@ def test_el_readme_de_la_spec_no_puede_llevar_cifras_viejas(repo: Path) -> None:
     """
     import re
 
-    from botsito.config.registro import cargar_registro
-
     ruta = repo / "knowledge" / "spec" / "README.md"
-    texto = " ".join(ruta.read_text(encoding="utf-8").split())
-    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    reales = {
-        "": len(registro.parametros),
-        "confirmados": sum(
-            1 for p in registro.parametros.values() if p.estado.value == "CONFIRMED"
-        ),
-        "UNKNOWN": sum(1 for p in registro.parametros.values() if p.estado.value == "UNKNOWN"),
-    }
+    texto = ruta.read_text(encoding="utf-8")
 
-    m = re.search(
-        r"tiene (\d+) parametros: (\d+) confirmados, \d+ con un default \w+ y (\d+) UNKNOWN", texto
+    # LA GUARDIA SE INVIRTIO EN F13, y es mejor guardia. Antes exigia que el recuento pegado a
+    # mano cuadrara con el registro; ahora exige que NO HAYA recuento que cuadrar. El numero vive
+    # en `docs/spec/parametros.md`, que se GENERA desde el registro y que `test_spec_docs_generados`
+    # compara entero: una copia que no existe no se puede quedar vieja.
+    # Mas ancha que la version que nacio en F13, y ademas VIVA: aquella llevaba tres BACKSPACE
+    # literales (0x08) donde alguien escribio \b, porque el heredoc que la creo se comio las
+    # barras. Un 0x08 no aparece en ningun README, asi que la guardia no podia saltar NUNCA:
+    # pasaba por decorativa sin que se notara. La encontro la auditoria de cierre de F13 al ir a
+    # ensancharla, y de paso: "hay 24 UNKNOWN", "59 parametros" con tilde o "A-1 a A-21" tampoco
+    # los cazaba la version estrecha.
+    sospechosas = re.findall(
+        r"\d+\s+(?:par[aá]metros?|confirmados?|UNKNOWN|reglas?|ambig[uü]edades|registros?)"
+        r"|A-\d+\s*(?:\.\.|a)\s*A-\d+",
+        texto,
+        re.IGNORECASE,
     )
-    assert m, "el README dejo de declarar el recuento en la forma que esta guardia sabe leer"
-    dichos = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
-    esperados = (reales[""], reales["confirmados"], reales["UNKNOWN"])
-    assert dichos == esperados, f"el README dice {dichos} y el registro tiene {esperados}"
+    assert not sospechosas, (
+        f"el README de la spec volvio a pegar cifras vivas ({sospechosas}); el recuento lo dan "
+        f"`botsito spec status` y `docs/spec/parametros.md`, que se genera"
+    )
+    assert "spec status" in texto, "tiene que apuntar al comando que da el recuento vivo"
 
 
 def test_el_handoff_no_pega_un_recuento_que_caduca(repo: Path) -> None:

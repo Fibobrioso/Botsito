@@ -180,8 +180,12 @@ predicados:
     cita: fb-2026-09-09-sesion-01-060cd801
     literal: Sí, esto no gasta intentos, me dijiste, ¿no? No
   contexto_filtrable:
-    descripcion: hay noticia de alto impacto o el spread se ensancha
-    argumentos: [noticias, spread]
+    # Declaraba tambien `noticias` hasta el 2026-09-12. ADR-0022 partio RN-021 y se las llevo a
+    # RN-028, pero el argumento se quedo aqui, declarado y sin que nadie lo pasara: lo encontro la
+    # guardia de argumentos QUE FALTAN, que nacio en la auditoria de cierre de F13. La cita se
+    # conserva entera porque sigue sosteniendo lo que esta regla dice: el trader no filtra nada.
+    descripcion: el spread se ensancha por encima de lo tolerable
+    argumentos: [spread]
     cita: fb-2026-09-09-sesion-01-3565552d
     literal: >-
       a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
@@ -247,6 +251,60 @@ acciones:
   abstenerse:
     descripcion: no operar, sin aproximar ni buscar nada adicional
     argumentos: [segun]
+
+# Las palabras del lenguaje ejecutable que NO son parametros ni ligaduras: sujetos de geometria,
+# estados, resultados y los campos de la operacion en curso. Nacen en la auditoria de cierre de
+# F13 porque hasta entonces no estaban declaradas EN NINGUNA PARTE: `_ESTRUCTURALES` era una lista
+# de CLAVES de argumento -`que`, `a`, `por`, `resultado`...- y el valor que llevaran no se
+# contrastaba con nada, asi que `que: cuerpo` valia lo mismo que `que: liquidez_m15`. Era la mitad
+# que quedo abierta al invertir `_ARGS_DE_VALOR`, y estaba declarada como deuda en el codigo.
+#
+# Un token NO lleva numero ni admite alternativas de negocio: si una casilla puede valer una cosa
+# u otra segun lo que diga el trader, eso es un PARAMETRO del registro y no un token (ADR-0002).
+tokens:
+  OP:
+    descripcion: la operacion en curso; sus campos se nombran con punto (`OP.precio_entrada`)
+  precio_entrada:
+    descripcion: campo de OP, el precio al que se lleno la orden
+  instante_entrada:
+    descripcion: campo de OP, el momento en que se lleno la orden
+  zona_de_entrada:
+    descripcion: campo de OP, la zona de control desde la que se entro
+  "si":
+    descripcion: enciende un hecho de estado (`fijar`) o activa una opcion de una accion
+  "no":
+    descripcion: >-
+      apaga un hecho de estado. Va ENTRECOMILLADO en el YAML a proposito: sin comillas, `no` es el
+      booleano falso de YAML 1.1 mientras que `si` es una cadena, y la misma casilla de la misma
+      regla acababa con dos tipos distintos (RN-013, encontrado el 2026-09-12)
+  sentido_de_la_ruptura:
+    descripcion: el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`
+  hasta_cartuchos_reinicio:
+    descripcion: la detencion dura hasta el reinicio que diga `cartuchos_reinicio`
+  hasta_el_corte_siguiente:
+    descripcion: la detencion dura hasta el siguiente corte del dia o de la semana de riesgo
+  extremo_de_la_h4_anterior:
+    descripcion: el maximo o el minimo de la vela H4 previa, segun el sentido
+  vela_h4_previa:
+    descripcion: la vela H4 cerrada inmediatamente anterior al anclaje
+  liquidez_m15:
+    descripcion: la liquidez marcada en M15 que hay que tomar antes de mirar M1
+  lote_calculado:
+    descripcion: el lote que acaba de calcular `dimensionar_lote`, antes de redondear
+  stop_o_limite:
+    descripcion: el nivel al que llega el precio, sea el stop o el objetivo
+  primer_esquema:
+    descripcion: el primer esquema de entrada
+  segundo_esquema:
+    descripcion: el segundo esquema de entrada
+  cualquier_esquema:
+    descripcion: cualquiera de los dos esquemas de entrada, sin distinguirlos
+  equal:
+    descripcion: la operacion cerro sin ganancia ni perdida
+  ganancia:
+    descripcion: la operacion cerro en positivo
+  perdida:
+    descripcion: la operacion cerro en negativo
 
 # Estado del bot, no geometria del mercado. Cada hecho dice QUIEN lo produce y QUIEN lo consume:
 # un hecho que nadie consume es una regla que no sirve para nada, y uno que nadie produce es una
@@ -428,7 +486,7 @@ reglas:
           - cruza: {que: liquidez_m15, criterio: liquidez_m15_criterio_toma}
       entonces:
         hace:
-          - fijar: {hecho: liquidez_tomada, a: si}
+          - fijar: {hecho: liquidez_tomada, a: "si"}
     clase: disparador
     estado: VIGENTE
 
@@ -615,7 +673,7 @@ reglas:
           - escribir_stop_en_la_orden:
               donde: stop_en_orden_pendiente
               nivel: stop_fraccion_caja
-          - fijar: {hecho: orden_limite_pendiente, a: si}
+          - fijar: {hecho: orden_limite_pendiente, a: "si"}
     decision: ADR-0020
     clase: disparador
     estado: VIGENTE
@@ -678,8 +736,8 @@ reglas:
       entonces:
         hace:
           - escribir_stop_en_la_orden: {donde: stop_en_orden_pendiente, nivel: stop_fraccion_caja}
-          - fijar: {hecho: operacion_abierta, a: si}
-          - fijar: {hecho: orden_limite_pendiente, a: no}
+          - fijar: {hecho: operacion_abierta, a: "si"}
+          - fijar: {hecho: orden_limite_pendiente, a: "no"}
     clase: disparador
     estado: VIGENTE
 
@@ -876,20 +934,23 @@ reglas:
     estado: VIGENTE
 
   - id: RN-021
-    titulo: se opera durante las noticias y sin tope de spread
-    cuando: hay una noticia de alto impacto o el spread se ensancha
-    entonces: no se filtra (filtro_noticias, filtro_spread)
-    parametros: [filtro_noticias, filtro_spread]
+    titulo: el spread no se filtra
+    cuando: el spread se ensancha
+    entonces: no se filtra (filtro_spread); se opera igual
+    parametros: [filtro_spread]
     cita: fb-2026-09-09-sesion-01-3565552d
     literal: >-
       a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
     notas: >-
-      A-17: el propio trader avisa de que la cuenta de fondeo puede prohibirlo y cerrar la cuenta
-      aunque se acabe en profit. Verificar antes de operar en real
+      HASTA EL 2026-09-12 esta regla decia tambien que se opera DURANTE LAS NOTICIAS, y para el
+      trader sigue siendo cierto: opera cuentas propias que no lo prohiben y su estrategia funciona
+      dentro de esos eventos. Para el BOT ya no, porque va a una cuenta fondeada que puede
+      prohibirlo: esa mitad se fue a RN-028 (ADR-0022). El propio trader lo habia avisado y el
+      aviso llevaba tres dias en estas notas sin que ninguna guardia lo mirara
     forma:
       cuando:
         todos_de:
-          - contexto_filtrable: {noticias: filtro_noticias, spread: filtro_spread}
+          - contexto_filtrable: {spread: filtro_spread}
       entonces:
         permite: [buscar_entradas, abrir_operacion]
     clase: disparador
@@ -1013,9 +1074,34 @@ reglas:
       entonces:
         hace:
           - redondear_lote:
-              a_la_baja: si
+              a_la_baja: "si"
               paso: instrumento_lote_paso
               minimo: instrumento_lote_minimo
               contrato: instrumento_contrato
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-028
+    titulo: el bot no abre alrededor de una noticia de alto impacto, aunque el trader si lo haga
+    cuando: hay una noticia de alto impacto y filtro_noticias dice que se filtra
+    entonces: >-
+      no se abre ninguna operacion. NO es lo que hace el trader -el opera cuentas propias que no lo
+      prohiben y su estrategia funciona dentro de esos eventos-: es una restriccion de la cuenta a
+      la que va el bot
+    parametros: [filtro_noticias]
+    cita: fb-2026-09-09-sesion-01-3565552d
+    literal: >-
+      a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias
+    notas: >-
+      La cita dice lo CONTRARIO de lo que esta regla hace, y por eso declara `decision`. Lo que el
+      trader dijo sigue siendo verdad sobre SU operativa y se conserva intacto en RN-021 y en la
+      descripcion de filtro_noticias. Lo que decide ADR-0022 es donde corre el bot: una cuenta
+      fondeada que puede prohibirlo como norma, con la cuenta como sancion aunque la operacion
+      acabe en profit. El propio trader lo aviso en la sesion 1. La CAPACIDAD se conserva: basta
+      poner filtro_noticias en `no` el dia que el bot opere donde se permita. F26 tiene que citar
+      esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot
+    decision: ADR-0022
+    forma:
+      pendiente_definicion: A-17
     clase: gate
     estado: VIGENTE

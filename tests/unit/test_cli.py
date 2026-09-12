@@ -286,6 +286,9 @@ def _fb_args(repo: Path, **extra: str) -> list[str]:
         "accion": "CONFIRM",
         "respuesta": "si, el stop va al 0,75 siempre",
         "registrado-por": "aleks",
+        # La sesion es posterior al corte del 2026-09-13, asi que la guardia los exige.
+        "recibido-el": "2026-09-20",
+        "procedencia": "trader_hoja",
     }
     campos.update(extra)
     args = ["--repo", str(repo), "feedback", "new"]
@@ -472,7 +475,9 @@ def test_feedback_pending_omite_parametros_que_no_son_de_estrategia(
     assert cli.feedback_pending(repo) == 0
     salida = capsys.readouterr().out
     assert "stop_fraccion" in salida and "spread_max" not in salida
-    assert "1 registros activos" in salida
+    # `spread_max` no desaparece por estar reflejado sino por su CATEGORIA (ADR-0004): cuenta
+    # entre los activos y entre los reflejados, y por eso el recuento dice 2 y no 1.
+    assert "1 pendientes de 2 activos" in salida
 
 
 def test_evidence_new_rechaza_video_fuera_de_fuentes(tmp_path: Path) -> None:
@@ -557,3 +562,135 @@ def test_spec_status_no_llama_a_proposito_a_lo_que_no_se_ha_preguntado(
     assert con_registro, "hoy hay parametros sin valor y rechazados por el trader"
     assert all(n in rechazados for n in con_registro), con_registro
     assert not [n for n in sin_registro if n in rechazados], sin_registro
+
+
+def test_pending_no_lista_lo_que_ya_esta_reflejado(
+    repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """La deuda (b) de F11: listaba los 70 activos sin mirar si el valor habia llegado.
+
+    Una lista que siempre esta llena no la mira nadie, que es la forma mas silenciosa de que una
+    guardia deje de servir. El criterio no es una aproximacion: un parametro refleja su registro
+    cuando lo CITA en su `fuente`, que es donde `feedback apply` escribe el id. Y un REJECT se
+    refleja al reves, cuando el parametro deja de citarlo: o se queda sin valor a proposito, o
+    toma su valor de otra fuente.
+    """
+    from botsito.config.registro import cargar_registro
+
+    capsys.readouterr()
+    assert cli.feedback_pending(repo) == 0
+    salida = capsys.readouterr().out
+    ultima = salida.strip().splitlines()[-1]
+    assert "pendientes de" in ultima and "reflejados" in ultima
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    citados = {p.fuente.id for p in registro.parametros.values() if p.fuente is not None}
+    listados = {linea.split()[1] for linea in salida.splitlines() if linea.startswith("2026-")}
+    assert not (listados & citados), (
+        f"lista como pendientes registros que el registro ya cita: {sorted(listados & citados)}"
+    )
+
+    # con --todos se ven tambien los reflejados, y dicen por que lo estan
+    capsys.readouterr()
+    assert cli.feedback_pending(repo, todos=True) == 0
+    completa = capsys.readouterr().out
+    assert "(ok)" in completa and "aplicado" in completa
+
+
+def test_pending_no_da_por_reflejado_lo_que_no_puede_comprobar(
+    repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """La otra mitad, y la auditoria de cierre la encontro ROTA sobre el repositorio real.
+
+    La primera version de F13 cerraba con un `return False` -"el resto no se aplica a la spec"- y
+    con el se comia tres tipos de objetivo. Uno estaba VIVO: el `RESOLVE_CONTRADICTION` con el que
+    el trader cerro el 0,75 vs 0,8 salia como reflejado mientras `_contradicciones.yaml` seguia
+    diciendo que `stop.nivel` esta ABIERTA. Una herramienta que contesta "0 pendientes" teniendo
+    trabajo delante es peor que no tenerla.
+
+    Y se vigila la otra direccion: los CORRECT/REJECT sobre evidencia NO son pendientes -el item
+    cita bien lo que se dijo en el video- pero tampoco se pueden dar por reflejados, asi que salen
+    en su propio cajon, SIEMPRE visible. Un tercer estado callado seria la misma mentira.
+    """
+    capsys.readouterr()
+    assert cli.feedback_pending(repo) == 0
+    salida = capsys.readouterr().out
+
+    assert "contradiccion:stop.nivel" in salida, (
+        "el RESOLVE_CONTRADICTION de stop.nivel tiene que salir mientras la contradiccion siga "
+        "abierta: es el caso real que la auditoria de cierre encontro escondido"
+    )
+    linea = next(x for x in salida.splitlines() if "contradiccion:stop.nivel" in x)
+    assert not linea.lstrip().startswith(("(ok)", "(?)")), "es PENDIENTE, no un cajon callado"
+
+    sin_mecanismo = [x for x in salida.splitlines() if x.lstrip().startswith("(?)")]
+    assert sin_mecanismo, "los CORRECT/REJECT sobre evidencia se declaran, no se esconden"
+    assert all("evidence:" in x for x in sin_mecanismo)
+    assert "sin forma mecanica" in salida.strip().splitlines()[-1]
+
+
+def test_pending_ve_el_rechazo_sin_aplicar_y_la_regla_que_sigue_vigente(repo: Path) -> None:
+    """Los dos criterios que no tienen NINGUN caso real, ejercitados a mano.
+
+    Hoy no existe ni un registro con objetivo `regla` y los once REJECT sobre parametro estan
+    todos aplicados: sin esto, dos de los siete criterios no los probaria nada. Que no haya casos
+    no quiere decir que el camino sea correcto, quiere decir que nadie lo ha mirado.
+    """
+    import dataclasses
+
+    from botsito.config.registro import cargar_registro
+    from botsito.evidence.contradicciones import detectar
+    from botsito.evidence.modelo import cargar_evidencia
+    from botsito.feedback.modelo import Objetivo, cargar_feedback
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_reglas
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    reglas = cargar_reglas(repo / FICHERO_SPEC)
+    items = list(cargar_evidencia(repo / "knowledge" / "evidence"))
+    ctx = cli.ContextoPendiente(
+        registro.parametros,
+        {},
+        {r.id: r for r in reglas},
+        frozenset(str(c["tema"]) for c in detectar(items)),
+        "",
+    )
+
+    base = next(r for r in registros if r.accion == "REJECT" and r.objetivo.tipo == "parametro")
+    con_fuente = next(
+        p
+        for p in registro.parametros.values()
+        if p.fuente is not None and p.fuente.tipo == "feedback" and p.categoria == "estrategia"
+    )
+    assert con_fuente.fuente is not None
+    vigente = next(r for r in reglas if r.vigente)
+
+    casos = [
+        # un REJECT cuyo `supersede` es justo el registro que el parametro TODAVIA cita
+        (
+            dataclasses.replace(
+                base,
+                objetivo=Objetivo("parametro", con_fuente.nombre),
+                supersede=con_fuente.fuente.id,
+            ),
+            "que esto rechaza",
+        ),
+        # un REJECT sin `supersede`: no dice que retira, asi que no se puede dar por aplicado
+        (
+            dataclasses.replace(
+                base, objetivo=Objetivo("parametro", con_fuente.nombre), supersede=None
+            ),
+            "no dice que registro retira",
+        ),
+        # y un REJECT sobre una regla que sigue VIGENTE
+        (
+            dataclasses.replace(base, objetivo=Objetivo("regla", vigente.id), supersede=None),
+            "sigue VIGENTE",
+        ),
+    ]
+    problemas = []
+    for registro_falso, aguja in casos:
+        estado, motivo = cli.situacion_de(ctx, registro_falso)
+        if estado != "pendiente" or aguja not in motivo:
+            problemas.append(f"{registro_falso.objetivo}: {estado} - {motivo}")
+    assert not problemas, problemas
