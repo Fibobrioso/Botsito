@@ -593,6 +593,37 @@ _ARGS_DE_VALOR = frozenset(
 )
 
 
+def comprobar_citas_revocadas(
+    reglas: list[Regla],
+    terminos: list[Termino],
+    vocabulario: Mapping[str, Mapping[str, Any]],
+    revocados: Mapping[str, str],
+) -> list[str]:
+    """Nadie cita un registro de feedback que otro registro ya corrigio.
+
+    Es la guardia que mas veces ha nacido corta. Nacio en F11 mirando solo `parametros.yaml`
+    -P13: `cartuchos_reinicio` cito durante toda la funcionalidad un registro revocado por llevar
+    una parafrasis del consultor en el campo del literal-. Se amplio a reglas y glosario cuando
+    RN-013 acabo citando uno en el commit que arreglaba lo anterior. Y el 2026-09-11 se vio que el
+    vocabulario que estreno F12 -predicados y acciones, que tambien llevan `cita` propia- seguia
+    fuera: al cerrar el acuerdo del lotaje, `no_es_multiplo_de` se quedo citando el registro que
+    ese mismo acuerdo acababa de revocar, y nada lo dijo.
+
+    `revocados` es id revocado -> id que lo supersede.
+    """
+    citados: list[tuple[str, str]] = [(r.id, r.cita) for r in reglas]
+    citados += [(f"glosario {x.termino!r}", x.cita) for x in terminos]
+    for seccion in ("predicados", "acciones"):
+        for nombre, datos in sorted((vocabulario.get(seccion) or {}).items()):
+            if isinstance(datos, dict) and datos.get("cita"):
+                citados.append((f"{seccion} {nombre!r}", str(datos["cita"])))
+    return [
+        f"{doc_id}: cita {cita_id}, que esta revocado por {revocados[cita_id]}"
+        for doc_id, cita_id in citados
+        if cita_id in revocados
+    ]
+
+
 def comprobar_forma(
     reglas: list[Regla], vocabulario: dict[str, dict[str, Any]], parametros: set[str]
 ) -> list[str]:

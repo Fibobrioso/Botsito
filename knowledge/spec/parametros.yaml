@@ -396,8 +396,9 @@ parametros:
     unidad: multiplo de la distancia que declara base_calculo_objetivo
     descripcion: >-
       objetivo fijo, en multiplos de la distancia que fija base_calculo_objetivo. "Riesgo" a
-      secas seria ambiguo: el lote se dimensiona sobre la caja completa y el stop acaba en
-      stop_fraccion_caja, asi que hay dos distancias y no son la misma (ADR-0014). El objetivo
+      secas seria ambiguo: hay dos distancias y no son la misma (ADR-0014). Desde ADR-0020 la
+      diferencia es mayor, porque el lote ya no se dimensiona sobre la caja entera sino hasta
+      stop_fraccion_caja, que es donde acaba el stop. El objetivo
       es FIJO, no minimo: la sesion 1 cerro la extension en objetivo_extension_activa: false
     estado: CONFIRMED
     valor: "3"
@@ -526,7 +527,10 @@ parametros:
     categoria: estrategia
     tipo: porcentaje
     unidad: porcentaje de la cuenta por operacion
-    descripcion: riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo)
+    descripcion: >-
+      riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo). Desde ADR-0020 es lo que cuesta
+      el stop DE VERDAD, no un nominal: el lote se dimensiona sobre la distancia hasta
+      stop_fraccion_caja (lotaje_base)
     estado: CONFIRMED
     valor: "0.5"
     fuente:
@@ -537,14 +541,21 @@ parametros:
   - nombre: lotaje_base
     categoria: estrategia
     tipo: enum
-    unidad: distancia_completa/desde_075
-    opciones: ["distancia_completa", "desde_075"]
-    descripcion: sobre que distancia se calcula el lotaje
+    unidad: distancia que absorbe riesgo_por_operacion
+    opciones: ["distancia_completa", "hasta_stop_fraccion"]
+    descripcion: >-
+      sobre que distancia se dimensiona el lote. `distancia_completa` es la caja entera, del
+      nivel 0 al nivel 1, y deja la perdida del stop POR DEBAJO del riesgo nominal;
+      `hasta_stop_fraccion` es la distancia del nivel 0 a stop_fraccion_caja, asi que el stop
+      cuesta el riesgo ENTERO y el resto de la caja deja de ser presupuesto de riesgo. La
+      segunda opcion se llamaba `desde_075` hasta el 2026-09-11: nombraba un 0,75 que A-10
+      habia cerrado en 0,8, y un numero de negocio en el nombre de una opcion es la clase de
+      doble puerta que ADR-0002 prohibe. Ahora el nivel lo pone stop_fraccion_caja y solo el
     estado: CONFIRMED
-    valor: "distancia_completa"
+    valor: hasta_stop_fraccion
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-a089315e
+      id: fb-2026-09-09-sesion-01-17ed6193
 
   # F10 (auditoria previa a la sesion 1): parametros que la hoja de la sesion pregunta y que sin
   # esta entrada dejarian la respuesta del trader sin ningun objeto al que apuntar.
@@ -735,8 +746,10 @@ parametros:
     opciones: ["caja_completa", "riesgo_real"]
     descripcion: >-
       distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 ->
-      nivel 1, la misma que dimensiona el lote (lotaje_base); `riesgo_real` seria la distancia
-      hasta stop_fraccion_caja. El objetivo se traza CON la orden, antes de que el stop se
+      nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11
+      esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde
+      ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo
+      se mide sobre la caja entera. El objetivo se traza CON la orden, antes de que el stop se
       mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR
       realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
     estado: CONFIRMED

@@ -185,10 +185,10 @@ predicados:
   no_es_multiplo_de:
     descripcion: el lote calculado no cae en el escalon del broker
     argumentos: [que, paso]
-    cita: fb-2026-09-09-sesion-01-a089315e
+    cita: fb-2026-09-09-sesion-01-17ed6193
     literal: >-
-      El lotaje se pone sobre la caja completa de SL, pero automaticamente se mueve al 0.8 de la
-      misma para que corra la operacion.
+      el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el
+      acuerdo final
 
 # Lo que una regla HACE. Separado de los predicados a proposito: un predicado se EVALUA y una
 # accion se EJECUTA, y confundirlos fue lo que la guardia encontro al escribir las veinte reglas
@@ -218,7 +218,7 @@ acciones:
     argumentos: [multiplo, sobre, extension, parciales]
   realizar_perdida:
     descripcion: contabiliza la perdida efectiva cuando el stop salta
-    argumentos: [riesgo, sobre, fraccion]
+    argumentos: [riesgo, sobre]
   gestionar_salida:
     descripcion: protege y deja correr una entrada que no rompio
     argumentos: [segun, stop]
@@ -534,12 +534,12 @@ reglas:
 
   # ---------------------------------------------------------------- riesgo y gestion
   - id: RN-011
-    titulo: el lote se dimensiona sobre la caja completa y la orden nace con su stop
+    titulo: el lote se dimensiona hasta el stop, y la orden nace con ese mismo stop
     cuando: se coloca la orden limite
     entonces: >-
-      el lote sale de la distancia completa segun lotaje_base y riesgo_por_operacion sobre
-      base_calculo_riesgo; el stop viaja EN LA ORDEN segun stop_en_orden_pendiente, ya en
-      stop_fraccion_caja, antes de que la entrada se active
+      el lote sale de la distancia que va de la entrada a stop_fraccion_caja segun lotaje_base y
+      riesgo_por_operacion sobre base_calculo_riesgo; el stop viaja EN LA ORDEN segun
+      stop_en_orden_pendiente, en ese mismo stop_fraccion_caja, antes de que la entrada se active
     parametros:
       - lotaje_base
       - riesgo_por_operacion
@@ -552,12 +552,15 @@ reglas:
       hasta el 2026-09-10 esta regla decia que el stop "se mueve inmediatamente" tras activarse la
       entrada, citando "El primer stop loss es para el calculo del lotaje y el segundo es para
       proteccion". El trader lo corrigio, y ese es el literal de ahora. Los dos stops de la frase
-      anterior son el del CALCULO -la caja completa, que dimensiona el lote- y el que
-      se ESCRIBE en la orden, que ya es stop_fraccion_caja. El corpus describe lo mismo desde el
-      lado del resultado -"me activa la entrada y si yo protejo a 0.80", ev-v5-000312- y por eso
-      parecia un movimiento posterior. Importa en un caso concreto: un hueco de precio que
-      atraviese la entrada NO puede saltar al stop de rango completo, porque ese nunca llega a
-      estar vivo en el mercado
+      anterior son el del CALCULO y el que se ESCRIBE en la orden, y desde ADR-0020 son EL
+      MISMO: stop_fraccion_caja. El corpus describe lo mismo desde el lado del resultado -"me
+      activa la entrada y si yo protejo a 0.80", ev-v5-000312- y por eso parecia un movimiento
+      posterior. Importa en un caso concreto: un hueco de precio que atraviese la entrada NO
+      puede saltar al stop de rango completo, porque ese nunca llega a estar vivo en el mercado.
+      El 2026-09-11 el consultor cierra el acuerdo final y el lote deja de dimensionarse sobre la
+      caja completa: lo que absorbe riesgo_por_operacion es la distancia hasta el stop, asi que el
+      lote sube un 25 % con stop_fraccion_caja = 0,8. Esa parte de la regla NO la sostiene el
+      literal del trader -que decia lo contrario- y por eso declara `decision`
     forma:
       cuando:
         todos_de:
@@ -572,23 +575,32 @@ reglas:
               donde: stop_en_orden_pendiente
               nivel: stop_fraccion_caja
           - fijar: {hecho: orden_limite_pendiente, a: si}
+    decision: ADR-0020
     clase: disparador
     estado: VIGENTE
 
   - id: RN-012
-    titulo: la perdida real es menor que el riesgo nominal, y es a proposito
+    titulo: el stop cuesta el riesgo entero, y el resto de la caja no es presupuesto
     cuando: el stop salta
     entonces: >-
-      la perdida es riesgo_por_operacion -sobre base_calculo_riesgo- multiplicado por
-      stop_fraccion_caja, porque el lote se dimensiono sobre la caja completa. Lo que se
-      conserva es el resto de la caja
+      la perdida es riesgo_por_operacion sobre base_calculo_riesgo, entera y sin fraccion,
+      porque el lote se dimensiono sobre la distancia hasta stop_fraccion_caja. El tramo que va
+      de stop_fraccion_caja al extremo de la caja no se arriesga nunca: ahi ya esta cerrada
     parametros: [riesgo_por_operacion, base_calculo_riesgo, stop_fraccion_caja]
-    cita: fb-2026-09-09-sesion-01-c4922acb
+    cita: fb-2026-09-09-sesion-01-17ed6193
     literal: >-
-      La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve el SL
-      hasta el nivel 0.8 para todos los modelos de entrada.
+      el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el
+      acuerdo final
     notas: >-
-      INVARIANTE, no parametro: `stop_proteccion_capital` se queda UNKNOWN a proposito para que no
+      HASTA EL 2026-09-11 esta regla decia lo contrario: que la perdida real era MENOR que el
+      riesgo nominal -riesgo_por_operacion x stop_fraccion_caja, 0,4 % con 0,5 y 0,8- porque el
+      lote se dimensionaba sobre la caja completa, y citaba al trader: "La operativa se calcula
+      con el SL normal, pero apenas de abre la operacion se mueve el SL hasta el nivel 0.8 para
+      todos los modelos de entrada" (fb-2026-09-09-sesion-01-c4922acb). El acuerdo final del
+      consultor invierte la base del lotaje (ADR-0020) y con ella esta regla: el stop cuesta el
+      0,5 % completo. El RR realizado no cambia -sigue siendo objetivo_rr / stop_fraccion_caja =
+      3,75- porque las dos distancias se escalan igual; lo que cambia es el tamano del lote.
+      INVARIANTE, no parametro: `stop_proteccion_capital` sigue UNKNOWN a proposito para que no
       haya dos puertas para el mismo numero. Un motor que guarde el riesgo real como dato aparte
       puede desincronizarlo del stop
     complementa: [RN-011]
@@ -601,7 +613,7 @@ reglas:
           - realizar_perdida:
               riesgo: riesgo_por_operacion
               sobre: base_calculo_riesgo
-              fraccion: stop_fraccion_caja
+    decision: ADR-0020
     clase: disparador
     estado: VIGENTE
 
@@ -668,9 +680,10 @@ reglas:
     literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
     notas: >-
       la BASE del 1:3 no la dice el literal, y por eso vive en base_calculo_objetivo y no en
-      esta frase (ADR-0014). El objetivo y el lote se trazan juntos sobre la caja completa;
-      despues el stop se mueve a stop_fraccion_caja y el RR REALIZADO pasa a ser
-      objetivo_rr / stop_fraccion_caja, no objetivo_rr. Quien mida fidelidad en F26 no debe
+      esta frase (ADR-0014). El objetivo se traza sobre la caja completa y el lote YA NO: desde
+      ADR-0020 el lote se dimensiona hasta stop_fraccion_caja, asi que las dos distancias dejaron
+      de ser la misma. El RR REALIZADO sigue siendo objetivo_rr / stop_fraccion_caja, no
+      objetivo_rr, porque esa razon no depende del lote. Quien mida fidelidad en F26 no debe
       leer esa diferencia como un fallo del bot: es la mecanica. ev-v4-011951 empuja al otro
       lado -el trader dice que un ganador cubre "2 o 3" perdidas, que cuadra mejor con medir
       sobre el riesgo real-, pero es una estimacion redonda hablando de margenes, no una
@@ -933,15 +946,17 @@ reglas:
       se redondea hacia abajo al escalon; si queda por debajo de instrumento_lote_minimo, no se
       opera
     parametros: [instrumento_lote_paso, instrumento_lote_minimo, instrumento_contrato]
-    cita: fb-2026-09-09-sesion-01-a089315e
+    cita: fb-2026-09-09-sesion-01-17ed6193
     literal: >-
-      El lotaje se pone sobre la caja completa de SL, pero automaticamente se mueve al 0.8 de la
-      misma para que corra la operacion.
+      el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el
+      acuerdo final
     notas: >-
       a la baja y no al mas cercano: redondear hacia arriba haria arriesgar mas de lo que el
-      trader dijo, y el error se acumularia operacion tras operacion. La cita sostiene que el
-      lotaje sale de la caja completa, no la DIRECCION del redondeo, de la que el trader nunca
-      hablo: eso lo decide ADR-0016
+      trader dijo, y el error se acumularia operacion tras operacion. La cita sostiene DE DONDE
+      sale el lotaje, no la DIRECCION del redondeo, de la que el trader nunca hablo: eso lo
+      decide ADR-0016. Citaba el registro de la sesion 1, revocado el 2026-09-11 por el acuerdo
+      del lotaje (ADR-0020); ahora cita el vigente y el redondeo importa mas que antes, porque
+      el lote es un 25 % mayor sobre la misma caja
     decision: ADR-0016
     forma:
       cuando:

@@ -247,8 +247,11 @@ ambiguedades:
   - id: A-18
     titulo: base sobre la que se mide el objetivo 1:3
     pregunta: >-
-      ¿el 1:3 se mide sobre la caja completa -la misma distancia que dimensiona el lote- o
-      sobre el riesgo real que queda tras mover el stop a 0,8?
+      ¿el 1:3 se mide sobre la caja completa o sobre la distancia hasta el stop, que es la que
+      dimensiona el lote? Hasta el 2026-09-11 las dos eran la MISMA distancia y la pregunta
+      sonaba academica; desde ADR-0020 el lote se dimensiona hasta stop_fraccion_caja y el
+      objetivo sigue midiendose sobre la caja entera, asi que la respuesta cambia el RR
+      realizado de verdad
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1

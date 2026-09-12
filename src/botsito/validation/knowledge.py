@@ -421,6 +421,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         Termino,
         cargar_reglas,
         cargar_vocabulario,
+        comprobar_citas_revocadas,
         comprobar_contra,
         comprobar_decisiones,
         comprobar_forma,
@@ -474,16 +475,10 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             problemas_spec += comprobar_forma(
                 reglas, cargar_vocabulario(ruta_spec), set(registro.nombres())
             )
-            # Y que ni una regla ni un termino citen un registro revocado. La guardia gemela solo
-            # miraba `parametros.yaml`, asi que RN-013 acabo citando uno en el propio commit que
-            # arreglaba esto para los parametros.
-            for doc_id, cita_id in [(r.id, r.cita) for r in reglas] + [
-                (f"glosario {x.termino!r}", x.cita) for x in terminos
-            ]:
-                if cita_id in revocados:
-                    problemas_spec.append(
-                        f"{doc_id}: cita {cita_id}, que esta revocado por {revocados[cita_id]}"
-                    )
+            # Y que nadie cite un registro revocado, reglas, glosario y vocabulario incluidos.
+            problemas_spec += comprobar_citas_revocadas(
+                reglas, terminos, cargar_vocabulario(ruta_spec), revocados
+            )
             problemas_spec += comprobar_manifiesto_spec(repo, repo / FICHERO_MANIFIESTO)
         except SpecError as exc:
             problemas_spec = [str(exc)]

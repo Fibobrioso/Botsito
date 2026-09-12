@@ -5,7 +5,7 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-08, fase 1 cerrada en main; F10 construida, espera validacion)
+## Estado (2026-09-11, fase 1 cerrada en main; F11 validada y cerrada; F12 en construccion)
 - `main`: merge de F08 `5d8cf3c` con tag `stable/F08` (fase 1 F03-F08 cerrada); `docs(state)`
   `645aac6`; CI verde. Protegida en GitHub.
 - Cerradas y en main: F01-F09 (salvo las no iniciadas), F15, la auditoria global y los previos
@@ -43,6 +43,35 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     `huso_operativa` vuelve a `Europe/Madrid`, que es lo que ADR-0005 decia. El trader opera
     siempre a SU hora, sea cual sea la fecha, asi que su reloj es civil y no un offset fijo.
     La rejilla H4 se ancla aparte, en `17:00 America/New_York` = 00:00 de servidor.
+- F12 spec-semantic-validator EN CONSTRUCCION (rama `feature/F12-spec-semantic-validator`). Lo
+  que ya existe: ADR-0018 (la precedencia va por CLASE), ADR-0019 (la forma ejecutable: predicados
+  con argumentos, ligadura, y `predicados`/`acciones`/`hechos`/`acumuladores` DENTRO de
+  strategy_spec.yaml) y ADR-0020 (la base del lotaje). Las 24 reglas vigentes tienen forma
+  ejecutable; `spec status` dice cuantas siguen en prosa (hoy, ninguna). Falta para cerrarla: los
+  9 parametros con valor que ninguna regla nombra, el comando `spec check`, los ids `R-NN` de
+  `scripts/hoja_sesion_docx.py`, la auditoria de cierre y el informe de validacion.
+- EL LOTAJE CAMBIO DE BASE el 2026-09-11 (ADR-0020) y es lo mas caro de este tramo: el 0,5 % de
+  riesgo se mide EN el nivel 0,8 y no sobre la caja completa, asi que `lotaje_base` vale
+  `hasta_stop_fraccion`, el lote es un 25 % mayor y el stop cuesta el riesgo entero. RN-012 dice
+  ahora lo contrario de lo que decia. Si alguien lee material anterior al 2026-09-11 -incluidos
+  los mensajes del trader sobre la rentabilidad de mayo- lo encontrara contado en CAJAS
+  COMPLETAS, que es la convencion vieja: esta anotado en ADR-0020, con la pregunta pendiente de
+  ratificar con el trader.
+- BACKTEST DE MAYO 2026 recibido el 2026-09-11 (junio NO). Esta en el corpus, fuera de git, en
+  `Material adicional de su operativa/Backtest mayo 2026/`. OJO: 13 de los 19 dias de mayo son
+  holdout-1/2/3 segun `knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`, asi que no
+  puede usarse para elegir parametros; es entrada de F14 y F26.
+- Lecciones tecnicas (F12):
+  - Cambiar un valor de negocio no es cambiar un valor: al superseder el registro del lotaje,
+    dos citas quedaron apuntando a un registro revocado (RN-027 y el predicado
+    `no_es_multiplo_de`) y dos textos quedaron afirmando algo falso (la nota de RN-015 y la
+    descripcion de `base_calculo_objetivo` decian que el objetivo y el lote comparten distancia).
+    Lo destaparon las guardias, no la lectura.
+  - La guardia de citas revocadas ha nacido corta TRES veces (parametros, luego reglas y
+    glosario, y ahora el vocabulario de F12). Al anadir un sitio con `cita` propia, amplia
+    `comprobar_citas_revocadas` en el mismo commit.
+  - Las reglas no admiten cifras NI en un "nivel 0": `comprobar_contra` salta con el digito
+    suelto. Se escribe "la entrada" y "el extremo de la caja".
 - Lecciones tecnicas (F11):
   - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
     patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo

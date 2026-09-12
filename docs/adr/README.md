@@ -24,3 +24,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0017 | El reloj del trader es su reloj civil: se revierte ADR-0012 y se confirma ADR-0005 | ACTIVE |
 | 0018 | La precedencia va por clase, no por orden del fichero; y los siete defectos que eso destapo | ACTIVE |
 | 0019 | La forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre | ACTIVE |
+| 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |

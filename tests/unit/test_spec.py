@@ -687,3 +687,50 @@ def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:
         assert "operacion_abierta" in json.dumps(forma.get("cuando", {}), ensure_ascii=False), (
             consumidor
         )
+
+
+def test_el_vocabulario_tampoco_puede_citar_un_registro_revocado() -> None:
+    """La guardia de citas revocadas nacio corta TRES veces; esta es la tercera.
+
+    Miraba `parametros.yaml` (P13), luego reglas y glosario (RN-013), y el vocabulario que estreno
+    F12 seguia fuera aunque predicados y acciones llevan `cita` propia. Se vio en real el
+    2026-09-11: el acuerdo del lotaje (ADR-0020) revoco el registro de la sesion 1 y
+    `no_es_multiplo_de` se quedo citandolo sin que nada lo dijera.
+    """
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_vocabulario, comprobar_citas_revocadas
+
+    vocabulario = cargar_vocabulario(REPO / FICHERO_SPEC)
+    citado = next(
+        d["cita"]
+        for d in vocabulario["predicados"].values()
+        if isinstance(d, dict) and d.get("cita")
+    )
+
+    # el caso que NO salta: nada revocado
+    assert comprobar_citas_revocadas([], [], vocabulario, {}) == []
+
+    # el caso que SI salta, y nombra la seccion y el predicado
+    fallos = comprobar_citas_revocadas([], [], vocabulario, {citado: "fb-el-que-lo-corrige"})
+    assert fallos, "un predicado que cita un registro revocado tiene que saltar"
+    assert all("predicados '" in f and "fb-el-que-lo-corrige" in f for f in fallos)
+
+
+def test_la_spec_real_no_cita_ningun_registro_revocado() -> None:
+    """El golden: sobre la spec de verdad, con la cadena de supersede de verdad."""
+    from botsito.feedback.modelo import cargar_feedback
+    from botsito.spec.modelo import (
+        FICHERO_GLOSARIO,
+        FICHERO_SPEC,
+        cargar_vocabulario,
+        comprobar_citas_revocadas,
+    )
+
+    registros = cargar_feedback(REPO / "knowledge" / "feedback")
+    revocados = {r.supersede: r.id for r in registros if r.supersede}
+    fallos = comprobar_citas_revocadas(
+        cargar_reglas(REPO / FICHERO_SPEC),
+        cargar_glosario(REPO / FICHERO_GLOSARIO),
+        cargar_vocabulario(REPO / FICHERO_SPEC),
+        revocados,
+    )
+    assert not fallos, "; ".join(fallos)

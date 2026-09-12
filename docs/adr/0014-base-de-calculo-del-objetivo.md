@@ -6,6 +6,8 @@ phase: F11
 
 # 0014 · La base sobre la que se mide el objetivo: `base_calculo_objetivo`
 
+> **Enmienda (2026-09-11, ADR-0020).** Este ADR dice que la caja completa es tambien la distancia sobre la que se dimensiona el lote (`lotaje_base: distancia_completa`). **Eso ya no es cierto**: el acuerdo final del lotaje lo mide hasta `stop_fraccion_caja`. Lo que sigue vigente de este ADR es lo que decide de verdad: el OBJETIVO se mide sobre la caja completa.
+
 ## Decision
 
 1. **El 1:3 se mide sobre la CAJA COMPLETA** (la distancia nivel 0 -> nivel 1), no sobre el riesgo
