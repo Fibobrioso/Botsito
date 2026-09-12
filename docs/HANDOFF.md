@@ -19,9 +19,11 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   `LABEL_CASE`); CLI `kit build|check|kappa`; `knowledge validate` capa kit con guardia de
   ancestro (particiones commiteadas antes del primer `LABEL_CASE`); paquete real
   `knowledge/cases/kit/2026-09-09-sesion-01/` (nacio con la fecha provisional 2026-09-15 y se movio al celebrarse).
-- SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 116 registros de
+- SESION 1 CELEBRADA el 2026-09-09 y procesada entera (video v6, 2 h 27 min; 117 registros de
   feedback; A-1..A-12 RESUELTAS). Informe: `docs/validation/SESION-01-2026-09-09.md`, que es el
-  esquema completo de la estrategia con la cita de cada decision. Cerrada en main con el tag
+  ACTA: que se pregunto, que respondio y con que minuto de v6. El ESQUEMA de la estrategia ya NO
+  vive ahi -se quedo viejo dos veces en dos dias, las dos en hechos de negocio-: se GENERA en
+  `docs/spec/` desde `knowledge/spec/` y `make check` lo compara (F13). Cerrada en main con el tag
   `stable/F10-sesion-01`.
 - CUIDADO al citar v6: dos tramos NO son especificacion y la guardia los rechaza
   (`knowledge/corpus/tramos_no_citables.yaml`): 0:41:00-0:50:11, donde ambos acuerdan en voz que lo
