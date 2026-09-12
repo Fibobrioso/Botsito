@@ -1,6 +1,50 @@
 # GENERADO por `botsito corpus inventory`. No editar a mano. Ver fuentes.yaml.
 ffprobe: 9.0.1
 ficheros:
+- bytes: 99579
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.48 PM.jpeg
+  sha256: dc7937a565218c48d10853cfc5b13798389d999eac5554dc7a428f7131dc16bc
+- bytes: 71870
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.49 PM
+    (1).jpeg
+  sha256: b8f366b5fe840af8fe3e4136ff0bd38454b70b28fd4a333781a199eb0c8072fe
+- bytes: 85852
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.49 PM
+    (2).jpeg
+  sha256: 2e2243c25fec92b39f4c07b89649b1e62b5beb086a16ef7d6f55dc2fb617d8f2
+- bytes: 105021
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.49 PM
+    (3).jpeg
+  sha256: c12d5f95795237d771e3c868c43a8ff4174651f3619b443c2751751ee9da7b31
+- bytes: 87904
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.49 PM
+    (4).jpeg
+  sha256: c02bc1c1584347f3b59ec733035627e49bffe8a49b7232a7c498006ad44f5de4
+- bytes: 80926
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.49 PM.jpeg
+  sha256: 41b2a67f5ad9e6ce3f13cc3986c6501349ec23cdf3b7f21cadfcbb4dcfb016d8
+- bytes: 64850
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.50 PM.jpeg
+  sha256: cf9d0b74808fa032849591862c4551989a3a65610b320e747f7df5a48cb2d9a5
+- bytes: 13601
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/backtesting-analytics MAYO 2026.xlsx
+  sha256: ba3aeceb6c496c2f4191540a9d79ca4a0bda078254a39c0290ed4d714a3aa74c
+- bytes: 25826
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/mensaje-whatsapp-2026-09-11-1802-rentabilidad-mayo.png
+  sha256: 050d99d2964b0bbce5fdd43fdf0112e4f10aa8db372e0f72642ab33aad4e7a13
+- bytes: 51022
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest mayo 2026/mensaje-whatsapp-2026-09-11-1904-factible-promediando.png
+  sha256: 0076e82738b4df0460830ece6670047be0865a89e0580ed46a94ae68ac8a2624
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2068,8 +2112,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 2597267
-    ficheros: 25
+    bytes: 3283718
+    ficheros: 35
   video_original:
     bytes: 23715506889
     ficheros: 6
