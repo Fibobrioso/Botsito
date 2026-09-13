@@ -616,12 +616,24 @@ def test_pending_no_da_por_reflejado_lo_que_no_puede_comprobar(
     assert cli.feedback_pending(repo) == 0
     salida = capsys.readouterr().out
 
-    assert "contradiccion:stop.nivel" in salida, (
-        "el RESOLVE_CONTRADICTION de stop.nivel tiene que salir mientras la contradiccion siga "
-        "abierta: es el caso real que la auditoria de cierre encontro escondido"
-    )
-    linea = next(x for x in salida.splitlines() if "contradiccion:stop.nivel" in x)
-    assert not linea.lstrip().startswith(("(ok)", "(?)")), "es PENDIENTE, no un cajon callado"
+    # `stop.nivel` se cerro el 2026-09-12 -dos items de v6 superseden a los que decian 0,75- y
+    # con ella el `RESOLVE_CONTRADICTION` paso de PENDIENTE a reflejado. Se comprueban las dos
+    # cosas, porque el criterio es lo que importa: mientras el tema figure entre las abiertas
+    # sale como pendiente, y en cuanto deja de figurar, como aplicado.
+    from botsito.evidence.contradicciones import detectar
+    from botsito.evidence.modelo import cargar_evidencia
+
+    abiertas = {
+        str(c["tema"]) for c in detectar(list(cargar_evidencia(repo / "knowledge" / "evidence")))
+    }
+    capsys.readouterr()
+    assert cli.feedback_pending(repo, todos=True) == 0
+    completa = capsys.readouterr().out
+    linea = next(x for x in completa.splitlines() if "contradiccion:stop.nivel" in x)
+    if "stop.nivel" in abiertas:
+        assert not linea.lstrip().startswith(("(ok)", "(?)")), "abierta: tiene que salir PENDIENTE"
+    else:
+        assert linea.lstrip().startswith("(ok)"), "cerrada: tiene que salir como aplicada"
 
     sin_mecanismo = [x for x in salida.splitlines() if x.lstrip().startswith("(?)")]
     assert sin_mecanismo, "los CORRECT/REJECT sobre evidencia se declaran, no se esconden"

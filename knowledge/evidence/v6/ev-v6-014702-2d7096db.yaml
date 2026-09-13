@@ -1,0 +1,23 @@
+id: ev-v6-014702-2d7096db
+video_id: v6
+t0: '1:47:02.7'
+t1: '1:47:48.9'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si es algún cálculo rápido usando 075 en 33 dispositivos pues nos nos mantendríamos en el
+  umbral de un beneficio de 2,25. Entonces, si en el cuarto trade era ganador, tendríamos un margen de
+  ganancia de 0,75%. Pero ahora, como manejamos a 0,80, 3-3 perdedores y el cuarto es ganador tenemos
+  un margen de ganancia de 0.60
+afirmacion: con 0,75 tres perdedores cuestan 2,25 y el cuarto ganador deja 0,75 % de margen; con 0,80
+  ese margen baja a 0,60
+tema: objetivo.rr_13_margen_tres_perdidas
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+valor: '0.60'
+supersede: ev-v4-011951-5fb49e03
+notas: '`075` y `33` son lecturas del ASR de 0,75 y de 3 de 3. La aritmetica cuadra sola: 3 - 3x0,75 =
+  0,75 y 3 - 3x0,80 = 0,60, o sea que el 1:3 se mide sobre la CAJA COMPLETA (A-18). Supersede al item
+  de v4 que decia lo mismo con los numeros viejos'
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

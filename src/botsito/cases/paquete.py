@@ -399,8 +399,14 @@ def construir(
         raise KitError(f"huso_operativa: {exc}") from exc
     vivos = activos(list(items))
     abiertas = contradicciones.detectar(vivos)
+    # TODOS los items para la EXISTENCIA de la cita, y solo los vivos para la contradiccion: una
+    # ambiguedad cita la evidencia que ABRIO la pregunta, y esa evidencia existe aunque despues se
+    # haya supersedido. Miraba solo los vivos, asi que el 2026-09-12 -al cerrar `stop.nivel` con
+    # los primeros `supersede` sobre evidencia del proyecto- `kit check` dijo que A-10, A-11 y
+    # A-18 citaban evidencia "que no existe". `validation/knowledge.py` ya lo hacia bien: eran dos
+    # llamadas a la misma comprobacion diciendo cosas distintas.
     problemas_amb = validar_ambiguedades(
-        ambiguedades, {i.id for i in vivos}, set(registro.nombres()), {c["tema"] for c in abiertas}
+        ambiguedades, {i.id for i in items}, set(registro.nombres()), {c["tema"] for c in abiertas}
     )
     if problemas_amb:
         raise KitError("ambiguedades: " + "; ".join(problemas_amb))

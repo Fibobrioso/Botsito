@@ -9,8 +9,12 @@
 #
 # Fechas que el trader YA ha visto (backtest, operativa o ejemplos dibujados): quedan fuera del
 # universo de ventanas de etiquetado ciego (F10, ADR-0011). Manual, versionado con `Fuente:`.
-# Un mes entero se excluye cuando no se puede saber que dias vio (el xlsx de agosto no tiene
-# columna de fecha). Antes de cada sesion el trader confirma por escrito (registro F09) que no
+# Un mes entero se excluye cuando no se puede saber que dias vio. ATENCION: hasta el 2026-09-12
+# esta linea daba como ejemplo que "el xlsx de agosto no tiene columna de fecha", y es FALSO -tiene
+# `dateStart`, rellena en 47 de 47 filas, del 3 al 31 de agosto-. Agosto se excluyo entero por un
+# motivo que no era cierto; sigue excluido, pero por otro: v1 y v4 lo comentan en camara y desde el
+# 20 de agosto hay operativa real de fondeo mezclada con el backtest. Hoy no se conoce ningun mes
+# del que de verdad no se puedan saber los dias. Antes de cada sesion el trader confirma por escrito (registro F09) que no
 # ha operado ni backtesteado los meses del paquete: se registra en F09 como CONFIRM sobre el
 # objetivo `paquete <sesion>`. Si lo ha hecho, es un REJECT sobre el mismo objetivo, el mes se
 # anade aqui citando ese `fb-...` en `fuente` y se regenera el paquete.

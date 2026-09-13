@@ -822,13 +822,18 @@ def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:
 
     # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion
     por_id = {r.id: r for r in reglas}
-    productor = next(
+    productores = {
         r.id
         for r in reglas
         if isinstance(r.forma, dict)
         and "operacion_abierta" in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
-    )
-    assert productor == "RN-013"
+    }
+    # DOS productores, y no uno: toda regla que deje una posicion viva tiene que declararlo, o el
+    # cierre forzoso y el break even no la ven. RN-010 se anadio el 2026-09-12: una entrada
+    # activada por un EQUAL se gestionaba (`gestionar_salida`) sin fijar el hecho, asi que era
+    # invisible para RN-002 y RN-014. Lo encontro la auditoria de material, y es el mismo defecto
+    # que F12 encontro con `liquidez_tomada`, en otra regla.
+    assert {"RN-010", "RN-013"} <= productores, f"productores de operacion_abierta: {productores}"
     for consumidor in ("RN-002", "RN-014"):
         forma = por_id[consumidor].forma
         assert isinstance(forma, dict)

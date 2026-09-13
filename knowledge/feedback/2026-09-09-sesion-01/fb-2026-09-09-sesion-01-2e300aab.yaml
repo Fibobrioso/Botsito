@@ -1,0 +1,17 @@
+id: fb-2026-09-09-sesion-01-2e300aab
+sesion: 2026-09-09-sesion-01
+fecha: '2026-09-09'
+medio: escrito
+objetivo:
+  tipo: evidence
+  id: ev-v3-010304-4468cc20
+accion: CORRECT
+respuesta_literal: se deja correr hasta las 3pm, a esa hora se cierra la operativa total
+registrado_por: Aleks · respuesta del trader referida por el consultor
+valor_resultante: 'no'
+notas: 'cierra la contradiccion que la auditoria del 2026-09-12 levanto en su §2.2: la ficha de reglas
+  (ev-v3-010304, confirmado) decia que al vencer la vela H4 operativa se cierra el trade, o sea que uno
+  abierto a las 10:58 moriria a las 11:00; RN-002 solo cierra en ventana_fin. Gana RN-002 y la spec NO
+  cambia. El detector no lo veia porque los dos temas son distintos, y A-6 no citaba este item'
+recibido_el: '2026-09-12'
+procedencia: referido_por_consultor

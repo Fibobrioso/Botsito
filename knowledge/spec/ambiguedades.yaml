@@ -279,6 +279,10 @@ ambiguedades:
   - id: A-17
     titulo: noticias frente a la regla de la cuenta de fondeo
     pregunta: >-
+      DESCARTADA una via el 2026-09-12: se penso que la pestaña `Prop firm` de FX Replay -que el
+      trader tiene con el plan Pro- podria llevar dentro la ventana de noticias y el corte del dia
+      de riesgo, y cerrar esta y A-19 de golpe. El trader responde que NO la tiene configurada con
+      FundedNext. Sigue haciendo falta el reglamento.
       ¿QUE prohibe exactamente el reglamento de FundedNext sobre operar en noticias: que eventos,
       cuantos minutos antes y despues, y que sancion? Es un HECHO que se verifica en su reglamento,
       no una decision. Partida en dos el 2026-09-12 (ADR-0022): la decision de alcance -el bot no
@@ -318,6 +322,9 @@ ambiguedades:
   - id: A-19
     titulo: cuando empieza el dia y la semana de riesgo
     pregunta: >-
+      DESCARTADA una via el 2026-09-12: la pestaña `Prop firm` de FX Replay no la tiene el
+      trader configurada con FundedNext, asi que no hay atajo. Sigue siendo el panel de la
+      cuenta (F17).
       ¿en que reloj cae la medianoche que reinicia el tope diario del 4,5 % y el domingo que
       reinicia el semanal: el del servidor del broker, que cambia con el calendario de Nueva
       York, o el del grafico? Hay que verificarlo en el panel de la cuenta, no suponerlo

@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 import yaml
 
-from botsito.evidence.modelo import activos, cargar_evidencia, parse_tiempo
+from botsito.evidence.modelo import cargar_evidencia, parse_tiempo
 from botsito.evidence.verificacion import tokens
 
 REPO = Path(__file__).resolve().parents[2]
@@ -38,7 +38,15 @@ def test_golden_bien_formado() -> None:
 
 
 def test_las_citas_de_referencia_existen_como_evidencia() -> None:
-    items = activos(cargar_evidencia(REPO / "knowledge" / "evidence"))
+    """TODOS los items, no solo los activos.
+
+    Esto mide que la extraccion de F07 encontro las 40 citas de referencia, y un item SUPERSEDIDO
+    las encontro igual: lo que cambia al superseder es el valor vigente de la estrategia, no lo
+    que el trader dijo en ese minuto. Miraba solo los activos hasta el 2026-09-12, y ese dia -el
+    primero en que alguien uso `supersede` sobre evidencia, para cerrar `stop.nivel`- el golden se
+    puso rojo por dos citas de V2 y V4 que se siguen habiendo extraido perfectamente.
+    """
+    items = list(cargar_evidencia(REPO / "knowledge" / "evidence"))
     if not items:
         pytest.skip("sin evidencia todavia (ronda 1 de F07)")
     faltan: list[str] = []

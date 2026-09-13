@@ -53,7 +53,10 @@ def contexto_feedback(
 
     items = cargar_evidencia(repo / "knowledge" / "evidence")
     registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    temas = {c["tema"] for c in contradicciones.detectar(items)}
+    # HISTORICOS y no abiertos: si fueran los abiertos, cerrar una contradiccion invalidaria
+    # el registro que la cierra. `feedback new` si exige que este abierta, que es donde esa
+    # exigencia tiene sentido (cli.py).
+    temas = contradicciones.temas_historicos(list(items))
     ruta_manifiesto = repo / "knowledge" / "corpus" / "manifest.yaml"
     rutas_corpus: set[str] | None = None
     duraciones: dict[str, float] = {}
@@ -343,7 +346,10 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     except FeedbackError as exc:
         salida.append(f"ERROR: feedback: {exc}")
         return 1, salida
-    temas = {c["tema"] for c in contradicciones.detectar(items)}
+    # HISTORICOS y no abiertos: si fueran los abiertos, cerrar una contradiccion invalidaria
+    # el registro que la cierra. `feedback new` si exige que este abierta, que es donde esa
+    # exigencia tiene sentido (cli.py).
+    temas = contradicciones.temas_historicos(list(items))
     rutas_corpus: set[str] | None = None
     duraciones: dict[str, float] = {}
     if manifiesto is not None:
