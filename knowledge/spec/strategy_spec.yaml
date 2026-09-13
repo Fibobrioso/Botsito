@@ -331,7 +331,7 @@ hechos:
     consume: [RN-006]
   operacion_abierta:
     descripcion: hay una posicion viva
-    produce: [RN-013]
+    produce: [RN-010, RN-013]
     consume: [RN-002, RN-014]
   detenido_por_tope:
     descripcion: >-
@@ -628,6 +628,7 @@ reglas:
       entonces:
         hace:
           - gestionar_salida: {segun: salida_sin_ruptura, stop: stop_fraccion_caja}
+          - fijar: {hecho: operacion_abierta, a: "si"}
     clase: disparador
     estado: VIGENTE
 

@@ -65,6 +65,27 @@ def detectar(items: list[EvidenceItem]) -> list[dict[str, Any]]:
     return salida
 
 
+def temas_historicos(items: list[EvidenceItem]) -> set[str]:
+    """Temas que tuvieron una contradiccion ALGUNA VEZ, contando tambien los items supersedidos.
+
+    `detectar` mira solo los items vivos, y eso esta bien para el fichero generado: una
+    contradiccion cerrada deja de estar abierta. Pero la guardia que valida un
+    `RESOLVE_CONTRADICTION` no puede usar esa vista, porque se muerde la cola: exigir que el tema
+    siga ABIERTO significa que cerrar la contradiccion invalida el registro que la cierra, y
+    entonces no se puede cerrar ninguna. Paso el 2026-09-12 al cerrar `stop.nivel`.
+
+    Esta vista no encoge nunca: un tema que tuvo dos valores incompatibles los tuvo para siempre,
+    aunque hoy uno de los items este supersedido. Y no se puede fabricar: hacen falta dos items
+    reales con valores distintos.
+    """
+    con_valor = sorted((i for i in items if i.valor is not None), key=lambda i: i.tema)
+    salida: set[str] = set()
+    for tema, grupo in groupby(con_valor, key=lambda i: i.tema):
+        if len({normalizar_valor(i.valor) for i in grupo if i.valor is not None}) > 1:
+            salida.add(tema)
+    return salida
+
+
 def texto(items: list[EvidenceItem]) -> str:
     cuerpo = yaml.safe_dump(
         {"contradicciones": detectar(items)}, allow_unicode=True, sort_keys=True, width=100

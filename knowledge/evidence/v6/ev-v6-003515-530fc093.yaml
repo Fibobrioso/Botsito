@@ -1,0 +1,17 @@
+id: ev-v6-003515-530fc093
+video_id: v6
+t0: '0:35:15.8'
+t1: '0:35:31.8'
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: no hay entrada por el hecho de que ya como me generó más de una zona de control dentro [...]
+  no podemos entrar lo ideal hubiera sido que nos nos genere solo una sola
+afirmacion: no hay entrada porque se genero mas de una zona de control dentro; lo ideal hubiera sido que
+  generase solo una
+tema: zona_control.una_sola_para_entrar
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+notas: operacionaliza A-21 y coincide con lo que el trader cerro por escrito en A-20
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

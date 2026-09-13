@@ -1423,6 +1423,15 @@ def evidence_contradictions(repo: Path) -> int:
     return 0
 
 
+def _abiertas_ahora(repo: Path) -> set[str]:
+    """Temas con una contradiccion ABIERTA hoy, derivados de los items vivos."""
+    from botsito.evidence import contradicciones
+    from botsito.evidence.modelo import cargar_evidencia
+
+    items = cargar_evidencia(repo / "knowledge" / "evidence")
+    return {str(c["tema"]) for c in contradicciones.detectar(list(items))}
+
+
 def feedback_new(repo: Path, args: argparse.Namespace) -> int:
     """Crea un registro de feedback. Se valida contra el contexto (evidencia, registro,
     contradicciones, corpus) ANTES de escribir: un registro es inmutable."""
@@ -1459,7 +1468,14 @@ def feedback_new(repo: Path, args: argparse.Namespace) -> int:
         problemas = validar_contra_contexto(
             todos, ids_ev, nombres, temas, rutas_corpus, ids_amb, duraciones
         )
-        return [p for p in problemas if p.startswith(r.id) or p.startswith("ciclo")]
+        propios = [p for p in problemas if p.startswith(r.id) or p.startswith("ciclo")]
+        # Lo que la carga NO puede exigir y la creacion SI: resolver una contradiccion solo tiene
+        # sentido mientras siga ABIERTA. Al cargar, ese mismo requisito impediria cerrarla nunca.
+        if r.objetivo.tipo == "contradiccion" and r.objetivo.id not in _abiertas_ahora(repo):
+            propios.append(
+                f"{r.id}: {r.objetivo.id} no es una contradiccion ABIERTA; no hay nada que resolver"
+            )
+        return propios
 
     campos = {
         "sesion": args.sesion,

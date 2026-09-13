@@ -1,0 +1,20 @@
+id: ev-v6-003227-c4efcf49
+video_id: v6
+t0: '0:32:27.6'
+t1: '0:32:55.6'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pues trazamos nuevamente liquidez, o sea, ya aquí está el trade ganador, aquí no buscamos
+  nada, [...] pues tenemos que esperar nuevamente a que se desarrolle la liquidez, [...] ya nos confirmaría
+  con anticipación a que se ha desarrollado aquí una zona de liquidez en M15, entonces esperaríamos las
+  mismas condiciones aquí.
+afirmacion: tras el trade ganador se traza liquidez de nuevo y hay que esperar a que M15 desarrolle otra
+  zona de liquidez, con las mismas condiciones
+tema: cartuchos.nueva_liquidez_tras_ganadora
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+notas: es la cita que faltaba para apagar el hecho `liquidez_tomada`, que hoy se enciende y no se apaga
+  nunca
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

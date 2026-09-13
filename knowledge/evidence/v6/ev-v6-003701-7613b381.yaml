@@ -1,0 +1,18 @@
+id: ev-v6-003701-7613b381
+video_id: v6
+t0: '0:37:01.9'
+t1: '0:37:20.1'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aquí hay un flujo todavía normal, y aquí vemos una vela contraria, entonces ya este par
+  de velas conjunto, o sea, nos indica que aquí ya se puede marcar la liquidez en M15
+afirmacion: tras un flujo todavia normal, la vela contraria y ese par de velas en conjunto indican que
+  ya se puede marcar la liquidez en M15
+tema: liquidez.m15.marca_con_vela_contraria
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+notas: 'el token `liquidez_m15` se usaba en la forma ejecutable como si estuviera dado: ninguna regla
+  decia QUE nivel es'
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

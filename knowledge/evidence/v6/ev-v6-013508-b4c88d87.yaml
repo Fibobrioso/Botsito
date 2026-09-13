@@ -1,0 +1,17 @@
+id: ev-v6-013508-b4c88d87
+video_id: v6
+t0: '1:35:08.6'
+t1: '1:35:19.5'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: pero era 0 75 con la corrida de ya quizás porque te dije bro a 0 75 0 80 bueno 0 80 Hay
+  que hablar con 0.80 porque manejamos 0.80
+afirmacion: 'el nivel del stop es 0,80: hay que hablar de 0,80 porque es lo que manejan, ya no 0,75'
+tema: stop.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+valor: '0.80'
+supersede: ev-v1-000448-346d6d90
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

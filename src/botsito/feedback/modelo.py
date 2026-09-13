@@ -400,7 +400,10 @@ def validar_contra_contexto(
         elif t == "parametro" and i not in nombres_parametros:
             problemas.append(f"{r.id}: parametro objetivo {i} no esta en el registro")
         elif t == "contradiccion" and i not in temas_contradiccion:
-            problemas.append(f"{r.id}: no hay contradiccion abierta sobre {i}")
+            # `temas_contradiccion` es la vista HISTORICA (ver `contradicciones.temas_historicos`):
+            # exigir aqui que siga ABIERTA impediria cerrar ninguna, porque el registro que la
+            # cierra dejaria de validar en cuanto hiciera efecto.
+            problemas.append(f"{r.id}: {i} nunca ha sido una contradiccion entre items")
         elif t == "ambiguedad" and ids_ambiguedades is not None and i not in ids_ambiguedades:
             problemas.append(f"{r.id}: ambiguedad objetivo {i} no esta en ambiguedades.yaml")
         elif t == "paquete" and i != r.sesion:

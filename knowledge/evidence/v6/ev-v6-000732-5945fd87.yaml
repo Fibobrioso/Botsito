@@ -1,0 +1,19 @@
+id: ev-v6-000732-5945fd87
+video_id: v6
+t0: '0:07:32.7'
+t1: '0:07:43.5'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: operando todo, o sea, no estamos pausando cuando se dé el trade ganador, si no se está operando
+  toda la sesión como tal, todos los trades sean perdedores o ganadores, pues en este caso continuamos
+afirmacion: 'no se pausa cuando se da el trade ganador: se opera toda la sesion, sean los trades perdedores
+  o ganadores, y se continua'
+tema: cartuchos.dia_termina_con_ganadora
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+supersede: ev-v1-000959-b82650ad
+notas: la misma frase de v6 corrige tres afirmaciones distintas, cada una con su tema, porque una correccion
+  habla del mismo tema que lo que corrige (knowledge/evidence/README.md)
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

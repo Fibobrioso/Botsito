@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 10.1.1` · hash `f11b708ae3f8…`
+`spec_version 10.2.0` · hash `9c4bf66f4707…`
 
 25 vigentes y 3 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -371,6 +371,12 @@
         "gestionar_salida": {
           "segun": "salida_sin_ruptura",
           "stop": "stop_fraccion_caja"
+        }
+      },
+      {
+        "fijar": {
+          "a": "si",
+          "hecho": "operacion_abierta"
         }
       }
     ]
@@ -1021,7 +1027,7 @@
 - **`detenido_por_cartuchos`** — los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia Lo produce: RN-016. Lo consume: RN-001, RN-016.
 - **`detenido_por_tope`** — el tope porcentual -diario o semanal- esta alcanzado y no se abre hasta el corte siguiente. Es un HECHO que dura, no un instante: sin el, la prohibicion de RN-020 solo valia en el tick del evento y nada impedia abrir en el siguiente Lo produce: RN-020. Lo consume: RN-001, RN-020.
 - **`liquidez_tomada`** — la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los dos esquemas de entrada: sin ella no se mira M1. Hasta el 2026-09-11 esta condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consume el predicado `se_da_esquema` (`depende_de`), no una regla Lo produce: RN-004. Lo consume: predicado se_da_esquema.
-- **`operacion_abierta`** — hay una posicion viva Lo produce: RN-013. Lo consume: RN-002, RN-014.
+- **`operacion_abierta`** — hay una posicion viva Lo produce: RN-010, RN-013. Lo consume: RN-002, RN-014.
 - **`orden_limite_pendiente`** — hay una orden colocada y todavia sin llenar Lo produce: RN-011, RN-013. Lo consume: RN-006.
 - **`sesgo`** — el sentido en el que se busca entrada Lo produce: RN-003. Lo consume: RN-005.
 

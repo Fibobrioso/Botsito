@@ -1,0 +1,16 @@
+id: ev-v6-021939-1c7cad28
+video_id: v6
+t0: '2:19:39.3'
+t1: '2:19:48.9'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: Es 0.80 Ya a 0.75 Acá nada más Ahora es a 0.8 No a 0.75
+afirmacion: el stop es 0,80 y ya no 0,75
+tema: stop.nivel
+confianza: alta
+extractor: llm
+revisado_por: Aleks · auditoria de material 2026-09-12 · cruda leida
+provenance: botsito
+valor: '0.80'
+supersede: ev-v2-003142-beb4ad3c
+transcripcion: tr-v6-large-v3-int8-float16-7718b3f4

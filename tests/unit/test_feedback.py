@@ -156,7 +156,7 @@ def test_validacion_contra_contexto(tmp_path: Path) -> None:
     )
     assert any("no existe" in p and "evidencia" in p for p in problemas)
     assert any("no esta en el registro" in p for p in problemas)
-    assert any("no hay contradiccion abierta" in p for p in problemas)
+    assert any("nunca ha sido una contradiccion" in p for p in problemas)
     assert any("supersede a" in p for p in problemas)
     assert any("no esta inventariada" in p for p in problemas)
     ok = validar_contra_contexto(
