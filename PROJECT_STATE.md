@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-Ninguna abierta. F13 spec-documents VALIDADA por el usuario y cerrada en `main` el 2026-09-12 (merge ce3b185, tag `stable/F13`). La siguiente es F14 (biblioteca de casos), que necesita antes dos decisiones del consultor: el reparto de mayo y el ADR que cierre A-15 y A-16.
+Rama de trabajo `trabajo/ambiguedades-del-consultor`: cerrar con un ADR las dos ambiguedades que decide el consultor y llevaban decididas y ABIERTA desde el 2026-09-09 (A-15 y A-16), usando el mecanismo `DECIDIDA` que F13 construyo y dejo expresamente fuera de su alcance. F13 spec-documents quedo VALIDADA y cerrada en `main` el 2026-09-12 (merge ce3b185, tag `stable/F13`).
 
 ## Current Branch
-main
+trabajo/ambiguedades-del-consultor
 
 ## Stable Main State
 ce3b185 · merge de F13 spec-documents (tag `stable/F13`), sobre el merge de la rama de trabajo del holdout (09d55f2, tag stable/F12-holdout). `docs/spec/` se GENERA desde `knowledge/spec/` y `make check` lo compara; el vocabulario de la forma ejecutable declara sus `tokens`, asi que ningun argumento de una regla puede llevar un valor de negocio crudo; el feedback sabe cuando llego cada respuesta (ADR-0023) y una ambiguedad de alcance la cierra el consultor con el estado DECIDIDA (ADR-0022), que ademas decide que EL BOT NO OPERA NOTICIAS. spec 10.1.1.
@@ -138,6 +138,8 @@ ce3b185 · merge de F13 spec-documents (tag `stable/F13`), sobre el merge de la 
 - ADR-0021 que cuenta como abrir un holdout, y que se hace con la exposicion de mayo — ACTIVE
 - ADR-0022 el bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision — ACTIVE
 - ADR-0023 el registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) — ACTIVE
+- ADR-0024 la ventana no se amplia a Nueva York (A-15 DECIDIDA), y la referencia para medir la fidelidad es Dukascopy (A-23 nace DECIDIDA; A-16 se parte y conserva la medicion, que sigue ABIERTA) — ACTIVE
+- ADR-0025 el reparto de mayo no se toca: 6 dias `dev` y 13 de holdout (6/4/3), junio sale del universo de F14 y los cupos de `config.yaml` se quedan quietos — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -246,11 +248,11 @@ evidencia de v6 que el consultor acepto:
    que la apertura podria verse "a las 8, o [...] a las 6" (0:58:10). Con UTC+2 fijo el anclaje es
    21:00 UTC todo el año; con Madrid, en invierno se desplaza. Mayo y junio no se ven afectados;
    enero si.
-3. **A-15 alcance** (DECIDIDA por el consultor el 2026-09-09: no se amplia en esta fase. SIGUE ABIERTA en el fichero, y ya NO por falta de mecanismo -el estado `DECIDIDA` existe desde ADR-0022- sino porque falta escribir el ADR que la cierre; mientras tanto entra en el cuestionario de la sesion 2 y se le vuelve a preguntar al trader lo que ya decidimos): deja abierto ampliar a Nueva York, "puedes buscar las operaciones donde sea"
+3. **A-15 alcance** (CERRADA como DECIDIDA el 2026-09-12 por ADR-0024: no se amplia a Nueva York en esta fase. No era una pregunta del trader: el la DEVOLVIO -"puedes buscar las operaciones donde sea, o sea, no hay problema"-, y toda su operativa grabada va de 07:00 a 15:00. La capacidad se conserva: ampliar es cambiar `ventana_inicio` y `ventana_fin`): deja abierto ampliar a Nueva York, "puedes buscar las operaciones donde sea"
    (1:46:23), cuando toda su operativa grabada va de 07:00 a 15:00. Decision del consultor.
-4. **A-16 proveedor de datos** (DECIDIDA el 2026-09-09 con medicion, `docs/validation/anexos/A-16-proveedor-de-datos-2026-09-09.md`: el historico sigue siendo Dukascopy porque la demo de FundedNext solo sirve M1 desde el 2026-06-03 y no cubre el paquete; donde se pueden comparar coinciden a 2 puntos de mediana; MT5 queda para spread, ejecucion y paridad): el backtestea en FX Replay, que usa datos de Oanda (0:24:14), y el
-   proyecto mide sobre Dukascopy (ADR-0005). Con reglas que dependen de romper "por una milesima",
-   uno o dos puntos cambian un dia entero.
+4. **A-16 proveedor de datos**, PARTIDA EN DOS el 2026-09-12 por ADR-0024 porque mezclaba una decision con una medicion. La DECISION es **A-23** y esta DECIDIDA: la referencia es Dukascopy (ADR-0005), MT5/FundedNext se usa para spread, ejecucion, reloj de servidor y paridad, y la divergencia entre proveedores entra en F26 como MARGEN DECLARADO. La MEDICION se queda en **A-16** y sigue ABIERTA, con `resuelve_en: F26`: el anexo del 2026-09-09 (`docs/validation/anexos/A-16-proveedor-de-datos-2026-09-09.md`) midio MT5 contra Dukascopy -2 puntos de mediana una vez corregido el reloj de servidor, y la demo de FundedNext no sirve NI UNA vela M1 de mayo- pero el propio anexo dice que la fuente del trader, Oanda via FX Replay, "esta medicion no la cubre": el trader backtestea en FX Replay,
+   que usa datos de Oanda (0:24:14), y con reglas que dependen de romper "por una milesima", uno o
+   dos puntos cambian un dia entero. Eso es lo que F26 tiene que medir y declarar.
 5. **A-17 noticias**, partida en dos por ADR-0022 (2026-09-12). **EL BOT NO OPERA NOTICIAS** en
    su primera version: `filtro_noticias = regla` y RN-028 (clase `gate`) prohibe abrir. Lo que el
    trader hace -y que este parrafo daba antes por decidido tambien para el bot- sigue siendo cierto
@@ -276,14 +278,15 @@ evidencia de v6 que el consultor acepto:
 | A-12 | porcentaje de vela transcurrido para bajar la proteccion a 0,50: 40 % (transcripcion heredada) o 50 % (large-v3, V1 0:15:59) | F21 | ¿a partir de que parte de la vela bajas el stop a 0,50? |
 | A-13 | break even al toque o con cuerpo | F11, F23, F26 | ¿el rompimiento que dispara el BE vale al toque o hay que esperar cuerpo? (v6 0:57:01 vs 1:09:27) |
 | A-14 | los 28 dias al año en que su horario y la rejilla H4 no cuadran | F11, F15, F26 | del 8 al 28 de marzo y del 25 al 31 de octubre la primera H4 se ve a las 22:00: ¿opera de 7 a 15 igual o se ajusta a la vela? |
-| A-15 | alcance de la ventana operativa | F11 | ¿solo 07-11 y 11-15, o tambien Nueva York? (v6 1:46:10) |
-| A-16 | proveedor de datos para medir la fidelidad | F26 | ¿como se comparan decisiones sobre Oanda con un bot medido sobre Dukascopy? (v6 0:24:14) |
+| A-15 | alcance de la ventana operativa | F11 | DECIDIDA (ADR-0024): no se amplia a Nueva York en esta fase; el trader devolvio la pregunta (v6 1:46:10, 1:46:23) |
+| A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | F26 | ABIERTA, y es una MEDICION: el anexo del 2026-09-09 midio MT5 contra Dukascopy, no Oanda (v6 0:24:14) |
 | A-17 | noticias frente a la regla de la cuenta de fondeo | F11, F33 | ¿QUE prohibe exactamente el reglamento de FundedNext: que eventos, cuantos minutos antes y despues, y que sancion? Es un hecho que se VERIFICA, no una decision. Partida el 2026-09-12 (ADR-0022): la decision se fue a A-22 |
 | A-18 | base sobre la que se mide el objetivo 1:3 | F11, F26 | ¿el 1:3 se mide sobre la caja completa o sobre el riesgo real tras mover el stop? (v2 0:32:56) |
 | A-19 | cuando empieza el dia y la semana de riesgo | F11, F33 | ¿en que reloj cae la medianoche que reinicia el tope diario, el del servidor o el del grafico? |
 | A-20 | cuantas zonas de control invalidan un esquema | F12, F20, F26 | RN-009 dice "mas de una zona" pero el literal dice "por lo general solo buscamos uno": ¿regla o tendencia? · RESUELTA el 2026-09-11 por escrito: es REGLA, y el trader ratifica el descarte |
 | A-21 | que es una zona de control limpia, sin ruido | F12, F20, F26 | los dos esquemas SI estan definidos en el corpus; lo que sigue siendo cualitativo es "que no haga mucho ruido, o sea, sea una zona limpia" |
 | A-22 | si el bot opera noticias, y que pasa con la capacidad para otras cuentas | F13, F22, F26, F33 | DECIDIDA por el consultor (ADR-0022): el bot NO opera noticias en la v1 -va a una cuenta fondeada que puede prohibirlo- aunque la estrategia del trader si funcione dentro de ellas; la capacidad se conserva |
+| A-23 | que proveedor es la referencia para medir la fidelidad | F26, F17, F24 | DECIDIDA (ADR-0024): Dukascopy; MT5 para spread, ejecucion y paridad; la divergencia entra en F26 como margen declarado |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los <!-- cifra-congelada: la sesion 1 ya se celebro -->
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
@@ -391,7 +394,7 @@ F14 (biblioteca de casos), que se abre con F11 igual que F12 y F13 (MASTER_PLAN 
 ## Next Action
 1. PEDIRLE AL TRADER UN MES QUE NO HAYA TOCADO (ADR-0021 §7). Mayo ya esta expuesto -su PnL diario, los 19 dias- y junio quedo descartado, asi que hoy no existe ninguna particion limpia de verdad. No bloquea F13 ni F14, pero tiene semanas de plazo: cuanto antes se pida, antes hay material para que F26 mida sobre algo que nadie ha visto. Meses ya vistos y por tanto descartados: enero, abril, mayo, julio y agosto. Candidatos: febrero o marzo de 2026, que ademas exigen `botsito data download` porque no estan en el dataset.
 2. VALIDAR F13 (informe `docs/validation/F13-spec-documents.md`) y, si procede, el ritual de merge. Bloquea F14, que comparte esquema y necesita `feedback pending` fiable.
-3. ESCRIBIR EL ADR QUE CIERRE A-15 Y A-16, decididas por el consultor el 2026-09-09 y todavia ABIERTA. El mecanismo ya existe (`DECIDIDA`, ADR-0022) y cerrarlas quedo FUERA de F13 por su §4; mientras sigan abiertas, el `kit build` de la sesion 2 le vuelve a preguntar al trader lo que ya decidimos. Las otras dos decisiones de metodo que esta linea daba por pendientes estan cerradas: ADR-0022 y ADR-0023.
+3. ABRIR F14 (biblioteca de casos) con su brief y su revision de diseno. El universo ya esta decidido: los 6 dias `dev` de mayo (ADR-0025), y su detalle por operacion es lo unico del xlsx que se puede abrir. Hereda de ADR-0021 implementar de verdad la guarda de holdout de `tests/conftest.py`, que hoy es un stub.
 4. DECIDIR EL REPARTO DE MAYO para F14: 6 dias `dev` y 13 holdout (6/4/3) frente a los 16/8/8/8 que `config.yaml` pedia para 40 dias. Reparticionar es legitimo mientras no exista ningun LABEL_CASE y exige ADR.
 5. Verificar fuera del repositorio: A-19 (en que reloj cae la medianoche que reinicia el 4,5 %, en el panel de FundedNext) e `instrumento_stops_level` en la cuenta fondeada (vale 0, medido en demo, asi que RN-026 hoy no se activa nunca).
 

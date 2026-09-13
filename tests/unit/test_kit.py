@@ -264,8 +264,13 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-14",
         "A-20",
     }
-    # DECIDIDA nace con ADR-0022 y su primer ocupante: la decision de no operar noticias.
-    assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {"A-22"}
+    # DECIDIDA nace con ADR-0022 (A-22, no operar noticias) y ADR-0024 le suma las dos que
+    # llevaban decididas y abiertas desde el 2026-09-09: A-15 (la ventana no se amplia a Nueva
+    # York) y A-23, la decision de metodo que estaba MEZCLADA dentro de A-16. A-16 se queda solo
+    # con la medicion -cuanto se separa Oanda de Dukascopy- y sigue ABIERTA, porque eso no lo
+    # cierra una decision: el anexo del 2026-09-09 midio otra pareja y lo dice el mismo.
+    assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {"A-15", "A-22", "A-23"}
+    assert next(a for a in ambs if a.id == "A-16").estado == "ABIERTA"
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (
