@@ -37,8 +37,13 @@ etiquetas: [compra, venta, no_trade]
 # Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
 # OJO: estos cupos se dimensionaron para los 40 dias de mayo+junio. JUNIO QUEDA DESCARTADO
 # (decision del consultor, 2026-09-12), asi que el reparto REAL de la sesion 1 es 6 dev y 13
-# holdout (6/4/3) sobre los 19 dias de mayo. Cambiar estos cupos es reparticionar y exige ADR;
-# mientras no exista ningun LABEL_CASE es legitimo, despues no.
+# holdout (6/4/3) sobre los 19 dias de mayo. ADR-0025 decide DEJARLO ASI y no reparticionar,
+# aunque todavia seria legitimo -no existe ningun LABEL_CASE-: `particiones.yaml` se reproduce
+# byte a byte SIN exencion, y es la unica prueba mecanica de que las particiones se fijaron antes
+# de etiquetar. Estos numeros no se tocan ademas por un motivo mecanico: `cases/paquete.py`
+# compara el config que el paquete guardo contra este fichero, asi que cambiarlos rompe la
+# comprobacion de la sesion 1 entera. El universo crece con el mes limpio que se le pidio al
+# trader, que entrara como paquete nuevo con sus propios cupos.
 particiones:
   dev: 16
   holdout-1: 8

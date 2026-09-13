@@ -139,6 +139,7 @@ ce3b185 · merge de F13 spec-documents (tag `stable/F13`), sobre el merge de la 
 - ADR-0022 el bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision — ACTIVE
 - ADR-0023 el registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) — ACTIVE
 - ADR-0024 la ventana no se amplia a Nueva York (A-15 DECIDIDA), y la referencia para medir la fidelidad es Dukascopy (A-23 nace DECIDIDA; A-16 se parte y conserva la medicion, que sigue ABIERTA) — ACTIVE
+- ADR-0025 el reparto de mayo no se toca: 6 dias `dev` y 13 de holdout (6/4/3), junio sale del universo de F14 y los cupos de `config.yaml` se quedan quietos — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -393,7 +394,7 @@ F14 (biblioteca de casos), que se abre con F11 igual que F12 y F13 (MASTER_PLAN 
 ## Next Action
 1. PEDIRLE AL TRADER UN MES QUE NO HAYA TOCADO (ADR-0021 §7). Mayo ya esta expuesto -su PnL diario, los 19 dias- y junio quedo descartado, asi que hoy no existe ninguna particion limpia de verdad. No bloquea F13 ni F14, pero tiene semanas de plazo: cuanto antes se pida, antes hay material para que F26 mida sobre algo que nadie ha visto. Meses ya vistos y por tanto descartados: enero, abril, mayo, julio y agosto. Candidatos: febrero o marzo de 2026, que ademas exigen `botsito data download` porque no estan en el dataset.
 2. VALIDAR F13 (informe `docs/validation/F13-spec-documents.md`) y, si procede, el ritual de merge. Bloquea F14, que comparte esquema y necesita `feedback pending` fiable.
-3. DECIDIR EL REPARTO DE MAYO para F14 (6 dias `dev` y 13 de holdout 6/4/3, frente a los 16/8/8/8 que `config.yaml` pedia para 40 dias). Exige ADR y solo es legitimo mientras no exista ningun `LABEL_CASE`; hoy no existe ninguno. A-15 y A-16 ya NO estan aqui: las cerro ADR-0024 el 2026-09-12, A-15 entera y A-16 partida -su decision es A-23, DECIDIDA; su medicion sigue abierta y es de F26-.
+3. ABRIR F14 (biblioteca de casos) con su brief y su revision de diseno. El universo ya esta decidido: los 6 dias `dev` de mayo (ADR-0025), y su detalle por operacion es lo unico del xlsx que se puede abrir. Hereda de ADR-0021 implementar de verdad la guarda de holdout de `tests/conftest.py`, que hoy es un stub.
 4. DECIDIR EL REPARTO DE MAYO para F14: 6 dias `dev` y 13 holdout (6/4/3) frente a los 16/8/8/8 que `config.yaml` pedia para 40 dias. Reparticionar es legitimo mientras no exista ningun LABEL_CASE y exige ADR.
 5. Verificar fuera del repositorio: A-19 (en que reloj cae la medianoche que reinicia el 4,5 %, en el panel de FundedNext) e `instrumento_stops_level` en la cuenta fondeada (vale 0, medido en demo, asi que RN-026 hoy no se activa nunca).
 
