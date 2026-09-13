@@ -28,6 +28,35 @@ verificado ejecutando; lo que es hipótesis se marca.
 | 8 | **La observación de invierno que ADR-0015 daba por inexistente, existe** (§3.3) | no |
 | 9 | Pedirle **junio** —el mes que ya debe— y la captura de la pestaña `Prop firm` (§5) | **sí** |
 
+### Lo que se aplicó en esta misma rama
+
+| | Qué se hizo | Dónde |
+|---|---|---|
+| 1 | **`stop.nivel` CERRADA**, la única contradicción abierta del proyecto. Dos citas de v6 superseden a los items que sostenían 0,75 — y a **dos más** que nadie había visto, en temas hermanos | 11 items nuevos en `knowledge/evidence/v6/` |
+| 2 | **A-18 gana su cita**: la aritmética de v6 solo cuadra con la caja completa | `ev-v6-014702-2d7096db` |
+| 3 | **El ganador no apaga el día**: tres items superseden a los tres que decían lo contrario | `ev-v6-000732-*` |
+| 4 | **RN-010 fija `operacion_abierta`** (§2.6): una entrada activada por un `equal` era invisible para el cierre forzoso y para el break even | `strategy_spec.yaml`, spec 10.2.0 |
+| 5 | **La guardia de contradicciones dejó de morderse la cola**: exigía que siguiera ABIERTA, así que cerrarla invalidaba el registro que la cierra | `contradicciones.py`, `feedback/modelo.py`, `cli.py` |
+| 6 | **El golden de F07 mide la extracción, no la vigencia**: un item supersedido sigue siendo un registro fiel de lo que se dijo | `test_golden_citas_f07.py` |
+| 7 | **`vistos.yaml` deja de decir un dato falso** sobre la columna de fecha de agosto | `vistos.yaml` |
+
+**Lo que NO se aplicó, y por qué:** el ciclo de vida completo de los hechos (§2.1, §2.3, §2.4)
+está diseñado y **bloqueado por un defecto del propio diseño**, en
+`docs/plan/features/F14b-ciclo-de-vida-de-los-hechos.md`. Resumido: apagar `liquidez_tomada`
+mientras dure `detenido_por_cartuchos` —que no se apaga nunca— dejaría el bot muerto tras agotar
+cartuchos la primera vez. Antes de escribir esas reglas hay que decidir **si un hecho se apaga con
+una regla o se declara con su duración dentro**, porque hoy conviven las dos formas y ninguna está
+documentada como la buena.
+
+### §2.6 · RN-010 no declaraba que hubiera posición viva
+
+Encontrado al revisar el token `equal`. RN-010 gestiona la entrada activada por un `equal`
+(`gestionar_salida`) pero **no fijaba `operacion_abierta`**, el hecho que consumen RN-002 (cierre
+forzoso a `ventana_fin`) y RN-014 (break even). Una entrada por `equal` no se habría cerrado a las
+15:00 ni habría llegado nunca a break even. Es el mismo defecto que la auditoría de F12 encontró
+con `liquidez_tomada`, en otra regla. Corregido, y el test pasa a exigir **dos** productores en vez
+de fijar uno.
+
 ---
 
 ## 1. El material, y cuánto no se usaba
