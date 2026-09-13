@@ -242,21 +242,31 @@ ambiguedades:
     titulo: alcance de la ventana operativa
     pregunta: >-
       ¿el bot busca solo en las dos sesiones de 07-11 y 11-15, o tambien en la de Nueva York?
+      DECIDIDO por el consultor el 2026-09-12: NO se amplia en esta fase. No es una pregunta que
+      el trader se reservara, es una que DEVOLVIO -"puedes buscar las operaciones donde sea, o
+      sea, no hay problema"-, y toda su operativa GRABADA va de 07:00 a 15:00. Ampliar sin una
+      sola sesion grabada en Nueva York meteria en el universo de etiquetado dias que nadie ha
+      visto operar y cambiaria el sesgo H4 de la mitad. La capacidad se conserva: ampliar es
+      cambiar ventana_inicio y ventana_fin, nada mas
     resuelve_en: [F11]
     evidencia:
       - ev-v6-014610-597e442a
       - ev-v6-014623-f23c5f63
     parametros: [ventana_inicio, ventana_fin]
     contradiccion: null
-    estado: ABIERTA
-    decision: null
-    decidida_el: null
+    estado: DECIDIDA
+    decision: ADR-0024
+    decidida_el: '2026-09-12'
     bloqueante: false
   - id: A-16
-    titulo: proveedor de datos para medir la fidelidad
+    titulo: cuanto se separan las velas de Oanda de las de Dukascopy
     pregunta: >-
       ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido
-      sobre Dukascopy, si la regla depende de romper por una milesima?
+      sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12
+      (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo
+      del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y
+      el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no
+      la cubre". La decision de metodo que estaba mezclada aqui es A-23
     resuelve_en: [F26]
     evidencia:
       - ev-v6-002414-d59b1c82
@@ -377,5 +387,26 @@ ambiguedades:
     contradiccion: null
     estado: DECIDIDA
     decision: ADR-0022
+    decidida_el: '2026-09-12'
+    bloqueante: false
+  - id: A-23
+    titulo: que proveedor es la referencia para medir la fidelidad
+    pregunta: >-
+      el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. ¿cual es la
+      referencia? DECIDIDO por el consultor el 2026-09-12: DUKASCOPY (ADR-0005), porque cubre 2026
+      entero, es publico y reproducible, y donde se puede comparar esta a 2 puntos del feed del
+      broker. MT5/FundedNext no puede sustituirlo -no sirve los meses del paquete: cero velas M1
+      de mayo- y se usa para lo que si aporta: spread real, condiciones de ejecucion, reloj de
+      servidor y paridad con Strategy Tester. La divergencia entre proveedores entra en F26 como
+      MARGEN DECLARADO y no como ruido ignorado: una regla que depende de romper por una milesima
+      puede cambiar de decision dentro de ese margen. Cuanto vale ese margen frente a Oanda es
+      A-16, que sigue abierta
+    resuelve_en: [F26, F17, F24]
+    evidencia:
+      - ev-v6-002414-d59b1c82
+    parametros: []
+    contradiccion: null
+    estado: DECIDIDA
+    decision: ADR-0024
     decidida_el: '2026-09-12'
     bloqueante: false

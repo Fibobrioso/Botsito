@@ -28,3 +28,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
 | 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE |
 | 0023 | El registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) | ACTIVE |
+| 0024 | La ventana no se amplia a Nueva York (A-15), y la referencia para medir es Dukascopy (A-23; A-16 se parte y conserva la medicion) | ACTIVE |
