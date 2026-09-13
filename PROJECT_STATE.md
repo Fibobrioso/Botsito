@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-Ninguna abierta. La siguiente es F14 (biblioteca de casos), que ya tiene su universo decidido: los 6 dias `dev` de mayo (ADR-0025). Cerrado en `main` el 2026-09-12: F13 spec-documents (merge ce3b185, tag `stable/F13`) y las tres decisiones del consultor que quedaban (merge b332639, tag `stable/F13-decisiones`).
+Rama de trabajo `trabajo/auditoria-de-material`: barrido de TODO el material recogido, pedido por el consultor al descubrir que tres exportaciones de backtest del trader llevaban nueve dias sin usar mientras se planificaba F14 sobre seis dias. Informe: `docs/validation/AUDITORIA-2026-09-12-material.md`. F14 queda EN ESPERA: la auditoria encontro defectos de negocio en la spec que la biblioteca de casos heredaria mal.
 
 ## Current Branch
-main
+trabajo/auditoria-de-material
 
 ## Stable Main State
 b332639 · merge de `trabajo/ambiguedades-del-consultor` (tag `stable/F13-decisiones`), sobre el merge de F13 (ce3b185, tag stable/F13). ADR-0024 cierra A-15 -la ventana no se amplia a Nueva York- y PARTE A-16, que mezclaba una decision con una medicion: la decision de metodo es A-23 y esta DECIDIDA (la referencia es Dukascopy, la divergencia entra en F26 como margen declarado), la medicion sigue ABIERTA porque el anexo del 2026-09-09 midio otra pareja. ADR-0025 deja el reparto de mayo como esta -6 dias `dev` y 13 de holdout (6/4/3)- para no cambiar la prueba de que las particiones se fijaron antes de etiquetar. spec 10.1.1.
