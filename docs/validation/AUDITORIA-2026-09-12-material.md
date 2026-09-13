@@ -19,7 +19,7 @@ verificado ejecutando; lo que es hipótesis se marca.
 | | Qué | Necesita al trader |
 |---|---|---|
 | 1 | **`liquidez_tomada` no se apaga nunca** (§2.1). El motor reentraría sobre la misma liquidez indefinidamente | no |
-| 2 | **¿Se cierra el trade al vencer la H4 de las 11:00, o corre hasta las 15:00?** (§2.2). Su ficha y la spec dicen cosas distintas | **sí**, y es la única |
+| 2 | ~~¿Se cierra el trade al vencer la H4 de las 11:00?~~ **RESPONDIDA el 2026-09-12** (§2.2): corre hasta las 15:00. Gana RN-002 y la spec no cambia | hecho |
 | 3 | **No existe regla que diga QUÉ nivel es la liquidez de M15** (§2.3). Sin ella F18 no se puede construir fiel | no |
 | 4 | **El token `equal` está mal definido y RN-019 nunca dispararía** (§2.4) | no |
 | 5 | **Cinco items vivos contradicen reglas ya corregidas** (§2.5) | no |
@@ -110,7 +110,11 @@ RN-002 solo cierra en `ventana_fin`. Un trade abierto a las 10:58: según su fic
 **11:00**; según la spec corre hasta las **15:00**. El detector no lo ve porque están en temas
 distintos, y A-6 no cita ese item.
 
-**Es la única pregunta de toda la auditoría que necesita al trader.**
+**RESUELTA el 2026-09-12.** El trader, por el consultor: *"se deja correr hasta las 3pm, a esa
+hora se cierra la operativa total"*. Gana **RN-002** y la spec **no cambia**; lo que queda viejo es
+`ev-v3-010304`, corregido por `fb-2026-09-09-sesion-01-2e300aab`. Ese registro es además **el
+primero que usa `recibido_el` para lo que ADR-0023 lo creó**: la sesión es del 9 y la respuesta
+llegó el 12.
 
 ### 2.3 · No hay regla que diga qué nivel *es* la liquidez de M15
 
@@ -226,7 +230,7 @@ interruptores salen 9/6/3, que es lo que muestran las capturas; contándolos com
    etiqueta—. Además tiene OHLC congelado, así que no hace falta descargar nada. Aportaría **11
    días de holdout** sobre los 12 que quedan vivos.
 2. **La pregunta del cierre a las 11:00** (§2.2).
-3. **Una captura de la pestaña `Prop firm` de FX Replay.** Tiene el plan Pro y esa pestaña
+3. ~~**Una captura de la pestaña `Prop firm` de FX Replay.**~~ **DESCARTADA el 2026-09-12**: el trader no la tiene configurada con FundedNext, así que no hay atajo y A-17 y A-19 siguen necesitando el reglamento y el panel de la cuenta. Anotado en las dos ambigüedades para que nadie lo vuelva a proponer. El texto original era: Tiene el plan Pro y esa pestaña
    contratada, y no la ha enseñado nunca. Si su simulador está configurado con FundedNext, el panel
    llevaría dentro **la ventana de noticias (A-17)** y **el corte del día de riesgo (A-19)**: las
    dos preguntas que hoy solo se pueden cerrar leyendo un documento externo. Cuesta un mensaje.
