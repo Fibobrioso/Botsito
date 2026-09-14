@@ -5,6 +5,42 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-14, rama `trabajo/ftmo-y-arquitectura` esperando validacion; lo de debajo es anterior)
+- LA FIRMA ES FTMO 2-Step SWING de 100.000 (ADR-0026). FundedNext no admite bots desde 50.000, ni en
+  el reto ni en la fondeada. Todo lo que diga "FundedNext" en material anterior al 2026-09-14 habla
+  de la firma descartada, incluida la demo 34891752: sus mediciones del instrumento corren como
+  DEFAULT declarado bajo A-27 y las del reloj del servidor estan SIN VALOR bajo A-28. El tipo Swing
+  se elige en la compra y no se cambia despues: no comprar sin confirmarlo en el panel.
+- EL BOT SI OPERA NOTICIAS otra vez (enmienda de ADR-0022): `filtro_noticias = no`, RN-028
+  DESCARTADA, A-17 DECIDIDA. Con Swing no hay ventana que respetar; con Standard volveria entera.
+- EL DIA DE RIESGO ES CIVIL (ADR-0027): el reglamento corta a medianoche CE(S)T, que es
+  `huso_operativa`. `reloj_dia_riesgo = civil_operativa`, A-19 DECIDIDA, y RN-020 ya no nombra el
+  reloj del servidor. Quedan dos relojes: el civil y el del servidor (rejilla de velas).
+- NACE RN-029, el freno de la firma (5 % diario desde el saldo al corte, 10 % total estatico, los
+  dos del capital inicial y sobre equity). El mas restrictivo no es siempre el del trader: por
+  encima de 111.111,11 de saldo al empezar el dia manda la firma.
+- CUATRO ADR DE ARQUITECTURA que F18-F24 necesitan: ADR-0028 (riesgo por tick, estrategia al cierre
+  de M1, ordenes por evento, punto fijo con refraccion, hechos del broker derivados), ADR-0029 (BID,
+  redondeo al mas cercano con empate en contra del bot), ADR-0030 (arbol generico + primitivas a
+  mano). OJO: ADR-0028 punto 5 NO esta aplicado a la spec -RN-010, RN-011 y RN-013 siguen fijando
+  `operacion_abierta` y `orden_limite_pendiente`- y va en el brief siguiente.
+- A-24, A-25 y A-26 estan RESERVADAS (F14b §3) y no existen; `test_kit` las lista en
+  `IDS_RESERVADOS` y falla en cuanto se cree una, para obligar a retirarla de la lista.
+- Lecciones de la rama:
+  - Un brief puede pedir algo que el esquema no admite: "UNKNOWN con ambiguedad_id" no existe
+    (solo DEFAULT_AMBIGUOUS lleva `ambiguedad_id`), y una regla vigente no puede nombrar un UNKNOWN.
+    Se pregunto antes de escribir; el consultor partio la ambiguedad en dos (A-27 default, A-28
+    sin valor) y dejo que `comprobar_forma` y `comprobar_consumo` decidieran si el reloj podia
+    quedar sin valor.
+  - Una regla DESCARTADA con `forma: {pendiente_definicion: A-N}` falla si A-N se cierra:
+    `comprobar_forma` mira las descartadas tambien. Al descartar, se quita la forma.
+  - Quien fija un freno tiene que leerlo (`test_los_hechos_declarados_coinciden...`), aunque otra
+    regla ya lo lea: RN-029 lee `detenido_por_tope` y eso tiene un efecto declarado en sus notas.
+  - Otra vez el heredoc: `\b` dentro de un heredoc de Git Bash es BACKSPACE. Los regex, con Write.
+  - `## Estado` de un ADR se lee con `split()[0]`: "ACTIVE." con punto falla. Texto, en otra linea.
+  - `spec status` pone los parametros UNKNOWN sin REJECT bajo "falta preguntarlo", y los de A-28 no
+    son preguntas sino mediciones: la etiqueta miente para ellos (informe de la rama).
+
 ## Estado (2026-09-12, fase 1 cerrada en main; F11 y F12 validadas y cerradas; F13 CERRADA, esperando validacion)
 - `main`: merge de F11 `b62f4aa` con tag `stable/F11`; `docs(state)` `3597b3d`. La fase 1 (F03-F08)
   se cerro antes, en `5d8cf3c` con tag `stable/F08`. Protegida en GitHub.
@@ -122,7 +158,7 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     sus palabras y no una sintesis del consultor, que es la diferencia que A-11 y el lotaje
     tuvieron que declarar en `registrado_por`.
 - Lecciones tecnicas (F11):
-  - Los heredocs de bash convierten `` en el CARACTER backspace (0x08) dentro de un regex, y el
+  - Los heredocs de bash convierten `\b` en el CARACTER backspace (0x08) dentro de un regex, y el
     patron deja de casar sin dar ningun error. Le paso a `test_no_business_literals`, que estuvo
     con dos patrones muertos sin que nadie lo viera. Escribir regex con Write o con `chr(92)`.
   - `make check` incluye `ruff format --check`: filtrar su salida con grep por "All checks passed"

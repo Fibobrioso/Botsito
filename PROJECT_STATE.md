@@ -5,7 +5,7 @@
 
 ## Project Goal
 Bot fiel a la estrategia de un trader concreto (EURUSD, H4→M15→M1), verificable caso a caso contra sus
-decisiones, ejecutable en MetaTrader 5 (FundedNext), sin IA en ejecución. Fidelidad y rentabilidad se
+decisiones, ejecutable en MetaTrader 5 (cuenta FTMO 2-Step Swing de 100.000, ADR-0026; FundedNext se descarto el 2026-09-14 porque no admite bots desde 50.000), sin IA en ejecución. Fidelidad y rentabilidad se
 miden por separado.
 
 ## Approved Architecture
@@ -131,17 +131,22 @@ trabajo/ftmo-y-arquitectura
 - ADR-0013 StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace — ACTIVE
 - ADR-0011 kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback — ACTIVE (el esquema de ambiguedades gana DECIDIDA en ADR-0022)
 - ADR-0014 la base sobre la que se mide el objetivo: `base_calculo_objetivo` — ACTIVE (enmendado por ADR-0020)
-- ADR-0015 los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo — ACTIVE (enmendado por ADR-0020)
+- ADR-0015 los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo — ACTIVE (enmendado por ADR-0020 y por ADR-0027: con FTMO el dia de riesgo es el civil del trader)
 - ADR-0016 de donde sale cada regla: el campo `decision`, y un hash que cubre lo que un humano lee — ACTIVE
 - ADR-0017 el reloj del trader es su reloj civil: se revierte ADR-0012 y se confirma ADR-0005 — ACTIVE
 - ADR-0018 la precedencia va por clase, no por orden del fichero; y los siete defectos que eso destapo — ACTIVE
 - ADR-0019 la forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre (cinco desde que la auditoria de cierre de F12 anadio `efectos`) — ACTIVE
 - ADR-0020 la base del lotaje es la distancia hasta el stop, no la caja completa — ACTIVE
 - ADR-0021 que cuenta como abrir un holdout, y que se hace con la exposicion de mayo — ACTIVE
-- ADR-0022 el bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision — ACTIVE
+- ADR-0022 el bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision — ACTIVE (con enmienda del 2026-09-14: con FTMO Swing el bot SI opera noticias; `filtro_noticias` vuelve a `no`, RN-028 DESCARTADA; el estado DECIDIDA sigue en pie)
 - ADR-0023 el registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) — ACTIVE
 - ADR-0024 la ventana no se amplia a Nueva York (A-15 DECIDIDA), y la referencia para medir la fidelidad es Dukascopy (A-23 nace DECIDIDA; A-16 se parte y conserva la medicion, que sigue ABIERTA) — ACTIVE
 - ADR-0025 el reparto de mayo no se toca: 6 dias `dev` y 13 de holdout (6/4/3), junio sale del universo de F14 y los cupos de `config.yaml` se quedan quietos — ACTIVE
+- ADR-0026 la prop firm es FTMO, reto 2-Step, tipo de cuenta Swing: topes de la firma como parametros `firma_*` y RN-029, el mas restrictivo manda, A-17 DECIDIDA, los parametros del instrumento a default bajo A-27 y el reloj del servidor a UNKNOWN bajo A-28 — ACTIVE
+- ADR-0027 los relojes con FTMO: el dia de riesgo es el civil del trader (medianoche CE(S)T), desaparece el tercer reloj y A-19 queda DECIDIDA — ACTIVE
+- ADR-0028 el reloj del motor: fase de riesgo por tick sobre equity, estrategia al cierre de M1, ordenes por evento, punto fijo con refraccion y hechos del broker derivados — ACTIVE (la spec todavia fija `operacion_abierta` y `orden_limite_pendiente`: pendiente del brief siguiente)
+- ADR-0029 lado del precio y redondeo: geometria en BID (sin verificar que FX Replay dibuje BID), llenado por direccion, al mas cercano con empate en contra del bot, lote a la baja — ACTIVE
+- ADR-0030 el motor interpreta la `forma` y despacha por nombre a primitivas escritas a mano; F18-F22 son primitivas, no modulos sueltos — ACTIVE
 
 ## Decisions and Rationale
 Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
@@ -263,6 +268,17 @@ evidencia de v6 que el consultor acepto:
    minutos antes y despues y cerrarla aunque acabes en profit (2:00:29, 2:01:14), y ahi va el bot.
    **A-17** se queda con la VERIFICACION del reglamento y sigue ABIERTA (que ventana, que sancion;
    se lee antes de F33). **A-22** nace con la decision de alcance y esta DECIDIDA.
+   ENMIENDA DEL 2026-09-14 (ADR-0026 y enmienda de ADR-0022): la firma pasa a ser FTMO 2-Step
+   **Swing**, que no restringe las noticias. **EL BOT SI OPERA NOTICIAS**, como el trader:
+   `filtro_noticias = no` y RN-028 DESCARTADA. A-17 queda DECIDIDA por ADR-0026 -el reglamento se
+   leyo y el supuesto era cierto en FTMO Standard y en FundedNext, justo las cuentas que no se
+   eligieron- y A-22 sigue DECIDIDA con el sentido invertido.
+6. **A-27 y A-28**, abiertas el 2026-09-14 (ADR-0026), son MEDICIONES del entorno de FTMO, no
+   preguntas al trader: la ficha de EURUSD (default declarado, heredado de la demo de FundedNext) y
+   el reloj del servidor con su horario de verano (sin valor; no se cierra antes de observar el
+   cambio de hora de octubre). A-19 queda DECIDIDA por ADR-0027: el corte del dia de riesgo es la
+   medianoche CE(S)T que escribe el reglamento. A-24, A-25 y A-26 estan RESERVADAS por F14b §3 (la
+   liquidez de M15) y todavia no existen.
 
 | Id | Ambiguedad | Resuelve en | Pregunta de la sesion 1 |
 |---|---|---|---|
@@ -282,13 +298,15 @@ evidencia de v6 que el consultor acepto:
 | A-14 | los 28 dias al año en que su horario y la rejilla H4 no cuadran | F11, F15, F26 | del 8 al 28 de marzo y del 25 al 31 de octubre la primera H4 se ve a las 22:00: ¿opera de 7 a 15 igual o se ajusta a la vela? |
 | A-15 | alcance de la ventana operativa | F11 | DECIDIDA (ADR-0024): no se amplia a Nueva York en esta fase; el trader devolvio la pregunta (v6 1:46:10, 1:46:23) |
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | F26 | ABIERTA, y es una MEDICION: el anexo del 2026-09-09 midio MT5 contra Dukascopy, no Oanda (v6 0:24:14) |
-| A-17 | noticias frente a la regla de la cuenta de fondeo | F11, F33 | ¿QUE prohibe exactamente el reglamento de FundedNext: que eventos, cuantos minutos antes y despues, y que sancion? Es un hecho que se VERIFICA, no una decision. Partida el 2026-09-12 (ADR-0022): la decision se fue a A-22 |
+| A-17 | noticias frente a la regla de la cuenta de fondeo | F11, F33 | DECIDIDA (ADR-0026, 2026-09-14): la cuenta elegida es FTMO 2-Step Swing, sin restriccion de noticias; el reglamento se leyo y la ventana de 2 minutos existe en FTMO Standard, que no se eligio |
 | A-18 | base sobre la que se mide el objetivo 1:3 | F11, F26 | ¿el 1:3 se mide sobre la caja completa o sobre el riesgo real tras mover el stop? (v2 0:32:56) |
-| A-19 | cuando empieza el dia y la semana de riesgo | F11, F33 | ¿en que reloj cae la medianoche que reinicia el tope diario, el del servidor o el del grafico? |
+| A-19 | cuando empieza el dia y la semana de riesgo | F11, F33 | DECIDIDA (ADR-0027, 2026-09-14): la medianoche CE(S)T del reglamento de FTMO, que es el reloj civil del trader; `reloj_dia_riesgo = civil_operativa` |
 | A-20 | cuantas zonas de control invalidan un esquema | F12, F20, F26 | RN-009 dice "mas de una zona" pero el literal dice "por lo general solo buscamos uno": ¿regla o tendencia? · RESUELTA el 2026-09-11 por escrito: es REGLA, y el trader ratifica el descarte |
 | A-21 | que es una zona de control limpia, sin ruido | F12, F20, F26 | los dos esquemas SI estan definidos en el corpus; lo que sigue siendo cualitativo es "que no haga mucho ruido, o sea, sea una zona limpia" |
-| A-22 | si el bot opera noticias, y que pasa con la capacidad para otras cuentas | F13, F22, F26, F33 | DECIDIDA por el consultor (ADR-0022): el bot NO opera noticias en la v1 -va a una cuenta fondeada que puede prohibirlo- aunque la estrategia del trader si funcione dentro de ellas; la capacidad se conserva |
+| A-22 | si el bot opera noticias, y que pasa con la capacidad para otras cuentas | F13, F22, F26, F33 | DECIDIDA por el consultor (ADR-0022). El 2026-09-12: NO en la v1. Desde la enmienda del 2026-09-14 (ADR-0026): SI, porque la cuenta FTMO Swing no lo restringe; la capacidad de filtrar se conserva |
 | A-23 | que proveedor es la referencia para medir la fidelidad | F26, F17, F24 | DECIDIDA (ADR-0024): Dukascopy; MT5 para spread, ejecucion y paridad; la divergencia entra en F26 como margen declarado |
+| A-27 | las especificaciones de EURUSD en FTMO | F17, F33 | ABIERTA, MEDICION en la demo de FTMO: digits, contrato, lote minimo y paso, stops level; corren con el default de FundedNext, sin verificar en FTMO |
+| A-28 | el reloj del servidor de FTMO y su regla de horario de verano | F17 | ABIERTA, MEDICION: desfase y calendario de cambio de hora; sin valor, y no se cierra antes de observar la transicion de octubre |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los <!-- cifra-congelada: la sesion 1 ya se celebro -->
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.
@@ -372,6 +390,9 @@ De lectura (temas distintos, sin `valor` comparable; abiertas como ambiguedades)
   F33 pre-vuelo): digits 5, point 1e-5, contrato 100000, lote 0.01/0.01/40, stops_level 0,
   freeze_level 0, filling 3 (FOK|IOC), expiration 15, ejecucion market, ruta Forex\EURUSD,
   spread 12 puntos con mercado cerrado. Queda por medir en invierno (GMT+2) en F17.
+  DESDE EL 2026-09-14 ESTA MEDICION NO VALE COMO MEDICION (ADR-0026): la firma es FTMO. Los cinco
+  del instrumento corren como default declarado bajo A-27 y el reloj del servidor esta sin valor
+  bajo A-28; todo se vuelve a medir en la prueba gratuita de FTMO.
 - `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
   stderr desde la auditoria); F14 debe tratar la ventana vacia como error del caso.
 - Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
@@ -386,6 +407,7 @@ De lectura (temas distintos, sin `valor` comparable; abiertas como ambiguedades)
 ## Things That Must Not Be Changed
 - Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
 - La validacion de fidelidad (F26) precede a cualquier MQL5.
+- La firma y el tipo de cuenta (FTMO 2-Step Swing, ADR-0026) no se cambian sin ADR: el tipo se elige EN LA COMPRA, Standard -> Swing no existe, y con Standard vuelve la restriccion de noticias entera (calendario, RN-028, `filtro_noticias`).
 - Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado (que es "abrir" lo define ADR-0021; las exposiciones se declaran en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
 - Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
@@ -398,7 +420,8 @@ F14 (biblioteca de casos), que se abre con F11 igual que F12 y F13 (MASTER_PLAN 
 2. VALIDAR F13 (informe `docs/validation/F13-spec-documents.md`) y, si procede, el ritual de merge. Bloquea F14, que comparte esquema y necesita `feedback pending` fiable.
 3. ABRIR F14 (biblioteca de casos) con su brief y su revision de diseno. El universo ya esta decidido: los 6 dias `dev` de mayo (ADR-0025), y su detalle por operacion es lo unico del xlsx que se puede abrir. Hereda de ADR-0021 implementar de verdad la guarda de holdout de `tests/conftest.py`, que hoy es un stub.
 4. DECIDIR EL REPARTO DE MAYO para F14: 6 dias `dev` y 13 holdout (6/4/3) frente a los 16/8/8/8 que `config.yaml` pedia para 40 dias. Reparticionar es legitimo mientras no exista ningun LABEL_CASE y exige ADR.
-5. Verificar fuera del repositorio: A-19 (en que reloj cae la medianoche que reinicia el 4,5 %, en el panel de FundedNext) e `instrumento_stops_level` en la cuenta fondeada (vale 0, medido en demo, asi que RN-026 hoy no se activa nunca).
+5. (2026-09-14, rama `trabajo/ftmo-y-arquitectura`) VALIDAR la rama de FTMO y arquitectura: informe `docs/validation/FTMO-Y-ARQUITECTURA.md`, con su seccion "Que debe decidir el usuario". A-19 ya no se verifica en ningun panel: la cerro el reglamento (ADR-0027).
+6. EL DUEÑO, EN PARALELO: no comprar todavia -confirmar en el panel de FTMO que el tipo Swing existe para 100.000 y su region, con su apalancamiento-; abrir la prueba gratuita de FTMO y medir A-27 y A-28 (digits, contrato, lote minimo, paso y maximo, stops y freeze level, modos de llenado, desfase del servidor, rejilla H4 real); grabar spread y ticks de esa demo desde el primer dia; y declarar en `docs/validation/HOLDOUT-EXPOSICIONES.md` la exposicion de la auditoria del 2026-09-13 (`kit check` con `data/` presente recompone `ventanas.yaml` leyendo velas M1 de dias reservados de mayo; ni etiquetas ni precios leidos).
 
 ## Last Stable Commit
 0a9612d · merge: la auditoria del material, y tres guardias que nunca habian visto un supersede · tag stable/F13-auditoria
