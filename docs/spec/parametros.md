@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 10.2.0` · hash `9c4bf66f4707…`
+`spec_version 11.0.0` · hash `36bf40524d06…`
 
-59 en total: 52 con valor y 7 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+70 en total: 61 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -15,8 +15,6 @@
 | `base_calculo_riesgo` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-2603c017` | sobre que saldo se calcula |
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
 | `break_even_criterio_ruptura` | `mecha` | DEFAULT_AMBIGUOUS · en revision por A-13 | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | que hace falta para dar por rota la zona que dispara el break even |
-| `broker_dst` | `us` | CONFIRMED | broker | `ADR-0012` | que calendario de cambio de hora sigue el servidor |
-| `broker_offset_base` | `120` | CONFIRMED | broker | `ADR-0012` | minutos que el reloj del servidor va por delante de UTC en horario estandar |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
@@ -25,16 +23,27 @@
 | `cuenta_objetivo` | `fondeada` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `cuenta_pruebas` | `demo` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `dias_operables` | `lunes_a_viernes` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-140d655c` | que dias de la semana se opera |
-| `filtro_noticias` | `regla` | CONFIRMED | prop_firm | `ADR-0022` | regla de filtro, o no si no filtra |
+| `filtro_noticias` | `no` | CONFIRMED | prop_firm | `ADR-0026` | regla de filtro, o no si no filtra |
 | `filtro_spread` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-672262d5` | se aplica o no |
+| `firma` | `ftmo` | CONFIRMED | prop_firm | `ADR-0026` | prop firm de destino |
+| `firma_apalancamiento` | `30` | CONFIRMED | prop_firm | `ADR-0026` | apalancamiento maximo en forex (1:N) |
+| `firma_base_perdida_diaria` | `saldo_corte_diario` | CONFIRMED | prop_firm | `ADR-0026` | sobre que saldo se fija el limite del dia |
+| `firma_magnitud_vigilada` | `equity` | CONFIRMED | prop_firm | `ADR-0026` | que magnitud no puede bajar del limite |
+| `firma_mensajes_dia_max` | `2000` | CONFIRMED | prop_firm | `ADR-0026` | peticiones al servidor por dia |
+| `firma_noticias_restringe` | `False` | CONFIRMED | prop_firm | `ADR-0026` | si la cuenta restringe operar alrededor de noticias |
+| `firma_perdida_diaria_max` | `5 %` | CONFIRMED | prop_firm | `ADR-0026` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
+| `firma_perdida_total_arrastra` | `False` | CONFIRMED | prop_firm | `ADR-0026` | si el limite total sigue al saldo maximo alcanzado |
+| `firma_perdida_total_max` | `10 %` | CONFIRMED | prop_firm | `ADR-0026` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
+| `firma_programa` | `2-step` | CONFIRMED | prop_firm | `ADR-0026` | programa del reto |
+| `firma_tipo_cuenta` | `swing` | CONFIRMED | prop_firm | `ADR-0026` | tipo de cuenta elegido en la compra |
 | `huso_grafico` | `Europe/Madrid` | CONFIRMED | estrategia | `ev-v3-000136-6160fcea` | nombre IANA del huso configurado en el grafico del trader |
 | `huso_operativa` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0017` | nombre IANA del huso en el que se expresan las horas de la operativa |
 | `instrumento` | `EURUSD` | CONFIRMED | estrategia | `ev-v2-003320-a736fd37` | simbolo del instrumento |
-| `instrumento_contrato` | `100000` | CONFIRMED | instrumento | `ADR-0012` | unidades de la divisa base por lote |
-| `instrumento_digitos` | `5` | CONFIRMED | instrumento | `ADR-0012` | decimales de la cotizacion |
-| `instrumento_lote_minimo` | `0.01` | CONFIRMED | instrumento | `ADR-0012` | lotes |
-| `instrumento_lote_paso` | `0.01` | CONFIRMED | instrumento | `ADR-0012` | lotes |
-| `instrumento_stops_level` | `0` | CONFIRMED | instrumento | `ADR-0012` | puntos de distancia minima a mercado |
+| `instrumento_contrato` | `100000` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | unidades de la divisa base por lote |
+| `instrumento_digitos` | `5` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | decimales de la cotizacion |
+| `instrumento_lote_minimo` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
+| `instrumento_lote_paso` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
+| `instrumento_stops_level` | `0` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | puntos de distancia minima a mercado |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
@@ -47,10 +56,10 @@
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
-| `reloj_dia_riesgo` | `servidor` | DEFAULT_AMBIGUOUS · en revision por A-19 | prop_firm | `ADR-0015` | que reloj marca el corte del dia (y de la semana) de riesgo |
+| `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
 | `reubicacion_cadencia` | `al_romper` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6b29059d` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `riesgo_por_operacion` | `0.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-648ec915` | porcentaje de la cuenta por operacion |
-| `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0012` | USD |
+| `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0026` | USD |
 | `salida_sin_ruptura` | `proteger_y_dejar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9626d3dd` | cerrar_al_cierre/proteger_y_dejar |
 | `sesgo_h4_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | que hace falta para dar por rota la vela H4 previa |
 | `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
@@ -65,6 +74,8 @@
 
 No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno de estos revienta, y eso es lo correcto.
 
+- **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
+- **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
 - **`spread_maximo`** (estrategia) — spread por encima del cual no se abre la operacion; solo si filtro_spread
 - **`stop_colchon_spread`** (estrategia) — si el 0,8 es fijo o es 0,75 mas un colchon variable. RESPONDIDO Y DESCARTADO en la sesion 1 (A-10): el 0,8 ya lleva el colchon dentro, asi que no hay parametro que fijar. Se queda UNKNOWN a proposito -leerlo falla- y la regla vive en strategy_spec
@@ -79,6 +90,13 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
+- `filtro_noticias` → F33
+- `firma` → F33
+- `firma_apalancamiento` → F21, F33
+- `firma_mensajes_dia_max` → F23, F24, F31
+- `firma_noticias_restringe` → F33
+- `firma_programa` → F33
+- `firma_tipo_cuenta` → F33
 - `huso_grafico` → ADR-0017
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
@@ -89,7 +107,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 ### `anclaje_h4`
 
-donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirma broker_dst medido contra la demo. El trader lo ve como las 23:00 en su pantalla, y es cierto 337 dias al año; los otros 28 -8 a 28 de marzo y 25 a 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017)
+donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO esta SIN VERIFICAR: se contrasta con su rejilla H4 real al medir A-28, y si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027). El trader lo ve como las 23:00 en su pantalla, y es cierto 337 dias al año; los otros 28 -8 a 28 de marzo y 25 a 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017)
 
 ### `base_calculo_objetivo`
 
@@ -99,7 +117,7 @@ Opciones: `caja_completa`, `riesgo_real`.
 
 ### `base_calculo_perdida_diaria`
 
-base del tope de perdida del dia; el trader dice que el saldo inicial
+base del tope de perdida del dia; el trader dice que el saldo inicial. Coincide en forma con la del tope de la firma -el saldo al corte diario, firma_base_perdida_diaria- y la coincidencia se declara, no se da por obvia: el porcentaje y la base del porcentaje de la firma son otros (ADR-0026, RN-029)
 
 Opciones: `saldo_actual`, `saldo_inicial_dia`.
 
@@ -129,13 +147,13 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `broker_dst`
 
-con que calendario cambia la hora el servidor. FundedNext sigue el de Nueva York, asi que en verano el reloj va a GMT+3 y el dia de riesgo se desplaza. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide. Coinciden en invierno y divergen una hora en verano, asi que las horas de la operativa se interpretan SIEMPRE en huso_grafico y se convierten al ejecutar
+con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 
 Opciones: `us`, `eu`, `ninguno`.
 
 ### `broker_offset_base`
 
-desfase base del reloj del servidor (GMT+2 en invierno, GMT+3 en verano de Nueva York); medido en el terminal, no supuesto
+desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
 
 ### `cartucho_criterio`
 
@@ -167,13 +185,13 @@ Opciones: `abstenerse`, `regla_mas_parecida`.
 
 ### `cuenta_objetivo`
 
-cuenta a la que apunta el bot cuando este validado
+cuenta a la que apunta el bot cuando este validado: la FTMO Account que sale del reto 2-Step (ADR-0026). QUE firma, programa y tipo de cuenta lo dicen firma, firma_programa y firma_tipo_cuenta
 
 Opciones: `fondeada`, `demo`, `propia`.
 
 ### `cuenta_pruebas`
 
-cuenta en la que se prueba el funcionamiento antes de la fondeada
+cuenta en la que se prueba el funcionamiento antes de la fondeada: la prueba gratuita de FTMO (ADR-0026), donde se miden A-27 y A-28. La demo de FundedNext del 2026-09-05 ya no cuenta
 
 Opciones: `fondeada`, `demo`, `propia`.
 
@@ -185,7 +203,7 @@ Opciones: `lunes_a_viernes`, `todos_los_dias`.
 
 ### `filtro_noticias`
 
-si se deja de operar alrededor de noticias de alto impacto y con que margen. `no` es lo que hace EL TRADER en sus cuentas propias, que no lo prohiben, y su estrategia funciona dentro de esos eventos -"a mi me es indiferente si hay noticia o no", fb-2026-09-09-sesion-01-3565552d-. El BOT corre con `regla` desde ADR-0022 porque va a una cuenta fondeada que puede prohibirlo como norma, y la sancion es perder la cuenta aunque la operacion acabe en profit. La opcion `no` se conserva a proposito: el dia que el bot corra donde se permita, se cambia el valor y nada mas. CON QUE VENTANA se bloquea es A-17, que sigue abierta
+si se deja de operar alrededor de noticias de alto impacto. `no` es lo que hace EL TRADER -"a mi me es indiferente si hay noticia o no", fb-2026-09-09-sesion-01-3565552d- y es tambien lo que hace el BOT desde el 2026-09-14: la cuenta elegida es FTMO 2-Step Swing, que no tiene restricciones de noticias (ADR-0026, firma_noticias_restringe). Del 2026-09-12 al 2026-09-14 corrio con `regla` por ADR-0022, que suponia una cuenta fondeada con prohibicion; ese supuesto es cierto en FTMO Standard y en FundedNext, y por eso NO se eligio ninguna de las dos. La opcion `regla` se conserva: si el bot corre algun dia en una cuenta con restriccion, se cambia este valor, se revive RN-028 y hace falta un calendario economico, que es precondicion del pre-vuelo de F33
 
 Opciones: `no`, `regla`.
 
@@ -193,9 +211,61 @@ Opciones: `no`, `regla`.
 
 si el bot descarta una entrada por spread alto (el trader dice que no filtra)
 
+### `firma`
+
+la firma de la cuenta fondeada. FundedNext se descarta porque no admite bots en cuentas de 50.000 o mas, ni en el reto ni en la cuenta fondeada
+
+Opciones: `ftmo`, `fundednext`.
+
+### `firma_apalancamiento`
+
+apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto puede pedir mas margen del que hay (ADR-0026, impacto). F21 lo comprueba con la distribucion real de cajas
+
+### `firma_base_perdida_diaria`
+
+el limite del dia se fija con el saldo al corte diario (medianoche CE(S)T, reloj_dia_riesgo) y no con el capital inicial: "Account balance at midnight CE(S)T of the previous day - 5% of the Initial Simulated Capital"
+
+Opciones: `saldo_inicial_cuenta`, `saldo_corte_diario`.
+
+### `firma_magnitud_vigilada`
+
+la firma vigila EQUITY: saldo mas P/L flotante, swaps y comisiones ("equity cannot drop at any time"). Por eso la fase de riesgo del motor va por tick (ADR-0028)
+
+Opciones: `saldo`, `equity`.
+
+### `firma_mensajes_dia_max`
+
+por encima de este numero de peticiones al servidor en un dia, la firma lo trata como practica prohibida ("an excessive number of more than 2,000 server requests per day"). Restriccion de diseño de primera clase: la fase de estrategia va al cierre de M1 para no acercarse (ADR-0028)
+
+### `firma_noticias_restringe`
+
+si la cuenta prohibe o penaliza operar alrededor de noticias. Con firma_tipo_cuenta = swing, no. Si algun dia vale true, filtro_noticias pasa a `regla`, RN-028 se revive y hace falta un calendario economico: el pre-vuelo de F33 lo comprueba
+
+### `firma_perdida_diaria_max`
+
+perdida maxima del dia de la firma. El limite del dia es el saldo al corte diario (firma_base_perdida_diaria, reloj_dia_riesgo) menos este porcentaje del capital INICIAL, y lo vigila sobre firma_magnitud_vigilada. No es perdida_maxima_diaria, que es el freno del trader: con saldo al empezar el dia por encima de 111.111,11 el del trader es el MENOS restrictivo (ADR-0026)
+
+### `firma_perdida_total_arrastra`
+
+si la perdida maxima total arrastra con el saldo mas alto alcanzado. En el programa 2-Step NO: es estatica, capital inicial menos firma_perdida_total_max
+
+### `firma_perdida_total_max`
+
+perdida maxima total de la firma: el limite es el capital inicial menos este porcentaje, fijo en las dos fases y en la cuenta fondeada (firma_perdida_total_arrastra). El semanal del trader no lo cubre: se reinicia cada semana y este no se reinicia nunca
+
+### `firma_programa`
+
+programa del reto: reto, verificacion y cuenta fondeada, con la perdida maxima ESTATICA. El programa de una fase se descarta porque su perdida maxima arrastra y lleva regla del mejor dia
+
+### `firma_tipo_cuenta`
+
+tipo de cuenta. Se elige EN LA COMPRA y no se puede cambiar despues ("Change from Standard to Swing: Not allowed"). `swing` no restringe las noticias; `standard` prohibe abrir o cerrar -incluida la ejecucion de un stop o un objetivo- de dos minutos antes a dos despues de noticias seleccionadas en la cuenta fondeada
+
+Opciones: `standard`, `swing`.
+
 ### `huso_grafico`
 
-como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las 21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y sigue a Nueva York
+como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las 21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28)
 
 ### `huso_operativa`
 
@@ -207,23 +277,23 @@ instrumento sobre el que opera la primera version. Sale de la evidencia, no de u
 
 ### `instrumento_contrato`
 
-tamano del contrato; con el se convierte el riesgo en lotes
+tamano del contrato; con el se convierte el riesgo en lotes. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
 
 ### `instrumento_digitos`
 
-digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos
+digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
 
 ### `instrumento_lote_minimo`
 
-lote minimo que admite el broker; por debajo, la operacion se rechaza
+lote minimo que admite el broker; por debajo, la operacion se rechaza. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
 
 ### `instrumento_lote_paso`
 
-escalon del lote; el lotaje calculado se redondea a un multiplo de este paso
+escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
 
 ### `instrumento_stops_level`
 
-distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2)
+distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27). Y aqui el aviso pesa mas que en los otros cuatro: el stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
 
 ### `latencia_ms`
 
@@ -291,9 +361,9 @@ Opciones: `si`, `no`.
 
 ### `reloj_dia_riesgo`
 
-en que reloj cae la medianoche que reinicia el tope diario, y el domingo que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. Importa porque los dos relojes NO coinciden: el del servidor cambia con el calendario de Nueva York (broker_offset_base + broker_dst) y el del grafico esta en discusion (A-14), asi que se separan una hora buena parte del año. `servidor` es un DEFAULT NUESTRO: es como lo calculan las cuentas de fondeo, pero no esta verificado contra el panel de FundedNext (A-19), y en una cuenta fondeada equivocarse aqui es perder la cuenta, no perder un trade
+en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj
 
-Opciones: `servidor`, `grafico`.
+Opciones: `servidor`, `civil_operativa`.
 
 ### `reubicacion_cadencia`
 
@@ -307,7 +377,7 @@ riesgo por operacion (1 en backtest; 0,4-0,5 en fondeo). Desde ADR-0020 es lo qu
 
 ### `saldo_inicial_cuenta`
 
-saldo con el que arranca la cuenta. NO es la base de ningun calculo: el lotaje va sobre base_calculo_riesgo (saldo_actual), el tope diario sobre base_calculo_perdida_diaria (saldo_inicial_dia) y el semanal sobre base_calculo_perdida_semanal (saldo_actual). Lo decia y era falso; corregido en la auditoria del 2026-09-10
+saldo con el que arranca la cuenta: el capital simulado inicial de la cuenta FTMO de 100.000 (ADR-0026). NO es base de ningun calculo DEL TRADER: el lotaje va sobre base_calculo_riesgo (saldo_actual), el tope diario sobre base_calculo_perdida_diaria (saldo_inicial_dia) y el semanal sobre base_calculo_perdida_semanal (saldo_actual). SI es la base de los dos topes DE LA FIRMA: firma_perdida_diaria_max y firma_perdida_total_max son porcentajes de este capital (RN-029)
 
 ### `salida_sin_ruptura`
 

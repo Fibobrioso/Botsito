@@ -2,9 +2,9 @@
 
 # Reglas de la operativa
 
-`spec_version 10.2.0` · hash `9c4bf66f4707…`
+`spec_version 11.0.0` · hash `36bf40524d06…`
 
-25 vigentes y 3 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
+25 vigentes y 4 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
 ## Vigentes
 
@@ -743,15 +743,15 @@
 }
 ```
 
-### RN-020 · el tope porcentual es el unico freno del dia
+### RN-020 · el tope porcentual del trader es el unico freno del dia de su operativa
 
 - **Clase**: `gate`
-- **Cuando**: la perdida acumulada desde el corte que marca reloj_dia_riesgo -que cae en el reloj del servidor, cuyo calendario declara broker_dst y cuyo desfase base declara broker_offset_base- alcanza perdida_maxima_diaria sobre base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
+- **Cuando**: la perdida acumulada desde el corte que marca reloj_dia_riesgo -la medianoche civil en huso_operativa, que es tambien la de la firma- alcanza perdida_maxima_diaria sobre base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
 - **Entonces**: se deja de operar hasta el corte siguiente
-- **Parametros**: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `reloj_dia_riesgo`, `broker_dst`, `broker_offset_base`
+- **Parametros**: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `reloj_dia_riesgo`
 - **Cita**: `fb-2026-09-09-sesion-01-bff260ea` — *«De la cuenta basado en el saldo, y que sea en el saldo inicial del día»*
-- **Decision**: `ADR-0015` — dice mas que su cita, y lo declara
-- **Notas**: OJO a la aritmetica, corregida en la auditoria del 2026-09-09: agotar los cartuchos cuesta tres perdidas, pero el contador NO es diario -se reinicia con la siguiente liquidez de M15 (cartuchos_reinicio)-, asi que no hay cota diaria por esa via: son tres perdidas POR ZONA, y nada limita cuantas zonas se desarrollan entre la apertura y el cierre de la ventana. El tope porcentual no es una red que nunca se toca: es el unico freno del dia que existe, y el titulo de esta regla decia lo contrario hasta la auditoria del 2026-09-10. Las dos bases NO son la misma -el dia sobre el saldo inicial del dia, la semana sobre el saldo actual, que es lo que dijo el trader en cada caso- y el corte lo marca reloj_dia_riesgo, que sigue siendo un default nuestro (A-19)
+- **Decision**: `ADR-0027` — dice mas que su cita, y lo declara
+- **Notas**: OJO a la aritmetica, corregida en la auditoria del 2026-09-09: agotar los cartuchos cuesta tres perdidas, pero el contador NO es diario -se reinicia con la siguiente liquidez de M15 (cartuchos_reinicio)-, asi que no hay cota diaria por esa via: son tres perdidas POR ZONA, y nada limita cuantas zonas se desarrollan entre la apertura y el cierre de la ventana. El tope porcentual no es una red que nunca se toca: es el unico freno del dia DE LA OPERATIVA, y el titulo de esta regla decia lo contrario hasta la auditoria del 2026-09-10. Las dos bases NO son la misma -el dia sobre el saldo inicial del dia, la semana sobre el saldo actual, que es lo que dijo el trader en cada caso-. El corte lo marca reloj_dia_riesgo, que fue un default nuestro en el reloj del servidor hasta el 2026-09-14 (A-19) y ahora es la medianoche civil que dice el reglamento de FTMO (ADR-0027): por eso esta regla ya no nombra broker_dst ni broker_offset_base. Desde ADR-0026 hay OTRO freno, el de la firma (RN-029): no es de la operativa del trader sino de la cuenta, y el motor respeta siempre el mas restrictivo de los dos
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -799,7 +799,7 @@
 - **Entonces**: no se filtra (filtro_spread); se opera igual
 - **Parametros**: `filtro_spread`
 - **Cita**: `fb-2026-09-09-sesion-01-3565552d` — *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*
-- **Notas**: HASTA EL 2026-09-12 esta regla decia tambien que se opera DURANTE LAS NOTICIAS, y para el trader sigue siendo cierto: opera cuentas propias que no lo prohiben y su estrategia funciona dentro de esos eventos. Para el BOT ya no, porque va a una cuenta fondeada que puede prohibirlo: esa mitad se fue a RN-028 (ADR-0022). El propio trader lo habia avisado y el aviso llevaba tres dias en estas notas sin que ninguna guardia lo mirara
+- **Notas**: HASTA EL 2026-09-12 esta regla decia tambien que se opera DURANTE LAS NOTICIAS, y para el trader sigue siendo cierto: opera cuentas propias que no lo prohiben y su estrategia funciona dentro de esos eventos. Del 2026-09-12 al 2026-09-14 esa mitad se fue a RN-028 (ADR-0022) porque la cuenta fondeada podia prohibirlo. Desde ADR-0026 la cuenta es FTMO 2-Step Swing, que no lo restringe: el bot vuelve a operar noticias como el trader, RN-028 queda DESCARTADA y filtro_noticias vale `no`. Esta regla sigue diciendo solo lo del spread
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -935,17 +935,61 @@
 }
 ```
 
-### RN-028 · el bot no abre alrededor de una noticia de alto impacto, aunque el trader si lo haga
+### RN-029 · el freno de la firma, que el motor respeta aunque el del trader no se haya tocado
 
 - **Clase**: `gate`
-- **Cuando**: hay una noticia de alto impacto y filtro_noticias dice que se filtra
-- **Entonces**: no se abre ninguna operacion. NO es lo que hace el trader -el opera cuentas propias que no lo prohiben y su estrategia funciona dentro de esos eventos-: es una restriccion de la cuenta a la que va el bot
-- **Parametros**: `filtro_noticias`
-- **Cita**: `fb-2026-09-09-sesion-01-3565552d` — *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*
-- **Decision**: `ADR-0022` — dice mas que su cita, y lo declara
-- **Notas**: La cita dice lo CONTRARIO de lo que esta regla hace, y por eso declara `decision`. Lo que el trader dijo sigue siendo verdad sobre SU operativa y se conserva intacto en RN-021 y en la descripcion de filtro_noticias. Lo que decide ADR-0022 es donde corre el bot: una cuenta fondeada que puede prohibirlo como norma, con la cuenta como sancion aunque la operacion acabe en profit. El propio trader lo aviso en la sesion 1. La CAPACIDAD se conserva: basta poner filtro_noticias en `no` el dia que el bot opere donde se permita. F26 tiene que citar esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot
+- **Cuando**: el equity -firma_magnitud_vigilada- cae hasta el limite del dia de la firma, que es el saldo al corte de reloj_dia_riesgo segun firma_base_perdida_diaria menos firma_perdida_diaria_max del capital saldo_inicial_cuenta, o hasta el limite total, que es saldo_inicial_cuenta menos firma_perdida_total_max y no se mueve mientras firma_perdida_total_arrastra lo diga
+- **Entonces**: se prohibe abrir y buscar entradas, se cierra a mercado lo que quede vivo, y la detencion dura hasta el corte siguiente
+- **Parametros**: `firma_perdida_diaria_max`, `firma_perdida_total_max`, `firma_base_perdida_diaria`, `firma_perdida_total_arrastra`, `firma_magnitud_vigilada`, `saldo_inicial_cuenta`, `reloj_dia_riesgo`
+- **Cita**: `ev-v4-012524-0ef85a89` — *«5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10»*
+- **Decision**: `ADR-0026` — dice mas que su cita, y lo declara
+- **Notas**: LO QUE LA CITA SOSTIENE y lo que no: sostiene que la cuenta de fondeo tiene sus PROPIOS topes, uno diario y uno total, distintos de los del trader. No sostiene ni las cifras -el trader las dice de memoria, de otra firma y dudando- ni la base, ni la magnitud, ni el corte: todo eso lo escribe el reglamento de FTMO y lo decide ADR-0026, y por eso esta regla declara `decision`. POR QUE EXISTE aparte de RN-020: el mas restrictivo NO es siempre el del trader. El 4,5 % del trader va sobre el saldo inicial del dia y el 5 % de la firma sobre el capital inicial, asi que con el saldo al empezar el dia por encima de 5.000 / 0,045 = 111.111,11 manda la firma; y el semanal del trader se reinicia cada semana mientras el total de la firma no se reinicia nunca. LLEGAR AL LIMITE DE LA FIRMA ES LA INFRACCION: esta regla no evita perder la cuenta, impide seguir operando y deja escrita la jerarquia. Si lo alcanzado es el limite total, la cuenta ya esta perdida y el corte siguiente no la devuelve. Cuanto margen se deja antes de llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su prohibicion dura un tick (lo exige una guardia). EFECTO DECLARADO: por leerlo, esta regla tambien cierra a mercado cuando el freno lo fijo el TRADER (RN-020), que por si solo no cierra nada. Hoy es inocuo -con operaciones_simultaneas_max en su valor, RN-020 salta al realizarse la perdida de un stop y ya no queda posicion viva-, pero deja de serlo si algun dia se admiten operaciones en paralelo o el tope del trader se mide sobre equity; entonces hara falta un hecho propio para la firma
 
-**No es ejecutable todavia** (A-17): la prohibicion esta en pie, pero falta definir su condicion.
+**Forma ejecutable**, tal cual la lee el motor:
+
+```json
+{
+  "cuando": {
+    "cualquiera_de": [
+      {
+        "alcanza_tope": {
+          "acumulador": "perdida_dia_firma",
+          "tope": "firma_perdida_diaria_max"
+        }
+      },
+      {
+        "alcanza_tope": {
+          "acumulador": "perdida_total_firma",
+          "tope": "firma_perdida_total_max"
+        }
+      },
+      {
+        "hecho": "detenido_por_tope"
+      }
+    ]
+  },
+  "entonces": {
+    "hace": [
+      {
+        "cerrar_a_mercado": {
+          "de": "OP",
+          "si": "si"
+        }
+      },
+      {
+        "fijar": {
+          "a": "hasta_el_corte_siguiente",
+          "hecho": "detenido_por_tope"
+        }
+      }
+    ],
+    "prohibe": [
+      "abrir_operacion",
+      "buscar_entradas"
+    ]
+  }
+}
+```
 
 ## Descartadas
 
@@ -973,6 +1017,16 @@
 - **Entonces**: no se entra
 - **Cita**: `ev-v4-013008-73dcd8c3` — *«solo sería agregar un modelo de entrada más, o sea, no un modelo, sino un esquema de entrada más [...] antes que se desarrolle esta zona de control pues operar»*
 - **Notas**: lo explico en v6 entre 0:41:00 y 0:50:11, tramo declarado fuera de la operativa por ambos y no citable (knowledge/corpus/tramos_no_citables.yaml)
+
+### RN-028 · el bot no abre alrededor de una noticia de alto impacto, aunque el trader si lo haga
+
+- **Clase**: `gate`
+- **Cuando**: hay una noticia de alto impacto y filtro_noticias dice que se filtra
+- **Entonces**: no se abre ninguna operacion. NO es lo que hace el trader -el opera cuentas propias que no lo prohiben y su estrategia funciona dentro de esos eventos-: es una restriccion de la cuenta a la que va el bot
+- **Parametros**: `filtro_noticias`
+- **Cita**: `fb-2026-09-09-sesion-01-3565552d` — *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*
+- **Decision**: `ADR-0022` — dice mas que su cita, y lo declara
+- **Notas**: La cita dice lo CONTRARIO de lo que esta regla hace, y por eso declara `decision`. Lo que el trader dijo sigue siendo verdad sobre SU operativa y se conserva intacto en RN-021 y en la descripcion de filtro_noticias. Lo que decide ADR-0022 es donde corre el bot: una cuenta fondeada que puede prohibirlo como norma, con la cuenta como sancion aunque la operacion acabe en profit. El propio trader lo aviso en la sesion 1. La CAPACIDAD se conserva: basta poner filtro_noticias en `no` el dia que el bot opere donde se permita. F26 tiene que citar esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot. DESCARTADA el 2026-09-14 (ADR-0026 y la enmienda de ADR-0022): la cuenta elegida es FTMO 2-Step Swing, sin restriccion de noticias, asi que el motivo de esta regla desaparece y el bot opera noticias igual que el trader. Pierde su `forma`, que solo decia `pendiente_definicion: A-17`: una regla descartada no se ejecuta, y A-17 ya no esta abierta. SE CONSERVA como capacidad: si el bot corre algun dia en una cuenta con restriccion (firma_noticias_restringe), se revive esta regla con su condicion definida, filtro_noticias pasa a `regla` y hace falta un calendario economico -precondicion del pre-vuelo de F33-. La divergencia de F26 que citaba tambien desaparece
 
 ## Vocabulario
 
@@ -1025,14 +1079,16 @@
 ### hechos (6)
 
 - **`detenido_por_cartuchos`** — los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia Lo produce: RN-016. Lo consume: RN-001, RN-016.
-- **`detenido_por_tope`** — el tope porcentual -diario o semanal- esta alcanzado y no se abre hasta el corte siguiente. Es un HECHO que dura, no un instante: sin el, la prohibicion de RN-020 solo valia en el tick del evento y nada impedia abrir en el siguiente Lo produce: RN-020. Lo consume: RN-001, RN-020.
+- **`detenido_por_tope`** — un tope porcentual esta alcanzado -el diario o el semanal del trader (RN-020), o el diario o el total de la firma (RN-029)- y no se abre hasta el corte siguiente. Es un HECHO que dura, no un instante: sin el, la prohibicion solo valia en el tick del evento y nada impedia abrir en el siguiente. Lo leen RN-001, que es el gate maestro, y las dos reglas que lo fijan Lo produce: RN-020, RN-029. Lo consume: RN-001, RN-020, RN-029.
 - **`liquidez_tomada`** — la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los dos esquemas de entrada: sin ella no se mira M1. Hasta el 2026-09-11 esta condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consume el predicado `se_da_esquema` (`depende_de`), no una regla Lo produce: RN-004. Lo consume: predicado se_da_esquema.
 - **`operacion_abierta`** — hay una posicion viva Lo produce: RN-010, RN-013. Lo consume: RN-002, RN-014.
 - **`orden_limite_pendiente`** — hay una orden colocada y todavia sin llenar Lo produce: RN-011, RN-013. Lo consume: RN-006.
 - **`sesgo`** — el sentido en el que se busca entrada Lo produce: RN-003. Lo consume: RN-005.
 
-### acumuladores (3)
+### acumuladores (5)
 
 - **`cartuchos`** — perdidas que cuentan como intento Cita `fb-2026-09-09-sesion-01-e3eedcaa`: *«»*.
 - **`perdida_dia`** — perdida acumulada desde el corte del dia de riesgo Cita `fb-2026-09-09-sesion-01-462134c7`: *«»*.
+- **`perdida_dia_firma`** — caida del EQUITY (firma_magnitud_vigilada) por debajo del saldo al corte diario; ese corte lo marca reloj_dia_riesgo y la base la declara firma_base_perdida_diaria. El tope es un porcentaje del capital INICIAL, no del saldo del corte (ADR-0026)
 - **`perdida_semana`** — perdida acumulada desde el corte de la semana Cita `fb-2026-09-09-sesion-01-a85b6bc7`: *«»*.
+- **`perdida_total_firma`** — caida del EQUITY por debajo del capital inicial (saldo_inicial_cuenta). No se reinicia nunca: el limite es estatico mientras firma_perdida_total_arrastra valga false, que es lo que dice el programa 2-Step (ADR-0026)
