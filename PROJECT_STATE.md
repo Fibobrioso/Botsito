@@ -68,7 +68,7 @@ trabajo/ftmo-y-arquitectura
 - Auditoria del material recogido · validada el 2026-09-13 · docs/validation/AUDITORIA-2026-09-12-material.md · tag stable/F13-auditoria
 
 ## Features Waiting for Validation
-— ninguna.
+- FTMO y arquitectura (rama de trabajo `trabajo/ftmo-y-arquitectura`) · WAITING_FOR_USER_VALIDATION · docs/validation/FTMO-Y-ARQUITECTURA.md · tag previsto stable/F13-ftmo
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
