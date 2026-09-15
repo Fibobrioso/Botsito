@@ -130,11 +130,28 @@ dentro de ella, y vuelve a WAITING_FOR_USER_VALIDATION:
 | 2026-09-14 | `cerrar_a_mercado {si: "si"}` llevaba un literal donde RN-002 usa `cierre_forzoso_fin_ventana`; y como RN-029 lee `detenido_por_tope`, que dura hasta el corte, habría emitido un cierre en cada evento mientras el bot está parado, contra `firma_mensajes_dia_max` | consultor | **Resuelto por las dos vías**: la ligadura de RN-030 hace que sin posición viva no dispare (y no lee `detenido_por_tope`, así que tampoco cierra por el freno del trader), y `si` pasa a ser el parámetro nuevo **`firma_cierre_al_tope`** (`prop_firm`, `si`, fuente ADR-0026) |
 | 2026-09-14 | A-28 no pedía verificar el corte del día de riesgo en el panel | consultor | A-28 gana el punto explícito: confirmar en el panel de FTMO que el límite diario se recalcula a **medianoche CE(S)T y no a la medianoche del servidor** (se separan una hora). `reloj_dia_riesgo` **se queda CONFIRMED**, no se añade a los parámetros de A-28 (lo sacaría como «en revisión» en `spec status`), y su descripción remite a esa comprobación |
 
-**Al brief siguiente, NO a esta rama** (lo decide el consultor): `firma_magnitud_vigilada` no tiene
-lector ejecutable —el equity solo vive en la prosa de los acumuladores—; `detenido_por_tope` necesita
-un valor permanente para el tope total; y `perdida_total_firma.reinicia_con` debería ser un token de
-«nunca» y no un booleano. Y un candidato a guardia que sale de la primera fila: una acción que usa una
-ligadura tiene que tenerla atada en un `todos_de` del `cuando`.
+**RN-030 aceptada por el consultor** (2026-09-14): idéntica en forma a RN-002 —liga `OP` donde hay
+que ligarlo, saca el `si` de un parámetro y no lee `detenido_por_tope`, así que deja de disparar
+cuando la posición se cierra—, y la separación prohibir/cerrar es el mismo par que RN-001 y RN-002.
+El `complementa: [RN-029]` es obligatorio: los parámetros de RN-029 son un subconjunto de los de
+RN-030 y `comprobar_precedencia` denuncia ese caso sin él. Y `docs/plan/features/F14b-*.md` avisa ya
+de que su numeración provisional de reglas quedó obsoleta: su "RN-030" no es esta regla.
+
+**Al brief siguiente, NO a esta rama** (lo decide el consultor):
+
+1. **`firma_magnitud_vigilada` sin lector ejecutable**: el equity solo vive en la prosa de los
+   acumuladores.
+2. **`detenido_por_tope` necesita un valor permanente** para el tope total.
+3. **`perdida_total_firma.reinicia_con`** debería ser un token de «nunca» y no un booleano.
+4. **La clase de RN-030.** Está como `gate`, y por la taxonomía debería ser `terminal` o
+   `disparador`: un `gate` prohíbe, y RN-030 no prohíbe nada, solo actúa; su gemela RN-002, misma
+   forma y misma función, es `terminal`. Siendo `gate` entra además en el grupo de colisión de
+   RN-001/RN-020/RN-029. No se cambia ahora porque tocar la clase puede invalidar el `complementa`,
+   que es un mecanismo intra-clase. En el brief siguiente: leer las definiciones de clase de
+   ADR-0018 y decidir.
+5. **La guardia de ligadura, ACEPTADA**: toda acción que use una ligadura la tiene atada en un
+   `todos_de` del `cuando`. Es la que habría cazado el `OP` sin ligar de RN-029, y cierra el agujero
+   que ADR-0019 nombra y que no comprobaba nadie (hoy pasa porque `OP` también es un token).
 
 Comprobado por el auditor en una copia sin `data/`: crear una A-24 falsa hace fallar
 `test_ambiguedades_reales_y_esquema` (la reserva se autoliquida), y poner `firma_perdida_diaria_max`
@@ -192,6 +209,56 @@ uv run botsito spec status                  # A-17 y A-19 en "cerradas por decis
 uv run botsito knowledge validate           # guardias de DECIDIDA, trailers Fuente
 git diff 0a9612d..HEAD --stat -- knowledge/evidence knowledge/feedback   # vacio
 ```
+
+## 9. El ritual de cierre (lo ejecuta el usuario)
+
+Nada de esto lo ha hecho la sesión: ni merge, ni tag, ni push. Secuencia exacta, en Git Bash desde
+la raíz del repositorio, con `BOTSITO_ALLOW_MAIN=1` **exportada durante toda la secuencia** (la exige
+el hook `pre-commit` en el commit del paso 3; el merge no dispara `pre-commit`):
+
+```
+export BOTSITO_ALLOW_MAIN=1
+git checkout main
+git status --short                 # tiene que salir vacio
+
+# (1) merge sin fast-forward
+git merge --no-ff trabajo/ftmo-y-arquitectura -m "merge: FTMO 2-Step Swing y los cuatro ADR de arquitectura"
+
+# (2) tag anotado sobre el commit de merge (HEAD en este momento)
+git tag -a stable/F13-ftmo -m "FTMO y arquitectura: ADR-0026..ADR-0030, RN-029/RN-030, spec 11.1.0"
+git rev-parse --short HEAD         # anota este sha: es el del merge
+
+# (3) commit docs(state) que toca SOLO PROJECT_STATE.md
+#     Editar PROJECT_STATE.md:
+#       - Current Branch: main
+#       - Current Feature: ninguna abierta; lo siguiente es el brief de las correcciones de fidelidad
+#       - Stable Main State y Last Stable Commit: empiezan por el sha del merge, tag stable/F13-ftmo
+#       - Completed Features: + "FTMO y arquitectura · validada el <fecha> ·
+#         docs/validation/FTMO-Y-ARQUITECTURA.md · tag stable/F13-ftmo"
+#       - Features Waiting for Validation: "— ninguna."
+#       - Change Log: la entrada del 2026-09-14 pasa de "esperando validacion" a "cerrada en main"
+git add PROJECT_STATE.md
+git diff --cached --name-only      # tiene que salir SOLO PROJECT_STATE.md
+git commit -m "docs(state): FTMO y arquitectura cerrada en main (stable/F13-ftmo)"
+
+# (4) make check desde main, con la salida a un fichero (no a /dev/null: en Git Bash
+#     lint-imports devuelve error al escribir ahi y make sale con 2 aunque todo este verde)
+make check > make-check.log 2>&1; echo "exit=$?"; tail -5 make-check.log; rm make-check.log
+
+# (5) push de main y del tag
+git push origin main
+git push origin stable/F13-ftmo
+unset BOTSITO_ALLOW_MAIN
+```
+
+**Entre (1) y (3) `state check` falla a propósito**: tras el merge, `Current Branch` todavía dice
+`trabajo/ftmo-y-arquitectura` y `Last Stable Commit` no apunta al tag nuevo. Por eso `make check` va en
+el paso 4 y no antes. Si el paso 4 falla, no se pushea.
+
+Después: mirar la CI del commit `docs(state)`, que es el que cuenta (el merge no tiene run propio):
+`curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/<sha-docs-state>/check-runs`. Y
+borrar la rama cuando quieras: `git branch -d trabajo/ftmo-y-arquitectura` (y
+`git push origin --delete trabajo/ftmo-y-arquitectura` si llegó a subirse).
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

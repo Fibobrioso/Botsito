@@ -40,7 +40,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     regla ya lo lea: RN-029 lee `detenido_por_tope`.
   - Una accion que usa una ligadura (`de: OP`) necesita que el `cuando` la ATE en un `todos_de`:
     ninguna guardia lo comprueba -OP es tambien un token y pasa-, y en un `cualquiera_de` no tiene
-    semantica. Lo cazo el consultor al validar, no una guardia: candidato a guardia nueva.
+    semantica. Lo cazo el consultor al validar, no una guardia; la guardia queda ACEPTADA para el
+    brief siguiente, junto con decidir la clase de RN-030 (esta como `gate` y no prohibe nada).
+  - F14b usa ids de regla PROVISIONALES (RN-030, RN-034) que ya no significan eso: RN-029 y
+    RN-030 son el freno de la firma. Al aplicar F14b, numerar desde el primer id libre.
   - Otra vez el heredoc: `\b` dentro de un heredoc de Git Bash es BACKSPACE. Los regex, con Write.
   - `## Estado` de un ADR se lee con `split()[0]`: "ACTIVE." con punto falla. Texto, en otra linea.
   - `spec status` pone los parametros UNKNOWN sin REJECT bajo "falta preguntarlo", y los de A-28 no

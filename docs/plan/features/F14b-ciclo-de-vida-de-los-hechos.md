@@ -4,6 +4,13 @@
 (`docs/validation/AUDITORIA-2026-09-12-material.md` §2) y de un diseño encargado a un agente el
 mismo día. **No se ha aplicado nada de este documento**, salvo lo que se dice en §0.
 
+> **Numeración obsoleta (2026-09-14).** Los ids de regla de este documento son PROVISIONALES y
+> quedaron obsoletos: RN-029 y RN-030 ya existen en la spec con otro significado —el freno de la
+> firma y su cierre a mercado (ADR-0026, rama `trabajo/ftmo-y-arquitectura`)—. El "RN-030" de §2
+> es un ejemplo de una propuesta descartada y **NO es esa regla**; lo mismo vale para cualquier
+> otro id nuevo que se cite aquí (RN-034). Al aplicar F14b se numera desde el primer id libre.
+> Mismo cuidado que A-24..A-26, que siguen reservadas para este documento (§3).
+
 ---
 
 ## 0. Lo que SÍ se aplicó ya, y por qué solo eso
