@@ -243,11 +243,31 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 
 # ---------------------------------------------------------------- ambiguedades
 
+# Ids que un documento ya nombra y que todavia no existen en `ambiguedades.yaml`. Es la UNICA
+# excepcion a "correlativas y sin huecos", va con su motivo, y se AUTOLIQUIDA: el test de abajo
+# exige que ninguno de estos ids exista todavia, asi que el dia que el brief de la geometria cree
+# A-24 falla y obliga a retirarlo de aqui. Mismo patron que las exenciones por seccion de
+# `tests/contract/test_documentos_vivos.py`. Nacio el 2026-09-14, cuando ADR-0026 abrio A-27 y
+# A-28 con las tres de la liquidez de M15 reservadas y sin abrir.
+IDS_RESERVADOS = {
+    "A-24": "reservadas por F14b §3",
+    "A-25": "reservadas por F14b §3",
+    "A-26": "reservadas por F14b §3",
+}
+
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
-    # correlativas desde A-1, sin huecos: la sesion 1 añadio A-13..A-17 y seguira creciendo
-    assert [a.id for a in ambs] == [f"A-{i}" for i in range(1, len(ambs) + 1)]
+    ids = [a.id for a in ambs]
+    # La reserva no puede sobrevivir a su motivo: si alguno ya existe, sobra en la lista.
+    ya_existen = sorted(set(IDS_RESERVADOS) & set(ids))
+    assert not ya_existen, f"reservados que ya existen; retiralos de IDS_RESERVADOS: {ya_existen}"
+    assert set(IDS_RESERVADOS) == {"A-24", "A-25", "A-26"}
+    # correlativas desde A-1, sin huecos salvo los reservados: la sesion 1 añadio A-13..A-17 y
+    # seguira creciendo
+    ultimo = int(ids[-1][2:])
+    esperados = [f"A-{i}" for i in range(1, ultimo + 1) if f"A-{i}" not in IDS_RESERVADOS]
+    assert ids == esperados
     assert len(ambs) >= 17
     # `bloqueante` marca lo que hay que llevar SI o SI a una sesion (MASTER_PLAN G). Las tres de
     # la sesion 1 siguen marcadas y estan RESUELTAS; desde el 2026-09-10 hay una viva para la
@@ -269,8 +289,23 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # York) y A-23, la decision de metodo que estaba MEZCLADA dentro de A-16. A-16 se queda solo
     # con la medicion -cuanto se separa Oanda de Dukascopy- y sigue ABIERTA, porque eso no lo
     # cierra una decision: el anexo del 2026-09-09 midio otra pareja y lo dice el mismo.
-    assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {"A-15", "A-22", "A-23"}
+    # Y ADR-0026/ADR-0027 (2026-09-14) le suman dos al cambiar de firma: A-17 (la ventana de
+    # noticias deja de importar con una cuenta Swing) y A-19 (el corte del dia de riesgo lo escribe
+    # el reglamento de FTMO: medianoche CE(S)T). A-22 sigue DECIDIDA por ADR-0022, con su enmienda.
+    assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {
+        "A-15",
+        "A-17",
+        "A-19",
+        "A-22",
+        "A-23",
+    }
     assert next(a for a in ambs if a.id == "A-16").estado == "ABIERTA"
+    # A-27 y A-28 son MEDICIONES del entorno de FTMO, partidas como se partio A-16: la ficha del
+    # simbolo corre con un default declarado, el reloj del servidor sin valor hasta medirlo.
+    assert {a.id: a.estado for a in ambs if a.id in ("A-27", "A-28")} == {
+        "A-27": "ABIERTA",
+        "A-28": "ABIERTA",
+    }
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (

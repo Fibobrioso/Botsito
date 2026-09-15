@@ -19,14 +19,19 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0012 | El registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader | ACTIVE (punto 5 revertido por ADR-0017) |
 | 0013 | StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace | ACTIVE |
 | 0014 | La base sobre la que se mide el objetivo: `base_calculo_objetivo` | ACTIVE (enmendado por ADR-0020) |
-| 0015 | Los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo | ACTIVE (enmendado por ADR-0017 y ADR-0020) |
+| 0015 | Los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo | ACTIVE (enmendado por ADR-0017, ADR-0020 y ADR-0027) |
 | 0016 | De donde sale cada regla: el campo `decision`, y un hash que cubre lo que un humano lee | ACTIVE (con nota del 2026-09-11) |
 | 0017 | El reloj del trader es su reloj civil: se revierte ADR-0012 y se confirma ADR-0005 | ACTIVE |
 | 0018 | La precedencia va por clase, no por orden del fichero; y los siete defectos que eso destapo | ACTIVE (con nota del 2026-09-11: A-20 cerrada) |
 | 0019 | La forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre (cinco desde F12: nace `efectos`) | ACTIVE |
 | 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |
 | 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
-| 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE |
+| 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE (con enmienda del 2026-09-14: con FTMO Swing el bot si opera noticias) |
 | 0023 | El registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) | ACTIVE |
 | 0024 | La ventana no se amplia a Nueva York (A-15), y la referencia para medir es Dukascopy (A-23; A-16 se parte y conserva la medicion) | ACTIVE |
 | 0025 | El reparto de mayo no se toca: 6 dias dev y 13 de holdout (6/4/3), y junio sale del universo de F14 | ACTIVE |
+| 0026 | La prop firm es FTMO, reto 2-Step, tipo de cuenta Swing | ACTIVE |
+| 0027 | Los relojes con FTMO: el dia de riesgo es el dia civil del trader | ACTIVE |
+| 0028 | El reloj del motor: tres fases, y el riesgo va por tick | ACTIVE |
+| 0029 | Lado del precio y redondeo de niveles | ACTIVE |
+| 0030 | El motor interpreta la `forma`; las primitivas se escriben a mano | ACTIVE |

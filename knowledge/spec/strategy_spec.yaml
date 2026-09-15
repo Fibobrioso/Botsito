@@ -332,14 +332,15 @@ hechos:
   operacion_abierta:
     descripcion: hay una posicion viva
     produce: [RN-010, RN-013]
-    consume: [RN-002, RN-014]
+    consume: [RN-002, RN-014, RN-030]
   detenido_por_tope:
     descripcion: >-
-      el tope porcentual -diario o semanal- esta alcanzado y no se abre hasta el corte siguiente.
-      Es un HECHO que dura, no un instante: sin el, la prohibicion de RN-020 solo valia en el tick
-      del evento y nada impedia abrir en el siguiente
-    produce: [RN-020]
-    consume: [RN-001, RN-020]
+      un tope porcentual esta alcanzado -el diario o el semanal del trader (RN-020), o el diario o
+      el total de la firma (RN-029)- y no se abre hasta el corte siguiente. Es un HECHO que dura, no
+      un instante: sin el, la prohibicion solo valia en el tick del evento y nada impedia abrir en
+      el siguiente. Lo leen RN-001, que es el gate maestro, y las dos reglas que lo fijan
+    produce: [RN-020, RN-029]
+    consume: [RN-001, RN-020, RN-029]
   detenido_por_cartuchos:
     descripcion: >-
       los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope
@@ -370,6 +371,22 @@ acumuladores:
     base: base_calculo_perdida_semanal
     reinicia_con: reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-a85b6bc7
+  # Los dos de la firma (ADR-0026) no llevan cita: no los dijo el trader, los escribe el
+  # reglamento, y la regla que los usa -RN-029- declara `decision`.
+  perdida_dia_firma:
+    descripcion: >-
+      caida del EQUITY (firma_magnitud_vigilada) por debajo del saldo al corte diario; ese corte lo
+      marca reloj_dia_riesgo y la base la declara firma_base_perdida_diaria. El tope es un
+      porcentaje del capital INICIAL, no del saldo del corte (ADR-0026)
+    base: firma_base_perdida_diaria
+    reinicia_con: reloj_dia_riesgo
+  perdida_total_firma:
+    descripcion: >-
+      caida del EQUITY por debajo del capital inicial (saldo_inicial_cuenta). No se reinicia nunca:
+      el limite es estatico mientras firma_perdida_total_arrastra valga false, que es lo que dice el
+      programa 2-Step (ADR-0026)
+    base: saldo_inicial_cuenta
+    reinicia_con: firma_perdida_total_arrastra
   cartuchos:
     descripcion: perdidas que cuentan como intento
     base: cartucho_criterio
@@ -892,12 +909,11 @@ reglas:
     estado: VIGENTE
 
   - id: RN-020
-    titulo: el tope porcentual es el unico freno del dia
+    titulo: el tope porcentual del trader es el unico freno del dia de su operativa
     cuando: >-
-      la perdida acumulada desde el corte que marca reloj_dia_riesgo -que cae en el reloj del
-      servidor, cuyo calendario declara broker_dst y cuyo desfase base declara
-      broker_offset_base- alcanza perdida_maxima_diaria sobre base_calculo_perdida_diaria, o
-      perdida_maxima_semanal sobre base_calculo_perdida_semanal
+      la perdida acumulada desde el corte que marca reloj_dia_riesgo -la medianoche civil en
+      huso_operativa, que es tambien la de la firma- alcanza perdida_maxima_diaria sobre
+      base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
     entonces: se deja de operar hasta el corte siguiente
     parametros:
       - perdida_maxima_diaria
@@ -905,8 +921,6 @@ reglas:
       - perdida_maxima_semanal
       - base_calculo_perdida_semanal
       - reloj_dia_riesgo
-      - broker_dst
-      - broker_offset_base
     cita: fb-2026-09-09-sesion-01-bff260ea
     literal: >-
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
@@ -915,12 +929,16 @@ reglas:
       tres perdidas, pero el contador NO es diario -se reinicia con la siguiente liquidez de M15
       (cartuchos_reinicio)-, asi que no hay cota diaria por esa via: son tres perdidas POR ZONA, y
       nada limita cuantas zonas se desarrollan entre la apertura y el cierre de la ventana. El
-      tope porcentual no es una red que nunca se toca: es el unico freno del dia que existe, y el
-      titulo de esta regla decia lo contrario hasta la auditoria del 2026-09-10. Las dos bases NO
+      tope porcentual no es una red que nunca se toca: es el unico freno del dia DE LA OPERATIVA, y
+      el titulo de esta regla decia lo contrario hasta la auditoria del 2026-09-10. Las dos bases NO
       son la misma -el dia sobre el saldo inicial del dia, la semana sobre el saldo actual, que es
-      lo que dijo el trader en cada caso- y el corte lo marca reloj_dia_riesgo, que sigue siendo
-      un default nuestro (A-19)
-    decision: ADR-0015
+      lo que dijo el trader en cada caso-. El corte lo marca reloj_dia_riesgo, que fue un default
+      nuestro en el reloj del servidor hasta el 2026-09-14 (A-19) y ahora es la medianoche civil
+      que dice el reglamento de FTMO (ADR-0027): por eso esta regla ya no nombra broker_dst ni
+      broker_offset_base. Desde ADR-0026 hay OTRO freno, el de la firma (RN-029): no es de la
+      operativa del trader sino de la cuenta, y el motor respeta siempre el mas restrictivo de los
+      dos
+    decision: ADR-0027
     forma:
       cuando:
         cualquiera_de:
@@ -945,9 +963,10 @@ reglas:
     notas: >-
       HASTA EL 2026-09-12 esta regla decia tambien que se opera DURANTE LAS NOTICIAS, y para el
       trader sigue siendo cierto: opera cuentas propias que no lo prohiben y su estrategia funciona
-      dentro de esos eventos. Para el BOT ya no, porque va a una cuenta fondeada que puede
-      prohibirlo: esa mitad se fue a RN-028 (ADR-0022). El propio trader lo habia avisado y el
-      aviso llevaba tres dias en estas notas sin que ninguna guardia lo mirara
+      dentro de esos eventos. Del 2026-09-12 al 2026-09-14 esa mitad se fue a RN-028 (ADR-0022)
+      porque la cuenta fondeada podia prohibirlo. Desde ADR-0026 la cuenta es FTMO 2-Step Swing,
+      que no lo restringe: el bot vuelve a operar noticias como el trader, RN-028 queda DESCARTADA
+      y filtro_noticias vale `no`. Esta regla sigue diciendo solo lo del spread
     forma:
       cuando:
         todos_de:
@@ -1100,9 +1119,124 @@ reglas:
       fondeada que puede prohibirlo como norma, con la cuenta como sancion aunque la operacion
       acabe en profit. El propio trader lo aviso en la sesion 1. La CAPACIDAD se conserva: basta
       poner filtro_noticias en `no` el dia que el bot opere donde se permita. F26 tiene que citar
-      esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot
+      esta regla: si el trader opero una noticia y el bot se abstuvo, NO es un fallo del bot.
+      DESCARTADA el 2026-09-14 (ADR-0026 y la enmienda de ADR-0022): la cuenta elegida es FTMO
+      2-Step Swing, sin restriccion de noticias, asi que el motivo de esta regla desaparece y el bot
+      opera noticias igual que el trader. Pierde su `forma`, que solo decia `pendiente_definicion:
+      A-17`: una regla descartada no se ejecuta, y A-17 ya no esta abierta. SE CONSERVA como
+      capacidad: si el bot corre algun dia en una cuenta con restriccion (firma_noticias_restringe),
+      se revive esta regla con su condicion definida, filtro_noticias pasa a `regla` y hace falta un
+      calendario economico -precondicion del pre-vuelo de F33-. La divergencia de F26 que citaba
+      tambien desaparece
     decision: ADR-0022
+    clase: gate
+    estado: DESCARTADA
+
+  # ---------------------------------------------------------------- la cuenta de la firma
+  - id: RN-029
+    titulo: el freno de la firma, que el motor respeta aunque el del trader no se haya tocado
+    cuando: >-
+      el equity -firma_magnitud_vigilada- cae hasta el limite del dia de la firma, que es el saldo
+      al corte de reloj_dia_riesgo segun firma_base_perdida_diaria menos firma_perdida_diaria_max
+      del capital saldo_inicial_cuenta, o hasta el limite total, que es saldo_inicial_cuenta menos
+      firma_perdida_total_max y no se mueve mientras firma_perdida_total_arrastra lo diga
+    entonces: >-
+      se prohibe abrir y buscar entradas, y la detencion dura hasta el corte siguiente. Cerrar lo que
+      quede vivo lo hace la regla complementaria, que solo dispara con una posicion viva
+    parametros:
+      - firma_perdida_diaria_max
+      - firma_perdida_total_max
+      - firma_base_perdida_diaria
+      - firma_perdida_total_arrastra
+      - firma_magnitud_vigilada
+      - saldo_inicial_cuenta
+      - reloj_dia_riesgo
+    cita: ev-v4-012524-0ef85a89
+    literal: >-
+      5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8,
+      sí
+    notas: >-
+      LO QUE LA CITA SOSTIENE y lo que no: sostiene que la cuenta de fondeo tiene sus PROPIOS topes,
+      uno diario y uno total, distintos de los del trader. No sostiene ni las cifras -el trader las
+      dice de memoria, de otra firma y dudando- ni la base, ni la magnitud, ni el corte: todo eso lo
+      escribe el reglamento de FTMO y lo decide ADR-0026, y por eso esta regla declara `decision`.
+      POR QUE EXISTE aparte de RN-020: el mas restrictivo NO es siempre el del trader. El 4,5 % del
+      trader va sobre el saldo inicial del dia y el 5 % de la firma sobre el capital inicial, asi
+      que con el saldo al empezar el dia por encima de 5.000 / 0,045 = 111.111,11 manda la firma; y
+      el semanal del trader se reinicia cada semana mientras el total de la firma no se reinicia
+      nunca. LLEGAR AL LIMITE DE LA FIRMA ES LA INFRACCION: esta regla no evita perder la cuenta,
+      impide seguir operando y deja escrita la jerarquia. Si lo alcanzado es el limite total, la
+      cuenta ya esta perdida y el corte siguiente no la devuelve: la detencion fijada dice "hasta el
+      corte siguiente", pero `perdida_total_firma` no se reinicia, asi que en el primer evento tras
+      el corte esta regla vuelve a disparar y la fija de nuevo. El trader cerraba su recuerdo en un
+      8 % total -el de otra firma-; la cifra vigente es la del reglamento. Cuanto margen se deja antes de
+      llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE
+      `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su
+      prohibicion dura un tick (lo exige una guardia). POR QUE NO CIERRA ESTA REGLA (correccion del
+      2026-09-14): hasta entonces llevaba en su `hace` un `cerrar_a_mercado: {de: OP, si: "si"}` con
+      OP SIN LIGAR -la unica de la spec que usaba OP en `entonces` sin atarlo en `cuando`- y un
+      literal donde RN-002 usa un parametro. Y como lee `detenido_por_tope`, que dura hasta el corte
+      siguiente, habria emitido un cierre en CADA evento mientras el bot esta parado, contra el
+      limite de firma_mensajes_dia_max, y tambien cuando el freno lo fijo el trader. Ligar OP aqui no
+      se puede: el `cuando` es un `cualquiera_de`, la prohibicion tiene que valer SIN posicion, y
+      ADR-0019 no da semantica a una ligadura atada en una sola rama ni a una accion condicionada
+      dentro de `entonces`. El cierre se mudo a RN-030, que liga OP con todos_de como RN-002
+    decision: ADR-0026
     forma:
-      pendiente_definicion: A-17
+      cuando:
+        cualquiera_de:
+          - alcanza_tope: {acumulador: perdida_dia_firma, tope: firma_perdida_diaria_max}
+          - alcanza_tope: {acumulador: perdida_total_firma, tope: firma_perdida_total_max}
+          - hecho: detenido_por_tope
+      entonces:
+        prohibe: [abrir_operacion, buscar_entradas]
+        hace:
+          - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-030
+    titulo: al alcanzar el limite de la firma con una posicion viva, se cierra a mercado
+    cuando: >-
+      el equity -firma_magnitud_vigilada- alcanza el limite del dia de la firma o el limite total, en
+      los mismos terminos que el freno de la firma, y hay una posicion viva
+    entonces: se cierra a mercado esa posicion si firma_cierre_al_tope lo dice
+    parametros:
+      - firma_perdida_diaria_max
+      - firma_perdida_total_max
+      - firma_base_perdida_diaria
+      - firma_perdida_total_arrastra
+      - firma_magnitud_vigilada
+      - saldo_inicial_cuenta
+      - reloj_dia_riesgo
+      - firma_cierre_al_tope
+    cita: ev-v4-012524-0ef85a89
+    literal: >-
+      5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8,
+      sí
+    notas: >-
+      nace el 2026-09-14 partiendo RN-029, que cerraba a mercado con OP sin ligar y con un literal
+      en `si` (ver sus notas). Aqui el cierre DEPENDE DE LA LIGADURA y no el gate entero: sin
+      posicion viva esta regla no dispara, asi que no emite un cierre por evento mientras el bot
+      esta detenido, y tampoco dispara cuando el freno alcanzado fue el del trader, porque no lee
+      `detenido_por_tope` sino los acumuladores de la firma. Complementa a RN-029 -mismo disparador,
+      otro efecto- y lo declara. La cita sostiene lo mismo que en RN-029 y nada mas: que la cuenta
+      tiene sus propios topes; el cierre lo decide ADR-0026. LO QUE SIGUE SIN RESOLVER, y va al
+      brief siguiente: `firma_magnitud_vigilada` no tiene lector ejecutable -el equity solo vive en
+      la prosa de los acumuladores-, `detenido_por_tope` no tiene un valor permanente para el tope
+      total, y `perdida_total_firma.reinicia_con` deberia ser un token de "nunca" y no un booleano
+    complementa: [RN-029]
+    decision: ADR-0026
+    forma:
+      cuando:
+        todos_de:
+          - cualquiera_de:
+              - alcanza_tope: {acumulador: perdida_dia_firma, tope: firma_perdida_diaria_max}
+              - alcanza_tope: {acumulador: perdida_total_firma, tope: firma_perdida_total_max}
+          - hecho: operacion_abierta
+            liga: OP
+      entonces:
+        hace:
+          - cerrar_a_mercado: {de: OP, si: firma_cierre_al_tope}
     clase: gate
     estado: VIGENTE

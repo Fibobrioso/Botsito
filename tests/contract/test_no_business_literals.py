@@ -39,6 +39,7 @@ TEXTOS_PROHIBIDOS: dict[re.Pattern[str], str] = {
     re.compile(r"\bEURUSD\b"): "instrumento",
     re.compile(r"\b(XAUUSD|NASDAQ)\b"): "hoja de ruta de instrumentos (instrumento)",
     re.compile(r"\bFundedNext\b"): "la cuenta (cuenta_objetivo, cuenta_pruebas)",
+    re.compile(r"\bFTMO\b"): "la firma de la cuenta (firma, ADR-0026)",
     re.compile(r"Europe/Madrid"): "huso del trader antes de la sesion 1 (huso_operativa)",
     re.compile(r"America/New_York"): "reloj de servidor (anclaje por parametro, ADR-0005)",
     re.compile(r"Etc/GMT-\d"): "huso del grafico del trader (huso_grafico, ADR-0012)",
@@ -202,6 +203,10 @@ def test_los_valores_confirmados_del_registro_estan_vigilados(repo: Path) -> Non
     que son los valores de verdad. Este test cierra ese hueco: cada numero de ESTRATEGIA que el
     registro da por bueno tiene que estar prohibido en `src/`, porque su sitio es el registro.
 
+    Y desde ADR-0026 (2026-09-14) tambien los de PROP_FIRM: los topes de la firma son valores de
+    negocio igual que los del trader, y uno con decimales que la lista no vigilara podria vivir en
+    el motor sin pasar por el registro.
+
     Los enteros pequenos quedan fuera a proposito (`3` cartuchos, `9` % semanal): prohibir el 3 en
     todo el codigo seria insufrible y para eso esta el contrato AST de accesores, que exige que
     cada lectura del registro cite un parametro existente con su tipo.
@@ -213,7 +218,7 @@ def test_los_valores_confirmados_del_registro_estan_vigilados(repo: Path) -> Non
 
     registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
     faltan: list[str] = []
-    for nombre in registro.por_categoria("estrategia"):
+    for nombre in (*registro.por_categoria("estrategia"), *registro.por_categoria("prop_firm")):
         p = registro.parametros[nombre]
         if p.estado is Estado.UNKNOWN or p.valor is None:
             continue
@@ -228,6 +233,6 @@ def test_los_valores_confirmados_del_registro_estan_vigilados(repo: Path) -> Non
         if magnitud not in NUMEROS_PROHIBIDOS:
             faltan.append(f"{nombre} = {magnitud}")
     assert not faltan, (
-        "valores de estrategia que el registro confirma y la lista no vigila: "
+        "valores de estrategia o prop_firm que el registro confirma y la lista no vigila: "
         + ", ".join(sorted(faltan))
     )

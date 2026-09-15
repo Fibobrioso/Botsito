@@ -98,3 +98,37 @@ dentro de las noticias; lo que cambia es dónde corre el bot).
 ## Estado
 
 ACTIVE
+
+## Enmienda del 2026-09-14 (ADR-0026)
+
+**Este ADR partió de un supuesto que era cierto para una cuenta y no para la que se ha elegido.**
+Decía que el bot no opera noticias porque la cuenta fondeada «puede prohibirlo» dos minutos antes y
+después y cerrarla aunque la operación acabe en profit. El cuerpo de arriba no se reescribe —igual
+que se hizo con `Operativa_Cerrada.md`—; lo que cambia se dice aquí.
+
+1. **El supuesto se verificó el 2026-09-14, y es correcto para dos cuentas:**
+   - **FTMO Standard**, en la cuenta fondeada: *«it is not permitted to open or close any trades
+     [...] within a time window starting 2 minutes before and ending 2 minutes after the release of
+     selected news announcements»*; la ejecución de un stop o un objetivo dentro de la ventana cuenta
+     como infracción, y la sanción puede ser terminar la cuenta.
+   - **FundedNext**, con otra forma: recorta el 40 % del beneficio de lo operado entre 5 minutos
+     antes y 5 minutos después de una noticia de alto impacto correlacionada.
+2. **ADR-0026 elige un tipo de cuenta sin esa restricción**: FTMO 2-Step **Swing**, que *«have no
+   restrictions on trading during news releases»*. El motivo de este ADR desaparece.
+3. **En consecuencia:**
+   - **`filtro_noticias` vuelve a `no`**, que es lo que hace el trader y lo que dice su registro
+     (`fb-2026-09-09-sesion-01-3565552d`). Su fuente sigue siendo una decisión —ADR-0026—, porque
+     la norma es de la cuenta y no de la operativa.
+   - **RN-028 pasa a `DESCARTADA`**, con nota que cita ADR-0026, y pierde su `forma`: una regla
+     descartada no se ejecuta y su `pendiente_definicion` apuntaba a una ambigüedad que ya no está
+     abierta.
+   - **A-17 queda CERRADA como DECIDIDA por ADR-0026**: la verificación está hecha y el tipo de
+     cuenta la vuelve irrelevante.
+   - **A-22 sigue DECIDIDA por este ADR, con el sentido invertido**: el bot SÍ opera noticias en la
+     cuenta elegida. La decisión de alcance que A-22 recogía —bloquear en la v1— se revoca aquí, y
+     la otra mitad —conservar la capacidad— sigue en pie.
+   - **La divergencia declarada de F26 desaparece**: si el trader operó una noticia, el bot también
+     tiene que hacerlo.
+4. **La capacidad se conserva.** El día que el bot corra en una cuenta con restricción de noticias,
+   se cambia `filtro_noticias` a `regla`, se revive RN-028 y hace falta el calendario económico.
+   Eso queda como **precondición del pre-vuelo de F33**, no como funcionalidad abierta hoy.

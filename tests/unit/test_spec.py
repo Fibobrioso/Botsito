@@ -774,11 +774,11 @@ def test_los_dos_esquemas_de_entrada_estan_definidos(repo: Path) -> None:
         if r.vigente and isinstance(r.forma, dict) and r.forma.get("pendiente_definicion")
     }
     # RN-008 dejo de estarlo cuando A-21 se reformulo: la definicion de los esquemas SI estaba en
-    # el corpus. La unica que queda es RN-028, y esta declarada a proposito: el bot bloquea las
-    # noticias por ADR-0022 y nadie ha leido todavia el reglamento de la cuenta, asi que se sabe
-    # QUE bloquea y no CON QUE VENTANA. Lo que este test impide es que aparezca una pendiente
-    # SILENCIOSA, no que exista una declarada.
-    assert pendientes == {"RN-028": "A-17"}, f"pendientes inesperadas: {pendientes}"
+    # el corpus. RN-028 lo estuvo del 2026-09-12 al 2026-09-14 (ADR-0022, pendiente de A-17) y se
+    # DESCARTO al elegir una cuenta FTMO Swing sin restriccion de noticias (ADR-0026), asi que hoy
+    # no queda ninguna. Lo que este test impide es que aparezca una pendiente SILENCIOSA: la
+    # siguiente que nazca tiene que figurar aqui con su ambiguedad.
+    assert pendientes == {}, f"pendientes inesperadas: {pendientes}"
     from botsito.cases.ambiguedades import cargar_ambiguedades
 
     abiertas = {
