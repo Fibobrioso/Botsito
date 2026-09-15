@@ -8,9 +8,9 @@
 #
 # Semver: mayor si una regla cambia de sentido o desaparece, menor si se anade una regla o un
 # parametro, parche si solo cambia un valor o una redaccion.
-spec_version: "11.0.0"
-hash: 36bf40524d064738eee4102371e3cadc9ecb7969d9cf727dae2d4176856405f0
-generado_el: "2026-09-14T23:30:06Z"
+spec_version: "11.0.1"
+hash: 73eabc2844040e01716b2db241f6ae8a71ebedcd57cf054225127db95d210678
+generado_el: "2026-09-15T00:08:29Z"
 cubre:
   - knowledge/spec/parametros.yaml
   - knowledge/spec/strategy_spec.yaml

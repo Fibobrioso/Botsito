@@ -1153,7 +1153,8 @@ reglas:
       - reloj_dia_riesgo
     cita: ev-v4-012524-0ef85a89
     literal: >-
-      5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10
+      5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8,
+      sí
     notas: >-
       LO QUE LA CITA SOSTIENE y lo que no: sostiene que la cuenta de fondeo tiene sus PROPIOS topes,
       uno diario y uno total, distintos de los del trader. No sostiene ni las cifras -el trader las
@@ -1165,7 +1166,10 @@ reglas:
       el semanal del trader se reinicia cada semana mientras el total de la firma no se reinicia
       nunca. LLEGAR AL LIMITE DE LA FIRMA ES LA INFRACCION: esta regla no evita perder la cuenta,
       impide seguir operando y deja escrita la jerarquia. Si lo alcanzado es el limite total, la
-      cuenta ya esta perdida y el corte siguiente no la devuelve. Cuanto margen se deja antes de
+      cuenta ya esta perdida y el corte siguiente no la devuelve: la detencion fijada dice "hasta el
+      corte siguiente", pero `perdida_total_firma` no se reinicia, asi que en el primer evento tras
+      el corte esta regla vuelve a disparar y la fija de nuevo. El trader cerraba su recuerdo en un
+      8 % total -el de otra firma-; la cifra vigente es la del reglamento. Cuanto margen se deja antes de
       llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE
       `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su
       prohibicion dura un tick (lo exige una guardia). EFECTO DECLARADO: por leerlo, esta regla

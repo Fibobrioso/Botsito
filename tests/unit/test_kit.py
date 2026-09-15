@@ -261,7 +261,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     ids = [a.id for a in ambs]
     # La reserva no puede sobrevivir a su motivo: si alguno ya existe, sobra en la lista.
     ya_existen = sorted(set(IDS_RESERVADOS) & set(ids))
-    assert not ya_existen, f"ids reservados que ya existen; retiralos de IDS_RESERVADOS: {ya_existen}"
+    assert not ya_existen, f"reservados que ya existen; retiralos de IDS_RESERVADOS: {ya_existen}"
     assert set(IDS_RESERVADOS) == {"A-24", "A-25", "A-26"}
     # correlativas desde A-1, sin huecos salvo los reservados: la sesion 1 añadio A-13..A-17 y
     # seguira creciendo

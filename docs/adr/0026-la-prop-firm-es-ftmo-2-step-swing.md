@@ -91,7 +91,7 @@ Y porque el tope **estático** del 2-Step es el único que se puede modelar sin 
 - **Sale del camino crítico la funcionalidad de calendario de noticias.** Queda como precondición
   del pre-vuelo de F33 para el día en que el bot corra en una cuenta con restricción (ADR-0022,
   enmienda).
-- **Nacen once parámetros `firma_*`** con `fuente: ADR-0026`, y RN-029 consume los que el veto
+- **Nacen once parámetros de la firma** (`firma` y los diez `firma_*`) con `fuente: ADR-0026`, y RN-029 consume los que el veto
   necesita.
 - **El más restrictivo cambia según el saldo, y no es siempre el del trader.** El 4,5 % del trader se
   mide sobre el saldo inicial del día y el 5 % de la firma sobre el capital inicial. Por encima de

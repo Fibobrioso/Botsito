@@ -446,8 +446,12 @@ ambiguedades:
       el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y
       el pre-vuelo de F33 aborta si la cuenta real dice otra cosa
     resuelve_en: [F17, F33]
+    # la firma que se eligio entonces (donde se midio), el instrumento leido en pantalla y el
+    # lotaje de la prueba de fondeo, que es lo que estas especificaciones convierten en lotes
     evidencia:
       - ev-v4-012524-0ef85a89
+      - ev-v2-003320-a736fd37
+      - ev-v4-012900-8ef676ed
     parametros:
       - instrumento_digitos
       - instrumento_contrato
@@ -472,7 +476,11 @@ ambiguedades:
       CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la
       regla de horario de verano no
     resuelve_en: [F17]
+    # la vela H4 que el trader ve abrir a las 23 (la medianoche del servidor que anclaje_h4 supone)
+    # y lo que dice del cambio de hora; la firma elegida entonces, donde se midio lo que no se hereda
     evidencia:
+      - ev-v6-005830-48b30e48
+      - ev-v6-005810-5cb1ef06
       - ev-v4-012524-0ef85a89
     parametros: [broker_offset_base, broker_dst]
     contradiccion: null
