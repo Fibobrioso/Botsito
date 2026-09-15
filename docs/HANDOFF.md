@@ -16,8 +16,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - EL DIA DE RIESGO ES CIVIL (ADR-0027): el reglamento corta a medianoche CE(S)T, que es
   `huso_operativa`. `reloj_dia_riesgo = civil_operativa`, A-19 DECIDIDA, y RN-020 ya no nombra el
   reloj del servidor. Quedan dos relojes: el civil y el del servidor (rejilla de velas).
-- NACE RN-029, el freno de la firma (5 % diario desde el saldo al corte, 10 % total estatico, los
-  dos del capital inicial y sobre equity). El mas restrictivo no es siempre el del trader: por
+- NACEN RN-029, el freno de la firma (5 % diario desde el saldo al corte, 10 % total estatico, los
+  dos del capital inicial y sobre equity), y RN-030, que cierra a mercado SOLO con posicion viva
+  ligada a OP (se partieron al validar: RN-029 cerraba con OP sin ligar y un `si` literal, y
+  habria emitido un cierre por evento mientras el bot estaba parado). El mas restrictivo no es siempre el del trader: por
   encima de 111.111,11 de saldo al empezar el dia manda la firma.
 - CUATRO ADR DE ARQUITECTURA que F18-F24 necesitan: ADR-0028 (riesgo por tick, estrategia al cierre
   de M1, ordenes por evento, punto fijo con refraccion, hechos del broker derivados), ADR-0029 (BID,
@@ -35,7 +37,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   - Una regla DESCARTADA con `forma: {pendiente_definicion: A-N}` falla si A-N se cierra:
     `comprobar_forma` mira las descartadas tambien. Al descartar, se quita la forma.
   - Quien fija un freno tiene que leerlo (`test_los_hechos_declarados_coinciden...`), aunque otra
-    regla ya lo lea: RN-029 lee `detenido_por_tope` y eso tiene un efecto declarado en sus notas.
+    regla ya lo lea: RN-029 lee `detenido_por_tope`.
+  - Una accion que usa una ligadura (`de: OP`) necesita que el `cuando` la ATE en un `todos_de`:
+    ninguna guardia lo comprueba -OP es tambien un token y pasa-, y en un `cualquiera_de` no tiene
+    semantica. Lo cazo el consultor al validar, no una guardia: candidato a guardia nueva.
   - Otra vez el heredoc: `\b` dentro de un heredoc de Git Bash es BACKSPACE. Los regex, con Write.
   - `## Estado` de un ADR se lee con `split()[0]`: "ACTIVE." con punto falla. Texto, en otra linea.
   - `spec status` pone los parametros UNKNOWN sin REJECT bajo "falta preguntarlo", y los de A-28 no

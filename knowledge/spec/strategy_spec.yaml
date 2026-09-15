@@ -332,7 +332,7 @@ hechos:
   operacion_abierta:
     descripcion: hay una posicion viva
     produce: [RN-010, RN-013]
-    consume: [RN-002, RN-014]
+    consume: [RN-002, RN-014, RN-030]
   detenido_por_tope:
     descripcion: >-
       un tope porcentual esta alcanzado -el diario o el semanal del trader (RN-020), o el diario o
@@ -1141,8 +1141,8 @@ reglas:
       del capital saldo_inicial_cuenta, o hasta el limite total, que es saldo_inicial_cuenta menos
       firma_perdida_total_max y no se mueve mientras firma_perdida_total_arrastra lo diga
     entonces: >-
-      se prohibe abrir y buscar entradas, se cierra a mercado lo que quede vivo, y la detencion dura
-      hasta el corte siguiente
+      se prohibe abrir y buscar entradas, y la detencion dura hasta el corte siguiente. Cerrar lo que
+      quede vivo lo hace la regla complementaria, que solo dispara con una posicion viva
     parametros:
       - firma_perdida_diaria_max
       - firma_perdida_total_max
@@ -1172,12 +1172,15 @@ reglas:
       8 % total -el de otra firma-; la cifra vigente es la del reglamento. Cuanto margen se deja antes de
       llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE
       `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su
-      prohibicion dura un tick (lo exige una guardia). EFECTO DECLARADO: por leerlo, esta regla
-      tambien cierra a mercado cuando el freno lo fijo el TRADER (RN-020), que por si solo no cierra
-      nada. Hoy es inocuo -con operaciones_simultaneas_max en su valor, RN-020 salta al realizarse
-      la perdida de un stop y ya no queda posicion viva-, pero deja de serlo si algun dia se admiten
-      operaciones en paralelo o el tope del trader se mide sobre equity; entonces hara falta un hecho
-      propio para la firma
+      prohibicion dura un tick (lo exige una guardia). POR QUE NO CIERRA ESTA REGLA (correccion del
+      2026-09-14): hasta entonces llevaba en su `hace` un `cerrar_a_mercado: {de: OP, si: "si"}` con
+      OP SIN LIGAR -la unica de la spec que usaba OP en `entonces` sin atarlo en `cuando`- y un
+      literal donde RN-002 usa un parametro. Y como lee `detenido_por_tope`, que dura hasta el corte
+      siguiente, habria emitido un cierre en CADA evento mientras el bot esta parado, contra el
+      limite de firma_mensajes_dia_max, y tambien cuando el freno lo fijo el trader. Ligar OP aqui no
+      se puede: el `cuando` es un `cualquiera_de`, la prohibicion tiene que valer SIN posicion, y
+      ADR-0019 no da semantica a una ligadura atada en una sola rama ni a una accion condicionada
+      dentro de `entonces`. El cierre se mudo a RN-030, que liga OP con todos_de como RN-002
     decision: ADR-0026
     forma:
       cuando:
@@ -1188,7 +1191,52 @@ reglas:
       entonces:
         prohibe: [abrir_operacion, buscar_entradas]
         hace:
-          - cerrar_a_mercado: {de: OP, si: "si"}
           - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-030
+    titulo: al alcanzar el limite de la firma con una posicion viva, se cierra a mercado
+    cuando: >-
+      el equity -firma_magnitud_vigilada- alcanza el limite del dia de la firma o el limite total, en
+      los mismos terminos que el freno de la firma, y hay una posicion viva
+    entonces: se cierra a mercado esa posicion si firma_cierre_al_tope lo dice
+    parametros:
+      - firma_perdida_diaria_max
+      - firma_perdida_total_max
+      - firma_base_perdida_diaria
+      - firma_perdida_total_arrastra
+      - firma_magnitud_vigilada
+      - saldo_inicial_cuenta
+      - reloj_dia_riesgo
+      - firma_cierre_al_tope
+    cita: ev-v4-012524-0ef85a89
+    literal: >-
+      5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8,
+      sí
+    notas: >-
+      nace el 2026-09-14 partiendo RN-029, que cerraba a mercado con OP sin ligar y con un literal
+      en `si` (ver sus notas). Aqui el cierre DEPENDE DE LA LIGADURA y no el gate entero: sin
+      posicion viva esta regla no dispara, asi que no emite un cierre por evento mientras el bot
+      esta detenido, y tampoco dispara cuando el freno alcanzado fue el del trader, porque no lee
+      `detenido_por_tope` sino los acumuladores de la firma. Complementa a RN-029 -mismo disparador,
+      otro efecto- y lo declara. La cita sostiene lo mismo que en RN-029 y nada mas: que la cuenta
+      tiene sus propios topes; el cierre lo decide ADR-0026. LO QUE SIGUE SIN RESOLVER, y va al
+      brief siguiente: `firma_magnitud_vigilada` no tiene lector ejecutable -el equity solo vive en
+      la prosa de los acumuladores-, `detenido_por_tope` no tiene un valor permanente para el tope
+      total, y `perdida_total_firma.reinicia_con` deberia ser un token de "nunca" y no un booleano
+    complementa: [RN-029]
+    decision: ADR-0026
+    forma:
+      cuando:
+        todos_de:
+          - cualquiera_de:
+              - alcanza_tope: {acumulador: perdida_dia_firma, tope: firma_perdida_diaria_max}
+              - alcanza_tope: {acumulador: perdida_total_firma, tope: firma_perdida_total_max}
+          - hecho: operacion_abierta
+            liga: OP
+      entonces:
+        hace:
+          - cerrar_a_mercado: {de: OP, si: firma_cierre_al_tope}
     clase: gate
     estado: VIGENTE

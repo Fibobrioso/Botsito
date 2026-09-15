@@ -474,7 +474,13 @@ ambiguedades:
       servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL
       CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE
       CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la
-      regla de horario de verano no
+      regla de horario de verano no.
+      VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la
+      prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario-
+      cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el
+      servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo
+      se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra
+      cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
     resuelve_en: [F17]
     # la vela H4 que el trader ve abrir a las 23 (la medianoche del servidor que anclaje_h4 supone)
     # y lo que dice del cambio de hora; la firma elegida entonces, donde se midio lo que no se hereda

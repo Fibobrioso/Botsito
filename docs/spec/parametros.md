@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 11.0.1` · hash `73eabc284404…`
+`spec_version 11.1.0` · hash `232c220dcc71…`
 
-70 en total: 61 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+71 en total: 62 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -28,6 +28,7 @@
 | `firma` | `ftmo` | CONFIRMED | prop_firm | `ADR-0026` | prop firm de destino |
 | `firma_apalancamiento` | `30` | CONFIRMED | prop_firm | `ADR-0026` | apalancamiento maximo en forex (1:N) |
 | `firma_base_perdida_diaria` | `saldo_corte_diario` | CONFIRMED | prop_firm | `ADR-0026` | sobre que saldo se fija el limite del dia |
+| `firma_cierre_al_tope` | `si` | CONFIRMED | prop_firm | `ADR-0026` | si/no |
 | `firma_magnitud_vigilada` | `equity` | CONFIRMED | prop_firm | `ADR-0026` | que magnitud no puede bajar del limite |
 | `firma_mensajes_dia_max` | `2000` | CONFIRMED | prop_firm | `ADR-0026` | peticiones al servidor por dia |
 | `firma_noticias_restringe` | `False` | CONFIRMED | prop_firm | `ADR-0026` | si la cuenta restringe operar alrededor de noticias |
@@ -227,6 +228,12 @@ el limite del dia se fija con el saldo al corte diario (medianoche CE(S)T, reloj
 
 Opciones: `saldo_inicial_cuenta`, `saldo_corte_diario`.
 
+### `firma_cierre_al_tope`
+
+si, al alcanzar un limite de la firma con una posicion viva, el bot la cierra a mercado (RN-030). Nace el 2026-09-14 para sustituir el literal `si: "si"` que RN-029 llevaba en su cierre, donde RN-002 usa cierre_forzoso_fin_ventana: una opcion de una accion es un valor de negocio y vive aqui (ADR-0002). `si` es lo que decide ADR-0026: con el limite ya alcanzado la cuenta esta en infraccion, y dejar correr la posicion solo puede agrandar la perdida
+
+Opciones: `si`, `no`.
+
 ### `firma_magnitud_vigilada`
 
 la firma vigila EQUITY: saldo mas P/L flotante, swaps y comisiones ("equity cannot drop at any time"). Por eso la fase de riesgo del motor va por tick (ADR-0028)
@@ -361,7 +368,7 @@ Opciones: `si`, `no`.
 
 ### `reloj_dia_riesgo`
 
-en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj
+en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj. Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita de FTMO dentro de A-28: la medianoche del servidor y la CE(S)T se separan una hora y equivocarse cuesta la cuenta
 
 Opciones: `servidor`, `civil_operativa`.
 

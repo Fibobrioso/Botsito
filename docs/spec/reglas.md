@@ -2,9 +2,9 @@
 
 # Reglas de la operativa
 
-`spec_version 11.0.1` · hash `73eabc284404…`
+`spec_version 11.1.0` · hash `232c220dcc71…`
 
-25 vigentes y 4 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
+26 vigentes y 4 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
 ## Vigentes
 
@@ -939,11 +939,11 @@
 
 - **Clase**: `gate`
 - **Cuando**: el equity -firma_magnitud_vigilada- cae hasta el limite del dia de la firma, que es el saldo al corte de reloj_dia_riesgo segun firma_base_perdida_diaria menos firma_perdida_diaria_max del capital saldo_inicial_cuenta, o hasta el limite total, que es saldo_inicial_cuenta menos firma_perdida_total_max y no se mueve mientras firma_perdida_total_arrastra lo diga
-- **Entonces**: se prohibe abrir y buscar entradas, se cierra a mercado lo que quede vivo, y la detencion dura hasta el corte siguiente
+- **Entonces**: se prohibe abrir y buscar entradas, y la detencion dura hasta el corte siguiente. Cerrar lo que quede vivo lo hace la regla complementaria, que solo dispara con una posicion viva
 - **Parametros**: `firma_perdida_diaria_max`, `firma_perdida_total_max`, `firma_base_perdida_diaria`, `firma_perdida_total_arrastra`, `firma_magnitud_vigilada`, `saldo_inicial_cuenta`, `reloj_dia_riesgo`
 - **Cita**: `ev-v4-012524-0ef85a89` — *«5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8, sí»*
 - **Decision**: `ADR-0026` — dice mas que su cita, y lo declara
-- **Notas**: LO QUE LA CITA SOSTIENE y lo que no: sostiene que la cuenta de fondeo tiene sus PROPIOS topes, uno diario y uno total, distintos de los del trader. No sostiene ni las cifras -el trader las dice de memoria, de otra firma y dudando- ni la base, ni la magnitud, ni el corte: todo eso lo escribe el reglamento de FTMO y lo decide ADR-0026, y por eso esta regla declara `decision`. POR QUE EXISTE aparte de RN-020: el mas restrictivo NO es siempre el del trader. El 4,5 % del trader va sobre el saldo inicial del dia y el 5 % de la firma sobre el capital inicial, asi que con el saldo al empezar el dia por encima de 5.000 / 0,045 = 111.111,11 manda la firma; y el semanal del trader se reinicia cada semana mientras el total de la firma no se reinicia nunca. LLEGAR AL LIMITE DE LA FIRMA ES LA INFRACCION: esta regla no evita perder la cuenta, impide seguir operando y deja escrita la jerarquia. Si lo alcanzado es el limite total, la cuenta ya esta perdida y el corte siguiente no la devuelve: la detencion fijada dice "hasta el corte siguiente", pero `perdida_total_firma` no se reinicia, asi que en el primer evento tras el corte esta regla vuelve a disparar y la fija de nuevo. El trader cerraba su recuerdo en un 8 % total -el de otra firma-; la cifra vigente es la del reglamento. Cuanto margen se deja antes de llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su prohibicion dura un tick (lo exige una guardia). EFECTO DECLARADO: por leerlo, esta regla tambien cierra a mercado cuando el freno lo fijo el TRADER (RN-020), que por si solo no cierra nada. Hoy es inocuo -con operaciones_simultaneas_max en su valor, RN-020 salta al realizarse la perdida de un stop y ya no queda posicion viva-, pero deja de serlo si algun dia se admiten operaciones en paralelo o el tope del trader se mide sobre equity; entonces hara falta un hecho propio para la firma
+- **Notas**: LO QUE LA CITA SOSTIENE y lo que no: sostiene que la cuenta de fondeo tiene sus PROPIOS topes, uno diario y uno total, distintos de los del trader. No sostiene ni las cifras -el trader las dice de memoria, de otra firma y dudando- ni la base, ni la magnitud, ni el corte: todo eso lo escribe el reglamento de FTMO y lo decide ADR-0026, y por eso esta regla declara `decision`. POR QUE EXISTE aparte de RN-020: el mas restrictivo NO es siempre el del trader. El 4,5 % del trader va sobre el saldo inicial del dia y el 5 % de la firma sobre el capital inicial, asi que con el saldo al empezar el dia por encima de 5.000 / 0,045 = 111.111,11 manda la firma; y el semanal del trader se reinicia cada semana mientras el total de la firma no se reinicia nunca. LLEGAR AL LIMITE DE LA FIRMA ES LA INFRACCION: esta regla no evita perder la cuenta, impide seguir operando y deja escrita la jerarquia. Si lo alcanzado es el limite total, la cuenta ya esta perdida y el corte siguiente no la devuelve: la detencion fijada dice "hasta el corte siguiente", pero `perdida_total_firma` no se reinicia, asi que en el primer evento tras el corte esta regla vuelve a disparar y la fija de nuevo. El trader cerraba su recuerdo en un 8 % total -el de otra firma-; la cifra vigente es la del reglamento. Cuanto margen se deja antes de llegar es una decision abierta (informe de la rama FTMO-Y-ARQUITECTURA). Produce Y LEE `detenido_por_tope`, como RN-020: quien fija un freno tiene que seguir viendolo, o su prohibicion dura un tick (lo exige una guardia). POR QUE NO CIERRA ESTA REGLA (correccion del 2026-09-14): hasta entonces llevaba en su `hace` un `cerrar_a_mercado: {de: OP, si: "si"}` con OP SIN LIGAR -la unica de la spec que usaba OP en `entonces` sin atarlo en `cuando`- y un literal donde RN-002 usa un parametro. Y como lee `detenido_por_tope`, que dura hasta el corte siguiente, habria emitido un cierre en CADA evento mientras el bot esta parado, contra el limite de firma_mensajes_dia_max, y tambien cuando el freno lo fijo el trader. Ligar OP aqui no se puede: el `cuando` es un `cualquiera_de`, la prohibicion tiene que valer SIN posicion, y ADR-0019 no da semantica a una ligadura atada en una sola rama ni a una accion condicionada dentro de `entonces`. El cierre se mudo a RN-030, que liga OP con todos_de como RN-002
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -971,12 +971,6 @@
   "entonces": {
     "hace": [
       {
-        "cerrar_a_mercado": {
-          "de": "OP",
-          "si": "si"
-        }
-      },
-      {
         "fijar": {
           "a": "hasta_el_corte_siguiente",
           "hecho": "detenido_por_tope"
@@ -986,6 +980,58 @@
     "prohibe": [
       "abrir_operacion",
       "buscar_entradas"
+    ]
+  }
+}
+```
+
+### RN-030 · al alcanzar el limite de la firma con una posicion viva, se cierra a mercado
+
+- **Clase**: `gate`
+- **Cuando**: el equity -firma_magnitud_vigilada- alcanza el limite del dia de la firma o el limite total, en los mismos terminos que el freno de la firma, y hay una posicion viva
+- **Entonces**: se cierra a mercado esa posicion si firma_cierre_al_tope lo dice
+- **Parametros**: `firma_perdida_diaria_max`, `firma_perdida_total_max`, `firma_base_perdida_diaria`, `firma_perdida_total_arrastra`, `firma_magnitud_vigilada`, `saldo_inicial_cuenta`, `reloj_dia_riesgo`, `firma_cierre_al_tope`
+- **Complementa**: RN-029
+- **Cita**: `ev-v4-012524-0ef85a89` — *«5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10. 8, 8. Un 8, sí»*
+- **Decision**: `ADR-0026` — dice mas que su cita, y lo declara
+- **Notas**: nace el 2026-09-14 partiendo RN-029, que cerraba a mercado con OP sin ligar y con un literal en `si` (ver sus notas). Aqui el cierre DEPENDE DE LA LIGADURA y no el gate entero: sin posicion viva esta regla no dispara, asi que no emite un cierre por evento mientras el bot esta detenido, y tampoco dispara cuando el freno alcanzado fue el del trader, porque no lee `detenido_por_tope` sino los acumuladores de la firma. Complementa a RN-029 -mismo disparador, otro efecto- y lo declara. La cita sostiene lo mismo que en RN-029 y nada mas: que la cuenta tiene sus propios topes; el cierre lo decide ADR-0026. LO QUE SIGUE SIN RESOLVER, y va al brief siguiente: `firma_magnitud_vigilada` no tiene lector ejecutable -el equity solo vive en la prosa de los acumuladores-, `detenido_por_tope` no tiene un valor permanente para el tope total, y `perdida_total_firma.reinicia_con` deberia ser un token de "nunca" y no un booleano
+
+**Forma ejecutable**, tal cual la lee el motor:
+
+```json
+{
+  "cuando": {
+    "todos_de": [
+      {
+        "cualquiera_de": [
+          {
+            "alcanza_tope": {
+              "acumulador": "perdida_dia_firma",
+              "tope": "firma_perdida_diaria_max"
+            }
+          },
+          {
+            "alcanza_tope": {
+              "acumulador": "perdida_total_firma",
+              "tope": "firma_perdida_total_max"
+            }
+          }
+        ]
+      },
+      {
+        "hecho": "operacion_abierta",
+        "liga": "OP"
+      }
+    ]
+  },
+  "entonces": {
+    "hace": [
+      {
+        "cerrar_a_mercado": {
+          "de": "OP",
+          "si": "firma_cierre_al_tope"
+        }
+      }
     ]
   }
 }
@@ -1081,7 +1127,7 @@
 - **`detenido_por_cartuchos`** — los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia Lo produce: RN-016. Lo consume: RN-001, RN-016.
 - **`detenido_por_tope`** — un tope porcentual esta alcanzado -el diario o el semanal del trader (RN-020), o el diario o el total de la firma (RN-029)- y no se abre hasta el corte siguiente. Es un HECHO que dura, no un instante: sin el, la prohibicion solo valia en el tick del evento y nada impedia abrir en el siguiente. Lo leen RN-001, que es el gate maestro, y las dos reglas que lo fijan Lo produce: RN-020, RN-029. Lo consume: RN-001, RN-020, RN-029.
 - **`liquidez_tomada`** — la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los dos esquemas de entrada: sin ella no se mira M1. Hasta el 2026-09-11 esta condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consume el predicado `se_da_esquema` (`depende_de`), no una regla Lo produce: RN-004. Lo consume: predicado se_da_esquema.
-- **`operacion_abierta`** — hay una posicion viva Lo produce: RN-010, RN-013. Lo consume: RN-002, RN-014.
+- **`operacion_abierta`** — hay una posicion viva Lo produce: RN-010, RN-013. Lo consume: RN-002, RN-014, RN-030.
 - **`orden_limite_pendiente`** — hay una orden colocada y todavia sin llenar Lo produce: RN-011, RN-013. Lo consume: RN-006.
 - **`sesgo`** — el sentido en el que se busca entrada Lo produce: RN-003. Lo consume: RN-005.
 

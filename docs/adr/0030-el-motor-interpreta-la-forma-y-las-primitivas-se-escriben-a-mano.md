@@ -70,9 +70,13 @@ código a mano por regla, la spec y el motor divergen en silencio.
   punto 1: el árbol dice `alcanza_tope: {acumulador: perdida_semana, ...}` y la primitiva del
   acumulador `perdida_semana` sabe que reinicia por semana. Que el campo `reinicia_con` no lo
   distinga es una deuda de la spec, declarada y fuera de esta rama.
-- **Coste de una regla nueva**: cero código si solo combina vocabulario existente. RN-029 es el
-  primer ejemplo: no introduce ningún predicado ni ninguna acción, solo dos acumuladores nuevos, y
-  por eso exige dos primitivas de acumulador y nada más.
+- **Coste de una regla nueva**: cero código si solo combina vocabulario existente. RN-029 y RN-030
+  son el primer ejemplo: no introducen ningún predicado ni ninguna acción, solo dos acumuladores
+  nuevos, y por eso exigen dos primitivas de acumulador y nada más.
+- **Límite del árbol, medido al validar esta rama (2026-09-14)**: una ligadura atada en una sola
+  rama de `cualquiera_de` no tiene semántica, y `entonces` no admite una acción condicionada. Por
+  eso el cierre de la firma vive en RN-030 y no dentro de RN-029. Si se quiere expresar en una
+  sola regla, hace falta ampliar ADR-0019; queda para el brief siguiente.
 - F29 nombra sus funciones MQL5 igual que las primitivas de Python, y F30 compara las decisiones
   que salen del árbol.
 

@@ -22,7 +22,11 @@ phase: post-F13 (habilita F18-F24)
    El escalado es cuenta nuestra, no una cita.
 4. **El motor respeta siempre el más restrictivo** entre el freno del trader
    (`perdida_maxima_diaria`, `perdida_maxima_semanal`) y el de la firma. Es una regla de la spec y
-   no un parámetro: **RN-029**, clase `gate`, `decision: ADR-0026`.
+   no un parámetro: **RN-029**, clase `gate`, `decision: ADR-0026`, que prohíbe y detiene; y
+   **RN-030**, que la complementa y cierra a mercado **solo si hay posición viva**
+   (`firma_cierre_al_tope`). Van separadas porque la forma de ADR-0019 no puede condicionar una
+   acción a una ligadura atada en una sola rama de un `cualquiera_de` (corrección del
+   2026-09-14 al validar la rama).
 5. **El tipo Swing se elige en la compra y no se puede cambiar después**: FTMO lo dice como
    *«Change from Standard to Swing: Not allowed»*. Por eso esta decisión se toma antes de pagar.
 6. **Lo que la demo de FundedNext midió ya no vale como medición.** Los cinco parámetros del
@@ -91,8 +95,9 @@ Y porque el tope **estático** del 2-Step es el único que se puede modelar sin 
 - **Sale del camino crítico la funcionalidad de calendario de noticias.** Queda como precondición
   del pre-vuelo de F33 para el día en que el bot corra en una cuenta con restricción (ADR-0022,
   enmienda).
-- **Nacen once parámetros de la firma** (`firma` y los diez `firma_*`) con `fuente: ADR-0026`, y RN-029 consume los que el veto
-  necesita.
+- **Nacen doce parámetros de la firma** (`firma` y once `firma_*`, uno de ellos
+  `firma_cierre_al_tope`, añadido al validar la rama) con `fuente: ADR-0026`, y RN-029 y RN-030
+  consumen los que el veto necesita.
 - **El más restrictivo cambia según el saldo, y no es siempre el del trader.** El 4,5 % del trader se
   mide sobre el saldo inicial del día y el 5 % de la firma sobre el capital inicial. Por encima de
   5.000 / 0,045 = **111.111,11** de saldo al empezar el día, el 4,5 % del trader supera los 5.000 de

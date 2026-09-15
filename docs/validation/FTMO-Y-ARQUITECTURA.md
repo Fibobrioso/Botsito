@@ -3,7 +3,7 @@
 **Rama:** `trabajo/ftmo-y-arquitectura` (rama de trabajo sin número propio, MASTER_PLAN §F)
 **Cierre previsto:** tag `stable/F13-ftmo`
 **Decisiones:** ADR-0026, ADR-0027, ADR-0028, ADR-0029, ADR-0030 y la enmienda de ADR-0022
-**spec_version:** 10.2.0 → 11.0.1 (11.0.0 es el cambio mayor —una regla nueva y otra que cambia de sentido, ADR-0013—; el parche lo exige la guardia del manifiesto al corregir, ya commiteada la 11.0.0, lo que encontró la auditoría de cierre)
+**spec_version:** 10.2.0 → 11.1.0 (11.0.0 es el cambio mayor —una regla nueva y otra que cambia de sentido, ADR-0013—; 11.0.1, el parche que exige la guardia del manifiesto al corregir lo que encontró la auditoría de cierre; 11.1.0, la regla y el parámetro nuevos de las correcciones del consultor del 2026-09-14)
 **Estado:** WAITING_FOR_USER_VALIDATION
 
 ---
@@ -26,8 +26,8 @@ No se ha escrito una línea de motor. No se ha tocado `knowledge/evidence/` ni `
 
 | | Decisión | Dónde |
 |---|---|---|
-| **Firma** | FTMO, 2-Step, tipo **Swing**, 100.000. Once parámetros de la firma (`firma` y `firma_*`) | ADR-0026 |
-| **Freno de la firma** | **RN-029** (`gate`): 5 % diario desde el saldo a medianoche CE(S)T y 10 % total estático, los dos del capital inicial y sobre equity | ADR-0026 |
+| **Firma** | FTMO, 2-Step, tipo **Swing**, 100.000. Doce parámetros de la firma (`firma` y `firma_*`) | ADR-0026 |
+| **Freno de la firma** | **RN-029** (`gate`): 5 % diario desde el saldo a medianoche CE(S)T y 10 % total estático, los dos del capital inicial y sobre equity; prohíbe y detiene. **RN-030** (`gate`, complementa a RN-029): cierra a mercado solo con posición viva | ADR-0026 |
 | **Noticias** | Swing no las restringe: `filtro_noticias` vuelve a `no`, **RN-028 DESCARTADA**, **A-17 DECIDIDA**, A-22 invierte su sentido | enmienda de ADR-0022 |
 | **Día de riesgo** | Medianoche CE(S)T = reloj civil del trader. `reloj_dia_riesgo = civil_operativa`, **A-19 DECIDIDA**. Desaparece el tercer reloj | ADR-0027 |
 | **Reloj del motor** | Riesgo por tick sobre equity, estrategia al cierre de M1, órdenes por evento, punto fijo con refracción, hechos del bróker derivados | ADR-0028 |
@@ -61,7 +61,7 @@ Conviene que el dueño las vea en el panel antes de comprar (§7).
 | Los siete parámetros de FundedNext a **UNKNOWN con `ambiguedad_id`** | Cinco a **DEFAULT_AMBIGUOUS** bajo A-27 y dos a **UNKNOWN** bajo A-28 | El registro solo admite `ambiguedad_id` en DEFAULT_AMBIGUOUS, y `spec check` falla si una regla vigente (RN-026, RN-027) nombra un UNKNOWN. **Lo decidió el consultor** antes de escribir: modo mixto, A-27 partida en dos y el paso a UNKNOWN condicionado a las guardias |
 | Una sola A-27 | **A-27** (instrumento, `[F17, F33]`) y **A-28** (reloj, `[F17]`) | Petición del consultor: son dos mediciones con sitio y momento distintos, como A-16 en ADR-0024 |
 | A-27 sin más | **Reserva de A-24..A-26** en `test_kit` (`IDS_RESERVADOS`), con aserción de que no existen | `test_kit` exigía ids correlativos sin huecos. Petición del consultor: la exención se autoliquida el día que el brief de la geometría cree A-24 |
-| RN-029 consume `detenido_por_tope` | Lo consume, **con un efecto declarado** | Probé primero a no consumirlo, porque así cierra a mercado también cuando el freno lo fijó el trader. La guardia `test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen` exige que quien fija un freno lo lea. Manda la guardia; el efecto (inocuo hoy, con una sola operación viva) está escrito en las notas de RN-029 |
+| RN-029 consume `detenido_por_tope` | Lo consume, y **ya no cierra nada** | La guardia `test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen` exige que quien fija un freno lo lea. El cierre, que por eso se disparaba también con el freno del trader y en cada evento, se mudó a RN-030 al validar (§5, corrección del 2026-09-14) |
 | Dos reglas de la spec | Tres: **RN-020 también** | Su `cuando` decía que el corte «cae en el reloj del servidor», que ADR-0027 vuelve falso. Deja de nombrar `broker_dst` y `broker_offset_base`, y su `decision` pasa a ADR-0027. Es el tercero de los cuatro sitios que el HANDOFF manda tocar al cerrar una ambigüedad |
 | RN-028 a DESCARTADA | DESCARTADA **y sin `forma`** | `comprobar_forma` revisa también las descartadas, y su `pendiente_definicion: A-17` apuntaba a una ambigüedad ya cerrada |
 | `reloj_dia_riesgo`: `servidor` → `civil_operativa` | Además, la opción `grafico` se sustituye por `civil_operativa` | El gráfico del trader está en el mismo huso: serían dos puertas para el mismo instante (ADR-0002) |
@@ -119,7 +119,22 @@ que los commits de `knowledge/spec` llevan `Fuente:`. Dos menores, aplicados: «
 | El literal de RN-029 se cortaba en «O un 10» y escondía que el trader cierra en «8, 8. Un 8, sí» | media | **Corregido**: el literal llega hasta el final y las notas dicen que ese 8 % era de otra firma |
 | `reinicia_con: firma_perdida_total_arrastra` apunta a un booleano, no a un reloj o un evento | media | **Se deja declarado**: la descripción del acumulador lo explica, y ADR-0030 ya anota que `reinicia_con` no distingue tipos de reinicio. Deuda de la spec, fuera de esta rama |
 | El tope total fija `hasta_el_corte_siguiente` como el diario, y las notas dicen que es permanente | media | **Aclarado en las notas**: como `perdida_total_firma` no se reinicia, RN-029 vuelve a disparar en el primer evento tras el corte. No hay guardia que lo compruebe |
-| El efecto de leer `detenido_por_tope` | — | El auditor lo da por bien razonado |
+| El efecto de leer `detenido_por_tope` | — | El auditor lo dio por bien razonado; el consultor no, y lo corrigió al validar (fila siguiente) |
+
+**Correcciones del consultor al validar (2026-09-14).** La rama se aprobó con estas correcciones
+dentro de ella, y vuelve a WAITING_FOR_USER_VALIDATION:
+
+| Fecha | Hallazgo | Quién | Qué se hizo |
+|---|---|---|---|
+| 2026-09-14 | RN-029 usaba `OP` en `entonces` (`cerrar_a_mercado: {de: OP}`) **sin ligarlo en `cuando`**: la única de las reglas de la spec que lo hacía (RN-002 y RN-014 lo ligan). Ninguna guardia lo vio, porque `OP` es también un token declarado | consultor | **La forma no puede expresarlo dentro de RN-029**: su `cuando` es un `cualquiera_de`, la prohibición tiene que valer sin posición, y ADR-0019 no da semántica a una ligadura atada en una sola rama ni a una acción condicionada dentro de `entonces`. No se fuerza. Con el vocabulario que ya existe, el cierre **se parte a una regla nueva, RN-030** (`gate`, `complementa: [RN-029]`): `todos_de` con los dos `alcanza_tope` de la firma y `hecho: operacion_abierta, liga: OP`, como RN-002. RN-029 se queda con `prohibe` y `fijar`. **Es una decisión a validar** (§6): la alternativa era dejar RN-029 como estaba y llevar el hallazgo al brief siguiente. ADR-0030 anota el límite del árbol |
+| 2026-09-14 | `cerrar_a_mercado {si: "si"}` llevaba un literal donde RN-002 usa `cierre_forzoso_fin_ventana`; y como RN-029 lee `detenido_por_tope`, que dura hasta el corte, habría emitido un cierre en cada evento mientras el bot está parado, contra `firma_mensajes_dia_max` | consultor | **Resuelto por las dos vías**: la ligadura de RN-030 hace que sin posición viva no dispare (y no lee `detenido_por_tope`, así que tampoco cierra por el freno del trader), y `si` pasa a ser el parámetro nuevo **`firma_cierre_al_tope`** (`prop_firm`, `si`, fuente ADR-0026) |
+| 2026-09-14 | A-28 no pedía verificar el corte del día de riesgo en el panel | consultor | A-28 gana el punto explícito: confirmar en el panel de FTMO que el límite diario se recalcula a **medianoche CE(S)T y no a la medianoche del servidor** (se separan una hora). `reloj_dia_riesgo` **se queda CONFIRMED**, no se añade a los parámetros de A-28 (lo sacaría como «en revisión» en `spec status`), y su descripción remite a esa comprobación |
+
+**Al brief siguiente, NO a esta rama** (lo decide el consultor): `firma_magnitud_vigilada` no tiene
+lector ejecutable —el equity solo vive en la prosa de los acumuladores—; `detenido_por_tope` necesita
+un valor permanente para el tope total; y `perdida_total_firma.reinicia_con` debería ser un token de
+«nunca» y no un booleano. Y un candidato a guardia que sale de la primera fila: una acción que usa una
+ligadura tiene que tenerla atada en un `todos_de` del `cuando`.
 
 Comprobado por el auditor en una copia sin `data/`: crear una A-24 falsa hace fallar
 `test_ambiguedades_reales_y_esquema` (la reserva se autoliquida), y poner `firma_perdida_diaria_max`
@@ -139,12 +154,15 @@ aritmética de ADR-0026 y RN-029 cuadra con Python. Ninguna guardia quedó más 
    propia), o recordarlo al construir la sesión 2. Recomiendo el campo: el cuestionario es lo único
    que se ejecuta delante del trader.
 4. **Margen antes del límite de la firma.** Llegar al 5 % o al 10 % ya es la infracción. Hoy nada deja
-   margen: RN-029 dispara al alcanzarlo, y el tope del trader se rebasa por construcción hasta
+   margen: RN-029 y RN-030 disparan al alcanzarlo, y el tope del trader se rebasa por construcción hasta
    ~4,9 % porque no descuenta la operación que se abre (auditoría del 09-13, [d1-interprete-04]).
    ¿Se decide ahora un margen o una lectura prospectiva del tope, o se deja a F21-F24?
 5. **ADR-0029 punto 1, sin verificar.** ¿Se le pregunta al trader —o se mira en su FX Replay— si
    sus velas son BID? Si fueran ASK o medio, se abre ambigüedad.
-6. **El orden del siguiente brief.** ADR-0028 punto 5 (derivar `operacion_abierta` y
+6. **RN-030.** ¿Se acepta partir el cierre de la firma en una regla propia, o se prefiere revertir a
+   RN-029 sin cierre y llevar el cierre entero al brief siguiente, junto con la ampliación de
+   ADR-0019 que permitiría expresarlo en una sola regla?
+7. **El orden del siguiente brief.** ADR-0028 punto 5 (derivar `operacion_abierta` y
    `orden_limite_pendiente`) no está en la spec; conviene que vaya en el mismo brief que las
    correcciones de fidelidad (RN-005, la acción que coloca la orden límite, `equal`, RN-013/RN-015)
    y antes de F18.
@@ -169,7 +187,7 @@ aritmética de ADR-0026 y RN-029 cuadra con Python. Ninguna guardia quedó más 
 ```
 git checkout trabajo/ftmo-y-arquitectura
 make check                                  # 663 casos; state check con la rama
-uv run botsito spec check                   # RN-029 vigente y ejecutable; RN-028 descartada
+uv run botsito spec check                   # RN-029 y RN-030 vigentes y ejecutables; RN-028 descartada
 uv run botsito spec status                  # A-17 y A-19 en "cerradas por decision"; A-27 y A-28 en revision
 uv run botsito knowledge validate           # guardias de DECIDIDA, trailers Fuente
 git diff 0a9612d..HEAD --stat -- knowledge/evidence knowledge/feedback   # vacio

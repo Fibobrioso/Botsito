@@ -806,7 +806,10 @@ parametros:
       instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria =
       saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden
       en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026).
-      FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj
+      FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj.
+      Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita
+      de FTMO dentro de A-28: la medianoche del servidor y la CE(S)T se separan una hora y
+      equivocarse cuesta la cuenta
     estado: CONFIRMED
     valor: "civil_operativa"
     fuente:
@@ -1012,6 +1015,22 @@ parametros:
       any time"). Por eso la fase de riesgo del motor va por tick (ADR-0028)
     estado: CONFIRMED
     valor: equity
+    fuente:
+      tipo: decision
+      id: ADR-0026
+  - nombre: firma_cierre_al_tope
+    categoria: prop_firm
+    tipo: enum
+    unidad: si/no
+    opciones: ["si", "no"]
+    descripcion: >-
+      si, al alcanzar un limite de la firma con una posicion viva, el bot la cierra a mercado
+      (RN-030). Nace el 2026-09-14 para sustituir el literal `si: "si"` que RN-029 llevaba en su
+      cierre, donde RN-002 usa cierre_forzoso_fin_ventana: una opcion de una accion es un valor de
+      negocio y vive aqui (ADR-0002). `si` es lo que decide ADR-0026: con el limite ya alcanzado la
+      cuenta esta en infraccion, y dejar correr la posicion solo puede agrandar la perdida
+    estado: CONFIRMED
+    valor: "si"
     fuente:
       tipo: decision
       id: ADR-0026
