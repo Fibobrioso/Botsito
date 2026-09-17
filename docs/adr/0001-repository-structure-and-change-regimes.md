@@ -14,7 +14,7 @@ validacion, especificacion generada). Tres regimenes de cambio, cada uno con un 
 cumplir: evidencia inmutable y feedback solo-anadir (test en CI contra el historial de git; el hook
 es la comodidad local, ver ADR-0003), spec y casos versionados con cita obligatoria (test sobre el
 historial). `knowledge/cases/holdout/` es ilegible para `spec/` y `domain/`
-(guarda en tests). `domain/` no importa IO, reloj ni MetaTrader (import-linter + test AST).
+(guarda en tests). **Nota (2026-09-17, ADR-0033):** para CUALQUIER llamante durante los tests, no solo esos dos, y con una puerta en `src/` (`botsito.cases.holdout`) para todo lo que abra. `domain/` no importa IO, reloj ni MetaTrader (import-linter + test AST).
 
 ## Problema que resuelve
 La arquitectura aprobada distingue evidencia original, conocimiento confirmado por el experto y

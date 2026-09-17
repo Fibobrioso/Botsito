@@ -149,6 +149,12 @@ def _blob(repo: Path, revision: str, ruta: str) -> str | None:
     return salida.strip() if salida else None
 
 
+def blob_en_head(repo: Path, ruta: str) -> str | None:
+    """El sha del blob de `ruta` en HEAD (el mismo que `git hash-object` da de su contenido), o
+    None si no hay git, no hay commits o el fichero no esta en HEAD."""
+    return _blob(repo, "HEAD", ruta)
+
+
 def intacto_desde(repo: Path, sha: str, ruta: str) -> bool | None:
     """True si el blob de `ruta` en `sha`, en HEAD y en el arbol de trabajo es el mismo (el
     fichero no cambio desde ese commit); False si difiere; None si git no puede decirlo."""

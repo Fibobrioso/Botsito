@@ -1,4 +1,4 @@
-# knowledge/cases/holdout/ - particiones RESERVADAS. Prohibido leer desde spec/ y domain/ (guarda en tests, F14).
+# knowledge/cases/holdout/ - particiones RESERVADAS. No se lee desde ningun sitio salvo la puerta `botsito.cases.holdout` (ADR-0033); la guarda de tests lo vigila.
 
 | Particion | Se abre en | Uso |
 |---|---|---|
@@ -29,6 +29,15 @@ no se puede invertir para deducirlas- **pero si es una EXPOSICION y se declara**
 - `docs/validation/PREREGISTRO.md` commiteado con los umbrales. Un umbral no se relaja despues de
   ver el resultado: para eso se pre-registra.
 - un ADR que diga que se va a medir, sobre que particion y contra que umbral.
+
+**Con que, mecanicamente (ADR-0033):** `docs/validation/PREREGISTRO.md` commiteado y sin la marca
+`SIN RELLENAR`, y un fichero commiteado por particion, `docs/validation/AUTORIZACION-<particion>.md`,
+con `particion`, `autorizado_por`, `fecha`, `adr` y `preregistro_blob` -el sha del blob del
+PREREGISTRO que se aprueba (`git rev-parse HEAD:docs/validation/PREREGISTRO.md`)-. La puerta
+`botsito.cases.holdout` los comprueba y se niega si falta algo, o si el PREREGISTRO cambio despues de
+autorizar. Leer las velas de un dia reservado para recalcular su ventana no pasa por
+ella: no es abrir, y `kit build` / `kit check` lo declaran en su salida, con el recuento de dias
+reservados por particion y sin fechas.
 
 ## Reparticionar
 

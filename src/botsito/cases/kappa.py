@@ -8,7 +8,7 @@ activos (respetando `supersede`); un fichero de ronda aparte solo existe como fi
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from fractions import Fraction
 
@@ -83,6 +83,9 @@ class ResultadoKappa:
     matriz: dict[str, dict[str, int]]  # a -> b -> recuento
     acuerdo_por_categoria: dict[str, Fraction]
     avisos: list[str] = field(default_factory=list)
+    # Cuantos CASOS distintos hay detras de las unidades. Un kappa alto sobre ocho casos no
+    # significa nada, y hasta el 2026-09-17 la salida no lo decia junto al kappa.
+    casos: int = 0
 
 
 def calcular(
@@ -125,7 +128,8 @@ def calcular(
         )
     if kappa is None:
         avisos.append("una sola categoria en ambas rondas: kappa no esta definida (pe = 1)")
-    return ResultadoKappa(n, po, pe, kappa, matriz, acuerdo, avisos)
+    casos = len({u.split("|", 1)[0] for u in a})
+    return ResultadoKappa(n, po, pe, kappa, matriz, acuerdo, avisos, casos)
 
 
 def etiquetas_de_registros(
@@ -133,9 +137,16 @@ def etiquetas_de_registros(
     sesion: str,
     sesiones_h4: Sequence[str],
     etiquetas: Sequence[str],
+    *,
+    excluir: Collection[str],
 ) -> dict[str, str]:
     """Unidades (`caso|sesion_h4` -> decision) de los `LABEL_CASE` ACTIVOS de una sesion de
     feedback. Dos registros activos sobre el mismo caso son error (uno debe superseder al otro).
+
+    `excluir` son casos cuya etiqueta NO se lee: los de dias reservados, salvo que la puerta del
+    holdout los haya abierto (`botsito.cases.holdout`, ADR-0033). Es obligatorio y sin valor por
+    defecto a proposito: quien llame tiene que decidir que casos no puede leer, porque leer la
+    etiqueta de un dia reservado es ABRIR su holdout (ADR-0021 §1).
 
     `activos` se aplica a TODOS los registros antes de filtrar: un `BORDERLINE` o un
     `MARK_FALSE_POSITIVE` tambien pueden superseder a un `LABEL_CASE` (los tres admiten objetivo
@@ -148,6 +159,8 @@ def etiquetas_de_registros(
     vistos: dict[str, str] = {}
     for r in sorted(vivos, key=lambda x: x.id):
         caso = r.objetivo.id
+        if caso in excluir:
+            continue  # ni se parsea: el valor de la etiqueta no se toca
         if caso in vistos:
             raise EtiquetaError(
                 f"{sesion}: {caso} tiene dos LABEL_CASE activos ({vistos[caso]}, {r.id})"

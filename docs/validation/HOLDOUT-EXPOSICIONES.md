@@ -39,17 +39,25 @@ Qué es cada cosa, en corto (la definicion completa esta en ADR-0021 y en
    infirio en parte de esos mismos dias** -v4, el video en el que recorre enero en pantalla, aporta
    130 de los 353 items de evidencia-. Medir fidelidad sobre los dias de los que salieron las
    reglas es circular. Mayo sigue siendo el unico material ciego que existe.
-6. **`kit check` y `kit build` no se ejecutan con `data/` presente** mientras no exista una guarda
-   que lo impida. Con los datasets del kit en la carpeta de datos (`[rutas].data` de
-   `config/settings.*.toml`, o `data/` si no hay ninguno; `src/botsito/config/ajustes.py`), los dos llaman a `construir()` (`src/botsito/cases/paquete.py`), que lee las velas M1 de
-   todos los dias del universo del paquete -holdout incluido, de mayo y de junio- para recalcular sus
-   ventanas (`src/botsito/cases/ventanas.py`). Lo hacen CADA VEZ que se ejecutan, sin pedir permiso y
-   sin decirlo en la salida. Ya paso dos veces, el 2026-09-13. La guarda prevista,
-   `holdout_guard` en `tests/conftest.py`, sigue siendo un stub hasta F14 -`return None`-, y ni
-   siquiera implementada cubriria esto: tal como esta descrita, falla si un modulo de `botsito.spec`
-   o `botsito.domain` abre un fichero de `knowledge/cases/holdout/` DURANTE LOS TESTS, y `kit check`
-   se ejecuta por la CLI, lee de `data/` y vive en `botsito.cases`. La rama de fidelidad de la spec
-   (2026-09-16/17) se abstuvo a mano, y eso no es un mecanismo. Para probar el cuestionario sin
-   datos: `cuestionario.generar` con `paquete._cargar_todo`, como hace
-   `tests/unit/test_spec_fidelidad.py`. Si hace falta ejecutarlos con datos, se decide antes, se
-   declara aqui el mismo dia, y F14 tiene que cerrar el hueco con una guarda que cubra la CLI.
+6. **Leer las velas de un dia reservado no es abrirlo; abrirlo exige autorizacion, y la CLI declara
+   lo que lee.** (Reescrita el 2026-09-17, ADR-0033. La redaccion anterior prohibia ejecutar
+   `kit check` y `kit build` con `data/` presente, y tomada al pie de la letra impedia construir el
+   paquete de la sesion 2 para siempre.)
+   - **Leer velas para recalcular una ventana no es abrir** (ADR-0021 §1). Y el paquete no se puede
+     construir sin hacerlo: `universo()` (`src/botsito/cases/ventanas.py`) lee el mes entero de cada
+     dataset y descarta los dias con menos de `min_velas`, y que dias son reservados depende de
+     cuales entran. Las ventanas de los dias reservados son la prueba de que las particiones se
+     fijaron antes de etiquetar.
+   - **Lo prohibido sin autorizacion del usuario y sin pre-registro es ABRIR**: las etiquetas
+     (`LABEL_CASE`) y el detalle por operacion de esos dias (ADR-0021 §1 y §3). Todo lo que abre pasa
+     por `botsito.cases.holdout` (`src/botsito/cases/holdout.py`), que se niega sin
+     `docs/validation/PREREGISTRO.md` commiteado y relleno y sin
+     `docs/validation/AUTORIZACION-<particion>.md` commiteado, que fija con `preregistro_blob` el
+     pre-registro exacto que aprueba. `kit kappa` excluye las etiquetas de
+     los casos reservados sin leerlas, y lo dice.
+   - **Lo que faltaba, y ya esta**: que `kit build` y `kit check` lo declaren en su salida -lineas
+     `LECTURA:` con los datasets y CUANTOS dias reservados se leen por particion, sin fechas, sin
+     cifras de velas y sin precios-; y que la guarda de `tests/conftest.py` deje de ser un stub y vigile a cualquier
+     llamante, no solo a `spec` y `domain`.
+   - **La fila del 2026-09-13 no cambia**: lo que paso sigue siendo lo que paso, y sigue sin quemar.
+     Lo que cambia es que ya no pasaria en silencio.

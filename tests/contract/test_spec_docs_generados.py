@@ -17,6 +17,15 @@ import pytest
 
 from botsito.cases.spec_docs import DIRECTORIO, FICHEROS, comprobar, generar
 
+
+def _sin_holdout(directorio: str, nombres: list[str]) -> set[str]:
+    """`ignore` de `copytree`: nada de `holdout/{1,2,3}` salvo su README (copiar es leer)."""
+    partes = Path(directorio).parts
+    if len(partes) >= 2 and partes[-2] == "holdout" and partes[-1] in {"1", "2", "3"}:
+        return {n for n in nombres if n != "README.md"}
+    return set()
+
+
 REPO = Path(__file__).resolve().parents[2]
 
 
@@ -54,7 +63,7 @@ def test_la_guardia_no_es_decorativa(tmp_path: Path) -> None:
     import shutil
 
     falso = tmp_path / "repo"
-    shutil.copytree(REPO / "knowledge", falso / "knowledge")
+    shutil.copytree(REPO / "knowledge", falso / "knowledge", ignore=_sin_holdout)
     shutil.copytree(copia, falso / DIRECTORIO)
     problemas = comprobar(falso)
     assert any("reglas.md" in p for p in problemas), problemas
