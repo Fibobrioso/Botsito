@@ -25,7 +25,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0018 | La precedencia va por clase, no por orden del fichero; y los siete defectos que eso destapo | ACTIVE (con nota del 2026-09-11: A-20 cerrada) |
 | 0019 | La forma ejecutable de una regla: predicados con argumentos, ligadura, y cuatro cosas con nombre (cinco desde F12: nace `efectos`) | ACTIVE |
 | 0020 | La base del lotaje es la distancia hasta el stop, no la caja completa | ACTIVE |
-| 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE |
+| 0021 | Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo | ACTIVE (con nota del 2026-09-17: su §3 tiene mecanismo en ADR-0033) |
 | 0022 | El bot no opera noticias en la cuenta fondeada, y una ambiguedad puede cerrarse por decision | ACTIVE (con enmienda del 2026-09-14: con FTMO Swing el bot si opera noticias) |
 | 0023 | El registro de feedback sabe cuando llego cada respuesta y por donde (`recibido_el`, `procedencia`) | ACTIVE |
 | 0024 | La ventana no se amplia a Nueva York (A-15), y la referencia para medir es Dukascopy (A-23; A-16 se parte y conserva la medicion) | ACTIVE |
@@ -37,3 +37,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0030 | El motor interpreta la `forma`; las primitivas se escriben a mano | ACTIVE |
 | 0031 | El freno de la firma dispara antes del limite: margen declarado y lectura prospectiva | ACTIVE |
 | 0032 | De donde sale cada hecho y cada evento, y como nace la orden limite | ACTIVE |
+| 0033 | La guarda y la puerta del holdout: que vigilan, por donde se abre y como se autoriza | ACTIVE |

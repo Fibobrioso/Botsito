@@ -6,6 +6,8 @@ phase: F12-holdout
 
 # 0021 · Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo
 
+> **Nota (2026-09-17, ADR-0033).** Lo que este ADR decide sigue en pie, y desde la rama de la guarda tiene mecanismo: la guarda de tests (`tests/guarda_holdout.py`) deja de ser un stub y vigila a cualquier llamante; toda apertura pasa por `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin una autorizacion commiteada por particion; y `kit build` y `kit check` declaran en su salida los dias reservados cuyas velas leen, que no es abrir (§1).
+
 ## Decision
 
 1. **Abrir un holdout** es cualquiera de estas dos cosas, y solo estas dos:

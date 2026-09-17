@@ -26,7 +26,7 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 - knowledge/evidence/  → INMUTABLE tras commit (hook). Corrección = nuevo item que supersede.
 - knowledge/feedback/  → SOLO AÑADIR. Nunca editar un registro.
 - knowledge/spec/, knowledge/cases/ → versionados; cada cambio de valor cita evidence-id o feedback-id.
-- knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada una se abre una sola vez. QUE CUENTA COMO ABRIRLA, quien lo autoriza y que se hace ante una exposicion: `knowledge/cases/holdout/README.md` (ADR-0021). Prohibido leer desde src/botsito/spec y src/botsito/domain: OJO, la guarda de `tests/conftest.py` es todavia un STUB que se implementa en F14; hoy lo unico vivo es el contrato que busca la cadena en los .py.
+- knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada una se abre una sola vez. QUE CUENTA COMO ABRIRLA, quien lo autoriza y que se hace ante una exposicion: `knowledge/cases/holdout/README.md` (ADR-0021). No se lee desde ningun sitio salvo la puerta `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin autorizacion commiteada por particion; la guarda de `tests/conftest.py` vigila a cualquier llamante durante los tests, y `kit build` / `kit check` declaran las velas de dias reservados que leen, que no es abrir (ADR-0021, ADR-0033).
 - src/botsito/domain/ → sin IO, sin reloj, sin MetaTrader (import-linter).
 - data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
 

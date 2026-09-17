@@ -67,6 +67,8 @@ o si se materializa todo y la guarda vigila la lectura. **Lo primero es más dif
 
 ### D4 · La guarda del holdout: ¿qué vigila exactamente y cómo?
 
+> **HECHO fuera de F14 (2026-09-17, rama `trabajo/guarda-de-holdout`, ADR-0033).** Hook de auditoría `autouse` para cualquier llamante, visto saltar por cada vía de lectura; una puerta en `botsito.cases.holdout` para todo lo que abra, con autorización commiteada y `PREREGISTRO.md` relleno; y `kit build` / `kit check` que declaran las velas que leen. F14 NO rehace esto: lo usa. Lo que le queda a F14 es que su ingesta del xlsx pase por la puerta (D3).
+
 El stub promete *"fallará si cualquier módulo bajo `botsito.spec` o `botsito.domain` abre un fichero
 de `knowledge/cases/holdout/`"*. Hay que decidir el mecanismo (¿`sys.audit` hook? ¿un `open`
 envuelto? ¿`autouse` en toda la suite?) y, sobre todo, **probar que salta**: una guarda de holdout
@@ -98,7 +100,7 @@ la biblioteca inútil en una máquina limpia. Hay que medir cuánto ocupan seis 
 
 1. `make check` verde.
 2. Existen los 6 casos `dev` de mayo, con su formato declarado y validado por un cargador estricto.
-3. **La guarda del holdout salta**, y hay un test que la ve saltar. Deja de ser un stub.
+3. **La guarda del holdout salta**, y hay un test que la ve saltar. Deja de ser un stub. **HECHO en la rama de la guarda (ADR-0033):** `tests/unit/test_guarda_holdout.py` y `tests/unit/test_puerta_holdout.py`.
 4. Ningún fichero de `knowledge/cases/holdout/` se lee en toda la suite, y se comprueba.
 5. El `no_trade` está representado explícitamente, no por ausencia de fila.
 6. Cada caso dice de dónde sale su verdad, con el mismo régimen de cita que el resto del proyecto.
