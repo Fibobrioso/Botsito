@@ -693,13 +693,25 @@ def spec_status(repo: Path) -> int:
     print(f"{linea}, {len(unknown)} sin valor a proposito ({len(registro.parametros)} en total)")
 
     abiertas = [a for a in ambiguedades if a.estado == "ABIERTA"]
+    # Separadas por lo que hace falta para cerrarlas: preguntar al trader o medir. Hasta el
+    # 2026-09-16 salian juntas, y los parametros de A-28 -una medicion en el terminal de FTMO-
+    # aparecian abajo como "falta preguntarlo".
     en_revision: dict[str, list[str]] = {}
+    por_medir: set[str] = set()
     for a in abiertas:
         for nombre in a.parametros:
             en_revision.setdefault(nombre, []).append(a.id)
-    if en_revision:
-        print("\nCorriendo con un valor que sigue en revision:")
-        for nombre in sorted(en_revision):
+            if a.clase == "medicion":
+                por_medir.add(nombre)
+    for titulo, grupo in (
+        ("Corriendo con un valor que sigue en revision (falta preguntarlo):", False),
+        ("Corriendo con un valor que sigue en revision (falta MEDIRLO, no se pregunta):", True),
+    ):
+        nombres = sorted(n for n in en_revision if (n in por_medir) is grupo)
+        if not nombres:
+            continue
+        print(f"\n{titulo}")
+        for nombre in nombres:
             p = registro.parametros.get(nombre)
             valor = "(sin valor)" if p is None or p.valor is None else str(p.valor)
             print(f"  {nombre:32} {valor:24} {', '.join(sorted(en_revision[nombre]))}")
@@ -729,10 +741,15 @@ def spec_status(repo: Path) -> int:
         except (OSError, ValueError):
             rechazados = set()
         a_proposito = sorted(x for x in unknown if x in rechazados)
-        sin_justificar = sorted(x for x in unknown if x not in rechazados)
+        sin_medir = sorted(x for x in unknown if x not in rechazados and x in por_medir)
+        sin_justificar = sorted(x for x in unknown if x not in rechazados and x not in por_medir)
         if a_proposito:
             print("\nSin valor A PROPOSITO, con su registro REJECT (leerlos falla):")
             for nombre in a_proposito:
+                print(f"  {nombre}")
+        if sin_medir:
+            print("\nSin valor a la espera de una MEDICION (no se le pregunta al trader):")
+            for nombre in sin_medir:
                 print(f"  {nombre}")
         if sin_justificar:
             print("\nSin valor y SIN registro que lo justifique (falta preguntarlo):")

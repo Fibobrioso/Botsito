@@ -483,6 +483,23 @@ def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
     problemas: list[str] = []
     vigentes = [r for r in reglas if r.vigente]
 
+    # `complementa` es lo que exime de las denuncias de abajo, y solo se validaba su FORMATO: un
+    # `RN-777` o una regla DESCARTADA -que ya no refina nada- apagaban la guardia igual que una
+    # declaracion cierta (revision de diseno de la rama de fidelidad, 2026-09-16).
+    por_id_todas = {r.id: r for r in reglas}
+    for r in reglas:
+        for c in r.complementa:
+            otra = por_id_todas.get(c)
+            if otra is None:
+                problemas.append(f"{r.id}: complementa a {c}, que no existe")
+            elif c == r.id:
+                problemas.append(f"{r.id}: se declara complementaria de si misma")
+            elif r.vigente and not otra.vigente:
+                problemas.append(
+                    f"{r.id}: complementa a {c}, que esta DESCARTADA; una regla que no se ejecuta "
+                    f"no refina nada"
+                )
+
     fallbacks = [r.id for r in vigentes if r.clase == "fallback"]
     if len(fallbacks) > 1:
         problemas.append(
@@ -683,11 +700,102 @@ def _ligaduras(nodo: Any) -> set[str]:
     return atadas
 
 
+def _atadas_por_todos_de(nodo: Any, por_todos_de: bool = True) -> set[str]:
+    """Las ligaduras que el `cuando` ata en un camino de `todos_de` desde la raiz.
+
+    `_ligaduras` recoge TODO `liga:` del arbol, y eso sirve para negar por defecto -que el nombre
+    exista- pero no para saber si la ligadura tiene VALOR cuando se usa. Una atada dentro de una
+    rama de `cualquiera_de` solo vale si esa rama fue la que se cumplio, y dentro de `ninguno_de`
+    no vale nunca: ADR-0019 no da semantica a ninguna de las dos. RN-029 llevo hasta el 2026-09-14
+    un `cerrar_a_mercado: {de: OP}` con OP sin atar, y lo cazo el consultor a mano: OP es tambien
+    un token declarado, asi que la guardia de argumentos lo daba por bueno.
+    """
+    atadas: set[str] = set()
+    if isinstance(nodo, list):
+        for hijo in nodo:
+            atadas |= _atadas_por_todos_de(hijo, por_todos_de)
+    elif isinstance(nodo, dict):
+        liga = nodo.get("liga")
+        if por_todos_de and isinstance(liga, str) and _ES_LIGADURA.fullmatch(liga):
+            atadas.add(liga)
+        for clave, valor in nodo.items():
+            if clave == "todos_de":
+                atadas |= _atadas_por_todos_de(valor, por_todos_de)
+            elif clave in ("cualquiera_de", "ninguno_de"):
+                atadas |= _atadas_por_todos_de(valor, False)
+            elif clave not in _ESTRUCTURALES and isinstance(valor, dict):
+                # una invocacion: su `liga` va dentro del mapa de argumentos
+                liga_inv = valor.get("liga")
+                if por_todos_de and isinstance(liga_inv, str) and _ES_LIGADURA.fullmatch(liga_inv):
+                    atadas.add(liga_inv)
+    return atadas
+
+
+def comprobar_ligaduras(regla: Regla) -> list[str]:
+    """Toda ligadura que se USA esta atada en un `todos_de` del `cuando` de la misma regla.
+
+    Mira la CLASE del nombre -la forma de una ligadura, mayusculas cortas- y no su nombre: `OP` es
+    tambien un token declarado, y por eso el `de: OP` sin atar de RN-029 paso todas las guardias.
+    Vale para `entonces` y para el propio `cuando` (RN-014 usa `OP.zona_de_entrada` dentro de el).
+    """
+    if not isinstance(regla.forma, dict):
+        return []
+    atadas = _atadas_por_todos_de(regla.forma.get("cuando"))
+    problemas: list[str] = []
+    for rama in ("cuando", "entonces"):
+        for nombre, args in _invocaciones(regla.forma.get(rama)):
+            for clave, valor in args.items():
+                if clave == "liga" or not isinstance(valor, str):
+                    continue
+                cabeza = valor.split(".")[0]
+                if _ES_LIGADURA.fullmatch(cabeza) and cabeza not in atadas:
+                    problemas.append(
+                        f"{regla.id}: '{nombre}.{clave}' usa la ligadura {cabeza}, que el `cuando` "
+                        f"no ata en un `todos_de`; atada en una rama de `cualquiera_de` o de "
+                        f"`ninguno_de` no tiene valor (ADR-0019)"
+                    )
+    return problemas
+
+
+def parametros_leidos_por_las_formas(
+    reglas: list[Regla],
+    parametros: set[str],
+    vocabulario: Mapping[str, Mapping[str, Any]] | None = None,
+) -> set[str]:
+    """Los parametros que alguna forma VIGENTE lee de verdad, directamente o por un acumulador."""
+    leidos: set[str] = set()
+    acumuladores_usados: set[str] = set()
+    for r in reglas:
+        if not r.vigente or not isinstance(r.forma, dict):
+            continue
+        for _nombre, args in _invocaciones(r.forma):
+            for clave, valor in args.items():
+                if not isinstance(valor, str):
+                    continue
+                if clave == "acumulador":
+                    acumuladores_usados.add(valor)
+                    continue
+                raiz = valor.split(".")[-1]
+                if raiz in parametros:
+                    leidos.add(raiz)
+    acumuladores = (vocabulario or {}).get("acumuladores") or {}
+    for nombre in acumuladores_usados:
+        datos = acumuladores.get(nombre)
+        if not isinstance(datos, dict):
+            continue
+        for campo in ("base", "reinicia_con", "magnitud", "arrastra"):
+            valor = datos.get(campo)
+            if isinstance(valor, str) and valor in parametros:
+                leidos.add(valor)
+    return leidos
+
+
 def comprobar_consumo(
     reglas: list[Regla],
     consumidores: Mapping[str, tuple[str, ...] | None],
     ids_validos: Mapping[str, str],
     con_valor: set[str] | None = None,
+    vocabulario: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> list[str]:
     """Todo parametro CON VALOR tiene un lector, y el lector existe.
 
@@ -704,9 +812,16 @@ def comprobar_consumo(
     validan siempre, tambien en los que no tienen valor, que si no se quedaban sin comprobar.
     `con_valor` son los que ademas exigen tener un lector. `ids_validos` es id -> que es ("regla
     vigente", "regla", "funcionalidad", "ADR").
+
+    LECTOR ES UNA FORMA, no una lista (2026-09-16). Hasta entonces bastaba con que el parametro
+    figurara en la lista `parametros` de una regla vigente, y `firma_magnitud_vigilada` -que la
+    firma vigila EQUITY, el hecho mas consecuente del reglamento- estaba en la lista de RN-029 y
+    RN-030 sin que ninguna forma lo leyera: vivia solo en prosa. Ahora cuenta como leido si una
+    forma vigente lo pasa como argumento, o si es un campo (`base`, `reinicia_con`, `magnitud`,
+    `arrastra`) de un acumulador que una forma vigente usa.
     """
     problemas: list[str] = []
-    nombrados = {p for r in reglas if r.vigente for p in r.parametros}
+    nombrados = parametros_leidos_por_las_formas(reglas, set(consumidores), vocabulario)
     for nombre, declarados in sorted(consumidores.items()):
         # Los ids se validan SIEMPRE, tambien si una regla ya lo nombra: de lo contrario un
         # `consumido_por: [F99, RN-777]` colaba entero en cuanto cualquier regla mencionara el
@@ -724,7 +839,7 @@ def comprobar_consumo(
             continue
         if not declarados:
             problemas.append(
-                f"{nombre}: tiene valor y NINGUNA regla vigente lo nombra; declara "
+                f"{nombre}: tiene valor y NINGUNA forma vigente lo lee; declara "
                 f"`consumido_por` con la regla, la funcionalidad (MASTER_PLAN H.2) o el ADR "
                 f"que lo lee"
             )
@@ -848,6 +963,198 @@ def _problemas_de_argumento(
     ]
 
 
+# Las claves que admite cada seccion del vocabulario. Cerradas desde el 2026-09-16 (ADR-0032): la
+# carga solo exigia que cada seccion fuera un mapa, asi que un `origen` o un `valores` mal escritos
+# se ignoraban en silencio, y con ellos la guardia que dependia de que estuvieran bien escritos.
+CLAVES_VOCABULARIO: dict[str, frozenset[str]] = {
+    "predicados": frozenset(
+        {
+            "descripcion",
+            "argumentos",
+            "cita",
+            "literal",
+            "notas",
+            "depende_de",
+            "fuente",
+            "lo_provoca",
+            "valores",
+            "lado_de_ruido",
+        }
+    ),
+    "acciones": frozenset({"descripcion", "argumentos", "efecto", "cita", "literal", "notas"}),
+    "efectos": frozenset({"descripcion"}),
+    "hechos": frozenset(
+        {"descripcion", "origen", "decision", "lo_provoca", "produce", "consume", "valores"}
+    ),
+    "acumuladores": frozenset(
+        {"descripcion", "base", "reinicia_con", "magnitud", "arrastra", "cita"}
+    ),
+    "tokens": frozenset({"descripcion", "clase"}),
+}
+ORIGENES_HECHO = ("regla", "broker")
+# De donde sale lo que un predicado evalua (ADR-0032). `broker` y `bot` son los que una accion
+# PROVOCA: un evento de esas fuentes sin accion que lo produzca es una regla inalcanzable, que es
+# lo que era `se_coloca_orden_limite`.
+FUENTES_PREDICADO = ("mercado", "reloj", "broker", "bot", "motor", "acumulador")
+CLASES_TOKEN = ("reinicio", "duracion")
+# Los dos valores del hecho `sesgo`. NO son tokens: si lo fueran, `sentido: alcista` pasaria la
+# guardia de argumentos, que es la puerta que cerro la auditoria de F13. Solo se usan como claves de
+# `lado_de_ruido`, y tienen que estar las dos, o un sentido quedaria sin lado de ruido.
+SENTIDOS_SESGO = ("alcista", "bajista")
+
+
+def _acciones_ejecutadas(reglas: list[Regla]) -> set[str]:
+    return {
+        nombre
+        for r in reglas
+        if r.vigente and isinstance(r.forma, dict)
+        for nombre, _ in _invocaciones(r.forma.get("entonces"))
+    }
+
+
+def _problemas_lo_provoca(
+    quien: str,
+    datos: Mapping[str, Any],
+    vocabulario: Mapping[str, Mapping[str, Any]],
+    ejecutadas: set[str],
+    exige_efecto: bool = True,
+) -> list[str]:
+    """`lo_provoca` no vacio, con acciones que existen y que alguna regla vigente ejecuta."""
+    lista = datos.get("lo_provoca")
+    if not isinstance(lista, list) or not lista:
+        return [
+            f"{quien}: no declara `lo_provoca`; sin la accion que lo hace verdadero, quien lo lee "
+            f"puede ser inalcanzable y nada lo diria"
+        ]
+    problemas: list[str] = []
+    acciones = vocabulario.get("acciones") or {}
+    for accion in lista:
+        if accion not in acciones:
+            problemas.append(f"{quien}: lo provoca '{accion}', que no esta en `acciones`")
+        elif accion not in ejecutadas:
+            problemas.append(
+                f"{quien}: lo provoca '{accion}', y NINGUNA regla vigente la ejecuta; quien lo lee "
+                f"es inalcanzable"
+            )
+        elif exige_efecto and not (acciones.get(accion) or {}).get("efecto"):
+            problemas.append(
+                f"{quien}: lo provoca '{accion}', que no declara `efecto`; una accion que cambia "
+                f"el broker tiene que poder frenarla un gate (ADR-0032)"
+            )
+    return problemas
+
+
+def comprobar_vocabulario(
+    reglas: list[Regla], vocabulario: Mapping[str, Mapping[str, Any]]
+) -> list[str]:
+    """Claves cerradas, fuentes de predicado, efectos de accion, clases de token y valores.
+
+    Todo lo que ADR-0032 anade al vocabulario, comprobado contra las formas y no solo contra si
+    mismo: un `valores` que nadie compara es una lista decorativa.
+    """
+    problemas: list[str] = []
+    for seccion, claves in CLAVES_VOCABULARIO.items():
+        for nombre, datos in sorted((vocabulario.get(seccion) or {}).items()):
+            if not isinstance(datos, dict):
+                problemas.append(f"{seccion} '{nombre}': no es un mapa")
+                continue
+            sobran = sorted(set(datos) - claves)
+            if sobran:
+                problemas.append(f"{seccion} '{nombre}': claves desconocidas {sobran}")
+
+    ejecutadas = _acciones_ejecutadas(reglas)
+    tokens_decl = vocabulario.get("tokens") or {}
+    efectos = vocabulario.get("efectos") or {}
+
+    for nombre, datos in sorted(tokens_decl.items()):
+        clase = datos.get("clase") if isinstance(datos, dict) else None
+        if clase is not None and clase not in CLASES_TOKEN:
+            problemas.append(f"tokens '{nombre}': clase {clase!r} no esta en {CLASES_TOKEN}")
+
+    for nombre, datos in sorted((vocabulario.get("acciones") or {}).items()):
+        efecto = datos.get("efecto") if isinstance(datos, dict) else None
+        if efecto is not None and efecto not in efectos:
+            problemas.append(f"acciones '{nombre}': efecto '{efecto}', que no esta en `efectos`")
+
+    predicados = vocabulario.get("predicados") or {}
+    for nombre, datos in sorted(predicados.items()):
+        if not isinstance(datos, dict):
+            continue
+        fuente = datos.get("fuente")
+        if fuente not in FUENTES_PREDICADO:
+            problemas.append(
+                f"predicados '{nombre}': fuente {fuente!r} no esta en {FUENTES_PREDICADO}; "
+                f"sin ella no se sabe quien produce lo que evalua"
+            )
+        elif fuente in ("broker", "bot"):
+            problemas += _problemas_lo_provoca(
+                f"predicados '{nombre}'",
+                datos,
+                vocabulario,
+                ejecutadas,
+                exige_efecto=fuente == "broker",
+            )
+        elif "lo_provoca" in datos:
+            problemas.append(
+                f"predicados '{nombre}': `lo_provoca` solo va en predicados de fuente broker o bot"
+            )
+        valores = datos.get("valores")
+        if valores is not None:
+            if not isinstance(valores, dict):
+                problemas.append(
+                    f"predicados '{nombre}': `valores` debe ser un mapa argumento -> lista"
+                )
+            else:
+                for arg, lista in valores.items():
+                    if arg not in (datos.get("argumentos") or []):
+                        problemas.append(
+                            f"predicados '{nombre}': `valores` de '{arg}', que no es un argumento"
+                        )
+                    for v in lista if isinstance(lista, list) else [lista]:
+                        if v not in tokens_decl:
+                            problemas.append(
+                                f"predicados '{nombre}': `valores` de '{arg}' incluye {v!r}, que "
+                                f"no es un token declarado"
+                            )
+        lados = datos.get("lado_de_ruido")
+        if lados is not None:
+            if not isinstance(lados, dict) or not lados:
+                problemas.append(f"predicados '{nombre}': `lado_de_ruido` debe ser un mapa")
+            else:
+                if sorted(lados) != sorted(SENTIDOS_SESGO):
+                    problemas.append(
+                        f"predicados '{nombre}': `lado_de_ruido` tiene que nombrar exactamente "
+                        f"{SENTIDOS_SESGO}, y nombra {sorted(lados)}"
+                    )
+                for lado in lados.values():
+                    if lado not in tokens_decl:
+                        problemas.append(
+                            f"predicados '{nombre}': `lado_de_ruido` usa {lado!r}, que no es un "
+                            f"token declarado"
+                        )
+                if len(set(lados.values())) != len(lados):
+                    problemas.append(
+                        f"predicados '{nombre}': `lado_de_ruido` da el mismo lado a los dos "
+                        f"sentidos"
+                    )
+
+    # Y los valores contra lo que las formas pasan de verdad.
+    for r in reglas:
+        if not isinstance(r.forma, dict):
+            continue
+        for nombre, args in _invocaciones(r.forma.get("cuando")):
+            valores = (predicados.get(nombre) or {}).get("valores")
+            if not isinstance(valores, dict):
+                continue
+            for arg, lista in valores.items():
+                if arg in args and isinstance(lista, list) and args[arg] not in lista:
+                    problemas.append(
+                        f"{r.id}: '{nombre}.{arg}' vale {args[arg]!r}, fuera de su conjunto "
+                        f"cerrado {lista}"
+                    )
+    return problemas
+
+
 def es_ejecutable(regla: Any) -> bool:
     """Tiene forma Y su condicion esta definida.
 
@@ -866,6 +1173,8 @@ def comprobar_forma(
     vocabulario: dict[str, dict[str, Any]],
     parametros: set[str],
     ambiguedades_abiertas: set[str] | None = None,
+    tipos: Mapping[str, str] | None = None,
+    ids_adr: set[str] | None = None,
 ) -> list[str]:
     """Que la forma ejecutable use vocabulario que existe y no esconda valores de negocio.
 
@@ -873,9 +1182,10 @@ def comprobar_forma(
     maneras y nadie lo nota; una invocacion a un predicado que no existe, o un argumento de valor
     que no es el nombre de un parametro, se ven a la primera y se nombran por su id.
     """
-    problemas: list[str] = []
+    problemas: list[str] = comprobar_vocabulario(reglas, vocabulario)
     hechos = vocabulario["hechos"]
     acumuladores = vocabulario["acumuladores"]
+    ejecutadas = _acciones_ejecutadas(reglas)
 
     for r in reglas:
         if not isinstance(r.forma, dict):
@@ -900,6 +1210,7 @@ def comprobar_forma(
                     f"{r.id}: pendiente_definicion {pendiente}, que no es una ambiguedad ABIERTA; "
                     f"o la ambiguedad existe y sigue abierta, o la regla ya se puede ejecutar"
                 )
+        problemas += comprobar_ligaduras(r)
         # Lo que se permite o se prohibe, contra su catalogo.
         for efecto in _efectos_invocados(r.forma):
             if efecto not in vocabulario.get("efectos", {}):
@@ -988,7 +1299,10 @@ def comprobar_forma(
     hechos_usados: set[str] = set()
     reales: dict[str, dict[str, list[str]]] = {}
     for r in reglas:
-        if not isinstance(r.forma, dict):
+        # Solo las VIGENTES producen o consumen de verdad: una DESCARTADA que conservara su forma
+        # contaba como productor real y tapaba un hecho que nadie produce (auditoria de cierre de la
+        # rama de fidelidad, 2026-09-16, con un mutante). `_acciones_ejecutadas` ya filtraba.
+        if not r.vigente or not isinstance(r.forma, dict):
             continue
         for papel, rama in (("consume", "cuando"), ("produce", "entonces")):
             for nombre in _hechos_nombrados(r.forma.get(rama)):
@@ -1014,7 +1328,42 @@ def comprobar_forma(
 
     for nombre, h in sorted(hechos.items()):
         real_de = reales.get(nombre, {"produce": [], "consume": []})
-        for papel in ("produce", "consume"):
+        origen = h.get("origen", "regla")
+        if origen not in ORIGENES_HECHO:
+            problemas.append(f"hecho '{nombre}': origen {origen!r} no esta en {ORIGENES_HECHO}")
+            continue
+        papeles: tuple[str, ...] = ("produce", "consume")
+        if origen == "broker":
+            # ADR-0028 §5 y ADR-0032: lo lee el motor del broker. Ninguna forma lo fija, y lo que
+            # sustituye a "tiene un productor real" es que la accion que lo provoca exista y la
+            # ejecute alguna regla vigente; si no, sus consumidores quedan inalcanzables en
+            # silencio.
+            papeles = ("consume",)
+            if h.get("produce"):
+                problemas.append(
+                    f"hecho '{nombre}': es de origen broker y declara `produce`; lo lee el motor "
+                    f"del estado de ordenes y posiciones, no lo produce una regla (ADR-0028 §5)"
+                )
+            for rid in sorted(set(real_de["produce"])):
+                problemas.append(
+                    f"{rid}: fija '{nombre}', que se deriva del broker (ADR-0028 §5); una regla no "
+                    f"puede fijarlo, o la copia se desincroniza del broker"
+                )
+            decision_h = h.get("decision")
+            if not (isinstance(decision_h, str) and re.fullmatch(r"ADR-\d{4}", decision_h)):
+                problemas.append(
+                    f"hecho '{nombre}': es de origen broker y no declara `decision` con el ADR que "
+                    f"lo deriva"
+                )
+            elif ids_adr is not None and decision_h not in ids_adr:
+                problemas.append(f"hecho '{nombre}': decision {decision_h}, que no existe")
+            problemas += _problemas_lo_provoca(f"hecho '{nombre}'", h, vocabulario, ejecutadas)
+        elif "lo_provoca" in h or "decision" in h:
+            problemas.append(
+                f"hecho '{nombre}': `lo_provoca` y `decision` son de un hecho de origen broker; "
+                f"este es de origen regla y lo dice `produce`"
+            )
+        for papel in papeles:
             declarado = sorted(h.get(papel) or [])
             for rid in declarado:
                 if rid not in ids_regla and not rid.startswith("predicado "):
@@ -1032,11 +1381,62 @@ def comprobar_forma(
                     f"hecho '{nombre}': declara {papel}={declarado} y en las formas es {real}"
                 )
 
+    # Con que se fija cada hecho. Sin esto, `permanente` podia acabar en `detenido_por_tope` -que
+    # RN-020 y RN-029 reescriben en cada evento sin mirar su valor- y la guardia no decia nada.
+    for r in reglas:
+        if not isinstance(r.forma, dict):
+            continue
+        for nombre_inv, args in _invocaciones(r.forma.get("entonces")):
+            if nombre_inv != "fijar":
+                continue
+            h = hechos.get(str(args.get("hecho")))
+            valores_h = h.get("valores") if isinstance(h, dict) else None
+            if isinstance(valores_h, list) and args.get("a") not in valores_h:
+                problemas.append(
+                    f"{r.id}: fija '{args.get('hecho')}' a {args.get('a')!r}, que no esta en sus "
+                    f"`valores` {valores_h}"
+                )
+
+    tokens_decl = vocabulario.get("tokens") or {}
     for nombre, a in sorted(acumuladores.items()):
-        for campo in ("base", "reinicia_con"):
+        if a.get("base") not in parametros:
+            problemas.append(
+                f"acumulador '{nombre}': 'base' vale {a.get('base')!r}, que no es un parametro"
+            )
+        # `reinicia_con` es un reloj o un evento: un token de clase `reinicio` o un parametro enum
+        # que diga cual. Nunca un booleano: `perdida_total_firma` llevaba ahi
+        # `firma_perdida_total_arrastra`, que dice si la BASE sigue al maximo, no cuando se
+        # reinicia.
+        reinicio = a.get("reinicia_con")
+        token_r = tokens_decl.get(reinicio) if isinstance(reinicio, str) else None
+        if isinstance(token_r, dict):
+            if token_r.get("clase") != "reinicio":
+                problemas.append(
+                    f"acumulador '{nombre}': 'reinicia_con' vale el token {reinicio!r}, que no es "
+                    f"de clase `reinicio`"
+                )
+        elif reinicio not in parametros:
+            problemas.append(
+                f"acumulador '{nombre}': 'reinicia_con' vale {reinicio!r}, que no es un parametro "
+                f"ni un token de reinicio"
+            )
+        elif tipos is not None and tipos.get(str(reinicio)) != "enum":
+            problemas.append(
+                f"acumulador '{nombre}': 'reinicia_con' vale el parametro {reinicio!r}, de tipo "
+                f"{tipos.get(str(reinicio))}; un reinicio es un reloj o un evento, no un "
+                f"{tipos.get(str(reinicio))}"
+            )
+        for campo, tipo_exigido in (("magnitud", "enum"), ("arrastra", "booleano")):
+            if campo not in a:
+                continue
             valor = a.get(campo)
             if valor not in parametros:
                 problemas.append(
                     f"acumulador '{nombre}': '{campo}' vale {valor!r}, que no es un parametro"
+                )
+            elif tipos is not None and tipos.get(str(valor)) != tipo_exigido:
+                problemas.append(
+                    f"acumulador '{nombre}': '{campo}' vale {valor!r}, que no es de tipo "
+                    f"{tipo_exigido}"
                 )
     return problemas

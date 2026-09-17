@@ -2,9 +2,9 @@
 
 # Glosario: que es cada cosa
 
-`spec_version 11.1.0` · hash `232c220dcc71…`
+`spec_version 12.0.0` · hash `7b56ead497c8…`
 
-10 terminos. Aqui se dice QUE es cada cosa, no que se hace con ella -eso son las reglas- ni con que numero -eso es el registro-.
+11 terminos. Aqui se dice QUE es cada cosa, no que se hace con ella -eso son las reglas- ni con que numero -eso es el registro-.
 
 ### breaker
 
@@ -30,11 +30,19 @@ cada operacion que gasta el cupo. Ni el break even, ni una entrada invalidada, n
 
 Cita `fb-2026-09-09-sesion-01-aa2abe65`: *«un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento»* · visto en v6 0:52:19
 
+### cerrar un equal
+
+*Tambien: activacion sin ruptura, equal (la salida).*
+
+el precio activa la orden y la posicion se cierra con lo que el trader llama un equal; se vuelve a entrar y no se gasta intento. En la spec es el cierre en negativo, sin que lo cerrara ningun stop, de una operacion que se activo sin ruptura (RN-010, RN-019). Esa correspondencia es lectura nuestra de v6 1:22:25-1:23:19, donde el trader describe una entrada activada sin validar que un equal saca con perdida; si la misma entrada se va al stop entero, lo pregunta A-31
+
+Cita `fb-2026-09-09-sesion-01-060cd801`: *«Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar [...] ¿y gastas tus intentos? Sí, esto no gasta intentos, me dijiste, ¿no? No»* · visto en v6 1:52:26
+
 ### equal
 
 *Tambien: equal high, equal low, igual.*
 
-dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el extremo anterior, aunque sea por una milesima
+dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el extremo anterior, aunque sea por una milesima. Es GEOMETRIA: la salida que un equal provoca tiene su propio termino, "cerrar un equal", y la spec ya no usa esta palabra como resultado de cierre ni como forma de activarse
 
 Cita `fb-2026-09-09-sesion-01-8eccf5c0`: *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»* · visto en v6 1:03:01
 

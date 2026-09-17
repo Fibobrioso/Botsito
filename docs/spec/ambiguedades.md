@@ -2,43 +2,57 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 11.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 12.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
-Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue preguntando, y entra en el cuestionario de la sesion siguiente.
+Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (6)
+## ABIERTA (9)
 
-### A-13 · break even al toque o con cuerpo
+### A-13 · break even al toque o con cuerpo · pregunta
 
 ¿el rompimiento de la zona de control que dispara el break even vale al toque (por un pip) o hay que esperar a que la vela cierre con cuerpo? El parametro que responde a esto es `break_even_criterio_ruptura`, no `break_even_condicion`: aquel dice CON QUE se da por rota la zona y este si el stop se mueve al TOCAR el nivel o al cierre, que es otra pregunta y la cerro A-4. Hasta el 2026-09-11 esta ambiguedad nombraba el segundo, asi que `spec status` ensenaba como "en revision" un valor CONFIRMED y ESCONDIA el default que de verdad corre
 
 Afecta a: `break_even_criterio_ruptura`.
 
-### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy
+### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
 
-### A-18 · base sobre la que se mide el objetivo 1:3
+### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
 
 ¿el 1:3 se mide sobre la caja completa o sobre la distancia hasta el stop, que es la que dimensiona el lote? Hasta el 2026-09-11 las dos eran la MISMA distancia y la pregunta sonaba academica; desde ADR-0020 el lote se dimensiona hasta stop_fraccion_caja y el objetivo sigue midiendose sobre la caja entera, asi que la respuesta cambia el RR realizado de verdad
 
 Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 
-### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE**
+### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
 el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin retroceso, o pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo unico de la geometria de entrada que sigue siendo cualitativo y que el motor no puede evaluar. ¿cuantas velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa? ESTA AMBIGUEDAD NACIO MAL el 2026-09-10, preguntando que es un breaker; la definicion ya estaba en el corpus y lo que faltaba era recogerla en el glosario. Reformulada el mismo dia
 
-### A-27 · las especificaciones de EURUSD en FTMO
+### A-27 · las especificaciones de EURUSD en FTMO · medicion
 
 MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo, paso de lote y stops level tiene EURUSD en la cuenta de FTMO? Los cinco se midieron el 2026-09-05 en una demo de FundedNext, la firma que ADR-0026 descarta, y se conservan como DEFAULT declarado porque EURUSD tiene las mismas especificaciones en casi cualquier broker: no se heredan como medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y el pre-vuelo de F33 aborta si la cuenta real dice otra cosa
 
 Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
 
-### A-28 · el reloj del servidor de FTMO y su regla de horario de verano
+### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
 MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por delante de UTC en horario estandar, y con que calendario cambia de hora: el de Nueva York, el europeo o ninguno? La ficha de FTMO dice "GMT+2 +DST" sin nombrar el calendario, y lo que midio la demo de FundedNext (120 minutos, calendario de Nueva York) no se hereda (ADR-0026). Desde ADR-0027 este reloj ya no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la regla de horario de verano no. VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario- cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
 
 Afecta a: `broker_offset_base`, `broker_dst`.
+
+### A-29 · cuando nace la orden limite · pregunta
+
+¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema de entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez de M15, en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus dice las dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto rompe la liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14) la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion. PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el trader responda
+
+Afecta a: `orden_limite_nace`.
+
+### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
+
+¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la cancelas, o la dejas puesta y, si se llena despues, la gestionas? A las 15:00 cierras lo que tengas abierto (RN-002), pero de una orden todavia sin llenar no hablaste, y ninguna ambiguedad lo preguntaba: la auditoria del 2026-09-13 midio que, sin respuesta, una limite viva sobrevive al cierre y se llena fuera de la ventana. La accion `retirar_orden_limite` esta declarada y ninguna regla la usa hasta que respondas
+
+### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
+
+una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que no llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida" y actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2
 
 ## DECIDIDA (5)
 

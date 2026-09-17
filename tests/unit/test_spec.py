@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import re
 from pathlib import Path
 from typing import Any
@@ -15,7 +16,13 @@ from botsito.spec.manifiesto import (
     estructura_para_hash,
     hash_de,
 )
-from botsito.spec.modelo import SpecError, cargar_glosario, cargar_reglas, comprobar_contra
+from botsito.spec.modelo import (
+    Regla,
+    SpecError,
+    cargar_glosario,
+    cargar_reglas,
+    comprobar_contra,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 FB = "fb-2026-09-09-sesion-01-846fb0d7"
@@ -595,12 +602,16 @@ def test_por_ninguna_de_las_seis_puertas_entra_un_valor_de_negocio() -> None:
         regla(rs, "RN-020").forma["cuando"]["cualquiera_de"][0]["alcanza_tope"]["tope"] = 9.5
 
     def valor_en_clave_estructural(rs: list[Any]) -> None:
-        regla(rs, "RN-005").forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["que"] = "cuerpo"
+        regla(rs, "RN-005").forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"][
+            "que"
+        ] = "cuerpo"
 
     def ligadura_inventada(rs: list[Any]) -> None:
         r5 = regla(rs, "RN-005")
         r5.forma["cuando"]["todos_de"][0]["liga"] = "alcista"
-        r5.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+        r5.forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"]["sentido"] = (
+            "alcista"
+        )
 
     def prefijo_inventado(rs: list[Any]) -> None:
         regla(rs, "RN-011").forma["entonces"]["hace"][1]["escribir_stop_en_la_orden"]["nivel"] = (
@@ -658,8 +669,8 @@ def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
     de ADR-0002 entrando por la otra puerta- pasaba sin una queja. Ahora se niega por defecto.
 
     Y la contraparte, que es la que hace que la inversion sea usable: una LIGADURA sigue valiendo.
-    RN-005 ata `S` al hecho `sesgo` y se lo pasa a `esta_al_otro_lado_de`; si negar por defecto
-    denunciara eso, la guardia obligaria a romper una regla correcta.
+    RN-005 ata `S` al hecho `sesgo` y se lo pasa a `se_desarrolla_en_el_lado_de_ruido`; si negar
+    por defecto denunciara eso, la guardia obligaria a romper una regla correcta.
     """
     import copy
 
@@ -680,7 +691,7 @@ def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
 
     rota = copy.deepcopy(rn005)
     assert rota.forma is not None
-    rota.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+    rota.forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"]["sentido"] = "alcista"
     problemas = sobre_argumentos([rota])
     assert any("lleva el NOMBRE, no el valor" in p and "alcista" in p for p in problemas), problemas
 
@@ -820,21 +831,29 @@ def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:
             f"{freno}: quien lo fija tiene que seguir viendolo, o el freno dura un tick"
         )
 
-    # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion
+    # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion. Hasta el
+    # 2026-09-16 se exigian DOS reglas que fijaran `operacion_abierta` (RN-010 y RN-013, F14b §0).
+    # ADR-0028 §5 lo deshace: el hecho lo lee el motor del broker, ninguna forma puede fijarlo, y lo
+    # que hace alcanzables a sus consumidores es que la accion que lo provoca exista y se ejecute.
     por_id = {r.id: r for r in reglas}
-    productores = {
-        r.id
-        for r in reglas
-        if isinstance(r.forma, dict)
-        and "operacion_abierta" in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
-    }
-    # DOS productores, y no uno: toda regla que deje una posicion viva tiene que declararlo, o el
-    # cierre forzoso y el break even no la ven. RN-010 se anadio el 2026-09-12: una entrada
-    # activada por un EQUAL se gestionaba (`gestionar_salida`) sin fijar el hecho, asi que era
-    # invisible para RN-002 y RN-014. Lo encontro la auditoria de material, y es el mismo defecto
-    # que F12 encontro con `liquidez_tomada`, en otra regla.
-    assert {"RN-010", "RN-013"} <= productores, f"productores de operacion_abierta: {productores}"
-    for consumidor in ("RN-002", "RN-014"):
+    for derivado in ("operacion_abierta", "orden_limite_pendiente"):
+        h = vocabulario["hechos"][derivado]
+        assert h["origen"] == "broker" and "produce" not in h, derivado
+        assert h["decision"] == "ADR-0028", derivado
+        assert not [
+            r.id
+            for r in reglas
+            if isinstance(r.forma, dict)
+            and derivado in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
+        ], f"{derivado}: una forma lo fija"
+        for accion in h["lo_provoca"]:
+            assert any(
+                isinstance(r.forma, dict)
+                and r.vigente
+                and accion in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
+                for r in reglas
+            ), f"{derivado}: nadie ejecuta {accion}"
+    for consumidor in ("RN-002", "RN-014", "RN-030"):
         forma = por_id[consumidor].forma
         assert isinstance(forma, dict)
         assert "operacion_abierta" in json.dumps(forma.get("cuando", {}), ensure_ascii=False), (
@@ -1049,3 +1068,130 @@ def test_la_puerta_de_spec_check_denuncia_y_nombra_ids() -> None:
         re.match(r"(RN-\d{3}|glosario |predicados |acciones |hecho |acumulador |\w+:)", p)
         for p in problemas
     ), problemas[:5]
+
+
+def _regla_sintetica(
+    rid: str, clase: str, parametros: tuple[str, ...], cuando: Any, **extra: Any
+) -> Regla:
+    return Regla(
+        id=rid,
+        titulo="sintetica",
+        cuando="prosa",
+        entonces="prosa",
+        parametros=parametros,
+        cita=FB,
+        literal="lo dijo asi",
+        estado=extra.pop("estado", "VIGENTE"),
+        clase=clase,
+        forma={"cuando": cuando, "entonces": {"prohibe": ["abrir_operacion"]}},
+        **extra,
+    )
+
+
+def test_cada_denuncia_de_la_precedencia_salta_por_su_cuenta() -> None:
+    """Cuatro denuncias y ninguna probada sola: la de dos `fallback` y la de subconjunto no las
+    ejecutaba ningun test, y la de mismo disparador y la de clon saltaban juntas sobre la misma
+    gemela, asi que apagar cualquiera de las dos dejaba la suite verde (revision de diseno de la
+    rama de fidelidad, 2026-09-16: los cuatro mutantes sobrevivian). Cada caso aqui dispara UNA.
+    """
+    from botsito.spec.modelo import comprobar_precedencia
+
+    ev_a = {"todos_de": [{"alcanza_hora": {"hora": "p_a", "huso": "p_h"}}]}
+    ev_b = {"todos_de": [{"alcanza_hora": {"hora": "p_b", "huso": "p_h"}}]}
+
+    dos_else = [
+        _regla_sintetica("RN-901", "fallback", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "fallback", ("p2",), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(dos_else)
+    assert "fallback" in fallo
+
+    mismo_disparo = [
+        _regla_sintetica("RN-901", "disparador", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "disparador", ("p2",), ev_a),
+    ]
+    (fallo,) = comprobar_precedencia(mismo_disparo)
+    assert "MISMO disparador" in fallo and "RN-901" in fallo and "RN-902" in fallo
+    declarado = [mismo_disparo[0], dataclasses.replace(mismo_disparo[1], complementa=("RN-901",))]
+    assert comprobar_precedencia(declarado) == []
+
+    clones = [
+        _regla_sintetica("RN-901", "gate", ("p1", "p2"), ev_a),
+        _regla_sintetica("RN-902", "gate", ("p1", "p2"), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(clones)
+    assert "exactamente los mismos" in fallo
+
+    subconjunto = [
+        _regla_sintetica("RN-901", "gate", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "gate", ("p1", "p2"), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(subconjunto)
+    assert "subconjunto" in fallo
+    declarado = [subconjunto[0], dataclasses.replace(subconjunto[1], complementa=("RN-901",))]
+    assert comprobar_precedencia(declarado) == []
+
+    # y `complementa` ya no exime por su formato: tiene que apuntar a algo que existe y se ejecuta
+    fantasma = [_regla_sintetica("RN-901", "gate", ("p1",), ev_a, complementa=("RN-777",))]
+    (fallo,) = comprobar_precedencia(fantasma)
+    assert "RN-777" in fallo and "no existe" in fallo
+    a_descartada = [
+        _regla_sintetica("RN-901", "gate", ("p1",), ev_a, complementa=("RN-902",)),
+        _regla_sintetica("RN-902", "gate", ("p9",), ev_b, estado="DESCARTADA"),
+    ]
+    (fallo,) = comprobar_precedencia(a_descartada)
+    assert "DESCARTADA" in fallo
+
+
+def test_una_ligadura_usada_tiene_que_estar_atada_en_un_todos_de() -> None:
+    """La RN-029 anterior al 2026-09-14 cerraba a mercado `de: OP` con OP sin atar: su `cuando`
+    era un `cualquiera_de`. Pasaba todas las guardias porque OP es tambien un token, y lo cazo el
+    consultor a mano. La guardia mira la forma del nombre, no el catalogo.
+    """
+    from botsito.spec.modelo import FICHERO_SPEC, comprobar_ligaduras
+
+    reglas = {r.id: r for r in cargar_reglas(REPO / FICHERO_SPEC)}
+    # NO salta: las que atan OP (o Z, o S) en un todos_de
+    for rid in ("RN-002", "RN-005", "RN-006", "RN-014", "RN-030"):
+        assert comprobar_ligaduras(reglas[rid]) == [], rid
+
+    rn029_vieja = dataclasses.replace(
+        reglas["RN-029"],
+        forma={
+            "cuando": {
+                "cualquiera_de": [
+                    {
+                        "alcanza_tope": {
+                            "acumulador": "perdida_dia_firma",
+                            "tope": "firma_perdida_diaria_max",
+                        }
+                    },
+                    {"hecho": "detenido_por_tope"},
+                ]
+            },
+            "entonces": {
+                "prohibe": ["abrir_operacion", "buscar_entradas"],
+                "hace": [{"cerrar_a_mercado": {"de": "OP", "si": "si"}}],
+            },
+        },
+    )
+    (fallo,) = comprobar_ligaduras(rn029_vieja)
+    assert "RN-029" in fallo and "OP" in fallo
+
+    # SALTA tambien si la atadura vive en una rama de cualquiera_de o de ninguno_de
+    for conector in ("cualquiera_de", "ninguno_de"):
+        rama = dataclasses.replace(
+            reglas["RN-002"],
+            forma={
+                "cuando": {
+                    "todos_de": [
+                        {"alcanza_hora": {"hora": "ventana_fin", "huso": "huso_operativa"}},
+                        {conector: [{"hecho": "operacion_abierta", "liga": "OP"}]},
+                    ]
+                },
+                "entonces": {
+                    "hace": [{"cerrar_a_mercado": {"de": "OP", "si": "cierre_forzoso_fin_ventana"}}]
+                },
+            },
+        )
+        assert comprobar_ligaduras(rama), conector

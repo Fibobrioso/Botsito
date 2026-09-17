@@ -6,6 +6,8 @@ phase: F11
 
 # 0014 · La base sobre la que se mide el objetivo: `base_calculo_objetivo`
 
+> **Nota (2026-09-16, rama de fidelidad de la spec).** Las DOS premisas con las que este ADR eligio la caja completa estan revocadas: que el stop se mueve tras el llenado -A-11 cerro que viaja en la orden desde el principio- y que el lote se dimensiona sobre la caja -ADR-0020-. El argumento "en el instante de trazar la orden la unica distancia que existe es la caja completa" ya no discrimina: en ese instante existen las dos, porque el stop se escribe en la misma orden. La decision NO se cambia en esa rama -cambiar la base cambia el RR realizado- y queda para el consultor, con A-18 abierta. Lo mismo se anota en las notas de RN-015.
+
 > **Enmienda (2026-09-11, ADR-0020).** Este ADR dice que la caja completa es tambien la distancia sobre la que se dimensiona el lote (`lotaje_base: distancia_completa`). **Eso ya no es cierto**: el acuerdo final del lotaje lo mide hasta `stop_fraccion_caja`. Lo que sigue vigente de este ADR es lo que decide de verdad: el OBJETIVO se mide sobre la caja completa. Tambien queda muerto el parrafo de "riesgo nominal frente a riesgo real": desde ADR-0020 no hay dos riesgos -`riesgo_por_operacion` ES lo que cuesta el stop- y RN-012 dice hoy lo contrario de lo que ese parrafo le atribuye.
 
 ## Decision
