@@ -46,6 +46,18 @@ propia sesion (`--objetivo-tipo paquete --objetivo-id <sesion>`). Si el trader d
 visto, es un `REJECT` sobre el mismo objetivo: el mes se anade a `vistos.yaml` citando ese
 `fb-...` en `fuente`, y el paquete se regenera desde cero.
 
+**Cada entrada de `vistos.yaml` lleva `visto_el`** (desde el 2026-09-17): el dia a mas tardar en
+que el trader lo habia visto. Cuenta para un paquete solo si es igual o anterior a la fecha de su
+SESION, la del nombre `AAAA-MM-DD-sesion-NN`, que es el dia en que el trader etiqueta. Asi un mes
+visto despues no borra lo que un paquete anterior pregunto, `kit build` no puede sortearlo en un
+paquete posterior y `knowledge validate` denuncia un paquete escrito que lo tenga.
+
+**Para la sesion 2** (informe `docs/validation/MESES-VISTOS.md`): se etiqueta sobre el paquete de la
+sesion 1, y solo son ciegos sus `dev` de junio. Los `dev` de mayo ya no lo son: el trader entrego el
+backtest de mayo el 2026-09-11, y `kit kappa` lo avisa al comparar cualquier ronda posterior que los
+incluya. La confirmacion escrita de ESTA sesion tiene que decir expresamente que no ha backtesteado
+junio: la de la sesion 1 decia que lo haria.
+
 ## Si cambia la fecha de la sesion
     uv run --no-sync python scripts/mover_sesion.py --a AAAA-MM-DD
     uv run botsito kit hoja
