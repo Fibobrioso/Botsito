@@ -5,6 +5,39 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-17, rama `trabajo/guarda-de-holdout` esperando validacion; lo de debajo es anterior)
+- LA RAMA DE FIDELIDAD ESTA CERRADA EN MAIN (merge e4f761c, tag `stable/F13-fidelidad`, spec 12.0.0).
+  Esta rama sale de ahi y no toca `knowledge/spec/`.
+- LA GUARDA DEL HOLDOUT EXISTE (ADR-0033): hook de auditoria en `tests/guarda_holdout.py`, `autouse`
+  en toda la suite, para CUALQUIER llamante -no solo `spec` y `domain`: restringida a esos dos no
+  veia nada-. Salta con cualquier apertura de `knowledge/cases/holdout/{1,2,3}/**` salvo su README;
+  copiar cuenta, listar no. Un test que la quiera provocar se marca `provoca_holdout` y reapunta la
+  raiz a un holdout sintetico.
+- LA PUERTA: todo lo que ABRE pasa por `botsito.cases.holdout.abrir()`, que se niega sin
+  `PREREGISTRO.md` commiteado y sin la marca `SIN RELLENAR` y sin
+  `docs/validation/AUTORIZACION-<particion>.md` commiteado. Cubre los ficheros del holdout y el
+  VALOR de las etiquetas de casos reservados: `kit kappa` las excluye (`--incluir-holdout` pasa por
+  la puerta) y `feedback trace` las oculta. Cargar registros NO es abrir: `knowledge validate` y la
+  guardia de ancestro no pasan por ella.
+- LAS VELAS NO PASAN POR LA PUERTA, y no pueden: que dias son reservados depende de cuales entran en
+  el universo, y eso de sus velas. `kit build` y `kit check` SE PUEDEN ejecutar con `data/` presente
+  -la obligacion 6 que lo prohibia esta reescrita- y declaran en su salida (`LECTURA:`) los dias
+  reservados cuyas velas leen. Eso desbloquea el paquete de la sesion 2.
+- Lecciones de la rama:
+  - EL RITUAL POR LINEAS `!` EN CLAUDE CODE: cada linea abre una shell nueva, asi que un `export
+    BOTSITO_ALLOW_MAIN=1` no sobrevive a la linea siguiente. La variable va pegada al commit:
+    `BOTSITO_ALLOW_MAIN=1 git commit -m "..."`. El merge, el tag y el push no la necesitan. Y un
+    bloque de varias lineas con `!` delante de cada una falla: `!` solo va al principio del mensaje.
+  - Una obligacion escrita a mano puede ser mas ancha que el problema: "no ejecutar el kit con datos"
+    bloqueaba la sesion 2 para siempre. Antes de escribir una prohibicion, medir que impide.
+  - Una guarda por RUTA no cubre lo que no vive en esa ruta: las etiquetas del holdout estan en
+    `knowledge/feedback/` y en el xlsx. Y quien muestra un valor no es solo quien lo parsea:
+    `feedback trace` imprimia la etiqueta de cualquier caso.
+  - `sys.addaudithook` no se puede quitar; en Windows las copias de `shutil` no emiten `open`; y una
+    guarda que hereda de `Exception` se la traga cualquier `except` del kit.
+  - `os.path.normcase` baja a minusculas en Windows: compara TODO normalizado o `README.md` deja de
+    casar.
+
 ## Estado (2026-09-16, rama `trabajo/fidelidad-de-la-spec` esperando validacion; lo de debajo es anterior)
 - FTMO Y ARQUITECTURA ESTA CERRADA EN MAIN (merge 00ad174, tag `stable/F13-ftmo`). Esta rama sale de
   ahi y lleva la spec a 12.0.0 con un solo bump.
