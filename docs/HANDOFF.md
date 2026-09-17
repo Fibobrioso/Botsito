@@ -5,9 +5,11 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
-## Estado (2026-09-17, rama `trabajo/breaker-m1` esperando validacion; lo de debajo es anterior)
-- HAY DOS RAMAS ABIERTAS A LA VEZ, las dos sobre el mismo commit de main y sin fusionar:
-  `trabajo/reglas-de-la-casa` (docs only: `CLAUDE.md` y `docs/runbooks/RITUAL.md`) y esta.
+## Estado (2026-09-17, rama `trabajo/breaker-m1` validada y pendiente del ritual; lo de debajo es anterior)
+- LAS REGLAS DE LA CASA YA ESTAN EN MAIN (merge 52f579d, tag `stable/F13-reglas`), y esta rama las
+  lleva incorporadas: se fusiono `main` DENTRO de la rama para reconciliar el choque en
+  `PROJECT_STATE.md` y en este fichero. Merge y no rebase: los commits de la rama estan validados y
+  citados por sha en el informe y en PROJECT_STATE, y un rebase los reescribiria.
 - LA CONTRADICCION DEL BREAKER NO ERA UNA CONTRADICCION, y se resolvio MIRANDO LA PANTALLA, no
   razonando: en v4 0:53:12-0:53:17 el grafico esta en M15 (con zonas etiquetadas `m1 lq` y `15 lq`)
   y desde 0:53:18 en M1; lo que rompe con mecha es un NIVEL DIBUJADO al que apunta una flecha -la
@@ -29,6 +31,22 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   evidencia se sale del mecanismo de propuestas; y un CONFIRM sobre un item supersedido queda
   invisible -`kb find` filtra por activos- y sin aviso -`feedback pending` dice REFLEJADO con un
   motivo que ya no es cierto-.
+
+## Estado (2026-09-17, rama `trabajo/reglas-de-la-casa` esperando validacion; lo de debajo es anterior)
+- LOS MESES VISTOS ESTAN CERRADOS EN MAIN (merge 1c2561e, tag `stable/F13-vistos`, CI verde).
+- YA NO SE PEGA EL RITUAL A MANO EN EL CHAT. Hay dos ficheros nuevos, ambos de esta rama:
+  - `CLAUDE.md` en la raiz: lo que toda sesion lee sola. Por donde se empieza, main no se toca, los
+    regimenes de cambio, el trailer `Fuente:`, las TRES guardias de `cita`, las cifras al registro
+    (ADR-0002), el holdout (ADR-0033: leer velas no es abrir), los cuatro sitios de una ambiguedad,
+    las trampas medidas (heredoc y ``, `## Estado` con punto, `make check` a `/dev/null`) y DONDE
+    ESTA EL TEXTO DE LAS TRANSCRIPCIONES. Toda regla se verifico contra el repositorio antes de
+    escribirla; si una deja de ser cierta, se corrige ahi en el mismo commit que la rompe.
+  - `docs/runbooks/RITUAL.md`: el ritual de cierre tal como se ejecuta, con lineas `!`, con sus
+    puertas y con las tres correcciones de esta semana.
+- LA CORRECCION DE PROCESO DEL 2026-09-17: con lineas `!`, `make check` pasa de los 120 s y se va a
+  segundo plano, asi que el push NO se encadena detras en la misma tanda. Se espera el aviso de la
+  tarea y se pushea despues. Ese dia se pusheo antes de saber si pasaba (paso, pero fue suerte).
+- `BOTSITO_ALLOW_MAIN=1` va PEGADA a la linea del `git commit`: cada linea `!` abre una shell nueva.
 
 ## Estado (2026-09-17, rama `trabajo/meses-vistos` esperando validacion; lo de debajo es anterior)
 - LA GUARDA DEL HOLDOUT ESTA CERRADA EN MAIN (merge 44a9fc1, tag `stable/F13-guarda`).
