@@ -1335,7 +1335,7 @@ def _kit_errores() -> tuple[type[Exception], ...]:
 
 def kit_build(repo: Path, args: argparse.Namespace) -> int:
     """Genera el paquete de una sesion (F10, ADR-0011). Exige los datos en data/."""
-    from botsito.cases.paquete import construir, escribir
+    from botsito.cases.paquete import construir, escribir, lectura_de_velas
 
     try:
         paquete = construir(repo, _carpeta_datos(repo), args.sesion, args.seed)
@@ -1343,6 +1343,9 @@ def kit_build(repo: Path, args: argparse.Namespace) -> int:
     except _kit_errores() as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
+    # Construir ya leyo las velas: que dias eran reservados solo se sabe despues (ADR-0033).
+    for linea in lectura_de_velas(repo, _carpeta_datos(repo), paquete.asignacion):
+        print(linea)
     dev = sum(1 for v in paquete.asignacion.values() if v == "dev")
     print(
         f"OK: {carpeta.relative_to(repo).as_posix()}: {len(paquete.preguntas)} preguntas, "
@@ -1353,10 +1356,15 @@ def kit_build(repo: Path, args: argparse.Namespace) -> int:
 
 
 def kit_check(repo: Path, args: argparse.Namespace) -> int:
-    from botsito.cases.paquete import comprobar
+    from botsito.cases.paquete import comprobar, esquema_paquete, lectura_de_velas
     from botsito.feedback.modelo import cargar_feedback
 
     try:
+        # ANTES de comprobar, que es lo que lee las velas: la asignacion ya esta escrita y leerla
+        # no lee ninguna vela (ADR-0033). Si algo falla despues, la lectura ya quedo declarada.
+        _, _, particiones = esquema_paquete(repo, args.sesion)
+        for linea in lectura_de_velas(repo, _carpeta_datos(repo), particiones["asignacion"]):
+            print(linea)
         # Si la sesion ya se celebro, su paquete es historico y no tiene que reproducirse: el
         # registro tiene ya las respuestas y el cuestionario de hoy preguntaria otra cosa.
         directorio = repo / "knowledge" / "feedback"
@@ -1404,13 +1412,17 @@ def kit_hoja(repo: Path, args: argparse.Namespace) -> int:
 
 
 def kit_kappa(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.cases.holdout import HoldoutCerradoError
     from botsito.cases.paquete import kappa_entre_sesiones
     from botsito.feedback.modelo import cargar_feedback
 
+    errores: tuple[type[Exception], ...] = (*_kit_errores(), HoldoutCerradoError)
     try:
         registros = cargar_feedback(repo / "knowledge" / "feedback")
-        r = kappa_entre_sesiones(repo, registros, args.sesion_a, args.sesion_b)
-    except _kit_errores() as exc:
+        r = kappa_entre_sesiones(
+            repo, registros, args.sesion_a, args.sesion_b, incluir_holdout=args.incluir_holdout
+        )
+    except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     for a in r.avisos:
@@ -2022,6 +2034,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     kb_kappa.add_argument("--sesion-a", dest="sesion_a", required=True)
     kb_kappa.add_argument("--sesion-b", dest="sesion_b", required=True)
+    kb_kappa.add_argument(
+        "--incluir-holdout",
+        dest="incluir_holdout",
+        action="store_true",
+        help=(
+            "lee tambien las etiquetas de los dias reservados: ABRE su holdout y exige "
+            "autorizacion commiteada y PREREGISTRO relleno (ADR-0021 §3, ADR-0033)"
+        ),
+    )
     kb_hoja = kit_sub.add_parser("hoja", help="compone la hoja de respuestas en Word (.docx)")
     kb_hoja.add_argument("--sesion", help="AAAA-MM-DD-sesion-NN (por defecto, la ultima del kit)")
     kb_hoja.add_argument("--salida", help="ruta del .docx (por defecto, en la raiz del repo)")

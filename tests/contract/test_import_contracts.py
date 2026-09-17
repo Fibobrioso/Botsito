@@ -192,3 +192,43 @@ def test_evidence_no_importa_corpus() -> None:
     for py in paquete.rglob("*.py"):
         malos = {m for m in _imports(py) if any(m.startswith(f) for f in FORBIDDEN_FOR_EVIDENCE)}
         assert not malos, f"{py.name} importa {sorted(malos)}"
+
+
+@pytest.mark.contract
+def test_solo_la_puerta_nombra_la_carpeta_del_holdout(repo: Path) -> None:
+    """ADR-0033: el unico modulo de `src/` que puede nombrar `knowledge/cases/holdout` es la puerta.
+
+    Se comprueba por texto, no por buena fe: la ruta con barra, y la ruta construida con `/` sobre
+    `Path` (`"cases" / "holdout"`). Leer la ASIGNACION de particiones no nombra la carpeta.
+    """
+    import re
+
+    patron = re.compile(r"""cases/holdout|["']cases["']\s*/\s*["']holdout["']""")
+    puerta = repo / "src" / "botsito" / "cases" / "holdout.py"
+    infractores = [
+        py.relative_to(repo).as_posix()
+        for py in (repo / "src" / "botsito").rglob("*.py")
+        if py != puerta and patron.search(py.read_text(encoding="utf-8"))
+    ]
+    assert infractores == [], f"nombran la carpeta del holdout fuera de la puerta: {infractores}"
+    assert patron.search(puerta.read_text(encoding="utf-8")), "la puerta tiene que nombrarla"
+
+
+@pytest.mark.contract
+def test_el_valor_de_una_etiqueta_solo_se_lee_con_los_reservados_excluidos(repo: Path) -> None:
+    """ADR-0033: leer el VALOR de un `LABEL_CASE` de un dia reservado es abrir su holdout.
+
+    `parsear_etiqueta` es lo unico que lee ese valor, y solo lo llama `etiquetas_de_registros`,
+    que exige `excluir` por argumento obligatorio. A esa, solo la llama `kappa_entre_sesiones`, que
+    excluye los reservados o pasa por la puerta. Si alguien anade otro lector, este test lo nombra.
+    """
+    import re
+
+    llamadas: dict[str, list[str]] = {"parsear_etiqueta(": [], "etiquetas_de_registros(": []}
+    for py in (repo / "src" / "botsito").rglob("*.py"):
+        texto = py.read_text(encoding="utf-8")
+        for nombre in llamadas:
+            if re.search(r"(?<!def )\b" + re.escape(nombre), texto):
+                llamadas[nombre].append(py.relative_to(repo).as_posix())
+    assert sorted(llamadas["parsear_etiqueta("]) == ["src/botsito/cases/kappa.py"]
+    assert sorted(llamadas["etiquetas_de_registros("]) == ["src/botsito/cases/paquete.py"]

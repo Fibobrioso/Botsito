@@ -40,6 +40,7 @@ addopts = "-q -ra"
 markers = [
   "contract: contratos estructurales (importaciones, arbol, documentos)",
   "golden: casos de la biblioteca (desde F14)",
+  "provoca_holdout: el test abre material de holdout A PROPOSITO para ver saltar la guarda (ADR-0033)",
 ]
 
 [tool.ruff]

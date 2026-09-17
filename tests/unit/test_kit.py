@@ -27,6 +27,7 @@ from botsito.cases.paquete import (
     comprobar,
     construir,
     escribir,
+    lectura_de_velas,
     validar_paquetes,
 )
 from botsito.cases.particiones import ParticionError, asignar, clave_orden
@@ -156,6 +157,14 @@ def _item(**cambios: Any) -> dict[str, Any]:
     }
     d.update(cambios)
     return d
+
+
+def _sin_holdout(directorio: str, nombres: list[str]) -> set[str]:
+    """`ignore` de `copytree`: nada de `holdout/{1,2,3}` salvo su README (copiar es leer)."""
+    partes = Path(directorio).parts
+    if len(partes) >= 2 and partes[-2] == "holdout" and partes[-1] in {"1", "2", "3"}:
+        return {n for n in nombres if n != "README.md"}
+    return set()
 
 
 def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
@@ -539,14 +548,44 @@ def _registro_label(repo: Path, sesion: str, caso: str, valor: str, **extra: Any
     return escribir_registro(repo / "knowledge" / "feedback", campos).stem
 
 
+def _autorizar(repo: Path, particiones: list[str]) -> None:
+    """Git, PREREGISTRO relleno, ADR y una autorizacion commiteada por particion, en un repo de
+    PRUEBA. Nunca en el real: el PREREGISTRO del proyecto sigue vacio a proposito (ADR-0033)."""
+    import subprocess
+
+    def git(*args: str) -> None:
+        subprocess.run(
+            ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+            check=True,
+            capture_output=True,
+        )
+
+    validation = repo / "docs" / "validation"
+    validation.mkdir(parents=True, exist_ok=True)
+    (validation / "PREREGISTRO.md").write_text("# PREREGISTRO\n\numbral: 0.8\n", encoding="utf-8")
+    (repo / "docs" / "adr" / "0099-apertura.md").write_text("# 99\n", encoding="utf-8")
+    for particion in particiones:
+        (validation / f"AUTORIZACION-{particion}.md").write_text(
+            f"particion: {particion}\nautorizado_por: el usuario\nfecha: 2026-10-01\n"
+            f"adr: ADR-0099\n",
+            encoding="utf-8",
+        )
+    if not (repo / ".git").is_dir():
+        git("init", "-q")
+    git("add", "-A")
+    git("commit", "-q", "-m", "autoriza")
+
+
 def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     repo, _ = repo_kit(tmp_path)
     base = ["--repo", str(repo), "kit"]
     assert cli.main([*base, "build", "--sesion", "2026-09-15-sesion-01", "--seed", "3"]) == 0
-    assert "5 casos (2 dev)" in capsys.readouterr().out
+    salida_build = capsys.readouterr().out
+    assert "5 casos (2 dev)" in salida_build
     assert cli.main([*base, "build", "--sesion", "2026-09-15-sesion-01", "--seed", "3"]) == 1
     assert "no se sobreescribe" in capsys.readouterr().err
     assert cli.main([*base, "check", "--sesion", "2026-09-15-sesion-01"]) == 0
+    salida_check = capsys.readouterr().out
     assert cli.main([*base, "check", "--sesion", "2026-09-15-sesion-09"]) == 1
     capsys.readouterr()
     doc = yaml.safe_load(
@@ -554,6 +593,25 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
             encoding="utf-8"
         )
     )
+    # ADR-0033: build y check DECLARAN en su salida que leen velas y de que dias reservados, por
+    # nombre, sin una cifra de velas ni un precio. Se comprueba la salida, no la intencion.
+    reservados = {
+        p: sorted(c[-10:] for c, x in doc["asignacion"].items() if x == p)
+        for p in ("holdout-1", "holdout-2", "holdout-3")
+    }
+    for salida in (salida_build, salida_check):
+        assert "LECTURA: se leen las velas M1 de" in salida
+        assert "no es abrir un holdout (ADR-0021 §1)" in salida
+        for particion, dias in reservados.items():
+            assert (
+                f"LECTURA: {particion}, {len(dias)} dias cuyas velas se leen: " + ", ".join(dias)
+                in salida
+            )
+        assert "sha256:" not in salida and "n_velas:" not in salida
+    # la LECTURA va antes del OK: en check se declara antes de leer
+    assert salida_check.index("LECTURA:") < salida_check.index("OK:")
+    # sin datos no se lee ninguna vela, y no se declara nada
+    assert lectura_de_velas(repo, tmp_path / "sin-datos", doc["asignacion"]) == []
     casos = sorted(doc["asignacion"])
     s1, s2 = "2026-09-15-sesion-01", "2026-09-22-sesion-02"
     for i, c in enumerate(casos):
@@ -564,7 +622,20 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
             c,
             "07-11: venta; 11-15: no_trade" if i < 4 else "07-11: compra; 11-15: no_trade",
         )
+    # Por defecto NO se leen las etiquetas de los casos reservados (ADR-0033): el kit sintetico
+    # tiene 2 dev y 3 reservados, asi que quedan 2 casos x 2 sesiones H4 = 4 unidades.
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2]) == 0
+    out = capsys.readouterr()
+    assert "unidades: 4" in out.out
+    assert "3 casos reservados excluidos sin leer su etiqueta" in out.err
+    # Pedir abrirlas se niega: no hay git, ni PREREGISTRO relleno, ni autorizacion
+    assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 1
+    err = capsys.readouterr().err
+    assert "ADR-0021 §3" in err and "PREREGISTRO.md" in err
+    assert "unidades" not in err
+    # Con la autorizacion commiteada, el preregistro relleno y el ADR, se abren: las 10 unidades
+    _autorizar(repo, ["holdout-1", "holdout-2", "holdout-3"])
+    assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 0
     out = capsys.readouterr()
     assert "unidades: 10" in out.out and "po: 0.900" in out.out and "kappa: 0.818" in out.out
     assert kp.calcular(
@@ -575,13 +646,13 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     with pytest.raises(kp.EtiquetaError, match="dos LABEL_CASE activos"):
         kp.etiquetas_de_registros(
-            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
         )
     _registro_label(repo, s2, casos[4], "07-11: venta; 11-15: no_trade", supersede=viejo, notas="y")
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     with pytest.raises(kp.EtiquetaError, match="dos LABEL_CASE activos"):
         kp.etiquetas_de_registros(
-            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
         )
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", "2026-01-01-sesion-09"]) == 1
 
@@ -761,7 +832,7 @@ def test_kappa_con_supersede_en_cadena(tmp_path: Path) -> None:
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     with pytest.raises(kp.EtiquetaError, match="dos LABEL_CASE activos"):
         kp.etiquetas_de_registros(
-            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
         )
     original = next(
         r.id
@@ -775,7 +846,7 @@ def test_kappa_con_supersede_en_cadena(tmp_path: Path) -> None:
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     with pytest.raises(kp.EtiquetaError, match="dos LABEL_CASE activos"):
         kp.etiquetas_de_registros(
-            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
         )
     # dejamos una sola cadena viva: supersedemos `d` con uno que apunte a `ultimo`? No: un
     # registro supersede a UN registro; la cadena valida es original <- d y a <- b <- c. Cerramos
@@ -784,7 +855,7 @@ def test_kappa_con_supersede_en_cadena(tmp_path: Path) -> None:
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     with pytest.raises(kp.EtiquetaError, match="dos LABEL_CASE activos"):
         kp.etiquetas_de_registros(
-            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+            registros, s2, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
         )
     # Conclusion del test: cada caso admite UNA cadena; dos cadenas vivas son error hasta que
     # una supersede a la otra. Comprobamos la ronda con la cadena unica en otro caso:
@@ -888,7 +959,7 @@ def test_una_etiqueta_retirada_con_borderline_no_reaparece(tmp_path: Path) -> No
     )
     registros = cargar_feedback(repo / "knowledge" / "feedback")
     unidades = kp.etiquetas_de_registros(
-        registros, sesion, ["07-11", "11-15"], ["compra", "venta", "no_trade"]
+        registros, sesion, ["07-11", "11-15"], ["compra", "venta", "no_trade"], excluir=frozenset()
     )
     assert unidades == {}, "la etiqueta retirada por el BORDERLINE seguia contando"
 
@@ -1128,7 +1199,7 @@ def test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad(tmp_path: Pat
         destino.mkdir()
         for carpeta in ("knowledge", "docs", "config"):
             if (REPO / carpeta).is_dir():
-                shutil.copytree(REPO / carpeta, destino / carpeta)
+                shutil.copytree(REPO / carpeta, destino / carpeta, ignore=_sin_holdout)
         return destino
 
     def problemas_con(cambio: tuple[str, str]) -> list[str]:

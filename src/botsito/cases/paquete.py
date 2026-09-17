@@ -383,6 +383,46 @@ def _manifiestos_del_kit(repo: Path, config: Config) -> list[dict[str, Any]]:
     return salida
 
 
+def hay_datos_del_kit(repo: Path, carpeta_datos: Path, config: Config) -> bool:
+    """Si estan en `carpeta_datos` los ficheros de todos los datasets del kit."""
+    manifiestos_kit = _manifiestos_del_kit(repo, config)
+    return bool(manifiestos_kit) and all(
+        (carpeta_datos / str(f["ruta"])).is_file() for m in manifiestos_kit for f in m["ficheros"]
+    )
+
+
+def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]) -> list[str]:
+    """Lo que `kit build` y `kit check` declaran en su salida ANTES de leer velas (ADR-0033).
+
+    Construir o comprobar un paquete lee las velas M1 de TODOS los dias del universo, reservados
+    incluidos: que dias son reservados depende de cuales entran, y eso de sus velas. No es abrir un
+    holdout (ADR-0021 §1), pero hasta el 2026-09-17 pasaba en silencio, y el 2026-09-13 paso dos
+    veces sin que nadie lo viera en la salida. Sin datos no se lee nada y no se declara nada.
+
+    Nombra los dias -no cifras de velas ni precios-: la asignacion ya esta commiteada en
+    `particiones.yaml`, y lo que importa es que quien ejecuta sepa QUE ha tocado.
+    """
+    config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
+    if not hay_datos_del_kit(repo, carpeta_datos, config):
+        return []
+    from botsito.cases.holdout import PARTICIONES_RESERVADAS
+
+    datasets = sorted(str(m["dataset_id"]) for m in _manifiestos_del_kit(repo, config))
+    lineas = [
+        f"LECTURA: se leen las velas M1 de {', '.join(datasets)} en {carpeta_datos.name}/ -todos "
+        f"los dias del universo, reservados incluidos- para recalcular n_velas, sha256 y limites "
+        f"H4 de sus ventanas. Ninguna etiqueta y ningun precio: no es abrir un holdout (ADR-0021 "
+        f"§1), y se declara (ADR-0033)"
+    ]
+    for particion in PARTICIONES_RESERVADAS:
+        dias = sorted(caso[-10:] for caso, p in asignacion.items() if p == particion)
+        if dias:
+            lineas.append(
+                f"LECTURA: {particion}, {len(dias)} dias cuyas velas se leen: {', '.join(dias)}"
+            )
+    return lineas
+
+
 def construir(
     repo: Path, carpeta_datos: Path, sesion: str, seed: int, indice: Indice | None = None
 ) -> Paquete:
@@ -550,13 +590,7 @@ def comprobar(
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
     if ventanas.get("config") != config.doc:
         problemas.append(f"{sesion}: config.yaml cambio despues de generar el paquete")
-    datasets = {str(m["dataset_id"]) for m in _manifiestos_del_kit(repo, config)}
-    hay_datos = all(
-        (carpeta_datos / str(f["ruta"])).is_file()
-        for m in _manifiestos_del_kit(repo, config)
-        for f in m["ficheros"]
-    ) and bool(datasets)
-    if not hay_datos:
+    if not hay_datos_del_kit(repo, carpeta_datos, config):
         avisos.append(
             f"{sesion}: datos de los datasets ausentes en {carpeta_datos.name}/: solo esquema"
         )
@@ -667,13 +701,59 @@ def validar_paquetes(
     return problemas, avisos
 
 
-def kappa_entre_sesiones(repo: Path, registros: list[FeedbackRecord], a: str, b: str) -> Any:
+def kappa_entre_sesiones(
+    repo: Path,
+    registros: list[FeedbackRecord],
+    a: str,
+    b: str,
+    incluir_holdout: bool = False,
+) -> Any:
+    """Kappa entre dos rondas, SIN leer las etiquetas de los dias reservados (ADR-0033).
+
+    Leer la etiqueta de un caso asignado a `holdout-1/2/3` es abrir ese holdout (ADR-0021 §1), y el
+    kappa las leia todas. Ahora se excluyen y se dice cuantas; con `incluir_holdout` se pide
+    abrirlas, y la puerta se niega salvo autorizacion del usuario y PREREGISTRO relleno (§3).
+    """
+    from botsito.cases.holdout import abrir, casos_reservados
     from botsito.cases.kappa import calcular, etiquetas_de_registros
 
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
+    reservados = casos_reservados(repo)
+    # Solo el OBJETIVO del registro (el id del caso), nunca su valor: saber que un caso reservado
+    # tiene etiqueta no es leerla.
+    etiquetados = {
+        r.objetivo.id
+        for r in registros
+        if r.accion == "LABEL_CASE" and r.sesion in (a, b) and r.objetivo.id in reservados
+    }
+    por_particion: dict[str, int] = {}
+    for caso in etiquetados:
+        por_particion[reservados[caso]] = por_particion.get(reservados[caso], 0) + 1
+    if incluir_holdout:
+        for particion in sorted(por_particion):
+            abrir(repo, particion, f"kit kappa entre {a} y {b}")
+        excluir: frozenset[str] = frozenset()
+    else:
+        excluir = frozenset(etiquetados)
     try:
-        ra = etiquetas_de_registros(registros, a, config.nombres_sesiones, config.etiquetas)
-        rb = etiquetas_de_registros(registros, b, config.nombres_sesiones, config.etiquetas)
-        return calcular(ra, rb, config.etiquetas)
+        ra = etiquetas_de_registros(
+            registros, a, config.nombres_sesiones, config.etiquetas, excluir=excluir
+        )
+        rb = etiquetas_de_registros(
+            registros, b, config.nombres_sesiones, config.etiquetas, excluir=excluir
+        )
+        resultado = calcular(ra, rb, config.etiquetas)
     except EtiquetaError as exc:
-        raise KitError(str(exc)) from exc
+        pista = (
+            " (las etiquetas de los dias reservados no se leen sin abrir su holdout, ADR-0033)"
+            if excluir
+            else ""
+        )
+        raise KitError(f"{exc}{pista}") from exc
+    if excluir:
+        detalle = ", ".join(f"{p}: {n}" for p, n in sorted(por_particion.items()))
+        resultado.avisos.append(
+            f"{len(excluir)} casos reservados excluidos sin leer su etiqueta ({detalle}); "
+            f"abrirlos exige autorizacion y PREREGISTRO (ADR-0021 §3)"
+        )
+    return resultado
