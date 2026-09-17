@@ -1299,7 +1299,10 @@ def comprobar_forma(
     hechos_usados: set[str] = set()
     reales: dict[str, dict[str, list[str]]] = {}
     for r in reglas:
-        if not isinstance(r.forma, dict):
+        # Solo las VIGENTES producen o consumen de verdad: una DESCARTADA que conservara su forma
+        # contaba como productor real y tapaba un hecho que nadie produce (auditoria de cierre de la
+        # rama de fidelidad, 2026-09-16, con un mutante). `_acciones_ejecutadas` ya filtraba.
+        if not r.vigente or not isinstance(r.forma, dict):
             continue
         for papel, rama in (("consume", "cuando"), ("produce", "entonces")):
             for nombre in _hechos_nombrados(r.forma.get(rama)):

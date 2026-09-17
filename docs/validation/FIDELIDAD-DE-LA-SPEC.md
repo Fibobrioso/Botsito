@@ -136,14 +136,39 @@ del límite diario). La guardia no se ha bajado para ninguno.
 
 ## 6. La auditoría de cierre
 
-*Pendiente de completar con el resultado de los dos auditores (código y spec; documentos y proceso).*
+Dos agentes en paralelo (Sonnet, solo lectura, prohibido `kit check`, `kit build`, `data/` y el
+holdout): uno sobre código, spec y tests, con mutantes en memoria contra las funciones reales; otro
+sobre ADR, documentos vivos y proceso.
+
+**Lo que comprobaron y se sostiene.**
+- Cada cita con minuto de las notas nuevas está en la transcripción, incluido el sesgo bajista de
+  `ev-v3-001725` por contexto (v3 0:12:34 y 0:15:08).
+- La aritmética cuadra: 4.388,99, 478,06, 4.867,05, 4,9775 %, 5,475 %, 10,45 % y 111.111,11.
+- Los ocho mutantes pedidos hacen saltar su guardia, y apagar `comprobar_ligaduras` o
+  `comprobar_vocabulario` rompe tests reales.
+- Las tres guardias de cita recorren `acciones`.
+- Hay un solo bump del manifiesto, 11.1.0 → 12.0.0.
+- Los directorios inmutables no se tocaron.
+- Los ids del trailer `Fuente:` existen.
+- No hay caracteres de control en los ficheros tocados.
+- Los ADR dicen lo que el código hace.
+
+| Hallazgo | Gravedad | Quién | Qué se hizo |
+|---|---|---|---|
+| `PROJECT_STATE`, índice de ADR: ADR-0028 seguía diciendo «la spec todavía fija `operacion_abierta` y `orden_limite_pendiente`» | grave | documentos | **Corregido** |
+| `comprobar_forma` contaba como productor real a una regla DESCARTADA que conservara su forma (mutante: RN-013 con una forma que fija `detenido_por_tope` pasaba). Latente: hoy ninguna descartada conserva forma | media | código | **Corregido** (solo cuentan las vigentes) y **test** del mutante |
+| ADR-0031 e informe: «la décima solo se abriría con un margen por debajo de 0,13»; el umbral exacto es 0,133, así que con 0,13 también se abre | media | código | **Corregido** en los dos |
+| `Current Feature` de PROJECT_STATE seguía diciendo que lo siguiente era el brief de esta misma rama | media | documentos | **Corregido** |
+| `firma_margen_seguridad` es CONFIRMED y su descripción dice «decisión pendiente de validar»; no sale en `spec status` | menor | código | **No se cambia el estado, y se dice por qué**: la cierra un ADR, no el trader ni una medición, así que no cabe en una ambigüedad; lo que falta es la validación de esta rama, y está en §7. Si el valor cambia al validar, cambia en el registro y en ADR-0031 antes del merge |
+| MASTER_PLAN, fila del veto de riesgo: solo nombraba RN-029 y RN-030 | menor | documentos | **Corregido**: nombra RN-031, RN-032 y el margen |
+| El literal de «cerrar un equal» (v6 1:52:26) puntúa como pregunta una frase que el ASR da como afirmación | menor | código | **Sin cambio**: es el `respuesta_literal` del registro de feedback, copiado tal cual, y la guardia de literales lo compara por tokens |
 
 ## 7. Qué debe decidir el usuario
 
 1. **¿Validar la rama y hacer el ritual** (§9)?
 2. **El valor del margen de la firma, 0,5** (ADR-0031). Implica que, con 100.000 o más al empezar el
-   día, la décima pérdida seguida del día no se abre. Con 0,25 pasaría lo mismo; solo por debajo
-   de ~0,13 se volvería a abrir. Mientras la pérdida del día más el riesgo de la operación siguiente
+   día, la décima pérdida seguida del día no se abre. Con 0,25 pasaría lo mismo; solo con 0,13 o
+   menos (el umbral exacto es 0,133) se volvería a abrir. Mientras la pérdida del día más el riesgo de la operación siguiente
    quede por debajo de 4.500, el margen no cambia nada. ¿0,5, otro valor, o se prefiere que el
    margen sea exactamente un riesgo por operación?
 3. **A-29, el default de cuándo nace la orden.** Corre con `al_darse_el_esquema`, que es la única

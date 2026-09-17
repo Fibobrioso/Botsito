@@ -125,6 +125,23 @@ def test_un_hecho_del_broker_sin_accion_que_lo_provoque_salta(spec: Any) -> None
     assert any("colocar_orden_limite" in f and "NINGUNA regla vigente" in f for f in fallos)
 
 
+def test_una_regla_descartada_no_cuenta_como_productor_real(spec: Any) -> None:
+    """Mutante de la auditoria de cierre: RN-013 DESCARTADA con una forma que fija
+    `detenido_por_tope`, declarada productora, pasaba sin una queja."""
+    reglas, vocabulario, parametros, tipos = spec
+    fija = {
+        "cuando": {"todos_de": [{"salta_stop": {}}]},
+        "entonces": {
+            "hace": [{"fijar": {"hecho": "detenido_por_tope", "a": "hasta_el_corte_siguiente"}}]
+        },
+    }
+    con_forma = [dataclasses.replace(r, forma=fija) if r.id == "RN-013" else r for r in reglas]
+    voc = copy.deepcopy(vocabulario)
+    voc["hechos"]["detenido_por_tope"]["produce"] = ["RN-013", "RN-020", "RN-029"]
+    fallos = comprobar_forma(con_forma, voc, parametros, tipos=tipos)
+    assert any("detenido_por_tope" in f and "produce" in f for f in fallos), fallos
+
+
 def test_un_predicado_del_broker_o_del_bot_declara_quien_lo_provoca(spec: Any) -> None:
     reglas, vocabulario, _, _ = spec
     voc = copy.deepcopy(vocabulario)

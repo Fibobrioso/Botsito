@@ -79,7 +79,7 @@ comisiones, o que el equity cruce el umbral y RN-030 cierre a mercado con desliz
   riesgo de la décima (0,5 % de 95.611,01 = 478,06) da 4.867,05, por encima de 4.500. Con el tope del
   trader solo, se abría y acababa en ~4,87 %. Es un día de nueve pérdidas; con tres cartuchos por
   zona hacen falta al menos tres zonas perdidas enteras. Con 0,25 pasaría lo mismo (4.867,05 >
-  4.750); la décima solo se abriría con un margen por debajo de 0,13. Mientras la pérdida del día
+  4.750); la décima solo se abriría con un margen de 0,13 o menos (el umbral exacto es 132,95 / 1.000 = 0,133). Mientras la pérdida del día
   más el riesgo de la operación siguiente quede por debajo de 4.500 -en la práctica, una pérdida
   acumulada por debajo de ~4.000-, el margen no cambia nada.
 - **Ningún control discreto cubre un gap mayor que el margen.** Si el precio salta el stop y el
