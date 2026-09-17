@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-Ninguna abierta. Cerrada en `main` el 2026-09-17: la rama de la guarda del holdout (merge 44a9fc1, tag `stable/F13-guarda`). Lo siguiente es el paquete de la sesion 2 -A-29 como prioridad, con A-30 y A-31-, y detras F14b y F14.
+Rama de trabajo `trabajo/meses-vistos` (sin numero de funcionalidad; tag previsto `stable/F13-vistos`): cierra el hueco de proceso de `knowledge/cases/kit/vistos.yaml` -un mes visto por el trader despues de construir un paquete no puede borrar lo que ese paquete pregunto- con una fecha por mes visto, declara mayo 2026 visto, pone la guardia en `kit build` y decide sobre que etiqueta la sesion 2. Sin tocar `knowledge/spec/` (spec 12.0.0). Informe: `docs/validation/MESES-VISTOS.md`. Antes de esta rama: Ninguna abierta. Cerrada en `main` el 2026-09-17: la rama de la guarda del holdout (merge 44a9fc1, tag `stable/F13-guarda`). Lo siguiente es el paquete de la sesion 2 -A-29 como prioridad, con A-30 y A-31-, y detras F14b y F14.
 
 ## Current Branch
-main
+trabajo/meses-vistos
 
 ## Stable Main State
 44a9fc1 · merge de `trabajo/guarda-de-holdout` (tag `stable/F13-guarda`), sobre el merge de fidelidad de la spec (e4f761c, tag stable/F13-fidelidad). Entra ADR-0033: la guarda de tests deja de ser un stub y es un hook de auditoria `autouse` que vigila a cualquier llamante; la puerta (`botsito.cases.holdout`) exige una autorizacion commiteada por particion con el pre-registro fijado por su blob (`preregistro_blob`), y `PREREGISTRO.md` sigue vacio; `kit build` y `kit check` declaran por recuento las velas reservadas que leen; `kit kappa` excluye los casos reservados y dice sobre cuantas unidades calculo; y la obligacion 6 de HOLDOUT-EXPOSICIONES, reescrita: leer velas no es abrir. La spec no se movio: 12.0.0, mismo hash.
