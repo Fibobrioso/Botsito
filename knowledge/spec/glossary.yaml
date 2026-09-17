@@ -88,9 +88,10 @@ terminos:
     alias: [activacion sin ruptura, equal (la salida)]
     definicion: >-
       el precio activa la orden y la posicion se cierra con lo que el trader llama un equal; se
-      vuelve a entrar y no se gasta intento. En la spec es el cierre de una operacion que se activo
-      sin ruptura (RN-010, RN-019). Esa correspondencia es lectura nuestra de v6 1:22:25-1:23:19, donde
-      el trader describe una entrada activada sin validar que un equal saca con perdida
+      vuelve a entrar y no se gasta intento. En la spec es el cierre en negativo, sin que lo cerrara
+      ningun stop, de una operacion que se activo sin ruptura (RN-010, RN-019). Esa correspondencia es
+      lectura nuestra de v6 1:22:25-1:23:19, donde el trader describe una entrada activada sin validar
+      que un equal saca con perdida; si la misma entrada se va al stop entero, lo pregunta A-31
     cita: fb-2026-09-09-sesion-01-060cd801
     literal: >-
       Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar [...] ¿y

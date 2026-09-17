@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 12.0.0` · hash `683748bc94ea…`
+`spec_version 12.0.0` · hash `7b56ead497c8…`
 
 73 en total: 64 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -162,7 +162,7 @@ desfase base del reloj del servidor, medido en el terminal y no supuesto. En la 
 
 ### `cartucho_criterio`
 
-que cuenta como cartucho gastado; el trader dice que solo una perdida. Ni el break even -que se clasifica por mecanismo, no por el P/L neto de costes- ni la perdida de una operacion que se activo sin ruptura cuentan: la reentrada despues de un equal no es un intento (RN-016, RN-019)
+que cuenta como cartucho gastado. LO QUE DIJO EL TRADER: solo una perdida, y no cuentan un break even, una entrada invalidada ni la reentrada despues de un equal. LO QUE ES NUESTRO (RN-016, RN-019): que el break even se clasifica por mecanismo -el stop que RN-014 llevo a la entrada- y no por el P/L neto de costes; que "la reentrada despues de un equal" se lee como la salida en negativo SIN stop de una entrada que se activo sin ruptura, que no suma; y que un cierre en el que salto el stop de stop_fraccion_caja suma sea cual sea la activacion, que el trader no dijo y pregunta A-31
 
 Opciones: `solo_perdida`, `todo_intento`.
 
@@ -246,7 +246,7 @@ Opciones: `saldo`, `equity`.
 
 ### `firma_margen_seguridad`
 
-cuanto antes de cada limite de la firma saltan sus frenos (RN-029, RN-030, RN-031) y deja de caber una operacion nueva (RN-032). Llegar al limite ya es la infraccion, asi que frenar en el limite no evita perder la cuenta. El margen es el colchon para lo que la lectura prospectiva no ve: deslizamiento, gap, costes y el equity flotante antes de que un cierre se ejecute. El valor es una DECISION DEL CONSULTOR PENDIENTE DE VALIDAR (ADR-0031): con el, en un dia que empieza en el capital inicial o por encima, la decima perdida seguida del dia ya no se abre. No cubre un gap mayor que el propio margen
+cuanto antes de cada limite de la firma saltan sus frenos (RN-029, RN-030, RN-031) y deja de caber una operacion nueva (RN-032). Llegar al limite ya es la infraccion, asi que frenar en el limite no evita perder la cuenta. El margen es el colchon para lo que la lectura prospectiva no ve: deslizamiento, gap, costes y el equity flotante antes de que un cierre se ejecute. El valor lo VALIDO EL CONSULTOR el 2026-09-17 (ADR-0031): 0,5 % del capital inicial es aproximadamente un riesgo nominal, y como riesgo_por_operacion va sobre el saldo actual y encoge con el drawdown, el colchon solo crece. Con el, en un dia que empieza en el capital inicial o por encima, la decima perdida seguida del dia ya no se abre. No cubre un gap mayor que el propio margen
 
 ### `firma_mensajes_dia_max`
 

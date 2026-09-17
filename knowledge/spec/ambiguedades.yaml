@@ -515,7 +515,9 @@ ambiguedades:
       liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14)
       la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de
       RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que
-      reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion
+      reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion.
+      PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el trader
+      responda
     resuelve_en: [F20, F22]
     evidencia:
       - ev-v3-004201-bfeb3734
@@ -540,6 +542,30 @@ ambiguedades:
     resuelve_en: [F22, F23]
     evidencia:
       - ev-v4-011514-fe34ac7e
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-31
+    titulo: el stop entero de una entrada que se activo sin ruptura
+    pregunta: >-
+      una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no
+      cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de
+      equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que no
+      llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida" y
+      actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec
+      corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y
+      con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra
+      (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2
+    resuelve_en: [F21, F22]
+    # la entrada que se activa por un equal sin romper y la salida antes del stop (A-3); el tramo de
+    # la sesion 1 no tiene item de evidencia propio y va por minuto en la pregunta
+    evidencia:
+      - ev-v4-010759-514b5d7d
+      - ev-v4-010326-875c8067
     parametros: []
     contradiccion: null
     estado: ABIERTA

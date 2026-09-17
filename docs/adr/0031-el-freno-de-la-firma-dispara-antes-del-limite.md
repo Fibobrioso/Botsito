@@ -11,8 +11,9 @@ phase: post-F13 (antes de F18-F24)
 1. **Nace `firma_margen_seguridad`** (`prop_firm`, porcentaje del capital inicial
    `saldo_inicial_cuenta`, fuente este ADR). Los dos límites de la firma se vigilan en
    `firma_perdida_diaria_max − firma_margen_seguridad` y en `firma_perdida_total_max −
-   firma_margen_seguridad`, no en el límite. **Valor: 0,5**, a validar por el consultor (ver
-   «Lo que queda abierto»).
+   firma_margen_seguridad`, no en el límite. **Valor: 0,5**, validado por el consultor el
+   2026-09-17: 0,5 % del capital inicial es aproximadamente un riesgo nominal, y como
+   `riesgo_por_operacion` va sobre el saldo actual y encoge con el drawdown, el colchón solo crece.
 2. **El margen se aplica a las tres reglas de la firma**: RN-029 (detiene por el día), RN-031
    (detiene para siempre por el total, nace en esta rama) y RN-030 (cierra a mercado la posición
    viva). Las tres leen el acumulador sobre equity (`firma_magnitud_vigilada`).
@@ -73,8 +74,8 @@ comisiones, o que el equity cruce el umbral y RN-030 cierre a mercado con desliz
 
 ## Lo que queda abierto, y conviene no creer que está cerrado
 
-- **El valor 0,5 es una decisión del consultor pendiente de validar**, no un dato medido. Lo que
-  implica: con el margen y la prospectiva, en un día que empieza con 100.000 o más, la décima
+- **El valor 0,5 es una decisión del consultor, validada el 2026-09-17**, no un dato medido. Lo
+  que implica: con el margen y la prospectiva, en un día que empieza con 100.000 o más, la décima
   pérdida seguida del día ya no se abre: tras nueve, `s05a` mide 4.388,99 de pérdida, y sumando el
   riesgo de la décima (0,5 % de 95.611,01 = 478,06) da 4.867,05, por encima de 4.500. Con el tope del
   trader solo, se abría y acababa en ~4,87 %. Es un día de nueve pérdidas; con tres cartuchos por

@@ -88,9 +88,9 @@ ADR-0018 prohíbe. RN-001 lee el hecho nuevo.
 | **1 · ADR-0028 §5** | `operacion_abierta` y `orden_limite_pendiente` con `origen: broker`, `decision: ADR-0028` y `lo_provoca: [colocar_orden_limite]`. RN-010, RN-011 y RN-013 dejan de fijarlos. Fijarlos salta con el id de la regla | ADR-0032; `comprobar_forma`; F14b §0 anotado como deshecho |
 | **2.1 · RN-005** | El predicado pasa a `se_desarrolla_en_el_lado_de_ruido`, con `lado_de_ruido: {alcista: por_encima, bajista: por_debajo}`. Dos citas, una por sentido: RN-005 cita el bajista (`ev-v3-001725`, «la operativa está por encima no por debajo»), el predicado el alcista (`ev-v1-001306`, «nuestra operativa tiene que estar por debajo») | `alcista` y `bajista` **no** son tokens a propósito: si lo fueran, `sentido: alcista` volvería a pasar la guardia de argumentos que cerró F13 |
 | **2.2 · colocar** | `colocar_orden_limite` (con `efecto`). **RN-011** prepara: con `toca_colocar_orden_limite` (momento según `orden_limite_nace`) y sin orden pendiente ni posición viva, dimensiona el lote, escribe el stop y fija `orden_dimensionada` con la zona. **RN-015** coloca: escribe el objetivo, envía la orden y apaga el hecho. `se_coloca_orden_limite` y `vuelve_a_dar_el_esquema` desaparecen. `retirar_orden_limite` queda **declarada y sin regla**: lo de la pendiente a las 15:00 es **A-30** | ADR-0032 |
-| **2.3 · `equal`** | El token `equal` desaparece. Quedan `activacion_sin_ruptura` (cómo se activó), `break_even` (resultado, clasificado por **mecanismo** y no por el P/L neto de costes) y `cualquier_resultado` / `cualquier_activacion`. `se_cierra_operacion` gana el argumento `por` y declara su conjunto cerrado de valores. RN-016 solo gasta con `por: cualquier_esquema`; RN-019 dispara con `por: activacion_sin_ruptura`. El glosario conserva `equal` como geometría y gana «cerrar un equal» | Sin renombrar parámetros (§2.2) |
+| **2.3 · `equal`** | El token `equal` desaparece. Quedan `activacion_sin_ruptura` (cómo se activó), `break_even` (resultado, clasificado por **mecanismo** y no por el P/L neto de costes) y `cualquier_resultado` / `cualquier_activacion`. `se_cierra_operacion` gana el argumento `por` y declara su conjunto cerrado de valores. RN-016 solo gasta con `por: cualquier_esquema`; RN-019 dispara con `por: activacion_sin_ruptura`. **Corregido el 2026-09-17 (§10)**: el resultado gana `salto_el_stop`, el stop entero gasta sea cual sea la activación, y RN-019 solo dispara con la salida en rojo sin stop. El glosario conserva `equal` como geometría y gana «cerrar un equal» | Sin renombrar parámetros (§2.2) |
 | **2.4 · el instante** | Stop (RN-011) y objetivo (RN-015) se escriben antes de enviar, en la cadena que coloca la orden. Ninguna regla los escribe ya al llenarse. RN-013 queda **DESCARTADA por absorbida**: sin sus dos `fijar` y sin reescribir el stop, su `hace` quedaba vacío, y lo que afirma (un único stop) es ahora cierto por construcción. La base del objetivo **no se toca**: se anota en RN-015, en la cabecera de ADR-0014 y en la descripción de `base_calculo_objetivo`, que usaba la premisa revocada | Test: la única regla que coloca escribe el objetivo antes |
-| **3 · margen** | `firma_margen_seguridad` (0,5, **a validar**). RN-029 (diario) y RN-031 (total) frenan en límite − margen; RN-030 cierra ahí; **RN-032** es la lectura prospectiva, solo para la firma. El tope del trader (RN-020) no cambia de lectura: su desbordamiento queda declarado en sus notas | ADR-0031 |
+| **3 · margen** | `firma_margen_seguridad` (0,5, **validado por el consultor el 2026-09-17**, §7). RN-029 (diario) y RN-031 (total) frenan en límite − margen; RN-030 cierra ahí; **RN-032** es la lectura prospectiva, solo para la firma. El tope del trader (RN-020) no cambia de lectura: su desbordamiento queda declarado en sus notas | ADR-0031 |
 | **4 · `clase`** | `medicion | pregunta` en `ambiguedades.yaml`: opcional en el esquema y obligatoria por guardia en toda ABIERTA (en `knowledge validate`). El cuestionario no incluye mediciones. `spec status` separa «falta preguntarlo» de «falta medirlo». A-16, A-27 y A-28 son medición; A-13, A-18, A-21, A-29 y A-30, pregunta | `abiertas_sin_clase`; test con el cuestionario real, sin `data/` |
 | **5 · RN-030** | `terminal`, como su gemela RN-002. ADR-0018: el gate «prohíbe o frena»; el terminal cierra y gana a mover un stop, que es lo que hace falta frente a RN-014. Medido: como terminal, `comprobar_precedencia` da `[]` con y sin `complementa`; como gate sin él, denuncia el subconjunto. `complementa: [RN-029, RN-031]` se conserva porque dice la verdad | Test propio de la clase; y el de los cuatro mutantes |
 | **6 · ligadura** | `comprobar_ligaduras`: toda ligadura usada (en `entonces` y en `cuando`) tiene que estar atada en un camino de `todos_de` desde la raíz. Mira la forma del nombre, no el catálogo. Falla con la RN-029 de antes del 2026-09-14; pasan RN-002, RN-005, RN-006, RN-014 y RN-030 | Commit propio, antes que la spec |
@@ -163,27 +163,21 @@ sobre ADR, documentos vivos y proceso.
 | MASTER_PLAN, fila del veto de riesgo: solo nombraba RN-029 y RN-030 | menor | documentos | **Corregido**: nombra RN-031, RN-032 y el margen |
 | El literal de «cerrar un equal» (v6 1:52:26) puntúa como pregunta una frase que el ASR da como afirmación | menor | código | **Sin cambio**: es el `respuesta_literal` del registro de feedback, copiado tal cual, y la guardia de literales lo compara por tokens |
 
-## 7. Qué debe decidir el usuario
+## 7. Lo que decidió el usuario (2026-09-17)
 
-1. **¿Validar la rama y hacer el ritual** (§9)?
-2. **El valor del margen de la firma, 0,5** (ADR-0031). Implica que, con 100.000 o más al empezar el
-   día, la décima pérdida seguida del día no se abre. Con 0,25 pasaría lo mismo; solo con 0,13 o
-   menos (el umbral exacto es 0,133) se volvería a abrir. Mientras la pérdida del día más el riesgo de la operación siguiente
-   quede por debajo de 4.500, el margen no cambia nada. ¿0,5, otro valor, o se prefiere que el
-   margen sea exactamente un riesgo por operación?
-3. **A-29, el default de cuándo nace la orden.** Corre con `al_darse_el_esquema`, que es la única
-   frase que nombra el momento, pero la sesión 1 (v6 1:22:14) describe la orden ya puesta antes de
-   validar. ¿Se deja el default hasta preguntarlo, o se prefiere la otra lectura, reescribiendo
-   RN-008 en otra rama? Con el default, RN-010 (activación sin ruptura) se vuelve difícil de alcanzar.
-4. **RN-019, lectura nuestra.** Todo cierre de una operación activada sin ruptura habilita la
-   reentrada sin gastar cartucho, aunque no haya equal. ¿Aceptable, o se lleva a la sesión 2 junto
-   con A-29?
-5. **RN-013 DESCARTADA por absorbida.** No se descarta lo que dijo el trader (el stop es único): se
-   descarta una forma que se quedaba vacía. ¿Se acepta el estado, o se prefiere conservarla
-   VIGENTE con otra forma?
-6. **ADR-0032 punto 3** precisa ADR-0028 §4: una acción con `efecto` no se ejecuta si un gate
-   prohíbe ese efecto en ese instante, y el resto de la regla sí. Es la semántica que F22-F23 tienen
-   que implementar. ¿De acuerdo?
+Las seis preguntas de este apartado quedaron respondidas en la revisión del consultor:
+
+1. **La rama**: revisada, con una corrección posterior al informe (§10) antes del ritual.
+2. **Margen de la firma: 0,5, CONFIRMADO.** Motivo del consultor: 0,5 % del capital inicial es
+   aproximadamente un riesgo nominal, y como `riesgo_por_operacion` va sobre el saldo actual y
+   encoge con el drawdown, el colchón solo crece. Escrito en ADR-0031 y en la descripción de
+   `firma_margen_seguridad`, sin el «a validar».
+3. **A-29: se queda el default `al_darse_el_esquema`**, y A-29 queda anotada como prioridad de la
+   sesión 2.
+4. **RN-019: aceptada CON la corrección de §10.** La reentrada sin gastar cartucho ya no alcanza a
+   una entrada activada sin ruptura que se va al stop entero.
+5. **RN-013 DESCARTADA por absorbida: aceptada.**
+6. **ADR-0032 punto 3: aceptado.**
 
 ## 8. Cómo comprobarlo
 
@@ -232,6 +226,54 @@ unset BOTSITO_ALLOW_MAIN
 Entre el merge y el `docs(state)`, `state check` falla a propósito. Si `make check` falla en el
 paso de después, no se pushea. La CI que cuenta es la del `docs(state)`:
 `curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/<sha>/check-runs`.
+
+## 10. Hallazgo posterior al informe, y qué se hizo (2026-09-17)
+
+**Lo encontró el consultor al revisar.** RN-016 solo gastaba cartucho con `por: cualquier_esquema`.
+Una operación activada sin ruptura que se iba al stop de `stop_fraccion_caja` -el riesgo entero-
+llegaba como `perdida` con `por: activacion_sin_ruptura`: **no gastaba intento, y RN-019 habilitaba
+reentrar**. El trader exime tres casos -break even, entrada invalidada y reentrada después de un
+equal- y ninguno es ese. El equal que describe (v6 1:23:13-1:23:19) es una salida que **no** llega
+al stop: «te saque la entrada, te genera una pérdida», distinto del caso de «ya nos saca con menos
+0.80» que acaba de describir en 1:23:01-1:23:09. La exención del 2026-09-16 era ancha de más, y
+además la descripción de `cartucho_criterio` atribuía esa lectura al trader dentro de un parámetro
+CONFIRMED cuya fuente es su registro.
+
+**Se puede expresar sin inventar nada, y se expresó.** Que cierre el stop es un evento del bróker
+que la spec ya tenía (`salta_stop`, RN-012), así que el resultado del cierre lo distingue por
+mecanismo, igual que ya distinguía el break even:
+
+| Resultado | Cuándo |
+|---|---|
+| `salto_el_stop` (nuevo) | lo cierra el stop en `stop_fraccion_caja`: el riesgo entero |
+| `break_even` | lo cierra el stop que RN-014 llevó a la entrada |
+| `perdida` / `ganancia` | no lo cierra ningún stop; por su signo |
+
+- **RN-016** gasta cartucho con `salto_el_stop` y cualquier activación, y con `perdida` (sin stop)
+  solo si la operación vino de un esquema.
+- **RN-019** dispara solo con `perdida` y `por: activacion_sin_ruptura`: la salida en rojo sin stop,
+  que es el equal del trader.
+- El token `cualquier_resultado` desaparece: ya nadie lo usa.
+- **`cartucho_criterio`**: la descripción separa lo que dijo el trader (solo una pérdida; no cuentan
+  break even, entrada invalidada ni reentrada tras un equal) de lo que es nuestro (el break even por
+  mecanismo, la lectura del equal como salida sin stop, y que el stop entero gasta).
+- **Glosario**, «cerrar un equal»: es la salida en negativo sin stop, y el stop entero de esa misma
+  entrada remite a A-31.
+- **A-31** (pregunta, sesión 2): «una entrada que se activó sin ruptura y se fue al stop entero,
+  ¿gasta intento?». Cita el literal de RN-016 y el tramo de v6 1:22:25-1:23:19, que no tiene item de
+  evidencia propio. Por eso sus `evidencia` son los de la entrada que se activa por un equal y se
+  cierra antes del stop (`ev-v4-010759-514b5d7d`, `ev-v4-010326-875c8067`). `resuelve_en` son
+  funcionalidades por esquema (`F21`, `F22`): lo de la sesión 2 va en la pregunta. A-24..A-26
+  siguen reservadas.
+- **Test** (`test_el_stop_entero_gasta_cartucho_aunque_la_entrada_se_activara_sin_ruptura`): stop
+  saltado sobre una entrada activada sin ruptura gasta y no habilita reentrar; el cierre en rojo sin
+  stop de esa entrada no gasta y RN-019 dispara. Contra la forma anterior, la primera aserción falla.
+
+**`spec_version` se queda en 12.0.0**, como decidió el consultor: la rama no se ha fusionado. El hash
+cambia (683748bc94ea… → 7b56ead497c8…) y el manifiesto se regeneró. Consecuencia medida:
+`version_sin_subir` compara con HEAD, así que `spec check` da error mientras el cambio está sin
+commitear y vuelve a verde en cuanto se commitea. En la historia de la rama quedan dos hashes bajo
+12.0.0, y en `main` entrará solo el último.
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

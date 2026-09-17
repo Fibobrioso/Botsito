@@ -221,13 +221,18 @@ predicados:
     # un equal y "te genera una perdida" (v6 1:23:13-1:23:19)- cerraba como `perdida`: RN-016
     # gastaba cartucho y RN-019 no disparaba, contra el literal de abajo. Ahora el resultado se
     # clasifica por MECANISMO y COMO se activo la operacion viaja aparte, en `por`.
+    # 2026-09-17: el mecanismo gana `salto_el_stop`. Sin el, una operacion activada sin ruptura que
+    # se iba al stop de stop_fraccion_caja -el riesgo entero- llegaba como `perdida` con `por:
+    # activacion_sin_ruptura`, no gastaba cartucho y RN-019 habilitaba reentrar. El trader exime
+    # tres casos y ninguno es ese; el equal que describe es una salida que NO llega al stop.
     descripcion: >-
-      la posicion deja de estar viva. `resultado`: `break_even` si salta el stop que RN-014 llevo a
-      la entrada, sea cual sea el P/L neto de costes; `ganancia` o `perdida` en cualquier otro
-      cierre, por su signo. `por`: como se activo la operacion que se cierra (ver se_activa_entrada)
+      la posicion deja de estar viva. `resultado`, por MECANISMO: `salto_el_stop` si la cierra el stop
+      en stop_fraccion_caja; `break_even` si la cierra el stop que RN-014 llevo a la entrada; y si no
+      la cierra ningun stop, `ganancia` o `perdida` por su signo. El P/L neto de costes no cambia la
+      clase. `por`: como se activo la operacion que se cierra (ver se_activa_entrada)
     argumentos: [resultado, por]
     valores:
-      resultado: [ganancia, perdida, break_even, cualquier_resultado]
+      resultado: [ganancia, perdida, break_even, salto_el_stop]
       por: [primer_esquema, segundo_esquema, cualquier_esquema, activacion_sin_ruptura, cualquier_activacion]
     fuente: broker
     lo_provoca: [colocar_orden_limite]
@@ -437,16 +442,20 @@ tokens:
   cualquier_activacion:
     descripcion: cualquier forma de activarse, por un esquema o sin ruptura
   ganancia:
-    descripcion: la operacion cerro en positivo, por cualquier via que no sea el break even
+    descripcion: la operacion cerro en positivo sin que la cerrara ningun stop
   perdida:
-    descripcion: la operacion cerro en negativo, por cualquier via que no sea el break even
+    descripcion: >-
+      la operacion cerro en negativo sin que la cerrara ningun stop: un cierre a mercado, o la salida
+      por un equal que describe el trader (v6 1:23:13-1:23:19), que no llega al stop
+  salto_el_stop:
+    descripcion: >-
+      la cerro el stop en stop_fraccion_caja: la perdida del riesgo entero (RN-012), sea cual sea el
+      P/L neto de deslizamiento y costes. Gasta cartucho sea cual sea la activacion (RN-016)
   break_even:
     descripcion: >-
       salto el stop que RN-014 llevo a la entrada. Se clasifica por MECANISMO, no por el P/L neto:
       con comisiones o deslizamiento cierra unos dolares en negativo y sigue siendo un break even,
       que no gasta cartucho (cartucho_criterio)
-  cualquier_resultado:
-    descripcion: cualquier resultado de cierre
 
 # Estado del bot, no geometria del mercado. Cada hecho dice QUIEN lo produce y QUIEN lo consume:
 # un hecho que nadie consume es una regla que no sirve para nada, y uno que nadie produce es una
@@ -1085,10 +1094,20 @@ reglas:
       despues de un equal no es un intento (el literal)-; y el break even es su propio resultado
       (`break_even`), clasificado por mecanismo, asi que unos dolares de comision no lo convierten
       en perdida. Hasta entonces esa perdida llegaba como `perdida` y gastaba cartucho, contra el
-      literal de esta misma regla
+      literal de esta misma regla. CORREGIDO EL 2026-09-17: la exencion del 2026-09-16 era ANCHA DE
+      MAS. Eximia toda perdida de una operacion activada sin ruptura, tambien la que se va al stop de
+      stop_fraccion_caja y cuesta el riesgo entero, y el trader exime tres casos -break even, entrada
+      invalidada y reentrada despues de un equal- y ninguno es ese: el equal que describe es una
+      salida que no llega al stop. Ahora gasta cartucho todo cierre en que salto ese stop, se
+      activara como se activara, y una perdida SIN stop solo si la operacion vino de un esquema. Que
+      el stop entero de una activacion sin ruptura gaste es LECTURA NUESTRA y es A-31; que no gaste
+      la salida en rojo sin stop de esa activacion, tambien, y es la de RN-019
     forma:
       cuando:
         cualquiera_de:
+          - todos_de:
+              - se_cierra_operacion: {resultado: salto_el_stop, por: cualquier_activacion}
+              - alcanza_tope: {acumulador: cartuchos, tope: cartuchos_max}
           - todos_de:
               - se_cierra_operacion: {resultado: perdida, por: cualquier_esquema}
               - alcanza_tope: {acumulador: cartuchos, tope: cartuchos_max}
@@ -1143,7 +1162,9 @@ reglas:
 
   - id: RN-019
     titulo: se puede reentrar tras un equal sin gastar cartucho
-    cuando: se cierra la operacion en curso y se habia activado sin ruptura, lo que el trader llama cerrar un equal
+    cuando: >-
+      se cierra en negativo la operacion en curso, que se habia activado sin ruptura, sin que la
+      cerrara ningun stop: lo que el trader llama cerrar un equal
     entonces: >-
       se puede volver a entrar segun reentrada_tras_equal, por la via normal de colocacion, y ese
       cierre no suma al contador
@@ -1160,13 +1181,16 @@ reglas:
       operacion, y la reentrada la hace la colocacion de siempre (RN-011 y RN-015) cuando vuelva a
       tocar, con los gates delante: `reentrar` ya no envia nada. LECTURA NUESTRA, declarada: el
       trader habla de una entrada activada sin validar que un equal saca (v6 1:22:25-1:23:19); la
-      spec no tiene forma de reconocer el equal en si, y trata igual todo cierre de una operacion
-      activada sin ruptura. Cuando se reentra -en cuanto se cierra o al volver a darse la condicion de
-      colocar- depende de A-29
+      spec no tiene forma de reconocer el equal en si. Del 2026-09-16 al 2026-09-17 trataba igual
+      TODO cierre de una operacion activada sin ruptura, incluido el stop entero, que el trader no
+      eximio nunca: ahora solo la salida en negativo que no cerro ningun stop, que es la que el
+      describe ("te saque la entrada, te genera una perdida", v6 1:23:13-1:23:19). Si el stop entero
+      de una activacion sin ruptura gasta intento lo pregunta A-31. Cuando se reentra -en cuanto se
+      cierra o al volver a darse la condicion de colocar- depende de A-29
     forma:
       cuando:
         todos_de:
-          - se_cierra_operacion: {resultado: cualquier_resultado, por: activacion_sin_ruptura}
+          - se_cierra_operacion: {resultado: perdida, por: activacion_sin_ruptura}
       entonces:
         hace:
           - reentrar: {segun: reentrada_tras_equal, cuenta_como: cartucho_criterio}

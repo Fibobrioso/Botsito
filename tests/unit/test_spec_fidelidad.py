@@ -221,7 +221,7 @@ def test_la_pendiente_a_las_15_esta_declarada_como_ambiguedad_y_no_supuesta(spec
 # ---------------------------------------------------------------- 2.3 · el caso de v6 1:23:13
 
 
-_COMODINES = {"cualquier_resultado": None, "cualquier_activacion": None}
+_COMODINES = {"cualquier_activacion": None}
 
 
 def _casa(esperado: str, real: str) -> bool:
@@ -258,13 +258,38 @@ def test_cerrar_un_equal_con_perdida_no_gasta_cartucho_y_habilita_la_reentrada(s
     assert not _dispara_con_cierre(por_id["RN-019"], "perdida", "segundo_esquema")
     # un break even no gasta cartucho, tenga el P/L neto que tenga
     assert not _dispara_con_cierre(por_id["RN-016"], "break_even", "primer_esquema")
+    assert not _dispara_con_cierre(por_id["RN-016"], "break_even", "activacion_sin_ruptura")
+
+
+def test_el_stop_entero_gasta_cartucho_aunque_la_entrada_se_activara_sin_ruptura(
+    spec: Any,
+) -> None:
+    """Hallazgo posterior al informe (2026-09-17): la exencion era ancha de mas. Una operacion
+    activada sin ruptura que se iba al stop de stop_fraccion_caja -el riesgo entero- no gastaba
+    intento y RN-019 habilitaba reentrar. El trader exime el break even, la entrada invalidada y la
+    reentrada tras un equal, y el equal que describe no llega al stop. Lo que queda es A-31."""
+    reglas, vocabulario, _, _ = spec
+    por_id = _por_id(reglas)
+    # stop saltado sobre una entrada activada sin ruptura: GASTA, y no habilita reentrar
+    assert _dispara_con_cierre(por_id["RN-016"], "salto_el_stop", "activacion_sin_ruptura")
+    assert not _dispara_con_cierre(por_id["RN-019"], "salto_el_stop", "activacion_sin_ruptura")
+    # y sobre un esquema, igual
+    assert _dispara_con_cierre(por_id["RN-016"], "salto_el_stop", "segundo_esquema")
+    # cierre en rojo SIN stop de esa misma entrada: no gasta, y RN-019 si dispara
+    assert not _dispara_con_cierre(por_id["RN-016"], "perdida", "activacion_sin_ruptura")
+    assert _dispara_con_cierre(por_id["RN-019"], "perdida", "activacion_sin_ruptura")
+    # el mecanismo esta declarado, no inventado en el test
+    assert (
+        "salto_el_stop" in vocabulario["predicados"]["se_cierra_operacion"]["valores"]["resultado"]
+    )
+    assert "cualquier_resultado" not in vocabulario["tokens"]
 
 
 def test_ningun_token_equal_y_el_cierre_declara_su_conjunto_de_resultados(spec: Any) -> None:
     reglas, vocabulario, _, _ = spec
     assert "equal" not in vocabulario["tokens"]
     valores = vocabulario["predicados"]["se_cierra_operacion"]["valores"]
-    assert {"ganancia", "perdida", "break_even"} <= set(valores["resultado"])
+    assert {"ganancia", "perdida", "break_even", "salto_el_stop"} <= set(valores["resultado"])
     assert "activacion_sin_ruptura" in valores["por"]
     # y la guardia compara lo que las formas pasan con ese conjunto
     rn017 = _por_id(reglas)["RN-017"]

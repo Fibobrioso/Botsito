@@ -22,10 +22,15 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - HECHOS DEL BROKER: `operacion_abierta` y `orden_limite_pendiente` llevan `origen: broker`,
   `decision` y `lo_provoca`; fijarlos en una forma es un error. F14b §0 quedo deshecho y anotado.
 - `equal` YA NO ES TOKEN. El resultado de un cierre es `ganancia | perdida | break_even` (break even
-  por mecanismo, no por P/L neto) y como se activo va en `por`. NO SE PUEDE RENOMBRAR un parametro
+  por mecanismo, no por P/L neto) y como se activo va en `por`. Desde el 2026-09-17 el mecanismo
+  distingue tambien `salto_el_stop`: el stop entero GASTA cartucho sea cual sea la activacion, y
+  solo la salida en rojo SIN stop de una entrada activada sin ruptura (el equal del trader) no gasta
+  y habilita RN-019. Que el stop entero gaste es lectura nuestra: A-31, sesion 2, junto a A-29, que
+  el consultor marco como prioridad. NO SE PUEDE RENOMBRAR un parametro
   que nombra un registro de feedback: `knowledge validate` pasa todos los registros, tambien los
   supersedidos, contra el registro.
-- LA FIRMA FRENA ANTES DEL LIMITE (ADR-0031): `firma_margen_seguridad` = 0,5, VALOR A VALIDAR; RN-029
+- LA FIRMA FRENA ANTES DEL LIMITE (ADR-0031): `firma_margen_seguridad` = 0,5, VALIDADO por el
+  consultor el 2026-09-17 (un riesgo nominal de colchon, que crece con el drawdown); RN-029
   diario, RN-031 total con `detenido_por_tope_total: permanente`, RN-032 prospectiva, RN-030
   `terminal`. El tope del trader (RN-020) no cambia de lectura.
 - Lecciones de la rama:
@@ -41,6 +46,12 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
     de cifras en letra: "en la zona de control que la ancla", "la operacion en curso".
   - Otra vez los heredocs: dos scripts de Python con f-strings y comillas simples no llegaron a
     ejecutarse en Git Bash. Scripts largos, con Write al scratchpad.
+  - Una exencion se escribe con los casos que el trader nombra, no con una clase que los contiene:
+    "activada sin ruptura" contenia el equal que el eximio y el stop entero, que no eximio. Lo
+    cazo el consultor al revisar, no una guardia.
+  - `spec_version` fijo con la spec cambiada: `version_sin_subir` compara con HEAD, asi que da rojo
+    hasta commitear y verde despues. Si hay que corregir la spec de una rama sin fusionar sin subir
+    la version, se corrige, se regenera el manifiesto y se commitea antes de `make check`.
   - No ejecutar `kit check` ni `kit build` para probar el cuestionario: con `data/` presente leen
     velas de dias reservados. El test llama a `cuestionario.generar` con `_cargar_todo` y sin indice.
 

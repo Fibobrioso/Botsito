@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 12.0.0` · hash `683748bc94ea…`
+`spec_version 12.0.0` · hash `7b56ead497c8…`
 
 27 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -576,7 +576,7 @@
 - **Entonces**: suma al contador solo si fue perdida (cartucho_criterio); al llegar a cartuchos_max se deja de operar hasta cartuchos_reinicio
 - **Parametros**: `cartuchos_max`, `cartucho_criterio`, `cartuchos_reinicio`
 - **Cita**: `fb-2026-09-09-sesion-01-aa2abe65` — *«un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento»*
-- **Notas**: el contador NO es diario; se reinicia con la siguiente liquidez de M15. DESDE EL 2026-09-16 el cierre lleva `por`: una perdida de una operacion activada SIN RUPTURA no suma -es lo que el trader llama cerrar un equal, "te genera una perdida" (v6 1:23:13-1:23:19), y la reentrada despues de un equal no es un intento (el literal)-; y el break even es su propio resultado (`break_even`), clasificado por mecanismo, asi que unos dolares de comision no lo convierten en perdida. Hasta entonces esa perdida llegaba como `perdida` y gastaba cartucho, contra el literal de esta misma regla
+- **Notas**: el contador NO es diario; se reinicia con la siguiente liquidez de M15. DESDE EL 2026-09-16 el cierre lleva `por`: una perdida de una operacion activada SIN RUPTURA no suma -es lo que el trader llama cerrar un equal, "te genera una perdida" (v6 1:23:13-1:23:19), y la reentrada despues de un equal no es un intento (el literal)-; y el break even es su propio resultado (`break_even`), clasificado por mecanismo, asi que unos dolares de comision no lo convierten en perdida. Hasta entonces esa perdida llegaba como `perdida` y gastaba cartucho, contra el literal de esta misma regla. CORREGIDO EL 2026-09-17: la exencion del 2026-09-16 era ANCHA DE MAS. Eximia toda perdida de una operacion activada sin ruptura, tambien la que se va al stop de stop_fraccion_caja y cuesta el riesgo entero, y el trader exime tres casos -break even, entrada invalidada y reentrada despues de un equal- y ninguno es ese: el equal que describe es una salida que no llega al stop. Ahora gasta cartucho todo cierre en que salto ese stop, se activara como se activara, y una perdida SIN stop solo si la operacion vino de un esquema. Que el stop entero de una activacion sin ruptura gaste es LECTURA NUESTRA y es A-31; que no gaste la salida en rojo sin stop de esa activacion, tambien, y es la de RN-019
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -584,6 +584,22 @@
 {
   "cuando": {
     "cualquiera_de": [
+      {
+        "todos_de": [
+          {
+            "se_cierra_operacion": {
+              "por": "cualquier_activacion",
+              "resultado": "salto_el_stop"
+            }
+          },
+          {
+            "alcanza_tope": {
+              "acumulador": "cartuchos",
+              "tope": "cartuchos_max"
+            }
+          }
+        ]
+      },
       {
         "todos_de": [
           {
@@ -685,11 +701,11 @@
 ### RN-019 · se puede reentrar tras un equal sin gastar cartucho
 
 - **Clase**: `disparador`
-- **Cuando**: se cierra la operacion en curso y se habia activado sin ruptura, lo que el trader llama cerrar un equal
+- **Cuando**: se cierra en negativo la operacion en curso, que se habia activado sin ruptura, sin que la cerrara ningun stop: lo que el trader llama cerrar un equal
 - **Entonces**: se puede volver a entrar segun reentrada_tras_equal, por la via normal de colocacion, y ese cierre no suma al contador
 - **Parametros**: `reentrada_tras_equal`, `cartucho_criterio`
 - **Cita**: `fb-2026-09-09-sesion-01-060cd801` — *«Sí, esto no gasta intentos, me dijiste, ¿no? No»*
-- **Notas**: HASTA EL 2026-09-16 NO PODIA DISPARAR NUNCA, por dos motivos. Su forma pedia `se_cierra_operacion: {resultado: equal}`, y el caso que el trader describe cierra con perdida -"te genera una perdida" (v6 1:23:13-1:23:19)-, asi que llegaba como `perdida`, y encima RN-016 gastaba cartucho. Y unia en un `todos_de` ese cierre, que es un evento del broker, con `vuelve_a_dar_el_esquema`, que se evalua al cierre de M1: con las fases de ADR-0028 los dos pulsos no coinciden nunca. Ahora dispara con el cierre solo, reconocido por COMO se activo la operacion, y la reentrada la hace la colocacion de siempre (RN-011 y RN-015) cuando vuelva a tocar, con los gates delante: `reentrar` ya no envia nada. LECTURA NUESTRA, declarada: el trader habla de una entrada activada sin validar que un equal saca (v6 1:22:25-1:23:19); la spec no tiene forma de reconocer el equal en si, y trata igual todo cierre de una operacion activada sin ruptura. Cuando se reentra -en cuanto se cierra o al volver a darse la condicion de colocar- depende de A-29
+- **Notas**: HASTA EL 2026-09-16 NO PODIA DISPARAR NUNCA, por dos motivos. Su forma pedia `se_cierra_operacion: {resultado: equal}`, y el caso que el trader describe cierra con perdida -"te genera una perdida" (v6 1:23:13-1:23:19)-, asi que llegaba como `perdida`, y encima RN-016 gastaba cartucho. Y unia en un `todos_de` ese cierre, que es un evento del broker, con `vuelve_a_dar_el_esquema`, que se evalua al cierre de M1: con las fases de ADR-0028 los dos pulsos no coinciden nunca. Ahora dispara con el cierre solo, reconocido por COMO se activo la operacion, y la reentrada la hace la colocacion de siempre (RN-011 y RN-015) cuando vuelva a tocar, con los gates delante: `reentrar` ya no envia nada. LECTURA NUESTRA, declarada: el trader habla de una entrada activada sin validar que un equal saca (v6 1:22:25-1:23:19); la spec no tiene forma de reconocer el equal en si. Del 2026-09-16 al 2026-09-17 trataba igual TODO cierre de una operacion activada sin ruptura, incluido el stop entero, que el trader no eximio nunca: ahora solo la salida en negativo que no cerro ningun stop, que es la que el describe ("te saque la entrada, te genera una perdida", v6 1:23:13-1:23:19). Si el stop entero de una activacion sin ruptura gasta intento lo pregunta A-31. Cuando se reentra -en cuanto se cierra o al volver a darse la condicion de colocar- depende de A-29
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -700,7 +716,7 @@
       {
         "se_cierra_operacion": {
           "por": "activacion_sin_ruptura",
-          "resultado": "cualquier_resultado"
+          "resultado": "perdida"
         }
       }
     ]
@@ -1167,7 +1183,7 @@
 - **`salta_stop`** — el precio alcanza el stop y cierra la posicion en perdida Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Cita `fb-2026-09-09-sesion-01-c4922acb`: *«La operativa se calcula con el SL normal, pero apenas de abre la operacion se mueve el SL hasta el nivel 0.8 para todos los modelos de entrada.»*.
 - **`se_acerca_al_limite`** — el acumulador llega al tope menos el margen: el limite de la firma deja de ser el sitio donde se frena, porque llegar a el ya es la infraccion Argumentos: `acumulador`, `tope`, `margen`. Fuente: `acumulador`.
 - **`se_activa_entrada`** — la orden limite se llena. `por` dice COMO se activo: por uno de los dos esquemas, o sin que la estructura llegara a romperse (`activacion_sin_ruptura`, lo que el trader acaba llamando cerrar un equal cuando el precio forma el equal y lo saca) Argumentos: `por`. Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Valores: `por` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`, `activacion_sin_ruptura`. Cita `fb-2026-09-09-sesion-01-9626d3dd`: *«se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa ya nos saca con menos 0.80»*.
-- **`se_cierra_operacion`** — la posicion deja de estar viva. `resultado`: `break_even` si salta el stop que RN-014 llevo a la entrada, sea cual sea el P/L neto de costes; `ganancia` o `perdida` en cualquier otro cierre, por su signo. `por`: como se activo la operacion que se cierra (ver se_activa_entrada) Argumentos: `resultado`, `por`. Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Valores: `por` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`, `activacion_sin_ruptura`, `cualquier_activacion`; `resultado` en `ganancia`, `perdida`, `break_even`, `cualquier_resultado`. Cita `fb-2026-09-09-sesion-01-aa2abe65`: *«un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento»*.
+- **`se_cierra_operacion`** — la posicion deja de estar viva. `resultado`, por MECANISMO: `salto_el_stop` si la cierra el stop en stop_fraccion_caja; `break_even` si la cierra el stop que RN-014 llevo a la entrada; y si no la cierra ningun stop, `ganancia` o `perdida` por su signo. El P/L neto de costes no cambia la clase. `por`: como se activo la operacion que se cierra (ver se_activa_entrada) Argumentos: `resultado`, `por`. Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Valores: `por` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`, `activacion_sin_ruptura`, `cualquier_activacion`; `resultado` en `ganancia`, `perdida`, `break_even`, `salto_el_stop`. Cita `fb-2026-09-09-sesion-01-aa2abe65`: *«un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento»*.
 - **`se_completa_zona_de_control`** — el precio rompe el punto extremo anterior y deja la zona cerrada Argumentos: `criterio`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-a456bc3f`: *«como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento [...] rompe el punto alto anterior con mecha, con mecha no importa»*.
 - **`se_da_esquema`** — el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada. `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta. `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. En M1 la ruptura vale con mecha o con cuerpo; la de M15 tiene que ser con cuerpo (RN-004) Argumentos: `cual`. Fuente: `mercado`. Valores: `cual` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`. Depende de: liquidez_tomada. Cita `ev-v4-000243-5f8875ce`: *«ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con un pequeño retroceso pequeña zona de control y luego rompe»*.
 - **`se_desarrolla_en_el_lado_de_ruido`** — el precio se desarrolla en el lado de la liquidez de M15 donde el trader NO busca entrada: por encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25, sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada). Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader Argumentos: `que`, `sentido`. Fuente: `mercado`. Lado de ruido: en `alcista`, `por_encima`; en `bajista`, `por_debajo`. Cita `ev-v1-001306-f98e12e9`: *«el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra operativa tiene que estar por debajo»*.
@@ -1224,9 +1240,8 @@
 - **`break_even`** — salto el stop que RN-014 llevo a la entrada. Se clasifica por MECANISMO, no por el P/L neto: con comisiones o deslizamiento cierra unos dolares en negativo y sigue siendo un break even, que no gasta cartucho (cartucho_criterio)
 - **`cualquier_activacion`** — cualquier forma de activarse, por un esquema o sin ruptura
 - **`cualquier_esquema`** — cualquiera de los dos esquemas de entrada, sin distinguirlos. NO incluye una activacion sin ruptura, que no es un esquema
-- **`cualquier_resultado`** — cualquier resultado de cierre
 - **`extremo_de_la_h4_anterior`** — el maximo o el minimo de la vela H4 previa, segun el sentido
-- **`ganancia`** — la operacion cerro en positivo, por cualquier via que no sea el break even
+- **`ganancia`** — la operacion cerro en positivo sin que la cerrara ningun stop
 - **`hasta_cartuchos_reinicio`** — la detencion dura hasta el reinicio que diga `cartuchos_reinicio` Clase: `duracion`.
 - **`hasta_el_corte_siguiente`** — la detencion dura hasta el siguiente corte del dia o de la semana de riesgo Clase: `duracion`.
 - **`instante_entrada`** — campo de OP, el momento en que se lleno la orden
@@ -1234,12 +1249,13 @@
 - **`lote_calculado`** — el lote que acaba de calcular `dimensionar_lote`, antes de redondear
 - **`no`** — apaga un hecho de estado. Va ENTRECOMILLADO en el YAML a proposito: sin comillas, `no` es el booleano falso de YAML 1.1 mientras que `si` es una cadena, y la misma casilla de la misma regla acababa con dos tipos distintos (RN-013, encontrado el 2026-09-12)
 - **`nunca`** — el acumulador no se reinicia. Nace el 2026-09-16 para `perdida_total_firma`, que ponia en `reinicia_con` un parametro booleano -firma_perdida_total_arrastra- donde los demas llevan un reloj o un evento Clase: `reinicio`.
-- **`perdida`** — la operacion cerro en negativo, por cualquier via que no sea el break even
+- **`perdida`** — la operacion cerro en negativo sin que la cerrara ningun stop: un cierre a mercado, o la salida por un equal que describe el trader (v6 1:23:13-1:23:19), que no llega al stop
 - **`permanente`** — la detencion no caduca: ningun corte de dia ni de semana la levanta. Es la del limite TOTAL de la firma, cuya infraccion pierde la cuenta (RN-031, ADR-0026) Clase: `duracion`.
 - **`por_debajo`** — el lado de un nivel que queda por debajo del precio
 - **`por_encima`** — el lado de un nivel que queda por encima del precio
 - **`precio_entrada`** — campo de OP, el precio al que se lleno la orden
 - **`primer_esquema`** — el primer esquema de entrada
+- **`salto_el_stop`** — la cerro el stop en stop_fraccion_caja: la perdida del riesgo entero (RN-012), sea cual sea el P/L neto de deslizamiento y costes. Gasta cartucho sea cual sea la activacion (RN-016)
 - **`segundo_esquema`** — el segundo esquema de entrada
 - **`sentido_de_la_ruptura`** — el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`
 - **`si`** — enciende un hecho de estado (`fijar`) o activa una opcion de una accion

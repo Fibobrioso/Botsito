@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (8)
+## ABIERTA (9)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -42,13 +42,17 @@ Afecta a: `broker_offset_base`, `broker_dst`.
 
 ### A-29 · cuando nace la orden limite · pregunta
 
-¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema de entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez de M15, en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus dice las dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto rompe la liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14) la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion
+¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema de entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez de M15, en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus dice las dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto rompe la liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14) la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion. PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el trader responda
 
 Afecta a: `orden_limite_nace`.
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
 ¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la cancelas, o la dejas puesta y, si se llena despues, la gestionas? A las 15:00 cierras lo que tengas abierto (RN-002), pero de una orden todavia sin llenar no hablaste, y ninguna ambiguedad lo preguntaba: la auditoria del 2026-09-13 midio que, sin respuesta, una limite viva sobrevive al cierre y se llena fuera de la ventana. La accion `retirar_orden_limite` esta declarada y ninguna regla la usa hasta que respondas
+
+### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
+
+una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que no llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida" y actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2
 
 ## DECIDIDA (5)
 

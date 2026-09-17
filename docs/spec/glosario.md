@@ -2,7 +2,7 @@
 
 # Glosario: que es cada cosa
 
-`spec_version 12.0.0` · hash `683748bc94ea…`
+`spec_version 12.0.0` · hash `7b56ead497c8…`
 
 11 terminos. Aqui se dice QUE es cada cosa, no que se hace con ella -eso son las reglas- ni con que numero -eso es el registro-.
 
@@ -34,7 +34,7 @@ Cita `fb-2026-09-09-sesion-01-aa2abe65`: *«un intento no es considerado un brea
 
 *Tambien: activacion sin ruptura, equal (la salida).*
 
-el precio activa la orden y la posicion se cierra con lo que el trader llama un equal; se vuelve a entrar y no se gasta intento. En la spec es el cierre de una operacion que se activo sin ruptura (RN-010, RN-019). Esa correspondencia es lectura nuestra de v6 1:22:25-1:23:19, donde el trader describe una entrada activada sin validar que un equal saca con perdida
+el precio activa la orden y la posicion se cierra con lo que el trader llama un equal; se vuelve a entrar y no se gasta intento. En la spec es el cierre en negativo, sin que lo cerrara ningun stop, de una operacion que se activo sin ruptura (RN-010, RN-019). Esa correspondencia es lectura nuestra de v6 1:22:25-1:23:19, donde el trader describe una entrada activada sin validar que un equal saca con perdida; si la misma entrada se va al stop entero, lo pregunta A-31
 
 Cita `fb-2026-09-09-sesion-01-060cd801`: *«Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar [...] ¿y gastas tus intentos? Sí, esto no gasta intentos, me dijiste, ¿no? No»* · visto en v6 1:52:26
 
