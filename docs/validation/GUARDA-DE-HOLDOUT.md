@@ -56,7 +56,8 @@ alcance de la puerta, autorización y ADR, todo por grep.
   `shutil` en Windows no emiten `open` sino `_winapi.CopyFile2` o `shutil.copyfile`, y hay que
   escucharlas.
 - **Coste:** ~3 µs por apertura. En dos pares alternos de la suite completa: 245 y 231 s sin hook,
-  230 y 228 s con él, dentro del ruido. `make check` de la rama tardó 242 s, frente a 238 s antes.
+  230 y 228 s con él, dentro del ruido (revisión A). En esta sesión, la suite de pytest dentro de
+  `make check` tardó 242 s en esta rama y entre 238 y 246 s en la rama anterior, que no tenía hook.
 - **Sin vuelta atrás:** un hook no se puede quitar, así que consulta un estado que la fixture
   enciende en cada test.
 - **Frente a `monkeypatch`:** medido, se le escapan `os.open`, `io.FileIO`, `shutil.copy2` y
@@ -136,7 +137,38 @@ ya declara lo que lee.
 
 ## 7. La auditoría de cierre
 
-*Pendiente de completar con el resultado de los dos auditores.*
+Dos agentes en paralelo (Sonnet, solo lectura; prohibido leer `data/`, abrir el holdout o ejecutar el
+kit sobre el repositorio real): uno sobre código y tests, con mutantes en repos sintéticos y
+`monkeypatch`; otro sobre ADR, documentos y proceso.
+
+**Lo que comprobaron y se sostiene.**
+- **La guarda muerde de verdad.** Cargando el `conftest.py` real, un test SIN marcar que se traga
+  `LecturaDeHoldout` con `contextlib.suppress(BaseException)` acaba en ERROR por el teardown de
+  `holdout_guard`.
+- **No hay más vías.** Un grep exhaustivo de `valor_resultante` y `respuesta_literal` en `src/` no
+  encontró otra salida del valor de una etiqueta: `feedback apply` solo toca parámetros,
+  `feedback pending` no imprime valores, y `knowledge validate` compara literales sin citarlos.
+- **Las velas no pasan por la puerta.** `construir`, `comprobar` y `universo` no importan la puerta;
+  `check` declara antes de leer y `build`, después.
+- **El kappa no lee ningún valor excluido.** `etiquetas_de_registros` salta los excluidos antes de
+  tocar su valor.
+- **Tiempo:** la suite completa tardó 242 s.
+- **La spec no se movió:** el manifiesto es idéntico byte a byte al de `d7db83f`.
+- **Sin cambios** en evidencia ni en feedback.
+- **Los documentos dicen lo que hace el código**, punto por punto, y ninguna fila de
+  `HOLDOUT-EXPOSICIONES.md` cambió.
+
+| Hallazgo | Gravedad | Quién | Qué se hizo |
+|---|---|---|---|
+| Una autorización con la clave `particion:` repetida valía por su ÚLTIMA línea: un `AUTORIZACION-holdout-1.md` con `particion: holdout-2` y después `particion: holdout-1` abría holdout-1 | media | código | **Corregido**: una clave repetida cierra la puerta. Test en los dos órdenes |
+| PROJECT_STATE, «Next Feature» y el punto 3 de «Next Action» seguían llamando stub a la guarda | media | documentos | **Corregido** |
+| El informe decía «`make check` tardó 242 s frente a 238 s» sin una medición citable de `make check` completo | media | documentos | **Corregido** en el informe y en ADR-0033: son los tiempos de la suite de pytest dentro de `make check` que se midieron en esta sesión (242 s aquí; 238 y 246 s en la rama anterior) |
+| Sin `git` en el PATH, `motivos_de_cierre` lanzaba una excepción en vez de dar un motivo | baja | código | **Corregido**: cierra con motivo. Test |
+| Un BOM al principio de la autorización rompía la primera clave (fallaba cerrado, pero con un motivo engañoso) | baja | código | **Corregido**. Test |
+| El aviso del kappa contaba etiquetas reservadas ya supersedidas y habría pedido abrir una partición sin ninguna etiqueta activa | info | código | **Corregido**: cuenta sobre `activos()` |
+| El test de CRLF excluía también los README del holdout, que la guarda permite leer | baja | los dos | **Corregido**: vuelve a comprobarlos |
+| El índice de ADR de PROJECT_STATE ponía ADR-0033 antes que ADR-0032 | baja | documentos | **Corregido** |
+| `SIN RELLENAR` se busca en todo el `PREREGISTRO.md`: uno relleno que la mencione en un comentario sigue cerrado | baja | código | **Sin cambio de lógica**, a propósito: falla del lado seguro. El mensaje dice ahora que la marca se quita de todo el fichero |
 
 ## 8. Qué debe decidir el usuario
 

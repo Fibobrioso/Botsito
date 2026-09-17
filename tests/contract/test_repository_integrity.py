@@ -101,7 +101,11 @@ def test_no_crlf_in_tracked_text_files(repo: Path) -> None:
         # El material de holdout no se abre ni para buscar CRLF (ADR-0033): la guarda de
         # `tests/conftest.py` lo prohibe, y el dia que F14 escriba un caso este test caeria.
         partes = Path(rel).parts
-        if partes[:3] == ("knowledge", "cases", "holdout") and len(partes) > 4:
+        if (
+            partes[:3] == ("knowledge", "cases", "holdout")
+            and len(partes) > 4
+            and partes[-1] != "README.md"
+        ):
             continue
         if b"\r\n" in path.read_bytes():
             offenders.append(rel)

@@ -68,8 +68,8 @@ phase: post-F13 (extrae F14 D4)
 
 Porque cada pieza está medida:
 - **El hook cuesta ~3 µs por apertura.** Sobre la suite completa, la diferencia no se distingue del
-  ruido (245 y 231 s sin hook, 230 y 228 s con él), y `make check` de la rama tarda lo mismo que
-  antes.
+  ruido (245 y 231 s sin hook, 230 y 228 s con él); la suite de pytest dentro de `make check` tardó
+  242 s en esta rama y entre 238 y 246 s en la anterior.
 - **Ve todas las vías de lectura**, copias de Windows incluidas, y los tests lo prueban una por una.
 - **La puerta vive en un solo módulo** que un grep puede vigilar.
 - **Un fichero commiteado** con autor, fecha y ADR es difícil de crear sin querer y queda en

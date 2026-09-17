@@ -53,12 +53,15 @@ def fichero_autorizacion(particion: str) -> str:
 
 def _commiteado_y_sin_cambios(repo: Path, ruta: str) -> str | None:
     """El texto del fichero si esta en HEAD y el arbol no lo ha cambiado; si no, None."""
-    en_head = contenido_en_head(repo, ruta)
+    try:
+        en_head = contenido_en_head(repo, ruta)
+    except OSError:
+        return None  # sin `git` en el PATH no hay forma de saber que esta commiteado: cerrado
     fichero = repo / ruta
     if en_head is None or not fichero.is_file():
         return None
-    actual = fichero.read_text(encoding="utf-8").replace("\r\n", "\n")
-    return actual if actual == en_head.replace("\r\n", "\n") else None
+    actual = fichero.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+    return actual if actual == en_head.lstrip("\ufeff").replace("\r\n", "\n") else None
 
 
 def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
@@ -70,17 +73,33 @@ def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
     if preregistro is None:
         motivos.append(f"{FICHERO_PREREGISTRO} no esta commiteado tal como esta en el arbol")
     elif MARCA_SIN_RELLENAR in preregistro:
-        motivos.append(f"{FICHERO_PREREGISTRO} sigue vacio (lleva la marca {MARCA_SIN_RELLENAR!r})")
+        # Por subcadena en TODO el fichero, a proposito: falla del lado seguro. Quien lo rellene
+        # tiene que quitar la marca tambien de cualquier comentario.
+        motivos.append(
+            f"{FICHERO_PREREGISTRO} sigue vacio (lleva la marca {MARCA_SIN_RELLENAR!r} en alguna "
+            f"parte; al rellenarlo se quita de todo el fichero)"
+        )
     ruta = fichero_autorizacion(particion)
     autorizacion = _commiteado_y_sin_cambios(repo, ruta)
     if autorizacion is None:
         motivos.append(f"no hay autorizacion del usuario commiteada en {ruta}")
         return motivos
     campos: dict[str, str] = {}
+    repetidas: set[str] = set()
     for linea in autorizacion.splitlines():
         clave, sep, valor = linea.partition(":")
         if sep and clave.strip() in _CAMPOS_AUTORIZACION:
+            if clave.strip() in campos:
+                repetidas.add(clave.strip())
             campos[clave.strip()] = valor.strip()
+    if repetidas:
+        # Con una clave repetida, cual vale lo decidiria el orden de las lineas: una autorizacion
+        # para holdout-2 con una segunda linea `particion: holdout-1` abria holdout-1 (auditoria de
+        # cierre de la rama de la guarda). Se rechaza entera.
+        motivos.append(
+            f"{ruta}: claves repetidas {sorted(repetidas)}; una autorizacion no es ambigua"
+        )
+        return motivos
     faltan = [c for c in _CAMPOS_AUTORIZACION if not campos.get(c)]
     if faltan:
         motivos.append(f"{ruta}: faltan {faltan}")

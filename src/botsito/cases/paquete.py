@@ -721,9 +721,11 @@ def kappa_entre_sesiones(
     reservados = casos_reservados(repo)
     # Solo el OBJETIVO del registro (el id del caso), nunca su valor: saber que un caso reservado
     # tiene etiqueta no es leerla.
+    from botsito.feedback.modelo import activos
+
     etiquetados = {
         r.objetivo.id
-        for r in registros
+        for r in activos(list(registros))
         if r.accion == "LABEL_CASE" and r.sesion in (a, b) and r.objetivo.id in reservados
     }
     por_particion: dict[str, int] = {}

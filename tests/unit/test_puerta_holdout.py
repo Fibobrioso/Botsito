@@ -100,6 +100,8 @@ def test_con_todo_en_orden_se_abre(tmp_path: Path) -> None:
         (RELLENO, BUENA.replace("ADR-0099", "ADR-0777"), "no es un ADR que exista"),
         (RELLENO, BUENA.replace("2026-10-01", "ayer"), "no es AAAA-MM-DD"),
         (RELLENO, "particion: holdout-2\n", "faltan"),
+        (RELLENO, "particion: holdout-1\n" + BUENA, "claves repetidas"),
+        (RELLENO, BUENA + "particion: holdout-1\n", "claves repetidas"),
     ],
 )
 def test_cada_motivo_de_cierre_salta_por_su_cuenta(
@@ -124,6 +126,26 @@ def test_una_autorizacion_sin_commitear_no_autoriza(tmp_path: Path) -> None:
     assert motivos_de_cierre(repo, "holdout-2") == []
     (repo / FICHERO_PREREGISTRO).write_text(RELLENO + "umbral: 0.5\n", encoding="utf-8")
     assert any("no esta commiteado" in m for m in motivos_de_cierre(repo, "holdout-2"))
+
+
+def test_un_bom_no_rompe_una_autorizacion_buena(tmp_path: Path) -> None:
+    repo = _repo(tmp_path, RELLENO, "\ufeff" + BUENA)
+    assert motivos_de_cierre(repo, "holdout-2") == []
+
+
+def test_sin_el_ejecutable_de_git_se_cierra_con_un_motivo(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import botsito.cases.holdout as puerta
+
+    repo = _repo(tmp_path, RELLENO, BUENA)
+
+    def sin_git(_repo: Path, _ruta: str) -> str | None:
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(puerta, "contenido_en_head", sin_git)
+    motivos = motivos_de_cierre(repo, "holdout-2")
+    assert any("no esta commiteado" in m for m in motivos), motivos
 
 
 def test_sin_git_no_se_abre_nada(tmp_path: Path) -> None:
