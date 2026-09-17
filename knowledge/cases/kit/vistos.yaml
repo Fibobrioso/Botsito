@@ -53,8 +53,9 @@ meses:
       de Analytics). Disparador (b). No borra el paquete de la sesion 1 (2026-09-09), construido y
       celebrado con mayo ciego: la CONFIRM de esa sesion (fb-2026-09-09-sesion-01-c79021dc) lo daba
       por no visto ese dia, y decia que el trader "hara el backtest" de mayo y junio
-    fuente: [8fb2323, fb-2026-09-09-sesion-01-c79021dc]
-    # la entrega del backtest: commit 8fb2323, "entra el backtest de mayo" (2026-09-11)
+    fuente: [8fb2323]
+    # la entrega del backtest: commit 8fb2323, "entra el backtest de mayo" (2026-09-11). La CONFIRM
+    # de la sesion 1 va en el motivo y no aqui: prueba que el 09-09 mayo AUN no estaba visto
     visto_el: "2026-09-11"
   - mes: "2026-07"
     motivo: v3 dibuja los ejemplos sobre el grafico de julio y v2 muestra las operaciones del 2 de julio

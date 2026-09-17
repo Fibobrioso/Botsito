@@ -144,7 +144,7 @@ una fila de `HOLDOUT-EXPOSICIONES.md`: los `dev` no son holdout.
 | Pieza | Hecho | Dónde |
 |---|---|---|
 | **`visto_el`** | Obligatorio en meses y días, AAAA-MM-DD. Una entrada cuenta para un paquete si `visto_el` ≤ fecha de su sesión | `cases/paquete.py`: `cargar_vistos_fechados`, `cargar_vistos(ruta, hasta)`, `fecha_de_sesion` |
-| **Mayo visto** | `visto_el: 2026-09-11`, con el motivo y la fuente: el commit del corpus `8fb2323`, «entra el backtest de mayo», y la CONFIRM de la sesión 1, que lo daba por no visto ese día | `knowledge/cases/kit/vistos.yaml` |
+| **Mayo visto** | `visto_el: 2026-09-11`, con su motivo y su fuente: el commit del corpus `8fb2323`, «entra el backtest de mayo». La CONFIRM de la sesión 1 se cita en el motivo y no en `fuente`, porque prueba lo contrario: que el 09-09 mayo aún no estaba visto | `knowledge/cases/kit/vistos.yaml` |
 | **Fechas de los otros cuatro** | Las de sus fuentes, en `knowledge/corpus/manifest.yaml`: enero 2026-08-30 (v4), julio 2026-08-03 (v2, la más antigua de sus dos fuentes), agosto 2026-08-20 (v1), abril 2026-09-05 (v5, ver §6). Todas anteriores a la sesión 1, así que su reproducción no depende de ellas | `vistos.yaml` |
 | **Guardia en el kit** | Filtro por fecha en `_cargar_todo` y `KitError` en `construir` si un día visto se colara | `cases/paquete.py` |
 | **Guardia sin datos** | `knowledge validate` denuncia días vistos dentro de un paquete y exclusiones que ya no se sostienen | `cases/paquete.py:_problemas_de_vistos` |
@@ -167,7 +167,7 @@ una fila de `HOLDOUT-EXPOSICIONES.md`: los `dev` no son holdout.
 |---|---|---|
 | «La fecha del paquete» | La fecha de la SESIÓN (del nombre) | Es la del etiquetado, que es lo que decide si es ciego; la del commit es la del último move, y una fecha dentro del paquete rompe la reproducción (§3) |
 | Guardia en `kit build` | Y en `knowledge validate`, sin datos | En CI no hay `data/`, y `kit check` solo avisa sin datos: un paquete escrito con días vistos solo lo vería `knowledge validate` |
-| Fuente de mayo: el commit del corpus | El commit `8fb2323` y la CONFIRM de la sesión 1 | La CONFIRM es la que sostenía que mayo era ciego el 09-09, y es donde el trader dice que hará el backtest de mayo y junio |
+| Fuente de mayo: el commit del corpus | El commit `8fb2323` en `fuente`, y la CONFIRM de la sesión 1 en el motivo | La CONFIRM sostiene que mayo era ciego el 09-09 -lo contrario de una fuente de «visto»- y es donde el trader dice que hará el backtest de mayo y junio |
 | No pedía nada sobre el kappa | `kit kappa` avisa de etiquetado no ciego | Es la forma mecanizable de la pregunta 4 |
 | (a) recomendada | (a) confirmada, con tres condiciones que el brief no tenía (§3) | Medido |
 
@@ -190,7 +190,34 @@ una fila de `HOLDOUT-EXPOSICIONES.md`: los `dev` no son holdout.
 
 ## 7. La auditoría de cierre
 
-*Pendiente de completar.*
+Dos agentes en paralelo (Sonnet, solo lectura; prohibido `data/`, el holdout y ejecutar el kit sobre el
+repositorio real): uno sobre código y tests, con mutantes aplicados por `monkeypatch` sobre el kit
+sintético; otro sobre documentos y proceso.
+
+**Código y tests: sin hallazgos que bloqueen.**
+- **Mutantes:** los cuatro pedidos (quitar el filtro de `_cargar_todo`, quitar la guardia de
+  `construir`, quitar `_problemas_de_vistos` y cambiar `<=` por `<`) los caza algún test. Con el filtro
+  y la guardia de `construir` apagados a la vez, `knowledge validate` sigue denunciando el paquete
+  escrito.
+- **Bordes sin falsos positivos:**
+  - los `dias:` sueltos se filtran con la misma regla que los meses;
+  - un `vistos.yaml` malformado da un problema limpio;
+  - los `excluidos` por otros motivos no hacen ruido;
+  - un nombre de sesión inválido no llega a validarse.
+- **`mover_sesion`:** sigue funcionando, y si la fecha nueva cruza un `visto_el`, `construir` falla
+  limpio.
+- **Kappa:** el aviso usa la fecha de cada ronda por separado, y `c[-10:]` es siempre la fecha por
+  construcción del id de caso (`ventanas.py`).
+- **La única laguna ya estaba declarada en §6:** una etiqueta tardía dentro de la misma sesión.
+
+**Documentos y proceso:** todas las fechas de `vistos.yaml` coinciden con `fecha_grabacion` o con el
+commit citado, y en julio y agosto son las de la fuente más antigua. Todas las cifras de §2 a §6 están
+verificadas contra el repositorio, la cita de ADR-0025 es literal, y los trailers `Fuente:` y los
+documentos vivos están bien.
+
+| Hallazgo | Gravedad | Quién | Qué se hizo |
+|---|---|---|---|
+| La entrada de mayo citaba en `fuente:` la CONFIRM de la sesión 1, que prueba lo contrario -que el 09-09 mayo aún no estaba visto- | baja | documentos | **Corregido**: `fuente: [8fb2323]`; la CONFIRM queda en el motivo |
 
 ## 8. Qué debe decidir el usuario
 
