@@ -5,6 +5,45 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-16, rama `trabajo/fidelidad-de-la-spec` esperando validacion; lo de debajo es anterior)
+- FTMO Y ARQUITECTURA ESTA CERRADA EN MAIN (merge 00ad174, tag `stable/F13-ftmo`). Esta rama sale de
+  ahi y lleva la spec a 12.0.0 con un solo bump.
+- RN-005 ESTABA AL REVES y ya no: prohibia abrir por debajo de la liquidez de M15 en sesgo alcista,
+  que es donde el trader opera. El lado se nombra en el predicado (`lado_de_ruido`); `alcista` y
+  `bajista` NO son tokens a proposito, o `sentido: alcista` volveria a pasar la guardia de argumentos.
+- LA ORDEN SE COLOCA EN DOS REGLAS (ADR-0032): RN-011 prepara (lote, stop y `orden_dimensionada` con
+  la zona) y RN-015 escribe el objetivo, coloca y apaga el hecho. Una sola regla dejaba a los gates
+  sin ventana; tres dejaban el orden entre disparadores al azar. `colocar_orden_limite` lleva
+  `efecto: abrir_operacion`: un gate la frena en el instante de ejecutarla y el resto de la regla
+  sigue. RN-013 quedo DESCARTADA por absorbida (no por falsa).
+- CUANDO NACE LA ORDEN NO ESTA CERRADO: A-29, con `orden_limite_nace` en DEFAULT. Con la otra
+  lectura hay que reescribir RN-008. Lo de la pendiente a las 15:00 es A-30, y
+  `retirar_orden_limite` esta declarada sin regla.
+- HECHOS DEL BROKER: `operacion_abierta` y `orden_limite_pendiente` llevan `origen: broker`,
+  `decision` y `lo_provoca`; fijarlos en una forma es un error. F14b §0 quedo deshecho y anotado.
+- `equal` YA NO ES TOKEN. El resultado de un cierre es `ganancia | perdida | break_even` (break even
+  por mecanismo, no por P/L neto) y como se activo va en `por`. NO SE PUEDE RENOMBRAR un parametro
+  que nombra un registro de feedback: `knowledge validate` pasa todos los registros, tambien los
+  supersedidos, contra el registro.
+- LA FIRMA FRENA ANTES DEL LIMITE (ADR-0031): `firma_margen_seguridad` = 0,5, VALOR A VALIDAR; RN-029
+  diario, RN-031 total con `detenido_por_tope_total: permanente`, RN-032 prospectiva, RN-030
+  `terminal`. El tope del trader (RN-020) no cambia de lectura.
+- Lecciones de la rama:
+  - Un bump unico con varios commits: los commits de guardias que no cambian la spec van antes, y
+    toda la spec, el manifiesto y los documentos generados en UN commit. `version_sin_subir` compara
+    con HEAD, asi que un segundo commit de spec en 12.0.0 fallaria.
+  - Una guardia que exige un campo nuevo en un fichero que el kit reconstruye en repos de prueba
+    (`clase` en ambiguedades) va en `knowledge validate`, no en la construccion del paquete: los
+    fixtures del kit no la llevan y catorce tests cayeron a la vez.
+  - "Nunca un parametro en `reinicia_con`" parecia limpio y rompia cuatro de cinco acumuladores. Medir
+    la guardia sobre la spec real ANTES de escribirla en el brief.
+  - Una regla nueva que usa en su `cuando` la palabra "una" junto a zona u operacion salta la guardia
+    de cifras en letra: "en la zona de control que la ancla", "la operacion en curso".
+  - Otra vez los heredocs: dos scripts de Python con f-strings y comillas simples no llegaron a
+    ejecutarse en Git Bash. Scripts largos, con Write al scratchpad.
+  - No ejecutar `kit check` ni `kit build` para probar el cuestionario: con `data/` presente leen
+    velas de dias reservados. El test llama a `cuestionario.generar` con `_cargar_todo` y sin indice.
+
 ## Estado (2026-09-14, rama `trabajo/ftmo-y-arquitectura` esperando validacion; lo de debajo es anterior)
 - LA FIRMA ES FTMO 2-Step SWING de 100.000 (ADR-0026). FundedNext no admite bots desde 50.000, ni en
   el reto ni en la fondeada. Todo lo que diga "FundedNext" en material anterior al 2026-09-14 habla
