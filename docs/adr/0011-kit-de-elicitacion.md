@@ -6,6 +6,8 @@ phase: F10
 
 # 0011 · Kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback
 
+> **Nota (2026-09-17, rama de los meses vistos).** Cada entrada de `vistos.yaml` lleva `visto_el`, y cuenta para un paquete solo si es igual o anterior a la fecha de su sesion (la del nombre). Un mes visto despues de celebrar una sesion no borra lo que su paquete pregunto; mayo 2026 queda declarado visto el 2026-09-11 sin tocar la sesion 1. Guardia en `construir()` y en `knowledge validate` (`docs/validation/MESES-VISTOS.md`).
+
 ## Decision
 1. **Ambiguedades legibles por maquina** en `knowledge/spec/ambiguedades.yaml` (`id` A-N,
    `titulo`, `pregunta`, `resuelve_en`, `evidencia` con ids existentes, `parametros` del

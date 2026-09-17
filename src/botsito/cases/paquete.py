@@ -225,28 +225,76 @@ def cargar_mapa(
     return salida
 
 
-def cargar_vistos(ruta: Path) -> tuple[set[str], set[str], dict[str, Any]]:
+def _fecha_vista(ruta: Path, que: str, valor: object) -> str:
+    try:
+        return date.fromisoformat(str(valor)).isoformat()
+    except ValueError as exc:
+        raise KitError(f"{ruta.name}: {que}: visto_el {valor!r} no es AAAA-MM-DD") from exc
+
+
+def cargar_vistos_fechados(ruta: Path) -> tuple[dict[str, str], dict[str, str], dict[str, Any]]:
+    """`mes -> visto_el` y `dia -> visto_el`: CUANDO vio el trader cada cosa (2026-09-17).
+
+    Sin la fecha, un mes visto DESPUES de construir un paquete borraba lo que ese paquete pregunto:
+    declarar mayo visto hacia que `kit check` de la sesion 1 -construida con mayo ciego- dijera
+    "se piden 40 casos y el universo tiene 22". `visto_el` es obligatorio: sin el no se sabe a que
+    paquetes afecta, y "desde siempre" es justo la suposicion que rompio la sesion 1.
+    """
     doc = _yaml(ruta)
     if not isinstance(doc, dict) or set(doc) != {"meses", "dias"}:
         raise KitError(f"{ruta.name}: claves meses y dias")
-    meses: set[str] = set()
+    meses: dict[str, str] = {}
     for m in doc["meses"] if isinstance(doc["meses"], list) else []:
         if (
             not isinstance(m, dict)
-            or not {"mes", "motivo", "fuente"} <= set(m)
+            or not {"mes", "motivo", "fuente", "visto_el"} <= set(m)
             or not _MES.match(str(m["mes"]))
         ):
-            raise KitError(f"{ruta.name}: cada mes tiene mes (AAAA-MM), motivo y fuente")
-        meses.add(str(m["mes"]))
-    dias: set[str] = set()
+            raise KitError(
+                f"{ruta.name}: cada mes tiene mes (AAAA-MM), motivo, fuente y visto_el (AAAA-MM-DD)"
+            )
+        meses[str(m["mes"])] = _fecha_vista(ruta, str(m["mes"]), m["visto_el"])
+    dias: dict[str, str] = {}
     for d in doc["dias"] if isinstance(doc["dias"], list) else []:
-        if not isinstance(d, dict) or not {"dia", "motivo"} <= set(d):
-            raise KitError(f"{ruta.name}: cada dia tiene dia y motivo")
+        if not isinstance(d, dict) or not {"dia", "motivo", "visto_el"} <= set(d):
+            raise KitError(f"{ruta.name}: cada dia tiene dia, motivo y visto_el")
         try:
-            dias.add(date.fromisoformat(str(d["dia"])).isoformat())
+            dia = date.fromisoformat(str(d["dia"])).isoformat()
         except ValueError as exc:
             raise KitError(f"{ruta.name}: dia {d['dia']!r} no es AAAA-MM-DD") from exc
+        dias[dia] = _fecha_vista(ruta, dia, d["visto_el"])
     return meses, dias, doc
+
+
+def fecha_de_sesion(sesion: str) -> str:
+    """La fecha de la REUNION en la que el trader etiqueta: la del nombre del paquete.
+
+    Es la que decide si un mes es ciego, porque lo que importa es que el trader no lo haya visto
+    cuando etiqueta, no cuando se construyo el paquete. Y es la unica fiable: el commit que anadio
+    `particiones.yaml` es el del ultimo `mover_sesion` (git no sigue renombrados ahi), sin commit no
+    existe, y una fecha nueva dentro del paquete romperia la reproduccion de la sesion 1.
+    """
+    if not SESION.match(sesion):
+        raise KitError(f"sesion invalida {sesion!r} (AAAA-MM-DD-sesion-NN)")
+    return sesion[:10]
+
+
+def cargar_vistos(
+    ruta: Path, hasta: str | None = None
+) -> tuple[set[str], set[str], dict[str, Any]]:
+    """Meses y dias vistos A MAS TARDAR en `hasta` (la fecha de la sesion). Sin `hasta`, todos."""
+    meses, dias, doc = cargar_vistos_fechados(ruta)
+    return (
+        {m for m, f in meses.items() if hasta is None or f <= hasta},
+        {d for d, f in dias.items() if hasta is None or f <= hasta},
+        doc,
+    )
+
+
+def vistos_en_el_paquete(repo: Path, sesion: str, dias_del_paquete: list[str]) -> list[str]:
+    """Dias de un paquete que el trader ya habia visto el dia de su sesion. Debe salir vacio."""
+    meses, dias, _ = cargar_vistos(repo / DIRECTORIO_KIT / FICHERO_VISTOS, fecha_de_sesion(sesion))
+    return sorted(d for d in dias_del_paquete if d[:7] in meses or d in dias)
 
 
 def _dump(doc: Any) -> str:
@@ -347,6 +395,7 @@ class Paquete:
 
 def _cargar_todo(
     repo: Path,
+    sesion: str | None = None,
 ) -> tuple[
     Config,
     Registro,
@@ -369,7 +418,11 @@ def _cargar_todo(
     ruta_temas = repo / FICHERO_TEMAS
     temas_raiz = cargar_temas(ruta_temas).raices if ruta_temas.is_file() else frozenset()
     mapa = cargar_mapa(kit / FICHERO_MAPA, registro, temas_raiz)
-    meses, dias, _ = cargar_vistos(kit / FICHERO_VISTOS)
+    # Solo lo visto a mas tardar el dia de la sesion: un mes visto despues no borra lo que un
+    # paquete anterior pregunto (2026-09-17).
+    meses, dias, _ = cargar_vistos(
+        kit / FICHERO_VISTOS, fecha_de_sesion(sesion) if sesion is not None else None
+    )
     items = cargar_evidencia(repo / "knowledge" / "evidence")
     return config, registro, ambiguedades, mapa, meses, dias, items
 
@@ -435,7 +488,7 @@ def construir(
         raise KitError(f"sesion invalida {sesion!r} (AAAA-MM-DD-sesion-NN)")
     if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
         raise KitError("el seed debe ser un entero >= 0")
-    config, registro, ambiguedades, mapa, meses, dias, items = _cargar_todo(repo)
+    config, registro, ambiguedades, mapa, meses, dias, items = _cargar_todo(repo, sesion)
     huso = registro.texto("huso_operativa")
     try:
         huso_canonico(huso)
@@ -487,6 +540,15 @@ def construir(
     except (DatasetError, VentanaError, ParticionError, VelaInvalidaError) as exc:
         raise KitError(str(exc)) from exc
     elegidos = [c for c in casos if c.id in asignacion]
+    # La guardia, en el camino de `kit build`, `kit check` y `mover_sesion`: un paquete no puede
+    # sortear un dia que el trader ya habia visto el dia de su sesion. El filtro de `_cargar_todo`
+    # ya lo impide; esto FALLA si algun dia se colara igual, en vez de dejarlo pasar.
+    colados = vistos_en_el_paquete(repo, sesion, [c.dia for c in elegidos])
+    if colados:
+        raise KitError(
+            f"{sesion}: el paquete sortearia dias que el trader ya habia visto el "
+            f"{fecha_de_sesion(sesion)}: {', '.join(colados)} (vistos.yaml)"
+        )
     ficheros = {
         "cuestionario.yaml": _dump(
             {"sesion": sesion, "preguntas": [p.como_dict() for p in preguntas]}
@@ -630,6 +692,47 @@ def sesiones_del_kit(repo: Path) -> list[str]:
     return sorted(p.name for p in kit.iterdir() if p.is_dir() and SESION.match(p.name))
 
 
+def _problemas_de_vistos(repo: Path, sesion: str, ventanas: dict[str, Any]) -> list[str]:
+    """Meses vistos (2026-09-17), para `knowledge validate` y sin datos, asi que corre en CI.
+
+    Un paquete escrito no puede tener dias que el trader ya habia visto el dia de su sesion. Y lo
+    que excluyo como visto tiene que seguir fechado a mas tardar ese dia: poner a una entrada ya
+    usada una fecha posterior -o borrarla- la saca del paquete y rompe su reproduccion, y eso solo
+    lo veria `kit check` con `data/` presente. Sin `vistos.yaml` no hay nada visto que comprobar.
+    """
+    ruta = repo / DIRECTORIO_KIT / FICHERO_VISTOS
+    if not ruta.is_file():
+        return []
+    try:
+        meses_todos, dias_todos, _ = cargar_vistos(ruta)
+        meses, dias, _ = cargar_vistos(ruta, fecha_de_sesion(sesion))
+    except KitError as exc:
+        return [str(exc)]
+    casos = [str(c.get("dia")) for c in ventanas.get("casos") or [] if isinstance(c, dict)]
+    problemas: list[str] = []
+    colados = sorted(d for d in casos if d[:7] in meses or d in dias)
+    if colados:
+        problemas.append(
+            f"{sesion}: tiene dias que el trader ya habia visto el dia de su sesion: "
+            f"{', '.join(colados)} (vistos.yaml)"
+        )
+    for e in ventanas.get("excluidos") or []:
+        if not isinstance(e, dict):
+            continue
+        dia, motivo = str(e.get("dia")), str(e.get("motivo"))
+        if motivo == "mes visto por el trader" and dia[:7] not in meses:
+            estado = (
+                "tiene visto_el posterior a la sesion" if dia[:7] in meses_todos else "ya no esta"
+            )
+            problemas.append(
+                f"{sesion}: excluyo {dia} como mes visto, y en vistos.yaml {dia[:7]} {estado}"
+            )
+        elif motivo == "dia visto por el trader" and dia not in dias:
+            estado = "tiene visto_el posterior a la sesion" if dia in dias_todos else "ya no esta"
+            problemas.append(f"{sesion}: excluyo {dia} como dia visto, y en vistos.yaml {estado}")
+    return problemas
+
+
 def validar_paquetes(
     repo: Path,
     registros: list[FeedbackRecord],
@@ -668,6 +771,7 @@ def validar_paquetes(
                 problemas.append(
                     f"{sesion}: {c.get('id')} cita dataset inexistente {c.get('dataset_id')}"
                 )
+        problemas += _problemas_de_vistos(repo, sesion, ventanas)
         asignacion = particiones.get("asignacion") or {}
         if set(asignacion) != set(cids):
             problemas.append(
@@ -756,6 +860,18 @@ def kappa_entre_sesiones(
             else ""
         )
         raise KitError(f"{exc}{pista}") from exc
+    # Etiquetado que NO fue ciego (2026-09-17): una unidad de un dia cuyo mes -o el propio dia- el
+    # trader ya habia visto el dia de la sesion que la etiqueto. No se excluye -el kappa mide
+    # consistencia y sigue sirviendo-, pero F26 tiene que saberlo al leer cualquier kappa que la
+    # incluya: lo dice aqui, y no en una nota que nadie mira.
+    for sesion_r, ronda in ((a, ra), (b, rb)):
+        casos_ronda = sorted({u.split("|", 1)[0] for u in ronda})
+        vistos = vistos_en_el_paquete(repo, sesion_r, [c[-10:] for c in casos_ronda])
+        if vistos:
+            resultado.avisos.append(
+                f"{sesion_r}: {len(vistos)} casos etiquetados sobre dias que el trader ya habia "
+                f"visto el {fecha_de_sesion(sesion_r)} (vistos.yaml): no fue etiquetado ciego"
+            )
     if excluir:
         detalle = ", ".join(f"{p}: {n}" for p, n in sorted(por_particion.items()))
         resultado.avisos.append(

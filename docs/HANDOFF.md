@@ -5,6 +5,39 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-17, rama `trabajo/meses-vistos` esperando validacion; lo de debajo es anterior)
+- LA GUARDA DEL HOLDOUT ESTA CERRADA EN MAIN (merge 44a9fc1, tag `stable/F13-guarda`).
+- VALIDADA por el usuario el 2026-09-17: manda la fecha de la sesion porque la ceguera tiene que
+  valer al ETIQUETAR; abril fechado el 2026-09-05. `mover_sesion` a una fecha posterior a un
+  `visto_el` falla y restaura (test).
+- MAYO 2026 ESTA DECLARADO VISTO en `knowledge/cases/kit/vistos.yaml`, con `visto_el: 2026-09-11`.
+  Cada entrada lleva ya su `visto_el` (obligatorio) y cuenta para un paquete solo si es igual o
+  anterior a la FECHA DE SU SESION -la del nombre, el dia en que el trader etiqueta-. La sesion 1
+  (2026-09-09) se sigue reproduciendo igual; un paquete de una sesion del 09-11 o posterior no puede
+  sortear mayo (`kit build` falla) y `knowledge validate` denuncia un paquete escrito que lo tenga.
+  Lo que HANDOFF dice mas abajo de que mayo "no se puede declarar en `vistos.yaml`" ya no es cierto.
+- LA SESION 2 ETIQUETA SOBRE EL PAQUETE DE LA SESION 1 (opcion (a) del brief, medida): solo sus 10
+  `dev` de junio son ciegos. Tres condiciones antes de registrar una etiqueta:
+  (1) confirmacion escrita del trader de que NO backtesteo junio -su CONFIRM del 09-09 decia que lo
+  haria-; (2) material de la sesion sin los `dev` de mayo en el etiquetado ciego; (3) la guardia de
+  ancestro solo mira `LABEL_CASE` con la MISMA sesion que el paquete, asi que etiquetas registradas
+  como sesion 2 sobre casos de la sesion 1 quedarian fuera. Es un DEFECTO de la guardia, no una
+  restriccion (usuario, 2026-09-17): el brief del paquete la corrige comprobando POR CASO -las
+  particiones del paquete del caso, commiteadas antes de esa etiqueta- y no por sesion.
+  (b) -paquete nuevo solo con junio- esta bloqueado: `config.yaml` es global y cambiar los cupos
+  rompe `kit check` de la sesion 1.
+- `kit kappa` avisa cuando una ronda tiene unidades sobre dias que el trader ya habia visto el dia de
+  su sesion: "no fue etiquetado ciego". Es lo que F26 tiene que leer.
+- Lecciones de la rama:
+  - La fecha de un commit no es la de un paquete: `commit_que_anadio` sigue sin renombrados y da la
+    del ultimo `mover_sesion`. Para fechar algo del kit, la fecha va en el nombre de la sesion.
+  - Refechar una entrada de `vistos.yaml` ya usada por un paquete lo rompe en silencio sin `data/`:
+    por eso la guardia de `knowledge validate` mira tambien las exclusiones, no solo los casos.
+  - Congelar un dataset nuevo con el prefijo del kit ya rompe hoy la reproduccion de la sesion 1
+    (medido por la revision de diseno). Resolverlo antes de construir el siguiente paquete.
+  - Medir la linea base de `kit check` ANTES de tocar nada, y comparar la salida entera con `diff`:
+    es la unica forma de decir "byte a byte" sin fiarse.
+
 ## Estado (2026-09-17, rama `trabajo/guarda-de-holdout` esperando validacion; lo de debajo es anterior)
 - LA RAMA DE FIDELIDAD ESTA CERRADA EN MAIN (merge e4f761c, tag `stable/F13-fidelidad`, spec 12.0.0).
   Esta rama sale de ahi y no toca `knowledge/spec/`.

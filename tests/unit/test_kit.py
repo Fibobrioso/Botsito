@@ -116,7 +116,7 @@ MAPA = """parametros:
   break_even_condicion: {temas: [break_even]}
   anclaje_h4: {temas: [reloj]}
 """
-VISTOS = 'meses: []\ndias:\n  - {dia: "2026-05-05", motivo: prueba}\n'
+VISTOS = 'meses: []\ndias:\n  - {dia: "2026-05-05", motivo: prueba, visto_el: "2026-09-01"}\n'
 AJUSTES = (
     '[entorno]\nnombre = "backtest"\n\n'
     '[rutas]\ncorpus = "corpus"\ndata = "data"\nknowledge = "knowledge"\n'
@@ -808,11 +808,16 @@ def test_resuelta_min_velas_meses_vistos_y_universo(tmp_path: Path) -> None:
     # mes visto entero
     vis = repo / DIRECTORIO_KIT / "vistos.yaml"
     vis.write_text(
-        'meses:\n  - {mes: "2026-05", motivo: prueba, fuente: []}\ndias: []\n', encoding="utf-8"
+        'meses:\n  - {mes: "2026-05", motivo: prueba, fuente: [], visto_el: "2026-09-01"}\n'
+        "dias: []\n",
+        encoding="utf-8",
     )
     with pytest.raises(KitError, match="universo tiene 0"):
         construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
-    vis.write_text('meses: []\ndias:\n  - {dia: "2026-5-5", motivo: x}\n', encoding="utf-8")
+    vis.write_text(
+        'meses: []\ndias:\n  - {dia: "2026-5-5", motivo: x, visto_el: "2026-09-01"}\n',
+        encoding="utf-8",
+    )
     with pytest.raises(KitError, match="AAAA-MM-DD"):
         construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
     vis.write_text(VISTOS, encoding="utf-8")
@@ -1264,3 +1269,155 @@ def test_una_decidida_no_entra_en_el_cuestionario_de_la_siguiente_sesion() -> No
     decididas = {a.id for a in ambs if a.estado == "DECIDIDA"}
     assert decididas, "hoy hay al menos una decidida (A-22)"
     assert not (decididas & abiertas), "una decidida ya no se pregunta"
+
+
+# ---------------------------------------------------------------- meses vistos (2026-09-17)
+
+
+def _vistos_mayo(repo: Path, visto_el: str) -> None:
+    """Mayo visto el `visto_el`, conservando el dia 05-05 del kit sintetico (visto el 09-01)."""
+    (repo / DIRECTORIO_KIT / "vistos.yaml").write_text(
+        f'meses:\n  - {{mes: "2026-05", motivo: backtest, fuente: [x], visto_el: "{visto_el}"}}\n'
+        + VISTOS.split("\n", 1)[1],
+        encoding="utf-8",
+    )
+
+
+def test_un_mes_visto_despues_no_borra_lo_que_un_paquete_anterior_pregunto(tmp_path: Path) -> None:
+    """El hueco de `vistos.yaml`: declarar mayo visto hacia que `kit check` de la sesion 1,
+    construida con mayo ciego, dijera "se piden 40 casos y el universo tiene 22". Con `visto_el`
+    posterior a la sesion, el paquete se reproduce entero; y un paquete de una sesion posterior no
+    puede sortear mayo: `kit build` FALLA."""
+    repo, ids = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    _vistos_mayo(repo, "2026-09-11")
+    # el paquete del 09-09 se sigue reproduciendo byte a byte, sin un aviso
+    assert comprobar(repo, repo / "data", "2026-09-09-sesion-01") == ([], [])
+    # y knowledge validate no le encuentra nada
+    ids_ev = set(ids.values())
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "ventanas.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    datasets = {c["dataset_id"] for c in doc["casos"]}
+    assert validar_paquetes(repo, [], ids_ev, datasets) == ([], [])
+    # un paquete con sesion el MISMO dia o despues no puede sortear mayo: falla
+    for sesion in ("2026-09-11-sesion-02", "2026-09-15-sesion-02"):
+        with pytest.raises(KitError, match="universo tiene 0"):
+            construir(repo, repo / "data", sesion, 3)
+    # uno de la vispera, si
+    assert construir(repo, repo / "data", "2026-09-10-sesion-02", 3).casos
+
+
+def test_la_guardia_de_construir_falla_aunque_el_filtro_se_salte(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Defensa en profundidad: si un dia visto se colara en el universo, `construir` no escribe un
+    paquete con el: falla. Se prueba apagando el filtro de `_cargar_todo`, que es el fallo que la
+    guardia cubre; la guardia lee `vistos.yaml` por su cuenta."""
+    import botsito.cases.paquete as paq
+
+    repo, _ = repo_kit(tmp_path)
+    _vistos_mayo(repo, "2026-09-01")
+    original = paq._cargar_todo
+
+    def sin_filtro(repo_: Path, sesion: str | None = None) -> Any:
+        config, registro, ambiguedades, mapa, _meses, _dias, items = original(repo_, sesion)
+        return config, registro, ambiguedades, mapa, set(), set(), items
+
+    monkeypatch.setattr(paq, "_cargar_todo", sin_filtro)
+    with pytest.raises(KitError, match="ya habia visto"):
+        construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+
+
+def test_knowledge_validate_denuncia_un_paquete_escrito_con_dias_vistos(tmp_path: Path) -> None:
+    """Sin datos, en CI: un paquete ya escrito que tenga dias de un mes visto a mas tardar el dia de
+    su sesion; y un dia que el paquete excluyo como visto y cuya entrada ya no lo sostiene."""
+    repo, ids = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-15-sesion-01", 3))
+    ids_ev = set(ids.values())
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-15-sesion-01" / "ventanas.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    datasets = {c["dataset_id"] for c in doc["casos"]}
+    assert validar_paquetes(repo, [], ids_ev, datasets) == ([], [])
+    # mayo declarado visto ANTES de la sesion, con el paquete ya escrito: se denuncia
+    _vistos_mayo(repo, "2026-09-12")
+    problemas, _ = validar_paquetes(repo, [], ids_ev, datasets)
+    assert any("ya habia visto el dia de su sesion" in p for p in problemas), problemas
+    # el dia 05-05 que el paquete excluyo como visto, refechado DESPUES de la sesion: se denuncia
+    (repo / DIRECTORIO_KIT / "vistos.yaml").write_text(
+        VISTOS.replace("2026-09-01", "2026-09-20"), encoding="utf-8"
+    )
+    problemas, _ = validar_paquetes(repo, [], ids_ev, datasets)
+    assert any("2026-05-05" in p and "posterior a la sesion" in p for p in problemas), problemas
+    # y quitado del todo
+    (repo / DIRECTORIO_KIT / "vistos.yaml").write_text("meses: []\ndias: []\n", encoding="utf-8")
+    problemas, _ = validar_paquetes(repo, [], ids_ev, datasets)
+    assert any("2026-05-05" in p and "ya no esta" in p for p in problemas), problemas
+
+
+def test_visto_el_es_obligatorio(tmp_path: Path) -> None:
+    repo, _ = repo_kit(tmp_path)
+    vis = repo / DIRECTORIO_KIT / "vistos.yaml"
+    vis.write_text(
+        'meses:\n  - {mes: "2026-05", motivo: x, fuente: []}\ndias: []\n', encoding="utf-8"
+    )
+    with pytest.raises(KitError, match="visto_el"):
+        construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+    vis.write_text(
+        'meses:\n  - {mes: "2026-05", motivo: x, fuente: [], visto_el: "ayer"}\ndias: []\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(KitError, match="no es AAAA-MM-DD"):
+        construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+
+
+def test_el_kappa_avisa_de_etiquetado_no_ciego(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Para F26: una unidad sobre un dia de un mes que el trader ya habia visto el dia de la sesion
+    que la etiqueto no es etiquetado ciego. No se excluye, se dice."""
+    repo, _ = repo_kit(tmp_path)
+    s1, s2 = "2026-09-09-sesion-01", "2026-09-22-sesion-02"
+    escribir(repo, construir(repo, repo / "data", s1, 3))
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / s1 / "particiones.yaml").read_text(encoding="utf-8")
+    )
+    dev = [c for c, p in doc["asignacion"].items() if p == "dev"]
+    for c in dev:
+        _registro_label(repo, s1, c, "07-11: venta; 11-15: no_trade")
+        _registro_label(repo, s2, c, "07-11: venta; 11-15: no_trade")
+    _vistos_mayo(repo, "2026-09-11")
+    assert cli.main(["--repo", str(repo), "kit", "kappa", "--sesion-a", s1, "--sesion-b", s2]) == 0
+    err = capsys.readouterr().err
+    assert f"{s2}: {len(dev)} casos etiquetados sobre dias que el trader ya habia visto" in err
+    # la sesion 1 etiqueto el 09-09, antes de que el trader viera mayo: esa ronda SI fue ciega
+    assert f"{s1}: {len(dev)} casos etiquetados" not in err
+    assert "no fue etiquetado ciego" in err
+
+
+def test_mover_una_sesion_despues_de_un_visto_el_falla_y_no_mueve(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Meses vistos (2026-09-17): mover una sesion a una fecha igual o posterior al `visto_el` de un
+    mes que su paquete sortea la dejaria etiquetando dias ya vistos. Tiene que FALLAR y dejar el
+    paquete original byte a byte; a una fecha anterior al `visto_el`, se mueve."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    _vistos_mayo(repo, "2026-09-11")
+    carpeta = repo / DIRECTORIO_KIT / "2026-09-09-sesion-01"
+    original = {p.name: p.read_bytes() for p in carpeta.iterdir()}
+    modulo = _mover_sesion(repo)
+    for fecha in ("2026-09-11", "2026-09-22"):
+        monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", fecha])
+        with pytest.raises(KitError, match="universo tiene 0"):
+            modulo.main()
+        assert {p.name: p.read_bytes() for p in carpeta.iterdir()} == original
+        assert not (repo / DIRECTORIO_KIT / f"{fecha}-sesion-01").exists()
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-10"])
+    assert modulo.main() == 0
+    assert (repo / DIRECTORIO_KIT / "2026-09-10-sesion-01").is_dir()
