@@ -6,6 +6,8 @@ phase: post-F13 (antes de F18-F24)
 
 # 0028 · El reloj del motor: tres fases, y el riesgo va por tick
 
+> **Nota (2026-09-16, ADR-0032).** El punto 5 ya esta aplicado a la spec: los dos hechos declaran `origen: broker` y ninguna forma puede fijarlos. El punto 4 se PRECISA: una accion con `efecto` se ejecuta solo si, en el instante de ejecutarla, ningun `gate` prohibe ese efecto. Y la lectura prospectiva que este ADR dejaba abierta la decide ADR-0031 para los limites de la firma; el tope del trader no cambia de lectura.
+
 ## Decision
 
 El bucle del motor tiene **tres fases con cadencias distintas**. No es una preferencia: sale del

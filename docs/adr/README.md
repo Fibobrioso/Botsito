@@ -18,7 +18,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0011 | Kit de elicitacion: ambiguedades legibles por maquina, registro pre-poblado, ventanas no vistas con particiones commiteadas antes y kappa desde el feedback | ACTIVE (el esquema de ambiguedades gana el estado DECIDIDA en ADR-0022) |
 | 0012 | El registro despues de la sesion 1: tipos nuevos, ausencia de valor, categorias y el reloj del trader | ACTIVE (punto 5 revertido por ADR-0017) |
 | 0013 | StrategySpec: reglas que nombran parametros y nunca los contienen, y un hash que cubre lo que el bot hace | ACTIVE |
-| 0014 | La base sobre la que se mide el objetivo: `base_calculo_objetivo` | ACTIVE (enmendado por ADR-0020) |
+| 0014 | La base sobre la que se mide el objetivo: `base_calculo_objetivo` | ACTIVE (enmendado por ADR-0020; con nota del 2026-09-16: sus dos premisas estan revocadas y la base queda para el consultor) |
 | 0015 | Los relojes tras la auditoria: el del grafico es un default, y el dia de riesgo necesita el suyo | ACTIVE (enmendado por ADR-0017, ADR-0020 y ADR-0027) |
 | 0016 | De donde sale cada regla: el campo `decision`, y un hash que cubre lo que un humano lee | ACTIVE (con nota del 2026-09-11) |
 | 0017 | El reloj del trader es su reloj civil: se revierte ADR-0012 y se confirma ADR-0005 | ACTIVE |
@@ -32,6 +32,8 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0025 | El reparto de mayo no se toca: 6 dias dev y 13 de holdout (6/4/3), y junio sale del universo de F14 | ACTIVE |
 | 0026 | La prop firm es FTMO, reto 2-Step, tipo de cuenta Swing | ACTIVE |
 | 0027 | Los relojes con FTMO: el dia de riesgo es el dia civil del trader | ACTIVE |
-| 0028 | El reloj del motor: tres fases, y el riesgo va por tick | ACTIVE |
+| 0028 | El reloj del motor: tres fases, y el riesgo va por tick | ACTIVE (con nota del 2026-09-16: el punto 5 aplicado y el 4 precisado por ADR-0032) |
 | 0029 | Lado del precio y redondeo de niveles | ACTIVE |
 | 0030 | El motor interpreta la `forma`; las primitivas se escriben a mano | ACTIVE |
+| 0031 | El freno de la firma dispara antes del limite: margen declarado y lectura prospectiva | ACTIVE |
+| 0032 | De donde sale cada hecho y cada evento, y como nace la orden limite | ACTIVE |
