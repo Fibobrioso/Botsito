@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import lzma
 import struct
 from datetime import UTC, date, datetime
@@ -562,12 +563,15 @@ def _autorizar(repo: Path, particiones: list[str]) -> None:
 
     validation = repo / "docs" / "validation"
     validation.mkdir(parents=True, exist_ok=True)
-    (validation / "PREREGISTRO.md").write_text("# PREREGISTRO\n\numbral: 0.8\n", encoding="utf-8")
+    preregistro = "# PREREGISTRO\n\numbral: 0.8\n"
+    (validation / "PREREGISTRO.md").write_text(preregistro, encoding="utf-8")
+    datos = preregistro.encode("utf-8")
+    blob = hashlib.sha1(b"blob %d\x00" % len(datos) + datos).hexdigest()  # noqa: S324
     (repo / "docs" / "adr" / "0099-apertura.md").write_text("# 99\n", encoding="utf-8")
     for particion in particiones:
         (validation / f"AUTORIZACION-{particion}.md").write_text(
             f"particion: {particion}\nautorizado_por: el usuario\nfecha: 2026-10-01\n"
-            f"adr: ADR-0099\n",
+            f"adr: ADR-0099\npreregistro_blob: {blob}\n",
             encoding="utf-8",
         )
     if not (repo / ".git").is_dir():
@@ -596,17 +600,19 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
     # ADR-0033: build y check DECLARAN en su salida que leen velas y de que dias reservados, por
     # nombre, sin una cifra de velas ni un precio. Se comprueba la salida, no la intencion.
     reservados = {
-        p: sorted(c[-10:] for c, x in doc["asignacion"].items() if x == p)
+        p: [c[-10:] for c, x in doc["asignacion"].items() if x == p]
         for p in ("holdout-1", "holdout-2", "holdout-3")
     }
+    total = sum(len(d) for d in reservados.values())
+    detalle = ", ".join(f"{p} {len(d)}" for p, d in reservados.items() if d)
     for salida in (salida_build, salida_check):
         assert "LECTURA: se leen las velas M1 de" in salida
         assert "no es abrir un holdout (ADR-0021 §1)" in salida
-        for particion, dias in reservados.items():
-            assert (
-                f"LECTURA: {particion}, {len(dias)} dias cuyas velas se leen: " + ", ".join(dias)
-                in salida
-            )
+        # RECUENTO y no fechas (decision del consultor): ninguna fecha de dia reservado
+        assert f"LECTURA: {total} dias reservados cuyas velas se leen: {detalle}" in salida
+        for dias in reservados.values():
+            for dia in dias:
+                assert dia not in salida, dia
         assert "sha256:" not in salida and "n_velas:" not in salida
     # la LECTURA va antes del OK: en check se declara antes de leer
     assert salida_check.index("LECTURA:") < salida_check.index("OK:")
@@ -635,6 +641,8 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2]) == 0
     out = capsys.readouterr()
     assert "unidades: 4" in out.out
+    # sobre cuanto se calculo, junto al kappa: un kappa alto sobre pocos casos no significa nada
+    assert "calculado sobre 4 unidades de 2 casos" in out.out
     assert "3 casos reservados excluidos sin leer su etiqueta" in out.err
     # Pedir abrirlas se niega: no hay git, ni PREREGISTRO relleno, ni autorizacion
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 1
@@ -646,6 +654,7 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 0
     out = capsys.readouterr()
     assert "unidades: 10" in out.out and "po: 0.900" in out.out and "kappa: 0.818" in out.out
+    assert "kappa 0.818 calculado sobre 10 unidades de 5 casos" in out.out
     assert kp.calcular(
         {"u": "a", "v": "a", "w": "b"}, {"u": "a", "v": "a", "w": "a"}, ["a", "b"]
     ).avisos

@@ -74,7 +74,7 @@ alcance de la puerta, autorización y ADR, todo por grep.
   holdout en `cli.py` hace fallar el primero (probado).
 
 **3 · Autorización:** un fichero commiteado por partición, `docs/validation/AUTORIZACION-<partición>.md`,
-con `particion`, `autorizado_por`, `fecha` y `adr`. Además, `PREREGISTRO.md` commiteado y sin la marca
+con `particion`, `autorizado_por`, `fecha`, `adr` y, desde la validación, `preregistro_blob` (§11). Además, `PREREGISTRO.md` commiteado y sin la marca
 `SIN RELLENAR` con la que nació. Los dos tienen que estar en HEAD tal como están en el árbol. Se
 descartó imitar `BOTSITO_ALLOW_MAIN`: una variable de entorno se deja puesta sin querer y no deja
 rastro de quién autorizó.
@@ -107,7 +107,7 @@ ya declara lo que lee.
 | **2 · puerta** | `abrir()` se niega sin PREREGISTRO relleno y sin autorización commiteada, y nombra ADR-0021 §3. Con el PREREGISTRO real se niega para las tres particiones. Con todo en orden, abre, siempre en repos temporales. Cada motivo de cierre, por su cuenta. Una autorización sin commitear, o un PREREGISTRO cambiado tras commitearlo, no autoriza | `src/botsito/cases/holdout.py`, `tests/unit/test_puerta_holdout.py` |
 | **2 · etiquetas** | `kit kappa` excluye los casos reservados sin leer su valor y lo dice; `--incluir-holdout` se niega hoy y, autorizado en un repo de prueba, da las mismas 10 unidades de antes. `feedback trace` los oculta | `cases/paquete.py`, `cases/kappa.py`, `feedback/modelo.py`, `cli.py`; `test_kit.py::test_kappa_desde_registros_y_cli` |
 | **2 · contratos** | Solo la puerta nombra la carpeta; el valor de una etiqueta solo se lee por el camino que excluye reservados | `tests/contract/test_import_contracts.py` |
-| **3 · declaración** | `kit build` y `kit check` imprimen `LECTURA:` con los datasets leídos y, por partición reservada, los días cuyas velas se leen, sin cifras ni precios. `check` lo declara antes de leer; `build`, al terminar, porque qué días son reservados solo se sabe al construir. Sin datos, no imprimen nada | `cases/paquete.py:lectura_de_velas`, `cli.py`; test sobre la salida en el kit sintético |
+| **3 · declaración** | `kit build` y `kit check` imprimen `LECTURA:` con los datasets leídos y CUÁNTOS días reservados se leen por partición, sin fechas (decisión del consultor, §8), sin cifras ni precios. `check` lo declara antes de leer; `build`, al terminar, porque qué días son reservados solo se sabe al construir. Sin datos, no imprimen nada | `cases/paquete.py:lectura_de_velas`, `cli.py`; test sobre la salida en el kit sintético |
 | **§2 · obligación 6** | Reescrita: leer velas no es abrir y el paquete no se construye sin hacerlo; abrir exige autorización; la CLI declara lo que lee. La fila del 2026-09-13 no cambia | `docs/validation/HOLDOUT-EXPOSICIONES.md` |
 | **§3 · F14** | D4 y el criterio 3 anotados como hechos aquí; a F14 le queda que su ingesta del xlsx pase por la puerta | `docs/plan/features/F14-case-library.md` |
 
@@ -132,6 +132,11 @@ ya declara lo que lee.
   existe. F24 y F26 llaman a `abrir()` antes de medir.
 - **Que el ADR de la autorización diga de verdad qué se mide y contra qué umbral** no es mecanizable:
   se comprueba que exista.
+- **Qué pre-registro se aprobó SÍ se comprueba** desde la validación: `preregistro_blob` en la
+  autorización tiene que ser el blob del `PREREGISTRO.md` commiteado, o la puerta cierra (§11). Lo
+  que no cubre: si los umbrales se cambian y después se devuelven byte a byte a lo aprobado, vuelve a
+  abrir, porque el contenido vuelve a ser el aprobado; que nadie los tocara entretanto lo dice
+  `git log`.
 - **Un test legítimo de F26 que lea el holdout real** no tiene hoy vía en la guarda de tests. La
   diseña F26, ligada a la misma autorización.
 
@@ -170,19 +175,20 @@ kit sobre el repositorio real): uno sobre código y tests, con mutantes en repos
 | El índice de ADR de PROJECT_STATE ponía ADR-0033 antes que ADR-0032 | baja | documentos | **Corregido** |
 | `SIN RELLENAR` se busca en todo el `PREREGISTRO.md`: uno relleno que la mencione en un comentario sigue cerrado | baja | código | **Sin cambio de lógica**, a propósito: falla del lado seguro. El mensaje dice ahora que la marca se quita de todo el fichero |
 
-## 8. Qué debe decidir el usuario
+## 8. Lo que decidió el usuario (2026-09-17)
 
-1. **¿Validar la rama y hacer el ritual** (§10)?
-2. **Fechas o recuento en la salida de `kit build` / `kit check`.** Hoy imprimen las fechas de los días
-   reservados por partición. La asignación ya está commiteada en `particiones.yaml`, así que no se
-   revela nada nuevo al operador. Pero la hoja del trader oculta esos días a propósito: si esa salida
-   puede acabar delante del trader, conviene imprimir solo el recuento. ¿Fechas o recuento?
-3. **`kit kappa` cambia de resultado por defecto**: excluye los casos reservados y lo dice. La ronda
-   2 del kappa sobre la sesión 2 medirá solo los `dev`, salvo que se autorice abrir. ¿De acuerdo, o
-   se prefiere que se niegue entero en vez de excluir?
-4. **El formato de la autorización** (`AUTORIZACION-<partición>.md` con `particion`,
-   `autorizado_por`, `fecha` y `adr`). ¿Vale, o prefieres otro sitio o más campos (por ejemplo, el
-   commit del PREREGISTRO que se aprueba)?
+1. **La rama: validada**, con una corrección posterior (§11) antes del ritual.
+2. **RECUENTO, no fechas.** La línea `LECTURA:` dice cuántos días reservados y de qué partición
+   («24 dias reservados cuyas velas se leen: holdout-1 8, holdout-2 8, holdout-3 8»), sin fechas.
+   Motivo del consultor: las fechas ya están en `particiones.yaml` para quien las quiera, la lectura
+   es siempre la misma, y esa salida puede acabar delante del trader, a quien la hoja le oculta esos
+   días por contrato. Hecho; el test comprueba además que no sale ninguna fecha de día reservado.
+3. **EXCLUIR por defecto, como estaba.** Negarse entero dejaría el kappa inservible hasta abrir un
+   holdout, y el kappa sirve para cazar deriva de etiquetado ANTES de eso. Y el kappa dice ahora,
+   junto a su valor, sobre cuántas unidades y cuántos casos se calculó («kappa 0.600 calculado sobre
+   4 unidades de 2 casos»): un kappa alto sobre ocho casos no significa nada. `kit kappa` no escribe
+   ningún fichero; lo dice en su salida, que es todo lo que produce.
+4. **El formato de la autorización vale, con el campo nuevo `preregistro_blob`** (§11).
 
 ## 9. Cómo comprobarlo
 
@@ -224,6 +230,44 @@ git push origin stable/F13-guarda
 Entre el merge y el `docs(state)`, `state check` falla a propósito. Si `make check` falla, no se
 pushea. La CI que cuenta es la del `docs(state)`:
 `curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/<sha>/check-runs`.
+
+## 11. Hallazgo posterior al informe, y qué se hizo (2026-09-17)
+
+**Lo encontró el consultor al validar.** La autorización exigía que `PREREGISTRO.md` estuviera
+commiteado y relleno, pero no ataba QUÉ versión se aprobó. Se podía rellenar, autorizar, abrir y
+después cambiar los umbrales: la autorización seguía valiendo, y el fichero seguía commiteado y
+relleno. Es justo lo que un pre-registro existe para impedir.
+
+**Qué se hizo.** Campo obligatorio nuevo en `AUTORIZACION-<partición>.md`: `preregistro_blob`, el sha
+del **blob** de `PREREGISTRO.md` que se aprueba (`git rev-parse HEAD:docs/validation/PREREGISTRO.md`).
+La puerta lo compara con el blob del PREREGISTRO commiteado. Si no coincide, cierra: «aprueba el
+PREREGISTRO.md con blob …, y el commiteado es …: el pre-registro cambió después de autorizar, y hace
+falta una autorización nueva». Si falta o no son 40 hexadecimales en minúscula, también cierra.
+
+**Blob y no commit, y por qué.** Lo que se aprueba es un contenido:
+- el sha del blob cambia con cualquier byte del fichero y con nada más; otro commit que no toque el
+  PREREGISTRO no lo mueve;
+- sobrevive a un rebase o a un merge;
+- se compara directamente con lo que hay en HEAD.
+
+El sha de un commit fija un instante: habría que buscar el fichero dentro de él, y un rebase lo deja
+apuntando a nada. Comprobado que coincide con lo que da git: en este repositorio,
+`git rev-parse HEAD:docs/validation/PREREGISTRO.md` y `git hash-object` del fichero dan el mismo sha,
+y un test calcula el blob en Python y lo compara con el `rev-parse` de un repo temporal.
+
+**Tests** (`tests/unit/test_puerta_holdout.py`, siempre en repos temporales):
+- una autorización válida abre;
+- cambiar un umbral del PREREGISTRO y commitearlo cierra, con el motivo;
+- una autorización nueva sobre el PREREGISTRO cambiado vuelve a abrir;
+- el campo ausente, mal formado (`HEAD`, 40 `A`) o con un blob que no es el commiteado cierra.
+
+El kit sintético de `test_kit.py` autoriza con el campo.
+
+**Lo que no cubre, declarado:** si los umbrales se cambian y después se devuelven byte a byte a lo
+aprobado, la puerta vuelve a abrir, porque el contenido vuelve a ser el aprobado. Que nadie los tocara
+entretanto lo dice `git log`, no la puerta.
+
+`knowledge/spec/` sigue sin tocarse: spec 12.0.0 y el mismo hash.
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

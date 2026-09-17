@@ -52,11 +52,12 @@ Qué es cada cosa, en corto (la definicion completa esta en ADR-0021 y en
      (`LABEL_CASE`) y el detalle por operacion de esos dias (ADR-0021 §1 y §3). Todo lo que abre pasa
      por `botsito.cases.holdout` (`src/botsito/cases/holdout.py`), que se niega sin
      `docs/validation/PREREGISTRO.md` commiteado y relleno y sin
-     `docs/validation/AUTORIZACION-<particion>.md` commiteado. `kit kappa` excluye las etiquetas de
+     `docs/validation/AUTORIZACION-<particion>.md` commiteado, que fija con `preregistro_blob` el
+     pre-registro exacto que aprueba. `kit kappa` excluye las etiquetas de
      los casos reservados sin leerlas, y lo dice.
    - **Lo que faltaba, y ya esta**: que `kit build` y `kit check` lo declaren en su salida -lineas
-     `LECTURA:` con los datasets y, por particion reservada, los dias cuyas velas se leen, sin cifras
-     ni precios-; y que la guarda de `tests/conftest.py` deje de ser un stub y vigile a cualquier
+     `LECTURA:` con los datasets y CUANTOS dias reservados se leen por particion, sin fechas, sin
+     cifras de velas y sin precios-; y que la guarda de `tests/conftest.py` deje de ser un stub y vigile a cualquier
      llamante, no solo a `spec` y `domain`.
    - **La fila del 2026-09-13 no cambia**: lo que paso sigue siendo lo que paso, y sigue sin quemar.
      Lo que cambia es que ya no pasaria en silencio.

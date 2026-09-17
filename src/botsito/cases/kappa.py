@@ -83,6 +83,9 @@ class ResultadoKappa:
     matriz: dict[str, dict[str, int]]  # a -> b -> recuento
     acuerdo_por_categoria: dict[str, Fraction]
     avisos: list[str] = field(default_factory=list)
+    # Cuantos CASOS distintos hay detras de las unidades. Un kappa alto sobre ocho casos no
+    # significa nada, y hasta el 2026-09-17 la salida no lo decia junto al kappa.
+    casos: int = 0
 
 
 def calcular(
@@ -125,7 +128,8 @@ def calcular(
         )
     if kappa is None:
         avisos.append("una sola categoria en ambas rondas: kappa no esta definida (pe = 1)")
-    return ResultadoKappa(n, po, pe, kappa, matriz, acuerdo, avisos)
+    casos = len({u.split("|", 1)[0] for u in a})
+    return ResultadoKappa(n, po, pe, kappa, matriz, acuerdo, avisos, casos)
 
 
 def etiquetas_de_registros(

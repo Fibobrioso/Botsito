@@ -15,14 +15,16 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   raiz a un holdout sintetico.
 - LA PUERTA: todo lo que ABRE pasa por `botsito.cases.holdout.abrir()`, que se niega sin
   `PREREGISTRO.md` commiteado y sin la marca `SIN RELLENAR` y sin
-  `docs/validation/AUTORIZACION-<particion>.md` commiteado. Cubre los ficheros del holdout y el
-  VALOR de las etiquetas de casos reservados: `kit kappa` las excluye (`--incluir-holdout` pasa por
-  la puerta) y `feedback trace` las oculta. Cargar registros NO es abrir: `knowledge validate` y la
+  `docs/validation/AUTORIZACION-<particion>.md` commiteado, cuyo `preregistro_blob` tiene que ser
+  el blob del PREREGISTRO commiteado: cambiar un umbral despues de autorizar cierra la puerta hasta
+  una autorizacion nueva. Cubre los ficheros del holdout y el
+  VALOR de las etiquetas de casos reservados: `kit kappa` las excluye y dice sobre cuantas unidades
+  y casos calculo (`--incluir-holdout` pasa por la puerta) y `feedback trace` las oculta. Cargar registros NO es abrir: `knowledge validate` y la
   guardia de ancestro no pasan por ella.
 - LAS VELAS NO PASAN POR LA PUERTA, y no pueden: que dias son reservados depende de cuales entran en
   el universo, y eso de sus velas. `kit build` y `kit check` SE PUEDEN ejecutar con `data/` presente
-  -la obligacion 6 que lo prohibia esta reescrita- y declaran en su salida (`LECTURA:`) los dias
-  reservados cuyas velas leen. Eso desbloquea el paquete de la sesion 2.
+  -la obligacion 6 que lo prohibia esta reescrita- y declaran en su salida (`LECTURA:`) CUANTOS
+  dias reservados leen por particion, sin fechas: esa salida puede acabar delante del trader. Eso desbloquea el paquete de la sesion 2.
 - Lecciones de la rama:
   - EL RITUAL POR LINEAS `!` EN CLAUDE CODE: cada linea abre una shell nueva, asi que un `export
     BOTSITO_ALLOW_MAIN=1` no sobrevive a la linea siguiente. La variable va pegada al commit:

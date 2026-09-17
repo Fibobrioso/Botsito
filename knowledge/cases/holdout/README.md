@@ -32,9 +32,12 @@ no se puede invertir para deducirlas- **pero si es una EXPOSICION y se declara**
 
 **Con que, mecanicamente (ADR-0033):** `docs/validation/PREREGISTRO.md` commiteado y sin la marca
 `SIN RELLENAR`, y un fichero commiteado por particion, `docs/validation/AUTORIZACION-<particion>.md`,
-con `particion`, `autorizado_por`, `fecha` y `adr`. La puerta `botsito.cases.holdout` los comprueba y
-se niega si falta algo. Leer las velas de un dia reservado para recalcular su ventana no pasa por
-ella: no es abrir, y `kit build` / `kit check` lo declaran en su salida.
+con `particion`, `autorizado_por`, `fecha`, `adr` y `preregistro_blob` -el sha del blob del
+PREREGISTRO que se aprueba (`git rev-parse HEAD:docs/validation/PREREGISTRO.md`)-. La puerta
+`botsito.cases.holdout` los comprueba y se niega si falta algo, o si el PREREGISTRO cambio despues de
+autorizar. Leer las velas de un dia reservado para recalcular su ventana no pasa por
+ella: no es abrir, y `kit build` / `kit check` lo declaran en su salida, con el recuento de dias
+reservados por particion y sin fechas.
 
 ## Reparticionar
 

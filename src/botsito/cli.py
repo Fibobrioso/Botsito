@@ -1429,6 +1429,9 @@ def kit_kappa(repo: Path, args: argparse.Namespace) -> int:
         print(f"AVISO: {a}", file=sys.stderr)
     kappa = "indefinida" if r.kappa is None else f"{float(r.kappa):.3f}"
     print(f"unidades: {r.unidades}  po: {float(r.po):.3f}  pe: {float(r.pe):.3f}  kappa: {kappa}")
+    # Sobre cuanto se calculo, junto al kappa y no solo en la cabecera: un kappa alto sobre pocos
+    # casos no significa nada (decision del consultor, 2026-09-17).
+    print(f"kappa {kappa} calculado sobre {r.unidades} unidades de {r.casos} casos")
     for x, fila in r.matriz.items():
         print(f"  {x:10s} " + " ".join(f"{fila[y]:4d}" for y in fila))
     for x, v in r.acuerdo_por_categoria.items():

@@ -23,7 +23,11 @@ phase: post-F13 (extrae F14 D4)
    carpeta del holdout (contrato por grep). Todo lo que ABRE (ADR-0021 §1) pasa por `abrir()`:
    - leer un fichero de `holdout/{1,2,3}/` (`leer_fichero`);
    - usar el VALOR de un `LABEL_CASE` cuyo caso está asignado a una partición reservada.
-     `kit kappa` los excluye sin parsearlos y lo dice; `--incluir-holdout` pasa por la puerta.
+     `kit kappa` los excluye sin parsearlos y lo dice, y dice junto al kappa sobre cuántas
+     unidades y cuántos casos lo calculó -un kappa alto sobre pocos casos no significa nada-;
+     `--incluir-holdout` pasa por la puerta. Excluir y no negarse entero, por decisión del
+     consultor: negarse dejaría el kappa inservible hasta abrir un holdout, y el kappa sirve para
+     cazar deriva de etiquetado ANTES de eso.
      `feedback trace` no IMPRIME ni el valor ni el literal de un caso reservado: los oculta. Fue
      la segunda via, encontrada al revisar quien mas mostraba `valor_resultante`.
 3. **La frontera es usar el valor, no cargar el fichero.** `knowledge validate`, `feedback pending`
@@ -32,14 +36,29 @@ phase: post-F13 (extrae F14 D4)
 4. **Las velas de mercado no pasan por la puerta.** Construir o comprobar un paquete exige leer
    las de todos los días del universo, reservados incluidos, y eso no es abrir (ADR-0021 §1). Lo que
    se exige es **declararlo**: `kit build` y `kit check` imprimen líneas `LECTURA:` con los datasets
-   leídos y, por partición reservada, los días cuyas velas se leen. No imprimen ninguna cifra de
-   velas ni ningún precio. `check` lo declara antes de leer; `build`, después, porque qué días son
+   leídos y **cuántos** días reservados se leen y de qué partición
+   (`LECTURA: 24 dias reservados cuyas velas se leen: holdout-1 8, holdout-2 8, holdout-3 8`),
+   **sin fechas**, sin cifras de velas y sin precios. Recuento y no fechas por decisión del
+   consultor (2026-09-17): las fechas ya están en `particiones.yaml` para quien las quiera, la
+   lectura es siempre la misma, y esa salida puede acabar delante del trader, a quien la hoja le
+   oculta esos días por contrato. `check` lo declara antes de leer; `build`, después, porque qué días son
    reservados solo se sabe al construir.
 5. **La autorización es un fichero commiteado por partición**,
-   `docs/validation/AUTORIZACION-<partición>.md`, con `particion`, `autorizado_por`, `fecha` y `adr`
-   (un ADR que exista). La puerta exige además `docs/validation/PREREGISTRO.md` **commiteado y
-   relleno**. «Relleno» es mecánico: sin la marca `SIN RELLENAR` con la que nació. Los dos tienen
-   que estar en HEAD tal como están en el árbol: lo que no está en git no autoriza.
+   `docs/validation/AUTORIZACION-<partición>.md`, con `particion`, `autorizado_por`, `fecha`, `adr`
+   (un ADR que exista) y **`preregistro_blob`**. La puerta exige además
+   `docs/validation/PREREGISTRO.md` **commiteado y relleno**. «Relleno» es mecánico: sin la marca
+   `SIN RELLENAR` con la que nació. Los dos tienen que estar en HEAD tal como están en el árbol:
+   lo que no está en git no autoriza. Una clave repetida cierra.
+6. **`preregistro_blob` fija QUÉ pre-registro se aprobó** (añadido el 2026-09-17, al validar): el sha
+   del BLOB de `PREREGISTRO.md` que se autoriza, el que da
+   `git rev-parse HEAD:docs/validation/PREREGISTRO.md`. La puerta lo compara con el blob del
+   PREREGISTRO commiteado, y si no coincide cierra: «el pre-registro cambió después de autorizar, y
+   hace falta una autorización nueva». Sin él se podía rellenar, autorizar, abrir y después cambiar
+   los umbrales, y la autorización seguía valiendo con el fichero commiteado y relleno.
+   **El blob y no el commit** porque lo que se aprueba es un contenido. El sha del blob cambia con
+   cualquier byte del fichero y con nada más: otro commit que no toque el PREREGISTRO no lo mueve.
+   Sobrevive a un rebase o a un merge, y se compara directamente. El sha de un commit fija un
+   instante: habría que buscar el fichero dentro de él, y un rebase lo deja apuntando a nada.
 
 ## Problema que resuelve
 
@@ -100,6 +119,10 @@ Porque cada pieza está medida:
   existe. F24 y F26 llaman a `abrir()` antes de medir.
 - **Que el ADR de la autorización diga de verdad qué se mide y contra qué umbral** no es
   mecanizable: se comprueba que exista, no lo que dice.
+- **Volver al contenido aprobado reabre.** Si los umbrales se cambian y después se devuelven byte a
+  byte a lo aprobado, el blob vuelve a coincidir y la puerta vuelve a abrir: el contenido es otra vez
+  el aprobado. Lo que el pre-registro protege -que la medida se haga con los umbrales aprobados- se
+  sostiene; que nadie los tocara entretanto lo dice `git log`, no la puerta.
 - **Un test legítimo de F26 que lea holdout real** no tiene hoy vía en la guarda de tests. La
   diseña F26, ligada a esta misma autorización.
 

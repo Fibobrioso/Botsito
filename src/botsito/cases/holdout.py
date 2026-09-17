@@ -21,7 +21,18 @@ LA AUTORIZACION es un fichero COMMITEADO por particion,
 `docs/validation/AUTORIZACION-<particion>.md`, y no una variable de entorno: una variable se deja
 puesta sin querer y no queda en ningun sitio; un fichero commiteado con fecha, autor y ADR es
 dificil de crear por accidente y trivial de auditar con `git log`. Y no basta con el: el
-`PREREGISTRO.md` tiene que estar commiteado y RELLENO.
+`PREREGISTRO.md` tiene que estar commiteado y RELLENO, y ser EXACTAMENTE el que se aprobo.
+
+QUE VERSION SE APROBO lo fija `preregistro_blob`: el sha del BLOB de `PREREGISTRO.md`, no el de un
+commit. Sin este campo se podia rellenar, autorizar, abrir y despues cambiar los umbrales: la
+autorizacion seguia valiendo y el fichero seguia commiteado y relleno, que es justo lo que un
+pre-registro existe para impedir. El blob y no el commit porque lo que se aprueba es un CONTENIDO:
+el sha del blob cambia con cualquier byte del fichero y con nada mas -otro commit que no toque el
+PREREGISTRO no lo mueve-, sobrevive a un rebase o a un merge, y se compara directamente con
+`git rev-parse HEAD:docs/validation/PREREGISTRO.md`. El sha de un commit fija un instante: habria
+que ir a buscar el fichero dentro de el, y un rebase lo deja apuntando a nada. Consecuencia
+declarada: si los umbrales se cambian y despues se devuelven byte a byte a lo aprobado, la puerta
+vuelve a abrir, porque el contenido vuelve a ser el aprobado.
 """
 
 from __future__ import annotations
@@ -29,7 +40,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from botsito.comun.historial import contenido_en_head
+from botsito.comun.historial import blob_en_head, contenido_en_head
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 
 PARTICIONES_RESERVADAS = ("holdout-1", "holdout-2", "holdout-3")
@@ -38,7 +49,8 @@ DIRECTORIO_KIT = "knowledge/cases/kit"
 FICHERO_PREREGISTRO = "docs/validation/PREREGISTRO.md"
 # El PREREGISTRO nacio vacio el 2026-09-12 con esta marca en su cabecera. Mientras siga, no se abre.
 MARCA_SIN_RELLENAR = "SIN RELLENAR"
-_CAMPOS_AUTORIZACION = ("particion", "autorizado_por", "fecha", "adr")
+_CAMPOS_AUTORIZACION = ("particion", "autorizado_por", "fecha", "adr", "preregistro_blob")
+_SHA = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
 _FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 _ADR = re.compile(r"^ADR-(\d{4})$", re.ASCII)
 
@@ -111,6 +123,23 @@ def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
     adr = _ADR.match(campos["adr"])
     if adr is None or not list((repo / "docs" / "adr").glob(f"{adr.group(1)}-*.md")):
         motivos.append(f"{ruta}: adr {campos['adr']!r} no es un ADR que exista")
+    aprobado = campos["preregistro_blob"]
+    if not _SHA.match(aprobado):
+        motivos.append(
+            f"{ruta}: preregistro_blob {aprobado!r} no es un sha de blob (40 hex; lo da "
+            f"`git rev-parse HEAD:{FICHERO_PREREGISTRO}`)"
+        )
+    else:
+        try:
+            vigente = blob_en_head(repo, FICHERO_PREREGISTRO)
+        except OSError:
+            vigente = None
+        if vigente != aprobado:
+            motivos.append(
+                f"{ruta}: aprueba el {FICHERO_PREREGISTRO} con blob {aprobado[:12]}…, y el "
+                f"commiteado es {vigente[:12] + '…' if vigente else 'ninguno'}: el pre-registro "
+                f"cambio despues de autorizar, y hace falta una autorizacion nueva"
+            )
     return motivos
 
 

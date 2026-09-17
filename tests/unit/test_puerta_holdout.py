@@ -6,6 +6,7 @@ sigue vacio a proposito, y este fichero comprueba que, tal como esta, la puerta 
 
 from __future__ import annotations
 
+import hashlib
 import subprocess
 from pathlib import Path
 
@@ -79,8 +80,17 @@ def _repo(tmp_path: Path, preregistro: str, autorizacion: str | None) -> Path:
     return tmp_path
 
 
-BUENA = "particion: holdout-2\nautorizado_por: el usuario\nfecha: 2026-10-01\nadr: ADR-0099\n"
+def blob_de(texto: str) -> str:
+    """El sha que git da al blob de este contenido (`git hash-object`)."""
+    datos = texto.encode("utf-8")
+    return hashlib.sha1(b"blob %d\x00" % len(datos) + datos).hexdigest()  # noqa: S324
+
+
 RELLENO = "# PREREGISTRO\n\numbral: 0.8\n"
+BUENA = (
+    "particion: holdout-2\nautorizado_por: el usuario\nfecha: 2026-10-01\nadr: ADR-0099\n"
+    f"preregistro_blob: {blob_de(RELLENO)}\n"
+)
 
 
 def test_con_todo_en_orden_se_abre(tmp_path: Path) -> None:
@@ -100,6 +110,10 @@ def test_con_todo_en_orden_se_abre(tmp_path: Path) -> None:
         (RELLENO, BUENA.replace("ADR-0099", "ADR-0777"), "no es un ADR que exista"),
         (RELLENO, BUENA.replace("2026-10-01", "ayer"), "no es AAAA-MM-DD"),
         (RELLENO, "particion: holdout-2\n", "faltan"),
+        (RELLENO, BUENA.replace(f"preregistro_blob: {blob_de(RELLENO)}\n", ""), "faltan"),
+        (RELLENO, BUENA.replace(blob_de(RELLENO), "HEAD"), "no es un sha de blob"),
+        (RELLENO, BUENA.replace(blob_de(RELLENO), "A" * 40), "no es un sha de blob"),
+        (RELLENO, BUENA.replace(blob_de(RELLENO), "0" * 40), "cambio despues de autorizar"),
         (RELLENO, "particion: holdout-1\n" + BUENA, "claves repetidas"),
         (RELLENO, BUENA + "particion: holdout-1\n", "claves repetidas"),
     ],
@@ -126,6 +140,36 @@ def test_una_autorizacion_sin_commitear_no_autoriza(tmp_path: Path) -> None:
     assert motivos_de_cierre(repo, "holdout-2") == []
     (repo / FICHERO_PREREGISTRO).write_text(RELLENO + "umbral: 0.5\n", encoding="utf-8")
     assert any("no esta commiteado" in m for m in motivos_de_cierre(repo, "holdout-2"))
+
+
+def test_cambiar_el_preregistro_despues_de_autorizar_cierra_la_puerta(tmp_path: Path) -> None:
+    """El hueco que cierra `preregistro_blob`: rellenar, autorizar, abrir y despues mover un umbral.
+    La autorizacion seguia valiendo y el fichero seguia commiteado y relleno."""
+    repo = _repo(tmp_path, RELLENO, BUENA)
+    assert motivos_de_cierre(repo, "holdout-2") == []  # la autorizacion valida abre
+    cambiado = RELLENO.replace("0.8", "0.6")
+    (repo / FICHERO_PREREGISTRO).write_text(cambiado, encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "baja el umbral despues de abrir")
+    motivos = motivos_de_cierre(repo, "holdout-2")
+    assert any("cambio despues de autorizar" in m for m in motivos), motivos
+    with pytest.raises(HoldoutCerradoError, match="autorizacion nueva"):
+        abrir(repo, "holdout-2", "prueba")
+    # una autorizacion NUEVA sobre el pre-registro cambiado vuelve a abrir
+    nueva = BUENA.replace(blob_de(RELLENO), blob_de(cambiado))
+    (repo / "docs" / "validation" / "AUTORIZACION-holdout-2.md").write_text(nueva, encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "autoriza el pre-registro nuevo")
+    assert motivos_de_cierre(repo, "holdout-2") == []
+
+
+def test_el_blob_de_la_prueba_es_el_de_git(tmp_path: Path) -> None:
+    repo = _repo(tmp_path, RELLENO, BUENA)
+    salida = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", f"HEAD:{FICHERO_PREREGISTRO}"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    assert salida == blob_de(RELLENO)
 
 
 def test_un_bom_no_rompe_una_autorizacion_buena(tmp_path: Path) -> None:

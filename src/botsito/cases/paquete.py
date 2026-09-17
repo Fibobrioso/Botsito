@@ -399,8 +399,8 @@ def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]
     holdout (ADR-0021 §1), pero hasta el 2026-09-17 pasaba en silencio, y el 2026-09-13 paso dos
     veces sin que nadie lo viera en la salida. Sin datos no se lee nada y no se declara nada.
 
-    Nombra los dias -no cifras de velas ni precios-: la asignacion ya esta commiteada en
-    `particiones.yaml`, y lo que importa es que quien ejecuta sepa QUE ha tocado.
+    Dice CUANTOS dias reservados y de que particion, sin fechas, sin cifras de velas y sin precios:
+    las fechas estan en `particiones.yaml`, y la salida puede acabar delante del trader.
     """
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
     if not hay_datos_del_kit(repo, carpeta_datos, config):
@@ -414,12 +414,16 @@ def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]
         f"H4 de sus ventanas. Ninguna etiqueta y ningun precio: no es abrir un holdout (ADR-0021 "
         f"§1), y se declara (ADR-0033)"
     ]
-    for particion in PARTICIONES_RESERVADAS:
-        dias = sorted(caso[-10:] for caso, p in asignacion.items() if p == particion)
-        if dias:
-            lineas.append(
-                f"LECTURA: {particion}, {len(dias)} dias cuyas velas se leen: {', '.join(dias)}"
-            )
+    # RECUENTO y no fechas (decision del consultor, 2026-09-17): las fechas ya estan en
+    # `particiones.yaml` para quien las quiera, la lectura es siempre la misma, y esta salida puede
+    # acabar delante del trader, a quien la hoja le oculta esos dias por contrato.
+    por_particion = {
+        p: sum(1 for x in asignacion.values() if x == p) for p in PARTICIONES_RESERVADAS
+    }
+    total = sum(por_particion.values())
+    if total:
+        detalle = ", ".join(f"{p} {n}" for p, n in por_particion.items() if n)
+        lineas.append(f"LECTURA: {total} dias reservados cuyas velas se leen: {detalle}")
     return lineas
 
 
