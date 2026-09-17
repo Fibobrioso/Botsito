@@ -23,7 +23,12 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - `breaker_m1_criterio_ruptura` ES NUEVO (enum mecha|cuerpo, `mecha`, CONFIRMED por ev-v4-005910).
   `se_da_esquema` lo toma como argumento y RN-008 lo pasa en su forma: sin eso no tendria lector.
 - A-32 VA A LA SESION 2 con el fotograma delante: si el nivel roto es la liquidez de M15 o de M1.
-- DEUDA ANOTADA: el detector de contradicciones no ve los temas hermanos, y es la segunda vez.
+- VALIDADA por el usuario el 2026-09-17, desviacion incluida.
+- TRES DEUDAS ANOTADAS en PROJECT_STATE, todas medidas en esta rama: el detector no ve los temas
+  hermanos (segunda vez); la via de propuesta no admite `supersede`, asi que toda correccion de
+  evidencia se sale del mecanismo de propuestas; y un CONFIRM sobre un item supersedido queda
+  invisible -`kb find` filtra por activos- y sin aviso -`feedback pending` dice REFLEJADO con un
+  motivo que ya no es cierto-.
 
 ## Estado (2026-09-17, rama `trabajo/meses-vistos` esperando validacion; lo de debajo es anterior)
 - LA GUARDA DEL HOLDOUT ESTA CERRADA EN MAIN (merge 44a9fc1, tag `stable/F13-guarda`).

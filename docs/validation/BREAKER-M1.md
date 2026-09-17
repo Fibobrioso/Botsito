@@ -153,11 +153,25 @@ porque un parámetro nuevo es más que una redacción.
 - **Holdout**: no se abre nada. `kit check` declara por recuento las velas que lee (ADR-0033).
 - **`knowledge/feedback/`**: el CONFIRM se queda como está; es solo-añadir y sigue siendo cierto.
 
+## 9b. Las otras dos deudas, anotadas al validar
+
+El usuario las mando a **Technical Debt** el 2026-09-17, junto a la del detector; las dos salieron de
+medir esta rama y no las tenia nadie escritas:
+
+1. **La via de propuesta no admite `supersede`** (§3): toda correccion de evidencia se salta el
+   mecanismo de propuestas -guardias, sello `salida_sha256`, trazabilidad de que modelo la propuso- y
+   va por `evidence new --supersede`. O el esquema de la propuesta lo admite, o se declara por escrito
+   que las correcciones van por otra via a proposito.
+2. **Un CONFIRM sobre un item supersedido queda invisible y sin aviso** (§2): `feedback pending` dice
+   REFLEJADO sin mirar si el item vive, con un motivo que ya no es cierto, y `kb find` no encuentra el
+   item viejo porque el indice filtra por activos.
+
 ## 9. Qué debe decidir el usuario
 
-1. **¿Validar la rama** y hacer el ritual (`docs/runbooks/RITUAL.md`)?
+1. **VALIDADA el 2026-09-17**, con su ritual (`docs/runbooks/RITUAL.md`) a cargo del usuario.
 2. **El item nuevo se creó con `evidence new --supersede`** y no con `propose`/`accept`, porque ese camino
-   no admite `supersede` (§3). ¿De acuerdo, o se prefiere ampliar el esquema de propuesta en otra rama?
+   no admite `supersede` (§3). **Aceptado al validar: es el camino correcto y tiene precedente**; la
+   eleccion de fondo queda como deuda (§9b).
 3. **`breaker_m1_criterio_ruptura` entra CONFIRMED** citando evidencia (§4). ¿O se prefiere
    DEFAULT_AMBIGUOUS colgado de A-32, aunque A-32 no pregunte por este criterio?
 4. **El hueco del detector queda como deuda** (§5). ¿Se abre rama propia después de la sesión 2, o entra
@@ -176,4 +190,4 @@ make check > make-check.log 2>&1; echo "exit=$?"
 ```
 
 ## Estado
-WAITING_FOR_USER_VALIDATION
+VALIDADA por el usuario (2026-09-17); pendiente del ritual de cierre
