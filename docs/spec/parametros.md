@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 12.0.0` · hash `7b56ead497c8…`
+`spec_version 12.1.0` · hash `88599aff7284…`
 
-73 en total: 64 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+74 en total: 65 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -15,6 +15,7 @@
 | `base_calculo_riesgo` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-2603c017` | sobre que saldo se calcula |
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
 | `break_even_criterio_ruptura` | `mecha` | DEFAULT_AMBIGUOUS · en revision por A-13 | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | que hace falta para dar por rota la zona que dispara el break even |
+| `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
@@ -147,6 +148,12 @@ Opciones: `tocar`, `cierre`.
 ### `break_even_criterio_ruptura`
 
 criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el break even. Es exactamente lo que pregunta A-13, y sigue ABIERTA: el trader se desdice a los doce minutos. Entra `mecha` por coherencia con los otros dos criterios, pero es un DEFAULT NUESTRO. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
+
+Opciones: `mecha`, `cuerpo`.
+
+### `breaker_m1_criterio_ruptura`
+
+criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada, break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md)
 
 Opciones: `mecha`, `cuerpo`.
 

@@ -146,9 +146,9 @@ predicados:
       el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada.
       `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta.
       `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos
-      marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. En M1 la ruptura vale
-      con mecha o con cuerpo; la de M15 tiene que ser con cuerpo (RN-004)
-    argumentos: [cual]
+      marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. La ruptura en M1 se juzga
+      con `criterio` (breaker_m1_criterio_ruptura); la de M15 es otra cosa y la fija RN-004
+    argumentos: [cual, criterio]
     valores: {cual: [primer_esquema, segundo_esquema, cualquier_esquema]}
     fuente: mercado
     depende_de: [liquidez_tomada]
@@ -800,7 +800,7 @@ reglas:
     titulo: sin ninguno de los esquemas de entrada no hay entrada
     cuando: no se da el breaker ni el otro esquema de entrada
     entonces: no se opera
-    parametros: []
+    parametros: [breaker_m1_criterio_ruptura]
     cita: ev-v4-001844-93dcb658
     literal: >-
       aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
@@ -812,12 +812,14 @@ reglas:
       esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona
       de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH),
       ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en
-      el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice
+      el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice.
+      El 2026-09-17 el criterio de M1 deja de ser prosa de `se_da_esquema` y pasa a
+      breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro
     forma:
       cuando:
         ninguno_de:
-          - se_da_esquema: {cual: primer_esquema}
-          - se_da_esquema: {cual: segundo_esquema}
+          - se_da_esquema: {cual: primer_esquema, criterio: breaker_m1_criterio_ruptura}
+          - se_da_esquema: {cual: segundo_esquema, criterio: breaker_m1_criterio_ruptura}
       entonces:
         prohibe: [abrir_operacion]
     clase: gate

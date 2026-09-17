@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 12.0.0` · hash `7b56ead497c8…`
+`spec_version 12.1.0` · hash `88599aff7284…`
 
 27 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -289,8 +289,9 @@
 - **Clase**: `gate`
 - **Cuando**: no se da el breaker ni el otro esquema de entrada
 - **Entonces**: no se opera
+- **Parametros**: `breaker_m1_criterio_ruptura`
 - **Cita**: `ev-v4-001844-93dcb658` — *«aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya sabemos cuál es [...] cualquiera de estos dos de aquí»*
-- **Notas**: el 2026-09-10 esta regla se marco `pendiente_definicion` porque el glosario definia breaker de forma circular y su cita dice "el que ya sabemos cual es". ERA UN ERROR DE BUSQUEDA: la definicion SI esta en el corpus, repartida en una docena de items -ev-v4-000243 (los dos esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH), ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice
+- **Notas**: el 2026-09-10 esta regla se marco `pendiente_definicion` porque el glosario definia breaker de forma circular y su cita dice "el que ya sabemos cual es". ERA UN ERROR DE BUSQUEDA: la definicion SI esta en el corpus, repartida en una docena de items -ev-v4-000243 (los dos esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH), ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice. El 2026-09-17 el criterio de M1 deja de ser prosa de `se_da_esquema` y pasa a breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -300,11 +301,13 @@
     "ninguno_de": [
       {
         "se_da_esquema": {
+          "criterio": "breaker_m1_criterio_ruptura",
           "cual": "primer_esquema"
         }
       },
       {
         "se_da_esquema": {
+          "criterio": "breaker_m1_criterio_ruptura",
           "cual": "segundo_esquema"
         }
       }
@@ -1185,7 +1188,7 @@
 - **`se_activa_entrada`** — la orden limite se llena. `por` dice COMO se activo: por uno de los dos esquemas, o sin que la estructura llegara a romperse (`activacion_sin_ruptura`, lo que el trader acaba llamando cerrar un equal cuando el precio forma el equal y lo saca) Argumentos: `por`. Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Valores: `por` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`, `activacion_sin_ruptura`. Cita `fb-2026-09-09-sesion-01-9626d3dd`: *«se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa ya nos saca con menos 0.80»*.
 - **`se_cierra_operacion`** — la posicion deja de estar viva. `resultado`, por MECANISMO: `salto_el_stop` si la cierra el stop en stop_fraccion_caja; `break_even` si la cierra el stop que RN-014 llevo a la entrada; y si no la cierra ningun stop, `ganancia` o `perdida` por su signo. El P/L neto de costes no cambia la clase. `por`: como se activo la operacion que se cierra (ver se_activa_entrada) Argumentos: `resultado`, `por`. Fuente: `broker`. Lo provoca la accion: colocar_orden_limite. Valores: `por` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`, `activacion_sin_ruptura`, `cualquier_activacion`; `resultado` en `ganancia`, `perdida`, `break_even`, `salto_el_stop`. Cita `fb-2026-09-09-sesion-01-aa2abe65`: *«un intento no es considerado un break even, ¿vale? una entrada invalidada pues tampoco es considerado un intento [...] reentrada después de equal, tampoco es considerado un intento»*.
 - **`se_completa_zona_de_control`** — el precio rompe el punto extremo anterior y deja la zona cerrada Argumentos: `criterio`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-a456bc3f`: *«como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento [...] rompe el punto alto anterior con mecha, con mecha no importa»*.
-- **`se_da_esquema`** — el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada. `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta. `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. En M1 la ruptura vale con mecha o con cuerpo; la de M15 tiene que ser con cuerpo (RN-004) Argumentos: `cual`. Fuente: `mercado`. Valores: `cual` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`. Depende de: liquidez_tomada. Cita `ev-v4-000243-5f8875ce`: *«ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con un pequeño retroceso pequeña zona de control y luego rompe»*.
+- **`se_da_esquema`** — el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada. `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta. `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. La ruptura en M1 se juzga con `criterio` (breaker_m1_criterio_ruptura); la de M15 es otra cosa y la fija RN-004 Argumentos: `cual`, `criterio`. Fuente: `mercado`. Valores: `cual` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`. Depende de: liquidez_tomada. Cita `ev-v4-000243-5f8875ce`: *«ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con un pequeño retroceso pequeña zona de control y luego rompe»*.
 - **`se_desarrolla_en_el_lado_de_ruido`** — el precio se desarrolla en el lado de la liquidez de M15 donde el trader NO busca entrada: por encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25, sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada). Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader Argumentos: `que`, `sentido`. Fuente: `mercado`. Lado de ruido: en `alcista`, `por_encima`; en `bajista`, `por_debajo`. Cita `ev-v1-001306-f98e12e9`: *«el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra operativa tiene que estar por debajo»*.
 - **`se_mapea_estructura`** — varias velas de M1 se agrupan como una estructura Argumentos: `criterio`. Fuente: `motor`. Cita `fb-2026-09-09-sesion-01-7ee9cabc`: *«sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura»*.
 - **`toca_colocar_orden_limite`** — llega el momento de colocar la orden limite en una zona de control, segun `momento` (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que RN-006 la ira moviendo. Ata la zona con `liga` Argumentos: `momento`. Fuente: `mercado`. Depende de: liquidez_tomada. Cita `ev-v3-004201-bfeb3734`: *«Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas el breaker, o sea, marco mi orden limit y ya está»*.

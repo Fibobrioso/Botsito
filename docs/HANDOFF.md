@@ -5,6 +5,26 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-17, rama `trabajo/breaker-m1` esperando validacion; lo de debajo es anterior)
+- HAY DOS RAMAS ABIERTAS A LA VEZ, las dos sobre el mismo commit de main y sin fusionar:
+  `trabajo/reglas-de-la-casa` (docs only: `CLAUDE.md` y `docs/runbooks/RITUAL.md`) y esta.
+- LA CONTRADICCION DEL BREAKER NO ERA UNA CONTRADICCION, y se resolvio MIRANDO LA PANTALLA, no
+  razonando: en v4 0:53:12-0:53:17 el grafico esta en M15 (con zonas etiquetadas `m1 lq` y `15 lq`)
+  y desde 0:53:18 en M1; lo que rompe con mecha es un NIVEL DIBUJADO al que apunta una flecha -la
+  mecha lo perfora y el cuerpo cierra por debajo-, no la ruptura del esquema de entrada.
+  `ev-v4-005319` decia mas que su cita: lo supersede `ev-v4-005310-ce69f8c6`, con cita de audio Y de
+  pantalla. Para fechar una afirmacion del trader sobre lo que se VE, el fotograma manda.
+- UNA PROPUESTA NO PUEDE LLEVAR `supersede`: el esquema de `_proposals` no lo admite y `evidence
+  accept` tampoco. Los supersede se crean con `evidence new --supersede`, como los ocho primeros
+  (commit 2003e61). Si alguna vez se quiere el rastro de propuesta, hay que ampliar el esquema.
+- EL CONFIRM SOBRE UN ITEM SUPERSEDIDO NO ROMPE NADA, medido antes de aceptar: la comprobacion de
+  existencia usa TODOS los items desde 653efdc. Ojo con `feedback pending`, que imprime "un CONFIRM
+  confirma un item que ya vive" sin mirar si vive; el veredicto es correcto, la frase no.
+- `breaker_m1_criterio_ruptura` ES NUEVO (enum mecha|cuerpo, `mecha`, CONFIRMED por ev-v4-005910).
+  `se_da_esquema` lo toma como argumento y RN-008 lo pasa en su forma: sin eso no tendria lector.
+- A-32 VA A LA SESION 2 con el fotograma delante: si el nivel roto es la liquidez de M15 o de M1.
+- DEUDA ANOTADA: el detector de contradicciones no ve los temas hermanos, y es la segunda vez.
+
 ## Estado (2026-09-17, rama `trabajo/meses-vistos` esperando validacion; lo de debajo es anterior)
 - LA GUARDA DEL HOLDOUT ESTA CERRADA EN MAIN (merge 44a9fc1, tag `stable/F13-guarda`).
 - VALIDADA por el usuario el 2026-09-17: manda la fecha de la sesion porque la ceguera tiene que
