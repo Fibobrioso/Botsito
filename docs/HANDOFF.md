@@ -7,6 +7,9 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 
 ## Estado (2026-09-17, rama `trabajo/meses-vistos` esperando validacion; lo de debajo es anterior)
 - LA GUARDA DEL HOLDOUT ESTA CERRADA EN MAIN (merge 44a9fc1, tag `stable/F13-guarda`).
+- VALIDADA por el usuario el 2026-09-17: manda la fecha de la sesion porque la ceguera tiene que
+  valer al ETIQUETAR; abril fechado el 2026-09-05. `mover_sesion` a una fecha posterior a un
+  `visto_el` falla y restaura (test).
 - MAYO 2026 ESTA DECLARADO VISTO en `knowledge/cases/kit/vistos.yaml`, con `visto_el: 2026-09-11`.
   Cada entrada lleva ya su `visto_el` (obligatorio) y cuenta para un paquete solo si es igual o
   anterior a la FECHA DE SU SESION -la del nombre, el dia en que el trader etiqueta-. La sesion 1
@@ -18,7 +21,9 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   (1) confirmacion escrita del trader de que NO backtesteo junio -su CONFIRM del 09-09 decia que lo
   haria-; (2) material de la sesion sin los `dev` de mayo en el etiquetado ciego; (3) la guardia de
   ancestro solo mira `LABEL_CASE` con la MISMA sesion que el paquete, asi que etiquetas registradas
-  como sesion 2 sobre casos de la sesion 1 quedarian fuera. Lo resuelve el brief del paquete.
+  como sesion 2 sobre casos de la sesion 1 quedarian fuera. Es un DEFECTO de la guardia, no una
+  restriccion (usuario, 2026-09-17): el brief del paquete la corrige comprobando POR CASO -las
+  particiones del paquete del caso, commiteadas antes de esa etiqueta- y no por sesion.
   (b) -paquete nuevo solo con junio- esta bloqueado: `config.yaml` es global y cambiar los cupos
   rompe `kit check` de la sesion 1.
 - `kit kappa` avisa cuando una ronda tiene unidades sobre dias que el trader ya habia visto el dia de

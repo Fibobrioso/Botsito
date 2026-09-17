@@ -47,7 +47,10 @@ ADR, sin abrir `data/` ni el holdout.
 | (iii) Una fecha nueva dentro del paquete | `comprobar` compara el texto entero: una clave nueva rompe la reproducción de la sesión 1. Si se saca de `date.today()` deja de ser determinista; si se saca del nombre, es la (i) | Descartada |
 
 **La semántica también elige la (i).** Lo que hace ciego un etiquetado es que el trader no haya visto
-el mes cuando etiqueta, no cuándo se construyó el paquete. Con `mover_sesion` funciona: si una sesión
+el mes cuando etiqueta, no cuándo se construyó el paquete. **Motivo de fondo (usuario, al validar):** la
+ceguera tiene que valer en el momento de ETIQUETAR. Un paquete construido antes y etiquetado después de
+que el trader viera el mes está contaminado igual; con esta regla salta y obliga a regenerar, que es lo
+que el README del kit ya exigía como condición previa. Con `mover_sesion` funciona: si una sesión
 se mueve a una fecha posterior al `visto_el` de un mes que contiene, los casos cambian y el script se
 niega y restaura. En el caso real ni se llega ahí: la sesión 1 tiene registros de feedback y el script
 ya se niega a moverla.
@@ -109,7 +112,10 @@ Las cifras del brief cuadran.
    Etiquetas registradas como sesión 2 sobre casos del paquete de la sesión 1 quedarían FUERA de la
    única prueba mecánica de que las particiones se fijaron antes de etiquetar (lo anotó la auditoría
    del 2026-09-13, [d7-metodo-03]). Lo tiene que resolver el brief del paquete de la sesión 2, antes
-   de registrar la primera etiqueta.
+   de registrar la primera etiqueta. **Para ese brief (usuario, al validar): es un DEFECTO de la
+   guardia de ancestro, no una restricción a respetar.** La guardia debería comprobarse POR CASO -las
+   particiones del paquete al que pertenece el caso, commiteadas antes de esa etiqueta- y no por
+   sesión.
 
 **Por qué no (b), medido:**
 - **No llega a los cupos.** Con mayo visto, un paquete solo de junio tiene un universo de unos 22
@@ -159,7 +165,11 @@ una fila de `HOLDOUT-EXPOSICIONES.md`: los `dev` no son holdout.
 - `knowledge validate` denuncia un paquete escrito con días de mayo, un día refechado después de la
   sesión y un día quitado;
 - `visto_el` es obligatorio y con formato;
-- el kappa avisa de etiquetado no ciego en la sesión posterior y no en la anterior.
+- el kappa avisa de etiquetado no ciego en la sesión posterior y no en la anterior;
+- `scripts/mover_sesion.py` a una fecha igual o posterior al `visto_el` de un mes que el paquete
+  sortea FALLA (`universo tiene 0`) y deja el paquete original byte a byte; a la víspera, mueve
+  (añadido al validar: el script lo hacía ya, porque reconstruye con `construir` y la fecha nueva, pero
+  no había test que lo fijara).
 
 ## 5. Lo que cambió respecto al brief
 
@@ -219,15 +229,16 @@ documentos vivos están bien.
 |---|---|---|---|
 | La entrada de mayo citaba en `fuente:` la CONFIRM de la sesión 1, que prueba lo contrario -que el 09-09 mayo aún no estaba visto- | baja | documentos | **Corregido**: `fuente: [8fb2323]`; la CONFIRM queda en el motivo |
 
-## 8. Qué debe decidir el usuario
+## 8. Lo que decidió el usuario (2026-09-17, al validar)
 
-1. **¿Validar la rama y hacer el ritual** (§10)?
-2. **La fecha de la sesión, y no la de construcción, decide qué es ciego.** ¿De acuerdo? La
-   consecuencia práctica es que un paquete construido antes de que el trader vea un mes, y celebrado
-   después, queda denunciado.
-3. **(a) con sus tres condiciones.** ¿Se pide ya al trader la confirmación escrita de que no
-   backtesteó junio? Su CONFIRM del 09-09 decía que lo haría.
-4. **Abril se fecha el 09-05**, con la fuente que lo sostiene, y no el 09-03 del motivo. ¿Vale?
+1. **Rama validada;** el ritual (§10) lo ejecuta el usuario.
+2. **Manda la fecha de la SESIÓN,** no la de construcción: la ceguera tiene que valer al etiquetar
+   (motivo en §3, pregunta 1). Un paquete construido antes y etiquetado después de que el trader vea
+   el mes queda denunciado y hay que regenerarlo.
+3. **(a) aceptada con sus tres condiciones.** La tercera es un DEFECTO de la guardia de ancestro, a
+   corregir en el brief del paquete de la sesión 2 comprobándola por caso y no por sesión (§3,
+   pregunta 3).
+4. **Abril, el 2026-09-05:** la única fecha con fuente.
 
 ## 9. Cómo comprobarlo
 
@@ -267,4 +278,4 @@ Entre el merge y el `docs(state)`, `state check` falla a propósito. Si `make ch
 pushea. La CI que cuenta es la del `docs(state)`.
 
 ## Estado
-WAITING_FOR_USER_VALIDATION
+VALIDADA por el usuario (2026-09-17); pendiente del ritual de cierre

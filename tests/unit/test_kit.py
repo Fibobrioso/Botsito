@@ -1398,3 +1398,26 @@ def test_el_kappa_avisa_de_etiquetado_no_ciego(
     # la sesion 1 etiqueto el 09-09, antes de que el trader viera mayo: esa ronda SI fue ciega
     assert f"{s1}: {len(dev)} casos etiquetados" not in err
     assert "no fue etiquetado ciego" in err
+
+
+def test_mover_una_sesion_despues_de_un_visto_el_falla_y_no_mueve(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Meses vistos (2026-09-17): mover una sesion a una fecha igual o posterior al `visto_el` de un
+    mes que su paquete sortea la dejaria etiquetando dias ya vistos. Tiene que FALLAR y dejar el
+    paquete original byte a byte; a una fecha anterior al `visto_el`, se mueve."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    _vistos_mayo(repo, "2026-09-11")
+    carpeta = repo / DIRECTORIO_KIT / "2026-09-09-sesion-01"
+    original = {p.name: p.read_bytes() for p in carpeta.iterdir()}
+    modulo = _mover_sesion(repo)
+    for fecha in ("2026-09-11", "2026-09-22"):
+        monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", fecha])
+        with pytest.raises(KitError, match="universo tiene 0"):
+            modulo.main()
+        assert {p.name: p.read_bytes() for p in carpeta.iterdir()} == original
+        assert not (repo / DIRECTORIO_KIT / f"{fecha}-sesion-01").exists()
+    monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-10"])
+    assert modulo.main() == 0
+    assert (repo / DIRECTORIO_KIT / "2026-09-10-sesion-01").is_dir()
