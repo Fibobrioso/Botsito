@@ -23,6 +23,12 @@ FICHERO_AMBIGUEDADES = "knowledge/spec/ambiguedades.yaml"
 # campo junto a ABIERTA: si fuera un campo, `cuestionario.py` le volveria a preguntar al trader lo
 # que el consultor ya decidio, que es justo lo que el kit existe para evitar.
 ESTADOS = ("ABIERTA", "RESUELTA", "DECIDIDA")
+# Que hace falta para cerrarla (2026-09-16). Una MEDICION la cierra un dato -la ficha del
+# simbolo, el reloj del servidor, una comparacion de velas- y no se le pregunta al trader; una
+# PREGUNTA, si. Hasta
+# entonces `cuestionario.py` metia TODA abierta en la sesion siguiente, y A-16, A-27 y A-28 -que lo
+# dicen en su propio texto: "MEDICION, no pregunta al trader"- le habrian llegado como preguntas.
+CLASES = ("medicion", "pregunta")
 CAMPOS = (
     "id",
     "titulo",
@@ -38,6 +44,9 @@ CAMPOS = (
     "decidida_el",
     "bloqueante",
 )
+# Opcional en el esquema, como `recibido_el` en el feedback (ADR-0023): las cerradas no la
+# necesitan. Obligatoria por guardia en toda ABIERTA (`abiertas_sin_clase`).
+CAMPOS_OPCIONALES = ("clase",)
 
 
 class AmbiguedadError(ValueError):
@@ -57,6 +66,7 @@ class Ambiguedad:
     decision: str | None
     decidida_el: str | None
     bloqueante: bool
+    clase: str | None = None
 
 
 def _lista_de_textos(bruto: object, campo: str, aid: str) -> tuple[str, ...]:
@@ -72,7 +82,7 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
     if not ids.es_id_de("ambiguedad", aid):
         raise AmbiguedadError(f"id invalido {aid!r} (formato A-N)")
     faltan = [c for c in CAMPOS if c not in bruto]
-    extra = sorted(set(bruto) - set(CAMPOS))
+    extra = sorted(set(bruto) - set(CAMPOS) - set(CAMPOS_OPCIONALES))
     if faltan or extra:
         raise AmbiguedadError(f"{aid}: faltan {faltan}, sobran {extra}")
     for c in ("titulo", "pregunta"):
@@ -99,6 +109,9 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
         raise AmbiguedadError(
             f"{aid}: `decision` y `decidida_el` solo van en DECIDIDA; aqui esta {bruto['estado']}"
         )
+    clase = bruto.get("clase")
+    if clase is not None and clase not in CLASES:
+        raise AmbiguedadError(f"{aid}: clase {clase!r} no esta en {CLASES}")
     evidencia = _lista_de_textos(bruto["evidencia"], "evidencia", aid)
     if not evidencia:
         raise AmbiguedadError(f"{aid}: una ambiguedad cita al menos un item de evidencia")
@@ -117,6 +130,7 @@ def _ambiguedad(bruto: object) -> Ambiguedad:
         str(decision) if decision is not None else None,
         str(decidida_el) if decidida_el is not None else None,
         bool(bruto["bloqueante"]),
+        str(clase) if clase is not None else None,
     )
 
 
@@ -161,3 +175,19 @@ def validar_contra_contexto(
         if a.contradiccion and a.estado == "ABIERTA" and a.contradiccion not in temas_contradiccion:
             problemas.append(f"{a.id}: no hay contradiccion abierta sobre {a.contradiccion}")
     return problemas
+
+
+def abiertas_sin_clase(ambiguedades: list[Ambiguedad]) -> list[str]:
+    """Toda ABIERTA declara si es medicion o pregunta.
+
+    Vive aparte de `validar_contra_contexto` a proposito: esa la usa tambien el kit al construir
+    paquetes de repositorios de prueba, y el campo es opcional en el esquema (como `recibido_el`,
+    ADR-0023). La exige `knowledge validate` sobre el fichero real, que es el que alimenta el
+    cuestionario de la sesion siguiente.
+    """
+    return [
+        f"{a.id}: esta ABIERTA y no declara `clase` (medicion | pregunta); sin ella el "
+        f"cuestionario no sabe si preguntarsela al trader"
+        for a in ambiguedades
+        if a.estado == "ABIERTA" and a.clase is None
+    ]

@@ -125,7 +125,10 @@ def generar(
         p.casos = [_caso_de(i, fotograma) for i in elegidos]
         preguntas.append(p)
 
-    abiertas = [a for a in ambiguedades if a.estado == "ABIERTA"]
+    # Una MEDICION no se le pregunta al trader: la cierra un dato (2026-09-16). Una abierta sin
+    # clase se trata como pregunta, que es lo que se hacia con todas hasta entonces; la guardia de
+    # `knowledge validate` exige la clase, asi que no deberia quedar ninguna.
+    abiertas = [a for a in ambiguedades if a.estado == "ABIERTA" and a.clase != "medicion"]
     orden = sorted(abiertas, key=lambda a: (not a.bloqueante, int(a.id[2:])))
     for a in orden:
         origenes = [{"tipo": "ambiguedad", "id": a.id}]

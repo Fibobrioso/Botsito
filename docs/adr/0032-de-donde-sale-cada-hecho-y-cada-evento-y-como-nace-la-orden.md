@@ -23,8 +23,10 @@ phase: post-F13 (antes de F18-F24)
    `efecto: abrir_operacion`. Una acción con efecto se ejecuta solo si, **en el instante de
    ejecutarla** -con lo que las acciones anteriores de la misma regla ya escribieron-, ningún `gate`
    prohíbe ese efecto; si alguno lo prohíbe, esa acción no se ejecuta y el resto de la regla sí.
-   Toda acción que aparezca en un `lo_provoca` declara su efecto: si provoca un hecho del bróker,
-   un gate tiene que poder frenarla. **Esto precisa ADR-0028 §4** (punto fijo con refracción), que
+   Toda acción que aparezca en el `lo_provoca` de un hecho de origen `broker` o de un predicado de
+   fuente `broker` declara su efecto: si cambia el bróker, un gate tiene que poder frenarla. Las
+   que provocan un predicado de fuente `bot` (dimensionar el lote, escribir el stop o el objetivo)
+   no lo necesitan: no salen del bot. **Esto precisa ADR-0028 §4** (punto fijo con refracción), que
    no decía cuándo se miran los gates respecto de las acciones de una misma regla.
 4. **La orden límite nace en DOS reglas encadenadas por un hecho**, porque ADR-0028 §4 no ordena
    las reglas de la misma clase dentro de un evento:

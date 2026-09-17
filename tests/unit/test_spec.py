@@ -602,12 +602,16 @@ def test_por_ninguna_de_las_seis_puertas_entra_un_valor_de_negocio() -> None:
         regla(rs, "RN-020").forma["cuando"]["cualquiera_de"][0]["alcanza_tope"]["tope"] = 9.5
 
     def valor_en_clave_estructural(rs: list[Any]) -> None:
-        regla(rs, "RN-005").forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["que"] = "cuerpo"
+        regla(rs, "RN-005").forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"][
+            "que"
+        ] = "cuerpo"
 
     def ligadura_inventada(rs: list[Any]) -> None:
         r5 = regla(rs, "RN-005")
         r5.forma["cuando"]["todos_de"][0]["liga"] = "alcista"
-        r5.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+        r5.forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"]["sentido"] = (
+            "alcista"
+        )
 
     def prefijo_inventado(rs: list[Any]) -> None:
         regla(rs, "RN-011").forma["entonces"]["hace"][1]["escribir_stop_en_la_orden"]["nivel"] = (
@@ -665,8 +669,8 @@ def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
     de ADR-0002 entrando por la otra puerta- pasaba sin una queja. Ahora se niega por defecto.
 
     Y la contraparte, que es la que hace que la inversion sea usable: una LIGADURA sigue valiendo.
-    RN-005 ata `S` al hecho `sesgo` y se lo pasa a `esta_al_otro_lado_de`; si negar por defecto
-    denunciara eso, la guardia obligaria a romper una regla correcta.
+    RN-005 ata `S` al hecho `sesgo` y se lo pasa a `se_desarrolla_en_el_lado_de_ruido`; si negar
+    por defecto denunciara eso, la guardia obligaria a romper una regla correcta.
     """
     import copy
 
@@ -687,7 +691,7 @@ def test_un_argumento_recien_inventado_no_es_una_puerta_de_servicio() -> None:
 
     rota = copy.deepcopy(rn005)
     assert rota.forma is not None
-    rota.forma["cuando"]["todos_de"][1]["esta_al_otro_lado_de"]["sentido"] = "alcista"
+    rota.forma["cuando"]["todos_de"][1]["se_desarrolla_en_el_lado_de_ruido"]["sentido"] = "alcista"
     problemas = sobre_argumentos([rota])
     assert any("lleva el NOMBRE, no el valor" in p and "alcista" in p for p in problemas), problemas
 
@@ -827,21 +831,29 @@ def test_los_hechos_declarados_coinciden_con_lo_que_las_formas_hacen() -> None:
             f"{freno}: quien lo fija tiene que seguir viendolo, o el freno dura un tick"
         )
 
-    # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion
+    # y el cierre forzoso y el break even tienen de verdad quien les produzca la posicion. Hasta el
+    # 2026-09-16 se exigian DOS reglas que fijaran `operacion_abierta` (RN-010 y RN-013, F14b §0).
+    # ADR-0028 §5 lo deshace: el hecho lo lee el motor del broker, ninguna forma puede fijarlo, y lo
+    # que hace alcanzables a sus consumidores es que la accion que lo provoca exista y se ejecute.
     por_id = {r.id: r for r in reglas}
-    productores = {
-        r.id
-        for r in reglas
-        if isinstance(r.forma, dict)
-        and "operacion_abierta" in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
-    }
-    # DOS productores, y no uno: toda regla que deje una posicion viva tiene que declararlo, o el
-    # cierre forzoso y el break even no la ven. RN-010 se anadio el 2026-09-12: una entrada
-    # activada por un EQUAL se gestionaba (`gestionar_salida`) sin fijar el hecho, asi que era
-    # invisible para RN-002 y RN-014. Lo encontro la auditoria de material, y es el mismo defecto
-    # que F12 encontro con `liquidez_tomada`, en otra regla.
-    assert {"RN-010", "RN-013"} <= productores, f"productores de operacion_abierta: {productores}"
-    for consumidor in ("RN-002", "RN-014"):
+    for derivado in ("operacion_abierta", "orden_limite_pendiente"):
+        h = vocabulario["hechos"][derivado]
+        assert h["origen"] == "broker" and "produce" not in h, derivado
+        assert h["decision"] == "ADR-0028", derivado
+        assert not [
+            r.id
+            for r in reglas
+            if isinstance(r.forma, dict)
+            and derivado in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
+        ], f"{derivado}: una forma lo fija"
+        for accion in h["lo_provoca"]:
+            assert any(
+                isinstance(r.forma, dict)
+                and r.vigente
+                and accion in json.dumps(r.forma.get("entonces", {}), ensure_ascii=False)
+                for r in reglas
+            ), f"{derivado}: nadie ejecuta {accion}"
+    for consumidor in ("RN-002", "RN-014", "RN-030"):
         forma = por_id[consumidor].forma
         assert isinstance(forma, dict)
         assert "operacion_abierta" in json.dumps(forma.get("cuando", {}), ensure_ascii=False), (

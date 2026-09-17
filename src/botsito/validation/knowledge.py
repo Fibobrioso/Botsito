@@ -181,7 +181,16 @@ def problemas_de_spec(
             }
         except (OSError, ValueError):
             abiertas = None
-        problemas += comprobar_forma(reglas, vocabulario, set(registro.nombres()), abiertas)
+        problemas += comprobar_forma(
+            reglas,
+            vocabulario,
+            set(registro.nombres()),
+            abiertas,
+            tipos={
+                n: str(getattr(p.tipo, "value", p.tipo)) for n, p in registro.parametros.items()
+            },
+            ids_adr=ids_de_adr(repo),
+        )
         # Y que todo parametro CON VALOR tenga un lector: una regla vigente que lo nombre, o una
         # funcionalidad del plan. F11 dejo nueve valores que nadie leia y a los que ninguna
         # guardia miraba. OJO a lo que esto NO comprueba: que la fila de MASTER_PLAN H.2 de esa
@@ -196,6 +205,7 @@ def problemas_de_spec(
             {n: p.consumido_por for n, p in registro.parametros.items()},
             ids_validos,
             {n for n, p in registro.parametros.items() if p.valor is not None},
+            vocabulario,
         )
         # Y que nadie cite un registro revocado: reglas, glosario y vocabulario incluidos.
         problemas += comprobar_citas_revocadas(reglas, terminos, vocabulario, revocados)
@@ -357,6 +367,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     from botsito.cases.ambiguedades import (
         FICHERO_AMBIGUEDADES,
         AmbiguedadError,
+        abiertas_sin_clase,
         cargar_ambiguedades,
     )
     from botsito.cases.ambiguedades import validar_contra_contexto as validar_ambiguedades
@@ -373,6 +384,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
                 for p in validar_ambiguedades(
                     ambiguedades, {i.id for i in items}, set(registro.nombres()), temas
                 )
+                + abiertas_sin_clase(ambiguedades)
             ]
         except AmbiguedadError as exc:
             fallos_amb = [f"ambiguedades: {exc}"]

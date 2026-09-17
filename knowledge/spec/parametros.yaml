@@ -247,6 +247,9 @@ parametros:
       las velas H4, que es de donde sale el sesgo (ADR-0017)
     estado: CONFIRMED
     valor: "17:00"
+    # Lo nombra RN-003 en su lista, pero ninguna forma lo lee: la rejilla la construye la
+    # agregacion de velas (F15, "H4 reproducible para cualquier anclaje_h4"), no una regla
+    consumido_por: [F15]
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-479e68b9
@@ -299,9 +302,14 @@ parametros:
     tipo: enum
     unidad: opcion cerrada (las sostiene `opciones`, aqui debajo)
     opciones: ["vela_anterior_color", "vela_anterior_cierre_mecha", "otra"]
-    descripcion: que vela H4 fija el sesgo y cuando cambia (A-1)
+    descripcion: >-
+      que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto
+      y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en
+      sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el
+      motor es lo otro (ADR-0019)
     estado: CONFIRMED
     valor: "vela_anterior_cierre_mecha"
+    consumido_por: [ADR-0019]
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-8eccf5c0
@@ -406,6 +414,26 @@ parametros:
     estado: UNKNOWN
     minimo: "0"
     maximo: "1"
+  - nombre: orden_limite_nace
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se coloca por primera vez la orden limite de una zona
+    opciones: ["al_darse_el_esquema", "al_tomarse_la_liquidez"]
+    descripcion: >-
+      en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos
+      esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco
+      mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta
+      tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo
+      (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de
+      "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la
+      primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que
+      prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla
+    estado: DEFAULT_AMBIGUOUS
+    valor: "al_darse_el_esquema"
+    ambiguedad_id: A-29
+    fuente:
+      tipo: evidence
+      id: ev-v3-004201-bfeb3734
   - nombre: stop_en_orden_pendiente
     categoria: estrategia
     tipo: enum
@@ -518,7 +546,11 @@ parametros:
     tipo: enum
     unidad: si/no
     opciones: ["si", "no"]
-    descripcion: si tras un equal (activacion sin rotura) se reentra al romper de nuevo
+    descripcion: >-
+      si, tras cerrarse una operacion que se activo sin ruptura -lo que el trader llama cerrar un
+      equal-, se vuelve a entrar sin gastar intento (RN-019). La reentrada va por la via normal de
+      colocacion (RN-011 y RN-015). Hasta el 2026-09-16 decia "se reentra al romper de nuevo", que no
+      es lo que dice el literal
     estado: CONFIRMED
     valor: "si"
     fuente:
@@ -732,7 +764,10 @@ parametros:
     tipo: enum
     unidad: que suma al contador
     opciones: [solo_perdida, todo_intento]
-    descripcion: "que cuenta como cartucho gastado; el trader dice que solo una perdida"
+    descripcion: >-
+      que cuenta como cartucho gastado; el trader dice que solo una perdida. Ni el break even -que
+      se clasifica por mecanismo, no por el P/L neto de costes- ni la perdida de una operacion que se
+      activo sin ruptura cuentan: la reentrada despues de un equal no es un intento (RN-016, RN-019)
     estado: CONFIRMED
     valor: "solo_perdida"
     fuente:
@@ -825,9 +860,12 @@ parametros:
       nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11
       esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde
       ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo
-      se mide sobre la caja entera. El objetivo se traza CON la orden, antes de que el stop se
-      mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR
-      realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
+      se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja,
+      y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el
+      objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que
+      existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve,
+      viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor
+      NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015)
     estado: CONFIRMED
     valor: "caja_completa"
     fuente:
@@ -1034,6 +1072,25 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0026
+  - nombre: firma_margen_seguridad
+    categoria: prop_firm
+    tipo: porcentaje
+    unidad: porcentaje del capital simulado inicial (saldo_inicial_cuenta)
+    descripcion: >-
+      cuanto antes de cada limite de la firma saltan sus frenos (RN-029, RN-030, RN-031) y deja de
+      caber una operacion nueva (RN-032). Llegar al limite ya es la infraccion, asi que frenar en el
+      limite no evita perder la cuenta. El margen es el colchon para lo que la lectura prospectiva no
+      ve: deslizamiento, gap, costes y el equity flotante antes de que un cierre se ejecute. El valor
+      es una DECISION DEL CONSULTOR PENDIENTE DE VALIDAR (ADR-0031): con el, en un dia que empieza en
+      el capital inicial o por encima, la decima perdida seguida del dia ya no se abre. No cubre un
+      gap mayor que el propio margen
+    estado: CONFIRMED
+    valor: "0.5"
+    minimo: "0"
+    maximo: "100"
+    fuente:
+      tipo: decision
+      id: ADR-0031
   - nombre: firma_mensajes_dia_max
     categoria: prop_firm
     tipo: entero

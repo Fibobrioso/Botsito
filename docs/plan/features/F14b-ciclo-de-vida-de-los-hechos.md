@@ -11,6 +11,15 @@ mismo día. **No se ha aplicado nada de este documento**, salvo lo que se dice e
 > otro id nuevo que se cite aquí (RN-034). Al aplicar F14b se numera desde el primer id libre.
 > Mismo cuidado que A-24..A-26, que siguen reservadas para este documento (§3).
 
+> **§0 deshecho (2026-09-16, rama `trabajo/fidelidad-de-la-spec`, ADR-0032).** Lo único que esta
+> propuesta había aplicado -que RN-010 fije `operacion_abierta` y que el test exija dos productores-
+> contradecía ADR-0028 §5 y ya no existe: `operacion_abierta` y `orden_limite_pendiente` declaran
+> `origen: broker`, ninguna forma puede fijarlos y el test comprueba lo contrario. Es la segunda nota
+> de este documento (la primera, la numeración). Dos cosas más de §3 cambiaron en esa rama: el token
+> `equal` ya no existe -el resultado es `break_even`/`ganancia`/`perdida` y la forma de activarse va
+> en `por`-, y las ambigüedades nuevas de esa rama se numeraron A-29 y A-30 para respetar la reserva
+> de A-24..A-26.
+
 ---
 
 ## 0. Lo que SÍ se aplicó ya, y por qué solo eso

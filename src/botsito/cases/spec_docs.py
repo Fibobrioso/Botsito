@@ -98,7 +98,7 @@ def _reglas(reglas: list[Any], vocabulario: dict[str, dict[str, Any]], man: dict
                     lineas += _bloque(r.forma)
             lineas += [""]
     lineas += ["## Vocabulario", ""]
-    for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores"):
+    for seccion in ("predicados", "acciones", "efectos", "hechos", "acumuladores", "tokens"):
         entradas = vocabulario.get(seccion) or {}
         lineas += [f"### {seccion} ({len(entradas)})", ""]
         for nombre, datos in sorted(entradas.items()):
@@ -107,9 +107,45 @@ def _reglas(reglas: list[Any], vocabulario: dict[str, dict[str, Any]], man: dict
             partes = [f"**`{nombre}`** — {datos.get('descripcion', '')}"]
             if datos.get("argumentos"):
                 partes.append(f"Argumentos: {', '.join(f'`{a}`' for a in datos['argumentos'])}.")
-            for campo, etiqueta in (("produce", "Lo produce"), ("consume", "Lo consume")):
+            # Lo que ADR-0032 anade: de donde sale cada hecho y cada evento, y que efecto frena una
+            # accion. Sin imprimirlo, `docs/spec/reglas.md` diria de `operacion_abierta` que nadie
+            # lo produce, que es cierto y engana.
+            for campo, etiqueta in (
+                ("origen", "Origen"),
+                ("fuente", "Fuente"),
+                ("efecto", "Lo frena un gate que prohibe"),
+                ("clase", "Clase"),
+                ("base", "Base"),
+                ("reinicia_con", "Se reinicia con"),
+                ("magnitud", "Magnitud vigilada"),
+                ("arrastra", "La base sigue al maximo segun"),
+            ):
+                if datos.get(campo):
+                    partes.append(f"{etiqueta}: `{datos[campo]}`.")
+            if datos.get("decision"):
+                partes.append(f"Lo decide {datos['decision']}.")
+            for campo, etiqueta in (
+                ("produce", "Lo produce"),
+                ("lo_provoca", "Lo provoca la accion"),
+                ("consume", "Lo consume"),
+            ):
                 if datos.get(campo):
                     partes.append(f"{etiqueta}: {', '.join(str(x) for x in datos[campo])}.")
+            if datos.get("valores"):
+                valores = datos["valores"]
+                if isinstance(valores, dict):
+                    texto = "; ".join(
+                        f"`{arg}` en {', '.join(f'`{v}`' for v in lista)}"
+                        for arg, lista in sorted(valores.items())
+                    )
+                else:
+                    texto = ", ".join(f"`{v}`" for v in valores)
+                partes.append(f"Valores: {texto}.")
+            if datos.get("lado_de_ruido"):
+                texto = "; ".join(
+                    f"en `{s}`, `{lado}`" for s, lado in sorted(datos["lado_de_ruido"].items())
+                )
+                partes.append(f"Lado de ruido: {texto}.")
             if datos.get("depende_de"):
                 partes.append(f"Depende de: {', '.join(str(x) for x in datos['depende_de'])}.")
             # La cita del vocabulario se imprime a proposito: durante toda F12 nadie la comprobaba
@@ -199,7 +235,8 @@ def _ambiguedades(ambiguedades: list[Any], man: dict[str, Any]) -> str:
     lineas += [
         "Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; "
         "**DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se "
-        "sigue preguntando, y entra en el cuestionario de la sesion siguiente.",
+        "sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si "
+        "es una `medicion` la cierra un dato y no se le pregunta al trader.",
         "",
     ]
     for estado in ("ABIERTA", "DECIDIDA", "RESUELTA"):
@@ -210,7 +247,8 @@ def _ambiguedades(ambiguedades: list[Any], man: dict[str, Any]) -> str:
         for a in grupo:
             marca = " · **BLOQUEANTE**" if a.bloqueante else ""
             cierre = f" · cerrada por `{a.decision}` el {a.decidida_el}" if a.decision else ""
-            lineas += [f"### {a.id} · {a.titulo}{marca}{cierre}", "", a.pregunta, ""]
+            clase = f" · {a.clase}" if a.clase else ""
+            lineas += [f"### {a.id} · {a.titulo}{marca}{clase}{cierre}", "", a.pregunta, ""]
             if a.parametros:
                 lineas += [f"Afecta a: {', '.join(f'`{p}`' for p in a.parametros)}.", ""]
     return "\n".join(lineas).rstrip() + "\n"

@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 11.1.0` · hash `232c220dcc71…`
+`spec_version 12.0.0` · hash `683748bc94ea…`
 
-71 en total: 62 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+73 en total: 64 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -30,6 +30,7 @@
 | `firma_base_perdida_diaria` | `saldo_corte_diario` | CONFIRMED | prop_firm | `ADR-0026` | sobre que saldo se fija el limite del dia |
 | `firma_cierre_al_tope` | `si` | CONFIRMED | prop_firm | `ADR-0026` | si/no |
 | `firma_magnitud_vigilada` | `equity` | CONFIRMED | prop_firm | `ADR-0026` | que magnitud no puede bajar del limite |
+| `firma_margen_seguridad` | `0.5 %` | CONFIRMED | prop_firm | `ADR-0031` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
 | `firma_mensajes_dia_max` | `2000` | CONFIRMED | prop_firm | `ADR-0026` | peticiones al servidor por dia |
 | `firma_noticias_restringe` | `False` | CONFIRMED | prop_firm | `ADR-0026` | si la cuenta restringe operar alrededor de noticias |
 | `firma_perdida_diaria_max` | `5 %` | CONFIRMED | prop_firm | `ADR-0026` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
@@ -53,6 +54,7 @@
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
+| `orden_limite_nace` | `al_darse_el_esquema` | DEFAULT_AMBIGUOUS · en revision por A-29 | estrategia | `ev-v3-004201-bfeb3734` | cuando se coloca por primera vez la orden limite de una zona |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
@@ -89,6 +91,7 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 
 Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un valor que nadie usa y nadie vigila (F12).
 
+- `anclaje_h4` → F15
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
 - `filtro_noticias` → F33
@@ -103,6 +106,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `latencia_ms` → F24, F27
 - `modelo_llenado` → F24, F27
 - `saldo_inicial_cuenta` → F24, F33
+- `sesgo_h4_regla` → ADR-0019
 
 ## Que dice cada uno
 
@@ -112,7 +116,7 @@ donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion d
 
 ### `base_calculo_objetivo`
 
-distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012)
+distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015)
 
 Opciones: `caja_completa`, `riesgo_real`.
 
@@ -158,7 +162,7 @@ desfase base del reloj del servidor, medido en el terminal y no supuesto. En la 
 
 ### `cartucho_criterio`
 
-que cuenta como cartucho gastado; el trader dice que solo una perdida
+que cuenta como cartucho gastado; el trader dice que solo una perdida. Ni el break even -que se clasifica por mecanismo, no por el P/L neto de costes- ni la perdida de una operacion que se activo sin ruptura cuentan: la reentrada despues de un equal no es un intento (RN-016, RN-019)
 
 Opciones: `solo_perdida`, `todo_intento`.
 
@@ -239,6 +243,10 @@ Opciones: `si`, `no`.
 la firma vigila EQUITY: saldo mas P/L flotante, swaps y comisiones ("equity cannot drop at any time"). Por eso la fase de riesgo del motor va por tick (ADR-0028)
 
 Opciones: `saldo`, `equity`.
+
+### `firma_margen_seguridad`
+
+cuanto antes de cada limite de la firma saltan sus frenos (RN-029, RN-030, RN-031) y deja de caber una operacion nueva (RN-032). Llegar al limite ya es la infraccion, asi que frenar en el limite no evita perder la cuenta. El margen es el colchon para lo que la lectura prospectiva no ve: deslizamiento, gap, costes y el equity flotante antes de que un cierre se ejecute. El valor es una DECISION DEL CONSULTOR PENDIENTE DE VALIDAR (ADR-0031): con el, en un dia que empieza en el capital inicial o por encima, la decima perdida seguida del dia ya no se abre. No cubre un gap mayor que el propio margen
 
 ### `firma_mensajes_dia_max`
 
@@ -346,6 +354,12 @@ objetivo fijo, en multiplos de la distancia que fija base_calculo_objetivo. "Rie
 
 cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de RN-018 -"hay una operacion abierta", "no se abre otra"- y por tanto fuera del registro
 
+### `orden_limite_nace`
+
+en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla
+
+Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`.
+
 ### `parciales`
 
 si se toman parciales
@@ -362,7 +376,7 @@ perdida acumulada en la semana que detiene la operativa; la base la fija base_ca
 
 ### `reentrada_tras_equal`
 
-si tras un equal (activacion sin rotura) se reentra al romper de nuevo
+si, tras cerrarse una operacion que se activo sin ruptura -lo que el trader llama cerrar un equal-, se vuelve a entrar sin gastar intento (RN-019). La reentrada va por la via normal de colocacion (RN-011 y RN-015). Hasta el 2026-09-16 decia "se reentra al romper de nuevo", que no es lo que dice el literal
 
 Opciones: `si`, `no`.
 
@@ -400,7 +414,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `sesgo_h4_regla`
 
-que vela H4 fija el sesgo y cuando cambia (A-1)
+que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019)
 
 Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
 

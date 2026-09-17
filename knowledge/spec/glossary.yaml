@@ -75,12 +75,27 @@ terminos:
     alias: [equal high, equal low, igual]
     definicion: >-
       dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el
-      extremo anterior, aunque sea por una milesima
+      extremo anterior, aunque sea por una milesima. Es GEOMETRIA: la salida que un equal provoca
+      tiene su propio termino, "cerrar un equal", y la spec ya no usa esta palabra como resultado de
+      cierre ni como forma de activarse
     cita: fb-2026-09-09-sesion-01-8eccf5c0
     literal: >-
       si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
       entonces seguiríamos operando bajista
     visto_en: v6 1:03:01
+
+  - termino: cerrar un equal
+    alias: [activacion sin ruptura, equal (la salida)]
+    definicion: >-
+      el precio activa la orden y la posicion se cierra con lo que el trader llama un equal; se
+      vuelve a entrar y no se gasta intento. En la spec es el cierre de una operacion que se activo
+      sin ruptura (RN-010, RN-019). Esa correspondencia es lectura nuestra de v6 1:22:25-1:23:19, donde
+      el trader describe una entrada activada sin validar que un equal saca con perdida
+    cita: fb-2026-09-09-sesion-01-060cd801
+    literal: >-
+      Cuando el precio activa tu orden y cierras lo que llamas un equal, vuelves a entrar [...] ¿y
+      gastas tus intentos? Sí, esto no gasta intentos, me dijiste, ¿no? No
+    visto_en: v6 1:52:26
 
   - termino: cartucho
     alias: [intento]

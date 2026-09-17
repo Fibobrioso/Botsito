@@ -9,7 +9,10 @@
 # resuelve_en (funcionalidades), evidencia (ids ev-* existentes), parametros (nombres del
 # registro que la respuesta fija), contradiccion (tema con contradiccion mecanica, o null),
 # estado (ABIERTA | RESUELTA | DECIDIDA; la ultima, con decision y decidida_el, desde ADR-0022),
-# bloqueante (las 3 de la sesion 1, MASTER_PLAN G).
+# bloqueante (las 3 de la sesion 1, MASTER_PLAN G) y clase (medicion | pregunta, desde el
+# 2026-09-16): una MEDICION no se le pregunta al trader -la cierra un dato, no una respuesta- y
+# no entra en el cuestionario. Opcional en el esquema -las cerradas no lo necesitan- y obligatoria
+# por guardia en toda ABIERTA.
 ambiguedades:
   - id: A-1
     titulo: sesgo H4
@@ -216,6 +219,7 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: pregunta
     bloqueante: false
   - id: A-14
     titulo: los 28 dias al año en que su horario y la rejilla H4 no cuadran
@@ -276,6 +280,7 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: medicion
     bloqueante: false
   - id: A-17
     titulo: noticias frente a la regla de la cuenta de fondeo
@@ -325,6 +330,7 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: pregunta
     bloqueante: false
   - id: A-19
     titulo: cuando empieza el dia y la semana de riesgo
@@ -387,6 +393,7 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: pregunta
     bloqueante: true
   - id: A-22
     titulo: si el bot opera noticias, y que pasa con la capacidad para otras cuentas
@@ -462,6 +469,7 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: medicion
     bloqueante: false
   - id: A-28
     titulo: el reloj del servidor de FTMO y su regla de horario de verano
@@ -493,4 +501,49 @@ ambiguedades:
     estado: ABIERTA
     decision: null
     decidida_el: null
+    clase: medicion
+    bloqueante: false
+  # A-24, A-25 y A-26 estan RESERVADAS para F14b (docs/plan/features/F14b-*.md §3): por eso las dos
+  # de la rama de fidelidad de la spec (2026-09-16) empiezan en A-29.
+  - id: A-29
+    titulo: cuando nace la orden limite
+    pregunta: >-
+      ¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema de
+      entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez de M15,
+      en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus dice las
+      dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto rompe la
+      liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14)
+      la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de
+      RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que
+      reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion
+    resuelve_en: [F20, F22]
+    evidencia:
+      - ev-v3-004201-bfeb3734
+      - ev-v1-001358-a2b8ec0d
+      - ev-v3-002511-b12d67be
+    parametros: [orden_limite_nace]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-30
+    titulo: la orden limite pendiente al llegar el fin de la ventana
+    pregunta: >-
+      ¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la
+      cancelas, o la dejas puesta y, si se llena despues, la gestionas? A las 15:00 cierras lo que
+      tengas abierto (RN-002), pero de una orden todavia sin llenar no hablaste, y ninguna ambiguedad
+      lo preguntaba: la auditoria del 2026-09-13 midio que, sin respuesta, una limite viva sobrevive
+      al cierre y se llena fuera de la ventana. La accion `retirar_orden_limite` esta declarada y
+      ninguna regla la usa hasta que respondas
+    resuelve_en: [F22, F23]
+    evidencia:
+      - ev-v4-011514-fe34ac7e
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
     bloqueante: false
