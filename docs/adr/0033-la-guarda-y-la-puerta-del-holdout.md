@@ -24,6 +24,8 @@ phase: post-F13 (extrae F14 D4)
    - leer un fichero de `holdout/{1,2,3}/` (`leer_fichero`);
    - usar el VALOR de un `LABEL_CASE` cuyo caso está asignado a una partición reservada.
      `kit kappa` los excluye sin parsearlos y lo dice; `--incluir-holdout` pasa por la puerta.
+     `feedback trace` no IMPRIME ni el valor ni el literal de un caso reservado: los oculta. Fue
+     la segunda via, encontrada al revisar quien mas mostraba `valor_resultante`.
 3. **La frontera es usar el valor, no cargar el fichero.** `knowledge validate`, `feedback pending`
    y la guardia de ancestro cargan todos los registros y no pasan por la puerta: no leen ninguna
    etiqueta.

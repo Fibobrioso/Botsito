@@ -622,6 +622,14 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
             c,
             "07-11: venta; 11-15: no_trade" if i < 4 else "07-11: compra; 11-15: no_trade",
         )
+    # `feedback trace` tampoco IMPRIME la etiqueta de un caso reservado; la de uno dev, si
+    reservado = next(c for c, x in doc["asignacion"].items() if x.startswith("holdout-"))
+    dev = next(c for c, x in doc["asignacion"].items() if x == "dev")
+    assert cli.main(["--repo", str(repo), "feedback", "trace", reservado]) == 0
+    traza = capsys.readouterr().out
+    assert "no se muestra, ADR-0033" in traza and "venta" not in traza and "compra" not in traza
+    assert cli.main(["--repo", str(repo), "feedback", "trace", dev]) == 0
+    assert "07-11: venta" in capsys.readouterr().out
     # Por defecto NO se leen las etiquetas de los casos reservados (ADR-0033): el kit sintetico
     # tiene 2 dev y 3 reservados, asi que quedan 2 casos x 2 sesiones H4 = 4 unidades.
     assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2]) == 0

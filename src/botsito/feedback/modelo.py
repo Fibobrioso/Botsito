@@ -11,7 +11,7 @@ from __future__ import annotations
 import datetime
 import json
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Collection
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -512,20 +512,39 @@ def escribir_registro(
     return ruta
 
 
-def trazar(identificador: str, registros: list[FeedbackRecord]) -> list[str]:
-    """Cadena de un objeto: registros que lo tienen como objetivo y sus supersedes, en orden."""
+def trazar(
+    identificador: str,
+    registros: list[FeedbackRecord],
+    ocultar: Collection[str] = (),
+) -> list[str]:
+    """Cadena de un objeto: registros que lo tienen como objetivo y sus supersedes, en orden.
+
+    `ocultar` son objetivos cuyo VALOR y cuyo literal no se imprimen: los casos de dias reservados.
+    Imprimir la etiqueta de un caso reservado es abrir su holdout (ADR-0021 §1), y `feedback trace`
+    lo hacia sin pasar por ninguna puerta (rama de la guarda, 2026-09-17, ADR-0033). Este modulo no
+    sabe que casos son reservados -`cases` esta por encima en las capas-: se lo dice quien llama.
+    """
     por_id = {r.id: r for r in registros}
+    oculto = " -> [etiqueta de un caso reservado: no se muestra, ADR-0033]"
     lineas: list[str] = []
     relacionados = [r for r in registros if r.objetivo.id == identificador or r.id == identificador]
     if not relacionados:
         return [f"sin registros de feedback para {identificador}"]
     for r in sorted(relacionados, key=lambda r: (r.fecha, r.id)):
         estado = "superseded" if any(x.supersede == r.id for x in registros) else "activo"
+        reservado = r.objetivo.id in ocultar
+        valor = (oculto if reservado else f" -> {r.valor_resultante}") if r.valor_resultante else ""
         lineas.append(
             f"{r.fecha} {r.id} [{estado}] {r.accion} sobre {r.objetivo.tipo}:{r.objetivo.id}"
-            + (f" -> {r.valor_resultante}" if r.valor_resultante else "")
+            + valor
             + (f" (supersede {r.supersede})" if r.supersede else "")
         )
         if r.supersede and r.supersede in por_id:
-            lineas.append(f"    corrige a: {por_id[r.supersede].respuesta_literal[:80]}")
+            corregido = por_id[r.supersede]
+            literal = (
+                "[literal de un caso reservado: no se muestra, ADR-0033]"
+                if corregido.objetivo.id in ocultar
+                else corregido.respuesta_literal[:80]
+            )
+            lineas.append(f"    corrige a: {literal}")
     return lineas

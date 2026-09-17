@@ -1558,7 +1558,9 @@ def feedback_trace(repo: Path, identificador: str) -> int:
     for it in items:
         if it.id == identificador:
             print(f"evidencia {it.id} [{it.video_id} {it.t0}-{it.t1}] {it.tema}: {it.cita_literal}")
-    for linea in trazar(identificador, registros):
+    from botsito.cases.holdout import casos_reservados
+
+    for linea in trazar(identificador, registros, ocultar=set(casos_reservados(repo))):
         print(linea)
     return 0
 
