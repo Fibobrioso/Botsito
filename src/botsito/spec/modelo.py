@@ -483,6 +483,23 @@ def comprobar_precedencia(reglas: list[Regla]) -> list[str]:
     problemas: list[str] = []
     vigentes = [r for r in reglas if r.vigente]
 
+    # `complementa` es lo que exime de las denuncias de abajo, y solo se validaba su FORMATO: un
+    # `RN-777` o una regla DESCARTADA -que ya no refina nada- apagaban la guardia igual que una
+    # declaracion cierta (revision de diseno de la rama de fidelidad, 2026-09-16).
+    por_id_todas = {r.id: r for r in reglas}
+    for r in reglas:
+        for c in r.complementa:
+            otra = por_id_todas.get(c)
+            if otra is None:
+                problemas.append(f"{r.id}: complementa a {c}, que no existe")
+            elif c == r.id:
+                problemas.append(f"{r.id}: se declara complementaria de si misma")
+            elif r.vigente and not otra.vigente:
+                problemas.append(
+                    f"{r.id}: complementa a {c}, que esta DESCARTADA; una regla que no se ejecuta "
+                    f"no refina nada"
+                )
+
     fallbacks = [r.id for r in vigentes if r.clase == "fallback"]
     if len(fallbacks) > 1:
         problemas.append(
@@ -681,6 +698,63 @@ def _ligaduras(nodo: Any) -> set[str]:
         for hijo in nodo:
             atadas |= _ligaduras(hijo)
     return atadas
+
+
+def _atadas_por_todos_de(nodo: Any, por_todos_de: bool = True) -> set[str]:
+    """Las ligaduras que el `cuando` ata en un camino de `todos_de` desde la raiz.
+
+    `_ligaduras` recoge TODO `liga:` del arbol, y eso sirve para negar por defecto -que el nombre
+    exista- pero no para saber si la ligadura tiene VALOR cuando se usa. Una atada dentro de una
+    rama de `cualquiera_de` solo vale si esa rama fue la que se cumplio, y dentro de `ninguno_de`
+    no vale nunca: ADR-0019 no da semantica a ninguna de las dos. RN-029 llevo hasta el 2026-09-14
+    un `cerrar_a_mercado: {de: OP}` con OP sin atar, y lo cazo el consultor a mano: OP es tambien
+    un token declarado, asi que la guardia de argumentos lo daba por bueno.
+    """
+    atadas: set[str] = set()
+    if isinstance(nodo, list):
+        for hijo in nodo:
+            atadas |= _atadas_por_todos_de(hijo, por_todos_de)
+    elif isinstance(nodo, dict):
+        liga = nodo.get("liga")
+        if por_todos_de and isinstance(liga, str) and _ES_LIGADURA.fullmatch(liga):
+            atadas.add(liga)
+        for clave, valor in nodo.items():
+            if clave == "todos_de":
+                atadas |= _atadas_por_todos_de(valor, por_todos_de)
+            elif clave in ("cualquiera_de", "ninguno_de"):
+                atadas |= _atadas_por_todos_de(valor, False)
+            elif clave not in _ESTRUCTURALES and isinstance(valor, dict):
+                # una invocacion: su `liga` va dentro del mapa de argumentos
+                liga_inv = valor.get("liga")
+                if por_todos_de and isinstance(liga_inv, str) and _ES_LIGADURA.fullmatch(liga_inv):
+                    atadas.add(liga_inv)
+    return atadas
+
+
+def comprobar_ligaduras(regla: Regla) -> list[str]:
+    """Toda ligadura que se USA esta atada en un `todos_de` del `cuando` de la misma regla.
+
+    Mira la CLASE del nombre -la forma de una ligadura, mayusculas cortas- y no su nombre: `OP` es
+    tambien un token declarado, y por eso el `de: OP` sin atar de RN-029 paso todas las guardias.
+    Vale para `entonces` y para el propio `cuando` (RN-014 usa `OP.zona_de_entrada` dentro de el).
+    """
+    if not isinstance(regla.forma, dict):
+        return []
+    atadas = _atadas_por_todos_de(regla.forma.get("cuando"))
+    problemas: list[str] = []
+    for rama in ("cuando", "entonces"):
+        for nombre, args in _invocaciones(regla.forma.get(rama)):
+            for clave, valor in args.items():
+                if clave == "liga" or not isinstance(valor, str):
+                    continue
+                cabeza = valor.split(".")[0]
+                if _ES_LIGADURA.fullmatch(cabeza) and cabeza not in atadas:
+                    problemas.append(
+                        f"{regla.id}: '{nombre}.{clave}' usa la ligadura {cabeza}, que el `cuando` "
+                        f"no ata en un `todos_de`; atada en una rama de `cualquiera_de` o de "
+                        f"`ninguno_de` no tiene valor (ADR-0019)"
+                    )
+    return problemas
 
 
 def comprobar_consumo(
@@ -900,6 +974,7 @@ def comprobar_forma(
                     f"{r.id}: pendiente_definicion {pendiente}, que no es una ambiguedad ABIERTA; "
                     f"o la ambiguedad existe y sigue abierta, o la regla ya se puede ejecutar"
                 )
+        problemas += comprobar_ligaduras(r)
         # Lo que se permite o se prohibe, contra su catalogo.
         for efecto in _efectos_invocados(r.forma):
             if efecto not in vocabulario.get("efectos", {}):

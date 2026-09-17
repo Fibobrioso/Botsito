@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import re
 from pathlib import Path
 from typing import Any
@@ -15,7 +16,13 @@ from botsito.spec.manifiesto import (
     estructura_para_hash,
     hash_de,
 )
-from botsito.spec.modelo import SpecError, cargar_glosario, cargar_reglas, comprobar_contra
+from botsito.spec.modelo import (
+    Regla,
+    SpecError,
+    cargar_glosario,
+    cargar_reglas,
+    comprobar_contra,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 FB = "fb-2026-09-09-sesion-01-846fb0d7"
@@ -1049,3 +1056,130 @@ def test_la_puerta_de_spec_check_denuncia_y_nombra_ids() -> None:
         re.match(r"(RN-\d{3}|glosario |predicados |acciones |hecho |acumulador |\w+:)", p)
         for p in problemas
     ), problemas[:5]
+
+
+def _regla_sintetica(
+    rid: str, clase: str, parametros: tuple[str, ...], cuando: Any, **extra: Any
+) -> Regla:
+    return Regla(
+        id=rid,
+        titulo="sintetica",
+        cuando="prosa",
+        entonces="prosa",
+        parametros=parametros,
+        cita=FB,
+        literal="lo dijo asi",
+        estado=extra.pop("estado", "VIGENTE"),
+        clase=clase,
+        forma={"cuando": cuando, "entonces": {"prohibe": ["abrir_operacion"]}},
+        **extra,
+    )
+
+
+def test_cada_denuncia_de_la_precedencia_salta_por_su_cuenta() -> None:
+    """Cuatro denuncias y ninguna probada sola: la de dos `fallback` y la de subconjunto no las
+    ejecutaba ningun test, y la de mismo disparador y la de clon saltaban juntas sobre la misma
+    gemela, asi que apagar cualquiera de las dos dejaba la suite verde (revision de diseno de la
+    rama de fidelidad, 2026-09-16: los cuatro mutantes sobrevivian). Cada caso aqui dispara UNA.
+    """
+    from botsito.spec.modelo import comprobar_precedencia
+
+    ev_a = {"todos_de": [{"alcanza_hora": {"hora": "p_a", "huso": "p_h"}}]}
+    ev_b = {"todos_de": [{"alcanza_hora": {"hora": "p_b", "huso": "p_h"}}]}
+
+    dos_else = [
+        _regla_sintetica("RN-901", "fallback", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "fallback", ("p2",), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(dos_else)
+    assert "fallback" in fallo
+
+    mismo_disparo = [
+        _regla_sintetica("RN-901", "disparador", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "disparador", ("p2",), ev_a),
+    ]
+    (fallo,) = comprobar_precedencia(mismo_disparo)
+    assert "MISMO disparador" in fallo and "RN-901" in fallo and "RN-902" in fallo
+    declarado = [mismo_disparo[0], dataclasses.replace(mismo_disparo[1], complementa=("RN-901",))]
+    assert comprobar_precedencia(declarado) == []
+
+    clones = [
+        _regla_sintetica("RN-901", "gate", ("p1", "p2"), ev_a),
+        _regla_sintetica("RN-902", "gate", ("p1", "p2"), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(clones)
+    assert "exactamente los mismos" in fallo
+
+    subconjunto = [
+        _regla_sintetica("RN-901", "gate", ("p1",), ev_a),
+        _regla_sintetica("RN-902", "gate", ("p1", "p2"), ev_b),
+    ]
+    (fallo,) = comprobar_precedencia(subconjunto)
+    assert "subconjunto" in fallo
+    declarado = [subconjunto[0], dataclasses.replace(subconjunto[1], complementa=("RN-901",))]
+    assert comprobar_precedencia(declarado) == []
+
+    # y `complementa` ya no exime por su formato: tiene que apuntar a algo que existe y se ejecuta
+    fantasma = [_regla_sintetica("RN-901", "gate", ("p1",), ev_a, complementa=("RN-777",))]
+    (fallo,) = comprobar_precedencia(fantasma)
+    assert "RN-777" in fallo and "no existe" in fallo
+    a_descartada = [
+        _regla_sintetica("RN-901", "gate", ("p1",), ev_a, complementa=("RN-902",)),
+        _regla_sintetica("RN-902", "gate", ("p9",), ev_b, estado="DESCARTADA"),
+    ]
+    (fallo,) = comprobar_precedencia(a_descartada)
+    assert "DESCARTADA" in fallo
+
+
+def test_una_ligadura_usada_tiene_que_estar_atada_en_un_todos_de() -> None:
+    """La RN-029 anterior al 2026-09-14 cerraba a mercado `de: OP` con OP sin atar: su `cuando`
+    era un `cualquiera_de`. Pasaba todas las guardias porque OP es tambien un token, y lo cazo el
+    consultor a mano. La guardia mira la forma del nombre, no el catalogo.
+    """
+    from botsito.spec.modelo import FICHERO_SPEC, comprobar_ligaduras
+
+    reglas = {r.id: r for r in cargar_reglas(REPO / FICHERO_SPEC)}
+    # NO salta: las que atan OP (o Z, o S) en un todos_de
+    for rid in ("RN-002", "RN-005", "RN-006", "RN-014", "RN-030"):
+        assert comprobar_ligaduras(reglas[rid]) == [], rid
+
+    rn029_vieja = dataclasses.replace(
+        reglas["RN-029"],
+        forma={
+            "cuando": {
+                "cualquiera_de": [
+                    {
+                        "alcanza_tope": {
+                            "acumulador": "perdida_dia_firma",
+                            "tope": "firma_perdida_diaria_max",
+                        }
+                    },
+                    {"hecho": "detenido_por_tope"},
+                ]
+            },
+            "entonces": {
+                "prohibe": ["abrir_operacion", "buscar_entradas"],
+                "hace": [{"cerrar_a_mercado": {"de": "OP", "si": "si"}}],
+            },
+        },
+    )
+    (fallo,) = comprobar_ligaduras(rn029_vieja)
+    assert "RN-029" in fallo and "OP" in fallo
+
+    # SALTA tambien si la atadura vive en una rama de cualquiera_de o de ninguno_de
+    for conector in ("cualquiera_de", "ninguno_de"):
+        rama = dataclasses.replace(
+            reglas["RN-002"],
+            forma={
+                "cuando": {
+                    "todos_de": [
+                        {"alcanza_hora": {"hora": "ventana_fin", "huso": "huso_operativa"}},
+                        {conector: [{"hecho": "operacion_abierta", "liga": "OP"}]},
+                    ]
+                },
+                "entonces": {
+                    "hace": [{"cerrar_a_mercado": {"de": "OP", "si": "cierre_forzoso_fin_ventana"}}]
+                },
+            },
+        )
+        assert comprobar_ligaduras(rama), conector
