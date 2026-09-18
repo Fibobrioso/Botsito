@@ -49,13 +49,39 @@ Ha nacido corta cuatro veces.
 Si un valor puede cambiar, es un parametro del registro (ADR-0002: una sola puerta, tipos no
 intercambiables, lectura estricta). La forma nombra el parametro; no lleva el numero dentro.
 
-## Holdout
+## Que se puede mirar y que no: son TRES cosas distintas, no una
 
-La puerta `botsito.cases.holdout` es el UNICO sitio por el que se abre, y exige `PREREGISTRO.md`
-relleno y autorizacion commiteada por particion, atada por `preregistro_blob` (ADR-0033). **Leer velas
-no es abrir:** `kit build` y `kit check` se pueden ejecutar con `data/` presente y declaran en su
-salida, por RECUENTO y no por fechas, los dias reservados cuyas velas leen. Toda exposicion se declara
-en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
+Verificado contra el repositorio el 2026-09-17. `corpus/` y casi todo `data/` estan fuera de git
+(`.gitignore`: `/corpus/`, `/data/*` salvo `/data/manifests/`), asi que viven en la maquina.
+
+**1. SE LEEN, y conviene leerlos: `data/fotogramas/**` y `data/transcripciones/**`.** No son holdout,
+y se regeneran desde el corpus. Son la fuente primaria de lo que el trader hace EN PANTALLA, y la via
+es `botsito corpus frames show --video <v> --t h:mm:ss [--n N]`, que da las rutas de los PNG mas
+cercanos. El texto de las transcripciones vive tambien ahi: `knowledge/corpus/transcripciones/` solo
+tiene los MANIFIESTOS (ver la seccion de transcripciones, mas abajo).
+
+Estan infrautilizados, y eso cuesta turnos del trader: hay **25.372 PNG a 1 fps** de los seis videos y
+solo **8 fotogramas distintos, citados por 9 items de 365** (dos de esos ocho los cito esta misma rama,
+el 2026-09-17). La auditoria del 2026-09-13, epigrafe *Fotogramas no abiertos*, ya lo decia: los "aqui"
+de v4 1:06:12, v1 0:14:54 y el bloque de origen siguen sin abrirse, y entonces `data/fotogramas` ni
+siquiera estaba copiado. **Una pregunta de geometria se contesta muchas veces mirando el fotograma, sin
+gastarle un turno al trader** (asi se resolvio el breaker de M1: `docs/validation/BREAKER-M1.md`).
+
+**2. LAS VELAS DE `data/` SE LEEN para recalcular ventanas, y eso NO es abrir un holdout** (ADR-0021
+§1). `kit build` y `kit check` se ejecutan con `data/` presente y declaran en su salida, por RECUENTO y
+no por fechas, los dias reservados cuyas velas leen (ADR-0033). Ninguna etiqueta y ningun precio.
+
+**3. PROHIBIDO sin pasar por la puerta de ADR-0033** (`botsito.cases.holdout`, que exige `PREREGISTRO.md`
+relleno y autorizacion commiteada por particion, atada por `preregistro_blob`):
+- `knowledge/cases/holdout/**` (particiones 1, 2 y 3);
+- el **detalle por operacion** de los xlsx del corpus
+  (`corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics *.xlsx` y
+  `Backtest mayo 2026/`);
+- las **capturas de Analytics** de FX Replay que acompanan a esos backtests;
+- y **el backtest de septiembre**, en cuanto entre -hoy no esta en la maquina-: no se abre hasta que
+  sus particiones esten sorteadas y commiteadas.
+
+Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 
 ## Abrir una ambiguedad toca dos sitios; cerrarla, cuatro
 
