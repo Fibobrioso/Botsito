@@ -90,11 +90,29 @@ Aunque la mecánica esté en cuestión, esto está medido y no cambia:
   que el colateral está acotado. Hace falta un token nuevo para el resultado que `equal` ocupaba
   por error.
 - **Tres preguntas que el corpus no cierra** y que habría que abrir como ambigüedades:
-  - **A-24**: con varios pivotes candidatos en M15, ¿la liquidez es **el más reciente**
-    (`ev-v1-001334`, `ev-v4-010921`) o **el más extremo** (`ev-v3-001531`)? No son el mismo nivel.
-  - **A-25**: con la liquidez ya tomada y cartuchos vivos, ¿un pivote más reciente la invalida?
-  - **A-26**: la vela que marca la liquidez es "contraria al flujo" — ¿ese flujo es el **sesgo de
-    H4**, o se lee en M15 y puede ir contra el sesgo?
+  - **A-24**: con varios pivotes candidatos en M15, **¿qué hace que marque uno y no otro?**
+  - **A-25**: **la vida de la marca** — ¿se mueve a un pivote más reciente mientras está viva?
+  - **A-26**: el flujo es el de **M15** (cerrado) — **¿qué pasa cuando va contra el sesgo de H4?**
+
+> **CORREGIDO el 2026-09-20** (rama de la liquidez de M15, `docs/validation/LIQUIDEZ-M15.md`). Las
+> tres estaban mal enunciadas, y las tres se midieron contra los fotogramas antes de reescribirse.
+> Se abren ya en `knowledge/spec/ambiguedades.yaml` con sus ids reservados; esta sección es un
+> resumen, y manda el fichero.
+>
+> - **A-24 no era «el más reciente o el más extremo».** Ese eje no existe: `ev-v3-001531` —el que
+>   sostenía el polo «más extremo»— mide lo mismo que los otros dos. En pantalla
+>   (`fr-v3-982da728/944000`) el trader **descarta** el alto más alto y marca el de abajo, que es a
+>   la vez el más próximo al precio y el más reciente. Y `ev-v3-001242` («el alto más alto» en un
+>   *complex pullback*) está dicho sobre un **croquis a mano alzada en un gráfico de 1h**
+>   (`fr-v3-982da728/781000`), donde el alto más alto **es además el último**: no discrimina. Ese
+>   item lo cita ahora A-24. La pregunta pasa a ser abierta y por el **criterio**.
+> - **A-25 no tenía corpus**: nada dice que un pivote nuevo invalide una liquidez **ya tomada**; la
+>   premisa era del análisis. Lo abierto es si la marca **se mueve** mientras vive.
+> - **A-26 tenía una mitad ya cerrada**: el flujo es el de **M15**, dicho cuatro veces
+>   (`ev-v3-001204`, `ev-v4-003451`, `ev-v6-003701`, `ev-v3-011147`). Eso está **escrito en la spec**
+>   desde el 2026-09-20, no solo preguntado. Lo abierto es el choque con el sesgo de H4.
+> - `ev-v3-001531-1b12a896` **está supersedido** por `ev-v3-001528-87eef4f0`, que añade la cita de
+>   pantalla y respeta el «suelo» y el «en este caso» de la cita original.
 
 ## 4. Cómo seguir
 

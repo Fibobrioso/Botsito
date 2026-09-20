@@ -441,6 +441,91 @@ ambiguedades:
     decision: ADR-0024
     decidida_el: '2026-09-12'
     bloqueante: false
+  # A-24, A-25 y A-26 estaban RESERVADAS para F14b desde el 2026-09-12 y se abren el 2026-09-20
+  # (rama de la liquidez de M15, docs/validation/LIQUIDEZ-M15.md). Por eso la numeracion salto a A-29
+  # en la rama de fidelidad de la spec. Las tres se midieron contra los fotogramas antes de redactarse
+  # y las tres cambiaron de enunciado respecto a F14b §3.
+  - id: A-24
+    titulo: que hace que marques un pivote de M15 y no otro
+    pregunta: >-
+      cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3
+      0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo
+      invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es
+      "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el
+      mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir
+      sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es
+      "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras,
+      que tamano de movimiento, que lo descalifica
+    resuelve_en: [F19, F20]
+    # nadie produce `liquidez_m15` en la spec: esta pregunta es la que dice que regla escribir. El
+    # item de v3 0:12:42 (complex pullback, "el alto mas alto") se mide sobre un CROQUIS A MANO en un
+    # grafico de 1h -fr-v3-982da728/781000-, y en ese dibujo el alto mas alto es ademas el ultimo: no
+    # sostiene un criterio distinto, solo el mismo en otro ejemplo
+    evidencia:
+      - ev-v3-001528-87eef4f0
+      - ev-v1-001334-96e8ca40
+      - ev-v4-010921-31dd762d
+      - ev-v3-001242-cbe6bdc3
+      - ev-v4-005644-e06ef304
+      # el item que sostiene el riesgo de fidelidad: "marcas tu zona de liquidez que tu consideres"
+      - ev-v3-003916-447dc8d7
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true
+  - id: A-25
+    titulo: la vida de la marca de liquidez de M15
+    pregunta: >-
+      ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y sigues
+      con cartuchos: si M15 desarrolla entretanto otro pivote del mismo lado y mas reciente, ¿mueves
+      la liquidez a ese pivote -y con ella el lado de ruido de RN-005 y el reinicio de los cartuchos,
+      que es `siguiente_liquidez_m15`- o la marca se queda fija hasta que la retire uno de los
+      eventos que si nombras: trade ganador (v6 0:32:27), invalidacion (v3 0:51:10) o cambio de dia
+      (v4 1:09:21)?
+    resuelve_en: [F19, F20]
+    # F14b §3 la enunciaba como "¿un pivote mas reciente invalida una liquidez YA TOMADA?", y eso no
+    # lo dice ni el corpus ni ninguna pantalla: la premisa era del analisis, no del trader. Lo que si
+    # esta abierto es si la marca se mueve mientras vive
+    evidencia:
+      - ev-v4-010921-31dd762d
+      - ev-v3-005110-d10dd043
+      - ev-v6-003227-c4efcf49
+    parametros: [cartuchos_reinicio]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-26
+    titulo: el flujo de M15 cuando va contra el sesgo de H4
+    pregunta: >-
+      la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo
+      dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3
+      0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback
+      ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la
+      vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de
+      M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al
+      flujo que va en el sentido del sesgo?
+    resuelve_en: [F18, F19]
+    # la mitad disyuntiva que F14b §3 preguntaba ("¿H4 o M15?") esta CERRADA por el corpus y se
+    # escribio en la spec el 2026-09-20 (nota de RN-004 y del token, con sus citas)
+    evidencia:
+      - ev-v3-001204-889179d2
+      - ev-v3-001242-cbe6bdc3
+      - ev-v3-001508-e1a49a38
+      - ev-v4-003451-d750e553
+      - ev-v6-003701-7613b381
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
   - id: A-27
     titulo: las especificaciones de EURUSD en FTMO
     pregunta: >-
@@ -503,8 +588,6 @@ ambiguedades:
     decidida_el: null
     clase: medicion
     bloqueante: false
-  # A-24, A-25 y A-26 estan RESERVADAS para F14b (docs/plan/features/F14b-*.md §3): por eso las dos
-  # de la rama de fidelidad de la spec (2026-09-16) empiezan en A-29.
   - id: A-29
     titulo: cuando nace la orden limite
     pregunta: >-

@@ -1,0 +1,28 @@
+id: ev-v3-001528-87eef4f0
+video_id: v3
+t0: 0:15:28
+t1: 0:15:45
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: tus zonas de liquidez, que sería este alto, aunque yo invadiría este alto, la verdad, o
+  sea, suelo usar la zona, en este caso la zona de liquidez más baja, que me deja el precio, que sería
+  este de aquí
+afirmacion: en este ejemplo, con dos altos candidatos por encima del precio, descarta el mas alto -dice
+  que lo invadiria- y suele marcar la liquidez de M15 en la zona mas baja que le deja el precio, que en
+  pantalla es ademas la mas proxima al precio y la mas reciente
+tema: liquidez.m15.zona_mas_baja
+confianza: media
+extractor: humano
+revisado_por: Aleks · rama de la liquidez de M15 2026-09-20 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v3-982da728/938000
+- fr-v3-982da728/944000
+supersede: ev-v3-001531-1b12a896
+notas: 'supersede a ev-v3-001531-1b12a896, cuya afirmacion se comia el ''suelo'' y el ''en este caso''
+  de la cita y quedaba como regla general de M15. Medido en pantalla: /938000 tiene el segmento sobre
+  el alto anterior y mas alto; en /944000 dibuja OTRO, con sus dos circulos de extremo, mas abajo y mas
+  a la derecha, pegado al precio, y el primero se queda sin marcar. El sesgo del ejemplo es bajista (v3
+  0:12:34 ''esto es H4 esta bajista'', ev-v3-001508), asi que la liquidez esta por encima del precio y
+  ''la mas baja'' es la menos extrema. Por eso F14b lo leia como ''el mas extremo'' y no lo es'
+transcripcion: tr-v3-large-v3-int8-float16-270a4851

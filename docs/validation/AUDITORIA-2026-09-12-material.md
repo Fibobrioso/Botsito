@@ -127,6 +127,14 @@ zona más baja que me deja el precio"* (`ev-v3-001531`).
 
 Sin esta regla, F18 no puede construirse fiel.
 
+> **Nota del 2026-09-20** (rama de la liquidez de M15, `docs/validation/LIQUIDEZ-M15.md`): el hueco
+> sigue abierto y ahora está medido —`liquidez_m15` tiene **cero** producciones, y por eso RN-008,
+> que es un `ninguno_de`, prohíbe abrir operación **siempre**—. Dos avisos para quien lea este
+> párrafo: `ev-v3-001531` está **supersedido** por `ev-v3-001528-87eef4f0`, porque su afirmación se
+> comía el *"suelo"* y el *"en este caso"* de la cita; y *"la zona más baja"* **no** es un criterio
+> distinto de *"la más reciente"*: en pantalla (`fr-v3-982da728/944000`) es el mismo nivel. Quién
+> marca la liquidez lo decide A-24, abierta ese día.
+
 ### 2.4 · El token `equal` está mal definido, y RN-019 nunca dispararía
 
 `strategy_spec.yaml` lo define como *"la operación cerró sin ganancia ni pérdida"*, y contradice al

@@ -1,0 +1,22 @@
+id: ev-v1-001403-eea19530
+video_id: v1
+t0: 0:14:03
+t1: 0:14:22
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: la zona de liquidez pues nosotros vamos abarcando con nuestro límite [...] este sería pues
+  la el último pico en este en este retroceso complejo
+afirmacion: mientras va bajando el limite dentro de un retroceso complejo nombra el ultimo pico como referencia;
+  lo dice sobre un grafico de M1 y no dice que ese pico sea la liquidez de M15
+tema: entrada.limite_baja_hasta_ultimo_pico
+confianza: media
+extractor: humano
+revisado_por: Aleks · rama de la liquidez de M15 2026-09-20 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v1-5a2a42c3/855000
+notas: 'item que faltaba: el tramo no tenia evidencia (los vecinos son ev-v1-001306 y ev-v1-001334). Se
+  crea al medir la rama de la liquidez de M15 porque se cito como apoyo de que dentro de un retroceso
+  complejo el trader elige el pico RECIENTE. Medido, NO sirve de apoyo: en /855000 el grafico es M1 -no
+  M15- y la frase va del limite que va bajando, no de la liquidez de M15'
+transcripcion: tr-v1-large-v3-int8-float16-bbd8a931
