@@ -75,11 +75,32 @@ no por fechas, los dias reservados cuyas velas leen (ADR-0033). Ninguna etiqueta
 relleno y autorizacion commiteada por particion, atada por `preregistro_blob`):
 - `knowledge/cases/holdout/**` (particiones 1, 2 y 3);
 - el **detalle por operacion** de los xlsx del corpus
-  (`corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics *.xlsx` y
-  `Backtest mayo 2026/`);
-- las **capturas de Analytics** de FX Replay que acompanan a esos backtests;
-- y **el backtest de septiembre**, en cuanto entre -hoy no esta en la maquina-: no se abre hasta que
-  sus particiones esten sorteadas y commiteadas.
+  (`corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics *.xlsx`,
+  `Backtest mayo 2026/`, `Backtest septiembre 2026/` y los que vengan);
+- las **capturas de Analytics** de FX Replay que acompanan a esos backtests.
+
+**Lo minimo para fijar el universo SI se lee, y no es abrir.** De un backtest del trader se puede
+leer QUE DIAS CUBRE EL MATERIAL -la columna de fechas- porque eso no es leer una etiqueta ni medir
+una cifra del bot (ADR-0021 §1), y sin saberlo no hay universo, y sin universo no hay sorteo. Vale
+para CUALQUIER backtest, no solo el de septiembre: febrero o marzo vienen detras. Con tres ataduras:
+
+- **QUIEN:** el consultor. No una sesion, no un agente.
+- **CUANDO:** una sola vez, ANTES del sorteo. Nunca despues.
+- **QUE:** solo la columna de fechas. Ni resultados, ni PnL, ni una fila de operaciones.
+
+Y **se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre** (ADR-0021 §4).
+
+> **Por que cambio esta regla (2026-09-20).** Hasta hoy decia que el backtest de septiembre no se
+> abria "hasta que sus particiones esten sorteadas y commiteadas". Estaba MAL ESCRITA desde el
+> principio: bloqueaba un paso que el propio proceso exige, porque sin saber que dias cubre el
+> material no hay universo que sortear. **Es la segunda vez que pasa lo mismo, y eso ya es un
+> patron, no una anecdota**: la obligacion 6 de `HOLDOUT-EXPOSICIONES.md` prohibia ejecutar
+> `kit check` y `kit build` con `data/` presente y dejaba la sesion 2 bloqueada para siempre
+> (reescrita el 2026-09-17, ADR-0033). **En los dos casos este fichero era MAS ESTRICTO QUE
+> ADR-0021 sin que ningun ADR lo dijera.** De ahi la regla de la regla: una prohibicion escrita
+> aqui que no salga de un ADR se revisa antes de aplicarla, porque puede estar prohibiendo un paso
+> necesario; y si se aparta de ADR-0021, o se corrige aqui o se cambia el ADR, pero no se deja el
+> desacuerdo por escrito.
 
 Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 

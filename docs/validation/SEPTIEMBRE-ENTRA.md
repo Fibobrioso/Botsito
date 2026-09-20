@@ -28,6 +28,11 @@ Va con tres cosas más escritas en la fila, porque ninguna se puede probar de ot
   fuera de alcance «hasta que sus particiones estén sorteadas y commiteadas». No se abrió ningún
   holdout, pero la regla escrita era más ancha que ADR-0021 §1 y se rompió. Queda declarado.
 
+**El orden importa, y por eso la fila de exposición se queda como está.** La lectura del día 20
+ocurrió **antes** de corregir la regla, no después. La corrección de `CLAUDE.md` que entra en esta
+rama (§2b) **no absuelve nada retroactivamente**: arregla una regla que estaba mal escrita, y la
+fila sigue diciendo que la lectura la cruzó.
+
 ## 2. El inventario, medido antes de ejecutarlo
 
 `corpus inventory` guarda por fichero **ruta, papel, bytes y sha256**, y el hash se calcula abriendo
@@ -40,6 +45,28 @@ Entraron **siete** ficheros. El fichero de bloqueo de Excel **no**: se cerró Ex
 de inventariar, porque `rglob` no excluye nada y un libro abierto puede cambiar de bytes y con ellos
 su hash. Verificado después: el xlsx conserva sus **10.066 bytes** y el mtime de la copia, así que el
 sha256 congelado es el del fichero tal como lo mandó el trader. `corpus check`: OK.
+
+## 2b. La regla de `CLAUDE.md` estaba mal escrita, y es la segunda vez
+
+`CLAUDE.md` prohibía abrir el backtest de septiembre «hasta que sus particiones estén sorteadas y
+commiteadas». **Esa regla bloqueaba un paso que el propio proceso exige**: sin saber qué días cubre
+el material no hay universo, y sin universo no hay sorteo. No era una regla estricta de más: era
+imposible de cumplir sin quedarse parado.
+
+**Es la misma clase de error que la obligación 6 de `HOLDOUT-EXPOSICIONES.md`**, que prohibía
+ejecutar `kit check` y `kit build` con `data/` presente y, tomada al pie de la letra, dejaba la
+sesión 2 bloqueada para siempre; se reescribió el 2026-09-17 con ADR-0033. **En los dos casos
+`CLAUDE.md` era más estricto que ADR-0021 sin que ningún ADR lo dijera.** Dos veces es un patrón, no
+una anécdota, y así queda escrito en el propio fichero: una prohibición escrita ahí que no salga de
+un ADR se revisa antes de aplicarla, porque puede estar prohibiendo un paso necesario.
+
+**La regla nueva**, en la voz del fichero: de un backtest del trader siguen sin abrirse, sin la
+puerta de ADR-0033, el detalle por operación y las capturas de Analytics; y **sí se puede leer lo
+mínimo para fijar el universo** —qué días cubre—, con tres ataduras escritas: **quién** (el
+consultor, no una sesión ni un agente), **cuándo** (una sola vez, antes del sorteo, nunca después) y
+**qué** (solo la columna de fechas). Y se declara el mismo día, siempre. Vale para cualquier
+backtest futuro, no solo septiembre. De paso desaparece el «en cuanto entre -hoy no esta en la
+maquina-», que ya era falso.
 
 ## 3. Septiembre, declarado visto — con la fecha que sí tiene fuente
 
@@ -120,10 +147,10 @@ pendiente, y es la lectura fácil y equivocada.
 ## 7. Qué debe decidir el usuario
 
 1. **¿Validar la rama** y hacer el ritual (tag `stable/F13-septiembre`)?
-2. **La precisión de `CLAUDE.md`** (§1): hoy dice que el backtest de septiembre no se abre hasta
-   tener particiones, y eso ya no describe lo que pasó. Lo propuesto: de septiembre no se abren el
-   detalle por operación ni las capturas; la columna de fechas para fijar el universo sí, y se
-   declara. **No lo he tocado en esta rama**, porque cambia una regla de la casa y es tuya.
+2. **La corrección de `CLAUDE.md`** (§2b): **hecha en esta rama**, a petición del consultor y con
+   sus tres ataduras. Queda por decidir si el patrón que deja escrito -una prohibición de
+   `CLAUDE.md` más estricta que ADR-0021 sin ADR que lo diga- merece además una guardia, o basta con
+   la regla escrita.
 3. **La rama del universo congelado**: es el bloqueo entero y necesita su brief y su ADR.
 4. **La fecha real del backtest del trader**, que está pedida y hoy no consta.
 
