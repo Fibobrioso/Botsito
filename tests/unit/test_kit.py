@@ -255,15 +255,11 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 
 # Ids que un documento ya nombra y que todavia no existen en `ambiguedades.yaml`. Es la UNICA
 # excepcion a "correlativas y sin huecos", va con su motivo, y se AUTOLIQUIDA: el test de abajo
-# exige que ninguno de estos ids exista todavia, asi que el dia que el brief de la geometria cree
-# A-24 falla y obliga a retirarlo de aqui. Mismo patron que las exenciones por seccion de
-# `tests/contract/test_documentos_vivos.py`. Nacio el 2026-09-14, cuando ADR-0026 abrio A-27 y
-# A-28 con las tres de la liquidez de M15 reservadas y sin abrir.
-IDS_RESERVADOS = {
-    "A-24": "reservadas por F14b §3",
-    "A-25": "reservadas por F14b §3",
-    "A-26": "reservadas por F14b §3",
-}
+# exige que ninguno de estos ids exista todavia. Nacio el 2026-09-14, cuando ADR-0026 abrio A-27 y
+# A-28 con las tres de la liquidez de M15 reservadas y sin abrir, y FUNCIONO: el 2026-09-20 la rama
+# de la liquidez de M15 creo A-24, A-25 y A-26, el test fallo y obligo a vaciar la lista. Se deja
+# vacia a proposito, con el mecanismo intacto para la proxima reserva.
+IDS_RESERVADOS: dict[str, str] = {}
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
@@ -272,7 +268,6 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # La reserva no puede sobrevivir a su motivo: si alguno ya existe, sobra en la lista.
     ya_existen = sorted(set(IDS_RESERVADOS) & set(ids))
     assert not ya_existen, f"reservados que ya existen; retiralos de IDS_RESERVADOS: {ya_existen}"
-    assert set(IDS_RESERVADOS) == {"A-24", "A-25", "A-26"}
     # correlativas desde A-1, sin huecos salvo los reservados: la sesion 1 añadio A-13..A-17 y
     # seguira creciendo
     ultimo = int(ids[-1][2:])
@@ -280,12 +275,14 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     assert ids == esperados
     assert len(ambs) >= 17
     # `bloqueante` marca lo que hay que llevar SI o SI a una sesion (MASTER_PLAN G). Las tres de
-    # la sesion 1 siguen marcadas y estan RESUELTAS; desde el 2026-09-10 hay una viva para la
-    # sesion 2: A-21, que el corpus nunca define que es un breaker y sin eso RN-008 no se ejecuta.
+    # la sesion 1 siguen marcadas y estan RESUELTAS; para la sesion 2 hay DOS vivas: A-21, que el
+    # corpus nunca define que es un breaker, y desde el 2026-09-20 A-24 -nadie produce el token
+    # `liquidez_m15`, asi que RN-004 no dispara y RN-008, que es un `ninguno_de`, prohibe abrir
+    # SIEMPRE-. Las dos dejan al motor sin entrada posible, cada una por su lado.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    assert abiertas == {"A-21", "A-24"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida

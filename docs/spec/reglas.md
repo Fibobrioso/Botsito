@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 12.1.1` · hash `9a1f84bdad58…`
+`spec_version 12.1.1` · hash `702fdb1396db…`
 
 27 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -1248,7 +1248,7 @@
 - **`hasta_cartuchos_reinicio`** — la detencion dura hasta el reinicio que diga `cartuchos_reinicio` Clase: `duracion`.
 - **`hasta_el_corte_siguiente`** — la detencion dura hasta el siguiente corte del dia o de la semana de riesgo Clase: `duracion`.
 - **`instante_entrada`** — campo de OP, el momento en que se lleno la orden
-- **`liquidez_m15`** — la liquidez marcada en M15 que hay que tomar antes de mirar M1. ES UN NIVEL, no una banda: medido en pantalla el 2026-09-20 (v4 0:57:06, fr-v4-9ad0ebb8/3426000) lo que queda dibujado es una LINEA horizontal etiquetada "15 lq"; el trader dice que le es indiferente desde cual de los puntos anteriores la marque porque considera liquidez todo lo que hay entre ellos (ev-v4-005644-e06ef304), pero lo que deja en el grafico es un nivel, que es lo que `alcanza_nivel` y `cruza` necesitan. LA MARCA LA PONE UNA PERSONA: ninguna regla de esta spec produce este token -no hay `fijar` que lo escriba- y por eso RN-004 no puede dispararse. Que regla lo marque es justo lo que decide A-24; escribir aqui una inventada seria hacer pasar por metodo del trader lo que decide el plan. La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4 (ev-v3-001204-889179d2, ev-v4-003451-d750e553, ev-v6-003701-7613b381, ev-v3-011147: "seria solo M15, M15 y ya"); que pasa cuando ese flujo va contra el sesgo de H4 es A-26
+- **`liquidez_m15`** — la liquidez marcada en M15 que hay que tomar antes de mirar M1. ES UN NIVEL, no una banda: medido en pantalla el 2026-09-20 (v4 0:57:06, fr-v4-9ad0ebb8/3426000) lo que queda dibujado es una LINEA horizontal etiquetada "15 lq"; el trader dice que le es indiferente desde cual de los puntos anteriores la marque porque considera liquidez todo lo que hay entre ellos (ev-v4-005644-e06ef304), pero lo que deja en el grafico es un nivel, que es lo que `alcanza_nivel` y `cruza` necesitan. LA MARCA LA PONE UNA PERSONA: ninguna regla de esta spec produce este token -no hay `fijar` que lo escriba- y por eso RN-004 no puede dispararse. Que regla lo marque es justo lo que decide A-24; escribir aqui una inventada seria hacer pasar por metodo del trader lo que decide el plan. La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4 (ev-v3-001204-889179d2, ev-v4-003451-d750e553, ev-v6-003701-7613b381, ev-v3-011147-fa2e6984: "seria solo M15, M15 y ya"); que pasa cuando ese flujo va contra el sesgo de H4 es A-26
 - **`lote_calculado`** — el lote que acaba de calcular `dimensionar_lote`, antes de redondear
 - **`no`** — apaga un hecho de estado. Va ENTRECOMILLADO en el YAML a proposito: sin comillas, `no` es el booleano falso de YAML 1.1 mientras que `si` es una cadena, y la misma casilla de la misma regla acababa con dos tipos distintos (RN-013, encontrado el 2026-09-12)
 - **`nunca`** — el acumulador no se reinicia. Nace el 2026-09-16 para `perdida_total_firma`, que ponia en `reinicia_con` un parametro booleano -firma_perdida_total_arrastra- donde los demas llevan un reloj o un evento Clase: `reinicio`.
