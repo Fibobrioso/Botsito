@@ -38,3 +38,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0031 | El freno de la firma dispara antes del limite: margen declarado y lectura prospectiva | ACTIVE |
 | 0032 | De donde sale cada hecho y cada evento, y como nace la orden limite | ACTIVE |
 | 0033 | La guarda y la puerta del holdout: que vigilan, por donde se abre y como se autoriza | ACTIVE |
+| 0034 | Septiembre es material ETIQUETADO de un mes que el trader ya ha visto | ACTIVE |

@@ -45,6 +45,40 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest mayo 2026/mensaje-whatsapp-2026-09-11-1904-factible-promediando.png
   sha256: 0076e82738b4df0460830ece6670047be0865a89e0580ed46a94ae68ac8a2624
+- bytes: 85833
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.24
+    AM (1).jpeg
+  sha256: dd922dcee8a31dd96890fa8f9ced4499134ef6544c1282fa776e2fd25ecab461
+- bytes: 106703
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.24
+    AM.jpeg
+  sha256: 7232c52c6c6acb47f22cfb403a44d498c69bd3711f9824f864b118d791223bd8
+- bytes: 96386
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.25
+    AM (1).jpeg
+  sha256: 178bdd5b4f8ec60b3c4bbdac4907792e76b4bf992e685dcf7e6ab427e8aab41d
+- bytes: 71003
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.25
+    AM.jpeg
+  sha256: c14f7da3dad5ae534f41d23470a7749b6f8834ef54acdff6a2f400d4c5f9f744
+- bytes: 76949
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.26
+    AM (1).jpeg
+  sha256: 34c3cf5433b10d5093ca6d3e744a03acf480248d957c09cbca1f5dd3869e8bc5
+- bytes: 51448
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/WhatsApp Image 2026-09-20 at 6.03.26
+    AM.jpeg
+  sha256: 526a467cdfb7d4fc6d7d8cc95c0b50e3232d81674ef01e4cc59cea7a2e1a3263
+- bytes: 10066
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest septiembre 2026/backtesting-analytics SEPTIEMBRE 2026.xlsx
+  sha256: 8a37c24b841ad9d5c7058ffba93fe15d9abac32c0a1c25fcd97a8df83d3c0b3d
 - bytes: 12417
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-0208-zonas-de-control.png
@@ -2116,8 +2150,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 3296135
-    ficheros: 36
+    bytes: 3794523
+    ficheros: 43
   video_original:
     bytes: 23715506889
     ficheros: 6

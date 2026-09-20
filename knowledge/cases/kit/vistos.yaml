@@ -67,4 +67,19 @@ meses:
     fuente: [ev-v4-011742-3a6b5367, ev-v4-011856-52f0f859, ev-v1-000633-686f20a1]
     # la grabacion de v1, la mas antigua de las fuentes (v4 es del 2026-08-30)
     visto_el: "2026-08-20"
+  - mes: "2026-09"
+    motivo: >-
+      el trader backtesteo septiembre y lo entrego el 2026-09-20 por WhatsApp: seis capturas de las
+      06:03 y `backtesting-analytics SEPTIEMBRE 2026.xlsx`. Disparador (b). Es material ETIQUETADO de
+      un mes que el ya ha visto (ADR-0034): no sirve para una sesion ciega y si para medir fidelidad,
+      con las particiones fijadas antes de leer ninguna etiqueta. El material cubre del 1 al 18,
+      sabido al leer la columna de fechas, exposicion declarada el 2026-09-20
+    fuente: [5c9fcc3, ADR-0034]
+    # 5c9fcc3 es el commit que mete los siete ficheros en el inventario del corpus (corpus/ esta
+    # fuera de git). LA FECHA EN QUE EL TRADER LO BACKTESTEO NO SE SABE y esta pedida: `visto_el` es
+    # la de la ENTREGA, que es la unica con fuente. Mismo criterio que se aplico a abril el
+    # 2026-09-17, donde el motivo decia 09-03 y solo el commit del 09-05 lo sostenia. Si llega otra
+    # fecha con su fuente delante, se corrige aqui; y como es un mes que ningun paquete ha sorteado
+    # -cero casos de septiembre en particiones.yaml-, corregirla no rompe ninguna reproduccion
+    visto_el: "2026-09-20"
 dias: []
