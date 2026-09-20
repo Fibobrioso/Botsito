@@ -60,15 +60,15 @@ Abierta en `knowledge/spec/ambiguedades.yaml` con su id reservado, `clase: pregu
 > «el más extremo»: las dos veces que lo hemos medido, el que eliges es el mismo. La pregunta es por
 > el **criterio**, y lo necesitamos dicho de forma que se pueda reproducir sin ti: que dos personas
 > mirando el mismo gráfico marquen el mismo nivel. Si la respuesta es «el que yo considere»
-> (v3 0:39:16), dinos **qué miras** para considerarlo: cuántas velas atrás, qué tamaño de
-> movimiento, qué lo descalifica.
+> (v3 0:39:16, `ev-v3-003916-447dc8d7`), dinos **qué miras** para considerarlo: cuántas velas
+> atrás, qué tamaño de movimiento, qué lo descalifica.
 
 **Sin menú falso** —va abierta y anclada en la pantalla— y **pidiendo un criterio operativo**.
 
 ### El riesgo de fidelidad, dicho como es
 
-El trader dice «marcas tu zona de liquidez **que tú consideres**» (v3 0:39:16) y «tienes tiempo de
-sobra para **marcar tú** tus zonas» (v3 0:15:28). **Si la respuesta de la sesión 2 se queda en juicio
+El trader dice «marcas tu zona de liquidez **que tú consideres**» (`ev-v3-003916-447dc8d7`) y
+«tienes tiempo de sobra para **marcar tú** tus zonas» (v3 0:15:28, cruda). **Si la respuesta de la sesión 2 se queda en juicio
 humano, el bot no puede reproducirlo.** Eso no es un detalle de la spec: es un riesgo de fidelidad
 **del proyecto entero**. Todo lo que hay aguas abajo —los dos esquemas de entrada, la orden límite,
 el reinicio de cartuchos, el único filtro direccional— cuelga de un nivel que hoy pone una persona a
@@ -147,7 +147,14 @@ mismo commit.
 ## 8. El detector de contradicciones: tercera aparición
 
 Los ~10 items que describen qué nivel es la liquidez viven en **temas hermanos** y **ninguno tiene
-`valor`**: invisibles por los dos motivos. Van contados en `PROJECT_STATE.md` como la tercera vez
+`valor`**: invisibles por los dos motivos.
+
+**Y un punto ciego más, encontrado al validar esta rama:** una `pregunta` de ambigüedad puede
+**nombrar un instante del corpus sin enlazar su item** —A‑24 citaba «v3 0:39:16», el item que
+sostiene el riesgo de fidelidad entero, y no estaba en su `evidencia:`— y **ninguna guardia se
+queja**: se comprueba que los ids de `evidencia:` existan, nunca que las marcas de tiempo de la prosa
+tengan item. Corregido a mano aquí (A‑25 y A‑26 se revisaron igual y estaban completas). La guardia
+**no se hace en esta rama**: queda contado. Van contados en `PROJECT_STATE.md` como la tercera vez
 —0,75 en 2026‑09‑12, el breaker en 2026‑09‑17, la liquidez hoy— y con la consecuencia escrita: **a la
 tercera deja de ser deuda y pasa a rama con nombre**, que la próxima planificación abre. No se toca
 aquí.

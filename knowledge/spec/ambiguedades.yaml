@@ -467,6 +467,8 @@ ambiguedades:
       - ev-v4-010921-31dd762d
       - ev-v3-001242-cbe6bdc3
       - ev-v4-005644-e06ef304
+      # el item que sostiene el riesgo de fidelidad: "marcas tu zona de liquidez que tu consideres"
+      - ev-v3-003916-447dc8d7
     parametros: []
     contradiccion: null
     estado: ABIERTA
