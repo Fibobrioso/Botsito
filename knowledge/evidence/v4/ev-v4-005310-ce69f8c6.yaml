@@ -1,0 +1,24 @@
+id: ev-v4-005310-ce69f8c6
+video_id: v4
+t0: 0:53:10
+t1: 0:53:31
+modalidad: ambas
+tipo: NO_TRADE
+cita_literal: mira aquí en m1 vemos [...] el precio me rompe aquí con mecha no hay validez de poder yo
+  seguir operando [...] sino de tomar este 3d
+afirmacion: 'en M1, lo que rompe con mecha es el nivel horizontal dibujado al que apunta la flecha: la
+  vela lo perfora con la mecha y cierra el cuerpo por debajo, y por eso no toma la entrada'
+tema: no_trade.rompe_con_mecha_no_valida
+confianza: media
+extractor: humano
+revisado_por: Aleks · rama del breaker de M1 2026-09-17 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v4-9ad0ebb8/3203000
+- fr-v4-9ad0ebb8/3209000
+supersede: ev-v4-005319-dee95093
+notas: 'supersede a ev-v4-005319-dee95093, cuya afirmacion era incondicional y decia mas que su cita:
+  la pantalla acota de que ruptura habla. En el mismo tramo el grafico esta en M15 hasta 0:53:17 y en
+  M1 desde 0:53:18; el nivel roto NO lleva etiqueta, asi que no consta si es la liquidez de M15 (A-32).
+  La ruptura del esquema de entrada es otra cosa: ev-v4-005910-d24c0345 y ev-v3-000606-f2aff599'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

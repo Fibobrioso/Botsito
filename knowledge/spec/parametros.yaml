@@ -359,6 +359,23 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-0ccafcba
+  - nombre: breaker_m1_criterio_ruptura
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada
+    opciones: ["mecha", "cuerpo"]
+    descripcion: >-
+      criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el
+      unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras
+      sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada,
+      break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de
+      liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo
+      que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md)
+    estado: CONFIRMED
+    valor: "mecha"
+    fuente:
+      tipo: evidence
+      id: ev-v4-005910-d24c0345
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum

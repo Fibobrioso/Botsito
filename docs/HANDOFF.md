@@ -5,6 +5,46 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-17, rama `trabajo/breaker-m1` validada y pendiente del ritual; lo de debajo es anterior)
+- LAS REGLAS DE LA CASA YA ESTAN EN MAIN (merge 52f579d, tag `stable/F13-reglas`), y esta rama las
+  lleva incorporadas: se fusiono `main` DENTRO de la rama para reconciliar el choque en
+  `PROJECT_STATE.md` y en este fichero. Merge y no rebase: los commits de la rama estan validados y
+  citados por sha en el informe y en PROJECT_STATE, y un rebase los reescribiria.
+- LA CONTRADICCION DEL BREAKER NO ERA UNA CONTRADICCION, y se resolvio MIRANDO LA PANTALLA, no
+  razonando: en v4 0:53:12-0:53:17 el grafico esta en M15 (con zonas etiquetadas `m1 lq` y `15 lq`)
+  y desde 0:53:18 en M1; lo que rompe con mecha es un NIVEL DIBUJADO al que apunta una flecha -la
+  mecha lo perfora y el cuerpo cierra por debajo-, no la ruptura del esquema de entrada.
+  `ev-v4-005319` decia mas que su cita: lo supersede `ev-v4-005310-ce69f8c6`, con cita de audio Y de
+  pantalla. Para fechar una afirmacion del trader sobre lo que se VE, el fotograma manda.
+- UNA PROPUESTA NO PUEDE LLEVAR `supersede`: el esquema de `_proposals` no lo admite y `evidence
+  accept` tampoco. Los supersede se crean con `evidence new --supersede`, como los ocho primeros
+  (commit 2003e61). Si alguna vez se quiere el rastro de propuesta, hay que ampliar el esquema.
+- EL CONFIRM SOBRE UN ITEM SUPERSEDIDO NO ROMPE NADA, medido antes de aceptar: la comprobacion de
+  existencia usa TODOS los items desde 653efdc. Ojo con `feedback pending`, que imprime "un CONFIRM
+  confirma un item que ya vive" sin mirar si vive; el veredicto es correcto, la frase no.
+- `breaker_m1_criterio_ruptura` ES NUEVO (enum mecha|cuerpo, `mecha`, CONFIRMED por ev-v4-005910).
+  `se_da_esquema` lo toma como argumento y RN-008 lo pasa en su forma: sin eso no tendria lector.
+- A-32 VA A LA SESION 2 con el fotograma delante: si el nivel roto es la liquidez de M15 o de M1.
+- CLAUDE.md YA NO PROHIBE `data/` EN BLOQUE, y se separa en TRES cosas (peticion del consultor al
+  cerrar esta rama, 2026-09-17): los fotogramas y las transcripciones SE LEEN; las velas para
+  recalcular ventanas se leen y no es abrir (ADR-0021 §1, ADR-0033); y lo prohibido sin la puerta es
+  `knowledge/cases/holdout/**`, el detalle por operacion de los xlsx, las capturas de Analytics y el
+  backtest de septiembre hasta que sus particiones esten sorteadas y commiteadas. POR QUE SE SEPARA:
+  la prohibicion en bloque venia de una instruccion del consultor mal redactada, y dejo sin abrir la
+  unica fuente que cierra geometria sin gastarle un turno al trader. Medido hoy: 25.372 PNG a 1 fps y
+  solo 8 fotogramas citados por 9 items de 365 -dos de esos ocho los cita esta rama-.
+- CORRECCION A LA PREMISA DEL ENCARGO: el fotograma obligatorio v4 0:12:30 ("caja con el nivel
+  0,75 = 1,19537") SI se abrio y SI esta citado, por `ev-v4-001221-1e66b5fd`
+  (`fr-v4-9ad0ebb8/750000`, revisado "fotograma visto"). Los tres obligatorios de
+  `fotogramas_obligatorios.yaml` estan citados. Lo que la auditoria del 09-13 dice de ese fotograma es
+  mas estrecho: no se midio QUE VELA O MAXIMO ANCLA EL NIVEL 1 en v4 0:12:30, que sigue sin medirse.
+- VALIDADA por el usuario el 2026-09-17, desviacion incluida.
+- TRES DEUDAS ANOTADAS en PROJECT_STATE, todas medidas en esta rama: el detector no ve los temas
+  hermanos (segunda vez); la via de propuesta no admite `supersede`, asi que toda correccion de
+  evidencia se sale del mecanismo de propuestas; y un CONFIRM sobre un item supersedido queda
+  invisible -`kb find` filtra por activos- y sin aviso -`feedback pending` dice REFLEJADO con un
+  motivo que ya no es cierto-.
+
 ## Estado (2026-09-17, rama `trabajo/reglas-de-la-casa` esperando validacion; lo de debajo es anterior)
 - LOS MESES VISTOS ESTAN CERRADOS EN MAIN (merge 1c2561e, tag `stable/F13-vistos`, CI verde).
 - YA NO SE PEGA EL RITUAL A MANO EN EL CHAT. Hay dos ficheros nuevos, ambos de esta rama:

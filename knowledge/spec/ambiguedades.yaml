@@ -573,3 +573,23 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-32
+    titulo: el nivel que al romperse con mecha invalida la entrada
+    pregunta: >-
+      en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe
+      con mecha el nivel horizontal que tienes dibujado, al que apunta tu flecha: ¿ese nivel es la
+      liquidez de M15 -y entonces lo que exige cuerpo es RN-004, ya escrito- o es un nivel de M1, y
+      entonces hay rupturas de M1 que tampoco valen con mecha, contra breaker_m1_criterio_ruptura?
+    resuelve_en: [F19, F20]
+    # la linea no lleva etiqueta en pantalla; en la misma pantalla, unos segundos antes y en M15, hay
+    # zonas marcadas "m1 lq" y "15 lq", asi que el trader distingue las dos y aqui no consta cual es
+    evidencia:
+      - ev-v4-005310-ce69f8c6
+      - ev-v4-005910-d24c0345
+    parametros: [breaker_m1_criterio_ruptura]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

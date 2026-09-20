@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 12.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 12.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (9)
+## ABIERTA (10)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -53,6 +53,12 @@ Afecta a: `orden_limite_nace`.
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que no llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida" y actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2
+
+### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
+
+en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe con mecha el nivel horizontal que tienes dibujado, al que apunta tu flecha: ¿ese nivel es la liquidez de M15 -y entonces lo que exige cuerpo es RN-004, ya escrito- o es un nivel de M1, y entonces hay rupturas de M1 que tampoco valen con mecha, contra breaker_m1_criterio_ruptura?
+
+Afecta a: `breaker_m1_criterio_ruptura`.
 
 ## DECIDIDA (5)
 
