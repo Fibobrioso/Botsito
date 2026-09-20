@@ -5,6 +5,31 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-20, rama `trabajo/septiembre-entra` esperando validacion; lo de debajo es anterior)
+- LA LIQUIDEZ DE M15 ESTA CERRADA EN MAIN (merge b60c44b, tag `stable/F13-liquidez`, CI verde).
+- ENTRO EL BACKTEST DE SEPTIEMBRE (seis capturas y un xlsx, 2026-09-20). Hecho: la EXPOSICION
+  declarada el mismo dia -el consultor leyo la columna de fechas, del 1 al 18: NO QUEMA-, los siete
+  ficheros en el inventario, septiembre declarado visto con `visto_el: 2026-09-20` y ADR-0034
+  diciendo QUE ES.
+- LA FECHA EN QUE EL TRADER LO BACKTESTEO NO SE SABE y esta PEDIDA. `visto_el` es la de la entrega,
+  que es la unica con fuente (mismo criterio que abril). Si llega, se corrige con su fuente delante.
+- LAS VELAS Y LAS PARTICIONES NO ENTRARON, y el motivo NO es el que el brief preveia: ademas de que
+  los cupos suman 40 para 14 dias, DESCARGAR LAS VELAS DE SEPTIEMBRE ROMPE LA SESION 1 POR SI SOLO.
+  `_manifiestos_del_kit` coge todo manifiesto con el prefijo del kit, asi que un dataset nuevo entra
+  en el universo de TODOS los paquetes. Decidido: se congela el universo EN EL PROPIO PAQUETE, como
+  se hizo con config.yaml; NO se separa el prefijo y NO se acepta perder la reproduccion. Rama
+  propia. LINEA BASE medida hoy: `kit check --sesion 2026-09-09-sesion-01` exit 0, y el criterio de
+  esa rama es salida IDENTICA con `diff`, no solo exit 0.
+- LA GUARDIA DE ANCESTRO SE ARREGLA ANTES DE LA PRIMERA ETIQUETA. Empareja por el campo `sesion` y
+  nunca por el caso; hoy no hay ningun LABEL_CASE y por eso no puede fallar, pero en cuanto exista
+  uno la prueba de anterioridad ya esta comprometida. Tercera vez que se apunta: ahora va con
+  condicion fechada en ADR-0034 §Impacto y en Technical Debt.
+- PENDIENTE DEL CONSULTOR: precisar `CLAUDE.md`, que pone el backtest de septiembre entero fuera de
+  alcance hasta tener las particiones commiteadas; la lectura del dia 20 cruzo esa regla. No se toco
+  en la rama, porque cambia una regla de la casa.
+- OJO CON EXCEL: el `~$*.xlsx` de un libro abierto entra al inventario si se ejecuta con Excel
+  abierto, y desaparece al cerrarlo, rompiendo `corpus check`. Cerrar Excel ANTES de inventariar.
+
 ## Estado (2026-09-20, rama `trabajo/liquidez-m15` esperando validacion; lo de debajo es anterior)
 - LAS TRES RAMAS DEL 17-09 ESTAN CERRADAS EN MAIN: vistos (1c2561e), reglas de la casa (52f579d) y
   breaker de M1 (53e9d17, docs(state) 60216f8, CI verde). Main tenia la spec en 12.1.0.
