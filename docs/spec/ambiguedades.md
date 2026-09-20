@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 12.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 12.1.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (10)
+## ABIERTA (13)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -27,6 +27,20 @@ Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
 el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin retroceso, o pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo unico de la geometria de entrada que sigue siendo cualitativo y que el motor no puede evaluar. ¿cuantas velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa? ESTA AMBIGUEDAD NACIO MAL el 2026-09-10, preguntando que es un breaker; la definicion ya estaba en el corpus y lo que faltaba era recogerla en el glosario. Reformulada el mismo dia
+
+### A-24 · que hace que marques un pivote de M15 y no otro · **BLOQUEANTE** · pregunta
+
+cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3 0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras, que tamano de movimiento, que lo descalifica
+
+### A-25 · la vida de la marca de liquidez de M15 · pregunta
+
+ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y sigues con cartuchos: si M15 desarrolla entretanto otro pivote del mismo lado y mas reciente, ¿mueves la liquidez a ese pivote -y con ella el lado de ruido de RN-005 y el reinicio de los cartuchos, que es `siguiente_liquidez_m15`- o la marca se queda fija hasta que la retire uno de los eventos que si nombras: trade ganador (v6 0:32:27), invalidacion (v3 0:51:10) o cambio de dia (v4 1:09:21)?
+
+Afecta a: `cartuchos_reinicio`.
+
+### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
+
+la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al flujo que va en el sentido del sesgo?
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion
 

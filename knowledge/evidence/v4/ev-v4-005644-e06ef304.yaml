@@ -1,0 +1,27 @@
+id: ev-v4-005644-e06ef304
+video_id: v4
+t0: 0:56:44
+t1: 0:57:10
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: en m15 pues mi punto más alto en este caso no sé cuál es la tendencia la verdad [...] yo
+  marco desde el punto anterior, en este caso desde aquí, si lo cojo, marco desde aquí a aquí y hasta
+  aquí. O sea, todo lo que hay es liquidez, o sea, yo lo considero liquidez y me es indiferente
+afirmacion: le es indiferente desde cual de los puntos anteriores marque, porque considera liquidez todo
+  lo que hay entre ellos; lo que deja dibujado en pantalla es una LINEA horizontal etiquetada 15 lq, no
+  una banda
+tema: liquidez.m15.rango_completo_es_liquidez
+confianza: media
+extractor: humano
+revisado_por: Aleks · rama de la liquidez de M15 2026-09-20 · fotograma visto
+provenance: botsito
+fotogramas:
+- fr-v4-9ad0ebb8/3423000
+- fr-v4-9ad0ebb8/3426000
+supersede: ev-v4-005703-4e43180e
+notas: 'supersede a ev-v4-005703-4e43180e, cuya afirmacion -"todo el rango de M15 lo considera liquidez"-
+  decia mas que su cita: "me es indiferente" es "da igual cual de los puntos tome", no "la liquidez es
+  una banda". La pantalla lo acota: en /3426000, M15, lo marcado es una linea horizontal etiquetada "15
+  lq" a ~1,17375, sin rectangulo ni zona. Importa porque alcanza_nivel y cruza (RN-004) necesitan un nivel,
+  no una banda'
+transcripcion: tr-v4-large-v3-int8-float16-a8d1bccc

@@ -5,6 +5,32 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-20, rama `trabajo/liquidez-m15` esperando validacion; lo de debajo es anterior)
+- LAS TRES RAMAS DEL 17-09 ESTAN CERRADAS EN MAIN: vistos (1c2561e), reglas de la casa (52f579d) y
+  breaker de M1 (53e9d17, docs(state) 60216f8, CI verde). Main tenia la spec en 12.1.0.
+- EL METODO VOLVIO A GANARLE AL TEXTO. Los dos agentes de la revision DISCREPARON en lo principal
+  -si A-24 era una eleccion o dos casos- y lo resolvio el fotograma: el "complex pullback" de v3
+  0:12:42 esta dicho sobre un CROQUIS A MANO en un grafico de 1h (fr-v3-982da728/781000), y en ese
+  dibujo el alto mas alto es ademas el ultimo, asi que no distingue nada. Cuando dos lecturas del
+  texto chocan, la pantalla decide; y si la pantalla no lo dice, eso tambien es un resultado.
+- A-24, A-25 Y A-26 EXISTEN YA en ambiguedades.yaml, con sus ids reservados y las tres reescritas.
+  A-24 es BLOQUEANTE: nadie produce `liquidez_m15` en la spec, RN-008 es un `ninguno_de` y por eso
+  prohibe abrir operacion SIEMPRE. La regla de marcado NO se ha escrito a proposito: la decide A-24.
+- LO QUE EL CORPUS YA CERRABA SE ESCRIBE, no se vuelve a preguntar: el flujo de la vela que marca la
+  liquidez es el de M15 -cuatro citas- y eso esta ahora en la spec, no solo en una pregunta.
+- ANTES DE ABRIR UNA AMBIGUEDAD, MIRA EL FOTOGRAMA: A-33 (¿nivel o rango?) no se abrio porque v4
+  0:57:06 ensena una LINEA etiquetada "15 lq", no una banda. Entra como nota en el token.
+- TRES ITEMS CON EL MISMO VICIO (ev-v4-005319 el 17-09; ev-v3-001531 y ev-v4-005703 hoy): la
+  `afirmacion` quita el deictico o el matiz de la cita -"aqui", "suelo", "en este caso", "me es
+  indiferente"- y la convierte en regla general. Son de `extractor: llm` y los tres se cazaron
+  MIRANDO LA PANTALLA. Es un patron de extraccion, no tres descuidos: el proximo repaso de F07 tiene
+  que mirar los items llm con esa lente.
+- EL PUNTO CIEGO DEL DETECTOR VA POR LA TERCERA (0,75, breaker, liquidez). Queda contado en
+  PROJECT_STATE con la consecuencia: rama con nombre en la proxima planificacion, no mas parches.
+- RIESGO DE FIDELIDAD, DICHO EN EL INFORME §3: el trader marca la liquidez "la que tu consideres". Si
+  la sesion 2 responde eso, el bot no puede reproducirlo y la pregunta deja de ser de la spec para
+  ser del proyecto.
+
 ## Estado (2026-09-17, rama `trabajo/breaker-m1` validada y pendiente del ritual; lo de debajo es anterior)
 - LAS REGLAS DE LA CASA YA ESTAN EN MAIN (merge 52f579d, tag `stable/F13-reglas`), y esta rama las
   lleva incorporadas: se fusiono `main` DENTRO de la rama para reconciliar el choque en
