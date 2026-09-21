@@ -5,6 +5,28 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-20, rama `trabajo/universo-congelado` esperando validacion; lo de debajo es anterior)
+- LA ENTRADA DE SEPTIEMBRE ESTA CERRADA EN MAIN (merge ad2693d, tag `stable/F13-septiembre`).
+- EL BLOQUEO ESTA ARREGLADO: cada paquete declara sus `datasets:` en `ventanas.yaml` y `comprobar()`
+  se recompone con esa lista, no con el disco de hoy. `construir()` de un paquete NUEVO sigue
+  leyendo el disco A PROPOSITO: congelarlo tambien seria el tercer caso del mes de una prohibicion
+  que bloquea un paso que el proceso exige. ADR-0035.
+- LA CIFRA, MEDIDA, por si hace falta defenderla: el universo de la sesion 1 son 42 dias y `asignar`
+  reproduce `particiones.yaml` exacto; metiendo los 14 dias de septiembre cambian 23 de esos 42 y
+  `holdout-3` se queda sin ninguno de sus 8 dias. (En la revision dije 33: sumaba los 10 dias de
+  septiembre que entran, que no son casos que cambien de particion.)
+- DERIVAR LA LISTA NO VALE, medido: enero, julio y agosto aportan 66 de las 67 exclusiones de la
+  sesion 1 y ni un solo caso, y el donante por contiguidad es invisible en `casos[]`.
+- LA EDICION DE LA SESION 1 SE HIZO HOY PORQUE HOY SE PODIA: la guardia que congela `ventanas.yaml`
+  se arma con el primer `LABEL_CASE`, y hay cero. Fue aditiva -6 lineas, ninguna quitada- y la
+  prueba es que `kit check` da la salida IDENTICA a la linea base comparada con `diff`.
+- OJO AL SIGUIENTE MES: esta rama tiene que estar dentro ANTES de congelar ABRIL tambien, no solo
+  septiembre. `2026-05-01` esta hoy excluido por "ventana fuera del dataset" porque falta abril, y
+  abril es mes visto: el dia que abril entre, ese dia pasa a ser caso con un donante de cero casos.
+- SIGUEN ABIERTOS, y no se mezclaron: los cupos de `config.yaml` (40 frente a 14 dias de
+  septiembre) y la guardia de ancestro, que empareja por `sesion` y no por caso y se arregla ANTES
+  DE LA PRIMERA ETIQUETA.
+
 ## Estado (2026-09-20, rama `trabajo/septiembre-entra` esperando validacion; lo de debajo es anterior)
 - LA LIQUIDEZ DE M15 ESTA CERRADA EN MAIN (merge b60c44b, tag `stable/F13-liquidez`, CI verde).
 - ENTRO EL BACKTEST DE SEPTIEMBRE (seis capturas y un xlsx, 2026-09-20). Hecho: la EXPOSICION

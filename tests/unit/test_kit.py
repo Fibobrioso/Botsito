@@ -27,12 +27,13 @@ from botsito.cases.paquete import (
     cargar_mapa,
     comprobar,
     construir,
+    datasets_que_faltan_en_disco,
     escribir,
     lectura_de_velas,
     validar_paquetes,
 )
 from botsito.cases.particiones import ParticionError, asignar, clave_orden
-from botsito.data.dataset import congelar
+from botsito.data.dataset import congelar, manifiestos
 from botsito.evidence.modelo import escribir_item
 from botsito.feedback.modelo import cargar_feedback, escribir_registro
 
@@ -1418,3 +1419,112 @@ def test_mover_una_sesion_despues_de_un_visto_el_falla_y_no_mueve(
     monkeypatch.setattr("sys.argv", ["mover_sesion.py", "--a", "2026-09-10"])
     assert modulo.main() == 0
     assert (repo / DIRECTORIO_KIT / "2026-09-10-sesion-01").is_dir()
+
+
+# ------------------------------------------------- el universo congelado (2026-09-20, ADR-0035)
+
+
+def _segundo_dataset(repo: Path, nombre: str = "prueba", con_datos: bool = True) -> str:
+    """Congela OTRO dataset con el mismo prefijo del kit, como haria `data download` de un mes
+    nuevo. Con `con_datos=False` deja el manifiesto y borra sus ficheros: el caso que convertia
+    `kit check` en un exit 0 que no comprobaba nada."""
+    congelado = congelar(
+        repo=repo,
+        carpeta_datos=repo / "data",
+        nombre=nombre,
+        simbolo="XXXYYY",
+        escala=100000,
+        desde=date(2026, 6, 1),
+        hasta=date(2026, 6, 15),
+        descarga=descarga,
+        hoy=HOY,
+    )
+    if not con_datos:
+        for f in congelado.ficheros:
+            f.unlink()
+    return str(congelado.manifiesto["dataset_id"])
+
+
+def test_un_dataset_nuevo_no_cambia_un_paquete_ya_escrito(tmp_path: Path) -> None:
+    """EL defecto que cierra ADR-0035: el universo se calculaba del disco de HOY, asi que
+    descargar un mes nuevo reparticionaba un paquete anterior y `particiones.yaml` -la unica
+    prueba de que las particiones se fijaron antes de etiquetar- dejaba de reproducirse."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    antes = comprobar(repo, repo / "data", "2026-09-09-sesion-01")
+    assert antes == ([], []), antes
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "ventanas.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    congelados = doc["datasets"]
+    assert congelados and all(isinstance(d, str) for d in congelados)
+
+    nuevo = _segundo_dataset(repo)
+    assert nuevo not in congelados
+    # El paquete sigue reproduciendose: se recompone con SU lista, no con el disco.
+    assert comprobar(repo, repo / "data", "2026-09-09-sesion-01") == ([], [])
+    # Y un paquete NUEVO si ve el dataset nuevo: `construir` sigue leyendo el disco a proposito.
+    otro = construir(repo, repo / "data", "2026-09-10-sesion-02", 3)
+    assert nuevo in yaml.safe_load(otro.ficheros["ventanas.yaml"])["datasets"]
+
+
+def test_sin_datasets_congelados_es_problema_y_no_aviso(tmp_path: Path) -> None:
+    """Sin la lista no hay con que reproducir el paquete. Y no puede bajar a AVISO por ser una
+    sesion celebrada: `datasets` no sale de ninguna respuesta del trader."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    ruta = repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "ventanas.yaml"
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    quitados = doc.pop("datasets")
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=True, width=100), "utf-8")
+    for celebrada in (False, True):
+        problemas, _ = comprobar(repo, repo / "data", "2026-09-09-sesion-01", celebrada)
+        assert any("no esta congelado" in p for p in problemas), (celebrada, problemas)
+    # y `knowledge validate`, que corre SIN datos, lo ve igual
+    ids_ev = {i.stem for i in (repo / "knowledge" / "evidence").glob("ev-*.yaml")}
+    problemas, _ = validar_paquetes(repo, [], ids_ev, set(quitados))
+    assert any("no esta congelado" in p for p in problemas), problemas
+
+
+def test_quitar_un_dataset_de_la_lista_congelada_se_ve(tmp_path: Path) -> None:
+    """La lista no es decorativa: si alguien quita un dataset -por ejemplo un DONANTE, que aporta
+    las velas de las 22:00Z al primer dia del mes siguiente y no deja ningun caso- el paquete deja
+    de reproducirse, y se ve aunque la sesion este celebrada."""
+    repo, _ = repo_kit(tmp_path)
+    _segundo_dataset(repo)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    ruta = repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "ventanas.yaml"
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert len(doc["datasets"]) == 2
+    doc["datasets"] = doc["datasets"][:1]
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=True, width=100), "utf-8")
+    problemas, _ = comprobar(repo, repo / "data", "2026-09-09-sesion-01", celebrada=True)
+    assert problemas, "quitar un dataset congelado paso desapercibido"
+
+
+def test_un_manifiesto_sin_sus_ficheros_nombra_los_datasets(tmp_path: Path) -> None:
+    """Hasta el 2026-09-20 `hay_datos_del_kit` era un AND global sobre TODOS los datasets del
+    prefijo: un manifiesto commiteado sin descargar sus ficheros -aunque fuera ajeno al paquete-
+    convertia `kit check` en un exit 0 que no comprobaba nada y que no declaraba ninguna lectura.
+    Ahora los datasets a los que les faltan ficheros se NOMBRAN."""
+    repo, _ = repo_kit(tmp_path)
+    escribir(repo, construir(repo, repo / "data", "2026-09-09-sesion-01", 3))
+    huerfano = _segundo_dataset(repo, con_datos=False)
+    config = cargar_config(repo / DIRECTORIO_KIT / "config.yaml")
+    assert datasets_que_faltan_en_disco(repo, repo / "data", config) == [huerfano]
+    # El paquete no lo tiene congelado, asi que su comprobacion NO se apaga por culpa de el.
+    assert comprobar(repo, repo / "data", "2026-09-09-sesion-01") == ([], [])
+    # Y si al que le faltan los ficheros es uno DEL paquete, el aviso lo nombra.
+    doc = yaml.safe_load(
+        (repo / DIRECTORIO_KIT / "2026-09-09-sesion-01" / "ventanas.yaml").read_text("utf-8")
+    )
+    suyo = doc["datasets"][0]
+    manifiesto = next(
+        m for m in manifiestos(repo) if yaml.safe_load(m.read_text("utf-8"))["dataset_id"] == suyo
+    )
+    for f in yaml.safe_load(manifiesto.read_text("utf-8"))["ficheros"]:
+        (repo / "data" / str(f["ruta"])).unlink()
+    _, avisos = comprobar(repo, repo / "data", "2026-09-09-sesion-01")
+    assert any(suyo in a for a in avisos), avisos

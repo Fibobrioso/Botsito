@@ -97,8 +97,12 @@ def main() -> int:
         raise SystemExit(f"ya existe el paquete {nueva}: borralo antes o elige otra fecha")
     sin_etiquetar(vieja)
 
-    _, _, particiones = esquema_paquete(RAIZ, vieja)
+    _, ventanas_viejas, particiones = esquema_paquete(RAIZ, vieja)
     seed = int(particiones["seed"])
+    # El universo congelado del paquete VIEJO viaja con el (ADR-0035): mover una sesion no puede
+    # reabrir el universo al disco de hoy, o el move dejaria de reproducir lo que movio. Se lee
+    # AQUI, antes de borrar la carpeta.
+    congelados = ventanas_viejas.get("datasets")
     antes = huella(vieja)
     carpeta_vieja = RAIZ / DIRECTORIO_KIT / vieja
 
@@ -106,7 +110,7 @@ def main() -> int:
     shutil.copytree(carpeta_vieja, respaldo)
     try:
         shutil.rmtree(carpeta_vieja)
-        escribir(RAIZ, construir(RAIZ, carpeta_datos(RAIZ), nueva, seed))
+        escribir(RAIZ, construir(RAIZ, carpeta_datos(RAIZ), nueva, seed, datasets=congelados))
         despues = huella(nueva)
         if despues != antes:
             raise SystemExit(
