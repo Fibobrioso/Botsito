@@ -5,6 +5,31 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/septiembre-sorteo` esperando validacion; lo de debajo es anterior)
+- EL CAMINO DE FIDELIDAD ESTA CERRADO EN MAIN (merge 06330e2, tag `stable/F13-camino-de-fidelidad`,
+  CI verde). Esta rama lo ESTRENA con el reparto de septiembre.
+- EL REPARTO, y su argumento, que es lo que hay que poder reproducir: artefacto `eurusd-2026-09`,
+  seed 20260921, 14 dias del 1 al 18, cupos 4 `fidelidad-dev` + 10 `fidelidad-1`, y `fidelidad-2` y
+  `fidelidad-3` VACIAS a proposito. Se concentro por la TENTACION y no por la potencia: ningun
+  reparto llega a 36 unidades efectivas, y tres cubos de ~3 dias no dan tres medidas sino tres
+  cifras que se contradicen, que es una invitacion a escoger la que convenga.
+- LOS DOS CUBOS VACIOS SON UNA RESERVA, no un olvido: esperan a febrero o marzo, el mes limpio que
+  sigue pendiente de pedirle al trader. Si alguien los llena con material ya visto, quema dos
+  aperturas para no medir nada.
+- SOLO 4 `dev` porque MAYO YA TIENE SEIS SIN ABRIR. Los de septiembre estan para comprobar la
+  ingesta y el formato contra un mes DISTINTO, no para afinar el motor.
+- NADIE HA ABIERTO NADA, ni antes ni despues del sorteo. Los `dev` se abren con su propio brief.
+- LA FECHA DEL BACKTEST ES EL 2026-09-19, no el 20. El 20 era la fecha de la ENTREGA y hacia de
+  sustituta. La fuente es la declaracion del consultor del 2026-09-21 y esta escrita TAL CUAL: no
+  hay captura en `corpus/.../Mensajes del trader/`. EL 19 ES SABADO Y CUADRA -el material llega al
+  viernes 18-, y esta dicho en `vistos.yaml` y en el informe porque es el tipo de dato que dentro
+  de seis meses alguien "corrige" pensando que es una errata.
+- SIGUEN EN PIE, y no son de esta rama: el freno de ADR-0036 §6 -antes de la PRIMERA autorizacion
+  hay que cerrar `excluir` en `kappa_entre_sesiones`- y la cita con el problema de re-descargar un
+  mes, que nos ata al rango 2026-09-01..20.
+- LO SIGUIENTE DE VERDAD: pedirle al trader un mes que no haya tocado (febrero o marzo). Es lo unico
+  que puede llenar `fidelidad-2` con una cifra defendible.
+
 ## Estado (2026-09-21, rama `trabajo/septiembre-particiones` esperando validacion; lo de debajo es anterior)
 - LOS CUPOS CONGELADOS ESTAN CERRADOS EN MAIN (merge 93e17a2, tag `stable/F13-cupos`, CI verde).
 - ESTA RAMA SE ABRIO PARA SORTEAR SEPTIEMBRE Y LA REVISION DE DISENO LO PARO, y el consultor lo dio
