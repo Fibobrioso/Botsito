@@ -5,6 +5,33 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/puerta-por-pregunta` esperando validacion; lo de debajo es anterior)
+- EL SORTEO DE SEPTIEMBRE ESTA CERRADO EN MAIN (merge 15a49b0, tag `stable/F13-septiembre-sorteo`).
+- LO QUE HAY QUE ENTENDER ANTES DE TOCAR LA PUERTA: `abrir` es PURA y lo seguira siendo. Por eso el
+  historial de git NO puede servir de registro de aperturas -no distingue "usada una vez" de "usada
+  cincuenta", porque son el mismo arbol y el mismo commit-, y por eso una funcion pura del estado no
+  puede negar la segunda apertura si nada cambio entre las dos. Medido: cincuenta aperturas
+  seguidas, `git status` vacio.
+- LO QUE CIERRA EL AGUJERO: la autorizacion CITA una pregunta, la pregunta vive en `PREREGISTRO.md`
+  con estado, y EL COMANDO la gasta ANTES de leer. El orden importa y no es simetrico: "gastada y no
+  leida" cuesta volver a pre-registrar; "leida y no gastada" es el defecto.
+- GASTAR INVALIDA TODAS LAS AUTORIZACIONES VIVAS, y eso es DESEABLE, no un fallo: es la caducidad
+  automatica. Si alguien ve varias autorizaciones caidas a la vez tras una apertura, es el mecanismo
+  funcionando. Firmar no invalida nada: solo gastar o editar.
+- `kit kappa --incluir-holdout` EXIGE `--pregunta <id>`. El acto de abrir declara para que se abre.
+- DOS HUECOS MAS CERRADOS: `casos_reservados` GRITA ante un reparto ilegible (antes devolvia un mapa
+  incompleto indistinguible de uno completo), y `leer_fichero` decide sobre la ruta RESUELTA -el
+  `..` saltaba la puerta, medido-.
+- Y UNA CORRECCION DE LO QUE ESCRIBI AYER: el test de la puerta NO cazaba "un camino fuera del glob"
+  como decia su docstring; los dos lados de la igualdad pasaban por `repartos_commiteables`. Ahora
+  hay una enumeracion que sale del disco. ADR-0036 §Impacto lleva la correccion.
+- SIGUE ABIERTO Y ES LO PRIMERO ANTES DE FIRMAR NADA: el agujero de `excluir` en
+  `kappa_entre_sesiones`. Una autorizacion lee las etiquetas de los tres cubos. Con esta enmienda es
+  PEOR de explicar, porque la autorizacion ya dice a que pregunta y a que particion abre.
+- EL PREREGISTRO SIGUE VACIO Y NO HAY NI UNA AUTORIZACION FIRMADA. Esta rama construye el mecanismo;
+  no pre-registra ni firma nada.
+- LO SIGUIENTE, que no es codigo: pedirle al trader febrero o marzo.
+
 ## Estado (2026-09-21, rama `trabajo/septiembre-sorteo` esperando validacion; lo de debajo es anterior)
 - EL CAMINO DE FIDELIDAD ESTA CERRADO EN MAIN (merge 06330e2, tag `stable/F13-camino-de-fidelidad`,
   CI verde). Esta rama lo ESTRENA con el reparto de septiembre.
