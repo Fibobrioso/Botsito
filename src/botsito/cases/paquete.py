@@ -26,7 +26,13 @@ from botsito.cases.particiones import PARTICIONES, ParticionError, asignar
 from botsito.cases.ventanas import Anclaje, Caso, Excluido, VentanaError, universo
 from botsito.comun import ids
 from botsito.comun.documentos import activos
-from botsito.comun.historial import commit_que_anadio, es_ancestro, intacto_desde
+from botsito.comun.historial import (
+    blob_en_arbol,
+    blob_en_head,
+    commit_que_anadio,
+    es_ancestro,
+    intacto_desde,
+)
 from botsito.comun.husos import HusoDesconocidoError, huso_canonico
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.config.registro import Registro, RegistroError, cargar_registro
@@ -44,6 +50,10 @@ DIRECTORIO_KIT = "knowledge/cases/kit"
 FICHERO_CONFIG = "config.yaml"
 FICHERO_MAPA = "mapa_parametros.yaml"
 FICHERO_VISTOS = "vistos.yaml"
+FICHERO_ANCLAS = "anclas.yaml"
+# Lo que el ancla ata. `ventanas.yaml` lleva el universo y el config congelados; `particiones.yaml`,
+# la asignacion. Son los dos ficheros que la guardia de ancestro ya nombraba.
+FICHEROS_ANCLADOS = ("ventanas.yaml", "particiones.yaml")
 FICHEROS_PAQUETE = ("cuestionario.yaml", "ventanas.yaml", "particiones.yaml", "hoja_trader.md")
 # Lo que una sesion ya celebrada cambia legitimamente: el cuestionario ya no preguntaria lo
 # mismo, las ventanas se recortan con lo respondido y la hoja las refleja. `particiones.yaml`
@@ -54,6 +64,7 @@ DEPENDEN_DE_LAS_RESPUESTAS = ("cuestionario.yaml", "ventanas.yaml", "hoja_trader
 SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _MES = re.compile(r"^\d{4}-\d{2}$", re.ASCII)
 _HORA = re.compile(r"^\d{2}:\d{2}$", re.ASCII)
+_SHA_BLOB = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
 
 
 class KitError(ValueError):
@@ -98,8 +109,10 @@ def _hora(v: object, que: str) -> str:
     return v
 
 
-def cargar_config(ruta: Path) -> Config:
-    doc = _yaml(ruta)
+def config_desde_doc(doc: Any, nombre: str) -> Config:
+    """Valida un doc de config ya leido. Lo usa `cargar_config` con el fichero global y
+    `comprobar` con el bloque `config:` CONGELADO dentro del paquete (ADR-0035, enmienda del
+    2026-09-21): un mecanismo, dos origenes, la misma validacion."""
     esperadas = {
         "simbolo",
         "dataset_prefijo",
@@ -111,33 +124,33 @@ def cargar_config(ruta: Path) -> Config:
         "particiones",
     }
     if not isinstance(doc, dict) or set(doc) != esperadas:
-        raise KitError(f"{ruta.name}: claves {sorted(esperadas)} exactamente")
+        raise KitError(f"{nombre}: claves {sorted(esperadas)} exactamente")
     if not isinstance(doc["simbolo"], str) or not doc["simbolo"].isalnum():
-        raise KitError(f"{ruta.name}: simbolo invalido")
+        raise KitError(f"{nombre}: simbolo invalido")
     if not isinstance(doc["dataset_prefijo"], str) or not doc["dataset_prefijo"].strip():
-        raise KitError(f"{ruta.name}: dataset_prefijo vacio")
+        raise KitError(f"{nombre}: dataset_prefijo vacio")
     ventana = doc["ventana_local"]
     if not isinstance(ventana, dict) or set(ventana) != {"desde", "hasta"}:
-        raise KitError(f"{ruta.name}: ventana_local necesita desde y hasta")
+        raise KitError(f"{nombre}: ventana_local necesita desde y hasta")
     v_desde, v_hasta = (
         _hora(ventana["desde"], "ventana_local"),
         _hora(ventana["hasta"], "ventana_local"),
     )
     if v_hasta <= v_desde:
-        raise KitError(f"{ruta.name}: ventana_local acaba antes de empezar")
+        raise KitError(f"{nombre}: ventana_local acaba antes de empezar")
     sesiones: list[Sesion] = []
     for s in doc["sesiones"] if isinstance(doc["sesiones"], list) else []:
         if not isinstance(s, dict) or set(s) != {"nombre", "desde", "hasta"}:
-            raise KitError(f"{ruta.name}: cada sesion tiene nombre, desde y hasta")
-        nombre = str(s["nombre"])
-        if not re.match(r"^[a-z0-9-]+$", nombre):
-            raise KitError(f"{ruta.name}: nombre de sesion {nombre!r} (solo a-z, 0-9 y guion)")
-        d, h = _hora(s["desde"], nombre), _hora(s["hasta"], nombre)
+            raise KitError(f"{nombre}: cada sesion tiene nombre, desde y hasta")
+        nombre_sesion = str(s["nombre"])
+        if not re.match(r"^[a-z0-9-]+$", nombre_sesion):
+            raise KitError(f"{nombre}: nombre de sesion {nombre_sesion!r} (solo a-z, 0-9 y guion)")
+        d, h = _hora(s["desde"], nombre_sesion), _hora(s["hasta"], nombre_sesion)
         if not (v_desde <= d < h <= v_hasta):
-            raise KitError(f"{ruta.name}: la sesion {nombre} no cabe en ventana_local")
-        sesiones.append(Sesion(nombre, d, h))
+            raise KitError(f"{nombre}: la sesion {nombre_sesion} no cabe en ventana_local")
+        sesiones.append(Sesion(nombre_sesion, d, h))
     if not sesiones or len({s.nombre for s in sesiones}) != len(sesiones):
-        raise KitError(f"{ruta.name}: sesiones vacias o con nombres repetidos")
+        raise KitError(f"{nombre}: sesiones vacias o con nombres repetidos")
     anclajes: list[Anclaje] = []
     for a in doc["anclajes_candidatos"] if isinstance(doc["anclajes_candidatos"], list) else []:
         if not isinstance(a, dict) or set(a) != {
@@ -147,25 +160,25 @@ def cargar_config(ruta: Path) -> Config:
             "coincide_con_sesiones",
         }:
             raise KitError(
-                f"{ruta.name}: cada anclaje tiene etiqueta, hora, huso y coincide_con_sesiones"
+                f"{nombre}: cada anclaje tiene etiqueta, hora, huso y coincide_con_sesiones"
             )
         try:
             HoraLocal(str(a["hora"]), str(a["huso"]))
             ZoneInfo(str(a["huso"]))
         except (ValueError, KeyError, OSError) as exc:
-            raise KitError(f"{ruta.name}: anclaje {a.get('etiqueta')!r}: {exc}") from exc
+            raise KitError(f"{nombre}: anclaje {a.get('etiqueta')!r}: {exc}") from exc
         if not isinstance(a["coincide_con_sesiones"], bool):
-            raise KitError(f"{ruta.name}: coincide_con_sesiones debe ser true/false")
+            raise KitError(f"{nombre}: coincide_con_sesiones debe ser true/false")
         anclajes.append(
             Anclaje(str(a["etiqueta"]), str(a["hora"]), str(a["huso"]), a["coincide_con_sesiones"])
         )
     if not anclajes or len({a.etiqueta for a in anclajes}) != len(anclajes):
-        raise KitError(f"{ruta.name}: anclajes vacios o con etiquetas repetidas")
+        raise KitError(f"{nombre}: anclajes vacios o con etiquetas repetidas")
     if sum(1 for a in anclajes if a.coincide_con_sesiones) != 1:
-        raise KitError(f"{ruta.name}: exactamente un anclaje coincide con las sesiones")
+        raise KitError(f"{nombre}: exactamente un anclaje coincide con las sesiones")
     minimo = doc["min_velas_ventana"]
     if isinstance(minimo, bool) or not isinstance(minimo, int) or minimo < 1:
-        raise KitError(f"{ruta.name}: min_velas_ventana debe ser un entero >= 1")
+        raise KitError(f"{nombre}: min_velas_ventana debe ser un entero >= 1")
     etiquetas = doc["etiquetas"]
     if (
         not isinstance(etiquetas, list)
@@ -174,14 +187,14 @@ def cargar_config(ruta: Path) -> Config:
         or not all(isinstance(e, str) and re.match(r"^[a-z_]+$", e) for e in etiquetas)
     ):
         raise KitError(
-            f"{ruta.name}: etiquetas debe ser una lista de nombres en minusculas sin repetir"
+            f"{nombre}: etiquetas debe ser una lista de nombres en minusculas sin repetir"
         )
     particiones = doc["particiones"]
     if not isinstance(particiones, dict) or set(particiones) != set(PARTICIONES):
-        raise KitError(f"{ruta.name}: particiones debe declarar {PARTICIONES}")
+        raise KitError(f"{nombre}: particiones debe declarar {PARTICIONES}")
     for k, v in particiones.items():
         if isinstance(v, bool) or not isinstance(v, int) or v < 0:
-            raise KitError(f"{ruta.name}: particion {k}: entero >= 0")
+            raise KitError(f"{nombre}: particion {k}: entero >= 0")
     return Config(
         str(doc["simbolo"]),
         str(doc["dataset_prefijo"]),
@@ -193,6 +206,10 @@ def cargar_config(ruta: Path) -> Config:
         {str(k): int(v) for k, v in particiones.items()},
         doc,
     )
+
+
+def cargar_config(ruta: Path) -> Config:
+    return config_desde_doc(_yaml(ruta), ruta.name)
 
 
 def cargar_mapa(
@@ -535,19 +552,23 @@ def construir(
     seed: int,
     indice: Indice | None = None,
     datasets: Sequence[str] | None = None,
+    config: Config | None = None,
 ) -> Paquete:
     """Construye el paquete completo en memoria. Exige los datos de los datasets en `data/`.
 
-    `datasets` es la lista CONGELADA de un paquete existente (ADR-0035): con ella el universo se
-    recompone con lo que el paquete uso y no con lo que haya hoy en disco. Por omision -`None`-
-    lee el disco, que es lo que un paquete NUEVO tiene que hacer: `kit build` se construye con lo
-    que hay, y congelar tambien este camino dejaria al proyecto sin poder hacer ningun paquete.
+    `datasets` y `config` son lo CONGELADO de un paquete existente (ADR-0035 y su enmienda del
+    2026-09-21): con ellos el paquete se recompone con lo que uso y no con lo que haya hoy en
+    disco -ni los manifiestos de hoy, ni el `config.yaml` de hoy-. Los dos tienen el MISMO
+    contrato: por omision -`None`- se lee el disco, que es lo que un paquete NUEVO tiene que
+    hacer, porque `kit build` se construye con lo que hay y congelar tambien este camino dejaria
+    al proyecto sin poder hacer ningun paquete.
     """
     if not SESION.match(sesion):
         raise KitError(f"sesion invalida {sesion!r} (AAAA-MM-DD-sesion-NN)")
     if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
         raise KitError("el seed debe ser un entero >= 0")
-    config, registro, ambiguedades, mapa, meses, dias, items = _cargar_todo(repo, sesion)
+    del_disco, registro, ambiguedades, mapa, meses, dias, items = _cargar_todo(repo, sesion)
+    config = del_disco if config is None else config
     huso = registro.texto("huso_operativa")
     try:
         huso_canonico(huso)
@@ -735,6 +756,127 @@ def _datasets_congelados(
     return lista
 
 
+def cargar_anclas(repo: Path) -> dict[str, dict[str, str]]:
+    """`knowledge/cases/kit/anclas.yaml`: sesion -> fichero -> sha del blob. Vacio si no existe."""
+    ruta = repo / DIRECTORIO_KIT / FICHERO_ANCLAS
+    if not ruta.is_file():
+        return {}
+    doc = _yaml(ruta)
+    if doc is None:
+        return {}
+    if not isinstance(doc, dict):
+        raise KitError(f"{FICHERO_ANCLAS}: se espera un mapa sesion -> fichero -> sha")
+    anclas: dict[str, dict[str, str]] = {}
+    for sesion, entrada in doc.items():
+        if not isinstance(sesion, str) or not SESION.match(sesion):
+            raise KitError(f"{FICHERO_ANCLAS}: {sesion!r} no es una sesion")
+        if not isinstance(entrada, dict) or set(entrada) - set(FICHEROS_ANCLADOS):
+            raise KitError(f"{FICHERO_ANCLAS}: {sesion}: ficheros {list(FICHEROS_ANCLADOS)}")
+        for nombre, sha in entrada.items():
+            if not isinstance(sha, str) or not _SHA_BLOB.match(sha):
+                raise KitError(
+                    f"{FICHERO_ANCLAS}: {sesion}/{nombre}: {sha!r} no es un sha de blob (40 hex; "
+                    f"lo da `git hash-object {DIRECTORIO_KIT}/{sesion}/{nombre}`)"
+                )
+        anclas[sesion] = {str(k): str(v) for k, v in entrada.items()}
+    return anclas
+
+
+CABECERA_ANCLAS = """\
+# Anclas anti-manipulacion de los paquetes del kit (ADR-0035, enmienda del 2026-09-21).
+#
+# Un paquete congela dentro de si mismo el universo (`datasets:`) y los cupos (el bloque
+# `config:`), y se recompone con ellos. Congelar solo es legitimo si editar lo congelado a mano
+# se VE, y la comparacion byte a byte no lo ve entero: `anclajes_candidatos`, `sesiones` y
+# `etiquetas` solo alimentan ficheros que una sesion celebrada exime. Estas anclas cierran eso.
+#
+# Es el sha del BLOB de cada fichero -`git hash-object <ruta>`-, no el de un commit: el blob
+# cambia con cualquier byte del fichero y con nada mas, y sobrevive a un rebase. Mismo patron que
+# `preregistro_blob` (ADR-0033).
+#
+# GENERADO por `botsito kit anclar --sesion <s>`. Re-anclar un paquete que cambio es un acto
+# EXPLICITO (`--reanclar`) y su diff se ve aqui, no como efecto colateral de regenerar nada.
+"""
+
+
+def anclas_del_arbol(repo: Path, sesion: str) -> dict[str, str]:
+    """Los sha de blob de los ficheros anclados de una sesion tal como estan AHORA en el disco."""
+    salida: dict[str, str] = {}
+    for nombre in FICHEROS_ANCLADOS:
+        ruta = f"{DIRECTORIO_KIT}/{sesion}/{nombre}"
+        sha = blob_en_arbol(repo, ruta)
+        if sha is None:
+            raise KitError(f"{ruta}: no existe, o git no puede calcular su blob")
+        salida[nombre] = sha
+    return salida
+
+
+def escribir_anclas(repo: Path, anclas: dict[str, dict[str, str]]) -> Path:
+    ruta = repo / DIRECTORIO_KIT / FICHERO_ANCLAS
+    cuerpo = _dump({s: dict(sorted(v.items())) for s, v in sorted(anclas.items())})
+    ruta.write_text(CABECERA_ANCLAS + cuerpo, encoding="utf-8", newline="\n")
+    return ruta
+
+
+def _problemas_de_ancla(repo: Path, sesion: str, anclas: dict[str, dict[str, str]]) -> list[str]:
+    """El ancla anti-manipulacion de un paquete (ADR-0035, enmienda del 2026-09-21).
+
+    Congelar algo dentro de un fichero solo es legitimo si editarlo a mano se ve. Con `datasets:`
+    se ve: cambiarlo cambia el universo y `particiones.yaml` deja de reproducirse. Con el bloque
+    `config:` NO se ve entero: `particiones` si -cambia la asignacion-, pero `anclajes_candidatos`,
+    `sesiones` y `etiquetas` solo alimentan ficheros que una sesion celebrada exime, y editarlos
+    daba exit 0 (medido el 2026-09-21). El ancla cubre el fichero ENTERO y cierra eso.
+
+    El patron es el de `preregistro_blob` (ADR-0033), con sus tres requisitos:
+
+      1. VIVE FUERA del fichero que ata (`anclas.yaml`, no `ventanas.yaml`): un ancla dentro de lo
+         que ancla la reescribe quien reescriba el fichero.
+      2. Es el sha del BLOB, no el de un commit: el blob cambia con cualquier byte del fichero y
+         con nada mas, sobrevive a un rebase o a un merge y no se mueve porque otro commit toque
+         otra cosa. `ventanas.yaml` tiene ya dos commits (`6266738` y el de ADR-0035) y un ancla
+         de commit lo habria dado por alterado sin que su contenido lo estuviera.
+      3. RE-ANCLAR ES EXPLICITO: cambiar el paquete obliga a editar `anclas.yaml`, que es otro
+         fichero, en un diff que se ve y con su trailer `Fuente:`. No se cuela como efecto
+         colateral de regenerar nada.
+
+    Y NO depende de que existan etiquetas. La guardia de ancestro se desentiende con
+    `if not etiquetas: continue`, y hoy no hay ni un `LABEL_CASE` en el repositorio: si el ancla
+    heredara ese `continue` no ataria nada justo en el periodo en el que hace falta.
+    """
+    problemas: list[str] = []
+    declaradas = anclas.get(sesion, {})
+    for nombre in FICHEROS_ANCLADOS:
+        ruta = f"{DIRECTORIO_KIT}/{sesion}/{nombre}"
+        en_head = blob_en_head(repo, ruta)
+        if en_head is None:
+            # Sin commitear -o sin git- no hay nada que anclar todavia: el paquete se ancla en el
+            # mismo commit que lo mete. Lo que no esta commiteado lo vigilan las otras guardias.
+            continue
+        declarado = declaradas.get(nombre)
+        if declarado is None:
+            problemas.append(
+                f"{sesion}/{nombre}: sin ancla en {FICHERO_ANCLAS}: lo congelado dentro del "
+                f"paquete no esta atado contra manipulacion (ADR-0035, enmienda del 2026-09-21); "
+                f"se declara con `botsito kit anclar --sesion {sesion}`"
+            )
+            continue
+        if declarado != en_head:
+            problemas.append(
+                f"{sesion}/{nombre}: su ancla dice {declarado[:12]}… y lo commiteado es "
+                f"{en_head[:12]}…: el paquete cambio despues de anclarse. Si el cambio es "
+                f"legitimo se re-ancla a proposito (`botsito kit anclar --sesion {sesion} "
+                f"--reanclar`), que deja el diff a la vista"
+            )
+            continue
+        en_arbol = blob_en_arbol(repo, ruta)
+        if en_arbol is not None and en_arbol != declarado:
+            problemas.append(
+                f"{sesion}/{nombre}: editado en el arbol de trabajo ({en_arbol[:12]}…) y no "
+                f"coincide con su ancla ({declarado[:12]}…)"
+            )
+    return problemas
+
+
 def comprobar(
     repo: Path, carpeta_datos: Path, sesion: str, celebrada: bool = False
 ) -> tuple[list[str], list[str]]:
@@ -744,24 +886,48 @@ def comprobar(
     avisos: list[str] = []
     cuestionario, ventanas, particiones = esquema_paquete(repo, sesion)
     seed = int(particiones["seed"])
-    config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
-    if ventanas.get("config") != config.doc:
-        problemas.append(f"{sesion}: config.yaml cambio despues de generar el paquete")
-    # El universo de un paquete se congela DENTRO del paquete, como ya se hace con `config:`. Pero
-    # `config:` se COMPARA contra el fichero de hoy y `datasets:` no puede compararse contra nada:
-    # el disco crece a proposito -meses nuevos- y esa era justo la averia (ADR-0035). `datasets:`
-    # se USA: es la lista con la que se recompone el paquete, y lo que la prueba es que el paquete
-    # siga reproduciendose byte a byte con ella. Tres condiciones, y ninguna es un permiso:
+    # El bloque `config:` del paquete se USA, no se compara contra el `config.yaml` de hoy
+    # (ADR-0035, enmienda del 2026-09-21). Comparar hacia el fichero global hacia DOS trabajos en
+    # una sola linea y por eso estorbaba: probaba la reproduccion del paquete Y avisaba de que el
+    # config global habia derivado. Lo primero se hace ahora con el congelado; lo segundo vive en
+    # `validar_paquetes` como AVISO, porque un paquete viejo no tiene por que saber nada del
+    # config de hoy y porque editar `config.yaml` para el paquete SIGUIENTE es el camino normal.
+    doc_congelado = ventanas.get("config")
+    if doc_congelado is None:
+        problemas.append(
+            f"{sesion}/ventanas.yaml: sin bloque `config`: los cupos del paquete no estan "
+            f"congelados y no hay con que reproducirlo (ADR-0035, enmienda del 2026-09-21)"
+        )
+        return problemas, avisos
+    try:
+        config = config_desde_doc(doc_congelado, f"{sesion}/ventanas.yaml:config")
+    except KitError as exc:
+        problemas.append(str(exc))
+        return problemas, avisos
+    # El universo y los cupos de un paquete se congelan DENTRO del paquete. Ninguno de los dos
+    # puede compararse contra nada: el disco crece a proposito -meses nuevos- y el config global
+    # evoluciona a proposito -el paquete siguiente quiere otros cupos-, y esas eran justo las dos
+    # averias (ADR-0035 y su enmienda). Lo congelado se USA: es con lo que se recompone el
+    # paquete, y lo que lo prueba es que el paquete siga reproduciendose byte a byte con ello.
+    # Tres condiciones, y ninguna es un permiso:
     #
     #   1. Sin `datasets:` no se comprueba nada: PROBLEMA, no aviso. Un paquete sin universo
     #      congelado no tiene con que reproducirse, y dejarlo pasar seria devolver el defecto.
     #   2. La lista se valida contra los manifiestos, que son inmutables: ids existentes, ordenada
     #      y sin repetidos, y contiene todos los `casos[].dataset_id`. Lo que no necesita velas se
     #      comprueba ademas en `knowledge validate` (`validar_paquetes`), que corre sin `data/`.
-    #   3. Se comprueba AQUI, fuera del bucle de comparacion, igual que `config:`, y NO entra en
+    #   3. Se comprueba AQUI, fuera del bucle de comparacion, y NO entra en
     #      DEPENDEN_DE_LAS_RESPUESTAS: una diferencia en `datasets:` no sale de ninguna respuesta
     #      del trader, asi que nunca puede bajar a aviso. Si bajara, alterar la lista congelada
     #      quedaria invisible en una sesion celebrada, que son todas las que importan.
+    #
+    # Y una cuarta, que es de los CUPOS y hay que decirla porque la falsabilidad del bloque
+    # `config:` no es uniforme: editar `particiones` dentro del congelado cambia la asignacion y
+    # `particiones.yaml` -que no se exime NUNCA- deja de reproducirse, asi que se ve. Pero
+    # `anclajes_candidatos`, `sesiones` y `etiquetas` solo alimentan `ventanas.yaml` y
+    # `hoja_trader.md`, que en una sesion celebrada SI se eximen: editarlos ahi no lo ve nadie.
+    # Medido el 2026-09-21 (exit 0, "sin diferencias que no explique la sesion celebrada"). Por
+    # eso el bloque congelado se ata FUERA, con el ancla de `anclas.yaml` (`_problemas_de_ancla`).
     congelados = _datasets_congelados(sesion, ventanas, problemas)
     if congelados is None:
         return problemas, avisos
@@ -772,7 +938,7 @@ def comprobar(
             f"esquema"
         )
         return problemas, avisos
-    nuevo = construir(repo, carpeta_datos, sesion, seed, datasets=congelados)
+    nuevo = construir(repo, carpeta_datos, sesion, seed, datasets=congelados, config=config)
     carpeta = repo / DIRECTORIO_KIT / sesion
     for nombre, texto in nuevo.ficheros.items():
         if _leer(carpeta, nombre) == texto:
@@ -855,6 +1021,15 @@ def validar_paquetes(
     anadio el primer `LABEL_CASE` de esa sesion (y distinto de el)."""
     problemas: list[str] = []
     avisos: list[str] = []
+    try:
+        anclas = cargar_anclas(repo)
+    except KitError as exc:
+        problemas.append(str(exc))
+        anclas = {}
+    try:
+        doc_global = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG).doc
+    except KitError:
+        doc_global = None  # lo denuncia `kit check`; aqui solo sirve para el aviso de deriva
     for sesion in sesiones_del_kit(repo):
         try:
             cuestionario, ventanas, particiones = esquema_paquete(repo, sesion)
@@ -906,6 +1081,28 @@ def validar_paquetes(
                     f"{sesion}: {c.get('id')} cita dataset inexistente {c.get('dataset_id')}"
                 )
         problemas += _problemas_de_vistos(repo, sesion, ventanas)
+        # El ancla del paquete, ANTES de cualquier `continue` que dependa de las etiquetas: es
+        # justo mientras no existe ninguna cuando hace falta (ADR-0035, enmienda del 2026-09-21).
+        problemas += _problemas_de_ancla(repo, sesion, anclas)
+        # (b) del reparto de trabajos de la vieja guardia: avisar de que el config global ha
+        # derivado. AVISO y no ERROR, y por dos motivos: un paquete viejo se reproduce con el
+        # suyo y no tiene por que saber nada del de hoy, y editar `config.yaml` para el paquete
+        # SIGUIENTE -otros cupos, otro mes- es el camino normal, no una averia. Nombra las claves
+        # que difieren, no vuelca el diff: quien quiera el detalle tiene `git diff`.
+        doc_congelado = ventanas.get("config")
+        if doc_global is not None and isinstance(doc_congelado, dict):
+            distintas = sorted(
+                k
+                for k in set(doc_global) | set(doc_congelado)
+                if doc_global.get(k) != doc_congelado.get(k)
+            )
+            if distintas:
+                avisos.append(
+                    f"{sesion}/ventanas.yaml: su config congelado difiere del {FICHERO_CONFIG} de "
+                    f"hoy en {', '.join(distintas)}. Es lo esperado cuando el config global "
+                    f"evoluciona: el paquete se reproduce con el suyo (ADR-0035, enmienda del "
+                    f"2026-09-21). Si no esperabas esa clave, mira el ancla"
+                )
         asignacion = particiones.get("asignacion") or {}
         if set(asignacion) != set(cids):
             problemas.append(

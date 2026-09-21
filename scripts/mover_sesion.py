@@ -29,6 +29,7 @@ sys.path.insert(0, str(RAIZ / "src"))
 from botsito.cases.paquete import (  # noqa: E402
     DIRECTORIO_KIT,
     comprobar,
+    config_desde_doc,
     construir,
     escribir,
     esquema_paquete,
@@ -99,10 +100,11 @@ def main() -> int:
 
     _, ventanas_viejas, particiones = esquema_paquete(RAIZ, vieja)
     seed = int(particiones["seed"])
-    # El universo congelado del paquete VIEJO viaja con el (ADR-0035): mover una sesion no puede
-    # reabrir el universo al disco de hoy, o el move dejaria de reproducir lo que movio. Se lee
-    # AQUI, antes de borrar la carpeta.
+    # Lo congelado del paquete VIEJO viaja con el (ADR-0035 y su enmienda del 2026-09-21): mover
+    # una sesion no puede reabrir ni el universo ni los cupos al disco de hoy, o el move dejaria
+    # de reproducir lo que movio. Se lee AQUI, antes de borrar la carpeta.
     congelados = ventanas_viejas.get("datasets")
+    config_congelada = config_desde_doc(ventanas_viejas.get("config"), f"{vieja}/ventanas.yaml")
     antes = huella(vieja)
     carpeta_vieja = RAIZ / DIRECTORIO_KIT / vieja
 
@@ -110,7 +112,17 @@ def main() -> int:
     shutil.copytree(carpeta_vieja, respaldo)
     try:
         shutil.rmtree(carpeta_vieja)
-        escribir(RAIZ, construir(RAIZ, carpeta_datos(RAIZ), nueva, seed, datasets=congelados))
+        escribir(
+            RAIZ,
+            construir(
+                RAIZ,
+                carpeta_datos(RAIZ),
+                nueva,
+                seed,
+                datasets=congelados,
+                config=config_congelada,
+            ),
+        )
         despues = huella(nueva)
         if despues != antes:
             raise SystemExit(

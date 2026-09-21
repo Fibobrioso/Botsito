@@ -1394,6 +1394,41 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def kit_anclar(repo: Path, args: argparse.Namespace) -> int:
+    """Declara el ancla de un paquete (ADR-0035, enmienda del 2026-09-21).
+
+    Anclar un paquete nuevo es rutina y va en el commit que lo mete. RE-anclar uno que cambio es
+    otra cosa: exige `--reanclar`, para que no se cuele como efecto colateral.
+    """
+    from botsito.cases.paquete import anclas_del_arbol, cargar_anclas, escribir_anclas
+
+    try:
+        anclas = cargar_anclas(repo)
+        nuevas = anclas_del_arbol(repo, args.sesion)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    viejas = anclas.get(args.sesion)
+    if viejas == nuevas:
+        print(f"OK: {args.sesion} ya esta anclada con estos blobs; no se toca nada.")
+        return 0
+    if viejas is not None and not args.reanclar:
+        cambian = sorted(n for n, s in nuevas.items() if viejas.get(n) != s)
+        print(
+            f"ERROR: {args.sesion} ya tiene ancla y cambia en {', '.join(cambian)}. Re-anclar es "
+            f"un acto explicito: si el cambio del paquete es legitimo, repite con --reanclar y "
+            f"que se vea en el diff.",
+            file=sys.stderr,
+        )
+        return 1
+    anclas[args.sesion] = nuevas
+    ruta = escribir_anclas(repo, anclas)
+    que = "re-anclada" if viejas is not None else "anclada"
+    detalle = ", ".join(f"{n} {s[:12]}…" for n, s in sorted(nuevas.items()))
+    print(f"OK: {args.sesion} {que} en {ruta.relative_to(repo).as_posix()}: {detalle}")
+    return 0
+
+
 def kit_hoja(repo: Path, args: argparse.Namespace) -> int:
     """Compone la hoja de respuestas de la sesion en Word (F10; entra en el CLI en F13).
 
@@ -2039,6 +2074,15 @@ def build_parser() -> argparse.ArgumentParser:
     kb_build.add_argument("--seed", required=True, type=int)
     kb_check = kit_sub.add_parser("check", help="recompone el paquete y compara byte a byte")
     kb_check.add_argument("--sesion", required=True)
+    kb_anclar = kit_sub.add_parser(
+        "anclar", help="declara el ancla (sha de blob) de un paquete en anclas.yaml"
+    )
+    kb_anclar.add_argument("--sesion", required=True)
+    kb_anclar.add_argument(
+        "--reanclar",
+        action="store_true",
+        help="el paquete cambio a proposito y se vuelve a anclar (acto explicito)",
+    )
     kb_kappa = kit_sub.add_parser(
         "kappa", help="kappa de Cohen entre los LABEL_CASE de dos sesiones"
     )
@@ -2231,6 +2275,8 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_list(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "build":
         return kit_build(args.repo, args)
+    if args.cmd == "kit" and args.kit_cmd == "anclar":
+        return kit_anclar(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "check":
         return kit_check(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "hoja":
