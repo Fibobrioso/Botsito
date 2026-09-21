@@ -1236,6 +1236,7 @@ def kappa_entre_sesiones(
     a: str,
     b: str,
     incluir_holdout: bool = False,
+    pregunta: str = "",
 ) -> Any:
     """Kappa entre dos rondas, SIN leer las etiquetas de los dias reservados (ADR-0033).
 
@@ -1243,7 +1244,7 @@ def kappa_entre_sesiones(
     kappa las leia todas. Ahora se excluyen y se dice cuantas; con `incluir_holdout` se pide
     abrirlas, y la puerta se niega salvo autorizacion del usuario y PREREGISTRO relleno (§3).
     """
-    from botsito.cases.holdout import abrir, casos_reservados
+    from botsito.cases.holdout import abrir, casos_reservados, gastar_pregunta
     from botsito.cases.kappa import calcular, etiquetas_de_registros
 
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
@@ -1261,8 +1262,12 @@ def kappa_entre_sesiones(
     for caso in etiquetados:
         por_particion[reservados[caso]] = por_particion.get(reservados[caso], 0) + 1
     if incluir_holdout:
+        # El orden manda (ADR-0033, enmienda del 2026-09-21): comprobar la puerta -> GASTAR la
+        # pregunta -> leer. Los dos modos de fallo no son simetricos: "gastada y no leida" cuesta
+        # volver a pre-registrar; "leida y no gastada" es el defecto que la enmienda cierra.
         for particion in sorted(por_particion):
-            abrir(repo, particion, f"kit kappa entre {a} y {b}")
+            abrir(repo, particion, pregunta)
+        gastar_pregunta(repo, pregunta)
         excluir: frozenset[str] = frozenset()
     else:
         excluir = frozenset(etiquetados)

@@ -49,10 +49,16 @@ phase: post-F13 (abre el reparto del material etiquetado, antes de la primera et
    anteriores.
 
    > **FRENO, y es bloqueante.** `kappa_entre_sesiones` deja `excluir` vacío después de pasar la
-   > puerta, así que **una autorización lee las etiquetas de todos los cubos**. Extender una puerta
-   > con fuga multiplica la fuga: **antes de la PRIMERA autorización hay que cerrarlo**. Hoy es
-   > seguro porque `PREREGISTRO.md` sigue vacío y no existe ninguna autorización. Es bloqueante para
-   > **abrir**, no para crear los nombres.
+   > puerta. **Antes de la PRIMERA autorización hay que cerrarlo.** Hoy es seguro porque
+   > `PREREGISTRO.md` sigue vacío y no existe ninguna autorización. Es bloqueante para **abrir**, no
+   > para crear los nombres.
+   >
+   > **Corrección del 2026-09-21 (tarde).** Este freno decía que «una autorización lee las etiquetas
+   > de todos los cubos». **Era falso, y está medido**: firmada sólo `holdout-2`, con etiqueta
+   > también en `holdout-1`, el comando **falla nombrando `AUTORIZACION-holdout-1.md`**. No hay
+   > fuga. Lo que hay es el espejo: una pregunta se gasta una vez y **abre N particiones, y N lo
+   > decide el dato**, así que obliga a firmar toda partición con etiqueta en esas rondas. Sigue
+   > siendo bloqueante; cambia el motivo y cambia el arreglo.
 
 7. **La anterioridad se prueba por CASO, no por sesión** (`cases/anterioridad.py`, enganchada en
    `knowledge validate`): toda etiqueta cae sobre un caso que algún reparto commiteado contiene, y
@@ -139,11 +145,19 @@ puerta, no de este camino—. Por eso una entra y el otro se escribe.
   qué partición, así que forma parte de lo que `particiones.yaml` reproduce.
 - La puerta agrega ahora los repartos de **los dos caminos** (`repartos_commiteables`), y
   `tests/unit/test_puerta_holdout.py` afirma **la unión exacta** en vez de una cifra pegada: no se
-  rompe al añadir un camino y caza lo que la otra no veía —un camino que quede fuera del glob, que
-  es material reservado invisible—.
+  rompe al añadir un camino.
+
+  > **Corrección del 2026-09-21 (enmienda de ADR-0033).** La frase que seguía aquí —que ese test
+  > «caza un camino que quede fuera del glob»— **era falsa**, y está medido: con un tercer camino
+  > `knowledge/cases/marzo/eurusd-2026-03/particiones.yaml` con un `holdout-2` dentro, los **dos**
+  > lados de la igualdad usan `repartos_commiteables`, así que el caso es invisible para ambos y la
+  > igualdad se cumple igual. Lo único que afirmaba algo sobre el glob era un par `{"kit",
+  > "fidelidad"}` pegado a mano. El test lleva ahora una enumeración que **no** pasa por el glob
+  > —sale del disco— y que sí se rompe con ese tercer camino.
 - **En este camino ningún fichero se exime nunca** de reproducirse byte a byte: no hubo sesión
   celebrada cuyas respuestas expliquen una diferencia.
-- **No cierra** el agujero de `excluir` en `kappa_entre_sesiones` (bloqueante para abrir, §6), ni el
+- **No cierra** el defecto de `excluir` en `kappa_entre_sesiones` (bloqueante para abrir, §6 y su
+  corrección del 2026-09-21: no es una fuga, es que una pregunta abre N particiones), ni el
   sorteo de septiembre —que va en su propia rama, porque un ADR decidido y estrenado en el mismo
   aliento acaba con la forma de la conveniencia de un mes—, ni la petición del mes limpio.
 - **Queda estrenado en vacío**: los cupos de `knowledge/cases/fidelidad/config.yaml` están en cero y

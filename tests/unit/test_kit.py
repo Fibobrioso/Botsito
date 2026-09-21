@@ -565,7 +565,10 @@ def _autorizar(repo: Path, particiones: list[str]) -> None:
 
     validation = repo / "docs" / "validation"
     validation.mkdir(parents=True, exist_ok=True)
-    preregistro = "# PREREGISTRO\n\numbral: 0.8\n"
+    preregistro = (
+        "# PREREGISTRO\n\numbral: 0.8\n\n## Preguntas\n\n"
+        "- pregunta: P1 | estado: ABIERTA | kappa entre las dos rondas\n"
+    )
     (validation / "PREREGISTRO.md").write_text(preregistro, encoding="utf-8")
     datos = preregistro.encode("utf-8")
     blob = hashlib.sha1(b"blob %d\x00" % len(datos) + datos).hexdigest()  # noqa: S324
@@ -573,7 +576,7 @@ def _autorizar(repo: Path, particiones: list[str]) -> None:
     for particion in particiones:
         (validation / f"AUTORIZACION-{particion}.md").write_text(
             f"particion: {particion}\nautorizado_por: el usuario\nfecha: 2026-10-01\n"
-            f"adr: ADR-0099\npreregistro_blob: {blob}\n",
+            f"adr: ADR-0099\npregunta: P1\npreregistro_blob: {blob}\n",
             encoding="utf-8",
         )
     if not (repo / ".git").is_dir():
@@ -646,17 +649,28 @@ def test_kappa_desde_registros_y_cli(tmp_path: Path, capsys: pytest.CaptureFixtu
     # sobre cuanto se calculo, junto al kappa: un kappa alto sobre pocos casos no significa nada
     assert "calculado sobre 4 unidades de 2 casos" in out.out
     assert "3 casos reservados excluidos sin leer su etiqueta" in out.err
-    # Pedir abrirlas se niega: no hay git, ni PREREGISTRO relleno, ni autorizacion
-    assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 1
+    # Abrir sin decir QUE pregunta se gasta ya no se puede (ADR-0033, enmienda del
+    # 2026-09-21): el acto de abrir tiene que declarar para que se abre.
+    abrir_holdout = [*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]
+    assert cli.main(abrir_holdout) == 1
+    assert "exige --pregunta" in capsys.readouterr().err
+    # Y diciendola, se niega igual: no hay git, ni PREREGISTRO relleno, ni autorizacion
+    assert cli.main([*abrir_holdout, "--pregunta", "P1"]) == 1
     err = capsys.readouterr().err
     assert "ADR-0021 §3" in err and "PREREGISTRO.md" in err
     assert "unidades" not in err
     # Con la autorizacion commiteada, el preregistro relleno y el ADR, se abren: las 10 unidades
     _autorizar(repo, ["holdout-1", "holdout-2", "holdout-3"])
-    assert cli.main([*base, "kappa", "--sesion-a", s1, "--sesion-b", s2, "--incluir-holdout"]) == 0
+    assert cli.main([*abrir_holdout, "--pregunta", "P1"]) == 0
     out = capsys.readouterr()
     assert "unidades: 10" in out.out and "po: 0.900" in out.out and "kappa: 0.818" in out.out
     assert "kappa 0.818 calculado sobre 10 unidades de 5 casos" in out.out
+    # Y LA SEGUNDA VEZ NO. El comando gasto P1 ANTES de leer (ADR-0033, enmienda del
+    # 2026-09-21), asi que el pre-registro ya no es el que la autorizacion aprobo. Antes de
+    # esta enmienda, este mismo comando abria las veces que hiciera falta: medido, cincuenta
+    # aperturas seguidas con el repositorio sin tocar.
+    assert cli.main([*abrir_holdout, "--pregunta", "P1"]) == 1
+    assert "ADR-0021 §3" in capsys.readouterr().err
     assert kp.calcular(
         {"u": "a", "v": "a", "w": "b"}, {"u": "a", "v": "a", "w": "a"}, ["a", "b"]
     ).avisos
