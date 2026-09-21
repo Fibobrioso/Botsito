@@ -204,6 +204,45 @@ ambigüedad —no su `estado`, no su `decision`— deja `make check` en rojo con
 va commiteado. Hay que pasar `botsito spec docs --escribir` en el **mismo** commit. La regla de la
 casa decía qué sitios toca *abrir* y *cerrar* una ambigüedad, y no contemplaba **editarla**.
 
+### La predicción de mayo, PRE-REGISTRADA hoy
+
+Escrita **antes de mirar mayo**, que es la única forma de que signifique algo, y commiteada el
+2026-09-21 en esta rama. Va literal al brief de `trabajo/mayo-dev-ingerido`, **antes de ingerir
+nada**.
+
+```
+REGIÓN DISCRIMINANTE: el RR implícito de maxTP sobre entrada-stop, en  [3,00 , 3,75)
+
+  base = riesgo_real    ->  la región está POBLADA, con suelo y moda en 3,00
+  base = caja_completa  ->  la región está VACÍA,   con suelo en 3,75
+
+AGOSTO, medido:  15 de 18 dentro de la región.  Suelo 3,00, moda 3,00 (tres filas).
+                 Fuera: un 2,50 por debajo; un 3,75 y un 5,33 por arriba.
+```
+
+**Corrección de un número del brief:** el brief dice «13 de 18 dentro de la región»; son **15**.
+De las 18, sólo tres quedan fuera —el 2,50 por debajo, y el 3,75 y el 5,33 en el borde o por
+encima—. La conclusión no cambia, y otra vez hacia arriba: la región que `caja_completa` exige
+**vacía** contiene cinco sextos de las filas.
+
+**EL CRITERIO, y no se toca después de mirar:**
+
+| Lo que dé mayo | Qué se hace |
+|---|---|
+| Región **poblada** y suelo en 3,00 | Dos meses independientes diciendo lo mismo: **se decide A-18 hacia `riesgo_real`**, con su ADR y con el cambio del parámetro |
+| Región **vacía** y suelo en 3,75 | Los dos meses se contradicen: A-18 **se queda abierta y sube a `bloqueante: true`**, porque el material diciendo cosas distintas según el mes es peor que no saber |
+| Otra cosa | Se escribe lo que dé. **No se fuerza** |
+
+**Y la limitación se repite aquí porque en el brief va a hacer falta: la caja no está en el
+fichero.** La medida discrimina **sólo si el stop del trader no vive en el borde de la caja**. Si
+mayo apunta a `riesgo_real`, la lectura alternativa es que su stop real esté en 1,0 y no en 0,8 —y
+eso tocaría `stop_fraccion_caja`, que también es CONFIRMED—. **Las dos salidas son hallazgos y las
+dos exigen ADR. No se elige la cómoda.**
+
+**El 2,50 y el 5,33 se miran por separado.** El 2,50 es una **ganadora que cerró por debajo de 3R**,
+y eso contradice el *«sin toma de parciales y que tiene que llegar al ratio 1.3 sí o sí»* de v6
+0:17:07. Una fila no tumba una cita, pero **se nombra**, y en mayo se mira si hay más como ella.
+
 ### Lo que sí es el objetivo, y lo contestó el corpus
 
 Una **REGLA**, no una columna: `objetivo_rr` con su `base_calculo_objetivo`, que la spec ya tenía.
@@ -278,6 +317,31 @@ Las dos primeras redacciones eran error mío —falsas en direcciones opuestas, 
 el RR realizado con los tres parámetros. La regla se amplía: una consecuencia para F26 no se escribe
 sin medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que cuelgan
 de los parámetros que nombra**.
+
+## 6b. El TERCER patrón de defecto, y ya no es anécdota
+
+Lo enseñó el tropiezo de esta misma rama. Hasta hoy la lista tenía dos; ahora son tres, y **se
+comprueban en cada rama**:
+
+1. **Un input GLOBAL y MUTABLE del que depende la reproducción** (ADR-0035: el paquete recomponía
+   con los cupos de hoy, no con los suyos).
+2. **Una prohibición escrita MÁS ESTRICTA que el ADR, sin que ningún ADR lo diga** (tres
+   apariciones; la tercera es `CLAUDE.md` §3 y esta rama).
+3. **UNA REGLA QUE ENUMERA LOS CASOS EN VEZ DE NOMBRAR LA CONDICIÓN DEJA FUERA EL CASO QUE NADIE
+   PENSÓ.**
+
+Las tres apariciones del tercero, esta semana:
+
+- **`CLAUDE.md`** decía qué sitios toca **abrir** y **cerrar** una ambigüedad, y no contemplaba
+  **editarla** —por eso `docs/spec/ambiguedades.md` quedó desincronizado hoy y `make check` salió
+  en rojo—.
+- **`leer_fichero`** enumeraba `1|2|3` en vez de negar por defecto, y el `..` se colaba (medido en
+  `trabajo/puerta-por-pregunta`).
+- **`CARPETAS_RESERVADAS`** es explícita a propósito, que está bien, pero **convive con un fallback
+  a `holdout-1`** que es una enumeración con agujero: una carpeta desconocida se juzga bajo la
+  autorización de la partición 1.
+
+**El arreglo es siempre el mismo: nombrar la condición y negar por defecto.**
 
 ## 7. Los agregados: hoy el riesgo es FUTURO, no presente
 

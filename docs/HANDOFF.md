@@ -82,6 +82,32 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   25 % del recorrido. Las dos primeras versiones fueron error mio; esta no: la cadena era mas larga
   de lo que nadie habia escrito. La regla se amplia: **la cadena hasta F26 incluye las ambiguedades
   ABIERTAS que cuelgan de los parametros que nombra.**
+- LA PREDICCION DE MAYO ESTA PRE-REGISTRADA Y COMMITEADA EL 2026-09-21, ANTES DE MIRAR MAYO. NO SE
+  TOCA DESPUES DE MIRAR; si la cambias despues, no vale nada. REGION DISCRIMINANTE: el RR implicito
+  de `maxTP` sobre entrada-stop en **[3,00 , 3,75)**. `riesgo_real` la predice POBLADA con suelo y
+  moda en 3,00; `caja_completa` la predice VACIA con suelo en 3,75. AGOSTO: **15 de 18 dentro**
+  (fuera: un 2,50 por debajo, un 3,75 y un 5,33 por arriba).
+- EL CRITERIO, congelado: region POBLADA con suelo en 3,00 -> dos meses independientes, SE DECIDE
+  A-18 hacia `riesgo_real`, con ADR y con el cambio del parametro. Region VACIA con suelo en 3,75
+  -> los dos meses se contradicen, A-18 sigue ABIERTA y SUBE A `bloqueante: true`, porque el
+  material diciendo cosas distintas segun el mes es peor que no saber. Otra cosa -> se escribe lo
+  que de y NO SE FUERZA.
+- Y LA TRAMPA DE ESA MEDIDA, que hay que repetir en el brief: LA CAJA NO ESTA EN EL FICHERO. Si
+  mayo apunta a `riesgo_real`, la lectura alternativa es que el stop real del trader este en 1,0 y
+  no en 0,8, y eso tocaria `stop_fraccion_caja`, que TAMBIEN es CONFIRMED. Las dos salidas son
+  hallazgos y las dos exigen ADR: NO SE ELIGE LA COMODA.
+- EL 2,50 SE MIRA APARTE: es una GANADORA que cerro por debajo de 3R, y contradice el "sin toma de
+  parciales y que tiene que llegar al ratio 1.3 si o si" de v6 0:17:07. Una fila no tumba una cita,
+  pero se nombra, y en mayo se mira si hay mas como ella.
+- **EL TERCER PATRON DE DEFECTO, y desde hoy se comprueba en cada rama junto a los otros dos: UNA
+  REGLA QUE ENUMERA LOS CASOS EN VEZ DE NOMBRAR LA CONDICION DEJA FUERA EL CASO QUE NADIE PENSO.**
+  Los otros dos son (1) un input GLOBAL y MUTABLE del que depende la reproduccion (ADR-0035) y (2)
+  una prohibicion escrita MAS ESTRICTA que el ADR. Tres apariciones del tercero esta semana:
+  `CLAUDE.md` decia que sitios toca ABRIR y CERRAR una ambiguedad y no contemplaba EDITARLA -eso
+  dejo `ambiguedades.md` desincronizado hoy y `make check` en rojo-; `leer_fichero` enumeraba
+  `1|2|3` en vez de negar por defecto y el `..` se colaba; y `CARPETAS_RESERVADAS` convive con un
+  fallback a `holdout-1` que es una enumeracion con agujero. EL ARREGLO ES SIEMPRE EL MISMO:
+  nombrar la condicion y negar por defecto.
 - LO QUE VIENE, decidido: rama `trabajo/mayo-dev-ingerido`, y NO es solo ingerir. Ingiere los 6
   `dev` de mayo Y REPITE LA MEDIDA DEL RR sobre ellos. Si mayo tambien da suelo en 3,00, la lectura
   `caja_completa` queda en serios apuros y entonces SI toca decidir A-18. Ahi entra tambien
