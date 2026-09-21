@@ -60,8 +60,10 @@ arriba: cincuenta aperturas.
 3. **`gastar_pregunta`**, que llama el comando y nunca `abrir`. `kit kappa --incluir-holdout` exige
    `--pregunta <id>` y el orden es **comprobar → gastar → leer**.
 4. **`casos_reservados` grita** (`RepartoIlegibleError`) en vez de saltarse un reparto ilegible.
-5. **`leer_fichero` decide sobre la ruta resuelta** y niega por defecto dentro del directorio
-   guardado.
+5. **`leer_fichero` decide sobre la ruta resuelta**, y dentro del directorio guardado todo lo que
+   no sea el `README.md` de una partición conocida pasa por `abrir`. Con una reserva que está en
+   §9: el fallback juzga una carpeta desconocida bajo la autorización de `holdout-1`, así que
+   «niega por defecto» es más de lo que el mecanismo sostiene.
 
 ### Por qué se gasta antes de leer
 
@@ -126,7 +128,8 @@ ahora:  NIEGA
 
 El `..` hacía que el primer tramo no fuera `1|2|3`, así que **no se llamaba a `abrir`**, mientras
 `read_text` sí lo resolvía. No se ha parcheado buscando `".."`: se resuelve la ruta y se decide sobre
-lo resuelto. Y ahora niega por defecto: una partición `4/` que aparezca mañana cae del lado seguro.
+lo resuelto. Y una partición `4/` que aparezca mañana ya pasa por `abrir` en vez de leerse sin más
+—aunque bajo la autorización de `holdout-1`, que es la reserva de §9—.
 
 ## 7. Una corrección que me toca a mí
 
@@ -139,10 +142,16 @@ el caso del tercer camino esta? False
 la igualdad del test se cumple? True
 ```
 
-Los dos lados usaban `repartos_commiteables`. El docstring se ha **retirado**, no suavizado, y el
-par `{"kit","fidelidad"}` pegado a mano se ha ido. En su lugar hay una enumeración **que no pasa por
-el glob** —sale del disco— y que sí se rompe con ese tercer camino. ADR-0036 lleva la corrección con
-su medición.
+Los dos lados usaban `repartos_commiteables`. El par `{"kit","fidelidad"}` pegado a mano se ha ido,
+y en su lugar hay una enumeración **que no pasa por el glob** —sale del disco— y que sí se rompe con
+ese tercer camino. ADR-0036 lleva la corrección con su medición.
+
+**Y una corrección de este informe, del mismo día.** Aquí decía que «el docstring se ha retirado, no
+suavizado». **Era falso**: el primer commit de la rama corrigió ADR-0036 pero dejó la frase en el
+docstring del test, donde seguía atribuyendo a la unión exacta algo que sólo hace la enumeración
+nueva —cierto por accidente, y sembrando la deuda de «ADR que citan tests por su docstring»—. La
+frase está ahora retirada de verdad, y la afirmación vive junto a `del_disco == del_glob`, que es lo
+que la sostiene.
 
 ## 8. Los tests
 
@@ -159,9 +168,44 @@ su medición.
 
 ## 9. Lo que NO se ha hecho
 
-- **El agujero de `excluir`** en `kappa_entre_sesiones` sigue abierto, y con esta enmienda es peor
-  de explicar: la autorización dirá «P1 sobre holdout-2» y el código leerá los tres cubos. Sigue
-  siendo **bloqueante para abrir**, ahora también escrito en la enmienda.
+- **Una pregunta abre N particiones, y N lo decide el dato.** `abrir` se llama en bucle sobre las
+  particiones que tienen etiqueta en las dos rondas, y `gastar_pregunta` una sola vez. Sigue siendo
+  **bloqueante antes de la primera autorización**, y el arreglo —que el llamante nombre la partición
+  que su pregunta abre— es rama propia.
+
+  > **Corrección.** Este informe decía antes que había una **fuga**: que tras pasar la puerta «una
+  > autorización lee las etiquetas de todos los cubos». **Es falso, y está medido.** El experimento:
+  > dos casos reservados con etiqueta en ambas rondas, uno en `holdout-1` y otro en `holdout-2`;
+  > firmada **sólo** `AUTORIZACION-holdout-2.md` citando P1; `kit kappa --incluir-holdout
+  > --pregunta P1`. Resultado:
+  >
+  > ```
+  > (B) FALLA. ¿nombra AUTORIZACION-holdout-1.md? True
+  >     no se abre holdout-1 (P1): ... no hay autorizacion ... AUTORIZACION-holdout-1.md
+  >     ¿y se gasto P1 pese a fallar? False
+  > ```
+  >
+  > No lee nada. El conjunto que se lee y el que pasa por la puerta se derivan de lo mismo, así que
+  > todo caso reservado cuya etiqueta se lee pasó antes por `abrir`. Y falla del lado seguro: la
+  > pregunta **no** se gasta. Queda fijado en
+  > `test_una_pregunta_abre_todas_las_particiones_con_etiqueta`, que es el test que avisa si algún
+  > día sí hubiera fuga.
+
+- **Hoy no existe ni un `LABEL_CASE` en todo el repositorio**, y tiene consecuencia medible. Las 118
+  entradas de `knowledge/feedback/2026-09-09-sesion-01` son CONFIRM (11), CORRECT (20), REJECT (15),
+  RESOLVE_UNKNOWN (71) y RESOLVE_CONTRADICTION (1); hay **34 casos reservados repartidos y cero
+  etiquetados**. Con eso, `por_particion` sale vacío y **`kit kappa --incluir-holdout --pregunta P1`
+  gasta P1 sin abrir nada**: cero `abrir`, un `gastar_pregunta`. Medido:
+  `P1 GASTADA despues: True`, y el comando falla después con «no hay unidades que comparar». Es
+  conservador —falla del lado de gastar de más— pero conviene saberlo antes de la primera firma.
+- **`leer_fichero` no tiene ningún llamante de producción** —sólo tests—, así que **hoy la puerta
+  protege un solo comando**: `kit kappa --incluir-holdout`. De ahí que su fallback
+  (`CARPETAS_RESERVADAS.get(resto[0], RESERVADAS[0])`) no se toque en esta rama: juzga una carpeta
+  desconocida **bajo la autorización de `holdout-1`** —con `holdout-1` abierto para la pregunta en
+  curso, `holdout/4/x.yaml` se leería— y un `resto` vacío sale por `IndexError` en vez de
+  `HoldoutCerradoError`. Su docstring dice «niega por defecto» y **eso es más de lo que el mecanismo
+  sostiene**. Va a Technical Debt: sin llamante de producción no justifica tocar la puerta en la
+  rama que la endurece.
 - **Quien llame `abrir()` en un bucle** sin gastar entre medias abre N veces. La puerta comprueba la
   autorización, no cuenta aperturas. Declarado en la enmienda.
 - **`EXPOSICIONES` sigue sin mecanismo.** El comando que gasta está a una línea de añadir también la
@@ -170,17 +214,37 @@ su medición.
 ## 10. Qué debe decidir el usuario
 
 Validar la rama. Y antes de la primera autorización real —que será `fidelidad-1`, con los 10 días de
-septiembre—: cerrar el agujero de `excluir`.
+septiembre— decidir la rama que permita **nombrar la partición que una pregunta abre**, para no
+tener que firmar toda partición con etiqueta en esas rondas sólo para contestar una.
 
 ## 11. Cómo comprobarlo
 
+El resultado, no sólo el comando: el número vive hoy en un terminal y esto es lo que sobrevive.
+
 ```
-uv run botsito kit check --sesion 2026-09-09-sesion-01     # identico a la linea base
+$ make check > make-check.log 2>&1; echo "exit=$?"
+exit=0
+  ruff: All checks passed!   ·   lint-imports: Contracts: 4 kept, 0 broken.
+  pytest: 761 passed
+  knowledge validate: 6 manifiestos · 32 reglas de spec · 32 ambiguedades ·
+                      1 paquetes de sesion validos · 1 artefactos de fidelidad ·
+                      118 registros de feedback · 368 items de evidencia
+
+$ uv run botsito kit check --sesion 2026-09-09-sesion-01 | diff LINEA-BASE.txt -
+(sin diferencias)
+
+$ git status --short docs/validation/PREREGISTRO.md
+(vacio)
+
+$ ls docs/validation | grep -ci autoriz
+0
+```
+
+Para repetirlo:
+
+```
 uv run pytest tests/unit/test_puerta_holdout.py -q
 uv run pytest tests/unit/test_kit.py -k kappa -q
-git status --short docs/validation/PREREGISTRO.md          # vacio
-ls docs/validation | grep -i autoriz                        # nada
-make check > make-check.log 2>&1; echo "exit=$?"
 ```
 
 ## Estado

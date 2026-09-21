@@ -25,9 +25,18 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - Y UNA CORRECCION DE LO QUE ESCRIBI AYER: el test de la puerta NO cazaba "un camino fuera del glob"
   como decia su docstring; los dos lados de la igualdad pasaban por `repartos_commiteables`. Ahora
   hay una enumeracion que sale del disco. ADR-0036 §Impacto lleva la correccion.
-- SIGUE ABIERTO Y ES LO PRIMERO ANTES DE FIRMAR NADA: el agujero de `excluir` en
-  `kappa_entre_sesiones`. Una autorizacion lee las etiquetas de los tres cubos. Con esta enmienda es
-  PEOR de explicar, porque la autorizacion ya dice a que pregunta y a que particion abre.
+- SIGUE ABIERTO Y ES LO PRIMERO ANTES DE FIRMAR NADA, pero NO es lo que yo habia escrito: NO HAY
+  FUGA. Medido con etiqueta en holdout-1 y holdout-2 y firmada solo la de holdout-2, el comando
+  FALLA nombrando `AUTORIZACION-holdout-1.md` y NO gasta la pregunta. Lo que hay es el ESPEJO: una
+  pregunta se gasta UNA vez y abre N particiones, y N LO DECIDE EL DATO -hay que firmar toda
+  particion con etiqueta en esas rondas o el comando falla entero-. El arreglo, que el llamante
+  pueda nombrar la particion, es RAMA PROPIA.
+- Y OJO CON ESTO ANTES DE LA PRIMERA FIRMA: hoy no existe ni un LABEL_CASE, asi que
+  `kit kappa --incluir-holdout --pregunta P1` GASTA LA PREGUNTA SIN ABRIR NADA -`por_particion`
+  vacio: cero `abrir`, un `gastar_pregunta`- y falla despues con "no hay unidades que comparar".
+- `leer_fichero` NO TIENE LLAMANTE DE PRODUCCION: hoy la puerta protege UN SOLO COMANDO. Por eso su
+  fallback -que juzga una carpeta desconocida bajo la autorizacion de holdout-1- se queda en
+  Technical Debt y no se toco aqui.
 - EL PREREGISTRO SIGUE VACIO Y NO HAY NI UNA AUTORIZACION FIRMADA. Esta rama construye el mecanismo;
   no pre-registra ni firma nada.
 - LO SIGUIENTE, que no es codigo: pedirle al trader febrero o marzo.

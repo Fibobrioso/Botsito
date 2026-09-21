@@ -56,9 +56,11 @@ def test_los_casos_reservados_salen_de_la_asignacion_sin_abrir_nada() -> None:
     La afirmacion es LA UNION EXACTA de todos los repartos commiteados, de los dos caminos, y no
     una cifra pegada. Hasta el 2026-09-21 esto decia `== dict.fromkeys(PARTICIONES_RESERVADAS, 8)`
     y se habria roto con el primer reparto nuevo; relajarlo a `>= 8` habria perdido la unica
-    afirmacion mecanica que existe sobre el reparto. Esta version no se rompe al anadir un camino
-    y ademas caza lo que la otra no veia: que un camino nuevo quede FUERA del glob de la puerta,
-    que es material reservado invisible (ADR-0036).
+    afirmacion mecanica que existe sobre el reparto. Esta version no se rompe al anadir un camino.
+
+    Lo que NO hace, y aqui decia que si hasta el 2026-09-21: cazar un camino que quede FUERA del
+    glob. La union no puede: sus dos lados pasan por `repartos_commiteables`. Quien lo caza es la
+    enumeracion del final, que sale del disco. La afirmacion vive alli, junto a lo que la sostiene.
     """
     reservados = casos_reservados(REPO)
     esperado: dict[str, str] = {}
@@ -127,6 +129,19 @@ def blob_de(texto: str) -> str:
 
 # El umbral y la pregunta van con numeros DISTINTOS a proposito: hay un test que hace
 # `RELLENO.replace("0.8", "0.6")` y si la linea de la pregunta llevara 0.8 cambiaria dos sitios.
+CONFIG_KAPPA = """simbolo: XXXYYY
+dataset_prefijo: prueba-
+ventana_local: {desde: "00:00", hasta: "15:00"}
+sesiones:
+  - {nombre: "07-11", desde: "07:00", hasta: "11:00"}
+  - {nombre: "11-15", desde: "11:00", hasta: "15:00"}
+anclajes_candidatos:
+  - {etiqueta: madrid-00, hora: "00:00", huso: Europe/Madrid, coincide_con_sesiones: false}
+  - {etiqueta: ny-17, hora: "17:00", huso: America/New_York, coincide_con_sesiones: true}
+min_velas_ventana: 850
+etiquetas: [compra, venta, no_trade]
+particiones: {dev: 0, holdout-1: 1, holdout-2: 1, holdout-3: 0}
+"""
 RELLENO = (
     "# PREREGISTRO\n\numbral: 0.8\n\n## Preguntas\n\n"
     "- pregunta: P1 | estado: ABIERTA | fidelidad de F26 sobre la particion\n"
@@ -353,3 +368,65 @@ def test_un_reparto_ilegible_no_se_salta_en_silencio(tmp_path: Path) -> None:
     (roto / "particiones.yaml").write_text("asignacion:\n  a: : :\n", encoding="utf-8")
     with pytest.raises(RepartoIlegibleError, match="particiones.yaml"):
         casos_reservados(repo)
+
+
+def test_una_pregunta_abre_todas_las_particiones_con_etiqueta(tmp_path: Path) -> None:
+    """El defecto ESPEJO: no hay fuga, hay obligacion de firmar de mas.
+
+    Lo escrito hasta el 2026-09-21 decia que tras pasar la puerta `excluir` quedaba vacio y que
+    UNA autorizacion leia las etiquetas de TODOS los cubos. **Es falso**, y este test lo fija: el
+    conjunto que se lee (`kappa.py`, por `excluir`) y el que pasa por la puerta
+    (`paquete.py`, por `etiquetados` -> `por_particion`) se derivan de lo MISMO -mismo `activos`,
+    misma accion, mismas sesiones, mismo `objetivo.id`-, asi que todo caso reservado cuya etiqueta
+    se lee paso antes por `abrir`.
+
+    Lo que si hay es el espejo: UNA pregunta se gasta UNA vez y abre N particiones, y **N lo
+    decide el DATO, no el humano**. Para contestar una pregunta sobre `holdout-2` hay que firmar
+    toda particion reservada que tenga etiqueta en esas dos rondas, o el comando falla entero.
+
+    Y falla del lado seguro, que es lo unico bueno de la historia: `abrir` lanza ANTES de
+    `gastar_pregunta`, asi que la pregunta NO se gasta cuando falta una firma.
+    """
+    from botsito.cases.paquete import KitError, kappa_entre_sesiones
+    from botsito.feedback.modelo import cargar_feedback, escribir_registro
+
+    s1, s2 = "2026-09-15-sesion-01", "2026-09-16-sesion-02"
+    uno, dos = "caso-xxxyyy-2026-05-04", "caso-xxxyyy-2026-05-05"
+    kit = tmp_path / "knowledge" / "cases" / "kit"
+    (kit / s1).mkdir(parents=True)
+    (kit / "config.yaml").write_text(CONFIG_KAPPA, encoding="utf-8")
+    (kit / "vistos.yaml").write_text("meses: []\ndias: []\n", encoding="utf-8")
+    (kit / s1 / "particiones.yaml").write_text(
+        f"sesion: {s1}\nseed: 1\nasignacion:\n  {uno}: holdout-1\n  {dos}: holdout-2\n",
+        encoding="utf-8",
+    )
+    valores = ((uno, "07-11: venta; 11-15: no_trade"), (dos, "07-11: compra; 11-15: no_trade"))
+    for sesion in (s1, s2):
+        for caso, valor in valores:
+            escribir_registro(
+                tmp_path / "knowledge" / "feedback",
+                {
+                    "sesion": sesion,
+                    "fecha": sesion[:10],
+                    "recibido_el": sesion[:10],
+                    "procedencia": "trader_hoja",
+                    "medio": "escrito",
+                    "objetivo": {"tipo": "caso", "id": caso},
+                    "accion": "LABEL_CASE",
+                    "respuesta_literal": "lo que dijo",
+                    "valor_resultante": valor,
+                    "registrado_por": "aleks",
+                },
+            )
+    # Se firma SOLO holdout-2, citando P1. holdout-1 tambien tiene etiqueta en las dos rondas.
+    repo = _repo(tmp_path, RELLENO, BUENA)
+
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    with pytest.raises((HoldoutCerradoError, KitError)) as exc:
+        kappa_entre_sesiones(repo, registros, s1, s2, incluir_holdout=True, pregunta="P1")
+    assert "AUTORIZACION-holdout-1.md" in str(exc.value), (
+        "si esto deja de fallar, HAY FUGA: se estarian leyendo etiquetas de una particion que "
+        "nadie autorizo"
+    )
+    # Y la pregunta NO se gasto: `abrir` lanza antes que `gastar_pregunta`.
+    assert "estado: ABIERTA" in (repo / FICHERO_PREREGISTRO).read_text(encoding="utf-8")

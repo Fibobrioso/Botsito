@@ -205,10 +205,23 @@ partición conocida pasa por `abrir`, incluida una `4/` que aparezca mañana.
 
 **Lo que esta enmienda NO cierra, y queda dicho:**
 
-- **El agujero de `excluir` en `kappa_entre_sesiones` sigue abierto**: tras pasar la puerta,
-  `excluir` queda vacío y una autorización lee las etiquetas de todos los cubos. Está declarado como
-  bloqueante para abrir en ADR-0036 §6 y en Technical Debt. Con esta enmienda es **peor de
-  explicar**, porque la autorización dirá «pregunta P1 sobre holdout-2» y el código leerá los tres.
+- **Una pregunta abre N particiones, y N lo decide el DATO.** `abrir` se llama en un bucle sobre
+  las particiones que TIENEN etiqueta en las dos rondas, y `gastar_pregunta` UNA sola vez. Para
+  contestar una pregunta sobre `holdout-2` hay que firmar **toda** partición reservada con etiqueta
+  en esas rondas, o el comando falla entero. Quien llama no puede nombrar la partición que su
+  pregunta abre. **Sigue siendo bloqueante antes de la primera autorización**, pero el motivo es
+  éste y el arreglo —que el llamante nombre la partición y el resto siga en `excluir`— es rama
+  propia.
+
+  > **Esto decía otra cosa hasta el 2026-09-21 por la tarde, y era falso.** Decía que tras pasar la
+  > puerta «una autorización lee las etiquetas de todos los cubos». **Medido en repositorio
+  > sintético**: con etiqueta en `holdout-1` y en `holdout-2` y firmada sólo la de `holdout-2`, el
+  > comando **falla nombrando `AUTORIZACION-holdout-1.md`** — no lee nada. El conjunto que se lee y
+  > el que pasa por la puerta se derivan de lo mismo (mismo `activos`, misma acción, mismas
+  > sesiones, mismo `objetivo.id`), así que todo caso reservado cuya etiqueta se lee pasó antes por
+  > `abrir`. Y falla del lado seguro: `abrir` lanza **antes** que `gastar_pregunta`, así que la
+  > pregunta no se gasta. Fijado en
+  > `test_una_pregunta_abre_todas_las_particiones_con_etiqueta`.
 - **El camino de fidelidad no tiene lector guardado, y hoy no lo necesita**, medido:
   `knowledge/cases/holdout/{1,2,3}/` contiene cuatro README y nada más, y el material del camino de
   fidelidad vive en `knowledge/feedback/` —que cubren `casos_reservados` y `trazar(ocultar=)`— y en
