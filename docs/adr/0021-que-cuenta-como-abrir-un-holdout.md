@@ -6,6 +6,8 @@ phase: F12-holdout
 
 # 0021 · Que cuenta como abrir un holdout, y que se hace con la exposicion de mayo
 
+> **Nota (2026-09-21, ADR-0037).** Su §1 ya era granular POR DIA -"el detalle por operacion del backtest del trader EN ESOS DIAS"- y eso no cambia. ADR-0037 anade lo que faltaba: la regla para un fichero que MEZCLA granularidades -filas de un dia junto a agregados del mes- y la regla para leer estructura sin leer valores. **No reclasifica ninguna exposicion ya declarada**, y su §2 sigue gobernando lo que se VE; ADR-0037 gobierna lo que se LEE a proposito.
+>
 > **Nota (2026-09-17, ADR-0033).** Lo que este ADR decide sigue en pie, y desde la rama de la guarda tiene mecanismo: la guarda de tests (`tests/guarda_holdout.py`) deja de ser un stub y vigila a cualquier llamante; toda apertura pasa por `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin una autorizacion commiteada por particion; y `kit build` y `kit check` declaran en su salida cuantos dias reservados leen, que no es abrir (§1).
 
 ## Decision

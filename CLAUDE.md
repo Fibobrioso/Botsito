@@ -72,12 +72,26 @@ gastarle un turno al trader** (asi se resolvio el breaker de M1: `docs/validatio
 no por fechas, los dias reservados cuyas velas leen (ADR-0033). Ninguna etiqueta y ningun precio.
 
 **3. PROHIBIDO sin pasar por la puerta de ADR-0033** (`botsito.cases.holdout`, que exige `PREREGISTRO.md`
-relleno y autorizacion commiteada por particion, atada por `preregistro_blob`):
+relleno y autorizacion commiteada por particion, atada por `preregistro_blob`). **El criterio no es
+el TIPO DE FICHERO: es la GRANULARIDAD DEL DATO** (ADR-0037):
 - `knowledge/cases/holdout/**` (particiones 1, 2 y 3);
-- el **detalle por operacion** de los xlsx del corpus
-  (`corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics *.xlsx`,
-  `Backtest mayo 2026/`, `Backtest septiembre 2026/` y los que vengan);
-- las **capturas de Analytics** de FX Replay que acompanan a esos backtests.
+- el **detalle por operacion** de los xlsx del corpus **DE LOS DIAS QUE ESTEN EN UNA PARTICION
+  RESERVADA** -hora, direccion, entrada, stop, objetivo-. El dia manda, no el fichero: las filas de
+  un dia `dev` del MISMO libro se leen sin puerta, y asi lo dice ADR-0021 §1 desde el principio
+  ("el detalle por operacion del backtest del trader EN ESOS DIAS") y ADR-0025 §4 para mayo ("se
+  puede abrir para esos 6 dias `dev`, y solo para ellos");
+- **todo AGREGADO sobre un rango que incluya un dia reservado** -totales del mes, un calendario de
+  PnL, un recuento por columna del fichero entero, la lista de fechas presentes en el libro- y esto
+  **no lo abre ninguna autorizacion**, porque un agregado no se trocea por dia: mirarlo ES leer una
+  cifra que contiene los reservados. Vale aunque viva en el mismo fichero que las filas que si se
+  pueden leer;
+- las **capturas de Analytics** de FX Replay, EN BLOQUE y de cualquier mes: no se pueden trocear
+  por dia.
+
+**Material de DESARROLLO, que no es holdout y se abre sin puerta:** enero, abril y agosto de 2026
+(`HOLDOUT-EXPOSICIONES.md` §, "esos tres meses son material de DESARROLLO... la spec se infirio en
+parte de esos mismos dias"). No tienen ni un dia en ninguna particion, y eso se COMPRUEBA antes de
+abrir con `casos_reservados(repo)`, no se supone. Se declara igual el mismo dia.
 
 **Lo minimo para fijar el universo SI se lee, y no es abrir.** De un backtest del trader se puede
 leer QUE DIAS CUBRE EL MATERIAL -la columna de fechas- porque eso no es leer una etiqueta ni medir
@@ -90,6 +104,15 @@ para CUALQUIER backtest, no solo el de septiembre: febrero o marzo vienen detras
 
 Y **se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre** (ADR-0021 §4).
 
+> **Por que cambio esta regla, TERCERA vez (2026-09-21).** Hasta hoy el segundo punto prohibia
+> "el detalle por operacion de los xlsx del corpus" EN BLOQUE, sin distinguir dias. Los dos
+> documentos que mandan ya eran granulares por dia -`ADR-0021` §1 dice "en esos dias" desde el
+> 2026-09-12, y `ADR-0025` §4 autoriza los 6 `dev` de mayo-, asi que este fichero volvia a ser MAS
+> ESTRICTO QUE EL ADR sin que ningun ADR lo dijera, y tomado al pie de la letra prohibia F14a
+> entera: la ingesta del detalle de los dias `dev`, que es el paso que el proceso exige. Corregido
+> con ADR-0037, que ademas anade lo que faltaba y no estaba en ninguna parte: la regla para un
+> fichero que MEZCLA granularidades, y la regla para leer estructura sin leer valores.
+>
 > **Por que cambio esta regla (2026-09-20).** Hasta hoy decia que el backtest de septiembre no se
 > abria "hasta que sus particiones esten sorteadas y commiteadas". Estaba MAL ESCRITA desde el
 > principio: bloqueaba un paso que el propio proceso exige, porque sin saber que dias cubre el
