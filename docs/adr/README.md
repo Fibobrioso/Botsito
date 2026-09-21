@@ -37,7 +37,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0030 | El motor interpreta la `forma`; las primitivas se escriben a mano | ACTIVE |
 | 0031 | El freno de la firma dispara antes del limite: margen declarado y lectura prospectiva | ACTIVE |
 | 0032 | De donde sale cada hecho y cada evento, y como nace la orden limite | ACTIVE |
-| 0033 | La guarda y la puerta del holdout: que vigilan, por donde se abre y como se autoriza | ACTIVE |
+| 0033 | La guarda y la puerta del holdout: que vigilan, por donde se abre y como se autoriza | ACTIVE (con enmienda del 2026-09-21: la autorizacion cita la PREGUNTA que abre, gastarla cierra, y el lector decide sobre la ruta resuelta) |
 | 0034 | Septiembre es material ETIQUETADO de un mes que el trader ya ha visto | ACTIVE |
 | 0035 | El universo de un paquete se congela en el paquete: comprobar va por la lista, construir por el disco | ACTIVE (con enmienda del 2026-09-21: tambien los cupos, y `anclas.yaml` ata lo congelado por el sha de su blob) |
 | 0036 | El material ya visto se reparte por su propio camino, con nombres propios y con puerta | ACTIVE |

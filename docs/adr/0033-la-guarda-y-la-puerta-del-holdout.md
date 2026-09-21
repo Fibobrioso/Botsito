@@ -136,6 +136,92 @@ Porque cada pieza está medida:
 - `docs/plan/features/F14-case-library.md`: D4 y el criterio 3 quedan hechos aquí.
 - `knowledge/spec/` no se toca: spec 12.0.0, mismo hash.
 
+## Enmienda del 2026-09-21 (la puerta es de una pregunta, no de una versión)
+
+El cuerpo de arriba **no se reescribe**. Lo que cambia se dice aquí.
+
+ADR-0033 puso la puerta. Esta enmienda dice **de qué es la llave**.
+
+**El defecto, medido antes de escribirlo.** `abrir()` es pura: comprueba el estado del repositorio
+y vuelve. No registra nada. Con una autorización válida y el pre-registro intacto se abre **dos
+veces, y cincuenta**: medido, `git status` vacío después y `rev-list --count` del fichero de
+autorización en **1**. El historial de git no distingue «firmada una vez y usada una» de «firmada
+una vez y usada cincuenta», porque son el mismo árbol y el mismo commit — no es una limitación de
+git, es que una función pura del estado no puede dar dos respuestas sobre el mismo estado.
+
+Lo único que volvía a cerrar era que cambiara el blob del pre-registro. Dicho con precisión: **una
+autorización era de un solo uso POR VERSIÓN DEL PRE-REGISTRO, no por pregunta.** Con tres preguntas
+escritas en el blob B1, una autorización anclada a B1 abría para las tres — y para una cuarta que a
+nadie se le ocurrió escribir. Eso rompe lo que la puerta existe para garantizar: que **cada apertura
+responde a una pregunta escrita antes de mirar**. Y lo rompía *aparentando* cumplirlo.
+
+**1. La autorización cita la pregunta que abre.** Campo nuevo `pregunta` en
+`_CAMPOS_AUTORIZACION`, y esa pregunta tiene que existir en el `PREREGISTRO.md` de HEAD con estado
+`ABIERTA`. El pre-registro gana una sección `## Preguntas` con una línea por pregunta y el estado en
+la misma línea — una sola fuente de verdad: una sección aparte de «gastadas» se desincroniza y
+además invita a borrarla entera.
+
+**2. `abrir` sigue siendo PURA, y `pregunta` pasa a ser load-bearing.** El tercer argumento era
+`para_que`, una frase que sólo aparecía en el mensaje de error: cuando la puerta **abría** —que es
+cuando importa— esa cadena no dejaba rastro en ninguna parte. Ahora es el id de la pregunta y se
+compara con la que la autorización cita. El acto de abrir **declara** para qué se abre.
+
+**3. Gastar la pregunta lo hace el COMANDO, y la gasta ANTES de leer.** `botsito kit kappa
+--incluir-holdout` exige `--pregunta <id>`, y el orden dentro del comando es: comprobar la puerta →
+gastar → leer. **Los dos modos de fallo no son simétricos**: «gastada y no leída» cuesta volver a
+pre-registrar; «leída y no gastada» es exactamente el defecto que esta enmienda cierra. `abrir` no
+escribe: una puerta que escribe se dispara en cada test y a los dos meses nadie se fía del registro
+que produce.
+
+**4. La caducidad automática es deseable y no se «arregla» después.** Gastar una pregunta cambia el
+blob del pre-registro, y eso **invalida todas las autorizaciones vivas**, que hay que volver a
+firmar. Es el mecanismo de ADR-0033 usado como lo que es. **Firmar no invalida nada: sólo gastar o
+editar.**
+
+Medido: en cuanto el comando escribe la marca, la puerta ya está cerrada **antes del commit**,
+porque `_commiteado_y_sin_cambios` exige que el árbol coincida con HEAD. Tres motivos independientes
+tapan el mismo agujero —el árbol sucio, el blob que ya no cuadra y la pregunta marcada— y sólo el
+tercero sobrevive a una **re-firma**, que es donde hoy se reabría: medido, re-firmar citando una
+pregunta ya gastada daba `motivos == []`.
+
+**5. Borrar una pregunta en vez de gastarla también cierra, y ahora es irreversible como atajo.**
+Confirmado midiendo: borrar la línea cambia el blob y la autorización se cierra sola. Pero eso no
+aguantaba una re-firma —medido, `[]`—, y con el punto 1 esa re-firma cae por «cita una pregunta que
+el pre-registro no tiene».
+
+**6. `casos_reservados` deja de saltarse en silencio un reparto ilegible.** Lanza
+`RepartoIlegibleError`. El comentario que delegaba en `knowledge validate` era **falso** para toda
+carpeta que el glob ve y el validador de su camino no reconoce: medido, un `BORRADOR_2026-09/` daba
+exit 0 en todas partes con sus casos reservados invisibles. Y el atenuante que existía —un test que
+reimplementa el bucle sin `try`— no basta: un truncado que siga siendo YAML válido pierde ocho casos
+y el test pasa. La puerta no puede responder a medias: si no puede leer la asignación, **no sabe qué
+ocultar**.
+
+**7. El lector decide sobre la ruta RESUELTA.** `knowledge/cases/holdout/../holdout/2/<fichero>`
+leía material reservado **sin llamar a `abrir`** —medido—, porque el `..` hacía que el primer tramo
+no fuera `1|2|3` mientras `read_text` sí lo resolvía. Tres puntos y una barra saltaban la puerta. Y
+ahora niega por defecto: dentro del directorio guardado, todo lo que no sea el `README.md` de una
+partición conocida pasa por `abrir`, incluida una `4/` que aparezca mañana.
+
+**Lo que esta enmienda NO cierra, y queda dicho:**
+
+- **El agujero de `excluir` en `kappa_entre_sesiones` sigue abierto**: tras pasar la puerta,
+  `excluir` queda vacío y una autorización lee las etiquetas de todos los cubos. Está declarado como
+  bloqueante para abrir en ADR-0036 §6 y en Technical Debt. Con esta enmienda es **peor de
+  explicar**, porque la autorización dirá «pregunta P1 sobre holdout-2» y el código leerá los tres.
+- **El camino de fidelidad no tiene lector guardado, y hoy no lo necesita**, medido:
+  `knowledge/cases/holdout/{1,2,3}/` contiene cuatro README y nada más, y el material del camino de
+  fidelidad vive en `knowledge/feedback/` —que cubren `casos_reservados` y `trazar(ocultar=)`— y en
+  `corpus/`, que ningún código lee. **El disparador, escrito para no volver a medirlo:** el día que
+  exista bajo `knowledge/cases/<camino>/` un fichero con una etiqueta, un precio o el detalle por
+  operación de un día asignado a una partición reservada, ese camino necesita lector guardado
+  **antes de que ese fichero se commitee**.
+- **Quien llame `abrir()` en un bucle sin gastar entre medias sigue abriendo N veces.** La puerta
+  comprueba la AUTORIZACIÓN, no cuenta aperturas. Lo que hace que se abra una sola vez es que el
+  camino soportado —el comando— gaste, y por eso gasta antes.
+- **`EXPOSICIONES` sigue sin mecanismo**: ADR-0021 §4 obliga a declarar cada exposición el mismo
+  día, y ningún código lo comprueba ni sabe que hubo una apertura que declarar.
+
 ## Fecha / fase
 
 2026-09-17, rama `trabajo/guarda-de-holdout` (revisión de diseño con dos agentes antes de programar).

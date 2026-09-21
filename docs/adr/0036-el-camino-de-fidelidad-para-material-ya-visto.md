@@ -139,8 +139,15 @@ puerta, no de este camino—. Por eso una entra y el otro se escribe.
   qué partición, así que forma parte de lo que `particiones.yaml` reproduce.
 - La puerta agrega ahora los repartos de **los dos caminos** (`repartos_commiteables`), y
   `tests/unit/test_puerta_holdout.py` afirma **la unión exacta** en vez de una cifra pegada: no se
-  rompe al añadir un camino y caza lo que la otra no veía —un camino que quede fuera del glob, que
-  es material reservado invisible—.
+  rompe al añadir un camino.
+
+  > **Corrección del 2026-09-21 (enmienda de ADR-0033).** La frase que seguía aquí —que ese test
+  > «caza un camino que quede fuera del glob»— **era falsa**, y está medido: con un tercer camino
+  > `knowledge/cases/marzo/eurusd-2026-03/particiones.yaml` con un `holdout-2` dentro, los **dos**
+  > lados de la igualdad usan `repartos_commiteables`, así que el caso es invisible para ambos y la
+  > igualdad se cumple igual. Lo único que afirmaba algo sobre el glob era un par `{"kit",
+  > "fidelidad"}` pegado a mano. El test lleva ahora una enumeración que **no** pasa por el glob
+  > —sale del disco— y que sí se rompe con ese tercer camino.
 - **En este camino ningún fichero se exime nunca** de reproducirse byte a byte: no hubo sesión
   celebrada cuyas respuestas expliquen una diferencia.
 - **No cierra** el agujero de `excluir` en `kappa_entre_sesiones` (bloqueante para abrir, §6), ni el
