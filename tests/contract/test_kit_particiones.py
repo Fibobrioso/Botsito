@@ -40,7 +40,9 @@ def _paquete(repo: Path, caso: str) -> None:
         encoding="utf-8",
     )
     (repo / KIT / "ventanas.yaml").write_text(
-        f"sesion: {SESION}\ncasos:\n  - id: {caso}\n    dataset_id: prueba-1\n", encoding="utf-8"
+        f"sesion: {SESION}\ndatasets:\n  - prueba-1\n"
+        f"casos:\n  - id: {caso}\n    dataset_id: prueba-1\n",
+        encoding="utf-8",
     )
     (repo / KIT / "particiones.yaml").write_text(
         f"sesion: {SESION}\nseed: 1\nasignacion:\n  {caso}: dev\n", encoding="utf-8"

@@ -1362,8 +1362,13 @@ def kit_check(repo: Path, args: argparse.Namespace) -> int:
     try:
         # ANTES de comprobar, que es lo que lee las velas: la asignacion ya esta escrita y leerla
         # no lee ninguna vela (ADR-0033). Si algo falla despues, la lectura ya quedo declarada.
-        _, _, particiones = esquema_paquete(repo, args.sesion)
-        for linea in lectura_de_velas(repo, _carpeta_datos(repo), particiones["asignacion"]):
+        _, ventanas, particiones = esquema_paquete(repo, args.sesion)
+        # La lista CONGELADA del paquete, no el disco (ADR-0035): comprobar va a leer esos
+        # datasets y no los que haya hoy, asi que es lo que hay que declarar.
+        congelados = ventanas.get("datasets")
+        for linea in lectura_de_velas(
+            repo, _carpeta_datos(repo), particiones["asignacion"], congelados
+        ):
             print(linea)
         # Si la sesion ya se celebro, su paquete es historico y no tiene que reproducirse: el
         # registro tiene ya las respuestas y el cuestionario de hoy preguntaria otra cosa.

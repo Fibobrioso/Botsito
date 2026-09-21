@@ -4,6 +4,7 @@ escritura sin sobreescribir, `check` puro y validacion para `knowledge validate`
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -46,7 +47,9 @@ FICHERO_VISTOS = "vistos.yaml"
 FICHEROS_PAQUETE = ("cuestionario.yaml", "ventanas.yaml", "particiones.yaml", "hoja_trader.md")
 # Lo que una sesion ya celebrada cambia legitimamente: el cuestionario ya no preguntaria lo
 # mismo, las ventanas se recortan con lo respondido y la hoja las refleja. `particiones.yaml`
-# NO esta aqui a proposito (ver `comprobar`).
+# NO esta aqui a proposito (ver `comprobar`). Y el `datasets:` de `ventanas.yaml` tampoco se exime
+# nunca: se compara APARTE, antes del bucle, porque no sale de ninguna respuesta del trader
+# (ADR-0035). Si entrara aqui, alterar la lista congelada seria invisible en una sesion celebrada.
 DEPENDEN_DE_LAS_RESPUESTAS = ("cuestionario.yaml", "ventanas.yaml", "hoja_trader.md")
 SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _MES = re.compile(r"^\d{4}-\d{2}$", re.ASCII)
@@ -427,24 +430,66 @@ def _cargar_todo(
     return config, registro, ambiguedades, mapa, meses, dias, items
 
 
-def _manifiestos_del_kit(repo: Path, config: Config) -> list[dict[str, Any]]:
-    salida = []
+def _manifiestos_del_kit(
+    repo: Path, config: Config, datasets: Sequence[str] | None = None
+) -> list[dict[str, Any]]:
+    """Los manifiestos con los que se calcula un universo.
+
+    Con `datasets` -la lista CONGELADA en el paquete- devuelve exactamente esos, y falla si falta
+    alguno: un paquete existente se recompone con lo que dice que uso, no con lo que haya hoy en
+    disco. Sin `datasets` devuelve todos los del prefijo, que es lo correcto para un paquete NUEVO:
+    se construye con lo que hay (ADR-0035).
+    """
+    del_disco = []
     for ruta in manifiestos(repo):
         m = cargar_manifiesto(ruta)
         if str(m["dataset_id"]).startswith(config.dataset_prefijo):
-            salida.append(m)
-    return salida
+            del_disco.append(m)
+    if datasets is None:
+        return del_disco
+    por_id = {str(m["dataset_id"]): m for m in del_disco}
+    faltan = [d for d in datasets if d not in por_id]
+    if faltan:
+        raise KitError(
+            f"datasets congelados que ya no estan en data/manifests: {', '.join(sorted(faltan))}"
+        )
+    return [por_id[d] for d in datasets]
 
 
-def hay_datos_del_kit(repo: Path, carpeta_datos: Path, config: Config) -> bool:
-    """Si estan en `carpeta_datos` los ficheros de todos los datasets del kit."""
-    manifiestos_kit = _manifiestos_del_kit(repo, config)
-    return bool(manifiestos_kit) and all(
-        (carpeta_datos / str(f["ruta"])).is_file() for m in manifiestos_kit for f in m["ficheros"]
+def datasets_que_faltan_en_disco(
+    repo: Path, carpeta_datos: Path, config: Config, datasets: Sequence[str] | None = None
+) -> list[str]:
+    """Datasets cuyos ficheros no estan en `carpeta_datos`, por id y ordenados.
+
+    Antes esto era un booleano global (`hay_datos_del_kit`) sobre TODOS los datasets del prefijo, y
+    bastaba con que uno solo -aunque fuera ajeno al paquete- no tuviera sus ficheros para que
+    `kit check` saliera con 0 sin comprobar nada y sin declarar ninguna lectura. Un exit 0 que no
+    comprueba nada es la misma clase de defecto que ADR-0035 arregla, asi que ahora se NOMBRAN.
+    """
+    return sorted(
+        str(m["dataset_id"])
+        for m in _manifiestos_del_kit(repo, config, datasets)
+        if not all((carpeta_datos / str(f["ruta"])).is_file() for f in m["ficheros"])
     )
 
 
-def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]) -> list[str]:
+def hay_datos_del_kit(
+    repo: Path, carpeta_datos: Path, config: Config, datasets: Sequence[str] | None = None
+) -> bool:
+    """Si estan en `carpeta_datos` los ficheros de los datasets pedidos (los congelados, o los del
+    prefijo si no se pasa lista)."""
+    manifiestos_kit = _manifiestos_del_kit(repo, config, datasets)
+    return bool(manifiestos_kit) and not datasets_que_faltan_en_disco(
+        repo, carpeta_datos, config, datasets
+    )
+
+
+def lectura_de_velas(
+    repo: Path,
+    carpeta_datos: Path,
+    asignacion: dict[str, str],
+    datasets: Sequence[str] | None = None,
+) -> list[str]:
     """Lo que `kit build` y `kit check` declaran en su salida ANTES de leer velas (ADR-0033).
 
     Construir o comprobar un paquete lee las velas M1 de TODOS los dias del universo, reservados
@@ -456,13 +501,16 @@ def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]
     las fechas estan en `particiones.yaml`, y la salida puede acabar delante del trader.
     """
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
-    if not hay_datos_del_kit(repo, carpeta_datos, config):
+    if not hay_datos_del_kit(repo, carpeta_datos, config, datasets):
         return []
     from botsito.cases.holdout import PARTICIONES_RESERVADAS
 
-    datasets = sorted(str(m["dataset_id"]) for m in _manifiestos_del_kit(repo, config))
+    # Los que se van a leer DE VERDAD: con un paquete existente, su lista congelada; si no, el
+    # disco. Declarar de mas es menos peligroso que declarar de menos, pero sigue siendo una
+    # declaracion falsa en el unico fichero que existe para ser creible (ADR-0033, ADR-0035).
+    leidos = sorted(str(m["dataset_id"]) for m in _manifiestos_del_kit(repo, config, datasets))
     lineas = [
-        f"LECTURA: se leen las velas M1 de {', '.join(datasets)} en {carpeta_datos.name}/ -todos "
+        f"LECTURA: se leen las velas M1 de {', '.join(leidos)} en {carpeta_datos.name}/ -todos "
         f"los dias del universo, reservados incluidos- para recalcular n_velas, sha256 y limites "
         f"H4 de sus ventanas. Ninguna etiqueta y ningun precio: no es abrir un holdout (ADR-0021 "
         f"§1), y se declara (ADR-0033)"
@@ -481,9 +529,20 @@ def lectura_de_velas(repo: Path, carpeta_datos: Path, asignacion: dict[str, str]
 
 
 def construir(
-    repo: Path, carpeta_datos: Path, sesion: str, seed: int, indice: Indice | None = None
+    repo: Path,
+    carpeta_datos: Path,
+    sesion: str,
+    seed: int,
+    indice: Indice | None = None,
+    datasets: Sequence[str] | None = None,
 ) -> Paquete:
-    """Construye el paquete completo en memoria. Exige los datos de los datasets en `data/`."""
+    """Construye el paquete completo en memoria. Exige los datos de los datasets en `data/`.
+
+    `datasets` es la lista CONGELADA de un paquete existente (ADR-0035): con ella el universo se
+    recompone con lo que el paquete uso y no con lo que haya hoy en disco. Por omision -`None`-
+    lee el disco, que es lo que un paquete NUEVO tiene que hacer: `kit build` se construye con lo
+    que hay, y congelar tambien este camino dejaria al proyecto sin poder hacer ningun paquete.
+    """
     if not SESION.match(sesion):
         raise KitError(f"sesion invalida {sesion!r} (AAAA-MM-DD-sesion-NN)")
     if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
@@ -520,7 +579,7 @@ def construir(
     except CuestionarioError as exc:
         raise KitError(str(exc)) from exc
     try:
-        manif = _manifiestos_del_kit(repo, config)
+        manif = _manifiestos_del_kit(repo, config, datasets)
         if not manif:
             raise KitError(
                 f"ningun dataset con prefijo {config.dataset_prefijo!r} en data/manifests"
@@ -559,6 +618,7 @@ def construir(
                 "config": config.doc,
                 "huso_operativa": huso,
                 "casos": [c.como_dict() for c in elegidos],
+                "datasets": sorted(str(m["dataset_id"]) for m in manif),
                 "universo": len(casos),
                 "excluidos": [{"dia": e.dia, "motivo": e.motivo} for e in excluidos],
             }
@@ -644,6 +704,37 @@ def esquema_paquete(
     return cuestionario, ventanas, particiones
 
 
+def _datasets_congelados(
+    sesion: str, ventanas: dict[str, Any], problemas: list[str]
+) -> list[str] | None:
+    """La lista congelada del paquete, validada. `None` si no se puede seguir (ADR-0035)."""
+    crudo = ventanas.get("datasets")
+    if crudo is None:
+        problemas.append(
+            f"{sesion}/ventanas.yaml: sin `datasets`: el universo del paquete no esta congelado y "
+            f"no hay con que reproducirlo (ADR-0035)"
+        )
+        return None
+    if not isinstance(crudo, list) or not all(isinstance(d, str) and d for d in crudo):
+        problemas.append(f"{sesion}/ventanas.yaml: `datasets` debe ser una lista de ids")
+        return None
+    lista = [str(d) for d in crudo]
+    if lista != sorted(set(lista)):
+        problemas.append(f"{sesion}/ventanas.yaml: `datasets` con repetidos o sin ordenar")
+        return None
+    de_casos = {
+        str(c.get("dataset_id")) for c in ventanas.get("casos") or [] if isinstance(c, dict)
+    }
+    huerfanos = sorted(de_casos - set(lista))
+    if huerfanos:
+        problemas.append(
+            f"{sesion}/ventanas.yaml: casos que citan datasets fuera de `datasets`: "
+            f"{', '.join(huerfanos)}"
+        )
+        return None
+    return lista
+
+
 def comprobar(
     repo: Path, carpeta_datos: Path, sesion: str, celebrada: bool = False
 ) -> tuple[list[str], list[str]]:
@@ -656,12 +747,32 @@ def comprobar(
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
     if ventanas.get("config") != config.doc:
         problemas.append(f"{sesion}: config.yaml cambio despues de generar el paquete")
-    if not hay_datos_del_kit(repo, carpeta_datos, config):
+    # El universo de un paquete se congela DENTRO del paquete, como ya se hace con `config:`. Pero
+    # `config:` se COMPARA contra el fichero de hoy y `datasets:` no puede compararse contra nada:
+    # el disco crece a proposito -meses nuevos- y esa era justo la averia (ADR-0035). `datasets:`
+    # se USA: es la lista con la que se recompone el paquete, y lo que la prueba es que el paquete
+    # siga reproduciendose byte a byte con ella. Tres condiciones, y ninguna es un permiso:
+    #
+    #   1. Sin `datasets:` no se comprueba nada: PROBLEMA, no aviso. Un paquete sin universo
+    #      congelado no tiene con que reproducirse, y dejarlo pasar seria devolver el defecto.
+    #   2. La lista se valida contra los manifiestos, que son inmutables: ids existentes, ordenada
+    #      y sin repetidos, y contiene todos los `casos[].dataset_id`. Lo que no necesita velas se
+    #      comprueba ademas en `knowledge validate` (`validar_paquetes`), que corre sin `data/`.
+    #   3. Se comprueba AQUI, fuera del bucle de comparacion, igual que `config:`, y NO entra en
+    #      DEPENDEN_DE_LAS_RESPUESTAS: una diferencia en `datasets:` no sale de ninguna respuesta
+    #      del trader, asi que nunca puede bajar a aviso. Si bajara, alterar la lista congelada
+    #      quedaria invisible en una sesion celebrada, que son todas las que importan.
+    congelados = _datasets_congelados(sesion, ventanas, problemas)
+    if congelados is None:
+        return problemas, avisos
+    faltan = datasets_que_faltan_en_disco(repo, carpeta_datos, config, congelados)
+    if faltan:
         avisos.append(
-            f"{sesion}: datos de los datasets ausentes en {carpeta_datos.name}/: solo esquema"
+            f"{sesion}: datos ausentes en {carpeta_datos.name}/ de {', '.join(faltan)}: solo "
+            f"esquema"
         )
         return problemas, avisos
-    nuevo = construir(repo, carpeta_datos, sesion, seed)
+    nuevo = construir(repo, carpeta_datos, sesion, seed, datasets=congelados)
     carpeta = repo / DIRECTORIO_KIT / sesion
     for nombre, texto in nuevo.ficheros.items():
         if _leer(carpeta, nombre) == texto:
@@ -760,6 +871,29 @@ def validar_paquetes(
             for e in evs:
                 if e not in ids_evidencia:
                     problemas.append(f"{sesion}: {p.get('id')} cita evidencia inexistente {e}")
+        # El universo congelado (ADR-0035), con lo que se puede comprobar SIN velas: que la lista
+        # exista, que sus ids sigan en data/manifests -si alguien borra un manifiesto, el paquete
+        # deja de poder reproducirse y aqui se ve sin datos- y que ningun caso cite uno que no
+        # este. Lo demas lo prueba `kit check` reproduciendo el paquete byte a byte.
+        congelados = ventanas.get("datasets")
+        if congelados is None:
+            problemas.append(
+                f"{sesion}/ventanas.yaml: sin `datasets`: el universo del paquete no esta "
+                f"congelado (ADR-0035)"
+            )
+        elif not isinstance(congelados, list) or [str(d) for d in congelados] != sorted(
+            {str(d) for d in congelados}
+        ):
+            problemas.append(
+                f"{sesion}/ventanas.yaml: `datasets` debe ser una lista ordenada y sin repetidos"
+            )
+        else:
+            for d in congelados:
+                if str(d) not in ids_datasets:
+                    problemas.append(
+                        f"{sesion}/ventanas.yaml: `datasets` cita {d}, que ya no esta en "
+                        f"data/manifests: el paquete no se puede reproducir"
+                    )
         casos = ventanas.get("casos") or []
         cids = [str(c.get("id")) for c in casos]
         if len(set(cids)) != len(cids):

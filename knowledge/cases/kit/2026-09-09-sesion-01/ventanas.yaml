@@ -831,6 +831,12 @@ config:
   ventana_local:
     desde: 00:00
     hasta: '15:00'
+datasets:
+- eurusd-m1-2026-01-e37291d4
+- eurusd-m1-2026-05-03d048ed
+- eurusd-m1-2026-06-9c45983f
+- eurusd-m1-2026-07-aa162170
+- eurusd-m1-2026-08-0d42230e
 excluidos:
 - dia: '2026-01-01'
   motivo: mes visto por el trader
