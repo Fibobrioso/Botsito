@@ -5,6 +5,65 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `feature/F14a-ingesta-del-detalle` esperando validacion; lo de debajo es anterior)
+- LO PRIMERO, PORQUE VUELVE A PASAR: `CLAUDE.md` §3 prohibia "el detalle por operacion de los xlsx"
+  EN BLOQUE, y ADR-0021 §1 dice "en esos dias" desde el 2026-09-12. TERCERA VEZ que este fichero es
+  mas estricto que el ADR sin que ningun ADR lo diga, y las tres veces bloqueo un paso NECESARIO.
+  Corregido, con su caja. **Si te topas con una prohibicion de `CLAUDE.md`, buscala en el ADR antes
+  de obedecerla.**
+- EL CRITERIO, que es lo que hay que entender antes de tocar nada: LA GRANULARIDAD DEL DATO, no el
+  tipo de fichero (ADR-0037). Las filas de un dia `dev` se leen; una pestana de totales del mismo
+  libro NO se abre nunca, y NINGUNA autorizacion la abre, porque lleva los reservados dentro y no se
+  puede trocear. Y la ESTRUCTURA se VERIFICA contra una lista escrita antes: la pestana se
+  SELECCIONA, no se enumera, y el conjunto de FECHAS del libro no sale del lector -un "14 dias en el
+  libro" publica que dias reservados NO opero el trader, y un dia laborable sin operaciones ES su
+  etiqueta-.
+- LO QUE MAS VALE DE LA RAMA NO ES EL CODIGO, ES LO QUE SE MIDIO. Se abrio AGOSTO -material de
+  desarrollo, cero dias reservados, comprobado ANTES con `casos_reservados(repo)` y declarado el
+  mismo dia- y resulto que NINGUNA columna del libro es el objetivo planeado. `maxTP` esta relleno
+  si y solo si la operacion gano (20/20 con `rPnL > 0`; 27 sin `maxTP`, ninguna ganadora): es un
+  resultado. `idealTP` cae DEL LADO DE LA PERDIDA en 4 de 47 -las cuatro `sell` perdedoras-.
+- EL OBJETIVO ES UNA REGLA, `objetivo_rr` con `base_calculo_objetivo`, y el xlsx NO LO REGISTRA.
+  Cita literal del trader: `ev-v2-001658-d02fb71a` (v2 0:16:58). POR ESO EL CASO NO LLEVA CAMPO
+  `objetivo`, y no es que lo lleve vacio: un campo opcional vacio es una invitacion a que alguien lo
+  rellene con `maxTP` dentro de seis meses. QUITAR EL CAMPO ES EL MECANISMO.
+- LA LECCION QUE HAY QUE LLEVARSE: lo cazo EL INVARIANTE GEOMETRICO -para `buy` el stop por debajo
+  de la entrada, para `sell` por encima-, que estaba puesto como test PERMANENTE DE HIGIENE y no
+  como discriminador. Tres cruces disenados a proposito -presencia contra resultado, RR calculado
+  contra RR declarado, recuento de valores distintos- miraban CORRELACIONES y no lo vieron. Una
+  comprobacion de sentido puesta por higiene vale mas que un cruce disenado, porque no sabe que
+  esta buscando. Se queda como guardia permanente: cualquier fila que la viole ABORTA la ingesta
+  nombrando la fila.
+- EL CORPUS CONTESTO DOS VECES LO QUE IBA A IRSE AL TRADER, en el mismo dia: el objetivo
+  (`ev-v2-001658-d02fb71a`) y los parciales (`ev-v1-002313-6342a154`, `ev-v2-001819-60a1b0f1`, y
+  sobre todo v6 0:17:07, el trader EN LA SESION 1: "sin toma de parciales y que tiene que llegar al
+  ratio 1.3 si o si" -el ASR escribe 1.3 donde dice 1:3-). BUSCA EN EL CORPUS ANTES DE REDACTAR
+  CUALQUIER AMBIGUEDAD. Una pregunta al trader cuesta un hueco de sesion; la busqueda no cuesta
+  nada. A-33 NO se abre.
+- `dateStart` VIENE EN UTC, y esa medida sostiene la asignacion a sesion H4: convertidas a
+  `huso_operativa` las 47 operaciones de agosto caen dentro de las dos sesiones; leidas como hora
+  local de Madrid, 16 quedarian fuera.
+- LOS DIAS NO SE ELIGEN, SE DERIVAN: no hay `--dias`. `dias_ingeribles` = casos de un reparto
+  COMMITEADO menos `casos_reservados`. Un dia fuera de todo reparto ABORTA el comando entero; un dia
+  reservado se descarta sin escribirse y SIN NOMBRARSE en la salida.
+- ES LA PRIMERA VEZ QUE HAY PRECIOS BAJO `knowledge/cases/`. Por eso `problemas_de_biblioteca` corre
+  dentro de `knowledge validate` siempre y sin `data/`, y hay test de contrato: ningun fichero de
+  `knowledge/cases/dev/` puede corresponder a un caso reservado.
+- NO SE HA INGERIDO NADA DE VERDAD: cero `caso-*.yaml` en el arbol. Los tests van contra un xlsx
+  SINTETICO. Si el usuario dice que si, la ingesta real de mayo son 6 casos y su commit necesita
+  trailer `Fuente:` (`knowledge/cases/` esta en `DIRECTORIOS_CON_FUENTE`).
+- ERROR MIO, VISIBLE Y SIN REESCRIBIR: ADR-0037 se commiteo (`a791f92`) diciendo que el objetivo es
+  `idealTP`. La correccion va EN CAJA dentro del propio ADR. Y peor que el error: antes de medir
+  escribi DOS consecuencias para F26 en direcciones OPUESTAS, las dos falsas. Una consecuencia para
+  F26 es una afirmacion como cualquier otra y no se escribe sin medir la cadena entera hasta ella.
+- DEUDA QUE DESCUBRE ESTA RAMA Y HAY QUE LEER: JUNIO sigue siendo `dev` en el reparto de la sesion 1
+  y ADR-0025 lo descarto. `dias_ingeribles` devuelve 20 dias: 6 de mayo, 10 DE JUNIO y 4 de
+  septiembre. Hoy inocuo -no hay xlsx de junio- pero el dia que llegue uno se escribirian 10 casos
+  de un mes descartado sin que nada chille.
+- LA PUERTA SIGUE CERRADA: `PREREGISTRO.md` intacto (blob `52649183...`, marca `SIN RELLENAR`), cero
+  `AUTORIZACION-*.md`, ninguna particion abierta. Esta rama no pre-registra ni firma nada.
+- LO SIGUIENTE, que no es codigo y lleva semanas de plazo: pedirle al trader FEBRERO O MARZO.
+
 ## Estado (2026-09-21, rama `trabajo/puerta-por-pregunta` esperando validacion; lo de debajo es anterior)
 - EL SORTEO DE SEPTIEMBRE ESTA CERRADO EN MAIN (merge 15a49b0, tag `stable/F13-septiembre-sorteo`).
 - LO QUE HAY QUE ENTENDER ANTES DE TOCAR LA PUERTA: `abrir` es PURA y lo seguira siendo. Por eso el

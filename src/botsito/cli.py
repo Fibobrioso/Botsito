@@ -1309,8 +1309,10 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
 
 
 def _kit_errores() -> tuple[type[Exception], ...]:
+    from botsito.cases.biblioteca import BibliotecaError
     from botsito.cases.fidelidad import FidelidadError
     from botsito.cases.holdout import RepartoIlegibleError
+    from botsito.cases.ingesta import IngestaError
     from botsito.cases.paquete import KitError
     from botsito.config.ajustes import AjustesError
     from botsito.config.registro import RegistroError
@@ -1324,6 +1326,8 @@ def _kit_errores() -> tuple[type[Exception], ...]:
     return (
         KitError,
         FidelidadError,
+        BibliotecaError,
+        IngestaError,
         RepartoIlegibleError,
         AjustesError,
         RegistroError,
@@ -1506,6 +1510,78 @@ def fidelidad_anclar(repo: Path, args: argparse.Namespace) -> int:
     que = "re-anclado" if viejas is not None else "anclado"
     detalle = ", ".join(f"{n} {s[:12]}…" for n, s in sorted(nuevas.items()))
     print(f"OK: {args.artefacto} {que} en {ruta.relative_to(repo).as_posix()}: {detalle}")
+    return 0
+
+
+DIRECTORIO_DEV_TXT = "knowledge/cases/dev"
+
+
+def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
+    """Ingiere el detalle por operacion de los dias INGERIBLES (F14a, ADR-0037).
+
+    No hay `--dias`: el conjunto se deriva de los repartos commiteados menos los reservados, y un
+    humano no puede ampliarlo.
+    """
+    from botsito.cases.biblioteca import como_documento, escribir
+    from botsito.cases.ingesta import dias_ingeribles, ingerir
+    from botsito.cases.paquete import cargar_config
+    from botsito.comun.documentos import sha256_hex
+    from botsito.config.registro import cargar_registro
+
+    material = Path(args.material)
+    try:
+        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        huso = registro.texto("huso_operativa")
+        sesiones = [(s.nombre, s.desde, s.hasta) for s in config.sesiones]
+        pedidos = dias_ingeribles(repo)
+        resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    fuente = {
+        "tipo": "backtest_xlsx",
+        "fichero": material.as_posix(),
+        "sha256": sha256_hex(material.read_bytes()),
+        "ingerido_el": args.fecha,
+    }
+    docs = [
+        como_documento(pedidos[dia], dia, config.simbolo, ops, fuente)
+        for dia, ops in sorted(resultado.casos.items())
+        if ops
+    ]
+    escritos = escribir(repo, docs)
+    # RECUENTO y no fechas, como las lineas `LECTURA:` de ADR-0033: esta salida puede acabar
+    # delante de cualquiera, y el conjunto de dias del libro no sale de aqui.
+    print(
+        f"INGESTA: {len(escritos)} casos escritos de {len(pedidos)} dias ingeribles; "
+        f"{resultado.filas_leidas} filas leidas; 0 pestanas de agregado abiertas"
+    )
+    if resultado.sin_stop:
+        print(
+            f"INGESTA: {resultado.sin_stop} filas SIN `initialSL` no produjeron caso: una fila sin "
+            f"stop no es una decision completa. Se cuentan aqui para que no desaparezcan en "
+            f"silencio",
+            file=sys.stderr,
+        )
+    print(f"OK: {DIRECTORIO_DEV_TXT}/ con {len(escritos)} casos. Commitealos con `Fuente:`")
+    return 0
+
+
+def casos_check(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.cases.biblioteca import problemas_de_biblioteca
+
+    try:
+        problemas = problemas_de_biblioteca(repo)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for p in problemas:
+        print(f"ERROR: {p}", file=sys.stderr)
+    if problemas:
+        return 1
+    print("OK: los casos de la biblioteca tienen la forma declarada y ninguno esta reservado")
     return 0
 
 
@@ -2221,6 +2297,18 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="el artefacto cambio a proposito y se vuelve a anclar (acto explicito)",
     )
+    casos = sub.add_parser(
+        "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
+    )
+    casos_sub = casos.add_subparsers(dest="casos_cmd", required=True)
+    cs_ing = casos_sub.add_parser(
+        "ingerir", help="escribe los casos de los dias INGERIBLES (derivados, no elegidos)"
+    )
+    cs_ing.add_argument("--material", required=True, help="el xlsx del backtest del trader")
+    cs_ing.add_argument("--fecha", required=True, help="AAAA-MM-DD en que se ingiere")
+    casos_sub.add_parser(
+        "check", help="comprueba la forma de los casos y que ninguno este reservado"
+    )
     kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
     kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
     find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
@@ -2394,6 +2482,10 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_reject(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "list":
         return evidence_list(args.repo, args)
+    if args.cmd == "casos" and args.casos_cmd == "ingerir":
+        return casos_ingerir(args.repo, args)
+    if args.cmd == "casos" and args.casos_cmd == "check":
+        return casos_check(args.repo, args)
     if args.cmd == "fidelidad" and args.fidelidad_cmd == "build":
         return fidelidad_build(args.repo, args)
     if args.cmd == "fidelidad" and args.fidelidad_cmd == "check":

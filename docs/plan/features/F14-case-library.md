@@ -5,6 +5,16 @@ ejecutables con tres particiones reservadas (holdout-1/2/3) · guarda de holdout
 runner independiente"*)
 **Revisión de diseño:** PENDIENTE.
 
+> **F14a se separó de aquí el 2026-09-21** (rama `feature/F14a-ingesta-del-detalle`, ADR-0037,
+> informe `docs/validation/F14A-INGESTA.md`). F14a construye **sólo la ingesta del detalle por
+> operación**: el lector único del libro (`corpus/libro.py`), los días que se DERIVAN del reparto en
+> vez de elegirse, la forma del caso en `knowledge/cases/dev/` y la guardia de que ningún caso
+> reservado viva ahí. **No toma D1**: el caso guarda las operaciones que el material dice, y el
+> `no_trade` por ausencia sigue siendo una inferencia nuestra sin ADR que la decida (ADR-0016). Y
+> resolvió por medida algo que esta página daba por hecho: **el xlsx no registra el objetivo
+> planeado** —ninguna columna lo es— porque el objetivo es la regla `objetivo_rr`
+> (`ev-v2-001658-d02fb71a`, ADR-0037 §7 y su corrección).
+
 ---
 
 ## 1. Qué problema resuelve, y cuál NO

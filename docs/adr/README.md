@@ -41,4 +41,4 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0034 | Septiembre es material ETIQUETADO de un mes que el trader ya ha visto | ACTIVE |
 | 0035 | El universo de un paquete se congela en el paquete: comprobar va por la lista, construir por el disco | ACTIVE (con enmienda del 2026-09-21: tambien los cupos, y `anclas.yaml` ata lo congelado por el sha de su blob) |
 | 0036 | El material ya visto se reparte por su propio camino, con nombres propios y con puerta | ACTIVE |
-| 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE |
+| 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

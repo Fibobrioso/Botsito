@@ -70,11 +70,71 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    `avgRiskReward` fuera un promedio agregado repetido por fila— resultó **falso**: tiene 16 valores
    distintos en 42 filas, y `maxRiskReward` 15 en 47. Es por operación. El motivo de fondo basta.)
 
+   > **CORRECCIÓN del 2026-09-21 (mismo día, commit `a791f92` arriba).** El cuerpo de esta
+   > decisión **afirmaba que el objetivo es `idealTP`, y es falso**. Se midió después, al probar el
+   > lector, y lo cazó el invariante geométrico —que estaba puesto como test permanente de higiene,
+   > no como discriminador—:
+   >
+   > ```
+   > idealTP:   del lado correcto 43, del lado MALO 4, sin valor 0
+   > maxTP:     del lado correcto 20, del lado MALO 0, sin valor 27
+   > initialSL: del lado correcto 42, del lado MALO 0, sin valor 5
+   > ```
+   >
+   > **Ninguna de las dos columnas es el objetivo planeado.** `maxTP` se cae por estar relleno sólo
+   > cuando se gana; `idealTP` se cae porque en 4 de 47 filas está **del lado de la pérdida** —entre
+   > la entrada y el stop, las cuatro `sell` perdedoras—, y su RR implícito no tiene estructura
+   > (0,2 · 0,1 · −0,2 · 2,1 · 1,1 · 56,6).
+   >
+   > **Lo que sí es el objetivo, y lo contestó el corpus:** una REGLA, no una columna. El trader
+   > dice en cámara *«el ratio de riesgo-beneficio de 1 a 3»* como mínimo
+   > (`ev-v2-001658-d02fb71a`, v2 0:16:58) y *«como objetivo fijo»* (v1 0:04:14), y la spec ya lo
+   > tiene como `objetivo_rr` con su `base_calculo_objetivo`. **El xlsx simplemente no registra el
+   > objetivo planeado.**
+   >
+   > Y hay huella mecánica de la regla dentro del propio fichero, independiente de la cita: el RR
+   > implícito de `maxTP` tiene **suelo en 3,00** —17 de 18 filas en 3,00 o por encima, tres
+   > clavadas en 3,00, con un único 2,50—, que es lo que se ve si la salida ocurre en 3R. Y que 15
+   > de 18 **se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada en
+   > 3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo.
+   >
+   > **Consecuencia para F26, corregida.** F26 **sí** puede puntuar el objetivo, comparando el del
+   > bot contra la REGLA —`entrada ± objetivo_rr × base_calculo_objetivo`—. Lo que **no** puede es
+   > verificar que en una operación concreta el trader colocara ese TP, porque el fichero no lo
+   > guarda. (Antes de esta corrección se escribieron **dos** consecuencias para F26 sin medir la
+   > cadena, y las dos eran falsas en direcciones opuestas: «el objetivo falta en la mayoría de
+   > unidades» y «no se puede puntuar en absoluto». La regla que sale: una consecuencia para F26 es
+   > una afirmación como cualquier otra y no se escribe sin medir la cadena entera hasta ella.)
+   >
+   > **Por eso el caso NO lleva campo `objetivo`**, y no es que lo lleve vacío: un campo opcional
+   > vacío es una invitación a que dentro de seis meses alguien lo rellene con `maxTP`. Quitar el
+   > campo **es** el mecanismo; un comentario no lo es. El caso lleva cuatro cosas: instante de
+   > apertura, dirección, entrada y stop.
+   >
+   > **Y `idealTP` no se guarda** en el caso, con motivo medido: no sabemos qué es. Queda anotado
+   > como deuda —*columna del material que no sabemos qué es y no usamos*— y no se le gasta al
+   > trader una pregunta por ella.
+
 8. **El instante de apertura viene en UTC, y esa es la medida que sostiene la asignación a sesión
    H4.** `dateStart` es texto sin huso (`2026/08/03 06:03:05`). Interpretado como UTC y llevado a
    `huso_operativa`, **las 47 operaciones de agosto caen dentro de las dos sesiones declaradas**
    (25 en `07-11`, 22 en `11-15`, cero fuera); interpretado como hora local de Madrid, 16 de 47
    quedarían fuera de toda sesión. La ingesta convierte desde UTC, y lo declara.
+
+8b. **Dos propiedades medidas del material, que no se corrigen ni se descartan.** Van escritas
+   porque van a reaparecer en mayo y en septiembre y alguien va a tropezar con ellas:
+
+   - **4 de 47 filas de agosto tienen `idealTP` entre la entrada y el stop**, las cuatro `sell` en
+     pérdida. No es un error del fichero: es cómo viene.
+   - **5 de 47 filas no tienen `initialSL`.** Una fila sin stop **no produce caso**, y no se cae en
+     silencio: se cuenta y se dice, con su motivo, en la salida del comando. Un caso que desaparece
+     sin constancia es el defecto que a la sesión 1 le costó dos días —`2026-05-25` y
+     `2026-06-29`— y que sólo delata un contador.
+
+   Y el **invariante geométrico** queda como guardia permanente, no como comprobación de una vez:
+   para `buy`, `initialSL` por debajo de `entryPrice`; para `sell`, por encima. Cualquier fila que
+   lo viole **aborta la ingesta nombrando la fila**. Caza para siempre un intercambio de columnas,
+   que es el fallo silencioso que más caro sale aquí —y es el que cazó lo de `idealTP`—.
 
 9. **`knowledge/cases/dev/` es un camino con PRECIOS, y ésa es su novedad.** Un `caso-*.yaml` lleva
    entrada y stop: es la primera vez que este repositorio pone precios bajo `knowledge/cases/`. El
