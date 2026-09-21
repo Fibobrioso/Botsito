@@ -29,6 +29,33 @@ Metiendo los 14 días laborables de septiembre (1‑4, 7‑11, 14‑18):
 **Corrección sobre lo que dije en la revisión:** la cifra es **23 de 42**, no 33. El 33 sumaba los 10
 días de septiembre que entran, que no son «casos que cambian de partición» sino casos nuevos.
 
+## 2b. Los dos días del universo que no están en ninguna partición
+
+El universo son 42 días y el paquete 40, porque los cupos suman 40. **Los dos que sobran son
+`2026-05-25` y `2026-06-29`** (`caso-eurusd-2026-05-25` y `caso-eurusd-2026-06-29`).
+
+**Dónde están, medido:** en ninguna parte del paquete. No están en `particiones.yaml`, así que **no
+son `dev` ni holdout**; no están en `casos:` de `ventanas.yaml`; y **tampoco están en `excluidos:`**,
+porque no se excluyeron por ningún motivo de datos. Lo único que deja constancia de que existen es
+el contador `universo: 42`.
+
+**Cómo se eligieron:** los descarta el sorteo por cupos, y de forma **reproducible**. `asignar()`
+ordena los casos por `sha256(f"{seed}:{caso}")` —con el id como desempate— y reparte los cupos en
+orden sobre esa lista; los sobrantes «quedan fuera del paquete». Con el seed commiteado (20260915),
+`2026-05-25` queda en el **puesto 41** y `2026-06-29` en el **42** de 42. No hay azar no reproducible:
+mismo seed y mismo universo dan los mismos dos días, y eso se vuelve a comprobar cada vez que
+`kit check` reproduce `particiones.yaml`.
+
+### La consecuencia para F26, que hay que tener delante
+
+- **Un kappa «sobre el universo» y uno «sobre el paquete» NO son el mismo conjunto.** Se diferencian
+  en estos dos días. Cualquier cifra tiene que decir sobre cuál de los dos se calcula.
+- **«Las particiones se fijaron antes de etiquetar» cubre el PAQUETE, no el universo.** La prueba
+  mecánica es `particiones.yaml`, y esos dos días no aparecen ahí. Si algún día se etiquetaran, su
+  anterioridad no estaría probada por ese fichero: habría que fijarlos antes, en un paquete.
+- **No son holdout, así que no queman ni protegen nada.** No sirven para medir fidelidad contra un
+  reparto ciego, porque nunca estuvieron repartidos.
+
 ## 3. Derivar la lista no vale, y está medido por los dos lados
 
 **(a) El dataset sin casos ocurre hoy, tres veces.** Los 40 casos de la sesión 1 citan solo mayo y

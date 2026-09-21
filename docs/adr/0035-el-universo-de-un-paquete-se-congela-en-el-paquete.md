@@ -101,6 +101,13 @@ descargar abril, no solo antes de septiembre.**
   que les faltan ficheros se **nombran**.
 - **Para el paquete de la sesión 2**: su lista se fija en el momento del build y para siempre, así
   que todos los meses que se quieran dentro tienen que estar congelados antes.
+- **Para F26, y no es un detalle:** el universo de la sesión 1 son 42 días y su paquete 40, porque
+  los cupos suman 40. Los dos que sobran -`2026-05-25` y `2026-06-29`- **no están en
+  `particiones.yaml`, ni en `casos:`, ni en `excluidos:`**: los descarta el sorteo por cupos, de
+  forma reproducible (puestos 41 y 42 del orden `sha256(seed:caso)`). Consecuencia: un kappa «sobre
+  el universo» y uno «sobre el paquete» no son el mismo conjunto, y la frase «las particiones se
+  fijaron antes de etiquetar» **cubre el paquete, no el universo** — esos dos días no aparecen en el
+  fichero que lo prueba.
 - **No cierra** ni la petición del mes limpio, ni el defecto de la guardia de ancestro —que empareja
   por el campo `sesion` y nunca por el caso, y se arregla **antes de la primera etiqueta**—, ni los
   cupos de `config.yaml`, que suman 40 frente a los 14 días laborables de septiembre.
