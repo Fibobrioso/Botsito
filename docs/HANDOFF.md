@@ -60,6 +60,35 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   y ADR-0025 lo descarto. `dias_ingeribles` devuelve 20 dias: 6 de mayo, 10 DE JUNIO y 4 de
   septiembre. Hoy inocuo -no hay xlsx de junio- pero el dia que llegue uno se escribirian 10 casos
   de un mes descartado sin que nada chille.
+- Y AL VALIDAR, EL CONSULTOR ENCONTRO LO MEJOR DE LA RAMA MIRANDO LO MISMO OTRA VEZ: el suelo del
+  RR no mide el objetivo PLANEADO, mide el RR REALIZADO sobre entrada-stop, que es exactamente lo
+  que A-18 lleva abierta desde F11. Las dos lecturas PREDICEN: `caja_completa` da
+  `objetivo_rr / stop_fraccion_caja` = 3/0,8 = 3,75; `riesgo_real` da 3,00. Agosto da SUELO EN 3,00
+  -18 filas con `maxTP` e `initialSL`, minimo 2,50, TRES clavadas en 3,00, 16 de 18 por debajo de
+  3,75-. **LA COMBINACION CONFIRMED DE HOY NO CUADRA CON EL MATERIAL**: o la base es `riesgo_real`,
+  o el stop del trader en su backtest no esta a 0,8 de la caja, y las dos tocan un parametro
+  CONFIRMED.
+- POR QUE NO SE DECIDE A-18, y esto es lo que hay que entender antes de tocarla: es UN mes, son 18
+  filas, y **LA CAJA NO ESTA EN EL FICHERO**. El RR que se mide es riesgo real POR CONSTRUCCION, asi
+  que si el stop del trader viviera en el borde de la caja las dos lecturas coincidirian y la medida
+  NO DISCRIMINARIA. Lo que hay es la primera medida que A-18 ha tenido nunca, y apunta al mismo lado
+  que `ev-v4-011951-5fb49e03` ya empujaba. A-18 gana la nota en `ambiguedades.yaml`; su estado, su
+  `decision` y su `evidencia` NO se tocan.
+- CORREGI UN NUMERO DEL BRIEF: decia "todos por debajo de 3,75" y son 16 de 18 -hay un 3,75 exacto y
+  un 5,33-. No cambia la conclusion; la refuerza, porque un suelo EN 3,00 con tres filas clavadas es
+  la firma de un objetivo en 3R sobrepasado, no la de un 3,75R al que 16 ganadoras no llegaron.
+- LA FRASE DE F26 VA POR SU TERCERA REDACCION EN UN DIA: F26 podra puntuar el objetivo contra la
+  regla CUANDO A-18 ESTE CERRADA, no antes, porque hoy la regla tiene dos lecturas que difieren un
+  25 % del recorrido. Las dos primeras versiones fueron error mio; esta no: la cadena era mas larga
+  de lo que nadie habia escrito. La regla se amplia: **la cadena hasta F26 incluye las ambiguedades
+  ABIERTAS que cuelgan de los parametros que nombra.**
+- LO QUE VIENE, decidido: rama `trabajo/mayo-dev-ingerido`, y NO es solo ingerir. Ingiere los 6
+  `dev` de mayo Y REPITE LA MEDIDA DEL RR sobre ellos. Si mayo tambien da suelo en 3,00, la lectura
+  `caja_completa` queda en serios apuros y entonces SI toca decidir A-18. Ahi entra tambien
+  `cobertura_material` para junio, CON LA EXCLUSION QUE GRITA -nunca en silencio-, y sin tocar el
+  reparto de la sesion 1, que esta anclado por blob.
+- A-33 CERRADA SIN ABRIRLA, y bien cerrada: v6 0:17:07, y encaja con `parciales` y con
+  `objetivo_extension_activa: false` que la sesion 1 ya cerro.
 - LA PUERTA SIGUE CERRADA: `PREREGISTRO.md` intacto (blob `52649183...`, marca `SIN RELLENAR`), cero
   `AUTORIZACION-*.md`, ninguna particion abierta. Esta rama no pre-registra ni firma nada.
 - LO SIGUIENTE, que no es codigo y lleva semanas de plazo: pedirle al trader FEBRERO O MARZO.

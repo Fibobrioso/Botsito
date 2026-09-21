@@ -3,8 +3,11 @@
 Rama `feature/F14a-ingesta-del-detalle`, desde `a791f92`. Sin tocar main, sin merge, sin tag, sin
 push. **`PREREGISTRO.md` intacto** (blob `52649183dcdc55f136d88675feaa7c43459b5277`, con su marca
 `SIN RELLENAR`); **cero ficheros `AUTORIZACION-*.md` en el árbol**; **ninguna partición reservada
-abierta**. Sin tocar `knowledge/spec/`, `evidence/`, `feedback/`, ni los repartos y anclas ya
-commiteados.
+abierta**. Sin tocar `evidence/`, `feedback/`, ni los repartos y anclas ya commiteados. De
+`knowledge/spec/` se toca **una sola cosa, y en el segundo commit**: la nota medida de A-18 en
+`ambiguedades.yaml` (§4), que no cambia su `estado`, ni su `decision`, ni su lista de `evidencia`,
+y cuyo commit lleva trailer `Fuente:`. `kit check` sigue dando salida **idéntica** a la línea base
+después de escribirla.
 
 Lo que el brief llamaba «abrir cuatro días» resultó ser **escribir F14a entera**: no había ingesta
 —cero `xlsx`, `openpyxl` o `pandas` en `src/`— ni forma de caso —`find knowledge -name 'caso-*'`
@@ -139,6 +142,68 @@ diseñado, porque no sabe qué está buscando.
 Y que **15 de 18 se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada en
 3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo.
 
+### El suelo en 3,00 mide algo que nadie había medido: es la primera medida de A-18
+
+La medida del suelo **no es del objetivo planeado**: es del **RR REALIZADO**, calculado sobre la
+distancia entrada-stop. Y esa distinción, que parecía contabilidad, es exactamente lo que A-18
+lleva abierta desde F11. Los tres parámetros, en la spec de HEAD:
+
+| Parámetro | Valor | Estado | Fuente |
+|---|---|---|---|
+| `objetivo_rr` | `3` | CONFIRMED | `fb-2026-09-09-sesion-01-7fbbb2e7` |
+| `base_calculo_objetivo` | `caja_completa` | CONFIRMED | `ev-v2-003256-0197f4e1` |
+| `stop_fraccion_caja` | `0.8` | CONFIRMED | `fb-2026-09-09-sesion-01-d34a0222` |
+
+Y `knowledge/spec/strategy_spec.yaml:1063` ya lo avisaba, sin que nadie lo hubiera contrastado con
+material: *«El RR REALIZADO sigue siendo `objetivo_rr / stop_fraccion_caja`, no `objetivo_rr`
+[…] Quien mida fidelidad en F26 no debe leer esa diferencia como un fallo del bot: es la
+mecánica.»* A-18 —*base sobre la que se mide el objetivo 1:3*, ABIERTA, `resuelve_en: [F11, F26]`—
+es justo esa pregunta, y **las dos lecturas predicen cosas distintas y medibles**:
+
+```
+base = caja_completa  ->  RR sobre entrada-stop = objetivo_rr / stop_fraccion_caja = 3 / 0,8 = 3,75
+base = riesgo_real    ->  RR sobre entrada-stop = objetivo_rr                      =         3,00
+```
+
+**Lo medido en agosto**, sobre las 18 filas que tienen `maxTP` e `initialSL` a la vez (de las 20
+con `maxTP`: dos de ellas no tienen stop):
+
+```
+2,50 · 3,00 · 3,00 · 3,00 · 3,05 · 3,06 · 3,12 · 3,22 · 3,25
+3,25 · 3,29 · 3,29 · 3,33 · 3,43 · 3,46 · 3,54 · 3,75 · 5,33
+
+mínimo 2,50   ·   máximo 5,33   ·   tres clavadas en 3,00
+>= 3,00:  17 de 18          >= 3,75:  2 de 18  (una exactamente 3,75, y un 5,33)
+```
+
+**Corrección de un número del brief.** El brief decía «todos por debajo de 3,75»; no lo son. **Son
+16 de 18**, porque hay un 3,75 exacto y un 5,33. No cambia la conclusión —cambia su fuerza, y hacia
+arriba: un suelo **en** 3,00 con tres filas clavadas ahí es la firma de un objetivo en 3R
+sobrepasado por el recorrido, no la de un objetivo en 3,75R al que 16 de 18 ganadoras no llegaron.
+
+**Lo que esto dice, y es un hallazgo sobre parámetros CONFIRMED.** La combinación de hoy
+—`caja_completa` **con** el stop a `0,8`— **no cuadra con el material**. O la base es `riesgo_real`,
+o el stop del trader en su backtest no está a 0,8 de la caja. Las dos posibilidades tocan un
+parámetro CONFIRMED.
+
+**Y A-18 NO se decide hoy, con el motivo escrito.** Es **un** mes y son **18 filas**. Y sobre todo:
+**la caja no está en el fichero**. El RR que se mide es riesgo real *por construcción*, así que si
+el stop del trader viviera en el borde de la caja (`stop_fraccion_caja` = 1) las dos lecturas
+coincidirían y la medida **no discriminaría**. Lo que sí hay es **la primera medida que A-18 ha
+tenido nunca**, y apunta al mismo lado al que `ev-v4-011951-5fb49e03` ya empujaba —el trader dice
+que un ganador cubre «2 o 3» perdidas, que cuadra mejor con medir sobre el riesgo real—. A-18 gana
+la nota en `knowledge/spec/ambiguedades.yaml`; su estado, su `decision` y su lista de `evidencia`
+**no se tocan**.
+
+**Se repite sobre mayo**, en `trabajo/mayo-dev-ingerido`. Dos meses que coincidan mueven esto de
+«una medida» a «un hecho», y entonces sí toca decidir.
+
+**Una trampa medida al escribir esa nota**, que se lleva a `CLAUDE.md`: tocar el **texto** de una
+ambigüedad —no su `estado`, no su `decision`— deja `make check` en rojo con
+`test_lo_commiteado_es_lo_que_sale_de_la_fuente`, porque `docs/spec/ambiguedades.md` es GENERADO y
+va commiteado. Hay que pasar `botsito spec docs --escribir` en el **mismo** commit. La regla de la
+casa decía qué sitios toca *abrir* y *cerrar* una ambigüedad, y no contemplaba **editarla**.
+
 ### Lo que sí es el objetivo, y lo contestó el corpus
 
 Una **REGLA**, no una columna: `objetivo_rr` con su `base_calculo_objetivo`, que la spec ya tenía.
@@ -200,9 +265,19 @@ cadena, y las dos eran falsas en direcciones opuestas** —«el objetivo falta e
 unidades» y «no se puede puntuar en absoluto»—. La regla que sale: **una consecuencia para F26 es una
 afirmación como cualquier otra y no se escribe sin medir la cadena entera hasta ella.**
 
-**La consecuencia real, medida**: F26 **sí** puede puntuar el objetivo, comparando el del bot contra
-la REGLA —`entrada ± objetivo_rr × base_calculo_objetivo`—. Lo que **no** puede es verificar que en
-una operación concreta el trader colocara ese TP, porque el fichero no lo guarda.
+**La consecuencia real, TERCERA versión — y la segunda también se quedaba corta.** F26 podrá
+puntuar el objetivo contra la REGLA —`entrada ± objetivo_rr × base_calculo_objetivo`— **cuando A-18
+esté cerrada, y no antes**: hoy esa regla tiene **dos lecturas que difieren en un 25 % del
+recorrido** (3,75 frente a 3,00 sobre la distancia entrada-stop, §4). Puntuar «contra la regla» sin
+decir cuál de las dos es puntuar contra un número que todavía no existe. Lo que en ningún caso podrá
+F26 es verificar que en una operación concreta el trader colocara ese TP, porque el fichero no lo
+guarda.
+
+Las dos primeras redacciones eran error mío —falsas en direcciones opuestas, sin medir la cadena—.
+**Ésta no lo es**: la cadena era más larga de lo que nadie había escrito, y sólo apareció al cruzar
+el RR realizado con los tres parámetros. La regla se amplía: una consecuencia para F26 no se escribe
+sin medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que cuelgan
+de los parámetros que nombra**.
 
 ## 7. Los agregados: hoy el riesgo es FUTURO, no presente
 
@@ -263,16 +338,27 @@ aquí porque tocar el reparto commiteado de la sesión 1 no es cosa de esta rama
 
 ## 11. Qué debe decidir el usuario
 
-1. **Validar F14a** y, si procede, el ritual de merge con tag `stable/F14a-ingesta`.
-2. **Si la ingesta REAL de mayo entra en esta rama o en la siguiente.** Escribiría 6 `caso-*.yaml`
-   bajo `knowledge/cases/dev/` —con precios— y su commit necesita trailer `Fuente:`, porque
-   `knowledge/cases/` está en `DIRECTORIOS_CON_FUENTE`. Mi recomendación: **en la siguiente**, para
-   que esta rama se valide como mecanismo y el primer material escrito no se mezcle con la discusión
-   del mecanismo que lo escribe.
-3. **Junio (§10)**: si se corrige el reparto de la sesión 1 o se le pone `cobertura_material` al
-   `config.yaml` del kit.
-4. **La regla del corpus antes de la ambigüedad (§5)**: si el campo de términos buscados entra en
-   `ambiguedades.yaml` en la siguiente ambigüedad que se abra, como está anotado, o antes.
+> **Los cuatro puntos de abajo quedaron DECIDIDOS por el consultor el 2026-09-21**, al validar esta
+> rama y antes del ritual. Se dejan escritos con su decisión al lado, porque el informe tiene que
+> poder leerse dentro de seis meses sin el hilo de la conversación. La decisión 0 —el commit de
+> A-18— es la que produjo la §4 de arriba, y no estaba en ninguna de las dos listas.
+
+1. **DECIDIDO: F14a se valida**, con el commit de A-18 dentro, y va al ritual con tag `stable/F14a-ingesta`.
+2. **DECIDIDO: la ingesta real de mayo va en la SIGUIENTE rama**, `trabajo/mayo-dev-ingerido`, y
+   **con más alcance del que yo proponía**: no sólo ingiere los 6 días `dev` —6 `caso-*.yaml` con
+   precios, cuyo commit arrastra por primera vez el régimen del trailer `Fuente:` a esta línea de
+   trabajo— sino que **repite sobre ellos la medida del RR de la §4**. Eso es lo que convierte un
+   mes en dos y lo que puede mover A-18 de «una medida» a «un hecho»: si mayo también da suelo en
+   3,00, la lectura `caja_completa` queda en serios apuros y entonces sí toca decidirla.
+
+   Mi motivo era que esta rama se valide como mecanismo sin mezclarlo con el material. El del
+   consultor es más fuerte y lo dejo con sus palabras: **el informe dice CERO `caso-*.yaml`, y eso
+   es lo que permite validarla como MECANISMO**; en cuanto escriba 6 casos con precios deja de ser
+   «la ingesta funciona» para ser «la ingesta funciona y además aquí está el primer material», y
+   las dos cosas no se validan por separado.
+
+3. **DECIDIDO: junio (§10) se arregla con `cobertura_material` en el `config.yaml` del kit, y NO se toca el reparto de la sesión 1** —artefacto commiteado y anclado por blob, línea base de comparación de toda la semana, y soporte de la prueba de anterioridad por caso: reparticionar es legítimo con cero `LABEL_CASE`, pero el radio de explosión no se justifica para un defecto hoy inocuo—. La guardia va **donde se lee**, no reescribiendo la historia. Y lo que añadió el consultor: **la exclusión tiene que GRITAR** —un día que esté en un reparto y fuera de `cobertura_material` se cuenta, se nombra el mes y se dice el motivo en la salida—, porque un mapa incompleto indistinguible de uno completo es justo lo que se acaba de arreglar en `casos_reservados`.
+4. **DECIDIDO: el campo `buscado_en_corpus` es condición fechada.** Es cambio de esquema en `knowledge/spec/`, con su trailer `Fuente:` y con el test que congela cuáles están RESUELTAS, y no se atornilla a una rama que cierra. La condición, escrita para que no sea «alguna vez»: **la próxima ambigüedad que se abra lleva el campo, y el commit que la abra trae el cambio de esquema**. Hoy no se abre ninguna, así que esperar no cuesta nada.
 
 ## 12. Cómo comprobarlo
 
@@ -293,6 +379,11 @@ print(len(d), dict(sorted(collections.Counter(k[:7] for k in d).items())))"
 # El contrato del lector único
 uv run pytest tests/contract/test_import_contracts.py -k libro_del_trader -q
 uv run pytest tests/contract/test_ingesta.py -q
+
+# La nota de A-18: está, y no ha cambiado nada de lo que decide
+grep -c "PRIMERA MEDIDA" knowledge/spec/ambiguedades.yaml
+uv run python -c "from pathlib import Path; from botsito.cases.ambiguedades import cargar_ambiguedades as c; a=[x for x in c(Path('knowledge/spec/ambiguedades.yaml')) if x.id=='A-18'][0]; print(a.estado, a.decision, len(a.evidencia))"   # ABIERTA None 3
+uv run botsito spec check
 
 # Todo
 make check > make-check.log 2>&1; echo $?     # a FICHERO, nunca a /dev/null

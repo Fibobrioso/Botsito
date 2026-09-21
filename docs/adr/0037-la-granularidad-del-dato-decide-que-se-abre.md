@@ -98,13 +98,21 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    > de 18 **se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada en
    > 3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo.
    >
-   > **Consecuencia para F26, corregida.** F26 **sí** puede puntuar el objetivo, comparando el del
-   > bot contra la REGLA —`entrada ± objetivo_rr × base_calculo_objetivo`—. Lo que **no** puede es
-   > verificar que en una operación concreta el trader colocara ese TP, porque el fichero no lo
-   > guarda. (Antes de esta corrección se escribieron **dos** consecuencias para F26 sin medir la
-   > cadena, y las dos eran falsas en direcciones opuestas: «el objetivo falta en la mayoría de
-   > unidades» y «no se puede puntuar en absoluto». La regla que sale: una consecuencia para F26 es
-   > una afirmación como cualquier otra y no se escribe sin medir la cadena entera hasta ella.)
+   > **Consecuencia para F26 — TERCERA versión, y la anterior también se quedaba corta.** F26
+   > podrá puntuar el objetivo comparándolo contra la REGLA —`entrada ± objetivo_rr ×
+   > base_calculo_objetivo`— **cuando A-18 esté cerrada, y no antes**, porque hoy esa regla tiene
+   > **dos lecturas que difieren en un 25 % del recorrido**: sobre la distancia entrada-stop,
+   > `caja_completa` da `objetivo_rr / stop_fraccion_caja` = 3,75 y `riesgo_real` da 3,00.
+   > Puntuar contra «la regla» sin decir cuál de las dos es puntuar contra un número que todavía
+   > no existe. Lo que en ningún caso podrá F26 es verificar que en una operación concreta el
+   > trader colocara ese TP, porque el fichero no lo guarda.
+   >
+   > Es la tercera redacción de esta frase en el mismo día. Las dos primeras eran error mío
+   > —falsas en direcciones opuestas, sin medir la cadena—. **Ésta no**: la cadena era más larga
+   > de lo que nadie había escrito, y sólo se vio al medir el RR realizado contra los tres
+   > parámetros. La regla sigue en pie y se amplía: una consecuencia para F26 no se escribe sin
+   > medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que
+   > cuelgan de los parámetros que nombra**.
    >
    > **Por eso el caso NO lleva campo `objetivo`**, y no es que lo lleve vacío: un campo opcional
    > vacío es una invitación a que dentro de seis meses alguien lo rellene con `maxTP`. Quitar el

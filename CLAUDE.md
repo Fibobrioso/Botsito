@@ -132,6 +132,14 @@ Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 **Abrirla:** `knowledge/spec/ambiguedades.yaml` y la tabla "Known Ambiguities" de `PROJECT_STATE.md`,
 donde un test exige que ids y titulos coincidan.
 
+**Y TOCAR EL TEXTO DE UNA AMBIGUEDAD, AUNQUE NO SE ABRA NI SE CIERRE NINGUNA, OBLIGA A
+`botsito spec docs --escribir`** (medido el 2026-09-21, rama F14a: anadir una nota medida al campo
+`pregunta` de A-18 dejo `make check` en rojo con
+`test_lo_commiteado_es_lo_que_sale_de_la_fuente`). `docs/spec/ambiguedades.md` es GENERADO y va
+commiteado, asi que cualquier cambio en el YAML -no solo el `estado`- tiene que viajar con su
+documento en el MISMO commit. Vale igual para `parametros.yaml`, `strategy_spec.yaml` y
+`glossary.yaml`, que generan los otros tres de `docs/spec/`.
+
 ## Cerrar una ambiguedad toca cuatro sitios, y solo dos los vigila una guardia
 
 El registro de parametros (via `feedback apply`), `knowledge/spec/ambiguedades.yaml`, la regla de la

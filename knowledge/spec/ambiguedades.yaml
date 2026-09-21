@@ -319,7 +319,16 @@ ambiguedades:
       dimensiona el lote? Hasta el 2026-09-11 las dos eran la MISMA distancia y la pregunta
       sonaba academica; desde ADR-0020 el lote se dimensiona hasta stop_fraccion_caja y el
       objetivo sigue midiendose sobre la caja entera, asi que la respuesta cambia el RR
-      realizado de verdad
+      realizado de verdad. PRIMERA MEDIDA, y no sale de la sesion sino del material
+      (2026-09-21, agosto, ADR-0037): las dos lecturas predicen RR distintos sobre la distancia
+      entrada-stop -`caja_completa` da objetivo_rr/stop_fraccion_caja = 3,75; `riesgo_real` da
+      3,00- y las 18 filas de agosto con `maxTP` e `initialSL` tienen SUELO EN 3,00 (minimo
+      2,50, tres clavadas en 3,00, 16 de 18 por debajo de 3,75). La combinacion CONFIRMED de hoy
+      -caja_completa con stop a 0,8- no cuadra con el material: o la base es `riesgo_real`, o el
+      stop del trader en su backtest no esta a 0,8 de la caja. NO DECIDE NADA: es un mes, son 18
+      filas, y LA CAJA NO ESTA EN EL FICHERO -el RR medido es riesgo real por construccion, asi
+      que si el stop viviera en el borde de la caja las dos lecturas coincidirian y la medida no
+      discriminaria-. Se repite sobre mayo al ingerirlo
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1
