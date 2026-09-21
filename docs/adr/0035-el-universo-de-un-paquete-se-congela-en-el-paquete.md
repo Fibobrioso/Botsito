@@ -112,10 +112,72 @@ descargar abril, no solo antes de septiembre.**
   por el campo `sesion` y nunca por el caso, y se arregla **antes de la primera etiqueta**—, ni los
   cupos de `config.yaml`, que suman 40 frente a los 14 días laborables de septiembre.
 
+## Enmienda del 2026-09-21 (los cupos, y el ancla que hace falsable lo congelado)
+
+El cuerpo de arriba **no se reescribe**. Lo que cambia se dice aquí.
+
+Este ADR dejó escrito en su Impacto que **no cerraba** «los cupos de `config.yaml`, que suman 40
+frente a los 14 días laborables de septiembre». Era el mismo defecto un escalón más abajo, y así se
+midió el 2026-09-21: `comprobar()` recomponía con `config.yaml` de HOY —`construir()` se recarga
+todo el config en `_cargar_todo`— y solo **comparaba** el bloque `config:` que el paquete ya
+guardaba. Consecuencia medida: editar los cupos daba `exit 1` con *«config.yaml cambió después de
+generar el paquete»* y *«particiones.yaml difiere»*, así que `config.yaml` era inmodificable
+mientras existiera un solo paquete, y septiembre no podía sortearse (`asignar` con 14 casos y 40
+cupos: `ParticionError: se piden 40 casos y el universo tiene 14`).
+
+**1. El bloque `config:` se USA, no se compara.** `construir(..., config=)` recibe el config
+congelado con el MISMO contrato que `datasets=`: `None` lee el disco —lo que un paquete NUEVO tiene
+que hacer— y no-`None` usa el congelado. Un mecanismo, dos entradas, la misma forma. `mover_sesion`
+arrastra las dos.
+
+**2. La guardia que comparaba no se borra: cambia de sujeto.** Hacía dos trabajos en una línea y por
+eso estorbaba: probaba la reproducción del paquete *y* avisaba de que el config global había
+derivado. Lo primero se hace ahora contra el congelado. Lo segundo vive en `validar_paquetes` como
+**AVISO con exit 0**, nombrando las claves que difieren: un paquete viejo se reproduce con el suyo y
+no tiene por qué saber nada del config de hoy, y editar `config.yaml` para el paquete SIGUIENTE es
+el camino normal, no una avería. Vive ahí y no en `comprobar()` porque `validar_paquetes` corre en
+`make check` **sin `data/`**, y `comprobar()` sale antes por dos `return` cuando no hay velas.
+
+**3. La falsabilidad, que es lo que legitima congelar — y NO es uniforme.** Si alguien edita los
+`cupos` del bloque congelado, la recomposición reparte distinto y `particiones.yaml` —que no se
+exime nunca, ni con la sesión celebrada— deja de reproducirse: medido, `ERROR: particiones.yaml
+difiere de lo que se genera hoy`. Pero eso **solo vale para los cupos**. `anclajes_candidatos`,
+`sesiones` y `etiquetas` alimentan únicamente `ventanas.yaml` y `hoja_trader.md`, que una sesión
+celebrada SÍ exime. Medido el 2026-09-21 sobre el paquete real, renombrando la etiqueta del anclaje
+dentro del bloque congelado: **`exit 0`, «sin diferencias que no explique la sesión celebrada»**. Y
+la guardia de ancestro no lo tapa: se desentiende con `if not etiquetas: continue` y hoy no existe
+ni un `LABEL_CASE` en el repositorio. Dicho de frente: **hasta esta enmienda, la línea que aquí se
+cambia de sujeto era lo único que impedía editar a mano el bloque congelado de un paquete
+celebrado.** Cambiarla sin nada a cambio habría abierto justo el agujero que la Decisión punto 4 de
+arriba se escribió para no abrir.
+
+**4. Por eso lo congelado se ata FUERA, con un ancla de blob.** `knowledge/cases/kit/anclas.yaml`
+declara, por sesión, el sha del **blob** de `ventanas.yaml` y `particiones.yaml`. Es el patrón de
+`preregistro_blob` (ADR-0033) y cumple sus tres requisitos: vive **fuera** del fichero que ata —un
+ancla dentro de lo que ancla la reescribe quien reescriba el fichero—; es **blob y no commit**,
+porque el blob cambia con cualquier byte y con nada más y sobrevive a un rebase (`ventanas.yaml`
+tiene ya dos commits, y un ancla de commit lo habría dado por alterado sin estarlo); y **re-anclar
+es un acto explícito**, `botsito kit anclar --sesion <s> --reanclar`, cuyo diff se ve en otro
+fichero. El ancla **no depende de que existan etiquetas**: ese `continue` es precisamente lo que
+deja sin atar el período en el que hace falta.
+
+Medido después: editar `config.yaml` a 6/3/3/2 deja `kit check` de la sesión 1 **idéntico a su línea
+base** con `diff` y `knowledge validate` en exit 0 con el aviso de deriva; el mutante sobre los
+cupos congelados sigue viéndose fallar; y el mutante sobre `anclajes_candidatos`, que daba exit 0,
+pasa a `exit 1`.
+
+**Lo que esta enmienda NO cambia.** La decisión de ADR-0025 sigue en pie: los cupos de `config.yaml`
+no se tocan *para reparticionar mayo*. Lo que caduca es su **argumento**, que decía que tocarlos
+«rompería la comprobación del paquete entero» citando este mecanismo de comparación. Ya no la rompe,
+y ADR-0025 lo dice ahora en su propia nota. Tampoco hacen falta cupos por paquete: editar
+`config.yaml` antes de cada `kit build` basta, porque cada paquete guarda el suyo — y eso solo es
+seguro **con** el ancla puesta.
+
 ## Fecha / fase
 
 2026-09-20, post-F13, rama `trabajo/universo-congelado`. Informe:
-`docs/validation/UNIVERSO-CONGELADO.md`.
+`docs/validation/UNIVERSO-CONGELADO.md`. Enmienda del 2026-09-21, rama
+`trabajo/cupos-congelados`. Informe: `docs/validation/CUPOS-CONGELADOS.md`.
 
 ## Estado
 

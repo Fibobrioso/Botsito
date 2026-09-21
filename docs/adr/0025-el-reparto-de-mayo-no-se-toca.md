@@ -6,6 +6,17 @@ phase: post-F13 (habilita F14)
 
 # 0025 · El reparto de mayo no se toca: seis días de biblioteca valen menos que la prueba de que se repartió antes
 
+> **Nota del 2026-09-21 (enmienda de ADR-0035).** La DECISION de abajo sigue entera: los cupos de
+> `config.yaml` no se tocan para reparticionar mayo, y el reparto real de la sesión 1 se queda como
+> está. Lo que ha caducado es uno de sus ARGUMENTOS. El punto 3 y la alternativa (3) dicen que
+> cambiar los cupos «rompería la comprobación del paquete entero» porque `cases/paquete.py` compara
+> el `config` que el paquete guardó contra el `config.yaml` de hoy. Desde la enmienda de ADR-0035
+> **eso ya no pasa**: `comprobar()` recompone con el bloque `config:` congelado del paquete, así que
+> editar `config.yaml` —lo que septiembre exige— deja la sesión 1 idéntica y solo produce un aviso
+> de deriva. El motivo que queda en pie para no reparticionar mayo es el de siempre, y es el bueno:
+> `particiones.yaml` es la única prueba mecánica de que las particiones se fijaron antes de
+> etiquetar.
+
 ## Decision
 
 1. **El universo de F14 son los 19 días de MAYO de 2026.** Los 21 de junio salen: el trader se

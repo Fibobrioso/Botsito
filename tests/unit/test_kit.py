@@ -467,11 +467,14 @@ def test_paquete_determinista_y_check(tmp_path: Path) -> None:
     with pytest.raises(KitError, match="no se sobreescribe"):
         escribir(repo, p1)
     assert comprobar(repo, repo / "data", "2026-09-15-sesion-01") == ([], [])
+    # El config global evoluciona a proposito -el paquete SIGUIENTE quiere otros cupos- y eso ya
+    # no rompe un paquete viejo: se recompone con su bloque `config:` congelado (ADR-0035,
+    # enmienda del 2026-09-21). Hasta esta rama, esto daba "config.yaml cambio despues de generar
+    # el paquete" y dejaba `config.yaml` inmodificable mientras existiera un solo paquete.
     (repo / DIRECTORIO_KIT / "config.yaml").write_text(
         CONFIG.replace("dev: 2", "dev: 3"), encoding="utf-8"
     )
-    problemas, _ = comprobar(repo, repo / "data", "2026-09-15-sesion-01")
-    assert any("config.yaml cambio" in p for p in problemas)
+    assert comprobar(repo, repo / "data", "2026-09-15-sesion-01") == ([], [])
     (repo / DIRECTORIO_KIT / "config.yaml").write_text(CONFIG, encoding="utf-8")
     # sin datos: solo esquema y aviso
     problemas, avisos = comprobar(repo, tmp_path / "otra", "2026-09-15-sesion-01")
@@ -1116,6 +1119,45 @@ def test_las_particiones_no_se_perdonan_ni_con_la_sesion_celebrada(tmp_path: Pat
         assert any("particiones.yaml" in p for p in problemas), (
             f"con celebrada={celebrada} las particiones tienen que ser ERROR, no AVISO"
         )
+
+
+def test_los_cupos_del_paquete_salen_del_paquete_y_editarlos_se_ve(tmp_path: Path) -> None:
+    """ADR-0035, enmienda del 2026-09-21: `comprobar` recompone con el bloque `config:` congelado.
+
+    El universo se congelo el 2026-09-20, pero los CUPOS seguian saliendo del `config.yaml` de
+    HOY: `comprobar` solo COMPARABA el bloque guardado contra el fichero global, asi que editarlo
+    -lo que septiembre exige, porque sus 14 dias laborables no dan para los 40 cupos de mayo-
+    rompia la comprobacion de la sesion 1 entera. Medido el 2026-09-21: exit 1 con "config.yaml
+    cambio despues de generar el paquete" y "particiones.yaml difiere".
+
+    Y la falsabilidad, que es lo que legitima congelar: si alguien edita los cupos DEL BLOQUE
+    CONGELADO, la recomposicion reparte distinto y `particiones.yaml` -que no se exime nunca, ni
+    con la sesion celebrada- deja de reproducirse. Lo congelado se verifica, por el mismo
+    mecanismo que prueba todo lo demas.
+    """
+    repo, _ = repo_kit(tmp_path)
+    sesion = "2026-09-15-sesion-01"
+    escribir(repo, construir(repo, repo / "data", sesion, 3))
+    assert comprobar(repo, repo / "data", sesion) == ([], [])
+
+    ventanas = repo / DIRECTORIO_KIT / sesion / "ventanas.yaml"
+    texto = ventanas.read_text(encoding="utf-8")
+    assert texto.count("    dev: 2\n") == 1, "el cupo vive una sola vez en el bloque congelado"
+    ventanas.write_text(texto.replace("    dev: 2\n", "    dev: 1\n"), encoding="utf-8")
+    for celebrada in (False, True):
+        problemas, _ = comprobar(repo, repo / "data", sesion, celebrada=celebrada)
+        assert any("particiones.yaml" in p for p in problemas), (
+            f"con celebrada={celebrada} editar los cupos congelados tiene que verse"
+        )
+    ventanas.write_text(texto, encoding="utf-8")
+    assert comprobar(repo, repo / "data", sesion) == ([], [])
+
+    # Sin bloque `config:` no hay con que reproducir: PROBLEMA, no aviso, igual que `datasets:`.
+    sin_config = yaml.safe_load(texto)
+    del sin_config["config"]
+    ventanas.write_text(yaml.safe_dump(sin_config, sort_keys=True), encoding="utf-8")
+    problemas, _ = comprobar(repo, repo / "data", sesion)
+    assert any("sin bloque `config`" in p for p in problemas)
 
 
 def test_decidida_exige_un_adr_que_exista_y_que_la_nombre(tmp_path: Path) -> None:

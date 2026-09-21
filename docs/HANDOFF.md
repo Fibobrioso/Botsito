@@ -5,6 +5,43 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/cupos-congelados` esperando validacion; lo de debajo es anterior)
+- EL UNIVERSO CONGELADO ESTA CERRADO EN MAIN (merge dfc7e20, tag `stable/F13-universo`, CI verde).
+- ESTA RAMA ES SU ENMIENDA, no un ADR nuevo, y el motivo no es de estilo: ADR-0035 dejo escrito en
+  su Impacto que NO cerraba "los cupos de `config.yaml`, que suman 40 frente a los 14 dias
+  laborables de septiembre". El precedente del repo para esto es unanime (ADR-0007, ADR-0015,
+  ADR-0022 llevan la enmienda DENTRO del fichero viejo; ADR-0033 fue nuevo porque estrenaba
+  mecanismo).
+- EL BLOQUEO DE SEPTIEMBRE ESTA QUITADO: `comprobar()` recompone con el bloque `config:` congelado
+  del paquete, asi que editar `config.yaml` para los 14 dias ya NO rompe la sesion 1. Medido con el
+  global a 6/3/3/2: `kit check` de la sesion 1 IDENTICO a su linea base y `knowledge validate` en
+  exit 0 con el aviso de deriva.
+- EL HALLAZGO DE LA RAMA, Y ES EL QUE HAY QUE RECORDAR: LA FALSABILIDAD DE LO CONGELADO NO ERA
+  UNIFORME. Editar `particiones` dentro del bloque congelado se ve -`particiones.yaml` no se exime
+  nunca-, pero editar `anclajes_candidatos`, `sesiones` o `etiquetas` NO se veia: solo alimentan
+  `ventanas.yaml` y `hoja_trader.md`, que una sesion celebrada exime. Mutante medido ANTES de
+  escribir codigo: exit 0 y "sin diferencias que no explique la sesion celebrada". La linea que
+  comparaba contra `config.yaml` era LO UNICO que lo impedia, asi que cambiarla de sujeto sin nada a
+  cambio habria abierto el agujero. De ahi que la rama sea la completa (opcion A) y no la minima.
+- EL ANCLA: `knowledge/cases/kit/anclas.yaml` declara el sha del BLOB de `ventanas.yaml` y
+  `particiones.yaml` por sesion. Patron `preregistro_blob` (ADR-0033) y sus tres requisitos: vive
+  FUERA del fichero que ata, es BLOB y no commit -`ventanas.yaml` ya tiene dos commits y un ancla de
+  commit lo habria dado por alterado sin estarlo- y RE-ANCLAR ES EXPLICITO
+  (`botsito kit anclar --sesion <s> --reanclar`). NO depende de que existan etiquetas, a proposito:
+  `validar_paquetes` se desentiende con `if not etiquetas: continue` y hoy no hay ni un LABEL_CASE.
+- SI TOCAS UN PAQUETE, RE-ANCLALO. Es el unico paso nuevo del dia a dia: cualquier byte de esos dos
+  ficheros que no coincida con su ancla pone `knowledge validate` en rojo, y eso es lo que se quiere.
+- DOS TESTS CAMBIAN DE SIGNIFICADO A PROPOSITO, y esta escrito en su docstring: donde afirmaban que
+  sin etiquetas el paquete se podia regenerar libremente, ahora exigen que tocarlo se vea.
+- LO QUE SIGUE ABIERTO y no se mezclo: la guardia de ancestro empareja por `sesion` y no por caso
+  -ANTES DE LA PRIMERA ETIQUETA-, y `lectura_de_velas` aun lee el `config.yaml` de hoy para el
+  prefijo (ultimo hilo del patron, anotado en Technical Debt).
+- LO SIGUIENTE, YA SIN BLOQUEO: descargar las velas de 2026-09 y SORTEAR Y COMMITEAR las particiones
+  de sus 14 dias laborables antes de que nadie lea una etiqueta. Y ahi hay una decision que es del
+  consultor y no del codigo: CUANTOS CUPOS para 14 dias, con su `Fuente:`. Acotar el universo al
+  1-18 -lo que cubre el backtest del trader- sigue pendiente de decidir COMO; "visto" no es el
+  motivo correcto para los dias 19 y 20, porque no los ha backtesteado.
+
 ## Estado (2026-09-20, rama `trabajo/universo-congelado` esperando validacion; lo de debajo es anterior)
 - LA ENTRADA DE SEPTIEMBRE ESTA CERRADA EN MAIN (merge ad2693d, tag `stable/F13-septiembre`).
 - EL BLOQUEO ESTA ARREGLADO: cada paquete declara sus `datasets:` en `ventanas.yaml` y `comprobar()`

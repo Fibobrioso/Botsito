@@ -155,6 +155,16 @@ def blob_en_head(repo: Path, ruta: str) -> str | None:
     return _blob(repo, "HEAD", ruta)
 
 
+def blob_en_arbol(repo: Path, ruta: str) -> str | None:
+    """El sha del blob del fichero tal como esta AHORA en el arbol de trabajo, o None si no
+    existe o git no puede decirlo. Es el otro extremo de `blob_en_head`: un ancla que solo mire
+    HEAD no ve una edicion sin commitear, que es justo como se prueba un mutante."""
+    if not (repo / ruta).exists():
+        return None
+    salida = _git(repo, "hash-object", "--", ruta)
+    return salida.strip() if salida else None
+
+
 def intacto_desde(repo: Path, sha: str, ruta: str) -> bool | None:
     """True si el blob de `ruta` en `sha`, en HEAD y en el arbol de trabajo es el mismo (el
     fichero no cambio desde ese commit); False si difiere; None si git no puede decirlo."""
