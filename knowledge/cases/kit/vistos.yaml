@@ -74,12 +74,29 @@ meses:
       un mes que el ya ha visto (ADR-0034): no sirve para una sesion ciega y si para medir fidelidad,
       con las particiones fijadas antes de leer ninguna etiqueta. El material cubre del 1 al 18,
       sabido al leer la columna de fechas, exposicion declarada el 2026-09-20
-    fuente: [5c9fcc3, ADR-0034]
+    fuente:
+      - 5c9fcc3
+      - ADR-0034
+      - "el trader dijo al consultor que lo backtesteo el 2026-09-19; lo declara el consultor el
+        2026-09-21 y NO hay captura del mensaje en el corpus"
     # 5c9fcc3 es el commit que mete los siete ficheros en el inventario del corpus (corpus/ esta
-    # fuera de git). LA FECHA EN QUE EL TRADER LO BACKTESTEO NO SE SABE y esta pedida: `visto_el` es
-    # la de la ENTREGA, que es la unica con fuente. Mismo criterio que se aplico a abril el
-    # 2026-09-17, donde el motivo decia 09-03 y solo el commit del 09-05 lo sostenia. Si llega otra
-    # fecha con su fuente delante, se corrige aqui; y como es un mes que ningun paquete ha sorteado
-    # -cero casos de septiembre en particiones.yaml-, corregirla no rompe ninguna reproduccion
-    visto_el: "2026-09-20"
+    # fuera de git).
+    #
+    # CORREGIDA EL 2026-09-21: `visto_el` decia 2026-09-20, que era la fecha de la ENTREGA -la
+    # unica con fuente cuando se escribio, y asi quedo anotado aqui-. El trader ha dicho que lo
+    # backtesteo el 2026-09-19, asi que ahora hay dato real y la fecha de entrega deja de hacer de
+    # sustituta. La fuente es la declaracion del consultor del 2026-09-21 y se escribe TAL CUAL:
+    # se busco captura en `corpus/.../Mensajes del trader/` y NO la hay -solo
+    # `mensaje-whatsapp-0208-zonas-de-control.png`, del 11 de septiembre y de otro tema-. Es mas
+    # debil que un fichero y por eso se dice, en vez de disfrazarla de algo mas solido.
+    #
+    # EL 19 ES SABADO, y cuadra: el material cubre hasta el viernes 18, asi que es un backtest de
+    # fin de semana sobre la semana recien cerrada. Queda dicho porque una fecha de backtest en
+    # sabado es justo lo que dentro de seis meses alguien lee como errata.
+    #
+    # NO MUEVE NADA, y se midio antes de darlo por bueno: el filtro compara `visto_el` con la
+    # fecha de la SESION, y la sesion 1 es del 2026-09-09, anterior a las dos fechas. `kit check`
+    # de la sesion 1 da la salida IDENTICA antes y despues. Y septiembre no lo ha sorteado ningun
+    # paquete del kit, asi que no hay reproduccion que romper.
+    visto_el: "2026-09-19"
 dias: []
