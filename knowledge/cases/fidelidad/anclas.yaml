@@ -1,0 +1,9 @@
+# Anclas anti-manipulacion de los artefactos de fidelidad (ADR-0035 enmendado, ADR-0036).
+#
+# Mismo patron que `knowledge/cases/kit/anclas.yaml`: el sha del BLOB de cada fichero
+# -`git hash-object <ruta>`-, no el de un commit, declarado FUERA del fichero que ata.
+#
+# GENERADO por `botsito fidelidad anclar --artefacto <id>`. Re-anclar es un acto EXPLICITO
+# (`--reanclar`) y su diff se ve aqui.
+#
+# Vacio: todavia no hay ningun artefacto. El SORTEO va en la rama siguiente (ADR-0036).

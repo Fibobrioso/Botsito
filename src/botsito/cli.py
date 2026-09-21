@@ -1309,6 +1309,7 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
 
 
 def _kit_errores() -> tuple[type[Exception], ...]:
+    from botsito.cases.fidelidad import FidelidadError
     from botsito.cases.paquete import KitError
     from botsito.config.ajustes import AjustesError
     from botsito.config.registro import RegistroError
@@ -1321,6 +1322,7 @@ def _kit_errores() -> tuple[type[Exception], ...]:
 
     return (
         KitError,
+        FidelidadError,
         AjustesError,
         RegistroError,
         InventarioError,
@@ -1426,6 +1428,82 @@ def kit_anclar(repo: Path, args: argparse.Namespace) -> int:
     que = "re-anclada" if viejas is not None else "anclada"
     detalle = ", ".join(f"{n} {s[:12]}…" for n, s in sorted(nuevas.items()))
     print(f"OK: {args.sesion} {que} en {ruta.relative_to(repo).as_posix()}: {detalle}")
+    return 0
+
+
+def fidelidad_build(repo: Path, args: argparse.Namespace) -> int:
+    """Construye un artefacto de fidelidad (ADR-0036). Exige los datos en data/."""
+    from botsito.cases.fidelidad import construir, escribir, lectura
+
+    try:
+        artefacto = construir(repo, _carpeta_datos(repo), args.artefacto, args.seed)
+        carpeta = escribir(repo, artefacto)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for linea in lectura(repo, _carpeta_datos(repo), artefacto.asignacion):
+        print(linea)
+    print(
+        f"OK: {carpeta.relative_to(repo).as_posix()}: {len(artefacto.casos)} casos de un universo "
+        f"de {artefacto.universo} (+ {len(artefacto.excluidos)} dias excluidos), seed "
+        f"{artefacto.seed}. ANCLALO en este mismo commit: "
+        f"`botsito fidelidad anclar --artefacto {artefacto.id}`"
+    )
+    return 0
+
+
+def fidelidad_check(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.cases.fidelidad import comprobar, esquema_artefacto, lectura
+
+    try:
+        ventanas, particiones = esquema_artefacto(repo, args.artefacto)
+        for linea in lectura(
+            repo, _carpeta_datos(repo), particiones["asignacion"], ventanas.get("datasets")
+        ):
+            print(linea)
+        problemas, avisos = comprobar(repo, _carpeta_datos(repo), args.artefacto)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for a in avisos:
+        print(f"AVISO: {a}", file=sys.stderr)
+    for p in problemas:
+        print(f"ERROR: {p}", file=sys.stderr)
+    if problemas:
+        return 1
+    print(f"OK: {args.artefacto} se recompone igual desde el repo y data/")
+    return 0
+
+
+def fidelidad_anclar(repo: Path, args: argparse.Namespace) -> int:
+    """El ancla de un artefacto. Va en el MISMO commit que lo crea."""
+    from botsito.cases.fidelidad import ARTEFACTO, DIRECTORIO_FIDELIDAD
+    from botsito.cases.paquete import anclas_del_arbol, cargar_anclas, escribir_anclas
+
+    try:
+        anclas = cargar_anclas(repo, DIRECTORIO_FIDELIDAD, ARTEFACTO)
+        nuevas = anclas_del_arbol(repo, args.artefacto, DIRECTORIO_FIDELIDAD)
+    except _kit_errores() as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    viejas = anclas.get(args.artefacto)
+    if viejas == nuevas:
+        print(f"OK: {args.artefacto} ya esta anclado con estos blobs; no se toca nada.")
+        return 0
+    if viejas is not None and not args.reanclar:
+        cambian = sorted(n for n, s in nuevas.items() if viejas.get(n) != s)
+        print(
+            f"ERROR: {args.artefacto} ya tiene ancla y cambia en {', '.join(cambian)}. Re-anclar "
+            f"es un acto explicito: si el cambio es legitimo, repite con --reanclar y que se vea "
+            f"en el diff.",
+            file=sys.stderr,
+        )
+        return 1
+    anclas[args.artefacto] = nuevas
+    ruta = escribir_anclas(repo, anclas, DIRECTORIO_FIDELIDAD)
+    que = "re-anclado" if viejas is not None else "anclado"
+    detalle = ", ".join(f"{n} {s[:12]}…" for n, s in sorted(nuevas.items()))
+    print(f"OK: {args.artefacto} {que} en {ruta.relative_to(repo).as_posix()}: {detalle}")
     return 0
 
 
@@ -2100,6 +2178,24 @@ def build_parser() -> argparse.ArgumentParser:
     kb_hoja = kit_sub.add_parser("hoja", help="compone la hoja de respuestas en Word (.docx)")
     kb_hoja.add_argument("--sesion", help="AAAA-MM-DD-sesion-NN (por defecto, la ultima del kit)")
     kb_hoja.add_argument("--salida", help="ruta del .docx (por defecto, en la raiz del repo)")
+    fid = sub.add_parser(
+        "fidelidad", help="camino de fidelidad: material ETIQUETADO de un mes ya visto (ADR-0036)"
+    )
+    fid_sub = fid.add_subparsers(dest="fidelidad_cmd", required=True)
+    fd_build = fid_sub.add_parser(
+        "build", help="genera knowledge/cases/fidelidad/<artefacto>/ (no sobreescribe)"
+    )
+    fd_build.add_argument("--artefacto", required=True, help="id sin fecha, p. ej. eurusd-2026-09")
+    fd_build.add_argument("--seed", required=True, type=int)
+    fd_check = fid_sub.add_parser("check", help="recompone el artefacto y compara byte a byte")
+    fd_check.add_argument("--artefacto", required=True)
+    fd_anclar = fid_sub.add_parser("anclar", help="declara el ancla (sha de blob) del artefacto")
+    fd_anclar.add_argument("--artefacto", required=True)
+    fd_anclar.add_argument(
+        "--reanclar",
+        action="store_true",
+        help="el artefacto cambio a proposito y se vuelve a anclar (acto explicito)",
+    )
     kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
     kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
     find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
@@ -2273,6 +2369,12 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_reject(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "list":
         return evidence_list(args.repo, args)
+    if args.cmd == "fidelidad" and args.fidelidad_cmd == "build":
+        return fidelidad_build(args.repo, args)
+    if args.cmd == "fidelidad" and args.fidelidad_cmd == "check":
+        return fidelidad_check(args.repo, args)
+    if args.cmd == "fidelidad" and args.fidelidad_cmd == "anclar":
+        return fidelidad_anclar(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "build":
         return kit_build(args.repo, args)
     if args.cmd == "kit" and args.kit_cmd == "anclar":
