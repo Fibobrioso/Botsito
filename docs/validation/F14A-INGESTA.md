@@ -297,12 +297,19 @@ es cambio de esquema: condición fechada, la siguiente ambigüedad que se abra.
 
 ADR-0037 se commiteó (`a791f92`) **afirmando en su decisión 7 que el objetivo es `idealTP`**. Es
 falso, y se midió media hora después al probar el lector. La corrección va **dentro del propio ADR**,
-en caja, con fecha y con los números, y no se reescribe el cuerpo: el error queda visible.
+en caja, con fecha y con los números, y no se reescribe el cuerpo: el error queda visible. Ésa es
+mía entera: la escribí yo y no la había medido.
 
-Peor que el error: **antes de la corrección se escribieron DOS consecuencias para F26 sin medir la
-cadena, y las dos eran falsas en direcciones opuestas** —«el objetivo falta en la mayoría de
-unidades» y «no se puede puntuar en absoluto»—. La regla que sale: **una consecuencia para F26 es una
-afirmación como cualquier otra y no se escribe sin medir la cadena entera hasta ella.**
+## 6a. Una que NO me toca a mí, y la atribución importa
+
+**Las dos primeras consecuencias para F26 las escribió el consultor en el brief** —«el objetivo está
+ausente en la mayoría de unidades» y, corrigiéndola en el brief siguiente, «F26 no podrá puntuar el
+objetivo en absoluto»—, y **yo las transcribí** a ADR-0037 y a este informe, que hasta hoy se las
+atribuían a quien las redactó.
+
+**EL FALLO FUE EN LA DECISIÓN, NO EN LA REDACCIÓN, y por eso la regla que sale vigila el BRIEF y no
+la transcripción.** Con la atribución mal puesta, la regla se habría leído como «revisa lo que
+escribes en los documentos», que es el sitio equivocado: las dos frases llegaron ya decididas.
 
 **La consecuencia real, TERCERA versión — y la segunda también se quedaba corta.** F26 podrá
 puntuar el objetivo contra la REGLA —`entrada ± objetivo_rr × base_calculo_objetivo`— **cuando A-18
@@ -312,11 +319,11 @@ decir cuál de las dos es puntuar contra un número que todavía no existe. Lo q
 F26 es verificar que en una operación concreta el trader colocara ese TP, porque el fichero no lo
 guarda.
 
-Las dos primeras redacciones eran error mío —falsas en direcciones opuestas, sin medir la cadena—.
-**Ésta no lo es**: la cadena era más larga de lo que nadie había escrito, y sólo apareció al cruzar
-el RR realizado con los tres parámetros. La regla se amplía: una consecuencia para F26 no se escribe
-sin medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que cuelgan
-de los parámetros que nombra**.
+Las dos primeras redacciones eran falsas en direcciones opuestas y salieron del brief (§6a).
+**Ésta no es error de nadie**: la cadena era más larga de lo que estaba escrito, y sólo apareció al
+cruzar el RR realizado con los tres parámetros. La regla se amplía: una consecuencia para F26 no se
+escribe sin medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que
+cuelgan de los parámetros que nombra**.
 
 ## 6b. El TERCER patrón de defecto, y ya no es anécdota
 

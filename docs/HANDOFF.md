@@ -79,8 +79,10 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   la firma de un objetivo en 3R sobrepasado, no la de un 3,75R al que 16 ganadoras no llegaron.
 - LA FRASE DE F26 VA POR SU TERCERA REDACCION EN UN DIA: F26 podra puntuar el objetivo contra la
   regla CUANDO A-18 ESTE CERRADA, no antes, porque hoy la regla tiene dos lecturas que difieren un
-  25 % del recorrido. Las dos primeras versiones fueron error mio; esta no: la cadena era mas larga
-  de lo que nadie habia escrito. La regla se amplia: **la cadena hasta F26 incluye las ambiguedades
+  25 % del recorrido. LAS DOS PRIMERAS VERSIONES LAS ESCRIBIO EL CONSULTOR EN EL BRIEF y se
+  transcribieron a ADR-0037 y al informe, que hasta hoy se las atribuian a quien las redacto: EL
+  FALLO FUE EN LA DECISION, NO EN LA REDACCION, y por eso la regla vigila EL BRIEF y no la
+  transcripcion. La tercera no es error de nadie: la cadena era mas larga de lo que estaba escrito. La regla se amplia: **la cadena hasta F26 incluye las ambiguedades
   ABIERTAS que cuelgan de los parametros que nombra.**
 - LA PREDICCION DE MAYO ESTA PRE-REGISTRADA Y COMMITEADA EL 2026-09-21, ANTES DE MIRAR MAYO. NO SE
   TOCA DESPUES DE MIRAR; si la cambias despues, no vale nada. REGION DISCRIMINANTE: el RR implicito

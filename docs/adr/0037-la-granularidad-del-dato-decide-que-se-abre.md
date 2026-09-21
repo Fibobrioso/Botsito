@@ -94,9 +94,11 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    >
    > Y hay huella mecánica de la regla dentro del propio fichero, independiente de la cita: el RR
    > implícito de `maxTP` tiene **suelo en 3,00** —17 de 18 filas en 3,00 o por encima, tres
-   > clavadas en 3,00, con un único 2,50—, que es lo que se ve si la salida ocurre en 3R. Y que 15
-   > de 18 **se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada en
-   > 3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo.
+   > clavadas en 3,00, con un único 2,50—, que es lo que se ve si la salida ocurre en 3R. Y que
+   > **14** de 18 **se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite
+   > colocada en 3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría
+   > superarlo. (Decía «15» hasta el 2026-09-21: son 14 —18 menos el 2,50 de abajo y las tres
+   > clavadas en 3,00—. No cambia el argumento.)
    >
    > **Consecuencia para F26 — TERCERA versión, y la anterior también se quedaba corta.** F26
    > podrá puntuar el objetivo comparándolo contra la REGLA —`entrada ± objetivo_rr ×
@@ -107,12 +109,17 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    > no existe. Lo que en ningún caso podrá F26 es verificar que en una operación concreta el
    > trader colocara ese TP, porque el fichero no lo guarda.
    >
-   > Es la tercera redacción de esta frase en el mismo día. Las dos primeras eran error mío
-   > —falsas en direcciones opuestas, sin medir la cadena—. **Ésta no**: la cadena era más larga
-   > de lo que nadie había escrito, y sólo se vio al medir el RR realizado contra los tres
-   > parámetros. La regla sigue en pie y se amplía: una consecuencia para F26 no se escribe sin
-   > medir la cadena entera hasta ella, **y la cadena incluye las ambigüedades abiertas que
-   > cuelgan de los parámetros que nombra**.
+   > Es la tercera redacción de esta frase en el mismo día, y **la caja deja de ser anónima**
+   > porque saber de dónde salió es lo que decide qué hay que vigilar. **Las dos primeras las
+   > escribió el consultor en el brief** —«el objetivo está ausente en la mayoría de unidades»
+   > y, corrigiéndola, «F26 no podrá puntuar el objetivo en absoluto»— y **se transcribieron aquí
+   > y al informe**, que hasta hoy se las atribuían a quien las redactó. **El fallo fue en la
+   > DECISIÓN, no en la redacción**, y por eso la regla que sale vigila **el brief** y no la
+   > transcripción. La tercera no es error de nadie: la cadena era más larga de lo que estaba
+   > escrito, y sólo se vio al medir el RR realizado contra los tres parámetros. La regla sigue
+   > en pie y se amplía: una consecuencia para F26 no se escribe sin medir la cadena entera hasta
+   > ella, **y la cadena incluye las ambigüedades abiertas que cuelgan de los parámetros que
+   > nombra**.
    >
    > **Por eso el caso NO lleva campo `objetivo`**, y no es que lo lleve vacío: un campo opcional
    > vacío es una invitación a que dentro de seis meses alguien lo rellene con `maxTP`. Quitar el
