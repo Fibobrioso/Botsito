@@ -65,6 +65,10 @@ SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _MES = re.compile(r"^\d{4}-\d{2}$", re.ASCII)
 _HORA = re.compile(r"^\d{2}:\d{2}$", re.ASCII)
 _SHA_BLOB = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
+_DIA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
+# Claves de config que un camino puede traer y otro no. La guardia sigue siendo estricta:
+# todo lo que no este aqui ni en las obligatorias se rechaza (ADR-0036).
+CLAVES_OPCIONALES = ("cobertura_material",)
 
 
 class KitError(ValueError):
@@ -88,6 +92,9 @@ class Config:
     min_velas_ventana: int
     etiquetas: tuple[str, ...]
     particiones: dict[str, int]
+    # Hasta donde llega el MATERIAL ETIQUETADO del trader, por mes: `AAAA-MM` -> tramos
+    # `(desde, hasta)` de dias del trader. Vacio = ese mes no se acota (ADR-0036).
+    cobertura: dict[str, tuple[tuple[str, str], ...]]
     doc: dict[str, Any]
 
     @property
@@ -109,10 +116,71 @@ def _hora(v: object, que: str) -> str:
     return v
 
 
-def config_desde_doc(doc: Any, nombre: str) -> Config:
+def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, str], ...]]:
+    """`cobertura_material`: hasta donde llega el material ETIQUETADO del trader (ADR-0036).
+
+    SOLO TRAMOS `{desde, hasta}`. NUNCA una lista de dias cubiertos, y se rechaza por la FORMA,
+    no por convenio: `docs/validation/SEPTIEMBRE-ENTRA.md` dejo escrito que un dia laborable
+    dentro del rango que NO aparezca en la columna de fechas del backtest **es un dia sin
+    operaciones, y eso ES su etiqueta**. Declarar la lista de dias cubiertos publicaria esas
+    etiquetas por la puerta de atras, sin pasar por la de ADR-0033.
+
+    Es ADITIVO: una entrega nueva del mismo mes ANADE un tramo, no corrige el que hay. Por eso el
+    valor es una lista y no un `hasta:` suelto, que ademas no sabria expresar una entrega partida.
+    """
+    if crudo is None:
+        return {}
+    if not isinstance(crudo, dict):
+        raise KitError(f"{nombre}: cobertura_material es un mapa AAAA-MM -> lista de tramos")
+    salida: dict[str, tuple[tuple[str, str], ...]] = {}
+    for mes, tramos in crudo.items():
+        if not isinstance(mes, str) or not _MES.match(mes):
+            raise KitError(f"{nombre}: cobertura_material: {mes!r} no es un mes AAAA-MM")
+        if not isinstance(tramos, list) or not tramos:
+            raise KitError(f"{nombre}: cobertura_material/{mes}: lista de tramos no vacia")
+        pares: list[tuple[str, str]] = []
+        for tramo in tramos:
+            if not isinstance(tramo, dict):
+                raise KitError(
+                    f"{nombre}: cobertura_material/{mes}: cada tramo es un mapa con desde y "
+                    f"hasta. Una lista de DIAS cubiertos no se admite: un dia laborable del "
+                    f"rango que no estuviera en ella seria un dia sin operaciones, y eso es su "
+                    f"etiqueta (ADR-0036)"
+                )
+            sobran = set(tramo) - {"desde", "hasta", "entregado_el", "fuente"}
+            if not {"desde", "hasta"} <= set(tramo) or sobran:
+                raise KitError(
+                    f"{nombre}: cobertura_material/{mes}: tramo con desde, hasta y opcionalmente "
+                    f"entregado_el y fuente"
+                )
+            desde, hasta = str(tramo["desde"]), str(tramo["hasta"])
+            for f in (desde, hasta):
+                if not _DIA.match(f):
+                    raise KitError(f"{nombre}: cobertura_material/{mes}: {f!r} no es AAAA-MM-DD")
+                if not f.startswith(f"{mes}-"):
+                    raise KitError(f"{nombre}: cobertura_material/{mes}: {f} no es de ese mes")
+            if hasta < desde:
+                raise KitError(f"{nombre}: cobertura_material/{mes}: {desde}..{hasta} al reves")
+            pares.append((desde, hasta))
+        # Ordenados y sin solapar: dos tramos que se pisan harian ambiguo que dia esta cubierto.
+        if pares != sorted(pares) or any(
+            pares[i][1] >= pares[i + 1][0] for i in range(len(pares) - 1)
+        ):
+            raise KitError(f"{nombre}: cobertura_material/{mes}: tramos sin ordenar o solapados")
+        salida[mes] = tuple(pares)
+    return salida
+
+
+def config_desde_doc(
+    doc: Any, nombre: str, particiones_validas: Sequence[str] = PARTICIONES
+) -> Config:
     """Valida un doc de config ya leido. Lo usa `cargar_config` con el fichero global y
     `comprobar` con el bloque `config:` CONGELADO dentro del paquete (ADR-0035, enmienda del
-    2026-09-21): un mecanismo, dos origenes, la misma validacion."""
+    2026-09-21): un mecanismo, dos origenes, la misma validacion.
+
+    `particiones_validas` es el juego de nombres del camino que llama; por omision, el del kit.
+    El camino de fidelidad (ADR-0036) trae los suyos, porque sus dias no son ciegos.
+    """
     esperadas = {
         "simbolo",
         "dataset_prefijo",
@@ -123,8 +191,11 @@ def config_desde_doc(doc: Any, nombre: str) -> Config:
         "etiquetas",
         "particiones",
     }
-    if not isinstance(doc, dict) or set(doc) != esperadas:
-        raise KitError(f"{nombre}: claves {sorted(esperadas)} exactamente")
+    if not isinstance(doc, dict) or set(doc) - set(CLAVES_OPCIONALES) != esperadas:
+        raise KitError(
+            f"{nombre}: claves {sorted(esperadas)} exactamente"
+            f" (opcionales: {sorted(CLAVES_OPCIONALES)})"
+        )
     if not isinstance(doc["simbolo"], str) or not doc["simbolo"].isalnum():
         raise KitError(f"{nombre}: simbolo invalido")
     if not isinstance(doc["dataset_prefijo"], str) or not doc["dataset_prefijo"].strip():
@@ -190,11 +261,12 @@ def config_desde_doc(doc: Any, nombre: str) -> Config:
             f"{nombre}: etiquetas debe ser una lista de nombres en minusculas sin repetir"
         )
     particiones = doc["particiones"]
-    if not isinstance(particiones, dict) or set(particiones) != set(PARTICIONES):
-        raise KitError(f"{nombre}: particiones debe declarar {PARTICIONES}")
+    if not isinstance(particiones, dict) or set(particiones) != set(particiones_validas):
+        raise KitError(f"{nombre}: particiones debe declarar {tuple(particiones_validas)}")
     for k, v in particiones.items():
         if isinstance(v, bool) or not isinstance(v, int) or v < 0:
             raise KitError(f"{nombre}: particion {k}: entero >= 0")
+    cobertura = _cobertura_desde_doc(doc.get("cobertura_material"), nombre)
     return Config(
         str(doc["simbolo"]),
         str(doc["dataset_prefijo"]),
@@ -204,6 +276,7 @@ def config_desde_doc(doc: Any, nombre: str) -> Config:
         minimo,
         tuple(etiquetas),
         {str(k): int(v) for k, v in particiones.items()},
+        cobertura,
         doc,
     )
 
@@ -447,7 +520,7 @@ def _cargar_todo(
     return config, registro, ambiguedades, mapa, meses, dias, items
 
 
-def _manifiestos_del_kit(
+def manifiestos_del_prefijo(
     repo: Path, config: Config, datasets: Sequence[str] | None = None
 ) -> list[dict[str, Any]]:
     """Los manifiestos con los que se calcula un universo.
@@ -485,7 +558,7 @@ def datasets_que_faltan_en_disco(
     """
     return sorted(
         str(m["dataset_id"])
-        for m in _manifiestos_del_kit(repo, config, datasets)
+        for m in manifiestos_del_prefijo(repo, config, datasets)
         if not all((carpeta_datos / str(f["ruta"])).is_file() for f in m["ficheros"])
     )
 
@@ -495,7 +568,7 @@ def hay_datos_del_kit(
 ) -> bool:
     """Si estan en `carpeta_datos` los ficheros de los datasets pedidos (los congelados, o los del
     prefijo si no se pasa lista)."""
-    manifiestos_kit = _manifiestos_del_kit(repo, config, datasets)
+    manifiestos_kit = manifiestos_del_prefijo(repo, config, datasets)
     return bool(manifiestos_kit) and not datasets_que_faltan_en_disco(
         repo, carpeta_datos, config, datasets
     )
@@ -506,6 +579,8 @@ def lectura_de_velas(
     carpeta_datos: Path,
     asignacion: dict[str, str],
     datasets: Sequence[str] | None = None,
+    config: Config | None = None,
+    reservadas: Sequence[str] | None = None,
 ) -> list[str]:
     """Lo que `kit build` y `kit check` declaran en su salida ANTES de leer velas (ADR-0033).
 
@@ -517,15 +592,18 @@ def lectura_de_velas(
     Dice CUANTOS dias reservados y de que particion, sin fechas, sin cifras de velas y sin precios:
     las fechas estan en `particiones.yaml`, y la salida puede acabar delante del trader.
     """
-    config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
+    config = config or cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
     if not hay_datos_del_kit(repo, carpeta_datos, config, datasets):
         return []
-    from botsito.cases.holdout import PARTICIONES_RESERVADAS
+    if reservadas is None:
+        from botsito.cases.holdout import PARTICIONES_RESERVADAS
+
+        reservadas = PARTICIONES_RESERVADAS
 
     # Los que se van a leer DE VERDAD: con un paquete existente, su lista congelada; si no, el
     # disco. Declarar de mas es menos peligroso que declarar de menos, pero sigue siendo una
     # declaracion falsa en el unico fichero que existe para ser creible (ADR-0033, ADR-0035).
-    leidos = sorted(str(m["dataset_id"]) for m in _manifiestos_del_kit(repo, config, datasets))
+    leidos = sorted(str(m["dataset_id"]) for m in manifiestos_del_prefijo(repo, config, datasets))
     lineas = [
         f"LECTURA: se leen las velas M1 de {', '.join(leidos)} en {carpeta_datos.name}/ -todos "
         f"los dias del universo, reservados incluidos- para recalcular n_velas, sha256 y limites "
@@ -535,9 +613,7 @@ def lectura_de_velas(
     # RECUENTO y no fechas (decision del consultor, 2026-09-17): las fechas ya estan en
     # `particiones.yaml` para quien las quiera, la lectura es siempre la misma, y esta salida puede
     # acabar delante del trader, a quien la hoja le oculta esos dias por contrato.
-    por_particion = {
-        p: sum(1 for x in asignacion.values() if x == p) for p in PARTICIONES_RESERVADAS
-    }
+    por_particion = {p: sum(1 for x in asignacion.values() if x == p) for p in reservadas}
     total = sum(por_particion.values())
     if total:
         detalle = ", ".join(f"{p} {n}" for p, n in por_particion.items() if n)
@@ -600,7 +676,7 @@ def construir(
     except CuestionarioError as exc:
         raise KitError(str(exc)) from exc
     try:
-        manif = _manifiestos_del_kit(repo, config, datasets)
+        manif = manifiestos_del_prefijo(repo, config, datasets)
         if not manif:
             raise KitError(
                 f"ningun dataset con prefijo {config.dataset_prefijo!r} en data/manifests"
@@ -756,9 +832,15 @@ def _datasets_congelados(
     return lista
 
 
-def cargar_anclas(repo: Path) -> dict[str, dict[str, str]]:
-    """`knowledge/cases/kit/anclas.yaml`: sesion -> fichero -> sha del blob. Vacio si no existe."""
-    ruta = repo / DIRECTORIO_KIT / FICHERO_ANCLAS
+def cargar_anclas(
+    repo: Path, directorio: str = DIRECTORIO_KIT, patron: re.Pattern[str] = SESION
+) -> dict[str, dict[str, str]]:
+    """`<directorio>/anclas.yaml`: id -> fichero -> sha del blob. Vacio si no existe.
+
+    `directorio` y `patron` los trae el camino que llama: el kit usa sesiones con fecha; el de
+    fidelidad (ADR-0036), artefactos sin fecha, porque alli no hay reunion que fechar.
+    """
+    ruta = repo / directorio / FICHERO_ANCLAS
     if not ruta.is_file():
         return {}
     doc = _yaml(ruta)
@@ -768,7 +850,7 @@ def cargar_anclas(repo: Path) -> dict[str, dict[str, str]]:
         raise KitError(f"{FICHERO_ANCLAS}: se espera un mapa sesion -> fichero -> sha")
     anclas: dict[str, dict[str, str]] = {}
     for sesion, entrada in doc.items():
-        if not isinstance(sesion, str) or not SESION.match(sesion):
+        if not isinstance(sesion, str) or not patron.match(sesion):
             raise KitError(f"{FICHERO_ANCLAS}: {sesion!r} no es una sesion")
         if not isinstance(entrada, dict) or set(entrada) - set(FICHEROS_ANCLADOS):
             raise KitError(f"{FICHERO_ANCLAS}: {sesion}: ficheros {list(FICHEROS_ANCLADOS)}")
@@ -799,11 +881,11 @@ CABECERA_ANCLAS = """\
 """
 
 
-def anclas_del_arbol(repo: Path, sesion: str) -> dict[str, str]:
+def anclas_del_arbol(repo: Path, sesion: str, directorio: str = DIRECTORIO_KIT) -> dict[str, str]:
     """Los sha de blob de los ficheros anclados de una sesion tal como estan AHORA en el disco."""
     salida: dict[str, str] = {}
     for nombre in FICHEROS_ANCLADOS:
-        ruta = f"{DIRECTORIO_KIT}/{sesion}/{nombre}"
+        ruta = f"{directorio}/{sesion}/{nombre}"
         sha = blob_en_arbol(repo, ruta)
         if sha is None:
             raise KitError(f"{ruta}: no existe, o git no puede calcular su blob")
@@ -811,14 +893,22 @@ def anclas_del_arbol(repo: Path, sesion: str) -> dict[str, str]:
     return salida
 
 
-def escribir_anclas(repo: Path, anclas: dict[str, dict[str, str]]) -> Path:
-    ruta = repo / DIRECTORIO_KIT / FICHERO_ANCLAS
+def escribir_anclas(
+    repo: Path, anclas: dict[str, dict[str, str]], directorio: str = DIRECTORIO_KIT
+) -> Path:
+    ruta = repo / directorio / FICHERO_ANCLAS
     cuerpo = _dump({s: dict(sorted(v.items())) for s, v in sorted(anclas.items())})
     ruta.write_text(CABECERA_ANCLAS + cuerpo, encoding="utf-8", newline="\n")
     return ruta
 
 
-def _problemas_de_ancla(repo: Path, sesion: str, anclas: dict[str, dict[str, str]]) -> list[str]:
+def problemas_de_ancla(
+    repo: Path,
+    sesion: str,
+    anclas: dict[str, dict[str, str]],
+    directorio: str = DIRECTORIO_KIT,
+    comando: str = "kit anclar",
+) -> list[str]:
     """El ancla anti-manipulacion de un paquete (ADR-0035, enmienda del 2026-09-21).
 
     Congelar algo dentro de un fichero solo es legitimo si editarlo a mano se ve. Con `datasets:`
@@ -846,7 +936,7 @@ def _problemas_de_ancla(repo: Path, sesion: str, anclas: dict[str, dict[str, str
     problemas: list[str] = []
     declaradas = anclas.get(sesion, {})
     for nombre in FICHEROS_ANCLADOS:
-        ruta = f"{DIRECTORIO_KIT}/{sesion}/{nombre}"
+        ruta = f"{directorio}/{sesion}/{nombre}"
         en_head = blob_en_head(repo, ruta)
         if en_head is None:
             # Sin commitear -o sin git- no hay nada que anclar todavia: el paquete se ancla en el
@@ -857,15 +947,15 @@ def _problemas_de_ancla(repo: Path, sesion: str, anclas: dict[str, dict[str, str
             problemas.append(
                 f"{sesion}/{nombre}: sin ancla en {FICHERO_ANCLAS}: lo congelado dentro del "
                 f"paquete no esta atado contra manipulacion (ADR-0035, enmienda del 2026-09-21); "
-                f"se declara con `botsito kit anclar --sesion {sesion}`"
+                f"se declara con `botsito {comando} {sesion}`"
             )
             continue
         if declarado != en_head:
             problemas.append(
                 f"{sesion}/{nombre}: su ancla dice {declarado[:12]}… y lo commiteado es "
                 f"{en_head[:12]}…: el paquete cambio despues de anclarse. Si el cambio es "
-                f"legitimo se re-ancla a proposito (`botsito kit anclar --sesion {sesion} "
-                f"--reanclar`), que deja el diff a la vista"
+                f"legitimo se re-ancla a proposito (`botsito {comando} {sesion} --reanclar`), "
+                f"que deja el diff a la vista"
             )
             continue
         en_arbol = blob_en_arbol(repo, ruta)
@@ -927,7 +1017,7 @@ def comprobar(
     # `anclajes_candidatos`, `sesiones` y `etiquetas` solo alimentan `ventanas.yaml` y
     # `hoja_trader.md`, que en una sesion celebrada SI se eximen: editarlos ahi no lo ve nadie.
     # Medido el 2026-09-21 (exit 0, "sin diferencias que no explique la sesion celebrada"). Por
-    # eso el bloque congelado se ata FUERA, con el ancla de `anclas.yaml` (`_problemas_de_ancla`).
+    # eso el bloque congelado se ata FUERA, con el ancla de `anclas.yaml` (`problemas_de_ancla`).
     congelados = _datasets_congelados(sesion, ventanas, problemas)
     if congelados is None:
         return problemas, avisos
@@ -1083,7 +1173,7 @@ def validar_paquetes(
         problemas += _problemas_de_vistos(repo, sesion, ventanas)
         # El ancla del paquete, ANTES de cualquier `continue` que dependa de las etiquetas: es
         # justo mientras no existe ninguna cuando hace falta (ADR-0035, enmienda del 2026-09-21).
-        problemas += _problemas_de_ancla(repo, sesion, anclas)
+        problemas += problemas_de_ancla(repo, sesion, anclas)
         # (b) del reparto de trabajos de la vieja guardia: avisar de que el config global ha
         # derivado. AVISO y no ERROR, y por dos motivos: un paquete viejo se reproduce con el
         # suyo y no tiene por que saber nada del de hoy, y editar `config.yaml` para el paquete

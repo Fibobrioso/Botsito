@@ -9,6 +9,7 @@ ventana completa cae dentro del dataset y tiene suficientes velas.
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
@@ -153,9 +154,27 @@ def universo(
     min_velas: int,
     meses_vistos: set[str],
     dias_vistos: set[str],
+    cobertura: Mapping[str, Sequence[tuple[str, str]]] | None = None,
+    solo_con_cobertura: bool = False,
 ) -> tuple[list[Caso], list[Excluido]]:
     """Casos de todos los dias laborables no vistos de los datasets dados (ordenados por dia) y
-    los dias excluidos con motivo. Cada dataset se lee UNA vez (hash por fichero)."""
+    los dias excluidos con motivo. Cada dataset se lee UNA vez (hash por fichero).
+
+    `cobertura` acota un mes a lo que cubre el MATERIAL ETIQUETADO del trader (ADR-0036): mes ->
+    tramos `(desde, hasta)` de dias del trader. Un mes que no aparece NO se acota, que es lo que
+    hace que esto no toque ningun paquete anterior.
+
+    `solo_con_cobertura` invierte esa regla y es del camino de fidelidad: alli un mes SIN material
+    declarado no aporta ningun caso, porque ese camino existe para repartir material etiquetado y
+    de un mes sin material no hay nada que medir. Los manifiestos se siguen pasando TODOS aunque
+    su mes no aporte casos: el dia 1 de un mes necesita las velas de la vispera, y sin el mes
+    anterior en la lista el primer dia se caeria con un motivo que no es el suyo.
+
+    El filtro va con MOTIVO PROPIO y despues de
+    los de vistos: si fuera despues de `construir_caso`, el dia saldria como `N velas < min` o
+    como `ventana fuera del dataset`, y ninguno de los dos dice la verdad -que el trader no
+    etiqueto ese dia-. `excluidos:` es la unica narracion de por que un dia no entro.
+    """
     casos: list[Caso] = []
     excluidos: list[Excluido] = []
     ordenados = sorted(manifiestos, key=lambda x: (str(x["desde"]), str(x["dataset_id"])))
@@ -184,6 +203,26 @@ def universo(
                 continue
             if dia.isoformat() in dias_vistos:
                 excluidos.append(Excluido(dia.isoformat(), "dia visto por el trader"))
+                continue
+            tramos = (cobertura or {}).get(dia.isoformat()[:7])
+            if tramos is None and solo_con_cobertura:
+                excluidos.append(
+                    Excluido(
+                        dia.isoformat(),
+                        f"sin material etiquetado del trader ({dia.isoformat()[:7]} no esta en "
+                        f"cobertura_material)",
+                    )
+                )
+                continue
+            if tramos is not None and not any(d <= dia.isoformat() <= h for d, h in tramos):
+                cubre = ", ".join(f"{d}..{h}" for d, h in tramos)
+                excluidos.append(
+                    Excluido(
+                        dia.isoformat(),
+                        f"fuera de la cobertura del material del trader "
+                        f"({dia.isoformat()[:7]} cubre {cubre})",
+                    )
+                )
                 continue
             resultado = construir_caso(
                 serie, dia, simbolo, huso_operativa, ventana_local, anclajes, min_velas

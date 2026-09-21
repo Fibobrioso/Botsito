@@ -16,17 +16,20 @@ from botsito.cases.holdout import (
     FICHERO_PREREGISTRO,
     MARCA_SIN_RELLENAR,
     PARTICIONES_RESERVADAS,
+    RESERVADAS,
     HoldoutCerradoError,
     abrir,
     casos_reservados,
     leer_fichero,
     motivos_de_cierre,
+    repartos_commiteables,
 )
+from botsito.comun.yaml_estricto import leer_yaml
 
 REPO = Path(__file__).resolve().parents[2]
 
 
-@pytest.mark.parametrize("particion", PARTICIONES_RESERVADAS)
+@pytest.mark.parametrize("particion", RESERVADAS)
 def test_con_el_preregistro_de_hoy_la_puerta_se_niega_y_nombra_adr_0021(particion: str) -> None:
     assert MARCA_SIN_RELLENAR in (REPO / FICHERO_PREREGISTRO).read_text(encoding="utf-8")
     with pytest.raises(HoldoutCerradoError, match="ADR-0021 §3") as exc:
@@ -46,14 +49,32 @@ def test_leer_material_del_holdout_real_pasa_por_la_puerta_y_se_niega() -> None:
 
 
 def test_los_casos_reservados_salen_de_la_asignacion_sin_abrir_nada() -> None:
-    """Leer `particiones.yaml` no es abrir: es lo que dice que no se puede leer."""
+    """Leer `particiones.yaml` no es abrir: es lo que dice que no se puede leer.
+
+    La afirmacion es LA UNION EXACTA de todos los repartos commiteados, de los dos caminos, y no
+    una cifra pegada. Hasta el 2026-09-21 esto decia `== dict.fromkeys(PARTICIONES_RESERVADAS, 8)`
+    y se habria roto con el primer reparto nuevo; relajarlo a `>= 8` habria perdido la unica
+    afirmacion mecanica que existe sobre el reparto. Esta version no se rompe al anadir un camino
+    y ademas caza lo que la otra no veia: que un camino nuevo quede FUERA del glob de la puerta,
+    que es material reservado invisible (ADR-0036).
+    """
     reservados = casos_reservados(REPO)
-    assert set(reservados.values()) == set(PARTICIONES_RESERVADAS)
-    por_particion = {
-        p: sum(1 for v in reservados.values() if v == p) for p in PARTICIONES_RESERVADAS
-    }
-    # los cupos del paquete de la sesion 1 (config.yaml): 8 por particion reservada
-    assert por_particion == dict.fromkeys(PARTICIONES_RESERVADAS, 8)
+    esperado: dict[str, str] = {}
+    for fichero in repartos_commiteables(REPO):
+        doc = leer_yaml(fichero)
+        for caso, particion in (doc.get("asignacion") or {}).items():
+            if particion in RESERVADAS:
+                esperado[str(caso)] = str(particion)
+    assert reservados == esperado, "la puerta no ve todos los repartos, o ve de mas"
+    assert esperado, "sin un solo reparto, esta prueba no afirma nada"
+    # Y el reparto concreto de la sesion 1, que sigue siendo el de ADR-0025: 8 por reservada.
+    sesion_1 = leer_yaml(
+        REPO / "knowledge" / "cases" / "kit" / "2026-09-09-sesion-01" / "particiones.yaml"
+    )
+    suyos = [p for p in sesion_1["asignacion"].values() if p in PARTICIONES_RESERVADAS]
+    assert {p: suyos.count(p) for p in PARTICIONES_RESERVADAS} == dict.fromkeys(
+        PARTICIONES_RESERVADAS, 8
+    )
     assert "caso-eurusd-2026-05-14" in reservados  # el dia quemado sigue asignado a holdout-2
 
 
@@ -197,5 +218,5 @@ def test_sin_git_no_se_abre_nada(tmp_path: Path) -> None:
     (tmp_path / FICHERO_PREREGISTRO).write_text(RELLENO, encoding="utf-8")
     assert motivos_de_cierre(tmp_path, "holdout-1")
     assert motivos_de_cierre(tmp_path, "dev") == [
-        f"'dev' no es una particion reservada {PARTICIONES_RESERVADAS}"
+        f"'dev' no es una particion reservada {RESERVADAS}"
     ]

@@ -637,11 +637,32 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         salida.append(f"ERROR: kit: {f}")
     if fallos_kit:
         return 1, salida
+    # Capa fidelidad (ADR-0036): artefactos de material ETIQUETADO, con sus nombres propios. El
+    # enganche va AQUI y no en otro sitio: sin el, el directorio entero pasaria sin mirar y
+    # `make check` saldria 0, que es la forma de defecto que ADR-0035 tuvo que arreglar.
+    from botsito.cases.anterioridad import problemas_de_anterioridad
+    from botsito.cases.fidelidad import FidelidadError, artefactos, validar_artefactos
+
+    try:
+        fallos_fid, avisos_fid = validar_artefactos(repo, {str(d) for d in ids_datasets})
+    except (FidelidadError, KitError) as exc:
+        fallos_fid, avisos_fid = [str(exc)], []
+    # La anterioridad, por CASO y para los DOS caminos (ADR-0036). No depende de que existan
+    # etiquetas para correr, y hoy no hay ninguna: es justo el periodo en que hace falta.
+    fallos_fid += problemas_de_anterioridad(repo, registros_fb)
+    for a in avisos_fid:
+        salida.append(f"AVISO: {a}")
+    for f in fallos_fid:
+        salida.append(f"ERROR: fidelidad: {f}")
+    if fallos_fid:
+        return 1, salida
     n_sesiones = len(sesiones_del_kit(repo))
+    n_artefactos = len(artefactos(repo))
     if ambiguedades or n_sesiones:
+        detalle = f"; {n_artefactos} artefactos de fidelidad" if n_artefactos else ""
         salida.append(
             f"OK: {len(ambiguedades)} ambiguedades registradas; {n_sesiones} paquetes de sesion "
-            "validos, particiones anteriores al etiquetado"
+            f"validos, particiones anteriores al etiquetado{detalle}"
         )
     abiertas = len(contradicciones.detectar(items))
     salida.append(

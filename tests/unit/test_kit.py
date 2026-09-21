@@ -14,6 +14,7 @@ import pytest
 import yaml
 
 from botsito import cli
+from botsito.cases import fidelidad as fid
 from botsito.cases import kappa as kp
 from botsito.cases.ambiguedades import (
     AmbiguedadError,
@@ -1158,6 +1159,134 @@ def test_los_cupos_del_paquete_salen_del_paquete_y_editarlos_se_ve(tmp_path: Pat
     ventanas.write_text(yaml.safe_dump(sin_config, sort_keys=True), encoding="utf-8")
     problemas, _ = comprobar(repo, repo / "data", sesion)
     assert any("sin bloque `config`" in p for p in problemas)
+
+
+CONFIG_FIDELIDAD = """simbolo: XXXYYY
+dataset_prefijo: prueba-
+ventana_local: {desde: "00:00", hasta: "15:00"}
+sesiones:
+  - {nombre: "07-11", desde: "07:00", hasta: "11:00"}
+  - {nombre: "11-15", desde: "11:00", hasta: "15:00"}
+anclajes_candidatos:
+  - {etiqueta: madrid-00, hora: "00:00", huso: Europe/Madrid, coincide_con_sesiones: false}
+  - {etiqueta: ny-17, hora: "17:00", huso: America/New_York, coincide_con_sesiones: true}
+min_velas_ventana: 850
+etiquetas: [compra, venta, no_trade]
+cobertura_material:
+  "2026-05":
+    - {desde: "2026-05-04", hasta: "2026-05-08", entregado_el: "2026-09-20", fuente: [ADR-0034]}
+particiones: {fidelidad-dev: 2, fidelidad-1: 2, fidelidad-2: 0, fidelidad-3: 0}
+"""
+
+
+def _repo_fidelidad(tmp_path: Path, config: str = CONFIG_FIDELIDAD) -> Path:
+    repo, _ = repo_kit(tmp_path)
+    carpeta = repo / "knowledge" / "cases" / "fidelidad"
+    carpeta.mkdir(parents=True)
+    (carpeta / "config.yaml").write_text(config, encoding="utf-8")
+    return repo
+
+
+def test_el_camino_de_fidelidad_reparte_lo_que_el_material_cubre(tmp_path: Path) -> None:
+    """ADR-0036: material ETIQUETADO, sin sesion, sin cuestionario y sin filtro de vistos.
+
+    Tres cosas a la vez, y las tres son la decision:
+      1. El filtro de `vistos.yaml` se SALTA a proposito: `2026-05-05` esta visto y en el kit
+         queda excluido, pero aqui es un caso. Estos dias los ha visto el trader, y por eso estan
+         etiquetados y sirven.
+      2. `cobertura_material` acota el universo con MOTIVO PROPIO, que no es "visto" ni "pocas
+         velas": el material del trader no llega mas alla.
+      3. Aqui NINGUN fichero se exime de reproducirse, ni con sesion celebrada ni sin ella, porque
+         no hubo reunion cuyas respuestas expliquen una diferencia.
+    """
+    repo = _repo_fidelidad(tmp_path)
+    a1 = fid.construir(repo, repo / "data", "xxxyyy-2026-05", 3)
+    a2 = fid.construir(repo, repo / "data", "xxxyyy-2026-05", 3)
+    assert a1.ficheros == a2.ficheros  # determinista
+    assert fid.construir(repo, repo / "data", "xxxyyy-2026-05", 4).asignacion != a1.asignacion
+
+    dias = sorted(c.dia for c in a1.casos)
+    assert all("2026-05-04" <= d <= "2026-05-08" for d in dias), dias
+    assert a1.universo == 5, "laborables 4,5,6,7,8 del tramo cubierto"
+    assert len(a1.casos) == 4, "cupos 2+2; el quinto caso se queda fuera del reparto"
+    assert set(a1.asignacion.values()) <= {"fidelidad-dev", "fidelidad-1"}
+
+    motivos = {e.dia: e.motivo for e in a1.excluidos}
+    #  esta en  y el kit lo excluye; aqui NO, y esa es la decision.
+    assert "2026-05-05" not in motivos, "el filtro de vistos se salta a proposito"
+    assert "fuera de la cobertura del material del trader" in motivos["2026-05-11"]
+    assert "2026-05 cubre 2026-05-04..2026-05-08" in motivos["2026-05-11"]
+    assert "visto" not in motivos["2026-05-11"] and "velas" not in motivos["2026-05-11"]
+
+    fid.escribir(repo, a1)
+    assert fid.comprobar(repo, repo / "data", "xxxyyy-2026-05") == ([], [])
+    with pytest.raises(fid.FidelidadError, match="ya existe"):
+        fid.escribir(repo, a1)
+
+    # Nada se exime: tocar el bloque congelado se ve, sin excepcion de "sesion celebrada".
+    ventanas = repo / "knowledge" / "cases" / "fidelidad" / "xxxyyy-2026-05" / "ventanas.yaml"
+    texto = ventanas.read_text(encoding="utf-8")
+    # Un campo que la recomposicion SI regenera. Mutar el bloque `config:` congelado no serviria
+    # aqui: se recompone CON el, asi que el fichero saldria igual -esa es justo la razon de ser
+    # del ancla (ADR-0035 enmendado), que cubre el fichero entero y no lo que el fichero decide-.
+    ventanas.write_text(texto.replace("universo: 5", "universo: 9"), encoding="utf-8")
+    problemas, _ = fid.comprobar(repo, repo / "data", "xxxyyy-2026-05")
+    assert any("ventanas.yaml" in p for p in problemas)
+    ventanas.write_text(texto, encoding="utf-8")
+    assert fid.comprobar(repo, repo / "data", "xxxyyy-2026-05") == ([], [])
+
+
+def test_un_mes_sin_material_declarado_no_aporta_casos(tmp_path: Path) -> None:
+    """Este camino existe para repartir material etiquetado: de un mes sin material, nada."""
+    repo = _repo_fidelidad(
+        tmp_path,
+        CONFIG_FIDELIDAD.replace('"2026-05"', '"2026-06"')
+        .replace("2026-05-04", "2026-06-01")
+        .replace("2026-05-08", "2026-06-05")
+        .replace("fidelidad-dev: 2, fidelidad-1: 2", "fidelidad-dev: 0, fidelidad-1: 0"),
+    )
+    a = fid.construir(repo, repo / "data", "xxxyyy-2026-06", 1)
+    assert a.casos == [] and a.universo == 0
+    motivos = {e.dia: e.motivo for e in a.excluidos}
+    assert "sin material etiquetado del trader" in motivos["2026-05-04"]
+    assert "2026-05 no esta en cobertura_material" in motivos["2026-05-04"]
+
+
+def test_cobertura_material_no_admite_una_lista_de_dias(tmp_path: Path) -> None:
+    """Declarar los dias CUBIERTOS publicaria etiquetas: un laborable del rango que no estuviera
+    en la lista seria un dia sin operaciones, y eso ES su etiqueta (ADR-0036)."""
+    malos = (
+        (
+            '- {desde: "2026-05-04", hasta: "2026-05-08", entregado_el: "2026-09-20",'
+            " fuente: [ADR-0034]}",
+            '- "2026-05-04"\n    - "2026-05-05"',
+            "lista de DIAS",
+        ),
+        (
+            'desde: "2026-05-04", hasta: "2026-05-08"',
+            'desde: "2026-05-08", hasta: "2026-05-04"',
+            "al reves",
+        ),
+        (
+            'desde: "2026-05-04", hasta: "2026-05-08"',
+            'desde: "2026-06-04", hasta: "2026-06-08"',
+            "no es de ese mes",
+        ),
+    )
+    for i, (viejo, nuevo, mensaje) in enumerate(malos):
+        repo = _repo_fidelidad(tmp_path / f"malo{i}", CONFIG_FIDELIDAD.replace(viejo, nuevo))
+        with pytest.raises(fid.FidelidadError, match=mensaje):
+            fid.cargar_config(repo)
+    # Y dos tramos que se pisan: que dia esta cubierto seria ambiguo.
+    repo = _repo_fidelidad(
+        tmp_path / "solapa",
+        CONFIG_FIDELIDAD.replace(
+            "fuente: [ADR-0034]}",
+            'fuente: [ADR-0034]}\n    - {desde: "2026-05-06", hasta: "2026-05-09"}',
+        ),
+    )
+    with pytest.raises(fid.FidelidadError, match="solapados"):
+        fid.cargar_config(repo)
 
 
 def test_decidida_exige_un_adr_que_exista_y_que_la_nombre(tmp_path: Path) -> None:

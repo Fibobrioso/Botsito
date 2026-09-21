@@ -1,0 +1,76 @@
+# Datos de negocio del camino de FIDELIDAD (ADR-0036). Manual, versionado; cada commit cita
+# `Fuente:`. Es el gemelo de `knowledge/cases/kit/config.yaml` y se valida con el MISMO validador
+# (`config_desde_doc`), pero con sus propios nombres de particion.
+#
+# QUE ES ESTE CAMINO: repartir material ETIQUETADO de un mes que el trader YA vio (ADR-0034). El
+# kit es el camino del etiquetado CIEGO y por construccion no sirve aqui. Lo que este camino puede
+# prometer es ANTERIORIDAD DEMOSTRABLE -que el reparto se fijo antes de leer ninguna etiqueta- mas
+# una cifra DESCRIPTIVA con su intervalo. NO una cifra con potencia: hacen falta 36 unidades
+# efectivas y nada construible hoy las alcanza.
+simbolo: EURUSD
+dataset_prefijo: eurusd-m1-
+# Iguales a los del kit a proposito: la ventana y el anclaje son propiedades de la OPERATIVA del
+# trader, no del camino por el que entra el material. Si un dia divergen, es que uno de los dos
+# esta mal.
+ventana_local:
+  desde: "00:00"
+  hasta: "15:00"
+sesiones:
+  - nombre: "07-11"
+    desde: "07:00"
+    hasta: "11:00"
+  - nombre: "11-15"
+    desde: "11:00"
+    hasta: "15:00"
+anclajes_candidatos:
+  - etiqueta: madrid-00
+    hora: "00:00"
+    huso: Europe/Madrid
+    coincide_con_sesiones: false
+  - etiqueta: servidor-ny-17
+    hora: "17:00"
+    huso: America/New_York
+    coincide_con_sesiones: true
+min_velas_ventana: 850
+etiquetas: [compra, venta, no_trade]
+# Hasta donde llega el MATERIAL ETIQUETADO del trader, por mes (ADR-0036).
+#
+# SOLO TRAMOS `{desde, hasta}`, NUNCA una lista de dias cubiertos, y el validador lo rechaza por la
+# forma: `docs/validation/SEPTIEMBRE-ENTRA.md` dejo escrito que un dia laborable del rango que NO
+# aparezca en la columna de fechas del backtest es un dia SIN OPERACIONES, y eso ES su etiqueta.
+# Declarar la lista de dias cubiertos publicaria esas etiquetas por la puerta de atras.
+#
+# NO es "visto". Un dia puede estar sin ver Y sin etiquetar, y son cosas distintas: `vistos.yaml`
+# dice lo que el trader ya miro; esto dice hasta donde llega lo que entrego.
+#
+# ES ADITIVO: una entrega nueva del mismo mes ANADE un tramo, no corrige el que hay. Por eso es una
+# lista y no un `hasta:` suelto, que ademas no sabria expresar una entrega partida (1-5 y 12-18).
+#
+# Y EN ESTE CAMINO, un mes que NO aparezca aqui no aporta ningun caso (`solo_con_cobertura`): este
+# camino existe para repartir material etiquetado, y de un mes sin material no hay nada que medir.
+# Los datasets de los demas meses se siguen leyendo -el dia 1 necesita las velas de la vispera-.
+#
+# El dato sale de leer SOLO la columna de fechas, lo hace el consultor una vez ANTES del sorteo y
+# se declara el mismo dia en `docs/validation/HOLDOUT-EXPOSICIONES.md` (ADR-0021 §1, CLAUDE.md).
+cobertura_material:
+  "2026-09":
+    - desde: "2026-09-01"
+      hasta: "2026-09-18"
+      entregado_el: "2026-09-20"
+      fuente: [5c9fcc3, ADR-0034]
+# Cupos del reparto. NOMBRES PROPIOS, no los del kit: los del kit son globales -un
+# `AUTORIZACION-<nombre>.md` por nombre y un mapa plano que tira el paquete-, asi que meter dias no
+# ciegos en `holdout-N` daria un cubo mezclado con los dias ciegos de mayo y una cifra que no se
+# puede interpretar (ADR-0034, ADR-0036).
+#
+# EN CERO A PROPOSITO: el SORTEO de septiembre NO es de la rama que estrena este mecanismo, porque
+# un ADR decidido y estrenado en el mismo aliento acaba con la forma de la conveniencia de un mes.
+# Los numeros los fija la rama del sorteo, con su `Fuente:` y su argumento, DESPUES de ver cuantos
+# casos quedan de verdad -`asignar` descarta el sobrante en silencio, que es como la sesion 1
+# perdio dos dias-. Lo medido hasta ahora: partir 14 dias en tres cubos quema las tres aperturas
+# que tiene el proyecto en una sola pregunta y baja la potencia de 0,68 a ~0,27 por cubo.
+particiones:
+  fidelidad-dev: 0
+  fidelidad-1: 0
+  fidelidad-2: 0
+  fidelidad-3: 0

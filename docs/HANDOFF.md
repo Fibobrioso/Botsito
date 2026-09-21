@@ -5,6 +5,50 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/septiembre-particiones` esperando validacion; lo de debajo es anterior)
+- LOS CUPOS CONGELADOS ESTAN CERRADOS EN MAIN (merge 93e17a2, tag `stable/F13-cupos`, CI verde).
+- ESTA RAMA SE ABRIO PARA SORTEAR SEPTIEMBRE Y LA REVISION DE DISENO LO PARO, y el consultor lo dio
+  por bueno: `kit build` NO PUEDE construir un paquete de septiembre. `vistos.yaml` declara
+  `2026-09` con `visto_el: 2026-09-20`, `universo()` excluye sus 14 dias con motivo "mes visto por
+  el trader" y `construir()` aborta si alguno se cuela. Forzarlo exigia falsear la fecha de la
+  sesion o desactivar el filtro de vistos. ADR-0034 §6 YA LO DECIA: "el camino del kit es el del
+  etiquetado ciego y, por construccion, no sirve aqui". Leelo antes de proponer nada por ahi.
+- LA RAMA ENTREGA SOLO EL MECANISMO (ADR-0036). EL SORTEO VA EN LA SIGUIENTE, a proposito: un ADR
+  decidido y estrenado en el mismo aliento acaba con la forma de la conveniencia de un mes.
+- LO QUE HAY QUE SABER PARA LA RAMA DEL SORTEO:
+  * Los cupos de `knowledge/cases/fidelidad/config.yaml` estan EN CERO. Los decide el consultor con
+    `Fuente:` y su argumento, y DESPUES de ver cuantos casos quedan de verdad: `asignar` descarta el
+    sobrante EN SILENCIO, que es como la sesion 1 perdio `2026-05-25` y `2026-06-29`.
+  * Lo medido sobre el reparto: los nombres de particion del kit son GLOBALES -un
+    `AUTORIZACION-<nombre>.md` por nombre y un mapa plano que tira el paquete-, y el proyecto tiene
+    TRES aperturas en total. Partir 14 dias en tres cubos las quema todas en una sola pregunta y
+    baja la potencia de 0,68 a ~0,27 por cubo.
+  * `botsito fidelidad build --artefacto <id> --seed <n>` y DESPUES
+    `botsito fidelidad anclar --artefacto <id>`, EN EL MISMO COMMIT. Sin ancla, el artefacto nace
+    con el agujero que la rama de ayer tapo.
+- LO QUE ESTE CAMINO NO PROMETE, Y ESTA ESCRITO EN TRES SITIOS A PROPOSITO (ADR-0036 §8, el README
+  del directorio y la cabecera de `cases/fidelidad.py`): NO da una cifra con potencia. Hacen falta
+  36 unidades efectivas y septiembre entero da ~23; mayo tampoco llega. Da ANTERIORIDAD DEMOSTRABLE
+  y una cifra DESCRIPTIVA con su intervalo. Si alguien cita esa cifra como fidelidad medida, esta
+  afirmando lo que no se probo.
+- LA CAPTURA QUE MAS VALE DE ESTA RAMA: `cobertura_material` NO admite una lista de dias, solo
+  tramos, y el validador lo rechaza por la FORMA. Un dia laborable del rango que no apareciera en la
+  lista seria un dia sin operaciones, y eso ES su etiqueta: declararlos publicaria etiquetas por la
+  puerta de atras.
+- LA DEUDA DE LA GUARDIA DE ANCESTRO QUEDA CERRADA en su cuarta aparicion:
+  `cases/anterioridad.py` empareja por CASO y no por `sesion`, recorre los repartos de los DOS
+  caminos y no depende de que existan etiquetas. Se ve fallar con mutante, incluido el que hoy
+  pasaba: una etiqueta que lleva en `sesion` el nombre de otro paquete.
+- BLOQUEANTE PARA ABRIR, no para esta rama: `kappa_entre_sesiones` deja `excluir` vacio tras pasar
+  la puerta, asi que UNA autorizacion lee las etiquetas de los tres cubos. Hay que cerrarlo ANTES DE
+  LA PRIMERA AUTORIZACION. Hoy es seguro porque `PREREGISTRO.md` sigue vacio.
+- OJO SI EL TRADER ENTREGA MAS SEPTIEMBRE: la descarga de hoy cubre del 1 al 20 -`congelar` rechaza
+  `hasta >= hoy`, asi que era el maximo legal- y re-descargar el mes entero rompe `kit build` en
+  silencio: dos manifiestos del prefijo que cubran el mismo dia dan "dos datasets cubren el mismo
+  dia". `reemplaza_a` se escribe para datasets y NADIE LO LEE. Anotado en Technical Debt.
+- EL NOMBRE DE LA RAMA SE QUEDO VIEJO a mitad de camino; el informe se llama
+  `docs/validation/CAMINO-DE-FIDELIDAD.md`, por lo que la rama hace.
+
 ## Estado (2026-09-21, rama `trabajo/cupos-congelados` esperando validacion; lo de debajo es anterior)
 - EL UNIVERSO CONGELADO ESTA CERRADO EN MAIN (merge dfc7e20, tag `stable/F13-universo`, CI verde).
 - ESTA RAMA ES SU ENMIENDA, no un ADR nuevo, y el motivo no es de estilo: ADR-0035 dejo escrito en

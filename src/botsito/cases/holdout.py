@@ -44,8 +44,16 @@ from botsito.comun.historial import blob_en_head, contenido_en_head
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 
 PARTICIONES_RESERVADAS = ("holdout-1", "holdout-2", "holdout-3")
+# Las del camino de fidelidad (ADR-0036). ADR-0034 separo DOS cegueras: la DEL TRADER, que
+# septiembre ya no tiene, y LA NUESTRA, que sigue intacta. Es la nuestra la que esta puerta
+# protege, asi que el material etiquetado no ciego pasa por ella igual. Dejar estos nombres fuera
+# seria material reservado POR INTENCION y desprotegido POR MECANISMO, que es la forma de defecto
+# que llevan cerrando las tres ultimas ramas; a sabiendas seria peor que las anteriores.
+PARTICIONES_RESERVADAS_FIDELIDAD = ("fidelidad-1", "fidelidad-2", "fidelidad-3")
+RESERVADAS = PARTICIONES_RESERVADAS + PARTICIONES_RESERVADAS_FIDELIDAD
 DIRECTORIO_HOLDOUT = "knowledge/cases/holdout"
 DIRECTORIO_KIT = "knowledge/cases/kit"
+DIRECTORIO_FIDELIDAD = "knowledge/cases/fidelidad"
 FICHERO_PREREGISTRO = "docs/validation/PREREGISTRO.md"
 # El PREREGISTRO nacio vacio el 2026-09-12 con esta marca en su cabecera. Mientras siga, no se abre.
 MARCA_SIN_RELLENAR = "SIN RELLENAR"
@@ -78,8 +86,8 @@ def _commiteado_y_sin_cambios(repo: Path, ruta: str) -> str | None:
 
 def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
     """Por que `particion` NO se puede abrir hoy. Lista vacia: se puede."""
-    if particion not in PARTICIONES_RESERVADAS:
-        return [f"{particion!r} no es una particion reservada {PARTICIONES_RESERVADAS}"]
+    if particion not in RESERVADAS:
+        return [f"{particion!r} no es una particion reservada {RESERVADAS}"]
     motivos: list[str] = []
     preregistro = _commiteado_y_sin_cambios(repo, FICHERO_PREREGISTRO)
     if preregistro is None:
@@ -165,14 +173,27 @@ def leer_fichero(repo: Path, ruta: str) -> str:
     return (repo / ruta).read_text(encoding="utf-8")
 
 
+def repartos_commiteables(repo: Path) -> list[Path]:
+    """Todos los `particiones.yaml` que existen, de los dos caminos, en orden estable.
+
+    Los dos, y por eso esta funcion existe en vez de un glob suelto: un camino que se anada y no
+    se agregue aqui deja sus dias reservados invisibles para la puerta, que es un exit 0 que no
+    comprueba nada. `tests/unit/test_puerta_holdout.py` lo vigila comparando la union.
+    """
+    ficheros: list[Path] = []
+    for directorio in (DIRECTORIO_KIT, DIRECTORIO_FIDELIDAD):
+        base = repo / directorio
+        if base.is_dir():
+            ficheros += sorted(base.glob("*/particiones.yaml"))
+    return ficheros
+
+
 def casos_reservados(repo: Path) -> dict[str, str]:
     """`caso -> particion` de todos los casos asignados a una particion reservada, en todos los
-    paquetes del kit. Leer la ASIGNACION no es abrir: es lo que dice que no se puede leer."""
+    repartos commiteados de los DOS caminos. Leer la ASIGNACION no es abrir: es lo que dice que
+    no se puede leer."""
     salida: dict[str, str] = {}
-    kit = repo / DIRECTORIO_KIT
-    if not kit.is_dir():
-        return salida
-    for fichero in sorted(kit.glob("*/particiones.yaml")):
+    for fichero in repartos_commiteables(repo):
         try:
             doc = leer_yaml(fichero)
         except (OSError, YamlError):
@@ -181,6 +202,6 @@ def casos_reservados(repo: Path) -> dict[str, str]:
         if not isinstance(asignacion, dict):
             continue
         for caso, particion in asignacion.items():
-            if particion in PARTICIONES_RESERVADAS:
+            if particion in RESERVADAS:
                 salida[str(caso)] = str(particion)
     return salida
