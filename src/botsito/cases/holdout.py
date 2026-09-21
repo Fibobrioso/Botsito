@@ -54,10 +54,31 @@ RESERVADAS = PARTICIONES_RESERVADAS + PARTICIONES_RESERVADAS_FIDELIDAD
 DIRECTORIO_HOLDOUT = "knowledge/cases/holdout"
 DIRECTORIO_KIT = "knowledge/cases/kit"
 DIRECTORIO_FIDELIDAD = "knowledge/cases/fidelidad"
+# Subcarpeta de material reservado -> particion que la guarda. Explicita en vez de construida
+# con f-strings: una particion nueva que no este aqui se ve en el diff. `DIRECTORIO_FIDELIDAD`
+# NO tiene entrada: hoy sus carpetas solo llevan ASIGNACION -`ventanas.yaml`,
+# `particiones.yaml`, `anclas.yaml`, `config.yaml`-, y leer asignacion no es abrir. El
+# disparador para que la necesite esta escrito en la enmienda de ADR-0033 y en Technical Debt.
+CARPETAS_RESERVADAS = {"1": "holdout-1", "2": "holdout-2", "3": "holdout-3"}
 FICHERO_PREREGISTRO = "docs/validation/PREREGISTRO.md"
 # El PREREGISTRO nacio vacio el 2026-09-12 con esta marca en su cabecera. Mientras siga, no se abre.
 MARCA_SIN_RELLENAR = "SIN RELLENAR"
-_CAMPOS_AUTORIZACION = ("particion", "autorizado_por", "fecha", "adr", "preregistro_blob")
+_CAMPOS_AUTORIZACION = (
+    "particion",
+    "autorizado_por",
+    "fecha",
+    "adr",
+    "pregunta",
+    "preregistro_blob",
+)
+# Las preguntas del pre-registro, una por linea, con su estado en la misma linea. Una sola
+# fuente de verdad: una seccion aparte de `gastadas` se desincroniza y ademas invita a
+# borrarla entera.
+_PREGUNTA = re.compile(
+    r"^-\s*pregunta:\s*(?P<id>[A-Za-z0-9][\w-]*)\s*\|\s*estado:\s*(?P<estado>\S+)",
+    re.MULTILINE,
+)
+ABIERTA, GASTADA = "ABIERTA", "GASTADA"
 _SHA = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
 _FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 _ADR = re.compile(r"^ADR-(\d{4})$", re.ASCII)
@@ -65,6 +86,19 @@ _ADR = re.compile(r"^ADR-(\d{4})$", re.ASCII)
 
 class HoldoutCerradoError(PermissionError):
     """Se intento abrir material de holdout sin lo que exige ADR-0021 §3."""
+
+
+class RepartoIlegibleError(ValueError):
+    """Un `particiones.yaml` que la puerta no puede leer.
+
+    La puerta no puede responder a medias: si no puede leer la asignacion, NO SABE que hay que
+    ocultar, y un mapa incompleto es indistinguible de uno completo. Hasta el 2026-09-21 esto
+    era un `continue` en silencio, con un comentario que delegaba en `knowledge validate`; el
+    comentario era FALSO para toda carpeta que el glob ve y el validador de su camino no
+    reconoce -medido: un `BORRADOR_2026-09/` daba exit 0 en todas partes con sus reservados
+    invisibles-. Ningun comando que deba sobrevivir a un paquete a medio escribir pasa por
+    aqui: ni `kit build`, ni `kit check`, ni `knowledge validate`, ni un clon sin `data/`.
+    """
 
 
 def fichero_autorizacion(particion: str) -> str:
@@ -82,6 +116,20 @@ def _commiteado_y_sin_cambios(repo: Path, ruta: str) -> str | None:
         return None
     actual = fichero.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
     return actual if actual == en_head.lstrip("\ufeff").replace("\r\n", "\n") else None
+
+
+def preguntas_del_preregistro(texto: str) -> dict[str, str]:
+    """`id -> estado` de las preguntas declaradas en el pre-registro.
+
+    La forma es una linea por pregunta dentro de `## Preguntas`:
+
+        - pregunta: P1 | estado: ABIERTA | de que va, en una frase
+
+    Empieza por `- ` a proposito: el parser de la AUTORIZACION parte por el primer `:` de cada
+    linea, asi que una linea que empezara por `pregunta:` en columna cero seria una clave si
+    alguien reusara ese parser aqui.
+    """
+    return {m.group("id"): m.group("estado") for m in _PREGUNTA.finditer(texto)}
 
 
 def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
@@ -148,29 +196,122 @@ def motivos_de_cierre(repo: Path, particion: str) -> list[str]:
                 f"commiteado es {vigente[:12] + '…' if vigente else 'ninguno'}: el pre-registro "
                 f"cambio despues de autorizar, y hace falta una autorizacion nueva"
             )
+    # La PREGUNTA que esta autorizacion abre (ADR-0033, enmienda del 2026-09-21). Sin esto, una
+    # autorizacion es de un solo uso POR VERSION DEL PRE-REGISTRO y no por pregunta: si el
+    # pre-registro lleva tres preguntas en el blob B1, una autorizacion anclada a B1 abre para las
+    # tres y para una cuarta que nadie escribio. Se comprueba contra el `preregistro` que ya
+    # tenemos en la mano: ni una llamada mas a git.
+    if preregistro is not None:
+        estado = preguntas_del_preregistro(preregistro).get(campos["pregunta"])
+        if estado is None:
+            motivos.append(
+                f"{ruta}: cita la pregunta {campos['pregunta']!r} y el {FICHERO_PREREGISTRO} "
+                f"commiteado no la tiene"
+            )
+        elif estado != ABIERTA:
+            motivos.append(
+                f"{ruta}: la pregunta {campos['pregunta']!r} ya se gasto (estado {estado}): una "
+                f"autorizacion abre UNA pregunta, y esa ya esta contestada"
+            )
     return motivos
 
 
-def abrir(repo: Path, particion: str, para_que: str) -> None:
-    """Deja pasar o se niega. Todo acceso a material reservado llama aqui antes."""
+def abrir(repo: Path, particion: str, pregunta: str) -> None:
+    """Deja pasar o se niega. Todo acceso a material reservado llama aqui antes.
+
+    `pregunta` es el ID de la pregunta pre-registrada que se esta abriendo, y es LOAD-BEARING: la
+    autorizacion cita una, y si no coinciden la puerta se niega nombrando las dos. Hasta el
+    2026-09-21 este parametro se llamaba `para_que`, era una frase y solo aparecia en el mensaje
+    de error: cuando la puerta ABRIA -que es cuando importa- esa cadena no dejaba rastro en
+    ningun sitio, porque `abrir` es pura y no escribe. Con el id, el acto de abrir DECLARA para
+    que se abre, y esa declaracion se compara.
+
+    Sigue siendo PURA: comprueba y vuelve. Quien gasta la pregunta es el COMANDO, y la gasta
+    ANTES de leer (ADR-0033, enmienda del 2026-09-21).
+    """
     motivos = motivos_de_cierre(repo, particion)
+    if not motivos:
+        ruta = fichero_autorizacion(particion)
+        texto = _commiteado_y_sin_cambios(repo, ruta) or ""
+        citada = next(
+            (
+                linea.partition(":")[2].strip()
+                for linea in texto.splitlines()
+                if linea.partition(":")[0].strip() == "pregunta"
+            ),
+            None,
+        )
+        if citada != pregunta:
+            motivos = [f"{ruta}: autoriza la pregunta {citada!r} y se esta abriendo {pregunta!r}"]
     if motivos:
         raise HoldoutCerradoError(
-            f"no se abre {particion} ({para_que}): ADR-0021 §3 exige autorizacion del usuario y "
+            f"no se abre {particion} ({pregunta}): ADR-0021 §3 exige autorizacion del usuario y "
             f"PREREGISTRO.md commiteado y relleno ANTES de abrir. " + "; ".join(motivos)
         )
 
 
-def leer_fichero(repo: Path, ruta: str) -> str:
-    """El unico lector de `knowledge/cases/holdout/`. El README de cada particion es libre."""
-    partes = Path(ruta).parts
-    base = Path(DIRECTORIO_HOLDOUT).parts
-    if partes[: len(base)] != base:
-        raise ValueError(f"{ruta} no esta en {DIRECTORIO_HOLDOUT}")
-    resto = partes[len(base) :]
-    if len(resto) >= 2 and resto[0] in {"1", "2", "3"} and resto[1:] != ("README.md",):
-        abrir(repo, f"holdout-{resto[0]}", f"leer {ruta}")
-    return (repo / ruta).read_text(encoding="utf-8")
+def gastar_pregunta(repo: Path, pregunta: str) -> Path:
+    """Marca una pregunta como GASTADA en el pre-registro. LO LLAMA EL COMANDO, nunca `abrir`.
+
+    Se gasta ANTES de leer, no despues, y los dos modos de fallo no son simetricos: "gastada y no
+    leida" cuesta volver a pre-registrar; "leida y no gastada" es exactamente el defecto que esta
+    enmienda cierra.
+
+    Escribe y no commitea, como `kit anclar`. Y en cuanto escribe, la puerta YA esta cerrada
+    aunque nadie haya commiteado: `_commiteado_y_sin_cambios` exige que el arbol coincida con HEAD.
+    """
+    ruta = repo / FICHERO_PREREGISTRO
+    try:
+        texto = ruta.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+    except OSError as exc:
+        raise HoldoutCerradoError(f"{FICHERO_PREREGISTRO}: {exc}") from exc
+    estados = preguntas_del_preregistro(texto)
+    if pregunta not in estados:
+        raise HoldoutCerradoError(
+            f"{FICHERO_PREREGISTRO} no declara la pregunta {pregunta!r}: "
+            f"{sorted(estados) or 'ninguna'}"
+        )
+    if estados[pregunta] != ABIERTA:
+        raise HoldoutCerradoError(
+            f"la pregunta {pregunta!r} ya estaba {estados[pregunta]}: no se gasta dos veces"
+        )
+    lineas = texto.splitlines(keepends=True)
+    for i, linea in enumerate(lineas):
+        m = _PREGUNTA.match(linea)
+        if m is not None and m.group("id") == pregunta:
+            lineas[i] = linea.replace(f"estado: {ABIERTA}", f"estado: {GASTADA}", 1)
+            break
+    ruta.write_text("".join(lineas), encoding="utf-8", newline="\n")
+    return ruta
+
+
+def leer_fichero(repo: Path, ruta: str, pregunta: str = "") -> str:
+    """El unico lector de `knowledge/cases/holdout/`. El README de cada particion es libre.
+
+    DECIDE SOBRE LA RUTA RESUELTA, no sobre el texto que le pasan. Hasta el 2026-09-21 comparaba
+    `Path(ruta).parts` sin resolver, y eso dejaba pasar esto -medido-:
+
+        knowledge/cases/holdout/../holdout/2/caso-secreto.yaml  ->  LEE, sin llamar a `abrir`
+
+    porque el `..` hacia que `resto[0]` no fuera `1|2|3`, mientras que `read_text` si resolvia el
+    `..` y leia el fichero reservado. Tres puntos y una barra saltaban la puerta. No se arregla
+    buscando `".."` por subcadena -eso es jugar al gato y al raton con la sintaxis-: se resuelve
+    la ruta y se decide sobre lo resuelto.
+
+    Y NIEGA POR DEFECTO dentro del directorio guardado: todo lo que no sea exactamente el
+    `README.md` de una particion conocida pasa por `abrir`, incluidas las subcarpetas que no
+    existen -una `4/` que aparezca manana cae del lado seguro- y los ficheros sueltos en la raiz.
+    """
+    raiz = repo.resolve()
+    destino = (repo / ruta).resolve()
+    base = (raiz / DIRECTORIO_HOLDOUT).resolve()
+    try:
+        resto = destino.relative_to(base).parts
+    except ValueError:
+        raise ValueError(f"{ruta} no esta en {DIRECTORIO_HOLDOUT}") from None
+    if resto[1:] != ("README.md",) or resto[0] not in CARPETAS_RESERVADAS:
+        abrir(repo, CARPETAS_RESERVADAS.get(resto[0], RESERVADAS[0]), pregunta)
+    return destino.read_text(encoding="utf-8")
 
 
 def repartos_commiteables(repo: Path) -> list[Path]:
@@ -196,8 +337,11 @@ def casos_reservados(repo: Path) -> dict[str, str]:
     for fichero in repartos_commiteables(repo):
         try:
             doc = leer_yaml(fichero)
-        except (OSError, YamlError):
-            continue  # el esquema del paquete lo denuncia `knowledge validate`, no esta puerta
+        except (OSError, YamlError) as exc:
+            raise RepartoIlegibleError(
+                f"{fichero.relative_to(repo).as_posix()}: {exc}. La puerta no sabe que casos "
+                f"reservados hay en este reparto, asi que no puede decir que ocultar"
+            ) from exc
         asignacion = doc.get("asignacion") if isinstance(doc, dict) else None
         if not isinstance(asignacion, dict):
             continue

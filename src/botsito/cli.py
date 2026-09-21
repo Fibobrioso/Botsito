@@ -1310,6 +1310,7 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
 
 def _kit_errores() -> tuple[type[Exception], ...]:
     from botsito.cases.fidelidad import FidelidadError
+    from botsito.cases.holdout import RepartoIlegibleError
     from botsito.cases.paquete import KitError
     from botsito.config.ajustes import AjustesError
     from botsito.config.registro import RegistroError
@@ -1323,6 +1324,7 @@ def _kit_errores() -> tuple[type[Exception], ...]:
     return (
         KitError,
         FidelidadError,
+        RepartoIlegibleError,
         AjustesError,
         RegistroError,
         InventarioError,
@@ -1537,8 +1539,20 @@ def kit_kappa(repo: Path, args: argparse.Namespace) -> int:
     errores: tuple[type[Exception], ...] = (*_kit_errores(), HoldoutCerradoError)
     try:
         registros = cargar_feedback(repo / "knowledge" / "feedback")
+        if args.incluir_holdout and not args.pregunta:
+            print(
+                "ERROR: --incluir-holdout abre material reservado: exige --pregunta con el id de "
+                "la pregunta pre-registrada que se esta gastando (ADR-0033, enmienda)",
+                file=sys.stderr,
+            )
+            return 1
         r = kappa_entre_sesiones(
-            repo, registros, args.sesion_a, args.sesion_b, incluir_holdout=args.incluir_holdout
+            repo,
+            registros,
+            args.sesion_a,
+            args.sesion_b,
+            incluir_holdout=args.incluir_holdout,
+            pregunta=args.pregunta or "",
         )
     except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -1679,9 +1693,16 @@ def feedback_trace(repo: Path, identificador: str) -> int:
     for it in items:
         if it.id == identificador:
             print(f"evidencia {it.id} [{it.video_id} {it.t0}-{it.t1}] {it.tema}: {it.cita_literal}")
-    from botsito.cases.holdout import casos_reservados
+    from botsito.cases.holdout import RepartoIlegibleError, casos_reservados
 
-    for linea in trazar(identificador, registros, ocultar=set(casos_reservados(repo))):
+    try:
+        ocultar = set(casos_reservados(repo))
+    except RepartoIlegibleError as exc:
+        # Ocultar de MENOS es imprimir el valor de una etiqueta reservada. Antes del 2026-09-21
+        # esto salia con exit 0 y sin una palabra sobre el fichero ilegible.
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    for linea in trazar(identificador, registros, ocultar=ocultar):
         print(linea)
     return 0
 
@@ -2166,6 +2187,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     kb_kappa.add_argument("--sesion-a", dest="sesion_a", required=True)
     kb_kappa.add_argument("--sesion-b", dest="sesion_b", required=True)
+    kb_kappa.add_argument(
+        "--pregunta",
+        help="id de la pregunta pre-registrada que se abre y se gasta (con --incluir-holdout)",
+    )
     kb_kappa.add_argument(
         "--incluir-holdout",
         dest="incluir_holdout",
