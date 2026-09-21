@@ -1,0 +1,22 @@
+artefacto: eurusd-2026-09
+asignacion:
+  caso-eurusd-2026-09-01: fidelidad-dev
+  caso-eurusd-2026-09-02: fidelidad-1
+  caso-eurusd-2026-09-03: fidelidad-1
+  caso-eurusd-2026-09-04: fidelidad-dev
+  caso-eurusd-2026-09-07: fidelidad-1
+  caso-eurusd-2026-09-08: fidelidad-1
+  caso-eurusd-2026-09-09: fidelidad-1
+  caso-eurusd-2026-09-10: fidelidad-1
+  caso-eurusd-2026-09-11: fidelidad-1
+  caso-eurusd-2026-09-14: fidelidad-1
+  caso-eurusd-2026-09-15: fidelidad-1
+  caso-eurusd-2026-09-16: fidelidad-1
+  caso-eurusd-2026-09-17: fidelidad-dev
+  caso-eurusd-2026-09-18: fidelidad-dev
+cupos:
+  fidelidad-1: 10
+  fidelidad-2: 0
+  fidelidad-3: 0
+  fidelidad-dev: 4
+seed: 20260921

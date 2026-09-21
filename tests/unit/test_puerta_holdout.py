@@ -48,6 +48,12 @@ def test_leer_material_del_holdout_real_pasa_por_la_puerta_y_se_niega() -> None:
         leer_fichero(REPO, "knowledge/cases/kit/config.yaml")
 
 
+def _reservados_en(fichero: Path) -> list[str]:
+    """Los casos reservados de un `particiones.yaml`, leidos del fichero y no de la puerta."""
+    doc = leer_yaml(fichero)
+    return [c for c, p in (doc.get("asignacion") or {}).items() if p in RESERVADAS]
+
+
 def test_los_casos_reservados_salen_de_la_asignacion_sin_abrir_nada() -> None:
     """Leer `particiones.yaml` no es abrir: es lo que dice que no se puede leer.
 
@@ -67,6 +73,13 @@ def test_los_casos_reservados_salen_de_la_asignacion_sin_abrir_nada() -> None:
                 esperado[str(caso)] = str(particion)
     assert reservados == esperado, "la puerta no ve todos los repartos, o ve de mas"
     assert esperado, "sin un solo reparto, esta prueba no afirma nada"
+    # Y que NINGUNO de los dos caminos aporte cero, porque entonces la igualdad de arriba seria
+    # cierta por vacuidad y borrar un camino del glob no la rompería. Hasta el sorteo de septiembre
+    # (2026-09-21) el camino de fidelidad no tenia reservados y esto pasaba sin ejercitarse.
+    por_camino = {f.parent.parent.name for f in repartos_commiteables(REPO) if _reservados_en(f)}
+    assert por_camino == {"kit", "fidelidad"}, (
+        f"solo {sorted(por_camino)} aporta casos reservados: la union no esta ejercitada"
+    )
     # Y el reparto concreto de la sesion 1, que sigue siendo el de ADR-0025: 8 por reservada.
     sesion_1 = leer_yaml(
         REPO / "knowledge" / "cases" / "kit" / "2026-09-09-sesion-01" / "particiones.yaml"

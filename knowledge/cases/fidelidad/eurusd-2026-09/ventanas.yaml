@@ -1,0 +1,550 @@
+artefacto: eurusd-2026-09
+casos:
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-08-31T22:00Z
+  dia: '2026-09-01'
+  hasta_utc: 2026-09-01T13:00Z
+  id: caso-eurusd-2026-09-01
+  limites_h4:
+    madrid-00:
+    - 2026-08-31T22:00Z
+    - 2026-09-01T02:00Z
+    - 2026-09-01T06:00Z
+    - 2026-09-01T10:00Z
+    - 2026-09-01T14:00Z
+    servidor-ny-17:
+    - 2026-08-31T21:00Z
+    - 2026-09-01T01:00Z
+    - 2026-09-01T05:00Z
+    - 2026-09-01T09:00Z
+    - 2026-09-01T13:00Z
+  n_velas: 898
+  sha256: b9b8675aec611a217b12a9fd314e7f47bacf2a8cd6887a195900c0f5cee226b2
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-01T22:00Z
+  dia: '2026-09-02'
+  hasta_utc: 2026-09-02T13:00Z
+  id: caso-eurusd-2026-09-02
+  limites_h4:
+    madrid-00:
+    - 2026-09-01T22:00Z
+    - 2026-09-02T02:00Z
+    - 2026-09-02T06:00Z
+    - 2026-09-02T10:00Z
+    - 2026-09-02T14:00Z
+    servidor-ny-17:
+    - 2026-09-01T21:00Z
+    - 2026-09-02T01:00Z
+    - 2026-09-02T05:00Z
+    - 2026-09-02T09:00Z
+    - 2026-09-02T13:00Z
+  n_velas: 892
+  sha256: de9efa746177602a0f86f4b1c17d92c1da94ead90ba6cf827d1c01178a677282
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-02T22:00Z
+  dia: '2026-09-03'
+  hasta_utc: 2026-09-03T13:00Z
+  id: caso-eurusd-2026-09-03
+  limites_h4:
+    madrid-00:
+    - 2026-09-02T22:00Z
+    - 2026-09-03T02:00Z
+    - 2026-09-03T06:00Z
+    - 2026-09-03T10:00Z
+    - 2026-09-03T14:00Z
+    servidor-ny-17:
+    - 2026-09-02T21:00Z
+    - 2026-09-03T01:00Z
+    - 2026-09-03T05:00Z
+    - 2026-09-03T09:00Z
+    - 2026-09-03T13:00Z
+  n_velas: 899
+  sha256: 6d09d8507f15eefd0b14846589df1a8c5446d330de8ced3784c1a60a39628065
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-03T22:00Z
+  dia: '2026-09-04'
+  hasta_utc: 2026-09-04T13:00Z
+  id: caso-eurusd-2026-09-04
+  limites_h4:
+    madrid-00:
+    - 2026-09-03T22:00Z
+    - 2026-09-04T02:00Z
+    - 2026-09-04T06:00Z
+    - 2026-09-04T10:00Z
+    - 2026-09-04T14:00Z
+    servidor-ny-17:
+    - 2026-09-03T21:00Z
+    - 2026-09-04T01:00Z
+    - 2026-09-04T05:00Z
+    - 2026-09-04T09:00Z
+    - 2026-09-04T13:00Z
+  n_velas: 898
+  sha256: 33b3ee68f5572dd8e92d1224e2b44105c31efd9a06c58ac3df94d3ca47c89b69
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-06T22:00Z
+  dia: '2026-09-07'
+  hasta_utc: 2026-09-07T13:00Z
+  id: caso-eurusd-2026-09-07
+  limites_h4:
+    madrid-00:
+    - 2026-09-06T22:00Z
+    - 2026-09-07T02:00Z
+    - 2026-09-07T06:00Z
+    - 2026-09-07T10:00Z
+    - 2026-09-07T14:00Z
+    servidor-ny-17:
+    - 2026-09-06T21:00Z
+    - 2026-09-07T01:00Z
+    - 2026-09-07T05:00Z
+    - 2026-09-07T09:00Z
+    - 2026-09-07T13:00Z
+  n_velas: 893
+  sha256: 952a6f7f7f783b5b3620df7de1e9a1cc1ce92fcbd30fb8cd8b58c63dcf1033a1
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-07T22:00Z
+  dia: '2026-09-08'
+  hasta_utc: 2026-09-08T13:00Z
+  id: caso-eurusd-2026-09-08
+  limites_h4:
+    madrid-00:
+    - 2026-09-07T22:00Z
+    - 2026-09-08T02:00Z
+    - 2026-09-08T06:00Z
+    - 2026-09-08T10:00Z
+    - 2026-09-08T14:00Z
+    servidor-ny-17:
+    - 2026-09-07T21:00Z
+    - 2026-09-08T01:00Z
+    - 2026-09-08T05:00Z
+    - 2026-09-08T09:00Z
+    - 2026-09-08T13:00Z
+  n_velas: 899
+  sha256: c0e7db7a2b38ffa8ce245fd40743b9db486dda4fd7d1d30a9be614cd949a10e3
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-08T22:00Z
+  dia: '2026-09-09'
+  hasta_utc: 2026-09-09T13:00Z
+  id: caso-eurusd-2026-09-09
+  limites_h4:
+    madrid-00:
+    - 2026-09-08T22:00Z
+    - 2026-09-09T02:00Z
+    - 2026-09-09T06:00Z
+    - 2026-09-09T10:00Z
+    - 2026-09-09T14:00Z
+    servidor-ny-17:
+    - 2026-09-08T21:00Z
+    - 2026-09-09T01:00Z
+    - 2026-09-09T05:00Z
+    - 2026-09-09T09:00Z
+    - 2026-09-09T13:00Z
+  n_velas: 899
+  sha256: fa9c90751be5a808e6dea1900aa7a595f270d476b99869c34db9f0e8ea186be9
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-09T22:00Z
+  dia: '2026-09-10'
+  hasta_utc: 2026-09-10T13:00Z
+  id: caso-eurusd-2026-09-10
+  limites_h4:
+    madrid-00:
+    - 2026-09-09T22:00Z
+    - 2026-09-10T02:00Z
+    - 2026-09-10T06:00Z
+    - 2026-09-10T10:00Z
+    - 2026-09-10T14:00Z
+    servidor-ny-17:
+    - 2026-09-09T21:00Z
+    - 2026-09-10T01:00Z
+    - 2026-09-10T05:00Z
+    - 2026-09-10T09:00Z
+    - 2026-09-10T13:00Z
+  n_velas: 898
+  sha256: ccc0c1b82dfcab2ebfd4ce4b9945ac661f25b2e9ae5af35c7bfc7fe16b7e2aa4
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-10T22:00Z
+  dia: '2026-09-11'
+  hasta_utc: 2026-09-11T13:00Z
+  id: caso-eurusd-2026-09-11
+  limites_h4:
+    madrid-00:
+    - 2026-09-10T22:00Z
+    - 2026-09-11T02:00Z
+    - 2026-09-11T06:00Z
+    - 2026-09-11T10:00Z
+    - 2026-09-11T14:00Z
+    servidor-ny-17:
+    - 2026-09-10T21:00Z
+    - 2026-09-11T01:00Z
+    - 2026-09-11T05:00Z
+    - 2026-09-11T09:00Z
+    - 2026-09-11T13:00Z
+  n_velas: 899
+  sha256: 24335e42affed6b748d23634f948abb0163a8cdafd1f011f2e270839c1e775b8
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-13T22:00Z
+  dia: '2026-09-14'
+  hasta_utc: 2026-09-14T13:00Z
+  id: caso-eurusd-2026-09-14
+  limites_h4:
+    madrid-00:
+    - 2026-09-13T22:00Z
+    - 2026-09-14T02:00Z
+    - 2026-09-14T06:00Z
+    - 2026-09-14T10:00Z
+    - 2026-09-14T14:00Z
+    servidor-ny-17:
+    - 2026-09-13T21:00Z
+    - 2026-09-14T01:00Z
+    - 2026-09-14T05:00Z
+    - 2026-09-14T09:00Z
+    - 2026-09-14T13:00Z
+  n_velas: 900
+  sha256: da84e6fe3f7da2ca6c74d70640835fb0533a4ada5f5ff0438eb7126de57789b9
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-14T22:00Z
+  dia: '2026-09-15'
+  hasta_utc: 2026-09-15T13:00Z
+  id: caso-eurusd-2026-09-15
+  limites_h4:
+    madrid-00:
+    - 2026-09-14T22:00Z
+    - 2026-09-15T02:00Z
+    - 2026-09-15T06:00Z
+    - 2026-09-15T10:00Z
+    - 2026-09-15T14:00Z
+    servidor-ny-17:
+    - 2026-09-14T21:00Z
+    - 2026-09-15T01:00Z
+    - 2026-09-15T05:00Z
+    - 2026-09-15T09:00Z
+    - 2026-09-15T13:00Z
+  n_velas: 897
+  sha256: ae1e8b41bb1f30029cdd2b8c52b40b18de61b634a79917d07c7663a908b45d82
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-15T22:00Z
+  dia: '2026-09-16'
+  hasta_utc: 2026-09-16T13:00Z
+  id: caso-eurusd-2026-09-16
+  limites_h4:
+    madrid-00:
+    - 2026-09-15T22:00Z
+    - 2026-09-16T02:00Z
+    - 2026-09-16T06:00Z
+    - 2026-09-16T10:00Z
+    - 2026-09-16T14:00Z
+    servidor-ny-17:
+    - 2026-09-15T21:00Z
+    - 2026-09-16T01:00Z
+    - 2026-09-16T05:00Z
+    - 2026-09-16T09:00Z
+    - 2026-09-16T13:00Z
+  n_velas: 900
+  sha256: 325d2d36084344f700fdbe31495642d42cf04bd93265d2f8e5e7c3e26ad72a2f
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-16T22:00Z
+  dia: '2026-09-17'
+  hasta_utc: 2026-09-17T13:00Z
+  id: caso-eurusd-2026-09-17
+  limites_h4:
+    madrid-00:
+    - 2026-09-16T22:00Z
+    - 2026-09-17T02:00Z
+    - 2026-09-17T06:00Z
+    - 2026-09-17T10:00Z
+    - 2026-09-17T14:00Z
+    servidor-ny-17:
+    - 2026-09-16T21:00Z
+    - 2026-09-17T01:00Z
+    - 2026-09-17T05:00Z
+    - 2026-09-17T09:00Z
+    - 2026-09-17T13:00Z
+  n_velas: 899
+  sha256: 07b5dc102f0ebc9da391f280906c27097e066b36100326b28dea976012df91ff
+- dataset_id: eurusd-m1-2026-09-9d707383
+  desde_utc: 2026-09-17T22:00Z
+  dia: '2026-09-18'
+  hasta_utc: 2026-09-18T13:00Z
+  id: caso-eurusd-2026-09-18
+  limites_h4:
+    madrid-00:
+    - 2026-09-17T22:00Z
+    - 2026-09-18T02:00Z
+    - 2026-09-18T06:00Z
+    - 2026-09-18T10:00Z
+    - 2026-09-18T14:00Z
+    servidor-ny-17:
+    - 2026-09-17T21:00Z
+    - 2026-09-18T01:00Z
+    - 2026-09-18T05:00Z
+    - 2026-09-18T09:00Z
+    - 2026-09-18T13:00Z
+  n_velas: 898
+  sha256: 16ef0f1bcf57a6ea3490fdc574a244a448670962a0d302a045461dc6251816cc
+config:
+  anclajes_candidatos:
+  - coincide_con_sesiones: false
+    etiqueta: madrid-00
+    hora: 00:00
+    huso: Europe/Madrid
+  - coincide_con_sesiones: true
+    etiqueta: servidor-ny-17
+    hora: '17:00'
+    huso: America/New_York
+  cobertura_material:
+    2026-09:
+    - desde: '2026-09-01'
+      entregado_el: '2026-09-20'
+      fuente:
+      - 5c9fcc3
+      - ADR-0034
+      hasta: '2026-09-18'
+  dataset_prefijo: eurusd-m1-
+  etiquetas:
+  - compra
+  - venta
+  - no_trade
+  min_velas_ventana: 850
+  particiones:
+    fidelidad-1: 10
+    fidelidad-2: 0
+    fidelidad-3: 0
+    fidelidad-dev: 4
+  sesiones:
+  - desde: 07:00
+    hasta: '11:00'
+    nombre: 07-11
+  - desde: '11:00'
+    hasta: '15:00'
+    nombre: 11-15
+  simbolo: EURUSD
+  ventana_local:
+    desde: 00:00
+    hasta: '15:00'
+datasets:
+- eurusd-m1-2026-01-e37291d4
+- eurusd-m1-2026-05-03d048ed
+- eurusd-m1-2026-06-9c45983f
+- eurusd-m1-2026-07-aa162170
+- eurusd-m1-2026-08-0d42230e
+- eurusd-m1-2026-09-9d707383
+excluidos:
+- dia: '2026-01-01'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-02'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-05'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-06'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-07'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-08'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-09'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-12'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-13'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-14'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-15'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-16'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-19'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-20'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-21'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-22'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-23'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-26'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-27'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-28'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-29'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-01-30'
+  motivo: sin material etiquetado del trader (2026-01 no esta en cobertura_material)
+- dia: '2026-05-01'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-04'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-05'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-06'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-07'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-08'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-11'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-12'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-13'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-14'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-15'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-18'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-19'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-20'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-21'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-22'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-25'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-26'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-27'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-28'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-05-29'
+  motivo: sin material etiquetado del trader (2026-05 no esta en cobertura_material)
+- dia: '2026-06-01'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-02'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-03'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-04'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-05'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-08'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-09'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-10'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-11'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-12'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-15'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-16'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-17'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-18'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-19'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-22'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-23'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-24'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-25'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-26'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-29'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-06-30'
+  motivo: sin material etiquetado del trader (2026-06 no esta en cobertura_material)
+- dia: '2026-07-01'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-02'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-03'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-06'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-07'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-08'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-09'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-10'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-13'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-14'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-15'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-16'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-17'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-20'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-21'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-22'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-23'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-24'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-27'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-28'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-29'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-30'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-07-31'
+  motivo: sin material etiquetado del trader (2026-07 no esta en cobertura_material)
+- dia: '2026-08-03'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-04'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-05'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-06'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-07'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-10'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-11'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-12'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-13'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-14'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-17'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-18'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-19'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-20'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-21'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-24'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-25'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-26'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-27'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-28'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+- dia: '2026-08-31'
+  motivo: sin material etiquetado del trader (2026-08 no esta en cobertura_material)
+huso_operativa: Europe/Madrid
+universo: 14

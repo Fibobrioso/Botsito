@@ -63,14 +63,29 @@ cobertura_material:
 # ciegos en `holdout-N` daria un cubo mezclado con los dias ciegos de mayo y una cifra que no se
 # puede interpretar (ADR-0034, ADR-0036).
 #
-# EN CERO A PROPOSITO: el SORTEO de septiembre NO es de la rama que estrena este mecanismo, porque
-# un ADR decidido y estrenado en el mismo aliento acaba con la forma de la conveniencia de un mes.
-# Los numeros los fija la rama del sorteo, con su `Fuente:` y su argumento, DESPUES de ver cuantos
-# casos quedan de verdad -`asignar` descarta el sobrante en silencio, que es como la sesion 1
-# perdio dos dias-. Lo medido hasta ahora: partir 14 dias en tres cubos quema las tres aperturas
-# que tiene el proyecto en una sola pregunta y baja la potencia de 0,68 a ~0,27 por cubo.
+# LOS DE SEPTIEMBRE, decididos por el consultor el 2026-09-21. El universo son 14 dias (medido) y
+# los cupos suman 14 exactos: no sobra ninguno, asi que nadie se cae en silencio como le paso a
+# `2026-05-25` y `2026-06-29` en la sesion 1.
+#
+# EL ARGUMENTO, que es lo que hay que poder reproducir; el numero solo es su consecuencia:
+#
+# (a) CONCENTRAR, y el motivo NO es la potencia: es la TENTACION. Ningun reparto llega a las 36
+#     unidades efectivas que F26 necesita, asi que ninguna cifra sera defendible se reparta como se
+#     reparta. Tres cubos de ~3 dias no dan tres medidas: dan tres cifras que se contradiran entre
+#     si, y eso invita a escoger la que convenga. Un cubo da UNA cifra honesta, con su intervalo
+#     ancho y a la vista.
+#
+# (b) `fidelidad-2` y `fidelidad-3` SE QUEDAN VACIAS A PROPOSITO, reservadas para material que
+#     pueda cargar una cifra de verdad -febrero o marzo, el mes limpio que sigue pendiente-.
+#     Llenarlas hoy seria quemar dos aperturas para no medir nada. Comprobado antes de sortear:
+#     `asignar` admite cupo 0 en un nombre reservado y una particion vacia simplemente no aparece
+#     en la asignacion; la decision no depende de una limitacion del codigo.
+#
+# (c) SOLO 4 `dev` porque MAYO YA TIENE SEIS SIN ABRIR. Los `dev` de septiembre no son el recurso
+#     escaso: estan para comprobar la ingesta y el formato contra un mes DISTINTO, y para que el
+#     motor no acabe afinado solo sobre mayo. Cada `dev` de mas sale de la reserva.
 particiones:
-  fidelidad-dev: 0
-  fidelidad-1: 0
+  fidelidad-dev: 4
+  fidelidad-1: 10
   fidelidad-2: 0
   fidelidad-3: 0

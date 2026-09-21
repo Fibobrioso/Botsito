@@ -1,9 +1,16 @@
-# Anclas anti-manipulacion de los artefactos de fidelidad (ADR-0035 enmendado, ADR-0036).
+# Anclas anti-manipulacion de los paquetes del kit (ADR-0035, enmienda del 2026-09-21).
 #
-# Mismo patron que `knowledge/cases/kit/anclas.yaml`: el sha del BLOB de cada fichero
-# -`git hash-object <ruta>`-, no el de un commit, declarado FUERA del fichero que ata.
+# Un paquete congela dentro de si mismo el universo (`datasets:`) y los cupos (el bloque
+# `config:`), y se recompone con ellos. Congelar solo es legitimo si editar lo congelado a mano
+# se VE, y la comparacion byte a byte no lo ve entero: `anclajes_candidatos`, `sesiones` y
+# `etiquetas` solo alimentan ficheros que una sesion celebrada exime. Estas anclas cierran eso.
 #
-# GENERADO por `botsito fidelidad anclar --artefacto <id>`. Re-anclar es un acto EXPLICITO
-# (`--reanclar`) y su diff se ve aqui.
+# Es el sha del BLOB de cada fichero -`git hash-object <ruta>`-, no el de un commit: el blob
+# cambia con cualquier byte del fichero y con nada mas, y sobrevive a un rebase. Mismo patron que
+# `preregistro_blob` (ADR-0033).
 #
-# Vacio: todavia no hay ningun artefacto. El SORTEO va en la rama siguiente (ADR-0036).
+# GENERADO por `botsito kit anclar --sesion <s>`. Re-anclar un paquete que cambio es un acto
+# EXPLICITO (`--reanclar`) y su diff se ve aqui, no como efecto colateral de regenerar nada.
+eurusd-2026-09:
+  particiones.yaml: 03529e10754064e25299cd4e56f3fdfe1a0d2d3c
+  ventanas.yaml: cd92b2bdcf51db0932ef2d5a2a26603497b52547
