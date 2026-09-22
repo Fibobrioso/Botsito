@@ -123,7 +123,9 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    >
    > **A-18 TIENE EVIDENCIA EN LOS DOS LADOS, Y SON DE CLASE DISTINTA** (medido el 2026-09-21,
    > después de esta caja, en la pasada por el material de septiembre). De un lado
-   > `ev-v6-014702-2d7096db`, **el item más reciente**, donde el trader **razona en voz alta sobre
+   > `ev-v6-014702-2d7096db` —**el más reciente DE LOS QUE PESAN SOBRE A-18**, posterior a los tres
+   > que ella cita (v2 0:32:56, v3 0:31:42, v4 1:19:51); no es el item más nuevo del repositorio,
+   > que hay de v6 hasta 2:19:39—, donde el trader **razona en voz alta sobre
    > su regla** y cuya aritmética —«3 − 3×0,75 = 0,75 y 3 − 3×0,80 = 0,60»— concluye
    > **`caja_completa`**. Del otro, **la PANTALLA**: en `v5 0:04:52-53` la herramienta de FX Replay
    > calcula el R/R **sobre entrada-stop** mientras él arrastra el objetivo hasta que marca 3

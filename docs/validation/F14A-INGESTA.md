@@ -361,7 +361,7 @@ Salió en la pasada por el material de septiembre, **después** de que esta rama
 
 | Lado | De dónde sale | Qué es | Hacia dónde empuja |
 |---|---|---|---|
-| `ev-v6-014702-2d7096db` | v6 (2026-09-09), **el item más reciente** | el trader **razona en voz alta sobre su regla**; su aritmética, «3 − 3×0,75 = 0,75 y 3 − 3×0,80 = 0,60» | **`caja_completa`** |
+| `ev-v6-014702-2d7096db` | v6 (2026-09-09), **el más reciente de los que pesan sobre A-18** —posterior a los tres que ella cita (v2 0:32:56, v3 0:31:42, v4 1:19:51); NO el item más nuevo del repositorio, que hay de v6 hasta 2:19:39— | el trader **razona en voz alta sobre su regla**; su aritmética, «3 − 3×0,75 = 0,75 y 3 − 3×0,80 = 0,60» | **`caja_completa`** |
 | `v5 0:04:52-53` (fotograma) | v5 (2026-09-05) | **la herramienta** de FX Replay calcula el R/R **sobre entrada-stop** mientras él arrastra el objetivo hasta que marca 3 | **`riesgo_real`** |
 | Agosto, 18 filas (§4) | el backtest del trader | el RR realizado sobre entrada-stop, con **suelo en 3,00** | **`riesgo_real`** |
 
