@@ -15,12 +15,13 @@ from __future__ import annotations
 
 import subprocess
 import zipfile
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
 from botsito.cases.biblioteca import como_documento, escribir, problemas_de_biblioteca
-from botsito.cases.ingesta import IngestaError, dias_ingeribles, ingerir
+from botsito.cases.ingesta import IngestaError, Operacion, dias_ingeribles, ingerir
 from botsito.corpus.libro import LibroError, filas_de_los_dias
 
 SESIONES = [("07-11", "07:00", "11:00"), ("11-15", "11:00", "15:00")]
@@ -74,6 +75,14 @@ def _repo(tmp_path: Path, asignacion: dict[str, str]) -> Path:
     return tmp_path
 
 
+# La fuente COMPLETA: desde el 2026-09-22 la forma es una lista cerrada tambien en `fuente`, y el
+# `{"tipo": "prueba"}` que se usaba aqui ya no la cumple.
+FUENTE = {
+    "tipo": "prueba",
+    "fichero": "libro.xlsx",
+    "sha256": "0" * 64,
+    "ingerido_el": "2026-09-22",
+}
 CABECERA = ["dateStart", "side", "entryPrice", "initialSL", "maxTP", "idealTP"]
 FILAS = [
     CABECERA,
@@ -112,7 +121,7 @@ def test_la_ingesta_abre_de_verdad_y_produce_casos(tmp_path: Path) -> None:
     assert op.sesion == "07-11"
 
     docs = [
-        como_documento(pedidos[d], d, "EURUSD", ops, {"tipo": "prueba"})
+        como_documento(pedidos[d], d, "EURUSD", ops, FUENTE)
         for d, ops in sorted(r.casos.items())
         if ops
     ]
@@ -132,7 +141,7 @@ def test_un_dia_reservado_no_se_ingiere_ni_se_nombra(tmp_path: Path) -> None:
     _xlsx(material, FILAS)
     r = ingerir(repo2, material, "Europe/Madrid", SESIONES, dias=["2026-05-07"])
     docs = [
-        como_documento("caso-eurusd-2026-05-07", "2026-05-07", "EURUSD", ops, {"tipo": "prueba"})
+        como_documento("caso-eurusd-2026-05-07", "2026-05-07", "EURUSD", ops, FUENTE)
         for d, ops in r.casos.items()
         if ops
     ]
@@ -246,3 +255,50 @@ def test_ningun_numero_de_la_salida_cuenta_el_libro_entero(tmp_path: Path) -> No
     with pytest.raises(IngestaError) as exc:
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
     assert "ilegible" in str(exc.value) and "12" not in str(exc.value)
+
+
+def _un_caso_valido(tmp_path: Path) -> tuple[Path, dict[str, object]]:
+    repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev"})
+    op = Operacion("2026-05-08T07:30:00+00:00", "07-11", "compra", Decimal("1.1"), Decimal("1.0"))
+    doc = como_documento("caso-eurusd-2026-05-08", "2026-05-08", "EURUSD", [op], FUENTE)
+    escribir(repo, [doc])
+    assert problemas_de_biblioteca(repo) == [], "el caso bien formado pasa"
+    return repo, doc
+
+
+@pytest.mark.contract
+def test_el_caso_no_lleva_objetivo_y_la_guardia_lo_caza_arriba(tmp_path: Path) -> None:
+    """ADR-0037 §7 decia que el campo no existia y `como_documento` lo escribia, con un texto
+    que decia «NO ES UN CAMPO». Medido el 2026-09-22 antes de commitear los primeros casos."""
+    repo, doc = _un_caso_valido(tmp_path)
+    assert "objetivo" not in doc
+    escribir(repo, [{**doc, "objetivo": "1.1030"}])
+    assert any("sobran ['objetivo']" in p for p in problemas_de_biblioteca(repo))
+
+
+@pytest.mark.contract
+def test_la_guardia_caza_maxtp_dentro_de_una_operacion(tmp_path: Path) -> None:
+    """`maxTP` e `idealTP` viven a nivel de OPERACION: la lista cerrada va tambien ahi."""
+    repo, doc = _un_caso_valido(tmp_path)
+    ops = doc["operaciones"]
+    assert isinstance(ops, list)
+    escribir(repo, [{**doc, "operaciones": [{**ops[0], "maxTP": "1.1030"}]}])
+    problemas = problemas_de_biblioteca(repo)
+    assert any("exactamente" in p and "operacion 1" in p for p in problemas)
+
+
+@pytest.mark.contract
+def test_la_lista_cerrada_caza_una_clave_que_nadie_penso(tmp_path: Path) -> None:
+    """El valor de una lista cerrada es que caza lo que no se enumero: en los tres niveles."""
+    repo, doc = _un_caso_valido(tmp_path)
+    ops = doc["operaciones"]
+    fuente = doc["fuente"]
+    assert isinstance(ops, list) and isinstance(fuente, dict)
+    for roto in (
+        {**doc, "nota_del_analista": "cerro en 3R"},
+        {**doc, "operaciones": [{**ops[0], "cierre": "1.1030"}]},
+        {**doc, "fuente": {**fuente, "rpnl": "300"}},
+        {**doc, "dia": "2026-05-09"},
+    ):
+        escribir(repo, [roto])
+        assert problemas_de_biblioteca(repo), f"no la caza: {sorted(roto)}"

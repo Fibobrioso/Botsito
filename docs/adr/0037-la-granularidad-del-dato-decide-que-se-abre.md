@@ -150,6 +150,19 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    > campo **es** el mecanismo; un comentario no lo es. El caso lleva cuatro cosas: instante de
    > apertura, dirección, entrada y stop.
    >
+   > > **CORRECCIÓN del 2026-09-22 (rama `trabajo/mayo-dev-ingerido`). El cuerpo de arriba no se
+   > > reescribe.** *Qué decía:* que el caso NO lleva campo `objetivo`, y que quitarlo es el
+   > > mecanismo. *Qué hacía de verdad el código:* `biblioteca.como_documento` escribía una clave
+   > > `objetivo` en cada caso, con el texto «NO ES UN CAMPO: lo fija la regla `objetivo_rr`…», y
+   > > `problemas_de_biblioteca` no cerraba las claves del primer nivel, así que nada impedía
+   > > cambiar ese texto por un precio. Era exactamente el comentario que este párrafo dice que no
+   > > es el mecanismo, convertido en campo. *Cuándo se detectó:* el 2026-09-22, al revisar la
+   > > forma ANTES de commitear los seis primeros casos del proyecto (los de mayo), porque el brief
+   > > afirmaba «sin campo `objetivo`» y la regla es medir las afirmaciones sobre un mecanismo.
+   > > Ningún caso llegó a escribirse con la clave. *Arreglo:* la clave desaparece y la guardia
+   > > exige una lista CERRADA de claves en el caso, en cada operación y en `fuente`. Patrón 5,
+   > > quinta instancia (`PROJECT_STATE.md`, Technical Debt).
+   >
    > **Y `idealTP` no se guarda** en el caso, con motivo medido: no sabemos qué es. Queda anotado
    > como deuda —*columna del material que no sabemos qué es y no usamos*— y no se le gasta al
    > trader una pregunta por ella.

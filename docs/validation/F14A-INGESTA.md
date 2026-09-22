@@ -291,6 +291,16 @@ una invitación a que dentro de seis meses alguien lo rellene con `maxTP`. **Qui
 mecanismo**; un comentario no lo es. Y `problemas_de_biblioteca` rechaza un documento que nombre
 `maxTP` o `idealTP`.
 
+> **CORRECCIÓN del 2026-09-22 (rama `trabajo/mayo-dev-ingerido`). El párrafo de arriba no se
+> reescribe.** *Qué decía:* que el caso no lleva campo `objetivo`. *Qué hacía de verdad el
+> código de esta rama:* `como_documento` escribía una clave `objetivo` con el texto «NO ES UN
+> CAMPO…», y la guardia solo rechazaba los NOMBRES `maxTP` e `idealTP`: no cerraba las claves del
+> caso, así que ese texto se podía cambiar por un precio sin que nada lo viera. El comentario que
+> este párrafo descarta, hecho campo. *Cuándo se detectó:* el 2026-09-22, antes de commitear los
+> seis primeros casos, midiendo la afirmación del brief de mayo en vez de creerla. No llegó a
+> escribirse ningún caso con ella. Arreglado con una lista cerrada de claves en los tres niveles
+> (caso, operación, `fuente`). Patrón 5, quinta instancia.
+
 ### El instante viene en UTC, y eso sostiene la sesión H4
 
 `dateStart` es texto sin huso (`2026/08/03 06:03:05`). Interpretado como **UTC** y llevado a
