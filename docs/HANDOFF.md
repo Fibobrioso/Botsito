@@ -45,6 +45,29 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
 - **LO QUE NO SE DECIDE**: si un dia ingerible sin filas produce un `no_trade`. Hoy no produce nada
   y asi se queda. Lo que esta rama aporta es que, cuando se tome esa decision, se tomara sobre un
   conjunto donde el cero YA NO ES AMBIGUO.
+- **LAS LINEAS QUE IMPRIME EL COMANDO SON EL ENTREGABLE**, no el codigo. Ejecutadas de verdad:
+
+      (a) dia ingerible sin operaciones, exit 0:
+          "INGESTA: 1 dias ingeribles sin ninguna operacion: el material cubre esos dias y el
+           trader no opero. NO producen caso hoy, y que produzcan un `no_trade` es una decision
+           que no esta tomada (ADR-0016)"
+      (b) mes sin material, exit 0, negado POR MES:
+          "INGESTA: 2 dias de 2026-06 NO son ingeribles: 2026-06 esta declarado con CERO tramos:
+           no hay material del trader. No se han leido ni escrito, y no se nombran uno a uno: un
+           dia laborable que no aparece es su etiqueta"
+      (c) el libro equivocado, exit 1 y NO escribe nada:
+          "ERROR: el material que se ha pasado no tiene ni una fila de 2026-09: o es el libro de
+           otro mes, o falta. No se escribe nada, porque un cero de aqui no se puede distinguir de
+           un dia sin operaciones"
+
+- **LO QUE ESTA RAMA LE ENTREGA A LA SIGUIENTE, y son dos decisiones del consultor del 2026-09-21:**
+  1. LA LIMITACION DEL §10 SE QUEDA porque FALLA HACIA EL LADO SEGURO -un falso error PARA el
+     comando, no fabrica un dato-. Su arreglo esta NOMBRADO en Technical Debt: declarar el mes del
+     material en vez de deducirlo de las filas, con su condicion y con la medida que le falta.
+  2. EL `no_trade` POR AUSENCIA **NO ENTRA EN LA RAMA DE MAYO**. Va a la rama de la FORMA DEL CASO
+     con su ADR. Mayo ingiere lo que tiene operaciones, DICE cuales no y por que, y escribe CERO
+     casos `no_trade`. Esperar sale barato precisamente por esta rama: la decision se tomara
+     despues sobre un conjunto limpio y SIN volver a ingerir.
 - No se descargo abril, ni febrero, ni marzo. No se ingirio mayo: cero `caso-*.yaml`. A-18 y la
   prediccion congelada, sin tocar. El reparto y las anclas, sin tocar.
 

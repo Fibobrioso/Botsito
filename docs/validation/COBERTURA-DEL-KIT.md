@@ -115,6 +115,55 @@ en cobertura_material. Es lo esperado cuando el config global evoluciona: el paq
 reproduce con el suyo (ADR-0035, enmienda del 2026-09-21).
 ```
 
+## 5b. Las líneas que imprime el comando, que son el entregable
+
+«Que el cero signifique una sola cosa» vive en el **mensaje**, no en el código. Ejecutado de
+verdad sobre un repo temporal con el config y el registro reales, un reparto sintético y un xlsx
+sintético:
+
+**(a) Un día ingerible sin operaciones** — `exit = 0`, y no es un error:
+
+```
+INGESTA: 1 casos escritos de 2 dias ingeribles; 1 filas leidas; 0 pestanas de agregado abiertas
+INGESTA: 1 dias ingeribles sin ninguna operacion: el material cubre esos dias y el trader no
+         opero. NO producen caso hoy, y que produzcan un `no_trade` es una decision que no esta
+         tomada (ADR-0016)
+```
+
+**(b) Un mes sin material** —junio, declarado con cero tramos— `exit = 0`, y se niega **por mes**:
+
+```
+INGESTA: 1 casos escritos de 1 dias ingeribles; 1 filas leidas; 0 pestanas de agregado abiertas
+INGESTA: 2 dias de 2026-06 NO son ingeribles: 2026-06 esta declarado con CERO tramos: no hay
+         material del trader. No se han leido ni escrito, y no se nombran uno a uno: un dia
+         laborable que no aparece es su etiqueta
+```
+
+**(c) El libro equivocado** —el de mayo, pidiéndole días de septiembre— `exit = 1`, y **no escribe
+nada**:
+
+```
+ERROR: el material que se ha pasado no tiene ni una fila de 2026-09: o es el libro de otro mes, o
+       falta. No se escribe nada, porque un cero de aqui no se puede distinguir de un dia sin
+       operaciones
+```
+
+Los tres mensajes dicen **el motivo**, y ninguno nombra un día.
+
+## 5c. El agujero 2, ejecutado
+
+Un `kit build` NUEVO sobre el repo sintético de `tests/unit/test_kit.py`:
+
+```
+(1) SIN cobertura  ->  universo = 9 casos, mes 2026-05 · excluidos = 2     <- el estado de `main`
+(2) CON "2026-05": []  ->  KitError: se piden 5 casos y el universo tiene 0
+    y el motivo de cada dia excluido:
+    2026-05: sin material del trader (declarado con cero tramos en cobertura_material)
+(3) CON tramos de verdad  ->  universo = 9 casos (antes 9) · mismos dias: True
+```
+
+El (3) es el que impide cerrar de más: acotar a todo el mes **no quita ningún día**.
+
 ## 6. Lo que se declaró en el config, y lo que NO
 
 Se declara **sólo lo que ya estaba declarado en otro sitio**: mayo `01..31` (del `vistos.yaml`: *«el
@@ -167,16 +216,39 @@ días ingeribles de un mes, el libro correcto daría cero filas de ese mes y el 
 error. Con seis días `dev` de mayo es improbable, pero **no es imposible**, y el error diría algo
 falso. La alternativa —preguntarle al lector si el fichero tiene alguna fila de ese mes, sin
 filtrar por día— distinguiría los dos casos, pero rompe la regla de que el lector no acumula nada
-del libro (ADR-0037 §6). **Se deja como está, con la condición escrita: si algún día aparece ese
-error sobre un libro que sí es el suyo, la salida es esa y hay que decidirla entonces.**
+del libro (ADR-0037 §6). **Se deja como está**, y el motivo que lo sostiene es que **falla hacia
+el lado seguro**: un falso error **para** el comando, no fabrica un dato. En una rama que existe
+para que nadie fabrique ausencias, equivocarse parando es el error barato.
+
+**Pero el arreglo existe y se nombra para que no se redescubra:** *declarar el mes del material y
+compararlo con lo pedido*, en vez de deducirlo de las filas. El fichero ya viene con el mes en el
+nombre y el inventario ya lo hashea. Con la declaración, pasar el libro de mayo y pedir días de
+septiembre **se niega antes de leer una fila**, sin tocar ADR-0037 §6 —el lector sigue sin acumular
+nada del libro— y la limitación desaparece: un cero dentro del mes declarado vuelve a ser un dato.
+
+**No se hace aquí.** Va a Technical Debt con su condición —el día que un mes llegue con cero
+operaciones en todos sus días ingeribles, o el día que el mes del material sea metadato declarado,
+lo que pase antes— y necesita una medida propia que no es de esta rama: si el inventario del corpus
+ya registra el mes o hay que añadirlo.
 
 ## 11. Qué debe decidir el usuario
 
 1. **Validar la rama** y, si procede, el ritual con tag `stable/F14-cobertura` (comprobado con
    `git tag -l`: no colisiona).
-2. **La limitación del §10**: si se acepta como está o se abre deuda con su condición.
-3. **Si el `no_trade` por ausencia (§9) entra en la rama de mayo o espera** a la de la forma del
-   caso.
+2. **DECIDIDO el 2026-09-21: la limitación del §10 se queda**, porque falla hacia el lado
+   seguro, y **su arreglo queda nombrado** en Technical Debt con su condición.
+3. **DECIDIDO: el `no_trade` por ausencia NO entra en la rama de mayo.** Espera a la rama de la
+   forma del caso, con su ADR, y por tres motivos: es una decisión sobre **qué es un caso** y no
+   sobre cómo se ingiere; la rama de mayo ya tiene su trabajo —ingerir los 6 días `dev` y repetir
+   la medida del RR contra la predicción congelada— y su valor es ser el **primer material real**,
+   así que meterle dentro una decisión semántica la hace no validable por separado; y **esperar
+   sale barato justamente por lo que esta rama compra**: la salida de mayo ya va a decir qué días
+   no produjeron caso y por qué, así que la decisión se podrá tomar después sobre un conjunto
+   limpio y **sin volver a ingerir**.
+
+   Mayo ingiere lo que tiene operaciones, dice cuáles no y por qué, y escribe **cero** casos
+   `no_trade`. En su rama es donde toca mirar «un día sin ninguna operación ES su etiqueta», que es
+   lo que quemó algo el 2026-09-12.
 
 ## 12. Cómo comprobarlo
 
