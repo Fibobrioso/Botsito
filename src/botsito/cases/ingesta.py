@@ -236,7 +236,7 @@ def _decimal(valor: object, fila: str, columna: str) -> Decimal:
     try:
         return Decimal(str(valor))
     except (InvalidOperation, ValueError) as exc:
-        raise IngestaError(f"fila {fila}: {columna} ilegible") from exc
+        raise IngestaError(f"{fila}: {columna} ilegible") from exc
 
 
 def _sesion_de(
@@ -289,10 +289,12 @@ def ingerir(
     casos: dict[str, list[Operacion]] = {d: [] for d in pedidos}
     sin_stop = 0
     for fila in filas:
-        n = str(fila.get("_fila"))
+        # Se nombra por su orden ENTRE LAS PEDIDAS y su instante, que son de un dia ingerible;
+        # nunca por su fila en el libro, que cuenta las de dias reservados de antes.
+        n = f"la fila pedida {fila.get('_orden')} ({fila.get('_instante_utc')})"
         lado = str(fila.get("side") or "")
         if lado not in _DIRECCION:
-            raise IngestaError(f"fila {n}: `side` no es buy ni sell")
+            raise IngestaError(f"{n}: `side` no es buy ni sell")
         if not fila.get("initialSL"):
             # Una fila sin stop NO produce caso. Se CUENTA, y quien llama lo dice: un caso que
             # desaparece sin constancia es el defecto que a la sesion 1 le costo dos dias.
@@ -305,7 +307,7 @@ def ingerir(
         bien = stop < entrada if lado == "buy" else stop > entrada
         if not bien:
             raise IngestaError(
-                f"fila {n}: con `side` {lado} el stop {stop} esta del lado equivocado de la "
+                f"{n}: con `side` {lado} el stop {stop} esta del lado equivocado de la "
                 f"entrada {entrada}. O las columnas estan intercambiadas o el material no es el "
                 f"que se cree"
             )
@@ -313,7 +315,7 @@ def ingerir(
         sesion = _sesion_de(instante, huso_operativa, sesiones)
         if sesion is None:
             raise IngestaError(
-                f"fila {n}: su apertura no cae en ninguna sesion declarada. La asignacion a sesion "
+                f"{n}: su apertura no cae en ninguna sesion declarada. La asignacion a sesion "
                 f"H4 depende del huso, y sin ella la unidad de fidelidad no existe"
             )
         dia = datetime.fromisoformat(instante).astimezone(ZoneInfo(huso_operativa)).date()

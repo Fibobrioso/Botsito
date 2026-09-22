@@ -124,7 +124,7 @@ def filas_de_los_dias(
         raise LibroError(f"{ruta.name}/{pestana}: faltan las columnas {faltan}")
 
     salida: list[dict[str, str | None]] = []
-    for n, fila in enumerate(filas[1:], start=2):
+    for fila in filas[1:]:
         celdas = _fila_como_dict(fila)
         crudo = celdas.get(donde[cabeceras[0]])
         if not crudo:
@@ -132,12 +132,20 @@ def filas_de_los_dias(
         try:
             instante = datetime.strptime(str(crudo), _FORMATO)
         except ValueError as exc:
-            raise LibroError(f"{ruta.name}/{pestana}: fila {n}: {cabeceras[0]} ilegible") from exc
+            # SIN su numero de fila: la posicion en el libro cuenta TODAS las filas de antes,
+            # las de dias reservados incluidas, y es un recuento sobre el libro entero (ADR-0037).
+            # Y de una fila sin fecha legible no se sabe de que dia es: puede ser reservada.
+            raise LibroError(
+                f"{ruta.name}/{pestana}: una fila tiene {cabeceras[0]} ilegible. No se da su "
+                f"posicion: contaria las filas de antes, reservadas incluidas"
+            ) from exc
         instante = instante.replace(tzinfo=UTC if huso_del_fichero == "UTC" else None)
         if instante.date().isoformat() not in pedidos:
             continue  # NO se cuenta, NO se acumula: el conjunto de dias del libro no sale de aqui
+        # `_orden` es la posicion ENTRE LAS FILAS PEDIDAS, no en el libro: el numero de fila del
+        # libro contaria las de los dias no pedidos que van delante (2026-09-22, MAYO-DEV).
         fila_util: dict[str, str | None] = {
-            "_fila": str(n),
+            "_orden": str(len(salida) + 1),
             "_instante_utc": instante.isoformat(),
         }
         for c in cabeceras:

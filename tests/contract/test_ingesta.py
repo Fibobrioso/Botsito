@@ -211,3 +211,38 @@ def test_el_lector_no_publica_el_conjunto_de_fechas_ni_de_columnas(tmp_path: Pat
     assert "inventada" in str(exc.value)
     for encontrada in ("dateStart", "entryPrice", "maxTP", "idealTP"):
         assert encontrada not in str(exc.value), "el error publica las columnas encontradas"
+
+
+@pytest.mark.contract
+def test_ningun_numero_de_la_salida_cuenta_el_libro_entero(tmp_path: Path) -> None:
+    """Medido el 2026-09-22 (MAYO-DEV) antes de leer el libro real de mayo, que es el PRIMERO con
+    dias reservados cuyas filas se leen. Los contadores ya contaban solo las pedidas, pero los
+    errores nombraban la fila por su POSICION EN EL LIBRO -«fila 12»-, y esa posicion cuenta las
+    filas de los dias no pedidos que van delante: un recuento sobre el libro entero, el agregado
+    de ADR-0037. Aqui van 10 filas NO pedidas -y sin stop- delante de las pedidas."""
+    repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev"})
+    no_pedida = ["2026/05/07 08:00:00", "buy", "1.2000", "", "", ""]
+    material = tmp_path / "libro.xlsx"
+    _xlsx(
+        material,
+        [
+            CABECERA,
+            *[no_pedida] * 10,
+            ["2026/05/08 07:30:00", "buy", "1.1000", "1.0990", "", ""],
+            ["2026/05/08 08:30:00", "sell", "1.1000", "", "", ""],
+            *[no_pedida] * 5,
+        ],
+    )
+    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    assert (r.filas_leidas, r.sin_stop) == (2, 1), "cuentan las PEDIDAS, no las 17 del libro"
+
+    _xlsx(material, [CABECERA, *[no_pedida] * 10, ["2026/05/08 07:30:00", "hold", "1.1", "1.0"]])
+    with pytest.raises(IngestaError) as exc:
+        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    assert "la fila pedida 1 (2026-05-08T07:30:00+00:00)" in str(exc.value)
+    assert "12" not in str(exc.value)
+
+    _xlsx(material, [CABECERA, *[no_pedida] * 10, ["ayer", "buy", "1.1", "1.0"]])
+    with pytest.raises(IngestaError) as exc:
+        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    assert "ilegible" in str(exc.value) and "12" not in str(exc.value)
