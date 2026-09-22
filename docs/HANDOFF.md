@@ -129,6 +129,44 @@ Con las velas de ese dia se mide la estructura y se compara. **`data/manifests/`
    es lo que ya esta decidido para junio en `trabajo/mayo-dev-ingerido`. NO SE EJECUTA NADA: lo
    decide el consultor.
 
+### EL ORDEN, DECIDIDO EL 2026-09-21: `cobertura_material` -> ABRIL -> A-18 -> MAYO
+
+Tres ramas, y **ninguna mezclada con otra**. El motivo del consultor, que vale mas que el orden:
+
+1. **`cobertura_material` PRIMERO Y SOLA.** Es una GUARDIA, y las guardias aterrizan solas: tiene
+   criterio de aceptacion propio y desbloquea DOS cosas distintas -junio y abril-, asi que metida
+   dentro de la rama que ingiere mayo no se puede validar ninguna de las dos por separado. Lleva la
+   exclusion que GRITA -motivo y recuento- y tests. **DESCARTADA Y ESCRITA COMO DESCARTADA** la
+   salida de descargar abril con un nombre fuera del prefijo: funciona, pero ESCONDE EL DEFECTO, y
+   esconder defectos es lo que este proyecto lleva pagando toda la semana.
+2. **ABRIL DESPUES, TAMBIEN SOLA.** Si la medida cierra A-18 cambia un parametro CONFIRMED de la
+   spec, y eso exige ADR e informe propios: no se mete de matute en la rama que ingiere mayo.
+3. **MAYO AL FINAL**, con la prediccion congelada intacta.
+
+**LA ADVERTENCIA SOBRE LA MEDIDA DE ABRIL, para que no se venda antes de tiempo.** LA CAJA LA
+DIBUJA EL TRADER SOBRE NIVELES QUE EL ELIGE. Con las velas del 29 de abril tendremos los altos y
+bajos CANDIDATOS, pero **cual par escogio como nivel 0 y nivel 1 sigue siendo interpretacion
+nuestra**. La via: entrada = nivel 0, riesgo = **0,00019** medido en el fotograma, y ver si
+`entrada + 0,00019` cae sobre un nivel que este a 0,8 del siguiente alto estructural -lectura
+`riesgo_real`, caja 0,0002375- o **sobre el alto mismo** -lectura `caja_completa`, caja 0,00019-.
+Es un SELL sobre EURUSD M1 del miercoles 29 de abril de 2026 hacia las 10:03-10:08, que se lee en
+el eje del propio fotograma. **PUEDE SALIR NO CONCLUYENTE, Y SI SALE ASI SE ESCRIBE ASI.** No es
+una medida garantizada; es una medida que merece la pena.
+
+**Y SI ABRIL CIERRA A-18, LA PREDICCION DE MAYO NO SE TOCA**: pasa a ser comprobacion
+INDEPENDIENTE, que es mejor y no peor. No se reescribe ni se ajusta en ningun caso.
+
+### QUIEN MIDIO QUE, PORQUE DESDE HOY SE MARCA
+
+El consultor instituyo el 2026-09-21 marcar lo que se RELAYA y no se ha medido en primera persona.
+De este bloque: **medido por la sesion** -que la frase falsa estaba en el informe y no en el ADR;
+el tema `objetivo.rr_13_margen_tres_perdidas`; el comportamiento de `manifiestos_del_prefijo` con y
+sin `datasets` (`cases/paquete.py:523-546`); los 22 laborables de abril-. **Medido por el
+consultor** -que el .mkv de v5 es nativamente 1280x720; que en `0:04:52` se ven rotulados los
+niveles 0, 0.5 y 0.8 con la herramienta de posicion encima-. **Medido por los dos por separado**
+-que `fr-v5-718ecabb.yaml` declara esa misma resolucion, y que `data/manifests/` tiene 2026-01, 05,
+06, 07, 08 y 09 y no abril-.
+
 ### LO QUE NO SE HA HECHO, A PROPOSITO
 
 No se ha declarado ninguna regla de recencia: **la decide el consultor con ADR**, y lleva matiz -v6
