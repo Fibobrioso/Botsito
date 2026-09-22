@@ -34,6 +34,45 @@ anclajes_candidatos:
 min_velas_ventana: 850
 # Conjunto cerrado de decisiones por sesion (kappa).
 etiquetas: [compra, venta, no_trade]
+# Hasta donde llega el MATERIAL DEL TRADER, por mes (ADR-0036, ampliado el 2026-09-21). Responde
+# una pregunta DISTINTA de la de `vistos.yaml`, y las dos hacen falta porque son ortogonales:
+#
+#   vistos.yaml         ->  ¿ES CIEGO?       abril: NO.  junio: SI.
+#   cobertura_material  ->  ¿HAY MATERIAL?   abril: SI.  junio: NO.
+#
+# SOLO TRAMOS, nunca una lista de dias: un dia laborable dentro del rango que no aparezca en la
+# columna de fechas del backtest es un dia sin operaciones, y eso ES su etiqueta.
+#
+# UN MES CON CERO TRAMOS dice "hay decision sobre este mes y NO hay material". Un mes que NO
+# aparece aqui queda SIN ACOTAR, no excluido (`solo_con_cobertura` sigue en False): asi un mes
+# legitimo que nadie haya declarado todavia no se niega solo.
+#
+# NO SE DECLARAN enero, abril, julio ni agosto, y el motivo es de proceso y no de olvido: sus
+# tramos saldrian de leer la columna de fechas de sus backtests, y eso lo hace EL CONSULTOR una
+# sola vez antes del sorteo y lo declara el mismo dia (ADR-0021 §1, CLAUDE.md). Los cuatro estan
+# en `vistos.yaml`, asi que ningun paquete ciego los sortea; el dia que hagan falta aqui, se
+# declaran con su lectura y su exposicion.
+cobertura_material:
+  # El trader backtesteo mayo ENTERO y lo entrego el 2026-09-11 (68 operaciones). El tramo no sale
+  # de leer el fichero: sale de esa declaracion, que ya estaba escrita en `vistos.yaml`.
+  "2026-05":
+    - desde: "2026-05-01"
+      hasta: "2026-05-31"
+      entregado_el: "2026-09-11"
+      fuente: [8fb2323]
+  # CERO TRAMOS: junio NO tiene material y nunca lo tendra. El trader se comprometio a dos meses y
+  # entrego uno, asi que para junio no hay ninguna decision suya (ADR-0025 §1). NO esta en
+  # `vistos.yaml` y es CORRECTO que no este -el trader no lo vio-: es ciego y esta vacio, que es
+  # justo la combinacion que hasta hoy no se podia expresar. Sin esto, sus 10 dias `dev` del
+  # reparto de la sesion 1 siguen siendo ingeribles y un `kit build` nuevo volveria a sortearlo.
+  "2026-06": []
+  # El material de septiembre cubre del 1 al 18. Ya declarado en `knowledge/cases/fidelidad/
+  # config.yaml` y en `vistos.yaml`: aqui se repite, no se lee nada nuevo.
+  "2026-09":
+    - desde: "2026-09-01"
+      hasta: "2026-09-18"
+      entregado_el: "2026-09-20"
+      fuente: [5c9fcc3, ADR-0034]
 # Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
 # OJO: estos cupos se dimensionaron para los 40 dias de mayo+junio. JUNIO QUEDA DESCARTADO
 # (decision del consultor, 2026-09-12), asi que el reparto REAL de la sesion 1 es 6 dev y 13

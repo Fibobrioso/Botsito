@@ -1713,3 +1713,43 @@ def test_un_manifiesto_sin_sus_ficheros_nombra_los_datasets(tmp_path: Path) -> N
         (repo / "data" / str(f["ruta"])).unlink()
     _, avisos = comprobar(repo, repo / "data", "2026-09-09-sesion-01")
     assert any(suyo in a for a in avisos), avisos
+
+
+def test_la_cobertura_saca_un_mes_del_universo_y_el_kit_la_pasa(tmp_path: Path) -> None:
+    """EL AGUJERO 2: un `kit build` NUEVO metia en el universo un mes sin material del trader.
+
+    No lo tapaba `vistos.yaml` y es CORRECTO que no lo tape: ese fichero responde "¿es ciego?" y
+    un mes que el trader no ha visto ES ciego. Lo que faltaba es la otra pregunta, "¿hay
+    material?", y hasta el 2026-09-21 su respuesta no llegaba a `universo()` porque la llamada del
+    kit no pasaba `cobertura`. El mes se sortearia a una particion y no se etiquetaria nunca, que
+    es el defecto de los dos dias que se cayeron en silencio un escalon mas arriba.
+
+    Tambien comprueba lo contrario, que es lo que impide cerrar de mas: con la cobertura puesta,
+    el paquete SIGUE construyendose e incluye los dias que debe.
+    """
+    repo, _ = repo_kit(tmp_path)
+    cfg = repo / DIRECTORIO_KIT / "config.yaml"
+
+    # (1) SIN cobertura: el universo es el que era. Es el estado de `main` hasta esta rama.
+    antes = construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+    assert antes.universo > 0
+    dias_antes = {c.dia for c in antes.casos}
+    alguno = sorted(dias_antes)[0]
+    mes = alguno[:7]
+
+    # (2) CON el mes declarado con CERO tramos: sale del universo, con su motivo y sin dias.
+    cfg.write_text(CONFIG + f'cobertura_material:\n  "{mes}": []\n', encoding="utf-8")
+    with pytest.raises(KitError, match="universo tiene 0"):
+        construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+
+    # (3) Y CON TRAMOS DE VERDAD el paquete CONSTRUYE e incluye lo que debe: una guardia que solo
+    # sabe decir que no no ha demostrado nada.
+    cfg.write_text(
+        CONFIG
+        + f'cobertura_material:\n  "{mes}":\n    - {{desde: "{mes}-01", hasta: "{mes}-31"}}\n',
+        encoding="utf-8",
+    )
+    despues = construir(repo, repo / "data", "2026-09-15-sesion-01", 3)
+    assert despues.universo == antes.universo, "acotar a todo el mes no quita ningun dia"
+    assert {c.dia for c in despues.casos} == dias_antes
+    cfg.write_text(CONFIG, encoding="utf-8")

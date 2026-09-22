@@ -136,8 +136,14 @@ def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, 
     for mes, tramos in crudo.items():
         if not isinstance(mes, str) or not _MES.match(mes):
             raise KitError(f"{nombre}: cobertura_material: {mes!r} no es un mes AAAA-MM")
-        if not isinstance(tramos, list) or not tramos:
-            raise KitError(f"{nombre}: cobertura_material/{mes}: lista de tramos no vacia")
+        # CERO TRAMOS es un valor con significado y NO un error (2026-09-21): dice "hay
+        # decision sobre este mes y NO hay material del trader". Es lo que distingue un mes
+        # DECLARADO SIN MATERIAL -junio, ADR-0025: el trader se comprometio a dos meses y entrego
+        # uno- de un mes del que simplemente nadie ha dicho nada, que sigue sin acotarse porque
+        # `solo_con_cobertura` sigue en False. Hasta hoy la lista vacia se rechazaba, y por eso
+        # la unica forma de excluir un mes era invertir el default para TODOS.
+        if not isinstance(tramos, list):
+            raise KitError(f"{nombre}: cobertura_material/{mes}: lista de tramos")
         pares: list[tuple[str, str]] = []
         for tramo in tramos:
             if not isinstance(tramo, dict):
@@ -691,6 +697,13 @@ def construir(
             config.min_velas_ventana,
             meses,
             dias,
+            # La cobertura NO llegaba aqui hasta el 2026-09-21, asi que el campo era inerte en
+            # este camino. JUNIO es el motivo medido: no esta en `vistos.yaml` -y es correcto,
+            # el trader no lo vio-, tiene dataset, y sin esto un `kit build` nuevo lo sortearia
+            # como material ciego. Ciego lo es; lo que no hay es NADA con lo que etiquetarlo.
+            # `solo_con_cobertura` se queda en False: un mes no declarado sigue SIN ACOTAR, no
+            # excluido, para no negar un mes legitimo que nadie haya declarado todavia.
+            config.cobertura or None,
         )
         asignacion = asignar([c.id for c in casos], seed, config.particiones)
     except (DatasetError, VentanaError, ParticionError, VelaInvalidaError) as exc:
