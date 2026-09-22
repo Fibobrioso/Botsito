@@ -153,6 +153,30 @@ Además, en los dos fotogramas hay **DOS grupos de etiquetas** `1/0,8/0,5/0,25/0
 velas y otro desplazado a la derecha. **Se dirá cuál se midió y si son el mismo objeto o dos
 dibujos.** Si son dos, el que vale es **el que comparte ancla con la herramienta**.
 
+## 4. TERCER PRE-REGISTRO: el error de lectura baja a ±1 px
+
+Escrito y commiteado **antes de medir nada**. **El criterio NO se toca** —sigue siendo *«sobre qué
+etiqueta cae el stop»*, tolerancia **0,03**, las cinco etiquetas de su plantilla—. Lo único que
+cambia es **el error de lectura**, y eso es **mejorar el instrumento, no elegir el resultado**: el
+mismo caso que el rodeo del cociente, y se justifica igual.
+
+- La lectura pasa de **estimación a ojo (±3 px)** a **detección programática (±1 px)**. El ±1 px se
+  justifica porque **una línea dibujada ocupa una o dos filas exactas de píxeles** y la ambigüedad
+  es **cuál de las dos**.
+- Con ±1 px: caja de **80 px → ±0,0125**, **DENTRO** de 0,03. **La condición «caja ≥ 100 px» queda
+  SIN EFECTO**, y se dice por qué: **era una consecuencia del ±3 px, no del material**.
+- **CRITERIO DE ANCLA, numérico y fijado ahora:**
+  `|y(nivel 0 de la caja) − y(arista de entrada de la herramienta)| ≤ 2 px`.
+  Si lo supera, **no comparten ancla**, la comparación es **inválida** y se escribe así. **Diez
+  píxeles no se explican como error de lectura cuando el error es uno.**
+- **COMPROBACIÓN DEL 3,21, ahora afilada:** `alto(zona teal) / alto(zona roja) = 3,21`. Con ±1 px en
+  cada borde el margen baja de ~±10 % a **~±3 %**. **Si no da 3,21 dentro de ese margen, lo
+  identificado como stop no es el stop y se para ahí.**
+
+**El instrumento**: un decodificador PNG de biblioteca estándar —firma, chunks, IHDR, IDAT +
+`zlib`, y deshacer los filtros por línea incluido Paeth—. **`pyproject.toml` no se toca**: no es una
+dependencia del paquete, es una **herramienta de medida** de la rama.
+
 ---
 
 # RESULTADOS
