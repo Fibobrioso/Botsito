@@ -209,5 +209,238 @@ intacta**. Es un resultado, no un fracaso.
   sorteo, y abril no hace falta ahí porque ya está en `vistos.yaml`.
 - Nada del material de septiembre. `PREREGISTRO.md` vacío. Cero autorizaciones.
 
+---
+
+# RESULTADOS
+
+Los criterios de arriba **no se han tocado**. Lo que sigue es lo que dio cada uno.
+
+## R0. El titular: la puerta del paso 3 se abrió por dos pelos, y de paso contestó a A-16
+
+**El reloj del gráfico de FX Replay no es UTC: es UTC+2.** Lo dice el propio FX Replay en el
+fotograma de v4 (`001200000.png`), abajo a la derecha: **`14:29:59 UTC+2`**. Y es un **UTC+2 fijo**,
+no un huso con horario de verano: ese fotograma muestra **enero** —`Thu 29 Jan '26`— y ya marca +2.
+
+Con ese desfase aplicado, las dos velas que las leyendas de v5 dan exactas **sí** están en las velas
+de Dukascopy recién descargadas:
+
+| Fotograma | Eje (UTC+2) | UTC | Pantalla (OANDA) O/H/L/C | Dukascopy O/H/L/C | máx \|dif\| |
+|---|---|---|---|---|---|
+| `000293000.png` | 10:03 | **08:03** | 116996 · 116998 · 116986 · 116988 | 116996 · 116996 · 116986 · 116986 | **2 puntos** |
+| `000292000.png` | 10:04 | **08:04** | 116987 · 116994 · 116980 · 116982 | 116988 · 116993 · 116979 · 116982 | **1 punto** |
+
+**Las series cuadran a 1 y 2 puntos (0,1 y 0,2 pips).** Por eso la medida 2 **sí** se ejecutó.
+
+> **CORRECCIÓN, y el error fue mío.** Durante esta misma rama concluí lo contrario —«no cuadran, la
+> medida 2 no se ejecuta»— con dos fallos encadenados: **supuse que el eje del gráfico era UTC** sin
+> comprobarlo, y **leí `10:08` donde pone `10:04`**. Comparando UTC con UTC+2 las diferencias salían
+> de 15 a 26 puntos y la conclusión parecía sólida; incluso barrí las 31.549 velas del mes buscando
+> la vela exacta y no apareció, lo cual era cierto y no significaba lo que le hice significar. **Lo
+> que lo destapó no fue una relectura: fue mirar un fotograma de OTRO vídeo por un motivo distinto**
+> —el punto (b) de la ampliación de A-16, «leer la leyenda de la fuente»— y encontrarse el reloj.
+
+**Y esto es la primera medida de A-16** —*«cuánto se separan las velas de Oanda de las de
+Dukascopy»*, ABIERTA, `clase: medicion`, `resuelve_en: [F26]`—, que es exactamente la **tercera
+fuente** que su propio texto dice que la medición del 2026-09-09 no cubría: *«queda una tercera
+fuente en juego, que es la del trader […] esta medicion no la cubre»*. Da **1 y 2 puntos**,
+comparable a los **2 puntos de mediana** de la pareja MT5/FundedNext. **Con n = 2 no se cierra
+nada**: `estado`, `decision` y `evidencia` de A-16 **no se tocan**.
+
+La leyenda de v5 dice además de dónde salen esas velas: **`EUR/USD · 1 · OANDA on FXReplay`**.
+
+## R1. Medida 1 — la réplica
+
+```
+38 filas leidas   (vistos.yaml decia 38 operaciones: cuadra exactamente)
+buy 18 · sell 20 · sin initialSL 3 · con stop pero sin maxTP 20
+
+RR realizado, n = 15:
+2,57  2,94  3,00  3,00  3,00  3,12  3,31  3,33  3,50  4,15  4,18  4,19  4,60  4,69  5,05
+
+minimo 2,57 · maximo 5,05 · MODA 3,00 (tres filas)
+en [3,00 , 3,75): 7 de 15   ·   >= 3,75: 6 de 15   ·   < 3,00: 2 de 15
+```
+
+**Lo que abril refuta, y lo refuta solo:** `caja_completa` predice la región **[3,00 , 3,75) VACÍA**
+con suelo en 3,75. Abril tiene **7 de 15 dentro** y **la moda clavada en 3,00**, con tres filas.
+**Nueve de quince** están por debajo de 3,75. Es el **segundo mes independiente** que puebla una
+región que esa lectura exige vacía.
+
+**Lo que abril NO decide, y es lo mismo que ya estaba escrito:** la alternativa a `riesgo_real`
+nunca fue sólo `caja_completa`; era **`caja_completa` CON `stop_fraccion_caja` = 1,0**, que predice
+suelo en 3,00 igual. Lo único que separa esas dos es la medida 2. **A-18 sigue ABIERTA.**
+
+**Dónde los dos meses no se parecen**, y se dice sin adornarlo: el suelo de agosto era **limpio**
+—17 de 18 en 3,00 o más, una sola por debajo— y el de abril **no** —2 de 15 por debajo de 3,00—.
+**Coinciden en lo que refutan y difieren en la limpieza del suelo.**
+
+### Qué es `maxTP`, fijado ANTES de usar el hallazgo
+
+El corpus **no lo dice**: se buscó al trader explicando su exportación (`exporta`, `excel`,
+`analytics`, `estadistic`, `maxTP` en las seis transcripciones crudas) y **no aparece**. Se fijó por
+**consistencia interna del libro**, con dos medidas sobre abril:
+
+```
+maxTP == avgClosePrice  en las 17 filas donde existen las dos.   DISTINTOS: 0
+maxTP presente  <=>  rPnL > 0   (17 de 17; las 21 sin maxTP: 19 pierden, 2 a cero)
+```
+
+**`maxTP` es el PRECIO DE CIERRE de las operaciones ganadoras**, no la excursión favorable máxima.
+
+> **Esto corrige algo que escribí en F14a**, donde dije que `maxTP` es *«lo más lejos que llegó a
+> favor»*. Era una suposición, no una medida. **La conclusión de F14a no cambia** —`maxTP` sigue
+> siendo un resultado y no el objetivo planeado, y sigue estando relleno si y sólo si se ganó— pero
+> el motivo estaba mal dicho, y el argumento que colgaba de él ha tenido que reescribirse (§R4).
+
+### El hallazgo que no es de A-18: tres ganadoras por debajo de 3R
+
+Entre los dos meses hay **tres ganadoras que cierran por debajo de 3R**: **2,50** en agosto, **2,57**
+y **2,94** en abril. El informe de F14a dijo *«una fila no tumba una cita, pero se nombra»*. **Tres
+filas en dos meses independientes ya no son una fila.**
+
+Y ahora que `maxTP` está fijado, el hallazgo es **más fuerte** de lo que parecía: no son operaciones
+que *no llegaron* a 3R —eso sería la lectura de la excursión— sino operaciones que **cerraron en
+ganancia por debajo de 3R**. Contradice el *«sin toma de parciales y que tiene que llegar al ratio
+1.3 sí o sí»* de **v6 0:17:07**, y apunta a **parciales o salidas manuales**, que sería cosa de la
+spec y no de un parámetro.
+
+**La incertidumbre que queda, delante y no detrás:** la columna se llama `avgClosePrice` —un cierre
+**promedio**—. Si hubiera cierres parciales, ese promedio los mezclaría, lo cual es *coherente* con
+la hipótesis de los parciales pero **no la prueba**: «avg» puede ser sólo el nombre del campo. No se
+decide aquí.
+
+## R2. Medida 2 — NO CONCLUYENTE
+
+Se ejecutó con los criterios pre-registrados, sin tocar un parámetro.
+
+```
+operaciones usadas: 35 de 38   ·   sin ventana suficiente: 0
+fractales por ventana (ABRIL): mediana 11 · min 6 · max 14      (mayo daba 6 y 5)
+rango de ventana (ABRIL): mediana 128 puntos                     (mayo daba 141)
+
+multiplicador        ±2 pts    ±5 pts    residuo mediana / min / max
+1,00  (H 1,0)         4/35      10/35        +4 / -54 / +54
+1,25  (H 0,8)         3/35       8/35         0 / -57 / +57
+0,90 (señuelo)        4/35      12/35        +3 / -52 / +52
+1,10 (señuelo)        4/35       9/35         0 / -55 / +55
+1,40 (señuelo)        5/35       9/35        +1 / -59 / +59
+ANCLA (entrada)       7/35      17/35        -1 / -40 / +41
+
+umbral del criterio: max(mitad = 17,5 · doble del mejor señuelo = 10) = 17,5
+   1,00 -> 4 aciertos. NO CUMPLE
+   1,25 -> 3 aciertos. NO CUMPLE
+```
+
+**NO CONCLUYENTE, y no por poco: por mucho.** Ninguno de los dos multiplicadores llega al umbral, y
+lo que es más informativo, **ninguno se distingue de los señuelos** —4 y 3 frente a 4, 4 y 5—.
+
+**Lo que esto dice, y no es «no salió»:** los niveles derivados de `d` **no caen sobre fractales más
+que el azar**. O el nivel 1 de la caja del trader **no es un alto/bajo estructural de M1**, o no lo
+es con *este* fractal (5 velas a cada lado) y *esta* ventana (120 velas). La premisa geométrica de
+la medida, y no las hipótesis sobre A-18, es lo que este resultado pone en duda.
+
+**El control del ancla lo refuerza:** `entryPrice` acierta **7/35 a ±2 y 17/35 a ±5**, por encima de
+todos los demás niveles. La **entrada** sí tiende a caer en estructura; los niveles a `1,00·d` y
+`1,25·d` **no**. Eso acota cuánto fiarse: el ancla no está roto, lo que falla es el blanco.
+
+**Los residuos no enseñan moda desplazada**: medianas entre −1 y +4 puntos y rangos de ±50-59. **No
+hay desfase sistemático de lado**, lo cual es coherente con que las series cuadren a 1-2 puntos
+(§R0). Así que **no nace ninguna predicción pre-registrada** de aquí.
+
+**El control es de abril y no de mayo, como estaba exigido**: abril tiene **11** fractales por
+ventana frente a los 6+5 de mayo y ventanas algo más estrechas (128 frente a 141 puntos), así que la
+probabilidad por azar en abril es **mayor** que la estimada. El test era, si acaso, más fácil de
+pasar de lo previsto, y aun así no se pasó.
+
+## R3. El universo en cero, y de quién es la culpa
+
+```
+CON cobertura (hoy, tras la rama de ayer):        UNIVERSO = 0 casos · 145 excluidos
+SIN cobertura (main ANTES de ayer):               UNIVERSO = 22 casos, TODOS de 2026-06
+```
+
+**La guardia que escribí ayer es la que llevó el universo a cero**, y hay que mirarla de frente.
+
+**Por qué se excluye junio, con las citas:** ADR-0025 §1 dice *«Los 21 de junio salen: el trader se
+comprometió a dos meses y entregó uno, así que para junio **no hay ninguna decisión suya con la que
+comparar**»*, y §4 añade que rescatar sus `dev` *«exigiría pedirle un backtest de junio que ya no va
+a llegar»*. **Ese motivo es del camino de FIDELIDAD**: sin su backtest no hay con qué *comparar*.
+
+**Pero un paquete CIEGO no compara: hace etiquetar.** El trader recibe gráficos de días que no ha
+visto y los etiqueta en sesión; la etiqueta **es** el dato (`LABEL_CASE`). Junio **no está en
+`vistos.yaml`** —y es correcto que no esté: no lo ha visto—, así que sus 22 días **son ciegos y
+etiquetables**. El criterio que apliqué ayer, *«no hay material del trader»*, es el de la
+comparación, y lo puse donde se decide **qué se puede etiquetar**.
+
+**Es el patrón 2 de la lista de tres** —una regla más estricta de lo que el ADR sostiene— y en el
+informe de ayer escribí que lo había comprobado y que no aplicaba. **Esa comprobación fue mía y fue
+errónea.** No lo arreglo aquí: no toca a esta rama y la decisión de qué es un paquete ciego es del
+consultor.
+
+**Y el hecho, se decida como se decida:** con la guardia puesta, **hoy no hay ni un día ciego**. Un
+`kit build` nuevo falla con `universo tiene 0` y **falla correctamente**. **La sesión 2 no se puede
+construir hasta que entre material nuevo** —o hasta que junio vuelva.
+
+## R4. Lo que se corrige en otros documentos
+
+- **`F14A-INGESTA.md` y ADR-0037**: `maxTP` no es la excursión favorable máxima sino el precio de
+  cierre de las ganadoras. El argumento *«una orden límite habría cerrado ahí y el recorrido máximo
+  no podría superarlo»* colgaba de la lectura vieja y se reescribe.
+- **`F14A-INGESTA.md`**: decía *«15 de 18 se pasan de 3,00»* donde ADR-0037 ya estaba corregido a
+  **14**. Quedó descuadrado al corregir sólo uno de los dos.
+- **`F14A-INGESTA.md`**: la predicción congelada de mayo gana un **recuadro de anotación** —no se
+  reescribe— que dice qué decide de verdad la región poblada.
+
+## R5. Deuda que esta rama deja
+
+- **La serie del trader es OANDA y la nuestra es Dukascopy**, y toda medida geométrica contra su
+  material depende de eso (**A-16**, `resuelve_en: [F26]`). Hoy tiene su primera medida —1 y 2
+  puntos, n=2— y **el método para ampliarla ya no es el que estaba escrito**: hay que aplicar el
+  **UTC+2** del gráfico antes de comparar nada. Barrer los 367 fotogramas de v5 exige OCR y este
+  repositorio no tiene Pillow a propósito; la vía realista es **pedirle al trader una exportación de
+  velas de FX Replay**, o leer a mano una muestra.
+- **El reloj de FX Replay es UTC+2 FIJO**, también en enero. No es Europe/Madrid, que en enero es
+  UTC+1. Toca A-9 (anclaje H4) y no se decide aquí.
+- **El fractal 5/120 no captura lo que el trader llama estructura** (§R2): cualquier medida futura
+  que quiera poner la caja sobre las velas necesita otra definición, y esta rama no la busca.
+
+## R6. La peticion al trader: son DOS cosas, y Next Action 1 las mezclaba
+
+| Necesidad | Que hace falta del trader | Cita |
+|---|---|---|
+| **Sesion 2 ciega** (kit) | solo una **CONFIRMACION por escrito** de que no ha operado ni backtesteado ese mes; las velas las bajamos nosotros | `vistos.yaml`: *«antes de cada sesion el trader confirma por escrito que no ha operado ni backtesteado los meses del paquete […] se registra en F09 como CONFIRM sobre el objetivo `paquete <sesion>`»* |
+| **Llenar `fidelidad-2` y `fidelidad-3`** (F26) | un **BACKTEST suyo** de un mes que no haya visto, para tener decisiones con las que comparar | ADR-0036 es el camino para material **ya visto**; Next Action: *«un mes limpio es LO UNICO que puede llenarlas con una cifra defendible»* |
+
+**Y son INCOMPATIBLES sobre el mismo mes:** si backtestea febrero, febrero deja de ser ciego y pasa
+a ser material del camino de fidelidad. **Si se quieren las dos cosas, hacen falta DOS meses.**
+
+### El texto literal, para que Aleks lo mande
+
+> Hola. Dos cosas, y son distintas.
+>
+> **1) Confirmame por escrito, si puedes:** ¿has operado o backtesteado **febrero de 2026** o
+> **marzo de 2026**? Me vale un si o un no por cada uno. No necesito que hagas nada con esos meses:
+> solo saber si los has mirado.
+>
+> **2) Y esto si es trabajo, cuando puedas:** necesito **un mes entero backtesteado que no hayas
+> visto antes** — el que me confirmes limpio en el punto 1. Exportado como los otros, con el Excel
+> de FX Replay. Es lo unico que nos permite medir de verdad si el bot decide como tu, porque los
+> meses que ya conoces no sirven para eso: ya sabes lo que paso.
+>
+> Lo primero me desbloquea la siguiente sesion contigo. Lo segundo no corre prisa esta semana, pero
+> sin ello hay una parte de la validacion que no se puede cerrar nunca.
+
+## R7. Que debe decidir el usuario
+
+1. **Validar la rama** y, si procede, el ritual. No hay ADR: **no se decide nada**.
+2. **Junio (§R3)**: si vuelve al universo ciego, o si la guardia de ayer se queda como esta. De eso
+   depende si la sesion 2 se puede construir sin material nuevo.
+3. **A-16**: si se amplia, y por que via —OCR sobre los fotogramas, que exige una dependencia que
+   este repositorio no tiene a proposito, o pedirle al trader una exportacion de velas—.
+4. **El hallazgo de los parciales (§R1)**: tres ganadoras por debajo de 3R en dos meses
+   independientes. Si abre ambiguedad, si va a la sesion 2, o si espera a mayo para tener un tercer
+   mes.
+5. **Enero**: tercer mes de desarrollo a coste de descarga cero, con xlsx y dataset ya presentes.
+
 ## Estado
-PRE-REGISTRO COMMITEADO · sin datos leídos
+WAITING_FOR_USER_VALIDATION

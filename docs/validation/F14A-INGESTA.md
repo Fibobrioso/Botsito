@@ -117,8 +117,16 @@ initialSL: del lado correcto 42, del lado MALO 0, sin valor  5
 
 - **`maxTP` se cae**: está relleno **si y sólo si la operación ganó** —20 filas con `maxTP`, las 20
   con `rPnL > 0`; 27 sin `maxTP`, ninguna con `rPnL > 0` (22 en pérdida, 5 a cero)—. Un objetivo
-  *planeado* no puede faltar precisamente cuando se pierde: `maxTP` es «lo más lejos que llegó a
-  favor», un resultado.
+  *planeado* no puede faltar precisamente cuando se pierde: `maxTP` es un **resultado**.
+
+  > **CORRECCIÓN del 2026-09-21 (rama `trabajo/abril-y-la-caja`).** Esta línea decía que `maxTP`
+  > es *«lo más lejos que llegó a favor»*. **Era una suposición, no una medida.** Medido sobre
+  > abril por consistencia interna del libro: **`maxTP` == `avgClosePrice` en las 17 filas donde
+  > existen las dos, sin una sola excepción**, y `maxTP` está presente **si y sólo si**
+  > `rPnL > 0` (17 de 17). O sea que **`maxTP` es el PRECIO DE CIERRE de las ganadoras**, no la
+  > excursión favorable máxima. La conclusión de este apartado **no cambia** —sigue siendo un
+  > resultado y no el objetivo planeado— pero el motivo estaba mal dicho, y el argumento que
+  > colgaba de él está reescrito más abajo.
 - **`idealTP` se cae** porque en **4 de 47 filas está del lado de la pérdida** —entre la entrada y el
   stop, las cuatro `sell` perdedoras— y su RR implícito no tiene estructura
   (0,2 · 0,1 · −0,2 · 2,1 · 1,1 · 56,6).
@@ -139,8 +147,16 @@ diseñado, porque no sabe qué está buscando.
 | `avgRiskReward` repetido | ¿Es un promedio agregado clonado por fila? | **16 valores distintos en 42 filas**; `maxRiskReward`, 15 en 47 | **Es por operación.** El motivo mecánico que se había supuesto para descartar la reconstrucción era FALSO; el de fondo basta |
 | Suelo del RR implícito de `maxTP` | ¿Hay suelo en 3,0? | **17 de 18 en 3,00 o por encima**, tres clavadas en 3,00, un único 2,50 | Huella mecánica de la regla, independiente de la cita |
 
-Y que **15 de 18 se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada en
-3R exacto: una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo.
+Y que **14 de 18 se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite colocada
+en 3R exacto.
+
+> **CORRECCIÓN del 2026-09-21, doble.** (1) Decía **15**; son **14** —18 menos el 2,50 de abajo y
+> las tres clavadas en 3,00—. ADR-0037 se corrigió el mismo día y esta línea se quedó
+> descuadrada: corregir uno de dos sitios que dicen lo mismo es no corregir. (2) El argumento
+> terminaba *«una orden límite habría cerrado ahí y el recorrido máximo no podría superarlo»*, y
+> eso **colgaba de que `maxTP` fuera la excursión máxima**. No lo es: es el precio de cierre. La
+> conclusión aguanta y es **más directa** —una orden límite en 3R cierra EN 3R, así que 14 cierres
+> por encima dicen que el TP no estaba ahí— pero el razonamiento era otro.
 
 ### El suelo en 3,00 mide algo que nadie había medido: es la primera medida de A-18
 
@@ -202,6 +218,21 @@ y su lista de `evidencia` **no se tocan**.
 
 **Se repite sobre mayo**, en `trabajo/mayo-dev-ingerido`. Dos meses que coincidan mueven esto de
 «una medida» a «un hecho», y entonces sí toca decidir.
+
+> **ANOTACIÓN del 2026-09-21, firmada por `trabajo/abril-y-la-caja`. La predicción de más abajo
+> NO se modifica: se lee con esto al lado.**
+>
+> Lo que la región poblada con suelo en 3,00 decide es que **la COMBINACIÓN CONFIRMED de hoy**
+> —`caja_completa` con el stop a 0,8— **es falsa**. **NO elige entre los dos supervivientes:**
+> `(riesgo_real, 0,8)` y `(caja_completa, 1,0)` predicen el mismo suelo. Elegir entre ellos exige
+> la medida de la caja, y la medida de la caja exige la serie de precios del trader, que no es la
+> nuestra (**A-16**, medida por primera vez el 2026-09-21).
+>
+> Esta anotación existe porque la primera rama del criterio —*«región poblada y suelo en 3,00 →
+> se decide A-18 hacia `riesgo_real`»*— y el párrafo que va justo debajo —donde sobrevive
+> `stop_fraccion_caja` = 1,0— **estaban en tensión desde que se escribieron**. Hoy sabemos que la
+> tensión es real: **abril replicó la región poblada y la medida de la caja salió NO CONCLUYENTE**
+> (`docs/validation/ABRIL-Y-LA-CAJA.md` §R2).
 
 **Una trampa medida al escribir esa nota**, que se lleva a `CLAUDE.md`: tocar el **texto** de una
 ambigüedad —no su `estado`, no su `decision`— deja `make check` en rojo con
