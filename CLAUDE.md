@@ -125,6 +125,20 @@ Y **se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempr
 > necesario; y si se aparta de ADR-0021, o se corrige aqui o se cambia el ADR, pero no se deja el
 > desacuerdo por escrito.
 
+**COMO SE ABRE UN FOTOGRAMA: POR INSTANTE LOCALIZADO, NUNCA POR MUESTREO** (ADR-0038). Un
+fotograma se abre solo en un instante que se haya localizado ANTES -por la transcripcion, por un
+item de evidencia que ya lo cite, o por una marca de tiempo ya registrada-, y el vecindario
+inmediato de un instante ya citado cuenta como localizado. **LA VIA DE LOCALIZACION ES LA
+TRANSCRIPCION**, que ademas es mucho mas barata que barrer imagenes.
+
+Es PROCEDIMIENTO y no una prohibicion nueva de contenido: lo que se puede mirar no cambia. El
+motivo es que **no se puede saber que hay en un PNG antes de abrirlo**, asi que muestrear a
+ciegas es incompatible con que una clase entera de imagenes -las capturas de Analytics- este
+prohibida. Si un fotograma abierto asi resulta traer un AGREGADO, se declara el MISMO DIA con sus
+cifras listadas y ninguna se usa (ADR-0021 §2, ADR-0038 §2). Medido el 2026-09-22: muestreando v4
+se abrio la pestana Analytics de agosto; el mismo muestreo sobre v1 o v2 habria caido sobre mayo
+o julio, que SI tienen dias reservados.
+
 **EL RELOJ DE LOS GRAFICOS DE FX REPLAY ES UTC+2 FIJO.** Medido en el propio grafico de v4 sobre
 un fotograma de ENERO -asi que NO es Europe/Madrid, que en enero es UTC+1-; confirmado porque con
 ese desfase las velas de abril casan a 1 y 2 puntos con las de Dukascopy. Es una propiedad del
