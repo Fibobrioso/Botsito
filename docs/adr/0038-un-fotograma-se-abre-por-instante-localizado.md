@@ -40,6 +40,16 @@ phase: post-F14 (rama `trabajo/la-caja-del-29-de-abril`)
    Es la misma familia que la trampa del «15 de 18» que cerró la rama de abril: **no todo lo que
    parece necesitar corrección la necesita, y hay que saber QUÉ HACE una regla antes de tocarla.**
 
+> **NOTA del 2026-09-22 (no reescribe el cuerpo).** La decision 3 es **una de las dos caras**
+> del **cuarto patron de defecto** de la lista que `PROJECT_STATE.md` mantiene en Technical
+> Debt: *una restriccion elegida se disfraza de restriccion del mundo, y al reves, y desde
+> dentro las dos se ven igual*. Aqui esta **la cara contraria**: una regla que **parece**
+> elegida de mas y en realidad **la fuerza el mundo**, porque la comprobacion no llega a
+> tiempo. La cara del fallo se midio el mismo dia en la misma rama —«no hay extraccion
+> programatica de pixeles» era una decision de dependencias disfrazada de imposibilidad—.
+> **Antes de aceptar o de relajar una restriccion hay que establecer de cual de las dos clases
+> es.**
+
 ## Problema que resuelve
 
 `CLAUDE.md` ya prohibía abrir las capturas de Analytics. Lo que no existía en ninguna parte es
