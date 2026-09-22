@@ -232,3 +232,26 @@ def test_el_valor_de_una_etiqueta_solo_se_lee_con_los_reservados_excluidos(repo:
                 llamadas[nombre].append(py.relative_to(repo).as_posix())
     assert sorted(llamadas["parsear_etiqueta("]) == ["src/botsito/cases/kappa.py"]
     assert sorted(llamadas["etiquetas_de_registros("]) == ["src/botsito/cases/paquete.py"]
+
+
+@pytest.mark.contract
+def test_solo_un_modulo_puede_nombrar_el_libro_del_trader(repo: Path) -> None:
+    """ADR-0037: el unico modulo de `src/` que puede nombrar un xlsx del trader es el lector.
+
+    Sustituye al refuerzo que `docs/validation/SEPTIEMBRE-ENTRA.md` apoyaba en que las
+    dependencias del proyecto fueran solo `pyyaml` y `tzdata` -"ninguna ruta de codigo puede leer
+    el libro"-. Ese parrafo MURIO con F14a, porque un lector de stdlib tambien lee, y este
+    contrato es su sustituto: la lectura vive en un solo sitio y se sabe donde mirar. Mismo patron
+    que `test_solo_la_puerta_nombra_la_carpeta_del_holdout`.
+    """
+    import re
+
+    patron = re.compile(r"\.xlsx|backtesting-analytics|openpyxl")
+    lector = repo / "src" / "botsito" / "corpus" / "libro.py"
+    infractores = [
+        py.relative_to(repo).as_posix()
+        for py in (repo / "src" / "botsito").rglob("*.py")
+        if py != lector and patron.search(py.read_text(encoding="utf-8"))
+    ]
+    assert infractores == [], f"nombran el libro del trader fuera del lector: {infractores}"
+    assert patron.search(lector.read_text(encoding="utf-8")), "el lector tiene que nombrarlo"

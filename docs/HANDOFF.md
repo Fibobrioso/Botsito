@@ -5,6 +5,293 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## La pasada por el material de septiembre (2026-09-21) · NADA DECIDIDO, TODO MEDIDO
+
+- **LOS IDS NO SON CRONOLOGICOS Y LEERLOS COMO SECUENCIA ES UN ERROR.** Orden real por
+  `fecha_grabacion` de `knowledge/corpus/fuentes.yaml`: **v2 (08-03) -> v3 (08-06) -> v1 (08-20) ->
+  v4 (08-30) -> v5 (09-05) -> v6 (09-09)**.
+- **LA BASE DE EVIDENCIA ESTA CONSTRUIDA SOBRE EL MATERIAL VIEJO.** De 368 items: v2 53, v3 102
+  -los dos mas viejos, **42 %**-, v1 46, v4 132, v5 12, v6 23. **El material de septiembre aporta
+  35 items, menos del 10 %.** Y el usuario dice que la operativa se fue aclarando video a video y
+  que la version buena, con los arreglos, es la del ultimo.
+- **NADA declara que lo mas reciente mande.** `fecha_grabacion` existe en `fuentes.yaml` y NINGUN
+  mecanismo la usa. 11 items llevan `supersede` -13 ficheros lo mencionan-, y **8 de los 11 salen
+  de v6**: el mecanismo existe y se usa a mano, pero no hay eje de recencia.
+
+### LO QUE SALIO, Y POR QUE HAY QUE PARAR ANTES DE TOCARLO
+
+**A-18 CITA UN ITEM QUE OTRO SUPERSEDE, Y EL QUE LO SUPERSEDE DICE LO CONTRARIO.** A-18 cita
+`ev-v4-011951-5fb49e03`, y `ev-v6-014702-2d7096db` lo supersede. Las `notas` de ese item de v6
+concluyen, con la aritmetica del trader -"3 - 3x0,75 = 0,75 y 3 - 3x0,80 = 0,60"-, que **el 1:3 se
+mide sobre la CAJA COMPLETA**. Es la lectura OPUESTA a la que apunta el material de agosto (suelo
+del RR realizado en 3,00, informe F14A §4), y **es tambien la opuesta a la que ADR-0037 escribio**
+diciendo que `ev-v4-011951` "empujaba al mismo lado" que agosto: ese item esta superseded y su
+sucesor empuja al otro.
+
+**Y v5 -la DEMOSTRACION- apunta al tercer sitio, que es el de agosto.** En `v5 0:04:52` y
+`v5 0:04:53` la herramienta de posicion de FX Replay muestra sus propias cifras mientras el trader
+arrastra el objetivo:
+
+```
+0:04:52   Risk/Reward Ratio: 3.21   Target: 0.00061 (0.052%) 6.1   Amount: 1802.63
+0:04:53   Risk/Reward Ratio: 3      Target: 0.00057 (0.049%) 5.7   Amount: 1750
+```
+
+0,00061/3,21 = 0,00019 y 0,00057/3 = 0,00019: **el riesgo es constante -1,9 pips- y lo que mueve es
+el objetivo, hasta que el ratio marca exactamente 3.** Esa razon la calcula la herramienta entre su
+zona de stop y su zona de objetivo, o sea **sobre la distancia entrada-stop**. Si el stop esta en el
+0,8 -que es lo que el propio v5 dice en `0:03:12`, "si yo protejo a 0.80, que es el SL por
+defecto"-, entonces el objetivo es 3 x RIESGO REAL y no 3 x caja. **CUIDADO CON ESTO**: no esta
+medido a que nivel de la caja cae la zona roja en ese fotograma, y las dos lecturas se separan ahi.
+Lo que si esta medido es que **la razon 3 se fija sobre entrada-stop**, no sobre la caja.
+
+Y lo que el audio de v5 anade, `0:04:42`: *"sabemos que manejamos el calculo del RR en base al 1%"*,
+seguido de un deictico -"que seria alli"- y NUEVE SEGUNDOS de silencio mientras dibuja. El 1 % puede
+ser la caja entera o el riesgo por operacion, y el texto solo no lo decide.
+
+**POR QUE NO HE ESCRITO EL ITEM NUEVO, que es lo que la regla manda.** Lo que un item de v5 sobre la
+geometria contradice NO es la `afirmacion` de ningun item -la de `ev-v6-014702` es solo la
+aritmetica, y es correcta- sino **las `notas` de ese item**, que son una INTERPRETACION. Y el tema no
+coincide: `objetivo.rr_13_margen_tres_perdidas` frente a `objetivo.rr`. La guardia de
+`evidence new --supersede` exige el MISMO tema, asi que por ahi no entra. **Se para y se avisa, como
+estaba acordado.**
+
+**LA CUARTA APARICION DEL PUNTO CIEGO, y con la dimension nueva.** `comprobar_citas_revocadas`
+vigila reglas, glosario y vocabulario contra registros de FEEDBACK revocados. **No mira
+`ambiguedades.yaml`, y no mira los `supersede` de EVIDENCIA.** Medido: **TRES ambiguedades citan
+evidencia superseded** -A-10 y A-11, ya RESUELTAS, y **A-18, que sigue ABIERTA**-. `make check` pasa
+verde con eso.
+
+### A-21 y A-24 CONTRA v6: BUSCADO, NO APARECE
+
+- **A-21** -que es una zona de control LIMPIA, sin ruido; bloqueante, `resuelve_en [F12, F20, F26]`;
+  pregunta cuantas velas o cuanto retroceso de mas la invalida-. Terminos buscados en la cruda de
+  v6: `limpi`, `ruido`. Diez coincidencias, y **ninguna da un criterio evaluable**: el "ruido" de v6
+  es el de QUE VELAS cuentan al mapear el order block en temporalidad menor (`79:52`, `97:19`,
+  `126:44`), no el de la zona de control. Lo mas cerca es `80:02`, *"yo por eso considero tratar de
+  mapear de la manera mas limpia y mas objetiva posible, creo yo"*, que es una aspiracion y no una
+  regla: si acaso REFUERZA la premisa de A-21. **Sigue abierta.**
+- **A-24** -que hace que marques un pivote de M15 y no otro; bloqueante-. Terminos buscados:
+  `pivote`, `considere`, y `m15` cruzado con `marc|traz|elij|escoj`. Diez coincidencias sobre M15 y
+  **ninguna sobre el criterio de seleccion**: hablan de la temporalidad (`26:18`, *"la liquidez la
+  solemos marcar en M15 y con eso basta"*), no de cual de varios candidatos se marca. **Sigue
+  abierta.**
+
+### LA RECENCIA ES SENAL, NUNCA ARBITRO, Y ESTE CASO ES POR QUE
+
+El consultor iba a escribir "lo mas reciente manda" la manana del 2026-09-21. **A-18 es su
+contraejemplo**: la recencia sola elegiria `caja_completa` -v6 es el mas nuevo- y LA PANTALLA de v5
+y los backtests de agosto dicen lo contrario. **Un trader razonando sobre su regla puede
+equivocarse sobre su propia regla; la herramienta que usa, no.** Por eso la recencia entra como
+SENAL y no como arbitro, y por eso "el ultimo gana" a secas es peligroso: dejaria que un comentario
+de pasada tumbe una explicacion cuidada, y aqui ademas dejaria que un razonamiento tumbe una
+medida.
+
+### Y LA DENSIDAD DE v5, QUE ES EL OTRO DATO DE LA PASADA
+
+**v5 dura SEIS MINUTOS y aporta 12 items**; v3 y v4 son grabaciones largas y aportan 102 y 132. Lo
+que falta no es material, es haberlo explotado. Y su naturaleza es la que mas decide, porque es la
+UNICA donde el trader **dibuja la caja mientras explica**: la pasada de hoy saco de esos seis
+minutos un fotograma que contradice una interpretacion escrita en un ADR. Mirar v5 es barato y no
+esta hecho.
+
+### LO QUE PUEDE CERRAR A-18, MEDIDO Y SIN EJECUTAR
+
+La via del consultor: si la pata roja del fotograma es 0,8 de la caja, la caja mide **0,0002375**;
+si es la caja entera, mide **0,00019**. La caja son niveles de estructura sobre EURUSD M1 del
+**miercoles 29 de abril de 2026**, hacia las 10:03-10:08 (se lee en el eje del propio fotograma).
+Con las velas de ese dia se mide la estructura y se compara. **`data/manifests/` NO tiene abril**
+-tiene 2026-01, 05, 06, 07, 08 y 09-.
+
+**MEDIDO ANTES DE DESCARGAR NADA, que es lo que el consultor pidio:**
+
+1. **La colision que se temia NO se da.** El defecto documentado salta cuando DOS manifiestos del
+   prefijo del kit cubren EL MISMO DIA (`universo()`: "dos datasets cubren el mismo dia: ids de
+   caso repetidos"). Abril (2026-04-01..30) **no solapa** con ninguno de los seis meses presentes,
+   y `reemplaza_a` no hace falta porque no sustituye a nadie.
+2. **El paquete de la sesion 1 es INMUNE, y esta medido**: `ventanas.yaml` congela
+   `datasets: [eurusd-m1-2026-01, -05, -06, -07, -08]` -cinco ids- y
+   `manifiestos_del_prefijo(datasets=...)` (`cases/paquete.py:523-546`) devuelve EXACTAMENTE esos y
+   falla si falta alguno. Es ADR-0035 haciendo su trabajo: `kit check --sesion
+   2026-09-09-sesion-01` no cambia.
+3. **PERO HAY OTRA COLISION, Y ES LA DE JUNIO CON UN MES MAS.** Un `kit build` NUEVO llama a
+   `manifiestos_del_prefijo` **sin** `datasets`, o sea coge TODO lo que empiece por
+   `eurusd-m1-`. Abril entraria en el universo de la sesion 2, y **abril es material de
+   DESARROLLO** -la spec se infirio en parte de esos dias-. El `config.yaml` del kit NO tiene
+   `cobertura_material`; el de fidelidad si. Son **22 dias laborables** de abril que se sumarian a
+   los 10 de junio ya anotados.
+4. **MITIGACION BARATA Y MEDIDA**, si se quiere descargar abril sin ampliar esa deuda: el filtro es
+   `dataset_id.startswith(config.dataset_prefijo)` (`paquete.py:536`) y `data download --dataset`
+   controla el nombre -el id le anade `-hash8`-. Un nombre que NO empiece por `eurusd-m1-` queda
+   fuera de todo universo, ahora y en la sesion 2. **Contra**: un dataset de EURUSD M1 con otro
+   nombre es en si mismo confuso, y esconde el problema en vez de arreglarlo. **La alternativa
+   honesta es poner `cobertura_material` al `config.yaml` del kit ANTES de descargar abril**, que
+   es lo que ya esta decidido para junio en `trabajo/mayo-dev-ingerido`. NO SE EJECUTA NADA: lo
+   decide el consultor.
+
+### EL ORDEN, DECIDIDO EL 2026-09-21: `cobertura_material` -> ABRIL -> A-18 -> MAYO
+
+Tres ramas, y **ninguna mezclada con otra**. El motivo del consultor, que vale mas que el orden:
+
+1. **`cobertura_material` PRIMERO Y SOLA.** Es una GUARDIA, y las guardias aterrizan solas: tiene
+   criterio de aceptacion propio y desbloquea DOS cosas distintas -junio y abril-, asi que metida
+   dentro de la rama que ingiere mayo no se puede validar ninguna de las dos por separado. Lleva la
+   exclusion que GRITA -motivo y recuento- y tests. **DESCARTADA Y ESCRITA COMO DESCARTADA** la
+   salida de descargar abril con un nombre fuera del prefijo: funciona, pero ESCONDE EL DEFECTO, y
+   esconder defectos es lo que este proyecto lleva pagando toda la semana.
+2. **ABRIL DESPUES, TAMBIEN SOLA.** Si la medida cierra A-18 cambia un parametro CONFIRMED de la
+   spec, y eso exige ADR e informe propios: no se mete de matute en la rama que ingiere mayo.
+3. **MAYO AL FINAL**, con la prediccion congelada intacta.
+
+**LA ADVERTENCIA SOBRE LA MEDIDA DE ABRIL, para que no se venda antes de tiempo.** LA CAJA LA
+DIBUJA EL TRADER SOBRE NIVELES QUE EL ELIGE. Con las velas del 29 de abril tendremos los altos y
+bajos CANDIDATOS, pero **cual par escogio como nivel 0 y nivel 1 sigue siendo interpretacion
+nuestra**. La via: entrada = nivel 0, riesgo = **0,00019** medido en el fotograma, y ver si
+`entrada + 0,00019` cae sobre un nivel que este a 0,8 del siguiente alto estructural -lectura
+`riesgo_real`, caja 0,0002375- o **sobre el alto mismo** -lectura `caja_completa`, caja 0,00019-.
+Es un SELL sobre EURUSD M1 del miercoles 29 de abril de 2026 hacia las 10:03-10:08, que se lee en
+el eje del propio fotograma. **PUEDE SALIR NO CONCLUYENTE, Y SI SALE ASI SE ESCRIBE ASI.** No es
+una medida garantizada; es una medida que merece la pena.
+
+**Y SI ABRIL CIERRA A-18, LA PREDICCION DE MAYO NO SE TOCA**: pasa a ser comprobacion
+INDEPENDIENTE, que es mejor y no peor. No se reescribe ni se ajusta en ningun caso.
+
+### QUIEN MIDIO QUE, PORQUE DESDE HOY SE MARCA
+
+El consultor instituyo el 2026-09-21 marcar lo que se RELAYA y no se ha medido en primera persona.
+De este bloque: **medido por la sesion** -que la frase falsa estaba en el informe y no en el ADR;
+el tema `objetivo.rr_13_margen_tres_perdidas`; el comportamiento de `manifiestos_del_prefijo` con y
+sin `datasets` (`cases/paquete.py:523-546`); los 22 laborables de abril-. **Medido por el
+consultor** -que el .mkv de v5 es nativamente 1280x720; que en `0:04:52` se ven rotulados los
+niveles 0, 0.5 y 0.8 con la herramienta de posicion encima-. **Medido por los dos por separado**
+-que `fr-v5-718ecabb.yaml` declara esa misma resolucion, y que `data/manifests/` tiene 2026-01, 05,
+06, 07, 08 y 09 y no abril-.
+
+### LO QUE NO SE HA HECHO, A PROPOSITO
+
+No se ha declarado ninguna regla de recencia: **la decide el consultor con ADR**, y lleva matiz -v6
+es un cuestionario y manda sobre lo que se le pregunto, callando en lo demas; v5 es una demostracion
+y manda sobre la geometria que ensena; "el ultimo gana" a secas dejaria que un comentario de pasada
+tumbe una explicacion cuidada-. No se ha tocado `evidence/`, ni `ambiguedades.yaml`, ni la
+prediccion pre-registrada de mayo, que **no se toca pase lo que pase**: si v5 o v6 cierran A-18, esa
+prediccion se queda como comprobacion INDEPENDIENTE.
+
+## Estado (2026-09-21, rama `feature/F14a-ingesta-del-detalle` esperando validacion; lo de debajo es anterior)
+- LO PRIMERO, PORQUE VUELVE A PASAR: `CLAUDE.md` §3 prohibia "el detalle por operacion de los xlsx"
+  EN BLOQUE, y ADR-0021 §1 dice "en esos dias" desde el 2026-09-12. TERCERA VEZ que este fichero es
+  mas estricto que el ADR sin que ningun ADR lo diga, y las tres veces bloqueo un paso NECESARIO.
+  Corregido, con su caja. **Si te topas con una prohibicion de `CLAUDE.md`, buscala en el ADR antes
+  de obedecerla.**
+- EL CRITERIO, que es lo que hay que entender antes de tocar nada: LA GRANULARIDAD DEL DATO, no el
+  tipo de fichero (ADR-0037). Las filas de un dia `dev` se leen; una pestana de totales del mismo
+  libro NO se abre nunca, y NINGUNA autorizacion la abre, porque lleva los reservados dentro y no se
+  puede trocear. Y la ESTRUCTURA se VERIFICA contra una lista escrita antes: la pestana se
+  SELECCIONA, no se enumera, y el conjunto de FECHAS del libro no sale del lector -un "14 dias en el
+  libro" publica que dias reservados NO opero el trader, y un dia laborable sin operaciones ES su
+  etiqueta-.
+- LO QUE MAS VALE DE LA RAMA NO ES EL CODIGO, ES LO QUE SE MIDIO. Se abrio AGOSTO -material de
+  desarrollo, cero dias reservados, comprobado ANTES con `casos_reservados(repo)` y declarado el
+  mismo dia- y resulto que NINGUNA columna del libro es el objetivo planeado. `maxTP` esta relleno
+  si y solo si la operacion gano (20/20 con `rPnL > 0`; 27 sin `maxTP`, ninguna ganadora): es un
+  resultado. `idealTP` cae DEL LADO DE LA PERDIDA en 4 de 47 -las cuatro `sell` perdedoras-.
+- EL OBJETIVO ES UNA REGLA, `objetivo_rr` con `base_calculo_objetivo`, y el xlsx NO LO REGISTRA.
+  Cita literal del trader: `ev-v2-001658-d02fb71a` (v2 0:16:58). POR ESO EL CASO NO LLEVA CAMPO
+  `objetivo`, y no es que lo lleve vacio: un campo opcional vacio es una invitacion a que alguien lo
+  rellene con `maxTP` dentro de seis meses. QUITAR EL CAMPO ES EL MECANISMO.
+- LA LECCION QUE HAY QUE LLEVARSE: lo cazo EL INVARIANTE GEOMETRICO -para `buy` el stop por debajo
+  de la entrada, para `sell` por encima-, que estaba puesto como test PERMANENTE DE HIGIENE y no
+  como discriminador. Tres cruces disenados a proposito -presencia contra resultado, RR calculado
+  contra RR declarado, recuento de valores distintos- miraban CORRELACIONES y no lo vieron. Una
+  comprobacion de sentido puesta por higiene vale mas que un cruce disenado, porque no sabe que
+  esta buscando. Se queda como guardia permanente: cualquier fila que la viole ABORTA la ingesta
+  nombrando la fila.
+- EL CORPUS CONTESTO DOS VECES LO QUE IBA A IRSE AL TRADER, en el mismo dia: el objetivo
+  (`ev-v2-001658-d02fb71a`) y los parciales (`ev-v1-002313-6342a154`, `ev-v2-001819-60a1b0f1`, y
+  sobre todo v6 0:17:07, el trader EN LA SESION 1: "sin toma de parciales y que tiene que llegar al
+  ratio 1.3 si o si" -el ASR escribe 1.3 donde dice 1:3-). BUSCA EN EL CORPUS ANTES DE REDACTAR
+  CUALQUIER AMBIGUEDAD. Una pregunta al trader cuesta un hueco de sesion; la busqueda no cuesta
+  nada. A-33 NO se abre.
+- `dateStart` VIENE EN UTC, y esa medida sostiene la asignacion a sesion H4: convertidas a
+  `huso_operativa` las 47 operaciones de agosto caen dentro de las dos sesiones; leidas como hora
+  local de Madrid, 16 quedarian fuera.
+- LOS DIAS NO SE ELIGEN, SE DERIVAN: no hay `--dias`. `dias_ingeribles` = casos de un reparto
+  COMMITEADO menos `casos_reservados`. Un dia fuera de todo reparto ABORTA el comando entero; un dia
+  reservado se descarta sin escribirse y SIN NOMBRARSE en la salida.
+- ES LA PRIMERA VEZ QUE HAY PRECIOS BAJO `knowledge/cases/`. Por eso `problemas_de_biblioteca` corre
+  dentro de `knowledge validate` siempre y sin `data/`, y hay test de contrato: ningun fichero de
+  `knowledge/cases/dev/` puede corresponder a un caso reservado.
+- NO SE HA INGERIDO NADA DE VERDAD: cero `caso-*.yaml` en el arbol. Los tests van contra un xlsx
+  SINTETICO. Si el usuario dice que si, la ingesta real de mayo son 6 casos y su commit necesita
+  trailer `Fuente:` (`knowledge/cases/` esta en `DIRECTORIOS_CON_FUENTE`).
+- ERROR MIO, VISIBLE Y SIN REESCRIBIR: ADR-0037 se commiteo (`a791f92`) diciendo que el objetivo es
+  `idealTP`. La correccion va EN CAJA dentro del propio ADR. Y peor que el error: antes de medir
+  escribi DOS consecuencias para F26 en direcciones OPUESTAS, las dos falsas. Una consecuencia para
+  F26 es una afirmacion como cualquier otra y no se escribe sin medir la cadena entera hasta ella.
+- DEUDA QUE DESCUBRE ESTA RAMA Y HAY QUE LEER: JUNIO sigue siendo `dev` en el reparto de la sesion 1
+  y ADR-0025 lo descarto. `dias_ingeribles` devuelve 20 dias: 6 de mayo, 10 DE JUNIO y 4 de
+  septiembre. Hoy inocuo -no hay xlsx de junio- pero el dia que llegue uno se escribirian 10 casos
+  de un mes descartado sin que nada chille.
+- Y AL VALIDAR, EL CONSULTOR ENCONTRO LO MEJOR DE LA RAMA MIRANDO LO MISMO OTRA VEZ: el suelo del
+  RR no mide el objetivo PLANEADO, mide el RR REALIZADO sobre entrada-stop, que es exactamente lo
+  que A-18 lleva abierta desde F11. Las dos lecturas PREDICEN: `caja_completa` da
+  `objetivo_rr / stop_fraccion_caja` = 3/0,8 = 3,75; `riesgo_real` da 3,00. Agosto da SUELO EN 3,00
+  -18 filas con `maxTP` e `initialSL`, minimo 2,50, TRES clavadas en 3,00, 16 de 18 por debajo de
+  3,75-. **LA COMBINACION CONFIRMED DE HOY NO CUADRA CON EL MATERIAL**: o la base es `riesgo_real`,
+  o el stop del trader en su backtest no esta a 0,8 de la caja, y las dos tocan un parametro
+  CONFIRMED.
+- POR QUE NO SE DECIDE A-18, y esto es lo que hay que entender antes de tocarla: es UN mes, son 18
+  filas, y **LA CAJA NO ESTA EN EL FICHERO**. El RR que se mide es riesgo real POR CONSTRUCCION, asi
+  que si el stop del trader viviera en el borde de la caja las dos lecturas coincidirian y la medida
+  NO DISCRIMINARIA. Lo que hay es la primera medida que A-18 ha tenido nunca, y apunta al mismo lado
+  que `ev-v4-011951-5fb49e03` ya empujaba. A-18 gana la nota en `ambiguedades.yaml`; su estado, su
+  `decision` y su `evidencia` NO se tocan.
+- CORREGI UN NUMERO DEL BRIEF: decia "todos por debajo de 3,75" y son 16 de 18 -hay un 3,75 exacto y
+  un 5,33-. No cambia la conclusion; la refuerza, porque un suelo EN 3,00 con tres filas clavadas es
+  la firma de un objetivo en 3R sobrepasado, no la de un 3,75R al que 16 ganadoras no llegaron.
+- LA FRASE DE F26 VA POR SU TERCERA REDACCION EN UN DIA: F26 podra puntuar el objetivo contra la
+  regla CUANDO A-18 ESTE CERRADA, no antes, porque hoy la regla tiene dos lecturas que difieren un
+  25 % del recorrido. LAS DOS PRIMERAS VERSIONES LAS ESCRIBIO EL CONSULTOR EN EL BRIEF y se
+  transcribieron a ADR-0037 y al informe, que hasta hoy se las atribuian a quien las redacto: EL
+  FALLO FUE EN LA DECISION, NO EN LA REDACCION, y por eso la regla vigila EL BRIEF y no la
+  transcripcion. La tercera no es error de nadie: la cadena era mas larga de lo que estaba escrito. La regla se amplia: **la cadena hasta F26 incluye las ambiguedades
+  ABIERTAS que cuelgan de los parametros que nombra.**
+- LA PREDICCION DE MAYO ESTA PRE-REGISTRADA Y COMMITEADA EL 2026-09-21, ANTES DE MIRAR MAYO. NO SE
+  TOCA DESPUES DE MIRAR; si la cambias despues, no vale nada. REGION DISCRIMINANTE: el RR implicito
+  de `maxTP` sobre entrada-stop en **[3,00 , 3,75)**. `riesgo_real` la predice POBLADA con suelo y
+  moda en 3,00; `caja_completa` la predice VACIA con suelo en 3,75. AGOSTO: **15 de 18 dentro**
+  (fuera: un 2,50 por debajo, un 3,75 y un 5,33 por arriba).
+- EL CRITERIO, congelado: region POBLADA con suelo en 3,00 -> dos meses independientes, SE DECIDE
+  A-18 hacia `riesgo_real`, con ADR y con el cambio del parametro. Region VACIA con suelo en 3,75
+  -> los dos meses se contradicen, A-18 sigue ABIERTA y SUBE A `bloqueante: true`, porque el
+  material diciendo cosas distintas segun el mes es peor que no saber. Otra cosa -> se escribe lo
+  que de y NO SE FUERZA.
+- Y LA TRAMPA DE ESA MEDIDA, que hay que repetir en el brief: LA CAJA NO ESTA EN EL FICHERO. Si
+  mayo apunta a `riesgo_real`, la lectura alternativa es que el stop real del trader este en 1,0 y
+  no en 0,8, y eso tocaria `stop_fraccion_caja`, que TAMBIEN es CONFIRMED. Las dos salidas son
+  hallazgos y las dos exigen ADR: NO SE ELIGE LA COMODA.
+- EL 2,50 SE MIRA APARTE: es una GANADORA que cerro por debajo de 3R, y contradice el "sin toma de
+  parciales y que tiene que llegar al ratio 1.3 si o si" de v6 0:17:07. Una fila no tumba una cita,
+  pero se nombra, y en mayo se mira si hay mas como ella.
+- **EL TERCER PATRON DE DEFECTO, y desde hoy se comprueba en cada rama junto a los otros dos: UNA
+  REGLA QUE ENUMERA LOS CASOS EN VEZ DE NOMBRAR LA CONDICION DEJA FUERA EL CASO QUE NADIE PENSO.**
+  Los otros dos son (1) un input GLOBAL y MUTABLE del que depende la reproduccion (ADR-0035) y (2)
+  una prohibicion escrita MAS ESTRICTA que el ADR. Tres apariciones del tercero esta semana:
+  `CLAUDE.md` decia que sitios toca ABRIR y CERRAR una ambiguedad y no contemplaba EDITARLA -eso
+  dejo `ambiguedades.md` desincronizado hoy y `make check` en rojo-; `leer_fichero` enumeraba
+  `1|2|3` en vez de negar por defecto y el `..` se colaba; y `CARPETAS_RESERVADAS` convive con un
+  fallback a `holdout-1` que es una enumeracion con agujero. EL ARREGLO ES SIEMPRE EL MISMO:
+  nombrar la condicion y negar por defecto.
+- LO QUE VIENE, decidido: rama `trabajo/mayo-dev-ingerido`, y NO es solo ingerir. Ingiere los 6
+  `dev` de mayo Y REPITE LA MEDIDA DEL RR sobre ellos. Si mayo tambien da suelo en 3,00, la lectura
+  `caja_completa` queda en serios apuros y entonces SI toca decidir A-18. Ahi entra tambien
+  `cobertura_material` para junio, CON LA EXCLUSION QUE GRITA -nunca en silencio-, y sin tocar el
+  reparto de la sesion 1, que esta anclado por blob.
+- A-33 CERRADA SIN ABRIRLA, y bien cerrada: v6 0:17:07, y encaja con `parciales` y con
+  `objetivo_extension_activa: false` que la sesion 1 ya cerro.
+- LA PUERTA SIGUE CERRADA: `PREREGISTRO.md` intacto (blob `52649183...`, marca `SIN RELLENAR`), cero
+  `AUTORIZACION-*.md`, ninguna particion abierta. Esta rama no pre-registra ni firma nada.
+- LO SIGUIENTE, que no es codigo y lleva semanas de plazo: pedirle al trader FEBRERO O MARZO.
+
 ## Estado (2026-09-21, rama `trabajo/puerta-por-pregunta` esperando validacion; lo de debajo es anterior)
 - EL SORTEO DE SEPTIEMBRE ESTA CERRADO EN MAIN (merge 15a49b0, tag `stable/F13-septiembre-sorteo`).
 - LO QUE HAY QUE ENTENDER ANTES DE TOCAR LA PUERTA: `abrir` es PURA y lo seguira siendo. Por eso el

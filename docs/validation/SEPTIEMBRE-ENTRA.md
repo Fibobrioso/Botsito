@@ -41,6 +41,15 @@ declarados; el único `read_text` del módulo es para un `index.txt` del materia
 mecánico: las dependencias del proyecto son **solo `pyyaml` y `tzdata`** —no hay openpyxl, ni
 pandas, ni Pillow—, así que ninguna ruta de código puede leer el libro ni renderizar un JPEG.
 
+> **ESE REFUERZO MURIÓ el 2026-09-21** (rama `feature/F14a-ingesta-del-detalle`, ADR-0037
+> §Impacto). F14a escribió un lector del libro **con stdlib pura** —`zipfile` + `xml.etree`—, así
+> que «no hay openpyxl ni pandas» ya no implica que ninguna ruta de código pueda leerlo. El
+> argumento de esta sección sobre `corpus inventory` sigue en pie por sí solo —no parsea, sólo
+> hashea—; lo que se cae es el refuerzo por dependencias. **Su sustituto** entró en la misma rama:
+> `test_solo_un_modulo_puede_nombrar_el_libro_del_trader` en
+> `tests/contract/test_import_contracts.py`, un contrato por grep que afirma que el único módulo de
+> `src/` que puede nombrar un `.xlsx` del trader es `botsito/corpus/libro.py`.
+
 Entraron **siete** ficheros. El fichero de bloqueo de Excel **no**: se cerró Excel y se borró antes
 de inventariar, porque `rglob` no excluye nada y un libro abierto puede cambiar de bytes y con ellos
 su hash. Verificado después: el xlsx conserva sus **10.066 bytes** y el mtime de la copia, así que el

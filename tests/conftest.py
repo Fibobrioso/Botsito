@@ -11,6 +11,10 @@ from tests import guarda_holdout
 
 REPO = Path(__file__).resolve().parents[1]
 RAIZ_HOLDOUT = REPO / "knowledge" / "cases" / "holdout"
+# El material del trader vive en `corpus/`, fuera de git, y hasta el 2026-09-21 NADA impedia
+# que un test abriera el xlsx de mayo: la guarda solo miraba la carpeta del holdout. ADR-0033
+# lo dejo escrito -"el dia que F14 escriba la ingesta, pasa por la puerta"- y ese dia es hoy.
+RAIZ_MATERIAL = REPO / "corpus" / "Estrategia del trader" / "Material adicional de su operativa"
 
 
 @pytest.fixture(scope="session")

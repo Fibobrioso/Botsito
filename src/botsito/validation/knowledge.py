@@ -650,6 +650,11 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     # La anterioridad, por CASO y para los DOS caminos (ADR-0036). No depende de que existan
     # etiquetas para correr, y hoy no hay ninguna: es justo el periodo en que hace falta.
     fallos_fid += problemas_de_anterioridad(repo, registros_fb)
+    # La biblioteca (F14a, ADR-0037): aqui hay PRECIOS, asi que la guardia de que ninguno
+    # este reservado corre siempre y sin `data/`.
+    from botsito.cases.biblioteca import problemas_de_biblioteca
+
+    fallos_fid += problemas_de_biblioteca(repo)
     for a in avisos_fid:
         salida.append(f"AVISO: {a}")
     for f in fallos_fid:
