@@ -255,7 +255,97 @@ máxima, y la cita de v6 `0:17:07` copiada de la cruda.
 > inventado —`ev-v6-001707-9f2b6e31`— y la comprobación lo paró. Es exactamente lo que la guardia
 > existe para impedir, y queda dicho porque el error llegó a estar escrito.
 
-## R6. Lo que esta rama no hizo
+## R7. El rodeo del cociente: NO CONCLUYENTE, y ahora con motivo exacto
+
+**El cociente cancela la escala de precios, como estaba previsto. Lo que NO cancela es la precisión
+de lectura**, y ése es el muro.
+
+**Todas mis coordenadas son estimaciones a ojo sobre la imagen renderizada.** No hay extracción
+programática de píxeles: este repositorio no tiene Pillow, a propósito. Con un error realista de
+**±3 px**:
+
+```
+caja de 187 px (fotogramas 216/225):  1 px = 0,0053 de caja · ±3 px = ±0,016  ->  DENTRO de 0,03
+caja de  80 px (fotograma 292):       1 px = 0,0125 de caja · ±3 px = ±0,038  ->  FUERA de 0,03
+
+altura minima de caja para que ±3 px quepa en la tolerancia: 100 px
+```
+
+### Y el problema es que las dos condiciones nunca coinciden en los fotogramas abiertos
+
+| Fotograma | Caja | Herramienta de posición | ¿Sirve? |
+|---|---|---|---|
+| `000216000.png`, `000225000.png` | **187 px** ✓ | en **ERROR** —*«Order Error: Stop Loss price must be lower than current price»*—, sin zonas roja/verde válidas | **no**: no hay stop que localizar |
+| `000292000.png`, `000293000.png` | **~80 px** ✗ | válida, con sus tooltips | **no**: la caja no da resolución |
+
+**Hace falta un fotograma con la caja ≥ 100 px Y la herramienta en estado válido. Ninguno de los
+cuatro abiertos lo cumple.**
+
+### La comprobación de ancla común: tampoco se sostiene
+
+En `000292000.png`, leído a ojo: el **nivel 0** de la caja está en `y≈165` y la **arista de entrada**
+de la herramienta —frontera roja/verde, con sus manijas— en `y≈155`. **Diez píxeles**, que sobre una
+caja de 80 px son **0,125 de caja**: muy por encima de la tolerancia.
+
+**O no comparten ancla, o mi lectura no da para distinguirlo. En los dos casos la comparación es
+inválida**, que es exactamente la respuesta honesta que el pre-registro anticipaba.
+
+### La comprobación que podía tumbar la lectura: consistente, pero con error inútil
+
+Zona verde ≈ 215 px, zona roja ≈ 70 px → cociente **≈ 3,07** frente al **3,21** que la herramienta
+imprime. **Consistente dentro de mi error**, pero ese error es de ~±10 %, y con él no se valida nada
+a 0,03. **No tumba la lectura; tampoco la sostiene.**
+
+### Los dos grupos de etiquetas: son el mismo objeto
+
+En `000292000.png` las etiquetas aparecen a `x≈885` y a `x≈1043`, y en `000225000.png` a `x≈690` y
+`x≈1040`. **Son los dos bordes del mismo rectángulo**, no dos dibujos: en `000225000.png` los dos
+grupos están a la misma altura `y` exacta para cada nivel. **No hay ambigüedad de qué objeto se
+midió.**
+
+### Conclusión, con el criterio sin tocar
+
+**NO CONCLUYENTE.** La fracción del stop no se puede medir a ±0,03 con los fotogramas abiertos.
+**No se ensancha la tolerancia** y **no se cambia el criterio**: lo que se escribe es **qué haría
+falta**, que es lo que esta medida deja de herencia.
+
+> **Lo que el rodeo SÍ consiguió**, y no es poco: convertir *«no se puede fijar la escala»* —un muro
+> sin salida— en *«hace falta un fotograma con la caja ≥ 100 px y la herramienta válida»*, que es
+> una **condición comprobable** sobre un conjunto finito. La transcripción de v5 localiza siete
+> instantes (§1c) y sólo se han abierto cuatro fotogramas de dos de ellos.
+
+## R8. El id inventado: la guardia, medida
+
+`ev-v6-001707-9f2b6e31` llegó a estar escrito en `ambiguedades.yaml` y lo paró una comprobación.
+**Cuál, y con qué cobertura:**
+
+- La guardia es `cases/ambiguedades.py:170` —*«cada evidencia citada existe»*— más su gemela de
+  `cases/paquete.py:1150`, y corre dentro de `knowledge validate`.
+- **Corre sobre `knowledge/**`. NO corre sobre `docs/**`.** Ningún test recorre los documentos
+  buscando ids citados: `test_documentos_vivos.py` sólo vigila **recuentos** en `PROJECT_STATE` y
+  en los README.
+
+**Medido sobre el repositorio, no supuesto:**
+
+```
+ids ev-* citados en docs/**:  104
+de esos, INEXISTENTES:          3
+   ev-v4-003710-f32c06e4  ·  AUDITORIA-2026-09-13-ultracode.md
+   ev-v4-003710-f610cc8f  ·  AUDITORIA-2026-09-13-ultracode.md
+   ev-v6-001707-9f2b6e31  ·  LA-CAJA-DEL-29-DE-ABRIL.md  (este informe, nombrándolo como el id que
+                             estuve a punto de inventar)
+```
+
+**Ninguno de los tres es una fabricación haciéndose pasar por evidencia:** los dos de la auditoría
+son **salida pegada de un `botsito evidence new` ejecutado sobre una copia**, y el tercero es este
+informe citando el error. **Pero eso es suerte, no diseño: nada habría parado una fabricación de
+verdad en un documento.**
+
+Es el mismo agujero, con el mismo nombre, que el punto ciego de `comprobar_citas_revocadas` que ya
+está en Technical Debt: **una guardia que enumera los sitios que vigila en vez de nombrar la
+condición** —el patrón 3—. **No se arregla aquí**, y queda anotado con su disparador.
+
+## R9. Lo que esta rama no hizo
 
 No se reajustó el fractal. No se abrió el xlsx de enero. No se tocó febrero. No se tocó la
 predicción congelada de mayo. **ADR-0038 no decide nada sobre qué se puede mirar**: sólo cómo se
