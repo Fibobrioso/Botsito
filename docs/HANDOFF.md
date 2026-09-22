@@ -5,6 +5,139 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## La pasada por el material de septiembre (2026-09-21) · NADA DECIDIDO, TODO MEDIDO
+
+- **LOS IDS NO SON CRONOLOGICOS Y LEERLOS COMO SECUENCIA ES UN ERROR.** Orden real por
+  `fecha_grabacion` de `knowledge/corpus/fuentes.yaml`: **v2 (08-03) -> v3 (08-06) -> v1 (08-20) ->
+  v4 (08-30) -> v5 (09-05) -> v6 (09-09)**.
+- **LA BASE DE EVIDENCIA ESTA CONSTRUIDA SOBRE EL MATERIAL VIEJO.** De 368 items: v2 53, v3 102
+  -los dos mas viejos, **42 %**-, v1 46, v4 132, v5 12, v6 23. **El material de septiembre aporta
+  35 items, menos del 10 %.** Y el usuario dice que la operativa se fue aclarando video a video y
+  que la version buena, con los arreglos, es la del ultimo.
+- **NADA declara que lo mas reciente mande.** `fecha_grabacion` existe en `fuentes.yaml` y NINGUN
+  mecanismo la usa. 11 items llevan `supersede` -13 ficheros lo mencionan-, y **8 de los 11 salen
+  de v6**: el mecanismo existe y se usa a mano, pero no hay eje de recencia.
+
+### LO QUE SALIO, Y POR QUE HAY QUE PARAR ANTES DE TOCARLO
+
+**A-18 CITA UN ITEM QUE OTRO SUPERSEDE, Y EL QUE LO SUPERSEDE DICE LO CONTRARIO.** A-18 cita
+`ev-v4-011951-5fb49e03`, y `ev-v6-014702-2d7096db` lo supersede. Las `notas` de ese item de v6
+concluyen, con la aritmetica del trader -"3 - 3x0,75 = 0,75 y 3 - 3x0,80 = 0,60"-, que **el 1:3 se
+mide sobre la CAJA COMPLETA**. Es la lectura OPUESTA a la que apunta el material de agosto (suelo
+del RR realizado en 3,00, informe F14A §4), y **es tambien la opuesta a la que ADR-0037 escribio**
+diciendo que `ev-v4-011951` "empujaba al mismo lado" que agosto: ese item esta superseded y su
+sucesor empuja al otro.
+
+**Y v5 -la DEMOSTRACION- apunta al tercer sitio, que es el de agosto.** En `v5 0:04:52` y
+`v5 0:04:53` la herramienta de posicion de FX Replay muestra sus propias cifras mientras el trader
+arrastra el objetivo:
+
+```
+0:04:52   Risk/Reward Ratio: 3.21   Target: 0.00061 (0.052%) 6.1   Amount: 1802.63
+0:04:53   Risk/Reward Ratio: 3      Target: 0.00057 (0.049%) 5.7   Amount: 1750
+```
+
+0,00061/3,21 = 0,00019 y 0,00057/3 = 0,00019: **el riesgo es constante -1,9 pips- y lo que mueve es
+el objetivo, hasta que el ratio marca exactamente 3.** Esa razon la calcula la herramienta entre su
+zona de stop y su zona de objetivo, o sea **sobre la distancia entrada-stop**. Si el stop esta en el
+0,8 -que es lo que el propio v5 dice en `0:03:12`, "si yo protejo a 0.80, que es el SL por
+defecto"-, entonces el objetivo es 3 x RIESGO REAL y no 3 x caja. **CUIDADO CON ESTO**: no esta
+medido a que nivel de la caja cae la zona roja en ese fotograma, y las dos lecturas se separan ahi.
+Lo que si esta medido es que **la razon 3 se fija sobre entrada-stop**, no sobre la caja.
+
+Y lo que el audio de v5 anade, `0:04:42`: *"sabemos que manejamos el calculo del RR en base al 1%"*,
+seguido de un deictico -"que seria alli"- y NUEVE SEGUNDOS de silencio mientras dibuja. El 1 % puede
+ser la caja entera o el riesgo por operacion, y el texto solo no lo decide.
+
+**POR QUE NO HE ESCRITO EL ITEM NUEVO, que es lo que la regla manda.** Lo que un item de v5 sobre la
+geometria contradice NO es la `afirmacion` de ningun item -la de `ev-v6-014702` es solo la
+aritmetica, y es correcta- sino **las `notas` de ese item**, que son una INTERPRETACION. Y el tema no
+coincide: `objetivo.rr_13_margen_tres_perdidas` frente a `objetivo.rr`. La guardia de
+`evidence new --supersede` exige el MISMO tema, asi que por ahi no entra. **Se para y se avisa, como
+estaba acordado.**
+
+**LA CUARTA APARICION DEL PUNTO CIEGO, y con la dimension nueva.** `comprobar_citas_revocadas`
+vigila reglas, glosario y vocabulario contra registros de FEEDBACK revocados. **No mira
+`ambiguedades.yaml`, y no mira los `supersede` de EVIDENCIA.** Medido: **TRES ambiguedades citan
+evidencia superseded** -A-10 y A-11, ya RESUELTAS, y **A-18, que sigue ABIERTA**-. `make check` pasa
+verde con eso.
+
+### A-21 y A-24 CONTRA v6: BUSCADO, NO APARECE
+
+- **A-21** -que es una zona de control LIMPIA, sin ruido; bloqueante, `resuelve_en [F12, F20, F26]`;
+  pregunta cuantas velas o cuanto retroceso de mas la invalida-. Terminos buscados en la cruda de
+  v6: `limpi`, `ruido`. Diez coincidencias, y **ninguna da un criterio evaluable**: el "ruido" de v6
+  es el de QUE VELAS cuentan al mapear el order block en temporalidad menor (`79:52`, `97:19`,
+  `126:44`), no el de la zona de control. Lo mas cerca es `80:02`, *"yo por eso considero tratar de
+  mapear de la manera mas limpia y mas objetiva posible, creo yo"*, que es una aspiracion y no una
+  regla: si acaso REFUERZA la premisa de A-21. **Sigue abierta.**
+- **A-24** -que hace que marques un pivote de M15 y no otro; bloqueante-. Terminos buscados:
+  `pivote`, `considere`, y `m15` cruzado con `marc|traz|elij|escoj`. Diez coincidencias sobre M15 y
+  **ninguna sobre el criterio de seleccion**: hablan de la temporalidad (`26:18`, *"la liquidez la
+  solemos marcar en M15 y con eso basta"*), no de cual de varios candidatos se marca. **Sigue
+  abierta.**
+
+### LA RECENCIA ES SENAL, NUNCA ARBITRO, Y ESTE CASO ES POR QUE
+
+El consultor iba a escribir "lo mas reciente manda" la manana del 2026-09-21. **A-18 es su
+contraejemplo**: la recencia sola elegiria `caja_completa` -v6 es el mas nuevo- y LA PANTALLA de v5
+y los backtests de agosto dicen lo contrario. **Un trader razonando sobre su regla puede
+equivocarse sobre su propia regla; la herramienta que usa, no.** Por eso la recencia entra como
+SENAL y no como arbitro, y por eso "el ultimo gana" a secas es peligroso: dejaria que un comentario
+de pasada tumbe una explicacion cuidada, y aqui ademas dejaria que un razonamiento tumbe una
+medida.
+
+### Y LA DENSIDAD DE v5, QUE ES EL OTRO DATO DE LA PASADA
+
+**v5 dura SEIS MINUTOS y aporta 12 items**; v3 y v4 son grabaciones largas y aportan 102 y 132. Lo
+que falta no es material, es haberlo explotado. Y su naturaleza es la que mas decide, porque es la
+UNICA donde el trader **dibuja la caja mientras explica**: la pasada de hoy saco de esos seis
+minutos un fotograma que contradice una interpretacion escrita en un ADR. Mirar v5 es barato y no
+esta hecho.
+
+### LO QUE PUEDE CERRAR A-18, MEDIDO Y SIN EJECUTAR
+
+La via del consultor: si la pata roja del fotograma es 0,8 de la caja, la caja mide **0,0002375**;
+si es la caja entera, mide **0,00019**. La caja son niveles de estructura sobre EURUSD M1 del
+**miercoles 29 de abril de 2026**, hacia las 10:03-10:08 (se lee en el eje del propio fotograma).
+Con las velas de ese dia se mide la estructura y se compara. **`data/manifests/` NO tiene abril**
+-tiene 2026-01, 05, 06, 07, 08 y 09-.
+
+**MEDIDO ANTES DE DESCARGAR NADA, que es lo que el consultor pidio:**
+
+1. **La colision que se temia NO se da.** El defecto documentado salta cuando DOS manifiestos del
+   prefijo del kit cubren EL MISMO DIA (`universo()`: "dos datasets cubren el mismo dia: ids de
+   caso repetidos"). Abril (2026-04-01..30) **no solapa** con ninguno de los seis meses presentes,
+   y `reemplaza_a` no hace falta porque no sustituye a nadie.
+2. **El paquete de la sesion 1 es INMUNE, y esta medido**: `ventanas.yaml` congela
+   `datasets: [eurusd-m1-2026-01, -05, -06, -07, -08]` -cinco ids- y
+   `manifiestos_del_prefijo(datasets=...)` (`cases/paquete.py:523-546`) devuelve EXACTAMENTE esos y
+   falla si falta alguno. Es ADR-0035 haciendo su trabajo: `kit check --sesion
+   2026-09-09-sesion-01` no cambia.
+3. **PERO HAY OTRA COLISION, Y ES LA DE JUNIO CON UN MES MAS.** Un `kit build` NUEVO llama a
+   `manifiestos_del_prefijo` **sin** `datasets`, o sea coge TODO lo que empiece por
+   `eurusd-m1-`. Abril entraria en el universo de la sesion 2, y **abril es material de
+   DESARROLLO** -la spec se infirio en parte de esos dias-. El `config.yaml` del kit NO tiene
+   `cobertura_material`; el de fidelidad si. Son **22 dias laborables** de abril que se sumarian a
+   los 10 de junio ya anotados.
+4. **MITIGACION BARATA Y MEDIDA**, si se quiere descargar abril sin ampliar esa deuda: el filtro es
+   `dataset_id.startswith(config.dataset_prefijo)` (`paquete.py:536`) y `data download --dataset`
+   controla el nombre -el id le anade `-hash8`-. Un nombre que NO empiece por `eurusd-m1-` queda
+   fuera de todo universo, ahora y en la sesion 2. **Contra**: un dataset de EURUSD M1 con otro
+   nombre es en si mismo confuso, y esconde el problema en vez de arreglarlo. **La alternativa
+   honesta es poner `cobertura_material` al `config.yaml` del kit ANTES de descargar abril**, que
+   es lo que ya esta decidido para junio en `trabajo/mayo-dev-ingerido`. NO SE EJECUTA NADA: lo
+   decide el consultor.
+
+### LO QUE NO SE HA HECHO, A PROPOSITO
+
+No se ha declarado ninguna regla de recencia: **la decide el consultor con ADR**, y lleva matiz -v6
+es un cuestionario y manda sobre lo que se le pregunto, callando en lo demas; v5 es una demostracion
+y manda sobre la geometria que ensena; "el ultimo gana" a secas dejaria que un comentario de pasada
+tumbe una explicacion cuidada-. No se ha tocado `evidence/`, ni `ambiguedades.yaml`, ni la
+prediccion pre-registrada de mayo, que **no se toca pase lo que pase**: si v5 o v6 cierran A-18, esa
+prediccion se queda como comprobacion INDEPENDIENTE.
+
 ## Estado (2026-09-21, rama `feature/F14a-ingesta-del-detalle` esperando validacion; lo de debajo es anterior)
 - LO PRIMERO, PORQUE VUELVE A PASAR: `CLAUDE.md` §3 prohibia "el detalle por operacion de los xlsx"
   EN BLOQUE, y ADR-0021 §1 dice "en esos dias" desde el 2026-09-12. TERCERA VEZ que este fichero es

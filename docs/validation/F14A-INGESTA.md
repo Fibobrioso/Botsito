@@ -190,10 +190,15 @@ parámetro CONFIRMED.
 **la caja no está en el fichero**. El RR que se mide es riesgo real *por construcción*, así que si
 el stop del trader viviera en el borde de la caja (`stop_fraccion_caja` = 1) las dos lecturas
 coincidirían y la medida **no discriminaría**. Lo que sí hay es **la primera medida que A-18 ha
-tenido nunca**, y apunta al mismo lado al que `ev-v4-011951-5fb49e03` ya empujaba —el trader dice
-que un ganador cubre «2 o 3» perdidas, que cuadra mejor con medir sobre el riesgo real—. A-18 gana
-la nota en `knowledge/spec/ambiguedades.yaml`; su estado, su `decision` y su lista de `evidencia`
-**no se tocan**.
+tenido nunca**. A-18 gana la nota en `knowledge/spec/ambiguedades.yaml`; su estado, su `decision`
+y su lista de `evidencia` **no se tocan**.
+
+> **CORRECCIÓN del 2026-09-21, y la escribió el consultor.** Esta línea decía que la medida
+> «apunta al mismo lado al que `ev-v4-011951-5fb49e03` ya empujaba». **Es falsa por dos motivos, no
+> uno**: ese item **está superseded** por `ev-v6-014702-2d7096db`, y **su sucesor empuja al
+> contrario** —su aritmética concluye `caja_completa`—. **Citar un item sin comprobar su supersesión
+> es el mismo fallo que esta rama documenta en otros sitios** (§6b, patrón 3). La forma real del
+> conflicto está en §6c.
 
 **Se repite sobre mayo**, en `trabajo/mayo-dev-ingerido`. Dos meses que coincidan mueven esto de
 «una medida» a «un hecho», y entonces sí toca decidir.
@@ -349,6 +354,48 @@ Las tres apariciones del tercero, esta semana:
   autorización de la partición 1.
 
 **El arreglo es siempre el mismo: nombrar la condición y negar por defecto.**
+
+## 6c. A-18 tiene evidencia en los dos lados, y son de clase distinta
+
+Salió en la pasada por el material de septiembre, **después** de que esta rama escribiera su §4.
+
+| Lado | De dónde sale | Qué es | Hacia dónde empuja |
+|---|---|---|---|
+| `ev-v6-014702-2d7096db` | v6 (2026-09-09), **el item más reciente** | el trader **razona en voz alta sobre su regla**; su aritmética, «3 − 3×0,75 = 0,75 y 3 − 3×0,80 = 0,60» | **`caja_completa`** |
+| `v5 0:04:52-53` (fotograma) | v5 (2026-09-05) | **la herramienta** de FX Replay calcula el R/R **sobre entrada-stop** mientras él arrastra el objetivo hasta que marca 3 | **`riesgo_real`** |
+| Agosto, 18 filas (§4) | el backtest del trader | el RR realizado sobre entrada-stop, con **suelo en 3,00** | **`riesgo_real`** |
+
+**LO QUE DICE SOBRE SU REGLA frente a LO QUE LA HERRAMIENTA HACE MIENTRAS LA USA.** Las cifras de
+v5, tal como las muestra el propio widget:
+
+```
+0:04:52   Risk/Reward Ratio: 3.21   Target: 0.00061 (0.052%) 6.1
+0:04:53   Risk/Reward Ratio: 3      Target: 0.00057 (0.049%) 5.7
+```
+
+0,00061/3,21 = 0,00057/3 = **0,00019**: el riesgo es constante y lo que mueve es el objetivo.
+
+**EL LÍMITE DE LO MEDIDO, dicho:** no está medido **a qué nivel de la caja cae la pata roja** en ese
+fotograma, y las dos lecturas se separan exactamente ahí. El `.mkv` de v5 es **nativamente
+1280×720** —cabecera Matroska y manifiesto `fr-v5-*` coinciden—, así que **no hay más resolución que
+extraer** y los rótulos de los niveles miden seis píxeles: por esa vía no se cierra.
+
+**Y POR ESO NO SE DECLARA «LO MÁS RECIENTE MANDA».** Este caso es su contraejemplo: la recencia sola
+elegiría `caja_completa` —v6 es el más nuevo— y la pantalla y los backtests dicen lo contrario. **Un
+trader razonando sobre su regla puede equivocarse sobre su propia regla; la herramienta que usa,
+no.** La recencia entra como **señal, nunca como árbitro**.
+
+**Lo que NO se hizo, y es lo correcto:** no se escribió el item de v5. Lo que contradiría son las
+**`notas`** de `ev-v6-014702-2d7096db`, que son **interpretación** y no su `afirmacion` —la
+aritmética es correcta—, y el tema no coincide: `objetivo.rr_13_margen_tres_perdidas` frente a
+`objetivo.rr`. La guardia de `evidence new --supersede` exige el mismo tema, y no se fuerza.
+
+**A-21 y A-24, buscadas contra v6 y no aparecen, con los términos escritos.** A-21: `limpi`,
+`ruido` —el «ruido» de v6 es otro, el de qué velas cuentan al mapear el order block en temporalidad
+menor; lo más cerca, `80:02`, es una aspiración y no un criterio—. A-24: `pivote`, `considere`, y
+`m15` cruzado con `marc|traz|elij|escoj` —hablan de la temporalidad, no de cuál de varios candidatos
+se marca—. **Las dos siguen abiertas y siguen siendo el motivo de la sesión 2. Eso es un resultado,
+no un fracaso de la pasada.**
 
 ## 7. Los agregados: hoy el riesgo es FUTURO, no presente
 

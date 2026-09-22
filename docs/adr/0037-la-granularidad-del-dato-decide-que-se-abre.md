@@ -121,6 +121,21 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    > ella, **y la cadena incluye las ambigüedades abiertas que cuelgan de los parámetros que
    > nombra**.
    >
+   > **A-18 TIENE EVIDENCIA EN LOS DOS LADOS, Y SON DE CLASE DISTINTA** (medido el 2026-09-21,
+   > después de esta caja, en la pasada por el material de septiembre). De un lado
+   > `ev-v6-014702-2d7096db`, **el item más reciente**, donde el trader **razona en voz alta sobre
+   > su regla** y cuya aritmética —«3 − 3×0,75 = 0,75 y 3 − 3×0,80 = 0,60»— concluye
+   > **`caja_completa`**. Del otro, **la PANTALLA**: en `v5 0:04:52-53` la herramienta de FX Replay
+   > calcula el R/R **sobre entrada-stop** mientras él arrastra el objetivo hasta que marca 3
+   > —riesgo constante de 0,00019: 0,00061/3,21 = 0,00057/3—, y la distribución de agosto, cuyo RR
+   > realizado tiene **suelo en 3,00**.
+   >
+   > O sea: **LO QUE DICE SOBRE SU REGLA frente a LO QUE LA HERRAMIENTA HACE MIENTRAS LA USA.** No
+   > se decide aquí, y **no se declara ninguna regla de recencia**: este caso es justamente su
+   > contraejemplo, porque la recencia sola elegiría `caja_completa` y la pantalla dice lo
+   > contrario. Un trader razonando sobre su regla puede equivocarse sobre su propia regla; la
+   > herramienta que usa, no.
+   >
    > **Por eso el caso NO lleva campo `objetivo`**, y no es que lo lleve vacío: un campo opcional
    > vacío es una invitación a que dentro de seis meses alguien lo rellene con `maxTP`. Quitar el
    > campo **es** el mecanismo; un comentario no lo es. El caso lleva cuatro cosas: instante de
