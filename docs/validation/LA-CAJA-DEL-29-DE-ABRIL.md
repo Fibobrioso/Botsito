@@ -369,6 +369,110 @@ Es el mismo agujero, con el mismo nombre, que el punto ciego de `comprobar_citas
 está en Technical Debt: **una guardia que enumera los sitios que vigila en vez de nombrar la
 condición** —el patrón 3—. **No se arregla aquí**, y queda anotado con su disparador.
 
+## R10. La medida con ±1 px: el 3,21 PASA, el ancla NO, y sigue NO CONCLUYENTE
+
+**El instrumento**: decodificador PNG de biblioteca estándar —firma, chunks, IHDR, `IDAT` + `zlib`,
+y deshacer los filtros por línea incluido Paeth—, en la carpeta de trabajo de la rama.
+**`pyproject.toml` no se tocó.** Devuelve `1280x720, 3 canales`.
+
+> **Dónde vive, y por qué no en el repositorio.** Se queda como **script de la rama**, en la
+> carpeta de trabajo. Meterlo dentro abriría un **directorio nuevo de primer nivel**, y eso lo
+> vigila `tests/unit/test_tree.py`: sería un cambio de estructura del repositorio, que es una
+> decisión de otro tamaño que la de medir unos píxeles. **Si vuelve a hacer falta, entra con su
+> sitio y su test, no de rebote.** Lo que no vale —y no se ha hecho— es volver a medir a ojo.
+
+### Mi medida, independiente, y dónde difiere de la tuya
+
+Localizada por color sobre el fotograma **entero**, no sobre una banda elegida a mano:
+
+| | medida del consultor | mi medida |
+|---|---|---|
+| zona roja | `y≈79..153` | `y 82..152` en `x=1050`, interrumpida por superposiciones |
+| arista de entrada | `y=154-155` | `y≈153..155` |
+| teal empieza | `y≈156` | `y≈155-157`, y acaba en **`y=384`** |
+| línea azul A | `y=98-99` | `y=98-99`, **`x 880..1057`** |
+| línea azul B | `y=108-109` | `y=108-109`, **`x 475..941`** |
+| línea verde | `y=118-119` | `y=118-119`, **`x 880..991`** |
+| barra flotante | `y≈121-145` | `y≈120..145` |
+
+**Coincidimos en todos los bordes dentro de 1-3 px.** Lo que añado es **la extensión en `x`**, y es
+lo que resuelve tu pregunta.
+
+### Las dos azules: son TRES, y ninguna es una línea de la herramienta
+
+```
+y= 98-99   x  880..1057   RGB (58,102,220)/(6,50,168)
+y=108-109  x  475.. 941   RGB (58,102,220)/(6,50,168)   <- MISMO color exacto
+y=236-237  x   80.. 662   RGB (57,101,219)/(6,50,168)   <- y hay una TERCERA
+```
+
+**Las tres tienen el mismo RGB y rangos de `x` que no se solapan: teselan el gráfico de izquierda a
+derecha a tres alturas distintas.** Eso es la firma de **tres rayas horizontales dibujadas a mano**,
+cada una terminada donde él soltó el ratón —no de niveles de una caja, que compartirían `x`—.
+
+**La que pertenece a la caja es la de `y=98-99`**, y se sabe por el ancla: **arranca en `x=880`,
+igual que la verde de `y=118-119`**. Las otras dos arrancan en `x=475` y `x=80`. **Un solo nivel
+azul en la caja, como su plantilla dice.**
+
+### La comprobación del 3,21: PASA
+
+```
+riesgo    = entrada 154,5 - stop 81,5  =  73,0 px
+beneficio = teal 384,5 - 155,5         = 229,0 px
+cociente  = 3,137      declarado 3,21      desvio 2,3 %   (margen +-3 %)
+```
+
+**Dentro del margen.** Lo identificado como stop **es** el stop: el borde superior de la zona roja.
+La comprobación podía tumbar la lectura y no la tumba.
+
+### La comprobación del ANCLA: NO PASA
+
+Con la azul de la caja en `0,8` y la verde en `0,5`, separadas **20 px** para **0,3** de caja:
+
+```
+caja = 66,7 px   ·   nivel 0 en y=151,8   ·   nivel 1 en y=85,2
+ANCLA: |151,8 - 154,5| = 2,7 px      criterio <= 2 px   ->   NO COMPARTEN
+```
+
+**2,7 px con un error de ±1 px no se explica como lectura.** Y la propagación tampoco salva:
+con ±1 px en cada una de las cuatro medidas, la separación va de **0,3 a 5,1 px**, así que **ni
+siquiera se puede afirmar que la superen o no**. Por el criterio pre-registrado, **la comparación
+es inválida**.
+
+### Y aun así, la fracción, para que conste
+
+```
+fraccion_del_stop = 73,0 / 66,7 = 1,095
+etiqueta mas cercana: 1   ·   a 0,095   ·   tolerancia 0,03   ->   FUERA
+```
+
+**NO CONCLUYENTE**, y por partida doble: el ancla no se sostiene **y** la fracción no cae cerca de
+ninguna etiqueta. **No se ensancha la tolerancia y no se cambia el criterio.**
+
+### La obstrucción, sin adornarla
+
+**La barra de herramientas flotante tapa `y≈120..145`.** El nivel **`0,25`** de la caja caería en
+`y=135,2`: **debajo de la barra**. Y los niveles **`0` y `1`** no tienen línea propia visible —sólo
+`0,8` y `0,5` la tienen—, así que **los dos extremos de la caja se deducen, no se ven**.
+
+**Ésa sí es una limitación del material y no del instrumento**, y es la que de verdad impide la
+medida en este fotograma: aunque la precisión alcance, **faltan los dos extremos**.
+
+## R11. Lo que la semana enseña, y la pregunta que abre
+
+Cuatro de las reglas buenas de esta semana —ADR-0038, la regla del huso, la del «15 de 18» y la
+condición de precisión de esta rama— **no salieron de un diseño previo. Salieron de fallos.**
+
+**Pero decirlo así se lee como consuelo, y es menos que eso: es un sesgo de selección.** No
+salieron de «procedimientos que fallaron»: salieron de **fallos que una comprobación sacó a la
+luz**. Los fallos que ninguna comprobación mira **no producen reglas: producen silencio**, y por
+construcción no aparecen en esta lista.
+
+**La pregunta que eso abre —y no es retórica, porque hoy tiene un ejemplo medido— es: qué está
+fallando donde no mira ninguna comprobación.** El ejemplo es §R8: **tres ids `ev-*` inexistentes
+en `docs/**` que no caza nadie**, y que no son fabricaciones **por suerte**, no por diseño. Nadie
+los había visto en nueve días. Aparecieron porque esta rama fue a buscar *otra cosa*.
+
 ## R9. Lo que esta rama no hizo
 
 No se reajustó el fractal. No se abrió el xlsx de enero. No se tocó febrero. No se tocó la
