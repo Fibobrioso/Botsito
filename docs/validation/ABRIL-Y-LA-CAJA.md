@@ -339,9 +339,27 @@ que el azar**. O el nivel 1 de la caja del trader **no es un alto/bajo estructur
 es con *este* fractal (5 velas a cada lado) y *esta* ventana (120 velas). La premisa geométrica de
 la medida, y no las hipótesis sobre A-18, es lo que este resultado pone en duda.
 
-**El control del ancla lo refuerza:** `entryPrice` acierta **7/35 a ±2 y 17/35 a ±5**, por encima de
-todos los demás niveles. La **entrada** sí tiende a caer en estructura; los niveles a `1,00·d` y
-`1,25·d` **no**. Eso acota cuánto fiarse: el ancla no está roto, lo que falla es el blanco.
+**El control del ancla NO salva la premisa, y la aritmética lo dice:**
+
+```
+azar TEORICO (p=0,17, el de mayo)      media 6,0  sd 2,22  ->  el 7 esta a +0,47 sd
+azar EMPIRICO de abril (señuelos 4,4,5) media 4,3  sd 1,95  ->  el 7 esta a +1,37 sd
+```
+
+`entryPrice` acierta 7 de 35 a ±2. Frente al azar teórico está a **medio sigma**; frente al azar
+empírico de abril, a **1,4 sigmas** —y con **tres** señuelos de por medio, o sea tres oportunidades
+de que alguno suba—. **Eso no es «por encima del azar»: es indistinguible de él.**
+
+> **CORRECCIÓN dentro de la misma rama.** Esta sección decía *«el ancla no está roto, lo que falla
+> es el blanco»*. **Los números no lo sostienen** y la frase queda retirada entera. La conclusión
+> que sí se sostiene es **más general y más fuerte**: con esta definición de estructura **ningún
+> nivel derivado de la operación cae sobre un fractal por encima del azar, LA ENTRADA INCLUIDA**. El
+> fractal 5/120 no captura lo que el trader llama estructura, y **el fallo alcanza al ancla**, no
+> sólo al blanco. No se puede decir que la geometría sea correcta.
+
+**Y lo que esto NO permite concluir, dicho aparte para que nadie lo lea al revés: no refuta H(0,8)
+ni H(1,0).** Un test sin poder no es evidencia contra nada. Lo único refutado aquí es la premisa
+instrumental —que el nivel 1 sea un fractal de 5 velas en una ventana de 120—.
 
 **Los residuos no enseñan moda desplazada**: medianas entre −1 y +4 puntos y rangos de ±50-59. **No
 hay desfase sistemático de lado**, lo cual es coherente con que las series cuadren a 1-2 puntos
@@ -386,19 +404,39 @@ construir hasta que entre material nuevo** —o hasta que junio vuelva.
 - **`F14A-INGESTA.md` y ADR-0037**: `maxTP` no es la excursión favorable máxima sino el precio de
   cierre de las ganadoras. El argumento *«una orden límite habría cerrado ahí y el recorrido máximo
   no podría superarlo»* colgaba de la lectura vieja y se reescribe.
-- **`F14A-INGESTA.md`**: decía *«15 de 18 se pasan de 3,00»* donde ADR-0037 ya estaba corregido a
-  **14**. Quedó descuadrado al corregir sólo uno de los dos.
+- **El «15 de 18» descuadrado, y los dos sitios nombrados**:
+
+  | Dónde | Qué mide | Qué decía | Qué dice hoy |
+  |---|---|---|---|
+  | `ADR-0037` §7, caja de corrección | filas que **se pasan** de 3,00 (estrictamente por encima) | 15 | **14** (corregido el 2026-09-21) |
+  | `F14A-INGESTA.md` §4, tras la tabla de cruces | **lo mismo** | 15 | **14** (corregido en esta rama) |
+
+  Corregir uno de dos sitios que dicen lo mismo es no corregir.
+
+  > **Y UNA TRAMPA QUE ESTUVO A PUNTO DE MORDER.** Hay un **tercer** «15 de 18» en
+  > `F14A-INGESTA.md`, dentro de la **predicción congelada de mayo**: *«AGOSTO, medido: 15 de 18
+  > dentro de la región»*. **Ése es CORRECTO y mide otra cosa** —las que caen **dentro** de
+  > [3,00 , 3,75), no las que se pasan de 3,00—. Un barrido mecánico de «15 de 18» habría
+  > «corregido» el número bueno de un documento que no se toca.
+  >
+  > **REGLA, decidida por el consultor el 2026-09-21 y de la casa desde hoy: si uno de los sitios
+  > es la PREDICCIÓN CONGELADA, NO SE EDITA.** Una predicción congelada **incluye su medida**; toda
+  > corrección sobre ella va en el recuadro de anotación, nunca en el cuerpo. El otro sitio se
+  > corrige normal.
 - **`F14A-INGESTA.md`**: la predicción congelada de mayo gana un **recuadro de anotación** —no se
   reescribe— que dice qué decide de verdad la región poblada.
 
 ## R5. Deuda que esta rama deja
 
-- **La serie del trader es OANDA y la nuestra es Dukascopy**, y toda medida geométrica contra su
-  material depende de eso (**A-16**, `resuelve_en: [F26]`). Hoy tiene su primera medida —1 y 2
-  puntos, n=2— y **el método para ampliarla ya no es el que estaba escrito**: hay que aplicar el
-  **UTC+2** del gráfico antes de comparar nada. Barrer los 367 fotogramas de v5 exige OCR y este
-  repositorio no tiene Pillow a propósito; la vía realista es **pedirle al trader una exportación de
-  velas de FX Replay**, o leer a mano una muestra.
+- **A-16 tiene su primera medida, y es 1-2 PUNTOS con n = 2 velas**, una vez aplicado el UTC+2.
+  **No es 5-26 puntos**: esa lectura fue **error de instrumentación, retractado en esta misma rama**
+  (§R0). A-16 queda **ABIERTA**: `estado`, `decision` y `evidencia` **sin tocar**, porque con dos
+  velas no se cierra una medición.
+
+  **Y esto es lo que más cambia de toda la noche: DESBLOQUEA LA MEDIDA DE LA CAJA.** Con el reloj
+  fijado y las series casando a 1-2 puntos, comparar lo que el trader dibuja en pantalla contra las
+  velas de Dukascopy **tiene instrumento por primera vez**. Hasta esta noche no lo tenía, y no
+  porque nadie lo hubiera intentado: porque nadie había comprobado el huso.
 - **El reloj de FX Replay es UTC+2 FIJO**, también en enero. No es Europe/Madrid, que en enero es
   UTC+1. Toca A-9 (anclaje H4) y no se decide aquí.
 - **El fractal 5/120 no captura lo que el trader llama estructura** (§R2): cualquier medida futura
@@ -430,17 +468,47 @@ a ser material del camino de fidelidad. **Si se quieren las dos cosas, hacen fal
 > Lo primero me desbloquea la siguiente sesion contigo. Lo segundo no corre prisa esta semana, pero
 > sin ello hay una parte de la validacion que no se puede cerrar nunca.
 
-## R7. Que debe decidir el usuario
+## R7. Lo decidido por el consultor el 2026-09-21
 
-1. **Validar la rama** y, si procede, el ritual. No hay ADR: **no se decide nada**.
-2. **Junio (§R3)**: si vuelve al universo ciego, o si la guardia de ayer se queda como esta. De eso
-   depende si la sesion 2 se puede construir sin material nuevo.
-3. **A-16**: si se amplia, y por que via —OCR sobre los fotogramas, que exige una dependencia que
-   este repositorio no tiene a proposito, o pedirle al trader una exportacion de velas—.
-4. **El hallazgo de los parciales (§R1)**: tres ganadoras por debajo de 3R en dos meses
-   independientes. Si abre ambiguedad, si va a la sesion 2, o si espera a mayo para tener un tercer
-   mes.
-5. **Enero**: tercer mes de desarrollo a coste de descarga cero, con xlsx y dataset ya presentes.
+1. **La rama se valida** con estas cinco correcciones dentro. **Sin ADR: no decide nada.**
+
+2. **JUNIO vuelve al universo ciego** —un paquete ciego no compara, hace etiquetar— **pero en RAMA
+   PROPIA y NO antes de contestar algo que ninguno de los dos ha medido:**
+
+   > El reparto de la sesión 1 tiene **ONCE días de junio RESERVADOS** (medido en esta rama:
+   > `casos_reservados` da 34 casos, de los cuales `2026-06`: 11). Si un `kit build` nuevo sortea
+   > junio, **¿qué impide que uno de esos once caiga en `dev` del paquete nuevo?** Si nada lo
+   > impide, **la guardia de ayer estaba tapando un agujero real por accidente** y quitarla lo
+   > abre.
+
+   Esa medida va **antes** de tocar nada. No se hace aquí.
+
+3. **A-16: ni OCR ni pedirle nada al trader.** Meter una dependencia de OCR en este repositorio por
+   esto sería desproporcionado, y gastarle un turno al trader en una separación de 1-2 puntos,
+   peor. **Se confirma gratis en la rama siguiente**: aplicar el mismo +2 a un fotograma de **v4** y
+   comprobar contra las velas de **enero**, que ya están descargadas. Otro vídeo, otro mes, coste
+   cero.
+
+4. **LOS PARCIALES: se abre AMBIGÜEDAD, `clase: pregunta`, en la rama siguiente.** Tres ganadoras
+   que **cierran** por debajo de 3R en dos meses independientes contradicen *«tiene que llegar al
+   ratio sí o sí»*, y eso sólo lo contesta él. **No se espera a mayo**: mayo son pocos días `dev` y
+   aunque diera cero, las tres siguen pidiendo explicación. Va con su nota de que `maxTP` es el
+   precio de cierre —medido, `== avgClosePrice` 17 de 17— y de que en F14a **se supuso**.
+
+5. **ENERO: de momento sólo como CONTROL DEL RELOJ.** Su xlsx **no se abre todavía**. Un tercer mes
+   de la misma medida no mueve A-18; **lo que la mueve es la definición de estructura**.
+
+## R8. La rama siguiente, y por qué las tres cosas viajan juntas
+
+`trabajo/la-caja-del-29-de-abril`. Con el reloj fijado y las series casando a 1-2 puntos, se leen
+**los dos bordes de la caja que el trader dibuja** en el fotograma de v5 y se comparan contra
+`1,00·d` y `1,25·d`, con `d` sacada del xlsx. **n = 1, no decide A-18**, pero es la lectura exacta
+que Next Action §0a quería y que **hasta esta noche no tenía instrumento**.
+
+Van con ella el **control del reloj contra enero** (decisión 3) y la **ambigüedad de los parciales**
+(decisión 4). Viajan juntas porque **las tres son lo que abril dejó nombrado y ninguna toca
+mecanismo**: una lee un fotograma, otra compara un fotograma contra velas ya descargadas, y la
+tercera escribe una pregunta. Ninguna añade código ni cambia una guardia.
 
 ## Estado
 WAITING_FOR_USER_VALIDATION

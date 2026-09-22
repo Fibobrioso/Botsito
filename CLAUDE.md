@@ -125,6 +125,18 @@ Y **se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempr
 > necesario; y si se aparta de ADR-0021, o se corrige aqui o se cambia el ADR, pero no se deja el
 > desacuerdo por escrito.
 
+**EL RELOJ DE LOS GRAFICOS DE FX REPLAY ES UTC+2 FIJO.** Medido en el propio grafico de v4 sobre
+un fotograma de ENERO -asi que NO es Europe/Madrid, que en enero es UTC+1-; confirmado porque con
+ese desfase las velas de abril casan a 1 y 2 puntos con las de Dukascopy. Es una propiedad del
+INSTRUMENTO y la necesita toda comparacion futura entre video y velas.
+
+**Y LA REGLA QUE SALE DE AHI: antes de comparar dos fuentes se FIJA EL HUSO DE LAS DOS, medido y no
+supuesto**, igual que las cabeceras se escriben antes de abrir el libro. El pre-registro impide
+elegir el criterio despues de ver los datos; NO impide equivocarse al instrumentar, y la rama
+`trabajo/abril-y-la-caja` lo demuestra: con los criterios congelados y respetados, suponer que el
+eje del grafico era UTC dio una conclusion falsa -"las series no cuadran"- que estuvo a punto de
+cerrar la rama. Lo que lo destapo fue mirar un fotograma de OTRO video por un motivo distinto.
+
 Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 
 ## Abrir una ambiguedad toca dos sitios; cerrarla, cuatro
