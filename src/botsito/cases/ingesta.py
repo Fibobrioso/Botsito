@@ -18,6 +18,29 @@ y un humano no puede ampliarlo. Tres negativas duras:
 - si un reparto no se puede leer, `casos_reservados` lanza y el comando falla: un mapa a medias es
   indistinguible de uno completo.
 
+**EL CERO SIGNIFICA UNA SOLA COSA, Y ESO ES LO QUE LA PUERTA COMPRA** (2026-09-21). Hasta hoy
+un dia que no producia filas podia ser dos cosas incompatibles -«el trader miro y no opero», que
+es UN DATO SUYO, y «este mes no tiene material», que es AUSENCIA DE CONOCIMIENTO- y las dos daban
+exactamente el mismo silencio. El dia que alguien decida que un dia sin filas produce un
+`no_trade`, esa decision convertiria la segunda en la primera sin que nadie lo viera: fabricar una
+etiqueta del trader donde no hay material. Por eso:
+
+- un dia cuyo mes NO este declarado en `cobertura_material`, o lo este con CERO tramos, **no es
+  ingerible**: se descarta nombrando el MES y el motivo, nunca los dias;
+- si un mes pedido no tiene NI UNA FILA en el xlsx que se ha pasado, es **error** y se nombra el
+  mes: `--material` recibe un libro y la ingesta nunca busca fichero por mes, asi que pasarle el
+  de mayo y pedirle dias de septiembre daba ceros en silencio;
+- y despues de la puerta, un dia ingerible sin filas significa exactamente UNA cosa -el material
+  cubre ese dia y NO HAY NINGUNA FILA EN EL-, asi que se **cuenta y se dice**, como ya se hacia con
+  las filas sin `initialSL`. Se dice SIN sujeto humano: de esa ausencia salen dos cosas -que no
+  opero, o que opero y la fila no esta en la exportacion- y quedarse con la primera seria
+  atribuirle una decision al trader a partir de lo que falta.
+
+Lo que NO se decide aqui: si ese dia produce un caso `no_trade` o no produce nada. Hoy no produce
+nada y asi se queda; toca la forma del caso y roza «un dia sin ninguna operacion ES su etiqueta».
+Lo que esta rama aporta es que, cuando se tome, se tomara sobre un conjunto donde el cero ya no es
+ambiguo.
+
 **EL OBJETIVO NO ES UN CAMPO.** El objetivo del trader es una REGLA -`objetivo_rr` con su
 `base_calculo_objetivo`, 1:3, con cita literal en `ev-v2-001658-d02fb71a`- y el xlsx no registra el
 objetivo planeado: `maxTP` solo existe cuando la operacion gano y `idealTP` cae del lado de la
@@ -29,7 +52,7 @@ con `maxTP` dentro de seis meses, asi que **el campo no existe**. Quitar el camp
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
@@ -68,18 +91,41 @@ class Operacion:
 
 
 @dataclass(frozen=True)
+class Ingeribles:
+    """Lo que la puerta deja pasar, y lo que niega POR MES y nunca por dia."""
+
+    dias: dict[str, str]
+    # mes -> (cuantos dias se niegan, motivo). Nunca la lista de dias: un dia laborable que no
+    # aparece ES su etiqueta, y publicarlo seria abrir por la puerta de atras (ADR-0036, ADR-0037).
+    negados: dict[str, tuple[int, str]]
+
+
+@dataclass(frozen=True)
 class Resultado:
     casos: dict[str, list[Operacion]]
     sin_stop: int
     filas_leidas: int
+    # Dias ingeribles que el material cubre y en los que NO HAY NINGUNA FILA. Se dice asi, sin
+    # sujeto humano: de una ausencia salen DOS cosas -que no opero, o que opero y la fila no esta
+    # en la exportacion- y quedarse con la primera es atribuirle una decision a una persona a
+    # partir de lo que falta, que es justo lo que esta rama existe para impedir.
+    sin_operaciones: int = 0
 
 
-def dias_ingeribles(repo: Path) -> dict[str, str]:
-    """`dia -> id de caso` de todo caso repartido, commiteado y NO reservado.
+def dias_ingeribles(
+    repo: Path, cobertura: Mapping[str, Sequence[tuple[str, str]]] | None = None
+) -> Ingeribles:
+    """`dia -> id de caso` de todo caso repartido, commiteado, NO reservado y CON MATERIAL.
 
     El reparto tiene que estar COMMITEADO: `repartos_commiteables` globea el arbol de trabajo, asi
     que un `particiones.yaml` sin commitear podria marcar un dia como `dev` y hacerlo ingerible.
     Es el mismo criterio que `anterioridad.problemas_de_anterioridad` ya aplica.
+
+    **LA PUERTA DEL MATERIAL** (2026-09-21): `cobertura` es el `cobertura_material` del camino, y
+    un dia cuyo mes no este declarado -o lo este con cero tramos- NO es ingerible. No lanza: los
+    niega y los DEVUELVE CONTADOS POR MES, porque negarlos lanzando dejaria el comando inservible
+    mientras junio siga repartido, y negarlos en silencio es el defecto que esto viene a cerrar.
+    Con `cobertura` en None no hay puerta, que es lo que necesitan los tests de lo demas.
     """
     reservados = casos_reservados(repo)  # lanza si un reparto es ilegible: falla cerrado
     salida: dict[str, str] = {}
@@ -95,7 +141,23 @@ def dias_ingeribles(repo: Path) -> dict[str, str]:
             m = _CASO.match(str(caso))
             if m is not None and str(caso) not in reservados:
                 salida[m.group(1)] = str(caso)
-    return salida
+    if cobertura is None:
+        return Ingeribles(salida, {})
+    negados: dict[str, tuple[int, str]] = {}
+    for dia in sorted(salida):
+        mes = dia[:7]
+        tramos = cobertura.get(mes)
+        if tramos is None:
+            motivo = f"{mes} no esta declarado en cobertura_material: no consta que haya material"
+        elif not tramos:
+            motivo = f"{mes} esta declarado con CERO tramos: no hay material del trader"
+        else:
+            continue
+        n, _ = negados.get(mes, (0, motivo))
+        negados[mes] = (n + 1, motivo)
+    for dia in [d for d in salida if d[:7] in negados]:
+        del salida[dia]
+    return Ingeribles(salida, negados)
 
 
 def _decimal(valor: object, fila: str, columna: str) -> Decimal:
@@ -127,7 +189,7 @@ def ingerir(
 
     `dias` solo se pasa en tests: en produccion se derivan con `dias_ingeribles`.
     """
-    pedidos = dict.fromkeys(dias) if dias is not None else dias_ingeribles(repo)
+    pedidos = dict.fromkeys(dias) if dias is not None else dias_ingeribles(repo).dias
     if not pedidos:
         raise IngestaError(
             "no hay ningun dia ingerible: o no hay reparto commiteado, o todos sus casos estan "
@@ -137,6 +199,20 @@ def ingerir(
         filas = filas_de_los_dias(material, pedidos, PESTANA, COLUMNAS, HUSO_DEL_FICHERO)
     except LibroError as exc:
         raise IngestaError(str(exc)) from exc
+
+    # LA REGLA POR MES, no por dia: si un mes pedido no tiene NI UNA fila en el libro que se ha
+    # pasado, el libro no es el suyo y decirlo cuesta una linea. Habla del FICHERO -"el material
+    # que me has dado"- y no de los dias del trader, asi que no publica calendario. Un dia
+    # concreto sin filas dentro de un mes que SI tiene es otra cosa, y es la que si tiene sentido.
+    meses_pedidos = {d[:7] for d in pedidos}
+    meses_con_filas = {str(f["_instante_utc"])[:7] for f in filas}
+    vacios = sorted(meses_pedidos - meses_con_filas)
+    if vacios:
+        raise IngestaError(
+            f"el material que se ha pasado no tiene ni una fila de {', '.join(vacios)}: o es el "
+            f"libro de otro mes, o falta. No se escribe nada, porque un cero de aqui no se puede "
+            f"distinguir de un dia sin operaciones"
+        )
 
     casos: dict[str, list[Operacion]] = {d: [] for d in pedidos}
     sin_stop = 0
@@ -172,4 +248,7 @@ def ingerir(
         casos.setdefault(dia.isoformat(), []).append(
             Operacion(instante, sesion, _DIRECCION[lado], entrada, stop)
         )
-    return Resultado(casos, sin_stop, len(filas))
+    # Despues de la puerta y de la regla por mes, esto significa UNA cosa: el material cubre ese
+    # dia y NO HAY NINGUNA FILA. Se cuenta, y quien llama lo dice SIN sujeto humano.
+    sin_operaciones = sum(1 for d in pedidos if not casos.get(d))
+    return Resultado(casos, sin_stop, len(filas), sin_operaciones)

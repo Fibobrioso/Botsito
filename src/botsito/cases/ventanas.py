@@ -144,6 +144,21 @@ def construir_caso(
     )
 
 
+def motivo_de_cobertura(dia: str, tramos: Sequence[tuple[str, str]]) -> str:
+    """El motivo de excluir un dia por la cobertura del material. Publico a proposito.
+
+    CERO TRAMOS tiene su propia frase: hasta el 2026-09-21 salia `(2026-06 cubre )` con la lista
+    vacia detras, que es literalmente falso, y el motivo de una exclusion es lo unico que alguien
+    va a leer dentro de un ano. Vive aqui, y no dentro del bucle, para que el test compruebe LA
+    FRASE y no una copia suya.
+    """
+    mes = dia[:7]
+    if not tramos:
+        return f"{mes}: sin material del trader (declarado con cero tramos en cobertura_material)"
+    cubre = ", ".join(f"{d}..{h}" for d, h in tramos)
+    return f"fuera de la cobertura del material del trader ({mes} cubre {cubre})"
+
+
 def universo(
     manifiestos: list[dict[str, Any]],
     carpeta_datos: Path,
@@ -214,14 +229,11 @@ def universo(
                     )
                 )
                 continue
+            # Con CERO tramos `any(...)` es False y el mes entero cae por aqui, que es
+            # exactamente lo que se quiere: mes declarado, cero dias cubiertos.
             if tramos is not None and not any(d <= dia.isoformat() <= h for d, h in tramos):
-                cubre = ", ".join(f"{d}..{h}" for d, h in tramos)
                 excluidos.append(
-                    Excluido(
-                        dia.isoformat(),
-                        f"fuera de la cobertura del material del trader "
-                        f"({dia.isoformat()[:7]} cubre {cubre})",
-                    )
+                    Excluido(dia.isoformat(), motivo_de_cobertura(dia.isoformat(), tramos))
                 )
                 continue
             resultado = construir_caso(

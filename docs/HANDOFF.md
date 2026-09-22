@@ -5,6 +5,74 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/cobertura-material-del-kit` esperando validacion; lo de debajo es anterior)
+- **LA RAMA NO VA DE JUNIO. VA DE QUE EL CERO SIGNIFIQUE UNA SOLA COSA.** Hasta hoy un dia sin
+  filas podia ser DOS cosas incompatibles -«el trader miro y no opero», que es UN DATO SUYO, y
+  «este mes no tiene material», que es AUSENCIA DE CONOCIMIENTO- y las dos daban EXACTAMENTE EL
+  MISMO SILENCIO. El dia que alguien decida que un dia sin filas produce un `no_trade`, esa
+  decision convertiria la segunda en la primera sin que nadie lo viera: fabricar una etiqueta del
+  trader donde no hay material.
+- **LAS DOS PREGUNTAS SON ORTOGONALES Y HACEN FALTA LAS DOS**, y esto es lo que hay que tener
+  delante antes de tocar nada:
+
+      vistos.yaml         ->  ¿ES CIEGO?       abril: NO.  junio: SI.
+      cobertura_material  ->  ¿HAY MATERIAL?   abril: SI.  junio: NO.
+
+  Junio es el UNICO mes con dataset que es ciego y esta vacio, y esa combinacion no se podia
+  expresar hasta hoy.
+- **TRES AGUJEROS, no uno.** (1) junio es ingerible HOY porque `dias_ingeribles` no leia el config;
+  (2) junio entraria en el universo de un `kit build` NUEVO porque la llamada del kit no pasaba
+  `cobertura`; (3) el cero significa dos cosas y ademas `--material` puede ser el libro equivocado
+  sin que nada lo diga. El (3) es el que mas vale.
+- **CERO TRAMOS ES UN VALOR CON SIGNIFICADO**, no un error: dice "hay decision sobre este mes y NO
+  hay material". Hasta hoy el esquema lo rechazaba (`paquete.py:139-140`), y por eso la unica forma
+  de excluir un mes era invertir el default para TODOS con `solo_con_cobertura`. **Ese flag SIGUE
+  EN FALSE**: un mes no declarado queda SIN ACOTAR, no excluido, para no negar un mes legitimo que
+  nadie haya declarado todavia.
+- MEDIDO: `dias_ingeribles` pasa de **20 dias** (6 mayo + 10 JUNIO + 4 septiembre) a **10**, y
+  junio se niega POR MES y con motivo, nunca nombrando dias.
+- **LA REVISION DE DISENO REFUTO EL BRIEF TRES VECES**, y dos de esas refutaciones corrigen una
+  medida que habia dado YO: que abril entraria en el universo de la sesion 2 -FALSO, esta en
+  `vistos.yaml` desde el 2026-09-12- y que bastaba con poner el campo en el config -FALSO, la
+  llamada del kit no lo pasaba-. Lei `manifiestos_del_prefijo` y afirme sobre la cadena sin seguir
+  hasta el filtro de vistos. Es el patron 3 de la lista.
+- **LA LIMITACION QUE ESTA RAMA CREA, y va dicha**: la regla por mes usa los DIAS PEDIDOS, asi que
+  si el trader no hubiera operado en NINGUNO de los dias ingeribles de un mes, el libro correcto
+  daria cero filas y el comando lo llamaria error. Con seis dias `dev` de mayo es improbable pero
+  NO imposible. La alternativa -preguntarle al lector si el fichero tiene alguna fila de ese mes-
+  rompe la regla de que el lector no acumula nada del libro (ADR-0037 §6). Si algun dia aparece ese
+  error sobre un libro que SI es el suyo, esa es la salida y hay que decidirla entonces.
+- **LO QUE NO SE DECIDE**: si un dia ingerible sin filas produce un `no_trade`. Hoy no produce nada
+  y asi se queda. Lo que esta rama aporta es que, cuando se tome esa decision, se tomara sobre un
+  conjunto donde el cero YA NO ES AMBIGUO.
+- **LAS LINEAS QUE IMPRIME EL COMANDO SON EL ENTREGABLE**, no el codigo. Ejecutadas de verdad:
+
+      (a) dia ingerible sin operaciones, exit 0 -SIN SUJETO HUMANO, y es deliberado: de una
+          ausencia salen dos cosas y quedarse con "no opero" le atribuye una decision al trader-:
+          "INGESTA: 1 dias ingeribles sin ninguna operacion en el material: lo cubre y no hay
+           ninguna fila. NO producen caso. Leer esa ausencia como `no_trade` seria una inferencia
+           NUESTRA sobre lo que hizo el trader, y ADR-0016 exige que una decision asi declare el
+           ADR que la toma; hoy no hay ninguno"
+      (b) mes sin material, exit 0, negado POR MES:
+          "INGESTA: 2 dias de 2026-06 NO son ingeribles: 2026-06 esta declarado con CERO tramos:
+           no hay material del trader. No se han leido ni escrito, y no se nombran uno a uno: un
+           dia laborable que no aparece es su etiqueta"
+      (c) el libro equivocado, exit 1 y NO escribe nada:
+          "ERROR: el material que se ha pasado no tiene ni una fila de 2026-09: o es el libro de
+           otro mes, o falta. No se escribe nada, porque un cero de aqui no se puede distinguir de
+           un dia sin operaciones"
+
+- **LO QUE ESTA RAMA LE ENTREGA A LA SIGUIENTE, y son dos decisiones del consultor del 2026-09-21:**
+  1. LA LIMITACION DEL §10 SE QUEDA porque FALLA HACIA EL LADO SEGURO -un falso error PARA el
+     comando, no fabrica un dato-. Su arreglo esta NOMBRADO en Technical Debt: declarar el mes del
+     material en vez de deducirlo de las filas, con su condicion y con la medida que le falta.
+  2. EL `no_trade` POR AUSENCIA **NO ENTRA EN LA RAMA DE MAYO**. Va a la rama de la FORMA DEL CASO
+     con su ADR. Mayo ingiere lo que tiene operaciones, DICE cuales no y por que, y escribe CERO
+     casos `no_trade`. Esperar sale barato precisamente por esta rama: la decision se tomara
+     despues sobre un conjunto limpio y SIN volver a ingerir.
+- No se descargo abril, ni febrero, ni marzo. No se ingirio mayo: cero `caso-*.yaml`. A-18 y la
+  prediccion congelada, sin tocar. El reparto y las anclas, sin tocar.
+
 ## La pasada por el material de septiembre (2026-09-21) · NADA DECIDIDO, TODO MEDIDO
 
 - **LOS IDS NO SON CRONOLOGICOS Y LEERLOS COMO SECUENCIA ES UN ERROR.** Orden real por

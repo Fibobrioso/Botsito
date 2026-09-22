@@ -1534,7 +1534,8 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
         huso = registro.texto("huso_operativa")
         sesiones = [(s.nombre, s.desde, s.hasta) for s in config.sesiones]
-        pedidos = dias_ingeribles(repo)
+        ingeribles = dias_ingeribles(repo, config.cobertura)
+        pedidos = ingeribles.dias
         resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
     except _kit_errores() as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -1558,11 +1559,28 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
         f"INGESTA: {len(escritos)} casos escritos de {len(pedidos)} dias ingeribles; "
         f"{resultado.filas_leidas} filas leidas; 0 pestanas de agregado abiertas"
     )
+    # LA PUERTA GRITA, por MES y nunca por dia. Si esto se cayera en silencio seria el mismo
+    # defecto que a la sesion 1 le costo dos dias, un escalon mas arriba.
+    for mes, (cuantos, motivo) in sorted(ingeribles.negados.items()):
+        print(
+            f"INGESTA: {cuantos} dias de {mes} NO son ingeribles: {motivo}. No se han leido ni "
+            f"escrito, y no se nombran uno a uno: un dia laborable que no aparece es su etiqueta",
+            file=sys.stderr,
+        )
     if resultado.sin_stop:
         print(
             f"INGESTA: {resultado.sin_stop} filas SIN `initialSL` no produjeron caso: una fila sin "
             f"stop no es una decision completa. Se cuentan aqui para que no desaparezcan en "
             f"silencio",
+            file=sys.stderr,
+        )
+    if resultado.sin_operaciones:
+        # DESPUES de la puerta y de la regla por mes, este cero significa UNA sola cosa.
+        print(
+            f"INGESTA: {resultado.sin_operaciones} dias ingeribles sin ninguna operacion en el "
+            f"material: lo cubre y no hay ninguna fila. NO producen caso. Leer esa ausencia como "
+            f"`no_trade` seria una inferencia NUESTRA sobre lo que hizo el trader, y ADR-0016 "
+            f"exige que una decision asi declare el ADR que la toma; hoy no hay ninguno",
             file=sys.stderr,
         )
     print(f"OK: {DIRECTORIO_DEV_TXT}/ con {len(escritos)} casos. Commitealos con `Fuente:`")

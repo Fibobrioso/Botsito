@@ -101,7 +101,7 @@ def test_la_ingesta_abre_de_verdad_y_produce_casos(tmp_path: Path) -> None:
     material = tmp_path / "libro.xlsx"
     _xlsx(material, FILAS)
 
-    pedidos = dias_ingeribles(repo)
+    pedidos = dias_ingeribles(repo).dias
     assert set(pedidos) == {"2026-05-08", "2026-05-12"}, "el dia reservado no se deriva"
 
     r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=list(pedidos))
