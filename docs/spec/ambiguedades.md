@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (13)
+## ABIERTA (14)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -73,6 +73,12 @@ una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? 
 en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe con mecha el nivel horizontal que tienes dibujado, al que apunta tu flecha: ¿ese nivel es la liquidez de M15 -y entonces lo que exige cuerpo es RN-004, ya escrito- o es un nivel de M1, y entonces hay rupturas de M1 que tampoco valen con mecha, contra breaker_m1_criterio_ruptura?
 
 Afecta a: `breaker_m1_criterio_ruptura`.
+
+### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
+
+en la sesion 1 dijiste "sin toma de parciales y que tiene que llegar al ratio 1.3 si o si" (v6 0:17:07). Pero en tu material hay TRES operaciones GANADORAS que CIERRAN por debajo de 3R: una en agosto (2,50) y dos en abril (2,57 y 2,94), en dos meses independientes. ¿cerraste esas a mano? ¿tomaste parciales en ellas? ¿o hubo otro motivo -un break even que salto, una noticia, cerrar antes de una sesion-? No te preguntamos si tomas parciales EN GENERAL, que ya lo contestaste: te preguntamos que paso en esas. MEDIDO ANTES DE PREGUNTAR, y es lo que hace que la pregunta exista: `maxTP` es el PRECIO DE CIERRE de las ganadoras y no la excursion maxima -`== avgClosePrice` en 17 de 17 filas de abril donde existen las dos, y presente si y solo si `rPnL > 0`-, asi que esas tres no son operaciones que NO LLEGARON a 3R: son operaciones que CERRARON en ganancia por debajo de 3R. En F14a esa columna se habia SUPUESTO al reves (ADR-0037 y su correccion del 2026-09-22)
+
+Afecta a: `parciales`, `objetivo_rr`.
 
 ## DECIDIDA (5)
 
