@@ -1577,9 +1577,10 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     if resultado.sin_operaciones:
         # DESPUES de la puerta y de la regla por mes, este cero significa UNA sola cosa.
         print(
-            f"INGESTA: {resultado.sin_operaciones} dias ingeribles sin ninguna operacion: el "
-            f"material cubre esos dias y el trader no opero. NO producen caso hoy, y que produzcan "
-            f"un `no_trade` es una decision que no esta tomada (ADR-0016)",
+            f"INGESTA: {resultado.sin_operaciones} dias ingeribles sin ninguna operacion en el "
+            f"material: lo cubre y no hay ninguna fila. NO producen caso. Leer esa ausencia como "
+            f"`no_trade` seria una inferencia NUESTRA sobre lo que hizo el trader, y ADR-0016 "
+            f"exige que una decision asi declare el ADR que la toma; hoy no hay ninguno",
             file=sys.stderr,
         )
     print(f"OK: {DIRECTORIO_DEV_TXT}/ con {len(escritos)} casos. Commitealos con `Fuente:`")

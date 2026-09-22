@@ -31,8 +31,10 @@ etiqueta del trader donde no hay material. Por eso:
   mes: `--material` recibe un libro y la ingesta nunca busca fichero por mes, asi que pasarle el
   de mayo y pedirle dias de septiembre daba ceros en silencio;
 - y despues de la puerta, un dia ingerible sin filas significa exactamente UNA cosa -el material
-  cubre ese dia y no hay operaciones-, asi que se **cuenta y se dice**, como ya se hacia con las
-  filas sin `initialSL`.
+  cubre ese dia y NO HAY NINGUNA FILA EN EL-, asi que se **cuenta y se dice**, como ya se hacia con
+  las filas sin `initialSL`. Se dice SIN sujeto humano: de esa ausencia salen dos cosas -que no
+  opero, o que opero y la fila no esta en la exportacion- y quedarse con la primera seria
+  atribuirle una decision al trader a partir de lo que falta.
 
 Lo que NO se decide aqui: si ese dia produce un caso `no_trade` o no produce nada. Hoy no produce
 nada y asi se queda; toca la forma del caso y roza «un dia sin ninguna operacion ES su etiqueta».
@@ -103,8 +105,10 @@ class Resultado:
     casos: dict[str, list[Operacion]]
     sin_stop: int
     filas_leidas: int
-    # Dias ingeribles que el material cubre y en los que el trader no opero. Despues de la puerta
-    # esto significa UNA sola cosa, y por eso se puede contar sin mentir.
+    # Dias ingeribles que el material cubre y en los que NO HAY NINGUNA FILA. Se dice asi, sin
+    # sujeto humano: de una ausencia salen DOS cosas -que no opero, o que opero y la fila no esta
+    # en la exportacion- y quedarse con la primera es atribuirle una decision a una persona a
+    # partir de lo que falta, que es justo lo que esta rama existe para impedir.
     sin_operaciones: int = 0
 
 
@@ -245,6 +249,6 @@ def ingerir(
             Operacion(instante, sesion, _DIRECCION[lado], entrada, stop)
         )
     # Despues de la puerta y de la regla por mes, esto significa UNA cosa: el material cubre ese
-    # dia y el trader no opero. Se cuenta, y quien llama lo dice.
+    # dia y NO HAY NINGUNA FILA. Se cuenta, y quien llama lo dice SIN sujeto humano.
     sin_operaciones = sum(1 for d in pedidos if not casos.get(d))
     return Resultado(casos, sin_stop, len(filas), sin_operaciones)

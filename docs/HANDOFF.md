@@ -47,10 +47,12 @@ rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, 
   conjunto donde el cero YA NO ES AMBIGUO.
 - **LAS LINEAS QUE IMPRIME EL COMANDO SON EL ENTREGABLE**, no el codigo. Ejecutadas de verdad:
 
-      (a) dia ingerible sin operaciones, exit 0:
-          "INGESTA: 1 dias ingeribles sin ninguna operacion: el material cubre esos dias y el
-           trader no opero. NO producen caso hoy, y que produzcan un `no_trade` es una decision
-           que no esta tomada (ADR-0016)"
+      (a) dia ingerible sin operaciones, exit 0 -SIN SUJETO HUMANO, y es deliberado: de una
+          ausencia salen dos cosas y quedarse con "no opero" le atribuye una decision al trader-:
+          "INGESTA: 1 dias ingeribles sin ninguna operacion en el material: lo cubre y no hay
+           ninguna fila. NO producen caso. Leer esa ausencia como `no_trade` seria una inferencia
+           NUESTRA sobre lo que hizo el trader, y ADR-0016 exige que una decision asi declare el
+           ADR que la toma; hoy no hay ninguno"
       (b) mes sin material, exit 0, negado POR MES:
           "INGESTA: 2 dias de 2026-06 NO son ingeribles: 2026-06 esta declarado con CERO tramos:
            no hay material del trader. No se han leido ni escrito, y no se nombran uno a uno: un

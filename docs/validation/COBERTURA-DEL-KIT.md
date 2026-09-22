@@ -125,10 +125,23 @@ sintético:
 
 ```
 INGESTA: 1 casos escritos de 2 dias ingeribles; 1 filas leidas; 0 pestanas de agregado abiertas
-INGESTA: 1 dias ingeribles sin ninguna operacion: el material cubre esos dias y el trader no
-         opero. NO producen caso hoy, y que produzcan un `no_trade` es una decision que no esta
-         tomada (ADR-0016)
+INGESTA: 1 dias ingeribles sin ninguna operacion en el material: lo cubre y no hay ninguna fila.
+         NO producen caso. Leer esa ausencia como `no_trade` seria una inferencia NUESTRA sobre lo
+         que hizo el trader, y ADR-0016 exige que una decision asi declare el ADR que la toma; hoy
+         no hay ninguno
 ```
+
+> **Esta frase se reescribió antes del merge, y el motivo es el asunto de la rama.** Decía «el
+> material cubre esos días **y el trader no operó**». Eso **no es lo medido**: lo medido es que el
+> material cubre el día y **no hay ninguna fila**, y de ahí salen dos cosas —que no operó, o que
+> operó y la fila no está en la exportación—. Quedarse con la primera es **atribuirle una decisión
+> a una persona a partir de una ausencia**, que es exactamente lo que esta rama existe para
+> impedir; y es la frase que alguien citaría dentro de tres meses —«si la ingesta ya dice que no
+> operó»— justo cuando se discuta si esos días son `no_trade`.
+>
+> También se ajustó la cita: **ADR-0016 no dice que la decisión no esté tomada**. Dice que una
+> decisión nuestra que el trader nunca enunció **tiene que declarar el ADR que la toma**. Es el
+> sitio correcto al que mandar al lector, pero mandándolo por lo que el ADR sí dice.
 
 **(b) Un mes sin material** —junio, declarado con cero tramos— `exit = 0`, y se niega **por mes**:
 
