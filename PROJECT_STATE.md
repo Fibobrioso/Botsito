@@ -34,10 +34,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-Ninguna abierta. `trabajo/la-caja-del-29-de-abril` quedo VALIDADA y cerrada en `main` el 2026-09-22: tag `stable/F14-caja`, informe docs/validation/LA-CAJA-DEL-29-DE-ABRIL.md, ADR-0038. Lo siguiente es `trabajo/mayo-dev-ingerido` (Next Action 1).
+Rama `trabajo/lo-que-no-cabia-en-main` (informe docs/validation/LO-QUE-NO-CABIA-EN-MAIN.md): LAS TRES DEUDAS DEL CIERRE DEL 2026-09-22, y NO MIDE NADA. (a) La nota de vuelta en ADR-0038, integra. (b) El ritual: `state check` pasa a ser puerta ANTES del commit -corria despues, dentro de `make check`, cuando el commit ya existia- y `make check` CONDICIONA el push, con el log quedandose cuando falla. (c) Los comandos, como se invocan de verdad: `uv run botsito ...` y `curl --ssl-no-revoke`, porque dentro de un bloque pegado un `command not found` es INDISTINGUIBLE de una comprobacion que pasa. NACE DE UN FALLO DEL CONSULTOR -un brief que contradecia MASTER_PLAN §F- que la sesion obedecio sin contrastarlo con lo escrito.
 
 ## Current Branch
-main
+trabajo/lo-que-no-cabia-en-main
 
 ## Stable Main State
 7bef6ee · merge de `trabajo/la-caja-del-29-de-abril` (tag `stable/F14-caja`), sobre abril (e7f7638, tag stable/F14-abril). EL TITULAR ES EL 0,8: **LA PLANTILLA DE DIBUJO DEL TRADER LLEVA LOS CINCO NIVELES 1 / 0,8 / 0,5 / 0,25 / 0**, con el 0,8 en LINEA PROPIA y las proporciones cuadrando dentro de un pixel. Hasta ahora ese numero venia solo de lo que el DICE -A-10, RESUELTA por un registro suyo-; AHORA HAY UNA IMAGEN. La ENTRADA esta en el nivel 0, medido. LA FRACCION DEL STOP sigue NO CONCLUYENTE, y el motivo cambio TRES veces: primero el eje de precios, luego la lectura a ojo, y al final lo que queda es EL MATERIAL -los niveles 0 y 1 no tienen linea propia visible y el 0,25 cae bajo la barra de herramientas flotante; sin los extremos no hay denominador, por mucha precision que haya-. A-18 NO SE MUEVE, tal como el pre-registro contemplaba. Y QUEDA UN CRITERIO REUTILIZABLE: las rayas que el trader dibuja a mano se distinguen de los niveles de la caja POR EL ANCLA EN x, que es lo que explico las tres rayas azules -mismo RGB, rangos de x que no se solapan, y solo la de y=98-99 comparte el x=880 de la verde-. A-16 en n=3, las tres medidas entre 1 y 2 puntos. A-33 abierta. ADR-0038 escrito. `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones, cero `caso-*.yaml`, `kit check --sesion 2026-09-09-sesion-01` IDENTICO a su linea base.
@@ -85,7 +85,7 @@ main
 - La caja del 29 de abril · validada el 2026-09-22 · docs/validation/LA-CAJA-DEL-29-DE-ABRIL.md · ADR-0038 · tag stable/F14-caja
 
 ## Features Waiting for Validation
-— ninguna.
+- Lo que no cabia en main (rama `trabajo/lo-que-no-cabia-en-main`) · WAITING_FOR_USER_VALIDATION · docs/validation/LO-QUE-NO-CABIA-EN-MAIN.md · sin ADR
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
