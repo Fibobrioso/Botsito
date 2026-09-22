@@ -110,6 +110,49 @@ de que **la caja y el 0,8 se dibujan juntos**.
 **n será 1 o 2. NO DECIDE A-18, y se escribe así de claro.** Lo que produce es la **primera
 descripción medida de cómo el trader elige sus niveles**.
 
+## 3. SEGUNDO PRE-REGISTRO: el rodeo del cociente, escrito ANTES de reabrir los fotogramas
+
+La medida 2 se quedó en NO CONCLUYENTE (§R2) **por una vía muerta, no por el material**: la escala
+de precios de la imagen no se puede fijar. **Hay rodeo, y no cambia el criterio pre-registrado**
+—sigue siendo *«sobre qué etiqueta cae el stop»*— **sino sólo el instrumento**:
+
+```
+fraccion_del_stop  =  (pixeles de entrada a stop)  /  (pixeles del 0 al 1 de la caja)
+```
+
+**La escala de precios NO interviene: aparece en los dos términos y se cancela.** Con las medidas ya
+tomadas —`0` en `y=424`, `1` en `y=237`, alto **187 px**— el `0,8` está en `y=274`, a **37 px** del
+`1`, y **un píxel vale 0,005 de caja**.
+
+**TOLERANCIA, fijada ahora:** la fracción medida tiene que caer **a menos de 0,03** de una de las
+**cinco** etiquetas de su plantilla (`0 · 0,25 · 0,5 · 0,8 · 1`). Si cae a menos de 0,03 de **dos**,
+o de **ninguna**, es **NO CONCLUYENTE y se escribe así. No se ensancha después.**
+
+### La comprobación que puede tumbar la lectura, y va ANTES de concluir
+
+En `000292000.png` la herramienta imprime **«Risk/Reward Ratio: 3.21»** y **«Target: 0.00061
+(0.052%) 6.1»**. Entonces:
+
+```
+alto de la zona de BENEFICIO (px)  /  alto de la zona de RIESGO (px)  =  3,21
+```
+
+Se miden las dos alturas y se comprueba. **Si no da 3,21, lo identificado como stop no es el stop y
+se para ahí.** Es la misma disciplina que el señuelo: una comprobación que puede tumbar la lectura
+antes de que la lectura signifique algo.
+
+### Y la comprobación de ANCLA COMÚN, sin la cual el cociente no significa nada
+
+La **arista de ENTRADA de la herramienta de posición** —la frontera entre la zona roja y la verde—
+tiene que **coincidir en `y`** con el **nivel 0 de la caja**. Lo medido en §R2 fue que la *línea de
+precio actual* está a dos píxeles del nivel 0, y **eso es la línea de precio, no la entrada de la
+herramienta**: son cosas distintas y hay que medir la segunda. **Si no coinciden, la comparación es
+inválida, y ésa es la respuesta honesta.**
+
+Además, en los dos fotogramas hay **DOS grupos de etiquetas** `1/0,8/0,5/0,25/0`, uno sobre las
+velas y otro desplazado a la derecha. **Se dirá cuál se midió y si son el mismo objeto o dos
+dibujos.** Si son dos, el que vale es **el que comparte ancla con la herramienta**.
+
 ---
 
 # RESULTADOS
