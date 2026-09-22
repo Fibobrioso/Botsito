@@ -36,6 +36,20 @@ etiqueta del trader donde no hay material. Por eso:
   opero, o que opero y la fila no esta en la exportacion- y quedarse con la primera seria
   atribuirle una decision al trader a partir de lo que falta.
 
+**EL LIBRO DICE DE QUE MES ES, Y SOLO SE PIDEN LOS DIAS DE ESE MES** (2026-09-22, rama
+`trabajo/mayo-dev-ingerido`). Hasta hoy el mes del material se DEDUCIA de sus filas -la regla de
+arriba- y con dos meses ingeribles a la vez el comando no podia ingerir ninguno: pedia los dias de
+los dos y el libro de uno solo "no tenia ni una fila" del otro. Ese «falla cerrada» NO ERA LA
+PUERTA: era la regla de cobertura protegiendo por coincidencia. Ahora el mes se DECLARA -el
+`material_sha256` de cada tramo de `cobertura_material`, copiado del manifiesto del corpus- y
+`dias_del_material` lo compara con el sha del `--material` ANTES de leer una fila. Es la deuda que
+`trabajo/cobertura-material-del-kit` dejo nombrada en Technical Debt: «declarar el mes del
+material en vez de deducirlo de las filas».
+
+**SOLO EL CAMINO DEL KIT.** Los dias del camino de fidelidad (ADR-0036) no los toma este comando:
+el brief que los abra no existe todavia (PROJECT_STATE, Next Action), y hasta hoy esa obligacion
+solo estaba ESCRITA. Se cuentan -nunca se nombran- y se dice.
+
 Lo que NO se decide aqui: si ese dia produce un caso `no_trade` o no produce nada. Hoy no produce
 nada y asi se queda; toca la forma del caso y roza «un dia sin ninguna operacion ES su etiqueta».
 Lo que esta rama aporta es que, cuando se tome, se tomara sobre un conjunto donde el cero ya no es
@@ -59,12 +73,14 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from botsito.cases.holdout import casos_reservados, repartos_commiteables
+from botsito.cases.holdout import DIRECTORIO_KIT, casos_reservados, repartos_commiteables
 from botsito.comun.historial import commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
+from botsito.corpus.inventario import InventarioError, cargar_manifiesto
 from botsito.corpus.libro import PESTANA_OPERACIONES, LibroError, filas_de_los_dias
 
 DIRECTORIO_DEV = "knowledge/cases/dev"
+MANIFIESTO_CORPUS = "knowledge/corpus/manifest.yaml"
 PESTANA = PESTANA_OPERACIONES
 # Las CUATRO columnas que entran, y en este orden: la primera es el instante, que es de la unica
 # sin la cual nada se puede trocear por dia. Todo lo demas del libro -resultado, PnL, RR, ids,
@@ -98,6 +114,18 @@ class Ingeribles:
     # mes -> (cuantos dias se niegan, motivo). Nunca la lista de dias: un dia laborable que no
     # aparece ES su etiqueta, y publicarlo seria abrir por la puerta de atras (ADR-0036, ADR-0037).
     negados: dict[str, tuple[int, str]]
+    # Dias no reservados de repartos de OTRO camino (fidelidad). Este comando no los toma: se
+    # cuentan para que no desaparezcan en silencio, y no se nombran.
+    de_otro_camino: int = 0
+
+
+def aviso_de_otro_camino(n: int) -> str:
+    """La frase que dice que los dias de fidelidad no entran. Por RECUENTO, sin fechas."""
+    return (
+        f"INGESTA: {n} dias del camino de FIDELIDAD no los toma este comando: sus dias `dev` no "
+        f"se abren sin su propio brief (PROJECT_STATE.md, Next Action: «EL BRIEF PARA ABRIR LOS "
+        f"4 `dev` DE SEPTIEMBRE [...] no se abre sin el»). No se han leido ni escrito"
+    )
 
 
 @dataclass(frozen=True)
@@ -129,10 +157,14 @@ def dias_ingeribles(
     """
     reservados = casos_reservados(repo)  # lanza si un reparto es ilegible: falla cerrado
     salida: dict[str, str] = {}
+    de_otro_camino: set[str] = set()
+    kit = (repo / DIRECTORIO_KIT).resolve()
     for fichero in repartos_commiteables(repo):
         ruta = fichero.relative_to(repo).as_posix()
         if commit_que_anadio(repo, ruta) is None:
             continue  # sin commitear no reparte nada
+        # LOS RESERVADOS SE LEEN DE LOS DOS CAMINOS (arriba); LOS INGERIBLES, SOLO DEL KIT.
+        del_kit = fichero.resolve().is_relative_to(kit)
         try:
             doc = leer_yaml(fichero)
         except (OSError, YamlError) as exc:  # pragma: no cover - lo cubre casos_reservados
@@ -140,9 +172,12 @@ def dias_ingeribles(
         for caso in (doc.get("asignacion") or {}) if isinstance(doc, dict) else {}:
             m = _CASO.match(str(caso))
             if m is not None and str(caso) not in reservados:
-                salida[m.group(1)] = str(caso)
+                if del_kit:
+                    salida[m.group(1)] = str(caso)
+                else:
+                    de_otro_camino.add(str(caso))
     if cobertura is None:
-        return Ingeribles(salida, {})
+        return Ingeribles(salida, {}, len(de_otro_camino))
     negados: dict[str, tuple[int, str]] = {}
     for dia in sorted(salida):
         mes = dia[:7]
@@ -157,7 +192,44 @@ def dias_ingeribles(
         negados[mes] = (n + 1, motivo)
     for dia in [d for d in salida if d[:7] in negados]:
         del salida[dia]
-    return Ingeribles(salida, negados)
+    return Ingeribles(salida, negados, len(de_otro_camino))
+
+
+def dias_del_material(
+    repo: Path, dias: Mapping[str, str], materiales: Mapping[str, str], sha: str
+) -> dict[str, str]:
+    """De los `dias` ingeribles, SOLO los del mes que el libro DECLARA ser, por su sha.
+
+    `materiales` es `sha256 -> AAAA-MM` de `cobertura_material`. Tres negativas, todas antes de
+    leer una fila: un sha que no este en el manifiesto del corpus (el libro no es del corpus), un
+    sha que ningun tramo declare (el libro no es material de ningun mes), y un mes sin ningun dia
+    ingerible. Ninguna nombra un dia.
+    """
+    try:
+        manifiesto = cargar_manifiesto(repo / MANIFIESTO_CORPUS)
+    except InventarioError as exc:
+        raise IngestaError(str(exc)) from exc
+    del_corpus = {
+        str(f.get("sha256")) for f in manifiesto.get("ficheros") or [] if isinstance(f, dict)
+    }
+    if sha not in del_corpus:
+        raise IngestaError(
+            f"el material {sha[:12]}... no esta en {MANIFIESTO_CORPUS}: no es un fichero del "
+            f"corpus, o ha cambiado. No se lee"
+        )
+    mes = materiales.get(sha)
+    if mes is None:
+        raise IngestaError(
+            f"el material {sha[:12]}... no lo declara ningun tramo de cobertura_material: no "
+            f"consta de que mes es, y no se deduce de sus filas. No se lee"
+        )
+    salida = {d: c for d, c in dias.items() if d[:7] == mes}
+    if not salida:
+        raise IngestaError(
+            f"el material es de {mes} y ese mes no tiene ningun dia ingerible en el camino del "
+            f"kit. No se lee"
+        )
+    return salida
 
 
 def _decimal(valor: object, fila: str, columna: str) -> Decimal:

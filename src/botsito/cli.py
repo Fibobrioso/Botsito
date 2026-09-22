@@ -1519,32 +1519,43 @@ DIRECTORIO_DEV_TXT = "knowledge/cases/dev"
 def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     """Ingiere el detalle por operacion de los dias INGERIBLES (F14a, ADR-0037).
 
-    No hay `--dias`: el conjunto se deriva de los repartos commiteados menos los reservados, y un
+    No hay `--dias`: el conjunto se deriva de los repartos commiteados DEL KIT menos los
+    reservados, y de ahi SOLO los del mes que el libro declara ser por su sha (2026-09-22). Un
     humano no puede ampliarlo.
     """
     from botsito.cases.biblioteca import como_documento, escribir
-    from botsito.cases.ingesta import dias_ingeribles, ingerir
+    from botsito.cases.ingesta import (
+        aviso_de_otro_camino,
+        dias_del_material,
+        dias_ingeribles,
+        ingerir,
+    )
     from botsito.cases.paquete import cargar_config
     from botsito.comun.documentos import sha256_hex
     from botsito.config.registro import cargar_registro
 
     material = Path(args.material)
+    errores: tuple[type[Exception], ...] = (OSError, *_kit_errores())
     try:
+        sha = sha256_hex(material.read_bytes())
         config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
         huso = registro.texto("huso_operativa")
         sesiones = [(s.nombre, s.desde, s.hasta) for s in config.sesiones]
         ingeribles = dias_ingeribles(repo, config.cobertura)
-        pedidos = ingeribles.dias
+        if ingeribles.de_otro_camino:
+            # ANTES de cualquier error: que no entran se dice aunque el comando falle despues.
+            print(aviso_de_otro_camino(ingeribles.de_otro_camino), file=sys.stderr)
+        pedidos = dias_del_material(repo, ingeribles.dias, config.materiales, sha)
         resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
-    except _kit_errores() as exc:
+    except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
     fuente = {
         "tipo": "backtest_xlsx",
         "fichero": material.as_posix(),
-        "sha256": sha256_hex(material.read_bytes()),
+        "sha256": sha,
         "ingerido_el": args.fecha,
     }
     docs = [
