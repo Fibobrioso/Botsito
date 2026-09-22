@@ -5,6 +5,40 @@ lo contradice, manda `PROJECT_STATE.md`. Regla (MASTER_PLAN §F): el HANDOFF se 
 rama de cada funcionalidad, antes del merge; en `main`, tras el tag `stable/*`, solo puede cambiar
 `PROJECT_STATE.md` (un `docs(handoff)` en main puso la CI en rojo dos veces, F04 y F05).
 
+## Estado (2026-09-21, rama `trabajo/abril-y-la-caja` esperando validacion; lo de debajo es anterior)
+- **A-18 SIGUE ABIERTA.** Abril se abrio para poner la CAJA sobre las velas -lo unico que separa
+  `(riesgo_real, 0,8)` de `(caja_completa, 1,0)`, que predicen el MISMO suelo de 3,00- y la medida
+  salio **NO CONCLUYENTE**: 1,00 acierta 4 de 35 y 1,25 acierta 3, INDISTINGUIBLES de los tres
+  senuelos (4, 4, 5) y muy por debajo del umbral 17,5. Criterios PRE-REGISTRADOS y commiteados
+  (96b3664) antes de descargar y de abrir nada.
+- **LO QUE ESO SI DICE:** los niveles derivados de la distancia entrada-stop NO caen sobre fractales
+  mas que el azar, mientras que la ENTRADA si (7 de 35 a +/-2, 17 a +/-5, por encima de todos). El
+  ancla no esta rota: **lo que falla es el blanco**. El fractal 5/120 no captura lo que el trader
+  llama estructura, y cualquier medida futura necesita OTRA definicion.
+- **EL RELOJ DE FX REPLAY ES UTC+2 FIJO**, y esto es lo que hay que saber antes de comparar NADA con
+  su material. Lo dice el propio grafico en el fotograma de v4: `14:29:59 UTC+2`, y ese fotograma es
+  de ENERO, asi que no es Europe/Madrid (UTC+1 en enero). Con el desfase aplicado, las dos velas que
+  las leyendas de v5 dan exactas cuadran con Dukascopy a **1 y 2 PUNTOS**. Es la PRIMERA MEDIDA DE
+  A-16 y con n=2 no cierra nada.
+- **YO CONCLUI LO CONTRARIO A MEDIA RAMA Y ERA FALSO:** dije "las series no cuadran, la medida 2 no
+  se ejecuta" por dos fallos encadenados -suponer que el eje era UTC sin comprobarlo, y leer `10:08`
+  donde pone `10:04`-. Lo destapo mirar un fotograma de OTRO video por un motivo distinto. Si vuelves
+  a comparar pantalla con velas: **comprueba el huso del grafico ANTES**.
+- **`maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS**, no la excursion maxima: `maxTP` ==
+  `avgClosePrice` en las 17 filas donde existen las dos, sin excepcion, y presente si y solo si
+  `rPnL > 0`. F14a lo habia SUPUESTO al reves. CONSECUENCIA: las tres ganadoras por debajo de 3R
+  -2,50 agosto, 2,57 y 2,94 abril- CERRARON ahi, no es que no llegaran, y eso contradice el "sin
+  toma de parciales" de v6 0:17:07 mas fuerte de lo que parecia.
+- **HOY NO HAY NI UN DIA CIEGO**, y la guardia que escribi el dia anterior es la que llevo el
+  universo a cero: CON cobertura 0 casos, SIN cobertura 22, todos de junio. ADR-0025 saca junio
+  porque "no hay decision suya con la que COMPARAR" -camino de fidelidad-, pero un paquete CIEGO no
+  compara, hace ETIQUETAR, y junio no esta en `vistos.yaml`. Es el PATRON 2, y el informe de esa
+  rama afirma haberlo comprobado. **Lo decide el consultor.**
+- LA PETICION AL TRADER SON DOS COSAS DISTINTAS: para la sesion ciega basta una CONFIRMACION por
+  escrito; para llenar `fidelidad-2` y `fidelidad-3` hace falta un BACKTEST suyo. Y son
+  INCOMPATIBLES sobre el mismo mes. El texto literal esta en el informe §R6.
+- Enero queda NOMBRADO como tercer mes de desarrollo a coste de descarga cero, y NO se abrio.
+
 ## Estado (2026-09-21, rama `trabajo/cobertura-material-del-kit` esperando validacion; lo de debajo es anterior)
 - **LA RAMA NO VA DE JUNIO. VA DE QUE EL CERO SIGNIFIQUE UNA SOLA COSA.** Hasta hoy un dia sin
   filas podia ser DOS cosas incompatibles -«el trader miro y no opero», que es UN DATO SUYO, y

@@ -93,6 +93,13 @@ phase: post-F13 (abre F14a: la ingesta del detalle por operación)
    > objetivo planeado.**
    >
    > Y hay huella mecánica de la regla dentro del propio fichero, independiente de la cita: el RR
+   > **CORRECCIÓN del 2026-09-21 (rama `trabajo/abril-y-la-caja`): `maxTP` es el PRECIO DE
+   > CIERRE de las ganadoras, no la excursión favorable máxima.** Medido sobre abril por
+   > consistencia interna: `maxTP` == `avgClosePrice` en las 17 filas donde existen las dos, sin
+   > excepción, y presente si y sólo si `rPnL > 0`. Lo que sigue se escribió con la lectura vieja
+   > —«recorrido máximo»— y su conclusión aguanta, pero por otro camino: una orden límite en 3R
+   > **cierra en 3R**, así que 14 cierres por encima dicen que el TP no estaba ahí.
+   >
    > implícito de `maxTP` tiene **suelo en 3,00** —17 de 18 filas en 3,00 o por encima, tres
    > clavadas en 3,00, con un único 2,50—, que es lo que se ve si la salida ocurre en 3R. Y que
    > **14** de 18 **se pasen** de 3,00 es evidencia de que el TP **no** es una orden límite
