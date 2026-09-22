@@ -388,6 +388,23 @@ Las tres apariciones del tercero, esta semana:
 
 ## 6c. A-18 tiene evidencia en los dos lados, y son de clase distinta
 
+> **ANOTACIÓN del 2026-09-22, firmada por `trabajo/la-caja-del-29-de-abril`. El cuerpo de esta
+> sección NO se reescribe.**
+>
+> El fotograma de v5 `0:04:52-53` que esta sección usa como **«LA PANTALLA»** es una
+> **DEMOSTRACIÓN y no una operación registrada**, medido contra el xlsx de abril: su riesgo es
+> 0,00019 y **ninguna** de las cuatro operaciones del 2026-04-29 lo tiene —d = 15, 15, 11 y 25
+> puntos— y el nivel está unos 70 puntos por debajo de las dos más cercanas.
+>
+> **Lo que la herramienta CALCULA no cambia por eso**: que el R/R de FX Replay se mida sobre
+> entrada-stop es una propiedad del programa, no de esa operación. **Lo que cambia** es que su
+> arrastre hasta 3 es **un gesto deliberado de enseñanza** y no el registro de lo que hizo, y
+> quien lo cite después tiene que saberlo.
+>
+> Y un matiz que la misma medida añade: **otro** instante del mismo vídeo, `0:03:36`, sí está
+> parado sobre una operación registrada —07:55 UTC, `sell` 1.17064 / 1.17079, que perdió, con
+> su reentrada a las 07:58 que ganó a RR 4,60—. **Son dos momentos distintos del mismo vídeo.**
+
 Salió en la pasada por el material de septiembre, **después** de que esta rama escribiera su §4.
 
 | Lado | De dónde sale | Qué es | Hacia dónde empuja |

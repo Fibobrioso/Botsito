@@ -13,6 +13,11 @@ pregunta al material **qué son sus niveles**.
 
 ### (a) La operación del fotograma NO está en el xlsx
 
+> **CORREGIDO DENTRO DE ESTA MISMA RAMA, ver §R3.** Esto es cierto del instante `0:04:52`
+> —riesgo 0,00019— pero **falso del instante que la transcripción localiza**, `0:03:36`, que
+> está parado en una operación **sí registrada**. Se deja el apartado como se escribió, con el
+> puntero: es lo que se creía al empezar, y la corrección tiene más valor con el error delante.
+
 ```
 operaciones del 2026-04-29 en el libro de abril: 4, todas SELL
   07:55 UTC (eje 09:55)  entrada 1.17064  stop 1.17079  d = 0.00015
@@ -105,5 +110,113 @@ de que **la caja y el 0,8 se dibujan juntos**.
 **n será 1 o 2. NO DECIDE A-18, y se escribe así de claro.** Lo que produce es la **primera
 descripción medida de cómo el trader elige sus niveles**.
 
+---
+
+# RESULTADOS
+
+Los criterios de arriba no se han tocado.
+
+## R1. La caja del trader, vista: su plantilla LLEVA el 0,8
+
+Fotogramas abiertos, **los dos por instante localizado** (ADR-0038): `000216000.png` (v5 `0:03:36`,
+*«protejo aquí»*) y `000225000.png` (v5 `0:03:45`, el mismo tramo, con las velas ocultas y la caja
+limpia).
+
+**La caja está dibujada y sus cinco niveles son legibles.** En `000225000.png`, de arriba abajo:
+`1` · `0.8` · `0.5` · `0.25` · `0`, cada uno con su color —el `0,8` en **azul**, el `0,5` en verde,
+el `0,25` en naranja— y repetidos en los dos bordes del rectángulo. Las proporciones cuadran con las
+etiquetas dentro de un píxel:
+
+```
+0 en y=424 · 1 en y=237  ->  alto 187 px
+   0,25 esperado y=377,3   ·  leido 377
+   0,50 esperado y=330,5   ·  leido 331
+   0,80 esperado y=274,4   ·  leido 274
+```
+
+**Eso es el hallazgo, y es nuevo: el `0,8` no es una inferencia nuestra. Está en su plantilla de
+dibujo, con línea propia, y lo dibuja a la vez que la caja.** Hasta hoy el 0,8 venía sólo de lo que
+él **dice** —A-10, resuelta por un registro suyo— y de lo que la spec escribe. Ahora se ve.
+
+## R2. Lo pre-registrado: media respuesta, y la otra media NO CONCLUYENTE
+
+**«En qué extremo de la caja está la entrada»: en el `0`.** En `000216000.png` la línea discontinua
+del precio actual cae en `y≈422` y el nivel `0` de la caja en `y≈424` —dos píxeles, con una escala
+del orden de 10 px por punto—. **El nivel 0 es la entrada**, y la caja se dibuja **desde** ella.
+
+**«Sobre qué etiqueta cae la línea de stop»: NO CONCLUYENTE, y el motivo es honesto.** No consigo
+fijar la escala de precios de la imagen con precisión suficiente: distintos pares de referencias que
+creo leer dan escalas incompatibles —de 1,5 a 16 px por punto— y con esa dispersión **cualquier
+lectura del stop sería inventada**. Las etiquetas son legibles; la **escala** no. Sin ella no se
+puede decir si el stop cae en `0,8` o en `1`, que es justo lo que decide.
+
+**Así que A-18 no se mueve por esta vía**, tal como el pre-registro contemplaba.
+
+**Y lo que sí queda atado, que no es poco:** la operación es **real y está en el xlsx**. El replay
+está parado en la vela de **07:55 UTC**, y esa es la primera de las cuatro del día:
+
+```
+07:55 UTC  sell  entrada 1.17064  stop 1.17079  d = 15 pt  ->  PERDIO (cierre 1.17079, rPnL -15)
+07:58 UTC  sell  entrada 1.17064  stop 1.17079  d = 15 pt  ->  GANO   (cierre 1.16995, RR 4,60)
+```
+
+Las dos son **la misma entrada y el mismo stop**: es la **reentrada** que él narra en ese momento
+—*«nos mitiga y nuevamente, pues, sería cuestión de poner otra reentrada aquí»*—. **La demostración
+del fotograma es la operación del xlsx**, no un dibujo suelto.
+
+Y lo que implicaría cada lectura, escrito aunque no se pueda elegir entre ellas:
+
+```
+stop en 0,8 de la caja  ->  caja = 15/0,8 = 18,75 pt  ·  nivel 1 = 1,170828
+stop en 1,0 de la caja  ->  caja = 15 pt              ·  nivel 1 = 1,17079
+```
+
+## R3. Corrección a (a): el fotograma SÍ está en el xlsx, y me equivoqué al decir que no
+
+En §1(a) escribí que la operación del fotograma **no** está en el libro, porque el riesgo que se lee
+en `0:04:52` es **0,00019** y ninguna de las cuatro del día lo tiene. Eso sigue siendo cierto **para
+ese instante**. Pero el instante que la transcripción localiza —`0:03:36`, *«protejo aquí»*— está
+parado en **07:55 UTC**, que **sí** es una operación registrada, con `d = 15`.
+
+**Son dos momentos distintos del mismo vídeo y los confundí en uno.** El de `0:04:52` es él
+arrastrando el objetivo con la herramienta —un gesto de enseñanza, riesgo 19— y el de `0:03:36` es
+la operación real. **La lección se repite: localizar el instante antes de interpretarlo**, que es lo
+que ADR-0038 acaba de hacer obligatorio por otro motivo.
+
+## R4. El reloj: TERCERA confirmación, y a 1 punto
+
+La leyenda de `000216000.png` da otra vela exacta: `O 1.17071 H 1.17072 L 1.17064 C 1.17072`, con el
+eje en `Wed 29 Apr '26`. El minuto más parecido de todo el día en Dukascopy:
+
+```
+07:55 UTC  ->  1 punto de diferencia   (eje UTC+2: 09:55)
+07:35 UTC  ->  3 puntos
+04:35 UTC  ->  4 puntos
+```
+
+**UTC+2 otra vez, y a 1 punto.** A-16 pasa de n=2 a **n=3**, las tres entre 1 y 2 puntos. **Sigue
+ABIERTA**: `estado`, `decision` y `evidencia` sin tocar.
+
+## R5. A-33, abierta
+
+`clase: pregunta`, `resuelve_en: [F20, F24, F26]`, `parametros: [parciales, objetivo_rr]`, en
+`ambiguedades.yaml` y en la tabla Known Ambiguities, con `botsito spec docs --escribir` en el mismo
+commit. **33 ambigüedades registradas.**
+
+Lleva las tres ganadoras que **cierran** por debajo de 3R —2,50 en agosto; 2,57 y 2,94 en abril, en
+dos meses independientes—, la corrección de que `maxTP` es el precio de cierre y no la excursión
+máxima, y la cita de v6 `0:17:07` copiada de la cruda.
+
+> **No hay item de evidencia de v6 `0:17:07`.** La cita vive en el texto de la `pregunta`, y la
+> `evidencia` cita los items **reales** que hay sobre parciales. Estuve a punto de escribir un id
+> inventado —`ev-v6-001707-9f2b6e31`— y la comprobación lo paró. Es exactamente lo que la guardia
+> existe para impedir, y queda dicho porque el error llegó a estar escrito.
+
+## R6. Lo que esta rama no hizo
+
+No se reajustó el fractal. No se abrió el xlsx de enero. No se tocó febrero. No se tocó la
+predicción congelada de mayo. **ADR-0038 no decide nada sobre qué se puede mirar**: sólo cómo se
+llega a mirarlo.
+
 ## Estado
-PRE-REGISTRO COMMITEADO · sin fotogramas abiertos en esta rama
+WAITING_FOR_USER_VALIDATION
