@@ -1,0 +1,35 @@
+dia: '2026-05-28'
+fuente:
+  fichero: corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/backtesting-analytics
+    MAYO 2026.xlsx
+  ingerido_el: '2026-09-22'
+  sha256: ba3aeceb6c496c2f4191540a9d79ca4a0bda078254a39c0290ed4d714a3aa74c
+  tipo: backtest_xlsx
+id: caso-eurusd-2026-05-28
+operaciones:
+- direccion: venta
+  entrada: '1.15924'
+  instante_utc: '2026-05-28T05:08:10+00:00'
+  sesion: 07-11
+  stop: '1.15934'
+- direccion: venta
+  entrada: '1.15975'
+  instante_utc: '2026-05-28T05:37:30+00:00'
+  sesion: 07-11
+  stop: '1.15984'
+- direccion: venta
+  entrada: '1.1606'
+  instante_utc: '2026-05-28T06:24:20+00:00'
+  sesion: 07-11
+  stop: '1.16078'
+- direccion: venta
+  entrada: '1.16155'
+  instante_utc: '2026-05-28T07:15:05+00:00'
+  sesion: 07-11
+  stop: '1.16178'
+- direccion: venta
+  entrada: '1.16174'
+  instante_utc: '2026-05-28T09:17:45+00:00'
+  sesion: 11-15
+  stop: '1.16184'
+simbolo: EURUSD

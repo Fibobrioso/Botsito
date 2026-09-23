@@ -27,7 +27,7 @@ from botsito.cases.ingesta import IngestaError, dias_ingeribles, ingerir
 from botsito.cases.paquete import KitError, _cobertura_desde_doc
 from botsito.cases.ventanas import motivo_de_cobertura
 
-from .test_ingesta import CABECERA, SESIONES, _repo, _xlsx
+from .test_ingesta import CABECERA, SESIONES, _declarar, _repo, _xlsx
 
 MAYO = {"2026-05": (("2026-05-01", "2026-05-31"),)}
 MAYO_Y_JUNIO_VACIO: dict[str, tuple[tuple[str, str], ...]] = {**MAYO, "2026-06": ()}
@@ -90,6 +90,7 @@ def test_los_dos_ceros_se_distinguen(tmp_path: Path) -> None:
     repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev", "caso-eurusd-2026-05-12": "dev"})
     material = tmp_path / "solo-el-8.xlsx"
     _xlsx(material, [CABECERA, ["2026/05/08 07:30:00", "buy", "1.1000", "1.0990", "", ""]])
+    _declarar(repo, material)
 
     # (a) el 12 esta cubierto y no tiene operaciones: NO es error, y se cuenta.
     r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08", "2026-05-12"])

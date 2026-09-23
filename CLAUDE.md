@@ -27,6 +27,10 @@ rechaza un commit directo en `main` salvo con `BOTSITO_ALLOW_MAIN=1`, que solo u
   exige la guardia). La via de propuesta (`evidence propose --check` + `accept`) NO admite
   `supersede`: por ahi no se puede corregir (deuda anotada el 2026-09-17).
 - `knowledge/feedback/` → SOLO ANADIR. Nunca se edita un registro.
+- `knowledge/corpus/libros.yaml` → SOLO ANADIR (ADR-0039). El sha fija los bytes, asi que el formato
+  y el huso con que se lee un libro no pueden cambiar nunca: una entrada commiteada no se edita ni se
+  borra. Y ningun libro se lee sin su entrada. Lo vigila `knowledge validate` contra el historial; el
+  hook no, porque solo sabe de inmutabilidad fichero a fichero.
 - `knowledge/spec/`, `knowledge/cases/` → versionados; cada cambio de valor cita su fuente.
 - `data/manifests/`, `knowledge/corpus/transcripciones/`, `knowledge/corpus/fotogramas/` → INMUTABLES
   tras commit.

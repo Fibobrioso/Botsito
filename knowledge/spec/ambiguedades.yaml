@@ -698,7 +698,10 @@ ambiguedades:
       ganadoras y no la excursion maxima -`== avgClosePrice` en 17 de 17 filas de abril donde
       existen las dos, y presente si y solo si `rPnL > 0`-, asi que esas tres no son operaciones
       que NO LLEGARON a 3R: son operaciones que CERRARON en ganancia por debajo de 3R. En F14a
-      esa columna se habia SUPUESTO al reves (ADR-0037 y su correccion del 2026-09-22)
+      esa columna se habia SUPUESTO al reves (ADR-0037 y su correccion del 2026-09-22).
+      OBSERVACION DESCRIPTIVA del 2026-09-22 (MAYO-DEV, ADR-0040), sin atribuir causa: ganadoras
+      por debajo de 3R = agosto 1 (2,50), abril 2 (2,57; 2,94), mayo 1 (2,90), esta ultima
+      sobre los 6 dias `dev` de mayo
     resuelve_en: [F20, F24, F26]
     # NO hay item de evidencia de v6 0:17:07: la cita vive en la `pregunta`, copiada literal de la
     # transcripcion CRUDA. Se citan los items REALES que hay sobre parciales; inventar un id seria

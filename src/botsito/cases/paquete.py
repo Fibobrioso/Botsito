@@ -65,6 +65,7 @@ SESION = re.compile(r"^\d{4}-\d{2}-\d{2}-sesion-\d{2}$", re.ASCII)
 _MES = re.compile(r"^\d{4}-\d{2}$", re.ASCII)
 _HORA = re.compile(r"^\d{2}:\d{2}$", re.ASCII)
 _SHA_BLOB = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
+_SHA256 = re.compile(r"^[0-9a-f]{64}$", re.ASCII)
 _DIA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 # Claves de config que un camino puede traer y otro no. La guardia sigue siendo estricta:
 # todo lo que no este aqui ni en las obligatorias se rechaza (ADR-0036).
@@ -95,6 +96,10 @@ class Config:
     # Hasta donde llega el MATERIAL ETIQUETADO del trader, por mes: `AAAA-MM` -> tramos
     # `(desde, hasta)` de dias del trader. Vacio = ese mes no se acota (ADR-0036).
     cobertura: dict[str, tuple[tuple[str, str], ...]]
+    # `sha256 del libro -> AAAA-MM`: EL MES DEL MATERIAL, DECLARADO y no deducido de sus filas
+    # (2026-09-22, deuda de `trabajo/cobertura-material-del-kit`). Sale del `material_sha256` de
+    # cada tramo, copiado del manifiesto del corpus.
+    materiales: dict[str, str]
     doc: dict[str, Any]
 
     @property
@@ -117,6 +122,12 @@ def _hora(v: object, que: str) -> str:
 
 
 def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, str], ...]]:
+    return _cobertura_y_materiales(crudo, nombre)[0]
+
+
+def _cobertura_y_materiales(
+    crudo: Any, nombre: str
+) -> tuple[dict[str, tuple[tuple[str, str], ...]], dict[str, str]]:
     """`cobertura_material`: hasta donde llega el material ETIQUETADO del trader (ADR-0036).
 
     SOLO TRAMOS `{desde, hasta}`. NUNCA una lista de dias cubiertos, y se rechaza por la FORMA,
@@ -127,12 +138,18 @@ def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, 
 
     Es ADITIVO: una entrega nueva del mismo mes ANADE un tramo, no corrige el que hay. Por eso el
     valor es una lista y no un `hasta:` suelto, que ademas no sabria expresar una entrega partida.
+
+    **EL MES DEL MATERIAL SE DECLARA** (2026-09-22): un tramo puede llevar `material_sha256`, el
+    sha del xlsx que lo entrega, COPIADO del manifiesto del corpus. Es lo que deja a `casos
+    ingerir` saber de que mes es un libro SIN leer una fila. Un mismo sha en dos meses se rechaza:
+    un libro que dijera ser de dos meses devolveria a deducir el mes de las filas.
     """
     if crudo is None:
-        return {}
+        return {}, {}
     if not isinstance(crudo, dict):
         raise KitError(f"{nombre}: cobertura_material es un mapa AAAA-MM -> lista de tramos")
     salida: dict[str, tuple[tuple[str, str], ...]] = {}
+    materiales: dict[str, str] = {}
     for mes, tramos in crudo.items():
         if not isinstance(mes, str) or not _MES.match(mes):
             raise KitError(f"{nombre}: cobertura_material: {mes!r} no es un mes AAAA-MM")
@@ -153,12 +170,25 @@ def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, 
                     f"rango que no estuviera en ella seria un dia sin operaciones, y eso es su "
                     f"etiqueta (ADR-0036)"
                 )
-            sobran = set(tramo) - {"desde", "hasta", "entregado_el", "fuente"}
+            sobran = set(tramo) - {"desde", "hasta", "entregado_el", "fuente", "material_sha256"}
             if not {"desde", "hasta"} <= set(tramo) or sobran:
                 raise KitError(
                     f"{nombre}: cobertura_material/{mes}: tramo con desde, hasta y opcionalmente "
-                    f"entregado_el y fuente"
+                    f"entregado_el, fuente y material_sha256"
                 )
+            if "material_sha256" in tramo:
+                sha = tramo["material_sha256"]
+                if not isinstance(sha, str) or not _SHA256.match(sha):
+                    raise KitError(
+                        f"{nombre}: cobertura_material/{mes}: material_sha256 no es un sha256 en "
+                        f"hexadecimal minuscula"
+                    )
+                if materiales.get(sha, mes) != mes:
+                    raise KitError(
+                        f"{nombre}: cobertura_material: el material {sha[:12]}... se declara de "
+                        f"{materiales[sha]} y de {mes}. Un libro es de UN mes"
+                    )
+                materiales[sha] = mes
             desde, hasta = str(tramo["desde"]), str(tramo["hasta"])
             for f in (desde, hasta):
                 if not _DIA.match(f):
@@ -174,7 +204,7 @@ def _cobertura_desde_doc(crudo: Any, nombre: str) -> dict[str, tuple[tuple[str, 
         ):
             raise KitError(f"{nombre}: cobertura_material/{mes}: tramos sin ordenar o solapados")
         salida[mes] = tuple(pares)
-    return salida
+    return salida, materiales
 
 
 def config_desde_doc(
@@ -272,7 +302,7 @@ def config_desde_doc(
     for k, v in particiones.items():
         if isinstance(v, bool) or not isinstance(v, int) or v < 0:
             raise KitError(f"{nombre}: particion {k}: entero >= 0")
-    cobertura = _cobertura_desde_doc(doc.get("cobertura_material"), nombre)
+    cobertura, materiales = _cobertura_y_materiales(doc.get("cobertura_material"), nombre)
     return Config(
         str(doc["simbolo"]),
         str(doc["dataset_prefijo"]),
@@ -283,6 +313,7 @@ def config_desde_doc(
         tuple(etiquetas),
         {str(k): int(v) for k, v in particiones.items()},
         cobertura,
+        materiales,
         doc,
     )
 

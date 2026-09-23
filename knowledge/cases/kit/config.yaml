@@ -60,6 +60,10 @@ cobertura_material:
       hasta: "2026-05-31"
       entregado_el: "2026-09-11"
       fuente: [8fb2323]
+      # EL MES DEL MATERIAL, DECLARADO (2026-09-22): el sha del libro, COPIADO del manifiesto del
+      # corpus (`knowledge/corpus/manifest.yaml`), no recalculado. `casos ingerir` compara el sha
+      # del `--material` con este y solo pide los dias de ESTE mes, sin leer una fila.
+      material_sha256: "ba3aeceb6c496c2f4191540a9d79ca4a0bda078254a39c0290ed4d714a3aa74c"
   # CERO TRAMOS: junio NO tiene material y nunca lo tendra. El trader se comprometio a dos meses y
   # entrego uno, asi que para junio no hay ninguna decision suya (ADR-0025 §1). NO esta en
   # `vistos.yaml` y es CORRECTO que no este -el trader no lo vio-: es ciego y esta vacio, que es
@@ -73,6 +77,9 @@ cobertura_material:
       hasta: "2026-09-18"
       entregado_el: "2026-09-20"
       fuente: [5c9fcc3, ADR-0034]
+      # SIN `material_sha256`, a proposito (2026-09-22, ADR-0039): hay material de septiembre y
+      # `casos ingerir` no lo lee. El sha vuelve cuando septiembre tenga su brief Y su medida en
+      # `knowledge/corpus/libros.yaml`, los dos a la vez.
 # Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
 # OJO: estos cupos se dimensionaron para los 40 dias de mayo+junio. JUNIO QUEDA DESCARTADO
 # (decision del consultor, 2026-09-12), asi que el reparto REAL de la sesion 1 es 6 dev y 13
