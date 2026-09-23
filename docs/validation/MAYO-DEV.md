@@ -58,12 +58,31 @@ abril sin enseñar la cuenta; aquí queda sustituido por lo medido.
 
 ### La lectura contra el criterio congelado
 
-El criterio, escrito el 2026-09-21 antes de mirar mayo y leído con su anotación:
+El criterio, literal, de `F14A-INGESTA.md` §4, escrito el 2026-09-21 antes de mirar mayo:
 
-> Región **poblada** con suelo en 3,00 → la combinación CONFIRMED de hoy (`caja_completa` con el
-> stop a 0,8) es FALSA. NO elige entre los dos supervivientes.
-> Región **vacía** con suelo en 3,75 → los meses se contradicen: A-18 sube a `bloqueante: true`.
-> Otra cosa → se escribe lo que dé y no se fuerza.
+> ```
+> REGIÓN DISCRIMINANTE: el RR implícito de maxTP sobre entrada-stop, en  [3,00 , 3,75)
+>
+>   base = riesgo_real    ->  la región está POBLADA, con suelo y moda en 3,00
+>   base = caja_completa  ->  la región está VACÍA,   con suelo en 3,75
+> ```
+>
+> | Lo que dé mayo | Qué se hace |
+> |---|---|
+> | Región **poblada** y suelo en 3,00 | Dos meses independientes diciendo lo mismo: **se decide A-18 hacia `riesgo_real`**, con su ADR y con el cambio del parámetro |
+> | Región **vacía** y suelo en 3,75 | Los dos meses se contradicen: A-18 **se queda abierta y sube a `bloqueante: true`**, porque el material diciendo cosas distintas según el mes es peor que no saber |
+> | Otra cosa | Se escribe lo que dé. **No se fuerza** |
+
+Y su anotación, commiteada el mismo día y también antes de mirar mayo:
+
+> Lo que la región poblada con suelo en 3,00 decide es que **la COMBINACIÓN CONFIRMED de hoy**
+> —`caja_completa` con el stop a 0,8— **es falsa**. **NO elige entre los dos supervivientes:**
+> `(riesgo_real, 0,8)` y `(caja_completa, 1,0)` predicen el mismo suelo.
+
+Se aplica la primera fila leída con su anotación. La letra de la fila («se decide A-18 hacia
+`riesgo_real` […] con el cambio del parámetro») y la anotación estaban en tensión desde que se
+escribieron. Se sigue la anotación: se refuta la combinación y no se cambia ningún parámetro
+(ADR-0040, decisión 4).
 
 - **La región [3,00 , 3,75) está POBLADA: 4 de 5.** Aplica la primera rama. **(caja_completa,
   0,8) sigue refutada, ahora por un tercer mes independiente**, después de agosto y abril. **A-18
@@ -75,15 +94,13 @@ El criterio, escrito el 2026-09-21 antes de mirar mayo y leído con su anotació
   tamaño: venía de que `caja_completa` con 0,8 predice la región **VACÍA**, y «vacía» es absoluto.
   Una sola fila dentro la refuta, y aquí hay cuatro. Lo contrario no sería cierto: con n = 5, una
   región «poblada» o una forma concreta de la distribución no se sostendrían como hecho.
-- **El suelo.** El criterio habla de «suelo en 3,00» y mayo tiene su mínimo en 2,90, con el resto
-  en 3,05 o más. Lo que decide la rama es la región poblada, que es lo que la vacía de
-  `caja_completa` contradice. Se dice para que nadie lea «suelo en 3,00» como «ninguna por debajo».
+- **El suelo.** «Suelo» es el límite inferior de la región (3,00 en una rama, 3,75 en la otra), no
+  el mínimo de la distribución. El 2,90 queda fuera de la región y no cambia qué rama aplica.
 
-**Pendiente, y no lo decide esta rama.** El brief de apertura decía que la primera rama **«exige
-ADR»**: uno que escriba lo refutado —la combinación CONFIRMED `(caja_completa, 0,8)`— y el residuo
-abierto —cuál de los dos supervivientes rige—. Ese ADR **no se ha escrito aquí**, porque el brief
-del cierre no lo pedía. Tampoco se ha tocado ningún parámetro ni el texto de A-18 en
-`knowledge/spec/ambiguedades.yaml`. Lo decide el consultor.
+**El ADR que la primera rama exige es ADR-0040** (`f88da0b`). Escribe lo refutado —la combinación
+CONFIRMED `(caja_completa, 0,8)`, con el n y el recuento de cada mes— y el residuo abierto: los dos
+supervivientes, y la condición que los separaría, que es un material que traiga la caja. No se
+abre ni se pide nada. No cambia ningún parámetro, y el texto de A-18 no se ha tocado.
 
 ### La forma: observación descriptiva, no una hipótesis
 
@@ -91,8 +108,8 @@ del cierre no lo pedía. Tampoco se ha tocado ningún parámetro ni el texto de 
   interpretación**. No estaba pre-registrada y **no se convierte en hipótesis**.
 - **Nota para A-33** (*«tres ganadoras que cierran por debajo de 3R»*): mayo añade **una ganadora
   en 2,90**. **Sin atribuirle causa.** Con agosto y abril suman cuatro ganadoras por debajo de 3R
-  en tres meses. La nota vive en este informe: el texto de A-33 en `ambiguedades.yaml` no se ha
-  tocado, y hacerlo obliga a pasar `spec docs --escribir` en el mismo commit.
+  en tres meses. Añadida al final de la `pregunta` de A-33, sin reescribir el texto que había
+  (`0992c14`, con `docs/spec/ambiguedades.md` regenerado en el mismo commit).
 
 ## 3. Lo que se ingirió (A)
 
@@ -222,17 +239,15 @@ de un libro que contiene días reservados**: agosto y abril tenían cero.
 
 ## 7. Lo que NO se ha hecho, y dónde queda
 
-- **El ADR de la primera rama del criterio** (§2), que pedía el brief de apertura. Lo decide el
-  consultor.
-- **La nota de A-33 en `ambiguedades.yaml`**: queda en este informe (§2).
 - **Quitar la regla «mes pedido sin filas es error»**: queda en Technical Debt, pagada en parte.
 - **Corregir `docs/runbooks/RITUAL.md`**, las ventanas de `state check`: **en su propia rama,
   después de mayo**. El «rama siguiente» de esa deuda se lee así. Mientras tanto sigue mandando la
   anulación de `PROJECT_STATE.md`.
 - **El hook de pre-commit no cubre `libros.yaml`**: solo sabe de ficheros inmutables enteros. La
   garantía es `knowledge validate`.
-- **El índice de ADRs de `PROJECT_STATE.md` no tiene la entrada de ADR-0038**, desde la rama
-  anterior. No se ha tocado aquí.
+- **El índice de ADRs de `PROJECT_STATE.md`** no tenía la entrada de ADR-0038 desde la rama
+  anterior. Se añadió en esta rama, junto con ADR-0039 y ADR-0040. **Sigue teniendo ADR-0033 dos
+  veces**, con dos redacciones distintas; no se ha tocado.
 - Nada de septiembre se ha abierto, febrero no se ha tocado y marzo no existe para esta rama.
 
 ## 8. Cierre
