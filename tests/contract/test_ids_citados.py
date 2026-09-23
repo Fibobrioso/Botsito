@@ -119,3 +119,15 @@ def test_dos_bloques_en_un_documento_fallan(tmp_path: Path) -> None:
     texto = _bloque(f"{NO_EXISTE} — uno") + _bloque(f"{NO_EXISTE} — otro") + f"\n{NO_EXISTE}\n"
     problemas = problemas_de_ids_citados(_doc(tmp_path, texto), EXISTENTES)
     assert any("segundo bloque" in p for p in problemas)
+
+
+@pytest.mark.contract
+def test_un_ejemplo_indentado_como_codigo_no_abre_un_bloque(tmp_path: Path) -> None:
+    """Con 4 espacios o mas la linea es CODIGO (CommonMark): un documento puede ensenar la
+    sintaxis sin declarar nada. El informe de esta rama lo hace, y la primera version del parser
+    lo leia como un segundo bloque."""
+    ejemplo = "\n".join(
+        ["Asi se escribe:", "", "    ```ids-inexistentes", "    <id> — <motivo>", "    ```"]
+    )
+    texto = _bloque(f"{NO_EXISTE} — motivo") + f"\n{NO_EXISTE}\n\n" + ejemplo + "\n"
+    assert problemas_de_ids_citados(_doc(tmp_path, texto), EXISTENTES) == []

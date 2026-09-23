@@ -40,8 +40,12 @@ DOCUMENTOS_RAIZ = ("CLAUDE.md", "PROJECT_STATE.md")
 DIRECTORIO_DOCS = "docs"
 _TRAMO = re.compile(r"[A-Za-z0-9-]+")
 _CITA = re.compile(r"^\s*(?:>\s*)*")
-_APERTURA = re.compile(r"^\s*(?:>\s*)*```" + re.escape(BLOQUE) + r"\s*$")
-_CIERRE = re.compile(r"^\s*(?:>\s*)*```\s*$")
+# Una valla lo es con 3 espacios de sangria como mucho, como en CommonMark: con 4 o mas la linea es
+# CODIGO, y asi un documento puede ENSENAR la sintaxis sin abrir un bloque de verdad (medido el
+# 2026-09-22: el informe de esta rama lo hacia, y la primera version lo leia como segundo bloque).
+_VALLA = r"^(?: {0,3}> ?)*[ ]{0,3}```"
+_APERTURA = re.compile(_VALLA + re.escape(BLOQUE) + r"\s*$")
+_CIERRE = re.compile(_VALLA + r"\s*$")
 _SEPARADOR = " — "
 
 
