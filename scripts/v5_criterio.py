@@ -275,17 +275,33 @@ def sha_esperados() -> dict[str, str]:
     return {str(f["fichero"]): str(f["sha256"]) for f in filas}
 
 
-def verificar(nombres: tuple[str, ...]) -> None:
+def verificar(nombres: tuple[str, ...]) -> list[str]:
     """Todos los nombres estan en la lista cerrada y sus bytes son los que F05 extrajo. Nada se
-    decodifica hasta que TODOS pasan."""
+    decodifica hasta que TODOS pasan. Devuelve el registro de la verificacion, para imprimirlo."""
     fuera = [n for n in nombres if n not in MEDIR]
     if fuera:
         raise IntegridadError(f"fuera de la lista cerrada: {fuera}")
     esperados = sha_esperados()
+    registro: list[str] = []
     for n in nombres:
         real = hashlib.sha256((FOTOGRAMAS / f"{n}.png").read_bytes()).hexdigest()
         if esperados.get(f"{n}.png") != real:
             raise IntegridadError(f"{n}.png no es el fotograma que extrajo F05")
+        registro.append(f"INTEGRIDAD {n}.png sha256 {real} = indice F05: OK")
+    return registro
+
+
+def eslabones() -> list[str]:
+    """Los dos eslabones de la cadena de F05, para imprimirlos: manifiesto -> indice."""
+    texto = MANIFIESTO_F05.read_text(encoding="utf-8")
+    m = re.search(r"^sha256_index: ([0-9a-f]{64})$", texto, re.M)
+    indice = hashlib.sha256((FOTOGRAMAS / "index.jsonl").read_bytes()).hexdigest()
+    fijado = m.group(1) if m else "AUSENTE"
+    return [
+        f"INTEGRIDAD eslabon 1: {MANIFIESTO_F05.name} fija sha256_index {fijado}",
+        f"INTEGRIDAD eslabon 2: index.jsonl sha256 {indice}: "
+        + ("coincide" if indice == fijado else "NO COINCIDE"),
+    ]
 
 
 def leer_para_medir(nombre: str) -> Lectura:
@@ -375,7 +391,9 @@ def main(argv: list[str]) -> int:
             print(formato(leer(nombre)))
         return 0
     if argv[1:] == ["--medir"]:
-        verificar(MEDIR)  # los 36, contra F05, ANTES de decodificar ninguno
+        registro = verificar(MEDIR)  # los 36, contra F05, ANTES de decodificar ninguno
+        for linea in [*eslabones(), *registro]:
+            print(linea)
         por_instante: dict[str, str] = {}
         for instante, t in INSTANTES.items():
             lecturas = [leer_para_medir(f"{(t + k) * 1000:09d}") for k in range(VENTANA_S)]
