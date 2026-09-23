@@ -36,7 +36,7 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-EN CURSO: `trabajo/regla-mes-sin-filas` (Next Action 13), abierta el 2026-09-23. La regla «mes pedido sin filas» SE MANTIENE -detecta un libro atado al tramo de otro mes, que nada mas detecta, y no toca dias reservados-; su mensaje pasa a decir solo lo que la regla sabe, y se escriben por la CLI los tests que faltaban. Informe: docs/validation/REGLA-MES-SIN-FILAS.md.
+WAITING_FOR_USER_VALIDATION: `trabajo/regla-mes-sin-filas` (Next Action 13), informe docs/validation/REGLA-MES-SIN-FILAS.md, sin ADR. La regla «mes pedido sin filas» SE MANTIENE por el criterio fijado antes de medir: detecta un libro atado al tramo de otro mes, que nada mas detecta, y cuenta solo sobre los dias pedidos. Su mensaje dice ya solo lo que sabe, sin sujeto humano; los tests que faltaban van por la CLI; y el caso normal de un huso mal declarado -filas que se van a un dia no pedido- queda anotado en Technical Debt, sin detector.
 
 ## Current Branch
 trabajo/regla-mes-sin-filas
@@ -91,7 +91,7 @@ cb6b33e · merge de `trabajo/guardia-ids-docs` (tag `stable/F14-guardia-ids`), s
 - La guardia de ids citados en los documentos · validada el 2026-09-23 · docs/validation/GUARDIA-IDS-DOCS.md · sin ADR · tag stable/F14-guardia-ids
 
 ## Features Waiting for Validation
-— ninguna.
+- La regla del mes sin filas · docs/validation/REGLA-MES-SIN-FILAS.md · sin ADR · rama `trabajo/regla-mes-sin-filas`
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
