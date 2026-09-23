@@ -87,6 +87,19 @@ git rev-parse --short HEAD
 Current Feature, Stable Main State, Completed Features, Features Waiting for Validation, la entrada
 del Change Log, Next Action y Last Stable Commit.
 
+**El sha del merge lo LEE la sesión del repositorio; el mensaje que se le pasa NO lleva hueco
+`<SHA>`.** Antes de editar, la sesión ejecuta:
+
+```
+git branch --show-current
+git rev-parse --short HEAD
+git rev-parse --short "stable/<tag>^{commit}"
+```
+→ **Puerta:** la rama es `main` y los dos sha coinciden. Si no está en `main`, o el tag no existe, o
+no apunta a `HEAD`, **la sesión se para sin editar nada** y dice qué falta. Hasta el 2026-09-23 el
+mensaje llevaba un hueco `<SHA>` que se rellenaba a mano, y se pegó sin rellenar cuatro veces, dos de
+ellas antes del merge (patrón 5).
+
 ```
 git add PROJECT_STATE.md
 git diff --cached --name-only
