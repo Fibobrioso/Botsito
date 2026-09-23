@@ -208,5 +208,11 @@ Es lo que mas tiempo hace perder. `knowledge/corpus/transcripciones/` solo tiene
 ## Como se trabaja
 
 - Antes de escribir codigo, revision de diseno; se contesta MIDIENDO, no razonando.
+- **Y lo mismo vale para los briefs: toda afirmacion del consultor sobre como se comporta un
+  mecanismo se mide antes de escribirla en ningun documento; si la medida la contradice, gana la
+  medida y se dice con su nombre.** No es una regla nueva: es la de arriba aplicada tambien a los
+  briefs. Cubre el sub-caso del patron 5 que mas ha costado -una afirmacion sobre un mecanismo
+  adoptada sin medirla-; el patron 5 entero sigue sin deteccion mecanica (`PROJECT_STATE.md`,
+  Technical Debt).
 - Un informe por rama en `docs/validation/`, con su estado al final.
 - Nada afirma mas de lo que su cita sostiene.
