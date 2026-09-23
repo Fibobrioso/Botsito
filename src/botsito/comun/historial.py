@@ -69,6 +69,25 @@ def contenido_en_head(repo: Path, ruta: str) -> str | None:
     return _git(repo, "show", f"HEAD:{ruta}")
 
 
+def contenido_en(repo: Path, revision: str, ruta: str) -> str | None:
+    """El contenido de `ruta` en `revision`, o None si ahi no existe."""
+    return _git(repo, "show", f"{revision}:{ruta}")
+
+
+def versiones_del_fichero(repo: Path, ruta: str) -> list[tuple[str, str]] | None:
+    """`(commit, padre)` por cada commit que toco `ruta` y cada uno de sus padres, merges
+    incluidos. Es lo que necesita una guardia de SOLO ANADIR sobre UN fichero: comparar cada
+    version con la anterior. None si no hay git."""
+    salida = _git(repo, "log", "--format=%H %P", "--full-history", "--", ruta)
+    if salida is None:
+        return None
+    pares: list[tuple[str, str]] = []
+    for linea in salida.splitlines():
+        commit, *padres = linea.split()
+        pares += [(commit, p) for p in padres]
+    return pares
+
+
 def commit_que_anadio(repo: Path, ruta: str) -> tuple[str, str] | None:
     """(sha, fecha de committer en UTC ISO) del commit MAS ANTIGUO que anadio `ruta`; None si no
     esta commiteado o no hay git. La fecha es informativa (falsificable, cambia con rebase): la

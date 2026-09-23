@@ -1525,10 +1525,12 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     """
     from botsito.cases.biblioteca import como_documento, escribir
     from botsito.cases.ingesta import (
+        aviso_de_meses_sin_libro,
         aviso_de_otro_camino,
         dias_del_material,
         dias_ingeribles,
         ingerir,
+        meses_sin_libro,
     )
     from botsito.cases.paquete import cargar_config
     from botsito.comun.documentos import sha256_hex
@@ -1546,6 +1548,9 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
         if ingeribles.de_otro_camino:
             # ANTES de cualquier error: que no entran se dice aunque el comando falle despues.
             print(aviso_de_otro_camino(ingeribles.de_otro_camino), file=sys.stderr)
+        sin_libro = meses_sin_libro(config.cobertura, config.materiales)
+        if sin_libro:
+            print(aviso_de_meses_sin_libro(sin_libro), file=sys.stderr)
         pedidos = dias_del_material(repo, ingeribles.dias, config.materiales, sha)
         resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
     except errores as exc:

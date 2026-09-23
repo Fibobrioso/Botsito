@@ -24,7 +24,7 @@ import yaml
 from botsito import cli
 from botsito.cases.paquete import KitError, config_desde_doc
 
-from .test_ingesta import _xlsx
+from .test_ingesta import _declarar, _xlsx
 
 REAL = Path(__file__).resolve().parents[2]
 KIT = "knowledge/cases/kit"
@@ -74,7 +74,12 @@ def _libros(tmp: Path) -> dict[str, Path]:
     return salida
 
 
-def _repo(tmp: Path, libros: dict[str, Path], en_manifiesto: tuple[str, ...]) -> Path:
+def _repo(
+    tmp: Path,
+    libros: dict[str, Path],
+    en_manifiesto: tuple[str, ...],
+    sin_sha: tuple[str, ...] = (),
+) -> Path:
     repo = tmp / "repo"
     (repo / KIT / "2026-09-09-sesion-01").mkdir(parents=True)
     (repo / "knowledge/cases/fidelidad/eurusd-2026-09").mkdir(parents=True)
@@ -84,7 +89,11 @@ def _repo(tmp: Path, libros: dict[str, Path], en_manifiesto: tuple[str, ...]) ->
 
     config = yaml.safe_load((REAL / KIT / "config.yaml").read_text(encoding="utf-8"))
     config["cobertura_material"] = {
-        mes: [{"desde": f"{mes}-01", "hasta": f"{mes}-28", "material_sha256": _sha(libros[n])}]
+        mes: [
+            {"desde": f"{mes}-01", "hasta": f"{mes}-28"}
+            if mes in sin_sha
+            else {"desde": f"{mes}-01", "hasta": f"{mes}-28", "material_sha256": _sha(libros[n])}
+        ]
         for mes, n in (("2026-05", "mayo"), ("2026-07", "julio"), ("2026-09", "septiembre"))
     }
     (repo / KIT / "config.yaml").write_text(yaml.safe_dump(config), encoding="utf-8")
@@ -97,6 +106,8 @@ def _repo(tmp: Path, libros: dict[str, Path], en_manifiesto: tuple[str, ...]) ->
     (repo / "knowledge/corpus/manifest.yaml").write_text(
         yaml.safe_dump({"ficheros": ficheros}), encoding="utf-8"
     )
+    # Los libros del corpus de prueba, declarados (ADR-0039): lo que aqui se prueba es el MES.
+    _declarar(repo, *(libros[n] for n in en_manifiesto))
     for args in (("init", "-q"), ("add", "-A"), ("commit", "-q", "-m", "repartos")):
         subprocess.run(
             ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t", *args],
@@ -219,15 +230,42 @@ def test_un_libro_no_puede_declararse_de_dos_meses() -> None:
 
 
 @pytest.mark.contract
-def test_el_config_real_declara_el_mes_de_mayo_y_de_septiembre() -> None:
-    """Y los sha del config real son los del manifiesto del corpus, no unos copiados a mano."""
+def test_el_config_real_ata_mayo_por_su_sha_y_septiembre_no() -> None:
+    """Los sha del config real son los del manifiesto del corpus, no unos copiados a mano.
+
+    Septiembre llevo su sha desde el paso 1 de esta rama -lo pidio un brief escrito sin anticipar
+    ADR-0039- y la guardia del cruce con `libros.yaml` lo cazo el mismo dia: su tramo se queda,
+    sin sha, hasta que tenga su brief y su medida, los dos a la vez."""
     doc = yaml.safe_load((REAL / KIT / "config.yaml").read_text(encoding="utf-8"))
-    materiales = config_desde_doc(doc, "config.yaml").materiales
+    config = config_desde_doc(doc, "config.yaml")
+    materiales = config.materiales
+    assert config.cobertura["2026-09"], "el tramo de septiembre se queda"
     manifiesto = yaml.safe_load(
         (REAL / "knowledge/corpus/manifest.yaml").read_text(encoding="utf-8")
     )
     por_sha = {f["sha256"]: f["ruta"] for f in manifiesto["ficheros"]}
-    assert sorted(materiales.values()) == ["2026-05", "2026-09"]
+    assert sorted(materiales.values()) == ["2026-05"]
     for sha, mes in materiales.items():
         assert sha in por_sha, f"{mes}: su sha no esta en el manifiesto del corpus"
         assert por_sha[sha].endswith(".xlsx")
+
+
+@pytest.mark.contract
+def test_un_tramo_sin_sha_es_material_que_este_comando_no_lee(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Un tramo SIN `material_sha256` significa: «hay material de este mes, y `casos ingerir` no
+    lo lee». Julio tiene dias `dev` en el kit y su libro esta en el corpus y DECLARADO en
+    `libros.yaml`; aun asi, sin sha en su tramo, no se pide ni un dia suyo con ningun libro, y el
+    mensaje lo dice nombrando el MES y sin fechas."""
+    libros = _libros(tmp_path)
+    repo = _repo(tmp_path, libros, ("mayo", "julio", "septiembre", "ajeno"), sin_sha=("2026-07",))
+    assert _ingerir(repo, libros["julio"]) == 1
+    assert _escritos(repo) == []
+    err = capsys.readouterr().err
+    assert "2026-07: hay material declarado y ningun libro atado por su sha" in err
+    assert "2026-07-06" not in err and "2026-07-07" not in err
+    # Con otro libro tampoco entra julio: mayo ingiere solo mayo, y el aviso se repite.
+    assert _ingerir(repo, libros["mayo"]) == 0
+    assert _escritos(repo) == ["caso-eurusd-2026-05-08", "caso-eurusd-2026-05-12"]
+    assert "2026-07: hay material declarado" in capsys.readouterr().err

@@ -1,0 +1,52 @@
+# EL REGISTRO DE LIBROS (ADR-0039): como se lee cada backtest del trader, atado al sha de SUS
+# BYTES. Ningun libro se lee sin su entrada: el lector (`corpus.libro`) verifica el sha y parsea
+# cada fecha con las lecturas declaradas y con ninguna otra.
+#
+# SOLO ANADIR, como `knowledge/feedback/`: el sha fija los bytes, asi que el formato y el huso de un
+# libro no cambian nunca. Una entrada commiteada NO se edita ni se borra (`knowledge validate` lo
+# comprueba version a version contra el historial). Si una resulta estar mal, el libro deja de
+# leerse hasta que un ADR decida; no se corrige encima.
+#
+# EL PROCEDIMIENTO PARA DECLARAR UN LIBRO NUEVO: medir el huso por velas -entrada dentro de
+# [minima - 2, maxima + 2] puntos de la M1 de ese minuto, con UTC y con Europe/Madrid- sobre filas
+# que se puedan leer, y con CONTROL sobre un libro de huso ya conocido. Decide si un huso da
+# >= 90 % y el otro <= 50 %. Si no, NO CONCLUYENTE y no se declara.
+#
+# NO ESTAN enero ni septiembre, y es lo correcto: nadie ha medido todavia como se leen.
+libros:
+  "33a01f1d81246417548663ec43752f3eb952b983175016ca3318044d5b090f45":
+    fichero: "Material adicional de su operativa/backtesting-analytics AGOSTO 2026.xlsx"
+    lecturas:
+      - formato: "AAAA/MM/DD HH:MM:SS"
+        huso: UTC
+    medida: >-
+      Sesiones: leidas en UTC y llevadas a huso_operativa, las 47 filas caen en las dos sesiones H4
+      declaradas; leidas como hora de Madrid, 16 quedarian fuera (F14A-INGESTA §4, 2026-09-21).
+      Velas, 2026-09-22 (MAYO-DEV): entrada dentro de la M1 +-2 puntos, UTC 47 de 47 (100 %),
+      Europe/Madrid 1 de 47 (2 %).
+    declarado_el: "2026-09-22"
+    fuente: [ADR-0037, ADR-0039]
+  "5e5d9b83dc12a15e111e63b274e315dc01f9b8b1187d6c2ee0efff71ab4c125b":
+    fichero: "Material adicional de su operativa/backtesting-analytics ABRIL 2026.xlsx"
+    lecturas:
+      - formato: "AAAA/MM/DD HH:MM:SS"
+        huso: UTC
+    medida: >-
+      Velas, 2026-09-22 (MAYO-DEV): entrada dentro de la M1 +-2 puntos, UTC 36 de 38 (95 %),
+      Europe/Madrid 4 de 38 (11 %). Las 2 filas que caen fuera con UTC se dejan como dato, sin
+      interpretar. Coherente con ABRIL-Y-LA-CAJA (2026-09-21): las series casan a 1 y 2 puntos.
+    declarado_el: "2026-09-22"
+    fuente: [ADR-0039]
+  "ba3aeceb6c496c2f4191540a9d79ca4a0bda078254a39c0290ed4d714a3aa74c":
+    fichero: "Material adicional de su operativa/Backtest mayo 2026/backtesting-analytics MAYO 2026.xlsx"
+    lecturas:
+      - formato: "AAAA-MM-DD HH:MM:SS"
+        huso: UTC
+    medida: >-
+      El libro viene ENTERO en AAAA-MM-DD HH:MM:SS: ni una fila en el formato de agosto (medido por
+      booleanos de estructura, sin leer valores de dias reservados). Velas, 2026-09-22
+      (MAYO-DEV), SOLO sobre filas de los seis dias dev cuyo dia sale igual con los dos husos: UTC
+      19 de 19 (100 %), Europe/Madrid 0 de 19 (0 %); con UTC, las 19 en sesiones H4 declaradas.
+      Controles con el mismo metodo y umbral: agosto (100 % / 2 %) y abril (95 % / 11 %).
+    declarado_el: "2026-09-22"
+    fuente: [ADR-0039]

@@ -77,7 +77,9 @@ cobertura_material:
       hasta: "2026-09-18"
       entregado_el: "2026-09-20"
       fuente: [5c9fcc3, ADR-0034]
-      material_sha256: "8a37c24b841ad9d5c7058ffba93fe15d9abac32c0a1c25fcd97a8df83d3c0b3d"
+      # SIN `material_sha256`, a proposito (2026-09-22, ADR-0039): hay material de septiembre y
+      # `casos ingerir` no lo lee. El sha vuelve cuando septiembre tenga su brief Y su medida en
+      # `knowledge/corpus/libros.yaml`, los dos a la vez.
 # Asignacion de los casos (MASTER_PLAN H "Tres particiones reservadas").
 # OJO: estos cupos se dimensionaron para los 40 dias de mayo+junio. JUNIO QUEDA DESCARTADO
 # (decision del consultor, 2026-09-12), asi que el reparto REAL de la sesion 1 es 6 dev y 13

@@ -273,6 +273,47 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     except InventarioError as exc:
         salida.append(f"ERROR: fuentes del corpus: {exc}")
         return 1, salida
+
+    # LOS LIBROS (ADR-0039): ninguno se lee sin su formato y su huso declarados. Forma, SOLO
+    # ANADIR contra el historial, y el cruce con `cobertura_material` de los dos caminos: dos
+    # registros con la misma llave y nada que los compare es como empieza una deriva.
+    from botsito.cases import fidelidad as camino_fidelidad
+    from botsito.cases.paquete import KitError
+    from botsito.cases.paquete import cargar_config as cargar_config_kit
+    from botsito.corpus.libros import (
+        FICHERO_LIBROS,
+        LibrosError,
+        cargar_libros,
+        problemas_de_libros,
+    )
+
+    shas_cobertura: set[str] = set()
+    # Un config que no existe no declara cobertura (un repo sin kit o sin camino de fidelidad);
+    # uno que existe y no se lee, si es error.
+    try:
+        ruta_kit = repo / "knowledge/cases/kit/config.yaml"
+        if ruta_kit.exists():
+            shas_cobertura |= set(cargar_config_kit(ruta_kit).materiales)
+        if (repo / camino_fidelidad.DIRECTORIO_FIDELIDAD / "config.yaml").exists():
+            shas_cobertura |= set(camino_fidelidad.cargar_config(repo).materiales)
+    except (KitError, camino_fidelidad.FidelidadError) as exc:
+        salida.append(f"ERROR: libros: no se pudo leer cobertura_material: {exc}")
+        return 1, salida
+    if (repo / FICHERO_LIBROS).exists() or shas_cobertura:
+        problemas_libros = problemas_de_libros(repo, shas_cobertura)
+        for p in problemas_libros:
+            salida.append(f"ERROR: libros: {p}")
+        if problemas_libros:
+            return 1, salida
+        try:
+            n_libros = len(cargar_libros(repo))
+        except LibrosError as exc:  # pragma: no cover - ya lo dice problemas_de_libros
+            salida.append(f"ERROR: libros: {exc}")
+            return 1, salida
+        salida.append(
+            f"OK: {n_libros} libros declarados con formato y huso, solo-anadir intacto, "
+            f"cruzados con cobertura_material"
+        )
     from botsito.comun.historial import (
         hay_git,
         historial_evaluable,

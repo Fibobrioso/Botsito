@@ -78,6 +78,7 @@ from botsito.comun.historial import commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.inventario import InventarioError, cargar_manifiesto
 from botsito.corpus.libro import PESTANA_OPERACIONES, LibroError, filas_de_los_dias
+from botsito.corpus.libros import LibrosError, declaracion_de
 
 DIRECTORIO_DEV = "knowledge/cases/dev"
 MANIFIESTO_CORPUS = "knowledge/corpus/manifest.yaml"
@@ -86,9 +87,9 @@ PESTANA = PESTANA_OPERACIONES
 # sin la cual nada se puede trocear por dia. Todo lo demas del libro -resultado, PnL, RR, ids,
 # `idealTP`- se descarta y no se escribe en ningun sitio.
 COLUMNAS = ("dateStart", "side", "entryPrice", "initialSL")
-# `dateStart` viene en UTC: medido sobre agosto, convertido a `huso_operativa` las 47 operaciones
-# caen dentro de las dos sesiones H4 declaradas; leido como hora local, 16 quedarian fuera.
-HUSO_DEL_FICHERO = "UTC"
+# El formato y el huso de `dateStart` NO se fijan aqui: los declara cada libro, atados a su sha,
+# en `knowledge/corpus/libros.yaml` (ADR-0039). Hasta el 2026-09-22 aqui habia una constante
+# `HUSO_DEL_FICHERO = "UTC"`, medida sobre agosto y aplicada a todos los libros.
 _DIRECCION = {"buy": "compra", "sell": "venta"}
 _CASO = re.compile(r"^caso-[a-z0-9]+-(\d{4}-\d{2}-\d{2})$", re.ASCII)
 
@@ -195,6 +196,26 @@ def dias_ingeribles(
     return Ingeribles(salida, negados, len(de_otro_camino))
 
 
+def meses_sin_libro(
+    cobertura: Mapping[str, Sequence[tuple[str, str]]], materiales: Mapping[str, str]
+) -> list[str]:
+    """Meses CON material declarado y SIN ningun libro atado por su sha.
+
+    Un tramo sin `material_sha256` significa exactamente esto: «hay material de este mes, y
+    `casos ingerir` no lo lee». Ningun libro se resuelve a ese mes, asi que no se pide ninguno de
+    sus dias (2026-09-22: septiembre, hasta que tenga su brief y su medida en `libros.yaml`).
+    """
+    con_libro = set(materiales.values())
+    return sorted(m for m, tramos in cobertura.items() if tramos and m not in con_libro)
+
+
+def aviso_de_meses_sin_libro(meses: Sequence[str]) -> str:
+    return (
+        f"INGESTA: {', '.join(meses)}: hay material declarado y ningun libro atado por su sha. "
+        f"Este comando no lee ningun dia de ese mes, con ningun libro"
+    )
+
+
 def dias_del_material(
     repo: Path, dias: Mapping[str, str], materiales: Mapping[str, str], sha: str
 ) -> dict[str, str]:
@@ -280,10 +301,11 @@ def ingerir(
             "reservados"
         )
     try:
+        declaracion = declaracion_de(repo, material)
         filas = filas_de_los_dias(
-            material, pedidos, PESTANA, COLUMNAS, HUSO_DEL_FICHERO, huso_de_los_dias=huso_operativa
+            material, pedidos, PESTANA, COLUMNAS, declaracion, huso_de_los_dias=huso_operativa
         )
-    except LibroError as exc:
+    except (LibroError, LibrosError, OSError) as exc:
         raise IngestaError(str(exc)) from exc
 
     # LA REGLA POR MES, no por dia: si un mes pedido no tiene NI UNA fila en el libro que se ha

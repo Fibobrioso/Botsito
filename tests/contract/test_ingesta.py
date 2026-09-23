@@ -19,6 +19,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
+import yaml
 
 from botsito.cases.biblioteca import como_documento, escribir, problemas_de_biblioteca
 from botsito.cases.ingesta import (
@@ -29,6 +30,7 @@ from botsito.cases.ingesta import (
     ingerir,
 )
 from botsito.corpus.libro import LibroError, filas_de_los_dias
+from botsito.corpus.libros import FICHERO_LIBROS, Declaracion, Lectura, sha256_de
 
 SESIONES = [("07-11", "07:00", "11:00"), ("11-15", "11:00", "15:00")]
 COLS = ["dateStart", "side", "entryPrice", "initialSL"]
@@ -65,6 +67,33 @@ def _xlsx(ruta: Path, filas: list[list[str]], con_agregado: bool = True) -> None
         z.writestr("xl/worksheets/sheet1.xml", "".join(xml))
         if con_agregado:
             z.writestr("xl/worksheets/sheet2.xml", BASURA)
+
+
+VIEJO = "AAAA/MM/DD HH:MM:SS"
+
+
+def _decl(ruta: Path, formato: str = VIEJO, huso: str = "UTC") -> Declaracion:
+    """La declaracion de un libro sintetico: sin ella el lector no lo abre (ADR-0039)."""
+    return Declaracion(sha256_de(ruta), (Lectura(formato, huso),))
+
+
+def _declarar(repo: Path, *libros: Path, formato: str = VIEJO, huso: str = "UTC") -> None:
+    """Anade los libros al `libros.yaml` del repo de prueba, como lo haria una rama que los mide."""
+    ruta = repo / FICHERO_LIBROS
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8")) if ruta.exists() else {"libros": {}}
+    for libro in libros:
+        doc["libros"].setdefault(
+            sha256_de(libro),
+            {
+                "fichero": libro.name,
+                "lecturas": [{"formato": formato, "huso": huso}],
+                "medida": "sintetico",
+                "declarado_el": "2026-09-22",
+                "fuente": ["ADR-0039"],
+            },
+        )
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True), encoding="utf-8")
 
 
 def _repo(tmp_path: Path, asignacion: dict[str, str]) -> Path:
@@ -115,6 +144,7 @@ def test_la_ingesta_abre_de_verdad_y_produce_casos(tmp_path: Path) -> None:
     )
     material = tmp_path / "libro.xlsx"
     _xlsx(material, FILAS)
+    _declarar(repo, material)
 
     pedidos = dias_ingeribles(repo).dias
     assert set(pedidos) == {"2026-05-08", "2026-05-12"}, "el dia reservado no se deriva"
@@ -145,6 +175,7 @@ def test_un_dia_reservado_no_se_ingiere_ni_se_nombra(tmp_path: Path) -> None:
     repo2 = _repo(tmp_path / "dos", {"caso-eurusd-2026-05-07": "holdout-2"})
     material = tmp_path / "dos" / "libro.xlsx"
     _xlsx(material, FILAS)
+    _declarar(repo2, material)
     r = ingerir(repo2, material, "Europe/Madrid", SESIONES, dias=["2026-05-07"])
     docs = [
         como_documento("caso-eurusd-2026-05-07", "2026-05-07", "EURUSD", ops, FUENTE)
@@ -166,6 +197,7 @@ def test_el_agregado_no_se_lee_aunque_viva_en_el_mismo_fichero(tmp_path: Path) -
     repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev"})
     material = tmp_path / "libro.xlsx"
     _xlsx(material, FILAS, con_agregado=True)
+    _declarar(repo, material)
     r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
     assert len(r.casos["2026-05-08"]) == 1
 
@@ -183,7 +215,12 @@ def test_el_agregado_no_se_lee_aunque_viva_en_el_mismo_fichero(tmp_path: Path) -
     _xlsx(otro, FILAS, con_agregado=True)
     with pytest.raises(LibroError, match="no tiene la pestana esperada"):
         filas_de_los_dias(
-            otro, {"2026-05-08"}, "la-que-no-esta", COLS, "UTC", huso_de_los_dias="Europe/Madrid"
+            otro,
+            {"2026-05-08"},
+            "la-que-no-esta",
+            COLS,
+            _decl(otro),
+            huso_de_los_dias="Europe/Madrid",
         )
 
 
@@ -196,6 +233,7 @@ def test_el_invariante_geometrico_aborta_nombrando_la_fila(tmp_path: Path) -> No
     repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev"})
     material = tmp_path / "libro.xlsx"
     _xlsx(material, [CABECERA, ["2026/05/08 07:30:00", "buy", "1.1000", "1.1010", "", "1.1"]])
+    _declarar(repo, material)
     with pytest.raises(IngestaError, match="del lado equivocado"):
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
 
@@ -206,6 +244,7 @@ def test_una_fila_sin_stop_no_produce_caso_y_se_cuenta(tmp_path: Path) -> None:
     repo = _repo(tmp_path, {"caso-eurusd-2026-05-08": "dev"})
     material = tmp_path / "libro.xlsx"
     _xlsx(material, [CABECERA, ["2026/05/08 07:30:00", "buy", "1.1000", "", "", "1.1"]])
+    _declarar(repo, material)
     r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
     assert r.sin_stop == 1 and r.casos["2026-05-08"] == []
 
@@ -220,7 +259,7 @@ def test_el_lector_no_publica_el_conjunto_de_fechas_ni_de_columnas(tmp_path: Pat
         {"2026-05-08"},
         "backtesting-analytics",
         COLS,
-        "UTC",
+        _decl(material),
         huso_de_los_dias="Europe/Madrid",
     )
     assert len(filas) == 1
@@ -236,7 +275,7 @@ def test_el_lector_no_publica_el_conjunto_de_fechas_ni_de_columnas(tmp_path: Pat
             {"2026-05-08"},
             "backtesting-analytics",
             ["inventada"],
-            "UTC",
+            _decl(material),
             huso_de_los_dias="Europe/Madrid",
         )
     assert "inventada" in str(exc.value)
@@ -264,19 +303,23 @@ def test_ningun_numero_de_la_salida_cuenta_el_libro_entero(tmp_path: Path) -> No
             *[no_pedida] * 5,
         ],
     )
+    _declarar(repo, material)
     r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
     assert (r.filas_leidas, r.sin_stop) == (2, 1), "cuentan las PEDIDAS, no las 17 del libro"
 
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["2026/05/08 07:30:00", "hold", "1.1", "1.0"]])
+    _declarar(repo, material)
     with pytest.raises(IngestaError) as exc:
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
     assert "el caso del dia 2026-05-08, operacion 1: `side`" in str(exc.value)
     assert "12" not in str(exc.value) and "07:30" not in str(exc.value)
 
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["ayer", "buy", "1.1", "1.0"]])
+    _declarar(repo, material)
     with pytest.raises(IngestaError) as exc:
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
-    assert "ilegible" in str(exc.value) and "12" not in str(exc.value)
+    assert "no casa con ningun formato declarado" in str(exc.value)
+    assert "12" not in str(exc.value) and "ayer" not in str(exc.value)
 
 
 def _un_caso_valido(tmp_path: Path) -> tuple[Path, dict[str, object]]:
@@ -337,6 +380,7 @@ def _ingerir_filas(
     repo = _repo(tmp_path, {c: "dev" for c in dias.values()})
     material = tmp_path / "libro.xlsx"
     _xlsx(material, [CABECERA, *filas])
+    _declarar(repo, material)
     try:
         return ingerir(repo, material, MADRID, SESIONES, dias=dias), ""
     except IngestaError as exc:
@@ -385,8 +429,14 @@ def test_b_c_la_madrugada_de_un_dia_pedido_si_entra_en_verano_y_en_invierno(
     repo = _repo(tmp_path, {f"caso-eurusd-{dia_madrid}": "dev"})
     material = tmp_path / "libro.xlsx"
     _xlsx(material, [CABECERA, fila])
+    _declarar(repo, material)
     filas = filas_de_los_dias(
-        material, {dia_madrid}, "backtesting-analytics", COLS, "UTC", huso_de_los_dias=MADRID
+        material,
+        {dia_madrid},
+        "backtesting-analytics",
+        COLS,
+        _decl(material),
+        huso_de_los_dias=MADRID,
     )
     assert [f["_dia"] for f in filas] == [dia_madrid]
     # Y la ingesta la ve como del dia pedido: la rechaza por SESION (00:30 no cae en ninguna),

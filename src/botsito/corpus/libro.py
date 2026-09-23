@@ -29,10 +29,19 @@ desarrollo, cero dias reservados, declarado en `HOLDOUT-EXPOSICIONES.md`):
 
 Nada de eso se da por hecho para el mes siguiente: la estructura se VERIFICA contra la lista
 escrita antes, asi que un cambio de serializacion sale como fallo limpio y no como dato mal leido.
+
+**Y NO SE DIO POR HECHO: MAYO LO ROMPIO** (2026-09-22, `trabajo/mayo-dev-ingerido`). El libro de
+mayo viene entero en `AAAA-MM-DD HH:MM:SS`, no en el formato de agosto. Medido por velas sobre sus
+filas `dev`, con control en agosto y abril: UTC. Desde entonces el formato y el huso NO los fija
+este modulo: los DECLARA cada libro, atados a su sha, en `knowledge/corpus/libros.yaml`
+(`corpus.libros`, ADR-0039), y aqui se acepta exactamente lo declarado. Formatos por libro, medidos:
+agosto y abril `AAAA/MM/DD HH:MM:SS` UTC; mayo `AAAA-MM-DD HH:MM:SS` UTC.
 """
 
 from __future__ import annotations
 
+import hashlib
+import io
 import zipfile
 from collections.abc import Iterable, Sequence
 from datetime import UTC, datetime
@@ -40,13 +49,13 @@ from pathlib import Path
 from xml.etree import ElementTree
 from zoneinfo import ZoneInfo
 
+from botsito.corpus.libros import Declaracion
+
 # La pestana de operaciones del export de FX Replay. Vive AQUI y no en la ingesta: es
 # conocimiento de como esta hecho el libro, y el contrato de importacion exige que solo este
 # modulo lo nombre.
 PESTANA_OPERACIONES = "backtesting-analytics"
 _NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
-# El formato de `dateStart`/`dateEnd` tal como lo escribe el exportador de FX Replay.
-_FORMATO = "%Y/%m/%d %H:%M:%S"
 
 
 class LibroError(ValueError):
@@ -68,12 +77,24 @@ def _fila_como_dict(fila: ElementTree.Element) -> dict[str, str | None]:
     return {_columna(c.get("r") or ""): _texto(c) for c in fila.iter(f"{_NS}c")}
 
 
+def _instante(texto: str, declaracion: Declaracion) -> datetime | None:
+    """El instante UTC con la PRIMERA lectura declarada que case; None si ninguna. Los formatos
+    del vocabulario son disjuntos, asi que como mucho casa uno."""
+    for lectura in declaracion.lecturas:
+        try:
+            ingenuo = datetime.strptime(texto, lectura.patron)
+        except ValueError:
+            continue
+        return ingenuo.replace(tzinfo=ZoneInfo(lectura.huso)).astimezone(UTC)
+    return None
+
+
 def filas_de_los_dias(
     ruta: Path,
     dias: Iterable[str],
     pestana: str,
     cabeceras: Sequence[str],
-    huso_del_fichero: str,
+    declaracion: Declaracion,
     *,
     huso_de_los_dias: str,
 ) -> list[dict[str, str | None]]:
@@ -92,12 +113,25 @@ def filas_de_los_dias(
     la regla de `CLAUDE.md` -fijar el huso de las dos fuentes antes de compararlas- con el libro y
     el reparto como las dos fuentes. Por eso `huso_de_los_dias` es obligatorio y no tiene default:
     uno en UTC reproduciria el defecto en silencio. Cada fila devuelta lleva `_dia` en ese huso.
+
+    **Y SOLO CON LA DECLARACION DEL LIBRO** (ADR-0039): los bytes tienen que dar el sha declarado,
+    y cada fecha se parsea con las lecturas `{formato, huso}` declaradas y con ninguna otra. Una
+    fecha que no casa con ninguna es error: nunca se prueba otro formato hasta que uno parsee.
     """
     pedidos = set(dias)
     if not pedidos:
         return []
     try:
-        with zipfile.ZipFile(ruta) as libro:
+        contenido = ruta.read_bytes()
+    except OSError as exc:
+        raise LibroError(f"{ruta.name}: {exc}") from exc
+    if hashlib.sha256(contenido).hexdigest() != declaracion.sha256:
+        raise LibroError(
+            f"{ruta.name}: sus bytes no son los del libro declarado {declaracion.sha256[:12]}...: "
+            f"no se lee con una declaracion ajena (ADR-0039)"
+        )
+    try:
+        with zipfile.ZipFile(io.BytesIO(contenido)) as libro:
             miembros = set(libro.namelist())
             if "xl/workbook.xml" not in miembros:
                 raise LibroError(f"{ruta.name}: no es un libro xlsx (falta xl/workbook.xml)")
@@ -139,17 +173,15 @@ def filas_de_los_dias(
         crudo = celdas.get(donde[cabeceras[0]])
         if not crudo:
             continue
-        try:
-            instante = datetime.strptime(str(crudo), _FORMATO)
-        except ValueError as exc:
-            # SIN su numero de fila: la posicion en el libro cuenta TODAS las filas de antes,
-            # las de dias reservados incluidas, y es un recuento sobre el libro entero (ADR-0037).
-            # Y de una fila sin fecha legible no se sabe de que dia es: puede ser reservada.
+        instante = _instante(str(crudo), declaracion)
+        if instante is None:
+            # SIN su numero de fila ni su valor: la posicion en el libro cuenta TODAS las filas de
+            # antes, reservadas incluidas (ADR-0037), y de una fila sin fecha legible no se sabe de
+            # que dia es: puede ser reservada.
             raise LibroError(
-                f"{ruta.name}/{pestana}: una fila tiene {cabeceras[0]} ilegible. No se da su "
-                f"posicion: contaria las filas de antes, reservadas incluidas"
-            ) from exc
-        instante = instante.replace(tzinfo=ZoneInfo(huso_del_fichero)).astimezone(UTC)
+                f"{ruta.name}/{pestana}: una fila tiene {cabeceras[0]} que no casa con ningun "
+                f"formato declarado para este libro. No se da ni su valor ni su posicion"
+            )
         dia = instante.astimezone(ZoneInfo(huso_de_los_dias)).date().isoformat()
         if dia not in pedidos:
             continue  # NO se cuenta, NO se acumula: el conjunto de dias del libro no sale de aqui
