@@ -330,7 +330,11 @@ ambiguedades:
       que si el stop viviera en el borde de la caja las dos lecturas coincidirian y la medida no
       discriminaria-. Se repite sobre mayo al ingerirlo.
       v5 (2026-09-05 21-03-59.mkv), 36 fotogramas en ventanas fijas de los instantes 1, 2, 3, 4, 6
-      y 7: ninguno cumple la condicion congelada; la medida no esta en v5; via cerrada
+      y 7: ninguno cumple la condicion congelada; la medida no esta en v5; via cerrada.
+      Transcripciones v1–v5: 42 pasajes, ninguno responde con la regla congelada; se pregunta al
+      trader. En v1–v4 el stop se describe en dos tiempos (lote sobre la caja entera, stop
+      protegido a 0,75 tras la entrada), anterior al lineamiento del 9 de septiembre; las dos
+      hipótesis vigentes suponen un solo stop.
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1
