@@ -47,6 +47,13 @@ _VALLA = r"^(?: {0,3}> ?)*[ ]{0,3}```"
 _APERTURA = re.compile(_VALLA + re.escape(BLOQUE) + r"\s*$")
 _CIERRE = re.compile(_VALLA + r"\s*$")
 _SEPARADOR = " — "
+# CADA TIPO DE FALLO CON SU TEXTO (2026-09-23): hasta ahora los cuatro salian con el prefijo «id
+# citado que no existe», y un «segundo bloque» o un «sin motivo» se leian como si faltara un id. Un
+# mensaje que dice una cosa y significa otra es el patron 5 en pequeno.
+NO_EXISTE = "id citado que no existe"
+MAL_FORMADA = "declaracion de ids-inexistentes mal formada"
+DECLARADO_Y_EXISTE = "id declarado inexistente que SI existe"
+DECLARADO_Y_NO_CITADO = "id declarado y no citado fuera de su bloque"
 
 
 @dataclass(frozen=True)
@@ -84,7 +91,7 @@ def _leer(rel: str, lineas: list[str]) -> tuple[list[_Declaracion], set[int], li
             bloques += 1
             del_bloque.add(n)
             if bloques == 2:
-                problemas.append(f"{rel}:{n}: segundo bloque {BLOQUE} (uno por documento)")
+                problemas.append(f"{MAL_FORMADA}: {rel}:{n}: segundo bloque (uno por documento)")
             continue
         if dentro:
             del_bloque.add(n)
@@ -98,20 +105,22 @@ def _leer(rel: str, lineas: list[str]) -> tuple[list[_Declaracion], set[int], li
             id_, _, resto = cuerpo.partition(" ")
             motivo = resto.strip().removeprefix(_SEPARADOR.strip())
             if not ids.FUENTE.fullmatch(id_):
-                problemas.append(f"{rel}:{n}: linea de {BLOQUE} sin un id al principio")
+                problemas.append(f"{MAL_FORMADA}: {rel}:{n}: linea sin un id al principio")
             elif not resto.strip().startswith(_SEPARADOR.strip()) or not motivo.strip():
-                problemas.append(f"{rel}:{n}: {id_} declarado sin motivo (`id — motivo`)")
+                problemas.append(f"{MAL_FORMADA}: {rel}:{n}: {id_} sin motivo (`id — motivo`)")
             else:
                 decl.append(_Declaracion(id_, n, motivo.strip()))
     if dentro:
-        problemas.append(f"{rel}: bloque {BLOQUE} sin cerrar")
+        problemas.append(f"{MAL_FORMADA}: {rel}: bloque sin cerrar")
     return decl, del_bloque, problemas
 
 
 def problemas_de_ids_citados(repo: Path, existentes: set[str]) -> list[str]:
     """Cada id citado en los documentos existe, o esta declarado en su documento con motivo.
 
-    El error de una cita nombra el fichero, la linea y el id, y nada mas.
+    Cada fallo empieza por el prefijo de SU tipo (`NO_EXISTE`, `MAL_FORMADA`,
+    `DECLARADO_Y_EXISTE`, `DECLARADO_Y_NO_CITADO`); el de una cita nombra despues el fichero, la
+    linea y el id, y nada mas.
     """
     problemas: list[str] = []
     for ruta in documentos(repo):
@@ -130,10 +139,10 @@ def problemas_de_ids_citados(repo: Path, existentes: set[str]) -> list[str]:
             for id_ in _ids_de(linea):
                 citados.add(id_)
                 if id_ not in existentes and id_ not in declarados:
-                    problemas.append(f"{rel}:{n}: {id_}")
+                    problemas.append(f"{NO_EXISTE}: {rel}:{n}: {id_}")
         for d in declaraciones:
             if d.id in existentes:
-                problemas.append(f"{rel}:{d.linea}: {d.id} declarado inexistente y SI existe")
+                problemas.append(f"{DECLARADO_Y_EXISTE}: {rel}:{d.linea}: {d.id}")
             elif d.id not in citados:
-                problemas.append(f"{rel}:{d.linea}: {d.id} declarado y no citado en el documento")
+                problemas.append(f"{DECLARADO_Y_NO_CITADO}: {rel}:{d.linea}: {d.id}")
     return problemas

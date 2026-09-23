@@ -119,6 +119,13 @@ enseñar la sintaxis, contaba como un **segundo bloque**. Ahora funciona como en
 admite como mucho 3 espacios por nivel de recuadro, y con 4 o más la línea es código. Va en su
 propio commit, con su test (`3663549`).
 
+**Otro, detectado en revisión:** los cuatro tipos de fallo compartían el prefijo «id citado que
+no existe», así que un «segundo bloque» o un «sin motivo» se leían como si faltara un id. Era una
+instancia del patrón 5: un mensaje que dice una cosa y significa otra. Ahora cada tipo tiene su
+texto -`id citado que no existe`, `declaracion de ids-inexistentes mal formada`, `id declarado
+inexistente que SI existe` e `id declarado y no citado fuera de su bloque`- y cada test comprueba
+el mensaje exacto.
+
 **Por qué en el documento y no en el código.** Una lista de ids exentos en el código enumera casos
 en vez de nombrar la condición, que es el patrón 3. Además separa la excepción del texto que la
 justifica: quien lea el informe no ve por qué ese id no existe, y quien toque el código no sabe de
@@ -144,7 +151,7 @@ declaración se quede atrás si el id aparece después o si la cita desaparece.
 
 ## 6. Cierre
 
-`state check` OK. `make check` en verde (819 tests, 4 contratos de importación) y log borrado. `kit
+`state check` OK. `make check` en verde (822 tests, 4 contratos de importación) y log borrado. `kit
 check` idéntico a la línea base. PREREGISTRO con blob `52649183…` y cero autorizaciones.
 
 ## Estado

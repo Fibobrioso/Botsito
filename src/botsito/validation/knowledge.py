@@ -526,7 +526,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
 
     fallos_ids = problemas_de_ids_citados(repo, ids_validos)
     for fallo in fallos_ids:
-        salida.append(f"ERROR: id citado que no existe: {fallo}")
+        salida.append(f"ERROR: {fallo}")
     if fallos_ids:
         return 1, salida
     salida.append(
