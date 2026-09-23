@@ -13,5 +13,8 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
 - `v5_criterio.py`: el criterio de lectura de los seis instantes de v5, CONGELADO antes de mirar
   (`docs/validation/V5-INSTANTES-CRITERIO.md`). `--calibrar` lee solo los cuatro fotogramas ya
   abiertos; `--medir` lee los 36 de la ventana fija y no se ejecuta sin luz verde del consultor.
+- `a18_buscar.py`: la busqueda de A-18 en las transcripciones vigentes de v1 a v5, CONGELADA antes de ejecutarla
+  (`docs/validation/A18-TRANSCRIPCIONES-CRITERIO.md`): 36 terminos, ventana de +-45 s, solo la cruda
+  verificada contra su manifiesto. Se ejecuta una sola vez.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
