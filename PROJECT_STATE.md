@@ -35,7 +35,7 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-EN CURSO: `trabajo/mayo-dev-ingerido` (Next Action 1), abierta el 2026-09-22. Ingerir los 6 dias `dev` de mayo y repetir la medida del RR contra la prediccion congelada de F14A §4. LA REVISION DE DISENO REFUTO EL PUNTO DE PARTIDA antes de abrir el libro: `dias_ingeribles` devolvia 10 dias y no 6 -los 6 `dev` de mayo mas los 4 `fidelidad-dev` de septiembre- y el comando fallaba con el libro de mayo por la regla de cobertura, no por la puerta. Decidido por el consultor: el mes del material se DECLARA por su sha (paga la deuda «el mes del material se deduce de las filas») y `casos ingerir` solo toma dias del camino del kit. Informe: docs/validation/MAYO-DEV.md.
+WAITING_FOR_USER_VALIDATION: `trabajo/mayo-dev-ingerido` (Next Action 1), informe docs/validation/MAYO-DEV.md, ADR-0039. LOS PRIMEROS CASOS DEL PROYECTO: 6 `caso-*.yaml` de los dias `dev` de mayo (6 pedidos, 0 reservados; 17 operaciones). LA MEDIDA CONTRA LA PREDICCION CONGELADA: n = 5 ganadoras, 2,90 · 3,05 · 3,30 · 3,46 · 3,57; region [3,00 , 3,75) POBLADA (4 de 5) -> (caja_completa, 0,8) refutada por TERCER mes y A-18 NO sube a bloqueante; los dos supervivientes no se separan en mayo, ni podian (el fichero no trae la caja). Antes de leer una fila hubo que arreglar seis cosas del mecanismo: el mes del libro por su sha y solo el camino del kit, la posicion de fila en los errores, `objetivo` en el caso, la frontera de dia UTC/Madrid, el formato y el huso por libro (ADR-0039) y la posicion de un XML roto. PENDIENTE DEL CONSULTOR: el ADR que la primera rama del criterio exigia en el brief de apertura, que esta rama NO escribe.
 
 ## Current Branch
 trabajo/mayo-dev-ingerido
@@ -87,7 +87,7 @@ trabajo/mayo-dev-ingerido
 - Lo que no cabia en main · validada el 2026-09-22 · docs/validation/LO-QUE-NO-CABIA-EN-MAIN.md · sin ADR · tag stable/F14-runbook
 
 ## Features Waiting for Validation
-— ninguna.
+- Mayo `dev` ingerido · docs/validation/MAYO-DEV.md · ADR-0039 · rama `trabajo/mayo-dev-ingerido`
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
