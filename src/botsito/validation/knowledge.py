@@ -322,6 +322,20 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             f"OK: {n_libros} libros declarados con formato y huso, solo-anadir intacto, "
             f"cruzados con cobertura_material"
         )
+    # LOS DIAS RETIRADOS DEL HOLDOUT (ADR-0041): forma, que cada huella sea de un reservado y SOLO
+    # ANADIR contra el historial, con el mismo mecanismo que los libros. Nunca imprime un id.
+    from botsito.cases.holdout import FICHERO_RETIRADOS, cargar_retirados, problemas_de_retirados
+
+    if (repo / FICHERO_RETIRADOS).exists():
+        problemas_ret = problemas_de_retirados(repo)
+        for p in problemas_ret:
+            salida.append(f"ERROR: retirados: {p}")
+        if problemas_ret:
+            return 1, salida
+        salida.append(
+            f"OK: {len(cargar_retirados(repo))} dias retirados del holdout, cada uno de un "
+            f"reservado, solo-anadir intacto"
+        )
     from botsito.comun.historial import (
         hay_git,
         historial_evaluable,

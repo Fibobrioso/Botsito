@@ -8,7 +8,7 @@ y el otro es derivado -versionado, cita `Fuente:`, se recalcula del material y d
 **QUE DIAS SE INGIEREN: NO SE ELIGEN, SE DERIVAN.** No hay `--dias`, ni `--mes`, ni `--desde`. El
 conjunto es
 
-    dias pedidos  =  (casos en un reparto COMMITEADO)  -  casos_reservados(repo)
+    dias pedidos  =  (casos en un reparto COMMITEADO)  -  casos_ocultos(repo)
 
 y un humano no puede ampliarlo. Tres negativas duras:
 
@@ -73,7 +73,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from botsito.cases.holdout import DIRECTORIO_KIT, casos_reservados, repartos_commiteables
+from botsito.cases.holdout import DIRECTORIO_KIT, casos_ocultos, repartos_commiteables
 from botsito.comun.historial import commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.inventario import InventarioError, cargar_manifiesto
@@ -156,7 +156,8 @@ def dias_ingeribles(
     mientras junio siga repartido, y negarlos en silencio es el defecto que esto viene a cerrar.
     Con `cobertura` en None no hay puerta, que es lo que necesitan los tests de lo demas.
     """
-    reservados = casos_reservados(repo)  # lanza si un reparto es ilegible: falla cerrado
+    # OCULTOS (ADR-0041): un retirado no es ingerible. Lanza si un reparto es ilegible.
+    reservados = casos_ocultos(repo)
     salida: dict[str, str] = {}
     de_otro_camino: set[str] = set()
     kit = (repo / DIRECTORIO_KIT).resolve()

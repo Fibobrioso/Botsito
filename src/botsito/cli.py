@@ -1803,10 +1803,10 @@ def feedback_trace(repo: Path, identificador: str) -> int:
     for it in items:
         if it.id == identificador:
             print(f"evidencia {it.id} [{it.video_id} {it.t0}-{it.t1}] {it.tema}: {it.cita_literal}")
-    from botsito.cases.holdout import RepartoIlegibleError, casos_reservados
+    from botsito.cases.holdout import RepartoIlegibleError, casos_ocultos
 
     try:
-        ocultar = set(casos_reservados(repo))
+        ocultar = set(casos_ocultos(repo))
     except RepartoIlegibleError as exc:
         # Ocultar de MENOS es imprimir el valor de una etiqueta reservada. Antes del 2026-09-21
         # esto salia con exit 0 y sin una palabra sobre el fichero ilegible.

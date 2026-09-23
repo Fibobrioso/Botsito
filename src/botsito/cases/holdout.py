@@ -37,11 +37,14 @@ vuelve a abrir, porque el contenido vuelve a ser el aprobado.
 
 from __future__ import annotations
 
+import hashlib
 import re
 from pathlib import Path
+from typing import Any
 
+from botsito.comun import historial
 from botsito.comun.historial import blob_en_head, contenido_en_head
-from botsito.comun.yaml_estricto import YamlError, leer_yaml
+from botsito.comun.yaml_estricto import YamlError, cargar_yaml, leer_yaml
 
 PARTICIONES_RESERVADAS = ("holdout-1", "holdout-2", "holdout-3")
 # Las del camino de fidelidad (ADR-0036). ADR-0034 separo DOS cegueras: la DEL TRADER, que
@@ -61,6 +64,10 @@ DIRECTORIO_FIDELIDAD = "knowledge/cases/fidelidad"
 # disparador para que la necesite esta escrito en la enmienda de ADR-0033 y en Technical Debt.
 CARPETAS_RESERVADAS = {"1": "holdout-1", "2": "holdout-2", "3": "holdout-3"}
 FICHERO_PREREGISTRO = "docs/validation/PREREGISTRO.md"
+# Los dias RETIRADOS del holdout (ADR-0041): SOLO ANADIR, y cada entrada por la HUELLA del id del
+# caso -su sha256-, nunca por el id ni por la fecha.
+FICHERO_RETIRADOS = "knowledge/cases/retirados.yaml"
+CLAVES_RETIRADO = frozenset({"motivo", "exposicion", "adr", "retirado_el"})
 # El PREREGISTRO nacio vacio el 2026-09-12 con esta marca en su cabecera. Mientras siga, no se abre.
 MARCA_SIN_RELLENAR = "SIN RELLENAR"
 _CAMPOS_AUTORIZACION = (
@@ -82,10 +89,15 @@ ABIERTA, GASTADA = "ABIERTA", "GASTADA"
 _SHA = re.compile(r"^[0-9a-f]{40}$", re.ASCII)
 _FECHA = re.compile(r"^\d{4}-\d{2}-\d{2}$", re.ASCII)
 _ADR = re.compile(r"^ADR-(\d{4})$", re.ASCII)
+_SHA256 = re.compile(r"^[0-9a-f]{64}$", re.ASCII)
 
 
 class HoldoutCerradoError(PermissionError):
     """Se intento abrir material de holdout sin lo que exige ADR-0021 §3."""
+
+
+class RetiradosError(ValueError):
+    """`retirados.yaml` no tiene la forma declarada: la puerta no sabe que dias estan retirados."""
 
 
 class RepartoIlegibleError(ValueError):
@@ -310,6 +322,8 @@ def leer_fichero(repo: Path, ruta: str, pregunta: str = "") -> str:
     except ValueError:
         raise ValueError(f"{ruta} no esta en {DIRECTORIO_HOLDOUT}") from None
     if resto[1:] != ("README.md",) or resto[0] not in CARPETAS_RESERVADAS:
+        if huella_de_caso(destino.stem) in cargar_retirados(repo):
+            raise HoldoutCerradoError(_NUNCA_SE_ABRE)
         abrir(repo, CARPETAS_RESERVADAS.get(resto[0], RESERVADAS[0]), pregunta)
     return destino.read_text(encoding="utf-8")
 
@@ -349,3 +363,170 @@ def casos_reservados(repo: Path) -> dict[str, str]:
             if particion in RESERVADAS:
                 salida[str(caso)] = str(particion)
     return salida
+
+
+# ---------------------------------------------------------------------------------------------
+# LOS DIAS RETIRADOS (ADR-0041): un dia reservado EXPUESTO sale del holdout y no se sustituye.
+#
+# Retirar no es desreservar. Un dia retirado deja de MEDIRSE -no cuenta en ninguna particion- pero
+# sigue OCULTO: sus etiquetas no se leen nunca, ni con autorizacion, porque pasarlo a desarrollo
+# seria lo contrario de retirarlo. De ahi dos conjuntos derivados, y cada consumidor usa el suyo:
+#
+#   medidos = reservados - retirados   (lo que MIDE: la puerta que abre para medir)
+#   ocultos = reservados | retirados   (lo que OCULTA: trace, validate, kappa, ingesta)
+#
+# El reparto (`particiones.yaml`) NO se toca: se reproduce byte a byte y esta anclado (ADR-0036).
+# La retirada vive aparte, en `retirados.yaml`, SOLO ANADIR y por la huella del id. La huella no es
+# un secreto -un dia laborable de un mes se adivina probando una veintena de fechas-; lo que evita
+# es que la fecha aparezca escrita en el repositorio.
+# ---------------------------------------------------------------------------------------------
+
+_NUNCA_SE_ABRE = (
+    "un dia retirado del holdout no se abre nunca, con o sin autorizacion (ADR-0041): exponerlo "
+    "fue el motivo de retirarlo, y abrirlo lo pasaria a desarrollo"
+)
+
+
+def huella_de_caso(caso: str) -> str:
+    """El sha256 del id del caso: lo unico de un dia retirado que se escribe en el repositorio."""
+    return hashlib.sha256(caso.encode("utf-8")).hexdigest()
+
+
+def _entradas_retiradas(doc: Any, nombre: str) -> dict[str, dict[str, Any]]:
+    if not isinstance(doc, dict) or set(doc) != {"retirados"}:
+        raise RetiradosError(f"{nombre}: un mapa con la clave `retirados` y nada mas")
+    entradas = doc["retirados"] or {}
+    if not isinstance(entradas, dict):
+        raise RetiradosError(f"{nombre}: `retirados` es un mapa huella -> entrada")
+    return {str(k): v for k, v in entradas.items()}
+
+
+def _problemas_de_entrada(repo: Path, huella: str, entrada: Any) -> list[str]:
+    donde = f"{FICHERO_RETIRADOS}: {huella[:12]}..."
+    if not _SHA256.match(huella):
+        return [f"{FICHERO_RETIRADOS}: {huella[:16]}... no es un sha256 en hexadecimal minuscula"]
+    if not isinstance(entrada, dict) or set(entrada) != CLAVES_RETIRADO:
+        return [f"{donde}: claves {sorted(CLAVES_RETIRADO)}, exactamente"]
+    problemas: list[str] = []
+    if not str(entrada["motivo"]).strip() or not str(entrada["exposicion"]).strip():
+        problemas.append(f"{donde}: una retirada sin motivo o sin su exposicion no vale")
+    adr = _ADR.match(str(entrada["adr"]))
+    if adr is None or not list((repo / "docs" / "adr").glob(f"{adr.group(1)}-*.md")):
+        problemas.append(f"{donde}: adr {entrada['adr']!r} no es un ADR que exista")
+    if not _FECHA.match(str(entrada["retirado_el"])):
+        problemas.append(f"{donde}: retirado_el no es AAAA-MM-DD")
+    return problemas
+
+
+def cargar_retirados(repo: Path) -> dict[str, dict[str, Any]]:
+    """`huella -> entrada`. Sin fichero, ninguno. Mal formado, LANZA: un mapa a medias es
+    indistinguible de uno completo, y la puerta no responde a medias."""
+    ruta = repo / FICHERO_RETIRADOS
+    if not ruta.is_file():
+        return {}
+    try:
+        doc = leer_yaml(ruta)
+    except (OSError, YamlError) as exc:
+        raise RetiradosError(f"{FICHERO_RETIRADOS}: {exc}") from exc
+    entradas = _entradas_retiradas(doc, FICHERO_RETIRADOS)
+    for huella, entrada in entradas.items():
+        problemas = _problemas_de_entrada(repo, huella, entrada)
+        if problemas:
+            raise RetiradosError("; ".join(problemas))
+    return entradas
+
+
+def casos_retirados(repo: Path) -> dict[str, str]:
+    """`caso -> particion` de los reservados cuya huella esta en `retirados.yaml`."""
+    huellas = set(cargar_retirados(repo))
+    return {c: p for c, p in casos_reservados(repo).items() if huella_de_caso(c) in huellas}
+
+
+def casos_medidos(repo: Path) -> dict[str, str]:
+    """Lo que MIDE: reservados menos retirados. Lanza si no puede saber cuales estan retirados."""
+    retirados = casos_retirados(repo)
+    return {c: p for c, p in casos_reservados(repo).items() if c not in retirados}
+
+
+def casos_ocultos(repo: Path) -> dict[str, str]:
+    """Lo que OCULTA: reservados mas retirados, con su particion.
+
+    Hoy es el mismo mapa que `casos_reservados`, porque un retirado tiene que ser reservado
+    (`problemas_de_retirados` lo exige) y el reparto no se toca al retirar. Existe con su nombre
+    para que cada consumidor diga para que lo quiere: si manana un retirado dejara de estar en un
+    reparto, seguiria oculto y no habria que ir a buscar a todos los que ocultan.
+    """
+    return casos_reservados(repo)
+
+
+def abrir_caso(repo: Path, caso: str, pregunta: str) -> None:
+    """La puerta, caso a caso. Un dia retirado se rechaza SIEMPRE; uno medido pasa por `abrir`."""
+    if huella_de_caso(caso) in cargar_retirados(repo):
+        raise HoldoutCerradoError(_NUNCA_SE_ABRE)
+    reservados = casos_reservados(repo)
+    if caso not in reservados:
+        raise ValueError("ese caso no esta en ninguna particion reservada")
+    abrir(repo, reservados[caso], pregunta)
+
+
+def _version_retirados(texto: str | None, donde: str) -> dict[str, Any]:
+    if texto is None:
+        return {}
+    try:
+        return _entradas_retiradas(cargar_yaml(texto), f"{FICHERO_RETIRADOS}@{donde}")
+    except YamlError as exc:
+        raise RetiradosError(f"{FICHERO_RETIRADOS}@{donde}: {exc}") from exc
+
+
+def problemas_de_retirados(repo: Path) -> list[str]:
+    """Para `knowledge validate`: forma, que cada huella sea de un reservado, y SOLO ANADIR contra
+    el historial -el mismo mecanismo que `libros.yaml`-."""
+    ruta = repo / FICHERO_RETIRADOS
+    if not ruta.is_file():
+        return []
+    try:
+        doc = leer_yaml(ruta)
+        entradas = _entradas_retiradas(doc, FICHERO_RETIRADOS)
+    except (OSError, YamlError, RetiradosError) as exc:
+        return [str(exc)]
+    problemas: list[str] = []
+    for huella, entrada in entradas.items():
+        problemas += _problemas_de_entrada(repo, huella, entrada)
+    try:
+        huellas_reservadas = {huella_de_caso(c) for c in casos_reservados(repo)}
+    except RepartoIlegibleError as exc:
+        return [*problemas, str(exc)]
+    for huella in sorted(set(entradas) - huellas_reservadas):
+        problemas.append(
+            f"{FICHERO_RETIRADOS}: {huella[:12]}... no es la huella de ningun caso reservado: "
+            f"solo se retira un dia que esta en una particion reservada (ADR-0041)"
+        )
+    if historial.historial_evaluable(repo) is not None:
+        return problemas
+    pares = historial.versiones_del_fichero(repo, FICHERO_RETIRADOS)
+    if pares is None:
+        return problemas
+    actual = ruta.read_text(encoding="utf-8")
+    for hijo, padre in [*pares, ("arbol de trabajo", "HEAD")]:
+        texto_hijo = (
+            actual
+            if hijo == "arbol de trabajo"
+            else historial.contenido_en(repo, hijo, FICHERO_RETIRADOS)
+        )
+        try:
+            antes = _version_retirados(
+                historial.contenido_en(repo, padre, FICHERO_RETIRADOS), padre[:7]
+            )
+            despues = _version_retirados(texto_hijo, hijo[:7])
+        except RetiradosError as exc:
+            problemas.append(str(exc))
+            continue
+        for huella, entrada in antes.items():
+            if huella not in despues:
+                problemas.append(f"{hijo[:16]}: borra la retirada {huella[:12]}...")
+            elif despues[huella] != entrada:
+                problemas.append(
+                    f"{hijo[:16]}: modifica la retirada {huella[:12]}.... El registro es SOLO "
+                    f"ANADIR: una retirada no se deshace ni se reescribe (ADR-0041)"
+                )
+    return problemas

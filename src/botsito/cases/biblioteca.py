@@ -50,7 +50,7 @@ from typing import Any
 
 import yaml
 
-from botsito.cases.holdout import casos_reservados
+from botsito.cases.holdout import casos_ocultos
 from botsito.cases.ingesta import DIRECTORIO_DEV, Operacion
 from botsito.comun import ids
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
@@ -110,7 +110,9 @@ def problemas_de_biblioteca(repo: Path) -> list[str]:
     if not carpeta.is_dir():
         return []
     problemas: list[str] = []
-    reservados = casos_reservados(repo)  # lanza si un reparto es ilegible: falla cerrado
+    # OCULTOS (ADR-0041): un retirado tampoco puede tener caso en `dev`. Lanza si un reparto es
+    # ilegible: falla cerrado.
+    reservados = casos_ocultos(repo)
     for ruta in sorted(carpeta.glob("caso-*.yaml")):
         nombre = ruta.name
         try:
