@@ -1,0 +1,1952 @@
+INTEGRIDAD tr-v1-large-v3-int8-float16-bbd8a931 cruda.jsonl sha256 bbd8a931fdba7e00287d0ad9bca864595bac7d8ecf891e0c6c815c53c8e84b2f = manifiesto: OK
+INTEGRIDAD tr-v2-large-v3-int8-float16-28391c2c cruda.jsonl sha256 28391c2c9e5e66edbcdb663e9aee03bf7afde03036a4ea10b0e8455d212578c8 = manifiesto: OK
+INTEGRIDAD tr-v3-large-v3-int8-float16-270a4851 cruda.jsonl sha256 270a48517e6f57f5449913091937a95e5a3e4f4d32b771aaa8f690078975902e = manifiesto: OK
+INTEGRIDAD tr-v4-large-v3-int8-float16-a8d1bccc cruda.jsonl sha256 a8d1bccc209272ed91f6b9fcf3e18bb4ac2ff2b048c99c43606fe1a57b2402ed = manifiesto: OK
+INTEGRIDAD tr-v5-large-v3-int8-float16-3c6fbb57 cruda.jsonl sha256 3c6fbb578746456e0830b162f6cf81222dbfa8295173b6f6de36faac555ab980 = manifiesto: OK
+=== PASAJE 1 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:03:29-0:05:11 | objetivo x2
+[0:03:28-0:03:39] #38 tiene que ser mitigada para que se desarrolle el esquema por debajo y hoy entrar, vale, perfecto,
+[0:03:39-0:03:45] #39 ¿qué tenemos aquí? nosotros aquí ya tenemos lo que sería este breaker de aquí, o sea, justo en M15 tenemos este breaker
+[0:03:45-0:03:52] #40 que obviamente si nosotros ya tenemos que ir anticipándonos e ir trabajando con orden orden
+[0:03:52-0:03:59] #41 es el límite por el límite entonces estaría aquí el flujo bajista aquí entonces bueno bueno voy a
+[0:03:59-0:04:06] #42 retroceder pero es eso tendrías que anticipar te ir bajando esperarías el breaker de aquí para que
+[0:04:06-0:04:13] #43 puedas entrar entonces entras allí cantan y vale aquí ya tienes definido lo que sería pues
+[0:04:14-0:04:26] #44 pues, como corresponde, y planteas el 1.3, 1.3 como objetivo fijo, como objetivo fijo
+[0:04:26-0:04:31] #45 y mínimo, por así decirlo, que es lo que yo suelo buscar como tal, vale, entonces vemos
+[0:04:31-0:04:36] #46 que es el precio, baja, vale, aquí que ocurre, pues aquí tengo una pérdida, como tal, o
+[0:04:36-0:04:41] #47 sea, están viendo tal cual como yo es lo que haría, o sea, como tomaría el trade,
+[0:04:41-0:04:46] #48 entonces yo aquí considero que tengo una pérdida, que no pasa nada, vale, obvio,
+[0:04:46-0:04:48] #49 me olvidé mencionar también que tenemos que
+[0:04:48-0:04:50] #50 trazar el cuadro de GAN
+[0:04:50-0:04:52] #51 para poder, desde aquí
+[0:04:52-0:04:54] #52 hasta aquí, para poder cubrir
+[0:04:54-0:04:56] #53 hasta un 0.75, entonces
+[0:04:56-0:04:58] #54 aquí perderíamos menos un 0.75
+[0:04:58-0:05:00] #55 como tal, vale, me había olvidado
+[0:05:00-0:05:02] #56 mencionar eso, pero es algo que hay que tener
+[0:05:02-0:05:03] #57 en cuenta, entonces
+[0:05:03-0:05:06] #58 luego, continuando, pues
+[0:05:06-0:05:06] #59 vemos que
+[0:05:08-0:05:10] #60 esperaría que siga un flujo
+[0:05:10-0:05:12] #61 bajista y luego me genere un breaker
+=== PASAJE 2 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:05:43-0:09:46 | proteger x2, TP x1, objetivo x2
+[0:05:41-0:05:45] #67 debajo por el hecho de que esta mecha yo considero también como parte de la estructura de mercado
+[0:05:45-0:06:08] #68 En el cual si plantamos lo que sería el order flow, yo lo mapearía así, ¿vale? Lo mapearía así y esa mecha pues me genera esta zona de control aquí, esta zona de liquidez que yo validaría perfectamente para que si hay un breaker pues entrar allí.
+[0:06:08-0:06:10] #69 Vemos que es el precio, aquí estaría mi order limit
+[0:06:12-0:06:13] #70 Vale
+[0:06:15-0:06:16] #71 Perfecto, ahí se activaría
+[0:06:16-0:06:17] #72 Mi order limit, ok
+[0:06:17-0:06:20] #73 Entonces aquí yo tendría la orden
+[0:06:20-0:06:22] #74 Obviamente no olvidarse
+[0:06:22-0:06:24] #75 De poner el cuadro, bueno el cuadro de GAN
+[0:06:25-0:06:27] #76 Supongo que ya va a estar configurado como tal
+[0:06:27-0:06:28] #77 En 0.75
+[0:06:28-0:06:30] #78 Proteger el trade, a inicio apenas
+[0:06:30-0:06:32] #79 Se genere la entrada, en 0.75
+[0:06:32-0:06:33] #80 Proteger el trade
+[0:06:33-0:06:37] #81 Y pues plantar hasta 1.3
+[0:06:37-0:06:39] #82 Que mira, perfectamente
+[0:06:39-0:06:41] #83 Ahí se da el 1.3
+[0:06:41-0:06:43] #84 O sea, se da demasiado rápido, ¿entiendes?
+[0:06:43-0:06:45] #85 O sea, se da demasiado rápido el 1.3
+[0:06:45-0:06:48] #86 Como tal, ahora vemos que hace el precio
+[0:06:52-0:06:53] #87 Vale
+[0:06:53-0:06:55] #88 Y esto es lo heavy, ¿vale?
+[0:06:55-0:06:57] #89 Lo heavy y lo interesante que es
+[0:06:57-0:06:59] #90 Que si nosotros nos damos cuenta
+[0:07:01-0:07:02] #91 Mira
+[0:07:02-0:07:05] #92 El precio, bueno yo ya sé
+[0:07:05-0:07:06] #93 Más o menos por el hecho de que sé que
+[0:07:06-0:07:09] #94 Ha terminado alcista, o sea, ha habido un flujo alcista
+[0:07:09-0:07:10] #95 Demasiado fuerte
+[0:07:14-0:07:21] #96 pues claro si uno digámoslo así tiene estudiado la velocidad y la fuerza con la que va a ir el
+[0:07:21-0:07:28] #97 precio aunque creo que por ciertas noticias y ciertas menciones que hizo trump el dólar pues
+[0:07:29-0:07:37] #98 se puso fuerte entonces por lo cual generó este flujo alcista demasiado fuerte en el cual si uno
+[0:07:37-0:07:43] #99 sabe definir que hasta aquí posiblemente llegue el precio pues hubiera hecho un 132 vale pero como
+[0:07:43-0:07:51] #100 digo como objetivo fijo pues está el 13 que se cumplió rápidamente ahora pues después otro yo
+[0:07:51-0:07:58] #101 aquí honestamente yo siendo sincero me hubiera salido en 13 no por lectura de mercado y más o
+[0:07:58-0:08:02] #102 menos y cómo se va desarrollando el precio no hubiera sabido definir como tal al menos en este
+[0:08:02-0:08:04] #103 En este contexto de estructura de mercado
+[0:08:05-0:08:06] #104 Decir que esta va a ser una zona
+[0:08:06-0:08:07] #105 Muy interesante
+[0:08:08-0:08:10] #106 Para en la cual yo pueda salir, ¿vale?
+[0:08:11-0:08:12] #107 O sea, y a lo mucho
+[0:08:12-0:08:15] #108 Creo yo, pude haber plantado aquí
+[0:08:15-0:08:16] #109 A lo mucho, o sea
+[0:08:17-0:08:18] #110 Viendo así la estructura, diciendo eso
+[0:08:18-0:08:20] #111 Pero jugándomela
+[0:08:20-0:08:22] #112 Que no me la iba a jugar, honestamente
+[0:08:22-0:08:24] #113 Pues hasta aquí, que sería un 1.10
+[0:08:25-0:08:25] #114 ¿Vale?
+[0:08:27-0:08:28] #115 Porque es algo, a ver
+[0:08:28-0:08:30] #116 Es algo, yo tengo plantado
+[0:08:30-0:08:31] #117 Como tal, planteado
+[0:08:31-0:08:41] #118 planteado mejor dicho como un target fijo el 13 pero es eso a veces por el hecho de que hay
+[0:08:41-0:08:48] #119 niveles donde el precio suele reaccionar y luego generar el rivers pero pasa también que por
+[0:08:48-0:08:54] #120 ejemplo si nosotros tenemos aquí plantado pues eso como son objetivo vale este nivel aquí que
+[0:08:54-0:09:01] #121 pasa a veces antes de que te llegue aquí a este punto aquí y te cierre con tp el precio lo que
+[0:09:01-0:09:07] #122 que hace es apoyarse bueno esto es un ejemplo no es lo que sucedió pero se apoya y se apoya
+[0:09:07-0:09:14] #123 esta zona y genera por abajo y te puede sacar a veces entonces claro es ya creo dependiendo
+[0:09:14-0:09:19] #124 el contexto en este caso a lo mejor se puede haber llevado el envasador guiándote por el
+[0:09:19-0:09:24] #125 precio y demás puedes ir subiendo a poco a poco si lo gestionan manualmente pero el robot creo
+[0:09:24-0:09:30] #126 no sé si lo va a llegar a hacer o sea de poder se puede pero ahora como recién cesada digamos
+[0:09:30-0:09:38] #127 iniciando y demás entonces es eso no sé si va a poder hacer eso bueno aquí entonces tenemos
+[0:09:38-0:09:48] #128 una pérdida vale tenemos una pérdida como tal y tenemos aquí pues 1 3 o sea entonces
+=== PASAJE 3 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:14:12-0:17:36 | stop x4, stop loss x4, TP x1, riesgo x1
+[0:14:08-0:14:13] #185 pasar si llega aquí o rompe entonces vamos ahí bajando el límite bajando el límite y este sería
+[0:14:13-0:14:21] #186 pues la el último pico en este en este retroceso complejo entonces esperaría yo a que o sea va con
+[0:14:21-0:14:26] #187 todas las condiciones de que va a dar uno de los esquemas de entrada que sería que o sea ya
+[0:14:26-0:14:33] #188 Ya sabemos, o bien el precio hace esto, o bien el precio me rompe de esa manera.
+[0:14:35-0:14:41] #189 Y cuando se desarrolle esta zona de control que no haga mucho ruido, o sea, sea una zona limpia, por así decirlo, sin mucho ruido.
+[0:14:42-0:14:46] #190 Entonces, esperamos a que genere el breaker y aquí se activaría el order limit, ¿ok?
+[0:14:48-0:14:54] #191 Obviamente, pues, tenemos que ya definir, o sea, antes que nada ya ir definiendo también lo que sería, o sea, ya puedes definir como tal.
+[0:14:54-0:14:57] #192 Desde el punto más abajo te genera la vela contraria
+[0:14:57-0:15:01] #193 Se puede definir, pues, el stop loss y demás
+[0:15:01-0:15:05] #194 Entonces, aquí sería mi stop loss, ¿vale?
+[0:15:06-0:15:07] #195 Ahora, ¿qué ocurre?
+[0:15:07-0:15:13] #196 Mira, yo, honestamente, ya como había comentado en anteriores videos
+[0:15:13-0:15:18] #197 El precio, cuando me genera estos dos esquemas que yo busco en estos dos esquemas
+[0:15:18-0:15:22] #198 Que el precio usualmente genere rompimiento, retroceda
+[0:15:22-0:15:30] #199 o bien a veces no retrocede y va con una fuerza, o sea, va con fuerza y pues continúa hasta llegar al TP, ¿vale?
+[0:15:30-0:15:38] #200 Pero ¿qué pasa? A veces genera este tipo de retrocesos y bien puede hacer esto, retrocede y continúa subiendo el precio, ¿vale?
+[0:15:39-0:15:45] #201 Pero también ¿qué ocurre? Pues suele hacer como un pequeño retroceso complejo en el cual el precio suele hacer esto.
+[0:15:46-0:15:51] #202 Llega, sube, es un ejemplo, llega, sube, baja y luego sube, ¿vale?
+[0:15:52-0:15:55] #203 Mientras no me choque la línea de stop loss
+[0:15:55-0:15:56] #204 Todo normal
+[0:15:56-0:15:57] #205 Pero ¿qué pasa?
+[0:15:57-0:15:59] #206 Yo también, o sea, sé que cuando ya he entrado demasiado
+[0:15:59-0:16:02] #207 Y ya ha pasado más del 50% de la vela
+[0:16:02-0:16:04] #208 Entonces yo ahí entro, tomo cuidado
+[0:16:04-0:16:06] #209 Por el hecho de que, a ver
+[0:16:07-0:16:09] #210 Independientemente si después el trade se me da ganador
+[0:16:09-0:16:11] #211 A mí no me importa, honestamente
+[0:16:11-0:16:14] #212 Yo prefiero reducir mi riesgo
+[0:16:14-0:16:16] #213 A que tener ese trade ganador
+[0:16:16-0:16:16] #214 O sea
+[0:16:18-0:16:20] #215 Según el backtesting que yo hice
+[0:16:20-0:16:27] #216 pues yo lo pienso así ahora y también por el hecho de que por el número de datos que he obtenido a
+[0:16:27-0:16:33] #217 través de mi backtesting claro si como nuevamente lo repito si es mayor o sea si en el bot sale
+[0:16:33-0:16:43] #218 que es más factible qué sé yo o sea no usar en 0.75 y mejor dejarlo en 1 pues ya es otra historia
+[0:16:43-0:16:51] #219 o sea se cambia y está pero yo según suelo reducir o sea mi stop loss digamos máximo que yo puedo
+[0:16:51-0:16:59] #220 fijar o sea de pasar de 0.75 es a 0.50 entonces si yo estuviera gestionando el trade que es lo
+[0:16:59-0:17:05] #221 que yo hice hoy día o sea yo hice este trade tomé este trade que ya les digo que es perdedor como
+[0:17:05-0:17:11] #222 tal pero yo lo gestioné de la siguiente manera tengo aquí planteo allí entonces veo que el
+[0:17:11-0:17:17] #223 precio llega me genera esto entonces existe dos posibilidades que siga bajando aunque se revierta
+[0:17:17-0:17:23] #224 pero como sé que esta vela ha terminado alcista entonces yo sé que hay un rechazo allí entonces
+[0:17:23-0:17:30] #225 existe una alta probabilidad yo sé que existe una alta probabilidad de que el precio pues me
+[0:17:30-0:17:42] #226 me genere este tipo de retroceso, que es lo más probable, llegue, baje y me termine de romper, ¿vale?
+=== PASAJE 4 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:18:00-0:20:36 | protejo x1, TP x1, 1% x1
+[0:18:00-0:18:01] #228 Que es lo que se va a ver también
+[0:18:01-0:18:03] #229 Llega, retroceda, llega hasta aquí
+[0:18:03-0:18:04] #230 Y llega allí
+[0:18:05-0:18:07] #231 ¿Vale? Pero como digo
+[0:18:07-0:18:09] #232 Yo prefiero
+[0:18:09-0:18:11] #233 Ser más conservador
+[0:18:11-0:18:12] #234 Y plantear
+[0:18:12-0:18:15] #235 Cuando me genere la vela de rechazo aquí
+[0:18:15-0:18:17] #236 Porque yo lo que busco en el modelo son
+[0:18:17-0:18:19] #237 Que los trades sean rápidos
+[0:18:19-0:18:21] #238 Como tal, o que me genere una zona
+[0:18:21-0:18:23] #239 De control para yo poner mi break even
+[0:18:23-0:18:25] #240 Afuera, o sea que llegue hasta allí
+[0:18:26-0:18:28] #241 Retroceda como tenga que retroceder
+[0:18:28-0:18:29] #242 Me genere la zona de control
+[0:18:29-0:18:39] #243 y pues pongo sobre la operativa en la operativa ahora vamos a ver qué hace el precio llega llega
+[0:18:39-0:18:45] #244 es por eso que yo planto allí o sea ya estoy protegiendo a 0.50 el trade y mira me saca pero
+[0:18:45-0:18:53] #245 mira luego se me termina sacando del todo entonces yo ya protejo 0.50 no pierdo el 1% en total sino
+[0:18:53-0:19:02] #246 el 0.50 entiendes entonces sigo aquí no hay entrada todavía porque a veces puede ser que
+[0:19:02-0:19:08] #247 genere el retroceso siga cayendo y nuevamente se genera la entrada que suele pasar vale no
+[0:19:08-0:19:14] #248 entra allí no entra allí no entra allí no entra allí no entra allí y aquí pues bueno
+[0:19:14-0:19:22] #249 a ver nuevamente sabemos que tenemos que ir con el límite allí y aquí estaría vale aquí estaría
+[0:19:23-0:19:24] #250 La entrada
+[0:19:25-0:19:26] #251 Como tal
+[0:19:27-0:19:28] #252 Nosotros definimos aquí
+[0:19:28-0:19:30] #253 A un 1.3
+[0:19:30-0:19:31] #254 ¿Vale?
+[0:19:38-0:19:39] #255 Entonces vemos que hace el precio
+[0:19:40-0:19:42] #256 Y mira, mira lo que tenemos aquí
+[0:19:42-0:19:44] #257 El precio
+[0:19:44-0:19:45] #258 Esto es muy curioso ¿Vale?
+[0:19:47-0:19:49] #259 Porque yo pensé
+[0:19:49-0:19:51] #260 Que iba a llegar a tocar el TP
+[0:19:51-0:19:52] #261 ¿Ok? Pero no lo hizo
+[0:19:52-0:19:54] #262 ¿Vale? No lo hizo
+[0:19:54-0:19:56] #263 Entonces yo aquí
+[0:19:56-0:19:57] #264 Aquí pues ya más o menos.
+[0:19:58-0:20:28] #265 0.75, y voy, sé que ha subido demasiado el precio, entonces voy reduciendo un poquito más, no lo dejo por encima del 0.25, pero para poder poner en break even mi entrada, pues lo que haría es que el precio llegue hasta aquí, y me genere una zona de control, o sea, mitigue esta zona de aquí, y automáticamente lo pongo en break even, a ver, me he olvidado que es lo que sucede aquí, sé que he perdido este trade, pero me he olvidado el movimiento que hace, entonces vamos a ver que hace, perfecto, aquí me genera rechazo, ok,
+[0:20:28-0:20:46] #266 ¿Ok? Hay una manera de gestionar también de decir, vale, pues sé que el precio ya ha retrocedido, o sea, genera un rechazo, entonces lo ideal sería, como yo busco trades rápidos, o sea, si el trade se va a dar, pues la mayoría de trades se dan en ese contexto, que llega, retrocede y automáticamente se dispara, ¿vale?
+=== PASAJE 5 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:21:53-0:23:42 | riesgo x1
+[0:21:48-0:21:54] #277 esto es algo que estaba viendo es planteando por ejemplo tenemos un trade en el cual lo normal
+[0:21:54-0:22:01] #278 sería 13 pero visualizando que configurando allí sería un 14 entiendes entonces algo así
+[0:22:01-0:22:10] #279 más o menos entonces es algo que bueno me gustaría qué que me comenten si es factible
+[0:22:10-0:22:11] #280 o no, o que opinan
+[0:22:12-0:22:14] #281 o sea, igual por ahora yo me manejo
+[0:22:14-0:22:15] #282 con esto, o sea, con eso
+[0:22:15-0:22:17] #283 como tal, pero
+[0:22:17-0:22:19] #284 tampoco, claro, no creo que
+[0:22:20-0:22:22] #285 entremos a un modo de sobre optimización
+[0:22:22-0:22:23] #286 no creo yo, porque
+[0:22:23-0:22:26] #287 las reglas se mantienen como tal, como digo
+[0:22:26-0:22:28] #288 el esquema de entrada es el mismo, es algo que no se va
+[0:22:28-0:22:30] #289 a cambiar, solo que
+[0:22:30-0:22:31] #290 claro, en cuanto a ajustes
+[0:22:33-0:22:34] #291 de arriesgo
+[0:22:34-0:22:36] #292 o sea, lo que
+[0:22:36-0:22:38] #293 tratamos de hacer, claro, existe la posibilidad
+[0:22:38-0:22:57] #294 o bien arriesgamos la curva de drawdown, cómo va a crecer, el riesgo también, pero es eso, entonces nada, no me llega el 1.3, el precio llega allí, hubiera esperado allí para poner un break even,
+[0:22:57-0:22:58] #295 Pero mira, me termina cerrando
+[0:22:58-0:22:59] #296 Pues en
+[0:23:00-0:23:01] #297 Por aquí, vale
+[0:23:01-0:23:04] #298 Ahora, todavía estamos en la zona
+[0:23:04-0:23:06] #299 Operativa, entonces yo digo, pues vale
+[0:23:06-0:23:08] #300 Me generó esto, no se dio el trade
+[0:23:08-0:23:10] #301 Si no ya hubiera cerrado allí
+[0:23:10-0:23:11] #302 Aunque
+[0:23:13-0:23:14] #303 Bueno, yo no suelo
+[0:23:14-0:23:16] #304 Tomar parciales por ahora
+[0:23:16-0:23:17] #305 No lo he intentado
+[0:23:18-0:23:20] #306 Pero bueno, a ver, vamos a ver que hace el precio
+[0:23:21-0:23:22] #307 Vale, me ha adelantado
+[0:23:22-0:23:24] #308 Demasiado rápido, aquí luego tomé este trade
+[0:23:24-0:23:26] #309 También de aquí, que fue otro trade
+[0:23:26-0:23:34] #310 y perdedor o sea yo lo estoy mostrando tal cual fue otro 3 perdedor me voy a saltar para lo mismo
+[0:23:34-0:23:46] #311 aquí no menos 0 75 aquí menos 0 50 vale y aquí pues menos 0 50 vamos 0 1 menos 1 con 75 menos
+=== PASAJE 6 | tr-v2-large-v3-int8-float16-28391c2c | 0:01:00-0:02:50 | objetivo x1, riesgo x1
+[0:00:55-0:01:01] #5 a buscar más que nada también con esta estrategia pues es que sea tanto para mercados volátiles como
+[0:01:01-0:01:06] #6 direccionalidad es como una lectura del precio o sea puedes usar o bien gráfico de barras bueno
+[0:01:06-0:01:12] #7 digo velas o también puedes usar línea u otros pero yo suelo usar velas por el hecho de que te
+[0:01:12-0:01:19] #8 suele marcar tanto el máximo como el mínimo o sea un mínimo y un máximo entonces de esa manera pues
+[0:01:19-0:01:23] #9 pues cuando lo veamos más adelante en profundidad te vas a dar cuenta
+[0:01:23-0:01:27] #10 qué criterios tenemos que usar.
+[0:01:29-0:01:32] #11 Ahora, pues universalidad de diferentes activos,
+[0:01:32-0:01:38] #12 lo he backtesteado en diferentes activos como el SPY, Forex y también en materias primas
+[0:01:38-0:01:41] #13 y funciona, o sea, como es acción del precio,
+[0:01:41-0:01:45] #14 o sea, se trata de ser lo más subjetivo posible,
+[0:01:45-0:01:51] #15 a lo mejor la subjetividad entra en lo que sería la gestión de riesgo pero en cuanto a la toma de
+[0:01:51-0:01:57] #16 entrada o sea que es lo que queremos llegar o sea aplicarlo a código de lo bueno es lo más
+[0:01:57-0:02:05] #17 objetivo posible vale no sé no suelo usar indicadores como el rc y entre otros no o
+[0:02:05-0:02:11] #18 medias móviles no lo suelo usar pero a lo mejor pues claro en algunos casos agregar indicadores
+[0:02:11-0:02:18] #19 como las medias móviles y demás pues no he intentado yo pero si alguno pues le interesa
+[0:02:18-0:02:25] #20 pues lo puede intentar y a ver qué onda hipótesis de multi temporalidad pues la integración de los
+[0:02:25-0:02:31] #21 marcos temporales de 4 horas 15 minutos y un minuto vale aquí voy a profundizar lo que serían
+[0:02:31-0:02:40] #22 bueno un punto clave las temporalidades ya que nosotros pues trabajamos en dos sesiones ahora
+[0:02:40-0:02:49] #23 voy a por ejemplo voy a retroceder aquí este es el pequeño bate sin que estaba haciendo desde
+[0:02:49-0:02:56] #24 desde el inicio de ver a lo que tenía un bote sin que era este mes no sé si está para que no
+=== PASAJE 7 | tr-v2-large-v3-int8-float16-28391c2c | 0:04:46-0:06:18 | objetivo x1
+[0:04:40-0:04:47] #43 O sea, trata de decir, oh, esto es, qué sé yo, lo último en el mundo y me va a ser rentable.
+[0:04:47-0:04:58] #44 Y honestamente, yo confronto con algunas ideas de ICT porque, o sea, se ha vendido como que si fuera lo máximo cuando es algo que literalmente está desde hace antes.
+[0:04:58-0:05:06] #45 O sea, aparte creo yo desde Wyckoff, o sea, que es acumulación, distribución, redistribución y demás, que es lo que ahora les voy a mostrar, ¿entiendes?
+[0:05:06-0:05:21] #46 O sea, si tú quieres plantearlo como, digamos, solo teniendo ese pensamiento de acumulación, distribución, te va a servir mucho mejor porque no me complico con usar conceptos que bloque de órdenes, imbalances, entre otros, no. O sea, solo son un par de cosas.
+[0:05:21-0:05:29] #47 O sea, lo que vamos a buscar es que, a ver, lo más simple posible, ¿vale?
+[0:05:29-0:05:31] #48 Para que cuando se ponga el código, se haga como código.
+[0:05:31-0:05:33] #49 O sea, hay una lógica y sea objetivo.
+[0:05:33-0:05:40] #50 Porque la subjetividad, si no aplicas redes neuronales o IA, pues no se va a poder, digamos.
+[0:05:41-0:05:45] #51 Pero la subjetividad entra más que nada en lo que sería la gestión del store loss.
+[0:05:46-0:05:47] #52 Pero bueno, vamos por eso, ¿vale?
+[0:05:47-0:05:49] #53 Obviamente trabajas por marcos temporales.
+[0:05:49-0:05:55] #54 o sea el time frame alto que sería cuatro horas te indica la direccionalidad vale estadísticamente
+[0:05:57-0:06:03] #55 estadísticamente según el back testing que yo hice usualmente se suele definir la tendencia
+[0:06:03-0:06:10] #56 por así decirlo tú el inicio de sesión empieza a las siete de la mañana y la vela o el precio
+[0:06:10-0:06:17] #57 termina alcista vale entonces es lo más probable que continúe o sea esa tendencia en las próximas
+[0:06:17-0:06:23] #58 cuatro horas o sea también sea alcista entonces qué pasa pues tú vas a seguir buscando lo que es
+=== PASAJE 8 | tr-v2-large-v3-int8-float16-28391c2c | 0:15:01-0:19:45 | stop x1, stop loss x1, objetivo x1, 1 a 3 x4, ratio x2, riesgo x4, beneficio x3
+[0:14:40-0:15:12] #127 sujeto no sé cómo lo es tú o sea que me puedes decir claro no hay eso la cosa es un muy buen
+[0:15:12-0:15:18] #128 en punto que por eso mira no vamos a poder evitar este escenario o sea la verdad esto es en este
+[0:15:18-0:15:24] #129 caso si yo sea cierro a ver no evitando este escenario tendríamos una pérdida directamente
+[0:15:24-0:15:29] #130 o sea sin él no se llega a poner el break even por las condiciones porque la condicional para
+[0:15:29-0:15:35] #131 que se ponga en break even es que el precio una vez desarrollada está este rompimiento o
+[0:15:35-0:15:43] #132 o sea, el BOS, pues retroceda, suba y me genere, bueno, yo lo suelo llamar zona de control,
+[0:15:43-0:15:45] #133 esta zona de control aquí, ¿entiendes? Donde el precio da como que continuidad,
+[0:15:46-0:15:52] #134 pero una vez ya me genere este pequeño rompimiento aquí, automáticamente se sube el stop loss,
+[0:15:52-0:15:58] #135 entonces, porque sé que va a caer luego, o sea, es lo más probable, o sea, yo ya lo tengo validado,
+[0:15:58-0:16:05] #136 que estadísticamente, o si el precio no genera un impulso fuerte, lo más probable es que la entrada
+[0:16:05-0:16:15] #137 o sea se toque de solos entonces pero luego si seguimos viendo desarrollando el precio aquí vale
+[0:16:15-0:16:24] #138 por ejemplo luego tienes esto aquí donde te genera el otro voz que máximo suele ser dos entradas o
+[0:16:24-0:16:32] #139 sea después del rompimiento de liquidez en este caso de m15 tienes máximo dos entradas pero bueno
+[0:16:32-0:16:37] #140 Bueno, aquí también entra un poco lo más complejo, creo yo, no sé.
+[0:16:38-0:16:44] #141 A ver, si te toman break-even, puedes como que acumular, digamos, ese cartucho.
+[0:16:44-0:16:49] #142 O sea, de seguir buscando ese boss hasta que se te complete la operativa.
+[0:16:49-0:16:53] #143 Por ejemplo, en este caso, sería aquí.
+[0:16:58-0:17:02] #144 Suelo buscar yo como mínimo, o sea, el ratio de riesgo-beneficio de 1 a 3.
+[0:17:02-0:17:08] #145 o sea, mi break-even se ha definido más que nada
+[0:17:08-0:17:11] #146 como te digo, por el desarrollo de una zona de control, o sea que después del break
+[0:17:11-0:17:15] #147 el precio retroceda y rompa y me genera ese bloque, o bueno
+[0:17:16-0:17:19] #148 llamémoslo bloque de aquí, la entrada está en break-even
+[0:17:19-0:17:22] #149 en este caso, ya la entrada también estaría en break-even
+[0:17:24-0:17:27] #150 en break-even aquí, o sea, ya estaría
+[0:17:27-0:17:29] #151 llega, me genera aquí
+[0:17:31-0:17:37] #152 como ya generó este bloque de aquí entonces ya la entrada y estaría en break even para lo que
+[0:17:37-0:17:43] #153 si ya se mueve el precio en break even y puedes esperar a que llegue el precio hasta el objetivo
+[0:17:50-0:17:56] #154 vale pues en algunos casos no llega si lo define sabón aún 12 no lo he probado o sea honestamente
+[0:17:56-0:18:02] #155 como el estado trabajando con un radio riesgo beneficio de un 1 a 3 claro es a veces que el
+[0:18:02-0:18:07] #156 precio se le llegará un poco más difícil porque no genera movimientos muy fuertes digamos pero
+[0:18:07-0:18:15] #157 en un 12 y logramos puesto en un 12 ya habremos cerrado la operativa se podría ver cristiano
+[0:18:19-0:18:26] #158 pues es una buena pregunta yo honestamente no lo he probado tomando parciales pero claro
+[0:18:26-0:18:32] #159 parciales es una manera entra en lo que sería gestión de riesgo que pero no es lo mismo si
+[0:18:32-0:18:38] #160 O sea, si tú, por ejemplo, tomas de toda la operación cuando llega a un 1 a 1 un 25%,
+[0:18:39-0:18:43] #161 como le estás quitando margen a la operativa, lo siguiente es que al final,
+[0:18:43-0:18:48] #162 o sea, si tú estableces de un 1 a 3, no se llega a completar ese 1 a 3,
+[0:18:48-0:18:53] #163 sino termine con un 1, 2 con 5, un 1, 2 con 1.
+[0:18:55-0:19:00] #164 Entonces, que también, o sea, un ratio de riesgo-beneficio, un 1 con 1, 1, 2,
+[0:19:00-0:19:06] #165 todavía te da margen o sea de tener un buen rey no demasiado alto y terminar o sea rentablemente
+[0:19:07-0:19:12] #166 pero yo lo que trato es eso pero claro o sea es algo que creo que sé como tú dices bueno se
+[0:19:12-0:19:17] #167 puede se puede probar entiendes al final es eso no saberla o sea tratar de buscar la mejor
+[0:19:17-0:19:22] #168 configuración óptima aunque con la que yo he trabajado al menos o sea y le van testeado nada
+[0:19:22-0:19:32] #169 ha dado esos resultados a ver no sé si voy a esperar un momento le voy a pasar lo que le pasa
+[0:19:32-0:19:35] #170 en mí
+=== PASAJE 9 | tr-v2-large-v3-int8-float16-28391c2c | 0:20:23-0:23:57 | stop x2, stop loss x2, ratio x1, RR x3, riesgo x1, beneficio x1
+[0:20:26-0:20:27] #176 ¿Lo mandaste ayer?
+[0:20:27-0:20:28] #177 Sí, sí.
+[0:20:29-0:20:30] #178 Bien.
+[0:20:32-0:20:33] #179 Escucha, me lo aprendí yo.
+[0:20:34-0:20:34] #180 Al grupo.
+[0:20:37-0:20:38] #181 ¿Cómo es?
+[0:20:45-0:20:46] #182 Espera, yo lo...
+[0:20:46-0:20:47] #183 Ah, ya, vale.
+[0:20:52-0:20:53] #184 ¿Lo llegas a ver, Aldi?
+[0:20:56-0:21:08] #185 Vale, esa más o menos es la curva de drawdown. Tengo otras, bueno, no las tengo como capturas, pero está en otra cuenta de FQFplay, que es la plataforma que utilizo para hacer el backtesting, ¿vale?
+[0:21:08-0:21:27] #186 Pero, a ver, claro, esas dos se las había enviado a Yair, donde más o menos puedes ver lo que sería el RR promedio. El mínimo más o menos se termina en un ponderado de 2,87 con el RR promedio en una imagen.
+[0:21:27-0:21:39] #187 está aprobado en distintas en distintos meses en distintas sesiones también y pues nada claro
+[0:21:39-0:21:47] #188 donde se por ejemplo donde suele ver un rr promedio de 4.45 fue estableciendo digámoslo
+[0:21:47-0:21:56] #189 bueno fue un mercado un poco tendencial el de 287 fue volátil ahora ahora se pueden maximizar
+[0:21:56-0:21:58] #190 también lo que sería el ratio riesgo-beneficio
+[0:22:00-0:22:05] #191 pero creo que no sé si eso entraría bueno si lo podría hacer robot bueno de
+[0:22:05-0:22:11] #192 poder hacerlo hacerlo se puede pero yo yo lo veo un poco difícil o sea
+[0:22:11-0:22:18] #193 objetiva objetivamente sería definiendo por ejemplo si sabes que el precio va a
+[0:22:18-0:22:24] #194 llegar aquí o sea que tomas aquí y tienes que ser yo en algunos casos o sea
+[0:22:24-0:22:33] #195 lo más probable que el precio se revierta aquí en esta aquí pues se cierra la operativa automáticamente
+[0:22:33-0:22:38] #196 pues en este caso si te das cuenta usualmente cuando el precio está ya a punto de generar un
+[0:22:38-0:22:44] #197 breaker o un boss el precio suele revertirse entonces en este caso podría ser lo más óptimo
+[0:22:44-0:22:48] #198 cerrar la entrada aquí porque lo más probable que después siga cayendo quién sabe bueno se ve
+[0:22:48-0:22:54] #199 porque aquí está marcado pero es eso pero vale continuar la operativa aquí por ejemplo siguiente
+[0:22:56-0:23:04] #200 siguiendo el mismo enfoque que teníamos bueno tenemos aquí vale aquí por ejemplo habría una
+[0:23:04-0:23:12] #201 operativa que sería un stop loss fijo que no buscamos reducir los stop loss o sea para eso
+[0:23:12-0:23:16] #202 ya tenemos como que la condicional de el precio hace este movimiento y genera automáticamente
+[0:23:16-0:23:24] #203 break even si no lo hace pues es un ser los ya ejemplo en este caso el precio no hay manera de
+[0:23:24-0:23:34] #204 poner estos blogs aquí vale se pierde después tienes otra entrada aquí y el precio pues en
+[0:23:34-0:23:40] #205 este caso a ver se podría agregar también una manera de poner break even es que cuando llegue
+[0:23:40-0:23:50] #206 la operación a un 1 a 1 no sé si aquí llega yo al llegar a alcanzar no no llega a alcanzar pero
+[0:23:50-0:24:00] #207 eso también sería nuestro los vale pero después tienes este último breaker o sea este último
+=== PASAJE 10 | tr-v2-large-v3-int8-float16-28391c2c | 0:25:04-0:38:37 | proteger x1, 100% x4, objetivo x4, 1 a 3 x4, ratio x4, riesgo x6, 1% x4, beneficio x9
+[0:24:59-0:25:13] #217 movimiento no me suelta la verdad o no sé si tengo que activar lo de las noticias
+[0:25:17-0:25:17] #218 claro
+[0:25:19-0:25:20] #219 objetivamente
+[0:25:21-0:25:22] #220 como te digo
+[0:25:22-0:25:25] #221 no trato de meterle las noticias
+[0:25:25-0:25:25] #222 porque
+[0:25:26-0:25:28] #223 en el sentido de que claro, se puede poner
+[0:25:29-0:25:30] #224 pero yo no
+[0:25:30-0:25:32] #225 lo he bacteceado, o sea, he bacteceado sin ver
+[0:25:32-0:25:33] #226 las noticias
+[0:25:33-0:25:36] #227 lo he bacteceado así, full price
+[0:25:36-0:25:37] #228 no
+[0:25:38-0:25:40] #229 pero claro, se podría, sí
+[0:25:40-0:25:42] #230 se podría, pero es eso
+[0:25:42-0:25:44] #231 yo lo he bacteceado así nomás
+[0:25:44-0:25:49] #232 pero claro como digo si tú esperas a que bueno el robot llega a cerrar la operativa cuando la
+[0:25:49-0:25:57] #233 vela de cuatro horas finalice pues capturaría su mayor margen de beneficio ampliaría su radio
+[0:25:57-0:26:04] #234 radio beneficio pero es así después lo que sigue es eso tengo más que estaba deseando lo último que
+[0:26:04-0:26:10] #235 estaba haciendo es para tratar de capturar o sea porque sólo usando el modelo de 4 de 4 horas m 15
+[0:26:10-0:26:17] #236 y m1 que son las temporadas m1 es el marco de ejecución donde el robot o el humano buscaría
+[0:26:17-0:26:26] #237 el breaker para dar continuidad a la operativa es en m1 vale direccionalidad es en h4 y m15 es
+[0:26:26-0:26:32] #238 para el marco de marco de liquidez es el precio genera liquidez en este caso bajista genera un
+[0:26:32-0:26:40] #239 breaker en el que apenas generó el breaker te diriges a m1 y buscas lo que sería el boss pero
+[0:26:40-0:26:46] #240 contemplando la direccionalidad como esta vez la terminó en cuatro horas o sea yo solo decir
+[0:26:46-0:26:53] #241 eso estadísticamente o sea que tampoco es 100% certeza hay una alta probabilidad de que el precio
+[0:26:53-0:27:00] #242 o sea continúe ese flujo entiendes o sea esa direccionalidad en algunos casos y vamos más
+[0:27:00-0:27:05] #243 más adelante a lo mejor te encuentres te suele generar incluso entradas y la vela de cuatro
+[0:27:05-0:27:10] #244 horas termina bajista te suele generar entradas que terminan tomándote el ratio riesgo-beneficio
+[0:27:10-0:27:17] #245 de 1 a 3 que es lo que yo busco claro si tienes si a lo mejor nos basamos en que reducimos el
+[0:27:17-0:27:24] #246 ratio riesgo-beneficio a un 1 a 2 aumentaría lo que sería el win rate pero pero claro está
+[0:27:24-0:27:29] #247 reduciendo el beneficio entonces yo al menos yo prefiero tener un ratio riesgo-beneficio
+[0:27:29-0:27:38] #248 mayor con un 1 a 3 que me dan mayores posibilidades de perder que tener un radio
+[0:27:38-0:27:53] #249 rico beneficio menor entonces es eso solo trabajando un vale en cuanto a gestión de
+[0:27:53-0:27:58] #250 riesgo yo lo estaba viendo creo que lo más óptimo sería si uno quiere escalar la cuenta rápido rápido
+[0:27:58-0:28:07] #251 que sea un crecimiento geométrico o sea no fijo o aritmético sino geométrico en el cual pues por
+[0:28:07-0:28:14] #252 ejemplo si estás es un de 10.000 haces un bueno manejas en porcentajes en términos simples se
+[0:28:14-0:28:21] #253 manejan porcentajes vale crecimiento geométrico en porcentajes entonces es eso no es una cuantía
+[0:28:21-0:28:27] #254 fija si no es porcentajes porcentaje un 1% de la cuenta entonces va creciendo geométricamente pues
+[0:28:27-0:28:33] #255 así se crece más rápido también creo yo y aparte de que en un crecimiento geométrico yo lo veo más
+[0:28:33-0:28:39] #256 óptimo por el hecho de que cuando llegue un punto donde tienes una racha perdedora se suele gestionar
+[0:28:39-0:28:45] #257 mejor o sea y automáticamente sin que tú tengas que modificar algo o sea porcentualmente pues
+[0:28:45-0:28:52] #258 eso se suele disminuir el riesgo entonces el porcentaje que puedes manejar es un 1% aunque
+[0:28:52-0:29:00] #259 para la prueba de fondeo que yo lo tengo planteado sería manejarlo con un 0.50 0.50 o un 0.75 para
+[0:29:00-0:29:09] #260 que tengas mayores tiros y claro exacto exacto qué empresa te interesa o sea con qué empresa
+[0:29:09-0:29:25] #261 estás planeando fundarte a vale vale pues creo que tienen las mismas condiciones no claro claro
+[0:29:28-0:29:49] #262 Claro, por eso también más o menos que, o sea, yo trato de, o sea, si tú te das cuenta y ves en las imágenes, los puntos de equilibrio en los trades se combina tanto como perdedoras y ganadoras, pero yo prefiero honestamente tener un punto de equilibrio, o sea, un break even, que a que la operación me sea indecisa, o sea, que se pierda o se gane, ¿entiendes?
+[0:29:49-0:29:53] #263 más que nada también por el hecho de proteger o sea lo que sería o sea
+[0:29:53-0:29:57] #264 esa curva de drawdown que te termina afectando la cuenta
+[0:29:58-0:30:15] #265 Porque claro, si es con cuenta propia, como que puedes arriesgarte mucho más, o sea, puedes gestionar mejores riesgos y todo eso, pero como tienes limitaciones, que es el enfoque que también voy, entonces es eso, o sea, yo prefiero tener un break even que tener una entrada positiva o una perdedora.
+[0:30:15-0:30:28] #266 Pero que yo estoy muy seguro, por lo que he bacteseado, que lo más probable es que sea perdedora. Aunque así teniendo un ratio de riesgo-beneficio de 1 a 3, no te salva, por ejemplo, de las rachas perdedoras.
+[0:30:28-0:30:32] #267 que si tú tienes una racha perdedora que estadísticamente matemáticamente no tienes
+[0:30:32-0:30:40] #268 no sabes con certeza qué día se te va a ocurrir eso entonces imagínate por ejemplo tienes un
+[0:30:40-0:30:47] #269 buen rey de un 55 por ciento a un 40 por ciento pero las dos primas las dos primeras bueno los
+[0:30:47-0:30:53] #270 diez primeros trades son negativos entonces lo positivo todavía estaría en las siguientes
+[0:30:53-0:30:58] #271 operaciones pero no llegas porque ya tienes quemada la cuenta entiendes entonces ese es
+[0:30:58-0:31:03] #272 el chiste también por eso es tratado de como que ser lo más objetivo posible en cuanto a
+[0:31:03-0:31:08] #273 la gestión de estos blogs entonces el break even yo creo que es fundamental o sea que apenas el
+[0:31:08-0:31:20] #274 precio suele generar ese movimiento de aquí en esta o sea aquí hay un flujo de órdenes y luego
+[0:31:20-0:31:24] #275 genera el break que los hasta rompe ese flujo de ese flujo de órdenes o se genera el voz como lo
+[0:31:24-0:31:32] #276 lo conoces te genera este bloque de orden alcista entonces ahí o sea apenas genera aquí ya la
+[0:31:32-0:31:36] #277 entrada se pone automáticamente en solos que lo puedes hacer manualmente también o sea yo lo
+[0:31:36-0:31:42] #278 estaba haciendo manualmente y es importante también otra cosa que nos ha olvidando bueno
+[0:31:42-0:31:50] #279 sólo es el cuadro de gam más o menos porque yo suelo a ver yo cuando suelo medir lo que sería
+[0:31:50-0:31:59] #280 sería la entrada, lo suelo medir normalmente así, o sea, desde el punto anterior, bueno, anterior y el final, o sea, inicio y final, ¿vale?
+[0:32:01-0:32:13] #281 Pero, por ejemplo, pongo unos aquí, ¿vale? Pero al final lo suelo poner en 0.75, o sea, 0.75, entonces no estás arriesgando el 100% de la entrada, ¿vale?
+[0:32:13-0:32:26] #282 Vale, esto estadísticamente que lo puedes ver tú también, o sea, si te pones a backtestear, se suele dar la mayoría de veces que si el precio usualmente suele retroceder hasta un 0.75, hay una alta probabilidad de que caiga.
+[0:32:26-0:32:34] #283 o sea el precio continúe su orden flow bajista pero en 0.75 lo que tú haces estás ya protegiendo
+[0:32:34-0:32:41] #284 un 0.25 del capital cuida también lo que sería tu curva de drawdown porque ya no es lo mismo perder
+[0:32:41-0:32:52] #285 un 1% a perder solo 0.75 entonces te da pues bueno se ve visiblemente una mejora curva de drawdown y
+[0:32:52-0:32:56] #286 Y también, pues, protege mejor tu capital y nada, arriesgas menos, literal.
+[0:32:56-0:33:00] #287 Y al final, igual tienes planteado tu objetivo a 1 a 3.
+[0:33:00-0:33:07] #288 No suelo poner yo aquí, por así decirlo, calcular el OTAG y demás desde aquí.
+[0:33:08-0:33:10] #289 Porque, claro, suele...
+[0:33:11-0:33:13] #290 Bueno, no lo he intentado, la verdad, pero...
+[0:33:14-0:33:16] #291 No, o sea, no lo veo viable.
+[0:33:16-0:33:20] #292 No lo veo viable porque en algunos casos...
+[0:33:22-0:33:23] #293 que lo he intentado
+[0:33:23-0:33:24] #294 bueno, si lo he intentado
+[0:33:24-0:33:26] #295 no me fue muy bien
+[0:33:26-0:33:29] #296 no me fue muy bien por el hecho del
+[0:33:29-0:33:31] #297 drawdown, o sea, es como si estuvieras perdiendo
+[0:33:31-0:33:32] #298 un 1% nuevamente
+[0:33:34-0:33:35] #299 entonces
+[0:33:36-0:33:38] #300 es eso, yo calculo mi lotaje
+[0:33:38-0:33:41] #301 desde aquí, o sea, como si fuera lo básico
+[0:33:41-0:33:42] #302 un bot normal, pero luego
+[0:33:43-0:33:45] #303 automáticamente, se de inicio
+[0:33:45-0:33:46] #304 la entrada, lo pongo en 0.75
+[0:33:47-0:33:48] #305 y estoy
+[0:33:48-0:33:50] #306 guardándome 0.25
+[0:33:50-0:33:56] #307 25 que si lo agrega también a la operativa sería finalizando con un 3 con 25 no sólo un 3 un radio
+[0:33:56-0:34:07] #308 rego beneficio de una traducción o con un 3 con 25 y es eso bueno después creo que a lo mejor en
+[0:34:07-0:34:12] #309 otra charla pues podemos tocarlo o podemos irlo viendo porque es lo que he estado viendo
+[0:34:12-0:34:17] #310 recientemente como se me suelen ir las entradas como te digo o sea no aplicando este modelo
+[0:34:17-0:34:24] #311 lo que sería tomar esta zona de aquí o sea la redistribución porque si tú te das cuenta al
+[0:34:24-0:34:30] #312 final de cabo pues en la redistribución si nos vamos a cuatro horas lo que se está tomando el
+[0:34:30-0:34:37] #313 triste está tomando en el punto casi más bajo de la operativa o sea casi más bajo es por eso que
+[0:34:37-0:34:43] #314 tú puedes aprovechar todo ese movimiento si se da entiendes pero después existe la posibilidad de
+[0:34:43-0:34:45] #315 que te deje la operativa, entonces
+[0:34:45-0:34:47] #316 para eso, o sea, lo que
+[0:34:47-0:34:49] #317 he tratado de buscar es el flujo de órdenes
+[0:34:49-0:34:51] #318 donde se rompe y donde el
+[0:34:51-0:34:52] #319 precio suele generar
+[0:34:53-0:34:55] #320 ese flujo de órdenes natural
+[0:34:55-0:34:57] #321 digámoslo también así, no muy ruidoso
+[0:34:57-0:34:59] #322 en el cual si
+[0:34:59-0:35:00] #323 lo pasas a código
+[0:35:00-0:35:03] #324 y está operando el robot, te está comprando y vendiendo
+[0:35:03-0:35:05] #325 a los locos, no, entonces es eso
+[0:35:05-0:35:07] #326 o sea, bueno, M5 es otra historia
+[0:35:08-0:35:09] #327 pero es eso
+[0:35:12-0:35:13] #328 ¿Tienes alguna duda?
+[0:35:14-0:35:15] #329 ¿O me he liado en algo?
+[0:35:29-0:35:45] #330 Vale, es una muy buena pregunta. Yo principalmente como objetivo tengo pues, a ver, un modelo más robusto a un mayor número de muestras, ¿vale? Entonces lo que me gustaría es, claro, yo supongamos me pongo a bacteciar 1000 trades.
+[0:35:46-0:35:53] #331 aparte de que es muy cansado o sea psicológicamente y demás tampoco tengo el tiempo está suficiente
+[0:35:53-0:35:59] #332 como para abastecer a ser mil 2003 que ya estadísticamente también daría una gran
+[0:35:59-0:36:04] #333 validación de decir pues esto funciona entiendes como te digo en este modelo no lo ha aplicado
+[0:36:04-0:36:10] #334 todavía real tengo planeado ya tengo la cuenta de fondeo también de probable en estas la próxima
+[0:36:10-0:36:16] #335 semana lo más probable no sea sólo usando este modelo aquí porque el de m5 es otra historia
+[0:36:17-0:36:23] #336 pero es eso y bueno esos son con los tres que tengo más trades pero no llevado a sacar el
+[0:36:23-0:36:30] #337 captura pantallas o sea está en otra cuenta pero o sea llegue casi a los 200 trades entonces yo
+[0:36:30-0:36:37] #338 creo que para intentarlo pues viene bien o sea no tampoco pierdo nada entiendes bueno perderé
+[0:36:37-0:36:43] #339 la cuenta de fondeo y está pero claro si es la hay la posibilidad de automatizarlo entonces puedes
+[0:36:43-0:36:53] #340 tener un mayor número de muestras porque después esos esos 203 lo pasé por el nombre
+[0:36:55-0:37:03] #341 monte carlos desde monte carlos y bueno los números dan positivo pero al final es eso
+[0:37:03-0:37:10] #342 o sea el mercado dice otra cosa entiendes entonces nada pues es eso lo que busco es aumentar mi
+[0:37:10-0:37:16] #343 número muestras o sea como objetivo principal y validar el sistema y ya y si hay posibilidad de
+[0:37:16-0:37:21] #344 automatizarlo en el sentido de que trabaje solo pues aquí no le gustaría no o sea te evitarías
+[0:37:21-0:37:27] #345 estar a lo mejor cuatro horas buscando en alguna sesión la entrada que en total serían ocho horas
+[0:37:27-0:37:31] #346 aunque tan fácilmente también puedes trabajar en una sesión de cuatro horas y buscar la entrada
+[0:37:31-0:37:38] #347 y ya o sea o que el robot también a lo mejor pues te indique hay rompimiento aquí que se yo
+[0:37:38-0:37:45] #348 aún eso sería algo más que nada algo híbrido pero si existe posibilidad de automatizar al 100% pues
+[0:37:45-0:37:52] #349 genial creo yo o cualquiera de las dos sea híbrido o automatizar el 100% hay varios aspectos son
+[0:37:52-0:37:57] #350 realidad son varios que pueden hacer o sea el principal lo que primero lo primero que
+[0:37:57-0:38:03] #351 quiero hacer es tratar de va a testear pues de manera robusta no sería tu primera prioridad
+[0:38:03-0:38:10] #352 para validar la estrategia en cierto claro porque al final de cabo no se ha llegado a
+[0:38:10-0:38:11] #353 a ver los backtestings que hicieron
+[0:38:11-0:38:12] #354 de ICT
+[0:38:14-0:38:15] #355 y no sé nada
+[0:38:16-0:38:17] #356 no, leí varias
+[0:38:21-0:38:22] #357 hola
+[0:38:23-0:38:24] #358 ah no
+[0:38:26-0:38:28] #359 has llegado tú a backtestar ICT
+=== PASAJE 11 | tr-v2-large-v3-int8-float16-28391c2c | 0:45:41-0:47:13 | stop x1, stop loss x1, take profit x1
+[0:44:53-0:45:48] #415 claro, claro
+[0:45:48-0:45:50] #416 pues me parece genial, o sea
+[0:45:50-0:45:52] #417 creo que yo también, pues lo principal sería
+[0:45:52-0:45:59] #418 que ustedes se familiaricen para que más o menos tenga la noción de cómo funciona y también puedan
+[0:45:59-0:46:11] #419 potenciarlo y vean entienden y después ya de eso con toda la información ya en el modelo que vamos
+[0:46:11-0:46:18] #420 a hacer pues ya se podría buscar como que por ejemplo detectar detectar entradas no usando
+[0:46:18-0:46:19] #421 nuestros algoritmos
+[0:46:19-0:46:20] #422 o
+[0:46:20-0:46:23] #423 o simplemente ya que te haga
+[0:46:23-0:46:24] #424 la entrada él mismo
+[0:46:26-0:46:28] #425 ponga el stop loss, ponga el take profit
+[0:46:28-0:46:30] #426 o sea de esa manera
+[0:46:30-0:46:31] #427 hay muchas cosas que se pueden hacer
+[0:46:31-0:46:32] #428 incluso hay
+[0:46:33-0:46:36] #429 espacios donde se podría implementar tecnologías más avanzadas
+[0:46:36-0:46:38] #430 pero de momento vamos a iniciar
+[0:46:38-0:46:39] #431 con Python, creo que es
+[0:46:39-0:46:41] #432 lo más flexible, porque hay otro
+[0:46:41-0:46:43] #433 código, creo que era el C
+[0:46:43-0:46:45] #434 que era más profesional
+[0:46:45-0:46:46] #435 más
+=== PASAJE 12 | tr-v2-large-v3-int8-float16-28391c2c | 0:58:42-1:00:17 | riesgo x1
+[0:58:41-0:59:10] #610 después claro pero has intentado con las pruebas de fondeo o era con capital propio soplaba la vela
+[0:59:10-0:59:19] #611 para que se va no a ver si la última prueba de fondeo que la realice hace un par de años porque
+[0:59:19-0:59:26] #612 después con las cosas la universidad y todo esto ha estado petado pero me quedé en un 7% sano me
+[0:59:26-0:59:27] #613 Me comí un drawdown terrible.
+[0:59:27-0:59:32] #614 Tampoco tenía, digamos, un plan de gestión de riesgo muy óptimo.
+[0:59:32-0:59:34] #615 Entonces, es eso.
+[0:59:34-0:59:35] #616 Pero, nada.
+[0:59:37-0:59:38] #617 ¿Ahorita estás jodeando algo?
+[0:59:39-0:59:41] #618 ¿Tienes alguna cripto jodeando?
+[0:59:42-0:59:44] #619 Estoy jodeando, sí.
+[0:59:44-0:59:45] #620 Tengo jodeando Bitcoin.
+[0:59:46-0:59:47] #621 Tengo jodeando Ethereum.
+[0:59:47-0:59:51] #622 Tengo jodeando algunas altcoins como...
+[0:59:52-0:59:53] #623 Pucha, es que ya me olvidé del nombre.
+[0:59:53-0:59:55] #624 No entro desde hace meses.
+[0:59:56-1:00:02] #625 Yo tampoco he entrado, recién me acordé y tengo como 7.000 monedas creo holdeando actualmente.
+[1:00:04-1:00:06] #626 ¿En qué más tienes? ¿En acciones, no?
+[1:00:07-1:00:13] #627 Acciones, materias primas, acciones, ahora más que nada estoy por los semiconductores y todo eso.
+[1:00:14-1:00:18] #628 Te digo porque quiero volver a meterle a la inversión.
+=== PASAJE 13 | tr-v2-large-v3-int8-float16-28391c2c | 1:06:08-1:07:49 | ratio x2, riesgo x2, beneficio x2
+[1:06:27-1:06:29] #759 En España he visto que hay una tendencia
+[1:06:29-1:06:31] #760 Tremenda por abrir este tipo de fondos
+[1:06:31-1:06:31] #761 O sea, en realidad
+[1:06:31-1:06:34] #762 Pero es que como te digo
+[1:06:34-1:06:35] #763 O sea, los
+[1:06:35-1:06:37] #764 Juan Fons, o sea, que realmente
+[1:06:37-1:06:39] #765 valen la pena, creo que
+[1:06:39-1:06:41] #766 son contados alrededor del mundo
+[1:06:41-1:06:43] #767 porque como, claro, existe esa posibilidad
+[1:06:43-1:06:44] #768 de que
+[1:06:45-1:06:47] #769 si tú te das cuenta y revisas un poco la historia
+[1:06:47-1:06:49] #770 la mayoría suele fracasar
+[1:06:49-1:06:52] #771 porque aunque el modelo sea matemático
+[1:06:52-1:06:53] #772 o sea, todo parte de su
+[1:06:53-1:06:54] #773 ratio riesgo-beneficio, o sea
+[1:06:56-1:06:57] #774 acierta, puedes tener tú un modelo
+[1:06:57-1:06:59] #775 estadístico que acierta mucho, pero
+[1:06:59-1:07:01] #776 ese acierto
+[1:07:01-1:07:03] #777 tiene algo, ¿entiendes? A lo mejor su ratio
+[1:07:03-1:07:04] #778 riesgo-beneficio es mínimo
+[1:07:04-1:07:10] #779 o por ejemplo el arbitraje también bueno el arbitraje funciona funciona pero también es
+[1:07:10-1:07:15] #780 algo donde tienes que saber demasiado entiendes aunque no sé actualmente he escuchado poco ya
+[1:07:15-1:07:22] #781 muy pocos lo hacen pero no se me refería justo esa tendencia no porque estoy viendo también que
+[1:07:22-1:07:32] #782 se han creado un montón de fondos de hedge funds en europa y mucha de toda la mayoría está
+[1:07:32-1:07:38] #783 fracasando los cinco o seis años si por eso hay que diferenciarnos hay que diferenciarnos a 0
+[1:07:38-1:07:47] #784 sea un modelo que verdaderamente y estadísticamente pues se valide y para adelante no pero normal se
+[1:07:47-1:07:54] #785 puede ver más adelante ya con más conocimiento se puede más que nada pues nos sirve a cada uno
+=== PASAJE 14 | tr-v3-large-v3-int8-float16-270a4851 | 0:20:09-0:23:42 | proteger x1, ratio x1, riesgo x1, beneficio x1
+[0:20:04-0:20:25] #235 O sea, una vez roto el flujo de órdenes, pues me desarrolla una zona, yo los llamo zona de control, o sea, zona de control en el precio porque puede hacer lo que quiera, ¿vale? O sea, el precio dentro de la zona de control te puede generar eso de aquí, pero una vez complete esta zona de aquí, o sea, una vez se complete esa, inmediatamente se tiene que poner en break even la entrada, inmediatamente.
+[0:20:26-0:20:54] #236 O sea, si en ese caso lo hace, no sé qué va a ser el precio después, ¿vale? No sé qué va a ser el precio. Pero después existe otra regla que le habías comentado, Alex. O sea, no suelo trabajar yo con el 1-1, pero creo yo, o sea, haciendo las pruebas, se podría ver si es factible o no, porque también hay que ver el chiste de que, o sea, a veces poner la entrada, o sea, el break even en 1-1 puede o bien aumentar la tasa de aciertos o bien puede disminuirla.
+[0:20:54-0:21:17] #237 O sea, eso no sabemos. Yo suelo manejarlo con eso. Espero que se desarrolle una zona de control para poner recién break-even. Aunque, como digo, se podría intentar también planteando lo que sería un break-even cuando el ratio riesgo-beneficio sea de 1 a 1.
+[0:21:17-0:21:30] #238 o sea sería cuestión de que no sea exacto exacto por ejemplo hasta aquí sería un 1 a 1 la entrada
+[0:21:30-0:21:34] #239 automáticamente sería break even pero si te das cuenta a veces suele pasar yo creo la mayoría de
+[0:21:34-0:21:42] #240 veces a ver con el número 3 que hice al menos yo creo que no le da tiempo para que el precio
+[0:21:42-0:21:49] #241 se desarrolle y a veces o sea te hace retroceso te toma break even y ya entonces y luego continúa
+[0:21:49-0:21:51] #242 del precio. O sea, por eso yo espero
+[0:21:51-0:21:53] #243 que desarrolle una zona de control, o sea, que genere
+[0:21:53-0:21:54] #244 como que un flujo bajista más,
+[0:21:55-0:21:57] #245 o sea, un bloque de orden, como lo quieran llamar,
+[0:21:57-0:21:59] #246 digamos Z6 y ya está, para poder
+[0:21:59-0:22:01] #247 recién poner a break-even.
+[0:22:01-0:22:03] #248 En este, no sé qué va a pasar después,
+[0:22:03-0:22:04] #249 ¿vale? No sé qué va a pasar después.
+[0:22:05-0:22:07] #250 Yo ahora no podría mover la entrada en break-even,
+[0:22:07-0:22:09] #251 pero ahora
+[0:22:09-0:22:11] #252 también hay que ver una, esto es un punto muy
+[0:22:11-0:22:13] #253 importante también a destacar, que a veces ya
+[0:22:13-0:22:14] #254 con un, si aquí ya es
+[0:22:14-0:22:17] #255 un 1 a 2, aquí ya se torna interesante,
+[0:22:18-0:22:19] #256 porque, claro,
+[0:22:19-0:22:42] #257 A ver, la expansión del precio, si lo vemos de una manera más detallada, suele ser diferente. Porque, o sea, claro, aquí un 1 a 2 es muy rápido, digámoslo así. Y al ser muy rápido, existe la alta posibilidad de que el precio ya haya completado su siglo y luego siga subiendo, ¿entiendes? Cuando se cumple un 1 a 2, no un 1 a 1.
+[0:22:42-0:22:57] #258 Entonces, ¿qué pasa? Si no se desarrolla la zona de control, pues fácilmente yo podría poner en break-even o, como está en 0.75 la entrada, llevarlo a 0.50 o a 0.25, ¿vale? O sea, proteger.
+[0:22:58-0:23:11] #259 No sé si el robot puede hacer eso, o sea, claro, si lo alimentas, qué sé yo, o sea, lo desarrollas con red neuronal o en play, sí, a lo mejor puede entender eso, pero no sé si mediante código sea fácil de plantearlo.
+[0:23:12-0:23:18] #260 pero gracias no no si ese es un buen punto o sea yo también está puesto claro
+[0:23:18-0:23:25] #261 o sea pero es eso o sea yo lo que haría o sea humanamente sería lleva un 12 como
+[0:23:25-0:23:32] #262 es el 0 75 moverlo a 0 con 50 vale o un 0 25 porque ya ya de por sí el precio ya
+[0:23:32-0:23:37] #263 cumplió el siglo entiendes y aparte de que aquí también hay liquidez entonces si
+[0:23:37-0:23:42] #264 si lo quieres ver o sea digámoslo así que el precio sube naturalmente o sea aquí ya
+=== PASAJE 15 | tr-v3-large-v3-int8-float16-270a4851 | 0:25:42-0:30:21 | 1 a 3 x4, ratio x2, RR x1, riesgo x1, 1% x2, beneficio x3
+[0:25:31-0:25:55] #283 defino nuevamente a 13 vaya cumplió se robó en 13 ahora si nosotros nos vamos a lo que sería
+[0:25:55-0:25:59] #284 en H4 vamos a ver
+[0:25:59-0:26:01] #285 o sea, desde donde hemos tomado
+[0:26:01-0:26:03] #286 o sea, desde donde hemos capturado
+[0:26:03-0:26:04] #287 la entrada
+[0:26:09-0:26:11] #288 voy a expandir más esto para que se vea
+[0:26:12-0:26:12] #289 vale
+[0:26:15-0:26:17] #290 nosotros lo hemos tomado desde el punto más alto
+[0:26:17-0:26:19] #291 es por eso que yo voy a M1, vale
+[0:26:19-0:26:21] #292 o sea, si alguna vez se ha preguntado por qué vas
+[0:26:21-0:26:23] #293 a M1 y no a M5 o otras
+[0:26:23-0:26:25] #294 porque desde M1 yo considero
+[0:26:26-0:26:27] #295 que o sea, da tiempo
+[0:26:27-0:26:35] #296 para una toma de decisiones correcta y maximizar lo que sería el ratio de beneficio porque si lo
+[0:26:35-0:26:42] #297 tomara en m5 que si me voy a m5 buscaría mi voz no estaría allí estaría aquí pero ya no es lo
+[0:26:42-0:26:50] #298 mismo porque si bajo es 271 o inclusive y es eso entiendes o sea conforme una temporalidad mayor
+[0:26:50-0:26:54] #299 pues es menor tu rr para el movimiento también o sea para el tiempo más o menos que estamos
+[0:26:54-0:27:01] #300 buscando que se desarrolle el precio es eso ahora eso sería la entrada que hubiera dado y si se
+[0:27:01-0:27:05] #301 hubiera tomado que yo no le ha tomado porque todavía no o sea no doy inicio a la prueba pero
+[0:27:05-0:27:13] #302 ya desde el lunes pues lo haré o sea cantaré eso pero eso sería la entrada ahora es muy importante
+[0:27:14-0:27:21] #303 también que quería comentarles es esto en cuanto a la operativa como tenemos digamos así dos sesiones
+[0:27:21-0:27:27] #304 que serían de 7 a 11 y de 11 a 3 el robot o sea la idea sería qué
+[0:27:28-0:27:31] #305 bueno no sé qué opinan ustedes ahora me lo comenta
+[0:27:36-0:27:42] #306 vale tenemos por lo general dos entradas vale porque nuestro ratio riesgo
+[0:27:42-0:27:48] #307 beneficio es de 1 a 3 si nosotros perdemos 2 pero la siguiente es ganadora
+[0:27:48-0:27:59] #308 ahora todavía tendríamos, restando estas dos, o sea, 3 menos 2, nos quedaría todavía un 1%, digamos, positivo, así continuamente, ¿vale?
+[0:27:59-0:28:12] #309 Por lo general, o sea, yo cortaría apenas se desarrolle, o sea, el 1 a 3 en una zona, o sea, de 7 a 11, si ya se ha dado el 1 a 3, ya no operaría de 7 a 3.
+[0:28:12-0:28:13] #310 Eso es mi opinión, ¿vale?
+[0:28:14-0:28:15] #311 Pero, ¿qué pasa?
+[0:28:15-0:28:21] #312 A veces el precio, a veces el precio, claro, suele generar muchas más entradas.
+[0:28:21-0:28:27] #313 O sea, en una sesión te puede generar, qué sé yo, tres entradas de 1 a 3,
+[0:28:27-0:28:33] #314 que contando las posibles pérdidas te puedes terminar con 1 a 4, o sea, 4% positivo.
+[0:28:33-0:28:38] #315 O bien también que puede ocurrir que termines o menos 1%.
+[0:28:38-0:28:46] #316 No sé si lo tengo en el Excel apuntado que estaba haciendo una vez un backup sin, o sea, usando, o sea, como apunte nomás.
+[0:28:47-0:28:51] #317 Vale, estas son algunas operativas que estaba haciendo manualmente.
+[0:28:51-0:28:56] #318 Aquí pueden ver cómo es los ratios de beneficios que he estado trabajando, ¿sí?
+[0:28:56-0:28:58] #319 O sea, el 23 de abril, 2.83.
+[0:28:58-0:29:00] #320 O sea, ¿qué quiere decir esto?
+[0:29:00-0:29:05] #321 Que en la primera sesión, o sea, bueno, sí, la primera sesión me dio un 2.83.
+[0:29:05-0:29:08] #322 La siguiente, o sea, la siguiente operativa
+[0:29:09-0:29:10] #323 Perdí
+[0:29:10-0:29:11] #324 Menos 0.75
+[0:29:11-0:29:14] #325 Luego, por más que busques, ya no hay entrada
+[0:29:14-0:29:16] #326 Por eso que no hay más
+[0:29:16-0:29:18] #327 Porque por más que yo busque, ya no hay entrada
+[0:29:18-0:29:19] #328 Ahora, el 24 de abril
+[0:29:20-0:29:22] #329 La primera entrada fue perdedora
+[0:29:22-0:29:23] #330 Pero la otra fue 3.33
+[0:29:25-0:29:26] #331 Luego, la otra entrada
+[0:29:26-0:29:28] #332 Fue perdedora, 0.75
+[0:29:28-0:29:29] #333 Y menos 0.5
+[0:29:30-0:29:32] #334 El 27 de abril sigue lo mismo
+[0:29:32-0:29:33] #335 Aquí hay
+[0:29:33-0:29:36] #336 un reto de beneficio de 9
+[0:29:36-0:29:37] #337 que lo voy a explicar
+[0:29:38-0:29:40] #338 cómo yo maximizaría
+[0:29:40-0:29:41] #339 o sea, cómo maximizo
+[0:29:41-0:29:44] #340 el radio, bueno
+[0:29:44-0:29:46] #341 el target
+[0:29:46-0:29:48] #342 ¿vale? yo maximizo el target
+[0:29:48-0:29:49] #343 de la siguiente manera
+[0:29:50-0:29:52] #344 esto es definiendo pues las zonas
+[0:29:52-0:29:52] #345 de
+[0:29:57-0:29:58] #346 yo maximizo
+[0:29:58-0:30:00] #347 el target, en algunos casos
+[0:30:00-0:30:02] #348 claro, da la posibilidad
+[0:30:02-0:30:04] #349 de maximizar el target porque tú vienes
+[0:30:04-0:30:05] #350 de un precio
+[0:30:06-0:30:48] #351 demasiado alcista y cuando tú buscas la operativa, por ejemplo, bajista y tienes tú definido por aquí, o sea, que es una zona de liquidez, o sea, está definido no subjetivamente, sino subjetivamente, solo que ahora podría buscar ejemplos, pero no, creo que tendría que, bueno, no sé si lo tengo por aquí, ese 1.5 me podría servir, hora de julio, sí, vale, hay dos maneras en las que yo defino mi target,
+=== PASAJE 16 | tr-v3-large-v3-int8-float16-270a4851 | 0:30:57-0:34:37 | proteger x1, TP x2, objetivo x4, 1 a 3 x3
+[0:30:48-0:31:07] #352 Uno es planteando, suponiendo que el precio llega aquí, o sea, es lo más probable que, o sea, también aquí se podrían apoyar de noticias también. A veces porque si es una noticia que impacta en el precio y va a la direccionalidad, o sea, a tu favor, pues podrías tú elevar tu TPA hasta aquí.
+[0:31:07-0:31:12] #353 porque sabes que existe una alta probabilidad de que el precio haga lo contrario a lo que venía
+[0:31:12-0:31:25] #354 haciendo pero no creo en un ejemplo más claro vale porque quiero que se me sirve este ejemplo
+[0:31:25-0:31:32] #355 de aquí me sirve perfectamente pero solamente yo el profil máximo que suelo buscar es en la
+[0:31:32-0:31:41] #356 liquidez de m15 vale a ver esto yo honestamente no lo hubiera captado o sea este 18 no si no lo
+[0:31:41-0:31:42] #357 lo hubiera dejado aproximadamente aquí
+[0:31:42-0:31:45] #358 en, bueno, 1 a 3 es lo mínimo
+[0:31:45-0:31:46] #359 bueno, aquí tampoco no sería un buen ejemplo
+[0:31:46-0:31:48] #360 que digamos, ah no, espera, sí
+[0:31:52-0:31:55] #361 vale, o sea
+[0:31:58-0:32:00] #362 sí, sí, sí, es lo más probable
+[0:32:02-0:32:04] #363 claro, o sea, si existe
+[0:32:04-0:32:06] #364 la posibilidad, creo yo, o sea
+[0:32:06-0:32:08] #365 de que hagan que el bot
+[0:32:08-0:32:09] #366 les lea la noticia y demás
+[0:32:10-0:32:11] #367 pues estaría muy bien, o sea
+[0:32:11-0:32:13] #368 porque de esa manera, claro
+[0:32:13-0:32:16] #369 si uno llega a capturar
+[0:32:16-0:32:17] #370 o sea, si el robot
+[0:32:17-0:32:20] #371 como no tiene emociones, o sea, no tiene
+[0:32:20-0:32:25] #372 y el ser humano sí por eso yo trato de ser objetivo en los tepes que yo planteo o sea
+[0:32:25-0:32:29] #373 mi tp objetivo no sería hasta aquí para decirlo se había marcado porque estaba probando otra cosa
+[0:32:29-0:32:41] #374 pero mi tp objetivo es aquí o sea 16 ese sería mi tema probable pero yo iría aquí si protegiendo
+[0:32:43-0:32:48] #375 protegiendo diría poco a poco si veo que hay un flujo de velas alcistas o por ejemplo en
+[0:32:48-0:32:50] #376 en continuidad, que a veces suele hacerlo en el precio
+[0:32:50-0:32:52] #377 como por ejemplo aquí, bajista, continuidad
+[0:32:52-0:32:54] #378 pues voy protegiendo
+[0:32:54-0:32:55] #379 ahí, tal, tal, tal, tal, manualmente
+[0:32:56-0:32:58] #380 el robot se lo puede hacer genial
+[0:32:58-0:33:00] #381 pero al final es eso, sí
+[0:33:00-0:33:02] #382 lo más probable es que aquí sea impulsado por
+[0:33:02-0:33:03] #383 una noticia, no sé
+[0:33:03-0:33:06] #384 no sé por qué no me aparece la noticia, tengo que
+[0:33:06-0:33:08] #385 configurarlo, no está configurado
+[0:33:08-0:33:10] #386 pero es eso
+[0:33:10-0:33:12] #387 la manera de maximizar al menos
+[0:33:12-0:33:13] #388 lo que sería
+[0:33:13-0:33:16] #389 esto es en julio, lo que le estamos
+[0:33:16-0:33:18] #390 mostrando es en abril, pero más o menos sería eso
+[0:33:18-0:33:37] #391 Es a través de eso, o sea, buscar, plantear, aquí tengo liquidez en M15 y este sería, pues, el punto más alto. Aunque existe la posibilidad de que no llegue o se queda a media también. Eso es, te la arriesgas, ¿vale? Te la arriesgas, o sea, pero el objetivo sería un 1 a 3.
+[0:33:37-0:33:45] #392 si tienes un 1 a 3 pero consideras que puede llegar a más entonces en ese caso pues más
+[0:33:45-0:33:52] #393 protegiendo en lo que yo haría sería proteger o sea y voy subiendo también mi visto los conforme
+[0:33:52-0:34:01] #394 va desarrollándose el precio pero es eso luego pues se hacía recap aquí me daría una suma de
+[0:34:01-0:34:03] #395 de 40% o sea restando lo demás
+[0:34:03-0:34:05] #396 o sea de 40% que claro
+[0:34:05-0:34:07] #397 es muy heavy o sea
+[0:34:07-0:34:09] #398 porque aquí si consideré
+[0:34:09-0:34:11] #399 o sea todas las pérdidas como te digo
+[0:34:11-0:34:12] #400 a veces por más que tú quieras
+[0:34:13-0:34:15] #401 seguir buscando entradas no te va a dar
+[0:34:15-0:34:17] #402 por eso o sea a menos a que operes
+[0:34:17-0:34:19] #403 ya la siguiente BL y demás pero
+[0:34:19-0:34:21] #404 al menos en... yo marco esas
+[0:34:21-0:34:22] #405 dos franjas pero es eso
+[0:34:22-0:34:24] #406 por ejemplo si yo
+[0:34:24-0:34:26] #407 esto es porque operé las dos
+[0:34:27-0:34:28] #408 o sea las dos son
+[0:34:28-0:34:31] #409 las horarias de 4 a 11 y de 4 a 3
+[0:34:31-0:34:33] #410 cuando estaba haciendo el backtesting, pero igual me
+[0:34:33-0:34:34] #411 soltó, o sea, son todas las operativas, incluyendo
+[0:34:34-0:34:36] #412 las pérdidas, sin saltearme ninguna
+[0:34:36-0:34:37] #413 me soltó esto
+=== PASAJE 17 | tr-v3-large-v3-int8-float16-270a4851 | 0:36:35-0:41:13 | objetivo x1, 1 a 3 x1, RR x1, beneficio x2
+[0:36:35-0:36:36] #447 y explicó cómo suele
+[0:36:36-0:36:38] #448 usar lo que sería el volumen
+[0:36:38-0:36:40] #449 y algunas características
+[0:36:40-0:36:43] #450 que él mencionó, también lo suele trabajar
+[0:36:43-0:36:44] #451 esta persona, o sea que
+[0:36:44-0:36:48] #452 que mediante el estudio de mercado profundo,
+[0:36:48-0:36:49] #453 o sea, el análisis que él aplica.
+[0:36:50-0:36:52] #454 Yo veo que es lo mismo, o sea, al final es lo mismo,
+[0:36:52-0:36:56] #455 o sea, solo que la ventaja de usar volumen
+[0:36:56-0:36:58] #456 o cuando se llegue al punto de usar volumen
+[0:36:58-0:37:00] #457 en este tipo de operativas, ¿qué nos va a poder evitar?
+[0:37:01-0:37:03] #458 Nos va a poder evitar, claro, por ejemplo,
+[0:37:06-0:37:09] #459 algunas, bueno, no nos va a evitar,
+[0:37:09-0:37:12] #460 sino nos va a permitir, nos va a ayudar a saber definir
+[0:37:12-0:37:15] #461 si no necesariamente tenemos que esperar
+[0:37:15-0:37:18] #462 en la zona de control para poner el break-even,
+[0:37:18-0:37:20] #463 sino que inmediatamente tenemos que poner break-even.
+[0:37:20-0:37:25] #464 O también maximizar lo que sería el RR,
+[0:37:25-0:37:26] #465 o sea, el target.
+[0:37:28-0:37:30] #466 Porque, claro, mediante ese análisis que ellos usan,
+[0:37:30-0:37:34] #467 pues tienen de manera más definida
+[0:37:34-0:37:37] #468 también cuáles son las zonas con mayor liquidez y demás.
+[0:37:37-0:37:39] #469 O sea, que el precio suele generar un...
+[0:37:39-0:37:41] #470 O sea, se suele ver demasiado atraído
+[0:37:41-0:37:42] #471 para que llegue a tomar esas zonas.
+[0:37:42-0:38:00] #472 Pero yo por lo general no tengo una regla como tal. O sea, como te digo, yo defino lo principal es mi 1 a 3. Ahora, si yo quiero maximizar lo que sería el profit, lo suelo manejar en M15. Por ejemplo, supongamos que estamos bajista, ¿vale?
+[0:38:00-0:38:30] #473 Vale, entonces podrías usar también como referencia a lo mejor la zona de liquidez aquí, o sea, esta zona de liquidez aquí o esta zona de liquidez aquí, pero ya es algo, entra la subjetividad, creo yo, o sea, entra la subjetividad porque yo no estoy analizando también el número de contratos o si es una zona muy líquida, por ejemplo, suelo usar un mapa de calor también para ver si hay demasiados compradores o vendedores, o sea, y conforme a eso, ven si hay, pues, o sea, demasiada liquidez,
+[0:38:30-0:38:37] #474 es y que se apunta a ello como no yo no lo manejo o sea no lo pueden ver no sé pero es eso sea
+[0:38:37-0:38:47] #475 subjetivamente podrías definir marcar aquí y eso ahora como te digo que juega está es un arma de
+[0:38:47-0:38:54] #476 doble filo a tratar a veces de maximizar el beneficio porque igual si yo o sea yo quitando
+[0:38:54-0:39:02] #477 que yo quitando o sea promediando todo al menos todos estos profits en 113 todavía me queda un
+[0:39:02-0:39:06] #478 26 por ciento creo por lo que una vez bueno una vez el cálculo me queda entre un 26 por ciento
+[0:39:06-0:39:16] #479 creo o más o menos para allí sale profe entonces es eso lo más objetivo es ponerlo a 13 y ver qué
+[0:39:16-0:39:24] #480 que onda. Ahora, sí, y ya normalmente si quieres hacerlo, pues es eso. Coge SM15 y marcas tu zona
+[0:39:24-0:39:32] #481 de liquidez que tú consideres y ya. Esperar a que el precio llegue. ¿Y qué más? Bueno, ¿cuál era la
+[0:39:32-0:39:38] #482 otra pregunta? Bueno, esta ya está respondida. Creo que toqué varias cosas aquí.
+[0:39:39-0:39:44] #483 ¿Sólo la biblia japonesa sin RSI, medias estocásticos, ni volumen, ni BWAP en el núcleo?
+[0:39:44-0:40:03] #484 Pero, mira, yo te soy sincero, se va un poco, creo, a lo mejor del tema, pero yo considero que si, o sea, cualquier estrategia, inclusive es operando con reportes y resistencias, si estadísticamente te da una esperanza matemática positiva y te funciona, o sea, genial.
+[0:40:04-0:40:28] #485 O sea, tendrías que trabajar, claro, o bien maximizo, qué sé yo, mi winrate, o bien maximizo mi relativo re-beneficio. Cualquiera de los dos. Pero es eso, yo no suelo utilizar como indicadores. Y si alguna vez utilizara, que yo lo vería interesante, pero tengo que aprender más a profundidad para poder meterme a ello, sería, usaría el bigwap y eso.
+[0:40:28-0:40:29] #486 O sea, el volumen...
+[0:40:30-0:40:31] #487 A ver, aquí no me sale el volumen.
+[0:40:31-0:40:34] #488 No, no me sale el volumen, pero hay un volumen que es aquí.
+[0:40:34-0:40:35] #489 Al menos en Forex no sirve.
+[0:40:35-0:40:42] #490 Te puede servir en otros activos, como podrían ser los índices o acciones,
+[0:40:42-0:40:46] #491 pero en Forex no suele servir ese volumen que aparece aquí.
+[0:40:47-0:40:50] #492 Bueno, tampoco en Forex creo que habría la necesidad de usar volumen.
+[0:40:50-0:40:54] #493 No sé si has escuchado que, o sea, este volumen que nos suelen dar estas plataformas,
+[0:40:54-0:40:55] #494 pues no es la real, digamos.
+[0:40:55-0:40:57] #495 O sea, claro, no representa...
+[0:40:58-0:40:59] #496 representativo, entonces es más representativo
+[0:40:59-0:41:01] #497 usar aquí, o sea, en índices
+[0:41:01-0:41:04] #498 o las otras acciones
+[0:41:04-0:41:05] #499 pero, bueno, en acciones
+[0:41:05-0:41:07] #500 pero es eso, o en el oro
+[0:41:07-0:41:09] #501 y así, pero en forex no
+[0:41:10-0:41:11] #502 ahora, ¿qué más?
+=== PASAJE 18 | tr-v3-large-v3-int8-float16-270a4851 | 0:43:00-0:47:38 | stop x1, stop loss x1, protejo x2, proteger x1, objetivo x1, 1 a 3 x1, 1% x3, beneficio x1
+[0:43:02-0:43:03] #540 bueno, tenemos ejemplo de los dos
+[0:43:03-0:43:06] #541 donde el precio no suele
+[0:43:07-0:43:09] #542 suele ser este primer esquema de aquí
+[0:43:09-0:43:11] #543 y el otro esquema
+[0:43:11-0:43:12] #544 pues sería este de aquí
+[0:43:14-0:43:15] #545 o sea
+[0:43:15-0:43:17] #546 hay un flujo de órdenes que si quitamos esto
+[0:43:17-0:43:18] #547 y lo vemos así, bueno
+[0:43:18-0:43:21] #548 es un flujo de órdenes, ahí está
+[0:43:21-0:43:22] #549 o sea, el otro esquema de aquí
+[0:43:23-0:43:24] #550 este esquema de aquí
+[0:43:24-0:43:26] #551 entonces, ¿qué pasa?
+[0:43:29-0:43:31] #552 usualmente yo lo tengo en 0.75
+[0:43:31-0:43:33] #553 o sea, 0.75 en la entrada
+[0:43:33-0:43:35] #554 ¿vale? o sea, lo suelo
+[0:43:35-0:43:37] #555 marcar aquí, ¿qué pasa?
+[0:43:37-0:43:43] #556 a veces el este estas son el control se suele desarrollar si se desarrolla más abajo entonces
+[0:43:45-0:43:53] #557 yo protegería aquí o sea definiría aquí vale o sea definiría aquí lo que sería mi stop loss pero
+[0:43:53-0:43:59] #558 claro yo mi lotaje el lotaje se calcula desde el inicio desde el punto más alto hasta el punto más
+[0:43:59-0:44:06] #559 bajo ahora esto es algo que también le quería preguntar a lo mejor con la se podría ver con
+[0:44:06-0:44:13] #560 con los datos porque si yo más si yo pusiera mira bueno si yo pongo aquí dibujo el 1 a 3
+[0:44:15-0:44:23] #561 objetivamente desde allí hasta allí vale pero qué pasaría si yo pongo desde aquí hasta aquí
+[0:44:23-0:44:31] #562 y hasta el mismo nivel de un 3 un 3.5 o sea un 0.5 por ciento más entiendes entonces qué pasa
+[0:44:31-0:44:38] #563 yo lo suelo calcular el lotaje desde aquí pero si calculas desde aquí también entonces ahora
+[0:44:39-0:44:45] #564 honestamente es algo que yo lo tomo como un poco de dilema a mí mismo porque digo porque calcularía
+[0:44:45-0:44:51] #565 aquí si sé que el precio usualmente me va a respetar aquí o sea entonces podría calcularlo
+[0:44:51-0:44:57] #566 desde aquí el lotaje así se desarrolla este esquema claro entonces así tendría un mayor
+[0:44:57-0:45:05] #567 margen de beneficio. Entonces, no sé qué opinan, o sea, ¿cuál sería lo ideal según ustedes?
+[0:45:17-0:45:27] #568 Claro, claro. Claro, no, o sea, porque supongamos que invirtiendo nosotros en esa entrada del 1%,
+[0:45:27-0:45:35] #569 es un ejemplo nomás, porque claro, se van a ir ya con 0,50 por allí, pero en un 1%, si tú ya proteges
+[0:45:36-0:45:38] #570 inmediatamente, que es lo que yo también haría en esta
+[0:45:38-0:45:39] #571 entrada, ya tienes
+[0:45:41-0:45:41] #572 0.25
+[0:45:43-0:45:44] #573 explícitamente, pues estás
+[0:45:44-0:45:46] #574 guardando, o sea, estás protegiendo
+[0:45:46-0:45:48] #575 entonces, porque lo que
+[0:45:48-0:45:49] #576 al final es muy clave, o sea
+[0:45:49-0:45:52] #577 la entrada se va a dar, si es exclusiva
+[0:45:52-0:45:54] #578 o sea, la entrada, la mayoría de tres dispositivos
+[0:45:54-0:45:56] #579 que se va a ver
+[0:45:56-0:45:58] #580 en el backtesting y demás, van a ser
+[0:45:58-0:45:59] #581 entradas que a veces ni llega
+[0:45:59-0:46:01] #582 o sea, ni llega a retroceder, o sea
+[0:46:01-0:46:04] #583 son explosivas, el precio llega, ta, ta, ta, y hace eso
+[0:46:04-0:46:05] #584 entonces
+[0:46:05-0:46:15] #585 Entonces, claro, después está, como digo, esta zona de aquí, porque proteger el 1%, o sea, también se podría trabajar inclusive porque lo he intentado, ¿vale?
+[0:46:17-0:46:32] #586 Ha habido veces en las que, no, no, no, es que claro, la respuesta a esto está al drawdown, a la curva de drawdown, porque si tú proteges en 0.75, tienes la posibilidad de que tu curva de drawdown, o sea, no sea demasiado profunda si tienes una racha perdedora.
+[0:46:33-0:46:35] #587 a eso es lo que quería llegar
+[0:46:35-0:46:37] #588 sí, es por eso
+[0:46:38-0:46:41] #589 ya recuerdo, es por eso que también calculo el lotaje desde aquí
+[0:46:41-0:46:44] #590 pero luego protejo desde allí, o sea, si
+[0:46:44-0:46:47] #591 tengo una zona de control dentro del esquema de desarrollo
+[0:46:47-0:46:50] #592 o sea, dentro del esquema de entrada, pues protejo eso
+[0:46:50-0:46:53] #593 pero con el objetivo de que en caso de la operación
+[0:46:53-0:46:56] #594 sea perdedora, pues mi curva de drawdown sea la menor
+[0:46:56-0:46:59] #595 o sea, no sea muy significativa la caída
+[0:46:59-0:47:08] #596 caída y también puedes perder lo menos posible esa es la respuesta pero esa es la respuesta si
+[0:47:08-0:47:15] #597 está en caso se desarrolla más abajo pues estaría más abajo o sea aquí nuevamente lo repito o sea
+[0:47:16-0:47:23] #598 aquí pones allí el ataque se calcula en base aquí pero la entrada bueno listo blogs basar
+[0:47:23-0:47:31] #599 por encima de esto y esto y a veces el precio claro en algunos casos muy raros creo yo te suele
+[0:47:31-0:47:40] #600 como que generar es aquí se va un poquito para allá y ya entonces o bien lo puedes se puede
+=== PASAJE 19 | tr-v3-large-v3-int8-float16-270a4851 | 0:52:15-0:54:50 | objetivo x2, 1 a 3 x1, RR x2
+[0:52:17-0:52:19] #654 bueno, aquí son ya las 4
+[0:52:19-0:52:21] #655 o sea, ya para ahí se habrá
+[0:52:21-0:52:23] #656 perdido, pero continuando la operativa sería
+[0:52:23-0:52:25] #657 eso, o sea, ya tengo la
+[0:52:25-0:52:27] #658 condición de que ya se ha desarrollado
+[0:52:27-0:52:27] #659 en M15
+[0:52:29-0:52:31] #660 la liquidez, entonces yo
+[0:52:31-0:52:32] #661 buscaría por aquí mi entrada
+[0:52:32-0:52:33] #662 ah, vale, aquí está la entrada
+[0:52:40-0:52:41] #663 mira, esto es algo que
+[0:52:41-0:52:43] #664 los quiero comentar, ¿vale? ¿qué pasa?
+[0:52:45-0:52:46] #665 que aquí se cumple
+[0:52:46-0:52:47] #666 el esquema, mira, yo aquí
+[0:52:47-0:52:49] #667 grupo aquí, ta, ta
+[0:52:50-0:52:51] #668 ta, ta
+[0:52:54-0:52:56] #669 la zona de control que se desarrolla
+[0:52:56-0:52:56] #670 es esta de aquí
+[0:52:56-0:53:00] #671 llega a desarrollarse aquí
+[0:53:00-0:53:04] #672 y aquí ya me pondría el objetivo y la entrada
+[0:53:04-0:53:05] #673 ¿qué pasa?
+[0:53:06-0:53:07] #674 aquí todavía no hemos
+[0:53:07-0:53:09] #675 ya en esta operativa
+[0:53:09-0:53:13] #676 en esta operativa de aquí
+[0:53:13-0:53:14] #677 ya la otra tenemos dos perdidas
+[0:53:14-0:53:15] #678 pero en esta de aquí
+[0:53:16-0:53:17] #679 todavía no hemos perdido ninguna
+[0:53:17-0:53:20] #680 entonces tenemos la posibilidad de
+[0:53:20-0:53:25] #681 operar pero qué pasa el precio se desarrolla todo bien pero ya aquí ya me llegaría nuevamente o sea
+[0:53:25-0:53:32] #682 como ya está el break even me sacaría de la entrada vale pero la entrada continuaría entonces
+[0:53:32-0:53:38] #683 aquí también entra de ese dilema de o sea de break even porque si yo no hubiera puesto break
+[0:53:38-0:53:45] #684 even y lo hubiera dejado en 0.75 existe la posibilidad de que pues hubiera obtenido el
+[0:53:45-0:54:05] #685 el RR pues el 1 a 3, o sea bueno, el RR objetivo. Vale. Ah, aquí quiero que también les pudiera
+[0:54:05-0:54:11] #686 mostrar más o menos el ejemplo de cómo suelo maximizar. Mira, yo, o sea, lo que suelo hacer
+[0:54:11-0:54:16] #687 es esto. Marcar, por ejemplo, si tengo esta zona de liquidez de aquí a aquí y veo que
+[0:54:16-0:54:23] #688 el precio me va a este, puedo maximizarlo hasta 0.50. Suelo usar el 0.50 que lo suelo
+[0:54:23-0:54:32] #689 usar también en aquí también los lanzar a este nivel para maximizar los trabajos de con 76 y
+[0:54:32-0:54:40] #690 eso para como también me dio por el flujo de m5 si hay ya no hay un flujo ya preestablecido
+[0:54:40-0:54:46] #691 o sea si te das cuenta el flujo es casi está ya veo que se ve que está respetando entonces
+[0:54:46-0:54:52] #692 maximizar su entrada allí pero es eso yo objetivamente aquí tendría un break even
+=== PASAJE 20 | tr-v3-large-v3-int8-float16-270a4851 | 0:57:05-0:58:44 | objetivo x1, 1 a 3 x1, beneficio x1
+[0:57:04-0:57:05] #741 Aquí hay otro ejemplo interesante.
+[0:57:06-0:57:08] #742 Que, claro, a veces, nuevamente digo, como, ¿qué pasa?
+[0:57:09-0:57:11] #743 Aquí se rompe el flujo, ta, ta, ta, ta, mira.
+[0:57:11-0:57:16] #744 Aquí se cumple el segundo esquema, como tal, desarrollo de zona de control,
+[0:57:16-0:57:19] #745 pero, nuevamente, llega hasta aquí y retrocede.
+[0:57:20-0:57:27] #746 entonces habrá llegado a un 0.98 pero claro ya te sacan break even pero bueno tampoco es que
+[0:57:27-0:57:35] #747 lleve al 1.3 así que no importa pero suele pasar en algunas muy buenas entradas suele pasar pero
+[0:57:35-0:57:44] #748 es eso ahora la siguiente pregunta cuál era límite estricto de dos cartuchos por barrido de liquidez
+[0:57:44-0:57:50] #749 es que es correcto si ambos se pierden escenario invalidado y se espera el desarrollo nuevamente
+[0:57:50-0:57:59] #750 de liquidez para poder seguir operando durante un beneficio objetivo mínimo 1 a 3 un rey esperado
+[0:57:59-0:58:05] #751 40 55 si parciales del 30 40 por ciento de volumen a llevar a la liquidez opuesta en m15
+=== PASAJE 21 | tr-v3-large-v3-int8-float16-270a4851 | 0:58:49-1:01:56 | stop x3, stop loss x3, proteger x1
+[0:58:56-0:59:02] #752 es un buen punto la verdad sí o sea lo de toma de parciales es un buen punto pero
+[0:59:04-0:59:10] #753 creo que lo podríamos evaluar al final es eso tratar de buscar la mejor manera más que nada
+[0:59:12-0:59:25] #754 No, pero otro, o sea, lo que yo veía interesante y lo que yo he probado, o sea, manualmente, porque si nos dirigimos aquí, vas a ver que, por ejemplo, tengo, lo usual es 0.75, o sea, pero también vas a ver 0.5.
+[0:59:25-0:59:34] #755 ¿Qué pasa? O sea, hay un retroceso, o sea, si tú lo quieres probar, o sea, va a crecer manualmente, hay un retroceso que vas a ver de esa manera.
+[0:59:34-1:00:07] #756 Cuando el precio desarrolla de esta manera, te genera este esquema aquí suponiendo y luego el precio si llega a hacer un retroceso con complex pullback y todavía no te desarrolla la zona de control, entonces lo más probable es que de 0.75 se pase a 0.50 para proteger mucho más porque existe una alta probabilidad, pero muy alta probabilidad.
+[1:00:07-1:00:11] #757 De que el precio, lo más probable, te rompa, ¿vale?
+[1:00:11-1:00:18] #758 O sea, es por eso que yo manualmente, o sea, gestiono el stop loss de esa manera.
+[1:00:18-1:00:22] #759 O sea, que cuando vean el precio, no sé si hay algo aquí,
+[1:00:22-1:00:34] #760 en el auditorio voy a buscar, ah, bueno, aquí me viene bien.
+[1:00:39-1:00:43] #761 Vale, mira, el precio llega aquí, ¿vale?
+[1:00:44-1:00:45] #762 Tú tienes tu entrada aquí.
+[1:00:54-1:00:58] #763 Stop loss va a estar predefinido aquí, ¿vale?
+[1:00:58-1:01:00] #764 el precio suele respetar como digo
+[1:01:00-1:01:02] #765 pero ¿qué pasa?
+[1:01:03-1:01:05] #766 cuando el precio ya esté
+[1:01:05-1:01:06] #767 desarrollando a veces con 0.50
+[1:01:07-1:01:09] #768 lo más probable es ir bajando
+[1:01:09-1:01:11] #769 o sea el stop loss, pero algo que
+[1:01:11-1:01:13] #770 también, a ver, yo honestamente no he
+[1:01:13-1:01:14] #771 tomado en cuenta así del split
+[1:01:14-1:01:17] #772 y las comisiones, pero bueno, quitando las comisiones
+[1:01:17-1:01:18] #773 lo interesante es el split
+[1:01:19-1:01:21] #774 creo yo, o sea, creo que
+[1:01:21-1:01:23] #775 en FTMO o en otros
+[1:01:23-1:01:25] #776 brokers se suele manejar en euro
+[1:01:25-1:01:27] #777 es decir, participar más líquido en 0.1
+[1:01:27-1:01:27] #778 ¿no?
+[1:01:29-1:01:41] #779 0.2 claro entonces bueno no sería exactamente a 0.50 sino dejarlo casi
+[1:01:41-1:01:52] #780 que se yo un 0.70 0.68 estaría gestionando ahí exacto exacto entonces no también cuando
+[1:01:52-1:01:59] #781 retrocede el precio pues te quitas así está exactamente a 0.50 o qué se yo en 0 bueno
+=== PASAJE 22 | tr-v3-large-v3-int8-float16-270a4851 | 1:02:13-1:04:34 | caja x1, objetivo x2
+[1:02:08-1:02:16] #783 manera que gestiona es eso o sea en 0.50 bueno usualmente a veces en 0.50 si no llega pues no
+[1:02:16-1:02:21] #784 llega y está o sea me da igual si al final la entrada es positiva pero es eso prefiero perder
+[1:02:21-1:02:28] #785 0.50 a que se yo a que sé que estadísticamente el trade se va a voltear o sea que esté la alta
+[1:02:28-1:02:30] #786 la probabilidad de que se voltee, en este caso no se volteó
+[1:02:30-1:02:32] #787 pero es lo que suele hacer el precio
+[1:02:32-1:02:34] #788 que llega aquí, hace un retroceso
+[1:02:35-1:02:35] #789 luego
+[1:02:35-1:02:37] #790 hace esto aquí y rompe
+[1:02:37-1:02:40] #791 o sea, ya
+[1:02:41-1:02:41] #792 invalida el trade
+[1:02:43-1:02:44] #793 entonces
+[1:02:44-1:02:46] #794 la gestión que se podría aplicar sería
+[1:02:46-1:02:48] #795 esa creo yo, o sea, si es que se puede
+[1:02:48-1:02:50] #796 claro, si no, se deja en 0.75
+[1:02:50-1:02:52] #797 y ya está, para este
+[1:02:52-1:02:53] #798 punto de aquí
+[1:02:54-1:02:56] #799 por eso pongo, creo que la idea sería probar
+[1:02:56-1:02:58] #800 sin la toma de parciales, por el momento
+[1:02:58-1:03:01] #801 y pues si se cumple el objetivo
+[1:03:01-1:03:02] #802 o sea, cumple el objetivo
+[1:03:02-1:03:04] #803 o no de ARR
+[1:03:04-1:03:06] #804 luego, en cierre agresivo opcional
+[1:03:06-1:03:08] #805 el vencimiento exacto de la vela H4 operativa
+[1:03:08-1:03:10] #806 este es un muy buen punto
+[1:03:10-1:03:13] #807 y puse que sí
+[1:03:14-1:03:16] #808 o sea, lo ideal sería que
+[1:03:16-1:03:19] #809 cierra la vela de H4
+[1:03:19-1:03:20] #810 operativa, se cierra el trade
+[1:03:20-1:03:22] #811 porque ya la siguiente
+[1:03:22-1:03:24] #812 vela es otro movimiento
+[1:03:24-1:03:26] #813 es otra estructura
+[1:03:26-1:03:28] #814 se va a desarrollar, o sea, su continuidad
+[1:03:28-1:03:30] #815 va a ser de manera diferente, entonces
+[1:03:30-1:03:32] #816 sí, cierre agresivo
+[1:03:33-1:03:34] #817 Sizing geométrico
+[1:03:34-1:03:35] #818 porcentaje, sí, también
+[1:03:36-1:03:38] #819 0.50 o 0.75
+[1:03:38-1:03:40] #820 en fondeo, exacto
+[1:03:40-1:03:42] #821 Break-even técnico, estos los
+[1:03:42-1:03:44] #822 a la entrada de confirmarse en la segunda zona de control
+[1:03:44-1:03:48] #823 en M1, exacto
+[1:03:48-1:03:49] #824 caja de GAN
+[1:03:49-1:03:51] #825 nivel 0 con un bral de invalidación y optimización
+[1:03:51-1:03:53] #826 del stock, sí
+[1:03:54-1:03:55] #827 y vale, esto
+[1:03:55-1:03:57] #828 creo que lo vimos al comienzo
+[1:03:57-1:03:59] #829 en cuanto, bueno, espera
+[1:04:00-1:04:01] #830 ¿cuántas velas a cada lado
+[1:04:01-1:04:03] #831 valían un máximo o mínimo estructural? ¿a qué te
+[1:04:03-1:04:03] #832 refieres con eso?
+[1:04:05-1:04:06] #833 o sea
+[1:04:21-1:04:21] #834 simplemente
+[1:04:25-1:04:26] #835 pues tú en cuenta, o sea, las mechas
+[1:04:26-1:04:27] #836 si te das cuenta
+[1:04:28-1:04:31] #837 por ejemplo, yo lo que hago es
+[1:04:31-1:04:32] #838 esto, ¿vale? mira, con el
+[1:04:32-1:04:34] #839 M1 hay mucho ruido, es por eso que yo
+=== PASAJE 23 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:00:07-0:02:28 | RR x3
+[0:00:00-0:00:10] #0 Entonces me salgo de la red sin hacer bulla. Y nada, continúan. O sea, no voy a comprarme tampoco mucho tiempo, no mucho será 40 minutos, así que me actualizan si llego a volver, ¿ya?
+[0:00:10-0:00:11] #1 Sí, perfecto, bro.
+[0:00:11-0:00:12] #2 Dale.
+[0:00:12-0:00:13] #3 Buen día, bro.
+[0:00:14-0:00:14] #4 Vale.
+[0:00:16-0:00:22] #5 He estado usando el FX Replay para poder bactesear.
+[0:00:22-0:00:31] #6 He estado bacteseando lo que sería el mes de este mes cogido todo enero, en las cuales, como tal, las métricas me saltaron las siguientes.
+[0:00:31-0:00:45] #7 vale un buen rey de un 30 por ciento un total de tres de 53 13 break events 12 12 profits y bueno
+[0:00:45-0:00:52] #8 28 estados entonces qué pasa pues claro aquí es esto es indiferente por el hecho de que no
+[0:00:52-0:00:59] #9 he calculado el lotaje ni nada pero estás haciendo cálculos simples sería 12 por 3 que es el rr
+[0:00:59-0:01:07] #10 de promedio es sin maximizar porque claro hay cosas que me estaba dando cuenta y existe la
+[0:01:07-0:01:16] #11 posibilidad también de poder maximizar en algunos escenarios el profe por ejemplo aquí o sea según
+[0:01:16-0:01:23] #12 los datos de la plataforma me suele soltar que un promedio ideal de rr es de 17 con 49 y claro
+[0:01:23-0:01:27] #13 si lo dejas hasta el día siguiente pero creo que hay por ejemplo cuenta de fondeo que no permiten
+[0:01:28-0:01:30] #14 Entonces, esto está de más, creo yo
+[0:01:30-0:01:31] #15 Pero es eso
+[0:01:31-0:01:33] #16 Después, otro punto interesante
+[0:01:33-0:01:37] #17 También me he estado dando cuenta del break-even
+[0:01:37-0:01:41] #18 Por ejemplo, aquí me suelta que 4 break-evens
+[0:01:41-0:01:43] #19 Con un máximo potencial de RR
+[0:01:43-0:01:45] #20 Llegó a 9.65
+[0:01:45-0:01:47] #21 Pero creo que es un poco indiferente
+[0:01:47-0:01:51] #22 Por el hecho de que, claro, son 13 break-evens
+[0:01:51-0:01:52] #23 13 menos 8, 9
+[0:01:53-0:01:54] #24 Menos 4, digo
+[0:01:55-0:01:57] #25 Yo todavía mantengo, o sea
+[0:01:57-0:02:00] #26 o sea, la condicional de usar el break-even.
+[0:02:00-0:02:10] #27 He planeado, sí, por ejemplo, porque va a desear, o sea, hacer como que un muestreo sin usar el break-even,
+[0:02:10-0:02:15] #28 porque hay momentos donde, o sea, nosotros lo que buscamos es, claro, el precio rompe,
+[0:02:15-0:02:21] #29 se genera el escenario, por ejemplo, aquí tenemos el break-even, mira, esto es del día 30.
+[0:02:22-0:02:30] #30 aquí marcamos la liquidez en m 15 tenemos bueno nos vamos a 4 h 4 había seguimos un flujo alcista
+=== PASAJE 24 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:04:13-0:06:21 | proteger x1, RR x1, 1% x1
+[0:04:11-0:04:17] #43 no poner break-even o también que se yo o en vez de o mantener el break-even pero también otra
+[0:04:17-0:04:23] #44 manera de poner break-even otra condicional sería de que el r o sea cuando llegue a un 1-1 pues se
+[0:04:23-0:04:28] #45 ponga en break-even la entrada o se proteja que se yo a 0.50 otro punto también que quería destacar
+[0:04:28-0:04:36] #46 antes de iniciar con las preguntas es que claro aquí si me voy a dar a las analíticas
+[0:04:37-0:04:44] #47 que esto ha sido un mes heavy porque me ha soltado un buen rey muy bajo pero igual terminamos
+[0:04:44-0:04:51] #48 positivos a la curva como tal el término positivo cogiendo de todos los 13 en pérdidas comiendo de
+[0:04:51-0:04:58] #49 todo lo que tenía que comer por ejemplo el la el número de pérdidas consecutivos fue de 7 entonces
+[0:04:58-0:05:05] #50 claro como manejamos un digamos un rr bueno pero un solo de tres cuartos o sea 0 75 pros entonces
+[0:05:08-0:05:27] #51 O sea, genera un impacto, sí, pero también protegeríamos, o sea, esto en la curva de drawdown como tal generaría un impacto. O sea, si manejamos a un 0.50 en una prueba de fondeo, pues sería un 2.25 aprox que, o sea, protege si no vas en contra de las reglas. Si vas con el 1%, creo que sí llega a sobrepasar.
+[0:05:30-0:05:36] #52 entonces eso es algo por ejemplo que había comentado a decir en algunos momentos proteger
+[0:05:36-0:05:42] #53 a 0.50 la entrada o sea apenas se dé por ejemplo otro que me gustaría también ya actualmente ya
+[0:05:43-0:05:49] #54 haciendo esto ya supere como tal haciendo que sin más de 250 en trades o sea así en número
+[0:05:49-0:05:57] #55 número de datos, mi muestra es de esa cantidad. Entonces, bueno, es algo que me gustaría ver,
+[0:05:57-0:06:06] #56 claro, más adelante, pero sí a tomarlo en cuenta. Dime. O sea, cuando tomamos en cuenta el 0.75,
+[0:06:06-0:06:10] #57 ¿dentro de esto se debe contemplar también el split que se maneja? O sea, para el cálculo.
+[0:06:11-0:06:17] #58 Muy buena pregunta. Por ejemplo, la mayoría me he estado dando cuenta que manejan con el mínimo,
+[0:06:17-0:06:19] #59 que es que con el 1 creo
+[0:06:19-0:06:21] #60 a ver
+=== PASAJE 25 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:06:40-0:09:41 | stop x1, SL x1, proteger x1, 0.80 x1
+[0:06:39-0:06:40] #66 suelen rondar, por ejemplo
+[0:06:40-0:06:43] #67 yo estoy en fundenex, está en
+[0:06:43-0:06:43] #68 0.1
+[0:06:44-0:06:46] #69 o 0.2 a lo mucho
+[0:06:46-0:06:48] #70 pero como los trades por lo general
+[0:06:50-0:06:51] #71 digamoslo así
+[0:06:51-0:06:52] #72 o sea, son rápidos, si te das cuenta
+[0:06:52-0:07:00] #73 buscamos que se desarrolle de manera rápida por ejemplo aquí tendríamos un ejemplo o sea
+[0:07:00-0:07:06] #74 del trade que como tal ganador por así decirlo entonces que se da de la siguiente manera pues
+[0:07:06-0:07:11] #75 llega el precio o sea todo esto es un flujo de órdenes o sea hay un flujo de órdenes que se
+[0:07:11-0:07:20] #76 respeta el flujo de órdenes se rompe aquí que es lo que buscamos nosotros entonces por ejemplo
+[0:07:22-0:07:23] #77 De aquí a aquí
+[0:07:23-0:07:25] #78 O sea, es muy
+[0:07:25-0:07:27] #79 Yo suelo proteger en 0.75 como te dije
+[0:07:27-0:07:30] #80 Porque el número muestra, por lo que yo he manejado
+[0:07:30-0:07:32] #81 El precio, si llega a pasar
+[0:07:32-0:07:34] #82 El 0.75 es que se va a revertir
+[0:07:34-0:07:36] #83 Entonces, ese margen
+[0:07:36-0:07:37] #84 Que protegemos nosotros, pues
+[0:07:37-0:07:39] #85 Lo guardamos para tres posteriores
+[0:07:39-0:07:41] #86 Y demás
+[0:07:41-0:07:43] #87 Entonces, pero como tal
+[0:07:43-0:07:45] #88 O sea, por ejemplo, aquí sería
+[0:07:47-0:07:48] #89 Approx aquí
+[0:07:48-0:07:49] #90 Pero no suele llegar
+[0:07:49-0:07:51] #91 o sea, yo creo que respeta
+[0:07:51-0:07:53] #92 y si no, pues ya te comiste
+[0:07:53-0:07:56] #93 un SL y ya está
+[0:07:56-0:07:57] #94 pero es eso
+[0:07:57-0:07:59] #95 o sea, el spread, tomando en cuenta el spread
+[0:07:59-0:08:01] #96 no influye mucho, creo yo, o sea
+[0:08:01-0:08:04] #97 si va entre 0.2 o 0.1
+[0:08:04-0:08:05] #98 no tiene mucha influencia
+[0:08:06-0:08:07] #99 en el trade
+[0:08:10-0:08:11] #100 ok, entonces que se tome en cuenta
+[0:08:11-0:08:13] #101 con eso, el 0.75, entonces lo que
+[0:08:13-0:08:15] #102 tiene es esto, si el punto de entrada, por ejemplo
+[0:08:15-0:08:17] #103 ahí que tienes es en el nivel 1.19502
+[0:08:18-0:08:19] #104 que sí o sí
+[0:08:19-0:08:21] #105 el stop se marca en este caso
+[0:08:21-0:08:23] #106 No me sale el nivel
+[0:08:23-0:08:25] #107 Pero en el que es de 0.75
+[0:08:25-0:08:27] #108 Y se desplace un poco más en todo caso
+[0:08:27-0:08:28] #109 Si el sprint está influyendo
+[0:08:29-0:08:31] #110 O que se corte en 0.75
+[0:08:33-0:08:33] #111 Exacto
+[0:08:33-0:08:35] #112 No, es un buen punto lo que acabas de mencionar
+[0:08:35-0:08:36] #113 Que también me estaba olvidando de comentarte
+[0:08:36-0:08:39] #114 Creo que es mejor a veces en algunos casos
+[0:08:39-0:08:40] #115 Como que darle un pequeño respiro, por ejemplo
+[0:08:40-0:08:42] #116 Aquí, o sea
+[0:08:43-0:08:45] #117 Exactamente aquí sería 0.75
+[0:08:45-0:08:47] #118 Pero le damos un pequeño respiro
+[0:08:47-0:08:48] #119 De un par de pips
+[0:08:48-0:08:49] #120 O sea, uno o dos pips
+[0:08:50-0:08:52] #121 allí. Entonces, ¿prefieres que sea
+[0:08:52-0:08:54] #122 rankeado, por ejemplo, de 0.75
+[0:08:54-0:08:56] #123 a 0.80 o que sea
+[0:08:56-0:08:58] #124 fijo en 0.75? Porque
+[0:08:58-0:09:00] #125 también hay ocasiones, por ejemplo, imagina que estamos
+[0:09:00-0:09:01] #126 operando a las 9 y le toca hablar, bueno,
+[0:09:02-0:09:03] #127 9M en mi zona horaria,
+[0:09:03-0:09:05] #128 y le toca hablar a Powell en este, bueno,
+[0:09:06-0:09:08] #129 ya no está, no, pero si le tocara hablar
+[0:09:08-0:09:09] #130 en este caso, obviamente
+[0:09:09-0:09:12] #131 en esos momentos el split aumenta.
+[0:09:12-0:09:13] #132 Claro, sí, sí, es verdad.
+[0:09:14-0:09:15] #133 Es un buen
+[0:09:15-0:09:17] #134 punto también lo que acabas de mencionar, porque
+[0:09:17-0:09:19] #135 sí, claro, específicamente
+[0:09:19-0:09:21] #136 El spread aumenta en esos momentos
+[0:09:23-0:09:25] #137 Claro, ahí sería cuestión de darle respiro al trade
+[0:09:26-0:09:27] #138 Si, o sea
+[0:09:27-0:09:29] #139 Si hay alguna manera de poder
+[0:09:29-0:09:30] #140 Que se yo
+[0:09:33-0:09:34] #141 Dale un 5
+[0:09:34-0:09:36] #142 5 pips y demás, pues genial
+[0:09:36-0:09:38] #143 Porque como te digo, o sea, yo he estado
+[0:09:38-0:09:40] #144 Bateceando, bueno, se suelen mostrar
+[0:09:40-0:09:42] #145 Noticias, hay momentos, por ejemplo
+=== PASAJE 26 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:09:42-0:14:06 | stop x3, stop loss x2, protejo x3, proteger x1, protegido x1
+[0:09:40-0:09:42] #145 Noticias, hay momentos, por ejemplo
+[0:09:42-0:09:44] #146 No sé si lo encuentro por aquí
+[0:09:46-0:09:47] #147 Lo más probable
+[0:09:48-0:09:49] #148 No sé si esto es una noticia
+[0:09:49-0:09:51] #149 bueno, hay volumen
+[0:09:53-0:09:55] #150 pero luego, o sea, he operado 3 con noticias
+[0:09:55-0:09:56] #151 y es independiente, a veces
+[0:09:56-0:09:58] #152 inclusive sirve a tu favor
+[0:09:59-0:10:01] #153 no te llega a sacar, no te llega a sacar como tal
+[0:10:06-0:10:08] #154 bueno aquí hay algunas noticias
+[0:10:09-0:10:10] #155 bueno este trade está fuera de horario
+[0:10:10-0:10:13] #156 pero ya si, o sea, ya de por si también se puede tomar
+[0:10:13-0:10:15] #157 o sea, tomas el como vayas
+[0:10:15-0:10:17] #158 lo que ha hecho la vela anterior
+[0:10:18-0:10:18] #159 y se opera
+[0:10:21-0:10:23] #160 bueno aquí hay creo un específico
+[0:10:23-0:10:24] #161 fue aquí, si
+[0:10:25-0:10:27] #162 mira aquí, este por ejemplo
+[0:10:27-0:10:56] #163 por ejemplo, este era un trade ganador, o sea, por así decirlo, porque cumple con todo, o sea, venimos ya de un flujo bajista, estamos buscando una operativa alcista, una reversión, el bias anterior pues era alcista, es por eso que buscamos alcista, pero mira, si yo no hubiera protegido a 0.75, el trade era ganador, o sea, ya de por sí, y hay muchos trades, o sea, que a veces se me pasa por eso,
+[0:10:56-0:10:58] #164 Porque protejo en 0.75 y lo come
+[0:10:58-0:10:59] #165 Entonces
+[0:10:59-0:11:01] #166 Eso es algo que, claro
+[0:11:02-0:11:04] #167 A ver, hacer backtest sin
+[0:11:04-0:11:05] #168 Calza también, entonces
+[0:11:06-0:11:08] #169 O sea, planteando esa condicional
+[0:11:08-0:11:10] #170 Es decir, no protejo en 0.75
+[0:11:10-0:11:12] #171 Pero, a ver, veo
+[0:11:12-0:11:14] #172 Qué tal va con, si no protejo
+[0:11:14-0:11:16] #173 La entrada, cómo van los resultados
+[0:11:16-0:11:18] #174 Un robot, claro, lo haría
+[0:11:18-0:11:19] #175 Mucho más rápido, entonces
+[0:11:20-0:11:21] #176 Pero es eso, por ejemplo
+[0:11:22-0:11:24] #177 Protegiendo a 0.75
+[0:11:25-0:11:26] #178 que sería por aquí
+[0:11:26-0:11:28] #179 inclusive dándole un poco de respiro al trade
+[0:11:28-0:11:29] #180 te comes el
+[0:11:30-0:11:32] #181 un sub loss, pero sin proteger
+[0:11:32-0:11:34] #182 obviamente, o sea, ya tienes el bias anterior
+[0:11:35-0:11:36] #183 que influye mucho, ya de por sí
+[0:11:36-0:11:38] #184 yo creo que, o sea, saber
+[0:11:39-0:11:40] #185 más o menos, o sea, con alta
+[0:11:40-0:11:42] #186 probabilidad que es lo que va a continuar
+[0:11:43-0:11:44] #187 influye mucho en tu trade
+[0:11:45-0:11:46] #188 entonces, es eso
+[0:11:46-0:11:48] #189 o sea, hubiera sido ganador
+[0:11:49-0:11:50] #190 pero sí, o sea
+[0:11:52-0:11:52] #191 yo, si tú
+[0:11:52-0:11:54] #192 tú consideras honestamente darle un
+[0:11:54-0:11:56] #193 margen, o sea, cuando hay noticias
+[0:11:56-0:11:58] #194 obviamente extender un poco más a lo mejor,
+[0:11:59-0:12:00] #195 pues estaría bien, creo yo.
+[0:12:00-0:12:00] #196 O sea,
+[0:12:02-0:12:04] #197 estaría bien. Ok, entonces ya,
+[0:12:04-0:12:06] #198 para clarificar esta parte y ya poder
+[0:12:06-0:12:07] #199 cerrar el código de esto, entonces
+[0:12:07-0:12:10] #200 se arma un trade y el stop loss se pone
+[0:12:10-0:12:11] #201 hasta el final como del rango, ¿no?
+[0:12:12-0:12:14] #202 Al final del rango. Pero
+[0:12:15-0:12:16] #203 el stop loss
+[0:12:16-0:12:18] #204 como tal que se va a introducir
+[0:12:18-0:12:20] #205 en la operación es hasta el 0.75.
+[0:12:21-0:12:22] #206 Entonces, la opción que yo te
+[0:12:22-0:12:24] #207 de aquí es que se abra la operación
+[0:12:24-0:12:26] #208 pero que este 0.75 se
+[0:12:26-0:12:28] #209 desplace lo suficiente
+[0:12:28-0:12:29] #210 como para que
+[0:12:30-0:12:32] #211 esté de acuerdo al split del momento. ¿Te parece
+[0:12:32-0:12:34] #212 así? Sí,
+[0:12:34-0:12:36] #213 me parece bien, sí, sí. Es un buen punto,
+[0:12:36-0:12:38] #214 sí. Y de ahí ya que
+[0:12:38-0:12:40] #215 con ese porcentaje que igual va a ser
+[0:12:40-0:12:42] #216 el 0.75, ya ahí se
+[0:12:42-0:12:44] #217 calcule el lotaje para arriesgar el porcentaje
+[0:12:44-0:12:45] #218 de la cuenta que vamos a ver
+[0:12:45-0:12:47] #219 en unos segundos, ¿sí?
+[0:12:48-0:12:50] #220 Sí, perfecto. Ya, cerramos el tema entonces.
+[0:12:51-0:12:52] #221 Vale.
+[0:12:52-0:12:53] #222 pues voy a
+[0:12:54-0:12:54] #223 dime
+[0:12:55-0:12:57] #224 ese es el primer punto
+[0:12:58-0:13:00] #225 vamos a ir con todas las preguntas que te pasé
+[0:13:00-0:13:00] #226 ¿te parece?
+[0:13:01-0:13:03] #227 sí, sí, perfecto, justamente ahora lo iba a ver
+[0:13:03-0:13:05] #228 el siguiente punto es el tema
+[0:13:05-0:13:08] #229 de zonas de control
+[0:13:08-0:13:10] #230 justamente lo que me estabas hablando, lo que estabas considerando
+[0:13:10-0:13:11] #231 de break-even, o sea, ya
+[0:13:12-0:13:13] #232 ¿qué tiene que pasar?
+[0:13:14-0:13:16] #233 o detállame el escenario que tiene que pasar
+[0:13:16-0:13:17] #234 para que el bot entienda
+[0:13:17-0:13:20] #235 ya, es momento de poner un break-even
+[0:13:20-0:13:21] #236 y ya correr el stop
+[0:13:22-0:13:23] #237 ¿Qué tiene que pasar?
+[0:13:24-0:13:25] #238 Las velas, acumulación
+[0:13:25-0:13:28] #239 En este caso, velas con tanto volumen
+[0:13:28-0:13:30] #240 Obviamente no usamos el volumen como indicador
+[0:13:30-0:13:32] #241 Pero me refiero al volumen de las velas
+[0:13:32-0:13:33] #242 Tamaño de pips
+[0:13:34-0:13:35] #243 Vale, mira
+[0:13:35-0:13:37] #244 He estado tratando de profundizar eso
+[0:13:37-0:13:38] #245 Por el hecho de que
+[0:13:39-0:13:41] #246 Influye mucho, creo yo
+[0:13:42-0:13:43] #247 Pero, o sea
+[0:13:43-0:13:44] #248 Planteando como tal la condicional
+[0:13:44-0:13:46] #249 Que yo vengo usando
+[0:13:46-0:13:49] #250 De decir, o sea, una zona de control
+[0:13:49-0:13:51] #251 Es que cuando, o sea, el precio
+[0:13:51-0:14:03] #252 por ejemplo aquí no bueno a ver llega aquí y el precio pues te hace esto o sea llega a completar
+[0:14:03-0:14:12] #253 pues todo es hacer esta formación entiendes que ya llega apenas a romper aquí aunque sea mínimo
+=== PASAJE 27 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:20:20-0:23:26 | stop x1, stop loss x1, protejo x1, proteger x2, protección x1, RR x1
+[0:20:00-0:20:48] #353 y entrada, después el otro, vale, por ejemplo aquí es uno claro, ah no, es lo mismo, el esquema 1, y también, vale, aquí es uno muy claro, por ejemplo aquí, el precio, por ejemplo, mira, te rompe, marcamos la zona de liquidez, cierra con cuerpo por debajo, pero nosotros lo que buscamos es eso, o sea, el precio llega, hace esto aquí, y luego rompe, o sea, llega a concretar,
+[0:20:48-0:20:50] #354 a desarrollar esta zona de control
+[0:20:50-0:20:52] #355 y pues luego se protege la entrada
+[0:20:52-0:20:53] #356 break-even
+[0:20:54-0:20:55] #357 y ya
+[0:20:56-0:20:58] #358 inclusive un punto muy importante también
+[0:20:58-0:21:00] #359 que es lo que a veces yo hago también
+[0:21:00-0:21:02] #360 si sé que me va a generar
+[0:21:02-0:21:04] #361 este segundo esquema de entrada
+[0:21:05-0:21:06] #362 yo protejo por debajo
+[0:21:06-0:21:09] #363 de este, o sea, hay algunos momentos
+[0:21:09-0:21:10] #364 donde inclusive esta protección
+[0:21:10-0:21:12] #365 te puede llegar no a 0.75
+[0:21:12-0:21:14] #366 sino protege ya inmediatamente
+[0:21:14-0:21:15] #367 entre un 0.50 y así
+[0:21:15-0:21:23] #368 sí entonces yo lo gestionó de esa manera como tal entonces manualmente lo gestiona de esa manera
+[0:21:24-0:21:33] #369 cuando se va si por ejemplo nosotros tenemos este segundo esquema de entrada vale ajá entonces en
+[0:21:33-0:21:39] #370 este esquema de entrada por ejemplo a veces el precio que puede generar el segundo es que me
+[0:21:39-0:21:48] #371 entrada un poco más arriba así entonces tú tu stop loss o sea en vez de proteger a 0.75 en lugar de
+[0:21:48-0:21:53] #372 eso pues lo protege es o sea por el punto más bajo en este caso como estamos de bajista alcista
+[0:21:54-0:22:03] #373 protege es allí en ese nivel pues en este caso sería proteger a este nivel aquí sabes el segundo
+[0:22:05-0:22:10] #374 vemos el precio llega rompe con cuerpo cierra con cuerpo por debajo de la zona de liquidez y
+[0:22:10-0:22:18] #375 te genera la entrada y bueno en este caso no llega algún 13 pero es así o sea todo lo que
+[0:22:18-0:22:25] #376 buscaba todos los tres son así por ejemplo aquí en verdad hubiera sido un break y bien claro por
+[0:22:25-0:22:31] #377 ejemplo podemos que lo mira soy humano o sea no puedo procesar muchos datos pero creo que
+[0:22:31-0:22:35] #378 buscando la manera de automatizar y demás podemos buscar a lo mejor inclusive mejores
+[0:22:35-0:22:41] #379 configuraciones o sea mejores configuraciones a lo mejor el rr ideal no es el 13 puede ser el
+[0:22:41-0:22:49] #380 2.5 y obviamente o sea tienes inclusive menos tres perdedores o demás o sea claro te cambia
+[0:22:49-0:22:57] #381 todas las estadísticas pero pero es eso por ejemplo aquí habría aquí tendría dentro mira
+[0:22:57-0:23:08] #382 Mira, bueno, aquí hay una entrada que me sacó en B, o sea, me sacaría en B porque no llega al 1.3 tampoco, por eso lo puse B y así.
+[0:23:09-0:23:11] #383 Ah, por cierto, también me olvidé mencionarte.
+[0:23:11-0:23:18] #384 Mira, un punto muy importante también, que es que, por ejemplo, nosotros aquí tenemos marcado la zona de liquidez, ¿vale?
+[0:23:18-0:23:27] #385 Pero suponiendo que aquí se genera un trade erróneo, o sea, perdemos el trade aquí, o sea, y luego sigue nuevamente el flujo, o sea, el flujo bajista,
+=== PASAJE 28 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:28:13-0:33:47 | stop x2, stop loss x2, SL x1, proteger x5, protección x1, 1% x3
+[0:28:07-0:28:14] #462 ese es ese nivel de allí este nivel aquí pues es muy posible o sea yo lo que suelo hacer manualmente
+[0:28:14-0:28:22] #463 es claro una orden un buen límite y voy ahí bajando bajando bajando pero claro para entrar
+[0:28:22-0:28:26] #464 con lotaje pues te tienes que poner a calcular o buscar una calculara y es todo un lío porque
+[0:28:26-0:28:33] #465 es como un scalp y literal o sea tiene que ser rápido con la terminadora en segundo claro
+[0:28:33-0:28:39] #466 entonces defines ahí y allí entonces ya tiene la vela cerrada o sea te da tiempo para pensar y
+[0:28:39-0:28:46] #467 demás entonces bueno entonces no te lo tomaría obviamente o sea pero ya vas como que vale pues
+[0:28:46-0:28:52] #468 siguen manteniendo allí siguen manteniendo allí y obviamente la calculadora esa calculadora lo que
+[0:28:52-0:28:58] #469 hacía es que si tú lo movía para allí pues ya te calculaba o sea conforme tú ibas moviéndole
+[0:28:58-0:28:59] #470 y además el stop loss
+[0:28:59-0:29:01] #471 se iba configurando, el lotaje
+[0:29:01-0:29:04] #472 el tamaño también de la posición de tu cuenta
+[0:29:04-0:29:06] #473 1%, ponías 1%
+[0:29:07-0:29:08] #474 y ahí lo
+[0:29:08-0:29:10] #475 moviendo el SL pues se calculaba
+[0:29:10-0:29:12] #476 entonces ya sé que allí, o sea aquí
+[0:29:12-0:29:13] #477 ya me va a tomar el trade, o sea
+[0:29:13-0:29:15] #478 estaba aquí, de aquí a aquí
+[0:29:15-0:29:16] #479 esta es la última
+[0:29:18-0:29:20] #480 zona de liquidez o de control
+[0:29:20-0:29:21] #481 en la cual busco el breaker
+[0:29:22-0:29:24] #482 y pues ya, o sea
+[0:29:24-0:29:26] #483 aquí está la vela roja, la vela verde
+[0:29:26-0:29:28] #484 Puedo dar el click derecho ahí? Ahí no se puede configurar
+[0:29:28-0:29:28] #485 Ahí mismo
+[0:29:30-0:29:32] #486 Ah, no, es que este es el FX Replay
+[0:29:32-0:29:33] #487 No, no es el MetaTrader
+[0:29:33-0:29:35] #488 Ah, ya, ya, dale, sí, sí, perdón
+[0:29:35-0:29:36] #489 Entonces, sí
+[0:29:37-0:29:38] #490 Sí, entonces
+[0:29:39-0:29:40] #491 No, no me permite
+[0:29:40-0:29:42] #492 Ok, ok, ya
+[0:29:42-0:29:44] #493 Será la chamba para ahorita
+[0:29:45-0:29:45] #494 Ya, entonces
+[0:29:47-0:29:47] #495 Siete puntos
+[0:29:49-0:29:51] #496 Justo de lo que tú último mencionaste
+[0:29:51-0:29:53] #497 ¿Quieres que sea sí o sí dos entradas?
+[0:29:53-0:29:54] #498 ¿O tener permiso por una tres?
+[0:29:54-0:29:56] #499 porque creo que sí deberíamos tener el parámetro
+[0:29:56-0:29:58] #500 estático, porque finalmente creo que es
+[0:29:58-0:30:00] #501 proteger el capital, más allá de buscar
+[0:30:00-0:30:01] #502 rendimientos
+[0:30:02-0:30:29] #503 Sí, es un buen punto. Mira, como te decía, bueno, esto es algo que a lo mejor en un futuro pues podemos gestionar porque a lo mejor nos es más factible proteger, o sea, una manera de gestionar también el capital es, por ejemplo, no entrando con el 1%, sino ya bien sabemos que va a ser un buen mes, bueno, no un buen mes, pero la estrategia es rentable con un 30% de acierto y te llega a generar creo que más un 16,5% o así.
+[0:30:29-0:30:43] #504 o sea, gestionando esto a un 0.75, pero obviamente hay trades que si tú gestionas manualmente llegas a proteger no un 0.75, sino un 0.50, un 0.60 y demás.
+[0:30:43-0:30:51] #505 Entonces, o sea, ¿cómo llegas a proteger? Como te decía, pues cuando se desarrolla el segundo esquema, pues tienes la ventaja de que en algunos casos,
+[0:30:51-0:30:58] #506 pues en vez de poner la 075 si no protege es allí y está protegiendo mucho más la entrada o sea esto
+[0:30:58-0:31:02] #507 lo aplicó cuando se desarrolla el segundo esquema cuando se desarrolla el primer esquema pues
+[0:31:02-0:31:13] #508 claramente es en 075 y bueno que se acomode y ya entonces la primera forma que mostraste es
+[0:31:13-0:31:22] #509 el 075 con la segunda te bajas al 0.5 claro o sea para la segunda es depende cosa como
+[0:31:22-0:31:27] #510 desarrolla el precio en movimiento por ejemplo supongamos que el precio hace esto hace esto hace
+[0:31:27-0:31:34] #511 esto y aquí te desarrolla la zona de control y allí vale no es el segundo esquema tal y bueno
+[0:31:34-0:31:40] #512 tenemos otro ejemplo de que el precio va a llevarse esto hace esto y hace esto y hace esto vale
+[0:31:41-0:31:47] #513 aquí hay una diferencia de preciación entonces claro si nosotros buscamos aquí están nuestros
+[0:31:47-0:31:53] #514 o sea, aquí mira
+[0:31:53-0:31:55] #515 el stop loss estaría por aquí
+[0:31:55-0:31:58] #516 entonces no estamos ya protegiendo el 0.75
+[0:31:58-0:31:59] #517 sino estamos protegiendo
+[0:31:59-0:32:01] #518 bueno, que se yo
+[0:32:01-0:32:04] #519 casi mitad de la entrada o un poco más
+[0:32:04-0:32:06] #520 0.60 por ahí
+[0:32:06-0:32:07] #521 si, exacto
+[0:32:07-0:32:10] #522 pero mira, en este caso por ejemplo
+[0:32:10-0:32:12] #523 es el segundo esquema
+[0:32:12-0:32:14] #524 y claro, a veces
+[0:32:14-0:32:16] #525 llega a concordar que claro
+[0:32:16-0:32:17] #526 te protege aquí en 0.75
+[0:32:18-0:32:20] #527 pero, o sea, en algunos casos
+[0:32:20-0:32:21] #528 pues si se desarrolla aquí, genial
+[0:32:21-0:32:24] #529 en algunos casos inclusive se llega a desarrollar así
+[0:32:25-0:32:26] #530 entonces
+[0:32:27-0:32:28] #531 protegerías todo esto
+[0:32:28-0:32:30] #532 o sea, solo estarías arriesgando
+[0:32:30-0:32:31] #533 un 0.25
+[0:32:31-0:32:33] #534 y lo demás pues
+[0:32:33-0:32:35] #535 ya, o sea, estás protegiendo
+[0:32:35-0:32:37] #536 entonces en el segundo esquema se define la protección
+[0:32:37-0:32:40] #537 por el hecho de que, donde termina
+[0:32:40-0:32:42] #538 pues el desarrollo de zona de control
+[0:32:42-0:32:44] #539 o sea, puede variar
+[0:32:44-0:32:46] #540 como digo, puede variar, pero por lo general
+[0:32:46-0:32:48] #541 para el primer esquema de entrada
+[0:32:48-0:32:50] #542 sería eso. Ahora también podría
+[0:32:50-0:32:51] #543 ser también, o sea,
+[0:32:52-0:32:54] #544 si por ahora no te quieres
+[0:32:54-0:32:56] #545 complicar ni nada, pues simplemente
+[0:32:56-0:32:58] #546 claro, también mantenerlo estático
+[0:32:58-0:33:00] #547 para los dos esquemas de entrada
+[0:33:00-0:33:02] #548 y proteger en 0.75
+[0:33:04-0:33:06] #549 para los dos esquemas de entrada.
+[0:33:06-0:33:07] #550 Para este rango
+[0:33:08-0:33:10] #551 habíamos acordado que sea con vela
+[0:33:10-0:33:11] #552 cuerpo o con vela mecha.
+[0:33:13-0:33:14] #553 ¿Cuál?
+[0:33:14-0:33:16] #554 O sea, para trazar todo este rango,
+[0:33:16-0:33:18] #555 Para identificarlo, vela cuerpo o vela mecha
+[0:33:19-0:33:20] #556 Que termine
+[0:33:20-0:33:22] #557 O sea, cuando hay un rompimiento de liquidez
+[0:33:23-0:33:25] #558 Claro, o sea, para entender el patrón
+[0:33:25-0:33:26] #559 Que acabas de dibujar, pero obviamente
+[0:33:26-0:33:27] #560 Entendido con velas propiamente
+[0:33:28-0:33:30] #561 Esas cosas como mechas
+[0:33:30-0:33:31] #562 Ya, hasta las mechas
+[0:33:31-0:33:33] #563 En este caso, mechas, sí
+[0:33:33-0:33:36] #564 O sea, el breaker, también lo importante es la mecha
+[0:33:36-0:33:37] #565 O sea, el breaker se da con mecha
+[0:33:37-0:33:39] #566 Solo en cuanto a liquidez
+[0:33:39-0:33:41] #567 O sea, cuando vamos a
+[0:33:41-0:33:42] #568 Aquí tenemos liquidez, pues tiene que
+[0:33:43-0:33:44] #569 Ser con
+[0:33:45-0:33:46] #570 Como se llama, con cuerpo
+[0:33:46-0:33:47] #571 con cuerpo y breaker
+=== PASAJE 29 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:35:01-0:39:11 | stop x1, stop loss x1, protejo x2
+[0:35:01-0:35:07] #596 en m15 buscamos un rivers que de la siguiente manera que se desarrolla aquí en m15 o sea tal
+[0:35:07-0:35:16] #597 cual y ya apenas una manera de identificarlos es la vela contraria o sea estas son un flujo
+[0:35:16-0:35:18] #598 bajista, se desarrolla una vela
+[0:35:18-0:35:19] #599 alcista, entonces ya
+[0:35:20-0:35:22] #600 claramente tienes que, ya marcas
+[0:35:22-0:35:24] #601 la zona de M15
+[0:35:24-0:35:25] #602 y te vas a
+[0:35:25-0:35:26] #603 M1
+[0:35:26-0:35:29] #604 y aquí pues ya buscas
+[0:35:29-0:35:31] #605 por todo lo que sea por debajo
+[0:35:31-0:35:33] #606 0 con cuerpo, la entrada
+[0:35:33-0:35:35] #607 por ejemplo, me voy aquí
+[0:35:36-0:35:37] #608 y aquí que tenemos
+[0:35:37-0:35:39] #609 por ejemplo aquí sería 1-2
+[0:35:39-0:35:41] #610 o sea, esto era 1-2
+[0:35:44-0:35:46] #611 1-2 porque no llevo al 1-3
+[0:35:46-0:35:56] #612 pero protejo a 0.75 y bueno igual me saca entonces pero si nos vamos a m15 o sea
+[0:35:57-0:36:08] #613 todavía no se llega a desarrollar tenemos una ronda pero todavía continuamos espero a que el
+[0:36:08-0:36:13] #614 precio nuevamente pues voy trazando aquí mi liquidez o sea ya en m1 o sea voy lo que busco
+[0:36:13-0:36:19] #615 nuevamente es que se cierre este flujo este flujo bajista para buscar el siguiente flujo por ejemplo
+[0:36:19-0:36:29] #616 luego está aquí aquí hay otra entrada que aquí no hay entrada por el hecho de que no hay entrada
+[0:36:29-0:36:34] #617 porque se desarrolla o sea no se desarrolla el esquema como tal si no te suelta otra zona de
+[0:36:34-0:36:40] #618 control entonces no hay entrada ok me nace una duda aquí justamente creo que es parte de las
+[0:36:40-0:36:42] #619 preguntas. Entonces, ¿las entradas
+[0:36:42-0:36:44] #620 pueden darse en paralelo o no?
+[0:36:46-0:36:46] #621 ¿O tiene
+[0:36:46-0:36:48] #622 que ser una después? O sea,
+[0:36:48-0:36:50] #623 ¿esta de acá se hace en paralelo o no?
+[0:36:51-0:36:52] #624 ¿O la otra también? Porque obviamente
+[0:36:52-0:36:54] #625 puede suceder dos veces el patrón, quizás.
+[0:36:55-0:36:56] #626 Exacto, exacto. Es una muy buena
+[0:36:56-0:36:58] #627 pregunta. A ver, tengo entendido que
+[0:36:58-0:37:00] #628 tu pregunta se basa en la que si
+[0:37:00-0:37:02] #629 puede haber dos entradas al mismo tiempo.
+[0:37:03-0:37:04] #630 Claro, eso mismo. Si se pueden
+[0:37:04-0:37:06] #631 aportar dos entradas al mismo tiempo, una después de la
+[0:37:06-0:37:08] #632 otra, ¿cómo podemos gestionar esto?
+[0:37:08-0:37:09] #633 claro
+[0:37:10-0:37:12] #634 ya la respuesta es no
+[0:37:12-0:37:14] #635 o sea, por el hecho de que
+[0:37:14-0:37:16] #636 para que tú puedas entrar nuevamente
+[0:37:16-0:37:18] #637 o bien te ha tocado stop loss
+[0:37:18-0:37:20] #638 o bien pues has
+[0:37:20-0:37:23] #639 tenido profit, pero con el profit
+[0:37:23-0:37:24] #640 ya no operas más
+[0:37:24-0:37:26] #641 por ejemplo, en este caso
+[0:37:29-0:37:31] #642 venimos de un flujo bajista
+[0:37:31-0:37:33] #643 lo que buscamos es al cista
+[0:37:33-0:37:35] #644 el precio hace esto, nos entraría
+[0:37:35-0:37:36] #645 aquí, pero
+[0:37:36-0:37:37] #646 vale
+[0:37:39-0:37:41] #647 vale, el flujo es bajista
+[0:37:42-0:37:43] #648 aquí se activaría la entrada
+[0:37:43-0:37:44] #649 vale, a ver, bueno
+[0:37:44-0:37:46] #650 a ver, para hacerlo más claro
+[0:37:54-0:37:54] #651 vale
+[0:37:55-0:37:57] #652 como yo hago el backtesting, entonces
+[0:37:58-0:37:59] #653 aquí tendría una entrada
+[0:38:00-0:38:02] #654 pondría mi entrada y bla bla bla
+[0:38:03-0:38:03] #655 obviamente
+[0:38:03-0:38:06] #656 el cuadro de gama, vale
+[0:38:06-0:38:08] #657 protegería aquí, vale
+[0:38:08-0:38:08] #658 o sea
+[0:38:09-0:38:14] #659 vamos a hacerlo, lo que hago es esto
+[0:38:18-0:38:19] #660 yo ya voy
+[0:38:19-0:38:19] #661 protegiendo allí
+[0:38:20-0:38:26] #662 bueno ya sé que me va a quitar entonces protejo al 0.75 no voy a calcular ahora pero es como que
+[0:38:26-0:38:31] #663 en 0.75 se corta la entrada ahí se corta la entrada ya no habría entrada aquí hasta que
+[0:38:31-0:38:38] #664 te termine de cerrar este flujo de aquí o sea tenemos una entrada en pérdida pero no puedes
+[0:38:38-0:38:44] #665 volver a entrar hasta que nuevamente pues o sea se cierre esta zona de control y te genere otra
+[0:38:44-0:38:49] #666 o sea sigan nuevamente el flujo y se rompa nuevamente pero no adentro aquí sino tiene
+[0:38:49-0:38:54] #667 que ser nuevamente afuera ahora un punto muy importante es que en m1 o sea
+[0:38:56-0:39:01] #668 si contaría las mechas o sea ya no en m15 te tiene que la liquidez que tiene
+[0:39:01-0:39:05] #669 la vela que tiene que cerrar con cuerpo pero en m15 en algunos casos basta con
+[0:39:05-0:39:10] #670 la mecha no sé si lo pueda dibujar por ejemplo ahí te hace el precio te
+[0:39:10-0:39:14] #671 genera una mecha aquí y luego se vuelve supongamos un ejemplo
+=== PASAJE 30 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:39:48-0:41:21 | stop x1, stop loss x1
+[0:39:47-0:39:51] #685 Cuando hay el breaker de liquidez, o sea, la mitigación de liquidez, sea con cuerpo.
+[0:39:52-0:39:55] #686 O sea, por ejemplo, a ver, lo pongo aquí, M15.
+[0:39:59-0:40:01] #687 O sea, de aquí a aquí.
+[0:40:01-0:40:28] #688 Claro, que por debajo, todo lo que está por debajo va a ser nuestras entradas, o sea, sea con cuerpo, pero luego el precio, o sea, en M1 ya se trata de otra manera diferente, en este caso, nosotros lo que buscamos es lo siguiente, por ejemplo, aquí hay una entrada, que la entrada nos da pérdida, no es viable, o sea, no es posible, mejor dicho, que haya dos entradas en el mismo caso, en el mismo trade,
+[0:40:28-0:40:31] #689 O sea, 2.3 en la misma posición
+[0:40:31-0:40:33] #690 Por el hecho de que o bien te termina en profit
+[0:40:33-0:40:36] #691 O bien te saca en stop loss
+[0:40:36-0:40:38] #692 Porque, por ejemplo, en este caso
+[0:40:38-0:40:39] #693 Para nosotros poder nuevamente
+[0:40:39-0:40:41] #694 Entrar, tendríamos que
+[0:40:41-0:40:43] #695 Esperar a que el precio
+[0:40:43-0:40:45] #696 Pues complete este ciclo de aquí
+[0:40:45-0:40:47] #697 Y nuevamente por afuera buscar
+[0:40:47-0:40:49] #698 O sea, lo he dibujado aquí
+[0:40:49-0:40:51] #699 En M1 si es viable
+[0:40:51-0:40:52] #700 Por ejemplo, que
+[0:40:52-0:40:55] #701 Saca, o sea, mitiga esta liquidez
+[0:40:55-0:40:57] #702 Con cuerpo, no, perdón
+[0:40:57-0:40:59] #703 con mecha o con cuerpo es indiferente
+[0:40:59-0:41:01] #704 y luego se regrese
+[0:41:01-0:41:03] #705 o sea, hay una vela bajista
+[0:41:03-0:41:05] #706 y tengo una mecha aquí y luego una vela
+[0:41:05-0:41:07] #707 verde y se activa la entrada
+[0:41:07-0:41:09] #708 o sea, es totalmente viable
+[0:41:09-0:41:10] #709 bueno, en este caso no
+[0:41:11-0:41:13] #710 ahí se traería por orden límite
+[0:41:13-0:41:13] #711 ¿no?
+[0:41:14-0:41:17] #712 sí, por ejemplo, mira, aquí tenemos
+[0:41:17-0:41:18] #713 claramente un ejemplo, por ejemplo
+=== PASAJE 31 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:43:34-0:45:29 | proteger x3
+[0:43:35-0:43:37] #735 Aquí, por ejemplo, hay una entrada
+[0:43:38-0:43:39] #736 Hay una entrada
+[0:43:41-0:43:45] #737 Hay una entrada, o sea, con el segundo esquema
+[0:43:45-0:43:46] #738 Si te das cuenta, porque cumple tal cual
+[0:43:46-0:43:48] #739 El precio llega aquí
+[0:43:50-0:43:51] #740 O sea, mira
+[0:43:51-0:43:53] #741 Te genera el breaker en M1
+[0:43:53-0:43:54] #742 O sea, la absorción de liquidez
+[0:43:55-0:43:57] #743 Te lo hace con mecha
+[0:43:57-0:43:58] #744 Pero eso es indiferente
+[0:43:58-0:44:00] #745 eso es en M1, está por debajo
+[0:44:00-0:44:01] #746 de M15
+[0:44:05-0:44:06] #747 entonces tú buscas
+[0:44:06-0:44:08] #748 la entrada aquí
+[0:44:08-0:44:11] #749 la posición está aquí
+[0:44:15-0:44:16] #750 obviamente como es
+[0:44:16-0:44:18] #751 el segundo esquema pues proteges aquí
+[0:44:19-0:44:21] #752 inclusive pues podrías proteger a 0.75
+[0:44:21-0:44:22] #753 bueno, manualmente
+[0:44:22-0:44:24] #754 si lo haces, pues yo lo suelo proteger allí
+[0:44:25-0:44:26] #755 y bueno
+[0:44:26-0:44:28] #756 a ver, expandes hasta el 1.3
+[0:44:28-0:44:29] #757 no sé si se da, pero
+[0:44:29-0:44:31] #758 es eso
+[0:44:32-0:44:35] #759 Aquí viene la condicional de que, por ejemplo
+[0:44:35-0:44:36] #760 Aquí el precio
+[0:44:38-0:44:39] #761 Hace mucha estructura
+[0:44:39-0:44:39] #762 Mira
+[0:44:40-0:44:43] #763 Bueno, no lo voy a tocar, pero yo suelo
+[0:44:43-0:44:44] #764 Inclusive proteger más, ¿vale?
+[0:44:44-0:44:47] #765 O sea, esta entrada, por así decirlo
+[0:44:47-0:44:49] #766 A ver, en el segundo esquema
+[0:44:49-0:44:50] #767 De entrada, si se da
+[0:44:50-0:44:53] #768 Lo respetas allí y te genera la otra zona de control
+[0:44:53-0:44:54] #769 Y luego pones en break even
+[0:44:54-0:44:56] #770 Y te termina sacando en break even
+[0:44:56-0:44:57] #771 O sea, mira
+[0:44:57-0:44:59] #772 Te genera el breaker aquí
+[0:45:00-0:45:06] #773 ya vas a poner el break even allí o sea apenas rompe esto o cierra la vela pues ya proteges y
+[0:45:06-0:45:14] #774 luego pues se te devuelve no llega al 1.3 no llega al 1.3 entonces nada sé que este 3 no se da
+[0:45:14-0:45:21] #775 por experiencia pero aquí tienes otra en m15 tienes liquidez allí ya sabes que se te ha
+[0:45:21-0:45:27] #776 desarrollado o sea en m15 entonces nuevamente buscas entrada y si te das cuenta o sea no hay
+[0:45:27-0:45:33] #777 muchos tres tampoco se aparece que sí pero de por sí o sea manualmente no da muchos trades a lo
+=== PASAJE 32 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:46:13-0:48:04 | proteger x1, protegido x1
+[0:46:12-0:46:18] #783 entonces como finalizó por debajo llegó terminó mitigar esto entonces el tú vayas ahora bajista
+[0:46:18-0:46:26] #784 no sé me 15 voy a dejar que se desarrolle todo para vale que tenemos aquí ya está marcado allí
+[0:46:26-0:46:33] #785 pero o sea tú siguiendo el flujo de órdenes en m1 pues te acostumbras y lo va marcando y demás
+[0:46:33-0:46:42] #786 por ejemplo aquí no hay entrada ya que genere el rompimiento como tal pero no hay entrada o sea vale
+[0:46:44-0:46:49] #787 aquí habría una entrada así perdón aquí se abrió una entrada que también puesto los creo puesto
+[0:46:50-0:46:58] #788 estos los por qué porque si yo marco de aquí aquí mira protegiendo 0.75 pues no llevo o sea no se
+[0:46:58-0:47:04] #789 cumple la condición entonces me toco estos blogs luego baja si no hubiera protegido a un 0.75 era
+[0:47:04-0:47:09] #790 ahora pues algunas condicionales para decir pues que se lo gestione de manera diferente a lo mejor
+[0:47:09-0:47:13] #791 no hubiera perdido este trading muy bravo ventaja para poner en break even pero no o sea aquí es
+[0:47:13-0:47:19] #792 nuestro blog se conoce nuestro blog vale aquí por ejemplo si te da la opción de proteger continuas
+[0:47:19-0:47:26] #793 o sea entonces qué esperas a que el precio llegue a eso tienes nuestro blog te genera un break que
+[0:47:26-0:47:36] #794 vale aquí hay otros dos blogs también aquí hay otros dos blogs menos 0.75 nuevamente aquí te
+[0:47:36-0:47:42] #795 da la posibilidad vale aquí ya tenemos un buen ejemplo desarrollo de desarrollo de liquidez en
+[0:47:42-0:47:50] #796 m 15 tenemos una pérdida y otra pérdida entonces hay dos opciones aquí entra un poco discrecional
+[0:47:50-0:48:00] #797 o sea la discre discrecionalidad es decir o bien puedo hacer un tercer tren más y a ver si se da o
+[0:48:00-0:48:06] #798 no o bien me o sea me aguanto espero que se desarrolle otra zona de digámoslo así de otra
+=== PASAJE 33 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:48:05-0:49:37 | 1 a 3 x1, RR x1
+[0:48:00-0:48:06] #798 no o bien me o sea me aguanto espero que se desarrolle otra zona de digámoslo así de otra
+[0:48:06-0:48:14] #799 otra zona de liquidez en m15 y sigo operando después entonces para un tercer trade vale si
+[0:48:14-0:48:22] #800 tú cierras en esos dos trades 1 y 2 entonces esto ya no lo operarías que te sacarían break even
+[0:48:22-0:48:24] #801 o sea, como tal, a ver, bueno
+[0:48:24-0:48:26] #802 no sé si te saca un breakeven
+[0:48:27-0:48:28] #803 a ver aquí
+[0:48:30-0:48:32] #804 sí, te sacaría un breakeven, porque no se da
+[0:48:32-0:48:34] #805 pero los breakeven no se cuenta
+[0:48:34-0:48:36] #806 o sea, si te saca un breakeven
+[0:48:36-0:48:38] #807 es un trade que, o sea, es como, por así decirlo
+[0:48:38-0:48:40] #808 tienes un cartucho todavía para poder seguir operando
+[0:48:41-0:48:41] #809 entonces
+[0:48:43-0:48:44] #810 puedes limitar tu, yo
+[0:48:44-0:48:46] #811 honestamente, yo sinceramente
+[0:48:48-0:48:48] #812 limito a 3
+[0:48:48-0:48:50] #813 o sea, a 3, por ejemplo
+[0:48:50-0:48:52] #814 entonces, porque mi RR es de 1 a 3
+[0:48:52-0:48:58] #815 entonces sé que el tercer trade hay una alta probabilidad de que se dé entonces
+[0:49:00-0:49:06] #816 esto me saltó en break even pero aquí si se da el trade aquí si se llega a dar el trade 1-3
+[0:49:07-0:49:16] #817 no se da aquí pero nuevamente pues siguiendo el flujo el flujo que hay entonces se desarrolla en
+[0:49:16-0:49:22] #818 m1 aquí está y se rompe el flujo aquí y pues nada se llega a dar y justo en m15 pues se desarrolla
+[0:49:22-0:49:24] #819 bueno, si te vas a DM15 se llega a desarrollar
+[0:49:24-0:49:26] #820 la vela bajista
+[0:49:26-0:49:27] #821 como tal
+[0:49:28-0:49:30] #822 bueno, aunque al final termina bajista también la
+[0:49:30-0:49:31] #823 vela esta
+[0:49:32-0:49:34] #824 por ejemplo aquí, luego
+[0:49:34-0:49:36] #825 tienes la posibilidad, claro, por ejemplo
+[0:49:36-0:49:38] #826 de tomar otro trade aquí, pero
+=== PASAJE 34 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:51:35-0:54:30 | stop x2, stop loss x2, protegido x1
+[0:51:33-0:51:38] #856 pues no nos opera entonces pero una vez desarrollado o sea esperamos al que una vez
+[0:51:38-0:51:45] #857 desarrollado esta zona de mx de liquidez se rompa con las condicionales que ya sabemos con cuerpo
+[0:51:45-0:51:51] #858 en m1 y demás y buscamos el trade luego obviamente se va a formar otros y o sea por ejemplo aquí
+[0:51:51-0:51:57] #859 tenemos 12 no se decidimos detener en 23 esperaríamos a que se desarrolle otra otra
+[0:51:57-0:52:07] #860 zona nuevamente digamos las y más limpia en m15 por ejemplo en m15 aquí suponiendo que tú te
+[0:52:07-0:52:14] #861 tienes en o sea tienes después del desarrollo m15 tienes dos partos y te tienes allí por ejemplo
+[0:52:14-0:52:20] #862 mira aquí hay un claro ejemplo si nosotros no hubiéramos tomado o sea nos hubiéramos detenido
+[0:52:20-0:52:22] #863 ya tenemos 1, 2 stop loss
+[0:52:22-0:52:24] #864 hubiéramos esperado a que el precio me desarrolle
+[0:52:24-0:52:26] #865 nuevamente en M15, otra zona de liquidez
+[0:52:26-0:52:27] #866 y hubiéramos operado
+[0:52:27-0:52:30] #867 por lo que está por encima, y justamente aquí da una
+[0:52:30-0:52:32] #868 entrada, pero no sé si llega al 1, 3
+[0:52:32-0:52:33] #869 pero da una entrada
+[0:52:35-0:52:37] #870 que no llega al 1, 3, estoy clarísimo
+[0:52:37-0:52:38] #871 no llega al 1, 3
+[0:52:40-0:52:41] #872 da una entrada y es
+[0:52:41-0:52:43] #873 eso, entonces nuevamente supongamos que el
+[0:52:43-0:52:45] #874 precio hubiera hecho esto, o sea
+[0:52:45-0:52:47] #875 no da y se devuelve, obviamente ya estás
+[0:52:47-0:52:49] #876 protegido, o sea con las condicionales y demás
+[0:52:49-0:52:51] #877 de break even, entonces
+[0:52:51-0:52:57] #878 aquí nuevamente tienes otra zona si está en el mismo en la misma sesión pues sigue buscando
+[0:52:57-0:53:04] #879 por ejemplo como estaba a ver vamos a ver que tenemos aquí vale sigue buscando es aquí por
+[0:53:04-0:53:10] #880 ejemplo sigue buscando y tienes el enfoque bajista entonces te planteas y ves que hace
+[0:53:10-0:53:17] #881 no pero esto ya está fuera de igual o sea si es si es operando por ejemplo mira aquí en m1 vemos
+[0:53:19-0:53:25] #882 vemos que hay vemos que por ejemplo el precio me rompe aquí con mecha no hay validez de poder
+[0:53:25-0:53:31] #883 yo seguir operando no de seguir operando sino de tomar este 3d en caso se ve entonces sigo
+[0:53:31-0:53:38] #884 buscando el flujo bajista y el flujo aquí hay una entrada que tiene la posibilidad de poner
+[0:53:38-0:53:45] #885 en break even entonces a ver aquí también hay entrada que te comes el stop loss pero no aquí
+[0:53:45-0:53:49] #886 que no hay entrada porque la vela roja pues no sabe la verde debió de haber terminado por encima
+[0:53:49-0:53:57] #887 entonces no hay entrada aquí ya es como tal un retroceso son un retroceso y aquí mira por
+[0:53:57-0:54:11] #888 ejemplo aquí será el 3 y el flujo y vale tú tienes aquí y lo que haces es cerrar aquí entonces el 3
+[0:54:11-0:54:18] #889 ahí se te da allí es que como digo en la sesión no importa si dejas por bueno si dejas correr
+[0:54:18-0:54:26] #890 inclusivos a dibujas el 137 al 13 o inclusive un poco más pero teniendo como fijo el 13 ahí se te
+[0:54:26-0:54:35] #891 da ya usando sólo el bias anterior sabes que tú vayas el bajista pues busca la operativa pero es
+=== PASAJE 35 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:59:13-1:01:09 | 100% x1
+[0:59:13-0:59:15] #964 La mecha, o sea, el breaker
+[0:59:15-0:59:18] #965 Si el breaker hay condicionales
+[0:59:18-0:59:20] #966 Claro, como te decía, en M1
+[0:59:20-0:59:22] #967 Pues es válido con mecha o con cuerpo
+[0:59:22-0:59:24] #968 Pero en M15
+[0:59:24-0:59:26] #969 Cuando nos va a romper en M15 es con cuerpo
+[0:59:26-0:59:27] #970 Tiene que ser con cuerpo
+[0:59:28-0:59:29] #971 Pero es eso
+[0:59:29-0:59:30] #972 ¿Se me llega a entender?
+[0:59:31-0:59:32] #973 Sí, perfecto
+[0:59:33-0:59:34] #974 Sí, vale
+[0:59:36-0:59:37] #975 Siguiente, bueno esta creo que
+[0:59:37-0:59:38] #976 Ya le respondimos, que justamente
+[0:59:38-0:59:41] #977 Que se tome en cuenta para decir que ya se ha roto
+[0:59:41-0:59:42] #978 Un mínimo, en este caso
+[0:59:42-0:59:45] #979 Basta con el cuerpo y que haya cerrado
+[0:59:45-0:59:47] #980 La vela con cuerpo, ¿no?
+[0:59:49-0:59:50] #981 Claro
+[0:59:52-0:59:53] #982 En M
+[0:59:53-0:59:55] #983 Claro, cuando hay breaker
+[0:59:55-0:59:56] #984 De liquidez en M15
+[0:59:56-0:59:58] #985 Tiene que ser con cuerpo en M1
+[0:59:58-0:59:58] #986 Uno.
+[0:59:58-1:00:24] #987 el breaker tiene que ser con cuerpo, porque nosotros correlacionamos, hay que darnos cuenta, las temporalidades, buscamos esa correlación, la correlación no 100% perfecta pero más perfecta para estas 3 temporalidades, o sea que uso estas 3 temporalidades es que yo he tratado de buscar el flujo de orden es más limpio por así decirlo, en el cual suelo buscar y se suele dar el breaker o el reverse de H4 a M15, pero de M15 a M1
+[1:00:24-1:00:25] #988 entonces, por ejemplo, inclusive
+[1:00:25-1:00:27] #989 se puede, o sea, se puede
+[1:00:27-1:00:30] #990 tú puedes combinar, por ejemplo, quieres hacer
+[1:00:30-1:00:31] #991 scalping mucho más rápido
+[1:00:31-1:00:34] #992 buscar, por ejemplo, una temporalidad
+[1:00:34-1:00:36] #993 coges tu M15 como temporalidad
+[1:00:36-1:00:38] #994 mayor, pero usas
+[1:00:38-1:00:39] #995 temporalidades de 30 a 15 segundos
+[1:00:40-1:00:41] #996 bueno, a ver, si
+[1:00:41-1:00:44] #997 usas M15, luego
+[1:00:44-1:00:45] #998 usas M5 para
+[1:00:45-1:00:47] #999 un flujo de órdenes
+[1:00:47-1:00:50] #1000 buscas el breaker de flujo de órdenes
+[1:00:50-1:00:51] #1001 en M5, bueno, usas tu
+[1:00:51-1:00:53] #1002 temporalidad media, va a ser en M5
+[1:00:53-1:00:55] #1003 y en 30 segundos, 15 segundos
+[1:00:55-1:00:56] #1004 pues
+[1:00:58-1:00:59] #1005 sería tu escenario
+[1:00:59-1:01:01] #1006 de ejecución, pero es eso
+[1:01:01-1:01:02] #1007 o sea
+[1:01:04-1:01:06] #1008 no sé si me he salido del tema
+[1:01:06-1:01:07] #1009 se me ha pasado por la mente una cosa
+=== PASAJE 36 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:03:18-1:04:56 | proteger x1
+[1:03:13-1:03:18] #1062 no supongamos que nosotros tenemos nuestro límite aquí vale nuestro buscamos una operativa alcista
+[1:03:18-1:03:26] #1063 un ejemplo pero el precio llega y hace esto se desarrolla se desarrolla bien allí pero supongamos
+[1:03:26-1:03:33] #1064 que esta vez de la verde sabe el alcista o sea llega a activar no llega a romper pero llega a
+[1:03:33-1:03:40] #1065 activar tu entrada o sea bueno tu orden límite entonces se llega a activar entonces aquí pueden
+[1:03:40-1:03:47] #1066 puede pasar dos cosas o bien continúa termina de romper luego y continúa su tendencia o bien
+[1:03:47-1:03:54] #1067 se revierte o sea te genera como un igual único el high entiendes ya o sea tal cual es que te
+[1:03:54-1:04:03] #1068 genera tal cual único el hype que aquí hay yo lo que suele hacer o sea porque puede pasar pongo en
+[1:04:03-1:04:11] #1069 0 76 a ver pongo en 0 75 y lo que se entiende es lo que se ve pongo en 0 75 solo proteger en
+[1:04:11-1:04:12] #1070 0.50 y ya
+[1:04:13-1:04:14] #1071 No me complico
+[1:04:15-1:04:17] #1072 Pero es eso, o sea, el breaker basta
+[1:04:17-1:04:19] #1073 O sea, con mecha, con mecha basta
+[1:04:19-1:04:21] #1074 O sea, no es indiferente si es con cuerpo o con mecha
+[1:04:21-1:04:23] #1075 Tiene que, y ya
+[1:04:23-1:04:25] #1076 Ahora, creo que también vi, no sé si
+[1:04:25-1:04:27] #1077 Está allí, el número de velas
+[1:04:27-1:04:29] #1078 Creo que es indiferente el número de velas
+[1:04:29-1:04:30] #1079 Por ejemplo, va a haber en algunos casos
+[1:04:31-1:04:32] #1080 A ver, ¿dónde?
+[1:04:34-1:04:35] #1081 A ver, no
+[1:04:36-1:04:38] #1082 Que son casos raros
+[1:04:38-1:04:40] #1083 Pero, por ejemplo
+[1:04:41-1:04:42] #1084 A ver, lo voy a tratar
+[1:04:43-1:04:51] #1085 supongamos aquí esto es una vela verde y luego aquí aquí estaría tu entrada al límite de bajista
+[1:04:51-1:05:00] #1086 de alcista bajista y se llega a activar aquí o sea se llega a activar y luego se devuelve o sea
+=== PASAJE 37 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:07:22-1:09:34 | stop x1, stop loss x1, protejo x1, proteger x1
+[1:07:21-1:07:23] #1139 la orden? O sea, tú pones el límite, pero no
+[1:07:23-1:07:25] #1140 se... Ah, vale. No, es que la orden
+[1:07:25-1:07:27] #1141 si te das cuenta, o sea, se va actualizando como tal.
+[1:07:28-1:07:29] #1142 La vamos actualizando.
+[1:07:29-1:07:30] #1143 O sea,
+[1:07:31-1:07:33] #1144 la orden, tú, o sea, order limit, tú lo puedes
+[1:07:33-1:07:35] #1145 ir moviendo conforme se va
+[1:07:35-1:07:37] #1146 desarrollando el flujo, por ejemplo, es un ejemplo.
+[1:07:38-1:07:39] #1147 Nosotros aquí tenemos un flujo
+[1:07:41-1:07:41] #1148 alcista, ¿vale?
+[1:07:43-1:07:43] #1149 Entonces,
+[1:07:43-1:07:45] #1150 en M1, supongamos que no tenemos,
+[1:07:45-1:07:47] #1151 no sabemos qué se va
+[1:07:47-1:07:53] #1152 desarrollar después pero seguimos usar nosotros la orden de orden límite lo seguimos moviendo
+[1:07:53-1:07:59] #1153 para aquí abajo hasta que se rompa mira por ejemplo aquí es un punto muy importante mira
+[1:07:59-1:08:07] #1154 aquí hay un igual aquí se activaría la entrada esto es lo que me refería aquí se activaría la
+[1:08:07-1:08:14] #1155 la entrada pero qué pasa 1 lo ideal sería proteger a 0.75 pero
+[1:08:17-1:08:25] #1156 bueno te come aquí o sea te come a ver más más objetivos serían o sea si se da esto cerrar apenas
+[1:08:25-1:08:30] #1157 la operación lo más rápido posible se cierra la vela y si no termina por debajo con un rompimiento
+[1:08:31-1:08:35] #1158 cerrar la operación pero va a haber momentos claros que si no protege si demás te lo va a
+[1:08:35-1:08:37] #1159 quitar, pero también existe la posibilidad de que
+[1:08:37-1:08:39] #1160 se dé el trade, o sea, te va a unir
+[1:08:39-1:08:41] #1161 cual, luego retroceda
+[1:08:41-1:08:43] #1162 un poco y se dé, o sea, no llega
+[1:08:43-1:08:45] #1163 a tocar al 0.75 y se dé
+[1:08:45-1:08:47] #1164 el trade, yo prefiero eso, entonces
+[1:08:47-1:08:49] #1165 protejo, pues aquí tengo un stop loss
+[1:08:52-1:08:53] #1166 y ya, pues
+[1:08:53-1:08:55] #1167 continúo, entonces aquí tengo
+[1:08:55-1:08:56] #1168 otro y así
+[1:08:57-1:08:59] #1169 entonces el límite se va actualizando
+[1:08:59-1:09:01] #1170 o sea, el mismo límite se va moviendo
+[1:09:01-1:09:03] #1171 a medida que no se activa
+[1:09:03-1:09:04] #1172 se va desarrollando el precio, sí
+[1:09:04-1:09:06] #1173 Ya, perfecto
+[1:09:20-1:09:21] #1174 Respecto a estructura
+[1:09:21-1:09:23] #1175 Siempre se respeta la estructura más reciente
+[1:09:23-1:09:25] #1176 Por ejemplo, imagina que hay
+[1:09:25-1:09:27] #1177 Un alto
+[1:09:27-1:09:28] #1178 O un máximo como zona de liquidez
+[1:09:28-1:09:30] #1179 De hace 2 o 3 días
+[1:09:30-1:09:32] #1180 Ese ahí no se toma en cuenta
+[1:09:32-1:09:34] #1181 Lo importante es los más próximos
+=== PASAJE 38 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:10:25-1:13:53 | stop x1, SL x1, TP x1, RR x4
+[1:10:25-1:10:27] #1195 por arriba y un máximo por abajo, un mínimo por abajo
+[1:10:28-1:10:28] #1196 ¿cuál de las dos eliges?
+[1:10:29-1:10:30] #1197 pero esto es más que nada por el tema del rompimiento
+[1:10:30-1:10:32] #1198 más que tú tienes una predisposición
+[1:10:33-1:10:34] #1199 claro
+[1:10:34-1:10:36] #1200 sí, o sea, esto es más que nada la perspectiva, es donde
+[1:10:36-1:10:38] #1201 existe el rompimiento y se generan los patrones
+[1:10:38-1:10:41] #1202 ok, ah mira, acá trae
+[1:10:41-1:10:43] #1203 un rezago de una sesión anterior, tú mencionaste
+[1:10:43-1:10:44] #1204 que el tema de parciales
+[1:10:44-1:10:46] #1205 es el filtro del 40%,
+[1:10:46-1:10:47] #1206 eso se elimina, ¿verdad?
+[1:10:49-1:10:50] #1207 ¿Qué pregunta es?
+[1:10:50-1:10:51] #1208 O donde... O sea, mira, dice,
+[1:10:52-1:10:54] #1209 acá me sale, mencionaste
+[1:10:54-1:10:55] #1210 en un video pasado que
+[1:10:55-1:10:58] #1211 un tema del 40%, ¿hablabas exactamente
+[1:10:58-1:11:00] #1212 de tomar el 30-40%
+[1:11:00-1:11:02] #1213 parciales o el recorrido
+[1:11:02-1:11:04] #1214 del precio? Ah, vale, no, no, estábamos, claro,
+[1:11:04-1:11:06] #1215 te recuerdas que estábamos hablando sobre
+[1:11:06-1:11:08] #1216 si a lo mejor es viable
+[1:11:08-1:11:10] #1217 tomar parciales cuando llegue a
+[1:11:10-1:11:12] #1218 un RR específico.
+[1:11:12-1:11:14] #1219 Sí, sí, pero creo que he descartado eso, ¿verdad?
+[1:11:16-1:11:40] #1220 Como te digo, o sea, esta semana lo he pensado, o sea, lo he pensado por el hecho de que, claro, a lo mejor es viable, qué sé yo, tomar un 50% cuando llegue al 1 o 2, porque si te das cuenta, hay muchos trades, o sea, yo tengo trades que debieron de haber, a lo mejor, pudieron haber sido positivos si lo ponía en 1 o 2.
+[1:11:40-1:11:42] #1221 Entonces, si iba a disparar
+[1:11:42-1:11:43] #1222 Lo que sería mi win rate
+[1:11:43-1:11:46] #1223 Si iba a disparar a un 50, 40%
+[1:11:47-1:11:48] #1224 Pero, o sea
+[1:11:48-1:11:50] #1225 Para este mes de enero, pero no, o sea
+[1:11:51-1:11:52] #1226 Pero influye, o sea
+[1:11:52-1:11:54] #1227 Por ejemplo, si pierde, si proteges
+[1:11:54-1:11:54] #1228 Allí estarías
+[1:11:54-1:11:58] #1229 O sea, pero yo no lo haría, o sea, por ahora no
+[1:11:58-1:12:00] #1230 Hasta tener un número de muestras
+[1:12:01-1:12:02] #1231 Ya, por ahora
+[1:12:02-1:12:04] #1232 Es montar el sistema solo así
+[1:12:04-1:12:05] #1233 Break even y sin parciales
+[1:12:05-1:12:07] #1234 Esa palabra no existe, ok
+[1:12:07-1:12:09] #1235 Y a ver
+[1:12:17-1:12:20] #1236 Ya, solo para cerrar el tema del RR
+[1:12:20-1:12:21] #1237 ¿Cómo hacemos con eso?
+[1:12:21-1:12:23] #1238 Nos quedamos en 1.3, en 2.5
+[1:12:23-1:12:27] #1239 O sea, el stop ya quedó que es en 0.75
+[1:12:27-1:12:28] #1240 Y este se va a mover
+[1:12:29-1:12:31] #1241 Dependiendo del sprint del momento
+[1:12:31-1:12:32] #1242 Pero respecto al otro tema
+[1:12:32-1:12:34] #1243 Que es el RR
+[1:12:34-1:12:35] #1244 ¿Cómo manejamos ello?
+[1:12:36-1:12:38] #1245 Vale, es un buen punto
+[1:12:38-1:12:47] #1246 el rr a ver yo lo tengo en un 13 entonces influye mucho porque como te digo yo lo si tuviera que
+[1:12:47-1:12:58] #1247 mover algo de la operativa no movería los esquemas sino o sea si no lo que haría sería o bien mover
+[1:12:58-1:13:08] #1248 gestionar el sl o bien puedes maximizar el tp o y demás entonces yo lo he probado o sea todos
+[1:13:08-1:13:18] #1249 mis tres citas cuenta la mayoría se acepta un rey de 13 entonces yo lo manejaría con 13 pero
+[1:13:18-1:13:27] #1250 claro en 2.5 obviamente te cambia el porcentaje de un rey te lo cambia pues no sé si tú quieres
+[1:13:27-1:13:29] #1251 ponerlo a 2.5, pues
+[1:13:29-1:13:31] #1252 bien, o sería cuestión de
+[1:13:31-1:13:33] #1253 probar, creo yo, como te digo. Sí, sí, creo
+[1:13:33-1:13:35] #1254 que voy a probar eso, voy a montar dos sistemas
+[1:13:35-1:13:37] #1255 y que intere y me tire el resultado
+[1:13:37-1:13:39] #1256 real con ambos, creo que va a ser
+[1:13:39-1:13:40] #1257 lo ideal. Exacto, por ejemplo, a lo mejor es más
+[1:13:41-1:13:42] #1258 factible
+[1:13:44-1:13:45] #1259 un 1.2
+[1:13:45-1:13:47] #1260 que un 1.3, porque, ojo,
+[1:13:47-1:13:48] #1261 que, como no sé,
+[1:13:48-1:13:51] #1262 qué es lo que yo hago como tal, es que
+[1:13:51-1:13:53] #1263 supongamos que aquí se me hubiera dado
+[1:13:53-1:13:55] #1264 la operativa ganadora, por así
+=== PASAJE 39 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:18:32-1:21:20 | RR x2, 1% x1, beneficio x1
+[1:18:32-1:18:34] #1365 por aquí te voy a ver creo
+[1:18:34-1:18:36] #1366 la zona horaria, London, creo que
+[1:18:36-1:18:37] #1367 choca con London
+[1:18:38-1:18:40] #1368 en Nueva York pues
+[1:18:40-1:18:41] #1369 no se ve nada, ahora
+[1:18:41-1:18:43] #1370 si nos vamos
+[1:18:43-1:18:45] #1371 por ejemplo de 7
+[1:18:49-1:18:50] #1372 si nos vamos
+[1:18:51-1:18:52] #1373 con la vía abierta
+[1:18:56-1:18:58] #1374 ahora, este backtesting
+[1:18:58-1:19:00] #1375 es solo operando desde las
+[1:19:01-1:19:02] #1376 7 de la mañana hasta las
+[1:19:02-1:19:04] #1377 11 de la mañana, hora España
+[1:19:04-1:19:17] #1378 entonces más 2 y estos son los datos que resultó 27 trades 57% de un rey guase sí entonces ahora
+[1:19:17-1:19:26] #1379 si nos vamos por números arriesgando un 1% 12 x 3 son 39 ahora el 9 no es un 9 como tal que
+[1:19:26-1:19:40] #1380 que perdemos si no promediando un 0.75 por 0.75 sería 6.75 o sea 36 menos 6.75 es casi más de un
+[1:19:40-1:19:49] #1381 28% de la cuenta entonces es eso o sea estoy manejando claro un RR de 1.3 pero como te digo
+[1:19:49-1:19:50] #1382 Digo, hay momentos, o sea...
+[1:19:51-1:20:20] #1383 Llega un punto donde sería cuestión de probar, porque a lo mejor también es más factible si tú pones a un 2.5 el RR, se te podría disparar inclusive esto y en las otras estadísticas analíticas, en las cuales, qué sé yo, el primer trade, porque hay trades que no llegan al 1.3, o sea, es el primer trade que vas a tomar, pero no llega al 1.3, sino llega al 1.2.
+[1:20:20-1:20:30] #1384 con 5 1 2 o 1 2 y es eso así por eso es muy buena pregunta influye mucho pero yo o sea si yo lo
+[1:20:30-1:20:35] #1385 manejo con 1 con 3 o sea porque me da margen de beneficio también por el hecho de que si tengo
+[1:20:35-1:20:42] #1386 23 consecutivos pérdidas pues uno tercero me lo puedo permitir y así entonces es eso después
+[1:20:42-1:20:49] #1387 también mira algo si tú te das cuenta tenemos los el propio break even no lo he tomado en cuenta
+[1:20:49-1:20:55] #1388 pero lo que voy a hacer esta semana antes de iniciar las clases es recopilar más más datos
+[1:20:56-1:21:00] #1389 sobre algunas configuraciones por ejemplo qué pasaría si no pongo el break even me manejo sin
+[1:21:00-1:21:08] #1390 break even pero mantengo el 1-3 a ver qué ocurre y demás pero si por ejemplo aquí si nos vamos
+[1:21:08-1:21:15] #1391 a horario y llega el london y asia claro porque es antes de london es así entonces como que ahí
+[1:21:17-1:21:22] #1392 después nueva york si te das cuenta no lo toma en cuenta porque no no se suele operar como tal
+=== PASAJE 40 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:25:05-1:28:45 | riesgo x4, 1% x1
+[1:25:09-1:25:11] #1486 Vale, no sé qué tú recomiendas, bro.
+[1:25:11-1:25:23] #1487 O sea, yo puedo pagar, o sea, la prueba en la que es más factible, o sea, la que tú consideres viable, si es FTMO u otra, pues lo pago, no pasa nada.
+[1:25:24-1:25:30] #1488 La idea creo que sería Funded Next, porque creo que es la que tiene más recorrido en estos últimos tres años y cero quejas he visto.
+[1:25:31-1:25:45] #1489 Ah, perfecto, pues esa, o sea, sí, creo que también tiene, o sea, buenas condiciones, o sea, creo que 5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no? O un 10.
+[1:25:45-1:25:46] #1490 8, 8.
+[1:25:46-1:25:48] #1491 Un 8, sí.
+[1:25:50-1:25:55] #1492 Ya, ok. El riesgo que vamos a centrarnos en la operación final, o sea, es... ¿cuánto?
+[1:26:01-1:26:02] #1493 Es el inicial, compadre.
+[1:26:02-1:26:02] #1494 Bro.
+[1:26:07-1:26:08] #1495 El recorte reporteo.
+[1:26:09-1:26:10] #1496 Ya terminó.
+[1:26:10-1:26:10] #1497 ¡Oye, volvamos!
+[1:26:11-1:26:11] #1498 Es tres, ¿no?
+[1:26:12-1:26:13] #1499 ¿Qué tal? ¿Cómo van ustedes?
+[1:26:14-1:26:19] #1500 Ya, estamos cerrando ya. Solo faltan dos preguntas más para terminar de cerrar todo el pendiente de código.
+[1:26:20-1:26:26] #1501 Ah, sí, estás muteado, bro.
+[1:26:32-1:26:33] #1502 Espera, ¿me han escuchado o no?
+[1:26:34-1:26:35] #1503 No, no, no
+[1:26:35-1:26:36] #1504 Pedro, nada
+[1:26:37-1:26:39] #1505 Ah, vale, vale, escucha, me había asustado
+[1:26:42-1:26:43] #1506 Me había asustado
+[1:26:43-1:26:45] #1507 Dije que te iba a ir solo, qué cosa
+[1:26:48-1:26:49] #1508 Ala, ala, gracias
+[1:26:49-1:26:50] #1509 Gracias, mano
+[1:26:51-1:26:53] #1510 Vale, a ver, espera
+[1:26:54-1:27:05] #1511 Está abriendo esto
+[1:27:07-1:27:08] #1512 ¿Qué les falta ahorita?
+[1:27:09-1:27:10] #1513 Disculpen aparecerme una hora después
+[1:27:10-1:27:12] #1514 Estamos en la gestión
+[1:27:12-1:27:15] #1515 Estamos viendo los parámetros ya para cerrar esto
+[1:27:15-1:27:16] #1516 Bueno, más que nada
+[1:27:16-1:27:17] #1517 ¿Con qué riesgo jugamos?
+[1:27:18-1:27:20] #1518 ¿Nos quedamos con un riesgo estático de 0.75
+[1:27:20-1:27:22] #1519 O 0.75 de la cuenta
+[1:27:22-1:27:23] #1520 Al momento que está
+[1:27:24-1:27:26] #1521 O 0.5, 1
+[1:27:26-1:27:28] #1522 ¿Qué deseas? ¿Qué tipo de riesgo manejamos?
+[1:27:28-1:27:30] #1523 Pensando, por ejemplo, en una cuenta estándar
+[1:27:30-1:27:31] #1524 De 100K, imagínate
+[1:27:32-1:27:33] #1525 Sí, vale
+[1:27:33-1:27:53] #1526 Vale, es un buen punto lo que acabas de mencionar. Creo yo que podríamos hacer, o sea, tomando en cuenta el mes más malo que hemos tenido, bueno, se ha tenido siete pérdidas consecutivas, un negativo así tal cual daría un drawdown de 3,5, o sea, arriesgando un 0,5.
+[1:27:53-1:28:00] #1527 Obviamente si inviertes un 1% sería un 7%, entonces ahí sí te quema la cuenta.
+[1:28:01-1:28:08] #1528 Entonces, obviamente, los datos varían. Creo yo que podría ser... ¿Estoy mutiado?
+[1:28:08-1:28:09] #1529 No.
+[1:28:11-1:28:12] #1530 ¿Qué pasó?
+[1:28:12-1:28:14] #1531 No, te estoy mutiando.
+[1:28:14-1:28:15] #1532 Ah, vale, vale
+[1:28:15-1:28:17] #1533 Eh, podríamos
+[1:28:18-1:28:19] #1534 Entrar con
+[1:28:20-1:28:21] #1535 0.50
+[1:28:22-1:28:23] #1536 0.40, creo yo
+[1:28:23-1:28:26] #1537 Ya, 0.5
+[1:28:26-1:28:28] #1538 0.40, estático o
+[1:28:28-1:28:28] #1539 Escalado
+[1:28:31-1:28:33] #1540 Escalado, en base a la cuenta
+[1:28:33-1:28:34] #1541 O sea, para buscar un
+[1:28:35-1:28:37] #1542 Crecimiento geométrico, no aritmético
+[1:28:37-1:28:38] #1543 Ok, ok, ok
+[1:28:41-1:28:41] #1544 Y
+[1:28:43-1:28:44] #1545 Pues ya, eso es todo
+[1:28:44-1:28:47] #1546 Mira, lo único aquí es, cualquier día que opere
+=== PASAJE 41 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:31:53-1:33:27 | proteger x1
+[1:31:46-1:31:54] #1597 zona de control y pones en break y de la entrada y por ejemplo a ver tenemos un ejemplo aquí mira
+[1:32:01-1:32:09] #1598 tenemos un flujo alcista aquí se desarrolla o sea aquí pondríamos nosotros el orden límite se activa
+[1:32:09-1:32:13] #1599 de la entrada pero ya apenas se desarrolle esta zona de aquí se pone en break even entonces cosa
+[1:32:13-1:32:20] #1600 que protege la entrada y nada tienes si se da pues bien porque pasa que se suele dar eso es
+[1:32:20-1:32:26] #1601 algo que claro yo trataré de usar en esta semana que me queda a ver si incorporó eso no porque
+[1:32:27-1:32:32] #1602 hay entradas que se suelen dar cosas que apenas se desarrolla la zona blablabla el toma de liquidez
+[1:32:32-1:32:38] #1603 etcétera etcétera y se acelera en ese caso no pierde la entrada porque te da margen a
+[1:32:38-1:32:42] #1604 proteger y es eso por ejemplo que no tienes entrada hablar aquí tampoco
+[1:32:46-1:32:51] #1605 y es eso pero eso es un tercer un tercer esquema de entrada que es que tengo que
+[1:32:51-1:32:58] #1606 batizarlo y ver si es viable o no incorporarlo más que nada para o sea para tomar entradas y
+[1:32:58-1:32:59] #1607 y a veces, inclusive, no esperar, o sea,
+[1:32:59-1:33:01] #1608 el primer y segundo esquema de entrada, si se da, no,
+[1:33:02-1:33:03] #1609 sino, ya con esa, pues,
+[1:33:04-1:33:05] #1610 de una.
+[1:33:08-1:33:08] #1611 Sí.
+[1:33:10-1:33:11] #1612 Vale, primero,
+[1:33:11-1:33:13] #1613 quiero tradear como tú, hermano,
+[1:33:13-1:33:15] #1614 de grande quiero ser como tú.
+[1:33:16-1:33:18] #1615 No, a ver, es que no es difícil,
+[1:33:18-1:33:20] #1616 o sea, yo creo que no es difícil, pasa que,
+[1:33:20-1:33:22] #1617 a ver, en internet hay mucho vendehumo,
+[1:33:22-1:33:24] #1618 y yo lo que he buscado, al menos en mi trading,
+[1:33:24-1:33:25] #1619 es implicarle de manera más
+[1:33:26-1:33:28] #1620 fácil posible, o sea, no complicarme.
+=== PASAJE 42 | tr-v5-large-v3-int8-float16-3c6fbb57 | 0:02:27-0:06:06 | SL x1, protejo x2, 0.80 x1, RR x2, 1% x1
+[0:02:19-0:02:27] #28 hay casos donde no llega hasta el 080 o sea sino que lo cae pero lo usual o sea en la mayoría de
+[0:02:27-0:02:33] #29 casos pues suele retroceder o sea te activa la entrada suele retroceder hasta inclusive no o
+[0:02:33-0:02:36] #30 O sea, no llega a romper ese nivel aquí
+[0:02:36-0:02:37] #31 Que sería el tope
+[0:02:38-0:02:39] #32 El tope
+[0:02:39-0:02:41] #33 Pero luego cae
+[0:02:41-0:02:44] #34 O sea, estamos jugando nosotros una operación bajista
+[0:02:44-0:02:46] #35 Cae y aquí
+[0:02:46-0:02:47] #36 Entonces cuando hay un equal
+[0:02:47-0:02:49] #37 Que no lo vamos a poder anticipar
+[0:02:49-0:02:51] #38 Porque se va a activar la entrada como tal
+[0:02:51-0:02:53] #39 Es reentrar como tal
+[0:02:53-0:02:55] #40 Y eso lo otro
+[0:02:55-0:02:57] #41 Contarlo como pérdida
+[0:02:57-0:02:59] #42 Pero reentrar nuevamente si es que el precio
+[0:02:59-0:03:01] #43 Pues te llega a romper nuevamente
+[0:03:01-0:03:02] #44 Esta zona de aquí
+[0:03:02-0:03:12] #45 o sea, si llega a romper esa zona de allí, entrarlo, o sea, sería algo así, vale, nosotros
+[0:03:12-0:03:23] #46 vamos aquí, vale, yo activo la entrada aquí, mira, me activa la entrada y si yo protejo
+[0:03:23-0:03:35] #47 a 0.80, que es el SL por defecto, que no me permite dejarlo, vale, la cosa es esa, si
+[0:03:35-0:04:15] #48 Si nosotros protegemos, eh, espera, ah, es que le he dado buy creo, espera, sell, protejo aquí, vale, mira, se activa la entrada como tal, vale, pero, bueno, continúa desarrollándose y eso es lo que quiero llegar, o sea, nos mitiga y nuevamente, pues, sería cuestión de poner otra reentrada aquí, si el precio va a seguir bajando lo va a hacer, o sea, es lo más probable, crean.
+[0:04:17-0:04:19] #49 lo validan los datos, o sea, no porque yo lo diga
+[0:04:21-0:04:23] #50 o sea, nuevamente se activó la entrada
+[0:04:23-0:04:25] #51 y pues eso, dejarlo continuar
+[0:04:25-0:04:27] #52 ya llegaría a un punto
+[0:04:27-0:04:29] #53 también donde, o sea, se cumplen las condiciones
+[0:04:29-0:04:31] #54 para poner break even, bueno, en ese caso
+[0:04:31-0:04:33] #55 el precio sigue así por caída
+[0:04:33-0:04:35] #56 ya lo podemos poner en B
+[0:04:35-0:04:42] #57 bueno, yo lo calculo así, o sea
+[0:04:42-0:04:44] #58 sabemos que manejamos
+[0:04:44-0:04:47] #59 el cálculo del RR en base al 1%
+[0:04:47-0:04:47] #60 que sería allí
+[0:04:56-0:04:58] #61 yo todos los backtesting como tal, o sea
+[0:04:58-0:05:00] #62 estaba buscando el 1.3
+[0:05:00-0:05:01] #63 o sea, existe la posibilidad
+[0:05:01-0:05:03] #64 como he comentado también, de que podamos
+[0:05:03-0:05:05] #65 amplificar a 1.4
+[0:05:07-0:05:08] #66 lo que sería
+[0:05:08-0:05:10] #67 no me permite
+[0:05:10-0:05:15] #68 lo voy a cerrar aquí
+[0:05:15-0:05:15] #69 pero
+[0:05:15-0:05:19] #70 o sea, existe la posibilidad de
+[0:05:19-0:05:21] #71 amplificar a 1.4 el RR
+[0:05:21-0:05:23] #72 pero creo que eso ya lo veremos más adelante
+[0:05:23-0:05:24] #73 si es factible
+[0:05:25-0:05:27] #74 y pues es eso, quería comentar eso
+[0:05:27-0:05:35] #75 también existe bueno el otro caso sería por ejemplo como esto es un igual lo único lo hay
+[0:05:36-0:05:45] #76 sería pues allí entonces nosotros esperaríamos a que por ejemplo el precio en este caso rompa por
+[0:05:45-0:05:53] #77 arriba vale se rompa por arriba para poder nosotros en la reentrada sabemos de un flujo bajista vale
+[0:05:53-0:05:59] #78 vale, se genera allí, la entrada, o sea, puede estar así, y luego el precio lo que
+[0:05:59-0:06:03] #79 va a ser es esto, o sea, entraríamos aquí, vale, eso sería todo.
+== PASAJES POR TRANSCRIPCION
+tr-v1-large-v3-int8-float16-bbd8a931: 5
+tr-v2-large-v3-int8-float16-28391c2c: 8
+tr-v3-large-v3-int8-float16-270a4851: 9
+tr-v4-large-v3-int8-float16-a8d1bccc: 19
+tr-v5-large-v3-int8-float16-3c6fbb57: 1
+== TOTAL: 42
