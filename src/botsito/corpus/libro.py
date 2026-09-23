@@ -38,6 +38,7 @@ from collections.abc import Iterable, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from xml.etree import ElementTree
+from zoneinfo import ZoneInfo
 
 # La pestana de operaciones del export de FX Replay. Vive AQUI y no en la ingesta: es
 # conocimiento de como esta hecho el libro, y el contrato de importacion exige que solo este
@@ -72,16 +73,25 @@ def filas_de_los_dias(
     dias: Iterable[str],
     pestana: str,
     cabeceras: Sequence[str],
-    huso_del_fichero: str = "UTC",
+    huso_del_fichero: str,
+    *,
+    huso_de_los_dias: str,
 ) -> list[dict[str, str | None]]:
-    """Las filas del libro cuyo dia -en `huso_del_fichero`- esta en `dias`. Nada mas.
+    """Las filas del libro cuyo dia -EN `huso_de_los_dias`- esta en `dias`. Nada mas.
 
     `pestana` y `cabeceras` son lo ESPERADO, escrito antes de abrir: si no cuadran, el error
     nombra lo que falta de esa lista y NUNCA lo que se ha encontrado.
 
     `dias` son dias ISO ya filtrados por quien llama: este modulo no sabe cuales estan reservados.
-    El dia de una fila se calcula del instante en `huso_del_fichero`, sin convertir de huso: la
-    conversion a `huso_operativa` la hace la ingesta, que es quien sabe de sesiones H4.
+
+    **EL DIA SE CALCULA EN EL HUSO DE LOS DIAS PEDIDOS, no en el del fichero** (2026-09-22, rama
+    `trabajo/mayo-dev-ingerido`). Hasta hoy se comparaba la fecha UTC con dias que son de
+    `huso_operativa`, y una fila de las 22:00-24:00 UTC de un dia pedido -que en Madrid es el dia
+    SIGUIENTE, y puede estar reservado- entraba como pedida: su instante, su entrada y su stop
+    podian salir en un mensaje de error. Y al reves, la madrugada de un dia pedido se perdia. Es
+    la regla de `CLAUDE.md` -fijar el huso de las dos fuentes antes de compararlas- con el libro y
+    el reparto como las dos fuentes. Por eso `huso_de_los_dias` es obligatorio y no tiene default:
+    uno en UTC reproduciria el defecto en silencio. Cada fila devuelta lleva `_dia` en ese huso.
     """
     pedidos = set(dias)
     if not pedidos:
@@ -139,14 +149,16 @@ def filas_de_los_dias(
                 f"{ruta.name}/{pestana}: una fila tiene {cabeceras[0]} ilegible. No se da su "
                 f"posicion: contaria las filas de antes, reservadas incluidas"
             ) from exc
-        instante = instante.replace(tzinfo=UTC if huso_del_fichero == "UTC" else None)
-        if instante.date().isoformat() not in pedidos:
+        instante = instante.replace(tzinfo=ZoneInfo(huso_del_fichero)).astimezone(UTC)
+        dia = instante.astimezone(ZoneInfo(huso_de_los_dias)).date().isoformat()
+        if dia not in pedidos:
             continue  # NO se cuenta, NO se acumula: el conjunto de dias del libro no sale de aqui
         # `_orden` es la posicion ENTRE LAS FILAS PEDIDAS, no en el libro: el numero de fila del
         # libro contaria las de los dias no pedidos que van delante (2026-09-22, MAYO-DEV).
         fila_util: dict[str, str | None] = {
             "_orden": str(len(salida) + 1),
             "_instante_utc": instante.isoformat(),
+            "_dia": dia,
         }
         for c in cabeceras:
             fila_util[c] = celdas.get(donde[c])

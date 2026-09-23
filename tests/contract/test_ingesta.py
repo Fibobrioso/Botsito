@@ -21,7 +21,13 @@ from pathlib import Path
 import pytest
 
 from botsito.cases.biblioteca import como_documento, escribir, problemas_de_biblioteca
-from botsito.cases.ingesta import IngestaError, Operacion, dias_ingeribles, ingerir
+from botsito.cases.ingesta import (
+    IngestaError,
+    Operacion,
+    Resultado,
+    dias_ingeribles,
+    ingerir,
+)
 from botsito.corpus.libro import LibroError, filas_de_los_dias
 
 SESIONES = [("07-11", "07:00", "11:00"), ("11-15", "11:00", "15:00")]
@@ -176,7 +182,9 @@ def test_el_agregado_no_se_lee_aunque_viva_en_el_mismo_fichero(tmp_path: Path) -
     otro = tmp_path / "otro.xlsx"
     _xlsx(otro, FILAS, con_agregado=True)
     with pytest.raises(LibroError, match="no tiene la pestana esperada"):
-        filas_de_los_dias(otro, {"2026-05-08"}, "la-que-no-esta", COLS)
+        filas_de_los_dias(
+            otro, {"2026-05-08"}, "la-que-no-esta", COLS, "UTC", huso_de_los_dias="Europe/Madrid"
+        )
 
 
 @pytest.mark.contract
@@ -207,7 +215,14 @@ def test_el_lector_no_publica_el_conjunto_de_fechas_ni_de_columnas(tmp_path: Pat
     """Un "14 dias en el libro" publica que dias reservados NO opero el trader (ADR-0037 §6)."""
     material = tmp_path / "libro.xlsx"
     _xlsx(material, FILAS)
-    filas = filas_de_los_dias(material, {"2026-05-08"}, "backtesting-analytics", COLS)
+    filas = filas_de_los_dias(
+        material,
+        {"2026-05-08"},
+        "backtesting-analytics",
+        COLS,
+        "UTC",
+        huso_de_los_dias="Europe/Madrid",
+    )
     assert len(filas) == 1
     # Lo devuelto habla SOLO del dia pedido: ninguna otra fecha del libro aparece.
     texto = repr(filas)
@@ -216,7 +231,14 @@ def test_el_lector_no_publica_el_conjunto_de_fechas_ni_de_columnas(tmp_path: Pat
 
     # Y el error de estructura nombra lo ESPERADO que falta, nunca lo encontrado.
     with pytest.raises(LibroError) as exc:
-        filas_de_los_dias(material, {"2026-05-08"}, "backtesting-analytics", ["inventada"])
+        filas_de_los_dias(
+            material,
+            {"2026-05-08"},
+            "backtesting-analytics",
+            ["inventada"],
+            "UTC",
+            huso_de_los_dias="Europe/Madrid",
+        )
     assert "inventada" in str(exc.value)
     for encontrada in ("dateStart", "entryPrice", "maxTP", "idealTP"):
         assert encontrada not in str(exc.value), "el error publica las columnas encontradas"
@@ -248,8 +270,8 @@ def test_ningun_numero_de_la_salida_cuenta_el_libro_entero(tmp_path: Path) -> No
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["2026/05/08 07:30:00", "hold", "1.1", "1.0"]])
     with pytest.raises(IngestaError) as exc:
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
-    assert "la fila pedida 1 (2026-05-08T07:30:00+00:00)" in str(exc.value)
-    assert "12" not in str(exc.value)
+    assert "el caso del dia 2026-05-08, operacion 1: `side`" in str(exc.value)
+    assert "12" not in str(exc.value) and "07:30" not in str(exc.value)
 
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["ayer", "buy", "1.1", "1.0"]])
     with pytest.raises(IngestaError) as exc:
@@ -302,3 +324,87 @@ def test_la_lista_cerrada_caza_una_clave_que_nadie_penso(tmp_path: Path) -> None
     ):
         escribir(repo, [roto])
         assert problemas_de_biblioteca(repo), f"no la caza: {sorted(roto)}"
+
+
+# LA FRONTERA DE DIA ENTRE UTC Y MADRID (2026-09-22, MAYO-DEV). El libro viene en UTC y los dias
+# del reparto son de `huso_operativa`: el lector comparaba la fecha UTC. Es el huso OTRA VEZ.
+MADRID = "Europe/Madrid"
+
+
+def _ingerir_filas(
+    tmp_path: Path, filas: list[list[str]], dias: dict[str, str]
+) -> tuple[Resultado | None, str]:
+    repo = _repo(tmp_path, {c: "dev" for c in dias.values()})
+    material = tmp_path / "libro.xlsx"
+    _xlsx(material, [CABECERA, *filas])
+    try:
+        return ingerir(repo, material, MADRID, SESIONES, dias=dias), ""
+    except IngestaError as exc:
+        return None, str(exc)
+
+
+@pytest.mark.contract
+@pytest.mark.parametrize(
+    ("utc", "madrid"),
+    [
+        ("2026/05/08 23:00:00", "verano, UTC+2: el 09 a la 01:00"),
+        ("2026/01/08 23:30:00", "invierno, UTC+1: el 09 a las 00:30"),
+    ],
+)
+def test_a_una_fila_del_dia_pedido_en_utc_que_en_madrid_es_otro_dia_no_se_lee(
+    tmp_path: Path, utc: str, madrid: str
+) -> None:
+    """(a) La fila es del dia pedido EN UTC pero del SIGUIENTE en Madrid -que puede estar
+    reservado-. Antes pasaba el filtro y su instante salia en el error de sesion. Ahora no se
+    lee: no cuenta en ningun contador y no aparece en ningun mensaje."""
+    dia = utc[:10].replace("/", "-")
+    buena = [f"{utc[:10]} 07:30:00", "buy", "1.1000", "1.0990", "", ""]
+    fuera = [utc, "sell", "1.2345", "1.2400", "", ""]
+    r, err = _ingerir_filas(tmp_path, [buena, fuera], {dia: f"caso-eurusd-{dia}"})
+    assert err == "", f"{madrid}: la fila de otro dia no puede llegar a la ingesta: {err}"
+    assert r is not None
+    assert (r.filas_leidas, r.sin_stop) == (1, 0), madrid
+    ops = r.casos[dia]
+    assert [str(o.entrada) for o in ops] == ["1.1000"]
+
+
+@pytest.mark.contract
+@pytest.mark.parametrize(
+    ("utc", "dia_madrid"),
+    [
+        ("2026/05/07 22:30:00", "2026-05-08"),  # verano: 00:30 del 08 en Madrid
+        ("2026/01/07 23:30:00", "2026-01-08"),  # invierno: 00:30 del 08 en Madrid
+    ],
+)
+def test_b_c_la_madrugada_de_un_dia_pedido_si_entra_en_verano_y_en_invierno(
+    tmp_path: Path, utc: str, dia_madrid: str
+) -> None:
+    """(b) y (c) La fila es del dia pedido EN MADRID y del anterior en UTC: antes se perdia. El
+    desfase no es el mismo en verano que en invierno, y por eso van los dos."""
+    fila = [utc, "buy", "1.1000", "1.0990", "", ""]
+    repo = _repo(tmp_path, {f"caso-eurusd-{dia_madrid}": "dev"})
+    material = tmp_path / "libro.xlsx"
+    _xlsx(material, [CABECERA, fila])
+    filas = filas_de_los_dias(
+        material, {dia_madrid}, "backtesting-analytics", COLS, "UTC", huso_de_los_dias=MADRID
+    )
+    assert [f["_dia"] for f in filas] == [dia_madrid]
+    # Y la ingesta la ve como del dia pedido: la rechaza por SESION (00:30 no cae en ninguna),
+    # nombrando el caso y no el instante ni los precios.
+    with pytest.raises(IngestaError) as exc:
+        ingerir(repo, material, MADRID, SESIONES, dias={dia_madrid: f"caso-eurusd-{dia_madrid}"})
+    msg = str(exc.value)
+    assert msg.startswith(f"caso-eurusd-{dia_madrid}, operacion 1: su apertura no cae")
+    assert "1.1000" not in msg and "1.0990" not in msg and ":30" not in msg
+
+
+@pytest.mark.contract
+def test_los_mensajes_nombran_el_caso_y_la_comprobacion_no_el_instante_ni_los_precios(
+    tmp_path: Path,
+) -> None:
+    """Una puerta no puede depender de que otra este bien: aunque el filtro fallara, el mensaje
+    no puede ser la via por la que salga una fila."""
+    mala = ["2026/05/08 07:30:00", "buy", "1.1000", "1.1010", "", ""]  # stop del lado malo
+    _, err = _ingerir_filas(tmp_path, [mala], {"2026-05-08": "caso-eurusd-2026-05-08"})
+    assert err.startswith("caso-eurusd-2026-05-08, operacion 1: falla el invariante geometrico")
+    assert "1.1000" not in err and "1.1010" not in err and "07:30" not in err

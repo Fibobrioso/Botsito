@@ -236,7 +236,7 @@ def _decimal(valor: object, fila: str, columna: str) -> Decimal:
     try:
         return Decimal(str(valor))
     except (InvalidOperation, ValueError) as exc:
-        raise IngestaError(f"{fila}: {columna} ilegible") from exc
+        raise IngestaError(f"{fila}: `{columna}` no es un numero") from exc
 
 
 def _sesion_de(
@@ -255,20 +255,34 @@ def ingerir(
     material: Path,
     huso_operativa: str,
     sesiones: Sequence[tuple[str, str, str]],
-    dias: Iterable[str] | None = None,
+    dias: Mapping[str, str] | Iterable[str] | None = None,
 ) -> Resultado:
     """Las operaciones de los dias ingeribles, agrupadas por dia. No escribe nada.
 
-    `dias` solo se pasa en tests: en produccion se derivan con `dias_ingeribles`.
+    `dias` es `dia -> id de caso` (o solo los dias, en tests); si no se pasa, se derivan con
+    `dias_ingeribles`.
+
+    **LOS MENSAJES DE ERROR NOMBRAN EL CASO Y LA COMPROBACION, NUNCA EL INSTANTE NI LOS PRECIOS**
+    (2026-09-22). Con el lector filtrando en el huso correcto, lo que se imprimiria seria de un dia
+    `dev`; pero una puerta no puede depender de que otra este bien: si el filtro vuelve a fallar,
+    el mensaje no puede ser la via por la que salga una fila reservada. Y el caso sale de lo
+    PEDIDO, no de la fila: una fila cuyo dia no este pedido aborta sin decir nada de ella.
     """
-    pedidos = dict.fromkeys(dias) if dias is not None else dias_ingeribles(repo).dias
+    if dias is None:
+        pedidos: dict[str, str] = dias_ingeribles(repo).dias
+    elif isinstance(dias, Mapping):
+        pedidos = {str(d): str(c) for d, c in dias.items()}
+    else:
+        pedidos = {d: f"el caso del dia {d}" for d in dias}
     if not pedidos:
         raise IngestaError(
             "no hay ningun dia ingerible: o no hay reparto commiteado, o todos sus casos estan "
             "reservados"
         )
     try:
-        filas = filas_de_los_dias(material, pedidos, PESTANA, COLUMNAS, HUSO_DEL_FICHERO)
+        filas = filas_de_los_dias(
+            material, pedidos, PESTANA, COLUMNAS, HUSO_DEL_FICHERO, huso_de_los_dias=huso_operativa
+        )
     except LibroError as exc:
         raise IngestaError(str(exc)) from exc
 
@@ -277,7 +291,7 @@ def ingerir(
     # que me has dado"- y no de los dias del trader, asi que no publica calendario. Un dia
     # concreto sin filas dentro de un mes que SI tiene es otra cosa, y es la que si tiene sentido.
     meses_pedidos = {d[:7] for d in pedidos}
-    meses_con_filas = {str(f["_instante_utc"])[:7] for f in filas}
+    meses_con_filas = {str(f["_dia"])[:7] for f in filas}
     vacios = sorted(meses_pedidos - meses_con_filas)
     if vacios:
         raise IngestaError(
@@ -288,10 +302,20 @@ def ingerir(
 
     casos: dict[str, list[Operacion]] = {d: [] for d in pedidos}
     sin_stop = 0
+    orden: dict[str, int] = {}
     for fila in filas:
-        # Se nombra por su orden ENTRE LAS PEDIDAS y su instante, que son de un dia ingerible;
-        # nunca por su fila en el libro, que cuenta las de dias reservados de antes.
-        n = f"la fila pedida {fila.get('_orden')} ({fila.get('_instante_utc')})"
+        dia = str(fila.get("_dia"))
+        if dia not in pedidos:
+            # Defensa en profundidad: el lector no deberia devolverla. Si lo hace, NADA de ella
+            # sale de aqui -ni su dia, ni su instante, ni sus precios-.
+            raise IngestaError(
+                "el lector devolvio una fila de un dia que no se pidio. No se dice nada de ella: "
+                "es un fallo del filtro por dia, y puede ser de un dia reservado"
+            )
+        # Se nombra por el CASO -que sale de lo pedido- y su orden dentro de el. Nunca por el
+        # instante ni los precios, ni por su fila en el libro.
+        orden[dia] = orden.get(dia, 0) + 1
+        n = f"{pedidos[dia]}, operacion {orden[dia]}"
         lado = str(fila.get("side") or "")
         if lado not in _DIRECCION:
             raise IngestaError(f"{n}: `side` no es buy ni sell")
@@ -307,9 +331,9 @@ def ingerir(
         bien = stop < entrada if lado == "buy" else stop > entrada
         if not bien:
             raise IngestaError(
-                f"{n}: con `side` {lado} el stop {stop} esta del lado equivocado de la "
-                f"entrada {entrada}. O las columnas estan intercambiadas o el material no es el "
-                f"que se cree"
+                f"{n}: falla el invariante geometrico -con `side` {lado} el stop esta del lado "
+                f"equivocado de la entrada-. O las columnas estan intercambiadas o el material no "
+                f"es el que se cree"
             )
         instante = str(fila["_instante_utc"])
         sesion = _sesion_de(instante, huso_operativa, sesiones)
@@ -318,10 +342,7 @@ def ingerir(
                 f"{n}: su apertura no cae en ninguna sesion declarada. La asignacion a sesion "
                 f"H4 depende del huso, y sin ella la unidad de fidelidad no existe"
             )
-        dia = datetime.fromisoformat(instante).astimezone(ZoneInfo(huso_operativa)).date()
-        casos.setdefault(dia.isoformat(), []).append(
-            Operacion(instante, sesion, _DIRECCION[lado], entrada, stop)
-        )
+        casos[dia].append(Operacion(instante, sesion, _DIRECCION[lado], entrada, stop))
     # Despues de la puerta y de la regla por mes, esto significa UNA cosa: el material cubre ese
     # dia y NO HAY NINGUNA FILA. Se cuenta, y quien llama lo dice SIN sujeto humano.
     sin_operaciones = sum(1 for d in pedidos if not casos.get(d))
