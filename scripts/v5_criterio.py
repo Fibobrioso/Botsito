@@ -14,7 +14,10 @@ pixeles, y ningun OCR.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
+import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -33,6 +36,21 @@ INSTANTES = {
     "7 (0:04:58)": 298,
 }
 VENTANA_S = 6
+# LA LISTA CERRADA de los 36, escrita aqui y comprobada contra su derivacion (t..t+5 s de los seis).
+# Cualquier otro nombre se rechaza ANTES de leer ni un byte del fichero.
+MEDIR = (
+    "000106000", "000107000", "000108000", "000109000", "000110000", "000111000",
+    "000153000", "000154000", "000155000", "000156000", "000157000", "000158000",
+    "000201000", "000202000", "000203000", "000204000", "000205000", "000206000",
+    "000209000", "000210000", "000211000", "000212000", "000213000", "000214000",
+    "000284000", "000285000", "000286000", "000287000", "000288000", "000289000",
+    "000298000", "000299000", "000300000", "000301000", "000302000", "000303000",
+)  # fmt: skip
+assert (
+    tuple(f"{(t + k) * 1000:09d}" for t in INSTANTES.values() for k in range(VENTANA_S)) == MEDIR
+), "la lista cerrada no es la ventana t..t+5 s de los seis instantes"
+# La extraccion de F05: el manifiesto commiteado fija el sha del indice, y el indice el de cada PNG.
+MANIFIESTO_F05 = RAIZ / "knowledge" / "corpus" / "fotogramas" / "fr-v5-718ecabb.yaml"
 
 # Region del grafico y umbrales, calibrados con los cuatro abiertos (documento, seccion 3).
 Y_MIN, Y_MAX = 80, 640
@@ -227,10 +245,53 @@ class Lectura:
     error_riesgo_real: float | None = None
     error_caja_completa: float | None = None
     veredicto: str = "no valido"
+    y_stop: float | None = None
+    y_entrada: float | None = None
+    y_tp: float | None = None
+    y_nivel_0: float | None = None
+    y_nivel_1: float | None = None
+
+
+class IntegridadError(ValueError):
+    """Un fotograma fuera de la lista cerrada, o que no es el que F05 extrajo."""
 
 
 def leer(nombre: str) -> Lectura:
     return evaluar(nombre, _png().leer(FOTOGRAMAS / f"{nombre}.png"))
+
+
+def sha_esperados() -> dict[str, str]:
+    """`fichero -> sha256` del indice de F05, despues de comprobar que el indice es el que fija el
+    manifiesto commiteado (`sha256_index`)."""
+    m = re.search(
+        r"^sha256_index: ([0-9a-f]{64})$", MANIFIESTO_F05.read_text(encoding="utf-8"), re.M
+    )
+    if m is None:
+        raise IntegridadError(f"{MANIFIESTO_F05.name}: sin sha256_index")
+    indice = FOTOGRAMAS / "index.jsonl"
+    if hashlib.sha256(indice.read_bytes()).hexdigest() != m.group(1):
+        raise IntegridadError("index.jsonl no es el que fija el manifiesto de F05")
+    filas = [json.loads(x) for x in indice.read_text(encoding="utf-8").splitlines() if x.strip()]
+    return {str(f["fichero"]): str(f["sha256"]) for f in filas}
+
+
+def verificar(nombres: tuple[str, ...]) -> None:
+    """Todos los nombres estan en la lista cerrada y sus bytes son los que F05 extrajo. Nada se
+    decodifica hasta que TODOS pasan."""
+    fuera = [n for n in nombres if n not in MEDIR]
+    if fuera:
+        raise IntegridadError(f"fuera de la lista cerrada: {fuera}")
+    esperados = sha_esperados()
+    for n in nombres:
+        real = hashlib.sha256((FOTOGRAMAS / f"{n}.png").read_bytes()).hexdigest()
+        if esperados.get(f"{n}.png") != real:
+            raise IntegridadError(f"{n}.png no es el fotograma que extrajo F05")
+
+
+def leer_para_medir(nombre: str) -> Lectura:
+    """Solo un nombre de la lista cerrada, y solo verificado contra F05."""
+    verificar((nombre,))
+    return leer(nombre)
 
 
 def evaluar(nombre: str, img: object) -> Lectura:
@@ -238,12 +299,22 @@ def evaluar(nombre: str, img: object) -> Lectura:
     cae dentro (+-DENTRO px) y cual fuera (> FUERA px), en stop y TP a la vez."""
     a, c, y1, y0 = detector_a(img)
     b, h = detector_b(img)
+    pos = {
+        "y_stop": h.y_stop if h else None,
+        "y_entrada": h.y_entrada if h else None,
+        "y_tp": h.y_tp if h else None,
+        "y_nivel_0": y0,
+        "y_nivel_1": y1,
+    }
     if not (a and b) or c is None or h is None or y1 is None or y0 is None:
-        return Lectura(nombre, a, b, False, "no cumple a) y b)")
+        falla = " y ".join(k for k, ok in (("a)", a), ("b)", b)) if not ok) or "a)"
+        return Lectura(nombre, a, b, False, f"no cumple {falla}", **pos)
     if abs(y0 - h.y_entrada) > ANCLA_MAX:
-        return Lectura(nombre, a, b, False, f"ancla: |nivel 0 - entrada| = {abs(y0 - h.y_entrada)}")
+        return Lectura(
+            nombre, a, b, False, f"ancla: |nivel 0 - entrada| = {abs(y0 - h.y_entrada)}", **pos
+        )
     if (y1 - y0) * (h.y_stop - h.y_entrada) <= 0:
-        return Lectura(nombre, a, b, False, "el nivel 1 y el stop no estan del mismo lado")
+        return Lectura(nombre, a, b, False, "el nivel 1 y el stop no estan del mismo lado", **pos)
     d = y1 - y0  # con signo: hacia el lado del stop
     pred = {
         "riesgo_real": (y0 + 0.8 * d, y0 - 3 * 0.8 * d),  # stop en 0,8; TP a 3 x (entrada-stop)
@@ -257,10 +328,13 @@ def evaluar(nombre: str, img: object) -> Lectura:
         veredicto = "separa: caja_completa"
     else:
         veredicto = "no separa"
-    return Lectura(nombre, a, b, True, "valido", rr, cc, veredicto)
+    return Lectura(nombre, a, b, True, "valido", rr, cc, veredicto, **pos)
 
 
 def resultado_instante(lecturas: list[Lectura]) -> str:
+    """Separa hacia X si al menos UNO de sus fotogramas validos separa hacia X y NINGUNO separa en
+    sentido contrario: los «no separa» no vetan. Los dos sentidos dentro del instante son
+    contradiccion, y cuenta como contradiccion global."""
     validas = [x for x in lecturas if x.valido]
     if not validas:
         return "sin fotograma valido"
@@ -280,17 +354,33 @@ def resultado_global(por_instante: dict[str, str]) -> str:
     return f"separacion hacia {sentidos.pop().split(': ')[1]}" if sentidos else "no separa"
 
 
+def _px(v: float | None) -> str:
+    return "-" if v is None else f"{v:g}"
+
+
+def formato(lec: Lectura) -> str:
+    """Una linea por fotograma, sirva o no: que falla, posiciones en px, errores y veredicto."""
+    sirve = "SIRVE" if lec.valido else f"NO SIRVE ({lec.motivo})"
+    return (
+        f"{lec.fotograma}: {sirve} | stop {_px(lec.y_stop)} entrada {_px(lec.y_entrada)} "
+        f"TP {_px(lec.y_tp)} nivel_0 {_px(lec.y_nivel_0)} nivel_1 {_px(lec.y_nivel_1)} | "
+        f"error riesgo_real {_px(lec.error_riesgo_real)} caja_completa "
+        f"{_px(lec.error_caja_completa)} | {lec.veredicto}"
+    )
+
+
 def main(argv: list[str]) -> int:
     if argv[1:] == ["--calibrar"]:
         for nombre in ABIERTOS:
-            print(leer(nombre))
+            print(formato(leer(nombre)))
         return 0
     if argv[1:] == ["--medir"]:
+        verificar(MEDIR)  # los 36, contra F05, ANTES de decodificar ninguno
         por_instante: dict[str, str] = {}
         for instante, t in INSTANTES.items():
-            lecturas = [leer(f"{(t + k) * 1000:09d}") for k in range(VENTANA_S)]
+            lecturas = [leer_para_medir(f"{(t + k) * 1000:09d}") for k in range(VENTANA_S)]
             for lec in lecturas:
-                print(instante, lec)
+                print(f"{instante} {formato(lec)}")
             por_instante[instante] = resultado_instante(lecturas)
             print(f"== {instante}: {por_instante[instante]}")
         print(f"== GLOBAL: {resultado_global(por_instante)}")

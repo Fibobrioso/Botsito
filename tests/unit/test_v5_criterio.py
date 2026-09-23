@@ -112,3 +112,51 @@ def test_la_agregacion_por_instante_y_global(criterio: ModuleType) -> None:
         "contradictorio"
     )
     assert g({"1": "no separa", "2": "sin fotograma valido"}) == "no separa"
+
+
+def test_la_lista_cerrada_son_36_de_la_ventana_y_ninguno_ya_abierto(criterio: ModuleType) -> None:
+    assert len(criterio.MEDIR) == 36 == len(set(criterio.MEDIR))
+    assert not set(criterio.MEDIR) & set(criterio.ABIERTOS)
+
+
+def test_un_nombre_fuera_de_la_lista_falla_sin_decodificar_nada(
+    criterio: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def prohibido(*_: object) -> None:
+        raise AssertionError("no se puede leer ni decodificar nada antes de la lista cerrada")
+
+    monkeypatch.setattr(criterio, "_png", prohibido)
+    monkeypatch.setattr(criterio, "sha_esperados", prohibido)
+    with pytest.raises(criterio.IntegridadError, match="fuera de la lista cerrada"):
+        criterio.leer_para_medir("000216000")  # un abierto: no es de los 36
+    with pytest.raises(criterio.IntegridadError, match="fuera de la lista cerrada"):
+        criterio.verificar(("000999000",))
+
+
+def test_un_fotograma_que_no_es_el_de_f05_se_rechaza(
+    criterio: ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Extraccion F05 falsa: manifiesto -> sha del indice -> sha de cada PNG. Un byte cambiado en el
+    PNG, o un indice que no es el del manifiesto, se rechazan antes de decodificar."""
+    import hashlib
+    import json
+
+    nombre = criterio.MEDIR[0]
+    png = tmp_path / f"{nombre}.png"
+    png.write_bytes(b"los bytes que F05 extrajo")
+    indice = tmp_path / "index.jsonl"
+    fila = {"fichero": f"{nombre}.png", "sha256": hashlib.sha256(png.read_bytes()).hexdigest()}
+    indice.write_text(json.dumps(fila) + "\n", encoding="utf-8")
+    manifiesto = tmp_path / "fr.yaml"
+    sha_indice = hashlib.sha256(indice.read_bytes()).hexdigest()
+    manifiesto.write_text(f"sha256_index: {sha_indice}\n", encoding="utf-8")
+    monkeypatch.setattr(criterio, "FOTOGRAMAS", tmp_path)
+    monkeypatch.setattr(criterio, "MANIFIESTO_F05", manifiesto)
+
+    criterio.verificar((nombre,))  # integro: pasa
+    png.write_bytes(b"otros bytes")
+    with pytest.raises(criterio.IntegridadError, match="no es el fotograma que extrajo F05"):
+        criterio.verificar((nombre,))
+    manifiesto.write_text("sha256_index: " + "0" * 64 + "\n", encoding="utf-8")
+    with pytest.raises(criterio.IntegridadError, match="index.jsonl no es el que fija"):
+        criterio.verificar((nombre,))

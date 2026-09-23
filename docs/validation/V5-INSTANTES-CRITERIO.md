@@ -148,11 +148,15 @@ Los `y₀` e `y₁` que se usan son **los bordes grises medidos por a)**, no los
 2. **Veredicto de un fotograma que sirve:**
    - «separa: X» si el error de X es ≤ 2 px y el del otro > 4 px;
    - si no, «no separa».
-3. **Un instante** es válido si al menos uno de sus 6 fotogramas sirve:
-   - separa hacia X si algún fotograma suyo separa hacia X y ninguno hacia el otro;
-   - si sus fotogramas separan en los dos sentidos, el instante es **«contradictorio»**, y eso
-     cuenta como contradicción global. Es lo conservador;
+3. **Un instante** es válido si al menos uno de sus 6 fotogramas sirve. **Fotogramas mixtos**
+   (fijado por el consultor el 2026-09-23, antes de medir):
+   - **separa hacia X si al menos uno de sus fotogramas válidos separa hacia X y ninguno separa en
+     sentido contrario. Los fotogramas «no separa» no vetan;**
+   - si dentro del instante hay fotogramas en los dos sentidos, el instante es
+     **«contradictorio»**, y eso cuenta como contradicción global;
    - si ninguno separa, «no separa».
+
+   **El informe muestra siempre los 36 resultados por fotograma, sirvan o no.**
 4. **Global:**
    - ningún instante válido: **«la medida NO ESTÁ en v5»**;
    - instantes en los dos sentidos, o alguno contradictorio: **«contradictorio»** (A-18 sube a
@@ -177,9 +181,24 @@ manifiesto sin ninguna necesidad.
 uv run python scripts/v5_criterio.py --medir
 ```
 
-Decodifica exactamente los 36 ficheros de la tabla de §0, con el decodificador de
-`scripts/decodificar_png.py`. Imprime el veredicto de cada fotograma, el de cada instante y el
-global.
+**Integridad**, añadida el 2026-09-23 en un commit posterior a `bd9405f` y anterior a medir:
+- **Lista cerrada:** los 36 nombres están escritos en el código (`MEDIR`), y se comprueba al
+  cargar que son exactamente la ventana t…t+5 s de los seis instantes. Cualquier otro nombre se
+  rechaza **antes de leer un solo byte del fichero**; hay un test que lo comprueba con el
+  decodificador prohibido.
+- **Contra F05, fichero a fichero, antes de decodificar ninguno.** El manifiesto commiteado
+  `fr-v5-718ecabb.yaml`, inmutable por hook, fija `sha256_index`. Ese es el sha del
+  `index.jsonl` de la extracción, y el índice trae **el sha256 de cada PNG**. `--medir` comprueba
+  primero que el índice es el del manifiesto y después que los 36 ficheros tienen su sha. Si
+  falla algo, se para sin decodificar nada.
+
+**Salida**, una línea por fotograma, sirva o no:
+- si sirve, o qué condición falla;
+- la posición en px del stop, la entrada, el TP, el nivel 0 y el nivel 1;
+- el error de cada superviviente;
+- el veredicto del fotograma.
+
+Después, el veredicto de cada instante y el global.
 
 ## Estado
 
