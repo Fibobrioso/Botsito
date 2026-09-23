@@ -154,7 +154,15 @@ def filas_de_los_dias(
             if destino not in miembros:
                 raise LibroError(f"{ruta.name}: falta {destino}")
             hoja = ElementTree.fromstring(libro.read(destino))
-    except (OSError, zipfile.BadZipFile, ElementTree.ParseError) as exc:
+    except ElementTree.ParseError:
+        # SIN el texto del parser: trae «line X, column Y», y esa columna es una POSICION dentro
+        # de la hoja entera, que crece con las filas de antes -reservadas incluidas- (medido el
+        # 2026-09-22: «column 4913»). `from None` para que tampoco salga encadenada.
+        raise LibroError(
+            f"{ruta.name}: XML mal formado dentro del libro. No se da la posicion: contaria el "
+            f"contenido de antes, reservado incluido"
+        ) from None
+    except (OSError, zipfile.BadZipFile) as exc:
         raise LibroError(f"{ruta.name}: {exc}") from exc
 
     filas = list(hoja.iter(f"{_NS}row"))

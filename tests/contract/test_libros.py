@@ -168,3 +168,32 @@ def test_el_registro_real_declara_mayo_agosto_y_abril_y_nada_mas() -> None:
     assert meses == ["ABRIL", "AGOSTO", "MAYO"]
     formatos = {por_sha[s].rsplit(" ", 2)[-2]: d.lecturas for s, d in libros.items()}
     assert [(le.formato, le.huso) for le in formatos["MAYO"]] == [(NUEVO, "UTC")]
+
+
+@pytest.mark.contract
+def test_un_xml_roto_no_publica_su_posicion_en_la_hoja(tmp_path: Path) -> None:
+    """Medido el 2026-09-22 antes de leer mayo: el `ParseError` del XML traia «line 1, column
+    4913», una posicion en la hoja ENTERA que crece con las filas de antes, reservadas incluidas."""
+    import zipfile
+
+    ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    fila = '<row r="{n}"><c r="A{n}" t="inlineStr"><is><t>2026/05/07 08:00:00</t></is></c></row>'
+    libro = tmp_path / "roto.xlsx"
+    with zipfile.ZipFile(libro, "w") as z:
+        z.writestr(
+            "xl/workbook.xml",
+            f'<workbook xmlns="{ns}"><sheets>'
+            '<sheet name="backtesting-analytics"/></sheets></workbook>',
+        )
+        z.writestr(
+            "xl/worksheets/sheet1.xml",
+            f'<worksheet xmlns="{ns}"><sheetData>'
+            + "".join(fila.format(n=n) for n in range(2, 60))
+            + "<row><c &&& </row></sheetData></worksheet>",
+        )
+    with pytest.raises(LibroError) as exc:
+        _leer(libro, "AAAA/MM/DD HH:MM:SS")
+    msg = str(exc.value)
+    assert "XML mal formado" in msg
+    assert "column" not in msg and "line" not in msg
+    assert exc.value.__cause__ is None and exc.value.__suppress_context__
