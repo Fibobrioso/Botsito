@@ -10,5 +10,8 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
 - `decodificar_png.py`: decodificador de PNG de biblioteca estandar (`zlib` y `struct`), HERRAMIENTA
   DE MEDIDA de fotogramas, fuera del paquete; su test fabrica sus propios PNG con los cinco filtros
   (`tests/unit/test_decodificar_png.py`). Next Action 4, 2026-09-23.
+- `v5_criterio.py`: el criterio de lectura de los seis instantes de v5, CONGELADO antes de mirar
+  (`docs/validation/V5-INSTANTES-CRITERIO.md`). `--calibrar` lee solo los cuatro fotogramas ya
+  abiertos; `--medir` lee los 36 de la ventana fija y no se ejecuta sin luz verde del consultor.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
