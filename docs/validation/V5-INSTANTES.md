@@ -92,7 +92,10 @@ nada:
 ya vista, y la vía está cerrada. Si alguien reutiliza `scripts/v5_criterio.py` con otro vídeo, esta
 limitación va primero.
 
-## Pregunta al trader
+## Pregunta al trader (RESERVA)
+
+**Solo se usa si la búsqueda en las transcripciones del corpus no resuelve A-18** (Next Action 14,
+en su propia rama, con la regla fijada antes de buscar). Hasta entonces no se envía.
 
 > Cuando colocas la orden con la herramienta de posición, ¿cómo decides dónde va el stop y cómo
 > calculas dónde va el TP? Cuéntamelo paso a paso con un ejemplo, usando los niveles de la caja si
@@ -102,7 +105,15 @@ Su respuesta entra como feedback (`fb-*`), por su régimen.
 
 ## 7. Cierre
 
-`state check` OK. `make check` en verde, con el log borrado. Guardia de ids OK. `kit check --sesion
+`state check` OK. `make check` en verde, con el log borrado.
+
+**Un tropiezo del cierre, dicho.** El commit `40759cb` se hizo con `make check` en **rojo**: el
+commit no estaba condicionado al resultado. El fallo era
+`test_no_crlf_in_tracked_text_files`, porque la **copia de trabajo** de
+`V5-INSTANTES-SALIDA.txt` conservaba los CRLF que imprimió la consola de Windows. El contenido
+commiteado en `d279a3b` siempre fue LF (git lo normaliza por `.gitattributes`), y el texto es el
+mismo. Se corrigió restaurando la copia de trabajo desde el blob, sin tocar el contenido, y desde
+ahí cada commit va condicionado a `make check`. Guardia de ids OK. `kit check --sesion
 2026-09-09-sesion-01` idéntico a la línea base. PREREGISTRO con blob `52649183…` y cero
 autorizaciones.
 
