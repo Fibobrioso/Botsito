@@ -36,10 +36,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-NINGUNA ABIERTA en `main`. `trabajo/v6-fuera-del-holdout` quedo VALIDADA y cerrada el 2026-09-23: tag `stable/F14-v6-fuera-del-holdout`, informe docs/validation/V6-FUERA-DEL-HOLDOUT.md, ADR-0041. EN ESPERA, la respuesta del trader sobre A-18 (Next Action 15). LO SIGUIENTE es cerrar `trabajo/inventario-fidelidad`, que salio del `main` anterior y hay que reaplicar sobre este porque las dos ramas tocan PROJECT_STATE; esa rama trae la siguiente accion: ingerir agosto, abril y los 4 `fidelidad-dev`.
+WAITING_FOR_USER_VALIDATION: `trabajo/inventario-fidelidad`, informe docs/validation/INVENTARIO-FIDELIDAD.md, sin ADR y sin codigo. Solo lectura de codigo, spec y tests: el bot NO existe como algo ejecutable (F18-F24 y F26 sin empezar); las reglas vigentes tienen forma validada estaticamente y ninguna implementada (algunas parciales por la agregacion de F15); solo hay casos `dev` de mayo. Lo minimo para una primera medida, ordenado, con A-24 y A-21 bloqueantes por delante, y tres preguntas (D1, mas casos `dev`, que instante se compara).
 
 ## Current Branch
-main
+trabajo/inventario-fidelidad
 
 ## Stable Main State
 286c113 · merge de `trabajo/v6-fuera-del-holdout` (tag `stable/F14-v6-fuera-del-holdout`), sobre `stable/F14-a18-transcripciones` (6dbce8b). ADR-0041: el dia reservado de v6 sale del holdout y no se sustituye. La retirada vive en `knowledge/cases/retirados.yaml`, solo anadir y por la huella del id; la puerta separa lo que MIDE (`casos_medidos`, reservados menos retirados) de lo que OCULTA (`casos_ocultos`) y rechaza un retirado siempre, con o sin autorizacion; `fidelidad-1` declara 10 y se medira sobre 9. El reparto no se toca, y `kit check` y `fidelidad check` salen identicos. `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones.
@@ -95,7 +95,7 @@ main
 - El dia reservado de v6 fuera del holdout · validada el 2026-09-23 · docs/validation/V6-FUERA-DEL-HOLDOUT.md · ADR-0041 · tag stable/F14-v6-fuera-del-holdout
 
 ## Features Waiting for Validation
-- Inventario para la fidelidad · docs/validation/INVENTARIO-FIDELIDAD.md y docs/validation/INVENTARIO-FIDELIDAD-DECISIONES.md · sin ADR · rama `trabajo/inventario-fidelidad`, pendiente de reaplicar sobre este `main`
+- Inventario para la fidelidad · docs/validation/INVENTARIO-FIDELIDAD.md · sin ADR · rama `trabajo/inventario-fidelidad`
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
