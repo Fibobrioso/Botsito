@@ -1,0 +1,81 @@
+INTEGRIDAD eslabon 1: fr-v5-718ecabb.yaml fija sha256_index 718ecabb8db63ddf06b32f983db1c859871cebfc69a4499863874b46880bca7e
+INTEGRIDAD eslabon 2: index.jsonl sha256 718ecabb8db63ddf06b32f983db1c859871cebfc69a4499863874b46880bca7e: coincide
+INTEGRIDAD 000106000.png sha256 7eac1a2b5de06942e2a5fa05a2b5c8e48e71b21ec95923cd01b5f83b4960b5e4 = indice F05: OK
+INTEGRIDAD 000107000.png sha256 a0200cf0c973523afe7e30b1132bcffed5b63a61c8926189d5c58c251f2755a7 = indice F05: OK
+INTEGRIDAD 000108000.png sha256 5ea8af894545fc74a29355c50518495cdbb544ea3c43831e4d79c2038bb314cc = indice F05: OK
+INTEGRIDAD 000109000.png sha256 94f6c13113a30333017f739a2d94a0bf1e17cb99f4910bdac50e2490080fa2be = indice F05: OK
+INTEGRIDAD 000110000.png sha256 a305155de4c3d834a73ada50c10d91834cd752bee8f56490438bf8a9a377cc73 = indice F05: OK
+INTEGRIDAD 000111000.png sha256 16c14ccce9f9e51c6e8b1b0010dc45ae6c1d2af1e9c2c8b1c5e554c18199c733 = indice F05: OK
+INTEGRIDAD 000153000.png sha256 41ecf54d0fbb410704468d7b6228c4b6c6f277bf70800227849d4ed02cfadd18 = indice F05: OK
+INTEGRIDAD 000154000.png sha256 b8b4bf0cce74567bc860765cd1461aed5afd0a2f5c852aa04e2381cdabe66777 = indice F05: OK
+INTEGRIDAD 000155000.png sha256 54b18c6dbb4b32ca1fb6694056e58013bb4704b91704510c0ae9c86afadf103a = indice F05: OK
+INTEGRIDAD 000156000.png sha256 6842e220ce867f32c18be1ff2cd92c06c2e225a7a013ef0a06fe452f663b2247 = indice F05: OK
+INTEGRIDAD 000157000.png sha256 cfe2ee2cab88754e84553b290ee518cd55ba4b4ba19f052ce3443898c9768b10 = indice F05: OK
+INTEGRIDAD 000158000.png sha256 37513bfffa5cf18481ada1d65e0e828d900662be6f1534b4139feafc901d3202 = indice F05: OK
+INTEGRIDAD 000201000.png sha256 8c2f4c52c41871bc1578e4280952f77ddccaf8faec139d63a350fdb8c70534e7 = indice F05: OK
+INTEGRIDAD 000202000.png sha256 d5525abbe6c1f789dcf55e696f083fc88f6d7541c63a17b27f35567de1691a14 = indice F05: OK
+INTEGRIDAD 000203000.png sha256 f3653f04627a28137fb96c3aef0cf268b3ac0d8f9fec31812d19d7d50b48f0b0 = indice F05: OK
+INTEGRIDAD 000204000.png sha256 ae1164ee152b9c1760993ad501bb99d7a2678f7078e9cb908a9684b0a6a15b8b = indice F05: OK
+INTEGRIDAD 000205000.png sha256 93b983e8a0a649f535bc026ab4f736b3c58ad19193746acabd19fb3716d5dc7c = indice F05: OK
+INTEGRIDAD 000206000.png sha256 172a860be74e3dde262684187c814dd008bac01f03956858765fa29dc8363ad0 = indice F05: OK
+INTEGRIDAD 000209000.png sha256 781b750c4c98a13b48c9d5064f3575656a281c0e9a3649ceecf765904c6f610f = indice F05: OK
+INTEGRIDAD 000210000.png sha256 990b3dc779d5896407f870f654a2acd5dab25836c099be73293b87ae7c5d0977 = indice F05: OK
+INTEGRIDAD 000211000.png sha256 1f7a858b5fcb880401ea0418fa3afa49f4d51edf7a02c3ea7d8c8ff2b71b0072 = indice F05: OK
+INTEGRIDAD 000212000.png sha256 53a32d73f93604faaf8b9a1ddc3d55776662a9759c75fbce2c24da465c959c28 = indice F05: OK
+INTEGRIDAD 000213000.png sha256 3713c5d7cdd98f2d8c0077b5429897992196799710a67e9569b906672d523535 = indice F05: OK
+INTEGRIDAD 000214000.png sha256 1453e44433822756fc51c64d4b5ad1042f707d88670fa5912ab224843dc53ad9 = indice F05: OK
+INTEGRIDAD 000284000.png sha256 99db740712f5c49474b95b2a440e04ae4a4ec016bce9b86e2394aaac4005e892 = indice F05: OK
+INTEGRIDAD 000285000.png sha256 49d59306a6b560b3ef52e93a6fe265edfe70be0a82ba8ec58041a921ebecb66d = indice F05: OK
+INTEGRIDAD 000286000.png sha256 97233464c2e037d0025d1f68295e9200beeb9449246d5de1da67c808b1a89cef = indice F05: OK
+INTEGRIDAD 000287000.png sha256 e6e9ee83e1381dd70f6f87d44cd72a2859df6455eab79882664b35d7dbd615c6 = indice F05: OK
+INTEGRIDAD 000288000.png sha256 f2a2a9c08afd35655f73e654f46fd273293633450e14fe884e426e20c953b132 = indice F05: OK
+INTEGRIDAD 000289000.png sha256 63d67b0118392fa65ed4be9ed8b5349fdac73408fcde9cb586b8848e35e53157 = indice F05: OK
+INTEGRIDAD 000298000.png sha256 3d90ceefe78ff8cd946491b4a893c7de4eb2ec091b9739a9f72487587ddf8929 = indice F05: OK
+INTEGRIDAD 000299000.png sha256 2f9df705daa4d4334bf102cdba3b49cd39b6ff33703fb107aaae0b354a27e290 = indice F05: OK
+INTEGRIDAD 000300000.png sha256 eaacc5ba8b8db7bb07c6b26c725cd8c9d95aa592765cc04c96a1490fd0a89912 = indice F05: OK
+INTEGRIDAD 000301000.png sha256 32f6f3e09c951bd8110803b499fc4e77a684daf50c71b4c5ecb34ee992e97172 = indice F05: OK
+INTEGRIDAD 000302000.png sha256 a87e6e72d6377c62a8b97507d4332a347c14c3712e17a637f65ea91abd5b4eba = indice F05: OK
+INTEGRIDAD 000303000.png sha256 1f25b8da927947e4b70fc4e20ec18ef595e7204952ba34bc3b25e6ed0c6d40ef = indice F05: OK
+1 (0:01:46) 000106000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+1 (0:01:46) 000107000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+1 (0:01:46) 000108000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+1 (0:01:46) 000109000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+1 (0:01:46) 000110000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+1 (0:01:46) 000111000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+== 1 (0:01:46): sin fotograma valido
+2 (0:02:33) 000153000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+2 (0:02:33) 000154000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+2 (0:02:33) 000155000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+2 (0:02:33) 000156000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+2 (0:02:33) 000157000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+2 (0:02:33) 000158000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+== 2 (0:02:33): sin fotograma valido
+3 (0:03:21) 000201000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+3 (0:03:21) 000202000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+3 (0:03:21) 000203000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+3 (0:03:21) 000204000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+3 (0:03:21) 000205000: NO SIRVE (no cumple a) y b)) | stop - entrada - TP - nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+3 (0:03:21) 000206000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+== 3 (0:03:21): sin fotograma valido
+4 (0:03:29) 000209000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+4 (0:03:29) 000210000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+4 (0:03:29) 000211000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+4 (0:03:29) 000212000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+4 (0:03:29) 000213000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+4 (0:03:29) 000214000: NO SIRVE (no cumple b)) | stop - entrada - TP - nivel_0 424 nivel_1 237 | error riesgo_real - caja_completa - | no valido
+== 4 (0:03:29): sin fotograma valido
+6 (0:04:44) 000284000: NO SIRVE (no cumple a)) | stop 208 entrada 279.5 TP 359 nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+6 (0:04:44) 000285000: NO SIRVE (no cumple a)) | stop 208 entrada 279.5 TP 359 nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+6 (0:04:44) 000286000: NO SIRVE (no cumple a)) | stop 208 entrada 279.5 TP 359 nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+6 (0:04:44) 000287000: NO SIRVE (no cumple a)) | stop 208 entrada 279.5 TP 359 nivel_0 - nivel_1 - | error riesgo_real - caja_completa - | no valido
+6 (0:04:44) 000288000: NO SIRVE (no cumple a)) | stop 82 entrada 154 TP 233 nivel_0 - nivel_1 83 | error riesgo_real - caja_completa - | no valido
+6 (0:04:44) 000289000: NO SIRVE (no cumple a)) | stop 82 entrada 154 TP 234 nivel_0 - nivel_1 83 | error riesgo_real - caja_completa - | no valido
+== 6 (0:04:44): sin fotograma valido
+7 (0:04:58) 000298000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+7 (0:04:58) 000299000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+7 (0:04:58) 000300000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+7 (0:04:58) 000301000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+7 (0:04:58) 000302000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+7 (0:04:58) 000303000: NO SIRVE (no cumple a)) | stop 160 entrada 232 TP 447 nivel_0 - nivel_1 161 | error riesgo_real - caja_completa - | no valido
+== 7 (0:04:58): sin fotograma valido
+== GLOBAL: la medida NO ESTA en v5
