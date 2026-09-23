@@ -35,7 +35,7 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-WAITING_FOR_USER_VALIDATION: `trabajo/ritual-ventanas` (Next Action 1). SOLO DOCUMENTACION: `docs/runbooks/RITUAL.md` escribe lo que de verdad se ejecuta -las ventanas A/B/C de `state check`, medidas el 2026-09-22 en un clon desechable (A y B fallan por diseno, C da OK y ahi un error es REAL), y el bloque del ritual en el orden del cierre de mayo, sin la «puerta 2» que salia vacia siempre-; `PROJECT_STATE.md` deja de corregirlo, se queda con UNA entrada de ADR-0033 y anota las instancias sexta y septima del patron 5. Sin ADR. PENDIENTE DEL CONSULTOR: donde va la extension «toda afirmacion del consultor sobre un mecanismo se mide» (Next Action 5).
+WAITING_FOR_USER_VALIDATION: `trabajo/ritual-ventanas` (Next Action 1). SOLO DOCUMENTACION: `docs/runbooks/RITUAL.md` escribe lo que de verdad se ejecuta -las ventanas A/B/C de `state check`, medidas el 2026-09-22 en un clon desechable (A y B fallan por diseno, C da OK y ahi un error es REAL), y el bloque del ritual en el orden del cierre de mayo, sin la «puerta 2» que salia vacia siempre-; `PROJECT_STATE.md` deja de corregirlo, se queda con UNA entrada de ADR-0033 y anota las instancias sexta y septima del patron 5. Sin ADR. Y la extension «toda afirmacion del consultor sobre un mecanismo se mide» queda en `CLAUDE.md` (`4747d25`, Next Action 5 hecha). Informe docs/validation/RITUAL-VENTANAS.md.
 
 ## Current Branch
 trabajo/ritual-ventanas
@@ -88,7 +88,7 @@ trabajo/ritual-ventanas
 - Mayo `dev` ingerido · validada el 2026-09-22 · docs/validation/MAYO-DEV.md · ADR-0039 y ADR-0040 · tag stable/F14-mayo-dev
 
 ## Features Waiting for Validation
-- El ritual y sus ventanas · docs/runbooks/RITUAL.md · sin ADR · rama `trabajo/ritual-ventanas`
+- El ritual y sus ventanas · docs/validation/RITUAL-VENTANAS.md · sin ADR · rama `trabajo/ritual-ventanas`
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -495,15 +495,11 @@ F14 (biblioteca de casos), que se abre con F11 igual que F12 y F13 (MASTER_PLAN 
 
 4. EL DECODIFICADOR DE PNG ENTRA AL REPOSITORIO, decidido por el consultor el 2026-09-22, con TRES condiciones. (a) En `scripts/`, que YA EXISTE -comprobado contra `tests/unit/test_tree.py:32`, que lo lista, en vez de supuesto: no hace falta directorio nuevo-. (b) **CON TEST, y el test FABRICA SU PROPIO PNG** con los cinco filtros (None, Sub, Up, Average, Paeth) y comprueba los pixeles, porque `data/fotogramas/**` esta fuera de git y porque **un filtro mal implementado no revienta: da una medida ligeramente falsa con cara de exacta**. (c) Cero dependencias nuevas, `pyproject.toml` sin tocar: sale entero de `zlib` y `struct`. Entra en la rama del punto 3, que es su primer consumidor.
 
-5. CERRADA hoy: `trabajo/lo-que-no-cabia-en-main` (tag `stable/F14-runbook`, 2026-09-22). Las tres deudas del cierre -la nota de ADR-0038, el ritual y los comandos- estan aplicadas. **PERO DEJA UNA SUYA, medida el mismo dia y DESPUES del tag, asi que no cabe en `main`:**
+5. **HECHA en `trabajo/ritual-ventanas`** (`0f45986` el runbook, `4747d25` la regla en `CLAUDE.md`). Historia: CERRADA el 2026-09-22 `trabajo/lo-que-no-cabia-en-main` (tag `stable/F14-runbook`, 2026-09-22). Las tres deudas del cierre -la nota de ADR-0038, el ritual y los comandos- estan aplicadas. **PERO DEJA UNA SUYA, medida el mismo dia y DESPUES del tag, asi que no cabe en `main`:**
 
    **Su deuda -`RITUAL.md` decia en las lineas 67 y 78 que `state check` fallaba «entre el merge y el `docs(state)`», y asi ensenaba a ignorar el unico caso que tiene que parar- queda APLICADA en `trabajo/ritual-ventanas`**: las ventanas A/B/C viven ahora en `docs/runbooks/RITUAL.md`, medidas, y la anulacion que esta entrada imponia sobre esas lineas deja de hacer falta.
 
-   **Y QUEDA PENDIENTE, SIN COLOCAR, UNA EXTENSION DE UNA REGLA QUE YA EXISTE**: esta entrada pedia que la rama siguiente la colocara donde decidiera -el runbook o `CLAUDE.md`-, y `trabajo/ritual-ventanas` NO la ha colocado porque su brief no dice donde. Lo decide el consultor. `CLAUDE.md`, en «Como se trabaja», dice que antes de escribir codigo hay revision de diseno y **se contesta MIDIENDO, no razonando**. Esa regla se venia aplicando a las preguntas de DISENO y **no a las afirmaciones del consultor dentro de un brief**, que es la forma exacta que comparten las instancias 3 y 4 del patron 5: una afirmacion sobre COMO SE COMPORTA UN MECANISMO, adoptada sin medirla.
-
-   > **TODA AFIRMACION DEL CONSULTOR SOBRE COMO SE COMPORTA UN MECANISMO SE MIDE ANTES DE ESCRIBIRLA EN NINGUN DOCUMENTO.** No es una regla nueva: es la de «se contesta midiendo» aplicada tambien a los briefs. Medido dos veces el 2026-09-22, y las dos veces la version medida era mas fina que la afirmada.
-
-   **Es la mitigacion BARATA DEL SUB-CASO, y no hay que confundirla con deteccion del patron 5 entero: ese sigue SIN DETECCION MECANICA.** Cubre la forma «afirmacion del consultor sobre un mecanismo», que es la que mas ha costado esta semana; no cubre que lo escrito y lo ejecutado se separen por cualquier otra via.
+   **Y LA EXTENSION DE REGLA QUE ESTA ENTRADA DEJABA SIN COLOCAR, HECHA** en `trabajo/ritual-ventanas` (`4747d25`): «toda afirmacion del consultor sobre como se comporta un mecanismo se mide antes de escribirla en ningun documento; si la medida la contradice, gana la medida y se dice con su nombre» vive ahora en `CLAUDE.md`, «Como se trabaja», junto a «se contesta MIDIENDO, no razonando». La segunda mitad la anadio el consultor al colocarla el 2026-09-22. **Sigue siendo la mitigacion BARATA DEL SUB-CASO: el patron 5 entero continua SIN DETECCION MECANICA.**
 
 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es el acto que devuelve el universo ciego a un numero distinto de cero: **rama propia y declaracion**, no una descarga suelta.
 
