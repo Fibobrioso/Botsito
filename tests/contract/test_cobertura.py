@@ -97,12 +97,16 @@ def test_los_dos_ceros_se_distinguen(tmp_path: Path) -> None:
     assert r.sin_operaciones == 1, "el dia sin operaciones se CUENTA"
     assert [d for d, ops in r.casos.items() if ops] == ["2026-05-08"]
 
-    # (b) el mismo libro, pidiendole un mes del que no tiene ni una fila: ERROR con el MES.
+    # (b) el mismo libro, pidiendole un mes en el que ninguno de los dias pedidos tiene filas:
+    # ERROR con el MES, y el TEXTO EXACTO -solo lo que la regla sabe, sin sujeto humano-.
     with pytest.raises(IngestaError) as exc:
         ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08", "2026-06-01"])
-    assert "2026-06" in str(exc.value) and "no tiene ni una fila" in str(exc.value)
-    # habla del FICHERO, no de los dias del trader: no publica calendario
-    assert "2026-06-01" not in str(exc.value)
+    assert str(exc.value) == (
+        "ninguno de los dias pedidos de 2026-06 tiene filas en este material: o el libro no es de "
+        "2026-06 (revisa a que tramo de cobertura_material esta atado su sha), o esos dias no "
+        "tienen ninguna fila en la exportacion. No se escribe nada"
+    )
+    assert "2026-06-01" not in str(exc.value), "nombra el MES, nunca los dias"
 
 
 @pytest.mark.contract

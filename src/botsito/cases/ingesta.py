@@ -260,6 +260,16 @@ def _decimal(valor: object, fila: str, columna: str) -> Decimal:
         raise IngestaError(f"{fila}: `{columna}` no es un numero") from exc
 
 
+def mensaje_mes_sin_filas(meses: Sequence[str]) -> str:
+    """El texto de la regla del mes sin filas: solo lo que la regla sabe, sin sujeto humano."""
+    mes = ", ".join(meses)
+    return (
+        f"ninguno de los dias pedidos de {mes} tiene filas en este material: o el libro no es de "
+        f"{mes} (revisa a que tramo de cobertura_material esta atado su sha), o esos dias no "
+        f"tienen ninguna fila en la exportacion. No se escribe nada"
+    )
+
+
 def _sesion_de(
     instante_utc: str, huso: str, sesiones: Sequence[tuple[str, str, str]]
 ) -> str | None:
@@ -308,19 +318,22 @@ def ingerir(
     except (LibroError, LibrosError, OSError) as exc:
         raise IngestaError(str(exc)) from exc
 
-    # LA REGLA POR MES, no por dia: si un mes pedido no tiene NI UNA fila en el libro que se ha
-    # pasado, el libro no es el suyo y decirlo cuesta una linea. Habla del FICHERO -"el material
-    # que me has dado"- y no de los dias del trader, asi que no publica calendario. Un dia
-    # concreto sin filas dentro de un mes que SI tiene es otra cosa, y es la que si tiene sentido.
+    # LA REGLA DEL MES SIN FILAS (se mantiene, 2026-09-23, docs/validation/REGLA-MES-SIN-FILAS.md).
+    # Cuenta SOLO las filas de los dias PEDIDOS, nunca las del mes entero: si ninguno de los dias
+    # pedidos de un mes tiene fila, el comando para. Es lo unico que detecta un libro cuyo sha esta
+    # atado en `cobertura_material` al tramo de OTRO mes. Su coste, aceptado: no distingue ese caso
+    # de uno valido -ninguno de esos dias tiene fila en la exportacion-, en el que tampoco habria
+    # nada que escribir.
+    #
+    # EL MENSAJE DICE SOLO LO QUE LA REGLA SABE. Hasta el 2026-09-23 decia «el material no tiene ni
+    # una fila de <mes>», afirmando algo del mes entero que la regla no comprueba (patron 5). Y va
+    # SIN sujeto humano, por lo mismo que el aviso de dias sin operaciones: de una ausencia salen
+    # dos lecturas, y quedarse con «el trader no opero» seria atribuirle una decision.
     meses_pedidos = {d[:7] for d in pedidos}
     meses_con_filas = {str(f["_dia"])[:7] for f in filas}
     vacios = sorted(meses_pedidos - meses_con_filas)
     if vacios:
-        raise IngestaError(
-            f"el material que se ha pasado no tiene ni una fila de {', '.join(vacios)}: o es el "
-            f"libro de otro mes, o falta. No se escribe nada, porque un cero de aqui no se puede "
-            f"distinguir de un dia sin operaciones"
-        )
+        raise IngestaError(mensaje_mes_sin_filas(vacios))
 
     casos: dict[str, list[Operacion]] = {d: [] for d in pedidos}
     sin_stop = 0
