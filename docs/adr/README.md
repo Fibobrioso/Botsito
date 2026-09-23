@@ -43,4 +43,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0036 | El material ya visto se reparte por su propio camino, con nombres propios y con puerta | ACTIVE |
 | 0038 | Un fotograma se abre por instante localizado, nunca por muestreo | ACTIVE |
 | 0039 | Ningun libro se lee sin su formato y su huso declarados | ACTIVE |
+| 0040 | La combinacion CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos | ACTIVE |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |
