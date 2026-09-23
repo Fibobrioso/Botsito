@@ -36,10 +36,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-NINGUNA ABIERTA. `trabajo/guardia-ids-docs` quedo VALIDADA y cerrada en `main` el 2026-09-23: tag `stable/F14-guardia-ids`, informe docs/validation/GUARDIA-IDS-DOCS.md, sin ADR. LO SIGUIENTE es decidir la regla «mes pedido sin filas» ANTES de que llegue marzo (Next Action 13).
+EN CURSO: `trabajo/regla-mes-sin-filas` (Next Action 13), abierta el 2026-09-23. La regla «mes pedido sin filas» SE MANTIENE -detecta un libro atado al tramo de otro mes, que nada mas detecta, y no toca dias reservados-; su mensaje pasa a decir solo lo que la regla sabe, y se escriben por la CLI los tests que faltaban. Informe: docs/validation/REGLA-MES-SIN-FILAS.md.
 
 ## Current Branch
-main
+trabajo/regla-mes-sin-filas
 
 ## Stable Main State
 cb6b33e · merge de `trabajo/guardia-ids-docs` (tag `stable/F14-guardia-ids`), sobre `stable/F14-ritual` (24dc81f). Todo id citado en `docs/**`, `CLAUDE.md` y `PROJECT_STATE.md` existe o esta declarado en SU documento, con motivo, en un bloque `ids-inexistentes`: capa de `knowledge validate` con la gramatica de `comun.ids.FUENTE` y el MISMO conjunto de existencia que los trailers (`ids_de_fuente`); cada tipo de fallo con su propio texto. Salio en ROJO sobre main con las 13 citas esperadas antes de declarar nada. `CLAUDE.md` declara el regimen de `docs/validation/` -un informe cerrado se corrige con un recuadro al principio y el cuerpo queda intacto-, sin detector todavia (Technical Debt). `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones.
