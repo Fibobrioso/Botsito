@@ -1,5 +1,16 @@
 # La caja del 29 de abril
 
+> **CORRECCIÓN del 2026-09-22 (rama `trabajo/guardia-ids-docs`). El cuerpo de este informe no
+> se toca.** El informe cita a propósito ids que no existen en el repositorio. Desde esa fecha
+> `knowledge validate` exige que todo id citado en un documento exista, o esté declarado en ese
+> mismo documento con su motivo. Estos son los de aquí:
+>
+> ```ids-inexistentes
+> ev-v4-003710-f32c06e4 — citado en §R8 como inexistente
+> ev-v4-003710-f610cc8f — citado en §R8 como inexistente
+> ev-v6-001707-9f2b6e31 — el id que estuve a punto de inventar; nunca se commiteó
+> ```
+
 Rama `trabajo/la-caja-del-29-de-abril`, desde `569ce2c` (tag `stable/F14-abril`). Sin merge, sin
 tag, sin push.
 

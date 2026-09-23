@@ -1,5 +1,15 @@
 # Auditoría ultracode — 2026-09-13
 
+> **CORRECCIÓN del 2026-09-22 (rama `trabajo/guardia-ids-docs`). El cuerpo de este informe no
+> se toca.** El informe cita a propósito ids que no existen en el repositorio. Desde esa fecha
+> `knowledge validate` exige que todo id citado en un documento exista, o esté declarado en ese
+> mismo documento con su motivo. Estos son los de aquí:
+>
+> ```ids-inexistentes
+> ev-v4-003710-f32c06e4 — salida literal de `evidence new --supersede` ejecutado en una copia desechable; nunca existió en el repo
+> ev-v4-003710-f610cc8f — ítem con cita inventada creado en una copia desechable para reproducir el hallazgo; nunca existió en el repo
+> ```
+
 ## 0. Veredicto de rumbo
 
 ### Veredicto: ROJO
