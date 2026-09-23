@@ -32,6 +32,10 @@ rechaza un commit directo en `main` salvo con `BOTSITO_ALLOW_MAIN=1`, que solo u
   borra. Y ningun libro se lee sin su entrada. Lo vigila `knowledge validate` contra el historial; el
   hook no, porque solo sabe de inmutabilidad fichero a fichero.
 - `knowledge/spec/`, `knowledge/cases/` → versionados; cada cambio de valor cita su fuente.
+- `docs/validation/` → un informe CERRADO en `main` no se reescribe: se corrige con un RECUADRO DE
+  CORRECCION al principio (o junto al pasaje que corrige), con fecha y rama, y el cuerpo queda
+  intacto. Es la practica ya seguida -`F14A-INGESTA.md` y ADR-0037 §7 el 2026-09-21 y 22-, escrita
+  como regla el 2026-09-22. Nada lo comprueba mecanicamente todavia (Technical Debt).
 - `data/manifests/`, `knowledge/corpus/transcripciones/`, `knowledge/corpus/fotogramas/` → INMUTABLES
   tras commit.
 - `src/botsito/domain/` → sin IO, sin reloj, sin MetaTrader (import-linter).

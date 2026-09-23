@@ -1,5 +1,14 @@
 # FUNCTIONALITY VALIDATION REPORT
 
+> **CORRECCIÓN del 2026-09-22 (rama `trabajo/guardia-ids-docs`). El cuerpo de este informe no
+> se toca.** El informe cita a propósito ids que no existen en el repositorio. Desde esa fecha
+> `knowledge validate` exige que todo id citado en un documento exista, o esté declarado en ese
+> mismo documento con su motivo. Estos son los de aquí:
+>
+> ```ids-inexistentes
+> ADR-9999 — ejemplo de ADR inexistente que antes pasaba el trailer
+> ```
+
 **Funcionalidad:** F09 · expert-feedback-model
 **Rama:** `feature/F09-expert-feedback-model`
 **Objetivo:** cada aportacion del trader como registro trazable y solo-anadir, con respuesta

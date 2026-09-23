@@ -8,6 +8,7 @@ Devuelve (codigo, lineas): 0 OK, 1 error de contenido, 2 estructura ausente.
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,13 @@ def ids_de_adr(repo: Path) -> set[str]:
         for p in (repo / "docs" / "adr").glob("[0-9][0-9][0-9][0-9]-*.md")
         if p.name[:4] != "0000"
     }
+
+
+def ids_de_fuente(repo: Path, items: Iterable[Any], registros: Iterable[Any]) -> set[str]:
+    """LOS ids que existen como fuente citable: evidencia, feedback y ADR. UNA definicion para
+    las dos guardias que la usan -los trailers `Fuente:` y los ids citados en los documentos-:
+    si fueran dos conjuntos, un id podria valer en un commit y no en un informe."""
+    return {i.id for i in items} | {r.id for r in registros} | ids_de_adr(repo)
 
 
 def ids_de_funcionalidad(repo: Path) -> set[str]:
@@ -490,7 +498,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         motivo = no_evaluable or "git fallo"
         fallos_fb.append(f"la guardia de historial de feedback no se pudo evaluar ({motivo})")
     fallos_fb += [f"feedback modificado en el historial: {h}" for h in historial_fb or []]
-    ids_validos = {i.id for i in items} | {r.id for r in registros_fb} | ids_de_adr(repo)
+    ids_validos = ids_de_fuente(repo, items, registros_fb)
     # El ancla es el SHA: un tag se puede mover; si el tag existe y no coincide, es un error.
     tag, sha = ANCLA_FUENTE
     ancla = resolver(repo, sha) if con_git else None
@@ -511,6 +519,19 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         salida.append(f"ERROR: {fallo}")
     if fallos_fb:
         return 1, salida
+    # LOS IDS CITADOS EN LOS DOCUMENTOS (2026-09-22): `docs/**`, `CLAUDE.md` y `PROJECT_STATE.md`,
+    # contra el MISMO conjunto que los trailers. Un id que no existe se declara en su documento
+    # con motivo, o es error.
+    from botsito.validation.ids_citados import documentos, problemas_de_ids_citados
+
+    fallos_ids = problemas_de_ids_citados(repo, ids_validos)
+    for fallo in fallos_ids:
+        salida.append(f"ERROR: {fallo}")
+    if fallos_ids:
+        return 1, salida
+    salida.append(
+        f"OK: {len(documentos(repo))} documentos: todo id citado existe o esta declarado con motivo"
+    )
     # Alias: `cargar_manifiesto` ya nombra aqui el del corpus, y sombrearlo hace que
     # cualquier linea nueva de mas abajo use el de datos en silencio.
     from botsito.data.dataset import DIRECTORIO_MANIFIESTOS, DatasetError
