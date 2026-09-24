@@ -16,5 +16,7 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
 - `a18_buscar.py`: la busqueda de A-18 en las transcripciones vigentes de v1 a v5, CONGELADA antes de ejecutarla
   (`docs/validation/A18-TRANSCRIPCIONES-CRITERIO.md`): 36 terminos, ventana de +-45 s, solo la cruda
   verificada contra su manifiesto. Se ejecuta una sola vez.
+- `instante_llenado.py`: si el instante del xlsx es el LLENADO o la COLOCACION de la orden, con
+  control a -30 y +30 min (`docs/validation/CRITERIO-FIDELIDAD.md` §1). Solo imprime tasas.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
