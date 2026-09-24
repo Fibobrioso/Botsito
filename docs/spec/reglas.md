@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 12.1.1` · hash `702fdb1396db…`
+`spec_version 12.2.0` · hash `7743b9a05622…`
 
 27 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -101,10 +101,11 @@
 
 - **Clase**: `disparador`
 - **Cuando**: abre una sesion operativa
-- **Entonces**: el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia
-- **Parametros**: `sesgo_h4_regla`, `anclaje_h4`, `sesgo_h4_criterio_ruptura`
+- **Entonces**: el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela rompe los dos extremos, el sesgo es AMBIGUO; si ninguna de las ultimas sesgo_h4_tope_velas rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+- **Parametros**: `sesgo_h4_regla`, `anclaje_h4`, `sesgo_h4_criterio_ruptura`, `sesgo_h4_tope_velas`
 - **Cita**: `fb-2026-09-09-sesion-01-8eccf5c0` — *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»*
-- **Notas**: el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017)
+- **Decision**: `ADR-0044` — dice mas que su cita, y lo declara
+- **Notas**: el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017). En esas semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo AMBIGUO espera a A-34, y el tope y lo demas los decide ADR-0044. Una ruptura de uno o dos puntos puede serlo en la serie del trader y no en la nuestra (A-16)
 
 **Forma ejecutable**, tal cual la lee el motor:
 

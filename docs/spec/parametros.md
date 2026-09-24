@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 12.1.1` · hash `702fdb1396db…`
+`spec_version 12.2.0` · hash `7743b9a05622…`
 
-74 en total: 65 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+75 en total: 66 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -67,6 +67,7 @@
 | `salida_sin_ruptura` | `proteger_y_dejar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9626d3dd` | cerrar_al_cierre/proteger_y_dejar |
 | `sesgo_h4_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | que hace falta para dar por rota la vela H4 previa |
 | `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
+| `sesgo_h4_tope_velas` | `60` | CONFIRMED | ejecucion | `ADR-0044` | velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo |
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared del trader (huso_operativa) |
@@ -108,6 +109,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `modelo_llenado` → F24, F27
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
+- `sesgo_h4_tope_velas` → F18
 
 ## Que dice cada uno
 
@@ -424,6 +426,10 @@ Opciones: `mecha`, `cuerpo`.
 que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019)
 
 Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
+
+### `sesgo_h4_tope_velas`
+
+tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay ninguna, el sesgo es INSUFICIENTE y no se opera. PROVISIONAL: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
 
 ### `spread_maximo`
 

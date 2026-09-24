@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 12.1.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 12.2.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (14)
+## ABIERTA (15)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -40,7 +40,7 @@ Afecta a: `cartuchos_reinicio`.
 
 ### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
 
-la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al flujo que va en el sentido del sesgo?
+la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al flujo que va en el sentido del sesgo? DIAGNOSTICO del 2026-09-24 (MOTOR-SESGO-H4, construccion abril y agosto, sin tocar la regla): de 77 operaciones del trader, 12 van EN CONTRA del sesgo H4 del bot al abrir su sesion (58 a favor, 7 con sesgo ambiguo)
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion
 
@@ -79,6 +79,10 @@ Afecta a: `breaker_m1_criterio_ruptura`.
 en la sesion 1 dijiste "sin toma de parciales y que tiene que llegar al ratio 1.3 si o si" (v6 0:17:07). Pero en tu material hay TRES operaciones GANADORAS que CIERRAN por debajo de 3R: una en agosto (2,50) y dos en abril (2,57 y 2,94), en dos meses independientes. ¿cerraste esas a mano? ¿tomaste parciales en ellas? ¿o hubo otro motivo -un break even que salto, una noticia, cerrar antes de una sesion-? No te preguntamos si tomas parciales EN GENERAL, que ya lo contestaste: te preguntamos que paso en esas. MEDIDO ANTES DE PREGUNTAR, y es lo que hace que la pregunta exista: `maxTP` es el PRECIO DE CIERRE de las ganadoras y no la excursion maxima -`== avgClosePrice` en 17 de 17 filas de abril donde existen las dos, y presente si y solo si `rPnL > 0`-, asi que esas tres no son operaciones que NO LLEGARON a 3R: son operaciones que CERRARON en ganancia por debajo de 3R. En F14a esa columna se habia SUPUESTO al reves (ADR-0037 y su correccion del 2026-09-22). OBSERVACION DESCRIPTIVA del 2026-09-22 (MAYO-DEV, ADR-0040), sin atribuir causa: ganadoras por debajo de 3R = agosto 1 (2,50), abril 2 (2,57; 2,94), mayo 1 (2,90), esta ultima sobre los 6 dias `dev` de mayo
 
 Afecta a: `parciales`, `objetivo_rr`.
+
+### A-34 · vela H4 previa que rompe ambos extremos · pregunta
+
+vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo cambia si la vela rompe el extremo de la anterior, y que basta con la mecha; no dijiste que pasa si la rompe por arriba y por abajo. Mientras no lo digas, el bot da el sesgo por AMBIGUO en esa sesion y no opera (ADR-0044)
 
 ## DECIDIDA (5)
 
