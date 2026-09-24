@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 12.2.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 12.2.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
@@ -27,10 +27,6 @@ Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
 el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin retroceso, o pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo unico de la geometria de entrada que sigue siendo cualitativo y que el motor no puede evaluar. ¿cuantas velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa? ESTA AMBIGUEDAD NACIO MAL el 2026-09-10, preguntando que es un breaker; la definicion ya estaba en el corpus y lo que faltaba era recogerla en el glosario. Reformulada el mismo dia
-
-### A-24 · que hace que marques un pivote de M15 y no otro · **BLOQUEANTE** · pregunta
-
-cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3 0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras, que tamano de movimiento, que lo descalifica
 
 ### A-25 · la vida de la marca de liquidez de M15 · pregunta
 
@@ -84,7 +80,11 @@ Afecta a: `parciales`, `objetivo_rr`.
 
 vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo cambia si la vela rompe el extremo de la anterior, y que basta con la mecha; no dijiste que pasa si la rompe por arriba y por abajo. Mientras no lo digas, el bot da el sesgo por AMBIGUO en esa sesion y no opera (ADR-0044)
 
-## DECIDIDA (5)
+### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
+
+dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que siguen en curso (v4 0:50:48, "Uno ya formado"; v4 0:50:55, "Por encima de este ya formado"). ¿Cuando das un pivote de M15 por formado? ¿Cuando cierra la vela que hace el alto o el bajo, cuando cierra la vela contraria que lo deja atras, o cuando pasa otra cosa? Dilo de forma que dos personas mirando el mismo grafico lo den por formado en la misma vela
+
+## DECIDIDA (6)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
 
@@ -113,6 +113,10 @@ Afecta a: `filtro_noticias`.
 ### A-23 · que proveedor es la referencia para medir la fidelidad · cerrada por `ADR-0024` el 2026-09-12
 
 el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. ¿cual es la referencia? DECIDIDO por el consultor el 2026-09-12: DUKASCOPY (ADR-0005), porque cubre 2026 entero, es publico y reproducible, y donde se puede comparar esta a 2 puntos del feed del broker. MT5/FundedNext no puede sustituirlo -no sirve los meses del paquete: cero velas M1 de mayo- y se usa para lo que si aporta: spread real, condiciones de ejecucion, reloj de servidor y paridad con Strategy Tester. La divergencia entre proveedores entra en F26 como MARGEN DECLARADO y no como ruido ignorado: una regla que depende de romper por una milesima puede cambiar de decision dentro de ese margen. Cuanto vale ese margen frente a Oanda es A-16, que sigue abierta
+
+### A-24 · que hace que marques un pivote de M15 y no otro · cerrada por `ADR-0045` el 2026-09-24
+
+cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3 0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras, que tamano de movimiento, que lo descalifica
 
 ## RESUELTA (14)
 

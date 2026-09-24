@@ -280,11 +280,13 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # la sesion 1 siguen marcadas y estan RESUELTAS; para la sesion 2 hay DOS vivas: A-21, que el
     # corpus nunca define que es un breaker, y desde el 2026-09-20 A-24 -nadie produce el token
     # `liquidez_m15`, asi que RN-004 no dispara y RN-008, que es un `ninguno_de`, prohibe abrir
-    # SIEMPRE-. Las dos dejan al motor sin entrada posible, cada una por su lado.
+    # SIEMPRE-. Las dos dejan al motor sin entrada posible, cada una por su lado. El 2026-09-24
+    # ADR-0045 decide A-24 (el pivote mas reciente ya formado) y abre A-35, cuando esta formado,
+    # que hereda el bloqueo: sin ella el productor de `liquidez_m15` no se escribe sin inventar.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-24"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    assert abiertas == {"A-21", "A-35"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida
@@ -307,6 +309,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-19",
         "A-22",
         "A-23",
+        "A-24",
     }
     assert next(a for a in ambs if a.id == "A-16").estado == "ABIERTA"
     # A-27 y A-28 son MEDICIONES del entorno de FTMO, partidas como se partio A-16: la ficha del
