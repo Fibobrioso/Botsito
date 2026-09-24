@@ -20,5 +20,8 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   control a -30 y +30 min (`docs/validation/CRITERIO-FIDELIDAD.md` §1). Solo imprime tasas.
 - `sesgo_h4_diagnostico.py`: DIAGNOSTICO del sesgo H4 sobre abril y agosto (construccion), sin
   umbral y sin tocar mayo (`docs/validation/MOTOR-SESGO-H4.md`). Solo imprime recuentos.
+- `buscar_ambiguedades.py`: la busqueda de A-24, A-21, A-26 y A-34 en las transcripciones, CONGELADA
+  antes de ejecutarla (`docs/validation/A24-A21-A26-A34-CRITERIO.md`): terminos por ambiguedad,
+  ventana de +-45 s y pasajes de como mucho 180 s. Reutiliza `a18_buscar.py`.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.

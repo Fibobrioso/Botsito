@@ -405,6 +405,11 @@ ambiguedades:
       - ev-v3-004201-bfeb3734
     parametros: []
     contradiccion: null
+    # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
+    # ningun pasaje de v1-v5 responde con la regla congelada; se pregunta al trader. Informe:
+    # docs/validation/A24-A21-A26-A34-CLASIFICACION.md
+    # Lo mas cercano es una regla que ya es RN-009 -mas de una zona de control invalida, v3 #624- y
+    # una negativa -"es indiferente el numero de velas", v4 #1078-; ninguna define "limpia"
     estado: ABIERTA
     decision: null
     decidida_el: null
@@ -484,13 +489,20 @@ ambiguedades:
       - ev-v4-005644-e06ef304
       # el item que sostiene el riesgo de fidelidad: "marcas tu zona de liquidez que tu consideres"
       - ev-v3-003916-447dc8d7
+      # DECIDIDA el 2026-09-24 por ADR-0045: la liquidez es el pivote MAS RECIENTE YA FORMADO,
+      # por la regla global sobre la busqueda en transcripciones (docs/validation/A24-A21-A26-A34-CLASIFICACION.md).
+      # Responde v1 #180 ("tiene que ser la mas reciente"), refuerza v4 #1174-#1182 y acota v4 #846
+      # ("uno ya formado"). Leido en su contexto, el item de arriba es del TP (#479), no de la
+      # liquidez de entrada, y ya no sostiene la hipotesis discrecional. Pasa a RESUELTA solo con un
+      # registro del trader que apunte aqui; si el trader la contradice, un ADR nuevo sustituye al
+      # 0045. Cuando esta formado un pivote es A-35
+      - ev-v4-005053-885e2773
     parametros: []
     contradiccion: null
-    estado: ABIERTA
-    decision: null
-    decidida_el: null
-    clase: pregunta
-    bloqueante: true
+    estado: DECIDIDA
+    decision: ADR-0045
+    decidida_el: '2026-09-24'
+    bloqueante: false
   - id: A-25
     titulo: la vida de la marca de liquidez de M15
     pregunta: >-
@@ -538,6 +550,11 @@ ambiguedades:
       - ev-v6-003701-7613b381
     parametros: []
     contradiccion: null
+    # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
+    # ningun pasaje de v1-v5 responde con la regla congelada; se pregunta al trader. Informe:
+    # docs/validation/A24-A21-A26-A34-CLASIFICACION.md
+    # Tres pasajes apuntan a (a) -marcar con la vela contraria de cualquier flujo, v3 #976, v4
+    # #597 y #942-, pero ninguno lo dice para el caso de M15 contra H4 ni habla del lado de ruido
     estado: ABIERTA
     decision: null
     decidida_el: null
@@ -738,8 +755,38 @@ ambiguedades:
       - ev-v3-000824-c81f03eb
     parametros: []
     contradiccion: null
+    # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
+    # ningun pasaje de v1-v5 responde con la regla congelada; se pregunta al trader. Informe:
+    # docs/validation/A24-A21-A26-A34-CLASIFICACION.md
+    # v3 #982-#992 ofrece, como simplificacion OPCIONAL, tomar el color de la vela anterior, que
+    # choca con las notas de RN-003; y v3 #158 dice que una vela que ENVUELVE valida la continuidad,
+    # pero envolver no dice que la mecha rompa los dos extremos
     estado: ABIERTA
     decision: null
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-35
+    titulo: cuándo un pivote de M15 está formado
+    pregunta: >-
+      dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
+      siguen en curso (v4 0:50:48, "Uno ya formado"; v4 0:50:55, "Por encima de este ya formado").
+      ¿Cuando das un pivote de M15 por formado? ¿Cuando cierra la vela que hace el alto o el bajo,
+      cuando cierra la vela contraria que lo deja atras, o cuando pasa otra cosa? Dilo de forma que
+      dos personas mirando el mismo grafico lo den por formado en la misma vela
+    resuelve_en: [F19, F20]
+    # Nace el 2026-09-24 con ADR-0045, que decide A-24 (el pivote MAS RECIENTE YA FORMADO) y no
+    # define "formado" porque la spec vigente no lo define en ninguna parte -glosario, reglas,
+    # registro ni tokens-. BLOQUEA RN-004: sin ella no se puede escribir el productor de
+    # `liquidez_m15` sin inventar. NO se sustituye por un parametro provisional, porque es un
+    # MECANISMO y no una cifra. Siguiente paso: buscarla en las transcripciones con el metodo
+    # congelado de A-24
+    evidencia:
+      - ev-v4-005053-885e2773
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true

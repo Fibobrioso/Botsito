@@ -1,0 +1,106 @@
+"""La busqueda de A-24, A-21, A-26 y A-34 en las transcripciones, CONGELADA antes de ejecutarla.
+
+Documento: `docs/validation/A24-A21-A26-A34-CRITERIO.md` (2026-09-24, rama
+`trabajo/a24-a21-a26-a34`). Reutiliza `scripts/a18_buscar.py` -mismo alcance, misma integridad,
+misma normalizacion y la misma ventana de +-45 s con union de solapes- con dos diferencias:
+
+- una lista CERRADA de terminos POR AMBIGUEDAD, solo frases o combinaciones especificas: ningun
+  termino de una sola palabra de uso constante (liquidez, zona, M15, H4, sesgo, vela, pivote);
+- un pasaje mide como mucho 180 s; una union mas larga se corta en pasajes consecutivos, y cada
+  uno lista sus propias coincidencias.
+
+Se busca por separado para cada ambiguedad, asi que un mismo tramo puede salir en mas de una.
+
+  `uv run python scripts/buscar_ambiguedades.py --salida <fichero>`
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import sys
+from pathlib import Path
+from types import ModuleType
+
+RAIZ = Path(__file__).resolve().parent
+MAXIMO_MS = 180_000
+# LOS TERMINOS, lista cerrada por ambiguedad y en los dos sentidos. No se anade ni se quita ninguno
+# despues de ver resultados.
+TERMINOS: dict[str, tuple[str, ...]] = {
+    "A-24": (
+        "más reciente", "más recientes", "estructura más reciente", "más próximo", "más cercano",
+        "más extremo", "alto más alto", "bajo más bajo", "el más alto", "el más bajo",
+        "punto más alto", "punto más bajo", "que tú consideres", "que yo considere",
+        "yo considero", "invadiría", "no se toma en cuenta", "velas atrás",
+    ),
+    "A-21": (
+        "zona limpia", "zona de control limpia", "sea limpia", "mucho ruido", "sin ruido",
+        "sin mucho ruido", "haga ruido", "hace ruido", "ruidoso", "ruidosa", "cuántas velas",
+        "número de velas", "retroceso complejo", "complex pullback", "ningún retroceso",
+        "segunda zona de control", "otra zona de control",
+    ),
+    "A-26": (
+        "contra el sesgo", "contra la tendencia", "contra tendencia", "a favor de la tendencia",
+        "a favor del sesgo", "sentido del sesgo", "flujo de 15", "flujo de m15", "flujo de m 15",
+        "flujo en m15", "flujo en m 15", "vela contraria", "velas contrarias",
+        "contraria al flujo", "envuelve", "envolvente",
+    ),
+    "A-34": (
+        "por arriba y por abajo", "por abajo y por arriba", "los dos extremos", "ambos extremos",
+        "los dos lados", "ambos lados", "las dos direcciones", "rompe los dos", "envolvente",
+        "outside", "vela de 4 previa", "previa cerrada", "vela previa", "vela de 4 horas",
+    ),
+}  # fmt: skip
+PROHIBIDOS = {"liquidez", "zona", "m15", "h4", "sesgo", "vela", "pivote"}
+
+
+def base() -> ModuleType:
+    nombre = "a18_buscar"
+    if nombre in sys.modules:
+        return sys.modules[nombre]
+    spec = importlib.util.spec_from_file_location(nombre, RAIZ / f"{nombre}.py")
+    assert spec is not None and spec.loader is not None
+    modulo = importlib.util.module_from_spec(spec)
+    sys.modules[nombre] = modulo
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def patrones(ambiguedad: str) -> tuple[tuple[str, object], ...]:
+    b = base()
+    return tuple((t, b.patron(t)) for t in TERMINOS[ambiguedad])
+
+
+def buscar() -> list[str]:
+    b = base()
+    lineas: list[str] = []
+    segmentos: dict[str, list[object]] = {}
+    for tr in b.ALCANCE:
+        segs, sha = b.leer(tr)
+        segmentos[tr] = segs
+        lineas.append(f"INTEGRIDAD {tr} cruda.jsonl sha256 {sha} = manifiesto: OK")
+    resumen: list[str] = ["== PASAJES POR AMBIGUEDAD Y TRANSCRIPCION"]
+    for amb in TERMINOS:
+        lineas.append(f"== {amb}: {len(TERMINOS[amb])} terminos")
+        todos = []
+        for tr in b.ALCANCE:
+            todos += b.pasajes(tr, segmentos[tr], patrones(amb), MAXIMO_MS)
+        for i, p in enumerate(todos, 1):
+            bloque = b.formato(p, i)
+            lineas.append(bloque[0].replace("=== PASAJE", f"=== {amb} · PASAJE", 1))
+            lineas += bloque[1:]
+        for tr in b.ALCANCE:
+            resumen.append(f"{amb} {tr}: {sum(1 for p in todos if p.transcripcion == tr)}")
+        resumen.append(f"{amb} TOTAL: {len(todos)}")
+    return [*lineas, *resumen]
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) != 2 or argv[0] != "--salida":
+        print("uso: buscar_ambiguedades.py --salida <fichero>", file=sys.stderr)
+        return 2
+    Path(argv[1]).write_text("\n".join(buscar()) + "\n", encoding="utf-8", newline="\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
