@@ -1,0 +1,24 @@
+# LOS DIAS RETIRADOS DEL HOLDOUT (ADR-0041). Un dia reservado cuya exposicion no se puede descartar
+# sale del holdout: deja de MEDIRSE y sigue OCULTO -la puerta lo rechaza siempre, con o sin
+# autorizacion-. No pasa a desarrollo y no se sustituye por ningun otro dia.
+#
+# SOLO ANADIR, como `knowledge/corpus/libros.yaml`: una entrada commiteada no se edita ni se borra
+# (`knowledge validate` lo comprueba version a version contra el historial). Cada entrada va por la
+# HUELLA del id del caso -sha256 del id, `holdout.huella_de_caso`-, nunca por el id ni por la
+# fecha, y la huella tiene que ser la de un caso que este en una particion reservada.
+#
+# EL REPARTO NO SE TOCA (ADR-0036): `particiones.yaml` sigue declarando su cupo. Por eso la
+# diferencia se escribe aqui: el artefacto de fidelidad `eurusd-2026-09` declara 10 dias en
+# `fidelidad-1` y, con la retirada de abajo, la medida de `fidelidad-1` se hace sobre 9. Ningun
+# dia sustituye al retirado.
+retirados:
+  "183c5def9b202df31e3cd7a8e03952003910c8ce69773f4f702f7c71b208a1e6":
+    motivo: >-
+      el dia reservado en que se grabo v6: su transcripcion se leyo en ramas anteriores (23 items
+      de evidencia y el informe de su sesion) y si trae detalle por operacion de ese dia solo se
+      sabe leyendola; y su identidad quedo en el historial de git por el commit cdcf58e
+    exposicion: >-
+      docs/validation/HOLDOUT-EXPOSICIONES.md, entradas del 2026-09-23: la exposicion posible de la
+      transcripcion de v6, el desliz de cdcf58e y su resolucion por retirada
+    adr: ADR-0041
+    retirado_el: "2026-09-23"

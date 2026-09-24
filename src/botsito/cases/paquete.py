@@ -1288,11 +1288,13 @@ def kappa_entre_sesiones(
     kappa las leia todas. Ahora se excluyen y se dice cuantas; con `incluir_holdout` se pide
     abrirlas, y la puerta se niega salvo autorizacion del usuario y PREREGISTRO relleno (§3).
     """
-    from botsito.cases.holdout import abrir, casos_reservados, gastar_pregunta
+    from botsito.cases.holdout import abrir, casos_ocultos, casos_retirados, gastar_pregunta
     from botsito.cases.kappa import calcular, etiquetas_de_registros
 
     config = cargar_config(repo / DIRECTORIO_KIT / FICHERO_CONFIG)
-    reservados = casos_reservados(repo)
+    reservados = casos_ocultos(repo)
+    # Los RETIRADOS (ADR-0041) no se leen NUNCA, ni con `incluir_holdout`: se miden fuera.
+    retirados = set(casos_retirados(repo))
     # Solo el OBJETIVO del registro (el id del caso), nunca su valor: saber que un caso reservado
     # tiene etiqueta no es leerla.
     from botsito.feedback.modelo import activos
@@ -1303,7 +1305,7 @@ def kappa_entre_sesiones(
         if r.accion == "LABEL_CASE" and r.sesion in (a, b) and r.objetivo.id in reservados
     }
     por_particion: dict[str, int] = {}
-    for caso in etiquetados:
+    for caso in etiquetados - retirados:
         por_particion[reservados[caso]] = por_particion.get(reservados[caso], 0) + 1
     if incluir_holdout:
         # El orden manda (ADR-0033, enmienda del 2026-09-21): comprobar la puerta -> GASTAR la
@@ -1312,7 +1314,7 @@ def kappa_entre_sesiones(
         for particion in sorted(por_particion):
             abrir(repo, particion, pregunta)
         gastar_pregunta(repo, pregunta)
-        excluir: frozenset[str] = frozenset()
+        excluir: frozenset[str] = frozenset(etiquetados & retirados)
     else:
         excluir = frozenset(etiquetados)
     try:
@@ -1342,10 +1344,17 @@ def kappa_entre_sesiones(
                 f"{sesion_r}: {len(vistos)} casos etiquetados sobre dias que el trader ya habia "
                 f"visto el {fecha_de_sesion(sesion_r)} (vistos.yaml): no fue etiquetado ciego"
             )
-    if excluir:
+    n_retirados = len(etiquetados & retirados)
+    if n_retirados:
+        resultado.avisos.append(
+            f"{n_retirados} casos retirados del holdout excluidos sin leer su etiqueta: "
+            f"no se abren nunca (ADR-0041)"
+        )
+    if excluir - retirados:
         detalle = ", ".join(f"{p}: {n}" for p, n in sorted(por_particion.items()))
         resultado.avisos.append(
-            f"{len(excluir)} casos reservados excluidos sin leer su etiqueta ({detalle}); "
+            f"{len(excluir - retirados)} casos reservados excluidos sin leer su etiqueta "
+            f"({detalle}); "
             f"abrirlos exige autorizacion y PREREGISTRO (ADR-0021 §3)"
         )
     return resultado
