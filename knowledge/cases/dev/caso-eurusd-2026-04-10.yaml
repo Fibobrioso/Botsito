@@ -1,0 +1,20 @@
+dia: '2026-04-10'
+fuente:
+  fichero: corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics ABRIL
+    2026.xlsx
+  ingerido_el: '2026-09-23'
+  sha256: 5e5d9b83dc12a15e111e63b274e315dc01f9b8b1187d6c2ee0efff71ab4c125b
+  tipo: backtest_xlsx
+id: caso-eurusd-2026-04-10
+operaciones:
+- direccion: compra
+  entrada: '1.16862'
+  instante_utc: '2026-04-10T06:33:55+00:00'
+  sesion: 07-11
+  stop: '1.16839'
+- direccion: compra
+  entrada: '1.16798'
+  instante_utc: '2026-04-10T08:05:45+00:00'
+  sesion: 07-11
+  stop: '1.1678'
+simbolo: EURUSD

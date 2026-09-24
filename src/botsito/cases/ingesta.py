@@ -73,7 +73,12 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from botsito.cases.holdout import DIRECTORIO_KIT, casos_ocultos, repartos_commiteables
+from botsito.cases.holdout import (
+    DIRECTORIO_KIT,
+    DIRECTORIO_VISTO,
+    casos_ocultos,
+    repartos_commiteables,
+)
 from botsito.comun.historial import commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.inventario import InventarioError, cargar_manifiesto
@@ -161,12 +166,22 @@ def dias_ingeribles(
     salida: dict[str, str] = {}
     de_otro_camino: set[str] = set()
     kit = (repo / DIRECTORIO_KIT).resolve()
+    visto = (repo / DIRECTORIO_VISTO).resolve()
+    # EL REPARTO DEV-VISTO (ADR-0042) solo cuenta si cumple sus condiciones -mes visto, lectura
+    # completa declarada, tramo con su libro- y se reproduce y esta anclado. Si no, FALLA CERRADO:
+    # un reparto que no deberia existir no puede hacer ingerible nada.
+    from botsito.cases import visto as camino_visto
+
+    fallos_visto = camino_visto.problemas(repo)
+    if fallos_visto:
+        raise IngestaError("reparto dev-visto invalido: " + "; ".join(fallos_visto))
     for fichero in repartos_commiteables(repo):
         ruta = fichero.relative_to(repo).as_posix()
         if commit_que_anadio(repo, ruta) is None:
             continue  # sin commitear no reparte nada
-        # LOS RESERVADOS SE LEEN DE LOS DOS CAMINOS (arriba); LOS INGERIBLES, SOLO DEL KIT.
-        del_kit = fichero.resolve().is_relative_to(kit)
+        # LOS OCULTOS SE LEEN DE TODOS LOS CAMINOS (arriba); LOS INGERIBLES, SOLO DEL KIT Y DEL
+        # REPARTO DEV-VISTO (ADR-0042). La fidelidad sigue fuera: su `dev` es de otro camino.
+        del_kit = fichero.resolve().is_relative_to(kit) or fichero.resolve().is_relative_to(visto)
         try:
             doc = leer_yaml(fichero)
         except (OSError, YamlError) as exc:  # pragma: no cover - lo cubre casos_reservados

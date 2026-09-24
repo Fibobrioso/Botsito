@@ -1,0 +1,15 @@
+dia: '2026-08-12'
+fuente:
+  fichero: corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics AGOSTO
+    2026.xlsx
+  ingerido_el: '2026-09-23'
+  sha256: 33a01f1d81246417548663ec43752f3eb952b983175016ca3318044d5b090f45
+  tipo: backtest_xlsx
+id: caso-eurusd-2026-08-12
+operaciones:
+- direccion: compra
+  entrada: '1.1533'
+  instante_utc: '2026-08-12T05:25:20+00:00'
+  sesion: 07-11
+  stop: '1.15322'
+simbolo: EURUSD

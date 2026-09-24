@@ -731,6 +731,11 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     from botsito.cases.biblioteca import problemas_de_biblioteca
 
     fallos_fid += problemas_de_biblioteca(repo)
+    # El reparto dev-visto (ADR-0042): condiciones, reproduccion desde cobertura_material y ancla.
+    # Sin `data/`, siempre: el reparto sale entero de la cobertura.
+    from botsito.cases import visto as camino_visto
+
+    fallos_fid += [f"dev-visto: {p}" for p in camino_visto.problemas(repo)]
     for a in avisos_fid:
         salida.append(f"AVISO: {a}")
     for f in fallos_fid:
@@ -741,6 +746,8 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     n_artefactos = len(artefactos(repo))
     if ambiguedades or n_sesiones:
         detalle = f"; {n_artefactos} artefactos de fidelidad" if n_artefactos else ""
+        n_vistos = len(camino_visto.artefactos(repo))
+        detalle += f"; {n_vistos} repartos dev-visto" if n_vistos else ""
         salida.append(
             f"OK: {len(ambiguedades)} ambiguedades registradas; {n_sesiones} paquetes de sesion "
             f"validos, particiones anteriores al etiquetado{detalle}"

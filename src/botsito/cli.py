@@ -1603,6 +1603,29 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def casos_visto(repo: Path, args: argparse.Namespace) -> int:
+    """Construye y ANCLA el reparto dev-visto de un mes (ADR-0042). No sobreescribe.
+
+    Solo si el mes cumple las condiciones: visto, con su libro leido entero y declarado, y con su
+    tramo en `cobertura_material`. Imprime un RECUENTO de dias, nunca las fechas.
+    """
+    from botsito.cases import visto as camino_visto
+
+    errores: tuple[type[Exception], ...] = (camino_visto.VistoError, *_kit_errores())
+    try:
+        texto = camino_visto.construir(repo, args.mes)
+        ruta = camino_visto.escribir(repo, args.mes, texto)
+        n = len(camino_visto.asignacion(repo, args.mes))
+    except errores as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(
+        f"OK: {ruta.relative_to(repo).as_posix()}: {n} dias laborables, todos `dev`, sin sorteo; "
+        f"anclado en {camino_visto.DIRECTORIO_VISTO}/{camino_visto.FICHERO_ANCLAS}"
+    )
+    return 0
+
+
 def casos_check(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.biblioteca import problemas_de_biblioteca
 
@@ -2343,6 +2366,10 @@ def build_parser() -> argparse.ArgumentParser:
     casos_sub.add_parser(
         "check", help="comprueba la forma de los casos y que ninguno este reservado"
     )
+    cs_visto = casos_sub.add_parser(
+        "visto", help="construye y ancla el reparto dev-visto de un mes ya visto (ADR-0042)"
+    )
+    cs_visto.add_argument("--mes", required=True, help="AAAA-MM")
     kb = sub.add_parser("kb", help="busqueda de desarrollo sobre la base de conocimiento (F08)")
     kb_sub = kb.add_subparsers(dest="kb_cmd", required=True)
     find = kb_sub.add_parser("find", help="por texto: AND de tokens, --frase o --prefijo")
@@ -2520,6 +2547,8 @@ def main(argv: list[str] | None = None) -> int:
         return casos_ingerir(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "check":
         return casos_check(args.repo, args)
+    if args.cmd == "casos" and args.casos_cmd == "visto":
+        return casos_visto(args.repo, args)
     if args.cmd == "fidelidad" and args.fidelidad_cmd == "build":
         return fidelidad_build(args.repo, args)
     if args.cmd == "fidelidad" and args.fidelidad_cmd == "check":
