@@ -524,7 +524,9 @@ ambiguedades:
       ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la
       vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de
       M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al
-      flujo que va en el sentido del sesgo?
+      flujo que va en el sentido del sesgo? DIAGNOSTICO del 2026-09-24 (MOTOR-SESGO-H4,
+      construccion abril y agosto, sin tocar la regla): de 77 operaciones del trader, 12 van EN
+      CONTRA del sesgo H4 del bot al abrir su sesion (58 a favor, 7 con sesgo ambiguo)
     resuelve_en: [F18, F19]
     # la mitad disyuntiva que F14b §3 preguntaba ("¿H4 o M15?") esta CERRADA por el corpus y se
     # escribio en la spec el 2026-09-20 (nota de RN-004 y del token, con sus citas)

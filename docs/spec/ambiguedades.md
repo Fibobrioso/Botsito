@@ -40,7 +40,7 @@ Afecta a: `cartuchos_reinicio`.
 
 ### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
 
-la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al flujo que va en el sentido del sesgo?
+la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al flujo que va en el sentido del sesgo? DIAGNOSTICO del 2026-09-24 (MOTOR-SESGO-H4, construccion abril y agosto, sin tocar la regla): de 77 operaciones del trader, 12 van EN CONTRA del sesgo H4 del bot al abrir su sesion (58 a favor, 7 con sesgo ambiguo)
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion
 
