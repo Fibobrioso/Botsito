@@ -89,6 +89,37 @@ con su lista.
 - **Después, la clasificación**, en su propio commit. Cada pasaje recibe su ambigüedad, su clase
   (responde → hipótesis X, o no responde) y la frase literal que lo decide.
 
+## 7. Aplicación de la regla global
+
+La aplica el consultor, el 2026-09-24, sobre la clasificación de `A24-A21-A26-A34-CLASIFICACION.md`.
+El criterio de arriba no ha cambiado.
+
+| ambigüedad | decisión | base |
+|---|---|---|
+| **A-24** | **DECIDIDA → (a), el pivote más reciente ya formado** (ADR-0045). No queda RESUELTA porque no hay registro del trader | Responde v1 #180 («la zona de liquidez tiene que ser la más reciente») y ninguno responde en contra; refuerza v4 #1174-#1182, confirmado con «Exacto»; acota v4 #846 («Uno ya formado») |
+| **A-21** | Sigue ABIERTA: **se pregunta al trader** | Ninguno de sus 14 pasajes responde |
+| **A-26** | Sigue ABIERTA: **se pregunta al trader** | Ninguno de sus 9 pasajes responde |
+| **A-34** | Sigue ABIERTA: **se pregunta al trader** | Ninguno de sus 3 pasajes responde |
+| **A-35** (nueva) | ABIERTA y bloqueante: **cuándo un pivote de M15 está formado** | La spec vigente no lo define en ninguna parte: ni el glosario, ni las reglas, ni el registro, ni los tokens. Bloquea RN-004 y no se sustituye por un parámetro provisional |
+
+**Lo que cambió al aplicarla:**
+- La fila 5 de la clasificación decía que el fotograma del croquis no se había abierto. Ya estaba
+  medido: la nota de A-24 dice que en ese dibujo el alto más alto es además el último. Está
+  corregida en la misma rama, antes del merge.
+- El ítem `ev-v3-003916-447dc8d7`, que sostenía la hipótesis discrecional, es del TP (#479) y no de
+  la liquidez de entrada.
+
+**Lo que no se tocó:**
+- PROJECT_STATE, salvo la tabla Known Ambiguities, que exige
+  `test_project_state_refleja_las_ambiguedades`.
+- Nada de septiembre ni de febrero, y mayo tampoco.
+- PREREGISTRO sigue vacío, y no se ha firmado ninguna autorización.
+- La salida de `kit check` y `fidelidad check` es idéntica antes y después de cada commit.
+
+**Lo siguiente** no es el productor de RN-004, que está bloqueado por A-35. Es buscar A-35 en las
+transcripciones con el método congelado de A-24.
+
 ## Estado
 
-CRITERIO CONGELADO. La búsqueda no se ha ejecutado.
+CERRADA PARA EL RITUAL: el criterio congelado, una sola ejecución, la clasificación y la regla
+global aplicada (ADR-0045). Sin merge, sin tag y sin push.
