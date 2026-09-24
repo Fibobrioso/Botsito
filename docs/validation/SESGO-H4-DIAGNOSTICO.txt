@@ -1,0 +1,5 @@
+PARAMETROS: anclaje_h4 17:00 America/New_York; sesgo_h4_tope_velas 60; sesgo_h4_criterio_ruptura mecha
+CONJUNTO: construccion (abril y agosto). Mayo no se lee.
+2026-04 (velas: eurusd-m1-2026-04-990211bd): operaciones 35; a favor 24; en contra 7; ambiguo 4; insuficiente 0; de ellas con ruptura de 1-2 puntos (zona A-16) 0
+2026-08 (velas: eurusd-m1-2026-07-aa162170, eurusd-m1-2026-08-0d42230e): operaciones 42; a favor 34; en contra 5; ambiguo 3; insuficiente 0; de ellas con ruptura de 1-2 puntos (zona A-16) 0
+total: operaciones 77; a favor 58; en contra 12; ambiguo 7; insuficiente 0; de ellas con ruptura de 1-2 puntos (zona A-16) 0
