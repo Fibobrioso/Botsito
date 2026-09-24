@@ -1,0 +1,17 @@
+# Anclas anti-manipulacion de los paquetes del kit (ADR-0035, enmienda del 2026-09-21).
+#
+# Un paquete congela dentro de si mismo el universo (`datasets:`) y los cupos (el bloque
+# `config:`), y se recompone con ellos. Congelar solo es legitimo si editar lo congelado a mano
+# se VE, y la comparacion byte a byte no lo ve entero: `anclajes_candidatos`, `sesiones` y
+# `etiquetas` solo alimentan ficheros que una sesion celebrada exime. Estas anclas cierran eso.
+#
+# Es el sha del BLOB de cada fichero -`git hash-object <ruta>`-, no el de un commit: el blob
+# cambia con cualquier byte del fichero y con nada mas, y sobrevive a un rebase. Mismo patron que
+# `preregistro_blob` (ADR-0033).
+#
+# GENERADO por `botsito kit anclar --sesion <s>`. Re-anclar un paquete que cambio es un acto
+# EXPLICITO (`--reanclar`) y su diff se ve aqui, no como efecto colateral de regenerar nada.
+2026-04:
+  particiones.yaml: 7b04c5fc34428376bfd940ebe01138bb0e1a4be5
+2026-08:
+  particiones.yaml: 0bb09b84b7d7a718603865ee79dda731c0e2ae52

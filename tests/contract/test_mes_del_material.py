@@ -235,7 +235,10 @@ def test_el_config_real_ata_mayo_por_su_sha_y_septiembre_no() -> None:
 
     Septiembre llevo su sha desde el paso 1 de esta rama -lo pidio un brief escrito sin anticipar
     ADR-0039- y la guardia del cruce con `libros.yaml` lo cazo el mismo dia: su tramo se queda,
-    sin sha, hasta que tenga su brief y su medida, los dos a la vez."""
+    sin sha, hasta que tenga su brief y su medida, los dos a la vez.
+
+    Desde ADR-0042 (2026-09-23) abril y agosto llevan tambien el suyo: son material ya visto que
+    entra por el reparto dev-visto, con su libro medido en `libros.yaml`. Septiembre sigue sin."""
     doc = yaml.safe_load((REAL / KIT / "config.yaml").read_text(encoding="utf-8"))
     config = config_desde_doc(doc, "config.yaml")
     materiales = config.materiales
@@ -244,7 +247,8 @@ def test_el_config_real_ata_mayo_por_su_sha_y_septiembre_no() -> None:
         (REAL / "knowledge/corpus/manifest.yaml").read_text(encoding="utf-8")
     )
     por_sha = {f["sha256"]: f["ruta"] for f in manifiesto["ficheros"]}
-    assert sorted(materiales.values()) == ["2026-05"]
+    assert sorted(materiales.values()) == ["2026-04", "2026-05", "2026-08"]
+    assert "2026-09" not in materiales.values(), "septiembre sin sha hasta su brief y su medida"
     for sha, mes in materiales.items():
         assert sha in por_sha, f"{mes}: su sha no esta en el manifiesto del corpus"
         assert por_sha[sha].endswith(".xlsx")

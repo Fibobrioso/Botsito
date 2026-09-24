@@ -53,6 +53,16 @@ etiquetas: [compra, venta, no_trade]
 # en `vistos.yaml`, asi que ningun paquete ciego los sortea; el dia que hagan falta aqui, se
 # declaran con su lectura y su exposicion.
 cobertura_material:
+  # ABRIL: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
+  # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
+  # UNA vez el 2026-09-23 por orden del consultor y con el formato y el huso de libros.yaml, y nada
+  # mas. Es un LIMITE INFERIOR de la cobertura real: un dia del borde sin operaciones no se
+  # distingue de uno no cubierto. Se amplia si el trader declara el mes completo (ADR-0042).
+  "2026-04":
+    - desde: "2026-04-01"
+      hasta: "2026-04-29"
+      fuente: [ADR-0042]
+      material_sha256: "5e5d9b83dc12a15e111e63b274e315dc01f9b8b1187d6c2ee0efff71ab4c125b"
   # El trader backtesteo mayo ENTERO y lo entrego el 2026-09-11 (68 operaciones). El tramo no sale
   # de leer el fichero: sale de esa declaracion, que ya estaba escrita en `vistos.yaml`.
   "2026-05":
@@ -70,6 +80,16 @@ cobertura_material:
   # justo la combinacion que hasta hoy no se podia expresar. Sin esto, sus 10 dias `dev` del
   # reparto de la sesion 1 siguen siendo ingeribles y un `kit build` nuevo volveria a sortearlo.
   "2026-06": []
+  # AGOSTO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
+  # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
+  # UNA vez el 2026-09-23 por orden del consultor y con el formato y el huso de libros.yaml, y nada
+  # mas. Es un LIMITE INFERIOR de la cobertura real: un dia del borde sin operaciones no se
+  # distingue de uno no cubierto. Se amplia si el trader declara el mes completo (ADR-0042).
+  "2026-08":
+    - desde: "2026-08-03"
+      hasta: "2026-08-31"
+      fuente: [ADR-0042]
+      material_sha256: "33a01f1d81246417548663ec43752f3eb952b983175016ca3318044d5b090f45"
   # El material de septiembre cubre del 1 al 18. Ya declarado en `knowledge/cases/fidelidad/
   # config.yaml` y en `vistos.yaml`: aqui se repite, no se lee nada nuevo.
   "2026-09":
