@@ -36,10 +36,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-NINGUNA ABIERTA en `main`. `trabajo/v6-fuera-del-holdout` quedo VALIDADA y cerrada el 2026-09-23: tag `stable/F14-v6-fuera-del-holdout`, informe docs/validation/V6-FUERA-DEL-HOLDOUT.md, ADR-0041. EN ESPERA, la respuesta del trader sobre A-18 (Next Action 15). LO SIGUIENTE es cerrar `trabajo/inventario-fidelidad`, que salio del `main` anterior y hay que reaplicar sobre este porque las dos ramas tocan PROJECT_STATE; esa rama trae la siguiente accion: ingerir agosto, abril y los 4 `fidelidad-dev`.
+WAITING_FOR_USER_VALIDATION: `trabajo/inventario-fidelidad`, informes docs/validation/INVENTARIO-FIDELIDAD.md y docs/validation/INVENTARIO-FIDELIDAD-DECISIONES.md, sin ADR y sin codigo. El bot NO existe como algo ejecutable (F18-F24 y F26 sin empezar). Decidido por el consultor: D1 -la verdad es el xlsx, «no opero» solo donde el libro cubre-, el instante del xlsx, y LO SIGUIENTE es ingerir agosto, abril y los 4 `fidelidad-dev` (Next Action 17).
 
 ## Current Branch
-main
+trabajo/inventario-fidelidad
 
 ## Stable Main State
 286c113 · merge de `trabajo/v6-fuera-del-holdout` (tag `stable/F14-v6-fuera-del-holdout`), sobre `stable/F14-a18-transcripciones` (6dbce8b). ADR-0041: el dia reservado de v6 sale del holdout y no se sustituye. La retirada vive en `knowledge/cases/retirados.yaml`, solo anadir y por la huella del id; la puerta separa lo que MIDE (`casos_medidos`, reservados menos retirados) de lo que OCULTA (`casos_ocultos`) y rechaza un retirado siempre, con o sin autorizacion; `fidelidad-1` declara 10 y se medira sobre 9. El reparto no se toca, y `kit check` y `fidelidad check` salen identicos. `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones.
@@ -95,7 +95,7 @@ main
 - El dia reservado de v6 fuera del holdout · validada el 2026-09-23 · docs/validation/V6-FUERA-DEL-HOLDOUT.md · ADR-0041 · tag stable/F14-v6-fuera-del-holdout
 
 ## Features Waiting for Validation
-- Inventario para la fidelidad · docs/validation/INVENTARIO-FIDELIDAD.md y docs/validation/INVENTARIO-FIDELIDAD-DECISIONES.md · sin ADR · rama `trabajo/inventario-fidelidad`, pendiente de reaplicar sobre este `main`
+- Inventario para la fidelidad · docs/validation/INVENTARIO-FIDELIDAD.md y docs/validation/INVENTARIO-FIDELIDAD-DECISIONES.md · sin ADR · rama `trabajo/inventario-fidelidad`
 
 ## Existing Components
 - Paquete `botsito`: `domain/valores.py` (Fraccion, Porcentaje sobre Decimal, no intercambiables; HoraLocal con huso); `config/registro.py` (registro de parametros con categoria, procedencia y lectura estricta; vacio de valores); `config/ajustes.py` (entorno y rutas, sin claves de negocio).
@@ -532,6 +532,7 @@ F14 (biblioteca de casos), que se abre con F11 igual que F12 y F13 (MASTER_PLAN 
 14. **HECHO en `trabajo/a18-transcripciones`: 0 de 42 pasajes responden con la regla congelada; se pregunta al trader (docs/validation/A18-TRANSCRIPCIONES.md).** Texto original: A-18: buscar en TODAS las transcripciones del corpus (no solo v5) los pasajes donde el trader explica donde pone el stop respecto a la caja y como calcula el TP. Rama propia.** Regla fijada antes de buscar: un pasaje RESPONDE si dice ambas cosas, o si dice una sola de forma incompatible con uno de los dos supervivientes. Si hay pasajes en sentidos opuestos, o ninguno responde, se pregunta al trader con la pregunta abierta de `docs/validation/V5-INSTANTES.md` (seccion «Pregunta al trader», de reserva hasta entonces); su respuesta entra como feedback (`fb-*`) por su regimen.
 15. **EN ESPERA: A-18: pregunta de reserva enviada al trader el 2026-09-23** (lo declara el consultor; es la de `docs/validation/V5-INSTANTES.md`). Su respuesta entra como `fb-*` por su regimen, y con ella se decide si A-18 se replantea: en v1-v4 el stop se describe en DOS tiempos (lote sobre la caja entera, stop protegido a 0,75 tras la entrada) y las dos hipotesis vigentes suponen uno solo.
 16. **HECHO en `trabajo/v6-fuera-del-holdout`: el dia reservado de v6 sale del holdout y no se sustituye (ADR-0041, `knowledge/cases/retirados.yaml`); medidos 33, `fidelidad-1` se mide sobre 9 (docs/validation/V6-FUERA-DEL-HOLDOUT.md).** Texto original: decidir, en rama propia y antes de usar el holdout, si el dia reservado de v6 se retira del holdout (exposicion posible + identidad revelada en `cdcf58e`; las dos declaradas en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
+17. **SIGUIENTE: ingerir agosto, abril y los 4 `fidelidad-dev` por el camino de mayo, en rama propia** (decision del consultor, docs/validation/INVENTARIO-FIDELIDAD-DECISIONES.md). D1 ya decidida: la verdad es el xlsx, y «no opero» solo en los dias que el libro cubre de verdad (`cobertura_material`); el instante que se compara es el que registra el xlsx.
 
 ## Last Stable Commit
 286c113 · merge: ADR-0041, el dia reservado de v6 sale del holdout y no se sustituye · tag stable/F14-v6-fuera-del-holdout
