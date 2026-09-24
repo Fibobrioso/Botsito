@@ -12,6 +12,13 @@ misma normalizacion y la misma ventana de +-45 s con union de solapes- con dos d
 Se busca por separado para cada ambiguedad, asi que un mismo tramo puede salir en mas de una.
 
   `uv run python scripts/buscar_ambiguedades.py --salida <fichero>`
+
+A-35 (cuando un pivote de M15 esta formado) tiene su PROPIA lista cerrada, congelada en
+`docs/validation/A35-PIVOTE-FORMADO-CRITERIO.md` (2026-09-24, rama `trabajo/a35-pivote-formado`),
+con el mismo metodo. Va en un conjunto aparte para que la salida de A-24, A-21, A-26 y A-34 se siga
+reproduciendo byte a byte:
+
+  `uv run python scripts/buscar_ambiguedades.py --conjunto a35 --salida <fichero>`
 """
 
 from __future__ import annotations
@@ -50,6 +57,21 @@ TERMINOS: dict[str, tuple[str, ...]] = {
         "outside", "vela de 4 previa", "previa cerrada", "vela previa", "vela de 4 horas",
     ),
 }  # fmt: skip
+# A-35, lista cerrada propia (mismo criterio: solo frases, ninguna palabra suelta de uso constante).
+# No se anade ni se quita ninguno despues de ver resultados.
+TERMINOS_A35: dict[str, tuple[str, ...]] = {
+    "A-35": (
+        "ya formado", "ya formada", "ya formados", "ya se formó", "ya se ha formado",
+        "se ha formado", "se formó", "se forme", "está formado", "esté formado",
+        "formado del todo", "se termine de formar", "termina de formarse",
+        "en curso", "vela cerrada", "velas cerradas", "cierre de la vela", "cierra la vela",
+        "la vela cierra", "esperar el cierre", "espero el cierre", "ya cerró",
+        "vela contraria", "velas contrarias", "marca un mínimo", "marca un máximo",
+        "marca un alto", "marca un bajo", "máximo estructural", "mínimo estructural",
+        "a cada lado", "cuántas velas",
+    ),
+}  # fmt: skip
+CONJUNTOS = {"a24": TERMINOS, "a35": TERMINOS_A35}
 PROHIBIDOS = {"liquidez", "zona", "m15", "h4", "sesgo", "vela", "pivote"}
 
 
@@ -67,10 +89,10 @@ def base() -> ModuleType:
 
 def patrones(ambiguedad: str) -> tuple[tuple[str, object], ...]:
     b = base()
-    return tuple((t, b.patron(t)) for t in TERMINOS[ambiguedad])
+    return tuple((t, b.patron(t)) for t in {**TERMINOS, **TERMINOS_A35}[ambiguedad])
 
 
-def buscar() -> list[str]:
+def buscar(terminos: dict[str, tuple[str, ...]] = TERMINOS) -> list[str]:
     b = base()
     lineas: list[str] = []
     segmentos: dict[str, list[object]] = {}
@@ -79,8 +101,8 @@ def buscar() -> list[str]:
         segmentos[tr] = segs
         lineas.append(f"INTEGRIDAD {tr} cruda.jsonl sha256 {sha} = manifiesto: OK")
     resumen: list[str] = ["== PASAJES POR AMBIGUEDAD Y TRANSCRIPCION"]
-    for amb in TERMINOS:
-        lineas.append(f"== {amb}: {len(TERMINOS[amb])} terminos")
+    for amb in terminos:
+        lineas.append(f"== {amb}: {len(terminos[amb])} terminos")
         todos = []
         for tr in b.ALCANCE:
             todos += b.pasajes(tr, segmentos[tr], patrones(amb), MAXIMO_MS)
@@ -95,10 +117,14 @@ def buscar() -> list[str]:
 
 
 def main(argv: list[str]) -> int:
+    conjunto = "a24"
+    if len(argv) == 4 and argv[0] == "--conjunto" and argv[1] in CONJUNTOS:
+        conjunto, argv = argv[1], argv[2:]
     if len(argv) != 2 or argv[0] != "--salida":
-        print("uso: buscar_ambiguedades.py --salida <fichero>", file=sys.stderr)
+        print("uso: buscar_ambiguedades.py [--conjunto a35] --salida <fichero>", file=sys.stderr)
         return 2
-    Path(argv[1]).write_text("\n".join(buscar()) + "\n", encoding="utf-8", newline="\n")
+    salida = "\n".join(buscar(CONJUNTOS[conjunto])) + "\n"
+    Path(argv[1]).write_text(salida, encoding="utf-8", newline="\n")
     return 0
 
 
