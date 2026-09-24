@@ -1,4 +1,4 @@
-# El día reservado de v6 fuera del holdout: detenida en el paso 0
+# El día reservado de v6 fuera del holdout (ADR-0041)
 
 Rama `trabajo/v6-fuera-del-holdout`, 2026-09-23. Es el punto 16 de Next Action. Sin merge, sin tag
 y sin push. En este informe no aparece la fecha del día.
@@ -7,10 +7,8 @@ y sin push. En este informe no aparece la fecha del día.
 a desarrollo y no se sustituye por ningún otro. El motivo es doble: su lectura previa es una
 exposición posible, y su identidad quedó en el historial por `cdcf58e`.
 
-**Lo que se ha hecho: solo el paso 0, leer.** No hay ni código, ni ADR, ni tests, ni cambios en la
-asignación. La rama se para aquí por la regla del brief: *«Si el régimen no permite retirar un día
-sin romper una garantía […], PARA la rama 1, escribe la pregunta»*. Y hay además dos decisiones de
-diseño que el brief no toma (§3).
+**Cómo va el informe.** La rama se paró en el paso 0 con cuatro preguntas (§1 a §3, `af4be96`).
+El consultor las contestó, y la retirada está hecha (§4 en adelante).
 
 ## 1. Dónde y cómo está definido el conjunto reservado
 
@@ -56,7 +54,7 @@ fijó ANTES de leer ninguna etiqueta, comprobado por máquina.
 - `test_mes_del_material.py` cuenta los 4 `fidelidad-dev` de septiembre, que no cambian.
 - **`kit check` no cambiaría**: el día no está en el paquete del kit.
 
-## 3. Por qué se para, y las preguntas
+## 3. Por qué se paró, y las preguntas (contestadas en §4)
 
 **P1. El mecanismo de la retirada rompe una garantía, según cuál se elija.**
 - **(a) Escribir un estado «retirado» en `particiones.yaml`** rompe la reproducción byte a byte:
@@ -92,18 +90,79 @@ aparte, que es lo que haría (b)?
 **P4. El ADR.** El siguiente número libre de ADR es el **0041**; lo comprobé en `docs/adr/`. No se ha
 escrito, porque su contenido depende de P1 y P2.
 
-## 4. Lo que queda sin hacer
+## 4. Las decisiones del consultor
 
-Los pasos 2 a 5 del brief:
-- el ADR;
-- el estado «retirado»;
-- los tests de 33 reservados, de que no sea ingerible y de que ningún comando nombre el día;
-- `kit check`;
-- la entrada en `HOLDOUT-EXPOSICIONES.md`;
-- el punto 16 de Next Action como HECHO.
+- **P1: la opción (b).** Un fichero aparte, solo de añadir: `knowledge/cases/retirados.yaml`.
+  Cada entrada lleva la huella (sha256) del id del caso, el motivo, la referencia a su exposición
+  y el ADR. Ni `particiones.yaml` ni ADR-0036 se tocan.
+  - **Sobre el sitio:** no hay un lugar mejor en el repositorio. `knowledge/cases/` es donde viven
+    los repartos que la retirada modifica en efecto, y el otro fichero de solo añadir del mismo
+    tipo, `libros.yaml`, vive junto a su dominio (`knowledge/corpus/`).
+- **P2: sí.** Dos conjuntos derivados: «medidos» = reservados − retirados, y «ocultos» = reservados
+  ∪ retirados. Todo lo que oculta usa «ocultos», y todo lo que mide usa «medidos». La puerta
+  rechaza siempre un día retirado.
+- **P3:** el reparto sigue declarando 10, y la medida de `fidelidad-1` se hace sobre 9. No se
+  sustituye ningún día.
+- **P4:** ADR-0041, «un día reservado expuesto sale del holdout y no se sustituye».
 
-**El punto 16 sigue abierto.**
+## 5. Lo que se ha hecho (`1aeae24`)
+
+- **`knowledge/cases/retirados.yaml`**, con una entrada: la huella del caso, su motivo, su
+  exposición y `ADR-0041`. Su cabecera documenta que la medida de `fidelidad-1` se hace sobre 9.
+- **`src/botsito/cases/holdout.py`**:
+  - `huella_de_caso`, `cargar_retirados`, `casos_retirados`, `casos_medidos`, `casos_ocultos`,
+    `abrir_caso` y `problemas_de_retirados`;
+  - `leer_fichero` rechaza siempre un fichero cuyo nombre sea el id de un retirado;
+  - si `retirados.yaml` está mal formado, `casos_medidos` lanza, porque la puerta no responde a
+    medias.
+- **Consumidores que ocultan, pasados a `casos_ocultos`:**
+  - `biblioteca.problemas_de_biblioteca` (`knowledge validate` y `casos check`);
+  - `ingesta.dias_ingeribles`;
+  - `feedback trace`;
+  - `kit kappa`, que además no lee NUNCA un retirado, ni con `--incluir-holdout`, y lo avisa por
+    recuento, sin id.
+- **`knowledge validate`** comprueba `retirados.yaml`: la forma; que cada huella sea de un caso
+  reservado; y que sea solo de añadir contra el historial, versión a versión, con el mismo
+  mecanismo que `libros.yaml`. Imprime «OK: 1 dias retirados del holdout…».
+- **Tests** (`tests/unit/test_retirados.py`, 6):
+  1. un retirado no está en «medidos», está en «ocultos», y la puerta lo rechaza con una
+     autorización válida, que sí abre la partición y el caso medido. El mensaje no nombra el caso;
+  2. añadir una entrada vale; modificarla o borrarla falla, y commitear el borrado no lo arregla;
+  3. en el repositorio real hay 1 retirado y 33 medidos, y ninguna salida de `knowledge validate`,
+     `state check`, `casos check`, `spec status`, `feedback pending`, `kit check` ni
+     `fidelidad check` imprime el id del retirado. El test no escribe el id: lo deriva de la
+     huella;
+  4. una huella que no es de ningún reservado falla;
+  
+  y dos más: que sin fichero «medidos» es igual a los reservados, y que una entrada mal formada
+  cierra la puerta.
+
+**`kit check`, idéntico a la línea base.** El día no está en el paquete del kit, así que no hay
+diferencia que explicar.
+
+**`fidelidad check`, idéntico** antes y después del cambio. Sigue diciendo «10 dias reservados
+cuyas velas se leen: fidelidad-1 10», y es correcto: leer las velas de un día no es abrirlo
+(ADR-0021 §1), y el día retirado sigue en el reparto.
+
+## 6. Una medida que el brief no preveía: el reparto ya nombra el día
+
+**`knowledge/cases/fidelidad/eurusd-2026-09/particiones.yaml` lleva el id del caso retirado EN
+CLARO**, con su partición. Lo medí con un booleano, sin imprimirlo. Ese fichero está en `main`
+desde `394a18e`, el sorteo de septiembre, y leer la asignación no es abrir.
+
+- **Qué evita la huella de `retirados.yaml`:** que el repositorio diga en claro, en un sitio más,
+  qué día se retiró.
+- **Qué no evita:** que cualquiera cruce el reparto con la fecha de grabación de v6, que está en
+  el manifiesto del corpus. Y la huella de un día laborable de un mes se adivina probando una
+  veintena de fechas (ADR-0041, Impacto).
+- **Lo que eso dice del desliz de `cdcf58e`.** Lo único nuevo que escribió fue la unión de esas
+  dos cosas públicas en una frase. No cambia nada de lo hecho, y se anota para que nadie le
+  atribuya a la huella más protección de la que da.
+
+## 7. Lo que queda sin hacer
+
+Nada del brief. Tampoco se ha ingerido ni leído ninguna etiqueta.
 
 ## Estado
 
-WAITING_FOR_USER_VALIDATION: detenida en el paso 0, con las preguntas P1 a P4.
+WAITING_FOR_USER_VALIDATION
