@@ -1,0 +1,23 @@
+# EL CRITERIO DE FIDELIDAD EN DESARROLLO (ADR-0043), commiteado ANTES de construir el motor.
+#
+# Las cifras viven aqui y no en `src/` (ADR-0002); las lee `cases/criterio_fidelidad.py`. Este
+# criterio NO se modifica una vez que el motor produzca su primera salida sobre el conjunto de
+# medida, salvo con un ADR nuevo que diga por que y declare quemado lo que se haya visto.
+#
+# Esto NO es el PREREGISTRO del holdout: es el umbral de DESARROLLO sobre material `dev`.
+adr: ADR-0043
+# |Δentrada| en puntos. Un punto es 0,00001 en EURUSD (`domain/velas.py`: 100000 puntos por unidad).
+tolerancia_entrada_puntos: 3
+# |Δinstante de llenado| en minutos. El instante del caso ES el llenado
+# (docs/validation/INSTANTE-LLENADO-SALIDA.txt).
+tolerancia_instante_min: 15
+# Puntos por unidad de precio: el `escala` de los datasets eurusd-m1 (data/manifests).
+escala_puntos: 100000
+# Sobre el conjunto de MEDIDA.
+umbral_cobertura: "0.70"
+umbral_precision: "0.60"
+# Construccion: donde se ajusta el motor. Medida: se mide una vez por version de la spec; si la
+# spec cambia despues de ver el resultado de mayo, mayo pasa a construccion y queda escrito.
+# Marzo entra en medida cuando llegue.
+construccion: ["2026-04", "2026-08"]
+medida: ["2026-05"]

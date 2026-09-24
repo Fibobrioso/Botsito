@@ -1,0 +1,6 @@
+DATASETS: eurusd-m1-2026-04-990211bd, eurusd-m1-2026-05-03d048ed, eurusd-m1-2026-08-0d42230e
+2026-04: instante: 34/35 = 97.1 % | -30 min: 2/35 = 5.7 % | +30 min: 4/35 = 11.4 %
+2026-05: instante: 17/17 = 100.0 % | -30 min: 0/17 = 0.0 % | +30 min: 1/17 = 5.9 %
+2026-08: instante: 42/42 = 100.0 % | -30 min: 3/42 = 7.1 % | +30 min: 7/42 = 16.7 %
+total: instante: 93/94 = 98.9 % | -30 min: 5/94 = 5.3 % | +30 min: 12/94 = 12.8 %
+== VEREDICTO (regla fijada): LLENADO
