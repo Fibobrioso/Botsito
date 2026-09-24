@@ -36,10 +36,10 @@ tras validación del usuario. `main` siempre estable y etiquetado `stable/F##`. 
 FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 27 min, video v6): el cuestionario entero respondido -preguntas, adicionales y confirmaciones-, y las doce ambiguedades A-1..A-12 RESUELTAS con feedback del trader. El etiquetado de casos lo entrega el trader como backtest: MAYO llego el 2026-09-11 (68 operaciones, en el corpus) y JUNIO queda DESCARTADO por decision del consultor el 2026-09-12, asi que la biblioteca de casos se construye solo con mayo: 19 dias, de los que 6 son `dev` y 13 holdout. F12 cerrada en main el 2026-09-12 (stable/F12). Siguiente: F13, y F14 en cuanto el consultor decida el reparto de mayo y que hacer con la exposicion del holdout
 
 ## Current Feature
-NINGUNA ABIERTA. `trabajo/criterio-fidelidad` quedo VALIDADA y cerrada en `main` el 2026-09-24: tag `stable/F14-criterio-fidelidad`, informe docs/validation/CRITERIO-FIDELIDAD.md, ADR-0043. EN ESPERA, la respuesta del trader sobre A-18 (Next Action 15). LO SIGUIENTE es el punto 19 de Next Action: el motor, primera regla, el sesgo H4 (RN-003), con test contra velas y sin tocar mayo.
+EN CURSO: `trabajo/motor-sesgo-h4` (Next Action 19): la primera regla del motor, el sesgo H4 (RN-003), con las cuatro decisiones del consultor en ADR-0044 -ambiguo, insuficiente con tope, fijado al abrir la sesion, ruptura por poco que sea- y A-34 abierta. Sin tocar mayo. Informe docs/validation/MOTOR-SESGO-H4.md.
 
 ## Current Branch
-main
+trabajo/motor-sesgo-h4
 
 ## Stable Main State
 a7bf86b · merge de `trabajo/criterio-fidelidad` (tag `stable/F14-criterio-fidelidad`), sobre `stable/F14-casos-agosto-abril` (4463019). ADR-0043: el criterio de fidelidad en desarrollo, fijado antes del motor -la operacion como unidad; empareja dia, sesion y direccion con tolerancias de entrada y de instante de llenado, uno a uno; cobertura y precision; construccion abril y agosto, medida mayo; umbral de desarrollo-, con sus cifras en `knowledge/cases/criterio_fidelidad.yaml` y su funcion pura en `src/botsito/cases/criterio_fidelidad.py`, sin motor. El instante del xlsx es el LLENADO, medido con control (`scripts/instante_llenado.py`). `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones.
@@ -359,6 +359,7 @@ evidencia de v6 que el consultor acepto:
 | A-31 | el stop entero de una entrada que se activo sin ruptura | F21, F22 | ABIERTA, PREGUNTA (2026-09-17), sesion 2: si gasta intento. La spec corre con que si -cuesta el riesgo entero y el trader no lo eximio- y con que la salida en rojo sin stop no; las dos son lectura nuestra |
 | A-33 | tres ganadoras que cierran por debajo de 3R | F20, F24, F26 | en la sesion 1 dijo «sin toma de parciales y que tiene que llegar al ratio 1.3 si o si» (v6 0:17:07), pero hay TRES ganadoras que CIERRAN por debajo de 3R en DOS meses independientes: 2,50 en agosto, 2,57 y 2,94 en abril. `maxTP` es el precio de CIERRE -medido: `== avgClosePrice` 17 de 17-, asi que no es que no llegaran: es que cerraron ahi |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | F19, F20 | ABIERTA, PREGUNTA (2026-09-17), sesion 2: si el nivel que el trader ve romperse con mecha en v4 0:53:23 es la liquidez de M15 (RN-004, cuerpo) o un nivel de M1. La pantalla no lo dice: la linea no lleva etiqueta |
+| A-34 | vela H4 previa que rompe ambos extremos | F18 | ABIERTA, PREGUNTA (2026-09-24, ADR-0044): RN-003 no dice que sentido toma el sesgo si la vela previa rompe los dos extremos de la anterior; mientras no lo diga el trader, el sesgo es AMBIGUO en esa sesion y no se opera |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los <!-- cifra-congelada: la sesion 1 ya se celebro -->
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.

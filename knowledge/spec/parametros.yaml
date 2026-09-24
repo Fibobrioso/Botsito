@@ -328,6 +328,22 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-8eccf5c0
+  - nombre: sesgo_h4_tope_velas
+    categoria: ejecucion
+    tipo: entero
+    unidad: velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo
+    descripcion: >-
+      tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la
+      ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay
+      ninguna, el sesgo es INSUFICIENTE y no se opera. PROVISIONAL: es una decision del
+      proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
+      `estrategia`, cuyos valores solo los dice el trader
+    estado: CONFIRMED
+    valor: 60
+    consumido_por: [F18]
+    fuente:
+      tipo: decision
+      id: ADR-0044
   - nombre: zona_control_criterio_completada
     categoria: estrategia
     tipo: enum

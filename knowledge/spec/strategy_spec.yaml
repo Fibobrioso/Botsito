@@ -674,8 +674,12 @@ reglas:
     cuando: abre una sesion operativa
     entonces: >-
       el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela
-      rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia
-    parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura]
+      rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
+      AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
+      de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
+      rompe los dos extremos, el sesgo es AMBIGUO; si ninguna de las ultimas sesgo_h4_tope_velas
+      rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+    parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
     cita: fb-2026-09-09-sesion-01-8eccf5c0
     literal: >-
       si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
@@ -683,7 +687,11 @@ reglas:
     notas: >-
       el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
       deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO
-      huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017)
+      huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017). En esas
+      semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo
+      AMBIGUO espera a A-34, y el tope y lo demas los decide ADR-0044.
+      Una ruptura de uno o dos puntos puede serlo en la serie del trader y no en la nuestra
+      (A-16)
     forma:
       cuando:
         todos_de:
@@ -696,6 +704,7 @@ reglas:
         hace:
           - fijar: {hecho: sesgo, a: sentido_de_la_ruptura}
     clase: disparador
+    decision: ADR-0044
     estado: VIGENTE
 
   # ---------------------------------------------------------------- liquidez y entrada

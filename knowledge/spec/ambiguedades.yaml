@@ -723,3 +723,21 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-34
+    titulo: vela H4 previa que rompe ambos extremos
+    pregunta: >-
+      vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo
+      cambia si la vela rompe el extremo de la anterior, y que basta con la mecha; no dijiste que
+      pasa si la rompe por arriba y por abajo. Mientras no lo digas, el bot da el sesgo por
+      AMBIGUO en esa sesion y no opera (ADR-0044)
+    resuelve_en: [F18]
+    evidencia:
+      - ev-v3-000531-4d6375b6
+      - ev-v3-000824-c81f03eb
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
