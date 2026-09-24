@@ -83,11 +83,13 @@ class Pasaje:
     segmentos: tuple[Segmento, ...]
 
 
-def coincidencias(segmentos: list[Segmento]) -> list[tuple[str, int, int]]:
+def coincidencias(
+    segmentos: list[Segmento], patrones: tuple[tuple[str, re.Pattern[str]], ...] | None = None
+) -> list[tuple[str, int, int]]:
     """`(termino, t0_ms, t1_ms)` de cada coincidencia, buscando sobre el texto de TODA la
     transcripcion unido con un espacio, para que una frase partida entre dos segmentos tambien
     case. El intervalo va del inicio del segmento donde empieza al final del segmento donde
-    acaba."""
+    acaba. `patrones` son los de A-18 si no se pasan otros."""
     inicios: list[int] = []
     partes: list[str] = []
     pos = 0
@@ -105,32 +107,59 @@ def coincidencias(segmentos: list[Segmento]) -> list[tuple[str, int, int]]:
         return i
 
     salida: list[tuple[str, int, int]] = []
-    for termino, pat in PATRONES:
+    for termino, pat in PATRONES if patrones is None else patrones:
         for m in pat.finditer(texto):
             a, b = indice(m.start()), indice(m.end() - 1)
             salida.append((termino, segmentos[a].t0_ms, segmentos[b].t1_ms))
     return salida
 
 
-def pasajes(transcripcion: str, segmentos: list[Segmento]) -> list[Pasaje]:
+def pasajes(
+    transcripcion: str,
+    segmentos: list[Segmento],
+    patrones: tuple[tuple[str, re.Pattern[str]], ...] | None = None,
+    maximo_ms: int | None = None,
+) -> list[Pasaje]:
     """Ventana de +-45 s alrededor de cada coincidencia; las que se solapan se unen en una. El
-    pasaje trae todos los segmentos que tocan su ventana, sin recortar."""
+    pasaje trae todos los segmentos que tocan su ventana, sin recortar.
+
+    Para A-18 (`patrones` y `maximo_ms` en None) el comportamiento es el de siempre. Con
+    `maximo_ms`, una union mas larga se CORTA en pasajes consecutivos de como mucho `maximo_ms`
+    desde su inicio; cada trozo lista SUS coincidencias -las que empiezan dentro de el- y trae los
+    segmentos que lo tocan. Un trozo sin ninguna coincidencia propia no se emite."""
+    usados = PATRONES if patrones is None else patrones
+    orden_terminos = [t for t, _ in usados]
     ventanas = sorted(
-        (max(0, t0 - VENTANA_MS), t1 + VENTANA_MS, termino)
-        for termino, t0, t1 in coincidencias(segmentos)
+        (max(0, t0 - VENTANA_MS), t1 + VENTANA_MS, termino, t0)
+        for termino, t0, t1 in coincidencias(segmentos, usados)
     )
-    unidas: list[tuple[int, int, dict[str, int]]] = []
-    for a, b, termino in ventanas:
+    unidas: list[tuple[int, int, list[tuple[str, int]]]] = []
+    for a, b, termino, t0 in ventanas:
         if unidas and a <= unidas[-1][1]:
-            ua, ub, cuenta = unidas[-1]
-            cuenta[termino] = cuenta.get(termino, 0) + 1
-            unidas[-1] = (ua, max(ub, b), cuenta)
+            ua, ub, lista = unidas[-1]
+            lista.append((termino, t0))
+            unidas[-1] = (ua, max(ub, b), lista)
         else:
-            unidas.append((a, b, {termino: 1}))
+            unidas.append((a, b, [(termino, t0)]))
+    trozos: list[tuple[int, int, list[tuple[str, int]]]] = []
+    for a, b, lista in unidas:
+        if maximo_ms is None or b - a <= maximo_ms:
+            trozos.append((a, b, lista))
+            continue
+        inicio = a
+        while inicio < b:
+            fin = min(inicio + maximo_ms, b)
+            propias = [(tm, t0) for tm, t0 in lista if inicio <= t0 < fin or (fin == b and t0 == b)]
+            if propias:
+                trozos.append((inicio, fin, propias))
+            inicio = fin
     salida = []
-    for a, b, cuenta in unidas:
+    for a, b, lista in trozos:
         dentro = tuple(s for s in segmentos if s.t1_ms >= a and s.t0_ms <= b)
-        orden = {t: cuenta[t] for t in TERMINOS if t in cuenta}
+        cuenta: dict[str, int] = {}
+        for termino, _ in lista:
+            cuenta[termino] = cuenta.get(termino, 0) + 1
+        orden = {t: cuenta[t] for t in orden_terminos if t in cuenta}
         salida.append(Pasaje(transcripcion, a, b, orden, dentro))
     return salida
 
