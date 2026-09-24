@@ -1,0 +1,338 @@
+INTEGRIDAD tr-v1-large-v3-int8-float16-bbd8a931 cruda.jsonl sha256 bbd8a931fdba7e00287d0ad9bca864595bac7d8ecf891e0c6c815c53c8e84b2f = manifiesto: OK
+INTEGRIDAD tr-v2-large-v3-int8-float16-28391c2c cruda.jsonl sha256 28391c2c9e5e66edbcdb663e9aee03bf7afde03036a4ea10b0e8455d212578c8 = manifiesto: OK
+INTEGRIDAD tr-v3-large-v3-int8-float16-270a4851 cruda.jsonl sha256 270a48517e6f57f5449913091937a95e5a3e4f4d32b771aaa8f690078975902e = manifiesto: OK
+INTEGRIDAD tr-v4-large-v3-int8-float16-a8d1bccc cruda.jsonl sha256 a8d1bccc209272ed91f6b9fcf3e18bb4ac2ff2b048c99c43606fe1a57b2402ed = manifiesto: OK
+INTEGRIDAD tr-v5-large-v3-int8-float16-3c6fbb57 cruda.jsonl sha256 3c6fbb578746456e0830b162f6cf81222dbfa8295173b6f6de36faac555ab980 = manifiesto: OK
+== A-35: 32 terminos
+=== A-35 · PASAJE 1 | tr-v1-large-v3-int8-float16-bbd8a931 | 0:14:09-0:15:42 | vela contraria x1
+[0:14:08-0:14:13] #185 pasar si llega aquí o rompe entonces vamos ahí bajando el límite bajando el límite y este sería
+[0:14:13-0:14:21] #186 pues la el último pico en este en este retroceso complejo entonces esperaría yo a que o sea va con
+[0:14:21-0:14:26] #187 todas las condiciones de que va a dar uno de los esquemas de entrada que sería que o sea ya
+[0:14:26-0:14:33] #188 Ya sabemos, o bien el precio hace esto, o bien el precio me rompe de esa manera.
+[0:14:35-0:14:41] #189 Y cuando se desarrolle esta zona de control que no haga mucho ruido, o sea, sea una zona limpia, por así decirlo, sin mucho ruido.
+[0:14:42-0:14:46] #190 Entonces, esperamos a que genere el breaker y aquí se activaría el order limit, ¿ok?
+[0:14:48-0:14:54] #191 Obviamente, pues, tenemos que ya definir, o sea, antes que nada ya ir definiendo también lo que sería, o sea, ya puedes definir como tal.
+[0:14:54-0:14:57] #192 Desde el punto más abajo te genera la vela contraria
+[0:14:57-0:15:01] #193 Se puede definir, pues, el stop loss y demás
+[0:15:01-0:15:05] #194 Entonces, aquí sería mi stop loss, ¿vale?
+[0:15:06-0:15:07] #195 Ahora, ¿qué ocurre?
+[0:15:07-0:15:13] #196 Mira, yo, honestamente, ya como había comentado en anteriores videos
+[0:15:13-0:15:18] #197 El precio, cuando me genera estos dos esquemas que yo busco en estos dos esquemas
+[0:15:18-0:15:22] #198 Que el precio usualmente genere rompimiento, retroceda
+[0:15:22-0:15:30] #199 o bien a veces no retrocede y va con una fuerza, o sea, va con fuerza y pues continúa hasta llegar al TP, ¿vale?
+[0:15:30-0:15:38] #200 Pero ¿qué pasa? A veces genera este tipo de retrocesos y bien puede hacer esto, retrocede y continúa subiendo el precio, ¿vale?
+[0:15:39-0:15:45] #201 Pero también ¿qué ocurre? Pues suele hacer como un pequeño retroceso complejo en el cual el precio suele hacer esto.
+=== A-35 · PASAJE 2 | tr-v3-large-v3-int8-float16-270a4851 | 1:02:31-1:04:48 | cierra la vela x1, mínimo estructural x1, a cada lado x1, cuántas velas x1
+[1:02:30-1:02:32] #787 pero es lo que suele hacer el precio
+[1:02:32-1:02:34] #788 que llega aquí, hace un retroceso
+[1:02:35-1:02:35] #789 luego
+[1:02:35-1:02:37] #790 hace esto aquí y rompe
+[1:02:37-1:02:40] #791 o sea, ya
+[1:02:41-1:02:41] #792 invalida el trade
+[1:02:43-1:02:44] #793 entonces
+[1:02:44-1:02:46] #794 la gestión que se podría aplicar sería
+[1:02:46-1:02:48] #795 esa creo yo, o sea, si es que se puede
+[1:02:48-1:02:50] #796 claro, si no, se deja en 0.75
+[1:02:50-1:02:52] #797 y ya está, para este
+[1:02:52-1:02:53] #798 punto de aquí
+[1:02:54-1:02:56] #799 por eso pongo, creo que la idea sería probar
+[1:02:56-1:02:58] #800 sin la toma de parciales, por el momento
+[1:02:58-1:03:01] #801 y pues si se cumple el objetivo
+[1:03:01-1:03:02] #802 o sea, cumple el objetivo
+[1:03:02-1:03:04] #803 o no de ARR
+[1:03:04-1:03:06] #804 luego, en cierre agresivo opcional
+[1:03:06-1:03:08] #805 el vencimiento exacto de la vela H4 operativa
+[1:03:08-1:03:10] #806 este es un muy buen punto
+[1:03:10-1:03:13] #807 y puse que sí
+[1:03:14-1:03:16] #808 o sea, lo ideal sería que
+[1:03:16-1:03:19] #809 cierra la vela de H4
+[1:03:19-1:03:20] #810 operativa, se cierra el trade
+[1:03:20-1:03:22] #811 porque ya la siguiente
+[1:03:22-1:03:24] #812 vela es otro movimiento
+[1:03:24-1:03:26] #813 es otra estructura
+[1:03:26-1:03:28] #814 se va a desarrollar, o sea, su continuidad
+[1:03:28-1:03:30] #815 va a ser de manera diferente, entonces
+[1:03:30-1:03:32] #816 sí, cierre agresivo
+[1:03:33-1:03:34] #817 Sizing geométrico
+[1:03:34-1:03:35] #818 porcentaje, sí, también
+[1:03:36-1:03:38] #819 0.50 o 0.75
+[1:03:38-1:03:40] #820 en fondeo, exacto
+[1:03:40-1:03:42] #821 Break-even técnico, estos los
+[1:03:42-1:03:44] #822 a la entrada de confirmarse en la segunda zona de control
+[1:03:44-1:03:48] #823 en M1, exacto
+[1:03:48-1:03:49] #824 caja de GAN
+[1:03:49-1:03:51] #825 nivel 0 con un bral de invalidación y optimización
+[1:03:51-1:03:53] #826 del stock, sí
+[1:03:54-1:03:55] #827 y vale, esto
+[1:03:55-1:03:57] #828 creo que lo vimos al comienzo
+[1:03:57-1:03:59] #829 en cuanto, bueno, espera
+[1:04:00-1:04:01] #830 ¿cuántas velas a cada lado
+[1:04:01-1:04:03] #831 valían un máximo o mínimo estructural? ¿a qué te
+[1:04:03-1:04:03] #832 refieres con eso?
+[1:04:05-1:04:06] #833 o sea
+[1:04:21-1:04:21] #834 simplemente
+[1:04:25-1:04:26] #835 pues tú en cuenta, o sea, las mechas
+[1:04:26-1:04:27] #836 si te das cuenta
+[1:04:28-1:04:31] #837 por ejemplo, yo lo que hago es
+[1:04:31-1:04:32] #838 esto, ¿vale? mira, con el
+[1:04:32-1:04:34] #839 M1 hay mucho ruido, es por eso que yo
+[1:04:34-1:04:36] #840 no busco, o sea, yo lo que busco es
+[1:04:36-1:04:38] #841 un bus en M1, no busco
+[1:04:38-1:04:40] #842 una entrada, o sea, tomar el flujo de órdenes
+[1:04:40-1:04:42] #843 aquí y demás, porque sé que, mira
+[1:04:42-1:04:44] #844 mira, si yo tomara aquí y aquí,
+[1:04:45-1:04:48] #845 o sea, suponiendo que yo tomara aquí y aquí,
+=== A-35 · PASAJE 3 | tr-v3-large-v3-int8-float16-270a4851 | 1:07:40-1:09:17 | vela contraria x1
+[1:07:35-1:07:41] #868 de ICT, esto sería un order block. Esto de aquí sería tu order block. Esto sería tu bloque de
+[1:07:41-1:07:48] #869 de órdenes entonces es por eso que se considera una vela y lo demás sería ruido pero este es un
+[1:07:48-1:07:57] #870 orden block en m5 o sea el flujo de órdenes está desarrollando en m5 no en m1 por eso que yo por
+[1:07:57-1:08:04] #871 eso consideró tratar de mapear de la manera más limpia y más objetiva posible creo yo porque de
+[1:08:04-1:08:09] #872 esa manera también si lo quieres ver o sea con un flujo de ordenes y trazar tus orden block esto
+[1:08:09-1:08:18] #873 sería como tal entonces si yo yo considero esto aquí porque a veces si consideraría si lo haría
+[1:08:18-1:08:25] #874 así podría ser que tampoco a veces no hay entrada entonces lo ideal sería considerar eso salto a
+[1:08:25-1:08:32] #875 ver la contra si hay un flujo bajista hay una vela contraria marcarlo acá y eso es ahora
+[1:08:39-1:08:49] #876 pero si te sirve o sea yo honestamente si lo ves porque de la manera de city y demás te puede
+[1:08:49-1:08:56] #877 servir creo yo ya te puede servir inclusive para que no te puedas no te puedes a entiendas el por
+[1:08:56-1:09:03] #878 qué a veces te suele invalidar un bloque de órdenes es que si te fijas vas a ver que el
+[1:09:03-1:09:05] #879 el flujo ya no está en M1, sino está en M5
+[1:09:05-1:09:07] #880 y así continuamente. Por ejemplo, si en M5
+[1:09:07-1:09:09] #881 ya te genera nuevamente ese esquema
+[1:09:09-1:09:14] #882 de aquí, si te genera
+[1:09:14-1:09:16] #883 ese esquema en M5
+[1:09:16-1:09:18] #884 pero se llega a romper así, es que
+=== A-35 · PASAJE 4 | tr-v3-large-v3-int8-float16-270a4851 | 1:14:26-1:16:44 | vela contraria x1, marca un mínimo x1, a cada lado x1, cuántas velas x1
+[1:14:26-1:14:28] #962 donde tengo el micrófono pues no
+[1:14:28-1:14:30] #963 no puedo grabar el video
+[1:14:30-1:14:31] #964 entonces
+[1:14:32-1:14:34] #965 mediante este video
+[1:14:34-1:14:35] #966 esta reunión he tratado de explicar
+[1:14:37-1:14:37] #967 respondiendo
+[1:14:37-1:14:39] #968 visualmente también como
+[1:14:39-1:14:41] #969 a estas preguntas
+[1:14:43-1:14:44] #970 dale Cristian mira
+[1:14:47-1:14:49] #971 parece si los escribes cuando estés más libre
+[1:14:49-1:14:54] #972 si no igual vamos a usar el vídeo para rellenar todos los vacíos, pero sería bueno que lo escribas
+[1:14:54-1:15:01] #973 por tu cuenta y dé ejemplos gráficos, un gráfico con justo lo que estás mostrando sería ideal
+[1:15:01-1:15:11] #974 para tenerlo en base de datos y como se llama poder simplemente pasarlo a código. Sí, sí vale
+[1:15:11-1:15:40] #975 Vale, entonces, si quieren que lo escriba, pues es eso, pero, o sea, aquí, o sea, yo lo hice visualmente, o sea, en el video para más o menos que mediante su interpretación de ustedes, pues, consideren cuál sería, o sea, la manera de decir eso, o sea, porque yo puedo poner cuántas velas a cada lado y invalidar un máximo y decir, pues, yo lo que hago es mapear de tal manera la estructura, o sea, como les he mostrado, o sea, como yo les he mostrado, y esta, o sea, un máximo, un mínimo, pues,
+[1:15:40-1:15:59] #976 O bueno, podría responder a esto, si hay un flujo alcista, una vela contraria, pues marca un mínimo si es roja y eso, y al revés, si el flujo es bajista, una vela verde, pues una vela alcista marca un retroceso y eso.
+[1:16:00-1:16:02] #977 y aquí se busca hacer la vela
+[1:16:02-1:16:03] #978 previa del sistema bajista, pues
+[1:16:04-1:16:06] #979 ya lo he mostrado, o sea
+[1:16:07-1:16:08] #980 aquí hay variaciones
+[1:16:08-1:16:09] #981 o sea, aquí hay variaciones
+[1:16:10-1:16:12] #982 pero si quieren hacerlo
+[1:16:12-1:16:13] #983 más factible, o sea
+[1:16:14-1:16:16] #984 también podría, se podría
+[1:16:16-1:16:18] #985 intentar, o sea, no considerar
+[1:16:18-1:16:20] #986 que a veces se envuelva y indirecto
+[1:16:20-1:16:21] #987 o sea, simplemente
+[1:16:21-1:16:23] #988 si la vela anterior es bajista
+[1:16:23-1:16:26] #989 que la otra sea, exista una probabilidad que sea bajista
+[1:16:26-1:16:27] #990 y así, o sea, plantearlo de esa manera
+[1:16:27-1:16:29] #991 y ya, no
+[1:16:29-1:16:33] #992 No tratar de buscar, claro, a ver si envuelve y todo eso para no liarse.
+[1:16:34-1:16:36] #993 Porque también, o sea, en algunos casos se da baja.
+[1:16:36-1:16:37] #994 Y es eso.
+[1:16:39-1:16:42] #995 ¿Qué niveles cuentan como liquidez a ahorrar y con qué prioridad?
+[1:16:43-1:16:44] #996 ¿Qué niveles cuentan?
+[1:16:44-1:16:51] #997 Pues M15, o sea, M15, ¿cuánto debe penetrar esto con mecha?
+=== A-35 · PASAJE 5 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:27:16-0:29:24 | vela cerrada x1, vela contraria x1
+[0:27:15-0:27:24] #455 5 ya perfecto en los puntos y la idea es que claro por ejemplo no sirve a ti ya a ti a mí
+[0:27:24-0:27:30] #456 mí también o sea hay también por el hecho de que más factible es nosotros automáticamente pues
+[0:27:30-0:27:35] #457 ponemos usamos la herramienta o sea había yo sé que hay porque le estaba buscando pero no
+[0:27:35-0:27:41] #458 le ha encontrado con la que sólo bastaba que pongas o sea definas tú tú por ejemplo el precio
+[0:27:46-0:27:51] #459 no importa aquí está el progreso
+[0:27:54-0:28:01] #460 simulando vale entonces tú sabes que aquí el precio te genera un flujo de órdenes bajista
+[0:28:01-0:28:07] #461 está bajista trata entonces ya sabes que aquí la vela contraria pues ya te está diciendo que
+[0:28:07-0:28:14] #462 ese es ese nivel de allí este nivel aquí pues es muy posible o sea yo lo que suelo hacer manualmente
+[0:28:14-0:28:22] #463 es claro una orden un buen límite y voy ahí bajando bajando bajando pero claro para entrar
+[0:28:22-0:28:26] #464 con lotaje pues te tienes que poner a calcular o buscar una calculara y es todo un lío porque
+[0:28:26-0:28:33] #465 es como un scalp y literal o sea tiene que ser rápido con la terminadora en segundo claro
+[0:28:33-0:28:39] #466 entonces defines ahí y allí entonces ya tiene la vela cerrada o sea te da tiempo para pensar y
+[0:28:39-0:28:46] #467 demás entonces bueno entonces no te lo tomaría obviamente o sea pero ya vas como que vale pues
+[0:28:46-0:28:52] #468 siguen manteniendo allí siguen manteniendo allí y obviamente la calculadora esa calculadora lo que
+[0:28:52-0:28:58] #469 hacía es que si tú lo movía para allí pues ya te calculaba o sea conforme tú ibas moviéndole
+[0:28:58-0:28:59] #470 y además el stop loss
+[0:28:59-0:29:01] #471 se iba configurando, el lotaje
+[0:29:01-0:29:04] #472 el tamaño también de la posición de tu cuenta
+[0:29:04-0:29:06] #473 1%, ponías 1%
+[0:29:07-0:29:08] #474 y ahí lo
+[0:29:08-0:29:10] #475 moviendo el SL pues se calculaba
+[0:29:10-0:29:12] #476 entonces ya sé que allí, o sea aquí
+[0:29:12-0:29:13] #477 ya me va a tomar el trade, o sea
+[0:29:13-0:29:15] #478 estaba aquí, de aquí a aquí
+[0:29:15-0:29:16] #479 esta es la última
+[0:29:18-0:29:20] #480 zona de liquidez o de control
+[0:29:20-0:29:21] #481 en la cual busco el breaker
+[0:29:22-0:29:24] #482 y pues ya, o sea
+[0:29:24-0:29:26] #483 aquí está la vela roja, la vela verde
+=== A-35 · PASAJE 6 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:34:22-0:36:01 | vela contraria x1
+[0:34:23-0:34:26] #586 Fue aquí donde me comí, creo, las 7, por así decirlo
+[0:34:26-0:34:28] #587 Las 7 pérdidas
+[0:34:28-0:34:29] #588 Vale, por ejemplo
+[0:34:30-0:34:31] #589 Ahora vamos a ver si era aquí
+[0:34:31-0:34:34] #590 Mira, si nosotros tenemos el vallas bajista
+[0:34:34-0:34:36] #591 La vela anterior, o sea, voy a explicar ese trade
+[0:34:36-0:34:38] #592 Tenemos el vallas salchista
+[0:34:42-0:34:46] #593 Porque la vela anterior no terminó por debajo
+[0:34:46-0:34:51] #594 entonces todavía buscamos operativa alcista todavía todavía esto no se va a desarrollar
+[0:34:51-0:34:59] #595 entonces si nos vamos a m15 pues lo que tenemos es lo siguiente esperamos a que obviamente
+[0:35:01-0:35:07] #596 en m15 buscamos un rivers que de la siguiente manera que se desarrolla aquí en m15 o sea tal
+[0:35:07-0:35:16] #597 cual y ya apenas una manera de identificarlos es la vela contraria o sea estas son un flujo
+[0:35:16-0:35:18] #598 bajista, se desarrolla una vela
+[0:35:18-0:35:19] #599 alcista, entonces ya
+[0:35:20-0:35:22] #600 claramente tienes que, ya marcas
+[0:35:22-0:35:24] #601 la zona de M15
+[0:35:24-0:35:25] #602 y te vas a
+[0:35:25-0:35:26] #603 M1
+[0:35:26-0:35:29] #604 y aquí pues ya buscas
+[0:35:29-0:35:31] #605 por todo lo que sea por debajo
+[0:35:31-0:35:33] #606 0 con cuerpo, la entrada
+[0:35:33-0:35:35] #607 por ejemplo, me voy aquí
+[0:35:36-0:35:37] #608 y aquí que tenemos
+[0:35:37-0:35:39] #609 por ejemplo aquí sería 1-2
+[0:35:39-0:35:41] #610 o sea, esto era 1-2
+[0:35:44-0:35:46] #611 1-2 porque no llevo al 1-3
+[0:35:46-0:35:56] #612 pero protejo a 0.75 y bueno igual me saca entonces pero si nos vamos a m15 o sea
+[0:35:57-0:36:08] #613 todavía no se llega a desarrollar tenemos una ronda pero todavía continuamos espero a que el
+=== A-35 · PASAJE 7 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:44:15-0:45:51 | cierra la vela x1
+[0:44:15-0:44:16] #750 obviamente como es
+[0:44:16-0:44:18] #751 el segundo esquema pues proteges aquí
+[0:44:19-0:44:21] #752 inclusive pues podrías proteger a 0.75
+[0:44:21-0:44:22] #753 bueno, manualmente
+[0:44:22-0:44:24] #754 si lo haces, pues yo lo suelo proteger allí
+[0:44:25-0:44:26] #755 y bueno
+[0:44:26-0:44:28] #756 a ver, expandes hasta el 1.3
+[0:44:28-0:44:29] #757 no sé si se da, pero
+[0:44:29-0:44:31] #758 es eso
+[0:44:32-0:44:35] #759 Aquí viene la condicional de que, por ejemplo
+[0:44:35-0:44:36] #760 Aquí el precio
+[0:44:38-0:44:39] #761 Hace mucha estructura
+[0:44:39-0:44:39] #762 Mira
+[0:44:40-0:44:43] #763 Bueno, no lo voy a tocar, pero yo suelo
+[0:44:43-0:44:44] #764 Inclusive proteger más, ¿vale?
+[0:44:44-0:44:47] #765 O sea, esta entrada, por así decirlo
+[0:44:47-0:44:49] #766 A ver, en el segundo esquema
+[0:44:49-0:44:50] #767 De entrada, si se da
+[0:44:50-0:44:53] #768 Lo respetas allí y te genera la otra zona de control
+[0:44:53-0:44:54] #769 Y luego pones en break even
+[0:44:54-0:44:56] #770 Y te termina sacando en break even
+[0:44:56-0:44:57] #771 O sea, mira
+[0:44:57-0:44:59] #772 Te genera el breaker aquí
+[0:45:00-0:45:06] #773 ya vas a poner el break even allí o sea apenas rompe esto o cierra la vela pues ya proteges y
+[0:45:06-0:45:14] #774 luego pues se te devuelve no llega al 1.3 no llega al 1.3 entonces nada sé que este 3 no se da
+[0:45:14-0:45:21] #775 por experiencia pero aquí tienes otra en m15 tienes liquidez allí ya sabes que se te ha
+[0:45:21-0:45:27] #776 desarrollado o sea en m15 entonces nuevamente buscas entrada y si te das cuenta o sea no hay
+[0:45:27-0:45:33] #777 muchos tres tampoco se aparece que sí pero de por sí o sea manualmente no da muchos trades a lo
+[0:45:33-0:45:42] #778 mucho esos 37 tres consecutivos no es que lo ha dado en y manejando inclusive las dos zonas de
+[0:45:42-0:45:50] #779 sesión o sea de 4 de 7 am a 11 am y de 11 a 3 números a las 7 así sino que ha sido varios días
+[0:45:50-0:45:58] #780 que se han acumulado o sea que no no de por sí nos han dado y se dieron pero por ejemplo aquí
+=== A-35 · PASAJE 8 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:49:15-0:51:41 | ya formado x2, ya se formó x1, ya se ha formado x1, se ha formado x1, se formó x1, en curso x1
+[0:49:07-0:49:16] #817 no se da aquí pero nuevamente pues siguiendo el flujo el flujo que hay entonces se desarrolla en
+[0:49:16-0:49:22] #818 m1 aquí está y se rompe el flujo aquí y pues nada se llega a dar y justo en m15 pues se desarrolla
+[0:49:22-0:49:24] #819 bueno, si te vas a DM15 se llega a desarrollar
+[0:49:24-0:49:26] #820 la vela bajista
+[0:49:26-0:49:27] #821 como tal
+[0:49:28-0:49:30] #822 bueno, aunque al final termina bajista también la
+[0:49:30-0:49:31] #823 vela esta
+[0:49:32-0:49:34] #824 por ejemplo aquí, luego
+[0:49:34-0:49:36] #825 tienes la posibilidad, claro, por ejemplo
+[0:49:36-0:49:38] #826 de tomar otro trade aquí, pero
+[0:49:38-0:49:40] #827 yo no lo hago, o sea, yo cierro
+[0:49:40-0:49:42] #828 la operación, apenas tengo el trade positivo
+[0:49:42-0:49:43] #829 ya no opero más
+[0:49:43-0:49:46] #830 o sea, aunque después haya otros trades
+[0:49:46-0:49:48] #831 con la otra sesión, se den 3 ganadores
+[0:49:48-0:49:49] #832 no lo hago
+[0:49:49-0:49:57] #833 ya, ya, sí, queda claro
+[0:49:57-0:49:58] #834 queda claro
+[0:49:59-0:49:59] #835 sí
+[0:50:00-0:50:18] #836 A ver, siguiente es, cuando marcas la zona de liquidez en M15, ¿tomas el último pico que ya se formó del todo o simplemente el punto más alto de las últimas velas aunque sigan en curso?
+[0:50:23-0:50:31] #837 A más o menos a qué se referiría esa pregunta, o sea, tipo, en M15, o sea, ¿cómo trazo yo en M15 la zona o qué?
+[0:50:31-0:50:34] #838 Sí, sí, definitivamente, o sea, creo que se refiere a eso
+[0:50:34-0:50:36] #839 ¿Cómo trazas el M15? Porque probablemente
+[0:50:36-0:50:38] #840 Imagina que tu pico M15 es el
+[0:50:38-0:50:39] #841 M15 actual, entonces
+[0:50:40-0:50:42] #842 ¿Eso se tomaría como válido o es uno que ya
+[0:50:42-0:50:43] #843 Se ha formado?
+[0:50:44-0:50:46] #844 Ah, o sea, por ejemplo, en este caso
+[0:50:46-0:50:48] #845 Tenemos aquí en M15
+[0:50:48-0:50:49] #846 Uno ya formado
+[0:50:51-0:50:52] #847 Ajá
+[0:50:53-0:50:54] #848 Claro, buscamos, o sea
+[0:50:55-0:50:56] #849 Por encima de este ya formado
+[0:50:56-0:50:58] #850 Buscamos por encima del tray
+[0:50:58-0:51:00] #851 No se da, entonces, pero mira
+[0:51:00-0:51:11] #852 aquí luego se desarrolla ya el 3 es que como puede tratar de ser un poco más claro en esa pregunta
+[0:51:14-0:51:19] #853 a ver nosotros partimos esto por ejemplo sabemos que estamos bajista entonces nosotros lo que
+[0:51:19-0:51:26] #854 buscamos es aquí hay un retroceso alcista sea complejo entonces buscamos que el precio
+[0:51:26-0:51:33] #855 desarrolle primeramente una zona de m15 de liquidez para poder operar si no se desarrolla
+[0:51:33-0:51:38] #856 pues no nos opera entonces pero una vez desarrollado o sea esperamos al que una vez
+[0:51:38-0:51:45] #857 desarrollado esta zona de mx de liquidez se rompa con las condicionales que ya sabemos con cuerpo
+=== A-35 · PASAJE 9 | tr-v4-large-v3-int8-float16-a8d1bccc | 0:57:21-0:59:14 | vela contraria x2
+[0:57:17-0:57:21] #934 buscamos es que hay un flujo en m15 que se desarrolla pero nosotros buscamos a rivers
+[0:57:21-0:57:26] #935 en este caso como estamos cuando operativa alcista buscamos a rivers que se suele dar
+[0:57:26-0:57:31] #936 pero no se suele dar con esa digamos digámoslo así con esa fuerza para que se desarrolle la
+[0:57:31-0:57:38] #937 entrada no se suele dar por ejemplo mira aquí a lo mejor la entrada se dio pero sólo generó
+[0:57:38-0:57:44] #938 esta pequeña vela en m 15 que o sea no generó entrada en nada pero pero así por ejemplo aquí
+[0:57:44-0:57:49] #939 también no sé es algo muy corto digamos así entonces de aquí yo por ejemplo 3 haría desde
+[0:57:49-0:57:57] #940 aquí hasta aquí o sea sólo un papel así considera siempre consideró la mecha a veces en algunos
+[0:57:57-0:58:06] #941 casos supongamos que aquí su mente es aquí entonces yo lo pongo allí no aquí entonces
+[0:58:06-0:58:29] #942 Entonces, la vela contraria para mí, apenas se inicia una vela contraria en un flujo de órdenes, yo ya lo tomo como un punto en el cual yo ya voy marcando, por ejemplo, en ese caso, si sé que la vela MX se me ha desarrollado, yo ya, o sea, no tenemos nada aquí, sé que aquí, entonces yo ya marco y sé que esperaría un breaker en M1 para seguir operando.
+[0:58:29-0:58:31] #943 pero es eso, o sea, es un mapeo muy rápido
+[0:58:31-0:58:33] #944 y muy simple creo yo, no me complico
+[0:58:33-0:58:35] #945 no sé, como, bueno
+[0:58:35-0:58:37] #946 hay gente que, por ejemplo, mapea y busca
+[0:58:37-0:58:38] #947 entradas aquí, aquí, pero es que todo esto es ruido
+[0:58:38-0:58:41] #948 todo esto es ruido, o sea, dentro
+[0:58:41-0:58:43] #949 de aquí, por ejemplo, si nos vamos, si somos
+[0:58:43-0:58:45] #950 más minuciosos inclusive y sabemos en
+[0:58:45-0:58:47] #951 qué temporalidad se está dando, por ejemplo
+[0:58:47-0:58:49] #952 todo, todo esto
+[0:58:49-0:58:49] #953 a ver
+[0:58:51-0:58:53] #954 cuando hay una vela consecutiva
+[0:58:53-0:58:55] #955 o sea, de velas rojas, hay un flujo
+[0:58:55-0:58:56] #956 de órdenes casi limpio, o sea
+[0:58:56-0:58:59] #957 Si nos vamos a M1, casi limpio en M1
+[0:59:01-0:59:03] #958 Ya ves, mira
+[0:59:03-0:59:05] #959 Hay un flujo de órdenes casi limpio en M1
+[0:59:07-0:59:08] #960 Entonces
+[0:59:08-0:59:09] #961 Es eso
+[0:59:10-0:59:11] #962 Yo suelo tomar en cuenta
+[0:59:11-0:59:13] #963 Para el mapeo es la mecha
+[0:59:13-0:59:15] #964 La mecha, o sea, el breaker
+=== A-35 · PASAJE 10 | tr-v4-large-v3-int8-float16-a8d1bccc | 1:07:40-1:09:15 | cierra la vela x1
+[1:07:41-1:07:41] #1148 alcista, ¿vale?
+[1:07:43-1:07:43] #1149 Entonces,
+[1:07:43-1:07:45] #1150 en M1, supongamos que no tenemos,
+[1:07:45-1:07:47] #1151 no sabemos qué se va
+[1:07:47-1:07:53] #1152 desarrollar después pero seguimos usar nosotros la orden de orden límite lo seguimos moviendo
+[1:07:53-1:07:59] #1153 para aquí abajo hasta que se rompa mira por ejemplo aquí es un punto muy importante mira
+[1:07:59-1:08:07] #1154 aquí hay un igual aquí se activaría la entrada esto es lo que me refería aquí se activaría la
+[1:08:07-1:08:14] #1155 la entrada pero qué pasa 1 lo ideal sería proteger a 0.75 pero
+[1:08:17-1:08:25] #1156 bueno te come aquí o sea te come a ver más más objetivos serían o sea si se da esto cerrar apenas
+[1:08:25-1:08:30] #1157 la operación lo más rápido posible se cierra la vela y si no termina por debajo con un rompimiento
+[1:08:31-1:08:35] #1158 cerrar la operación pero va a haber momentos claros que si no protege si demás te lo va a
+[1:08:35-1:08:37] #1159 quitar, pero también existe la posibilidad de que
+[1:08:37-1:08:39] #1160 se dé el trade, o sea, te va a unir
+[1:08:39-1:08:41] #1161 cual, luego retroceda
+[1:08:41-1:08:43] #1162 un poco y se dé, o sea, no llega
+[1:08:43-1:08:45] #1163 a tocar al 0.75 y se dé
+[1:08:45-1:08:47] #1164 el trade, yo prefiero eso, entonces
+[1:08:47-1:08:49] #1165 protejo, pues aquí tengo un stop loss
+[1:08:52-1:08:53] #1166 y ya, pues
+[1:08:53-1:08:55] #1167 continúo, entonces aquí tengo
+[1:08:55-1:08:56] #1168 otro y así
+[1:08:57-1:08:59] #1169 entonces el límite se va actualizando
+[1:08:59-1:09:01] #1170 o sea, el mismo límite se va moviendo
+[1:09:01-1:09:03] #1171 a medida que no se activa
+[1:09:03-1:09:04] #1172 se va desarrollando el precio, sí
+[1:09:04-1:09:06] #1173 Ya, perfecto
+== PASAJES POR AMBIGUEDAD Y TRANSCRIPCION
+A-35 tr-v1-large-v3-int8-float16-bbd8a931: 1
+A-35 tr-v2-large-v3-int8-float16-28391c2c: 0
+A-35 tr-v3-large-v3-int8-float16-270a4851: 3
+A-35 tr-v4-large-v3-int8-float16-a8d1bccc: 6
+A-35 tr-v5-large-v3-int8-float16-3c6fbb57: 0
+A-35 TOTAL: 10
