@@ -57,6 +57,9 @@ RESERVADAS = PARTICIONES_RESERVADAS + PARTICIONES_RESERVADAS_FIDELIDAD
 DIRECTORIO_HOLDOUT = "knowledge/cases/holdout"
 DIRECTORIO_KIT = "knowledge/cases/kit"
 DIRECTORIO_FIDELIDAD = "knowledge/cases/fidelidad"
+# El reparto dev-visto (ADR-0042): material ya visto, todo `dev`, sin sorteo. No tiene particiones
+# reservadas, pero la puerta lo recorre igual: un camino fuera del glob es un camino que nadie mira.
+DIRECTORIO_VISTO = "knowledge/cases/visto"
 # Subcarpeta de material reservado -> particion que la guarda. Explicita en vez de construida
 # con f-strings: una particion nueva que no este aqui se ve en el diff. `DIRECTORIO_FIDELIDAD`
 # NO tiene entrada: hoy sus carpetas solo llevan ASIGNACION -`ventanas.yaml`,
@@ -329,14 +332,15 @@ def leer_fichero(repo: Path, ruta: str, pregunta: str = "") -> str:
 
 
 def repartos_commiteables(repo: Path) -> list[Path]:
-    """Todos los `particiones.yaml` que existen, de los dos caminos, en orden estable.
+    """Todos los `particiones.yaml` que existen, de los TRES caminos (kit, fidelidad y dev-visto,
+    ADR-0042), en orden estable.
 
     Los dos, y por eso esta funcion existe en vez de un glob suelto: un camino que se anada y no
     se agregue aqui deja sus dias reservados invisibles para la puerta, que es un exit 0 que no
     comprueba nada. `tests/unit/test_puerta_holdout.py` lo vigila comparando la union.
     """
     ficheros: list[Path] = []
-    for directorio in (DIRECTORIO_KIT, DIRECTORIO_FIDELIDAD):
+    for directorio in (DIRECTORIO_KIT, DIRECTORIO_FIDELIDAD, DIRECTORIO_VISTO):
         base = repo / directorio
         if base.is_dir():
             ficheros += sorted(base.glob("*/particiones.yaml"))
