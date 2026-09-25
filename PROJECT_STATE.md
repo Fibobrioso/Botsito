@@ -39,7 +39,7 @@ FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 2
 NINGUNA ABIERTA. `trabajo/entrada-marzo` quedo VALIDADA y cerrada en `main` el 2026-09-24: tag `stable/F14-entrada-marzo`, informe docs/validation/ENTRADA-MARZO.md, ADR-0046. Marzo tiene camino, herramienta, ensayo y runbook, y todavia no hay material de marzo. LO SIGUIENTE es el punto 23 de Next Action: la entrada de marzo cuando llegue el libro, por docs/runbooks/ENTRADA-MARZO.md; y en paralelo el punto 22, la reunion con el trader. RN-004 sigue BLOQUEADA por A-21 y A-35.
 
 ## Current Branch
-main
+trabajo/sesion-02
 
 ## Stable Main State
 e2931d9 · merge de `trabajo/entrada-marzo` (tag `stable/F14-entrada-marzo`), sobre `stable/F19-a35-al-trader` (75f60d9). ADR-0046: marzo entra por el camino de fidelidad con sorteo y la misma puerta, lo que caiga en `fidelidad-2` y `fidelidad-3` queda oculto, y su parte `fidelidad-dev` es medicion de desarrollo junto con mayo. Cupos por REGLA fijada antes de ver marzo (`cupos_por_mes`: dev = N/3, `fidelidad-2` la mitad del resto, `fidelidad-3` el resto), artefacto limitado al mes de su id, y el sorteo no se repite nunca. `casos ingerir --artefacto` toma solo los `fidelidad-dev` de un artefacto sorteado, anclado y commiteado. El huso de ADR-0039 §5 es HERRAMIENTA (`scripts/huso_por_velas.py`, cifras en `knowledge/corpus/criterio_huso.yaml`), con control sobre abril: UTC 36/38 frente a Madrid 4/38, coincide con lo declarado. Velas M1 de marzo descargadas, con kit y fidelidad identicos. Ensayo de punta a punta sobre repo sintetico y runbook docs/runbooks/ENTRADA-MARZO.md con sus PARADAS. No hay material de marzo. Mayo sigue sin tocar. `PREREGISTRO.md` intacto, cero autorizaciones.
