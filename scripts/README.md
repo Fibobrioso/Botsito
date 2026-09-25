@@ -11,6 +11,10 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   seed no se teclea: se lee del paquete que ya existe, y si los casos o su reparto salen distintos
   restaura el original. Su uso lo explica `knowledge/cases/kit/README.md` («Si cambia la fecha de
   la sesion»).
+- `sello_make_check.py`: el sello de `make check` (rama `trabajo/blindaje`). `borrar` al empezar y
+  `sellar` al terminar en verde: escribe el hash del arbol estadiado dentro del directorio de git,
+  salvo que haya cambios sin estadiar o ficheros sin seguir. Los hooks `pre-commit` y
+  `pre-merge-commit` rechazan un arbol sin ese sello (`scripts/git-hooks/README.md`).
 - `decodificar_png.py`: decodificador de PNG de biblioteca estandar (`zlib` y `struct`), HERRAMIENTA
   DE MEDIDA de fotogramas, fuera del paquete; su test fabrica sus propios PNG con los cinco filtros
   (`tests/unit/test_decodificar_png.py`). Next Action 4, 2026-09-23.

@@ -7,8 +7,9 @@ commit pasa. Se comprobo en una prueba cruzada el 2026-09-04. Tras cambiar el ho
 ejecutar `make hooks`.
 
 - `pre-commit`: rechaza commits directos en `main` (salvo `BOTSITO_ALLOW_MAIN=1`, que el ritual de
-  cierre EXPORTA para toda la secuencia; quien la necesita es el commit `docs(state)` sobre `main`,
-  NO el merge, porque `git merge --no-ff` no dispara este hook y no existe `pre-merge-commit`);
+  cierre pone pegada al `git commit` del `docs(state)`; el merge no la necesita, porque
+  `git merge --no-ff` no dispara este hook); **rechaza un arbol sin el sello de `make check`**
+  (rama `trabajo/blindaje`, abajo);
   rechaza modificar, renombrar o borrar `*.yaml` bajo `knowledge/evidence/`,
   `knowledge/feedback/`, `data/manifests/` (F15), `knowledge/corpus/transcripciones/` (F04) y
   `knowledge/corpus/fotogramas/` (F05)
@@ -17,8 +18,25 @@ ejecutar `make hooks`.
   los contratos de importacion con `uv run --no-sync lint-imports` (sin tocar el entorno: un
   proceso largo, como una transcripcion en la GPU, puede tener abierto el ejecutable).
 
+- `pre-merge-commit`: el que SI dispara `git merge` cuando crea el commit sin conflictos (git >= 2.24,
+  medido con git 2.55 el 2026-09-25; hasta entonces este README decia que no existia). Solo comprueba
+  el sello, sin mirar la rama. Si rechaza, el merge queda a medias: `git merge --abort`, o
+  `make check` sobre el arbol fusionado y `BOTSITO_ALLOW_MAIN=1 git commit --no-edit`.
+
+**El sello** (`scripts/sello_make_check.py`). `make check` borra el sello al empezar y, si termina en
+verde, escribe el hash del arbol ESTADIADO (`git write-tree`) en `git rev-parse --git-path
+botsito-sello`, dentro del directorio de git. No sella si hay cambios sin estadiar o ficheros sin
+seguir fuera de `.gitignore`: lo avisa. Los dos hooks comparan su `git write-tree` con el sello, asi
+que tambien cubren `git commit -a` y `--amend`. `cherry-pick` y `rebase` no pasan por `pre-commit`:
+no los cubre. El bloque del sello es identico en los dos hooks (lo comprueba
+`tests/unit/test_sello_make_check.py`).
+
+**Instalacion, un solo comando desde la raiz:** `make hooks`. Hay que repetirlo cada vez que cambia un
+hook, y la primera vez despues de esta rama.
+
 La copia la hace `scripts/instalar_hooks.py` (Python, no `cp`/`chmod`): el `make` de Windows
 ejecuta las recetas con `cmd.exe` desde PowerShell.
 
-Los hooks son una comodidad local, no una garantia: se saltan con `--no-verify`. La garantia son los
+Los hooks son una comodidad local, no una garantia: se saltan con `--no-verify`, que esta PROHIBIDO
+(`CLAUDE.md`). La garantia son los
 tests en CI (`tests/contract/`), que comprueban el indice y, desde F06/F09, el historial de git.

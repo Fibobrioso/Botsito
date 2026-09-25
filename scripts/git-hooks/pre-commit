@@ -3,13 +3,14 @@
 # 1. Nunca se commitea directamente en main. El ritual de merge exporta BOTSITO_ALLOW_MAIN=1.
 # 2. Evidencia, feedback, manifiestos de datos, de transcripciones y de fotogramas son inmutables: modificar,
 #    renombrar o borrar sus *.yaml se rechaza.
+# 1b. El arbol del commit tiene que tener el sello de un make check en verde (trabajo/blindaje).
 # 3. Los contratos de importacion se comprueban antes de cada commit (si hay pyproject.toml).
 #    `uv lock --check` + `uv run --no-sync`: el hook nunca reescribe uv.lock ni el entorno dentro
 #    de un commit (un `--locked` con sync falla si otro proceso del proyecto, p. ej. una
 #    transcripcion en la GPU, tiene abierto el ejecutable); si uv no esta en PATH, el commit se
 #    rechaza en vez de saltarse la comprobacion.
-# Este hook es defensa local: --no-verify o reescribir el historial lo saltan. La garantia real
-# son los tests de historial en CI (ADR-0003).
+# Este hook es defensa local: --no-verify o reescribir el historial lo saltan, y --no-verify esta
+# PROHIBIDO (CLAUDE.md). La garantia real son los tests de historial en CI (ADR-0003).
 # Nota: la salida se captura por tuberia, no con >/dev/null: en Git Bash de Windows,
 # lint-imports devuelve 1 al escribir en /dev/null.
 branch=$(git symbolic-ref --short HEAD 2>/dev/null)
@@ -18,6 +19,34 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
   echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
   exit 1
 fi
+# --- sello de make check (inicio): identico en pre-commit y pre-merge-commit ---
+# El arbol que se commitea tiene que ser el que `make check` probo en verde: `make check` escribe
+# su hash (git write-tree) en el sello solo si termina en verde y no hay cambios sin estadiar ni
+# ficheros sin seguir (scripts/sello_make_check.py). Aqui se compara con el arbol de ESTE commit,
+# que en un `git commit -a` o un `--amend` es el que git va a escribir de verdad.
+nombre=${0##*/}
+arbol=$(git write-tree 2>/dev/null)
+fichero_sello=$(git rev-parse --git-path botsito-sello 2>/dev/null)
+sello=""
+if [ -n "$fichero_sello" ] && [ -f "$fichero_sello" ]; then
+  sello=$(head -n 1 "$fichero_sello")
+fi
+if [ -z "$arbol" ] || [ "$arbol" != "$sello" ]; then
+  echo "$nombre: rechazado. El arbol que vas a commitear (${arbol:-desconocido}) no tiene un make check en verde." >&2
+  if [ -n "$sello" ]; then
+    echo "  El ultimo make check en verde sello otro arbol ($sello): algo cambio despues." >&2
+  else
+    echo "  No hay sello: make check no ha terminado en verde sobre lo estadiado." >&2
+  fi
+  echo "  Estadia exactamente lo que vas a commitear y ejecuta:  make check > make-check.log 2>&1" >&2
+  echo "  Si termina en verde, sella el arbol; despues repite el commit. --no-verify esta prohibido (CLAUDE.md)." >&2
+  if [ "$nombre" = "pre-merge-commit" ]; then
+    echo "  El merge queda a medias: o  git merge --abort,  o  make check > make-check.log 2>&1  sobre el" >&2
+    echo "  arbol fusionado y despues  BOTSITO_ALLOW_MAIN=1 git commit --no-edit  (en main)." >&2
+  fi
+  exit 1
+fi
+# --- sello de make check (fin) ---
 # Rutas sin entrecomillar (core.quotepath=false) y separadas por tabulador: un nombre con
 # acento o espacio no se cuela.
 for dir in knowledge/evidence knowledge/feedback data/manifests knowledge/corpus/transcripciones knowledge/corpus/fotogramas; do

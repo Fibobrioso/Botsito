@@ -1,0 +1,35 @@
+#!/bin/sh
+# Hook local (copiado a .git/hooks por `make hooks`, ADR-0003). Rama trabajo/blindaje, 2026-09-25.
+# `git merge` que crea un commit sin conflictos NO dispara pre-commit, sino este (git >= 2.24,
+# medido con git 2.55). Solo comprueba el sello: el merge del ritual va a main SIN
+# BOTSITO_ALLOW_MAIN, asi que aqui no se mira la rama. Si el merge tiene conflictos, se cierra con
+# `git commit`, y ese pasa por pre-commit.
+# --- sello de make check (inicio): identico en pre-commit y pre-merge-commit ---
+# El arbol que se commitea tiene que ser el que `make check` probo en verde: `make check` escribe
+# su hash (git write-tree) en el sello solo si termina en verde y no hay cambios sin estadiar ni
+# ficheros sin seguir (scripts/sello_make_check.py). Aqui se compara con el arbol de ESTE commit,
+# que en un `git commit -a` o un `--amend` es el que git va a escribir de verdad.
+nombre=${0##*/}
+arbol=$(git write-tree 2>/dev/null)
+fichero_sello=$(git rev-parse --git-path botsito-sello 2>/dev/null)
+sello=""
+if [ -n "$fichero_sello" ] && [ -f "$fichero_sello" ]; then
+  sello=$(head -n 1 "$fichero_sello")
+fi
+if [ -z "$arbol" ] || [ "$arbol" != "$sello" ]; then
+  echo "$nombre: rechazado. El arbol que vas a commitear (${arbol:-desconocido}) no tiene un make check en verde." >&2
+  if [ -n "$sello" ]; then
+    echo "  El ultimo make check en verde sello otro arbol ($sello): algo cambio despues." >&2
+  else
+    echo "  No hay sello: make check no ha terminado en verde sobre lo estadiado." >&2
+  fi
+  echo "  Estadia exactamente lo que vas a commitear y ejecuta:  make check > make-check.log 2>&1" >&2
+  echo "  Si termina en verde, sella el arbol; despues repite el commit. --no-verify esta prohibido (CLAUDE.md)." >&2
+  if [ "$nombre" = "pre-merge-commit" ]; then
+    echo "  El merge queda a medias: o  git merge --abort,  o  make check > make-check.log 2>&1  sobre el" >&2
+    echo "  arbol fusionado y despues  BOTSITO_ALLOW_MAIN=1 git commit --no-edit  (en main)." >&2
+  fi
+  exit 1
+fi
+# --- sello de make check (fin) ---
+exit 0

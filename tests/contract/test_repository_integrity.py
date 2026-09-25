@@ -43,6 +43,9 @@ IGNORED_ALLOWLIST = (
 # Hojas de sesion en Word, en la raiz: las genera `botsito kit hoja` desde el paquete del kit
 # (F10) y se rellenan a mano; la fuente versionada es el paquete, no el binario.
 IGNORADOS_EN_RAIZ = (".docx",)
+# La salida de `make check` va a este fichero (CLAUDE.md) y se ignora desde la rama
+# `trabajo/blindaje`: si no, el sello de make check nunca se escribiria. Nombre exacto, en la raiz.
+IGNORADOS_EXACTOS_EN_RAIZ = ("make-check.log",)
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -129,6 +132,8 @@ def test_no_unexpected_ignored_paths(repo: Path) -> None:
         limpio = p.strip('"').rstrip("/")
         partes = limpio.split("/")
         if len(partes) == 1 and limpio.lower().endswith(IGNORADOS_EN_RAIZ):
+            return True
+        if len(partes) == 1 and limpio in IGNORADOS_EXACTOS_EN_RAIZ:
             return True
         return any(a.rstrip("/") in partes for a in IGNORED_ALLOWLIST)
 

@@ -2,7 +2,12 @@
 UV ?= uv
 export PYTHONHASHSEED = 0
 
-.PHONY: sync hooks check lint types test contracts regress state config corpus knowledge
+.PHONY: sync hooks check lint types test contracts regress state config corpus knowledge desellar sellar
+
+# El orden de `check` importa: `desellar` primero y `sellar` el ultimo, y `make` para en el primer
+# objetivo que falla, asi que el sello solo se escribe con todo en verde. Sin paralelismo: con
+# `-j`, `sellar` podria escribir el sello antes de que acabaran los tests.
+.NOTPARALLEL:
 
 sync:
 	$(UV) sync --locked --group dev
@@ -44,7 +49,16 @@ knowledge:
 corpus:
 	$(UV) run botsito corpus check --hashes
 
-check: lint types contracts test state config knowledge
+# El sello (scripts/sello_make_check.py, rama trabajo/blindaje): el hash del arbol ESTADIADO que
+# acaba de pasar en verde. El hook de pre-commit rechaza un arbol sin sello. No sella si hay
+# cambios sin estadiar o ficheros sin seguir: lo avisa, y el commit se rechazara.
+desellar:
+	$(UV) run python scripts/sello_make_check.py borrar
+
+sellar:
+	$(UV) run python scripts/sello_make_check.py sellar
+
+check: desellar lint types contracts test state config knowledge sellar
 
 # Regresion completa: en F01 equivale a check; desde F14 anade la biblioteca de casos.
 regress: check
