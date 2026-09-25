@@ -144,6 +144,26 @@ está. El criterio:
 SUSTITUIDA PORQUE SUGERIA RESPUESTA». Con él se conservan las medidas y el historial que llevaba.
 El estado de ninguna cambia: A-24 sigue DECIDIDA (ADR-0045) y las demás, ABIERTAS.
 
+## 6. El runbook de la sesión
+
+`docs/runbooks/SESION-DE-PREGUNTAS.md`, que no existía. Consolida los pasos repartidos entre
+ADR-0011 §8, ADR-0012 §7, ADR-0022 §7, ADR-0023 §2, `knowledge/cases/kit/README.md` y el informe
+de la sesión 01, para una sesión **solo de preguntas**: sin `kit build`, sin paquete y sin casos.
+Lleva las cuatro reglas del consultor y lo que hace Aleks antes, durante y después.
+
+**Lo que añade la consolidación y no estaba escrito en ningún sitio:**
+- **Comprobar que el día de la sesión no es reservado**, con una línea que imprime solo `True` o
+  `False` sobre `casos_ocultos`. Es la lección de v6, cuyo día resultó reservado y hoy está
+  retirado (ADR-0041). Se probó con una fecha fuera de todo el material, así que no revela nada;
+  y los 34 ids ocultos llevan la fecha ISO, que es lo que la comprobación busca.
+- **Dónde va la hoja**: se genera en la raíz del repositorio, que **no es un sitio commiteable**
+  (`/*.docx` en `.gitignore`), como la de la sesión 01. Se versionan su fuente
+  (`ambiguedades.yaml`) y su orden (el script). La hoja rellenada va a
+  `corpus/…/Sesiones/<sesion>/`, que tampoco se versiona y entra por el inventario.
+
+Todos los comandos del runbook se comprobaron contra la CLI (`feedback new`, `corpus transcribe`,
+`corpus frames extract`, `corpus inventory`).
+
 ## Estado
 
 EN CURSO. Cada sección entra con su commit.
