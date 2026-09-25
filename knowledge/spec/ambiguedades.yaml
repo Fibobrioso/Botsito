@@ -319,8 +319,12 @@ ambiguedades:
   - id: A-18
     titulo: base sobre la que se mide el objetivo 1:3
     pregunta: >-
-      Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para
-      calcularlo?
+      ¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop
+      en dos tiempos: ¿cómo funciona eso?
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para
+    # calcularlo?"
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿el 1:3 se mide sobre la caja completa o sobre la distancia hasta el stop, que es la que
@@ -550,7 +554,11 @@ ambiguedades:
     titulo: el flujo de M15 cuando va contra el sesgo de H4
     pregunta: >-
       A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando
-      pasa eso, ¿cómo marcas la liquidez en M15?
+      pasa eso, ¿qué haces?
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando
+    # pasa eso, ¿cómo marcas la liquidez en M15?"
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo
@@ -728,7 +736,12 @@ ambiguedades:
     titulo: el nivel que al romperse con mecha invalida la entrada
     pregunta: >-
       En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea
-      horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea?
+      horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa
+      nada.
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea
+    # horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea?"
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe
@@ -751,8 +764,11 @@ ambiguedades:
   - id: A-33
     titulo: tres ganadoras que cierran por debajo de 3R
     pregunta: >-
-      En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo.
-      ¿Qué pasó en esas operaciones?
+      ¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo.
+    # ¿Qué pasó en esas operaciones?"
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "en la sesion 1 dijiste "sin toma de parciales y que tiene que llegar al ratio 1.3 si o si"
@@ -872,8 +888,12 @@ ambiguedades:
   - id: A-37
     titulo: en qué temporalidad se busca la vela contraria de la que sale el stop
     pregunta: >-
-      Dijiste que el stop sale del punto donde se genera la vela contraria. ¿En qué temporalidad
-      buscas esa vela?
+      Dijiste que el stop se define desde el punto más bajo donde se genera la vela contraria. ¿En
+      qué temporalidad miras esa vela?
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "Dijiste que el stop sale del punto donde se genera la vela contraria. ¿En qué temporalidad
+    # buscas esa vela?"
     resuelve_en: [F21]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-02 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. CONSTA, en v1 0:14:54: "Desde el punto más abajo
@@ -964,8 +984,11 @@ ambiguedades:
   - id: A-41
     titulo: si hay un tope de entradas por día, aparte de los cartuchos
     pregunta: >-
-      Aparte de lo que ya dijiste sobre los intentos por zona, ¿hay algo que limite cuántas entradas
-      haces en un día?
+      ¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas?
+    # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
+    # trabajo/sesion-02):
+    # "Aparte de lo que ya dijiste sobre los intentos por zona, ¿hay algo que limite cuántas
+    # entradas haces en un día?"
     resuelve_en: [F21]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-07 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. El pasaje de v4 0:33:50 -"entonces en un día
@@ -988,3 +1011,30 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-42
+    titulo: con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00
+    pregunta: >-
+      Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
+    resuelve_en: [F14, F26]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor tras K-07,
+    # docs/validation/SESION-02-DECISIONES.md §2 y §8). El grafico de FX Replay es UTC+2 fijo: lo
+    # marca un fotograma de ENERO de v4, fr-v4-9ad0ebb8/1200000 ("14:29:59 UTC+2" sobre "Thu 29 Jan
+    # '26", docs/validation/ABRIL-Y-LA-CAJA.md R0), y huso_grafico vale Etc/GMT-2. El corpus cuenta
+    # el horario de dos maneras: "de 7 a 15 por españa" (v3 0:01:36, ev-v3-000136-6160fcea; la cruda
+    # lo escribe en minuscula) y "De UTC más 2, de 7, claro" (v4 1:14:34, segmento #1280, dentro de
+    # ev-v4-011425-ae028b78, contestando a la pregunta del interlocutor). En verano dan la misma
+    # hora; en invierno se separan una hora: las 07:00 de su grafico son las 06:00 de Madrid.
+    # huso_operativa SE QUEDA en Europe/Madrid hasta que se resuelva (decision del consultor).
+    # BLOQUEANTE DE LA INGESTA DE MESES DE INVIERNO: docs/runbooks/ENTRADA-MARZO.md para antes del
+    # paso e si no esta RESUELTA; en 2026 el horario de verano europeo empieza el 29 de marzo, asi
+    # que casi todo marzo es invierno
+    evidencia:
+      - ev-v3-000136-6160fcea
+      - ev-v4-011425-ae028b78
+    parametros: [huso_operativa]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true

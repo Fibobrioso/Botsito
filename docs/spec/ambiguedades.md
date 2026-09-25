@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (21)
+## ABIERTA (22)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -20,7 +20,7 @@ Afecta a: `break_even_criterio_ruptura`.
 
 ### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
 
-Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para calcularlo?
+¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop en dos tiempos: ¿cómo funciona eso?
 
 Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 
@@ -36,7 +36,7 @@ Afecta a: `cartuchos_reinicio`.
 
 ### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
 
-A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿cómo marcas la liquidez en M15?
+A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿qué haces?
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion
 
@@ -66,13 +66,13 @@ Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop
 
 ### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
 
-En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea?
+En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
 
 Afecta a: `breaker_m1_criterio_ruptura`.
 
 ### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
 
-En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo. ¿Qué pasó en esas operaciones?
+¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
 
 Afecta a: `parciales`, `objetivo_rr`.
 
@@ -90,7 +90,7 @@ Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha
 
 ### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
 
-Dijiste que el stop sale del punto donde se genera la vela contraria. ¿En qué temporalidad buscas esa vela?
+Dijiste que el stop se define desde el punto más bajo donde se genera la vela contraria. ¿En qué temporalidad miras esa vela?
 
 ### A-38 · cuándo se da por anulada una orden límite que el precio deja sin llenar · pregunta
 
@@ -106,7 +106,13 @@ Una vez que la operación está en break even, ¿qué haces con el stop a partir
 
 ### A-41 · si hay un tope de entradas por día, aparte de los cartuchos · pregunta
 
-Aparte de lo que ya dijiste sobre los intentos por zona, ¿hay algo que limite cuántas entradas haces en un día?
+¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas?
+
+### A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 · **BLOQUEANTE** · pregunta
+
+Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
+
+Afecta a: `huso_operativa`.
 
 ## DECIDIDA (6)
 

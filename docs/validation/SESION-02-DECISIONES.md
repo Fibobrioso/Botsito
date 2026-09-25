@@ -168,9 +168,10 @@ Todos los comandos del runbook se comprobaron contra la CLI (`feedback new`, `co
 
 `scripts/hoja_preguntas.py` genera `hoja-sesion-02.docx` desde `knowledge/spec/ambiguedades.yaml`,
 reutilizando las piezas de Word de `botsito.cases.hoja_docx`. Arriba van las tres reglas; después,
-diecinueve preguntas en el orden del consultor, cada una con su id en pequeño, el texto del campo
+diecinueve preguntas en el orden del consultor (veinte desde §8, con A-42), cada una con su id en pequeño, el texto del campo
 `pregunta` tal cual y un recuadro para notas:
-1. Lo primero: A-35, A-21 (sigue siendo bloqueante tras K-04, ahora de RN-008) y A-24.
+1. Lo primero: A-35, A-21 (sigue siendo bloqueante tras K-04, ahora de RN-008), A-24 y, desde §8,
+   A-42.
 2. La liquidez de M15: A-26, A-25 y A-32.
 3. La orden y el stop: A-36, A-37, A-29, A-30 y A-38.
 4. La gestión de la operación: A-18, A-13, A-31, A-40 y A-33.
@@ -182,6 +183,26 @@ hoja. Test propio: `tests/unit/test_hoja_preguntas.py`, con 5 casos.
 
 **Dónde está:** en la raíz del repositorio, que **no es commiteable** (`/*.docx`). Se generó el
 2026-09-25 y se comprobó leyendo su `document.xml`.
+
+## 8. Segunda revisión del consultor: A-42, preguntas y la parada de marzo
+
+- **A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00.** Es la pregunta
+  que K-07 dejó al consultor (§2). Es ABIERTA y **bloqueante de la ingesta de meses de invierno**.
+  La nota lleva:
+  - las dos citas literales, «de 7 a 15 por españa» (v3 0:01:36, en minúscula en la cruda) y «De
+    UTC más 2, de 7, claro» (v4 1:14:34, #1280);
+  - el fotograma de enero que marca UTC+2, `fr-v4-9ad0ebb8/1200000`.
+
+  `huso_operativa` se queda en Europe/Madrid hasta que se resuelva.
+- **`ENTRADA-MARZO.md`, PARADA E0** antes de la ingesta: si A-42 no está RESUELTA, no se ingiere.
+  Los pasos 0 a d pueden avanzar, por decisión del consultor. La parada deja escrito, porque es
+  cierto, que el paso b congela `huso_operativa` en `ventanas.yaml` con la ventana de cada caso, y
+  que el sorteo no se repite (ADR-0046 §5).
+- **Preguntas cambiadas**, con la anterior citada en un comentario («PREGUNTA ANTERIOR, SUSTITUIDA
+  EN LA SEGUNDA REVISION DEL CONSULTOR»): A-26, A-18, A-33, A-41 y A-37. A-32 lleva al final «Si
+  no lo recuerdas, no pasa nada.»
+- **La hoja**: A-42 es la pregunta 4, dentro de «Lo primero», después de A-24. Se regeneró
+  `hoja-sesion-02.docx` en la raíz y su test sigue en verde.
 
 ## Estado
 

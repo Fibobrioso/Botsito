@@ -206,6 +206,17 @@ libro recien declarado, sale con `0` y `== CONTROL: declarado <VEREDICTO> -> COI
 
 ## Paso e · La ingesta de los `fidelidad-dev`
 
+> **PARADA E0 (anadida el 2026-09-25, rama `trabajo/sesion-02`). Si A-42 no esta RESUELTA, no se
+> ingiere.** A-42 pregunta con que reloj cuenta el trader su horario de 07:00 a 15:00. El grafico
+> de FX Replay es UTC+2 fijo, `huso_operativa` sigue en Europe/Madrid, y en invierno las dos
+> lecturas se separan una hora. En 2026 el horario de verano europeo empieza el 29 de marzo, asi
+> que casi todo marzo es invierno, y la ingesta reparte las filas en sesiones con
+> `huso_operativa`. Antes del comando, el estado se mira en `knowledge/spec/ambiguedades.yaml`
+> (entrada `A-42`, campo `estado`). Si no dice `RESUELTA`, la sesion para aqui y lo informa. **Los
+> pasos 0 a d pueden avanzar** (decision del consultor). Que conste: el paso b congela
+> `huso_operativa` en `ventanas.yaml` junto con la ventana de cada caso, y el sorteo no se repite
+> (ADR-0046 §5).
+
 ```
 uv run botsito casos ingerir --material "<LIBRO>" --fecha AAAA-MM-DD --artefacto eurusd-2026-03
 ```
