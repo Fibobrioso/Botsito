@@ -171,6 +171,7 @@ def universo(
     dias_vistos: set[str],
     cobertura: Mapping[str, Sequence[tuple[str, str]]] | None = None,
     solo_con_cobertura: bool = False,
+    solo_mes: str | None = None,
 ) -> tuple[list[Caso], list[Excluido]]:
     """Casos de todos los dias laborables no vistos de los datasets dados (ordenados por dia) y
     los dias excluidos con motivo. Cada dataset se lee UNA vez (hash por fichero).
@@ -178,6 +179,12 @@ def universo(
     `cobertura` acota un mes a lo que cubre el MATERIAL ETIQUETADO del trader (ADR-0036): mes ->
     tramos `(desde, hasta)` de dias del trader. Un mes que no aparece NO se acota, que es lo que
     hace que esto no toque ningun paquete anterior.
+
+    `solo_mes` (ADR-0046) limita el universo a UN mes, el del artefacto de fidelidad: la
+    `cobertura_material` es una sola para todos los meses, y sin esto un artefacto de marzo se
+    llevaria tambien los dias de septiembre. Va DESPUES del filtro de cobertura y con motivo
+    propio, asi que un dia sin cobertura conserva el suyo y un artefacto de un solo mes cubierto
+    -septiembre- sale igual byte a byte.
 
     `solo_con_cobertura` invierte esa regla y es del camino de fidelidad: alli un mes SIN material
     declarado no aporta ningun caso, porque ese camino existe para repartir material etiquetado y
@@ -227,6 +234,11 @@ def universo(
                         f"sin material etiquetado del trader ({dia.isoformat()[:7]} no esta en "
                         f"cobertura_material)",
                     )
+                )
+                continue
+            if solo_mes is not None and dia.isoformat()[:7] != solo_mes:
+                excluidos.append(
+                    Excluido(dia.isoformat(), f"de otro mes que el del artefacto ({solo_mes})")
                 )
                 continue
             # Con CERO tramos `any(...)` es False y el mes entero cae por aqui, que es

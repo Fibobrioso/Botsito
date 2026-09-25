@@ -89,3 +89,19 @@ particiones:
   fidelidad-1: 10
   fidelidad-2: 0
   fidelidad-3: 0
+# LOS CUPOS DE MARZO, UNA REGLA Y NO CIFRAS (ADR-0046, decision del consultor del 2026-09-24,
+# fijada ANTES de ver marzo porque no se sabe cuantos dias tendra). `particiones`, arriba, son los
+# de septiembre y no se tocan: un artefacto usa la regla de su mes si la hay, y si no, esos cupos.
+# N son los casos del universo del artefacto -los laborables del tramo que entran-, y la regla
+# tiene que repartirlos TODOS, porque `asignar` deja fuera en silencio lo que no quepa. Se aplica
+# en orden y con suelo, al sortear, y el resultado queda en el `particiones.yaml` del artefacto:
+#   fidelidad-dev = floor(N/3); fidelidad-2 = floor((N - dev)/2); fidelidad-3 = el resto;
+#   fidelidad-1 = 0, porque es de septiembre.
+# El porque es de criterio: la medicion de desarrollo algo menor, porque mayo ya aporta la suya,
+# y el holdout repartido entre dos puertas.
+cupos_por_mes:
+  "2026-03":
+    - {particion: fidelidad-dev, de: total, fraccion: "1/3"}
+    - {particion: fidelidad-2, de: resto, fraccion: "1/2"}
+    - {particion: fidelidad-3, de: resto, fraccion: "1/1"}
+    - {particion: fidelidad-1, fijo: 0}

@@ -208,7 +208,10 @@ def _cobertura_y_materiales(
 
 
 def config_desde_doc(
-    doc: Any, nombre: str, particiones_validas: Sequence[str] = PARTICIONES
+    doc: Any,
+    nombre: str,
+    particiones_validas: Sequence[str] = PARTICIONES,
+    opcionales: Sequence[str] = CLAVES_OPCIONALES,
 ) -> Config:
     """Valida un doc de config ya leido. Lo usa `cargar_config` con el fichero global y
     `comprobar` con el bloque `config:` CONGELADO dentro del paquete (ADR-0035, enmienda del
@@ -216,6 +219,9 @@ def config_desde_doc(
 
     `particiones_validas` es el juego de nombres del camino que llama; por omision, el del kit.
     El camino de fidelidad (ADR-0036) trae los suyos, porque sus dias no son ciegos.
+
+    `opcionales` son las claves que el camino admite ademas de las 8 exactas. Por omision, las del
+    kit; el camino de fidelidad anade `cupos_por_mes` (ADR-0046), que el kit NO admite.
     """
     esperadas = {
         "simbolo",
@@ -227,10 +233,9 @@ def config_desde_doc(
         "etiquetas",
         "particiones",
     }
-    if not isinstance(doc, dict) or set(doc) - set(CLAVES_OPCIONALES) != esperadas:
+    if not isinstance(doc, dict) or set(doc) - set(opcionales) != esperadas:
         raise KitError(
-            f"{nombre}: claves {sorted(esperadas)} exactamente"
-            f" (opcionales: {sorted(CLAVES_OPCIONALES)})"
+            f"{nombre}: claves {sorted(esperadas)} exactamente (opcionales: {sorted(opcionales)})"
         )
     if not isinstance(doc["simbolo"], str) or not doc["simbolo"].isalnum():
         raise KitError(f"{nombre}: simbolo invalido")
