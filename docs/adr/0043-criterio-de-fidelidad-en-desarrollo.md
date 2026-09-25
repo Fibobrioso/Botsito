@@ -29,6 +29,9 @@ se fija AQUÍ, antes de escribir una línea del motor. Texto literal del consult
 - **Conjuntos:**
   - construcción = abril y agosto;
   - medida = mayo (y marzo cuando entre);
+    > **NOTA del 2026-09-24 (ADR-0046, no reescribe el cuerpo).** «Marzo cuando entre» significa
+    > SOLO su parte `fidelidad-dev`: marzo entra por el camino de fidelidad (ADR-0036), y lo que caiga
+    > en `fidelidad-2` y `fidelidad-3` queda oculto y no es medición de desarrollo.
   - mayo se mide una vez por versión de la spec; si la spec cambia después de ver el resultado de
     mayo, mayo pasa a construcción y queda escrito.
 - **Umbral de desarrollo:** cobertura ≥ 70 % y precisión ≥ 60 % sobre el conjunto de medida. Esto

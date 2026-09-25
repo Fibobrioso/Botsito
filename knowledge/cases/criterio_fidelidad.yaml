@@ -18,6 +18,7 @@ umbral_cobertura: "0.70"
 umbral_precision: "0.60"
 # Construccion: donde se ajusta el motor. Medida: se mide una vez por version de la spec; si la
 # spec cambia despues de ver el resultado de mayo, mayo pasa a construccion y queda escrito.
-# Marzo entra en medida cuando llegue.
+# Marzo entra en medida cuando llegue, y SOLO con su parte `fidelidad-dev` (ADR-0046): entra por
+# el camino de fidelidad, y lo que caiga en `fidelidad-2` y `fidelidad-3` queda oculto.
 construccion: ["2026-04", "2026-08"]
 medida: ["2026-05"]

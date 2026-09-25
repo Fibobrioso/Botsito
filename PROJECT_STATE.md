@@ -39,7 +39,7 @@ FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 2
 NINGUNA ABIERTA. `trabajo/a35-pivote-formado` quedo VALIDADA y cerrada en `main` el 2026-09-24: tag `stable/F19-a35-al-trader`, informes docs/validation/A35-PIVOTE-FORMADO-CLASIFICACION.md y docs/validation/A35-FOTOGRAMAS-RESULTADO.md, sin ADR. A-35 no responde ni en las transcripciones ni en los fotogramas: va al trader con una pregunta abierta y sigue bloqueante. LO SIGUIENTE es el punto 22 de Next Action: la reunion con el trader. RN-004 sigue BLOQUEADA por A-21 y A-35.
 
 ## Current Branch
-main
+trabajo/entrada-marzo
 
 ## Stable Main State
 75f60d9 · merge de `trabajo/a35-pivote-formado` (tag `stable/F19-a35-al-trader`), sobre `stable/F19-a24-decidida` (8451cff). A-35 -cuando un pivote de M15 esta formado- buscada con el metodo congelado de A-24: 10 pasajes de v1-v5, uno responde (v4 #942, «apenas se inicia una vela contraria»), cinco con duda. Aplicada la regla global por el consultor, se miden los fotogramas con criterio congelado antes de abrir: 89 de P4, P5, P6, P8 y P9, verificados contra la extraccion de F05 (`scripts/a35_fotogramas.py`); ninguno lee el cuando -P4 sin grafico, P5 en M1 y con la marca moviendose, P6, P8 y P9 con la marca previa a la ventana y el replay parado-. Tercera rama: A-35 no responde, va al trader con la pregunta abierta del informe, que sustituye a la anterior en `ambiguedades.yaml`, y sigue bloqueante. Consta, sin decidirse, que el pivote lo marca la vela contraria al flujo. Ningun fotograma mostro Analytics ni un agregado. Mayo sigue sin tocar. `PREREGISTRO.md` intacto con blob 52649183..., cero autorizaciones.

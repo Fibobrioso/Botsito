@@ -17,6 +17,12 @@ phase: post-F14 (rama `trabajo/mayo-dev-ingerido`)
    ni su posición. **Nunca se prueban formatos hasta que uno parsee**: eso es aceptar un formato
    sin su huso.
 
+   > **NOTA del 2026-09-24 (ADR-0046, no reescribe el cuerpo). Excepción acotada a este §1 para
+   > el libro de marzo:** Aleks lee SOLO la columna de fechas, UNA vez, antes del sorteo y antes de
+   > declarar el libro, y lo declara el mismo día en `HOLDOUT-EXPOSICIONES.md`. Nada más del fichero.
+   > Resuelve la circularidad entre el §5 -el huso se mide con filas `dev`- y el sorteo, que necesita
+   > el tramo de cobertura antes de que exista ningún `dev`.
+
 2. **Los formatos salen de un vocabulario cerrado** (`corpus.libros.FORMATOS`), hoy de dos:
    `AAAA/MM/DD HH:MM:SS` y `AAAA-MM-DD HH:MM:SS`. No hay DD/MM ni MM/DD: el orden de un formato con
    día y mes intercambiables no se ha demostrado en ningún libro. Un formato nuevo entra en el
