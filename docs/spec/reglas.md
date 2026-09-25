@@ -2,9 +2,9 @@
 
 # Reglas de la operativa
 
-`spec_version 12.2.2` · hash `4e87b2abdce8…`
+`spec_version 13.0.0` · hash `6cb656a08e6a…`
 
-27 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
+28 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
 ## Vigentes
 
@@ -105,7 +105,7 @@
 - **Parametros**: `sesgo_h4_regla`, `anclaje_h4`, `sesgo_h4_criterio_ruptura`, `sesgo_h4_tope_velas`
 - **Cita**: `fb-2026-09-09-sesion-01-8eccf5c0` — *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»*
 - **Decision**: `ADR-0044` — dice mas que su cita, y lo declara
-- **Notas**: el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017). En esas semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo AMBIGUO espera a A-34, y el tope y lo demas los decide ADR-0044. Una ruptura de uno o dos puntos puede serlo en la serie del trader y no en la nuestra (A-16)
+- **Notas**: el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017). En esas semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo AMBIGUO espera a A-34, y el tope y lo demas los decide ADR-0044. Una ruptura de uno o dos puntos puede serlo en la serie del trader y no en la nuestra (A-16). DESDE ADR-0049 (H1) la forma fija `sesgo` tambien a `ambiguo` o `insuficiente` -hasta entonces con esos dos no fijaba nada, y una segunda sesion heredaba el sesgo de la primera, contra ADR-0044 §1-, y la prohibicion de operar con ellos es RN-033. La busqueda hacia atras y el tope van en el predicado `sesgo_h4_al_abrir`, que los nombra; `rompe` sobre la vela previa no los expresaba y la primitiva los hacia por su cuenta
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -117,10 +117,11 @@
         "abre_sesion_operativa": {}
       },
       {
-        "rompe": {
+        "sesgo_h4_al_abrir": {
           "contra": "extremo_de_la_h4_anterior",
           "criterio": "sesgo_h4_criterio_ruptura",
-          "que": "vela_h4_previa"
+          "que": "vela_h4_previa",
+          "tope": "sesgo_h4_tope_velas"
         }
       }
     ]
@@ -185,7 +186,7 @@
 - **Cuando**: el precio se desarrolla por encima de la liquidez de M15 en sesgo alcista, o por debajo de ella en sesgo bajista
 - **Entonces**: no hay entrada
 - **Cita**: `ev-v3-001725-bca9714b` — *«la operativa está por encima no por debajo todo lo que haya por debajo es ruido»*
-- **Notas**: HASTA EL 2026-09-16 ESTA REGLA ESTABA AL REVES: prohibia abrir "por debajo de la liquidez de M15 en sesgo alcista, o al reves", que es justo donde el trader opera, en los dos sentidos (auditoria del 2026-09-13, hallazgo [2]; verificado otra vez en la revision de diseno de la rama de fidelidad). Es el unico filtro direccional de la spec -`sesgo` solo lo consume esta regla- y es un gate, la clase que gana siempre. LO QUE SOSTIENE CADA SENTIDO. Bajista: esta cita (v3 0:17:25) y la que llevaba antes, ev-v3-001600-ed45b091 (v3 0:16:00, "por debajo de esta liquidez de m15 es ruido"), las dos sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de v3 0:15:08, no por la frase citada; la sesion 1 lo repite sin item de evidencia propio (v6 0:18:16-0:19:08). Alcista: la cita del predicado, ev-v1-001306-f98e12e9 (v1 0:13:06, "nuestra operativa tiene que estar por debajo"), con el sesgo alcista dicho en v1 0:01:22 y 0:12:29. Ningun item junta en su propia frase el sesgo y el lado: la ligadura es lectura del tramo. Por eso el lado se nombra en el predicado (`lado_de_ruido`) y no se deduce de "el lado contrario al sesgo", que es la frase que se tradujo al reves
+- **Notas**: HASTA EL 2026-09-16 ESTA REGLA ESTABA AL REVES: prohibia abrir "por debajo de la liquidez de M15 en sesgo alcista, o al reves", que es justo donde el trader opera, en los dos sentidos (auditoria del 2026-09-13, hallazgo [2]; verificado otra vez en la revision de diseno de la rama de fidelidad). Es el unico filtro direccional de la spec -`sesgo` lo consumen esta regla y, desde ADR-0049, RN-033- y es un gate, la clase que gana siempre. Con `sesgo` en `ambiguo` o `insuficiente` esta regla no tiene lado que mirar y no lo inventa: RN-033 ya prohibe abrir en esas sesiones (ADR-0049, H1). LO QUE SOSTIENE CADA SENTIDO. Bajista: esta cita (v3 0:17:25) y la que llevaba antes, ev-v3-001600-ed45b091 (v3 0:16:00, "por debajo de esta liquidez de m15 es ruido"), las dos sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de v3 0:15:08, no por la frase citada; la sesion 1 lo repite sin item de evidencia propio (v6 0:18:16-0:19:08). Alcista: la cita del predicado, ev-v1-001306-f98e12e9 (v1 0:13:06, "nuestra operativa tiene que estar por debajo"), con el sesgo alcista dicho en v1 0:01:22 y 0:12:29. Ningun item junta en su propia frase el sesgo y el lado: la ligadura es lectura del tramo. Por eso el lado se nombra en el predicado (`lado_de_ruido`) y no se deduce de "el lado contrario al sesgo", que es la frase que se tradujo al reves
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -1120,6 +1121,40 @@
 }
 ```
 
+### RN-033 · con sesgo ambiguo o insuficiente no se opera
+
+- **Clase**: `gate`
+- **Cuando**: el sesgo fijado al abrir la sesion es AMBIGUO o INSUFICIENTE
+- **Entonces**: se prohibe buscar entradas y abrir operacion en esa sesion; no fija nada, porque el sesgo lo vuelve a fijar la regla del sesgo en la apertura siguiente
+- **Cita**: `ev-v3-000531-4d6375b6` — *«alcistas sólo compras bajistas sólo ventas»*
+- **Decision**: `ADR-0049` — dice mas que su cita, y lo declara
+- **Notas**: LO QUE LA CITA SOSTIENE: que el sesgo alcista solo compra y el bajista solo vende, o sea que sin un lado no hay direccion en la que buscar entrada. LO QUE NO: que con la vela previa rompiendo los dos extremos, o sin ninguna ruptura en sesgo_h4_tope_velas, no se opere. Eso lo decidio el consultor en ADR-0044 §1-2 -"la mas conservadora donde no habla"- y hasta ADR-0049 vivia solo en la prosa de RN-003, sin forma: RN-005, entonces el unico consumidor de `sesgo`, solo prohibe SI el hecho existe, asi que sin el hecho el bot se quedaba sin filtro direccional, y una segunda sesion ambigua heredaba el sesgo de la primera (medido sobre construccion el 2026-09-25: 15 sesiones ambiguas de 84, 6 de ellas heredando, 0 insuficientes). El sentido de la doble ruptura sigue siendo A-34: si el trader lo da, `ambiguo` desaparece y esta regla queda para `insuficiente`
+
+**Forma ejecutable**, tal cual la lee el motor:
+
+```json
+{
+  "cuando": {
+    "cualquiera_de": [
+      {
+        "hecho": "sesgo",
+        "vale": "ambiguo"
+      },
+      {
+        "hecho": "sesgo",
+        "vale": "insuficiente"
+      }
+    ]
+  },
+  "entonces": {
+    "prohibe": [
+      "buscar_entradas",
+      "abrir_operacion"
+    ]
+  }
+}
+```
+
 ## Descartadas
 
 ### RN-013 · hay un unico esquema de stop, y vale para cualquier esquema de entrada
@@ -1169,7 +1204,7 @@
 
 ## Vocabulario
 
-### predicados (23)
+### predicados (24)
 
 - **`abre_sesion_operativa`** — empieza una de las sesiones de la ventana Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
 - **`alcanza_hora`** — la hora de pared llega al instante declarado Argumentos: `hora`, `huso`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
@@ -1192,6 +1227,7 @@
 - **`se_da_esquema`** — el precio forma uno de los dos esquemas de entrada en M1, con la liquidez de M15 ya tomada. `primer_esquema`: rompe directamente, sin retroceso, y el breaker basta. `segundo_esquema`: pequeno retroceso que deja una zona de control, y despues rompe. Los dos marcan el bloque de origen con el breaker (BOS); el CHoCH no se usa. La ruptura en M1 se juzga con `criterio` (breaker_m1_criterio_ruptura); la de M15 es otra cosa y la fija RN-004 Argumentos: `cual`, `criterio`. Fuente: `mercado`. Valores: `cual` en `primer_esquema`, `segundo_esquema`, `cualquier_esquema`. Depende de: liquidez_tomada. Cita `ev-v4-000243-5f8875ce`: *«ya recordamos los dos esquemas que era uno, o bien me hace esto de aquí, rompe o bien directamente rompe el precio como tal o sea sólo con velas rojas y si hace el otro esquema pues con un pequeño retroceso pequeña zona de control y luego rompe»*.
 - **`se_desarrolla_en_el_lado_de_ruido`** — el precio se desarrolla en el lado de la liquidez de M15 donde el trader NO busca entrada: por encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25, sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada). Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader Argumentos: `que`, `sentido`. Fuente: `mercado`. Lado de ruido: en `alcista`, `por_encima`; en `bajista`, `por_debajo`. Cita `ev-v1-001306-f98e12e9`: *«el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra operativa tiene que estar por debajo»*.
 - **`se_mapea_estructura`** — varias velas de M1 se agrupan como una estructura Argumentos: `criterio`. Fuente: `motor`. Cita `fb-2026-09-09-sesion-01-7ee9cabc`: *«sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura»*.
+- **`sesgo_h4_al_abrir`** — el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o bajista- o, cuando no hay lado, `ambiguo` (la vela rompio los dos extremos, A-34) o `insuficiente` (ninguna rompio dentro del tope). SIEMPRE tiene respuesta: por eso RN-003 fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1) Argumentos: `que`, `contra`, `criterio`, `tope`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-8eccf5c0`: *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»*.
 - **`toca_colocar_orden_limite`** — llega el momento de colocar la orden limite en una zona de control, segun `momento` (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que RN-006 la ira moviendo. Ata la zona con `liga` Argumentos: `momento`. Fuente: `mercado`. Depende de: liquidez_tomada. Cita `ev-v3-004201-bfeb3734`: *«Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas el breaker, o sea, marco mi orden limit y ya está»*.
 - **`zonas_desarrolladas_superan`** — el esquema desarrolla mas zonas de control de las admitidas Argumentos: `tope`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-1b2203b0`: *«solo 1 zona control bro. si hay 2 se descarta»*.
 
@@ -1227,7 +1263,7 @@
 - **`operacion_abierta`** — hay una posicion viva Origen: `broker`. Lo decide ADR-0028. Lo provoca la accion: colocar_orden_limite. Lo consume: RN-002, RN-011, RN-014, RN-030.
 - **`orden_dimensionada`** — la orden limite ya tiene lote y stop (RN-011) y espera su objetivo y su envio (RN-015). Guarda la ZONA en la que se va a colocar. Existe porque ADR-0028 no ordena dos reglas de la misma clase dentro de un evento: sin este hecho, la que coloca podia disparar antes que la que dimensiona, y entre las dos tienen que pasar los gates (RN-027 redondea el lote). RN-015 lo apaga aunque un gate prohiba colocar, asi que nunca sobrevive al evento (ADR-0032) Origen: `regla`. Lo produce: RN-011, RN-015. Lo consume: RN-015.
 - **`orden_limite_pendiente`** — hay una orden colocada y todavia sin llenar Origen: `broker`. Lo decide ADR-0028. Lo provoca la accion: colocar_orden_limite. Lo consume: RN-006, RN-011.
-- **`sesgo`** — el sentido en el que se busca entrada Origen: `regla`. Lo produce: RN-003. Lo consume: RN-005. Valores: `sentido_de_la_ruptura`.
+- **`sesgo`** — el sentido en el que se busca entrada, o que no lo hay: `ambiguo` e `insuficiente` (ADR-0044) son valores del hecho desde ADR-0049, y con ellos RN-033 prohibe operar. Lo fija RN-003 en CADA apertura de sesion y CADUCA al abrir: sin la caducidad, la primera pasada del evento de apertura evaluaba los gates con el sesgo de la sesion anterior todavia vivo y RN-033 disparaba una vez sobre el (medido el 2026-09-25 sobre construccion: en 24 sesiones de 84, y solo 15 eran ambiguas). Asi nunca se hereda de la sesion anterior, ni el valor ni la prohibicion Origen: `regla`. Lo produce: RN-003. Lo consume: RN-005, RN-033. Valores: `sentido_de_la_ruptura`, `ambiguo`, `insuficiente`.
 
 ### acumuladores (5)
 
@@ -1237,10 +1273,12 @@
 - **`perdida_semana`** — perdida acumulada desde el corte de la semana Base: `base_calculo_perdida_semanal`. Se reinicia con: `reloj_dia_riesgo`. Cita `fb-2026-09-09-sesion-01-a85b6bc7`: *«»*.
 - **`perdida_total_firma`** — caida de la magnitud vigilada (equity) por debajo del capital inicial (saldo_inicial_cuenta). No se reinicia nunca, y la base no sigue al maximo mientras firma_perdida_total_arrastra valga false, que es lo que dice el programa 2-Step (ADR-0026) Base: `saldo_inicial_cuenta`. Se reinicia con: `nunca`. Magnitud vigilada: `firma_magnitud_vigilada`. La base sigue al maximo segun: `firma_perdida_total_arrastra`.
 
-### tokens (27)
+### tokens (30)
 
 - **`OP`** — la operacion en curso; sus campos se nombran con punto (`OP.precio_entrada`)
 - **`activacion_sin_ruptura`** — la orden se lleno sin que la estructura llegara a romperse (RN-010, A-3). Si despues el precio forma un equal y saca la posicion, es lo que el trader llama cerrar un equal (RN-019)
+- **`al_abrir_sesion`** — el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada: la regla que lo produce lo vuelve a fijar en ese mismo evento y ningun gate lee el de la sesion anterior (ADR-0049, H1). Hoy solo lo declara `sesgo` Clase: `caducidad`.
+- **`ambiguo`** — valor de `sesgo` cuando la H4 previa rompio LOS DOS extremos de su anterior (ADR-0044 §1, A-34): no hay lado, y RN-033 prohibe operar
 - **`break_even`** — salto el stop que RN-014 llevo a la entrada. Se clasifica por MECANISMO, no por el P/L neto: con comisiones o deslizamiento cierra unos dolares en negativo y sigue siendo un break even, que no gasta cartucho (cartucho_criterio)
 - **`cualquier_activacion`** — cualquier forma de activarse, por un esquema o sin ruptura
 - **`cualquier_esquema`** — cualquiera de los dos esquemas de entrada, sin distinguirlos. NO incluye una activacion sin ruptura, que no es un esquema
@@ -1249,6 +1287,7 @@
 - **`hasta_cartuchos_reinicio`** — la detencion dura hasta el reinicio que diga `cartuchos_reinicio` Clase: `duracion`.
 - **`hasta_el_corte_siguiente`** — la detencion dura hasta el siguiente corte del dia o de la semana de riesgo Clase: `duracion`.
 - **`instante_entrada`** — campo de OP, el momento en que se lleno la orden
+- **`insuficiente`** — valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su anterior (ADR-0044 §2): no hay lado, y RN-033 prohibe operar
 - **`liquidez_m15`** — la liquidez marcada en M15 que hay que tomar antes de mirar M1. ES UN NIVEL, no una banda: medido en pantalla el 2026-09-20 (v4 0:57:06, fr-v4-9ad0ebb8/3426000) lo que queda dibujado es una LINEA horizontal etiquetada "15 lq"; el trader dice que le es indiferente desde cual de los puntos anteriores la marque porque considera liquidez todo lo que hay entre ellos (ev-v4-005644-e06ef304), pero lo que deja en el grafico es un nivel, que es lo que `alcanza_nivel` y `cruza` necesitan. LA MARCA LA PONE UNA PERSONA: ninguna regla de esta spec produce este token -no hay `fijar` que lo escriba- y por eso RN-004 no puede dispararse. Que pivote se marca lo decide A-24, DECIDIDA por ADR-0045: el MAS RECIENTE YA FORMADO. Cuando esta formado es A-35, y hasta que se responda la regla no se escribe: escribir aqui una inventada seria hacer pasar por metodo del trader lo que decide el plan. La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4 (ev-v3-001204-889179d2, ev-v4-003451-d750e553, ev-v6-003701-7613b381, ev-v3-011147-fa2e6984: "seria solo M15, M15 y ya"); que pasa cuando ese flujo va contra el sesgo de H4 es A-26
 - **`lote_calculado`** — el lote que acaba de calcular `dimensionar_lote`, antes de redondear
 - **`no`** — apaga un hecho de estado. Va ENTRECOMILLADO en el YAML a proposito: sin comillas, `no` es el booleano falso de YAML 1.1 mientras que `si` es una cadena, y la misma casilla de la misma regla acababa con dos tipos distintos (RN-013, encontrado el 2026-09-12)
@@ -1261,7 +1300,7 @@
 - **`primer_esquema`** — el primer esquema de entrada
 - **`salto_el_stop`** — la cerro el stop en stop_fraccion_caja: la perdida del riesgo entero (RN-012), sea cual sea el P/L neto de deslizamiento y costes. Gasta cartucho sea cual sea la activacion (RN-016)
 - **`segundo_esquema`** — el segundo esquema de entrada
-- **`sentido_de_la_ruptura`** — el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`
+- **`sentido_de_la_ruptura`** — el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`. Lo ata `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `ambiguo` o `insuficiente` (ADR-0049)
 - **`si`** — enciende un hecho de estado (`fijar`) o activa una opcion de una accion
 - **`stop_o_limite`** — el nivel al que llega el precio, sea el stop o el objetivo
 - **`vela_h4_previa`** — la vela H4 cerrada inmediatamente anterior al anclaje

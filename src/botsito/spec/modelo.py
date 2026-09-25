@@ -654,6 +654,7 @@ _ESTRUCTURALES = frozenset(
         "por",
         "resultado",
         "hecho",
+        "vale",  # `{hecho: sesgo, vale: ambiguo}`: el valor que el hecho tiene que tener (ADR-0049)
         "a_la_baja",
     }
 )
@@ -984,7 +985,16 @@ CLAVES_VOCABULARIO: dict[str, frozenset[str]] = {
     "acciones": frozenset({"descripcion", "argumentos", "efecto", "cita", "literal", "notas"}),
     "efectos": frozenset({"descripcion"}),
     "hechos": frozenset(
-        {"descripcion", "origen", "decision", "lo_provoca", "produce", "consume", "valores"}
+        {
+            "descripcion",
+            "origen",
+            "decision",
+            "lo_provoca",
+            "produce",
+            "consume",
+            "valores",
+            "caduca",
+        }
     ),
     "acumuladores": frozenset(
         {"descripcion", "base", "reinicia_con", "magnitud", "arrastra", "cita"}
@@ -996,7 +1006,8 @@ ORIGENES_HECHO = ("regla", "broker")
 # PROVOCA: un evento de esas fuentes sin accion que lo produzca es una regla inalcanzable, que es
 # lo que era `se_coloca_orden_limite`.
 FUENTES_PREDICADO = ("mercado", "reloj", "broker", "bot", "motor", "acumulador")
-CLASES_TOKEN = ("reinicio", "duracion")
+# `caducidad` (ADR-0049): cuando un hecho de origen regla se apaga por si solo (`caduca`).
+CLASES_TOKEN = ("reinicio", "duracion", "caducidad")
 # Los dos valores del hecho `sesgo`. NO son tokens: si lo fueran, `sentido: alcista` pasaria la
 # guardia de argumentos, que es la puerta que cerro la auditoria de F13. Solo se usan como claves de
 # `lado_de_ruido`, y tienen que estar las dos, o un sentido quedaria sin lado de ruido.
@@ -1138,12 +1149,57 @@ def comprobar_vocabulario(
                         f"sentidos"
                     )
 
+    # Los `valores` de un hecho son tokens declarados: RN-033 los nombra con `vale`, y un valor que
+    # no fuera token no se podria contrastar contra nada (ADR-0049).
+    for nombre, datos in sorted((vocabulario.get("hechos") or {}).items()):
+        if not isinstance(datos, dict):
+            continue
+        # `caduca`: un token de clase `caducidad`, y solo en un hecho de origen regla; uno del
+        # broker lo lee el motor del broker y no caduca por si solo (ADR-0049).
+        caduca = datos.get("caduca")
+        if caduca is not None:
+            token_c = tokens_decl.get(caduca) if isinstance(caduca, str) else None
+            if not isinstance(token_c, dict) or token_c.get("clase") != "caducidad":
+                problemas.append(
+                    f"hechos '{nombre}': `caduca` vale {caduca!r}, que no es un token de clase "
+                    f"`caducidad`"
+                )
+            if datos.get("origen") == "broker":
+                problemas.append(
+                    f"hechos '{nombre}': es de origen broker y declara `caduca`; lo lee el motor "
+                    f"del broker y no caduca por si solo"
+                )
+        valores_h = datos.get("valores")
+        if valores_h is None:
+            continue
+        if not isinstance(valores_h, list) or not valores_h:
+            problemas.append(f"hechos '{nombre}': `valores` debe ser una lista no vacia")
+            continue
+        for v in valores_h:
+            if v not in tokens_decl:
+                problemas.append(
+                    f"hechos '{nombre}': `valores` incluye {v!r}, que no es un token declarado"
+                )
+
     # Y los valores contra lo que las formas pasan de verdad.
     for r in reglas:
         if not isinstance(r.forma, dict):
             continue
         for nombre, args in _invocaciones(r.forma.get("cuando")):
-            valores = (predicados.get(nombre) or {}).get("valores")
+            declarado_p = predicados.get(nombre) or {}
+            # Un predicado con `lado_de_ruido` recibe `sentido` como LIGADURA del hecho `sesgo`,
+            # nunca como token: `alcista` y `bajista` no son tokens para que `sentido: alcista` no
+            # pase, y desde que `ambiguo` e `insuficiente` si lo son (ADR-0049) hace falta decirlo
+            # aqui, o `sentido: ambiguo` entraria por la puerta que aquello cerro.
+            if isinstance(declarado_p.get("lado_de_ruido"), dict) and "sentido" in args:
+                sentido = args["sentido"]
+                if not (isinstance(sentido, str) and _ES_LIGADURA.fullmatch(sentido)):
+                    problemas.append(
+                        f"{r.id}: '{nombre}.sentido' vale {sentido!r}; un predicado con "
+                        f"`lado_de_ruido` recibe el sentido como LIGADURA del hecho `sesgo`, "
+                        f"nunca como token (ADR-0049)"
+                    )
+            valores = declarado_p.get("valores")
             if not isinstance(valores, dict):
                 continue
             for arg, lista in valores.items():
@@ -1153,6 +1209,20 @@ def comprobar_vocabulario(
                         f"cerrado {lista}"
                     )
     return problemas
+
+
+def _nodos_hecho(nodo: object) -> list[dict[str, Any]]:
+    """Los nodos `hecho` de una rama, enteros: con su `liga` y su `vale` (ADR-0049)."""
+    fuera: list[dict[str, Any]] = []
+    if isinstance(nodo, dict):
+        if isinstance(nodo.get("hecho"), str):
+            fuera.append(nodo)
+        for valor in nodo.values():
+            fuera += _nodos_hecho(valor)
+    elif isinstance(nodo, list):
+        for v in nodo:
+            fuera += _nodos_hecho(v)
+    return fuera
 
 
 def es_ejecutable(regla: Any) -> bool:
@@ -1368,7 +1438,9 @@ def comprobar_forma(
             for rid in declarado:
                 if rid not in ids_regla and not rid.startswith("predicado "):
                     problemas.append(f"hecho '{nombre}': {papel} {rid}, que no existe")
-            real = sorted(real_de[papel])
+            # Por conjunto: una regla que nombra el mismo hecho dos veces -RN-033 pregunta por
+            # `sesgo` con dos `vale`- es UN consumidor, no dos (ADR-0049).
+            real = sorted(set(real_de[papel]))
             if not real:
                 motivo = (
                     "nadie lo establece y quien lo lee es inalcanzable"
@@ -1394,6 +1466,24 @@ def comprobar_forma(
             if isinstance(valores_h, list) and args.get("a") not in valores_h:
                 problemas.append(
                     f"{r.id}: fija '{args.get('hecho')}' a {args.get('a')!r}, que no esta en sus "
+                    f"`valores` {valores_h}"
+                )
+        # Y con que valor se PREGUNTA por un hecho: `vale` es un token de sus `valores` (ADR-0049).
+        # Un hecho sin `valores` no admite `vale`: no habria contra que contrastarlo.
+        for nodo_h in _nodos_hecho(r.forma.get("cuando")):
+            if "vale" not in nodo_h:
+                continue
+            nombre_h, vale = str(nodo_h["hecho"]), nodo_h["vale"]
+            h = hechos.get(nombre_h)
+            valores_h = h.get("valores") if isinstance(h, dict) else None
+            if not isinstance(valores_h, list):
+                problemas.append(
+                    f"{r.id}: pregunta por '{nombre_h}' con vale={vale!r}, y ese hecho no declara "
+                    f"`valores`; no hay contra que contrastarlo"
+                )
+            elif not isinstance(vale, str) or vale not in valores_h:
+                problemas.append(
+                    f"{r.id}: pregunta por '{nombre_h}' con vale={vale!r}, que no esta en sus "
                     f"`valores` {valores_h}"
                 )
 

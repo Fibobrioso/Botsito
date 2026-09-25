@@ -52,4 +52,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0046 | Marzo entra por el camino de fidelidad, con su reserva y sin repetir el sorteo | ACTIVE |
 | 0047 | La unidad de comparacion es la operacion tambien en el holdout | ACTIVE |
 | 0048 | El arnes del motor | ACTIVE |
+| 0049 | Los huecos del arnes: H1-H6 de ADR-0048 cerrados con las decisiones del consultor | ACTIVE |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

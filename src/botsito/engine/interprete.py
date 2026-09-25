@@ -14,6 +14,9 @@ concreto: lo que una regla hace lo dice su arbol.
   propagan con la logica de Kleene. Una regla cuyo `cuando` es DESCONOCIDO no ejecuta su
   `entonces`, y una accion con efecto que un `gate` DESCONOCIDO podria prohibir no se ejecuta. Cada
   caso queda registrado en `Evento.no_implementadas` y `Evento.bloqueadas`.
+- **Un nodo `hecho` con `vale`** es verdadero solo si el hecho esta fijado a ese valor, y **un hecho
+  que declara `caduca: al_abrir_sesion`** se apaga al empezar el evento de apertura de cada sesion,
+  antes de la primera pasada (ADR-0049, H1). `permite` se registra y no cambia nada (H5).
 
 Es puro: recibe el estado, el momento y las primitivas, y devuelve lo que paso. No lee ficheros.
 """
@@ -32,6 +35,10 @@ NODOS_LOGICOS = ("todos_de", "cualquiera_de", "ninguno_de")
 ORIGEN_BROKER = "broker"
 FUENTE_ACUMULADOR = "acumulador"
 VALOR_APAGADO = "no"  # `fijar: {hecho: X, a: no}` apaga el hecho (RN-015, ADR-0032 §4)
+# `caduca: al_abrir_sesion` (ADR-0049): el hecho se apaga al empezar el evento de apertura de cada
+# sesion, ANTES de la primera pasada. Sin esto los gates leian en esa pasada el `sesgo` de la
+# sesion anterior, y RN-033 disparaba una vez sobre el.
+CADUCA_AL_ABRIR = "al_abrir_sesion"
 
 
 class InterpreteError(ValueError):
@@ -104,6 +111,11 @@ class Evento:
     """Lo que paso en un evento: que disparo, que se fijo y que no se pudo evaluar."""
 
     disparadas: list[str] = field(default_factory=list)
+    caducados: list[str] = field(default_factory=list)  # hechos apagados al abrir (ADR-0049)
+    # (clase, ids): dos o mas reglas de la MISMA clase que dieron SI en la misma pasada. Cual
+    # disparo primero lo decidio el desempate, y ADR-0018 dice que eso no tiene semantica: es un
+    # AVISO para que la spec lo resuelva encadenando por un hecho o con `complementa` (H3).
+    empates: list[tuple[str, tuple[str, ...]]] = field(default_factory=list)
     fijados: list[tuple[str, str, str]] = field(default_factory=list)  # (regla, hecho, valor)
     no_implementadas: set[tuple[str, str]] = field(default_factory=set)  # (regla, primitiva)
     bloqueadas: set[tuple[str, str, str]] = field(default_factory=set)  # (regla, accion, motivo)
@@ -136,6 +148,19 @@ class Interprete:
 
     vocabulario: Mapping[str, Mapping[str, Any]]
     primitivas: Primitivas
+    # El orden DENTRO de una clase, solo para ser determinista (ADR-0048 H3): por id. La spec no
+    # depende de el, y el test de invariancia lo comprueba invirtiendolo (ADR-0049).
+    desempate: Callable[[ReglaEjecutable], Any] = field(default=lambda r: r.id)
+    caducan_al_abrir: tuple[str, ...] = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.caducan_al_abrir = tuple(
+            sorted(
+                nombre
+                for nombre, h in (self.vocabulario.get("hechos") or {}).items()
+                if isinstance(h, Mapping) and h.get("caduca") == CADUCA_AL_ABRIR
+            )
+        )
 
     def _hecho(self, nodo: Mapping[str, Any], estado: EstadoDia) -> Resultado:
         nombre = str(nodo["hecho"])
@@ -148,6 +173,12 @@ class Interprete:
         else:
             valor = estado.hechos.get(nombre)
         if valor is None:
+            return Resultado(Tri.NO)
+        # `vale` (ADR-0049): el nodo es verdadero solo si el hecho esta fijado A ESE valor. Es lo
+        # que hace expresable "con sesgo ambiguo" (RN-033) en un arbol que solo sabia preguntar si
+        # un hecho esta encendido.
+        vale = nodo.get("vale")
+        if vale is not None and valor != str(vale):
             return Resultado(Tri.NO)
         liga = nodo.get("liga")
         return Resultado(Tri.SI, {str(liga): valor} if liga else {})
@@ -243,12 +274,42 @@ class Interprete:
             )
             evento.fijados += [(regla.id, hecho, valor) for hecho, valor in fijados]
 
+    def _empatadas(
+        self,
+        orden: Sequence[ReglaEjecutable],
+        primera: ReglaEjecutable,
+        disparadas: set[str],
+        momento: Momento,
+        estado: EstadoDia,
+    ) -> list[str]:
+        """Las reglas de la clase de `primera`, aun sin disparar, que tambien dan SI ahora mismo.
+
+        Se evaluan ANTES de ejecutar `primera`, sobre el mismo estado: si alguna da SI, cual
+        dispara primero lo decidio el desempate y no la spec (H3). Lo que les falte por escribir
+        no se anota aqui: se anotara cuando les toque en su pasada.
+        """
+        otras: list[str] = []
+        vistas = False
+        for candidata in orden:
+            if candidata is primera:
+                vistas = True
+                continue
+            if not vistas or candidata.clase != primera.clase or candidata.id in disparadas:
+                continue
+            if self.evaluar(candidata.cuando, momento, estado, set()).valor is Tri.SI:
+                otras.append(candidata.id)
+        return otras
+
     def evento(
         self, reglas: Sequence[ReglaEjecutable], momento: Momento, estado: EstadoDia
     ) -> Evento:
         """Un evento a punto fijo con refraccion (ADR-0028 §4)."""
-        orden = sorted(reglas, key=lambda r: (CLASES_EN_ORDEN.index(r.clase), r.id))
+        orden = sorted(reglas, key=lambda r: (CLASES_EN_ORDEN.index(r.clase), self.desempate(r)))
         evento = Evento()
+        if momento.abre_sesion:
+            for nombre in self.caducan_al_abrir:
+                if estado.hechos.pop(nombre, None) is not None:
+                    evento.caducados.append(nombre)
         disparadas: set[str] = set()
         while True:
             quizas_prohibidos: set[str] = set()
@@ -266,6 +327,9 @@ class Interprete:
                         )
                     continue
                 if r.valor is Tri.SI:
+                    otras = self._empatadas(orden, regla, disparadas, momento, estado)
+                    if otras:
+                        evento.empates.append((regla.clase, tuple(sorted((regla.id, *otras)))))
                     self._ejecutar(regla, r.ligaduras, momento, estado, evento, quizas_prohibidos)
                     disparadas.add(regla.id)
                     evento.disparadas.append(regla.id)
@@ -291,6 +355,7 @@ def reglas_ejecutables(reglas: Sequence[Any]) -> list[ReglaEjecutable]:
 
 
 __all__ = [
+    "CADUCA_AL_ABRIR",
     "CLASES_EN_ORDEN",
     "Accion",
     "EstadoDia",
