@@ -87,6 +87,20 @@ casi todo el mes. Lo mismo vale para enero. Cambiar `huso_operativa` alteraría 
 sesiones de la fidelidad, la ingesta y los días que usa la herramienta del huso de ENTRADA-MARZO.
 **No se toca.**
 
+## 3. K-02, K-05 y K-06: documentación
+
+- **K-02.** `scripts/README.md` lista ahora `mover_sesion.py`, con su propósito tomado de su
+  docstring y la referencia a `knowledge/cases/kit/README.md`, que explica cuándo se usa.
+- **K-05.** ADR-0011 lleva una nota de enmienda: la frase «Se cierra una ambiguedad solo con un
+  registro del trader» ya no es la única vía desde que ADR-0022 §7 creó `DECIDIDA`.
+- **K-06.** `CLAUDE.md` conserva la cifra del 2026-09-17, ya fechada, y añade la de hoy medida con
+  el mismo recuento: 13 fotogramas distintos citados por 12 ítems de 368. El recuento es el de los
+  ids `fr-…/<ms>` dentro de `knowledge/evidence/`. Aplicado sobre `a0de4af`, el commit que
+  escribió la cifra vieja, reproduce 8 y 9.
+
+K-01 (ADR-0045 en el índice de PROJECT_STATE) y K-03 (la deuda que ya está hecha) no se tocan: van
+en el paso 3 del ritual.
+
 ## Estado
 
 EN CURSO. Cada sección entra con su commit.

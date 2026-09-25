@@ -7,6 +7,10 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   `uv.lock` desactualizado y contratos de importacion rotos.
 - `instalar_hooks.py`: copia los hooks al directorio de hooks del repositorio (`make hooks`).
   Portable (Python, sin `cp`/`chmod`); aborta si `core.hooksPath` esta configurado fuera del repo.
+- `mover_sesion.py`: cambia la fecha de una sesion del kit sin cambiar nada mas (F10, ADR-0011). El
+  seed no se teclea: se lee del paquete que ya existe, y si los casos o su reparto salen distintos
+  restaura el original. Su uso lo explica `knowledge/cases/kit/README.md` («Si cambia la fecha de
+  la sesion»).
 - `decodificar_png.py`: decodificador de PNG de biblioteca estandar (`zlib` y `struct`), HERRAMIENTA
   DE MEDIDA de fotogramas, fuera del paquete; su test fabrica sus propios PNG con los cinco filtros
   (`tests/unit/test_decodificar_png.py`). Next Action 4, 2026-09-23.
