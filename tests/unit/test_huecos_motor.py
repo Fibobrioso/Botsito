@@ -4,8 +4,11 @@ H1: una sesion ambigua fija `sesgo` a `ambiguo` y RN-033 prohibe; una segunda se
 hereda el sesgo de la primera, ni una no ambigua la prohibicion de una ambigua -el hecho caduca al
 abrir-; insuficiente prohibe; y, cuando `data/` esta en la maquina, la forma y la primitiva
 coinciden en todas las sesiones de construccion. Mas las guardias nuevas: `vale`, `caduca`, los
-`valores` de un hecho como tokens y `sentido` como ligadura. Ninguna fecha real: el dia sintetico
-es de 2030.
+`valores` de un hecho como tokens y `sentido` como ligadura.
+
+H2: las sesiones de `kit/config.yaml` cubren exactamente [ventana_inicio, ventana_fin). H3: la
+misma traza con el orden de cada clase invertido, y el aviso cuando dos reglas de la misma clase
+dan SI en la misma pasada. Ninguna fecha real: el dia sintetico es de 2030.
 """
 
 from __future__ import annotations
@@ -14,27 +17,40 @@ import copy
 import dataclasses
 from collections import Counter
 from datetime import UTC, date, datetime, timedelta
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
 import pytest
 
+from botsito.cases.criterio_fidelidad import Criterio, Tolerancias
+from botsito.cases.paquete import cargar_config
 from botsito.config.registro import Registro, cargar_registro
 from botsito.data.dataset import DatasetError, buscar_manifiesto
 from botsito.data.velas import a_minuto
 from botsito.domain.sesgo import sesgo_h4
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
+from botsito.engine import arnes
 from botsito.engine.interprete import (
     EstadoDia,
     Interprete,
     Momento,
     Primitivas,
+    ReglaEjecutable,
+    Resultado,
     Tri,
     reglas_ejecutables,
 )
-from botsito.engine.motor import DatosMercado, DiaDeMercado, MotorSpec, Sesion, TrazaSesion
+from botsito.engine.motor import (
+    DatosMercado,
+    DiaDeMercado,
+    MotorSpec,
+    ResultadoDia,
+    Sesion,
+    TrazaSesion,
+)
 from botsito.engine.primitivas import primitivas_escritas
 from botsito.spec.modelo import (
     FICHERO_SPEC,
@@ -346,3 +362,144 @@ def test_caduca_exige_un_token_de_caducidad_y_solo_en_hechos_de_regla(
     voc2["hechos"]["operacion_abierta"]["caduca"] = "al_abrir_sesion"
     fallos = comprobar_forma(reglas, voc2, parametros, tipos=tipos)
     assert any("operacion_abierta" in f and "origen broker" in f for f in fallos), fallos
+
+
+# ------------------------------------------------------------------------------------- H2
+
+
+def test_las_sesiones_del_kit_cubren_exactamente_la_ventana_operativa(registro: Registro) -> None:
+    """ADR-0049 H2 (a): las sesiones del motor salen de `kit/config.yaml` y la ventana de RN-001
+    del registro. Los dos sitios siguen existiendo; esta guardia caza que se separen."""
+    config = cargar_config(RAIZ / "knowledge" / "cases" / "kit" / "config.yaml")
+    inicio, fin = registro.hora("ventana_inicio"), registro.hora("ventana_fin")
+    sesiones = list(config.sesiones)
+    assert sesiones, "sin sesiones no hay motor"
+    assert sesiones[0].desde == inicio.hora and sesiones[-1].hasta == fin.hora
+    for anterior, siguiente in zip(sesiones, sesiones[1:], strict=False):
+        assert anterior.hasta == siguiente.desde, (anterior, siguiente)  # ni hueco ni solape
+    for s in sesiones:
+        assert s.desde < s.hasta, s  # "HH:MM" se ordena como texto
+    assert inicio.huso == fin.huso == registro.texto("huso_operativa")
+
+
+# ------------------------------------------------------------------------------------- H3
+
+
+def _inverso(r: ReglaEjecutable) -> str:
+    """Un desempate que ordena los ids AL REVES que el del interprete."""
+    return "".join(chr(0x10FFFF - ord(c)) for c in r.id)
+
+
+def _huella(r: ResultadoDia) -> dict[str, Any]:
+    return {
+        s: (
+            t.fijados,
+            sorted(t.no_implementadas),
+            sorted(t.bloqueadas),
+            t.anotaciones,
+            sorted(t.disparadas),
+            sorted(t.empates),
+        )
+        for s, t in r.sesiones.items()
+    }
+
+
+def test_invariancia_al_orden_dentro_de_cada_clase(registro: Registro, motor: MotorSpec) -> None:
+    """H3 (b): con el orden de cada clase invertido, la misma traza en todos los escenarios."""
+    invertido = MotorSpec(
+        Interprete(cargar_vocabulario(SPEC), primitivas_escritas(registro), desempate=_inverso),
+        motor.reglas,
+    )
+    ids = [r.id for r in motor.reglas]
+    assert sorted(ids, key=lambda i: _inverso(ReglaEjecutable(i, "gate", {}, {}))) == sorted(
+        ids, reverse=True
+    )
+    escenarios = (
+        ("ambos", "arriba"),
+        ("arriba", "ambos"),
+        ("dentro", "dentro"),
+        ("abajo", "arriba"),
+    )
+    for pasos in escenarios:
+        directo = _huella(motor.correr_dia(_dia(_velas(*pasos))))
+        assert directo == _huella(invertido.correr_dia(_dia(_velas(*pasos)))), pasos
+        assert any(t[0] for t in directo.values()), pasos  # el escenario decide algo
+
+
+def test_dos_reglas_de_la_misma_clase_que_dan_si_a_la_vez_dejan_aviso() -> None:
+    """H3 (c): el empate se anota ANTES de ejecutar la primera, sobre el mismo estado."""
+    vocab: dict[str, dict[str, Any]] = {
+        "predicados": {"si": {"fuente": "mercado"}, "sin_h": {"fuente": "mercado"}},
+        "acciones": {"fijar": {}},
+        "hechos": {"h": {"origen": "regla"}, "g": {"origen": "regla"}},
+        "acumuladores": {},
+        "efectos": {},
+        "tokens": {},
+    }
+
+    def fijar(args: Any, lig: Any, momento: Any, estado: EstadoDia) -> list[tuple[str, str]]:
+        estado.hechos[str(args["hecho"])] = "si"
+        return [(str(args["hecho"]), "si")]
+
+    def sin_h(args: Any, momento: Any, estado: EstadoDia) -> Resultado:
+        return Resultado(Tri.NO if "h" in estado.hechos else Tri.SI)
+
+    it = Interprete(
+        vocab,
+        Primitivas({"si": lambda a, m, e: Resultado(Tri.SI), "sin_h": sin_h}, {"fijar": fijar}, {}),
+    )
+    momento = Momento(MinutoUtc(0), "s", False, None)
+    fija_h = {"hace": [{"fijar": {"hecho": "h", "a": "si"}}]}
+    fija_g = {"hace": [{"fijar": {"hecho": "g", "a": "si"}}]}
+    reglas = [
+        ReglaEjecutable("D2", "disparador", {"si": {}}, fija_g),
+        ReglaEjecutable("D1", "disparador", {"si": {}}, fija_h),
+        ReglaEjecutable("G", "gate", {"si": {}}, {"prohibe": ["abrir"]}),
+    ]
+    ev = it.evento(reglas, momento, EstadoDia())
+    assert ev.disparadas == ["G", "D1", "D2"]
+    assert ev.empates == [("disparador", ("D1", "D2"))]
+    # Encadenadas por un hecho no hay empate: D2 solo se da mientras D1 no haya fijado `h`, asi
+    # que en la pasada de D1 las dos dan SI -eso es el aviso- pero con D2 condicionada al hecho
+    # que D1 fija, deja de darse y no dispara: la spec resuelve el orden, no el desempate.
+    reglas = [
+        ReglaEjecutable("D1", "disparador", {"si": {}}, fija_h),
+        ReglaEjecutable("D2", "disparador", {"sin_h": {}}, fija_g),
+    ]
+    ev = it.evento(reglas, momento, EstadoDia())
+    assert ev.disparadas == ["D1"] and ev.empates == [("disparador", ("D1", "D2"))]
+    reglas = [
+        ReglaEjecutable("D1", "disparador", {"si": {}}, fija_h),
+        ReglaEjecutable("D2", "disparador", {"todos_de": [{"hecho": "h"}]}, fija_g),
+    ]
+    ev = it.evento(reglas, momento, EstadoDia())
+    assert ev.disparadas == ["D1", "D2"] and ev.empates == []
+
+
+@dataclasses.dataclass
+class _ConEmpate:
+    """Motor sintetico que deja un aviso de H3 en la primera sesion."""
+
+    def correr_dia(self, dia: DiaDeMercado) -> ResultadoDia:
+        trazas = {s.nombre: TrazaSesion() for s in dia.sesiones}
+        trazas["07-11"].empates.add(("disparador", ("RN-006", "RN-014")))
+        return ResultadoDia(dia.dia.isoformat(), (), trazas)
+
+
+def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
+    motor: MotorSpec,
+) -> None:
+    criterio = Criterio(
+        Tolerancias(3, 15, 100_000), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+    )
+    voc = cargar_vocabulario(SPEC)
+    dias = (arnes.DiaTrader("c1", DIA.isoformat(), ()),)
+    mercado = {DIA.isoformat(): _dia(_velas("arriba", "arriba"))}
+    texto = arnes.informe(
+        arnes.correr("x", ("2030-01",), dias, mercado, _ConEmpate()), criterio, voc
+    )
+    assert "## Avisos de orden dentro de una clase (ADR-0049, H3)" in texto
+    assert "- 2030-01-15 07-11: disparador RN-006, RN-014" in texto
+    texto = arnes.informe(arnes.correr("spec", ("2030-01",), dias, mercado, motor), criterio, voc)
+    assert "- ninguno: en ninguna sesion dieron SI dos reglas de la misma clase a la vez" in texto
+    assert "- RN-003: 2 de 2; 0 de 0" in texto  # reglas disparadas sobre las sesiones corridas

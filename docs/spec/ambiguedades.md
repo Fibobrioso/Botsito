@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (22)
+## ABIERTA (23)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -113,6 +113,10 @@ Una vez que la operación está en break even, ¿qué haces con el stop a partir
 Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
 
 Afecta a: `huso_operativa`.
+
+### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
+
+Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después?
 
 ## DECIDIDA (6)
 

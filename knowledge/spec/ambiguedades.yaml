@@ -1040,3 +1040,27 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: true
+  - id: A-43
+    titulo: si una liquidez de M15 tomada antes de las 7 cuenta para operar después
+    pregunta: >-
+      Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario,
+      ¿la tienes en cuenta para operar después?
+    resuelve_en: [F19, F20]
+    # NACE EL 2026-09-25 (rama trabajo/huecos-motor, ADR-0049 H2, decision del consultor). El motor
+    # solo tiene eventos entre ventana_inicio y ventana_fin (ADR-0048; las sesiones salen de
+    # kit/config.yaml), asi que RN-004 no puede ver una toma anterior a las 07:00 y `liquidez_tomada`
+    # no puede nacer antes, mientras que el contexto de mapeo del kit empieza a medianoche
+    # (config.yaml, `ventana_local`; ev-v3-000138-567dc5d7 y ev-v3-000157-b26147c7 sostienen la
+    # ventana de 7 a 15, no lo que pasa antes). El rango de eventos se queda en las 07:00 hasta que el
+    # trader responda. Afecta a RN-004. NO BLOQUEANTE. A-42 -con que reloj cuenta las 7- es otra
+    # pregunta y sigue donde esta
+    evidencia:
+      - ev-v3-000138-567dc5d7
+      - ev-v3-000157-b26147c7
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

@@ -319,7 +319,20 @@ def informe(
         f"- {rid}: {disparadas_todas[rid]} de {len(corridas)}; {disparadas_trader[rid]} de {n}"
         for rid in sorted(disparadas_todas)
     ] or ["- ninguna"]
+    # H3 (ADR-0049): dos reglas de la misma clase que dieron SI en la misma pasada. Cual disparo
+    # primero lo decidio el orden por id, que no tiene semantica: la spec tiene que resolverlo.
+    avisos = [
+        f"- {dia} {sesion}: {clase} {', '.join(ids)}"
+        for (dia, sesion) in corridas
+        for clase, ids in sorted(trazas[(dia, sesion)].empates)
+    ]
     lineas += [
+        "",
+        "## Avisos de orden dentro de una clase (ADR-0049, H3)",
+        *(
+            avisos
+            or ["- ninguno: en ninguna sesion dieron SI dos reglas de la misma clase a la vez"]
+        ),
         "",
         "## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)",
         "por sesion: " + "; ".join(f"{k} {v}" for k, v in sorted(sesgo_sesion.items())),
