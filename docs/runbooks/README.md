@@ -8,3 +8,5 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
   `tests/contract/test_ensayo_marzo.py`.
 - `SESION-DE-PREGUNTAS.md` · una sesion solo de preguntas con el trader, sin kit ni casos: antes,
   durante y despues, con sus cuatro reglas y como entran las respuestas. Escrito para la sesion 02.
+- `ARNES-MOTOR.md` · corre el motor sobre construccion y lee su informe: criterio de fidelidad,
+  embudo sobre el grafo de hechos y negativas (ADR-0048).

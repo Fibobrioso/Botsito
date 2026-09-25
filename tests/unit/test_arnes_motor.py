@@ -336,3 +336,18 @@ def test_determinismo_byte_a_byte(
         arnes.correr("spec", ("2030-01",), dias, mercado, motor), _criterio(), vocabulario
     )
     assert uno.encode("utf-8") == dos.encode("utf-8")
+
+
+def test_la_cli_se_niega_sin_escribir_nada(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from botsito import cli
+
+    salida = tmp_path / "informe.txt"
+    for mes in (*cargar_criterio(RAIZ).medida, "2026-03"):
+        codigo = cli.main(
+            ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida)]
+        )
+        assert codigo == 2
+        assert not salida.exists()
+    assert "MEDIDA" in capsys.readouterr().err

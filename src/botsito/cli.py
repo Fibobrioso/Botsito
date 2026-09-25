@@ -2058,6 +2058,63 @@ def _texto_de_vistos(repo: Path) -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
+def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
+    """El arnes del motor sobre CONSTRUCCION (ADR-0048).
+
+    El informe va al fichero y es determinista; el tiempo y la memoria, por pantalla, fuera de el.
+    """
+    import time
+    import tracemalloc
+
+    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.holdout import HoldoutCerradoError
+    from botsito.cases.paquete import cargar_config
+    from botsito.config.registro import cargar_registro
+    from botsito.engine import arnes
+    from botsito.engine.interprete import Interprete, reglas_ejecutables
+    from botsito.engine.motor import MotorSpec
+    from botsito.engine.primitivas import primitivas_escritas
+    from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
+
+    inicio = time.perf_counter()
+    tracemalloc.start()
+    try:
+        criterio = cargar_criterio(repo)
+        meses = args.meses.split(",") if args.meses else list(criterio.construccion)
+        arnes.validar_meses(criterio, meses)
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
+        vocabulario = cargar_vocabulario(spec)
+        motor = MotorSpec(
+            Interprete(vocabulario, primitivas_escritas(registro)),
+            reglas_ejecutables(cargar_reglas(spec)),
+        )
+        dias = arnes.dias_de_construccion(repo, criterio, meses)
+        mercado = arnes.dias_de_mercado(
+            repo, _carpeta_datos(repo), config, registro, dias, registro.texto("huso_operativa")
+        )
+        corrida = arnes.correr("spec vigente", tuple(sorted(set(meses))), dias, mercado, motor)
+        texto = arnes.informe(corrida, criterio, vocabulario)
+    except (arnes.ConjuntoError, CriterioError) as exc:
+        tracemalloc.stop()
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    except HoldoutCerradoError as exc:
+        tracemalloc.stop()
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 3
+    _, pico = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    Path(args.salida).write_text(texto, encoding="utf-8", newline="\n")
+    print(f"OK: informe del arnes en {args.salida}")
+    print(
+        f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: pico de {pico / 2**20:.1f} MiB "
+        f"(tracemalloc: solo lo que asigna Python)"
+    )
+    return 0
+
+
 def _carpeta_datos(repo: Path) -> Path:
     """`[rutas].data` (config/ajustes.carpeta_datos); un TOML roto aborta con ERROR."""
     from botsito.config.ajustes import AjustesError, carpeta_datos
@@ -2374,6 +2431,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="el artefacto cambio a proposito y se vuelve a anclar (acto explicito)",
     )
+    motor = sub.add_parser("motor", help="el motor y su arnes (ADR-0030, ADR-0048)")
+    motor_sub = motor.add_subparsers(dest="motor_cmd", required=True)
+    mt_arnes = motor_sub.add_parser(
+        "arnes", help="corre el motor sobre CONSTRUCCION y escribe el informe del arnes"
+    )
+    mt_arnes.add_argument("--salida", required=True, help="fichero del informe")
+    mt_arnes.add_argument(
+        "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
+    )
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )
@@ -2567,6 +2633,8 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_reject(args.repo, args)
     if args.cmd == "evidence" and args.evidence_cmd == "list":
         return evidence_list(args.repo, args)
+    if args.cmd == "motor" and args.motor_cmd == "arnes":
+        return motor_arnes(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "ingerir":
         return casos_ingerir(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "check":
