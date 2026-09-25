@@ -35,6 +35,10 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   la de A-35 con su propia lista cerrada (`docs/validation/A35-PIVOTE-FORMADO-CRITERIO.md`).
   Con `--conjunto sesion02`, la de los candidatos C-01, C-02, C-04, C-05, C-06 y C-07 de la
   sesion 02 (`docs/validation/SESION-02-BUSQUEDA-CRITERIO.md`).
+- `hoja_preguntas.py`: la hoja en Word de una sesion SOLO DE PREGUNTAS, desde
+  `knowledge/spec/ambiguedades.yaml`, en el orden que fijo el consultor para la sesion 02
+  (`ORDEN_SESION_02`). Escribe `hoja-sesion-02.docx` en la raiz, que no se versiona
+  (`docs/runbooks/SESION-DE-PREGUNTAS.md`). Una pregunta ya cerrada hace fallar la hoja.
 - `a35_fotogramas.py`: los fotogramas de A-35, CONGELADOS antes de abrir ninguno
   (`docs/validation/A35-FOTOGRAMAS-CRITERIO.md`): lista cerrada por ventana de segmento,
   verificacion contra la extraccion de F05 y pixeles distintos del anterior; no lee el grafico.

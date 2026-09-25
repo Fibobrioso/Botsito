@@ -164,6 +164,29 @@ Lleva las cuatro reglas del consultor y lo que hace Aleks antes, durante y despu
 Todos los comandos del runbook se comprobaron contra la CLI (`feedback new`, `corpus transcribe`,
 `corpus frames extract`, `corpus inventory`).
 
+## 7. La hoja de la sesión 02
+
+`scripts/hoja_preguntas.py` genera `hoja-sesion-02.docx` desde `knowledge/spec/ambiguedades.yaml`,
+reutilizando las piezas de Word de `botsito.cases.hoja_docx`. Arriba van las tres reglas; después,
+diecinueve preguntas en el orden del consultor, cada una con su id en pequeño, el texto del campo
+`pregunta` tal cual y un recuadro para notas:
+1. Lo primero: A-35, A-21 (sigue siendo bloqueante tras K-04, ahora de RN-008) y A-24.
+2. La liquidez de M15: A-26, A-25 y A-32.
+3. La orden y el stop: A-36, A-37, A-29, A-30 y A-38.
+4. La gestión de la operación: A-18, A-13, A-31, A-40 y A-33.
+5. Para terminar: A-34, A-41 y A-39.
+
+El texto no se reescribe en el script: si una pregunta cambia, cambia en el yaml y la hoja se
+regenera. Una ambiguedad repetida, inexistente o que ya no esté ABIERTA o DECIDIDA hace fallar la
+hoja. Test propio: `tests/unit/test_hoja_preguntas.py`, con 5 casos.
+
+**Dónde está:** en la raíz del repositorio, que **no es commiteable** (`/*.docx`). Se generó el
+2026-09-25 y se comprobó leyendo su `document.xml`.
+
 ## Estado
 
-EN CURSO. Cada sección entra con su commit.
+CERRADA PARA EL RITUAL. Aplicadas las siete decisiones del consultor, una pieza por commit, cada
+una con `make check` verde sobre su árbol. **Quedan para el consultor:**
+- si la ventana de 07:00 a 15:00 sigue el reloj civil del trader o el de su gráfico (§2), que
+  toca a marzo;
+- K-01 y K-03, en el paso 3 del ritual.
