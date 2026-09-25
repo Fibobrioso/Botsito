@@ -8,15 +8,14 @@ fidelidad de la spec, la guarda del holdout y los meses vistos.
 
 1. **`BOTSITO_ALLOW_MAIN=1` va PEGADA a la linea del `git commit`.** Cada linea `!` abre una shell
    nueva, asi que un `export` en una linea anterior no sobrevive. El merge, el tag y el push no la
-   necesitan: el hook solo mira los commits.
-2. **`make check` pasa de los 120 s y se va a segundo plano, y el push VA ENCADENADO DETRAS CON `&&`.**
-   El 2026-09-17 se pusheo antes de saber si pasaba (paso, pero fue suerte) y esto decia «el push NO
-   se encadena detras: se espera el aviso y se pushea despues», que dependia de que alguien se
-   acordara. Desde el 2026-09-22 el push va en la MISMA linea que `make check`, detras de `&&` (ver
-   mas abajo): si `make check` sale distinto de 0, la cadena se corta y no hay push. Hasta esta
-   rama el runbook lo escribia como un `if` de tres lineas; el cierre de mayo se ejecuto con la
-   cadena `&&`, que hace lo mismo en una linea, y es la que queda escrita. Se sigue esperando el
-   aviso; lo que ya no hace falta es acordarse de mirar.
+   necesitan: el merge no dispara `pre-commit` sino `pre-merge-commit`, que solo mira el sello
+   (correccion 7).
+2. **`make check` va ANTES del commit y lo SELLA; el commit y el push van DESPUES.** Pasa de los
+   120 s y se va a segundo plano: se espera el aviso. Historia: el 2026-09-17 se pusheo antes de
+   saber si pasaba; el 2026-09-22 el push se encadeno detras de `make check` con `&&`, despues del
+   commit. **Desde el 2026-09-25 (`trabajo/blindaje`) el hook rechaza un commit cuyo arbol no tenga
+   el sello de un `make check` en verde, asi que el orden commit → `make check` → push ya no
+   funciona**: el commit se rechazaria. Ahora la puerta la pone el hook, y no la cadena.
 3. **De una linea en una, mirando la salida.** `git status --short` vacio antes del merge, y
    `git diff --cached --name-only` con SOLO `PROJECT_STATE.md` antes del commit.
 4. **`git add PROJECT_STATE.md`, NUNCA `git add -A`.** El 2026-09-22 se uso `git add -A`, entro un
@@ -32,6 +31,12 @@ fidelidad de la spec, la guarda del holdout y los meses vistos.
    ES el commit del tag, asi que compara un commit consigo mismo: **sale vacio siempre**, y un diff
    entre commits ni siquiera ve lo estadiado. Una puerta que no puede fallar no para nada. Lo que de
    verdad mira que no entre nada mas es `git diff --cached --name-only` junto con `git status --short`.
+
+7. **La puerta del sello (2026-09-25, `trabajo/blindaje`).** `make check` en verde escribe el hash
+   del arbol ESTADIADO en un sello; `pre-commit` y `pre-merge-commit` rechazan cualquier arbol que
+   no sea ese. Por eso se estadia primero y se prueba despues, y por eso `make-check.log` esta en
+   `.gitignore`: si no, el sello no se escribiria nunca. **`--no-verify` esta prohibido**
+   (`CLAUDE.md`). Los hooks se instalan con `make hooks` (ver «La primera vez con la puerta»).
 
 ## Cuándo falla `state check`, y cuándo un fallo es REAL
 
@@ -74,6 +79,25 @@ git merge --no-ff trabajo/<rama> -m "merge: <qué entra, en una línea>"
 ```
 → **Puerta:** el `--stat` del merge trae los ficheros de la rama y ninguno más. Si la rama no tocaba
 `knowledge/spec/`, `knowledge/evidence/` ni `knowledge/feedback/`, ahí no puede aparecer nada.
+→ **Puerta del sello (desde el 2026-09-25):** el merge pasa por `pre-merge-commit`, que exige que el
+árbol fusionado tenga sello. Si `main` no se ha movido desde que salió la rama, ese árbol es el del
+último commit de la rama, que se selló al commitearlo, y pasa sin hacer nada. **No se corre
+`make check` en `main` antes del merge:** reescribiría el sello con el árbol viejo. Si sale
+`pre-merge-commit: rechazado`, el merge queda a medias. **No se sella en `main` a mitad de merge**:
+`PROJECT_STATE.md` todavía declara la rama de trabajo y `state check` falla por diseño (ventana A),
+así que `make check` saldría en rojo. Se vuelve atrás y se sella en la rama:
+
+```
+git merge --abort
+git checkout trabajo/<rama>
+make check > make-check.log 2>&1
+grep "SELLO: make check en verde" make-check.log
+rm make-check.log
+git checkout main
+git merge --no-ff trabajo/<rama> -m "merge: <qué entra, en una línea>"
+```
+Si `main` se hubiera movido desde que salió la rama, el árbol fusionado no es el de la rama, y esto
+no basta: se para y se decide con el consultor.
 → Estamos en la **ventana A**: aquí `state check` fallaría por diseño. No se corre.
 
 ```
@@ -118,22 +142,36 @@ uv run botsito state check
 → **Puerta, ventana C:** tiene que dar **OK**. **Un ERROR aquí es REAL.** `state check` acumula los
 errores y los imprime todos, sin cortocircuito (`cli.py:state_check`): se leen TODAS las líneas.
 
+**Desde aquí el orden cambió el 2026-09-25: el hook solo deja entrar un commit cuyo árbol tenga el
+sello de un `make check` en verde, así que `make check` va antes del commit, y el push, después.**
+
 ```
+make check > make-check.log 2>&1
+```
+→ Tarda más de 120 s y se va a segundo plano: **se espera el aviso de la tarea antes de seguir.** La
+salida va a un FICHERO, nunca a `/dev/null` (`lint-imports` falla al escribir ahí y `make` sale con 2
+aunque todo esté verde). Si sale distinto de 0, no hay sello: el log se queda para leerlo y **no se
+sigue**.
+
+```
+grep "SELLO: make check en verde" make-check.log
+```
+→ **Puerta:** una línea con el hash del árbol. Si en su lugar sale un `AVISO: ... NO se sella`, hay
+algo sin estadiar o sin seguir: se arregla y se repite `make check`. Sin esta línea, el commit se
+rechazará.
+
+```
+rm make-check.log
 BOTSITO_ALLOW_MAIN=1 git commit -m "docs(state): trabajo/<rama>, cerrada en main (stable/<tag>)"
 ```
-
-**`make check` CONDICIONA EL PUSH. Una sola línea:**
+→ **Puerta:** el commit sale con su sha. Si sale `pre-commit: rechazado`, el árbol no es el que se
+probó: se vuelve a `make check`, nunca a `--no-verify`.
 
 ```
-make check > make-check.log 2>&1 && rm make-check.log && git push origin main && git push origin stable/<tag>
+git push origin main
+git push origin stable/<tag>
 ```
-
-→ **Puerta:** la cadena `&&` se corta en el primer fallo. Si `make check` sale distinto de 0, no se
-borra el log y **no se empuja nada**: el log se queda para leerlo, que es justo cuando hace falta. La
-salida va a un FICHERO, nunca a `/dev/null` (`lint-imports` falla al escribir ahí y `make` sale con 2
-aunque todo esté verde). Como tarda más de 120 s, la línea se va a segundo plano: **se espera el
-aviso de la tarea antes de seguir.** Dentro de `make check` vuelve a correr `state check`, ya en la
-ventana C.
+→ **Puerta:** los dos pushes terminan sin error. Solo se ejecutan con el commit hecho.
 
 ```
 git ls-remote --tags origin stable/<tag>
@@ -161,4 +199,21 @@ git branch -d trabajo/<rama>
 
 ## Si la CI sale roja
 
-No se revierte `main`. Se mira que fallo y se arregla con un commit encima.
+No se revierte `main`. Se mira que fallo y se arregla con un commit encima, con el mismo orden:
+estadiar el arreglo, `make check > make-check.log 2>&1`, comprobar el `SELLO`, `rm make-check.log`,
+`BOTSITO_ALLOW_MAIN=1 git commit` y los dos pushes.
+
+## La primera vez con la puerta
+
+Los hooks viven en `scripts/git-hooks/` y se COPIAN a `.git/hooks` con **un solo comando, desde la
+raíz: `make hooks`**. Hay que ejecutarlo cada vez que cambia un hook. **Copia los hooks de la rama
+EN LA QUE ESTÁS**, así que tras `trabajo/blindaje` va en esa rama, ANTES de `git checkout main`: en
+`main`, antes del merge, instalaría los viejos. En ese primer cierre:
+
+```
+git branch --show-current
+make hooks
+```
+→ **Puerta:** la rama es `trabajo/blindaje`, y `make hooks` lista `pre-commit` y `pre-merge-commit`.
+Después, el ritual de siempre desde `git checkout main`. El merge pasa sin más, porque el último
+commit de la rama ya se selló al hacerse.

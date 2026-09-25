@@ -23,7 +23,9 @@ Tiene que salir `1 passed`. Si no, no se empieza.
   despues de un huso NO CONCLUYENTE. `fidelidad build` se niega solo, y nadie lo rodea.
 - **Toda lectura se declara el mismo dia** en `docs/validation/HOLDOUT-EXPOSICIONES.md` (ADR-0021 §4).
 - **Todo commit que toque `knowledge/cases/` lleva `Fuente:`** en el cuerpo, con ids que existan.
-- `make check` con la salida a un fichero, nunca a `/dev/null`.
+- **Cada commit, en este orden: estadiar lo que entra → `make check > make-check.log 2>&1` →
+  commit** (2026-09-25, `trabajo/blindaje`). `make check` en verde sella el arbol estadiado y el
+  hook rechaza un commit sin ese sello. La salida, a un fichero y nunca a `/dev/null`.
 
 ## Paso 0 · La entrega, y la primera parada
 
@@ -232,13 +234,21 @@ ingeribles sin ninguna operacion: se copian al informe tal cual.
 
 ```
 uv run botsito casos check
-make check > make-check.log 2>&1
 ```
 
 `casos check` da `OK: los casos de la biblioteca tienen la forma declarada y ninguno esta
-reservado`, y `make check` sale con 0; `make-check.log` se borra y no se commitea. Se declara la lectura en `HOLDOUT-EXPOSICIONES.md`
--`dateStart`, `side`, `entryPrice` e `initialSL` de las filas de los dias `fidelidad-dev`- y se
-commitea con `Fuente: ADR-0046`.
+reservado`. Se declara la lectura en `HOLDOUT-EXPOSICIONES.md` -`dateStart`, `side`, `entryPrice` e
+`initialSL` de las filas de los dias `fidelidad-dev`- y, con todo escrito, se estadia, se prueba y
+se commitea, en ese orden:
+
+```
+git add knowledge/cases/dev/ docs/validation/HOLDOUT-EXPOSICIONES.md
+make check > make-check.log 2>&1
+grep "SELLO: make check en verde" make-check.log
+rm make-check.log
+```
+
+`make check` sale con 0 y el `grep` da una linea: entonces se commitea con `Fuente: ADR-0046`.
 
 > **PARADA E.** Cualquier `ERROR` de la ingesta: no se escribe nada, se informa y se para. No se
 > prueba con otro libro ni con otro artefacto.

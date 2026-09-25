@@ -66,6 +66,8 @@ ROOT_FILES = [
     "tests/fixtures/clip_2s.mp4",
     "tests/fixtures/README.md",
     "scripts/git-hooks/pre-commit",
+    "scripts/git-hooks/pre-merge-commit",
+    "scripts/sello_make_check.py",
     "docs/plan/MASTER_PLAN.md",
     "docs/adr/0000-template.md",
     "docs/plan/features/_template.md",

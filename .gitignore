@@ -20,3 +20,6 @@ __pycache__/
 # so
 .DS_Store
 Thumbs.db
+# la salida de make check: se escribe a fichero (CLAUDE.md) y no se versiona; si no estuviera
+# ignorada, el sello de make check (scripts/sello_make_check.py) nunca se escribiria
+/make-check.log

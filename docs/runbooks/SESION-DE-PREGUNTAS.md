@@ -116,5 +116,6 @@ precondición de ceguera.
    el consultor por decisión**: solo el trader.
 8. **El informe de la sesión** en `docs/validation/`: qué quedó resuelto, con qué registro, qué
    sigue abierto y qué compromisos salieron. Con su estado al final.
-9. `make check` con la salida a un fichero, y el ritual (`docs/runbooks/RITUAL.md`) lo hace el
-   usuario.
+9. **Cada commit, en este orden: estadiar → `make check > make-check.log 2>&1` → commit.** Un
+   `make check` en verde sella el arbol estadiado, y el hook rechaza un commit sin ese sello
+   (2026-09-25, `trabajo/blindaje`). El ritual (`docs/runbooks/RITUAL.md`) lo hace el usuario.

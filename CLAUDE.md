@@ -20,6 +20,14 @@ Se trabaja en una rama (`feature/F##-nombre` o `trabajo/<nombre>`). **La sesion 
 ni push: el ritual de cierre lo ejecuta el usuario** (`docs/runbooks/RITUAL.md`). El hook `pre-commit`
 rechaza un commit directo en `main` salvo con `BOTSITO_ALLOW_MAIN=1`, que solo usa el ritual.
 
+**Ningún commit sin el sello de `make check`, y NUNCA `--no-verify`** (ni en `git commit` ni en
+`git merge`: los hooks son la puerta, y saltarlos es saltarse la regla). Desde la rama
+`trabajo/blindaje` (2026-09-25), `make check` en verde escribe el hash del árbol ESTADIADO en un
+sello, y los hooks `pre-commit` y `pre-merge-commit` rechazan cualquier árbol que no sea ese. El
+orden es siempre el mismo: **estadiar lo que se va a commitear → `make check > make-check.log
+2>&1` → commit**. Si quedan cambios sin estadiar o ficheros sin seguir, `make check` lo avisa y no
+sella. `cherry-pick` y `rebase` no pasan por `pre-commit`: no se usan para meter trabajo.
+
 ## Regimenes de cambio
 
 - `knowledge/evidence/` → INMUTABLE tras commit (hook). Correccion = item nuevo que supersede, y se
