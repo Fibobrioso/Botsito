@@ -20,8 +20,9 @@ ejecutar `make hooks`.
 
 - `pre-merge-commit`: el que SI dispara `git merge` cuando crea el commit sin conflictos (git >= 2.24,
   medido con git 2.55 el 2026-09-25; hasta entonces este README decia que no existia). Solo comprueba
-  el sello, sin mirar la rama. Si rechaza, el merge queda a medias: `git merge --abort`, o
-  `make check` sobre el arbol fusionado y `BOTSITO_ALLOW_MAIN=1 git commit --no-edit`.
+  el sello, sin mirar la rama. Si rechaza, el merge queda a medias: `git merge --abort`, `make check`
+  en la rama que se fusiona (sella su ultimo arbol) y repetir el merge. En `main` no se puede sellar
+  a mitad de merge, porque `state check` falla por diseno hasta el `docs(state)`.
 
 **El sello** (`scripts/sello_make_check.py`). `make check` borra el sello al empezar y, si termina en
 verde, escribe el hash del arbol ESTADIADO (`git write-tree`) en `git rev-parse --git-path

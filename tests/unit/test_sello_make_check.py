@@ -260,9 +260,13 @@ def test_merge_no_ff_sin_sello_rechazado_y_queda_a_medias(repo: Path, m: ModuleT
     assert c.returncode != 0
     assert "pre-merge-commit: rechazado" in c.stderr and "git merge --abort" in c.stderr
     assert git(repo, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode == 0
-    # la salida documentada: sellar el arbol fusionado y cerrar con git commit (pasa por pre-commit)
+    # la salida documentada (RITUAL.md): abortar, sellar en la rama que se fusiona y repetir
+    assert git(repo, "merge", "--abort").returncode == 0
+    git(repo, "checkout", "-q", "trabajo/otra")
     assert m.sellar(repo)[0]
-    assert git(repo, "commit", "-q", "--no-edit").returncode == 0
+    git(repo, "checkout", "-q", "trabajo/prueba")
+    otra = git(repo, "merge", "--no-ff", "trabajo/otra", "-m", "merge")
+    assert otra.returncode == 0, otra.stderr
 
 
 def test_main_sigue_exigiendo_botsito_allow_main_aunque_haya_sello(

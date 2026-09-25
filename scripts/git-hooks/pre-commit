@@ -41,8 +41,9 @@ if [ -z "$arbol" ] || [ "$arbol" != "$sello" ]; then
   echo "  Estadia exactamente lo que vas a commitear y ejecuta:  make check > make-check.log 2>&1" >&2
   echo "  Si termina en verde, sella el arbol; despues repite el commit. --no-verify esta prohibido (CLAUDE.md)." >&2
   if [ "$nombre" = "pre-merge-commit" ]; then
-    echo "  El merge queda a medias: o  git merge --abort,  o  make check > make-check.log 2>&1  sobre el" >&2
-    echo "  arbol fusionado y despues  BOTSITO_ALLOW_MAIN=1 git commit --no-edit  (en main)." >&2
+    echo "  El merge queda a medias. Vuelve atras con  git merge --abort,  cambia a la rama que fusionas," >&2
+    echo "  ejecuta alli  make check > make-check.log 2>&1  (sella su ultimo arbol) y repite el merge." >&2
+    echo "  En main no se sella a mitad de merge: state check falla por diseno hasta el docs(state)." >&2
   fi
   exit 1
 fi
