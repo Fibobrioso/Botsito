@@ -1,0 +1,19 @@
+# LA MEDIDA DEL HUSO DE UN LIBRO POR VELAS (ADR-0039 §5), hecha HERRAMIENTA el 2026-09-24 (rama
+# `trabajo/entrada-marzo`, ADR-0046 §6c). La ejecuta `scripts/huso_por_velas.py`, que lee de aqui
+# TODAS sus cifras y sus husos (ADR-0002): el script no lleva ni un numero de la regla dentro.
+#
+# Son las cifras de §5 tal como estan escritas, y con las que se midieron agosto, abril y mayo el
+# 2026-09-22 (docs/validation/MAYO-DEV.md). Cambiarlas es cambiar el procedimiento de ADR-0039:
+# va con un ADR, no con un commit suelto.
+adr: ADR-0039
+# La entrada de la fila esta DENTRO si cae en [minima - margen, maxima + margen] puntos de la vela
+# M1 de Dukascopy del minuto de su instante. Los 2 puntos son A-16: tres medidas OANDA frente a
+# Dukascopy, entre 1 y 2 puntos.
+margen_puntos: 2
+# Los dos husos con que se lee el instante de cada fila: UTC y el alternativo de §5.
+husos: [UTC, Europe/Madrid]
+# Decide un huso si da >= umbral_decide dentro Y el otro <= umbral_otro. El segundo importa tanto
+# como el primero: si los dos salen altos, la prueba no distingue husos. Cualquier otra cosa es
+# NO CONCLUYENTE, y el libro no se declara.
+umbral_decide: "0.90"
+umbral_otro: "0.50"
