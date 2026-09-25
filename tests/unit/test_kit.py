@@ -283,10 +283,16 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # SIEMPRE-. Las dos dejan al motor sin entrada posible, cada una por su lado. El 2026-09-24
     # ADR-0045 decide A-24 (el pivote mas reciente ya formado) y abre A-35, cuando esta formado,
     # que hereda el bloqueo: sin ella el productor de `liquidez_m15` no se escribe sin inventar.
+    # El 2026-09-25 (rama trabajo/sesion-02, decision del consultor) nace A-42, con que reloj cuenta
+    # el trader su horario de 07:00 a 15:00: bloquea la entrada de meses de invierno desde el
+    # sorteo, porque su grafico es UTC+2 fijo, huso_operativa es Europe/Madrid y el sorteo congela
+    # huso_operativa y no se repite (ENTRADA-MARZO, PARADA B0).
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-35"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    assert abiertas == {"A-21", "A-35", "A-42"}, (
+        f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    )
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida

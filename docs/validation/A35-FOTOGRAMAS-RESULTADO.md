@@ -51,6 +51,15 @@ y luego a 1.19739, es decir, **del cuerpo a las mechas**.
 **Lo que esta rama no cambia:** RN-004 sigue bloqueada, con A-21 y A-35 bloqueantes a la espera del
 trader.
 
+> **CORRECCIÓN del 2026-09-25 (rama `trabajo/sesion-02`).** A-21 no bloquea RN-004. Nació en
+> ADR-0019 (commit `d264912`, 2026-09-10) y se reformuló el mismo día a «qué es una zona de control
+> "limpia, sin ruido". Es lo único de la geometría de entrada que sigue siendo cualitativo»: la zona
+> de control del esquema de entrada en M1, que es RN-008. Su evidencia es de ese esquema
+> (`ev-v1-001435-f0586d02`, «cuando se desarrolle esta zona de control que no haga mucho ruido»;
+> `ev-v4-000243-5f8875ce`; `ev-v3-004201-bfeb3734`), y RN-004 solo cita A-24, DECIDIDA, y A-35. La
+> frase de arriba copió la de `PROJECT_STATE.md`, que entró sin fuente en `0901d2c`. **RN-004 queda
+> bloqueada solo por A-35.** El cuerpo no se toca.
+
 ## Estado
 
 CERRADA PARA EL RITUAL. A-35 sin respuesta en transcripciones ni en fotogramas, y a la reunión con el

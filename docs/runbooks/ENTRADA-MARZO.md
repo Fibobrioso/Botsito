@@ -82,6 +82,16 @@ Tiene que salir sin `ERROR`; `knowledge-validate.log` se borra y no se commitea.
 
 ## Paso b · El sorteo
 
+> **PARADA B0 (2026-09-25, rama `trabajo/sesion-02`). Si A-42 no esta RESUELTA, marzo se detiene
+> aqui, tras el paso a.** A-42 pregunta con que reloj cuenta el trader su horario de 07:00 a
+> 15:00. El grafico de FX Replay es UTC+2 fijo, `huso_operativa` sigue en Europe/Madrid, y en
+> invierno las dos lecturas se separan una hora. En 2026 el horario de verano europeo empieza el
+> 29 de marzo, asi que casi todo marzo es invierno. **Por que aqui y no antes de la ingesta:**
+> este paso congela `huso_operativa` en `ventanas.yaml`, junto con la ventana de cada caso, y el
+> sorteo no se repite (ADR-0046 §5). Parar despues ya no arreglaria nada. Antes del comando, el
+> estado se mira en `knowledge/spec/ambiguedades.yaml` (entrada `A-42`, campo `estado`). Si no dice
+> `RESUELTA`, la sesion para aqui y lo informa, y los pasos b a e no se ejecutan.
+
 La semilla la fija el consultor ANTES de ejecutarlo: por el precedente de septiembre es
 `AAAAMMDD`, la fecha en que se fija el reparto (`SEPTIEMBRE-SORTEO.md` §4), y va en el mensaje
 del commit.

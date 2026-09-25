@@ -8,6 +8,8 @@ phase: F10
 
 > **Nota (2026-09-17, rama de los meses vistos).** Cada entrada de `vistos.yaml` lleva `visto_el`, y cuenta para un paquete solo si es igual o anterior a la fecha de su sesion (la del nombre). Un mes visto despues de celebrar una sesion no borra lo que su paquete pregunto; mayo 2026 queda declarado visto el 2026-09-11 sin tocar la sesion 1. Guardia en `construir()` y en `knowledge validate` (`docs/validation/MESES-VISTOS.md`).
 
+> **Enmienda (2026-09-12, ADR-0022 §7; nota escrita el 2026-09-25).** La ultima frase del punto 1 -"Se cierra una ambiguedad solo con un registro del trader"- ya no es la unica via: ADR-0022 §7 crea el estado `DECIDIDA`, que cierra una ambiguedad no bloqueante por decision del consultor con el ADR que la nombra. `RESUELTA` sigue exigiendo el registro del trader, y una bloqueante no se puede cerrar por decision (`src/botsito/validation/knowledge.py`).
+
 ## Decision
 1. **Ambiguedades legibles por maquina** en `knowledge/spec/ambiguedades.yaml` (`id` A-N,
    `titulo`, `pregunta`, `resuelve_en`, `evidencia` con ids existentes, `parametros` del

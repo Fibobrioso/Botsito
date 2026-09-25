@@ -69,8 +69,10 @@ cercanos. El texto de las transcripciones vive tambien ahi: `knowledge/corpus/tr
 tiene los MANIFIESTOS (ver la seccion de transcripciones, mas abajo).
 
 Estan infrautilizados, y eso cuesta turnos del trader: hay **25.372 PNG a 1 fps** de los seis videos y
-solo **8 fotogramas distintos, citados por 9 items de 365** (dos de esos ocho los cito esta misma rama,
-el 2026-09-17). La auditoria del 2026-09-13, epigrafe *Fotogramas no abiertos*, ya lo decia: los "aqui"
+solo **8 fotogramas distintos, citados por 9 items de 365** el 2026-09-17 (dos de esos ocho los
+cito aquella misma rama). Medido de nuevo el 2026-09-25 con el mismo recuento (ids
+`fr-…/<ms>` dentro de `knowledge/evidence/`): **13 fotogramas distintos, citados por 12 items de
+368**. Sigue siendo muy poco. La auditoria del 2026-09-13, epigrafe *Fotogramas no abiertos*, ya lo decia: los "aqui"
 de v4 1:06:12, v1 0:14:54 y el bloque de origen siguen sin abrirse, y entonces `data/fotogramas` ni
 siquiera estaba copiado. **Una pregunta de geometria se contesta muchas veces mirando el fotograma, sin
 gastarle un turno al trader** (asi se resolvio el breaker de M1: `docs/validation/BREAKER-M1.md`).

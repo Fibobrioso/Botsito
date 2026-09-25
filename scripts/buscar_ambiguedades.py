@@ -19,6 +19,12 @@ con el mismo metodo. Va en un conjunto aparte para que la salida de A-24, A-21, 
 reproduciendo byte a byte:
 
   `uv run python scripts/buscar_ambiguedades.py --conjunto a35 --salida <fichero>`
+
+Los candidatos C-01, C-02, C-04, C-05, C-06 y C-07 de la sesion 02 (huecos del motor sin
+ambiguedad ni regla, `docs/validation/SESION-02-INVENTARIO.md` §4.3) van en el conjunto
+`sesion02`, congelado en `docs/validation/SESION-02-BUSQUEDA-CRITERIO.md`:
+
+  `uv run python scripts/buscar_ambiguedades.py --conjunto sesion02 --salida <fichero>`
 """
 
 from __future__ import annotations
@@ -71,7 +77,49 @@ TERMINOS_A35: dict[str, tuple[str, ...]] = {
         "a cada lado", "cuántas velas",
     ),
 }  # fmt: skip
-CONJUNTOS = {"a24": TERMINOS, "a35": TERMINOS_A35}
+# Los candidatos C-xx de la sesion 02, lista cerrada propia, congelada en
+# `docs/validation/SESION-02-BUSQUEDA-CRITERIO.md` (2026-09-25, rama `trabajo/sesion-02`). Mismo
+# criterio: solo frases, ninguna palabra suelta. No se anade ni se quita ninguno despues de ver
+# resultados.
+TERMINOS_SESION02: dict[str, tuple[str, ...]] = {
+    "C-01": (
+        "orden limit", "orden límite", "mi orden", "la orden limit", "pongo la orden",
+        "coloco la orden", "marco mi orden", "poner la orden", "colocar la orden",
+        "precio de entrada", "punto de entrada", "bloque de origen", "origen del breaker",
+        "order block", "mitad de la zona", "cincuenta por ciento", "50 por ciento",
+    ),
+    "C-02": (
+        "punto más abajo", "punto más bajo", "punto más arriba", "punto más alto",
+        "caja de gann", "cuadro de gann", "nivel cero", "nivel uno", "nivel 0", "nivel 1",
+        "desde aquí hasta", "de aquí hasta aquí", "de aquí a aquí", "extremo de la caja",
+        "mi stop", "el stop va", "pongo el stop", "defino el stop", "definir el stop",
+    ),
+    "C-04": (
+        "no se llenó", "no se llena", "no me llenó", "no se activó", "no se activa",
+        "no me activó", "no me activa", "se fue sin", "se va sin", "se me fue", "sin activar",
+        "sin activarse", "no entró", "no me entró", "cancelo la orden", "cancelar la orden",
+        "quito la orden", "quitar la orden", "borro la orden", "elimino la orden",
+    ),
+    "C-05": (
+        "siguiente sesión", "otra sesión", "nueva sesión", "cambio de sesión",
+        "segunda sesión", "a las once", "de 11 a 15", "de once a", "nueva vela de 4",
+        "nueva vela de cuatro", "cambia el sesgo", "cambió el sesgo", "sigue abierta",
+        "sigo dentro", "la dejo abierta", "queda abierta",
+    ),
+    "C-06": (
+        "muevo el stop", "mover el stop", "subo el stop", "bajo el stop", "subir el stop",
+        "bajar el stop", "trailing stop", "arrastrar el stop", "arrastro el stop",
+        "voy moviendo el stop", "asegurar ganancias", "asegurar beneficio",
+        "después del break even", "luego del break even", "ya en break even",
+    ),
+    "C-07": (
+        "dos entradas", "tres entradas", "dos operaciones", "tres operaciones",
+        "una operación al día", "una entrada al día", "máximo de operaciones",
+        "máximo de entradas", "como máximo", "ya no opero", "dejo de operar",
+        "cierro el día", "se acabó el día", "por día", "al día",
+    ),
+}  # fmt: skip
+CONJUNTOS = {"a24": TERMINOS, "a35": TERMINOS_A35, "sesion02": TERMINOS_SESION02}
 PROHIBIDOS = {"liquidez", "zona", "m15", "h4", "sesgo", "vela", "pivote"}
 
 
@@ -89,7 +137,8 @@ def base() -> ModuleType:
 
 def patrones(ambiguedad: str) -> tuple[tuple[str, object], ...]:
     b = base()
-    return tuple((t, b.patron(t)) for t in {**TERMINOS, **TERMINOS_A35}[ambiguedad])
+    todos = {**TERMINOS, **TERMINOS_A35, **TERMINOS_SESION02}
+    return tuple((t, b.patron(t)) for t in todos[ambiguedad])
 
 
 def buscar(terminos: dict[str, tuple[str, ...]] = TERMINOS) -> list[str]:
@@ -121,7 +170,10 @@ def main(argv: list[str]) -> int:
     if len(argv) == 4 and argv[0] == "--conjunto" and argv[1] in CONJUNTOS:
         conjunto, argv = argv[1], argv[2:]
     if len(argv) != 2 or argv[0] != "--salida":
-        print("uso: buscar_ambiguedades.py [--conjunto a35] --salida <fichero>", file=sys.stderr)
+        print(
+            "uso: buscar_ambiguedades.py [--conjunto a35|sesion02] --salida <fichero>",
+            file=sys.stderr,
+        )
         return 2
     salida = "\n".join(buscar(CONJUNTOS[conjunto])) + "\n"
     Path(argv[1]).write_text(salida, encoding="utf-8", newline="\n")

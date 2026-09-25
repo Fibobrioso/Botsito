@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 12.2.1` · hash `d3b9178415c4…`
+`spec_version 12.2.2` · hash `4e87b2abdce8…`
 
 75 en total: 66 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -39,7 +39,7 @@
 | `firma_perdida_total_max` | `10 %` | CONFIRMED | prop_firm | `ADR-0026` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
 | `firma_programa` | `2-step` | CONFIRMED | prop_firm | `ADR-0026` | programa del reto |
 | `firma_tipo_cuenta` | `swing` | CONFIRMED | prop_firm | `ADR-0026` | tipo de cuenta elegido en la compra |
-| `huso_grafico` | `Europe/Madrid` | CONFIRMED | estrategia | `ev-v3-000136-6160fcea` | nombre IANA del huso configurado en el grafico del trader |
+| `huso_grafico` | `Etc/GMT-2` | CONFIRMED | estrategia | `ev-v4-011425-ae028b78` | nombre IANA del huso configurado en el grafico del trader |
 | `huso_operativa` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0017` | nombre IANA del huso en el que se expresan las horas de la operativa |
 | `instrumento` | `EURUSD` | CONFIRMED | estrategia | `ev-v2-003320-a736fd37` | simbolo del instrumento |
 | `instrumento_contrato` | `100000` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | unidades de la divisa base por lote |
@@ -289,7 +289,7 @@ Opciones: `standard`, `swing`.
 
 ### `huso_grafico`
 
-como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las 21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28)
+como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay. Es UTC+2 FIJO, sin horario de verano: lo marca el propio grafico en un fotograma de ENERO de v4 ("14:29:59 UTC+2" sobre "Thu 29 Jan '26", docs/validation/ABRIL-Y-LA-CAJA.md R0), y ADR-0039 lo da por medido ("es UTC+2 fijo"). En la sesion 1 ya se leyo UTC+2 en su pantalla (fr-v6-22982c02/3585000, ADR-0005), pero era verano y no distinguia (ADR-0015); y en v4, preguntado por el horario "en el horario UTC más 2", contesta "De UTC más 2, de 7, claro" (ev-v4-011425-ae028b78). Hasta el 2026-09-25 valia Europe/Madrid (ADR-0017 §4), con la premisa de que la plataforma muestra su hora local; la medida de enero la desmiente, y en verano los dos valores dan la misma hora. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 en su grafico son las 21:00 UTC todo el año. NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa, que es OTRO reloj y en invierno va una hora por detras de este, y la rejilla H4 de anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28), ni el huso de un libro del trader, que se declara por libro (ADR-0039, knowledge/corpus/libros.yaml)
 
 ### `huso_operativa`
 

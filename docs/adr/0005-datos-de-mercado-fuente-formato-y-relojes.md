@@ -109,5 +109,7 @@ Queda abierta A-14: si su grafico es UTC+2 fijo o sigue a Madrid, algo que solo 
 una fecha de invierno. Mayo y junio -los meses del paquete de la sesion- son verano y dan las
 mismas velas con las dos hipotesis.
 
+> **Nota (2026-09-25).** Distinguido en una fecha de invierno: el grafico es UTC+2 fijo (ADR-0039, `docs/validation/ABRIL-Y-LA-CAJA.md` R0), y `huso_grafico` vale `Etc/GMT-2` desde la enmienda de ADR-0017 de ese dia.
+
 ## Estado
 ACTIVE
