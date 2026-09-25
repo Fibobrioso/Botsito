@@ -112,8 +112,9 @@ ambigüedad, no en el código.
   `sesgo` al sentido de la ruptura. ADR-0044 añade la búsqueda hacia atrás hasta
   `sesgo_h4_tope_velas`, y los estados AMBIGUO e INSUFICIENTE, «con cualquiera de los dos no se
   opera». Ninguna forma expresa ese «no se opera». Por orden del consultor, la primitiva usa
-  `domain/sesgo.py` tal cual. Con AMBIGUO o INSUFICIENTE, el hecho `sesgo` queda sin valor en esa
-  sesión y el embudo lo dice.
+  `domain/sesgo.py` tal cual. Con AMBIGUO o INSUFICIENTE, la forma no fija el hecho `sesgo` en esa
+  sesión; si una sesión anterior del mismo día lo fijó, lo conserva, porque ninguna forma lo borra.
+  El embudo cuenta esa sesión como sesión sin `sesgo` propio, y anota lo que dijo `sesgo_h4`.
 - **H2. Qué es una sesión.** `abre_sesion_operativa` es «empieza una de las sesiones de la
   ventana», y la spec no declara sus límites como parámetro. El arnés usa las sesiones de
   `knowledge/cases/kit/config.yaml`, las mismas que etiquetan los casos del trader, para que bot y
