@@ -1522,11 +1522,17 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     No hay `--dias`: el conjunto se deriva de los repartos commiteados DEL KIT menos los
     reservados, y de ahi SOLO los del mes que el libro declara ser por su sha (2026-09-22). Un
     humano no puede ampliarlo.
+
+    Con `--artefacto <id>` (ADR-0046 §7) el conjunto son los `fidelidad-dev` de ese artefacto
+    -sorteado, anclado y commiteado- menos los ocultos, con el config del camino de fidelidad.
     """
+    from botsito.cases import fidelidad
     from botsito.cases.biblioteca import como_documento, escribir
     from botsito.cases.ingesta import (
+        Ingeribles,
         aviso_de_meses_sin_libro,
         aviso_de_otro_camino,
+        dias_de_fidelidad,
         dias_del_material,
         dias_ingeribles,
         ingerir,
@@ -1537,21 +1543,35 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     from botsito.config.registro import cargar_registro
 
     material = Path(args.material)
+    artefacto: str | None = getattr(args, "artefacto", None)
     errores: tuple[type[Exception], ...] = (OSError, *_kit_errores())
+    ingeribles = Ingeribles({}, {})
     try:
         sha = sha256_hex(material.read_bytes())
-        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        if artefacto is None:
+            config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        else:
+            config = fidelidad.cargar_config(repo)
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
         huso = registro.texto("huso_operativa")
         sesiones = [(s.nombre, s.desde, s.hasta) for s in config.sesiones]
-        ingeribles = dias_ingeribles(repo, config.cobertura)
-        if ingeribles.de_otro_camino:
-            # ANTES de cualquier error: que no entran se dice aunque el comando falle despues.
-            print(aviso_de_otro_camino(ingeribles.de_otro_camino), file=sys.stderr)
-        sin_libro = meses_sin_libro(config.cobertura, config.materiales)
-        if sin_libro:
-            print(aviso_de_meses_sin_libro(sin_libro), file=sys.stderr)
-        pedidos = dias_del_material(repo, ingeribles.dias, config.materiales, sha)
+        if artefacto is None:
+            ingeribles = dias_ingeribles(repo, config.cobertura)
+            if ingeribles.de_otro_camino:
+                # ANTES de cualquier error: que no entran se dice aunque el comando falle despues.
+                print(aviso_de_otro_camino(ingeribles.de_otro_camino), file=sys.stderr)
+            sin_libro = meses_sin_libro(config.cobertura, config.materiales)
+            if sin_libro:
+                print(aviso_de_meses_sin_libro(sin_libro), file=sys.stderr)
+            pedidos = dias_del_material(repo, ingeribles.dias, config.materiales, sha)
+        else:
+            pedidos = dias_del_material(
+                repo,
+                dias_de_fidelidad(repo, artefacto),
+                config.materiales,
+                sha,
+                camino=f"de fidelidad ({artefacto})",
+            )
         resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
     except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -2363,6 +2383,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cs_ing.add_argument("--material", required=True, help="el xlsx del backtest del trader")
     cs_ing.add_argument("--fecha", required=True, help="AAAA-MM-DD en que se ingiere")
+    cs_ing.add_argument(
+        "--artefacto",
+        help="los `fidelidad-dev` de un artefacto de fidelidad sorteado y anclado (ADR-0046 §7)",
+    )
     casos_sub.add_parser(
         "check", help="comprueba la forma de los casos y que ninguno este reservado"
     )

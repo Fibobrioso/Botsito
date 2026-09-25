@@ -46,9 +46,16 @@ PUERTA: era la regla de cobertura protegiendo por coincidencia. Ahora el mes se 
 `trabajo/cobertura-material-del-kit` dejo nombrada en Technical Debt: «declarar el mes del
 material en vez de deducirlo de las filas».
 
-**SOLO EL CAMINO DEL KIT.** Los dias del camino de fidelidad (ADR-0036) no los toma este comando:
-el brief que los abra no existe todavia (PROJECT_STATE, Next Action), y hasta hoy esa obligacion
-solo estaba ESCRITA. Se cuentan -nunca se nombran- y se dice.
+**SIN `--artefacto`, SOLO EL CAMINO DEL KIT.** Los dias del camino de fidelidad (ADR-0036) no los
+toma el comando sin mas: se cuentan -nunca se nombran- y se dice.
+
+**CON `--artefacto <id>`, SOLO LOS `fidelidad-dev` DE ESE ARTEFACTO** (ADR-0046 §7). El conjunto
+sigue sin elegirse: es `(casos fidelidad-dev del artefacto) - casos_ocultos(repo)`, y el artefacto
+tiene que estar sorteado, anclado y commiteado, con su `particiones.yaml` y su `ventanas.yaml` tal
+como los ancla `anclas.yaml`. Un artefacto sin sorteo se niega: es lo que impide ingerir un mes
+antes de repartirlo. El libro pasa por las mismas negativas del sha, ahora contra el
+`cobertura_material` del camino de fidelidad, y las filas de los dias reservados del mismo libro no
+salen del lector, igual que en el kit.
 
 Lo que NO se decide aqui: si ese dia produce un caso `no_trade` o no produce nada. Hoy no produce
 nada y asi se queda; toca la forma del caso y roza «un dia sin ninguna operacion ES su etiqueta».
@@ -74,12 +81,13 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from botsito.cases.holdout import (
+    DIRECTORIO_FIDELIDAD,
     DIRECTORIO_KIT,
     DIRECTORIO_VISTO,
     casos_ocultos,
     repartos_commiteables,
 )
-from botsito.comun.historial import commit_que_anadio
+from botsito.comun.historial import blob_en_arbol, blob_en_head, commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.inventario import InventarioError, cargar_manifiesto
 from botsito.corpus.libro import PESTANA_OPERACIONES, LibroError, filas_de_los_dias
@@ -128,9 +136,11 @@ class Ingeribles:
 def aviso_de_otro_camino(n: int) -> str:
     """La frase que dice que los dias de fidelidad no entran. Por RECUENTO, sin fechas."""
     return (
-        f"INGESTA: {n} dias del camino de FIDELIDAD no los toma este comando: sus dias `dev` no "
-        f"se abren sin su propio brief (PROJECT_STATE.md, Next Action: «EL BRIEF PARA ABRIR LOS "
-        f"4 `dev` DE SEPTIEMBRE [...] no se abre sin el»). No se han leido ni escrito"
+        f"INGESTA: {n} dias del camino de FIDELIDAD no los toma este comando sin `--artefacto`: "
+        f"sus dias `fidelidad-dev` entran solo con `casos ingerir --artefacto <id>`, de un "
+        f"artefacto sorteado, anclado y commiteado, y con un libro atado a su mes (ADR-0046 §7; "
+        f"septiembre, ademas, con su brief: PROJECT_STATE.md, Next Action). No se han leido ni "
+        f"escrito"
     )
 
 
@@ -212,6 +222,70 @@ def dias_ingeribles(
     return Ingeribles(salida, negados, len(de_otro_camino))
 
 
+def dias_de_fidelidad(repo: Path, artefacto: str) -> dict[str, str]:
+    """`dia -> caso` de los `fidelidad-dev` de UN artefacto (ADR-0046 §7), menos los ocultos.
+
+    Se niega si el artefacto no esta sorteado, no esta anclado, no esta commiteado o su reparto no
+    es el que ancla `anclas.yaml` -en HEAD y en el arbol-. Ninguna negativa nombra un dia.
+    """
+    from botsito.cases import fidelidad
+    from botsito.cases.paquete import KitError, cargar_anclas
+
+    try:
+        mes = fidelidad.mes_del_artefacto(artefacto)
+        anclas = cargar_anclas(repo, DIRECTORIO_FIDELIDAD, fidelidad.ARTEFACTO)
+    except (fidelidad.FidelidadError, KitError) as exc:
+        raise IngestaError(str(exc)) from exc
+    base = f"{DIRECTORIO_FIDELIDAD}/{artefacto}"
+    if not (repo / base / "particiones.yaml").is_file():
+        raise IngestaError(
+            f"{artefacto} no esta sorteado: no hay {base}/particiones.yaml. Sin sorteo no se "
+            f"ingiere ningun dia (ADR-0046 §7)"
+        )
+    ancla = anclas.get(artefacto)
+    if ancla is None:
+        raise IngestaError(
+            f"{artefacto} no esta anclado en {DIRECTORIO_FIDELIDAD}/anclas.yaml: sin ancla no se "
+            f"ingiere ningun dia (ADR-0046 §7)"
+        )
+    for nombre in fidelidad.FICHEROS_ARTEFACTO:
+        ruta = f"{base}/{nombre}"
+        if commit_que_anadio(repo, ruta) is None:
+            raise IngestaError(
+                f"{ruta} no esta commiteado: un reparto sin commitear no hace ingerible nada"
+            )
+        sha = ancla.get(nombre)
+        if sha is None or blob_en_head(repo, ruta) != sha or blob_en_arbol(repo, ruta) != sha:
+            raise IngestaError(
+                f"{ruta} no es el que ancla {DIRECTORIO_FIDELIDAD}/anclas.yaml: el reparto cambio "
+                f"despues de anclarse y no se ingiere nada"
+            )
+    try:
+        doc = leer_yaml(repo / base / "particiones.yaml")
+    except (OSError, YamlError) as exc:
+        raise IngestaError(f"{base}/particiones.yaml: {exc}") from exc
+    asignacion = doc.get("asignacion") if isinstance(doc, dict) else None
+    if not isinstance(asignacion, dict):
+        raise IngestaError(f"{base}/particiones.yaml: sin `asignacion`")
+    # OCULTOS (ADR-0041): reservados de TODOS los caminos, mas los retirados. Lanza si un reparto
+    # es ilegible: un mapa a medias es indistinguible de uno completo.
+    ocultos = casos_ocultos(repo)
+    salida: dict[str, str] = {}
+    for caso, particion in asignacion.items():
+        m = _CASO.match(str(caso))
+        if m is None or particion != "fidelidad-dev" or str(caso) in ocultos:
+            continue
+        if m.group(1)[:7] != mes:
+            raise IngestaError(
+                f"{base}/particiones.yaml: un caso `fidelidad-dev` no es de {mes}, el mes del id. "
+                f"El artefacto no es el que ADR-0046 §4 construye, y no se ingiere nada"
+            )
+        salida[m.group(1)] = str(caso)
+    if not salida:
+        raise IngestaError(f"{artefacto} no tiene ningun dia `fidelidad-dev` ingerible")
+    return salida
+
+
 def meses_sin_libro(
     cobertura: Mapping[str, Sequence[tuple[str, str]]], materiales: Mapping[str, str]
 ) -> list[str]:
@@ -233,7 +307,11 @@ def aviso_de_meses_sin_libro(meses: Sequence[str]) -> str:
 
 
 def dias_del_material(
-    repo: Path, dias: Mapping[str, str], materiales: Mapping[str, str], sha: str
+    repo: Path,
+    dias: Mapping[str, str],
+    materiales: Mapping[str, str],
+    sha: str,
+    camino: str = "del kit",
 ) -> dict[str, str]:
     """De los `dias` ingeribles, SOLO los del mes que el libro DECLARA ser, por su sha.
 
@@ -263,8 +341,8 @@ def dias_del_material(
     salida = {d: c for d, c in dias.items() if d[:7] == mes}
     if not salida:
         raise IngestaError(
-            f"el material es de {mes} y ese mes no tiene ningun dia ingerible en el camino del "
-            f"kit. No se lee"
+            f"el material es de {mes} y ese mes no tiene ningun dia ingerible en el camino "
+            f"{camino}. No se lee"
         )
     return salida
 

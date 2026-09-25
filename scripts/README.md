@@ -18,6 +18,11 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   verificada contra su manifiesto. Se ejecuta una sola vez.
 - `instante_llenado.py`: si el instante del xlsx es el LLENADO o la COLOCACION de la orden, con
   control a -30 y +30 min (`docs/validation/CRITERIO-FIDELIDAD.md` §1). Solo imprime tasas.
+- `huso_por_velas.py`: el huso de un libro del trader MEDIDO POR VELAS, el procedimiento de
+  ADR-0039 §5 hecho herramienta (2026-09-24, ADR-0046 §6c). Todas sus cifras y sus husos salen de
+  `knowledge/corpus/criterio_huso.yaml`; los dias `dev`, de los repartos commiteados. Con un libro
+  ya declarado es CONTROL, y si no coincide sale con codigo 3. Solo imprime recuentos y tasas
+  (control de abril: `docs/validation/HUSO-POR-VELAS-CONTROL-ABRIL.txt`).
 - `sesgo_h4_diagnostico.py`: DIAGNOSTICO del sesgo H4 sobre abril y agosto (construccion), sin
   umbral y sin tocar mayo (`docs/validation/MOTOR-SESGO-H4.md`). Solo imprime recuentos.
 - `buscar_ambiguedades.py`: la busqueda de A-24, A-21, A-26 y A-34 en las transcripciones, CONGELADA

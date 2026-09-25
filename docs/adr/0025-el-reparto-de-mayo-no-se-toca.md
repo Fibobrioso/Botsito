@@ -33,6 +33,11 @@ phase: post-F13 (habilita F14)
 5. **La vía para crecer no es repartir otra vez, es el mes limpio** que se le ha pedido al trader
    (febrero o marzo de 2026). Cuando llegue, entra como paquete nuevo con sus propios cupos.
 
+   > **NOTA del 2026-09-24 (ADR-0046, no reescribe el cuerpo). Enmienda de este §5 para marzo.**
+   > Marzo NO entra por el kit ciego como paquete nuevo: el backtest lo hace el propio trader, ese
+   > material no es ciego para él, y ADR-0036 §1 lo saca del kit. Entra por el camino de fidelidad,
+   > con sorteo, puerta y la reserva de `fidelidad-2` y `fidelidad-3` (ADR-0046).
+
 ## Problema que resuelve
 
 F14 construye la biblioteca de casos y necesita saber sobre qué días trabaja. Hoy hay tres cosas

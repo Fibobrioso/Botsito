@@ -29,12 +29,19 @@ mezclar dias no ciegos con los ciegos de mayo daria un cubo cuya cifra no se pue
 Pasan por la MISMA puerta (`holdout.py`): ADR-0034 separo la ceguera DEL TRADER -que
 septiembre ya no tiene- de LA NUESTRA -que sigue intacta-, y es la nuestra la que la puerta
 protege.
+
+**UN ARTEFACTO ES UN MES, Y SU SORTEO NO SE REPITE NUNCA (ADR-0046).** El id es
+`<simbolo>-AAAA-MM` y limita el universo a ese mes. Sus cupos son los fijos de `particiones` o,
+si `cupos_por_mes` trae una REGLA para su mes, los que salen de aplicarla a N -los casos del
+universo- en el momento del sorteo: la regla es un dato del config (ADR-0002) y se fijo antes de
+ver el mes. Y `escribir` se niega a sortear un id que ya tenga ancla, carpeta o cualquier commit:
+repetir el sorteo seria buscar la semilla.
 """
 
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -56,6 +63,7 @@ from botsito.cases.paquete import (
 from botsito.cases.particiones import PARTICIONES_FIDELIDAD, ParticionError, asignar
 from botsito.cases.ventanas import Caso, Excluido, VentanaError, universo
 from botsito.comun import ids
+from botsito.comun.historial import commit_que_anadio
 from botsito.comun.husos import HusoDesconocidoError, huso_canonico
 from botsito.config.registro import RegistroError, cargar_registro
 from botsito.data.dataset import DatasetError
@@ -69,6 +77,11 @@ FICHEROS_ARTEFACTO = ("ventanas.yaml", "particiones.yaml")
 ARTEFACTO = re.compile(r"^[a-z0-9][a-z0-9-]*$", re.ASCII)
 # El comando que nombra el ancla en los mensajes de la guardia.
 COMANDO_ANCLA = "fidelidad anclar --artefacto"
+# El mes del artefacto sale de su id (ADR-0046): `eurusd-2026-03` reparte SOLO 2026-03.
+_MES_DEL_ID = re.compile(r"^[a-z0-9]+-(\d{4}-(?:0[1-9]|1[0-2]))$", re.ASCII)
+# Las claves que este camino admite ademas de las 8 exactas del config.
+OPCIONALES_FIDELIDAD = ("cobertura_material", "cupos_por_mes")
+_FRACCION = re.compile(r"^(\d+)/(\d+)$", re.ASCII)
 
 
 class FidelidadError(ValueError):
@@ -86,13 +99,133 @@ class Artefacto:
     universo: int
 
 
+def config_de_fidelidad(doc: Any, nombre: str) -> Config:
+    """Valida un doc de config del camino: las 8 claves, sus opcionales y la regla de cupos."""
+    try:
+        config = config_desde_doc(doc, nombre, PARTICIONES_FIDELIDAD, OPCIONALES_FIDELIDAD)
+    except KitError as exc:
+        raise FidelidadError(str(exc)) from exc
+    reglas_de_cupos(config.doc, nombre)
+    return config
+
+
 def cargar_config(repo: Path) -> Config:
     """El config del camino, con sus nombres de particion y su `cobertura_material`."""
     ruta = repo / DIRECTORIO_FIDELIDAD / FICHERO_CONFIG
     try:
-        return config_desde_doc(_yaml(ruta), ruta.name, PARTICIONES_FIDELIDAD)
+        doc = _yaml(ruta)
     except KitError as exc:
         raise FidelidadError(str(exc)) from exc
+    return config_de_fidelidad(doc, ruta.name)
+
+
+def mes_del_artefacto(artefacto: str) -> str:
+    """`AAAA-MM` del id. Un id sin mes no se sortea: el artefacto limita su universo a su mes."""
+    m = _MES_DEL_ID.match(artefacto)
+    if m is None:
+        raise FidelidadError(
+            f"id de artefacto {artefacto!r}: tiene que ser <simbolo>-AAAA-MM, porque el artefacto "
+            f"limita su universo a ese mes (ADR-0046)"
+        )
+    return m.group(1)
+
+
+@dataclass(frozen=True)
+class Paso:
+    """Un paso de la regla de cupos: `fijo`, o `fraccion` de `total` o del `resto`."""
+
+    particion: str
+    de: str | None
+    numerador: int
+    denominador: int
+    fijo: int | None
+
+
+def reglas_de_cupos(doc: Mapping[str, Any], nombre: str) -> dict[str, tuple[Paso, ...]]:
+    """`AAAA-MM -> pasos` de `cupos_por_mes` (ADR-0046). Estricto: cada particion del camino una
+    vez exacta, en pasos `{particion, fijo}` o `{particion, de: total|resto, fraccion: "a/b"}`."""
+    bruto = doc.get("cupos_por_mes")
+    if bruto is None:
+        return {}
+    if not isinstance(bruto, dict):
+        raise FidelidadError(f"{nombre}: cupos_por_mes debe ser un mapa AAAA-MM -> pasos")
+    salida: dict[str, tuple[Paso, ...]] = {}
+    for mes, pasos in bruto.items():
+        donde = f"{nombre}: cupos_por_mes[{mes}]"
+        if not isinstance(mes, str) or not re.match(r"^\d{4}-(0[1-9]|1[0-2])$", mes):
+            raise FidelidadError(f"{nombre}: cupos_por_mes: clave {mes!r} no es AAAA-MM")
+        if not isinstance(pasos, list) or not pasos:
+            raise FidelidadError(f"{donde}: una lista no vacia de pasos")
+        leidos: list[Paso] = []
+        for p in pasos:
+            if not isinstance(p, dict) or "particion" not in p:
+                raise FidelidadError(f"{donde}: cada paso lleva `particion`")
+            particion = str(p["particion"])
+            if set(p) == {"particion", "fijo"}:
+                fijo = p["fijo"]
+                if isinstance(fijo, bool) or not isinstance(fijo, int) or fijo < 0:
+                    raise FidelidadError(f"{donde}: {particion}: `fijo` es un entero >= 0")
+                leidos.append(Paso(particion, None, 0, 1, fijo))
+                continue
+            if set(p) != {"particion", "de", "fraccion"} or p["de"] not in ("total", "resto"):
+                raise FidelidadError(
+                    f"{donde}: {particion}: el paso es {{particion, fijo}} o "
+                    f'{{particion, de: total|resto, fraccion: "a/b"}}'
+                )
+            m = _FRACCION.match(str(p["fraccion"]))
+            if m is None or int(m.group(2)) == 0 or int(m.group(1)) > int(m.group(2)):
+                raise FidelidadError(f'{donde}: {particion}: fraccion "a/b" con 0 <= a <= b')
+            leidos.append(Paso(particion, str(p["de"]), int(m.group(1)), int(m.group(2)), None))
+        nombres = [x.particion for x in leidos]
+        if sorted(nombres) != sorted(PARTICIONES_FIDELIDAD):
+            raise FidelidadError(
+                f"{donde}: cada particion de {PARTICIONES_FIDELIDAD} exactamente una vez"
+            )
+        salida[mes] = tuple(leidos)
+    return salida
+
+
+def cupos_desde_regla(pasos: Sequence[Paso], n: int) -> dict[str, int]:
+    """Aplica la regla a N casos, en orden y con suelo. Determinista. N = 0 se niega, y la regla
+    tiene que repartir los N: `asignar` dejaria fuera en silencio lo que no quepa."""
+    if n <= 0:
+        raise FidelidadError(
+            "N = 0: el tramo no aporta ningun caso al universo y no hay nada que sortear"
+        )
+    resto = n
+    cupos: dict[str, int] = {}
+    for p in pasos:
+        if p.fijo is not None:
+            c = p.fijo
+        else:
+            base = n if p.de == "total" else resto
+            c = base * p.numerador // p.denominador
+        if c > resto:
+            raise FidelidadError(f"la regla pide {c} en {p.particion} y solo quedan {resto}")
+        cupos[p.particion] = c
+        resto -= c
+    if resto:
+        raise FidelidadError(
+            f"la regla deja {resto} de {n} casos sin particion: tiene que repartirlos todos"
+        )
+    return cupos
+
+
+def sorteado_antes(repo: Path, artefacto: str) -> str | None:
+    """Por que el sorteo de `artefacto` ya ocurrio, o None. Ancla, carpeta o commit."""
+    carpeta = repo / DIRECTORIO_FIDELIDAD / artefacto
+    if carpeta.exists():
+        return f"{carpeta.as_posix()} ya existe"
+    try:
+        anclas = cargar_anclas(repo, DIRECTORIO_FIDELIDAD, ARTEFACTO)
+    except KitError as exc:
+        raise FidelidadError(str(exc)) from exc
+    if artefacto in anclas:
+        return f"{artefacto} tiene ancla en {DIRECTORIO_FIDELIDAD}/{FICHERO_ANCLAS}"
+    for nombre in FICHEROS_ARTEFACTO:
+        if commit_que_anadio(repo, f"{DIRECTORIO_FIDELIDAD}/{artefacto}/{nombre}") is not None:
+            return f"{artefacto}/{nombre} ya se commiteo una vez"
+    return None
 
 
 def artefactos(repo: Path) -> list[str]:
@@ -120,6 +253,7 @@ def construir(
         raise FidelidadError(f"id de artefacto invalido {artefacto!r} (a-z, 0-9 y guion)")
     if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
         raise FidelidadError("el seed debe ser un entero >= 0")
+    mes = mes_del_artefacto(artefacto)
     config = config or cargar_config(repo)
     try:
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
@@ -150,8 +284,11 @@ def construir(
             set(),
             config.cobertura,
             solo_con_cobertura=True,
+            solo_mes=mes,
         )
-        asignacion = asignar([c.id for c in casos], seed, config.particiones, PARTICIONES_FIDELIDAD)
+        regla = reglas_de_cupos(config.doc, FICHERO_CONFIG).get(mes)
+        cupos = config.particiones if regla is None else cupos_desde_regla(regla, len(casos))
+        asignacion = asignar([c.id for c in casos], seed, cupos, PARTICIONES_FIDELIDAD)
     except (DatasetError, VentanaError, ParticionError, VelaInvalidaError, KitError) as exc:
         raise FidelidadError(str(exc)) from exc
     elegidos = [c for c in casos if c.id in asignacion]
@@ -171,7 +308,7 @@ def construir(
             {
                 "artefacto": artefacto,
                 "seed": seed,
-                "cupos": config.particiones,
+                "cupos": cupos,
                 "asignacion": {c.id: asignacion[c.id] for c in elegidos},
             }
         ),
@@ -180,9 +317,16 @@ def construir(
 
 
 def escribir(repo: Path, artefacto: Artefacto) -> Path:
+    """Escribe el reparto. EL SORTEO NO SE REPITE NUNCA (ADR-0046): ni otra semilla, ni borrando
+    la carpeta, ni despues de un huso NO CONCLUYENTE. Repetirlo seria buscar la semilla."""
     carpeta = repo / DIRECTORIO_FIDELIDAD / artefacto.id
     if carpeta.exists():
         raise FidelidadError(f"{carpeta.as_posix()} ya existe: no se sobreescribe")
+    motivo = sorteado_antes(repo, artefacto.id)
+    if motivo is not None:
+        raise FidelidadError(
+            f"EL SORTEO NO SE REPITE NUNCA (ADR-0046): {motivo}. Repetirlo seria buscar la semilla"
+        )
     carpeta.mkdir(parents=True)
     for nombre, texto in artefacto.ficheros.items():
         (carpeta / nombre).write_text(texto, encoding="utf-8", newline="\n")
@@ -228,10 +372,8 @@ def comprobar(repo: Path, carpeta_datos: Path, artefacto: str) -> tuple[list[str
         )
         return problemas, avisos
     try:
-        config = config_desde_doc(
-            doc_congelado, f"{artefacto}/ventanas.yaml:config", PARTICIONES_FIDELIDAD
-        )
-    except KitError as exc:
+        config = config_de_fidelidad(doc_congelado, f"{artefacto}/ventanas.yaml:config")
+    except FidelidadError as exc:
         problemas.append(str(exc))
         return problemas, avisos
     congelados = ventanas.get("datasets")
@@ -358,14 +500,21 @@ __all__ = [
     "DIRECTORIO_FIDELIDAD",
     "FICHERO_ANCLAS",
     "FICHEROS_ARTEFACTO",
+    "OPCIONALES_FIDELIDAD",
     "Artefacto",
     "FidelidadError",
+    "Paso",
     "artefactos",
     "cargar_config",
     "comprobar",
+    "config_de_fidelidad",
     "construir",
+    "cupos_desde_regla",
     "escribir",
     "esquema_artefacto",
     "lectura",
+    "mes_del_artefacto",
+    "reglas_de_cupos",
+    "sorteado_antes",
     "validar_artefactos",
 ]
