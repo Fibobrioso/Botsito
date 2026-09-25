@@ -82,7 +82,7 @@ vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste qu
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
-dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que siguen en curso (v4 0:50:48, "Uno ya formado"; v4 0:50:55, "Por encima de este ya formado"). ¿Cuando das un pivote de M15 por formado? ¿Cuando cierra la vela que hace el alto o el bajo, cuando cierra la vela contraria que lo deja atras, o cuando pasa otra cosa? Dilo de forma que dos personas mirando el mismo grafico lo den por formado en la misma vela
+Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco?
 
 ## DECIDIDA (6)
 

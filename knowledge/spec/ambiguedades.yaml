@@ -769,12 +769,15 @@ ambiguedades:
   - id: A-35
     titulo: cuándo un pivote de M15 está formado
     pregunta: >-
-      dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
-      siguen en curso (v4 0:50:48, "Uno ya formado"; v4 0:50:55, "Por encima de este ya formado").
-      ¿Cuando das un pivote de M15 por formado? ¿Cuando cierra la vela que hace el alto o el bajo,
-      cuando cierra la vela contraria que lo deja atras, o cuando pasa otra cosa? Dilo de forma que
-      dos personas mirando el mismo grafico lo den por formado en la misma vela
+      Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué
+      haces si después el precio lo supera un poco?
     resuelve_en: [F19, F20]
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
+    # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
+    # siguen en curso (v4 0:50:48, "Uno ya formado"; v4 0:50:55, "Por encima de este ya formado").
+    # ¿Cuando das un pivote de M15 por formado? ¿Cuando cierra la vela que hace el alto o el bajo,
+    # cuando cierra la vela contraria que lo deja atras, o cuando pasa otra cosa? Dilo de forma que
+    # dos personas mirando el mismo grafico lo den por formado en la misma vela"
     # Nace el 2026-09-24 con ADR-0045, que decide A-24 (el pivote MAS RECIENTE YA FORMADO) y no
     # define "formado" porque la spec vigente no lo define en ninguna parte -glosario, reglas,
     # registro ni tokens-. BLOQUEA RN-004: sin ella no se puede escribir el productor de
