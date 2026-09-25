@@ -201,13 +201,30 @@ hoja. Test propio: `tests/unit/test_hoja_preguntas.py`, con 5 casos.
 - **Preguntas cambiadas**, con la anterior citada en un comentario («PREGUNTA ANTERIOR, SUSTITUIDA
   EN LA SEGUNDA REVISION DEL CONSULTOR»): A-26, A-18, A-33, A-41 y A-37. A-32 lleva al final «Si
   no lo recuerdas, no pasa nada.»
+- **`tests/unit/test_kit.py`**, que congela las bloqueantes ABIERTAS para que añadir una sea
+  deliberado, pasa de `{A-21, A-35}` a `{A-21, A-35, A-42}`, con el motivo en su comentario.
 - **La hoja**: A-42 es la pregunta 4, dentro de «Lo primero», después de A-24. Se regeneró
   `hoja-sesion-02.docx` en la raíz y su test sigue en verde.
 
+## 9. C-08: ADR-0047
+
+`docs/adr/0047-la-unidad-de-comparacion-es-la-operacion-tambien-en-el-holdout.md` adopta la opción
+(a):
+- cuando se rellene el PREREGISTRO, la unidad será la de ADR-0043, la operación dentro de su día y
+  su sesión;
+- el PREREGISTRO no se toca ahora;
+- la gramática del kit, en `(caso, sesión)`, queda como deuda; no rompe nada porque hay 0 registros
+  con `accion: LABEL_CASE`, contados en `knowledge/feedback/`;
+- el motivo es el hallazgo [47] de la auditoría del 2026-09-13: medir por sesión deja sin comparar
+  el segundo y el tercer cartucho, «donde se concentran las pérdidas».
+
+Solo documentación: el ADR y su línea en el índice de `docs/adr/`. La del índice de `PROJECT_STATE`
+va con K-01 en el paso 3 del ritual.
+
 ## Estado
 
-CERRADA PARA EL RITUAL. Aplicadas las siete decisiones del consultor, una pieza por commit, cada
-una con `make check` verde sobre su árbol. **Quedan para el consultor:**
-- si la ventana de 07:00 a 15:00 sigue el reloj civil del trader o el de su gráfico (§2), que
-  toca a marzo;
-- K-01 y K-03, en el paso 3 del ritual.
+CERRADA PARA EL RITUAL. Aplicadas las decisiones del consultor en tres tandas, una pieza por commit
+y cada una con `make check` verde sobre su árbol. **Quedan para el consultor:**
+- A-42, que se lleva al trader en la sesión 02 y bloquea la ingesta de marzo;
+- K-01 (ADR-0045 y ADR-0047 en el índice de `PROJECT_STATE`) y K-03, en el paso 3 del ritual;
+- la deuda de ADR-0047: la gramática de `LABEL_CASE` y `kappa.py` en `(caso, sesión)`.
