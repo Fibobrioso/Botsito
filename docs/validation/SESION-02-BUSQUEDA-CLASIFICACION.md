@@ -105,6 +105,11 @@ los 15 términos aparece, no que el corpus calle. Ver el hallazgo lateral L-2.
 
 **Recuento C-07:** 8 pasajes · RESPONDE 1 (P4) · DUDA 2 (P1, P2) · NO RESPONDE 5.
 
+> **CORRECCIÓN del 2026-09-25 (misma rama, al abrir A-41).** P2 cita `ev-v3-002714-742f2589` sin
+> decir que **está supersedido** por `ev-v6-000732-f9c41d5e` (sesión 1: «no estamos pausando cuando
+> se dé el trade ganador»). No cambia la clase de P2, que es DUDA por lo que dice su frase, pero su
+> ítem no vale como evidencia vigente, y A-41 no lo lleva en `evidencia`. La tabla no se toca.
+
 ## Recuento
 
 | candidato | pasajes | RESPONDE | DUDA | NO RESPONDE |

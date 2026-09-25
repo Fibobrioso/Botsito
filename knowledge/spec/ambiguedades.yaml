@@ -202,12 +202,16 @@ ambiguedades:
   - id: A-13
     titulo: break even al toque o con cuerpo
     pregunta: >-
-      ¿el rompimiento de la zona de control que dispara el break even vale al toque (por un
-      pip) o hay que esperar a que la vela cierre con cuerpo? El parametro que responde a esto es
-      `break_even_criterio_ruptura`, no `break_even_condicion`: aquel dice CON QUE se da por rota
-      la zona y este si el stop se mueve al TOCAR el nivel o al cierre, que es otra pregunta y la
-      cerro A-4. Hasta el 2026-09-11 esta ambiguedad nombraba el segundo, asi que `spec status`
-      ensenaba como "en revision" un valor CONFIRMED y ESCONDIA el default que de verdad corre
+      Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para
+      que la des por rota?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "¿el rompimiento de la zona de control que dispara el break even vale al toque (por un pip) o
+    # hay que esperar a que la vela cierre con cuerpo? El parametro que responde a esto es
+    # `break_even_criterio_ruptura`, no `break_even_condicion`: aquel dice CON QUE se da por rota la
+    # zona y este si el stop se mueve al TOCAR el nivel o al cierre, que es otra pregunta y la cerro
+    # A-4. Hasta el 2026-09-11 esta ambiguedad nombraba el segundo, asi que `spec status` ensenaba
+    # como "en revision" un valor CONFIRMED y ESCONDIA el default que de verdad corre"
     resuelve_en: [F11, F23, F26]
     evidencia:
       - ev-v6-005359-e00e4b0f
@@ -315,26 +319,29 @@ ambiguedades:
   - id: A-18
     titulo: base sobre la que se mide el objetivo 1:3
     pregunta: >-
-      ¿el 1:3 se mide sobre la caja completa o sobre la distancia hasta el stop, que es la que
-      dimensiona el lote? Hasta el 2026-09-11 las dos eran la MISMA distancia y la pregunta
-      sonaba academica; desde ADR-0020 el lote se dimensiona hasta stop_fraccion_caja y el
-      objetivo sigue midiendose sobre la caja entera, asi que la respuesta cambia el RR
-      realizado de verdad. PRIMERA MEDIDA, y no sale de la sesion sino del material
-      (2026-09-21, agosto, ADR-0037): las dos lecturas predicen RR distintos sobre la distancia
-      entrada-stop -`caja_completa` da objetivo_rr/stop_fraccion_caja = 3,75; `riesgo_real` da
-      3,00- y las 18 filas de agosto con `maxTP` e `initialSL` tienen SUELO EN 3,00 (minimo
-      2,50, tres clavadas en 3,00, 16 de 18 por debajo de 3,75). La combinacion CONFIRMED de hoy
-      -caja_completa con stop a 0,8- no cuadra con el material: o la base es `riesgo_real`, o el
-      stop del trader en su backtest no esta a 0,8 de la caja. NO DECIDE NADA: es un mes, son 18
-      filas, y LA CAJA NO ESTA EN EL FICHERO -el RR medido es riesgo real por construccion, asi
-      que si el stop viviera en el borde de la caja las dos lecturas coincidirian y la medida no
-      discriminaria-. Se repite sobre mayo al ingerirlo.
-      v5 (2026-09-05 21-03-59.mkv), 36 fotogramas en ventanas fijas de los instantes 1, 2, 3, 4, 6
-      y 7: ninguno cumple la condicion congelada; la medida no esta en v5; via cerrada.
-      Transcripciones v1–v5: 42 pasajes, ninguno responde con la regla congelada; se pregunta al
-      trader. En v1–v4 el stop se describe en dos tiempos (lote sobre la caja entera, stop
-      protegido a 0,75 tras la entrada), anterior al lineamiento del 9 de septiembre; las dos
-      hipótesis vigentes suponen un solo stop.
+      Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para
+      calcularlo?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "¿el 1:3 se mide sobre la caja completa o sobre la distancia hasta el stop, que es la que
+    # dimensiona el lote? Hasta el 2026-09-11 las dos eran la MISMA distancia y la pregunta sonaba
+    # academica; desde ADR-0020 el lote se dimensiona hasta stop_fraccion_caja y el objetivo sigue
+    # midiendose sobre la caja entera, asi que la respuesta cambia el RR realizado de verdad.
+    # PRIMERA MEDIDA, y no sale de la sesion sino del material (2026-09-21, agosto, ADR-0037): las
+    # dos lecturas predicen RR distintos sobre la distancia entrada-stop -`caja_completa` da
+    # objetivo_rr/stop_fraccion_caja = 3,75; `riesgo_real` da 3,00- y las 18 filas de agosto con
+    # `maxTP` e `initialSL` tienen SUELO EN 3,00 (minimo 2,50, tres clavadas en 3,00, 16 de 18 por
+    # debajo de 3,75). La combinacion CONFIRMED de hoy -caja_completa con stop a 0,8- no cuadra con
+    # el material: o la base es `riesgo_real`, o el stop del trader en su backtest no esta a 0,8 de
+    # la caja. NO DECIDE NADA: es un mes, son 18 filas, y LA CAJA NO ESTA EN EL FICHERO -el RR
+    # medido es riesgo real por construccion, asi que si el stop viviera en el borde de la caja las
+    # dos lecturas coincidirian y la medida no discriminaria-. Se repite sobre mayo al ingerirlo. v5
+    # (2026-09-05 21-03-59.mkv), 36 fotogramas en ventanas fijas de los instantes 1, 2, 3, 4, 6 y 7:
+    # ninguno cumple la condicion congelada; la medida no esta en v5; via cerrada. Transcripciones
+    # v1–v5: 42 pasajes, ninguno responde con la regla congelada; se pregunta al trader. En v1–v4 el
+    # stop se describe en dos tiempos (lote sobre la caja entera, stop protegido a 0,75 tras la
+    # entrada), anterior al lineamiento del 9 de septiembre; las dos hipótesis vigentes suponen un
+    # solo stop."
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1
@@ -391,13 +398,17 @@ ambiguedades:
   - id: A-21
     titulo: que es una zona de control limpia, sin ruido
     pregunta: >-
-      el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea
-      una zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin
-      retroceso, o pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo
-      unico de la geometria de entrada que sigue siendo cualitativo y que el motor no puede
-      evaluar. ¿cuantas velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa?
-      ESTA AMBIGUEDAD NACIO MAL el 2026-09-10, preguntando que es un breaker; la definicion ya
-      estaba en el corpus y lo que faltaba era recogerla en el glosario. Reformulada el mismo dia
+      Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras
+      para decidir que una zona está limpia?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una
+    # zona limpia". Los dos esquemas SI estan definidos en el corpus -rompe directo sin retroceso, o
+    # pequeno retroceso con zona de control y luego rompe- pero "limpia" no: es lo unico de la
+    # geometria de entrada que sigue siendo cualitativo y que el motor no puede evaluar. ¿cuantas
+    # velas? ¿cuanto retroceso de mas la invalida? ¿o se mide por otra cosa? ESTA AMBIGUEDAD NACIO
+    # MAL el 2026-09-10, preguntando que es un breaker; la definicion ya estaba en el corpus y lo
+    # que faltaba era recogerla en el glosario. Reformulada el mismo dia"
     resuelve_en: [F12, F20, F26]
     evidencia:
       - ev-v1-001435-f0586d02
@@ -468,14 +479,18 @@ ambiguedades:
   - id: A-24
     titulo: que hace que marques un pivote de M15 y no otro
     pregunta: >-
-      cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3
-      0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo
-      invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es
-      "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el
-      mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir
-      sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es
-      "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras,
-      que tamano de movimiento, que lo descalifica
+      Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te
+      haga descartar una?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "cuando en M15 tienes varios pivotes candidatos, ¿que hace que marques uno y no otro? En v3
+    # 0:15:31 (fotograma fr-v3-982da728/944000) descartas expresamente el alto mas alto -"aunque yo
+    # invadiria este alto"- y marcas el de abajo, el que te deja el precio. No te preguntamos si es
+    # "el mas reciente" o "el mas extremo": las dos veces que lo hemos medido, el que eliges es el
+    # mismo. La pregunta es por el CRITERIO, y lo necesitamos dicho de forma que se pueda reproducir
+    # sin ti: que dos personas mirando el mismo grafico marquen el mismo nivel. Si la respuesta es
+    # "el que yo considere" (v3 0:39:16), dinos QUE MIRAS para considerarlo: cuantas velas atras,
+    # que tamano de movimiento, que lo descalifica"
     resuelve_en: [F19, F20]
     # nadie produce `liquidez_m15` en la spec: esta pregunta es la que dice que regla escribir. El
     # item de v3 0:12:42 (complex pullback, "el alto mas alto") se mide sobre un CROQUIS A MANO en un
@@ -506,12 +521,16 @@ ambiguedades:
   - id: A-25
     titulo: la vida de la marca de liquidez de M15
     pregunta: >-
-      ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y sigues
-      con cartuchos: si M15 desarrolla entretanto otro pivote del mismo lado y mas reciente, ¿mueves
-      la liquidez a ese pivote -y con ella el lado de ruido de RN-005 y el reinicio de los cartuchos,
-      que es `siguiente_liquidez_m15`- o la marca se queda fija hasta que la retire uno de los
-      eventos que si nombras: trade ganador (v6 0:32:27), invalidacion (v3 0:51:10) o cambio de dia
-      (v4 1:09:21)?
+      Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o
+      bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y
+    # sigues con cartuchos: si M15 desarrolla entretanto otro pivote del mismo lado y mas reciente,
+    # ¿mueves la liquidez a ese pivote -y con ella el lado de ruido de RN-005 y el reinicio de los
+    # cartuchos, que es `siguiente_liquidez_m15`- o la marca se queda fija hasta que la retire uno
+    # de los eventos que si nombras: trade ganador (v6 0:32:27), invalidacion (v3 0:51:10) o cambio
+    # de dia (v4 1:09:21)?"
     resuelve_en: [F19, F20]
     # F14b §3 la enunciaba como "¿un pivote mas reciente invalida una liquidez YA TOMADA?", y eso no
     # lo dice ni el corpus ni ninguna pantalla: la premisa era del analisis, no del trader. Lo que si
@@ -530,15 +549,19 @@ ambiguedades:
   - id: A-26
     titulo: el flujo de M15 cuando va contra el sesgo de H4
     pregunta: >-
-      la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo
-      dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3
-      0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback
-      ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la
-      vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de
-      M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al
-      flujo que va en el sentido del sesgo? DIAGNOSTICO del 2026-09-24 (MOTOR-SESGO-H4,
-      construccion abril y agosto, sin tocar la regla): de 77 operaciones del trader, 12 van EN
-      CONTRA del sesgo H4 del bot al abrir su sesion (58 a favor, 7 con sesgo ambiguo)
+      A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando
+      pasa eso, ¿cómo marcas la liquidez en M15?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "la vela que marca la liquidez es "contraria al flujo", y ese flujo es el de M15: eso ya lo
+    # dijiste cuatro veces y desde el 2026-09-20 esta escrito en la spec. Lo que no has dicho: en v3
+    # 0:12:42 el sesgo de H4 es bajista y el flujo de M15 que describes es un "complex pullback
+    # ALCISTA". Cuando el flujo de M15 va contra el sesgo de H4, ¿marcas igual la liquidez con la
+    # vela contraria a ese flujo alcista -y entonces el lado de ruido hay que leerlo del flujo de
+    # M15 y no del sesgo de H4, como esta hoy en RN-005- o solo cuentan las velas contrarias al
+    # flujo que va en el sentido del sesgo? DIAGNOSTICO del 2026-09-24 (MOTOR-SESGO-H4, construccion
+    # abril y agosto, sin tocar la regla): de 77 operaciones del trader, 12 van EN CONTRA del sesgo
+    # H4 del bot al abrir su sesion (58 a favor, 7 con sesgo ambiguo)"
     resuelve_en: [F18, F19]
     # la mitad disyuntiva que F14b §3 preguntaba ("¿H4 o M15?") esta CERRADA por el corpus y se
     # escribio en la spec el 2026-09-20 (nota de RN-004 y del token, con sus citas)
@@ -625,16 +648,19 @@ ambiguedades:
   - id: A-29
     titulo: cuando nace la orden limite
     pregunta: >-
-      ¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema de
-      entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez de M15,
-      en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus dice las
-      dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto rompe la
-      liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1 (v6 1:22:14)
-      la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es el caso de
-      RN-010. La spec corre con la primera como default (orden_limite_nace). Con la segunda hay que
-      reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia colocacion.
-      PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el trader
-      responda
+      ¿En qué momento pones por primera vez la orden límite en una zona?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema
+    # de entrada ("apenas el breaker, o sea, marco mi orden limit"), o en cuanto tomas la liquidez
+    # de M15, en la primera zona de control que se completa, y desde ahi la vas moviendo? El corpus
+    # dice las dos: v3 0:42:01 marca la orden con el breaker; v1 0:13:58 la va "bajando" en cuanto
+    # rompe la liquidez; v3 0:25:11 la tiene "predefinida" esperando el breaker; y en la sesion 1
+    # (v6 1:22:14) la orden ya esta en la zona de "posible breaker" y se activa sin validar, que es
+    # el caso de RN-010. La spec corre con la primera como default (orden_limite_nace). Con la
+    # segunda hay que reescribir RN-008, que hoy prohibe abrir sin esquema y frenaria la propia
+    # colocacion. PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el
+    # trader responda"
     resuelve_en: [F20, F22]
     evidencia:
       - ev-v3-004201-bfeb3734
@@ -650,12 +676,16 @@ ambiguedades:
   - id: A-30
     titulo: la orden limite pendiente al llegar el fin de la ventana
     pregunta: >-
-      ¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la
-      cancelas, o la dejas puesta y, si se llena despues, la gestionas? A las 15:00 cierras lo que
-      tengas abierto (RN-002), pero de una orden todavia sin llenar no hablaste, y ninguna ambiguedad
-      lo preguntaba: la auditoria del 2026-09-13 midio que, sin respuesta, una limite viva sobrevive
-      al cierre y se llena fuera de la ventana. La accion `retirar_orden_limite` esta declarada y
-      ninguna regla la usa hasta que respondas
+      Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha
+      llenado, ¿qué haces con ella?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la
+    # cancelas, o la dejas puesta y, si se llena despues, la gestionas? A las 15:00 cierras lo que
+    # tengas abierto (RN-002), pero de una orden todavia sin llenar no hablaste, y ninguna
+    # ambiguedad lo preguntaba: la auditoria del 2026-09-13 midio que, sin respuesta, una limite
+    # viva sobrevive al cierre y se llena fuera de la ventana. La accion `retirar_orden_limite` esta
+    # declarada y ninguna regla la usa hasta que respondas"
     resuelve_en: [F22, F23]
     evidencia:
       - ev-v4-011514-fe34ac7e
@@ -669,14 +699,18 @@ ambiguedades:
   - id: A-31
     titulo: el stop entero de una entrada que se activo sin ruptura
     pregunta: >-
-      una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no
-      cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de
-      equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que no
-      llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida" y
-      actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec
-      corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y
-      con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra
-      (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2
+      Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la
+      cuentas en tus intentos?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no
+    # cuentan como intento "un break even [...] una entrada invalidada [...] reentrada despues de
+    # equal" (RN-016, v6 0:52:19), y el equal que describes en v6 1:22:25-1:23:19 es una salida que
+    # no llega al stop: se activa sin validar, un equal "te saque la entrada, te genera una perdida"
+    # y actualizas el limit para reentrar. Del stop entero de esa misma entrada no hablaste. La spec
+    # corre con que SI gasta, porque cuesta el riesgo entero y ninguno de tus tres casos lo exime; y
+    # con que la salida en negativo sin stop NO gasta. Las dos cosas son lectura nuestra
+    # (cartucho_criterio, RN-016, RN-019). Se lleva a la sesion 2"
     resuelve_en: [F21, F22]
     # la entrada que se activa por un equal sin romper y la salida antes del stop (A-3); el tramo de
     # la sesion 1 no tiene item de evidencia propio y va por minuto en la pregunta
@@ -693,10 +727,14 @@ ambiguedades:
   - id: A-32
     titulo: el nivel que al romperse con mecha invalida la entrada
     pregunta: >-
-      en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe
-      con mecha el nivel horizontal que tienes dibujado, al que apunta tu flecha: ¿ese nivel es la
-      liquidez de M15 -y entonces lo que exige cuerpo es RN-004, ya escrito- o es un nivel de M1, y
-      entonces hay rupturas de M1 que tampoco valen con mecha, contra breaker_m1_criterio_ruptura?
+      En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea
+      horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "en v4 0:53:23 (fotograma fr-v4-9ad0ebb8/3203000) descartas la entrada porque el precio rompe
+    # con mecha el nivel horizontal que tienes dibujado, al que apunta tu flecha: ¿ese nivel es la
+    # liquidez de M15 -y entonces lo que exige cuerpo es RN-004, ya escrito- o es un nivel de M1, y
+    # entonces hay rupturas de M1 que tampoco valen con mecha, contra breaker_m1_criterio_ruptura?"
     resuelve_en: [F19, F20]
     # la linea no lleva etiqueta en pantalla; en la misma pantalla, unos segundos antes y en M15, hay
     # zonas marcadas "m1 lq" y "15 lq", asi que el trader distingue las dos y aqui no consta cual es
@@ -713,20 +751,23 @@ ambiguedades:
   - id: A-33
     titulo: tres ganadoras que cierran por debajo de 3R
     pregunta: >-
-      en la sesion 1 dijiste "sin toma de parciales y que tiene que llegar al ratio 1.3 si o si"
-      (v6 0:17:07). Pero en tu material hay TRES operaciones GANADORAS que CIERRAN por debajo de
-      3R: una en agosto (2,50) y dos en abril (2,57 y 2,94), en dos meses independientes.
-      ¿cerraste esas a mano? ¿tomaste parciales en ellas? ¿o hubo otro motivo -un break even que
-      salto, una noticia, cerrar antes de una sesion-? No te preguntamos si tomas parciales EN
-      GENERAL, que ya lo contestaste: te preguntamos que paso en esas. MEDIDO ANTES DE
-      PREGUNTAR, y es lo que hace que la pregunta exista: `maxTP` es el PRECIO DE CIERRE de las
-      ganadoras y no la excursion maxima -`== avgClosePrice` en 17 de 17 filas de abril donde
-      existen las dos, y presente si y solo si `rPnL > 0`-, asi que esas tres no son operaciones
-      que NO LLEGARON a 3R: son operaciones que CERRARON en ganancia por debajo de 3R. En F14a
-      esa columna se habia SUPUESTO al reves (ADR-0037 y su correccion del 2026-09-22).
-      OBSERVACION DESCRIPTIVA del 2026-09-22 (MAYO-DEV, ADR-0040), sin atribuir causa: ganadoras
-      por debajo de 3R = agosto 1 (2,50), abril 2 (2,57; 2,94), mayo 1 (2,90), esta ultima
-      sobre los 6 dias `dev` de mayo
+      En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo.
+      ¿Qué pasó en esas operaciones?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "en la sesion 1 dijiste "sin toma de parciales y que tiene que llegar al ratio 1.3 si o si"
+    # (v6 0:17:07). Pero en tu material hay TRES operaciones GANADORAS que CIERRAN por debajo de 3R:
+    # una en agosto (2,50) y dos en abril (2,57 y 2,94), en dos meses independientes. ¿cerraste esas
+    # a mano? ¿tomaste parciales en ellas? ¿o hubo otro motivo -un break even que salto, una
+    # noticia, cerrar antes de una sesion-? No te preguntamos si tomas parciales EN GENERAL, que ya
+    # lo contestaste: te preguntamos que paso en esas. MEDIDO ANTES DE PREGUNTAR, y es lo que hace
+    # que la pregunta exista: `maxTP` es el PRECIO DE CIERRE de las ganadoras y no la excursion
+    # maxima -`== avgClosePrice` en 17 de 17 filas de abril donde existen las dos, y presente si y
+    # solo si `rPnL > 0`-, asi que esas tres no son operaciones que NO LLEGARON a 3R: son
+    # operaciones que CERRARON en ganancia por debajo de 3R. En F14a esa columna se habia SUPUESTO
+    # al reves (ADR-0037 y su correccion del 2026-09-22). OBSERVACION DESCRIPTIVA del 2026-09-22
+    # (MAYO-DEV, ADR-0040), sin atribuir causa: ganadoras por debajo de 3R = agosto 1 (2,50), abril
+    # 2 (2,57; 2,94), mayo 1 (2,90), esta ultima sobre los 6 dias `dev` de mayo"
     resuelve_en: [F20, F24, F26]
     # NO hay item de evidencia de v6 0:17:07: la cita vive en la `pregunta`, copiada literal de la
     # transcripcion CRUDA. Se citan los items REALES que hay sobre parciales; inventar un id seria
@@ -745,10 +786,14 @@ ambiguedades:
   - id: A-34
     titulo: vela H4 previa que rompe ambos extremos
     pregunta: >-
-      vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo
-      cambia si la vela rompe el extremo de la anterior, y que basta con la mecha; no dijiste que
-      pasa si la rompe por arriba y por abajo. Mientras no lo digas, el bot da el sesgo por
-      AMBIGUO en esa sesion y no opera (ADR-0044)
+      Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas
+      para la sesión?
+    # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
+    # rama trabajo/sesion-02):
+    # "vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo
+    # cambia si la vela rompe el extremo de la anterior, y que basta con la mecha; no dijiste que
+    # pasa si la rompe por arriba y por abajo. Mientras no lo digas, el bot da el sesgo por AMBIGUO
+    # en esa sesion y no opera (ADR-0044)"
     resuelve_en: [F18]
     evidencia:
       - ev-v3-000531-4d6375b6
@@ -802,3 +847,144 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: true
+  - id: A-36
+    titulo: en qué punto de la mecha va la orden límite
+    pregunta: >-
+      Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
+    resuelve_en: [F20, F22]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-01 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. CONSTA, en v4 1:06:05-1:06:47 y como respuesta a
+    # "¿la orden va en el borde de arriba en el medio o el borde de abajo?": "Siempre se toma en la
+    # mecha el límite" (ev-v4-010605-a11249c0, que ninguna regla citaba;
+    # docs/validation/SESION-02-BUSQUEDA-CLASIFICACION.md, C-01 P13). QUEDA ABIERTO en que punto de
+    # la mecha. Su fotograma, fr-v4-9ad0ebb8/3972000 (1:06:12), no se ha abierto. NO BLOQUEANTE:
+    # RN-011 coloca la orden en la zona Z (`colocar_orden_limite`, `en: Z`) y la spec no dice que no
+    # pueda escribirse sin el precio exacto
+    evidencia:
+      - ev-v4-010605-a11249c0
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-37
+    titulo: en qué temporalidad se busca la vela contraria de la que sale el stop
+    pregunta: >-
+      Dijiste que el stop sale del punto donde se genera la vela contraria. ¿En qué temporalidad
+      buscas esa vela?
+    resuelve_en: [F21]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-02 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. CONSTA, en v1 0:14:54: "Desde el punto más abajo
+    # te genera la vela contraria / Se puede definir, pues, el stop loss" (ev-v1-001454-69cebe62,
+    # que ninguna regla citaba; SESION-02-BUSQUEDA-CLASIFICACION.md, C-02 P2). QUEDA ABIERTA la
+    # temporalidad de esa vela. Cerca, sin responderlo: ev-v3-004353-b7661782, el lote "desde el
+    # punto más alto hasta el punto más bajo". Su fotograma, fr-v1-5a2a42c3/894000 (0:14:54), no se
+    # ha abierto. NO BLOQUEANTE: la spec no dice que RN-011 ni RN-012 no puedan escribirse sin ella,
+    # aunque las dos miden stop_fraccion_caja sobre una caja cuyo extremo sale de aqui
+    evidencia:
+      - ev-v1-001454-69cebe62
+      - ev-v3-004353-b7661782
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-38
+    titulo: cuándo se da por anulada una orden límite que el precio deja sin llenar
+    pregunta: >-
+      Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada?
+    resuelve_en: [F22]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-04 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. RN-006 ya cubre la orden que se mueve: "el mismo
+    # límite se va moviendo / a medida que no se activa" (ev-v4-010857-5bc906c9, evidencia de A-5).
+    # En v4 1:07:01-1:07:28 le preguntan "¿cuánto tiempo se tiene que esperar / Con esta orden para
+    # poder / Darla por anulada?" y contesta que la orden "se va actualizando"
+    # (ev-v4-010731-bb8af97c; SESION-02-BUSQUEDA-CLASIFICACION.md, lateral L-3). QUEDA ABIERTO
+    # cuando se da por anulada, por ejemplo si el precio se va sin completar otra zona. NO
+    # BLOQUEANTE: ninguna regla la necesita para escribirse; A-30 es el caso del fin de la ventana
+    evidencia:
+      - ev-v4-010731-bb8af97c
+      - ev-v4-010857-5bc906c9
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-39
+    titulo: qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo
+    pregunta: >-
+      Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de
+      la primera, ya sea una orden puesta o una operación abierta?
+    resuelve_en: [F22, F23]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-05 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. La busqueda no dio ningun RESPONDE
+    # (SESION-02-BUSQUEDA-CLASIFICACION.md, C-05). ANOTADO, lateral L-1: en v3 1:03:04, leyendo el
+    # cuestionario, "cierre agresivo opcional / el vencimiento exacto de la vela H4 operativa / este
+    # es un muy buen punto" y "cierra la vela de H4 / operativa, se cierra el trade / porque ya la
+    # siguiente / vela es otro movimiento" (ev-v3-010304-4468cc20, que ninguna regla ni ADR cita).
+    # La spec solo cierra al fin de la ventana (RN-002). NO BLOQUEANTE: ninguna regla la necesita
+    # para escribirse
+    evidencia:
+      - ev-v3-010304-4468cc20
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-40
+    titulo: qué se hace con el stop después del break even
+    pregunta: >-
+      Una vez que la operación está en break even, ¿qué haces con el stop a partir de ahí?
+    resuelve_en: [F23]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-06 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. La busqueda dio CERO pasajes, sin control
+    # positivo (SESION-02-BUSQUEDA-CRITERIO.md §5). ANOTADO, lateral L-2: en v3 0:32:29-0:33:52
+    # protege "poco a poco" y "voy subiendo también mi visto los conforme" -que "mi visto los" sea
+    # "mi stop loss" es lectura del ASR-, pero lo dice de ir MAS ALLA del 1 a 3
+    # (ev-v3-003220-8805194d, ev-v3-003318-f1a2d27d, sin citar en la spec), y RN-015 dice que el
+    # objetivo es fijo y no se mueve. NO BLOQUEANTE: RN-014 se escribe sin ella
+    evidencia:
+      - ev-v3-003220-8805194d
+      - ev-v3-003318-f1a2d27d
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-41
+    titulo: si hay un tope de entradas por día, aparte de los cartuchos
+    pregunta: >-
+      Aparte de lo que ya dijiste sobre los intentos por zona, ¿hay algo que limite cuántas entradas
+      haces en un día?
+    resuelve_en: [F21]
+    # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-07 de
+    # docs/validation/SESION-02-INVENTARIO.md §4.3. El pasaje de v4 0:33:50 -"entonces en un día
+    # como máximo / dos entradas ¿no? por separado / es un buen punto / sí, dos entradas"- tiene DOS
+    # LECTURAS en el repositorio: (1) POR DIA, la de su item, ev-v4-003350-acb03ee7 ("confirma: como
+    # maximo dos entradas por dia, por separado"), y la de SESION-02-BUSQUEDA-CLASIFICACION.md, C-07
+    # P4; (2) POR ZONA, en A-2 ("¿2 o 3 intentos por zona?"), que lo cita como evidencia y quedo
+    # RESUELTA con cartuchos_max 3. La frase la propone el interlocutor y el trader asiente. Junto a
+    # ella, ev-v2-001615-d96c699f dice "máximo dos entradas" despues del rompimiento de la liquidez
+    # de M15, que es por zona. Las notas de RN-020 sostienen que nada acota el dia salvo el tope
+    # porcentual, y RN-017 (sesion 1) revoca el parar tras la ganadora (ev-v3-002714-742f2589 esta
+    # supersedido por ev-v6-000732-f9c41d5e). NO BLOQUEANTE: RN-016 y RN-020 se escriben sin ella
+    evidencia:
+      - ev-v4-003350-acb03ee7
+      - ev-v2-001615-d96c699f
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

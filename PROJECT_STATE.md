@@ -367,6 +367,12 @@ evidencia de v6 que el consultor acepto:
 | A-32 | el nivel que al romperse con mecha invalida la entrada | F19, F20 | ABIERTA, PREGUNTA (2026-09-17), sesion 2: si el nivel que el trader ve romperse con mecha en v4 0:53:23 es la liquidez de M15 (RN-004, cuerpo) o un nivel de M1. La pantalla no lo dice: la linea no lleva etiqueta |
 | A-34 | vela H4 previa que rompe ambos extremos | F18 | ABIERTA, PREGUNTA (2026-09-24, ADR-0044): RN-003 no dice que sentido toma el sesgo si la vela previa rompe los dos extremos de la anterior; mientras no lo diga el trader, el sesgo es AMBIGUO en esa sesion y no se opera |
 | A-35 | cuándo un pivote de M15 está formado | F19, F20 | ABIERTA, PREGUNTA (2026-09-24, ADR-0045), BLOQUEANTE: la spec no define cuando un pivote esta formado; bloquea RN-004 y no se sustituye por un parametro provisional, porque es un mecanismo y no una cifra |
+| A-36 | en qué punto de la mecha va la orden límite | F20, F22 | ABIERTA, PREGUNTA (2026-09-25, trabajo/sesion-02, candidato C-01): consta que la orden va siempre en la mecha (ev-v4-010605-a11249c0); falta en que punto. No bloqueante |
+| A-37 | en qué temporalidad se busca la vela contraria de la que sale el stop | F21 | ABIERTA, PREGUNTA (2026-09-25, candidato C-02): consta que el stop sale del punto donde se genera la vela contraria (ev-v1-001454-69cebe62); falta la temporalidad. No bloqueante |
+| A-38 | cuándo se da por anulada una orden límite que el precio deja sin llenar | F22 | ABIERTA, PREGUNTA (2026-09-25, candidato C-04): RN-006 cubre la orden que se mueve; falta cuando se anula. No bloqueante |
+| A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | F22, F23 | ABIERTA, PREGUNTA (2026-09-25, candidato C-05): anotado el cierre al vencer la vela H4 operativa (ev-v3-010304-4468cc20), que ninguna regla cita. No bloqueante |
+| A-40 | qué se hace con el stop después del break even | F23 | ABIERTA, PREGUNTA (2026-09-25, candidato C-06): cero pasajes; anotada la proteccion progresiva mas alla del 1 a 3 (ev-v3-003220, ev-v3-003318), contra RN-015. No bloqueante |
+| A-41 | si hay un tope de entradas por día, aparte de los cartuchos | F21 | ABIERTA, PREGUNTA (2026-09-25, candidato C-07): ev-v4-003350-acb03ee7 se lee por dia aqui y por zona en A-2. No bloqueante |
 
 Las 3 preguntas bloqueantes de la sesion 1 (MASTER_PLAN G) se eligen en el brief de F10 con los <!-- cifra-congelada: la sesion 1 ya se celebro -->
 casos delante; candidatas por impacto en el kit: A-9 (afecta a todos los casos), A-2 y A-4.

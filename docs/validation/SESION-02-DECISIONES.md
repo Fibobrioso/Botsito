@@ -101,6 +101,49 @@ sesiones de la fidelidad, la ingesta y los días que usa la herramienta del huso
 K-01 (ADR-0045 en el índice de PROJECT_STATE) y K-03 (la deuda que ya está hecha) no se tocan: van
 en el paso 3 del ritual.
 
+## 4. Las ambigüedades nuevas: A-36 a A-41
+
+Se abren con los siguientes números libres, en `knowledge/spec/ambiguedades.yaml` y en la tabla
+«Known Ambiguities» de `PROJECT_STATE.md`. La nota de cada una, en comentarios junto a la entrada
+como en A-35, cita su evidencia y lo que queda abierto.
+
+| id | candidato | título | evidencia | ¿bloqueante? y por qué |
+|---|---|---|---|---|
+| A-36 | C-01 | en qué punto de la mecha va la orden límite | `ev-v4-010605-a11249c0` | no: RN-011 coloca la orden en la zona (`en: Z`) y la spec no dice que haga falta el precio exacto |
+| A-37 | C-02 | en qué temporalidad se busca la vela contraria de la que sale el stop | `ev-v1-001454-69cebe62`, `ev-v3-004353-b7661782` | no: la spec no lo dice de RN-011 ni de RN-012, aunque las dos miden `stop_fraccion_caja` sobre una caja cuyo extremo sale de aquí |
+| A-38 | C-04 | cuándo se da por anulada una orden límite que el precio deja sin llenar | `ev-v4-010731-bb8af97c`, `ev-v4-010857-5bc906c9` | no: ninguna regla la necesita; RN-006 cubre la orden que se mueve |
+| A-39 | C-05 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | `ev-v3-010304-4468cc20` (lateral L-1) | no: ninguna regla la necesita |
+| A-40 | C-06 | qué se hace con el stop después del break even | `ev-v3-003220-8805194d`, `ev-v3-003318-f1a2d27d` (lateral L-2) | no: RN-014 se escribe sin ella |
+| A-41 | C-07 | si hay un tope de entradas por día, aparte de los cartuchos | `ev-v4-003350-acb03ee7`, `ev-v2-001615-d96c699f` | no: RN-016 y RN-020 se escriben sin ella |
+
+**A-41 cita las dos lecturas del pasaje de v4 0:33:50:**
+- **por día**, la de su ítem («confirma: como maximo dos entradas por dia, por separado») y la de la
+  clasificación;
+- **por zona**, la de A-2, que lo lleva como evidencia de «¿2 o 3 intentos por zona?».
+
+Al preparar A-41 apareció que `ev-v3-002714-742f2589`, citado en la clasificación B3 (C-07 P2), está
+**supersedido** por `ev-v6-000732-f9c41d5e`. Se corrige con un recuadro en
+`SESION-02-BUSQUEDA-CLASIFICACION.md`, y A-41 no lo lleva en su evidencia.
+
+Todas las evidencias citadas se comprobaron: ninguna está supersedida.
+
+**C-03** (el lado del libro que dibuja FX Replay) queda PARA DATOS y no se abre. **C-08** no se abre:
+es la unidad de fidelidad y la explica el reporte al consultor.
+
+## 5. El campo `pregunta`, en forma abierta
+
+Se reescriben las de A-13, A-18, A-21, A-24 (como confirmación, con el texto que dio el consultor),
+A-25, A-26, A-29, A-30, A-31, A-32, A-33 y A-34, y nacen así las seis nuevas. A-35 se queda como
+está. El criterio:
+- sin alternativas, sin cifras y sin la respuesta esperada;
+- una sola incógnita por pregunta;
+- en español natural, en una o dos frases;
+- la situación descrita, no la solución.
+
+**El texto anterior queda citado entero** en un comentario junto a la entrada: «PREGUNTA ANTERIOR,
+SUSTITUIDA PORQUE SUGERIA RESPUESTA». Con él se conservan las medidas y el historial que llevaba.
+El estado de ninguna cambia: A-24 sigue DECIDIDA (ADR-0045) y las demás, ABIERTAS.
+
 ## Estado
 
 EN CURSO. Cada sección entra con su commit.
