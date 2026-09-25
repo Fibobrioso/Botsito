@@ -22,6 +22,10 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   umbral y sin tocar mayo (`docs/validation/MOTOR-SESGO-H4.md`). Solo imprime recuentos.
 - `buscar_ambiguedades.py`: la busqueda de A-24, A-21, A-26 y A-34 en las transcripciones, CONGELADA
   antes de ejecutarla (`docs/validation/A24-A21-A26-A34-CRITERIO.md`): terminos por ambiguedad,
-  ventana de +-45 s y pasajes de como mucho 180 s. Reutiliza `a18_buscar.py`.
+  ventana de +-45 s y pasajes de como mucho 180 s. Reutiliza `a18_buscar.py`. Con `--conjunto a35`,
+  la de A-35 con su propia lista cerrada (`docs/validation/A35-PIVOTE-FORMADO-CRITERIO.md`).
+- `a35_fotogramas.py`: los fotogramas de A-35, CONGELADOS antes de abrir ninguno
+  (`docs/validation/A35-FOTOGRAMAS-CRITERIO.md`): lista cerrada por ventana de segmento,
+  verificacion contra la extraccion de F05 y pixeles distintos del anterior; no lee el grafico.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
