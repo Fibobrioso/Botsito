@@ -187,17 +187,16 @@ hoja. Test propio: `tests/unit/test_hoja_preguntas.py`, con 5 casos.
 ## 8. Segunda revisión del consultor: A-42, preguntas y la parada de marzo
 
 - **A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00.** Es la pregunta
-  que K-07 dejó al consultor (§2). Es ABIERTA y **bloqueante de la ingesta de meses de invierno**.
+  que K-07 dejó al consultor (§2). Es ABIERTA y **bloqueante de la entrada de meses de invierno, desde el sorteo** (§10).
   La nota lleva:
   - las dos citas literales, «de 7 a 15 por españa» (v3 0:01:36, en minúscula en la cruda) y «De
     UTC más 2, de 7, claro» (v4 1:14:34, #1280);
   - el fotograma de enero que marca UTC+2, `fr-v4-9ad0ebb8/1200000`.
 
   `huso_operativa` se queda en Europe/Madrid hasta que se resuelva.
-- **`ENTRADA-MARZO.md`, PARADA E0** antes de la ingesta: si A-42 no está RESUELTA, no se ingiere.
-  Los pasos 0 a d pueden avanzar, por decisión del consultor. La parada deja escrito, porque es
-  cierto, que el paso b congela `huso_operativa` en `ventanas.yaml` con la ventana de cada caso, y
-  que el sorteo no se repite (ADR-0046 §5).
+- **`ENTRADA-MARZO.md`**: la parada por A-42 entró primero antes de la ingesta (PARADA E0). Esa
+  misma parada dejaba escrito que el paso b congela `huso_operativa` en `ventanas.yaml` y que el
+  sorteo no se repite, y por eso el consultor la adelantó antes del sorteo (§10).
 - **Preguntas cambiadas**, con la anterior citada en un comentario («PREGUNTA ANTERIOR, SUSTITUIDA
   EN LA SEGUNDA REVISION DEL CONSULTOR»): A-26, A-18, A-33, A-41 y A-37. A-32 lleva al final «Si
   no lo recuerdas, no pasa nada.»
@@ -221,10 +220,20 @@ hoja. Test propio: `tests/unit/test_hoja_preguntas.py`, con 5 casos.
 Solo documentación: el ADR y su línea en el índice de `docs/adr/`. La del índice de `PROJECT_STATE`
 va con K-01 en el paso 3 del ritual.
 
+## 10. La parada de marzo, antes del sorteo
+
+Corrección del consultor sobre el aviso de §8. En `docs/runbooks/ENTRADA-MARZO.md`, la parada por
+A-42 pasa a ser la **PARADA B0**, al principio del paso b: si A-42 no está RESUELTA, marzo se detiene
+tras el paso a. El motivo queda escrito en el runbook: el paso b congela `huso_operativa` en
+`ventanas.yaml`, junto con la ventana de cada caso, y el sorteo no se repite (ADR-0046 §5).
+
+La PARADA E0 se quita del paso e para que no quede duplicada ni contradictoria. La nota de A-42, su
+fila en `PROJECT_STATE.md` y el comentario de `tests/unit/test_kit.py` dicen lo mismo que el runbook.
+
 ## Estado
 
 CERRADA PARA EL RITUAL. Aplicadas las decisiones del consultor en tres tandas, una pieza por commit
 y cada una con `make check` verde sobre su árbol. **Quedan para el consultor:**
-- A-42, que se lleva al trader en la sesión 02 y bloquea la ingesta de marzo;
+- A-42, que se lleva al trader en la sesión 02 y detiene marzo tras el paso a;
 - K-01 (ADR-0045 y ADR-0047 en el índice de `PROJECT_STATE`) y K-03, en el paso 3 del ritual;
 - la deuda de ADR-0047: la gramática de `LABEL_CASE` y `kappa.py` en `(caso, sesión)`.

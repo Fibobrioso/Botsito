@@ -1025,9 +1025,11 @@ ambiguedades:
     # ev-v4-011425-ae028b78, contestando a la pregunta del interlocutor). En verano dan la misma
     # hora; en invierno se separan una hora: las 07:00 de su grafico son las 06:00 de Madrid.
     # huso_operativa SE QUEDA en Europe/Madrid hasta que se resuelva (decision del consultor).
-    # BLOQUEANTE DE LA INGESTA DE MESES DE INVIERNO: docs/runbooks/ENTRADA-MARZO.md para antes del
-    # paso e si no esta RESUELTA; en 2026 el horario de verano europeo empieza el 29 de marzo, asi
-    # que casi todo marzo es invierno
+    # BLOQUEANTE DE LA ENTRADA DE MESES DE INVIERNO, DESDE EL SORTEO: docs/runbooks/ENTRADA-MARZO.md
+    # para antes del paso b (PARADA B0) si no esta RESUELTA, porque el sorteo congela huso_operativa
+    # en ventanas.yaml y no se repite (ADR-0046 §5). Nacio parando antes de la ingesta y el consultor
+    # la adelanto el mismo dia. En 2026 el horario de verano europeo empieza el 29 de marzo, asi que
+    # casi todo marzo es invierno
     evidencia:
       - ev-v3-000136-6160fcea
       - ev-v4-011425-ae028b78
