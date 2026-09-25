@@ -27,10 +27,21 @@ ADR-0018, ADR-0028, ADR-0032 y ADR-0044 sigue tal cual.
    de ADR-0044 §2, que `rompe` sobre «la vela H4 previa» no expresaba. Ata en
    `sentido_de_la_ruptura` el lado de la última ruptura o, cuando no hay lado, `ambiguo` o
    `insuficiente`. `rompe` sigue declarado en el vocabulario; ninguna regla lo invoca hoy.
-3. **Cada sesión produce SIEMPRE su propio `sesgo` al abrir.** El predicado siempre tiene
-   respuesta, así que RN-003 fija el hecho en cada apertura y **ninguna sesión hereda el sesgo de
-   la anterior** (ADR-0044 §1 «en esa sesión» y §3 «se fija AL ABRIR»). No hace falta ninguna
-   regla que lo borre.
+3. **Cada sesión produce SIEMPRE su propio `sesgo` al abrir, y el hecho CADUCA al abrir.** El
+   predicado siempre tiene respuesta, así que RN-003 fija el hecho en cada apertura. Pero eso
+   solo no bastaba, y se midió después de escribir la primera versión de este punto —que decía
+   «no hace falta ninguna regla que lo borre»—: en el evento de apertura la primera pasada
+   evalúa los `gate` ANTES de que RN-003 vuelva a fijar el hecho, y RN-033 leía el `sesgo` de la
+   sesión anterior, vivo por ADR-0048 §3, y disparaba una vez sobre él. Sobre construcción:
+   **24 sesiones de 84, las 15 ambiguas y 9 no ambiguas que seguían a una ambigua**. Por eso el
+   hecho declara **`caduca: al_abrir_sesion`** —la caducidad de hechos que F14b anticipó para
+   `liquidez_tomada` y `zona_perdida`, escrita hoy solo para `sesgo`— y el intérprete lo apaga al
+   empezar el evento de apertura, antes de la primera pasada. Así **ninguna sesión hereda el
+   sesgo de la anterior, ni el valor ni la prohibición** (ADR-0044 §1 «en esa sesión» y §3 «se
+   fija AL ABRIR»). No es una retirada del arnés, que ADR-0048 §3 prohíbe: la declara la spec,
+   hecho a hecho. Decisión del consultor del 2026-09-25 entre tres opciones: caducar el hecho;
+   documentar y contar 24; o excluir la apertura de RN-033, que dejaba sin prohibición el minuto
+   de apertura de una sesión ambigua.
 4. **Un gate nuevo, RN-033, prohíbe `buscar_entradas` y `abrir_operacion` con `sesgo` ambiguo o
    insuficiente.** Es la forma ejecutable del «con cualquiera de los dos no se opera» de
    ADR-0044 §1-2, que hasta hoy vivía solo en la prosa de RN-003. Su `cita` sostiene que el
@@ -44,8 +55,9 @@ ADR-0018, ADR-0028, ADR-0032 y ADR-0044 sigue tal cual.
 6. **Las guardias que lo vigilan.** Los `valores` de un hecho tienen que ser tokens declarados.
    El argumento `sentido` de un predicado con `lado_de_ruido` tiene que ser una LIGADURA, nunca
    un token: así `sentido: ambiguo` no pasa, que es el agujero que la spec temía al declarar
-   `alcista` y `bajista` fuera de los tokens. Y `lado_de_ruido` sigue nombrando exactamente los
-   dos sentidos.
+   `alcista` y `bajista` fuera de los tokens. `lado_de_ruido` sigue nombrando exactamente los
+   dos sentidos. Y `caduca` nombra un token de clase `caducidad`, solo en hechos de origen
+   `regla`: uno del bróker lo lee el motor del bróker y no caduca por sí solo.
 7. **`lado_de_ruido` con `ambiguo` o `insuficiente`: no está definido, y no hace falta.** RN-005
    liga `S` al valor de `sesgo` y `se_desarrolla_en_el_lado_de_ruido` no tiene lado para esos
    dos. No se inventa uno: en esas sesiones RN-033 ya prohíbe lo único que RN-005 prohíbe, así
@@ -183,15 +195,16 @@ puede cerrar hoy y deja escrito, con su ambigüedad o su ADR, lo que no.
 
 ## Impacto
 
-- **`knowledge/spec/strategy_spec.yaml`**: tokens `ambiguo` e `insuficiente`; predicado
-  `sesgo_h4_al_abrir`; `hechos.sesgo.valores` y `consume`; la forma de RN-003; RN-033 (gate);
-  notas de RN-005 y del predicado `se_desarrolla_en_el_lado_de_ruido`. `spec_version`
-  **12.2.2 → 13.0.0**: RN-003 cambia lo que fija y nace una prohibición.
-- **`src/botsito/spec/modelo.py`**: `vale` en el nodo `hecho`, `valores` de hecho como tokens, y
-  `sentido` como ligadura en los predicados con `lado_de_ruido`.
-- **`src/botsito/engine/`**: `vale` en el intérprete; la primitiva `sesgo_h4_al_abrir` sustituye
-  a `rompe`; `empates` y el desempate por id (H3); el informe lista los gates disparados por
-  sesión y los avisos de H3.
+- **`knowledge/spec/strategy_spec.yaml`**: tokens `ambiguo`, `insuficiente` y `al_abrir_sesion`
+  (clase `caducidad`); predicado `sesgo_h4_al_abrir`; `hechos.sesgo.valores`, `caduca` y
+  `consume`; la forma de RN-003; RN-033 (gate); notas de RN-005, de `rompe` y del predicado
+  `se_desarrolla_en_el_lado_de_ruido`. `spec_version` **12.2.2 → 13.0.0**: RN-003 cambia lo que
+  fija y nace una prohibición.
+- **`src/botsito/spec/modelo.py`**: `vale` en el nodo `hecho`, `caduca` y `valores` de hecho como
+  tokens, y `sentido` como ligadura en los predicados con `lado_de_ruido`.
+- **`src/botsito/engine/`**: `vale` y la caducidad al abrir en el intérprete; la primitiva
+  `sesgo_h4_al_abrir` sustituye a `rompe`; `empates` y el desempate por id (H3); el informe lista
+  las reglas disparadas por sesión y los avisos de H3.
 - **`knowledge/spec/ambiguedades.yaml`**: A-43. La hoja de la sesión 02 la lleva justo después
   de A-35.
 - **`knowledge/spec/parametros.yaml`**: sin cambios (punto 8 de H1).

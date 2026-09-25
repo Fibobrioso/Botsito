@@ -14,6 +14,9 @@ concreto: lo que una regla hace lo dice su arbol.
   propagan con la logica de Kleene. Una regla cuyo `cuando` es DESCONOCIDO no ejecuta su
   `entonces`, y una accion con efecto que un `gate` DESCONOCIDO podria prohibir no se ejecuta. Cada
   caso queda registrado en `Evento.no_implementadas` y `Evento.bloqueadas`.
+- **Un nodo `hecho` con `vale`** es verdadero solo si el hecho esta fijado a ese valor, y **un hecho
+  que declara `caduca: al_abrir_sesion`** se apaga al empezar el evento de apertura de cada sesion,
+  antes de la primera pasada (ADR-0049, H1). `permite` se registra y no cambia nada (H5).
 
 Es puro: recibe el estado, el momento y las primitivas, y devuelve lo que paso. No lee ficheros.
 """
@@ -32,6 +35,10 @@ NODOS_LOGICOS = ("todos_de", "cualquiera_de", "ninguno_de")
 ORIGEN_BROKER = "broker"
 FUENTE_ACUMULADOR = "acumulador"
 VALOR_APAGADO = "no"  # `fijar: {hecho: X, a: no}` apaga el hecho (RN-015, ADR-0032 §4)
+# `caduca: al_abrir_sesion` (ADR-0049): el hecho se apaga al empezar el evento de apertura de cada
+# sesion, ANTES de la primera pasada. Sin esto los gates leian en esa pasada el `sesgo` de la
+# sesion anterior, y RN-033 disparaba una vez sobre el.
+CADUCA_AL_ABRIR = "al_abrir_sesion"
 
 
 class InterpreteError(ValueError):
@@ -104,6 +111,7 @@ class Evento:
     """Lo que paso en un evento: que disparo, que se fijo y que no se pudo evaluar."""
 
     disparadas: list[str] = field(default_factory=list)
+    caducados: list[str] = field(default_factory=list)  # hechos apagados al abrir (ADR-0049)
     fijados: list[tuple[str, str, str]] = field(default_factory=list)  # (regla, hecho, valor)
     no_implementadas: set[tuple[str, str]] = field(default_factory=set)  # (regla, primitiva)
     bloqueadas: set[tuple[str, str, str]] = field(default_factory=set)  # (regla, accion, motivo)
@@ -136,6 +144,16 @@ class Interprete:
 
     vocabulario: Mapping[str, Mapping[str, Any]]
     primitivas: Primitivas
+    caducan_al_abrir: tuple[str, ...] = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.caducan_al_abrir = tuple(
+            sorted(
+                nombre
+                for nombre, h in (self.vocabulario.get("hechos") or {}).items()
+                if isinstance(h, Mapping) and h.get("caduca") == CADUCA_AL_ABRIR
+            )
+        )
 
     def _hecho(self, nodo: Mapping[str, Any], estado: EstadoDia) -> Resultado:
         nombre = str(nodo["hecho"])
@@ -148,6 +166,12 @@ class Interprete:
         else:
             valor = estado.hechos.get(nombre)
         if valor is None:
+            return Resultado(Tri.NO)
+        # `vale` (ADR-0049): el nodo es verdadero solo si el hecho esta fijado A ESE valor. Es lo
+        # que hace expresable "con sesgo ambiguo" (RN-033) en un arbol que solo sabia preguntar si
+        # un hecho esta encendido.
+        vale = nodo.get("vale")
+        if vale is not None and valor != str(vale):
             return Resultado(Tri.NO)
         liga = nodo.get("liga")
         return Resultado(Tri.SI, {str(liga): valor} if liga else {})
@@ -249,6 +273,10 @@ class Interprete:
         """Un evento a punto fijo con refraccion (ADR-0028 §4)."""
         orden = sorted(reglas, key=lambda r: (CLASES_EN_ORDEN.index(r.clase), r.id))
         evento = Evento()
+        if momento.abre_sesion:
+            for nombre in self.caducan_al_abrir:
+                if estado.hechos.pop(nombre, None) is not None:
+                    evento.caducados.append(nombre)
         disparadas: set[str] = set()
         while True:
             quizas_prohibidos: set[str] = set()
@@ -291,6 +319,7 @@ def reglas_ejecutables(reglas: Sequence[Any]) -> list[ReglaEjecutable]:
 
 
 __all__ = [
+    "CADUCA_AL_ABRIR",
     "CLASES_EN_ORDEN",
     "Accion",
     "EstadoDia",

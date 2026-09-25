@@ -72,6 +72,7 @@ class TrazaSesion:
     no_implementadas: set[tuple[str, str]] = field(default_factory=set)  # (regla, primitiva)
     bloqueadas: set[tuple[str, str, str]] = field(default_factory=set)
     anotaciones: dict[str, str] = field(default_factory=dict)
+    disparadas: set[str] = field(default_factory=set)  # reglas que dispararon en la sesion (H1)
 
     @property
     def hechos_producidos(self) -> frozenset[str]:
@@ -124,6 +125,7 @@ class MotorSpec:
                 traza.fijados += [(instante, r, h, v) for r, h, v in evento.fijados]
                 traza.no_implementadas |= evento.no_implementadas
                 traza.bloqueadas |= evento.bloqueadas
+                traza.disparadas |= set(evento.disparadas)
             instante += 1
         for nombre, traza in trazas.items():
             traza.anotaciones.update(estado.anotaciones.get(nombre, {}))

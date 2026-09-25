@@ -53,6 +53,26 @@ predicados:
     literal: >-
       si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
       entonces seguiríamos operando bajista
+    notas: >-
+      DESDE ADR-0049 NINGUNA REGLA LO INVOCA. RN-003 lo usaba sobre la vela H4 previa, y la
+      primitiva hacia mas de lo que esta forma decia: la busqueda hacia atras de ADR-0044, leyendo
+      sesgo_h4_tope_velas sin nombrarlo. Ahora RN-003 usa `sesgo_h4_al_abrir`, que declara el tope.
+      Se conserva declarado porque romper un extremo es la primitiva de la geometria, con su cita;
+      la usara quien la necesite con su sujeto
+  sesgo_h4_al_abrir:
+    descripcion: >-
+      el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la
+      apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
+      mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
+      bajista- o, cuando no hay lado, `ambiguo` (la vela rompio los dos extremos, A-34) o
+      `insuficiente` (ninguna rompio dentro del tope). SIEMPRE tiene respuesta: por eso RN-003
+      fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
+    argumentos: [que, contra, criterio, tope]
+    fuente: mercado
+    cita: fb-2026-09-09-sesion-01-8eccf5c0
+    literal: >-
+      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
+      entonces seguiríamos operando bajista
   se_completa_zona_de_control:
     descripcion: el precio rompe el punto extremo anterior y deja la zona cerrada
     argumentos: [criterio]
@@ -130,6 +150,12 @@ predicados:
       Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader
     argumentos: [que, sentido]
     lado_de_ruido: {alcista: por_encima, bajista: por_debajo}
+    notas: >-
+      `sentido` es una LIGADURA del arbol -RN-005 ata S al valor de `sesgo`- y la guardia rechaza
+      un token ahi, para que `sentido: ambiguo` no pase igual que no pasa `sentido: alcista`. Con
+      `sesgo` en `ambiguo` o `insuficiente` NO HAY lado de ruido y no se inventa: en esas sesiones
+      RN-033 ya prohibe abrir, asi que RN-005 no decide nada; cuando se escriba esta primitiva, un
+      sentido fuera de `lado_de_ruido` es un error del interprete, no un valor (ADR-0049, H1)
     fuente: mercado
     cita: ev-v1-001306-f98e12e9
     literal: >-
@@ -388,10 +414,29 @@ tokens:
       booleano falso de YAML 1.1 mientras que `si` es una cadena, y la misma casilla de la misma
       regla acababa con dos tipos distintos (RN-013, encontrado el 2026-09-12)
   sentido_de_la_ruptura:
-    descripcion: el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`
+    descripcion: >-
+      el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`. Lo ata
+      `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `ambiguo` o `insuficiente`
+      (ADR-0049)
   # `alcista` y `bajista` NO son tokens a proposito: si lo fueran, `sentido: alcista` volveria a
   # pasar la guardia de argumentos, que es justo la puerta que la auditoria de F13 cerro. Solo viven
-  # como claves de `lado_de_ruido`, contra una lista fija del codigo.
+  # como claves de `lado_de_ruido`, contra una lista fija del codigo. `ambiguo` e `insuficiente` SI
+  # son tokens porque RN-033 los nombra con `vale` (ADR-0049); `sentido: ambiguo` sigue sin pasar
+  # porque la guardia exige una LIGADURA en el `sentido` de un predicado con `lado_de_ruido`.
+  ambiguo:
+    descripcion: >-
+      valor de `sesgo` cuando la H4 previa rompio LOS DOS extremos de su anterior (ADR-0044 §1,
+      A-34): no hay lado, y RN-033 prohibe operar
+  insuficiente:
+    descripcion: >-
+      valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
+      anterior (ADR-0044 §2): no hay lado, y RN-033 prohibe operar
+  al_abrir_sesion:
+    descripcion: >-
+      el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada:
+      la regla que lo produce lo vuelve a fijar en ese mismo evento y ningun gate lee el de la
+      sesion anterior (ADR-0049, H1). Hoy solo lo declara `sesgo`
+    clase: caducidad
   por_encima:
     descripcion: el lado de un nivel que queda por encima del precio
   por_debajo:
@@ -486,15 +531,26 @@ hechos:
   # `broker` -lo lee el motor del estado de ordenes y posiciones (ADR-0028 §5)-. Uno de origen
   # broker NO lleva `produce`: ninguna forma puede fijarlo, y `lo_provoca` dice que accion lo hace
   # verdadero, para que sus consumidores no queden inalcanzables en silencio. `valores`: con que se
-  # puede fijar.
+  # puede fijar. `caduca` (ADR-0049): cuando el motor lo apaga por si solo -hoy `al_abrir_sesion`,
+  # antes de la primera pasada del evento de apertura-; solo en hechos de origen regla. Es la
+  # caducidad de hechos que F14b anticipo para `liquidez_tomada` y `zona_perdida`, escrita hoy
+  # solo para `sesgo`.
   sesgo:
-    descripcion: el sentido en el que se busca entrada
+    descripcion: >-
+      el sentido en el que se busca entrada, o que no lo hay: `ambiguo` e `insuficiente`
+      (ADR-0044) son valores del hecho desde ADR-0049, y con ellos RN-033 prohibe operar. Lo fija
+      RN-003 en CADA apertura de sesion y CADUCA al abrir: sin la caducidad, la primera pasada
+      del evento de apertura evaluaba los gates con el sesgo de la sesion anterior todavia vivo y
+      RN-033 disparaba una vez sobre el (medido el 2026-09-25 sobre construccion: en 24 sesiones
+      de 84, y solo 15 eran ambiguas). Asi nunca se hereda de la sesion anterior, ni el valor ni
+      la prohibicion
     origen: regla
-    valores: [sentido_de_la_ruptura]
+    valores: [sentido_de_la_ruptura, ambiguo, insuficiente]
+    caduca: al_abrir_sesion
     produce: [RN-003]
     # RN-003 lo PRODUCE, no lo consume. Declaraba las dos cosas y colaba porque la guardia casaba
     # por subcadena: el `cuando` de RN-003 contiene `sesgo_h4_criterio_ruptura` (2026-09-11)
-    consume: [RN-005]
+    consume: [RN-005, RN-033]
   orden_limite_pendiente:
     descripcion: hay una orden colocada y todavia sin llenar
     # Lo fijaban RN-011 y RN-013 hasta el 2026-09-16, contra ADR-0028 §5: una copia del broker que
@@ -692,20 +748,58 @@ reglas:
       semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo
       AMBIGUO espera a A-34, y el tope y lo demas los decide ADR-0044.
       Una ruptura de uno o dos puntos puede serlo en la serie del trader y no en la nuestra
-      (A-16)
+      (A-16). DESDE ADR-0049 (H1) la forma fija `sesgo` tambien a `ambiguo` o `insuficiente`
+      -hasta entonces con esos dos no fijaba nada, y una segunda sesion heredaba el sesgo de la
+      primera, contra ADR-0044 §1-, y la prohibicion de operar con ellos es RN-033. La busqueda
+      hacia atras y el tope van en el predicado `sesgo_h4_al_abrir`, que los nombra; `rompe`
+      sobre la vela previa no los expresaba y la primitiva los hacia por su cuenta
     forma:
       cuando:
         todos_de:
           - abre_sesion_operativa: {}
-          - rompe:
+          - sesgo_h4_al_abrir:
               que: vela_h4_previa
               contra: extremo_de_la_h4_anterior
               criterio: sesgo_h4_criterio_ruptura
+              tope: sesgo_h4_tope_velas
       entonces:
         hace:
           - fijar: {hecho: sesgo, a: sentido_de_la_ruptura}
     clase: disparador
     decision: ADR-0044
+    estado: VIGENTE
+
+  - id: RN-033
+    titulo: con sesgo ambiguo o insuficiente no se opera
+    cuando: el sesgo fijado al abrir la sesion es AMBIGUO o INSUFICIENTE
+    entonces: >-
+      se prohibe buscar entradas y abrir operacion en esa sesion; no fija nada, porque el sesgo lo
+      vuelve a fijar la regla del sesgo en la apertura siguiente
+    parametros: []
+    cita: ev-v3-000531-4d6375b6
+    literal: alcistas sólo compras bajistas sólo ventas
+    notas: >-
+      LO QUE LA CITA SOSTIENE: que el sesgo alcista solo compra y el bajista solo vende, o sea que
+      sin un lado no hay direccion en la que buscar entrada. LO QUE NO: que con la vela previa
+      rompiendo los dos extremos, o sin ninguna ruptura en sesgo_h4_tope_velas, no se opere. Eso lo
+      decidio el consultor en ADR-0044 §1-2 -"la mas conservadora donde no habla"- y hasta ADR-0049
+      vivia solo en la prosa de RN-003, sin forma: RN-005, entonces el unico consumidor de `sesgo`,
+      solo prohibe SI el hecho existe, asi que sin el hecho el bot se quedaba sin filtro
+      direccional, y una segunda sesion ambigua heredaba el sesgo de la primera (medido sobre
+      construccion el 2026-09-25: 15 sesiones ambiguas de 84, 6 de ellas heredando, 0
+      insuficientes). El sentido de la doble ruptura sigue siendo A-34: si el trader lo da,
+      `ambiguo` desaparece y esta regla queda para `insuficiente`
+    decision: ADR-0049
+    forma:
+      cuando:
+        cualquiera_de:
+          - hecho: sesgo
+            vale: ambiguo
+          - hecho: sesgo
+            vale: insuficiente
+      entonces:
+        prohibe: [buscar_entradas, abrir_operacion]
+    clase: gate
     estado: VIGENTE
 
   # ---------------------------------------------------------------- liquidez y entrada
@@ -756,8 +850,10 @@ reglas:
       HASTA EL 2026-09-16 ESTA REGLA ESTABA AL REVES: prohibia abrir "por debajo de la liquidez de
       M15 en sesgo alcista, o al reves", que es justo donde el trader opera, en los dos sentidos
       (auditoria del 2026-09-13, hallazgo [2]; verificado otra vez en la revision de diseno de la rama
-      de fidelidad). Es el unico filtro direccional de la spec -`sesgo` solo lo consume esta regla- y
-      es un gate, la clase que gana siempre. LO QUE SOSTIENE CADA SENTIDO. Bajista: esta cita (v3
+      de fidelidad). Es el unico filtro direccional de la spec -`sesgo` lo consumen esta regla y,
+      desde ADR-0049, RN-033- y es un gate, la clase que gana siempre. Con `sesgo` en `ambiguo` o
+      `insuficiente` esta regla no tiene lado que mirar y no lo inventa: RN-033 ya prohibe abrir en
+      esas sesiones (ADR-0049, H1). LO QUE SOSTIENE CADA SENTIDO. Bajista: esta cita (v3
       0:17:25) y la que llevaba antes, ev-v3-001600-ed45b091 (v3 0:16:00, "por debajo de esta liquidez
       de m15 es ruido"), las dos sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de v3
       0:15:08, no por la frase citada; la sesion 1 lo repite sin item de evidencia propio (v6

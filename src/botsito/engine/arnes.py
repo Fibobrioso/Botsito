@@ -256,8 +256,19 @@ def informe(
         sesgo_sesion[anotado] += 1
         filas.append(
             f"{clave[0]} {clave[1]} | trader {trader_por_sesion[clave]} | bot "
-            f"{bot_por_sesion[clave]} | rn003 {anotado} | {' '.join(partes)}"
+            f"{bot_por_sesion[clave]} | rn003 {anotado} | {' '.join(partes)} | disparadas "
+            f"{', '.join(sorted(traza.disparadas)) or 'ninguna'}"
         )
+
+    # Que reglas dispararon, sobre TODAS las sesiones corridas y sobre las del trader (ADR-0049,
+    # H1): es donde se ve RN-033 en cada sesion ambigua, tenga o no operaciones del trader.
+    corridas = sorted(trazas)
+    disparadas_todas: Counter[str] = Counter()
+    disparadas_trader: Counter[str] = Counter()
+    for clave, traza in trazas.items():
+        disparadas_todas.update(traza.disparadas)
+        if clave in trader_por_sesion:
+            disparadas_trader.update(traza.disparadas)
 
     por_operacion: Counter[str] = Counter()
     for d in corrida.dias:
@@ -299,6 +310,15 @@ def informe(
     lineas.append(f"- operacion del bot: {producen['operacion del bot']} de {n}")
     lineas += ["", "cuantas se paran en cada primitiva NO_IMPLEMENTADA:"]
     lineas += [f"- {p}: {c} de {n}" for p, c in sorted(paradas.items())] or ["- ninguna"]
+    lineas += [
+        "",
+        "## Reglas disparadas por sesion (ADR-0049)",
+        f"sobre las {len(corridas)} sesiones corridas, y sobre las {n} con operaciones del trader:",
+    ]
+    lineas += [
+        f"- {rid}: {disparadas_todas[rid]} de {len(corridas)}; {disparadas_trader[rid]} de {n}"
+        for rid in sorted(disparadas_todas)
+    ] or ["- ninguna"]
     lineas += [
         "",
         "## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)",
