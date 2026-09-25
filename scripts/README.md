@@ -29,6 +29,8 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   antes de ejecutarla (`docs/validation/A24-A21-A26-A34-CRITERIO.md`): terminos por ambiguedad,
   ventana de +-45 s y pasajes de como mucho 180 s. Reutiliza `a18_buscar.py`. Con `--conjunto a35`,
   la de A-35 con su propia lista cerrada (`docs/validation/A35-PIVOTE-FORMADO-CRITERIO.md`).
+  Con `--conjunto sesion02`, la de los candidatos C-01, C-02, C-04, C-05, C-06 y C-07 de la
+  sesion 02 (`docs/validation/SESION-02-BUSQUEDA-CRITERIO.md`).
 - `a35_fotogramas.py`: los fotogramas de A-35, CONGELADOS antes de abrir ninguno
   (`docs/validation/A35-FOTOGRAMAS-CRITERIO.md`): lista cerrada por ventana de segmento,
   verificacion contra la extraccion de F05 y pixeles distintos del anterior; no lee el grafico.
