@@ -781,6 +781,15 @@ ambiguedades:
     # `liquidez_m15` sin inventar. NO se sustituye por un parametro provisional, porque es un
     # MECANISMO y no una cifra. Siguiente paso: buscarla en las transcripciones con el metodo
     # congelado de A-24
+    # BUSQUEDA Y FOTOGRAMAS SIN RESPUESTA (2026-09-24, rama `trabajo/a35-pivote-formado`): ninguno de
+    # los 10 pasajes de v1-v5 responde (docs/validation/A35-PIVOTE-FORMADO-CLASIFICACION.md), y los
+    # 89 fotogramas de P4, P5, P6, P8 y P9 tampoco (docs/validation/A35-FOTOGRAMAS-RESULTADO.md):
+    # P4 sin grafico, P5 en M1 y con la marca moviendose, P6, P8 y P9 con la marca previa a la
+    # ventana y el replay parado. Consta, sin decidirse, que el pivote lo marca la vela contraria al
+    # flujo (ev-v3-011540-5425b533, ev-v4-005749-1e9325cb) y que el trader rechaza el recuento de
+    # velas a cada lado (v3 #975). SIGUE BLOQUEANTE y va a la reunion con el trader, con la pregunta
+    # abierta del informe: "Cuando marcas un alto o un bajo en M15 como liquidez, ¿en que momento lo
+    # das por bueno? ¿Y que haces si despues el precio lo supera un poco?"
     evidencia:
       - ev-v4-005053-885e2773
     parametros: []
