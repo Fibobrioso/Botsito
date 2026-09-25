@@ -6,6 +6,8 @@ phase: F11
 
 # 0017 · El reloj del trader es su reloj civil: se revierte ADR-0012 y se confirma ADR-0005
 
+> **Enmienda (2026-09-25, rama `trabajo/sesion-02`, ADR-0039).** El **punto 4 queda corregido en su valor**: `huso_grafico` es `Etc/GMT-2` (UTC+2 fijo), no `Europe/Madrid`. Su premisa -"no hay ninguna configuracion deliberada de huso", la plataforma muestra la hora local- la desmiente el propio grafico de FX Replay en un fotograma de ENERO de v4 ("14:29:59 UTC+2", `docs/validation/ABRIL-Y-LA-CAJA.md` R0), que ADR-0039 da por medido. Era la objecion de ADR-0015: que todas las lecturas eran de verano; esta es de invierno. **Los puntos 1, 2, 3 y 5 no se tocan aqui**: si la ventana de 07:00 a 15:00 sigue su reloj civil o el de su grafico solo se distingue en invierno, cambia el kit, la fidelidad y la entrada de marzo, y lo decide el consultor (`docs/validation/SESION-02-DECISIONES.md` §2).
+
 ## Decision
 
 1. **`huso_operativa` vuelve a `Europe/Madrid`.** Es el reloj del trader como persona: se sienta a

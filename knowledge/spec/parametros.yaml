@@ -216,20 +216,29 @@ parametros:
     tipo: texto
     unidad: nombre IANA del huso configurado en el grafico del trader
     descripcion: >-
-      como se ETIQUETAN las horas en la pantalla del trader. No hay configuracion deliberada de
-      huso: su plataforma muestra su hora local, que es la misma de huso_operativa. Sirve para
-      traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 Madrid son las
-      21:00 UTC en verano y las 22:00 en invierno. NINGUNA regla cuelga de este parametro; las
-      horas de la operativa cuelgan de huso_operativa y la rejilla H4 de anclaje_h4. Y NO es el
-      reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO
-      (A-28)
+      como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay. Es
+      UTC+2 FIJO, sin horario de verano: lo marca el propio grafico en un fotograma de ENERO de v4
+      ("14:29:59 UTC+2" sobre "Thu 29 Jan '26", docs/validation/ABRIL-Y-LA-CAJA.md R0), y ADR-0039
+      lo da por medido ("es UTC+2 fijo"). En la sesion 1 ya se leyo UTC+2 en su pantalla
+      (fr-v6-22982c02/3585000, ADR-0005), pero era verano y no distinguia (ADR-0015); y en v4,
+      preguntado por el horario "en el horario UTC más 2", contesta "De UTC más 2, de 7, claro"
+      (ev-v4-011425-ae028b78). Hasta el 2026-09-25 valia Europe/Madrid (ADR-0017 §4), con la
+      premisa de que la plataforma muestra su hora local; la medida de enero la desmiente, y en
+      verano los dos valores dan la misma hora. Sirve para traducir lo que el dice -"la vela
+      empieza a las 23"- a un instante: 23:00 en su grafico son las 21:00 UTC todo el año.
+      NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa,
+      que es OTRO reloj y en invierno va una hora por detras de este, y la rejilla H4 de
+      anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se
+      mide en la demo de FTMO (A-28), ni el huso de un libro del trader, que se declara por libro
+      (ADR-0039, knowledge/corpus/libros.yaml)
     estado: CONFIRMED
-    valor: "Europe/Madrid"
-    # documental por ADR-0017: traduce lo que el trader DICE a un instante, no lo ejecuta nadie
+    valor: "Etc/GMT-2"
+    # documental por ADR-0017: traduce lo que el trader DICE a un instante, no lo ejecuta nadie.
+    # Valor corregido el 2026-09-25 (rama trabajo/sesion-02) por la medida que recoge ADR-0039
     consumido_por: [ADR-0017]
     fuente:
       tipo: evidence
-      id: ev-v3-000136-6160fcea
+      id: ev-v4-011425-ae028b78
   - nombre: anclaje_h4
     categoria: estrategia
     tipo: hora
