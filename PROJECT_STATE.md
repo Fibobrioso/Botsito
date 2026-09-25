@@ -39,7 +39,7 @@ FASE 2 · Retroalimentacion del experto. SESION 1 CELEBRADA el 2026-09-09 (2 h 2
 NINGUNA ABIERTA. `trabajo/arreglo-ci` quedo VALIDADA y cerrada en `main` el 2026-09-25: tag `stable/F14-arreglo-ci`, informe docs/validation/ARREGLO-CI.md, sin ADR. El ritual empuja `main` y el tag en un solo `git push --atomic origin main stable/<tag>` (docs/runbooks/RITUAL.md, correccion 8), y un commit solo entra con el SELLO de un `make check` en verde sobre su arbol. LO SIGUIENTE es el punto 22 de Next Action, la sesion 02 con el trader y el registro de sus respuestas. Marzo (punto 23) se DETIENE ANTES DEL SORTEO mientras A-42 no este RESUELTA (PARADA B0). RN-004 sigue BLOQUEADA solo por A-35 (punto 25).
 
 ## Current Branch
-main
+trabajo/ftmo-reglas
 
 ## Stable Main State
 eb45c94 · merge de `trabajo/arreglo-ci` (tag `stable/F14-arreglo-ci`), sobre `stable/F14-blindaje` (8c6354e). El ritual empuja `main` y el tag en UN solo `git push --atomic`: el run 36174003223 de la CI salio rojo porque se empujaron en dos lineas y la CI hizo `git fetch --tags` cinco segundos despues del push de `main`, antes de que llegara el tag, y `state check` vio el merge como cambios sin tag estable; el mismo arbol salio verde al relanzarlo. Test que reproduce la carrera en un repo temporal y test de que ningun runbook empuja `main` o un tag por separado. Primer merge que paso por `pre-merge-commit` con los hooks nuevos instalados.
