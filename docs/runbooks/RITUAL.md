@@ -38,6 +38,14 @@ fidelidad de la spec, la guarda del holdout y los meses vistos.
    `.gitignore`: si no, el sello no se escribiria nunca. **`--no-verify` esta prohibido**
    (`CLAUDE.md`). Los hooks se instalan con `make hooks` (ver «La primera vez con la puerta»).
 
+8. **`main` y el tag se empujan en el MISMO push, `--atomic`.** El run `36174003223` salió rojo porque
+   se empujaron en dos líneas: el push de `main` (`ac4e3a0`) creó el run a las 18:31:45, y la CI hizo
+   su `git fetch --tags` a las 18:31:50, antes de que llegara el tag. Sin el tag, `state check` ve el
+   merge como «cambios sin tag estable» y falla. Relanzado con el tag ya en `origin`, el mismo árbol
+   salió verde (intento 2). Hasta el 2026-09-25 el ritual encadenaba los dos pushes con `&&`, y
+   `trabajo/blindaje` los separó en dos líneas; `git push --atomic` actualiza los dos refs de una
+   vez (`docs/validation/ARREGLO-CI.md`).
+
 ## Cuándo falla `state check`, y cuándo un fallo es REAL
 
 **`uv run botsito state check` lee el FICHERO DEL DISCO, no el commit.** Por eso el tramo en el que
@@ -168,10 +176,11 @@ BOTSITO_ALLOW_MAIN=1 git commit -m "docs(state): trabajo/<rama>, cerrada en main
 probó: se vuelve a `make check`, nunca a `--no-verify`.
 
 ```
-git push origin main
-git push origin stable/<tag>
+git push --atomic origin main stable/<tag>
 ```
-→ **Puerta:** los dos pushes terminan sin error. Solo se ejecutan con el commit hecho.
+→ **Puerta:** termina sin error y lista los dos refs, `main` y el tag. Solo se ejecuta con el commit
+hecho. **`main` y el tag van SIEMPRE en el mismo push `--atomic`** (corrección 8): o llegan los dos,
+o ninguno.
 
 ```
 git ls-remote --tags origin stable/<tag>
@@ -201,7 +210,8 @@ git branch -d trabajo/<rama>
 
 No se revierte `main`. Se mira que fallo y se arregla con un commit encima, con el mismo orden:
 estadiar el arreglo, `make check > make-check.log 2>&1`, comprobar el `SELLO`, `rm make-check.log`,
-`BOTSITO_ALLOW_MAIN=1 git commit` y los dos pushes.
+`BOTSITO_ALLOW_MAIN=1 git commit` y el push, que ahí es solo `git push origin main` porque no hay tag
+nuevo.
 
 ## La primera vez con la puerta
 
