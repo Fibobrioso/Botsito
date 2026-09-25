@@ -53,6 +53,13 @@ lo que sigue, `<LIBRO>` es `corpus/Estrategia del trader/<ruta>` y `<SHA>` es su
 >    `AAAA/MM/DD HH:MM:SS` o `AAAA-MM-DD HH:MM:SS`. Si es otro, se para: un formato nuevo entra en
 >    el vocabulario solo con su medida (ADR-0039 §2).
 > 3. **Su fila en `HOLDOUT-EXPOSICIONES.md`**, ese mismo dia. Declara el rango, no la lista de dias.
+>
+> **PARADA A2. Si la columna trae fechas con MAS DE UN formato**, no se elige uno ni se sigue: en el
+> paso c el lector parsea cada fecha solo con el formato dado, y una que no case para la medida
+> entera, porque de esa fila no se sabe de que dia es. **No se toca el lector sobre la marcha.** Se describe el
+> caso -cuantas filas en cada patron y cual es el patron (p. ej. `AAAA-MM-DD HH:MM:SS`), SIN
+> mostrar ninguna fecha, porque puede ser de un dia que el sorteo reserve- y se espera al
+> consultor (decision del 2026-09-24).
 
 Con eso, la sesion anade el tramo SIN `material_sha256` -todavia no hay libro declarado- a
 `knowledge/cases/fidelidad/config.yaml`:
@@ -148,7 +155,14 @@ Se declara en `HOLDOUT-EXPOSICIONES.md`: de las filas de los dias `fidelidad-dev
 `entryPrice`, dos lecturas, una por huso. De las filas reservadas, `dateStart` se parsea en memoria
 para saber de que dia son -el lector lo hace por construccion- y no sale nada.
 
-> **PARADA C2. Si el veredicto es NO CONCLUYENTE, la rama para aqui** (ADR-0046 §5): el libro NO se
+> **PARADA C2. Si la herramienta sale con `ERROR: [...] una fila tiene dateStart que no casa con
+> ningun formato declarado para este libro`**, hay fechas con un formato distinto del del paso a,
+> y la medida entera se para: es lo correcto, no un fallo que rodear. **No se toca el lector ni la
+> herramienta sobre la marcha, y no se prueba otro `--formato`** hasta que uno parsee (ADR-0039
+> §1). La sesion describe el caso -cuantas filas y que patron, SIN mostrar ninguna fecha: pueden
+> ser de dias reservados- y espera al consultor (decision del 2026-09-24).
+
+> **PARADA C3. Si el veredicto es NO CONCLUYENTE, la rama para aqui** (ADR-0046 §5): el libro NO se
 > declara, los dias reservados siguen reservados, los `fidelidad-dev` esperan una decision del
 > consultor, y el sorteo NO se repite.
 
