@@ -65,7 +65,16 @@ contrato del motor queda en ADR-0052 §5. Tests: ciclo de vida, cancelada/expira
 al precio del tick, rechazos por cada límite, equity de la cuenta = saldo + flotante en cada
 marca, respaldo M1 marcado, swap y comisión, determinismo y sin mirar al futuro.
 
-## Fase 5 · punta a punta con estrategia sintética — pendiente
+## Fase 5 · punta a punta con estrategia sintética — HECHA
+
+`engine/simulacion.py`: `MercadoDia` (el mercado de un día dev de construcción por la compuerta
+del arnés, con los datasets de ticks que existan y la M1 de respaldo), el contrato `Estrategia`
+(decidir al cierre de cada M1 con las velas cerradas; recoger al cerrar la ventana), `simular_dia`
+y `simular_fase` (la cuenta persiste entre días), `reglas_broker_de(perfil)`. La estrategia de
+juguete vive en `tests/unit/test_simulacion.py`, marcada SINTÉTICA y fuera de `src`. Tests:
+determinismo, sin mirar al futuro, una que pierde siempre acaba SUSPENDIDA en el instante exacto,
+una que gana poco sin los días mínimos queda EN_CURSO, un día sin ticks va entero por el respaldo
+marcado, y un día dev real por la compuerta si hay datos.
 
 ## Fase 6 · repetición descriptiva de las operaciones del trader — pendiente
 
