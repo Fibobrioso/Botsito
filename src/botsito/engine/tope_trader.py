@@ -33,7 +33,14 @@ from zoneinfo import ZoneInfo
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import ParametroDesconocidoError, Registro
 from botsito.domain.valores import CIEN
-from botsito.engine.diagnostico import A44_MARCADOR, A44_SIN_TOPE, NINGUNO, Diagnostico
+from botsito.engine.diagnostico import (
+    A44_MARCADOR,
+    A44_MARCADOR_CERO,
+    A44_SIN_TOPE,
+    MODOS_A44,
+    NINGUNO,
+    Diagnostico,
+)
 
 # Los nombres del registro que este modulo lee (ADR-0002: una sola puerta).
 P_ALCANCE = "perdida_trader_alcance"
@@ -141,7 +148,7 @@ def tope_del_registro(
                 f"A-44 sin fijar: `{P_ALCANCE}` es UNKNOWN en knowledge/spec/parametros.yaml y la "
                 "spec no declara la magnitud ni el corte del tope propio del trader; el motor se "
                 "niega a correr. La responde el trader (docs/runbooks/ACTIVAR-A35-A44.md). Para "
-                f"ver el embudo en hipotesis, --diagnostico-a44 <{A44_SIN_TOPE}|{A44_MARCADOR}>: "
+                f"ver el embudo en hipotesis, --diagnostico-a44 <{'|'.join(MODOS_A44)}>: "
                 "corre ETIQUETADO y sin valor para ninguna medida"
             )
         if diagnostico.a44 == A44_SIN_TOPE:
@@ -149,7 +156,13 @@ def tope_del_registro(
                 SIN_TOPE, SALDO, PORCENTAJE, None, None, BASE_INICIAL_DIA, BASE_SALDO_ACTUAL,
                 huso_perfil, True, f"DIAGNOSTICO-A44-{A44_SIN_TOPE}",
             )  # fmt: skip
-        # el MARCADOR: un tope de un punto porcentual de nada, que no es un valor plausible del
+        if diagnostico.a44 == A44_MARCADOR_CERO:
+            # el marcador CERO se alcanza sin perder nada: demuestra el bloqueo de punta a punta
+            return TopeTrader(
+                AMBOS, EQUITY, USD, Decimal(0), Decimal(0), BASE_INICIAL_DIA, BASE_SALDO_ACTUAL,
+                huso_perfil, True, f"DIAGNOSTICO-A44-{A44_MARCADOR_CERO}",
+            )  # fmt: skip
+        # el MARCADOR: un tope de un dolar sobre la equity, que no es un valor plausible del
         # trader; se toca con cualquier perdida y sirve para ver el embudo, no para simular
         return TopeTrader(
             AMBOS, EQUITY, USD, Decimal(1), Decimal(1), BASE_INICIAL_DIA, BASE_SALDO_ACTUAL,

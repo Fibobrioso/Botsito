@@ -377,6 +377,33 @@ def test_el_motor_de_la_spec_sin_cuenta_evalua_rn020_con_tope_y_sin_el_es_hueco(
     assert "acumulador:perdida_dia" in {p for _, p in r.sesiones["07-11"].no_implementadas}
 
 
+def test_el_marcador_cero_se_alcanza_sin_perder_nada_y_rn020_bloquea_de_punta_a_punta(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], reglas: list[ReglaEjecutable]
+) -> None:
+    """Fase 3d de la verificacion: un marcador que SI se alcanza en construccion aunque el bot no
+    opere (tope cero). En el motor de la spec RN-020 dispara en cada sesion y fija
+    `detenido_por_tope`; en el motor cableado, ademas, `abrir_operacion` queda prohibido y la
+    estrategia sintetica no coloca ninguna orden. No es un valor plausible de nadie."""
+    cero = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR_CERO))
+    assert cero.tope_dia == Decimal(0) and cero.diagnostico == "DIAGNOSTICO-A44-marcador_cero"
+    voc = cargar_vocabulario(tc.SPEC)
+    datos = ta35._datos(registro, "cierre_vela_contraria")
+    r = MotorSpec(Interprete(voc, primitivas_escritas(registro, cero)), reglas).correr_dia(
+        ta35._dia(datos)
+    )
+    for nombre, traza in r.sesiones.items():
+        assert "RN-020" in traza.disparadas, nombre
+        assert ("detenido_por_tope", "hasta_el_corte_siguiente") in {
+            (h, v) for _, _, h, v in traza.fijados
+        }, nombre
+    motor = _motor_con_tope(registro, vocabulario, tc.RUTA_STOP, cero)
+    r2 = motor.correr_dia(tc._dia())
+    traza = r2.sesiones["07-11"]
+    assert "RN-020" in traza.disparadas and not r2.operaciones
+    assert any(b[1] == "accion:colocar_orden_limite" for b in traza.bloqueadas)
+    assert motor.primero_en_tocar is not None and motor.primero_en_tocar[0] == ORIGEN_TRADER
+
+
 def test_la_cli_se_niega_sin_a44_aunque_a35_vaya_en_diagnostico(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

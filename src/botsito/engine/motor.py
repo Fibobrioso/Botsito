@@ -111,6 +111,12 @@ class DatosMercado:
             False,
         )
 
+    def m1_entre(self, desde: int, hasta: int) -> list[Vela]:
+        """Las M1 con inicio en [desde, hasta), en orden: para medir sobre lo cerrado."""
+        a = bisect.bisect_left(self._inicios_m1, MinutoUtc(desde))
+        b = bisect.bisect_left(self._inicios_m1, MinutoUtc(hasta))
+        return self._m1[a:b]
+
     def liquidez_m15(self, instante: int, lado: str) -> Pivote | None:
         """El pivote de M15 mas reciente ya formado del lado pedido (ADR-0045), con la lectura de
         «formado» de estos datos. Sin lectura, falla con nombre: A-35 sin fijar."""

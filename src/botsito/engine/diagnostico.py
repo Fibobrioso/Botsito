@@ -29,7 +29,11 @@ ETIQUETA_A44 = "DIAGNOSTICO-A44"
 # perdida; vale para ver el embudo, no para simular una operativa).
 A44_SIN_TOPE = "sin_tope"
 A44_MARCADOR = "marcador"
-MODOS_A44 = (A44_SIN_TOPE, A44_MARCADOR)
+# El marcador CERO: un tope de cero, que se alcanza con cualquier perdida, incluida ninguna. Solo
+# sirve para demostrar de punta a punta que RN-020 bloquea cuando el tope se alcanza; no es un
+# valor plausible de nadie y no se registra en ningun sitio.
+A44_MARCADOR_CERO = "marcador_cero"
+MODOS_A44 = (A44_SIN_TOPE, A44_MARCADOR, A44_MARCADOR_CERO)
 
 
 class SinFijarError(ValueError):
@@ -132,6 +136,7 @@ def nombre_etiquetado(ruta: Path, etiquetas: tuple[str, ...]) -> Path:
 
 __all__ = [
     "A44_MARCADOR",
+    "A44_MARCADOR_CERO",
     "A44_SIN_TOPE",
     "ETIQUETA_A35",
     "ETIQUETA_A44",
