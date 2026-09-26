@@ -261,3 +261,39 @@ def test_la_cli_se_niega_a_un_mes_que_no_es_de_construccion(
     # un rango que cruza de construccion a otro mes tambien se niega entero
     assert cli.meses_fuera_de_construccion(RAIZ, date(2026, 4, 30), date(2026, 5, 1)) == ["2026-05"]
     assert cli.meses_fuera_de_construccion(RAIZ, date(2026, 8, 3), date(2026, 8, 4)) == []
+
+
+def test_la_seleccion_de_dias_y_horas_queda_en_el_manifiesto(tmp_path: Path) -> None:
+    """Solo el dia 7 y las horas 10-11: lo demas del rango no se pide ni se cuenta."""
+    pedidas: list[str] = []
+
+    def descarga(url: str) -> bytes | None:
+        pedidas.append(url)
+        return _descarga_falsa(url)
+
+    c = congelar_ticks(
+        tmp_path,
+        tmp_path / "data",
+        "prueba-sel",
+        "XXXYYY",
+        100_000,
+        date(2030, 1, 7),
+        date(2030, 1, 9),
+        descarga,
+        hoy=HOY,
+        dias=[date(2030, 1, 7)],
+        horas=[10, 11],
+    )
+    assert len(pedidas) == 2 and all("/07/1" in u for u in pedidas)
+    m = c.manifiesto
+    assert m["seleccion"] == {"dias": ["2030-01-07"], "horas_utc": [10, 11], "completa": False}
+    assert m["horas"] == {"presentes": 2, "ausentes_404": 0, "vacias": 0, "perdidas": []}
+    serie = cargar_ticks(cargar_manifiesto_ticks(c.ruta_manifiesto), tmp_path / "data")
+    assert serie.dias_seleccion == ("2030-01-07",) and serie.horas_seleccion == (10, 11)
+    with pytest.raises(TicksError, match="fuera del rango"):
+        congelar_ticks(
+            tmp_path, tmp_path / "data", "prueba-mal", "XXXYYY", 100_000, date(2030, 1, 7),
+            date(2030, 1, 9), descarga, hoy=HOY, dias=[date(2030, 1, 10)],
+        )  # fmt: skip
+    completo = _congelar(tmp_path)
+    assert completo.manifiesto["seleccion"]["completa"] is True

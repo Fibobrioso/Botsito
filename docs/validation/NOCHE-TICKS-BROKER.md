@@ -30,7 +30,18 @@ al toque (DN-1); con ticks el orden real, y un tick que cruce stop y objetivo a 
 deslizamiento fijo, solo el de hueco de los ticks (DN-3); spread de cada tick y, sin ticks, el
 percentil 90 por hora medido en construcción (DN-4), en `knowledge/simulador/llenado.yaml`.
 
-## Fase 2 · ticks de construcción — pendiente
+## Fase 2 · ticks de construcción — EN CURSO
+
+Código sellado (`data/ticks.py`, `domain/ticks.py`, CLI `data download-ticks` y `check-ticks`,
+16+1 tests sin red, `scripts/ticks_integridad.py` y `scripts/ticks_spread.py`). Formato del
+proveedor medido sobre una hora de abril: `>IIIff`, ms en la hora, ASK, BID, volúmenes float.
+
+**Tolerancia de integridad, fijada ANTES de comparar:** una M1 cuadra si existe en las dos
+fuentes y |ΔO|, |ΔH|, |ΔL|, |ΔC| ≤ 2 puntos; el volumen no se compara. No se toca después.
+
+**Lo que pasó con la descarga (medido):** dos descargas en paralelo perdían horas (503 con
+esperas de 5-20 s). Una sola secuencial con esperas 15-60 s fue de 2 s por hora al empezar a
+6,5 minutos por hora al saturarse: un mes entero (720 horas) no cabe en la noche. Ver DN-5.
 
 ## Fase 3 · modelo de llenado en código — pendiente
 
@@ -49,6 +60,14 @@ percentil 90 por hora medido en construcción (DN-4), en `knowledge/simulador/ll
   título, en el Estado y en los índices. Alternativa: cambiar la guardia para admitir PROPUESTO;
   no se hace de noche porque cambia una regla del repositorio.
 - **DN-1..DN-4**: las del modelo de llenado, en ADR-0051 §1, §3, §4 y §6.
+- **DN-5 (Fase 2): los ticks se congelan solo para los DÍAS DEV de construcción y las HORAS 05-13
+  UTC** (07:00-16:00 CEST: la ventana del trader 07:00-15:00 más una hora), con 2 s de pausa entre
+  peticiones, y la selección queda escrita en el manifiesto (`seleccion`). Motivo: el ritmo del
+  servidor, medido arriba. Alternativas: el mes entero (no cabe en la noche); solo los minutos de
+  las operaciones (no serviría al bróker ni a la medida del spread). El mes entero se baja de día
+  con el mismo comando sin `--solo-dias-dev`, y es otro dataset. Consecuencia: la integridad y el
+  spread se miden sobre esas horas; fuera de ellas el modelo de llenado usa el respaldo M1 y lo
+  marca.
 
 ## Paradas
 

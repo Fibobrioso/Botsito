@@ -2275,7 +2275,10 @@ def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
     descargan. La descarga es en streaming y las horas perdidas tras los reintentos quedan
     listadas en el manifiesto, no abortan.
     """
+    import time
+
     from botsito.cases.criterio_fidelidad import CriterioError
+    from botsito.cases.criterio_fidelidad import cargar_criterio as cargar_criterio_local
     from botsito.data.dukascopy import DescargaError, FormatoBi5Error, descarga_http
     from botsito.data.ticks import (
         ESPERA_BASE_S,
@@ -2306,11 +2309,39 @@ def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
         return 2
     commit = _git(repo, "rev-parse", "--short", "HEAD")
     carpeta_datos = _carpeta_datos(repo)
+    dias: list[date] | None = None
+    if args.solo_dias_dev:
+        from botsito.engine.arnes import ConjuntoError, dias_de_construccion
+
+        try:
+            meses = sorted({d.strftime("%Y-%m") for d in (desde, hasta)})
+            dias = [
+                date.fromisoformat(d.dia)
+                for d in dias_de_construccion(repo, cargar_criterio_local(repo), meses)
+                if desde <= date.fromisoformat(d.dia) <= hasta
+            ]
+        except (ConjuntoError, CriterioError) as exc:
+            print(f"ERROR: {exc}")
+            return 2
+        if not dias:
+            print("ERROR: ningun dia dev de construccion en el rango")
+            return 2
+    horas: list[int] | None = None
+    if args.horas:
+        mh = re.fullmatch(r"(\d{2})-(\d{2})", args.horas)
+        if mh is None or not 0 <= int(mh.group(1)) <= int(mh.group(2)) <= 23:
+            print(f"ERROR: --horas debe ser HH-HH entre 00 y 23, no {args.horas!r}")
+            return 1
+        horas = list(range(int(mh.group(1)), int(mh.group(2)) + 1))
 
     def descarga(url: str) -> bytes | None:
         # espera creciente 15, 30, 45 y 60 s: el servidor devuelve 503 cuando se satura y con
-        # 5 s no le daba tiempo (medido el 2026-09-26 sobre abril)
-        return descarga_http(url, intentos=MAX_INTENTOS_POR_TRAMO, espera_s=ESPERA_BASE_S)
+        # 5 s no le daba tiempo (medido el 2026-09-26 sobre abril); y una pausa entre peticiones
+        # reales para no provocarlo
+        cuerpo = descarga_http(url, intentos=MAX_INTENTOS_POR_TRAMO, espera_s=ESPERA_BASE_S)
+        if args.pausa > 0:
+            time.sleep(args.pausa)
+        return cuerpo
 
     try:
         congelado = congelar_ticks(
@@ -2325,6 +2356,8 @@ def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
             hoy=datetime.now(UTC).date(),
             generado_por=commit,
             avisar=lambda linea: print(linea, flush=True),
+            dias=dias,
+            horas=horas,
         )
     except (TicksError, DescargaError, FormatoBi5Error) as exc:
         print(f"ERROR: {exc}")
@@ -2337,6 +2370,12 @@ def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
         f"{h['presentes']}, ausentes (404) {h['ausentes_404']}, vacias {h['vacias']}, PERDIDAS "
         f"{len(h['perdidas'])}; cotizaciones cruzadas {m['ticks']['cruzados_ask_menor_que_bid']}"
     )
+    sel = m["seleccion"]
+    if not sel["completa"]:
+        print(
+            f"  SELECCION: {len(sel['dias'])} dias y horas UTC {sel['horas_utc'][0]:02d}-"
+            f"{sel['horas_utc'][-1]:02d}; el resto del rango no esta en este dataset"
+        )
     print("Commit del manifiesto con Fuente: ADR-0051 (es inmutable: no se edita)")
     return 0
 
@@ -2787,6 +2826,16 @@ def build_parser() -> argparse.ArgumentParser:
     dt.add_argument("--escala", required=True, type=int, help="puntos por unidad de precio")
     dt.add_argument("--desde", required=True, help="AAAA-MM-DD")
     dt.add_argument("--hasta", required=True, help="AAAA-MM-DD (anterior a hoy)")
+    dt.add_argument(
+        "--solo-dias-dev",
+        dest="solo_dias_dev",
+        action="store_true",
+        help="solo los dias dev de construccion del rango (por la compuerta del arnes)",
+    )
+    dt.add_argument("--horas", help="HH-HH, horas UTC inclusivas de cada dia (por defecto 00-23)")
+    dt.add_argument(
+        "--pausa", type=float, default=2.0, help="segundos entre peticiones reales al servidor"
+    )
     dtc = datos_sub.add_parser("check-ticks", help="compara un dataset de ticks con el disco")
     dtc.add_argument("--dataset", required=True, help="dataset_id o nombre")
     dtc.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")

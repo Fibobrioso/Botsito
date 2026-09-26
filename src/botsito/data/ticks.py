@@ -80,6 +80,7 @@ CAMPOS = (
     "ficheros",
     "horas",
     "ticks",
+    "seleccion",
 )
 CAMPOS_OPCIONALES = ("generado_por",)
 
@@ -318,8 +319,15 @@ def congelar_ticks(
     generado_por: str | None = None,
     avisar: Callable[[str], None] | None = None,
     descargar: Callable[..., HoraDescargada] = descargar_hora,
+    dias: Sequence[date] | None = None,
+    horas: Sequence[int] | None = None,
 ) -> CongeladoTicks:
     """Descarga el rango hora a hora, escribe un CSV por dia y el manifiesto. Nunca sobreescribe.
+
+    `dias` y `horas` acotan la SELECCION dentro del rango: solo esos dias (que tienen que estar
+    en [desde, hasta]) y solo esas horas UTC de cada dia; el manifiesto la deja escrita. Sin
+    ellos, todo el rango y las 24 horas. Nacio la noche del 2026-09-26 porque el servidor no da
+    un mes entero en una noche (medido: de 2 s a 6,5 min por hora).
 
     Streaming: cada dia se escribe al terminar sus 24 horas y se suelta. Los ficheros van a una
     carpeta temporal `<dataset>.parcial` hasta conocer el id (que depende de los hashes) y se
@@ -333,6 +341,12 @@ def congelar_ticks(
         raise TicksError("escala debe ser un entero positivo")
     if hasta >= hoy:
         raise TicksError(f"hasta ({hasta}) debe ser anterior a hoy ({hoy})")
+    dias_pedidos = list(_dias(desde, hasta)) if dias is None else sorted(set(dias))
+    if any(d < desde or d > hasta for d in dias_pedidos):
+        raise TicksError("dias fuera del rango [desde, hasta]")
+    horas_pedidas = list(range(24)) if horas is None else sorted(set(horas))
+    if not horas_pedidas or any(h < 0 or h > 23 for h in horas_pedidas):
+        raise TicksError("horas fuera de 0..23")
     parcial = carpeta_datos / CARPETA_TICKS / f"{nombre}.parcial"
     if parcial.exists():
         raise TicksError(f"queda una descarga parcial en {parcial}: borrala o terminala")
@@ -341,9 +355,9 @@ def congelar_ticks(
     ficheros: list[dict[str, Any]] = []
     rutas: list[Path] = []
     hashes: list[str] = []
-    for dia in _dias(desde, hasta):
+    for dia in dias_pedidos:
         del_dia: list[Tick] = []
-        for hora in range(24):
+        for hora in horas_pedidas:
             h = descargar(simbolo, dia, hora, descarga)
             if h.estado == "presente":
                 recuento.presentes += 1
@@ -415,6 +429,11 @@ def congelar_ticks(
             "perdidas": recuento.perdidas,
         },
         "ticks": {"total": recuento.ticks, "cruzados_ask_menor_que_bid": recuento.cruzados},
+        "seleccion": {
+            "dias": [d.isoformat() for d in dias_pedidos],
+            "horas_utc": horas_pedidas,
+            "completa": dias is None and horas is None,
+        },
     }
     if generado_por:
         manifiesto["generado_por"] = generado_por
@@ -508,6 +527,14 @@ def validar_manifiesto_ticks(doc: dict[str, Any], origen: str) -> dict[str, Any]
         raise TicksError(f"{origen}: el sufijo del dataset_id no coincide con los hashes")
     if not isinstance(doc["horas"], dict) or not isinstance(doc["ticks"], dict):
         raise TicksError(f"{origen}: horas y ticks deben ser mapas")
+    sel = doc["seleccion"]
+    if (
+        not isinstance(sel, dict)
+        or not isinstance(sel.get("dias"), list)
+        or not isinstance(sel.get("horas_utc"), list)
+        or not isinstance(sel.get("completa"), bool)
+    ):
+        raise TicksError(f"{origen}: seleccion debe llevar dias, horas_utc y completa")
     return doc
 
 
@@ -567,6 +594,10 @@ class SerieTicks:
     origen: str
     ticks: tuple[Tick, ...]
     horas_perdidas: tuple[str, ...]  # `AAAA-MM-DDTHHZ`: sin ticks por fallo, no por mercado cerrado
+    dias_seleccion: tuple[
+        str, ...
+    ]  # los dias que el dataset cubre (todos los del rango, o la seleccion)
+    horas_seleccion: tuple[int, ...]  # las horas UTC que cubre cada dia
 
 
 def cargar_ticks(
@@ -611,6 +642,8 @@ def cargar_ticks(
         origen=str(manifiesto["dataset_id"]),
         ticks=tuple(ticks),
         horas_perdidas=tuple(str(h) for h in manifiesto["horas"].get("perdidas", [])),
+        dias_seleccion=tuple(str(d) for d in manifiesto["seleccion"]["dias"]),
+        horas_seleccion=tuple(int(h) for h in manifiesto["seleccion"]["horas_utc"]),
     )
 
 
