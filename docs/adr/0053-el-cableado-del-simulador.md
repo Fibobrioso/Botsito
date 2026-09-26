@@ -195,9 +195,14 @@ de intérprete de distancia.
 - `botsito motor arnes --simular` (informe de fidelidad más veredicto FTMO, curva de equity y
   eventos del bróker) y el visor con las órdenes y los llenados del bot.
 - La línea base del arnés se vuelve a escribir al lado de las anteriores: cobertura 0 (el motor
-  sigue parado en RN-004 por A-35) y el embudo muestra qué gates de la firma pasan de DESCONOCIDO a
-  evaluados: RN-018, RN-026, RN-027, RN-029, RN-030, RN-031 y RN-032. Siguen en DESCONOCIDO por
-  geometría o por hueco: RN-005, RN-008, RN-009, RN-016 y RN-020.
+  sigue parado en RN-011 y RN-004 por A-35) y el embudo muestra qué reglas pasan de DESCONOCIDO a
+  evaluadas. **Medido al construir (`CABLEADO-SIMULADOR.md` §4), y corrige lo que este ADR
+  anunciaba al proponerse:** pasan a evaluadas RN-010, RN-012, RN-016, RN-017, RN-018, RN-019,
+  RN-026, RN-027, RN-029, RN-031 y RN-032; de los diez gates de ADR-0049 H4 siguen en DESCONOCIDO
+  RN-005, RN-008 y RN-009 (geometría) y RN-020 (hueco de `perdida_dia` y `perdida_semana`).
+  RN-016 se evalúa porque `se_cierra_operacion` da NO mientras no hay cierres y el hueco de
+  `cartuchos` no llega a pedirse; RN-030 es terminal y lee un hecho, no el acumulador, así que no
+  cambia de estado con el cableado.
 - Sin tocar: la spec, `ambiguedades.yaml`, `engine/interprete.py`, `engine/motor.py`.
 
 ## Fecha / fase

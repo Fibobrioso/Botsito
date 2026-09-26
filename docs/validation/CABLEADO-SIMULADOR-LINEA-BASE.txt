@@ -1,0 +1,162 @@
+# Arnes del motor
+
+MOTOR: spec vigente + broker simulado (ADR-0053)
+CONJUNTO: construccion (2026-04, 2026-08); dias 42; sesiones con operaciones del trader 49
+
+## Criterio de fidelidad (ADR-0043)
+operaciones del trader: 77
+operaciones del bot puntuables: 0
+operaciones del bot en dias sin operaciones del trader: 0
+cobertura: 0/77 (0.0 %)
+precision: sin definir (cero operaciones del bot puntuables)
+parejas en el mismo minuto: 0
+
+## Embudo sobre el grafo de hechos (ADR-0048 §5)
+cuantas sesiones con operaciones del trader producen cada hecho:
+- sesgo: 49 de 49
+- orden_dimensionada: 0 de 49
+- detenido_por_tope: 0 de 49
+- detenido_por_tope_total: 0 de 49
+- detenido_por_cartuchos: 0 de 49
+- liquidez_tomada: 0 de 49
+- operacion del bot: 0 de 49
+
+cuantas se paran en cada primitiva NO_IMPLEMENTADA:
+- acumulador:perdida_dia: 49 de 49
+- acumulador:perdida_semana: 49 de 49
+- predicado:alcanza_nivel: 49 de 49
+- predicado:cruza: 49 de 49
+- predicado:toca_colocar_orden_limite: 49 de 49
+
+## Reglas disparadas por sesion (ADR-0049)
+sobre las 84 sesiones corridas, y sobre las 49 con operaciones del trader:
+- RN-001: 42 de 84; 21 de 49
+- RN-003: 84 de 84; 49 de 49
+- RN-033: 15 de 84; 6 de 49
+
+## Avisos de orden dentro de una clase (ADR-0049, H3)
+- 2026-04-03 11-15: gate RN-001, RN-033
+- 2026-04-13 11-15: gate RN-001, RN-033
+- 2026-04-17 11-15: gate RN-001, RN-033
+- 2026-04-20 11-15: gate RN-001, RN-033
+- 2026-08-26 11-15: gate RN-001, RN-033
+- 2026-08-31 11-15: gate RN-001, RN-033
+
+## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)
+por sesion: alcista 21; ambiguo 6; bajista 22
+por operacion del trader: a favor 58; ambiguo 7; en contra 12
+
+## Por sesion
+2026-04-01 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-03 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-03 11-15 | trader 1 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003, RN-033
+2026-04-06 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-09 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-09 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-10 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-13 07-11 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-13 11-15 | trader 2 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003, RN-033
+2026-04-14 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-14 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-16 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-16 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-17 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-21 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-22 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-23 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-24 07-11 | trader 1 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003, RN-033
+2026-04-24 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-27 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-04-28 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-29 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-04-29 11-15 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-03 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-03 11-15 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-04 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-06 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-07 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-07 11-15 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-10 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-11 07-11 | trader 1 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003, RN-033
+2026-08-12 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-13 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-14 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-17 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-19 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-20 07-11 | trader 1 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003, RN-033
+2026-08-20 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-21 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-21 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-24 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-25 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-25 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-26 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-26 11-15 | trader 1 | bot 0 | rn003 ambiguo | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003, RN-033
+2026-08-27 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+2026-08-27 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-28 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-001, RN-003
+2026-08-31 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[predicado:toca_colocar_orden_limite] detenido_por_tope:no[acumulador:perdida_dia, acumulador:perdida_semana] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza] | disparadas RN-003
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: ftmo-2step-swing-100k; FASE: reto
+DIAS CORRIDOS: 42
+
+### Veredicto de la cuenta sobre el tramo
+estado: EN_CURSO
+motivo: sin objetivo alcanzado ni limite infringido
+instante: -
+saldo final: 100000
+equity final: 100000
+dias de trading: 0
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2026-04-01 | 100000 | 100000 | -
+2026-04-02 | 100000 | 100000 | -
+2026-04-03 | 100000 | 100000 | -
+2026-04-06 | 100000 | 100000 | -
+2026-04-07 | 100000 | 100000 | -
+2026-04-08 | 100000 | 100000 | -
+2026-04-09 | 100000 | 100000 | -
+2026-04-10 | 100000 | 100000 | -
+2026-04-13 | 100000 | 100000 | -
+2026-04-14 | 100000 | 100000 | -
+2026-04-15 | 100000 | 100000 | -
+2026-04-16 | 100000 | 100000 | -
+2026-04-17 | 100000 | 100000 | -
+2026-04-20 | 100000 | 100000 | -
+2026-04-21 | 100000 | 100000 | -
+2026-04-22 | 100000 | 100000 | -
+2026-04-23 | 100000 | 100000 | -
+2026-04-24 | 100000 | 100000 | -
+2026-04-27 | 100000 | 100000 | -
+2026-04-28 | 100000 | 100000 | -
+2026-04-29 | 100000 | 100000 | -
+2026-08-03 | 100000 | 100000 | -
+2026-08-04 | 100000 | 100000 | -
+2026-08-05 | 100000 | 100000 | -
+2026-08-06 | 100000 | 100000 | -
+2026-08-07 | 100000 | 100000 | -
+2026-08-10 | 100000 | 100000 | -
+2026-08-11 | 100000 | 100000 | -
+2026-08-12 | 100000 | 100000 | -
+2026-08-13 | 100000 | 100000 | -
+2026-08-14 | 100000 | 100000 | -
+2026-08-17 | 100000 | 100000 | -
+2026-08-18 | 100000 | 100000 | -
+2026-08-19 | 100000 | 100000 | -
+2026-08-20 | 100000 | 100000 | -
+2026-08-21 | 100000 | 100000 | -
+2026-08-24 | 100000 | 100000 | -
+2026-08-25 | 100000 | 100000 | -
+2026-08-26 | 100000 | 100000 | -
+2026-08-27 | 100000 | 100000 | -
+2026-08-28 | 100000 | 100000 | -
+2026-08-31 | 100000 | 100000 | -
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+ninguno
+
+eventos: 0; por fuente: respaldo_m1 0, ticks 0
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): acumulador:perdida_dia, acumulador:perdida_semana

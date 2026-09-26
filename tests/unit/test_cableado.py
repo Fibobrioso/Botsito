@@ -335,16 +335,17 @@ def test_la_cuenta_persiste_entre_dias_y_la_estrategia_empieza_de_cero(
     """ADR-0053 §6: el mismo mercado dos dias seguidos por el MISMO motor. La zona sintetica se
     liga otra vez (la estrategia y el broker empiezan de cero) y la cuenta arrastra el saldo: la
     segunda perdida sale del saldo ya mermado, asi que el lote es menor."""
-    dia2 = date(2030, 1, 16)
-    m2 = dataclasses.replace(_mercado(RUTA_STOP), caso="caso-x-2030-01-16", dia=dia2)
+    dia2 = date(2030, 1, 21)  # el lunes siguiente: cinco dias de calendario sin correr
+    salto = 6 * 1440  # minutos entre el martes 15 y el lunes 21
+    m2 = dataclasses.replace(_mercado(RUTA_STOP), caso="caso-x-2030-01-21", dia=dia2)
     m2 = dataclasses.replace(
         m2,
-        desde=MinutoUtc(MINUTO_INI + 1440),
-        hasta=MinutoUtc(MINUTO_FIN + 1440),
-        m1=tuple(dataclasses.replace(v, inicio=MinutoUtc(int(v.inicio) + 1440)) for v in m2.m1),
+        desde=MinutoUtc(MINUTO_INI + salto),
+        hasta=MinutoUtc(MINUTO_FIN + salto),
+        m1=tuple(dataclasses.replace(v, inicio=MinutoUtc(int(v.inicio) + salto)) for v in m2.m1),
         ticks=tuple(
             Tick(
-                MilisegundoUtc(int(k.instante) + 1440 * MS_POR_MINUTO),
+                MilisegundoUtc(int(k.instante) + salto * MS_POR_MINUTO),
                 k.ask,
                 k.bid,
                 k.volumen_ask,
@@ -359,8 +360,8 @@ def test_la_cuenta_persiste_entre_dias_y_la_estrategia_empieza_de_cero(
     assert motor.cuenta is not None
     saldo_1 = motor.cuenta.saldo
     lote_1 = next(iter(motor.brokers[DIA.isoformat()].posiciones.values())).lotes
-    # el dia 2: la zona sintetica se vuelve a activar en su minuto, 1440 minutos despues
-    predicados, acumuladores = _sinteticas(minuto_zona=MINUTO_ZONA + 1440)
+    # el dia 2: la zona sintetica se vuelve a activar en su minuto, seis dias despues
+    predicados, acumuladores = _sinteticas(minuto_zona=MINUTO_ZONA + salto)
     motor.primitivas_extra = predicados
     motor.acumuladores_extra = acumuladores
     r2 = motor.correr_dia(DiaDeMercado(dia2, HUSO, SESIONES, DatosMercado(_h4_alcista())))
@@ -373,6 +374,8 @@ def test_la_cuenta_persiste_entre_dias_y_la_estrategia_empieza_de_cero(
     assert lote_2 < lote_1  # el 0,5 % del saldo mermado
     assert motor.cuenta.dias_de_trading == 2
     assert [d for d, *_ in cableado.curva_de_equity(motor)] == [DIA.isoformat(), dia2.isoformat()]
+    # la cuenta corto los cinco dias de calendario intermedios, y la curva no los nombra
+    assert len(motor.cuenta.dias()) >= 6
     # y el broker del dia 1 no arrastra nada al dia 2
     assert set(motor.brokers[dia2.isoformat()].posiciones) == set(
         motor.brokers[DIA.isoformat()].posiciones

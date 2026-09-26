@@ -305,12 +305,16 @@ def zona_sintetica(id: str, lado: str, entrada: int, extremo: int, por: str) -> 
 
 
 def curva_de_equity(motor: MotorCableado) -> list[tuple[str, Decimal, Decimal, Decimal | None]]:
-    """(dia, saldo al corte, saldo final, equity minima) por dia de la cuenta."""
+    """(dia, saldo al corte, saldo final, equity minima) por dia CORRIDO. La cuenta corta todos
+    los dias de calendario que cruza entre dos dias corridos (el limite diario se recalcula cada
+    dia), pero solo se listan los dias con mercado: la curva no nombra ningun dia que la corrida no
+    haya leido."""
     if motor.cuenta is None:
         return []
     return [
         (d.dia.isoformat(), d.saldo_corte, d.saldo_final, d.equity_minima)
         for d in motor.cuenta.cerrar_dia_en_curso()
+        if d.dia.isoformat() in motor.trazas_broker
     ]
 
 
