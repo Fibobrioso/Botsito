@@ -26,7 +26,7 @@ La salida no se versiona: va a una carpeta ignorada por git (`data/visor/` por d
 from __future__ import annotations
 
 import html
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal
@@ -86,10 +86,49 @@ class OperacionVisor:
     direccion: str
     instante: datetime  # llenado, con huso
     entrada: Decimal
-    stop: Decimal | None = None  # el caso del trader lo trae; el bot, hoy, no
+    stop: Decimal | None = None  # el caso del trader lo trae; el bot, con --simular
+    objetivo: Decimal | None = None  # el bot con --simular: el que puso en la orden
 
     def como_criterio(self, dia: str) -> Operacion:
         return Operacion(dia, self.sesion, self.direccion, self.instante, self.entrada)
+
+
+@dataclass(frozen=True)
+class OrdenVisor:
+    """Una orden o una posicion del broker simulado (ADR-0053), ya en precio."""
+
+    id: str
+    lado: str
+    precio: Decimal
+    lotes: Decimal
+    stop: Decimal
+    objetivo: Decimal
+    estado: str
+    colocada: datetime
+    cerrada: datetime | None = None
+    precio_cierre: Decimal | None = None
+
+
+@dataclass(frozen=True)
+class EventoVisor:
+    instante: datetime
+    tipo: str
+    id: str
+    fuente: str
+
+
+@dataclass(frozen=True)
+class DetalleBroker:
+    """Lo que el broker simulado hizo en el dia, para la pagina (solo con --simular)."""
+
+    ordenes: tuple[OrdenVisor, ...]
+    posiciones: tuple[OrdenVisor, ...]
+    eventos: tuple[EventoVisor, ...]
+    rechazos: int
+    huecos: tuple[str, ...]
+    saldo_fin: Decimal
+    equity_fin: Decimal
+    depuracion: str | None  # la marca de depuracion, si el dia corrio sobre respaldo M1
 
 
 @dataclass(frozen=True)
@@ -124,6 +163,7 @@ class DiaVisor:
     sesgos: tuple[SesgoSesion, ...]
     objetivo_rr: Decimal | None  # el objetivo DERIVADO por regla; el caso no trae objetivo
     motor: str
+    broker: DetalleBroker | None = None  # con --simular
 
     @property
     def ventana_utc(self) -> tuple[MinutoUtc, MinutoUtc]:
@@ -204,6 +244,7 @@ class Preparador:
     vocabulario: Mapping[str, Mapping[str, Any]]
     motor: Motor
     nombre_motor: str = "spec vigente"
+    detalle_broker: Callable[[str], DetalleBroker | None] | None = None  # con --simular
     _m1_por_mes: dict[str, tuple[tuple[Vela, ...], int]] = field(default_factory=dict)
 
     @property
@@ -265,8 +306,19 @@ class Preparador:
             OperacionVisor(TRADER, op.sesion, op.direccion, op.instante, op.entrada, stop)
             for op, stop in zip(dt.operaciones, stops, strict=True)
         )
+        detalle = self.detalle_broker(dt.dia) if self.detalle_broker is not None else None
+        posiciones = {
+            (p.colocada, p.precio): p for p in (detalle.posiciones if detalle is not None else ())
+        }
         bot = tuple(
-            OperacionVisor(BOT, op.sesion, op.direccion, op.instante, op.entrada)
+            OperacionVisor(
+                BOT,
+                op.sesion,
+                op.direccion,
+                op.instante,
+                op.entrada,
+                *_stop_y_objetivo(posiciones.get((op.instante, op.entrada))),
+            )
             for op in resultado.operaciones
         )
         parejas = medir(
@@ -292,7 +344,12 @@ class Preparador:
             sesgos=sesgos,
             objetivo_rr=self.registro.decimal("objetivo_rr"),
             motor=self.nombre_motor,
+            broker=detalle,
         )
+
+
+def _stop_y_objetivo(p: OrdenVisor | None) -> tuple[Decimal | None, Decimal | None]:
+    return (None, None) if p is None else (p.stop, p.objetivo)
 
 
 def _sesgo_de_sesion(
@@ -494,7 +551,14 @@ def _operacion_svg(
         partes.append(
             f'<line class="stop" x1="{_px(x)}" y1="{_px(ys)}" x2="{_px(fin)}" y2="{_px(ys)}"/>'
         )
-        if d.objetivo_rr is not None:
+        if op.objetivo is not None:
+            yo = lienzo.y(_puntos(op.objetivo, d.escala))
+            partes.append(
+                f'<line class="objetivo" x1="{_px(x)}" y1="{_px(yo)}" x2="{_px(fin)}" '
+                f'y2="{_px(yo)}"><title>objetivo de la orden del bot (broker simulado)'
+                "</title></line>"
+            )
+        elif d.objetivo_rr is not None:
             distancia = abs(op.entrada - op.stop) * d.objetivo_rr
             objetivo = (
                 op.entrada + distancia if op.direccion == "compra" else op.entrada - distancia
@@ -712,6 +776,95 @@ def _operaciones_html(d: DiaVisor, huso: ZoneInfo, ops: Sequence[OperacionVisor]
     )
 
 
+def _filas_ordenes(ordenes: Sequence[OrdenVisor], huso: ZoneInfo) -> str:
+    if not ordenes:
+        return "<p>ninguna</p>"
+    return _tabla(
+        ("id", "lado", "precio", "lotes", "stop", "objetivo", "estado", "colocada"),
+        (
+            _fila(
+                html.escape(o.id),
+                html.escape(o.lado),
+                html.escape(str(o.precio)),
+                html.escape(str(o.lotes)),
+                html.escape(str(o.stop)),
+                html.escape(str(o.objetivo)),
+                html.escape(o.estado),
+                _hora_exacta(o.colocada, huso),
+            )
+            for o in ordenes
+        ),
+    )
+
+
+def _filas_posiciones(posiciones: Sequence[OrdenVisor], huso: ZoneInfo) -> str:
+    if not posiciones:
+        return "<p>ninguna</p>"
+    return _tabla(
+        ("id", "lado", "entrada", "lotes", "stop", "objetivo", "llenada", "cierre", "precio"),
+        (
+            _fila(
+                html.escape(p.id),
+                html.escape(p.lado),
+                html.escape(str(p.precio)),
+                html.escape(str(p.lotes)),
+                html.escape(str(p.stop)),
+                html.escape(str(p.objetivo)),
+                _hora_exacta(p.colocada, huso),
+                html.escape(p.estado)
+                + (f" @ {_hora_exacta(p.cerrada, huso)}" if p.cerrada is not None else ""),
+                html.escape(str(p.precio_cierre)) if p.precio_cierre is not None else "-",
+            )
+            for p in posiciones
+        ),
+    )
+
+
+def _filas_eventos(eventos: Sequence[EventoVisor], huso: ZoneInfo) -> str:
+    if not eventos:
+        return "<p>ninguno</p>"
+    return _tabla(
+        ("instante", "tipo", "id", "fuente"),
+        (
+            _fila(
+                _hora_exacta(e.instante, huso),
+                html.escape(e.tipo),
+                html.escape(e.id),
+                html.escape(e.fuente),
+            )
+            for e in eventos
+        ),
+    )
+
+
+def _broker_html(
+    detalle: DetalleBroker | None, huso: ZoneInfo, hasta: MinutoUtc | None
+) -> list[str]:
+    """Las ordenes del bot, sus posiciones y los eventos del broker simulado (solo --simular),
+    recortados a `hasta` como todo lo demas."""
+    if detalle is None:
+        return []
+    ordenes = [o for o in detalle.ordenes if _visible(_minuto_de(o.colocada), hasta)]
+    posiciones = [p for p in detalle.posiciones if _visible(_minuto_de(p.colocada), hasta)]
+    eventos = [e for e in detalle.eventos if _visible(_minuto_de(e.instante), hasta)]
+    salida = ["<h2>Broker simulado (ADR-0053)</h2>"]
+    if detalle.depuracion is not None:
+        salida.append(f'<p class="aviso">{html.escape(detalle.depuracion)}</p>')
+    salida += [
+        f"<p>ordenes {len(ordenes)}, posiciones {len(posiciones)}, eventos {len(eventos)}, "
+        f"rechazos {detalle.rechazos} · saldo al cierre {html.escape(str(detalle.saldo_fin))}, "
+        f"equity {html.escape(str(detalle.equity_fin))} · huecos con nombre: "
+        f"{html.escape(', '.join(detalle.huecos) or 'ninguno')}</p>",
+        "<h3>Ordenes</h3>",
+        _filas_ordenes(ordenes, huso),
+        "<h3>Posiciones</h3>",
+        _filas_posiciones(posiciones, huso),
+        "<h3>Eventos</h3>",
+        _filas_eventos(eventos, huso),
+    ]
+    return salida
+
+
 def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
     """La pagina de un dia. Pura y determinista. Con `hasta`, la vista se recorta a ese instante:
     velas cerradas hasta el, hechos fijados hasta el y operaciones llenadas hasta el."""
@@ -781,6 +934,7 @@ def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
         sesiones_html,
         "<h2>Operaciones</h2>",
         _operaciones_html(recortado, huso, (*trader, *bot)),
+        *_broker_html(d.broker, huso, hasta),
         "</body></html>",
     ]
     return "\n".join(cuerpo) + "\n"

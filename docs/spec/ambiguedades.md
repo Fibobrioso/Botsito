@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (23)
+## ABIERTA (24)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -117,6 +117,12 @@ Afecta a: `huso_operativa`.
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
 Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después?
+
+### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
+
+¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
+
+Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`.
 
 ## DECIDIDA (6)
 

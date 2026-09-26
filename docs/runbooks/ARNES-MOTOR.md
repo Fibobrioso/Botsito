@@ -26,6 +26,21 @@ sobre esos, y tienen que ser de construcción. Por pantalla sale `OK` con la rut
 línea `TIEMPO` y `MEMORIA` que **no** va en el informe: el informe es determinista y dos ejecuciones
 dan el mismo fichero byte a byte, así que dos informes se comparan con `diff`.
 
+## El modo simulación (`--simular`, ADR-0053)
+
+```
+uv run botsito motor arnes --simular --salida arnes-simulado.txt
+```
+Corre el MISMO arnés con el motor cableado al broker simulado y a la capa de cuenta: las órdenes
+que la spec coloca se llenan con ticks (obligatorios, ADR-0051 §8), la cuenta viva da el veredicto
+del tramo y el informe lleva al final una sección «Simulación» con el veredicto, la curva de equity
+por día, los eventos del broker y los huecos con nombre (primitivas sin contrato que alguna regla
+pidió). Las operaciones del bot que puntúan para el criterio son las posiciones LLENADAS, no las
+órdenes colocadas. Opciones: `--perfil <nombre>` (por defecto el único de `knowledge/cuentas/`),
+`--fase <fase>` (por defecto la primera del perfil) y `--depuracion`, que admite días sin ticks
+sobre el respaldo M1 y marca toda la salida con `DEPURACION: respaldo M1, no cuenta`. Medido el
+2026-09-26: abril entero tarda unos tres minutos.
+
 ## Cuándo se niega
 
 - **Un mes de medida** (hoy mayo) o **cualquier mes que no sea de construcción** (marzo, septiembre,

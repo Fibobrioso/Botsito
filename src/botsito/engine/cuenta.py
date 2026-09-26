@@ -367,6 +367,164 @@ class _Cuenta:
         return f"objetivo: saldo {self.saldo} en o sobre {meta} sin posiciones vivas, {dias}"
 
 
+# ------------------------------------------------------------------------- la cuenta viva
+
+
+class CuentaViva:
+    """La capa de cuenta INCREMENTAL (ADR-0053 §3): la misma aritmetica que `evaluar_fase`, pero
+    avanzando con los eventos del broker en el orden en que llegan, con una sola instancia por
+    corrida para que la cuenta persista entre dias (ADR-0050, ADR-0049 H6). Expone en cada
+    instante los acumuladores de la firma que la spec declara, recortados en cero."""
+
+    def __init__(self, reglas: ReglasFase, contrato: Decimal, primer_instante_ms: int) -> None:
+        if contrato <= 0:
+            raise OperacionError(f"contrato no positivo ({contrato})")
+        self.reglas = reglas
+        self.contrato = contrato
+        dia = _dia_local(_de_ms(primer_instante_ms), reglas.huso_corte)
+        self._c = _Cuenta(
+            reglas=reglas,
+            contrato=contrato,
+            saldo=reglas.capital_inicial,
+            saldo_maximo=reglas.capital_inicial,
+            dia=dia,
+            saldo_corte=reglas.capital_inicial,
+            limite_dia=Decimal(0),
+            limite_total=Decimal(0),
+        )
+        self._c.limite_dia = self._c.limite_del_dia()
+        self._c.limite_total = self._c.limite_del_total()
+        self.estado = EstadoCuenta.EN_CURSO
+        self.motivo = "sin objetivo alcanzado ni limite infringido"
+        self.instante: datetime | None = None
+        self._vigilada_minima_tramo: Decimal | None = None
+        self._ultimo_ms = primer_instante_ms
+
+    # ------------------------------------------------------------------------- eventos
+
+    def avanzar(self, instante_ms: int) -> None:
+        """Lleva el reloj de la cuenta a `instante_ms`, cortando los dias que cruce."""
+        if instante_ms < self._ultimo_ms:
+            raise OperacionError("la cuenta no avanza hacia atras")
+        self._ultimo_ms = instante_ms
+        siguiente = self._c.dia + timedelta(days=1)
+        while _medianoche(siguiente, self.reglas.huso_corte) <= _de_ms(instante_ms):
+            self._c.cortar(siguiente)
+            siguiente = self._c.dia + timedelta(days=1)
+
+    def abrir(
+        self, id: str, direccion: Direccion, lotes: Decimal, precio: Decimal, instante_ms: int
+    ) -> None:
+        self.avanzar(instante_ms)
+        if id in self._c.abiertas:
+            raise OperacionError(f"posicion {id!r} repetida en la cuenta")
+        marca = Marca(_de_ms(instante_ms), precio)
+        self._c.abiertas[id] = (Operacion(id, direccion, lotes, marca, marca), precio)
+        self._c.dias_de_trading.add(self._c.dia)
+        self._c.con_apertura_dia = True
+        self._observar()
+
+    def marcar(self, id: str, precio: Decimal, instante_ms: int) -> None:
+        self.avanzar(instante_ms)
+        op, _ = self._c.abiertas[id]
+        self._c.abiertas[id] = (op, precio)
+        self._observar()
+
+    def cargar(self, importe: Decimal, instante_ms: int) -> None:
+        self.avanzar(instante_ms)
+        self._c.anotar_saldo(self._c.saldo - importe)
+        self._observar()
+
+    def cerrar(self, id: str, precio: Decimal, instante_ms: int) -> None:
+        self.avanzar(instante_ms)
+        op, _ = self._c.abiertas.pop(id)
+        self._c.anotar_saldo(self._c.saldo + pnl(op, precio, self.contrato))
+        self._observar()
+        if self.estado is EstadoCuenta.EN_CURSO:
+            logro = self._c.superada()
+            if logro is not None:
+                self.estado = EstadoCuenta.SUPERADA
+                self.motivo = f"{logro} [cierre de {id}]"
+                self.instante = _de_ms(instante_ms)
+
+    def _observar(self) -> None:
+        self._c.observar()
+        v = self._c.vigilada
+        if self._vigilada_minima_tramo is None or v < self._vigilada_minima_tramo:
+            self._vigilada_minima_tramo = v
+        if self.estado is EstadoCuenta.EN_CURSO:
+            infracciones = self._c.infracciones()
+            if infracciones:
+                self.estado = EstadoCuenta.SUSPENDIDA
+                self.motivo = "; ".join(infracciones)
+                self.instante = _de_ms(self._ultimo_ms)
+
+    # ----------------------------------------------------------------------- lecturas
+
+    def acumuladores(self) -> dict[str, Decimal]:
+        """`perdida_dia_firma` y `perdida_total_firma` con la PEOR magnitud vigilada desde la
+        lectura anterior, recortados en cero (ADR-0053 §3.1). Leerlos reinicia el tramo."""
+        peor = (
+            self._vigilada_minima_tramo
+            if self._vigilada_minima_tramo is not None
+            else self._c.vigilada
+        )
+        self._vigilada_minima_tramo = None
+        base_total = (
+            self._c.saldo_maximo
+            if self.reglas.perdida_total_arrastra
+            else self.reglas.capital_inicial
+        )
+        return {
+            "perdida_dia_firma": max(Decimal(0), self._c.saldo_corte - peor),
+            "perdida_total_firma": max(Decimal(0), base_total - peor),
+        }
+
+    @property
+    def saldo(self) -> Decimal:
+        return self._c.saldo
+
+    @property
+    def equity(self) -> Decimal:
+        return self._c.equity
+
+    @property
+    def limite_dia(self) -> Decimal:
+        return self._c.limite_dia
+
+    @property
+    def limite_total(self) -> Decimal:
+        return self._c.limite_total
+
+    @property
+    def saldo_corte(self) -> Decimal:
+        return self._c.saldo_corte
+
+    @property
+    def dias_de_trading(self) -> int:
+        return len(self._c.dias_de_trading)
+
+    def dias(self) -> tuple[DiaDeCuenta, ...]:
+        """Los dias ya cortados; el dia en curso no esta hasta que se corte o se cierre."""
+        return tuple(self._c.dias)
+
+    def cerrar_dia_en_curso(self) -> tuple[DiaDeCuenta, ...]:
+        """Todos los dias, con el en curso al final, sin cortar (para el informe)."""
+        actual = DiaDeCuenta(
+            dia=self._c.dia,
+            saldo_corte=self._c.saldo_corte,
+            limite_dia=self._c.limite_dia,
+            equity_minima=self._c.equity_minima_dia,
+            saldo_final=self._c.saldo,
+            con_apertura=self._c.con_apertura_dia,
+        )
+        return (*self._c.dias, actual)
+
+
+def _de_ms(ms: int) -> datetime:
+    return datetime.fromtimestamp(ms / 1000, UTC)
+
+
 # ------------------------------------------------------------------------------ la guardia
 
 

@@ -1064,3 +1064,31 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-44
+    titulo: magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana)
+    pregunta: >-
+      ¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
+    resuelve_en: [F11, F18]
+    # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
+    # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
+    # dia de su operativa», cita fb-2026-09-09-sesion-01-bff260ea: «De la cuenta basado en el saldo,
+    # y que sea en el saldo inicial del dia»- lee los acumuladores perdida_dia y perdida_semana, y
+    # la spec no declara para ellos ni la MAGNITUD (saldo o equity) ni el CORTE (la semana no tiene
+    # corte aparte del diario). MEDIDO en esa rama (CABLEADO-SIMULADOR.md §4): con el broker y la
+    # cuenta cableados, los dos siguen NO_IMPLEMENTADA con nombre y RN-020, un gate en DESCONOCIDO,
+    # prohibe abrir_operacion en todas las sesiones de construccion; aunque la geometria (A-35 y las
+    # demas) quede resuelta, seguira prohibiendo. Es el siguiente bloqueo del bot despues de A-35.
+    # BLOQUEANTE de RN-020. El corpus no tiene un item de evidencia propio sobre el tope del trader
+    # -la fuente es el registro de feedback de la sesion 1-; los dos items citados son lo mas
+    # cercano: los limites de la firma que el trader recuerda y el 0,5 % que «protege» de romperlos.
+    # Va en la hoja de la sesion 02 justo despues de A-43
+    evidencia:
+      - ev-v4-012524-0ef85a89
+      - ev-v4-000508-0ce0adf1
+    parametros: [perdida_maxima_diaria, base_calculo_perdida_diaria, perdida_maxima_semanal, base_calculo_perdida_semanal]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true
