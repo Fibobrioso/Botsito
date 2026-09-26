@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (24)
+## ABIERTA (25)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -125,6 +125,12 @@ Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu
 ¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
 
 Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `perdida_trader_alcance`, `perdida_trader_magnitud`, `perdida_trader_unidad`, `perdida_trader_dia_usd`, `perdida_trader_semana_usd`, `perdida_trader_reinicio_huso`.
+
+### A-45 · en qué granularidad se evalúa «cierra con cuerpo» en la toma de liquidez de RN-004 · pregunta
+
+Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15 minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel?
+
+Afecta a: `liquidez_m15_criterio_toma`.
 
 ## DECIDIDA (6)
 

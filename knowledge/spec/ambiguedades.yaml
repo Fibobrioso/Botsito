@@ -1098,3 +1098,25 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: true
+  - id: A-45
+    titulo: en qué granularidad se evalúa «cierra con cuerpo» en la toma de liquidez de RN-004
+    pregunta: >-
+      Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15
+      minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel?
+    resuelve_en: [F19, F20]
+    # NACE en la orden de cierre de trabajo/preparar-a35-a44 (ADR-0054 §4). Afecta a RN-004. La
+    # referencia es docs/validation/VERIFICACION-A35-A44.md §2 y §3b: ninguna fuente fija que vela
+    # tiene que cerrar con cuerpo; RN-004 dice «una vela». Tres lecturas: al cierre de M15, al cierre
+    # de M1 o al tick. La convencion actual -al cierre de M15- es PROVISIONAL hasta la respuesta. Los
+    # tres items citados son los mas cercanos del corpus y admiten las dos primeras lecturas
+    evidencia:
+      - ev-v4-001533-73539d90
+      - ev-v4-003849-3fe5161b
+      - ev-v4-003942-cfffa382
+    parametros: [liquidez_m15_criterio_toma]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

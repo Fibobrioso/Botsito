@@ -159,6 +159,8 @@ def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> P
                 f"{pivote.lado} {pivote.nivel} formado_en {int(pivote.formado_en)}",
             )
         ultima = datos.ultima_m15_cerrada(momento.instante)
+        # PROVISIONAL (ADR-0054 §4, A-45): que la vela que cierra con cuerpo sea la M15 y no la M1
+        # no lo dice ninguna fuente; se mantiene hasta que el trader responda A-45.
         # La vela que puede tomar el nivel es la ultima M15 cerrada, y solo si el pivote YA EXISTIA
         # antes de que cerrara: eso es lo que el selector decide. Con `inicio_vela_contraria` la
         # propia vela contraria cuenta (el pivote nace en su primera M1); con
