@@ -126,15 +126,30 @@ def _bloque(n: int, apertura: int, cierre: int, minimo: int | None) -> list[Vela
     return velas
 
 
-def _m1(hasta: int | None = None) -> list[Vela]:
+# La misma secuencia, pero la vela CONTRARIA (B2) vuelve al nivel con su mecha antes de cerrar
+# verde: aqui las dos lecturas de A-35 dejan trazas distintas (fase 1 de la verificacion).
+BLOQUES_VUELVE: list[tuple[int, int, int | None]] = [
+    (BASE, BASE - 100, None),
+    (BASE - 100, BASE - 200, BASE - 210),
+    (BASE - 200, BASE - 150, BASE - 215),
+    (BASE - 150, BASE - 100, None),
+    (BASE - 100, BASE - 200, BASE - 210),
+    (BASE - 200, BASE - 300, None),
+]
+
+
+def _m1(
+    hasta: int | None = None, bloques: list[tuple[int, int, int | None]] | None = None
+) -> list[Vela]:
     """Las M1 de la ventana: los bloques disenados y, despues, bloques verdes suaves hasta el fin
     del dia. Con `hasta`, solo las M1 con inicio < hasta (para no mirar al futuro)."""
+    bloques = BLOQUES if bloques is None else bloques
     velas: list[Vela] = []
     n = 0
     precio = BASE
     while INICIO + M15 * n < FIN:
-        if n < len(BLOQUES):
-            a, c, lo = BLOQUES[n]
+        if n < len(bloques):
+            a, c, lo = bloques[n]
         else:
             a, c, lo = precio, precio + 5, None
         velas += _bloque(n, a, c, lo)
@@ -143,8 +158,13 @@ def _m1(hasta: int | None = None) -> list[Vela]:
     return [v for v in velas if hasta is None or int(v.inicio) < hasta]
 
 
-def _datos(registro: Registro, lectura: str | None, hasta: int | None = None) -> DatosMercado:
-    m1 = _m1(hasta)
+def _datos(
+    registro: Registro,
+    lectura: str | None,
+    hasta: int | None = None,
+    bloques: list[tuple[int, int, int | None]] | None = None,
+) -> DatosMercado:
+    m1 = _m1(hasta, bloques)
     anclaje = registro.hora("anclaje_h4")
     return DatosMercado(_h4_alcista(), agregar(m1, M15, anclaje), m1, lectura)
 
@@ -228,6 +248,49 @@ def test_rn004_dispara_con_la_spec_real_al_cierre_de_la_m15_que_cruza_con_cuerpo
         assert min(_fijados(r, "liquidez_tomada")) == cierre_b5, lectura
         assert not any(p == "predicado:alcanza_nivel" for _, p in traza.no_implementadas)
         assert not any(p == "predicado:cruza" for _, p in traza.no_implementadas)
+
+
+def test_por_el_arnes_real_las_lecturas_dejan_trazas_distintas_si_el_precio_vuelve(
+    registro: Registro, reglas: list[ReglaEjecutable]
+) -> None:
+    """Fase 1 de la verificacion: la sesion completa pasa por `arnes.correr` con el motor real. La
+    vela contraria (B2) vuelve al nivel con su mecha antes de cerrar verde. Con
+    `inicio_vela_contraria` el pivote ya existia en su primera M1, asi que al cerrar B2 la ultima
+    M15 cerrada puede tomarlo y `alcanza_nivel` da SI en ese cierre; con `cierre_vela_contraria`
+    el pivote nace al cerrar B2 y el primer toque es el de B4. Las trazas difieren en la huella del
+    selector (`liquidez_m15`, `liquidez_m15_alcanzada`). RN-004 dispara en el mismo cierre (B5) con
+    las dos, porque la vela que marca el pivote no puede cerrar con cuerpo al otro lado del extremo
+    que acaba de hacer: con la toma medida al cierre de M15 y con cuerpo, la diferencia esta en el
+    toque, no en la toma (VERIFICACION-A35-A44.md, fases 1 y 2)."""
+    from botsito.engine import arnes
+    from botsito.engine.primitivas import ANOTACION_LIQUIDEZ, ANOTACION_LIQUIDEZ_ALCANZADA
+
+    trazas = {}
+    for lectura in LECTURAS:
+        datos = _datos(registro, lectura, bloques=BLOQUES_VUELVE)
+        dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
+        corrida = arnes.correr(
+            "x", ("2030-01",), dias, {DIA.isoformat(): _dia(datos)}, _motor(registro, reglas)
+        )
+        trazas[lectura] = corrida.resultados[0].sesiones["07-11"]
+    inicio, cierre = trazas[INICIO_VELA_CONTRARIA], trazas[CIERRE_VELA_CONTRARIA]
+    b2_inicio = INICIO + M15 * CONTRARIA
+    assert inicio.anotaciones[ANOTACION_LIQUIDEZ] == f"bajo {NIVEL} formado_en {b2_inicio + 1}"
+    assert cierre.anotaciones[ANOTACION_LIQUIDEZ] == f"bajo {NIVEL} formado_en {b2_inicio + M15}"
+    assert inicio.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {b2_inicio + M15}"
+    assert cierre.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {INICIO + M15 * 5}"
+    assert inicio.anotaciones != cierre.anotaciones
+    cierre_b5 = INICIO + M15 * (CRUZA + 1)
+    for t in (inicio, cierre):
+        assert "RN-004" in t.disparadas
+        assert min(i for i, _, h, _ in t.fijados if h == "liquidez_tomada") == cierre_b5
+    # y sin que el precio vuelva en la contraria, las huellas del toque coinciden: es la vuelta
+    # dentro de la contraria lo que el selector separa
+    iguales = {}
+    for lectura in LECTURAS:
+        r = _motor(registro, reglas).correr_dia(_dia(_datos(registro, lectura)))
+        iguales[lectura] = r.sesiones["07-11"].anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA]
+    assert iguales[INICIO_VELA_CONTRARIA] == iguales[CIERRE_VELA_CONTRARIA]
 
 
 def test_la_invariancia_de_h3_sigue_con_la_lectura_puesta(

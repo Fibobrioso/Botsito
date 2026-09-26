@@ -50,6 +50,10 @@ from botsito.engine.tope_trader import (
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
 TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
+# La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
+# primer cierre de M15 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
+ANOTACION_LIQUIDEZ = "liquidez_m15"
+ANOTACION_LIQUIDEZ_ALCANZADA = "liquidez_m15_alcanzada"
 # Las opciones de `dias_operables` en parametros.yaml, con los dias ISO que abarca cada una.
 DIAS_OPERABLES = {
     "lunes_a_viernes": frozenset(range(1, 6)),
@@ -146,8 +150,22 @@ def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> P
             pivote = datos.liquidez_m15(momento.instante, lado)
         except (AttributeError, LookupError):
             return NoImplementada(f"predicado:{nombre}")
+        if pivote is None:
+            return Resultado(Tri.NO)
+        if momento.sesion is not None:
+            # la huella del selector en la traza: que pivote es la liquidez y desde cuando
+            estado.anotaciones.setdefault(momento.sesion, {}).setdefault(
+                ANOTACION_LIQUIDEZ,
+                f"{pivote.lado} {pivote.nivel} formado_en {int(pivote.formado_en)}",
+            )
         ultima = datos.ultima_m15_cerrada(momento.instante)
-        if pivote is None or ultima is None or ultima.inicio < pivote.contraria_fin:
+        # La vela que puede tomar el nivel es la ultima M15 cerrada, y solo si el pivote YA EXISTIA
+        # antes de que cerrara: eso es lo que el selector decide. Con `inicio_vela_contraria` la
+        # propia vela contraria cuenta (el pivote nace en su primera M1); con
+        # `cierre_vela_contraria` no (nace en su cierre). Hasta el 2026-09-26 aqui se exigia que la
+        # vela fuera POSTERIOR a la contraria, y eso dejaba el selector sin efecto en el motor
+        # (docs/validation/VERIFICACION-A35-A44.md, fase 1).
+        if ultima is None or not (int(pivote.formado_en) < int(ultima.fin)):
             return Resultado(Tri.NO)
         return pivote, ultima
 
@@ -158,7 +176,12 @@ def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> P
         if not isinstance(r, tuple):
             return r
         pivote, ultima = r
-        return Resultado(Tri.SI if toca(ultima, pivote) else Tri.NO)
+        alcanzado = toca(ultima, pivote)
+        if alcanzado and momento.sesion is not None:
+            estado.anotaciones.setdefault(momento.sesion, {}).setdefault(
+                ANOTACION_LIQUIDEZ_ALCANZADA, f"{pivote.nivel} en {int(momento.instante)}"
+            )
+        return Resultado(Tri.SI if alcanzado else Tri.NO)
 
     def cruza_nivel(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -221,6 +244,8 @@ def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> P
 
 
 __all__ = [
+    "ANOTACION_LIQUIDEZ",
+    "ANOTACION_LIQUIDEZ_ALCANZADA",
     "ANOTACION_SESGO",
     "LADO_DE_LA_LIQUIDEZ",
     "TOKEN_LIQUIDEZ_M15",
