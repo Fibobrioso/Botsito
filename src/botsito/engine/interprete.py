@@ -328,7 +328,7 @@ class Interprete:
                     continue
                 if r.valor is Tri.SI:
                     otras = self._empatadas(orden, regla, disparadas, momento, estado)
-                    if otras:
+                    if otras and not _empate_inocuo(regla, [r for r in orden if r.id in otras]):
                         evento.empates.append((regla.clase, tuple(sorted((regla.id, *otras)))))
                     self._ejecutar(regla, r.ligaduras, momento, estado, evento, quizas_prohibidos)
                     disparadas.add(regla.id)
@@ -337,6 +337,19 @@ class Interprete:
                     break
             if not disparo:
                 return evento
+
+
+def _empate_inocuo(primera: ReglaEjecutable, otras: Sequence[ReglaEjecutable]) -> bool:
+    """Un empate que el desempate NO decide: todas las empatadas son `gate` y su `entonces` solo
+    prohibe (sin `hace` ni `permite`). Las prohibiciones se acumulan en un conjunto y una
+    prohibicion gana siempre (ADR-0018 §1), asi que en cualquier orden el evento termina con las
+    mismas prohibiciones, los mismos hechos y las mismas acciones bloqueadas: no hay nada que la
+    spec tuviera que resolver (ADR-0049 H3). Medido en construccion el 2026-09-26: los seis
+    avisos de siempre eran RN-001 y RN-033 a las 15:00 de una segunda sesion ambigua, los dos
+    gates que prohiben lo mismo y nada mas (docs/validation/PREPARACION-A35-A44.md §7). Un empate
+    con un gate que ademas HACE algo -RN-020 fija `detenido_por_tope`- sigue avisando: ahi el
+    orden si puede decidir que ve el siguiente."""
+    return all(r.clase == "gate" and not (set(r.entonces) - {"prohibe"}) for r in (primera, *otras))
 
 
 def reglas_ejecutables(reglas: Sequence[Any]) -> list[ReglaEjecutable]:

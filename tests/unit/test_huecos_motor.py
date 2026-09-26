@@ -476,6 +476,65 @@ def test_dos_reglas_de_la_misma_clase_que_dan_si_a_la_vez_dejan_aviso() -> None:
     assert ev.disparadas == ["D1", "D2"] and ev.empates == []
 
 
+def test_un_empate_entre_gates_que_solo_prohiben_no_avisa_y_el_orden_no_cambia_nada() -> None:
+    """Fase 6 de trabajo/preparar-a35-a44: dos gates que dan SI a la vez y solo prohiben -RN-001
+    y RN-033 a las 15:00 de una segunda sesion ambigua, los seis avisos de la linea base- no
+    dejan aviso, porque en cualquier orden el evento termina igual (invariancia medida aqui). Un
+    gate que ademas HACE algo sigue avisando."""
+    vocab: dict[str, dict[str, Any]] = {
+        "predicados": {"si": {"fuente": "mercado"}},
+        "acciones": {"fijar": {}, "abrir": {"efecto": "abrir"}},
+        "hechos": {"h": {"origen": "regla"}},
+        "acumuladores": {},
+        "efectos": {"abrir": {}},
+        "tokens": {},
+    }
+
+    def fijar(args: Any, lig: Any, momento: Any, estado: EstadoDia) -> list[tuple[str, str]]:
+        estado.hechos[str(args["hecho"])] = "si"
+        return [(str(args["hecho"]), "si")]
+
+    def abrir(args: Any, lig: Any, momento: Any, estado: EstadoDia) -> list[tuple[str, str]]:
+        return [("abierta", "si")]
+
+    prims = Primitivas(
+        {"si": lambda a, m, e: Resultado(Tri.SI)}, {"fijar": fijar, "abrir": abrir}, {}
+    )
+    momento = Momento(MinutoUtc(0), "s", False, None)
+    puros = [
+        ReglaEjecutable("G1", "gate", {"si": {}}, {"prohibe": ["abrir"]}),
+        ReglaEjecutable("G2", "gate", {"si": {}}, {"prohibe": ["abrir", "buscar"]}),
+        ReglaEjecutable("D", "disparador", {"si": {}}, {"hace": [{"abrir": {}}]}),
+    ]
+
+    def huella(reglas: list[ReglaEjecutable], desempate: Any) -> tuple[Any, ...]:
+        ev = Interprete(vocab, prims, desempate=desempate).evento(reglas, momento, EstadoDia())
+        return (
+            sorted(ev.disparadas),
+            sorted(ev.prohibidos),
+            ev.fijados,
+            sorted(ev.bloqueadas),
+            ev.empates,
+        )
+
+    directo, invertido = huella(puros, lambda r: r.id), huella(puros, _inverso)
+    assert directo == invertido
+    assert directo[4] == [] and sorted(directo[1]) == ["abrir", "buscar"]
+    assert ("D", "accion:abrir", "prohibida:abrir") in directo[3]
+    # con un gate que ademas fija un hecho, el aviso se queda: el orden puede decidir que ve el otro
+    con_hace = [
+        ReglaEjecutable("G1", "gate", {"si": {}}, {"prohibe": ["abrir"]}),
+        ReglaEjecutable(
+            "G3",
+            "gate",
+            {"si": {}},
+            {"prohibe": ["abrir"], "hace": [{"fijar": {"hecho": "h", "a": "si"}}]},
+        ),
+    ]
+    ev = Interprete(vocab, prims).evento(con_hace, momento, EstadoDia())
+    assert ev.empates == [("gate", ("G1", "G3"))]
+
+
 @dataclasses.dataclass
 class _ConEmpate:
     """Motor sintetico que deja un aviso de H3 en la primera sesion."""

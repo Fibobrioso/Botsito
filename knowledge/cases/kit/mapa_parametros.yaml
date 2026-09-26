@@ -18,6 +18,7 @@ parametros:
   cierre_forzoso_fin_ventana: {temas: [ventana]}
   sesgo_h4_regla: {temas: [sesgo]}
   liquidez_m15_criterio_toma: {temas: [liquidez]}
+  liquidez_m15_pivote_formado: {temas: [liquidez.m15.pico_ya_formado, mapeo.vela_contraria_marca_punto, mapeo.m1.vela_contraria_marca_extremo]}
   stop_fraccion_caja: {temas: [stop.nivel, stop.075_suficiente, stop.introducido_en_operacion_075]}
   stop_colchon_spread: {temas: [stop.colchon_spread_075_080, stop.acordado_075_mas_spread, stop.075_desplazado_por_spread_y_lotaje]}
   stop_reduccion_fraccion: {temas: [stop.bajar_050]}
@@ -42,4 +43,10 @@ parametros:
   spread_maximo: {temas: [stop.colchon_spread_075_080, stop.respiro_con_noticias, stop.075_desplazado_por_spread_y_lotaje]}
   perdida_maxima_diaria: {temas: [riesgo.por_operacion.calculo_racha, riesgo.fondeo]}
   perdida_maxima_semanal: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_alcance: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_magnitud: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_unidad: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_dia_usd: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_semana_usd: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_reinicio_huso: {temas: [riesgo.fondeo, reloj]}
   comportamiento_sin_regla: {temas: [no_trade]}

@@ -19,6 +19,7 @@ import pytest
 
 from botsito.cases.criterio_fidelidad import Criterio, Tolerancias, cargar_criterio, medir
 from botsito.cases.holdout import HoldoutCerradoError
+from botsito.cases.ventanas import MINUTOS_M15
 from botsito.comun.yaml_estricto import YamlError
 from botsito.config.registro import Registro, cargar_registro
 from botsito.data.agregacion import agregar
@@ -82,7 +83,7 @@ def _dia(registro: Registro, *, con_bot: bool = True) -> DiaVisor:
     desde = visor._minuto_local(DIA, VENTANA[0], HUSO)
     hasta = visor._minuto_local(DIA, VENTANA[1], HUSO)
     m1 = _m1(datetime.fromtimestamp(desde * 60, UTC), datetime.fromtimestamp(hasta * 60, UTC))
-    m15 = agregar(m1, visor.MINUTOS_M15, registro.hora("anclaje_h4"))
+    m15 = agregar(m1, MINUTOS_M15, registro.hora("anclaje_h4"))
     trader = (
         OperacionVisor(
             TRADER, "07-11", "compra", _t(8, 5, 20), Decimal("1.10010"), Decimal("1.09950")
@@ -369,18 +370,26 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
         pytest.skip("sin reparto dev-visto")
     caso = sorted(c for c, p in visto.asignacion(RAIZ, mes).items() if p == "dev")[0]
     salida = tmp_path / "visor"
-    codigo = cli.main(
-        ["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)]
+    # A-35 sin fijar: a secas el visor se niega nombrandola (rama trabajo/preparar-a35-a44); en
+    # diagnostico corre, y la pagina lleva la etiqueta en el nombre y en el cuerpo
+    assert (
+        cli.main(["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)])
+        == 2
     )
+    assert not salida.exists()
+    peticion = [
+        "--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida),
+        "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
+    ]  # fmt: skip
+    codigo = cli.main(peticion)
     if codigo == 2:
         pytest.skip("sin dataset en esta maquina")
     assert codigo == 0
-    pagina = salida / f"{caso}.html"
+    pagina = salida / f"{caso}.DIAGNOSTICO-A35-cierre_vela_contraria.DIAGNOSTICO-A44-sin_tope.html"
     primero = pagina.read_bytes()
-    assert (
-        cli.main(["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)])
-        == 0
-    )
+    assert not (salida / f"{caso}.html").exists()
+    assert b"DIAGNOSTICO-A35-cierre_vela_contraria" in primero
+    assert cli.main(peticion) == 0
     assert pagina.read_bytes() == primero
     assert not (salida / visor.INDICE).exists()
     assert b"<script" not in primero

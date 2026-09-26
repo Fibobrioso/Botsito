@@ -1,0 +1,114 @@
+# Verificacion A-35 / A-44: medicion descriptiva sobre construccion
+CONJUNTO: construccion (2026-04, 2026-08); dias 42; operaciones del trader 77
+REFERENCIA: pivote mas reciente ya formado (ADR-0045) del lado del sesgo (RN-005), lectura cierre_vela_contraria; `inicio_vela_contraria` dice desde cuando la contraria iba contraria
+
+## (a) Toque de la liquidez DENTRO de la vela contraria (donde las lecturas divergirian)
+operaciones con sesgo sin lado (ambiguo/insuficiente): 7; sin pivote del lado formado antes de la entrada: 0
+operaciones cuyo pivote fue tocado dentro de su vela contraria, tras ir contraria: 30
+- 2026-04-01 11-15 12:30Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 5 (de 15, al cierre de la M1 de las 11:35Z); la entrada es 45 min despues del cierre de la contraria
+- 2026-04-06 07-11 06:34Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 05:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 4 (de 15, al cierre de la M1 de las 05:49Z); la entrada es 34 min despues del cierre de la contraria
+- 2026-04-13 07-11 08:21Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 07:45Z) va contraria desde su minuto 7 y toca el nivel en su minuto 7 (de 15, al cierre de la M1 de las 07:52Z); la entrada es 21 min despues del cierre de la contraria
+- 2026-04-17 07-11 08:10Z (venta, sesgo bajista, pivote alto): la contraria (empieza 05:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 05:31Z); la entrada es 145 min despues del cierre de la contraria
+- 2026-04-17 07-11 08:36Z (venta, sesgo bajista, pivote alto): la contraria (empieza 05:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 05:31Z); la entrada es 171 min despues del cierre de la contraria
+- 2026-04-21 07-11 05:12Z (venta, sesgo bajista, pivote alto): la contraria (empieza 04:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 04:31Z); la entrada es 27 min despues del cierre de la contraria
+- 2026-04-23 07-11 05:30Z (venta, sesgo bajista, pivote alto): la contraria (empieza 03:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 2 (de 15, al cierre de la M1 de las 03:32Z); la entrada es 105 min despues del cierre de la contraria
+- 2026-04-23 07-11 05:53Z (venta, sesgo bajista, pivote alto): la contraria (empieza 03:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 2 (de 15, al cierre de la M1 de las 03:32Z); la entrada es 128 min despues del cierre de la contraria
+- 2026-04-23 07-11 06:49Z (venta, sesgo bajista, pivote alto): la contraria (empieza 06:00Z) va contraria desde su minuto 5 y toca el nivel en su minuto 5 (de 15, al cierre de la M1 de las 06:05Z); la entrada es 34 min despues del cierre de la contraria
+- 2026-04-24 11-15 11:06Z (venta, sesgo alcista, pivote bajo): la contraria (empieza 10:00Z) va contraria desde su minuto 2 y toca el nivel en su minuto 4 (de 15, al cierre de la M1 de las 10:04Z); la entrada es 51 min despues del cierre de la contraria
+- 2026-04-24 11-15 11:30Z (venta, sesgo alcista, pivote bajo): la contraria (empieza 10:00Z) va contraria desde su minuto 2 y toca el nivel en su minuto 4 (de 15, al cierre de la M1 de las 10:04Z); la entrada es 75 min despues del cierre de la contraria
+- 2026-04-27 11-15 11:45Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:15Z) va contraria desde su minuto 1 y toca el nivel en su minuto 2 (de 15, al cierre de la M1 de las 11:17Z); la entrada es 15 min despues del cierre de la contraria
+- 2026-04-27 11-15 12:00Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 9 (de 15, al cierre de la M1 de las 11:54Z); la entrada es 0 min despues del cierre de la contraria
+- 2026-04-29 11-15 09:36Z (venta, sesgo bajista, pivote alto): la contraria (empieza 09:00Z) va contraria desde su minuto 1 y toca el nivel en su minuto 5 (de 15, al cierre de la M1 de las 09:05Z); la entrada es 21 min despues del cierre de la contraria
+- 2026-04-29 11-15 11:02Z (venta, sesgo bajista, pivote alto): la contraria (empieza 10:15Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 10:16Z); la entrada es 32 min despues del cierre de la contraria
+- 2026-08-03 07-11 06:03Z (venta, sesgo bajista, pivote alto): la contraria (empieza 04:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 04:46Z); la entrada es 63 min despues del cierre de la contraria
+- 2026-08-03 07-11 06:07Z (venta, sesgo bajista, pivote alto): la contraria (empieza 04:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 04:46Z); la entrada es 67 min despues del cierre de la contraria
+- 2026-08-04 11-15 11:34Z (venta, sesgo alcista, pivote bajo): la contraria (empieza 11:00Z) va contraria desde su minuto 7 y toca el nivel en su minuto 7 (de 15, al cierre de la M1 de las 11:07Z); la entrada es 19 min despues del cierre de la contraria
+- 2026-08-10 11-15 12:38Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 4 (de 15, al cierre de la M1 de las 11:49Z); la entrada es 38 min despues del cierre de la contraria
+- 2026-08-13 07-11 07:33Z (venta, sesgo bajista, pivote alto): la contraria (empieza 06:00Z) va contraria desde su minuto 2 y toca el nivel en su minuto 2 (de 15, al cierre de la M1 de las 06:02Z); la entrada es 78 min despues del cierre de la contraria
+- 2026-08-13 07-11 07:49Z (venta, sesgo bajista, pivote alto): la contraria (empieza 06:00Z) va contraria desde su minuto 2 y toca el nivel en su minuto 2 (de 15, al cierre de la M1 de las 06:02Z); la entrada es 94 min despues del cierre de la contraria
+- 2026-08-17 07-11 05:17Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 04:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 5 (de 15, al cierre de la M1 de las 04:35Z); la entrada es 32 min despues del cierre de la contraria
+- 2026-08-19 11-15 11:46Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 09:00Z) va contraria desde su minuto 3 y toca el nivel en su minuto 3 (de 15, al cierre de la M1 de las 09:03Z); la entrada es 151 min despues del cierre de la contraria
+- 2026-08-20 11-15 11:49Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:15Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 11:16Z); la entrada es 19 min despues del cierre de la contraria
+- 2026-08-21 11-15 11:56Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 11:00Z) va contraria desde su minuto 1 y toca el nivel en su minuto 9 (de 15, al cierre de la M1 de las 11:09Z); la entrada es 41 min despues del cierre de la contraria
+- 2026-08-25 11-15 11:55Z (venta, sesgo bajista, pivote alto): la contraria (empieza 11:30Z) va contraria desde su minuto 8 y toca el nivel en su minuto 8 (de 15, al cierre de la M1 de las 11:38Z); la entrada es 10 min despues del cierre de la contraria
+- 2026-08-27 07-11 08:04Z (venta, sesgo alcista, pivote bajo): la contraria (empieza 07:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 07:31Z); la entrada es 19 min despues del cierre de la contraria
+- 2026-08-27 07-11 08:12Z (venta, sesgo alcista, pivote bajo): la contraria (empieza 07:30Z) va contraria desde su minuto 1 y toca el nivel en su minuto 1 (de 15, al cierre de la M1 de las 07:31Z); la entrada es 27 min despues del cierre de la contraria
+- 2026-08-27 11-15 12:13Z (venta, sesgo bajista, pivote alto): la contraria (empieza 11:30Z) va contraria desde su minuto 5 y toca el nivel en su minuto 11 (de 15, al cierre de la M1 de las 11:41Z); la entrada es 28 min despues del cierre de la contraria
+- 2026-08-31 07-11 06:30Z (compra, sesgo alcista, pivote bajo): la contraria (empieza 05:45Z) va contraria desde su minuto 1 y toca el nivel en su minuto 10 (de 15, al cierre de la M1 de las 05:55Z); la entrada es 30 min despues del cierre de la contraria
+
+## (b) Toma con cuerpo en M1 dentro de una M15 todavia abierta
+operaciones con una toma en M1 antes de la entrada: 53
+minutos antes del cierre de la M15: min 0, mediana 8, max 14
+minutos antes de la entrada: min 1, mediana 12, max 93
+entradas ANTERIORES al cierre de la M15 en la que la M1 tomo el nivel: 13
+- 2026-04-01 11-15 12:30Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 7 min antes del cierre de su M15 y 7 min antes de la entrada
+- 2026-04-06 07-11 06:34Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 6 min antes del cierre de su M15 y 10 min antes de la entrada
+- 2026-04-13 07-11 06:47Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 8 min antes del cierre de su M15 y 10 min antes de la entrada
+- 2026-04-13 07-11 06:50Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 8 min antes del cierre de su M15 y 13 min antes de la entrada
+- 2026-04-13 07-11 08:21Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 10 min antes del cierre de su M15 y 16 min antes de la entrada
+- 2026-04-14 07-11 06:23Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 13 min antes del cierre de su M15 y 6 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-14 11-15 12:06Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 13 min antes del cierre de su M15 y 4 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-16 07-11 06:13Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 11 min antes del cierre de su M15 y 9 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-16 11-15 11:13Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 14 min antes del cierre de su M15 y 12 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-17 07-11 08:36Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 11 min antes del cierre de su M15 y 2 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-21 07-11 05:12Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 6 min antes del cierre de su M15 y 18 min antes de la entrada
+- 2026-04-22 07-11 08:02Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 1 min antes del cierre de su M15 y 18 min antes de la entrada
+- 2026-04-22 07-11 08:19Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 1 min antes del cierre de su M15 y 35 min antes de la entrada
+- 2026-04-23 07-11 05:30Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 10 min antes del cierre de su M15 y 70 min antes de la entrada
+- 2026-04-23 07-11 05:53Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 10 min antes del cierre de su M15 y 93 min antes de la entrada
+- 2026-04-23 07-11 06:49Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 2 min antes del cierre de su M15 y 6 min antes de la entrada
+- 2026-04-27 11-15 11:45Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 7 min antes del cierre de su M15 y 7 min antes de la entrada
+- 2026-04-28 07-11 08:12Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 8 min antes del cierre de su M15 y 5 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-29 07-11 07:55Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 10 min antes del cierre de su M15 y 20 min antes de la entrada
+- 2026-04-29 07-11 07:58Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 10 min antes del cierre de su M15 y 23 min antes de la entrada
+- 2026-04-29 11-15 09:36Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 13 min antes del cierre de su M15 y 4 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-04-29 11-15 11:02Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 9 min antes del cierre de su M15 y 11 min antes de la entrada
+- 2026-08-03 07-11 06:03Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 13 min antes del cierre de su M15 y 16 min antes de la entrada
+- 2026-08-03 07-11 06:07Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 13 min antes del cierre de su M15 y 20 min antes de la entrada
+- 2026-08-03 11-15 09:46Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 4 min antes del cierre de su M15 y 5 min antes de la entrada
+- 2026-08-03 11-15 09:52Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 4 min antes del cierre de su M15 y 11 min antes de la entrada
+- 2026-08-03 11-15 12:03Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 11 min antes del cierre de su M15 y 14 min antes de la entrada
+- 2026-08-03 11-15 12:10Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 11 min antes del cierre de su M15 y 21 min antes de la entrada
+- 2026-08-06 07-11 06:07Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 9 min antes del cierre de su M15 y 16 min antes de la entrada
+- 2026-08-07 11-15 11:47Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 6 min antes del cierre de su M15 y 8 min antes de la entrada
+- 2026-08-07 11-15 12:09Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 6 min antes del cierre de su M15 y 30 min antes de la entrada
+- 2026-08-07 11-15 12:14Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 6 min antes del cierre de su M15 y 35 min antes de la entrada
+- 2026-08-10 11-15 11:57Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 7 min antes del cierre de su M15 y 49 min antes de la entrada
+- 2026-08-10 11-15 12:38Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 6 min antes del cierre de su M15 y 14 min antes de la entrada
+- 2026-08-13 07-11 07:49Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 13 min antes del cierre de su M15 y 2 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-08-17 07-11 05:17Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 6 min antes del cierre de su M15 y 23 min antes de la entrada
+- 2026-08-19 11-15 09:03Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 13 min antes del cierre de su M15 y 1 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-08-20 11-15 11:00Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 14 min antes del cierre de su M15 y 14 min antes de la entrada
+- 2026-08-20 11-15 11:49Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 2 min antes del cierre de su M15 y 6 min antes de la entrada
+- 2026-08-21 07-11 05:32Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 14 min antes del cierre de su M15 y 1 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-08-21 11-15 11:56Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 12 min antes del cierre de su M15 y 23 min antes de la entrada
+- 2026-08-24 11-15 11:29Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 4 min antes del cierre de su M15 y 3 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-08-25 07-11 06:16Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 0 min antes del cierre de su M15 y 1 min antes de la entrada
+- 2026-08-25 07-11 06:37Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 0 min antes del cierre de su M15 y 22 min antes de la entrada
+- 2026-08-25 07-11 08:48Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 7 min antes del cierre de su M15 y 55 min antes de la entrada
+- 2026-08-25 11-15 11:55Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 10 min antes del cierre de su M15 y 5 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+- 2026-08-26 07-11 05:49Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 13 min antes del cierre de su M15 y 17 min antes de la entrada
+- 2026-08-26 07-11 07:03Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 1 min antes del cierre de su M15 y 4 min antes de la entrada
+- 2026-08-26 07-11 08:31Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 1 min antes del cierre de su M15 y 92 min antes de la entrada
+- 2026-08-27 11-15 12:13Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 5 min antes del cierre de su M15 y 18 min antes de la entrada
+- 2026-08-28 11-15 10:42Z (venta, sesgo bajista, pivote alto): la toma en M1 cierra 0 min antes del cierre de su M15 y 12 min antes de la entrada
+- 2026-08-31 07-11 06:30Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 1 min antes del cierre de su M15 y 1 min antes de la entrada
+- 2026-08-31 07-11 06:58Z (compra, sesgo alcista, pivote bajo): la toma en M1 cierra 4 min antes del cierre de su M15 y 2 min antes de la entrada; la entrada es ANTERIOR al cierre de esa M15
+
+## (c) Sesiones del trader en las que RN-004 no toma liquidez, por causa
+sesiones: 11
+- 6: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 4: el pivote se toco (mecha) pero ninguna M15 cerro con cuerpo
+- 1: hay pivote del lado del sesgo, pero el precio no volvio a su nivel
+- 2026-04-03 11-15: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 2026-04-10 07-11: el pivote se toco (mecha) pero ninguna M15 cerro con cuerpo
+- 2026-04-13 11-15: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 2026-04-14 11-15: el pivote se toco (mecha) pero ninguna M15 cerro con cuerpo
+- 2026-04-24 07-11: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 2026-04-27 11-15: el pivote se toco (mecha) pero ninguna M15 cerro con cuerpo
+- 2026-08-11 07-11: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 2026-08-14 07-11: hay pivote del lado del sesgo, pero el precio no volvio a su nivel
+- 2026-08-19 11-15: el pivote se toco (mecha) pero ninguna M15 cerro con cuerpo
+- 2026-08-20 07-11: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+- 2026-08-26 11-15: sesgo ambiguo: sin lado, no hay liquidez marcada (RN-033 prohibe)
+

@@ -401,6 +401,24 @@ parametros:
     fuente:
       tipo: evidence
       id: ev-v4-005910-d24c0345
+  - nombre: liquidez_m15_pivote_formado
+    categoria: estrategia
+    tipo: enum
+    unidad: en que momento un pivote de M15 cuenta como formado (A-35)
+    opciones: [inicio_vela_contraria, cierre_vela_contraria]
+    descripcion: >-
+      cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el
+      mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader:
+      este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus
+      documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de
+      ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y
+      `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849,
+      ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor
+      (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo
+      diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
+    estado: UNKNOWN
+    consumido_por: [ADR-0045]
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum
@@ -871,6 +889,75 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-a85b6bc7
+  # --- el tope de perdida PROPIO del trader (RN-020, A-44): lo que la sesion 1 no dijo. Cada uno
+  # UNKNOWN hasta que el trader responda; leerlos falla y el motor se niega a correr salvo en
+  # diagnostico etiquetado (docs/runbooks/ACTIVAR-A35-A44.md). Independientes de los `firma_*` del
+  # perfil de cuenta: son del trader, no de la firma (ADR-0053 §3.3 y §9).
+  - nombre: perdida_trader_alcance
+    categoria: estrategia
+    tipo: enum
+    unidad: a que aplica el tope de perdida propio del trader
+    opciones: [sin_tope, dia, semana, ambos]
+    descripcion: >-
+      si el trader deja de operar por una perdida acumulada y en que plazo: en el dia
+      (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno
+      (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay
+      alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
+    estado: UNKNOWN
+    consumido_por: [ADR-0053]
+  - nombre: perdida_trader_magnitud
+    categoria: estrategia
+    tipo: enum
+    unidad: sobre que magnitud de la cuenta se mide la perdida del trader
+    opciones: [saldo, equity]
+    descripcion: >-
+      si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas)
+      o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni
+      perdida_semana (ADR-0053 §3.3): es A-44
+    estado: UNKNOWN
+    consumido_por: [ADR-0053]
+  - nombre: perdida_trader_unidad
+    categoria: estrategia
+    tipo: enum
+    unidad: en que unidad esta la cifra del tope del trader
+    opciones: [porcentaje, usd]
+    descripcion: >-
+      si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y
+      perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o
+      una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
+    estado: UNKNOWN
+    consumido_por: [ADR-0053]
+  - nombre: perdida_trader_dia_usd
+    categoria: estrategia
+    tipo: decimal
+    unidad: moneda de la cuenta
+    descripcion: >-
+      el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd);
+      con `porcentaje` no se lee
+    estado: UNKNOWN
+    minimo: "0"
+    consumido_por: [ADR-0053]
+  - nombre: perdida_trader_semana_usd
+    categoria: estrategia
+    tipo: decimal
+    unidad: moneda de la cuenta
+    descripcion: >-
+      el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trader_unidad =
+      usd); con `porcentaje` no se lee
+    estado: UNKNOWN
+    minimo: "0"
+    consumido_por: [ADR-0053]
+  - nombre: perdida_trader_reinicio_huso
+    categoria: estrategia
+    tipo: texto
+    unidad: nombre IANA del huso cuya medianoche reinicia el conteo del trader (y el lunes, la semana)
+    descripcion: >-
+      con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-.
+      Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como
+      SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia
+      de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
+    estado: UNKNOWN
+    consumido_por: [ADR-0053]
   - nombre: reloj_dia_riesgo
     categoria: prop_firm
     tipo: enum

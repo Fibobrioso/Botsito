@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.0.0` · hash `6cb656a08e6a…`
+`spec_version 13.2.0` · hash `5ac174b1bd23…`
 
-75 en total: 66 con valor y 9 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+82 en total: 66 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -81,7 +81,14 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 
 - **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 - **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
+- **`liquidez_m15_pivote_formado`** (estrategia) — cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
+- **`perdida_trader_alcance`** (estrategia) — si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
+- **`perdida_trader_dia_usd`** (estrategia) — el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
+- **`perdida_trader_magnitud`** (estrategia) — si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
+- **`perdida_trader_reinicio_huso`** (estrategia) — con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-. Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
+- **`perdida_trader_semana_usd`** (estrategia) — el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
+- **`perdida_trader_unidad`** (estrategia) — si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
 - **`spread_maximo`** (estrategia) — spread por encima del cual no se abre la operacion; solo si filtro_spread
 - **`stop_colchon_spread`** (estrategia) — si el 0,8 es fijo o es 0,75 mas un colchon variable. RESPONDIDO Y DESCARTADO en la sesion 1 (A-10): el 0,8 ya lleva el colchon dentro, asi que no hay parametro que fijar. Se queda UNKNOWN a proposito -leerlo falla- y la regla vive en strategy_spec
 - **`stop_proteccion_capital`** (estrategia) — la fraccion de la caja que queda al otro lado del stop. DERIVADA de stop_fraccion_caja (1 - 0,8 = 0,2), asi que no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya dos puertas para el mismo numero. OJO, dos cosas que esta descripcion decia hasta el 2026-09-11: el stop no "se mueve" -nace en la orden, A-11- y ese tramo no es presupuesto de riesgo que se "guarde", porque el lote ya no se dimensiona sobre la caja entera; RN-012 dice que no se arriesga nunca
@@ -329,6 +336,12 @@ si la liquidez de M15 se toma con cierre de cuerpo o basta la mecha
 
 Opciones: `cuerpo`, `mecha`.
 
+### `liquidez_m15_pivote_formado`
+
+cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
+
+Opciones: `inicio_vela_contraria`, `cierre_vela_contraria`.
+
 ### `lotaje_base`
 
 sobre que distancia se dimensiona el lote. `distancia_completa` es la caja entera, del nivel 0 al nivel 1, y deja la perdida del stop POR DEBAJO del riesgo nominal; `hasta_stop_fraccion` es la distancia del nivel 0 a stop_fraccion_caja, asi que el stop cuesta el riesgo ENTERO y el resto de la caja deja de ser presupuesto de riesgo. La segunda opcion se llamaba `desde_075` hasta el 2026-09-11: nombraba un 0,75 que A-10 habia cerrado en 0,8, y un numero de negocio en el nombre de una opcion es la clase de doble puerta que ADR-0002 prohibe. Ahora el nivel lo pone stop_fraccion_caja y solo el
@@ -382,6 +395,36 @@ perdida acumulada en el dia que detiene la operativa; la base la fija base_calcu
 ### `perdida_maxima_semanal`
 
 perdida acumulada en la semana que detiene la operativa; la base la fija base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
+
+### `perdida_trader_alcance`
+
+si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
+
+Opciones: `sin_tope`, `dia`, `semana`, `ambos`.
+
+### `perdida_trader_dia_usd`
+
+el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
+
+### `perdida_trader_magnitud`
+
+si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
+
+Opciones: `saldo`, `equity`.
+
+### `perdida_trader_reinicio_huso`
+
+con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-. Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
+
+### `perdida_trader_semana_usd`
+
+el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
+
+### `perdida_trader_unidad`
+
+si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
+
+Opciones: `porcentaje`, `usd`.
 
 ### `reentrada_tras_equal`
 

@@ -24,6 +24,7 @@ from botsito.domain.valores import HoraLocal
 from botsito.domain.velas import MinutoUtc, SerieVelas
 
 MINUTOS_H4 = 240
+MINUTOS_M15 = 15
 
 
 class VentanaError(ValueError):

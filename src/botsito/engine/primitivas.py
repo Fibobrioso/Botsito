@@ -19,12 +19,14 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import datetime
+from decimal import Decimal
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
 from botsito.data.velas import a_datetime
+from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote, cruza, toca
 from botsito.domain.sesgo import sesgo_h4
 from botsito.domain.velas import Vela
 from botsito.engine.interprete import (
@@ -36,11 +38,22 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
+from botsito.engine.tope_trader import (
+    ACUMULADOR_DIA,
+    ACUMULADOR_SEMANA,
+    PORCENTAJE,
+    SIN_TOPE,
+    TopeTrader,
+)
 
 # RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044).
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
 TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
+# La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
+# primer cierre de M15 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
+ANOTACION_LIQUIDEZ = "liquidez_m15"
+ANOTACION_LIQUIDEZ_ALCANZADA = "liquidez_m15_alcanzada"
 # Las opciones de `dias_operables` en parametros.yaml, con los dias ISO que abarca cada una.
 DIAS_OPERABLES = {
     "lunes_a_viernes": frozenset(range(1, 6)),
@@ -53,14 +66,30 @@ class DatosDelDia(Protocol):
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]: ...
 
+    def ultima_m15_cerrada(self, instante: int) -> Vela | None: ...
+
+    def liquidez_m15(self, instante: int, lado: str) -> Pivote | None: ...
+
+
+# RN-004 y RN-005 leen `que: liquidez_m15`: el unico nivel que estas primitivas saben producir.
+TOKEN_LIQUIDEZ_M15 = "liquidez_m15"
+HECHO_SESGO = "sesgo"
+# El lado del pivote que es la liquidez segun el sesgo (RN-005: «lo que se desarrolla por encima de
+# la liquidez de M15 en sesgo alcista, o por debajo de ella en sesgo bajista, es ruido»: la
+# operativa alcista va por debajo de un BAJO tomado; la bajista, por encima de un ALTO tomado).
+LADO_DE_LA_LIQUIDEZ = {"alcista": BAJO, "bajista": ALTO}
+
 
 def _local(instante: int, huso: str) -> datetime:
     zona: ZoneInfo = huso_canonico(huso)
     return a_datetime(instante).astimezone(zona)
 
 
-def primitivas_escritas(registro: Registro) -> Primitivas:
-    """Las primitivas de hoy, con el registro del que leen sus argumentos."""
+def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> Primitivas:
+    """Las primitivas de hoy, con el registro del que leen sus argumentos. Con `tope` (el tope
+    propio del trader, A-44) los acumuladores de RN-020 se evaluan tambien sin cuenta: el motor de
+    la spec no coloca ninguna orden, asi que su perdida acumulada es cero; sin `tope`, siguen
+    siendo hueco con nombre."""
 
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -105,6 +134,67 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})
 
+    def _liquidez(
+        nombre: str, args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> tuple[Pivote, Vela] | Resultado | NoImplementada:
+        """El pivote de M15 que hoy es la liquidez y la ultima M15 cerrada que puede tomarlo; NO
+        si no hay liquidez marcada (sin sesgo con lado, sin pivote, o sin vela posterior a la
+        contraria); NO_IMPLEMENTADA si los datos no tienen lectura de «formado» (A-35)."""
+        if str(args.get("que")) != TOKEN_LIQUIDEZ_M15:
+            return NoImplementada(f"predicado:{nombre}:{args.get('que')}")
+        datos: DatosDelDia = momento.datos
+        lado = LADO_DE_LA_LIQUIDEZ.get(str(estado.hechos.get(HECHO_SESGO)))
+        if lado is None:
+            return Resultado(Tri.NO)  # sin sesgo con lado no hay liquidez marcada (RN-033 manda)
+        try:
+            pivote = datos.liquidez_m15(momento.instante, lado)
+        except (AttributeError, LookupError):
+            return NoImplementada(f"predicado:{nombre}")
+        if pivote is None:
+            return Resultado(Tri.NO)
+        if momento.sesion is not None:
+            # la huella del selector en la traza: que pivote es la liquidez y desde cuando
+            estado.anotaciones.setdefault(momento.sesion, {}).setdefault(
+                ANOTACION_LIQUIDEZ,
+                f"{pivote.lado} {pivote.nivel} formado_en {int(pivote.formado_en)}",
+            )
+        ultima = datos.ultima_m15_cerrada(momento.instante)
+        # PROVISIONAL (ADR-0054 §4, A-45): que la vela que cierra con cuerpo sea la M15 y no la M1
+        # no lo dice ninguna fuente; se mantiene hasta que el trader responda A-45.
+        # La vela que puede tomar el nivel es la ultima M15 cerrada, y solo si el pivote YA EXISTIA
+        # antes de que cerrara: eso es lo que el selector decide. Con `inicio_vela_contraria` la
+        # propia vela contraria cuenta (el pivote nace en su primera M1); con
+        # `cierre_vela_contraria` no (nace en su cierre). Hasta el 2026-09-26 aqui se exigia que la
+        # vela fuera POSTERIOR a la contraria, y eso dejaba el selector sin efecto en el motor
+        # (docs/validation/VERIFICACION-A35-A44.md, fase 1).
+        if ultima is None or not (int(pivote.formado_en) < int(ultima.fin)):
+            return Resultado(Tri.NO)
+        return pivote, ultima
+
+    def alcanza_nivel(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        r = _liquidez("alcanza_nivel", args, momento, estado)
+        if not isinstance(r, tuple):
+            return r
+        pivote, ultima = r
+        alcanzado = toca(ultima, pivote)
+        if alcanzado and momento.sesion is not None:
+            estado.anotaciones.setdefault(momento.sesion, {}).setdefault(
+                ANOTACION_LIQUIDEZ_ALCANZADA, f"{pivote.nivel} en {int(momento.instante)}"
+            )
+        return Resultado(Tri.SI if alcanzado else Tri.NO)
+
+    def cruza_nivel(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        r = _liquidez("cruza", args, momento, estado)
+        if not isinstance(r, tuple):
+            return r
+        pivote, ultima = r
+        criterio = registro.opcion(str(args["criterio"]))  # lo nombra la forma (ADR-0019 §1)
+        return Resultado(Tri.SI if cruza(ultima, pivote, criterio) else Tri.NO)
+
     def fijar(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
@@ -116,16 +206,51 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
             estado.hechos[hecho] = valor
         return [(hecho, valor)]
 
+    def acumulador_sin_cuenta(nombre: str) -> Any:
+        def leer(
+            args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+        ) -> Resultado | NoImplementada:
+            assert tope is not None
+            if tope.alcance == SIN_TOPE:
+                return Resultado(Tri.NO)
+            aplica = tope.aplica_dia if nombre == ACUMULADOR_DIA else tope.aplica_semana
+            if not aplica:
+                return Resultado(Tri.NO)
+            umbral = (
+                registro.porcentaje(str(args["tope"])).valor
+                if tope.unidad == PORCENTAJE
+                else (tope.tope_dia if nombre == ACUMULADOR_DIA else tope.tope_semana)
+            )
+            perdida = Decimal(0)  # el motor de la spec no opera: no pierde nada
+            return Resultado(Tri.SI if umbral is not None and perdida >= umbral else Tri.NO)
+
+        return leer
+
+    acumuladores: dict[str, Any] = {}
+    if tope is not None:
+        for nombre in (ACUMULADOR_DIA, ACUMULADOR_SEMANA):
+            acumuladores[nombre] = acumulador_sin_cuenta(nombre)
+
     return Primitivas(
         predicados={
             "abre_sesion_operativa": abre_sesion_operativa,
             "en_ventana": en_ventana,
             "alcanza_hora": alcanza_hora,
             "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
+            "alcanza_nivel": alcanza_nivel,
+            "cruza": cruza_nivel,
         },
         acciones={"fijar": fijar},
-        acumuladores={},
+        acumuladores=acumuladores,
     )
 
 
-__all__ = ["ANOTACION_SESGO", "DatosDelDia", "primitivas_escritas"]
+__all__ = [
+    "ANOTACION_LIQUIDEZ",
+    "ANOTACION_LIQUIDEZ_ALCANZADA",
+    "ANOTACION_SESGO",
+    "LADO_DE_LA_LIQUIDEZ",
+    "TOKEN_LIQUIDEZ_M15",
+    "DatosDelDia",
+    "primitivas_escritas",
+]

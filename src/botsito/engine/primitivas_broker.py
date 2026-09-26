@@ -32,6 +32,13 @@ from botsito.engine.interprete import (
 )
 from botsito.engine.llenado import OBJETIVO, STOP, Lado
 from botsito.engine.primitivas import primitivas_escritas
+from botsito.engine.tope_trader import (
+    ACUMULADOR_DIA,
+    ACUMULADOR_SEMANA,
+    PORCENTAJE,
+    SIN_TOPE,
+    TopeTrader,
+)
 
 # Tokens de la spec que estas primitivas interpretan (declarados en `tokens` de strategy_spec.yaml)
 CUALQUIER_ESQUEMA = "cualquier_esquema"
@@ -46,10 +53,11 @@ PREFIJO_ZONA = "zona:"
 # Los acumuladores de la firma que la cuenta viva alimenta (ADR-0053 §3); los demas, hueco.
 ACUMULADORES_DE_LA_FIRMA = ("perdida_dia_firma", "perdida_total_firma")
 HUECOS = {
-    "acumulador:perdida_dia": "la spec no declara `magnitud` (saldo o equity) para el del trader",
-    "acumulador:perdida_semana": "idem, y la semana no tiene corte declarado aparte del diario",
     "acumulador:cartuchos": "depende de cartucho_criterio y de un cierre con esquema (geometria)",
 }
+# Los dos acumuladores del trader (RN-020) los alimenta el tope del trader (A-44,
+# engine/tope_trader.py) cuando esta fijado o en diagnostico; sin el, siguen siendo hueco.
+ACUMULADORES_DEL_TRADER = (ACUMULADOR_DIA, ACUMULADOR_SEMANA)
 
 
 class CableadoError(ValueError):
@@ -105,6 +113,7 @@ class ContextoDia:
     por_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> esquema
     instante_ms: int = 0  # el instante del evento del interprete (exclusivo para el broker)
     huecos: set[str] = field(default_factory=set)
+    tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
 
 
 def _casa_por(pedido: str, real: str | None) -> bool:
@@ -206,6 +215,35 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
                 sobre = registro.opcion(str(args["sobre"]))
                 base = ctx.cuenta.saldo if sobre == "saldo_actual" else ctx.cuenta.saldo_corte
                 valor = valor + base * registro.porcentaje(str(args["riesgo"])).valor / CIEN
+            return _tri(valor >= umbral)
+
+        return leer
+
+    def acumulador_del_trader(nombre: str) -> Any:
+        """`perdida_dia` / `perdida_semana` (RN-020) contra el tope propio del trader (A-44):
+        sin tope fijado es hueco con nombre; con `sin_tope`, NO siempre; con un alcance que no
+        incluye este acumulador, NO; si no, la perdida desde el corte contra el tope, en la unidad
+        del tope (el porcentaje lo nombra la forma, ADR-0019 §1; el dinero lo da el registro)."""
+
+        def leer(
+            args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+        ) -> Resultado | NoImplementada:
+            tope = ctx.tope
+            if tope is None:
+                ctx.huecos.add(f"acumulador:{nombre}")
+                return NoImplementada(f"acumulador:{nombre}")
+            if tope.alcance == SIN_TOPE:
+                return Resultado(Tri.NO)
+            aplica = tope.aplica_dia if nombre == ACUMULADOR_DIA else tope.aplica_semana
+            if not aplica:
+                return Resultado(Tri.NO)
+            valor = ctx.acumuladores.get(nombre)
+            if valor is None:
+                return NoImplementada(f"acumulador:{nombre}:sin cuenta")
+            if tope.unidad == PORCENTAJE:
+                umbral = registro.porcentaje(str(args["tope"])).valor
+            else:
+                umbral = ctx.acumuladores[f"{nombre}:tope"]
             return _tri(valor >= umbral)
 
         return leer
@@ -435,12 +473,15 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
     acumuladores = dict(base.acumuladores)
     for nombre in ACUMULADORES_DE_LA_FIRMA:
         acumuladores[nombre] = acumulador_de_la_firma(nombre)
+    for nombre in ACUMULADORES_DEL_TRADER:
+        acumuladores[nombre] = acumulador_del_trader(nombre)
     for id in HUECOS:
         acumuladores[id.split(":", 1)[1]] = hueco(id)
     return Primitivas(predicados=predicados, acciones=acciones, acumuladores=acumuladores)
 
 
 __all__ = [
+    "ACUMULADORES_DEL_TRADER",
     "ACUMULADORES_DE_LA_FIRMA",
     "HUECOS",
     "CableadoError",

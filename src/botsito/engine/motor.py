@@ -28,6 +28,7 @@ from typing import Protocol
 from botsito.cases.criterio_fidelidad import Operacion
 from botsito.comun.husos import huso_canonico
 from botsito.data.velas import a_minuto
+from botsito.domain.pivotes_m15 import Pivote, pivote_mas_reciente
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.interprete import (
     VALOR_APAGADO,
@@ -45,15 +46,92 @@ class Sesion:
     hasta: str
 
 
-class DatosMercado:
-    """Las H4 de un tramo, entregadas SOLO hasta el instante que se pide."""
+class SinLecturaDePivoteError(LookupError):
+    """Se pidio la liquidez de M15 a unos datos sin lectura de «formado» (A-35 sin fijar)."""
 
-    def __init__(self, velas_h4: Sequence[Vela]) -> None:
+
+class DatosMercado:
+    """Las velas de un tramo, entregadas SOLO hasta el instante que se pide: las H4 (el sesgo,
+    RN-003) y, desde `trabajo/preparar-a35-a44`, las M15 y las M1 con las que se construye la M15
+    en curso, para la liquidez de M15 (RN-004) con la lectura de «formado» que se le de. Sin
+    lectura -A-35 sin fijar-, pedir la liquidez falla con nombre y la primitiva queda
+    NO_IMPLEMENTADA, como hasta hoy."""
+
+    def __init__(
+        self,
+        velas_h4: Sequence[Vela],
+        velas_m15: Sequence[Vela] = (),
+        velas_m1: Sequence[Vela] = (),
+        lectura_pivote: str | None = None,
+    ) -> None:
         self._velas = sorted(velas_h4, key=lambda v: v.fin)
         self._fines = [v.fin for v in self._velas]
+        # las M15 completas, por su fin; las incompletas (la ultima del tramo) no cierran nunca
+        self._m15 = sorted((v for v in velas_m15 if v.completa), key=lambda v: v.fin)
+        self._fines_m15 = [v.fin for v in self._m15]
+        self._rejilla = sorted(velas_m15, key=lambda v: v.inicio)  # todas: da la M15 en curso
+        self._inicios_m15 = [v.inicio for v in self._rejilla]
+        self._m1 = sorted(velas_m1, key=lambda v: v.inicio)
+        self._inicios_m1 = [v.inicio for v in self._m1]
+        self.lectura_pivote = lectura_pivote
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]:
         return self._velas[: bisect.bisect_right(self._fines, instante)]
+
+    def _n_m15_cerradas(self, instante: int) -> int:
+        return bisect.bisect_right(self._fines_m15, instante)
+
+    def ultima_m15_cerrada(self, instante: int) -> Vela | None:
+        n = self._n_m15_cerradas(instante)
+        return self._m15[n - 1] if n else None
+
+    def m15_en_curso(self, instante: int) -> Vela | None:
+        """La M15 que contiene `instante`, construida SOLO con sus M1 cerradas hasta el; None si
+        `instante` cae justo en un limite de M15 o no hay ninguna M1 dentro."""
+        i = bisect.bisect_right(self._inicios_m15, instante) - 1
+        if i < 0:
+            return None
+        rejilla = self._rejilla[i]
+        if not (rejilla.inicio < instante < rejilla.fin):
+            return None
+        a = bisect.bisect_left(self._inicios_m1, rejilla.inicio)
+        b = bisect.bisect_left(self._inicios_m1, MinutoUtc(instante))
+        dentro = self._m1[a:b]
+        if not dentro:
+            return None
+        return Vela(
+            rejilla.inicio,
+            dentro[0].abierta,
+            max(v.maxima for v in dentro),
+            min(v.minima for v in dentro),
+            dentro[-1].cierre,
+            sum(v.volumen for v in dentro),
+            rejilla.duracion_min,
+            len(dentro),
+            False,
+        )
+
+    def m1_entre(self, desde: int, hasta: int) -> list[Vela]:
+        """Las M1 con inicio en [desde, hasta), en orden: para medir sobre lo cerrado."""
+        a = bisect.bisect_left(self._inicios_m1, MinutoUtc(desde))
+        b = bisect.bisect_left(self._inicios_m1, MinutoUtc(hasta))
+        return self._m1[a:b]
+
+    def liquidez_m15(self, instante: int, lado: str) -> Pivote | None:
+        """El pivote de M15 mas reciente ya formado del lado pedido (ADR-0045), con la lectura de
+        «formado» de estos datos. Sin lectura, falla con nombre: A-35 sin fijar."""
+        if self.lectura_pivote is None:
+            raise SinLecturaDePivoteError(
+                "sin lectura de «formado» (A-35): estos datos no producen liquidez_m15"
+            )
+        return pivote_mas_reciente(
+            self._m15,
+            self.m15_en_curso(instante),
+            self.lectura_pivote,
+            instante,
+            lado,
+            self._n_m15_cerradas(instante),
+        )
 
 
 @dataclass(frozen=True)
@@ -146,6 +224,7 @@ class MotorSpec:
 
 __all__ = [
     "DatosMercado",
+    "SinLecturaDePivoteError",
     "DiaDeMercado",
     "Motor",
     "MotorSpec",
