@@ -4,13 +4,11 @@ date: 2026-09-26
 phase: post-F14 (rama `trabajo/ticks-llenado`, sesión nocturna)
 ---
 
-# 0051 · El modelo de llenado (PROPUESTO: pendiente de aceptación del consultor)
+# 0051 · El modelo de llenado
 
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 2026-09-26 con las reglas de
-> autonomía del brief: ante cada duda, la opción MÁS CONSERVADORA (la que llena peor al bot o
-> suspende antes a la cuenta), anotada como DECISIÓN NOCTURNA. Lo acepta o corrige el consultor;
-> hasta entonces nada de lo que aquí se fija se toma por aceptado. El campo `status` dice ACTIVE
-> solo porque la guardia de ADR (`tests/unit/test_adr.py`) no admite otro valor.
+> **ACEPTADO el 2026-09-26** por el consultor, tras su revisión, sobre lo escrito en la sesión
+> autónoma de la noche anterior (`docs/validation/TICKS-LLENADO.md`). Lo que el consultor decidió
+> sobre cada DECISIÓN NOCTURNA está en la sección «Las decisiones nocturnas, resueltas», más abajo.
 
 ## Decision
 
@@ -90,6 +88,35 @@ antes los stops de las cortas), y fuera de la ventana el percentil 90 de toda la
 respaldo se niega a correr sin él. Las M1 del repositorio son BID (ADR-0005): el ASK del respaldo
 es BID más el spread supuesto.
 
+### 7. Las decisiones nocturnas, resueltas por el consultor (2026-09-26)
+
+- **DN-1** (límites y objetivos pasan estrictamente el nivel; stops al toque, §1): **ACEPTADA**.
+- **DN-2** (un tick que cruza stop y objetivo a la vez es stop, §3): **ACEPTADA**.
+- **DN-3** (sin deslizamiento fijo, §4): **PROVISIONAL hasta la demo en MetaTrader**, donde se
+  medirá; hasta entonces `deslizamiento_fijo_puntos: 0` con su motivo en `llenado.yaml`.
+- **DN-4** (spread supuesto = percentil 90 por hora medido, §6): **ACEPTADA**.
+- **DN-5** (ticks solo de los días dev de construcción y las horas 05-13 UTC, Fase 2 de la rama):
+  **ACEPTADA PARA VERANO**. La ventana de ticks de invierno (06:00-14:00 UTC, cuando el trader
+  está en CET) queda PENDIENTE y ligada a A-42, que decide con qué reloj cuenta la sesión.
+- **DN-6** (el swap se cobra en cada medianoche del huso del perfil, ADR-0052 §3): **PROVISIONAL
+  hasta medir el corte real en la plataforma** (A-28).
+- **DN-7** (quitar de este ADR la declaración de ADR-0052 como id inexistente): **ACEPTADA**.
+- **DN-8** (la salida de cada operación del trader se repite con la regla de la spec, Fase 6):
+  **ACEPTADA** como lectura descriptiva; no es la salida real del trader y así se dice.
+- **DN-0** (PROPUESTO con `status: ACTIVE` por la guardia): **SUPERADA por esta aceptación**.
+
+### 8. El hallazgo que cambia el proyecto: los ticks son obligatorios
+
+La Fase 6 de la rama repitió las operaciones reales del trader de construcción por el bróker de
+dos formas: con ticks y con el respaldo M1 pesimista. **El desenlace —el motivo o el precio de
+cierre— difiere entre las dos en una fracción grande de las operaciones** (las cifras, por mes y
+por escenario, en `docs/validation/TICKS-LLENADO.md` y `REPETICION-TRADER-SALIDA.txt`). Por eso,
+por decisión del consultor del 2026-09-26: **los TICKS SON OBLIGATORIOS para toda simulación que
+cuente —construcción, medición y holdout—, y el respaldo M1 solo sirve para depurar.** Una corrida
+que valga tiene que declarar su dataset de ticks y su selección; una hora perdida sigue cayendo al
+respaldo y queda marcada, pero un día sin ticks no cuenta. Lo que sigue de aquí: descargar los
+ticks de cada mes que se vaya a medir con el mismo procedimiento, y la ventana de invierno (DN-5).
+
 ## Problema que resuelve
 
 ADR-0028 fija que la fase de riesgo va por tick y que las órdenes se procesan por evento del
@@ -135,13 +162,13 @@ cuánto pesa la pérdida de ticks.
 - `src/botsito/data/ticks.py` (Fase 2): los ticks de construcción, congelados con manifiesto y
   hashes como las M1.
 - El bróker simulado (ADR-0052) consume este modelo y no decide nada de esto por su cuenta.
-- Lo que el consultor decide al aceptar: las cuatro decisiones nocturnas.
+- Lo que el consultor decidió al aceptar está en §7; el hallazgo de los ticks, en §8.
 
 ## Fecha / fase
 
-2026-09-26 · sesión nocturna, rama `trabajo/ticks-llenado`. Next Action 32.
+2026-09-26 · escrito en la sesión nocturna y ACEPTADO por el consultor el mismo día, rama
+`trabajo/ticks-llenado`. Next Action 32.
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE

@@ -4,12 +4,14 @@ date: 2026-09-26
 phase: post-F14 (rama `trabajo/ticks-llenado`, sesión nocturna)
 ---
 
-# 0052 · El bróker simulado (PROPUESTO: pendiente de aceptación del consultor)
+# 0052 · El bróker simulado
 
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 2026-09-26 con las reglas de
-> autonomía del brief: ante cada duda, la opción MÁS CONSERVADORA, anotada como DECISIÓN
-> NOCTURNA. Lo acepta o corrige el consultor. El campo `status` dice ACTIVE solo porque la guardia
-> de ADR no admite otro valor (DN-0).
+> **ACEPTADO el 2026-09-26** por el consultor, tras su revisión, sobre lo escrito en la sesión
+> autónoma de la noche anterior (`docs/validation/TICKS-LLENADO.md`). La decisión nocturna de este
+> ADR (DN-6, el corte del swap) queda PROVISIONAL hasta medir el corte real en la plataforma
+> (A-28); las demás decisiones nocturnas, resueltas en ADR-0051 §7. Los ticks son obligatorios
+> para toda simulación que cuente (ADR-0051 §8): este bróker cae al respaldo M1 solo en una hora
+> perdida, y lo marca.
 
 ## Decision
 
@@ -131,9 +133,9 @@ operaciones pequeñas.
 
 ## Fecha / fase
 
-2026-09-26 · sesión nocturna, rama `trabajo/ticks-llenado`. Next Action 33.
+2026-09-26 · escrito en la sesión nocturna y ACEPTADO por el consultor el mismo día, rama
+`trabajo/ticks-llenado`. Next Action 33.
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE
