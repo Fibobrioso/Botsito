@@ -21,7 +21,14 @@ tiene ADR propio y no se inventa uno). Test: el perfil ya no se niega a leerla; 
 valor (objetivo y días de la fondeada, ratio de la guardia). Recuadro de corrección en
 `SIMULADOR-CUENTA.md` §2.
 
-## Fase 1 · ADR del modelo de llenado — pendiente
+## Fase 1 · ADR del modelo de llenado — HECHA
+
+ADR-0051 «El modelo de llenado», PROPUESTO. Fija: el lado del spread por orden (compra al ASK,
+vende al BID); las límites y los objetivos exigen pasar estrictamente el nivel y los stops saltan
+al toque (DN-1); con ticks el orden real, y un tick que cruce stop y objetivo a la vez es stop
+(DN-2); respaldo M1 pesimista, stop primero (ADR-0049 H4), marcado `respaldo_m1`; sin
+deslizamiento fijo, solo el de hueco de los ticks (DN-3); spread de cada tick y, sin ticks, el
+percentil 90 por hora medido en construcción (DN-4), en `knowledge/simulador/llenado.yaml`.
 
 ## Fase 2 · ticks de construcción — pendiente
 
@@ -37,7 +44,11 @@ valor (objetivo y días de la fondeada, ratio de la guardia). Recuadro de correc
 
 ## Decisiones nocturnas (pendientes de validar)
 
-- Ninguna todavía.
+- **DN-0 (proceso).** La guardia de ADR solo admite `status: ACTIVE|SUPERSEDED` y el primer token
+  de `## Estado` en ese conjunto. Los ADR nocturnos llevan `ACTIVE` en el campo y PROPUESTO en el
+  título, en el Estado y en los índices. Alternativa: cambiar la guardia para admitir PROPUESTO;
+  no se hace de noche porque cambia una regla del repositorio.
+- **DN-1..DN-4**: las del modelo de llenado, en ADR-0051 §1, §3, §4 y §6.
 
 ## Paradas
 
