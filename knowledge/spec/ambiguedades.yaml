@@ -856,7 +856,10 @@ ambiguedades:
     # das por bueno? ¿Y que haces si despues el precio lo supera un poco?"
     evidencia:
       - ev-v4-005053-885e2773
-    parametros: []
+    # El selector de la respuesta, SIN VALOR (UNKNOWN) desde el 2026-09-26 (rama
+    # trabajo/preparar-a35-a44): sus opciones son las dos lecturas que el corpus documenta, y
+    # activar RN-004 es escribirle la que diga el trader (docs/runbooks/ACTIVAR-A35-A44.md)
+    parametros: [liquidez_m15_pivote_formado]
     contradiccion: null
     estado: ABIERTA
     decision: null

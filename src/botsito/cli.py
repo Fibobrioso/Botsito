@@ -2059,6 +2059,49 @@ def _texto_de_vistos(repo: Path) -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
+def _diagnostico_de(args: argparse.Namespace) -> Any:
+    """Lo pedido con --diagnostico-a35 / --diagnostico-a44 (rama trabajo/preparar-a35-a44)."""
+    from botsito.engine.diagnostico import Diagnostico
+
+    return Diagnostico(
+        getattr(args, "diagnostico_a35", None), getattr(args, "diagnostico_a44", None)
+    )
+
+
+def _cabecera_diagnostico(diag: Any, lectura: str) -> str:
+    """Las primeras lineas de un informe en diagnostico: que hipotesis corre y que NO vale."""
+    lineas = [
+        "# DIAGNOSTICO: corrida en HIPOTESIS, sin valor para ninguna medida de fidelidad ni",
+        "# conjunto de medicion. La lectura la elige el trader, no el ajuste.",
+    ]
+    if diag.a35 is not None:
+        lineas.append(f"# A-35 en hipotesis: liquidez_m15_pivote_formado = {lectura}")
+    if diag.a44 is not None:
+        lineas.append(f"# A-44 en hipotesis: tope del trader = {diag.a44}")
+    return "\n".join(lineas) + "\n\n"
+
+
+def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
+    """El modo diagnostico de A-35 y A-44: correr con un valor hipotetico, todo etiquetado."""
+    from botsito.domain.pivotes_m15 import LECTURAS
+    from botsito.engine.diagnostico import MODOS_A44
+
+    parser.add_argument(
+        "--diagnostico-a35",
+        choices=LECTURAS,
+        default=None,
+        help="A-35 sin fijar: corre con esta lectura de «formado» EN HIPOTESIS; cada linea, "
+        "fichero y pagina lleva la etiqueta DIAGNOSTICO-A35-<lectura> y no cuenta para nada",
+    )
+    parser.add_argument(
+        "--diagnostico-a44",
+        choices=MODOS_A44,
+        default=None,
+        help="A-44 sin fijar: corre con este tope del trader EN HIPOTESIS (sin_tope, o un "
+        "marcador que no es un valor plausible); etiquetado DIAGNOSTICO-A44-<modo>",
+    )
+
+
 def _opciones_simulacion(parser: argparse.ArgumentParser) -> None:
     """Las opciones del modo simulacion (ADR-0053), iguales en el arnes y en el visor."""
     parser.add_argument(
@@ -2098,7 +2141,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes
+    from botsito.engine import arnes, diagnostico
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
@@ -2115,8 +2158,18 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
         vocabulario = cargar_vocabulario(spec)
         dias = arnes.dias_de_construccion(repo, criterio, meses)
+        # A-35: sin la lectura de «formado» fijada por el trader, el motor se niega (salvo en
+        # diagnostico, etiquetado); la compuerta de construccion va ANTES, y manda
+        diag = _diagnostico_de(args)
+        lectura = diagnostico.lectura_pivote(registro, diag)
         mercado = arnes.dias_de_mercado(
-            repo, _carpeta_datos(repo), config, registro, dias, registro.texto("huso_operativa")
+            repo,
+            _carpeta_datos(repo),
+            config,
+            registro,
+            dias,
+            registro.texto("huso_operativa"),
+            lectura,
         )
         reglas = reglas_ejecutables(cargar_reglas(spec))
         motor: Motor
@@ -2145,6 +2198,10 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         texto = arnes.informe(corrida, criterio, vocabulario)
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
+        if diag.activo:
+            texto = diagnostico.etiquetar(
+                _cabecera_diagnostico(diag, lectura) + texto, diag.etiquetas
+            )
     except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         tracemalloc.stop()
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -2155,8 +2212,9 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         return 3
     _, pico = tracemalloc.get_traced_memory()
     tracemalloc.stop()
-    Path(args.salida).write_text(texto, encoding="utf-8", newline="\n")
-    print(f"OK: informe del arnes en {args.salida}")
+    salida = diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
+    salida.write_text(texto, encoding="utf-8", newline="\n")
+    print(f"OK: informe del arnes en {salida}")
     print(
         f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: pico de {pico / 2**20:.1f} MiB "
         f"(tracemalloc: solo lo que asigna Python)"
@@ -2179,7 +2237,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import visor
+    from botsito.engine import diagnostico, visor
     from botsito.engine.arnes import ConjuntoError
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
@@ -2204,6 +2262,10 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
             casos = preparador.dias(meses)
         else:
             casos = (preparador.caso(args.caso),)
+        # A-35: la compuerta de construccion va antes; sin lectura fijada, se niega (salvo
+        # diagnostico, etiquetado en cada pagina y en cada nombre)
+        diag = _diagnostico_de(args)
+        preparador.lectura_pivote = diagnostico.lectura_pivote(registro, diag)
         if args.simular:
             # ADR-0053: el mismo visor sobre el motor cableado; la pagina ensena ordenes y llenados
             from botsito.engine import cableado
@@ -2233,11 +2295,23 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
             )
         dias = [preparador.preparar(c) for c in casos]
         if hasta is None:
-            escritos = visor.generar(dias, salida, preparador.nombre_motor, con_indice=args.todos)
+            escritos = visor.generar(
+                dias,
+                salida,
+                preparador.nombre_motor,
+                con_indice=args.todos,
+                etiquetas=diag.etiquetas,
+            )
         else:
             salida.mkdir(parents=True, exist_ok=True)
-            ruta = salida / f"{dias[0].caso}.hasta-{args.hasta.replace(':', '')}.html"
-            ruta.write_text(visor.render_dia(dias[0], hasta), encoding="utf-8", newline="\n")
+            ruta = diagnostico.nombre_etiquetado(
+                salida / f"{dias[0].caso}.hasta-{args.hasta.replace(':', '')}.html", diag.etiquetas
+            )
+            ruta.write_text(
+                diagnostico.etiquetar_html(visor.render_dia(dias[0], hasta), diag.etiquetas),
+                encoding="utf-8",
+                newline="\n",
+            )
             escritos = [ruta]
     except (ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -2727,6 +2801,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
     )
     _opciones_simulacion(mt_arnes)
+    _opciones_diagnostico(mt_arnes)
     mt_visor = motor_sub.add_parser(
         "visor",
         help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
@@ -2750,6 +2825,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="con --caso: HH:MM local; la vista se recorta a ese instante (sin mirar al futuro)",
     )
     _opciones_simulacion(mt_visor)
+    _opciones_diagnostico(mt_visor)
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )

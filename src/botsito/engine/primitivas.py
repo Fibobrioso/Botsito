@@ -25,6 +25,7 @@ from zoneinfo import ZoneInfo
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
 from botsito.data.velas import a_datetime
+from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote, cruza, toca
 from botsito.domain.sesgo import sesgo_h4
 from botsito.domain.velas import Vela
 from botsito.engine.interprete import (
@@ -52,6 +53,19 @@ class DatosDelDia(Protocol):
     """Lo que el motor da a las primitivas: solo lo cerrado hasta el instante del evento."""
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]: ...
+
+    def ultima_m15_cerrada(self, instante: int) -> Vela | None: ...
+
+    def liquidez_m15(self, instante: int, lado: str) -> Pivote | None: ...
+
+
+# RN-004 y RN-005 leen `que: liquidez_m15`: el unico nivel que estas primitivas saben producir.
+TOKEN_LIQUIDEZ_M15 = "liquidez_m15"
+HECHO_SESGO = "sesgo"
+# El lado del pivote que es la liquidez segun el sesgo (RN-005: «lo que se desarrolla por encima de
+# la liquidez de M15 en sesgo alcista, o por debajo de ella en sesgo bajista, es ruido»: la
+# operativa alcista va por debajo de un BAJO tomado; la bajista, por encima de un ALTO tomado).
+LADO_DE_LA_LIQUIDEZ = {"alcista": BAJO, "bajista": ALTO}
 
 
 def _local(instante: int, huso: str) -> datetime:
@@ -105,6 +119,46 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})
 
+    def _liquidez(
+        nombre: str, args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> tuple[Pivote, Vela] | Resultado | NoImplementada:
+        """El pivote de M15 que hoy es la liquidez y la ultima M15 cerrada que puede tomarlo; NO
+        si no hay liquidez marcada (sin sesgo con lado, sin pivote, o sin vela posterior a la
+        contraria); NO_IMPLEMENTADA si los datos no tienen lectura de «formado» (A-35)."""
+        if str(args.get("que")) != TOKEN_LIQUIDEZ_M15:
+            return NoImplementada(f"predicado:{nombre}:{args.get('que')}")
+        datos: DatosDelDia = momento.datos
+        lado = LADO_DE_LA_LIQUIDEZ.get(str(estado.hechos.get(HECHO_SESGO)))
+        if lado is None:
+            return Resultado(Tri.NO)  # sin sesgo con lado no hay liquidez marcada (RN-033 manda)
+        try:
+            pivote = datos.liquidez_m15(momento.instante, lado)
+        except (AttributeError, LookupError):
+            return NoImplementada(f"predicado:{nombre}")
+        ultima = datos.ultima_m15_cerrada(momento.instante)
+        if pivote is None or ultima is None or ultima.inicio < pivote.contraria_fin:
+            return Resultado(Tri.NO)
+        return pivote, ultima
+
+    def alcanza_nivel(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        r = _liquidez("alcanza_nivel", args, momento, estado)
+        if not isinstance(r, tuple):
+            return r
+        pivote, ultima = r
+        return Resultado(Tri.SI if toca(ultima, pivote) else Tri.NO)
+
+    def cruza_nivel(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        r = _liquidez("cruza", args, momento, estado)
+        if not isinstance(r, tuple):
+            return r
+        pivote, ultima = r
+        criterio = registro.opcion(str(args["criterio"]))  # lo nombra la forma (ADR-0019 §1)
+        return Resultado(Tri.SI if cruza(ultima, pivote, criterio) else Tri.NO)
+
     def fijar(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
@@ -122,10 +176,18 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
             "en_ventana": en_ventana,
             "alcanza_hora": alcanza_hora,
             "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
+            "alcanza_nivel": alcanza_nivel,
+            "cruza": cruza_nivel,
         },
         acciones={"fijar": fijar},
         acumuladores={},
     )
 
 
-__all__ = ["ANOTACION_SESGO", "DatosDelDia", "primitivas_escritas"]
+__all__ = [
+    "ANOTACION_SESGO",
+    "LADO_DE_LA_LIQUIDEZ",
+    "TOKEN_LIQUIDEZ_M15",
+    "DatosDelDia",
+    "primitivas_escritas",
+]

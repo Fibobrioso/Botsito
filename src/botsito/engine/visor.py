@@ -37,7 +37,7 @@ from zoneinfo import ZoneInfo
 from botsito.cases.criterio_fidelidad import Criterio, Operacion, Pareja, medir
 from botsito.cases.ingesta import DIRECTORIO_DEV
 from botsito.cases.paquete import Config
-from botsito.cases.ventanas import MINUTOS_H4
+from botsito.cases.ventanas import MINUTOS_H4, MINUTOS_M15
 from botsito.comun.husos import huso_canonico
 from botsito.comun.yaml_estricto import leer_yaml
 from botsito.config.registro import Registro
@@ -48,6 +48,7 @@ from botsito.domain.sesgo import ResultadoSesgo, sesgo_h4
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine import arnes
 from botsito.engine.arnes import ConjuntoError, DiaTrader
+from botsito.engine.diagnostico import etiquetar_html, nombre_etiquetado
 from botsito.engine.interprete import VALOR_APAGADO
 from botsito.engine.motor import (
     DatosMercado,
@@ -59,7 +60,6 @@ from botsito.engine.motor import (
 )
 from botsito.engine.primitivas import ANOTACION_SESGO
 
-MINUTOS_M15 = 15
 CARPETA_SALIDA = Path("data") / "visor"  # ignorada por git (`/data/*`)
 INDICE = "index.html"
 TRADER = "trader"
@@ -245,6 +245,7 @@ class Preparador:
     motor: Motor
     nombre_motor: str = "spec vigente"
     detalle_broker: Callable[[str], DetalleBroker | None] | None = None  # con --simular
+    lectura_pivote: str | None = None  # la lectura de «formado» de A-35, o None
     _m1_por_mes: dict[str, tuple[tuple[Vela, ...], int]] = field(default_factory=dict)
 
     @property
@@ -284,7 +285,10 @@ class Preparador:
         anclaje = self.registro.hora("anclaje_h4")
         h4_todas = agregar(list(m1_mes), MINUTOS_H4, anclaje)
         sesiones = tuple(Sesion(s.nombre, s.desde, s.hasta) for s in self.config.sesiones)
-        mercado = DiaDeMercado(dia, self.huso, sesiones, DatosMercado(h4_todas))
+        datos = DatosMercado(
+            h4_todas, agregar(list(m1_mes), MINUTOS_M15, anclaje), m1_mes, self.lectura_pivote
+        )
+        mercado = DiaDeMercado(dia, self.huso, sesiones, datos)
         resultado = self.motor.correr_dia(mercado)
 
         desde, hasta = (
@@ -1014,18 +1018,27 @@ def render_indice(filas: Sequence[FilaIndice], motor: str) -> str:
     return "\n".join(cuerpo) + "\n"
 
 
-def generar(dias: Sequence[DiaVisor], salida: Path, motor: str, con_indice: bool) -> list[Path]:
-    """Escribe una pagina por dia y, si se pide, el indice. Determinista: mismos bytes siempre."""
+def generar(
+    dias: Sequence[DiaVisor],
+    salida: Path,
+    motor: str,
+    con_indice: bool,
+    etiquetas: tuple[str, ...] = (),
+) -> list[Path]:
+    """Escribe una pagina por dia y, si se pide, el indice. Determinista: mismos bytes siempre.
+    Con `etiquetas` (diagnostico), cada fichero lleva la etiqueta en el nombre y en la pagina."""
     salida.mkdir(parents=True, exist_ok=True)
     escritos: list[Path] = []
     for d in sorted(dias, key=lambda d: (d.dia, d.caso)):
-        ruta = salida / f"{d.caso}.html"
-        ruta.write_text(render_dia(d), encoding="utf-8", newline="\n")
+        ruta = nombre_etiquetado(salida / f"{d.caso}.html", etiquetas)
+        ruta.write_text(etiquetar_html(render_dia(d), etiquetas), encoding="utf-8", newline="\n")
         escritos.append(ruta)
     if con_indice:
-        ruta = salida / INDICE
+        ruta = nombre_etiquetado(salida / INDICE, etiquetas)
         ruta.write_text(
-            render_indice([fila_indice(d) for d in dias], motor), encoding="utf-8", newline="\n"
+            etiquetar_html(render_indice([fila_indice(d) for d in dias], motor), etiquetas),
+            encoding="utf-8",
+            newline="\n",
         )
         escritos.append(ruta)
     return escritos

@@ -18,6 +18,7 @@ parametros:
   cierre_forzoso_fin_ventana: {temas: [ventana]}
   sesgo_h4_regla: {temas: [sesgo]}
   liquidez_m15_criterio_toma: {temas: [liquidez]}
+  liquidez_m15_pivote_formado: {temas: [liquidez.m15.pico_ya_formado, mapeo.vela_contraria_marca_punto, mapeo.m1.vela_contraria_marca_extremo]}
   stop_fraccion_caja: {temas: [stop.nivel, stop.075_suficiente, stop.introducido_en_operacion_075]}
   stop_colchon_spread: {temas: [stop.colchon_spread_075_080, stop.acordado_075_mas_spread, stop.075_desplazado_por_spread_y_lotaje]}
   stop_reduccion_fraccion: {temas: [stop.bajar_050]}

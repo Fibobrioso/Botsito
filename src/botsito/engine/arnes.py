@@ -35,7 +35,7 @@ from botsito.cases.criterio_fidelidad import Criterio, Medida, Operacion, medir
 from botsito.cases.holdout import HoldoutCerradoError, casos_ocultos
 from botsito.cases.ingesta import DIRECTORIO_DEV
 from botsito.cases.paquete import Config
-from botsito.cases.ventanas import MINUTOS_H4
+from botsito.cases.ventanas import MINUTOS_H4, MINUTOS_M15
 from botsito.comun.yaml_estricto import leer_yaml
 from botsito.config.registro import Registro
 from botsito.data.agregacion import agregar
@@ -157,8 +157,11 @@ def dias_de_mercado(
     registro: Registro,
     dias: Sequence[DiaTrader],
     huso_sesiones: str,
+    lectura_pivote: str | None = None,
 ) -> dict[str, DiaDeMercado]:
-    """Las H4 de cada mes y del anterior, para el calentamiento del sesgo (como MOTOR-SESGO-H4)."""
+    """Las H4 de cada mes y del anterior, para el calentamiento del sesgo (como MOTOR-SESGO-H4); y
+    las M15 y las M1 del mismo tramo para la liquidez de M15 con la lectura de «formado» que se
+    de (A-35). Sin lectura, RN-004 sigue NO_IMPLEMENTADA."""
     anclaje = registro.hora("anclaje_h4")
     sesiones = tuple(Sesion(s.nombre, s.desde, s.hasta) for s in config.sesiones)
     por_mes: dict[str, DatosMercado] = {}
@@ -173,7 +176,12 @@ def dias_de_mercado(
                 except DatasetError:
                     continue  # sin el mes anterior, el calentamiento empieza en el mes
                 m1 += list(cargar_serie(cargar_manifiesto(ruta), carpeta_datos).velas)
-            por_mes[mes] = DatosMercado(agregar(m1, MINUTOS_H4, anclaje))
+            por_mes[mes] = DatosMercado(
+                agregar(m1, MINUTOS_H4, anclaje),
+                agregar(m1, MINUTOS_M15, anclaje),
+                m1,
+                lectura_pivote,
+            )
         salida[d.dia] = DiaDeMercado(
             date.fromisoformat(d.dia), huso_sesiones, sesiones, por_mes[mes]
         )

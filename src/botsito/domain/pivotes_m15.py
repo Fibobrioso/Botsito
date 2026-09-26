@@ -101,51 +101,99 @@ def _pivote_de(contraria: Vela, racha: Sequence[Vela], formado_en: MinutoUtc) ->
     )
 
 
-def pivotes_formados(
-    cerradas: Sequence[Vela], en_curso: Vela | None, lectura: str, instante: int
-) -> list[Pivote]:
-    """Todos los pivotes formados a la vista en `instante` (un cierre de M1), del mas antiguo al
-    mas reciente. `cerradas` son las M15 con fin <= instante, en orden; `en_curso`, la M15 que
-    contiene `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna)."""
+def _comprobar(
+    cerradas: Sequence[Vela], n: int, en_curso: Vela | None, lectura: str, instante: int
+) -> None:
     if lectura not in LECTURAS:
         raise PivoteError(f"lectura {lectura!r} no esta en {LECTURAS}")
-    for a, b in zip(cerradas, cerradas[1:], strict=False):
+    if n < 0 or n > len(cerradas):
+        raise PivoteError(f"n={n} fuera de las {len(cerradas)} velas cerradas")
+    if n and int(cerradas[n - 1].fin) > instante:
+        raise PivoteError("una M15 'cerrada' termina despues del instante: mira al futuro")
+    if en_curso is not None and n and en_curso.inicio < cerradas[n - 1].fin:
+        raise PivoteError("la M15 en curso empieza antes de que cierre la ultima cerrada")
+
+
+def _formado_en(c: Vela, lectura: str) -> MinutoUtc:
+    # con la lectura `inicio` una vela ya cerrada tambien esta formada: el instante en que empezo a
+    # contar es su primer cierre de M1, y ya paso
+    return c.fin if lectura == CIERRE_VELA_CONTRARIA else MinutoUtc(int(c.inicio) + 1)
+
+
+def _pivote_en(cerradas: Sequence[Vela], i: int, lectura: str) -> Pivote | None:
+    """El pivote que marca la vela cerrada `i` si es contraria a una racha anterior."""
+    c = cerradas[i]
+    signo = color(c)
+    if signo == 0:
+        return None
+    racha = _racha_anterior(cerradas, i, -signo)
+    if not racha:
+        return None
+    return _pivote_de(c, racha, _formado_en(c, lectura))
+
+
+def _pivote_en_curso(cerradas: Sequence[Vela], n: int, en_curso: Vela | None) -> Pivote | None:
+    """Con la lectura `inicio`: el pivote que la M15 en curso marca ahora mismo, si va contraria."""
+    if en_curso is None or n == 0:
+        return None
+    signo = color(en_curso)
+    if signo == 0:
+        return None
+    racha = _racha_anterior(cerradas, n, -signo)
+    if not racha:
+        return None
+    return _pivote_de(en_curso, racha, MinutoUtc(int(en_curso.inicio) + 1))
+
+
+def pivotes_formados(
+    cerradas: Sequence[Vela],
+    en_curso: Vela | None,
+    lectura: str,
+    instante: int,
+    n: int | None = None,
+) -> list[Pivote]:
+    """Todos los pivotes formados a la vista en `instante` (un cierre de M1), del mas antiguo al
+    mas reciente. `cerradas` son las M15 en orden y sin solapar; cuentan las `n` primeras (todas
+    si `n` es None), que tienen que tener fin <= instante; `en_curso` es la M15 que contiene
+    `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna)."""
+    n = len(cerradas) if n is None else n
+    _comprobar(cerradas, n, en_curso, lectura, instante)
+    for a, b in zip(cerradas[:n], cerradas[1:n], strict=False):
         if b.inicio < a.fin:
             raise PivoteError("las M15 cerradas tienen que ir en orden y sin solapar")
-    if cerradas and int(cerradas[-1].fin) > instante:
-        raise PivoteError("una M15 'cerrada' termina despues del instante: mira al futuro")
-    if en_curso is not None and cerradas and en_curso.inicio < cerradas[-1].fin:
-        raise PivoteError("la M15 en curso empieza antes de que cierre la ultima cerrada")
     salida: list[Pivote] = []
-    for i in range(1, len(cerradas)):
-        c = cerradas[i]
-        signo = color(c)
-        if signo == 0:
-            continue
-        racha = _racha_anterior(cerradas, i, -signo)
-        if not racha:
-            continue
-        # con la lectura `inicio` una vela ya cerrada tambien esta formada: el instante en que
-        # empezo a contar es su primer cierre de M1, y ya paso
-        formado = c.fin if lectura == CIERRE_VELA_CONTRARIA else MinutoUtc(int(c.inicio) + 1)
-        salida.append(_pivote_de(c, racha, formado))
-    if lectura == INICIO_VELA_CONTRARIA and en_curso is not None and cerradas:
-        signo = color(en_curso)
-        if signo != 0:
-            racha = _racha_anterior(cerradas, len(cerradas), -signo)
-            if racha:
-                salida.append(_pivote_de(en_curso, racha, MinutoUtc(int(en_curso.inicio) + 1)))
+    for i in range(1, n):
+        p = _pivote_en(cerradas, i, lectura)
+        if p is not None:
+            salida.append(p)
+    if lectura == INICIO_VELA_CONTRARIA:
+        p = _pivote_en_curso(cerradas, n, en_curso)
+        if p is not None:
+            salida.append(p)
     return salida
 
 
 def pivote_mas_reciente(
-    cerradas: Sequence[Vela], en_curso: Vela | None, lectura: str, instante: int, lado: str
+    cerradas: Sequence[Vela],
+    en_curso: Vela | None,
+    lectura: str,
+    instante: int,
+    lado: str,
+    n: int | None = None,
 ) -> Pivote | None:
-    """El pivote formado mas reciente del lado pedido (ADR-0045), o None si no hay ninguno."""
+    """El pivote formado mas reciente del lado pedido (ADR-0045), o None si no hay ninguno.
+    Busca hacia atras desde el mas reciente: no recorre toda la serie en cada instante."""
     if lado not in LADOS:
         raise PivoteError(f"lado {lado!r} no esta en {LADOS}")
-    for p in reversed(pivotes_formados(cerradas, en_curso, lectura, instante)):
-        if p.lado == lado:
+    n = len(cerradas) if n is None else n
+    _comprobar(cerradas, n, en_curso, lectura, instante)
+    if lectura == INICIO_VELA_CONTRARIA:
+        p = _pivote_en_curso(cerradas, n, en_curso)
+        if p is not None and p.lado == lado:
+            return p
+    for i in range(n - 1, 0, -1):
+        p = _pivote_en(cerradas, i, lectura)
+        if p is not None and p.lado == lado:
             return p
     return None
 

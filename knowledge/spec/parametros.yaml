@@ -401,6 +401,24 @@ parametros:
     fuente:
       tipo: evidence
       id: ev-v4-005910-d24c0345
+  - nombre: liquidez_m15_pivote_formado
+    categoria: estrategia
+    tipo: enum
+    unidad: en que momento un pivote de M15 cuenta como formado (A-35)
+    opciones: [inicio_vela_contraria, cierre_vela_contraria]
+    descripcion: >-
+      cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el
+      mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader:
+      este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus
+      documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de
+      ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y
+      `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849,
+      ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor
+      (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo
+      diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
+    estado: UNKNOWN
+    consumido_por: [ADR-0045]
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum
