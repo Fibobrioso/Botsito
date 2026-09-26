@@ -46,6 +46,16 @@ fidelidad de la spec, la guarda del holdout y los meses vistos.
    `trabajo/blindaje` los separó en dos líneas; `git push --atomic` actualiza los dos refs de una
    vez (`docs/validation/ARREGLO-CI.md`).
 
+9. **Ya no hace falta anteponer `PYTHONUTF8=1` al `git commit` (2026-09-25, rama
+   `trabajo/simulador-cuenta`).** Desde una consola de Windows en cp1252, `lint-imports` pintaba un
+   emoji, Python reventaba con `UnicodeEncodeError` y el hook lo contaba como «contrato de
+   importacion roto»; la salida era escribir `PYTHONUTF8=1` pegada a cada `git commit`. Ahora los
+   dos hooks versionados exportan la variable ellos mismos antes de lanzar ninguna herramienta
+   Python, porque un hook no puede depender de lo que cada terminal tenga configurado. Lo vigila
+   `tests/unit/test_hooks_utf8.py` con una consola cp1252 simulada y un `uv` falso: el hook
+   versionado pasa y el mismo hook sin la linea vuelve a rechazar. Hay que reinstalarlos una vez con
+   `make hooks` desde la rama que los trae.
+
 ## Cuándo falla `state check`, y cuándo un fallo es REAL
 
 **`uv run botsito state check` lee el FICHERO DEL DISCO, no el commit.** Por eso el tramo en el que

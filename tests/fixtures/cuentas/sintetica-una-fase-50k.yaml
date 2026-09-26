@@ -1,0 +1,133 @@
+# PERFIL SINTETICO, INVENTADO PARA LOS TESTS. No es ninguna firma real y ninguna cifra de aqui
+# tiene fuente: existe para demostrar que cambiar de firma en el simulador es cambiar de fichero
+# (ADR-0050). Una sola fase, el dia cortado en Nueva York, vigilancia sobre el SALDO, sin dias
+# minimos, con la perdida total arrastrando el saldo maximo y con cifra para la guardia de tamano.
+parametros:
+  - nombre: firma
+    categoria: prop_firm
+    tipo: enum
+    unidad: prop firm
+    opciones: [sintetica, ftmo]
+    descripcion: firma inventada para los tests
+    estado: CONFIRMED
+    valor: sintetica
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: saldo_inicial_cuenta
+    categoria: prop_firm
+    tipo: decimal
+    unidad: USD
+    descripcion: capital inicial inventado
+    estado: CONFIRMED
+    valor: "50000"
+    minimo: "0"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_huso_corte
+    categoria: prop_firm
+    tipo: texto
+    unidad: huso IANA del dia de la firma
+    descripcion: la firma inventada corta el dia a medianoche de Nueva York
+    estado: CONFIRMED
+    valor: "America/New_York"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_fases
+    categoria: prop_firm
+    tipo: texto
+    unidad: nombres de las fases, en orden y separados por espacios
+    descripcion: una sola fase
+    estado: CONFIRMED
+    valor: "unica"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_unica_objetivo_aplica
+    categoria: prop_firm
+    tipo: booleano
+    unidad: si la fase tiene objetivo de beneficio
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: true
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_unica_objetivo
+    categoria: prop_firm
+    tipo: porcentaje
+    unidad: porcentaje del capital inicial
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: "8"
+    minimo: "0"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_unica_dias_minimos_aplica
+    categoria: prop_firm
+    tipo: booleano
+    unidad: si la fase exige dias minimos de trading
+    descripcion: inventado, sin dias minimos
+    estado: CONFIRMED
+    valor: false
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_unica_dias_minimos
+    categoria: prop_firm
+    tipo: entero
+    unidad: dias de trading distintos
+    descripcion: sin valor porque la fase no exige dias
+    estado: UNKNOWN
+  - nombre: firma_perdida_diaria_max
+    categoria: prop_firm
+    tipo: porcentaje
+    unidad: porcentaje del capital inicial
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: "3"
+    minimo: "0"
+    maximo: "100"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_base_perdida_diaria
+    categoria: prop_firm
+    tipo: enum
+    unidad: sobre que saldo se fija el limite del dia
+    opciones: [saldo_inicial_cuenta, saldo_corte_diario]
+    descripcion: inventado, sobre el capital inicial siempre
+    estado: CONFIRMED
+    valor: saldo_inicial_cuenta
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_perdida_total_max
+    categoria: prop_firm
+    tipo: porcentaje
+    unidad: porcentaje del capital inicial
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: "6"
+    minimo: "0"
+    maximo: "100"
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_perdida_total_arrastra
+    categoria: prop_firm
+    tipo: booleano
+    unidad: si el limite total sigue al saldo maximo alcanzado
+    descripcion: inventado, arrastra
+    estado: CONFIRMED
+    valor: true
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_magnitud_vigilada
+    categoria: prop_firm
+    tipo: enum
+    unidad: que magnitud no puede bajar del limite
+    opciones: [saldo, equity]
+    descripcion: inventado, vigila el saldo y no la equity
+    estado: CONFIRMED
+    valor: saldo
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_tamano_posicion_aviso_aplica
+    categoria: prop_firm
+    tipo: booleano
+    unidad: si la firma pide coherencia en el tamano de posicion
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: true
+    fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_tamano_posicion_ratio_aviso
+    categoria: prop_firm
+    tipo: decimal
+    unidad: veces la mediana de los lotes de las demas operaciones
+    descripcion: inventado
+    estado: CONFIRMED
+    valor: "2"
+    minimo: "0"
+    fuente: {tipo: decision, id: ADR-0050}
