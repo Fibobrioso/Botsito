@@ -61,6 +61,7 @@ from botsito.engine.primitivas import ANOTACION_SESGO
 
 MINUTOS_M15 = 15
 CARPETA_SALIDA = Path("data") / "visor"  # ignorada por git (`/data/*`)
+INDICE = "index.html"
 TRADER = "trader"
 BOT = "bot"
 # Geometria de los graficos, en pixeles. No es negocio: es la pagina.
@@ -785,13 +786,93 @@ def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
     return "\n".join(cuerpo) + "\n"
 
 
-def generar(dias: Sequence[DiaVisor], salida: Path) -> list[Path]:
-    """Escribe una pagina por dia. Determinista: mismos bytes siempre."""
+# ---------------------------------------------------------------------------------- indice
+
+
+@dataclass(frozen=True)
+class FilaIndice:
+    caso: str
+    dia: str
+    sesiones_con_trader: int
+    operaciones_trader: int
+    operaciones_bot: int
+    parejas: int
+    sesgos: str
+    parada: str
+
+
+def fila_indice(d: DiaVisor) -> FilaIndice:
+    con_trader = {op.sesion for op in d.trader}
+    trazas = {s.nombre: d.resultado.sesiones.get(s.nombre, TrazaSesion()) for s in d.sesiones}
+    sesgos = "; ".join(
+        f"{s.nombre} {trazas[s.nombre].anotaciones.get(ANOTACION_SESGO, arnes.SIN_ANOTACION)}"
+        for s in d.sesiones
+    )
+    parada = "; ".join(
+        f"{s.nombre}: {donde_se_para(trazas[s.nombre], d.hechos)}" for s in d.sesiones
+    )
+    return FilaIndice(
+        d.caso,
+        d.dia.isoformat(),
+        len(con_trader),
+        len(d.trader),
+        len(d.bot),
+        len(d.parejas),
+        sesgos,
+        parada,
+    )
+
+
+def render_indice(filas: Sequence[FilaIndice], motor: str) -> str:
+    cuerpo = [
+        "<!doctype html>",
+        '<html lang="es"><head><meta charset="utf-8"><title>Visor de dias de construccion</title>',
+        f"<style>{_CSS}</style></head><body>",
+        "<h1>Visor de dias de construccion</h1>",
+        f"<p>Motor: {html.escape(motor)} · {len(filas)} dias. Cada fila enlaza a su pagina.</p>",
+        _tabla(
+            (
+                "caso",
+                "dia",
+                "sesiones con trader",
+                "op. trader",
+                "op. bot",
+                "parejas",
+                "sesgo por sesion",
+                "donde se para el embudo",
+            ),
+            (
+                _fila(
+                    f'<a href="{html.escape(f.caso)}.html">{html.escape(f.caso)}</a>',
+                    html.escape(f.dia),
+                    str(f.sesiones_con_trader),
+                    str(f.operaciones_trader),
+                    str(f.operaciones_bot),
+                    str(f.parejas),
+                    html.escape(f.sesgos),
+                    html.escape(f.parada),
+                )
+                for f in sorted(filas, key=lambda f: (f.dia, f.caso))
+            ),
+        ),
+        "</body></html>",
+    ]
+    return "\n".join(cuerpo) + "\n"
+
+
+def generar(dias: Sequence[DiaVisor], salida: Path, motor: str, con_indice: bool) -> list[Path]:
+    """Escribe una pagina por dia y, si se pide, el indice. Determinista: mismos bytes siempre."""
     salida.mkdir(parents=True, exist_ok=True)
     escritos: list[Path] = []
     for d in sorted(dias, key=lambda d: (d.dia, d.caso)):
         ruta = salida / f"{d.caso}.html"
         ruta.write_text(render_dia(d), encoding="utf-8", newline="\n")
+        escritos.append(ruta)
+    if con_indice:
+        ruta = salida / INDICE
+        ruta.write_text(
+            render_indice([fila_indice(d) for d in dias], motor), encoding="utf-8", newline="\n"
+        )
         escritos.append(ruta)
     return escritos
 
@@ -799,8 +880,10 @@ def generar(dias: Sequence[DiaVisor], salida: Path) -> list[Path]:
 __all__ = [
     "BOT",
     "CARPETA_SALIDA",
+    "INDICE",
     "TRADER",
     "DiaVisor",
+    "FilaIndice",
     "Lienzo",
     "OperacionVisor",
     "Preparador",
@@ -808,6 +891,8 @@ __all__ = [
     "caso_de_construccion",
     "donde_se_para",
     "embudo_de_sesion",
+    "fila_indice",
     "generar",
     "render_dia",
+    "render_indice",
 ]

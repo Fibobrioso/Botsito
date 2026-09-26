@@ -2116,7 +2116,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
 
 
 def motor_visor(repo: Path, args: argparse.Namespace) -> int:
-    """El visor de dias de construccion: una pagina por dia.
+    """El visor de dias de construccion: una pagina por dia, y el indice con `--todos`.
 
     Misma compuerta y mismos codigos que el arnes: 2 si el conjunto no es de construccion, 3 si un
     dia esta oculto; en los dos casos no se escribe nada. La salida va a una carpeta ignorada por
@@ -2152,15 +2152,21 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         preparador = visor.Preparador(
             repo, _carpeta_datos(repo), criterio, registro, config, vocabulario, motor
         )
-        casos = (preparador.caso(args.caso),)
+        if args.todos:
+            meses = args.meses.split(",") if args.meses else list(criterio.construccion)
+            casos = preparador.dias(meses)
+        else:
+            casos = (preparador.caso(args.caso),)
         hasta = None
         if args.hasta:
+            if args.todos:
+                raise ConjuntoError("--hasta solo tiene sentido con --caso")
             hasta = visor._minuto_local(
                 date.fromisoformat(casos[0].dia), args.hasta, preparador.huso
             )
         dias = [preparador.preparar(c) for c in casos]
         if hasta is None:
-            escritos = visor.generar(dias, salida)
+            escritos = visor.generar(dias, salida, preparador.nombre_motor, con_indice=args.todos)
         else:
             salida.mkdir(parents=True, exist_ok=True)
             ruta = salida / f"{dias[0].caso}.hasta-{args.hasta.replace(':', '')}.html"
@@ -2507,7 +2513,14 @@ def build_parser() -> argparse.ArgumentParser:
         "visor",
         help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
     )
-    mt_visor.add_argument("--caso", required=True, help="id del caso dev (caso-...-AAAA-MM-DD)")
+    que = mt_visor.add_mutually_exclusive_group(required=True)
+    que.add_argument("--caso", help="id del caso dev (caso-...-AAAA-MM-DD)")
+    que.add_argument(
+        "--todos", action="store_true", help="todos los dias de construccion, con indice"
+    )
+    mt_visor.add_argument(
+        "--meses", help="con --todos: AAAA-MM separados por comas; por defecto, construccion"
+    )
     mt_visor.add_argument(
         "--salida",
         default=None,
@@ -2516,7 +2529,7 @@ def build_parser() -> argparse.ArgumentParser:
     mt_visor.add_argument(
         "--hasta",
         default=None,
-        help="HH:MM local; la vista se recorta a ese instante (sin mirar al futuro)",
+        help="con --caso: HH:MM local; la vista se recorta a ese instante (sin mirar al futuro)",
     )
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
