@@ -10,6 +10,10 @@ descarga o ejecuta; mayo, marzo, febrero y septiembre, ni se descargan ni se eje
 descargar nada se guardó la salida de `kit check --sesion 2026-09-09-sesion-01` y de `fidelidad
 check --artefacto eurusd-2026-09` para compararlas byte a byte después.
 
+```ids-inexistentes
+ADR-0052 — el ADR del bróker simulado, Fase 4; se escribe después de esta pieza
+```
+
 ## Fase 0 · comisión conservadora — HECHA
 
 `firma_comision_por_lado` pasa de UNKNOWN a CONFIRMED `true` en
@@ -30,7 +34,7 @@ al toque (DN-1); con ticks el orden real, y un tick que cruce stop y objetivo a 
 deslizamiento fijo, solo el de hueco de los ticks (DN-3); spread de cada tick y, sin ticks, el
 percentil 90 por hora medido en construcción (DN-4), en `knowledge/simulador/llenado.yaml`.
 
-## Fase 2 · ticks de construcción — EN CURSO
+## Fase 2 · ticks de construcción — PARADA (servidor), sin manifiesto
 
 Código sellado (`data/ticks.py`, `domain/ticks.py`, CLI `data download-ticks` y `check-ticks`,
 16+1 tests sin red, `scripts/ticks_integridad.py` y `scripts/ticks_spread.py`). Formato del
@@ -43,7 +47,16 @@ fuentes y |ΔO|, |ΔH|, |ΔL|, |ΔC| ≤ 2 puntos; el volumen no se compara. No 
 esperas de 5-20 s). Una sola secuencial con esperas 15-60 s fue de 2 s por hora al empezar a
 6,5 minutos por hora al saturarse: un mes entero (720 horas) no cabe en la noche. Ver DN-5.
 
-## Fase 3 · modelo de llenado en código — pendiente
+## Fase 3 · modelo de llenado en código — HECHA
+
+`engine/llenado.py`: funciones puras sobre un `Mercado` (ticks por minuto, M1 de respaldo):
+`primer_llenado_limite` y `primera_salida` con las reglas de ADR-0051 (lado del spread, paso
+estricto para límites y objetivos, toque para stops, orden real con ticks, respaldo pesimista con
+el stop primero y el evento en el cierre de la vela, hueco a la apertura, deslizamiento fijo
+opcional). Tests: sin mirar al futuro, determinismo, stop y objetivo en la misma M1 (ticks frente
+a respaldo), límite tocada justo en su precio a cada lado, tramo sin ticks marcado, hueco.
+`engine/simulador_config.py` lee `knowledge/simulador/llenado.yaml` con lectura estricta; el
+fichero se escribe cuando el spread esté medido (Fase 2).
 
 ## Fase 4 · bróker simulado — pendiente
 
@@ -71,4 +84,20 @@ esperas de 5-20 s). Una sola secuencial con esperas 15-60 s fue de 2 s por hora 
 
 ## Paradas
 
-- Ninguna todavía.
+- **La sesión se cortó a la 01:35 por el límite de uso**, con el árbol TODO ESTADIADO y SIN SELLAR
+  (no dio tiempo a `make check`). Lo estadiado: Fase 3 (`engine/llenado.py` + 9 tests, verdes),
+  su configuración (`engine/simulador_config.py`, `knowledge/simulador/README.md`, tests verdes;
+  falta `llenado.yaml`, que espera al spread medido), Fase 4 (ADR-0052 PROPUESTO, `engine/broker.py`
+  + 8 tests verdes, `engine/simulacion.py`), Fase 5 (`tests/unit/test_simulacion.py`, 6 verdes,
+  estrategia sintética fuera de src), los scripts de las Fases 6 y 7 (escritos, SIN ejecutar: no hay
+  manifiesto de ticks), el índice de ADR-0052 y la robustez del descargador. Para retomar:
+  `make check > make-check.log 2>&1` y commits por pieza en el orden Fase 2 → 3 → 4 → 5.
+- **Fase 2 no cerró: Dukascopy rechaza las conexiones.** Medido a la 01:33: con conexiones nuevas y 8 s
+  de pausa, 1 de 4 horas responde 200 y el resto 503 o timeout; con una conexión persistente, 503 en
+  las 6. Antes, entre las 00:50 y la 01:30, el ritmo fue de 2 s por hora al empezar a más de un minuto
+  por hora, con horas perdidas. Lo bajado está en la caché cruda (`data/raw/EURUSD/ticks/`: abril 1 y 2
+  completos, abril 3 parcial, algo de agosto 1 y 2); NO hay manifiesto ni dataset congelado, y `kit
+  check` y `fidelidad check` no se han vuelto a comparar porque no se congeló nada. Para retomar:
+  relanzar `scratchpad/descarga.cmd` (o `botsito data download-ticks ... --solo-dias-dev --horas 05-13
+  --pausa 2`) cuando el servidor responda; la caché reanuda sola. Las Fases 6 y 7 dependen de esto.
+- Las decisiones nocturnas DN-0 a DN-6 están arriba y en ADR-0051 y ADR-0052.
