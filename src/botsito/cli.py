@@ -2068,7 +2068,7 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
     )
 
 
-def _cabecera_diagnostico(diag: Any, lectura: str) -> str:
+def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any) -> str:
     """Las primeras lineas de un informe en diagnostico: que hipotesis corre y que NO vale."""
     lineas = [
         "# DIAGNOSTICO: corrida en HIPOTESIS, sin valor para ninguna medida de fidelidad ni",
@@ -2077,7 +2077,7 @@ def _cabecera_diagnostico(diag: Any, lectura: str) -> str:
     if diag.a35 is not None:
         lineas.append(f"# A-35 en hipotesis: liquidez_m15_pivote_formado = {lectura}")
     if diag.a44 is not None:
-        lineas.append(f"# A-44 en hipotesis: tope del trader = {diag.a44}")
+        lineas.append(f"# A-44 en hipotesis: {tope.descripcion()}")
     return "\n".join(lineas) + "\n\n"
 
 
@@ -2141,7 +2141,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes, diagnostico
+    from botsito.engine import arnes, cableado, diagnostico, tope_trader
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
@@ -2162,6 +2162,9 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         # diagnostico, etiquetado); la compuerta de construccion va ANTES, y manda
         diag = _diagnostico_de(args)
         lectura = diagnostico.lectura_pivote(registro, diag)
+        # A-44: el tope propio del trader, fijado o en diagnostico; si no, se niega
+        perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
+        tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
         mercado = arnes.dias_de_mercado(
             repo,
             _carpeta_datos(repo),
@@ -2175,8 +2178,6 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         motor: Motor
         if args.simular:
             # ADR-0053: el motor cableado al broker simulado y a la capa de cuenta
-            from botsito.engine import cableado
-
             motor = cableado.construir_motor_cableado(
                 repo,
                 _carpeta_datos(repo),
@@ -2186,13 +2187,14 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
                 vocabulario,
                 reglas,
                 dias,
-                cableado.perfil_del_repo(repo, args.perfil),
+                perfil_cuenta,
                 args.fase,
                 args.depuracion,
+                tope,
             )
             nombre = cableado.NOMBRE_MOTOR
         else:
-            motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro)), reglas)
+            motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro, tope)), reglas)
             nombre = "spec vigente"
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
         texto = arnes.informe(corrida, criterio, vocabulario)
@@ -2200,7 +2202,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
             texto = diagnostico.etiquetar(
-                _cabecera_diagnostico(diag, lectura) + texto, diag.etiquetas
+                _cabecera_diagnostico(diag, lectura, tope) + texto, diag.etiquetas
             )
     except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         tracemalloc.stop()
@@ -2237,7 +2239,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import diagnostico, visor
+    from botsito.engine import arnes, cableado, diagnostico, tope_trader, visor
     from botsito.engine.arnes import ConjuntoError
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
@@ -2253,23 +2255,28 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
         vocabulario = cargar_vocabulario(spec)
         reglas = reglas_ejecutables(cargar_reglas(spec))
-        motor: Motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro)), reglas)
+        # LA COMPUERTA DE CONSTRUCCION VA PRIMERO: un mes de medida o un caso oculto se niegan con
+        # su mensaje antes de mirar A-35 o A-44
+        if args.todos:
+            meses = args.meses.split(",") if args.meses else list(criterio.construccion)
+            casos = arnes.dias_de_construccion(repo, criterio, meses)
+        else:
+            casos = (visor.caso_de_construccion(repo, criterio, args.caso),)
+        # A-35 y A-44: sin la lectura y el tope fijados, se niega (salvo diagnostico, etiquetado en
+        # cada pagina y en cada nombre)
+        diag = _diagnostico_de(args)
+        lectura = diagnostico.lectura_pivote(registro, diag)
+        perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
+        tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
+        motor: Motor = MotorSpec(
+            Interprete(vocabulario, primitivas_escritas(registro, tope)), reglas
+        )
         preparador = visor.Preparador(
             repo, _carpeta_datos(repo), criterio, registro, config, vocabulario, motor
         )
-        if args.todos:
-            meses = args.meses.split(",") if args.meses else list(criterio.construccion)
-            casos = preparador.dias(meses)
-        else:
-            casos = (preparador.caso(args.caso),)
-        # A-35: la compuerta de construccion va antes; sin lectura fijada, se niega (salvo
-        # diagnostico, etiquetado en cada pagina y en cada nombre)
-        diag = _diagnostico_de(args)
-        preparador.lectura_pivote = diagnostico.lectura_pivote(registro, diag)
+        preparador.lectura_pivote = lectura
         if args.simular:
             # ADR-0053: el mismo visor sobre el motor cableado; la pagina ensena ordenes y llenados
-            from botsito.engine import cableado
-
             cableado_motor = cableado.construir_motor_cableado(
                 repo,
                 _carpeta_datos(repo),
@@ -2279,9 +2286,10 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
                 vocabulario,
                 reglas,
                 casos,
-                cableado.perfil_del_repo(repo, args.perfil),
+                perfil_cuenta,
                 args.fase,
                 args.depuracion,
+                tope,
             )
             preparador.motor = cableado_motor
             preparador.nombre_motor = cableado.NOMBRE_MOTOR

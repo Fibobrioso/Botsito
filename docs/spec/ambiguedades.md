@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 13.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 13.2.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
@@ -124,7 +124,7 @@ Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu
 
 ¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
 
-Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`.
+Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `perdida_trader_alcance`, `perdida_trader_magnitud`, `perdida_trader_unidad`, `perdida_trader_dia_usd`, `perdida_trader_semana_usd`, `perdida_trader_reinicio_huso`.
 
 ## DECIDIDA (6)
 

@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import datetime
+from decimal import Decimal
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
@@ -36,6 +37,13 @@ from botsito.engine.interprete import (
     Primitivas,
     Resultado,
     Tri,
+)
+from botsito.engine.tope_trader import (
+    ACUMULADOR_DIA,
+    ACUMULADOR_SEMANA,
+    PORCENTAJE,
+    SIN_TOPE,
+    TopeTrader,
 )
 
 # RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044).
@@ -73,8 +81,11 @@ def _local(instante: int, huso: str) -> datetime:
     return a_datetime(instante).astimezone(zona)
 
 
-def primitivas_escritas(registro: Registro) -> Primitivas:
-    """Las primitivas de hoy, con el registro del que leen sus argumentos."""
+def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> Primitivas:
+    """Las primitivas de hoy, con el registro del que leen sus argumentos. Con `tope` (el tope
+    propio del trader, A-44) los acumuladores de RN-020 se evaluan tambien sin cuenta: el motor de
+    la spec no coloca ninguna orden, asi que su perdida acumulada es cero; sin `tope`, siguen
+    siendo hueco con nombre."""
 
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -170,6 +181,31 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
             estado.hechos[hecho] = valor
         return [(hecho, valor)]
 
+    def acumulador_sin_cuenta(nombre: str) -> Any:
+        def leer(
+            args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+        ) -> Resultado | NoImplementada:
+            assert tope is not None
+            if tope.alcance == SIN_TOPE:
+                return Resultado(Tri.NO)
+            aplica = tope.aplica_dia if nombre == ACUMULADOR_DIA else tope.aplica_semana
+            if not aplica:
+                return Resultado(Tri.NO)
+            umbral = (
+                registro.porcentaje(str(args["tope"])).valor
+                if tope.unidad == PORCENTAJE
+                else (tope.tope_dia if nombre == ACUMULADOR_DIA else tope.tope_semana)
+            )
+            perdida = Decimal(0)  # el motor de la spec no opera: no pierde nada
+            return Resultado(Tri.SI if umbral is not None and perdida >= umbral else Tri.NO)
+
+        return leer
+
+    acumuladores: dict[str, Any] = {}
+    if tope is not None:
+        for nombre in (ACUMULADOR_DIA, ACUMULADOR_SEMANA):
+            acumuladores[nombre] = acumulador_sin_cuenta(nombre)
+
     return Primitivas(
         predicados={
             "abre_sesion_operativa": abre_sesion_operativa,
@@ -180,7 +216,7 @@ def primitivas_escritas(registro: Registro) -> Primitivas:
             "cruza": cruza_nivel,
         },
         acciones={"fijar": fijar},
-        acumuladores={},
+        acumuladores=acumuladores,
     )
 
 

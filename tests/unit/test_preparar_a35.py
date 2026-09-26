@@ -357,13 +357,16 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida),
-         "--diagnostico-a35", CIERRE_VELA_CONTRARIA]
+         "--diagnostico-a35", CIERRE_VELA_CONTRARIA, "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     if codigo == 2 and "falta en disco" in capsys.readouterr().err:
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 0
-    etiquetado = tmp_path / f"informe.DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}.txt"
+    etiquetado = (
+        tmp_path / f"informe.DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}.DIAGNOSTICO-A44-sin_tope.txt"
+    )
     assert etiquetado.exists() and not salida.exists()
     lineas = etiquetado.read_text(encoding="utf-8").split("\n")
-    assert all(ln.startswith(f"[DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}] ") for ln in lineas if ln)
+    prefijo = f"[DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}][DIAGNOSTICO-A44-sin_tope] "
+    assert all(ln.startswith(prefijo) for ln in lineas if ln)
     assert "sin valor para ninguna medida" in lineas[0]

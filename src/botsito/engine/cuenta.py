@@ -398,6 +398,9 @@ class CuentaViva:
         self.motivo = "sin objetivo alcanzado ni limite infringido"
         self.instante: datetime | None = None
         self._vigilada_minima_tramo: Decimal | None = None
+        # la peor equity del tramo y el instante (ms) en que se observo: el tope del trader
+        # (A-44) puede vigilar equity aunque la firma vigile otra cosa, y la traza dice cuando
+        self._equity_minima_tramo: tuple[Decimal, int] | None = None
         self._ultimo_ms = primer_instante_ms
 
     # ------------------------------------------------------------------------- eventos
@@ -452,6 +455,9 @@ class CuentaViva:
         v = self._c.vigilada
         if self._vigilada_minima_tramo is None or v < self._vigilada_minima_tramo:
             self._vigilada_minima_tramo = v
+        e = self._c.equity
+        if self._equity_minima_tramo is None or e < self._equity_minima_tramo[0]:
+            self._equity_minima_tramo = (e, self._ultimo_ms)
         if self.estado is EstadoCuenta.EN_CURSO:
             infracciones = self._c.infracciones()
             if infracciones:
@@ -460,6 +466,13 @@ class CuentaViva:
                 self.instante = _de_ms(self._ultimo_ms)
 
     # ----------------------------------------------------------------------- lecturas
+
+    def peor_equity_del_tramo(self) -> tuple[Decimal, int]:
+        """La peor equity observada desde la lectura anterior de `acumuladores` y su instante en
+        ms (la equity actual y el ultimo instante si no hubo ninguna observacion). No reinicia."""
+        if self._equity_minima_tramo is None:
+            return self._c.equity, self._ultimo_ms
+        return self._equity_minima_tramo
 
     def acumuladores(self) -> dict[str, Decimal]:
         """`perdida_dia_firma` y `perdida_total_firma` con la PEOR magnitud vigilada desde la
@@ -470,6 +483,7 @@ class CuentaViva:
             else self._c.vigilada
         )
         self._vigilada_minima_tramo = None
+        self._equity_minima_tramo = None
         base_total = (
             self._c.saldo_maximo
             if self.reglas.perdida_total_arrastra

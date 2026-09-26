@@ -43,4 +43,10 @@ parametros:
   spread_maximo: {temas: [stop.colchon_spread_075_080, stop.respiro_con_noticias, stop.075_desplazado_por_spread_y_lotaje]}
   perdida_maxima_diaria: {temas: [riesgo.por_operacion.calculo_racha, riesgo.fondeo]}
   perdida_maxima_semanal: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_alcance: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_magnitud: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_unidad: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_dia_usd: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_semana_usd: {temas: [riesgo.fondeo, riesgo.por_operacion.calculo_racha]}
+  perdida_trader_reinicio_huso: {temas: [riesgo.fondeo, reloj]}
   comportamiento_sin_regla: {temas: [no_trade]}

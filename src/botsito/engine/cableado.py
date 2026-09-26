@@ -48,6 +48,14 @@ from botsito.engine.primitivas_broker import (
 )
 from botsito.engine.simulacion import MercadoDia, mercado_de_construccion, reglas_broker_de
 from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
+from botsito.engine.tope_trader import (
+    ACUMULADOR_DIA,
+    ACUMULADOR_SEMANA,
+    ORIGEN_FIRMA,
+    ORIGEN_TRADER,
+    SeguidorTope,
+    TopeTrader,
+)
 from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
@@ -92,7 +100,11 @@ class MotorCableado:
     primitivas_extra: Mapping[str, Any] = field(default_factory=dict)  # sinteticas (tests)
     acumuladores_extra: Mapping[str, Any] = field(default_factory=dict)  # sinteticas (tests)
     zonas_de: Callable[[MercadoDia], Mapping[str, Zona]] | None = None  # sinteticas (tests)
+    tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
     cuenta: CuentaViva | None = None
+    seguidor: SeguidorTope | None = None
+    # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
+    primero_en_tocar: tuple[str, str, int] | None = None
     trazas_broker: dict[str, TrazaBroker] = field(default_factory=dict)
     brokers: dict[str, Broker] = field(default_factory=dict)
 
@@ -121,7 +133,11 @@ class MotorCableado:
         broker = Broker(
             self.reglas_broker, self.config_llenado, md.mercado(), self.contrato, md.escala
         )
-        ctx = ContextoDia(broker, self.cuenta, self.contrato, md.escala)
+        if self.tope is not None and self.seguidor is None:
+            self.seguidor = SeguidorTope(
+                self.tope, _instante(primero * MS_POR_MINUTO - 1), self.cuenta.saldo
+            )
+        ctx = ContextoDia(broker, self.cuenta, self.contrato, md.escala, tope=self.tope)
         if self.zonas_de is not None:
             ctx.zonas.update(self.zonas_de(md))
         primitivas = primitivas_cableadas(self.registro, ctx)
@@ -144,7 +160,14 @@ class MotorCableado:
             vistos = self._a_la_cuenta(broker, ctx, tb, nuevos, vistos, hasta_ms)
             # 2. ordenes por evento del broker: hechos y eventos a la vista del interprete
             estado.broker = broker.hechos()
+            # la PEOR equity del minuto y su instante, antes de que la lectura reinicie el tramo:
+            # el tope del trader se lee como el de la firma, con la peor marca (ADR-0053 §5)
+            peor_equity, peor_ms = self.cuenta.peor_equity_del_tramo()
             ctx.acumuladores = self.cuenta.acumuladores()
+            if self.seguidor is not None:
+                self.seguidor.avanzar(_instante(hasta_ms), self.cuenta.saldo)
+                ctx.acumuladores.update(self.seguidor.acumuladores(self.cuenta.saldo, peor_equity))
+            self._anotar_toque(ctx.acumuladores, peor_ms)
             ctx.instante_ms = hasta_ms
             # 3. estrategia al cierre de M1
             sesion, abre = _sesion(limites, instante)
@@ -178,6 +201,30 @@ class MotorCableado:
         self.trazas_broker[clave] = tb
         self.brokers[clave] = broker
         return ResultadoDia(clave, self._operaciones_del_bot(broker, md, dia, limites), trazas)
+
+    def _anotar_toque(self, acumuladores: Mapping[str, Decimal], peor_ms: int) -> None:
+        """El primer limite que se toca en la corrida, y de quien es: del trader (RN-020, A-44) o
+        de la firma (la cuenta, ADR-0050). Los dos son independientes; se aplica el que se toque
+        antes y la traza dice cual. El toque del trader lleva el instante de la peor marca del
+        minuto; el de la firma, el instante exacto de su suspension; a igual instante, la traza
+        nombra al trader y el mas restrictivo manda igual."""
+        if self.primero_en_tocar is not None:
+            return
+        assert self.cuenta is not None
+        trader: tuple[str, str, int] | None = None
+        for cual in (ACUMULADOR_DIA, ACUMULADOR_SEMANA):
+            valor, tope = acumuladores.get(cual), acumuladores.get(f"{cual}:tope")
+            if valor is not None and tope is not None and valor >= tope:
+                trader = (ORIGEN_TRADER, cual, peor_ms)
+                break
+        firma: tuple[str, str, int] | None = None
+        if self.cuenta.estado is EstadoCuenta.SUSPENDIDA and self.cuenta.instante is not None:
+            ms = int(self.cuenta.instante.timestamp() * 1000)
+            firma = (ORIGEN_FIRMA, self.cuenta.motivo.split(":")[0], ms)
+        if trader is not None and (firma is None or trader[2] <= firma[2]):
+            self.primero_en_tocar = trader
+        elif firma is not None:
+            self.primero_en_tocar = firma
 
     def _a_la_cuenta(
         self,
@@ -351,6 +398,7 @@ def construir_motor_cableado(
     perfil: PerfilCuenta,
     fase: str | None,
     depuracion: bool,
+    tope: TopeTrader | None = None,
 ) -> MotorCableado:
     """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
@@ -372,6 +420,7 @@ def construir_motor_cableado(
         depuracion=depuracion,
         perfil=perfil.nombre,
         fase=fase_real,
+        tope=tope,
     )
 
 
@@ -429,6 +478,13 @@ def detalle_para_visor(motor: MotorCableado, dia: str) -> DetalleBroker | None:
     )
 
 
+def _primero_en_tocar(motor: MotorCableado) -> str:
+    if motor.primero_en_tocar is None:
+        return "ninguno"
+    origen, cual, ms = motor.primero_en_tocar
+    return f"{origen} ({cual}) en {_instante(ms).isoformat()}"
+
+
 def informe_simulacion(motor: MotorCableado) -> str:
     """La cola del informe del arnes en modo simulacion: veredicto de la cuenta sobre el tramo,
     curva de equity por dia, eventos del broker y huecos con nombre. Determinista."""
@@ -441,6 +497,9 @@ def informe_simulacion(motor: MotorCableado) -> str:
         f"MOTOR: {NOMBRE_MOTOR}",
         f"PERFIL: {motor.perfil or '-'}; FASE: {motor.fase or '-'}",
         f"DIAS CORRIDOS: {len(dias)}",
+        "TOPE DEL TRADER (RN-020, A-44): "
+        + (motor.tope.descripcion() if motor.tope is not None else "sin fijar: hueco con nombre"),
+        "PRIMERO EN TOCAR UN LIMITE: " + _primero_en_tocar(motor),
     ]
     if depurados:
         lineas.append(
