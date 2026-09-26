@@ -40,6 +40,15 @@ uv run botsito motor visor --caso caso-eurusd-2026-04-01 --hasta 09:30
 Escribe `<caso>.hasta-0930.html` con solo lo cerrado y fijado hasta esa hora: es la forma de ver
 lo que el motor SABÍA en ese momento, sin mirar al futuro.
 
+Con `--simular` (ADR-0053) el día lo corre el motor cableado al broker simulado: las operaciones
+del bot llevan su stop y su objetivo REALES (los de la orden, no derivados), y la página añade una
+sección «Broker simulado» con las órdenes, las posiciones y los eventos (llenados, stops,
+objetivos, cierres) del día, recortada también por `--hasta`:
+```
+uv run botsito motor visor --simular --caso caso-eurusd-2026-04-01
+```
+Admite `--perfil`, `--fase` y `--depuracion` igual que el arnés (`ARNES-MOTOR.md`).
+
 ## Cómo depurar una regla nueva con él
 
 1. Escribe la primitiva y corre el arnés (`ARNES-MOTOR.md`): el embudo dice cuántas sesiones se

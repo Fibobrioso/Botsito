@@ -2059,6 +2059,32 @@ def _texto_de_vistos(repo: Path) -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
+def _opciones_simulacion(parser: argparse.ArgumentParser) -> None:
+    """Las opciones del modo simulacion (ADR-0053), iguales en el arnes y en el visor."""
+    parser.add_argument(
+        "--simular",
+        action="store_true",
+        help="el motor cableado al broker simulado y a la capa de cuenta (ADR-0053); solo "
+        "CONSTRUCCION, con ticks obligatorios",
+    )
+    parser.add_argument(
+        "--depuracion",
+        action="store_true",
+        help="con --simular: admite dias sin ticks sobre el respaldo M1; la salida lo marca y "
+        "NO cuenta (ADR-0051 §8)",
+    )
+    parser.add_argument(
+        "--perfil",
+        default=None,
+        help="con --simular: perfil de cuenta de knowledge/cuentas (por defecto, el unico)",
+    )
+    parser.add_argument(
+        "--fase",
+        default=None,
+        help="con --simular: fase del perfil (por defecto, la primera que declara)",
+    )
+
+
 def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     """El arnes del motor sobre CONSTRUCCION (ADR-0048).
 
@@ -2071,9 +2097,10 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.holdout import HoldoutCerradoError
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
+    from botsito.data.dataset import DatasetError
     from botsito.engine import arnes
     from botsito.engine.interprete import Interprete, reglas_ejecutables
-    from botsito.engine.motor import MotorSpec
+    from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
     from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 
@@ -2087,17 +2114,38 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
         spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
         vocabulario = cargar_vocabulario(spec)
-        motor = MotorSpec(
-            Interprete(vocabulario, primitivas_escritas(registro)),
-            reglas_ejecutables(cargar_reglas(spec)),
-        )
         dias = arnes.dias_de_construccion(repo, criterio, meses)
         mercado = arnes.dias_de_mercado(
             repo, _carpeta_datos(repo), config, registro, dias, registro.texto("huso_operativa")
         )
-        corrida = arnes.correr("spec vigente", tuple(sorted(set(meses))), dias, mercado, motor)
+        reglas = reglas_ejecutables(cargar_reglas(spec))
+        motor: Motor
+        if args.simular:
+            # ADR-0053: el motor cableado al broker simulado y a la capa de cuenta
+            from botsito.engine import cableado
+
+            motor = cableado.construir_motor_cableado(
+                repo,
+                _carpeta_datos(repo),
+                criterio,
+                config,
+                registro,
+                vocabulario,
+                reglas,
+                dias,
+                cableado.perfil_del_repo(repo, args.perfil),
+                args.fase,
+                args.depuracion,
+            )
+            nombre = cableado.NOMBRE_MOTOR
+        else:
+            motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro)), reglas)
+            nombre = "spec vigente"
+        corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
         texto = arnes.informe(corrida, criterio, vocabulario)
-    except (arnes.ConjuntoError, CriterioError) as exc:
+        if args.simular:
+            texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
+    except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         tracemalloc.stop()
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -2134,7 +2182,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     from botsito.engine import visor
     from botsito.engine.arnes import ConjuntoError
     from botsito.engine.interprete import Interprete, reglas_ejecutables
-    from botsito.engine.motor import MotorSpec
+    from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
     from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 
@@ -2146,10 +2194,8 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
         spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
         vocabulario = cargar_vocabulario(spec)
-        motor = MotorSpec(
-            Interprete(vocabulario, primitivas_escritas(registro)),
-            reglas_ejecutables(cargar_reglas(spec)),
-        )
+        reglas = reglas_ejecutables(cargar_reglas(spec))
+        motor: Motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro)), reglas)
         preparador = visor.Preparador(
             repo, _carpeta_datos(repo), criterio, registro, config, vocabulario, motor
         )
@@ -2158,6 +2204,26 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
             casos = preparador.dias(meses)
         else:
             casos = (preparador.caso(args.caso),)
+        if args.simular:
+            # ADR-0053: el mismo visor sobre el motor cableado; la pagina ensena ordenes y llenados
+            from botsito.engine import cableado
+
+            cableado_motor = cableado.construir_motor_cableado(
+                repo,
+                _carpeta_datos(repo),
+                criterio,
+                config,
+                registro,
+                vocabulario,
+                reglas,
+                casos,
+                cableado.perfil_del_repo(repo, args.perfil),
+                args.fase,
+                args.depuracion,
+            )
+            preparador.motor = cableado_motor
+            preparador.nombre_motor = cableado.NOMBRE_MOTOR
+            preparador.detalle_broker = lambda dia: cableado.detalle_para_visor(cableado_motor, dia)
         hasta = None
         if args.hasta:
             if args.todos:
@@ -2660,6 +2726,7 @@ def build_parser() -> argparse.ArgumentParser:
     mt_arnes.add_argument(
         "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
     )
+    _opciones_simulacion(mt_arnes)
     mt_visor = motor_sub.add_parser(
         "visor",
         help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
@@ -2682,6 +2749,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="con --caso: HH:MM local; la vista se recorta a ese instante (sin mirar al futuro)",
     )
+    _opciones_simulacion(mt_visor)
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )

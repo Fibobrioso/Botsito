@@ -21,19 +21,24 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
+from botsito.cases.criterio_fidelidad import Criterio
 from botsito.cases.criterio_fidelidad import Operacion as OperacionCriterio
+from botsito.cases.paquete import Config
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
 from botsito.data.velas import a_datetime
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
+from botsito.engine.arnes import DiaTrader
 from botsito.engine.broker import LLENADA, MANUAL, Broker, ReglasBroker
-from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase
+from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
 from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, Configuracion
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
+from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
 from botsito.engine.primitivas_broker import (
     ContextoDia,
     EventoBroker,
@@ -41,9 +46,13 @@ from botsito.engine.primitivas_broker import (
     clasificar_cierre,
     primitivas_cableadas,
 )
-from botsito.engine.simulacion import MercadoDia
+from botsito.engine.simulacion import MercadoDia, mercado_de_construccion, reglas_broker_de
+from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
+from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
+NOMBRE_MOTOR = "spec vigente + broker simulado (ADR-0053)"
+CARPETA_PERFILES = Path("knowledge") / "cuentas"
 
 
 class CableadoError(ValueError):
@@ -78,6 +87,8 @@ class MotorCableado:
     config_llenado: Configuracion
     contrato: Decimal
     depuracion: bool = False
+    perfil: str = ""  # nombre del perfil y fase, solo para el informe
+    fase: str = ""
     primitivas_extra: Mapping[str, Any] = field(default_factory=dict)  # sinteticas (tests)
     acumuladores_extra: Mapping[str, Any] = field(default_factory=dict)  # sinteticas (tests)
     zonas_de: Callable[[MercadoDia], Mapping[str, Zona]] | None = None  # sinteticas (tests)
@@ -307,14 +318,186 @@ def instante_de(minuto: int) -> datetime:
     return a_datetime(minuto)
 
 
+def perfil_del_repo(repo: Path, nombre: str | None) -> PerfilCuenta:
+    """El perfil de cuenta: el pedido por nombre o, si `knowledge/cuentas/` tiene uno solo, ese.
+    Con varios y sin nombre, se pide. Ningun nombre de firma vive en el codigo (ADR-0050)."""
+    carpeta = repo / CARPETA_PERFILES
+    if nombre is not None:
+        ruta = carpeta / f"{nombre}.yaml"
+        if not ruta.exists():
+            raise CableadoError(f"no existe el perfil {nombre!r} en {CARPETA_PERFILES}")
+        return cargar_perfil(ruta)
+    rutas = sorted(carpeta.glob("*.yaml"))
+    if len(rutas) != 1:
+        raise CableadoError(
+            f"{CARPETA_PERFILES} tiene {len(rutas)} perfiles: hay que pedir uno con --perfil"
+        )
+    return cargar_perfil(rutas[0])
+
+
+def construir_motor_cableado(
+    repo: Path,
+    carpeta_datos: Path,
+    criterio: Criterio,
+    config: Config,
+    registro: Registro,
+    vocabulario: Mapping[str, Mapping[str, Any]],
+    reglas: Sequence[ReglaEjecutable],
+    dias: Sequence[DiaTrader],
+    perfil: PerfilCuenta,
+    fase: str | None,
+    depuracion: bool,
+) -> MotorCableado:
+    """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
+    ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
+    la primera que declara el perfil (DECISION pendiente de validar)."""
+    fase_real = fase if fase is not None else perfil.fases()[0]
+    mercados = {
+        d.dia: mercado_de_construccion(repo, carpeta_datos, criterio, config, registro, d.id)
+        for d in dias
+    }
+    return MotorCableado(
+        vocabulario=vocabulario,
+        reglas=reglas,
+        registro=registro,
+        mercados=mercados,
+        reglas_broker=reglas_broker_de(perfil),
+        reglas_fase=reglas_de_fase(perfil, fase_real),
+        config_llenado=cargar_config_llenado(repo / FICHERO_LLENADO).configuracion(),
+        contrato=registro.decimal("instrumento_contrato"),
+        depuracion=depuracion,
+        perfil=perfil.nombre,
+        fase=fase_real,
+    )
+
+
+def _instante(ms: int) -> datetime:
+    return datetime.fromtimestamp(ms / 1000, UTC)
+
+
+def detalle_para_visor(motor: MotorCableado, dia: str) -> DetalleBroker | None:
+    """Las ordenes, las posiciones y los eventos del broker de un dia ya corrido, para el visor."""
+    broker = motor.brokers.get(dia)
+    tb = motor.trazas_broker.get(dia)
+    if broker is None or tb is None:
+        return None
+    escala = broker.escala
+    ordenes = tuple(
+        OrdenVisor(
+            id=o.id,
+            lado=o.lado,
+            precio=_precio(o.precio, escala),
+            lotes=o.lotes,
+            stop=_precio(o.stop, escala),
+            objetivo=_precio(o.objetivo, escala),
+            estado=o.estado,
+            colocada=_instante(o.colocada_ms),
+        )
+        for o in sorted(broker.ordenes.values(), key=lambda o: (o.colocada_ms, o.id))
+    )
+    posiciones = tuple(
+        OrdenVisor(
+            id=p.id,
+            lado=p.lado,
+            precio=_precio(p.entrada, escala),
+            lotes=p.lotes,
+            stop=_precio(p.stop, escala),
+            objetivo=_precio(p.objetivo, escala),
+            estado=p.motivo_cierre or "abierta",
+            colocada=_instante(p.abierta_ms),
+            cerrada=_instante(p.cerrada_ms) if p.cerrada_ms is not None else None,
+            precio_cierre=_precio(p.precio_cierre, escala) if p.precio_cierre is not None else None,
+        )
+        for p in sorted(broker.posiciones.values(), key=lambda p: (p.abierta_ms, p.id))
+    )
+    eventos = tuple(
+        EventoVisor(_instante(ms), tipo, id, fuente) for ms, tipo, id, fuente in tb.eventos
+    )
+    return DetalleBroker(
+        ordenes=ordenes,
+        posiciones=posiciones,
+        eventos=eventos,
+        rechazos=tb.rechazos,
+        huecos=tuple(sorted(tb.huecos)),
+        saldo_fin=tb.saldo_fin,
+        equity_fin=tb.equity_fin,
+        depuracion=DEPURACION if tb.depuracion else None,
+    )
+
+
+def informe_simulacion(motor: MotorCableado) -> str:
+    """La cola del informe del arnes en modo simulacion: veredicto de la cuenta sobre el tramo,
+    curva de equity por dia, eventos del broker y huecos con nombre. Determinista."""
+    estado, motivo, instante = motor.veredicto()
+    dias = sorted(motor.trazas_broker)
+    depurados = [d for d in dias if motor.trazas_broker[d].depuracion]
+    lineas = [
+        "",
+        "## Simulacion (ADR-0053)",
+        f"MOTOR: {NOMBRE_MOTOR}",
+        f"PERFIL: {motor.perfil or '-'}; FASE: {motor.fase or '-'}",
+        f"DIAS CORRIDOS: {len(dias)}",
+    ]
+    if depurados:
+        lineas.append(
+            f"{DEPURACION}: {len(depurados)} dias sobre respaldo M1 ({', '.join(depurados)})"
+        )
+    lineas += [
+        "",
+        "### Veredicto de la cuenta sobre el tramo",
+        f"estado: {estado.value}",
+        f"motivo: {motivo}",
+        f"instante: {instante.isoformat() if instante is not None else '-'}",
+    ]
+    if motor.cuenta is not None:
+        lineas += [
+            f"saldo final: {motor.cuenta.saldo}",
+            f"equity final: {motor.cuenta.equity}",
+            f"dias de trading: {motor.cuenta.dias_de_trading}",
+        ]
+    lineas += ["", "### Curva de equity (dia | saldo al corte | saldo final | equity minima)"]
+    for dia, corte, final, minima in curva_de_equity(motor):
+        lineas.append(f"{dia} | {corte} | {final} | {minima if minima is not None else '-'}")
+    por_fuente: dict[str, int] = {TICKS: 0, RESPALDO_M1: 0}
+    rechazos = 0
+    huecos: set[str] = set()
+    total = 0
+    lineas += ["", "### Eventos del broker (dia | instante UTC | tipo | id | fuente)"]
+    for dia in dias:
+        tb = motor.trazas_broker[dia]
+        rechazos += tb.rechazos
+        huecos |= tb.huecos
+        for fuente, n in tb.por_fuente.items():
+            por_fuente[fuente] = por_fuente.get(fuente, 0) + n
+        for ms, tipo, id, fuente in tb.eventos:
+            total += 1
+            lineas.append(f"{dia} | {_instante(ms).isoformat()} | {tipo} | {id} | {fuente}")
+    if not total:
+        lineas.append("ninguno")
+    lineas += [
+        "",
+        f"eventos: {total}; por fuente: "
+        + ", ".join(f"{f} {n}" for f, n in sorted(por_fuente.items())),
+        f"rechazos del broker: {rechazos}",
+        "huecos con nombre (primitivas sin contrato que se pidieron): "
+        + (", ".join(sorted(huecos)) if huecos else "ninguno"),
+    ]
+    return "\n".join(lineas) + "\n"
+
+
 __all__ = [
     "DEPURACION",
+    "NOMBRE_MOTOR",
     "CableadoError",
     "MotorCableado",
     "Sesion",
     "TrazaBroker",
     "comprobar_reloj_unico",
+    "construir_motor_cableado",
     "curva_de_equity",
+    "detalle_para_visor",
+    "informe_simulacion",
+    "perfil_del_repo",
     "instante_de",
     "zona_sintetica",
 ]
