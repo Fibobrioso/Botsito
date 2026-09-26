@@ -20,6 +20,14 @@ commit de esta rama podía entrar. Se tocaron esas dos cosas y nada más (la lí
 número), como hizo la rama anterior con el mismo mandato del consultor; todo lo narrativo queda
 para el cierre. Está dicho en cada commit.
 
+> **Nota del 2026-09-26, misma rama, tras la verificación (`VERIFICACION-A35-A44.md`).** Dos cosas
+> de este informe cambiaron después: (1) «los toques cuentan desde el fin de la vela contraria»
+> (§2 y candidato 6 de §5) era un bug de cableado que dejaba el selector sin efecto; desde
+> `29cf798` la vela que puede tomar el nivel es la última M15 cerrada si el pivote ya existía antes
+> de su cierre, y la traza lleva la huella del selector. El embudo de §3 no se mueve. (2) El modo
+> `marcador_cero` de A-44 (`fde95bb`) se añade a `sin_tope` y `marcador`. Los §3 y §5 se leen con
+> eso delante.
+
 ## 1. Las lecturas de «formado» que están documentadas, y de dónde salen
 
 A-35 pregunta cuándo un alto o un bajo de M15 cuenta como formado. Lo que el corpus documenta,
