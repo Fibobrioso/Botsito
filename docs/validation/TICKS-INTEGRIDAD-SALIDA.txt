@@ -1,0 +1,7 @@
+TOLERANCIA (fijada antes de comparar): |delta| <= 2 puntos en O, H, L y C
+MESES: construccion 2026-04, 2026-08 (solo estos)
+DATASETS 2026-04: eurusd-m1-2026-04-990211bd frente a eurusd-ticks-2026-04-1d189bdd
+2026-04: M1 del repo 31549; cuadran 10915 (34.60 %); discrepan 0 (hasta 10 puntos 0, mas de 10 0; peor campo: abierta 0, maxima 0, minima 0, cierre 0); M1 del repo sin ticks 20634; minutos con ticks sin M1 en el repo 0; horas de ticks perdidas 7
+DATASETS 2026-08: eurusd-m1-2026-08-0d42230e frente a eurusd-ticks-2026-08-75bd3a08
+2026-08: M1 del repo 30257; cuadran 11160 (36.88 %); discrepan 0 (hasta 10 puntos 0, mas de 10 0; peor campo: abierta 0, maxima 0, minima 0, cierre 0); M1 del repo sin ticks 19097; minutos con ticks sin M1 en el repo 0; horas de ticks perdidas 3
+total: M1 del repo 61806; cuadran 22075 (35.72 %); discrepan 0 (hasta 10 puntos 0, mas de 10 0; peor campo: abierta 0, maxima 0, minima 0, cierre 0); M1 del repo sin ticks 39731; minutos con ticks sin M1 en el repo 0; horas de ticks perdidas 10

@@ -1,0 +1,17 @@
+REPETICION DESCRIPTIVA de las operaciones del trader por el broker y la cuenta FTMO
+SALIDA: la del caso NO existe; se repite con la regla de la spec (stop del caso, objetivo = entrada +/- objetivo_rr x |entrada - stop| con objetivo_rr = 3, cierre forzoso a 15:00 del trader). Escenarios HIPOTETICOS de riesgo por operacion: 0.25 %, 0.5 %, 1 %, 2 % del capital inicial; lote redondeado hacia abajo a 0,01
+PERFIL: ftmo-2step-swing-100k, fase reto; MESES: construccion 2026-04, 2026-08
+LLENADO: limite al toque False; spread supuesto de percentil 90 por hora medido con scripts/ticks_spread.py sobre eurusd-ticks-2026-04-1d189bdd y eurusd-ticks-2026-08-75bd3a08
+TICKS: 2026-04 21 de 21 dias con ticks; 2026-08 21 de 21 dias con ticks
+== ESCENARIO riesgo 0.25 % por operacion
+2026-04: operaciones 35; veredicto EN_CURSO; perdida diaria maxima 3.89 %; perdida total maxima 6.29 %; dias operados 16; saldo final 95977.45; suspende en -; desenlace cambia entre ticks y respaldo en 12 de 35; rechazadas por limite del perfil 0
+2026-08: operaciones 42; veredicto EN_CURSO; perdida diaria maxima 1.29 %; perdida total maxima 3.46 %; dias operados 19; saldo final 96780.43; suspende en -; desenlace cambia entre ticks y respaldo en 18 de 42; rechazadas por limite del perfil 0
+== ESCENARIO riesgo 0.5 % por operacion
+2026-04: operaciones 33; veredicto EN_CURSO; perdida diaria maxima 2.77 %; perdida total maxima 5.42 %; dias operados 16; saldo final 96372.75; suspende en -; desenlace cambia entre ticks y respaldo en 11 de 33; rechazadas por limite del perfil 2
+2026-08: operaciones 41; veredicto EN_CURSO; perdida diaria maxima 2.59 %; perdida total maxima 6.92 %; dias operados 18; saldo final 95311.68; suspende en -; desenlace cambia entre ticks y respaldo en 17 de 41; rechazadas por limite del perfil 1
+== ESCENARIO riesgo 1 % por operacion
+2026-04: operaciones 29; veredicto EN_CURSO; perdida diaria maxima 0.58 %; perdida total maxima 1.52 %; dias operados 14; saldo final 105639.78; suspende en -; desenlace cambia entre ticks y respaldo en 9 de 29; rechazadas por limite del perfil 6
+2026-08: operaciones 29; veredicto EN_CURSO; perdida diaria maxima 3.85 %; perdida total maxima 3.05 %; dias operados 15; saldo final 113259.53; suspende en -; desenlace cambia entre ticks y respaldo en 7 de 29; rechazadas por limite del perfil 13
+== ESCENARIO riesgo 2 % por operacion
+2026-04: operaciones 11; veredicto SUSPENDIDA; perdida diaria maxima 5.06 %; perdida total maxima 5.12 %; dias operados 4; saldo final 97065.52; suspende en 2026-04-13T12:03:59.999000+00:00; desenlace cambia entre ticks y respaldo en 3 de 11; rechazadas por limite del perfil 24
+2026-08: operaciones 11; veredicto EN_CURSO; perdida diaria maxima 1.70 %; perdida total maxima 0.85 %; dias operados 6; saldo final 123198.22; suspende en -; desenlace cambia entre ticks y respaldo en 4 de 11; rechazadas por limite del perfil 31

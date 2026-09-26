@@ -78,14 +78,13 @@ def test_cada_cifra_del_perfil_cita_una_regla_de_ftmo_reglas_que_existe(
 def test_lo_que_no_esta_en_la_fuente_no_tiene_valor(ftmo: PerfilCuenta) -> None:
     """Los NO ENCONTRADA de FTMO-REGLAS y lo que no aplica a la fondeada (ADR-0012 §2)."""
     assert ftmo.sin_valor() == (
-        "firma_comision_por_lado",
         "firma_fondeada_dias_minimos",
         "firma_fondeada_objetivo",
         "firma_tamano_posicion_ratio_aviso",
     )
     with pytest.raises(ParametroSinValorError) as exc:
-        ftmo.booleano("firma_comision_por_lado")
-    assert "firma_comision_por_lado" in str(exc.value)
+        ftmo.decimal("firma_tamano_posicion_ratio_aviso")
+    assert "firma_tamano_posicion_ratio_aviso" in str(exc.value)
     assert "ftmo-2step-swing-100k" in str(exc.value)
     assert "no puede correr" in str(exc.value)
 
@@ -187,3 +186,12 @@ def test_un_fichero_que_no_pasa_el_registro_no_es_un_perfil(tmp_path: Path) -> N
     ruta.write_text("parametros:\n  - nombre: x\n", encoding="utf-8")
     with pytest.raises(PerfilError, match="categoria"):
         cargar_perfil(ruta)
+
+
+def test_la_comision_por_lado_toma_el_supuesto_conservador(ftmo: PerfilCuenta) -> None:
+    """Decision del consultor (2026-09-25): se cobra en CADA lado hasta que FTMO lo confirme. El
+    simulador ya no se niega a correr por ella; la descripcion sigue citando R12 NO ENCONTRADA."""
+    assert ftmo.booleano("firma_comision_por_lado") is True
+    p = ftmo.registro.parametros["firma_comision_por_lado"]
+    assert "NO ENCONTRADA" in " ".join(p.descripcion.split())
+    assert "CONSERVADOR" in p.descripcion and "confirme" in p.descripcion

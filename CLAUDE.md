@@ -16,9 +16,14 @@ Si `Current Feature` esta en WAITING_FOR_USER_VALIDATION: no se avanza, se pregu
 
 ## main no se toca
 
-Se trabaja en una rama (`feature/F##-nombre` o `trabajo/<nombre>`). **La sesion no hace merge, ni tag,
-ni push: el ritual de cierre lo ejecuta el usuario** (`docs/runbooks/RITUAL.md`). El hook `pre-commit`
-rechaza un commit directo en `main` salvo con `BOTSITO_ALLOW_MAIN=1`, que solo usa el ritual.
+Se trabaja en una rama (`feature/F##-nombre` o `trabajo/<nombre>`). **Los commits en las ramas
+`trabajo/*` los hace Claude Code. El cierre en `main` -merge, tag, `PROJECT_STATE`, push atomico,
+verificacion de la CI y borrado de la rama- lo ejecuta Claude Code SOLO ante una ORDEN DE CIERRE
+EXPLICITA de Aleks, dada tras la revision del consultor; una tarea autonoma o nocturna NUNCA
+cierra** (`docs/runbooks/RITUAL.md`; regla del 2026-09-26, con la que se cerraron `trabajo/visor-dias`
+y `trabajo/ticks-llenado`). Todas las puertas del ritual siguen en pie: el sello, el push atomico de
+`main` y el tag, y la CI en verde antes de borrar la rama. El hook `pre-commit` rechaza un commit
+directo en `main` salvo con `BOTSITO_ALLOW_MAIN=1`, que solo usa el ritual.
 
 **Ningún commit sin el sello de `make check`, y NUNCA `--no-verify`** (ni en `git commit` ni en
 `git merge`: los hooks son la puerta, y saltarlos es saltarse la regla). Desde la rama

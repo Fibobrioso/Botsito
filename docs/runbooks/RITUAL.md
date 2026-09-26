@@ -1,8 +1,15 @@
 # El ritual de cierre
 
-Como se cierra una rama de verdad: **lo ejecuta el usuario**, con lineas `!` desde Claude Code. La
-sesion no hace merge, ni tag, ni push. Escrito el 2026-09-17 con lo aprendido en las ramas de
-fidelidad de la spec, la guarda del holdout y los meses vistos.
+Como se cierra una rama de verdad. **Desde el 2026-09-26 lo ejecuta Claude Code, paso a paso y
+mirando cada puerta, SOLO ante una orden de cierre explicita de Aleks dada tras la revision del
+consultor**; hasta entonces lo ejecutaba el usuario con lineas `!` y la sesion no hacia merge, ni
+tag, ni push. Los commits en las ramas `trabajo/*` los hace Claude Code; una tarea autonoma o
+nocturna NUNCA cierra: deja la rama con sus commits sellados y espera la orden. Ninguna puerta
+cambia: el sello, `main` y el tag en un solo push atomico, y la CI en verde antes de borrar la
+rama. Las dos primeras ramas cerradas asi fueron `trabajo/visor-dias` (2026-09-25, con la orden
+«sigue el ritual tal cual») y `trabajo/ticks-llenado` (2026-09-26, con la orden de cierre tras la
+revision del consultor). Escrito el 2026-09-17 con lo aprendido en las ramas de fidelidad de la
+spec, la guarda del holdout y los meses vistos.
 
 ## Seis correcciones que han costado tiempo
 

@@ -1,0 +1,28 @@
+# La configuracion del MODELO DE LLENADO (ADR-0051, PROPUESTO). Lo elegible vive aqui y no en
+# codigo (ADR-0002); lo lee engine/simulador_config.py con lectura estricta.
+adr: ADR-0051
+# DN-1 (conservadora): las limites y los objetivos exigen pasar ESTRICTAMENTE el nivel; true
+# los llenaria al toque, como un tester de MT5.
+limite_llena_al_toque: false
+# DN-3: sin deslizamiento fijo; el de hueco lo dan los ticks (un stop se llena al precio del
+# tick que lo dispara). Una cifra aqui seria inventada (ADR-0002) mientras no se mida en FTMO.
+deslizamiento_fijo_puntos: 0
+deslizamiento_motivo: >-
+  no hay ninguna medida del deslizamiento de FTMO; el de hueco sale de los ticks. El dia que se
+  mida entra por aqui
+# DN-4 (conservadora): el spread supuesto para los minutos SIN ticks es el percentil 90 del
+# spread por hora LOCAL del trader, medido sobre los ticks de construccion con
+# scripts/ticks_spread.py (docs/validation/TICKS-SPREAD-SALIDA.txt). Puntos (0,00001).
+spread:
+  fuente: percentil 90 por hora medido con scripts/ticks_spread.py sobre eurusd-ticks-2026-04-1d189bdd y eurusd-ticks-2026-08-75bd3a08
+  huso: Europe/Madrid
+  por_hora_local:
+    7: 5
+    8: 5
+    9: 5
+    10: 5
+    11: 5
+    12: 4
+    13: 4
+    14: 5
+  fuera_de_ventana: 4

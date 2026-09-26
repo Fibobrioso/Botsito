@@ -84,6 +84,12 @@ el día 6 en Nueva York. Ni una línea de código distinta.
 
 ## 2. Qué parámetros quedaron sin valor, y por qué
 
+> **RECUADRO DE CORRECCIÓN (2026-09-26, rama `trabajo/ticks-llenado`).** `firma_comision_por_lado`
+> ya NO está sin valor: por decisión del consultor del 2026-09-25 toma el supuesto conservador de
+> cobrarse en cada lado (`CONFIRMED`, `true`, fuente ADR-0050), pendiente de confirmar con FTMO.
+> La fila de abajo describe el estado del 2026-09-25 y se conserva tal cual.
+
+
 | parámetro | por qué no tiene valor | quién lo resuelve |
 |---|---|---|
 | `firma_comision_por_lado` | R12: si los 5 USD por lote son por lado o por operación completa, y qué aclara el asterisco de «USD/LOT*», es NO ENCONTRADA en la fuente oficial | medirlo en la plataforma (FTMO-REGLAS §4, «para datos»); lo consume el bróker simulado |
