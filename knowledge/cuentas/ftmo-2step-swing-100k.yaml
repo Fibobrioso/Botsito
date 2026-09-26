@@ -363,10 +363,13 @@ parametros:
     unidad: si los USD por lote se cobran en cada lado (apertura y cierre) o una vez
     descripcion: >-
       R12: «Si la comision es por lado o por operacion completa, y que aclara el asterisco: NO
-      ENCONTRADA». Sin valor hasta medirlo en la plataforma (FTMO-REGLAS §4, para datos). Lo
-      consume el broker simulado
-    estado: UNKNOWN
+      ENCONTRADA». SUPUESTO CONSERVADOR por decision del consultor (2026-09-25, PROJECT_STATE
+      Decisions and Rationale): se cobra en CADA lado, apertura y cierre, hasta que FTMO lo
+      confirme (Next Action 27). Hasta el 2026-09-26 estaba UNKNOWN. Lo consume el broker simulado
+    estado: CONFIRMED
+    valor: true
     consumido_por: [F24]
+    fuente: {tipo: decision, id: ADR-0050}
   - nombre: firma_swap_largo_puntos
     categoria: prop_firm
     tipo: decimal
