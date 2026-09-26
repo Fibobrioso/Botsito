@@ -30,7 +30,7 @@ al toque (DN-1); con ticks el orden real, y un tick que cruce stop y objetivo a 
 deslizamiento fijo, solo el de hueco de los ticks (DN-3); spread de cada tick y, sin ticks, el
 percentil 90 por hora medido en construcción (DN-4), en `knowledge/simulador/llenado.yaml`.
 
-## Fase 2 · ticks de construcción — PARADA (servidor), sin manifiesto
+## Fase 2 · ticks de construcción — HECHA (con DN-5, selección de días y horas)
 
 Código sellado (`data/ticks.py`, `domain/ticks.py`, CLI `data download-ticks` y `check-ticks`,
 16+1 tests sin red, `scripts/ticks_integridad.py` y `scripts/ticks_spread.py`). Formato del
@@ -39,7 +39,30 @@ proveedor medido sobre una hora de abril: `>IIIff`, ms en la hora, ASK, BID, vol
 **Tolerancia de integridad, fijada ANTES de comparar:** una M1 cuadra si existe en las dos
 fuentes y |ΔO|, |ΔH|, |ΔL|, |ΔC| ≤ 2 puntos; el volumen no se compara. No se toca después.
 
-**Lo que pasó con la descarga (medido):** dos descargas en paralelo perdían horas (503 con
+**Resultado (mañana del 2026-09-26):** el proceso desacoplado terminó solo tras el corte, y una
+segunda pasada sobre la caché (pausa de 5 s, 5 intentos con esperas 4-16 s) recuperó casi todas
+las horas perdidas. Datasets congelados, verificados con `check-ticks --hashes`:
+`eurusd-ticks-2026-04-1d189bdd` (21 días dev, horas 05-13 UTC, 182 de 189 horas presentes, 7
+perdidas, 687.585 ticks) y `eurusd-ticks-2026-08-75bd3a08` (21 días dev, 186 de 189, 3 perdidas,
+484.035 ticks). Los dos datasets anteriores de la primera pasada se descartaron sin comitear: el
+de abril había quedado incoherente (un `rm` mío borró dos CSV a mitad de descarga; el descargador
+recrea ahora la carpeta antes de cada día) y el de agosto tenía 28 horas perdidas.
+
+**Integridad, con la tolerancia fijada antes** (`docs/validation/TICKS-INTEGRIDAD-SALIDA.txt`):
+de las M1 del repo cuyo minuto tiene ticks, cuadran el 100 % (22.075 de 22.075: abril 10.915,
+agosto 11.160) y no discrepa ninguna; las 39.731 M1 restantes no tienen ticks porque quedan fuera
+de la selección (días no dev u horas fuera de 05-13 UTC) o en las 10 horas perdidas. Ningún minuto
+con ticks carece de M1 en el repo.
+
+**Spread medido** (`docs/validation/TICKS-SPREAD-SALIDA.txt`, ASK − BID en puntos, ventana
+07:00-15:00 del trader): media 2,8-3,4 según la hora, p50 3, p90 5 de 07 a 11 y a las 14, 4 a las
+12 y 13; fuera de la ventana p90 4; máximo aislado 121 a las 14:00 de abril. Con eso,
+`knowledge/simulador/llenado.yaml` lleva el p90 por hora (DN-4).
+
+**`kit check --sesion 2026-09-09-sesion-01` y `fidelidad check --artefacto eurusd-2026-09`
+salen IDÉNTICOS byte a byte** a los guardados antes de descargar nada (comparados con `cmp`).
+
+**Lo que pasó con la descarga de noche (medido):** dos descargas en paralelo perdían horas (503 con
 esperas de 5-20 s). Una sola secuencial con esperas 15-60 s fue de 2 s por hora al empezar a
 6,5 minutos por hora al saturarse: un mes entero (720 horas) no cabe en la noche. Ver DN-5.
 

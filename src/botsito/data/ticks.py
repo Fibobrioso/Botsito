@@ -55,7 +55,10 @@ DECODIFICADOR_TICKS_VERSION = 1
 DIRECTORIO_MANIFIESTOS_TICKS = "data/manifests/ticks"
 CARPETA_TICKS = "ticks"
 MAX_INTENTOS_POR_TRAMO = 5  # el brief: como maximo 5 por tramo, con espera creciente
-ESPERA_BASE_S = 15.0  # 15, 30, 45, 60 s: con 5 s el 503 del servidor no se recuperaba
+# 4, 8, 12, 16 s entre intentos. Medido la noche del 2026-09-26: con 15-60 s cada 503 costaba mas de
+# un minuto por hora y abril no cabia en la noche; una hora perdida se reintenta en una segunda
+# pasada, que solo va a la red por lo que falta (la cache guarda lo bajado).
+ESPERA_BASE_S = 4.0
 CABECERA_CSV = "ts_utc,ask,bid,volumen_ask,volumen_bid"
 _REGISTRO = struct.Struct(">IIIff")
 _MS_POR_HORA = 3_600_000
@@ -377,6 +380,7 @@ def congelar_ticks(
         nombre_fichero = f"{simbolo}_TICKS_{dia.isoformat()}.csv"
         texto = escribir_csv_ticks(del_dia).encode("utf-8")
         ruta = parcial / nombre_fichero
+        parcial.mkdir(parents=True, exist_ok=True)  # por si algo borro la carpeta a mitad
         ruta.write_bytes(texto)
         rutas.append(ruta)
         sha = sha256_hex(texto)

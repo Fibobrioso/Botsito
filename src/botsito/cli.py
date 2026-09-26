@@ -2335,9 +2335,8 @@ def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
         horas = list(range(int(mh.group(1)), int(mh.group(2)) + 1))
 
     def descarga(url: str) -> bytes | None:
-        # espera creciente 15, 30, 45 y 60 s: el servidor devuelve 503 cuando se satura y con
-        # 5 s no le daba tiempo (medido el 2026-09-26 sobre abril); y una pausa entre peticiones
-        # reales para no provocarlo
+        # espera creciente (ESPERA_BASE_S) entre intentos: el servidor devuelve 503 cuando se
+        # satura; y una pausa entre peticiones reales para no provocarlo
         cuerpo = descarga_http(url, intentos=MAX_INTENTOS_POR_TRAMO, espera_s=ESPERA_BASE_S)
         if args.pausa > 0:
             time.sleep(args.pausa)
