@@ -10,6 +10,7 @@ import subprocess
 import sys
 from collections.abc import Mapping
 from dataclasses import dataclass
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -2251,6 +2252,118 @@ def data_download(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def meses_fuera_de_construccion(repo: Path, desde: date, hasta: date) -> list[str]:
+    """Los meses del rango que NO son de construccion (criterio_fidelidad.yaml): los ticks solo se
+    descargan de construccion (rama `trabajo/ticks-llenado`). Vacio = todo el rango vale."""
+    from botsito.cases.criterio_fidelidad import cargar_criterio
+
+    criterio = cargar_criterio(repo)
+    meses: list[str] = []
+    d = desde
+    while d <= hasta:
+        mes = d.strftime("%Y-%m")
+        if mes not in meses:
+            meses.append(mes)
+        d += timedelta(days=1)
+    return [m for m in meses if m not in criterio.construccion]
+
+
+def data_download_ticks(repo: Path, args: argparse.Namespace) -> int:
+    """Congela un dataset de ticks (CSV por dia, manifiesto inmutable en data/manifests/ticks/).
+
+    Se niega a cualquier mes que no sea de construccion: mayo, marzo, febrero o septiembre ni se
+    descargan. La descarga es en streaming y las horas perdidas tras los reintentos quedan
+    listadas en el manifiesto, no abortan.
+    """
+    from botsito.cases.criterio_fidelidad import CriterioError
+    from botsito.data.dukascopy import DescargaError, FormatoBi5Error, descarga_http
+    from botsito.data.ticks import (
+        ESPERA_BASE_S,
+        MAX_INTENTOS_POR_TRAMO,
+        TicksError,
+        con_cache_horas,
+        congelar_ticks,
+    )
+
+    if not (repo / "knowledge").is_dir():
+        print("ERROR: falta knowledge/ (¿--repo apunta a la raiz del proyecto?)")
+        return 2
+    try:
+        desde, hasta = date.fromisoformat(args.desde), date.fromisoformat(args.hasta)
+    except ValueError as exc:
+        print(f"ERROR: fechas AAAA-MM-DD: {exc}")
+        return 1
+    try:
+        fuera = meses_fuera_de_construccion(repo, desde, hasta)
+    except CriterioError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    if fuera:
+        print(
+            f"ERROR: {', '.join(fuera)} no es de construccion (criterio_fidelidad.yaml): los ticks "
+            "solo se descargan de construccion; ese mes ni se descarga"
+        )
+        return 2
+    commit = _git(repo, "rev-parse", "--short", "HEAD")
+    carpeta_datos = _carpeta_datos(repo)
+
+    def descarga(url: str) -> bytes | None:
+        # espera creciente 15, 30, 45 y 60 s: el servidor devuelve 503 cuando se satura y con
+        # 5 s no le daba tiempo (medido el 2026-09-26 sobre abril)
+        return descarga_http(url, intentos=MAX_INTENTOS_POR_TRAMO, espera_s=ESPERA_BASE_S)
+
+    try:
+        congelado = congelar_ticks(
+            repo,
+            carpeta_datos,
+            args.dataset,
+            args.simbolo,
+            args.escala,
+            desde,
+            hasta,
+            con_cache_horas(carpeta_datos / "raw", descarga),
+            hoy=datetime.now(UTC).date(),
+            generado_por=commit,
+            avisar=lambda linea: print(linea, flush=True),
+        )
+    except (TicksError, DescargaError, FormatoBi5Error) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    m = congelado.manifiesto
+    h = m["horas"]
+    print(f"OK: {congelado.ruta_manifiesto.relative_to(repo).as_posix()} ({m['dataset_id']})")
+    print(
+        f"  {m['ticks']['total']} ticks en {len(m['ficheros'])} ficheros; horas presentes "
+        f"{h['presentes']}, ausentes (404) {h['ausentes_404']}, vacias {h['vacias']}, PERDIDAS "
+        f"{len(h['perdidas'])}; cotizaciones cruzadas {m['ticks']['cruzados_ask_menor_que_bid']}"
+    )
+    print("Commit del manifiesto con Fuente: ADR-0051 (es inmutable: no se edita)")
+    return 0
+
+
+def data_check_ticks(repo: Path, args: argparse.Namespace) -> int:
+    from botsito.data.ticks import (
+        TicksError,
+        buscar_manifiesto_ticks,
+        cargar_manifiesto_ticks,
+        comprobar_ticks,
+    )
+
+    try:
+        manifiesto = cargar_manifiesto_ticks(buscar_manifiesto_ticks(repo, args.dataset))
+    except TicksError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    carpeta = _carpeta_datos(repo)
+    problemas = comprobar_ticks(manifiesto, carpeta, hashes=args.hashes)
+    for p in problemas:
+        print(f"ERROR: {p} (carpeta de datos: {carpeta})")
+    if not problemas:
+        modo = "hashes" if args.hashes else "tamanos"
+        print(f"OK: {manifiesto['dataset_id']} coincide con el disco ({modo})")
+    return 1 if problemas else 0
+
+
 def data_check(repo: Path, args: argparse.Namespace) -> int:
     from botsito.data.dataset import DatasetError, buscar_manifiesto, cargar_manifiesto, comprobar
 
@@ -2665,6 +2778,18 @@ def build_parser() -> argparse.ArgumentParser:
     dc = datos_sub.add_parser("check", help="compara un dataset con el disco")
     dc.add_argument("--dataset", required=True, help="dataset_id o nombre")
     dc.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
+    dt = datos_sub.add_parser(
+        "download-ticks",
+        help="descarga ticks por horas (streaming) y congela un dataset; solo construccion",
+    )
+    dt.add_argument("--dataset", required=True, help="nombre (el id anade -hash8)")
+    dt.add_argument("--simbolo", required=True, help="simbolo del proveedor (mayusculas)")
+    dt.add_argument("--escala", required=True, type=int, help="puntos por unidad de precio")
+    dt.add_argument("--desde", required=True, help="AAAA-MM-DD")
+    dt.add_argument("--hasta", required=True, help="AAAA-MM-DD (anterior a hoy)")
+    dtc = datos_sub.add_parser("check-ticks", help="compara un dataset de ticks con el disco")
+    dtc.add_argument("--dataset", required=True, help="dataset_id o nombre")
+    dtc.add_argument("--hashes", action="store_true", help="verificar tambien SHA-256")
     da = datos_sub.add_parser("aggregate", help="agrega M1 con anclaje de reloj de pared")
     da.add_argument("--dataset", required=True, help="dataset_id o nombre")
     da.add_argument("--periodo", required=True, type=int, help="minutos (divisor de 1440)")
@@ -2776,6 +2901,10 @@ def main(argv: list[str] | None = None) -> int:
         return data_download(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "check":
         return data_check(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "download-ticks":
+        return data_download_ticks(args.repo, args)
+    if args.cmd == "data" and args.data_cmd == "check-ticks":
+        return data_check_ticks(args.repo, args)
     if args.cmd == "data" and args.data_cmd == "aggregate":
         return data_aggregate(args.repo, args)
     parser.print_help()

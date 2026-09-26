@@ -38,3 +38,17 @@ servidor de un broker MT5 tipico se expresa como `17:00 America/New_York`. Las v
 cerrar se omiten salvo `--incluir-incompletas`. Por convencion, el commit del manifiesto cita
 `Fuente: ADR-0005` (la guardia de trailers solo vigila `knowledge/spec` y `knowledge/cases`). La
 descarga cachea cada dia crudo en `<datos>/raw/<SIMBOLO>/` y se reanuda si se interrumpe.
+
+## Ticks (`ticks/`, rama `trabajo/ticks-llenado`, ADR-0051)
+
+Los ticks de CONSTRUCCION (abril y agosto de 2026) se congelan con el mismo procedimiento y la
+misma politica: `botsito data download-ticks` descarga hora a hora en streaming
+(`{SIMBOLO}/{AAAA}/{MM-1}/{DD}/{HH}h_ticks.bi5`, `>IIIff` = ms en la hora, ASK, BID, volumenes),
+escribe `data/ticks/<dataset_id>/<SIMBOLO>_TICKS_<AAAA-MM-DD>.csv` (un fichero por dia:
+`ts_utc,ask,bid,volumen_ask,volumen_bid`, ms en `AAAA-MM-DDTHH:MM:SS.mmmZ`, volumenes en
+milesimas) y el manifiesto INMUTABLE `data/manifests/ticks/<dataset_id>.yaml` (`schema_ticks: 1`;
+`horas`: presentes, ausentes_404, vacias y `perdidas[]` -las que fallaron tras 5 intentos con
+espera creciente-; `ticks`: total y cotizaciones cruzadas). La cache cruda va a
+`raw/<SIMBOLO>/ticks/<AAAA-MM-DD>/<HH>.bi5`. El comando SE NIEGA a cualquier mes que no sea de
+construccion (`criterio_fidelidad.yaml`). `botsito data check-ticks --dataset <id> --hashes`
+compara con el disco. Commit del manifiesto con Fuente: ADR-0051.
