@@ -123,7 +123,18 @@ cambia en 12 de 35 operaciones de abril y 18 de 42 de agosto al 0,25 % (30-43 %)
 pesimista decide el stop donde los ticks dicen objetivo. Es la medida de cuánto pesa no tener
 ticks. Ninguna cifra de aquí cambia un ADR, un parámetro ni la spec.
 
-## Fase 7 · medición del instante con ticks — pendiente
+## Fase 7 · medición del instante con ticks — HECHA
+
+`scripts/instante_ticks.py` → `docs/validation/INSTANTE-TICKS-SALIDA.txt`, con el margen de 2
+puntos de la medida original y el mismo control (±30 minutos). Sobre las 77 operaciones dev de
+construcción, 75 con ticks en su minuto: **el precio de entrada se toca dentro del minuto del
+xlsx en 75 de 75 (100 %)**; control −30 min 7,4 %, +30 min 14,9 %: cae claramente. Distancia
+del instante del xlsx al primer toque del minuto: mediana −2,4 s (abril −0,6, agosto −4,5), de
+−51,4 a +6,5 s; en 43 de 75 el primer toque es en el mismo segundo o antes, que es lo que se
+espera de un instante de LLENADO (el precio toca y luego se llena). Coincide con la medida M1
+(`INSTANTE-LLENADO-SALIDA.txt`: 98,9 %, controles 5,3 y 12,8 %). Y **en 31 de 75 la M1 del
+minuto cubre la entrada y el stop a la vez y no dice cuál se tocó antes; los ticks lo dicen en
+las 31.**
 
 ## Decisiones nocturnas (pendientes de validar)
 
@@ -153,7 +164,7 @@ ticks. Ninguna cifra de aquí cambia un ADR, un parámetro ni la spec.
 
 ## Paradas
 
-- **La sesión se cortó a la 01:35 por el límite de uso**, con el árbol TODO ESTADIADO y SIN SELLAR
+- (Resuelta en la segunda sesión: todo lo estadiado quedó sellado y comiteado por fases.) **La sesión se cortó a la 01:35 por el límite de uso**, con el árbol TODO ESTADIADO y SIN SELLAR
   (no dio tiempo a `make check`). Lo estadiado: Fase 3 (`engine/llenado.py` + 9 tests, verdes),
   su configuración (`engine/simulador_config.py`, `knowledge/simulador/README.md`, tests verdes;
   falta `llenado.yaml`, que espera al spread medido), Fase 4 (ADR-0052 PROPUESTO, `engine/broker.py`
@@ -161,7 +172,7 @@ ticks. Ninguna cifra de aquí cambia un ADR, un parámetro ni la spec.
   estrategia sintética fuera de src), los scripts de las Fases 6 y 7 (escritos, SIN ejecutar: no hay
   manifiesto de ticks), el índice de ADR-0052 y la robustez del descargador. Para retomar:
   `make check > make-check.log 2>&1` y commits por pieza en el orden Fase 2 → 3 → 4 → 5.
-- **Fase 2 no cerró: Dukascopy rechaza las conexiones.** Medido a la 01:33: con conexiones nuevas y 8 s
+- (Resuelta: el proceso desacoplado terminó solo y una segunda pasada recuperó casi todas las horas; ver Fase 2.) **Fase 2 no cerró de noche: Dukascopy rechazaba las conexiones.** Medido a la 01:33: con conexiones nuevas y 8 s
   de pausa, 1 de 4 horas responde 200 y el resto 503 o timeout; con una conexión persistente, 503 en
   las 6. Antes, entre las 00:50 y la 01:30, el ritmo fue de 2 s por hora al empezar a más de un minuto
   por hora, con horas perdidas. Lo bajado está en la caché cruda (`data/raw/EURUSD/ticks/`: abril 1 y 2
