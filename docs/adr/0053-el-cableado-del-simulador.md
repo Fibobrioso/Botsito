@@ -4,11 +4,14 @@ date: 2026-09-26
 phase: post-F14 (rama `trabajo/cableado-simulador`)
 ---
 
-# 0053 · El cableado del simulador (PROPUESTO: pendiente de aceptación del consultor)
+# 0053 · El cableado del simulador
 
-> **PROPUESTO.** Escrito en una sesión autónoma con la regla de elegir siempre la opción más
-> conservadora y anotarla como DECISIÓN pendiente de validar. El campo `status` dice ACTIVE porque
-> la guardia de ADR no admite otro valor (ADR-0051, DN-0). Lo acepta o corrige el consultor.
+> **ACEPTADO el 2026-09-26** por el consultor, tras su revisión, sobre lo escrito en la sesión
+> autónoma del mismo día (`docs/validation/CABLEADO-SIMULADOR.md`). Se escribió con la regla de
+> elegir siempre la opción más conservadora y anotarla como DECISIÓN pendiente de validar; lo que
+> el consultor decidió sobre cada una está en «Las decisiones, resueltas por el consultor», más
+> abajo: todas PROVISIONALES, y dos marcadas para revisar (2.1 y 5.1). El hallazgo de la rama
+> —RN-020 es el siguiente bloqueo del bot después de A-35— está en la sección 9 y abre A-44.
 
 ## Decision
 
@@ -157,6 +160,43 @@ La simulación completa corre solo sobre los días `dev` de construcción, por l
 (`dias_de_construccion`), y se niega a medición y a ocultos con el mismo mecanismo y los mismos
 mensajes (ADR-0048 §7).
 
+### 9. Las decisiones, resueltas por el consultor (2026-09-26)
+
+Aceptadas como **PROVISIONALES** en la orden de cierre de Aleks, tras la revisión del consultor:
+
+- **1.1** (el lote se resuelve al colocar, con el stop ya escrito): **PROVISIONAL**.
+- **1.2** (`OP` es la única posición viva; con varias, error con nombre): **PROVISIONAL**.
+- **1.3** (la zona `Z` es una ligadura de texto a una `Zona` del contexto del día): **PROVISIONAL**.
+- **2.1** (los eventos del bróker llegan al intérprete en el siguiente cierre de M1): **PROVISIONAL,
+  PARA REVISAR.** El motor conoce un llenado, un stop o un objetivo con un retraso de hasta una M1.
+  La cuenta vigila por tick, así que el riesgo de la firma queda cubierto por RN-029 a RN-032 sobre
+  la peor marca del minuto; lo que se retrasa es la reacción de la ESTRATEGIA. Se revisa con la
+  demo en MetaTrader, donde se verá con qué cadencia llegan de verdad los eventos.
+- **3.1** (los acumuladores de la firma se recortan en cero): **PROVISIONAL**.
+- **3.2** (la primitiva del acumulador distingue alcanza, se_acerca y no_cabe por sus argumentos,
+  con `>=`): **PROVISIONAL**.
+- **5.1** (el cierre de RN-030 se ejecuta al precio del cierre de M1): **PROVISIONAL, PARA
+  REVISAR.** Con ticks, lo correcto es cerrar al precio del tick que cruza el límite, no al cierre
+  de la vela. Se revisa al implementar RN-030 de verdad (hoy RN-030 es terminal y lee el hecho
+  `detenido_por_tope_total`; no ha llegado a ejecutarse en construcción).
+- **Las nuevas de la rama** (perfil por defecto el único de `knowledge/cuentas/` y fase la primera
+  del perfil; la cuenta arranca un milisegundo antes de la ventana; `distancia_menor_que` y
+  `no_es_multiplo_de` dan NO sin orden en preparación; un gate de la firma sin cuenta da
+  NO_IMPLEMENTADA; `fijar_objetivo` con extensión o parciales y `mover_stop` a un destino distinto
+  de `precio_entrada` dejan hueco con nombre; el stop se llena al precio del tick que lo cruza,
+  DN-3; la curva de equity solo nombra días corridos): **PROVISIONALES**.
+
+**El hallazgo de la rama, y el siguiente bloqueo del bot después de A-35.** Medido en
+`CABLEADO-SIMULADOR.md` §4: aunque la geometría quede resuelta (A-35 y las demás ambigüedades de
+la entrada), **RN-020 seguirá prohibiendo `abrir_operacion`** mientras `perdida_dia` y
+`perdida_semana` no tengan `magnitud` (saldo o equity) ni corte declarados en la spec. RN-020 es
+un `gate` que lee esos dos acumuladores, los dos siguen NO_IMPLEMENTADA con nombre (§3.3) y un
+gate en DESCONOCIDO prohíbe (ADR-0049 H4). Ni la geometría ni la cuenta lo desbloquean: solo la
+spec, y la spec no lo inventa. Por eso nace **A-44**, BLOQUEANTE de RN-020: «magnitud y corte del
+tope de pérdida propio del trader (perdida_dia, perdida_semana)», en la hoja de la sesión 02 justo
+después de A-43. La pregunta al trader, en forma abierta: «¿Hay alguna pérdida a partir de la
+cual dejas de operar? ¿Cuándo vuelves a empezar a contar?».
+
 ## Problema que resuelve
 
 ADR-0048 y ADR-0049 dejaron el motor sin bróker: diez gates en DESCONOCIDO y cobertura 0 por
@@ -207,9 +247,9 @@ de intérprete de distancia.
 
 ## Fecha / fase
 
-2026-09-26 · rama `trabajo/cableado-simulador`. Next Action 33.
+2026-09-26 · escrito en la sesión autónoma y ACEPTADO por el consultor el mismo día, rama
+`trabajo/cableado-simulador`. Next Action 33.
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE

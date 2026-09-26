@@ -286,11 +286,15 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # El 2026-09-25 (rama trabajo/sesion-02, decision del consultor) nace A-42, con que reloj cuenta
     # el trader su horario de 07:00 a 15:00: bloquea la entrada de meses de invierno desde el
     # sorteo, porque su grafico es UTC+2 fijo, huso_operativa es Europe/Madrid y el sorteo congela
-    # huso_operativa y no se repite (ENTRADA-MARZO, PARADA B0).
+    # huso_operativa y no se repite (ENTRADA-MARZO, PARADA B0). El 2026-09-26 (rama
+    # trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks) nace A-44, la magnitud y
+    # el corte del tope de perdida propio del trader: RN-020 lee perdida_dia y perdida_semana, la
+    # spec no los declara, y medido con el broker y la cuenta cableados el gate sigue en
+    # DESCONOCIDO y prohibe abrir aunque la geometria (A-35) quede resuelta. Bloquea RN-020.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-35", "A-42"}, (
+    assert abiertas == {"A-21", "A-35", "A-42", "A-44"}, (
         f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     )
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
