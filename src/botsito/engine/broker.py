@@ -103,6 +103,7 @@ class Posicion:
     motivo_cierre: str | None = None
     fuente_cierre: str | None = None
     ultimo_precio: int = 0
+    stop_original: int | None = None  # el stop con el que nacio, si se movio despues
     marcas: list[tuple[int, int]] = field(default_factory=list)  # (instante_ms, peor precio)
     swaps: list[tuple[int, Decimal]] = field(default_factory=list)
 
@@ -276,6 +277,22 @@ class Broker:
         )
         self.posiciones[id] = p
         self._eventos.append((instante_ms, LLENADA, id, fuente))
+        return p
+
+    def mover_stop(self, posicion_id: str, stop: int, instante_ms: int) -> Posicion:
+        """Cambia el stop de una posicion viva (RN-014, ADR-0053 §1); el objetivo no se toca. La
+        posicion guarda el stop original para clasificar el cierre (break even o salto el stop)."""
+        self._avanza_reloj(instante_ms)
+        p = self.posiciones.get(posicion_id)
+        if p is None or not p.abierta:
+            raise BrokerError(f"posicion {posicion_id!r} no esta abierta")
+        if p.lado == "compra" and not stop < p.objetivo:
+            raise BrokerError(f"{posicion_id}: el stop de una larga va por debajo del objetivo")
+        if p.lado == "venta" and not stop > p.objetivo:
+            raise BrokerError(f"{posicion_id}: el stop de una corta va por encima del objetivo")
+        if p.stop_original is None:
+            p.stop_original = p.stop
+        p.stop = stop
         return p
 
     def hechos(self) -> dict[str, bool]:
