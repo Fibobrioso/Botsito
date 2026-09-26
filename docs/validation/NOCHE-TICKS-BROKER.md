@@ -99,7 +99,29 @@ determinismo, sin mirar al futuro, una que pierde siempre acaba SUSPENDIDA en el
 una que gana poco sin los días mínimos queda EN_CURSO, un día sin ticks va entero por el respaldo
 marcado, y un día dev real por la compuerta si hay datos.
 
-## Fase 6 · repetición descriptiva de las operaciones del trader — pendiente
+## Fase 6 · repetición descriptiva de las operaciones del trader — HECHA, con ticks (DN-8)
+
+**Lo que los casos traen:** instante de llenado, dirección, entrada y stop. **Lo que no traen:**
+salida, resultado y lote (ADR-0037 §7, ADR-0043). La salida real NO se inventa: cada operación se
+REPITE por el bróker con la regla de salida de la spec —stop del caso, objetivo derivado por
+`objetivo_rr` (3), cierre forzoso a las 15:00 del trader— y el lote sale de una rejilla explícita
+de riesgo por operación (0,25, 0,5, 1 y 2 % del capital inicial), escenarios hipotéticos y no
+parámetros del bot. `scripts/repeticion_trader.py` →
+`docs/validation/REPETICION-TRADER-SALIDA.txt`. Resultados (perfil FTMO, fase reto, con ticks):
+
+| riesgo | abril: veredicto, pérdida diaria máx., total máx., ops | agosto: ídem |
+|---|---|---|
+| 0,25 % | EN_CURSO, 3,89 %, 6,29 %, 35 ops | EN_CURSO, 1,29 %, 3,46 %, 42 ops |
+| 0,5 % | EN_CURSO, 2,77 %, 5,42 %, 33 ops (2 rechazadas por volumen) | EN_CURSO, 2,59 %, 6,92 %, 41 ops (1 rechazada) |
+| 1 % | EN_CURSO, 0,58 %, 1,52 %, 29 ops (6 rechazadas) | EN_CURSO, 3,85 %, 3,05 %, 29 ops (13 rechazadas) |
+| 2 % | SUSPENDIDA el 2026-04-13 a las 12:03:59Z por pérdida diaria (5,06 %), 11 ops (24 rechazadas) | EN_CURSO, 1,70 %, 0,85 %, 11 ops (31 rechazadas) |
+
+Ojo a las rechazadas: con riesgo alto y un stop corto el lote supera `firma_volumen_max_lotes`
+(100), la operación no entra y el escenario queda MÁS BENIGNO de lo que sería; la cifra que vale
+es la de 0,25-0,5 %. **Ticks frente a respaldo M1:** el desenlace (motivo o precio de cierre)
+cambia en 12 de 35 operaciones de abril y 18 de 42 de agosto al 0,25 % (30-43 %): el respaldo
+pesimista decide el stop donde los ticks dicen objetivo. Es la medida de cuánto pesa no tener
+ticks. Ninguna cifra de aquí cambia un ADR, un parámetro ni la spec.
 
 ## Fase 7 · medición del instante con ticks — pendiente
 
@@ -110,6 +132,11 @@ marcado, y un día dev real por la compuerta si hay datos.
   título, en el Estado y en los índices. Alternativa: cambiar la guardia para admitir PROPUESTO;
   no se hace de noche porque cambia una regla del repositorio.
 - **DN-1..DN-4**: las del modelo de llenado, en ADR-0051 §1, §3, §4 y §6.
+- **DN-8 (Fase 6): la salida de cada operación del trader se REPITE con la regla de la spec** (stop
+  del caso, objetivo por `objetivo_rr`, cierre forzoso a fin de ventana) porque el caso no trae la
+  salida real; se declara como reconstrucción por regla, no como salida del trader. Alternativas:
+  cerrar la fase sin cifras; o leer la salida del libro (`maxTP`, `avgClosePrice`), que ADR-0037 y
+  la ingesta dejan fuera. El lote sale de una rejilla hipotética de riesgo.
 - **DN-7 (proceso, Fase 4): en ADR-0051 se quitó el bloque `ids-inexistentes` que declaraba a
   ADR-0052**, porque la guardia falla cuando un id declarado inexistente pasa a existir. Es el
   único cambio a un ADR PROPUESTO y no toca su contenido.

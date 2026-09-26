@@ -248,6 +248,36 @@ class Broker:
         self._cerrar(p, instante_ms, precio, MANUAL, fuente)
         return p
 
+    def abrir_conocida(
+        self,
+        id: str,
+        lado: Lado,
+        precio: int,
+        lotes: Decimal,
+        stop: int,
+        objetivo: int,
+        instante_ms: int,
+        fuente: str = "conocida",
+    ) -> Posicion:
+        """Abre una posicion en un llenado CONOCIDO (una operacion real del trader, cuyo instante y
+        precio de entrada trae el caso), sin pasar por el modelo de llenado: a partir de ahi, el
+        stop, el objetivo y el cierre a mercado si se deciden con el modelo. Los limites del perfil
+        se aplican igual y un rechazo levanta error, porque no hay orden que rechazar."""
+        self._avanza_reloj(instante_ms)
+        if id in self.posiciones:
+            raise BrokerError(f"posicion {id!r} repetida")
+        if lotes <= 0:
+            raise BrokerError(f"{id}: lotes no positivos")
+        motivo = self._limite_infringido(lotes, instante_ms)
+        if motivo is not None:
+            raise BrokerError(f"{id}: el perfil no admite esta posicion ({motivo})")
+        p = Posicion(
+            id, id, lado, lotes, precio, stop, objetivo, instante_ms, fuente, ultimo_precio=precio
+        )
+        self.posiciones[id] = p
+        self._eventos.append((instante_ms, LLENADA, id, fuente))
+        return p
+
     def hechos(self) -> dict[str, bool]:
         """Los hechos de origen `broker` de la spec, derivados del estado (ADR-0028 §5)."""
         return {

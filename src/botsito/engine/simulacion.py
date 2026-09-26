@@ -194,8 +194,10 @@ def simular_dia(
         if v is not None:
             cerradas.append(v)
         estrategia.decidir(broker, MinutoUtc(m), cerradas)
-    broker.avanzar(md.hasta_ms)
-    estrategia.al_cerrar_la_ventana(broker, md.hasta_ms)
+    # el ultimo milisegundo de la ventana: el minuto de `hasta` ya no pertenece al dia y no tiene
+    # M1 cargada, asi que un cierre a mercado ahi no tendria precio
+    broker.avanzar(md.hasta_ms - 1)
+    estrategia.al_cerrar_la_ventana(broker, md.hasta_ms - 1)
     return broker
 
 

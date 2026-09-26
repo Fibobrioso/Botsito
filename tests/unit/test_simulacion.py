@@ -279,5 +279,5 @@ def test_un_dia_dev_de_construccion_real_por_la_compuerta_si_hay_datos() -> None
     b = simular_dia(
         md, EstrategiaSintetica("compra", 30, 20, 100, 300), _reglas_broker(), _cfg(), Decimal(1)
     )
-    assert b.ahora_ms == md.hasta_ms
+    assert b.ahora_ms == md.hasta_ms - 1
     assert md.operaciones_trader is not None

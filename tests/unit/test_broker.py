@@ -279,3 +279,20 @@ def test_determinismo_y_sin_mirar_al_futuro() -> None:
         b = _broker(ticks)
         b.avanzar(_ms(M0 + 2))
         b.avanzar(_ms(M0 + 1))
+
+
+def test_abrir_conocida_repite_un_llenado_real_y_el_perfil_sigue_mandando() -> None:
+    """Una operacion cuyo llenado ya se conoce (el caso del trader) se abre sin pasar por el
+    modelo; desde ahi el stop, el objetivo y el cierre a mercado si se deciden con el, y un limite
+    del perfil sigue rechazando."""
+    ticks = [_tick(M0, 5, 995), _tick(M0 + 1, 0, 1005), _tick(M0 + 2, 0, 1021)]
+    b = _broker(ticks)
+    p = b.abrir_conocida("real", "compra", 1000, UNO, 990, 1020, _ms(M0, 10), "caso")
+    assert p.abierta and p.fuente_apertura == "caso" and b.hechos()[HECHO_OPERACION_ABIERTA]
+    b.avanzar(_ms(M0 + 3))
+    assert (p.motivo_cierre, p.precio_cierre, p.fuente_cierre) == (OBJETIVO, 1020, TICKS)
+    assert b.traza().eventos[0] == (_ms(M0, 10), LLENADA, "real", "caso")
+    with pytest.raises(BrokerError, match="volumen_max_lotes"):
+        b.abrir_conocida("grande", "compra", 1000, Decimal(11), 990, 1020, _ms(M0 + 3))
+    with pytest.raises(BrokerError, match="repetida"):
+        b.abrir_conocida("real", "compra", 1000, UNO, 990, 1020, _ms(M0 + 3))
