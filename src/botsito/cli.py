@@ -2115,6 +2115,69 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def motor_visor(repo: Path, args: argparse.Namespace) -> int:
+    """El visor de dias de construccion: una pagina por dia.
+
+    Misma compuerta y mismos codigos que el arnes: 2 si el conjunto no es de construccion, 3 si un
+    dia esta oculto; en los dos casos no se escribe nada. La salida va a una carpeta ignorada por
+    git y el tiempo se imprime fuera de las paginas, que son deterministas.
+    """
+    import time
+    from datetime import date
+
+    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.holdout import HoldoutCerradoError
+    from botsito.cases.paquete import cargar_config
+    from botsito.config.registro import cargar_registro
+    from botsito.data.dataset import DatasetError
+    from botsito.engine import visor
+    from botsito.engine.arnes import ConjuntoError
+    from botsito.engine.interprete import Interprete, reglas_ejecutables
+    from botsito.engine.motor import MotorSpec
+    from botsito.engine.primitivas import primitivas_escritas
+    from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
+
+    inicio = time.perf_counter()
+    salida = Path(args.salida) if args.salida else repo / visor.CARPETA_SALIDA
+    try:
+        criterio = cargar_criterio(repo)
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
+        vocabulario = cargar_vocabulario(spec)
+        motor = MotorSpec(
+            Interprete(vocabulario, primitivas_escritas(registro)),
+            reglas_ejecutables(cargar_reglas(spec)),
+        )
+        preparador = visor.Preparador(
+            repo, _carpeta_datos(repo), criterio, registro, config, vocabulario, motor
+        )
+        casos = (preparador.caso(args.caso),)
+        hasta = None
+        if args.hasta:
+            hasta = visor._minuto_local(
+                date.fromisoformat(casos[0].dia), args.hasta, preparador.huso
+            )
+        dias = [preparador.preparar(c) for c in casos]
+        if hasta is None:
+            escritos = visor.generar(dias, salida)
+        else:
+            salida.mkdir(parents=True, exist_ok=True)
+            ruta = salida / f"{dias[0].caso}.hasta-{args.hasta.replace(':', '')}.html"
+            ruta.write_text(visor.render_dia(dias[0], hasta), encoding="utf-8", newline="\n")
+            escritos = [ruta]
+    except (ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    except HoldoutCerradoError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 3
+    for ruta in escritos:
+        print(f"OK: {ruta}")
+    print(f"TIEMPO: {time.perf_counter() - inicio:.1f} s para {len(dias)} dias")
+    return 0
+
+
 def _carpeta_datos(repo: Path) -> Path:
     """`[rutas].data` (config/ajustes.carpeta_datos); un TOML roto aborta con ERROR."""
     from botsito.config.ajustes import AjustesError, carpeta_datos
@@ -2440,6 +2503,21 @@ def build_parser() -> argparse.ArgumentParser:
     mt_arnes.add_argument(
         "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
     )
+    mt_visor = motor_sub.add_parser(
+        "visor",
+        help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
+    )
+    mt_visor.add_argument("--caso", required=True, help="id del caso dev (caso-...-AAAA-MM-DD)")
+    mt_visor.add_argument(
+        "--salida",
+        default=None,
+        help="carpeta de salida; por defecto data/visor (ignorada por git, no se comitea)",
+    )
+    mt_visor.add_argument(
+        "--hasta",
+        default=None,
+        help="HH:MM local; la vista se recorta a ese instante (sin mirar al futuro)",
+    )
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )
@@ -2635,6 +2713,8 @@ def main(argv: list[str] | None = None) -> int:
         return evidence_list(args.repo, args)
     if args.cmd == "motor" and args.motor_cmd == "arnes":
         return motor_arnes(args.repo, args)
+    if args.cmd == "motor" and args.motor_cmd == "visor":
+        return motor_visor(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "ingerir":
         return casos_ingerir(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "check":
