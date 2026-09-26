@@ -19,6 +19,13 @@ if [ "$branch" = "main" ] && [ "$BOTSITO_ALLOW_MAIN" != "1" ]; then
   echo "            (el ritual de merge exporta BOTSITO_ALLOW_MAIN=1)" >&2
   exit 1
 fi
+# --- codificacion (rama trabajo/simulador-cuenta, 2026-09-25) ---
+# Toda herramienta Python que este hook lance corre en modo UTF-8, pase lo que pase con la
+# consola: desde una consola de Windows en cp1252, `lint-imports` pintaba un emoji, Python
+# reventaba con UnicodeEncodeError y el hook lo contaba como "contrato de importacion roto".
+# Medido el 2026-09-25: con PYTHONUTF8=0 falla, con PYTHONUTF8=1 pasa. Se exporta aqui y no en
+# la consola porque un hook no puede depender de lo que cada terminal tenga configurado.
+export PYTHONUTF8=1
 # --- sello de make check (inicio): identico en pre-commit y pre-merge-commit ---
 # El arbol que se commitea tiene que ser el que `make check` probo en verde: `make check` escribe
 # su hash (git write-tree) en el sello solo si termina en verde y no hay cambios sin estadiar ni

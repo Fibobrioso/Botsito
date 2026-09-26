@@ -24,6 +24,12 @@ ejecutar `make hooks`.
   en la rama que se fusiona (sella su ultimo arbol) y repetir el merge. En `main` no se puede sellar
   a mitad de merge, porque `state check` falla por diseno hasta el `docs(state)`.
 
+**La codificacion.** Los dos hooks exportan `PYTHONUTF8=1` antes de lanzar ninguna herramienta
+Python (rama `trabajo/simulador-cuenta`, 2026-09-25): desde una consola de Windows en cp1252,
+`lint-imports` pintaba un emoji, Python reventaba con `UnicodeEncodeError` y `pre-commit` lo
+contaba como contrato roto. Ya no hace falta anteponer la variable al `git commit`
+(`docs/runbooks/RITUAL.md`, correccion 9); lo vigila `tests/unit/test_hooks_utf8.py`.
+
 **El sello** (`scripts/sello_make_check.py`). `make check` borra el sello al empezar y, si termina en
 verde, escribe el hash del arbol ESTADIADO (`git write-tree`) en `git rev-parse --git-path
 botsito-sello`, dentro del directorio de git. No sella si hay cambios sin estadiar o ficheros sin
