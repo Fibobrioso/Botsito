@@ -94,8 +94,8 @@ paradas pasan de 5 (`perdida_dia`, `perdida_semana`, `alcanza_nivel`, `cruza`,
 acumuladores de la firma y `se_cierra_operacion` siguen paradas porque el motor de la spec no
 tiene cuenta ni bróker: son las mismas de siempre en ese modo. Las reglas disparadas, RN-001 (42
 de 84), RN-003 (84 de 84) y RN-033 (15 de 84), no se mueven; RN-004 aparece con **61 de 84**. Los 6
-avisos de H3 (`gate RN-001, RN-033`) siguen ahí (§6). Cobertura 0/77 en todas, como toca: nadie
-coloca una orden sin la geometría.
+avisos de H3 (`gate RN-001, RN-033`) estaban en las cinco corridas; tras la fase 6 (§7) son cero.
+Cobertura 0/77 en todas, como toca: nadie coloca una orden sin la geometría.
 
 **Las cuatro variantes sin `--simular` son idénticas byte a byte una vez quitada la etiqueta**, fila
 por fila. Medido, y tiene explicación, no es un fallo: (a) las dos lecturas difieren en CUÁNDO el
@@ -156,14 +156,45 @@ consultor. Ninguna se ha abierto: se llevan a la revisión.
 10. **`sin_tope` contradice la sesión 1** (4,5 % y 9 % CONFIRMED). El runbook lo registra como
     RESOLVE_CONTRADICTION y lo deja al consultor.
 
-## 6. Lo que quedó sin terminar, y la fase 6
+## 6. Lo que quedó sin terminar
 
-- **Fase 6 (los 6 avisos de H3):** véase §7 al final de este informe, que se completa en su propio
-  commit.
 - **Lo que no se hizo a propósito:** no se tocó la spec ejecutable (`strategy_spec.yaml` solo cambió
   de versión por los parámetros nuevos del registro; ninguna regla, ningún token); no se abrió
   ninguna ambigüedad; no se escribió ningún productor de zonas (`toca_colocar_orden_limite`), que es
   el siguiente bloqueo y depende de A-21 y las demás.
+
+## 7. Fase 6: los seis avisos de H3, analizados uno a uno
+
+Los seis avisos de la línea base (`CABLEADO-SIMULADOR-LINEA-BASE.txt`, «Avisos de orden dentro de
+una clase») son el mismo caso seis veces: **el evento de las 15:00 de una segunda sesión con sesgo
+`ambiguo`**, donde RN-001 (fuera de la ventana operativa) y RN-033 (sesgo ambiguo o insuficiente)
+dan SÍ en la misma pasada. Cuatro en abril y dos en agosto, todos en la sesión 11-15.
+
+**¿Lo resuelve la precedencia de ADR-0018 sin ambigüedad? Sí, y se puede demostrar.** Las dos son
+`gate`; su `entonces` es exactamente `prohibe: [buscar_entradas, abrir_operacion]` en las dos, sin
+`hace` ni `permite` (`strategy_spec.yaml`, formas de RN-001 y RN-033). El intérprete acumula las
+prohibiciones en un conjunto y una prohibición gana siempre (ADR-0018 §1); un gate que solo prohíbe
+no fija ningún hecho ni ejecuta ninguna acción, así que **en cualquier orden el evento termina con
+las mismas prohibiciones, los mismos hechos y las mismas acciones bloqueadas**: el desempate no
+decidió nada, que es justo lo que el aviso de ADR-0049 H3 (c) existe para señalar. `complementa`
+(ADR-0018 §1 bis) sigue siendo la vía para declarar un solape deliberado con acciones; aquí no hay
+acciones que declarar.
+
+**Cómo se silencia (hecho en este commit):** `engine/interprete.py`, `_empate_inocuo`: un empate
+en el que TODAS las reglas empatadas son `gate` y su `entonces` solo tiene `prohibe` no se anota.
+Cualquier otro empate —un gate que además fija un hecho, como RN-020 con `detenido_por_tope`, o
+dos disparadores— sigue avisando. **El test** (`tests/unit/test_huecos_motor.py`,
+`test_un_empate_entre_gates_que_solo_prohiben_no_avisa_y_el_orden_no_cambia_nada`): dos gates
+puros que empatan dan la misma huella con el orden invertido (disparadas, prohibiciones, hechos y
+acciones bloqueadas) y ningún aviso; un gate con `hace` empatado con uno puro sigue dejando el
+aviso. Los tests de H3 anteriores (invariancia en cuatro escenarios, el aviso entre disparadores,
+el informe) siguen verdes. Medido después sobre construcción en diagnóstico: la sección de avisos
+del arnés dice «ninguno». La línea base de la rama anterior no se reescribe (es histórica): la
+próxima que se escriba saldrá sin los seis.
+
+**Nada queda pendiente de esta fase.** Si el consultor prefiere la otra vía —que RN-033 declare
+`complementa: [RN-001]` y que el aviso respete `complementa`—, es un cambio de spec y de intérprete
+que no toca la semántica de ejecución; esta rama no lo hace.
 
 ## Estado
 
