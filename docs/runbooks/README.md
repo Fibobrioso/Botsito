@@ -10,3 +10,6 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
   durante y despues, con sus cuatro reglas y como entran las respuestas. Escrito para la sesion 02.
 - `ARNES-MOTOR.md` · corre el motor sobre construccion y lee su informe: criterio de fidelidad,
   embudo sobre el grafo de hechos y negativas (ADR-0048).
+- `VISOR-DIAS.md` · el visor de dias de construccion: una pagina por dia con las velas, lo que
+  hizo el trader, lo que hizo el bot y por que, para depurar una regla nueva. La salida no se
+  comitea.
