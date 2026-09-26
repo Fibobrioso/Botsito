@@ -12,10 +12,6 @@ phase: post-F14 (rama `trabajo/ticks-llenado`, sesión nocturna)
 > hasta entonces nada de lo que aquí se fija se toma por aceptado. El campo `status` dice ACTIVE
 > solo porque la guardia de ADR (`tests/unit/test_adr.py`) no admite otro valor.
 
-```ids-inexistentes
-ADR-0052 — el ADR del bróker simulado, Fase 4 de esta misma rama; se escribe después de este
-```
-
 ## Decision
 
 El **modelo de llenado** es la regla con la que el simulador decide, para cada orden y cada

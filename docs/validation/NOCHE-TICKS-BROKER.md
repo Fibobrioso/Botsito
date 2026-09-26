@@ -10,10 +10,6 @@ descarga o ejecuta; mayo, marzo, febrero y septiembre, ni se descargan ni se eje
 descargar nada se guardó la salida de `kit check --sesion 2026-09-09-sesion-01` y de `fidelidad
 check --artefacto eurusd-2026-09` para compararlas byte a byte después.
 
-```ids-inexistentes
-ADR-0052 — el ADR del bróker simulado, Fase 4; se escribe después de esta pieza
-```
-
 ## Fase 0 · comisión conservadora — HECHA
 
 `firma_comision_por_lado` pasa de UNKNOWN a CONFIRMED `true` en
@@ -58,7 +54,16 @@ a respaldo), límite tocada justo en su precio a cada lado, tramo sin ticks marc
 `engine/simulador_config.py` lee `knowledge/simulador/llenado.yaml` con lectura estricta; el
 fichero se escribe cuando el spread esté medido (Fase 2).
 
-## Fase 4 · bróker simulado — pendiente
+## Fase 4 · bróker simulado — HECHA
+
+ADR-0052 «El bróker simulado», PROPUESTO. `engine/broker.py`: ciclo de vida completo de la orden,
+posición con stop y objetivo, cierre por stop, objetivo o a mercado, rechazos por límite del
+perfil registrados, comisión por lado, swap por corte diario del huso del perfil (DN-6), marcas
+del peor precio por minuto para la cuenta, hechos de origen broker derivados del estado; sin
+cifras de negocio ni nada que asuma un instrumento o una firma. NO se cablea al motor: el
+contrato del motor queda en ADR-0052 §5. Tests: ciclo de vida, cancelada/expirada/manual, stop
+al precio del tick, rechazos por cada límite, equity de la cuenta = saldo + flotante en cada
+marca, respaldo M1 marcado, swap y comisión, determinismo y sin mirar al futuro.
 
 ## Fase 5 · punta a punta con estrategia sintética — pendiente
 
@@ -73,6 +78,11 @@ fichero se escribe cuando el spread esté medido (Fase 2).
   título, en el Estado y en los índices. Alternativa: cambiar la guardia para admitir PROPUESTO;
   no se hace de noche porque cambia una regla del repositorio.
 - **DN-1..DN-4**: las del modelo de llenado, en ADR-0051 §1, §3, §4 y §6.
+- **DN-7 (proceso, Fase 4): en ADR-0051 se quitó el bloque `ids-inexistentes` que declaraba a
+  ADR-0052**, porque la guardia falla cuando un id declarado inexistente pasa a existir. Es el
+  único cambio a un ADR PROPUESTO y no toca su contenido.
+- **DN-6 (Fase 4): el corte del swap es la medianoche del huso del perfil** (CE(S)T para FTMO),
+  porque el reloj del servidor no tiene calendario publicado (A-28); ADR-0052 §3.
 - **DN-5 (Fase 2): los ticks se congelan solo para los DÍAS DEV de construcción y las HORAS 05-13
   UTC** (07:00-16:00 CEST: la ventana del trader 07:00-15:00 más una hora), con 2 s de pausa entre
   peticiones, y la selección queda escrita en el manifiesto (`seleccion`). Motivo: el ritmo del
