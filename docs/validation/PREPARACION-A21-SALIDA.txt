@@ -1,0 +1,93 @@
+# Verificacion A-21: medicion descriptiva sobre construccion (DIAGNOSTICO)
+CONJUNTO: construccion (2026-04, 2026-08); dias 42; operaciones del trader 77
+HIPOTESIS: A-35 cierre_vela_contraria; A-44 sin_tope; A-21 cada lectura. Nada de esto vale para elegir una lectura: la elige el trader, no el ajuste.
+
+## A-21 = solo_una_zona_de_control (DIAGNOSTICO-A21-solo_una_zona_de_control)
+sesiones del trader en las que RN-011 liga una zona: 17 de 49
+operaciones del trader con una zona vigente antes de su entrada: 37; sin zona todavia (o sin lado, o sin toma): 40
+  la entrada cae DENTRO de la zona: 6; fuera: 31
+  la direccion coincide con el lado de la zona: 30
+  por esquema: {'primer_esquema': 37}
+  caja de las zonas vigentes (puntos, una por zona): min 5, mediana 10, max 28, n 17
+  distancia entrada-stop del trader en sus operaciones (puntos): min 3, mediana 15, max 49, n 77
+H3 (aviso «disparador RN-004, RN-011»): minutos por sesion del trader en que RN-004 vuelve a fijar liquidez_tomada: min 15, max 120; sesiones en las que RN-011 dispara en un minuto en que RN-004 tambien fija: 17; en otro minuto: 0
+- 2026-04-01 11-15 12:30Z (compra): zona compra del primer_esquema, formada 08:04Z, fuera de la zona
+- 2026-04-09 07-11 07:12Z (venta): zona compra del primer_esquema, formada 05:02Z, DENTRO de la zona; direccion contraria a la zona
+- 2026-04-09 11-15 09:15Z (venta): zona compra del primer_esquema, formada 05:02Z, fuera de la zona; direccion contraria a la zona
+- 2026-04-16 11-15 11:13Z (venta): zona venta del primer_esquema, formada 06:16Z, fuera de la zona
+- 2026-04-17 07-11 08:10Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-04-17 07-11 08:36Z (venta): zona venta del primer_esquema, formada 05:31Z, DENTRO de la zona
+- 2026-04-22 07-11 08:02Z (venta): zona venta del primer_esquema, formada 05:16Z, fuera de la zona
+- 2026-04-22 07-11 08:19Z (venta): zona venta del primer_esquema, formada 05:16Z, fuera de la zona
+- 2026-04-23 07-11 05:30Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-23 07-11 05:53Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-23 07-11 06:49Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-24 11-15 11:06Z (venta): zona compra del primer_esquema, formada 09:35Z, fuera de la zona; direccion contraria a la zona
+- 2026-04-24 11-15 11:30Z (venta): zona compra del primer_esquema, formada 09:35Z, fuera de la zona; direccion contraria a la zona
+- 2026-04-27 11-15 11:45Z (compra): zona compra del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-27 11-15 12:00Z (compra): zona compra del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-29 07-11 07:55Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-04-29 07-11 07:58Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-04-29 11-15 09:36Z (venta): zona venta del primer_esquema, formada 07:16Z, fuera de la zona
+- 2026-04-29 11-15 11:02Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-08-03 07-11 06:03Z (venta): zona venta del primer_esquema, formada 06:01Z, DENTRO de la zona
+- 2026-08-03 07-11 06:07Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 09:46Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 09:52Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 12:03Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 12:10Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-04 11-15 11:34Z (venta): zona compra del primer_esquema, formada 07:16Z, fuera de la zona; direccion contraria a la zona
+- 2026-08-07 11-15 11:47Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-07 11-15 12:09Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-07 11-15 12:14Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-17 07-11 05:17Z (compra): zona compra del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-08-20 11-15 11:49Z (compra): zona compra del primer_esquema, formada 11:01Z, fuera de la zona
+- 2026-08-26 07-11 05:49Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-26 07-11 07:03Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-26 07-11 08:31Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-27 07-11 08:04Z (venta): zona compra del primer_esquema, formada 06:23Z, fuera de la zona; direccion contraria a la zona
+- 2026-08-27 07-11 08:12Z (venta): zona compra del primer_esquema, formada 06:23Z, fuera de la zona; direccion contraria a la zona
+- 2026-08-27 11-15 12:13Z (venta): zona venta del primer_esquema, formada 06:17Z, fuera de la zona
+
+## A-21 = sin_mecha_mas_alla_del_extremo (DIAGNOSTICO-A21-sin_mecha_mas_alla_del_extremo)
+sesiones del trader en las que RN-011 liga una zona: 14 de 49
+operaciones del trader con una zona vigente antes de su entrada: 32; sin zona todavia (o sin lado, o sin toma): 45
+  la entrada cae DENTRO de la zona: 6; fuera: 26
+  la direccion coincide con el lado de la zona: 28
+  por esquema: {'primer_esquema': 32}
+  caja de las zonas vigentes (puntos, una por zona): min 5, mediana 10, max 28, n 13
+  distancia entrada-stop del trader en sus operaciones (puntos): min 3, mediana 15, max 49, n 77
+H3 (aviso «disparador RN-004, RN-011»): minutos por sesion del trader en que RN-004 vuelve a fijar liquidez_tomada: min 15, max 120; sesiones en las que RN-011 dispara en un minuto en que RN-004 tambien fija: 14; en otro minuto: 0
+- 2026-04-01 11-15 12:30Z (compra): zona compra del primer_esquema, formada 08:04Z, fuera de la zona
+- 2026-04-09 07-11 07:12Z (venta): zona compra del primer_esquema, formada 05:02Z, DENTRO de la zona; direccion contraria a la zona
+- 2026-04-09 11-15 09:15Z (venta): zona compra del primer_esquema, formada 05:02Z, fuera de la zona; direccion contraria a la zona
+- 2026-04-16 11-15 11:13Z (venta): zona venta del primer_esquema, formada 06:16Z, fuera de la zona
+- 2026-04-17 07-11 08:10Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-04-17 07-11 08:36Z (venta): zona venta del primer_esquema, formada 05:31Z, DENTRO de la zona
+- 2026-04-22 07-11 08:02Z (venta): zona venta del primer_esquema, formada 05:16Z, fuera de la zona
+- 2026-04-22 07-11 08:19Z (venta): zona venta del primer_esquema, formada 05:16Z, fuera de la zona
+- 2026-04-23 07-11 05:30Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-23 07-11 05:53Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-23 07-11 06:49Z (venta): zona venta del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-27 11-15 11:45Z (compra): zona compra del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-27 11-15 12:00Z (compra): zona compra del primer_esquema, formada 05:01Z, fuera de la zona
+- 2026-04-29 07-11 07:55Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-04-29 07-11 07:58Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-04-29 11-15 09:36Z (venta): zona venta del primer_esquema, formada 07:16Z, fuera de la zona
+- 2026-04-29 11-15 11:02Z (venta): zona venta del primer_esquema, formada 07:16Z, DENTRO de la zona
+- 2026-08-03 07-11 06:03Z (venta): zona venta del primer_esquema, formada 06:01Z, DENTRO de la zona
+- 2026-08-03 07-11 06:07Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 09:46Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 09:52Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 12:03Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-03 11-15 12:10Z (venta): zona venta del primer_esquema, formada 06:01Z, fuera de la zona
+- 2026-08-07 11-15 11:47Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-07 11-15 12:09Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-07 11-15 12:14Z (venta): zona venta del primer_esquema, formada 05:31Z, fuera de la zona
+- 2026-08-20 11-15 11:49Z (compra): zona compra del primer_esquema, formada 11:01Z, fuera de la zona
+- 2026-08-26 07-11 05:49Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-26 07-11 07:03Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-26 07-11 08:31Z (venta): zona venta del primer_esquema, formada 05:46Z, fuera de la zona
+- 2026-08-27 07-11 08:04Z (venta): zona compra del primer_esquema, formada 06:23Z, fuera de la zona; direccion contraria a la zona
+- 2026-08-27 07-11 08:12Z (venta): zona compra del primer_esquema, formada 06:23Z, fuera de la zona; direccion contraria a la zona
+
