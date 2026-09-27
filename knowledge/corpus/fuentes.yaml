@@ -49,6 +49,18 @@ videos:
       voz las 27 preguntas del cuestionario, las 3 adicionales y las 14 confirmaciones de la hoja
       de respuestas, que se rellena en paralelo con la version sintetizada
 
+  - video_id: v7
+    fichero: "Grabación de pantalla 2026-09-27 110427.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 4910297066
+    fecha_grabacion: "2026-09-27"
+    naturaleza: >-
+      sesion 2 de elicitacion con el trader (hoja-sesion-02): el trader hace backtesting paso a
+      paso en FX Replay de la segunda mitad de agosto de 2026 (material de DESARROLLO: ningun dia
+      de agosto esta en ninguna particion, medido con casos_reservados y casos_ocultos el
+      2026-09-27) mientras responde en voz las preguntas de la hoja. El nombre del fichero lleva
+      la fecha de grabacion, un domingo: no es un dia de operaciones
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2
