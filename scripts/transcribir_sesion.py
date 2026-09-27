@@ -28,10 +28,10 @@ ningun modelo lee la cruda). Un segmento va a `[CUARENTENA mm:ss–mm:ss]` SIN c
 Y tambien el segmento ANTERIOR y el SIGUIENTE. Ante la duda, cuarentena. Abril, agosto y enero
 no se filtran. Con punto y DOS partes no es fecha: son precios («1.17»), medido en v1-v6.
 
-LA SEGMENTACION POR PREGUNTA: un codigo dicho en voz alta («A-35», «A 35», «a35», «A treinta y
-cinco», «pregunta 35»...) abre esa pregunta hasta el siguiente codigo; «fin de pregunta» o «sin
-pregunta» vuelven a SIN PREGUNTA, y lo que hay antes del primer codigo es SIN PREGUNTA. Solo cuentan
-los codigos de ambiguedades que existen, y no cuenta «a 35 puntos» ni «de 20 a 25».
+LA SEGMENTACION POR PREGUNTA: SOLO «pregunta» seguida del codigo abre una pregunta («Pregunta A
+treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente «pregunta ...» o hasta
+«fin de pregunta», que devuelve a SIN PREGUNTA; lo que hay antes de la primera es SIN PREGUNTA.
+El «a N» suelto no abre nada. Solo cuentan los codigos que se preguntan (ABIERTA o DECIDIDA).
 
 Uso (un solo comando, desde la raiz del repo):
     uv run python scripts/transcribir_sesion.py [--audio <fichero o carpeta>]
@@ -197,26 +197,25 @@ _UNIDADES_TRAS = (
     r"puntos?|pips?|pipos?|minutos?|min|horas?|segundos?|dolares?|euros?|por\s*ciento|%|velas?|"
     r"lotes?|veces|operaciones?|dias?|semanas?|meses|anos?|pesos?|usd|k\b|mil"
 )
+# SOLO «pregunta» seguida del codigo abre una pregunta (protocolo de voz de la sesion 02):
+# «Pregunta A treinta y cinco», «pregunta a 35», «pregunta A-35», «pregunta, A35», «pregunta
+# numero 35», «pregunta 35». El «a N» suelto ya no abre nada: en la sesion 01 casaba 17 veces
+# con conversacion normal («llega a 30»).
 _RE_CODIGO = re.compile(
-    r"(?<![\w-])(?P<pre>(?:pregunta|ambiguedad)\s+(?:a\s*[-.]?\s*)?|(?:a|ha|ah)\s*[-.]?\s*)"
+    r"(?<![\w-])preguntas?\W{0,3}(?:numero\W{1,3})?(?:(?:a|ha|ah)\W{0,3})?"
     r"(?P<n>\d{1,2})(?!\d|[.,]\d)(?!\s*(?:" + _UNIDADES_TRAS + r"))"
 )
-_RE_RANGO = re.compile(r"\d+\s*$")  # «de 20 a 25»: lo que precede a la «a» es un numero
 _RE_FIN = re.compile(r"\b(?:fin de (?:la )?pregunta|sin pregunta|fuera de pregunta)\b")
 
 
 def codigo_en(texto: str, validos: Iterable[str]) -> str | None:
-    """El ULTIMO codigo de pregunta valido dicho en el texto, o None. «A treinta y cinco», «a35»,
-    «A-35», «ha 35», «pregunta 35»; no cuenta «a 35 puntos» ni «de 20 a 25»."""
+    """El ULTIMO codigo de pregunta valido dicho DESPUES DE «pregunta», o None: «pregunta A
+    treinta y cinco», «pregunta a 35», «pregunta A-35». «llega a 30» o «A-35» sueltos no
+    cuentan."""
     conocidos = set(validos)
     t = numeros_a_cifras(normalizar(texto))
     ultimo: str | None = None
     for m in _RE_CODIGO.finditer(t):
-        antes = t[: m.start()]
-        if not m.group("pre").startswith(("pregunta", "ambiguedad")) and _RE_RANGO.search(
-            antes.rstrip()
-        ):
-            continue
         codigo = f"A-{int(m.group('n'))}"
         if codigo in conocidos:
             ultimo = codigo

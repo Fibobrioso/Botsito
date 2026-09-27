@@ -130,40 +130,69 @@ def test_los_vecinos_van_tambien_a_cuarentena(m: ModuleType) -> None:
 @pytest.mark.parametrize(
     ("texto", "codigo"),
     [
-        ("vamos con la A-35", "A-35"),
-        ("A 35", "A-35"),
-        ("la a35, que es la del pivote", "A-35"),
-        ("A treinta y cinco", "A-35"),
-        ("ahora a 35", "A-35"),
-        ("ha 35", "A-35"),
+        ("Pregunta A treinta y cinco", "A-35"),
+        ("pregunta a 35", "A-35"),
+        ("pregunta A-35", "A-35"),
+        ("pregunta, A35, la del pivote", "A-35"),
         ("pregunta 35", "A-35"),
+        ("pregunta numero 35", "A-35"),
         ("pregunta treinta y cinco", "A-35"),
         ("Pregunta A-46", "A-46"),
-        ("A cuarenta y seis", "A-46"),
-        ("la A veintiuno", "A-21"),
-        ("primero A-35 y luego A-45", "A-45"),  # el ultimo manda
+        ("pregunta A cuarenta y seis", "A-46"),
+        ("pregunta ha veintiuno", "A-21"),
+        ("pregunta A treinta", "A-30"),
+        ("pregunta A-35 y luego pregunta A-45", "A-45"),  # el ultimo manda
     ],
 )
-def test_los_codigos_se_detectan_en_sus_formas(m: ModuleType, texto: str, codigo: str) -> None:
+def test_una_pregunta_se_abre_solo_con_pregunta_y_el_codigo(
+    m: ModuleType, texto: str, codigo: str
+) -> None:
     assert m.codigo_en(texto, VALIDOS) == codigo, texto
 
 
 @pytest.mark.parametrize(
     "texto",
     [
+        "el precio llega a 30",
+        "llega a treinta",
+        "vamos con la A-35",  # sin «pregunta» delante ya no abre
+        "A treinta y cinco",
+        "ahora a 35",
+        "la a35",
         "lo pongo a 35 puntos",
-        "a 30 pips del alto",
-        "a 25 minutos del cierre",
         "de 20 a 25",
         "voy a una zona",
-        "a dos velas",
-        "la A-12",  # no esta entre los validos (resuelta)
-        "a 99",
+        "pregunta A-12",  # no esta entre los validos (resuelta)
+        "pregunta a 99",
+        "pregunta a 35 puntos",
         "el precio a 1.21",
     ],
 )
-def test_lo_que_no_es_un_codigo(m: ModuleType, texto: str) -> None:
+def test_lo_que_no_abre_pregunta(m: ModuleType, texto: str) -> None:
     assert m.codigo_en(texto, VALIDOS) is None, texto
+
+
+def test_la_trampa_llega_a_30_no_abre_a30_y_fin_de_pregunta_cierra(m: ModuleType) -> None:
+    textos = [
+        "pregunta A treinta y cinco",  # 0 abre A-35
+        "el precio llega a treinta",  # 1 sigue en A-35: la trampa no abre A-30
+        "fin de pregunta",  # 2 cierra
+        "charla suelta",  # 3 SIN PREGUNTA
+        "pregunta A treinta",  # 4 abre A-30
+    ]
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), VALIDOS)
+    assert [ln.pregunta for ln in lineas] == [
+        "A-35",
+        "A-35",
+        m.SIN_PREGUNTA,
+        m.SIN_PREGUNTA,
+        "A-30",
+    ]
+
+
+def test_la_marco_no_va_a_cuarentena(m: ModuleType) -> None:
+    assert m.motivos_cuarentena("la marco en el alto") == []
+    assert m.en_cuarentena(["pregunta A-35", "la marco en el alto", "y sigo"]) == {}
 
 
 def test_numeros_a_cifras(m: ModuleType) -> None:
@@ -182,17 +211,17 @@ def _segs(m: ModuleType, textos: list[str]) -> list[object]:
 def test_la_filtrada_agrupa_por_pregunta_y_no_trae_nada_en_cuarentena(m: ModuleType) -> None:
     textos = [
         "buenas, empezamos",  # 0 SIN PREGUNTA
-        "vamos con la A-35",  # 1
+        "pregunta A-35",  # 1
         "yo lo marco cuando cierra",  # 2
         "respuesta uno sin mes",  # 3 vecino
         "SECRETO eso lo vi en septiembre",  # 4 cuarentena
         "otra cosa inocua",  # 5 vecino
         "sigo con la zona",  # 6
-        "ahora la A-21",  # 7
+        "pregunta A-21",  # 7
         "limpia es sin mechas",  # 8
         "fin de pregunta",  # 9 SIN PREGUNTA
         "charla final",  # 10
-        "volvemos a la A-35",  # 11
+        "pregunta A-35 otra vez",  # 11
         "y otra cosa de la 35",  # 12
     ]
     lineas, cuarentena = m.lineas_filtradas(_segs(m, textos), VALIDOS)
@@ -216,7 +245,7 @@ def test_un_tramo_sin_codigo_es_sin_pregunta(m: ModuleType) -> None:
 
 
 def test_el_registro_no_trae_contenido(m: ModuleType) -> None:
-    textos = ["A-35", "SECRETO en mayo", "algo", "A-46", "otra"]
+    textos = ["pregunta A-35", "SECRETO en mayo", "algo", "pregunta A-46", "otra"]
     lineas, cuarentena = m.lineas_filtradas(_segs(m, textos), VALIDOS)
     registro = "\n".join(m.registro_filtro(lineas, cuarentena, VALIDOS))
     assert "SECRETO" not in registro and "mayo" not in registro

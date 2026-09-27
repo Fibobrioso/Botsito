@@ -245,7 +245,11 @@ Lo que el trader diga fuera de un código y sea relevante para alguna ambigüeda
 
 ## Cómo se ejecuta mañana
 
-1. Grabar la sesión con el permiso del trader dicho EN la grabación (regla 1 de la hoja). Al pasar a cada pregunta, decir en voz alta **«pregunta A treinta y cinco»** (el código con la palabra «pregunta» delante es la forma que el detector casa sin dudas). Al salir de las preguntas, decir **«fin de pregunta»**.
+1. Grabar la sesión con el permiso del trader dicho EN la grabación (regla 1 de la hoja).
+   **Protocolo de voz, obligatorio: es lo único que el script entiende.**
+   - Para ABRIR cada pregunta, decir en voz alta **«Pregunta A …»** con el código: «Pregunta A treinta y cinco», «Pregunta A cuarenta y seis». Sin la palabra «pregunta» delante, el código NO abre nada: un «A-35» suelto, o un «llega a treinta» del trader, no cambian de pregunta.
+   - Para CERRAR, decir **«fin de pregunta»** al acabar cada una. Lo que se hable desde ahí hasta la siguiente «Pregunta A …» queda como SIN PREGUNTA.
+   - Si se olvida abrir, la respuesta cae en la pregunta anterior (o en SIN PREGUNTA si se cerró): se localiza a mano en la filtrada (paso 5).
 2. Copiar el audio (un solo fichero: m4a, mp3, wav, ogg, opus, mp4...) a `C:\Users\USER\Desktop\reunion-a35-a44\sesion-02-audio\`. La carpeta NO está dentro del repositorio, y así tiene que seguir.
 3. Desde la raíz del repositorio, en la terminal:
 
@@ -255,6 +259,6 @@ Lo que el trader diga fuera de un código y sea relevante para alguna ambigüeda
 
    Sin argumentos procesa todos los audios de esa carpeta; con `--audio <fichero>` solo uno. Tarda del orden de 0,4 veces la duración del audio en la GPU de esta máquina (medido: 3 minutos en 65 s, con la carga del modelo; unos 45 minutos para 2 horas). No descarga nada: usa el modelo que ya está en la caché. Si la GPU falla, `--dispositivo cpu` (mucho más lento).
 4. Abrir SOLO `<audio>.registro.txt` y `<audio>.filtrada.md`. El registro dice cuántos segmentos fueron a cuarentena, qué códigos se detectaron (con su primer `mm:ss`) y qué preguntas de la hoja no tienen código. No abrir `<audio>.cruda-NO-LEER.*`.
-5. Si un código no se detectó, la respuesta queda en la pregunta anterior o en SIN PREGUNTA: se localiza a mano DENTRO de la versión filtrada y se anota en «Notas».
+5. Si una pregunta no se abrió (el registro la lista en «preguntas de la hoja SIN codigo detectado»), su respuesta queda en la pregunta anterior o en SIN PREGUNTA: se localiza a mano DENTRO de la versión filtrada y se anota en «Notas».
 6. Si hace falta ajustar el filtro (por ejemplo, una grafía nueva de un mes), se ajusta el script y se rehace la filtrada sin volver a transcribir: `uv run python scripts/transcribir_sesion.py --solo-filtrar`.
 7. Rellenar esta plantilla en una rama, citando la filtrada. Registrar cada respuesta como feedback (`docs/runbooks/ACTIVAR-A35-A44.md` §1) solo después de la revisión del consultor.

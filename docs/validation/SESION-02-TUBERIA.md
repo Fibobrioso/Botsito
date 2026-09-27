@@ -83,9 +83,8 @@ menciones de los meses que Aleks dice haber leído.
 
 1. **Sin prueba con audio de la reunión**: la detección de códigos dichos en voz alta no se ha
    medido sobre habla real con códigos. La sesión 01 no los usaba.
-2. **Falsos positivos del «a N» desnudo**: «llega a 30» abriría la pregunta A-30. Mitigado por la
-   lista de códigos válidos y por las unidades («a 30 pips» no cuenta), no eliminado. El registro
-   lista cada código con su primer `mm:ss` para revisarlo.
+2. **Falsos positivos del «a N» desnudo**: «llega a 30» abriría la pregunta A-30. CERRADO en la
+   segunda tarea (§6): solo «pregunta» seguida del código abre una pregunta.
 3. **La cuarentena se pasa de frenada a propósito**: «2 de 3 operaciones» o una proporción «1-3»
    van a cuarentena como fecha numérica. Ante la duda, cuarentena; si una respuesta cae dentro, la
    pregunta queda NO RESPONDIDA y se repregunta otro día.
@@ -94,6 +93,12 @@ menciones de los meses que Aleks dice haber leído.
 5. **Un código dicho dentro de un tramo en cuarentena** sigue cambiando de pregunta: el código no
    dice nada del contenido, pero el encabezado lo delata.
 
-## 6. Estado
+## 6. Segunda tarea (misma rama): la detección estricta
+
+Desde el segundo paso de la rama, una pregunta se abre SOLO con «pregunta» seguida del código («Pregunta A treinta y cinco», «pregunta a 35», «pregunta A-35», «pregunta, A35», «pregunta número 35»), y «fin de pregunta» la cierra hasta la siguiente. El «a N» suelto ya no abre nada. Medido otra vez sobre la cruda completa de la sesión 01, sin leer el texto: **0 segmentos abren pregunta, aunque se acepte cualquier código de A-1 a A-99 (antes, 17 falsos positivos con los números bajos)**; la cuarentena no cambia (69 segmentos, 20 bloques). Con esto el riesgo 2 del §5 queda cerrado, y aparece otro: **si Aleks no dice «pregunta» al abrir, la respuesta se queda en la pregunta anterior**; el registro lista las preguntas de la hoja que no se abrieron, para localizarlas a mano.
+
+La prueba con el audio de Aleks sigue sin hacerse: la carpeta `sesion-02-audio` tampoco existía al empezar esta segunda tarea.
+
+## 7. Estado
 
 Rama lista para revisión, NO cerrada.
