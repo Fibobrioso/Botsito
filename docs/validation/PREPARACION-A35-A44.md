@@ -20,6 +20,14 @@ commit de esta rama podía entrar. Se tocaron esas dos cosas y nada más (la lí
 número), como hizo la rama anterior con el mismo mandato del consultor; todo lo narrativo queda
 para el cierre. Está dicho en cada commit.
 
+> **Corrección del 2026-09-26, rama `trabajo/preparar-a21`.** El NOMBRE del fichero de diagnóstico
+> ya no lleva las etiquetas completas (`informe.DIAGNOSTICO-A35-<lectura>.DIAGNOSTICO-A44-<modo>.txt`)
+> sino su forma compacta (`informe.DIAGNOSTICO.a35=<lectura>.a44=<modo>.txt`): con tres etiquetas
+> el nombre comía 105 de los 259 caracteres que admite Windows y tres corridas de nueve minutos
+> fallaron al escribir. Las líneas y las páginas siguen llevando las etiquetas completas, y una ruta
+> que no cabe se rechaza ANTES de leer una vela (`engine/diagnostico.py`, `comprobar_ruta`;
+> `tests/unit/test_rutas_windows.py`). El §2 de abajo se lee con eso delante.
+
 > **Nota del 2026-09-26, misma rama, tras la verificación (`VERIFICACION-A35-A44.md`).** Dos cosas
 > de este informe cambiaron después: (1) «los toques cuentan desde el fin de la vela contraria»
 > (§2 y candidato 6 de §5) era un bug de cableado que dejaba el selector sin efecto; desde

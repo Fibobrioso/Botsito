@@ -183,3 +183,85 @@ Con A-35 fijada RN-004 dispara y `liquidez_tomada` aparece en el embudo; lo que 
 embudo es la geometría de la entrada (`toca_colocar_orden_limite`, A-21 y las demás) y los
 cartuchos (`PREPARACION-A35-A44.md` §3). Con A-44 fijada, RN-020 deja de ser hueco. Cobertura 0
 sigue siendo lo esperado hasta que la geometría exista: **no es un fallo de la activación**.
+
+## 6. A-21 · «¿qué miras para decidir que una zona está limpia?» (RN-011, `zona_control_limpia`)
+
+Desde `trabajo/preparar-a21` (2026-09-26) la geometría de la zona de entrada está construida
+(`domain/estructura_m1.py`, `engine/zonas.py`; `docs/validation/PREPARACION-A21.md`) y RN-011 la
+liga en el cierre del breaker. Lo único que falta es **la condición de «limpia»**, que el corpus no
+define (0 de 14 pasajes, `A24-A21-A26-A34-CLASIFICACION.md`). El selector es
+`zona_control_limpia` (`knowledge/spec/parametros.yaml`, `estado: UNKNOWN`), y sus opciones son
+las DOS condiciones de validez que el corpus sí enuncia; **ninguna de las dos es una definición de
+«limpia» documentada**, así que la respuesta del trader tiene que calzar en una de ellas o se PARA.
+
+El estado de partida, comprobado como en §0:
+
+```
+uv run botsito motor arnes --meses 2026-04 --salida /tmp/x.txt \
+  --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope
+```
+→ Tiene que salir `ERROR: A-21 sin fijar: zona_control_limpia ...` y código 2, sin escribir nada:
+la compuerta de A-21 es la tercera y va después de las de A-35 y A-44. Con
+`--diagnostico-a21 <lectura>` corre etiquetado `DIAGNOSTICO-A21-<lectura>` y no cuenta para nada.
+
+| lo que dice el trader, en sustancia | valor que se escribe | dónde |
+|---|---|---|
+| que **no haya más de una zona de control** en el retroceso; «una sola», «si hace dos ya no» (es la regla que ya es RN-009, v3 #624-#627) | `solo_una_zona_de_control` | `zona_control_limpia` |
+| que **ninguna mecha pase el extremo del bloque** antes de la ruptura; «que no lo haya perforado», «que respete el bloque» (v4 0:53:10, `ev-v4-005310-ce69f8c6`) | `sin_mecha_mas_alla_del_extremo` | `zona_control_limpia` |
+| **las dos cosas a la vez** | **NINGUNO: PARAR, §4**. El selector es un enum de UNA opción; combinar es una lectura nueva que decide el consultor (ADR) | — |
+| **otra cosa**: un número de velas, un tamaño del retroceso, una proporción de la caja, «lo veo», la vela del bloque con cuerpo grande, que el impulso sea rápido | **NINGUNO: PARAR, §4** | — |
+
+Los dos registros (la ambigüedad y el parámetro), con la cita de la CRUDA:
+
+```
+uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
+  --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
+  --objetivo-tipo ambiguedad --objetivo-id A-21 --accion RESOLVE_UNKNOWN \
+  --respuesta "<literal de la cruda>" --registrado-por Aleks \
+  --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
+
+uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
+  --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
+  --objetivo-tipo parametro --objetivo-id zona_control_limpia --accion RESOLVE_UNKNOWN \
+  --respuesta "<literal de la cruda>" \
+  --valor <solo_una_zona_de_control|sin_mecha_mas_alla_del_extremo> \
+  --registrado-por Aleks --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
+```
+
+Después, el mismo §2: `feedback apply --check`, `feedback apply`, **subir `spec_version`**
+(`13.3.0` → `13.3.1`), `spec manifest --escribir`, `spec docs --escribir`, y el arnés a secas
+—sin `--diagnostico-a21`— tiene que CORRER (con A-35 y A-44 ya fijadas; si no, se fijan antes:
+la compuerta de A-21 es la última). Los tests que tienen que pasar:
+
+| respuesta | tests |
+|---|---|
+| A-21, cualquiera de las dos lecturas | `uv run pytest tests/unit/test_estructura_m1.py tests/unit/test_preparar_a21.py -q` (el test «con el valor fijado el diagnóstico se rechaza» es lo que ocurre entonces con el registro real) |
+| siempre, antes del commit | estadiar → `make check > make-check.log 2>&1` → `grep SELLO make-check.log` → commit |
+
+**Tests que cambian de sentido al activar A-21, y hay que tocar a propósito:**
+- `tests/unit/test_preparar_a21.py::test_la_cli_se_niega_sin_a21_aunque_a35_y_a44_vayan_en_diagnostico`
+  comprueba la negativa con el registro REAL sin fijar; con el valor puesto pasa a comprobar el
+  rechazo del diagnóstico. Se reescribe con ese sentido y se dice en el commit.
+- `tests/unit/test_visor.py::test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos` y
+  `tests/unit/test_preparar_a35.py::test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos`
+  corren hoy con `--diagnostico-a21 solo_una_zona_de_control` porque a secas se niegan; con A-21
+  fijada esa opción se RECHAZA («ya esta fijado ... no admite --diagnostico»): se quita de la
+  llamada y de los nombres esperados (`DIAGNOSTICO-A21-...` desaparece del fichero y de la página).
+- `tests/unit/test_kit.py::test_ambiguedades_reales_y_esquema` (el conjunto de bloqueantes ABIERTAS
+  pierde `A-21`) y la hoja de la sesión 02 (`scripts/hoja_preguntas.py`, `ORDEN_SESION_02`, y
+  `tests/unit/test_hoja_preguntas.py`), como en §3.
+
+Cerrar la ambigüedad: los cuatro sitios de §3, con la regla de la spec que la citaba en RN-008 y
+RN-011 (`toca_colocar_orden_limite`) y el glosario si nombra «limpia».
+
+**Lo que la respuesta a A-21 NO fija, y no se ajusta por lo bajo**: la agrupación de varias velas
+contrarias en un solo bloque («order block mayor», v3 #641), el punto exacto de la entrada dentro
+del bloque (A-36), la temporalidad de la vela contraria (A-37), el momento de la orden con
+`al_tomarse_la_liquidez` (A-29, NO_IMPLEMENTADA), la reubicación de RN-006, la invalidación
+posterior a la formación (A-38) y el nivel que no puede perforar la mecha (A-32). Están en
+`PREPARACION-A21.md` §5 como candidatos; si el trader los toca al responder, se registran sobre A-21
+y se llevan al consultor, no al registro.
+
+Si la respuesta no encaja: §4, tal cual, con `PREPARACION-A21.md` §5 como sitio donde se apunta la
+lectura nueva. Añadir una opción al enum (y su mecanismo en `domain/estructura_m1.py`) es decisión
+del consultor.

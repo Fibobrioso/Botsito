@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 13.2.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 13.3.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (25)
+## ABIERTA (26)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -27,6 +27,8 @@ Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
 Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia?
+
+Afecta a: `zona_control_limpia`.
 
 ### A-25 · la vida de la marca de liquidez de M15 · pregunta
 
@@ -131,6 +133,10 @@ Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxim
 Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15 minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel?
 
 Afecta a: `liquidez_m15_criterio_toma`.
+
+### A-46 · si una toma de liquidez de una sesion anterior del mismo dia sigue valiendo en la siguiente · pregunta
+
+Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en la de 07 a 11, la que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
 
 ## DECIDIDA (6)
 

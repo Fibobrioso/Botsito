@@ -45,6 +45,7 @@ from botsito.engine.tope_trader import (
     SIN_TOPE,
     TopeTrader,
 )
+from botsito.engine.zonas import primitivas_zona
 
 # RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044).
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
@@ -85,11 +86,14 @@ def _local(instante: int, huso: str) -> datetime:
     return a_datetime(instante).astimezone(zona)
 
 
-def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> Primitivas:
+def primitivas_escritas(
+    registro: Registro, tope: TopeTrader | None = None, limpia: str | None = None
+) -> Primitivas:
     """Las primitivas de hoy, con el registro del que leen sus argumentos. Con `tope` (el tope
     propio del trader, A-44) los acumuladores de RN-020 se evaluan tambien sin cuenta: el motor de
     la spec no coloca ninguna orden, asi que su perdida acumulada es cero; sin `tope`, siguen
-    siendo hueco con nombre."""
+    siendo hueco con nombre. Con `limpia` (la lectura de A-21) entra la geometria de la zona de
+    entrada (`engine/zonas.py`); sin ella, sigue NO_IMPLEMENTADA con nombre."""
 
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -231,18 +235,17 @@ def primitivas_escritas(registro: Registro, tope: TopeTrader | None = None) -> P
         for nombre in (ACUMULADOR_DIA, ACUMULADOR_SEMANA):
             acumuladores[nombre] = acumulador_sin_cuenta(nombre)
 
-    return Primitivas(
-        predicados={
-            "abre_sesion_operativa": abre_sesion_operativa,
-            "en_ventana": en_ventana,
-            "alcanza_hora": alcanza_hora,
-            "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
-            "alcanza_nivel": alcanza_nivel,
-            "cruza": cruza_nivel,
-        },
-        acciones={"fijar": fijar},
-        acumuladores=acumuladores,
-    )
+    predicados: dict[str, Any] = {
+        "abre_sesion_operativa": abre_sesion_operativa,
+        "en_ventana": en_ventana,
+        "alcanza_hora": alcanza_hora,
+        "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
+        "alcanza_nivel": alcanza_nivel,
+        "cruza": cruza_nivel,
+    }
+    if limpia is not None:
+        predicados.update(primitivas_zona(registro, limpia))
+    return Primitivas(predicados=predicados, acciones={"fijar": fijar}, acumuladores=acumuladores)
 
 
 __all__ = [

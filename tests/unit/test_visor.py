@@ -380,12 +380,16 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
     peticion = [
         "--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida),
         "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
+        "--diagnostico-a21", "solo_una_zona_de_control",
     ]  # fmt: skip
     codigo = cli.main(peticion)
     if codigo == 2:
         pytest.skip("sin dataset en esta maquina")
     assert codigo == 0
-    pagina = salida / f"{caso}.DIAGNOSTICO-A35-cierre_vela_contraria.DIAGNOSTICO-A44-sin_tope.html"
+    pagina = salida / (
+        f"{caso}.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope"
+        ".a21=solo_una_zona_de_control.html"
+    )
     primero = pagina.read_bytes()
     assert not (salida / f"{caso}.html").exists()
     assert b"DIAGNOSTICO-A35-cierre_vela_contraria" in primero

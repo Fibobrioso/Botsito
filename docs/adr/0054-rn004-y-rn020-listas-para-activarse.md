@@ -28,6 +28,10 @@ phase: post-F14 (rama `trabajo/preparar-a35-a44`)
   de eso puede alimentar una medida de fidelidad ni un conjunto de medición. Con el parámetro ya
   fijado, pedir el diagnóstico se rechaza. No es «un modo que no bloquee» (lo que ADR-0048 y
   ADR-0049 H4 rechazaron): los gates se evalúan con el valor hipotético, no se saltan.
+  *(Nota del 2026-09-26, rama `trabajo/preparar-a21`: el NOMBRE del fichero lleva la forma
+  compacta `DIAGNOSTICO.a35=<lectura>.a44=<modo>[.a21=<lectura>]` por el límite de 260 caracteres
+  de Windows; las líneas y las páginas siguen llevando las etiquetas completas. El contrato no
+  cambia: un fichero de diagnóstico nunca se llama como una línea base.)*
 - Activar cada regla es escribir un valor y correr un comando: `docs/runbooks/ACTIVAR-A35-A44.md`.
 
 ### 2. El tope del trader tiene tres estados y es independiente de la firma

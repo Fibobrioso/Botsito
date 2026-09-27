@@ -1,0 +1,182 @@
+# Verificacion A-21, entradas: distancia firmada al borde cercano de la zona viva, y causa
+CONJUNTO: construccion (2026-04, 2026-08); dias 42; operaciones del trader 77
+TOLERANCIA (ADR-0043, criterio_fidelidad.yaml): 3 puntos; escala 100000
+HIPOTESIS: A-35 cierre_vela_contraria; A-44 sin_tope; A-21 cada lectura. Descriptivo: no elige lectura ni cambia la geometria.
+d = entrada del trader - borde cercano (compra) o al reves (venta): d > 0 fuera del lado del precio; -caja <= d <= 0 dentro; d < -caja mas alla del extremo.
+
+## A-21 = solo_una_zona_de_control (DIAGNOSTICO-A21-solo_una_zona_de_control)
+operaciones con zona viva en el llenado: 39 de 77; sin zona: 38 -> {'sin toma antes del llenado': 18, 'toma sin esquema antes del llenado (o rechazado por la lectura)': 20}
+  d <= 0 (dentro, incluye mas alla del extremo): 17; 0 < d <= 3 (borde): 1; d > 3: 21
+  distribucion de d (puntos): min -151, p25 -24, mediana 20, p75 83, max 312
+  en direccion contraria a la zona: 13; con la toma hecha en otra sesion del dia: 18
+  causa mas probable (la primera que casa): {'otra zona anterior a la toma': 10, 'dentro': 6, 'no se sabe': 8, 'desfase de temporalidad (la M15 del bloque)': 3, 'mas alla del extremo': 11, 'en el borde (<= tolerancia)': 1}
+  todas las causas que casan (una operacion puede sumar en varias): {'otra zona anterior a la toma': 19, 'dentro': 6, 'no se sabe': 8, 'desfase de temporalidad (la M15 del bloque)': 7, 'mas alla del extremo': 11, 'en el borde (<= tolerancia)': 1, 'el borde lejano o el medio': 1}
+  geometria caja_motor:distancia_entrada_stop_trader por operacion: 28:33 27:34 27:6 8:14 8:3 7:11 7:25 7:4 7:7 7:9 11:18 11:13 10:20 10:37 14:15 14:15 14:11 14:25 14:16 14:26 14:10 14:36 14:17 14:30 29:9 5:5 5:22 5:38 5:13 5:7 10:14 21:15 7:18 7:6 7:18 7:18 5:8 5:20 5:36
+  el stop del trader esta MAS LEJOS que la caja entera del motor en 29 de 39 (el motor pondria el suyo a stop_fraccion_caja de la caja, mas cerca)
+FASE 3: sesiones posteriores a la primera toma del dia: 31; de ellas, RN-011 dispara con esa toma ajena en 0 y RN-008 o RN-009 en 31; operaciones del trader en esas sesiones: 25
+- 2026-04-01 11-15 12:30Z compra: zona compra primer_esquema caja 28 formada 08:04Z; d = +168; stop del trader 33; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-04-03 07-11 05:27Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-03 11-15 11:43Z compra: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-06 07-11 06:34Z compra: SIN ZONA (toma a las 06:30Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-09 07-11 07:12Z venta: zona compra primer_esquema caja 27 formada 05:02Z; d = -18; stop del trader 34; causa: dentro; DIRECCION CONTRARIA a la zona
+- 2026-04-09 11-15 09:15Z venta: zona compra primer_esquema caja 27 formada 05:02Z; d = +71; stop del trader 6; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-04-10 07-11 06:33Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-10 07-11 08:05Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-13 07-11 06:47Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 07-11 06:50Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 07-11 08:21Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 11-15 10:26Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 11-15 12:02Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-14 07-11 06:23Z compra: SIN ZONA (toma a las 05:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-14 11-15 12:06Z compra: SIN ZONA (toma a las 05:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-16 07-11 06:13Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-16 11-15 11:13Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-17 07-11 08:10Z venta: zona venta primer_esquema caja 8 formada 05:31Z; d = +20; stop del trader 14; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-04-17 07-11 08:36Z venta: zona venta primer_esquema caja 8 formada 05:31Z; d = -6; stop del trader 3; causa: dentro
+- 2026-04-21 07-11 05:12Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-22 07-11 08:02Z venta: zona venta primer_esquema caja 7 formada 05:16Z; d = -138; stop del trader 11; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque)
+- 2026-04-22 07-11 08:19Z venta: zona venta primer_esquema caja 7 formada 05:16Z; d = -151; stop del trader 25; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque)
+- 2026-04-23 07-11 05:30Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -24; stop del trader 4; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-04-23 07-11 05:53Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -44; stop del trader 7; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-04-23 07-11 06:49Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -78; stop del trader 9; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-04-24 07-11 06:44Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-24 11-15 11:06Z venta: zona compra primer_esquema caja 11 formada 09:35Z; d = +181; stop del trader 18; causa: no se sabe; DIRECCION CONTRARIA a la zona
+- 2026-04-24 11-15 11:30Z venta: zona compra primer_esquema caja 11 formada 09:35Z; d = +312; stop del trader 13; causa: no se sabe; DIRECCION CONTRARIA a la zona
+- 2026-04-27 11-15 11:45Z compra: zona compra primer_esquema caja 10 formada 05:01Z; d = +148; stop del trader 20; causa: no se sabe; toma de la sesion 07-11
+- 2026-04-27 11-15 12:00Z compra: zona compra primer_esquema caja 10 formada 05:01Z; d = +149; stop del trader 37; causa: no se sabe; toma de la sesion 07-11
+- 2026-04-28 07-11 08:12Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-29 07-11 07:55Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -8; stop del trader 15; causa: dentro
+- 2026-04-29 07-11 07:58Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -8; stop del trader 15; causa: dentro
+- 2026-04-29 11-15 09:36Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = +25; stop del trader 11; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-04-29 11-15 11:02Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -10; stop del trader 25; causa: dentro; toma de la sesion 07-11
+- 2026-08-03 07-11 06:03Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = -1; stop del trader 16; causa: dentro
+- 2026-08-03 07-11 06:07Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +1; stop del trader 26; causa: en el borde (<= tolerancia)
+- 2026-08-03 11-15 09:46Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +89; stop del trader 10; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 09:52Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +83; stop del trader 36; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 12:03Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +43; stop del trader 17; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 12:10Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +41; stop del trader 30; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-04 11-15 11:34Z venta: zona venta primer_esquema caja 29 formada 07:16Z; d = -99; stop del trader 9; causa: mas alla del extremo; toma de la sesion 07-11
+- 2026-08-06 07-11 06:07Z venta: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-07 07-11 05:14Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-07 11-15 11:47Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +90; stop del trader 5; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-07 11-15 12:09Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +118; stop del trader 22; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-07 11-15 12:14Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +117; stop del trader 38; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-10 11-15 11:57Z compra: zona venta primer_esquema caja 5 formada 06:01Z; d = +41; stop del trader 13; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-10 11-15 12:38Z compra: zona venta primer_esquema caja 5 formada 06:01Z; d = +60; stop del trader 7; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-11 07-11 08:08Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-12 07-11 05:25Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-13 07-11 07:33Z venta: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-13 07-11 07:49Z venta: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-14 07-11 06:30Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-17 07-11 05:17Z compra: zona compra primer_esquema caja 10 formada 05:01Z; d = -12; stop del trader 14; causa: mas alla del extremo | el borde lejano o el medio | desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-08-19 11-15 09:03Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-19 11-15 11:46Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-20 07-11 05:47Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-20 11-15 11:00Z compra: SIN ZONA (toma a las 11:00Z en 11-15, sin esquema valido antes del llenado)
+- 2026-08-20 11-15 11:49Z compra: zona compra primer_esquema caja 21 formada 11:01Z; d = -113; stop del trader 15; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-08-21 07-11 05:32Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-21 11-15 11:56Z compra: SIN ZONA (toma a las 07:45Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-24 11-15 11:29Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-25 07-11 06:16Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 07-11 06:37Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 07-11 08:48Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 11-15 11:55Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-26 07-11 05:49Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = +4; stop del trader 18; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-08-26 07-11 07:03Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = -24; stop del trader 6; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-08-26 07-11 08:31Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = -96; stop del trader 18; causa: mas alla del extremo
+- 2026-08-26 11-15 11:26Z compra: zona venta primer_esquema caja 7 formada 05:46Z; d = +35; stop del trader 18; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-27 07-11 08:04Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = +27; stop del trader 8; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:12Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = +25; stop del trader 20; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona
+- 2026-08-27 11-15 12:13Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = -113; stop del trader 36; causa: mas alla del extremo; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-28 11-15 10:42Z venta: SIN ZONA (toma a las 10:30Z en 11-15, sin esquema valido antes del llenado)
+- 2026-08-31 07-11 06:30Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-31 07-11 06:58Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+
+## A-21 = sin_mecha_mas_alla_del_extremo (DIAGNOSTICO-A21-sin_mecha_mas_alla_del_extremo)
+operaciones con zona viva en el llenado: 34 de 77; sin zona: 43 -> {'sin toma antes del llenado': 18, 'toma sin esquema antes del llenado (o rechazado por la lectura)': 25}
+  d <= 0 (dentro, incluye mas alla del extremo): 16; 0 < d <= 3 (borde): 1; d > 3: 17
+  distribucion de d (puntos): min -151, p25 -24, mediana 2.5, p75 71, max 168
+  en direccion contraria a la zona: 9; con la toma hecha en otra sesion del dia: 16
+  causa mas probable (la primera que casa): {'otra zona anterior a la toma': 8, 'dentro': 6, 'no se sabe': 6, 'desfase de temporalidad (la M15 del bloque)': 3, 'mas alla del extremo': 10, 'en el borde (<= tolerancia)': 1}
+  todas las causas que casan (una operacion puede sumar en varias): {'otra zona anterior a la toma': 16, 'dentro': 6, 'no se sabe': 6, 'desfase de temporalidad (la M15 del bloque)': 6, 'mas alla del extremo': 10, 'en el borde (<= tolerancia)': 1}
+  geometria caja_motor:distancia_entrada_stop_trader por operacion: 28:33 27:34 27:6 8:14 8:3 7:11 7:25 7:4 7:7 7:9 10:20 10:37 14:15 14:15 14:11 14:25 14:16 14:26 14:10 14:36 14:17 14:30 29:9 5:5 5:22 5:38 21:15 7:18 7:6 7:18 7:18 5:8 5:20 5:36
+  el stop del trader esta MAS LEJOS que la caja entera del motor en 24 de 34 (el motor pondria el suyo a stop_fraccion_caja de la caja, mas cerca)
+FASE 3: sesiones posteriores a la primera toma del dia: 31; de ellas, RN-011 dispara con esa toma ajena en 0 y RN-008 o RN-009 en 31; operaciones del trader en esas sesiones: 25
+- 2026-04-01 11-15 12:30Z compra: zona compra primer_esquema caja 28 formada 08:04Z; d = +168; stop del trader 33; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-04-03 07-11 05:27Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-03 11-15 11:43Z compra: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-06 07-11 06:34Z compra: SIN ZONA (toma a las 06:30Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-09 07-11 07:12Z venta: zona compra primer_esquema caja 27 formada 05:02Z; d = -18; stop del trader 34; causa: dentro; DIRECCION CONTRARIA a la zona
+- 2026-04-09 11-15 09:15Z venta: zona compra primer_esquema caja 27 formada 05:02Z; d = +71; stop del trader 6; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-04-10 07-11 06:33Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-10 07-11 08:05Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-13 07-11 06:47Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 07-11 06:50Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 07-11 08:21Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 11-15 10:26Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-13 11-15 12:02Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-14 07-11 06:23Z compra: SIN ZONA (toma a las 05:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-14 11-15 12:06Z compra: SIN ZONA (toma a las 05:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-16 07-11 06:13Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-16 11-15 11:13Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-04-17 07-11 08:10Z venta: zona venta primer_esquema caja 8 formada 05:31Z; d = +20; stop del trader 14; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-04-17 07-11 08:36Z venta: zona venta primer_esquema caja 8 formada 05:31Z; d = -6; stop del trader 3; causa: dentro
+- 2026-04-21 07-11 05:12Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-22 07-11 08:02Z venta: zona venta primer_esquema caja 7 formada 05:16Z; d = -138; stop del trader 11; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque)
+- 2026-04-22 07-11 08:19Z venta: zona venta primer_esquema caja 7 formada 05:16Z; d = -151; stop del trader 25; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque)
+- 2026-04-23 07-11 05:30Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -24; stop del trader 4; causa: mas alla del extremo | desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-04-23 07-11 05:53Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -44; stop del trader 7; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-04-23 07-11 06:49Z venta: zona venta primer_esquema caja 7 formada 05:01Z; d = -78; stop del trader 9; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-04-24 07-11 06:44Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-24 11-15 11:06Z venta: SIN ZONA (toma a las 09:30Z en 11-15, sin esquema valido antes del llenado)
+- 2026-04-24 11-15 11:30Z venta: SIN ZONA (toma a las 09:30Z en 11-15, sin esquema valido antes del llenado)
+- 2026-04-27 11-15 11:45Z compra: zona compra primer_esquema caja 10 formada 05:01Z; d = +148; stop del trader 20; causa: no se sabe; toma de la sesion 07-11
+- 2026-04-27 11-15 12:00Z compra: zona compra primer_esquema caja 10 formada 05:01Z; d = +149; stop del trader 37; causa: no se sabe; toma de la sesion 07-11
+- 2026-04-28 07-11 08:12Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-04-29 07-11 07:55Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -8; stop del trader 15; causa: dentro
+- 2026-04-29 07-11 07:58Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -8; stop del trader 15; causa: dentro
+- 2026-04-29 11-15 09:36Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = +25; stop del trader 11; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-04-29 11-15 11:02Z venta: zona venta primer_esquema caja 14 formada 07:16Z; d = -10; stop del trader 25; causa: dentro; toma de la sesion 07-11
+- 2026-08-03 07-11 06:03Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = -1; stop del trader 16; causa: dentro
+- 2026-08-03 07-11 06:07Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +1; stop del trader 26; causa: en el borde (<= tolerancia)
+- 2026-08-03 11-15 09:46Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +89; stop del trader 10; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 09:52Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +83; stop del trader 36; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 12:03Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +43; stop del trader 17; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-03 11-15 12:10Z venta: zona venta primer_esquema caja 14 formada 06:01Z; d = +41; stop del trader 30; causa: otra zona anterior a la toma; toma de la sesion 07-11
+- 2026-08-04 11-15 11:34Z venta: zona venta primer_esquema caja 29 formada 07:16Z; d = -99; stop del trader 9; causa: mas alla del extremo; toma de la sesion 07-11
+- 2026-08-06 07-11 06:07Z venta: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-07 07-11 05:14Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-07 11-15 11:47Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +90; stop del trader 5; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-07 11-15 12:09Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +118; stop del trader 22; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-07 11-15 12:14Z venta: zona compra segundo_esquema caja 5 formada 05:37Z; d = +117; stop del trader 38; causa: no se sabe; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-10 11-15 11:57Z compra: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-10 11-15 12:38Z compra: SIN ZONA (toma a las 06:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-11 07-11 08:08Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-12 07-11 05:25Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-13 07-11 07:33Z venta: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-13 07-11 07:49Z venta: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-14 07-11 06:30Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-17 07-11 05:17Z compra: SIN ZONA (toma a las 05:00Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-19 11-15 09:03Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-19 11-15 11:46Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-20 07-11 05:47Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-20 11-15 11:00Z compra: SIN ZONA (toma a las 11:00Z en 11-15, sin esquema valido antes del llenado)
+- 2026-08-20 11-15 11:49Z compra: zona compra primer_esquema caja 21 formada 11:01Z; d = -113; stop del trader 15; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-08-21 07-11 05:32Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-21 11-15 11:56Z compra: SIN ZONA (toma a las 07:45Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-24 11-15 11:29Z venta: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-25 07-11 06:16Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 07-11 06:37Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 07-11 08:48Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-25 11-15 11:55Z venta: SIN ZONA (toma a las 06:15Z en 07-11, sin esquema valido antes del llenado)
+- 2026-08-26 07-11 05:49Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = +4; stop del trader 18; causa: desfase de temporalidad (la M15 del bloque) | otra zona anterior a la toma
+- 2026-08-26 07-11 07:03Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = -24; stop del trader 6; causa: mas alla del extremo | otra zona anterior a la toma
+- 2026-08-26 07-11 08:31Z venta: zona venta primer_esquema caja 7 formada 05:46Z; d = -96; stop del trader 18; causa: mas alla del extremo
+- 2026-08-26 11-15 11:26Z compra: zona venta primer_esquema caja 7 formada 05:46Z; d = +35; stop del trader 18; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-27 07-11 08:04Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = +27; stop del trader 8; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:12Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = +25; stop del trader 20; causa: otra zona anterior a la toma; DIRECCION CONTRARIA a la zona
+- 2026-08-27 11-15 12:13Z venta: zona compra primer_esquema caja 5 formada 06:23Z; d = -113; stop del trader 36; causa: mas alla del extremo; DIRECCION CONTRARIA a la zona; toma de la sesion 07-11
+- 2026-08-28 11-15 10:42Z venta: SIN ZONA (toma a las 10:30Z en 11-15, sin esquema valido antes del llenado)
+- 2026-08-31 07-11 06:30Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+- 2026-08-31 07-11 06:58Z compra: SIN ZONA (RN-004 no habia tomado liquidez)
+

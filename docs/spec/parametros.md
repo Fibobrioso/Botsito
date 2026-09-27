@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.2.0` · hash `5ac174b1bd23…`
+`spec_version 13.3.0` · hash `430c8490105f…`
 
-82 en total: 66 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+83 en total: 66 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -95,6 +95,7 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 - **`stop_reduccion_fraccion`** (estrategia) — nivel al que se reduce el stop cuando la vela avanza (A-12)
 - **`stop_reduccion_umbral_vela`** (estrategia) — parte de la vela a partir de la cual se baja el stop (40 o 50; A-12)
 - **`stop_segundo_esquema`** (estrategia) — UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no hay un stop del segundo esquema distinto del primero. El trader dijo que es el MISMO en los dos, asi que un parametro aparte con el mismo valor son dos puertas para el mismo numero -lo que RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo-. Hay un unico esquema de stop y vive en stop_fraccion_caja. Leerlo falla, que es lo que debe pasar
+- **`zona_control_limpia`** (estrategia) — la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21, ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
 
 ## Quien lee cada valor
 
@@ -523,6 +524,12 @@ hora a la que el trader empieza a buscar entradas. Es SU horario como persona y 
 criterio de ruptura del punto extremo anterior que completa una zona de control. El trader lo dice con todas las letras -"con mecha no importa"- y hasta ahora vivia solo en la definicion del glosario
 
 Opciones: `mecha`, `cuerpo`.
+
+### `zona_control_limpia`
+
+la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21, ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
+
+Opciones: `solo_una_zona_de_control`, `sin_mecha_mas_alla_del_extremo`.
 
 ### `zonas_control_max_por_esquema`
 

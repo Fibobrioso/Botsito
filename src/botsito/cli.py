@@ -2064,11 +2064,13 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
     from botsito.engine.diagnostico import Diagnostico
 
     return Diagnostico(
-        getattr(args, "diagnostico_a35", None), getattr(args, "diagnostico_a44", None)
+        getattr(args, "diagnostico_a35", None),
+        getattr(args, "diagnostico_a44", None),
+        getattr(args, "diagnostico_a21", None),
     )
 
 
-def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any) -> str:
+def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None = None) -> str:
     """Las primeras lineas de un informe en diagnostico: que hipotesis corre y que NO vale."""
     lineas = [
         "# DIAGNOSTICO: corrida en HIPOTESIS, sin valor para ninguna medida de fidelidad ni",
@@ -2078,11 +2080,14 @@ def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any) -> str:
         lineas.append(f"# A-35 en hipotesis: liquidez_m15_pivote_formado = {lectura}")
     if diag.a44 is not None:
         lineas.append(f"# A-44 en hipotesis: {tope.descripcion()}")
+    if diag.a21 is not None:
+        lineas.append(f"# A-21 en hipotesis: zona_control_limpia = {limpia}")
     return "\n".join(lineas) + "\n\n"
 
 
 def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
     """El modo diagnostico de A-35 y A-44: correr con un valor hipotetico, todo etiquetado."""
+    from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
     from botsito.domain.pivotes_m15 import LECTURAS
     from botsito.engine.diagnostico import MODOS_A44
 
@@ -2092,6 +2097,13 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="A-35 sin fijar: corre con esta lectura de «formado» EN HIPOTESIS; cada linea, "
         "fichero y pagina lleva la etiqueta DIAGNOSTICO-A35-<lectura> y no cuenta para nada",
+    )
+    parser.add_argument(
+        "--diagnostico-a21",
+        choices=LECTURAS_LIMPIA,
+        default=None,
+        help="A-21 sin fijar: corre con esta lectura de «zona limpia» EN HIPOTESIS, etiquetado "
+        "DIAGNOSTICO-A21-<lectura>; no cuenta para nada",
     )
     parser.add_argument(
         "--diagnostico-a44",
@@ -2141,7 +2153,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes, cableado, diagnostico, tope_trader
+    from botsito.engine import arnes, cableado, diagnostico, tope_trader, zonas
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
@@ -2165,6 +2177,12 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         # A-44: el tope propio del trader, fijado o en diagnostico; si no, se niega
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
+        # A-21: la lectura de «limpia» de la zona de entrada, fijada o en diagnostico
+        limpia = zonas.lectura_limpia(registro, diag.a21)
+        # la ruta de salida, con su rotulo, cabe en Windows: se comprueba ANTES de leer velas
+        salida = diagnostico.comprobar_ruta(
+            diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
+        )
         mercado = arnes.dias_de_mercado(
             repo,
             _carpeta_datos(repo),
@@ -2191,10 +2209,13 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
                 args.fase,
                 args.depuracion,
                 tope,
+                limpia,
             )
             nombre = cableado.NOMBRE_MOTOR
         else:
-            motor = MotorSpec(Interprete(vocabulario, primitivas_escritas(registro, tope)), reglas)
+            motor = MotorSpec(
+                Interprete(vocabulario, primitivas_escritas(registro, tope, limpia)), reglas
+            )
             nombre = "spec vigente"
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
         texto = arnes.informe(corrida, criterio, vocabulario)
@@ -2202,7 +2223,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
             texto = diagnostico.etiquetar(
-                _cabecera_diagnostico(diag, lectura, tope) + texto, diag.etiquetas
+                _cabecera_diagnostico(diag, lectura, tope, limpia) + texto, diag.etiquetas
             )
     except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         tracemalloc.stop()
@@ -2214,7 +2235,6 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         return 3
     _, pico = tracemalloc.get_traced_memory()
     tracemalloc.stop()
-    salida = diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
     salida.write_text(texto, encoding="utf-8", newline="\n")
     print(f"OK: informe del arnes en {salida}")
     print(
@@ -2239,7 +2259,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes, cableado, diagnostico, tope_trader, visor
+    from botsito.engine import arnes, cableado, diagnostico, tope_trader, visor, zonas
     from botsito.engine.arnes import ConjuntoError
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
@@ -2268,8 +2288,15 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         lectura = diagnostico.lectura_pivote(registro, diag)
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
+        limpia = zonas.lectura_limpia(registro, diag.a21)
+        # cada ruta que se va a escribir, con su rotulo, cabe en Windows: ANTES de leer velas
+        candidatas = [salida / f"{c.id}.html" for c in casos] + [salida / visor.INDICE]
+        if args.hasta:
+            candidatas.append(salida / f"{casos[0].id}.hasta-{args.hasta.replace(':', '')}.html")
+        for candidata in candidatas:
+            diagnostico.comprobar_ruta(diagnostico.nombre_etiquetado(candidata, diag.etiquetas))
         motor: Motor = MotorSpec(
-            Interprete(vocabulario, primitivas_escritas(registro, tope)), reglas
+            Interprete(vocabulario, primitivas_escritas(registro, tope, limpia)), reglas
         )
         preparador = visor.Preparador(
             repo, _carpeta_datos(repo), criterio, registro, config, vocabulario, motor
@@ -2290,6 +2317,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
                 args.fase,
                 args.depuracion,
                 tope,
+                limpia,
             )
             preparador.motor = cableado_motor
             preparador.nombre_motor = cableado.NOMBRE_MOTOR

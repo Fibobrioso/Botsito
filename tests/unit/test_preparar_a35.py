@@ -355,7 +355,7 @@ def test_el_diagnostico_etiqueta_cada_linea_cada_fichero_y_cada_pagina() -> None
     assert "[DIAGNOSTICO-A44-sin_tope] " in lineas[0]
     assert etiquetar("x", ()) == "x"
     assert nombre_etiquetado(Path("a/informe.txt"), d.etiquetas) == Path(
-        "a/informe.DIAGNOSTICO-A35-inicio_vela_contraria.DIAGNOSTICO-A44-sin_tope.txt"
+        "a/informe.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.txt"
     )
     assert nombre_etiquetado(Path("a/informe.txt"), ()) == Path("a/informe.txt")
     pagina = etiquetar_html(
@@ -420,16 +420,21 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida),
-         "--diagnostico-a35", CIERRE_VELA_CONTRARIA, "--diagnostico-a44", "sin_tope"]
+         "--diagnostico-a35", CIERRE_VELA_CONTRARIA, "--diagnostico-a44", "sin_tope",
+         "--diagnostico-a21", "solo_una_zona_de_control"]
     )  # fmt: skip
     if codigo == 2 and "falta en disco" in capsys.readouterr().err:
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 0
     etiquetado = (
-        tmp_path / f"informe.DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}.DIAGNOSTICO-A44-sin_tope.txt"
+        tmp_path / f"informe.DIAGNOSTICO.a35={CIERRE_VELA_CONTRARIA}.a44=sin_tope"
+        ".a21=solo_una_zona_de_control.txt"
     )
     assert etiquetado.exists() and not salida.exists()
     lineas = etiquetado.read_text(encoding="utf-8").split("\n")
-    prefijo = f"[DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}][DIAGNOSTICO-A44-sin_tope] "
+    prefijo = (
+        f"[DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}][DIAGNOSTICO-A44-sin_tope]"
+        "[DIAGNOSTICO-A21-solo_una_zona_de_control] "
+    )
     assert all(ln.startswith(prefijo) for ln in lineas if ln)
     assert "sin valor para ninguna medida" in lineas[0]
