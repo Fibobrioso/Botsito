@@ -2179,6 +2179,10 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
         # A-21: la lectura de «limpia» de la zona de entrada, fijada o en diagnostico
         limpia = zonas.lectura_limpia(registro, diag.a21)
+        # la ruta de salida, con su rotulo, cabe en Windows: se comprueba ANTES de leer velas
+        salida = diagnostico.comprobar_ruta(
+            diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
+        )
         mercado = arnes.dias_de_mercado(
             repo,
             _carpeta_datos(repo),
@@ -2231,7 +2235,6 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         return 3
     _, pico = tracemalloc.get_traced_memory()
     tracemalloc.stop()
-    salida = diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
     salida.write_text(texto, encoding="utf-8", newline="\n")
     print(f"OK: informe del arnes en {salida}")
     print(
@@ -2286,6 +2289,12 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
         limpia = zonas.lectura_limpia(registro, diag.a21)
+        # cada ruta que se va a escribir, con su rotulo, cabe en Windows: ANTES de leer velas
+        candidatas = [salida / f"{c.id}.html" for c in casos] + [salida / visor.INDICE]
+        if args.hasta:
+            candidatas.append(salida / f"{casos[0].id}.hasta-{args.hasta.replace(':', '')}.html")
+        for candidata in candidatas:
+            diagnostico.comprobar_ruta(diagnostico.nombre_etiquetado(candidata, diag.etiquetas))
         motor: Motor = MotorSpec(
             Interprete(vocabulario, primitivas_escritas(registro, tope, limpia)), reglas
         )

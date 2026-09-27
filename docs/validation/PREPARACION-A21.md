@@ -59,8 +59,9 @@ abierta). Si el trader nombra otro nivel, la opción no vale y se PARA (runbook 
 **El contrato, el mismo de A-35 y A-44 (ADR-0054).** SIN FIJAR no es un valor válido: con
 `zona_control_limpia` UNKNOWN el arnés y el visor se niegan tras las compuertas de construcción, de
 A-35 y de A-44, nombrando A-21 y sin leer una sola vela. La única excepción es pedir el diagnóstico
-a propósito, y entonces cada línea, cada fichero y cada página llevan `DIAGNOSTICO-A21-<lectura>`
-junto a las etiquetas de A-35 y A-44; con el valor fijado, pedir el diagnóstico se rechaza (test con
+a propósito, y entonces cada línea y cada página llevan `DIAGNOSTICO-A21-<lectura>` junto a las
+etiquetas de A-35 y A-44, y el nombre del fichero su forma compacta (`.DIAGNOSTICO.a35=<lectura>.a44=<modo>.a21=<lectura>`,
+desde la segunda tarea de la rama, por el límite de 260 caracteres de Windows); con el valor fijado, pedir el diagnóstico se rechaza (test con
 un registro sintético CONFIRMED). Las salidas en diagnóstico nunca alimentan una medida de fidelidad
 (el informe lo dice en su cabecera; test). **Las dos lecturas dejan trazas DISTINTAS por
 `arnes.correr`** (test obligatorio del brief): sobre un día sintético en el que la primera vela del

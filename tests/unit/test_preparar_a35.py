@@ -355,7 +355,7 @@ def test_el_diagnostico_etiqueta_cada_linea_cada_fichero_y_cada_pagina() -> None
     assert "[DIAGNOSTICO-A44-sin_tope] " in lineas[0]
     assert etiquetar("x", ()) == "x"
     assert nombre_etiquetado(Path("a/informe.txt"), d.etiquetas) == Path(
-        "a/informe.DIAGNOSTICO-A35-inicio_vela_contraria.DIAGNOSTICO-A44-sin_tope.txt"
+        "a/informe.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.txt"
     )
     assert nombre_etiquetado(Path("a/informe.txt"), ()) == Path("a/informe.txt")
     pagina = etiquetar_html(
@@ -427,8 +427,8 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 0
     etiquetado = (
-        tmp_path / f"informe.DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}.DIAGNOSTICO-A44-sin_tope"
-        ".DIAGNOSTICO-A21-solo_una_zona_de_control.txt"
+        tmp_path / f"informe.DIAGNOSTICO.a35={CIERRE_VELA_CONTRARIA}.a44=sin_tope"
+        ".a21=solo_una_zona_de_control.txt"
     )
     assert etiquetado.exists() and not salida.exists()
     lineas = etiquetado.read_text(encoding="utf-8").split("\n")

@@ -387,8 +387,8 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
         pytest.skip("sin dataset en esta maquina")
     assert codigo == 0
     pagina = salida / (
-        f"{caso}.DIAGNOSTICO-A35-cierre_vela_contraria.DIAGNOSTICO-A44-sin_tope"
-        ".DIAGNOSTICO-A21-solo_una_zona_de_control.html"
+        f"{caso}.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope"
+        ".a21=solo_una_zona_de_control.html"
     )
     primero = pagina.read_bytes()
     assert not (salida / f"{caso}.html").exists()

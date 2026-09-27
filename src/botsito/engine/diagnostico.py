@@ -133,12 +133,46 @@ def etiquetar_html(html: str, etiquetas: tuple[str, ...]) -> str:
     return salida.replace("<body>", f"<body>{aviso}", 1)
 
 
+# Windows rechaza rutas de mas de 259 caracteres (MAX_PATH sin el terminador). Medido el
+# 2026-09-26: tres corridas del arnes de 9 minutos fallaron al ESCRIBIR porque la ruta de salida
+# mas el rotulo triple de diagnostico pasaban de ahi. La guarda va antes de leer una sola vela.
+LIMITE_RUTA_WINDOWS = 259
+PREFIJO_ETIQUETA = "DIAGNOSTICO-A"
+MARCA_FICHERO = "DIAGNOSTICO"
+
+
+class RutaDemasiadoLargaError(ValueError):
+    """Una ruta de salida que Windows no puede escribir: se dice antes de correr, no despues."""
+
+
 def nombre_etiquetado(ruta: Path, etiquetas: tuple[str, ...]) -> Path:
-    """`informe.txt` -> `informe.DIAGNOSTICO-A35-inicio_vela_contraria.txt`. Un fichero de
-    diagnostico nunca puede llevar el nombre de una linea base."""
+    """`informe.txt` -> `informe.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.txt`. Un
+    fichero de diagnostico nunca puede llevar el nombre de una linea base; el rotulo del nombre
+    es la forma COMPACTA de las etiquetas (la marca una sola vez y cada ambiguedad con su valor),
+    para que tres etiquetas no coman 105 caracteres de los 259 que da Windows. Las lineas y las
+    paginas siguen llevando las etiquetas completas."""
     if not etiquetas:
         return ruta
-    return ruta.with_name(f"{ruta.stem}.{'.'.join(etiquetas)}{ruta.suffix}")
+    partes = []
+    for e in etiquetas:
+        if not e.startswith(PREFIJO_ETIQUETA):
+            raise ValueError(f"etiqueta de diagnostico sin la forma esperada: {e!r}")
+        partes.append("a" + e.removeprefix(PREFIJO_ETIQUETA).replace("-", "=", 1))
+    return ruta.with_name(f"{ruta.stem}.{MARCA_FICHERO}.{'.'.join(partes)}{ruta.suffix}")
+
+
+def comprobar_ruta(ruta: Path) -> Path:
+    """La ruta que se va a escribir, o `RutaDemasiadoLargaError` si Windows no podria escribirla.
+    Se mide sobre la ruta ABSOLUTA, que es la que el sistema ve."""
+    absoluta = ruta if ruta.is_absolute() else Path.cwd() / ruta
+    n = len(str(absoluta))
+    if n > LIMITE_RUTA_WINDOWS:
+        raise RutaDemasiadoLargaError(
+            f"la ruta de salida tiene {n} caracteres y Windows admite {LIMITE_RUTA_WINDOWS}: "
+            f"usa una carpeta mas corta con --salida (no se ha leido ni escrito nada). Ruta: "
+            f"{absoluta}"
+        )
+    return ruta
 
 
 __all__ = [
@@ -154,6 +188,9 @@ __all__ = [
     "Diagnostico",
     "DiagnosticoRechazadoError",
     "SinFijarError",
+    "LIMITE_RUTA_WINDOWS",
+    "RutaDemasiadoLargaError",
+    "comprobar_ruta",
     "etiquetar",
     "etiquetar_html",
     "lectura_pivote",
