@@ -56,7 +56,8 @@ from botsito.engine.tope_trader import (
     SeguidorTope,
     TopeTrader,
 )
-from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor
+from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor, ZonaVisor
+from botsito.engine.zonas import zonas_del_dia
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
 NOMBRE_MOTOR = "spec vigente + broker simulado (ADR-0053)"
@@ -101,12 +102,14 @@ class MotorCableado:
     acumuladores_extra: Mapping[str, Any] = field(default_factory=dict)  # sinteticas (tests)
     zonas_de: Callable[[MercadoDia], Mapping[str, Zona]] | None = None  # sinteticas (tests)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
+    limpia: str | None = None  # la lectura de A-21, si esta fijada (o en diagnostico)
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
     # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
     primero_en_tocar: tuple[str, str, int] | None = None
     trazas_broker: dict[str, TrazaBroker] = field(default_factory=dict)
     brokers: dict[str, Broker] = field(default_factory=dict)
+    estados: dict[str, EstadoDia] = field(default_factory=dict)  # el EstadoDia de cada dia corrido
 
     def __post_init__(self) -> None:
         comprobar_reloj_unico(self.registro, self.reglas_fase, self.mercados)
@@ -140,7 +143,7 @@ class MotorCableado:
         ctx = ContextoDia(broker, self.cuenta, self.contrato, md.escala, tope=self.tope)
         if self.zonas_de is not None:
             ctx.zonas.update(self.zonas_de(md))
-        primitivas = primitivas_cableadas(self.registro, ctx)
+        primitivas = primitivas_cableadas(self.registro, ctx, self.limpia)
         if self.primitivas_extra or self.acumuladores_extra:
             predicados = dict(primitivas.predicados)
             predicados.update(self.primitivas_extra)
@@ -149,6 +152,7 @@ class MotorCableado:
             primitivas = type(primitivas)(predicados, primitivas.acciones, acumuladores)
         interprete = Interprete(self.vocabulario, primitivas)
         estado = EstadoDia()
+        self.estados[clave] = estado
         trazas = {nombre: TrazaSesion() for nombre, _, _ in limites}
         tb = TrazaBroker(depuracion=self.depuracion or not md.origen_ticks)
         vistos = 0
@@ -348,7 +352,7 @@ def _sesion(limites: Sequence[tuple[str, int, int]], instante: int) -> tuple[str
 
 def zona_sintetica(id: str, lado: str, entrada: int, extremo: int, por: str) -> Zona:
     """Una zona para los tests: la geometria real sigue NO_IMPLEMENTADA (A-29, A-35)."""
-    return Zona(id, lado, entrada, extremo, por)  # type: ignore[arg-type]
+    return Zona(id, lado, entrada, extremo, por)
 
 
 def curva_de_equity(motor: MotorCableado) -> list[tuple[str, Decimal, Decimal, Decimal | None]]:
@@ -399,6 +403,7 @@ def construir_motor_cableado(
     fase: str | None,
     depuracion: bool,
     tope: TopeTrader | None = None,
+    limpia: str | None = None,
 ) -> MotorCableado:
     """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
@@ -421,6 +426,7 @@ def construir_motor_cableado(
         perfil=perfil.nombre,
         fase=fase_real,
         tope=tope,
+        limpia=limpia,
     )
 
 
@@ -466,10 +472,24 @@ def detalle_para_visor(motor: MotorCableado, dia: str) -> DetalleBroker | None:
     eventos = tuple(
         EventoVisor(_instante(ms), tipo, id, fuente) for ms, tipo, id, fuente in tb.eventos
     )
+    estado = motor.estados.get(dia)
+    zonas = tuple(
+        ZonaVisor(
+            id=z.id,
+            lado=z.lado,
+            entrada=_precio(z.entrada, escala),
+            extremo=_precio(z.extremo, escala),
+            por=z.por,
+            desde=_instante(z.desde * MS_POR_MINUTO) if z.desde is not None else None,
+            formada=_instante(z.formada * MS_POR_MINUTO) if z.formada is not None else None,
+        )
+        for z in (zonas_del_dia(estado).values() if estado is not None else ())
+    )
     return DetalleBroker(
         ordenes=ordenes,
         posiciones=posiciones,
         eventos=eventos,
+        zonas=zonas,
         rechazos=tb.rechazos,
         huecos=tuple(sorted(tb.huecos)),
         saldo_fin=tb.saldo_fin,

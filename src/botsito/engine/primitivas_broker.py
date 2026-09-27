@@ -16,7 +16,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from decimal import ROUND_DOWN, Decimal
-from typing import Any
+from typing import Any, cast
 
 from botsito.config.registro import Registro
 from botsito.domain.valores import CIEN
@@ -39,6 +39,7 @@ from botsito.engine.tope_trader import (
     SIN_TOPE,
     TopeTrader,
 )
+from botsito.engine.zonas import Zona, zonas_del_dia
 
 # Tokens de la spec que estas primitivas interpretan (declarados en `tokens` de strategy_spec.yaml)
 CUALQUIER_ESQUEMA = "cualquier_esquema"
@@ -62,22 +63,6 @@ ACUMULADORES_DEL_TRADER = (ACUMULADOR_DIA, ACUMULADOR_SEMANA)
 
 class CableadoError(ValueError):
     """Una accion que el cableado no puede ejecutar con lo que tiene: nunca se adivina."""
-
-
-@dataclass(frozen=True)
-class Zona:
-    """Una zona de control ligada por una regla: la entrada (nivel 0), el extremo de la caja
-    (nivel 1), el lado y como se produjo (`por`, un esquema de la spec)."""
-
-    id: str
-    lado: Lado
-    entrada: int  # puntos
-    extremo: int  # puntos, el nivel 1 de la caja
-    por: str
-
-    @property
-    def distancia_completa(self) -> int:
-        return abs(self.entrada - self.extremo)
 
 
 @dataclass
@@ -135,9 +120,12 @@ def clasificar_cierre(motivo: str, stop_movido: bool, pnl_bruto: Decimal) -> str
     return GANANCIA if pnl_bruto > 0 else PERDIDA
 
 
-def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
-    """Las primitivas de ADR-0048 mas las del broker, la cuenta y las acciones de la orden."""
-    base = primitivas_escritas(registro)
+def primitivas_cableadas(
+    registro: Registro, ctx: ContextoDia, limpia: str | None = None
+) -> Primitivas:
+    """Las primitivas de ADR-0048 mas las del broker, la cuenta y las acciones de la orden. Con
+    `limpia` (A-21), la geometria de la zona de entrada produce las zonas que las acciones leen."""
+    base = primitivas_escritas(registro, None, limpia)
 
     # ------------------------------------------------------------------ fuente broker
 
@@ -259,9 +247,12 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
 
     # ---------------------------------------------------------------------- acciones
 
-    def _zona(ligaduras: Mapping[str, str], clave: str, quien: str) -> Zona:
+    def _zona(ligaduras: Mapping[str, str], clave: str, quien: str, estado: EstadoDia) -> Zona:
         ref = ligaduras.get(clave)
-        z = ctx.zonas.get(str(ref)) if ref is not None else None
+        z = None
+        if ref is not None:
+            # las zonas del contexto (sinteticas, tests) y las que el productor ligo en el dia
+            z = ctx.zonas.get(str(ref)) or zonas_del_dia(estado).get(str(ref))
         if z is None:
             raise CableadoError(f"{quien}: la ligadura {clave!r} no apunta a una zona ({ref!r})")
         return z
@@ -289,7 +280,7 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
         # ADR-0053 §1.1: se anota y el lote se resuelve al colocar, con el stop ya escrito
         o = ctx.orden
         if o is None:
-            z = _zona(ligaduras, "Z", "dimensionar_lote")
+            z = _zona(ligaduras, "Z", "dimensionar_lote", estado)
             o = ctx.orden = OrdenEnPreparacion(z)
         o.lotaje = (
             registro.opcion(str(args["base"])),
@@ -374,6 +365,7 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
             ligaduras,
             str(args["en"]) if str(args["en"]) in ligaduras else "Z",
             "colocar_orden_limite",
+            estado,
         )
         if z.id != o.zona.id:
             raise CableadoError(
@@ -384,7 +376,7 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
             raise CableadoError("colocar_orden_limite: la orden no lleva stop, objetivo y lote")
         id = f"o{len(ctx.broker.ordenes) + 1}"
         r = ctx.broker.colocar_limite(
-            id, z.lado, z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms
+            id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms
         )
         ctx.por_de_orden[id] = z.por
         if isinstance(r, Rechazo):
@@ -422,6 +414,7 @@ def primitivas_cableadas(registro: Registro, ctx: ContextoDia) -> Primitivas:
             ligaduras,
             str(args["a"]) if str(args["a"]) in ligaduras else "Z",
             "reubicar_orden_limite",
+            estado,
         )
         registro.opcion(str(args["cadencia"]))
         pendientes = [

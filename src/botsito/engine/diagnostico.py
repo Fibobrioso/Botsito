@@ -19,11 +19,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from botsito.config.registro import ParametroDesconocidoError, Registro
+from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
 from botsito.domain.pivotes_m15 import LECTURAS
 
 PARAMETRO_A35 = "liquidez_m15_pivote_formado"
 ETIQUETA_A35 = "DIAGNOSTICO-A35"
 ETIQUETA_A44 = "DIAGNOSTICO-A44"
+ETIQUETA_A21 = "DIAGNOSTICO-A21"
 # Los modos hipoteticos de A-44: sin tope (el trader dice que no tiene) o un MARCADOR que no es un
 # valor plausible del trader (un tope de un punto porcentual de nada: se toca con cualquier
 # perdida; vale para ver el embudo, no para simular una operativa).
@@ -50,12 +52,15 @@ class Diagnostico:
 
     a35: str | None = None
     a44: str | None = None
+    a21: str | None = None
 
     def __post_init__(self) -> None:
         if self.a35 is not None and self.a35 not in LECTURAS:
             raise ValueError(f"lectura de A-35 {self.a35!r} no esta en {LECTURAS}")
         if self.a44 is not None and self.a44 not in MODOS_A44:
             raise ValueError(f"modo de A-44 {self.a44!r} no esta en {MODOS_A44}")
+        if self.a21 is not None and self.a21 not in LECTURAS_LIMPIA:
+            raise ValueError(f"lectura de A-21 {self.a21!r} no esta en {LECTURAS_LIMPIA}")
 
     @property
     def etiquetas(self) -> tuple[str, ...]:
@@ -64,6 +69,8 @@ class Diagnostico:
             salida.append(f"{ETIQUETA_A35}-{self.a35}")
         if self.a44 is not None:
             salida.append(f"{ETIQUETA_A44}-{self.a44}")
+        if self.a21 is not None:
+            salida.append(f"{ETIQUETA_A21}-{self.a21}")
         return tuple(salida)
 
     @property
@@ -135,6 +142,7 @@ def nombre_etiquetado(ruta: Path, etiquetas: tuple[str, ...]) -> Path:
 
 
 __all__ = [
+    "ETIQUETA_A21",
     "A44_MARCADOR",
     "A44_MARCADOR_CERO",
     "A44_SIN_TOPE",

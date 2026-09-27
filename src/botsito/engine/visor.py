@@ -110,6 +110,21 @@ class OrdenVisor:
 
 
 @dataclass(frozen=True)
+class ZonaVisor:
+    """Una zona de entrada que el motor ligo en el dia (RN-011 por `toca_colocar_orden_limite`):
+    la entrada y el extremo en precio, desde el inicio del bloque de origen y visible desde el
+    cierre del breaker que la formo. Solo con --simular, como el resto del detalle."""
+
+    id: str
+    lado: str
+    entrada: Decimal
+    extremo: Decimal
+    por: str
+    desde: datetime | None
+    formada: datetime | None
+
+
+@dataclass(frozen=True)
 class EventoVisor:
     instante: datetime
     tipo: str
@@ -129,6 +144,7 @@ class DetalleBroker:
     saldo_fin: Decimal
     equity_fin: Decimal
     depuracion: str | None  # la marca de depuracion, si el dia corrio sobre respaldo M1
+    zonas: tuple[ZonaVisor, ...] = ()  # las zonas de entrada que el motor ligo en el dia
 
 
 @dataclass(frozen=True)
@@ -577,6 +593,35 @@ def _operacion_svg(
     return "".join(partes)
 
 
+def _zonas_svg(d: DiaVisor, lienzo: Lienzo, huso: ZoneInfo, hasta: MinutoUtc | None) -> str:
+    """Cada zona de entrada como rectangulo: del inicio de su bloque de origen al borde derecho,
+    entre la entrada y el extremo; solo si el breaker que la formo ya cerro antes de `hasta`."""
+    if d.broker is None:
+        return ""
+    partes: list[str] = []
+    for z in d.broker.zonas:
+        if z.formada is None or not _visible(_minuto_de(z.formada), hasta):
+            continue
+        x0 = lienzo.x(
+            max(_minuto_de(z.desde) if z.desde is not None else lienzo.desde, lienzo.desde)
+        )
+        x1 = lienzo.x(lienzo.hasta)
+        ya, yb = lienzo.y(_puntos(z.entrada, d.escala)), lienzo.y(_puntos(z.extremo, d.escala))
+        xf = lienzo.x(_minuto_de(z.formada))
+        etiqueta = (
+            f"zona {z.id} ({z.lado}, {z.por}): entrada {z.entrada}, extremo {z.extremo}, "
+            f"formada al cierre de las {_hora_exacta(z.formada, huso)}"
+        )
+        partes.append(
+            f'<g class="zona {html.escape(z.lado)}"><title>{html.escape(etiqueta)}</title>'
+            f'<rect x="{_px(x0)}" y="{_px(min(ya, yb))}" width="{_px(max(x1 - x0, 1.0))}" '
+            f'height="{_px(max(abs(ya - yb), 1.0))}"/>'
+            f'<line class="formada" x1="{_px(xf)}" y1="{_px(min(ya, yb))}" x2="{_px(xf)}" '
+            f'y2="{_px(max(ya, yb))}"/></g>'
+        )
+    return "".join(partes)
+
+
 def _parejas_svg(d: DiaVisor, lienzo: Lienzo) -> str:
     partes: list[str] = []
     for p in d.parejas:
@@ -677,6 +722,9 @@ _CSS = (
     ".op.trader .entrada,.op.trader .llenado{stroke:#1f4e9c;fill:#1f4e9c}"
     ".op.bot .entrada,.op.bot .llenado{stroke:#8e44ad;fill:#8e44ad}"
     ".pareja{stroke:#f39c12;stroke-width:2}.hecho.fijado circle{fill:#1f4e9c}"
+    ".zona rect{fill-opacity:.16;stroke-width:1}.zona .formada{stroke-width:1.5}"
+    ".zona.compra rect,.zona.compra .formada{fill:#2e8b57;stroke:#2e8b57}"
+    ".zona.venta rect,.zona.venta .formada{fill:#c0392b;stroke:#c0392b}"
     ".hecho.apagado circle{fill:#999}.valor{font-size:10px;fill:#333}"
     ".m15{display:none}#m15:checked~.grafico .m15{display:inline}"
     "#m15:checked~.grafico .m1{display:none}"
@@ -780,6 +828,26 @@ def _operaciones_html(d: DiaVisor, huso: ZoneInfo, ops: Sequence[OperacionVisor]
     )
 
 
+def _filas_zonas(zonas: Sequence[ZonaVisor], huso: ZoneInfo) -> str:
+    if not zonas:
+        return "<p>ninguna</p>"
+    return _tabla(
+        ["id", "lado", "esquema", "entrada", "extremo", "bloque desde", "formada (cierre)"],
+        (
+            _fila(
+                html.escape(z.id),
+                html.escape(z.lado),
+                html.escape(z.por),
+                html.escape(str(z.entrada)),
+                html.escape(str(z.extremo)),
+                _hora_exacta(z.desde, huso) if z.desde is not None else "-",
+                _hora_exacta(z.formada, huso) if z.formada is not None else "-",
+            )
+            for z in zonas
+        ),
+    )
+
+
 def _filas_ordenes(ordenes: Sequence[OrdenVisor], huso: ZoneInfo) -> str:
     if not ordenes:
         return "<p>ninguna</p>"
@@ -850,6 +918,9 @@ def _broker_html(
         return []
     ordenes = [o for o in detalle.ordenes if _visible(_minuto_de(o.colocada), hasta)]
     posiciones = [p for p in detalle.posiciones if _visible(_minuto_de(p.colocada), hasta)]
+    zonas = [
+        z for z in detalle.zonas if z.formada is not None and _visible(_minuto_de(z.formada), hasta)
+    ]
     eventos = [e for e in detalle.eventos if _visible(_minuto_de(e.instante), hasta)]
     salida = ["<h2>Broker simulado (ADR-0053)</h2>"]
     if detalle.depuracion is not None:
@@ -859,6 +930,8 @@ def _broker_html(
         f"rechazos {detalle.rechazos} · saldo al cierre {html.escape(str(detalle.saldo_fin))}, "
         f"equity {html.escape(str(detalle.equity_fin))} · huecos con nombre: "
         f"{html.escape(', '.join(detalle.huecos) or 'ninguno')}</p>",
+        "<h3>Zonas de entrada ligadas por el motor</h3>",
+        _filas_zonas(zonas, huso),
         "<h3>Ordenes</h3>",
         _filas_ordenes(ordenes, huso),
         "<h3>Posiciones</h3>",
@@ -894,6 +967,10 @@ def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
         precios.append(_puntos(op.entrada, d.escala))
         if op.stop is not None:
             precios.append(_puntos(op.stop, d.escala))
+    if d.broker is not None:
+        for z in d.broker.zonas:
+            if z.formada is not None and _visible(_minuto_de(z.formada), hasta):
+                precios += [_puntos(z.entrada, d.escala), _puntos(z.extremo, d.escala)]
     if not precios:
         precios = [0, 1]
     margen = max((max(precios) - min(precios)) // 20, 1)
@@ -907,7 +984,8 @@ def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
     grafico = (
         f'<svg class="precio" viewBox="0 0 {ANCHO} {ALTO_PRECIO}" width="{ANCHO}">'
         f"{_sesiones_svg(d, lienzo, huso)}{_eje_precio(lienzo, d.escala)}"
-        f"{_eje_tiempo(lienzo, huso, 60)}{_velas_svg(m1, lienzo, 'm1', 1.0)}"
+        f"{_eje_tiempo(lienzo, huso, 60)}{_zonas_svg(d, lienzo, huso, hasta)}"
+        f"{_velas_svg(m1, lienzo, 'm1', 1.0)}"
         f"{_velas_svg(m15, lienzo, 'm15', 4.0)}{ops_svg}{_parejas_svg(recortado, lienzo)}</svg>"
     )
     titulo = f"{d.caso} · {d.dia.isoformat()}"
@@ -927,7 +1005,8 @@ def render_dia(d: DiaVisor, hasta: MinutoUtc | None = None) -> str:
         '<p class="leyenda"><span>■ azul: trader</span><span>■ morado: bot</span>'
         "<span>-- rojo: stop</span><span>·· verde: objetivo DERIVADO por regla (objetivo_rr; "
         "el caso no trae objetivo, ADR-0043)</span><span>— naranja: pareja del criterio</span>"
-        "</p>",
+        "<span>▭ verde/rojo: zona de entrada que ligo el motor (compra/venta), visible desde el "
+        "cierre del breaker (solo --simular)</span></p>",
         '<input type="checkbox" id="m15"><label for="m15"> ver M15 en vez de M1</label>',
         f'<div class="grafico">{grafico}</div>',
         "<h2>Hechos del motor, en el instante en que se fijaron</h2>",

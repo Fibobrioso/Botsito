@@ -418,7 +418,10 @@ ambiguedades:
       - ev-v1-001435-f0586d02
       - ev-v4-000243-5f8875ce
       - ev-v3-004201-bfeb3734
-    parametros: []
+    # El selector de la respuesta, SIN VALOR (UNKNOWN) desde la rama trabajo/preparar-a21: sus
+    # opciones son las dos condiciones de validez que el corpus enuncia; activar RN-008/RN-011 es
+    # escribirle la que diga el trader, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md)
+    parametros: [zona_control_limpia]
     contradiccion: null
     # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
     # ningun pasaje de v1-v5 responde con la regla congelada; se pregunta al trader. Informe:

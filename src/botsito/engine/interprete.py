@@ -81,6 +81,9 @@ class EstadoDia:
     hechos: dict[str, str] = field(default_factory=dict)  # hechos de origen `regla` encendidos
     broker: dict[str, bool] = field(default_factory=dict)  # hechos de origen `broker` (H4)
     anotaciones: dict[str, dict[str, str]] = field(default_factory=dict)  # por sesion
+    # lo que un productor de primitivas necesita recordar dentro del dia (la zona de entrada);
+    # nace y muere con el dia, como todo lo demas (ADR-0048 §3)
+    memoria: dict[str, Any] = field(default_factory=dict)
 
 
 Predicado = Callable[[Mapping[str, Any], Momento, EstadoDia], "Resultado | NoImplementada"]
