@@ -1123,3 +1123,28 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-46
+    titulo: si una toma de liquidez de una sesion anterior del mismo dia sigue valiendo en la siguiente
+    pregunta: >-
+      Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en la de 07 a 11, la
+      que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que
+      llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor
+      la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
+    resuelve_en: [F19, F20]
+    # NACE en la orden de cierre de trabajo/preparar-a21 (ADR-0055 §4). Medido en construccion
+    # (docs/validation/VERIFICACION-A21.md §3): 31 sesiones abren con una toma hecha en una sesion
+    # anterior del mismo dia; con ella RN-008 y RN-009 disparan (31/31) y RN-011 no (0/31). Es deuda
+    # conocida y NO se corrige hasta la respuesta: o la spec escribe `caduca: al_abrir_sesion` en
+    # `liquidez_tomada` (la nota del bloque `caduca` ya dice que F14b lo anticipo), o se decide que
+    # hace RN-011 con una toma de la sesion anterior. Las sesiones son 07-11 y 11-15 hora de Madrid;
+    # el trader las llama Londres y Nueva York en v2 (ev-v2-000310-2fc6581b) y las fija asi en v6
+    evidencia:
+      - ev-v2-000310-2fc6581b
+      - ev-v6-014610-597e442a
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
