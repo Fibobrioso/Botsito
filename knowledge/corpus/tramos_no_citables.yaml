@@ -30,3 +30,10 @@ tramos:
     acordado: >-
       1:52:45 "bro, un momento, vale? voy a tomar agua, ahora vengo" / 1:57:31 "regrese. vale,
       en que estabamos?"
+  - video_id: v7
+    t0: "0:15:34"
+    t1: "0:15:48"
+    motivo: >-
+      cuarentena mecanica de la sesion 02 (scripts/transcribir_sesion.py): segmentos 128-130 de la cruda con motivo fecha numerica, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 02 (2026-09-27): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-02-VIDEO.md)
