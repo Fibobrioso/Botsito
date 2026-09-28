@@ -27,6 +27,9 @@ lado del precio». Si entrara con una orden stop en el punto del breaker, eso lo
    va de −305 a +153 puntos, con mediana −15 (§4). Es tan lejos como la zona.
 4. **Lo que sostiene y lo que no** (§5): sostiene que el trader entra a favor del movimiento,
    nunca en el retroceso; **no** sostiene que entre en el punto que el productor llama breaker.
+5. **Añadido en la revisión del consultor (§7)**: el control positivo sobre la única orden límite
+   real salió **AMBIGUO**, así que, por la regla fijada, el 77 de 77 NO queda sostenido por él y la
+   rama no se cierra. Los controles sintéticos sí pasan.
 
 ## 1. El criterio de la Fase 2, escrito antes de medir
 
@@ -250,6 +253,68 @@ productor calcula (§4). Lo decide el consultor.
    viva. Dice dónde no está la entrada; no dice dónde está.
 6. **Dos operaciones con M1** (23 de abril): mismo resultado, fuente distinta, en tabla aparte.
 
-## 7. Estado
+## 7. Control positivo del método (2026-09-27, revisión del consultor)
 
-Rama lista para revisión, NO cerrada.
+El método de §2 solo se había contrastado con etiquetas stop (§3). El consultor pidió aplicarlo, con
+el MISMO criterio de §1 y sin cambiar nada, a la única orden que FX Replay etiquetó como `Sell limit`
+—v7, operación n.º 6: lunes 3 de agosto, orden colocada a las 13:04:59 UTC+2 en 1.15253, llenado
+entre 13:05 y 13:12 UTC+2 según `SESION-02-VIDEO.md` §3.2—, y añadir un control sintético en los
+tests. El 3 de agosto es día de desarrollo, comprobado con `casos_reservados` y `casos_ocultos` antes
+de leer nada. Salida en `ORDEN-STOP-O-LIMITE-SALIDA.txt` («CONTROL POSITIVO»), producida por
+`control_sell_limit` del script.
+
+### 7.1 El control real: AMBIGUO
+
+Con los ticks del 3 de agosto (bid, porque es una venta), tolerancia 2 y la ventana entera del
+informe de v7 porque el instante es incierto (regla 2 del criterio):
+
+| | |
+|---|---|
+| ticks en 11:04:59–11:12:59 UTC | 214 |
+| bid al colocar la orden (último tick ≤ 11:04:59 UTC), respecto a L | −2 puntos |
+| bid mínimo / máximo en la ventana, respecto a L | −4 / +13 |
+| ventana entera (criterio con instante incierto) | lado **ambiguo** → **ambiguo** |
+| primer tick en el nivel | 11:05:02 UTC, 3 s después de colocarla |
+| W1 = [ese tick − 60 s, ese tick] | lado **ambiguo** → **ambiguo** |
+
+La traza de los 90 s anteriores al primer toque (bid − L, en puntos): +3 +3 +5 +4 … +5 +0 +0 +2 +3 +5
+… +5 +4 +1 +1 +3 +3 +3 −1 −2 +1 −3 +0 −1 +0, y después +5 +6 +5 +9 +11 +9 +12. El precio estaba EN el
+nivel cuando se colocó la orden (−2 puntos, dentro de la tolerancia) y oscila a los dos lados de L
+durante toda la ventana. El fotograma `001080000` lo confirma: la etiqueta «Sell limit» aparece a las
+13:04:59 UTC+2 con la última vela cerrando en 1.15252, un punto por debajo de la orden.
+
+**Resultado del control real: AMBIGUO.** No es LÍMITE. El método no ha distinguido esta orden. Es
+exactamente el caso que el propio criterio de §1 dejaba fuera de su lógica —«salvo que la orden se
+colocara con el precio ya en L»—, pero esa salvedad no convierte el ambiguo en un LÍMITE: el control
+pedido era que saliera LÍMITE, y no sale.
+
+### 7.2 El control sintético: pasa
+
+`tests/unit/test_orden_stop_o_limite.py`, con ticks inventados (día 2030-01-07, nivel 1.00000, que no
+es de ningún día ni precio real): una serie que SUBE hasta un nivel de venta sale LÍMITE; una que
+BAJA, STOP; una compra a la que el precio baja, LÍMITE, y a la que sube, STOP; una que cruza el nivel
+por los dos lados, ambiguo; y sin ticks en la ventana el método cae a M1 y lo dice. Las funciones puras
+y la Fase 2 de punta a punta pasan los seis casos.
+
+### 7.3 Decisión, según la regla que fijó el consultor
+
+La regla era: si el control real sale LÍMITE, el método queda validado; **si sale STOP o ambiguo, el
+77/77 NO se sostiene, no se cierra la rama y se para.** Salió ambiguo. Por tanto:
+
+- **El 77 de 77 de §2 NO queda sostenido por este control.** Lo que el método ha demostrado
+  distinguir son series sintéticas; sobre la única orden límite real disponible, no distingue.
+- **Lo que sí sigue en pie, dicho como medida**: las 77 entradas de construcción llegan al nivel desde
+  el lado de la ruptura (§2), y ninguna de las 75 con ticks es ambigua con la ventana de 60 s. La
+  orden límite real, en cambio, ES ambigua con esa misma ventana. Es decir, el método separa las 77
+  de este caso; lo que no ha podido enseñar es que un LÍMITE real le salga LÍMITE.
+- **Qué haría falta para validarlo**: una orden límite real colocada con el precio LEJOS del nivel y
+  llenada por un retroceso. En v7 y v8 no hay ninguna: la única limit del trader se colocó con el
+  precio a 1 punto de ella. Con el trader el martes se puede pedir, o buscar en un backtest suyo con
+  el tipo de orden anotado.
+
+**La rama no se cierra y aquí se para**, como manda la regla. A-47 sigue ABIERTA.
+
+## 8. Estado
+
+Rama lista para revisión, NO cerrada. El control positivo de §7 salió AMBIGUO: el 77/77 no queda
+sostenido por él, y la rama no se cierra (§7.3).

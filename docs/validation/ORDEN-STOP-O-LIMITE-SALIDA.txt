@@ -139,6 +139,12 @@ traza 2026-08-03 07-11 06:03:05Z venta L=115364 (segundos respecto a t : bid/ask
 traza 2026-08-10 11-15 11:57:15Z compra L=115503 (segundos respecto a t : bid/ask - L):
   -85s:-4 -83s:-5 -81s:-5 -70s:-3 -68s:-4 -68s:-4 -68s:-2 -64s:-3 -58s:-5 -58s:-7 -45s:-7 -38s:-4 -38s:-2 -38s:-3 -37s:-5 -36s:-4 -36s:-2 -30s:-2 -29s:-1 +2s:-1 +2s:+0 +4s:+2 +4s:+4 +4s:+5 +4s:+4 +9s:+2 +9s:+3 +10s:+5 +10s:+7 +10s:+7 +13s:+6 +14s:+6 +20s:+5 +20s:+5 +21s:+5 +21s:+5 +21s:+6 +23s:+8 +23s:+8 +23s:+8 +24s:+9 +24s:+11 +25s:+9 +28s:+8
 
+# CONTROL POSITIVO · v7 n.o 6, la unica «Sell limit» (3 de agosto, 1.15253; ventana de llenado 11:05-11:12 UTC = 13:05-13:12 UTC+2)
+ticks en la ventana: 214; bid al colocar la orden (ultimo tick <= 11:04:59 UTC) respecto a L: -2 puntos; bid min/max en la ventana respecto a L: -4 / 13
+ventana entera (criterio con instante incierto): lado ambiguo -> ambiguo
+primer tick en el nivel: 11:05:02 UTC; W1 = [ese tick - 60 s, ese tick]: lado ambiguo -> ambiguo
+traza (segundos respecto al primer toque : bid - L): -90s:+3 -89s:+3 -87s:+5 -84s:+4 -84s:+4 -80s:+4 -74s:+5 -74s:+4 -69s:+4 -61s:+5 -60s:+5 -60s:+0 -57s:+0 -56s:+2 -56s:+3 -54s:+5 -53s:+4 -51s:+5 -50s:+5 -46s:+5 -45s:+5 -45s:+5 -40s:+5 -38s:+5 -36s:+7 -35s:+6 -35s:+5 -33s:+5 -30s:+5 -28s:+4 -27s:+1 -26s:+1 -23s:+3 -21s:+3 -16s:+3 -12s:-1 -12s:-2 -8s:+1 -6s:-3 -5s:+0 +0s:-1 +0s:+0 +4s:+5 +10s:+6 +21s:+5 +22s:+9 +23s:+11 +25s:+9 +27s:+12
+
 # FASE 4 · la entrada frente al nivel de referencia del breaker del productor (Esquema.referencia)
 d_ref = entrada - referencia (compra) / referencia - entrada (venta): > 0 mas alla del nivel en la direccion de la ruptura. d_zona como en VERIFICACION-A21 (borde cercano de la zona).
 tolerancia de ADR-0043: 3 puntos

@@ -341,6 +341,52 @@ def robustez(ops: list[Op], ticks: Callable[[str], list[Tick]]) -> list[str]:
     return out + [""]
 
 
+def control_sell_limit(ticks: Callable[[str], list[Tick]], tol: int) -> list[str]:
+    """Control positivo pedido por el consultor (2026-09-27): el MISMO criterio sobre la unica orden
+    que FX Replay etiqueto «Sell limit» (v7, operacion n.o 6: 3 de agosto, colocada a las 13:04:59
+    UTC+2 en 1.15253; llenado entre 13:05 y 13:12 UTC+2 segun SESION-02-VIDEO.md). Con el instante
+    incierto, el criterio clasifica con la ventana entera y marca ambiguo si el precio cruza el
+    nivel por los dos lados."""
+    dia, nivel = "2026-08-03", 115253
+    t0 = ms_de(datetime.fromisoformat(f"{dia}T11:04:59+00:00"))
+    t1 = ms_de(datetime.fromisoformat(f"{dia}T11:12:59+00:00"))
+    serie = ticks(dia)
+    ventana = [k for k in serie if t0 <= k.instante <= t1]
+    bids = [bid_ask(k, "venta") for k in ventana]
+    previos = [bid_ask(k, "venta") for k in serie if k.instante <= t0]
+    lado = lado_llegada(bids, nivel, tol)
+    out = [
+        "# CONTROL POSITIVO · v7 n.o 6, la unica «Sell limit» (3 de agosto, 1.15253; ventana de "
+        "llenado 11:05-11:12 UTC = 13:05-13:12 UTC+2)",
+        f"ticks en la ventana: {len(ventana)}; bid al colocar la orden (ultimo tick <= 11:04:59 "
+        f"UTC) respecto a L: {previos[-1] - nivel if previos else '-'} puntos; bid min/max en la "
+        f"ventana respecto a L: {min(bids) - nivel if bids else '-'} / "
+        f"{max(bids) - nivel if bids else '-'}",
+        f"ventana entera (criterio con instante incierto): lado {lado} -> {tipo_de('venta', lado)}",
+    ]
+    toque = next((k for k in ventana if abs(bid_ask(k, "venta") - nivel) <= tol), None)
+    if toque is not None:
+        w1 = [
+            bid_ask(k, "venta")
+            for k in serie
+            if toque.instante - W1_S * 1000 <= k.instante <= toque.instante
+        ]
+        l1 = lado_llegada(w1, nivel, tol)
+        hora = datetime.fromtimestamp(toque.instante / 1000, UTC).strftime("%H:%M:%S")
+        tr = [k for k in serie if toque.instante - 90_000 <= k.instante <= toque.instante + 30_000]
+        paso = max(1, len(tr) // 40)
+        out += [
+            f"primer tick en el nivel: {hora} UTC; W1 = [ese tick - {W1_S} s, ese tick]: lado {l1} "
+            f"-> {tipo_de('venta', l1)}",
+            "traza (segundos respecto al primer toque : bid - L): "
+            + " ".join(
+                f"{(k.instante - toque.instante) / 1000:+.0f}s:{bid_ask(k, 'venta') - nivel:+d}"
+                for k in tr[::paso]
+            ),
+        ]
+    return out + [""]
+
+
 def fase4(ops: list[Op], criterio: Criterio, tol_adr: int) -> list[str]:
     """Distancia firmada al nivel de referencia del breaker del productor, en las operaciones con
     zona viva en el llenado (mismos supuestos que verificacion_a21_entradas.py)."""
@@ -473,6 +519,7 @@ def main(argv: list[str]) -> int:
         *tabla_fase2(ops, criterio, tol),
         *diagnostico(ops, ticks, tol),
         *robustez(ops, ticks),
+        *control_sell_limit(ticks, tol),
         *fase4(ops, criterio, criterio.tolerancias.entrada_puntos),
     ]
     Path(argv[1]).write_text("\n".join(lineas) + "\n", encoding="utf-8", newline="\n")
