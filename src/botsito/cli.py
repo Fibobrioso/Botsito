@@ -2065,6 +2065,10 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
     broker simulado."""
     from botsito.engine.diagnostico import Diagnostico
 
+    if getattr(args, "diagnostico_a47", None) is not None and not getattr(args, "simular", False):
+        raise ValueError(
+            "--diagnostico-a47 es el tipo de la orden en el broker simulado: va con --simular"
+        )
     if getattr(args, "diagnostico_a27", None) is not None and not getattr(args, "simular", False):
         raise ValueError(
             "--diagnostico-a27 es el stops level del broker simulado: va con --simular"
@@ -2074,6 +2078,7 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
         getattr(args, "diagnostico_a44", None),
         getattr(args, "diagnostico_a21", None),
         getattr(args, "diagnostico_a27", None),
+        getattr(args, "diagnostico_a47", None),
     )
 
 
@@ -2089,6 +2094,8 @@ def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None
         lineas.append(f"# A-44 en hipotesis: {tope.descripcion()}")
     if diag.a21 is not None:
         lineas.append(f"# A-21 en hipotesis: zona_control_limpia = {limpia}")
+    if diag.a47 is not None:
+        lineas.append(f"# A-47 en hipotesis: entrada_tipo_orden = {diag.a47}")
     if diag.a27 is not None:
         lineas.append(f"# A-27 en hipotesis: firma_stops_level_puntos = {diag.a27}")
     return "\n".join(lineas) + "\n\n"
@@ -2099,6 +2106,7 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
     from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
     from botsito.domain.pivotes_m15 import LECTURAS
     from botsito.engine.diagnostico import MODOS_A44
+    from botsito.engine.entrada import LECTURAS_A47
 
     parser.add_argument(
         "--diagnostico-a35",
@@ -2120,6 +2128,14 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="A-44 sin fijar: corre con este tope del trader EN HIPOTESIS (sin_tope, o un "
         "marcador que no es un valor plausible); etiquetado DIAGNOSTICO-A44-<modo>",
+    )
+    parser.add_argument(
+        "--diagnostico-a47",
+        choices=LECTURAS_A47,
+        default=None,
+        help="con --simular, A-47 sin fijar: la entrada va al broker como este tipo de orden EN "
+        "HIPOTESIS (stop_en_ruptura o limite_en_retroceso); etiquetado DIAGNOSTICO-A47-<lectura>; "
+        "no cuenta para nada",
     )
     parser.add_argument(
         "--diagnostico-a27",
@@ -2171,7 +2187,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes, cableado, diagnostico, tope_trader, zonas
+    from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, zonas
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
@@ -2197,6 +2213,8 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
         # A-21: la lectura de «limpia» de la zona de entrada, fijada o en diagnostico
         limpia = zonas.lectura_limpia(registro, diag.a21)
+        # A-47: el tipo de la orden de entrada, solo con el broker simulado (ADR-0056 §1)
+        tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47) if args.simular else None
         # la ruta de salida, con su rotulo, cabe en Windows: se comprueba ANTES de leer velas
         salida = diagnostico.comprobar_ruta(
             diagnostico.nombre_etiquetado(Path(args.salida), diag.etiquetas)
@@ -2229,6 +2247,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
                 tope,
                 limpia,
                 stops_level_diagnostico=diag.a27,
+                tipo_orden=tipo_orden,
             )
             nombre = cableado.NOMBRE_MOTOR
         else:
@@ -2278,7 +2297,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.paquete import cargar_config
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
-    from botsito.engine import arnes, cableado, diagnostico, tope_trader, visor, zonas
+    from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, visor, zonas
     from botsito.engine.arnes import ConjuntoError
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
@@ -2308,6 +2327,8 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
         limpia = zonas.lectura_limpia(registro, diag.a21)
+        # A-47: el tipo de la orden de entrada, solo con el broker simulado (ADR-0056 §1)
+        tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47) if args.simular else None
         # cada ruta que se va a escribir, con su rotulo, cabe en Windows: ANTES de leer velas
         candidatas = [salida / f"{c.id}.html" for c in casos] + [salida / visor.INDICE]
         if args.hasta:
@@ -2338,6 +2359,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
                 tope,
                 limpia,
                 stops_level_diagnostico=diag.a27,
+                tipo_orden=tipo_orden,
             )
             preparador.motor = cableado_motor
             preparador.nombre_motor = cableado.NOMBRE_MOTOR

@@ -500,6 +500,23 @@ parametros:
     fuente:
       tipo: evidence
       id: ev-v3-004201-bfeb3734
+  - nombre: entrada_tipo_orden
+    categoria: estrategia
+    tipo: enum
+    unidad: el tipo de la orden de entrada (A-47)
+    opciones: [stop_en_ruptura, limite_en_retroceso]
+    descripcion: >-
+      si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio
+      y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47,
+      ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes
+      legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e,
+      ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de
+      antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite
+      (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el
+      motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1).
+      Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
+    estado: UNKNOWN
+    consumido_por: [F20, F22]
   - nombre: stop_en_orden_pendiente
     categoria: estrategia
     tipo: enum

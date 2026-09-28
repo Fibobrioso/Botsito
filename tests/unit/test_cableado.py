@@ -24,9 +24,10 @@ from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine import arnes, cableado
-from botsito.engine.broker import LLENADA, Broker, BrokerError
+from botsito.engine.broker import LLENADA, MOTIVO_PRECIO_INVALIDO, Broker, BrokerError
 from botsito.engine.cableado import CableadoError, MotorCableado, comprobar_reloj_unico
 from botsito.engine.cuenta import EstadoCuenta, ReglasFase, reglas_de_fase
+from botsito.engine.entrada import LIMITE_EN_RETROCESO, STOP_EN_RUPTURA
 from botsito.engine.interprete import (
     EstadoDia,
     Momento,
@@ -354,6 +355,66 @@ def test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo(
     assert (p.motivo_cierre, p.precio_cierre) == (OBJETIVO, ENTRADA + 60)
     assert corrida.dias and informe
     assert motor.cuenta is not None and motor.cuenta.saldo > motor.reglas_fase.capital_inicial
+
+
+def test_rn011_con_el_selector_en_stop_de_punta_a_punta_por_el_arnes(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """ADR-0056 §8, rama 2, y ADR-0058: con `entrada_tipo_orden` en `stop_en_ruptura` (aqui por el
+    campo del motor, como lo pone la CLI con --diagnostico-a47), RN-011 y RN-015 dimensionan y la
+    entrada va al broker como COMPRA STOP en el 0 de la caja, en el cierre del breaker. Sin
+    desviar nada: es la via real. Sale una operacion completa, llenada al romper y cerrada por
+    objetivo."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
+    motor.tipo_orden = STOP_EN_RUPTURA
+    motor.stops_level_diagnostico = 2
+    dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
+    arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
+    broker = motor.brokers[DIA.isoformat()]
+    orden = next(iter(broker.ordenes.values()))
+    assert (orden.tipo, orden.lado, orden.precio) == (TIPO_STOP, "compra", ENTRADA)
+    assert orden.colocada_ms == MINUTO_ZONA * MS_POR_MINUTO - 1
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, OBJETIVO], tb.eventos
+    p = next(iter(broker.posiciones.values()))
+    assert (p.entrada, p.stop, p.objetivo, p.motivo_cierre) == (
+        ENTRADA,
+        ENTRADA - 16,
+        ENTRADA + 60,
+        OBJETIVO,
+    )
+
+
+def test_con_el_selector_en_limite_sale_lo_mismo_que_sin_selector(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """La linea base de las limites no cambia: `limite_en_retroceso` es lo de siempre, byte a
+    byte, en el informe del arnes y en el de la simulacion."""
+
+    def informe(tipo: str | None) -> str:
+        motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+        motor.tipo_orden = tipo
+        dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
+        corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
+        return arnes.informe(corrida, _criterio(), vocabulario) + cableado.informe_simulacion(motor)
+
+    assert informe(LIMITE_EN_RETROCESO).encode("utf-8") == informe(None).encode("utf-8")
+
+
+def test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_se_rechaza(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """El caso que ADR-0056 §1.3 anticipa y ADR-0058 mide: en RUTA_STOP el precio esta POR ENCIMA
+    de la entrada en el cierre del breaker, asi que una compra stop alli queda del lado
+    equivocado, y el broker la rechaza (ADR-0057); la limite, en cambio, espera y se llena."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    motor.tipo_orden = STOP_EN_RUPTURA
+    motor.stops_level_diagnostico = 0
+    motor.correr_dia(_dia())
+    tb = motor.trazas_broker[DIA.isoformat()]
+    broker = motor.brokers[DIA.isoformat()]
+    assert not broker.posiciones and not [e for e in tb.eventos if e[1] == LLENADA]
+    assert [r.motivo for r in broker.traza().rechazos] == [MOTIVO_PRECIO_INVALIDO]
 
 
 def test_sin_stops_level_la_orden_stop_no_se_coloca_y_lo_dice(

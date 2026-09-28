@@ -19,6 +19,7 @@ parametros:
   sesgo_h4_regla: {temas: [sesgo]}
   liquidez_m15_criterio_toma: {temas: [liquidez]}
   zona_control_limpia: {temas: [zona_control.limpia_sin_ruido, entrada.dos_esquemas.definicion, entrada.esquema2_zona_control_rompe]}
+  entrada_tipo_orden: {temas: [entrada.tipo_orden, entrada.esquema1_sin_retroceso, entrada.orden_limite.predefinida]}
   liquidez_m15_pivote_formado: {temas: [liquidez.m15.pico_ya_formado, mapeo.vela_contraria_marca_punto, mapeo.m1.vela_contraria_marca_extremo]}
   stop_fraccion_caja: {temas: [stop.nivel, stop.075_suficiente, stop.introducido_en_operacion_075]}
   stop_colchon_spread: {temas: [stop.colchon_spread_075_080, stop.acordado_075_mas_spread, stop.075_desplazado_por_spread_y_lotaje]}

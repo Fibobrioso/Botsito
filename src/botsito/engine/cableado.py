@@ -105,6 +105,7 @@ class MotorCableado:
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
     limpia: str | None = None  # la lectura de A-21, si esta fijada (o en diagnostico)
     stops_level_diagnostico: int | None = None  # A-27 en diagnostico (ADR-0057)
+    tipo_orden: str | None = None  # A-47 fijado o en diagnostico; sin el, la limite de siempre
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
     # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
@@ -150,7 +151,7 @@ class MotorCableado:
         ctx = ContextoDia(broker, self.cuenta, self.contrato, md.escala, tope=self.tope)
         if self.zonas_de is not None:
             ctx.zonas.update(self.zonas_de(md))
-        primitivas = primitivas_cableadas(self.registro, ctx, self.limpia)
+        primitivas = primitivas_cableadas(self.registro, ctx, self.limpia, self.tipo_orden)
         if self.primitivas_extra or self.acumuladores_extra:
             predicados = dict(primitivas.predicados)
             predicados.update(self.primitivas_extra)
@@ -412,6 +413,7 @@ def construir_motor_cableado(
     tope: TopeTrader | None = None,
     limpia: str | None = None,
     stops_level_diagnostico: int | None = None,
+    tipo_orden: str | None = None,
 ) -> MotorCableado:
     """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
@@ -443,6 +445,7 @@ def construir_motor_cableado(
         tope=tope,
         limpia=limpia,
         stops_level_diagnostico=stops_level_diagnostico,
+        tipo_orden=tipo_orden,
     )
 
 
