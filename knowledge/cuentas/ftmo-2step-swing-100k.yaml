@@ -391,6 +391,21 @@ parametros:
     consumido_por: [F24]
     fuente: {tipo: decision, id: ADR-0050}
 
+  # ------------------------------------------------------------------ el instrumento (R11)
+  - nombre: firma_stops_level_puntos
+    categoria: prop_firm
+    tipo: puntos
+    unidad: puntos de distancia minima al precio que el servidor admite para una pendiente, su stop o su objetivo
+    descripcion: >-
+      R11: la especificacion de EURUSD en FTMO trae contractSize, digits, maxTradeVolume y
+      marginPercent, y el stops level es NO ENCONTRADA. Se mide en la demo de FTMO con
+      SymbolInfo (A-27). Sin valor, el broker simulado se niega a colocar una orden stop y solo
+      corre en diagnostico, etiquetado (ADR-0057, PROVISIONAL). No es instrumento_stops_level
+      de la estrategia (RN-026, DEFAULT 0 de otra firma): este es la fidelidad del broker a esta
+      firma, y cuando se mida los dos tienen que llevar el mismo valor
+    estado: UNKNOWN
+    consumido_por: [F24]
+
   # ------------------------------------------------------------------ la guardia de tamano (R17)
   - nombre: firma_tamano_posicion_aviso_aplica
     categoria: prop_firm

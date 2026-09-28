@@ -2060,13 +2060,20 @@ def _texto_de_vistos(repo: Path) -> str:
 
 
 def _diagnostico_de(args: argparse.Namespace) -> Any:
-    """Lo pedido con --diagnostico-a35 / --diagnostico-a44 (rama trabajo/preparar-a35-a44)."""
+    """Lo pedido con --diagnostico-a35 / --diagnostico-a44 (rama trabajo/preparar-a35-a44), y
+    desde la rama trabajo/broker-ordenes-stop --diagnostico-a27, que solo tiene sentido con el
+    broker simulado."""
     from botsito.engine.diagnostico import Diagnostico
 
+    if getattr(args, "diagnostico_a27", None) is not None and not getattr(args, "simular", False):
+        raise ValueError(
+            "--diagnostico-a27 es el stops level del broker simulado: va con --simular"
+        )
     return Diagnostico(
         getattr(args, "diagnostico_a35", None),
         getattr(args, "diagnostico_a44", None),
         getattr(args, "diagnostico_a21", None),
+        getattr(args, "diagnostico_a27", None),
     )
 
 
@@ -2082,6 +2089,8 @@ def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None
         lineas.append(f"# A-44 en hipotesis: {tope.descripcion()}")
     if diag.a21 is not None:
         lineas.append(f"# A-21 en hipotesis: zona_control_limpia = {limpia}")
+    if diag.a27 is not None:
+        lineas.append(f"# A-27 en hipotesis: firma_stops_level_puntos = {diag.a27}")
     return "\n".join(lineas) + "\n\n"
 
 
@@ -2111,6 +2120,15 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="A-44 sin fijar: corre con este tope del trader EN HIPOTESIS (sin_tope, o un "
         "marcador que no es un valor plausible); etiquetado DIAGNOSTICO-A44-<modo>",
+    )
+    parser.add_argument(
+        "--diagnostico-a27",
+        type=int,
+        default=None,
+        metavar="PUNTOS",
+        help="con --simular, A-27 sin medir: el broker corre con este stops level EN HIPOTESIS "
+        "(la distancia minima al precio de una pendiente, su stop y su objetivo); etiquetado "
+        "DIAGNOSTICO-A27-<puntos>; no cuenta para nada",
     )
 
 
@@ -2210,6 +2228,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
                 args.depuracion,
                 tope,
                 limpia,
+                stops_level_diagnostico=diag.a27,
             )
             nombre = cableado.NOMBRE_MOTOR
         else:
@@ -2318,6 +2337,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
                 args.depuracion,
                 tope,
                 limpia,
+                stops_level_diagnostico=diag.a27,
             )
             preparador.motor = cableado_motor
             preparador.nombre_motor = cableado.NOMBRE_MOTOR

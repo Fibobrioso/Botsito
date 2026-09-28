@@ -37,7 +37,7 @@ from botsito.data.ticks import (
 from botsito.domain.ticks import MS_POR_MINUTO, Tick
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.arnes import DiaTrader
-from botsito.engine.broker import Broker, ReglasBroker
+from botsito.engine.broker import PARAMETRO_STOPS_LEVEL, Broker, ReglasBroker
 from botsito.engine.cuenta import Operacion, ReglasFase, ResultadoFase, evaluar_fase
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import PerfilCuenta
@@ -95,6 +95,9 @@ def reglas_broker_de(perfil: PerfilCuenta) -> ReglasBroker:
         comision_por_lado=perfil.booleano("firma_comision_por_lado"),
         swap_largo_puntos=perfil.decimal("firma_swap_largo_puntos"),
         swap_corto_puntos=perfil.decimal("firma_swap_corto_puntos"),
+        # UNKNOWN hasta medirlo en la demo de FTMO (A-27): el broker se niega a colocar una orden
+        # stop sin el, salvo en diagnostico (ADR-0057)
+        stops_level_puntos=perfil.puntos_o_nada(PARAMETRO_STOPS_LEVEL),
     )
 
 

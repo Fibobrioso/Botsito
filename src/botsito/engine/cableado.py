@@ -35,6 +35,7 @@ from botsito.domain.velas import MinutoUtc
 from botsito.engine.arnes import DiaTrader
 from botsito.engine.broker import LLENADA, MANUAL, Broker, ReglasBroker
 from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
+from botsito.engine.diagnostico import DiagnosticoRechazadoError
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
 from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, Configuracion
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
@@ -103,6 +104,7 @@ class MotorCableado:
     zonas_de: Callable[[MercadoDia], Mapping[str, Zona]] | None = None  # sinteticas (tests)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
     limpia: str | None = None  # la lectura de A-21, si esta fijada (o en diagnostico)
+    stops_level_diagnostico: int | None = None  # A-27 en diagnostico (ADR-0057)
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
     # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
@@ -134,7 +136,12 @@ class MotorCableado:
         if self.cuenta is None:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
         broker = Broker(
-            self.reglas_broker, self.config_llenado, md.mercado(), self.contrato, md.escala
+            self.reglas_broker,
+            self.config_llenado,
+            md.mercado(),
+            self.contrato,
+            md.escala,
+            stops_level_diagnostico=self.stops_level_diagnostico,
         )
         if self.tope is not None and self.seguidor is None:
             self.seguidor = SeguidorTope(
@@ -404,10 +411,18 @@ def construir_motor_cableado(
     depuracion: bool,
     tope: TopeTrader | None = None,
     limpia: str | None = None,
+    stops_level_diagnostico: int | None = None,
 ) -> MotorCableado:
     """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
-    la primera que declara el perfil (DECISION pendiente de validar)."""
+    la primera que declara el perfil (DECISION pendiente de validar). `stops_level_diagnostico`
+    es el stops level hipotetico de A-27 (ADR-0057): se rechaza si el perfil ya lo tiene."""
+    reglas_broker = reglas_broker_de(perfil)
+    if stops_level_diagnostico is not None and reglas_broker.stops_level_puntos is not None:
+        raise DiagnosticoRechazadoError(
+            f"el perfil {perfil.nombre} ya fija el stops level ({reglas_broker.stops_level_puntos}"
+            " puntos, A-27 medida): la corrida cuenta y no admite --diagnostico-a27"
+        )
     fase_real = fase if fase is not None else perfil.fases()[0]
     mercados = {
         d.dia: mercado_de_construccion(repo, carpeta_datos, criterio, config, registro, d.id)
@@ -418,7 +433,7 @@ def construir_motor_cableado(
         reglas=reglas,
         registro=registro,
         mercados=mercados,
-        reglas_broker=reglas_broker_de(perfil),
+        reglas_broker=reglas_broker,
         reglas_fase=reglas_de_fase(perfil, fase_real),
         config_llenado=cargar_config_llenado(repo / FICHERO_LLENADO).configuracion(),
         contrato=registro.decimal("instrumento_contrato"),
@@ -427,6 +442,7 @@ def construir_motor_cableado(
         fase=fase_real,
         tope=tope,
         limpia=limpia,
+        stops_level_diagnostico=stops_level_diagnostico,
     )
 
 
