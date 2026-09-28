@@ -35,6 +35,10 @@ lado del precio». Si entrara con una orden stop en el punto del breaker, eso lo
    del simulador, da **STOP en 3 de 8 (lectura a) y 4 de 8 (b)**: el método no distingue una límite
    colocada con el precio ya al otro lado de una stop. **No queda validado.** Ninguna límite en espera
    sale STOP.
+7. **Decisión del consultor (§10)**: el método queda ACOTADO, no invalidado. Distingue una límite
+   colocada de antemano esperando el retroceso de una entrada desde el lado de la ruptura, y en las
+   77 no hay ninguna de las primeras (lo que programa RN-011); no distingue una stop de una límite
+   ya pasada, y eso lo dicen las etiquetas de FX Replay y el trader (pendiente de grabación).
 
 ## 1. El criterio de la Fase 2, escrito antes de medir
 
@@ -405,8 +409,38 @@ stop espera al otro lado del precio y la límite cruzada no espera nada. El libr
 el instante de colocación; los vídeos v7 y v8 sí lo enseñan (la etiqueta de la orden aparece antes
 del llenado), y es lo que A-47 le pregunta al trader el martes.
 
-## 10. Estado
+## 10. Decisión del consultor (2026-09-28)
 
-Rama lista para revisión, NO cerrada. El control de §7 quedó como no informativo (nota del
-consultor); el que lo sustituye, con llenados límite del simulador (§8), da STOP en 3 de 8 y 4 de 8:
-el método no queda validado y la rama no se cierra (§9).
+El consultor acepta el control de §8 con una reinterpretación: **el método no queda invalidado para
+la pregunta que importa, sino acotado.** §7, §8 y §9 no se reescriben; esto se lee junto a ellos.
+
+**a) Qué sostiene el método.** Distingue una orden límite colocada DE ANTEMANO, esperando el
+retroceso, de una entrada que llega desde el lado de la ruptura: en el control con el simulador, las
+límites en espera salieron 2 LÍMITE y 1 ambigua, **0 de 3 STOP**. La muestra es pequeña —tres
+órdenes— y se dice. Sobre las 77 entradas de construcción (§2): **ninguna es una límite de antemano
+esperando el retroceso, que es lo que programa RN-011.**
+
+**b) Qué NO sostiene.** Si la entrada fue una orden stop o una límite colocada con el precio ya
+pasado el nivel: las dos se llenan igual y llegan desde el mismo lado (§8). Eso lo dicen otras
+fuentes, no este método:
+- las etiquetas de FX Replay en v7 y v8: 38 stop frente a 1 limit legibles (`SESION-02-VIDEO-V8.md`
+  §4), y las 7 de las parejas, todas stop (§3);
+- la respuesta del trader en la llamada, según el recuerdo de Aleks. **No es cita y está PENDIENTE
+  de confirmación grabada.**
+
+**A-47 sigue ABIERTA** hasta esa confirmación.
+
+**c) Deuda anotada.** En el control, las órdenes límite del bot colocadas con el precio ya pasado el
+nivel fueron **3 de 8 en la lectura (a) y 4 de 8 en la (b)** (4 de las 9 órdenes distintas), y el
+bróker simulado las llenó en el tick siguiente, 1 a 5 segundos después (medido: `primer_llenado_limite`
+de `engine/llenado.py` llena una venta en cuanto el bid supera el precio, sin mirar a qué lado estaba
+al colocarla; ADR-0052 solo prevé rechazos por los límites del perfil). **Según el consultor, en MT5
+una límite colocada en el lado equivocado se rechaza por precio inválido**; eso no se ha medido en
+este repositorio y se comprueba con la demo en MetaTrader. Si es así, es **un fallo de fidelidad del
+bróker simulado (ADR-0052)** y **un síntoma de RN-011**, que coloca la límite en la zona sin mirar
+dónde está el precio. Queda en Technical Debt de `PROJECT_STATE.md` (entrada del 2026-09-28).
+
+## 11. Estado
+
+Cerrada en main por orden de cierre explícita de Aleks tras la revisión del consultor (§10). Sin
+ADR: la rama no decide ningún parámetro ni regla, y A-47 sigue ABIERTA.
