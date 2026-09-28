@@ -1,0 +1,306 @@
+# Orden STOP o LIMITE: como se lleno cada entrada del trader en construccion
+Rama trabajo/orden-stop-o-limite, 2026-09-27. Descriptivo: no elige nada ni toca el motor.
+
+# FASE 2 · lado de llegada del precio al nivel de entrada en el llenado
+CONJUNTO: construccion (2026-04, 2026-08); operaciones 77; tolerancia 2 puntos (criterio_huso.yaml); ventanas 60 s y 300 s antes del llenado; precio bid (venta) / ask (compra)
+
+| dia | sesion | hora UTC | dir. | entrada | tipo | llega de | fuente | ventana | ticks en 60 s |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-04-01 | 11-15 | 12:30:20 | compra | 1.1597 | STOP | abajo | ticks | 60 s | 167 |
+| 2026-04-03 | 07-11 | 05:27:10 | compra | 1.15306 | STOP | abajo | ticks | 300 s | 17 |
+| 2026-04-03 | 11-15 | 11:43:35 | compra | 1.15419 | STOP | abajo | ticks | 60 s | 6 |
+| 2026-04-06 | 07-11 | 06:34:15 | compra | 1.15238 | STOP | abajo | ticks | 300 s | 15 |
+| 2026-04-09 | 07-11 | 07:12:50 | venta | 1.16659 | STOP | arriba | ticks | 60 s | 60 |
+| 2026-04-09 | 11-15 | 09:15:30 | venta | 1.16748 | STOP | arriba | ticks | 60 s | 46 |
+| 2026-04-10 | 07-11 | 06:33:55 | compra | 1.16862 | STOP | abajo | ticks | 60 s | 42 |
+| 2026-04-10 | 07-11 | 08:05:45 | compra | 1.16798 | STOP | abajo | ticks | 60 s | 43 |
+| 2026-04-13 | 07-11 | 06:47:45 | compra | 1.16802 | STOP | abajo | ticks | 60 s | 59 |
+| 2026-04-13 | 07-11 | 06:50:00 | compra | 1.16802 | STOP | abajo | ticks | 60 s | 47 |
+| 2026-04-13 | 07-11 | 08:21:35 | compra | 1.16936 | STOP | abajo | ticks | 60 s | 35 |
+| 2026-04-13 | 11-15 | 10:26:50 | compra | 1.16858 | STOP | abajo | ticks | 60 s | 22 |
+| 2026-04-13 | 11-15 | 12:02:20 | compra | 1.16857 | STOP | abajo | ticks | 60 s | 151 |
+| 2026-04-14 | 07-11 | 06:23:35 | compra | 1.17596 | STOP | abajo | ticks | 60 s | 39 |
+| 2026-04-14 | 11-15 | 12:06:35 | compra | 1.17944 | STOP | abajo | ticks | 60 s | 51 |
+| 2026-04-16 | 07-11 | 06:13:30 | compra | 1.18033 | STOP | abajo | ticks | 60 s | 44 |
+| 2026-04-16 | 11-15 | 11:13:10 | venta | 1.17855 | STOP | arriba | ticks | 60 s | 34 |
+| 2026-04-17 | 07-11 | 08:10:00 | venta | 1.17816 | STOP | arriba | ticks | 60 s | 28 |
+| 2026-04-17 | 07-11 | 08:36:10 | venta | 1.17842 | STOP | arriba | ticks | 60 s | 34 |
+| 2026-04-21 | 07-11 | 05:12:55 | venta | 1.17788 | STOP | arriba | ticks | 60 s | 9 |
+| 2026-04-22 | 07-11 | 08:02:15 | venta | 1.17553 | STOP | arriba | ticks | 60 s | 66 |
+| 2026-04-22 | 07-11 | 08:19:00 | venta | 1.17566 | STOP | arriba | ticks | 60 s | 55 |
+| 2026-04-23 | 07-11 | 05:30:00 | venta | 1.17018 | STOP | arriba | M1 | vela anterior | 0 |
+| 2026-04-23 | 07-11 | 05:53:30 | venta | 1.17038 | STOP | arriba | M1 | vela anterior | 0 |
+| 2026-04-23 | 07-11 | 06:49:35 | venta | 1.17072 | STOP | arriba | ticks | 60 s | 46 |
+| 2026-04-24 | 07-11 | 06:44:30 | venta | 1.16826 | STOP | arriba | ticks | 60 s | 34 |
+| 2026-04-24 | 11-15 | 11:06:25 | venta | 1.17034 | STOP | arriba | ticks | 60 s | 267 |
+| 2026-04-24 | 11-15 | 11:30:35 | venta | 1.17165 | STOP | arriba | ticks | 60 s | 115 |
+| 2026-04-27 | 11-15 | 11:45:35 | compra | 1.17416 | STOP | abajo | ticks | 60 s | 34 |
+| 2026-04-27 | 11-15 | 12:00:00 | compra | 1.17417 | STOP | abajo | ticks | 60 s | 22 |
+| 2026-04-28 | 07-11 | 08:12:05 | venta | 1.17022 | STOP | arriba | ticks | 60 s | 80 |
+| 2026-04-29 | 07-11 | 07:55:40 | venta | 1.17064 | STOP | arriba | ticks | 60 s | 40 |
+| 2026-04-29 | 07-11 | 07:58:35 | venta | 1.17064 | STOP | arriba | ticks | 60 s | 41 |
+| 2026-04-29 | 11-15 | 09:36:25 | venta | 1.17031 | STOP | arriba | ticks | 60 s | 42 |
+| 2026-04-29 | 11-15 | 11:02:00 | venta | 1.17066 | STOP | arriba | ticks | 60 s | 29 |
+| 2026-08-03 | 07-11 | 06:03:05 | venta | 1.15364 | STOP | arriba | ticks | 60 s | 38 |
+| 2026-08-03 | 07-11 | 06:07:40 | venta | 1.15362 | STOP | arriba | ticks | 60 s | 20 |
+| 2026-08-03 | 11-15 | 09:46:15 | venta | 1.15274 | STOP | arriba | ticks | 60 s | 28 |
+| 2026-08-03 | 11-15 | 09:52:50 | venta | 1.1528 | STOP | arriba | ticks | 60 s | 23 |
+| 2026-08-03 | 11-15 | 12:03:25 | venta | 1.1532 | STOP | arriba | ticks | 60 s | 64 |
+| 2026-08-03 | 11-15 | 12:10:55 | venta | 1.15322 | STOP | arriba | ticks | 60 s | 69 |
+| 2026-08-04 | 11-15 | 11:34:50 | venta | 1.15184 | STOP | arriba | ticks | 60 s | 46 |
+| 2026-08-06 | 07-11 | 06:07:25 | venta | 1.15488 | STOP | arriba | ticks | 60 s | 30 |
+| 2026-08-07 | 07-11 | 05:14:55 | venta | 1.15248 | STOP | arriba | ticks | 60 s | 3 |
+| 2026-08-07 | 11-15 | 11:47:55 | venta | 1.15318 | STOP | arriba | ticks | 60 s | 25 |
+| 2026-08-07 | 11-15 | 12:09:10 | venta | 1.15346 | STOP | arriba | ticks | 60 s | 37 |
+| 2026-08-07 | 11-15 | 12:14:55 | venta | 1.15345 | STOP | arriba | ticks | 60 s | 49 |
+| 2026-08-10 | 11-15 | 11:57:15 | compra | 1.15503 | STOP | abajo | ticks | 60 s | 11 |
+| 2026-08-10 | 11-15 | 12:38:45 | compra | 1.15484 | STOP | abajo | ticks | 60 s | 43 |
+| 2026-08-11 | 07-11 | 08:08:55 | compra | 1.1533 | STOP | abajo | ticks | 60 s | 25 |
+| 2026-08-12 | 07-11 | 05:25:20 | compra | 1.1533 | STOP | abajo | ticks | 60 s | 14 |
+| 2026-08-13 | 07-11 | 07:33:55 | venta | 1.15204 | STOP | arriba | ticks | 60 s | 47 |
+| 2026-08-13 | 07-11 | 07:49:40 | venta | 1.15247 | STOP | arriba | ticks | 60 s | 30 |
+| 2026-08-14 | 07-11 | 06:30:10 | compra | 1.15404 | STOP | abajo | ticks | 60 s | 19 |
+| 2026-08-17 | 07-11 | 05:17:15 | compra | 1.15842 | STOP | abajo | ticks | 60 s | 19 |
+| 2026-08-19 | 11-15 | 09:03:00 | compra | 1.15984 | STOP | abajo | ticks | 60 s | 31 |
+| 2026-08-19 | 11-15 | 11:46:15 | compra | 1.1603 | STOP | abajo | ticks | 60 s | 57 |
+| 2026-08-20 | 07-11 | 05:47:10 | compra | 1.16709 | STOP | abajo | ticks | 60 s | 18 |
+| 2026-08-20 | 11-15 | 11:00:00 | compra | 1.16976 | STOP | abajo | ticks | 60 s | 53 |
+| 2026-08-20 | 11-15 | 11:49:10 | compra | 1.16868 | STOP | abajo | ticks | 60 s | 106 |
+| 2026-08-21 | 07-11 | 05:32:55 | compra | 1.1692 | STOP | abajo | ticks | 60 s | 48 |
+| 2026-08-21 | 11-15 | 11:56:10 | compra | 1.1699 | STOP | abajo | ticks | 60 s | 29 |
+| 2026-08-24 | 11-15 | 11:29:50 | venta | 1.16674 | STOP | arriba | ticks | 60 s | 19 |
+| 2026-08-25 | 07-11 | 06:16:30 | venta | 1.16564 | STOP | arriba | ticks | 60 s | 31 |
+| 2026-08-25 | 07-11 | 06:37:00 | venta | 1.16573 | STOP | arriba | ticks | 60 s | 14 |
+| 2026-08-25 | 07-11 | 08:48:30 | venta | 1.1665 | STOP | arriba | ticks | 60 s | 40 |
+| 2026-08-25 | 11-15 | 11:55:00 | venta | 1.16622 | STOP | arriba | ticks | 60 s | 31 |
+| 2026-08-26 | 07-11 | 05:49:25 | venta | 1.16652 | STOP | arriba | ticks | 60 s | 12 |
+| 2026-08-26 | 07-11 | 07:03:00 | venta | 1.1668 | STOP | arriba | ticks | 60 s | 57 |
+| 2026-08-26 | 07-11 | 08:31:15 | venta | 1.16752 | STOP | arriba | ticks | 60 s | 36 |
+| 2026-08-26 | 11-15 | 11:26:30 | compra | 1.16621 | STOP | abajo | ticks | 60 s | 40 |
+| 2026-08-27 | 07-11 | 08:04:45 | venta | 1.16562 | STOP | arriba | ticks | 60 s | 36 |
+| 2026-08-27 | 07-11 | 08:12:25 | venta | 1.1656 | STOP | arriba | ticks | 60 s | 22 |
+| 2026-08-27 | 11-15 | 12:13:40 | venta | 1.16422 | STOP | arriba | ticks | 60 s | 56 |
+| 2026-08-28 | 11-15 | 10:42:10 | venta | 1.16458 | STOP | arriba | ticks | 60 s | 13 |
+| 2026-08-31 | 07-11 | 06:30:15 | compra | 1.15878 | STOP | abajo | ticks | 60 s | 17 |
+| 2026-08-31 | 07-11 | 06:58:10 | compra | 1.15879 | STOP | abajo | ticks | 60 s | 65 |
+
+| mes | fuente | STOP | LIMITE | ambiguo | sin datos | total |
+|---|---|---|---|---|---|---|
+| 2026-04 | ticks | 33 | 0 | 0 | 0 | 33 |
+| 2026-04 | M1 | 2 | 0 | 0 | 0 | 2 |
+| 2026-08 | ticks | 42 | 0 | 0 | 0 | 42 |
+| total | ticks | 75 | 0 | 0 | 0 | 75 |
+| total | M1 | 2 | 0 | 0 | 0 | 2 |
+| compra | todas | 32 | 0 | 0 | 0 | 32 |
+| venta | todas | 45 | 0 | 0 | 0 | 45 |
+
+# DIAGNOSTICO (anadido despues de ver la fase 2; no cambia el criterio)
+p(t) - L en puntos (75 operaciones con ticks): min -16 · p25 -2 · mediana 0 · p75 3 · max 11; |p(t)-L| <= 2: 39; <= 5: 67
+primer tick en el nivel dentro de [t-300 s, t+60 s], desfase respecto a t (s): min -299, mediana -261, max 5; |desfase| <= 5 s: 9; sin toque: 0
+| dir. | precio 60 s ANTES: encima de L | en L | debajo de L |
+|---|---|---|---|
+| venta | 38 | 5 | 0 |
+| compra | 0 | 3 | 29 |
+
+# ROBUSTEZ (anadida despues de ver la fase 2; el criterio es la fila bid/ask · 2 · 60 s)
+| precio | tol | ventana | STOP | LIMITE | ambiguo | sin dato |
+|---|---|---|---|---|---|---|
+| bid/ask | 0 | 10 s | 63 | 0 | 6 | 6 |
+| bid/ask | 0 | 60 s | 59 | 0 | 16 | 0 |
+| bid/ask | 0 | 300 s | 23 | 0 | 52 | 0 |
+| bid/ask | 2 | 10 s | 58 | 0 | 0 | 17 |
+| bid/ask | 2 | 60 s | 73 | 0 | 0 | 2 |
+| bid/ask | 2 | 300 s | 46 | 0 | 29 | 0 |
+| bid/ask | 5 | 10 s | 27 | 0 | 0 | 48 |
+| bid/ask | 5 | 60 s | 65 | 0 | 0 | 10 |
+| bid/ask | 5 | 300 s | 51 | 2 | 22 | 0 |
+| mid | 0 | 10 s | 68 | 0 | 1 | 6 |
+| mid | 0 | 60 s | 74 | 0 | 1 | 0 |
+| mid | 0 | 300 s | 43 | 0 | 32 | 0 |
+| mid | 2 | 10 s | 69 | 0 | 0 | 6 |
+| mid | 2 | 60 s | 75 | 0 | 0 | 0 |
+| mid | 2 | 300 s | 49 | 0 | 26 | 0 |
+| mid | 5 | 10 s | 40 | 0 | 0 | 35 |
+| mid | 5 | 60 s | 70 | 0 | 0 | 5 |
+| mid | 5 | 300 s | 53 | 1 | 21 | 0 |
+| ask/bid (al reves) | 0 | 10 s | 69 | 0 | 0 | 6 |
+| ask/bid (al reves) | 0 | 60 s | 75 | 0 | 0 | 0 |
+| ask/bid (al reves) | 0 | 300 s | 48 | 0 | 27 | 0 |
+| ask/bid (al reves) | 2 | 10 s | 69 | 0 | 0 | 6 |
+| ask/bid (al reves) | 2 | 60 s | 75 | 0 | 0 | 0 |
+| ask/bid (al reves) | 2 | 300 s | 51 | 0 | 24 | 0 |
+| ask/bid (al reves) | 5 | 10 s | 56 | 0 | 0 | 19 |
+| ask/bid (al reves) | 5 | 60 s | 74 | 0 | 0 | 1 |
+| ask/bid (al reves) | 5 | 300 s | 57 | 0 | 18 | 0 |
+
+traza 2026-08-03 07-11 06:03:05Z venta L=115364 (segundos respecto a t : bid/ask - L):
+  -90s:+14 -88s:+13 -88s:+14 -87s:+13 -85s:+11 -83s:+14 -78s:+14 -67s:+16 -66s:+15 -64s:+13 -64s:+19 -61s:+16 -60s:+13 -60s:+13 -58s:+12 -57s:+16 -54s:+16 -54s:+13 -53s:+12 -43s:+12 -38s:+11 -37s:+9 -32s:+7 -32s:+7 -28s:+11 -20s:+8 -20s:+4 -19s:+6 -13s:+7 -12s:+5 -8s:+4 -5s:+3 -3s:+1 +2s:+0 +2s:-3 +4s:-2 +10s:-1 +10s:+4 +18s:+4 +23s:+4 +26s:+1 +26s:+1
+
+traza 2026-08-10 11-15 11:57:15Z compra L=115503 (segundos respecto a t : bid/ask - L):
+  -85s:-4 -83s:-5 -81s:-5 -70s:-3 -68s:-4 -68s:-4 -68s:-2 -64s:-3 -58s:-5 -58s:-7 -45s:-7 -38s:-4 -38s:-2 -38s:-3 -37s:-5 -36s:-4 -36s:-2 -30s:-2 -29s:-1 +2s:-1 +2s:+0 +4s:+2 +4s:+4 +4s:+5 +4s:+4 +9s:+2 +9s:+3 +10s:+5 +10s:+7 +10s:+7 +13s:+6 +14s:+6 +20s:+5 +20s:+5 +21s:+5 +21s:+5 +21s:+6 +23s:+8 +23s:+8 +23s:+8 +24s:+9 +24s:+11 +25s:+9 +28s:+8
+
+# FASE 4 · la entrada frente al nivel de referencia del breaker del productor (Esquema.referencia)
+d_ref = entrada - referencia (compra) / referencia - entrada (venta): > 0 mas alla del nivel en la direccion de la ruptura. d_zona como en VERIFICACION-A21 (borde cercano de la zona).
+tolerancia de ADR-0043: 3 puntos
+## A-21 = solo_una_zona_de_control: con zona viva 39; sin zona 38
+d_ref: min -305 · p25 -86 · mediana -15 · p75 14 · max 153; |d_ref| <= 3: 2 de 39; |d_ref| <= 10: 6
+d_zona (mismas operaciones): min -151 · p25 -24 · mediana 20 · p75 83 · max 312; |d_zona| <= 3: 2; d_zona <= 3 (dentro, borde o mas alla del extremo): 18
+- 2026-04-01 11-15 12:30Z compra [STOP]: zona compra primer_esquema; d_ref = +115; d_zona = +168
+- 2026-04-03 07-11 05:27Z compra [STOP]: SIN ZONA
+- 2026-04-03 11-15 11:43Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-06 07-11 06:34Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-09 07-11 07:12Z venta [STOP]: zona compra primer_esquema; d_ref = +14; d_zona = -18; DIRECCION CONTRARIA a la zona
+- 2026-04-09 11-15 09:15Z venta [STOP]: zona compra primer_esquema; d_ref = -75; d_zona = +71; DIRECCION CONTRARIA a la zona
+- 2026-04-10 07-11 06:33Z compra [STOP]: SIN ZONA
+- 2026-04-10 07-11 08:05Z compra [STOP]: SIN ZONA
+- 2026-04-13 07-11 06:47Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 07-11 06:50Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 07-11 08:21Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 11-15 10:26Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 11-15 12:02Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-14 07-11 06:23Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-14 11-15 12:06Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-16 07-11 06:13Z compra [STOP]: SIN ZONA
+- 2026-04-16 11-15 11:13Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-17 07-11 08:10Z venta [STOP]: zona venta primer_esquema; d_ref = +14; d_zona = +20
+- 2026-04-17 07-11 08:36Z venta [STOP]: zona venta primer_esquema; d_ref = -12; d_zona = -6
+- 2026-04-21 07-11 05:12Z venta [STOP]: SIN ZONA
+- 2026-04-22 07-11 08:02Z venta [STOP]: zona venta primer_esquema; d_ref = -136; d_zona = -138
+- 2026-04-22 07-11 08:19Z venta [STOP]: zona venta primer_esquema; d_ref = -149; d_zona = -151
+- 2026-04-23 07-11 05:30Z venta [STOP]: zona venta primer_esquema; d_ref = -22; d_zona = -24
+- 2026-04-23 07-11 05:53Z venta [STOP]: zona venta primer_esquema; d_ref = -42; d_zona = -44
+- 2026-04-23 07-11 06:49Z venta [STOP]: zona venta primer_esquema; d_ref = -76; d_zona = -78
+- 2026-04-24 07-11 06:44Z venta [STOP]: SIN ZONA
+- 2026-04-24 11-15 11:06Z venta [STOP]: zona compra primer_esquema; d_ref = -174; d_zona = +181; DIRECCION CONTRARIA a la zona
+- 2026-04-24 11-15 11:30Z venta [STOP]: zona compra primer_esquema; d_ref = -305; d_zona = +312; DIRECCION CONTRARIA a la zona
+- 2026-04-27 11-15 11:45Z compra [STOP]: zona compra primer_esquema; d_ref = +152; d_zona = +148
+- 2026-04-27 11-15 12:00Z compra [STOP]: zona compra primer_esquema; d_ref = +153; d_zona = +149
+- 2026-04-28 07-11 08:12Z venta [STOP]: SIN ZONA
+- 2026-04-29 07-11 07:55Z venta [STOP]: zona venta primer_esquema; d_ref = -4; d_zona = -8
+- 2026-04-29 07-11 07:58Z venta [STOP]: zona venta primer_esquema; d_ref = -4; d_zona = -8
+- 2026-04-29 11-15 09:36Z venta [STOP]: zona venta primer_esquema; d_ref = +29; d_zona = +25
+- 2026-04-29 11-15 11:02Z venta [STOP]: zona venta primer_esquema; d_ref = -6; d_zona = -10
+- 2026-08-03 07-11 06:03Z venta [STOP]: zona venta primer_esquema; d_ref = +1; d_zona = -1
+- 2026-08-03 07-11 06:07Z venta [STOP]: zona venta primer_esquema; d_ref = +3; d_zona = +1
+- 2026-08-03 11-15 09:46Z venta [STOP]: zona venta primer_esquema; d_ref = +91; d_zona = +89
+- 2026-08-03 11-15 09:52Z venta [STOP]: zona venta primer_esquema; d_ref = +85; d_zona = +83
+- 2026-08-03 11-15 12:03Z venta [STOP]: zona venta primer_esquema; d_ref = +45; d_zona = +43
+- 2026-08-03 11-15 12:10Z venta [STOP]: zona venta primer_esquema; d_ref = +43; d_zona = +41
+- 2026-08-04 11-15 11:34Z venta [STOP]: zona venta primer_esquema; d_ref = -96; d_zona = -99
+- 2026-08-06 07-11 06:07Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-07 07-11 05:14Z venta [STOP]: SIN ZONA
+- 2026-08-07 11-15 11:47Z venta [STOP]: zona compra segundo_esquema; d_ref = -86; d_zona = +90; DIRECCION CONTRARIA a la zona
+- 2026-08-07 11-15 12:09Z venta [STOP]: zona compra segundo_esquema; d_ref = -114; d_zona = +118; DIRECCION CONTRARIA a la zona
+- 2026-08-07 11-15 12:14Z venta [STOP]: zona compra segundo_esquema; d_ref = -113; d_zona = +117; DIRECCION CONTRARIA a la zona
+- 2026-08-10 11-15 11:57Z compra [STOP]: zona venta primer_esquema; d_ref = -41; d_zona = +41; DIRECCION CONTRARIA a la zona
+- 2026-08-10 11-15 12:38Z compra [STOP]: zona venta primer_esquema; d_ref = -60; d_zona = +60; DIRECCION CONTRARIA a la zona
+- 2026-08-11 07-11 08:08Z compra [STOP]: SIN ZONA
+- 2026-08-12 07-11 05:25Z compra [STOP]: SIN ZONA
+- 2026-08-13 07-11 07:33Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-13 07-11 07:49Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-14 07-11 06:30Z compra [STOP]: SIN ZONA
+- 2026-08-17 07-11 05:17Z compra [STOP]: zona compra primer_esquema; d_ref = -11; d_zona = -12
+- 2026-08-19 11-15 09:03Z compra [STOP]: SIN ZONA
+- 2026-08-19 11-15 11:46Z compra [STOP]: SIN ZONA
+- 2026-08-20 07-11 05:47Z compra [STOP]: SIN ZONA
+- 2026-08-20 11-15 11:00Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-20 11-15 11:49Z compra [STOP]: zona compra primer_esquema; d_ref = -106; d_zona = -113
+- 2026-08-21 07-11 05:32Z compra [STOP]: SIN ZONA
+- 2026-08-21 11-15 11:56Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-24 11-15 11:29Z venta [STOP]: SIN ZONA
+- 2026-08-25 07-11 06:16Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 07-11 06:37Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 07-11 08:48Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 11-15 11:55Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-26 07-11 05:49Z venta [STOP]: zona venta primer_esquema; d_ref = +5; d_zona = +4
+- 2026-08-26 07-11 07:03Z venta [STOP]: zona venta primer_esquema; d_ref = -23; d_zona = -24
+- 2026-08-26 07-11 08:31Z venta [STOP]: zona venta primer_esquema; d_ref = -95; d_zona = -96
+- 2026-08-26 11-15 11:26Z compra [STOP]: zona venta primer_esquema; d_ref = -36; d_zona = +35; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:04Z venta [STOP]: zona compra primer_esquema; d_ref = -17; d_zona = +27; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:12Z venta [STOP]: zona compra primer_esquema; d_ref = -15; d_zona = +25; DIRECCION CONTRARIA a la zona
+- 2026-08-27 11-15 12:13Z venta [STOP]: zona compra primer_esquema; d_ref = +123; d_zona = -113; DIRECCION CONTRARIA a la zona
+- 2026-08-28 11-15 10:42Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-31 07-11 06:30Z compra [STOP]: SIN ZONA
+- 2026-08-31 07-11 06:58Z compra [STOP]: SIN ZONA
+
+## A-21 = sin_mecha_mas_alla_del_extremo: con zona viva 34; sin zona 43
+d_ref: min -149 · p25 -76 · mediana -9.0 · p75 29 · max 153; |d_ref| <= 3: 2 de 34; |d_ref| <= 10: 6
+d_zona (mismas operaciones): min -151 · p25 -24 · mediana 2.5 · p75 71 · max 168; |d_zona| <= 3: 2; d_zona <= 3 (dentro, borde o mas alla del extremo): 17
+- 2026-04-01 11-15 12:30Z compra [STOP]: zona compra primer_esquema; d_ref = +115; d_zona = +168
+- 2026-04-03 07-11 05:27Z compra [STOP]: SIN ZONA
+- 2026-04-03 11-15 11:43Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-06 07-11 06:34Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-09 07-11 07:12Z venta [STOP]: zona compra primer_esquema; d_ref = +14; d_zona = -18; DIRECCION CONTRARIA a la zona
+- 2026-04-09 11-15 09:15Z venta [STOP]: zona compra primer_esquema; d_ref = -75; d_zona = +71; DIRECCION CONTRARIA a la zona
+- 2026-04-10 07-11 06:33Z compra [STOP]: SIN ZONA
+- 2026-04-10 07-11 08:05Z compra [STOP]: SIN ZONA
+- 2026-04-13 07-11 06:47Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 07-11 06:50Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 07-11 08:21Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 11-15 10:26Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-13 11-15 12:02Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-14 07-11 06:23Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-14 11-15 12:06Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-16 07-11 06:13Z compra [STOP]: SIN ZONA
+- 2026-04-16 11-15 11:13Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-17 07-11 08:10Z venta [STOP]: zona venta primer_esquema; d_ref = +14; d_zona = +20
+- 2026-04-17 07-11 08:36Z venta [STOP]: zona venta primer_esquema; d_ref = -12; d_zona = -6
+- 2026-04-21 07-11 05:12Z venta [STOP]: SIN ZONA
+- 2026-04-22 07-11 08:02Z venta [STOP]: zona venta primer_esquema; d_ref = -136; d_zona = -138
+- 2026-04-22 07-11 08:19Z venta [STOP]: zona venta primer_esquema; d_ref = -149; d_zona = -151
+- 2026-04-23 07-11 05:30Z venta [STOP]: zona venta primer_esquema; d_ref = -22; d_zona = -24
+- 2026-04-23 07-11 05:53Z venta [STOP]: zona venta primer_esquema; d_ref = -42; d_zona = -44
+- 2026-04-23 07-11 06:49Z venta [STOP]: zona venta primer_esquema; d_ref = -76; d_zona = -78
+- 2026-04-24 07-11 06:44Z venta [STOP]: SIN ZONA
+- 2026-04-24 11-15 11:06Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-24 11-15 11:30Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-04-27 11-15 11:45Z compra [STOP]: zona compra primer_esquema; d_ref = +152; d_zona = +148
+- 2026-04-27 11-15 12:00Z compra [STOP]: zona compra primer_esquema; d_ref = +153; d_zona = +149
+- 2026-04-28 07-11 08:12Z venta [STOP]: SIN ZONA
+- 2026-04-29 07-11 07:55Z venta [STOP]: zona venta primer_esquema; d_ref = -4; d_zona = -8
+- 2026-04-29 07-11 07:58Z venta [STOP]: zona venta primer_esquema; d_ref = -4; d_zona = -8
+- 2026-04-29 11-15 09:36Z venta [STOP]: zona venta primer_esquema; d_ref = +29; d_zona = +25
+- 2026-04-29 11-15 11:02Z venta [STOP]: zona venta primer_esquema; d_ref = -6; d_zona = -10
+- 2026-08-03 07-11 06:03Z venta [STOP]: zona venta primer_esquema; d_ref = +1; d_zona = -1
+- 2026-08-03 07-11 06:07Z venta [STOP]: zona venta primer_esquema; d_ref = +3; d_zona = +1
+- 2026-08-03 11-15 09:46Z venta [STOP]: zona venta primer_esquema; d_ref = +91; d_zona = +89
+- 2026-08-03 11-15 09:52Z venta [STOP]: zona venta primer_esquema; d_ref = +85; d_zona = +83
+- 2026-08-03 11-15 12:03Z venta [STOP]: zona venta primer_esquema; d_ref = +45; d_zona = +43
+- 2026-08-03 11-15 12:10Z venta [STOP]: zona venta primer_esquema; d_ref = +43; d_zona = +41
+- 2026-08-04 11-15 11:34Z venta [STOP]: zona venta primer_esquema; d_ref = -96; d_zona = -99
+- 2026-08-06 07-11 06:07Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-07 07-11 05:14Z venta [STOP]: SIN ZONA
+- 2026-08-07 11-15 11:47Z venta [STOP]: zona compra segundo_esquema; d_ref = -86; d_zona = +90; DIRECCION CONTRARIA a la zona
+- 2026-08-07 11-15 12:09Z venta [STOP]: zona compra segundo_esquema; d_ref = -114; d_zona = +118; DIRECCION CONTRARIA a la zona
+- 2026-08-07 11-15 12:14Z venta [STOP]: zona compra segundo_esquema; d_ref = -113; d_zona = +117; DIRECCION CONTRARIA a la zona
+- 2026-08-10 11-15 11:57Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-10 11-15 12:38Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-11 07-11 08:08Z compra [STOP]: SIN ZONA
+- 2026-08-12 07-11 05:25Z compra [STOP]: SIN ZONA
+- 2026-08-13 07-11 07:33Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-13 07-11 07:49Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-14 07-11 06:30Z compra [STOP]: SIN ZONA
+- 2026-08-17 07-11 05:17Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-19 11-15 09:03Z compra [STOP]: SIN ZONA
+- 2026-08-19 11-15 11:46Z compra [STOP]: SIN ZONA
+- 2026-08-20 07-11 05:47Z compra [STOP]: SIN ZONA
+- 2026-08-20 11-15 11:00Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-20 11-15 11:49Z compra [STOP]: zona compra primer_esquema; d_ref = -106; d_zona = -113
+- 2026-08-21 07-11 05:32Z compra [STOP]: SIN ZONA
+- 2026-08-21 11-15 11:56Z compra [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-24 11-15 11:29Z venta [STOP]: SIN ZONA
+- 2026-08-25 07-11 06:16Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 07-11 06:37Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 07-11 08:48Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-25 11-15 11:55Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-26 07-11 05:49Z venta [STOP]: zona venta primer_esquema; d_ref = +5; d_zona = +4
+- 2026-08-26 07-11 07:03Z venta [STOP]: zona venta primer_esquema; d_ref = -23; d_zona = -24
+- 2026-08-26 07-11 08:31Z venta [STOP]: zona venta primer_esquema; d_ref = -95; d_zona = -96
+- 2026-08-26 11-15 11:26Z compra [STOP]: zona venta primer_esquema; d_ref = -36; d_zona = +35; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:04Z venta [STOP]: zona compra primer_esquema; d_ref = -17; d_zona = +27; DIRECCION CONTRARIA a la zona
+- 2026-08-27 07-11 08:12Z venta [STOP]: zona compra primer_esquema; d_ref = -15; d_zona = +25; DIRECCION CONTRARIA a la zona
+- 2026-08-27 11-15 12:13Z venta [STOP]: zona compra primer_esquema; d_ref = +123; d_zona = -113; DIRECCION CONTRARIA a la zona
+- 2026-08-28 11-15 10:42Z venta [STOP]: SIN ZONA (sin esquema antes del llenado)
+- 2026-08-31 07-11 06:30Z compra [STOP]: SIN ZONA
+- 2026-08-31 07-11 06:58Z compra [STOP]: SIN ZONA
+
