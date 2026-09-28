@@ -61,6 +61,22 @@ videos:
       2026-09-27) mientras responde en voz las preguntas de la hoja. El nombre del fichero lleva
       la fecha de grabacion, un domingo: no es un dia de operaciones
 
+  - video_id: v8
+    fichero: "intento-3-audio-relleno.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 7929658044
+    fecha_grabacion: "2026-09-27"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): es un video
+    # RESCATADO. La laptop se suspendio en el minuto 40 de la grabacion y esta siguio sin audio;
+    # el rescate (carpeta `rescate` del Escritorio, hecho el 2026-09-27, intacto) copio el flujo
+    # de video entero sin recodificar y le puso el audio real hasta 40:00 y SILENCIO de relleno
+    # desde 40:00 hasta el final (2:00:48). Todo lo dicho a partir de 40:00 se perdio.
+    naturaleza: >-
+      sesion 2 con el trader, segunda grabacion del mismo dia, RESCATADA: backtesting paso a paso
+      en FX Replay de agosto de 2026 (material de DESARROLLO) con audio real SOLO hasta 40:00 y
+      silencio de relleno de 40:00 a 2:00:48, porque la laptop se suspendio en el minuto 40 y la
+      grabacion siguio sin audio; el flujo de video esta entero y copiado sin recodificar
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2

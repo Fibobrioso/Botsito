@@ -2153,8 +2153,8 @@ resumen:
     bytes: 3794523
     ficheros: 43
   video_original:
-    bytes: 28625803955
-    ficheros: 7
+    bytes: 36555461999
+    ficheros: 8
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2235,3 +2235,14 @@ videos:
   fps: 30/1
   sha256: 6cdca768f2ec50a227bb6ebab5bcb3be5cbd1177444fb7706207619a3f84bb80
   video_id: v7
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 7929658044
+  drive_id: ''
+  duracion_s: 7248.4
+  fecha_grabacion: '2026-09-27'
+  fichero: intento-3-audio-relleno.mp4
+  fps: 30/1
+  sha256: 697c5146458249633f4c3ad743a1b8ba81867d7093e3a676395b7bccefcdabdc
+  video_id: v8

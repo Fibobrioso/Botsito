@@ -1,0 +1,26 @@
+# GENERADO por `botsito corpus frames extract`. INMUTABLE: no editar; una re-extraccion es otro manifiesto con reemplaza_a.
+carpeta: fotogramas/v8/png-1fps
+duracion_video_s: 7248.4
+extra: []
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: intento-3-audio-relleno.mp4
+fotogramas_id: fr-v8-ee53cbde
+generado_el: '2026-09-28T00:24:54Z'
+hueco_fotogramas_ms: 2000
+huecos: []
+n_fotogramas: 7249
+n_regulares: 7249
+parametros:
+  bitexact: true
+  formato: png
+  fps: 1
+  seleccion: isnan(prev_selected_t)+gte(floor(t),floor(prev_selected_t)+1)
+resolucion:
+  alto: 1080
+  ancho: 1920
+schema_version: 1
+segundos_ausentes_ms: []
+sha256_index: ee53cbde502a621995064a2de0057ef3ded629784869d0c7ffbd7d4e4db13361
+sha256_video: 697c5146458249633f4c3ad743a1b8ba81867d7093e3a676395b7bccefcdabdc
+ultimo_pts_ms: 7248000
+video_id: v8
