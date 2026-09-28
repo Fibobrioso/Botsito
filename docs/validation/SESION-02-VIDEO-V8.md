@@ -22,6 +22,17 @@ repite, está allí.
    —«Buy … limit» y «Sell … stop» al mismo precio— y el trader elige la STOP (0:36:20, `002180000`;
    0:39:35, `002375000`).
 
+   > **CORRECCIÓN del 2026-09-27 (rama `trabajo/orden-stop-o-limite`).** Esta línea dice que en
+   > los DOS fotogramas el trader elige la opción stop. **Solo el `002180000` lo muestra**: el
+   > cursor está sobre «Sell 1 OANDA:EURUSD @ 1.15773 stop», la fila resaltada. **En el
+   > `002375000` el menú aparece abierto sin ninguna fila seleccionada**: ofrece «Buy … @
+   > 1.15982 stop» y «Sell … @ 1.15982 limit», y el fotograma no dice cuál se elige. Lo
+   > que sí consta es que en el `002390000` (11:02:59 UTC+2) hay una posición abierta desde
+   > 1.15983 sin etiqueta de tipo. Se detectó el 2026-09-27 al crear el ítem
+   > `ev-v8-003935-0a0b3f8e` para A-47, cuya nota ya lo decía. El recuento de §3.2 (11 `Sell
+   > stop`, 3 `Buy stop`) no cambia, porque la n.º 18 se contó por su etiqueta y no por el
+   > menú; la afirmación de esta línea sí.
+
 ## 1. Fase 1 · Ingesta como v8 y la procedencia
 
 | pieza | id / fichero | commit |
