@@ -46,5 +46,9 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
 - `a35_fotogramas.py`: los fotogramas de A-35, CONGELADOS antes de abrir ninguno
   (`docs/validation/A35-FOTOGRAMAS-CRITERIO.md`): lista cerrada por ventana de segmento,
   verificacion contra la extraccion de F05 y pixeles distintos del anterior; no lee el grafico.
+- `embudo_77.py`: el embudo de las 77 operaciones de construccion. Corre el motor cableado en
+  diagnostico con la orden stop y la lectura de A-21 pedida, y anota para cada operacion del trader
+  el PRIMER paso del pipeline en el que el bot deja de acompanarla (`clasificar`, pura). Lee el
+  repositorio en `--raiz` y escribe solo en `--salida` (`docs/validation/EMBUDO-77.md`).
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
