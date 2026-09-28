@@ -1,0 +1,20 @@
+id: ev-v7-000423-01b2c18a
+video_id: v7
+t0: 0:04:23
+t1: 0:04:24
+modalidad: pantalla
+tipo: EXAMPLE_TRADE
+cita_literal: FX Replay, EURUSD 1 min, aviso 'Stop order executed on EURUSD / Sell 100000 at 1.15358';
+  caja 0/0,25/0,5/0,8/1 con el 0 en 1.15358; reloj 07:48:59 UTC+2
+afirmacion: 'en pantalla, la orden que abre la venta en 1.15358 es de tipo stop: la plataforma la notifica
+  como Stop order executed'
+tema: entrada.tipo_orden
+confianza: media
+extractor: llm
+revisado_por: consultor, orden del 2026-09-27 (trabajo/sesion-02) · fotograma visto por la sesion, sin
+  revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v7-40427216/263000
+valor: stop
+notas: lo que se ve, no lo que se oye. docs/validation/SESION-02-VIDEO.md, operacion n.o 1

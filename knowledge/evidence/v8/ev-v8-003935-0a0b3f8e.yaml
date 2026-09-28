@@ -1,0 +1,21 @@
+id: ev-v8-003935-0a0b3f8e
+video_id: v8
+t0: 0:39:35
+t1: 0:39:36
+modalidad: pantalla
+tipo: EXAMPLE_TRADE
+cita_literal: 'FX Replay, EURUSD 1 min, menu contextual del grafico: ''Buy 1 OANDA:EURUSD @ 1.15982 stop''
+  / ''Sell 1 OANDA:EURUSD @ 1.15982 limit'' / ''Go To 2026-08-19 11:08''; reloj 11:01:59 UTC+2'
+afirmacion: en pantalla, al mismo precio 1.15982 el menu de FX Replay ofrece una orden stop (compra) y
+  una limit (venta)
+tema: entrada.tipo_orden
+confianza: media
+extractor: llm
+revisado_por: consultor, orden del 2026-09-27 (trabajo/sesion-02) · fotograma visto por la sesion, sin
+  revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v8-ee53cbde/2375000
+notas: 'este fotograma NO muestra que opcion se elige: el menu esta abierto sin fila resaltada. El siguiente
+  citado en el informe (002390000, 11:02:59 UTC+2) muestra una posicion abierta en 1.15983 sin etiqueta
+  de tipo. docs/validation/SESION-02-VIDEO-V8.md, operacion n.o 18'

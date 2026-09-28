@@ -291,10 +291,13 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # el corte del tope de perdida propio del trader: RN-020 lee perdida_dia y perdida_semana, la
     # spec no los declara, y medido con el broker y la cuenta cableados el gate sigue en
     # DESCONOCIDO y prohibe abrir aunque la geometria (A-35) quede resuelta. Bloquea RN-020.
+    # El 2026-09-27 (rama trabajo/sesion-02, decision del consultor) nace A-47, el tipo de orden de
+    # entrada: la spec asume limite y en pantalla (v7+v8) son 38 stop frente a 1 limite. Decide el
+    # precio y el instante de entrada de RN-011.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-35", "A-42", "A-44"}, (
+    assert abiertas == {"A-21", "A-35", "A-42", "A-44", "A-47"}, (
         f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     )
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
