@@ -33,6 +33,18 @@ orden es siempre el mismo: **estadiar lo que se va a commitear → `make check >
 2>&1` → commit**. Si quedan cambios sin estadiar o ficheros sin seguir, `make check` lo avisa y no
 sella. `cherry-pick` y `rebase` no pasan por `pre-commit`: no se usan para meter trabajo.
 
+**Ensayos aislados, y nada escribe mientras corre `make check`** (regla del 2026-09-28, rama
+`trabajo/blindar-make-check`, tras el incidente del instalador sobre copias:
+`docs/validation/BLINDAR-MAKE-CHECK.md`):
+1. **Todo ensayo de un script que escriba archivos se hace en un clon desechable** creado con
+   `git worktree add` en un directorio temporal, nunca con copias sueltas de ficheros.
+2. **La raíz de un instalador, o de cualquier script que escriba, sale de un argumento o de una
+   variable de entorno**, nunca de una sustitución con `sed`: sobre una ruta de Windows, con sus
+   barras invertidas, `sed` no casa y no avisa, y el script escribe en el repositorio real.
+3. **No se ejecuta nada que escriba en el repositorio mientras corre `make check`.** Lo vigila una
+   guardia: `make check` toma una huella del árbol al empezar y otra al sellar, y si difieren sale
+   en rojo, nombra los ficheros y no sella.
+
 ## Regimenes de cambio
 
 - `knowledge/evidence/` → INMUTABLE tras commit (hook). Correccion = item nuevo que supersede, y se

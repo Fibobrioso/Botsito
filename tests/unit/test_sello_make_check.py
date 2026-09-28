@@ -346,9 +346,9 @@ def test_lo_que_make_check_escribe_de_verdad_no_dispara_la_guardia(
     repo: Path, tmp_path: Path, m: ModuleType
 ) -> None:
     # el .gitignore REAL, y en `test` lo que un make check real escribe dentro del arbol, medido
-    # con una foto del arbol antes y despues (docs/validation/BLINDAR-MAKE-CHECK.md §1): el log, la
-    # cache de pytest, la de mypy y la de import-linter; y los bytecodes, que se reescriben cuando
-    # cambia un modulo (medido en la corrida con este mismo codigo)
+    # con una foto del arbol antes y despues en dos corridas (docs/validation/BLINDAR-MAKE-CHECK.md
+    # §2): el log y las caches de pytest, mypy e import-linter siempre; y cuando cambia el codigo,
+    # ademas las de ruff e Hypothesis y los bytecodes
     reales = (RAIZ / ".gitignore").read_text(encoding="utf-8")
     _escribir(repo, ".gitignore", reales + "ignorado.txt\n")
     git(repo, "add", ".gitignore")
@@ -361,6 +361,8 @@ def test_lo_que_make_check_escribe_de_verdad_no_dispara_la_guardia(
         ".import_linter_cache/botsito.meta.json",
         "tests/unit/__pycache__/x.cpython-312-pytest-8.pyc",
         "scripts/__pycache__/x.cpython-312.pyc",
+        ".ruff_cache/0.16.6/x",
+        ".hypothesis/constants/x",
     )
     receta = " && ".join(f"mkdir -p \"$$(dirname '{x}')\" && printf 'x' > '{x}'" for x in rutas)
     r = _make(repo, _makefile_que_escribe(tmp_path, receta))
