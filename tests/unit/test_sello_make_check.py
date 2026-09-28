@@ -193,8 +193,10 @@ def test_el_makefile_real_desella_primero_sella_al_final_y_sin_paralelo() -> Non
 
 
 def test_cambios_sin_estadiar_no_sella(repo: Path, m: ModuleType) -> None:
-    m.borrar(repo)
+    # el cambio esta ANTES de empezar (antes de `borrar`): si llegara durante la comprobacion, lo
+    # pararia la guardia de la huella, que tiene sus propios tests al final del fichero
     _escribir(repo, "a.txt", "a cambiado\n")
+    m.borrar(repo)
     sellado, mensaje = m.sellar(repo)
     assert not sellado
     assert "cambios sin estadiar" in mensaje and "a.txt" in mensaje
@@ -202,12 +204,13 @@ def test_cambios_sin_estadiar_no_sella(repo: Path, m: ModuleType) -> None:
 
 
 def test_fichero_sin_seguir_no_sella_pero_uno_ignorado_si(repo: Path, m: ModuleType) -> None:
-    m.borrar(repo)
     _escribir(repo, "nuevo.txt", "n\n")
+    m.borrar(repo)
     sellado, mensaje = m.sellar(repo)
     assert not sellado and "nuevo.txt" in mensaje
     (repo / "nuevo.txt").unlink()
     _escribir(repo, "ignorado.txt", "x\n")
+    m.borrar(repo)
     assert m.sellar(repo)[0]
 
 
@@ -263,6 +266,9 @@ def test_merge_no_ff_sin_sello_rechazado_y_queda_a_medias(repo: Path, m: ModuleT
     # la salida documentada (RITUAL.md): abortar, sellar en la rama que se fusiona y repetir
     assert git(repo, "merge", "--abort").returncode == 0
     git(repo, "checkout", "-q", "trabajo/otra")
+    # sellar en la rama es correr make check: `borrar` al empezar toma la huella de ESTA rama. Solo
+    # con `sellar`, la huella del `borrar` de arriba (otra rama, otro HEAD) haria saltar la guardia
+    m.borrar(repo)
     assert m.sellar(repo)[0]
     git(repo, "checkout", "-q", "trabajo/prueba")
     otra = git(repo, "merge", "--no-ff", "trabajo/otra", "-m", "merge")
@@ -299,3 +305,114 @@ def test_ninguna_via_de_escape_nueva() -> None:
         variables = set(re.findall(r'"\$(BOTSITO_[A-Z_]+)"', texto))
         assert variables <= {"BOTSITO_ALLOW_MAIN"}, (nombre, variables)
     assert "--no-verify" in (RAIZ / "CLAUDE.md").read_text(encoding="utf-8")
+
+
+# ------------------------------------------------------------------------ la guardia de la huella
+# Rama `trabajo/blindar-make-check` (2026-09-28): un cambio en el arbol de trabajo MIENTRAS corre
+# make check no se puede sellar. Los tres primeros van por `make` con la linea `check:` real, y el
+# objetivo `test` simulado es el que escribe, como lo haria cualquier cosa que corriera a la vez.
+
+
+def _makefile_que_escribe(tmp_path: Path, receta: str) -> Path:
+    """El Makefile de prueba en verde, con `test` ejecutando `receta` en el repo."""
+    fichero = _makefile_de_prueba(tmp_path, falla=False)
+    texto = fichero.read_text(encoding="utf-8").replace("test:\n\t@echo ok", f"test:\n\t{receta}")
+    assert f"test:\n\t{receta}" in texto
+    fichero.write_text(texto, encoding="utf-8", newline="\n")
+    return fichero
+
+
+def test_un_fichero_seguido_cambiado_durante_la_comprobacion_falla_y_no_sella(
+    repo: Path, tmp_path: Path, m: ModuleType
+) -> None:
+    # cambiado Y estadiado a mitad: sin la guardia se sellaria un arbol que nadie probo entero
+    r = _make(repo, _makefile_que_escribe(tmp_path, "printf 'x\\n' >> a.txt && git add a.txt"))
+    assert r.returncode != 0, r.stdout + r.stderr
+    assert m.ERROR_GUARDIA in r.stdout and "a.txt" in r.stdout
+    assert _sello(repo) is None
+    assert not m.ruta_de_la_huella(repo).exists(), "la huella se consume"
+
+
+def test_un_fichero_sin_seguir_nuevo_durante_la_comprobacion_falla_y_no_sella(
+    repo: Path, tmp_path: Path, m: ModuleType
+) -> None:
+    r = _make(repo, _makefile_que_escribe(tmp_path, "printf 'n\\n' > nuevo.txt"))
+    assert r.returncode != 0, r.stdout + r.stderr
+    assert m.ERROR_GUARDIA in r.stdout and "nuevo.txt" in r.stdout
+    assert _sello(repo) is None
+
+
+def test_lo_que_make_check_escribe_de_verdad_no_dispara_la_guardia(
+    repo: Path, tmp_path: Path, m: ModuleType
+) -> None:
+    # el .gitignore REAL, y en `test` lo que un make check real escribe dentro del arbol, medido
+    # con una foto del arbol antes y despues (docs/validation/BLINDAR-MAKE-CHECK.md §1): el log, la
+    # cache de pytest, la de mypy y la de import-linter; y los bytecodes, que se reescriben cuando
+    # cambia un modulo (medido en la corrida con este mismo codigo)
+    reales = (RAIZ / ".gitignore").read_text(encoding="utf-8")
+    _escribir(repo, ".gitignore", reales + "ignorado.txt\n")
+    git(repo, "add", ".gitignore")
+    assert m.sellar(repo)[0]
+    assert git(repo, "commit", "-q", "-m", "gitignore real").returncode == 0
+    rutas = (
+        "make-check.log",
+        ".pytest_cache/v/cache/lastfailed",
+        ".mypy_cache/3.12/cache.3.db",
+        ".import_linter_cache/botsito.meta.json",
+        "tests/unit/__pycache__/x.cpython-312-pytest-8.pyc",
+        "scripts/__pycache__/x.cpython-312.pyc",
+    )
+    receta = " && ".join(f"mkdir -p \"$$(dirname '{x}')\" && printf 'x' > '{x}'" for x in rutas)
+    r = _make(repo, _makefile_que_escribe(tmp_path, receta))
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert all((repo / x).exists() for x in rutas)
+    assert _sello(repo) == git(repo, "write-tree").stdout.strip()
+
+
+def test_un_cambio_deshecho_antes_del_final_tambien_se_ve(repo: Path, m: ModuleType) -> None:
+    # mismo contenido al final, pero los tests pudieron leer el otro: el mtime lo delata
+    m.borrar(repo)
+    original = (repo / "a.txt").read_bytes()
+    antes = (repo / "a.txt").stat().st_mtime_ns
+    (repo / "a.txt").write_bytes(b"otro\n")
+    (repo / "a.txt").write_bytes(original)
+    os.utime(repo / "a.txt", ns=(antes + 1_000_000_000, antes + 1_000_000_000))
+    sellado, mensaje = m.sellar(repo)
+    assert not sellado and mensaje.startswith(m.ERROR_GUARDIA) and "a.txt" in mensaje
+    assert _sello(repo) is None
+
+
+def test_un_commit_a_mitad_se_ve_como_head(repo: Path, m: ModuleType) -> None:
+    # el commit se escribe con la fontaneria de git (commit-tree y update-ref), que no pasa por
+    # los hooks: asi se simula un commit a mitad sin saltarse ninguna puerta
+    m.borrar(repo)
+    _escribir(repo, "b.txt", "b\n")
+    git(repo, "add", "b.txt")
+    arbol = git(repo, "write-tree").stdout.strip()
+    nuevo = git(repo, "commit-tree", arbol, "-p", "HEAD", "-m", "a mitad").stdout.strip()
+    assert git(repo, "update-ref", "HEAD", nuevo).returncode == 0
+    sellado, mensaje = m.sellar(repo)
+    assert not sellado and "HEAD" in mensaje and "b.txt" in mensaje
+
+
+def test_sin_cambios_la_guardia_deja_sellar_igual_que_antes(repo: Path, m: ModuleType) -> None:
+    _escribir(repo, "b.txt", "b\n")
+    git(repo, "add", "b.txt")
+    assert "HUELLA: tomada sobre" in m.borrar(repo)
+    sellado, mensaje = m.sellar(repo)
+    assert sellado, mensaje
+    assert _sello(repo) == git(repo, "write-tree").stdout.strip()
+    # y sin huella (sellar fuera de make check, como hace el fixture) sella como siempre
+    assert not m.ruta_de_la_huella(repo).exists()
+    assert m.sellar(repo)[0]
+
+
+def test_main_sale_con_1_si_la_guardia_salta(
+    repo: Path, m: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(repo)
+    assert m.main(["borrar"]) == 0
+    _escribir(repo, "a.txt", "cambiado\n")
+    assert m.main(["sellar"]) == 1
+    assert m.main(["borrar"]) == 0
+    assert m.main(["sellar"]) == 0  # sin cambios desde la huella: aviso de sin estadiar, codigo 0
