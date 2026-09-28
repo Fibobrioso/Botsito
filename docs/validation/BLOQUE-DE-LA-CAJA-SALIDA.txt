@@ -1,0 +1,544 @@
+# El bloque de la caja: fases 2 y 3 (criterio en BLOQUE-DE-LA-CAJA.md §1)
+CAJAS: 12 legibles; velas: eurusd-m1-2026-08-0d42230e (Dukascopy, BID, UTC); pantalla: FX Replay (OANDA, UTC+2 fijo). OANDA y Dukascopy difieren 1-2 puntos (A-16).
+ventana: M1 en [T - 90 min, T) (v1) o hasta el cierre de la M1 en curso en T (v2); tau 2 puntos (sensibilidad 1, 2, 3)
+
+## CONTROL DE PROVEEDOR · la vela en curso de cada fotograma, OANDA (leyenda) - Dukascopy
+| caja | vela (UTC+2 / UTC) | dO | dH | dL | dC |
+|---|---|---|---|---|---|
+| v7-1 | 07:47 / 05:47 | +1 | +2 | +1 | +1 |
+| v7-2 | 08:00 / 06:00 | +0 | +3 | +1 | +2 |
+| v7-3 | 08:06 / 06:06 | +2 | +2 | +1 | +0 |
+| v7-4 | 09:33 / 07:33 | -2 | +3 | +1 | +2 |
+| v7-5 | 11:46 / 09:46 | +3 | +3 | +2 | +3 |
+| v7-7 | 13:11 / 11:11 | +1 | +2 | +3 | +2 |
+| v7-9 | 14:24 / 12:24 | +45 | +47 | +32 | +18  EXCLUIDA: leyenda de la vela bajo el cursor |
+| v7-10 | 09:44 / 07:44 | +2 | +3 | +2 | +2 |
+| v7-11 | 13:39 / 11:39 | -18 | -21 | -17 | -21  EXCLUIDA: leyenda de la vela bajo el cursor |
+| v7-12 | 13:56 / 11:56 | +38 | +6 | +12 | -28  EXCLUIDA: leyenda de la vela bajo el cursor |
+| v7-15 | 08:07 / 06:07 | +0 | +1 | +1 | +1 |
+| v8-1 | 08:37 / 06:37 | +4 | +2 | +3 | +2 |
+excluidas 3 (v7-9, v7-11, v7-12): algun valor difiere mas de 10 puntos, porque la leyenda de TradingView ensena la vela que esta bajo el cursor, no la vela en curso
+36 valores: |OANDA - Dukascopy| mediana 2, maximo 4; <= 1: 13; <= 2: 27; > 3: 1; media con signo +1.7
+
+# v1 · criterio de §1: M1 CERRADAS antes de T
+
+## FASE 2 · que velas dan el 0 y el 1 del trader (tau 2)
+### v7-1 · 2026-08-03 · colocacion 07:47:59 UTC+2 (05:47:59 UTC) · venta · 0 = 1.15358 · 1 = 1.15370 · caja 12 puntos · v7/000227000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 7 velas; 04:45 UTC (06:45 UTC+2) roja: maxima +2; 05:34 UTC (07:34 UTC+2) verde: maxima -2; 05:38 UTC (07:38 UTC+2) roja: maxima -2; 05:44 UTC (07:44 UTC+2) verde: maxima +1; 05:45 UTC (07:45 UTC+2) roja: minima -1; 05:46 UTC (07:46 UTC+2) verde: cuerpo -1 (se listan las 6 mas recientes)
+- el 1: SIN EXPLICACION (ninguna vela a <= 2 puntos)
+### v7-2 · 2026-08-03 · colocacion 08:00:59 UTC+2 (06:00:59 UTC) · venta · 0 = 1.15352 · 1 = 1.15376 · caja 24 puntos · v7/000404000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 20 velas; 05:49 UTC (07:49 UTC+2) verde: minima -2; 05:50 UTC (07:50 UTC+2) verde: maxima +1; 05:51 UTC (07:51 UTC+2) roja: maxima +1; 05:52 UTC (07:52 UTC+2) verde: cuerpo +2; 05:53 UTC (07:53 UTC+2) roja: minima -2, maxima +2; 05:54 UTC (07:54 UTC+2) verde: cuerpo -1 (se listan las 6 mas recientes)
+- el 1: 2 velas; 05:56 UTC (07:56 UTC+2) verde: maxima -2; 05:57 UTC (07:57 UTC+2) roja: maxima -2
+### v7-3 · 2026-08-03 · colocacion 08:06:59 UTC+2 (06:06:59 UTC) · venta · 0 = 1.15364 · 1 = 1.15389 · caja 25 puntos · v7/000510000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 7 velas; 05:46 UTC (07:46 UTC+2) verde: maxima -1; 05:47 UTC (07:47 UTC+2) verde: cuerpo -1; 05:56 UTC (07:56 UTC+2) verde: minima +1; 05:57 UTC (07:57 UTC+2) roja: minima +1; 05:58 UTC (07:58 UTC+2) verde: cuerpo +0; 06:00 UTC (08:00 UTC+2) verde: minima -1 (se listan las 6 mas recientes)
+- el 1: 1 velas; 06:05 UTC (08:05 UTC+2) verde: maxima -1
+### v7-4 · 2026-08-03 · colocacion 09:33:59 UTC+2 (07:33:59 UTC) · venta · 0 = 1.15306 · 1 = 1.15322 · caja 16 puntos · v7/000710000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 5 velas; 06:34 UTC (08:34 UTC+2) roja: cuerpo -2; 06:35 UTC (08:35 UTC+2) roja: maxima -2; 07:15 UTC (09:15 UTC+2) verde: maxima -2; 07:31 UTC (09:31 UTC+2) verde: cuerpo +2; 07:32 UTC (09:32 UTC+2) verde: minima -1
+- el 1: 12 velas; 06:29 UTC (08:29 UTC+2) verde: minima -1; 06:30 UTC (08:30 UTC+2) roja: minima +1; 06:31 UTC (08:31 UTC+2) roja: minima +0; 06:32 UTC (08:32 UTC+2) roja: maxima +2; 06:33 UTC (08:33 UTC+2) roja: maxima +2; 06:34 UTC (08:34 UTC+2) roja: maxima +0 (se listan las 6 mas recientes)
+### v7-5 · 2026-08-03 · colocacion 11:46:59 UTC+2 (09:46:59 UTC) · venta · 0 = 1.15274 · 1 = 1.15290 · caja 16 puntos · v7/000955000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 4 velas; 09:41 UTC (11:41 UTC+2) verde: cuerpo -1; 09:42 UTC (11:42 UTC+2) verde: minima -1; 09:43 UTC (11:43 UTC+2) verde: minima +0; 09:45 UTC (11:45 UTC+2) verde: minima +2
+- el 1: 1 velas; 09:43 UTC (11:43 UTC+2) verde: maxima -2
+### v7-7 · 2026-08-03 · colocacion 13:11:59 UTC+2 (11:11:59 UTC) · venta · 0 = 1.15256 · 1 = 1.15268 · caja 12 puntos · v7/001210000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 10 velas; 11:03 UTC (13:03 UTC+2) verde: cuerpo +1; 11:04 UTC (13:04 UTC+2) roja: cuerpo +2; 11:07 UTC (13:07 UTC+2) roja: maxima +0; 11:08 UTC (13:08 UTC+2) verde: maxima +0; 11:09 UTC (13:09 UTC+2) sin cuerpo: cuerpo -1; 11:10 UTC (13:10 UTC+2) verde: minima +0 (se listan las 6 mas recientes)
+- el 1: 4 velas; 09:46 UTC (11:46 UTC+2) roja: minima +0; 09:56 UTC (11:56 UTC+2) roja: minima -2; 09:57 UTC (11:57 UTC+2) roja: cuerpo -2; 11:05 UTC (13:05 UTC+2) verde: maxima -2
+### v7-9 · 2026-08-03 · colocacion 14:09:59 UTC+2 (12:09:59 UTC) · venta · 0 = 1.15338 · 1 = 1.15352 · caja 14 puntos · v7/001535000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 4 velas; 12:04 UTC (14:04 UTC+2) verde: maxima -2; 12:05 UTC (14:05 UTC+2) sin cuerpo: maxima -1; 12:07 UTC (14:07 UTC+2) verde: cuerpo +1; 12:08 UTC (14:08 UTC+2) roja: minima -1
+- el 1: SIN EXPLICACION (ninguna vela a <= 2 puntos)
+### v7-10 · 2026-08-04 · colocacion 09:44:59 UTC+2 (07:44:59 UTC) · venta · 0 = 1.15129 · 1 = 1.15172 · caja 43 puntos · v7/001930000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 5 velas; 07:19 UTC (09:19 UTC+2) verde: maxima -1; 07:21 UTC (09:21 UTC+2) roja: minima -2; 07:22 UTC (09:22 UTC+2) verde: minima +1; 07:41 UTC (09:41 UTC+2) verde: maxima +0; 07:42 UTC (09:42 UTC+2) roja: maxima +0
+- el 1: 2 velas; 07:24 UTC (09:24 UTC+2) verde: maxima -2; 07:25 UTC (09:25 UTC+2) roja: maxima -2
+### v7-11 · 2026-08-04 · colocacion 13:32:59 UTC+2 (11:32:59 UTC) · venta · 0 = 1.15184 · 1 = 1.15210 · caja 26 puntos · v7/002110000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 12 velas; 11:25 UTC (13:25 UTC+2) verde: cuerpo -1; 11:26 UTC (13:26 UTC+2) roja: minima -2; 11:28 UTC (13:28 UTC+2) verde: maxima +2; 11:29 UTC (13:29 UTC+2) verde: minima +2; 11:30 UTC (13:30 UTC+2) roja: minima +1; 11:31 UTC (13:31 UTC+2) verde: minima +0 (se listan las 6 mas recientes)
+- el 1: SIN EXPLICACION (ninguna vela a <= 2 puntos)
+### v7-12 · 2026-08-04 · colocacion 13:56:59 UTC+2 (11:56:59 UTC) · venta · 0 = 1.15174 · 1 = 1.15234 · caja 60 puntos · v7/002180000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 11 velas; 11:17 UTC (13:17 UTC+2) roja: maxima -2; 11:18 UTC (13:18 UTC+2) verde: cuerpo +2; 11:19 UTC (13:19 UTC+2) roja: cuerpo +2; 11:23 UTC (13:23 UTC+2) roja: minima +1; 11:24 UTC (13:24 UTC+2) roja: minima +2; 11:43 UTC (13:43 UTC+2) verde: minima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 11:44 UTC (13:44 UTC+2) verde: maxima +0
+### v7-15 · 2026-08-06 · colocacion 08:01:59 UTC+2 (06:01:59 UTC) · venta · 0 = 1.15491 · 1 = 1.15516 · caja 25 puntos · v7/002654000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 13 velas; 05:55 UTC (07:55 UTC+2) roja: minima +0; 05:56 UTC (07:56 UTC+2) sin cuerpo: maxima +1; 05:57 UTC (07:57 UTC+2) sin cuerpo: maxima +0; 05:58 UTC (07:58 UTC+2) verde: minima -1; 05:59 UTC (07:59 UTC+2) roja: minima +0; 06:00 UTC (08:00 UTC+2) verde: minima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 06:00 UTC (08:00 UTC+2) verde: maxima -1
+### v8-1 · 2026-08-12 · colocacion 08:35:59 UTC+2 (06:35:59 UTC) · venta · 0 = 1.15354 · 1 = 1.15362 · caja 8 puntos · v8/000200000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:30 UTC (08:30 UTC+2)
+- el 0: 15 velas; 06:26 UTC (08:26 UTC+2) verde: maxima +2; 06:27 UTC (08:27 UTC+2) roja: maxima +1; 06:28 UTC (08:28 UTC+2) sin cuerpo: maxima +1; 06:29 UTC (08:29 UTC+2) roja: maxima +0; 06:33 UTC (08:33 UTC+2) verde: maxima +1; 06:34 UTC (08:34 UTC+2) verde: minima -1 (se listan las 6 mas recientes)
+- el 1: SIN EXPLICACION (ninguna vela a <= 2 puntos)
+
+## FASE 3 · que regla da el mismo 0 y el mismo 1 (a <= tau)
+### v7-1 (0 = 115358, 1 = 115370)
+- productor a: sin zona (sin toma de M15 antes de T)
+- productor b: sin zona (sin toma de M15 antes de T)
+- R1: 0 = 115355 (-3), 1 = 115363 (-7)
+- R2: no da caja
+- R3: 0 = 115332 (-26), 1 = 115340 (-30)
+- R4: 0 = 115355 (-3), 1 = 115363 (-7)
+- R5: 0 = 115357 (-1), 1 = 115364 (-6)
+- R6: 0 = 115357 (-1), 1 = 115364 (-6)
+### v7-2 (0 = 115352, 1 = 115376)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115360 (+8), 1 = 115373 (-3)
+- R2: no da caja
+- R3: 0 = 115365 (+13), 1 = 115374 (-2)
+- R4: 0 = 115360 (+8), 1 = 115373 (-3)
+- R5: 0 = 115365 (+13), 1 = 115374 (-2)
+- R6: 0 = 115365 (+13), 1 = 115374 (-2)
+### v7-3 (0 = 115364, 1 = 115389)
+- R1: 0 = 115369 (+5), 1 = 115388 (-1)
+- R2: no da caja
+- R3: 0 = 115368 (+4), 1 = 115383 (-6)
+- R4: 0 = 115368 (+4), 1 = 115388 (-1)
+- R5: 0 = 115368 (+4), 1 = 115377 (-12)
+- R6: 0 = 115368 (+4), 1 = 115388 (-1)
+- productor a: 0 = 115363 (-1), 1 = 115377 (-12)
+- productor b: 0 = 115363 (-1), 1 = 115377 (-12)
+### v7-4 (0 = 115306, 1 = 115322)
+- R1: 0 = 115305 (-1), 1 = 115315 (-7)
+- R2: no da caja
+- R3: 0 = 115242 (-64), 1 = 115268 (-54)
+- R4: 0 = 115281 (-25), 1 = 115315 (-7)
+- R5: 0 = 115278 (-28), 1 = 115293 (-29)
+- R6: 0 = 115278 (-28), 1 = 115315 (-7)
+- productor a: 0 = 115363 (+57), 1 = 115377 (+55)
+- productor b: 0 = 115363 (+57), 1 = 115377 (+55)
+### v7-5 (0 = 115274, 1 = 115290)
+- R1: 0 = 115276 (+2), 1 = 115287 (-3)
+- R2: no da caja
+- R3: 0 = 115228 (-46), 1 = 115244 (-46)
+- R4: 0 = 115239 (-35), 1 = 115288 (-2)
+- R5: 0 = 115241 (-33), 1 = 115255 (-35)
+- R6: 0 = 115241 (-33), 1 = 115288 (-2)
+- productor a: 0 = 115363 (+89), 1 = 115377 (+87)
+- productor b: 0 = 115363 (+89), 1 = 115377 (+87)
+### v7-7 (0 = 115256, 1 = 115268)
+- R1: 0 = 115256 (+0), 1 = 115265 (-3)
+- R2: no da caja
+- R3: 0 = 115198 (-58), 1 = 115211 (-57)
+- R4: 0 = 115256 (+0), 1 = 115265 (-3)
+- R5: 0 = 115249 (-7), 1 = 115260 (-8)
+- R6: 0 = 115249 (-7), 1 = 115265 (-3)
+- productor a: 0 = 115363 (+107), 1 = 115377 (+109)
+- productor b: 0 = 115363 (+107), 1 = 115377 (+109)
+### v7-9 (0 = 115338, 1 = 115352)
+- R1: 0 = 115326 (-12), 1 = 115342 (-10)
+- R2: no da caja
+- R3: 0 = 115317 (-21), 1 = 115332 (-20)
+- R4: 0 = 115321 (-17), 1 = 115342 (-10)
+- R5: 0 = 115314 (-24), 1 = 115336 (-16)
+- R6: 0 = 115314 (-24), 1 = 115349 (-3)
+- productor a: 0 = 115363 (+25), 1 = 115377 (+25)
+- productor b: 0 = 115363 (+25), 1 = 115377 (+25)
+### v7-10 (0 = 115129, 1 = 115172)
+- R1: 0 = 115112 (-17), 1 = 115129 (-43)
+- R2: no da caja
+- R3: 0 = 115112 (-17), 1 = 115129 (-43)
+- R4: 0 = 115112 (-17), 1 = 115129 (-43)
+- R5: 0 = 115114 (-15), 1 = 115129 (-43)
+- R6: 0 = 115114 (-15), 1 = 115129 (-43)
+- productor a: 0 = 115085 (-44), 1 = 115114 (-58)
+- productor b: 0 = 115085 (-44), 1 = 115114 (-58)
+### v7-11 (0 = 115184, 1 = 115210)
+- R1: 0 = 115184 (+0), 1 = 115198 (-12)
+- R2: no da caja
+- R3: 0 = 115185 (+1), 1 = 115202 (-8)
+- R4: 0 = 115184 (+0), 1 = 115198 (-12)
+- R5: 0 = 115185 (+1), 1 = 115202 (-8)
+- R6: 0 = 115185 (+1), 1 = 115202 (-8)
+- productor a: 0 = 115085 (-99), 1 = 115114 (-96)
+- productor b: 0 = 115085 (-99), 1 = 115114 (-96)
+### v7-12 (0 = 115174, 1 = 115234)
+- R1: 0 = 115152 (-22), 1 = 115170 (-64)
+- R2: no da caja
+- R3: 0 = 115185 (+11), 1 = 115202 (-32)
+- R4: 0 = 115152 (-22), 1 = 115170 (-64)
+- R5: 0 = 115152 (-22), 1 = 115170 (-64)
+- R6: 0 = 115152 (-22), 1 = 115170 (-64)
+- productor a: 0 = 115085 (-89), 1 = 115114 (-120)
+- productor b: 0 = 115085 (-89), 1 = 115114 (-120)
+### v7-15 (0 = 115491, 1 = 115516)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115489 (-2), 1 = 115515 (-1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115484 (-7), 1 = 115486 (-30)
+- R4: 0 = 115489 (-2), 1 = 115515 (-1) · ACIERTA
+- R5: 0 = 115491 (+0), 1 = 115515 (-1) · ACIERTA
+- R6: 0 = 115491 (+0), 1 = 115515 (-1) · ACIERTA
+### v8-1 (0 = 115354, 1 = 115362)
+- R1: 0 = 115353 (-1), 1 = 115359 (-3)
+- R2: no da caja
+- R3: 0 = 115349 (-5), 1 = 115357 (-5)
+- R4: 0 = 115339 (-15), 1 = 115359 (-3)
+- R5: 0 = 115342 (-12), 1 = 115350 (-12)
+- R6: 0 = 115342 (-12), 1 = 115359 (-3)
+- productor a: 0 = 115349 (-5), 1 = 115356 (-6)
+- productor b: 0 = 115349 (-5), 1 = 115356 (-6)
+
+## RECUENTO (v1, sobre las 12 cajas legibles)
+| regla | los dos a 1 | a 2 | a 3 | el 0 a 2 | el 1 a 2 |
+|---|---|---|---|---|---|
+| R1 | 0 | 1 | 4 | 6 | 2 |
+| R2 | 0 | 0 | 0 | 0 | 0 |
+| R3 | 0 | 0 | 0 | 1 | 1 |
+| R4 | 0 | 1 | 2 | 3 | 3 |
+| R5 | 1 | 1 | 1 | 3 | 2 |
+| R6 | 1 | 1 | 1 | 3 | 4 |
+| productor a | 0 | 0 | 0 | 1 | 0 |
+| productor b | 0 | 0 | 0 | 1 | 0 |
+
+# v2 · nota del 2026-09-28: incluida la M1 en curso en T (le falta 1 s)
+
+## FASE 2 · que velas dan el 0 y el 1 del trader (tau 2)
+### v7-1 · 2026-08-03 · colocacion 07:47:59 UTC+2 (05:47:59 UTC) · venta · 0 = 1.15358 · 1 = 1.15370 · caja 12 puntos · v7/000227000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 8 velas; 05:34 UTC (07:34 UTC+2) verde: maxima -2; 05:38 UTC (07:38 UTC+2) roja: maxima -2; 05:44 UTC (07:44 UTC+2) verde: maxima +1; 05:45 UTC (07:45 UTC+2) roja: minima -1; 05:46 UTC (07:46 UTC+2) verde: cuerpo -1; 05:47 UTC (07:47 UTC+2) verde: minima +0 (se listan las 6 mas recientes)
+- el 1: 1 velas; 05:47 UTC (07:47 UTC+2) verde: maxima -2
+### v7-2 · 2026-08-03 · colocacion 08:00:59 UTC+2 (06:00:59 UTC) · venta · 0 = 1.15352 · 1 = 1.15376 · caja 24 puntos · v7/000404000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 20 velas; 05:49 UTC (07:49 UTC+2) verde: minima -2; 05:50 UTC (07:50 UTC+2) verde: maxima +1; 05:51 UTC (07:51 UTC+2) roja: maxima +1; 05:52 UTC (07:52 UTC+2) verde: cuerpo +2; 05:53 UTC (07:53 UTC+2) roja: minima -2, maxima +2; 05:54 UTC (07:54 UTC+2) verde: cuerpo -1 (se listan las 6 mas recientes)
+- el 1: 3 velas; 05:56 UTC (07:56 UTC+2) verde: maxima -2; 05:57 UTC (07:57 UTC+2) roja: maxima -2; 06:00 UTC (08:00 UTC+2) verde: maxima +1
+### v7-3 · 2026-08-03 · colocacion 08:06:59 UTC+2 (06:06:59 UTC) · venta · 0 = 1.15364 · 1 = 1.15389 · caja 25 puntos · v7/000510000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 7 velas; 05:46 UTC (07:46 UTC+2) verde: maxima -1; 05:47 UTC (07:47 UTC+2) verde: cuerpo -1; 05:56 UTC (07:56 UTC+2) verde: minima +1; 05:57 UTC (07:57 UTC+2) roja: minima +1; 05:58 UTC (07:58 UTC+2) verde: cuerpo +0; 06:00 UTC (08:00 UTC+2) verde: minima -1 (se listan las 6 mas recientes)
+- el 1: 1 velas; 06:05 UTC (08:05 UTC+2) verde: maxima -1
+### v7-4 · 2026-08-03 · colocacion 09:33:59 UTC+2 (07:33:59 UTC) · venta · 0 = 1.15306 · 1 = 1.15322 · caja 16 puntos · v7/000710000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 6 velas; 06:34 UTC (08:34 UTC+2) roja: cuerpo -2; 06:35 UTC (08:35 UTC+2) roja: maxima -2; 07:15 UTC (09:15 UTC+2) verde: maxima -2; 07:31 UTC (09:31 UTC+2) verde: cuerpo +2; 07:32 UTC (09:32 UTC+2) verde: minima -1; 07:33 UTC (09:33 UTC+2) verde: minima +1
+- el 1: 12 velas; 06:29 UTC (08:29 UTC+2) verde: minima -1; 06:30 UTC (08:30 UTC+2) roja: minima +1; 06:31 UTC (08:31 UTC+2) roja: minima +0; 06:32 UTC (08:32 UTC+2) roja: maxima +2; 06:33 UTC (08:33 UTC+2) roja: maxima +2; 06:34 UTC (08:34 UTC+2) roja: maxima +0 (se listan las 6 mas recientes)
+### v7-5 · 2026-08-03 · colocacion 11:46:59 UTC+2 (09:46:59 UTC) · venta · 0 = 1.15274 · 1 = 1.15290 · caja 16 puntos · v7/000955000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 4 velas; 09:41 UTC (11:41 UTC+2) verde: cuerpo -1; 09:42 UTC (11:42 UTC+2) verde: minima -1; 09:43 UTC (11:43 UTC+2) verde: minima +0; 09:45 UTC (11:45 UTC+2) verde: minima +2
+- el 1: 1 velas; 09:43 UTC (11:43 UTC+2) verde: maxima -2
+### v7-7 · 2026-08-03 · colocacion 13:11:59 UTC+2 (11:11:59 UTC) · venta · 0 = 1.15256 · 1 = 1.15268 · caja 12 puntos · v7/001210000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 11 velas; 11:04 UTC (13:04 UTC+2) roja: cuerpo +2; 11:07 UTC (13:07 UTC+2) roja: maxima +0; 11:08 UTC (13:08 UTC+2) verde: maxima +0; 11:09 UTC (13:09 UTC+2) sin cuerpo: cuerpo -1; 11:10 UTC (13:10 UTC+2) verde: minima +0; 11:11 UTC (13:11 UTC+2) roja: minima +1 (se listan las 6 mas recientes)
+- el 1: 5 velas; 09:46 UTC (11:46 UTC+2) roja: minima +0; 09:56 UTC (11:56 UTC+2) roja: minima -2; 09:57 UTC (11:57 UTC+2) roja: cuerpo -2; 11:05 UTC (13:05 UTC+2) verde: maxima -2; 11:11 UTC (13:11 UTC+2) roja: maxima -2
+### v7-9 · 2026-08-03 · colocacion 14:09:59 UTC+2 (12:09:59 UTC) · venta · 0 = 1.15338 · 1 = 1.15352 · caja 14 puntos · v7/001535000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 5 velas; 12:04 UTC (14:04 UTC+2) verde: maxima -2; 12:05 UTC (14:05 UTC+2) sin cuerpo: maxima -1; 12:07 UTC (14:07 UTC+2) verde: cuerpo +1; 12:08 UTC (14:08 UTC+2) roja: minima -1; 12:09 UTC (14:09 UTC+2) verde: minima +0
+- el 1: 1 velas; 12:09 UTC (14:09 UTC+2) verde: maxima -1
+### v7-10 · 2026-08-04 · colocacion 09:44:59 UTC+2 (07:44:59 UTC) · venta · 0 = 1.15129 · 1 = 1.15172 · caja 43 puntos · v7/001930000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 5 velas; 07:19 UTC (09:19 UTC+2) verde: maxima -1; 07:21 UTC (09:21 UTC+2) roja: minima -2; 07:22 UTC (09:22 UTC+2) verde: minima +1; 07:41 UTC (09:41 UTC+2) verde: maxima +0; 07:42 UTC (09:42 UTC+2) roja: maxima +0
+- el 1: 2 velas; 07:24 UTC (09:24 UTC+2) verde: maxima -2; 07:25 UTC (09:25 UTC+2) roja: maxima -2
+### v7-11 · 2026-08-04 · colocacion 13:32:59 UTC+2 (11:32:59 UTC) · venta · 0 = 1.15184 · 1 = 1.15210 · caja 26 puntos · v7/002110000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 12 velas; 11:25 UTC (13:25 UTC+2) verde: cuerpo -1; 11:26 UTC (13:26 UTC+2) roja: minima -2; 11:28 UTC (13:28 UTC+2) verde: maxima +2; 11:29 UTC (13:29 UTC+2) verde: minima +2; 11:30 UTC (13:30 UTC+2) roja: minima +1; 11:31 UTC (13:31 UTC+2) verde: minima +0 (se listan las 6 mas recientes)
+- el 1: 1 velas; 11:32 UTC (13:32 UTC+2) verde: maxima -1
+### v7-12 · 2026-08-04 · colocacion 13:56:59 UTC+2 (11:56:59 UTC) · venta · 0 = 1.15174 · 1 = 1.15234 · caja 60 puntos · v7/002180000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 11 velas; 11:17 UTC (13:17 UTC+2) roja: maxima -2; 11:18 UTC (13:18 UTC+2) verde: cuerpo +2; 11:19 UTC (13:19 UTC+2) roja: cuerpo +2; 11:23 UTC (13:23 UTC+2) roja: minima +1; 11:24 UTC (13:24 UTC+2) roja: minima +2; 11:43 UTC (13:43 UTC+2) verde: minima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 11:44 UTC (13:44 UTC+2) verde: maxima +0
+### v7-15 · 2026-08-06 · colocacion 08:01:59 UTC+2 (06:01:59 UTC) · venta · 0 = 1.15491 · 1 = 1.15516 · caja 25 puntos · v7/002654000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 13 velas; 05:55 UTC (07:55 UTC+2) roja: minima +0; 05:56 UTC (07:56 UTC+2) sin cuerpo: maxima +1; 05:57 UTC (07:57 UTC+2) sin cuerpo: maxima +0; 05:58 UTC (07:58 UTC+2) verde: minima -1; 05:59 UTC (07:59 UTC+2) roja: minima +0; 06:00 UTC (08:00 UTC+2) verde: minima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 06:00 UTC (08:00 UTC+2) verde: maxima -1
+### v8-1 · 2026-08-12 · colocacion 08:35:59 UTC+2 (06:35:59 UTC) · venta · 0 = 1.15354 · 1 = 1.15362 · caja 8 puntos · v8/000200000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:30 UTC (08:30 UTC+2)
+- el 0: 16 velas; 06:27 UTC (08:27 UTC+2) roja: maxima +1; 06:28 UTC (08:28 UTC+2) sin cuerpo: maxima +1; 06:29 UTC (08:29 UTC+2) roja: maxima +0; 06:33 UTC (08:33 UTC+2) verde: maxima +1; 06:34 UTC (08:34 UTC+2) verde: minima -1; 06:35 UTC (08:35 UTC+2) verde: minima -1 (se listan las 6 mas recientes)
+- el 1: SIN EXPLICACION (ninguna vela a <= 2 puntos)
+
+## FASE 3 · que regla da el mismo 0 y el mismo 1 (a <= tau)
+### v7-1 (0 = 115358, 1 = 115370)
+- productor a: sin zona (sin toma de M15 antes de T)
+- productor b: sin zona (sin toma de M15 antes de T)
+- R1: 0 = 115358 (+0), 1 = 115368 (-2) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115332 (-26), 1 = 115340 (-30)
+- R4: 0 = 115355 (-3), 1 = 115368 (-2)
+- R5: 0 = 115357 (-1), 1 = 115364 (-6)
+- R6: 0 = 115357 (-1), 1 = 115368 (-2) · ACIERTA
+### v7-2 (0 = 115352, 1 = 115376)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115363 (+11), 1 = 115377 (+1)
+- R2: no da caja
+- R3: 0 = 115365 (+13), 1 = 115374 (-2)
+- R4: 0 = 115363 (+11), 1 = 115377 (+1)
+- R5: 0 = 115368 (+16), 1 = 115377 (+1)
+- R6: 0 = 115368 (+16), 1 = 115377 (+1)
+### v7-3 (0 = 115364, 1 = 115389)
+- R1: 0 = 115369 (+5), 1 = 115388 (-1)
+- R2: no da caja
+- R3: 0 = 115368 (+4), 1 = 115383 (-6)
+- R4: 0 = 115368 (+4), 1 = 115388 (-1)
+- R5: 0 = 115368 (+4), 1 = 115377 (-12)
+- R6: 0 = 115368 (+4), 1 = 115388 (-1)
+- productor a: 0 = 115363 (-1), 1 = 115377 (-12)
+- productor b: 0 = 115363 (-1), 1 = 115377 (-12)
+### v7-4 (0 = 115306, 1 = 115322)
+- R1: 0 = 115307 (+1), 1 = 115319 (-3)
+- R2: no da caja
+- R3: 0 = 115242 (-64), 1 = 115268 (-54)
+- R4: 0 = 115281 (-25), 1 = 115319 (-3)
+- R5: 0 = 115278 (-28), 1 = 115293 (-29)
+- R6: 0 = 115278 (-28), 1 = 115319 (-3)
+- productor a: 0 = 115363 (+57), 1 = 115377 (+55)
+- productor b: 0 = 115363 (+57), 1 = 115377 (+55)
+### v7-5 (0 = 115274, 1 = 115290)
+- R1: 0 = 115276 (+2), 1 = 115287 (-3)
+- R2: 0 = 115268 (-6), 1 = 115287 (-3)
+- R3: 0 = 115228 (-46), 1 = 115244 (-46)
+- R4: 0 = 115239 (-35), 1 = 115288 (-2)
+- R5: 0 = 115241 (-33), 1 = 115255 (-35)
+- R6: 0 = 115241 (-33), 1 = 115288 (-2)
+- productor a: 0 = 115363 (+89), 1 = 115377 (+87)
+- productor b: 0 = 115363 (+89), 1 = 115377 (+87)
+### v7-7 (0 = 115256, 1 = 115268)
+- R1: 0 = 115256 (+0), 1 = 115265 (-3)
+- R2: no da caja
+- R3: 0 = 115198 (-58), 1 = 115211 (-57)
+- R4: 0 = 115256 (+0), 1 = 115265 (-3)
+- R5: 0 = 115249 (-7), 1 = 115260 (-8)
+- R6: 0 = 115249 (-7), 1 = 115266 (-2)
+- productor a: 0 = 115363 (+107), 1 = 115377 (+109)
+- productor b: 0 = 115363 (+107), 1 = 115377 (+109)
+### v7-9 (0 = 115338, 1 = 115352)
+- R1: 0 = 115338 (+0), 1 = 115351 (-1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115317 (-21), 1 = 115332 (-20)
+- R4: 0 = 115338 (+0), 1 = 115351 (-1) · ACIERTA
+- R5: 0 = 115337 (-1), 1 = 115351 (-1) · ACIERTA
+- R6: 0 = 115337 (-1), 1 = 115351 (-1) · ACIERTA
+- productor a: 0 = 115363 (+25), 1 = 115377 (+25)
+- productor b: 0 = 115363 (+25), 1 = 115377 (+25)
+### v7-10 (0 = 115129, 1 = 115172)
+- R1: 0 = 115112 (-17), 1 = 115129 (-43)
+- R2: no da caja
+- R3: 0 = 115112 (-17), 1 = 115129 (-43)
+- R4: 0 = 115112 (-17), 1 = 115129 (-43)
+- R5: 0 = 115114 (-15), 1 = 115129 (-43)
+- R6: 0 = 115114 (-15), 1 = 115129 (-43)
+- productor a: 0 = 115085 (-44), 1 = 115114 (-58)
+- productor b: 0 = 115085 (-44), 1 = 115114 (-58)
+### v7-11 (0 = 115184, 1 = 115210)
+- R1: 0 = 115194 (+10), 1 = 115209 (-1)
+- R2: no da caja
+- R3: 0 = 115185 (+1), 1 = 115202 (-8)
+- R4: 0 = 115184 (+0), 1 = 115209 (-1) · ACIERTA
+- R5: 0 = 115185 (+1), 1 = 115202 (-8)
+- R6: 0 = 115185 (+1), 1 = 115209 (-1) · ACIERTA
+- productor a: 0 = 115085 (-99), 1 = 115114 (-96)
+- productor b: 0 = 115085 (-99), 1 = 115114 (-96)
+### v7-12 (0 = 115174, 1 = 115234)
+- R1: 0 = 115148 (-26), 1 = 115188 (-46)
+- R2: no da caja
+- R3: 0 = 115185 (+11), 1 = 115202 (-32)
+- R4: 0 = 115148 (-26), 1 = 115188 (-46)
+- R5: 0 = 115152 (-22), 1 = 115170 (-64)
+- R6: 0 = 115152 (-22), 1 = 115188 (-46)
+- productor a: 0 = 115085 (-89), 1 = 115114 (-120)
+- productor b: 0 = 115085 (-89), 1 = 115114 (-120)
+### v7-15 (0 = 115491, 1 = 115516)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115489 (-2), 1 = 115515 (-1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115484 (-7), 1 = 115486 (-30)
+- R4: 0 = 115489 (-2), 1 = 115515 (-1) · ACIERTA
+- R5: 0 = 115491 (+0), 1 = 115515 (-1) · ACIERTA
+- R6: 0 = 115491 (+0), 1 = 115515 (-1) · ACIERTA
+### v8-1 (0 = 115354, 1 = 115362)
+- R1: 0 = 115353 (-1), 1 = 115359 (-3)
+- R2: no da caja
+- R3: 0 = 115349 (-5), 1 = 115357 (-5)
+- R4: 0 = 115339 (-15), 1 = 115359 (-3)
+- R5: 0 = 115342 (-12), 1 = 115350 (-12)
+- R6: 0 = 115342 (-12), 1 = 115359 (-3)
+- productor a: 0 = 115349 (-5), 1 = 115356 (-6)
+- productor b: 0 = 115349 (-5), 1 = 115356 (-6)
+
+## RECUENTO (v2, sobre las 12 cajas legibles)
+| regla | los dos a 1 | a 2 | a 3 | el 0 a 2 | el 1 a 2 |
+|---|---|---|---|---|---|
+| R1 | 1 | 3 | 7 | 7 | 6 |
+| R2 | 0 | 0 | 0 | 0 | 0 |
+| R3 | 0 | 0 | 0 | 1 | 1 |
+| R4 | 2 | 3 | 5 | 4 | 7 |
+| R5 | 2 | 2 | 2 | 4 | 3 |
+| R6 | 3 | 4 | 4 | 4 | 8 |
+| productor a | 0 | 0 | 0 | 1 | 0 |
+| productor b | 0 | 0 | 0 | 1 | 0 |
+
+# v3 · nota del 2026-09-28: v2 con los niveles del trader corregidos por el desfase OANDA - Dukascopy medido en las leyendas (+2 puntos)
+
+## FASE 2 · que velas dan el 0 y el 1 del trader (tau 2)
+### v7-1 · 2026-08-03 · colocacion 07:47:59 UTC+2 (05:47:59 UTC) · venta · 0 = 1.15358 · 1 = 1.15370 · caja 12 puntos · v7/000227000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 12 velas; 05:36 UTC (07:36 UTC+2) sin cuerpo: maxima -2; 05:38 UTC (07:38 UTC+2) roja: maxima +0; 05:44 UTC (07:44 UTC+2) verde: minima -2; 05:45 UTC (07:45 UTC+2) roja: minima +1; 05:46 UTC (07:46 UTC+2) verde: minima -1; 05:47 UTC (07:47 UTC+2) verde: minima +2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 05:47 UTC (07:47 UTC+2) verde: maxima +0
+### v7-2 · 2026-08-03 · colocacion 08:00:59 UTC+2 (06:00:59 UTC) · venta · 0 = 1.15352 · 1 = 1.15376 · caja 24 puntos · v7/000404000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 18 velas; 05:49 UTC (07:49 UTC+2) verde: minima +0; 05:50 UTC (07:50 UTC+2) verde: minima -2; 05:51 UTC (07:51 UTC+2) roja: minima -2; 05:52 UTC (07:52 UTC+2) verde: minima -2; 05:53 UTC (07:53 UTC+2) roja: minima +0; 05:54 UTC (07:54 UTC+2) verde: minima -1 (se listan las 6 mas recientes)
+- el 1: 5 velas; 05:56 UTC (07:56 UTC+2) verde: maxima +0; 05:57 UTC (07:57 UTC+2) roja: maxima +0; 05:58 UTC (07:58 UTC+2) verde: maxima -1; 05:59 UTC (07:59 UTC+2) roja: maxima -1; 06:00 UTC (08:00 UTC+2) verde: cuerpo -2
+### v7-3 · 2026-08-03 · colocacion 08:06:59 UTC+2 (06:06:59 UTC) · venta · 0 = 1.15364 · 1 = 1.15389 · caja 25 puntos · v7/000510000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 8 velas; 05:46 UTC (07:46 UTC+2) verde: maxima +1; 05:47 UTC (07:47 UTC+2) verde: cuerpo +1; 05:54 UTC (07:54 UTC+2) verde: maxima -2; 05:58 UTC (07:58 UTC+2) verde: minima -2; 06:00 UTC (08:00 UTC+2) verde: minima +1; 06:03 UTC (08:03 UTC+2) sin cuerpo: minima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 06:05 UTC (08:05 UTC+2) verde: maxima +1
+### v7-4 · 2026-08-03 · colocacion 09:33:59 UTC+2 (07:33:59 UTC) · venta · 0 = 1.15306 · 1 = 1.15322 · caja 16 puntos · v7/000710000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 5 velas; 06:34 UTC (08:34 UTC+2) roja: cuerpo +0; 06:35 UTC (08:35 UTC+2) roja: maxima +0; 07:15 UTC (09:15 UTC+2) verde: maxima +0; 07:30 UTC (09:30 UTC+2) verde: maxima -1; 07:32 UTC (09:32 UTC+2) verde: minima +1
+- el 1: 11 velas; 06:29 UTC (08:29 UTC+2) verde: minima +1; 06:31 UTC (08:31 UTC+2) roja: minima +2; 06:32 UTC (08:32 UTC+2) roja: cuerpo +1; 06:33 UTC (08:33 UTC+2) roja: cuerpo +0; 06:34 UTC (08:34 UTC+2) roja: maxima +2; 07:33 UTC (09:33 UTC+2) verde: maxima -1 (se listan las 6 mas recientes)
+### v7-5 · 2026-08-03 · colocacion 11:46:59 UTC+2 (09:46:59 UTC) · venta · 0 = 1.15274 · 1 = 1.15290 · caja 16 puntos · v7/000955000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 4 velas; 08:35 UTC (10:35 UTC+2) verde: maxima -2; 09:41 UTC (11:41 UTC+2) verde: cuerpo +1; 09:42 UTC (11:42 UTC+2) verde: minima +1; 09:43 UTC (11:43 UTC+2) verde: minima +2
+- el 1: 2 velas; 09:43 UTC (11:43 UTC+2) verde: maxima +0; 09:45 UTC (11:45 UTC+2) verde: maxima -1
+### v7-7 · 2026-08-03 · colocacion 13:11:59 UTC+2 (11:11:59 UTC) · venta · 0 = 1.15256 · 1 = 1.15268 · caja 12 puntos · v7/001210000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 9 velas; 11:05 UTC (13:05 UTC+2) verde: minima -2; 11:06 UTC (13:06 UTC+2) roja: cuerpo -2; 11:07 UTC (13:07 UTC+2) roja: maxima +2; 11:08 UTC (13:08 UTC+2) verde: minima -2, maxima +2; 11:09 UTC (13:09 UTC+2) sin cuerpo: minima -1; 11:10 UTC (13:10 UTC+2) verde: minima +2 (se listan las 6 mas recientes)
+- el 1: 7 velas; 09:46 UTC (11:46 UTC+2) roja: minima +2; 09:56 UTC (11:56 UTC+2) roja: minima +0; 09:57 UTC (11:57 UTC+2) roja: cuerpo +0; 11:05 UTC (13:05 UTC+2) verde: maxima +0; 11:10 UTC (13:10 UTC+2) verde: maxima -1; 11:11 UTC (13:11 UTC+2) roja: maxima +0 (se listan las 6 mas recientes)
+### v7-9 · 2026-08-03 · colocacion 14:09:59 UTC+2 (12:09:59 UTC) · venta · 0 = 1.15338 · 1 = 1.15352 · caja 14 puntos · v7/001535000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 4 velas; 12:04 UTC (14:04 UTC+2) verde: maxima +0; 12:05 UTC (14:05 UTC+2) sin cuerpo: maxima +1; 12:08 UTC (14:08 UTC+2) roja: minima +1; 12:09 UTC (14:09 UTC+2) verde: minima +2
+- el 1: 2 velas; 12:08 UTC (14:08 UTC+2) roja: maxima -1; 12:09 UTC (14:09 UTC+2) verde: maxima +1
+### v7-10 · 2026-08-04 · colocacion 09:44:59 UTC+2 (07:44:59 UTC) · venta · 0 = 1.15129 · 1 = 1.15172 · caja 43 puntos · v7/001930000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 7 velas; 07:21 UTC (09:21 UTC+2) roja: minima +0; 07:29 UTC (09:29 UTC+2) roja: minima -2; 07:30 UTC (09:30 UTC+2) roja: maxima -1; 07:40 UTC (09:40 UTC+2) roja: maxima -2; 07:41 UTC (09:41 UTC+2) verde: maxima +2; 07:42 UTC (09:42 UTC+2) roja: maxima +2 (se listan las 6 mas recientes)
+- el 1: 2 velas; 07:24 UTC (09:24 UTC+2) verde: maxima +0; 07:25 UTC (09:25 UTC+2) roja: maxima +0
+### v7-11 · 2026-08-04 · colocacion 13:32:59 UTC+2 (11:32:59 UTC) · venta · 0 = 1.15184 · 1 = 1.15210 · caja 26 puntos · v7/002110000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 8 velas; 11:23 UTC (13:23 UTC+2) roja: cuerpo -1; 11:24 UTC (13:24 UTC+2) roja: maxima +0; 11:25 UTC (13:25 UTC+2) verde: minima -2; 11:26 UTC (13:26 UTC+2) roja: minima +0; 11:28 UTC (13:28 UTC+2) verde: minima -2; 11:31 UTC (13:31 UTC+2) verde: minima +2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 11:32 UTC (13:32 UTC+2) verde: maxima +1
+### v7-12 · 2026-08-04 · colocacion 13:56:59 UTC+2 (11:56:59 UTC) · venta · 0 = 1.15174 · 1 = 1.15234 · caja 60 puntos · v7/002180000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 07:15 UTC (09:15 UTC+2)
+- el 0: 10 velas; 11:17 UTC (13:17 UTC+2) roja: maxima +0; 11:18 UTC (13:18 UTC+2) verde: cuerpo -2; 11:19 UTC (13:19 UTC+2) roja: cuerpo -2; 11:20 UTC (13:20 UTC+2) verde: minima -1; 11:43 UTC (13:43 UTC+2) verde: minima +0; 11:55 UTC (13:55 UTC+2) verde: maxima -2 (se listan las 6 mas recientes)
+- el 1: 1 velas; 11:44 UTC (13:44 UTC+2) verde: maxima +2
+### v7-15 · 2026-08-06 · colocacion 08:01:59 UTC+2 (06:01:59 UTC) · venta · 0 = 1.15491 · 1 = 1.15516 · caja 25 puntos · v7/002654000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:00 UTC (08:00 UTC+2)
+- el 0: 25 velas; 05:55 UTC (07:55 UTC+2) roja: minima +2; 05:56 UTC (07:56 UTC+2) sin cuerpo: cuerpo +1; 05:57 UTC (07:57 UTC+2) sin cuerpo: minima -1, maxima +2; 05:58 UTC (07:58 UTC+2) verde: minima +1; 05:59 UTC (07:59 UTC+2) roja: minima +2; 06:00 UTC (08:00 UTC+2) verde: minima +0 (se listan las 6 mas recientes)
+- el 1: 2 velas; 06:00 UTC (08:00 UTC+2) verde: maxima +1; 06:01 UTC (08:01 UTC+2) roja: maxima -2
+### v8-1 · 2026-08-12 · colocacion 08:35:59 UTC+2 (06:35:59 UTC) · venta · 0 = 1.15354 · 1 = 1.15362 · caja 8 puntos · v8/000200000
+- primera toma de M15 del dia (productor, A-35 en diagnostico): 06:30 UTC (08:30 UTC+2)
+- el 0: 18 velas; 06:28 UTC (08:28 UTC+2) sin cuerpo: minima -1; 06:29 UTC (08:29 UTC+2) roja: minima -2, maxima +2; 06:30 UTC (08:30 UTC+2) roja: maxima -2; 06:33 UTC (08:33 UTC+2) verde: cuerpo +2; 06:34 UTC (08:34 UTC+2) verde: minima +1; 06:35 UTC (08:35 UTC+2) verde: minima +1 (se listan las 6 mas recientes)
+- el 1: 4 velas; 06:18 UTC (08:18 UTC+2) verde: maxima -1; 06:25 UTC (08:25 UTC+2) sin cuerpo: maxima -2; 06:34 UTC (08:34 UTC+2) verde: maxima -1; 06:35 UTC (08:35 UTC+2) verde: maxima -1
+
+## FASE 3 · que regla da el mismo 0 y el mismo 1 (a <= tau)
+### v7-1 (0 = 115356, 1 = 115368)
+- productor a: sin zona (sin toma de M15 antes de T)
+- productor b: sin zona (sin toma de M15 antes de T)
+- R1: 0 = 115358 (+2), 1 = 115368 (+0) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115332 (-24), 1 = 115340 (-28)
+- R4: 0 = 115355 (-1), 1 = 115368 (+0) · ACIERTA
+- R5: 0 = 115357 (+1), 1 = 115364 (-4)
+- R6: 0 = 115357 (+1), 1 = 115368 (+0) · ACIERTA
+### v7-2 (0 = 115350, 1 = 115374)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115363 (+13), 1 = 115377 (+3)
+- R2: no da caja
+- R3: 0 = 115365 (+15), 1 = 115374 (+0)
+- R4: 0 = 115363 (+13), 1 = 115377 (+3)
+- R5: 0 = 115368 (+18), 1 = 115377 (+3)
+- R6: 0 = 115368 (+18), 1 = 115377 (+3)
+### v7-3 (0 = 115362, 1 = 115387)
+- R1: 0 = 115369 (+7), 1 = 115388 (+1)
+- R2: no da caja
+- R3: 0 = 115368 (+6), 1 = 115383 (-4)
+- R4: 0 = 115368 (+6), 1 = 115388 (+1)
+- R5: 0 = 115368 (+6), 1 = 115377 (-10)
+- R6: 0 = 115368 (+6), 1 = 115388 (+1)
+- productor a: 0 = 115363 (+1), 1 = 115377 (-10)
+- productor b: 0 = 115363 (+1), 1 = 115377 (-10)
+### v7-4 (0 = 115304, 1 = 115320)
+- R1: 0 = 115307 (+3), 1 = 115319 (-1)
+- R2: no da caja
+- R3: 0 = 115242 (-62), 1 = 115268 (-52)
+- R4: 0 = 115281 (-23), 1 = 115319 (-1)
+- R5: 0 = 115278 (-26), 1 = 115293 (-27)
+- R6: 0 = 115278 (-26), 1 = 115319 (-1)
+- productor a: 0 = 115363 (+59), 1 = 115377 (+57)
+- productor b: 0 = 115363 (+59), 1 = 115377 (+57)
+### v7-5 (0 = 115272, 1 = 115288)
+- R1: 0 = 115276 (+4), 1 = 115287 (-1)
+- R2: 0 = 115268 (-4), 1 = 115287 (-1)
+- R3: 0 = 115228 (-44), 1 = 115244 (-44)
+- R4: 0 = 115239 (-33), 1 = 115288 (+0)
+- R5: 0 = 115241 (-31), 1 = 115255 (-33)
+- R6: 0 = 115241 (-31), 1 = 115288 (+0)
+- productor a: 0 = 115363 (+91), 1 = 115377 (+89)
+- productor b: 0 = 115363 (+91), 1 = 115377 (+89)
+### v7-7 (0 = 115254, 1 = 115266)
+- R1: 0 = 115256 (+2), 1 = 115265 (-1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115198 (-56), 1 = 115211 (-55)
+- R4: 0 = 115256 (+2), 1 = 115265 (-1) · ACIERTA
+- R5: 0 = 115249 (-5), 1 = 115260 (-6)
+- R6: 0 = 115249 (-5), 1 = 115266 (+0)
+- productor a: 0 = 115363 (+109), 1 = 115377 (+111)
+- productor b: 0 = 115363 (+109), 1 = 115377 (+111)
+### v7-9 (0 = 115336, 1 = 115350)
+- R1: 0 = 115338 (+2), 1 = 115351 (+1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115317 (-19), 1 = 115332 (-18)
+- R4: 0 = 115338 (+2), 1 = 115351 (+1) · ACIERTA
+- R5: 0 = 115337 (+1), 1 = 115351 (+1) · ACIERTA
+- R6: 0 = 115337 (+1), 1 = 115351 (+1) · ACIERTA
+- productor a: 0 = 115363 (+27), 1 = 115377 (+27)
+- productor b: 0 = 115363 (+27), 1 = 115377 (+27)
+### v7-10 (0 = 115127, 1 = 115170)
+- R1: 0 = 115112 (-15), 1 = 115129 (-41)
+- R2: no da caja
+- R3: 0 = 115112 (-15), 1 = 115129 (-41)
+- R4: 0 = 115112 (-15), 1 = 115129 (-41)
+- R5: 0 = 115114 (-13), 1 = 115129 (-41)
+- R6: 0 = 115114 (-13), 1 = 115129 (-41)
+- productor a: 0 = 115085 (-42), 1 = 115114 (-56)
+- productor b: 0 = 115085 (-42), 1 = 115114 (-56)
+### v7-11 (0 = 115182, 1 = 115208)
+- R1: 0 = 115194 (+12), 1 = 115209 (+1)
+- R2: no da caja
+- R3: 0 = 115185 (+3), 1 = 115202 (-6)
+- R4: 0 = 115184 (+2), 1 = 115209 (+1) · ACIERTA
+- R5: 0 = 115185 (+3), 1 = 115202 (-6)
+- R6: 0 = 115185 (+3), 1 = 115209 (+1)
+- productor a: 0 = 115085 (-97), 1 = 115114 (-94)
+- productor b: 0 = 115085 (-97), 1 = 115114 (-94)
+### v7-12 (0 = 115172, 1 = 115232)
+- R1: 0 = 115148 (-24), 1 = 115188 (-44)
+- R2: no da caja
+- R3: 0 = 115185 (+13), 1 = 115202 (-30)
+- R4: 0 = 115148 (-24), 1 = 115188 (-44)
+- R5: 0 = 115152 (-20), 1 = 115170 (-62)
+- R6: 0 = 115152 (-20), 1 = 115188 (-44)
+- productor a: 0 = 115085 (-87), 1 = 115114 (-118)
+- productor b: 0 = 115085 (-87), 1 = 115114 (-118)
+### v7-15 (0 = 115489, 1 = 115514)
+- productor a: sin zona (toma 06:00 UTC sin esquema antes de T)
+- productor b: sin zona (toma 06:00 UTC sin esquema antes de T)
+- R1: 0 = 115489 (+0), 1 = 115515 (+1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115484 (-5), 1 = 115486 (-28)
+- R4: 0 = 115489 (+0), 1 = 115515 (+1) · ACIERTA
+- R5: 0 = 115491 (+2), 1 = 115515 (+1) · ACIERTA
+- R6: 0 = 115491 (+2), 1 = 115515 (+1) · ACIERTA
+### v8-1 (0 = 115352, 1 = 115360)
+- R1: 0 = 115353 (+1), 1 = 115359 (-1) · ACIERTA
+- R2: no da caja
+- R3: 0 = 115349 (-3), 1 = 115357 (-3)
+- R4: 0 = 115339 (-13), 1 = 115359 (-1)
+- R5: 0 = 115342 (-10), 1 = 115350 (-10)
+- R6: 0 = 115342 (-10), 1 = 115359 (-1)
+- productor a: 0 = 115349 (-3), 1 = 115356 (-4)
+- productor b: 0 = 115349 (-3), 1 = 115356 (-4)
+
+## RECUENTO (v3, sobre las 12 cajas legibles)
+| regla | los dos a 1 | a 2 | a 3 | el 0 a 2 | el 1 a 2 |
+|---|---|---|---|---|---|
+| R1 | 2 | 5 | 6 | 5 | 9 |
+| R2 | 0 | 0 | 0 | 0 | 1 |
+| R3 | 0 | 0 | 1 | 0 | 1 |
+| R4 | 2 | 5 | 5 | 5 | 9 |
+| R5 | 1 | 2 | 2 | 3 | 2 |
+| R6 | 2 | 3 | 4 | 3 | 9 |
+| productor a | 0 | 0 | 0 | 1 | 0 |
+| productor b | 0 | 0 | 0 | 1 | 0 |
+
