@@ -77,11 +77,15 @@ def test_cada_cifra_del_perfil_cita_una_regla_de_ftmo_reglas_que_existe(
 
 def test_lo_que_no_esta_en_la_fuente_no_tiene_valor(ftmo: PerfilCuenta) -> None:
     """Los NO ENCONTRADA de FTMO-REGLAS y lo que no aplica a la fondeada (ADR-0012 §2)."""
+    # el stops level entra UNKNOWN el 2026-09-28 (rama trabajo/broker-ordenes-stop, ADR-0057): R11
+    # lo da por NO ENCONTRADA y se mide en la demo de FTMO (A-27)
     assert ftmo.sin_valor() == (
         "firma_fondeada_dias_minimos",
         "firma_fondeada_objetivo",
+        "firma_stops_level_puntos",
         "firma_tamano_posicion_ratio_aviso",
     )
+    assert ftmo.puntos_o_nada("firma_stops_level_puntos") is None
     with pytest.raises(ParametroSinValorError) as exc:
         ftmo.decimal("firma_tamano_posicion_ratio_aviso")
     assert "firma_tamano_posicion_ratio_aviso" in str(exc.value)

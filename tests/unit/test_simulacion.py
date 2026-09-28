@@ -150,8 +150,12 @@ class EstrategiaSintetica:
 
 
 def _pierde_siempre(md: MercadoDia) -> EstrategiaSintetica:
-    # vende contra una tendencia alcista: el stop salta
-    return EstrategiaSintetica("venta", 10, 3, 40, 400, lotes=Decimal(50))
+    # vende contra una tendencia alcista: el stop salta. La venta va 15 puntos por encima del
+    # ultimo cierre, por encima del BID, y espera a que la tendencia la llene. Hasta la rama
+    # trabajo/broker-ordenes-stop iba a 3 puntos, que la dejaba POR DEBAJO del BID -una limite
+    # cruzada- y el broker la llenaba al instante a su propio precio; desde ADR-0057 esa orden se
+    # rechaza por precio invalido, y este test dependia del llenado falso
+    return EstrategiaSintetica("venta", 10, 15, 40, 400, lotes=Decimal(50))
 
 
 def _gana_poco(md: MercadoDia) -> EstrategiaSintetica:

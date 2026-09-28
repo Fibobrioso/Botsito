@@ -5,14 +5,21 @@ llenado de ADR-0051. Sin IO, sin reloj de pared, sin cifras de negocio: los limi
 vienen de `ReglasBroker` (leidas del perfil de cuenta por quien llama) y lo elegible del llenado
 de `Configuracion`. Nada aqui asume un instrumento ni una firma.
 
-CICLO DE VIDA de una orden limite: colocada -> (modificada)* -> llenada | cancelada | expirada;
-o rechazada al colocarla por un limite del perfil (volumen maximo, ordenes simultaneas, posiciones
-por dia), y el rechazo queda registrado. Una orden llenada abre una POSICION con stop y objetivo,
-que se cierra por stop, por objetivo o a mercado (cierre manual). Cada cierre produce una
-`cuenta.Operacion` con sus cargos -comision por lado si el perfil lo dice, swap por cada corte
-diario del perfil que la posicion cruce- y sus MARCAS: el peor precio de cada minuto vivo, que es
-lo que la capa de cuenta vigila (ADR-0050). La equity de la cuenta en cualquier marca es el saldo
-mas el flotante de las posiciones del broker: un test lo comprueba.
+CICLO DE VIDA de una orden pendiente, LIMITE o STOP (ADR-0056 §2, ADR-0057): colocada ->
+(modificada)* -> llenada | cancelada | expirada; o rechazada al colocarla, y el rechazo queda
+registrado con su motivo: un limite del perfil (volumen maximo, ordenes simultaneas, posiciones por
+dia), el PRECIO INVALIDO de una pendiente del lado equivocado del precio (una limite de venta por
+debajo del bid, una stop de venta por encima; y al reves en compra), o el STOPS LEVEL, cuando se
+conoce. Una pendiente del lado equivocado NUNCA se llena a su propio precio: se rechaza, como haria
+MT5 (PROVISIONAL hasta la demo de FTMO). Una orden STOP no se coloca sin stops level: el del perfil
+(`firma_stops_level_puntos`, UNKNOWN hasta medirlo, A-27) o uno hipotetico en diagnostico.
+
+Una orden llenada abre una POSICION con stop y objetivo, que se cierra por stop, por objetivo o a
+mercado (cierre manual); si era una stop, la posicion guarda el deslizamiento de la entrada. Cada
+cierre produce una `cuenta.Operacion` con sus cargos -comision por lado si el perfil lo dice,
+swap por cada corte diario del perfil que la posicion cruce- y sus MARCAS: el peor precio de cada
+minuto vivo, que es lo que la capa de cuenta vigila (ADR-0050). La equity de la cuenta en
+cualquier marca es el saldo mas el flotante de las posiciones del broker: un test lo comprueba.
 
 NO se cablea al motor de reglas (ADR-0052 §5): el motor sigue sin tocarse. Este broker expone el
 contrato que el motor tendra que cumplir -colocar, modificar, cancelar, cerrar a mercado, y leer
@@ -34,11 +41,16 @@ from botsito.engine.cuenta import Cargo, Marca, Operacion
 from botsito.engine.llenado import (
     RESPALDO_M1,
     TICKS,
+    TIPO_LIMITE,
+    TIPO_STOP,
+    TIPOS_ORDEN,
     Configuracion,
     Evento,
     Lado,
     Mercado,
+    lado_equivocado,
     primer_llenado_limite,
+    primer_llenado_stop,
     primera_salida,
 )
 
@@ -51,6 +63,9 @@ RECHAZADA = "rechazada"
 MANUAL = "manual"
 HECHO_OPERACION_ABIERTA = "operacion_abierta"
 HECHO_ORDEN_PENDIENTE = "orden_limite_pendiente"
+MOTIVO_PRECIO_INVALIDO = "precio_invalido"
+MOTIVO_STOPS_LEVEL = "stops_level"
+PARAMETRO_STOPS_LEVEL = "firma_stops_level_puntos"
 _EPOCA = datetime(1970, 1, 1, tzinfo=UTC)
 
 
@@ -70,6 +85,8 @@ class ReglasBroker:
     comision_por_lado: bool
     swap_largo_puntos: Decimal  # por lote y noche, con signo (negativo = cuesta)
     swap_corto_puntos: Decimal
+    # la distancia minima al precio que admite el broker (A-27): None mientras sea UNKNOWN
+    stops_level_puntos: int | None = None
 
 
 @dataclass
@@ -85,6 +102,7 @@ class Orden:
     estado: str = COLOCADA
     ultimo_cambio_ms: int = 0
     historial: list[tuple[int, str]] = field(default_factory=list)  # (instante, estado)
+    tipo: str = TIPO_LIMITE  # TIPO_LIMITE o TIPO_STOP
 
 
 @dataclass
@@ -106,6 +124,9 @@ class Posicion:
     stop_original: int | None = None  # el stop con el que nacio, si se movio despues
     marcas: list[tuple[int, int]] = field(default_factory=list)  # (instante_ms, peor precio)
     swaps: list[tuple[int, Decimal]] = field(default_factory=list)
+    # puntos EN CONTRA entre el precio de la orden y el llenado: 0 en una limite; en una stop, el
+    # hueco y el deslizamiento de la configuracion (ADR-0057)
+    deslizamiento_entrada: int = 0
 
     @property
     def abierta(self) -> bool:
@@ -158,9 +179,24 @@ class Broker:
         mercado: Mercado,
         contrato: Decimal,
         escala: int,
+        stops_level_diagnostico: int | None = None,
     ) -> None:
         if contrato <= 0 or escala <= 0:
             raise BrokerError("contrato y escala son positivos")
+        if stops_level_diagnostico is not None:
+            if reglas.stops_level_puntos is not None:
+                raise BrokerError(
+                    f"{PARAMETRO_STOPS_LEVEL} ya esta fijado en {reglas.stops_level_puntos} (A-27 "
+                    "medida): la corrida cuenta y no admite un stops level en diagnostico"
+                )
+            if stops_level_diagnostico < 0:
+                raise BrokerError("un stops level en diagnostico no es negativo")
+        # el stops level con el que opera: el del perfil o, sin el, el del diagnostico (ADR-0057)
+        self.stops_level: int | None = (
+            reglas.stops_level_puntos
+            if reglas.stops_level_puntos is not None
+            else stops_level_diagnostico
+        )
         self.reglas = reglas
         self.config = config
         self.mercado = mercado
@@ -186,8 +222,44 @@ class Broker:
         instante_ms: int,
         expira_ms: int | None = None,
     ) -> Orden | Rechazo:
-        """Coloca una limite. Un limite del perfil la RECHAZA y lo registra, no la encola."""
+        """Coloca una LIMITE. Un limite del perfil o un precio invalido la RECHAZA y lo registra,
+        no la encola."""
+        return self._colocar(
+            TIPO_LIMITE, id, lado, precio, lotes, stop, objetivo, instante_ms, expira_ms
+        )
+
+    def colocar_stop(
+        self,
+        id: str,
+        lado: Lado,
+        precio: int,
+        lotes: Decimal,
+        stop: int,
+        objetivo: int,
+        instante_ms: int,
+        expira_ms: int | None = None,
+    ) -> Orden | Rechazo:
+        """Coloca una STOP de entrada (ADR-0056 §2): una venta stop por debajo del bid, una compra
+        stop por encima del ask, que saltan al tocar su nivel. Sin stops level, se niega."""
+        return self._colocar(
+            TIPO_STOP, id, lado, precio, lotes, stop, objetivo, instante_ms, expira_ms
+        )
+
+    def _colocar(
+        self,
+        tipo: str,
+        id: str,
+        lado: Lado,
+        precio: int,
+        lotes: Decimal,
+        stop: int,
+        objetivo: int,
+        instante_ms: int,
+        expira_ms: int | None,
+    ) -> Orden | Rechazo:
         self._avanza_reloj(instante_ms)
+        if tipo not in TIPOS_ORDEN:
+            raise BrokerError(f"{id}: tipo de orden {tipo!r} desconocido")
         if id in self.ordenes:
             raise BrokerError(f"orden {id!r} repetida")
         if lotes <= 0:
@@ -196,21 +268,50 @@ class Broker:
             raise BrokerError(f"{id}: una compra lleva stop < precio < objetivo")
         if lado == "venta" and not objetivo < precio < stop:
             raise BrokerError(f"{id}: una venta lleva objetivo < precio < stop")
+        if tipo == TIPO_STOP and self.stops_level is None:
+            raise BrokerError(
+                f"{id}: una orden stop no se coloca sin stops level: {PARAMETRO_STOPS_LEVEL} es "
+                "UNKNOWN en el perfil de cuenta hasta medirlo en la demo de la firma (A-27). Para "
+                "correr en hipotesis, --diagnostico-a27 <puntos>: ETIQUETADO y sin valor para "
+                "ninguna medida (ADR-0057)"
+            )
         motivo = self._limite_infringido(lotes, instante_ms)
+        if motivo is None:
+            motivo = self._precio_infringido(tipo, lado, precio, stop, objetivo, instante_ms)
         if motivo is not None:
             r = Rechazo(instante_ms, id, motivo)
             self._rechazos.append(r)
             self.ordenes[id] = Orden(
                 id, lado, precio, lotes, stop, objetivo, instante_ms, expira_ms, RECHAZADA,
-                instante_ms, [(instante_ms, RECHAZADA)],
+                instante_ms, [(instante_ms, RECHAZADA)], tipo,
             )  # fmt: skip
             return r
         orden = Orden(
             id, lado, precio, lotes, stop, objetivo, instante_ms, expira_ms, COLOCADA, instante_ms,
-            [(instante_ms, COLOCADA)],
+            [(instante_ms, COLOCADA)], tipo,
         )  # fmt: skip
         self.ordenes[id] = orden
         return orden
+
+    def _precio_infringido(
+        self, tipo: str, lado: Lado, precio: int, stop: int, objetivo: int, instante_ms: int
+    ) -> str | None:
+        """El motivo de rechazo por precio (ADR-0057, PROVISIONAL hasta la demo de FTMO), o None.
+        Con la cotizacion del momento: una pendiente del lado equivocado es PRECIO INVALIDO; y, si
+        el stops level es conocido, una pendiente o su stop u objetivo mas cerca de el que ese
+        minimo es STOPS LEVEL. Sin cotizacion (antes del primer precio del mercado) no se juzga."""
+        q = self.mercado.cotizacion(instante_ms, self.config.spread_supuesto)
+        if q is None:
+            return None
+        bid, ask, _ = q
+        if lado_equivocado(tipo, lado, precio, bid, ask):
+            return MOTIVO_PRECIO_INVALIDO
+        minimo = self.stops_level
+        if minimo:
+            referencia = ask if lado == "compra" else bid
+            if min(abs(precio - referencia), abs(precio - stop), abs(precio - objetivo)) < minimo:
+                return MOTIVO_STOPS_LEVEL
+        return None
 
     def modificar(
         self,
@@ -219,12 +320,24 @@ class Broker:
         precio: int | None = None,
         stop: int | None = None,
         objetivo: int | None = None,
-    ) -> Orden:
+    ) -> Orden | Rechazo:
+        """Modifica una pendiente. Si la modificacion la deja con un precio invalido (ADR-0057),
+        se RECHAZA, se registra y la orden sigue como estaba, como en MT5."""
         self._avanza_reloj(instante_ms)
         orden = self._pendiente(id)
-        orden.precio = precio if precio is not None else orden.precio
-        orden.stop = stop if stop is not None else orden.stop
-        orden.objetivo = objetivo if objetivo is not None else orden.objetivo
+        nuevo_precio = precio if precio is not None else orden.precio
+        nuevo_stop = stop if stop is not None else orden.stop
+        nuevo_objetivo = objetivo if objetivo is not None else orden.objetivo
+        motivo = self._precio_infringido(
+            orden.tipo, orden.lado, nuevo_precio, nuevo_stop, nuevo_objetivo, instante_ms
+        )
+        if motivo is not None:
+            r = Rechazo(instante_ms, id, motivo)
+            self._rechazos.append(r)
+            return r
+        orden.precio = nuevo_precio
+        orden.stop = nuevo_stop
+        orden.objetivo = nuevo_objetivo
         orden.estado = MODIFICADA
         orden.ultimo_cambio_ms = instante_ms
         orden.historial.append((instante_ms, MODIFICADA))
@@ -330,7 +443,8 @@ class Broker:
             tope = hasta_ms if o.expira_ms is None else min(hasta_ms, o.expira_ms)
             # el tick en el que se coloco o modifico no cuenta (exclusivo); el tick del ultimo
             # evento procesado SI puede llenar otra orden pendiente (por eso ahora - 1)
-            ev = primer_llenado_limite(
+            llenado = primer_llenado_stop if o.tipo == TIPO_STOP else primer_llenado_limite
+            ev = llenado(
                 o.lado,
                 o.precio,
                 max(self.ahora_ms - 1, o.ultimo_cambio_ms),
@@ -376,9 +490,10 @@ class Broker:
             o.estado = LLENADA
             o.ultimo_cambio_ms = instante
             o.historial.append((instante, LLENADA))
+            contra = evento.precio - o.precio if o.lado == "compra" else o.precio - evento.precio
             p = Posicion(
                 f"pos-{o.id}", o.id, o.lado, o.lotes, evento.precio, o.stop, o.objetivo, instante,
-                evento.fuente, ultimo_precio=evento.precio,
+                evento.fuente, ultimo_precio=evento.precio, deslizamiento_entrada=contra,
             )  # fmt: skip
             self.posiciones[p.id] = p
             self._eventos.append((instante, LLENADA, o.id, evento.fuente))
@@ -559,6 +674,9 @@ __all__ = [
     "LLENADA",
     "MANUAL",
     "MODIFICADA",
+    "MOTIVO_PRECIO_INVALIDO",
+    "MOTIVO_STOPS_LEVEL",
+    "PARAMETRO_STOPS_LEVEL",
     "RECHAZADA",
     "Broker",
     "BrokerError",

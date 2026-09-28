@@ -60,4 +60,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0054 | RN-004 y RN-020, listas para activarse con la respuesta del trader | ACTIVE |
 | 0055 | RN-011 y la zona de entrada: preparada para A-21, con el selector de «limpia» PROVISIONAL | ACTIVE |
 | 0056 | La entrada con la ruptura: RN-011 con orden stop, preparada con selectores UNKNOWN | ACTIVE |
+| 0057 | Órdenes stop y rechazo de pendientes en el bróker simulado (PROVISIONAL hasta la demo de FTMO) | ACTIVE |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

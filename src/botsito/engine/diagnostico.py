@@ -26,6 +26,9 @@ PARAMETRO_A35 = "liquidez_m15_pivote_formado"
 ETIQUETA_A35 = "DIAGNOSTICO-A35"
 ETIQUETA_A44 = "DIAGNOSTICO-A44"
 ETIQUETA_A21 = "DIAGNOSTICO-A21"
+# A-27 (rama trabajo/broker-ordenes-stop, ADR-0057): el stops level del broker, UNKNOWN en el
+# perfil hasta medirlo en la demo de FTMO; en diagnostico, unos puntos hipoteticos
+ETIQUETA_A27 = "DIAGNOSTICO-A27"
 # Los modos hipoteticos de A-44: sin tope (el trader dice que no tiene) o un MARCADOR que no es un
 # valor plausible del trader (un tope de un punto porcentual de nada: se toca con cualquier
 # perdida; vale para ver el embudo, no para simular una operativa).
@@ -53,6 +56,7 @@ class Diagnostico:
     a35: str | None = None
     a44: str | None = None
     a21: str | None = None
+    a27: int | None = None  # el stops level hipotetico del broker, en puntos
 
     def __post_init__(self) -> None:
         if self.a35 is not None and self.a35 not in LECTURAS:
@@ -61,6 +65,8 @@ class Diagnostico:
             raise ValueError(f"modo de A-44 {self.a44!r} no esta en {MODOS_A44}")
         if self.a21 is not None and self.a21 not in LECTURAS_LIMPIA:
             raise ValueError(f"lectura de A-21 {self.a21!r} no esta en {LECTURAS_LIMPIA}")
+        if self.a27 is not None and self.a27 < 0:
+            raise ValueError(f"stops level de A-27 {self.a27!r}: no puede ser negativo")
 
     @property
     def etiquetas(self) -> tuple[str, ...]:
@@ -71,6 +77,8 @@ class Diagnostico:
             salida.append(f"{ETIQUETA_A44}-{self.a44}")
         if self.a21 is not None:
             salida.append(f"{ETIQUETA_A21}-{self.a21}")
+        if self.a27 is not None:
+            salida.append(f"{ETIQUETA_A27}-{self.a27}")
         return tuple(salida)
 
     @property

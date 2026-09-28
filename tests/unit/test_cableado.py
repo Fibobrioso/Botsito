@@ -24,7 +24,7 @@ from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine import arnes, cableado
-from botsito.engine.broker import LLENADA
+from botsito.engine.broker import LLENADA, Broker, BrokerError
 from botsito.engine.cableado import CableadoError, MotorCableado, comprobar_reloj_unico
 from botsito.engine.cuenta import EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.interprete import (
@@ -35,7 +35,7 @@ from botsito.engine.interprete import (
     Tri,
     reglas_ejecutables,
 )
-from botsito.engine.llenado import RESPALDO_M1, STOP, TICKS, Configuracion
+from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, TIPO_STOP, Configuracion
 from botsito.engine.motor import DatosMercado, DiaDeMercado, Sesion
 from botsito.engine.perfil_cuenta import cargar_perfil
 from botsito.engine.simulacion import MercadoDia, reglas_broker_de
@@ -111,6 +111,14 @@ def _mercado(
 
 RUTA_STOP = {MINUTO_ZONA + 3: ENTRADA - 2, MINUTO_ZONA + 6: ENTRADA - 17}  # llena y salta el stop
 RUTA_HUECO = {MINUTO_ZONA + 3: ENTRADA - 2, MINUTO_ZONA + 6: ENTRADA - 2000}  # salto de 2.000
+# para una COMPRA STOP en la entrada (rama trabajo/broker-ordenes-stop): el precio baja por debajo
+# de la entrada antes de la zona (la stop queda por encima del ASK, bien colocada), la cruza hacia
+# arriba despues y llega al objetivo (+60)
+RUTA_ORDEN_STOP = {
+    MINUTO_ZONA - 5: ENTRADA - 10,
+    MINUTO_ZONA + 3: ENTRADA + 5,
+    MINUTO_ZONA + 8: ENTRADA + 70,
+}
 
 
 def _sinteticas(minuto_zona: int = MINUTO_ZONA) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -314,6 +322,47 @@ def test_determinismo_byte_a_byte_del_informe(
         return arnes.informe(corrida, _criterio(), vocabulario) + cableado.informe_simulacion(motor)
 
     assert informe().encode("utf-8") == informe().encode("utf-8")
+
+
+def test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """ADR-0056 §8, rama 1: una operacion completa con orden STOP de punta a punta, por
+    `arnes.correr` con la spec real (RN-011 y RN-015). La estrategia sigue colocando limites (el
+    selector de A-47 no existe todavia): aqui la accion que coloca se desvia a la orden stop del
+    broker, que es lo unico que esta rama le da. El stops level va en diagnostico (A-27)."""
+    monkeypatch.setattr(Broker, "colocar_limite", Broker.colocar_stop)
+    motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
+    motor.stops_level_diagnostico = 2
+    dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
+    corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
+    informe = arnes.informe(corrida, _criterio(), vocabulario) + cableado.informe_simulacion(motor)
+    broker = motor.brokers[DIA.isoformat()]
+    orden = next(iter(broker.ordenes.values()))
+    assert orden.tipo == TIPO_STOP and orden.precio == ENTRADA
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, OBJETIVO], tb.eventos
+    p = next(iter(broker.posiciones.values()))
+    # el ASK toca la entrada en el tick de los 20 s del minuto que sube: sin hueco, al nivel
+    assert (p.entrada, p.deslizamiento_entrada, p.stop, p.objetivo) == (
+        ENTRADA,
+        0,
+        ENTRADA - 16,
+        ENTRADA + 60,
+    )
+    assert p.abierta_ms == (MINUTO_ZONA + 3) * MS_POR_MINUTO + 20_000
+    assert (p.motivo_cierre, p.precio_cierre) == (OBJETIVO, ENTRADA + 60)
+    assert corrida.dias and informe
+    assert motor.cuenta is not None and motor.cuenta.saldo > motor.reglas_fase.capital_inicial
+
+
+def test_sin_stops_level_la_orden_stop_no_se_coloca_y_lo_dice(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(Broker, "colocar_limite", Broker.colocar_stop)
+    motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
+    with pytest.raises(BrokerError, match="A-27"):
+        motor.correr_dia(_dia())
 
 
 def test_los_ticks_son_obligatorios_y_la_depuracion_lo_marca(

@@ -105,6 +105,14 @@ class PerfilCuenta:
     def lotes(self, nombre: str) -> Decimal:
         return self._leer(nombre, self.registro.lotes)
 
+    def puntos(self, nombre: str) -> int:
+        return self._leer(nombre, self.registro.puntos)
+
+    def puntos_o_nada(self, nombre: str) -> int | None:
+        """Unos puntos que la fuente puede no dar todavia (UNKNOWN): None en vez de error, para
+        que quien lo consume decida si puede correr sin el (el stops level, ADR-0057)."""
+        return None if nombre in self.sin_valor() else self.puntos(nombre)
+
     def _leer[T](self, nombre: str, accesor: Callable[[str], T]) -> T:
         try:
             return accesor(nombre)
