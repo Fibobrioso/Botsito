@@ -12,6 +12,15 @@ phase: post-F14 (rama `trabajo/preparar-a47`)
 > pieza nueva se pueda construir va marcado **PROVISIONAL**, como en ADR-0053, y se revisa en la
 > rama de código que lo toque. **Nada se resuelve ni se fija aquí**: A-47, A-18, A-21, A-29, A-46,
 > A-48 y A-49 siguen ABIERTAS y ningún parámetro cambia de valor.
+>
+> **Enmienda (2026-09-28, ADR-0058, decisión 2; rama `trabajo/selector-orden-stop`).** Lo que §1 y
+> la fila 2 de §8 decían de `stop_en_ruptura` -NO_IMPLEMENTADA y DESCONOCIDO hasta que existan las
+> piezas 4 a 7- queda enmendado de forma **PROVISIONAL**: en la rama 2, con `stop_en_ruptura`, la
+> orden STOP se coloca en el **mismo instante y al mismo precio que la límite** (el cierre del
+> breaker, el 0 de la caja), con el mismo stop, objetivo y lote, para poder medirla; el instante
+> propio de la stop, el posible punto de breaker de §7, sigue siendo la rama 3. El consultor lo pidió
+> y lo revisó. El resto de este ADR no cambia; la medida está en
+> `docs/validation/SELECTOR-ORDEN-STOP.md`.
 
 ## Decision
 
