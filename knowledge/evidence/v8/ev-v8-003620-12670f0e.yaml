@@ -1,0 +1,23 @@
+id: ev-v8-003620-12670f0e
+video_id: v8
+t0: 0:36:20
+t1: 0:36:21
+modalidad: pantalla
+tipo: EXAMPLE_TRADE
+cita_literal: 'FX Replay, EURUSD 1 min, menu contextual del grafico: ''Buy 1 OANDA:EURUSD @ 1.15773 limit''
+  / ''Sell 1 OANDA:EURUSD @ 1.15773 stop'' (fila resaltada bajo el cursor) / ''Go To 2026-08-18 12:25'';
+  reloj 11:59:59 UTC+2'
+afirmacion: en pantalla, al mismo precio 1.15773 el menu ofrece una orden limit y una stop, y el cursor
+  esta sobre la de tipo stop
+tema: entrada.tipo_orden
+confianza: media
+extractor: llm
+revisado_por: consultor, orden del 2026-09-27 (trabajo/sesion-02) · fotograma visto por la sesion, sin
+  revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v8-ee53cbde/2180000
+valor: stop
+notas: 'lo que se ve, no lo que se oye. El fotograma 002205000 (12:08:59 UTC+2) muestra despues ''Position
+  Updated: Stop loss moved to 1.15773'' con una posicion abierta en ese precio. docs/validation/SESION-02-VIDEO-V8.md,
+  operacion n.o 17'
