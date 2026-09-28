@@ -188,6 +188,28 @@ del vídeo es la hora de la tabla de §3.2 (estimada donde se dice) en UTC+2; el
 | solo en el vídeo | 17 |
 | solo en el backtest | 7 |
 
+> **CORRECCIÓN del 2026-09-27 (rama `trabajo/orden-stop-o-limite`). La operación n.º 23 pasa a
+> DUDOSA.** El trader dice de ella «ya no se toma porque quedó un par de 10 minutos» (1:06:26)
+> y la abre solo para simular qué pasaría. Este informe la contó como operación; el de v8 y la
+> decisión (a) de su §11 fijan el criterio contrario: **las que el trader dice que no se toman
+> quedan fuera de la métrica principal de ADR-0043 y se reportan aparte, como sensibilidad**,
+> porque pesa más la palabra del trader que lo que hace en pantalla al simular. Con ese
+> criterio, los recuentos de esta sección quedan así (la n.º 23 no tenía pareja, así que las
+> parejas y el «solo en el backtest» no se mueven):
+>
+> | | con la n.º 23 (cuerpo de arriba) | sin la n.º 23 (criterio de §11 de v8) |
+> |---|---|---|
+> | operaciones del vídeo | 25 | 24 (y 1 DUDOSA aparte) |
+> | filas del backtest original en esos 7 días | 15 | 15 |
+> | parejas | 8 | 8 |
+> | solo en el vídeo | 17 | 16 |
+> | solo en el backtest | 7 | 7 |
+>
+> En el recuento conjunto v7 + v8 de `SESION-02-VIDEO-V8.md` §4, «solo en el vídeo (no
+> dudosas)» pasa de 30 a 29 y las dudosas de 3 a 4; el recuento de etiquetas de §0.3 no se
+> rehace en este recuadro. La tabla de §3.2 no se reescribe: su fila n.º 23 ya dice que
+> el trader la declara no tomada.
+
 | día | backtest original (UTC / UTC+2, dir., entrada, stop) | vídeo (UTC+2, dir., entrada, stop, n.º) | resultado |
 |---|---|---|---|
 | 08-03 | — | 07:48, venta, 1.15358, 1.15368, n.º 1 | solo en el vídeo |
