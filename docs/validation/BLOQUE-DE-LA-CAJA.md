@@ -230,7 +230,131 @@ liquidez de M15 que calcula el productor (A-35 en diagnóstico, `cierre_vela_con
 anterior a esa toma (v7-1), dos se colocan en el mismo minuto (v7-2 y v7-15) y nueve después. Eso
 dice que la toma del productor y la del trader no son la misma, no qué toma usa el trader.
 
+## 3. Fase 3 · Qué regla da el mismo 0 y el mismo 1
+
+Una regla **acierta** una caja cuando da el 0 y el 1 del trader a ≤ τ puntos los dos. Las velas son
+de Dukascopy (BID, UTC) y los niveles del trader se leyeron en OANDA (reloj UTC+2): en v1 y v2 se
+cruzan tal cual, con el desfase de 1–2 puntos de A-16 dentro de la tolerancia; en v3 se restan los
++2 medidos en §2.3. Las lecturas «a» y «b» del productor (las dos de A-21) dan la misma zona en todas
+las cajas, así que van en una sola fila.
+
+### 3.1 Recuento sobre las 12 cajas
+
+| regla | v1: a 1 / 2 / 3 | v2: a 1 / 2 / 3 | v3: a 1 / 2 / 3 | v3: solo el 0 a 2 | v3: solo el 1 a 2 |
+|---|---|---|---|---|---|
+| R1 · última vela contraria | 0 / 1 / 4 | 1 / 3 / 7 | 2 / **5** / 6 | 5 | 9 |
+| R2 · R1 y la siguiente | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 | 1 |
+| R3 · última envolvente contraria | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 1 | 0 | 1 |
+| R4 · tramo de contrarias seguidas | 0 / 1 / 2 | 2 / 3 / 5 | 2 / **5** / 5 | 5 | 9 |
+| R5 · último pivote BAJO de M1 | 1 / 1 / 1 | 2 / 2 / 2 | 1 / 2 / 2 | 3 | 2 |
+| R6 · pivote y máxima hasta T | 1 / 1 / 1 | 3 / 4 / 4 | 2 / 3 / 4 | 3 | 9 |
+| productor en T (a y b) | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 1 | 0 |
+
+**Con el criterio tal como se escribió (v1), ninguna regla explica más de una caja de 12 a 2 puntos.**
+Las cinco de R1 y de R4 aparecen solo con las dos notas de §1.5, que son posteriores a ver v1. La
+sensibilidad tampoco es monótona entre versiones: R1 a 3 puntos pasa de 7 en v2 a 6 en v3.
+
+### 3.2 Caja a caja (v3, τ = 2)
+
+Cada celda es «regla − trader» en el 0 / en el 1, en puntos. **Negrita**: acierta. «—»: la regla no
+da caja.
+
+| caja | R1 | R2 | R3 | R4 | R5 | R6 | productor |
+|---|---|---|---|---|---|---|---|
+| v7-1 | **+2 / 0** | — | −24 / −28 | **−1 / 0** | +1 / −4 | **+1 / 0** | sin zona: aún no hay toma de M15 |
+| v7-2 | +13 / +3 | — | +15 / 0 | +13 / +3 | +18 / +3 | +18 / +3 | sin zona: toma sin esquema antes de T |
+| v7-3 | +7 / +1 | — | +6 / −4 | +6 / +1 | +6 / −10 | +6 / +1 | +1 / −10 |
+| v7-4 | +3 / −1 | — | −62 / −52 | −23 / −1 | −26 / −27 | −26 / −1 | +59 / +57 |
+| v7-5 | +4 / −1 | −4 / −1 | −44 / −44 | −33 / 0 | −31 / −33 | −31 / 0 | +91 / +89 |
+| v7-7 | **+2 / −1** | — | −56 / −55 | **+2 / −1** | −5 / −6 | −5 / 0 | +109 / +111 |
+| v7-9 | **+2 / +1** | — | −19 / −18 | **+2 / +1** | **+1 / +1** | **+1 / +1** | +27 / +27 |
+| v7-10 | −15 / −41 | — | −15 / −41 | −15 / −41 | −13 / −41 | −13 / −41 | −42 / −56 |
+| v7-11 | +12 / +1 | — | +3 / −6 | **+2 / +1** | +3 / −6 | +3 / +1 | −97 / −94 |
+| v7-12 | −24 / −44 | — | +13 / −30 | −24 / −44 | −20 / −62 | −20 / −44 | −87 / −118 |
+| v7-15 | **0 / +1** | — | −5 / −28 | **0 / +1** | **+2 / +1** | **+2 / +1** | sin zona: toma sin esquema antes de T |
+| v8-1 | **+1 / −1** | — | −3 / −3 | −13 / −1 | −10 / −10 | −10 / −1 | −3 / −4 |
+
+R1 y R4 aciertan las mismas cuatro (v7-1, 7, 9 y 15) y **se separan en dos**: en v7-11 el 0 del
+trader es la mínima del tramo entero de velas verdes (R4) y no la de la última (R1, +12); en v8-1 es
+al revés, la mínima de la última verde (R1) y no la del tramo (R4, −13).
+
+### 3.3 Lo que ninguna regla explica
+
+A 2 puntos en v3 quedan **seis cajas sin regla**: v7-2, 3, 4, 5, 10 y 12. A 3 puntos entra v7-4 (R1,
++3 / −1) y quedan cinco.
+
+- **v7-10 y v7-12: la medida no las puede juzgar.** En sus fotogramas la posición ya está abierta, así
+  que T no es la hora de colocación sino la del primer fotograma citado con la caja. La ventana de las
+  reglas acaba después de la colocación verdadera, y la última vela contraria ya es otra. Todas fallan
+  por 13 a 62 puntos.
+- **v7-2: la orden va en el 0,5 de la caja**, no en el 0. Todas las reglas dan el 1 a ≤ 3 puntos y el 0
+  entre 13 y 18 puntos por encima: la caja del trader mide 24 puntos y la de R1 14.
+- **v7-3: el 0 del productor y el 1 de las reglas.** R1, R4 y R6 dan el 1 a +1 y fallan el 0 por 6–7;
+  el productor da el 0 a +1 y falla el 1 por 10. La orden va 2 puntos por debajo del 0.
+- **v7-5: el 0 cae entre dos reglas.** R1 lo da a +4 y R2 a −4, las dos con el 1 a −1.
+
+De las diez cajas en las que T sí es la colocación, R1 o R4 explican seis a 2 puntos y siete a 3.
+
+### 3.4 Frente a lo que dibuja el productor en ese instante
+
+**El productor no da la caja del trader en ninguna de las 12**, ni a 3 puntos. Solo da el 0 de v7-3
+(+1). En tres no dibuja nada: en v7-1 aún no hay toma de M15, y en v7-2 y v7-15 la toma es de ese
+mismo minuto y no hay esquema antes de T. En el resto **la zona del productor no se mueve en todo el
+día** (día 3: 1.15363 / 1.15377 para cinco cajas; día 4: 1.15085 / 1.15114 para tres), porque sale de
+la primera toma del día; **el trader traza una caja nueva en cada operación**, pegada al precio del
+momento. La más cercana es v8-1 (−3 / −4).
+
+No se elige ganadora.
+
+## 4. Lo que la medida sostiene, lo que no, y las preguntas del martes
+
+### 4.1 Lo que sostiene
+
+- **El 1 es casi siempre la máxima de la última vela alcista.** En v3, R1, R4 y R6 dan el 1 a
+  ≤ 2 puntos en 9 de 12, y en 10 de 12 lo da la vela en curso en T o la inmediatamente anterior (§2.4).
+- **El 0 es donde las reglas se separan.** R1 y R4 lo dan en 5 de 12, y se contradicen en v7-11 y v8-1.
+- **R2, R3 y R5 no describen lo que hace el trader** en estas cajas: aciertan como mucho dos.
+- **La zona del productor en T no coincide con ninguna caja** y no sigue al precio durante el día.
+- **La orden va en el 0 en 10 de 12, y el stop va en el 0,8 en seis y en el 1 en otras seis** (§2.2).
+
+### 4.2 Lo que no sostiene
+
+- **Ninguna regla.** Son 12 cajas, todas ventas, de cuatro días, y once del mismo video. Nada de esto
+  dice nada de las compras, ni de las operaciones de v7 desde la n.º 16 y de v8, donde el trader no
+  dibuja caja.
+- **Las cifras altas dependen de dos correcciones posteriores.** Con el criterio al pie de la letra
+  (v1) ninguna regla pasa de una caja. La vela en curso (v2) y el desfase de +2 (v3) salen de los mismos
+  fotogramas que se miden; están declarados, pero no son un criterio escrito antes.
+- **La tolerancia es del tamaño del ruido.** La lectura en pantalla es de ±1–2 puntos y el desfase
+  entre proveedores de 1–2. A 1 punto ninguna regla pasa de tres cajas en ninguna versión.
+- **Tres T no son la colocación de la caja.** En v7-10 y v7-12 la posición ya estaba abierta; en v8-1
+  la caja se dibujó después de la orden, aunque ahí T sí es la colocación de la orden (08:35:59).
+- **Nada dice que el trader elija el bloque en M1.** Solo que, en M1, sus niveles caen donde caen.
+
+### 4.3 Preguntas para la sesión del martes
+
+Cerradas, sobre días de agosto (todos de desarrollo), sin el resultado de la operación. **Choque que
+hay que resolver antes**: el brief pide enseñar el gráfico cortado antes de la entrada, y la regla 2
+de `docs/runbooks/SESION-DE-PREGUNTAS.md` dice «No se enseña ningún gráfico de ningún día». Por eso
+cada pregunta está escrita para hacerse con palabras; enseñar el gráfico exige que el consultor cambie
+antes esa regla, y no se cambia en esta rama.
+
+1. **«Cuando antes de la caída hay varias velas verdes seguidas, ¿el bloque es solo la última verde, o
+   todas las verdes seguidas?»** (a) solo la última, (b) todas las seguidas, (c) depende, y de qué.
+   Casos: 4 de agosto, venta colocada a las 13:32 (reloj del gráfico), donde el 0 es la mínima de todo
+   el tramo verde; 12 de agosto, venta colocada a las 08:35, donde el 0 es la mínima de la última
+   verde. Es la diferencia entre R1 y R4 (§3.2).
+2. **«¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?»**
+   (a) cerrada, (b) formándose, (c) las dos. Casos: 3 de agosto a las 07:47 y a las 13:11, donde el 1
+   de la caja es la máxima de la vela del minuto en curso, a un segundo de cerrar. Decide si el motor
+   puede quedarse con velas cerradas (§1.5, v2).
+3. **«¿El stop va en el 0,8 de la caja o en el 1?»** (a) siempre en el 0,8, (b) siempre en el 1,
+   (c) primero en el 1 y luego se recalcula al 0,8, (d) depende, y de qué. Casos: 3 de agosto, venta de
+   las 09:33 con el stop en el 1, y venta de las 11:46 con el stop en el 0,8. Toca A-18; no se resuelve
+   aquí.
+
 ## 5. Estado
 
-Criterio de §1 commiteado antes de medir (4c9c0cd). Fase 2 en este commit; las fases 3 y 4 van en
-el siguiente.
+Fases 1 a 4 completas. Criterio commiteado antes de medir (4c9c0cd); cajas y medida, en los commits
+siguientes. No se ha cambiado el motor, el productor, RN-011 ni ningún parámetro, regla, ambigüedad,
+evidencia o feedback. **Rama lista para revisión, NO cerrada.**
