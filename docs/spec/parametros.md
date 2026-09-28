@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.3.1` · hash `6a27c44e69a1…`
+`spec_version 13.4.0` · hash `66243cf1302a…`
 
-83 en total: 66 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+84 en total: 66 con valor y 18 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -81,6 +81,7 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 
 - **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 - **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
+- **`entrada_tipo_orden`** (estrategia) — si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47, ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1). Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
 - **`liquidez_m15_pivote_formado`** (estrategia) — cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
 - **`perdida_trader_alcance`** (estrategia) — si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
@@ -222,6 +223,12 @@ Opciones: `fondeada`, `demo`, `propia`.
 dias en los que el bot busca entradas. Era `texto` con el valor "lunes a viernes" y RN-001 lo usa como condicion EJECUTABLE, asi que el motor habria tenido que parsear espanol
 
 Opciones: `lunes_a_viernes`, `todos_los_dias`.
+
+### `entrada_tipo_orden`
+
+si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47, ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1). Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
+
+Opciones: `stop_en_ruptura`, `limite_en_retroceso`.
 
 ### `filtro_noticias`
 

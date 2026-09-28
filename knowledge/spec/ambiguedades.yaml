@@ -1179,7 +1179,9 @@ ambiguedades:
     # el campo solo admite un tema de _contradicciones.yaml, y los items de lo que dice
     # (entrada.orden_limite.*, entrada.esquema1_sin_retroceso) y los de lo que hace
     # (entrada.tipo_orden) estan en temas distintos, asi que no hay contradiccion de evidencia.
-    # Sin parametro: el registro no tiene todavia uno de tipo de orden, y no se crea aqui.
+    # Sin parametro hasta el 2026-09-28: desde la rama trabajo/selector-orden-stop (ADR-0056 §1)
+    # la cita el selector `entrada_tipo_orden`, UNKNOWN, con las dos lecturas, `stop_en_ruptura` y
+    # `limite_en_retroceso`; activar A-47 es escribirle la que diga el trader, grabado.
     evidencia:
       - ev-v8-003620-12670f0e
       - ev-v8-003935-0a0b3f8e
@@ -1187,7 +1189,7 @@ ambiguedades:
       - ev-v3-004201-bfeb3734
       - ev-v1-001358-a2b8ec0d
       - ev-v3-002511-b12d67be
-    parametros: []
+    parametros: [entrada_tipo_orden]
     contradiccion: null
     estado: ABIERTA
     decision: null

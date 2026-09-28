@@ -22,6 +22,7 @@ from botsito.config.registro import Registro
 from botsito.domain.valores import CIEN
 from botsito.engine.broker import LLENADA, MANUAL, Broker, BrokerError, Rechazo
 from botsito.engine.cuenta import CuentaViva
+from botsito.engine.entrada import STOP_EN_RUPTURA
 from botsito.engine.interprete import (
     EstadoDia,
     Momento,
@@ -121,10 +122,16 @@ def clasificar_cierre(motivo: str, stop_movido: bool, pnl_bruto: Decimal) -> str
 
 
 def primitivas_cableadas(
-    registro: Registro, ctx: ContextoDia, limpia: str | None = None
+    registro: Registro,
+    ctx: ContextoDia,
+    limpia: str | None = None,
+    tipo_orden: str | None = None,
 ) -> Primitivas:
     """Las primitivas de ADR-0048 mas las del broker, la cuenta y las acciones de la orden. Con
-    `limpia` (A-21), la geometria de la zona de entrada produce las zonas que las acciones leen."""
+    `limpia` (A-21), la geometria de la zona de entrada produce las zonas que las acciones leen.
+    Con `tipo_orden` (A-47, ADR-0056 §1) `stop_en_ruptura`, la entrada va al broker como orden
+    STOP, al mismo precio y en el mismo instante que la limite (ADR-0058, PROVISIONAL); sin el, o
+    con `limite_en_retroceso`, como LIMITE, que es lo de siempre."""
     base = primitivas_escritas(registro, None, limpia)
 
     # ------------------------------------------------------------------ fuente broker
@@ -375,9 +382,10 @@ def primitivas_cableadas(
         if o.stop is None or o.objetivo is None or lote is None or lote <= 0:
             raise CableadoError("colocar_orden_limite: la orden no lleva stop, objetivo y lote")
         id = f"o{len(ctx.broker.ordenes) + 1}"
-        r = ctx.broker.colocar_limite(
-            id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms
+        colocar = (
+            ctx.broker.colocar_stop if tipo_orden == STOP_EN_RUPTURA else ctx.broker.colocar_limite
         )
+        r = colocar(id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
         ctx.por_de_orden[id] = z.por
         if isinstance(r, Rechazo):
             ctx.eventos.append(EventoBroker(r.instante_ms, "rechazo", r.orden_id, z.por))
