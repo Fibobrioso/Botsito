@@ -1,0 +1,22 @@
+id: ev-v7-001457-1fe7fdfe
+video_id: v7
+t0: '0:14:57.5'
+t1: 0:15:15
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: un punto de breaker, mejor dicho. No una posible entrada, sino un punto de breaker. Que
+  si lo rompe el precio, pues se opera. Vale, lo activo.
+afirmacion: 'marca un punto de breaker que, si el precio lo rompe, se opera, y lo activa: en pantalla
+  queda una Sell stop en 1.15274 puesta en ese punto con el precio por encima (1.15288), antes de la ruptura'
+tema: entrada.punto_de_breaker.se_activa_si_rompe
+confianza: media
+extractor: llm
+revisado_por: consultor, decisiones del 2026-09-28 (trabajo/preparar-a47) · cruda leida y fotogramas vistos
+  por la sesion, sin revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v7-40427216/905000
+notas: 'fotograma 000905000 (reloj 11:43:59 UTC+2): etiqueta Sell stop 1.15274 con su TP, precio 1.15288.
+  La operacion es la n.o 5 de docs/validation/SESION-02-VIDEO.md. Lo que dice y lo que se ve: la orden
+  nace en el punto, antes de que el precio lo rompa; no dice como elige el punto'
+transcripcion: tr-v7-large-v3-int8-float16-87297562

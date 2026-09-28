@@ -1,0 +1,26 @@
+id: ev-v7-002201-2b2f20aa
+video_id: v7
+t0: '0:22:01.3'
+t1: 0:22:45
+modalidad: ambas
+tipo: MANAGEMENT
+cita_literal: todavía no existe la posibilidad de nosotros poder marcar este punto como un posible breaker
+  para una posible entrada sino nuestro punto estaría aquí solo que nosotros luego pues vamos actualizando
+  [...] apenas con una mecha aquí y ya podríamos validar ese punto como un posible breaker en este caso
+  lo hace ahí actualizamos nuestro posible breaker y pues lo fijamos
+afirmacion: el posible breaker es un punto que se va actualizando conforme se desarrolla el precio, y
+  cuando se valida se fija; en pantalla la Sell stop pasa de 1.15293 a 1.15320 en el mismo minuto del
+  grafico
+tema: entrada.punto_de_breaker.se_actualiza
+confianza: media
+extractor: llm
+revisado_por: consultor, decisiones del 2026-09-28 (trabajo/preparar-a47) · cruda leida y fotogramas vistos
+  por la sesion, sin revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v7-40427216/1353000
+- fr-v7-40427216/1365000
+notas: 'fotogramas 001353000 (0:22:33, reloj 14:02:59: Sell stop 1.15293 con el cursor sobre su etiqueta)
+  y 001365000 (0:22:45, mismo reloj: Sell stop 1.15320, ya citado en SESION-02-VIDEO.md, operacion n.o
+  8). Se validaria ''apenas con una mecha'': el criterio de validacion no se define aqui'
+transcripcion: tr-v7-large-v3-int8-float16-87297562
