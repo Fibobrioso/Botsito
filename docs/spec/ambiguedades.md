@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (26)
+## ABIERTA (27)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -137,6 +137,10 @@ Afecta a: `liquidez_m15_criterio_toma`.
 ### A-46 · si una toma de liquidez de una sesion anterior del mismo dia sigue valiendo en la siguiente · pregunta
 
 Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en la de 07 a 11, la que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
+
+### A-47 · el tipo de orden de entrada, stop o límite · **BLOQUEANTE** · pregunta
+
+Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él?
 
 ## DECIDIDA (6)
 

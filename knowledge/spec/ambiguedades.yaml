@@ -1148,3 +1148,36 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-47
+    titulo: el tipo de orden de entrada, stop o límite
+    pregunta: >-
+      Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto
+      o cuando el precio vuelve a él?
+    resuelve_en: [F20, F22]
+    # NACE el 2026-09-27 (rama trabajo/sesion-02, decision del consultor). La spec asume orden
+    # limite (RN-008, RN-011; A-29, A-36 y A-38 la nombran en el titulo), y el trader lo DICE asi en
+    # el corpus (los tres items de A-29). Pero lo que HACE en pantalla en v7 y v8 son ordenes STOP:
+    # 38 stop frente a 1 limite entre las legibles (docs/validation/SESION-02-VIDEO-V8.md §4). En el
+    # fotograma 002180000 de v8 el cursor esta sobre la opcion stop del menu, con la limit al lado;
+    # en 002375000 el menu ofrece las dos y el fotograma no muestra cual elige. Ya estaba senalado en
+    # SESION-02-VIDEO.md, riesgo 4, sin registrar. Puede ser vocabulario de FX Replay o una
+    # diferencia real: por eso se pregunta. BLOQUEANTE porque decide el precio y el instante de
+    # entrada de RN-011 (una stop entra al romper; una limite, al volver). `contradiccion` va null:
+    # el campo solo admite un tema de _contradicciones.yaml, y los items de lo que dice
+    # (entrada.orden_limite.*, entrada.esquema1_sin_retroceso) y los de lo que hace
+    # (entrada.tipo_orden) estan en temas distintos, asi que no hay contradiccion de evidencia.
+    # Sin parametro: el registro no tiene todavia uno de tipo de orden, y no se crea aqui.
+    evidencia:
+      - ev-v8-003620-12670f0e
+      - ev-v8-003935-0a0b3f8e
+      - ev-v7-000423-01b2c18a
+      - ev-v3-004201-bfeb3734
+      - ev-v1-001358-a2b8ec0d
+      - ev-v3-002511-b12d67be
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true
