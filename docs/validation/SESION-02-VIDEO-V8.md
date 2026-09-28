@@ -436,3 +436,21 @@ ningún día reservado (medido antes de abrir nada). Nada se usa.
 ## 10. Estado
 
 Rama lista para revisión, NO cerrada.
+
+## 11. Decisiones del consultor (2026-09-27)
+
+Tomadas tras revisar este informe, rama `trabajo/sesion-02`. No cambian ninguna cifra de §3 ni de §4.
+
+a) **Las DUDOSAS n.º 4, 7 y 10 quedan fuera de la métrica principal de ADR-0043** y se reportan
+   aparte, como sensibilidad. La n.º 7 también, aunque sería pareja de la fila del libro de las
+   09:33 del día 13: pesa más la palabra del trader («no se toman») que una coincidencia de hora.
+   Las cifras de §4 no cambian.
+
+b) **Cuando el replay se rebobina, se conservan las dos versiones de la misma hora de mercado**,
+   como ya hace la tabla de §3.2 (n.º 5 y n.º 6).
+
+c) **Las once ventas sin pareja NO se tratan como error de cruce.** El huso (UTC → UTC+2) está
+   confirmado por las dos parejas a 0–1 punto, y el libro tiene ventas propias el día 13. Se leen
+   como una nueva pasada del trader sobre los mismos días. Se anota como **riesgo de fidelidad**: el
+   libro de referencia no es del todo reproducible por el propio trader (0:33:32). No se abre
+   sesión de diagnóstico.
