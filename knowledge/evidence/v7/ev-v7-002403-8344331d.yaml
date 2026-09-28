@@ -1,0 +1,30 @@
+id: ev-v7-002403-8344331d
+video_id: v7
+t0: '0:24:03.8'
+t1: '0:24:38.4'
+modalidad: ambas
+tipo: RULE_STATEMENT
+cita_literal: y aquí los se nos actualizaría aquí porque ya explicaba con anterioridad en otros vídeos
+  que ya es cuando pueden ser velas consecutivas del mismo color sí o sea pero no necesitamos que sea
+  roja para poder decir vale esta zona puede [...] ser un posible breaker y una posible entrada [...]
+  la condición es esta, que la vela siguiente, en este caso esta vela, cubra, o sea, con mecha por debajo
+  a la vela anterior, no importa si es del mismo color.
+afirmacion: 'el punto de posible breaker no exige una vela roja: pueden ser velas consecutivas del mismo
+  color, con la condicion de que la vela siguiente cubra con la mecha por debajo a la anterior; en pantalla
+  el punto y la Sell stop pasan de 1.15322 a 1.15338, la minima de la mecha de una vela verde que cubre
+  a la verde anterior'
+tema: entrada.punto_de_breaker.velas_mismo_color
+confianza: media
+extractor: llm
+revisado_por: consultor, decisiones del 2026-09-28 (trabajo/preparar-a47) · cruda leida y fotogramas vistos
+  por la sesion, sin revision humana del fotograma
+provenance: botsito
+fotogramas:
+- fr-v7-40427216/1445000
+- fr-v7-40427216/1470000
+notas: 'fotogramas 001445000 (0:24:05, reloj 14:09:59: Sell stop 1.15322) y 001470000 (0:24:30, mismo
+  reloj: Sell stop 1.15338; la vela verde de las 14:08 cubre con la mecha la minima de la verde de las
+  14:07). Es una venta, asi que las velas verdes son contrarias a la entrada. Dice que la zona puede ser
+  de varias velas del mismo color bajo esa condicion; NO dice que el bloque sea todo el tramo de contrarias
+  seguidas (la regla R4 de docs/validation/BLOQUE-DE-LA-CAJA.md), ni cual es el 1 de la caja'
+transcripcion: tr-v7-large-v3-int8-float16-87297562

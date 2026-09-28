@@ -46,11 +46,12 @@ REGLAS = (
 # de A-35 el mismo dia (ADR-0049, H2): afecta a RN-004, como A-35. A-44 entra justo despues de A-43
 # el 2026-09-26 (ADR-0053 §9): es el siguiente bloqueo del bot despues de A-35 (RN-020).
 # Orden de cierre de trabajo/preparar-a35-a44 (ADR-0054): A-35, A-45, A-21, A-44, A-43, A-24,
-# A-42, y detras el resto como estaba.
+# A-42, y detras el resto como estaba. A-48 y A-49 (2026-09-28, trabajo/preparar-a47) detras de
+# A-47: las tres son la caja y la orden de la entrada.
 ORDEN_SESION_02: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Lo primero", ("A-35", "A-45", "A-21", "A-44", "A-43", "A-24", "A-42")),
     ("La liquidez de M15", ("A-26", "A-25", "A-32")),
-    ("La orden y el stop", ("A-36", "A-37", "A-29", "A-30", "A-38", "A-47")),
+    ("La orden y el stop", ("A-36", "A-37", "A-29", "A-30", "A-38", "A-47", "A-48", "A-49")),
     ("La gestión de la operación", ("A-18", "A-13", "A-31", "A-40", "A-33")),
     ("Para terminar", ("A-34", "A-41", "A-39")),
 )
