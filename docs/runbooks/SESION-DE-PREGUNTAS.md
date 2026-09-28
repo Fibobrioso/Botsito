@@ -18,10 +18,24 @@ precondición de ceguera.
 1. **Se graba, con permiso del trader, y sin grabación no hay registro.** El permiso se pide al
    empezar y su «sí» queda dentro de la grabación. Lo que no esté grabado no entra como respuesta
    del trader ni cierra ninguna ambigüedad.
-2. **No se enseña ningún gráfico de ningún día.** Ni en pantalla compartida ni en captura. Si el
-   trader quiere enseñar algo sobre un gráfico, se le pide que lo describa con palabras. Una
-   pantalla con un día reservado dentro es una exposición del holdout (ADR-0021), y un gráfico
-   cualquiera puede traerlo sin que se sepa antes.
+2. **Solo se enseñan gráficos de días de CONSTRUCCIÓN** (abril y agosto, comprobados con
+   `casos_reservados`), cortados ANTES de la colocación de la orden, sin la operación, sin el
+   resultado y sin la fecha visible. Nunca un día de medición, holdout o retirado. Primero se
+   hace la pregunta en abstracto y después se enseña el gráfico.
+
+   > **Por qué cambió (decisión del consultor, 2026-09-28, rama `trabajo/bloque-de-la-caja`).**
+   > Hasta ese día decía: «No se enseña ningún gráfico de ningún día. Ni en pantalla compartida
+   > ni en captura. Si el trader quiere enseñar algo sobre un gráfico, se le pide que lo describa
+   > con palabras. Una pantalla con un día reservado dentro es una exposición del holdout
+   > (ADR-0021), y un gráfico cualquiera puede traerlo sin que se sepa antes.» **No salía de
+   > ningún ADR**: se escribió como una de las cuatro reglas del consultor al consolidar este
+   > runbook (`SESION-02-DECISIONES.md` §6), y ADR-0021 solo define qué es abrir y qué es exponer
+   > un día RESERVADO; enseñar un día de construcción no es ninguna de las dos cosas, así que
+   > ADR-0021 lo permite. Se cambia porque preguntar «¿esta caja o esta otra?» exige verlas
+   > (`docs/validation/BLOQUE-DE-LA-CAJA.md` §4.3). El riesgo que cubría la regla anterior, un
+   > gráfico que trae un día reservado sin que se sepa, lo cubren ahora la comprobación de cada
+   > día (paso 6 de «Antes») y que el gráfico lo prepara Aleks, no el trader. Es la regla de la
+   > regla de `CLAUDE.md`: una prohibición que no sale de un ADR se revisa.
 3. **Si el trader empieza a comentar operaciones concretas de septiembre, se reconduce la
    conversación** hacia la pregunta, sin discutir la operación. Septiembre tiene días reservados.
 4. **Las respuestas entran después, y solo por dos vías:** la grabación al corpus y un
@@ -54,7 +68,13 @@ precondición de ceguera.
    se versiona es su fuente (`ambiguedades.yaml`) y su orden (`ORDEN_SESION_02` en el script). La
    hoja rellenada se guarda después en el corpus (paso 2 de «Después»).
 5. **Preparar la grabación:** grabación de pantalla y de audio de la llamada, probada con unos
-   segundos antes de empezar. Sin gráficos abiertos en la pantalla que se graba.
+   segundos antes de empezar. En la pantalla que se graba, ningún gráfico que no sea de los
+   preparados según la regla 2.
+6. **Si se van a enseñar gráficos (regla 2), comprobar cada día antes de prepararlos**, con la
+   misma línea del paso 1 (imprime solo `True` o `False`; `casos_ocultos` son los reservados más
+   los retirados). Tiene que salir `False` en todos, y el día tiene que ser de abril o de agosto.
+   Los gráficos se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada
+   opción) la guarda Aleks y no se enseña.
 
 ## Durante (Aleks)
 

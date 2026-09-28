@@ -7,7 +7,8 @@ decide por él.** Si su respuesta no encaja en ninguna lectura documentada, se P
 
 Antes, lo que no cambia de `SESION-DE-PREGUNTAS.md`: **pedir permiso para grabar** y que el sí
 quede grabado (sin grabación no hay registro, y sin registro no se fija ningún valor); **no mostrar
-ningún gráfico de ningún día**; **reconducir la conversación si salen operaciones concretas de
+más gráficos que los que permite su regla 2** (días de construcción, cortados antes de la orden,
+sin fecha; cambiada el 2026-09-28); **reconducir la conversación si salen operaciones concretas de
 septiembre** (tiene días reservados); y **no abrir el backtest de marzo**, que sigue en el paso 0
 de `ENTRADA-MARZO.md`, con PARADA antes del sorteo mientras A-42 no esté RESUELTA.
 
