@@ -30,6 +30,11 @@ lado del precio». Si entrara con una orden stop en el punto del breaker, eso lo
 5. **Añadido en la revisión del consultor (§7)**: el control positivo sobre la única orden límite
    real salió **AMBIGUO**, así que, por la regla fijada, el 77 de 77 NO queda sostenido por él y la
    rama no se cierra. Los controles sintéticos sí pasan.
+6. **Añadido en la segunda revisión del consultor (§8 y §9)**: ese control quedó como no informativo
+   (la orden se colocó con el precio en el nivel). El que lo sustituye, con llenados límite reales
+   del simulador, da **STOP en 3 de 8 (lectura a) y 4 de 8 (b)**: el método no distingue una límite
+   colocada con el precio ya al otro lado de una stop. **No queda validado.** Ninguna límite en espera
+   sale STOP.
 
 ## 1. El criterio de la Fase 2, escrito antes de medir
 
@@ -314,7 +319,94 @@ La regla era: si el control real sale LÍMITE, el método queda validado; **si s
 
 **La rama no se cierra y aquí se para**, como manda la regla. A-47 sigue ABIERTA.
 
-## 8. Estado
+> **NOTA de la revisión del consultor (2026-09-28). El control de v7 n.º 6 queda como NO
+> INFORMATIVO.** La orden se colocó con el bid a 2 puntos del nivel, dentro de la tolerancia: no hubo
+> retroceso que medir, así que el método no tenía un lado de llegada que leer. Y el fallo relevante
+> habría sido clasificarla STOP, que no ocurrió. La regla «ambiguo → el 77/77 no se sostiene» de
+> §7.3 era, en palabras del consultor, demasiado gruesa, y el error es suyo. El control se sustituye
+> por el de §8. El cuerpo de §7 no se reescribe.
 
-Rama lista para revisión, NO cerrada. El control positivo de §7 salió AMBIGUO: el 77/77 no queda
-sostenido por él, y la rama no se cierra (§7.3).
+## 8. Control con llenados LÍMITE reales del simulador (2026-09-28)
+
+**Qué se hizo.** La corrida que en `PREPARACION-A21.md` §3 dio las 9 operaciones del bot —`botsito
+motor arnes --simular` sobre construcción, con ticks (ADR-0051), en DIAGNÓSTICO: A-35
+`cierre_vela_contraria`, A-44 `sin_tope`, A-21 en cada lectura—, reproducida por
+`control_simulador` del script con las mismas piezas que la CLI (`construir_motor_cableado`,
+`arnes.correr`). De cada posición del bot se comprueba en el bróker, antes de clasificar nada, que
+nace de una orden LÍMITE: su orden existe, la posición es `pos-<orden>`, el historial es `colocada >
+llenada`, el precio de la orden es la entrada de la posición y el llenado es con ticks. El bróker
+simulado solo coloca órdenes límite (`primitivas_broker.colocar_limite` es la única vía del bot), y
+las llena cuando el bid (venta) o el ask (compra) pasa **estrictamente** más allá del precio
+(`engine/llenado.py`, `limite_llena_al_toque: false`). A cada entrada se le aplica la Fase 2 con el
+MISMO criterio de §1, sin tocar nada; el instante es el del tick que llena.
+
+**Resultado.** Las dos lecturas dan 9 posiciones, como en `PREPARACION-A21.md`; 8 son comunes y
+cada lectura tiene una propia. **Una se excluye en las dos**: la venta del 23 de abril a las 05:01
+UTC se llenó con el respaldo M1, porque la hora `2026-04-23T05Z` no tiene ticks (es la misma hora
+perdida de §2). Las otras 8 de cada lectura son llenados de orden límite con ticks, comprobados en
+la traza.
+
+| día | llenado UTC | dir. | entrada | orden: colocada (UTC) | precio al colocar − L (puntos) | clase de la orden al colocarla | Fase 2 | lecturas |
+|---|---|---|---|---|---|---|---|---|
+| 2026-04-02 | 12:18:06 | venta | 1.15242 | 12:17:59 | −11 | en espera (el bid por debajo) | **LÍMITE** | a y b |
+| 2026-04-08 | 08:27:46 | compra | 1.16823 | 07:17:59 | +41 | en espera (el ask por encima) | **LÍMITE** | a y b |
+| 2026-04-10 | 09:33:15 | venta | 1.16974 | 09:32:59 | −11 | en espera | ambiguo | a y b |
+| 2026-04-23 | 05:01:00 | venta | 1.16994 | — | — | excluida: llenado con respaldo M1 | — | a y b |
+| 2026-04-27 | 05:01:00 | compra | 1.17268 | 05:00:59 | −5 | **cruzada**: el ask ya estaba por debajo de la compra límite | ambiguo | a y b |
+| 2026-04-29 | 07:16:02 | venta | 1.17056 | 07:15:59 | −2 | en el nivel (dentro de la tolerancia) | **STOP** | a y b |
+| 2026-08-03 | 06:01:00 | venta | 1.15363 | 06:00:59 | +14 | **cruzada**: el bid ya estaba por encima de la venta límite | **STOP** | a y b |
+| 2026-08-04 | 07:16:00 | venta | 1.15085 | 07:15:59 | +28 | **cruzada** | **STOP** | a y b |
+| 2026-08-11 | 12:32:35 | venta | 1.15405 | 11:16:59 | 0 | en el nivel | **LÍMITE** | solo a |
+| 2026-08-20 | 11:01:04 | compra | 1.16981 | 11:00:59 | −16 | **cruzada** | **STOP** | solo b |
+
+| lectura | llenados límite con ticks | LÍMITE | ambiguo | STOP |
+|---|---|---|---|---|
+| (a) `solo_una_zona_de_control` | 8 | 3 | 2 | **3** |
+| (b) `sin_mecha_mas_alla_del_extremo` | 8 | 2 | 2 | **4** |
+| las 9 distintas de las dos lecturas | 9 | 3 | 2 | **4** |
+
+La columna «precio al colocar − L» se calculó en la misma corrida, antes de mirar la clasificación,
+y da la clave del resultado. Con la misma tolerancia de 2 puntos, las 9 órdenes distintas con ticks
+son de tres clases:
+
+| clase de la orden al colocarla | órdenes | LÍMITE | ambiguo | STOP |
+|---|---|---|---|---|
+| **en espera**: el precio al otro lado del nivel, la orden espera a que llegue | 3 | 2 | 1 | **0** |
+| **en el nivel**: el precio a ≤ 2 puntos | 2 | 1 | 0 | 1 |
+| **cruzada**: el precio ya había pasado el nivel; el bróker la llena en el siguiente tick, 1–5 s después | 4 | 0 | 1 | **3** |
+
+**Lo que eso dice, descriptivo.** El método lee DESDE QUÉ LADO LLEGA EL PRECIO, y con eso distingue
+una límite que espera (ninguna sale STOP, 2 de 3 salen LÍMITE) de una stop. Pero una límite
+colocada con el precio ya al otro lado se llena como una orden a mercado en cuanto se coloca, con el
+precio llegando del lado de la ruptura, y el método la lee STOP: **por el lado de llegada, una límite
+cruzada y una stop son indistinguibles**. Las 4 STOP distintas son 3 cruzadas y 1 colocada en el
+nivel (la otra colocada en el nivel salió LÍMITE); **ninguna es una límite en espera**.
+
+## 9. Decisión, según la regla que fijó el consultor
+
+La regla era: si todas salen LÍMITE (con algún ambiguo explicado), el método queda validado; **si
+alguna sale STOP, el método no distingue, no se cierra y se para.** Salen STOP: 3 de 8 en (a), 4 de 8
+en (b). Por tanto:
+
+- **El método NO queda validado.** Tal como está escrito en §1, no distingue una orden límite de una
+  stop cuando la límite se coloca con el precio en el nivel o ya al otro lado.
+- **El 77 de 77 de §2 se lee, con esto, más estrecho**: las 77 entradas del trader llegan desde el
+  lado de la ruptura, y eso es compatible con órdenes stop Y con órdenes límite colocadas en el nivel
+  o cruzadas. Lo que sí sigue excluido, porque ninguna límite en espera ha salido STOP, es que el
+  trader entre con límites colocadas de antemano esperando un retroceso (la forma de RN-011). Eso
+  es una lectura del consultor, no una conclusión del método: el método no ha quedado validado.
+- **No se añade al §0** que el 77/77 se sostenga, ni la coincidencia con lo que el trader dijo en la
+  llamada: esa parte del brief solo aplicaba si el método quedaba validado.
+- **La rama no se cierra y aquí se para.** A-47 sigue ABIERTA.
+
+**Qué haría falta para separar las dos lecturas**: el instante y el precio de COLOCACIÓN de cada
+orden del trader, no solo el llenado. Con él, una stop y una límite cruzada se distinguen, porque la
+stop espera al otro lado del precio y la límite cruzada no espera nada. El libro de FX Replay no trae
+el instante de colocación; los vídeos v7 y v8 sí lo enseñan (la etiqueta de la orden aparece antes
+del llenado), y es lo que A-47 le pregunta al trader el martes.
+
+## 10. Estado
+
+Rama lista para revisión, NO cerrada. El control de §7 quedó como no informativo (nota del
+consultor); el que lo sustituye, con llenados límite del simulador (§8), da STOP en 3 de 8 y 4 de 8:
+el método no queda validado y la rama no se cierra (§9).

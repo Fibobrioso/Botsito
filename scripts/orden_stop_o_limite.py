@@ -387,6 +387,103 @@ def control_sell_limit(ticks: Callable[[str], list[Tick]], tol: int) -> list[str
     return out + [""]
 
 
+def control_simulador(
+    criterio: Criterio,
+    ticks: Callable[[str], list[Tick]],
+    m1: dict[str, list[Vela]],
+    tol: int,
+) -> list[str]:
+    """Control positivo con llenados LIMITE reales del simulador (revision del consultor,
+    2026-09-27): la corrida de PREPARACION-A21 §3 -`motor arnes --simular` en DIAGNOSTICO, A-35
+    `cierre_vela_contraria`, A-44 `sin_tope`, A-21 cada lectura-, con ticks. De cada posicion del
+    bot se comprueba en el broker que nace de una orden LIMITE colocada y llenada (su historial), y
+    a su entrada se le aplica la Fase 2 con el MISMO criterio. Si el metodo funciona, LIMITE."""
+    from botsito.engine import cableado, diagnostico, tope_trader, zonas
+    from botsito.engine.broker import COLOCADA, LLENADA
+
+    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+    config = cargar_config(RAIZ / "knowledge" / "cases" / "kit" / "config.yaml")
+    spec = RAIZ / "knowledge" / "spec" / "strategy_spec.yaml"
+    vocabulario = cargar_vocabulario(spec)
+    reglas = reglas_ejecutables(cargar_reglas(spec))
+    meses = list(criterio.construccion)
+    dias = arnes.dias_de_construccion(RAIZ, criterio, meses)
+    carpeta = carpeta_datos(RAIZ)
+    out = [
+        "# CONTROL CON LLENADOS LIMITE DEL SIMULADOR (motor arnes --simular, DIAGNOSTICO: A-35 "
+        "cierre_vela_contraria, A-44 sin_tope; con ticks)",
+    ]
+    for limpia in LECTURAS_LIMPIA:
+        diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, limpia)
+        lectura = diagnostico.lectura_pivote(registro, diag)
+        perfil = cableado.perfil_del_repo(RAIZ, None)
+        tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)
+        lim = zonas.lectura_limpia(registro, diag.a21)
+        mercado = arnes.dias_de_mercado(
+            RAIZ, carpeta, config, registro, dias, registro.texto("huso_operativa"), lectura
+        )
+        motor = cableado.construir_motor_cableado(
+            RAIZ, carpeta, criterio, config, registro, vocabulario, reglas, dias, perfil, None,
+            False, tope, lim,
+        )  # fmt: skip
+        arnes.correr(cableado.NOMBRE_MOTOR, tuple(sorted(set(meses))), dias, mercado, motor)
+        filas: list[str] = []
+        clasif: Counter[str] = Counter()
+        excluidas = 0
+        for dia in sorted(motor.brokers):
+            b = motor.brokers[dia]
+            for pid, pos in sorted(b.posiciones.items(), key=lambda kv: kv[1].abierta_ms):
+                orden = b.ordenes.get(pos.orden_id)
+                estados = [e for _, e in orden.historial] if orden is not None else []
+                es_limite = (
+                    orden is not None
+                    and pid == f"pos-{orden.id}"
+                    and orden.estado == LLENADA
+                    and COLOCADA in estados
+                    and LLENADA in estados
+                    and orden.precio == pos.entrada
+                    and pos.fuente_apertura == "ticks"
+                )
+                instante = datetime.fromtimestamp(pos.abierta_ms / 1000, UTC)
+                hora = instante.strftime("%H:%M:%S.%f")[:-3]
+                if not es_limite:
+                    excluidas += 1
+                    filas.append(
+                        f"| {dia} | {hora} | {pos.lado} | {pos.entrada} | EXCLUIDA: no es un "
+                        f"llenado de orden limite con ticks ({pos.fuente_apertura}, {estados}) | "
+                        "- | - | - |"
+                    )
+                    continue
+                assert orden is not None
+                entrada = str(Decimal(pos.entrada) / ESCALA)
+                op = Op(dia, "-", pos.lado, entrada, instante)
+                fase2([op], ticks, m1, tol)
+                clasif[op.tipo] += 1
+                previos = [
+                    bid_ask(k, pos.lado) for k in ticks(dia) if k.instante <= orden.colocada_ms
+                ]
+                al_colocar = previos[-1] - pos.entrada if previos else None
+                colocada = datetime.fromtimestamp(orden.colocada_ms / 1000, UTC).strftime(
+                    "%H:%M:%S"
+                )
+                filas.append(
+                    f"| {dia} | {hora} | {pos.lado} | {entrada} | orden {orden.id}: colocada "
+                    f"{colocada}, {' > '.join(estados)} | "
+                    f"{al_colocar if al_colocar is not None else '-'} | {op.tipo} | "
+                    f"{op.lado} · {op.fuente} · {op.ventana} |"
+                )
+        out += [
+            "",
+            f"## A-21 = {limpia}: posiciones del bot {len(filas)}; excluidas {excluidas}; "
+            f"clasificacion {dict(clasif)}",
+            "| dia | llenado UTC | dir. | entrada | traza del broker | precio al colocar - L "
+            "(bid venta / ask compra, puntos) | Fase 2 | lado · fuente · ventana |",
+            "|---|---|---|---|---|---|---|---|",
+            *filas,
+        ]
+    return out + [""]
+
+
 def fase4(ops: list[Op], criterio: Criterio, tol_adr: int) -> list[str]:
     """Distancia firmada al nivel de referencia del breaker del productor, en las operaciones con
     zona viva en el llenado (mismos supuestos que verificacion_a21_entradas.py)."""
@@ -520,6 +617,7 @@ def main(argv: list[str]) -> int:
         *diagnostico(ops, ticks, tol),
         *robustez(ops, ticks),
         *control_sell_limit(ticks, tol),
+        *control_simulador(criterio, ticks, m1, tol),
         *fase4(ops, criterio, criterio.tolerancias.entrada_puntos),
     ]
     Path(argv[1]).write_text("\n".join(lineas) + "\n", encoding="utf-8", newline="\n")

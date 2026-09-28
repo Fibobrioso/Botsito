@@ -145,6 +145,34 @@ ventana entera (criterio con instante incierto): lado ambiguo -> ambiguo
 primer tick en el nivel: 11:05:02 UTC; W1 = [ese tick - 60 s, ese tick]: lado ambiguo -> ambiguo
 traza (segundos respecto al primer toque : bid - L): -90s:+3 -89s:+3 -87s:+5 -84s:+4 -84s:+4 -80s:+4 -74s:+5 -74s:+4 -69s:+4 -61s:+5 -60s:+5 -60s:+0 -57s:+0 -56s:+2 -56s:+3 -54s:+5 -53s:+4 -51s:+5 -50s:+5 -46s:+5 -45s:+5 -45s:+5 -40s:+5 -38s:+5 -36s:+7 -35s:+6 -35s:+5 -33s:+5 -30s:+5 -28s:+4 -27s:+1 -26s:+1 -23s:+3 -21s:+3 -16s:+3 -12s:-1 -12s:-2 -8s:+1 -6s:-3 -5s:+0 +0s:-1 +0s:+0 +4s:+5 +10s:+6 +21s:+5 +22s:+9 +23s:+11 +25s:+9 +27s:+12
 
+# CONTROL CON LLENADOS LIMITE DEL SIMULADOR (motor arnes --simular, DIAGNOSTICO: A-35 cierre_vela_contraria, A-44 sin_tope; con ticks)
+
+## A-21 = solo_una_zona_de_control: posiciones del bot 9; excluidas 1; clasificacion {'LIMITE': 3, 'ambiguo': 2, 'STOP': 3}
+| dia | llenado UTC | dir. | entrada | traza del broker | precio al colocar - L (bid venta / ask compra, puntos) | Fase 2 | lado · fuente · ventana |
+|---|---|---|---|---|---|---|---|
+| 2026-04-02 | 12:18:06.102 | venta | 1.15242 | orden o1: colocada 12:17:59, colocada > llenada | -11 | LIMITE | abajo · ticks · 60 s |
+| 2026-04-08 | 08:27:46.535 | compra | 1.16823 | orden o1: colocada 07:17:59, colocada > llenada | 41 | LIMITE | arriba · ticks · 60 s |
+| 2026-04-10 | 09:33:15.120 | venta | 1.16974 | orden o1: colocada 09:32:59, colocada > llenada | -11 | ambiguo | ambiguo · ticks · 60 s |
+| 2026-04-23 | 05:01:00.000 | venta | 116994 | EXCLUIDA: no es un llenado de orden limite con ticks (respaldo_m1, ['colocada', 'llenada']) | - | - | - |
+| 2026-04-27 | 05:01:00.261 | compra | 1.17268 | orden o1: colocada 05:00:59, colocada > llenada | -5 | ambiguo | ambiguo · ticks · 60 s |
+| 2026-04-29 | 07:16:02.446 | venta | 1.17056 | orden o1: colocada 07:15:59, colocada > llenada | -2 | STOP | arriba · ticks · 60 s |
+| 2026-08-03 | 06:01:00.295 | venta | 1.15363 | orden o1: colocada 06:00:59, colocada > llenada | 14 | STOP | arriba · ticks · 60 s |
+| 2026-08-04 | 07:16:00.227 | venta | 1.15085 | orden o1: colocada 07:15:59, colocada > llenada | 28 | STOP | arriba · ticks · 60 s |
+| 2026-08-11 | 12:32:35.414 | venta | 1.15405 | orden o1: colocada 11:16:59, colocada > llenada | 0 | LIMITE | abajo · ticks · 60 s |
+
+## A-21 = sin_mecha_mas_alla_del_extremo: posiciones del bot 9; excluidas 1; clasificacion {'LIMITE': 2, 'ambiguo': 2, 'STOP': 4}
+| dia | llenado UTC | dir. | entrada | traza del broker | precio al colocar - L (bid venta / ask compra, puntos) | Fase 2 | lado · fuente · ventana |
+|---|---|---|---|---|---|---|---|
+| 2026-04-02 | 12:18:06.102 | venta | 1.15242 | orden o1: colocada 12:17:59, colocada > llenada | -11 | LIMITE | abajo · ticks · 60 s |
+| 2026-04-08 | 08:27:46.535 | compra | 1.16823 | orden o1: colocada 07:17:59, colocada > llenada | 41 | LIMITE | arriba · ticks · 60 s |
+| 2026-04-10 | 09:33:15.120 | venta | 1.16974 | orden o1: colocada 09:32:59, colocada > llenada | -11 | ambiguo | ambiguo · ticks · 60 s |
+| 2026-04-23 | 05:01:00.000 | venta | 116994 | EXCLUIDA: no es un llenado de orden limite con ticks (respaldo_m1, ['colocada', 'llenada']) | - | - | - |
+| 2026-04-27 | 05:01:00.261 | compra | 1.17268 | orden o1: colocada 05:00:59, colocada > llenada | -5 | ambiguo | ambiguo · ticks · 60 s |
+| 2026-04-29 | 07:16:02.446 | venta | 1.17056 | orden o1: colocada 07:15:59, colocada > llenada | -2 | STOP | arriba · ticks · 60 s |
+| 2026-08-03 | 06:01:00.295 | venta | 1.15363 | orden o1: colocada 06:00:59, colocada > llenada | 14 | STOP | arriba · ticks · 60 s |
+| 2026-08-04 | 07:16:00.227 | venta | 1.15085 | orden o1: colocada 07:15:59, colocada > llenada | 28 | STOP | arriba · ticks · 60 s |
+| 2026-08-20 | 11:01:04.114 | compra | 1.16981 | orden o1: colocada 11:00:59, colocada > llenada | -16 | STOP | abajo · ticks · 60 s |
+
 # FASE 4 · la entrada frente al nivel de referencia del breaker del productor (Esquema.referencia)
 d_ref = entrada - referencia (compra) / referencia - entrada (venta): > 0 mas alla del nivel en la direccion de la ruptura. d_zona como en VERIFICACION-A21 (borde cercano de la zona).
 tolerancia de ADR-0043: 3 puntos
