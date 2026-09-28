@@ -4,6 +4,13 @@ Rama `trabajo/bloque-de-la-caja`, 2026-09-28, tarea autónoma sobre `main` en
 `stable/F20-orden-stop-o-limite`. **Descriptivo**: no cambia el motor, ni el productor, ni RN-011,
 ni ningún parámetro, regla, ambigüedad, evidencia o registro de feedback. Nada se resuelve.
 
+> **RECUADRO DE CORRECCIÓN (2026-09-28, misma rama, tras la revisión del consultor).** Las
+> versiones v2 y v3 de §1.5 son EXPLORATORIAS y no sostienen ninguna regla. La caja de v7 n.º 2
+> medida en §2 y §3 es la primera que trazó el trader, y la sustituyó por otra: con la buena, la
+> orden va en el 0 en 11 de 12, y R1 y R4 llegan a 6 cajas en v3; en v1 no cambia nada. El recuento
+> del stop de §2.2 mezclaba momentos de la operación. Todo está en §5; el cuerpo de §1 a §4 queda
+> como estaba.
+
 **Pregunta.** En v7 y v8 el trader traza en M1 una caja de niveles 0 · 0,25 · 0,5 · 0,8 · 1. ¿Qué
 vela o velas de M1 elige como bloque para trazarla? `ORDEN-STOP-O-LIMITE.md` midió que ninguna de
 sus 77 entradas de construcción es una límite de antemano esperando el retroceso, y
@@ -353,8 +360,90 @@ antes esa regla, y no se cambia en esta rama.
    las 09:33 con el stop en el 1, y venta de las 11:46 con el stop en el 0,8. Toca A-18; no se resuelve
    aquí.
 
-## 5. Estado
+## 5. El stop en el 1 o en el 0,8, según el momento (2026-09-28, tras la revisión del consultor)
 
-Fases 1 a 4 completas. Criterio commiteado antes de medir (4c9c0cd); cajas y medida, en los commits
-siguientes. No se ha cambiado el motor, el productor, RN-011 ni ningún parámetro, regla, ambigüedad,
-evidencia o feedback. **Rama lista para revisión, NO cerrada.**
+**Revisión del consultor (2026-09-28).** Informe aceptado. Las versiones v2 y v3 de §1.5 quedan como
+**exploratorias**: no sostienen ninguna regla. La conclusión es que **el 0 de la caja no sale de los
+fotogramas con esta muestra, y hay que preguntarlo**.
+
+En A-18 el trader dice «primer cálculo desde el punto 1 y luego se recalcula a 0,80» (v7 0:06:07).
+§2.2 contó el stop en el fotograma de cada caja, sin mirar en qué momento de la operación estaba ese
+fotograma. Aquí se mira. Solo se abren los fotogramas que la tabla de operaciones de
+`SESION-02-VIDEO.md` y la de `SESION-02-VIDEO-V8.md` ya citan para cada operación (ADR-0038). Los
+niveles son de OANDA, con el reloj del gráfico (UTC+2 fijo); aquí no se cruza ninguna vela de
+Dukascopy.
+
+### 5.1 Caja a caja
+
+«Colocada» es orden puesta y sin llenar. «Llena» es posición abierta. «Cerrada» es sin posición y con
+el saldo ya movido.
+
+| caja | fotograma (reloj del gráfico) | momento | stop visible | fotogramas posteriores citados | ¿pasa del 1 al 0,8? |
+|---|---|---|---|---|---|
+| v7-1 | 000227000 (07:47:59) | colocada | 1.15369: entre el 0,8 (1.15368) y el 1 (1.15370) | 000263000 (07:48:59), llena: **1.15368, en el 0,8** | baja un punto, al 0,8, en el minuto del llenado; está dentro de la legibilidad del 1, que es interpolado |
+| v7-2 | 000404000 (08:00:59) | colocada | 1.15376, **en el 1 de la primera caja**; la orden, en su 0,5 | 000450000 (08:00:59 otra vez, más tarde en el vídeo): **caja redibujada**, 0 = 1.15364, 1 = 1.15380; orden en su 0 y stop 1.15377 **en su 0,8**. 000480000 (08:04:59): cerrada | el stop casi no se mueve (1.15376 a 1.15377): **lo que cambia es la caja** |
+| v7-3 | 000510000 (08:06:59) | colocada | 1.15389, **en el 1** | 000565000 (08:11:59), llena: **1.15383, en el 0,8** (±1) | **sí**, después del llenado |
+| v7-4 | 000710000 (09:33:59) | colocada | 1.15322, **en el 1** | ninguno: el tramo siguiente va a Analytics y no se abre | no se ve |
+| v7-5 | 000955000 (11:46:59) | llena | 1.15287, en el 0,8 | 000977000 (11:48:59): cerrada en tablas | no se ve el momento de la colocación |
+| v7-7 | 001210000 (13:11:59) | colocada | 1.15266, **en el 0,8** | 001240000: el stop va a la entrada a las 13:15:59 (tabla de operaciones; no reabierto) | no: ya estaba en el 0,8 al colocar |
+| v7-9 | 001510000 (14:09:59), sin caja | colocada | 1.15352 | 001535000 (14:24:59): cerrada (+42) y **la caja se dibuja entonces**, con su 1 en 1.15352 | no se ve cambio antes del cierre; el stop está en el 1 de una caja dibujada después |
+| v7-10 | 001930000 (09:44:59) | llena | 1.15163, en el 0,8 | 001962000 (10:06:59): cerrada en tablas | no se ve el momento de la colocación |
+| v7-11 | 002070000 (13:32:59), sin caja | colocada | 1.15210 | 002110000 (13:39:59): cerrada con pérdida, el precio (1.15220) ya por encima del stop, y **la caja se dibuja entonces**, con su 1 en 1.15210 | **no**: sigue en el 1 hasta que la operación se cierra |
+| v7-12 | 002180000 (13:56:59) | llena | 1.15222, en el 0,8 | ninguno | no se ve el momento de la colocación |
+| v7-15 | 002620000 (08:01:59), sin caja | colocada | 1.15516 | 002654000 (08:07:59), llena, con caja: **1.15516, en el 1**. La herramienta de posición que dibuja el trader tiene ahí su borde de riesgo en 1.15511, el 0,8. 002790000 (09:55:59): cerrada (+76), sin etiqueta de stop | **no** en el minuto del llenado; después no se ve |
+| v8-1 | 000180000 (08:35:59), sin caja | colocada **sin stop propio**: las etiquetas del objetivo y del stop están sobre la orden | ninguno | 000200000 (08:37:59), llena y con caja: **1.15361, en el 0,8**. 000215000 (08:42:59): cerrada en tablas | no: el stop se pone después de la caja, y ya en el 0,8 |
+
+### 5.2 Recuento
+
+| lo que se ve | cajas |
+|---|---|
+| colocada con el stop en el 1 | 6: v7-2 en su primera caja, v7-3, v7-4, v7-9, v7-11 y v7-15 |
+| colocada con el stop en el 0,8 | 2: v7-7, y v7-2 en su caja redibujada |
+| colocada con el stop entre el 0,8 y el 1 | 1: v7-1, a un punto de los dos |
+| colocada sin stop propio | 1: v8-1 |
+| sin fotograma de la colocación | 3: v7-5, v7-10 y v7-12, las tres llenas y con el stop en el 0,8 |
+| **pasa del 1 al 0,8 sobre la misma caja** | **1 clara (v7-3), y 1 de un punto (v7-1)** |
+| **sigue en el 1 con la posición abierta** | **2: v7-11, hasta el cierre, y v7-15, en el minuto del llenado** |
+| el stop se queda y **se redibuja la caja** | 1: v7-2 |
+
+**Lo que dice y lo que no.** La secuencia de A-18, «desde el 1 y luego al 0,8», se ve completa en
+v7-3, y en v7-1 como un movimiento de un punto. **No se ve en v7-11 ni en v7-15**, donde el stop sigue
+en el 1 con la posición abierta. En v7-7 y v8-1 el stop está en el 0,8 desde que existe. En v7-2 el
+stop apenas se mueve y lo que cambia es la caja: el mismo nivel pasa de ser el 1 de una caja a ser el
+0,8 de otra. En tres cajas no se ve la colocación. **Con doce cajas y cinco momentos distintos, esto no
+decide A-18, y no se resuelve aquí.**
+
+La nota de §2.2, «el stop va en el 0,8 en 6 de 12 y en el 1 en otras 6», mezclaba momentos: contaba
+el stop del fotograma de la caja, que en unas cajas es la orden colocada y en otras la posición llena.
+
+### 5.3 Lo que esta lectura corrige de §2 y §3
+
+- **v7-2: la caja medida en §2 y §3 es la primera, y el trader la sustituyó.** En el fotograma
+  000450000, con el reloj del gráfico parado en el mismo 08:00:59, la caja es otra: 0 = 1.15364, sobre
+  la etiqueta de la orden, y 1 = 1.15380, interpolado a 8,6 píxeles por punto (±1). Ese 1 es la máxima
+  de la vela en curso según la leyenda (`H 1.15380`). Con la caja buena, la orden está en el 0 y el
+  stop en el 0,8. Así que **la orden va en el 0 en 11 de 12 cajas, no en 10**, y la única excepción
+  es v7-3, dos puntos por debajo.
+- **Las reglas frente a la caja buena de v7-2**, con los valores que la salida ya da para esa caja
+  (misma T y mismas velas; solo cambia el nivel del trader):
+
+  | regla | v1 (0 / 1) | v2 (0 / 1) | v3 (0 / 1) |
+  |---|---|---|---|
+  | R1 | −4 / −7 | −1 / −3 | **+1 / −1** |
+  | R3 | +1 / −6 | +1 / −6 | +3 / −4 |
+  | R4 | −4 / −7 | −1 / −3 | **+1 / −1** |
+  | R5 y R6 | +1 / −6 | +4 / −3 | +6 / −1 |
+
+  R1 y R4 pasan de 5 a 6 cajas a 2 puntos en v3, y de 7 a 8 (R1) y de 5 a 6 (R4) a 3 puntos en v2.
+  **En v1, el criterio escrito antes de medir, no cambia nada**: ninguna regla pasa de una caja.
+- **Dos cajas más se dibujaron después de la operación**: v7-9, con la operación ya cerrada, y v7-11,
+  también cerrada. Su T sigue siendo la colocación, así que la ventana de las reglas no cambia. Pero
+  la caja no estaba en pantalla cuando se colocó la orden, igual que en v8-1.
+
+La conclusión del consultor no cambia: **el 0 de la caja no sale de los fotogramas con esta muestra**.
+
+## 6. Estado
+
+Fases 1 a 4 completas y aceptadas por el consultor el 2026-09-28; §5 (el stop según el momento, y
+la corrección de v7 n.º 2) añadida después de esa revisión. No se ha cambiado el motor, el
+productor, RN-011 ni ningún parámetro, regla, ambigüedad, evidencia o feedback. A-18 sigue abierta.
