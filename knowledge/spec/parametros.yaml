@@ -478,7 +478,7 @@ parametros:
     categoria: estrategia
     tipo: enum
     unidad: cuando se coloca por primera vez la orden limite de una zona
-    opciones: ["al_darse_el_esquema", "al_tomarse_la_liquidez"]
+    opciones: ["al_darse_el_esquema", "al_tomarse_la_liquidez", "al_aparecer_punto_de_breaker"]
     descripcion: >-
       en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos
       esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco
@@ -487,7 +487,13 @@ parametros:
       (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de
       "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la
       primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que
-      prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla
+      prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla.
+      TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47,
+      docs/validation/DISENO-ENTRADA-RUPTURA.md §2.7): la orden nace ANTES de la ruptura, en el punto que puede ser breaker, como orden
+      STOP que se activa si el precio lo rompe, y se mueve cuando ese punto se actualiza (v7 0:14:57
+      y 0:22:01, ev-v7-001457-1fe7fdfe y ev-v7-002201-2b2f20aa); solo tiene sentido con
+      `stop_en_ruptura` (A-47), y hoy deja al motor NO_IMPLEMENTADA con nombre, como la segunda. El
+      valor no cambia
     estado: DEFAULT_AMBIGUOUS
     valor: "al_darse_el_esquema"
     ambiguedad_id: A-29

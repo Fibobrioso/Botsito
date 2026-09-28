@@ -673,10 +673,23 @@ ambiguedades:
     # colocacion. PRIORIDAD DE LA SESION 2 (consultor, 2026-09-17): el default se queda hasta que el
     # trader responda"
     resuelve_en: [F20, F22]
+    # TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47,
+    # decision del consultor tras docs/validation/DISENO-ENTRADA-RUPTURA.md): en v7 el trader
+    # marca un POSIBLE punto de breaker antes de la ruptura, lo activa como orden stop en ese
+    # punto («un punto de breaker [...] que si lo rompe el precio, pues se opera. Vale, lo
+    # activo», v7 0:14:57, con la Sell stop puesta por debajo del precio en pantalla) y lo va
+    # actualizando conforme se desarrolla el precio hasta fijarlo («actualizamos nuestro posible
+    # breaker y pues lo fijamos», v7 0:22:01-0:22:45; la orden se mueve con el punto). Es una
+    # lectura de CUANDO nace la orden -antes del esquema, en el punto que puede ser breaker- y
+    # solo tiene sentido con una orden STOP (A-47): con una limite en el retroceso la orden nace
+    # al darse el esquema, como hoy. Entra como opcion de `orden_limite_nace`; el valor no cambia
+    # y con esta lectura el motor queda NO_IMPLEMENTADA con nombre, como con la segunda.
     evidencia:
       - ev-v3-004201-bfeb3734
       - ev-v1-001358-a2b8ec0d
       - ev-v3-002511-b12d67be
+      - ev-v7-001457-1fe7fdfe
+      - ev-v7-002201-2b2f20aa
     parametros: [orden_limite_nace]
     contradiccion: null
     estado: ABIERTA
@@ -1181,3 +1194,66 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: true
+  - id: A-48
+    titulo: qué velas forman el bloque de la caja
+    pregunta: >-
+      Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y
+      el 1?
+    resuelve_en: [F20, F21]
+    # NACE el 2026-09-28 (rama trabajo/preparar-a47, decision del consultor sobre
+    # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.5, tras docs/validation/BLOQUE-DE-LA-CAJA.md). Con el
+    # criterio escrito antes de medir, ninguna regla explica mas de una de las 12 cajas del trader
+    # a 2 puntos, y el 0 de la caja no sale de los fotogramas: hay que preguntarlo. Dos lecturas
+    # documentadas, sin fijar ninguna: `ultima_contraria`, la ultima vela del color contrario a la
+    # entrada antes del impulso (lo que hace hoy `bloque_de_origen`, domain/estructura_m1.py;
+    # ev-v3-010818-010bd2b3, ev-v3-011540-5425b533), y `tramo_de_contrarias`, varias velas seguidas
+    # del mismo color como una sola zona (RN-007, ev-v3-010648-0039e34d; y v7 0:24:03, «pueden ser
+    # velas consecutivas del mismo color», ev-v7-002403-8344331d, que lo CONDICIONA a que la vela
+    # siguiente cubra con la mecha a la anterior y NO dice que el bloque sea todo el tramo). El 1
+    # de la caja no lo nombra ninguna cita. Toca A-21 solo de lado: A-21 pregunta que hace «limpia»
+    # a una zona, no que velas la forman (decision del consultor: A-21 no se amplia). NO bloqueante:
+    # con la orden limite de hoy RN-011 corre con `ultima_contraria`; la lectura solo actua con la
+    # orden stop (A-47) y la caja por operacion (DISENO-ENTRADA-RUPTURA.md §2.4). Sin parametro: el
+    # selector `caja_bloque` nace con la rama de codigo que lo consuma (ADR-0054), no aqui.
+    evidencia:
+      - ev-v3-010818-010bd2b3
+      - ev-v3-011540-5425b533
+      - ev-v3-010648-0039e34d
+      - ev-v7-002403-8344331d
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-49
+    titulo: si la caja se traza con la vela del bloque cerrada o en formación
+    pregunta: >-
+      ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
+    resuelve_en: [F20, F21]
+    # NACE el 2026-09-28 (rama trabajo/preparar-a47, decision del consultor sobre
+    # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.5). Medido en docs/validation/BLOQUE-DE-LA-CAJA.md
+    # §1.5 y §2.4: los fotogramas de colocacion caen en el segundo :59 y en 10 de 12 cajas el 1 es
+    # la maxima de la vela en curso en ese instante o de la inmediatamente anterior; el criterio
+    # escrito antes de medir (solo M1 cerradas, como ADR-0028) dejaba el 1 sin explicacion en 4.
+    # Dos lecturas, sin fijar: `cerrada`, la caja se traza con la vela del bloque cerrada (lo de
+    # hoy: `m1_entre` solo devuelve M1 cerradas, engine/motor.py), y `en_formacion`, dentro de la
+    # vela. La segunda CHOCA con ADR-0028 (la estrategia se evalua al cierre de M1): queda
+    # documentada y NO_IMPLEMENTADA (DESCONOCIDO) hasta un ADR que lo decida; ADR-0028 no se toca
+    # (decision del consultor). Ninguna cita del trader habla de trazar la caja con la vela
+    # cerrada o en formacion: la base es la medida sobre sus cajas. Se citan los dos items de v7
+    # en los que un punto vale ANTES del cierre de la vela -«apenas con una mecha aqui y ya
+    # podriamos validar ese punto» (0:22:01) y la vela que cubre con la mecha a la anterior
+    # (0:24:03)-, porque son lo mas cercano que dice en voz, y no dicen mas que eso. NO
+    # bloqueante, por lo mismo que A-48. Sin parametro: el selector `caja_vela` nace con su rama.
+    evidencia:
+      - ev-v7-002201-2b2f20aa
+      - ev-v7-002403-8344331d
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

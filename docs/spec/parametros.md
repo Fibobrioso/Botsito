@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.3.0` · hash `430c8490105f…`
+`spec_version 13.3.1` · hash `6a27c44e69a1…`
 
 83 en total: 66 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -379,9 +379,9 @@ cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de R
 
 ### `orden_limite_nace`
 
-en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla
+en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla. TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47, docs/validation/DISENO-ENTRADA-RUPTURA.md §2.7): la orden nace ANTES de la ruptura, en el punto que puede ser breaker, como orden STOP que se activa si el precio lo rompe, y se mueve cuando ese punto se actualiza (v7 0:14:57 y 0:22:01, ev-v7-001457-1fe7fdfe y ev-v7-002201-2b2f20aa); solo tiene sentido con `stop_en_ruptura` (A-47), y hoy deja al motor NO_IMPLEMENTADA con nombre, como la segunda. El valor no cambia
 
-Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`.
+Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`, `al_aparecer_punto_de_breaker`.
 
 ### `parciales`
 
