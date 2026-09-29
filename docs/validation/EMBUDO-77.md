@@ -37,6 +37,9 @@ entrada del trader); **6 momento** (el breaker cierra más de 15 minutos despué
 **coincide**.
 
 Dos detalles de la medida:
+> **Corregido el 2026-09-28** (rama `trabajo/registrar-embudo`): una toma es un pivote tomado, no
+> una M15; ver el recuadro de §4, punto 3.
+
 - **Una toma de RN-004 es el cierre de la M15 que toma, no cada minuto en que el hecho se vuelve a
   fijar.** RN-004 fija `liquidez_tomada` en cada M1 mientras esa M15 sea la última cerrada, así que
   la traza trae la misma toma hasta quince veces. El script cuenta tomas distintas.
@@ -195,6 +198,30 @@ Se reportan aquí y no se tocan.
    cerrada. El productor solo registra la primera y el motor no cambia por ello, pero todo recuento
    que se haga sobre `fijados` cuenta la misma toma hasta quince veces. Este informe lo sufrió en su
    primer ensayo.
+
+> **Advertencia y corrección (2026-09-28, rama `trabajo/registrar-embudo`).** **Todo recuento sobre
+> la traza tiene que deduplicar por toma, y una toma es un PIVOTE tomado, no un minuto ni una M15.**
+> RN-004 vuelve a fijar `liquidez_tomada` en cada M1 mientras la misma M15 sea la última cerrada, y
+> una M15 posterior que vuelve a cruzar el mismo pivote también lo fija. Medido en construcción, con
+> la primera lectura: 2992 minutos con RN-004, 206 M15 distintas y **118 pivotes distintos** (lado,
+> nivel y vela contraria). Este informe deduplicó por M15, no por pivote, y eso toca a tres cifras
+> suyas, que no se reescriben:
+> - **La clasificación no cambia.** Las 15 operaciones de «la del productor es de una sesión
+>   anterior y no usa las nuevas» tienen en su sesión, antes del trader + 15 min, al menos un pivote
+>   distinto del que usa el productor (15 de 15).
+> - **Los recuentos de «toma(s) nueva(s)» del detalle son de M15, no de pivotes.** En §3.1, el 10 de
+>   agosto son **2 y 3 pivotes**, no «seis y ocho tomas»; el 3 de agosto, 1 y 3, como decía.
+> - **La anotación de §2 baja de 3 a 1 de 39** con la primera lectura si se parte de la primera toma
+>   del último pivote anterior al trader, y no de su última M15: el 22 de abril a las 08:02Z y el 17
+>   de agosto a las 05:17Z casaban porque su última M15 volvía a tomar un pivote ya tomado. Lo que la
+>   anotación decía -que mirar la toma más cercana no basta- sale más fuerte.
+>
+> No hay una utilidad común de lectura de trazas donde poner la deduplicación: cada script lee
+> `TrazaSesion.fijados` por su cuenta, y `TrazaSesion.hechos_producidos` es un conjunto y no cuenta.
+> Revisados los que la leen hoy: `scripts/verificacion_a21.py` cuenta minutos y los llama minutos;
+> `bloque_de_la_caja.py`, `orden_stop_o_limite.py` y `verificacion_a21_entradas.py` solo usan la
+> primera toma del día; el visor lista los hechos uno por minuto, sin contarlos. Ninguno más publica
+> un recuento de tomas.
 
 ## 5. Fase 3 · Test
 
