@@ -4,6 +4,10 @@
 > material para él: saber cómo le iría en FTMO sesgaría sus respuestas en las sesiones. Solo para el
 > consultor y para Aleks.
 
+> **Los veredictos válidos son los de las operaciones saneadas. Las cifras del motor tal cual quedan
+> invalidadas por el error de `evaluar_fase`, que se corrige en `trabajo/corregir-evaluar-fase`**
+> (§6). Recuadro añadido el 2026-09-28 por orden del consultor, antes del cierre.
+
 Rama `trabajo/viabilidad-trader`, 2026-09-28, desde `main` en `16e973d`. Es una **medición**: no
 cambia la estrategia, el bot ni el bróker, y no se ha ajustado nada para mejorar la cifra. Solo
 construcción: las 77 operaciones de los días `dev` de abril y agosto de 2026, material de desarrollo
