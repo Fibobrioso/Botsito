@@ -6,6 +6,17 @@ phase: post-F14 (rama `trabajo/simulador-cuenta`)
 
 # 0050 · El simulador: la capa de cuenta
 
+> **Enmienda (2026-09-28, rama `trabajo/corregir-evaluar-fase`).** El convenio «a igual instante,
+> un cierre se procesa antes que un cargo, una marca o una apertura» vale ENTRE operaciones, no
+> dentro de la vida de una misma: **su apertura va antes que sus marcas y sus marcas antes que su
+> cierre.** El contrato admite una marca en el instante mismo del cierre -el bróker la deja con el
+> tick que salta el stop o el objetivo, en 73 de 73 operaciones medidas-, y procesada después del
+> cierre volvía a meter la posición en la equity como abierta, para siempre: una suspensión podía
+> esconderse o adelantarse (`docs/validation/VIABILIDAD-TRADER.md` §6). Y una operación que abre y
+> cierra en el mismo instante reventaba, porque su cierre llegaba antes que su apertura. Una marca
+> de una operación que no está abierta es ahora un error con nombre, no un dato. El resto del ADR
+> no cambia; la medida, en `docs/validation/CORREGIR-EVALUAR-FASE.md`.
+
 ## Decision
 
 El simulador tiene dos mitades: el **bróker simulado**, que convierte las órdenes del motor en

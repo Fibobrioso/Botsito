@@ -211,6 +211,14 @@ trader operaría en una cuenta con comisión.
 
 ## 6. Error de código encontrado, y no corregido
 
+> **Corregido (2026-09-28, rama `trabajo/corregir-evaluar-fase`).** La causa estaba en la capa de
+> cuenta: a igual instante, la vida de una misma operación no se respetaba. Con la corrección, las
+> cifras saneadas de este informe salen **idénticas** y el «motor tal cual» da lo mismo que ellas:
+> los veredictos de §3 y §5 se mantienen. Los que el error cambiaba (0,5 % abril+agosto simulada,
+> SUSPENDIDA; 1 % abril+agosto simulada, SUPERADA; 2 % agosto simulada, SUSPENDIDA; 2 % abril
+> simulada, SUSPENDIDA el 16 de abril por la total) quedan confirmados. Detalle en
+> `docs/validation/CORREGIR-EVALUAR-FASE.md`.
+
 **`evaluar_fase` (`src/botsito/engine/cuenta.py`) cuenta dos veces el resultado de cada operación
 que viene del bróker.** El bróker deja en la operación cerrada una marca de precio en el **mismo
 instante** que su cierre (la del tick que salta el stop o el objetivo): pasa en **73 de 73** de la

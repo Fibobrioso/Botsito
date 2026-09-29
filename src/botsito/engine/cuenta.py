@@ -25,7 +25,9 @@ LO QUE SE LLEVA, evento a evento, en una linea de tiempo ordenada por instante:
 
 CONVENIOS DECLARADOS (ADR-0050): el limite se infringe al caer estrictamente por debajo, que es
 lo que dice la fuente («drops below»); el objetivo se cumple al llegar (mayor o igual); a igual
-instante, un cierre se procesa antes que un cargo, una marca o una apertura; el P/L se calcula en
+instante, un cierre se procesa antes que un cargo, una marca o una apertura, SALVO dentro de la
+vida de una misma operacion: su apertura va antes que sus marcas y sus marcas antes que su cierre
+(enmienda del 2026-09-28, trabajo/corregir-evaluar-fase); el P/L se calcula en
 la moneda de cotizacion del instrumento y se trata como moneda de la cuenta (la conversion cruzada
 es del broker); las magnitudes son `Decimal`.
 """
@@ -225,6 +227,14 @@ def pnl(op: Operacion, precio: Decimal, contrato: Decimal) -> Decimal:
 # ------------------------------------------------------------------------- la linea de tiempo
 
 _ORDEN = {"cierre": 0, "cargo": 1, "marca": 2, "apertura": 3}
+# La vida de UNA operacion manda sobre el convenio entre operaciones (ADR-0050, enmienda del
+# 2026-09-28): a igual instante, su apertura va antes que sus marcas y sus marcas antes que su
+# cierre. El broker deja una marca en el instante mismo del cierre (el peor precio visto con la
+# posicion viva hasta el tick que la cierra) y el contrato la admite; procesada DESPUES del cierre,
+# volvia a meter la posicion en la equity y ahi se quedaba (VIABILIDAD-TRADER.md §6).
+_ORDEN_MARCA_EN_EL_CIERRE = -1  # antes que cualquier cierre de ese instante, el suyo incluido
+_ORDEN_MARCA_EN_LA_APERTURA = 4  # despues de su propia apertura
+_ORDEN_APERTURA_QUE_CIERRA_EN_EL_ACTO = -2  # abre y cierra en el mismo instante: abre primero
 
 
 @dataclass(frozen=True, order=True)
@@ -242,10 +252,18 @@ class _Evento:
 def _eventos(operaciones: Sequence[Operacion]) -> list[_Evento]:
     eventos: list[_Evento] = []
     for op in sorted(operaciones, key=lambda o: (o.apertura.instante, o.id)):
-        eventos.append(_Evento(op.apertura.instante, _ORDEN["apertura"], op.id, 0, "apertura", op))
+        en_el_acto = op.apertura.instante == op.cierre.instante
+        orden_apertura = _ORDEN_APERTURA_QUE_CIERRA_EN_EL_ACTO if en_el_acto else _ORDEN["apertura"]
+        eventos.append(_Evento(op.apertura.instante, orden_apertura, op.id, 0, "apertura", op))
         for i, m in enumerate(op.marcas):
+            if m.instante == op.cierre.instante:
+                orden_marca = _ORDEN_MARCA_EN_EL_CIERRE
+            elif m.instante == op.apertura.instante:
+                orden_marca = _ORDEN_MARCA_EN_LA_APERTURA
+            else:
+                orden_marca = _ORDEN["marca"]
             eventos.append(
-                _Evento(m.instante, _ORDEN["marca"], op.id, i + 1, "marca", op, precio=m.precio)
+                _Evento(m.instante, orden_marca, op.id, i + 1, "marca", op, precio=m.precio)
             )
         for i, c in enumerate(op.cargos):
             eventos.append(_Evento(c.instante, _ORDEN["cargo"], op.id, i + 1, "cargo", op, cargo=c))
@@ -643,6 +661,10 @@ def evaluar_fase(
             cuenta.con_apertura_dia = True
         elif ev.tipo == "marca":
             assert ev.precio is not None
+            if ev.op_id not in cuenta.abiertas:
+                # una marca nunca abre ni reabre una posicion: con el orden de arriba no puede
+                # llegar aqui, y si llega es un fallo de la linea de tiempo, no un dato
+                raise OperacionError(f"{ev.op_id}: marca de una operacion que no esta abierta")
             cuenta.abiertas[ev.op_id] = (ev.op, ev.precio)
         elif ev.tipo == "cargo":
             assert ev.cargo is not None
