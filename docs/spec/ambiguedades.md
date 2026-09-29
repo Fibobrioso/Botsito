@@ -6,7 +6,7 @@
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (29)
+## ABIERTA (30)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -120,7 +120,7 @@ Afecta a: `huso_operativa`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
-Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después?
+Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 
@@ -151,6 +151,10 @@ Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque
 ### A-49 · si la caja se traza con la vela del bloque cerrada o en formación · pregunta
 
 ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
+
+### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
+
+Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera?
 
 ## DECIDIDA (6)
 

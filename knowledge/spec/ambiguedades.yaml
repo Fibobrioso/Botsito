@@ -1063,7 +1063,9 @@ ambiguedades:
     titulo: si una liquidez de M15 tomada antes de las 7 cuenta para operar después
     pregunta: >-
       Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario,
-      ¿la tienes en cuenta para operar después?
+      ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de
+      hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la
+      sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
     resuelve_en: [F19, F20]
     # NACE EL 2026-09-25 (rama trabajo/huecos-motor, ADR-0049 H2, decision del consultor). El motor
     # solo tiene eventos entre ventana_inicio y ventana_fin (ADR-0048; las sesiones salen de
@@ -1072,7 +1074,14 @@ ambiguedades:
     # (config.yaml, `ventana_local`; ev-v3-000138-567dc5d7 y ev-v3-000157-b26147c7 sostienen la
     # ventana de 7 a 15, no lo que pasa antes). El rango de eventos se queda en las 07:00 hasta que el
     # trader responda. Afecta a RN-004. NO BLOQUEANTE. A-42 -con que reloj cuenta las 7- es otra
-    # pregunta y sigue donde esta
+    # pregunta y sigue donde esta.
+    # MEDIDO el 2026-09-28 (docs/validation/EMBUDO-77.md §4, punto 2; anotado en la rama
+    # trabajo/registrar-embudo por orden del consultor): el codigo YA RESPONDE DE HECHO a A-43,
+    # y solo para una vela. RN-004 se evalua desde el primer minuto de la sesion con la ultima
+    # M15 cerrada, asi que la que cierra a las 07:00 -la que tomo entre las 06:45 y las 07:00-
+    # cuenta como toma dentro de la sesion, y las anteriores no. En construccion, la toma del
+    # productor es esa en 7 de los 40 dias con toma. No hay parametro que cambiar: A-43 no
+    # tiene ninguno, y el motor no cambia hasta la respuesta
     evidencia:
       - ev-v3-000138-567dc5d7
       - ev-v3-000157-b26147c7
@@ -1252,6 +1261,37 @@ ambiguedades:
     evidencia:
       - ev-v7-002201-2b2f20aa
       - ev-v7-002403-8344331d
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-50
+    titulo: para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera
+    pregunta: >-
+      Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la
+      caja o la caja entera?
+    resuelve_en: [F19, F20]
+    # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
+    # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
+    # en el lado de ruido de la liquidez de M15 -por encima en alcista, por debajo en bajista- y
+    # ninguna fuente dice QUE PUNTO de la zona se compara con el nivel tomado: los tres items de
+    # RN-005 dicen el lado, no el punto. LECTURA VIGENTE, DECISION DE CODIGO SIN FUENTE: solo el 0
+    # de la caja (`se_desarrolla_en_el_lado_de_ruido` en engine/zonas.py, rama trabajo/preparar-a21):
+    # una compra cuyo 0 queda por encima del nivel, o una venta cuyo 0 queda por debajo, es ruido
+    # aunque el 1 quede del lado del trader. La otra lectura: la caja entera al otro lado. MEDIDO en
+    # construccion (EMBUDO-77 §2 y §4, diagnostico con la orden stop): RN-005 deja sin orden 8 dias
+    # con `solo_una_zona_de_control` y 6 con `sin_mecha_mas_alla_del_extremo`, y en los 8 la caja
+    # cruza el nivel por 1 a 5 puntos con el 1 del lado donde opera el trader; ninguna de esas
+    # zonas habria coincidido con el trader, porque sus operaciones mueren antes. NO bloqueante: el
+    # motor corre con la lectura vigente y no cambia hasta la respuesta. Sin parametro: el selector,
+    # si hace falta, nace con la rama de codigo que lo consuma (ADR-0054).
+    evidencia:
+      - ev-v1-001306-f98e12e9
+      - ev-v3-001725-bca9714b
+      - ev-v3-001600-ed45b091
     parametros: []
     contradiccion: null
     estado: ABIERTA
