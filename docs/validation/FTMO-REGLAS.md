@@ -66,6 +66,29 @@ del riesgo.
 | R19 | Consistencia | «Provided you maintain sustainable risk management practices, there are no additional consistency requirements for your trading.» La **Best Day Rule** aparece solo en la sección 1-Step; la sección 2-Step no la trae | [Consistency rules](https://ftmo.com/en/faq/do-you-have-any-consistency-rules/); [Trading Objectives](https://ftmo.com/en/trading-objectives/) |
 | R20 | Tope semanal de la firma | No aparece en los objetivos del 2-Step: **NO ENCONTRADA** | [Trading Objectives](https://ftmo.com/en/trading-objectives/) |
 
+> **Recuadro (2026-09-28, rama `trabajo/viabilidad-comision`): la comisión de forex, más fuentes.
+> TODAS NO CONFIRMADAS EN DEMO.** El parámetro del perfil (`firma_comision_usd_por_lote`,
+> `firma_comision_por_lado`) solo se fija con el CSV de la demo (`docs/runbooks/DEMO-FTMO.md`).
+> Consultadas el 2026-09-29 hacia las 04:17 UTC.
+>
+> - **FTMO, «Trading Update | 27 Mar 2025»**
+>   (`https://ftmo.com/en/blog/trading-updates/trading-update-27-mar-2025/`, descargada con `curl`):
+>   «Both symbols have a contract size of 100,000, with a commission of 3 USD per lot (round-trip).»
+>   Habla de dos símbolos nuevos de forex, USDSGD y USDCNH, **no de EURUSD**.
+> - **FTMO, «Trading Update | 25 Sep 2025»**
+>   (`https://ftmo.com/en/blog/trading-updates/trading-update-25-sep-2025/`): según el buscador,
+>   anuncia ajustes de spreads y comisiones desde el 29 de septiembre de 2025. **NO LEÍDA**: el
+>   servidor cortó la conexión en los cuatro intentos, así que no se sabe qué dice de EURUSD.
+> - **propvator.com, «FTMO Commissions, Spreads and Swaps»** (`https://propvator.com/blog/ftmo-trading-conditions/`,
+>   tercero, fechada el 5 de julio de 2026): «FTMO charges roughly $3 per round lot on forex»,
+>   «charged on the full round turn».
+> - **La API de FTMO leída el 2026-09-25** (R12, arriba): EURUSD `"commission": 5`, `flat_USD`, sin
+>   decir si por lado o por operación.
+>
+> Con eso, `docs/validation/VIABILIDAD-COMISION.md` mide tres escenarios de ida y vuelta por lote:
+> 3 USD (FTMO en otros pares de forex y terceros), 5 USD (la API) y 10 USD (5 por lado, el
+> supuesto conservador del perfil). El cuerpo de este documento no cambia.
+
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
 **Coinciden:**

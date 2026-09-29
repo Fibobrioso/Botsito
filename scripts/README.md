@@ -57,5 +57,9 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   2-Step Swing 100k, simuladas por el broker sobre ticks y con su salida anotada, con la esperanza en R
   y su intervalo por bootstrap. Solo lee; escribe en `--salida` (`docs/validation/VIABILIDAD-TRADER.md`).
   Sus resultados NO se ensenan al trader.
+- `viabilidad_comision.py`: la viabilidad del trader con tres comisiones de ida y vuelta (3, 5 y 10 USD) y
+  cuatro variantes del stop de A-18, sobre las mismas 77 operaciones de `viabilidad_trader.py` (cuyo
+  `cargar` reutiliza). Solo lee; escribe en `--salida` (`docs/validation/VIABILIDAD-COMISION.md`).
+  Sus resultados NO se ensenan al trader.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.

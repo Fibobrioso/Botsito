@@ -201,7 +201,24 @@ def _pnl(op: Any, contrato: Decimal) -> Decimal:
     return bruto - sum((c.importe for c in op.cargos), Decimal(0))
 
 
-def medir(raiz: Path) -> dict[str, Any]:
+@dataclass
+class Contexto:
+    """Lo que las mediciones de la viabilidad comparten: reglas, operaciones y mercados."""
+
+    registro: Any
+    reglas_fase: Any
+    reglas_broker: Any
+    cfg: Any
+    contrato: Decimal
+    objetivo_rr: Decimal
+    ops: list[OpTrader]
+    mercados: dict[str, Any]
+    sin_stop: list[dict[str, str | None]]
+
+
+def cargar(raiz: Path) -> Contexto:
+    """Las 77 operaciones del trader de construccion con su salida anotada, y los mercados de sus
+    dias: el caso manda y el libro, leido solo por los dias `dev` pedidos, anade la salida."""
     from botsito.cases.criterio_fidelidad import cargar_criterio
     from botsito.cases.holdout import casos_ocultos, casos_reservados
     from botsito.cases.paquete import cargar_config
@@ -209,11 +226,8 @@ def medir(raiz: Path) -> dict[str, Any]:
     from botsito.config.registro import cargar_registro
     from botsito.corpus.libro import PESTANA_OPERACIONES, filas_de_los_dias
     from botsito.corpus.libros import declaracion_de
-    from botsito.data.velas import a_minuto
-    from botsito.domain.ticks import MS_POR_MINUTO
     from botsito.engine import arnes, simulacion
-    from botsito.engine.broker import Broker, BrokerError
-    from botsito.engine.cuenta import Cargo, Marca, Operacion, evaluar_fase, reglas_de_fase
+    from botsito.engine.cuenta import reglas_de_fase
     from botsito.engine.perfil_cuenta import cargar_perfil
     from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
 
@@ -316,6 +330,29 @@ def medir(raiz: Path) -> dict[str, Any]:
             )
     if len(ops) != 77:
         raise SystemExit(f"se esperaban 77 operaciones y hay {len(ops)}")
+    return Contexto(
+        registro=registro,
+        reglas_fase=reglas_fase,
+        reglas_broker=reglas_broker,
+        cfg=cfg,
+        contrato=contrato,
+        objetivo_rr=objetivo_rr,
+        ops=ops,
+        mercados=mercados,
+        sin_stop=sin_stop,
+    )
+
+
+def medir(raiz: Path) -> dict[str, Any]:
+    from botsito.data.velas import a_minuto
+    from botsito.domain.ticks import MS_POR_MINUTO
+    from botsito.engine.broker import Broker, BrokerError
+    from botsito.engine.cuenta import Cargo, Marca, Operacion, evaluar_fase
+
+    ctx = cargar(raiz)
+    reglas_fase, reglas_broker, cfg = ctx.reglas_fase, ctx.reglas_broker, ctx.cfg
+    contrato, objetivo_rr = ctx.contrato, ctx.objetivo_rr
+    ops, mercados, sin_stop = ctx.ops, ctx.mercados, ctx.sin_stop
 
     def pts(precio: Decimal, escala: int) -> int:
         return int((precio * escala).to_integral_value())
