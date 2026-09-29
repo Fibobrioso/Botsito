@@ -1,0 +1,18 @@
+id: ev-v9-003621-f65f51a0
+video_id: v9
+t0: 0:36:21
+t1: 0:36:41
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: desde que se forma en este caso se formaría en estas dos velas [...] El primero marca el
+  máximo y el segundo te confirma que está retrocedido.
+afirmacion: 'un alto de M15 vale como liquidez desde que se forma con un par de velas: la primera marca
+  el maximo y la segunda confirma el retroceso'
+tema: liquidez.m15.pivote_par_de_velas
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-35. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

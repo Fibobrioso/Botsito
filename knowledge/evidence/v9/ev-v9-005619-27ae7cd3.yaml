@@ -1,0 +1,16 @@
+id: ev-v9-005619-27ae7cd3
+video_id: v9
+t0: 0:56:19
+t1: 0:56:26
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: ¿En qué temporalidad miras la ruptura? Pues se mantiene en M1, o sea, se mantiene en M1.
+afirmacion: la ruptura de la zona de control para el break even se mira en M1
+tema: break_even.temporalidad_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-13. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

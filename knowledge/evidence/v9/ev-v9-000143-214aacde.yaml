@@ -1,0 +1,18 @@
+id: ev-v9-000143-214aacde
+video_id: v9
+t0: 0:01:43
+t1: 0:01:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder
+  trazar los posibles puntos de breaker
+afirmacion: 'la orden no se pone antes de la toma de liquidez: primero se desarrolla la toma y solo entonces
+  se trazan los posibles puntos de breaker'
+tema: entrada.orden_tras_toma_de_liquidez
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-47. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

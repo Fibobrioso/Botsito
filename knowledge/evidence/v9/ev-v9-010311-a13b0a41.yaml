@@ -1,0 +1,17 @@
+id: ev-v9-010311-a13b0a41
+video_id: v9
+t0: '1:03:11'
+t1: '1:03:28'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: la magia de brindarnos el beneficio adicional ese, es que se calcularía a partir del 0 al
+  0.8.
+afirmacion: el lotaje se calcula sobre la distancia del 0 al 0,8, y eso da el beneficio adicional
+tema: lotaje.base_0_a_08
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-18. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -71,6 +71,22 @@ ORDEN_SESION_02 = (
     "A-34", "A-41", "A-39",
 )  # fmt: skip
 
+# La hoja de la sesion 03 (2026-09-29, brief del consultor): ademas de las A-xx, codigos de sesion
+# que no son ambiguedades del registro -E-x, S-1 (como decide el sesgo del dia), G-1 (cerrar antes
+# del stop), G-2 (dejar correr mas alla del objetivo) y G-3 (tamano minimo de caja)-, dichos en voz
+# como «pregunta S uno» o «pregunta G dos». Es el orden con el que se agrupa la version filtrada.
+ORDEN_SESION_03 = (
+    "A-47",
+    "S-1", "A-34", "A-26", "A-39",
+    "A-46", "A-35", "A-45", "A-43", "A-50",
+    "A-13", "A-40", "G-1", "G-2", "A-18", "G-3",
+    "A-42", "A-44",
+    "A-21", "E-1",
+    "A-30", "A-31", "E-2", "E-3", "A-41", "A-38", "A-24", "A-25", "A-37",
+)  # fmt: skip
+CODIGOS_DE_SESION = ("E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3")
+ORDEN_SESION = ORDEN_SESION_03  # la hoja de la sesion en curso
+
 
 # ------------------------------------------------------------------------------ normalizar
 
@@ -200,9 +216,18 @@ _UNIDADES_TRAS = (
 # SOLO «pregunta» seguida del codigo abre una pregunta (protocolo de voz de la sesion 02):
 # «Pregunta A treinta y cinco», «pregunta a 35», «pregunta A-35», «pregunta, A35», «pregunta
 # numero 35», «pregunta 35». El «a N» suelto ya no abre nada: en la sesion 01 casaba 17 veces
-# con conversacion normal («llega a 30»).
+# con conversacion normal («llega a 30»). Desde la sesion 03, la letra puede ser tambien E, S o G,
+# con sus nombres y las grafias del ASR: «pregunta E uno», «pregunta ese uno», «pregunta G dos»,
+# «pregunta je dos»; sin letra, A. Solo abre si el codigo esta entre los validos.
+_LETRAS = {
+    "a": "A", "ha": "A", "ah": "A",
+    "e": "E", "he": "E",
+    "s": "S", "ese": "S", "es": "S",
+    "g": "G", "ge": "G", "je": "G",
+}  # fmt: skip
 _RE_CODIGO = re.compile(
-    r"(?<![\w-])preguntas?\W{0,3}(?:numero\W{1,3})?(?:(?:a|ha|ah)\W{0,3})?"
+    r"(?<![\w-])preguntas?\W{0,3}(?:numero\W{1,3})?"
+    r"(?:(?P<l>" + "|".join(sorted(_LETRAS, key=len, reverse=True)) + r")\W{0,3})?"
     r"(?P<n>\d{1,2})(?!\d|[.,]\d)(?!\s*(?:" + _UNIDADES_TRAS + r"))"
 )
 _RE_FIN = re.compile(r"\b(?:fin de (?:la )?pregunta|sin pregunta|fuera de pregunta)\b")
@@ -216,7 +241,7 @@ def codigo_en(texto: str, validos: Iterable[str]) -> str | None:
     t = numeros_a_cifras(normalizar(texto))
     ultimo: str | None = None
     for m in _RE_CODIGO.finditer(t):
-        codigo = f"A-{int(m.group('n'))}"
+        codigo = f"{_LETRAS.get(m.group('l') or 'a', 'A')}-{int(m.group('n'))}"
         if codigo in conocidos:
             ultimo = codigo
     return ultimo
@@ -281,11 +306,12 @@ def lineas_filtradas(
 
 
 def orden_de_preguntas(presentes: Iterable[str]) -> list[str]:
-    """El orden de la hoja (con A-46), luego las demas por numero, y SIN PREGUNTA al final."""
+    """El orden de la hoja de la sesion en curso, luego las demas por letra y numero, y SIN
+    PREGUNTA al final."""
     presentes = set(presentes)
-    en_hoja = [p for p in ORDEN_SESION_02 if p in presentes]
-    otras = sorted((p for p in presentes if p not in ORDEN_SESION_02 and p != SIN_PREGUNTA),
-                   key=lambda p: int(p[2:]))  # fmt: skip
+    en_hoja = [p for p in ORDEN_SESION if p in presentes]
+    otras = sorted((p for p in presentes if p not in ORDEN_SESION and p != SIN_PREGUNTA),
+                   key=lambda p: (p[0], int(p[2:])))  # fmt: skip
     return en_hoja + otras + ([SIN_PREGUNTA] if SIN_PREGUNTA in presentes else [])
 
 
@@ -329,7 +355,7 @@ def registro_filtro(
             primeras.setdefault(ln.pregunta, ln.t0_ms)
         anterior = ln.pregunta
     detectados = [p for p in orden_de_preguntas(primeras) if p != SIN_PREGUNTA]
-    no_detectados = [p for p in ORDEN_SESION_02 if p not in primeras]
+    no_detectados = [p for p in ORDEN_SESION if p not in primeras]
     return [
         f"segmentos: {sum(len(ln.indices) for ln in lineas)}",
         f"segmentos en cuarentena: {len(cuarentena)} en {bloques} bloques",
@@ -487,13 +513,17 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool) -> list[str]:
 
 def codigos_validos() -> tuple[str, ...]:
     """Los ids que se pueden preguntar: ABIERTA o DECIDIDA en `knowledge/spec/ambiguedades.yaml`
-    (solo lectura). Las RESUELTAS (A-1..A-12 y otras) no cuentan: «a dos» no es A-2."""
+    (solo lectura), mas los codigos de sesion de la hoja en curso. Las RESUELTAS (A-1..A-12 y
+    otras) no cuentan: «a dos» no es A-2."""
     from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
 
-    return tuple(
-        a.id
-        for a in cargar_ambiguedades(RAIZ / FICHERO_AMBIGUEDADES)
-        if a.estado in ("ABIERTA", "DECIDIDA")
+    return (
+        tuple(
+            a.id
+            for a in cargar_ambiguedades(RAIZ / FICHERO_AMBIGUEDADES)
+            if a.estado in ("ABIERTA", "DECIDIDA")
+        )
+        + CODIGOS_DE_SESION
     )
 
 

@@ -1,0 +1,17 @@
+id: ev-v9-011206-148fc7f9
+video_id: v9
+t0: '1:12:06'
+t1: '1:12:11'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: creo yo siempre con saldo final yo lo vería así
+afirmacion: el riesgo de la operacion siguiente se calcula sobre el saldo final, no sobre el inicial ni
+  con las operaciones abiertas
+tema: riesgo.base_saldo_final
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-44. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

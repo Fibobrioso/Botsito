@@ -1,0 +1,16 @@
+id: ev-v9-003026-0445965d
+video_id: v9
+t0: 0:30:26
+t1: 0:30:31
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Indiferentemente se cierra, sí, si el sesgo es el mismo.
+afirmacion: la operacion se cierra al vencer la sesion aunque el sesgo de la sesion siguiente sea el mismo
+tema: ventana.cierre_h4_aunque_mismo_sesgo
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-39. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

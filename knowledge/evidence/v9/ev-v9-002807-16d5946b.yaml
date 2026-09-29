@@ -1,0 +1,16 @@
+id: ev-v9-002807-16d5946b
+video_id: v9
+t0: 0:28:07
+t1: 0:28:12
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: si no ha llegado al objetivo, pues no importa, se cierra
+afirmacion: aunque no haya llegado al objetivo, la operacion se cierra al vencer la sesion de cuatro horas
+tema: ventana.cierre_al_vencer_vela_h4.sin_objetivo
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-39. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -94,6 +94,33 @@ del riesgo.
 > escenario de referencia)** y 10 USD (5 por lado, el supuesto conservador del perfil). **El parámetro
 > del perfil no se toca**: se fija con el CSV de la demo. El cuerpo de este documento no cambia.
 
+> **Respuesta de soporte de FTMO (ticket VDW-DPMWR-965, 29-09-2026; recuadro añadido en la rama
+> `trabajo/sesion-03`).** La respuesta la recibió Aleks por correo y la traslada en su brief de ese
+> día; no hay cita literal en el repositorio. Lo que dice, punto por punto:
+>
+> - **FTMO Account Swing: se permite operar durante noticias y mantener posiciones por la noche y el
+>   fin de semana.** Coincide con R6 y R7.
+> - **No se permite el gap trading** cuando hay programadas noticias globales importantes, eventos
+>   macroeconómicos o resultados que puedan afectar al mercado, **ni dentro de las dos horas previas
+>   al cierre de un mercado que va a estar cerrado al menos dos horas.** Confirma R15, que ya lo
+>   decía en la fuente oficial leída el 2026-09-25 («two hours or less before a relevant financial
+>   market is closed for at least two hours»).
+> - **Comisiones: en MT4 se descuentan al instante; en MT5, cTrader y TradingView, el 50 % al abrir
+>   y el 50 % al cerrar.** Es decir, en MT5 la comisión se cobra por lado, en dos mitades. **El
+>   importe no lo dice el correo**: sigue siendo el de la actualización del 25-09-2025, 2,50 USD por
+>   lote y por lado (recuadro de arriba), **no confirmado en demo**. El parámetro del perfil no se
+>   toca en esta rama.
+> - **La pregunta sobre si se puede variar el tamaño de posición quedó sin respuesta** (R17 sigue
+>   abierta en §4).
+>
+> **Lo que eso pide al bot**, comprobado en la spec el 2026-09-29: el bot solo busca entradas de 07:00
+> a 15:00 de Madrid, de lunes a viernes, y cierra a las 15:00 lo que tenga abierto (RN-001, RN-002).
+> En una semana normal no puede abrir en las dos horas previas al cierre del viernes, a las 22:00 UTC.
+> **Pero no tiene calendario de festivos ni de horario de mercado**: si FTMO cierra EURUSD antes de
+> las 17:00 de Madrid en un día seguido de un cierre de dos horas o más -Nochebuena, Nochevieja,
+> festivos con cierre anticipado-, el bot podría abrir dentro de esas dos horas. Queda como pendiente
+> en `PROJECT_STATE.md`; no se corrige en esta rama.
+
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
 **Coinciden:**

@@ -1,0 +1,19 @@
+id: ev-v9-004217-c014bfdc
+video_id: v9
+t0: 0:42:17
+t1: 0:42:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para el M1 para actualizar el punto de breaker vale la mecha y para la liquidez de M15 hace
+  siempre falta cuerpo
+afirmacion: 'a la frase de confirmacion del consultor, el trader repite: para actualizar el punto de breaker
+  en M1 vale la mecha y para la liquidez de M15 hace siempre falta cuerpo'
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: cuerpo
+notas: A-45. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

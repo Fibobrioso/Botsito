@@ -1,0 +1,16 @@
+id: ev-v9-005631-c3b42381
+video_id: v9
+t0: 0:56:31
+t1: 0:56:41
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Yo lo suelo, o sea, a entrada, a entrada. [...] Yo he estado trabajando así, a entrada.
+afirmacion: el break even va exactamente a la entrada, sin puntos a favor para cubrir costes
+tema: break_even.nivel_entrada_exacta
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-13. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

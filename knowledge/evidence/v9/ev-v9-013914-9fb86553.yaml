@@ -1,0 +1,16 @@
+id: ev-v9-013914-9fb86553
+video_id: v9
+t0: '1:39:14'
+t1: '1:39:19'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Para precisar, M1, M15 u otra M1
+afirmacion: a la pregunta del consultor, la vela contraria de la que sale el stop se mira en M1
+tema: stop.vela_contraria_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-37. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

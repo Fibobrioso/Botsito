@@ -37,3 +37,94 @@ tramos:
       cuarentena mecanica de la sesion 02 (scripts/transcribir_sesion.py): segmentos 128-130 de la cruda con motivo fecha numerica, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
     acordado: >-
       regla del brief de la sesion 02 (2026-09-27): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-02-VIDEO.md)
+  - video_id: v9
+    t0: "0:22:11"
+    t1: "0:22:16"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 404-406 de la cruda con motivo fecha numerica, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "0:24:11"
+    t1: "0:24:23"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 438-441 de la cruda con motivo fecha numerica, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "0:28:49"
+    t1: "0:29:53"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg volumedetect, 2026-09-29), de 1729,3 s a 1793,1 s. Lo que se dijo ahi se perdio en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      decision del consultor del 2026-09-29 (trabajo/sesion-03, opcion 1): seguir con este video y registrar los dos tramos sin audio, con su motivo, en el manifiesto y en la extraccion
+  - video_id: v9
+    t0: "0:32:20"
+    t1: "0:32:38"
+    motivo: >-
+      precaucion: el consultor dice en voz alta, en medio del tramo, que lo que esta leyendo no es citable. No se cita ni se describe
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): un tramo dudoso va aqui y no se cita ni se describe
+  - video_id: v9
+    t0: "0:34:44"
+    t1: "0:34:56"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 609-612 de la cruda con motivo fecha numerica, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "0:57:00"
+    t1: "0:58:06"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg volumedetect, 2026-09-29), de 3420,3 s a 3486,1 s. Lo que se dijo ahi se perdio en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      decision del consultor del 2026-09-29 (trabajo/sesion-03, opcion 1): seguir con este video y registrar los dos tramos sin audio, con su motivo, en el manifiesto y en la extraccion
+  - video_id: v9
+    t0: "1:06:38"
+    t1: "1:07:32"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1075-1080 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "1:07:34"
+    t1: "1:07:39"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1082-1084 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "1:07:45"
+    t1: "1:07:51"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1088-1090 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "1:13:04"
+    t1: "1:14:16"
+    motivo: >-
+      precaucion (ADR-0021 §2): el tramo puede contener un agregado de un periodo que el audio no identifica. Engloba los dos bloques de cuarentena mecanica de 1:13:25-1:13:39 (segmentos 1180-1182) y 1:13:55-1:14:04 (segmentos 1192-1194), con motivo mes, vecino. No se cita ni se describe, y ninguna cifra de aqui se usa
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): un tramo dudoso va aqui y no se cita ni se describe
+  - video_id: v9
+    t0: "1:13:25"
+    t1: "1:13:39"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1180-1182 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "1:13:55"
+    t1: "1:14:04"
+    motivo: >-
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1192-1194 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
+  - video_id: v9
+    t0: "1:39:43"
+    t1: "1:44:28"
+    motivo: >-
+      precaucion (ADR-0021 §2): despues de terminar las preguntas, el tramo puede contener operaciones y un agregado de un periodo que el audio no identifica. No se cita ni se describe, y ninguna cifra de aqui se usa
+    acordado: >-
+      regla del brief de la sesion 03 (2026-09-29): un tramo dudoso va aqui y no se cita ni se describe

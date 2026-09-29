@@ -1,0 +1,19 @@
+id: ev-v9-000902-25db5bf5
+video_id: v9
+t0: 0:09:02
+t1: 0:09:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el sesgo es alcista mientras que no se mitigue, pues, con mecha o con cuerpo por debajo
+  de esta vela que es nuestro rango
+afirmacion: el sesgo sigue alcista mientras no se mitigue con mecha o con cuerpo por debajo de la vela
+  que hace de rango; la vela de rango puede durar varias H4
+tema: sesgo.h4.rango
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: mecha
+notas: S-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

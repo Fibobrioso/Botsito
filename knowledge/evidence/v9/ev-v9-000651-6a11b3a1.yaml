@@ -1,0 +1,16 @@
+id: ev-v9-000651-6a11b3a1
+video_id: v9
+t0: 0:06:51
+t1: 0:07:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: que la vela anterior o sea la sesión que tú vas a operar va a ser tu tu bias
+afirmacion: la regla principal del sesgo es la vela H4 anterior a la sesion que se va a operar
+tema: sesgo.h4.vela_anterior
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

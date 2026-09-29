@@ -1,0 +1,17 @@
+id: ev-v9-012347-eef7627f
+video_id: v9
+t0: '1:23:47'
+t1: '1:23:54'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo creo que en este caso hay que usar lo último el último que fue el backtest completo
+afirmacion: cuando el mismo dia tiene dos versiones de su backtest, la buena para el bot es la ultima,
+  la del backtest completo
+tema: backtest.version_valida
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: E-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

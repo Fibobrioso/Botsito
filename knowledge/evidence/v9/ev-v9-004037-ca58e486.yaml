@@ -1,0 +1,19 @@
+id: ev-v9-004037-ca58e486
+video_id: v9
+t0: 0:40:37
+t1: 0:40:47
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta es la vela de M1 que rompe, o sea, la zona del índice de M15 y lo hace con cuerpo,
+  o sea, cierra por encima con cuerpo.
+afirmacion: la toma de la liquidez de M15 la hace una vela de M1 que cierra con cuerpo pasado el nivel;
+  con mecha no es valida
+tema: liquidez.m15.toma_con_vela_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: cuerpo
+notas: A-45. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

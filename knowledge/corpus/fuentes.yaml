@@ -77,6 +77,21 @@ videos:
       silencio de relleno de 40:00 a 2:00:48, porque la laptop se suspendio en el minuto 40 y la
       grabacion siguio sin audio; el flujo de video esta entero y copiado sin recodificar
 
+  - video_id: v9
+    fichero: "Grabación de pantalla 2026-09-29 164102.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 6981253429
+    fecha_grabacion: "2026-09-29"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): el audio tiene
+    # DOS CORTES de cero digital (-91 dB, medido con ffmpeg volumedetect el 2026-09-29): de 28:49 a
+    # 29:53 y de 57:00 a 58:06. Fuera de ellos no hay ningun silencio de mas de 20 s a -50 dB, y
+    # video y audio duran lo mismo (6273,9 s). Lo dicho en esos dos minutos se perdio; estan en
+    # tramos_no_citables.yaml. El consultor decidio seguir con este video (2026-09-29).
+    naturaleza: >-
+      sesion 3 con el trader (hoja de la sesion 03): preguntas del consultor y respuestas del
+      trader en voz, con DOS CORTES de audio de cero digital, de 28:49 a 29:53 y de 57:00 a 58:06,
+      en los que no se oye nada
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2

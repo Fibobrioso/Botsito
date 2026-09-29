@@ -1,0 +1,18 @@
+id: ev-v9-013736-463282d5
+video_id: v9
+t0: '1:37:36'
+t1: '1:37:48'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: alto nuevo más bajo va a ser el que nos vamos a enfocar en operar y si no no se da entrada,
+  pues seguimos al más alto.
+afirmacion: si se forma un alto nuevo mas bajo que la marca, se opera primero sobre el mas reciente; si
+  no da entrada, se sigue con el mas alto
+tema: liquidez.m15.marca_mas_reciente
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-25. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

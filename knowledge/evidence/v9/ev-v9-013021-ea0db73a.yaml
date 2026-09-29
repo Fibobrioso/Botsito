@@ -1,0 +1,18 @@
+id: ev-v9-013021-ea0db73a
+video_id: v9
+t0: '1:30:21'
+t1: '1:30:34'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto de
+  breaker
+afirmacion: 'una vela casi plana, sin color claro, cuenta como si no existiera: sobre ella no se traza
+  punto de breaker'
+tema: mapeo.vela_neutra_no_cuenta
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: E-3. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

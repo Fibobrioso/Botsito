@@ -1,0 +1,17 @@
+id: ev-v9-010753-063c8cb7
+video_id: v9
+t0: '1:07:53'
+t1: '1:08:02'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entonces en invierno no empiezas a las 7 o a las 6 sería tu reloj, ¿no? Sí.
+afirmacion: a la pregunta del consultor, el trader confirma con un «Sí» que en invierno no empieza a las
+  7 sino a las 6 de su reloj
+tema: reloj.invierno_empieza_a_las_6
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-42. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

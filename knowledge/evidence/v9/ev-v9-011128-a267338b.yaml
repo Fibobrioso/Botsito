@@ -1,0 +1,17 @@
+id: ev-v9-011128-a267338b
+video_id: v9
+t0: '1:11:28'
+t1: '1:11:37'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: 9 pérdidas como máximo O sea, para El tope es eso, 9 pérdidas como máximo
+afirmacion: el tope de perdida propio del trader es de 9 perdidas como maximo, contado en numero de perdidas
+  y no en porcentaje
+tema: riesgo.tope_trader_9_perdidas
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-44. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -1,0 +1,17 @@
+id: ev-v9-002735-472432b8
+video_id: v9
+t0: 0:27:35
+t1: 0:28:03
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
+afirmacion: una operacion abierta se cierra siempre un minuto antes de que cierre la vela H4 de la sesion,
+  este donde este
+tema: ventana.cierre_al_vencer_vela_h4
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-39. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

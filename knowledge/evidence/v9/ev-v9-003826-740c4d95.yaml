@@ -1,0 +1,18 @@
+id: ev-v9-003826-740c4d95
+video_id: v9
+t0: 0:38:26
+t1: 0:38:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No tiene que estar en transcurso, o sea, tiene que cerrar para poder definir si trazamos
+  o no.
+afirmacion: 'para validar una zona de liquidez de M15 la vela tiene que haber cerrado: no vale en transcurso'
+tema: liquidez.m15.pivote_vela_cerrada
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: cierre
+notas: A-35. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

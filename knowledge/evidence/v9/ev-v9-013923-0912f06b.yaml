@@ -1,0 +1,18 @@
+id: ev-v9-013923-0912f06b
+video_id: v9
+t0: '1:39:23'
+t1: '1:39:32'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La caja se trata desde el punto de breaker Hasta el punto más alto Se va actualizando eso
+  Hasta que ocurra el breaker
+afirmacion: la caja se traza desde el punto de breaker hasta el punto mas alto y se va actualizando hasta
+  que ocurre el breaker
+tema: herramientas.caja.trazado_hasta_el_breaker
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-37. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd
