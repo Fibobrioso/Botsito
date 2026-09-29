@@ -443,8 +443,9 @@ def medir(raiz: Path) -> dict[str, Any]:
         """El veredicto de la fase. SANEADO: sin las marcas en o despues del cierre. El broker deja
         una marca en el mismo instante del tick que cierra, y `cuenta._eventos` ordena a igual
         instante el cierre ANTES que la marca, asi que la marca vuelve a meter la posicion cerrada
-        en la equity como abierta y ahi se queda: un error de codigo de `evaluar_fase`, que esta
-        rama NO corrige (VIABILIDAD-TRADER.md §6). Con `sanear=False`, el motor tal cual."""
+        en la equity como abierta y ahi se queda: un error de codigo de `evaluar_fase`, corregido
+        en `trabajo/corregir-evaluar-fase` (desde entonces las dos dan lo mismo). Con
+        `sanear=False`, el motor tal cual."""
         if sanear:
             cerradas = [marcas_antes_del_cierre(x) for x in cerradas]
         r = evaluar_fase(cerradas, reglas_fase, contrato)

@@ -86,6 +86,21 @@ p90 por hora con su fuente.
 
 ## Fases 6 y 7
 
+> **Corrección (2026-09-28, rama `trabajo/corregir-evaluar-fase`).** Las cifras de la Fase 6 se
+> calcularon con un error de `evaluar_fase`: la marca que el bróker deja en el instante del cierre se
+> procesaba después del cierre y reabría la posición en la equity. Corregido, cambian las pérdidas
+> máximas de todos los escenarios y dos veredictos (entre paréntesis, pérdida diaria / total máximas):
+>
+> | riesgo | abril: antes → después | agosto: antes → después |
+> |---|---|---|
+> | 0,25 % | EN_CURSO (3,89 / 6,29) → EN_CURSO (2,72 / 5,13) | EN_CURSO (1,29 / 3,46) → EN_CURSO (1,73 / 3,22) |
+> | 0,5 % | EN_CURSO (2,77 / 5,42) → EN_CURSO (3,20 / 5,85) | EN_CURSO (2,59 / 6,92) → EN_CURSO (3,45 / 6,20) |
+> | 1 % | EN_CURSO (0,58 / 1,52) → EN_CURSO (3,39 / 3,36) | EN_CURSO (3,85 / 3,05) → **SUSPENDIDA el 7 de agosto a las 12:30:01Z** (5,11 %) |
+> | 2 % | SUSPENDIDA el 13 de abril a las 12:03:59Z (5,06 %) → SUSPENDIDA el 13 de abril a las **12:06:23Z** (5,07 %) | EN_CURSO (1,70 / 0,85) → **SUSPENDIDA el 7 de agosto a las 12:30:01Z** (10,22 %) |
+>
+> El número de operaciones, los rechazos y el contraste ticks frente a respaldo M1 no cambian. El
+> detalle, en `docs/validation/CORREGIR-EVALUAR-FASE.md`. El cuerpo de abajo queda como estaba.
+
 **Fase 6, repetición descriptiva** (perfil FTMO 2-Step Swing 100k, fase `reto`, con ticks; el
 detalle en `REPETICION-TRADER-SALIDA.txt` y en el registro): al 0,25 % de riesgo por operación,
 abril queda EN_CURSO con pérdida diaria máxima 3,89 % y total 6,29 % (35 operaciones, 16 días);

@@ -211,6 +211,19 @@ trader operaría en una cuenta con comisión.
 
 ## 6. Error de código encontrado, y no corregido
 
+> **Corregido (2026-09-28, rama `trabajo/corregir-evaluar-fase`).** La causa estaba en la capa de
+> cuenta: a igual instante, la vida de una misma operación no se respetaba. Con la corrección, las
+> cifras saneadas de este informe salen **idénticas** y el «motor tal cual» da lo mismo que ellas:
+> los veredictos de §3 y §5 se mantienen. Los que el error cambiaba (0,5 % abril+agosto simulada,
+> SUSPENDIDA; 1 % abril+agosto simulada, SUPERADA; 2 % agosto simulada, SUSPENDIDA; 2 % abril
+> simulada, SUSPENDIDA el 16 de abril por la total) quedan confirmados. Detalle en
+> `docs/validation/CORREGIR-EVALUAR-FASE.md`.
+>
+> **Nota del consultor (2026-09-28, antes del cierre).** El veredicto SUPERADA al 1 % no indica que
+> más riesgo sea mejor: a ese riesgo, el tope de 100 lotes excluye las operaciones de stop corto,
+> que son las que más castiga la comisión. Es una pista a favor de un stop mínimo, no una regla;
+> solo el trader puede confirmarla.
+
 **`evaluar_fase` (`src/botsito/engine/cuenta.py`) cuenta dos veces el resultado de cada operación
 que viene del bróker.** El bróker deja en la operación cerrada una marca de precio en el **mismo
 instante** que su cierre (la del tick que salta el stop o el objetivo): pasa en **73 de 73** de la

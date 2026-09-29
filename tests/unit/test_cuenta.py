@@ -516,3 +516,51 @@ def test_las_reglas_de_una_fase_se_leen_del_perfil_y_lo_que_no_aplica_queda_en_n
         cuenta.reglas_de_fase(ftmo, "otra")
     assert ftmo.registro.parametros["firma_fondeada_objetivo"].estado is Estado.UNKNOWN
     assert perfil_cuenta.CATEGORIA_PERFIL == "prop_firm"
+
+
+# ------------------------------------ el orden a igual instante (trabajo/corregir-evaluar-fase)
+
+
+def test_una_marca_en_el_instante_del_cierre_no_reabre_la_operacion(reto: ReglasFase) -> None:
+    """El broker deja en la operacion cerrada una marca en el MISMO instante de su cierre -la del
+    tick que salta el stop o el objetivo-, y el contrato lo admite (marcas en [apertura, cierre]).
+    Hasta esta rama, a igual instante el cierre iba antes que la marca y la marca volvia a meter la
+    posicion en la equity como abierta: una ganadora fantasma sostenia la equity y una perdida que
+    rompe el limite diario pasaba sin infraccion (VIABILIDAD-TRADER.md §6)."""
+    gana = _op("gana", _t(3, 4, 7), _t(3, 4, 8), 3000, marcas=((_t(3, 4, 8), 3000),))
+    pierde = _op("pierde", _t(3, 4, 9), _t(3, 4, 10), -8500)
+    r = _correr([gana, pierde], reto)
+    # saldo 100 000 + 3 000 - 8 500 = 94 500, bajo el limite del dia 100 000 - 5 000
+    assert r.estado is EstadoCuenta.SUSPENDIDA
+    assert r.motivo.startswith("perdida diaria"), r.motivo
+    assert r.instante == _t(3, 4, 10)
+    assert r.saldo_final == D(94500)
+
+
+def test_la_marca_del_cierre_no_deja_una_posicion_fantasma(reto: ReglasFase) -> None:
+    sola = _correr(
+        [_op("sola", _t(3, 4, 7), _t(3, 4, 8), 1000, marcas=((_t(3, 4, 8), 400),))], reto
+    )
+    assert sola.saldo_final == D(101000)
+    assert sola.equity_final == sola.saldo_final  # nada sigue abierto
+    # y la marca del cierre SI cuenta, antes del cierre: el peor precio visto con la posicion viva
+    mala = _correr([_op("mala", _t(3, 4, 7), _t(3, 4, 8), 0, marcas=((_t(3, 4, 8), -5500),))], reto)
+    assert mala.estado is EstadoCuenta.SUSPENDIDA and mala.instante == _t(3, 4, 8)
+
+
+def test_una_operacion_que_abre_y_cierra_en_el_mismo_instante(reto: ReglasFase) -> None:
+    """Abrir y cerrar en el mismo milisegundo (un tick que salta el stop justo al abrir): la
+    apertura va antes que su propio cierre, y una marca en ese instante, entre las dos."""
+    op = _op("cero", _t(3, 4, 7), _t(3, 4, 7), -200, marcas=((_t(3, 4, 7), -200),))
+    r = _correr([op], reto)
+    assert r.saldo_final == D(99800) and r.equity_final == r.saldo_final
+    assert r.dias_de_trading == 1
+
+
+def test_una_marca_en_el_instante_de_la_apertura_va_despues_de_abrir(reto: ReglasFase) -> None:
+    op = _op(
+        "x", _t(3, 4, 7), _t(3, 4, 8), 100, marcas=((_t(3, 4, 7), -300), (_t(3, 4, 7, 30), 50))
+    )
+    r = _correr([op], reto)
+    assert r.estado is EstadoCuenta.EN_CURSO and r.saldo_final == D(100100)
+    assert r.dias[0].equity_minima == D(99700)
