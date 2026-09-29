@@ -1,0 +1,99 @@
+# La medida en la demo de FTMO
+
+Para Aleks. Un script de MetaTrader 5 mide en la cuenta de **prueba gratuita** de FTMO lo que el
+simulador todavía supone: qué hace el servidor con una orden mal colocada, el stops level, la
+comisión y el reloj del servidor (ADR-0057, A-27, A-28 y `docs/validation/FTMO-REGLAS.md`). Tú lo
+ejecutas tres veces; el repositorio lee lo que sale. **No cambia nada de la estrategia ni de los
+parámetros**: los valores entran después, en otra rama, con los ficheros delante.
+
+El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda unos cinco minutos.
+
+## Lo que hace, y lo que no hace nunca
+
+- **Se niega a correr si la cuenta no es de prueba (DEMO).** En una cuenta real no hace nada.
+- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta).
+- Pone unas veinte órdenes de prueba y **las borra todas**; abre como mucho unas pocas posiciones
+  pequeñas y **las cierra**.
+  Toda orden de prueba caduca sola a los 15 minutos, y toda posición lleva un stop de protección.
+- Al empezar y al terminar busca cualquier orden o posición suya que siga abierta y la quita. Si
+  algo se quedara abierto, sale un aviso en pantalla y queda escrito en el fichero.
+
+## Una vez: la cuenta y MetaTrader
+
+1. **La cuenta de prueba.** Entra en ftmo.com, pulsa *Free Trial* y regístrate. Si te deja
+   elegir, pide **MetaTrader 5**, **Swing** y **100.000 USD**, como la cuenta de verdad. Al
+   terminar, en tu área de cliente (*Client Area*) verás tres datos de la cuenta: **login**,
+   **contraseña** y **servidor**. Apúntalos.
+2. **MetaTrader 5.** En este ordenador ya está instalado. Si no lo estuviera, se descarga desde el
+   área de cliente de FTMO o desde metatrader5.com, y se instala con las opciones por defecto.
+3. **Entrar en la cuenta.** Abre MetaTrader 5. Menú **Archivo → Iniciar sesión en la cuenta de
+   trading** (en inglés, *File → Login to Trade Account*). Escribe el login, la contraseña y elige el servidor de FTMO que te dieron. Abajo a
+   la derecha tiene que aparecer una conexión en verde con unos números (kb).
+4. **Copiar el script.** Menú **Archivo → Abrir carpeta de datos** (*File → Open Data Folder*). Se abre una carpeta de Windows:
+   entra en **MQL5**, luego en **Scripts**, y copia ahí el fichero
+   `tools/mql5/MedirDemoFTMO.mq5` del repositorio.
+5. **Compilarlo.** En MetaTrader pulsa **F4**: se abre MetaEditor. A la izquierda, en *Scripts*,
+   haz doble clic en **MedirDemoFTMO.mq5** y pulsa **F7**. Abajo tiene que decir **0 errors**.
+   Cierra MetaEditor.
+
+## Cada vez: ejecutarlo
+
+1. **Mercado abierto**, de lunes a viernes, entre las **9:00 y las 18:00 hora de España** (Londres
+   o Nueva York abiertos). Evita la hora exacta de una noticia importante.
+2. Pulsa el botón **Algo Trading** de la barra de arriba hasta que se vea en verde. Sin él, el
+   script se niega y te lo dice.
+3. **Un gráfico de EURUSD.** Menú **Ver → Observación del mercado** (*View → Market Watch*); en la lista, clic derecho en
+   **EURUSD → Ventana de gráfico**.
+4. **Lanzarlo.** Menú **Ver → Navegador** (*View → Navigator*); despliega **Scripts**, arrastra **MedirDemoFTMO** encima
+   del gráfico de EURUSD y pulsa **Aceptar** sin cambiar nada.
+5. **Esperar** unos cinco minutos, sin tocar nada, hasta que salga una ventana que diga
+   **«MedirDemoFTMO: terminado (completo)»**.
+6. **Comprobar.** Abajo, en la caja de herramientas (**Ctrl+T**), pestaña **Trading** (*Trade*), no
+   tiene que quedar ninguna orden ni posición. Si la ventana dijera **«ATENCIÓN: quedan…»**, en esa pestaña clic derecho
+   sobre cada una → **Cerrar** o **Eliminar**.
+7. **Si se corta** (se va la conexión, cierras MetaTrader…): vuelve a lanzarlo. Lo primero que hace
+   es limpiar lo que quedara de la vez anterior.
+
+## Dónde queda el fichero y a dónde va
+
+MetaTrader lo deja en **Archivo → Abrir carpeta de datos → MQL5 → Files**, con el nombre
+`MedirDemoFTMO_AAAAMMDD_HHMMSS.csv` (la fecha y la hora del servidor). **No lo abras con Excel ni lo
+renombres**: cópialo tal cual a la carpeta **`data/demo_ftmo/`** del repositorio (créala la primera
+vez). Para ver la tabla:
+
+    uv run python scripts/leer_demo_ftmo.py data/demo_ftmo
+
+**Por qué ahí y no en `knowledge/`.** `data/` es donde el repositorio guarda los datos medidos en
+bruto, fuera de git (`.gitignore`), como las velas y los ticks; lo que entra en git es su manifiesto
+con el hash, en `data/manifests/`, que es inmutable. `knowledge/evidence/` no sirve: es para items
+de evidencia del corpus con su esquema y su cita, no para ficheros de una plataforma. Cuando estén
+los tres CSV, la rama que los use congela su hash en un manifiesto y, desde ahí, cambia los
+parámetros con su fuente. El script no escribe el login de la cuenta: el fichero no lleva datos
+personales.
+
+## Cuándo: tres veces
+
+| vez | cuándo | por qué |
+|---|---|---|
+| 1 | **esta semana**, y en cualquier caso antes del domingo **25 de octubre** | todo lo que no depende de la fecha, y el desfase del reloj en horario de verano |
+| 2 | entre el **lunes 26 y el viernes 30 de octubre** | Europa ya cambió de hora (el 25) y Nueva York todavía no: el desfase dice qué calendario sigue el servidor (A-28) |
+| 3 | después del **domingo 1 de noviembre** | Nueva York ya cambió: confirma el horario de invierno |
+
+Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
+recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,
+«verificación explícita»). Apúntalo con la fecha.
+
+## Lo que mide cada paso
+
+| paso | qué | para qué |
+|---|---|---|
+| 1 | la ficha de EURUSD: stops level, freeze level, digits, point, contrato, lote mínimo, máximo y paso, modos de llenado, swaps y día del triple swap | A-27, ADR-0057 §5, FTMO-REGLAS R11 y R12 |
+| 2 | la hora del servidor, la hora GMT y el desfase | A-28 |
+| 3 | cuatro pendientes del lado equivocado: si se rechazan, se colocan o se llenan, y a qué precio | ADR-0057 d2, d3 y d4 |
+| 4 | las cuatro pendientes en el nivel exacto, a la distancia del stops level y un punto dentro | ADR-0057 d2 y §5, A-27 |
+| 5 | una pendiente buena, movida al lado equivocado: si se acepta y si la original sigue viva | ADR-0057 d3 |
+| 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento | FTMO-REGLAS R12, DN-3 |
+| 7 | una buy stop muy cerca del precio: a qué precio se llena frente a su nivel | ADR-0057 d1 |
+
+**Importante para leerlo:** la hora GMT sale del reloj de este ordenador. Si el ordenador no está en
+hora, el desfase sale mal: comprueba que la hora de Windows está sincronizada antes de lanzarlo.
