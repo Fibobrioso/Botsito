@@ -76,9 +76,13 @@ del riesgo.
 >   «Both symbols have a contract size of 100,000, with a commission of 3 USD per lot (round-trip).»
 >   Habla de dos símbolos nuevos de forex, USDSGD y USDCNH, **no de EURUSD**.
 > - **FTMO, «Trading Update | 25 Sep 2025»**
->   (`https://ftmo.com/en/blog/trading-updates/trading-update-25-sep-2025/`): según el buscador,
->   anuncia ajustes de spreads y comisiones desde el 29 de septiembre de 2025. **NO LEÍDA**: el
->   servidor cortó la conexión en los cuatro intentos, así que no se sabe qué dice de EURUSD.
+>   (`https://ftmo.com/en/blog/trading-updates/trading-update-25-sep-2025/`): **fija la comisión de
+>   forex en 2,50 USD por lote y por lado (5 USD ida y vuelta) desde la apertura del 29 de
+>   septiembre de 2025, para todas las cuentas; antes era 1,50 por lado (3 USD ida y vuelta).** Lo
+>   DECLARA el consultor en su orden de cierre del 2026-09-28: la sesión no pudo leer la página (el
+>   servidor cortó la conexión en los cuatro intentos), así que no hay cita literal. Casa con la API
+>   leída el 2026-09-25 (5 USD por lote en EURUSD) y con los 3 USD de marzo de 2025 como la tarifa
+>   anterior. **No confirmado en demo.**
 > - **propvator.com, «FTMO Commissions, Spreads and Swaps»** (`https://propvator.com/blog/ftmo-trading-conditions/`,
 >   tercero, fechada el 5 de julio de 2026): «FTMO charges roughly $3 per round lot on forex»,
 >   «charged on the full round turn».
@@ -86,8 +90,9 @@ del riesgo.
 >   decir si por lado o por operación.
 >
 > Con eso, `docs/validation/VIABILIDAD-COMISION.md` mide tres escenarios de ida y vuelta por lote:
-> 3 USD (FTMO en otros pares de forex y terceros), 5 USD (la API) y 10 USD (5 por lado, el
-> supuesto conservador del perfil). El cuerpo de este documento no cambia.
+> 3 USD (la tarifa anterior al 29 de septiembre de 2025), **5 USD (la publicada desde entonces: el
+> escenario de referencia)** y 10 USD (5 por lado, el supuesto conservador del perfil). **El parámetro
+> del perfil no se toca**: se fija con el CSV de la demo. El cuerpo de este documento no cambia.
 
 ## 3. Contraste con lo que daba por supuesto el repositorio
 

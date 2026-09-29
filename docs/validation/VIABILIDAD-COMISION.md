@@ -4,6 +4,14 @@
 > material para él: sesgaría sus respuestas, y en particular las de A-18, que es justo lo que las
 > variantes V2 a V4 suponen. Solo para el consultor y para Aleks.
 
+> **Escenario de referencia: 5 USD ida y vuelta (comisión publicada por FTMO desde el 29-09-2025).
+> El escenario de 3 USD corresponde a la tarifa anterior.** (Orden del consultor del 2026-09-28,
+> antes del cierre; la fuente, en el recuadro de `FTMO-REGLAS.md`, sigue sin confirmar en demo.)
+>
+> **Y parte de la ventaja de V2 procede de las operaciones de stop cortísimo que excluye el tope de
+> 100 lotes**: con su lote un 25 % mayor, V2 deja fuera 11 con 3 USD y 10 con 5 USD, frente a 7 en
+> V1, y son precisamente las que más castiga la comisión (§2).
+
 Rama `trabajo/viabilidad-comision`, 2026-09-28, desde `main` en `d09ca19`. Es una **medición**: no
 cambia la estrategia, el bot, el bróker ni ningún parámetro del perfil; la comisión de cada
 escenario vive solo en la corrida. **Las variantes V2 a V4 son hipótesis de A-18, no decisiones.**
@@ -43,15 +51,17 @@ comisión de ida y vuelta por lote.
 ## 1. Fase 1 · La comisión
 
 Tres escenarios de comisión de forex, de ida y vuelta por lote (la mitad en cada lado):
-- **3 USD**: lo que FTMO publicó el 27 de marzo de 2025 para dos pares nuevos de forex (USDSGD y
-  USDCNH, **no EURUSD**) y lo que da una fuente de terceros («roughly $3 per round lot on forex»);
-- **5 USD**: la cifra de la API de símbolos de FTMO para EURUSD (R12), sin decir si es por lado;
+- **3 USD**: la tarifa anterior de forex, 1,50 por lado (lo que FTMO publicó el 27 de marzo de 2025
+  para dos pares nuevos, USDSGD y USDCNH, y lo que da una fuente de terceros);
+- **5 USD, el escenario de referencia**: 2,50 por lado, la comisión de forex que FTMO fija desde la
+  apertura del 29 de septiembre de 2025 (declarado por el consultor; casa con la API de símbolos,
+  5 USD en EURUSD, R12);
 - **10 USD**: 5 por lado, el supuesto conservador del perfil (`firma_comision_por_lado: true`).
 
 Las fuentes, con su cita y marcadas **no confirmado en demo**, están en el recuadro nuevo de
-`docs/validation/FTMO-REGLAS.md`. La actualización de FTMO del 25 de septiembre de 2025, que según el
-buscador cambia las comisiones, **no se pudo leer**: el servidor cortó la conexión en los cuatro
-intentos. **El parámetro del perfil no cambia**: se fija solo con el CSV de la demo
+`docs/validation/FTMO-REGLAS.md`. La actualización de FTMO del 25 de septiembre de 2025, que fija los
+5 USD, la sesión **no la pudo leer** (el servidor cortó la conexión en los cuatro intentos): su
+contenido lo declara el consultor. **El parámetro del perfil no cambia**: se fija solo con el CSV de la demo
 (`docs/runbooks/DEMO-FTMO.md`).
 
 ## 2. Fase 2 · Las variantes de A-18
