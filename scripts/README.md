@@ -50,5 +50,8 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   diagnostico con la orden stop y la lectura de A-21 pedida, y anota para cada operacion del trader
   el PRIMER paso del pipeline en el que el bot deja de acompanarla (`clasificar`, pura). Lee el
   repositorio en `--raiz` y escribe solo en `--salida` (`docs/validation/EMBUDO-77.md`).
+- `leer_demo_ftmo.py`: lee los CSV de `tools/mql5/MedirDemoFTMO.mq5` y escribe la tabla de ADR-0057,
+  A-27 y las reglas de FTMO con su valor medido por fichero, y el desfase del servidor por fecha
+  (A-28). Marca los retcodes inesperados sin ocultarlos. Solo lee (`docs/runbooks/DEMO-FTMO.md`).
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.

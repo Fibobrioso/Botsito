@@ -30,6 +30,8 @@ DOC_DIRS = [
     "mql5/Scripts",
     "mql5/tester",
     "scripts",
+    "tools",
+    "tools/mql5",
     "data/manifests",
     "tests",
 ]
