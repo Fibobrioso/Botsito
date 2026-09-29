@@ -8,6 +8,11 @@
 > invalidadas por el error de `evaluar_fase`, que se corrige en `trabajo/corregir-evaluar-fase`**
 > (§6). Recuadro añadido el 2026-09-28 por orden del consultor, antes del cierre.
 
+> **Ampliado (2026-09-28, rama `trabajo/viabilidad-comision`):** la misma medida con tres comisiones
+> de ida y vuelta (3, 5 y 10 USD por lote) y cuatro variantes de gestión del stop de A-18, en
+> `docs/validation/VIABILIDAD-COMISION.md`. Con 3 o 5 USD la esperanza neta de la serie anotada queda
+> por encima de cero con su intervalo; con 10 USD, la de este informe, no. Nada de aquí cambia.
+
 Rama `trabajo/viabilidad-trader`, 2026-09-28, desde `main` en `16e973d`. Es una **medición**: no
 cambia la estrategia, el bot ni el bróker, y no se ha ajustado nada para mejorar la cifra. Solo
 construcción: las 77 operaciones de los días `dev` de abril y agosto de 2026, material de desarrollo
