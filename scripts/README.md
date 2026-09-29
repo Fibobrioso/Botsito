@@ -53,5 +53,9 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
 - `leer_demo_ftmo.py`: lee los CSV de `tools/mql5/MedirDemoFTMO.mq5` y escribe la tabla de ADR-0057,
   A-27 y las reglas de FTMO con su valor medido por fichero, y el desfase del servidor por fecha
   (A-28). Marca los retcodes inesperados sin ocultarlos. Solo lee (`docs/runbooks/DEMO-FTMO.md`).
+- `viabilidad_trader.py`: las 77 operaciones del trader en construccion frente a las reglas de FTMO
+  2-Step Swing 100k, simuladas por el broker sobre ticks y con su salida anotada, con la esperanza en R
+  y su intervalo por bootstrap. Solo lee; escribe en `--salida` (`docs/validation/VIABILIDAD-TRADER.md`).
+  Sus resultados NO se ensenan al trader.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
