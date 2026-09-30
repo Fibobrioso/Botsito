@@ -290,9 +290,96 @@ Aciertos, L0,8 / L1, de 77 salvo donde se dice:
   1. «¿El bloque es solo la última vela contraria o todo el tramo de contrarias?» (R1 o R4). R4 va
      por delante solo con el stop en el 1.
   2. «¿El stop que pones al colocar va en el 1 o en el 0,8?». El libro apunta al 1.
+- **El control indica que el stop del libro es el inicial y está en el 1 de la caja.** Línea
+  añadida en la revisión del consultor del 2026-09-30.
+
+## 3. EXPLORATORIA: posterior a ver el resultado, y no cambia el veredicto (2026-09-30)
+
+> **Esta sección se pidió en la revisión del consultor, DESPUÉS de ver §2.** No está en el criterio
+> de §1 y no cambia el veredicto: NO DECIDE. Sirve para orientar la pregunta de la sesión 4, no para
+> sostener ninguna regla.
+
+Script: `scripts/caja_77_exploratoria.py`, que importa las piezas de `caja_77.py` sin tocarlo.
+Salida: `CAJA-77-EXPLORATORIA.txt`. Se ensayó en un clon desechable y la salida del repositorio es
+idéntica byte a byte.
+
+### 3.1 «Solo el 0» (τ = 2, sin corrección)
+
+Celda: «solo el 0» (el 0 a ≤ 2 puntos y el 1 no) / el 0 a ≤ 2 en total (aciertos más «solo el 0»):
+
+| regla | ventas L0,8 | ventas L1 | compras L0,8 | compras L1 | todas L0,8 | todas L1 |
+|---|---|---|---|---|---|---|
+| R1 | 9 / 18 | 12 / 18 | 2 / 5 | 4 / 5 | 11 / 23 | 16 / 23 |
+| R2 | 5 / 5 | 2 / 5 | 0 / 0 | 0 / 0 | 5 / 5 | 2 / 5 |
+| R3 | 3 / 3 | 2 / 3 | 3 / 3 | 3 / 3 | 6 / 6 | 5 / 6 |
+| R4 | 15 / 23 | 15 / 23 | 5 / 8 | 5 / 8 | 20 / 31 | 20 / 31 |
+| R5 | 15 / 21 | 15 / 21 | 9 / 15 | 13 / 15 | 24 / 36 | 28 / 36 |
+| R6 | 15 / 21 | 14 / 21 | 10 / 15 | 10 / 15 | 25 / 36 | 24 / 36 |
+
+n: 45 ventas y 32 compras. **R5 y R6 dan el 0 en 36 de 77** (21 de 45 ventas y 15 de 32 compras),
+y en la mayoría falla el 1: R5 da «solo el 0» en 24 (L0,8) o 28 (L1). **R1 da el 0 en 5 de 32
+compras**, frente a 18 de 45 ventas.
+
+### 3.2 Placebo del 0
+
+Mismo T y mismas velas; el 0 del trader, la entrada, desplazado. «+» es hacia el stop y «−» hacia
+la ruptura. Aciertos del 0 a ≤ 2 puntos, de 77:
+
+| regla | −10 | −5 | **0 (la entrada real)** | +5 | +10 |
+|---|---|---|---|---|---|
+| R1 | 1 | 1 | **23** | 24 | 17 |
+| R2 | 0 | 0 | **5** | 10 | 3 |
+| R3 | 3 | 6 | **6** | 14 | 6 |
+| R4 | 1 | 5 | **31** | 24 | 10 |
+| R5 | 1 | 5 | **36** | 18 | 4 |
+| R6 | 1 | 5 | **36** | 18 | 4 |
+
+- **Hacia la ruptura, cualquier regla falla**: 0 a 6 aciertos. No dice nada de las reglas: su 0 sale
+  de velas cerradas antes de la ruptura, y queda del lado del stop por construcción.
+- **La comparación que vale es con +5 y +10.** Con el mismo sesgo de lado, R5 y R6 aciertan el doble
+  en la entrada real que a 5 puntos (36 frente a 18) y nueve veces más que a 10 (36 frente a 4).
+  **Su 0 localiza la entrada**, no solo «un nivel por encima».
+- **R1 no la localiza**: acierta lo mismo en la entrada que a 5 puntos hacia el stop (23 frente a
+  24). R4 está entre las dos (31 frente a 24). R2 y R3 aciertan más con el placebo que con la
+  entrada.
+
+### 3.3 R5: su pivote frente a la referencia del breaker del productor
+
+Para cada operación:
+- **la toma** es la de su sesión en el productor (en diagnóstico, como `scripts/embudo_77.py`: A-35
+  `cierre_vela_contraria`, A-44 `sin_tope`, A-21 `solo_una_zona_de_control`);
+- **la referencia** es el último pivote contrario formado hasta la vela de la toma, incluida. Es
+  `referencia_del_breaker`, el mismo que `Esquema.referencia` cuando hay esquema.
+- «Mismo pivote» quiere decir mismo nivel y misma vela contraria.
+
+| el pivote que da el 0 de R5 | operaciones | de ellas, con el 0 de R5 a ≤ 2 |
+|---|---|---|
+| **formado DESPUÉS de la toma** | **56** | 29 |
+| el MISMO que la referencia | 5 | 2 |
+| la toma es del lado contrario a la operación | 7 | |
+| la toma de su sesión llega después de T | 6 | |
+| sin toma del productor en su sesión | 3 | |
+| **total** | 77 | 36 (5 de ellas sin toma útil) |
+
+- Los minutos entre la vela contraria del pivote de R5 y la toma tienen **mediana +61**, de −7 a
+  +199.
+- En las 5 del mismo pivote, el pivote es de 1 a 7 minutos anterior a la toma.
+- De las 56 «después», 13 tenían ya un esquema del productor antes de T y 43 no.
+
+**Lo que dice, sin sostener nada:**
+- el pivote cuya ruptura coincide con la entrada del trader casi nunca es la referencia que el
+  productor fija en la toma;
+- casi siempre es un pivote de M1 formado después, una hora de mediana;
+- y es ahí donde R5 acierta el 0 (29 de 36).
+
+Encaja con que la orden vaya en el último mínimo (en una venta) o máximo (en una compra) formado en
+M1, y se mueva cuando se forma otro. Por eso esa pregunta pasa a la F de Next Action, para la
+sesión 4.
 
 ## Estado
 
-Criterio (§1) y nota del consultor (§1.8) commiteados y subidos antes de medir; medida hecha (§2).
-**Veredicto: NO DECIDE**; la pregunta del bloque y la del stop van a la sesión 4. Lista para
-revisión, no cerrada.
+Criterio (§1) y nota del consultor (§1.8) commiteados y subidos antes de medir; medida hecha (§2);
+parte exploratoria (§3) añadida tras la revisión del consultor. **Veredicto: NO DECIDE**, aceptado
+por el consultor el 2026-09-30 tal cual; la pregunta del bloque, la del stop y la de la orden en
+el último mínimo o máximo de M1 van a la sesión 4. Cerrada en `main` como
+`stable/F36c-caja-77`.

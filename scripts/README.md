@@ -71,5 +71,9 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   construccion, con el stop leido como el 0,8 y como el 1; el control sobre las cajas leidas en
   pantalla, el veredicto con el umbral pre-registrado y las sensibilidades. Solo lee; escribe en
   `--salida` (`docs/validation/CAJA-77.md`).
+- `caja_77_exploratoria.py`: la parte EXPLORATORIA de CAJA-77 (§3), posterior al resultado: «solo el
+  0» por direccion, el placebo del 0 con la entrada desplazada y el pivote de R5 frente a la
+  referencia del breaker del productor. Importa `caja_77.py` sin tocarlo; solo lee y escribe en
+  `--salida`.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.

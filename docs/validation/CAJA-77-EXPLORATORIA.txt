@@ -1,0 +1,101 @@
+# CAJA-77, parte EXPLORATORIA (posterior a ver el resultado; no cambia el veredicto)
+evaluables: 77
+
+## 1. «Solo el 0» (tau 2, sin correccion), por regla, lectura y direccion
+Celda: solo el 0 (el 0 a <= 2 y el 1 no) / el 0 a <= 2 en total (aciertos + solo el 0)
+| regla | ventas L0,8 | ventas L1 | compras L0,8 | compras L1 | todas L0,8 | todas L1 |
+|---|---|---|---|---|---|---|
+| R1 | 9 / 18 | 12 / 18 | 2 / 5 | 4 / 5 | 11 / 23 | 16 / 23 |
+| R2 | 5 / 5 | 2 / 5 | 0 / 0 | 0 / 0 | 5 / 5 | 2 / 5 |
+| R3 | 3 / 3 | 2 / 3 | 3 / 3 | 3 / 3 | 6 / 6 | 5 / 6 |
+| R4 | 15 / 23 | 15 / 23 | 5 / 8 | 5 / 8 | 20 / 31 | 20 / 31 |
+| R5 | 15 / 21 | 15 / 21 | 9 / 15 | 13 / 15 | 24 / 36 | 28 / 36 |
+| R6 | 15 / 21 | 14 / 21 | 10 / 15 | 10 / 15 | 25 / 36 | 24 / 36 |
+n: ventas 45, compras 32, todas 77
+
+## 2. Placebo del 0: la entrada desplazada, mismo T y mismas velas (tau 2, sin correccion)
+Aciertos del 0 (|0 de la regla - 0 desplazado| <= 2). Desplazamiento + hacia el stop, - hacia la ruptura (en una venta, + es hacia arriba; en una compra, hacia abajo). 0 = la entrada real.
+| regla | -10 | -5 | +0 | +5 | +10 |
+|---|---|---|---|---|---|
+| R1 | 1 | 1 | 23 | 24 | 17 |
+| R2 | 0 | 0 | 5 | 10 | 3 |
+| R3 | 3 | 6 | 6 | 14 | 6 |
+| R4 | 1 | 5 | 31 | 24 | 10 |
+| R5 | 1 | 5 | 36 | 18 | 4 |
+| R6 | 1 | 5 | 36 | 18 | 4 |
+n = 77
+
+## 3. R5: su pivote frente a la referencia del breaker del productor en la toma
+Toma: la de la sesion de la operacion en el productor (diagnostico); referencia: el ultimo pivote contrario formado hasta la vela de la toma (= Esquema.referencia cuando hay esquema).
+Mismo pivote = mismo nivel y misma vela contraria.
+- un pivote formado DESPUES de la toma: 56 de 77
+- la toma es del lado contrario a la operacion: 7 de 77
+- la toma de su sesion llega despues de T: 6 de 77
+- el MISMO pivote que la referencia: 5 de 77
+- sin toma del productor en su sesion: 3 de 77
+minutos de la vela contraria del pivote de R5 a la toma (+ despues): mediana +61, de -7 a +199
+
+| op | clase | nivel R5 - referencia | minutos desde la toma | esquema antes de T |
+|---|---|---|---|---|
+| 2026-04-01 12:30:20 compra | un pivote formado DESPUES de la toma | -57 | +6 | no |
+| 2026-04-03 11:43:35 compra | un pivote formado DESPUES de la toma | -12 | +109 | si |
+| 2026-04-06 06:34:15 compra | un pivote formado DESPUES de la toma | -20 | +6 | no |
+| 2026-04-13 06:47:45 compra | un pivote formado DESPUES de la toma | -87 | +105 | no |
+| 2026-04-13 06:50:00 compra | un pivote formado DESPUES de la toma | -87 | +108 | no |
+| 2026-04-13 08:21:35 compra | un pivote formado DESPUES de la toma | +43 | +199 | no |
+| 2026-04-14 06:23:35 compra | un pivote formado DESPUES de la toma | -99 | +70 | no |
+| 2026-04-14 12:06:35 compra | un pivote formado DESPUES de la toma | -118 | +2 | no |
+| 2026-04-16 06:13:30 compra | un pivote formado DESPUES de la toma | -42 | +8 | no |
+| 2026-04-16 11:13:10 venta | un pivote formado DESPUES de la toma | +82 | +8 | no |
+| 2026-04-17 08:10:00 venta | un pivote formado DESPUES de la toma | -7 | +158 | si |
+| 2026-04-17 08:36:10 venta | un pivote formado DESPUES de la toma | +11 | +186 | si |
+| 2026-04-21 05:12:55 venta | un pivote formado DESPUES de la toma | +39 | +7 | no |
+| 2026-04-22 08:02:15 venta | un pivote formado DESPUES de la toma | +158 | +170 | no |
+| 2026-04-22 08:19:00 venta | un pivote formado DESPUES de la toma | +173 | +185 | no |
+| 2026-04-23 05:30:00 venta | un pivote formado DESPUES de la toma | +20 | +19 | si |
+| 2026-04-23 05:53:30 venta | un pivote formado DESPUES de la toma | +34 | +49 | si |
+| 2026-04-23 06:49:35 venta | un pivote formado DESPUES de la toma | +74 | +105 | si |
+| 2026-04-24 06:44:30 venta | un pivote formado DESPUES de la toma | +37 | +68 | no |
+| 2026-04-27 11:45:35 compra | un pivote formado DESPUES de la toma | -5 | +88 | si |
+| 2026-04-27 12:00:00 compra | un pivote formado DESPUES de la toma | -1 | +94 | si |
+| 2026-04-28 08:12:05 venta | un pivote formado DESPUES de la toma | +74 | +3 | no |
+| 2026-04-29 07:55:40 venta | un pivote formado DESPUES de la toma | +49 | +43 | no |
+| 2026-04-29 07:58:35 venta | un pivote formado DESPUES de la toma | +55 | +46 | no |
+| 2026-04-29 09:36:25 venta | un pivote formado DESPUES de la toma | +18 | +2 | no |
+| 2026-04-29 11:02:00 venta | un pivote formado DESPUES de la toma | +55 | +87 | no |
+| 2026-08-03 06:03:05 venta | un pivote formado DESPUES de la toma | +11 | +13 | si |
+| 2026-08-03 06:07:40 venta | un pivote formado DESPUES de la toma | +11 | +13 | si |
+| 2026-08-03 09:46:15 venta | el MISMO pivote que la referencia | +0 | -3 | no |
+| 2026-08-03 09:52:50 venta | un pivote formado DESPUES de la toma | +42 | +9 | no |
+| 2026-08-03 12:03:25 venta | un pivote formado DESPUES de la toma | +76 | +141 | no |
+| 2026-08-03 12:10:55 venta | un pivote formado DESPUES de la toma | +96 | +148 | no |
+| 2026-08-06 06:07:25 venta | un pivote formado DESPUES de la toma | +21 | +14 | no |
+| 2026-08-07 11:47:55 venta | un pivote formado DESPUES de la toma | +69 | +161 | no |
+| 2026-08-07 12:09:10 venta | un pivote formado DESPUES de la toma | +119 | +185 | no |
+| 2026-08-07 12:14:55 venta | un pivote formado DESPUES de la toma | +112 | +188 | no |
+| 2026-08-10 11:57:15 compra | un pivote formado DESPUES de la toma | -124 | +142 | no |
+| 2026-08-10 12:38:45 compra | un pivote formado DESPUES de la toma | -143 | +183 | no |
+| 2026-08-11 08:08:55 compra | un pivote formado DESPUES de la toma | -84 | +164 | si |
+| 2026-08-13 07:33:55 venta | un pivote formado DESPUES de la toma | -28 | +147 | no |
+| 2026-08-13 07:49:40 venta | un pivote formado DESPUES de la toma | -5 | +160 | no |
+| 2026-08-17 05:17:15 compra | un pivote formado DESPUES de la toma | -11 | +13 | si |
+| 2026-08-19 09:03:00 compra | el MISMO pivote que la referencia | +0 | -4 | no |
+| 2026-08-19 11:46:15 compra | un pivote formado DESPUES de la toma | +46 | +158 | si |
+| 2026-08-20 11:00:00 compra | un pivote formado DESPUES de la toma | -66 | +10 | no |
+| 2026-08-20 11:49:10 compra | un pivote formado DESPUES de la toma | -175 | +61 | no |
+| 2026-08-21 05:32:55 compra | el MISMO pivote que la referencia | +0 | -7 | no |
+| 2026-08-21 11:56:10 compra | un pivote formado DESPUES de la toma | -110 | +20 | no |
+| 2026-08-24 11:29:50 venta | un pivote formado DESPUES de la toma | +27 | +2 | no |
+| 2026-08-25 06:16:30 venta | el MISMO pivote que la referencia | +0 | -6 | no |
+| 2026-08-25 06:37:00 venta | un pivote formado DESPUES de la toma | +41 | +16 | no |
+| 2026-08-25 08:48:30 venta | un pivote formado DESPUES de la toma | +119 | +150 | no |
+| 2026-08-25 11:55:00 venta | un pivote formado DESPUES de la toma | -13 | +173 | no |
+| 2026-08-26 05:49:25 venta | un pivote formado DESPUES de la toma | +15 | +13 | no |
+| 2026-08-26 07:03:00 venta | un pivote formado DESPUES de la toma | +0 | +84 | no |
+| 2026-08-26 08:31:15 venta | un pivote formado DESPUES de la toma | +106 | +171 | no |
+| 2026-08-26 11:26:30 compra | un pivote formado DESPUES de la toma | -39 | +58 | no |
+| 2026-08-27 12:13:40 venta | un pivote formado DESPUES de la toma | +54 | +12 | no |
+| 2026-08-28 10:42:10 venta | el MISMO pivote que la referencia | +0 | -1 | no |
+| 2026-08-31 06:30:15 compra | un pivote formado DESPUES de la toma | +0 | +49 | no |
+| 2026-08-31 06:58:10 compra | un pivote formado DESPUES de la toma | -34 | +81 | no |
+
