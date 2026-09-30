@@ -85,6 +85,14 @@ class DatosMercado:
         n = self._n_m15_cerradas(instante)
         return self._m15[n - 1] if n else None
 
+    def ultima_m1_cerrada(self, instante: int) -> Vela | None:
+        """La M1 que cierra justo en `instante` -la que dispara el evento de ese minuto-; None
+        si esa vela falta en los datos."""
+        i = bisect.bisect_left(self._inicios_m1, MinutoUtc(instante - 1))
+        if i < len(self._m1) and int(self._m1[i].inicio) == instante - 1:
+            return self._m1[i]
+        return None
+
     def m15_en_curso(self, instante: int) -> Vela | None:
         """La M15 que contiene `instante`, construida SOLO con sus M1 cerradas hasta el; None si
         `instante` cae justo en un limite de M15 o no hay ninguna M1 dentro."""
@@ -137,7 +145,7 @@ class DatosMercado:
 @dataclass(frozen=True)
 class DiaDeMercado:
     dia: date
-    huso: str  # el de las sesiones (`huso_operativa`)
+    huso: str  # el del reloj de las sesiones (`engine/relojes.huso_de_las_sesiones`)
     sesiones: tuple[Sesion, ...]
     datos: DatosMercado
 

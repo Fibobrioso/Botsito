@@ -2,7 +2,10 @@
 
 Hoy son pocas, y todo lo demas es NO_IMPLEMENTADA (ADR-0048 §2):
 
-- de reloj: `abre_sesion_operativa`, `en_ventana` y `alcanza_hora`;
+- de reloj: `abre_sesion_operativa`; `en_ventana` y `alcanza_hora`, que leen el reloj de las
+  sesiones por el selector que la forma nombra (`engine/relojes.py`, ADR-0063); y
+  `vence_vela_h4`, que
+  mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002, ADR-0060);
 - de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_previa` y `contra:
   extremo_de_la_h4_anterior`, que es RN-003 y usa `domain/sesgo.py` tal cual (ADR-0044, ADR-0048
   §8, ADR-0049 H1). Siempre tiene respuesta -alcista, bajista, ambiguo o insuficiente- y la ata en
@@ -23,12 +26,15 @@ from decimal import Decimal
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
+from botsito.cases.ventanas import MINUTOS_H4
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
+from botsito.data.agregacion import limites_entre
 from botsito.data.velas import a_datetime
 from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote, cruza, toca
 from botsito.domain.sesgo import sesgo_h4
-from botsito.domain.velas import Vela
+from botsito.domain.valores import HoraLocal
+from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.interprete import (
     VALOR_APAGADO,
     EstadoDia,
@@ -38,6 +44,7 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
+from botsito.engine.relojes import huso_del_reloj
 from botsito.engine.tope_trader import (
     ACUMULADOR_DIA,
     ACUMULADOR_SEMANA,
@@ -51,8 +58,10 @@ from botsito.engine.zonas import primitivas_zona
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
 TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
+# la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
+ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
-# primer cierre de M15 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
+# primer cierre de M1 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
 ANOTACION_LIQUIDEZ_ALCANZADA = "liquidez_m15_alcanzada"
 # Las opciones de `dias_operables` en parametros.yaml, con los dias ISO que abarca cada una.
@@ -67,7 +76,7 @@ class DatosDelDia(Protocol):
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]: ...
 
-    def ultima_m15_cerrada(self, instante: int) -> Vela | None: ...
+    def ultima_m1_cerrada(self, instante: int) -> Vela | None: ...
 
     def liquidez_m15(self, instante: int, lado: str) -> Pivote | None: ...
 
@@ -95,6 +104,31 @@ def primitivas_escritas(
     siendo hueco con nombre. Con `limpia` (la lectura de A-21) entra la geometria de la zona de
     entrada (`engine/zonas.py`); sin ella, sigue NO_IMPLEMENTADA con nombre."""
 
+    tramos_h4: dict[HoraLocal, tuple[int, int]] = {}
+
+    def _fin_de_la_h4(anclaje: HoraLocal, minuto: int) -> int:
+        """El fin de la vela H4 que contiene la M1 que empieza en `minuto`, en la rejilla de
+        `anclaje`: la misma que parte las velas en `data/agregacion.py`. Guarda el ultimo
+        tramo consultado: dentro de una vela la rejilla no se vuelve a calcular."""
+        tramo = tramos_h4.get(anclaje)
+        if tramo is None or not (tramo[0] <= minuto < tramo[1]):
+            limites = limites_entre(MinutoUtc(minuto), MinutoUtc(minuto + 1), MINUTOS_H4, anclaje)
+            if len(limites) < 2 or not (limites[0] <= minuto < limites[-1]):
+                raise ValueError(f"sin rejilla H4 alrededor del minuto {minuto} ({anclaje})")
+            tramo = tramos_h4[anclaje] = (int(limites[0]), int(limites[-1]))
+        return tramo[1]
+
+    def vence_vela_h4(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # RN-002 (sesion 3, ADR-0060): el evento es el cierre de la M1 [instante - 1, instante);
+        # a la H4 que la contiene le queda `antelacion` o menos. En el propio limite tambien: lo
+        # que se llenara en el ultimo minuto de la vela se cierra antes de que empiece la otra.
+        anclaje = registro.hora(str(args["anclaje"]))
+        antelacion = registro.minutos(str(args["antelacion"]))
+        fin = _fin_de_la_h4(anclaje, int(momento.instante) - 1)
+        return Resultado(Tri.SI if fin - int(momento.instante) <= antelacion else Tri.NO)
+
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
@@ -108,7 +142,7 @@ def primitivas_escritas(
         dias = DIAS_OPERABLES.get(registro.opcion(str(args["dias"])))
         if dias is None:
             return NoImplementada(f"predicado:en_ventana:{args['dias']}")
-        local = _local(momento.instante, registro.texto(str(args["huso"])))
+        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
         minuto = local.hour * 60 + local.minute
         dentro = inicio <= minuto < fin and local.isoweekday() in dias  # [inicio, fin)
         return Resultado(Tri.SI if dentro else Tri.NO)
@@ -117,7 +151,7 @@ def primitivas_escritas(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
         hora = registro.hora(str(args["hora"])).minutos_del_dia
-        local = _local(momento.instante, registro.texto(str(args["huso"])))
+        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
         return Resultado(Tri.SI if local.hour * 60 + local.minute >= hora else Tri.NO)
 
     def sesgo_h4_al_abrir(
@@ -133,7 +167,10 @@ def primitivas_escritas(
             registro.opcion(str(args["criterio"])),
         )
         if momento.sesion is not None:
-            estado.anotaciones.setdefault(momento.sesion, {})[ANOTACION_SESGO] = r.sesgo.value
+            anotaciones = estado.anotaciones.setdefault(momento.sesion, {})
+            anotaciones[ANOTACION_SESGO] = r.sesgo.value
+            if r.doble_ruptura:
+                anotaciones[ANOTACION_DOBLE_RUPTURA] = "si"
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})
@@ -141,9 +178,10 @@ def primitivas_escritas(
     def _liquidez(
         nombre: str, args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> tuple[Pivote, Vela] | Resultado | NoImplementada:
-        """El pivote de M15 que hoy es la liquidez y la ultima M15 cerrada que puede tomarlo; NO
-        si no hay liquidez marcada (sin sesgo con lado, sin pivote, o sin vela posterior a la
-        contraria); NO_IMPLEMENTADA si los datos no tienen lectura de «formado» (A-35)."""
+        """El pivote de M15 que hoy es la liquidez y la ultima M1 cerrada, que es la vela que
+        puede tomarlo (A-45 RESUELTA); NO si no hay liquidez marcada (sin sesgo con lado, sin
+        pivote, o sin una M1 que cierre despues de que el pivote exista); NO_IMPLEMENTADA si los
+        datos no tienen lectura de «formado» (A-35)."""
         if str(args.get("que")) != TOKEN_LIQUIDEZ_M15:
             return NoImplementada(f"predicado:{nombre}:{args.get('que')}")
         datos: DatosDelDia = momento.datos
@@ -162,15 +200,15 @@ def primitivas_escritas(
                 ANOTACION_LIQUIDEZ,
                 f"{pivote.lado} {pivote.nivel} formado_en {int(pivote.formado_en)}",
             )
-        ultima = datos.ultima_m15_cerrada(momento.instante)
-        # PROVISIONAL (ADR-0054 §4, A-45): que la vela que cierra con cuerpo sea la M15 y no la M1
-        # no lo dice ninguna fuente; se mantiene hasta que el trader responda A-45.
-        # La vela que puede tomar el nivel es la ultima M15 cerrada, y solo si el pivote YA EXISTIA
-        # antes de que cerrara: eso es lo que el selector decide. Con `inicio_vela_contraria` la
-        # propia vela contraria cuenta (el pivote nace en su primera M1); con
-        # `cierre_vela_contraria` no (nace en su cierre). Hasta el 2026-09-26 aqui se exigia que la
-        # vela fuera POSTERIOR a la contraria, y eso dejaba el selector sin efecto en el motor
-        # (docs/validation/VERIFICACION-A35-A44.md, fase 1).
+        ultima = datos.ultima_m1_cerrada(int(momento.instante))
+        # A-45 RESUELTA (sesion 3, fb-2026-09-29-sesion-03-b2e074e3): la vela que toma el nivel de
+        # M15 es una vela de M1 que cierra con cuerpo pasado el nivel. Hasta la rama
+        # trabajo/nocturno-01oct era la ultima M15 cerrada, PROVISIONAL por ADR-0054 §4.
+        # Y solo si el pivote YA EXISTIA antes de que esa M1 cerrara: eso es lo que el selector de
+        # A-35 decide. Con `inicio_vela_contraria` el pivote nace en la primera M1 de la vela
+        # contraria, y las siguientes M1 de esa misma vela ya pueden tomarlo; con
+        # `cierre_vela_contraria` nace en su cierre (docs/validation/VERIFICACION-A35-A44.md,
+        # fase 1).
         if ultima is None or not (int(pivote.formado_en) < int(ultima.fin)):
             return Resultado(Tri.NO)
         return pivote, ultima
@@ -239,6 +277,7 @@ def primitivas_escritas(
         "abre_sesion_operativa": abre_sesion_operativa,
         "en_ventana": en_ventana,
         "alcanza_hora": alcanza_hora,
+        "vence_vela_h4": vence_vela_h4,
         "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
         "alcanza_nivel": alcanza_nivel,
         "cruza": cruza_nivel,
@@ -249,6 +288,7 @@ def primitivas_escritas(
 
 
 __all__ = [
+    "ANOTACION_DOBLE_RUPTURA",
     "ANOTACION_LIQUIDEZ",
     "ANOTACION_LIQUIDEZ_ALCANZADA",
     "ANOTACION_SESGO",

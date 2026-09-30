@@ -6,13 +6,19 @@ Rama `trabajo/preparar-a21`, 2026-09-27. Mismo patron que A-35 y A-44 (ADR-0054)
 el motor se niega a correr, salvo en modo diagnostico etiquetado `DIAGNOSTICO-A21-<lectura>`, cuyas
 salidas no cuentan para nada. Con el valor fijado, el diagnostico se rechaza.
 
-El estado del productor vive en `EstadoDia.memoria` (nace y muere con el dia, ADR-0048 §3):
+El estado del productor vive en `EstadoDia.memoria` (nace y muere con el dia, ADR-0048 §3).
+**Cada sesion es un escenario propio** (A-46 RESUELTA en la sesion 3, «cada uno es un mundo
+diferente»; ADR-0055 §4): el hecho `liquidez_tomada` caduca al abrir la sesion y el productor lo
+sigue, asi que la toma, el esquema y el id de la zona se guardan SESION A SESION y lo de una no
+vale en la siguiente. Por sesion (`memoria_de_sesion`):
 
-- `toma`: el instante (cierre de M15) en que RN-004 fijo `liquidez_tomada`, el nivel del pivote
-  tomado y el lado de la entrada (el del sesgo: alcista compra, bajista vende);
+- `toma`: el instante en que RN-004 fijo `liquidez_tomada`, el nivel del pivote tomado y el
+  lado de la entrada (el del sesgo: alcista compra, bajista vende);
 - `esquema`: el `Esquema` detectado despues de la toma, si lo hay;
-- `zonas`: las `Zona` ligadas por `toca_colocar_orden_limite`, que las acciones del cableado leen;
 - `zona_id`: el id con el que `toca_colocar_orden_limite` ligo la zona en el cierre del breaker.
+
+Y del dia entero: `zonas`, las `Zona` ligadas por `toca_colocar_orden_limite`, que las acciones
+del cableado leen; sus ids no se repiten entre sesiones.
 
 `orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): solo `al_darse_el_esquema` esta escrito; con
 `al_tomarse_la_liquidez` la primitiva queda NO_IMPLEMENTADA con nombre.
@@ -44,6 +50,7 @@ HECHO_SESGO = "sesgo"
 AL_DARSE_EL_ESQUEMA = "al_darse_el_esquema"
 CUALQUIER_ESQUEMA = "cualquier_esquema"
 PREFIJO_ZONA = "zona:"
+POR_SESION = "por_sesion"
 LOOKBACK_M1 = (
     240  # minutos de M1 anteriores a la toma con los que se busca la referencia del breaker
 )
@@ -116,9 +123,25 @@ def _memoria(estado: EstadoDia) -> dict[str, Any]:
     return cast(dict[str, Any], estado.memoria.setdefault("zona_de_entrada", {}))
 
 
+def _de_la_sesion(estado: EstadoDia, sesion: str | None) -> dict[str, Any]:
+    """La toma, el esquema y el id de la zona de UNA sesion. No hay nada que borrar al cambiar
+    de sesion: cada una escribe en lo suyo, y asi el predicado que lo lee sigue siendo puro
+    (ADR-0055 §1)."""
+    por_sesion = _memoria(estado).setdefault(POR_SESION, {})
+    return cast(dict[str, Any], por_sesion.setdefault(sesion or "", {}))
+
+
+def memoria_de_sesion(estado: EstadoDia, sesion: str) -> Mapping[str, Any]:
+    """Lo que el productor guardo de una sesion (`toma`, `esquema`, `zona_id`), sin crear nada:
+    para quien mide despues de correr el dia (`scripts/embudo_77.py`)."""
+    mem: Mapping[str, Any] = estado.memoria.get("zona_de_entrada", {})
+    return cast(Mapping[str, Any], mem.get(POR_SESION, {}).get(sesion, {}))
+
+
 def _anotar_toma(datos: DatosDeZona, momento: Momento, estado: EstadoDia) -> dict[str, Any] | None:
-    """La toma de la liquidez, registrada la primera vez que el hecho aparece encendido."""
-    mem = _memoria(estado)
+    """La toma de la liquidez de ESTA sesion, registrada la primera vez que el hecho aparece
+    encendido en ella."""
+    mem = _de_la_sesion(estado, momento.sesion)
     toma = mem.get("toma")
     if toma is not None:
         return cast(dict[str, Any], toma)
@@ -151,7 +174,7 @@ def _esquema(
     toma = _anotar_toma(datos, momento, estado)
     if toma is None:
         return None
-    mem = _memoria(estado)
+    mem = _de_la_sesion(estado, momento.sesion)
     esquema = mem.get("esquema")
     if esquema is not None:
         return cast(Esquema, esquema)
@@ -214,8 +237,8 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         # de forma idempotente, con el mismo id para el mismo esquema.
         if e is None or int(momento.instante) != int(e.breaker_fin):
             return Resultado(Tri.NO)
-        mem = _memoria(estado)
-        zonas = mem.setdefault("zonas", {})
+        zonas = _memoria(estado).setdefault("zonas", {})
+        mem = _de_la_sesion(estado, momento.sesion)
         id = mem.setdefault("zona_id", f"{PREFIJO_ZONA}{len(zonas) + 1}")
         zonas.setdefault(
             id,
@@ -232,7 +255,7 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         criterio = registro.opcion("breaker_m1_criterio_ruptura")
         tope = registro.entero("zonas_control_max_por_esquema")
         e = _esquema(momento.datos, momento, estado, criterio, tope, limpia)
-        toma = _memoria(estado).get("toma")
+        toma = _de_la_sesion(estado, momento.sesion).get("toma")
         if e is None or toma is None:
             return Resultado(Tri.NO)
         # RN-005: la operativa alcista va por debajo de la liquidez tomada, la bajista por encima;
@@ -262,6 +285,7 @@ __all__ = [
     "SinLecturaDeZonaError",
     "Zona",
     "lectura_limpia",
+    "memoria_de_sesion",
     "primitivas_zona",
     "zonas_del_dia",
 ]

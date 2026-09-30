@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 13.5.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 14.4.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
@@ -86,9 +86,9 @@ Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con
 
 ### A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 · **BLOQUEANTE** · pregunta
 
-Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno? LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y 11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a 06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»: confirmar en la proxima sesion; hasta entonces sigue ABIERTA.
+Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno? LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y 11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a 06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»: confirmar en la proxima sesion; hasta entonces sigue ABIERTA. DESDE EL 2026-09-30 (ADR-0063, ACEPTADO) los dos relojes estan separados: la ventana se cuenta con el reloj que dice reloj_sesiones -hoy `civil_operativa`, sin cambio-, y aplicar esta lectura sera pasarlo a `grafico`; huso_operativa queda como reloj del dia de riesgo.
 
-Afecta a: `huso_operativa`.
+Afecta a: `reloj_sesiones`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 

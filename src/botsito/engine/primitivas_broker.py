@@ -15,10 +15,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from decimal import ROUND_DOWN, Decimal
+from decimal import ROUND_DOWN, ROUND_UP, Decimal
 from typing import Any, cast
 
 from botsito.config.registro import Registro
+from botsito.domain.estructura_m1 import zona_posterior_completada
+from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.valores import CIEN
 from botsito.engine.broker import LLENADA, MANUAL, Broker, BrokerError, Rechazo
 from botsito.engine.cuenta import CuentaViva
@@ -52,6 +54,10 @@ GANANCIA = "ganancia"
 PERDIDA = "perdida"
 SI = "si"
 PREFIJO_ZONA = "zona:"
+# Las opciones de `stop_fraccion_redondeo`: hacia donde va el stop cuando el nivel de la caja
+# no cae en un punto exacto. Se redondea la DISTANCIA de la entrada al stop: hacia abajo lo
+# acerca a la entrada y hacia arriba lo aleja, y el lote sale de esa distancia (RN-011).
+REDONDEO_DEL_STOP = {"hacia_la_entrada": ROUND_DOWN, "alejandose_de_la_entrada": ROUND_UP}
 # Los acumuladores de la firma que la cuenta viva alimenta (ADR-0053 §3); los demas, hueco.
 ACUMULADORES_DE_LA_FIRMA = ("perdida_dia_firma", "perdida_total_firma")
 HUECOS = {
@@ -165,6 +171,31 @@ def primitivas_cableadas(
                 for e in ctx.eventos
             )
         )
+
+    def se_completa_zona_de_control(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # Solo el break even de RN-014, que lo pide `posterior_a` la entrada de la posicion
+        # viva (ADR-0061). La reubicacion de la orden pendiente (RN-006) es la vida de la
+        # orden stop, rama 3 de ADR-0056, y sigue sin escribirse.
+        if "posterior_a" not in args:
+            return NoImplementada("predicado:se_completa_zona_de_control")
+        criterio = registro.opcion(str(args["criterio"]))  # lo nombra la forma
+        vivas = [p for p in ctx.broker.posiciones.values() if p.abierta]
+        if len(vivas) != 1:
+            return Resultado(Tri.NO)
+        p = vivas[0]
+        try:
+            # las M1 cerradas desde la que contiene el llenado: solo lo de despues de la entrada
+            m1 = momento.datos.m1_entre(p.abierta_ms // MS_POR_MINUTO, int(momento.instante))
+        except AttributeError:
+            return NoImplementada("predicado:se_completa_zona_de_control:sin M1")
+        k = zona_posterior_completada(m1, p.lado, criterio)
+        # SI exactamente en el cierre de la M1 que pasa el punto, y sin efectos (ADR-0055 §1)
+        if k is None or int(m1[k].fin) != int(momento.instante):
+            return Resultado(Tri.NO)
+        liga = str(args.get("liga", "Z"))
+        return Resultado(Tri.SI, {liga: f"zona_posterior:{int(momento.instante)}"})
 
     # -------------------------------------------------------------------- fuente bot
 
@@ -284,11 +315,12 @@ def primitivas_cableadas(
     def dimensionar_lote(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
-        # ADR-0053 §1.1: se anota y el lote se resuelve al colocar, con el stop ya escrito
-        o = ctx.orden
-        if o is None:
-            z = _zona(ligaduras, "Z", "dimensionar_lote", estado)
-            o = ctx.orden = OrdenEnPreparacion(z)
+        # ADR-0053 §1.1: se anota y el lote se resuelve al colocar, con el stop ya escrito.
+        # RN-011 PREPARA la orden de la zona que liga, y siempre de cero: una preparacion
+        # anterior que un gate no dejo enviar (RN-015 apaga `orden_dimensionada`, ADR-0032) no
+        # se arrastra a la zona siguiente. Con una zona por dia no podia pasar; desde A-46
+        # cada sesion liga la suya.
+        o = ctx.orden = OrdenEnPreparacion(_zona(ligaduras, "Z", "dimensionar_lote", estado))
         o.lotaje = (
             registro.opcion(str(args["base"])),
             registro.porcentaje(str(args["riesgo"])).valor,
@@ -302,9 +334,11 @@ def primitivas_cableadas(
         o = _orden("escribir_stop_en_la_orden")
         registro.opcion(str(args["donde"]))  # en_la_orden: el stop viaja en la orden (A-11)
         fraccion = registro.fraccion(str(args["nivel"])).valor
-        distancia = int(
-            (Decimal(o.zona.distancia_completa) * fraccion).to_integral_value(ROUND_DOWN)
-        )
+        hacia = registro.opcion(str(args["redondeo"]))  # lo nombra la forma (ADR-0019 §1)
+        modo = REDONDEO_DEL_STOP.get(hacia)
+        if modo is None:
+            raise CableadoError(f"escribir_stop_en_la_orden: redondeo {hacia!r} sin contrato")
+        distancia = int((Decimal(o.zona.distancia_completa) * fraccion).to_integral_value(modo))
         o.stop = (
             o.zona.entrada - distancia if o.zona.lado == "compra" else o.zona.entrada + distancia
         )
@@ -453,6 +487,7 @@ def primitivas_cableadas(
             "se_activa_entrada": se_activa_entrada,
             "salta_stop": salta_stop,
             "se_cierra_operacion": se_cierra_operacion,
+            "se_completa_zona_de_control": se_completa_zona_de_control,
             "distancia_menor_que": distancia_menor_que,
             "no_es_multiplo_de": no_es_multiplo_de,
         }

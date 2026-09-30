@@ -24,7 +24,13 @@ from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine import arnes, cableado
-from botsito.engine.broker import LLENADA, MOTIVO_PRECIO_INVALIDO, Broker, BrokerError
+from botsito.engine.broker import (
+    LLENADA,
+    MANUAL,
+    MOTIVO_PRECIO_INVALIDO,
+    Broker,
+    BrokerError,
+)
 from botsito.engine.cableado import CableadoError, MotorCableado, comprobar_reloj_unico
 from botsito.engine.cuenta import EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.entrada import LIMITE_EN_RETROCESO, STOP_EN_RUPTURA
@@ -120,6 +126,12 @@ RUTA_ORDEN_STOP = {
     MINUTO_ZONA + 3: ENTRADA + 5,
     MINUTO_ZONA + 8: ENTRADA + 70,
 }
+
+
+# llena la limite y el precio se queda quieto: ni stop ni objetivo, asi que la posicion llega
+# viva al fin de su vela H4 (06:00-10:00 UTC, la sesion 07-11 de Madrid en invierno)
+RUTA_VIVA = {MINUTO_ZONA + 3: ENTRADA - 6}
+FIN_H4 = int(a_minuto(datetime(2030, 1, 15, 10, 0, tzinfo=UTC)))
 
 
 def _sinteticas(minuto_zona: int = MINUTO_ZONA) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -252,6 +264,158 @@ def test_una_estrategia_sintetica_coloca_una_limite_por_el_motor_se_llena_y_cier
         or p.startswith("acumulador:perdida_total_firma")
         for p in faltan
     )
+
+
+def test_rn002_cierra_la_posicion_viva_antes_del_fin_de_su_vela_h4(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Sesion 3, S-1 (ADR-0060): «siempre menos un minuto, antes de que cierre [...] la sesion
+    de cuatro horas». Una posicion que llega viva al final de su H4 se cierra a mercado en el
+    evento anterior al limite de la rejilla de anclaje_h4 -la antelacion la da el registro-,
+    y no a las 15:00 de la ventana."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_VIVA))
+    r = motor.correr_dia(_dia())
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, MANUAL], tb.eventos
+    p = next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+    antelacion = registro.minutos("cierre_h4_antelacion")
+    assert p.motivo_cierre == MANUAL
+    assert p.cerrada_ms == (FIN_H4 - antelacion) * MS_POR_MINUTO - 1
+    assert "RN-002" in r.sesiones["07-11"].disparadas
+    assert "RN-002" not in r.sesiones["11-15"].disparadas
+    # sin posicion viva la regla no dispara: en la ruta del stop ya esta cerrada
+    otro = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    assert "RN-002" not in otro.correr_dia(_dia()).sesiones["07-11"].disparadas
+
+
+def test_una_orden_preparada_y_no_enviada_no_se_arrastra_a_la_zona_siguiente(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Dos zonas en el mismo dia, que desde A-46 es lo normal (cada sesion liga la suya). La
+    primera se dimensiona, pero un gate prohibe abrir y no se envia; la segunda se prepara de
+    cero. Medido con la simulacion sobre construccion: el cableado arrastraba la orden a
+    medio preparar y se paraba con «la zona ligada no es la de la orden preparada»."""
+    segunda = MINUTO_ZONA + 30
+    predicados, acumuladores = _sinteticas()
+
+    def toca(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        ids = {MINUTO_ZONA: "zona:1", segunda: "zona:2"}
+        id = ids.get(int(momento.instante))
+        return Resultado(Tri.NO) if id is None else Resultado(Tri.SI, {"Z": id})
+
+    def ruido(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        return Resultado(Tri.SI if int(momento.instante) == MINUTO_ZONA else Tri.NO)
+
+    predicados["toca_colocar_orden_limite"] = toca
+    predicados["se_desarrolla_en_el_lado_de_ruido"] = ruido  # RN-005 prohibe la primera
+    motor = _motor(registro, vocabulario, _mercado({}))
+    motor.primitivas_extra = predicados
+    zonas = {
+        "zona:1": cableado.zona_sintetica("zona:1", "compra", ENTRADA, EXTREMO, "primer_esquema"),
+        "zona:2": cableado.zona_sintetica(
+            "zona:2", "compra", ENTRADA - 40, EXTREMO - 40, "primer_esquema"
+        ),
+    }
+    motor.zonas_de = lambda md: zonas
+    r = motor.correr_dia(_dia())
+    bloqueo = ("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion")
+    assert bloqueo in r.sesiones["07-11"].bloqueadas
+    ordenes = list(motor.brokers[DIA.isoformat()].ordenes.values())
+    assert [(o.precio, o.stop, o.objetivo) for o in ordenes] == [
+        (ENTRADA - 40, ENTRADA - 40 - 16, ENTRADA - 40 + 60)
+    ]
+
+
+def _registro_con_redondeo(tmp_path: Path, valor: str) -> Registro:
+    """Una copia del registro real con `stop_fraccion_redondeo` en el valor pedido."""
+    texto = (RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
+    viejo = "    valor: alejandose_de_la_entrada\n"
+    assert texto.count(viejo) == 1
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(texto.replace(viejo, f"    valor: {valor}\n"), encoding="utf-8")
+    return cargar_registro(ruta)
+
+
+def test_el_stop_se_redondea_alejandose_de_la_entrada_y_el_lote_sale_de_esa_distancia(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], tmp_path: Path
+) -> None:
+    """Sesion 3 (A-18 en lo firme, fb-2026-09-29-sesion-03-11910e0a): con una caja en la que el
+    nivel de stop_fraccion_caja no cae en un punto exacto, el stop va al punto siguiente
+    ALEJANDOSE de la entrada, y el lote se dimensiona sobre esa distancia. El sentido lo da
+    `stop_fraccion_redondeo`, que la forma de RN-011 nombra: con el otro valor, al reves."""
+
+    def posicion(reg: Registro) -> Any:
+        motor = _motor(reg, vocabulario, _mercado(RUTA_STOP))
+        # caja de 21 puntos: el 0,8 cae en 16,8
+        zona = cableado.zona_sintetica("zona:1", "compra", ENTRADA, ENTRADA - 21, "primer_esquema")
+        motor.zonas_de = lambda md: {"zona:1": zona}
+        motor.correr_dia(_dia())
+        return next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+
+    assert registro.opcion("stop_fraccion_redondeo") == "alejandose_de_la_entrada"
+    fuera = posicion(registro)
+    assert fuera.stop == ENTRADA - 17
+    # 0,5 % de 100.000 sobre 17 puntos: 29,4117..., y RN-027 lo baja al escalon
+    assert fuera.lotes == Decimal("29.41")
+    dentro = posicion(_registro_con_redondeo(tmp_path, "hacia_la_entrada"))
+    assert dentro.stop == ENTRADA - 16 and dentro.lotes == Decimal("31.25")
+    # el objetivo no depende del redondeo del stop: sale de la caja completa
+    assert fuera.objetivo == dentro.objetivo == ENTRADA + 63
+
+
+# la limite se llena, el precio sube dos velas, retrocede una -la zona de control posterior-,
+# pasa el punto alto que dejo y despues vuelve por debajo de la entrada
+RUTA_BREAK_EVEN = {
+    MINUTO_ZONA + 3: ENTRADA - 6,
+    MINUTO_ZONA + 4: ENTRADA + 10,
+    MINUTO_ZONA + 5: ENTRADA + 20,
+    MINUTO_ZONA + 6: ENTRADA + 14,
+    MINUTO_ZONA + 7: ENTRADA + 25,
+    MINUTO_ZONA + 12: ENTRADA - 3,
+}
+
+
+def test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Sesion 3 (RN-014, fb-2026-09-29-sesion-03-9f506366): «apenas toca, pues se pone en B la
+    entrada», mirado en M1 y con el stop exactamente en la entrada. Aqui el predicado de la
+    zona completada es el del motor, no el sintetico: tras el llenado, la roja de retroceso
+    deja el punto alto y la M1 siguiente lo pasa con la mecha; en el cierre de esa M1 el stop
+    va a la entrada, y cuando el precio vuelve la posicion sale por break even."""
+    mercado = _mercado(RUTA_BREAK_EVEN)
+    motor = _motor(registro, vocabulario, mercado)
+    predicados, _ = _sinteticas()
+    del predicados["se_completa_zona_de_control"]
+    motor.primitivas_extra = predicados
+    datos = DatosMercado(_h4_alcista(), velas_m1=list(mercado.m1))
+    r = motor.correr_dia(DiaDeMercado(DIA, HUSO, SESIONES, datos))
+    assert "RN-014" in r.sesiones["07-11"].disparadas
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, STOP], tb.eventos
+    p = next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+    assert (p.stop, p.stop_original) == (ENTRADA, ENTRADA - 16)
+    # el stop ya esta en la entrada: salta al toque y se llena al precio del tick (DN-3)
+    assert (p.motivo_cierre, p.precio_cierre) == (STOP, ENTRADA - 3)
+    # un break even no gasta intento: el cierre se clasifica por mecanismo (RN-016)
+    from botsito.engine.primitivas_broker import BREAK_EVEN, clasificar_cierre
+
+    assert clasificar_cierre(STOP, p.stop_original is not None, Decimal(-3)) == BREAK_EVEN
+    # y sin zona posterior no hay break even: en la ruta viva el stop no se mueve
+    quieto = _mercado(RUTA_VIVA)
+    otro = _motor(registro, vocabulario, quieto)
+    predicados, _ = _sinteticas()  # de nuevo: la zona sintetica se liga una sola vez
+    del predicados["se_completa_zona_de_control"]
+    otro.primitivas_extra = predicados
+    datos = DatosMercado(_h4_alcista(), velas_m1=list(quieto.m1))
+    rr = otro.correr_dia(DiaDeMercado(DIA, HUSO, SESIONES, datos))
+    assert "RN-014" not in rr.sesiones["07-11"].disparadas
+    q = next(iter(otro.brokers[DIA.isoformat()].posiciones.values()))
+    assert q.stop_original is None and q.stop == ENTRADA - 16
 
 
 def test_un_gate_de_la_firma_prohibe_cuando_la_cuenta_cruza_su_limite(

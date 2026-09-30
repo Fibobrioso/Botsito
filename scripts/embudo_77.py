@@ -11,8 +11,10 @@ Los pasos, en el orden del pipeline real (docs/validation/EMBUDO-77.md §1):
 
 1. sesion: el instante del trader cae fuera de la ventana de su sesion;
 2. sesgo: la sesion no tiene sesgo H4 (RN-003, RN-033) o lo tiene contrario a la operacion;
-3. liquidez: el productor no tiene toma de M15 (RN-004) antes del trader + la tolerancia, o la
-   que tiene es de una sesion anterior y su zona no casa con la del trader (una zona por dia);
+3. liquidez: el productor no tiene, EN LA SESION DE LA OPERACION, toma de M15 (RN-004) antes del
+   trader + la tolerancia. Desde la rama trabajo/nocturno-01oct cada sesion tiene su toma y su
+   zona (A-46 RESUELTA): la rama «toma de otra sesion» de `clasificar` ya no puede darse con el
+   motor real, y se conserva para leer las salidas de antes;
 4. breaker: tras la toma, el productor no detecta esquema (RN-008, RN-009, A-21);
 5. caja: el 0 de la zona del bot queda a mas de la tolerancia de puntos de la entrada del trader;
 6. momento: el breaker cierra despues del instante del trader + la tolerancia de minutos;
@@ -293,10 +295,18 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     from botsito.cases.paquete import cargar_config
     from botsito.comun.husos import huso_canonico
     from botsito.config.ajustes import carpeta_datos
-    from botsito.config.registro import cargar_registro
+    from botsito.config.registro import ParametroDesconocidoError, cargar_registro
     from botsito.domain.estructura_m1 import detectar_esquema
     from botsito.domain.pivotes_m15 import CIERRE_VELA_CONTRARIA
-    from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, zonas
+    from botsito.engine import (
+        arnes,
+        cableado,
+        diagnostico,
+        entrada,
+        relojes,
+        tope_trader,
+        zonas,
+    )
     from botsito.engine.broker import RECHAZADA
     from botsito.engine.diagnostico import A44_SIN_TOPE, Diagnostico
     from botsito.engine.interprete import reglas_ejecutables
@@ -322,7 +332,17 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     if not set(meses) <= {"2026-04", "2026-08"}:
         raise SystemExit(f"construccion no es abril y agosto: {meses}")
     dias = arnes.dias_de_construccion(raiz, criterio, meses, ocultos=casos_ocultos(raiz))
-    diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, a21, a27, entrada.STOP_EN_RUPTURA)
+    # A-47 esta RESUELTA desde la sesion 3 (`entrada_tipo_orden` = stop_en_ruptura): pedirla en
+    # diagnostico se rechaza, y este script dejo de correr. Solo se pide si sigue sin fijar; y
+    # si el registro dijera otra cosa, el embudo mediria lo que no es
+    try:
+        fijado: str | None = registro.opcion(entrada.PARAMETRO_A47)
+    except ParametroDesconocidoError:
+        fijado = None
+    if fijado not in (None, entrada.STOP_EN_RUPTURA):
+        raise SystemExit(f"{entrada.PARAMETRO_A47} = {fijado}: el embudo mide la orden stop")
+    a47 = None if fijado is not None else entrada.STOP_EN_RUPTURA
+    diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, a21, a27, a47)
     lectura = diagnostico.lectura_pivote(registro, diag)
     perfil = cableado.perfil_del_repo(raiz, None)
     tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)
@@ -330,7 +350,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47)
     carpeta = carpeta_datos(raiz)
     mercado = arnes.dias_de_mercado(
-        raiz, carpeta, config, registro, dias, registro.texto("huso_operativa"), lectura
+        raiz, carpeta, config, registro, dias, relojes.huso_de_las_sesiones(registro), lectura
     )
     motor = cableado.construir_motor_cableado(
         raiz, carpeta, criterio, config, registro, vocabulario, reglas, dias, perfil, None, False,
@@ -359,47 +379,63 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
         escala = md.escala
         if escala != tol.escala:
             raise SystemExit(f"{d.dia}: escala del broker {escala} y del criterio {tol.escala}")
-        mem = estado.memoria.get("zona_de_entrada", {})
-        toma = mem.get("toma")
-        esquema = mem.get("esquema")
-        toma_s = None if toma is None else int(toma["instante"]) * 60
-        formada_s = None if esquema is None else int(esquema.breaker_fin) * 60
-        orden = None
-        if esquema is not None:
-            colocada_ms = int(esquema.breaker_fin) * 60_000 - 1
-            orden = next((o for o in broker.ordenes.values() if o.colocada_ms == colocada_ms), None)
-        sin_orden = None
-        if esquema is not None and orden is None:
-            ev = grabadora.eventos.get((id(estado), int(esquema.breaker_fin)))
-            sin_orden = _sin_orden(ev, prohiben, _sesion_de(limites, formada_s) is not None)
-        rechazo = None
-        if orden is not None and orden.estado == RECHAZADA:
-            rechazo = next(r.motivo for r in broker.traza().rechazos if r.orden_id == orden.id)
-        pos = None
-        if orden is not None:
-            pos = next((p for p in broker.posiciones.values() if p.orden_id == orden.id), None)
-        por_dia.append(
-            {
-                "dia": d.dia,
-                "operaciones_trader": len(d.operaciones),
-                "toma": _hhmm(toma_s),
-                "toma_sesion": None if toma_s is None else _sesion_de(limites, toma_s),
-                "zona": None
-                if esquema is None
-                else f"{esquema.lado} {esquema.cual} 0={int(esquema.entrada)} "
-                f"caja {int(esquema.caja)} formada {_hhmm(formada_s)}",
-                "orden": None if orden is None else orden.estado,
-                "rechazo": rechazo,
-                "sin_orden": sin_orden,
-                "ruido": None
-                if esquema is None or toma is None
-                else _ruido(
-                    esquema.lado, int(esquema.entrada), int(esquema.extremo), int(toma["nivel"])
-                ),
-                "posicion": None if pos is None else f"{pos.motivo_cierre} ({pos.fuente_apertura})",
-            }
-        )
+        # Cada sesion es un escenario propio (A-46 RESUELTA; el productor guarda la toma y el
+        # esquema por sesion desde la rama trabajo/nocturno-01oct): lo del bot se mira SESION A
+        # SESION, y cada operacion del trader se compara con lo de la suya
+        del_bot: dict[str, tuple[Any, ...]] = {}
+        for s in dm.sesiones:
+            mem = zonas.memoria_de_sesion(estado, s.nombre)
+            toma = mem.get("toma")
+            esquema = mem.get("esquema")
+            toma_s = None if toma is None else int(toma["instante"]) * 60
+            formada_s = None if esquema is None else int(esquema.breaker_fin) * 60
+            orden = None
+            if esquema is not None:
+                colocada_ms = int(esquema.breaker_fin) * 60_000 - 1
+                orden = next(
+                    (o for o in broker.ordenes.values() if o.colocada_ms == colocada_ms), None
+                )
+            sin_orden = None
+            if esquema is not None and orden is None:
+                ev = grabadora.eventos.get((id(estado), int(esquema.breaker_fin)))
+                sin_orden = _sin_orden(ev, prohiben, _sesion_de(limites, formada_s) is not None)
+            rechazo = None
+            if orden is not None and orden.estado == RECHAZADA:
+                rechazo = next(r.motivo for r in broker.traza().rechazos if r.orden_id == orden.id)
+            pos = None
+            if orden is not None:
+                pos = next((p for p in broker.posiciones.values() if p.orden_id == orden.id), None)
+            por_dia.append(
+                {
+                    "dia": d.dia,
+                    "sesion": s.nombre,
+                    "operaciones_trader": sum(1 for op in d.operaciones if op.sesion == s.nombre),
+                    "toma": _hhmm(toma_s),
+                    "toma_sesion": None if toma_s is None else _sesion_de(limites, toma_s),
+                    "zona": None
+                    if esquema is None
+                    else f"{esquema.lado} {esquema.cual} 0={int(esquema.entrada)} "
+                    f"caja {int(esquema.caja)} formada {_hhmm(formada_s)}",
+                    "orden": None if orden is None else orden.estado,
+                    "rechazo": rechazo,
+                    "sin_orden": sin_orden,
+                    "ruido": None
+                    if esquema is None or toma is None
+                    else _ruido(
+                        esquema.lado, int(esquema.entrada), int(esquema.extremo), int(toma["nivel"])
+                    ),
+                    "posicion": None
+                    if pos is None
+                    else f"{pos.motivo_cierre} ({pos.fuente_apertura})",
+                }
+            )
+            del_bot[s.nombre] = (
+                toma, esquema, toma_s, formada_s, orden, sin_orden, rechazo, pos
+            )  # fmt: skip
         for op in d.operaciones:
+            toma, esquema, toma_s, formada_s, orden, sin_orden, rechazo, pos = del_bot.get(
+                op.sesion, (None,) * 8
+            )
             t_s = int(op.instante.timestamp())
             traza = trazas.get((d.dia, op.sesion))
             fijados = traza.fijados if traza is not None else []
@@ -407,7 +443,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
             tomas = tuple(
                 sorted(
                     {
-                        int(dm.datos.ultima_m15_cerrada(i).fin) * 60
+                        i * 60  # el cierre de la M1 que toma (A-45 RESUELTA)
                         for i, r, h, v in fijados
                         if h == "liquidez_tomada" and v == "si" and r == "RN-004"
                     }
@@ -460,7 +496,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
                 and previas
                 and sesgo in (A_FAVOR[op.direccion],)
             ):
-                ultima = previas[-1] // 60  # el cierre de la M15 que toma
+                ultima = previas[-1] // 60  # el cierre de la M1 que toma
                 alternativa = {"toma": _hhmm(ultima * 60), "esquema": None}
                 fin = t_s // 60 + tol.instante_min + 1
                 for minuto in range(ultima + 1, fin + 1):
@@ -558,11 +594,11 @@ def informe(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any]) -> s
         f"operaciones muertas en liquidez, breaker, caja o momento con sesgo a favor y alguna toma "
         f"previa): el esquema casaria (<= tolerancia) en {casan}",
         "",
-        "## Por dia: la zona del productor, la orden y por que no la hay",
+        "## Por dia y sesion: la zona del productor, la orden y por que no la hay",
     ]
     for x in resumen["por_dia"]:
         lineas.append(
-            f"- {x['dia']} (trader {x['operaciones_trader']}) | toma {x['toma']} "
+            f"- {x['dia']} {x['sesion']} (trader {x['operaciones_trader']}) | toma {x['toma']} "
             f"({x['toma_sesion']}) | zona {x['zona']} | orden {x['orden']}"
             f"{' ' + x['rechazo'] if x['rechazo'] else ''}"
             f"{' | sin orden: ' + x['sin_orden'] if x['sin_orden'] else ''}"

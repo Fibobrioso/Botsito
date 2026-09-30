@@ -41,6 +41,7 @@ def test_rompe_arriba_es_alcista_y_el_color_no_decide() -> None:
     velas = [h4(0, 110, 100), h4(1, 108, 102), h4(2, 111, 103, abierta=109, cierre=104)]
     r = sesgo_h4(velas, MinutoUtc(FIN), TOPE, MECHA)
     assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 3 and r.velas_miradas == 1
+    assert not r.doble_ruptura  # con un solo extremo roto el color sigue sin decidir
 
 
 def test_rompe_abajo_es_bajista() -> None:
@@ -66,10 +67,45 @@ def test_romper_por_un_punto_basta() -> None:
     assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 1
 
 
-def test_rompe_ambos_extremos_es_ambiguo() -> None:
-    velas = [h4(0, 110, 100), h4(1, 112, 99)]
+def test_rompe_ambos_extremos_y_decide_el_color_de_la_vela() -> None:
+    """Sesion 3, A-34 RESUELTA: «si rompe por los dos [...] importa el color de la vela»."""
+    verde = [h4(0, 110, 100), h4(1, 112, 99, abierta=101, cierre=108)]
+    r = sesgo_h4(verde, MinutoUtc(2 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 2 and r.doble_ruptura
+    roja = [h4(0, 110, 100), h4(1, 112, 99, abierta=108, cierre=101)]
+    r = sesgo_h4(roja, MinutoUtc(2 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.BAJISTA and r.ruptura_puntos == 1 and r.doble_ruptura
+
+
+def test_doble_ruptura_sin_cuerpo_es_ambiguo() -> None:
+    """Sin cuerpo no hay color que decida, y el trader no describio ese caso (ADR-0060)."""
+    velas = [h4(0, 110, 100), h4(1, 112, 99, abierta=105, cierre=105)]
     r = sesgo_h4(velas, MinutoUtc(2 * H4), TOPE, MECHA)
-    assert r.sesgo is Sesgo.AMBIGUO and r.ruptura_puntos == 1
+    assert r.sesgo is Sesgo.AMBIGUO and r.ruptura_puntos == 1 and r.doble_ruptura
+
+
+def test_la_doble_ruptura_fija_el_sesgo_y_no_se_sigue_mirando_hacia_atras() -> None:
+    # la primera rompio abajo (bajista); la segunda rompe los dos y cierra verde; la tercera,
+    # dentro: manda la segunda, con su color, y la busqueda para en ella
+    velas = [
+        h4(0, 110, 100),
+        h4(1, 109, 95),
+        h4(2, 112, 90, abierta=92, cierre=110),
+        h4(3, 111, 91),
+    ]
+    r = sesgo_h4(velas, MinutoUtc(4 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 2 and r.doble_ruptura
+
+
+def test_con_criterio_de_cuerpo_la_doble_ruptura_tambien_la_decide_el_color() -> None:
+    # con `cuerpo`, los extremos son los del cuerpo; una vela los rompe los dos solo si su
+    # cuerpo envuelve al anterior, y el color sigue siendo el de su cierre contra su apertura
+    velas = [
+        h4(0, 110, 100, abierta=103, cierre=107),
+        h4(1, 115, 95, abierta=109, cierre=101),
+    ]
+    r = sesgo_h4(velas, MinutoUtc(2 * H4), TOPE, CUERPO)
+    assert r.sesgo is Sesgo.BAJISTA and r.doble_ruptura
 
 
 def test_sin_ruptura_dentro_del_tope_es_insuficiente() -> None:

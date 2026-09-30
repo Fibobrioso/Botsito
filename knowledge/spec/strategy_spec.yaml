@@ -64,8 +64,9 @@ predicados:
       el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la
       apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
       mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
-      bajista- o, cuando no hay lado, `ambiguo` (la vela rompio los dos extremos, A-34) o
-      `insuficiente` (ninguna rompio dentro del tope). SIEMPRE tiene respuesta: por eso RN-003
+      bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro
+      (sesion 3, A-34 RESUELTA; ADR-0060), y solo si cerro sin cuerpo ata `ambiguo`. Si ninguna
+      rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
       fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
     argumentos: [que, contra, criterio, tope]
     fuente: mercado
@@ -81,6 +82,14 @@ predicados:
     literal: >-
       como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento
       [...] rompe el punto alto anterior con mecha, con mecha no importa
+    notas: >-
+      LO QUE EL MOTOR HACE (rama trabajo/nocturno-01oct, ADR-0061, ACEPTADO). Con `posterior_a`
+      -el break even de RN-014- la zona es el retroceso que se forma en M1 despues de la
+      entrada: una vela contraria tras una racha a favor deja el punto extremo, y la zona se
+      completa en el cierre de la primera M1 posterior que lo pasa con `criterio`. Que el
+      retroceso sea eso es LECTURA NUESTRA de «rompe el punto alto anterior», hecha con la misma
+      geometria de M1 que el breaker. Sin `posterior_a` -la reubicacion de RN-006, que es la
+      vida de la orden stop- sigue sin escribirse (rama 3 de ADR-0056)
   abre_sesion_operativa:
     descripcion: empieza una de las sesiones de la ventana
     argumentos: []
@@ -107,21 +116,37 @@ predicados:
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
 
   en_ventana:
-    descripcion: la hora de pared cae en el intervalo medio abierto [inicio, fin)
-    argumentos: [inicio, fin, huso, dias]
+    descripcion: >-
+      la hora de pared, en el reloj que dice `reloj`, cae en el intervalo medio abierto
+      [inicio, fin). `reloj` es un selector del registro: dice con cual de sus relojes se cuenta,
+      y el huso de cada reloj vive en su propio parametro (ADR-0063)
+    argumentos: [inicio, fin, reloj, dias]
     fuente: reloj
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
       sesiones
   alcanza_hora:
-    descripcion: la hora de pared llega al instante declarado
-    argumentos: [hora, huso]
+    descripcion: la hora de pared, en el reloj que dice `reloj`, llega al instante declarado
+    argumentos: [hora, reloj]
     fuente: reloj
     cita: fb-2026-09-09-sesion-01-ffb528d7
     literal: la operativa se cierra a las 3pm en punto
+  vence_vela_h4:
+    descripcion: >-
+      a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para
+      terminar, en la rejilla H4 que fija `anclaje` -la del sesgo, la que construye la
+      agregacion de velas- y no en la de la ventana operativa. Vale tambien en el propio limite:
+      lo que se llene en el ultimo minuto de la vela se cierra antes de que empiece la siguiente
+      (ADR-0060)
+    argumentos: [anclaje, antelacion]
+    fuente: reloj
+    cita: fb-2026-09-29-sesion-03-c38c4aef
+    literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
   alcanza_nivel:
-    descripcion: el precio llega al nivel marcado
+    descripcion: >-
+      el precio llega al nivel marcado: la ultima vela de M1 cerrada lo toca, aunque sea solo con
+      la mecha
     argumentos: [que]
     fuente: mercado
     cita: ev-v3-001600-ed45b091
@@ -129,7 +154,10 @@ predicados:
       yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...]
       de esta liquidez de m15 es ruido
   cruza:
-    descripcion: el precio pasa al otro lado del nivel con el criterio declarado
+    descripcion: >-
+      el precio pasa al otro lado del nivel con el criterio declarado, mirado en la ultima vela de
+      M1 cerrada y no en la de M15 (A-45 RESUELTA en la sesion 3; cierra lo PROVISIONAL de
+      ADR-0054 §4)
     argumentos: [que, criterio]
     fuente: mercado
     cita: fb-2026-09-09-sesion-01-6e15504f
@@ -341,8 +369,11 @@ acciones:
     descripcion: calcula el lote a partir del riesgo y la distancia declarada
     argumentos: [base, riesgo, sobre]
   escribir_stop_en_la_orden:
-    descripcion: escribe el stop en la orden que se va a colocar, antes de enviarla (RN-011)
-    argumentos: [donde, nivel]
+    descripcion: >-
+      escribe el stop en la orden que se va a colocar, antes de enviarla (RN-011): en `nivel` de
+      la caja y, cuando ese nivel no cae en un punto exacto, redondeado hacia donde diga
+      `redondeo`
+    argumentos: [donde, nivel, redondeo]
   fijar_objetivo:
     descripcion: escribe el objetivo en la orden que se va a colocar, antes de enviarla (RN-015)
     argumentos: [multiplo, sobre, extension, parciales]
@@ -425,8 +456,10 @@ tokens:
   # porque la guardia exige una LIGADURA en el `sentido` de un predicado con `lado_de_ruido`.
   ambiguo:
     descripcion: >-
-      valor de `sesgo` cuando la H4 previa rompio LOS DOS extremos de su anterior (ADR-0044 §1,
-      A-34): no hay lado, y RN-033 prohibe operar
+      valor de `sesgo` cuando la H4 que lo fija rompio LOS DOS extremos de su anterior y cerro
+      SIN CUERPO, sin color que decida (ADR-0044 §1, ADR-0060): no hay lado, y RN-033 prohibe
+      operar. Con cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA) y no es
+      `ambiguo`
   insuficiente:
     descripcion: >-
       valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
@@ -434,8 +467,9 @@ tokens:
   al_abrir_sesion:
     descripcion: >-
       el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada:
-      la regla que lo produce lo vuelve a fijar en ese mismo evento y ningun gate lee el de la
-      sesion anterior (ADR-0049, H1). Hoy solo lo declara `sesgo`
+      ningun gate lee el de la sesion anterior (ADR-0049, H1). Lo declaran `sesgo`, que RN-003
+      vuelve a fijar en ese mismo evento, y desde el 2026-09-30 `liquidez_tomada`, que se queda
+      apagado hasta que la sesion tome su propia liquidez (A-46 RESUELTA)
     clase: caducidad
   por_encima:
     descripcion: el lado de un nivel que queda por encima del precio
@@ -527,6 +561,8 @@ efectos:
     descripcion: mirar M1 en busca de un esquema de entrada
 
 hechos:
+  # `caduca` desde el 2026-09-30 tambien en `liquidez_tomada` (A-46 RESUELTA, ADR-0055 §4): cada
+  # sesion es un escenario propio.
   # `origen` (ADR-0032): `regla` -lo fija una forma, y `produce` se compara con las formas- o
   # `broker` -lo lee el motor del estado de ordenes y posiciones (ADR-0028 §5)-. Uno de origen
   # broker NO lleva `produce`: ninguna forma puede fijarlo, y `lo_provoca` dice que accion lo hace
@@ -614,9 +650,15 @@ hechos:
       dos esquemas de entrada y de colocar la orden: sin ella no se mira M1. Hasta el 2026-09-11 esta
       condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma
       leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consumen los
-      predicados `se_da_esquema` y `toca_colocar_orden_limite` (`depende_de`), no una regla
+      predicados `se_da_esquema` y `toca_colocar_orden_limite` (`depende_de`), no una regla.
+      CADUCA AL ABRIR CADA SESION desde el 2026-09-30 (rama trabajo/nocturno-01oct): para el
+      trader cada sesion es un escenario propio -«cada uno es un mundo diferente», A-46 RESUELTA,
+      fb-2026-09-29-sesion-03-5021677e-, asi que una toma de la primera sesion no vale en la
+      segunda. Era la deuda de ADR-0055 §4: con la toma de la manana viva, RN-008 y RN-009 leian
+      esa toma en la segunda sesion y RN-011 no podia disparar, porque su breaker ya habia pasado
     origen: regla
     valores: ["si"]
+    caduca: al_abrir_sesion
     produce: [RN-004]
     consume: [predicado se_da_esquema, predicado toca_colocar_orden_limite]
 
@@ -669,11 +711,11 @@ reglas:
   - id: RN-001
     titulo: la ventana operativa es el horario del trader, no el de las velas
     cuando: >-
-      la hora de pared en huso_operativa esta en el intervalo MEDIO ABIERTO que empieza en
-      ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
+      la hora de pared, en el reloj que dice reloj_sesiones, esta en el intervalo MEDIO ABIERTO que
+      empieza en ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
       dias_operables
     entonces: el bot busca entradas; fuera de ese intervalo no opera
-    parametros: [ventana_inicio, ventana_fin, huso_operativa, dias_operables]
+    parametros: [ventana_inicio, ventana_fin, reloj_sesiones, dias_operables]
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
@@ -683,7 +725,12 @@ reglas:
       año; los otros 28 -del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no
       cambian la hora el mismo dia- el ancla se ve a las 22:00 y el bot empieza una hora DENTRO de
       la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual
-      sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre
+      sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre.
+      DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063, ACEPTADO) EL RELOJ DE LA VENTANA
+      LO ELIGE reloj_sesiones y ya no es huso_operativa, que se queda como reloj del dia de
+      riesgo. Nace en `civil_operativa`, asi que NADA CAMBIA todavia: es el mecanismo que
+      ADR-0059 pedia para poder aplicar, cuando se confirme, la lectura de A-42 -las sesiones en
+      el reloj del grafico- sin mover el corte del dia de la firma
     decision: ADR-0017
     forma:
       cuando:
@@ -692,7 +739,7 @@ reglas:
               - en_ventana:
                   inicio: ventana_inicio
                   fin: ventana_fin
-                  huso: huso_operativa
+                  reloj: reloj_sesiones
                   dias: dias_operables
           - hecho: detenido_por_tope
           - hecho: detenido_por_tope_total
@@ -703,30 +750,48 @@ reglas:
     estado: VIGENTE
 
   - id: RN-002
-    titulo: al llegar el fin de la ventana se cierra lo que quede abierto
+    titulo: >-
+      toda operacion se cierra antes de que termine su vela H4, y lo que quede, al llegar el fin
+      de la ventana
     cuando: >-
-      la hora de pared en huso_operativa alcanza ventana_fin y quedan operaciones abiertas
+      quedan operaciones abiertas y, o bien a la vela H4 en curso -en la rejilla de anclaje_h4- le
+      queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared, en el reloj que
+      dice reloj_sesiones, alcanza ventana_fin
     entonces: se cierra a mercado si cierre_forzoso_fin_ventana
-    parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_operativa]
-    cita: fb-2026-09-09-sesion-01-ffb528d7
-    literal: la operativa se cierra a las 3pm en punto
+    parametros:
+      - ventana_fin
+      - cierre_forzoso_fin_ventana
+      - reloj_sesiones
+      - anclaje_h4
+      - cierre_h4_antelacion
+    cita: fb-2026-09-29-sesion-03-c38c4aef
+    literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
     notas: >-
-      "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia con el horario de
-      verano igual que la de cualquiera (ADR-0017)
+      LA CITA ES LA DE LA PRIMERA RAMA DESDE EL 2026-09-30 (decision del consultor al aceptar
+      ADR-0060): el CORRECT de la sesion 3. La segunda rama, el cierre en ventana_fin, sale de
+      fb-2026-09-09-sesion-01-ffb528d7 («la operativa se cierra a las 3pm en punto»), que era la
+      cita hasta entonces. "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia
+      con el horario de verano igual que la de cualquiera (ADR-0017)
       DESDE EL 2026-09-29 (sesion 3, S-1; fb-2026-09-29-sesion-03-c38c4aef,
       ev-v9-002735-472432b8): el trader cierra TODA operacion un minuto antes de que termine su
       vela H4 -«siempre menos un minuto, antes de que cierre la sesión de cuatro horas»-, este
       donde este y sea cual sea el sesgo siguiente; y no tiene hora limite para abrir (A-30,
-      ev-v9-012514-b5b6c84f). DESALINEADO CON EL MOTOR: la forma cierra solo al alcanzar
-      ventana_fin, en punto, y no cierra al vencer la primera vela H4 de la ventana. No se toca
-      ventana_fin, que tambien decide que sesiones se operan: hace falta un predicado de fin de
-      vela H4 sobre la rejilla de anclaje_h4, que es rama de codigo. A-39, de donde sale, sigue
-      ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por la orden pendiente.
+      ev-v9-012514-b5b6c84f). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
+      ACEPTADO) LA FORMA LO HACE: `vence_vela_h4` da SI cuando a la vela H4 en curso le queda
+      cierre_h4_antelacion o menos, sobre la rejilla de anclaje_h4 -la del sesgo, no la de la
+      ventana-, y tambien en el propio limite, para que nada llenado en el ultimo minuto cruce a
+      la vela siguiente. No se toca ventana_fin, que tambien decide que sesiones se operan, y su
+      cierre en punto se conserva como segunda rama. El interruptor es el mismo
+      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela;
+      A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por
+      la orden pendiente (A-30).
     decision: ADR-0017
     forma:
       cuando:
         todos_de:
-          - alcanza_hora: {hora: ventana_fin, huso: huso_operativa}
+          - cualquiera_de:
+              - vence_vela_h4: {anclaje: anclaje_h4, antelacion: cierre_h4_antelacion}
+              - alcanza_hora: {hora: ventana_fin, reloj: reloj_sesiones}
           - hecho: operacion_abierta
             liga: OP
       entonces:
@@ -743,15 +808,18 @@ reglas:
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
       AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
       de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
-      rompe los dos extremos, el sesgo es AMBIGUO; si ninguna de las ultimas sesgo_h4_tope_velas
-      rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-, y
+      solo si cierra sin cuerpo el sesgo es AMBIGUO; si ninguna de las ultimas
+      sesgo_h4_tope_velas rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
     parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
-    cita: fb-2026-09-09-sesion-01-8eccf5c0
-    literal: >-
-      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
-      entonces seguiríamos operando bajista
+    cita: fb-2026-09-29-sesion-03-31fb311f
+    literal: si rompe por los dos, como te digo, importa el color de importa el color de la vela.
     notas: >-
-      el color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
+      LA CITA ES EL CORRECT DE LA SESION 3 DESDE EL 2026-09-30 (decision del consultor al aceptar
+      ADR-0060). Hasta entonces era fb-2026-09-09-sesion-01-8eccf5c0, que sigue sosteniendo la
+      ruptura de un extremo: «si no genera un rompimiento por encima, o sea, al menos por un pip o
+      una milésima de pip, entonces seguiríamos operando bajista». Con un solo extremo roto, el
+      color de la vela NO decide: una vela que cierra roja pero cuya mecha rompio por encima
       deja el sesgo alcista. La rejilla H4 la fija anclaje_h4 -la medianoche del servidor- y NO
       huso_operativa: son relojes distintos y se separan 28 dias al año (ADR-0017). En esas
       semanas la H4 que cierra a mitad de sesion cuenta desde la sesion siguiente. El sesgo
@@ -767,8 +835,10 @@ reglas:
       extremos, el sesgo lo decide el COLOR con que cierra -roja, bajista; verde, alcista-; que
       el color no decide vale solo para la ruptura de un extremo. La misma sesion confirma que
       el sesgo no cambia dentro de la sesion (ev-v9-001504-72aa462a) y que basta un pip con
-      mecha (ev-v9-001312-19e45e4a). DESALINEADO CON EL MOTOR: sesgo_h4_al_abrir sigue fijando
-      `ambiguo` con la doble ruptura, y RN-033 prohibe operar; lo cambia una rama de codigo.
+      mecha (ev-v9-001312-19e45e4a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
+      ACEPTADO) EL MOTOR LO HACE: con la doble ruptura sesgo_h4_al_abrir ata el lado del color,
+      y `ambiguo` queda solo para la vela que rompe los dos extremos y cierra sin cuerpo, que el
+      trader no describio.
     forma:
       cuando:
         todos_de:
@@ -809,9 +879,17 @@ reglas:
       ev-v9-001529-ac28bb40): «Siempre va a haber un sesgo … no existe un sesgo no claro». Con
       A-34 RESUELTA la doble ruptura tiene sentido -el color-, asi que `ambiguo` deja de ser del
       trader; y `insuficiente` tampoco lo es: para el el sesgo es el del ultimo rango, dure lo
-      que dure. DESALINEADO CON EL MOTOR: la regla sigue prohibiendo con los dos valores hasta
-      que la rama de codigo de RN-003 deje de producirlos (15 sesiones ambiguas de 84 en
-      construccion, medido el 2026-09-25; 0 insuficientes).
+      que dure. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060, ACEPTADO) RN-003 ya
+      no produce `ambiguo` con la doble ruptura, que toma el lado del color, y esta regla se
+      queda para lo que el trader no describio: la doble ruptura de una vela sin cuerpo
+      (`ambiguo`) y la falta de ruptura dentro de sesgo_h4_tope_velas (`insuficiente`), que es
+      un tope del proyecto y no suyo. Lo medido sobre construccion esta en ADR-0060.
+      DESDE EL 2026-09-30 (decision del consultor al aceptar ADR-0060): ESTA REGLA ES UNA GUARDIA
+      DEL PROYECTO, NO DEL TRADER. Prohibe solo en los dos casos que el trader no describio -la
+      doble ruptura de una vela sin cuerpo (`ambiguo`, ADR-0060 §2) y ninguna ruptura dentro de
+      sesgo_h4_tope_velas (`insuficiente`, ADR-0044 §2 y ADR-0060 §3)-, con la lectura mas
+      conservadora donde el no habla (ADR-0044 §1). Por eso no cita el CORRECT de la sesion 3
+      (fb-2026-09-29-sesion-03-1168f036), que dice que siempre hay sesgo, ni cambia de forma.
     decision: ADR-0049
     forma:
       cuando:
@@ -830,7 +908,7 @@ reglas:
     titulo: la liquidez de M15 se toma con cuerpo
     cuando: el precio alcanza el alto o el bajo de M15 marcado
     entonces: >-
-      se da por tomada solo si una vela cierra con cuerpo al otro lado segun
+      se da por tomada solo si una vela de M1 cierra con cuerpo al otro lado segun
       liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
     parametros: [liquidez_m15_criterio_toma]
     cita: fb-2026-09-09-sesion-01-6e15504f
@@ -852,10 +930,12 @@ reglas:
       fb-2026-09-29-sesion-03-43e0f90e, ev-v9-004037-ca58e486, ev-v9-004217-c014bfdc): la vela
       que cierra con cuerpo pasado el nivel de M15 es una vela de M1, no la de 15 minutos; la
       mecha solo vale para actualizar el punto de breaker en M1. Queda corregido en ese punto lo
-      de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESALINEADO CON EL
-      MOTOR: `cruza` evalua la ultima M15 cerrada (engine/primitivas.py, PROVISIONAL por
-      ADR-0054 §4). La toma, ademas, tiene que ocurrir dentro del horario aunque el nivel se
-      formara antes de las 7 (A-43, ev-v9-004533-d075b080, sin activar).
+      de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESDE EL 2026-09-30
+      (rama trabajo/nocturno-01oct, ADR-0062, ACEPTADO) EL MOTOR LO HACE: `alcanza_nivel` y
+      `cruza` miran la ultima M1 cerrada, y lo PROVISIONAL de ADR-0054 §4 queda cerrado. SIGUE
+      SIN ACTIVAR que la toma tenga que ocurrir dentro del horario aunque el nivel se formara
+      antes de las 7 (A-43, ev-v9-004533-d075b080): hoy cuenta tambien la M1 que cierra en el
+      instante mismo de la apertura.
     forma:
       cuando:
         todos_de:
@@ -1060,14 +1140,16 @@ reglas:
     entonces: >-
       el lote sale de la distancia que va de la entrada a stop_fraccion_caja segun lotaje_base y
       riesgo_por_operacion sobre base_calculo_riesgo; el stop se escribe EN LA ORDEN segun
-      stop_en_orden_pendiente, en ese mismo stop_fraccion_caja, antes de enviarla; y la orden queda
-      dimensionada en esa zona, a la espera de su objetivo y de su envio
+      stop_en_orden_pendiente, en ese mismo stop_fraccion_caja redondeado segun
+      stop_fraccion_redondeo, antes de enviarla; y la orden queda dimensionada en esa zona, a la
+      espera de su objetivo y de su envio
     parametros:
       - lotaje_base
       - riesgo_por_operacion
       - base_calculo_riesgo
       - stop_en_orden_pendiente
       - stop_fraccion_caja
+      - stop_fraccion_redondeo
       - orden_limite_nace
     cita: fb-2026-09-09-sesion-01-76fd91ba
     literal: el SL se pone junto a la orden limite, no cuando se apertura recien
@@ -1099,9 +1181,10 @@ reglas:
       fb-2026-09-29-sesion-03-f572f1a0) y el lote se calcula del 0 al 0,8 (lotaje_base,
       fb-2026-09-29-sesion-03-d62c788a), que es lo que esta regla ya hace; y el 0,8 se redondea
       ALEJANDOSE de la entrada, lo minimo (stop_fraccion_redondeo,
-      fb-2026-09-29-sesion-03-11910e0a). DESALINEADO CON EL MOTOR en el redondeo:
-      escribir_stop_en_la_orden redondea con ROUND_DOWN, hacia la entrada, y no lee
-      stop_fraccion_redondeo.
+      fb-2026-09-29-sesion-03-11910e0a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct,
+      ADR-0061, ACEPTADO) LA FORMA NOMBRA stop_fraccion_redondeo y el motor lo lee: la distancia
+      de la entrada al stop se redondea al punto entero siguiente, el stop queda un poco mas
+      lejos y el lote, que sale de esa distancia, un poco menor.
     decision: ADR-0020
     forma:
       cuando:
@@ -1121,6 +1204,7 @@ reglas:
           - escribir_stop_en_la_orden:
               donde: stop_en_orden_pendiente
               nivel: stop_fraccion_caja
+              redondeo: stop_fraccion_redondeo
           - fijar: {hecho: orden_dimensionada, a: Z}
     clase: disparador
     estado: VIGENTE
@@ -1200,7 +1284,11 @@ reglas:
       favor para costes, y despues el stop no se mueve (A-40 RESUELTA,
       fb-2026-09-29-sesion-03-7a79dcd7). break_even_criterio_ruptura pasa a CONFIRMED en
       `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9
-      0:57:00-0:58:06.
+      0:57:00-0:58:06. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061, ACEPTADO)
+      EL MOTOR LO EVALUA: `se_completa_zona_de_control` con `posterior_a` deja de ser un hueco y
+      el cableado mueve el stop a la entrada. LO QUE NO ES TODAVIA «al tocar»: la estrategia se
+      evalua al cierre de M1 (ADR-0028), asi que el stop se mueve en el cierre de la M1 que
+      toca el punto, no en el tick (ADR-0053 §2.1, para revisar con la demo).
     forma:
       cuando:
         todos_de:

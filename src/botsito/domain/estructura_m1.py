@@ -165,6 +165,38 @@ def mecha_mas_alla_del_extremo(
     return False
 
 
+def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> int | None:
+    """El indice de la PRIMERA M1 que completa una zona de control posterior a la entrada
+    (RN-014), o None si todavia no. `m1` son las M1 cerradas desde la entrada, en orden.
+
+    Tras la entrada, una vela CONTRARIA que sigue a una racha a favor deja el punto extremo
+    -el punto alto en una compra- y abre el retroceso, que es la zona de control; la zona se
+    completa cuando una M1 posterior PASA ese punto con `criterio` («rompe el punto alto
+    anterior con mecha», fb-2026-09-09-sesion-01-a456bc3f). Manda el ULTIMO punto formado, y
+    la mecha de la propia vela contraria no cuenta: el punto existe desde su cierre, como en
+    `pivotes_m15`. Sin mirar al futuro: solo usa las velas dadas."""
+    signo = _signo(lado)
+    if criterio not in (MECHA, CUERPO):
+        raise EstructuraError(f"criterio de ruptura {criterio!r} desconocido")
+    extremo: int | None = None
+    racha: list[Vela] = []  # las velas a favor consecutivas que preceden a la que se mira
+    for k, v in enumerate(m1):
+        if extremo is not None and _pasa(v, extremo, lado, criterio):
+            return k
+        c = color(v)
+        if c == signo:
+            racha.append(v)
+            continue
+        if c == -signo and racha:
+            extremo = (
+                max(int(x.maxima) for x in racha)
+                if lado == COMPRA
+                else min(int(x.minima) for x in racha)
+            )
+        racha = []
+    return None
+
+
 def detectar_esquema(
     m1: Sequence[Vela],
     idx_toma: int,
@@ -175,8 +207,8 @@ def detectar_esquema(
 ) -> Esquema | None:
     """El primer esquema de entrada que se completa despues de la toma de la liquidez.
 
-    `m1` son las M1 cerradas hasta el instante que se evalua, en orden; `idx_toma` es la ultima M1
-    de la M15 que tomo la liquidez (a partir de ahi se busca el breaker). Devuelve el esquema en
+    `m1` son las M1 cerradas hasta el instante que se evalua, en orden; `idx_toma` es la M1 que
+    tomo la liquidez de M15 (a partir de ahi se busca el breaker). Devuelve el esquema en
     cuanto una M1 cerrada pasa la referencia, o None si todavia no, si el retroceso dejo mas
     zonas de las admitidas, o si la zona no pasa la lectura de «limpia». Sin mirar al futuro: solo
     usa velas anteriores o iguales a la que rompe."""
@@ -240,5 +272,6 @@ __all__ = [
     "detectar_esquema",
     "mecha_mas_alla_del_extremo",
     "referencia_del_breaker",
+    "zona_posterior_completada",
     "zonas_de_control",
 ]

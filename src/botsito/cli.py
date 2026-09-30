@@ -2195,6 +2195,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.engine.interprete import Interprete, reglas_ejecutables
     from botsito.engine.motor import Motor, MotorSpec
     from botsito.engine.primitivas import primitivas_escritas
+    from botsito.engine.relojes import huso_de_las_sesiones
     from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 
     inicio = time.perf_counter()
@@ -2230,7 +2231,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             config,
             registro,
             dias,
-            registro.texto("huso_operativa"),
+            huso_de_las_sesiones(registro),
             lectura,
         )
         reglas = reglas_ejecutables(cargar_reglas(spec))
