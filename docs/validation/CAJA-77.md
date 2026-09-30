@@ -126,7 +126,53 @@ el 1 de cada regla. Todas son de días `dev`: su detalle se lee sin puerta (ADR-
 repositorio y escribe solo esa salida. Se ensaya antes en un clon desechable con `git worktree add`
 (CLAUDE.md, «Ensayos aislados»).
 
+### 1.8 Nota del 2026-09-30, del consultor, añadida ANTES de medir
+
+Tras revisar §1.1–§1.7, que no se tocan, el consultor añade cuatro puntos. Se commitean y se suben
+al remoto antes de leer ninguna fila ni cruzar ninguna vela.
+
+**1. El umbral, pre-registrado.**
+- **Evaluable** es una operación que no queda fuera por §1.1. Una regla que «no da caja» en una
+  operación evaluable cuenta como fallo, no la saca del denominador.
+- **Una regla queda SOSTENIDA** si, en la celda principal (τ = 2, sin corrección) y en al menos una
+  de las dos lecturas del stop, acierta en el **40 % o más de las operaciones evaluables**.
+- **Entre R1 y R4 deciden solo las operaciones en que dan cajas distintas** (distinto 0 o distinto
+  1; si una de las dos no da caja, también cuenta como distinta). En ese subconjunto, y en cada
+  lectura, **gana la que acierte al menos el doble que la otra**, con al menos un acierto. Si
+  ninguna llega al doble, R1 frente a R4 queda sin decidir en esa lectura.
+- **Si ninguna regla queda sostenida, el resultado es «no decide»** y la pregunta va a la sesión 4.
+- **Se informa aparte** en cuántas operaciones R1 y R4 dan la misma caja y en cuántas difieren, y
+  los aciertos de cada una en cada grupo.
+
+**2. El control de la reconstrucción, que se informa ANTES que el resultado principal.**
+- **Qué cajas.** Las de `BLOQUE-DE-LA-CAJA.md` con pareja en el libro según ADR-0043, tal como la
+  fijaron `SESION-02-VIDEO.md` §4 y `SESION-02-VIDEO-V8.md` §4: v7 n.º 2, 3, 5, 11 y 15. v8 n.º 1 no
+  tiene pareja.
+- **Qué niveles y horas.** Solo lo que `BLOQUE-DE-LA-CAJA.md` ya leyó: el 0, el 1 y la hora de
+  colocación de su §2.2. Para v7 n.º 2 se usa la caja que el trader dejó, la de §5.3
+  (0 = 1.15364, 1 = 1.15380), y se da también la primera. **No se abre ningún fotograma.**
+- **(a) La caja reconstruida frente a la leída.** Con la entrada y el stop del libro, la caja en L0,8
+  y en L1, y su diferencia con la caja leída en pantalla en el 0 y en el 1.
+- **(b) Las reglas ancladas en el llenado frente a la colocación real.** Cada regla, con la ventana
+  de §1.3 anclada en el llenado del libro y anclada en la hora de colocación leída (M1 cerradas
+  antes del minuto de colocación, la v1 de `BLOQUE-DE-LA-CAJA.md`). Se da la diferencia entre las
+  dos cajas, y la de cada una con la caja leída.
+- **Lo que se sabe ya y se dice aquí.** El libro es el backtest original y el vídeo es otra
+  ejecución de los mismos días: en las cinco parejas el stop del libro difiere del stop del vídeo
+  entre 3 y 17 puntos (`SESION-02-VIDEO.md` §4). El control mide cuánto pesa eso en la
+  reconstrucción, y no se corrige.
+
+**3. El spread.**
+- **En la principal no se corrige**: la orden se coloca en el nivel dibujado sobre el gráfico BID, y
+  el libro da ese precio.
+- **Como sensibilidad, se repiten las compras restando al 0 y al 1 del trader el spread de los
+  ticks de Dukascopy en T**: ask − bid del último tick en [T − 60 s, T], de los datasets
+  `eurusd-ticks-2026-04-1d189bdd` y `eurusd-ticks-2026-08-75bd3a08`. Una compra sin tick en ese
+  minuto se informa como «sin spread» y queda fuera de esa sensibilidad.
+
+**4. Lo demás del criterio queda como está.**
+
 ## Estado
 
-Fase 1 (el criterio) escrita y commiteada. **Parada**: no se mide nada hasta el visto bueno del
-consultor.
+Fase 1 (el criterio) escrita y commiteada, con la nota §1.8 del consultor añadida antes de medir.
+La medida todavía no se ha hecho: no se ha leído ninguna fila ni cruzado ninguna vela.
