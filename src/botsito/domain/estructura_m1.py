@@ -207,8 +207,8 @@ def detectar_esquema(
 ) -> Esquema | None:
     """El primer esquema de entrada que se completa despues de la toma de la liquidez.
 
-    `m1` son las M1 cerradas hasta el instante que se evalua, en orden; `idx_toma` es la ultima M1
-    de la M15 que tomo la liquidez (a partir de ahi se busca el breaker). Devuelve el esquema en
+    `m1` son las M1 cerradas hasta el instante que se evalua, en orden; `idx_toma` es la M1 que
+    tomo la liquidez de M15 (a partir de ahi se busca el breaker). Devuelve el esquema en
     cuanto una M1 cerrada pasa la referencia, o None si todavia no, si el retroceso dejo mas
     zonas de las admitidas, o si la zona no pasa la lectura de «limpia». Sin mirar al futuro: solo
     usa velas anteriores o iguales a la que rompe."""

@@ -170,8 +170,9 @@ def test_la_memoria_del_productor_es_de_cada_sesion(
                 motor.reglas, Momento(MinutoUtc(t), nombre, t == desde, dia.datos), estado
             )
     una, otra = (zonas.memoria_de_sesion(estado, s) for s in ("07-11", "11-15"))
-    assert una["toma"]["instante"] == t21.TOMA and una["zona_id"] == "zona:1"
-    assert otra["toma"]["instante"] == SEGUNDA + ta.M15 * len(ta.BLOQUES)
+    # la toma de cada sesion es la de SU primera M1 que cierra con cuerpo bajo SU nivel
+    assert una["toma"]["instante"] == ta.TOMA_M1 and una["zona_id"] == "zona:1"
+    assert otra["toma"]["instante"] == ta.TOMA_M1 + 240
     assert otra["zona_id"] == "zona:2"
     assert otra["toma"]["nivel"] == una["toma"]["nivel"] - BAJA
     assert otra["esquema"].entrada == una["esquema"].entrada - BAJA

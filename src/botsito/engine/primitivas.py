@@ -58,7 +58,7 @@ ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
 # la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
 ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
-# primer cierre de M15 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
+# primer cierre de M1 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
 ANOTACION_LIQUIDEZ_ALCANZADA = "liquidez_m15_alcanzada"
 # Las opciones de `dias_operables` en parametros.yaml, con los dias ISO que abarca cada una.
@@ -73,7 +73,7 @@ class DatosDelDia(Protocol):
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]: ...
 
-    def ultima_m15_cerrada(self, instante: int) -> Vela | None: ...
+    def ultima_m1_cerrada(self, instante: int) -> Vela | None: ...
 
     def liquidez_m15(self, instante: int, lado: str) -> Pivote | None: ...
 
@@ -175,9 +175,10 @@ def primitivas_escritas(
     def _liquidez(
         nombre: str, args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> tuple[Pivote, Vela] | Resultado | NoImplementada:
-        """El pivote de M15 que hoy es la liquidez y la ultima M15 cerrada que puede tomarlo; NO
-        si no hay liquidez marcada (sin sesgo con lado, sin pivote, o sin vela posterior a la
-        contraria); NO_IMPLEMENTADA si los datos no tienen lectura de «formado» (A-35)."""
+        """El pivote de M15 que hoy es la liquidez y la ultima M1 cerrada, que es la vela que
+        puede tomarlo (A-45 RESUELTA); NO si no hay liquidez marcada (sin sesgo con lado, sin
+        pivote, o sin una M1 que cierre despues de que el pivote exista); NO_IMPLEMENTADA si los
+        datos no tienen lectura de «formado» (A-35)."""
         if str(args.get("que")) != TOKEN_LIQUIDEZ_M15:
             return NoImplementada(f"predicado:{nombre}:{args.get('que')}")
         datos: DatosDelDia = momento.datos
@@ -196,15 +197,15 @@ def primitivas_escritas(
                 ANOTACION_LIQUIDEZ,
                 f"{pivote.lado} {pivote.nivel} formado_en {int(pivote.formado_en)}",
             )
-        ultima = datos.ultima_m15_cerrada(momento.instante)
-        # PROVISIONAL (ADR-0054 §4, A-45): que la vela que cierra con cuerpo sea la M15 y no la M1
-        # no lo dice ninguna fuente; se mantiene hasta que el trader responda A-45.
-        # La vela que puede tomar el nivel es la ultima M15 cerrada, y solo si el pivote YA EXISTIA
-        # antes de que cerrara: eso es lo que el selector decide. Con `inicio_vela_contraria` la
-        # propia vela contraria cuenta (el pivote nace en su primera M1); con
-        # `cierre_vela_contraria` no (nace en su cierre). Hasta el 2026-09-26 aqui se exigia que la
-        # vela fuera POSTERIOR a la contraria, y eso dejaba el selector sin efecto en el motor
-        # (docs/validation/VERIFICACION-A35-A44.md, fase 1).
+        ultima = datos.ultima_m1_cerrada(int(momento.instante))
+        # A-45 RESUELTA (sesion 3, fb-2026-09-29-sesion-03-b2e074e3): la vela que toma el nivel de
+        # M15 es una vela de M1 que cierra con cuerpo pasado el nivel. Hasta la rama
+        # trabajo/nocturno-01oct era la ultima M15 cerrada, PROVISIONAL por ADR-0054 §4.
+        # Y solo si el pivote YA EXISTIA antes de que esa M1 cerrara: eso es lo que el selector de
+        # A-35 decide. Con `inicio_vela_contraria` el pivote nace en la primera M1 de la vela
+        # contraria, y las siguientes M1 de esa misma vela ya pueden tomarlo; con
+        # `cierre_vela_contraria` nace en su cierre (docs/validation/VERIFICACION-A35-A44.md,
+        # fase 1).
         if ultima is None or not (int(pivote.formado_en) < int(ultima.fin)):
             return Resultado(Tri.NO)
         return pivote, ultima

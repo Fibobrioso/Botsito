@@ -141,7 +141,9 @@ predicados:
     cita: fb-2026-09-29-sesion-03-c38c4aef
     literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
   alcanza_nivel:
-    descripcion: el precio llega al nivel marcado
+    descripcion: >-
+      el precio llega al nivel marcado: la ultima vela de M1 cerrada lo toca, aunque sea solo con
+      la mecha
     argumentos: [que]
     fuente: mercado
     cita: ev-v3-001600-ed45b091
@@ -149,7 +151,10 @@ predicados:
       yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...]
       de esta liquidez de m15 es ruido
   cruza:
-    descripcion: el precio pasa al otro lado del nivel con el criterio declarado
+    descripcion: >-
+      el precio pasa al otro lado del nivel con el criterio declarado, mirado en la ultima vela de
+      M1 cerrada y no en la de M15 (A-45 RESUELTA en la sesion 3; cierra lo PROVISIONAL de
+      ADR-0054 §4)
     argumentos: [que, criterio]
     fuente: mercado
     cita: fb-2026-09-09-sesion-01-6e15504f
@@ -884,7 +889,7 @@ reglas:
     titulo: la liquidez de M15 se toma con cuerpo
     cuando: el precio alcanza el alto o el bajo de M15 marcado
     entonces: >-
-      se da por tomada solo si una vela cierra con cuerpo al otro lado segun
+      se da por tomada solo si una vela de M1 cierra con cuerpo al otro lado segun
       liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
     parametros: [liquidez_m15_criterio_toma]
     cita: fb-2026-09-09-sesion-01-6e15504f
@@ -906,10 +911,12 @@ reglas:
       fb-2026-09-29-sesion-03-43e0f90e, ev-v9-004037-ca58e486, ev-v9-004217-c014bfdc): la vela
       que cierra con cuerpo pasado el nivel de M15 es una vela de M1, no la de 15 minutos; la
       mecha solo vale para actualizar el punto de breaker en M1. Queda corregido en ese punto lo
-      de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESALINEADO CON EL
-      MOTOR: `cruza` evalua la ultima M15 cerrada (engine/primitivas.py, PROVISIONAL por
-      ADR-0054 §4). La toma, ademas, tiene que ocurrir dentro del horario aunque el nivel se
-      formara antes de las 7 (A-43, ev-v9-004533-d075b080, sin activar).
+      de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESDE EL 2026-09-30
+      (rama trabajo/nocturno-01oct, ADR-0062, PROPUESTO) EL MOTOR LO HACE: `alcanza_nivel` y
+      `cruza` miran la ultima M1 cerrada, y lo PROVISIONAL de ADR-0054 §4 queda cerrado. SIGUE
+      SIN ACTIVAR que la toma tenga que ocurrir dentro del horario aunque el nivel se formara
+      antes de las 7 (A-43, ev-v9-004533-d075b080): hoy cuenta tambien la M1 que cierra en el
+      instante mismo de la apertura.
     forma:
       cuando:
         todos_de:

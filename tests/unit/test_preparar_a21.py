@@ -49,7 +49,9 @@ from tests.unit import test_preparar_a35 as ta
 
 RAIZ = Path(__file__).resolve().parents[2]
 BASE = ta.BASE
-TOMA = ta.INICIO + ta.M15 * (ta.CRUZA + 1)  # el cierre de B5: RN-004 fija liquidez_tomada
+# El cierre de B5, donde empieza el camino de cada test. La toma la hace antes una M1 de B5
+# (`ta.TOMA_M1`, A-45 RESUELTA); hasta la sesion 3 se media aqui, al cierre de la M15.
+TOMA = ta.INICIO + ta.M15 * (ta.CRUZA + 1)
 REFERENCIA = BASE - 99  # el ALTO de M1 que deja la racha verde de B3 (max(a, c) + 1)
 SPREAD = 3
 Paso = tuple[int, int, int | None, int | None]  # apertura, cierre, minimo, maximo

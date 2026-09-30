@@ -435,7 +435,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
             tomas = tuple(
                 sorted(
                     {
-                        int(dm.datos.ultima_m15_cerrada(i).fin) * 60
+                        i * 60  # el cierre de la M1 que toma (A-45 RESUELTA)
                         for i, r, h, v in fijados
                         if h == "liquidez_tomada" and v == "si" and r == "RN-004"
                     }
@@ -488,7 +488,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
                 and previas
                 and sesgo in (A_FAVOR[op.direccion],)
             ):
-                ultima = previas[-1] // 60  # el cierre de la M15 que toma
+                ultima = previas[-1] // 60  # el cierre de la M1 que toma
                 alternativa = {"toma": _hhmm(ultima * 60), "esquema": None}
                 fin = t_s // 60 + tol.instante_min + 1
                 for minuto in range(ultima + 1, fin + 1):

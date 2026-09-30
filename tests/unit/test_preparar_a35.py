@@ -101,6 +101,12 @@ BLOQUES: list[tuple[int, int, int | None]] = [
 NIVEL = BASE - 210
 CONTRARIA = 2
 CRUZA = 5
+# Dentro de un bloque, la M1 del medio (la octava) es la que hace el minimo pedido con su mecha:
+# es el primer TOQUE del nivel en B4. Y B5 baja cien puntos en quince M1: la primera cierra
+# todavia por encima del nivel y la segunda ya por debajo, con el cuerpo: esa es la TOMA desde
+# que la hace una vela de M1 (A-45 RESUELTA), trece minutos antes de que cierre la M15.
+M1_DEL_MINIMO = 8
+TOMA_M1 = INICIO + M15 * CRUZA + 2
 
 
 def _bloque(n: int, apertura: int, cierre: int, minimo: int | None) -> list[Vela]:
@@ -233,19 +239,28 @@ def test_sin_lectura_no_hay_liquidez_y_rn004_sigue_no_implementada(
     assert ("RN-004", "predicado:alcanza_nivel") in viejo.sesiones["07-11"].no_implementadas
 
 
-def test_rn004_dispara_con_la_spec_real_al_cierre_de_la_m15_que_cruza_con_cuerpo(
+def test_rn004_dispara_con_la_spec_real_al_cierre_de_la_m1_que_cruza_con_cuerpo(
     registro: Registro, reglas: list[ReglaEjecutable]
 ) -> None:
-    """Con cualquiera de las dos lecturas: B4 toca el nivel sin cruzarlo (no dispara), B5 cierra
-    por debajo con el cuerpo y RN-004 fija `liquidez_tomada` justo en su cierre. Las dos lecturas
-    dan el MISMO instante aqui porque los toques cuentan desde el fin de la vela contraria; lo que
-    las separa es cuando el pivote esta disponible (test anterior)."""
-    cierre_b5 = INICIO + M15 * (CRUZA + 1)
+    """Con cualquiera de las dos lecturas: en B4 una M1 toca el nivel con la mecha sin cerrar al
+    otro lado (no dispara), y en B5 la primera M1 que CIERRA por debajo con el cuerpo fija
+    `liquidez_tomada` en su cierre, sin esperar al de la M15 (A-45 RESUELTA en la sesion 3;
+    hasta entonces la toma se media al cierre de la M15, PROVISIONAL por ADR-0054 §4). Las dos
+    lecturas dan el MISMO instante aqui; lo que las separa es cuando el pivote esta disponible
+    (test anterior)."""
+    m1 = _m1()
+    primera = next(
+        int(v.fin)
+        for v in m1
+        if int(v.inicio) >= INICIO + M15 * (CONTRARIA + 1) and int(v.cierre) < NIVEL
+    )
+    # la toma cae DENTRO de B5, antes de que cierre la vela de quince minutos
+    assert primera == TOMA_M1 and INICIO + M15 * CRUZA < TOMA_M1 < INICIO + M15 * (CRUZA + 1)
     for lectura in LECTURAS:
         r = _motor(registro, reglas).correr_dia(_dia(_datos(registro, lectura)))
         traza = r.sesiones["07-11"]
         assert "RN-004" in traza.disparadas, lectura
-        assert min(_fijados(r, "liquidez_tomada")) == cierre_b5, lectura
+        assert min(_fijados(r, "liquidez_tomada")) == TOMA_M1, lectura
         assert not any(p == "predicado:alcanza_nivel" for _, p in traza.no_implementadas)
         assert not any(p == "predicado:cruza" for _, p in traza.no_implementadas)
 
@@ -254,14 +269,14 @@ def test_por_el_arnes_real_las_lecturas_dejan_trazas_distintas_si_el_precio_vuel
     registro: Registro, reglas: list[ReglaEjecutable]
 ) -> None:
     """Fase 1 de la verificacion: la sesion completa pasa por `arnes.correr` con el motor real. La
-    vela contraria (B2) vuelve al nivel con su mecha antes de cerrar verde. Con
-    `inicio_vela_contraria` el pivote ya existia en su primera M1, asi que al cerrar B2 la ultima
-    M15 cerrada puede tomarlo y `alcanza_nivel` da SI en ese cierre; con `cierre_vela_contraria`
-    el pivote nace al cerrar B2 y el primer toque es el de B4. Las trazas difieren en la huella del
-    selector (`liquidez_m15`, `liquidez_m15_alcanzada`). RN-004 dispara en el mismo cierre (B5) con
-    las dos, porque la vela que marca el pivote no puede cerrar con cuerpo al otro lado del extremo
-    que acaba de hacer: con la toma medida al cierre de M15 y con cuerpo, la diferencia esta en el
-    toque, no en la toma (VERIFICACION-A35-A44.md, fases 1 y 2)."""
+    vela contraria (B2) vuelve al nivel con la mecha de una de sus M1 antes de cerrar verde. Con
+    `inicio_vela_contraria` el pivote ya existia desde su primera M1, asi que esa M1 lo toca y
+    `alcanza_nivel` da SI en su cierre; con `cierre_vela_contraria` el pivote nace al cerrar B2
+    y el primer toque es el de la M1 de B4. Las trazas difieren en la huella del selector
+    (`liquidez_m15`, `liquidez_m15_alcanzada`). RN-004 dispara en la misma M1 de B5 con las dos:
+    la M1 que vuelve al nivel lo hace con la mecha y no cierra al otro lado, asi que la
+    diferencia esta en el toque, no en la toma (VERIFICACION-A35-A44.md, fases 1 y 2; desde
+    A-45 la toma y el toque se miran en M1)."""
     from botsito.engine import arnes
     from botsito.engine.primitivas import ANOTACION_LIQUIDEZ, ANOTACION_LIQUIDEZ_ALCANZADA
 
@@ -277,13 +292,14 @@ def test_por_el_arnes_real_las_lecturas_dejan_trazas_distintas_si_el_precio_vuel
     b2_inicio = INICIO + M15 * CONTRARIA
     assert inicio.anotaciones[ANOTACION_LIQUIDEZ] == f"bajo {NIVEL} formado_en {b2_inicio + 1}"
     assert cierre.anotaciones[ANOTACION_LIQUIDEZ] == f"bajo {NIVEL} formado_en {b2_inicio + M15}"
-    assert inicio.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {b2_inicio + M15}"
-    assert cierre.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {INICIO + M15 * 5}"
+    toque_en_b2 = b2_inicio + M1_DEL_MINIMO
+    toque_en_b4 = INICIO + M15 * 4 + M1_DEL_MINIMO
+    assert inicio.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {toque_en_b2}"
+    assert cierre.anotaciones[ANOTACION_LIQUIDEZ_ALCANZADA] == f"{NIVEL} en {toque_en_b4}"
     assert inicio.anotaciones != cierre.anotaciones
-    cierre_b5 = INICIO + M15 * (CRUZA + 1)
     for t in (inicio, cierre):
         assert "RN-004" in t.disparadas
-        assert min(i for i, _, h, _ in t.fijados if h == "liquidez_tomada") == cierre_b5
+        assert min(i for i, _, h, _ in t.fijados if h == "liquidez_tomada") == TOMA_M1
     # y sin que el precio vuelva en la contraria, las huellas del toque coinciden: es la vuelta
     # dentro de la contraria lo que el selector separa
     iguales = {}
