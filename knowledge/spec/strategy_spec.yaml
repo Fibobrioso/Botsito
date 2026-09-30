@@ -713,6 +713,15 @@ reglas:
     notas: >-
       "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia con el horario de
       verano igual que la de cualquiera (ADR-0017)
+      DESDE EL 2026-09-29 (sesion 3, S-1; fb-2026-09-29-sesion-03-c38c4aef,
+      ev-v9-002735-472432b8): el trader cierra TODA operacion un minuto antes de que termine su
+      vela H4 -«siempre menos un minuto, antes de que cierre la sesión de cuatro horas»-, este
+      donde este y sea cual sea el sesgo siguiente; y no tiene hora limite para abrir (A-30,
+      ev-v9-012514-b5b6c84f). DESALINEADO CON EL MOTOR: la forma cierra solo al alcanzar
+      ventana_fin, en punto, y no cierra al vencer la primera vela H4 de la ventana. No se toca
+      ventana_fin, que tambien decide que sesiones se operan: hace falta un predicado de fin de
+      vela H4 sobre la rejilla de anclaje_h4, que es rama de codigo. A-39, de donde sale, sigue
+      ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por la orden pendiente.
     decision: ADR-0017
     forma:
       cuando:
@@ -753,6 +762,13 @@ reglas:
       primera, contra ADR-0044 §1-, y la prohibicion de operar con ellos es RN-033. La busqueda
       hacia atras y el tope van en el predicado `sesgo_h4_al_abrir`, que los nombra; `rompe`
       sobre la vela previa no los expresaba y la primitiva los hacia por su cuenta
+      DESDE EL 2026-09-29 (sesion 3, A-34 RESUELTA; fb-2026-09-29-sesion-03-617f496a y
+      fb-2026-09-29-sesion-03-31fb311f, ev-v9-001617-4b47e01a): si la vela rompe LOS DOS
+      extremos, el sesgo lo decide el COLOR con que cierra -roja, bajista; verde, alcista-; que
+      el color no decide vale solo para la ruptura de un extremo. La misma sesion confirma que
+      el sesgo no cambia dentro de la sesion (ev-v9-001504-72aa462a) y que basta un pip con
+      mecha (ev-v9-001312-19e45e4a). DESALINEADO CON EL MOTOR: sesgo_h4_al_abrir sigue fijando
+      `ambiguo` con la doble ruptura, y RN-033 prohibe operar; lo cambia una rama de codigo.
     forma:
       cuando:
         todos_de:
@@ -789,6 +805,13 @@ reglas:
       construccion el 2026-09-25: 15 sesiones ambiguas de 84, 6 de ellas heredando, 0
       insuficientes). El sentido de la doble ruptura sigue siendo A-34: si el trader lo da,
       `ambiguo` desaparece y esta regla queda para `insuficiente`
+      DESDE EL 2026-09-29 (sesion 3, S-1; fb-2026-09-29-sesion-03-1168f036,
+      ev-v9-001529-ac28bb40): «Siempre va a haber un sesgo … no existe un sesgo no claro». Con
+      A-34 RESUELTA la doble ruptura tiene sentido -el color-, asi que `ambiguo` deja de ser del
+      trader; y `insuficiente` tampoco lo es: para el el sesgo es el del ultimo rango, dure lo
+      que dure. DESALINEADO CON EL MOTOR: la regla sigue prohibiendo con los dos valores hasta
+      que la rama de codigo de RN-003 deje de producirlos (15 sesiones ambiguas de 84 en
+      construccion, medido el 2026-09-25; 0 insuficientes).
     decision: ADR-0049
     forma:
       cuando:
@@ -825,6 +848,14 @@ reglas:
       la liquidez es el pivote de M15 MAS RECIENTE YA FORMADO. El productor sigue sin escribirse
       porque la spec no define cuando esta formado un pivote, y eso es A-35, bloqueante: no se tapa
       con un parametro provisional, porque es un mecanismo y no una cifra
+      DESDE EL 2026-09-29 (sesion 3, A-45 RESUELTA; fb-2026-09-29-sesion-03-b2e074e3 y
+      fb-2026-09-29-sesion-03-43e0f90e, ev-v9-004037-ca58e486, ev-v9-004217-c014bfdc): la vela
+      que cierra con cuerpo pasado el nivel de M15 es una vela de M1, no la de 15 minutos; la
+      mecha solo vale para actualizar el punto de breaker en M1. Queda corregido en ese punto lo
+      de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESALINEADO CON EL
+      MOTOR: `cruza` evalua la ultima M15 cerrada (engine/primitivas.py, PROVISIONAL por
+      ADR-0054 §4). La toma, ademas, tiene que ocurrir dentro del horario aunque el nivel se
+      formara antes de las 7 (A-43, ev-v9-004533-d075b080, sin activar).
     forma:
       cuando:
         todos_de:
@@ -862,6 +893,9 @@ reglas:
       Ningun item junta en su propia frase el sesgo y el lado: la ligadura es lectura del tramo. Por
       eso el lado se nombra en el predicado (`lado_de_ruido`) y no se deduce de "el lado contrario al
       sesgo", que es la frase que se tradujo al reves
+      DESDE EL 2026-09-29 (sesion 3, A-26 RESUELTA; fb-2026-09-29-sesion-03-fc2c5c1f,
+      ev-v9-001915-d03d1565): cuando el flujo de M15 va contra el sesgo de H4, manda el sesgo y
+      en M15 solo se busca a favor, que es lo que este filtro ya hace.
     forma:
       cuando:
         todos_de:
@@ -893,6 +927,12 @@ reglas:
       abiertas son cero", que es un PROXY FALSO -tras un stop o un break even la cuenta vuelve a
       cero y la orden limite ya no existe, porque se lleno-, y ademas metia un numero de negocio
       en un campo ejecutable. La condicion es que la orden exista y siga pendiente
+      DESDE EL 2026-09-29 (sesion 3): la orden de entrada es una STOP en la ruptura (A-47
+      RESUELTA, fb-2026-09-29-sesion-03-92a38105); «límite» es vocabulario del trader, que la
+      sigue llamando asi (v9 1:34:46). Sigue viva hasta que aparece otro posible punto de
+      breaker, que la actualiza, y que el precio se aleje no la anula (A-38 RESUELTA,
+      fb-2026-09-29-sesion-03-c7fa3068, ev-v9-013205-85840dcc, ev-v9-013437-ffdd9c87). La vida
+      de la orden stop es la rama 3 de ADR-0056: la cadencia de esta forma se revisa alli.
     forma:
       cuando:
         todos_de:
@@ -913,6 +953,12 @@ reglas:
     parametros: [mapeo_dos_velas]
     cita: fb-2026-09-09-sesion-01-7ee9cabc
     literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
+    notas: >-
+      DESDE EL 2026-09-29 (sesion 3, E-3; fb-2026-09-29-sesion-03-ffab23dc,
+      ev-v9-013021-ea0db73a): una vela casi plana, sin color claro, «cuenta como si no
+      existiera», y sobre ella no se traza punto de breaker. El trader no dio el umbral de «casi
+      plana» («en EURUSD muy rara vez»). DESALINEADO CON EL MOTOR: el mapeo de M1 no trata esas
+      velas aparte; hacen falta el umbral y una rama de codigo.
     forma:
       cuando:
         todos_de:
@@ -1046,6 +1092,16 @@ reglas:
       -RN-027 redondea el lote- sin depender de un orden entre disparadores que ADR-0028 no da. Tampoco
       fija ya `orden_limite_pendiente`: lo lee del broker (ADR-0028 §5). El `ninguno_de` evita una
       segunda orden con una pendiente viva, que RN-018 no ve porque cuenta posiciones y no ordenes
+      DESDE EL 2026-09-29 (sesion 3): la orden es STOP en la ruptura (A-47, entrada_tipo_orden =
+      stop_en_ruptura, fb-2026-09-29-sesion-03-8f091ed8) y la vela contraria de la que sale el
+      stop se mira en M1 (A-37 RESUELTA, fb-2026-09-29-sesion-03-91eeee94). A-18 en lo firme: el
+      objetivo es 3 veces la distancia del 0 al 1 (base_calculo_objetivo,
+      fb-2026-09-29-sesion-03-f572f1a0) y el lote se calcula del 0 al 0,8 (lotaje_base,
+      fb-2026-09-29-sesion-03-d62c788a), que es lo que esta regla ya hace; y el 0,8 se redondea
+      ALEJANDOSE de la entrada, lo minimo (stop_fraccion_redondeo,
+      fb-2026-09-29-sesion-03-11910e0a). DESALINEADO CON EL MOTOR en el redondeo:
+      escribir_stop_en_la_orden redondea con ROUND_DOWN, hacia la entrada, y no lee
+      stop_fraccion_redondeo.
     decision: ADR-0020
     forma:
       cuando:
@@ -1138,6 +1194,13 @@ reglas:
     notas: >-
       el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
       despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
+      DESDE EL 2026-09-29 (sesion 3; fb-2026-09-29-sesion-03-9f506366 y
+      fb-2026-09-29-sesion-03-2cff5008): el break even se pone AL TOCAR -«apenas toca, pues se
+      pone en B la entrada»-, mirado en M1, con el stop EXACTAMENTE en la entrada, sin puntos a
+      favor para costes, y despues el stop no se mueve (A-40 RESUELTA,
+      fb-2026-09-29-sesion-03-7a79dcd7). break_even_criterio_ruptura pasa a CONFIRMED en
+      `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9
+      0:57:00-0:58:06.
     forma:
       cuando:
         todos_de:
@@ -1187,6 +1250,11 @@ reglas:
       gates tienen que ver la orden con el objetivo ya escrito -RN-026 compara stop y objetivo con el
       minimo del broker- y porque `colocar_orden_limite` lleva `efecto`: si un gate prohibe abrir, no
       se envia, y `orden_dimensionada` se apaga igual
+      CONFIRMADA el 2026-09-29 (sesion 3): G-1, no cierra a mano antes del stop -«o bien se gana
+      o bien se pierde, o bien ocurre break-even»- (fb-2026-09-29-sesion-03-280cf8f7); G-2, no
+      deja correr mas alla del objetivo -«el objetivo es fijo»-
+      (fb-2026-09-29-sesion-03-3f69a5f7). La unica salida fuera del objetivo, el stop y el break
+      even es el cierre al vencer la vela H4 (RN-002).
     forma:
       cuando:
         todos_de:
@@ -1231,6 +1299,12 @@ reglas:
       activara como se activara, y una perdida SIN stop solo si la operacion vino de un esquema. Que
       el stop entero de una activacion sin ruptura gaste es LECTURA NUESTRA y es A-31; que no gaste
       la salida en rojo sin stop de esa activacion, tambien, y es la de RN-019
+      DESDE EL 2026-09-29 (sesion 3): el contador es de TRES INTENTOS POR LIQUIDEZ, sin tope por
+      dia, y los break even y las entradas invalidadas no cuentan (A-41 RESUELTA,
+      fb-2026-09-29-sesion-03-7b87c3ee y fb-2026-09-29-sesion-03-68a21dc0); y el stop entero de
+      una activacion sin ruptura SI gasta un intento, que era lectura nuestra y ahora es del
+      trader (A-31 RESUELTA, fb-2026-09-29-sesion-03-d36ba0d2). El titulo dice «el dia», pero el
+      contador no es diario.
     forma:
       cuando:
         cualquiera_de:

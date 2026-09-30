@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-1168f036
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-033
+accion: CORRECT
+respuesta_literal: Siempre va a haber un sesgo, bro, como te digo, o sea, no existe un cejo no claro
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:15:29
+t1: 0:15:55
+valor_resultante: 'siempre hay sesgo: no se deja de operar por un sesgo no claro'
+notas: S-1; ev-v9-001529-ac28bb40
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

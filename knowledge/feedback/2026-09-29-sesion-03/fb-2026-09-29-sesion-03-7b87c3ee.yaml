@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-7b87c3ee
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-41
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Sí, serían tres intentos por liquidez. [...] ¿El máximo es por día? No, no, por liquidez.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:30:54'
+t1: '1:31:13'
+valor_resultante: tres intentos por liquidez, sin tope por dia
+notas: la cifra la propuso el consultor tras un «no sé, dime tú»; ev-v9-013054-d49a544e
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

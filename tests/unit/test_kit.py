@@ -293,20 +293,36 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # DESCONOCIDO y prohibe abrir aunque la geometria (A-35) quede resuelta. Bloquea RN-020.
     # El 2026-09-27 (rama trabajo/sesion-02, decision del consultor) nace A-47, el tipo de orden de
     # entrada: la spec asume limite y en pantalla (v7+v8) son 38 stop frente a 1 limite. Decide el
-    # precio y el instante de entrada de RN-011.
+    # precio y el instante de entrada de RN-011. El 2026-09-29 (rama trabajo/activar-sesion-03,
+    # orden del consultor) el trader responde A-47 en la sesion 3 -STOP en la ruptura- y queda
+    # RESUELTA; y nace A-51, que corta la racha de 9 perdidas seguidas con que el trader contesto
+    # A-44: BLOQUEANTE de RN-020 como ella.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-35", "A-42", "A-44", "A-47"}, (
+    assert abiertas == {"A-21", "A-35", "A-42", "A-44", "A-51"}, (
         f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     )
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida
     # de hecho el 2026-09-10 y cerrada con su frase referida el 2026-09-12, como se cerro A-11).
+    # Y las diez que el trader responde en la sesion 3 (2026-09-29, rama trabajo/activar-sesion-03):
+    # A-26, A-31, A-34, A-37, A-38, A-40, A-41, A-45, A-46 y A-47. A-13 y A-39 siguen ABIERTAS por
+    # los cortes de audio de v9, aunque lo firme de su respuesta ya este en la spec.
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
         "A-14",
         "A-20",
+        "A-26",
+        "A-31",
+        "A-34",
+        "A-37",
+        "A-38",
+        "A-40",
+        "A-41",
+        "A-45",
+        "A-46",
+        "A-47",
     }
     # DECIDIDA nace con ADR-0022 (A-22, no operar noticias) y ADR-0024 le suma las dos que
     # llevaban decididas y abiertas desde el 2026-09-09: A-15 (la ventana no se amplia a Nueva

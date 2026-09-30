@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-c38c4aef
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-002
+accion: CORRECT
+respuesta_literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:27:35
+t1: 0:28:03
+valor_resultante: toda operacion se cierra un minuto antes de que termine su vela H4
+notas: S-1 (el contenido de A-39, que sigue ABIERTA por el corte de audio); ev-v9-002735-472432b8
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

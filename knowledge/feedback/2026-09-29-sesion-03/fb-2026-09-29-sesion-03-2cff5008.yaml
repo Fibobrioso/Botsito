@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-2cff5008
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: parametro
+  id: break_even_criterio_ruptura
+accion: RESOLVE_UNKNOWN
+respuesta_literal: se completa, o sea, se llega a desarrollar, apenas toca, pues se pone en B la entrada.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:55:43
+t1: 0:55:50
+valor_resultante: mecha
+valor_canonico: mecha
+notas: 'A-13 en lo firme: al tocar basta, sin esperar cuerpo; A-13 sigue ABIERTA por el corte de audio
+  de 0:57:00-0:58:06; ev-v9-005543-1b52290e'
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

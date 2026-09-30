@@ -1,11 +1,17 @@
 """El selector del tipo de orden de entrada (A-47, ADR-0056 §1, ADR-0058; rama
 `trabajo/selector-orden-stop`): la lectura del registro o del diagnostico, la negativa sin ninguna,
 la etiqueta, y la CLI que se niega ANTES de leer una vela. RN-011 con orden stop, de punta a punta,
-vive en `test_cableado.py`, junto a su mercado sintetico."""
+vive en `test_cableado.py`, junto a su mercado sintetico.
+
+Desde el 2026-09-29 (rama `trabajo/activar-sesion-03`) el trader ha respondido A-47 -«se entra
+siempre por stop», fb-2026-09-29-sesion-03-8f091ed8- y el registro REAL dice `stop_en_ruptura`.
+Los tests que comprobaban la negativa contra el registro real cambian de sentido a proposito: la
+negativa se conserva, con A-47 fijada a UNKNOWN de forma EXPLICITA en una copia del registro."""
 
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 import pytest
@@ -23,6 +29,23 @@ from botsito.engine.entrada import (
 )
 
 RAIZ = Path(__file__).resolve().parents[2]
+REGISTRO_REAL = RAIZ / "knowledge" / "spec" / "parametros.yaml"
+
+
+def _registro_con_a47_unknown(tmp_path: Path) -> Path:
+    """Una copia del registro real con `entrada_tipo_orden` devuelto a UNKNOWN y sin valor: la
+    forma explicita de seguir probando la negativa cuando el registro real ya esta fijado."""
+    texto = REGISTRO_REAL.read_text(encoding="utf-8")
+    patron = re.compile(
+        r"(  - nombre: entrada_tipo_orden\n(?:    (?!estado:).*\n|      .*\n)*)"
+        r"    estado: CONFIRMED\n    valor: stop_en_ruptura\n    fuente:\n      tipo: feedback\n"
+        r"      id: fb-[0-9a-z-]+\n"
+    )
+    nuevo, n = patron.subn(r"\1    estado: UNKNOWN\n", texto)
+    assert n == 1, "el bloque de entrada_tipo_orden del registro real ya no tiene la forma esperada"
+    copia = tmp_path / "parametros.yaml"
+    copia.write_text(nuevo, encoding="utf-8")
+    return copia
 
 
 class _Fijado:
@@ -38,15 +61,20 @@ class _Fijado:
         return self.valor
 
 
-def test_el_selector_esta_en_el_registro_sin_valor_y_con_las_dos_lecturas() -> None:
-    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+def test_el_selector_esta_en_el_registro_fijado_en_stop_y_con_las_dos_lecturas() -> None:
+    registro = cargar_registro(REGISTRO_REAL)
     p = registro.parametros[PARAMETRO_A47]
-    assert p.estado.name == "UNKNOWN" and p.valor is None
+    assert p.estado.name == "CONFIRMED" and p.valor == STOP_EN_RUPTURA
     assert p.opciones == LECTURAS_A47 == (STOP_EN_RUPTURA, LIMITE_EN_RETROCESO)
+    # con el registro real, el motor corre con stop y rechaza el diagnostico
+    assert lectura_tipo_orden(registro, None) == STOP_EN_RUPTURA
+    with pytest.raises(DiagnosticoDeTipoRechazadoError, match="ya esta fijado"):
+        lectura_tipo_orden(registro, LIMITE_EN_RETROCESO)
 
 
-def test_sin_fijar_y_sin_diagnostico_se_niega_nombrando_a47() -> None:
-    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+def test_sin_fijar_y_sin_diagnostico_se_niega_nombrando_a47(tmp_path: Path) -> None:
+    registro = cargar_registro(_registro_con_a47_unknown(tmp_path))
+    assert registro.parametros[PARAMETRO_A47].estado.name == "UNKNOWN"
     with pytest.raises(SinTipoDeOrdenError) as exc:
         lectura_tipo_orden(registro, None)
     assert "A-47" in str(exc.value) and "--diagnostico-a47" in str(exc.value)
@@ -92,8 +120,38 @@ def test_la_cli_exige_simular_para_a47() -> None:
 
 
 def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from botsito import cli
+    from botsito.cases.criterio_fidelidad import cargar_criterio
+    from botsito.config import registro as modulo_registro
+
+    (tmp_path / "registro").mkdir()
+    copia = _registro_con_a47_unknown(tmp_path / "registro")
+    original = modulo_registro.cargar_registro
+
+    def con_a47_unknown(ruta: Path) -> modulo_registro.Registro:
+        return original(copia if Path(ruta) == REGISTRO_REAL else ruta)
+
+    monkeypatch.setattr(modulo_registro, "cargar_registro", con_a47_unknown)
+    real = cargar_criterio(RAIZ)
+    (tmp_path / "salida").mkdir()
+    salida = tmp_path / "salida" / "informe.txt"
+    codigo = cli.main(
+        ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
+         "--salida", str(salida), "--diagnostico-a35", "cierre_vela_contraria",
+         "--diagnostico-a44", "sin_tope", "--diagnostico-a21", "solo_una_zona_de_control"]
+    )  # fmt: skip
+    err = capsys.readouterr().err
+    assert codigo == 2 and "A-47" in err and PARAMETRO_A47 in err
+    assert not list((tmp_path / "salida").iterdir())
+
+
+def test_la_cli_con_a47_fijada_pasa_a_pedir_a27_antes_de_leer_velas(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """Con el registro real, A-47 ya no para la corrida: la siguiente puerta es la de la orden stop,
+    que no se coloca sin stops level (A-27, ADR-0057), y tambien se niega antes de leer velas."""
     from botsito import cli
     from botsito.cases.criterio_fidelidad import cargar_criterio
 
@@ -105,5 +163,5 @@ def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
          "--diagnostico-a44", "sin_tope", "--diagnostico-a21", "solo_una_zona_de_control"]
     )  # fmt: skip
     err = capsys.readouterr().err
-    assert codigo == 2 and "A-47" in err and PARAMETRO_A47 in err
+    assert codigo == 2 and "A-27" in err and "A-47" not in err
     assert not list(tmp_path.iterdir())

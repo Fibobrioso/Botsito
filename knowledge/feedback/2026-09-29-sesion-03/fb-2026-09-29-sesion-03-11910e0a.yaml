@@ -1,0 +1,21 @@
+id: fb-2026-09-29-sesion-03-11910e0a
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: parametro
+  id: stop_fraccion_redondeo
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Claro, o sea, lo mínimo O sea, lo mínimo posible O sea, si es un pip, un pip y ya está
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:05:41'
+t1: '1:05:50'
+valor_resultante: alejandose_de_la_entrada
+valor_canonico: alejandose_de_la_entrada
+notas: 'A-18 en lo firme: a la pregunta de hacia donde se redondea el 0,8 (para abajo en compra, para
+  arriba en venta), 1:04:39 «Claro, tener un margen extra»; ev-v9-010541-0c80d5cf. NO es un CORRECT: hasta
+  hoy no habia parametro CONFIRMED, el ROUND_DOWN vive en el codigo'
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-31fb311f
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CORRECT
+respuesta_literal: si rompe por los dos, como te digo, importa el color de importa el color de la vela.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:16:17
+t1: 0:16:25
+valor_resultante: si la vela H4 rompe los dos extremos, el sesgo lo decide el color de la vela
+notas: A-34 y S-1; ev-v9-001617-4b47e01a
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

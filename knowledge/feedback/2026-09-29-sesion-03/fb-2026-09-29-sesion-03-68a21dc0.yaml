@@ -1,0 +1,17 @@
+id: fb-2026-09-29-sesion-03-68a21dc0
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: parametro
+  id: cartuchos_max
+accion: CONFIRM
+respuesta_literal: Sí, serían tres intentos por liquidez. [...] ¿El máximo es por día? No, no, por liquidez.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:30:54'
+t1: '1:31:13'
+notas: A-41; ev-v9-013054-d49a544e
+recibido_el: '2026-09-29'
+procedencia: trader_grabado
