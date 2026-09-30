@@ -14,6 +14,15 @@ conoce. Una pendiente del lado equivocado NUNCA se llena a su propio precio: se 
 MT5 (PROVISIONAL hasta la demo de FTMO). Una orden STOP no se coloca sin stops level: el del perfil
 (`firma_stops_level_puntos`, UNKNOWN hasta medirlo, A-27) o uno hipotetico en diagnostico.
 
+PETICIONES AL SERVIDOR (R13 de FTMO-REGLAS.md, `firma_mensajes_dia_max`; rama
+`feature/contador-peticiones`): el broker apunta cada peticion que recibe -colocar, modificar
+(una pendiente o el stop de una posicion), cancelar y cerrar a mercado-, ACEPTADA O RECHAZADA, que
+es la lectura mas estricta de «server requests» hasta que FTMO diga otra cosa. Lo que el servidor
+hace solo -llenar, expirar, saltar el stop o el objetivo- no es una peticion, y tampoco
+`abrir_conocida`, que repite una operacion del trader y no la emite el bot. Una peticion que el
+broker no admite (`BrokerError`) no se apunta: es un error de quien llama y la corrida se para.
+Solo se mide: ningun limite frena por peticiones.
+
 Una orden llenada abre una POSICION con stop y objetivo, que se cierra por stop, por objetivo o a
 mercado (cierre manual); si era una stop, la posicion guarda el deslizamiento de la entrada. Cada
 cierre produce una `cuenta.Operacion` con sus cargos -comision por lado si el perfil lo dice,
@@ -30,6 +39,7 @@ instante en que su condicion se cumple y nada posterior lo cambia.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
@@ -66,6 +76,11 @@ HECHO_ORDEN_PENDIENTE = "orden_limite_pendiente"
 MOTIVO_PRECIO_INVALIDO = "precio_invalido"
 MOTIVO_STOPS_LEVEL = "stops_level"
 PARAMETRO_STOPS_LEVEL = "firma_stops_level_puntos"
+PETICION_COLOCAR = "colocar"
+PETICION_MODIFICAR = "modificar"
+PETICION_CANCELAR = "cancelar"
+PETICION_CERRAR = "cerrar"
+TIPOS_PETICION = (PETICION_COLOCAR, PETICION_MODIFICAR, PETICION_CANCELAR, PETICION_CERRAR)
 _EPOCA = datetime(1970, 1, 1, tzinfo=UTC)
 
 
@@ -87,6 +102,8 @@ class ReglasBroker:
     swap_corto_puntos: Decimal
     # la distancia minima al precio que admite el broker (A-27): None mientras sea UNKNOWN
     stops_level_puntos: int | None = None
+    # peticiones al servidor por dia de la firma (R13): solo para el informe, no frena nada
+    mensajes_dia_max: int | None = None
 
 
 @dataclass
@@ -141,11 +158,22 @@ class Rechazo:
 
 
 @dataclass(frozen=True)
+class Peticion:
+    """Una peticion al servidor (R13): su tipo, la orden o posicion y si se acepto."""
+
+    instante_ms: int
+    tipo: str  # uno de TIPOS_PETICION
+    id: str
+    aceptada: bool
+
+
+@dataclass(frozen=True)
 class Traza:
-    """Lo que el broker hizo, para el informe: eventos con su fuente y rechazos."""
+    """Lo que el broker hizo, para el informe: eventos con su fuente, rechazos y peticiones."""
 
     eventos: tuple[tuple[int, str, str, str], ...]  # (instante_ms, tipo, id, fuente)
     rechazos: tuple[Rechazo, ...]
+    peticiones: tuple[Peticion, ...] = ()
 
     def por_fuente(self) -> dict[str, int]:
         salida = {TICKS: 0, RESPALDO_M1: 0}
@@ -167,6 +195,23 @@ def _medianoche_ms(dia: date, huso: ZoneInfo) -> int:
         (datetime.combine(dia, time(0), tzinfo=huso).astimezone(UTC) - _EPOCA).total_seconds()
         * 1000
     )
+
+
+def peticiones_por_dia(
+    peticiones: Iterable[Peticion], huso_corte: ZoneInfo
+) -> dict[date, dict[str, int]]:
+    """Las peticiones agrupadas por el dia de la firma -el que corta a medianoche en `huso_corte`,
+    como el dia de riesgo (ADR-0027)-: por dia, cuantas de cada tipo, `total` y `rechazadas`."""
+    salida: dict[date, dict[str, int]] = {}
+    for p in peticiones:
+        dia = salida.setdefault(
+            _dia_local(p.instante_ms, huso_corte),
+            {**dict.fromkeys(TIPOS_PETICION, 0), "total": 0, "rechazadas": 0},
+        )
+        dia[p.tipo] += 1
+        dia["total"] += 1
+        dia["rechazadas"] += not p.aceptada
+    return dict(sorted(salida.items()))
 
 
 class Broker:
@@ -205,6 +250,7 @@ class Broker:
         self.ordenes: dict[str, Orden] = {}
         self.posiciones: dict[str, Posicion] = {}
         self._rechazos: list[Rechazo] = []
+        self._peticiones: list[Peticion] = []
         self._eventos: list[tuple[int, str, str, str]] = []
         self._cerradas: list[Operacion] = []
         self.ahora_ms: int = 0
@@ -281,6 +327,7 @@ class Broker:
         if motivo is not None:
             r = Rechazo(instante_ms, id, motivo)
             self._rechazos.append(r)
+            self._peticiones.append(Peticion(instante_ms, PETICION_COLOCAR, id, False))
             self.ordenes[id] = Orden(
                 id, lado, precio, lotes, stop, objetivo, instante_ms, expira_ms, RECHAZADA,
                 instante_ms, [(instante_ms, RECHAZADA)], tipo,
@@ -291,6 +338,7 @@ class Broker:
             [(instante_ms, COLOCADA)], tipo,
         )  # fmt: skip
         self.ordenes[id] = orden
+        self._peticiones.append(Peticion(instante_ms, PETICION_COLOCAR, id, True))
         return orden
 
     def _precio_infringido(
@@ -334,7 +382,9 @@ class Broker:
         if motivo is not None:
             r = Rechazo(instante_ms, id, motivo)
             self._rechazos.append(r)
+            self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, id, False))
             return r
+        self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, id, True))
         orden.precio = nuevo_precio
         orden.stop = nuevo_stop
         orden.objetivo = nuevo_objetivo
@@ -346,6 +396,7 @@ class Broker:
     def cancelar(self, id: str, instante_ms: int) -> Orden:
         self._avanza_reloj(instante_ms)
         orden = self._pendiente(id)
+        self._peticiones.append(Peticion(instante_ms, PETICION_CANCELAR, id, True))
         orden.estado = CANCELADA
         orden.ultimo_cambio_ms = instante_ms
         orden.historial.append((instante_ms, CANCELADA))
@@ -359,6 +410,7 @@ class Broker:
         if p is None or not p.abierta:
             raise BrokerError(f"posicion {posicion_id!r} no esta abierta")
         precio, fuente = self._precio_de_mercado(p.lado, instante_ms)
+        self._peticiones.append(Peticion(instante_ms, PETICION_CERRAR, posicion_id, True))
         self._cerrar(p, instante_ms, precio, MANUAL, fuente)
         return p
 
@@ -403,6 +455,7 @@ class Broker:
             raise BrokerError(f"{posicion_id}: el stop de una larga va por debajo del objetivo")
         if p.lado == "venta" and not stop > p.objetivo:
             raise BrokerError(f"{posicion_id}: el stop de una corta va por encima del objetivo")
+        self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, posicion_id, True))
         if p.stop_original is None:
             p.stop_original = p.stop
         p.stop = stop
@@ -656,7 +709,7 @@ class Broker:
         return tuple(sorted(self._cerradas, key=lambda o: (o.apertura.instante, o.id)))
 
     def traza(self) -> Traza:
-        return Traza(tuple(self._eventos), tuple(self._rechazos))
+        return Traza(tuple(self._eventos), tuple(self._rechazos), tuple(self._peticiones))
 
 
 def contrato_desde(escala: int, contrato: Decimal) -> tuple[Decimal, int]:
@@ -677,13 +730,20 @@ __all__ = [
     "MOTIVO_PRECIO_INVALIDO",
     "MOTIVO_STOPS_LEVEL",
     "PARAMETRO_STOPS_LEVEL",
+    "PETICION_CANCELAR",
+    "PETICION_CERRAR",
+    "PETICION_COLOCAR",
+    "PETICION_MODIFICAR",
     "RECHAZADA",
+    "TIPOS_PETICION",
     "Broker",
     "BrokerError",
     "Orden",
+    "Peticion",
     "Posicion",
     "Rechazo",
     "ReglasBroker",
     "Traza",
     "contrato_desde",
+    "peticiones_por_dia",
 ]

@@ -34,7 +34,15 @@ from botsito.data.velas import a_datetime
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine.arnes import DiaTrader
-from botsito.engine.broker import LLENADA, MANUAL, Broker, ReglasBroker
+from botsito.engine.broker import (
+    LLENADA,
+    MANUAL,
+    TIPOS_PETICION,
+    Broker,
+    Peticion,
+    ReglasBroker,
+    peticiones_por_dia,
+)
 from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.diagnostico import DiagnosticoRechazadoError
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
@@ -78,6 +86,7 @@ class TrazaBroker:
     rechazos: int = 0
     por_fuente: dict[str, int] = field(default_factory=lambda: {TICKS: 0, RESPALDO_M1: 0})
     huecos: set[str] = field(default_factory=set)
+    peticiones: list[Peticion] = field(default_factory=list)  # al servidor, R13
     equity_fin: Decimal = Decimal(0)
     saldo_fin: Decimal = Decimal(0)
     depuracion: bool = False
@@ -207,6 +216,7 @@ class MotorCableado:
         self._a_la_cuenta(broker, ctx, tb, nuevos, vistos, fin_ms)
         tb.huecos |= ctx.huecos
         tb.rechazos = len(broker.traza().rechazos)
+        tb.peticiones = list(broker.traza().peticiones)
         tb.equity_fin = self.cuenta.equity
         tb.saldo_fin = self.cuenta.saldo
         for nombre, traza in trazas.items():
@@ -586,7 +596,42 @@ def informe_simulacion(motor: MotorCableado) -> str:
         "huecos con nombre (primitivas sin contrato que se pidieron): "
         + (", ".join(sorted(huecos)) if huecos else "ninguno"),
     ]
-    return "\n".join(lineas) + "\n"
+    return "\n".join(lineas + _informe_peticiones(motor)) + "\n"
+
+
+def _informe_peticiones(motor: MotorCableado) -> list[str]:
+    """Las peticiones al servidor por dia de la firma (R13): el total de cada dia, el mayor y el
+    limite del perfil al lado. SOLO SE MIDE: ninguna regla frena por peticiones todavia."""
+    huso = motor.reglas_broker.huso_corte
+    contadas = peticiones_por_dia(
+        (p for d in sorted(motor.trazas_broker) for p in motor.trazas_broker[d].peticiones), huso
+    )
+    # todos los dias corridos salen, tambien los que no tuvieron ninguna peticion
+    vacio = {**dict.fromkeys(TIPOS_PETICION, 0), "total": 0, "rechazadas": 0}
+    por_dia = {date.fromisoformat(d): dict(vacio) for d in motor.trazas_broker} | contadas
+    por_dia = dict(sorted(por_dia.items()))
+    lineas = [
+        "",
+        f"### Peticiones al servidor (R13; dia de la firma en {huso.key})",
+        "LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el "
+        "bot; solo se mide, nada frena",
+        f"dia | total | {' | '.join(TIPOS_PETICION)} | rechazadas",
+    ]
+    for dia, n in por_dia.items():
+        tipos = " | ".join(str(n[t]) for t in TIPOS_PETICION)
+        lineas.append(f"{dia.isoformat()} | {n['total']} | {tipos} | {n['rechazadas']}")
+    mayor = "0"
+    if por_dia:
+        dia_max, n_max = max(por_dia.items(), key=lambda kv: (kv[1]["total"], kv[0]))
+        mayor = f"{n_max['total']} ({dia_max.isoformat()})"
+    else:
+        lineas.append("ninguna")
+    limite = motor.reglas_broker.mensajes_dia_max
+    lineas.append(
+        f"maximo diario: {mayor}; firma_mensajes_dia_max: "
+        + (str(limite) if limite is not None else "sin leer")
+    )
+    return lineas
 
 
 __all__ = [

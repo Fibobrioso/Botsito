@@ -489,6 +489,35 @@ def test_determinismo_byte_a_byte_del_informe(
     assert informe().encode("utf-8") == informe().encode("utf-8")
 
 
+def test_el_informe_da_las_peticiones_por_dia_de_la_firma_junto_al_limite_de_r13(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """R13, solo medir (rama `feature/contador-peticiones`): la estrategia sintetica coloca UNA
+    limite, que se llena y cierra por stop; el llenado y el stop los hace el servidor, asi que el
+    dia tiene una sola peticion, y el informe la da con el limite del perfil al lado."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
+    arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [(p.tipo, p.aceptada) for p in tb.peticiones] == [("colocar", True)]
+    informe = cableado.informe_simulacion(motor)
+    assert "### Peticiones al servidor (R13; dia de la firma en Europe/Prague)" in informe
+    assert "dia | total | colocar | modificar | cancelar | cerrar | rechazadas" in informe
+    assert "2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0" in informe
+    assert "maximo diario: 1 (2030-01-15); firma_mensajes_dia_max: 2000" in informe
+
+
+def test_un_dia_corrido_sin_peticiones_sale_con_cero(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    # un dia corrido en el que el bot no pidio nada al servidor
+    motor.trazas_broker[DIA.isoformat()] = cableado.TrazaBroker()
+    seccion = "\n".join(cableado._informe_peticiones(motor))
+    assert "2030-01-15 | 0 | 0 | 0 | 0 | 0 | 0" in seccion
+    assert "maximo diario: 0 (2030-01-15); firma_mensajes_dia_max: 2000" in seccion
+
+
 def test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo(
     registro: Registro, vocabulario: dict[str, dict[str, Any]], monkeypatch: pytest.MonkeyPatch
 ) -> None:

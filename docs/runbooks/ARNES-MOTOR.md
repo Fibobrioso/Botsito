@@ -46,6 +46,11 @@ pidió). Las operaciones del bot que puntúan para el criterio son las posicione
 sobre el respaldo M1 y marca toda la salida con `DEPURACION: respaldo M1, no cuenta`. Medido el
 2026-09-26: abril entero tarda unos tres minutos.
 
+La última sección, «Peticiones al servidor», cuenta por día de la firma (medianoche CE(S)T) las
+peticiones que el bot emite al servidor: colocar, modificar, cancelar y cerrar, aceptadas o
+rechazadas. Da también el máximo diario junto a `firma_mensajes_dia_max` (R13). Solo mide, nada
+frena (`docs/validation/CONTADOR-PETICIONES.md`).
+
 ## Cuándo se niega
 
 - **Un mes de medida** (hoy mayo) o **cualquier mes que no sea de construcción** (marzo, septiembre,
