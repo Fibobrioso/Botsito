@@ -1,6 +1,38 @@
 # GENERADO por `botsito corpus inventory`. No editar a mano. Ver fuentes.yaml.
 ffprobe: 9.0.1
 ficheros:
+- bytes: 96567
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/aaaaa.jpeg
+  sha256: 6a3fc3e64748a2d456aca8d3706f6ccd458bc467c28482897ba4abc9a2e202bc
+- bytes: 66124
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/asdasdasd.jpeg
+  sha256: f78735055cfde2f160f36fe8840ff031900b9c764b079127870b0fa060fcbbcd
+- bytes: 52957
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/asdasdasdwad.jpeg
+  sha256: f7c92eca9836893fc275b529efc6d82a3616e9a75a602cfb7fd5357d2927e556
+- bytes: 115611
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/asfasfasf.jpeg
+  sha256: 12f63cebb507ca40d0239e3235fb2656f9fbd23cf3072e55527f3870fccc1472
+- bytes: 11121
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/backtesting-analytics MARZO 2026.xlsx
+  sha256: 6b92694791b0b045b725a591810e4fc83b2b440e9d66805e08a6ae0b1a588598
+- bytes: 91627
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/dwarfawfa.jpeg
+  sha256: a279730342292dac38e7c94369a40a70ff67243e570263cf3eec5671f94e96d4
+- bytes: 49758
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/fwafafawfaw.jpeg
+  sha256: 51af4a8b24ee97acd774dbaafa942d4d0bec54f4a8c77756c79daadad3ae141f
+- bytes: 125001
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest marzo 2026/wdawad.jpeg
+  sha256: b5742edef30ee74dbcf3a21dd688869b32a296bc4d036c063dd128f151a53fad
 - bytes: 99579
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest mayo 2026/WhatsApp Image 2026-09-11 at 5.59.48 PM.jpeg
@@ -2150,8 +2182,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 3794523
-    ficheros: 43
+    bytes: 4403289
+    ficheros: 51
   video_original:
     bytes: 43536715428
     ficheros: 9
