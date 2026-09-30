@@ -84,13 +84,16 @@ de v9 se abrió en esta rama. Declarado en `HOLDOUT-EXPOSICIONES.md`.
 - **Sin registros de feedback.** El paso 5 del runbook (`feedback new` … `RESOLVE_UNKNOWN`) cierra
   cosas, y el brief dice que en esta rama no se resuelve nada. Esos registros van en la rama de
   después, con la revisión del consultor.
-- **Códigos de sesión.**
-  - S-1, G-1, G-2 y G-3: con el significado del brief.
-  - E-1, E-2 y E-3 **no están definidos en ningún fichero del repositorio**. Su significado sale de
-    la grabación:
-    - E-1 = «tus dos backtests de los mismos días» (82:47);
-    - E-2 = «¿cómo operas los equals?» (86:38);
-    - E-3 = qué pasa cuando la vela cambia de color, o cuando está casi plana (89:28–89:51).
+- **Códigos de sesión.** Desde la revisión del consultor (2026-09-29) están definidos, con el texto
+  de la hoja, en `scripts/transcribir_sesion.py` (`CODIGOS_DE_SESION_TEXTO`). Al escribir el
+  borrador, E-1, E-2 y E-3 no estaban definidos en ningún fichero y su significado se tomó de la
+  grabación; coincide con la hoja.
+  - S-1 = cómo decide el sesgo del día; G-1 = cerrar antes del stop; G-2 = dejar correr más allá del
+    objetivo; G-3 = tamaño mínimo de caja.
+  - E-1 = tus dos backtests de los mismos días (dicho a las 82:47);
+  - E-2 = cómo operas los equals (86:38);
+  - E-3 = cuando la vela cambia de color (89:28; en la sesión se preguntó además por la vela casi
+    plana, 89:51).
 
 ## 2. Los dos cortes de audio y el audio de respaldo
 
@@ -556,8 +559,67 @@ Formato: **Citas** (literal de la filtrada) · **Resumen** · **Confirmación** 
 - **Propuesta:** **resuelve en parte**.
   - Si el consultor confirma la lectura, toca `huso_operativa` (a `Etc/GMT-2`), ADR-0017, la ventana
     de ticks de invierno 06–14 UTC y la parada de marzo (A-42 es bloqueante).
-  - Hace falta que el consultor revise los tres bloques de cuarentena de 66:38–67:51.
+  - El texto de los tres bloques de cuarentena de 66:38–67:51, con máscara, va justo debajo. **A-42
+    no se activa hasta que el consultor lo revise.**
 - **Ítems:** `ev-v9-010753-063c8cb7`, `ev-v9-010809-68e4ea44`.
+
+#### El tramo 66:38–67:51, con máscara (revisión del consultor, 2026-09-29)
+
+Por orden del consultor, el texto de los segmentos 1075–1090 de la cruda (los tres bloques de
+cuarentena y los cuatro segmentos que ya estaban en la filtrada) se sacó con **toda fecha, mes y
+precio sustituidos** por `[FECHA]` o `[PRECIO]`. **La máscara se aplicó antes de imprimir nada**: el
+script lee la cruda y solo escribe el texto enmascarado, así que nadie leyó ese tramo sin ella.
+
+Qué sustituye la máscara:
+- los doce meses, con las grafías del ASR que ya usa la cuarentena;
+- cualquier número a tres palabras o menos de un mes, de un día de la semana o de «día», «mes» o
+  «fecha»;
+- las fechas numéricas y los números de cuatro cifras;
+- dos o más números seguidos (aunque vayan unidos por «punto», «coma», «y» o «con»), que se tratan
+  como un precio dictado.
+
+Antes de pasarla por el tramo se probó con frases sintéticas (fechas con día y mes, en cifras y en
+letras; precios en cifras y dictados; un número de día sin mes), y todas salieron enmascaradas.
+
+```
+[66:38] De nuevo esta pregunta
+[66:41] aquí está lo que todavía no sabemos claro y ya recordé en el bactés de [FECHA] en el bactés de
+[66:53] [FECHA] lo había hecho hace par de días pero como te había comentado se perdió el progreso por el
+[66:59] hecho de que se me había actualizado la cuenta o sea la suscripción y todo eso entonces se me había
+[67:06] eliminado. Inclusive de los otros backtests que te envié, o sea, está esto, o sea, falta, o sea, tendría que recopilar, pero en [FECHA] por ejemplo, cambia, en lugar de 7 sería 6, y creo que eso sería invierno, ¿verdad?
+[67:30] En lugar de 7 a 6
+[67:33] Y así
+[67:34] O sea, una hora como que menos
+[67:35] Eso es en [FECHA] pero en otras fechas es así
+[67:38] Supongo, también
+[67:40] En invierno empieza
+[67:41] Entonces cambia el horario para ti en invierno
+[67:45] Sí
+[67:45] Sí, claro, claro, también porque
+[67:48] Por la dirección geográfica, para mí en [FECHA]
+[67:50] Es verano, para ti es invierno
+```
+
+**Qué contiene, respuesta al consultor:**
+- **Ninguna operación, ningún precio y ningún resultado.** No sale ningún `[PRECIO]`, ni se dice
+  ninguna cifra de ganancia, pérdida o número de operaciones.
+- Los cinco `[FECHA]` son **nombres de mes**, y los cinco son de los cuatro meses con días
+  reservados. El script lo cuenta sin decir cuál. No hay ningún número de día.
+- **No son solo nombres de mes al hablar del cambio de hora.** Aparecen en dos contextos:
+  1. **66:41–67:06:** el trader cuenta que hizo el backtest de ese mes hace un par de días y que
+     perdió el progreso cuando se le actualizó la suscripción. Es un hecho sobre el material (que
+     ese backtest existe y se perdió), no un dato de él.
+  2. **67:06–67:35:** en ese mes, dice, el horario «cambia, en lugar de 7 sería 6, y creo que eso
+     sería invierno», «una hora como que menos». Es el cambio de hora, pero dicho de ese backtest:
+     que en él la hora de empezar es 6 y no 7. Es una propiedad del reloj del material, no una
+     etiqueta ni una cifra de resultado. Se declara en `HOLDOUT-EXPOSICIONES.md` y **la decisión es
+     del consultor**.
+- 67:48–67:50 («Por la dirección geográfica, para mí en [FECHA] / Es verano, para ti es invierno»)
+  suena al consultor, que vive en el otro hemisferio: se atribuye por contexto.
+- **Para A-42:** la voz confirma que en invierno el horario pasa de 7 a 6, «una hora como que
+  menos», pero no dice en qué reloj (el suyo o el del gráfico). La lectura de arriba sigue siendo
+  una lectura. Los tres bloques siguen en `tramos_no_citables.yaml`: el texto enmascarado no es
+  citable como evidencia.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana)
 
@@ -629,7 +691,7 @@ Formato: **Citas** (literal de la filtrada) · **Resumen** · **Confirmación** 
 - **Ítems:** `ev-v9-011555-81ec8beb`, `ev-v9-011655-c20a1c2d`, `ev-v9-011704-b5ddc3e3`,
   `ev-v9-011714-08536830`, `ev-v9-011957-4250c2b4`.
 
-### E-1 · tus dos backtests de los mismos días (significado tomado de la grabación)
+### E-1 · tus dos backtests de los mismos días
 
 - **Citas:**
   - 82:47–83:01 (consultor) «E1, tus dos backtests / De los mismos días / Comparando tu backtest
@@ -684,7 +746,7 @@ Formato: **Citas** (literal de la filtrada) · **Resumen** · **Confirmación** 
   lo que diga E-2 sobre RN-019.
 - **Ítems:** `ev-v9-012612-d9db2ee8`.
 
-### E-2 · cómo operas los equals (significado tomado de la grabación)
+### E-2 · cómo operas los equals
 
 - **Citas:** 86:38; 87:00–87:05 «me ha entrado una duda / … / mi palabra dice no…» (ASR confuso);
   88:09–88:12 «yo, este equal es válido / o sea, como si fuera un breaker»; 88:24–88:52 (el ejemplo);
@@ -700,7 +762,7 @@ Formato: **Citas** (literal de la filtrada) · **Resumen** · **Confirmación** 
   (tramo citable).
 - **Ítems:** `ev-v9-012809-4c13a3f4`.
 
-### E-3 · cuando la vela cambia de color o está casi plana (significado tomado de la grabación)
+### E-3 · cuando la vela cambia de color
 
 - **Citas:** 89:28 «vamos 5 a 5 más y 3 cuando la vela cambia de color aquí está el contexto» (ASR);
   89:51 (consultor) «Cuando una vela está casi plana y no queda claro si es rojo o verde, ¿cómo la
@@ -844,12 +906,14 @@ Cerrar cualquiera toca cuatro sitios más el test de `tests/unit/test_kit.py` y
   propuesta. Si el consultor quiere ver el gráfico de un ejemplo (A-50, A-21), los instantes
   localizados son los de las citas.
 - **Ningún registro de feedback, ningún parámetro, ninguna regla y ninguna ambigüedad cambiados.**
-- **La cuarentena no se reconstruyó.** Los tres bloques de A-42 (66:38–67:51) son los que más importan
-  para decidir: los tiene que revisar el consultor.
-- **E-1, E-2 y E-3 no tienen definición en el repositorio**: su significado aquí es el de la
-  grabación.
+- **La cuarentena no se reconstruyó**, salvo los tres bloques de A-42 (66:38–67:51), que se sacaron
+  **con máscara** por orden del consultor. Los otros cinco bloques siguen sin leer.
+- **E-1, E-2 y E-3** se definieron tras la revisión del consultor, con el texto de la hoja, en
+  `scripts/transcribir_sesion.py`.
 
 ## Estado
 
-**Rama `trabajo/sesion-03`: LISTA PARA REVISIÓN, NO CERRADA.** Borrador de extracción sobre la
-versión filtrada; 62 ítems de evidencia `ev-v9-*` nuevos; nada resuelto.
+**Rama `trabajo/sesion-03`: REVISADA por el consultor el 2026-09-29 y cerrada en `main` por su
+orden (tag `stable/F30-sesion-03`).** Extracción sobre la versión filtrada, con el tramo de A-42 con
+máscara; 62 ítems de evidencia `ev-v9-*` nuevos; nada resuelto en esta rama. La activación de lo
+que resuelve va en `trabajo/activar-sesion-03`; A-42 espera a la revisión del consultor.

@@ -359,3 +359,13 @@ def test_el_orden_es_el_de_la_hoja_de_la_sesion_03(m: ModuleType) -> None:
     assert set(m.CODIGOS_DE_SESION) == {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"}
     presentes = ["A-99", "G-3", m.SIN_PREGUNTA, "S-1", "A-47", "E-9"]
     assert m.orden_de_preguntas(presentes) == ["A-47", "S-1", "G-3", "A-99", "E-9", m.SIN_PREGUNTA]
+
+
+def test_los_codigos_de_sesion_llevan_el_texto_de_la_hoja(m: ModuleType) -> None:
+    """E-1, E-2 y E-3 no tenian texto en ningun fichero hasta la revision del consultor del
+    2026-09-29; aqui se fija el de la hoja de la sesion 03, y que todo codigo tiene uno."""
+    assert tuple(m.CODIGOS_DE_SESION_TEXTO) == m.CODIGOS_DE_SESION
+    assert m.CODIGOS_DE_SESION_TEXTO["E-1"] == "tus dos backtests de los mismos días"
+    assert m.CODIGOS_DE_SESION_TEXTO["E-2"] == "cómo operas los equals"
+    assert m.CODIGOS_DE_SESION_TEXTO["E-3"] == "cuando la vela cambia de color"
+    assert all(texto.strip() for texto in m.CODIGOS_DE_SESION_TEXTO.values())

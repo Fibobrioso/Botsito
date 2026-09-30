@@ -84,7 +84,19 @@ ORDEN_SESION_03 = (
     "A-21", "E-1",
     "A-30", "A-31", "E-2", "E-3", "A-41", "A-38", "A-24", "A-25", "A-37",
 )  # fmt: skip
-CODIGOS_DE_SESION = ("E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3")
+# Los codigos de sesion, con su texto tal como estaba en la hoja de la sesion 03 (definidos en la
+# revision del consultor del 2026-09-29; hasta entonces E-1, E-2 y E-3 no tenian texto en ningun
+# fichero del repositorio).
+CODIGOS_DE_SESION_TEXTO = {
+    "E-1": "tus dos backtests de los mismos días",
+    "E-2": "cómo operas los equals",
+    "E-3": "cuando la vela cambia de color",
+    "S-1": "cómo decide el sesgo del día",
+    "G-1": "cerrar antes del stop",
+    "G-2": "dejar correr más allá del objetivo",
+    "G-3": "tamaño mínimo de caja",
+}
+CODIGOS_DE_SESION = tuple(CODIGOS_DE_SESION_TEXTO)
 ORDEN_SESION = ORDEN_SESION_03  # la hoja de la sesion en curso
 
 

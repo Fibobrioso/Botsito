@@ -83,21 +83,21 @@ tramos:
     t0: "1:06:38"
     t1: "1:07:32"
     motivo: >-
-      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1075-1080 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1075-1080 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. Leidos SOLO con mascara ([FECHA], [PRECIO]) por orden del consultor en su revision del 2026-09-29 (docs/validation/SESION-03-EXTRACCION.md, A-42); siguen sin citarse
     acordado: >-
       regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
   - video_id: v9
     t0: "1:07:34"
     t1: "1:07:39"
     motivo: >-
-      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1082-1084 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1082-1084 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. Leidos SOLO con mascara ([FECHA], [PRECIO]) por orden del consultor en su revision del 2026-09-29 (docs/validation/SESION-03-EXTRACCION.md, A-42); siguen sin citarse
     acordado: >-
       regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
   - video_id: v9
     t0: "1:07:45"
     t1: "1:07:51"
     motivo: >-
-      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1088-1090 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+      cuarentena mecanica de la sesion 03 (scripts/transcribir_sesion.py): segmentos 1088-1090 de la cruda con motivo mes, vecino; pueden nombrar un mes con dias reservados o una fecha. Leidos SOLO con mascara ([FECHA], [PRECIO]) por orden del consultor en su revision del 2026-09-29 (docs/validation/SESION-03-EXTRACCION.md, A-42); siguen sin citarse
     acordado: >-
       regla del brief de la sesion 03 (2026-09-29): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-03-EXTRACCION.md)
   - video_id: v9
