@@ -270,14 +270,141 @@ el stop en el 1 (lo que midió CAJA-77) es esa misma distancia.
   - ni que sea el spread. El spread de 4 puntos frente a un stop de 13 es una sospecha, y medirla
     exige comparar con el spread de FTMO, que es la demo (A-27, DN-3).
 
+## 5. La cuenta reiniciada cada día, el momento, el resultado en R y el spread (2026-09-30, tercera revisión)
+
+> **DIAGNÓSTICO**, pedido tras aceptar §4. **Ningún valor por defecto cambia**: la decisión 5 y el
+> stop en el 0,8 se quedan.
+>
+> **Código**: `c02755d`.
+> - `--diagnostico-cuenta-diaria` en `motor arnes --simular` y `--cuenta-diaria` en `embudo_77`.
+>   La cuenta empieza de cero cada día, y la etiqueta `DIAGNOSTICO-CUENTA-diaria` va en cada línea y
+>   en el nombre del fichero. La corrida normal sigue arrastrando la cuenta (ADR-0053 §6).
+> - El embudo gana la tabla por mes, el momento, el R, las compras y ventas y el precio mid.
+> - `scripts/f35_resultado_r.py` cruza el R del bot con el del trader.
+>
+> **Dónde se corrió**: el arnés y el embudo, en un clon desechable. El cruce de R, desde el
+> repositorio, porque lee el libro de `corpus/`; solo lee y escribe fuera.
+
+### 5.1 Con la cuenta reiniciada cada día
+
+| | cuenta arrastrada (la normal) | **cuenta reiniciada cada día** |
+|---|---|---|
+| cobertura | 2/77 | **7/77** (abril 4, agosto 3) |
+| operaciones puntuables | 10 | **30** |
+| llenados | 15 (solo abril) | **36** (19 en abril, 17 en agosto) |
+| llenados que acaban en el stop | 14 de 15 | **33 de 36** |
+| máximo diario de peticiones (2000) | 7 | 7 |
+
+**El embudo de la vida, por mes (cuenta reiniciada):**
+
+| paso | todas | abril | agosto |
+|---|---|---|---|
+| sesión | 0 | 0 | 0 |
+| sesgo | 15 | 9 | 6 |
+| liquidez | 1 | 0 | 1 |
+| nace | 22 | 8 | 14 |
+| **punto** | **26** | 12 | 14 |
+| bróker | 2 | 0 | 2 |
+| reubica | 2 | 1 | 1 |
+| llenado | 2 | 1 | 1 |
+| **coincide** | **7** | 4 | 3 |
+
+- **Sin el freno de la cuenta, agosto opera** y el primer sitio donde se pierde una operación deja
+  de ser «nace» (de 49 a 22) y pasa a ser **«punto»: el bot pone la orden en un punto que no es el
+  del trader (26)**.
+- De las 22 de «nace», 18 las prohíbe RN-005, el lado de ruido, y 4 son sesiones con puntos pero sin
+  orden.
+- El freno de la firma ya no aparece.
+
+### 5.2 El momento de entrada
+
+Minutos desde que se forma el último pivote de M1 contrario a la entrada (el 0 de R5, al cierre de
+su vela contraria) hasta el llenado. Es la misma función para los dos.
+
+| | n | mínimo | Q1 | mediana | Q3 | máximo |
+|---|---|---|---|---|---|---|
+| **bot** (cuenta reiniciada) | 36 | 0 | 0,4 | **0,9** | 1,4 | 3,8 |
+| **trader** (las 77) | 77 | 0,2 | 1,2 | **2,5** | 5,2 | 12,2 |
+
+**El bot entra antes que el trader**: más o menos a la mitad de tiempo desde que se forma el
+pivote, y el trader tiene una cola hasta 12 minutos que el bot no tiene. El bot coloca en cuanto ve
+el pivote y la primera vela que lo toca lo llena. Encaja con §5.1: su punto no es el del trader en
+26 de 77.
+
+### 5.3 El resultado en R, bot frente a trader
+
+- **Bot**: R sobre su stop inicial, con la cuenta reiniciada.
+- **Trader**: `viabilidad_trader.py` en sus dos series, la ANOTADA (la salida real del libro) y la
+  SIMULADA (repetida por el bróker sobre ticks).
+
+| | n | Q1 | mediana | Q3 | media | ganadoras |
+|---|---|---|---|---|---|---|
+| **bot**, todos los días | 36 | −1,00 | −1,00 | 0,00 | **−0,44** | **3 (8 %)** |
+| **trader, anotada** | 77 | −1,00 | −0,77 | 3,22 | **+0,98** | **33 (43 %)** |
+| trader, simulada | 73 | −1,00 | −1,00 | 3,00 | +0,62 | 32 (44 %) |
+| bot, abril / agosto | 19 / 17 | | −1,00 / −1,00 | | −0,38 / −0,52 | 2 (11 %) / 1 (6 %) |
+| trader anotada, abril / agosto | 35 / 42 | | −0,77 / 0,00 | | +1,05 / +0,93 | 15 (43 %) / 18 (43 %) |
+| **en los 23 días en que operan los dos**: bot | 30 | −1,00 | −1,00 | 0,00 | −0,43 | 3 (10 %) |
+| mismos días: trader anotada | 50 | −1,00 | −1,00 | 3,29 | +0,94 | 21 (42 %) |
+
+- **La diferencia no es de tamaño de pérdida, es de acierto.** Las pérdidas del bot son de 1 R, como
+  las del trader, y su stop mide lo mismo (§4.1). Pero gana el 8 % y el trader el 43 %.
+- Q3 = 0 en el bot son los break even de RN-014.
+
+**Compras y ventas**:
+
+| | compras | ventas |
+|---|---|---|
+| bot, cuenta reiniciada | 19 | 17 |
+| trader | 32 | 45 |
+| bot, cuenta arrastrada | 10 | 5 |
+
+El bot está equilibrado; el trader vende más (58 %).
+
+### 5.4 El spread: con el precio medio, ningún stop se salva
+
+Para cada llenado que acabó en el stop se recorrieron los ticks con el precio medio (bid + ask) / 2,
+desde el llenado hasta el fin de la ventana, mirando qué salta primero, el stop o el objetivo.
+
+| | stops con bid y ask | con el precio medio: siguen en el stop | se salvan |
+|---|---|---|---|
+| compras | 17 | 17 | **0** |
+| ventas | 16 | 16 | **0** |
+
+**El spread no explica las pérdidas**: con el precio medio saltan los mismos 33 stops.
+
+### 5.5 Lo que el diagnóstico sostiene y lo que no
+
+- **Sostiene**:
+  - que el freno de la cuenta tapaba agosto: sin él la cobertura sube de 2 a 7 de 77;
+  - que ni el tamaño del stop (§4) ni el spread (§5.4) explican las pérdidas;
+  - que el bot entra antes que el trader desde el pivote (0,9 frente a 2,5 minutos de mediana);
+  - que con la cuenta reiniciada su punto no es el del trader en 26 de 77;
+  - que gana el 8 % de sus operaciones frente al 43 % del trader.
+- **No sostiene** qué espera el trader después del pivote. Los 1,6 minutos de diferencia en la
+  mediana, y una cola hasta 12, dicen que no entra en el primer toque, no por qué. Es la pregunta de
+  la F de la sesión 4 («¿pones la orden en el último mínimo que se formó en M1 y la vas moviendo?»):
+  queda más afilada, porque el bot, que hace justo eso, entra antes y pierde.
+
+### 5.6 Punto 5 del encargo: ffmpeg en la CI se queda
+
+La CI no instala el grupo `asr`, pero **cuatro ficheros de test necesitan ffprobe o ffmpeg**:
+`tests/unit/test_audio.py`, `tests/unit/test_inventario.py`,
+`tests/unit/test_pipeline_transcripcion.py` y `tests/integration/test_fotogramas_ffmpeg.py`. Con
+`CI` o `BOTSITO_EXIGE_FFPROBE` definidas, fallan en vez de saltarse, que es lo que pone el workflow.
+**No se ha quitado.** La lentitud del 30 de septiembre fue del espejo de `apt` del runner (20 min en
+`apt-get install`), no de la instalación en sí.
+
 ## Estado
 
 Lista para revisión, **no cerrada**. Commits:
 - `051d4c6`: el código;
 - `2ea0390`: la medida de §2;
 - `7449490`: `caja_se_fija` y el embudo de la vida;
-- el de este informe con §4.
+- `17460d7`: el informe con §4;
+- `c02755d`: la cuenta diaria y el resto del diagnóstico de §5;
+- el de este informe con §5.
 
 Cada uno con `make check` en verde y sellado. Ningún valor por defecto ha cambiado en la revisión.
-Pendientes del consultor: las seis DECISIONES de ADR-0064 y lo que §4.4 destapa, el freno de la
-cuenta que deja agosto sin operar.
+Pendientes del consultor: las seis DECISIONES de ADR-0064 y lo que §5 destapa. El bot entra antes
+que el trader y en otro punto, y gana el 8 % frente al 43 %.
