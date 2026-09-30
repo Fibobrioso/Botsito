@@ -7,4 +7,5 @@ Documentacion del proyecto, toda en Markdown salvo las instantaneas HTML.
 - `spec/`: especificacion generada desde `knowledge/spec/` (F13).
 - `runbooks/`: procedimientos operativos (F33+).
 - `research/`: investigacion previa a la decision de metodo (2026-09-03).
+- `nocturno/`: plan e informe de las sesiones autonomas nocturnas; nunca cierran una rama.
 - `HANDOFF.md`: resumen para retomar el proyecto desde otra terminal. Se actualiza DENTRO de la rama de cada funcionalidad antes del merge, nunca en `main` tras el tag (`state check` solo admite PROJECT_STATE.md ahi); si contradice PROJECT_STATE.md, manda PROJECT_STATE.md.
