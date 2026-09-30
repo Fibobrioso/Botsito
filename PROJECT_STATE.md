@@ -603,7 +603,7 @@ A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 
 
 B. **HECHA** (2026-09-30, `stable/F36b-contador-peticiones`). **Un contador de peticiones al servidor en el broker simulado**, informado por dia en el arnes. Estuvo EN REVISION en `feature/contador-peticiones` (docs/validation/CONTADOR-PETICIONES.md): cuenta colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, por dia CE(S)T; sobre construccion, maximo diario 1 frente a 2000; solo mide.
 
-C. **Medicion PRE-REGISTRADA de R1 a R6** (docs/validation/BLOQUE-DE-LA-CAJA.md §1.4) sobre las 77 operaciones de construccion, contra la entrada y el stop de los libros, con el stop en el 0,8 y en el 1. El criterio se escribe y se commitea ANTES de medir. EN CURSO en `feature/caja-77`: el criterio esta commiteado en docs/validation/CAJA-77.md §1 y la medida esta PARADA hasta el visto bueno del consultor.
+C. **Medicion PRE-REGISTRADA de R1 a R6** (docs/validation/BLOQUE-DE-LA-CAJA.md §1.4) sobre las 77 operaciones de construccion, contra la entrada y el stop de los libros, con el stop en el 0,8 y en el 1. El criterio se escribe y se commitea ANTES de medir. MEDIDA en `feature/caja-77`, EN REVISION (docs/validation/CAJA-77.md): criterio y nota del consultor commiteados y subidos antes de medir; VEREDICTO NO DECIDE -ninguna regla llega al 40 % (maximo 16 % en la celda principal)-; R4 gana a R1 solo con el stop en el 1; el stop del libro casa mas con el 1 de la caja de pantalla (3 de 5) que con su 0,8 (0 de 5). Las dos preguntas van a la sesion 4 (F).
 
 D. **F35: la orden stop nace en el 0 de la caja**; el bloque, por selector, segun el resultado de C (A-48, A-49).
 

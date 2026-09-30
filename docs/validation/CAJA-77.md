@@ -172,7 +172,127 @@ al remoto antes de leer ninguna fila ni cruzar ninguna vela.
 
 **4. Lo demás del criterio queda como está.**
 
+## 2. La medida (2026-09-30, después de subir el criterio y su nota)
+
+Script: `scripts/caja_77.py`. Salida completa, operación a operación: `CAJA-77-SALIDA.txt`. Se ensayó
+en un clon desechable (`git worktree add` en la carpeta de trabajo, leyendo los datos del
+repositorio y escribiendo fuera), y la salida del repositorio es idéntica byte a byte a la del
+ensayo.
+
+**El universo, tal como lo fijó §1.1**: 77 operaciones en 42 días `dev` de abril y agosto; 0 días
+reservados u ocultos; **77 evaluables y 0 fuera**. Son 45 ventas y 32 compras, 35 de abril y 42 de
+agosto. Las 32 compras tienen tick en T para la sensibilidad del spread.
+
+### 2.1 El control de la reconstrucción (§1.8.2), antes del resultado
+
+**(a) La caja reconstruida desde el libro frente a la leída en pantalla**, «reconstruida − leída»
+en puntos, en el 0 / en el 1:
+
+| caja | libro: entrada / stop | pantalla: 0 / 1 | L0,8 | L1 |
+|---|---|---|---|---|
+| v7-2 (la que dejó, §5.3) | 1.15364 / 1.15380 | 1.15364 / 1.15380 | 0 / +4 | **0 / 0** |
+| v7-2 (la primera, §2.2) | 1.15364 / 1.15380 | 1.15352 / 1.15376 | +12 / +8 | +12 / +4 |
+| v7-3 | 1.15362 / 1.15388 | 1.15364 / 1.15389 | −2 / +5,5 | **−2 / −1** |
+| v7-5 | 1.15274 / 1.15284 | 1.15274 / 1.15290 | 0 / −3,5 | 0 / −6 |
+| v7-11 | 1.15184 / 1.15193 | 1.15184 / 1.15210 | 0 / −14,75 | 0 / −17 |
+| v7-15 | 1.15488 / 1.15516 | 1.15491 / 1.15516 | −3 / +7 | −3 / 0 |
+
+- **El 0 se reconstruye bien**: a ≤ 2 puntos en 4 de 5 (v7-15 a −3).
+- **El 1 sale mejor con el stop del libro en el 1 que en el 0,8**: a ≤ 2 puntos en 3 de 5 con L1
+  (v7-2, v7-3 y v7-15) y en 0 de 5 con L0,8. Lo que eso dice: **el `initialSL` del libro coincide
+  con el 1 de la caja de la pantalla más a menudo que con su 0,8**. Encaja con «primer cálculo desde
+  el punto 1» (A-18), pero con cinco cajas no lo decide.
+- **La caja entera** (0 y 1 a ≤ 2) se reconstruye en 2 de 5 con L1 y en 0 de 5 con L0,8.
+- **v7-11 no se reconstruye con ninguna lectura**: el stop del libro está 17 puntos por debajo del de
+  la pantalla. Es lo que ya se sabía (§1.8.2): el libro y el vídeo son dos ejecuciones distintas de
+  los mismos días.
+
+**(b) Las reglas ancladas en el llenado frente a la colocación leída.** En v7-3 y v7-5 las seis
+reglas dan la misma caja con los dos anclajes. En v7-2, v7-11 y v7-15, **R1 y R4 cambian entre 7 y
+15 puntos** en el 0 o en el 1 según el anclaje. También cambian R3 y R5 en v7-2, R5 en v7-15 y R6
+en las tres. Anclar en el
+llenado, como obliga el libro, mueve la «última vela contraria» en 3 de 5 cajas. Es el límite que
+§1.3 declaró, y aquí está medido. Contra la caja leída, a ≤ 2 en el 0 y en el 1:
+- **ancladas en el llenado**: R4 en v7-2 (−1 / +1) y en v7-11 (0 / −1), y R6 en v7-11 (+1 / −1);
+- **ancladas en la colocación**: R5 y R6 en v7-15 (0 / −1), y R1 y R4 en v7-15 (−2 / −1).
+
+**Lo que el control deja dicho antes de leer el resultado.** La reconstrucción acierta el 0 casi
+siempre y el 1 solo a veces, mejor con L1. El anclaje en el llenado mueve la caja de R1 y R4 en la
+mitad de los casos. Las dos cosas restan aciertos a todas las reglas, así que **el resultado de §2.2
+es probablemente una cota inferior** de lo que cada regla explicaría con la hora de colocación y el
+stop de pantalla.
+
+### 2.2 La celda principal (τ = 2, sin corrección, 77 evaluables) y el veredicto
+
+| regla | L0,8: acierta | solo el 0 | solo el 1 | no da caja | L1: acierta | solo el 0 | solo el 1 | no da caja |
+|---|---|---|---|---|---|---|---|---|
+| R1 | 12 (16 %) | 11 | 13 | 0 | 7 (9 %) | 16 | 15 | 0 |
+| R2 | 0 (0 %) | 5 | 4 | 56 | 3 (4 %) | 2 | 2 | 56 |
+| R3 | 0 (0 %) | 6 | 3 | 0 | 1 (1 %) | 5 | 5 | 0 |
+| R4 | 11 (14 %) | 20 | 13 | 0 | 11 (14 %) | 20 | 11 | 0 |
+| R5 | 12 (16 %) | 24 | 5 | 0 | 8 (10 %) | 28 | 7 | 0 |
+| R6 | 11 (14 %) | 25 | 12 | 0 | 12 (16 %) | 24 | 11 | 0 |
+
+**Veredicto, con el umbral de §1.8.1: NO DECIDE.** Ninguna regla llega al 40 % en ninguna lectura;
+la que más acierta se queda en el 16 %. **La pregunta va a la sesión 4.**
+
+**R1 frente a R4.** Dan la misma caja en 46 operaciones y distinta en 31.
+
+| | L0,8: R1 / R4 | L1: R1 / R4 |
+|---|---|---|
+| misma caja (46) | 8 / 8 | 5 / 5 |
+| caja distinta (31) | 4 / 3 → sin decidir | 2 / **6 → gana R4** |
+
+R4 gana a R1 en las distintas solo con L1 (6 frente a 2). Como ninguna de las dos queda sostenida,
+eso no decide nada: dice por dónde preguntar.
+
+**Lo que sí se lee.** El 0 lo dan R4, R5 y R6 mucho más que el 1: entre 31 y 36 de 77 operaciones
+tienen el 0 a ≤ 2 puntos, contando los aciertos. **El 1 es donde fallan todas.** Y el 1 es
+justamente lo que depende de cómo se lea el stop y de la hora de colocación, que el control ya
+señaló como el punto débil de la reconstrucción.
+
+### 2.3 Las sensibilidades (no deciden)
+
+Aciertos, L0,8 / L1, de 77 salvo donde se dice:
+
+| | R1 | R2 | R3 | R4 | R5 | R6 |
+|---|---|---|---|---|---|---|
+| τ = 1 | 5 / 4 | 0 / 2 | 0 / 1 | 4 / 6 | 4 / 3 | 4 / 4 |
+| τ = 3 | 14 / 17 | 3 / 5 | 2 / 6 | 15 / **21** | 20 / **21** | 20 / **21** |
+| desfase −2, τ = 2 | 9 / 11 | 0 / 1 | 0 / 2 | 13 / 16 | 11 / 12 | 8 / 11 |
+| desfase −2, τ = 3 | 14 / 14 | 1 / 4 | 1 / 6 | 19 / **21** | 16 / 16 | 12 / 16 |
+| solo ventas (45) | 9 / 6 | 0 / 3 | 0 / 1 | 8 / 8 | 6 / 6 | 6 / 7 |
+| solo compras (32) | 3 / 1 | 0 / 0 | 0 / 0 | 3 / 3 | 6 / 2 | 5 / 5 |
+| compras restando el spread en T (32) | 2 / 7 | 0 / 0 | 0 / 0 | 5 / 8 | 2 / 7 | 4 / 4 |
+| solo abril (35) | 4 / 3 | 0 / 2 | 0 / 1 | 4 / 5 | 7 / 5 | 7 / 6 |
+| solo agosto (42) | 8 / 4 | 0 / 1 | 0 / 0 | 7 / 6 | 5 / 3 | 4 / 6 |
+
+- **Ninguna sensibilidad lleva a ninguna regla al 40 %.** El máximo es 21 de 77 (27 %) con τ = 3.
+- **El spread** de las compras en T tiene mediana 3 puntos (de 1 a 7). Restarlo mejora L1: R1 pasa
+  de 1 a 7 de 32 y R4 de 3 a 8. En L0,8 el efecto es mixto: R4 sube de 3 a 5 y R5 baja de 6 a 2. Las compras salen peor que las ventas sin restarlo,
+  como §1.5 pedía vigilar.
+- **El desfase −2** favorece a R4 en L1 (de 11 a 16) y perjudica a R1 y R6 en L0,8.
+- **R2 y R3 no describen al trader** en ninguna variante, como ya dijo `BLOQUE-DE-LA-CAJA.md`.
+
+### 2.4 Lo que la medida sostiene y lo que no
+
+- **Sostiene**:
+  - que ninguna de las seis reglas, aplicada a la caja reconstruida desde el libro, explica la caja
+    del trader en el 40 % de las operaciones;
+  - que R2 y R3 quedan descartadas;
+  - que el `initialSL` del libro casa más con el 1 de la caja de pantalla que con su 0,8 (3 de 5
+    frente a 0 de 5).
+- **No sostiene** que ninguna regla sea la del trader, ni que alguna de R1, R4, R5 y R6 quede
+  descartada. El control dice que la reconstrucción y el anclaje en el llenado restan aciertos a
+  todas. La medida que cerraría esto necesita la hora de colocación y el stop de pantalla, que el
+  libro no trae.
+- **Para la sesión 4**, lo que la medida afila:
+  1. «¿El bloque es solo la última vela contraria o todo el tramo de contrarias?» (R1 o R4). R4 va
+     por delante solo con el stop en el 1.
+  2. «¿El stop que pones al colocar va en el 1 o en el 0,8?». El libro apunta al 1.
+
 ## Estado
 
-Fase 1 (el criterio) escrita y commiteada, con la nota §1.8 del consultor añadida antes de medir.
-La medida todavía no se ha hecho: no se ha leído ninguna fila ni cruzado ninguna vela.
+Criterio (§1) y nota del consultor (§1.8) commiteados y subidos antes de medir; medida hecha (§2).
+**Veredicto: NO DECIDE**; la pregunta del bloque y la del stop van a la sesión 4. Lista para
+revisión, no cerrada.
