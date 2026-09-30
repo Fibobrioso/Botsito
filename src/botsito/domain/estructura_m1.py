@@ -165,6 +165,38 @@ def mecha_mas_alla_del_extremo(
     return False
 
 
+def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> int | None:
+    """El indice de la PRIMERA M1 que completa una zona de control posterior a la entrada
+    (RN-014), o None si todavia no. `m1` son las M1 cerradas desde la entrada, en orden.
+
+    Tras la entrada, una vela CONTRARIA que sigue a una racha a favor deja el punto extremo
+    -el punto alto en una compra- y abre el retroceso, que es la zona de control; la zona se
+    completa cuando una M1 posterior PASA ese punto con `criterio` («rompe el punto alto
+    anterior con mecha», fb-2026-09-09-sesion-01-a456bc3f). Manda el ULTIMO punto formado, y
+    la mecha de la propia vela contraria no cuenta: el punto existe desde su cierre, como en
+    `pivotes_m15`. Sin mirar al futuro: solo usa las velas dadas."""
+    signo = _signo(lado)
+    if criterio not in (MECHA, CUERPO):
+        raise EstructuraError(f"criterio de ruptura {criterio!r} desconocido")
+    extremo: int | None = None
+    racha: list[Vela] = []  # las velas a favor consecutivas que preceden a la que se mira
+    for k, v in enumerate(m1):
+        if extremo is not None and _pasa(v, extremo, lado, criterio):
+            return k
+        c = color(v)
+        if c == signo:
+            racha.append(v)
+            continue
+        if c == -signo and racha:
+            extremo = (
+                max(int(x.maxima) for x in racha)
+                if lado == COMPRA
+                else min(int(x.minima) for x in racha)
+            )
+        racha = []
+    return None
+
+
 def detectar_esquema(
     m1: Sequence[Vela],
     idx_toma: int,
@@ -240,5 +272,6 @@ __all__ = [
     "detectar_esquema",
     "mecha_mas_alla_del_extremo",
     "referencia_del_breaker",
+    "zona_posterior_completada",
     "zonas_de_control",
 ]

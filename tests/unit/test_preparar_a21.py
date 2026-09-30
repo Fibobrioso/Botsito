@@ -9,7 +9,7 @@ cableado la zona llega al broker como una orden limite con su stop y su objetivo
 from __future__ import annotations
 
 from datetime import UTC, date
-from decimal import Decimal
+from decimal import ROUND_UP, Decimal
 from pathlib import Path
 
 import pytest
@@ -309,9 +309,11 @@ def test_por_el_cableado_la_zona_llega_al_broker_como_una_orden_limite(
         entrada, extremo = BASE - 308, BASE - 324  # el bloque LIMPIO: entrada arriba, extremo abajo
         caja = entrada - extremo
         assert o.lado == "compra" and o.precio == entrada
-        assert o.stop == entrada - int(
-            Decimal(caja) * registro.fraccion("stop_fraccion_caja").valor
-        )
+        # caja de 16 puntos: el nivel de stop_fraccion_caja cae entre dos puntos y, desde la
+        # sesion 3, el stop va al siguiente ALEJANDOSE de la entrada (stop_fraccion_redondeo)
+        assert registro.opcion("stop_fraccion_redondeo") == "alejandose_de_la_entrada"
+        exacta = Decimal(caja) * registro.fraccion("stop_fraccion_caja").valor
+        assert exacta != int(exacta) and o.stop == entrada - int(exacta.to_integral_value(ROUND_UP))
         assert o.objetivo == entrada + int(Decimal(caja) * registro.decimal("objetivo_rr"))
         assert o.colocada_ms == (_breaker_fin(LIMPIO) * MS_POR_MINUTO - 1)
     # y la zona llega al detalle del visor, que la pinta desde el cierre del breaker y no antes

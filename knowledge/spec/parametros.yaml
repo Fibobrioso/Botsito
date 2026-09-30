@@ -475,8 +475,11 @@ parametros:
       linea de codigo -escribir_stop_en_la_orden calcula la distancia con ROUND_DOWN
       (engine/primitivas_broker.py), y eso acerca el stop a la entrada-. El trader, en la sesion 3,
       lo quiere al reves: hacia fuera, alejandose de la entrada, lo minimo posible, "si es un pip,
-      un pip y ya esta" (ev-v9-010541-0c80d5cf). DESALINEADO con el motor hasta la rama de codigo
-      que lo lea: hoy el motor sigue redondeando hacia la entrada
+      un pip y ya esta" (ev-v9-010541-0c80d5cf). DESDE EL 2026-09-30 (rama
+      trabajo/nocturno-01oct, ADR-0061) LO LEE LA FORMA de RN-011: el motor redondea la distancia
+      al stop hacia arriba, al punto entero siguiente. LECTURA NUESTRA, declarada: «lo minimo
+      posible» se toma como el minimo incremento del precio -un punto, la ultima cifra de la
+      cotizacion-, no como un pip entero
     consumido_por: [F21]
     estado: CONFIRMED
     valor: alejandose_de_la_entrada

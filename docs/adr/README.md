@@ -64,4 +64,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0058 | El selector de A-47 en la rama 2: la orden stop en el instante de la límite, para medirla (PROVISIONAL) | ACTIVE |
 | 0059 | A-42, PROVISIONAL: la ventana va en el reloj del gráfico, UTC+2 fijo, todo el año | ACTIVE |
 | 0060 | El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 (PROPUESTO, sesión nocturna) | ACTIVE |
+| 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior (PROPUESTO, sesión nocturna) | ACTIVE |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

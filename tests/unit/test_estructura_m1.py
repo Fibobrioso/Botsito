@@ -20,6 +20,7 @@ from botsito.domain.estructura_m1 import (
     bloque_de_origen,
     detectar_esquema,
     referencia_del_breaker,
+    zona_posterior_completada,
     zonas_de_control,
 )
 from botsito.domain.valores import Puntos
@@ -178,6 +179,56 @@ def test_sin_mirar_al_futuro_el_esquema_aparece_en_el_cierre_del_breaker_y_no_an
         assert (e is not None) == (n >= 9), n  # la vela 8 (indice) es el breaker: n = 9 velas
     e = detectar_esquema(m1, TOMA, COMPRA, MECHA, 1, SOLO_UNA_ZONA_DE_CONTROL)
     assert e is not None and e.breaker_fin == m1[8].fin
+
+
+# Tras la entrada de una compra: dos verdes que dejan el punto alto en 1051, una roja de
+# retroceso -la zona de control- y una verde que lo pasa.
+TRAS_LA_ENTRADA: list[tuple[int, int] | tuple[int, int, int | None, int | None]] = [
+    (1000, 1020),
+    (1020, 1050),  # el maximo de la racha: 1051
+    (1050, 1030),  # la contraria: el punto alto queda formado en 1051
+]
+
+
+def test_la_zona_posterior_se_completa_cuando_una_m1_pasa_el_punto_extremo() -> None:
+    """RN-014: «rompe el punto alto anterior con mecha»: la primera M1, despues de la vela
+    contraria, que pasa el extremo que dejo la racha a favor."""
+    sin_romper = _serie([*TRAS_LA_ENTRADA, (1030, 1045)])
+    assert zona_posterior_completada(sin_romper, COMPRA, MECHA) is None
+    # igualar el punto no lo rompe: romper es superarlo
+    iguala = _serie([*TRAS_LA_ENTRADA, (1030, 1045, None, 1051)])
+    assert zona_posterior_completada(iguala, COMPRA, MECHA) is None
+    con_mecha = _serie([*TRAS_LA_ENTRADA, (1030, 1045, None, 1052)])
+    assert zona_posterior_completada(con_mecha, COMPRA, MECHA) == 3
+    assert zona_posterior_completada(con_mecha, COMPRA, CUERPO) is None
+    con_cuerpo = _serie([*TRAS_LA_ENTRADA, (1030, 1045, None, 1052), (1045, 1060)])
+    assert zona_posterior_completada(con_cuerpo, COMPRA, CUERPO) == 4
+    assert zona_posterior_completada(con_cuerpo, COMPRA, MECHA) == 3  # la PRIMERA
+
+
+def test_sin_retroceso_no_hay_zona_posterior_y_la_mecha_de_la_contraria_no_cuenta() -> None:
+    solo_a_favor = _serie([(1000, 1020), (1020, 1050), (1050, 1090)])
+    assert zona_posterior_completada(solo_a_favor, COMPRA, MECHA) is None
+    # la vela contraria supera con su mecha el maximo de la racha: el punto se forma a su
+    # cierre, asi que ella misma no lo rompe
+    contraria = _serie([(1000, 1020), (1020, 1050), (1050, 1030, None, 1060)])
+    assert zona_posterior_completada(contraria, COMPRA, MECHA) is None
+    assert zona_posterior_completada([], COMPRA, MECHA) is None
+
+
+def test_manda_el_ultimo_punto_extremo_y_una_venta_es_el_espejo() -> None:
+    # dos retrocesos: el segundo punto alto (1041) queda por debajo del primero (1051), y
+    # romper el ULTIMO basta
+    dos = _serie(
+        [*TRAS_LA_ENTRADA, (1030, 1040), (1040, 1035), (1035, 1043)]
+    )  # 1041 formado en la vela 4; la 5 lo pasa
+    assert zona_posterior_completada(dos, COMPRA, MECHA) == 5
+    venta = _serie([(1000, 980), (980, 950), (950, 970), (970, 955, 948, None)])
+    assert zona_posterior_completada(venta, VENTA, MECHA) == 3
+    with pytest.raises(EstructuraError):
+        zona_posterior_completada(venta, "largo", MECHA)
+    with pytest.raises(EstructuraError):
+        zona_posterior_completada(venta, VENTA, "cierre")
 
 
 def test_las_guardias() -> None:

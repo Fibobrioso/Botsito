@@ -82,6 +82,14 @@ predicados:
     literal: >-
       como sé que una zona de control se ha completado, cuando apenas me generó un rompimiento
       [...] rompe el punto alto anterior con mecha, con mecha no importa
+    notas: >-
+      LO QUE EL MOTOR HACE (rama trabajo/nocturno-01oct, ADR-0061, PROPUESTO). Con `posterior_a`
+      -el break even de RN-014- la zona es el retroceso que se forma en M1 despues de la
+      entrada: una vela contraria tras una racha a favor deja el punto extremo, y la zona se
+      completa en el cierre de la primera M1 posterior que lo pasa con `criterio`. Que el
+      retroceso sea eso es LECTURA NUESTRA de «rompe el punto alto anterior», hecha con la misma
+      geometria de M1 que el breaker. Sin `posterior_a` -la reubicacion de RN-006, que es la
+      vida de la orden stop- sigue sin escribirse (rama 3 de ADR-0056)
   abre_sesion_operativa:
     descripcion: empieza una de las sesiones de la ventana
     argumentos: []
@@ -353,8 +361,11 @@ acciones:
     descripcion: calcula el lote a partir del riesgo y la distancia declarada
     argumentos: [base, riesgo, sobre]
   escribir_stop_en_la_orden:
-    descripcion: escribe el stop en la orden que se va a colocar, antes de enviarla (RN-011)
-    argumentos: [donde, nivel]
+    descripcion: >-
+      escribe el stop en la orden que se va a colocar, antes de enviarla (RN-011): en `nivel` de
+      la caja y, cuando ese nivel no cae en un punto exacto, redondeado hacia donde diga
+      `redondeo`
+    argumentos: [donde, nivel, redondeo]
   fijar_objetivo:
     descripcion: escribe el objetivo en la orden que se va a colocar, antes de enviarla (RN-015)
     argumentos: [multiplo, sobre, extension, parciales]
@@ -1103,14 +1114,16 @@ reglas:
     entonces: >-
       el lote sale de la distancia que va de la entrada a stop_fraccion_caja segun lotaje_base y
       riesgo_por_operacion sobre base_calculo_riesgo; el stop se escribe EN LA ORDEN segun
-      stop_en_orden_pendiente, en ese mismo stop_fraccion_caja, antes de enviarla; y la orden queda
-      dimensionada en esa zona, a la espera de su objetivo y de su envio
+      stop_en_orden_pendiente, en ese mismo stop_fraccion_caja redondeado segun
+      stop_fraccion_redondeo, antes de enviarla; y la orden queda dimensionada en esa zona, a la
+      espera de su objetivo y de su envio
     parametros:
       - lotaje_base
       - riesgo_por_operacion
       - base_calculo_riesgo
       - stop_en_orden_pendiente
       - stop_fraccion_caja
+      - stop_fraccion_redondeo
       - orden_limite_nace
     cita: fb-2026-09-09-sesion-01-76fd91ba
     literal: el SL se pone junto a la orden limite, no cuando se apertura recien
@@ -1142,9 +1155,10 @@ reglas:
       fb-2026-09-29-sesion-03-f572f1a0) y el lote se calcula del 0 al 0,8 (lotaje_base,
       fb-2026-09-29-sesion-03-d62c788a), que es lo que esta regla ya hace; y el 0,8 se redondea
       ALEJANDOSE de la entrada, lo minimo (stop_fraccion_redondeo,
-      fb-2026-09-29-sesion-03-11910e0a). DESALINEADO CON EL MOTOR en el redondeo:
-      escribir_stop_en_la_orden redondea con ROUND_DOWN, hacia la entrada, y no lee
-      stop_fraccion_redondeo.
+      fb-2026-09-29-sesion-03-11910e0a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct,
+      ADR-0061, PROPUESTO) LA FORMA NOMBRA stop_fraccion_redondeo y el motor lo lee: la distancia
+      de la entrada al stop se redondea al punto entero siguiente, el stop queda un poco mas
+      lejos y el lote, que sale de esa distancia, un poco menor.
     decision: ADR-0020
     forma:
       cuando:
@@ -1164,6 +1178,7 @@ reglas:
           - escribir_stop_en_la_orden:
               donde: stop_en_orden_pendiente
               nivel: stop_fraccion_caja
+              redondeo: stop_fraccion_redondeo
           - fijar: {hecho: orden_dimensionada, a: Z}
     clase: disparador
     estado: VIGENTE
@@ -1243,7 +1258,11 @@ reglas:
       favor para costes, y despues el stop no se mueve (A-40 RESUELTA,
       fb-2026-09-29-sesion-03-7a79dcd7). break_even_criterio_ruptura pasa a CONFIRMED en
       `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9
-      0:57:00-0:58:06.
+      0:57:00-0:58:06. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061, PROPUESTO)
+      EL MOTOR LO EVALUA: `se_completa_zona_de_control` con `posterior_a` deja de ser un hueco y
+      el cableado mueve el stop a la entrada. LO QUE NO ES TODAVIA «al tocar»: la estrategia se
+      evalua al cierre de M1 (ADR-0028), asi que el stop se mueve en el cierre de la M1 que
+      toca el punto, no en el tick (ADR-0053 §2.1, para revisar con la demo).
     forma:
       cuando:
         todos_de:

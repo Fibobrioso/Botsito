@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 14.1.0` · hash `e79e999f3b8a…`
+`spec_version 14.2.0` · hash `7262d5c7ff23…`
 
 86 en total: 69 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -512,7 +512,7 @@ nivel de la caja donde vive el stop. Se escribe EN la orden limite y no se mueve
 
 ### `stop_fraccion_redondeo`
 
-cuando el 0,8 de la caja no cae en un punto exacto, hacia donde va el stop. NACE el 2026-09-29 (rama trabajo/activar-sesion-03): hasta entonces no era un parametro, sino una linea de codigo -escribir_stop_en_la_orden calcula la distancia con ROUND_DOWN (engine/primitivas_broker.py), y eso acerca el stop a la entrada-. El trader, en la sesion 3, lo quiere al reves: hacia fuera, alejandose de la entrada, lo minimo posible, "si es un pip, un pip y ya esta" (ev-v9-010541-0c80d5cf). DESALINEADO con el motor hasta la rama de codigo que lo lea: hoy el motor sigue redondeando hacia la entrada
+cuando el 0,8 de la caja no cae en un punto exacto, hacia donde va el stop. NACE el 2026-09-29 (rama trabajo/activar-sesion-03): hasta entonces no era un parametro, sino una linea de codigo -escribir_stop_en_la_orden calcula la distancia con ROUND_DOWN (engine/primitivas_broker.py), y eso acerca el stop a la entrada-. El trader, en la sesion 3, lo quiere al reves: hacia fuera, alejandose de la entrada, lo minimo posible, "si es un pip, un pip y ya esta" (ev-v9-010541-0c80d5cf). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061) LO LEE LA FORMA de RN-011: el motor redondea la distancia al stop hacia arriba, al punto entero siguiente. LECTURA NUESTRA, declarada: «lo minimo posible» se toma como el minimo incremento del precio -un punto, la ultima cifra de la cotizacion-, no como un pip entero
 
 Opciones: `hacia_la_entrada`, `alejandose_de_la_entrada`.
 
