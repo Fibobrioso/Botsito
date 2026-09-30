@@ -19,31 +19,38 @@ sync:
 hooks:
 	$(UV) run python scripts/instalar_hooks.py
 
+# El pico de memoria de make check (scripts/pico_memoria.py, rama trabajo/memoria-suite): cada paso
+# corre dentro de `medir`, que apunta su pico en un acumulador del directorio de git, y `check`
+# acaba con UNA linea `PICO DE MEMORIA` en make-check.log. Lo lleva el sistema operativo: no
+# muestrea y no cuesta nada. Dentro de `uv run` los ejecutables del entorno estan en el PATH.
+PICO = $(UV) run python scripts/pico_memoria.py
+MEDIR = $(PICO) medir
+
 # `scripts/` entra desde F12. Entonces el motivo era la hoja de la sesion, que vivia ahi y era el
 # unico codigo que se ejecuta delante del trader sin red; en F13 se mudo a
 # `src/botsito/cases/hoja_docx.py` y ahora tiene `mypy --strict` y los contratos encima. El lint
 # se queda: `instalar_hooks.py` y `mover_sesion.py` siguen aqui y tocan el repositorio.
 lint:
-	$(UV) run ruff check src tests scripts
-	$(UV) run ruff format --check src tests scripts
+	$(MEDIR) lint -- ruff check src tests scripts
+	$(MEDIR) lint -- ruff format --check src tests scripts
 
 types:
-	$(UV) run mypy
+	$(MEDIR) types -- mypy
 
 contracts:
-	$(UV) run lint-imports
+	$(MEDIR) contracts -- lint-imports
 
 test:
-	$(UV) run pytest
+	$(MEDIR) test -- pytest
 
 state:
-	$(UV) run botsito state check
+	$(MEDIR) state -- botsito state check
 
 config:
-	$(UV) run botsito config validate
+	$(MEDIR) config -- botsito config validate
 
 knowledge:
-	$(UV) run botsito knowledge validate
+	$(MEDIR) knowledge -- botsito knowledge validate
 
 # Solo donde exista el corpus (no en CI): compara el manifiesto con el disco.
 corpus:
@@ -53,12 +60,14 @@ corpus:
 # acaba de pasar en verde. El hook de pre-commit rechaza un arbol sin sello. No sella si hay
 # cambios sin estadiar o ficheros sin seguir: lo avisa, y el commit se rechazara.
 desellar:
-	$(UV) run python scripts/sello_make_check.py borrar
+	$(PICO) empezar
+	$(MEDIR) desellar -- python scripts/sello_make_check.py borrar
 
 sellar:
-	$(UV) run python scripts/sello_make_check.py sellar
+	$(MEDIR) sellar -- python scripts/sello_make_check.py sellar
 
 check: desellar lint types contracts test state config knowledge sellar
+	@$(PICO) informe
 
 # Regresion completa: en F01 equivale a check; desde F14 anade la biblioteca de casos.
 regress: check

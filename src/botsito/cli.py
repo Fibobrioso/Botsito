@@ -2178,6 +2178,9 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     """El arnes del motor sobre CONSTRUCCION (ADR-0048).
 
     El informe va al fichero y es determinista; el tiempo y la memoria, por pantalla, fuera de el.
+    La memoria es el pico del PROCESO, que lleva el sistema y no cuesta nada; `tracemalloc`, que
+    instrumenta cada asignacion y multiplicaba tiempo y memoria, solo con `--tracemalloc` (rama
+    `trabajo/memoria-suite`).
     """
     import time
     import tracemalloc
@@ -2185,6 +2188,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
     from botsito.cases.holdout import HoldoutCerradoError
     from botsito.cases.paquete import cargar_config
+    from botsito.comun.memoria import pico_del_proceso
     from botsito.config.registro import cargar_registro
     from botsito.data.dataset import DatasetError
     from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, zonas
@@ -2194,7 +2198,8 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 
     inicio = time.perf_counter()
-    tracemalloc.start()
+    if args.tracemalloc:
+        tracemalloc.start()
     try:
         criterio = cargar_criterio(repo)
         meses = args.meses.split(",") if args.meses else list(criterio.construccion)
@@ -2271,14 +2276,14 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         tracemalloc.stop()
         print(f"ERROR: {exc}", file=sys.stderr)
         return 3
-    _, pico = tracemalloc.get_traced_memory()
-    tracemalloc.stop()
+    memoria = f"pico del proceso de {pico_del_proceso() / 2**20:.1f} MiB"
+    if args.tracemalloc:
+        _, pico = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        memoria += f"; tracemalloc: {pico / 2**20:.1f} MiB, solo lo que asigna Python"
     salida.write_text(texto, encoding="utf-8", newline="\n")
     print(f"OK: informe del arnes en {salida}")
-    print(
-        f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: pico de {pico / 2**20:.1f} MiB "
-        f"(tracemalloc: solo lo que asigna Python)"
-    )
+    print(f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: {memoria}")
     return 0
 
 
@@ -2877,6 +2882,12 @@ def build_parser() -> argparse.ArgumentParser:
     mt_arnes.add_argument("--salida", required=True, help="fichero del informe")
     mt_arnes.add_argument(
         "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
+    )
+    mt_arnes.add_argument(
+        "--tracemalloc",
+        action="store_true",
+        help="mide ademas con tracemalloc lo que asigna Python; CARO en tiempo y en memoria: por "
+        "defecto solo se da el pico del proceso",
     )
     _opciones_simulacion(mt_arnes)
     _opciones_diagnostico(mt_arnes)
