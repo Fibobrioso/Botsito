@@ -21,13 +21,19 @@ RESERVA = "b = bytearray(64 * 2**20); b[::4096] = b'x' * len(b[::4096])"
 
 
 def test_el_pico_del_proceso_sube_con_una_reserva_y_no_baja_al_soltarla() -> None:
-    # en un proceso nuevo: el de pytest ya puede haber tenido un pico mayor que la reserva
+    # en un proceso nuevo: el de pytest ya puede haber tenido un pico mayor que la reserva. Y
+    # lanzado desde un intermediario pequeno, no desde pytest: en Linux, `exec` conserva en
+    # `ru_maxrss` la RSS del proceso que hizo el fork, y el hijo directo de pytest arrancaba ya
+    # con la de pytest (135 MiB en la CI de 67ab298, por encima de la reserva)
     codigo = (
         "from botsito.comun.memoria import pico_del_proceso as p\n"
         f"antes = p()\n{RESERVA}\ndel b\ndespues = p()\nprint(antes, despues, p())\n"
     )
+    intermediario = (
+        f"import subprocess, sys; subprocess.run([sys.executable, '-c', {codigo!r}], check=True)"
+    )
     r = subprocess.run(
-        [sys.executable, "-c", codigo], capture_output=True, encoding="utf-8", check=True
+        [sys.executable, "-c", intermediario], capture_output=True, encoding="utf-8", check=True
     )
     antes, despues, final = (int(x) for x in r.stdout.split())
     assert antes > 0 and despues - antes >= 60 * MIB, r.stdout

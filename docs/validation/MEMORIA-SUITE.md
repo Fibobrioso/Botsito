@@ -29,6 +29,17 @@ entero, y `motor arnes` arrancaba siempre `tracemalloc`.
    memoria comprometida de la SUMA de los procesos del paso, y entre paréntesis la del mayor. En
    Linux (la CI), `ru_maxrss` del mayor proceso: el sistema no da la suma sin muestrear. La línea
    `check:` no cambia (desellar primero, sellar al final: lo congelan los tests del sello).
+> **RECUADRO DE CORRECCION (2026-09-30, rama `fix/ci-linux-memoria`).** El primer test del punto 3
+> no se probo en Linux y la CI de `67ab298` salio roja en el (run 36675429816: `141414400
+> 141414400 141414400`, 1 failed, 1367 passed). No era la reserva: en Linux, `exec` conserva en
+> `ru_maxrss` la RSS del proceso que hizo el fork, asi que el hijo lanzado directamente por pytest
+> arrancaba ya con la de pytest (135 MiB), por encima de los 64 MiB de la reserva, y `antes`,
+> `despues` y el final salian iguales. Windows no hereda ese contador. El test lanza ahora el hijo
+> medido desde un intermediario pequeno; la reserva y las aserciones no cambian. El medidor de
+> `make check` no se ve afectado: sus pasos los lanza `scripts/pico_memoria.py`, que es un proceso
+> pequeno. La linea `MEMORIA` de `motor arnes` en Linux incluye, eso si, la RSS de su padre al
+> lanzarlo, que desde una shell es despreciable. El cuerpo del informe queda intacto.
+
 3. **Tests** (`tests/unit/test_memoria.py`, seis funciones, siete casos): el pico del proceso sube con
    una reserva de 64 MiB; `motor arnes` solo arranca `tracemalloc` si se pide; el medidor mide un
    hijo, devuelve su código, apunta cada paso y el informe da el mayor y vacía el acumulador; y todo

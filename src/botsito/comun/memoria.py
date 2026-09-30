@@ -6,7 +6,9 @@ cada asignacion, que es lo que hace `tracemalloc` y lo que convertia `motor arne
 750 MB y tres minutos dentro de la suite. Mide el proceso entero (Python, extensiones y el propio
 interprete), no solo lo que asigna Python:
 - Windows: `PeakWorkingSetSize` de `GetProcessMemoryInfo`, el pico de memoria residente;
-- Linux: `ru_maxrss` de `getrusage(RUSAGE_SELF)`, en KiB; macOS lo da en bytes.
+- Linux: `ru_maxrss` de `getrusage(RUSAGE_SELF)`, en KiB; macOS lo da en bytes. `exec` conserva
+  en el la RSS del proceso que hizo el fork, asi que un proceso recien lanzado arranca con la de
+  su padre (rama `fix/ci-linux-memoria`).
 """
 
 from __future__ import annotations
