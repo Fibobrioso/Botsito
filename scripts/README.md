@@ -15,6 +15,11 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   `sellar` al terminar en verde: escribe el hash del arbol estadiado dentro del directorio de git,
   salvo que haya cambios sin estadiar o ficheros sin seguir. Los hooks `pre-commit` y
   `pre-merge-commit` rechazan un arbol sin ese sello (`scripts/git-hooks/README.md`).
+- `pico_memoria.py`: el pico de memoria de `make check` (rama `trabajo/memoria-suite`). Cada paso
+  corre dentro de `medir`, que apunta su pico en un acumulador del directorio de git, y `informe`
+  escribe una linea `PICO DE MEMORIA` al final del log. Windows: un Job Object, memoria
+  comprometida de la suma de procesos; Linux: `ru_maxrss` del mayor hijo. `ejecutar -- <orden>`
+  mide una orden suelta.
 - `decodificar_png.py`: decodificador de PNG de biblioteca estandar (`zlib` y `struct`), HERRAMIENTA
   DE MEDIDA de fotogramas, fuera del paquete; su test fabrica sus propios PNG con los cinco filtros
   (`tests/unit/test_decodificar_png.py`). Next Action 4, 2026-09-23.
