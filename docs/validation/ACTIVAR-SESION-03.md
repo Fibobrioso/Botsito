@@ -210,6 +210,16 @@ explícita**, en una copia del registro real:
 - uno nuevo, `test_la_cli_con_a47_fijada_pasa_a_pedir_a27_antes_de_leer_velas`, fija lo que hace hoy
   la CLI con el registro real.
 
+> **CORRECCIÓN (2026-09-29, `main`, arreglo de la CI tras `stable/F31-activar-sesion-03`).** El
+> nombre de ese test nuevo afirmaba más de lo que pasa: la negativa por A-27 **no** llega antes de
+> leer velas. La comprueba el bróker al colocar la primera orden stop (ADR-0057 §5), después de leer
+> las velas y los ticks del mes y de correr el motor hasta esa orden. En la CI, sin `data/`, la CLI
+> se paraba antes por «falta en disco» y el test fallaba: la CI de `e7df30b` salió roja por eso. Se
+> renombra a `test_la_cli_con_a47_fijada_pasa_a_pedir_a27`, se salta sin las velas en la máquina como
+> `test_preparar_a35.py`, y sus aserciones no cambian. Es también el test que se cortaba por memoria
+> al 69 %: medido solo, 753 MB y 192 s, casi todo de `tracemalloc` en `motor arnes`
+> (`trabajo/memoria-suite`).
+
 `tests/unit/test_cableado.py`, el otro módulo que nombra A-47, pasa sin cambios.
 
 - `tests/unit/test_transcribir_sesion.py::test_el_orden_es_el_de_la_hoja_con_a46_tras_a21`: comparaba

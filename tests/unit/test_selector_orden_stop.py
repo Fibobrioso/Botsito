@@ -147,11 +147,17 @@ def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
     assert not list((tmp_path / "salida").iterdir())
 
 
-def test_la_cli_con_a47_fijada_pasa_a_pedir_a27_antes_de_leer_velas(
+def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """Con el registro real, A-47 ya no para la corrida: la siguiente puerta es la de la orden stop,
-    que no se coloca sin stops level (A-27, ADR-0057), y tambien se niega antes de leer velas."""
+    que no se coloca sin stops level (A-27, ADR-0057).
+
+    NO se niega antes de leer velas, como decia el nombre de este test hasta el 2026-09-29: A-27 la
+    comprueba el broker al colocar la PRIMERA orden stop (ADR-0057 §5), despues de leer las velas y
+    los ticks del mes y de correr el motor hasta esa orden. Por eso necesita `data/`, y sin las
+    velas en la maquina (la CI) se salta, como `test_preparar_a35.py`; la CI de e7df30b fallo por
+    eso."""
     from botsito import cli
     from botsito.cases.criterio_fidelidad import cargar_criterio
 
@@ -163,5 +169,7 @@ def test_la_cli_con_a47_fijada_pasa_a_pedir_a27_antes_de_leer_velas(
          "--diagnostico-a44", "sin_tope", "--diagnostico-a21", "solo_una_zona_de_control"]
     )  # fmt: skip
     err = capsys.readouterr().err
+    if codigo == 2 and "falta en disco" in err:
+        pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 2 and "A-27" in err and "A-47" not in err
     assert not list(tmp_path.iterdir())
