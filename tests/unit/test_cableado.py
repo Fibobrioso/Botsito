@@ -288,6 +288,48 @@ def test_rn002_cierra_la_posicion_viva_antes_del_fin_de_su_vela_h4(
     assert "RN-002" not in otro.correr_dia(_dia()).sesiones["07-11"].disparadas
 
 
+def test_una_orden_preparada_y_no_enviada_no_se_arrastra_a_la_zona_siguiente(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Dos zonas en el mismo dia, que desde A-46 es lo normal (cada sesion liga la suya). La
+    primera se dimensiona, pero un gate prohibe abrir y no se envia; la segunda se prepara de
+    cero. Medido con la simulacion sobre construccion: el cableado arrastraba la orden a
+    medio preparar y se paraba con «la zona ligada no es la de la orden preparada»."""
+    segunda = MINUTO_ZONA + 30
+    predicados, acumuladores = _sinteticas()
+
+    def toca(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        ids = {MINUTO_ZONA: "zona:1", segunda: "zona:2"}
+        id = ids.get(int(momento.instante))
+        return Resultado(Tri.NO) if id is None else Resultado(Tri.SI, {"Z": id})
+
+    def ruido(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        return Resultado(Tri.SI if int(momento.instante) == MINUTO_ZONA else Tri.NO)
+
+    predicados["toca_colocar_orden_limite"] = toca
+    predicados["se_desarrolla_en_el_lado_de_ruido"] = ruido  # RN-005 prohibe la primera
+    motor = _motor(registro, vocabulario, _mercado({}))
+    motor.primitivas_extra = predicados
+    zonas = {
+        "zona:1": cableado.zona_sintetica("zona:1", "compra", ENTRADA, EXTREMO, "primer_esquema"),
+        "zona:2": cableado.zona_sintetica(
+            "zona:2", "compra", ENTRADA - 40, EXTREMO - 40, "primer_esquema"
+        ),
+    }
+    motor.zonas_de = lambda md: zonas
+    r = motor.correr_dia(_dia())
+    bloqueo = ("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion")
+    assert bloqueo in r.sesiones["07-11"].bloqueadas
+    ordenes = list(motor.brokers[DIA.isoformat()].ordenes.values())
+    assert [(o.precio, o.stop, o.objetivo) for o in ordenes] == [
+        (ENTRADA - 40, ENTRADA - 40 - 16, ENTRADA - 40 + 60)
+    ]
+
+
 def test_un_gate_de_la_firma_prohibe_cuando_la_cuenta_cruza_su_limite(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:

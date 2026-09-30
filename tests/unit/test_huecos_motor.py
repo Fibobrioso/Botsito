@@ -237,7 +237,8 @@ def test_el_hecho_solo_caduca_en_la_apertura(motor: MotorSpec) -> None:
     )
     ev = motor.interprete.evento(motor.reglas, dentro, estado)
     assert ev.caducados == [] and estado.hechos["sesgo"] == "bajista"
-    assert motor.interprete.caducan_al_abrir == ("sesgo",)
+    # desde A-46 (sesion 3) tambien caduca la toma de la liquidez: cada sesion, la suya
+    assert motor.interprete.caducan_al_abrir == ("liquidez_tomada", "sesgo")
 
 
 def test_vale_en_el_nodo_hecho() -> None:

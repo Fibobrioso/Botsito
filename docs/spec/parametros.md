@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 14.0.0` · hash `13faf33dc500…`
+`spec_version 14.1.0` · hash `e79e999f3b8a…`
 
 86 en total: 69 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 

@@ -284,11 +284,12 @@ def primitivas_cableadas(
     def dimensionar_lote(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
-        # ADR-0053 §1.1: se anota y el lote se resuelve al colocar, con el stop ya escrito
-        o = ctx.orden
-        if o is None:
-            z = _zona(ligaduras, "Z", "dimensionar_lote", estado)
-            o = ctx.orden = OrdenEnPreparacion(z)
+        # ADR-0053 §1.1: se anota y el lote se resuelve al colocar, con el stop ya escrito.
+        # RN-011 PREPARA la orden de la zona que liga, y siempre de cero: una preparacion
+        # anterior que un gate no dejo enviar (RN-015 apaga `orden_dimensionada`, ADR-0032) no
+        # se arrastra a la zona siguiente. Con una zona por dia no podia pasar; desde A-46
+        # cada sesion liga la suya.
+        o = ctx.orden = OrdenEnPreparacion(_zona(ligaduras, "Z", "dimensionar_lote", estado))
         o.lotaje = (
             registro.opcion(str(args["base"])),
             registro.porcentaje(str(args["riesgo"])).valor,

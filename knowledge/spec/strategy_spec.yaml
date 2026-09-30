@@ -448,8 +448,9 @@ tokens:
   al_abrir_sesion:
     descripcion: >-
       el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada:
-      la regla que lo produce lo vuelve a fijar en ese mismo evento y ningun gate lee el de la
-      sesion anterior (ADR-0049, H1). Hoy solo lo declara `sesgo`
+      ningun gate lee el de la sesion anterior (ADR-0049, H1). Lo declaran `sesgo`, que RN-003
+      vuelve a fijar en ese mismo evento, y desde el 2026-09-30 `liquidez_tomada`, que se queda
+      apagado hasta que la sesion tome su propia liquidez (A-46 RESUELTA)
     clase: caducidad
   por_encima:
     descripcion: el lado de un nivel que queda por encima del precio
@@ -541,6 +542,8 @@ efectos:
     descripcion: mirar M1 en busca de un esquema de entrada
 
 hechos:
+  # `caduca` desde el 2026-09-30 tambien en `liquidez_tomada` (A-46 RESUELTA, ADR-0055 §4): cada
+  # sesion es un escenario propio.
   # `origen` (ADR-0032): `regla` -lo fija una forma, y `produce` se compara con las formas- o
   # `broker` -lo lee el motor del estado de ordenes y posiciones (ADR-0028 §5)-. Uno de origen
   # broker NO lleva `produce`: ninguna forma puede fijarlo, y `lo_provoca` dice que accion lo hace
@@ -628,9 +631,15 @@ hechos:
       dos esquemas de entrada y de colocar la orden: sin ella no se mira M1. Hasta el 2026-09-11 esta
       condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma
       leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consumen los
-      predicados `se_da_esquema` y `toca_colocar_orden_limite` (`depende_de`), no una regla
+      predicados `se_da_esquema` y `toca_colocar_orden_limite` (`depende_de`), no una regla.
+      CADUCA AL ABRIR CADA SESION desde el 2026-09-30 (rama trabajo/nocturno-01oct): para el
+      trader cada sesion es un escenario propio -«cada uno es un mundo diferente», A-46 RESUELTA,
+      fb-2026-09-29-sesion-03-5021677e-, asi que una toma de la primera sesion no vale en la
+      segunda. Era la deuda de ADR-0055 §4: con la toma de la manana viva, RN-008 y RN-009 leian
+      esa toma en la segunda sesion y RN-011 no podia disparar, porque su breaker ya habia pasado
     origen: regla
     valores: ["si"]
+    caduca: al_abrir_sesion
     produce: [RN-004]
     consume: [predicado se_da_esquema, predicado toca_colocar_orden_limite]
 
