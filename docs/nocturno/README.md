@@ -9,4 +9,7 @@ anotado para la mañana.
 - `PLAN-01oct.md` · qué funcionalidades se intentan la noche del 30 de septiembre al 1 de octubre de
   2026, en qué orden y con qué criterios de aceptación.
 - `INFORME-01oct.md` · lo terminado, lo bloqueado, las decisiones de interpretación y las preguntas
-  para Aleks. Se escribe al cerrar la noche.
+  para Aleks. Empieza por el cierre de `trabajo/memoria-suite`, que dejó la CI de `main` en rojo.
+- `BRECHA-EN-VIVO.md` · inventario de lo que falta entre el código y ejecutar en vivo en FTMO:
+  qué hay, qué falta, qué funcionalidad del plan lo cubre y qué decisiones hacen falta. Solo
+  documento.
