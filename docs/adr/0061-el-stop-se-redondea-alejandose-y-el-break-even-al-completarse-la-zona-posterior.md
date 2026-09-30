@@ -4,13 +4,7 @@ date: 2026-09-30
 phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 ---
 
-# 0061 · El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior (PROPUESTO: pendiente de aceptación del consultor)
-
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 30 de septiembre al 1 de octubre de
-> 2026 (`docs/nocturno/PLAN-01oct.md`, F34). Lleva al motor dos cosas de la gestión que la spec dice
-> desde la sesión 3. Lo que el trader no dijo va marcado **DECISIÓN NOCTURNA**, con la lectura
-> razonable anotada. Lo acepta o corrige el consultor. El campo `status` dice ACTIVE solo porque la
-> guardia de ADR (`tests/unit/test_adr.py`) no admite otro valor.
+# 0061 · El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior
 
 ## Decision
 
@@ -27,6 +21,10 @@ hacia la entrada con una línea de código (`ACTIVAR-SESION-03.md` §3, desaline
   al punto entero siguiente; con `hacia_la_entrada`, hacia abajo, que es lo que hacía el código.
 - El lote sale de esa distancia (`lotaje_base` = `hasta_stop_fraccion`, ADR-0020), así que con el
   stop un punto más lejos el lote es un poco menor. El objetivo no cambia: sale de la caja completa.
+- **Enmienda ADR-0029 §3 para el redondeo del stop.** El stop ya no se redondea al punto entero
+  más cercano con el empate en contra del bot: su distancia a la entrada se redondea siempre
+  alejándose de ella, como dice `stop_fraccion_redondeo`. ADR-0029 §3 sigue valiendo para el
+  objetivo, y su §4 para el lote.
 
 ### 2. DECISIÓN NOCTURNA: «lo mínimo posible» es un punto, no un pip entero
 
@@ -34,7 +32,8 @@ El trader dijo «lo mínimo posible [...] si es un pip, un pip y ya está». Se 
 incremento del precio: un punto, la última cifra de la cotización. La otra lectura —redondear al pip
 entero, diez puntos— alejaría el stop hasta nueve puntos más, con stops que miden 15 puntos de
 mediana (`docs/validation/VIABILIDAD-TRADER.md` §2). Si el trader quiso decir pip entero, cambia la
-regla de redondeo, no el parámetro.
+regla de redondeo, no el parámetro. **Aceptada por el consultor el 2026-09-30, y queda además
+como pregunta para la sesión 4 con el trader.**
 
 ### 3. El break even de RN-014 deja de ser un hueco
 
@@ -77,9 +76,10 @@ demo de MetaTrader. `break_even_condicion` (`tocar`) se lee y no cambia nada tod
 ### 6. Lo que NO se decide aquí
 
 - **A-13 sigue ABIERTA** por el corte de audio de v9 0:57:00–0:58:06.
-- **ADR-0029** dice que un nivel se redondea «al punto entero más cercano y, en empate, en contra
-  del bot». El código del stop no hacía eso, sino redondear siempre hacia la entrada; ahora hace lo
-  que dijo el trader. El redondeo del objetivo no se toca.
+- **El redondeo del objetivo.** ADR-0029 dice que un nivel se redondea «al punto entero más
+  cercano y, en empate, en contra del bot». El código del stop no hacía eso, sino redondear
+  siempre hacia la entrada; ahora hace lo que dijo el trader, y para el stop ADR-0029 §3 queda
+  enmendado (§1). El redondeo del objetivo no se toca.
 
 ## Problema que resuelve
 
@@ -141,5 +141,5 @@ even al tocar, que el bróker simulado no podía reproducir porque la regla val�
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE (ACEPTADO por el consultor el 2026-09-30, con sus DECISIONES NOCTURNAS; revisión de
+`feature/nocturno-01oct`, docs/validation/NOCTURNO-01OCT.md)

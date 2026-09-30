@@ -4,13 +4,7 @@ date: 2026-09-30
 phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 ---
 
-# 0062 · La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor (PROPUESTO: pendiente de aceptación del consultor)
-
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 30 de septiembre al 1 de octubre de
-> 2026 (`docs/nocturno/PLAN-01oct.md`, F34, segunda parte). Va en su propio commit a propósito: es
-> la única pieza de la noche que **baja** la cobertura en diagnóstico, y así se puede revisar y
-> revertir sola. Lo acepta o corrige el consultor. El campo `status` dice ACTIVE solo porque la
-> guardia de ADR (`tests/unit/test_adr.py`) no admite otro valor.
+# 0062 · La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor
 
 ## Decision
 
@@ -111,5 +105,5 @@ Next Action A3.c), deja el efecto medido por separado y se puede revertir sin to
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE (ACEPTADO por el consultor el 2026-09-30, con sus DECISIONES NOCTURNAS; revisión de
+`feature/nocturno-01oct`, docs/validation/NOCTURNO-01OCT.md)

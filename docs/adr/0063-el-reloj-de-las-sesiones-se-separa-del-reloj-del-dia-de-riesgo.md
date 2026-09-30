@@ -4,14 +4,7 @@ date: 2026-09-30
 phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 ---
 
-# 0063 · El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` (PROPUESTO: pendiente de aceptación del consultor)
-
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 30 de septiembre al 1 de octubre de
-> 2026 (`docs/nocturno/PLAN-01oct.md`, F36). Es el mecanismo que ADR-0059 pedía como «rama de
-> código», y **no cambia ningún comportamiento**: el selector nace apuntando al reloj que el motor
-> ya usaba. A-42 sigue ABIERTA y bloqueante, y la lectura PROVISIONAL de ADR-0059 sigue sin
-> aplicarse. Lo acepta o corrige el consultor. El campo `status` dice ACTIVE solo porque la guardia
-> de ADR (`tests/unit/test_adr.py`) no admite otro valor.
+# 0063 · El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones`
 
 ## Decision
 
@@ -132,5 +125,5 @@ Sin separar los dos relojes, la lectura de A-42 no se puede aplicar, y ninguna c
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE (ACEPTADO por el consultor el 2026-09-30, con sus DECISIONES NOCTURNAS; revisión de
+`feature/nocturno-01oct`, docs/validation/NOCTURNO-01OCT.md)

@@ -4,14 +4,7 @@ date: 2026-09-30
 phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 ---
 
-# 0060 · El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 (PROPUESTO: pendiente de aceptación del consultor)
-
-> **PROPUESTO.** Escrito en la sesión autónoma de la noche del 30 de septiembre al 1 de octubre de
-> 2026 (`docs/nocturno/PLAN-01oct.md`, F32). Lo que el trader dijo en la sesión 3 ya estaba activado
-> en la spec por `trabajo/activar-sesion-03`; aquí se lleva al motor, y lo que el trader NO dijo se
-> decide con la lectura más conservadora y va marcado **DECISIÓN NOCTURNA**. Lo acepta o corrige el
-> consultor; hasta entonces nada de lo que aquí se fija se toma por aceptado. El campo `status`
-> dice ACTIVE solo porque la guardia de ADR (`tests/unit/test_adr.py`) no admite otro valor.
+# 0060 · El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4
 
 ## Decision
 
@@ -88,6 +81,11 @@ trader no describió ese caso (dijo además que no tiene hora límite para abrir
   reflejado solo cuando la regla lo cita. El motor ya hace lo que dicen; cambiar la `cita` y el
   `literal` de una regla es cosa del consultor. En RN-033 no es trivial: el registro dice que
   siempre hay sesgo, y la regla prohíbe justo en los dos casos que el trader no describió.
+  **Decidido por el consultor el 2026-09-30, al aceptar este ADR:** RN-002 y RN-003 pasan a
+  citar sus CORRECT de la sesión 3 (`fb-2026-09-29-sesion-03-c38c4aef` y
+  `fb-2026-09-29-sesion-03-31fb311f`); RN-033 conserva su cita y su forma, y sus notas dicen
+  que es una guardia del proyecto para los dos casos que el trader no describió (ADR-0044 y
+  este ADR).
 - **El cierre a mercado llega al cierre de la M1**, no al tick (ADR-0053 §2.1, para revisar con la
   demo).
 
@@ -164,5 +162,5 @@ al llegar `ventana_fin`.
 
 ## Estado
 
-ACTIVE (PROPUESTO: pendiente de aceptación del consultor; el campo dice ACTIVE porque la guardia
-de ADR no admite otro valor)
+ACTIVE (ACEPTADO por el consultor el 2026-09-30, con sus DECISIONES NOCTURNAS; revisión de
+`feature/nocturno-01oct`, docs/validation/NOCTURNO-01OCT.md)

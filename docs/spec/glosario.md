@@ -2,7 +2,7 @@
 
 # Glosario: que es cada cosa
 
-`spec_version 14.4.0` · hash `8d2ee93c64df…`
+`spec_version 14.4.1` · hash `303839ff1ae7…`
 
 11 terminos. Aqui se dice QUE es cada cosa, no que se hace con ella -eso son las reglas- ni con que numero -eso es el registro-.
 
