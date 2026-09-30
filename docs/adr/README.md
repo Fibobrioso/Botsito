@@ -66,4 +66,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0060 | El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 (PROPUESTO, sesión nocturna) | ACTIVE |
 | 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior (PROPUESTO, sesión nocturna) | ACTIVE |
 | 0062 | La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor (PROPUESTO, sesión nocturna) | ACTIVE |
+| 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` (PROPUESTO, sesión nocturna) | ACTIVE |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

@@ -59,6 +59,7 @@ from botsito.engine.motor import (
     TrazaSesion,
 )
 from botsito.engine.primitivas import ANOTACION_SESGO
+from botsito.engine.relojes import huso_de_las_sesiones
 
 CARPETA_SALIDA = Path("data") / "visor"  # ignorada por git (`/data/*`)
 INDICE = "index.html"
@@ -266,7 +267,7 @@ class Preparador:
 
     @property
     def huso(self) -> str:
-        return self.registro.texto("huso_operativa")
+        return huso_de_las_sesiones(self.registro)  # el reloj de las sesiones (ADR-0063)
 
     def dias(self, meses: Sequence[str]) -> tuple[DiaTrader, ...]:
         return arnes.dias_de_construccion(self.repo, self.criterio, meses)

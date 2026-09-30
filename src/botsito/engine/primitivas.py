@@ -2,7 +2,9 @@
 
 Hoy son pocas, y todo lo demas es NO_IMPLEMENTADA (ADR-0048 §2):
 
-- de reloj: `abre_sesion_operativa`, `en_ventana`, `alcanza_hora` y `vence_vela_h4`, que
+- de reloj: `abre_sesion_operativa`; `en_ventana` y `alcanza_hora`, que leen el reloj de las
+  sesiones por el selector que la forma nombra (`engine/relojes.py`, ADR-0063); y
+  `vence_vela_h4`, que
   mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002, ADR-0060);
 - de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_previa` y `contra:
   extremo_de_la_h4_anterior`, que es RN-003 y usa `domain/sesgo.py` tal cual (ADR-0044, ADR-0048
@@ -42,6 +44,7 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
+from botsito.engine.relojes import huso_del_reloj
 from botsito.engine.tope_trader import (
     ACUMULADOR_DIA,
     ACUMULADOR_SEMANA,
@@ -139,7 +142,7 @@ def primitivas_escritas(
         dias = DIAS_OPERABLES.get(registro.opcion(str(args["dias"])))
         if dias is None:
             return NoImplementada(f"predicado:en_ventana:{args['dias']}")
-        local = _local(momento.instante, registro.texto(str(args["huso"])))
+        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
         minuto = local.hour * 60 + local.minute
         dentro = inicio <= minuto < fin and local.isoweekday() in dias  # [inicio, fin)
         return Resultado(Tri.SI if dentro else Tri.NO)
@@ -148,7 +151,7 @@ def primitivas_escritas(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
         hora = registro.hora(str(args["hora"])).minutos_del_dia
-        local = _local(momento.instante, registro.texto(str(args["huso"])))
+        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
         return Resultado(Tri.SI if local.hour * 60 + local.minute >= hora else Tri.NO)
 
     def sesgo_h4_al_abrir(

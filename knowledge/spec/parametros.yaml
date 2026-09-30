@@ -205,12 +205,44 @@ parametros:
       cuelgan ventana_inicio y ventana_fin. Es su reloj civil y por tanto cambia con el horario
       de verano. ADR-0005 lo fijo en Europe/Madrid, ADR-0012 lo cambio a un offset fijo apoyandose
       en que "la sesion desmintio Madrid" -que no ocurrio, ver ADR-0015- y ADR-0017 lo revierte:
-      el trader opera siempre a la misma hora SUYA, sea cual sea la fecha
+      el trader opera siempre a la misma hora SUYA, sea cual sea la fecha. DESDE EL 2026-09-30
+      (rama trabajo/nocturno-01oct, ADR-0063) YA NO LO LEE NINGUNA FORMA como reloj de la ventana:
+      ese lo elige reloj_sesiones, que hoy apunta aqui (`civil_operativa`). Este parametro queda
+      como el huso del reloj civil del trader y, con el, del DIA DE RIESGO: es lo que
+      reloj_dia_riesgo declara (ADR-0027) y lo que el cableado compara con el reloj de la firma
+      (ADR-0053 §4). Si A-42 lleva las sesiones al reloj del grafico, este valor NO se toca
     estado: CONFIRMED
     valor: "Europe/Madrid"
+    consumido_por: [ADR-0027, ADR-0053, ADR-0063]
     fuente:
       tipo: decision
       id: ADR-0017
+  - nombre: reloj_sesiones
+    categoria: ejecucion
+    tipo: enum
+    unidad: con que reloj del registro se cuentan la ventana operativa y sus sesiones
+    opciones: [civil_operativa, grafico]
+    descripcion: >-
+      en que reloj caen ventana_inicio y ventana_fin, y con ellas las sesiones del motor.
+      `civil_operativa` es el reloj civil del trader, cuyo huso vive en huso_operativa; `grafico`,
+      el de su grafico, cuyo huso vive en huso_grafico: el huso no se escribe aqui, para no
+      tener dos puertas (ADR-0002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063)
+      para separar este reloj del reloj del dia de riesgo: hasta entonces huso_operativa hacia de
+      los dos y no se podia mover uno sin romper el otro (ADR-0059, desalineacion 9 de
+      docs/validation/ACTIVAR-SESION-03.md). NACE EN `civil_operativa`, LO QUE EL MOTOR YA
+      HACIA, asi que nada cambia todavia. Es un DEFAULT bajo A-42: la lectura PROVISIONAL del
+      consultor (ADR-0059) es que las sesiones van fijas en el reloj del grafico todo el año, y
+      el trader dijo «creo». Cuando se confirme, el valor que cambia es ESTE -a `grafico`-, junto
+      con el `huso` de ventana_inicio y ventana_fin, que un test mantiene iguales al de este
+      reloj; huso_operativa y el corte del dia de la firma no se tocan. La opcion
+      `civil_operativa` se llama igual que la de reloj_dia_riesgo porque es el mismo reloj, leido
+      para otro fin
+    estado: DEFAULT_AMBIGUOUS
+    valor: "civil_operativa"
+    ambiguedad_id: A-42
+    fuente:
+      tipo: decision
+      id: ADR-0063
   - nombre: huso_grafico
     categoria: estrategia
     tipo: texto
@@ -233,9 +265,10 @@ parametros:
       (ADR-0039, knowledge/corpus/libros.yaml)
     estado: CONFIRMED
     valor: "Etc/GMT-2"
-    # documental por ADR-0017: traduce lo que el trader DICE a un instante, no lo ejecuta nadie.
+    # documental por ADR-0017: traduce lo que el trader DICE a un instante. Desde ADR-0063 es
+    # ademas el huso del reloj `grafico` de reloj_sesiones: hoy el selector no apunta aqui.
     # Valor corregido el 2026-09-25 (rama trabajo/sesion-02) por la medida que recoge ADR-0039
-    consumido_por: [ADR-0017]
+    consumido_por: [ADR-0017, ADR-0063]
     fuente:
       tipo: evidence
       id: ev-v4-011425-ae028b78
@@ -274,7 +307,7 @@ parametros:
     categoria: estrategia
     tipo: hora
     huso: Europe/Madrid
-    unidad: hora de reloj de pared del trader (huso_operativa)
+    unidad: hora de reloj de pared, en el reloj que dice reloj_sesiones
     descripcion: >-
       hora a la que el trader empieza a buscar entradas. Es SU horario como persona y no se mueve
       con la fecha, asi que en UTC si se mueve con el cambio de hora (ADR-0017)
@@ -287,7 +320,7 @@ parametros:
     categoria: estrategia
     tipo: hora
     huso: Europe/Madrid
-    unidad: hora de reloj de pared del trader (huso_operativa)
+    unidad: hora de reloj de pared, en el reloj que dice reloj_sesiones
     descripcion: >-
       hora a la que el trader deja de operar y cierra lo que quede abierto. Es SU horario como
       persona, igual que ventana_inicio (A-6, ADR-0017)

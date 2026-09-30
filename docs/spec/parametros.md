@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 14.3.0` · hash `c5d3b0f5734b…`
+`spec_version 14.4.0` · hash `8d2ee93c64df…`
 
-86 en total: 69 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+87 en total: 70 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -63,6 +63,7 @@
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
+| `reloj_sesiones` | `civil_operativa` | DEFAULT_AMBIGUOUS · en revision por A-42 | ejecucion | `ADR-0063` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
 | `reubicacion_cadencia` | `al_romper` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6b29059d` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `riesgo_por_operacion` | `0.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-648ec915` | porcentaje de la cuenta por operacion |
 | `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0026` | USD |
@@ -73,8 +74,8 @@
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
-| `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared del trader (huso_operativa) |
-| `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora de reloj de pared del trader (huso_operativa) |
+| `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
+| `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
 | `zonas_control_max_por_esquema` | `1` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1b2203b0` | zonas de control admitidas dentro de un mismo esquema |
 
@@ -115,7 +116,8 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `firma_noticias_restringe` → F33
 - `firma_programa` → F33
 - `firma_tipo_cuenta` → F33
-- `huso_grafico` → ADR-0017
+- `huso_grafico` → ADR-0017, ADR-0063
+- `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
 - `modelo_llenado` → F24, F27
@@ -316,7 +318,7 @@ como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX R
 
 ### `huso_operativa`
 
-reloj del TRADER como persona: la hora a la que se sienta y a la que cierra, y de la que cuelgan ventana_inicio y ventana_fin. Es su reloj civil y por tanto cambia con el horario de verano. ADR-0005 lo fijo en Europe/Madrid, ADR-0012 lo cambio a un offset fijo apoyandose en que "la sesion desmintio Madrid" -que no ocurrio, ver ADR-0015- y ADR-0017 lo revierte: el trader opera siempre a la misma hora SUYA, sea cual sea la fecha
+reloj del TRADER como persona: la hora a la que se sienta y a la que cierra, y de la que cuelgan ventana_inicio y ventana_fin. Es su reloj civil y por tanto cambia con el horario de verano. ADR-0005 lo fijo en Europe/Madrid, ADR-0012 lo cambio a un offset fijo apoyandose en que "la sesion desmintio Madrid" -que no ocurrio, ver ADR-0015- y ADR-0017 lo revierte: el trader opera siempre a la misma hora SUYA, sea cual sea la fecha. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063) YA NO LO LEE NINGUNA FORMA como reloj de la ventana: ese lo elige reloj_sesiones, que hoy apunta aqui (`civil_operativa`). Este parametro queda como el huso del reloj civil del trader y, con el, del DIA DE RIESGO: es lo que reloj_dia_riesgo declara (ADR-0027) y lo que el cableado compara con el reloj de la firma (ADR-0053 §4). Si A-42 lleva las sesiones al reloj del grafico, este valor NO se toca
 
 ### `instrumento`
 
@@ -453,6 +455,12 @@ Opciones: `si`, `no`.
 en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj. Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita de FTMO dentro de A-28: la medianoche del servidor y la CE(S)T se separan una hora y equivocarse cuesta la cuenta
 
 Opciones: `servidor`, `civil_operativa`.
+
+### `reloj_sesiones`
+
+en que reloj caen ventana_inicio y ventana_fin, y con ellas las sesiones del motor. `civil_operativa` es el reloj civil del trader, cuyo huso vive en huso_operativa; `grafico`, el de su grafico, cuyo huso vive en huso_grafico: el huso no se escribe aqui, para no tener dos puertas (ADR-0002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063) para separar este reloj del reloj del dia de riesgo: hasta entonces huso_operativa hacia de los dos y no se podia mover uno sin romper el otro (ADR-0059, desalineacion 9 de docs/validation/ACTIVAR-SESION-03.md). NACE EN `civil_operativa`, LO QUE EL MOTOR YA HACIA, asi que nada cambia todavia. Es un DEFAULT bajo A-42: la lectura PROVISIONAL del consultor (ADR-0059) es que las sesiones van fijas en el reloj del grafico todo el año, y el trader dijo «creo». Cuando se confirme, el valor que cambia es ESTE -a `grafico`-, junto con el `huso` de ventana_inicio y ventana_fin, que un test mantiene iguales al de este reloj; huso_operativa y el corte del dia de la firma no se tocan. La opcion `civil_operativa` se llama igual que la de reloj_dia_riesgo porque es el mismo reloj, leido para otro fin
+
+Opciones: `civil_operativa`, `grafico`.
 
 ### `reubicacion_cadencia`
 

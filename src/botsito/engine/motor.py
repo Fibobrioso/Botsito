@@ -145,7 +145,7 @@ class DatosMercado:
 @dataclass(frozen=True)
 class DiaDeMercado:
     dia: date
-    huso: str  # el de las sesiones (`huso_operativa`)
+    huso: str  # el del reloj de las sesiones (`engine/relojes.huso_de_las_sesiones`)
     sesiones: tuple[Sesion, ...]
     datos: DatosMercado
 

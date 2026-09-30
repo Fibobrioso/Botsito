@@ -298,7 +298,15 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     from botsito.config.registro import ParametroDesconocidoError, cargar_registro
     from botsito.domain.estructura_m1 import detectar_esquema
     from botsito.domain.pivotes_m15 import CIERRE_VELA_CONTRARIA
-    from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, zonas
+    from botsito.engine import (
+        arnes,
+        cableado,
+        diagnostico,
+        entrada,
+        relojes,
+        tope_trader,
+        zonas,
+    )
     from botsito.engine.broker import RECHAZADA
     from botsito.engine.diagnostico import A44_SIN_TOPE, Diagnostico
     from botsito.engine.interprete import reglas_ejecutables
@@ -342,7 +350,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47)
     carpeta = carpeta_datos(raiz)
     mercado = arnes.dias_de_mercado(
-        raiz, carpeta, config, registro, dias, registro.texto("huso_operativa"), lectura
+        raiz, carpeta, config, registro, dias, relojes.huso_de_las_sesiones(registro), lectura
     )
     motor = cableado.construir_motor_cableado(
         raiz, carpeta, criterio, config, registro, vocabulario, reglas, dias, perfil, None, False,

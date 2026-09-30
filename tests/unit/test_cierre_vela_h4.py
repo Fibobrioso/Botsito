@@ -131,7 +131,7 @@ def test_la_forma_de_rn002_nombra_la_rejilla_y_conserva_el_fin_de_la_ventana() -
     assert rn002.clase == "terminal" and rn002.vigente and isinstance(rn002.forma, dict)
     llamadas: dict[str, dict[str, Any]] = dict(_invocaciones(rn002.forma["cuando"]))
     assert llamadas["vence_vela_h4"] == ARGS
-    assert llamadas["alcanza_hora"] == {"hora": "ventana_fin", "huso": "huso_operativa"}
+    assert llamadas["alcanza_hora"] == {"hora": "ventana_fin", "reloj": "reloj_sesiones"}
     assert {"anclaje_h4", PARAMETRO, "ventana_fin"} <= set(rn002.parametros)
     # el cierre depende de la posicion viva, que sigue ligada en el `todos_de` de la raiz
     assert {"hecho": "operacion_abierta", "liga": "OP"} in rn002.forma["cuando"]["todos_de"]

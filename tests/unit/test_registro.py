@@ -465,9 +465,14 @@ def test_la_ventana_y_la_rejilla_h4_no_cuelgan_del_mismo_reloj(repo: Path) -> No
     la confusion que costo cinco meses de velas H4 mal repartidas. La ventana es el horario del
     trader como persona (`huso_operativa`); la rejilla H4 es la medianoche del servidor. Que
     coincidan 337 dias al año no los hace el mismo reloj.
+
+    Desde ADR-0063 el reloj de la ventana lo elige `reloj_sesiones`: hoy es el civil del
+    trader, y si A-42 lo lleva al del grafico, las dos horas tienen que declarar ese huso.
     """
+    from botsito.engine.relojes import huso_de_las_sesiones
+
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    operativa = r.texto("huso_operativa")
+    operativa = huso_de_las_sesiones(r)
     for nombre in ("ventana_inicio", "ventana_fin"):
         assert r.hora(nombre).huso == operativa, nombre
     assert r.hora("anclaje_h4").huso != operativa, (

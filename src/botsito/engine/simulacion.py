@@ -41,6 +41,7 @@ from botsito.engine.broker import PARAMETRO_STOPS_LEVEL, Broker, ReglasBroker
 from botsito.engine.cuenta import Operacion, ReglasFase, ResultadoFase, evaluar_fase
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import PerfilCuenta
+from botsito.engine.relojes import huso_de_las_sesiones
 from botsito.engine.visor import _minuto_local, caso_de_construccion
 
 
@@ -131,7 +132,7 @@ def mercado_de_construccion(
     """El mercado de un dia dev de construccion, por la compuerta del arnes."""
     dt: DiaTrader = caso_de_construccion(repo, criterio, caso)
     dia = date.fromisoformat(dt.dia)
-    huso = registro.texto("huso_operativa")
+    huso = huso_de_las_sesiones(registro)  # la ventana del dia, en el reloj de las sesiones
     desde = _minuto_local(dia, config.ventana_local[0], huso)
     hasta = _minuto_local(dia, config.ventana_local[1], huso)
     try:

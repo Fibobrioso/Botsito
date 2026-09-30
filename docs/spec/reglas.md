@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 14.3.0` · hash `c5d3b0f5734b…`
+`spec_version 14.4.0` · hash `8d2ee93c64df…`
 
 28 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -11,12 +11,12 @@
 ### RN-001 · la ventana operativa es el horario del trader, no el de las velas
 
 - **Clase**: `gate`
-- **Cuando**: la hora de pared en huso_operativa esta en el intervalo MEDIO ABIERTO que empieza en ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de dias_operables
+- **Cuando**: la hora de pared, en el reloj que dice reloj_sesiones, esta en el intervalo MEDIO ABIERTO que empieza en ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de dias_operables
 - **Entonces**: el bot busca entradas; fuera de ese intervalo no opera
-- **Parametros**: `ventana_inicio`, `ventana_fin`, `huso_operativa`, `dias_operables`
+- **Parametros**: `ventana_inicio`, `ventana_fin`, `reloj_sesiones`, `dias_operables`
 - **Cita**: `fb-2026-09-09-sesion-01-8741c388` — *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*
 - **Decision**: `ADR-0017` — dice mas que su cita, y lo declara
-- **Notas**: manda SU horario, no la rejilla. La ventana coincide con dos velas H4 completas 337 dias al año; los otros 28 -del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- el ancla se ve a las 22:00 y el bot empieza una hora DENTRO de la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre
+- **Notas**: manda SU horario, no la rejilla. La ventana coincide con dos velas H4 completas 337 dias al año; los otros 28 -del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- el ancla se ve a las 22:00 y el bot empieza una hora DENTRO de la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063, PROPUESTO) EL RELOJ DE LA VENTANA LO ELIGE reloj_sesiones y ya no es huso_operativa, que se queda como reloj del dia de riesgo. Nace en `civil_operativa`, asi que NADA CAMBIA todavia: es el mecanismo que ADR-0059 pedia para poder aplicar, cuando se confirme, la lectura de A-42 -las sesiones en el reloj del grafico- sin mover el corte del dia de la firma
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -30,8 +30,8 @@
             "en_ventana": {
               "dias": "dias_operables",
               "fin": "ventana_fin",
-              "huso": "huso_operativa",
-              "inicio": "ventana_inicio"
+              "inicio": "ventana_inicio",
+              "reloj": "reloj_sesiones"
             }
           }
         ]
@@ -59,9 +59,9 @@
 ### RN-002 · toda operacion se cierra antes de que termine su vela H4, y lo que quede, al llegar el fin de la ventana
 
 - **Clase**: `terminal`
-- **Cuando**: quedan operaciones abiertas y, o bien a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared en huso_operativa alcanza ventana_fin
+- **Cuando**: quedan operaciones abiertas y, o bien a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin
 - **Entonces**: se cierra a mercado si cierre_forzoso_fin_ventana
-- **Parametros**: `ventana_fin`, `cierre_forzoso_fin_ventana`, `huso_operativa`, `anclaje_h4`, `cierre_h4_antelacion`
+- **Parametros**: `ventana_fin`, `cierre_forzoso_fin_ventana`, `reloj_sesiones`, `anclaje_h4`, `cierre_h4_antelacion`
 - **Cita**: `fb-2026-09-09-sesion-01-ffb528d7` — *«la operativa se cierra a las 3pm en punto»*
 - **Decision**: `ADR-0017` — dice mas que su cita, y lo declara
 - **Notas**: "las 3pm" son las suyas: la hora de pared en huso_operativa, que cambia con el horario de verano igual que la de cualquiera (ADR-0017) DESDE EL 2026-09-29 (sesion 3, S-1; fb-2026-09-29-sesion-03-c38c4aef, ev-v9-002735-472432b8): el trader cierra TODA operacion un minuto antes de que termine su vela H4 -«siempre menos un minuto, antes de que cierre la sesión de cuatro horas»-, este donde este y sea cual sea el sesgo siguiente; y no tiene hora limite para abrir (A-30, ev-v9-012514-b5b6c84f). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060, PROPUESTO) LA FORMA LO HACE: `vence_vela_h4` da SI cuando a la vela H4 en curso le queda cierre_h4_antelacion o menos, sobre la rejilla de anclaje_h4 -la del sesgo, no la de la ventana-, y tambien en el propio limite, para que nada llenado en el ultimo minuto cruce a la vela siguiente. No se toca ventana_fin, que tambien decide que sesiones se operan, y su cierre en punto se conserva como segunda rama. El interruptor es el mismo cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela; A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por la orden pendiente (A-30).
@@ -83,7 +83,7 @@
           {
             "alcanza_hora": {
               "hora": "ventana_fin",
-              "huso": "huso_operativa"
+              "reloj": "reloj_sesiones"
             }
           }
         ]
@@ -1219,13 +1219,13 @@
 ### predicados (25)
 
 - **`abre_sesion_operativa`** — empieza una de las sesiones de la ventana Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
-- **`alcanza_hora`** — la hora de pared llega al instante declarado Argumentos: `hora`, `huso`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
+- **`alcanza_hora`** — la hora de pared, en el reloj que dice `reloj`, llega al instante declarado Argumentos: `hora`, `reloj`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
 - **`alcanza_nivel`** — el precio llega al nivel marcado: la ultima vela de M1 cerrada lo toca, aunque sea solo con la mecha Argumentos: `que`. Fuente: `mercado`. Cita `ev-v3-001600-ed45b091`: *«yo no busco entrada aquí todo lo que se desarrolle dentro o sea por debajo de m15 [...] de esta liquidez de m15 es ruido»*.
 - **`alcanza_tope`** — un acumulador llega al tope declarado Argumentos: `acumulador`, `tope`. Fuente: `acumulador`. Cita `fb-2026-09-09-sesion-01-bff260ea`: *«De la cuenta basado en el saldo, y que sea en el saldo inicial del día»*.
 - **`contexto_filtrable`** — el spread se ensancha por encima de lo tolerable Argumentos: `spread`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-3565552d`: *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*.
 - **`cruza`** — el precio pasa al otro lado del nivel con el criterio declarado, mirado en la ultima vela de M1 cerrada y no en la de M15 (A-45 RESUELTA en la sesion 3; cierra lo PROVISIONAL de ADR-0054 §4) Argumentos: `que`, `criterio`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-6e15504f`: *«¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o vale con que la mecha lo perfore? Con cuerpo»*.
 - **`distancia_menor_que`** — el nivel que pide la spec queda mas cerca del precio que el minimo del broker; el minimo viene en puntos y `digitos` lo traduce a precio Argumentos: `que`, `tope`, `digitos`. Fuente: `bot`. Lo provoca la accion: escribir_stop_en_la_orden, fijar_objetivo. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
-- **`en_ventana`** — la hora de pared cae en el intervalo medio abierto [inicio, fin) Argumentos: `inicio`, `fin`, `huso`, `dias`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
+- **`en_ventana`** — la hora de pared, en el reloj que dice `reloj`, cae en el intervalo medio abierto [inicio, fin). `reloj` es un selector del registro: dice con cual de sus relojes se cuenta, y el huso de cada reloj vive en su propio parametro (ADR-0063) Argumentos: `inicio`, `fin`, `reloj`, `dias`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
 - **`ninguna_regla_de_entrada_aplica`** — la situacion no encaja en ningun esquema Fuente: `motor`. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
 - **`no_cabe_la_operacion`** — el acumulador, sumandole el riesgo de la operacion que se va a abrir (riesgo sobre su base), llega al tope menos el margen. Es la lectura PROSPECTIVA: `alcanza_tope` se comprueba antes de abrir y no descuenta la operacion que se abre, por eso un tope se rebasa por construccion Argumentos: `acumulador`, `tope`, `margen`, `riesgo`, `sobre`. Fuente: `acumulador`.
 - **`no_es_multiplo_de`** — el lote calculado no cae en el escalon del broker Argumentos: `que`, `paso`. Fuente: `bot`. Lo provoca la accion: dimensionar_lote. Cita `fb-2026-09-09-sesion-01-17ed6193`: *«el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el acuerdo final»*.

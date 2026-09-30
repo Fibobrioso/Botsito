@@ -9,7 +9,8 @@ milisegundo anterior al cierre de M1 y la cuenta viva recibe sus eventos y marca
 tick); los eventos del broker quedan a disposicion de las primitivas y `EstadoDia.broker` se
 actualiza (ordenes por evento); y el interprete corre el evento del cierre de M1 (estrategia).
 
-UN SOLO RELOJ (§4): el del perfil, comprobado al arrancar contra `huso_operativa`. LA CUENTA
+UN SOLO RELOJ (§4) PARA EL DIA DE RIESGO: el del perfil, comprobado al arrancar contra
+`huso_operativa`. El de las sesiones es otro y lo elige `reloj_sesiones` (ADR-0063). LA CUENTA
 PERSISTE en toda la corrida; el estado de estrategia y el broker empiezan cada dia de cero (§6).
 TICKS OBLIGATORIOS (§7): un dia sin dataset de ticks se rechaza salvo en modo depuracion, y
 entonces toda la salida lo dice. SOLO CONSTRUCCION, por la compuerta del arnes (§8).
@@ -324,8 +325,9 @@ class MotorCableado:
 def comprobar_reloj_unico(
     registro: Registro, reglas_fase: ReglasFase, mercados: Mapping[str, MercadoDia]
 ) -> None:
-    """ADR-0053 §4: el reloj del perfil y `huso_operativa` tienen que dar la misma medianoche en
-    cada dia de la corrida; si no, el cableado se niega."""
+    """ADR-0053 §4: el reloj del perfil y `huso_operativa` -el del DIA DE RIESGO- tienen que dar
+    la misma medianoche en cada dia de la corrida; si no, el cableado se niega. El reloj de las
+    sesiones no entra aqui: puede ser otro (`reloj_sesiones`, ADR-0063)."""
     operativa = huso_canonico(registro.texto("huso_operativa"))
     for clave in sorted(mercados):
         d = date.fromisoformat(clave)

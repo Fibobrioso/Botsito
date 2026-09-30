@@ -116,16 +116,19 @@ predicados:
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
 
   en_ventana:
-    descripcion: la hora de pared cae en el intervalo medio abierto [inicio, fin)
-    argumentos: [inicio, fin, huso, dias]
+    descripcion: >-
+      la hora de pared, en el reloj que dice `reloj`, cae en el intervalo medio abierto
+      [inicio, fin). `reloj` es un selector del registro: dice con cual de sus relojes se cuenta,
+      y el huso de cada reloj vive en su propio parametro (ADR-0063)
+    argumentos: [inicio, fin, reloj, dias]
     fuente: reloj
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
       sesiones
   alcanza_hora:
-    descripcion: la hora de pared llega al instante declarado
-    argumentos: [hora, huso]
+    descripcion: la hora de pared, en el reloj que dice `reloj`, llega al instante declarado
+    argumentos: [hora, reloj]
     fuente: reloj
     cita: fb-2026-09-09-sesion-01-ffb528d7
     literal: la operativa se cierra a las 3pm en punto
@@ -708,11 +711,11 @@ reglas:
   - id: RN-001
     titulo: la ventana operativa es el horario del trader, no el de las velas
     cuando: >-
-      la hora de pared en huso_operativa esta en el intervalo MEDIO ABIERTO que empieza en
-      ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
+      la hora de pared, en el reloj que dice reloj_sesiones, esta en el intervalo MEDIO ABIERTO que
+      empieza en ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
       dias_operables
     entonces: el bot busca entradas; fuera de ese intervalo no opera
-    parametros: [ventana_inicio, ventana_fin, huso_operativa, dias_operables]
+    parametros: [ventana_inicio, ventana_fin, reloj_sesiones, dias_operables]
     cita: fb-2026-09-09-sesion-01-8741c388
     literal: >-
       Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos
@@ -722,7 +725,12 @@ reglas:
       año; los otros 28 -del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no
       cambian la hora el mismo dia- el ancla se ve a las 22:00 y el bot empieza una hora DENTRO de
       la vela. Se decidio asi a proposito el 2026-09-10: el trader se sienta a su hora, sea cual
-      sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre
+      sea la fecha (ADR-0017). El titulo anterior afirmaba una alineacion que no es cierta siempre.
+      DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063, PROPUESTO) EL RELOJ DE LA VENTANA
+      LO ELIGE reloj_sesiones y ya no es huso_operativa, que se queda como reloj del dia de
+      riesgo. Nace en `civil_operativa`, asi que NADA CAMBIA todavia: es el mecanismo que
+      ADR-0059 pedia para poder aplicar, cuando se confirme, la lectura de A-42 -las sesiones en
+      el reloj del grafico- sin mover el corte del dia de la firma
     decision: ADR-0017
     forma:
       cuando:
@@ -731,7 +739,7 @@ reglas:
               - en_ventana:
                   inicio: ventana_inicio
                   fin: ventana_fin
-                  huso: huso_operativa
+                  reloj: reloj_sesiones
                   dias: dias_operables
           - hecho: detenido_por_tope
           - hecho: detenido_por_tope_total
@@ -747,13 +755,13 @@ reglas:
       de la ventana
     cuando: >-
       quedan operaciones abiertas y, o bien a la vela H4 en curso -en la rejilla de anclaje_h4- le
-      queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared en huso_operativa
-      alcanza ventana_fin
+      queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared, en el reloj que
+      dice reloj_sesiones, alcanza ventana_fin
     entonces: se cierra a mercado si cierre_forzoso_fin_ventana
     parametros:
       - ventana_fin
       - cierre_forzoso_fin_ventana
-      - huso_operativa
+      - reloj_sesiones
       - anclaje_h4
       - cierre_h4_antelacion
     cita: fb-2026-09-09-sesion-01-ffb528d7
@@ -780,7 +788,7 @@ reglas:
         todos_de:
           - cualquiera_de:
               - vence_vela_h4: {anclaje: anclaje_h4, antelacion: cierre_h4_antelacion}
-              - alcanza_hora: {hora: ventana_fin, huso: huso_operativa}
+              - alcanza_hora: {hora: ventana_fin, reloj: reloj_sesiones}
           - hecho: operacion_abierta
             liga: OP
       entonces:

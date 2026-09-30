@@ -53,6 +53,7 @@ from botsito.engine.motor import (
     TrazaSesion,
 )
 from botsito.engine.primitivas import ANOTACION_DOBLE_RUPTURA, primitivas_escritas
+from botsito.engine.relojes import huso_de_las_sesiones
 from botsito.spec.modelo import (
     FICHERO_SPEC,
     Regla,
@@ -406,7 +407,9 @@ def test_las_sesiones_del_kit_cubren_exactamente_la_ventana_operativa(registro: 
         assert anterior.hasta == siguiente.desde, (anterior, siguiente)  # ni hueco ni solape
     for s in sesiones:
         assert s.desde < s.hasta, s  # "HH:MM" se ordena como texto
-    assert inicio.huso == fin.huso == registro.texto("huso_operativa")
+    # el huso de las dos horas es el del reloj de las sesiones (ADR-0063), no el del dia de
+    # riesgo: hoy coinciden, y el dia que A-42 los separe esta guardia obliga a moverlos juntos
+    assert inicio.huso == fin.huso == huso_de_las_sesiones(registro)
 
 
 # ------------------------------------------------------------------------------------- H3
