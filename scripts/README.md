@@ -66,5 +66,14 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   cuatro variantes del stop de A-18, sobre las mismas 77 operaciones de `viabilidad_trader.py` (cuyo
   `cargar` reutiliza). Solo lee; escribe en `--salida` (`docs/validation/VIABILIDAD-COMISION.md`).
   Sus resultados NO se ensenan al trader.
+- `caja_77.py`: R1 a R6 de `BLOQUE-DE-LA-CAJA.md` §1.4 (las funciones de `bloque_de_la_caja.py`,
+  importadas) frente a la caja del trader reconstruida desde el libro en las 77 operaciones de
+  construccion, con el stop leido como el 0,8 y como el 1; el control sobre las cajas leidas en
+  pantalla, el veredicto con el umbral pre-registrado y las sensibilidades. Solo lee; escribe en
+  `--salida` (`docs/validation/CAJA-77.md`).
+- `caja_77_exploratoria.py`: la parte EXPLORATORIA de CAJA-77 (§3), posterior al resultado: «solo el
+  0» por direccion, el placebo del 0 con la entrada desplazada y el pivote de R5 frente a la
+  referencia del breaker del productor. Importa `caja_77.py` sin tocarlo; solo lee y escribe en
+  `--salida`.
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
