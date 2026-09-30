@@ -20,9 +20,15 @@ vale en la siguiente. Por sesion (`memoria_de_sesion`):
 Y del dia entero: `zonas`, las `Zona` ligadas por `toca_colocar_orden_limite`, que las acciones
 del cableado leen; sus ids no se repiten entre sesiones.
 
-`orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): solo `al_darse_el_esquema` esta escrito; con
-`al_tomarse_la_liquidez` la primitiva queda NO_IMPLEMENTADA con nombre.
-`se_completa_zona_de_control` (RN-006, la reubicacion) sigue NO_IMPLEMENTADA.
+`orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): `al_darse_el_esquema` coloca en el cierre del
+breaker, en el 0 del bloque de origen, como siempre; `al_tomarse_la_liquidez` queda NO_IMPLEMENTADA
+con nombre. `al_aparecer_punto_de_breaker` es LA VIDA DE LA ORDEN STOP (ADR-0056 §7, ADR-0064): tras
+la toma de la sesion, la orden nace en el posible punto de breaker que dice `orden_stop_punto`
+-`ultimo_pivote_m1`, el ultimo pivote de M1 contrario a la entrada (la funcion de R5), o
+`referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con la caja que dice
+`caja_bloque` (R6, R4 o R1 de CAJA-77), y cada punto nuevo liga una zona nueva (`zona_del_punto`),
+que RN-006 usa para reubicarla. Un punto ya usado -colocado, aceptado o rechazado- no se vuelve a
+colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`).
 """
 
 from __future__ import annotations
@@ -35,9 +41,12 @@ from botsito.config.registro import ParametroDesconocidoError, Registro
 from botsito.domain.estructura_m1 import (
     COMPRA,
     LECTURAS_LIMPIA,
+    PRIMER_ESQUEMA,
     VENTA,
     Esquema,
     detectar_esquema,
+    extremo_de_la_caja,
+    ultimo_punto_de_ruptura,
 )
 from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote
 from botsito.domain.velas import Vela
@@ -48,6 +57,12 @@ ETIQUETA_A21 = "DIAGNOSTICO-A21"
 HECHO_LIQUIDEZ_TOMADA = "liquidez_tomada"
 HECHO_SESGO = "sesgo"
 AL_DARSE_EL_ESQUEMA = "al_darse_el_esquema"
+AL_APARECER_PUNTO_DE_BREAKER = "al_aparecer_punto_de_breaker"
+PARAMETRO_MOMENTO = "orden_limite_nace"
+PARAMETRO_PUNTO = "orden_stop_punto"
+PARAMETRO_BLOQUE = "caja_bloque"
+ULTIMO_PIVOTE_M1 = "ultimo_pivote_m1"
+REFERENCIA_DE_LA_TOMA = "referencia_de_la_toma"
 CUALQUIER_ESQUEMA = "cualquier_esquema"
 PREFIJO_ZONA = "zona:"
 POR_SESION = "por_sesion"
@@ -189,6 +204,59 @@ def _esquema(
     return esquema
 
 
+def orden_nace_en_el_punto(registro: Registro) -> bool:
+    """Con `al_aparecer_punto_de_breaker` corre la vida de la orden stop (ADR-0064)."""
+    return registro.opcion(PARAMETRO_MOMENTO) == AL_APARECER_PUNTO_DE_BREAKER
+
+
+def zona_del_punto(registro: Registro, momento: Momento, estado: EstadoDia) -> Zona | None:
+    """La zona del posible punto de breaker de ESTA sesion en este instante (ADR-0064), o None si
+    todavia no hay toma, ni punto, ni caja con altura. Solo M1 cerradas. La misma para el mismo
+    punto: se liga una vez, con la caja del primer instante en que se ve, y el id no se repite en
+    el dia; asi es idempotente, como pide el interprete (ADR-0055 §1)."""
+    datos = momento.datos
+    toma = _anotar_toma(datos, momento, estado)
+    if toma is None:
+        return None
+    instante = int(momento.instante)
+    m1 = datos.m1_entre(toma["instante"] - LOOKBACK_M1, instante)
+    idx_toma = next((k for k, v in enumerate(m1) if int(v.fin) == toma["instante"]), None)
+    if idx_toma is None:
+        return None
+    lado = str(toma["lado"])
+    lectura = registro.opcion(PARAMETRO_PUNTO)
+    if lectura not in (ULTIMO_PIVOTE_M1, REFERENCIA_DE_LA_TOMA):
+        raise ValueError(f"{PARAMETRO_PUNTO} = {lectura!r}: lectura sin contrato")
+    hasta = idx_toma + 1 if lectura == REFERENCIA_DE_LA_TOMA else None
+    punto = ultimo_punto_de_ruptura(m1, lado, hasta)
+    if punto is None:
+        return None
+    mem = _de_la_sesion(estado, momento.sesion)
+    puntos = mem.setdefault("puntos", {})
+    zonas = _memoria(estado).setdefault("zonas", {})
+    clave = f"{punto.nivel}@{int(punto.contraria_inicio)}"
+    id = puntos.get(clave)
+    if id is None:
+        extremo = extremo_de_la_caja(m1, lado, punto, registro.opcion(PARAMETRO_BLOQUE))
+        if extremo is None:
+            return None
+        id = f"{PREFIJO_ZONA}{len(zonas) + 1}"
+        puntos[clave] = id
+        zonas[id] = Zona(
+            id, lado, punto.nivel, extremo, PRIMER_ESQUEMA, int(m1[punto.marca].inicio), instante
+        )
+    return cast(Zona, zonas[id])
+
+
+def marcar_usada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
+    """La orden de esta zona ya se envio, aceptada o rechazada: su punto no se vuelve a colocar."""
+    _de_la_sesion(estado, sesion).setdefault("usadas", set()).add(zona_id)
+
+
+def zonas_usadas(estado: EstadoDia, sesion: str | None) -> frozenset[str]:
+    return frozenset(_de_la_sesion(estado, sesion).get("usadas", set()))
+
+
 def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
     """Los predicados de la geometria de la entrada, con la lectura de A-21 dada."""
     if limpia not in LECTURAS_LIMPIA:
@@ -226,6 +294,11 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
         momento_orden = registro.opcion(str(args["momento"]))
+        if momento_orden == AL_APARECER_PUNTO_DE_BREAKER:
+            z = zona_del_punto(registro, momento, estado)
+            if z is None or z.id in zonas_usadas(estado, momento.sesion):
+                return Resultado(Tri.NO)
+            return Resultado(Tri.SI, {str(args.get("liga", "Z")): z.id})
         if momento_orden != AL_DARSE_EL_ESQUEMA:
             return NoImplementada(f"predicado:toca_colocar_orden_limite:{momento_orden}")
         criterio = registro.opcion("breaker_m1_criterio_ruptura")
@@ -252,9 +325,15 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
     def se_desarrolla_en_el_lado_de_ruido(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
-        criterio = registro.opcion("breaker_m1_criterio_ruptura")
-        tope = registro.entero("zonas_control_max_por_esquema")
-        e = _esquema(momento.datos, momento, estado, criterio, tope, limpia)
+        # Con la vida de la orden stop la zona es la del punto (ADR-0064, DECISION: RN-005 se
+        # aplica a ella, la lectura mas conservadora); con el esquema, la del esquema
+        e: Esquema | Zona | None
+        if orden_nace_en_el_punto(registro):
+            e = zona_del_punto(registro, momento, estado)
+        else:
+            criterio = registro.opcion("breaker_m1_criterio_ruptura")
+            tope = registro.entero("zonas_control_max_por_esquema")
+            e = _esquema(momento.datos, momento, estado, criterio, tope, limpia)
         toma = _de_la_sesion(estado, momento.sesion).get("toma")
         if e is None or toma is None:
             return Resultado(Tri.NO)
@@ -263,8 +342,16 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         ruido = e.entrada > toma["nivel"] if e.lado == COMPRA else e.entrada < toma["nivel"]
         return Resultado(Tri.SI if ruido else Tri.NO)
 
+    def la_orden_nace_antes_del_esquema(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # RN-008 no frena la colocacion de la orden stop en el punto (ADR-0056 §7, ADR-0064)
+        nace = registro.opcion(str(args["momento"])) == AL_APARECER_PUNTO_DE_BREAKER
+        return Resultado(Tri.SI if nace else Tri.NO)
+
     return {
         "se_da_esquema": se_da_esquema,
+        "la_orden_nace_antes_del_esquema": la_orden_nace_antes_del_esquema,
         "zonas_desarrolladas_superan": zonas_desarrolladas_superan,
         "toca_colocar_orden_limite": toca_colocar_orden_limite,
         "se_desarrolla_en_el_lado_de_ruido": se_desarrolla_en_el_lado_de_ruido,
@@ -277,15 +364,25 @@ def zonas_del_dia(estado: EstadoDia) -> dict[str, Zona]:
 
 
 __all__ = [
+    "AL_APARECER_PUNTO_DE_BREAKER",
     "AL_DARSE_EL_ESQUEMA",
     "ETIQUETA_A21",
     "LADO_ENTRADA",
     "PARAMETRO_A21",
+    "PARAMETRO_BLOQUE",
+    "PARAMETRO_MOMENTO",
+    "PARAMETRO_PUNTO",
+    "REFERENCIA_DE_LA_TOMA",
+    "ULTIMO_PIVOTE_M1",
     "DiagnosticoDeZonaRechazadoError",
     "SinLecturaDeZonaError",
     "Zona",
     "lectura_limpia",
+    "marcar_usada",
     "memoria_de_sesion",
+    "orden_nace_en_el_punto",
     "primitivas_zona",
+    "zona_del_punto",
     "zonas_del_dia",
+    "zonas_usadas",
 ]

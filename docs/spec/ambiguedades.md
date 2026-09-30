@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 14.4.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
@@ -103,6 +103,8 @@ Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxim
 ### A-48 · qué velas forman el bloque de la caja · pregunta
 
 Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y el 1?
+
+Afecta a: `orden_stop_punto`, `caja_bloque`.
 
 ### A-49 · si la caja se traza con la vela del bloque cerrada o en formación · pregunta
 
