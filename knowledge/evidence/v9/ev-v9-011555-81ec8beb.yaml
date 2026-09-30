@@ -1,0 +1,18 @@
+id: ev-v9-011555-81ec8beb
+video_id: v9
+t0: '1:15:55'
+t1: '1:16:16'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es indiferente el número de velas o sea, porque nosotros empezamos desde nuestro punto de
+  breaker es el punto más alto
+afirmacion: 'el numero de velas del bloque es indiferente: la caja va desde el punto de breaker hasta
+  el punto mas alto'
+tema: entrada.bloque.numero_de_velas
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-21. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

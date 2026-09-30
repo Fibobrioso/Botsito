@@ -1,0 +1,18 @@
+id: ev-v9-011139-a26a5b11
+video_id: v9
+t0: '1:11:39'
+t1: '1:11:56'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: 9 pérdidas seguidas O en un día Seguidas Si son 8 seguidas O sea, nada, no se detiene hasta
+  el noveno no el último cartucho es el noveno
+afirmacion: 'las 9 perdidas son seguidas, no en un dia: con 8 seguidas no se detiene y el noveno es el
+  ultimo cartucho'
+tema: riesgo.tope_trader_9_perdidas_seguidas
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-44. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

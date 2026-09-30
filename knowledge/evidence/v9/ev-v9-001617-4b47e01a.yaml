@@ -1,0 +1,17 @@
+id: ev-v9-001617-4b47e01a
+video_id: v9
+t0: 0:16:17
+t1: 0:16:25
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si rompe por los dos, como te digo, importa el color de importa el color de la vela.
+afirmacion: 'si la vela H4 rompe los dos extremos, decide el color de la vela: si cierra roja, la sesion
+  siguiente es bajista; si cierra verde, alcista'
+tema: sesgo.h4.doble_ruptura_color
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-34. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -1,0 +1,17 @@
+id: ev-v9-010541-0c80d5cf
+video_id: v9
+t0: '1:05:41'
+t1: '1:05:50'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Claro, o sea, lo mínimo O sea, lo mínimo posible O sea, si es un pip, un pip y ya está
+afirmacion: cuando el 0,8 no cae en un precio exacto, el stop se redondea un poco mas alla del 0,8 (hacia
+  abajo en compra, hacia arriba en venta), lo minimo posible
+tema: stop.redondeo_08_hacia_fuera
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-18. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

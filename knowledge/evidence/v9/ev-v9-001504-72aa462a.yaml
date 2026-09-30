@@ -1,0 +1,16 @@
+id: ev-v9-001504-72aa462a
+video_id: v9
+t0: 0:15:04
+t1: 0:15:10
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para nosotros poder cambiar el sesgo tendría que finalizar la vela de H4
+afirmacion: 'el sesgo no cambia a mitad de la sesion: para cambiarlo tiene que terminar la vela H4'
+tema: sesgo.h4.no_cambia_en_sesion
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

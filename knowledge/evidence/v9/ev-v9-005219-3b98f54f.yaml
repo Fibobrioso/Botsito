@@ -1,0 +1,16 @@
+id: ev-v9-005219-3b98f54f
+video_id: v9
+t0: 0:52:19
+t1: 0:52:37
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: se pasa a break even cuando en esa vela verde se complete la zona de control
+afirmacion: el break even se pone cuando se completa la zona de control
+tema: break_even.zona_control_completa
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-13. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

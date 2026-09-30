@@ -303,3 +303,69 @@ def test_el_orden_es_el_de_la_hoja_con_a46_tras_a21(m: ModuleType) -> None:
     esperado = list(hoja.ids_en_orden())
     esperado.insert(esperado.index("A-21") + 1, "A-46")
     assert list(m.ORDEN_SESION_02) == esperado
+
+
+# ----------------------------------------------- los codigos de sesion de la hoja 03 (E, S y G)
+
+VALIDOS_03 = (*VALIDOS, "E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3")
+
+
+@pytest.mark.parametrize(
+    ("texto", "codigo"),
+    [
+        ("Pregunta S uno", "S-1"),
+        ("pregunta ese uno", "S-1"),
+        ("pregunta es 1", "S-1"),
+        ("pregunta G dos", "G-2"),
+        ("pregunta ge dos", "G-2"),
+        ("pregunta je tres", "G-3"),
+        ("pregunta G2", "G-2"),
+        ("pregunta E uno", "E-1"),
+        ("pregunta, e 3", "E-3"),
+        ("pregunta A treinta y cinco", "A-35"),  # sin cambios para las A
+        ("pregunta 35", "A-35"),
+    ],
+)
+def test_la_sesion_03_abre_tambien_con_e_s_y_g(m: ModuleType, texto: str, codigo: str) -> None:
+    assert m.codigo_en(texto, VALIDOS_03) == codigo, texto
+
+
+@pytest.mark.parametrize(
+    "texto",
+    [
+        "la pregunta es 1 punto",  # «es» seguido de algo que no es el codigo
+        "pregunta es la uno",
+        "pregunta g 2 puntos",  # una unidad detras: no es un codigo
+        "pregunta s 7",  # no esta en la hoja
+        "vamos con la G dos",  # sin «pregunta» delante
+    ],
+)
+def test_lo_que_no_abre_en_la_sesion_03(m: ModuleType, texto: str) -> None:
+    assert m.codigo_en(texto, VALIDOS_03) is None, texto
+
+
+def test_el_orden_es_el_de_la_hoja_de_la_sesion_03(m: ModuleType) -> None:
+    """El orden del brief del consultor del 2026-09-29, que agrupa la version filtrada."""
+    assert list(m.ORDEN_SESION_03) == [
+        "A-47",
+        "S-1", "A-34", "A-26", "A-39",
+        "A-46", "A-35", "A-45", "A-43", "A-50",
+        "A-13", "A-40", "G-1", "G-2", "A-18", "G-3",
+        "A-42", "A-44",
+        "A-21", "E-1",
+        "A-30", "A-31", "E-2", "E-3", "A-41", "A-38", "A-24", "A-25", "A-37",
+    ]  # fmt: skip
+    assert m.ORDEN_SESION is m.ORDEN_SESION_03
+    assert set(m.CODIGOS_DE_SESION) == {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"}
+    presentes = ["A-99", "G-3", m.SIN_PREGUNTA, "S-1", "A-47", "E-9"]
+    assert m.orden_de_preguntas(presentes) == ["A-47", "S-1", "G-3", "A-99", "E-9", m.SIN_PREGUNTA]
+
+
+def test_los_codigos_de_sesion_llevan_el_texto_de_la_hoja(m: ModuleType) -> None:
+    """E-1, E-2 y E-3 no tenian texto en ningun fichero hasta la revision del consultor del
+    2026-09-29; aqui se fija el de la hoja de la sesion 03, y que todo codigo tiene uno."""
+    assert tuple(m.CODIGOS_DE_SESION_TEXTO) == m.CODIGOS_DE_SESION
+    assert m.CODIGOS_DE_SESION_TEXTO["E-1"] == "tus dos backtests de los mismos días"
+    assert m.CODIGOS_DE_SESION_TEXTO["E-2"] == "cómo operas los equals"
+    assert m.CODIGOS_DE_SESION_TEXTO["E-3"] == "cuando la vela cambia de color"
+    assert all(texto.strip() for texto in m.CODIGOS_DE_SESION_TEXTO.values())

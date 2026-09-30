@@ -1,0 +1,17 @@
+id: ev-v9-001529-ac28bb40
+video_id: v9
+t0: 0:15:29
+t1: 0:15:55
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Siempre va a haber un sesgo, bro, como te digo, o sea, no existe un cejo no claro
+afirmacion: a la pregunta de si deja de operar porque el sesgo no esta claro, el trader responde que siempre
+  hay un sesgo y que no existe un sesgo no claro
+tema: sesgo.siempre_hay_sesgo
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

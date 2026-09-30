@@ -1,0 +1,18 @@
+id: ev-v9-001915-d03d1565
+video_id: v9
+t0: 0:19:15
+t1: 0:19:27
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nosotros el sesgo ya nos define Qué vamos a buscar Luego nos enfocamos solo en M15 Tratar
+  de buscar, o sea, a favor
+afirmacion: 'cuando H4 y M15 van en sentidos contrarios manda el sesgo: el sesgo define que se busca y
+  en M15 solo se busca a favor de el'
+tema: sesgo.h4.m15_a_favor
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-26. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

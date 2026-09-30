@@ -1,0 +1,18 @@
+id: ev-v9-003253-2ac6060a
+video_id: v9
+t0: 0:32:53
+t1: 0:33:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro,
+  exacto.
+afirmacion: el consultor resume que las dos sesiones (7-11 y 11-15) son cada una un mundo diferente y
+  el trader lo confirma con un «Claro, exacto»
+tema: reentrada.sesiones_independientes
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-46. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

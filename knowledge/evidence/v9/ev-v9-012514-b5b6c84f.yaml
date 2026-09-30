@@ -1,0 +1,18 @@
+id: ev-v9-012514-b5b6c84f
+video_id: v9
+t0: '1:25:14'
+t1: '1:25:22'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si hay una operación a tal hora pues que lo tome y ya, que lo cierre antes de las, menos
+  un minuto antes de la próxima sesión
+afirmacion: 'no hay hora limite para abrir: si hay operacion se toma y se cierra un minuto antes de la
+  sesion siguiente'
+tema: ventana.sin_hora_limite_apertura
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-30. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

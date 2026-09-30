@@ -89,6 +89,15 @@ precondición de ceguera.
 5. **Gráficos y septiembre:** reglas 2 y 3.
 6. **Al terminar**, repasar si alguna quedó sin contestar y parar la grabación.
 
+> **Nota de la sesión 3 (2026-09-29, `trabajo/sesion-03`).** Los códigos se dijeron sin «pregunta»
+> delante («A47», «Una A46», «g1») y nunca se dijo «fin de pregunta», así que la detección estricta de
+> `scripts/transcribir_sesion.py` encontró **0 preguntas**. Es lo que tiene que hacer: aflojarla para
+> que case un código suelto devolvería los 17 falsos positivos de la sesión 01. Las respuestas se
+> localizaron a mano en la versión filtrada, usando como anclas los códigos sueltos y el texto de
+> cada pregunta leída (`docs/validation/SESION-03-EXTRACCION.md` §0 y §1). Para que el script
+> separe las preguntas solo, cada una se abre diciendo «pregunta» y el código («pregunta A cuarenta
+> y siete», «pregunta S uno») y se cierra con «fin de pregunta».
+
 ## Después (Aleks y la sesión)
 
 1. **La grabación al corpus** (ADR-0011 §8). Aleks copia el fichero a

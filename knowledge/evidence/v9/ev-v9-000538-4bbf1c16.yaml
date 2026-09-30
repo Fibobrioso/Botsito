@@ -1,0 +1,18 @@
+id: ev-v9-000538-4bbf1c16
+video_id: v9
+t0: 0:05:38
+t1: 0:05:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si invalida ese trade, pues se va actualizando. O si no, se va actualizando simplemente
+  por el flujo de precio.
+afirmacion: el punto de la orden se va actualizando si el trade se invalida, o si no por el propio flujo
+  del precio
+tema: entrada.orden.actualizacion
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-47. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

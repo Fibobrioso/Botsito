@@ -1,0 +1,18 @@
+id: ev-v9-002526-6a6579e6
+video_id: v9
+t0: 0:25:26
+t1: 0:25:42
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: hacer el cálculo en base a 1 pero la ejecución, o sea, de 1.3 en base a 1 usando el punto
+  1 pero el cálculo del lotaje a 0.8
+afirmacion: el objetivo 1:3 se calcula sobre el punto 1 de la caja y el lotaje sobre el 0,8, para ganar
+  un margen de beneficio adicional
+tema: objetivo.base_1_lotaje_08
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-18. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

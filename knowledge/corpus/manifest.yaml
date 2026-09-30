@@ -2153,8 +2153,8 @@ resumen:
     bytes: 3794523
     ficheros: 43
   video_original:
-    bytes: 36555461999
-    ficheros: 8
+    bytes: 43536715428
+    ficheros: 9
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2246,3 +2246,14 @@ videos:
   fps: 30/1
   sha256: 697c5146458249633f4c3ad743a1b8ba81867d7093e3a676395b7bccefcdabdc
   video_id: v8
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 6981253429
+  drive_id: ''
+  duracion_s: 6273.942
+  fecha_grabacion: '2026-09-29'
+  fichero: Grabación de pantalla 2026-09-29 164102.mp4
+  fps: 30/1
+  sha256: dd4d730e3eb81efdaf901f807227356358a183fdfc4bb303d87364118e964c45
+  video_id: v9

@@ -1,0 +1,17 @@
+id: ev-v9-010416-eb674c2f
+video_id: v9
+t0: '1:04:16'
+t1: '1:04:22'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: ¿El riesgo de 0.5 lo calculas con el stop en 1 o con el stop en 0.8? 0.8, ¿verdad? Sí.
+afirmacion: a la pregunta del consultor, el trader confirma con un «Sí» que el riesgo de 0,5 se calcula
+  con el stop en el 0,8
+tema: riesgo.050_sobre_08
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-18. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

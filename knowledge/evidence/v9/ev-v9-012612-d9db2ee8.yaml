@@ -1,0 +1,16 @@
+id: ev-v9-012612-d9db2ee8
+video_id: v9
+t0: '1:26:12'
+t1: '1:26:37'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si llega a tocar el stop se considera como un loss [...] gastaría un intento
+afirmacion: una entrada activada sin ruptura que acaba en el stop cuenta como perdida y gasta un intento
+tema: cartuchos.activada_sin_ruptura_gasta
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-31. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

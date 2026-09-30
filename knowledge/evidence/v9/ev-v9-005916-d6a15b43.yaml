@@ -1,0 +1,18 @@
+id: ev-v9-005916-d6a15b43
+video_id: v9
+t0: 0:59:16
+t1: 0:59:40
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: no cierro o sea yo dejo para hacerlo más lo más objetivo posible [...] o bien se gana o
+  bien se pierde. O bien ocurre break-even
+afirmacion: 'no cierra a mano antes del stop: para ser objetivo, o se gana, o se pierde, o sale en break
+  even'
+tema: objetivo.sin_cierre_manual
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: G-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

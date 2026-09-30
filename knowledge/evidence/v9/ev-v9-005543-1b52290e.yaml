@@ -1,0 +1,17 @@
+id: ev-v9-005543-1b52290e
+video_id: v9
+t0: 0:55:43
+t1: 0:55:50
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: se completa, o sea, se llega a desarrollar, apenas toca, pues se pone en B la entrada.
+afirmacion: completada la zona de control, apenas el precio toca se pone la entrada en break even
+tema: break_even.disparador_toque
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: toque
+notas: A-13. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

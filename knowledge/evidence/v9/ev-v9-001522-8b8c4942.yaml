@@ -1,0 +1,16 @@
+id: ev-v9-001522-8b8c4942
+video_id: v9
+t0: 0:15:22
+t1: 0:15:29
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no, o sea siempre es a favor del sesgo de H4 no se puede operar en contra
+afirmacion: 'no hay operaciones contra el sesgo de H4: siempre a favor'
+tema: sesgo.h4.siempre_a_favor
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

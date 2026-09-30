@@ -1,0 +1,18 @@
+id: ev-v9-004919-c6bfb3ee
+video_id: v9
+t0: 0:49:19
+t1: 0:49:28
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: no nos importa lo que haga por debajo, aquí no hay ninguna entrada, tiene que ser todo por
+  encima
+afirmacion: 'en una compra, lo que pasa por debajo del nivel de liquidez no es entrada: tiene que desarrollarse
+  todo por encima'
+tema: entrada.todo_mas_alla_de_la_liquidez
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-50. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

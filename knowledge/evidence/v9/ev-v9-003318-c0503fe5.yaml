@@ -1,0 +1,17 @@
+id: ev-v9-003318-c0503fe5
+video_id: v9
+t0: 0:33:18
+t1: 0:33:40
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación
+afirmacion: 'no hay un maximo de escenarios nuevos por dia: cada toma de liquidez de M15 de la sesion
+  puede dar una operacion'
+tema: reentrada.sin_tope_de_escenarios
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-46. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

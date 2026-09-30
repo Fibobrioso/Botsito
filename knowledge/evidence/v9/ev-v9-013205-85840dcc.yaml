@@ -1,0 +1,17 @@
+id: ev-v9-013205-85840dcc
+video_id: v9
+t0: '1:32:05'
+t1: '1:32:13'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: O sea, sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker.
+afirmacion: una orden que el precio deja sin llenar sigue viva hasta que se desarrolla otro posible punto
+  de breaker
+tema: entrada.orden.vida_hasta_nuevo_breaker
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-38. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -1,0 +1,16 @@
+id: ev-v9-010620-ac899dd8
+video_id: v9
+t0: '1:06:20'
+t1: '1:06:33'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No existe Yo creo que no O sea, no existe como tal [...] No, o sea, me es indiferente
+afirmacion: no hay un tamano minimo (ni maximo) de caja por debajo del cual la operacion no le interese
+tema: entrada.caja_sin_tamano_minimo
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: G-3. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

@@ -1,0 +1,16 @@
+id: ev-v9-010053-e521e833
+video_id: v9
+t0: '1:00:53'
+t1: '1:01:01'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: el objetivo es fijo como bien sabemos bro Ahora no lo gestionamos Es fijo
+afirmacion: 'no deja correr mas alla del objetivo: el objetivo es fijo y no se gestiona'
+tema: objetivo.fijo_sin_dejar_correr
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: G-2. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

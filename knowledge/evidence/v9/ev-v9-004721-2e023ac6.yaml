@@ -1,0 +1,18 @@
+id: ev-v9-004721-2e023ac6
+video_id: v9
+t0: 0:47:21
+t1: 0:47:31
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se traza desde el posible punto de breaker, o sea el punto de breaker hasta el punto más
+  alto
+afirmacion: la caja (el cuadro de Gann) se traza desde el posible punto de breaker hasta el punto mas
+  alto
+tema: herramientas.caja.trazado
+confianza: alta
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-50. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd

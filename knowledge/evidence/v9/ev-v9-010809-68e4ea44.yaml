@@ -1,0 +1,16 @@
+id: ev-v9-010809-68e4ea44
+video_id: v9
+t0: '1:08:09'
+t1: '1:08:14'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: lo adapto. O sea, automáticamente se adapta. La plataforma la adapta.
+afirmacion: 'no cambia a mano la zona horaria del grafico: la plataforma la adapta sola'
+tema: reloj.plataforma_adapta
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: A-42. docs/validation/SESION-03-EXTRACCION.md
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd
