@@ -64,7 +64,9 @@ De paso, dos errores que ya estaban y que las medidas destaparon, arreglados con
 Todo sobre construcción —abril y agosto de 2026, 42 días `dev`, 84 sesiones, 49 con operaciones del
 trader, 77 operaciones—, por la compuerta, **en DIAGNÓSTICO** (A-35 `cierre_vela_contraria`, A-44
 `sin_tope`, A-21 `solo_una_zona_de_control`, A-27 con 0 puntos). **Ninguna cifra cuenta como medida
-de fidelidad.** Ninguna corrida tocó mayo, marzo, febrero ni septiembre.
+de fidelidad.** Ninguna corrida tocó mayo, marzo, febrero ni septiembre. **No se abrió nada nuevo**:
+ni un libro xlsx, ni un fotograma, ni el texto de una transcripción. Las corridas leen los casos ya
+ingeridos de construcción, como las ramas anteriores, así que no hay exposición que declarar.
 
 | | antes de la noche | tras F32 | tras F33 | tras F34 (1 de 2) | tras F34 (2 de 2) | tras F36 |
 |---|---|---|---|---|---|---|
@@ -93,14 +95,28 @@ de fidelidad.** Ninguna corrida tocó mayo, marzo, febrero ni septiembre.
 
 ## 3. Bloqueadas y no intentadas
 
-- **F35, la vida de la orden stop (rama 3 de ADR-0056): NO INTENTADA.** No está bloqueada por un
-  dato: ADR-0056 §7 la describe. No la empecé porque es la pieza mayor de la lista y apila varias
-  lecturas sobre la propia entrada que el ADR deja sin decidir: qué caja lleva una orden que nace
-  antes de la ruptura (A-48 y A-49, ABIERTAS y sin selector), reescribir RN-008 «o parar», un
-  diagnóstico nuevo (`--diagnostico-a29`) y las candidatas C1 y C7. Es, además, lo que F34 (2 de 2)
-  deja más a la vista: sin ella y sin la caja por operación, el bot no iguala ninguna operación.
-- **La caja por operación (ADR-0056 §4, rama 4): NO INTENTADA.** Va detrás de la rama 3 y necesita
-  los selectores `caja_bloque` y `caja_vela`, que no existen.
+- **F35, la vida de la orden stop (rama 3 de ADR-0056): BLOQUEADA. Necesita una decisión tuya.**
+  El plan de la noche la daba por desbloqueada «con selectores y diagnóstico». La estudié entera
+  antes de escribir una línea, y no lo está. ADR-0056 §7 la describe, pero deja sin decidir las dos
+  cosas de las que cuelga todo lo demás:
+  1. **En qué precio nace la orden.** El ADR dice que el posible punto de breaker «es hoy
+     `referencia_del_breaker`» —el último pivote de M1 contrario a la entrada— y manda la otra
+     lectura a A-48. Pero el repositorio ya tiene medido que ese pivote no es el punto del trader:
+     en `docs/validation/ORDEN-STOP-O-LIMITE.md` §4, su entrada está a 3 puntos o menos de
+     `referencia` en 2 de las 39 operaciones con zona viva, con una mediana de 15 puntos antes del
+     nivel. Y `docs/validation/BLOQUE-DE-LA-CAJA.md` §4.1 midió, en 12 cajas leídas en el vídeo, que
+     la orden va en el 0 de la caja en 10 de 12. Son dos precios distintos.
+  2. **Qué caja lleva una orden que nace antes de la ruptura**, que es de donde salen su stop y su
+     lote. El ADR la remite a la caja por operación (§4, la rama 4) y a los selectores `caja_bloque`
+     y `caja_vela`, que no existen. A-48 y A-49 siguen ABIERTAS.
+
+  Escribirla con el pivote era construir la vida de la orden sobre un punto que la medida
+  desmiente; escribirla con el 0 de la caja era elegir yo entre las lecturas de A-48. En los dos
+  casos inventaba la decisión. Además pide reescribir RN-008 «o parar» y un diagnóstico nuevo
+  (`--diagnostico-a29`). Es lo que más pesa hoy: desde F34 (2 de 2), sin esta rama y sin la caja
+  por operación el bot no iguala ninguna operación del trader.
+- **La caja por operación (ADR-0056 §4, rama 4): NO INTENTADA.** Va detrás de la rama 3 y depende
+  de las mismas dos decisiones.
 - **RN-007, la vela casi plana: BLOQUEADA.** El trader no dio el umbral de «casi plana».
 - **F37, el calendario de cierres de mercado: BLOQUEADA.** No hay en el repositorio ninguna fuente
   de los cierres del bróker, y bajarla era descargar datos. Además, R15 frente a R6 sigue sin
@@ -132,12 +148,16 @@ Agotado lo desbloqueado, queda escrito `docs/nocturno/BRECHA-EN-VIVO.md`.
 1. **La CI de `main` en rojo.** ¿Me pegas el final del log del run de `67ab298`, como con
    `7ff9a9c`? Con él se confirma o se descarta la hipótesis de §0 y se arregla en una rama. Mientras
    tanto `main` tiene un tag estable sobre un commit cuya CI no pasa.
-2. **F34 (2 de 2), la toma en M1 (`2763ceb`).** ¿Entra ya, con la cobertura en diagnóstico a 0 de
+2. **F35, el punto de la orden stop.** Antes de la rama 3 hay que decidir (a) en qué precio nace
+   la orden —el pivote de `referencia_del_breaker`, que la medida desmiente, o el 0 de la caja— y
+   (b) con qué caja (A-48, A-49). Si te sirve, el paso siguiente sería una medición con el
+   criterio escrito antes: las reglas R1 a R6 de `BLOQUE-DE-LA-CAJA.md` §1.4 sobre las 77
+   operaciones de construcción, contra la entrada y el stop de los libros. No la hice: es una
+   medición nueva sobre las filas de los libros, con su declaración, y no estaba en el encargo.
+3. **F34 (2 de 2), la toma en M1 (`2763ceb`).** ¿Entra ya, con la cobertura en diagnóstico a 0 de
    77, o espera a la vida de la orden stop y a la caja por operación? Es lo que el trader dijo; el
    coste es que el bot queda peor hasta que lleguen esas dos ramas.
-3. **Los cuatro ADR PROPUESTOS** (ADR-0060 a ADR-0063): aceptar, corregir o rechazar cada uno.
-4. **F35**: si la rama 3 de ADR-0056 se hace con las lecturas de hoy para la caja (última vela
-   contraria, velas cerradas) y en diagnóstico, o si antes quieres A-48 y A-49 contestadas.
+4. **Los cuatro ADR PROPUESTOS** (ADR-0060 a ADR-0063): aceptar, corregir o rechazar cada uno.
 5. **A-42 y el invierno.** El cambio de hora es el 25 de octubre. El mecanismo ya está (F36); falta
    (a) cuándo pasa `reloj_sesiones` a `grafico` —el trader dijo «creo»— y (b) con qué reloj asigna
    el kit la sesión de las operaciones del trader en un mes de invierno, antes de que entre marzo.
