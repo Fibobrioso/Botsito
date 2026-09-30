@@ -150,10 +150,134 @@ punto es una rama aparte.
 - **La vela casi plana (RN-007)** sigue sin umbral.
 - **El embudo** no está adaptado (§2).
 
+## 4. Diagnóstico del stop (2026-09-30, revisión del consultor)
+
+> **Pedido tras ver §2.** La sospecha era que el stop del bot fuera demasiado corto, porque 14 de 15
+> llenados acababan en el stop. Todo es DIAGNÓSTICO sobre construcción y **ningún valor por defecto
+> cambia**. Las corridas se hicieron en clones desechables sobre `7449490`, con los mismos
+> diagnósticos que §2.
+
+**Lo nuevo en el código (`7449490`):**
+- El selector `caja_se_fija`, de categoría `ejecucion`, DEFAULT_AMBIGUOUS bajo A-49 y con el valor
+  `al_verse_el_punto` sin cambiar (ADR-0064 §5). Con `en_cada_cierre_m1`, el 1 de la caja se
+  recalcula en cada cierre de M1 hasta el llenado, y RN-006 reubica la orden con su stop y su lote.
+- **El embudo adaptado** a la vida de la orden stop, con sus pasos nuevos (nace, punto, bróker,
+  reubica, llenado) y el diagnóstico del stop.
+
+**Controles:**
+- la rama con `al_darse_el_esquema` da el arnés y el embudo idénticos byte a byte a `main`;
+- la combinación por defecto da el arnés idéntico al de §2.
+
+### 4.1 Distancia entrada-stop y tamaño de la caja: el stop NO es más corto que el del trader
+
+Todo en puntos. El trader son las 77 operaciones del libro: entrada menos stop inicial. Su caja con
+el stop en el 1 (lo que midió CAJA-77) es esa misma distancia.
+
+| | mínimo | Q1 | mediana | Q3 | máximo |
+|---|---|---|---|---|---|
+| **stop del bot**, 0,8 (sus 15 llenados) | 5 | 12 | **13** | 18 | 74 |
+| **stop del bot**, en el 1 (sus 15 llenados) | 5 | 11 | **16** | 22 | 92 |
+| **stop del trader** (77, libro) | 3 | 10 | **15** | 20 | 49 |
+| **caja del bot** (sus 15 llenados) | 6 | 14 | **16** | 22 | 92 |
+| **caja del trader**, stop en el 1 (77) | 3 | 10 | **15** | 20 | 49 |
+
+- **La caja del bot tiene el tamaño de la del trader**: 16 frente a 15 de mediana. Con el stop al
+  0,8, el stop del bot queda 2 puntos por debajo del del trader en la mediana (13 frente a 15); en
+  el 1, uno por encima (16).
+- **La hipótesis «el stop es demasiado corto» no se sostiene con estas cifras.** Poner el stop en el
+  1 no cambia nada (§4.3).
+
+### 4.2 Los 15 llenados (caja fija, stop al 0,8)
+
+| día | orden | lado | caja | stop | min caja → llenado | min llenado → cierre | cierre | spread en el llenado | spread en el cierre |
+|---|---|---|---|---|---|---|---|---|---|
+| 04-01 | o1 | compra | 17 | 14 | 0,4 | 4,7 | objetivo | 4 | 3 |
+| 04-02 | o1 | venta | 43 | 35 | 0,4 | 6,6 | stop | 4 | 4 |
+| 04-06 | o1 | compra | 16 | 13 | 1,0 | 5,0 | stop | 4 | 5 |
+| 04-07 | o3 | venta | 15 | 12 | 1,4 | 5,7 | stop | 4 | 3 |
+| 04-07 | o5 | compra | 22 | 18 | 0,0 | 6,0 | stop | 1 | 1 |
+| 04-09 | o1 | compra | 20 | 16 | 1,5 | 0,7 | stop | 4 | 4 |
+| 04-10 | o1 | venta | 92 | 74 | 3,8 | 5,8 | stop | 5 | 3 |
+| 04-13 | o1 | compra | 6 | 5 | 1,0 | 2,1 | stop | 2 | 5 |
+| 04-14 | o1 | compra | 8 | 7 | 0,5 | 0,6 | stop | 4 | 5 |
+| 04-14 | o2 | compra | 15 | 12 | 0,8 | 4,1 | stop | 4 | 2 |
+| 04-15 | o2 | compra | 65 | 52 | 2,0 | 21,7 | stop | 2 | 1 |
+| 04-16 | o1 | compra | 11 | 9 | 0,3 | 0,5 | stop | 4 | 4 |
+| 04-16 | o3 | venta | 16 | 13 | 0,5 | 7,5 | stop | 1 | 2 |
+| 04-20 | o1 | compra | 14 | 12 | 0,3 | 0,9 | stop | 3 | 5 |
+| 04-22 | o1 | venta | 11 | 9 | 2,0 | 1,1 | stop | 5 | 4 |
+
+- **La orden se llena casi en cuanto se fija la caja**: mediana 0,8 minutos, y nunca más de 4.
+- **Las posiciones duran poco**: mediana 4,7 minutos hasta el cierre.
+- **El spread de Dukascopy en los ticks es de 4 puntos de mediana**, en el llenado y en el cierre.
+  Frente a un stop de 13 es casi un tercio. En una compra (10 de 15), la orden salta con el ASK en el
+  punto y el stop salta con el BID, así que el margen real hasta el stop es el stop menos el spread.
+  Es una sospecha con cifras, no una medida de causa.
+
+### 4.3 Las cuatro combinaciones
+
+| caja | stop | cobertura | operaciones puntuables | llenados → stop | saldo simulado | máximo diario de peticiones (2000) | peticiones en 42 días |
+|---|---|---|---|---|---|---|---|
+| **fija (el valor)** | **0,8 (el valor)** | **2/77** | 10 | 14 de 15 | 90.218,33 | 7 | 35 |
+| fija | 1 | 2/77 | 10 | 14 de 15 | 90.236,11 | 4 | 32 |
+| recalculada en cada M1 | 0,8 | 1/77 | 10 | 13 de 15 (+1 manual) | 89.651,41 | 14 | 59 |
+| recalculada en cada M1 | 1 | 1/77 | 11 | 15 de 16 | 90.246,58 | 14 | 60 |
+
+- **El stop en el 1 no cambia los llenados ni las salidas**: 14 de 15 al stop, y el saldo apenas se
+  mueve. Solo baja el máximo diario de peticiones.
+- **Recalcular la caja en cada M1 empeora un poco**: 1 coincidencia en vez de 2, casi el doble de
+  peticiones y hasta 14 al día (sigue lejos de 2000). Con esta medida no hay razón para cambiar la
+  decisión 5.
+
+### 4.4 El embudo de la vida de la orden (las cuatro combinaciones)
+
+| paso | fija, 0,8 | fija, 1 | recalculada, 0,8 | recalculada, 1 |
+|---|---|---|---|---|
+| 1. sesión | 0 | 0 | 0 | 0 |
+| 2. sesgo | 15 | 15 | 15 | 15 |
+| 3. liquidez | 1 | 1 | 1 | 1 |
+| **4. nace** | **49** | 49 | 49 | 48 |
+| 5. punto | 8 | 8 | 8 | 9 |
+| 6. bróker | 0 | 0 | 0 | 0 |
+| 7. reubica | 1 | 1 | 2 | 2 |
+| 8. llenado | 1 | 1 | 1 | 1 |
+| coincide | 2 | 2 | 1 | 1 |
+
+**El hallazgo que manda, y que no es el stop: la cuenta se frena el 22 de abril.**
+- La cuenta simulada, que persiste entre días (ADR-0053 §6), llega el 22 de abril a 90.218, casi un
+  −10 %. Desde ese día el freno de pérdida total de la firma (RN-031 y RN-032, con
+  `firma_margen_seguridad`; RN-001 por `detenido_por_tope_total`) prohíbe toda colocación.
+- **El bot no coloca ninguna orden en los 21 días de agosto** ni en los últimos de abril.
+- En el embudo, **46 de las 49 operaciones que mueren en «nace» mueren por ese freno** (39 + 7), y 3
+  por RN-005.
+- **Consecuencia para leer §2 y §4.3**: la cobertura (2 de 77) se mide sobre un tramo en el que, a
+  partir del 22 de abril, el bot no puede operar. Las 42 operaciones de agosto no tienen ninguna
+  oportunidad. La cifra no dice cuánto iguala el bot cuando puede operar.
+- **Lo que haría falta para separarlo** (no se ha hecho, porque no estaba en el encargo): una
+  corrida de diagnóstico con la cuenta reiniciada cada día, o sin los gates de la firma, para medir
+  cobertura sin el camino de la cuenta.
+
+### 4.5 Lo que el diagnóstico sostiene y lo que no
+
+- **Sostiene**:
+  - que el stop y la caja del bot tienen el tamaño de los del trader;
+  - que poner el stop en el 1 no cambia los llenados ni las salidas;
+  - que recalcular la caja en cada M1 no mejora y cuesta peticiones;
+  - que las entradas se llenan al minuto de fijarse la caja y se cierran en unos 5 minutos;
+  - que el freno de la firma deja agosto sin operar.
+- **No sostiene**:
+  - que el problema sea el stop;
+  - ni que sea el spread. El spread de 4 puntos frente a un stop de 13 es una sospecha, y medirla
+    exige comparar con el spread de FTMO, que es la demo (A-27, DN-3).
+
 ## Estado
 
-Lista para revisión, **no cerrada**:
-- `make check` en verde y sellado sobre el código (`051d4c6`) y sobre este informe;
-- la CI de Linux va en el resumen de la sesión;
-- pendiente de la revisión del consultor: ADR-0064, las seis DECISIONES y el ítem
-  `ev-v7-001550-82e5cffc`.
+Lista para revisión, **no cerrada**. Commits:
+- `051d4c6`: el código;
+- `2ea0390`: la medida de §2;
+- `7449490`: `caja_se_fija` y el embudo de la vida;
+- el de este informe con §4.
+
+Cada uno con `make check` en verde y sellado. Ningún valor por defecto ha cambiado en la revisión.
+Pendientes del consultor: las seis DECISIONES de ADR-0064 y lo que §4.4 destapa, el freno de la
+cuenta que deja agosto sin operar.
