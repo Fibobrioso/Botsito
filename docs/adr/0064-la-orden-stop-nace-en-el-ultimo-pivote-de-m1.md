@@ -93,6 +93,21 @@ conservadora):
    (`LOOKBACK_M1`). En CAJA-77 era de 90 antes de T. El último pivote es el mismo mientras esté
    dentro de las dos.
 
+### 5. Sensibilidad de la decisión 5: `caja_se_fija` (2026-09-30, revisión del consultor)
+
+Tras la primera medida (14 de 15 llenados acaban en el stop), el consultor pidió medir la decisión 5
+como opción de un selector, **sin cambiar el valor por defecto**. `caja_se_fija`, `ejecucion`,
+DEFAULT_AMBIGUOUS bajo **A-49**, con dos opciones:
+- `al_verse_el_punto` (el valor): la decisión 5, sin cambios;
+- `en_cada_cierre_m1`: el 1 se recalcula en cada cierre de M1 hasta el llenado, como hace el trader
+  según `BLOQUE-DE-LA-CAJA.md` §2.4. Un 1 nuevo es una zona nueva del mismo punto, y RN-006 la
+  reubica con su stop y su lote. Un punto cuya orden se rechazó no se vuelve a colocar con otra caja
+  (decisión 1).
+
+Su fuente es este ADR y no una cita, porque es un mecanismo del motor y no una frase del trader (la
+guardia de `test_registro` lo admite en la categoría `ejecucion`, como `reloj_sesiones`). Lo medido
+está en `docs/validation/F35-ORDEN-STOP-PIVOTE.md` §4.
+
 ## Problema que resuelve
 
 F35 estaba BLOQUEADA (`docs/nocturno/INFORME-01oct.md` §3) por dos cosas que ADR-0056 no decidía:

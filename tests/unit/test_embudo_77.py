@@ -141,3 +141,51 @@ def test_la_tabla_del_embudo() -> None:
         "| coincide | 1 | 0 |",
         "| total | 4 | 4 |",
     ]
+
+
+def _vida(e: ModuleType, **cambios: Any) -> Any:
+    """Una venta con la vida de la orden stop (ADR-0064) que el bot acompana hasta el final."""
+    base = e.HechosVida(
+        en_sesion=True, direccion="venta", sesgo="bajista", toma_s=T - 1800, instante_s=T,
+        entrada=1000, ordenes=((1001, "llenada", T - 300, "venta", T + 30, 1001),),
+        sin_orden=None, emparejada=False, bot_casa_con_otra=False,
+    )  # fmt: skip
+    return replace(base, **cambios)
+
+
+def test_la_vida_de_la_orden_stop_en_el_orden_del_pipeline() -> None:
+    """Con la orden en el punto, los pasos describen como nace, se reubica y se llena: cada caso
+    muere en un paso distinto y en su orden."""
+    e = _cargar()
+    casos = [
+        (_vida(e, emparejada=True), ("coincide", "coincide", "")),
+        (_vida(e, en_sesion=False), ("sesion", "fuera de la ventana de su sesion", "")),
+        (_vida(e, sesgo="alcista"), ("sesgo", "sesgo contrario", "alcista")),
+        (
+            _vida(e, toma_s=None),
+            ("liquidez", "ninguna toma de M15 en la sesion antes del trader", ""),
+        ),
+        (
+            _vida(e, ordenes=(), sin_orden="sin punto con caja"),
+            ("nace", "sin punto con caja", ""),
+        ),
+        (
+            _vida(e, ordenes=((1020, "llenada", T, "venta", T, 1020),)),
+            ("punto", "el punto del bot no es el del trader", "el mas cercano a 20 puntos"),
+        ),
+        (
+            _vida(e, ordenes=((1001, "rechazada", T, "venta", None, None),)),
+            ("broker", "la orden en su precio se rechaza", ""),
+        ),
+        (
+            _vida(e, ordenes=((1001, "cancelada", T, "venta", None, None),)),
+            ("reubica", "la orden en su precio se cancela antes de llenarse", ""),
+        ),
+        (
+            _vida(e, ordenes=((1001, "llenada", T, "venta", T + 3600, 1001),)),
+            ("llenado", "se llena fuera de la tolerancia de minutos", "60 min"),
+        ),
+    ]
+    for hechos, esperado in casos:
+        assert e.clasificar_vida(hechos, TOL_PUNTOS, TOL_S) == esperado, esperado
+    assert e.tabla({"x": ["nace", "coincide"]}, e.PASOS_VIDA)[5] == "| 4. nace | 1 |"

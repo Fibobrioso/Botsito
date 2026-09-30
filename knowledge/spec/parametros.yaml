@@ -623,6 +623,28 @@ parametros:
     fuente:
       tipo: evidence
       id: ev-v7-001550-82e5cffc
+  - nombre: caja_se_fija
+    categoria: ejecucion
+    tipo: enum
+    unidad: cuando se fija el 1 de la caja de la orden stop
+    opciones: [al_verse_el_punto, en_cada_cierre_m1]
+    descripcion: >-
+      cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su
+      sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera
+      vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada
+      cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo
+      que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso
+      o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un
+      mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: el valor es
+      el de la decision 5 de ADR-0064, la lectura mas conservadora. Lo lee el productor
+      (engine/zonas.py), no una regla
+    consumido_por: [ADR-0064]
+    estado: DEFAULT_AMBIGUOUS
+    valor: al_verse_el_punto
+    ambiguedad_id: A-49
+    fuente:
+      tipo: decision
+      id: ADR-0064
   - nombre: entrada_tipo_orden
     categoria: estrategia
     tipo: enum

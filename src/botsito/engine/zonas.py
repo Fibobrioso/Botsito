@@ -28,7 +28,11 @@ la toma de la sesion, la orden nace en el posible punto de breaker que dice `ord
 `referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con la caja que dice
 `caja_bloque` (R6, R4 o R1 de CAJA-77), y cada punto nuevo liga una zona nueva (`zona_del_punto`),
 que RN-006 usa para reubicarla. Un punto ya usado -colocado, aceptado o rechazado- no se vuelve a
-colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`).
+colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`). Con
+`caja_se_fija` = `en_cada_cierre_m1` (sensibilidad de ADR-0064, decision 5) el 1 de la caja se
+recalcula en cada cierre de M1 hasta el llenado: un 1 nuevo es una zona nueva del mismo punto, y
+RN-006 la reubica; un punto cuya orden se rechazo no se vuelve a colocar con otra caja
+(`marcar_rechazada`).
 """
 
 from __future__ import annotations
@@ -63,6 +67,9 @@ PARAMETRO_PUNTO = "orden_stop_punto"
 PARAMETRO_BLOQUE = "caja_bloque"
 ULTIMO_PIVOTE_M1 = "ultimo_pivote_m1"
 REFERENCIA_DE_LA_TOMA = "referencia_de_la_toma"
+PARAMETRO_CAJA_SE_FIJA = "caja_se_fija"
+FIJA_AL_VERSE = "al_verse_el_punto"
+EN_CADA_CIERRE_M1 = "en_cada_cierre_m1"
 CUALQUIER_ESQUEMA = "cualquier_esquema"
 PREFIJO_ZONA = "zona:"
 POR_SESION = "por_sesion"
@@ -234,18 +241,44 @@ def zona_del_punto(registro: Registro, momento: Momento, estado: EstadoDia) -> Z
     mem = _de_la_sesion(estado, momento.sesion)
     puntos = mem.setdefault("puntos", {})
     zonas = _memoria(estado).setdefault("zonas", {})
-    clave = f"{punto.nivel}@{int(punto.contraria_inicio)}"
+    clave_punto = f"{punto.nivel}@{int(punto.contraria_inicio)}"
+    se_fija = registro.opcion(PARAMETRO_CAJA_SE_FIJA)
+    if se_fija not in (FIJA_AL_VERSE, EN_CADA_CIERRE_M1):
+        raise ValueError(f"{PARAMETRO_CAJA_SE_FIJA} = {se_fija!r}: lectura sin contrato")
+    extremo: int | None = None
+    clave = clave_punto
+    if se_fija == EN_CADA_CIERRE_M1:
+        extremo = extremo_de_la_caja(m1, lado, punto, registro.opcion(PARAMETRO_BLOQUE))
+        if extremo is None:
+            return None
+        clave = f"{clave_punto}#{extremo}"
     id = puntos.get(clave)
     if id is None:
-        extremo = extremo_de_la_caja(m1, lado, punto, registro.opcion(PARAMETRO_BLOQUE))
+        if extremo is None:
+            extremo = extremo_de_la_caja(m1, lado, punto, registro.opcion(PARAMETRO_BLOQUE))
         if extremo is None:
             return None
         id = f"{PREFIJO_ZONA}{len(zonas) + 1}"
         puntos[clave] = id
+        mem.setdefault("punto_de_zona", {})[id] = clave_punto
         zonas[id] = Zona(
             id, lado, punto.nivel, extremo, PRIMER_ESQUEMA, int(m1[punto.marca].inicio), instante
         )
     return cast(Zona, zonas[id])
+
+
+def marcar_rechazada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
+    """El broker rechazo la orden de esta zona: su PUNTO no se vuelve a colocar, tampoco con
+    otra caja (ADR-0064, decision 1)."""
+    mem = _de_la_sesion(estado, sesion)
+    punto = mem.get("punto_de_zona", {}).get(zona_id)
+    if punto is not None:
+        mem.setdefault("rechazados", set()).add(punto)
+
+
+def punto_rechazado(estado: EstadoDia, sesion: str | None, zona_id: str) -> bool:
+    mem = _de_la_sesion(estado, sesion)
+    return mem.get("punto_de_zona", {}).get(zona_id) in mem.get("rechazados", set())
 
 
 def marcar_usada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
@@ -296,7 +329,11 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         momento_orden = registro.opcion(str(args["momento"]))
         if momento_orden == AL_APARECER_PUNTO_DE_BREAKER:
             z = zona_del_punto(registro, momento, estado)
-            if z is None or z.id in zonas_usadas(estado, momento.sesion):
+            if (
+                z is None
+                or z.id in zonas_usadas(estado, momento.sesion)
+                or punto_rechazado(estado, momento.sesion, z.id)
+            ):
                 return Resultado(Tri.NO)
             return Resultado(Tri.SI, {str(args.get("liga", "Z")): z.id})
         if momento_orden != AL_DARSE_EL_ESQUEMA:
@@ -369,7 +406,10 @@ __all__ = [
     "ETIQUETA_A21",
     "LADO_ENTRADA",
     "PARAMETRO_A21",
+    "EN_CADA_CIERRE_M1",
+    "FIJA_AL_VERSE",
     "PARAMETRO_BLOQUE",
+    "PARAMETRO_CAJA_SE_FIJA",
     "PARAMETRO_MOMENTO",
     "PARAMETRO_PUNTO",
     "REFERENCIA_DE_LA_TOMA",
@@ -378,9 +418,11 @@ __all__ = [
     "SinLecturaDeZonaError",
     "Zona",
     "lectura_limpia",
+    "marcar_rechazada",
     "marcar_usada",
     "memoria_de_sesion",
     "orden_nace_en_el_punto",
+    "punto_rechazado",
     "primitivas_zona",
     "zona_del_punto",
     "zonas_del_dia",

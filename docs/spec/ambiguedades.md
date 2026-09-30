@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
@@ -109,6 +109,8 @@ Afecta a: `orden_stop_punto`, `caja_bloque`.
 ### A-49 · si la caja se traza con la vela del bloque cerrada o en formación · pregunta
 
 ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
+
+Afecta a: `caja_se_fija`.
 
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 

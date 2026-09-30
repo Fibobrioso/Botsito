@@ -71,6 +71,8 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "orden_limite_nace": '    valor: "al_aparecer_punto_de_breaker"\n',
         "orden_stop_punto": "    valor: ultimo_pivote_m1\n",
         "caja_bloque": "    valor: r6\n",
+        "caja_se_fija": "    valor: al_verse_el_punto\n",
+        "stop_fraccion_caja": '    valor: "0.8"\n',
     }
     for nombre, valor in valores.items():
         viejo = actuales[nombre]
@@ -203,6 +205,34 @@ def test_con_la_referencia_de_la_toma_el_punto_no_se_mueve(tmp_path: Path) -> No
     z_toma = zonas.zona_del_punto(reg, _momento(datos, 4), estado)
     z_despues = zonas.zona_del_punto(reg, _momento(datos, 8), estado)
     assert z_toma is not None and z_despues is not None and z_toma.id == z_despues.id
+
+
+def test_con_la_caja_recalculada_un_1_nuevo_liga_otra_zona_del_mismo_punto(
+    tmp_path: Path,
+) -> None:
+    """La sensibilidad de la decision 5 de ADR-0064 (`caja_se_fija`): el primer BAJO se forma en el
+    cierre de la M1 3 y la verde de la M1 4 sube la maxima. Con la caja fija, la zona es la misma;
+    recalculada en cada cierre de M1, el 1 nuevo es otra zona del mismo punto. Y un punto cuya
+    orden se rechazo no se vuelve a colocar con otra caja (decision 1)."""
+    datos = _Datos(_serie(VENTA_DOS_BAJOS), toma=M0 + 1)
+    fija = _registro(tmp_path)
+    e = _estado()
+    zonas.zona_del_punto(fija, _momento(datos, 0), e)  # la toma
+    a, b = (zonas.zona_del_punto(fija, _momento(datos, k), e) for k in (3, 4))
+    assert a is not None and a == b
+    otra = tmp_path / "otra"
+    otra.mkdir()
+    cada = _registro(otra, caja_se_fija="en_cada_cierre_m1")
+    e2 = _estado()
+    zonas.zona_del_punto(cada, _momento(datos, 0), e2)
+    a2, b2 = (zonas.zona_del_punto(cada, _momento(datos, k), e2) for k in (3, 4))
+    assert a2 is not None and b2 is not None
+    assert a2.entrada == b2.entrada and b2.extremo > a2.extremo and b2.id != a2.id
+    toca = zonas.primitivas_zona(cada, "solo_una_zona_de_control")["toca_colocar_orden_limite"]
+    args = {"momento": "orden_limite_nace", "liga": "Z"}
+    zonas.marcar_usada(e2, "07-11", b2.id)
+    zonas.marcar_rechazada(e2, "07-11", b2.id)
+    assert toca(args, _momento(datos, 5), e2) == Resultado(Tri.NO)
 
 
 def test_rn008_no_frena_con_la_orden_en_el_punto(tmp_path: Path) -> None:

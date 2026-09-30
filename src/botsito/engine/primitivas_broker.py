@@ -44,8 +44,10 @@ from botsito.engine.tope_trader import (
 )
 from botsito.engine.zonas import (
     Zona,
+    marcar_rechazada,
     marcar_usada,
     orden_nace_en_el_punto,
+    punto_rechazado,
     zona_del_punto,
     zonas_del_dia,
     zonas_usadas,
@@ -194,7 +196,12 @@ def primitivas_cableadas(
         if de_la_orden is None or de_la_orden not in usadas:
             return None  # la orden no es de esta sesion: cada sesion es un escenario (A-46)
         z = zona_del_punto(registro, momento, estado)
-        if z is None or z.id == de_la_orden or z.id in usadas:
+        if (
+            z is None
+            or z.id == de_la_orden
+            or z.id in usadas
+            or punto_rechazado(estado, momento.sesion, z.id)
+        ):
             return None
         return z
 
@@ -469,6 +476,7 @@ def primitivas_cableadas(
         marcar_usada(estado, momento.sesion, z.id)
         if isinstance(r, Rechazo):
             ctx.eventos.append(EventoBroker(r.instante_ms, "rechazo", r.orden_id, z.por))
+            marcar_rechazada(estado, momento.sesion, z.id)
         ctx.orden = None
         return []
 

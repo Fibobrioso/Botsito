@@ -24,6 +24,17 @@ Los pasos, en el orden del pipeline real (docs/validation/EMBUDO-77.md §1):
    otra del trader;
 y `coincide` si el criterio de fidelidad (ADR-0043) la empareja.
 
+CON LA VIDA DE LA ORDEN STOP (ADR-0064: `orden_limite_nace` = `al_aparecer_punto_de_breaker`) los
+pasos 4 en adelante describen esa vida y no el esquema, que el motor ya no usa para colocar
+(`PASOS_VIDA`, `clasificar_vida`): 4. nace: ninguna orden de la sesion antes del trader + la
+tolerancia; 5. punto: hay ordenes, pero ninguna en el precio del trader; 6. broker: la del precio
+se rechazo; 7. reubica: la del precio se cancelo al reubicarse y no se lleno; 8. llenado: no se
+lleno, o fuera de tolerancia, o casa con otra; y `coincide`. Anade, por sesion, la vida de sus
+ordenes (colocadas, canceladas, rechazadas, llenadas y como se cerraron) y el DIAGNOSTICO DEL STOP:
+la distancia entrada-stop y la caja del bot en sus llenados frente a las del trader en el libro, y
+por llenado la caja, los minutos desde que se fijo la caja, hasta el cierre y el spread en el
+llenado y en el cierre, medido en los ticks.
+
 Solo construccion (abril y agosto), por la compuerta del arnes. Lee el repositorio en --raiz (por
 defecto, el de este script) y escribe SOLO en --salida (.txt y .json).
 
@@ -55,6 +66,17 @@ PASOS = (
     "momento",
     "reglas",
     "broker",
+    "llenado",
+    "coincide",
+)
+PASOS_VIDA = (
+    "sesion",
+    "sesgo",
+    "liquidez",
+    "nace",
+    "punto",
+    "broker",
+    "reubica",
     "llenado",
     "coincide",
 )
@@ -162,7 +184,67 @@ def clasificar(h: Hechos, tol_puntos: int, tol_s: int) -> tuple[str, str, str]:
     return "llenado", "compatible y sin pareja", ""  # no deberia darse: el criterio la emparejaria
 
 
-def tabla(clases: Mapping[str, Sequence[str]]) -> list[str]:
+@dataclass(frozen=True)
+class HechosVida:
+    """Lo medido para UNA operacion del trader con la vida de la orden stop (ADR-0064)."""
+
+    en_sesion: bool
+    direccion: str
+    sesgo: str | None
+    toma_s: int | None  # la toma de la sesion en el productor
+    instante_s: int
+    entrada: int
+    # las ordenes de la sesion colocadas hasta el trader + la tolerancia: (precio, estado,
+    # colocada_s,
+    # lado, llenada_s o None, entrada del llenado o None)
+    ordenes: tuple[tuple[int, str, int, str, int | None, int | None], ...]
+    sin_orden: str | None  # por que no nacio ninguna, si no nacio
+    emparejada: bool
+    bot_casa_con_otra: bool
+
+
+def clasificar_vida(h: HechosVida, tol_puntos: int, tol_s: int) -> tuple[str, str, str]:
+    """El primer paso de la vida de la orden stop en el que el bot deja de acompanar a la
+    operacion: (paso, motivo, detalle). Pura."""
+    if h.emparejada:
+        return "coincide", "coincide", ""
+    if not h.en_sesion:
+        return "sesion", "fuera de la ventana de su sesion", ""
+    if h.sesgo not in A_FAVOR.values():
+        return "sesgo", "sin sesgo", h.sesgo or "ninguno"
+    if h.sesgo != A_FAVOR[h.direccion]:
+        return "sesgo", "sesgo contrario", h.sesgo or ""
+    limite = h.instante_s + tol_s
+    if h.toma_s is None or h.toma_s > limite:
+        return "liquidez", "ninguna toma de M15 en la sesion antes del trader", ""
+    if not h.ordenes:
+        return "nace", h.sin_orden or "ninguna orden de la sesion antes del trader", ""
+    del_lado = [o for o in h.ordenes if o[3] == h.direccion]
+    if not del_lado:
+        return "punto", "ninguna orden del lado del trader", ""
+    cerca = [o for o in del_lado if abs(o[0] - h.entrada) <= tol_puntos]
+    if not cerca:
+        d = min(abs(o[0] - h.entrada) for o in del_lado)
+        return "punto", "el punto del bot no es el del trader", f"el mas cercano a {d} puntos"
+    if all(o[1] == "rechazada" for o in cerca):
+        return "broker", "la orden en su precio se rechaza", ""
+    llenas = [o for o in cerca if o[4] is not None]
+    if not llenas:
+        if any(o[1] == "cancelada" for o in cerca):
+            return "reubica", "la orden en su precio se cancela antes de llenarse", ""
+        return "llenado", "la orden en su precio no se llena", ""
+    o = min(llenas, key=lambda x: abs((x[4] or 0) - h.instante_s))
+    dt, dp = abs((o[4] or 0) - h.instante_s), abs((o[5] or 0) - h.entrada)
+    if dt > tol_s:
+        return "llenado", "se llena fuera de la tolerancia de minutos", f"{dt // 60} min"
+    if dp > tol_puntos:
+        return "llenado", "se llena fuera de la tolerancia de puntos", f"{dp} puntos"
+    if h.bot_casa_con_otra:
+        return "llenado", "su operacion casa con otra del trader", ""
+    return "llenado", "compatible y sin pareja", ""
+
+
+def tabla(clases: Mapping[str, Sequence[str]], pasos: Sequence[str] = PASOS) -> list[str]:
     """La tabla del embudo: cuantas operaciones mueren en cada paso, por lectura."""
     lecturas = list(clases)
     cuentas = {lec: Counter(clases[lec]) for lec in lecturas}
@@ -170,7 +252,7 @@ def tabla(clases: Mapping[str, Sequence[str]]) -> list[str]:
         "| paso | " + " | ".join(lecturas) + " |",
         "|---|" + "---|" * len(lecturas),
     ]
-    for n, paso in enumerate(PASOS, 1):
+    for n, paso in enumerate(pasos, 1):
         nombre = paso if paso == "coincide" else f"{n}. {paso}"
         lineas.append(
             f"| {nombre} | " + " | ".join(str(cuentas[lec][paso]) for lec in lecturas) + " |"
@@ -364,6 +446,11 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     t_pareja = {id(p.trader) for p in parejas}
     b_pareja = {id(p.bot) for p in parejas}
     trazas = {(r.dia, s): t for r in corrida.resultados for s, t in r.sesiones.items()}
+    if zonas.orden_nace_en_el_punto(registro):
+        return medir_vida(
+            raiz, corrida, mercado, motor, grabadora, prohiben, tol, bot, t_pareja, b_pareja,
+            trazas, a21, a27,
+        )  # fmt: skip
     criterio_ruptura = registro.opcion("breaker_m1_criterio_ruptura")
     tope_zonas = registro.entero("zonas_control_max_por_esquema")
 
@@ -569,7 +656,260 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     return filas, resumen
 
 
+def _spread(ticks: Sequence[Any], ms: int) -> int | None:
+    """ask - bid del ultimo tick anterior o igual a `ms`, o None."""
+    import bisect
+
+    k = bisect.bisect_right([int(x.instante) for x in ticks], ms)
+    return None if k == 0 else int(ticks[k - 1].ask) - int(ticks[k - 1].bid)
+
+
+def _cuartiles(xs: Sequence[float]) -> str:
+    if not xs:
+        return "sin datos"
+    s = sorted(xs)
+
+    def q(f: float) -> float:
+        return s[min(len(s) - 1, int(f * (len(s) - 1) + 0.5))]
+
+    return (
+        f"n {len(s)}; minimo {s[0]:g}; Q1 {q(0.25):g}; mediana {q(0.5):g}; Q3 {q(0.75):g}; "
+        f"maximo {s[-1]:g}"
+    )
+
+
+def medir_vida(
+    raiz: Path, corrida: Any, mercado: Any, motor: Any, grabadora: Any, prohiben: Any, tol: Any,
+    bot: Any, t_pareja: Any, b_pareja: Any, trazas: Any, a21: str, a27: int,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:  # fmt: skip
+    """El embudo y el diagnostico del stop con la vida de la orden stop (ADR-0064)."""
+    from botsito.cases.criterio_fidelidad import compatibles
+    from botsito.cases.ingesta import DIRECTORIO_DEV
+    from botsito.comun.husos import huso_canonico
+    from botsito.comun.yaml_estricto import leer_yaml
+    from botsito.engine import entrada, zonas
+
+    tol_s = tol.instante_min * 60
+    filas: list[dict[str, Any]] = []
+    por_dia: list[dict[str, Any]] = []
+    llenados: list[dict[str, Any]] = []
+    for d in corrida.dias:
+        dm = mercado[d.dia]
+        limites = _limites(dm.dia, dm.sesiones, huso_canonico(dm.huso))
+        estado = motor.estados[d.dia]
+        broker = motor.brokers[d.dia]
+        md = motor.mercados[d.dia]
+        ticks = md.ticks
+        zonas_dia = zonas.zonas_del_dia(estado)
+        pos_de_orden = {p.orden_id: p for p in broker.posiciones.values()}
+        for s in dm.sesiones:
+            desde, hasta = next((a, b) for n, a, b in limites if n == s.nombre)
+            del_dia = [o for o in broker.ordenes.values() if desde <= o.colocada_ms // 1000 < hasta]
+            cierres = Counter(
+                pos_de_orden[o.id].motivo_cierre for o in del_dia if o.id in pos_de_orden
+            )
+            toma = zonas.memoria_de_sesion(estado, s.nombre).get("toma")
+            por_dia.append(
+                {
+                    "dia": d.dia,
+                    "sesion": s.nombre,
+                    "operaciones_trader": sum(1 for op in d.operaciones if op.sesion == s.nombre),
+                    "toma": _hhmm(None if toma is None else int(toma["instante"]) * 60),
+                    "colocadas": len(del_dia),
+                    "canceladas": sum(1 for o in del_dia if o.estado == "cancelada"),
+                    "rechazadas": sum(1 for o in del_dia if o.estado == "rechazada"),
+                    "llenadas": sum(1 for o in del_dia if o.id in pos_de_orden),
+                    "cierres": dict(sorted(cierres.items())),
+                }
+            )
+        for o in broker.ordenes.values():
+            p = pos_de_orden.get(o.id)
+            if p is None:
+                continue
+            z = max(
+                (
+                    z
+                    for z in zonas_dia.values()
+                    if z.entrada == o.precio and z.lado == o.lado and z.formada is not None
+                    and z.formada * 60 <= o.colocada_ms // 1000 + 60
+                ),
+                key=lambda z: z.formada or 0,
+                default=None,
+            )  # fmt: skip
+            abierta_s, cerrada_ms = p.abierta_ms // 1000, p.cerrada_ms
+            llenados.append(
+                {
+                    "dia": d.dia,
+                    "orden": o.id,
+                    "lado": o.lado,
+                    "entrada": p.entrada,
+                    "caja": None if z is None else z.distancia_completa,
+                    "distancia_stop": abs(o.precio - (p.stop_original or p.stop)),
+                    "min_caja_a_llenado": None
+                    if z is None or z.formada is None
+                    else round((abierta_s - z.formada * 60) / 60, 1),
+                    "min_a_cierre": None
+                    if cerrada_ms is None
+                    else round((cerrada_ms - p.abierta_ms) / 60000, 1),
+                    "cierre": p.motivo_cierre,
+                    "spread_llenado": _spread(ticks, p.abierta_ms),
+                    "spread_cierre": None if cerrada_ms is None else _spread(ticks, cerrada_ms),
+                }
+            )
+        for op in d.operaciones:
+            t_s = int(op.instante.timestamp())
+            sesion_lim = next(((a, b) for n, a, b in limites if n == op.sesion), None)
+            en_sesion = sesion_lim is not None and sesion_lim[0] <= t_s < sesion_lim[1]
+            fijados = trazas.get((d.dia, op.sesion)).fijados if (d.dia, op.sesion) in trazas else []
+            sesgo = next((v for _, r, h, v in fijados if h == "sesgo"), None)
+            toma = zonas.memoria_de_sesion(estado, op.sesion).get("toma")
+            toma_s = None if toma is None else int(toma["instante"]) * 60
+            ent = int((op.entrada * md.escala).to_integral_value())
+            ordenes = []
+            if sesion_lim is not None:
+                for o in broker.ordenes.values():
+                    c = o.colocada_ms // 1000
+                    if sesion_lim[0] <= c <= t_s + tol_s and c < sesion_lim[1]:
+                        p = pos_de_orden.get(o.id)
+                        ordenes.append(
+                            (
+                                o.precio, o.estado, c, o.lado,
+                                None if p is None else p.abierta_ms // 1000,
+                                None if p is None else p.entrada,
+                            )
+                        )  # fmt: skip
+            sin_orden = None
+            if not ordenes and sesion_lim is not None:
+                vistas = len(zonas.memoria_de_sesion(estado, op.sesion).get("puntos", {}))
+                if vistas == 0:
+                    sin_orden = "sin punto con caja en la sesion antes del trader"
+                else:
+                    for minuto in range(sesion_lim[0] // 60, min(t_s + tol_s, sesion_lim[1]) // 60):
+                        ev = grabadora.eventos.get((id(estado), minuto))
+                        if ev is not None and any(
+                            r in ("RN-011", "RN-015") for r, _, _ in ev.bloqueadas
+                        ):
+                            sin_orden = _sin_orden(ev, prohiben, True)
+                            break
+                    else:
+                        sin_orden = f"{vistas} punto(s) con caja y ninguna orden"
+            b_op = next((b for b in bot if compatibles(op, b, tol) and id(b) in b_pareja), None)
+            h = HechosVida(
+                en_sesion=en_sesion,
+                direccion=op.direccion,
+                sesgo=sesgo,
+                toma_s=toma_s,
+                instante_s=t_s,
+                entrada=ent,
+                ordenes=tuple(ordenes),
+                sin_orden=sin_orden,
+                emparejada=id(op) in t_pareja,
+                bot_casa_con_otra=b_op is not None and id(op) not in t_pareja,
+            )
+            paso, motivo, detalle = clasificar_vida(h, tol.entrada_puntos, tol_s)
+            filas.append(
+                {
+                    "dia": d.dia,
+                    "sesion": op.sesion,
+                    "instante": _hhmm(t_s),
+                    "direccion": op.direccion,
+                    "entrada": ent,
+                    "paso": paso,
+                    "motivo": motivo,
+                    "detalle": detalle,
+                    "ordenes": len(ordenes),
+                }
+            )
+    # el libro: entrada menos stop inicial de cada operacion (su caja con el stop en el 1, CAJA-77)
+    distancias_trader: list[float] = []
+    for d in corrida.dias:
+        ruta = raiz / DIRECTORIO_DEV / f"{d.id}.yaml"
+        if ruta.exists():
+            for op in leer_yaml(ruta).get("operaciones") or []:
+                e = int(round(float(op["entrada"]) * 100_000))
+                st = int(round(float(op["stop"]) * 100_000))
+                distancias_trader.append(abs(e - st))
+    resumen = {
+        "modo": "vida",
+        "a21": a21,
+        "a27": a27,
+        "a47": entrada.STOP_EN_RUPTURA,
+        "operaciones_trader": sum(len(d.operaciones) for d in corrida.dias),
+        "operaciones_bot": len(bot),
+        "parejas": len(t_pareja),
+        "tolerancia_puntos": tol.entrada_puntos,
+        "tolerancia_min": tol.instante_min,
+        "por_dia": por_dia,
+        "llenados": llenados,
+        "distancias_trader": distancias_trader,
+    }
+    return filas, resumen
+
+
+def informe_vida(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any]) -> str:
+    ll = resumen["llenados"]
+    lineas = [
+        f"# Embudo de las 77 con la VIDA DE LA ORDEN STOP (ADR-0064), A-21 = {resumen['a21']} "
+        f"(DIAGNOSTICO: A-35 cierre_vela_contraria, A-44 sin_tope, A-47 {resumen['a47']}, "
+        f"A-27 {resumen['a27']})",
+        f"operaciones del trader: {resumen['operaciones_trader']}; del bot: "
+        f"{resumen['operaciones_bot']}; parejas: {resumen['parejas']}; tolerancia "
+        f"{resumen['tolerancia_puntos']} puntos y {resumen['tolerancia_min']} min",
+        "",
+        *tabla({str(resumen["a21"]): [f["paso"] for f in filas]}, PASOS_VIDA),
+        "",
+        "## Por motivo",
+    ]
+    motivos = Counter((f["paso"], f["motivo"]) for f in filas)
+    for paso in PASOS_VIDA:
+        for (p, m), n in sorted(motivos.items()):
+            if p == paso:
+                lineas.append(f"- {p}: {m}: {n}")
+    cierres = Counter(x["cierre"] for x in ll)
+    lineas += [
+        "",
+        "## Diagnostico del stop",
+        "distancia entrada-stop del BOT (en sus llenados, el stop con el que nace): "
+        + _cuartiles([x["distancia_stop"] for x in ll]),
+        "distancia entrada-stop del TRADER (las operaciones del libro, stop inicial): "
+        + _cuartiles(resumen["distancias_trader"]),
+        "caja del BOT (en sus llenados): "
+        + _cuartiles([x["caja"] for x in ll if x["caja"] is not None]),
+        "caja del TRADER reconstruida con el stop en el 1 (CAJA-77): la misma distancia: "
+        + _cuartiles(resumen["distancias_trader"]),
+        f"llenados: {len(ll)}; cierres: "
+        + ", ".join(f"{k} {v}" for k, v in sorted(cierres.items())),
+        "",
+        "| dia | orden | lado | caja | stop | min caja->llenado | min llenado->cierre | cierre "
+        "| spread llenado | spread cierre |",
+        "|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for x in ll:
+        lineas.append(
+            f"| {x['dia']} | {x['orden']} | {x['lado']} | {x['caja']} | {x['distancia_stop']} | "
+            f"{x['min_caja_a_llenado']} | {x['min_a_cierre']} | {x['cierre']} | "
+            f"{x['spread_llenado']} | {x['spread_cierre']} |"
+        )
+    lineas += ["", "## Por dia y sesion: la vida de sus ordenes"]
+    for x in resumen["por_dia"]:
+        lineas.append(
+            f"- {x['dia']} {x['sesion']} (trader {x['operaciones_trader']}) | toma {x['toma']} | "
+            f"colocadas {x['colocadas']}, canceladas {x['canceladas']}, rechazadas "
+            f"{x['rechazadas']}, llenadas {x['llenadas']} | cierres {x['cierres'] or '-'}"
+        )
+    lineas += ["", "## Por operacion"]
+    for f in filas:
+        lineas.append(
+            f"- {f['dia']} {f['sesion']} {f['instante']} {f['direccion']} {f['entrada']} | "
+            f"{f['paso']}: {f['motivo']}{(' (' + f['detalle'] + ')') if f['detalle'] else ''} | "
+            f"ordenes de la sesion hasta ahi: {f['ordenes']}"
+        )
+    return "\n".join(lineas) + "\n"
+
+
 def informe(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any]) -> str:
+    if resumen.get("modo") == "vida":
+        return informe_vida(filas, resumen)
     lineas = [
         f"# Embudo de las 77, A-21 = {resumen['a21']} (DIAGNOSTICO: A-35 cierre_vela_contraria, "
         f"A-44 sin_tope, A-47 {resumen['a47']}, A-27 {resumen['a27']})",
