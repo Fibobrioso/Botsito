@@ -99,6 +99,8 @@ def reglas_broker_de(perfil: PerfilCuenta) -> ReglasBroker:
         # UNKNOWN hasta medirlo en la demo de FTMO (A-27): el broker se niega a colocar una orden
         # stop sin el, salvo en diagnostico (ADR-0057)
         stops_level_puntos=perfil.puntos_o_nada(PARAMETRO_STOPS_LEVEL),
+        # R13: solo para informar junto al recuento de peticiones; no frena nada todavia
+        mensajes_dia_max=perfil.entero("firma_mensajes_dia_max"),
     )
 
 
