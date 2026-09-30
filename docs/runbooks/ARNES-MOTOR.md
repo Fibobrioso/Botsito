@@ -26,6 +26,11 @@ sobre esos, y tienen que ser de construcción. Por pantalla sale `OK` con la rut
 línea `TIEMPO` y `MEMORIA` que **no** va en el informe: el informe es determinista y dos ejecuciones
 dan el mismo fichero byte a byte, así que dos informes se comparan con `diff`.
 
+La `MEMORIA` es el pico del proceso entero, el que lleva el sistema (working set en Windows, RSS
+máxima en Linux), y no cuesta nada. Con `--tracemalloc` se añade lo que asigna Python medido con
+`tracemalloc`, que era lo único que daba hasta la rama `trabajo/memoria-suite`: es caro en tiempo y
+en memoria, y por eso ya no va por defecto.
+
 ## El modo simulación (`--simular`, ADR-0053)
 
 ```

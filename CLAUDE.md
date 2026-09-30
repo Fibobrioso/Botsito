@@ -217,6 +217,12 @@ AMBIGUEDAD -no al parametro-, o `DECIDIDA` por el consultor con el ADR que la no
   vale para Python con comillas y sangrado complicado: script a la carpeta de trabajo y ejecutarlo.
 - **El `## Estado` de un ADR se lee con `split()[0]`** (`tests/unit/test_adr.py`): escribir `ACTIVE.`
   con punto hace fallar el test.
+- **Si una ejecucion larga en segundo plano muere con el aviso «system running low on memory», no
+  es un fallo de la suite: es el recorte de procesos en segundo plano de Claude Code**, que mata el
+  Bash de fondo cuando baja la memoria LIBRE DEL SISTEMA (Chrome, Discord, `vmmem`), no la del
+  proceso. Se evita arrancando Claude Code con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. No se
+  relanza sin permiso. Paso el 2026-09-29 (`PROJECT_STATE.md`, Next Action A4). El pico de cada
+  `make check` sale en la ultima linea del log, `PICO DE MEMORIA` (rama `trabajo/memoria-suite`).
 - **`make check` con la salida a un FICHERO, nunca a `/dev/null`:** `lint-imports` falla al escribir
   ahi y `make` sale con 2 aunque todo este verde. Medido hoy: a `/dev/null` sale 1; al fichero, 0 y
   "Contracts: 4 kept, 0 broken".
