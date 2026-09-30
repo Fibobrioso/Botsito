@@ -204,6 +204,13 @@ ambiguedades:
     pregunta: >-
       Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para
       que la des por rota?
+      LO FIRME, ACTIVADO el 2026-09-29 (sesion 3, v9 0:55:48-0:56:39): al tocar («apenas toca,
+      pues se pone en B la entrada»), mirado en M1, con el stop exactamente en la entrada, y
+      despues el stop no se mueve (break_even_criterio_ruptura = mecha,
+      fb-2026-09-29-sesion-03-2cff5008; RN-014, fb-2026-09-29-sesion-03-9f506366). SIGUE ABIERTA
+      por orden del consultor: el corte de audio de v9 de 0:57:00 a 0:58:06 cae al final de su
+      respuesta, y lo que pudo tapar se cierra con el audio de respaldo
+      (docs/validation/SESION-03-EXTRACCION.md §2).
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿el rompimiento de la zona de control que dispara el break even vale al toque (por un pip) o
@@ -218,6 +225,10 @@ ambiguedades:
       - ev-v6-005701-7ae2b8d3
       - ev-v6-010927-50b8d873
       - ev-v6-010947-8b4b485a
+      - ev-v9-005219-3b98f54f
+      - ev-v9-005543-1b52290e
+      - ev-v9-005619-27ae7cd3
+      - ev-v9-005631-c3b42381
     parametros: [break_even_criterio_ruptura]
     contradiccion: null
     estado: ABIERTA
@@ -404,6 +415,10 @@ ambiguedades:
     pregunta: >-
       Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras
       para decidir que una zona está limpia?
+      LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin
+      alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una
+      bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum
+      obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una
@@ -418,6 +433,11 @@ ambiguedades:
       - ev-v1-001435-f0586d02
       - ev-v4-000243-5f8875ce
       - ev-v3-004201-bfeb3734
+      - ev-v9-011555-81ec8beb
+      - ev-v9-011655-c20a1c2d
+      - ev-v9-011704-b5ddc3e3
+      - ev-v9-011714-08536830
+      - ev-v9-011957-4250c2b4
     # El selector de la respuesta, SIN VALOR (UNKNOWN) desde la rama trabajo/preparar-a21: sus
     # opciones son las dos condiciones de validez que el corpus enuncia; activar RN-008/RN-011 es
     # escribirle la que diga el trader, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md)
@@ -558,6 +578,9 @@ ambiguedades:
     pregunta: >-
       A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando
       pasa eso, ¿qué haces?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:19:17): «nosotros el sesgo ya nos define qué
+      vamos a buscar, luego nos enfocamos solo en M15, tratar de buscar a favor»: manda el sesgo
+      y en M15 solo se busca a favor (fb-2026-09-29-sesion-03-fc2c5c1f).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando
@@ -582,6 +605,7 @@ ambiguedades:
       - ev-v3-001508-e1a49a38
       - ev-v4-003451-d750e553
       - ev-v6-003701-7613b381
+      - ev-v9-001915-d03d1565
     parametros: []
     contradiccion: null
     # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
@@ -589,7 +613,7 @@ ambiguedades:
     # docs/validation/A24-A21-A26-A34-CLASIFICACION.md
     # Tres pasajes apuntan a (a) -marcar con la vela contraria de cualquier flujo, v3 #976, v4
     # #597 y #942-, pero ninguno lo dice para el caso de M15 contra H4 ni habla del lado de ruido
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -725,6 +749,9 @@ ambiguedades:
     pregunta: >-
       Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la
       cuentas en tus intentos?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera
+      como un loss … gastaría un intento»: la lectura de RN-016 era la del trader
+      (fb-2026-09-29-sesion-03-d36ba0d2).
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "una entrada que se activo sin ruptura y se fue al stop entero, ¿gasta intento? Dijiste que no
@@ -741,9 +768,10 @@ ambiguedades:
     evidencia:
       - ev-v4-010759-514b5d7d
       - ev-v4-010326-875c8067
+      - ev-v9-012612-d9db2ee8
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -820,6 +848,9 @@ ambiguedades:
     pregunta: >-
       Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas
       para la sesión?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:16:19): «si rompe por los dos, como te digo,
+      importa el color de la vela»: con la doble ruptura el sesgo lo decide el color con que
+      cierra la vela (fb-2026-09-29-sesion-03-617f496a).
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "vela H4 previa que rompe ambos extremos: ¿que sentido toma el sesgo? Dijiste que el sesgo
@@ -830,6 +861,7 @@ ambiguedades:
     evidencia:
       - ev-v3-000531-4d6375b6
       - ev-v3-000824-c81f03eb
+      - ev-v9-001617-4b47e01a
     parametros: []
     contradiccion: null
     # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
@@ -838,7 +870,7 @@ ambiguedades:
     # v3 #982-#992 ofrece, como simplificacion OPCIONAL, tomar el color de la vela anterior, que
     # choca con las notas de RN-003; y v3 #158 dice que una vela que ENVUELVE valida la continuidad,
     # pero envolver no dice que la mecha rompa los dos extremos
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -909,6 +941,8 @@ ambiguedades:
     pregunta: >-
       Dijiste que el stop se define desde el punto más bajo donde se genera la vela contraria. ¿En
       qué temporalidad miras esa vela?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 1:39:18): «M1», a «para precisar, M1, M15 u
+      otra» (fb-2026-09-29-sesion-03-91eeee94).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "Dijiste que el stop sale del punto donde se genera la vela contraria. ¿En qué temporalidad
@@ -925,9 +959,11 @@ ambiguedades:
     evidencia:
       - ev-v1-001454-69cebe62
       - ev-v3-004353-b7661782
+      - ev-v9-013914-9fb86553
+      - ev-v9-013923-0912f06b
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -936,6 +972,9 @@ ambiguedades:
     titulo: cuándo se da por anulada una orden límite que el precio deja sin llenar
     pregunta: >-
       Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 1:32:07): «sigue vivo hasta que se desarrolle
+      otro posible punto de breaker», y entonces la orden se actualiza; que el precio se aleje
+      no la anula (fb-2026-09-29-sesion-03-c7fa3068).
     resuelve_en: [F22]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-04 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. RN-006 ya cubre la orden que se mueve: "el mismo
@@ -948,9 +987,11 @@ ambiguedades:
     evidencia:
       - ev-v4-010731-bb8af97c
       - ev-v4-010857-5bc906c9
+      - ev-v9-013205-85840dcc
+      - ev-v9-013437-ffdd9c87
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -982,6 +1023,9 @@ ambiguedades:
     titulo: qué se hace con el stop después del break even
     pregunta: >-
       Una vez que la operación está en break even, ¿qué haces con el stop a partir de ahí?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:58:56): «no definimos parciales, o sea lo
+      dejamos ahí quieto»: despues del break even el stop no se mueve (el trader entendio la
+      pregunta como de parciales) (fb-2026-09-29-sesion-03-7a79dcd7).
     resuelve_en: [F23]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-06 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. La busqueda dio CERO pasajes, sin control
@@ -993,9 +1037,10 @@ ambiguedades:
     evidencia:
       - ev-v3-003220-8805194d
       - ev-v3-003318-f1a2d27d
+      - ev-v9-005850-8aae8764
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1004,6 +1049,10 @@ ambiguedades:
     titulo: si hay un tope de entradas por día, aparte de los cartuchos
     pregunta: >-
       ¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 1:31:00): «Sí, serían tres intentos por
+      liquidez» y «¿El máximo es por día? No, no, por liquidez»: no hay tope por dia, aparte de
+      los tres cartuchos por liquidez (la cifra la propuso el consultor tras un «no sé, dime
+      tú») (fb-2026-09-29-sesion-03-7b87c3ee).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "Aparte de lo que ya dijiste sobre los intentos por zona, ¿hay algo que limite cuántas
@@ -1023,9 +1072,11 @@ ambiguedades:
     evidencia:
       - ev-v4-003350-acb03ee7
       - ev-v2-001615-d96c699f
+      - ev-v9-013054-d49a544e
+      - ev-v9-013117-c683f9b5
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1034,6 +1085,13 @@ ambiguedades:
     titulo: con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00
     pregunta: >-
       Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
+      LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y
+      11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a
+      06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia
+      de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida
+      de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en
+      su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»:
+      confirmar en la proxima sesion; hasta entonces sigue ABIERTA.
     resuelve_en: [F14, F26]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor tras K-07,
     # docs/validation/SESION-02-DECISIONES.md §2 y §8). El grafico de FX Replay es UTC+2 fijo: lo
@@ -1052,6 +1110,8 @@ ambiguedades:
     evidencia:
       - ev-v3-000136-6160fcea
       - ev-v4-011425-ae028b78
+      - ev-v9-010753-063c8cb7
+      - ev-v9-010809-68e4ea44
     parametros: [huso_operativa]
     contradiccion: null
     estado: ABIERTA
@@ -1096,6 +1156,12 @@ ambiguedades:
     titulo: magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana)
     pregunta: >-
       ¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
+      RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro
+      no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la
+      semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el
+      noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA
+      (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope
+      es A-51.
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
@@ -1113,6 +1179,9 @@ ambiguedades:
     evidencia:
       - ev-v4-012524-0ef85a89
       - ev-v4-000508-0ce0adf1
+      - ev-v9-011128-a267338b
+      - ev-v9-011139-a26a5b11
+      - ev-v9-011206-148fc7f9
     # Los seis `perdida_trader_*` son los campos que la respuesta fija, SIN VALOR (UNKNOWN) desde
     # el 2026-09-26 (rama trabajo/preparar-a35-a44): alcance (sin_tope | dia | semana | ambos),
     # magnitud, unidad, las cifras en dinero y el huso del reinicio (docs/runbooks/ACTIVAR-A35-A44.md)
@@ -1128,6 +1197,10 @@ ambiguedades:
     pregunta: >-
       Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15
       minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:40:38): «esta es la vela de M1 que rompe la
+      zona de M15 y lo hace con cuerpo», confirmado a las 0:42:28: la toma la hace una vela de
+      M1 que cierra con cuerpo pasado el nivel; la mecha solo vale para el punto de breaker en
+      M1 (fb-2026-09-29-sesion-03-b2e074e3).
     resuelve_en: [F19, F20]
     # NACE en la orden de cierre de trabajo/preparar-a35-a44 (ADR-0054 §4). Afecta a RN-004. La
     # referencia es docs/validation/VERIFICACION-A35-A44.md §2 y §3b: ninguna fuente fija que vela
@@ -1138,9 +1211,11 @@ ambiguedades:
       - ev-v4-001533-73539d90
       - ev-v4-003849-3fe5161b
       - ev-v4-003942-cfffa382
+      - ev-v9-004037-ca58e486
+      - ev-v9-004217-c014bfdc
     parametros: [liquidez_m15_criterio_toma]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1152,6 +1227,9 @@ ambiguedades:
       que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que
       llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor
       la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:32:53): cada sesion es «un mundo diferente»
+      («Claro, exacto») y «no importa cómo terminó la primera operación»: cada toma nueva de M15
+      abre un escenario, sin tope diario de escenarios (fb-2026-09-29-sesion-03-5021677e).
     resuelve_en: [F19, F20]
     # NACE en la orden de cierre de trabajo/preparar-a21 (ADR-0055 §4). Medido en construccion
     # (docs/validation/VERIFICACION-A21.md §3): 31 sesiones abren con una toma hecha en una sesion
@@ -1163,9 +1241,13 @@ ambiguedades:
     evidencia:
       - ev-v2-000310-2fc6581b
       - ev-v6-014610-597e442a
+      - ev-v9-003253-2ac6060a
+      - ev-v9-003303-818a0796
+      - ev-v9-003318-c0503fe5
+      - ev-v9-003456-9ef48fb5
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1175,6 +1257,9 @@ ambiguedades:
     pregunta: >-
       Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto
       o cuando el precio vuelve a él?
+      RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra
+      siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura
+      (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
     resuelve_en: [F20, F22]
     # NACE el 2026-09-27 (rama trabajo/sesion-02, decision del consultor). La spec asume orden
     # limite (RN-008, RN-011; A-29, A-36 y A-38 la nombran en el titulo), y el trader lo DICE asi en
@@ -1198,9 +1283,12 @@ ambiguedades:
       - ev-v3-004201-bfeb3734
       - ev-v1-001358-a2b8ec0d
       - ev-v3-002511-b12d67be
+      - ev-v9-000124-d2afa992
+      - ev-v9-000143-214aacde
+      - ev-v9-000538-4bbf1c16
     parametros: [entrada_tipo_orden]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1273,6 +1361,10 @@ ambiguedades:
     pregunta: >-
       Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la
       caja o la caja entera?
+      LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa
+      la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa»,
+      y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al
+      punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
     # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
@@ -1292,6 +1384,8 @@ ambiguedades:
       - ev-v1-001306-f98e12e9
       - ev-v3-001725-bca9714b
       - ev-v3-001600-ed45b091
+      - ev-v9-004721-2e023ac6
+      - ev-v9-004919-c6bfb3ee
     parametros: []
     contradiccion: null
     estado: ABIERTA
@@ -1299,3 +1393,24 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-51
+    titulo: qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar
+    pregunta: >-
+      Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la
+      racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
+    resuelve_en: [F11, F18]
+    # NACE el 2026-09-29 (rama trabajo/activar-sesion-03, orden del consultor) de la respuesta de
+    # A-44 en la sesion 3: el tope del trader son 9 perdidas SEGUIDAS, no un porcentaje. Para
+    # escribir el tope en RN-020 faltan dos cosas que no se le preguntaron: que corta la racha y
+    # cuando se levanta la parada. BLOQUEANTE de RN-020 como A-44: sin ellas el acumulador no se
+    # escribe sin inventar. Sin parametro todavia: ninguno de los perdida_trader_* la expresa.
+    evidencia:
+      - ev-v9-011128-a267338b
+      - ev-v9-011139-a26a5b11
+    parametros: []
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: true

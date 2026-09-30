@@ -1,0 +1,19 @@
+id: fb-2026-09-29-sesion-03-8f091ed8
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: parametro
+  id: entrada_tipo_orden
+accion: RESOLVE_UNKNOWN
+respuesta_literal: aquí queda confirmado que se entra siempre por stop Sí, exacto
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:01:24
+t1: 0:01:30
+valor_resultante: stop_en_ruptura
+valor_canonico: stop_en_ruptura
+notas: A-47; ev-v9-000124-d2afa992
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

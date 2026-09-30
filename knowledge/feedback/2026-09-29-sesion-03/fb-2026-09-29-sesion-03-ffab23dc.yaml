@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-ffab23dc
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-007
+accion: CORRECT
+respuesta_literal: cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto
+  de breaker
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:30:21'
+t1: '1:30:34'
+valor_resultante: 'una vela casi plana, sin color claro, no cuenta al mapear: sobre ella no se traza punto
+  de breaker'
+notas: E-3; ev-v9-013021-ea0db73a; el umbral de «casi plana» no lo dio
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

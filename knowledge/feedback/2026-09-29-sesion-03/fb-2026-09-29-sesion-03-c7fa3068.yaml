@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-c7fa3068
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-38
+accion: RESOLVE_UNKNOWN
+respuesta_literal: O sea, sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:32:05'
+t1: '1:32:13'
+valor_resultante: la orden sigue viva hasta que aparece otro posible punto de breaker, y entonces se actualiza
+notas: ev-v9-013205-85840dcc, ev-v9-013437-ffdd9c87
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

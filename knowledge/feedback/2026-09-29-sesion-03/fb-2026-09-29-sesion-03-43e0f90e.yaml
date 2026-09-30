@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-43e0f90e
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: parametro
+  id: liquidez_m15_criterio_toma
+accion: CONFIRM
+respuesta_literal: para el M1 para actualizar el punto de breaker vale la mecha y para la liquidez de
+  M15 hace siempre falta cuerpo
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:42:17
+t1: 0:42:39
+notas: A-45; ev-v9-004217-c014bfdc
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

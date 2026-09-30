@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-9f506366
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-014
+accion: CORRECT
+respuesta_literal: apenas toca, pues se pone en B la entrada. [...] Pues se mantiene en M1, o sea, se
+  mantiene en M1. [...] Yo he estado trabajando así, a entrada.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:55:43
+t1: 0:56:41
+valor_resultante: el break even se pone al tocar, mirado en M1, con el stop exactamente en la entrada;
+  despues el stop no se mueve
+notas: A-13 en lo firme y A-40; ev-v9-005543-1b52290e, ev-v9-005619-27ae7cd3, ev-v9-005631-c3b42381, ev-v9-005850-8aae8764
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

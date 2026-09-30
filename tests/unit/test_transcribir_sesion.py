@@ -294,14 +294,17 @@ def test_la_guarda_de_rutas_es_la_de_siempre(m: ModuleType, tmp_path: Path) -> N
 
 
 def test_el_orden_es_el_de_la_hoja_con_a46_tras_a21(m: ModuleType) -> None:
-    spec = importlib.util.spec_from_file_location(
-        "hoja_preguntas", RAIZ / "scripts" / "hoja_preguntas.py"
-    )
-    assert spec is not None and spec.loader is not None
-    hoja = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(hoja)
-    esperado = list(hoja.ids_en_orden())
-    esperado.insert(esperado.index("A-21") + 1, "A-46")
+    """El orden de la hoja de la sesion 02 TAL COMO SE LLEVO (hoja_preguntas.py, 2026-09-25), con
+    A-46 tras A-21. Hasta el 2026-09-29 se comparaba con la hoja viva; desde que la sesion 3 deja
+    nueve RESUELTAS (rama trabajo/activar-sesion-03), la hoja viva ya no las lleva, y este orden,
+    que agrupa la grabacion de la sesion 02, es historia: se fija aqui, explicito."""
+    esperado = [
+        "A-35", "A-45", "A-21", "A-46", "A-44", "A-43", "A-24", "A-42",
+        "A-26", "A-25", "A-32",
+        "A-36", "A-37", "A-29", "A-30", "A-38", "A-47", "A-48", "A-49",
+        "A-18", "A-13", "A-31", "A-40", "A-33",
+        "A-34", "A-41", "A-39",
+    ]  # fmt: skip
     assert list(m.ORDEN_SESION_02) == esperado
 
 

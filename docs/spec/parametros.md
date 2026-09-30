@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.4.0` · hash `66243cf1302a…`
+`spec_version 13.5.0` · hash `9963ef9d8425…`
 
-84 en total: 66 con valor y 18 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+85 en total: 68 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -14,7 +14,7 @@
 | `base_calculo_perdida_semanal` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | sobre que saldo se calcula |
 | `base_calculo_riesgo` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-2603c017` | sobre que saldo se calcula |
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
-| `break_even_criterio_ruptura` | `mecha` | DEFAULT_AMBIGUOUS · en revision por A-13 | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | que hace falta para dar por rota la zona que dispara el break even |
+| `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
@@ -24,6 +24,7 @@
 | `cuenta_objetivo` | `fondeada` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `cuenta_pruebas` | `demo` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `dias_operables` | `lunes_a_viernes` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-140d655c` | que dias de la semana se opera |
+| `entrada_tipo_orden` | `stop_en_ruptura` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-8f091ed8` | el tipo de la orden de entrada (A-47) |
 | `filtro_noticias` | `no` | CONFIRMED | prop_firm | `ADR-0026` | regla de filtro, o no si no filtra |
 | `filtro_spread` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-672262d5` | se aplica o no |
 | `firma` | `ftmo` | CONFIRMED | prop_firm | `ADR-0026` | prop firm de destino |
@@ -70,6 +71,7 @@
 | `sesgo_h4_tope_velas` | `60` | CONFIRMED | ejecucion | `ADR-0044` | velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo |
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
+| `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared del trader (huso_operativa) |
 | `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora de reloj de pared del trader (huso_operativa) |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
@@ -81,7 +83,6 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 
 - **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 - **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
-- **`entrada_tipo_orden`** (estrategia) — si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47, ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1). Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
 - **`liquidez_m15_pivote_formado`** (estrategia) — cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
 - **`perdida_trader_alcance`** (estrategia) — si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
@@ -105,6 +106,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `anclaje_h4` → F15
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
+- `entrada_tipo_orden` → F20, F22
 - `filtro_noticias` → F33
 - `firma` → F33
 - `firma_apalancamiento` → F21, F33
@@ -119,6 +121,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
+- `stop_fraccion_redondeo` → F21
 
 ## Que dice cada uno
 
@@ -158,7 +161,7 @@ Opciones: `tocar`, `cierre`.
 
 ### `break_even_criterio_ruptura`
 
-criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el break even. Es exactamente lo que pregunta A-13, y sigue ABIERTA: el trader se desdice a los doce minutos. Entra `mecha` por coherencia con los otros dos criterios, pero es un DEFAULT NUESTRO. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
+criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el break even. Es lo que pregunta A-13. Hasta el 2026-09-29 entraba `mecha` como DEFAULT NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13 sigue ABIERTA solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
 
 Opciones: `mecha`, `cuerpo`.
 
@@ -226,7 +229,7 @@ Opciones: `lunes_a_viernes`, `todos_los_dias`.
 
 ### `entrada_tipo_orden`
 
-si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47, ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1). Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
+si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47, RESUELTA el 2026-09-29 en la sesion 3 -«aquí queda confirmado que se entra siempre por stop» / «Sí, exacto», v9 0:01:24-: STOP en la ruptura. Antes de que la respondiera: en pantalla, en v7 y v8, las ordenes legibles eran 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), ninguna de las 77 entradas de construccion es una limite puesta de antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10), y en el corpus lo decia como limite (ev-v3-004201-bfeb3734). Hasta el 2026-09-29, sin fijar, el motor cableado se negaba salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1). Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
 
 Opciones: `stop_en_ruptura`, `limite_en_retroceso`.
 
@@ -501,6 +504,12 @@ Opciones: `en_la_orden`, `tras_el_llenado`.
 ### `stop_fraccion_caja`
 
 nivel de la caja donde vive el stop. Se escribe EN la orden limite y no se mueve despues (A-10 lo fijo en 0,8; A-11 cerro que viaja en la orden). Ademas es la distancia que dimensiona el lote desde ADR-0020
+
+### `stop_fraccion_redondeo`
+
+cuando el 0,8 de la caja no cae en un punto exacto, hacia donde va el stop. NACE el 2026-09-29 (rama trabajo/activar-sesion-03): hasta entonces no era un parametro, sino una linea de codigo -escribir_stop_en_la_orden calcula la distancia con ROUND_DOWN (engine/primitivas_broker.py), y eso acerca el stop a la entrada-. El trader, en la sesion 3, lo quiere al reves: hacia fuera, alejandose de la entrada, lo minimo posible, "si es un pip, un pip y ya esta" (ev-v9-010541-0c80d5cf). DESALINEADO con el motor hasta la rama de codigo que lo lea: hoy el motor sigue redondeando hacia la entrada
+
+Opciones: `hacia_la_entrada`, `alejandose_de_la_entrada`.
 
 ### `stop_proteccion_capital`
 

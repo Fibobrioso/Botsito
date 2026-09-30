@@ -8,6 +8,8 @@ phase: F11
 
 > **Enmienda (2026-09-25, rama `trabajo/sesion-02`, ADR-0039).** El **punto 4 queda corregido en su valor**: `huso_grafico` es `Etc/GMT-2` (UTC+2 fijo), no `Europe/Madrid`. Su premisa -"no hay ninguna configuracion deliberada de huso", la plataforma muestra la hora local- la desmiente el propio grafico de FX Replay en un fotograma de ENERO de v4 ("14:29:59 UTC+2", `docs/validation/ABRIL-Y-LA-CAJA.md` R0), que ADR-0039 da por medido. Era la objecion de ADR-0015: que todas las lecturas eran de verano; esta es de invierno. **Los puntos 1, 2, 3 y 5 no se tocan aqui**: si la ventana de 07:00 a 15:00 sigue su reloj civil o el de su grafico solo se distingue en invierno, cambia el kit, la fidelidad y la entrada de marzo, y lo decide el consultor (`docs/validation/SESION-02-DECISIONES.md` §2).
 
+> **Enmienda PROVISIONAL (2026-09-29, rama `trabajo/activar-sesion-03`, ADR-0059).** La lectura de A-42 en la sesion 3 es que las sesiones de 07-11 y 11-15 van fijas en el reloj del grafico, UTC+2 todo el ano (en invierno, 06:00-14:00 de Madrid): **desmiente el punto 1 para el invierno**. Pero `huso_operativa` NO cambia todavia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo. El trader dijo «creo»: A-42 sigue ABIERTA.
+
 ## Decision
 
 1. **`huso_operativa` vuelve a `Europe/Madrid`.** Es el reloj del trader como persona: se sienta a

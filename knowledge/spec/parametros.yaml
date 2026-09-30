@@ -374,16 +374,16 @@ parametros:
     opciones: ["mecha", "cuerpo"]
     descripcion: >-
       criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el
-      break even. Es exactamente lo que pregunta A-13, y sigue ABIERTA: el trader se desdice a los
-      doce minutos. Entra `mecha` por coherencia con los otros dos criterios, pero es un DEFAULT
-      NUESTRO. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
+      break even. Es lo que pregunta A-13. Hasta el 2026-09-29 entraba `mecha` como DEFAULT
+      NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar
+      («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13
+      sigue ABIERTA solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
       nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
-    estado: DEFAULT_AMBIGUOUS
-    valor: "mecha"
-    ambiguedad_id: A-13
+    estado: CONFIRMED
+    valor: mecha
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-0ccafcba
+      id: fb-2026-09-29-sesion-03-2cff5008
   - nombre: breaker_m1_criterio_ruptura
     categoria: estrategia
     tipo: enum
@@ -445,6 +445,25 @@ parametros:
       id: fb-2026-09-09-sesion-01-d34a0222
     minimo: "0"
     maximo: "1"
+  - nombre: stop_fraccion_redondeo
+    categoria: estrategia
+    tipo: enum
+    unidad: hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto
+    opciones: ["hacia_la_entrada", "alejandose_de_la_entrada"]
+    descripcion: >-
+      cuando el 0,8 de la caja no cae en un punto exacto, hacia donde va el stop. NACE el
+      2026-09-29 (rama trabajo/activar-sesion-03): hasta entonces no era un parametro, sino una
+      linea de codigo -escribir_stop_en_la_orden calcula la distancia con ROUND_DOWN
+      (engine/primitivas_broker.py), y eso acerca el stop a la entrada-. El trader, en la sesion 3,
+      lo quiere al reves: hacia fuera, alejandose de la entrada, lo minimo posible, "si es un pip,
+      un pip y ya esta" (ev-v9-010541-0c80d5cf). DESALINEADO con el motor hasta la rama de codigo
+      que lo lea: hoy el motor sigue redondeando hacia la entrada
+    consumido_por: [F21]
+    estado: CONFIRMED
+    valor: alejandose_de_la_entrada
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-11910e0a
   - nombre: stop_reduccion_fraccion
     categoria: estrategia
     tipo: fraccion
@@ -508,15 +527,21 @@ parametros:
     descripcion: >-
       si la orden de entrada es una STOP en el nivel de ruptura, que espera al otro lado del precio
       y salta cuando el precio lo rompe, o una LIMITE que espera el retroceso al bloque. Es A-47,
-      ABIERTA y BLOQUEANTE de RN-011, y la responde el trader: en pantalla, en v7 y v8, las ordenes
-      legibles son 38 stop frente a 1 limite (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e,
-      ev-v7-000423-01b2c18a), y ninguna de las 77 entradas de construccion es una limite puesta de
-      antemano (docs/validation/ORDEN-STOP-O-LIMITE.md §10); en el corpus lo dice como limite
-      (ev-v3-004201-bfeb3734). `limite_en_retroceso` es lo que programa RN-011 hoy. Sin fijar, el
-      motor cableado se niega salvo en diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1).
+      RESUELTA el 2026-09-29 en la sesion 3 -«aquí queda confirmado que se entra siempre por
+      stop» / «Sí, exacto», v9 0:01:24-: STOP en la ruptura. Antes de que la respondiera: en
+      pantalla, en v7 y v8, las ordenes legibles eran 38 stop frente a 1 limite
+      (ev-v8-003620-12670f0e, ev-v8-003935-0a0b3f8e, ev-v7-000423-01b2c18a), ninguna de las 77
+      entradas de construccion es una limite puesta de antemano
+      (docs/validation/ORDEN-STOP-O-LIMITE.md §10), y en el corpus lo decia como limite
+      (ev-v3-004201-bfeb3734). Hasta el 2026-09-29, sin fijar, el motor cableado se negaba salvo en
+      diagnostico etiquetado (--diagnostico-a47, ADR-0056 §1).
       Lo lee quien coloca la orden en el broker (engine/primitivas_broker.py), no una regla
-    estado: UNKNOWN
     consumido_por: [F20, F22]
+    estado: CONFIRMED
+    valor: stop_en_ruptura
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-8f091ed8
   - nombre: stop_en_orden_pendiente
     categoria: estrategia
     tipo: enum

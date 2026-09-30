@@ -2,15 +2,15 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 13.4.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 13.5.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (30)
+## ABIERTA (21)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
-Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para que la des por rota?
+Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para que la des por rota? LO FIRME, ACTIVADO el 2026-09-29 (sesion 3, v9 0:55:48-0:56:39): al tocar («apenas toca, pues se pone en B la entrada»), mirado en M1, con el stop exactamente en la entrada, y despues el stop no se mueve (break_even_criterio_ruptura = mecha, fb-2026-09-29-sesion-03-2cff5008; RN-014, fb-2026-09-29-sesion-03-9f506366). SIGUE ABIERTA por orden del consultor: el corte de audio de v9 de 0:57:00 a 0:58:06 cae al final de su respuesta, y lo que pudo tapar se cierra con el audio de respaldo (docs/validation/SESION-03-EXTRACCION.md §2).
 
 Afecta a: `break_even_criterio_ruptura`.
 
@@ -26,7 +26,7 @@ Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
-Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia?
+Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
 
 Afecta a: `zona_control_limpia`.
 
@@ -35,10 +35,6 @@ Afecta a: `zona_control_limpia`.
 Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
 
 Afecta a: `cartuchos_reinicio`.
-
-### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
-
-A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿qué haces?
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion
 
@@ -62,10 +58,6 @@ Afecta a: `orden_limite_nace`.
 
 Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella?
 
-### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
-
-Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos?
-
 ### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
 
 En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
@@ -78,10 +70,6 @@ Afecta a: `breaker_m1_criterio_ruptura`.
 
 Afecta a: `parciales`, `objetivo_rr`.
 
-### A-34 · vela H4 previa que rompe ambos extremos · pregunta
-
-Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas para la sesión?
-
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
 Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco?
@@ -92,29 +80,13 @@ Afecta a: `liquidez_m15_pivote_formado`.
 
 Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
 
-### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
-
-Dijiste que el stop se define desde el punto más bajo donde se genera la vela contraria. ¿En qué temporalidad miras esa vela?
-
-### A-38 · cuándo se da por anulada una orden límite que el precio deja sin llenar · pregunta
-
-Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada?
-
 ### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
 
 Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta?
 
-### A-40 · qué se hace con el stop después del break even · pregunta
-
-Una vez que la operación está en break even, ¿qué haces con el stop a partir de ahí?
-
-### A-41 · si hay un tope de entradas por día, aparte de los cartuchos · pregunta
-
-¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas?
-
 ### A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 · **BLOQUEANTE** · pregunta
 
-Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
+Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno? LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y 11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a 06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»: confirmar en la proxima sesion; hasta entonces sigue ABIERTA.
 
 Afecta a: `huso_operativa`.
 
@@ -124,25 +96,9 @@ Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 
-¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar?
+¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar? RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope es A-51.
 
 Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `perdida_trader_alcance`, `perdida_trader_magnitud`, `perdida_trader_unidad`, `perdida_trader_dia_usd`, `perdida_trader_semana_usd`, `perdida_trader_reinicio_huso`.
-
-### A-45 · en qué granularidad se evalúa «cierra con cuerpo» en la toma de liquidez de RN-004 · pregunta
-
-Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15 minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel?
-
-Afecta a: `liquidez_m15_criterio_toma`.
-
-### A-46 · si una toma de liquidez de una sesion anterior del mismo dia sigue valiendo en la siguiente · pregunta
-
-Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en la de 07 a 11, la que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
-
-### A-47 · el tipo de orden de entrada, stop o límite · **BLOQUEANTE** · pregunta
-
-Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él?
-
-Afecta a: `entrada_tipo_orden`.
 
 ### A-48 · qué velas forman el bloque de la caja · pregunta
 
@@ -154,7 +110,11 @@ Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque
 
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 
-Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera?
+Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
+
+### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
+
+Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
 
 ## DECIDIDA (6)
 
@@ -190,7 +150,7 @@ el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. 
 
 Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te haga descartar una?
 
-## RESUELTA (14)
+## RESUELTA (24)
 
 ### A-1 · sesgo H4
 
@@ -275,3 +235,47 @@ Afecta a: `ventana_inicio`, `ventana_fin`.
 RN-009 afirma que con mas de una zona de control no hay trade, pero el literal que la sostiene dice "por lo general solo buscamos uno", que no es una prohibicion dura. ¿es regla o es tendencia? ¿dos zonas invalidan SIEMPRE el esquema, o hay casos en que opera igual? El valor 1 es un default nuestro hasta que lo diga. RESPONDIDA por escrito el 2026-09-11: es REGLA -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica tambien el descarte, no solo el numero (fb-2026-09-09-sesion-01-1b2203b0)
 
 Afecta a: `zonas_control_max_por_esquema`.
+
+### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
+
+A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿qué haces? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:19:17): «nosotros el sesgo ya nos define qué vamos a buscar, luego nos enfocamos solo en M15, tratar de buscar a favor»: manda el sesgo y en M15 solo se busca a favor (fb-2026-09-29-sesion-03-fc2c5c1f).
+
+### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
+
+Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
+
+### A-34 · vela H4 previa que rompe ambos extremos · pregunta
+
+Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas para la sesión? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:16:19): «si rompe por los dos, como te digo, importa el color de la vela»: con la doble ruptura el sesgo lo decide el color con que cierra la vela (fb-2026-09-29-sesion-03-617f496a).
+
+### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
+
+Dijiste que el stop se define desde el punto más bajo donde se genera la vela contraria. ¿En qué temporalidad miras esa vela? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:39:18): «M1», a «para precisar, M1, M15 u otra» (fb-2026-09-29-sesion-03-91eeee94).
+
+### A-38 · cuándo se da por anulada una orden límite que el precio deja sin llenar · pregunta
+
+Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:32:07): «sigue vivo hasta que se desarrolle otro posible punto de breaker», y entonces la orden se actualiza; que el precio se aleje no la anula (fb-2026-09-29-sesion-03-c7fa3068).
+
+### A-40 · qué se hace con el stop después del break even · pregunta
+
+Una vez que la operación está en break even, ¿qué haces con el stop a partir de ahí? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:58:56): «no definimos parciales, o sea lo dejamos ahí quieto»: despues del break even el stop no se mueve (el trader entendio la pregunta como de parciales) (fb-2026-09-29-sesion-03-7a79dcd7).
+
+### A-41 · si hay un tope de entradas por día, aparte de los cartuchos · pregunta
+
+¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:31:00): «Sí, serían tres intentos por liquidez» y «¿El máximo es por día? No, no, por liquidez»: no hay tope por dia, aparte de los tres cartuchos por liquidez (la cifra la propuso el consultor tras un «no sé, dime tú») (fb-2026-09-29-sesion-03-7b87c3ee).
+
+### A-45 · en qué granularidad se evalúa «cierra con cuerpo» en la toma de liquidez de RN-004 · pregunta
+
+Cuando dices que en M15 tiene que cerrar con cuerpo, ¿esperas a que cierre la vela de 15 minutos, o te basta con que una vela de 1 minuto cierre con cuerpo pasando el nivel? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:40:38): «esta es la vela de M1 que rompe la zona de M15 y lo hace con cuerpo», confirmado a las 0:42:28: la toma la hace una vela de M1 que cierra con cuerpo pasado el nivel; la mecha solo vale para el punto de breaker en M1 (fb-2026-09-29-sesion-03-b2e074e3).
+
+Afecta a: `liquidez_m15_criterio_toma`.
+
+### A-46 · si una toma de liquidez de una sesion anterior del mismo dia sigue valiendo en la siguiente · pregunta
+
+Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en la de 07 a 11, la que tú llamas Londres), ¿sigue valiendo para operar en la siguiente (la de 11 a 15, la que llamas Nueva York), o en esa sesión esperas una toma nueva? Repregunta anotada: hoy el motor la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca). RESUELTA el 2026-09-29 en la sesion 3 (v9 0:32:53): cada sesion es «un mundo diferente» («Claro, exacto») y «no importa cómo terminó la primera operación»: cada toma nueva de M15 abre un escenario, sin tope diario de escenarios (fb-2026-09-29-sesion-03-5021677e).
+
+### A-47 · el tipo de orden de entrada, stop o límite · **BLOQUEANTE** · pregunta
+
+Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
+
+Afecta a: `entrada_tipo_orden`.

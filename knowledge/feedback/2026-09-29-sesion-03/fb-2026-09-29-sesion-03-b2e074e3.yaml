@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-b2e074e3
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-45
+accion: RESOLVE_UNKNOWN
+respuesta_literal: esta es la vela de M1 que rompe, o sea, la zona del índice de M15 y lo hace con cuerpo,
+  o sea, cierra por encima con cuerpo.
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:40:37
+t1: 0:40:47
+valor_resultante: la toma de la liquidez de M15 la hace una vela de M1 que cierra con cuerpo pasado el
+  nivel
+notas: confirmado a las 0:42:28; ev-v9-004037-ca58e486, ev-v9-004217-c014bfdc
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

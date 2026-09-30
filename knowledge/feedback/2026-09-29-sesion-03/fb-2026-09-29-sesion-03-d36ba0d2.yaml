@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-d36ba0d2
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-31
+accion: RESOLVE_UNKNOWN
+respuesta_literal: si llega a tocar el stop se considera como un loss [...] gastaría un intento
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-09-29 (trabajo/activar-sesion-03)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:26:12'
+t1: '1:26:37'
+valor_resultante: gasta un intento
+notas: linea mezclada consultor/trader; ev-v9-012612-d9db2ee8
+recibido_el: '2026-09-29'
+procedencia: trader_grabado
