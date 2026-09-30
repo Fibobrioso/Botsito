@@ -2,7 +2,8 @@
 
 Hoy son pocas, y todo lo demas es NO_IMPLEMENTADA (ADR-0048 §2):
 
-- de reloj: `abre_sesion_operativa`, `en_ventana` y `alcanza_hora`;
+- de reloj: `abre_sesion_operativa`, `en_ventana`, `alcanza_hora` y `vence_vela_h4`, que
+  mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002, ADR-0060);
 - de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_previa` y `contra:
   extremo_de_la_h4_anterior`, que es RN-003 y usa `domain/sesgo.py` tal cual (ADR-0044, ADR-0048
   §8, ADR-0049 H1). Siempre tiene respuesta -alcista, bajista, ambiguo o insuficiente- y la ata en
@@ -23,12 +24,15 @@ from decimal import Decimal
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
+from botsito.cases.ventanas import MINUTOS_H4
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
+from botsito.data.agregacion import limites_entre
 from botsito.data.velas import a_datetime
 from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote, cruza, toca
 from botsito.domain.sesgo import sesgo_h4
-from botsito.domain.velas import Vela
+from botsito.domain.valores import HoraLocal
+from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.interprete import (
     VALOR_APAGADO,
     EstadoDia,
@@ -51,6 +55,8 @@ from botsito.engine.zonas import primitivas_zona
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
 TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
+# la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
+ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
 # primer cierre de M15 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
@@ -95,6 +101,31 @@ def primitivas_escritas(
     siendo hueco con nombre. Con `limpia` (la lectura de A-21) entra la geometria de la zona de
     entrada (`engine/zonas.py`); sin ella, sigue NO_IMPLEMENTADA con nombre."""
 
+    tramos_h4: dict[HoraLocal, tuple[int, int]] = {}
+
+    def _fin_de_la_h4(anclaje: HoraLocal, minuto: int) -> int:
+        """El fin de la vela H4 que contiene la M1 que empieza en `minuto`, en la rejilla de
+        `anclaje`: la misma que parte las velas en `data/agregacion.py`. Guarda el ultimo
+        tramo consultado: dentro de una vela la rejilla no se vuelve a calcular."""
+        tramo = tramos_h4.get(anclaje)
+        if tramo is None or not (tramo[0] <= minuto < tramo[1]):
+            limites = limites_entre(MinutoUtc(minuto), MinutoUtc(minuto + 1), MINUTOS_H4, anclaje)
+            if len(limites) < 2 or not (limites[0] <= minuto < limites[-1]):
+                raise ValueError(f"sin rejilla H4 alrededor del minuto {minuto} ({anclaje})")
+            tramo = tramos_h4[anclaje] = (int(limites[0]), int(limites[-1]))
+        return tramo[1]
+
+    def vence_vela_h4(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # RN-002 (sesion 3, ADR-0060): el evento es el cierre de la M1 [instante - 1, instante);
+        # a la H4 que la contiene le queda `antelacion` o menos. En el propio limite tambien: lo
+        # que se llenara en el ultimo minuto de la vela se cierra antes de que empiece la otra.
+        anclaje = registro.hora(str(args["anclaje"]))
+        antelacion = registro.minutos(str(args["antelacion"]))
+        fin = _fin_de_la_h4(anclaje, int(momento.instante) - 1)
+        return Resultado(Tri.SI if fin - int(momento.instante) <= antelacion else Tri.NO)
+
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
@@ -133,7 +164,10 @@ def primitivas_escritas(
             registro.opcion(str(args["criterio"])),
         )
         if momento.sesion is not None:
-            estado.anotaciones.setdefault(momento.sesion, {})[ANOTACION_SESGO] = r.sesgo.value
+            anotaciones = estado.anotaciones.setdefault(momento.sesion, {})
+            anotaciones[ANOTACION_SESGO] = r.sesgo.value
+            if r.doble_ruptura:
+                anotaciones[ANOTACION_DOBLE_RUPTURA] = "si"
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})
@@ -239,6 +273,7 @@ def primitivas_escritas(
         "abre_sesion_operativa": abre_sesion_operativa,
         "en_ventana": en_ventana,
         "alcanza_hora": alcanza_hora,
+        "vence_vela_h4": vence_vela_h4,
         "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
         "alcanza_nivel": alcanza_nivel,
         "cruza": cruza_nivel,
@@ -249,6 +284,7 @@ def primitivas_escritas(
 
 
 __all__ = [
+    "ANOTACION_DOBLE_RUPTURA",
     "ANOTACION_LIQUIDEZ",
     "ANOTACION_LIQUIDEZ_ALCANZADA",
     "ANOTACION_SESGO",

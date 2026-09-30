@@ -64,8 +64,9 @@ predicados:
       el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la
       apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
       mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
-      bajista- o, cuando no hay lado, `ambiguo` (la vela rompio los dos extremos, A-34) o
-      `insuficiente` (ninguna rompio dentro del tope). SIEMPRE tiene respuesta: por eso RN-003
+      bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro
+      (sesion 3, A-34 RESUELTA; ADR-0060), y solo si cerro sin cuerpo ata `ambiguo`. Si ninguna
+      rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
       fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
     argumentos: [que, contra, criterio, tope]
     fuente: mercado
@@ -120,6 +121,17 @@ predicados:
     fuente: reloj
     cita: fb-2026-09-09-sesion-01-ffb528d7
     literal: la operativa se cierra a las 3pm en punto
+  vence_vela_h4:
+    descripcion: >-
+      a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para
+      terminar, en la rejilla H4 que fija `anclaje` -la del sesgo, la que construye la
+      agregacion de velas- y no en la de la ventana operativa. Vale tambien en el propio limite:
+      lo que se llene en el ultimo minuto de la vela se cierra antes de que empiece la siguiente
+      (ADR-0060)
+    argumentos: [anclaje, antelacion]
+    fuente: reloj
+    cita: fb-2026-09-29-sesion-03-c38c4aef
+    literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
   alcanza_nivel:
     descripcion: el precio llega al nivel marcado
     argumentos: [que]
@@ -425,8 +437,10 @@ tokens:
   # porque la guardia exige una LIGADURA en el `sentido` de un predicado con `lado_de_ruido`.
   ambiguo:
     descripcion: >-
-      valor de `sesgo` cuando la H4 previa rompio LOS DOS extremos de su anterior (ADR-0044 §1,
-      A-34): no hay lado, y RN-033 prohibe operar
+      valor de `sesgo` cuando la H4 que lo fija rompio LOS DOS extremos de su anterior y cerro
+      SIN CUERPO, sin color que decida (ADR-0044 §1, ADR-0060): no hay lado, y RN-033 prohibe
+      operar. Con cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA) y no es
+      `ambiguo`
   insuficiente:
     descripcion: >-
       valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
@@ -703,11 +717,20 @@ reglas:
     estado: VIGENTE
 
   - id: RN-002
-    titulo: al llegar el fin de la ventana se cierra lo que quede abierto
+    titulo: >-
+      toda operacion se cierra antes de que termine su vela H4, y lo que quede, al llegar el fin
+      de la ventana
     cuando: >-
-      la hora de pared en huso_operativa alcanza ventana_fin y quedan operaciones abiertas
+      quedan operaciones abiertas y, o bien a la vela H4 en curso -en la rejilla de anclaje_h4- le
+      queda cierre_h4_antelacion o menos para terminar, o bien la hora de pared en huso_operativa
+      alcanza ventana_fin
     entonces: se cierra a mercado si cierre_forzoso_fin_ventana
-    parametros: [ventana_fin, cierre_forzoso_fin_ventana, huso_operativa]
+    parametros:
+      - ventana_fin
+      - cierre_forzoso_fin_ventana
+      - huso_operativa
+      - anclaje_h4
+      - cierre_h4_antelacion
     cita: fb-2026-09-09-sesion-01-ffb528d7
     literal: la operativa se cierra a las 3pm en punto
     notas: >-
@@ -717,16 +740,22 @@ reglas:
       ev-v9-002735-472432b8): el trader cierra TODA operacion un minuto antes de que termine su
       vela H4 -«siempre menos un minuto, antes de que cierre la sesión de cuatro horas»-, este
       donde este y sea cual sea el sesgo siguiente; y no tiene hora limite para abrir (A-30,
-      ev-v9-012514-b5b6c84f). DESALINEADO CON EL MOTOR: la forma cierra solo al alcanzar
-      ventana_fin, en punto, y no cierra al vencer la primera vela H4 de la ventana. No se toca
-      ventana_fin, que tambien decide que sesiones se operan: hace falta un predicado de fin de
-      vela H4 sobre la rejilla de anclaje_h4, que es rama de codigo. A-39, de donde sale, sigue
-      ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por la orden pendiente.
+      ev-v9-012514-b5b6c84f). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
+      PROPUESTO) LA FORMA LO HACE: `vence_vela_h4` da SI cuando a la vela H4 en curso le queda
+      cierre_h4_antelacion o menos, sobre la rejilla de anclaje_h4 -la del sesgo, no la de la
+      ventana-, y tambien en el propio limite, para que nada llenado en el ultimo minuto cruce a
+      la vela siguiente. No se toca ventana_fin, que tambien decide que sesiones se operan, y su
+      cierre en punto se conserva como segunda rama. El interruptor es el mismo
+      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela;
+      A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por
+      la orden pendiente (A-30).
     decision: ADR-0017
     forma:
       cuando:
         todos_de:
-          - alcanza_hora: {hora: ventana_fin, huso: huso_operativa}
+          - cualquiera_de:
+              - vence_vela_h4: {anclaje: anclaje_h4, antelacion: cierre_h4_antelacion}
+              - alcanza_hora: {hora: ventana_fin, huso: huso_operativa}
           - hecho: operacion_abierta
             liga: OP
       entonces:
@@ -743,8 +772,9 @@ reglas:
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
       AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
       de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
-      rompe los dos extremos, el sesgo es AMBIGUO; si ninguna de las ultimas sesgo_h4_tope_velas
-      rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-, y
+      solo si cierra sin cuerpo el sesgo es AMBIGUO; si ninguna de las ultimas
+      sesgo_h4_tope_velas rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
     parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
     cita: fb-2026-09-09-sesion-01-8eccf5c0
     literal: >-
@@ -767,8 +797,10 @@ reglas:
       extremos, el sesgo lo decide el COLOR con que cierra -roja, bajista; verde, alcista-; que
       el color no decide vale solo para la ruptura de un extremo. La misma sesion confirma que
       el sesgo no cambia dentro de la sesion (ev-v9-001504-72aa462a) y que basta un pip con
-      mecha (ev-v9-001312-19e45e4a). DESALINEADO CON EL MOTOR: sesgo_h4_al_abrir sigue fijando
-      `ambiguo` con la doble ruptura, y RN-033 prohibe operar; lo cambia una rama de codigo.
+      mecha (ev-v9-001312-19e45e4a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
+      PROPUESTO) EL MOTOR LO HACE: con la doble ruptura sesgo_h4_al_abrir ata el lado del color,
+      y `ambiguo` queda solo para la vela que rompe los dos extremos y cierra sin cuerpo, que el
+      trader no describio.
     forma:
       cuando:
         todos_de:
@@ -809,9 +841,11 @@ reglas:
       ev-v9-001529-ac28bb40): «Siempre va a haber un sesgo … no existe un sesgo no claro». Con
       A-34 RESUELTA la doble ruptura tiene sentido -el color-, asi que `ambiguo` deja de ser del
       trader; y `insuficiente` tampoco lo es: para el el sesgo es el del ultimo rango, dure lo
-      que dure. DESALINEADO CON EL MOTOR: la regla sigue prohibiendo con los dos valores hasta
-      que la rama de codigo de RN-003 deje de producirlos (15 sesiones ambiguas de 84 en
-      construccion, medido el 2026-09-25; 0 insuficientes).
+      que dure. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060, PROPUESTO) RN-003 ya
+      no produce `ambiguo` con la doble ruptura, que toma el lado del color, y esta regla se
+      queda para lo que el trader no describio: la doble ruptura de una vela sin cuerpo
+      (`ambiguo`) y la falta de ruptura dentro de sesgo_h4_tope_velas (`insuficiente`), que es
+      un tope del proyecto y no suyo. Lo medido sobre construccion esta en ADR-0060.
     decision: ADR-0049
     forma:
       cuando:

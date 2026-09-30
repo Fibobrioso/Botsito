@@ -8,7 +8,9 @@ la anterior, y basta con la mecha; un equal no lo cambia. ADR-0044 fija lo que R
   llegaron a la agregacion: asi el resultado no puede mirar el futuro por mucho que se le pase;
 - romper es superar el extremo por poco que sea: en puntos enteros, estrictamente mayor. Igual es
   un equal, y no rompe;
-- si la vela rompe LOS DOS extremos, el sesgo es AMBIGUO (A-34 abierta);
+- si la vela rompe LOS DOS extremos, decide el COLOR con que cierra: verde, alcista; roja, bajista
+  (sesion 3, A-34 RESUELTA; ADR-0060). Solo si cierra sin cuerpo -sin color- el sesgo es AMBIGUO.
+  Con un solo extremo roto el color sigue sin decidir nada;
 - el estado inicial se busca hacia atras, como mucho `tope` velas; si ninguna rompio, INSUFICIENTE.
 
 Con AMBIGUO o INSUFICIENTE no se opera. Las cifras no viven aqui (ADR-0002): el tope y el criterio
@@ -42,12 +44,16 @@ class Sesgo(Enum):
 @dataclass(frozen=True, slots=True)
 class ResultadoSesgo:
     sesgo: Sesgo
-    # Cuanto supero la vela que fija el sesgo el extremo de su anterior, en puntos; en AMBIGUO, la
-    # menor de las dos rupturas. None si no hubo ruptura (INSUFICIENTE). Sirve para ver cuantas
-    # rupturas caen en la zona de A-16, donde la serie del trader y la nuestra pueden discrepar.
+    # Cuanto supero la vela que fija el sesgo el extremo de su anterior, en puntos: con doble
+    # ruptura decidida por el color, la del lado del color; en AMBIGUO, la menor de las dos. None
+    # si no hubo ruptura (INSUFICIENTE). Sirve para ver cuantas rupturas caen en la zona de A-16,
+    # donde la serie del trader y la nuestra pueden discrepar.
     ruptura_puntos: int | None
     # Cuantas velas se miraron hacia atras hasta decidir.
     velas_miradas: int
+    # La vela que fija el sesgo rompio LOS DOS extremos de su anterior: el lado lo dio su color o,
+    # si cerro sin cuerpo, no hay lado (AMBIGUO).
+    doble_ruptura: bool = False
 
 
 def _extremos(vela: Vela, criterio: str) -> tuple[int, int]:
@@ -70,11 +76,18 @@ def sesgo_h4(
         if miradas == tope:
             break
         miradas += 1
-        alto, bajo = _extremos(cerradas[i], criterio)
+        vela = cerradas[i]
+        alto, bajo = _extremos(vela, criterio)
         alto_ant, bajo_ant = _extremos(cerradas[i - 1], criterio)
         arriba, abajo = alto - alto_ant, bajo_ant - bajo
         if arriba > 0 and abajo > 0:
-            return ResultadoSesgo(Sesgo.AMBIGUO, min(arriba, abajo), miradas)
+            # Doble ruptura: «importa el color de la vela» (sesion 3, A-34). El color es el del
+            # cuerpo, cierre contra apertura, sea cual sea el criterio de ruptura.
+            if vela.cierre > vela.abierta:
+                return ResultadoSesgo(Sesgo.ALCISTA, arriba, miradas, True)
+            if vela.cierre < vela.abierta:
+                return ResultadoSesgo(Sesgo.BAJISTA, abajo, miradas, True)
+            return ResultadoSesgo(Sesgo.AMBIGUO, min(arriba, abajo), miradas, True)
         if arriba > 0:
             return ResultadoSesgo(Sesgo.ALCISTA, arriba, miradas)
         if abajo > 0:

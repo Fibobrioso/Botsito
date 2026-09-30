@@ -24,7 +24,13 @@ from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine import arnes, cableado
-from botsito.engine.broker import LLENADA, MOTIVO_PRECIO_INVALIDO, Broker, BrokerError
+from botsito.engine.broker import (
+    LLENADA,
+    MANUAL,
+    MOTIVO_PRECIO_INVALIDO,
+    Broker,
+    BrokerError,
+)
 from botsito.engine.cableado import CableadoError, MotorCableado, comprobar_reloj_unico
 from botsito.engine.cuenta import EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.entrada import LIMITE_EN_RETROCESO, STOP_EN_RUPTURA
@@ -120,6 +126,12 @@ RUTA_ORDEN_STOP = {
     MINUTO_ZONA + 3: ENTRADA + 5,
     MINUTO_ZONA + 8: ENTRADA + 70,
 }
+
+
+# llena la limite y el precio se queda quieto: ni stop ni objetivo, asi que la posicion llega
+# viva al fin de su vela H4 (06:00-10:00 UTC, la sesion 07-11 de Madrid en invierno)
+RUTA_VIVA = {MINUTO_ZONA + 3: ENTRADA - 6}
+FIN_H4 = int(a_minuto(datetime(2030, 1, 15, 10, 0, tzinfo=UTC)))
 
 
 def _sinteticas(minuto_zona: int = MINUTO_ZONA) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -252,6 +264,28 @@ def test_una_estrategia_sintetica_coloca_una_limite_por_el_motor_se_llena_y_cier
         or p.startswith("acumulador:perdida_total_firma")
         for p in faltan
     )
+
+
+def test_rn002_cierra_la_posicion_viva_antes_del_fin_de_su_vela_h4(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Sesion 3, S-1 (ADR-0060): «siempre menos un minuto, antes de que cierre [...] la sesion
+    de cuatro horas». Una posicion que llega viva al final de su H4 se cierra a mercado en el
+    evento anterior al limite de la rejilla de anclaje_h4 -la antelacion la da el registro-,
+    y no a las 15:00 de la ventana."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_VIVA))
+    r = motor.correr_dia(_dia())
+    tb = motor.trazas_broker[DIA.isoformat()]
+    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, MANUAL], tb.eventos
+    p = next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+    antelacion = registro.minutos("cierre_h4_antelacion")
+    assert p.motivo_cierre == MANUAL
+    assert p.cerrada_ms == (FIN_H4 - antelacion) * MS_POR_MINUTO - 1
+    assert "RN-002" in r.sesiones["07-11"].disparadas
+    assert "RN-002" not in r.sesiones["11-15"].disparadas
+    # sin posicion viva la regla no dispara: en la ruta del stop ya esta cerrada
+    otro = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    assert "RN-002" not in otro.correr_dia(_dia()).sesiones["07-11"].disparadas
 
 
 def test_un_gate_de_la_firma_prohibe_cuando_la_cuenta_cruza_su_limite(

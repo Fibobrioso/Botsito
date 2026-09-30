@@ -48,7 +48,7 @@ from botsito.engine.motor import (
     Sesion,
     TrazaSesion,
 )
-from botsito.engine.primitivas import ANOTACION_SESGO
+from botsito.engine.primitivas import ANOTACION_DOBLE_RUPTURA, ANOTACION_SESGO
 
 PARTICION_DEV = "dev"
 _DIA = re.compile(r"(\d{4}-\d{2}-\d{2})$", re.ASCII)
@@ -244,6 +244,7 @@ def informe(
     producen: Counter[str] = Counter()
     paradas: Counter[str] = Counter()
     sesgo_sesion: Counter[str] = Counter()
+    dobles = 0  # sesiones cuyo sesgo lo decidio el color, con doble ruptura (ADR-0060)
     filas: list[str] = []
     for clave in sesiones:
         traza = trazas.get(clave, TrazaSesion())
@@ -262,6 +263,7 @@ def informe(
         paradas.update(paradas_sesion)
         anotado = traza.anotaciones.get(ANOTACION_SESGO, SIN_ANOTACION)
         sesgo_sesion[anotado] += 1
+        dobles += ANOTACION_DOBLE_RUPTURA in traza.anotaciones
         filas.append(
             f"{clave[0]} {clave[1]} | trader {trader_por_sesion[clave]} | bot "
             f"{bot_por_sesion[clave]} | rn003 {anotado} | {' '.join(partes)} | disparadas "
@@ -344,6 +346,7 @@ def informe(
         "",
         "## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)",
         "por sesion: " + "; ".join(f"{k} {v}" for k, v in sorted(sesgo_sesion.items())),
+        f"de ellas con doble ruptura, que decide el color de la vela (ADR-0060): {dobles}",
         "por operacion del trader: "
         + "; ".join(f"{k} {v}" for k, v in sorted(por_operacion.items())),
         "",

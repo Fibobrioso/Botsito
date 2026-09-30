@@ -760,6 +760,7 @@ def _sesion_html(
         detalle = (
             f" (domain/sesgo.py: {html.escape(r.sesgo.value)}, {r.velas_miradas} H4 miradas"
             f"{', ruptura de ' + str(r.ruptura_puntos) + ' puntos' if r.ruptura_puntos else ''}"
+            f"{', doble ruptura: decide el color' if r.doble_ruptura else ''}"
             f"{h4})"
         )
     partes.append(f"<p><b>Sesgo anotado por el motor:</b> {html.escape(anotado)}{detalle}</p>")

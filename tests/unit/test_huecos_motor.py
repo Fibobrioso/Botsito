@@ -1,6 +1,7 @@
 """Los huecos del arnes (ADR-0049) sobre H4 SINTETICAS y la spec real.
 
-H1: una sesion ambigua fija `sesgo` a `ambiguo` y RN-033 prohibe; una segunda sesion ambigua no
+H1: una sesion ambigua -desde ADR-0060, solo la doble ruptura de una vela SIN CUERPO; con cuerpo
+decide el color- fija `sesgo` a `ambiguo` y RN-033 prohibe; una segunda sesion ambigua no
 hereda el sesgo de la primera, ni una no ambigua la prohibicion de una ambigua -el hecho caduca al
 abrir-; insuficiente prohibe; y, cuando `data/` esta en la maquina, la forma y la primitiva
 coinciden en todas las sesiones de construccion. Mas las guardias nuevas: `vale`, `caduca`, los
@@ -51,7 +52,7 @@ from botsito.engine.motor import (
     Sesion,
     TrazaSesion,
 )
-from botsito.engine.primitivas import primitivas_escritas
+from botsito.engine.primitivas import ANOTACION_DOBLE_RUPTURA, primitivas_escritas
 from botsito.spec.modelo import (
     FICHERO_SPEC,
     Regla,
@@ -74,6 +75,8 @@ APERTURA = {
 }
 PROHIBE_RN033 = frozenset({"buscar_entradas", "abrir_operacion"})
 SIN_LADO = ("ambiguo", "insuficiente")
+# la vela que rompe los dos extremos: el color con que cierra (1 verde, -1 roja, 0 sin cuerpo)
+COLOR_DE_AMBOS = {"ambos": 1, "ambos_roja": -1, "ambos_sin_cuerpo": 0}
 
 
 @pytest.fixture(scope="module")
@@ -98,13 +101,19 @@ def spec_real(
 # ------------------------------------------------------------------------------- velas H4
 
 
-def _h4(inicio: datetime, maxima: int, minima: int) -> Vela:
+def _h4(inicio: datetime, maxima: int, minima: int, color: int = 1) -> Vela:
+    """`color`: 1 verde (cierra por encima de su apertura), -1 roja, 0 sin cuerpo."""
+    abierta, cierre = minima + 20, maxima - 20
+    if color < 0:
+        abierta, cierre = cierre, abierta
+    elif color == 0:
+        cierre = abierta
     return Vela(
         a_minuto(inicio),
-        Puntos(minima + 20),
+        Puntos(abierta),
         Puntos(maxima),
         Puntos(minima),
-        Puntos(maxima - 20),
+        Puntos(cierre),
         1,
         duracion_min=240,
         n_m1=240,
@@ -114,7 +123,8 @@ def _h4(inicio: datetime, maxima: int, minima: int) -> Vela:
 def _velas(*pasos: str) -> list[Vela]:
     """H4 desde las 22:00 UTC de la vispera; cada paso dice que hace la vela respecto a la previa.
 
-    `arriba` rompe solo el maximo, `abajo` solo el minimo, `ambos` los dos y `dentro` ninguno. La
+    `arriba` rompe solo el maximo, `abajo` solo el minimo y `dentro` ninguno. `ambos` rompe los
+    dos y cierra VERDE, `ambos_roja` cierra roja y `ambos_sin_cuerpo` cierra donde abrio. La
     sesion 07-11 mira el primer paso (02-06 contra 22-02) y la 11-15 el segundo (06-10 contra
     02-06).
     """
@@ -122,17 +132,19 @@ def _velas(*pasos: str) -> list[Vela]:
     maxima, minima = 100_100, 99_900
     velas = [_h4(inicio, maxima, minima)]
     for i, paso in enumerate(pasos, start=1):
+        color = 1
         if paso == "arriba":
             maxima, minima = maxima + 50, minima + 10
         elif paso == "abajo":
             maxima, minima = maxima - 10, minima - 50
-        elif paso == "ambos":
+        elif paso in COLOR_DE_AMBOS:
             maxima, minima = maxima + 50, minima - 50
+            color = COLOR_DE_AMBOS[paso]
         elif paso == "dentro":
             maxima, minima = maxima - 10, minima + 10
         else:
             raise ValueError(paso)
-        velas.append(_h4(inicio + timedelta(hours=4 * i), maxima, minima))
+        velas.append(_h4(inicio + timedelta(hours=4 * i), maxima, minima, color))
     return velas
 
 
@@ -152,7 +164,7 @@ def _sesgo_de(traza: TrazaSesion) -> list[str]:
 
 
 def test_una_sesion_ambigua_fija_sesgo_ambiguo_y_rn033_prohibe(motor: MotorSpec) -> None:
-    velas = _velas("ambos", "arriba")
+    velas = _velas("ambos_sin_cuerpo", "arriba")
     estado = EstadoDia()
     ev = motor.interprete.evento(motor.reglas, _apertura("07-11", velas), estado)
     assert ("RN-003", "sesgo", "ambiguo") in ev.fijados
@@ -165,7 +177,7 @@ def test_una_sesion_ambigua_fija_sesgo_ambiguo_y_rn033_prohibe(motor: MotorSpec)
 
 
 def test_una_segunda_sesion_ambigua_no_hereda_el_sesgo_de_la_primera(motor: MotorSpec) -> None:
-    velas = _velas("arriba", "ambos")
+    velas = _velas("arriba", "ambos_sin_cuerpo")
     r = motor.correr_dia(_dia(velas))
     assert _sesgo_de(r.sesiones["07-11"]) == ["alcista"]
     assert _sesgo_de(r.sesiones["11-15"]) == ["ambiguo"]
@@ -182,7 +194,7 @@ def test_una_segunda_sesion_ambigua_no_hereda_el_sesgo_de_la_primera(motor: Moto
 def test_una_sesion_no_ambigua_tras_una_ambigua_no_hereda_la_prohibicion(motor: MotorSpec) -> None:
     """Medido el 2026-09-25 antes de la caducidad: RN-033 disparaba en la apertura de la segunda
     sesion sobre el sesgo de la primera (24 sesiones de 84 en construccion, y solo 15 ambiguas)."""
-    velas = _velas("ambos", "arriba")
+    velas = _velas("ambos_sin_cuerpo", "arriba")
     r = motor.correr_dia(_dia(velas))
     assert _sesgo_de(r.sesiones["11-15"]) == ["alcista"]
     assert "RN-033" not in r.sesiones["11-15"].disparadas
@@ -191,6 +203,20 @@ def test_una_sesion_no_ambigua_tras_una_ambigua_no_hereda_la_prohibicion(motor: 
     assert ev.caducados == ["sesgo"]
     assert "RN-033" not in ev.disparadas and not (PROHIBE_RN033 & ev.prohibidos)
     assert estado.hechos["sesgo"] == "alcista"
+
+
+def test_la_doble_ruptura_toma_el_color_de_la_vela_y_rn033_no_prohibe(motor: MotorSpec) -> None:
+    """Sesion 3 (A-34 RESUELTA, ADR-0060): «si rompe por los dos [...] importa el color de la
+    vela». Verde, alcista; roja, bajista; y con lado, RN-033 no tiene nada que prohibir."""
+    r = motor.correr_dia(_dia(_velas("ambos", "ambos_roja")))
+    assert _sesgo_de(r.sesiones["07-11"]) == ["alcista"]
+    assert _sesgo_de(r.sesiones["11-15"]) == ["bajista"]
+    for sesion in ("07-11", "11-15"):
+        assert "RN-033" not in r.sesiones[sesion].disparadas
+        assert r.sesiones[sesion].anotaciones[ANOTACION_DOBLE_RUPTURA] == "si"
+    # una ruptura de un solo extremo no deja la anotacion
+    r = motor.correr_dia(_dia(_velas("arriba", "abajo")))
+    assert ANOTACION_DOBLE_RUPTURA not in r.sesiones["07-11"].anotaciones
 
 
 def test_insuficiente_prohibe(motor: MotorSpec) -> None:
@@ -417,6 +443,8 @@ def test_invariancia_al_orden_dentro_de_cada_clase(registro: Registro, motor: Mo
     escenarios = (
         ("ambos", "arriba"),
         ("arriba", "ambos"),
+        ("ambos_sin_cuerpo", "arriba"),
+        ("ambos", "ambos_roja"),
         ("dentro", "dentro"),
         ("abajo", "arriba"),
     )

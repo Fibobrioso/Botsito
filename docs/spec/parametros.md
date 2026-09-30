@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 13.5.0` · hash `9963ef9d8425…`
+`spec_version 14.0.0` · hash `13faf33dc500…`
 
-85 en total: 68 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+86 en total: 69 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -20,6 +20,7 @@
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
 | `cierre_forzoso_fin_ventana` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-ffb528d7` | si/no |
+| `cierre_h4_antelacion` | `1` | CONFIRMED | estrategia | `ev-v9-002735-472432b8` | minutos antes del fin de la vela H4 en curso, en la rejilla de anclaje_h4 |
 | `comportamiento_sin_regla` | `abstenerse` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-c698bc6a` | abstenerse/regla_mas_parecida |
 | `cuenta_objetivo` | `fondeada` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `cuenta_pruebas` | `demo` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
@@ -202,6 +203,10 @@ Opciones: `siguiente_liquidez_m15`, `fin_de_dia`, `nunca`.
 si un trade abierto se cierra en punto al terminar la ventana (A-6)
 
 Opciones: `si`, `no`.
+
+### `cierre_h4_antelacion`
+
+con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite
 
 ### `comportamiento_sin_regla`
 

@@ -256,8 +256,9 @@ parametros:
       las velas H4, que es de donde sale el sesgo (ADR-0017)
     estado: CONFIRMED
     valor: "17:00"
-    # Lo nombra RN-003 en su lista, pero ninguna forma lo lee: la rejilla la construye la
-    # agregacion de velas (F15, "H4 reproducible para cualquier anclaje_h4"), no una regla
+    # La rejilla la construye la agregacion de velas (F15, "H4 reproducible para cualquier
+    # anclaje_h4"). RN-003 lo nombra en su lista y, desde ADR-0060, lo lee la forma de RN-002
+    # (`vence_vela_h4`), sobre esa misma rejilla
     consumido_por: [F15]
     fuente:
       tipo: feedback
@@ -306,6 +307,24 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-ffb528d7
+  - nombre: cierre_h4_antelacion
+    categoria: estrategia
+    tipo: minutos
+    unidad: minutos antes del fin de la vela H4 en curso, en la rejilla de anclaje_h4
+    descripcion: >-
+      con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE
+      el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que
+      cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa
+      cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de
+      anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la
+      frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef):
+      ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo
+      sigue dando por pendiente mientras RN-002 no lo cite
+    estado: CONFIRMED
+    valor: 1
+    fuente:
+      tipo: evidence
+      id: ev-v9-002735-472432b8
   - nombre: sesgo_h4_regla
     categoria: estrategia
     tipo: enum
