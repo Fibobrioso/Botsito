@@ -116,6 +116,9 @@ class MotorCableado:
     limpia: str | None = None  # la lectura de A-21, si esta fijada (o en diagnostico)
     stops_level_diagnostico: int | None = None  # A-27 en diagnostico (ADR-0057)
     tipo_orden: str | None = None  # A-47 fijado o en diagnostico; sin el, la limite de siempre
+    # DIAGNOSTICO: la cuenta empieza de cero cada dia, sin arrastrar saldo ni frenos (revision de
+    # F35); por defecto se arrastra, ADR-0053 §6
+    cuenta_diaria: bool = False
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
     # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
@@ -144,6 +147,8 @@ class MotorCableado:
         ]
         primero = min(d for _, d, _ in limites)
         ultimo = max(h for _, _, h in limites)
+        if self.cuenta_diaria:
+            self.cuenta, self.seguidor = None, None
         if self.cuenta is None:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
         broker = Broker(
@@ -552,6 +557,11 @@ def informe_simulacion(motor: MotorCableado) -> str:
         + (motor.tope.descripcion() if motor.tope is not None else "sin fijar: hueco con nombre"),
         "PRIMERO EN TOCAR UN LIMITE: " + _primero_en_tocar(motor),
     ]
+    if motor.cuenta_diaria:
+        lineas.append(
+            "CUENTA: REINICIADA CADA DIA (diagnostico): el veredicto, el saldo y la curva son solo "
+            "del ultimo dia corrido"
+        )
     if depurados:
         lineas.append(
             f"{DEPURACION}: {len(depurados)} dias sobre respaldo M1 ({', '.join(depurados)})"

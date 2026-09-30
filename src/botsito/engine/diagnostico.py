@@ -32,6 +32,10 @@ ETIQUETA_A21 = "DIAGNOSTICO-A21"
 ETIQUETA_A27 = "DIAGNOSTICO-A27"
 # A-47 (rama trabajo/selector-orden-stop, ADR-0056 §1): el tipo de la orden de entrada
 ETIQUETA_A47 = "DIAGNOSTICO-A47"
+# La cuenta reiniciada cada dia (revision del consultor de F35, ADR-0064): la corrida normal
+# arrastra la cuenta entre dias (ADR-0053 §6) y sus frenos cortan el tramo; esta, no, para
+# medir el bot sin el camino de la cuenta. No es una ambiguedad: no lleva `A`
+ETIQUETA_CUENTA = "DIAGNOSTICO-CUENTA"
 # Los modos hipoteticos de A-44: sin tope (el trader dice que no tiene) o un MARCADOR que no es un
 # valor plausible del trader (un tope de un punto porcentual de nada: se toca con cualquier
 # perdida; vale para ver el embudo, no para simular una operativa).
@@ -61,6 +65,7 @@ class Diagnostico:
     a21: str | None = None
     a27: int | None = None  # el stops level hipotetico del broker, en puntos
     a47: str | None = None  # el tipo de la orden de entrada
+    cuenta_diaria: bool = False  # la cuenta simulada empieza de cero cada dia
 
     def __post_init__(self) -> None:
         if self.a35 is not None and self.a35 not in LECTURAS:
@@ -87,6 +92,8 @@ class Diagnostico:
             salida.append(f"{ETIQUETA_A47}-{self.a47}")
         if self.a27 is not None:
             salida.append(f"{ETIQUETA_A27}-{self.a27}")
+        if self.cuenta_diaria:
+            salida.append(f"{ETIQUETA_CUENTA}-diaria")
         return tuple(salida)
 
     @property
@@ -171,9 +178,12 @@ def nombre_etiquetado(ruta: Path, etiquetas: tuple[str, ...]) -> Path:
         return ruta
     partes = []
     for e in etiquetas:
-        if not e.startswith(PREFIJO_ETIQUETA):
+        if e.startswith(PREFIJO_ETIQUETA):
+            partes.append("a" + e.removeprefix(PREFIJO_ETIQUETA).replace("-", "=", 1))
+        elif e.startswith(ETIQUETA_CUENTA + "-"):
+            partes.append("cuenta=" + e.removeprefix(ETIQUETA_CUENTA + "-"))
+        else:
             raise ValueError(f"etiqueta de diagnostico sin la forma esperada: {e!r}")
-        partes.append("a" + e.removeprefix(PREFIJO_ETIQUETA).replace("-", "=", 1))
     return ruta.with_name(f"{ruta.stem}.{MARCA_FICHERO}.{'.'.join(partes)}{ruta.suffix}")
 
 

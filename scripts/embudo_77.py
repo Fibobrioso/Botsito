@@ -371,7 +371,9 @@ def _sin_orden(ev: Any, prohiben: Mapping[str, frozenset[str]], en_sesion: bool)
     return "RN-015 dispara y no hay orden en el broker"
 
 
-def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def medir(
+    raiz: Path, a21: str, a27: int, cuenta_diaria: bool = False
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     from botsito.cases.criterio_fidelidad import cargar_criterio, compatibles, emparejar
     from botsito.cases.holdout import casos_ocultos
     from botsito.cases.paquete import cargar_config
@@ -438,6 +440,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
         raiz, carpeta, criterio, config, registro, vocabulario, reglas, dias, perfil, None, False,
         tope, limpia, stops_level_diagnostico=a27, tipo_orden=tipo_orden,
     )  # fmt: skip
+    motor.cuenta_diaria = cuenta_diaria  # DIAGNOSTICO: la cuenta empieza de cero cada dia
     corrida = arnes.correr(cableado.NOMBRE_MOTOR, tuple(sorted(set(meses))), dias, mercado, motor)
 
     trader = [op for d in corrida.dias for op in d.operaciones]
@@ -449,7 +452,7 @@ def medir(raiz: Path, a21: str, a27: int) -> tuple[list[dict[str, Any]], dict[st
     if zonas.orden_nace_en_el_punto(registro):
         return medir_vida(
             raiz, corrida, mercado, motor, grabadora, prohiben, tol, bot, t_pareja, b_pareja,
-            trazas, a21, a27,
+            trazas, a21, a27, cuenta_diaria,
         )  # fmt: skip
     criterio_ruptura = registro.opcion("breaker_m1_criterio_ruptura")
     tope_zonas = registro.entero("zonas_control_max_por_esquema")
@@ -681,13 +684,39 @@ def _cuartiles(xs: Sequence[float]) -> str:
 def medir_vida(
     raiz: Path, corrida: Any, mercado: Any, motor: Any, grabadora: Any, prohiben: Any, tol: Any,
     bot: Any, t_pareja: Any, b_pareja: Any, trazas: Any, a21: str, a27: int,
+    cuenta_diaria: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:  # fmt: skip
     """El embudo y el diagnostico del stop con la vida de la orden stop (ADR-0064)."""
     from botsito.cases.criterio_fidelidad import compatibles
     from botsito.cases.ingesta import DIRECTORIO_DEV
     from botsito.comun.husos import huso_canonico
     from botsito.comun.yaml_estricto import leer_yaml
+    from botsito.domain.estructura_m1 import ultimo_punto_de_ruptura
     from botsito.engine import entrada, zonas
+
+    def min_desde_el_pivote(datos: Any, lado: str, instante_s: int) -> float | None:
+        """Minutos desde que se formo el ultimo pivote de M1 contrario a la entrada (el 0 de R5,
+        con `CIERRE_VELA_CONTRARIA`: al cierre de su vela contraria) hasta `instante_s`, con las M1
+        cerradas antes del minuto de ese instante."""
+        m = instante_s // 60
+        pivote = ultimo_punto_de_ruptura(datos.m1_entre(m - zonas.LOOKBACK_M1, m), lado)
+        if pivote is None:
+            return None
+        return round((instante_s - (int(pivote.contraria_inicio) + 1) * 60) / 60, 1)
+
+    def con_mid(ticks: Sequence[Any], p: Any, fin_ms: int) -> str:
+        """Con el precio MEDIO (bid + ask) / 2 en vez de bid y ask, que salta primero desde el
+        llenado hasta el fin de la ventana: `stop`, `objetivo` o `ninguno`."""
+        compra = p.lado == "compra"
+        for k in ticks:
+            if int(k.instante) <= p.abierta_ms or int(k.instante) > fin_ms:
+                continue
+            mid = (int(k.ask) + int(k.bid)) / 2
+            if (mid <= p.stop) if compra else (mid >= p.stop):
+                return "stop"
+            if (mid >= p.objetivo) if compra else (mid <= p.objetivo):
+                return "objetivo"
+        return "ninguno"
 
     tol_s = tol.instante_min * 60
     filas: list[dict[str, Any]] = []
@@ -737,6 +766,9 @@ def medir_vida(
                 default=None,
             )  # fmt: skip
             abierta_s, cerrada_ms = p.abierta_ms // 1000, p.cerrada_ms
+            riesgo = abs(p.entrada - (p.stop_original or p.stop))
+            signo = 1 if p.lado == "compra" else -1
+            fin_ventana_ms = max(b for _, _, b in limites) * 1000
             llenados.append(
                 {
                     "dia": d.dia,
@@ -754,6 +786,13 @@ def medir_vida(
                     "cierre": p.motivo_cierre,
                     "spread_llenado": _spread(ticks, p.abierta_ms),
                     "spread_cierre": None if cerrada_ms is None else _spread(ticks, cerrada_ms),
+                    "r": None
+                    if p.precio_cierre is None or riesgo == 0
+                    else round(signo * (p.precio_cierre - p.entrada) / riesgo, 3),
+                    "min_pivote_a_llenado": min_desde_el_pivote(dm.datos, p.lado, abierta_s),
+                    "con_mid": con_mid(ticks, p, fin_ventana_ms)
+                    if p.motivo_cierre == "stop"
+                    else None,
                 }
             )
         for op in d.operaciones:
@@ -818,6 +857,7 @@ def medir_vida(
                     "motivo": motivo,
                     "detalle": detalle,
                     "ordenes": len(ordenes),
+                    "min_pivote_a_llenado": min_desde_el_pivote(dm.datos, op.direccion, t_s),
                 }
             )
     # el libro: entrada menos stop inicial de cada operacion (su caja con el stop en el 1, CAJA-77)
@@ -831,6 +871,7 @@ def medir_vida(
                 distancias_trader.append(abs(e - st))
     resumen = {
         "modo": "vida",
+        "cuenta_diaria": cuenta_diaria,
         "a21": a21,
         "a27": a27,
         "a47": entrada.STOP_EN_RUPTURA,
@@ -848,15 +889,29 @@ def medir_vida(
 
 def informe_vida(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any]) -> str:
     ll = resumen["llenados"]
+    cuenta = (
+        "CUENTA REINICIADA CADA DIA (diagnostico)"
+        if resumen.get("cuenta_diaria")
+        else "cuenta arrastrada entre dias (ADR-0053 §6)"
+    )
     lineas = [
         f"# Embudo de las 77 con la VIDA DE LA ORDEN STOP (ADR-0064), A-21 = {resumen['a21']} "
         f"(DIAGNOSTICO: A-35 cierre_vela_contraria, A-44 sin_tope, A-47 {resumen['a47']}, "
-        f"A-27 {resumen['a27']})",
+        f"A-27 {resumen['a27']}; {cuenta})",
         f"operaciones del trader: {resumen['operaciones_trader']}; del bot: "
         f"{resumen['operaciones_bot']}; parejas: {resumen['parejas']}; tolerancia "
         f"{resumen['tolerancia_puntos']} puntos y {resumen['tolerancia_min']} min",
         "",
-        *tabla({str(resumen["a21"]): [f["paso"] for f in filas]}, PASOS_VIDA),
+        *tabla(
+            {
+                "todas": [f["paso"] for f in filas],
+                **{
+                    mes: [f["paso"] for f in filas if f["dia"].startswith(mes)]
+                    for mes in sorted({f["dia"][:7] for f in filas})
+                },
+            },
+            PASOS_VIDA,
+        ),
         "",
         "## Por motivo",
     ]
@@ -890,6 +945,34 @@ def informe_vida(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any])
             f"{x['min_caja_a_llenado']} | {x['min_a_cierre']} | {x['cierre']} | "
             f"{x['spread_llenado']} | {x['spread_cierre']} |"
         )
+    rs = [x["r"] for x in ll if x["r"] is not None]
+    lados_bot = Counter(x["lado"] for x in ll)
+    lados_trader = Counter(f["direccion"] for f in filas)
+    mid = Counter(x["con_mid"] for x in ll if x["con_mid"] is not None)
+    mid_lado = Counter((x["lado"], x["con_mid"]) for x in ll if x["con_mid"] is not None)
+    lineas += [
+        "",
+        "## Momento, resultado y spread",
+        "minutos desde que se forma el ultimo pivote de M1 (el 0 de R5) hasta el llenado, BOT: "
+        + _cuartiles(
+            [x["min_pivote_a_llenado"] for x in ll if x["min_pivote_a_llenado"] is not None]
+        ),
+        "los mismos minutos, TRADER (sus operaciones, en su llenado): "
+        + _cuartiles(
+            [f["min_pivote_a_llenado"] for f in filas if f["min_pivote_a_llenado"] is not None]
+        ),
+        "resultado del BOT en R (sobre su stop inicial): "
+        + _cuartiles(rs)
+        + f"; ganadoras {sum(1 for r in rs if r > 0)} de {len(rs)}",
+        "compras / ventas: BOT "
+        + f"{lados_bot['compra']} / {lados_bot['venta']}; TRADER "
+        + f"{lados_trader['compra']} / {lados_trader['venta']}",
+        "stops del bot con el precio MEDIO en vez de bid y ask (desde el llenado hasta el fin "
+        "de la ventana, que salta primero): "
+        + ", ".join(f"{k} {v}" for k, v in sorted(mid.items()))
+        + "; por lado: "
+        + ", ".join(f"{a} {b} {v}" for (a, b), v in sorted(mid_lado.items())),
+    ]
     lineas += ["", "## Por dia y sesion: la vida de sus ordenes"]
     for x in resumen["por_dia"]:
         lineas.append(
@@ -976,8 +1059,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--a27", type=int, default=0)
     p.add_argument("--raiz", type=Path, default=RAIZ_SCRIPT)
     p.add_argument("--salida", type=Path, required=True)
+    p.add_argument(
+        "--cuenta-diaria",
+        action="store_true",
+        help="DIAGNOSTICO: la cuenta simulada empieza de cero cada dia (sin arrastrar frenos)",
+    )
     args = p.parse_args(argv)
-    filas, resumen = medir(args.raiz, args.a21, args.a27)
+    filas, resumen = medir(args.raiz, args.a21, args.a27, args.cuenta_diaria)
     args.salida.with_suffix(".txt").write_text(
         informe(filas, resumen), encoding="utf-8", newline="\n"
     )
