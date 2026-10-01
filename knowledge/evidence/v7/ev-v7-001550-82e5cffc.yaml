@@ -1,0 +1,17 @@
+id: ev-v7-001550-82e5cffc
+video_id: v7
+t0: 0:15:50
+t1: 0:15:55
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: trazamos el GAN desde el posible punto de breaker hasta el punto más alto
+afirmacion: el GAN (la caja) se traza desde el posible punto de breaker hasta el punto mas alto
+tema: entrada.caja.desde_el_punto_de_breaker
+confianza: media
+extractor: llm
+revisado_por: sesion de Claude Code, 2026-09-30 (feature/F35-orden-stop-pivote); cruda leida, sin fotograma;
+  PENDIENTE de revision del consultor
+provenance: botsito
+notas: localizado por la transcripcion cruda (large-v3) a 0:15:50.05, en la misma operacion de ev-v7-001457-1fe7fdfe;
+  es la frase que BLOQUE-DE-LA-CAJA.md §1.4 cita para R6. Lo cita caja_bloque = r6 (ADR-0064)
+transcripcion: tr-v7-large-v3-int8-float16-87297562

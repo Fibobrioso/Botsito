@@ -2069,6 +2069,8 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
         raise ValueError(
             "--diagnostico-a47 es el tipo de la orden en el broker simulado: va con --simular"
         )
+    if getattr(args, "diagnostico_cuenta_diaria", False) and not getattr(args, "simular", False):
+        raise ValueError("--diagnostico-cuenta-diaria es la cuenta simulada: va con --simular")
     if getattr(args, "diagnostico_a27", None) is not None and not getattr(args, "simular", False):
         raise ValueError(
             "--diagnostico-a27 es el stops level del broker simulado: va con --simular"
@@ -2079,6 +2081,7 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
         getattr(args, "diagnostico_a21", None),
         getattr(args, "diagnostico_a27", None),
         getattr(args, "diagnostico_a47", None),
+        bool(getattr(args, "diagnostico_cuenta_diaria", False)),
     )
 
 
@@ -2145,6 +2148,13 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         help="con --simular, A-27 sin medir: el broker corre con este stops level EN HIPOTESIS "
         "(la distancia minima al precio de una pendiente, su stop y su objetivo); etiquetado "
         "DIAGNOSTICO-A27-<puntos>; no cuenta para nada",
+    )
+    parser.add_argument(
+        "--diagnostico-cuenta-diaria",
+        action="store_true",
+        help="con --simular, la cuenta simulada empieza de cero cada dia en vez de arrastrarse "
+        "(ADR-0053 §6), para medir el bot sin que los frenos de la firma corten el tramo; "
+        "etiquetado DIAGNOSTICO-CUENTA-diaria; no cuenta para nada",
     )
 
 
@@ -2255,6 +2265,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
                 stops_level_diagnostico=diag.a27,
                 tipo_orden=tipo_orden,
             )
+            motor.cuenta_diaria = diag.cuenta_diaria
             nombre = cableado.NOMBRE_MOTOR
         else:
             motor = MotorSpec(

@@ -63,6 +63,12 @@ SEGUNDO_ESQUEMA = "segundo_esquema"
 SOLO_UNA_ZONA_DE_CONTROL = "solo_una_zona_de_control"
 SIN_MECHA_MAS_ALLA_DEL_EXTREMO = "sin_mecha_mas_alla_del_extremo"
 LECTURAS_LIMPIA = (SOLO_UNA_ZONA_DE_CONTROL, SIN_MECHA_MAS_ALLA_DEL_EXTREMO)
+# El bloque de la caja de una orden stop (A-48, `caja_bloque`; ADR-0064): las reglas R6, R4 y R1
+# de docs/validation/CAJA-77.md, que dan el 1 de la caja; el 0 es siempre el punto de ruptura.
+BLOQUE_R6 = "r6"
+BLOQUE_R4 = "r4"
+BLOQUE_R1 = "r1"
+BLOQUES_CAJA = (BLOQUE_R6, BLOQUE_R4, BLOQUE_R1)
 
 
 class EstructuraError(ValueError):
@@ -165,6 +171,77 @@ def mecha_mas_alla_del_extremo(
     return False
 
 
+@dataclass(frozen=True)
+class PuntoDeRuptura:
+    """Un posible punto de breaker (ADR-0056 §7, ADR-0064): el ultimo pivote de M1 contrario al
+    sentido de la entrada -un BAJO en una venta, un ALTO en una compra- formado con las velas dadas.
+    `marca` es el indice de la vela que marca su nivel, desde la que R6 traza la caja."""
+
+    nivel: int
+    contraria_inicio: MinutoUtc  # la vela contraria que lo forma: con el nivel, lo identifica
+    marca: int
+
+    @property
+    def clave(self) -> tuple[int, int]:
+        return self.nivel, int(self.contraria_inicio)
+
+
+def ultimo_punto_de_ruptura(
+    m1: Sequence[Vela], lado: str, hasta: int | None = None
+) -> PuntoDeRuptura | None:
+    """El ultimo pivote de M1 contrario a la entrada formado con `m1[:hasta]` (todas si `hasta` es
+    None), con `CIERRE_VELA_CONTRARIA`: la funcion de R5 de `scripts/bloque_de_la_caja.py`. Con
+    `hasta` en la vela de la toma, es el pivote de `referencia_del_breaker`."""
+    signo = _signo(lado)
+    n = len(m1) if hasta is None else hasta
+    if n <= 0:
+        return None
+    buscado = ALTO if signo == 1 else BAJO
+    for p in reversed(pivotes_formados(m1, None, CIERRE_VELA_CONTRARIA, int(m1[n - 1].fin), n)):
+        if p.lado != buscado:
+            continue
+        ic = next((i for i in range(n) if int(m1[i].inicio) == int(p.contraria_inicio)), None)
+        if ic is None:
+            return None
+
+        def extremo(v: Vela) -> int:
+            return int(v.maxima) if signo == 1 else int(v.minima)
+
+        marca = next((i for i in range(ic, -1, -1) if extremo(m1[i]) == p.nivel), ic)
+        return PuntoDeRuptura(p.nivel, p.contraria_inicio, marca)
+    return None
+
+
+def extremo_de_la_caja(
+    m1: Sequence[Vela], lado: str, punto: PuntoDeRuptura, bloque: str
+) -> int | None:
+    """El 1 de la caja de una orden stop en `punto`, con las M1 cerradas `m1` (ADR-0064): R6, el
+    extremo opuesto de las velas desde la que marca el punto hasta la ultima; R4, el del tramo de
+    velas contrarias consecutivas que acaba en la ultima contraria; R1, el de esa ultima contraria.
+    El extremo opuesto es la maxima en una venta y la minima en una compra. None si el bloque no
+    tiene velas o si su extremo no queda del lado del stop: una caja sin altura no da stop ni
+    lote."""
+    signo = _signo(lado)
+    if bloque not in BLOQUES_CAJA:
+        raise EstructuraError(f"bloque {bloque!r} no esta en {BLOQUES_CAJA}")
+    if bloque == BLOQUE_R6:
+        velas = list(m1[punto.marca :])
+    else:
+        k = next((i for i in range(len(m1) - 1, -1, -1) if color(m1[i]) == -signo), None)
+        if k is None:
+            return None
+        j = k
+        if bloque == BLOQUE_R4:
+            while j - 1 >= 0 and color(m1[j - 1]) == -signo:
+                j -= 1
+        velas = list(m1[j : k + 1])
+    if not velas:
+        return None
+    uno = min(int(v.minima) for v in velas) if signo == 1 else max(int(v.maxima) for v in velas)
+    del_lado_del_stop = uno < punto.nivel if signo == 1 else uno > punto.nivel
+    return uno if del_lado_del_stop else None
+
+
 def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> int | None:
     """El indice de la PRIMERA M1 que completa una zona de control posterior a la entrada
     (RN-014), o None si todavia no. `m1` son las M1 cerradas desde la entrada, en orden.
@@ -256,6 +333,10 @@ def detectar_esquema(
 
 
 __all__ = [
+    "BLOQUES_CAJA",
+    "BLOQUE_R1",
+    "BLOQUE_R4",
+    "BLOQUE_R6",
     "COMPRA",
     "CUERPO",
     "LADOS",
@@ -268,10 +349,13 @@ __all__ = [
     "VENTA",
     "Esquema",
     "EstructuraError",
+    "PuntoDeRuptura",
     "bloque_de_origen",
     "detectar_esquema",
+    "extremo_de_la_caja",
     "mecha_mas_alla_del_extremo",
     "referencia_del_breaker",
+    "ultimo_punto_de_ruptura",
     "zona_posterior_completada",
     "zonas_de_control",
 ]

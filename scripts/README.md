@@ -75,5 +75,10 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   0» por direccion, el placebo del 0 con la entrada desplazada y el pivote de R5 frente a la
   referencia del breaker del productor. Importa `caja_77.py` sin tocarlo; solo lee y escribe en
   `--salida`.
+- `f35_resultado_r.py`: el resultado por operacion en R del bot (los llenados del JSON de
+  `embudo_77.py` en el modo de la vida de la orden stop) frente al trader (las dos series de
+  `viabilidad_trader.py`), por mes y en los dias comunes, con las ganadoras y la proporcion de
+  compras y ventas. DIAGNOSTICO; solo lee y escribe en `--salida`
+  (`docs/validation/F35-ORDEN-STOP-PIVOTE.md` §5).
 - Futuro: grabacion de ticks de la demo (F17), exportacion de FXReplay (F26). La transcripcion de
   un video es un comando del paquete (`botsito corpus transcribe`, F04), no un script.
