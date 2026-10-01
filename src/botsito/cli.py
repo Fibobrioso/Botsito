@@ -1126,7 +1126,10 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
     except TramosNoCitablesError as exc:
         print(f"ERROR: {exc}")
         return 1
-    tramo = filtro.aplicar([s for s in segmentos if s.t1_ms > t0 and s.t0_ms < t1])
+    # El filtro va sobre la cruda ENTERA y despues se recorta: la regla (c) arrastra al vecino de
+    # un segmento que dispara, y ese vecino puede caer en el borde del intervalo con el que lo
+    # dispara fuera (revisor de esta rama, B1). Asi oculta lo mismo que `cargar_cruda`.
+    tramo = [s for s in filtro.aplicar(segmentos) if s.t1_ms > t0 and s.t0_ms < t1]
     # Referencias del tramo, compactas: la cobertura es 1 fps (ADR-0008), asi que se anota el
     # manifiesto y el recuento por segundo, y solo los instantes con fraccion (obligatorios).
     en_tramo = [
@@ -1175,7 +1178,7 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
     escribir_propuesta(salida, doc)
     print(f"OK: {salida.relative_to(repo).as_posix() if salida.is_relative_to(repo) else salida}")
     print(f"  {len(tramo)} segmentos de {tid}, {len(referencias)} referencias de fotogramas")
-    if aviso := resumen(filtro.ocultos.values()):
+    if aviso := resumen(o for o in filtro.ocultos.values() if o.t1_ms > t0 and o.t0_ms < t1):
         print(aviso)
     return 0
 

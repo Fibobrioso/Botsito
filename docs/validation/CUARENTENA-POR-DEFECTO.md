@@ -109,9 +109,12 @@ stderr). `evidence propose` filtra SIEMPRE, sin `--crudo`, porque escribe en el 
 **La guardia** (`R_CRUDO`): bloquea cualquier comando Bash o PowerShell -y el codigo de `python -c`,
 de un heredoc o de un guion nuevo- que lleve `--crudo` (o su abreviatura hasta `--cr`, que argparse
 aceptaria) o `crudo=` con un valor que no sea `False` (o la clave `"crudo"` de un dict). Deja pasar
-`make check` y `pytest` sin argumentos. Las reglas que ya tenia para estos comandos -bloquear
-`kb find` sin `--video`, los videos en cuarentena y los intervalos que pisan un tramo- **se quedan
-como estaban**: el encargo no pide quitarlas, y relajarlas lo decide el consultor (§7).
+`make check` (solo con su redireccion a un fichero) y `pytest` sin argumentos.
+
+> **CORRECCION (2026-10-01, misma rama, tercera orden del consultor).** Este parrafo decia que las
+> reglas viejas -bloquear `kb find` sin `--video`, los videos en cuarentena y los intervalos que
+> pisan un tramo- se quedaban como estaban. La tercera orden quito la primera y mantuvo las otras
+> dos como segunda capa: lo vigente esta en §9.5.
 
 ### 2.1 Los llamadores que piden el contenido sin filtrar
 
@@ -316,3 +319,73 @@ que lo nombre. Si el consultor quiere afinarla (solo en el codigo que va a Pytho
   `transcript show` y `frames show` de una sesion en cuarentena, y los intervalos que pisan un tramo
   de v6. Lo comprueban `test_la_cli_pasa_salvo_lo_que_imprime_una_cruda` (con `kb find stop` ya en
   «pasa» y `kb find stop --video v7` en «bloquea») y los casos de v6 de siempre.
+
+## 10. La CI de Linux
+
+Regla de `RITUAL.md` (la rama toca un hook): empujada como `fix/cuarentena-por-defecto`.
+
+| Commit | Run | Resultado |
+|---|---|---|
+| `e30765c` (tercera orden) | `36936326358` | 1 failed, 1768 passed, 8 skipped: solo el fallo esperado, `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/` |
+
+El run del commit que trae los arreglos del revisor (§11) se apunta en la respuesta: escribirlo
+aqui exigiria otro commit y otro run.
+
+## 11. Informe del revisor
+
+Subagente `revisor`, sobre `e30765c`. Los hallazgos (A1, A2, B1 a B4), tal cual; la tabla de
+requisitos del eje (b), lo comprobado sin hallazgos y la lista de comandos, resumidos.
+
+> ## Informe del revisor · trabajo/cuarentena-por-defecto · 2026-10-01
+>
+> HEAD e30765c, base main c95ab8b, 3 commits. El árbol del commit es 687043c0…26 y coincide con `.git/botsito-sello`. No existe `make-check.log` en el árbol de trabajo, así que no vi la línea SELLO ni el PICO. Los 1777 passed y los 285 MiB los doy solo como declarados por quien encarga.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | El informe se contradice. §2 (el párrafo de «La guardia») dice que las reglas viejas de `kb find` sin `--video` «se quedan como estaban: el encargo no pide quitarlas, y relajarlas lo decide el consultor (§7)». La tercera orden, punto 2, ordena quitar esa regla, §9.5 dice que se quitó, y el código la quita. Un lector que se quede en §2 cree que la regla sigue. | `docs/validation/CUARENTENA-POR-DEFECTO.md` líneas 109-114 frente a 312-318; `.claude/hooks/guardia.py` (diff: `video is not None and video.lower() in cuarentena`) |
+> | A2 | menor | La lista `SIN_MIRAR_CRUDO` deja pasar un `make check` con argumentos extra, porque `make\s+check\b[^;&|]*` admite la opción de crudo. Es solo lectura del regex. Quise ejecutar `exigir_sin_crudo` y la propia guardia me bloqueó el comando, así que no pude comprobarlo. No lo rodeé. El caso es inofensivo, pero la orden decía «make check y pytest sin argumentos extra»: `pytest` está bien, `make check` no. | `.claude/hooks/guardia.py` (definición de `SIN_MIRAR_CRUDO`) |
+>
+> Comprobado sin hallazgos: el contrato (29 ficheros, nada en `rutas_protegidas`); `pytest` de `test_guardia_claude.py` y `test_cuarentena.py` en verde; `state check` OK; `knowledge/` intacto; `HISTORIA.md` solo con lineas anadidas; el informe sin contenido de transcripciones ni fechas de dias reservados; los tres anexos reproducen §4, §5 y §9.3; la regla (c) movida linea a linea desde `scripts/transcribir_sesion.py`; la guardia bloquea la opcion de crudo en todas las formas pedidas, deja pasar `make check` y `pytest`, bloquea la propuesta oculta, deja pasar `kb find` sin `--video` y bloquea `--video v7`; tres citas del informe contra su fuente.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 19 hechos, 1 parcial, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1-6, 8-15, 17-20 | Fase 0 a 3 y las ordenes segunda y tercera | Hecho | (ver el informe del revisor; resumido aqui por longitud) |
+> | 7 | Empujar como `fix/` y esperar la CI de Linux | Pendiente | se anade despues |
+> | 16 | Segunda orden 4: un test falla ante el parametro fuera de la lista; la guardia lo bloquea | Parcial | Ver B2 |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | importa | **`evidence propose` filtra solo el tramo copiado, no la cruda entera**, y puede copiar a `knowledge/_proposals/` un segmento que la CLI oculta por «vecino». `evidence_propose` hace `filtro.aplicar([s for s in segmentos if tramo])`. La regla (c) arrastra al segmento anterior y al siguiente, y esa vecindad solo se calcula dentro del recorte. Si un segmento del borde del intervalo es vecino de uno que menciona un mes y este queda fuera, se copia. Con `cargar_cruda` (filtrado global) ese mismo segmento sale oculto. Lo ejecuté con dos segmentos: `aplicar([s0, s1])` da `[]` y `aplicar([s0])` da `[0]`. Además `test_evidence_propose_copia_solo_lo_que_se_puede_ensenar` usa el intervalo entero 0:00:00-0:00:40, así que no ejercita el borde. | `src/botsito/cli.py` (líneas ~1120-1129 de la rama); `tests/unit/test_cuarentena.py:248` |
+> | B2 | importa | **El test `test_nadie_lee_la_cruda_sin_pasar_por_las_funciones_que_filtran` es sintáctico y no cubre lo que el encargo pide vigilar**. Solo detecta `X / FICHERO_CRUDA` o `X / "cruda.jsonl"` (BinOp `Div`) y el import de `desde_jsonl` desde `transcripcion`. No ve `joinpath("cruda.jsonl")`, `open(f"{c}/cruda.jsonl")`, `glob("cruda*")`, ni `cruda.txt` / `parciales/*.json`. Hoy no hay ningún caso real (mi barrido en `src/` y `scripts/` es limpio), pero el informe presenta el test como cierre de la vía. Además `scripts/transcribir_sesion.py` está autorizado por fichero entero (`(…, None)`) aunque «hoy no lo necesita» (§2.1). Cualquier uso nuevo en ese script pasaría el test. | `tests/unit/test_cuarentena.py:278`, `:340-375` |
+> | B3 | menor | La evidencia entra entera en `kb find`, `kb at` e índice. Los 9 items de §9.3, que citan segmentos que hoy se ocultan por (c), se muestran con su cita. Está declarado en §2 y §9.3 y en §7.1 espera la decisión del consultor. | Informe §2 y §9.3; `indice.py` |
+> | B4 | menor | `scripts/a18_buscar.py` pasa a leer filtrado y las cuatro salidas commiteadas ya no se reproducen byte a byte (declarado, §7.3 y §9.1). La afirmación la hizo la rama midiendo sha256, y no la puedo reproducir sin escribir. Es una decisión del consultor, no un fallo. | Informe §9.1 |
+>
+> ### Lo que no pude comprobar
+> `make check` (solo el sello contra el arbol del commit, que coincide); `knowledge validate` (escribe); `make check` con la opcion de crudo (la guardia lo bloqueo y no la rodeo); la CI de Linux; la medicion de sha256 de las salidas de A-18, A-24, A-35 y sesion 02; evasiones por construccion de cadenas en shell o en Python.
+
+**Respuesta de la sesion, hallazgo a hallazgo:**
+- **A1, arreglado**: recuadro de correccion en §2 que apunta a §9.5.
+- **A2, arreglado**: `SIN_MIRAR_CRUDO` deja pasar `make check` solo con su redireccion a un fichero;
+  `make check` con la opcion de crudo y redireccion se bloquea (caso nuevo en
+  `test_la_guardia_bloquea_el_corpus_sin_filtrar`).
+- **B1, arreglado**: `evidence propose` filtra la cruda ENTERA y despues recorta, como
+  `cargar_cruda`; el aviso cuenta solo los ocultos del intervalo.
+  `test_evidence_propose_oculta_el_vecino_aunque_el_que_dispara_quede_fuera` ejercita el borde
+  (intervalo 0:00:20-0:00:21: solo el vecino, con el que dispara fuera).
+- **B2, arreglado en lo que se puede medir**: `lecturas_en_bruto` ve ahora tambien el nombre del
+  texto de una transcripcion (`cruda*`, `corregida*`, `parciales`, en literales y f-strings, y las
+  constantes del pipeline) pasado a `open`, `Path`, `joinpath`, `glob`, `rglob`, `iglob` o
+  `read_text`, ademas de detras de una `/`; cuatro casos nuevos en
+  `test_los_recorridos_no_son_decorativos`. Sigue siendo un recorrido del codigo, no una prueba de
+  que no exista otra via (una ruta armada en tiempo de ejecucion no se ve): se dice asi. Sobre el
+  proyecto da cero casos; el primer intento con «parcial» cazo un `.parcial` de una descarga de
+  ticks y se estrecho a `parciales`. La autorizacion de `scripts/transcribir_sesion.py` por
+  fichero entero es la de la lista del consultor; si la quiere por funcion, no hay hoy ninguna que
+  la use.
+- **B3 y B4**: declarados; son decisiones del consultor (§7).

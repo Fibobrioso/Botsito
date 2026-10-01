@@ -569,6 +569,7 @@ LLAMADA = "cru" + "do=True"
         f"uv run python -c 'from botsito.corpus import x; x.f({LLAMADA})'",  # python -c
         "uv run python - <<'EOF'\nfrom botsito import x\nx.f(" + LLAMADA + ")\nEOF\n",  # heredoc
         "uv run python -c 'f(**{\"cru" + "do\": True})'",  # por diccionario
+        f"make check {OPCION} > make-check.log 2>&1",  # make check con argumentos extra
     ],
 )
 def test_la_guardia_bloquea_el_corpus_sin_filtrar(g: ModuleType, repo: Path, comando: str) -> None:

@@ -153,7 +153,11 @@ CRUDO_OPCION = re.compile(r"(?<![\w-])--cr(?:u(?:d(?:o)?)?)?(?![\w-])")
 CRUDO_PYTHON = re.compile(r"\bcrudo\s*=\s*(?!False\b)\S|[\"']crudo[\"']\s*:")
 # Lo que la regla deja pasar sin mirar: `make check` y `pytest` sin argumentos (orden del
 # consultor).
-SIN_MIRAR_CRUDO = re.compile(r"\s*(?:uv\s+run\s+)?(?:make\s+check\b[^;&|]*|pytest)\s*")
+# `make check` solo con su redireccion a un fichero: con cualquier otro argumento se mira
+# (revisor de esta rama, A2).
+SIN_MIRAR_CRUDO = re.compile(
+    r"\s*(?:uv\s+run\s+)?(?:make\s+check(?:\s*>\s*[\w./\\-]+(?:\s+2>&1)?)?|pytest)\s*"
+)
 
 
 def exigir_sin_crudo(texto: str, donde: str) -> None:

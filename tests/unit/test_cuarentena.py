@@ -258,6 +258,27 @@ def test_evidence_propose_copia_solo_lo_que_se_puede_ensenar(
     assert not any(PALABRA[regla] in t for t in textos)
 
 
+def test_evidence_propose_oculta_el_vecino_aunque_el_que_dispara_quede_fuera(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Revisor de esta rama, B1: el intervalo 0:00:20-0:00:21 solo trae el segmento 4, vecino
+    del 3 (el que nombra el mes), que queda FUERA. Filtrando solo el recorte, el 4 se copiaba."""
+    from tests.unit.test_cli import _knowledge_con_cruda
+
+    repo, _tid, _cita = _knowledge_con_cruda(tmp_path)
+    carpeta = next((repo / "data" / "transcripciones" / "v1").rglob("cruda.jsonl")).parent
+    (carpeta / "cruda.jsonl").write_text(a_jsonl(SEGMENTOS), encoding="utf-8")
+    (repo / "knowledge" / "_proposals").mkdir()
+    (repo / "knowledge" / "_proposals" / "PROMPT.md").write_text("# prompt\n", encoding="utf-8")
+    salida = _cli(
+        capsys, repo, "evidence", "propose", "--video", "v1", "--t0", "0:00:20", "--t1", "0:00:21"
+    )
+    assert "OCULTOS: 1 segmentos: 1 por material reservado o sin sortear (c)" in salida
+    (fichero,) = (repo / "knowledge" / "_proposals").glob("pr-*.yaml")
+    doc = yaml.safe_load(fichero.read_text(encoding="utf-8"))
+    assert doc["contexto"]["segmentos"] == []
+
+
 # ------------------------------------------------------------ quien puede pedir el crudo
 
 # (fichero, funcion) -> motivo. `None` como funcion: el fichero entero. Decision del consultor del
@@ -326,22 +347,40 @@ def usos_de_crudo(codigo: str) -> list[tuple[int, str, str | None]]:
     return salida
 
 
-FICHEROS_DE_TEXTO = {"FICHERO_CRUDA", "FICHERO_CORREGIDA", "cruda.jsonl", "corregida.jsonl"}
+# Los nombres de lo que guarda TEXTO de una transcripcion: las constantes del pipeline y cualquier
+# literal que nombre la cruda (`cruda.jsonl`, `cruda.txt`, `*.cruda-NO-LEER.*`), la corregida o
+# los parciales de un fragmento (revisor de esta rama, B2: la primera version solo veia
+# `cruda.jsonl` y `corregida.jsonl` detras de una `/`).
+CONSTANTES_DE_TEXTO = {"FICHERO_CRUDA", "FICHERO_CORREGIDA", "CARPETA_PARCIALES"}
+TROZOS_DE_TEXTO = ("cruda", "corregida", "parciales")
+LLAMADAS_CON_RUTA = {"open", "Path", "joinpath", "glob", "rglob", "iglob", "read_text"}
 
 
 def _nombra_fichero_de_texto(nodo: ast.AST) -> bool:
     if isinstance(nodo, ast.Name):
-        return nodo.id in FICHEROS_DE_TEXTO
+        return nodo.id in CONSTANTES_DE_TEXTO
     if isinstance(nodo, ast.Attribute):
-        return nodo.attr in FICHEROS_DE_TEXTO
-    return isinstance(nodo, ast.Constant) and nodo.value in FICHEROS_DE_TEXTO
+        return nodo.attr in CONSTANTES_DE_TEXTO
+    if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str):
+        return any(t in nodo.value.lower() for t in TROZOS_DE_TEXTO)
+    if isinstance(nodo, ast.JoinedStr):
+        return any(_nombra_fichero_de_texto(v) for v in nodo.values)
+    return False
+
+
+def _nombre_de_llamada(nodo: ast.Call) -> str | None:
+    if isinstance(nodo.func, ast.Name):
+        return nodo.func.id
+    if isinstance(nodo.func, ast.Attribute):
+        return nodo.func.attr
+    return None
 
 
 def lecturas_en_bruto(codigo: str) -> list[tuple[int, str, str | None]]:
-    """Lo que leeria la cruda o la corregida SIN pasar por `cargar_cruda`/`cargar_corregida`:
+    """Lo que leeria el texto de una transcripcion SIN pasar por `cargar_cruda`/`cargar_corregida`:
     construir su ruta (`carpeta / FICHERO_CRUDA`, `... / "cruda.jsonl"`) para algo que no sea
-    preguntar si existe (`.is_file()`, `.exists()`), o parsear con el `desde_jsonl` de las
-    transcripciones."""
+    preguntar si existe (`.is_file()`, `.exists()`); pasar su nombre a `open`, `Path`,
+    `joinpath`, `glob`, `rglob` o `iglob`; o parsear con el `desde_jsonl` de las transcripciones."""
     arbol = ast.parse(codigo)
     nodos = _con_funcion(arbol)
     padres = {id(n): p for n, _f, p in nodos}
@@ -365,6 +404,12 @@ def lecturas_en_bruto(codigo: str) -> list[tuple[int, str, str | None]]:
             )
             if not existe:
                 salida.append((nodo.lineno, "ruta", funcion))
+        if (
+            isinstance(nodo, ast.Call)
+            and _nombre_de_llamada(nodo) in LLAMADAS_CON_RUTA
+            and any(_nombra_fichero_de_texto(a) for a in nodo.args)
+        ):
+            salida.append((nodo.lineno, "llamada", funcion))
         if (
             importa_desde_jsonl
             and isinstance(nodo, ast.Call)
@@ -416,6 +461,10 @@ def test_los_recorridos_no_son_decorativos() -> None:
         (2, "ruta", "g")
     ]
     assert lecturas_en_bruto("x = c / 'corregida.jsonl'") == [(1, "ruta", None)]
+    assert lecturas_en_bruto("x = c.joinpath('cruda.jsonl')") == [(1, "llamada", None)]
+    assert lecturas_en_bruto("x = open(f'{c}/cruda.txt')") == [(1, "llamada", None)]
+    assert lecturas_en_bruto("x = c.glob('parciales/*.json')") == [(1, "llamada", None)]
+    assert lecturas_en_bruto("x = c / 'cruda.txt'") == [(1, "ruta", None)]
     assert lecturas_en_bruto("ok = (c / FICHERO_CRUDA).is_file()") == []
     assert lecturas_en_bruto(
         "from botsito.corpus.transcripcion import desde_jsonl\ndesde_jsonl(t)"
