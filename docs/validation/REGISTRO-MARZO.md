@@ -137,9 +137,9 @@ todo el ano. En invierno eso son las 06:00-14:00 de Madrid. Y el parametro `relo
 de `huso_operativa` por ADR-0063, sigue en `civil_operativa`. La PARADA B0 exige `RESUELTA`, y
 ADR-0022 admite dos formas de cerrarla:
 
-- **RESUELTA por el trader**, con un registro de feedback que apunte a A-42. Es la pregunta 6 de la
-  hoja de la sesion 4 (`docs/sesion-4/PREGUNTAS.md`, rama `feature/barrido-sesion-4`, aun sin
-  integrar). La sesion 3 dejo un «creo» en v9 1:07:53 y 1:08:09 que falta confirmar.
+- **RESUELTA por el trader**, con un registro de feedback que apunte a A-42. Es la pregunta 7 de la
+  hoja de la sesion 4 (`docs/sesion-4/PREGUNTAS.md`; era la 6 hasta que el consultor anadio la
+  primera, el 2026-09-30). La sesion 3 dejo un «creo» en v9 1:07:53 y 1:08:09 que falta confirmar.
 - **O DECIDIDA por el consultor**, con un ADR que la nombre. Pero **la PARADA B0 esta escrita pidiendo
   `RESUELTA`**: si se cierra como DECIDIDA, hay que enmendar el runbook en la misma rama, o decir
   expresamente que DECIDIDA tambien vale.
@@ -156,6 +156,17 @@ La decision tiene dos piezas, y las dos hacen falta antes del paso b:
   `civil_operativa`, no cambia nada del lado de los casos.
 
 ## Estado
+
+**ACEPTADA por el consultor el 2026-09-30, con orden de cierre en `main`.** Decide:
+- **La propuesta del §4 queda ACEPTADA:** marzo entra por el camino de fidelidad con el
+  artefacto `eurusd-2026-03`.
+- **A-42 se cerrara como RESUELTA con el trader en la sesion 4, y no por ADR.** Asi que marzo no
+  se sortea ni se ingiere hasta entonces, y **la PARADA B0 de `ENTRADA-MARZO.md` no cambia**: la
+  enmienda del runbook que pedia la via DECIDIDA no hace falta.
+- **Las 7 imagenes se quedan sin abrir y fuera del protocolo.** Se le pregunta al trader que son:
+  es la ultima pregunta de `docs/sesion-4/PREGUNTAS.md`, la 19.
+
+Lo que sigue es el estado previo a la revision, sin tocar.
 
 Material de marzo **recibido, movido al corpus (fuera de git), con huella en el manifiesto y SIN
 ABRIR**. Recepcion anotada en `HOLDOUT-EXPOSICIONES.md`, sin exposicion. **Nada ingerido**: marzo se

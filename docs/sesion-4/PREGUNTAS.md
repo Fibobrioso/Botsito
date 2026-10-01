@@ -42,7 +42,7 @@ añade «otra, ¿cuál?».
 - **Nada más**: ningún fotograma, ningún libro xlsx, ningún caso reservado u oculto y ningún
   agregado. No hay exposición nueva que declarar en `HOLDOUT-EXPOSICIONES.md`.
 
-## 1. Las que hay que hacer (17)
+## 1. Las que hay que hacer (19)
 
 Ordenadas por cuánto destraban:
 - primero, lo que bloquea F35 y la vida de la orden;
@@ -55,7 +55,18 @@ que ya está.
 
 ### A. La vida de la orden stop (F35)
 
-**1. Cuándo un mínimo de M1 se convierte en tu punto de breaker.** · PARCIAL · F («¿pones la orden en
+**1. Cuándo pones la orden, una vez formado el mínimo (o máximo) en M1.** · PARCIAL · A-49, F35
+§5.2. La añadió el consultor el 2026-09-30, al cerrar el barrido: va la primera de todas y abierta.
+- **Pregunta:** «Cuando se forma el mínimo (o máximo) en M1, ¿pones la orden de inmediato o esperas
+  a algo? ¿A qué?»
+- **El barrido no la encontró respondida.** Lo grabado dice dónde va la orden: tras la toma, en el
+  posible punto de breaker y con la mecha incluida. También dice que se actualiza con cada punto
+  nuevo. No dice cuándo: es el «Falta» de la pregunta 2. En construcción, el bot pone la orden a
+  0,9 minutos de mediana desde que se forma el pivote, y el trader entra a 2,5 (F35 §5.2).
+- Va abierta y antes de la 2, que ofrece opciones, para no sugerirle la respuesta. Si la contesta
+  aquí, la 2 solo se confirma.
+
+**2. Cuándo un mínimo de M1 se convierte en tu punto de breaker.** · PARCIAL · F («¿pones la orden en
 el último mínimo…?»), A-49 y el momento de entrada medido en F35 §5.2.
 - **Ya dijo**:
   - la orden se pone después de la toma de liquidez: «primero se desarrolla una toma de liquidez
@@ -76,7 +87,7 @@ el último mínimo…?»), A-49 y el momento de entrada medido en F35 §5.2.
   - (d) otra, ¿cuál?
   ¿Y en una compra es lo mismo con el máximo?»
 
-**2. El stop al poner la orden: ¿en el 1 o en el 0,8?** · PARCIAL · F («el stop en el 0,8 o en el
+**3. El stop al poner la orden: ¿en el 1 o en el 0,8?** · PARCIAL · F («el stop en el 0,8 o en el
 1»), A-18.
 - **Ya dijo**:
   - «primer cálculo es de 13 a normal o sea desde el punto 1 y luego se recalcula» (v7 0:06:07);
@@ -90,7 +101,7 @@ el último mínimo…?»), A-49 y el momento de entrada medido en F35 §5.2.
   - (c) en el 1, y lo pasas al 0,8 más tarde, ¿cuándo?;
   - (d) en el 1, y no lo mueves.»
 
-**3. Si el precio sube más antes de llenarse, ¿se mueve el 1 de la caja?** · SIN RESPUESTA · A-49,
+**4. Si el precio sube más antes de llenarse, ¿se mueve el 1 de la caja?** · SIN RESPUESTA · A-49,
 y la decisión 5 del ADR de F35 (`caja_se_fija`, en la rama `feature/F35-orden-stop-pivote`, sin integrar).
 - **Ya dijo** que la caja va «desde el posible punto de breaker, o sea el punto de breaker hasta el
   punto más alto» (v9 0:47:21; también v7 0:15:50). No dijo si ese punto más alto se actualiza
@@ -101,7 +112,7 @@ y la decisión 5 del ADR de F35 (`caja_se_fija`, en la rama `feature/F35-orden-s
   - (b) dejo la caja como estaba;
   - (c) otra.»
 
-**4. La orden sin llenar al acabar la sesión o la ventana.** · PARCIAL · A-30 y la parte pendiente de
+**5. La orden sin llenar al acabar la sesión o la ventana.** · PARCIAL · A-30 y la parte pendiente de
 A-39.
 - **Ya dijo**:
   - una operación abierta se cierra un minuto antes de que acabe su vela de 4 horas (v9 0:27:35);
@@ -116,7 +127,7 @@ A-39.
   - (c) la dejo, pero solo hasta las 3;
   - (d) otra.»
 
-**5. «Lo mínimo posible» al redondear el stop: ¿un punto o un pip entero?** · PARCIAL · F (el
+**6. «Lo mínimo posible» al redondear el stop: ¿un punto o un pip entero?** · PARCIAL · F (el
 redondeo), ADR-0061 §2.
 - **Ya dijo** «lo mínimo posible o sea, si es un pip, un pip y ya está» (v9 1:05:41–1:05:50).
 - Cuando dice «pip» suele querer decir lo mínimo:
@@ -130,7 +141,7 @@ redondeo), ADR-0061 §2.
 
 ### B. El reloj de invierno (A-42), antes del 25 de octubre
 
-**6. Con qué reloj empiezas a las 7 en invierno.** · PARCIAL · A-42 (bloqueante), F.
+**7. Con qué reloj empiezas a las 7 en invierno.** · PARCIAL · A-42 (bloqueante), F.
 - **Ya dijo**, fuera de la cuarentena:
   - «En invierno empieza» (v9 1:07:40);
   - a «entonces en invierno no empiezas a las 7 o a las 6 sería tu reloj, ¿no?», «Sí» (v9 1:07:53);
@@ -145,7 +156,7 @@ redondeo), ADR-0061 §2.
 
 ### C. Las ambigüedades que bloquean al bot
 
-**7. Qué corta la racha de 9 pérdidas y cuándo vuelves a operar.** · SIN RESPUESTA · A-51
+**8. Qué corta la racha de 9 pérdidas y cuándo vuelves a operar.** · SIN RESPUESTA · A-51
 (bloqueante).
 - **Ya dijo** que para con «9 pérdidas seguidas» (v9 1:11:30–1:11:54). No se le preguntó qué corta la
   racha.
@@ -157,7 +168,7 @@ redondeo), ADR-0061 §2.
   - (c) cuando revises qué pasó, sin fecha fija;
   - (d) otra.»
 
-**8. El tope de pérdida: ¿porcentaje o 9 seguidas?** · CONTRADICTORIA · A-44 (bloqueante).
+**9. El tope de pérdida: ¿porcentaje o 9 seguidas?** · CONTRADICTORIA · A-44 (bloqueante).
 - **Sesión 1**: 4,5 % del día y 9 % de la semana (`fb-2026-09-09-sesion-01-4963aa6f`,
   `-5e23d47c` y `-a85b6bc7`).
 - **Sesión 3**: «9 pérdidas como máximo / O sea, para / El tope es eso, 9 pérdidas como máximo»
@@ -167,7 +178,7 @@ redondeo), ADR-0061 §2.
   - (b) solo perder el 4,5 % en un día o el 9 % en una semana;
   - (c) las dos cosas, lo que llegue antes.»
 
-**9. Zona limpia.** · PARCIAL · A-21 (bloqueante).
+**10. Zona limpia.** · PARCIAL · A-21 (bloqueante).
 - **Ya dijo**: «esto limpio me refiero a que no haya, o sea, por ejemplo, una vela verde, una vela
   bajista, una vela verde, una bajista» (v9 1:19:57).
 - No contestó cuánto puede medir el retroceso del esquema 2 (v9 1:17:42).
@@ -179,7 +190,7 @@ redondeo), ADR-0061 §2.
   - (c) no importa el número;
   - (d) otra.»
 
-**10. El alto de M15 que el precio supera un poco.** · PARCIAL · A-35 (bloqueante).
+**11. El alto de M15 que el precio supera un poco.** · PARCIAL · A-35 (bloqueante).
 - **Ya dijo**: el alto vale cuando cierra la vela contraria (v9 0:38:06–0:38:34).
 - A «¿y si después el precio lo supera un poco?» no contestó.
 - **Pregunta:** «Marcaste un alto en M15 y después el precio lo pasa por poco con la mecha y vuelve.
@@ -190,7 +201,7 @@ redondeo), ADR-0061 §2.
 
 ### D. El resto
 
-**11. Las salidas por encima de 3 R.** · CONTRADICTORIA · G-2 y A-33 (A5 de Next Action).
+**12. Las salidas por encima de 3 R.** · CONTRADICTORIA · G-2 y A-33 (A5 de Next Action).
 - **Sesión 3**: «el objetivo es fijo como bien sabemos bro Ahora no lo gestionamos Es fijo»
   (v9 1:00:53).
 - **Antes dijo**:
@@ -207,7 +218,7 @@ redondeo), ADR-0061 §2.
 - **Preparación pendiente**: medir la caja de esas siete operaciones en sus fotogramas antes de la
   sesión, solo en construcción, por instante localizado (`ACTIVAR-SESION-03.md` §4.1).
 
-**12. La vela de 4 horas que rompe por los dos lados y cierra sin cuerpo.** · SIN RESPUESTA ·
+**13. La vela de 4 horas que rompe por los dos lados y cierra sin cuerpo.** · SIN RESPUESTA ·
 ADR-0060 §2.
 - **Ya dijo**: con doble ruptura decide el color (v9 0:16:17), y una vela M1 casi plana «cuenta como
   si no existiera» (v9 1:30:21). No dijo qué pasa en H4 sin color.
@@ -218,7 +229,7 @@ ADR-0060 §2.
   - (c) el de la vela anterior;
   - (d) ese día no opero.»
 
-**13. El umbral de la vela casi plana.** · PARCIAL · RN-007, E-3.
+**14. El umbral de la vela casi plana.** · PARCIAL · RN-007, E-3.
 - **Ya dijo** que «cuenta como si no existiera» (v9 1:30:21), y «en EURUSD muy rara vez me lo he
   topado» (v9 1:29:56). No dio umbral.
 - **Pregunta:** «¿Con cuánto cuerpo una vela de M1 deja de ser casi plana?
@@ -226,13 +237,13 @@ ADR-0060 §2.
   - (b) con 1 o 2 puntos de cuerpo o menos;
   - (c) otra cifra.»
 
-**14. Una liquidez tomada antes de las 7.** · PARCIAL · A-43.
+**15. Una liquidez tomada antes de las 7.** · PARCIAL · A-43.
 - **Ya dijo** que una liquidez formada antes de las 7 vale, pero «tiene que tomar para que se tome
   la entrada dentro de las 7» (v9 0:45:40–0:45:44). No se le preguntó por una toma anterior a las 7.
 - **Pregunta:** «Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para
   operar a partir de las 7? (a) sí; (b) no, necesito otra toma dentro del horario.»
 
-**15. Cuál de tus dos backtests de agosto vale.** · PARCIAL · E-1.
+**16. Cuál de tus dos backtests de agosto vale.** · PARCIAL · E-1.
 - **Ya dijo** «hay que usar lo último, el último que fue el backtest completo» (v9 1:23:47–1:23:50).
   Pero el último en fecha (el vídeo) es el que se saltó operaciones de break even, y el completo es
   el original.
@@ -240,18 +251,25 @@ ADR-0060 §2.
   - (a) el que hiciste primero, completo;
   - (b) el del vídeo, aunque te saltaste algunos break even.»
 
-**16. Si solo el 0 de la caja cuenta frente al nivel tomado.** · PARCIAL · A-50.
+**17. Si solo el 0 de la caja cuenta frente al nivel tomado.** · PARCIAL · A-50.
 - **Ya dijo** «¿El 0 o el 0? No, no importa» (v9 0:51:08–0:51:12), y que todo tiene que
   desarrollarse más allá del nivel. Queda por confirmar que no filtra.
 - **Pregunta:** «Si la caja queda a caballo del nivel de la liquidez que se tomó, ¿descartas la
   entrada? (a) sí; (b) no, me da igual.»
 
-**17. Los intentos: ¿por marca o por toma?** · PARCIAL · A-25.
+**18. Los intentos: ¿por marca o por toma?** · PARCIAL · A-25.
 - **Ya dijo**:
   - «Sí, serían tres intentos por liquidez» (v9 1:30:54);
   - con un alto nuevo más bajo, opera primero el más reciente (v9 1:37:20–1:37:47).
 - **Pregunta:** «Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba,
   ¿empiezas de nuevo con tres? (a) sí; (b) no, me queda uno.»
+
+**19. Las 7 capturas que venían con el backtest de marzo.** · SIN RESPUESTA ·
+docs/validation/REGISTRO-MARZO.md. La añadió el consultor el 2026-09-30: va la última.
+- Con el libro de marzo llegaron 7 imágenes JPEG con nombres sin significado. **No se han abierto
+  ni se abrirán**: si son capturas de la pestaña Analytics, son agregados de un mes que tendrá días
+  reservados. No se le enseña ninguna.
+- **Pregunta:** «¿Qué son las 7 capturas que venían con el backtest de marzo?»
 
 ## 2. Las que ya están respondidas: no se vuelven a preguntar
 
@@ -271,7 +289,7 @@ ADR-0060 §2.
 | Break even al tocar (pendiente de reflejar: RN-014) | tocar, M1, a la entrada | «apenas toca, pues se pone en B la entrada. […] se mantiene en M1 […] Yo he estado trabajando así, a entrada.» | v9 0:55:43–0:56:41 (`…-9f506366`) |
 | Lote del 0 al 0,8 (pendiente de reflejar: `lotaje_base`) | del 0 al 0,8 | «se calcularía a partir del 0 al 0.8» | v9 1:03:11 (`…-d62c788a`) |
 | Objetivo del 0 al 1 (pendiente de reflejar: `base_calculo_objetivo`) | 3 veces el 0 → 1 | «desde el punto 0 al punto 1. Y el objetivo es original 1, 3» | v9 1:02:32 (`…-f572f1a0`) |
-| La vela casi plana no cuenta (pendiente de reflejar: RN-007) | no marca punto | «cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto de breaker» | v9 1:30:21 (`…-ffab23dc`); **el umbral sigue abierto: pregunta 13** |
+| La vela casi plana no cuenta (pendiente de reflejar: RN-007) | no marca punto | «cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto de breaker» | v9 1:30:21 (`…-ffab23dc`); **el umbral sigue abierto: pregunta 14** |
 
 Los nueve registros de `feedback pending` son respuestas grabadas que la spec todavía no cita (los
 nueve «pendiente de reflejar»). **No son preguntas**: se reflejan en la spec en una rama propia.
@@ -285,7 +303,7 @@ nueve «pendiente de reflejar»). **No son preguntas**: se reflejan en la spec e
   propia ambigüedad dice «si no lo recuerdas, no pasa nada». Se deja fuera de esta hoja.
 - **Lo que tapan los cortes de audio de v9**:
   - A-13 (0:57:00–0:58:06) ya está respondida en lo firme;
-  - A-39 (0:28:49–0:29:53) va dentro de la pregunta 4.
+  - A-39 (0:28:49–0:29:53) va dentro de la pregunta 5.
 
   Si llega el audio de respaldo, se escucha antes de preguntar.
 - **SOLO DE MEMORIA: ninguna.** La única que lo era, A-47 («cuando rompe», que Aleks recordaba), ya
@@ -306,7 +324,7 @@ nueve «pendiente de reflejar»). **No son preguntas**: se reflejan en la spec e
 
 ## Estado
 
-Barrido hecho y documento escrito. **Por preguntar: 17.** **Ya respondidas: 15**, que son las 6 de
+Barrido hecho y documento escrito. **Por preguntar: 19**: las 17 del barrido y 2 que añadió el consultor el 2026-09-30, la primera y la última. **Ya respondidas: 15**, que son las 6 de
 arriba más las 9 de `feedback pending`. **Fuera de la hoja: 6**, que son 3 mediciones, A-32 y los
 2 cortes de audio. **Ninguna** queda solo de memoria. No cambia nada del motor, de la spec, de las ambigüedades ni del
 feedback.
