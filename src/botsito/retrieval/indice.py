@@ -17,6 +17,12 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
+from botsito.corpus.cuarentena import (
+    Filtro,
+    Oculto,
+    TramosNoCitablesError,
+    cargar_tramos_no_citables,
+)
 from botsito.corpus.fotogramas import nombre_fichero
 from botsito.corpus.inventario import InventarioError, cargar_fuentes
 from botsito.corpus.manifiestos_fotogramas import Fotogramas, referencia_en
@@ -103,6 +109,14 @@ class Indice:
         default_factory=dict
     )  # item viejo -> item que lo supersede
     temas_raiz: frozenset[str] = frozenset()  # de _temas.yaml; vacio si no existe
+    # La cuarentena (`trabajo/cuarentena-por-defecto`): el indice se construye FILTRADO salvo
+    # con `crudo=True`, y `filtros` guarda, por video, lo que oculto (sin su texto).
+    crudo: bool = False
+    filtros: dict[str, Filtro] = field(default_factory=dict)
+
+    @property
+    def ocultos(self) -> list[Oculto]:
+        return [o for f in self.filtros.values() for o in f.ocultos.values()]
 
     def ruta_fotograma(self, referencia: str) -> str | None:
         """Ruta POSIX relativa al repo del fichero del fotograma, si esta en la maquina y dentro
@@ -171,22 +185,35 @@ def _documento_segmento(
     return Documento(f"{tid}/{s.n}", TIPO_SEGMENTO, video, s.t0_ms, s.t1_ms, campos, s.texto, extra)
 
 
-def _capas_de(carpeta_datos: Path, t: Transcripcion, avisos: list[str]) -> Capas | None:
-    """Cruda obligatoria; una corregida ilegible degrada a aviso (ADR-0007: es ayuda de lectura)."""
+def _capas_de(
+    carpeta_datos: Path, t: Transcripcion, avisos: list[str], filtro: Filtro, crudo: bool
+) -> Capas | None:
+    """Cruda obligatoria; una corregida ilegible degrada a aviso (ADR-0007: es ayuda de lectura).
+    Filtradas por `filtro` salvo con `crudo` (`botsito.corpus.cuarentena`)."""
     carpeta = carpeta_de(carpeta_datos, t)
     if not (carpeta / FICHERO_CRUDA).is_file():
         return None
     try:
-        return cargar_capas(carpeta)
+        return cargar_capas(carpeta, filtro, crudo=crudo)
     except TranscripcionError as exc:
-        cruda = cargar_cruda(carpeta)  # si la cruda es la rota, esto lanza y la CLI lo captura
+        # si la cruda es la rota, esto lanza y la CLI lo captura
+        cruda = cargar_cruda(carpeta, filtro, crudo=crudo)
         avisos.append(f"{t.id}: corregida ilegible ({exc}); se indexa solo la cruda")
         return Capas(cruda, None, frozenset())
 
 
-def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
+def construir_indice(repo: Path, carpeta_datos: Path, *, crudo: bool = False) -> Indice:
     """Indice completo desde el repo y la carpeta de datos. Crudas o fotogramas ausentes no son
-    error: quedan avisos y el indice sirve con lo que hay (solo evidencia, como minimo)."""
+    error: quedan avisos y el indice sirve con lo que hay (solo evidencia, como minimo).
+
+    Los segmentos entran FILTRADOS (`botsito.corpus.cuarentena`: sesiones en cuarentena, tramos
+    no citables y material reservado o sin sortear); enteros solo con `crudo=True`. La evidencia
+    entra entera: un item ya paso la guardia de los tramos y la revision del consultor."""
+    try:
+        tramos = cargar_tramos_no_citables(repo)
+    except TramosNoCitablesError as exc:
+        raise RetrievalError(str(exc)) from exc
+    filtros: dict[str, Filtro] = {}
     try:
         videos = tuple(
             v.video_id
@@ -202,7 +229,8 @@ def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
     transcripciones: dict[str, str] = {}
     for t in activos(cargar_todos(repo)):
         transcripciones[t.video_id] = t.id
-        capas = _capas_de(carpeta_datos, t, avisos)
+        filtro = filtros.setdefault(t.video_id, Filtro(t.video_id, tramos.get(t.video_id, ())))
+        capas = _capas_de(carpeta_datos, t, avisos, filtro, crudo)
         if capas is None:
             avisos.append(f"cruda de {t.id} ausente en data/: {t.video_id} solo por evidencia")
             continue
@@ -240,4 +268,6 @@ def construir_indice(repo: Path, carpeta_datos: Path) -> Indice:
         avisos,
         reemplazados,
         temas_raiz,
+        crudo,
+        filtros,
     )

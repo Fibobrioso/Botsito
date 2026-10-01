@@ -20,6 +20,7 @@ from typing import Any, Protocol
 
 from botsito.comun.documentos import sha256_hex
 from botsito.corpus.audio import Fragmento
+from botsito.corpus.cuarentena import SIN_FILTRO, CuarentenaError, Filtro
 
 HUECO_TRANSCRIPCION_S = 30.0  # tramos sin segmento >= esto se listan (silencio o alucinacion)
 # Umbrales de Whisper para marcar segmentos sospechosos (hechos tecnicos del motor).
@@ -121,7 +122,7 @@ class MotorFalso:
         while t < d:
             fin = min(t + 5.0, d)
             salida.append(
-                SegmentoRelativo(t, fin, f"texto falso {int(t)}-{int(fin)} de {wav.name}")
+                SegmentoRelativo(t, fin, f"texto falso {int(t)} a {int(fin)} de {wav.name}")
             )
             t = fin
         return salida
@@ -370,13 +371,26 @@ def parse_ms(texto: str) -> int:
 
 
 def texto_entre(
-    segmentos: list[Segmento], t0_ms: int, t1_ms: int, margen_ms: int = 0
+    segmentos: list[Segmento],
+    t0_ms: int,
+    t1_ms: int,
+    margen_ms: int = 0,
+    *,
+    filtro: Filtro | None = None,
+    crudo: bool = False,
 ) -> list[Segmento]:
-    """Segmentos que tocan [t0 - margen, t1 + margen]: lo que F07 cita literalmente."""
+    """Segmentos que tocan [t0 - margen, t1 + margen]: lo que F07 cita literalmente. FILTRADOS
+    por defecto (`botsito.corpus.cuarentena`); sin filtrar solo con `crudo=True`."""
     a, b = max(t0_ms - margen_ms, 0), t1_ms + margen_ms
     if a == b:  # cita de un instante: tambien el segmento que empieza o acaba justo ahi
-        return [s for s in segmentos if s.t0_ms <= a <= s.t1_ms]
-    return [s for s in segmentos if s.t1_ms > a and s.t0_ms < b]
+        seleccion = [s for s in segmentos if s.t0_ms <= a <= s.t1_ms]
+    else:
+        seleccion = [s for s in segmentos if s.t1_ms > a and s.t0_ms < b]
+    if crudo:
+        return seleccion
+    if filtro is None:
+        raise CuarentenaError(f"texto_entre {SIN_FILTRO}")
+    return filtro.aplicar(seleccion)
 
 
 def a_texto_legible(segmentos: list[Segmento]) -> str:

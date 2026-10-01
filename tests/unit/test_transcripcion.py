@@ -209,15 +209,15 @@ def test_transcribir_fragmentos_es_reanudable_y_sensible_a_parametros(tmp_path: 
     transcribir_fragmentos(fragmentos, motor, tmp_path / "parciales", "h2")
     assert llamadas[-1:] == ["f1.wav"]
     fusion = fusionar(r2, 10_000).segmentos
-    assert texto_entre(fusion, 4900, 5100) == fusion[1:]
-    assert texto_entre(fusion, 4900, 5100, margen_ms=5000) == fusion
-    assert texto_entre(fusion, 500, 800) == fusion[:1]
+    assert texto_entre(fusion, 4900, 5100, crudo=True) == fusion[1:]
+    assert texto_entre(fusion, 4900, 5100, margen_ms=5000, crudo=True) == fusion
+    assert texto_entre(fusion, 500, 800, crudo=True) == fusion[:1]
     # Cita de un instante en el borde exacto entre dos segmentos: toca a ambos; en 0, al primero.
     contiguos = [Segmento(0, 0, 2000, "a"), Segmento(1, 2000, 4000, "b")]
-    assert texto_entre(contiguos, 2000, 2000) == contiguos
-    assert texto_entre(contiguos, 0, 0) == contiguos[:1]
-    assert texto_entre(contiguos, 4000, 4000) == contiguos[1:]
-    assert texto_entre(contiguos, 2000, 2001) == contiguos[1:]
+    assert texto_entre(contiguos, 2000, 2000, crudo=True) == contiguos
+    assert texto_entre(contiguos, 0, 0, crudo=True) == contiguos[:1]
+    assert texto_entre(contiguos, 4000, 4000, crudo=True) == contiguos[1:]
+    assert texto_entre(contiguos, 2000, 2001, crudo=True) == contiguos[1:]
 
 
 GLOSARIO = r"""

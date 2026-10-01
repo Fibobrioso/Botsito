@@ -26,6 +26,11 @@ STATE_FILE = "PROJECT_STATE.md"
 # La historia de PROJECT_STATE (rama `trabajo/dieta-y-skills`, 2026-10-01): solo se amplia, y cada
 # archivo copia tal cual un PROJECT_STATE.md entero, con sus secciones `##` (docs/state/README.md).
 HISTORY_FILE = "docs/state/HISTORIA.md"
+# `--crudo` (`trabajo/cuarentena-por-defecto`): la CLI ensena el corpus FILTRADO por defecto.
+AYUDA_CRUDO = (
+    "sin filtrar la cuarentena: SOLO Aleks, en su propia terminal (la guardia de Claude Code "
+    "lo bloquea)"
+)
 
 
 def _read_section(text: str, title: str) -> str:
@@ -348,7 +353,7 @@ def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
         cargar_todos,
         carpeta_de,
     )
-    from botsito.corpus.pipeline_transcripcion import cargar_cruda, corregir
+    from botsito.corpus.pipeline_transcripcion import regenerar_corregida
     from botsito.corpus.transcripcion import TranscripcionError
 
     try:
@@ -370,7 +375,7 @@ def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
             print(f"AVISO: {t.id}: cruda no esta en esta maquina")
             continue
         try:
-            cambios = corregir(carpeta, cargar_cruda(carpeta), glosario, t.id)
+            cambios = regenerar_corregida(carpeta, glosario, t.id)
         except TranscripcionError as exc:
             print(f"ERROR: {t.id}: {exc}")
             return 1
@@ -405,7 +410,9 @@ def corpus_transcript_check(repo: Path) -> int:
 
 
 def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
-    """Cita literal con marcas: lo que F07 copia en `cita_literal`."""
+    """Cita literal con marcas: lo que F07 copia en `cita_literal`. FILTRADA por defecto
+    (`botsito.corpus.cuarentena`); al final dice cuantos segmentos oculto y por que."""
+    from botsito.corpus.cuarentena import TramosNoCitablesError, filtro_de, resumen
     from botsito.corpus.manifiestos_transcripcion import (
         ManifiestoTranscripcionError,
         activa_de,
@@ -423,18 +430,28 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
     try:
         t = activa_de(cargar_todos(repo), args.video, args.transcripcion)
         carpeta = carpeta_de(_carpeta_datos(repo), t)
-        segmentos = cargar_cruda(carpeta) if args.capa == "cruda" else cargar_corregida(carpeta)
+        filtro = filtro_de(repo, t.video_id)
+        cargar = cargar_cruda if args.capa == "cruda" else cargar_corregida
+        segmentos = cargar(carpeta, filtro, crudo=args.crudo)
         t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
         if t1 < t0:
             raise TranscripcionError("--t1 no puede ser anterior a --t0")
         if args.margen_s < 0:
             raise TranscripcionError("--margen-s no puede ser negativo")
-        trozo = texto_entre(segmentos, t0, t1, round(args.margen_s * 1000))
-    except (ManifiestoTranscripcionError, TranscripcionError, OSError) as exc:
+        margen = round(args.margen_s * 1000)
+        trozo = texto_entre(segmentos, t0, t1, margen, filtro=filtro, crudo=args.crudo)
+    except (
+        ManifiestoTranscripcionError,
+        TranscripcionError,
+        TramosNoCitablesError,
+        OSError,
+    ) as exc:
         print(f"ERROR: {exc}")
         return 1
     print(f"# {t.id} · capa {args.capa} · {args.t0}-{args.t1} (margen {args.margen_s:g} s)")
     sys.stdout.write(a_texto_legible(trozo))
+    if aviso := resumen(filtro.ocultos_entre(max(t0 - margen, 0), t1 + margen)):
+        print(aviso)
     return 0
 
 
@@ -544,11 +561,13 @@ def corpus_frames_show(repo: Path, args: argparse.Namespace) -> int:
             f"{referencia(fr.id, f.t_ms)}\t{formato_ms(f.pts_ms)}\t{f.origen}\t"
             f"{(carpeta / f.fichero).as_posix()}"
         )
-    print(_segmento_en(repo, args.video, t_ms))
+    print(_segmento_en(repo, args.video, t_ms, args.crudo))
     return 0
 
 
-def _segmento_en(repo: Path, video_id: str, t_ms: int) -> str:
+def _segmento_en(repo: Path, video_id: str, t_ms: int, crudo: bool = False) -> str:
+    """El segmento que cubre el instante, FILTRADO salvo con `crudo` (Aleks, en su terminal)."""
+    from botsito.corpus.cuarentena import TramosNoCitablesError, filtro_de, resumen
     from botsito.corpus.manifiestos_transcripcion import (
         ManifiestoTranscripcionError,
         activa_de,
@@ -563,10 +582,16 @@ def _segmento_en(repo: Path, video_id: str, t_ms: int) -> str:
         carpeta = carpeta_de(_carpeta_datos(repo), tr)
         if not (carpeta / "cruda.jsonl").is_file():
             return f"# transcripcion {tr.id}: cruda no esta en esta maquina"
-        trozo = texto_entre(cargar_cruda(carpeta), t_ms, t_ms, 0)
+        filtro = filtro_de(repo, video_id)
+        segmentos = cargar_cruda(carpeta, filtro, crudo=crudo)
+        trozo = texto_entre(segmentos, t_ms, t_ms, 0, filtro=filtro, crudo=crudo)
+    except TramosNoCitablesError as exc:
+        return f"# ERROR: {exc}"
     except (ManifiestoTranscripcionError, OSError, ValueError):
         return "# sin transcripcion activa para este video"
     if not trozo:
+        if aviso := resumen(filtro.ocultos_entre(t_ms, t_ms)):
+            return f"# transcripcion {tr.id}: {aviso}"
         return f"# transcripcion {tr.id}: ningun segmento cubre este instante"
     return f"# transcripcion {tr.id} (cruda):\n" + a_texto_legible(trozo).rstrip()
 
@@ -1090,7 +1115,16 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
     except TranscripcionError as exc:
         print(f"ERROR: {exc}")
         return 1
-    tramo = [s for s in segmentos if s.t1_ms > t0 and s.t0_ms < t1]
+    # La propuesta copia los segmentos del tramo en un fichero del repositorio: van SIEMPRE
+    # filtrados, sin opcion de crudo (`trabajo/cuarentena-por-defecto`).
+    from botsito.corpus.cuarentena import TramosNoCitablesError, filtro_de, resumen
+
+    try:
+        filtro = filtro_de(repo, args.video)
+    except TramosNoCitablesError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    tramo = filtro.aplicar([s for s in segmentos if s.t1_ms > t0 and s.t0_ms < t1])
     # Referencias del tramo, compactas: la cobertura es 1 fps (ADR-0008), asi que se anota el
     # manifiesto y el recuento por segundo, y solo los instantes con fraccion (obligatorios).
     en_tramo = [
@@ -1139,6 +1173,8 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
     escribir_propuesta(salida, doc)
     print(f"OK: {salida.relative_to(repo).as_posix() if salida.is_relative_to(repo) else salida}")
     print(f"  {len(tramo)} segmentos de {tid}, {len(referencias)} referencias de fotogramas")
+    if aviso := resumen(filtro.ocultos.values()):
+        print(aviso)
     return 0
 
 
@@ -1256,10 +1292,10 @@ def evidence_list(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
-def _kb_indice(repo: Path) -> Any:
+def _kb_indice(repo: Path, crudo: bool = False) -> Any:
     from botsito.retrieval.indice import construir_indice
 
-    return construir_indice(repo, _carpeta_datos(repo))
+    return construir_indice(repo, _carpeta_datos(repo), crudo=crudo)
 
 
 def _kb_errores() -> tuple[type[Exception], ...]:
@@ -1282,6 +1318,7 @@ def _kb_errores() -> tuple[type[Exception], ...]:
 
 
 def _kb_imprimir(respuesta: Any, como_json: bool, contexto: bool) -> int:
+    from botsito.corpus.cuarentena import resumen
     from botsito.retrieval.salida import json_, tabla
 
     for a in respuesta.avisos:
@@ -1289,6 +1326,9 @@ def _kb_imprimir(respuesta: Any, como_json: bool, contexto: bool) -> int:
     sys.stdout.write(
         json_(respuesta.resultados) if como_json else tabla(respuesta.resultados, contexto)
     )
+    # Lo oculto, al final; con --json va a stderr para no romper el JSON.
+    if aviso := resumen(respuesta.ocultos):
+        print(aviso, file=sys.stderr if como_json else sys.stdout)
     return 0
 
 
@@ -1308,7 +1348,7 @@ def kb_find(repo: Path, args: argparse.Namespace) -> int:
             prefijo=args.prefijo,
             top=args.top,
         )
-        respuesta = buscar(_kb_indice(repo), args.texto, opciones)
+        respuesta = buscar(_kb_indice(repo, args.crudo), args.texto, opciones, crudo=args.crudo)
     except _kb_errores() as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -1325,7 +1365,11 @@ def kb_at(repo: Path, args: argparse.Namespace) -> int:
         if not math.isfinite(args.margen_s):
             raise ValueError("el margen debe ser un numero finito")
         respuesta = en_instante(
-            _kb_indice(repo), args.video, parse_ms(args.t), round(args.margen_s * 1000)
+            _kb_indice(repo, args.crudo),
+            args.video,
+            parse_ms(args.t),
+            round(args.margen_s * 1000),
+            crudo=args.crudo,
         )
     except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -2846,6 +2890,11 @@ def build_parser() -> argparse.ArgumentParser:
     tss.add_argument("--margen-s", dest="margen_s", type=float, default=0.0)
     tss.add_argument("--capa", choices=["cruda", "corregida"], default="corregida")
     tss.add_argument("--transcripcion", help="transcripcion_id (por defecto, la activa)")
+    tss.add_argument(
+        "--crudo",
+        action="store_true",
+        help=AYUDA_CRUDO,
+    )
     fr = corpus_sub.add_parser("frames", help="fotogramas del corpus (F05)")
     fr_sub = fr.add_subparsers(dest="frames_cmd", required=True)
     fre = fr_sub.add_parser("extract", help="cobertura completa a 1 fps sin perdida + obligatorios")
@@ -2856,6 +2905,11 @@ def build_parser() -> argparse.ArgumentParser:
     frs.add_argument("--video", required=True)
     frs.add_argument("--t", required=True, help="h:mm:ss[.mmm]")
     frs.add_argument("--n", type=int, default=1, help="cuantos fotogramas (por cercania)")
+    frs.add_argument(
+        "--crudo",
+        action="store_true",
+        help=AYUDA_CRUDO,
+    )
     ev = sub.add_parser("evidence", help="evidencia del corpus")
     ev_sub = ev.add_subparsers(dest="evidence_cmd", required=True)
     nuevo = ev_sub.add_parser("new", help="crea un item de evidencia con id calculado")
@@ -3028,12 +3082,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--contexto", action="store_true", help="texto completo y afirmacion/corregida"
     )
     find.add_argument("--json", action="store_true")
+    find.add_argument(
+        "--crudo",
+        action="store_true",
+        help=AYUDA_CRUDO,
+    )
     at = kb_sub.add_parser("at", help="todo lo que ocurre en un instante de un video")
     at.add_argument("--video", required=True)
     at.add_argument("--t", required=True, help="h:mm:ss[.d]")
     at.add_argument("--margen-s", dest="margen_s", type=float, default=10.0, help="0-120")
     at.add_argument("--contexto", action="store_true")
     at.add_argument("--json", action="store_true")
+    at.add_argument(
+        "--crudo",
+        action="store_true",
+        help=AYUDA_CRUDO,
+    )
     prop = ev_sub.add_parser("propose", help="esqueleto de propuesta o --check de una rellena")
     prop.add_argument("--video")
     prop.add_argument("--t0")

@@ -41,6 +41,7 @@ from botsito.corpus.audio import (
     puntos_de_corte,
     version_ffmpeg,
 )
+from botsito.corpus.cuarentena import SIN_FILTRO, CuarentenaError, Filtro
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
 from botsito.corpus.inventario import sha256_fichero
 from botsito.corpus.trabajo import (
@@ -289,12 +290,54 @@ def corregir(carpeta: Path, cruda: list[Segmento], glosario: Glosario, tid: str)
     return len(registro)
 
 
-def cargar_cruda(carpeta: Path) -> list[Segmento]:
-    return desde_jsonl((carpeta / FICHERO_CRUDA).read_text(encoding="utf-8"))
+def _segmentos(carpeta: Path, fichero: str) -> list[Segmento]:
+    return desde_jsonl((carpeta / fichero).read_text(encoding="utf-8"))
 
 
-def cargar_corregida(carpeta: Path) -> list[Segmento]:
-    return desde_jsonl((carpeta / FICHERO_CORREGIDA).read_text(encoding="utf-8"))
+def regenerar_corregida(carpeta: Path, glosario: Glosario, tid: str) -> int:
+    """`corpus glossary apply`: la corregida se recalcula desde la cruda ENTERA (ADR-0007), asi
+    que la lee sin filtrar; no devuelve ningun segmento, solo cuantas sustituciones hizo."""
+    return corregir(carpeta, _segmentos(carpeta, FICHERO_CRUDA), glosario, tid)
+
+
+def _filtrados(
+    carpeta: Path, segmentos: list[Segmento], filtro: Filtro | None, quien: str
+) -> list[Segmento]:
+    """Quita lo que el filtro oculta. La regla mira la cruda y, si existe, la corregida: un
+    segmento se oculta en las dos capas si lo pide cualquiera de ellas
+    (`trabajo/cuarentena-por-defecto`)."""
+    if filtro is None:
+        raise CuarentenaError(f"{quien} {SIN_FILTRO}")
+    ocultos: set[int] = set()
+    for fichero in (FICHERO_CRUDA, FICHERO_CORREGIDA):
+        if not (carpeta / fichero).is_file():
+            continue
+        try:
+            capa = _segmentos(carpeta, fichero)
+        except TranscripcionError:
+            if fichero == FICHERO_CRUDA:
+                raise
+            continue  # una corregida ilegible es ayuda de lectura (ADR-0007): manda la cruda
+        visibles = {s.n for s in filtro.aplicar(capa)}
+        ocultos |= {s.n for s in capa} - visibles
+    return [s for s in segmentos if s.n not in ocultos]
+
+
+def cargar_cruda(
+    carpeta: Path, filtro: Filtro | None = None, *, crudo: bool = False
+) -> list[Segmento]:
+    """La cruda, FILTRADA por defecto (`botsito.corpus.cuarentena`); entera solo con `crudo=True`,
+    que usan la verificacion de citas, scripts/transcribir_sesion.py y los tests."""
+    segmentos = _segmentos(carpeta, FICHERO_CRUDA)
+    return segmentos if crudo else _filtrados(carpeta, segmentos, filtro, "cargar_cruda")
+
+
+def cargar_corregida(
+    carpeta: Path, filtro: Filtro | None = None, *, crudo: bool = False
+) -> list[Segmento]:
+    """La corregida, con la misma regla que `cargar_cruda`."""
+    segmentos = _segmentos(carpeta, FICHERO_CORREGIDA)
+    return segmentos if crudo else _filtrados(carpeta, segmentos, filtro, "cargar_corregida")
 
 
 def dudas_de(carpeta: Path) -> set[int]:
@@ -324,9 +367,13 @@ class Capas:
     dudas: frozenset[int]
 
 
-def cargar_capas(carpeta: Path) -> Capas:
+def cargar_capas(carpeta: Path, filtro: Filtro | None = None, *, crudo: bool = False) -> Capas:
     """Cruda (obligatoria), corregida (si existe) y dudas del glosario de una carpeta de
-    transcripcion. Lo usan `validation` (contexto de la evidencia) y `retrieval` (indice)."""
-    cruda = cargar_cruda(carpeta)
-    corregida = cargar_corregida(carpeta) if (carpeta / FICHERO_CORREGIDA).is_file() else None
+    transcripcion, FILTRADAS por defecto como `cargar_cruda`. Lo usa `retrieval` (indice)."""
+    cruda = cargar_cruda(carpeta, filtro, crudo=crudo)
+    corregida = (
+        cargar_corregida(carpeta, filtro, crudo=crudo)
+        if (carpeta / FICHERO_CORREGIDA).is_file()
+        else None
+    )
     return Capas(cruda, corregida, frozenset(dudas_de(carpeta)))

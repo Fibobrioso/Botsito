@@ -550,6 +550,66 @@ def test_las_operaciones_prohibidas(g: ModuleType, repo: Path, comando: str) -> 
     assert motivo is not None and "Regla:" in motivo, comando
 
 
+# ------------------------------------ el corpus sin filtrar (`trabajo/cuarentena-por-defecto`)
+OPCION = "--" + "crudo"
+LLAMADA = "cru" + "do=True"
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        f"uv run botsito {OPCION} kb find hola",  # al principio
+        f"uv run botsito kb find hola {OPCION}",  # al final
+        f"uv run botsito kb at --video v1 --t 0:00:01 {OPCION}=1",  # con =
+        f"uv run botsito corpus transcript show --video v1 --t0 0:00:01 --t1 0:00:02 {OPCION} si",
+        "uv run botsito corpus frames show --video v1 --t 0:00:01 --cru",  # abreviada
+        f"uv run python -c 'from botsito.corpus import x; x.f({LLAMADA})'",  # python -c
+        "uv run python - <<'EOF'\nfrom botsito import x\nx.f(" + LLAMADA + ")\nEOF\n",  # heredoc
+        "uv run python -c 'f(**{\"cru" + "do\": True})'",  # por diccionario
+    ],
+)
+def test_la_guardia_bloquea_el_corpus_sin_filtrar(g: ModuleType, repo: Path, comando: str) -> None:
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and g.R_CRUDO in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "uv run botsito kb find hola --video v1",
+        "uv run botsito kb find hola --video v1 --contexto",
+        "uv run botsito kb at --video v1 --t 0:00:01",
+        "uv run botsito corpus transcript show --video v1 --t0 0:00:01 --t1 0:00:02",
+        "uv run botsito corpus frames show --video v1 --t 0:00:01",
+        "uv run python -c 'from botsito.corpus import x; x.f(cru" + "do=False)'",
+        "make check > make-check.log 2>&1",
+        "uv run pytest",
+    ],
+)
+def test_sin_la_opcion_los_mismos_comandos_pasan(g: ModuleType, repo: Path, comando: str) -> None:
+    assert _bash(g, repo, comando) is None, comando
+
+
+def test_un_guion_nuevo_con_el_corpus_sin_filtrar_se_bloquea(
+    g: ModuleType, repo: Path, tmp_path: Path
+) -> None:
+    guion = tmp_path / "nuevo.py"
+    guion.write_text(f"from botsito import x\nx.f({LLAMADA})\n", encoding="utf-8")
+    motivo = _bash(g, repo, f'uv run python "{guion}"')
+    assert motivo is not None and g.R_CRUDO in motivo
+    motivo = _decide(g, repo, "PowerShell", command=f"uv run botsito kb find hola {OPCION}")
+    assert motivo is not None and g.R_CRUDO in motivo
+
+
+def test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena(g: ModuleType) -> None:
+    """La guardia guarda su copia (la deduce de `fuentes.yaml`: `drive_id: null` menos v6) y el
+    modulo tiene la LISTA: tienen que decir lo mismo sobre el repositorio real."""
+    from botsito.corpus import cuarentena
+
+    assert g.Politica(RAIZ).sesiones_en_cuarentena == cuarentena.SESIONES_EN_CUARENTENA
+    assert frozenset(cuarentena.EXCEPCIONES) == g.SESIONES_SIN_CUARENTENA
+
+
 # ------------------------------------------------------------- el borrado de ramas remotas
 @pytest.mark.parametrize(
     "comando",

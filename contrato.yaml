@@ -3,6 +3,7 @@ riesgo: medio  # cambia la CLI que imprime el corpus, un hook y tests; no toca s
 artefacto: docs/validation/CUARENTENA-POR-DEFECTO.md
 rutas_permitidas:
   - docs/validation/CUARENTENA-POR-DEFECTO.md
+  - docs/validation/anexos/CUARENTENA-POR-DEFECTO/
   - docs/encargos/
   - docs/state/HISTORIA.md
   - docs/runbooks/
@@ -14,6 +15,7 @@ rutas_permitidas:
   - src/botsito/retrieval/
   - src/botsito/corpus/
   - src/botsito/comun/
+  - src/botsito/validation/contexto_evidencia.py
   - tests/unit/
   - tests/contract/
   - tests/golden/

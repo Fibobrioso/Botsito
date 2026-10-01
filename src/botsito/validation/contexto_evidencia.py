@@ -13,7 +13,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from botsito.comun.yaml_estricto import YamlError, leer_yaml
+from botsito.corpus.cuarentena import (
+    FICHERO_TRAMOS_NO_CITABLES as FICHERO_TRAMOS_NO_CITABLES,
+)
+from botsito.corpus.cuarentena import (
+    TramosNoCitablesError as TramosNoCitablesError,
+)
+from botsito.corpus.cuarentena import (
+    cargar_tramos_no_citables as cargar_tramos_no_citables,
+)
 from botsito.corpus.manifiestos_fotogramas import Fotogramas, referencias_conocidas
 from botsito.corpus.manifiestos_fotogramas import cargar_todos as cargar_fotogramas
 from botsito.corpus.manifiestos_transcripcion import (
@@ -24,53 +32,11 @@ from botsito.corpus.manifiestos_transcripcion import (
 )
 from botsito.corpus.pipeline_transcripcion import cargar_cruda, dudas_de
 from botsito.corpus.transcripcion import Segmento
-from botsito.evidence.modelo import EvidenciaError, parse_tiempo
 from botsito.evidence.propuestas import FICHERO_TEMAS, Temas, cargar_temas
 from botsito.evidence.verificacion import ContextoEvidencia, SegmentoCitable
 
-FICHERO_TRAMOS_NO_CITABLES = "knowledge/corpus/tramos_no_citables.yaml"
-
-
-class TramosNoCitablesError(ValueError):
-    """El fichero de tramos no citables existe pero no se puede leer."""
-
-
-def cargar_tramos_no_citables(repo: Path) -> dict[str, tuple[tuple[int, int, str], ...]]:
-    """Tramos de video que no son especificacion, por video_id (F07).
-
-    Sin fichero no hay tramos: un repo anterior a esto sigue funcionando igual.
-    """
-    ruta = repo / FICHERO_TRAMOS_NO_CITABLES
-    if not ruta.is_file():
-        return {}
-    try:
-        doc = leer_yaml(ruta)
-    except (OSError, YamlError) as exc:
-        raise TramosNoCitablesError(f"{ruta.name}: {exc}") from exc
-    if not isinstance(doc, dict) or set(doc) != {"tramos"}:
-        raise TramosNoCitablesError(f"{ruta.name}: se espera una unica clave 'tramos'")
-    bruto = doc["tramos"]
-    if not isinstance(bruto, list):
-        raise TramosNoCitablesError(f"{ruta.name}: 'tramos' debe ser una lista")
-    por_video: dict[str, list[tuple[int, int, str]]] = {}
-    for i, tramo in enumerate(bruto, start=1):
-        campos = {"video_id", "t0", "t1", "motivo", "acordado"}
-        if not isinstance(tramo, dict) or set(tramo) != campos:
-            raise TramosNoCitablesError(
-                f"{ruta.name}: tramo {i} necesita video_id, t0, t1, motivo y acordado"
-            )
-        try:
-            t0_ms = round(parse_tiempo(str(tramo["t0"])) * 1000)
-            t1_ms = round(parse_tiempo(str(tramo["t1"])) * 1000)
-        except EvidenciaError as exc:
-            raise TramosNoCitablesError(f"{ruta.name}: tramo {i}: {exc}") from exc
-        if t1_ms <= t0_ms:
-            raise TramosNoCitablesError(f"{ruta.name}: tramo {i}: t1 debe ser posterior a t0")
-        motivo = " ".join(str(tramo["motivo"]).split())
-        if not motivo:
-            raise TramosNoCitablesError(f"{ruta.name}: tramo {i}: motivo vacio")
-        por_video.setdefault(str(tramo["video_id"]), []).append((t0_ms, t1_ms, motivo))
-    return {v: tuple(sorted(ts)) for v, ts in por_video.items()}
+# Los tramos no citables tienen su fuente en `botsito.corpus.cuarentena` desde el 2026-10-01
+# (`trabajo/cuarentena-por-defecto`); aqui se siguen exportando con los mismos nombres.
 
 
 @dataclass
@@ -100,7 +66,9 @@ def construir_contexto(
             t = por_id.get(tid)
             carpeta = carpeta_de(carpeta_datos, t) if t else None
             if carpeta is not None and (carpeta / "cruda.jsonl").is_file():
-                segmentos: list[Segmento] = cargar_cruda(carpeta)
+                # La verificacion de citas es un llamador AUTORIZADO de `crudo=True`: compara
+                # la cita con la cruda entera, y no devuelve su texto a nadie.
+                segmentos: list[Segmento] = cargar_cruda(carpeta, crudo=True)
                 cache.crudas[tid] = segmentos
             else:
                 cache.crudas[tid] = None

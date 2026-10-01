@@ -222,6 +222,13 @@ de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso reservado
 medirlo y hashearlo; y bloquea las operaciones prohibidas que su cabecera enumera (`--no-verify`,
 `push --force`, borrar tags o una rama remota que no sea `trabajo/`, `feature/` o `fix/`, ...). Lo
 que cuenta para la sesion:
+- **La CLI ensena el corpus filtrado.** `kb find`, `kb at`, `corpus transcript show`,
+  `corpus frames show` y `evidence propose` ocultan por defecto las sesiones en cuarentena, los
+  tramos no citables y el material reservado o sin sortear, y dicen cuantos segmentos ocultaron
+  (`src/botsito/corpus/cuarentena.py`, la UNICA fuente). La opcion que lo ensena todo es solo de
+  Aleks, en su terminal, y su equivalente en Python solo lo usan la verificacion de citas,
+  `scripts/transcribir_sesion.py` y los tests. Guardias: la de Claude Code bloquea los dos, y
+  `tests/unit/test_cuarentena.py` falla si aparece otro llamador.
 - **Una guardia no se rodea.** Si bloquea algo legitimo, se dice en el informe y se corrige la
   guardia en su rama; no se reescribe el comando para que no la vea.
 - **Solo un guion identico al de `main` es codigo revisado.** Uno nuevo o cambiado en la rama en

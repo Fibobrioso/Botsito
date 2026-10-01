@@ -1,4 +1,5 @@
-"""La cuarentena mecanica y la segmentacion por pregunta de `scripts/transcribir_sesion.py`, sobre
+"""La cuarentena mecanica (desde el 2026-10-01 en `botsito.corpus.cuarentena`) y la segmentacion
+por pregunta de `scripts/transcribir_sesion.py`, sobre
 texto SINTETICO y sin audio.
 
 Ningun dato de prueba lleva una fecha real de un dia reservado: los meses filtrados van sin dia;
@@ -13,6 +14,8 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
+
+from botsito.corpus import cuarentena as cu
 
 RAIZ = Path(__file__).resolve().parents[2]
 VALIDOS = ("A-21", "A-24", "A-25", "A-30", "A-35", "A-44", "A-45", "A-46")
@@ -57,7 +60,7 @@ def m() -> ModuleType:
     ],
 )
 def test_cada_mes_filtrado_y_sus_grafias_van_a_cuarentena(m: ModuleType, texto: str) -> None:
-    assert m.MOTIVO_MES in m.motivos_cuarentena(texto), texto
+    assert cu.MOTIVO_MES in cu.motivos_cuarentena(texto), texto
 
 
 @pytest.mark.parametrize(
@@ -81,7 +84,7 @@ def test_cada_mes_filtrado_y_sus_grafias_van_a_cuarentena(m: ModuleType, texto: 
     ],
 )
 def test_abril_agosto_enero_y_el_lenguaje_normal_no_se_filtran(m: ModuleType, texto: str) -> None:
-    assert m.motivos_cuarentena(texto) == [], texto
+    assert cu.motivos_cuarentena(texto) == [], texto
 
 
 # -------------------------------------------------------------------- fechas y dias de la semana
@@ -99,29 +102,29 @@ def test_abril_agosto_enero_y_el_lenguaje_normal_no_se_filtran(m: ModuleType, te
     ],
 )
 def test_una_fecha_numerica_va_a_cuarentena(m: ModuleType, texto: str) -> None:
-    assert m.MOTIVO_FECHA in m.motivos_cuarentena(texto), texto
+    assert cu.MOTIVO_FECHA in cu.motivos_cuarentena(texto), texto
 
 
 @pytest.mark.parametrize("texto", ["el jueves 40 entré", "el lunes, 40", "el 40, domingo"])
 def test_un_dia_de_la_semana_con_un_numero_va_a_cuarentena(m: ModuleType, texto: str) -> None:
-    assert m.MOTIVO_DIA in m.motivos_cuarentena(texto), texto
-    assert m.motivos_cuarentena("el lunes entro poco") == []
+    assert cu.MOTIVO_DIA in cu.motivos_cuarentena(texto), texto
+    assert cu.motivos_cuarentena("el lunes entro poco") == []
 
 
 def test_backtest_con_una_abreviatura_de_mes(m: ModuleType) -> None:
-    assert m.MOTIVO_BACKTEST in m.motivos_cuarentena("el backtest de set")
-    assert m.MOTIVO_BACKTEST in m.motivos_cuarentena("el back test de sep")
-    assert m.motivos_cuarentena("el backtest que hiciste") == []
+    assert cu.MOTIVO_BACKTEST in cu.motivos_cuarentena("el backtest de set")
+    assert cu.MOTIVO_BACKTEST in cu.motivos_cuarentena("el back test de sep")
+    assert cu.motivos_cuarentena("el backtest que hiciste") == []
 
 
 def test_los_vecinos_van_tambien_a_cuarentena(m: ModuleType) -> None:
     textos = ["uno", "dos", "eso fue en mayo", "tres", "cuatro", "cinco"]
-    c = m.en_cuarentena(textos)
+    c = cu.en_cuarentena(textos)
     assert set(c) == {1, 2, 3}
-    assert c[2] == [m.MOTIVO_MES] and c[1] == c[3] == [m.MOTIVO_VECINO]
+    assert c[2] == [cu.MOTIVO_MES] and c[1] == c[3] == [cu.MOTIVO_VECINO]
     # en los bordes no se sale del rango, y dos seguidos no se pisan los motivos
-    assert set(m.en_cuarentena(["en marzo", "hola"])) == {0, 1}
-    assert m.en_cuarentena(["en marzo", "el 31/02"]) == {0: [m.MOTIVO_MES], 1: [m.MOTIVO_FECHA]}
+    assert set(cu.en_cuarentena(["en marzo", "hola"])) == {0, 1}
+    assert cu.en_cuarentena(["en marzo", "el 31/02"]) == {0: [cu.MOTIVO_MES], 1: [cu.MOTIVO_FECHA]}
 
 
 # ----------------------------------------------------------------------------- los codigos
@@ -191,14 +194,14 @@ def test_la_trampa_llega_a_30_no_abre_a30_y_fin_de_pregunta_cierra(m: ModuleType
 
 
 def test_la_marco_no_va_a_cuarentena(m: ModuleType) -> None:
-    assert m.motivos_cuarentena("la marco en el alto") == []
-    assert m.en_cuarentena(["pregunta A-35", "la marco en el alto", "y sigo"]) == {}
+    assert cu.motivos_cuarentena("la marco en el alto") == []
+    assert cu.en_cuarentena(["pregunta A-35", "la marco en el alto", "y sigo"]) == {}
 
 
 def test_numeros_a_cifras(m: ModuleType) -> None:
-    assert m.numeros_a_cifras("treinta y cinco") == "35"
-    assert m.numeros_a_cifras("veinticinco y trece") == "25 y 13"
-    assert m.numeros_a_cifras("una zona y un stop") == "una zona y un stop"
+    assert cu.numeros_a_cifras("treinta y cinco") == "35"
+    assert cu.numeros_a_cifras("veinticinco y trece") == "25 y 13"
+    assert cu.numeros_a_cifras("una zona y un stop") == "una zona y un stop"
 
 
 # ------------------------------------------------------------------ la version filtrada

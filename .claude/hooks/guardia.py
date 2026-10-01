@@ -134,6 +134,30 @@ R_BRANCH_D = (
     "docs/runbooks/RITUAL.md: «`-d` y no `-D`: si git se niega, es que algo no esta fusionado»"
 )
 R_REVERT = "docs/runbooks/RITUAL.md, «Si la CI sale roja»: «No se revierte `main`»"
+R_CRUDO = (
+    "encargo de `trabajo/cuarentena-por-defecto`: los comandos que ensenan el corpus lo filtran "
+    "por defecto (cuarentena de sesiones, tramos no citables y material reservado o sin sortear), "
+    "y `--crudo` -o `crudo=True` en Python- es SOLO para Aleks, en su propia terminal, nunca para "
+    "Claude. Los unicos llamadores de `crudo=True` son la verificacion de citas, "
+    "scripts/transcribir_sesion.py y los tests (`tests/unit/test_cuarentena.py`)"
+)
+# `--cr` es el prefijo mas corto que argparse aceptaria por `--crudo` (abrevia las opciones
+# largas); `crudo=` con cualquier valor que no sea False, y la clave "crudo" de un dict.
+CRUDO_OPCION = re.compile(r"(?<![\w-])--cr(?:u(?:d(?:o)?)?)?(?![\w-])")
+CRUDO_PYTHON = re.compile(r"\bcrudo\s*=\s*(?!False\b)\S|[\"']crudo[\"']\s*:")
+# Lo que la regla deja pasar sin mirar: `make check` y `pytest` sin argumentos (orden del
+# consultor).
+SIN_MIRAR_CRUDO = re.compile(r"\s*(?:uv\s+run\s+)?(?:make\s+check\b[^;&|]*|pytest)\s*")
+
+
+def exigir_sin_crudo(texto: str, donde: str) -> None:
+    """Bloquea `--crudo` y `crudo=True` en un comando, en su codigo en linea o en un guion."""
+    if SIN_MIRAR_CRUDO.fullmatch(texto):
+        return
+    if CRUDO_OPCION.search(texto) or CRUDO_PYTHON.search(texto):
+        raise BloqueoError(f"{donde} pide el corpus SIN FILTRAR.\nRegla: {R_CRUDO}.")
+
+
 R_BORRAR_REMOTO = (
     "docs/runbooks/RITUAL.md: la rama remota `fix/<rama>` de la CI de Linux se borra al final del "
     "ritual; un `git push` solo borra ramas `trabajo/`, `feature/` o `fix/` nombradas una a una, "
@@ -956,6 +980,7 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
     decidir y podria leer algo protegido."""
     if ctx.profundidad > 4:
         raise BloqueoError("demasiados niveles de `bash -c` o `$(...)` anidados para decidir")
+    exigir_sin_crudo(texto, "el comando")
     lex = tokenizar(texto)
     for h in lex.heredocs:
         if not h.con_comillas and "\\" in h.cuerpo:
@@ -1649,6 +1674,7 @@ SENSIBLES = (
 def analizar_codigo(codigo: str, ctx: Contexto, es_python: bool) -> None:
     """Codigo en linea (o un guion sin seguir). Cada literal de texto que sea una ruta se mira; y
     si el codigo recorre directorios o construye rutas con literales sensibles, no se decide."""
+    exigir_sin_crudo(codigo, "el codigo que se ejecuta")
     literales = _literales(codigo, es_python)
     recorre = CODIGO_QUE_RECORRE.search(codigo) is not None
     directorios = 0
@@ -1712,6 +1738,7 @@ PS_METADATOS = re.compile(
 def analizar_powershell(texto: str, ctx: Contexto) -> None:
     """Mas tosco que bash: rutas por las comillas y las palabras; si una es protegida, solo se
     deja pasar si TODOS los comandos del texto son de metadatos."""
+    exigir_sin_crudo(texto, "PowerShell")
     bajo = texto.lower()
     if re.search(r"(?i)\b(invoke-expression|iex|-encodedcommand|-enc)\b", texto):
         raise BloqueoError(

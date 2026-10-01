@@ -10,6 +10,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+from botsito.corpus.cuarentena import Filtro, Oculto
 from botsito.corpus.transcripcion import Segmento, texto_entre
 from botsito.evidence.verificacion import COMODIN, CitaError, buscar_secuencia
 from botsito.retrieval.indice import (
@@ -70,6 +71,31 @@ class Opciones:
 class Respuesta:
     resultados: list[Resultado]
     avisos: list[str] = field(default_factory=list)
+    # Los segmentos del ALCANCE de la consulta que la cuarentena oculto: no se busco en ellos y
+    # no se sabe si habrian casado. Sin texto (`botsito.corpus.cuarentena.Oculto`).
+    ocultos: list[Oculto] = field(default_factory=list)
+
+
+def _exigir_modo(indice: Indice, crudo: bool) -> None:
+    """Una consulta pide el mismo modo con que se construyo el indice: un indice filtrado no
+    tiene lo oculto, y uno crudo no se consulta como si estuviera filtrado."""
+    if crudo != indice.crudo:
+        modo = "crudo" if indice.crudo else "filtrado"
+        raise RetrievalError(
+            f"el indice se construyo {modo}: pide crudo={indice.crudo} tambien en la consulta"
+        )
+
+
+def _ocultos_del_alcance(indice: Indice, opciones: Opciones) -> list[Oculto]:
+    if opciones.solo == "evidencia" or opciones.tema:
+        return []
+    return [
+        o
+        for o in indice.ocultos
+        if (opciones.video is None or o.video_id == opciones.video)
+        and (opciones.desde_ms is None or o.t1_ms >= opciones.desde_ms)
+        and (opciones.hasta_ms is None or o.t0_ms <= opciones.hasta_ms)
+    ]
 
 
 def _orden(r: Resultado) -> tuple[str, int, int, str]:
@@ -222,9 +248,13 @@ def _frase_en_cruda(
 OPCIONES_POR_DEFECTO = Opciones()
 
 
-def buscar(indice: Indice, texto: str, opciones: Opciones = OPCIONES_POR_DEFECTO) -> Respuesta:
+def buscar(
+    indice: Indice, texto: str, opciones: Opciones = OPCIONES_POR_DEFECTO, *, crudo: bool = False
+) -> Respuesta:
     """AND de tokens de busqueda por documento; `frase` exige la secuencia (con `[...]`) por
-    campo en los items y sobre toda la cruda en los segmentos; `prefijo` casa por inicio."""
+    campo en los items y sobre toda la cruda en los segmentos; `prefijo` casa por inicio.
+    FILTRADA por defecto: con un indice construido filtrado; `crudo=True` exige uno crudo."""
+    _exigir_modo(indice, crudo)
     _comprobar_opciones(indice, opciones)
     if opciones.frase:
         try:
@@ -255,7 +285,7 @@ def buscar(indice: Indice, texto: str, opciones: Opciones = OPCIONES_POR_DEFECTO
     salida.sort(key=_orden)
     if opciones.top is not None:
         salida = salida[: opciones.top]
-    return Respuesta(salida, list(indice.avisos))
+    return Respuesta(salida, list(indice.avisos), _ocultos_del_alcance(indice, opciones))
 
 
 def _contradicciones_de(indice: Indice, ids: set[str], video: str, t_ms: int) -> list[Resultado]:
@@ -282,9 +312,13 @@ def _contradicciones_de(indice: Indice, ids: set[str], video: str, t_ms: int) ->
     return salida
 
 
-def en_instante(indice: Indice, video: str, t_ms: int, margen_ms: int = 10_000) -> Respuesta:
+def en_instante(
+    indice: Indice, video: str, t_ms: int, margen_ms: int = 10_000, *, crudo: bool = False
+) -> Respuesta:
     """Todo lo que ocurre en `t_ms` de `video` con margen: items (por t0), segmentos de la cruda
-    activa (por n), el fotograma de referencia y las contradicciones de esos items."""
+    activa (por n), el fotograma de referencia y las contradicciones de esos items. FILTRADO
+    por defecto, como `buscar`."""
+    _exigir_modo(indice, crudo)
     if video not in indice.videos:
         raise RetrievalError(f"video desconocido {video!r} (fuentes.yaml: {list(indice.videos)})")
     if t_ms < 0:
@@ -305,7 +339,8 @@ def en_instante(indice: Indice, video: str, t_ms: int, margen_ms: int = 10_000) 
     docs = {
         d.extra["n"]: d for d in indice.documentos if d.tipo == TIPO_SEGMENTO and d.video == video
     }
-    for s in texto_entre(list(segmentos), t_ms, t_ms, margen_ms):
+    filtro = indice.filtros.get(video) or Filtro(video)
+    for s in texto_entre(list(segmentos), t_ms, t_ms, margen_ms, filtro=filtro, crudo=indice.crudo):
         salida.append(_resultado(indice, docs[s.n]))
     foto = indice.fotograma_en(video, t_ms)
     if foto is not None:
@@ -325,4 +360,5 @@ def en_instante(indice: Indice, video: str, t_ms: int, margen_ms: int = 10_000) 
     # tiempo; las contradicciones cierran la lista (no tienen instante propio), por tema.
     salida.sort(key=lambda r: (_ORDEN_TIPO.get(r.tipo, 9), r.t0_ms, r.fuente))
     salida += sorted(_contradicciones_de(indice, ids, video, t_ms), key=lambda r: r.fuente)
-    return Respuesta(salida, list(indice.avisos))
+    ocultos = filtro.ocultos_entre(max(t_ms - margen_ms, 0), t_ms + margen_ms)
+    return Respuesta(salida, list(indice.avisos), ocultos)

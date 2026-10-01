@@ -31,3 +31,25 @@ Prompt de Aleks del 2026-10-01 que origina la rama, copiado tal cual:
 > Informe en docs/validation/CUARENTENA-POR-DEFECTO.md, con la tabla de la fase 0 antes y después, y los runs de la CI de Linux.
 > Ritual normal con make check sellado, sin --no-verify. Pasa el revisor y pega su informe al final.
 > «Rama lista para revisión, NO cerrada.»
+
+## Segunda orden: decisiones del consultor sobre §0.3 (2026-10-01)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisiones del consultor sobre §0.3:
+>
+> 1. Fuente de (a): sí a src/botsito/corpus/cuarentena.py, pero con una LISTA EXPLÍCITA de vídeos en cuarentena (v7 en adelante, y la excepción de v6 declarada ahí con su motivo), no con la deducción por drive_id: null. La deducción pasa a ser un test cruzado: falla si un vídeo con drive_id null no está en la lista, o si uno de la lista tiene drive_id, salvo las excepciones declaradas. Así un vídeo nuevo sin listar rompe make check en vez de quedar visible. El hook guarda su copia y un test comprueba que dice lo mismo que el módulo, como ya se hace con casos_reservados. La skill ingerir-sesion añade el paso «añadir el vídeo a la lista de cuarentena».
+>
+> 2. (c) dentro del texto: aprobado. Mueve en_cuarentena a src/ como única fuente para el script y la CLI, y aplícala a todos los vídeos. En el informe, por cada vídeo: total de segmentos, cuántos oculta (a), (b) y (c), y el porcentaje. Solo números, nunca contenido ni qué mes o día disparó la regla.
+>
+> 3. evidence propose: aprobado. Además, audita lo que ya existe en knowledge/_proposals/: cuántos ficheros y segmentos caen en (a), (b) o (c). Solo cuentas y nombres de fichero, sin imprimir contenido. No los borres ni los edites; si hay alguno, para y avísame.
+>
+> 4. Funciones de Python: el filtro va en las funciones, no solo en la CLI. buscar, en_instante, texto_entre y cargar_cruda filtran por defecto. El contenido sin filtrar se pide con un parámetro explícito crudo=True.
+>    - Llamadores autorizados: la verificación de citas, transcribir_sesion.py y los tests.
+>    - Un test recorre el código y falla si aparece un crudo=True fuera de esa lista.
+>    - El hook bloquea los comandos Bash que contengan crudo=True o --crudo (python -c, heredocs, scripts nuevos), salvo make check y pytest sin argumentos extra.
+>    - El resto del encargo sigue igual: fase 1, fase 2 y fase 3, CI de Linux como fix/cuarentena-por-defecto, revisor e informe.
+>
+> Sigue.
