@@ -25,10 +25,12 @@ Dos familias de reglas:
    Los casos reservados se leen de los `particiones.yaml` commiteados con la misma regla que
    `casos_reservados` (`tests/unit/test_guardia_claude.py` compara las dos).
 
-2. LAS OPERACIONES PROHIBIDAS: `--no-verify`, `push --force`, borrar o mover tags, `cherry-pick` y
-   `rebase`, `rm -rf` sobre `data/`, `corpus/` o `knowledge/`, `make check` sin la salida a un
-   fichero, un heredoc sin comillas con `\\` dentro y, en `main`, `git add -A`, `commit -a`,
-   `revert` y `reset --hard`, y `branch -D` en cualquier rama.
+2. LAS OPERACIONES PROHIBIDAS: `--no-verify`, `push --force`, borrar o mover tags, borrar una
+   referencia remota que no sea una rama `trabajo/`, `feature/` o `fix/` (`trabajo/dieta-y-skills`:
+   la `fix/<rama>` de la CI de Linux se borra al cerrar), `cherry-pick` y `rebase`, `rm -rf`
+   sobre `data/`, `corpus/` o `knowledge/`, `make check` sin la salida a un fichero, un heredoc
+   sin comillas con `\\` dentro y, en `main`, `git add -A`, `commit -a`, `revert` y
+   `reset --hard`, y `branch -D` en cualquier rama.
 
 Un comando que no se puede decidir con seguridad -una ruta construida al ejecutarse, `eval`, un
 `xargs` que lee contenido- SE BLOQUEA si podria llegar a material protegido, y el mensaje dice como
@@ -132,6 +134,11 @@ R_BRANCH_D = (
     "docs/runbooks/RITUAL.md: «`-d` y no `-D`: si git se niega, es que algo no esta fusionado»"
 )
 R_REVERT = "docs/runbooks/RITUAL.md, «Si la CI sale roja»: «No se revierte `main`»"
+R_BORRAR_REMOTO = (
+    "docs/runbooks/RITUAL.md: la rama remota `fix/<rama>` de la CI de Linux se borra al final del "
+    "ritual; un `git push` solo borra ramas `trabajo/`, `feature/` o `fix/` nombradas una a una, "
+    "nunca `main` ni un tag (encargo de `trabajo/dieta-y-skills`)"
+)
 
 COMO_REESCRIBIR = (
     "Como reescribirlo: rutas LITERALES, sin `$VAR`, `$(...)`, `eval` ni `xargs` delante de un "
@@ -1228,12 +1235,7 @@ def _analizar_git(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
             for t in textos
         ):
             raise BloqueoError(f"`git push` forzado.\nRegla: {R_FORCE}.")
-        if (
-            "--delete" in textos
-            or _flag_corta(textos, "d", "")
-            or any(not t.startswith("-") and t.startswith(":") for t in textos)
-        ):
-            raise BloqueoError(f"`git push` que borra una referencia remota.\nRegla: {R_TAG}.")
+        decidir_borrado_remoto([_valor_unico(a, ctx, lex) for a in resto])
     if sub == "tag" and (
         {"-d", "--delete", "-f", "--force"} & set(textos) or _flag_corta(textos, "df", "mFu")
     ):
@@ -1261,6 +1263,66 @@ def _analizar_git(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
     # `git push origin main` sin BOTSITO_ALLOW_MAIN NO se vigila: el ritual empuja `main` sin esa
     # variable (RITUAL.md, `git push --atomic origin main stable/<tag>` y el arreglo de una CI
     # roja), asi que la regla lo bloquearia (docs/validation/GUARDIAS-CLAUDE.md §1.4).
+
+
+# El borrado remoto (encargo de `trabajo/dieta-y-skills`): RITUAL.md manda borrar la `fix/<rama>`
+# que se empuja para la CI de Linux, asi que un `git push` puede borrar una rama de trabajo, y nada
+# mas. Se NIEGA POR DEFECTO: lo que no casa con RAMA_BORRABLE -`main`, un tag, `refs/tags/`, un
+# comodin, una referencia construida al ejecutarse- se bloquea, y un borrado de varias referencias
+# se bloquea entero si una sola no casa.
+_TRAMO_DE_RAMA = r"[A-Za-z0-9_-][A-Za-z0-9._-]*"
+RAMA_BORRABLE = re.compile(
+    rf"(?:refs/heads/)?(?:trabajo|feature|fix)/{_TRAMO_DE_RAMA}(?:/{_TRAMO_DE_RAMA})*"
+)
+PUSH_CON_VALOR = {"-o", "--push-option", "--receive-pack", "--exec", "--repo"}
+
+
+def _valor_unico(p: Palabra, ctx: Contexto, lex: Lexico) -> str | None:
+    """El valor de una palabra si se sabe ANTES de ejecutar y es uno solo; si no, None."""
+    valores = _valores(p, ctx, lex)
+    return valores[0] if valores is not None and len(valores) == 1 else None
+
+
+def decidir_borrado_remoto(argumentos: list[str | None]) -> None:
+    """Los argumentos de `git push` (None = se construye al ejecutarse): bloquea si borra algo que
+    no sea una rama `trabajo/`, `feature/` o `fix/`, o si no se puede saber que borra."""
+    flags = [a for a in argumentos if a is not None and a.startswith("-")]
+    for flag in ("--prune", "--mirror"):
+        if flag in flags:
+            raise BloqueoError(
+                f"`git push {flag}` borra ramas remotas sin nombrarlas.\nRegla: {R_BORRAR_REMOTO}."
+            )
+    borra = "--delete" in flags or _flag_corta(flags, "d", "")
+    posicionales: list[str | None] = []
+    saltar = False
+    for a in argumentos:
+        if saltar:
+            saltar = False
+        elif a is not None and a in PUSH_CON_VALOR:
+            saltar = True
+        elif a is None or not a.startswith("-"):
+            # `+:main` borra igual que `:main` (el `+` solo fuerza): se mira sin el `+`, aunque
+            # el push forzado ya lo bloquee antes (revisor de `trabajo/dieta-y-skills`, B1).
+            posicionales.append(a if a is None else a.removeprefix("+"))
+    if borra:
+        borradas = posicionales[1:]
+        if not borradas:
+            raise BloqueoError(
+                f"`git push --delete` sin una rama que se pueda nombrar.\nRegla: {R_BORRAR_REMOTO}."
+            )
+    else:
+        # Sin `--delete`, borra cada refspec `:<ref>`; uno construido al ejecutarse podria serlo.
+        borradas = [p if p is None else p[1:] for p in posicionales if p is None or p[:1] == ":"]
+    for ref in borradas:
+        if ref is None:
+            raise BloqueoError(
+                f"`git push` con una referencia que se construye al ejecutarse: no se sabe si "
+                f"borra. {COMO_REESCRIBIR}"
+            )
+        if RAMA_BORRABLE.fullmatch(ref) and ".." not in ref and not ref.endswith(".lock"):
+            continue
+        regla = R_TAG if ref.startswith(("refs/tags/", "stable/")) else R_BORRAR_REMOTO
+        raise BloqueoError(f"`git push` que borra la referencia remota `{ref}`.\nRegla: {regla}.")
 
 
 def _flag_corta(textos: Iterable[str], letras: str, con_valor: str) -> bool:
@@ -1664,6 +1726,13 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
     ):
         if re.search(patron, texto):
             raise BloqueoError(f"PowerShell: {patron}.\nRegla: {regla}.")
+    for segmento in re.split(r"[;|\n]|&&|\|\|", texto):
+        palabras = [
+            a or b or c for a, b, c in re.findall(r"'([^']*)'|\"([^\"]*)\"|([^\s'\"]+)", segmento)
+        ]
+        if "git" in palabras and "push" in palabras[palabras.index("git") :]:
+            argumentos = palabras[palabras.index("push", palabras.index("git")) + 1 :]
+            decidir_borrado_remoto([None if re.search(r"[$`(]", a) else a for a in argumentos])
     if re.search(r"(?i)\b(remove-item|rm|ri|del|erase|rd|rmdir)\b[^;|\n]*-r", texto):
         for raiz in RAICES_INTOCABLES:
             if re.search(rf"(?i)(^|[\s'\"\\/.]){raiz}([\\/'\"\s]|$)", texto):

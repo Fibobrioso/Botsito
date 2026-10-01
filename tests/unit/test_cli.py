@@ -98,6 +98,25 @@ def test_detects_completed_feature_without_report(tmp_path: Path) -> None:
     assert cli.state_check(r) == 0
 
 
+def test_completed_features_de_la_historia_tambien_cuentan(tmp_path: Path) -> None:
+    """Desde `trabajo/dieta-y-skills` las cerradas viven en docs/state/HISTORIA.md, una seccion
+    `## Completed Features` por archivo: la regla 4 las mira todas, no solo la primera."""
+    r = _repo_tmp(tmp_path)
+    _state(r)
+    (r / "docs" / "state").mkdir(parents=True)
+    (r / "docs" / "state" / "HISTORIA.md").write_text(
+        "# Historia\n\n# Archivo 1\n\n## Completed Features\n- F98 · uno\n\n## Change Log\n"
+        "- F97 · no es una feature completada\n\n# Archivo 2\n\n## Completed Features\n"
+        "- F99 · dos\n",
+        encoding="utf-8",
+    )
+    assert cli.state_check(r) == 1
+    (r / "docs" / "validation" / "F98-uno.md").write_text("ok", encoding="utf-8")
+    assert cli.state_check(r) == 1
+    (r / "docs" / "validation" / "F99-dos.md").write_text("ok", encoding="utf-8")
+    assert cli.state_check(r) == 0
+
+
 def test_state_check_missing_file(tmp_path: Path) -> None:
     assert cli.state_check(tmp_path) == 2
 

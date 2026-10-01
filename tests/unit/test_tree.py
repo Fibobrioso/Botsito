@@ -11,6 +11,7 @@ DOC_DIRS = [
     "docs/validation",
     "docs/spec",
     "docs/runbooks",
+    "docs/state",
     "knowledge",
     "knowledge/corpus",
     "knowledge/evidence",

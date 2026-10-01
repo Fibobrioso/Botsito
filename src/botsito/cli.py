@@ -23,6 +23,9 @@ if TYPE_CHECKING:
     from botsito.evidence.modelo import EvidenceItem
 
 STATE_FILE = "PROJECT_STATE.md"
+# La historia de PROJECT_STATE (rama `trabajo/dieta-y-skills`, 2026-10-01): solo se amplia, y cada
+# archivo copia tal cual un PROJECT_STATE.md entero, con sus secciones `##` (docs/state/README.md).
+HISTORY_FILE = "docs/state/HISTORIA.md"
 
 
 def _read_section(text: str, title: str) -> str:
@@ -34,6 +37,20 @@ def _read_section(text: str, title: str) -> str:
             if inside:
                 break
             inside = line[3:].strip() == title
+            continue
+        if inside and line.strip():
+            out.append(line.strip())
+    return "\n".join(out)
+
+
+def _read_sections(text: str, title: str) -> str:
+    """Como `_read_section`, pero junta TODAS las secciones `## title` (una por archivo de la
+    historia); una linea `# ` cierra la seccion, porque abre el archivo siguiente."""
+    out: list[str] = []
+    inside = False
+    for line in text.splitlines():
+        if line.startswith("# ") or line.startswith("## "):
+            inside = line.startswith("## ") and line[3:].strip() == title
             continue
         if inside and line.strip():
             out.append(line.strip())
@@ -86,7 +103,8 @@ def state_check(repo: Path) -> int:
     1. `Current Branch` coincide con la rama real (se omite con HEAD separado).
     2. `Tests Currently Passing` empieza por el recuento real de funciones de test.
     3. `Last Stable Commit` empieza por el commit del ultimo tag `stable/*` (si hay tags).
-    4. Toda funcionalidad en `Completed Features` tiene su informe en docs/validation/.
+    4. Toda funcionalidad en `Completed Features` tiene su informe en docs/validation/: las de
+       PROJECT_STATE.md y las de cada archivo de docs/state/HISTORIA.md.
     5. En `main`, lo commiteado despues del ultimo tag estable solo puede tocar PROJECT_STATE.md
        (el ritual de merge deja un commit docs(state) tras el tag; nada mas entra sin tag).
     """
@@ -133,7 +151,13 @@ def state_check(repo: Path) -> int:
                     "cualquier otro fichero entran por una rama con su tag: MASTER_PLAN §F)"
                 )
 
-    for line in _read_section(text, "Completed Features").splitlines():
+    historia = repo / HISTORY_FILE
+    completadas = _read_section(text, "Completed Features")
+    if historia.exists():
+        completadas += "\n" + _read_sections(
+            historia.read_text(encoding="utf-8"), "Completed Features"
+        )
+    for line in completadas.splitlines():
         mm = re.match(r"-\s*(F\d{2})\b", line)
         if mm and not list((repo / "docs" / "validation").glob(f"{mm.group(1)}-*.md")):
             errores.append(f"{mm.group(1)} figura como completada sin informe en docs/validation/")

@@ -75,7 +75,8 @@ Recorre, en este orden, y anota lo que compruebas aunque salga bien:
    `CONFIRM/CORRECT/REJECT` sobre evidencia, regla o parametro (`knowledge/feedback/README.md`).
 5. **Las ambiguedades.** Si cambia `knowledge/spec/ambiguedades.yaml`: en el MISMO commit cambia
    `docs/spec/ambiguedades.md` y, si se abre o se cierra, la tabla «Known Ambiguities» de
-   `PROJECT_STATE.md`; cerrar una toca los cuatro sitios de `CLAUDE.md`.
+   `PROJECT_STATE.md` (solo las abiertas: abrir anade su fila, cerrar la quita); cerrar una toca los
+   cuatro sitios de `docs/runbooks/AMBIGUEDADES.md`.
 6. **Los ADR.** Cada ADR nuevo o cambiado: su `## Estado` empieza por `ACTIVE` o `SUPERSEDED`
    (primera palabra, sin punto: `tests/unit/test_adr.py`).
 7. **Los informes cerrados.** Todo `docs/validation/*.md` que ya estaba en `main` y la rama cambia:
