@@ -344,8 +344,8 @@ class Politica:
         n = _normcase(ruta)
         if n == self.raiz_norm:
             return ""
-        if n.startswith(self.raiz_norm + "\\"):
-            return n[len(self.raiz_norm) + 1 :].replace("\\", "/")
+        if n.startswith(self.raiz_norm + "/"):
+            return n[len(self.raiz_norm) + 1 :]
         return None
 
     def mes_de(self, texto: str) -> str | None:
@@ -440,10 +440,25 @@ class Politica:
             ignorada = zona.split("/")[0] in RAICES_IGNORADAS
             if respeta_ignore and ignorada and not dentro_ignorado:
                 continue  # ripgrep no entra en lo ignorado si no se le da una ruta de dentro
-            motivo = self._primer_protegido(self.raiz / zona)
+            en_disco = self._ruta_real(zona)
+            motivo = self._primer_protegido(en_disco) if en_disco else None
             if motivo:
                 return motivo
         return None
+
+    def _ruta_real(self, rel: str) -> Path | None:
+        """La ruta de disco de `rel` (en minusculas), con la grafia de cada carpeta tal como esta.
+        En Windows da igual; en Linux, `corpus/estrategia del trader` no existe y la segunda CI de
+        la guardia (run 36891855700) lo midio: sin esto, la zona se daba por vacia."""
+        actual = self.raiz
+        for parte in rel.split("/"):
+            if not parte:
+                continue
+            try:
+                actual = next(h for h in actual.iterdir() if h.name.lower() == parte)
+            except (OSError, StopIteration):
+                return None
+        return actual
 
     def _zonas(self) -> list[str]:
         zonas = [MATERIAL, SESIONES, f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3", "data/visor"]
@@ -504,7 +519,13 @@ def _rangos(lineas: list[int]) -> str:
 
 
 def _normcase(ruta: str) -> str:
-    return os.path.normcase(os.path.normpath(ruta))
+    """La ruta normalizada, en minusculas y con `/`, en CUALQUIER sistema. `os.path.normcase` no
+    vale: en Linux no toca nada, y la primera CI de esta guardia (run 36889215829) salio roja
+    porque fuera de Windows ninguna ruta se reconocia dentro del repo."""
+    normal = os.path.normpath(ruta)
+    if os.altsep:
+        normal = normal.replace(os.altsep, "/")
+    return normal.replace(os.sep, "/").lower()
 
 
 # ------------------------------------------------------------------------- el tokenizador bash

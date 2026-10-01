@@ -87,6 +87,27 @@ no está.
 Así se ejecutó el cierre de `trabajo/mayo-dev-ingerido` el 2026-09-22, en este orden. Una línea `!`
 por paso, mirando la salida de cada una.
 
+### Antes del merge: la CI de Linux, si la rama toca la plataforma (desde el 2026-10-01)
+
+**Toda rama que toque hooks (`scripts/git-hooks/`, `.claude/hooks/`), rutas, el sistema de archivos
+o scripts que dependan de la plataforma se empuja como rama y espera la CI de Linux en verde ANTES
+del merge a `main`.** Los tests en local corren en Windows, y Windows tapa tres cosas que Linux no:
+el separador `\`, `os.path.normcase` (que en Linux no baja a minúsculas) y las mayúsculas y
+minúsculas de las rutas. Así salió roja la CI de `main` tras cerrar `trabajo/guardias-claude`
+(run 36889215829, con todo verde en local; `docs/validation/GUARDIAS-CLAUDE.md`, recuadro inicial).
+
+Una rama `trabajo/*` no dispara la CI (`.github/workflows/ci.yml` solo corre en `main`,
+`feature/**` y `fix/**`), así que se empuja con otro nombre, sin tocar la local:
+`git push origin trabajo/<rama>:refs/heads/fix/<rama>` (en texto y no en bloque: los bloques de este
+runbook solo llevan el push atómico de `main` y el tag, `tests/unit/test_push_atomico.py`).
+→ **Puerta:** la CI de ese commit termina en `"conclusion": "success"`, salvo UN fallo esperado y
+solo ese: `state check` avisa de que `PROJECT_STATE` declara `trabajo/<rama>` y la rama es
+`fix/<rama>` (`test_state_check_ok_on_real_repo`). Cualquier otro fallo para el merge. Medido el
+2026-10-01 con `trabajo/guardia-linux` (run 36894169605, intento 2: 1 fallo, ese). Si la CI se
+cancela por tiempo antes de `make check` (el intento 1 se colgó 20 minutos instalando `ffmpeg`), no
+es un resultado: se relanza con `gh run rerun <run>`. La rama remota `fix/<rama>` se borra al final
+del ritual, con las demás.
+
 ### Antes del merge: el contrato sale de la rama (desde el 2026-10-01)
 
 Si la rama tiene `contrato.yaml` (`docs/runbooks/CONTRATO-DE-RAMA.md`), sale de ella ANTES del
@@ -249,6 +270,13 @@ No se revierte `main`. Se mira que fallo y se arregla con un commit encima, con 
 estadiar el arreglo, `make check > make-check.log 2>&1`, comprobar el `SELLO`, `rm make-check.log`,
 `BOTSITO_ALLOW_MAIN=1 git commit` y el push, que ahí es solo `git push origin main` porque no hay tag
 nuevo.
+
+**Eso vale solo si el arreglo toca `PROJECT_STATE.md` y nada más** (medido el 2026-09-29 y otra vez
+el 2026-10-01, al cerrar `trabajo/guardias-claude`). `state check` (regla 5) no admite en `main`,
+después del último tag `stable/*`, commits que toquen otra cosa: un arreglo de código encima de
+`main` vuelve a poner la CI en rojo. Ese arreglo va por una rama corta, con su merge, su tag y su
+commit de estado, y eso es otro cierre: necesita su propia orden de cierre. La rama que se estaba
+cerrando no se borra hasta que la CI esté en verde.
 
 ## La primera vez con la puerta
 

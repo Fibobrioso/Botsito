@@ -17,6 +17,14 @@ hay que mirar, y se corrige su lista (eje a) o la forma de partir el encargo (ej
 - **Que se le escapo**: una linea por hallazgo del consultor, con la regla o el requisito. Es lo que
   hay que ensenarle al revisor.
 
+## Patrones que ya se conocen
+
+Errores que han vuelto o que se sabe que volveran, con la senal que los delata y lo que se hace.
+
+| Patron | Senal | Que hacer |
+|---|---|---|
+| **Pasa en Windows y falla en Linux** (rutas con `\`, `os.path.normcase`, mayusculas y minusculas). Medido el 2026-10-01: la guardia de Claude Code paso entera en local y rompio 24 tests en la CI, y el primer arreglo destapo otros dos (una carpeta en minusculas que en Linux no existe) | CI de `main` roja tras un merge con tests verdes en local | La regla de `RITUAL.md`, «Antes del merge: la CI de Linux, si la rama toca la plataforma»: se empuja la rama como `fix/<rama>` y se espera la CI de Linux en verde ANTES del merge |
+
 ## La tabla
 
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
