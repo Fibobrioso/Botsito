@@ -260,18 +260,52 @@ def test_evidence_propose_copia_solo_lo_que_se_puede_ensenar(
 
 # ------------------------------------------------------------ quien puede pedir el crudo
 
+# (fichero, funcion) -> motivo. `None` como funcion: el fichero entero. Decision del consultor del
+# 2026-10-01: la verificacion de citas, scripts/transcribir_sesion.py y los tests; y, por su
+# orden, `corpus glossary apply`. `corpus transcript check` se anade con su motivo en esta rama y
+# queda a su decision (docs/validation/CUARENTENA-POR-DEFECTO.md).
 AUTORIZADOS = {
-    "src/botsito/validation/contexto_evidencia.py",  # la verificacion de citas
-    "scripts/transcribir_sesion.py",
+    ("src/botsito/validation/contexto_evidencia.py", "crudas"): (
+        "la verificacion de citas compara cada cita con la cruda entera y no devuelve su texto"
+    ),
+    ("src/botsito/cli.py", "corpus_glossary_apply"): (
+        "corpus glossary apply recalcula la corregida desde la cruda entera (ADR-0007)"
+    ),
+    ("src/botsito/corpus/manifiestos_transcripcion.py", "comprobar"): (
+        "corpus transcript check recalcula sobre la cruda entera los recuentos del manifiesto"
+        " y compara la corregida con cruda + glosario (integridad)"
+    ),
+    ("scripts/transcribir_sesion.py", None): "la cuarentena de una sesion nueva",
 }
+# El modulo que IMPLEMENTA las funciones que filtran: es el unico que lee el fichero sin pasar
+# por ellas.
+IMPLEMENTACION = "src/botsito/corpus/pipeline_transcripcion.py"
 
 
-def usos_de_crudo(codigo: str) -> list[tuple[int, str]]:
+def _autorizado(rel: str, funcion: str | None) -> bool:
+    return (rel, None) in AUTORIZADOS or (rel, funcion) in AUTORIZADOS
+
+
+def _con_funcion(arbol: ast.AST) -> list[tuple[ast.AST, str | None, ast.AST | None]]:
+    """Cada nodo con la funcion que lo contiene (la mas interior) y su padre."""
+    salida: list[tuple[ast.AST, str | None, ast.AST | None]] = []
+
+    def visitar(nodo: ast.AST, funcion: str | None, padre: ast.AST | None) -> None:
+        salida.append((nodo, funcion, padre))
+        dentro = nodo.name if isinstance(nodo, ast.FunctionDef | ast.AsyncFunctionDef) else funcion
+        for hijo in ast.iter_child_nodes(nodo):
+            visitar(hijo, dentro, nodo)
+
+    visitar(arbol, None, None)
+    return salida
+
+
+def usos_de_crudo(codigo: str) -> list[tuple[int, str, str | None]]:
     """Cada `crudo=` de una llamada (y cada clave "crudo" de un dict) que NO sea `False`, ni el
     reenvio de un parametro (`crudo=crudo`) o de un atributo (`crudo=args.crudo`): `True` u otra
-    cosa, con su linea."""
-    salida: list[tuple[int, str]] = []
-    for nodo in ast.walk(ast.parse(codigo)):
+    cosa, con su linea y la funcion que lo contiene."""
+    salida: list[tuple[int, str, str | None]] = []
+    for nodo, funcion, _padre in _con_funcion(ast.parse(codigo)):
         if isinstance(nodo, ast.Call):
             for k in nodo.keywords:
                 if k.arg != "crudo":
@@ -284,30 +318,110 @@ def usos_de_crudo(codigo: str) -> list[tuple[int, str]]:
                 if isinstance(v, ast.Attribute) and v.attr == "crudo":
                     continue
                 es_true = isinstance(v, ast.Constant) and v.value is True
-                salida.append((nodo.lineno, "True" if es_true else "otro"))
+                salida.append((nodo.lineno, "True" if es_true else "otro", funcion))
         elif isinstance(nodo, ast.Dict):
             for clave in nodo.keys:
                 if isinstance(clave, ast.Constant) and clave.value == "crudo":
-                    salida.append((nodo.lineno, "dict"))
+                    salida.append((nodo.lineno, "dict", funcion))
     return salida
 
 
+FICHEROS_DE_TEXTO = {"FICHERO_CRUDA", "FICHERO_CORREGIDA", "cruda.jsonl", "corregida.jsonl"}
+
+
+def _nombra_fichero_de_texto(nodo: ast.AST) -> bool:
+    if isinstance(nodo, ast.Name):
+        return nodo.id in FICHEROS_DE_TEXTO
+    if isinstance(nodo, ast.Attribute):
+        return nodo.attr in FICHEROS_DE_TEXTO
+    return isinstance(nodo, ast.Constant) and nodo.value in FICHEROS_DE_TEXTO
+
+
+def lecturas_en_bruto(codigo: str) -> list[tuple[int, str, str | None]]:
+    """Lo que leeria la cruda o la corregida SIN pasar por `cargar_cruda`/`cargar_corregida`:
+    construir su ruta (`carpeta / FICHERO_CRUDA`, `... / "cruda.jsonl"`) para algo que no sea
+    preguntar si existe (`.is_file()`, `.exists()`), o parsear con el `desde_jsonl` de las
+    transcripciones."""
+    arbol = ast.parse(codigo)
+    nodos = _con_funcion(arbol)
+    padres = {id(n): p for n, _f, p in nodos}
+    importa_desde_jsonl = any(
+        isinstance(n, ast.ImportFrom)
+        and n.module == "botsito.corpus.transcripcion"
+        and any(a.name == "desde_jsonl" for a in n.names)
+        for n, _f, _p in nodos
+    )
+    salida: list[tuple[int, str, str | None]] = []
+    for nodo, funcion, padre in nodos:
+        if (
+            isinstance(nodo, ast.BinOp)
+            and isinstance(nodo.op, ast.Div)
+            and _nombra_fichero_de_texto(nodo.right)
+        ):
+            existe = (
+                isinstance(padre, ast.Attribute)
+                and padre.attr in {"is_file", "exists"}
+                and isinstance(padres.get(id(padre)), ast.Call)
+            )
+            if not existe:
+                salida.append((nodo.lineno, "ruta", funcion))
+        if (
+            importa_desde_jsonl
+            and isinstance(nodo, ast.Call)
+            and isinstance(nodo.func, ast.Name)
+            and nodo.func.id == "desde_jsonl"
+        ):
+            salida.append((nodo.lineno, "desde_jsonl", funcion))
+    return salida
+
+
+def _codigo_del_proyecto() -> list[tuple[str, str]]:
+    return [
+        (py.relative_to(RAIZ).as_posix(), py.read_text(encoding="utf-8"))
+        for base in ("src", "scripts")
+        for py in sorted((RAIZ / base).rglob("*.py"))
+    ]
+
+
 def test_crudo_true_solo_en_los_llamadores_autorizados() -> None:
-    """Decision del consultor: la verificacion de citas, transcribir_sesion.py y los tests. Los
-    tests no se recorren: son llamadores autorizados."""
-    problemas = []
-    for base in ("src", "scripts"):
-        for py in sorted((RAIZ / base).rglob("*.py")):
-            rel = py.relative_to(RAIZ).as_posix()
-            for linea, que in usos_de_crudo(py.read_text(encoding="utf-8")):
-                if que == "True" and rel in AUTORIZADOS:
-                    continue
-                problemas.append(f"{rel}:{linea}: crudo={que}")
+    """Los tests no se recorren: son llamadores autorizados."""
+    problemas = [
+        f"{rel}:{linea}: crudo={que} en {funcion}"
+        for rel, codigo in _codigo_del_proyecto()
+        for linea, que, funcion in usos_de_crudo(codigo)
+        if not (que == "True" and _autorizado(rel, funcion))
+    ]
     assert problemas == []
 
 
-def test_el_recorrido_de_crudo_no_es_decorativo() -> None:
-    assert usos_de_crudo("f(crudo=True)") == [(1, "True")]
-    assert usos_de_crudo("f(x, crudo=algo)") == [(1, "otro")]
-    assert usos_de_crudo("f(**{'crudo': True})") == [(1, "dict")]
+def test_nadie_lee_la_cruda_sin_pasar_por_las_funciones_que_filtran() -> None:
+    """Orden del consultor del 2026-10-01: ninguna funcion lee la cruda (o la corregida) sin
+    pasar por `crudo=True`; solo el modulo que las implementa y los llamadores autorizados."""
+    problemas = [
+        f"{rel}:{linea}: {que} en {funcion}"
+        for rel, codigo in _codigo_del_proyecto()
+        if rel != IMPLEMENTACION
+        for linea, que, funcion in lecturas_en_bruto(codigo)
+        if not _autorizado(rel, funcion)
+    ]
+    assert problemas == []
+
+
+def test_los_recorridos_no_son_decorativos() -> None:
+    assert usos_de_crudo("f(crudo=True)") == [(1, "True", None)]
+    assert usos_de_crudo("def g():\n    f(x, crudo=algo)") == [(2, "otro", "g")]
+    assert usos_de_crudo("f(**{'crudo': True})") == [(1, "dict", None)]
     assert usos_de_crudo("f(crudo=False)\ng(crudo=crudo)\nh(crudo=args.crudo)") == []
+    assert lecturas_en_bruto("def g(c):\n    return (c / FICHERO_CRUDA).read_bytes()") == [
+        (2, "ruta", "g")
+    ]
+    assert lecturas_en_bruto("x = c / 'corregida.jsonl'") == [(1, "ruta", None)]
+    assert lecturas_en_bruto("ok = (c / FICHERO_CRUDA).is_file()") == []
+    assert lecturas_en_bruto(
+        "from botsito.corpus.transcripcion import desde_jsonl\ndesde_jsonl(t)"
+    ) == [(2, "desde_jsonl", None)]
+    assert (
+        lecturas_en_bruto("from botsito.corpus.fotogramas import desde_jsonl\ndesde_jsonl(t)") == []
+    )
+    assert _autorizado("src/botsito/cli.py", "corpus_glossary_apply")
+    assert not _autorizado("src/botsito/cli.py", "kb_find")

@@ -226,9 +226,13 @@ que cuenta para la sesion:
   `corpus frames show` y `evidence propose` ocultan por defecto las sesiones en cuarentena, los
   tramos no citables y el material reservado o sin sortear, y dicen cuantos segmentos ocultaron
   (`src/botsito/corpus/cuarentena.py`, la UNICA fuente). La opcion que lo ensena todo es solo de
-  Aleks, en su terminal, y su equivalente en Python solo lo usan la verificacion de citas,
-  `scripts/transcribir_sesion.py` y los tests. Guardias: la de Claude Code bloquea los dos, y
-  `tests/unit/test_cuarentena.py` falla si aparece otro llamador.
+  Aleks, en su terminal, y su equivalente en Python solo lo usan los llamadores de `AUTORIZADOS`
+  (`tests/unit/test_cuarentena.py`: la verificacion de citas, `corpus glossary apply`,
+  `corpus transcript check` y `scripts/transcribir_sesion.py`, cada uno con su motivo) y los
+  tests. Una propuesta de `knowledge/_proposals/` con segmentos ocultos no se lee (lista
+  calculada en `.claude/hooks/propuestas_con_ocultos.txt`). Guardias: la de Claude Code bloquea
+  las dos cosas, y `tests/unit/test_cuarentena.py` falla si aparece otro llamador o alguien lee la
+  cruda sin pasar por las funciones que filtran.
 - **Una guardia no se rodea.** Si bloquea algo legitimo, se dice en el informe y se corrige la
   guardia en su rama; no se reescribe el comando para que no la vea.
 - **Solo un guion identico al de `main` es codigo revisado.** Uno nuevo o cambiado en la rama en

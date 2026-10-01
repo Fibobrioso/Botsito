@@ -134,12 +134,18 @@ R_BRANCH_D = (
     "docs/runbooks/RITUAL.md: «`-d` y no `-D`: si git se niega, es que algo no esta fusionado»"
 )
 R_REVERT = "docs/runbooks/RITUAL.md, «Si la CI sale roja»: «No se revierte `main`»"
+R_PROPUESTA_OCULTA = (
+    "orden del consultor del 2026-10-01 (`trabajo/cuarentena-por-defecto`): una propuesta de "
+    "`knowledge/_proposals/` que copia segmentos que hoy se ocultan (sesion en cuarentena, tramo "
+    "no citable o material reservado o sin sortear) no se lee; la lista la calcula "
+    "`botsito.corpus.cuarentena` (`.claude/hooks/propuestas_con_ocultos.txt`)"
+)
 R_CRUDO = (
     "encargo de `trabajo/cuarentena-por-defecto`: los comandos que ensenan el corpus lo filtran "
     "por defecto (cuarentena de sesiones, tramos no citables y material reservado o sin sortear), "
     "y `--crudo` -o `crudo=True` en Python- es SOLO para Aleks, en su propia terminal, nunca para "
-    "Claude. Los unicos llamadores de `crudo=True` son la verificacion de citas, "
-    "scripts/transcribir_sesion.py y los tests (`tests/unit/test_cuarentena.py`)"
+    "Claude. Los unicos llamadores de `crudo=True` son los de `AUTORIZADOS` en "
+    "`tests/unit/test_cuarentena.py`, cada uno con su motivo, y los tests"
 )
 # `--cr` es el prefijo mas corto que argparse aceptaria por `--crudo` (abrevia las opciones
 # largas); `crudo=` con cualquier valor que no sea False, y la clave "crudo" de un dict.
@@ -191,6 +197,7 @@ MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-08")
 # (ADR-0041, docs/validation/V6-FUERA-DEL-HOLDOUT.md). Desde v7 la cruda no se lee.
 SESIONES_SIN_CUARENTENA = frozenset({"v6"})
 TRAMOS_NO_CITABLES = "knowledge/corpus/tramos_no_citables.yaml"
+PROPUESTAS_OCULTAS = ".claude/hooks/propuestas_con_ocultos.txt"
 # Lo que hay en la carpeta de una transcripcion y no es texto: se puede abrir aunque tenga tramos.
 SIN_TEXTO = (".wav", ".sha256", ".sha256_video", "huella.txt", "video.sha256")
 # Ficheros de una transcripcion que van por segmentos, una linea cada uno: con tramos, se leen
@@ -354,7 +361,24 @@ class Politica:
                 prohibidas.append(n)
         return prohibidas
 
+    @cached_property
+    def propuestas_ocultas(self) -> frozenset[str]:
+        """Las propuestas con algun segmento oculto, de la lista CALCULADA por
+        `botsito.corpus.cuarentena` (la guardia no importa `botsito`: lee el fichero que genera
+        `scripts/propuestas_con_ocultos.py`, y un test comprueba que coincide). Sin fichero,
+        ninguna."""
+        try:
+            texto = (self.raiz / PROPUESTAS_OCULTAS).read_text(encoding="utf-8")
+        except OSError:
+            return frozenset()
+        return frozenset(
+            ln.strip().lower() for ln in texto.splitlines() if ln.strip() and not ln.startswith("#")
+        )
+
     def _motivo_propuesta(self, ruta: str, nombre: str) -> str | None:
+        if nombre in self.propuestas_ocultas:
+            return R_PROPUESTA_OCULTA
+        # Segunda capa, la de antes: lo que pisa un tramo, con la copia de la guardia.
         m = re.match(r"^pr-(v\d+)-", nombre)
         if not m or m.group(1) not in self.tramos_vigilados:
             return None
@@ -1495,11 +1519,14 @@ def _analizar_cli(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
                 " filtrada y abre el PNG por su ruta (`data/fotogramas/<v>/png-1fps/<ms>.png`)."
             )
     _tramos_en_la_cli(sin_opciones, args, video, ctx)
-    if sin_opciones[:2] == ("kb", "find") and (video is None or video.lower() in cuarentena):
+    # `kb find` SIN `--video` pasa desde `trabajo/cuarentena-por-defecto`: el indice que consulta
+    # se construye filtrado (`botsito.corpus.cuarentena`). Con `--video` de una sesion en
+    # cuarentena sigue bloqueado: segunda capa, por decision del consultor del 2026-10-01.
+    if sin_opciones[:2] == ("kb", "find") and video is not None and video.lower() in cuarentena:
         raise BloqueoError(
-            "`botsito kb find` sin `--video` busca tambien en las crudas en cuarentena "
-            f"({', '.join(sorted(cuarentena))}).\nRegla: {R_CUARENTENA}.\nComo reescribirlo: "
-            "`--video <v>` con un video que no sea una sesion en cuarentena."
+            f"`botsito kb find --video {video}` busca en una sesion en cuarentena."
+            f"\nRegla: {R_CUARENTENA}.\nComo reescribirlo: `--video <v>` con un video que no sea "
+            "una sesion en cuarentena, o sin `--video` (la busqueda sale filtrada)."
         )
 
 

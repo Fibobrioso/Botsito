@@ -53,3 +53,25 @@ Copiada tal cual:
 >    - El resto del encargo sigue igual: fase 1, fase 2 y fase 3, CI de Linux como fix/cuarentena-por-defecto, revisor e informe.
 >
 > Sigue.
+
+## Tercera orden: decisiones del consultor (2026-10-01)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisiones del consultor:
+>
+> 0. Desviación de glossary apply: no la acepto como está. Una función interna que lee la cruda sin crudo=True es una vía que el test de autorizados no ve. Haz que corpus glossary apply use crudo=True y añádelo a la lista de llamadores autorizados, con su motivo. Comprueba que no queda ninguna otra función que lea la cruda sin pasar por crudo=True, y que el test lo vigila.
+>
+> 1. Las 10 propuestas de knowledge/_proposals/: no se borran ni se editan.
+>    - Añádelas a la guardia: una propuesta con segmentos ocultos no se puede leer. Que la lista salga de cuarentena.py, calculada, no escrita a mano.
+>    - Auditoría, solo con cuentas e ids, sin contenido: ¿alguna evidencia o regla aceptada en knowledge/ cita un segmento que hoy cae en (b) o (c)? Para cada caso, da el id de la evidencia o regla, el vídeo y el motivo, (b) o (c). No toques nada de knowledge/. Si sale algún caso, para y avísame antes de declarar la rama lista.
+>
+> 2. Reglas viejas del hook:
+>    - Quita el bloqueo de kb find sin --video: el filtro del código ya lo hace innecesario.
+>    - Mantén como segunda capa los bloqueos de vídeos en cuarentena y de intervalos que pisan un tramo.
+>    - Tests: kb find sin --video pasa la guardia; v7 y un intervalo que pisa un tramo de v6 siguen bloqueados.
+>
+> Después sigue: push como fix/cuarentena-por-defecto, CI de Linux, revisor e informe.
+> «Rama lista para revisión, NO cerrada.»

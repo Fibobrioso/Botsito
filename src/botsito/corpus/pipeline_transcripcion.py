@@ -294,10 +294,10 @@ def _segmentos(carpeta: Path, fichero: str) -> list[Segmento]:
     return desde_jsonl((carpeta / fichero).read_text(encoding="utf-8"))
 
 
-def regenerar_corregida(carpeta: Path, glosario: Glosario, tid: str) -> int:
-    """`corpus glossary apply`: la corregida se recalcula desde la cruda ENTERA (ADR-0007), asi
-    que la lee sin filtrar; no devuelve ningun segmento, solo cuantas sustituciones hizo."""
-    return corregir(carpeta, _segmentos(carpeta, FICHERO_CRUDA), glosario, tid)
+def sha256_de_cruda(carpeta: Path) -> str:
+    """El sha256 de los bytes de la cruda: HASHEAR no es leer su contenido (CLAUDE.md, la guardia
+    de Claude Code), y es lo que compara la integridad con el manifiesto."""
+    return sha256_hex((carpeta / FICHERO_CRUDA).read_bytes())
 
 
 def _filtrados(
@@ -327,7 +327,7 @@ def cargar_cruda(
     carpeta: Path, filtro: Filtro | None = None, *, crudo: bool = False
 ) -> list[Segmento]:
     """La cruda, FILTRADA por defecto (`botsito.corpus.cuarentena`); entera solo con `crudo=True`,
-    que usan la verificacion de citas, scripts/transcribir_sesion.py y los tests."""
+    que solo usan los llamadores autorizados (`AUTORIZADOS` en tests/unit/test_cuarentena.py)."""
     segmentos = _segmentos(carpeta, FICHERO_CRUDA)
     return segmentos if crudo else _filtrados(carpeta, segmentos, filtro, "cargar_cruda")
 

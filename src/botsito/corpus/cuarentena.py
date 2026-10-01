@@ -16,8 +16,11 @@ segmento, tiempos y motivo, NUNCA el texto ni que mes o dia disparo la regla-, p
 use diga cuantos oculto y por que. Las funciones que devuelven segmentos de una transcripcion
 (`corpus.pipeline_transcripcion.cargar_cruda`, `cargar_corregida` y `cargar_capas`,
 `corpus.transcripcion.texto_entre`, `retrieval.consultas.buscar` y `en_instante`) filtran por
-defecto, y el contenido sin filtrar se pide con `crudo=True`, que solo usan la verificacion de
-citas, `scripts/transcribir_sesion.py` y los tests (`tests/unit/test_cuarentena.py` lo vigila).
+defecto, y el contenido sin filtrar se pide con `crudo=True`, que solo usan los llamadores
+autorizados de `tests/unit/test_cuarentena.py` (`AUTORIZADOS`, cada uno con su motivo: la
+verificacion de citas, `corpus glossary apply`, `corpus transcript check`,
+`scripts/transcribir_sesion.py`) y los tests; el mismo test falla si alguien mas lo pide o lee la
+cruda sin pasar por estas funciones.
 """
 
 from __future__ import annotations
@@ -96,7 +99,7 @@ class CuarentenaError(ValueError):
 
 SIN_FILTRO = (
     "filtra por defecto: pasa un `Filtro` (`botsito.corpus.cuarentena`) o `crudo=True`, que solo "
-    "usan la verificacion de citas, scripts/transcribir_sesion.py y los tests"
+    "usan los llamadores autorizados (`AUTORIZADOS` en tests/unit/test_cuarentena.py) y los tests"
 )
 
 # --------------------------------------------------------------- (b) los tramos no citables
@@ -353,6 +356,58 @@ def filtros(repo: Path) -> dict[str, Filtro]:
 
 def filtro_de(repo: Path, video_id: str) -> Filtro:
     return Filtro(video_id, cargar_tramos_no_citables(repo).get(video_id, ()))
+
+
+DIRECTORIO_PROPUESTAS = "knowledge/_proposals"
+# La lista que lee la guardia de Claude Code: CALCULADA por `propuestas_con_ocultos`, escrita por
+# `scripts/propuestas_con_ocultos.py --escribir` y vigilada por `tests/unit/test_cuarentena.py`,
+# que falla si no coincide con lo que se calcula hoy (orden del consultor del 2026-10-01).
+FICHERO_PROPUESTAS_OCULTAS = ".claude/hooks/propuestas_con_ocultos.txt"
+
+
+@dataclass(frozen=True, slots=True)
+class _SegmentoDePropuesta:
+    n: int
+    t0_ms: int
+    t1_ms: int
+    texto: str
+
+
+def propuestas_con_ocultos(repo: Path) -> dict[str, Counter[str]]:
+    """Fichero de `knowledge/_proposals/` -> cuantos de sus segmentos copiados caen en cada regla,
+    solo los que tienen alguno. Lee el YAML de la propuesta (los segmentos estan copiados en
+    `contexto.segmentos`) y aplica `Filtro.motivos`, que solo devuelve posiciones y motivos."""
+    tramos = cargar_tramos_no_citables(repo)
+    salida: dict[str, Counter[str]] = {}
+    for ruta in sorted((repo / DIRECTORIO_PROPUESTAS).glob("pr-*.yaml")):
+        try:
+            doc = leer_yaml(ruta)
+        except (OSError, YamlError) as exc:
+            raise CuarentenaError(f"{ruta.name}: {exc}") from exc
+        if not isinstance(doc, dict) or not isinstance(doc.get("contexto"), dict):
+            raise CuarentenaError(f"{ruta.name}: sin contexto")
+        video = str(doc.get("video_id"))
+        segmentos = [
+            _SegmentoDePropuesta(int(s["n"]), int(s["t0_ms"]), int(s["t1_ms"]), str(s["texto"]))
+            for s in doc["contexto"].get("segmentos") or []
+        ]
+        cuenta = Counter(Filtro(video, tramos.get(video, ())).motivos(segmentos).values())
+        if cuenta:
+            salida[ruta.name] = cuenta
+    return salida
+
+
+def texto_de_la_lista(propuestas: Iterable[str]) -> str:
+    """El fichero que lee la guardia: una cabecera que dice de donde sale, y un nombre por linea."""
+    cabecera = (
+        "# GENERADO por `uv run python scripts/propuestas_con_ocultos.py --escribir` desde\n"
+        "# `botsito.corpus.cuarentena.propuestas_con_ocultos`: las propuestas de\n"
+        "# knowledge/_proposals/ con algun segmento oculto (sesion en cuarentena, tramo no\n"
+        "# citable o material reservado o sin sortear). No se edita a mano:\n"
+        "# tests/unit/test_cuarentena.py falla si no coincide con lo que se calcula. La guardia\n"
+        "# de Claude Code no deja leerlas.\n"
+    )
+    return cabecera + "".join(f"{p}\n" for p in sorted(propuestas))
 
 
 def resumen(ocultos: Iterable[Oculto]) -> str:

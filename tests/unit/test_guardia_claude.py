@@ -358,7 +358,10 @@ def test_grep_recursivo_en_bash(g: ModuleType, repo: Path) -> None:
         ("uv run botsito corpus frames show --video v9 --t 0:15:29", True),
         ("uv run botsito corpus transcript show --video v7 --desde 0:01:00", True),
         ("uv run botsito kb at --video=v7 --t 0:10:00", True),
-        ("uv run botsito kb find stop", True),
+        # Sin `--video` pasa desde `trabajo/cuarentena-por-defecto` (el indice sale filtrado);
+        # con `--video` de una sesion en cuarentena sigue bloqueado (segunda capa).
+        ("uv run botsito kb find stop", False),
+        ("uv run botsito kb find stop --video v7", True),
         ("uv run botsito kb find stop --video v3", False),
         ("uv run botsito corpus frames show --video v4 --t 1:06:12", False),
         ("uv run botsito motor arnes --salida arnes.txt", False),
@@ -599,6 +602,33 @@ def test_un_guion_nuevo_con_el_corpus_sin_filtrar_se_bloquea(
     assert motivo is not None and g.R_CRUDO in motivo
     motivo = _decide(g, repo, "PowerShell", command=f"uv run botsito kb find hola {OPCION}")
     assert motivo is not None and g.R_CRUDO in motivo
+
+
+def test_una_propuesta_con_segmentos_ocultos_no_se_lee(g: ModuleType, repo: Path) -> None:
+    """La lista la calcula `botsito.corpus.cuarentena` y la guardia la lee de su fichero
+    (orden del consultor del 2026-10-01); aqui, sintetica."""
+    from botsito.corpus.cuarentena import FICHERO_PROPUESTAS_OCULTAS, texto_de_la_lista
+
+    oculta = _escribir(repo, "knowledge/_proposals/pr-v2-000100-000200-aaaaaaaa.yaml")
+    libre = _escribir(repo, "knowledge/_proposals/pr-v2-000300-000400-bbbbbbbb.yaml")
+    _escribir(repo, FICHERO_PROPUESTAS_OCULTAS, texto_de_la_lista([oculta.name]))
+    motivo = _decide(g, repo, "Read", file_path=str(oculta))
+    assert motivo is not None and g.R_PROPUESTA_OCULTA in motivo
+    assert _decide(g, repo, "Read", file_path=str(libre)) is None
+    assert _bash(g, repo, f'cat "{oculta}"') is not None
+
+
+def test_la_lista_de_la_guardia_es_la_que_se_calcula() -> None:
+    """El fichero que lee la guardia es exactamente el que sale de `propuestas_con_ocultos`:
+    nadie lo escribe a mano."""
+    from botsito.corpus.cuarentena import (
+        FICHERO_PROPUESTAS_OCULTAS,
+        propuestas_con_ocultos,
+        texto_de_la_lista,
+    )
+
+    esperado = texto_de_la_lista(propuestas_con_ocultos(RAIZ))
+    assert (RAIZ / FICHERO_PROPUESTAS_OCULTAS).read_text(encoding="utf-8") == esperado
 
 
 def test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena(g: ModuleType) -> None:

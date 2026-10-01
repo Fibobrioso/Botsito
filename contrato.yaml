@@ -10,6 +10,7 @@ rutas_permitidas:
   - PROJECT_STATE.md
   - CLAUDE.md
   - .claude/hooks/guardia.py
+  - .claude/hooks/propuestas_con_ocultos.txt
   - .claude/skills/
   - src/botsito/cli.py
   - src/botsito/retrieval/

@@ -353,7 +353,7 @@ def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
         cargar_todos,
         carpeta_de,
     )
-    from botsito.corpus.pipeline_transcripcion import regenerar_corregida
+    from botsito.corpus.pipeline_transcripcion import cargar_cruda, corregir
     from botsito.corpus.transcripcion import TranscripcionError
 
     try:
@@ -375,7 +375,9 @@ def corpus_glossary_apply(repo: Path, args: argparse.Namespace) -> int:
             print(f"AVISO: {t.id}: cruda no esta en esta maquina")
             continue
         try:
-            cambios = regenerar_corregida(carpeta, glosario, t.id)
+            # LLAMADOR AUTORIZADO de `crudo=True` (orden del consultor del 2026-10-01): la
+            # corregida se recalcula desde la cruda ENTERA (ADR-0007), y no se imprime nada.
+            cambios = corregir(carpeta, cargar_cruda(carpeta, crudo=True), glosario, t.id)
         except TranscripcionError as exc:
             print(f"ERROR: {t.id}: {exc}")
             return 1

@@ -117,19 +117,29 @@ como estaban**: el encargo no pide quitarlas, y relajarlas lo decide el consulto
 
 | Llamador | Como | Por que |
 |---|---|---|
+> **CORRECCION (2026-10-01, misma rama, tercera orden del consultor).** La primera version de
+> esta tabla ponia `corpus glossary apply` con una funcion interna que leia la cruda sin
+> `crudo=True` (`regenerar_corregida`). El consultor no la acepto: era una via que el test de
+> autorizados no veia. Ya no existe; la tabla de abajo es la vigente, y §9 cuenta el cambio.
+
+`AUTORIZADOS`, en `tests/unit/test_cuarentena.py`, por (fichero, funcion) y con su motivo:
+
+| Llamador | Como | Por que |
+|---|---|---|
 | La verificacion de citas (`validation/contexto_evidencia.py`, `crudas`) | `cargar_cruda(..., crudo=True)` | compara la cita con la cruda entera; no devuelve su texto |
-| `scripts/transcribir_sesion.py` | autorizado; hoy no lo necesita (lee su propia cruda fuera del repositorio) | es la cuarentena de una sesion nueva |
+| `corpus glossary apply` (`cli.py`, `corpus_glossary_apply`) | `cargar_cruda(..., crudo=True)` | la corregida se recalcula desde la cruda ENTERA (ADR-0007): filtrada, se corromperia. Por orden del consultor |
+| `corpus transcript check` (`corpus/manifiestos_transcripcion.py`, `comprobar`) | `cargar_cruda(..., crudo=True)`, y lee la corregida para compararla con cruda + glosario | la integridad recalcula los recuentos del manifiesto sobre la cruda entera. **Anadido en esta rama con su motivo: lo decide el consultor (§9)** |
+| `scripts/transcribir_sesion.py` (el fichero) | autorizado; hoy no lo necesita (lee su propia cruda fuera del repositorio) | es la cuarentena de una sesion nueva |
 | Los tests | `crudo=True` en sus llamadas directas | datos sinteticos |
-| `corpus glossary apply` | `regenerar_corregida`, que lee la cruda dentro del pipeline sin devolverla | la corregida se recalcula desde la cruda ENTERA (ADR-0007): filtrada, se corromperia. **No es un `crudo=True` y no esta en la lista del consultor: se declara aqui** |
 
-`make check` no necesita nada sin filtrar fuera de los tests. `test_crudo_true_solo_en_los_llamadores_autorizados`
-recorre `src/` y `scripts/` y falla ante un `crudo=` que no sea `False`, el reenvio de un parametro
-(`crudo=crudo`) o de un atributo (`crudo=args.crudo`, `crudo=indice.crudo`), salvo `True` en los dos
-ficheros autorizados; `test_el_recorrido_de_crudo_no_es_decorativo` lo rompe a proposito.
-
-Fuera de estas funciones leen la cruda directamente, abriendo `cruda.jsonl`,
-`scripts/a18_buscar.py` y `scripts/buscar_ambiguedades.py`: guiones de medicion de ramas cerradas,
-que la guardia trata como codigo revisado mientras sean identicos a los de `main`. No se tocan.
+El sha de la cruda se calcula con `pipeline_transcripcion.sha256_de_cruda`: hashear no es leer su
+contenido (CLAUDE.md). `make check` no necesita nada sin filtrar fuera de los tests. Los vigilan
+dos tests sobre `src/` y `scripts/`: `test_crudo_true_solo_en_los_llamadores_autorizados` (un
+`crudo=` que no sea `False` ni el reenvio de un parametro o de un atributo, salvo `True` en una
+funcion autorizada) y `test_nadie_lee_la_cruda_sin_pasar_por_las_funciones_que_filtran` (construir
+la ruta de la cruda o de la corregida para algo que no sea preguntar si existe, o parsearla con el
+`desde_jsonl` de las transcripciones, fuera del modulo que implementa las funciones y de los
+autorizados). `test_los_recorridos_no_son_decorativos` rompe los dos a proposito.
 
 ### 2.2 Cambios que no estaban en el encargo, declarados
 
@@ -210,11 +220,14 @@ la regla en su fuente nueva.
 
 ## 7. Lo que debe decidir el consultor
 
-1. **Las 10 propuestas** de §5: que se hace con ellas (no se han tocado).
-2. **Las reglas viejas de la guardia** para `kb find`, `kb at`, `transcript show` y `frames show`
-   (bloquear sin `--video`, los videos en cuarentena y los intervalos que pisan un tramo): con el
-   filtro en el codigo son redundantes, y siguen. Quitarlas haria que la sesion pudiera usar esos
-   comandos filtrados sobre cualquier video.
+1. **Los 9 items de evidencia de §9.3**, que citan un segmento que hoy se oculta por (c). No se ha
+   tocado nada de `knowledge/`.
+2. **`corpus transcript check` en `AUTORIZADOS`** (§2.1 y §9.1): se anadio con su motivo porque la
+   integridad necesita la cruda entera; si no se acepta, hay que decidir como comprueba el
+   manifiesto.
+3. **`scripts/a18_buscar.py` filtrado** (§9.1): con el filtro, las cuatro salidas commiteadas de
+   las busquedas de A-18, A-24, A-35 y la sesion 02 ya no se reproducen byte a byte (mismos
+   pasajes, menos lineas). La alternativa es autorizarlo con `crudo=True`.
 
 ## La skill `abrir-rama`, en su primer uso
 
@@ -227,7 +240,79 @@ HISTORIA, como pedia el encargo, lo que quedo fuera del cierre de F36k (el «1 s
 
 ## 8. Estado
 
-**PARADA por la auditoria de propuestas (§5), como manda la segunda orden.** El codigo, la guardia y
-los tests de las fases 1 a 3 estan hechos y sellados en la rama. Falta, tras la respuesta del
-consultor: empujar como `fix/cuarentena-por-defecto` y esperar la CI de Linux (regla de `RITUAL.md`:
-toca un hook), pasar el revisor y pegar su informe. NO lista para revision.
+**PARADA, por orden del consultor, antes de declarar la rama lista**: la auditoria de §9.3 encontro
+9 items de evidencia vivos que citan un segmento que hoy se oculta por (c). El resto de la tercera
+orden esta hecho y sellado; la CI de Linux y el revisor, en §10 y §11.
+
+## 9. La tercera orden del consultor (2026-10-01)
+
+Copiada tal cual en `docs/encargos/trabajo-cuarentena-por-defecto.md`, «Tercera orden».
+
+### 9.1 Punto 0: ninguna lectura de la cruda sin pasar por `crudo=True`
+
+- **`corpus glossary apply`** pasa a `cargar_cruda(carpeta, crudo=True)` y entra en `AUTORIZADOS`
+  con su motivo. La funcion interna `regenerar_corregida` ya no existe.
+- **Comprobado en todo `src/` y `scripts/`** con la busqueda de `cruda.jsonl`, `FICHERO_CRUDA` y
+  `desde_jsonl`. Habia dos lecturas mas sin pasar por `cargar_cruda`:
+  - `corpus transcript check` (`manifiestos_transcripcion.comprobar`) leia los bytes de la cruda
+    para el sha y los parseaba para recalcular el manifiesto. Ahora hashea con `sha256_de_cruda` y
+    lee con `cargar_cruda(carpeta, crudo=True)`; entra en `AUTORIZADOS` con su motivo, y queda a
+    decision del consultor (§7).
+  - `scripts/a18_buscar.py`, `leer` (que usa tambien `scripts/buscar_ambiguedades.py`), abria
+    `cruda.jsonl` y lo parseaba a mano. Ahora hashea con `sha256_de_cruda` y lee FILTRADO, con
+    `cargar_cruda(carpeta, filtro_de(...))`; no se anade a `AUTORIZADOS`. Medido con sha256, sin
+    leer contenido: antes del cambio las cuatro salidas se reproducian byte a byte (A-18, A-24,
+    A-35 y sesion 02); despues, ninguna. Tienen los MISMOS bloques -42, 44, 10 y 47 pasajes- y 50,
+    9, 9 y 11 lineas menos: los segmentos que ahora se ocultan dentro de los pasajes. Decision
+    del consultor (§7).
+- **Lo vigila un test nuevo**, `test_nadie_lee_la_cruda_sin_pasar_por_las_funciones_que_filtran`
+  (§2.1), y la lista de autorizados pasa a ser por (fichero, funcion) en vez de por fichero.
+
+### 9.2 Punto 1: las propuestas con segmentos ocultos no se leen
+
+- `cuarentena.propuestas_con_ocultos` CALCULA la lista; `scripts/propuestas_con_ocultos.py
+  --escribir` la vuelca a `.claude/hooks/propuestas_con_ocultos.txt`, que lee la guardia (no
+  importa `botsito`); `test_la_lista_de_la_guardia_es_la_que_se_calcula` falla si no coincide. Hoy:
+  las mismas 10 de §5. La guardia las bloquea con `R_PROPUESTA_OCULTA`
+  (`test_una_propuesta_con_segmentos_ocultos_no_se_lee`, sintetico), y mantiene como segunda capa
+  su calculo propio de lo que pisa un tramo. No se ha borrado ni editado ninguna propuesta.
+
+### 9.3 Punto 1: la auditoria de knowledge/
+
+`docs/validation/anexos/CUARENTENA-POR-DEFECTO/auditoria_knowledge.py`: un item de evidencia cita
+los segmentos de SU transcripcion que pisan su intervalo; sale si alguno lo oculta hoy el filtro
+por (b) o (c). Una regla de la spec o un termino del glosario salen si su `cita` es uno de esos
+items. Solo ids, video y motivo:
+
+| Item | Video | Motivo | Vivo |
+|---|---|---|---|
+| ev-v2-002604-041288d7 | v2 | (c) | si |
+| ev-v3-001952-a3276d86 | v3 | (c) | si |
+| ev-v3-002026-fa5295fa | v3 | (c) | si |
+| ev-v4-000016-8f6862dd | v4 | (c) | si |
+| ev-v4-000052-61cf22a9 | v4 | (c) | si |
+| ev-v4-000353-9ea3ce94 | v4 | (c) | si |
+| ev-v4-004533-14f2b226 | v4 | (c) | si |
+| ev-v4-012049-04c922c5 | v4 | (c) | si |
+| ev-v6-014702-2d7096db | v6 | (c) | si |
+
+9 de 437 items, ninguno por (b). **Ninguna regla de `strategy_spec.yaml` ni ningun termino de
+`glossary.yaml` los cita** (0 de 44), y una busqueda de los nueve ids en `knowledge/spec/` no
+devuelve nada. **Orden del consultor: «si sale algun caso, para y avísame antes de declarar la rama
+lista».**
+
+### 9.4 Un bloqueo de la guardia nueva, tal como se pidio
+
+La guardia bloqueo un `cat >> docs/encargos/... <<'EOF'` que copiaba esta orden: su texto lleva
+literalmente el parametro con `True`, y la orden pide bloquear los heredocs que lo contengan. No
+se rodeo: el encargo se completo con la herramienta Edit, que escribe un documento y no ejecuta
+nada. Es el coste conocido de buscar el texto en todo el comando: tampoco pasa un `git commit -m`
+que lo nombre. Si el consultor quiere afinarla (solo en el codigo que va a Python), es una linea.
+
+### 9.5 Punto 2: las reglas viejas de la guardia
+
+- `kb find` SIN `--video` pasa: el indice que consulta sale filtrado.
+- Siguen como segunda capa: `kb find --video v7` (una sesion en cuarentena), `kb at`,
+  `transcript show` y `frames show` de una sesion en cuarentena, y los intervalos que pisan un tramo
+  de v6. Lo comprueban `test_la_cli_pasa_salvo_lo_que_imprime_una_cruda` (con `kb find stop` ya en
+  «pasa» y `kb find stop --video v7` en «bloquea») y los casos de v6 de siempre.
