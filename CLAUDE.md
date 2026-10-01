@@ -72,7 +72,12 @@ commit.** Si quedan cambios sin estadiar o ficheros sin seguir, `make check` lo 
   principio (o junto al pasaje que corrige), con fecha y rama, y el cuerpo queda intacto (practica de
   `F14A-INGESTA.md` y ADR-0037 §7, escrita como regla el 2026-09-22). Nada lo comprueba
   mecanicamente todavia (Technical Debt).
-- `docs/state/HISTORIA.md` → SOLO SE AMPLIA (`docs/state/README.md`). Guardia:
+- `PROJECT_STATE.md` → solo el PRESENTE: lo que deja de ser verdad se SUSTITUYE, sin
+  «Lo anterior:», porque lo de antes ya esta archivado (regla del 2026-10-01, `trabajo/dieta-y-skills`;
+  el cierre lo edita asi, `RITUAL.md`). Guardia: `tests/unit/test_project_state.py` (sus secciones y
+  un tope de 25.000 bytes).
+- `docs/state/HISTORIA.md` → SOLO SE AMPLIA: al abrir cada rama se anade al final, como `# Archivo N`,
+  el `PROJECT_STATE.md` de `main` entero (`docs/state/README.md`). Guardia:
   `tests/unit/test_historia.py` contra el historial.
 - `data/manifests/`, `knowledge/corpus/transcripciones/`, `knowledge/corpus/fotogramas/` → INMUTABLES
   tras commit. Guardia: el hook.
@@ -137,12 +142,19 @@ con `casos_reservados(repo)`, no se supone, y se declara igual el mismo dia.
 
 **Lo minimo para fijar el universo SI se lee, y no es abrir.** De un backtest del trader se puede
 leer QUE DIAS CUBRE EL MATERIAL -la columna de fechas- porque eso no es leer una etiqueta ni medir
-una cifra del bot (ADR-0021 §1), y sin universo no hay sorteo. Vale para CUALQUIER backtest, con tres
-ataduras:
+una cifra del bot (ADR-0021 §1), y sin universo no hay sorteo. Vale para CUALQUIER backtest, no solo el de septiembre: febrero
+o marzo vienen detras. Con tres ataduras:
 
 - **QUIEN:** el consultor. No una sesion, no un agente.
 - **CUANDO:** una sola vez, ANTES del sorteo. Nunca despues.
 - **QUE:** solo la columna de fechas. Ni resultados, ni PnL, ni una fila de operaciones.
+
+**Marzo de 2026 esta RECIBIDO y SIN ABRIR** (`docs/validation/REGISTRO-MARZO.md`, decision del
+consultor del 2026-09-30): entra por el camino de fidelidad como mes reservado, y no se sortea ni se
+ingiere hasta que A-42 este RESUELTA con el trader en la sesion 4 (PARADA B0 de
+`docs/runbooks/ENTRADA-MARZO.md`); lo unico que se lee antes es la columna de fechas, por el
+consultor (arriba), y sus 7 imagenes no se abren. Guardia: la de Claude Code bloquea su carpeta
+`Backtest marzo 2026`.
 
 **Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre**
 (ADR-0021 §4).
@@ -174,8 +186,9 @@ tabla de `PROJECT_STATE.md` son exactamente las abiertas) y
 - Un informe por rama en `docs/validation/`, con su estado al final.
 - Nada afirma mas de lo que su cita sostiene.
 - **Al abrir una rama** (skill `abrir-rama`): el prompt que la origina se copia tal cual en
-  `docs/encargos/<rama con - en lugar de />.md`, y se escribe su `contrato.yaml`
-  (`docs/runbooks/CONTRATO-DE-RAMA.md`). Guardia: `make check` comprueba el contrato.
+  `docs/encargos/<rama con - en lugar de />.md`, se escribe su `contrato.yaml`
+  (`docs/runbooks/CONTRATO-DE-RAMA.md`) y se archiva en `docs/state/HISTORIA.md` el
+  `PROJECT_STATE.md` de `main`. Guardia: `make check` comprueba el contrato.
 - Antes de declarar una rama lista para revisión: guarda el encargo en docs/encargos/, pasa el revisor y pega su informe al final del informe de la rama.
   El revisor es el subagente `revisor` (`.claude/agents/revisor.md`); lo que encuentra el y lo que
   encuentra despues el consultor se apunta en `docs/runbooks/ERRORES-RECURRENTES.md`, que tambien
@@ -202,10 +215,11 @@ tabla de `PROJECT_STATE.md` son exactamente las abiertas) y
 ## Las guardias de Claude Code (`.claude/`)
 
 Un hook `PreToolUse` (`.claude/hooks/guardia.py`, desde el 2026-10-01,
-`docs/validation/GUARDIAS-CLAUDE.md`) mira cada Read, Grep, Glob, Bash y PowerShell: bloquea leer el
-CONTENIDO del material protegido del punto 3 -y las hojas de las sesiones, las crudas de las sesiones
-en cuarentena (v7 en adelante) y lo que nombre un caso reservado- y deja listarlo, medirlo y
-hashearlo; y bloquea las operaciones prohibidas que su cabecera enumera (`--no-verify`,
+`docs/validation/GUARDIAS-CLAUDE.md`) mira cada Read, Grep, Glob, Bash y PowerShell. **Bloquea leer
+el CONTENIDO del material protegido** del punto 3 -el holdout, los libros de meses con dias
+reservados o sin sortear, las imagenes del material adicional, las hojas de las sesiones, las crudas
+de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso reservado- y deja listarlo,
+medirlo y hashearlo; y bloquea las operaciones prohibidas que su cabecera enumera (`--no-verify`,
 `push --force`, borrar tags o una rama remota que no sea `trabajo/`, `feature/` o `fix/`, ...). Lo
 que cuenta para la sesion:
 - **Una guardia no se rodea.** Si bloquea algo legitimo, se dice en el informe y se corrige la
@@ -214,7 +228,9 @@ que cuenta para la sesion:
   curso, aunque este commiteado, se lee como codigo sin revisar: por eso un guion que nombre una
   carpeta protegida se bloquea aunque no la abra.
 - **Los tramos no citables** (`knowledge/corpus/tramos_no_citables.yaml`) de un video que no esta en
-  cuarentena tampoco se leen: la cruda de v6 se lee por trozos (Read con `offset` y `limit`) que no
-  toquen 0:41:00-0:50:11 ni 1:53:30-1:57:31 (decisiones del consultor del 2026-10-01).
+  cuarentena tampoco se leen: v6 queda fuera de la cuarentena solo con sus tramos bloqueados
+  (0:41:00-0:50:11 y 1:53:30-1:57:31), en sus ficheros, en las propuestas que copian sus segmentos y
+  en la CLI; su cruda se lee por trozos (Read con `offset` y `limit`) que no los toquen. Decisiones
+  del consultor del 2026-10-01.
 - Es defensa en profundidad: la barrera sigue siendo el codigo (`casos_reservados`, la compuerta del
   arnes).

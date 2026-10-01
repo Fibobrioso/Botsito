@@ -785,11 +785,33 @@ def test_los_ajustes_registran_la_guardia_y_las_denegaciones() -> None:
         "BOTSITO_ALLOW_MAIN=1 git commit --no-verify -m x",
         "git push origin --delete main",
         "git push origin --delete refs/tags/x",
+        "git push origin --delete refs/heads/main",
         "git push origin :stable/F01",
+        "git push origin :refs/heads/main",
+        # Lo que cubria `git push * --delete *` antes de partirla (revision del consultor de
+        # `trabajo/dieta-y-skills`): el borrado MIXTO, con una rama de trabajo delante.
+        "git push origin --delete fix/x main",
+        "git push origin --delete fix/x stable/F36j-guardia-linux",
+        "git push origin --delete trabajo/x refs/tags/x",
+        "git push origin --delete fix/x refs/heads/main",
+        "git push origin :fix/x :main",
+        "git push origin :fix/x :stable/F01",
+        "git push origin -d main",
+        "git push origin -d stable/F01",
+        "git push origin -d fix/x main",
+        "git push origin -d fix/x stable/F01",
+        "git push origin --force fix/x",
+        "git push --no-verify origin fix/x",
     ):
         assert any(_casa_regla(r, comando) for r in deny), comando
     # El borrado de la `fix/<rama>` del ritual no lo deniega ninguna regla: lo decide la guardia.
-    for comando in ("git push origin --delete fix/x", "git push origin :fix/x"):
+    for comando in (
+        "git push origin --delete fix/x",
+        "git push origin :fix/x",
+        "git push origin -d fix/dieta-y-skills",
+        "git push origin --delete trabajo/x feature/F35-orden-stop-pivote",
+        "git push origin --delete fix/main-nueva",
+    ):
         assert not any(_casa_regla(r, comando) for r in deny), comando
 
 

@@ -125,7 +125,7 @@ Decisiones, todas mias y todas revisables:
   (`test_el_readme_indexa_exactamente_los_adr_que_existen`).
 - **Las rutas citadas**: `test_project_state_rutas.py` miraba solo «Important Files»; ahora mira
   PROJECT_STATE entero (sin `data/`, que la CI no tiene).
-- **Tope**: `test_project_state_cabe_en_el_tope`, 25.000 bytes. Hoy hay 4,4 KB de margen, para que
+- **Tope**: `test_project_state_cabe_en_el_tope`, 25.000 bytes. Con la primera version habia 4,4 KB de margen (tras la revision del consultor, 1.915 bytes: §6.4), para que
   el commit de estado de un cierre (que anade una linea y una entrada) quepa.
 
 ### 1.3 HISTORIA.md, y que ningun texto se pierde
@@ -266,6 +266,193 @@ patrones de defecto», con la entrada de Technical Debt copiada tal cual.
 Linea J: «Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan
 híbrido, pre-registrado antes de medir». El umbral no lo he escrito.
 
+## 6. La revision del consultor (2026-10-01), punto por punto
+
+La orden esta copiada tal cual en `docs/encargos/trabajo-dieta-y-skills.md`, «Segunda orden».
+
+### 6.1 `.claude/settings.json` frente a `main`
+
+El diff completo (`git diff main -- .claude/settings.json`), tras esta revision:
+
+```diff
+diff --git a/.claude/settings.json b/.claude/settings.json
+index b04a0ca..41ff446 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -20,8 +20,26 @@
+       "Bash(git push * -f *)",
+       "Bash(git tag -d *)",
+       "Bash(git tag --delete *)",
+-      "Bash(git push * --delete *)",
++      "Bash(git push * --delete main*)",
++      "Bash(git push * --delete stable/*)",
++      "Bash(git push * --delete refs/tags/*)",
++      "Bash(git push * --delete refs/heads/main*)",
++      "Bash(git push * --delete * main*)",
++      "Bash(git push * --delete * stable/*)",
++      "Bash(git push * --delete * refs/tags/*)",
++      "Bash(git push * --delete * refs/heads/main*)",
++      "Bash(git push * -d main*)",
++      "Bash(git push * -d stable/*)",
++      "Bash(git push * -d refs/tags/*)",
++      "Bash(git push * -d refs/heads/main*)",
++      "Bash(git push * -d * main*)",
++      "Bash(git push * -d * stable/*)",
++      "Bash(git push * -d * refs/tags/*)",
++      "Bash(git push * -d * refs/heads/main*)",
++      "Bash(git push * :main*)",
++      "Bash(git push * :stable/*)",
+       "Bash(git push * :refs/tags/*)",
++      "Bash(git push * :refs/heads/main*)",
+       "Bash(rm -rf data*)",
+       "Bash(rm -rf ./data*)",
+       "Bash(rm -rf corpus*)",
+```
+
+**Se habia perdido algo al partir la regla, y se recupera.** La regla vieja `Bash(git push * --delete *)`
+denegaba cualquier `--delete`, y con eso tambien los borrados MIXTOS -una rama de trabajo delante y
+`main` o un tag detras: `--delete fix/x main`, `--delete fix/x stable/…`, `--delete fix/x
+refs/tags/x`- y `--delete refs/heads/main`. Las seis reglas de la primera version solo casaban con
+el nombre prohibido JUSTO despues de `--delete` o de `:`, asi que esos cuatro casos los paraba solo
+el hook. Ahora hay una forma `* <nombre>` para cada uno, que exige un ESPACIO delante del nombre
+prohibido: `--delete * main*` deniega `--delete fix/x main` y no `--delete fix/main-nueva`. Y
+lo mismo con `-d`, que la regla vieja tampoco cubria.
+
+Que sigue denegado en la capa de permisos, comprobado con `_casa_regla` en
+`test_los_ajustes_registran_la_guardia_y_las_denegaciones`:
+- **borrar tags**: `git tag -d` y `git tag --delete` (sin cambios); en remoto, `--delete stable/*`,
+  `--delete refs/tags/*`, `-d` con los mismos, `:stable/*` y `:refs/tags/*`, solos o detras de
+  una rama de trabajo;
+- **borrar `main`**: `--delete main`, `--delete refs/heads/main`, `-d main`, `:main`,
+  `:refs/heads/main`, solos o mixtos;
+- **`push --force`**: `--force*`, `-f` (sin cambios);
+- **`--no-verify`**: en `commit`, `merge` y `push` (sin cambios).
+
+Y NO se deniega `--delete fix/x`, `:fix/x`, `-d fix/dieta-y-skills`, `--delete trabajo/x
+feature/F35-orden-stop-pivote` ni `--delete fix/main-nueva` (el mismo test), ni ninguna linea del
+ritual (`test_ninguna_denegacion_toca_el_ritual`, que ya lleva el push a `fix/<rama>` y su borrado).
+Lo que la capa de permisos no ve y el hook si: un tag que no se llame `stable/*` ni vaya con
+`refs/tags/`, y el `+` de un refspec forzado; por eso la decision fina sigue siendo del hook.
+
+### 6.2 CLAUDE.md: lo que se mudo, y las reglas que tienen que quedarse
+
+Mudado TAL CUAL (la tabla de §2 con sus lineas):
+- a `docs/runbooks/MIRAR-EL-MATERIAL.md`: «Estan infrautilizados…» (los 25.372 PNG y el recuento de
+  fotogramas citados); los dos recuadros «Por que cambio esta regla»; «COMO SE ABRE UN FOTOGRAMA:
+  POR INSTANTE LOCALIZADO, NUNCA POR MUESTREO» con su procedimiento; «EL RELOJ DE LOS GRAFICOS DE FX
+  REPLAY ES UTC+2 FIJO» y «Y LA REGLA QUE SALE DE AHI» (fijar el huso de las dos fuentes); y la
+  seccion entera «Donde esta el texto de las transcripciones»;
+- a `docs/runbooks/AMBIGUEDADES.md`: las secciones enteras «Abrir una ambiguedad toca dos sitios;
+  cerrarla, cuatro» y «Cerrar una ambiguedad toca cuatro sitios, y solo dos los vigila una guardia».
+
+Las reglas que la orden nombra, en el `CLAUDE.md` de la rama:
+
+| Regla | Donde esta en CLAUDE.md |
+|---|---|
+| Holdout | «Que se puede mirar y que no», punto 3: `knowledge/cases/holdout/**` y la puerta de ADR-0033 |
+| Meses con dias reservados o sin sortear | punto 3 (el detalle de los dias reservados y los agregados) y «Las guardias de Claude Code»: «los libros de meses con dias reservados o sin sortear, las imagenes del material adicional…». **Esa lista se habia acortado en la primera version: devuelta tal cual** |
+| Marzo sin abrir | **parrafo nuevo** «Marzo de 2026 esta RECIBIDO y SIN ABRIR», con `REGISTRO-MARZO.md`, la PARADA B0 y la guardia. En el `CLAUDE.md` de `main` no estaba (solo «febrero o marzo vienen detras», que tambien se habia quitado y vuelve) |
+| Tramos no citables | «Las guardias de Claude Code»: los de v6, con sus dos tramos, en ficheros, propuestas y CLI (vuelve la redaccion de `main`) |
+| Transcripciones en cuarentena | «Las guardias de Claude Code»: «las crudas de las sesiones en cuarentena (v7 en adelante)» |
+| `--no-verify` | «Se trabaja en una rama: main no se toca»: «Ningún commit sin el sello de `make check`, y NUNCA `--no-verify`», con su guardia |
+| Cierre solo por orden del usuario | la misma seccion: «SOLO ante una ORDEN DE CIERRE EXPLICITA de Aleks», y «Por donde se empieza»: `cerrar-rama` (solo con orden de cierre de Aleks) |
+| Trailer `Fuente:` | «El trailer `Fuente:`», entero |
+
+Ninguna de ellas se mudo entera; lo que faltaba era recorte de la primera version y ya esta
+devuelto.
+
+### 6.3 Los hallazgos del revisor
+
+**El «importa», literal (B1):** «La guardia permite borrar `main` con el refspec forzado `+:main`:
+`git push origin +:main`. `decidir_borrado_remoto` solo trata como borrado el refspec que empieza por
+`:`. `.claude/settings.json` tampoco lo cubre, porque sus `deny` son `:main*` y `--delete main*`. No
+es una regresión, porque el código anterior también exigía `startswith(":")`. Pero el encargo pide
+«sigue bloqueando main» y «cualquier comando que no pueda decidir con seguridad», y los tests no
+tienen un caso `+:`.» **Como quedo:** medido por el hook completo, `+:main` ya lo bloqueaba la regla
+del push forzado en Bash y en PowerShell; la funcion sola no. Arreglado en `e5e257f`:
+`decidir_borrado_remoto` quita el `+` y lo lee como borrado, con un test de la funcion sola y el caso
+en las listas de Bash y de PowerShell.
+
+Los tres menores, una linea cada uno:
+- **A1** (las skills no se ejecutaron de punta a punta): sigue igual y declarado (§3); solo se
+  prueban con un cierre o una grabacion de verdad.
+- **B2** (`--mirror` pasa por `decidir_borrado_remoto`): arreglado en `e5e257f`; en PowerShell
+  pasaba DE VERDAD, no solo en la funcion.
+- **B3** (un tag llamado como una rama de trabajo): sigue declarado como riesgo residual (§0); los
+  tags de este repo son `stable/*`.
+
+### 6.4 La lista vieja de Next Action, punto por punto
+
+Regla de la orden: con evidencia de estar hecho, solo a HISTORIA; sin ella, se queda en
+`PROJECT_STATE.md`, en «Pendientes heredados (sin verificar)», una linea cada uno con su arranque
+literal (los primeros ~110 caracteres, cortados en un espacio: un corte a mitad de una ruta la rompia
+y lo cazo `test_las_rutas_de_project_state_existen`). Un punto hecho A MEDIAS cuenta como sin
+evidencia y se queda, con lo que si esta hecho dicho en la tabla. Lo genera
+`docs/validation/anexos/DIETA-Y-SKILLS/pendientes_heredados.py` desde el Archivo 1; la evidencia la
+puse yo, punto por punto.
+
+| Punto | Texto literal (arranque) | Evidencia de que esta hecho | Destino |
+|---|---|---|---|
+| A2 | A2. **Aleks ejecuta MedirDemoFTMO en la demo de FTMO** (docs/runbooks/DEMO-FTMO.md), tres ejecuciones: antes… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| A3 | A3. **Ramas de codigo, en este orden** (orden del consultor del 2026-09-29): | encabezado: de sus ramas, a), c) y 0) estan hechas; b), d) y e), no del todo | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| a | a) **sesgo**: RN-003 y RN-033 (siempre hay sesgo; la doble ruptura la decide el color) y RN-002 (cierre un… | ADR-0060; commit `6698426` (F32), tag `stable/F36-nocturno-01oct` | solo HISTORIA |
+| b | b) **sesiones independientes y varios escenarios por sesion**: `liquidez_tomada` caduca al abrir la sesion… | a medias: `liquidez_tomada` caduca al abrir la sesion en `bf1dc0b` (F33, A-46); la caja por operacion no: NOCTURNO-01OCT.md §5 la deja «detrás de F35», y nada la cierra | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| c | c) **gestion**: `stop_fraccion_redondeo` hacia fuera (hoy ROUND_DOWN hacia la entrada), RN-004 en la vela de… | redondeo hacia fuera: ADR-0061, `2cca34d`; RN-004 en M1: ADR-0062, `2763ceb` (los dos en `stable/F36-nocturno-01oct`); break even al tocar: ADR-0065, `stable/F36h-be-al-tick` | solo HISTORIA |
+| d | d) **vida de la orden stop** (RN-006, rama 3 de ADR-0056) y RN-007 (la vela casi plana; falta el umbral); | a medias: RN-006 en ADR-0064 (`stable/F36d-orden-stop-pivote`); RN-007 espera el umbral (Next Action H) | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 0 | 0) **REQUISITO PREVIO de cualquier corrida sobre meses de invierno, incluida fidelidad-dev: separar el reloj… | ADR-0063; commit `fad0305` (F36), tag `stable/F36-nocturno-01oct` | solo HISTORIA |
+| e | e) **calendario de cierres de mercado** para la regla de gap trading de FTMO (Technical Debt, 2026-09-29). | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| A4 | A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El… | a medias: la memoria de la suite en `stable/F31c-memoria-suite` y `stable/F31d-ci-linux-memoria`; la propuesta sobre ADR-0057 §5, sin aplicar (ningun commit la toca) | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| A5 | A5. **Para la sesion 4 con el trader**: confirmar A-42 (dijo «creo»); las siete ganadoras anotadas de mas de… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 2 | 2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto… | a medias: el libro esta en el corpus (`stable/F36f-registro-marzo`), pero marzo no esta en `knowledge/cases/visto/` ni hay CONFIRM del trader | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 6 | 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 7 | 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 8 | 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 9 | 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 10 | 10. EL DUEÑO, EN PARALELO: no comprar todavia -confirmar en el panel de FTMO que el tipo Swing existe para… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 12 | 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 15 | 15. **EN ESPERA: A-18: pregunta de reserva enviada al trader el 2026-09-23** (lo declara el consultor; es la… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 22 | 22. **SIGUIENTE: la sesion 02 con el trader, con A-35 y A-44 como PRIORIDAD** (desde ADR-0049 A-43 va en la… | a medias: la sesion 02 se grabo e ingirio (`stable/F19-sesion-02-videos`), pero no hay `knowledge/feedback/*-sesion-02/` y A-35 y A-44 siguen ABIERTAS | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 23 | 23. **MARZO: RECIBIDO el 2026-09-30 y SIN ABRIR** (`stable/F36f-registro-marzo`,… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 25 | 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): A-21 es la zona… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 27 | 27. **PENDIENTE PARA ALEKS, CON FTMO:** donde esta la linea entre operar con noticias en Swing y el gap… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 30 | 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 34 | 34. **PENDIENTES QUE DEJA `trabajo/ticks-llenado`, con dueno** (ADR-0051 §7): (a) la VENTANA DE TICKS DE… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 35 | 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 36 | 36. **EN MARCHA (el script existe desde `stable/F26-demo-ftmo-script`; lo ejecuta Aleks, punto A2): MEDIR EN… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+| 37 | 37. **PENDIENTE: LOS RECHAZOS POR VOLUMEN MAXIMO, EN LA RAMA DE STOP Y LOTE (A-18)** (2026-09-28, orden de… | sin evidencia | PROJECT_STATE, «Pendientes heredados (sin verificar)» |
+
+Resultado: 3 puntos (a, c, 0) solo en HISTORIA; 24 en «Pendientes heredados (sin verificar)», como
+subseccion `###` de Next Action (el test de secciones admite solo las once `##`). La primera linea
+del bloque viejo daba por HECHA tambien la rama b), y la evidencia dice que a medias: gana la
+evidencia. `PROJECT_STATE.md` pasa de 20.622 a 23.085 bytes: sigue por debajo de 25.000, pero el
+margen para el commit de estado de un cierre baja a 1.915 bytes (§1.2 decia 4,4 KB).
+
+### 6.5 Donde quedo la regla de mi memoria
+
+Lo que apunte en la memoria de la sesion (`project-state-historia-y-skills.md`) son cuatro reglas, y
+cada una esta ahora en `CLAUDE.md` o en `RITUAL.md`:
+- PROJECT_STATE solo presente, se sustituye sin «Lo anterior:», tope de 25 KB: `CLAUDE.md`,
+  «Regimenes de cambio», linea de `PROJECT_STATE.md` (**nueva en esta revision**), y `RITUAL.md`, la
+  lista de lo que edita el cierre;
+- HISTORIA solo se amplia y recibe el Archivo N al abrir cada rama: `CLAUDE.md`, «Regimenes de
+  cambio» (ampliada) y «Como se trabaja», «Al abrir una rama» (**nueva**); el como, en
+  `docs/state/README.md` y la skill `abrir-rama`;
+- la tabla de ambiguedades lleva solo las abiertas: `CLAUDE.md`, «Ambiguedades», y
+  `docs/runbooks/AMBIGUEDADES.md`;
+- `/cerrar-rama` es la orden de cierre: `CLAUDE.md`, «Por donde se empieza» y «Se trabaja en una
+  rama», y `RITUAL.md`, cabecera.
+
+### 6.6 La CI de Linux
+
+| Commit | Run | Resultado |
+|---|---|---|
+| `63efc02` (la rama) | `36911338342` | 1 failed, 1716 passed, 8 skipped: solo el esperado, `test_state_check_ok_on_real_repo` por `fix/` frente a `trabajo/` |
+| `e5e257f` (tras el revisor) | `36913763335` | 1 failed, 1721 passed, 8 skipped: el mismo, y solo ese |
+| `e5e257f` | `36913763427` | `cancelled` a los 2 s: el mismo push disparo dos runs y la concurrencia de la CI cancelo uno; no es un resultado |
+
+El run del commit de esta revision se apunta en la respuesta a la orden, porque escribirlo aqui
+exigiria otro commit y otro run.
+
 ## Archivos creados
 
 `docs/state/HISTORIA.md`, `docs/state/README.md`, `docs/runbooks/MIRAR-EL-MATERIAL.md`,
@@ -304,7 +491,7 @@ los tests `test_guardia_claude`, `test_project_state`, `test_project_state_rutas
 ## Que debe decidir el usuario
 
 1. Si «Next Action vigente» es lo no HECHO (§1.2): B, C, D y G fuera.
-2. Si la lista mecanica de pendientes del bloque viejo (A2… y 2, 6, 7… 37) sigue viva o se poda.
+2. Los 24 «Pendientes heredados (sin verificar)» (§6.4): cuales se cierran o se podan, uno a uno; la regla de la revision los deja todos mientras no haya evidencia.
 3. El umbral de cobertura de la linea J.
 
 ## Estado
@@ -392,3 +579,50 @@ aunque me dijiste…», «este texto es el que se pega»), resumidas o quitadas.
 > `git log/diff/status`, `cat` del encargo y del contrato; `uv run python scripts/contrato_rama.py`; `uv run pytest` sobre los tests citados; `uv run botsito state check`; `git show df6aa2c:PROJECT_STATE.md | wc -c` y `wc -c`; scripts Python de solo lectura que comparan HISTORIA y PROJECT_STATE con el original y llaman a `decidir_borrado_remoto`; `cat`/`sed`/`grep` de CLAUDE.md, el informe, las skills, `MIRAR-EL-MATERIAL.md` y `docs/state/README.md`. Dos intentos que la guardia o el hook de solo lectura bloquearon, sin rodearlos.
 
 Respuesta de la sesion a los hallazgos: **B1 y B2, arreglados** (§0; B1 ya lo paraba el push forzado en el hook completo, B2 pasaba de verdad en PowerShell). **A1 y B3, declarados**, sin cambio. Las citas que el revisor no abrio (`ACTIVAR-SESION-03.md`, `MEMORIA-SUITE.md`) las comprobe yo contra su fuente al escribir `ERRORES-RECURRENTES.md` (recuadro de correccion de ACTIVAR-SESION-03 y §1 y §5 de MEMORIA-SUITE).
+
+## Informe del revisor, segunda pasada (la revision del consultor)
+
+Pegado del subagente `revisor`, sobre los 7 ficheros estadiados encima de `e5e257f` y antes de
+`make check`. Los hallazgos y las tablas, tal cual; la lista de comandos, resumida.
+
+> ## Informe del revisor · trabajo/dieta-y-skills (cambios estadiados sobre e5e257f) · 2026-10-01
+>
+> Alcance: los 7 ficheros estadiados (`git diff --cached e5e257f`) frente a la «Segunda orden» (puntos 1 a 6) y a `docs/validation/DIETA-Y-SKILLS.md` §6. `make check` y el «pega su informe» no se cuentan.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | menor | §6.6 anota el run `36913763427` como `cancelled` a los 2 s, y `gh` lo marca con X en la vista resumen. La conclusión real es `cancelled`, así que el informe acierta. Un lector que mire solo el resumen lo verá como fallo. | `gh run view 36913763427 --json conclusion` → `"conclusion":"cancelled"`; anotación «Canceling since a higher priority waiting request for ci-refs/heads/fix/dieta-y-skills exists» |
+> | A2 | menor | §6.2 dice que «febrero o marzo vienen detras» «vuelve». Es cierto, pero CLAUDE.md:146 queda con el corte de línea en mitad de la frase («…no solo el de septiembre: febrero / o marzo vienen detrás»). Es forma, no contenido. | `CLAUDE.md:145-146` |
+>
+> Comprobado sin hallazgos: los tests de permisos (`-k "ajustes or ritual"`) en verde; el diff de §6.1 coincide con `git diff --cached main -- .claude/settings.json` (19 líneas añadidas y 1 quitada); PROJECT_STATE.md pesa 23.085 bytes; `6698426`, `2cca34d`, `2763ceb`, `fad0305` y `bf1dc0b` existen, son ancestros de `stable/F36-nocturno-01oct` y sus asuntos casan con la tabla; los tags y los ADR 0060 a 0065 citados existen; holdout, meses «reservados o sin sortear», cuarentena, tramos no citables de v6, `--no-verify`, ORDEN DE CIERRE y trailer `Fuente:` están en CLAUDE.md, y el párrafo de marzo es nuevo y sus referencias existen; `RITUAL.md:179-181` y CLAUDE.md:76-78 llevan la regla «sin Lo anterior» y el tope; nada en `knowledge/`, ADR ni spec.
+>
+> ### Eje (b) · Encargo (Segunda orden, puntos 1 a 6)
+> Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 6 hechos, 0 parciales, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1a | Pegar el diff completo de settings.json frente a main | Hecho | §6.1 pega el diff, y coincide con el real. |
+> | 1b | La capa de permisos sigue denegando borrar tags (`stable/*`, `refs/tags/`), borrar main, `push --force` y `--no-verify`, también en mixtos y con `-d` | Hecho | `settings.json` añade 14 reglas: `--delete`, `-d` y `:`, solos y con `* <nombre>` delante, más `refs/heads/main*`. El test cubre `--delete fix/x main`, `-d fix/x stable/F01`, `:fix/x :main`, `--force fix/x` y `push --no-verify`. |
+> | 1c | No chocar con borrar `trabajo/`, `feature/`, `fix/` | Hecho | El test comprueba que NO se deniegan `--delete fix/x`, `:fix/x`, `-d fix/dieta-y-skills`, `--delete trabajo/x feature/F35-…` y `--delete fix/main-nueva`. |
+> | 2 | Lista de secciones movidas, y reglas nombradas que se quedan en CLAUDE.md con puntero | Hecho | §6.2 lista lo movido; las 8 reglas aparecen en CLAUDE.md, con punteros en CLAUDE.md:116, 165 y 172. |
+> | 3 | Citar literal el hallazgo «importa» (B1) y dar los tres menores en una línea | Hecho | La cita de §6.3 coincide palabra por palabra con la celda «Hallazgo» de B1, salvo que omite la celda de evidencia. |
+> | 4 | Tabla de cuatro columnas; con evidencia solo a HISTORIA; sin evidencia a «Pendientes heredados (sin verificar)»; sin borrar por criterio propio; PROJECT_STATE < 25 KB | Hecho | 27 filas: a, c y 0 a HISTORIA, 24 a «Pendientes». Los 24 son prefijos literales de su línea en HISTORIA «Archivo 1» (script de solo lectura: `True 1` en los 24). b), d), A4 y 2 «a medias», comprobados; 22 (sin `*-sesion-02` en `knowledge/feedback/`) y 12 (sin marzo en `libros.yaml`), comprobados. |
+> | 5 | La regla de memoria, en RITUAL.md o CLAUDE.md | Hecho | CLAUDE.md:76-78, «Al abrir una rama», Ambigüedades y `RITUAL.md:179-181`. |
+> | 6 | Runs de la CI de Linux | Hecho | `36911338342`: failure, «1 failed, 1716 passed, 8 skipped», solo `test_state_check_ok_on_real_repo`. `36913763335`: failure, «1 failed, 1721 passed, 8 skipped», el mismo test. `36913763427`: cancelado por concurrencia. |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | menor | §6.6 fecha el run `36911338342` en `63efc02`. Es plausible, y la hora cuadra con el push. No contrasté el sha del run, solo la vista resumen de `gh`. | `gh run view 36911338342` (el sha del commit no sale en la vista corta) |
+>
+> ### Lo que no pude comprobar
+> - **`+:main` en la capa de permisos.** No se deniega ahí. Lo para el hook, y §6.1 lo dice. No lo probé con el hook completo: la guardia me bloquea invocar `guardia.py`.
+> - **Que los 21 puntos «sin evidencia» no estén hechos.** Solo comprobé a fondo 12, 22 y 2.
+> - **El sha de cada run de CI.** Solo vi la vista de `gh`.
+> - **`make check` y el sello.** Escriben, y no los ejecuté.
+
+Respuesta de la sesion: **A1**, nada que cambiar (el informe ya dice `cancelled`). **A2**, forma: se
+deja. **B1**, comprobado despues con `gh run view <run> --json headSha,conclusion`: `36911338342` →
+`63efc02 failure`; `36913763335` → `e5e257f failure`; `36913763427` → `e5e257f cancelled`.

@@ -39,3 +39,26 @@ Prompt de Aleks del 2026-10-01 que origina la rama, copiado tal cual:
 >
 > Ritual normal con make check sellado, sin --no-verify. Pasa el revisor al terminar.
 > «Rama lista para revisión, NO cerrada.»
+
+## Segunda orden: revision del consultor (2026-10-01)
+
+Copiada tal cual; la responde `docs/validation/DIETA-Y-SKILLS.md` §6.
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Revisión de trabajo/dieta-y-skills. Antes del cierre, en esta misma rama:
+>
+> 1. .claude/settings.json: pega el diff completo frente a main. Confirma que la capa de permisos sigue denegando borrar tags (stable/* y refs/tags/), borrar main, push --force y --no-verify, aunque el hook también lo haga. Si alguna denegación se perdió al partir la regla, recupérala con una forma que no choque con borrar trabajo/, feature/ y fix/.
+>
+> 2. CLAUDE.md: pega la lista de secciones movidas a MIRAR-EL-MATERIAL.md y AMBIGUEDADES.md. Toda regla sobre holdout, meses reservados o sin sortear, marzo sin abrir, tramos no citables, transcripciones en cuarentena, --no-verify, cierre solo por orden del usuario y trailers Fuente: tiene que quedar en CLAUDE.md, al menos como una línea con su puntero. Si alguna se movió entera, devuélvela.
+>
+> 3. El hallazgo «importa» del revisor: cítalo literal y di cómo quedó. Haz lo mismo con los tres menores, en una línea cada uno.
+>
+> 4. Lista vieja de Next Action (A2 a A5, las ramas de A3 y los puntos 2, 6, 7, 8, 9, 10, 12, 15, 22, 23, 25, 27, 30, 34, 35, 36 y 37). Haz una tabla con cuatro columnas: el punto, su texto literal en una línea, la evidencia de que está hecho (commit, tag, ADR o test) o «sin evidencia», y el destino. Regla: con evidencia va solo a HISTORIA; sin evidencia se queda en PROJECT_STATE, en una sección «Pendientes heredados (sin verificar)», con una línea cada uno. No borres nada por criterio propio. Comprueba que PROJECT_STATE sigue por debajo de 25 KB.
+>
+> 5. Lo que apuntaste en tu memoria sobre el nuevo régimen de PROJECT_STATE: si es una regla, tiene que estar en RITUAL.md o en CLAUDE.md. Di dónde quedó.
+>
+> 6. Añade al informe los dos runs de la CI de Linux.
+>
+> make check sellado y vuelve a empujar como fix/dieta-y-skills para la CI de Linux. Pasa el revisor solo sobre lo que cambie y pega su informe.
+> «Rama lista para revisión, NO cerrada.»
