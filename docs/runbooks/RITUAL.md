@@ -87,6 +87,24 @@ no está.
 Así se ejecutó el cierre de `trabajo/mayo-dev-ingerido` el 2026-09-22, en este orden. Una línea `!`
 por paso, mirando la salida de cada una.
 
+### Antes del merge: el contrato sale de la rama (desde el 2026-10-01)
+
+Si la rama tiene `contrato.yaml` (`docs/runbooks/CONTRATO-DE-RAMA.md`), sale de ella ANTES del
+merge, en la propia rama y con su sello, porque en `main` no se exige y la rama siguiente lo
+heredaría. Es el único commit que el cierre añade a la rama, y se cuenta en la puerta de
+`git log --oneline main..trabajo/<rama>`.
+
+```
+git branch --show-current
+git rm contrato.yaml
+make check > make-check.log 2>&1
+grep "SELLO: make check en verde" make-check.log
+rm make-check.log
+git commit -m "chore(contrato): sale de la rama antes del merge"
+```
+→ **Puerta:** la rama es la de trabajo, y `make check` dice `CONTRATO: sin contrato.yaml`. Sin
+contrato, `make check` no comprueba nada del contrato, así que este sello es el de siempre.
+
 ```
 git checkout main
 git status --short
@@ -196,7 +214,9 @@ probó: se vuelve a `make check`, nunca a `--no-verify`.
 git push --atomic origin main stable/<tag>
 ```
 → **Puerta:** termina sin error y lista los dos refs, `main` y el tag. Solo se ejecuta con el commit
-hecho. **`main` y el tag van SIEMPRE en el mismo push `--atomic`** (corrección 8): o llegan los dos,
+hecho. **Desde el 2026-10-01 Claude Code pide confirmacion antes de este push** (regla `ask` de
+`.claude/settings.json`, `trabajo/guardias-claude`): es lo esperado, y se confirma solo con la orden
+de cierre dada. **`main` y el tag van SIEMPRE en el mismo push `--atomic`** (corrección 8): o llegan los dos,
 o ninguno.
 
 ```
