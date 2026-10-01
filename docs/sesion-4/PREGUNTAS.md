@@ -249,7 +249,7 @@ ADR-0060 §2.
   el original.
 - **Pregunta:** «Para el bot, ¿qué backtest de agosto vale?
   - (a) el que hiciste primero, completo;
-  - (b) el del vídeo, aunque te saltaste algunos break even.»
+  - (b) el del vídeo.»
 
 **17. Si solo el 0 de la caja cuenta frente al nivel tomado.** · PARCIAL · A-50.
 - **Ya dijo** «¿El 0 o el 0? No, no importa» (v9 0:51:08–0:51:12), y que todo tiene que
@@ -270,6 +270,8 @@ docs/validation/REGISTRO-MARZO.md. La añadió el consultor el 2026-09-30: va la
   ni se abrirán**: si son capturas de la pestaña Analytics, son agregados de un mes que tendrá días
   reservados. No se le enseña ninguna.
 - **Pregunta:** «¿Qué son las 7 capturas que venían con el backtest de marzo?»
+- **Nota para Aleks:** pregunta solo qué tipo de capturas son; si empieza a dar cifras, córtalo; el
+  tramo va a cuarentena.
 
 ## 2. Las que ya están respondidas: no se vuelven a preguntar
 

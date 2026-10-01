@@ -190,6 +190,60 @@ de su colocación si está grabada, abriendo fotogramas solo por instante locali
 eso, la salida entre cajas deja de ser una cota y se lleva el dato a la sesión. Y preguntar al
 trader por estas salidas sin enseñarle cifras de viabilidad. No se ha hecho aquí.
 
+#### 4.1.1 La caja 0 → 1 en los fotogramas: ninguna de las siete se puede medir (2026-09-30)
+
+Añadido el 2026-09-30 en la rama `feature/reflejar-feedback-s3`, por orden del consultor. Lo de
+arriba queda como estaba. Solo construcción, y cada fotograma abierto por un instante localizado
+antes en la transcripción (ADR-0038). Ninguno cae en `tramos_no_citables.yaml`.
+
+**Qué días graba algún vídeo.** Se buscó «abril» en las transcripciones crudas de todos los vídeos:
+- v3 enseña el Excel del 23, 24 y 27 de abril;
+- v5 es el 29 de abril;
+- v9 habla de abril sin enseñarlo.
+
+Para agosto, la transcripción de v7 localiza los cambios de sesión, y en cada uno se leyó la fecha
+en el gráfico:
+- 0:27:40 → lunes 3, 14:24;
+- 0:41:05 → miércoles 5, 14:55;
+- 0:55:30 → jueves 6, 20:29;
+- 1:03:10 → lunes 10, 10:29.
+
+| operación (llenado UTC) | ¿la graba un vídeo? | medida |
+|---|---|---|
+| 04-01 12:30 | no: ningún vídeo enseña el 1 de abril | **no medible** |
+| 04-06 06:34 | no: ningún vídeo enseña el 6 de abril | **no medible** |
+| 04-13 06:50 | no: ningún vídeo enseña el 13 de abril | **no medible** |
+| 04-13 10:26 | no | **no medible** |
+| 04-29 07:58 | **sí**: v5 0:03:12–0:04:23, la reentrada sobre la de 07:55, con la misma entrada y el mismo stop | **no concluyente** (ver abajo) |
+| 04-29 09:36 | no: v5 dura 6 min y su transcripción solo recorre la entrada de 07:55 y su reentrada | **no medible** |
+| 08-07 05:14 (07:14 en el gráfico) | **no está**: el vídeo pasa por la primera sesión del viernes 7 sin entrar | **no medible** |
+
+- **04-29 07:58.** La caja está dibujada y sus etiquetas se leen (v5 0:03:45, `000225000.png`: `0`
+  en y≈424, `1` en y≈237). Pero ese fotograma no enseña el eje de precios, así que la caja no se
+  puede pasar a puntos; se volvió a mirar hoy y sigue sin eje. Es la misma operación que
+  `LA-CAJA-DEL-29-DE-ABRIL.md` (R2 y R10) ya intentó medir con un pre-registro y que dio **NO
+  CONCLUYENTE**: los extremos 0 y 1 no tienen línea propia y el ancla no se sostiene. No se repite
+  la medida con otro criterio.
+- **08-07.** La transcripción de esa sesión dice «no habría entrada aquí […] quedaría invalidado […]
+  aquí tampoco habría entrada» (v7 0:54:55–0:56:59). En el fotograma de v7 0:56:37, el gráfico de
+  M1 del viernes 7 de 07:00 a 08:40 (UTC+2) no tiene caja ni orden dibujadas, solo niveles
+  horizontales. La operación del libro no está en el backtest grabado, que es lo que pregunta E-1:
+  el trader tiene dos backtests de agosto y no coinciden.
+
+**Resultado: 0 de 7 medidas en pantalla.** Siguen valiendo las cotas de la tabla de §4.1 (de 4,15 a
+5,33 cajas con el stop en el 1, y de 3,32 a 4,27 con el stop en el 0,8), y ninguna de las dos
+lecturas cae en unas 3 cajas. Para medir la caja de esas siete hace falta material que no está en el
+corpus: o el trader las graba, o da la caja de cada una. Por orden del consultor, **esto no va en la
+hoja del trader**.
+
+**Lo abierto en esta medida, declarado en `HOLDOUT-EXPOSICIONES.md` el mismo día:**
+- v7: 0:27:40, 0:41:05, 0:55:30, 0:56:37, 0:57:05 y 1:03:10;
+- v5: 0:03:45.
+
+Agosto y abril son material de desarrollo. Los fotogramas de v7 enseñan abajo el saldo de la cuenta
+del replay, que es un agregado: sus cifras se listan allí y no se usan para nada. La conclusión
+sobre el 7 de agosto sale de la transcripción y del dibujo, no del saldo.
+
 ## 5. Tests que cambian a propósito
 
 **Los que fallaron en la primera corrida, y por qué.** La suite se cortó por memoria al 69 %, con dos

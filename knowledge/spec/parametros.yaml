@@ -1192,12 +1192,15 @@ parametros:
       objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que
       existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve,
       viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor
-      NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015)
+      NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015).
+      CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0,
+      ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es
+      la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1
     estado: CONFIRMED
     valor: "caja_completa"
     fuente:
-      tipo: evidence
-      id: ev-v2-003256-0197f4e1
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-f572f1a0
   - nombre: instrumento
     categoria: estrategia
     tipo: texto
