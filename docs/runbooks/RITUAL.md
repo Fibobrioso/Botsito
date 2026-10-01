@@ -214,7 +214,9 @@ probó: se vuelve a `make check`, nunca a `--no-verify`.
 git push --atomic origin main stable/<tag>
 ```
 → **Puerta:** termina sin error y lista los dos refs, `main` y el tag. Solo se ejecuta con el commit
-hecho. **`main` y el tag van SIEMPRE en el mismo push `--atomic`** (corrección 8): o llegan los dos,
+hecho. **Desde el 2026-10-01 Claude Code pide confirmacion antes de este push** (regla `ask` de
+`.claude/settings.json`, `trabajo/guardias-claude`): es lo esperado, y se confirma solo con la orden
+de cierre dada. **`main` y el tag van SIEMPRE en el mismo push `--atomic`** (corrección 8): o llegan los dos,
 o ninguno.
 
 ```

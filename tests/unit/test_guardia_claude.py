@@ -107,9 +107,17 @@ def repo(tmp_path: Path) -> Path:
     ):
         _escribir(r, rel)
     (r / ".gitignore").write_text("/corpus/\n/data/*\n", encoding="utf-8")
-    _git(r, "init", "-q", "-b", "trabajo/prueba")
+    _escribir(
+        r,
+        "knowledge/corpus/tramos_no_citables.yaml",
+        'tramos:\n  - video_id: v6\n    t0: "0:41:00"\n    t1: "0:50:11"\n    motivo: x\n'
+        '  - video_id: v6\n    t0: "1:53:30"\n    t1: "1:57:31"\n'
+        '  - video_id: v7\n    t0: "0:15:34"\n    t1: "0:15:48"\n',
+    )
+    _git(r, "init", "-q", "-b", "main")
     _git(r, "add", "-A")
     _git(r, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "inicio")
+    _git(r, "checkout", "-q", "-b", "trabajo/prueba")
     return r
 
 
@@ -264,7 +272,6 @@ def test_pytest_sobre_codigo_suelto_se_lee_como_un_guion(
         f"{MATERIAL}/backtesting-analytics ENERO 2026.xlsx",
         f"{MATERIAL}/Mensajes del trader/mensaje.txt",
         "data/transcripciones/v1/large-v3/cruda.txt",
-        "data/transcripciones/v6/large-v3/cruda.jsonl",
         "data/fotogramas/v4/png-1fps/004800000.png",
         "data/visor/caso-eurusd-2026-04-01.html",
         "knowledge/cases/holdout/1/README.md",
@@ -372,6 +379,106 @@ def test_core_hookspath_es_saltarse_los_hooks(g: ModuleType, repo: Path) -> None
     assert _bash(g, repo, "git config core.hooksPath") is None  # leerlo no lo cambia
     motivo = _decide(g, repo, "PowerShell", command="git config core.hooksPath NUL")
     assert motivo is not None
+
+
+def _segmentos_v6(repo: Path) -> Path:
+    """Cinco segmentos: el tercero dentro del tramo 0:41:00-0:50:11, los demas fuera."""
+    tiempos = [
+        (0, 1000),
+        (600000, 610000),
+        (2470000, 2480000),
+        (3100000, 3110000),
+        (3200000, 3201000),
+    ]
+    lineas = [
+        json.dumps({"n": i, "t0_ms": a, "t1_ms": b, "texto": "x"})
+        for i, (a, b) in enumerate(tiempos)
+    ]
+    return _escribir(repo, "data/transcripciones/v6/large-v3/cruda.jsonl", "\n".join(lineas) + "\n")
+
+
+def test_v6_se_lee_salvo_sus_tramos_no_citables(g: ModuleType, repo: Path) -> None:
+    """Decision del consultor del 2026-10-01: la exencion de v6 se mantiene solo con sus tramos
+    bloqueados."""
+    cruda = _segmentos_v6(repo)
+    txt = _escribir(
+        repo,
+        "data/transcripciones/v6/large-v3/cruda.txt",
+        "[0:00:00.000] a\n[0:10:00.000] a2\n[0:40:00.000] b\n[0:45:00.000] c\n[0:51:00.000] d\n",
+    )
+    # Se bloquea tambien la linea vecina de un tramo (margen de una linea, por prudencia), y la
+    # ultima, que no tiene fin conocido.
+    assert _decide(g, repo, "Read", file_path=str(cruda)) is not None  # entero: toca el tramo
+    assert _decide(g, repo, "Read", file_path=str(cruda), offset=1, limit=1) is None
+    assert _decide(g, repo, "Read", file_path=str(cruda), offset=5, limit=1) is None
+    motivo = _decide(g, repo, "Read", file_path=str(cruda), offset=2, limit=2)
+    assert motivo is not None and "Lineas en tramo no citable: 3" in motivo
+    assert _decide(g, repo, "Read", file_path=str(txt), offset=1, limit=1) is None
+    assert _decide(g, repo, "Read", file_path=str(txt), offset=3, limit=1) is not None  # 0:40-0:45
+    assert _bash(g, repo, f'cat "{cruda}"') is not None
+    assert _bash(g, repo, f'grep -n stop "{cruda}"') is not None
+    assert _bash(g, repo, f'sha256sum "{cruda}"') is None
+
+
+@pytest.mark.parametrize(
+    ("comando", "bloquea"),
+    [
+        ("uv run botsito corpus frames show --video v6 --t 0:45:00", True),
+        ("uv run botsito corpus frames show --video v6 --t 0:30:00", False),
+        ("uv run botsito kb at --video v6 --t 1:55:00 --contexto", True),
+        ("uv run botsito kb at --video v6 --t 1:58:00", False),
+        ("uv run botsito corpus transcript show --video v6 --t0 0:40:00 --t1 0:42:00", True),
+        ("uv run botsito corpus transcript show --video v6 --t0 0:10:00 --t1 0:20:00", False),
+        ("uv run botsito kb find stop --video v6", True),
+        ("uv run botsito kb find stop --video v6 --desde 0:00:00 --hasta 0:30:00", False),
+        ("uv run botsito kb find stop --video v6 --desde 0:30:00 --hasta 1:00:00", True),
+    ],
+)
+def test_la_cli_no_imprime_un_tramo_de_v6(
+    g: ModuleType, repo: Path, comando: str, bloquea: bool
+) -> None:
+    assert (_bash(g, repo, comando) is not None) is bloquea, comando
+
+
+def test_una_propuesta_con_segmentos_de_un_tramo(g: ModuleType, repo: Path) -> None:
+    dentro = _escribir(
+        repo,
+        "knowledge/_proposals/pr-v6-004900-005100-aaaa.yaml",
+        "contexto:\n  segmentos:\n  - n: 1\n    t0_ms: 2998843\n    t1_ms: 3001023\n",
+    )
+    fuera = _escribir(
+        repo,
+        "knowledge/_proposals/pr-v6-001000-001100-bbbb.yaml",
+        "contexto:\n  segmentos:\n  - n: 1\n    t0_ms: 600000\n    t1_ms: 601000\n",
+    )
+    assert _decide(g, repo, "Read", file_path=str(dentro)) is not None
+    assert _decide(g, repo, "Read", file_path=str(fuera)) is None
+    assert (
+        _decide(g, repo, "Grep", pattern="x", path=str(repo / "knowledge/_proposals")) is not None
+    )
+    assert _decide(g, repo, "Grep", pattern="x") is None  # limite declarado (§1.7)
+
+
+def test_los_tramos_del_repo_real(g: ModuleType) -> None:
+    """v7 y v9 tienen tramos, pero su cruda ya no se lee entera: solo se vigilan los de v6."""
+    assert g.Politica(RAIZ).tramos_vigilados == {
+        "v6": [(2_460_000, 3_011_000), (6_810_000, 7_051_000)]
+    }
+
+
+def test_solo_el_guion_de_main_es_codigo_revisado(g: ModuleType, repo: Path) -> None:
+    """Decision del consultor del 2026-10-01: un guion nuevo o cambiado en la rama en curso pasa
+    por el hook como cualquier otro comando, aunque este commiteado."""
+    marzo = f"{MATERIAL}/Backtest marzo 2026/backtesting-analytics MARZO 2026.xlsx"
+    _escribir(repo, "scripts/nuevo.py", f"print(open(r'{repo / marzo}', 'rb').read())\n")
+    _git(repo, "add", "-A")
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "nuevo")
+    motivo = _bash(g, repo, "uv run python scripts/nuevo.py")
+    assert motivo is not None and "MARZO" in motivo.upper()
+    assert _bash(g, repo, f'uv run python scripts/huso_por_velas.py --libro "{marzo}"') is None
+    _escribir(repo, "scripts/huso_por_velas.py", "print('cambiado en la rama')\n")
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-am", "cambia")
+    assert _bash(g, repo, f'uv run python scripts/huso_por_velas.py --libro "{marzo}"') is not None
 
 
 def test_un_guion_seguido_es_codigo_revisado_y_uno_nuevo_se_lee(
@@ -573,6 +680,22 @@ def test_los_ajustes_registran_la_guardia_y_las_denegaciones() -> None:
         "BOTSITO_ALLOW_MAIN=1 git commit --no-verify -m x",
     ):
         assert any(_casa_regla(r, comando) for r in deny), comando
+
+
+def test_el_push_a_main_pide_confirmacion() -> None:
+    """Decision del consultor del 2026-10-01: `ask`, no `deny`. El ritual sigue pudiendo empujar,
+    pero solo con la confirmacion de Aleks; una tarea nocturna se queda esperando."""
+    ask = json.loads(AJUSTES.read_text(encoding="utf-8"))["permissions"]["ask"]
+    for comando in (
+        "git push --atomic origin main stable/F37-guardias-claude",
+        "git push origin main",
+        "BOTSITO_ALLOW_MAIN=1 git push origin main",
+        "git push origin HEAD:main",
+        "git push origin HEAD:refs/heads/main",
+    ):
+        assert any(_casa_regla(r, comando) for r in ask), comando
+    for comando in ("git push origin trabajo/guardias-claude", "git push -u origin feature/x"):
+        assert not any(_casa_regla(r, comando) for r in ask), comando
 
 
 @pytest.mark.parametrize("comando", RITUAL)

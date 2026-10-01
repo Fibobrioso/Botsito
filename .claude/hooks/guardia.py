@@ -86,6 +86,12 @@ R_CUARENTENA = (
     "cruda de una sesion con el trader no la lee ninguna persona ni ningun modelo; solo la version "
     "FILTRADA"
 )
+R_TRAMO = (
+    "CLAUDE.md, «Las guardias de Claude Code»: los tramos no citables "
+    "(`knowledge/corpus/tramos_no_citables.yaml`) de un video que no esta en cuarentena no se "
+    "leen; la cruda de v6 queda exenta de la cuarentena SOLO con sus tramos bloqueados (decision "
+    "del consultor del 2026-10-01)"
+)
 R_CASO = (
     "CLAUDE.md, «Que se puede mirar y que no», punto 3: un caso de una particion reservada "
     "(`casos_reservados`, `casos_ocultos`) no se lee sin la puerta de ADR-0033"
@@ -153,6 +159,12 @@ MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-08")
 # y se leyo antes de que existiera la cuarentena, y su dia reservado esta RETIRADO del holdout
 # (ADR-0041, docs/validation/V6-FUERA-DEL-HOLDOUT.md). Desde v7 la cruda no se lee.
 SESIONES_SIN_CUARENTENA = frozenset({"v6"})
+TRAMOS_NO_CITABLES = "knowledge/corpus/tramos_no_citables.yaml"
+# Lo que hay en la carpeta de una transcripcion y no es texto: se puede abrir aunque tenga tramos.
+SIN_TEXTO = (".wav", ".sha256", ".sha256_video", "huella.txt", "video.sha256")
+# Ficheros de una transcripcion que van por segmentos, una linea cada uno: con tramos, se leen
+# por trozos (Read con offset y limit) que no los toquen.
+POR_LINEAS = ("cruda.jsonl", "corregida.jsonl", "cruda.txt")
 ACCIONES_DE_CASO = ("LABEL_CASE", "MARK_FALSE_POSITIVE", "MARK_FALSE_NEGATIVE", "BORDERLINE")
 
 MATERIAL = "corpus/estrategia del trader/material adicional de su operativa"
@@ -179,6 +191,7 @@ MESES = {
     "diciembre": 12,
 }
 _MES = re.compile(r"(?<![a-z])(" + "|".join(MESES) + r")(?![a-z])\D{0,3}(\d{4})?")
+_INSTANTE = re.compile(r"^(\d+):(\d{1,2}):(\d{1,2})(?:[.,](\d+))?$")
 _CASO = re.compile(r"caso-[a-z0-9]+-(\d{4}-\d{2})-\d{2}")
 _ASIGNACION = re.compile(r"^\s+([A-Za-z0-9_.-]+)\s*:\s*['\"]?([A-Za-z0-9_-]+)['\"]?\s*$")
 
@@ -238,6 +251,93 @@ class Politica:
                 salida.add(actual.lower())
         return frozenset(salida - SESIONES_SIN_CUARENTENA)
 
+    @cached_property
+    def tramos(self) -> dict[str, list[tuple[int, int]]]:
+        """`video -> [(t0_ms, t1_ms)]` de `tramos_no_citables.yaml`."""
+        salida: dict[str, list[tuple[int, int]]] = {}
+        ruta = self.raiz / TRAMOS_NO_CITABLES
+        if not ruta.is_file():
+            return salida
+        video: str | None = None
+        t0: int | None = None
+        for linea in ruta.read_text(encoding="utf-8").splitlines():
+            if m := re.match(r"^\s*-\s*video_id:\s*['\"]?(\w+)", linea):
+                video, t0 = m.group(1).lower(), None
+            elif video and (m := re.match(r"^\s*t0:\s*['\"]?([\d:.]+)", linea)):
+                t0 = a_ms(m.group(1))
+            elif video and t0 is not None and (m := re.match(r"^\s*t1:\s*['\"]?([\d:.]+)", linea)):
+                t1 = a_ms(m.group(1))
+                if t1 is not None:
+                    salida.setdefault(video, []).append((t0, t1))
+                t0 = None
+        return salida
+
+    @cached_property
+    def tramos_vigilados(self) -> dict[str, list[tuple[int, int]]]:
+        """Los de los videos que no estan en cuarentena: los de una cuarentena ya no se leen."""
+        return {v: t for v, t in self.tramos.items() if v not in self.sesiones_en_cuarentena}
+
+    def tramo_que_solapa(self, video: str, a_ms: int, b_ms: int) -> tuple[int, int] | None:
+        return next(
+            (
+                (t0, t1)
+                for t0, t1 in self.tramos_vigilados.get(video.lower(), [])
+                if a_ms <= t1 and t0 <= b_ms
+            ),
+            None,
+        )
+
+    def lineas_de_tramo(self, ruta: str) -> list[int] | None:
+        """Las lineas (desde 1) de un fichero POR_LINEAS que caen en un tramo; None si no se
+        pueden saber."""
+        rel = self.relativa(ruta) or ""
+        partes = rel.split("/")
+        nombre = os.path.basename(ruta).lower()
+        if len(partes) < 4 or nombre not in POR_LINEAS:
+            return None
+        video = partes[2]
+        try:
+            lineas = Path(ruta).read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            return None
+        intervalos: list[tuple[int, int] | None] = []
+        if nombre.endswith(".jsonl"):
+            for linea in lineas:
+                try:
+                    d = json.loads(linea)
+                    intervalos.append((int(d["t0_ms"]), int(d["t1_ms"])))
+                except (ValueError, KeyError, TypeError):
+                    intervalos.append(None)
+        else:
+            inicios = [
+                a_ms(m.group(1)) if (m := re.match(r"^\[([\d:.]+)\]", linea)) else None
+                for linea in lineas
+            ]
+            for i, t0 in enumerate(inicios):
+                siguiente = next((t for t in inicios[i + 1 :] if t is not None), None)
+                fin = siguiente if siguiente is not None else 10**12
+                intervalos.append((t0, fin) if t0 is not None else None)
+        prohibidas = []
+        for n, iv in enumerate(intervalos, start=1):
+            if iv is None or self.tramo_que_solapa(video, iv[0], iv[1]):
+                prohibidas.append(n)
+        return prohibidas
+
+    def _motivo_propuesta(self, ruta: str, nombre: str) -> str | None:
+        m = re.match(r"^pr-(v\d+)-", nombre)
+        if not m or m.group(1) not in self.tramos_vigilados:
+            return None
+        try:
+            texto = Path(ruta).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return None
+        t0s = [int(x) for x in re.findall(r"\bt0_ms:\s*(\d+)", texto)]
+        t1s = [int(x) for x in re.findall(r"\bt1_ms:\s*(\d+)", texto)]
+        for a, b in zip(t0s, t1s, strict=False):
+            if self.tramo_que_solapa(m.group(1), a, b):
+                return R_TRAMO
+        return None
+
     # ---------------------------------------------------------------- decidir sobre una ruta
     def relativa(self, ruta: str) -> str | None:
         """La ruta relativa a la raiz, en minusculas y con `/`, o None si esta fuera."""
@@ -275,6 +375,14 @@ class Politica:
         en_transcripciones = rel.startswith(TRANSCRIPCIONES + "/") and len(partes) > 3
         if en_transcripciones and partes[2] in self.sesiones_en_cuarentena:
             return R_CUARENTENA
+        if (
+            en_transcripciones
+            and partes[2] in self.tramos_vigilados
+            and not nombre.endswith(SIN_TEXTO)
+        ):
+            return R_TRAMO
+        if rel.startswith("knowledge/_proposals/") and nombre.endswith(".yaml"):
+            return self._motivo_propuesta(ruta, nombre)
         if rel.startswith(("knowledge/cases/", "data/visor/")) and self._nombra_reservado(nombre):
             return R_CASO
         if rel.startswith("knowledge/feedback/") and nombre.endswith(".yaml"):
@@ -319,6 +427,10 @@ class Politica:
         if rel is None:
             return None
         dentro_ignorado = rel.split("/")[0] in RAICES_IGNORADAS
+        if rel == "knowledge/_proposals" or rel.startswith("knowledge/_proposals/"):
+            # Solo con una ruta de dentro: desde mas arriba bloquearia toda busqueda del repo
+            # (limite declarado en docs/validation/GUARDIAS-CLAUDE.md §1.7).
+            return self._primer_protegido(Path(ruta))
         for zona in self._zonas():
             if rel.startswith(zona + "/"):  # el directorio esta DENTRO de una zona
                 return self._primer_protegido(Path(ruta))
@@ -336,6 +448,7 @@ class Politica:
     def _zonas(self) -> list[str]:
         zonas = [MATERIAL, SESIONES, f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3", "data/visor"]
         zonas += [f"{TRANSCRIPCIONES}/{v}" for v in sorted(self.sesiones_en_cuarentena)]
+        zonas += [f"{TRANSCRIPCIONES}/{v}" for v in sorted(self.tramos_vigilados)]
         zonas += ["knowledge/feedback", "knowledge/cases"]
         return zonas
 
@@ -369,6 +482,25 @@ class Politica:
         if any(rel == z or rel.startswith(z + "/") for z in self._zonas()):
             return self._primer_protegido(Path(ruta))
         return None
+
+
+def a_ms(texto: str) -> int | None:
+    """`h:mm:ss[.d]` en milisegundos, o None."""
+    m = _INSTANTE.match(texto.strip())
+    if not m:
+        return None
+    fraccion = int((m.group(4) or "0").ljust(3, "0")[:3])
+    return (int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))) * 1000 + fraccion
+
+
+def _rangos(lineas: list[int]) -> str:
+    trozos: list[str] = []
+    for n in lineas:
+        if trozos and int(trozos[-1].split("-")[-1]) == n - 1:
+            trozos[-1] = f"{trozos[-1].split('-')[0]}-{n}"
+        else:
+            trozos.append(str(n))
+    return ", ".join(trozos[:12]) + (" ..." if len(trozos) > 12 else "")
 
 
 def _normcase(ruta: str) -> str:
@@ -1254,6 +1386,7 @@ def _analizar_cli(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
                 f"\nRegla: {R_CUARENTENA}.\nComo reescribirlo: localiza el instante en la version"
                 " filtrada y abre el PNG por su ruta (`data/fotogramas/<v>/png-1fps/<ms>.png`)."
             )
+    _tramos_en_la_cli(sin_opciones, args, video, ctx)
     if sin_opciones[:2] == ("kb", "find") and (video is None or video.lower() in cuarentena):
         raise BloqueoError(
             "`botsito kb find` sin `--video` busca tambien en las crudas en cuarentena "
@@ -1279,6 +1412,33 @@ def _analizar_pytest(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
                 continue
             if ruta.lower().endswith(".py") and os.path.isfile(ruta):
                 analizar_codigo(Path(ruta).read_text(encoding="utf-8", errors="replace"), ctx, True)
+
+
+def _tramos_en_la_cli(
+    sin_opciones: tuple[str, ...], args: list[Palabra], video: str | None, ctx: Contexto
+) -> None:
+    """Un video con tramos vigilados: lo que la CLI imprimiria de dentro de un tramo, no."""
+    if video is None or video.lower() not in ctx.politica.tramos_vigilados:
+        return
+    if sin_opciones[:3] in {("corpus", "frames", "show")} or sin_opciones[:2] == ("kb", "at"):
+        desde = hasta = _tras_opcion(args, {"--t"})
+    elif sin_opciones[:3] == ("corpus", "transcript", "show"):
+        desde, hasta = _tras_opcion(args, {"--t0"}), _tras_opcion(args, {"--t1"})
+    elif sin_opciones[:2] == ("kb", "find"):
+        desde, hasta = _tras_opcion(args, {"--desde"}), _tras_opcion(args, {"--hasta"})
+    else:
+        return
+    a = a_ms(desde) if desde else None
+    b = a_ms(hasta) if hasta else None
+    tramo = ctx.politica.tramo_que_solapa(video, a, b) if a is not None and b is not None else None
+    if a is None or b is None or tramo:
+        donde = f"{desde}-{hasta}" if desde and hasta else "un intervalo sin acotar"
+        raise BloqueoError(
+            f"`botsito {' '.join(sin_opciones[:3])} --video {video}` en {donde} puede imprimir un "
+            f"tramo no citable de {video}.\nRegla: {R_TRAMO}.\nComo reescribirlo: un instante o un "
+            "intervalo (`--desde`/`--hasta` en `kb find`) fuera de los tramos de "
+            "`knowledge/corpus/tramos_no_citables.yaml`."
+        )
 
 
 def _analizar_shell(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
@@ -1338,15 +1498,15 @@ def _analizar_interprete(
 def _exigir_guion(
     guion: Palabra, args: list[Palabra], ctx: Contexto, lex: Lexico, es_python: bool
 ) -> None:
-    """Un guion SEGUIDO y sin cambios es codigo revisado: se miran sus argumentos. Uno nuevo o
-    cambiado se lee entero, como un `-c`."""
+    """Un guion identico al de `main` es codigo revisado: se miran sus argumentos. Uno nuevo o
+    cambiado en la rama en curso se lee entero, como un `-c`."""
     valores = _valores(guion, ctx, lex)
     if valores is None or len(valores) != 1:
         raise BloqueoError(f"el guion a ejecutar se construye al ejecutarse. {COMO_REESCRIBIR}")
     ruta = _absoluta(valores[0], ctx.cwd)
     rel = ctx.politica.relativa(ruta)
     resto = args[args.index(guion) + 1 :]
-    if rel is not None and _seguido_sin_cambios(ctx.politica.raiz, rel):
+    if rel is not None and _igual_que_en_main(ctx.politica.raiz, ruta, rel):
         if rel in SCRIPTS_CON_PUERTA:
             return
         _exigir_args_legibles(resto, ctx, lex, recursivo=False)
@@ -1362,27 +1522,30 @@ def _exigir_guion(
     _exigir_args_legibles(resto, ctx, lex, recursivo=False)
 
 
-def _seguido_sin_cambios(raiz: Path, rel: str) -> bool:
-    try:
-        r = subprocess.run(
-            ["git", "-c", "core.quotepath=false", "status", "--porcelain", "--", rel],
-            cwd=raiz,
-            capture_output=True,
-            encoding="utf-8",
-            timeout=10,
-            check=False,
-        )
-        s = subprocess.run(
-            ["git", "ls-files", "--error-unmatch", "--", rel],
-            cwd=raiz,
-            capture_output=True,
-            encoding="utf-8",
-            timeout=10,
-            check=False,
-        )
-    except (OSError, subprocess.SubprocessError):
-        return False
-    return r.returncode == 0 and not r.stdout.strip() and s.returncode == 0
+def _igual_que_en_main(raiz: Path, ruta: str, rel: str) -> bool:
+    """Un guion es codigo revisado solo si es EXACTAMENTE el de `main` (decision del consultor del
+    2026-10-01): mismo blob. Uno nuevo o cambiado en la rama en curso se lee entero."""
+    del rel  # en minusculas; git necesita la ruta con su grafia
+    relativa = os.path.relpath(ruta, raiz).replace("\\", "/")
+
+    def git(*args: str) -> str | None:
+        try:
+            r = subprocess.run(
+                ["git", "-c", "core.quotepath=false", *args],
+                cwd=raiz,
+                capture_output=True,
+                encoding="utf-8",
+                timeout=10,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return None
+        return r.stdout.strip() if r.returncode == 0 else None
+
+    en_main = git("rev-parse", "--verify", "-q", f"main:{relativa}") or git(
+        "rev-parse", "--verify", "-q", f"origin/main:{relativa}"
+    )
+    return en_main is not None and git("hash-object", "--", relativa) == en_main
 
 
 SENSIBLES = (
@@ -1540,6 +1703,17 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
         if herramienta == "Read":
             ruta = _absoluta(str(entrada.get("file_path", "")), cwd)
             motivo = politica.motivo_fichero(ruta)
+            if motivo == R_TRAMO:
+                prohibidas = politica.lineas_de_tramo(ruta)
+                if prohibidas is not None:
+                    desde = int(str(entrada.get("offset") or 1))
+                    hasta = desde + int(str(entrada.get("limit") or 2000)) - 1
+                    if not any(desde - 1 <= n <= hasta + 1 for n in prohibidas):
+                        return None
+                    motivo += (
+                        f". Lineas en tramo no citable: {_rangos(prohibidas)}; lee con `offset` y "
+                        "`limit` fuera de ellas, o `botsito corpus transcript show` fuera del tramo"
+                    )
             return f"Read de {ruta}.\nRegla: {motivo}." if motivo else None
         if herramienta == "Grep":
             ruta = _absoluta(str(entrada.get("path") or cwd), cwd)

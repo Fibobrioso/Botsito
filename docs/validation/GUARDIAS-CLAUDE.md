@@ -105,7 +105,7 @@ show`, `corpus transcript show`, `kb at` y `kb find` IMPRIMEN el segmento crudo 
 activa, tambien la de v7, v8 y v9, cuya cruda no lee nadie (`scripts/transcribir_sesion.py`). Para
 `frames show` ya lo decia `docs/validation/SESION-02-VIDEO.md:73-75` («imprime el segmento crudo
 mas cercano al instante pedido»); en el codigo no hay nada que lo impida.
-El hook lo cubre para la sesion (§1.2); el codigo no se toca en esta rama (§7, punto 3).
+El hook lo cubre para la sesion (§1.2); el codigo no se toca en esta rama (§7, punto 4: la rama siguiente).
 
 ## 1. La guardia: `.claude/settings.json` y `.claude/hooks/guardia.py` (fase 1)
 
@@ -145,7 +145,10 @@ las sesiones en cuarentena del repo real (`v7`, `v8`, `v9`) y los meses legibles
 (`test_un_mes_de_desarrollo_con_un_dia_reservado_deja_de_ser_legible`).
 
 **La exencion de v6 es una decision, no un hecho** (§7, punto 2): su cruda se leyo y la citan 23
-items antes de que existiera la cuarentena, y su dia reservado esta retirado (ADR-0041).
+items antes de que existiera la cuarentena, y su dia reservado esta retirado (ADR-0041). **Tras la
+revision, se mantiene solo con sus tramos no citables bloqueados** (§7, punto 2): sus ficheros de
+texto se leen por trozos que no los toquen, las propuestas que copian segmentos de un tramo no se
+abren, y la CLI no imprime un tramo.
 
 ### 1.3 Que deja pasar
 
@@ -155,7 +158,8 @@ items antes de que existiera la cuarentena, y su dia reservado esta retirado (AD
   no es abrir (ADR-0021 §1).
 - **La CLI del proyecto entera, que es la puerta**, salvo los cuatro subcomandos que imprimen una
   cruda en cuarentena (y `kb find` sin `--video`).
-- **El codigo commiteado y sin cambios** (`scripts/*.py`): se miran solo sus argumentos. Si un
+- **El codigo identico al de `main`** (`scripts/*.py`; hasta la revision bastaba con que estuviera
+  commiteado y sin cambios, §7 punto 3): se miran solo sus argumentos. Si un
   argumento es material protegido, se bloquea, salvo en `scripts/huso_por_velas.py`, que es el
   paso c de ENTRADA-MARZO y lee solo las filas `dev`. El codigo NUEVO o cambiado (un guion del
   scratchpad, `python -c`, un heredoc a `python -`, un `pytest` sobre un fichero fuera de `tests/`)
@@ -180,7 +184,8 @@ anade lo que un patron no expresa: `git -c core.hooksPath=...` y `git config cor
 ruta que contenga esas carpetas (`rm -rf .`), y en `main`: `add -A`, `commit -a`, `revert` y
 `reset --hard`.
 
-**`git push origin main` sin `BOTSITO_ALLOW_MAIN` NO se activa, porque bloquearia el ritual.**
+**`git push origin main` sin `BOTSITO_ALLOW_MAIN` NO se activa como `deny`, porque bloquearia el
+ritual; tras la revision es una regla `ask` (§7, punto 1).**
 `RITUAL.md` empuja `main` SIN esa variable dos veces: `git push --atomic origin main stable/<tag>`
 en el cierre y `git push origin main` cuando la CI sale roja (la variable va pegada al `git
 commit`, correccion 1, y solo la mira `pre-commit`). Ademas, una regla `deny` no podria
@@ -224,18 +229,22 @@ la semantica documentada.
 - **Si falta `python`** o el guion no esta, Claude Code trata la salida como error no bloqueante y
   la herramienta SE EJECUTA (falla abierto, segun la documentacion de hooks). Lo vigilan los
   tests, que ejecutan el guion como proceso en cada `make check`.
-- **El codigo commiteado es de confianza**: un guion seguido puede leer lo que quiera por dentro.
+- **El codigo de `main` es de confianza**: un guion identico al de `main` puede leer lo que quiera
+  por dentro.
   Es la frontera del encargo: la barrera de ese codigo es `casos_reservados` y la compuerta.
 - **PowerShell** se analiza mas tosco que Bash: por palabras, sin tokenizar; un comando con una
   ruta protegida solo pasa si todo el es de metadatos.
 - **Lo que la salida de un comando permitido traiga**: `git log -p` sobre el holdout se bloquea
   solo cuando hay etiquetas seguidas en el; hoy no las hay.
-- **El codigo de la CLI que imprime crudas** sigue igual (§0, fila 36).
+- **El codigo de la CLI que imprime crudas** sigue igual (§0, fila 36): es la rama siguiente.
+- **Una busqueda desde la raiz no se para por una propuesta con segmentos de un tramo**
+  (`knowledge/_proposals/pr-v6-005000-010000-*.yaml` los tiene): pararla bloquearia toda busqueda
+  del repo. Se para abrirla y buscar con una ruta dentro de `knowledge/_proposals/`.
 - **Mayo, a mano** (observacion del revisor): `CLAUDE.md` deja leer sin puerta las filas de los 6
   dias `dev` de mayo (ADR-0025 §4), pero el hook bloquea abrir el libro de mayo entero, porque
   abrirlo ensena tambien las filas reservadas y los agregados. Las filas `dev` se siguen leyendo por
   el codigo (`casos ingerir`, el arnes). Si alguna tarea necesitara leerlas a mano, el hook la
-  pararia: no es una prohibicion nueva de contenido, pero si un camino menos (§7, punto 5).
+  pararia: no es una prohibicion nueva de contenido, pero si un camino menos (§7, punto 4: mayo queda como esta).
 - **El subagente revisor no se carga en caliente.** Escrito `.claude/agents/revisor.md`, Claude Code
   respondio «Agent type 'revisor' not found»: los subagentes se leen al arrancar la sesion. Su hook
   de solo lectura (`solo_lectura.py`) esta probado por sus tests, pero NO medido en vivo dentro del
@@ -297,8 +306,10 @@ La metrica vive en `docs/runbooks/ERRORES-RECURRENTES.md`.
 
 ## 4. Tests (fase 4)
 
-48 funciones nuevas, 217 casos, en tres ficheros; la suite pasa de 1055 funciones (1455 casos) a
-1103 (1672). Dos de ellas se anadieron tras el revisor, una por cada hueco que encontro (§6).
+54 funciones nuevas, 230 casos, en tres ficheros; la suite pasa de 1055 funciones (1455 casos) a
+1109 (1685). Dos se anadieron tras el revisor, una por cada hueco que encontro (§6), y seis tras la
+revision del consultor (§7): los tramos de v6 en los ficheros, en la CLI y en las propuestas, los
+tramos del repo real, el guion que no es el de `main` y la regla `ask`.
 
 - `tests/unit/test_guardia_claude.py`: **bloquea una lectura de material reservado** (ocho rutas,
   con Read y con Bash), **deja pasar un sha256** (y `stat`, `ls`, `du`, `wc -c`, `certutil`, `find
@@ -340,32 +351,49 @@ linea nueva de `CLAUDE.md` dice «al final del informe de la rama» (hallazgo B3
 | A2 · `git -C <dir>` no movia la base de las rutas | importa | **Arreglado**: `-C` fija la base; `rev:ruta` va contra la raiz salvo `rev:./ruta`. Test `test_git_con_menos_c_resuelve_las_rutas_desde_su_directorio`, que fallaba antes del arreglo con `HEAD:./holdout/...` |
 | A3 · `docs/HANDOFF.md` sin actualizar | menor | Se deja: el encargo no lo pide y la rama no cambia el estado del proyecto |
 | B1 · la tabla de la fase 0 no se entrego antes del codigo | importa | **Declarado** en el §0: es una desviacion real del encargo |
-| B2 · se deja pasar mas que stat, tamano, sha256 e inventario | menor | Declarado en el §1.3; para el consultor (§7, punto 6) |
+| B2 · se deja pasar mas que stat, tamano, sha256 e inventario | menor | Declarado en el §1.3; el consultor restringio los guiones a los de `main` (§7, punto 3); del resto no dijo nada |
 | B3 · el informe del revisor no quedaba al final | menor | Pegado al final, tras el Estado |
-| Observacion · mayo a mano | — | Al §1.7 y al §7, punto 5 |
+| Observacion · mayo a mano | — | Al §1.7; el consultor: mayo queda como esta (§7, punto 4) |
 
-## 7. Que debe decidir el consultor
+## 7. Lo que decidio el consultor (2026-10-01), y lo que se hizo
 
-1. **El push a `main` sin la variable** (§1.4). (a) Dejarlo como esta; (b) una regla `ask` -no
-   `deny`- para `git push * main*` y `git merge*` en `main`: Claude Code pediria confirmacion en
-   cada push del ritual, que ya solo corre con orden de cierre, y una tarea nocturna se quedaria
-   esperando en vez de cerrar; o (c) cambiar el ritual para que el push lleve tambien
-   `BOTSITO_ALLOW_MAIN=1` y activar la regla en el hook. Recomendacion: (b), porque es exactamente
-   «solo ante una orden explicita» y no cambia ninguna puerta.
-2. **La exencion de v6** de la cuarentena (§1.2): ¿se mantiene?
-3. **El codigo que imprime crudas** (§0, fila 36): ¿una rama que haga que `frames show`,
-   `transcript show`, `kb at` y `kb find` no impriman texto de una sesion en cuarentena? Hoy solo
-   lo para el hook, y solo para Claude Code.
-4. **El modelo del revisor**: `sonnet`. Si el consultor encuentra lo que el revisor no vio
-   (ERRORES-RECURRENTES), lo primero es probar con `opus`. Y en la proxima sesion, ya con el
-   subagente cargado, medir en vivo su hook de solo lectura.
-5. **Mayo a mano** (§1.7): ¿basta con que las filas `dev` de mayo se lean por el codigo?
-6. **Lo que se deja pasar** ademas de stat, tamano, sha256 e inventario (§1.3): la CLI entera, los
-   guiones commiteados y `scripts/huso_por_velas.py` con un libro protegido. ¿Se aprueba?
+Revision del consultor sobre `23df399`, con orden de cierre. Las cinco decisiones:
+
+1. **El push a `main`: regla `ask`, no `deny`.** Hecho: `permissions.ask` en `.claude/settings.json`
+   con `git push * main*`, `git push *:main*` y `git push *refs/heads/main*`. El ritual sigue
+   pudiendo empujar, pero Claude Code pide confirmacion; una tarea autonoma se queda esperando en
+   vez de cerrar. Cierra las filas 2 y 46 del inventario. Test `test_el_push_a_main_pide_confirmacion`.
+2. **v6: se mantiene la exencion, siempre que el hook bloquee sus tramos no citables** (0:41:00-0:50:11
+   y 1:53:30-1:57:31). **Hoy no los bloqueaba**: se anadio. El hook lee
+   `tramos_no_citables.yaml` y, para los videos con tramos que no estan en cuarentena (hoy solo v6;
+   v7 y v9 ya estan enteros), bloquea: los ficheros de texto de su transcripcion salvo leidos por
+   trozos (Read con `offset` y `limit`) que no toquen un tramo, con una linea de margen; las
+   propuestas de `knowledge/_proposals/` con segmentos dentro de un tramo; y `frames show`, `kb at`,
+   `transcript show` y `kb find` cuando su instante o su intervalo toca un tramo (o, en `kb find`, no
+   esta acotado). Tests `test_v6_se_lee_salvo_sus_tramos_no_citables`,
+   `test_la_cli_no_imprime_un_tramo_de_v6` (9 casos), `test_una_propuesta_con_segmentos_de_un_tramo`
+   y `test_los_tramos_del_repo_real`. El comentario de `tramos_no_citables.yaml` («se puede leer y
+   buscar con `kb find`») no se toca en esta rama: `knowledge/` es ruta protegida del contrato, y lo
+   recogera la rama siguiente.
+3. **Scripts: solo exentos los que estan tal cual en `main`.** Hecho: el hook compara el blob del
+   fichero (`git hash-object`) con el de `main` (`git rev-parse main:<ruta>`, o `origin/main`). Un
+   guion nuevo o cambiado en la rama en curso, aunque este commiteado, se lee entero; tambien
+   `scripts/huso_por_velas.py` pierde su exencion si cambia. Test
+   `test_solo_el_guion_de_main_es_codigo_revisado`: un guion nuevo de la rama que lee el libro de
+   marzo queda bloqueado.
+4. **Rama siguiente** (Next Action de `PROJECT_STATE.md`): «kb find, kb at, transcript show y corpus
+   frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una
+   opcion explicita que el hook bloquea». **Mayo queda como esta.**
+5. **Estas cinco decisiones, anotadas aqui.**
+
+Y las dos cosas que el consultor encontro y el revisor no (la 2 y la 3) van a
+`docs/runbooks/ERRORES-RECURRENTES.md`.
 
 ## Estado
 
-Rama lista para revisión, NO cerrada.
+**Revisada por el consultor el 2026-10-01, con orden de cierre en `main`.** Las cinco decisiones del
+§7, hechas en la rama antes del cierre. Antes de la revision decia: «Rama lista para revisión, NO
+cerrada».
 
 ## Anexo · El informe del revisor, pegado tal cual
 

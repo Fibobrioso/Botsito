@@ -274,6 +274,13 @@ borrar o mover tags, `cherry-pick` y `rebase`, `rm -rf` sobre `data/`, `corpus/`
 protegido (rutas construidas al ejecutarse, `eval`, `xargs` delante de un lector) tambien lo
 bloquea. **Es defensa en profundidad: la barrera sigue siendo el codigo** (`casos_reservados`, la
 compuerta del arnes). Y **una guardia no se rodea**: si bloquea algo legitimo, se dice en el informe
-y se corrige la guardia en su rama, no se reescribe el comando para que no la vea. El codigo nuevo
-o cambiado que no esta commiteado se lee como codigo sin revisar: por eso un guion del scratchpad
-que nombre una carpeta protegida se bloquea aunque no la abra.
+y se corrige la guardia en su rama, no se reescribe el comando para que no la vea. **Solo un guion
+identico al de `main` es codigo revisado**; uno nuevo o cambiado en la rama en curso, aunque este
+commiteado, se lee como codigo sin revisar: por eso un guion que nombre una carpeta protegida se
+bloquea aunque no la abra. **Los tramos no citables** (`knowledge/corpus/tramos_no_citables.yaml`)
+de un video que no esta en cuarentena tampoco se leen: v6 queda fuera de la cuarentena solo con
+sus tramos bloqueados (0:41:00-0:50:11 y 1:53:30-1:57:31), en sus ficheros, en las propuestas que
+copian sus segmentos y en la CLI; su cruda se lee por trozos (Read con `offset` y `limit`) que no
+los toquen. Decisiones del consultor del 2026-10-01. **El push a `main` pide confirmacion** (regla
+`ask` de `.claude/settings.json`): el ritual lo hace con la orden de cierre delante, y una tarea
+autonoma se queda esperando en vez de cerrar.
