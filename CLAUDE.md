@@ -267,7 +267,7 @@ hook `PreToolUse` (`.claude/hooks/guardia.py`) mira cada Read, Grep, Glob, Bash 
 sesion. **Bloquea leer el CONTENIDO del material protegido** del punto 3 de arriba -el holdout, los
 libros de meses con dias reservados o sin sortear, las imagenes del material adicional, las hojas
 de las sesiones, las crudas de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso
-reservado- y deja listarlo, medirlo y hashearlo. Bloquea tambien `--no-verify`, `push --force`,
+reservado- y deja listarlo, medirlo y hashearlo. Bloquea tambien `--no-verify` (y `core.hooksPath`), `push --force`,
 borrar o mover tags, `cherry-pick` y `rebase`, `rm -rf` sobre `data/`, `corpus/` o `knowledge/`,
 `make check` sin fichero de salida, el heredoc sin comillas con `\` y, en `main`, `git add -A`,
 `commit -a`, `revert` y `reset --hard`. Un comando que no puede decidir y podria leer material

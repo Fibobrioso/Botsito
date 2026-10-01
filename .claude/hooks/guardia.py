@@ -1036,8 +1036,20 @@ GIT_QUE_MUESTRA = {
 
 def _analizar_git(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
     i = 0
+    base = ctx.cwd  # `git -C <dir>`: las rutas de los argumentos son relativas a <dir>
     while i < len(args) and args[i].texto.startswith("-"):
-        i += 2 if args[i].texto in GIT_CON_VALOR else 1
+        opcion = args[i].texto
+        valor = args[i + 1].texto if opcion in GIT_CON_VALOR and i + 1 < len(args) else ""
+        if opcion == "-C" and valor:
+            vals = _valores(args[i + 1], ctx, lex)
+            if vals is None or len(vals) != 1:
+                raise BloqueoError(f"`git -C` con una ruta dinamica. {COMO_REESCRIBIR}")
+            base = _absoluta(vals[0], base)
+        if opcion == "-c" and "core.hookspath" in valor.lower():
+            raise BloqueoError(
+                f"`git -c core.hooksPath=...` salta los hooks.\nRegla: {R_NO_VERIFY}."
+            )
+        i += 2 if opcion in GIT_CON_VALOR else 1
     if i >= len(args):
         return
     sub = args[i].texto
@@ -1045,6 +1057,13 @@ def _analizar_git(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
     textos = [a.texto for a in resto]
     if "--no-verify" in textos or (sub == "commit" and _flag_corta(textos, "n", "mFCct")):
         raise BloqueoError(f"`git {sub} --no-verify`.\nRegla: {R_NO_VERIFY}.")
+    if sub == "config" and any("core.hookspath" in t.lower() for t in textos):
+        valores = [t for t in textos if not t.startswith("-")]
+        if len(valores) > 1 or any(t.startswith("--unset") or t == "--add" for t in textos):
+            raise BloqueoError(
+                f"`git config core.hooksPath` cambia donde git busca los hooks: es saltarlos."
+                f"\nRegla: {R_NO_VERIFY}."
+            )
     if sub in {"cherry-pick", "rebase"} and not {"--abort", "--quit"} & set(textos):
         raise BloqueoError(f"`git {sub}`.\nRegla: {R_CHERRY}.")
     if sub == "push":
@@ -1085,7 +1104,7 @@ def _analizar_git(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
         if sub == "revert" or (sub == "reset" and "--hard" in textos):
             raise BloqueoError(f"`git {sub}` en `main`.\nRegla: {R_REVERT}.")
     if sub in GIT_QUE_MUESTRA:
-        _analizar_git_que_muestra(sub, resto, ctx, lex)
+        _analizar_git_que_muestra(sub, resto, ctx, lex, base)
     # `git push origin main` sin BOTSITO_ALLOW_MAIN NO se vigila: el ritual empuja `main` sin esa
     # variable (RITUAL.md, `git push --atomic origin main stable/<tag>` y el arreglo de una CI
     # roja), asi que la regla lo bloquearia (docs/validation/GUARDIAS-CLAUDE.md §1.4).
@@ -1104,7 +1123,11 @@ def _flag_corta(textos: Iterable[str], letras: str, con_valor: str) -> bool:
     return False
 
 
-def _analizar_git_que_muestra(sub: str, resto: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
+def _analizar_git_que_muestra(
+    sub: str, resto: list[Palabra], ctx: Contexto, lex: Lexico, base: str
+) -> None:
+    """`rev:ruta` es relativa a la raiz del repo, salvo `rev:./ruta`, que lo es al directorio de
+    git (`-C`); una ruta suelta, siempre al directorio de git."""
     rutas = False
     for a in resto:
         valores = _valores(a, ctx, lex)
@@ -1117,7 +1140,8 @@ def _analizar_git_que_muestra(sub: str, resto: list[Palabra], ctx: Contexto, lex
                 continue
             m = re.match(r"^[^:]*:(.+)$", v) if not re.match(r"^[a-zA-Z]:[\\/]", v) else None
             candidata = m.group(1) if m else v
-            ruta = _absoluta(candidata, str(ctx.politica.raiz) if m else ctx.cwd)
+            relativa_al_repo = m is not None and not candidata.startswith(("./", "../"))
+            ruta = _absoluta(candidata, str(ctx.politica.raiz) if relativa_al_repo else base)
             if ctx.politica.relativa(ruta) is not None and (os.path.exists(ruta) or m):
                 rutas = True
                 motivo = ctx.politica.motivo_ruta(ruta, recursivo=True, respeta_ignore=True)
@@ -1449,6 +1473,7 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
         )
     for patron, regla in (
         (r"--no-verify", R_NO_VERIFY),
+        (r"(?i)core\.hookspath\s*[=\s]\s*\S", R_NO_VERIFY),
         (r"\bgit\b[^;|&\n]*\bpush\b[^;|&\n]*(--force|\s-f\b|\s\+)", R_FORCE),
         (r"\bgit\b[^;|&\n]*\btag\b[^;|&\n]*\s(-d|--delete|-f|--force)\b", R_TAG),
         (r"\bgit\b[^;|&\n]*\b(cherry-pick|rebase)\b(?![^;|&\n]*--abort)", R_CHERRY),

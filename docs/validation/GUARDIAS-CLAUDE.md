@@ -7,7 +7,10 @@ cifra**: no toca `src/`, `knowledge/` ni `config/`.
 
 ## 0. Inventario: cada prohibicion y lo que la hace cumplir HOY
 
-Medido el 2026-10-01 sobre `41c9ed9`, ANTES de escribir codigo. Fuentes: `CLAUDE.md`,
+Medido el 2026-10-01 sobre `41c9ed9`, ANTES de escribir codigo. **Una desviacion del encargo, dicha
+con su nombre (hallazgo B1 del revisor):** la tabla se escribio en este informe antes que el codigo,
+pero NO se entrego a Aleks por separado ni se commiteo antes: la sesion siguio con las fases 1 a 4
+sin parar, y la rama llego con todo en el mismo commit (`3027599`). Fuentes: `CLAUDE.md`,
 `docs/runbooks/RITUAL.md` y los demas `docs/runbooks/*.md`, buscando «nunca», «no se», «prohibido»,
 «solo» y sus variantes. «Lo hace cumplir» se ha comprobado leyendo el mecanismo, no su descripcion:
 `scripts/git-hooks/pre-commit` y `pre-merge-commit`, el `Makefile`, `.github/workflows/ci.yml`,
@@ -171,7 +174,8 @@ frontera de seguridad»: no ve `git -C . push --force` ni una bandera en otra po
 `permissions.deny` van 24 patrones (`--no-verify` en commit, merge y push; `push --force` y `-f`;
 `tag -d` y `--delete`; `push --delete` y `:refs/tags/`; `rm -rf` y `rm -fr` sobre `data`,
 `corpus` y `knowledge`). El hook repite las mismas reglas analizando el comando por palabras, y
-anade lo que un patron no expresa: `commit -n`, `push +rama`, `--force-with-lease`, `tag -f`,
+anade lo que un patron no expresa: `git -c core.hooksPath=...` y `git config core.hooksPath <x>`
+(saltarse los hooks sin `--no-verify`, hallazgo A1 del revisor), `commit -n`, `push +rama`, `--force-with-lease`, `tag -f`,
 `update-ref -d`, `branch -D`, `cherry-pick` y `rebase` (salvo `--abort`), `rm -rf` sobre una
 ruta que contenga esas carpetas (`rm -rf .`), y en `main`: `add -A`, `commit -a`, `revert` y
 `reset --hard`.
@@ -227,6 +231,15 @@ la semantica documentada.
 - **Lo que la salida de un comando permitido traiga**: `git log -p` sobre el holdout se bloquea
   solo cuando hay etiquetas seguidas en el; hoy no las hay.
 - **El codigo de la CLI que imprime crudas** sigue igual (§0, fila 36).
+- **Mayo, a mano** (observacion del revisor): `CLAUDE.md` deja leer sin puerta las filas de los 6
+  dias `dev` de mayo (ADR-0025 §4), pero el hook bloquea abrir el libro de mayo entero, porque
+  abrirlo ensena tambien las filas reservadas y los agregados. Las filas `dev` se siguen leyendo por
+  el codigo (`casos ingerir`, el arnes). Si alguna tarea necesitara leerlas a mano, el hook la
+  pararia: no es una prohibicion nueva de contenido, pero si un camino menos (§7, punto 5).
+- **El subagente revisor no se carga en caliente.** Escrito `.claude/agents/revisor.md`, Claude Code
+  respondio «Agent type 'revisor' not found»: los subagentes se leen al arrancar la sesion. Su hook
+  de solo lectura (`solo_lectura.py`) esta probado por sus tests, pero NO medido en vivo dentro del
+  subagente (§6).
 
 ## 2. El contrato de rama (fase 2)
 
@@ -284,8 +297,8 @@ La metrica vive en `docs/runbooks/ERRORES-RECURRENTES.md`.
 
 ## 4. Tests (fase 4)
 
-46 funciones nuevas, 215 casos, en tres ficheros; la suite pasa de 1055 funciones (1455 casos) a
-1101 (1670).
+48 funciones nuevas, 217 casos, en tres ficheros; la suite pasa de 1055 funciones (1455 casos) a
+1103 (1672). Dos de ellas se anadieron tras el revisor, una por cada hueco que encontro (§6).
 
 - `tests/unit/test_guardia_claude.py`: **bloquea una lectura de material reservado** (ocho rutas,
   con Read y con Bash), **deja pasar un sha256** (y `stat`, `ls`, `du`, `wc -c`, `certutil`, `find
@@ -311,9 +324,25 @@ dos hooks y el contrato), `.gitignore`, `docs/runbooks/RITUAL.md` (el paso del c
 `docs/runbooks/README.md` y `PROJECT_STATE.md` (Current Branch y el recuento de tests). **No se
 toca** `src/`, `knowledge/`, `config/`, `data/`, ningun ADR ni ninguna cifra.
 
-## 6. El informe del revisor
+## 6. El informe del revisor, y que se hizo con cada hallazgo
 
-Pendiente: se pega aqui tras pasarlo sobre esta rama.
+**Como se paso.** El subagente `revisor` no estaba cargado (§1.7: los subagentes se leen al
+arrancar), asi que se paso con un agente general en `sonnet` al que se le dio a leer
+`.claude/agents/revisor.md` y `CLAUDE.md` con la orden de seguirlos al pie de la letra y de no
+escribir. La guardia del proyecto si le aplicaba; su hook de solo lectura, no: en esta forma, el
+«no escribe» lo sostuvo la orden, no el mecanismo. Reviso el commit `3027599` (arbol `1008399d`, el
+del sello). Su informe va pegado TAL CUAL al final de este documento, despues del Estado, porque la
+linea nueva de `CLAUDE.md` dice «al final del informe de la rama» (hallazgo B3).
+
+| Hallazgo | Gravedad | Que se hizo |
+|---|---|---|
+| A1 · `core.hooksPath` salta los hooks sin `--no-verify` | importa | **Arreglado**: el hook bloquea `git -c core.hooksPath=...` y `git config [--unset] core.hooksPath ...` (y en PowerShell); leerlo pasa. Test `test_core_hookspath_es_saltarse_los_hooks` |
+| A2 · `git -C <dir>` no movia la base de las rutas | importa | **Arreglado**: `-C` fija la base; `rev:ruta` va contra la raiz salvo `rev:./ruta`. Test `test_git_con_menos_c_resuelve_las_rutas_desde_su_directorio`, que fallaba antes del arreglo con `HEAD:./holdout/...` |
+| A3 · `docs/HANDOFF.md` sin actualizar | menor | Se deja: el encargo no lo pide y la rama no cambia el estado del proyecto |
+| B1 · la tabla de la fase 0 no se entrego antes del codigo | importa | **Declarado** en el §0: es una desviacion real del encargo |
+| B2 · se deja pasar mas que stat, tamano, sha256 e inventario | menor | Declarado en el §1.3; para el consultor (§7, punto 6) |
+| B3 · el informe del revisor no quedaba al final | menor | Pegado al final, tras el Estado |
+| Observacion · mayo a mano | — | Al §1.7 y al §7, punto 5 |
 
 ## 7. Que debe decidir el consultor
 
@@ -328,8 +357,105 @@ Pendiente: se pega aqui tras pasarlo sobre esta rama.
    `transcript show`, `kb at` y `kb find` no impriman texto de una sesion en cuarentena? Hoy solo
    lo para el hook, y solo para Claude Code.
 4. **El modelo del revisor**: `sonnet`. Si el consultor encuentra lo que el revisor no vio
-   (ERRORES-RECURRENTES), lo primero es probar con `opus`.
+   (ERRORES-RECURRENTES), lo primero es probar con `opus`. Y en la proxima sesion, ya con el
+   subagente cargado, medir en vivo su hook de solo lectura.
+5. **Mayo a mano** (§1.7): ¿basta con que las filas `dev` de mayo se lean por el codigo?
+6. **Lo que se deja pasar** ademas de stat, tamano, sha256 e inventario (§1.3): la CLI entera, los
+   guiones commiteados y `scripts/huso_por_velas.py` con un libro protegido. ¿Se aprueba?
 
 ## Estado
 
 Rama lista para revisión, NO cerrada.
+
+## Anexo · El informe del revisor, pegado tal cual
+
+Sobre el commit `3027599`, ANTES de arreglar nada (lo que se hizo con cada hallazgo, en el §6).
+
+## Informe del revisor · trabajo/guardias-claude · 2026-10-01
+
+Base: `git merge-base main HEAD` = 41c9ed992fb50b34761488f9893c0cabf8346467. Un solo commit (3027599). `git status --short` vacío. `git rev-parse HEAD^{tree}` = 1008399d648cd01491a8087ead43a1e5319bfa58, el mismo árbol que el SELLO que me diste.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | La guardia deja pasar el salto de los hooks por `core.hooksPath`, que equivale a `--no-verify` (regla «NUNCA --no-verify... los hooks son la puerta»). El informe y CLAUDE.md dicen que se bloquea el salto de hooks, y no es así. | `printf '{"tool_name":"Bash","tool_input":{"command":"git -c core.hooksPath=/dev/null commit -m x"},"cwd":"C:/Users/USER/Desktop/Bot v3"}' \| python .claude/hooks/guardia.py` → exit=0. Lo mismo con `git config core.hooksPath /dev/null` → exit=0. `grep -n "hooksPath" .claude/hooks/guardia.py` → sin resultados. `--no-verify` sí bloquea (exit=2). |
+| A2 | importa | `git -C <dir> show HEAD:<ruta relativa>` esquiva el bloqueo del holdout: la ruta se resuelve contra el cwd, no contra `-C`. `-C` está en `GIT_CON_VALOR` (`.claude/hooks/guardia.py:1023`) pero no se aplica a la ruta. Hoy `holdout/{1,2,3}` solo tienen README, así que no hay fuga real, pero es un hueco de la barrera. | `git -C knowledge/cases show HEAD:holdout/1/x` → exit=0. `git -C knowledge/cases/holdout/1 show HEAD:x` → exit=0. `git show HEAD:knowledge/cases/holdout/1/x` → exit=2 (el control sí bloquea). |
+| A3 | menor | `docs/HANDOFF.md` no se actualiza aunque el contrato lo permite y CLAUDE.md lo pone como paso 3 de «Por donde se empieza». No lo exige el encargo. | `git diff --stat main...HEAD` no lo lista; `contrato.yaml` lo permite. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → `CONTRATO: 19 ficheros dentro del contrato de trabajo/guardias-claude (riesgo medio, artefacto docs/validation/GUARDIAS-CLAUDE.md, 3 comprobaciones para el revisor)`, exit=0. Los tres pytest (`test_contrato_rama`, `test_guardia_claude`, `test_revisor`) pasan: 72+72+71 puntos, todos verdes. `make check` no lo ejecuté; su evidencia es lo que me diste (1670 passed, SELLO sobre el árbol 1008399…, PICO 283 MiB, que coincide con el árbol de HEAD) y GUARDIAS-CLAUDE.md §4. `uv run botsito state check` → OK.
+- **Rutas protegidas.** Nada de la rama toca `src/`, `knowledge/`, `config/`, `data/`, `mql5/`, `tools/`, `scripts/git-hooks/`, `docs/adr/` ni `docs/spec/`.
+- **Fuente:.** No se toca `knowledge/spec` ni `knowledge/cases`, así que no aplica.
+- **Regímenes de cambio.** Todo el diff son ficheros nuevos (A) salvo `.gitignore`, `CLAUDE.md`, `Makefile`, `PROJECT_STATE.md`, `RITUAL.md` y `runbooks/README.md`, que son modificaciones permitidas. No hay evidencia, feedback, manifiestos, transcripciones ni `libros.yaml`.
+- **Ambiguedades, ADR, tres guardias de `cita`, informes cerrados.** No aplican: no hay ambigüedades ni ADR nuevos, ni informes cerrados cambiados.
+- **Holdout y exposición.** La rama no declara haber leído ningún libro, imagen, fotograma ni transcripción. Las dos sondas que cuenta el informe (§1.6) eran ficheros propios, no material del corpus.
+- **Informe de la rama.** Existe y acaba en `## Estado` → «Rama lista para revisión, NO cerrada.».
+- **Cifras.** No hay cifras de negocio en el código nuevo.
+- **Pruebas del hook.** Bloquea las rutas con `..`, `//` y `./`; `cd x && cat rel`; `cp` del material; `xargs cat`; `python -c` que construye rutas; `unzip -p` sobre un xlsx de septiembre; Read de imagen del material adicional (también con mayúsculas distintas); `git push +HEAD:main`; `--no-verify`. Deja pasar `sha256sum`.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 20 hechos (6 de ellos de otra forma, declarada), 1 parcial, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama `trabajo/guardias-claude` desde main 41c9ed9 | Hecho | merge-base = 41c9ed992fb5… |
+| 2 | Fase 0: inventario de reglas de CLAUDE.md, RITUAL y runbooks, con qué las hace cumplir hoy (test, hook, make check, CI, nada), y las «nada» son el alcance | Hecho | GUARDIAS-CLAUDE.md §0, 58 filas en 3 tablas, columna «Esta rama» y cierre de alcance en las líneas 96-98 |
+| 3 | Fase 0: «Entrega la tabla antes de escribir código» | Parcial | La tabla está en el informe (§0), pero la rama es un único commit (3027599) y no puedo comprobar que se entregara antes del código. Es el hallazgo B1. |
+| 4 | F1: hook PreToolUse en Python, Windows, PYTHONUTF8, sin dependencias nuevas, para Read, Grep, Glob y Bash | Hecho | `.claude/settings.json`: matcher `Read\|Grep\|Glob\|Bash\|PowerShell`, orden `PYTHONUTF8=1 python …guardia.py`. `pyproject.toml` y lockfile sin cambios. |
+| 5 | F1: bloquea leer contenido de libros xlsx, imágenes, transcripciones y casos de meses reservados o sin sortear (`casos_reservados`, `casos_ocultos`, marzo) | Hecho | Probado: xlsx de septiembre y carpeta de marzo bloqueados; imagen del material adicional bloqueada; holdout bloqueado. §1.2 y `test_contra_el_repo_real_ve_lo_mismo_que_el_codigo` comparan con `casos_reservados`. |
+| 6 | F1: permite solo stat, tamaño, sha256 y `botsito corpus inventory` | Hecho de otra forma (declarada) | §1.3 permite además `ls`, `du`, `wc -c`, `certutil`, `find`, `git ls-files`, `check-ignore`, la CLI del proyecto entera «que es la puerta» y los scripts commiteados. La ampliación se declara y se justifica brevemente. Ver B2. |
+| 7 | F1: si no puede decidir un comando Bash, lo BLOQUEA y explica cómo reescribirlo | Hecho | `ls … \| xargs cat` → exit=2, mensaje «Como reescribirlo: rutas LITERALES…» |
+| 8 | F1: el mensaje de bloqueo cita la regla de CLAUDE.md | Hecho | Todos los bloqueos de mis pruebas empiezan por «Regla: CLAUDE.md, …» |
+| 9 | F1: deniega `--no-verify` en commit y push | Hecho | 24 patrones en `.claude/settings.json`, más el hook (exit=2). Pero ver A1 por `core.hooksPath`. |
+| 10 | F1: deniega `push --force` y borrar tags | Hecho | `Bash(git push --force*)`, `Bash(git tag -d *)` y el hook; probado `+HEAD:main` → exit=2 |
+| 11 | F1: deniega `git push origin main` sin BOTSITO_ALLOW_MAIN | Hecho de otra forma (declarada) | No se activa: §1.4 dice que bloquearía el ritual (`git push --atomic origin main stable/<tag>` y el push tras CI roja, que van sin la variable) y que una regla `deny` no distingue la variable. Deja la decisión al consultor en §7.1. Coincide con «si algo bloquearía el ritual, dilo y no lo actives». |
+| 12 | F1: deniega `rm -rf` sobre data/, corpus/ y knowledge/ | Hecho | Patrones `rm -rf`/`-fr` en deny y el hook (`rm -rf .` también) |
+| 13 | F1: `.claude/settings.local.json` en .gitignore y `settings.json` versionado | Hecho | `.gitignore` diff `+/.claude/settings.local.json`; `settings.json` está en el diff |
+| 14 | F1: lo que bloquearía make check, la CI o el ritual, dilo y no lo actives | Hecho | §1.4: los hooks de Claude Code no ven `make` ni la CI. `test_el_ritual_y_los_runbooks_pasan` y `test_ninguna_denegacion_toca_el_ritual` sobre los 30 comandos reales. |
+| 15 | F1: defensa en profundidad, `casos_reservados` y la compuerta no se tocan | Hecho | `src/` sin cambios; CLAUDE.md lo dice en la sección nueva |
+| 16 | F2: `contrato.yaml` con rutas_permitidas, rutas_protegidas, comprobaciones, riesgo y artefacto | Hecho | `contrato.yaml`; el cargador estricto exige las claves (`scripts/contrato_rama.py:44,80-99`) |
+| 17 | F2: make check compara el diff con el merge-base y falla nombrando cada fichero fuera de permitidas, dentro de protegidas y si falta el artefacto | Hecho | `scripts/contrato_rama.py:154-203`, objetivo `contrato` en el Makefile (diff). Mensajes por fichero. Prueba real contra la rama: `CONTRATO: 19 ficheros dentro del contrato…`. |
+| 18 | F2: «En main el contrato se borra en el merge y no se exige» | Hecho de otra forma (declarada) | `scripts/contrato_rama.py:176-177` no lo exige en main. Se borra en un paso previo al merge (RITUAL.md «Antes del merge: el contrato sale de la rama»), no dentro del merge. §2 decisión 2 explica por qué: sellar en main a mitad de merge rompe `state check`. Es un paso nuevo en el ritual, con cambio en RITUAL.md. |
+| 19 | F2: plantilla en `docs/runbooks/CONTRATO-DE-RAMA.md` con tres ejemplos (solo knowledge, motor, medición) | Hecho | Fichero con 167 líneas; un test carga los cuatro bloques (§2) |
+| 20 | F2: contrato de esta rama como primer ejemplo | Hecho | `contrato.yaml`, reproducido en §2.3 |
+| 21 | F3: `.claude/agents/revisor.md` con herramientas de solo lectura (Read, Grep, Glob, Bash sin escritura) | Hecho | frontmatter `tools: Read, Grep, Glob, Bash`; hook `solo_lectura.py` en el frontmatter para Bash |
+| 22 | F3: dos ejes independientes con informe cada uno; (a) lista de reglas y (b) encargo en `docs/encargos/<rama>.md` | Hecho | `revisor.md` secciones «Eje (a)» y «Eje (b)»; formato de salida con dos informes |
+| 23 | F3: cada hallazgo con evidencia y gravedad bloquea/importa/menor; no arregla nada | Hecho | `revisor.md` secciones «Gravedad» y primera frase |
+| 24 | F3: línea nueva en CLAUDE.md, literal | Hecho | CLAUDE.md, «Como se trabaja»: «Antes de declarar una rama lista para revisión: guarda el encargo en docs/encargos/, pasa el revisor y pega su informe al final del informe de la rama.» |
+| 25 | F3: métrica en `docs/runbooks/ERRORES-RECURRENTES.md` por rama (revisor / consultor después) | Hecho | Tabla con columnas «Hallazgos del revisor» y «Hallazgos del consultor despues», más «Que se le escapo» |
+| 26 | F4: tests del hook (bloquea lectura reservada, deja pasar sha256, bloquea Bash indecidible) | Hecho | `tests/unit/test_guardia_claude.py`, 72 casos pasan; §4 nombra cada uno |
+| 27 | F4: tests del contrato (falla con diff fuera, pasa con diff dentro) | Hecho | `tests/unit/test_contrato_rama.py`, 72 casos pasan |
+| 28 | F4: test del revisor (existe, frontmatter válido, sin herramientas de escritura) | Hecho | `tests/unit/test_revisor.py`, 71 casos pasan |
+| 29 | Encargo guardado en `docs/encargos/trabajo-guardias-claude.md` al empezar | Hecho | Existe, 48 líneas, cabecera «Copiado tal cual… el 2026-10-01». No puedo comprobar que sea byte a byte el prompt original. |
+| 30 | Ritual normal con make check sellado, sin --no-verify | Hecho (evidencia indirecta) | El árbol de HEAD = el del SELLO que me diste. No ejecuté `make check`. |
+| 31 | Pegar el informe del revisor en el informe de la rama, «lista para revisión, NO cerrada» | Pendiente de quien me llama | GUARDIAS-CLAUDE.md §6 dice «Pendiente: se pega aquí tras pasarlo». Este informe lo devuelvo yo, sin pegarlo (revisor.md, eje b punto 5). El estado final es el que pide el encargo. |
+| 32 | Lo que no se toca: motor, spec, knowledge, cifras | Hecho | Diff sin `src/`, `knowledge/`, `config/` ni `docs/spec/` |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | importa | Fase 0 exige entregar la tabla del inventario ANTES de escribir código. La rama es un único commit con inventario, código y tests juntos, y el informe no dice que se entregara antes ni cuándo. No se puede comprobar. | `git log --format='%h %s' main..HEAD` → solo 3027599. GUARDIAS-CLAUDE.md §0 no menciona la entrega previa. |
+| B2 | menor | «Permite solo stat, tamaño, sha256 y `botsito corpus inventory`». La rama permite muchas más cosas (CLI entera, `scripts/*.py` commiteados, `find -exec sha256sum`, etc.). Está declarado en §1.3, pero el motivo de dejar pasar la CLI y los scripts commiteados es una sola frase y esos scripts son confianza total (§1.7 lo reconoce). Conviene que el consultor lo apruebe de forma expresa. | `GUARDIAS-CLAUDE.md:153-160` |
+| B3 | menor | El encargo y CLAUDE.md piden pegar el informe del revisor «al final del informe de la rama». El §6 está antes del `## Estado`, así que el informe pegado quedaría en medio y no al final. | `GUARDIAS-CLAUDE.md:314-316` frente a `:333-335` |
+
+Cosas hechas fuera del encargo, todas declaradas en el informe: PowerShell en el matcher (§1.1); bloqueos adicionales de `cherry-pick`, `rebase`, `commit -n`, `branch -D`, `make check` sin fichero y heredoc sin comillas con `\` (§0 filas 5, 29, 32, 44; §1.4); `add -A`, `commit -a`, `revert` y `reset --hard` en main (filas 40 y 45); la cuarentena de crudas v7+ (fila 36); `hooks/solo_lectura.py`; `.claude/hooks` en ruff y `mypy --strict` (Makefile); el paso nuevo del ritual (RITUAL.md); la sección «Las guardias de Claude Code» en CLAUDE.md. Con una salvedad: el hook bloquea más cosas que el encargo enumera, y eso es decisión del consultor.
+
+### Lo que no pude comprobar
+- **`make check`.** No lo ejecuto (escribe). Me quedo con el dato que me diste y con que el árbol de HEAD coincide con el del SELLO.
+- **Hook en vivo dentro de Claude Code.** Solo lo probé invocando `guardia.py` por stdin. Que Claude Code lo cargue, que bloquee con exit 2 y la latencia, no lo verifiqué. Mis pruebas con rutas de Windows con barras invertidas fallaron por el escapado de mi propio shell («el evento no es JSON»), no por el hook, así que esas rutas quedan sin probar.
+- **Reglas `deny` de permisos.** No las medí en vivo; el propio informe (§1.6) dice lo mismo.
+- **Que el encargo guardado sea copia literal** del prompt original: no tengo el original.
+- **Posible cuarto caso del patrón «CLAUDE.md más estricto que el ADR».** El hook trata como no legible todo libro de un mes que no sea enero, abril o agosto, incluido mayo. ADR-0025 §4 permite abrir los 6 días `dev` de mayo, y el hook solo lo evita para la sesión (la ingesta por código sigue funcionando). Es una observación, no una medición. Quien revisa debería confirmar que ninguna tarea prevista necesita leer a mano filas dev de mayo.
+- **Informe de exposiciones.** Para saber si hay una fila en `HOLDOUT-EXPOSICIONES.md` he tenido que fiarme de que la rama no abre material. No leí ese fichero.
+
+### Comandos ejecutados
+1. `git rev-parse HEAD^{tree}`; `git diff --stat main...HEAD`; `git status --short`
+2. `cat contrato.yaml`; `uv run python scripts/contrato_rama.py`; `git log --format='%h %s' main..HEAD`; `git merge-base main HEAD`
+3. `uv run pytest tests/unit/test_contrato_rama.py tests/unit/test_guardia_claude.py tests/unit/test_revisor.py -q` (y la misma con `--co` para contar)
+4. `cat .claude/settings.json`; `git diff main...HEAD -- .gitignore CLAUDE.md Makefile PROJECT_STATE.md docs/runbooks/…` (varias veces, con salida recortada)
+5. `cat -n docs/validation/GUARDIAS-CLAUDE.md`; `cat -n scripts/contrato_rama.py`; `sed -n 255,285p CLAUDE.md`
+6. `uv run botsito state check`
+7. `ls corpus …` y `ls knowledge/cases/holdout/1` (solo nombres)
+8. Unas 26 invocaciones de `printf '<evento JSON>' | python .claude/hooks/guardia.py` con comandos Bash y Read de prueba (holdout, material adicional, `--no-verify`, `core.hooksPath`, `git -C`, push `+`, etc.), todas con rutas inexistentes o de metadatos
+9. `grep -n "hooksPath\|core.hooks" .claude/hooks/guardia.py`; `grep -n '"-C"' .claude/hooks/guardia.py`

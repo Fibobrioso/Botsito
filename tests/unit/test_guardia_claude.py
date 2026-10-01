@@ -346,6 +346,34 @@ def test_la_cli_pasa_salvo_lo_que_imprime_una_cruda(
     assert (_bash(g, repo, comando) is not None) is bloquea, comando
 
 
+def test_git_con_menos_c_resuelve_las_rutas_desde_su_directorio(g: ModuleType, repo: Path) -> None:
+    """Hallazgo A2 del revisor: `-C` cambia la base de las rutas de los argumentos."""
+    _escribir(repo, "knowledge/cases/holdout/1/etiquetas.yaml")
+    for comando in (
+        "git show HEAD:knowledge/cases/holdout/1/etiquetas.yaml",
+        "git -C knowledge/cases show HEAD:./holdout/1/etiquetas.yaml",
+        "git -C knowledge/cases/holdout/1 diff -- etiquetas.yaml",
+        "git -C knowledge/cases log -p -- holdout",
+    ):
+        assert _bash(g, repo, comando) is not None, comando
+    assert _bash(g, repo, "git -C src log --oneline -- botsito") is None
+
+
+def test_core_hookspath_es_saltarse_los_hooks(g: ModuleType, repo: Path) -> None:
+    """Hallazgo A1 del revisor: cambiar `core.hooksPath` equivale a `--no-verify`."""
+    for comando in (
+        "git -c core.hooksPath=/dev/null commit -m x",
+        "git config core.hooksPath /dev/null",
+        "git config --local core.hooksPath .vacio",
+        "git config --unset core.hooksPath",
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "--no-verify" in motivo, comando
+    assert _bash(g, repo, "git config core.hooksPath") is None  # leerlo no lo cambia
+    motivo = _decide(g, repo, "PowerShell", command="git config core.hooksPath NUL")
+    assert motivo is not None
+
+
 def test_un_guion_seguido_es_codigo_revisado_y_uno_nuevo_se_lee(
     g: ModuleType, repo: Path, tmp_path: Path
 ) -> None:

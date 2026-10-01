@@ -21,4 +21,4 @@ hay que mirar, y se corrige su lista (eje a) o la forma de partir el encargo (ej
 
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
 |---|---|---|---|
-| `trabajo/guardias-claude` | ver su informe (§6 de GUARDIAS-CLAUDE.md) | pendiente de la revision | — |
+| `trabajo/guardias-claude` | 0 bloquea, 3 importa, 3 menor (GUARDIAS-CLAUDE.md §6; pasado con un agente general que seguia `revisor.md`) | pendiente de la revision | — |
