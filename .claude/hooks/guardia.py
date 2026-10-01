@@ -440,10 +440,25 @@ class Politica:
             ignorada = zona.split("/")[0] in RAICES_IGNORADAS
             if respeta_ignore and ignorada and not dentro_ignorado:
                 continue  # ripgrep no entra en lo ignorado si no se le da una ruta de dentro
-            motivo = self._primer_protegido(self.raiz / zona)
+            en_disco = self._ruta_real(zona)
+            motivo = self._primer_protegido(en_disco) if en_disco else None
             if motivo:
                 return motivo
         return None
+
+    def _ruta_real(self, rel: str) -> Path | None:
+        """La ruta de disco de `rel` (en minusculas), con la grafia de cada carpeta tal como esta.
+        En Windows da igual; en Linux, `corpus/estrategia del trader` no existe y la segunda CI de
+        la guardia (run 36891855700) lo midio: sin esto, la zona se daba por vacia."""
+        actual = self.raiz
+        for parte in rel.split("/"):
+            if not parte:
+                continue
+            try:
+                actual = next(h for h in actual.iterdir() if h.name.lower() == parte)
+            except (OSError, StopIteration):
+                return None
+        return actual
 
     def _zonas(self) -> list[str]:
         zonas = [MATERIAL, SESIONES, f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3", "data/visor"]

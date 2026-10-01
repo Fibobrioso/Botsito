@@ -163,6 +163,10 @@ def test_las_rutas_se_comparan_igual_en_cualquier_sistema(g: ModuleType, repo: P
     assert p.relativa(str(repo)) == ""
     assert p.relativa(str(repo) + "-otro/x") is None
     assert p.motivo_fichero(str(repo / "SONDA.CRUDA-NO-LEER.txt")) == g.R_CUARENTENA
+    # La segunda CI (run 36891855700): las zonas se guardan en minusculas y en Linux hay que
+    # encontrar la carpeta con su grafia real para recorrerla.
+    assert p._ruta_real(g.MATERIAL) == repo / MATERIAL
+    assert p._ruta_real("corpus/no-existe") is None
 
 
 def test_un_mes_de_desarrollo_con_un_dia_reservado_deja_de_ser_legible(

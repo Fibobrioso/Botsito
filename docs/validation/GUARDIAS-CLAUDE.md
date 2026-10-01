@@ -6,8 +6,11 @@
 > el separador `\` y `os.path.normcase`, que en Linux no pasa a minusculas. Todo lo que este informe
 > dice que la guardia bloquea era cierto en Windows, donde corre Claude Code, y FALSO en Linux. Los
 > tests solo se habian ejecutado en Windows. Arreglado en esa rama: `_normcase` da minusculas y `/`
-> en cualquier sistema, con el test `test_las_rutas_se_comparan_igual_en_cualquier_sistema`. El
-> cuerpo de este informe queda intacto.
+> en cualquier sistema, con el test `test_las_rutas_se_comparan_igual_en_cualquier_sistema`. La
+> CI de esa rama (run 36891855700) destapo un segundo fallo que Windows tambien tapaba: las zonas
+> se guardan en minusculas y el hook las recorria en disco con esa grafia, que en Linux no existe
+> (`corpus/estrategia del trader`); ahora se resuelve la grafia real carpeta a carpeta
+> (`Politica._ruta_real`). El cuerpo de este informe queda intacto.
 
 Rama `trabajo/guardias-claude`, desde `main` en `41c9ed9`, el 2026-10-01. Encargo de Aleks, copiado
 tal cual en `docs/encargos/trabajo-guardias-claude.md`: que las reglas de `CLAUDE.md` que hoy son
