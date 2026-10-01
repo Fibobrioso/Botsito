@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 15.2.0` · hash `23904d572eb2…`
+`spec_version 15.2.1` · hash `16ff731ac0ef…`
 
 28 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -516,7 +516,7 @@
 - **Entonces**: el stop pasa a la entrada, en el instante del toque segun break_even_condicion
 - **Parametros**: `break_even_condicion`, `break_even_criterio_ruptura`
 - **Cita**: `fb-2026-09-29-sesion-03-9f506366` — *«apenas toca, pues se pone en B la entrada»*
-- **Notas**: DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la sesion 3, que dice lo mismo que la de la sesion 1 y anade el marco (M1) y el precio (la entrada exacta). La cita anterior, fb-2026-09-09-sesion-01-0ccafcba («apenas toca»), la sigue citando break_even_condicion. el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo DESDE EL 2026-09-29 (sesion 3; fb-2026-09-29-sesion-03-9f506366 y fb-2026-09-29-sesion-03-2cff5008): el break even se pone AL TOCAR -«apenas toca, pues se pone en B la entrada»-, mirado en M1, con el stop EXACTAMENTE en la entrada, sin puntos a favor para costes, y despues el stop no se mueve (A-40 RESUELTA, fb-2026-09-29-sesion-03-7a79dcd7). break_even_criterio_ruptura pasa a CONFIRMED en `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9 0:57:00-0:58:06. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061, ACEPTADO) EL MOTOR LO EVALUA: `se_completa_zona_de_control` con `posterior_a` deja de ser un hueco y el cableado mueve el stop a la entrada. LO QUE NO ES TODAVIA «al tocar»: la estrategia se evalua al cierre de M1 (ADR-0028), asi que el stop se mueve en el cierre de la M1 que toca el punto, no en el tick (ADR-0053 §2.1, para revisar con la demo).
+- **Notas**: DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la sesion 3, que dice lo mismo que la de la sesion 1 y anade el marco (M1) y el precio (la entrada exacta). La cita anterior, fb-2026-09-09-sesion-01-0ccafcba («apenas toca»), la sigue citando break_even_condicion. el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo DESDE EL 2026-09-29 (sesion 3; fb-2026-09-29-sesion-03-9f506366 y fb-2026-09-29-sesion-03-2cff5008): el break even se pone AL TOCAR -«apenas toca, pues se pone en B la entrada»-, mirado en M1, con el stop EXACTAMENTE en la entrada, sin puntos a favor para costes, y despues el stop no se mueve (A-40 RESUELTA, fb-2026-09-29-sesion-03-7a79dcd7). break_even_criterio_ruptura pasa a CONFIRMED en `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9 0:57:00-0:58:06. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061, ACEPTADO) EL MOTOR LO EVALUA: `se_completa_zona_de_control` con `posterior_a` deja de ser un hueco y el cableado mueve el stop a la entrada. Hasta la rama feature/be-al-tick lo movia en el cierre de la M1 que toca el punto, no en el tick (ADR-0053 §2.1). DESDE EL 2026-09-30 (ADR-0065, PROVISIONAL) ES AL TICK: con break_even_condicion en `tocar`, el stop pasa a la entrada en el primer tick cuyo BID pasa el mismo nivel; sin ticks, con `cierre` o con el criterio `cuerpo`, sigue en el cierre de la M1. La forma no cambia.
 
 **Forma ejecutable**, tal cual la lee el motor:
 

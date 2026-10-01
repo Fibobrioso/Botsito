@@ -1328,9 +1328,11 @@ reglas:
       `mecha`, que era su default. A-13 sigue ABIERTA solo por el corte de audio de v9
       0:57:00-0:58:06. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0061, ACEPTADO)
       EL MOTOR LO EVALUA: `se_completa_zona_de_control` con `posterior_a` deja de ser un hueco y
-      el cableado mueve el stop a la entrada. LO QUE NO ES TODAVIA «al tocar»: la estrategia se
-      evalua al cierre de M1 (ADR-0028), asi que el stop se mueve en el cierre de la M1 que
-      toca el punto, no en el tick (ADR-0053 §2.1, para revisar con la demo).
+      el cableado mueve el stop a la entrada. Hasta la rama feature/be-al-tick lo movia en el
+      cierre de la M1 que toca el punto, no en el tick (ADR-0053 §2.1). DESDE EL 2026-09-30
+      (ADR-0065, PROVISIONAL) ES AL TICK: con break_even_condicion en `tocar`, el stop pasa a la
+      entrada en el primer tick cuyo BID pasa el mismo nivel; sin ticks, con `cierre` o con el
+      criterio `cuerpo`, sigue en el cierre de la M1. La forma no cambia.
     forma:
       cuando:
         todos_de:

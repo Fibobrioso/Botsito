@@ -1,0 +1,19 @@
+id: fb-2026-09-29-sesion-03-39af36ee
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CONFIRM
+respuesta_literal: Siempre va a haber un sesgo, bro, como te digo, o sea, no existe un cejo no claro
+registrado_por: Aleks · grabacion de la sesion 3 (v9), version filtrada leida por la sesion; dirigido
+  a RN-003 por orden del consultor del 2026-10-01 (revision de feature/be-al-tick, opcion (b) para S-1)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:15:29
+t1: 0:15:55
+notas: 'S-1; ev-v9-001529-ac28bb40. La misma cita literal que fb-2026-09-29-sesion-03-1168f036, que se
+  dirigia a RN-033 y queda sustituida por fb-2026-09-29-sesion-03-86dc2801. Confirma lo que RN-003 hace
+  desde ADR-0060: siempre hay sesgo'
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

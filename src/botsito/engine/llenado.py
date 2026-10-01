@@ -37,6 +37,7 @@ RESPALDO_M1 = "respaldo_m1"
 LLENADO = "llenado"
 STOP = "stop"
 OBJETIVO = "objetivo"
+TOQUE = "toque"  # un nivel pasado al tick (ADR-0065): no es un llenado ni una salida
 # el tipo de una orden pendiente de entrada (ADR-0056 §1-2): la limite de siempre y la stop
 TIPO_LIMITE = "limite"
 TIPO_STOP = "stop"
@@ -59,7 +60,7 @@ class Configuracion:
 
 @dataclass(frozen=True)
 class Evento:
-    tipo: str  # LLENADO, STOP u OBJETIVO
+    tipo: str  # LLENADO, STOP, OBJETIVO o TOQUE
     instante_ms: int
     precio: int  # puntos, el precio al que se ejecuta
     fuente: str  # TICKS o RESPALDO_M1
@@ -309,6 +310,34 @@ def primera_salida(
     return None
 
 
+def primer_toque_al_tick(
+    lado: Lado, nivel: int, desde_ms: int, hasta_ms: int, mercado: Mercado
+) -> Evento | None:
+    """El primer TICK en (desde_ms, hasta_ms) cuyo BID pasa `nivel` a favor de `lado` -por encima
+    en una larga, por debajo en una corta-, o None (el break even de RN-014 al tick, ADR-0065).
+
+    Es la mecha de una M1 BID vista tick a tick: el mismo `_pasa` estricto de
+    `domain.estructura_m1`, sobre el BID con que se dibujan las velas. SOLO TICKS: un minuto sin
+    ticks no da instante, y el break even de ese minuto queda al cierre de la M1, que es el
+    respaldo pesimista de siempre (§3)."""
+    if hasta_ms <= desde_ms:
+        return None
+    larga = lado == "compra"
+    for m in _minutos(desde_ms, hasta_ms):
+        ticks = mercado.ticks_del_minuto(m)
+        if ticks is None:
+            continue
+        for t in ticks:
+            if t.instante <= desde_ms:
+                continue
+            if t.instante >= hasta_ms:
+                return None
+            bid = int(t.bid)
+            if (bid > nivel) if larga else (bid < nivel):
+                return Evento(TOQUE, int(t.instante), bid, TICKS, MinutoUtc(m))
+    return None
+
+
 def _con_deslizamiento(precio: int, larga: bool, config: Configuracion) -> int:
     d = config.deslizamiento_fijo_puntos
     return precio - d if larga else precio + d
@@ -334,6 +363,7 @@ __all__ = [
     "TIPOS_ORDEN",
     "TIPO_LIMITE",
     "TIPO_STOP",
+    "TOQUE",
     "Configuracion",
     "Evento",
     "Lado",
@@ -342,6 +372,7 @@ __all__ = [
     "lado_equivocado",
     "primer_llenado_limite",
     "primer_llenado_stop",
+    "primer_toque_al_tick",
     "primera_salida",
     "spread_por_hora",
 ]
