@@ -706,3 +706,105 @@ def test_pending_ve_el_rechazo_sin_aplicar_y_la_regla_que_sigue_vigente(repo: Pa
         if estado != "pendiente" or aguja not in motivo:
             problemas.append(f"{registro_falso.objetivo}: {estado} - {motivo}")
     assert not problemas, problemas
+
+
+def _ctx_pendiente(repo: Path) -> cli.ContextoPendiente:
+    from botsito.config.registro import cargar_registro
+    from botsito.evidence.contradicciones import detectar
+    from botsito.evidence.modelo import cargar_evidencia
+    from botsito.spec.modelo import FICHERO_SPEC, cargar_reglas
+
+    registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+    reglas = cargar_reglas(repo / FICHERO_SPEC)
+    items = list(cargar_evidencia(repo / "knowledge" / "evidence"))
+    return cli.ContextoPendiente(
+        registro.parametros,
+        {},
+        {r.id: r for r in reglas},
+        frozenset(str(c["tema"]) for c in detectar(items)),
+        "",
+    )
+
+
+def test_pending_una_confirmacion_del_valor_vigente_no_es_pendiente(
+    repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Opcion (b) del consultor (rama feature/reflejar-feedback-s3).
+
+    Un CONFIRM que repite el valor ya fijado no cabe en la cita -la ocupa el registro que FIJO el
+    valor, y moverla lo pondria a el en pendiente, medido- pero tampoco deja trabajo. Sale aparte,
+    a la vista, y no entre los pendientes. Vale con el valor escrito y sin el.
+    """
+    import dataclasses
+
+    from botsito.feedback.modelo import Objetivo, cargar_feedback
+
+    ctx = _ctx_pendiente(repo)
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    base = next(r for r in registros if r.accion == "CONFIRM")
+    p = ctx.parametros["liquidez_m15_criterio_toma"]
+    assert p.estado == "CONFIRMED" and p.valor == "cuerpo"
+    objetivo = Objetivo("parametro", p.nombre)
+    con_valor = dataclasses.replace(
+        base, objetivo=objetivo, valor_resultante="cuerpo", valor_canonico=None
+    )
+    sin_valor = dataclasses.replace(
+        base, objetivo=objetivo, valor_resultante=None, valor_canonico=None
+    )
+    for registro_falso in (con_valor, sin_valor):
+        estado, motivo = cli.situacion_de(ctx, registro_falso)
+        assert estado == "confirmacion", motivo
+        assert "confirma el valor vigente" in motivo
+
+    # y en la salida, en su cajon y con el id y el parametro
+    capsys.readouterr()
+    assert cli.feedback_pending(repo) == 0
+    salida = capsys.readouterr().out
+    lineas = salida.splitlines()
+    assert "confirmaciones de valores ya fijados:" in lineas
+    desde = lineas.index("confirmaciones de valores ya fijados:")
+    listadas = [x for x in lineas[desde + 1 :] if x.lstrip().startswith("(=)")]
+    assert any(
+        "fb-2026-09-29-sesion-03-43e0f90e" in x and "parametro:liquidez_m15_criterio_toma" in x
+        for x in listadas
+    ), listadas
+    pendientes = [x for x in lineas[:desde] if not x.lstrip().startswith(("(?)", "(=)"))]
+    assert not any("fb-2026-09-29-sesion-03-43e0f90e" in x for x in pendientes)
+    assert "confirmaciones de valores ya fijados" in lineas[-1]
+
+
+def test_pending_una_confirmacion_que_discrepa_o_sin_parametro_sigue_pendiente(repo: Path) -> None:
+    """Las dos salidas de la opcion (b) que tienen que seguir como hoy: si el valor del registro
+    NO es el vigente, o si el parametro que nombra no existe, el registro es pendiente."""
+    import dataclasses
+
+    from botsito.feedback.modelo import Objetivo, cargar_feedback
+
+    ctx = _ctx_pendiente(repo)
+    registros = cargar_feedback(repo / "knowledge" / "feedback")
+    base = next(r for r in registros if r.accion == "CONFIRM")
+    discrepa = dataclasses.replace(
+        base,
+        objetivo=Objetivo("parametro", "liquidez_m15_criterio_toma"),
+        valor_resultante="mecha",
+        valor_canonico=None,
+    )
+    estado, motivo = cli.situacion_de(ctx, discrepa)
+    assert estado == "pendiente" and "no coincide con el vigente" in motivo, motivo
+
+    huerfano = dataclasses.replace(
+        base,
+        objetivo=Objetivo("parametro", "no_existe_en_el_registro"),
+        valor_resultante=None,
+        valor_canonico=None,
+    )
+    estado, motivo = cli.situacion_de(ctx, huerfano)
+    assert estado == "pendiente" and "no esta en el registro" in motivo, motivo
+
+    # una regla no tiene valor con que comparar: un CONFIRM que trae uno no la confirma
+    vigente = next(r for r in ctx.reglas.values() if r.vigente)
+    sobre_regla = dataclasses.replace(
+        base, objetivo=Objetivo("regla", vigente.id), valor_resultante="algo", valor_canonico=None
+    )
+    estado, motivo = cli.situacion_de(ctx, sobre_regla)
+    assert estado == "pendiente", motivo

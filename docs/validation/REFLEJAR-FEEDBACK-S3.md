@@ -64,6 +64,41 @@ en el valor: lo único que falta es un sitio donde citar la confirmación.
   consultor la mantiene, el registro seguirá pendiente: la salida limpia es un ADR que lo diga, o
   que el registro apunte a RN-003, que es donde se refleja.
 
+### 1.2.1 La decisión del consultor: la opción (b), aplicada (2026-09-30)
+
+Tras la revisión, el consultor eligió la **(b)**. Un registro de confirmación cuyo valor coincide
+con el valor CONFIRMED vigente del parámetro o la regla que nombra **deja de contar como
+pendiente** sin ocupar la cita. `feedback pending` lo lista aparte, bajo «confirmaciones de valores
+ya fijados», con el id y el objetivo. Si el valor no coincide, sigue pendiente, como antes.
+
+**Cómo queda en el código** (`cli.py`, `situacion_de`; `feedback/aplicar.py`,
+`confirma_el_vigente`):
+- **Parámetro:** un CONFIRM sobre un parámetro CONFIRMED que no lo cita es confirmación si su valor
+  coincide con el vigente. Se convierte con el mismo conversor que usa `feedback apply`.
+- **Parámetro, CONFIRM sin valor propio:** también es confirmación. **Es la lectura que ha habido
+  que hacer, y se dice:** los cuatro CONFIRM reales no traen `valor_resultante` ni
+  `valor_canonico`. El trader dice «sí, es eso», así que no hay valor que pueda discrepar.
+- **Regla:** no tiene un valor con que comparar. Solo cuenta como confirmación un CONFIRM sin valor
+  propio sobre una regla VIGENTE; uno que traiga valor sigue pendiente.
+- **Sigue pendiente:** el CONFIRM cuyo valor no coincide, el que nombra un parámetro que no existe y
+  todo lo que no sea CONFIRM.
+- **Tests** (`tests/unit/test_cli.py`):
+  - una confirmación coincidente, con valor y sin él, no es pendiente y sale en su cajón;
+  - una discrepante es pendiente;
+  - una sobre un parámetro inexistente es pendiente;
+  - una sobre una regla que trae valor es pendiente.
+
+**Resultado sobre el repositorio:** `feedback pending` pasa a **1 pendiente**, 83 reflejados,
+**4 confirmaciones** (`liquidez_m15_criterio_toma`, `cartuchos_max`, `lotaje_base` y G-1 sobre
+RN-015) y 9 sin mecanismo.
+
+**S-1 sobre RN-033 sigue pendiente, y es a propósito: medido, no es una confirmación.**
+`fb-2026-09-29-sesion-03-1168f036` es un **CORRECT** con `valor_resultante` en prosa («siempre hay
+sesgo: no se deja de operar por un sesgo no claro»), así que la regla (b) no lo alcanza. Meterlo
+habría exigido una excepción a la regla que se acaba de escribir. Queda para el consultor: un ADR
+que diga que RN-033 no lo refleja, o un registro que lo lleve a RN-003, que es donde el motor ya lo
+hace.
+
 ### 1.3 Desalineaciones con el motor (no se ha tocado)
 
 - **RN-014 (break even al tocar).** El trader dice «apenas toca», y el motor evalúa la estrategia al
@@ -95,5 +130,9 @@ las cifras de saldo que se vieron en ellos sin usarlas, están declarados en
 
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** Pendiente del consultor: elegir (a), (b) o (c) para los
-cuatro CONFIRM que no caben, y decidir qué se hace con S-1 sobre RN-033.
+**Revisada por el consultor el 2026-09-30, con la opción (b) aplicada** (§1.2.1). En Next Action
+quedan dos puntos nuevos: G, la rama de código de RN-014 (break even al tick), y H, RN-007 a la
+espera de la pregunta 14. Queda pendiente S-1 sobre RN-033, que no es una confirmación.
+
+Antes de la revisión decía: «Rama lista para revisión, NO cerrada. Pendiente del consultor: elegir
+(a), (b) o (c) para los cuatro CONFIRM que no caben, y decidir qué se hace con S-1 sobre RN-033».
