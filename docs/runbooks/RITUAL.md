@@ -9,7 +9,9 @@ cambia: el sello, `main` y el tag en un solo push atomico, y la CI en verde ante
 rama. Las dos primeras ramas cerradas asi fueron `trabajo/visor-dias` (2026-09-25, con la orden
 «sigue el ritual tal cual») y `trabajo/ticks-llenado` (2026-09-26, con la orden de cierre tras la
 revision del consultor). Escrito el 2026-09-17 con lo aprendido en las ramas de fidelidad de la
-spec, la guarda del holdout y los meses vistos.
+spec, la guarda del holdout y los meses vistos. Desde el 2026-10-01 lo ejecuta la skill
+`cerrar-rama` (`.claude/skills/cerrar-rama/SKILL.md`), que sigue este runbook paso a paso: aqui
+estan las puertas, y alli solo como se recorren.
 
 ## Seis correcciones que han costado tiempo
 
@@ -172,8 +174,13 @@ git rev-parse --short HEAD
 → Estamos en la **ventana B**: aquí `state check` también fallaría por diseño. No se corre.
 
 **La sesión edita SOLO `PROJECT_STATE.md`**, **sin estadiar** y sin commitear: Current Branch,
-Current Feature, Stable Main State, Completed Features, Features Waiting for Validation, la entrada
-del Change Log, Next Action y Last Stable Commit.
+Current Feature, Stable Main State, Completed Features, la entrada del Change Log, Next Action y Last
+Stable Commit. **Desde el 2026-10-01 (`trabajo/dieta-y-skills`) se SUSTITUYE lo que deja de ser
+verdad, sin «Lo anterior:»**: lo de antes ya está en `docs/state/HISTORIA.md`, y la rama siguiente
+archiva allí este `PROJECT_STATE.md` al abrirse (`docs/state/README.md`). Completed Features gana
+una línea y Change Log una entrada; `PROJECT_STATE.md` no pasa de 25 KB
+(`tests/unit/test_project_state.py`, dentro de `make check`): si lo pasara, `make check` sale en
+rojo y no hay sello, así que se acorta lo sustituido, no se archiva en `main` (regla 5).
 
 **El sha del merge lo LEE la sesión del repositorio; el mensaje que se le pasa NO lleva hueco
 `<SHA>`.** Antes de editar, la sesión ejecuta:
@@ -263,6 +270,13 @@ sea que **el push no llegó**.
 git branch -d trabajo/<rama>
 ```
 → **Solo con la CI en verde.** `-d` y no `-D`: si git se niega, es que algo no está fusionado.
+
+Si la rama se empujó como `fix/<rama>` para la CI de Linux («Antes del merge: la CI de Linux»), su
+rama remota se borra también aquí, con la CI en verde: `git push origin --delete fix/<rama>` (en
+texto y no en bloque, como el push de la rama: `tests/unit/test_push_atomico.py`).
+→ **Puerta:** `git ls-remote --heads origin fix/<rama>` sale vacío. La guardia de Claude Code solo
+deja borrar así ramas `trabajo/`, `feature/` o `fix/`, nombradas una a una; `main`, un tag o un
+borrado que mezcle alguno de ellos los bloquea entero (`trabajo/dieta-y-skills`).
 
 ## Si la CI sale roja
 

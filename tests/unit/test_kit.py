@@ -375,15 +375,22 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     assert any("break_even_condicion no esta" in p for p in problemas)
 
 
-def test_project_state_refleja_las_ambiguedades() -> None:
-    """Anti-deriva: la tabla de PROJECT_STATE y el YAML tienen los mismos ids y titulos."""
+def test_project_state_refleja_las_ambiguedades_abiertas() -> None:
+    """Anti-deriva: la tabla de PROJECT_STATE tiene exactamente las ABIERTAS del YAML, con su
+    titulo, clase y bloqueante. Desde la dieta (`trabajo/dieta-y-skills`, 2026-10-01) las cerradas
+    salen de la tabla: su fila de antes esta en docs/state/HISTORIA.md."""
     ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
     texto = (REPO / "PROJECT_STATE.md").read_text(encoding="utf-8")
-    filas = [ln for ln in texto.splitlines() if ln.startswith("| A-")]
-    tabla = {ln.split("|")[1].strip(): ln.split("|")[2].strip() for ln in filas}
-    assert set(tabla) == {a.id for a in ambs}
-    for a in ambs:
-        assert tabla[a.id] == a.titulo, a.id
+    filas = [ln.split("|")[1:-1] for ln in texto.splitlines() if ln.startswith("| A-")]
+    tabla = {f[0].strip(): [c.strip() for c in f[1:]] for f in filas}
+    abiertas = [a for a in ambs if a.estado == "ABIERTA"]
+    assert set(tabla) == {a.id for a in abiertas}, "la tabla no son exactamente las ABIERTAS"
+    for a in abiertas:
+        titulo, clase, bloqueante, resuelve_en = tabla[a.id]
+        assert titulo == a.titulo, a.id
+        assert clase == a.clase, a.id
+        assert bloqueante == ("si" if a.bloqueante else "no"), a.id
+        assert resuelve_en == ", ".join(a.resuelve_en), a.id
 
 
 # ---------------------------------------------------------------- particiones

@@ -1,36 +1,24 @@
 from pathlib import Path
 
+# Desde la dieta (rama `trabajo/dieta-y-skills`, 2026-10-01) PROJECT_STATE lleva solo el presente;
+# lo demas -Project Goal, Existing Components, el indice de ADR, Lineamientos...- vive en
+# docs/state/HISTORIA.md (docs/state/README.md).
 REQUIRED_SECTIONS = [
-    "Project Goal",
-    "Approved Architecture",
-    "Development Strategy",
-    "How to Start a Session",
-    "Change Regimes (must be respected)",
-    "Current Phase",
-    "Current Feature",
     "Current Branch",
+    "Current Feature",
     "Stable Main State",
-    "Completed Phases",
-    "Completed Features",
-    "Features Waiting for Validation",
-    "Existing Components",
-    "Important Files",
-    "Tests Currently Passing",
-    "Architectural Decisions (index)",
-    "Decisions and Rationale",
-    "Expert Entry Points",
-    "Expert Validations",
-    "Known Ambiguities",
-    "Known Contradictions",
-    "Known Issues",
-    "Technical Debt",
-    "Open Questions",
-    "Things That Must Not Be Changed",
-    "Next Feature",
-    "Next Action",
     "Last Stable Commit",
+    "Tests Currently Passing",
+    "Next Action",
+    "Known Ambiguities",
+    "Technical Debt",
+    "Reglas vivas",
+    "Completed Features",
     "Change Log",
 ]
+# El encargo de la dieta: «Objetivo: menos de 25 KB». Si una rama lo pasa, lo que dejo de ser
+# presente se archiva en docs/state/HISTORIA.md; el tope no se sube.
+TOPE_BYTES = 25_000
 
 
 def _sections(text: str) -> list[str]:
@@ -48,6 +36,8 @@ def test_project_state_has_required_sections_in_order(repo: Path) -> None:
     assert not missing, f"faltan secciones: {missing}"
     positions = [found.index(s) for s in REQUIRED_SECTIONS]
     assert positions == sorted(positions), "las secciones no estan en el orden del plan"
+    sobran = [s for s in found if s not in REQUIRED_SECTIONS]
+    assert not sobran, f"secciones que no son del presente (van a docs/state/HISTORIA.md): {sobran}"
 
 
 def test_project_state_declares_a_branch(repo: Path) -> None:
@@ -55,3 +45,11 @@ def test_project_state_declares_a_branch(repo: Path) -> None:
     start = text.index("## Current Branch")
     body = text[start:].split("\n## ", 1)[0]
     assert any(line.strip() for line in body.splitlines()[1:]), "Current Branch vacio"
+
+
+def test_project_state_cabe_en_el_tope(repo: Path) -> None:
+    tamano = (repo / "PROJECT_STATE.md").stat().st_size
+    assert tamano < TOPE_BYTES, (
+        f"PROJECT_STATE.md pesa {tamano} bytes (tope {TOPE_BYTES}): archiva en "
+        "docs/state/HISTORIA.md lo que ya no es presente (docs/state/README.md)"
+    )

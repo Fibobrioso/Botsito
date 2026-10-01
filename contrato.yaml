@@ -1,0 +1,39 @@
+rama: trabajo/dieta-y-skills
+riesgo: medio  # cambia un hook, state check, tests y documentos de proceso; no toca spec, motor, knowledge ni cifras
+artefacto: docs/validation/DIETA-Y-SKILLS.md
+rutas_permitidas:
+  - docs/validation/DIETA-Y-SKILLS.md
+  - docs/validation/anexos/DIETA-Y-SKILLS/
+  - docs/encargos/
+  - docs/state/
+  - docs/runbooks/
+  - PROJECT_STATE.md
+  - CLAUDE.md
+  - .claude/skills/
+  - .claude/hooks/guardia.py
+  - .claude/settings.json
+  - .claude/agents/revisor.md
+  - src/botsito/cli.py
+  - tests/unit/test_guardia_claude.py
+  - tests/unit/test_project_state.py
+  - tests/unit/test_project_state_rutas.py
+  - tests/unit/test_historia.py
+  - tests/unit/test_adr.py
+  - tests/unit/test_kit.py
+  - tests/unit/test_cli.py
+  - tests/unit/test_push_atomico.py
+  - tests/unit/test_tree.py
+  - tests/contract/test_documentos_vivos.py
+rutas_protegidas:
+  - knowledge/
+  - config/
+  - data/manifests/
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - src/botsito/spec/
+  - docs/adr/
+comprobaciones:
+  - uv run pytest tests/unit/test_guardia_claude.py tests/unit/test_project_state.py tests/unit/test_historia.py tests/unit/test_kit.py tests/unit/test_adr.py tests/contract/test_documentos_vivos.py -q
+  - uv run botsito state check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1

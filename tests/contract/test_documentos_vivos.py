@@ -52,18 +52,15 @@ VIVOS = (
     "knowledge/cases/kit/README.md",
 )
 
-# PROJECT_STATE es mitad presente y mitad archivo. Estas secciones son archivo -o las vigila otra
-# guardia- y quedan fuera, cada una con su motivo:
+# PROJECT_STATE lleva el presente y, hasta que la rama siguiente lo archive, lo cerrado desde el
+# ultimo archivo de docs/state/HISTORIA.md (rama `trabajo/dieta-y-skills`). Estas secciones son
+# archivo -o las vigila otra guardia- y quedan fuera, cada una con su motivo. HISTORIA.md entera es
+# archivo y no la mira esta guardia.
 SECCIONES_EXENTAS = {
-    "## Completed Phases": "lo que se cerro entonces, con las cifras de entonces",
-    "## Completed Features": "idem, una linea por rama cerrada",
+    "## Completed Features": "una linea por rama cerrada, con las cifras de ese dia",
     "## Stable Main State": "describe `main`, no la rama: sus cifras son las del ultimo tag",
     "## Tests Currently Passing": "la vigila `state check`, que la compara con pytest",
-    "## Lineamientos recibidos del usuario y hechos del corpus (evidencia en F07)": (
-        "hechos fechados del corpus, con el id de evidencia que los sostiene"
-    ),
     "## Technical Debt": "describe deudas con las cifras del dia en que se anotaron",
-    "## Expert Validations": "actas de validacion, fechadas",
     "## Change Log": "el archivo por excelencia: cada entrada dice lo que era cierto ese dia",
 }
 

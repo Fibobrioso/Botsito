@@ -550,6 +550,78 @@ def test_las_operaciones_prohibidas(g: ModuleType, repo: Path, comando: str) -> 
     assert motivo is not None and "Regla:" in motivo, comando
 
 
+# ------------------------------------------------------------- el borrado de ramas remotas
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git push origin --delete fix/x",
+        "git push origin :fix/x",
+        "git push origin -d fix/dieta-y-skills",
+        "git push --delete origin trabajo/x feature/F35-orden-stop-pivote",
+        "git push origin :refs/heads/fix/x",
+        "git push origin trabajo/x:refs/heads/fix/x",
+    ],
+)
+def test_se_puede_borrar_una_rama_remota_de_trabajo(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """RITUAL.md: la `fix/<rama>` que se empuja para la CI de Linux se borra al cerrar."""
+    assert _bash(g, repo, comando) is None, comando
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git push origin --delete main",
+        "git push origin :main",
+        "git push origin --delete stable/F36j-guardia-linux",
+        "git push origin :stable/F36j-guardia-linux",
+        "git push origin --delete refs/tags/x",
+        "git push origin :refs/tags/x",
+        "git push origin --delete fix/x main",
+        "git push origin --delete fix/x stable/F36j-guardia-linux",
+        "git push origin :fix/x :main",
+        "git push origin trabajo/x :refs/tags/x",
+        "git push origin --delete 'fix/*'",
+        "git push origin --delete fix/x/../../main",
+        'git push origin --delete "$RAMA"',
+        "git push origin :$RAMA",
+        "git push origin --delete",
+        "git push --prune origin 'refs/heads/*:refs/heads/*'",
+        "git push origin :",
+    ],
+)
+def test_no_se_borra_main_ni_un_tag_ni_lo_que_no_se_puede_decidir(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    assert _bash(g, repo, comando) is not None, comando
+
+
+def test_borrar_un_tag_remoto_cita_la_regla_de_los_tags(g: ModuleType, repo: Path) -> None:
+    motivo = _bash(g, repo, "git push origin --delete fix/x stable/F36j-guardia-linux")
+    assert motivo is not None and g.R_TAG in motivo
+    motivo = _bash(g, repo, "git push origin --delete main")
+    assert motivo is not None and g.R_BORRAR_REMOTO in motivo
+
+
+@pytest.mark.parametrize(
+    ("comando", "bloquea"),
+    [
+        ("git push origin --delete fix/x", False),
+        ("git push origin :fix/x", False),
+        ("git push origin --delete main", True),
+        ("git push origin --delete fix/x stable/F36j-guardia-linux", True),
+        ("git push origin :refs/tags/x", True),
+        ("git push origin --delete $rama", True),
+    ],
+)
+def test_powershell_borra_solo_ramas_de_trabajo(
+    g: ModuleType, repo: Path, comando: str, bloquea: bool
+) -> None:
+    motivo = _decide(g, repo, "PowerShell", command=comando)
+    assert (motivo is not None) is bloquea, (comando, motivo)
+
+
 def test_en_una_rama_de_trabajo_add_a_y_un_heredoc_con_comillas_pasan(
     g: ModuleType, repo: Path
 ) -> None:
@@ -584,6 +656,8 @@ RITUAL = [
     '\'"status": *"[^"]*"\\|"conclusion": *"[^"]*"\'',
     "git push origin main",
     "git branch -d trabajo/guardias-claude",
+    "git push origin trabajo/guardia-linux:refs/heads/fix/guardia-linux",
+    "git push origin --delete fix/guardia-linux",
     "make hooks",
     "uv run botsito knowledge validate > knowledge-validate.log 2>&1",
     "uv run botsito fidelidad build --artefacto eurusd-2026-03 --seed 20261001",
@@ -696,8 +770,14 @@ def test_los_ajustes_registran_la_guardia_y_las_denegaciones() -> None:
         "rm -rf corpus/x",
         "rm -rf knowledge",
         "BOTSITO_ALLOW_MAIN=1 git commit --no-verify -m x",
+        "git push origin --delete main",
+        "git push origin --delete refs/tags/x",
+        "git push origin :stable/F01",
     ):
         assert any(_casa_regla(r, comando) for r in deny), comando
+    # El borrado de la `fix/<rama>` del ritual no lo deniega ninguna regla: lo decide la guardia.
+    for comando in ("git push origin --delete fix/x", "git push origin :fix/x"):
+        assert not any(_casa_regla(r, comando) for r in deny), comando
 
 
 def test_el_push_a_main_pide_confirmacion() -> None:
