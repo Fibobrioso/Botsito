@@ -589,12 +589,23 @@ def test_se_puede_borrar_una_rama_remota_de_trabajo(
         "git push origin --delete",
         "git push --prune origin 'refs/heads/*:refs/heads/*'",
         "git push origin :",
+        "git push origin +:main",
+        "git push --mirror origin",
     ],
 )
 def test_no_se_borra_main_ni_un_tag_ni_lo_que_no_se_puede_decidir(
     g: ModuleType, repo: Path, comando: str
 ) -> None:
     assert _bash(g, repo, comando) is not None, comando
+
+
+def test_la_decision_de_borrado_sola_tambien_cierra_el_forzado_y_el_espejo(g: ModuleType) -> None:
+    """Revisor de `trabajo/dieta-y-skills`, B1 y B2: `+:main` y `--mirror` los paraba ya el push
+    forzado en Bash, pero no en PowerShell (`--mirror`) ni la funcion por si sola."""
+    for argumentos in (["origin", "+:main"], ["--mirror", "origin"]):
+        with pytest.raises(g.BloqueoError):
+            g.decidir_borrado_remoto(argumentos)
+    g.decidir_borrado_remoto(["origin", "+:fix/x"])
 
 
 def test_borrar_un_tag_remoto_cita_la_regla_de_los_tags(g: ModuleType, repo: Path) -> None:
@@ -613,6 +624,8 @@ def test_borrar_un_tag_remoto_cita_la_regla_de_los_tags(g: ModuleType, repo: Pat
         ("git push origin --delete fix/x stable/F36j-guardia-linux", True),
         ("git push origin :refs/tags/x", True),
         ("git push origin --delete $rama", True),
+        ("git push origin +:main", True),
+        ("git push --mirror origin", True),
     ],
 )
 def test_powershell_borra_solo_ramas_de_trabajo(

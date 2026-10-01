@@ -1287,10 +1287,11 @@ def decidir_borrado_remoto(argumentos: list[str | None]) -> None:
     """Los argumentos de `git push` (None = se construye al ejecutarse): bloquea si borra algo que
     no sea una rama `trabajo/`, `feature/` o `fix/`, o si no se puede saber que borra."""
     flags = [a for a in argumentos if a is not None and a.startswith("-")]
-    if "--prune" in flags:
-        raise BloqueoError(
-            f"`git push --prune` borra ramas remotas sin nombrarlas.\nRegla: {R_BORRAR_REMOTO}."
-        )
+    for flag in ("--prune", "--mirror"):
+        if flag in flags:
+            raise BloqueoError(
+                f"`git push {flag}` borra ramas remotas sin nombrarlas.\nRegla: {R_BORRAR_REMOTO}."
+            )
     borra = "--delete" in flags or _flag_corta(flags, "d", "")
     posicionales: list[str | None] = []
     saltar = False
@@ -1300,7 +1301,9 @@ def decidir_borrado_remoto(argumentos: list[str | None]) -> None:
         elif a is not None and a in PUSH_CON_VALOR:
             saltar = True
         elif a is None or not a.startswith("-"):
-            posicionales.append(a)
+            # `+:main` borra igual que `:main` (el `+` solo fuerza): se mira sin el `+`, aunque
+            # el push forzado ya lo bloquee antes (revisor de `trabajo/dieta-y-skills`, B1).
+            posicionales.append(a if a is None else a.removeprefix("+"))
     if borra:
         borradas = posicionales[1:]
         if not borradas:

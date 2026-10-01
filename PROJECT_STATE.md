@@ -23,7 +23,7 @@ EN CURSO: `trabajo/dieta-y-skills` (2026-10-01; encargo docs/encargos/trabajo-di
 1f597cb · merge: la guardia de Claude Code en Linux, y la CI de Linux antes del merge · tag stable/F36j-guardia-linux
 
 ## Tests Currently Passing
-1119 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1120 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

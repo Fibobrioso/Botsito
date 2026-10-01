@@ -43,3 +43,4 @@ El original sigue entero en `docs/state/HISTORIA.md` (Archivo 1). Se amplian aqu
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
 |---|---|---|---|
 | `trabajo/guardias-claude` | 0 bloquea, 3 importa, 3 menor (GUARDIAS-CLAUDE.md §6; pasado con un agente general que seguia `revisor.md`) | 0 bloquea, 2 importa, 0 menor | (1) los tramos no citables de v6 no se bloqueaban, y la exencion de v6 los dejaba legibles; (2) un guion nuevo o cambiado en la rama, una vez commiteado, se trataba como codigo revisado |
+| `trabajo/dieta-y-skills` | 0 bloquea, 1 importa, 3 menor (DIETA-Y-SKILLS.md, «Informe del revisor»; B1 y B2 arreglados en la rama, A1 y B3 declarados) | se apunta al cerrar | — |
