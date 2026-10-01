@@ -397,6 +397,13 @@ La CI no instala el grupo `asr`, pero **cuatro ficheros de test necesitan ffprob
 
 ## Estado
 
+**ACEPTADA por el consultor el 2026-09-30, con orden de cierre en `main`.** ADR-0064 queda ACEPTADO
+en su dirección, con sus valores en DEFAULT_AMBIGUOUS bajo A-48 y A-29 (`orden_stop_punto`,
+`caja_bloque`, `caja_se_fija`). Ningún valor por defecto cambia al cerrar. El tag no lleva «F35» en el
+nombre, porque en MASTER_PLAN F35 es la puerta del go-live.
+
+Lo que sigue es el estado previo a la revisión, sin tocar.
+
 Lista para revisión, **no cerrada**. Commits:
 - `051d4c6`: el código;
 - `2ea0390`: la medida de §2;
