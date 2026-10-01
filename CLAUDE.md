@@ -253,3 +253,27 @@ Es lo que mas tiempo hace perder. `knowledge/corpus/transcripciones/` solo tiene
   Technical Debt).
 - Un informe por rama en `docs/validation/`, con su estado al final.
 - Nada afirma mas de lo que su cita sostiene.
+- **Al abrir una rama:** el prompt que la origina se copia tal cual en
+  `docs/encargos/<rama con - en lugar de />.md`, y se escribe su `contrato.yaml`
+  (`docs/runbooks/CONTRATO-DE-RAMA.md`), que `make check` comprueba.
+- Antes de declarar una rama lista para revisión: guarda el encargo en docs/encargos/, pasa el revisor y pega su informe al final del informe de la rama.
+  El revisor es el subagente `revisor` (`.claude/agents/revisor.md`); lo que encuentra el y lo que
+  encuentra despues el consultor se apunta en `docs/runbooks/ERRORES-RECURRENTES.md`.
+
+## Las guardias de Claude Code (`.claude/`)
+
+Desde el 2026-10-01 (rama `trabajo/guardias-claude`, `docs/validation/GUARDIAS-CLAUDE.md`), un
+hook `PreToolUse` (`.claude/hooks/guardia.py`) mira cada Read, Grep, Glob, Bash y PowerShell de la
+sesion. **Bloquea leer el CONTENIDO del material protegido** del punto 3 de arriba -el holdout, los
+libros de meses con dias reservados o sin sortear, las imagenes del material adicional, las hojas
+de las sesiones, las crudas de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso
+reservado- y deja listarlo, medirlo y hashearlo. Bloquea tambien `--no-verify`, `push --force`,
+borrar o mover tags, `cherry-pick` y `rebase`, `rm -rf` sobre `data/`, `corpus/` o `knowledge/`,
+`make check` sin fichero de salida, el heredoc sin comillas con `\` y, en `main`, `git add -A`,
+`commit -a`, `revert` y `reset --hard`. Un comando que no puede decidir y podria leer material
+protegido (rutas construidas al ejecutarse, `eval`, `xargs` delante de un lector) tambien lo
+bloquea. **Es defensa en profundidad: la barrera sigue siendo el codigo** (`casos_reservados`, la
+compuerta del arnes). Y **una guardia no se rodea**: si bloquea algo legitimo, se dice en el informe
+y se corrige la guardia en su rama, no se reescribe el comando para que no la vea. El codigo nuevo
+o cambiado que no esta commiteado se lee como codigo sin revisar: por eso un guion del scratchpad
+que nombre una carpeta protegida se bloquea aunque no la abra.
