@@ -109,6 +109,26 @@ def _valor_bruto(r: FeedbackRecord, p: Parametro) -> Any:
     return bruto
 
 
+def confirma_el_vigente(r: FeedbackRecord, p: Parametro) -> bool:
+    """Si un CONFIRM confirma el valor que `p` YA tiene (rama feature/reflejar-feedback-s3).
+
+    Un registro sin valor propio -el trader dice «si, es eso» y nada mas- no puede discrepar del
+    vigente, asi que lo confirma. Uno con valor se convierte con el MISMO conversor que `apply` y
+    se compara con el vigente: si no casa, o no se puede convertir, no confirma nada. Un `hora`
+    no se compara: sin el huso del fichero una hora no dice cuando ocurre.
+    """
+    if r.valor_canonico is None and r.valor_resultante is None:
+        return True
+    if p.tipo == "hora":
+        return False
+    try:
+        escrito = _valor_bruto(r, p)
+        convertido = _convertir(p.tipo, escrito, None, p.nombre)
+    except (AplicarError, RegistroError):
+        return False
+    return bool(convertido == p.valor)
+
+
 def cambios_de_sesion(
     registro: Registro,
     feedback: Sequence[FeedbackRecord],

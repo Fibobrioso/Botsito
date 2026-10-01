@@ -2,14 +2,14 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.1.0` · hash `776570759beb…`
+`spec_version 15.2.0` · hash `23904d572eb2…`
 
 90 en total: 73 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
 | `anclaje_h4` | `17:00 America/New_York` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-479e68b9` | hora de reloj de pared en el huso declarado; parte la recta UTC en velas H4 |
-| `base_calculo_objetivo` | `caja_completa` | CONFIRMED | estrategia | `ev-v2-003256-0197f4e1` | sobre que distancia se multiplica objetivo_rr |
+| `base_calculo_objetivo` | `caja_completa` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-f572f1a0` | sobre que distancia se multiplica objetivo_rr |
 | `base_calculo_perdida_diaria` | `saldo_inicial_dia` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-462134c7` | sobre que saldo se calcula |
 | `base_calculo_perdida_semanal` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | sobre que saldo se calcula |
 | `base_calculo_riesgo` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-2603c017` | sobre que saldo se calcula |
@@ -140,7 +140,7 @@ donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion d
 
 ### `base_calculo_objetivo`
 
-distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015)
+distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015). CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0, ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1
 
 Opciones: `caja_completa`, `riesgo_real`.
 

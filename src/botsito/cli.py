@@ -1875,6 +1875,10 @@ class ContextoPendiente:
 # Los tres estados de `feedback pending`. SIN_MECANISMO no es un tercer color decorativo: es
 # la unica forma de no mentir sobre lo que no se puede comprobar (auditoria de cierre de F13).
 _PENDIENTE, _REFLEJADO, _SIN_MECANISMO = "pendiente", "reflejado", "sin mecanismo"
+# Un CONFIRM que repite el valor ya fijado no deja trabajo, pero tampoco cabe en la cita, que
+# ocupa el registro que FIJO el valor (rama feature/reflejar-feedback-s3, opcion (b) del
+# consultor). Se lista aparte para que se vea, no se esconde entre los reflejados.
+_CONFIRMACION = "confirmacion"
 
 
 def situacion_de(ctx: ContextoPendiente, r: Any) -> tuple[str, str]:
@@ -1902,6 +1906,14 @@ def situacion_de(ctx: ContextoPendiente, r: Any) -> tuple[str, str]:
             return _REFLEJADO, f"aplicado: el parametro ya no cita lo rechazado ({donde})"
         if cita == r.id:
             return _REFLEJADO, "aplicado: el parametro lo cita"
+        if r.accion == "CONFIRM" and p.estado == "CONFIRMED":
+            from botsito.feedback.aplicar import confirma_el_vigente
+
+            if confirma_el_vigente(r, p):
+                return _CONFIRMACION, (
+                    f"confirma el valor vigente de {oid} ({p.valor}), que cita {cita}"
+                )
+            return _PENDIENTE, f"su valor no coincide con el vigente de {oid} ({p.valor})"
         return _PENDIENTE, f"{oid} no lo cita todavia (`botsito feedback apply`)"
     if tipo == "ambiguedad":
         if ctx.estados is None:
@@ -1934,6 +1946,15 @@ def situacion_de(ctx: ContextoPendiente, r: Any) -> tuple[str, str]:
             return _REFLEJADO, f"aplicado: {oid} esta {regla.estado}"
         if regla.cita == r.id:
             return _REFLEJADO, "aplicado: la regla lo cita"
+        # Una regla no tiene un valor con que comparar: solo confirma la regla VIGENTE un CONFIRM
+        # que no trae valor propio.
+        if (
+            r.accion == "CONFIRM"
+            and regla.vigente
+            and r.valor_canonico is None
+            and r.valor_resultante is None
+        ):
+            return _CONFIRMACION, f"confirma la regla vigente {oid}, que cita {regla.cita}"
         return _PENDIENTE, f"{oid} no lo cita todavia (cita {regla.cita})"
     if tipo == "paquete":
         if r.accion == "CONFIRM":
@@ -1987,6 +2008,13 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
         meter el mes en `vistos.yaml` citando el registro.
       - `caso`: no se refleja en la spec sino en la biblioteca de casos, que es F14.
 
+    Y un CUARTO cajon, que no es reflejado ni pendiente (opcion (b) del consultor, rama
+    feature/reflejar-feedback-s3): un CONFIRM sobre un parametro CONFIRMED cuyo valor coincide con
+    el vigente -o que no trae valor propio, y entonces no puede discrepar-, o un CONFIRM sin valor
+    sobre una regla VIGENTE, es una CONFIRMACION DE UN VALOR YA FIJADO. La cita la ocupa el
+    registro que fijo el valor, y moverla lo pondria a el en pendiente (medido). Se listan aparte y
+    siempre a la vista. Si el valor no coincide, sigue pendiente.
+
     Un parametro que no sea de categoria `estrategia` no se le pregunta al trader (ADR-0004).
     """
     from botsito.cases.ambiguedades import (
@@ -2028,7 +2056,12 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
     def situacion(r: Any) -> tuple[str, str]:
         return situacion_de(ctx, r)
 
-    cajones: dict[str, list[tuple[Any, str]]] = {_PENDIENTE: [], _REFLEJADO: [], _SIN_MECANISMO: []}
+    cajones: dict[str, list[tuple[Any, str]]] = {
+        _PENDIENTE: [],
+        _REFLEJADO: [],
+        _SIN_MECANISMO: [],
+        _CONFIRMACION: [],
+    }
     for r in registros:
         estado, motivo = situacion(r)
         cajones[estado].append((r, motivo))
@@ -2042,12 +2075,18 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
     # seria la misma mentira por omision que la auditoria encontro, con otra forma.
     for r, motivo in por_fecha(cajones[_SIN_MECANISMO]):
         print(f"  (?) {r.id} {r.accion} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
+    # Tambien SIEMPRE a la vista: no son pendientes, pero no los cita nadie.
+    if cajones[_CONFIRMACION]:
+        print("confirmaciones de valores ya fijados:")
+        for r, motivo in por_fecha(cajones[_CONFIRMACION]):
+            print(f"  (=) {r.id} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
     if todos:
         for r, motivo in por_fecha(cajones[_REFLEJADO]):
             print(f"  (ok) {r.id} {r.objetivo.tipo}:{r.objetivo.id} - {motivo}")
     print(
         f"{len(cajones[_PENDIENTE])} pendientes de {len(registros)} activos; "
         f"{len(cajones[_REFLEJADO])} reflejados (--todos para verlos); "
+        f"{len(cajones[_CONFIRMACION])} confirmaciones de valores ya fijados; "
         f"{len(cajones[_SIN_MECANISMO])} sin forma mecanica de comprobarlo"
     )
     return 0

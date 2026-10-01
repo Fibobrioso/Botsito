@@ -1048,13 +1048,21 @@ reglas:
     estado: VIGENTE
 
   - id: RN-007
-    titulo: varias velas de M1 que forman un order block mayor se mapean como una estructura
+    titulo: >-
+      varias velas de M1 que forman un order block mayor se mapean como una estructura, y una vela
+      casi plana no cuenta
     cuando: se mapea la estructura en M1
-    entonces: se agrupan segun mapeo_dos_velas y el resto se trata como ruido
+    entonces: >-
+      se agrupan segun mapeo_dos_velas y el resto se trata como ruido; una vela casi plana, sin
+      color claro, cuenta como si no existiera y sobre ella no se traza punto de breaker
     parametros: [mapeo_dos_velas]
-    cita: fb-2026-09-09-sesion-01-7ee9cabc
-    literal: sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura
+    cita: fb-2026-09-29-sesion-03-ffab23dc
+    literal: cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto de breaker
     notas: >-
+      DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la
+      sesion 3 (E-3). Que varias velas formen una estructura lo sostiene mapeo_dos_velas, que cita
+      fb-2026-09-09-sesion-01-7ee9cabc («sería considerado una estructura»), la cita de esta regla
+      hasta ese dia.
       DESDE EL 2026-09-29 (sesion 3, E-3; fb-2026-09-29-sesion-03-ffab23dc,
       ev-v9-013021-ea0db73a): una vela casi plana, sin color claro, «cuenta como si no
       existiera», y sobre ella no se traza punto de breaker. El trader no dio el umbral de «casi
@@ -1303,9 +1311,13 @@ reglas:
     cuando: tras la entrada se desarrolla otra zona de control y el precio la rompe
     entonces: el stop pasa a la entrada, en el instante del toque segun break_even_condicion
     parametros: [break_even_condicion, break_even_criterio_ruptura]
-    cita: fb-2026-09-09-sesion-01-0ccafcba
-    literal: yo siempre lo he estado trabajando, o sea, apenas toca
+    cita: fb-2026-09-29-sesion-03-9f506366
+    literal: apenas toca, pues se pone en B la entrada
     notas: >-
+      DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la
+      sesion 3, que dice lo mismo que la de la sesion 1 y anade el marco (M1) y el precio (la
+      entrada exacta). La cita anterior, fb-2026-09-09-sesion-01-0ccafcba («apenas toca»), la sigue
+      citando break_even_condicion.
       el disparador NO es un nivel de precio sino la ruptura de la zona de control que se forma
       despues de la entrada. A-13 pregunta si esa ruptura deberia exigir cuerpo
       DESDE EL 2026-09-29 (sesion 3; fb-2026-09-29-sesion-03-9f506366 y
@@ -1344,9 +1356,14 @@ reglas:
       parciales (parciales); la orden se coloca en esa zona
     parametros: [objetivo_rr, base_calculo_objetivo, objetivo_extension_activa, parciales]
     complementa: [RN-011]
-    cita: fb-2026-09-09-sesion-01-7fbbb2e7
-    literal: Siempre se fija el 1:3, no importa en que escenario nos encontremos
+    cita: fb-2026-09-29-sesion-03-3f69a5f7
+    literal: el objetivo es fijo como bien sabemos bro Ahora no lo gestionamos Es fijo
     notas: >-
+      DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita el CONFIRM de la
+      sesion 3 sobre el objetivo fijo (G-2). El 1:3 lo sigue sosteniendo objetivo_rr, que cita
+      fb-2026-09-09-sesion-01-7fbbb2e7 («Siempre se fija el 1:3»), la cita de esta regla hasta ese
+      dia. El otro CONFIRM de la sesion 3 sobre esta regla (G-1, fb-2026-09-29-sesion-03-280cf8f7)
+      no cabe en una cita sola y queda anotado mas abajo.
       la BASE del 1:3 no la dice el literal, y por eso vive en base_calculo_objetivo y no en
       esta frase (ADR-0014). El objetivo se traza sobre la caja completa y el lote YA NO: desde
       ADR-0020 el lote se dimensiona hasta stop_fraccion_caja, asi que las dos distancias dejaron
