@@ -67,6 +67,21 @@ phase: post-F14 (rama `feature/be-al-tick`, Next Action G: RN-014, break even al
 - **DECISIÓN: el cierre de la M1 no repite la petición.** Si el stop ya se movió al tick, RN-014 lo
   vuelve a pedir al cierre de esa M1 y el bróker no hace nada: ni petición ni evento.
 
+### 6. PENDIENTE para la demo de FTMO: el break even de una venta se dispara por el ASK
+
+Añadido el 2026-10-01 por orden del consultor, tras la medida de `docs/validation/BE-AL-TICK.md` §2.
+- **El caso, en construcción:** 04-07 pos-o3, una venta con una caja de 12 puntos.
+- **Qué pasa:** el tick que pasa el nivel por el BID pone el stop de break even en la entrada
+  exacta. En una venta, ese stop salta por el ASK, y el tick siguiente, un segundo después, lo
+  dispara.
+- **El resultado:** la posición sale a **−4 puntos** en vez de a 0, que es lo que daba el mismo
+  break even al cierre de la M1. Pierde el spread.
+- **Qué se mira en la demo:**
+  - cómo se dispara de verdad un stop de venta puesto en la entrada (ASK, deslizamiento y la
+    latencia de la petición `modificar`);
+  - si el trader lo pone a la entrada exacta también en las ventas.
+- **Hasta entonces, no se cambia ni el nivel (BID) ni el precio (la entrada exacta).**
+
 ## Problema que resuelve
 
 El trader pone el break even «apenas toca», y el motor lo ponía al cierre de la M1. Una M1 que pasa

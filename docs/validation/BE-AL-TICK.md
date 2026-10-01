@@ -159,8 +159,32 @@ confirmaciones de valores ya fijados.
 **Estado de `feedback pending` en esta rama**: 1 pendiente (S-1), 83 reflejados, 4 confirmaciones y
 9 sin mecanismo, igual que en `main`.
 
+## 4. S-1, resuelto con la opción (b) (2026-10-01)
+
+Tras la revisión, el consultor eligió la (b) de §3, y se han escrito dos registros sin tocar ninguna
+guardia:
+- **`fb-2026-09-29-sesion-03-86dc2801`, la corrección del consultor sobre RN-033**
+  (`correccion_consultor`, medio escrito).
+  - Sustituye a `fb-2026-09-29-sesion-03-1168f036`, con el mismo objetivo, como la guardia exige.
+  - Texto: «RN-033 es una guardia del proyecto (ADR-0044, ADR-0060), no una regla del trader; lo
+    que dijo el trader en S-1 lo ejecuta RN-003».
+  - **Va como CONFIRM sin valor.** RN-033 se queda como está, y con REJECT o CORRECT seguiría
+    pendiente mientras la regla esté vigente y no lo cite (`cli.py`, `situacion_de`).
+- **`fb-2026-09-29-sesion-03-39af36ee`, una confirmación sin valor sobre RN-003.** Lleva la misma cita
+  literal, grabación y tiempos que S-1 (v9 0:15:29–0:15:55, `trader_grabado`), y nombra en sus
+  notas a S-1 y a la corrección.
+
+**`feedback pending` queda en 0 pendientes**: 98 activos, 83 reflejados, 6 confirmaciones de valores
+ya fijados y 9 sin mecanismo. S-1 ya no está activo porque lo sustituye la corrección.
+
+**Y ADR-0065 §6** recoge como pendiente para la demo de FTMO el caso 04-07 pos-o3: el stop de break
+even en la entrada exacta de una venta salta por el ASK y pierde el spread (−4 puntos).
+
 ## Estado
 
-**Rama lista para revisión, NO cerrada.**
-- **Parte 1 hecha y medida:** ADR-0065 ACTIVE y PROVISIONAL.
-- **Parte 2 parada** por la guardia de `supersede`. Falta elegir (a), (b) o (c).
+**Revisada por el consultor el 2026-10-01, con orden de cierre en `main`.**
+- **Parte 1 hecha y medida:** ADR-0065 ACTIVE y PROVISIONAL, con el pendiente de la demo en §6.
+- **Parte 2 resuelta con la opción (b)** (§4): `feedback pending` en 0.
+
+Antes de la revisión decía: «Rama lista para revisión, NO cerrada; parte 2 parada por la guardia de
+`supersede`; falta elegir (a), (b) o (c)».

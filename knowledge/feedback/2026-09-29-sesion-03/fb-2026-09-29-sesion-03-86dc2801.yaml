@@ -1,0 +1,17 @@
+id: fb-2026-09-29-sesion-03-86dc2801
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: escrito
+objetivo:
+  tipo: regla
+  id: RN-033
+accion: CONFIRM
+respuesta_literal: RN-033 es una guardia del proyecto (ADR-0044, ADR-0060), no una regla del trader; lo
+  que dijo el trader en S-1 lo ejecuta RN-003
+registrado_por: Aleks, consultor · revision de feature/be-al-tick, opcion (b) para S-1 (2026-10-01)
+supersede: fb-2026-09-29-sesion-03-1168f036
+notas: 'S-1. Sustituye a fb-2026-09-29-sesion-03-1168f036 en RN-033 sin cambiar la regla: RN-033 sigue
+  VIGENTE como guardia del proyecto. La cita del trader pasa a RN-003 como confirmacion sin valor. docs/validation/BE-AL-TICK.md
+  §3'
+recibido_el: '2026-10-01'
+procedencia: correccion_consultor
