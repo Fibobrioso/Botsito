@@ -42,7 +42,16 @@ from botsito.engine.tope_trader import (
     SIN_TOPE,
     TopeTrader,
 )
-from botsito.engine.zonas import Zona, zonas_del_dia
+from botsito.engine.zonas import (
+    Zona,
+    marcar_rechazada,
+    marcar_usada,
+    orden_nace_en_el_punto,
+    punto_rechazado,
+    zona_del_punto,
+    zonas_del_dia,
+    zonas_usadas,
+)
 
 # Tokens de la spec que estas primitivas interpretan (declarados en `tokens` de strategy_spec.yaml)
 CUALQUIER_ESQUEMA = "cualquier_esquema"
@@ -103,6 +112,7 @@ class ContextoDia:
     eventos: list[EventoBroker] = field(default_factory=list)  # desde el evento anterior
     acumuladores: dict[str, Decimal] = field(default_factory=dict)
     por_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> esquema
+    zona_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> zona_id
     instante_ms: int = 0  # el instante del evento del interprete (exclusivo para el broker)
     huecos: set[str] = field(default_factory=set)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
@@ -172,14 +182,55 @@ def primitivas_cableadas(
             )
         )
 
+    def _pendientes() -> list[Any]:
+        return [o for o in ctx.broker.ordenes.values() if o.estado in ("colocada", "modificada")]
+
+    def _punto_nuevo(momento: Momento, estado: EstadoDia) -> Zona | None:
+        """RN-006 en la vida de la orden stop (ADR-0064): la zona de un punto de breaker NUEVO de
+        esta sesion, distinto del de la orden pendiente, que es de esta misma sesion; o None."""
+        pendientes = _pendientes()
+        if len(pendientes) != 1:
+            return None
+        de_la_orden = ctx.zona_de_orden.get(pendientes[0].id)
+        usadas = zonas_usadas(estado, momento.sesion)
+        if de_la_orden is None or de_la_orden not in usadas:
+            return None  # la orden no es de esta sesion: cada sesion es un escenario (A-46)
+        z = zona_del_punto(registro, momento, estado)
+        if (
+            z is None
+            or z.id == de_la_orden
+            or z.id in usadas
+            or punto_rechazado(estado, momento.sesion, z.id)
+        ):
+            return None
+        return z
+
+    def toca_colocar_orden_limite(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # DECISION de ADR-0064 (la lectura mas conservadora): con la vida de la orden stop, una
+        # sesion en la que ya se lleno una orden no coloca otra, como la zona de un solo uso
+        if orden_nace_en_el_punto(registro):
+            usadas = zonas_usadas(estado, momento.sesion)
+            ordenes = {o for o, z in ctx.zona_de_orden.items() if z in usadas}
+            if any(p.orden_id in ordenes for p in ctx.broker.posiciones.values()):
+                return Resultado(Tri.NO)
+        return base.predicados["toca_colocar_orden_limite"](args, momento, estado)
+
     def se_completa_zona_de_control(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
-        # Solo el break even de RN-014, que lo pide `posterior_a` la entrada de la posicion
-        # viva (ADR-0061). La reubicacion de la orden pendiente (RN-006) es la vida de la
-        # orden stop, rama 3 de ADR-0056, y sigue sin escribirse.
+        # Con `posterior_a`, el break even de RN-014 (ADR-0061). Sin el, la reubicacion de la orden
+        # pendiente (RN-006): con la vida de la orden stop (ADR-0064), la zona se completa cuando
+        # se forma un punto de breaker nuevo; con la orden en el esquema, sigue sin escribirse.
         if "posterior_a" not in args:
-            return NoImplementada("predicado:se_completa_zona_de_control")
+            if not orden_nace_en_el_punto(registro):
+                return NoImplementada("predicado:se_completa_zona_de_control")
+            registro.opcion(str(args["criterio"]))  # lo nombra la forma
+            z = _punto_nuevo(momento, estado)
+            if z is None:
+                return Resultado(Tri.NO)
+            return Resultado(Tri.SI, {str(args.get("liga", "Z")): z.id})
         criterio = registro.opcion(str(args["criterio"]))  # lo nombra la forma
         vivas = [p for p in ctx.broker.posiciones.values() if p.abierta]
         if len(vivas) != 1:
@@ -421,8 +472,11 @@ def primitivas_cableadas(
         )
         r = colocar(id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
         ctx.por_de_orden[id] = z.por
+        ctx.zona_de_orden[id] = z.id
+        marcar_usada(estado, momento.sesion, z.id)
         if isinstance(r, Rechazo):
             ctx.eventos.append(EventoBroker(r.instante_ms, "rechazo", r.orden_id, z.por))
+            marcar_rechazada(estado, momento.sesion, z.id)
         ctx.orden = None
         return []
 
@@ -459,11 +513,16 @@ def primitivas_cableadas(
             estado,
         )
         registro.opcion(str(args["cadencia"]))
-        pendientes = [
-            o for o in ctx.broker.ordenes.values() if o.estado in ("colocada", "modificada")
-        ]
+        pendientes = _pendientes()
         if len(pendientes) != 1:
             raise CableadoError(f"reubicar_orden_limite: {len(pendientes)} ordenes pendientes")
+        if orden_nace_en_el_punto(registro):
+            # ADR-0056 §7: se cancela y RN-011 y RN-015 la vuelven a colocar en el punto nuevo,
+            # con la caja, el stop y el lote recalculados. Los hechos del broker se refrescan para
+            # que lo hagan en este mismo cierre de M1 y no en el siguiente
+            ctx.broker.cancelar(pendientes[0].id, ctx.instante_ms)
+            estado.broker = ctx.broker.hechos()
+            return []
         ctx.broker.modificar(pendientes[0].id, ctx.instante_ms, precio=z.entrada)
         return []
 
@@ -492,6 +551,8 @@ def primitivas_cableadas(
             "no_es_multiplo_de": no_es_multiplo_de,
         }
     )
+    if "toca_colocar_orden_limite" in base.predicados:  # solo con la geometria de A-21
+        predicados["toca_colocar_orden_limite"] = toca_colocar_orden_limite
     acciones = dict(base.acciones)
     acciones.update(
         {

@@ -89,7 +89,12 @@ predicados:
       completa en el cierre de la primera M1 posterior que lo pasa con `criterio`. Que el
       retroceso sea eso es LECTURA NUESTRA de «rompe el punto alto anterior», hecha con la misma
       geometria de M1 que el breaker. Sin `posterior_a` -la reubicacion de RN-006, que es la
-      vida de la orden stop- sigue sin escribirse (rama 3 de ADR-0056)
+      vida de la orden stop- sigue sin escribirse (rama 3 de ADR-0056).
+      DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064): sin `posterior_a` y con
+      orden_limite_nace = al_aparecer_punto_de_breaker, la zona se completa cuando se forma un
+      posible punto de breaker NUEVO de la sesion, distinto del de la orden pendiente, y liga su
+      zona; es LECTURA NUESTRA del mecanismo de RN-006 que ADR-0056 §7 nombra. Con la orden en
+      el esquema sigue sin escribirse
   abre_sesion_operativa:
     descripcion: empieza una de las sesiones de la ventana
     argumentos: []
@@ -245,7 +250,9 @@ predicados:
       (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada
       (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando
       la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que
-      RN-006 la ira moviendo. Ata la zona con `liga`
+      RN-006 la ira moviendo; o `al_aparecer_punto_de_breaker`, tras la toma, en cuanto hay un
+      posible punto de breaker con caja (orden_stop_punto, caja_bloque) que la sesion no haya
+      usado (ADR-0056 §7, ADR-0064). Ata la zona con `liga`
     argumentos: [momento]
     fuente: mercado
     depende_de: [liquidez_tomada]
@@ -253,6 +260,14 @@ predicados:
     literal: >-
       Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas
       el breaker, o sea, marco mi orden limit y ya está
+  la_orden_nace_antes_del_esquema:
+    descripcion: >-
+      la orden de entrada nace antes de que se de el esquema, segun `momento` (orden_limite_nace):
+      SI con `al_aparecer_punto_de_breaker`, en la que la orden stop espera en el posible punto de
+      breaker y solo se llena cuando el precio lo rompe, que es el esquema 1 (ADR-0056 §7,
+      ADR-0064). Lo lee RN-008 para no frenar la colocacion
+    argumentos: [momento]
+    fuente: motor
   salta_stop:
     descripcion: el precio alcanza el stop y cierra la posicion en perdida
     argumentos: []
@@ -1013,6 +1028,12 @@ reglas:
       breaker, que la actualiza, y que el precio se aleje no la anula (A-38 RESUELTA,
       fb-2026-09-29-sesion-03-c7fa3068, ev-v9-013205-85840dcc, ev-v9-013437-ffdd9c87). La vida
       de la orden stop es la rama 3 de ADR-0056: la cadencia de esta forma se revisa alli.
+      DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064) LA FORMA LO HACE con
+      orden_limite_nace = al_aparecer_punto_de_breaker: la zona se completa al formarse un posible
+      punto de breaker nuevo y reubicar_orden_limite CANCELA la orden, que RN-011 y RN-015 vuelven
+      a colocar en el mismo cierre de M1 en el punto nuevo, con la caja, el stop y el lote
+      recalculados («se cancela y se vuelve a colocar», ADR-0056 §7). La cadencia al_romper no
+      cambia
     forma:
       cuando:
         todos_de:
@@ -1053,7 +1074,7 @@ reglas:
     titulo: sin ninguno de los esquemas de entrada no hay entrada
     cuando: no se da el breaker ni el otro esquema de entrada
     entonces: no se opera
-    parametros: [breaker_m1_criterio_ruptura]
+    parametros: [breaker_m1_criterio_ruptura, orden_limite_nace]
     cita: ev-v4-001844-93dcb658
     literal: >-
       aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya
@@ -1067,14 +1088,23 @@ reglas:
       ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en
       el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice.
       El 2026-09-17 el criterio de M1 deja de ser prosa de `se_da_esquema` y pasa a
-      breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro
+      breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro.
+      DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064, que escribe lo que
+      ADR-0056 §7 dejo PROVISIONAL): con orden_limite_nace = al_aparecer_punto_de_breaker esta
+      regla NO FRENA LA COLOCACION de la orden stop. Prohibe abrir sin esquema, y la orden stop
+      solo abre cuando el precio rompe el punto, que es el esquema 1. Con la orden en el esquema
+      sigue como estaba
     forma:
       cuando:
-        ninguno_de:
-          - se_da_esquema: {cual: primer_esquema, criterio: breaker_m1_criterio_ruptura}
-          - se_da_esquema: {cual: segundo_esquema, criterio: breaker_m1_criterio_ruptura}
+        todos_de:
+          - ninguno_de:
+              - se_da_esquema: {cual: primer_esquema, criterio: breaker_m1_criterio_ruptura}
+              - se_da_esquema: {cual: segundo_esquema, criterio: breaker_m1_criterio_ruptura}
+          - ninguno_de:
+              - la_orden_nace_antes_del_esquema: {momento: orden_limite_nace}
       entonces:
         prohibe: [abrir_operacion]
+    decision: ADR-0064
     clase: gate
     estado: VIGENTE
 

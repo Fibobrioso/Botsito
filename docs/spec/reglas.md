@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 14.4.1` · hash `303839ff1ae7…`
+`spec_version 15.1.0` · hash `776570759beb…`
 
 28 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -231,7 +231,7 @@
 - **Entonces**: la orden limite se mueve a la zona recien completada segun reubicacion_cadencia
 - **Parametros**: `reubicacion_cadencia`, `zona_control_criterio_completada`
 - **Cita**: `fb-2026-09-09-sesion-01-6b29059d` — *«cuando ya me rompe a este nivel de aquí, entonces ya esta orden límite aquí se pasa aquí»*
-- **Notas**: no es por vela ni por tiempo; mientras la zona no se completa, el limite no se mueve. La precondicion de que la orden siga pendiente se anadio el 2026-09-10: sin ella esta regla se disparaba sobre EL MISMO evento que RN-014 -"se completa una zona de control"- y, con la operacion ya abierta, reubicaba una limite en paralelo (lo que RN-018 prohibe) en vez de poner el break even. El literal habla de una orden que aun no ha entrado. SEGUNDA CORRECCION, mismo dia: la precondicion se escribio primero como "las operaciones abiertas son cero", que es un PROXY FALSO -tras un stop o un break even la cuenta vuelve a cero y la orden limite ya no existe, porque se lleno-, y ademas metia un numero de negocio en un campo ejecutable. La condicion es que la orden exista y siga pendiente DESDE EL 2026-09-29 (sesion 3): la orden de entrada es una STOP en la ruptura (A-47 RESUELTA, fb-2026-09-29-sesion-03-92a38105); «límite» es vocabulario del trader, que la sigue llamando asi (v9 1:34:46). Sigue viva hasta que aparece otro posible punto de breaker, que la actualiza, y que el precio se aleje no la anula (A-38 RESUELTA, fb-2026-09-29-sesion-03-c7fa3068, ev-v9-013205-85840dcc, ev-v9-013437-ffdd9c87). La vida de la orden stop es la rama 3 de ADR-0056: la cadencia de esta forma se revisa alli.
+- **Notas**: no es por vela ni por tiempo; mientras la zona no se completa, el limite no se mueve. La precondicion de que la orden siga pendiente se anadio el 2026-09-10: sin ella esta regla se disparaba sobre EL MISMO evento que RN-014 -"se completa una zona de control"- y, con la operacion ya abierta, reubicaba una limite en paralelo (lo que RN-018 prohibe) en vez de poner el break even. El literal habla de una orden que aun no ha entrado. SEGUNDA CORRECCION, mismo dia: la precondicion se escribio primero como "las operaciones abiertas son cero", que es un PROXY FALSO -tras un stop o un break even la cuenta vuelve a cero y la orden limite ya no existe, porque se lleno-, y ademas metia un numero de negocio en un campo ejecutable. La condicion es que la orden exista y siga pendiente DESDE EL 2026-09-29 (sesion 3): la orden de entrada es una STOP en la ruptura (A-47 RESUELTA, fb-2026-09-29-sesion-03-92a38105); «límite» es vocabulario del trader, que la sigue llamando asi (v9 1:34:46). Sigue viva hasta que aparece otro posible punto de breaker, que la actualiza, y que el precio se aleje no la anula (A-38 RESUELTA, fb-2026-09-29-sesion-03-c7fa3068, ev-v9-013205-85840dcc, ev-v9-013437-ffdd9c87). La vida de la orden stop es la rama 3 de ADR-0056: la cadencia de esta forma se revisa alli. DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064) LA FORMA LO HACE con orden_limite_nace = al_aparecer_punto_de_breaker: la zona se completa al formarse un posible punto de breaker nuevo y reubicar_orden_limite CANCELA la orden, que RN-011 y RN-015 vuelven a colocar en el mismo cierre de M1 en el punto nuevo, con la caja, el stop y el lote recalculados («se cancela y se vuelve a colocar», ADR-0056 §7). La cadencia al_romper no cambia
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -302,27 +302,41 @@
 - **Clase**: `gate`
 - **Cuando**: no se da el breaker ni el otro esquema de entrada
 - **Entonces**: no se opera
-- **Parametros**: `breaker_m1_criterio_ruptura`
+- **Parametros**: `breaker_m1_criterio_ruptura`, `orden_limite_nace`
 - **Cita**: `ev-v4-001844-93dcb658` — *«aquí no hay entrada por el hecho de que el precio no genera el esquema de entrada que ya sabemos cuál es [...] cualquiera de estos dos de aquí»*
-- **Notas**: el 2026-09-10 esta regla se marco `pendiente_definicion` porque el glosario definia breaker de forma circular y su cita dice "el que ya sabemos cual es". ERA UN ERROR DE BUSQUEDA: la definicion SI esta en el corpus, repartida en una docena de items -ev-v4-000243 (los dos esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH), ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice. El 2026-09-17 el criterio de M1 deja de ser prosa de `se_da_esquema` y pasa a breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro
+- **Decision**: `ADR-0064` — dice mas que su cita, y lo declara
+- **Notas**: el 2026-09-10 esta regla se marco `pendiente_definicion` porque el glosario definia breaker de forma circular y su cita dice "el que ya sabemos cual es". ERA UN ERROR DE BUSQUEDA: la definicion SI esta en el corpus, repartida en una docena de items -ev-v4-000243 (los dos esquemas), ev-v3-004201 (el primero no espera retroceso), ev-v3-004230 (el segundo deja zona de control y rompe), ev-v3-011653 (el breaker marca el bloque de origen, sin CHoCH), ev-v4-005910 (en M1 vale mecha o cuerpo; en M15 cuerpo)- y lo que faltaba era recogerla en el glosario. Afirmar una ausencia exige buscarla en la fuente, no en el indice. El 2026-09-17 el criterio de M1 deja de ser prosa de `se_da_esquema` y pasa a breaker_m1_criterio_ruptura, que esta forma lee: era el unico de su familia sin parametro. DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064, que escribe lo que ADR-0056 §7 dejo PROVISIONAL): con orden_limite_nace = al_aparecer_punto_de_breaker esta regla NO FRENA LA COLOCACION de la orden stop. Prohibe abrir sin esquema, y la orden stop solo abre cuando el precio rompe el punto, que es el esquema 1. Con la orden en el esquema sigue como estaba
 
 **Forma ejecutable**, tal cual la lee el motor:
 
 ```json
 {
   "cuando": {
-    "ninguno_de": [
+    "todos_de": [
       {
-        "se_da_esquema": {
-          "criterio": "breaker_m1_criterio_ruptura",
-          "cual": "primer_esquema"
-        }
+        "ninguno_de": [
+          {
+            "se_da_esquema": {
+              "criterio": "breaker_m1_criterio_ruptura",
+              "cual": "primer_esquema"
+            }
+          },
+          {
+            "se_da_esquema": {
+              "criterio": "breaker_m1_criterio_ruptura",
+              "cual": "segundo_esquema"
+            }
+          }
+        ]
       },
       {
-        "se_da_esquema": {
-          "criterio": "breaker_m1_criterio_ruptura",
-          "cual": "segundo_esquema"
-        }
+        "ninguno_de": [
+          {
+            "la_orden_nace_antes_del_esquema": {
+              "momento": "orden_limite_nace"
+            }
+          }
+        ]
       }
     ]
   },
@@ -1216,7 +1230,7 @@
 
 ## Vocabulario
 
-### predicados (25)
+### predicados (26)
 
 - **`abre_sesion_operativa`** — empieza una de las sesiones de la ventana Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
 - **`alcanza_hora`** — la hora de pared, en el reloj que dice `reloj`, llega al instante declarado Argumentos: `hora`, `reloj`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
@@ -1226,6 +1240,7 @@
 - **`cruza`** — el precio pasa al otro lado del nivel con el criterio declarado, mirado en la ultima vela de M1 cerrada y no en la de M15 (A-45 RESUELTA en la sesion 3; cierra lo PROVISIONAL de ADR-0054 §4) Argumentos: `que`, `criterio`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-6e15504f`: *«¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o vale con que la mecha lo perfore? Con cuerpo»*.
 - **`distancia_menor_que`** — el nivel que pide la spec queda mas cerca del precio que el minimo del broker; el minimo viene en puntos y `digitos` lo traduce a precio Argumentos: `que`, `tope`, `digitos`. Fuente: `bot`. Lo provoca la accion: escribir_stop_en_la_orden, fijar_objetivo. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
 - **`en_ventana`** — la hora de pared, en el reloj que dice `reloj`, cae en el intervalo medio abierto [inicio, fin). `reloj` es un selector del registro: dice con cual de sus relojes se cuenta, y el huso de cada reloj vive en su propio parametro (ADR-0063) Argumentos: `inicio`, `fin`, `reloj`, `dias`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
+- **`la_orden_nace_antes_del_esquema`** — la orden de entrada nace antes de que se de el esquema, segun `momento` (orden_limite_nace): SI con `al_aparecer_punto_de_breaker`, en la que la orden stop espera en el posible punto de breaker y solo se llena cuando el precio lo rompe, que es el esquema 1 (ADR-0056 §7, ADR-0064). Lo lee RN-008 para no frenar la colocacion Argumentos: `momento`. Fuente: `motor`.
 - **`ninguna_regla_de_entrada_aplica`** — la situacion no encaja en ningun esquema Fuente: `motor`. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
 - **`no_cabe_la_operacion`** — el acumulador, sumandole el riesgo de la operacion que se va a abrir (riesgo sobre su base), llega al tope menos el margen. Es la lectura PROSPECTIVA: `alcanza_tope` se comprueba antes de abrir y no descuenta la operacion que se abre, por eso un tope se rebasa por construccion Argumentos: `acumulador`, `tope`, `margen`, `riesgo`, `sobre`. Fuente: `acumulador`.
 - **`no_es_multiplo_de`** — el lote calculado no cae en el escalon del broker Argumentos: `que`, `paso`. Fuente: `bot`. Lo provoca la accion: dimensionar_lote. Cita `fb-2026-09-09-sesion-01-17ed6193`: *«el 0.5% de riesgo de la cuenta se calcula sobre el nivel 0.8 de la cuenta, ese es el acuerdo final»*.
@@ -1240,7 +1255,7 @@
 - **`se_desarrolla_en_el_lado_de_ruido`** — el precio se desarrolla en el lado de la liquidez de M15 donde el trader NO busca entrada: por encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25, sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada). Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader Argumentos: `que`, `sentido`. Fuente: `mercado`. Lado de ruido: en `alcista`, `por_encima`; en `bajista`, `por_debajo`. Cita `ev-v1-001306-f98e12e9`: *«el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra operativa tiene que estar por debajo»*.
 - **`se_mapea_estructura`** — varias velas de M1 se agrupan como una estructura Argumentos: `criterio`. Fuente: `motor`. Cita `fb-2026-09-09-sesion-01-7ee9cabc`: *«sería considerado una estructura [...] en el lenguaje del bot sería considerado una estructura»*.
 - **`sesgo_h4_al_abrir`** — el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro (sesion 3, A-34 RESUELTA; ADR-0060), y solo si cerro sin cuerpo ata `ambiguo`. Si ninguna rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003 fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1) Argumentos: `que`, `contra`, `criterio`, `tope`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-8eccf5c0`: *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»*.
-- **`toca_colocar_orden_limite`** — llega el momento de colocar la orden limite en una zona de control, segun `momento` (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que RN-006 la ira moviendo. Ata la zona con `liga` Argumentos: `momento`. Fuente: `mercado`. Depende de: liquidez_tomada. Cita `ev-v3-004201-bfeb3734`: *«Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas el breaker, o sea, marco mi orden limit y ya está»*.
+- **`toca_colocar_orden_limite`** — llega el momento de colocar la orden limite en una zona de control, segun `momento` (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que RN-006 la ira moviendo; o `al_aparecer_punto_de_breaker`, tras la toma, en cuanto hay un posible punto de breaker con caja (orden_stop_punto, caja_bloque) que la sesion no haya usado (ADR-0056 §7, ADR-0064). Ata la zona con `liga` Argumentos: `momento`. Fuente: `mercado`. Depende de: liquidez_tomada. Cita `ev-v3-004201-bfeb3734`: *«Yo no espero ningún retroceso, si se han dado cuenta. Con el breaker ya me basta [...] apenas el breaker, o sea, marco mi orden limit y ya está»*.
 - **`vence_vela_h4`** — a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para terminar, en la rejilla H4 que fija `anclaje` -la del sesgo, la que construye la agregacion de velas- y no en la de la ventana operativa. Vale tambien en el propio limite: lo que se llene en el ultimo minuto de la vela se cierra antes de que empiece la siguiente (ADR-0060) Argumentos: `anclaje`, `antelacion`. Fuente: `reloj`. Cita `fb-2026-09-29-sesion-03-c38c4aef`: *«siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas»*.
 - **`zonas_desarrolladas_superan`** — el esquema desarrolla mas zonas de control de las admitidas Argumentos: `tope`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-1b2203b0`: *«solo 1 zona control bro. si hay 2 se descarta»*.
 

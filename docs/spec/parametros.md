@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 14.4.1` · hash `303839ff1ae7…`
+`spec_version 15.1.0` · hash `776570759beb…`
 
-87 en total: 70 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+90 en total: 73 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -16,6 +16,8 @@
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
+| `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
+| `caja_se_fija` | `al_verse_el_punto` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0064` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
@@ -57,7 +59,8 @@
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
-| `orden_limite_nace` | `al_darse_el_esquema` | DEFAULT_AMBIGUOUS · en revision por A-29 | estrategia | `ev-v3-004201-bfeb3734` | cuando se coloca por primera vez la orden limite de una zona |
+| `orden_limite_nace` | `al_aparecer_punto_de_breaker` | DEFAULT_AMBIGUOUS · en revision por A-29 | estrategia | `ev-v7-001457-1fe7fdfe` | cuando se coloca por primera vez la orden limite de una zona |
+| `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
@@ -106,6 +109,8 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un valor que nadie usa y nadie vigila (F12).
 
 - `anclaje_h4` → F15
+- `caja_bloque` → ADR-0064
+- `caja_se_fija` → ADR-0064
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
 - `entrada_tipo_orden` → F20, F22
@@ -121,6 +126,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
 - `modelo_llenado` → F24, F27
+- `orden_stop_punto` → ADR-0064
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
@@ -183,6 +189,18 @@ Opciones: `us`, `eu`, `ninguno`.
 ### `broker_offset_base`
 
 desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
+
+### `caja_bloque`
+
+el bloque que da el 1 de la caja de cada orden stop, con el 0 en el punto (ADR-0064 §2), con las reglas de docs/validation/CAJA-77.md: `r6`, el extremo opuesto -la maxima en una venta- de las velas desde la que marca el nivel del punto hasta el instante de colocar o reubicar; `r4`, el del tramo de velas contrarias consecutivas que acaba en la ultima contraria; `r1`, el de esa ultima contraria. Es A-48, con las dos lecturas que ADR-0056 §5 documento (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. DEFAULT NUESTRO en `r6`, por decision del consultor; la cita es «trazamos el GAN desde el posible punto de breaker hasta el punto mas alto» (v7 0:15:50). Lo lee el productor (engine/zonas.py), no una regla
+
+Opciones: `r6`, `r4`, `r1`.
+
+### `caja_se_fija`
+
+cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: el valor es el de la decision 5 de ADR-0064, la lectura mas conservadora. Lo lee el productor (engine/zonas.py), no una regla
+
+Opciones: `al_verse_el_punto`, `en_cada_cierre_m1`.
 
 ### `cartucho_criterio`
 
@@ -396,9 +414,15 @@ cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de R
 
 ### `orden_limite_nace`
 
-en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla. TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47, docs/validation/DISENO-ENTRADA-RUPTURA.md §2.7): la orden nace ANTES de la ruptura, en el punto que puede ser breaker, como orden STOP que se activa si el precio lo rompe, y se mueve cuando ese punto se actualiza (v7 0:14:57 y 0:22:01, ev-v7-001457-1fe7fdfe y ev-v7-002201-2b2f20aa); solo tiene sentido con `stop_en_ruptura` (A-47), y hoy deja al motor NO_IMPLEMENTADA con nombre, como la segunda. El valor no cambia
+en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla. TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47, docs/validation/DISENO-ENTRADA-RUPTURA.md §2.7): la orden nace ANTES de la ruptura, en el punto que puede ser breaker, como orden STOP que se activa si el precio lo rompe, y se mueve cuando ese punto se actualiza (v7 0:14:57 y 0:22:01, ev-v7-001457-1fe7fdfe y ev-v7-002201-2b2f20aa); solo tiene sentido con `stop_en_ruptura` (A-47), y hoy deja al motor NO_IMPLEMENTADA con nombre, como la segunda. El valor no cambia. DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064, aceptado en su direccion por el consultor) EL VALOR ES `al_aparecer_punto_de_breaker` y el motor la hace: la vida de la orden stop de ADR-0056 §7 -nace tras la toma en el punto que dice orden_stop_punto, con la caja que dice caja_bloque, y se reubica con cada punto nuevo (RN-006)-. Sigue DEFAULT_AMBIGUOUS: A-29 no se resuelve, y la cita pasa a la de la orden stop puesta en el punto antes de la ruptura (v7 0:14:57). Con `al_darse_el_esquema` todo sale como antes
 
 Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`, `al_aparecer_punto_de_breaker`.
+
+### `orden_stop_punto`
+
+donde nace la orden stop con orden_limite_nace = al_aparecer_punto_de_breaker (ADR-0064 §1). `ultimo_pivote_m1`: el ultimo pivote de M1 contrario al sentido de la entrada -un BAJO en una venta- formado con las M1 cerradas (la funcion de R5 de CAJA-77), que se actualiza con cada pivote nuevo, y RN-006 mueve la orden con el. `referencia_de_la_toma`: el pivote de referencia_del_breaker en la vela de la toma, lo que ADR-0056 §7 llamaba el punto; no se mueve. DEFAULT NUESTRO en el primero, por decision del consultor sobre CAJA-77 §3 (medido en construccion: su 0 localiza la entrada del trader en 36 de 77, y en 56 de 77 es un pivote formado despues de la toma). La cita es la del punto que se actualiza «conforme se desarrolla el precio» (v7 0:22:01). Lo lee el productor (engine/zonas.py), no una regla
+
+Opciones: `ultimo_pivote_m1`, `referencia_de_la_toma`.
 
 ### `parciales`
 
