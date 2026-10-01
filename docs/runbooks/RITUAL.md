@@ -128,6 +128,14 @@ git commit -m "chore(contrato): sale de la rama antes del merge"
 → **Puerta:** la rama es la de trabajo, y `make check` dice `CONTRATO: sin contrato.yaml`. Sin
 contrato, `make check` no comprueba nada del contrato, así que este sello es el de siempre.
 
+**Si la orden de cierre pide un registro en `docs/state/HISTORIA.md`** (tag, runs de la CI, commits),
+va en ESTE commit, al final del fichero y con un encabezado `# Registro de cierre · <rama> (<fecha>)`:
+en `main`, tras el tag, solo puede cambiar `PROJECT_STATE.md` (`state check`, regla 5). El sha del
+merge todavía no existe: se escribe como `git rev-parse "stable/<tag>^{commit}"`, y el literal queda
+en `Last Stable Commit`. Decisión del consultor del 2026-10-01, en el primer cierre con la skill
+`cerrar-rama` (`trabajo/dieta-y-skills`). El commit se llama entonces
+`chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+
 ```
 git checkout main
 git status --short

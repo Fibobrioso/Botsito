@@ -919,3 +919,19 @@ Lo anterior, numerado como estaba (historial y pendientes con dueno):
 - 2026-09-03 · F01 construida; make check verde (21 tests, 3 contratos); WAITING_FOR_USER_VALIDATION
 - 2026-09-03 · plan aprobado por el usuario · rama feature/F01-project-scaffold abierta · paquete botsito
 - 2026-09-03 · repositorio inicializado en local · punto cero con documentacion · plan pendiente de validacion
+
+# Registro de cierre · `trabajo/dieta-y-skills` (2026-10-01)
+
+- Orden de cierre de Aleks, tras revisar `09a1bd1`; escrita aqui ANTES del merge, en la propia rama,
+  porque en `main`, tras el tag, solo puede cambiar `PROJECT_STATE.md` (`state check`, regla 5).
+  Decision del consultor del 2026-10-01.
+- Tag: `stable/F36k-dieta-y-skills`. El merge es `git rev-parse "stable/F36k-dieta-y-skills^{commit}"`:
+  su sha no existe hasta el merge, y el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama: `63efc02` (la dieta, CLAUDE.md, las skills y el borrado remoto), `e5e257f` (B1
+  y B2 del revisor), `09a1bd1` (la revision del consultor) y el de este registro, que saca tambien el
+  contrato.
+- CI de Linux, con la rama empujada como `fix/dieta-y-skills`: `36911338342` (`63efc02`),
+  `36913763335` (`e5e257f`) y `36920348532` (`09a1bd1`), cada uno con un solo fallo, el esperado:
+  `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/`. `36913763427`
+  (`e5e257f`) se cancelo por concurrencia.
+- Informe: `docs/validation/DIETA-Y-SKILLS.md`.

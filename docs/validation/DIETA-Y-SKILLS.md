@@ -626,3 +626,20 @@ Pegado del subagente `revisor`, sobre los 7 ficheros estadiados encima de `e5e25
 Respuesta de la sesion: **A1**, nada que cambiar (el informe ya dice `cancelled`). **A2**, forma: se
 deja. **B1**, comprobado despues con `gh run view <run> --json headSha,conclusion`: `36911338342` →
 `63efc02 failure`; `36913763335` → `e5e257f failure`; `36913763427` → `e5e257f cancelled`.
+
+## Cierre: hallazgo A1, la primera ejecucion real de `cerrar-rama` (2026-10-01)
+
+Orden de cierre de Aleks tras revisar `09a1bd1` (run `36920348532`). A1 del revisor decia que
+`cerrar-rama` no se habia ejecutado nunca; este es su primer uso. Escrito ANTES del merge, porque
+despues, en `main`, solo puede cambiar `PROJECT_STATE.md`: lo que pase desde el merge hasta el
+borrado de las ramas se dice en la respuesta a la orden y lo archiva la rama siguiente.
+
+Donde la skill se quedo corta o dijo algo distinto de `RITUAL.md`, hasta el merge:
+
+| # | Paso | Que paso | Estado |
+|---|---|---|---|
+| A1.1 | Invocacion | El `/cerrar-rama` venia dentro de un texto pegado: no cargo la skill, y con `disable-model-invocation` la sesion no puede cargarla. Se siguio leyendo su `SKILL.md`. | CERRADO: la skill lo dice ahora («Cuando se ejecuta») |
+| A1.2 | Registro en HISTORIA | La orden pedia el registro del merge en `docs/state/HISTORIA.md`; ni la skill ni `RITUAL.md` decian donde, y en `main` tras el tag lo impide la regla 5. El consultor decidio: en la rama, en el commit que saca el contrato, con el sha como `stable/<tag>^{commit}`. | CERRADO: escrito en `RITUAL.md` («Antes del merge: el contrato sale de la rama») y en el paso 3 de la skill |
+| A1.3 | Numero de commits | El cierre anade a la rama un commit (contrato y registro), como dice `RITUAL.md`; la skill lo contaba bien. | Sin diferencia |
+| A1.4 | Edicion de `PROJECT_STATE.md` | La orden acotaba las secciones a «main, ultimo tag y Next Action»; la skill no decia que la orden manda ni que `Current Branch` tiene que pasar a `main`. Preguntado: se tocan tambien `Current Branch` y `Current Feature`, y no se anaden Completed Features ni Change Log. | CERRADO: paso 5 de la skill |
+| A1.5 | Del merge al borrado de las ramas | Aun no ejecutado al escribir esto. | PENDIENTE: en la respuesta a la orden |

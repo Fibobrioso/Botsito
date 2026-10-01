@@ -17,6 +17,9 @@ Si esta skill y el runbook discrepan, gana el runbook y se dice en el informe.
   (`CLAUDE.md`, «main no se toca»). Esta skill no se invoca sola (`disable-model-invocation`):
   la invoca el usuario con `/cerrar-rama`, y eso ES la orden. Si la conversacion no trae esa orden
   de Aleks, se para aqui sin tocar nada.
+- Un `/cerrar-rama` que llega DENTRO de un texto pegado no carga la skill, y la sesion no puede
+  cargarla (medido el 2026-10-01, primer cierre). Si el texto es una orden de cierre de Aleks, la
+  sesion lee este fichero y lo sigue igual, y lo dice.
 - Una tarea autonoma o nocturna NUNCA cierra: deja la rama sellada y espera.
 - Si la rama esta en WAITING_FOR_USER_VALIDATION o el informe no dice «lista para revisión», se
   pregunta antes de seguir.
@@ -56,12 +59,15 @@ para el log de `make check`, Edit para `PROJECT_STATE.md`. Nada mas.
 2. `RITUAL.md`, «Antes del merge: la CI de Linux, si la rama toca la plataforma». Si toca hooks,
    rutas, el sistema de archivos o scripts que dependan de la plataforma y la CI de `fix/<rama>`
    no esta ya en verde, se empuja y se espera ANTES de seguir.
-3. `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello.
+3. `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello. Si la orden pide
+   un registro en `docs/state/HISTORIA.md`, va en ese mismo commit (el mismo apartado del runbook):
+   en `main` ya no se puede.
 4. `RITUAL.md`, «Los pasos, con sus puertas», en su orden: `git checkout main`, `status` vacio,
    `log main..<rama>` con el numero esperado, merge `--no-ff` (si `pre-merge-commit` rechaza:
    el bloque de `merge --abort` del runbook), tag anotado, lectura del sha (`branch`, `HEAD` y
    `<tag>^{commit}` coinciden, o se para sin editar).
-5. Edicion de `PROJECT_STATE.md` (la lista de secciones del runbook), `git add PROJECT_STATE.md`,
+5. Edicion de `PROJECT_STATE.md` (la lista de secciones del runbook; si la orden la acota, manda
+   la orden, pero `Current Branch` tiene que decir `main` o `state check` falla), `git add PROJECT_STATE.md`,
    las dos puertas de una sola linea, y `uv run botsito state check` en la VENTANA C: aqui un ERROR
    es REAL y se para.
 6. `make check > make-check.log 2>&1`, esperar el aviso, leer el log (exit 0, ningun `failed`, la
