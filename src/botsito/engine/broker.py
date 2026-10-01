@@ -61,6 +61,7 @@ from botsito.engine.llenado import (
     lado_equivocado,
     primer_llenado_limite,
     primer_llenado_stop,
+    primer_toque_al_tick,
     primera_salida,
 )
 
@@ -71,6 +72,11 @@ CANCELADA = "cancelada"
 EXPIRADA = "expirada"
 RECHAZADA = "rechazada"
 MANUAL = "manual"
+# el stop de una posicion cambia (RN-014): AL TICK que pasa el nivel vigilado (fuente `ticks`), o
+# en el cierre de la M1 cuando lo pide el motor (fuente `cierre_m1`, o `respaldo_m1` si ese minuto
+# no tiene ticks), ADR-0065. No es un cierre: la posicion sigue viva
+STOP_MOVIDO = "stop_movido"
+CIERRE_M1 = "cierre_m1"
 HECHO_OPERACION_ABIERTA = "operacion_abierta"
 HECHO_ORDEN_PENDIENTE = "orden_limite_pendiente"
 MOTIVO_PRECIO_INVALIDO = "precio_invalido"
@@ -139,6 +145,10 @@ class Posicion:
     fuente_cierre: str | None = None
     ultimo_precio: int = 0
     stop_original: int | None = None  # el stop con el que nacio, si se movio despues
+    stop_movido_ms: int | None = None  # el ultimo cambio de stop: el nuevo cuenta DESPUES
+    # el break even vigilado al tick (ADR-0065): el nivel que el BID tiene que pasar y desde cuando
+    break_even_nivel: int | None = None
+    break_even_desde_ms: int = 0
     marcas: list[tuple[int, int]] = field(default_factory=list)  # (instante_ms, peor precio)
     swaps: list[tuple[int, Decimal]] = field(default_factory=list)
     # puntos EN CONTRA entre el precio de la orden y el llenado: 0 en una limite; en una stop, el
@@ -446,20 +456,50 @@ class Broker:
 
     def mover_stop(self, posicion_id: str, stop: int, instante_ms: int) -> Posicion:
         """Cambia el stop de una posicion viva (RN-014, ADR-0053 §1); el objetivo no se toca. La
-        posicion guarda el stop original para clasificar el cierre (break even o salto el stop)."""
+        posicion guarda el stop original para clasificar el cierre (break even o salto el stop).
+
+        Si el stop YA esta ahi -el break even se movio al tick antes del cierre de la M1 que el
+        motor mira (ADR-0065)- no hace nada: ni peticion ni evento. Si no, es una peticion
+        `modificar` y queda en la traza como `stop_movido`, con la fuente del minuto: `cierre_m1`
+        con ticks, `respaldo_m1` sin ellos."""
         self._avanza_reloj(instante_ms)
         p = self.posiciones.get(posicion_id)
         if p is None or not p.abierta:
             raise BrokerError(f"posicion {posicion_id!r} no esta abierta")
+        if p.stop == stop:
+            return p
         if p.lado == "compra" and not stop < p.objetivo:
             raise BrokerError(f"{posicion_id}: el stop de una larga va por debajo del objetivo")
         if p.lado == "venta" and not stop > p.objetivo:
             raise BrokerError(f"{posicion_id}: el stop de una corta va por encima del objetivo")
-        self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, posicion_id, True))
+        fuente = (
+            CIERRE_M1
+            if self.mercado.ticks_del_minuto(instante_ms // MS_POR_MINUTO) is not None
+            else RESPALDO_M1
+        )
+        self._mover(p, stop, instante_ms, fuente)
+        return p
+
+    def vigilar_break_even(self, posicion_id: str, nivel: int, instante_ms: int) -> None:
+        """El break even de RN-014 AL TICK (ADR-0065): desde `instante_ms`, el primer tick cuyo BID
+        pase `nivel` a favor de la posicion pone su stop en la entrada exacta. Vigilar no es una
+        peticion -lo hace el bot en local, mirando el precio-; mover el stop si lo es. Solo una
+        posicion viva con su stop sin mover; un nivel nuevo sustituye al anterior."""
+        self._avanza_reloj(instante_ms)
+        p = self.posiciones.get(posicion_id)
+        if p is None or not p.abierta or p.stop_original is not None:
+            return
+        p.break_even_nivel = nivel
+        p.break_even_desde_ms = instante_ms
+
+    def _mover(self, p: Posicion, stop: int, instante_ms: int, fuente: str) -> None:
+        self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, p.id, True))
         if p.stop_original is None:
             p.stop_original = p.stop
         p.stop = stop
-        return p
+        p.stop_movido_ms = instante_ms
+        p.break_even_nivel = None
+        self._eventos.append((instante_ms, STOP_MOVIDO, p.id, fuente))
 
     def hechos(self) -> dict[str, bool]:
         """Los hechos de origen `broker` de la spec, derivados del estado (ADR-0028 §5)."""
@@ -512,20 +552,29 @@ class Broker:
         for p in sorted(self.posiciones.values(), key=lambda x: x.id):
             if not p.abierta:
                 continue
+            # el stop movido cuenta desde el tick SIGUIENTE al que lo movio (ADR-0065 §3), como
+            # cualquier evento del modelo: nunca contra el tick en el que se decidio
+            desde = max(self.ahora_ms - 1, p.abierta_ms, p.stop_movido_ms or 0)
             ev = primera_salida(
-                p.lado,
-                p.stop,
-                p.objetivo,
-                max(self.ahora_ms - 1, p.abierta_ms),
-                hasta_ms,
-                self.mercado,
-                self.config,
+                p.lado, p.stop, p.objetivo, desde, hasta_ms, self.mercado, self.config
             )
             if ev is not None:
                 candidatos.append((ev.instante_ms, p.id, ev.tipo, p.id, ev))
+            if p.break_even_nivel is not None:
+                toque = primer_toque_al_tick(
+                    p.lado,
+                    p.break_even_nivel,
+                    max(self.ahora_ms - 1, p.break_even_desde_ms),
+                    hasta_ms,
+                    self.mercado,
+                )
+                if toque is not None:
+                    candidatos.append((toque.instante_ms, p.id, STOP_MOVIDO, p.id, toque))
         if not candidatos:
             return None
-        return min(candidatos, key=lambda c: (c[0], c[2], c[1]))
+        # en el mismo tick, primero lo que el servidor hace con lo que YA hay (llenar, saltar el
+        # stop vigente o el objetivo) y despues mover el stop (ADR-0065 §3)
+        return min(candidatos, key=lambda c: (c[0], c[2] == STOP_MOVIDO, c[2], c[1]))
 
     def _aplicar(self, tipo: str, objeto: str, evento: Evento | None, instante: int) -> None:
         self._marcar_hasta(instante)
@@ -538,6 +587,10 @@ class Broker:
             self._eventos.append((instante, EXPIRADA, o.id, TICKS))
             return
         assert evento is not None
+        if tipo == STOP_MOVIDO:
+            p = self.posiciones[objeto]
+            self._mover(p, p.entrada, instante, TICKS)
+            return
         if tipo == LLENADA:
             o = self.ordenes[objeto]
             o.estado = LLENADA
@@ -720,6 +773,7 @@ def contrato_desde(escala: int, contrato: Decimal) -> tuple[Decimal, int]:
 
 __all__ = [
     "CANCELADA",
+    "CIERRE_M1",
     "COLOCADA",
     "EXPIRADA",
     "HECHO_OPERACION_ABIERTA",
@@ -735,6 +789,7 @@ __all__ = [
     "PETICION_COLOCAR",
     "PETICION_MODIFICAR",
     "RECHAZADA",
+    "STOP_MOVIDO",
     "TIPOS_PETICION",
     "Broker",
     "BrokerError",

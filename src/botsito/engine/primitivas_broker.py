@@ -19,7 +19,11 @@ from decimal import ROUND_DOWN, ROUND_UP, Decimal
 from typing import Any, cast
 
 from botsito.config.registro import Registro
-from botsito.domain.estructura_m1 import zona_posterior_completada
+from botsito.domain.estructura_m1 import (
+    MECHA,
+    nivel_de_activacion_posterior,
+    zona_posterior_completada,
+)
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.valores import CIEN
 from botsito.engine.broker import LLENADA, MANUAL, Broker, BrokerError, Rechazo
@@ -116,6 +120,10 @@ class ContextoDia:
     instante_ms: int = 0  # el instante del evento del interprete (exclusivo para el broker)
     huecos: set[str] = field(default_factory=set)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
+    # el nivel que la proxima M1 tendria que pasar para el break even de RN-014, visto en ESTE
+    # cierre de M1: (posicion, nivel). Lo deja el predicado, que no toca el broker; el cableado lo
+    # vigila al tick si `break_even_condicion` es `tocar` (ADR-0065). Se limpia cada minuto
+    break_even_vigilable: tuple[str, int] | None = None
 
 
 def _casa_por(pedido: str, real: str | None) -> bool:
@@ -242,6 +250,12 @@ def primitivas_cableadas(
         except AttributeError:
             return NoImplementada("predicado:se_completa_zona_de_control:sin M1")
         k = zona_posterior_completada(m1, p.lado, criterio)
+        if k is None and criterio == MECHA:
+            # el mismo punto, para vigilarlo al tick (ADR-0065): una mecha se ve en un tick y un
+            # cuerpo no, asi que con `cuerpo` el break even se queda en el cierre de la M1
+            nivel = nivel_de_activacion_posterior(m1, p.lado, criterio)
+            if nivel is not None:
+                ctx.break_even_vigilable = (p.id, nivel)
         # SI exactamente en el cierre de la M1 que pasa el punto, y sin efectos (ADR-0055 §1)
         if k is None or int(m1[k].fin) != int(momento.instante):
             return Resultado(Tri.NO)

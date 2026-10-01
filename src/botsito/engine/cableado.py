@@ -70,6 +70,9 @@ from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor, ZonaVis
 from botsito.engine.zonas import zonas_del_dia
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
+# el instante del break even de RN-014 (ADR-0065): `tocar` es al tick; `cierre`, al cierre de la M1
+PARAMETRO_BREAK_EVEN = "break_even_condicion"
+BREAK_EVEN_AL_TOCAR = "tocar"
 NOMBRE_MOTOR = "spec vigente + broker simulado (ADR-0053)"
 CARPETA_PERFILES = Path("knowledge") / "cuentas"
 
@@ -199,7 +202,15 @@ class MotorCableado:
             # 3. estrategia al cierre de M1
             sesion, abre = _sesion(limites, instante)
             momento = Momento(MinutoUtc(instante), sesion, abre, dia.datos)
+            ctx.break_even_vigilable = None
             evento = interprete.evento(self.reglas, momento, estado)
+            # el break even de RN-014 AL TICK (ADR-0065): el nivel que el predicado vio en este
+            # cierre se vigila en los ticks que vienen; el instante lo dice break_even_condicion
+            if ctx.break_even_vigilable is not None and (
+                self.registro.opcion(PARAMETRO_BREAK_EVEN) == BREAK_EVEN_AL_TOCAR
+            ):
+                posicion, nivel = ctx.break_even_vigilable
+                broker.vigilar_break_even(posicion, nivel, hasta_ms)
             if sesion is not None:
                 traza = trazas[sesion]
                 traza.fijados += [(instante, r, h, v) for r, h, v in evento.fijados]

@@ -28,6 +28,7 @@ from botsito.engine.broker import (
     LLENADA,
     MANUAL,
     MOTIVO_PRECIO_INVALIDO,
+    STOP_MOVIDO,
     Broker,
     BrokerError,
 )
@@ -385,8 +386,10 @@ def test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior(
     """Sesion 3 (RN-014, fb-2026-09-29-sesion-03-9f506366): «apenas toca, pues se pone en B la
     entrada», mirado en M1 y con el stop exactamente en la entrada. Aqui el predicado de la
     zona completada es el del motor, no el sintetico: tras el llenado, la roja de retroceso
-    deja el punto alto y la M1 siguiente lo pasa con la mecha; en el cierre de esa M1 el stop
-    va a la entrada, y cuando el precio vuelve la posicion sale por break even."""
+    deja el punto alto y la M1 siguiente lo pasa con la mecha. DESDE LA RAMA feature/be-al-tick
+    (ADR-0065) el stop va a la entrada en el TICK que pasa el punto -el de 40 s de esa M1-, no en
+    su cierre; el motor lo vuelve a pedir al cierre y ya no hace nada. Cuando el precio vuelve, la
+    posicion sale por break even."""
     mercado = _mercado(RUTA_BREAK_EVEN)
     motor = _motor(registro, vocabulario, mercado)
     predicados, _ = _sinteticas()
@@ -396,9 +399,14 @@ def test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior(
     r = motor.correr_dia(DiaDeMercado(DIA, HUSO, SESIONES, datos))
     assert "RN-014" in r.sesiones["07-11"].disparadas
     tb = motor.trazas_broker[DIA.isoformat()]
-    assert [t for _, t, _, _ in tb.eventos] == [LLENADA, STOP], tb.eventos
+    assert [(t, f) for _, t, _, f in tb.eventos] == [
+        (LLENADA, TICKS),
+        (STOP_MOVIDO, TICKS),
+        (STOP, TICKS),
+    ], tb.eventos
     p = next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
     assert (p.stop, p.stop_original) == (ENTRADA, ENTRADA - 16)
+    assert p.stop_movido_ms == (MINUTO_ZONA + 7) * MS_POR_MINUTO + 40_000
     # el stop ya esta en la entrada: salta al toque y se llena al precio del tick (DN-3)
     assert (p.motivo_cierre, p.precio_cierre) == (STOP, ENTRADA - 3)
     # un break even no gasta intento: el cierre se clasifica por mecanismo (RN-016)

@@ -252,6 +252,23 @@ def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> i
     anterior con mecha», fb-2026-09-09-sesion-01-a456bc3f). Manda el ULTIMO punto formado, y
     la mecha de la propia vela contraria no cuenta: el punto existe desde su cierre, como en
     `pivotes_m15`. Sin mirar al futuro: solo usa las velas dadas."""
+    return _recorrer_zona_posterior(m1, lado, criterio)[0]
+
+
+def nivel_de_activacion_posterior(m1: Sequence[Vela], lado: str, criterio: str) -> int | None:
+    """El nivel que la PROXIMA M1 tendria que pasar para completar la zona de control posterior
+    (RN-014), con las M1 cerradas `m1` desde la entrada; None si todavia no hay zona o si ya se
+    completo (rama feature/be-al-tick, ADR-0065). Es el MISMO punto que mira
+    `zona_posterior_completada`, del mismo recorrido: el break even al tick cambia el instante,
+    no el nivel. Sin mirar al futuro."""
+    k, extremo = _recorrer_zona_posterior(m1, lado, criterio)
+    return extremo if k is None else None
+
+
+def _recorrer_zona_posterior(
+    m1: Sequence[Vela], lado: str, criterio: str
+) -> tuple[int | None, int | None]:
+    """(indice de la M1 que completa la zona o None, ultimo punto extremo formado o None)."""
     signo = _signo(lado)
     if criterio not in (MECHA, CUERPO):
         raise EstructuraError(f"criterio de ruptura {criterio!r} desconocido")
@@ -259,7 +276,7 @@ def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> i
     racha: list[Vela] = []  # las velas a favor consecutivas que preceden a la que se mira
     for k, v in enumerate(m1):
         if extremo is not None and _pasa(v, extremo, lado, criterio):
-            return k
+            return k, extremo
         c = color(v)
         if c == signo:
             racha.append(v)
@@ -271,7 +288,7 @@ def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> i
                 else min(int(x.minima) for x in racha)
             )
         racha = []
-    return None
+    return None, extremo
 
 
 def detectar_esquema(
@@ -354,6 +371,7 @@ __all__ = [
     "detectar_esquema",
     "extremo_de_la_caja",
     "mecha_mas_alla_del_extremo",
+    "nivel_de_activacion_posterior",
     "referencia_del_breaker",
     "ultimo_punto_de_ruptura",
     "zona_posterior_completada",
