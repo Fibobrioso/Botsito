@@ -344,8 +344,8 @@ class Politica:
         n = _normcase(ruta)
         if n == self.raiz_norm:
             return ""
-        if n.startswith(self.raiz_norm + "\\"):
-            return n[len(self.raiz_norm) + 1 :].replace("\\", "/")
+        if n.startswith(self.raiz_norm + "/"):
+            return n[len(self.raiz_norm) + 1 :]
         return None
 
     def mes_de(self, texto: str) -> str | None:
@@ -504,7 +504,13 @@ def _rangos(lineas: list[int]) -> str:
 
 
 def _normcase(ruta: str) -> str:
-    return os.path.normcase(os.path.normpath(ruta))
+    """La ruta normalizada, en minusculas y con `/`, en CUALQUIER sistema. `os.path.normcase` no
+    vale: en Linux no toca nada, y la primera CI de esta guardia (run 36889215829) salio roja
+    porque fuera de Windows ninguna ruta se reconocia dentro del repo."""
+    normal = os.path.normpath(ruta)
+    if os.altsep:
+        normal = normal.replace(os.altsep, "/")
+    return normal.replace(os.sep, "/").lower()
 
 
 # ------------------------------------------------------------------------- el tokenizador bash

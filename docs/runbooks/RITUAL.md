@@ -250,6 +250,13 @@ estadiar el arreglo, `make check > make-check.log 2>&1`, comprobar el `SELLO`, `
 `BOTSITO_ALLOW_MAIN=1 git commit` y el push, que ahí es solo `git push origin main` porque no hay tag
 nuevo.
 
+**Eso vale solo si el arreglo toca `PROJECT_STATE.md` y nada más** (medido el 2026-09-29 y otra vez
+el 2026-10-01, al cerrar `trabajo/guardias-claude`). `state check` (regla 5) no admite en `main`,
+después del último tag `stable/*`, commits que toquen otra cosa: un arreglo de código encima de
+`main` vuelve a poner la CI en rojo. Ese arreglo va por una rama corta, con su merge, su tag y su
+commit de estado, y eso es otro cierre: necesita su propia orden de cierre. La rama que se estaba
+cerrando no se borra hasta que la CI esté en verde.
+
 ## La primera vez con la puerta
 
 Los hooks viven en `scripts/git-hooks/` y se COPIAN a `.git/hooks` con **un solo comando, desde la

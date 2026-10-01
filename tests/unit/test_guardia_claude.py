@@ -151,6 +151,20 @@ def test_contra_el_repo_real_ve_lo_mismo_que_el_codigo(g: ModuleType) -> None:
     assert p.meses_reservados >= {"2026-05", "2026-09"}
 
 
+def test_las_rutas_se_comparan_igual_en_cualquier_sistema(g: ModuleType, repo: Path) -> None:
+    """La primera CI de la guardia (run 36889215829, Linux) salio roja con 24 fallos: `relativa`
+    comparaba con `\\` y `os.path.normcase` no pasa a minusculas fuera de Windows, asi que ninguna
+    ruta se reconocia dentro del repo. `_normcase` da minusculas y `/` en cualquier sistema."""
+    p = g.Politica(repo)
+    assert "\\" not in g._normcase(str(repo / "Corpus" / "X.txt"))
+    assert g._normcase(str(repo / "Corpus" / "X.txt")).endswith("/corpus/x.txt")
+    con_barras = str(repo).replace("\\", "/") + "/Knowledge/Cases/holdout/1/x.yaml"
+    assert p.relativa(con_barras) == "knowledge/cases/holdout/1/x.yaml"
+    assert p.relativa(str(repo)) == ""
+    assert p.relativa(str(repo) + "-otro/x") is None
+    assert p.motivo_fichero(str(repo / "SONDA.CRUDA-NO-LEER.txt")) == g.R_CUARENTENA
+
+
 def test_un_mes_de_desarrollo_con_un_dia_reservado_deja_de_ser_legible(
     g: ModuleType, repo: Path
 ) -> None:

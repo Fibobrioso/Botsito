@@ -1,0 +1,22 @@
+# El contrato de esta rama (docs/runbooks/CONTRATO-DE-RAMA.md).
+rama: trabajo/guardia-linux
+riesgo: bajo  # un arreglo de comparacion de rutas en el hook de Claude Code y su test
+artefacto: docs/validation/GUARDIAS-CLAUDE.md
+rutas_permitidas:
+  - .claude/hooks/guardia.py
+  - tests/unit/test_guardia_claude.py
+  - docs/validation/GUARDIAS-CLAUDE.md
+  - docs/encargos/trabajo-guardia-linux.md
+  - docs/runbooks/RITUAL.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - knowledge/
+  - config/
+  - data/
+  - .claude/settings.json
+  - .claude/agents/
+comprobaciones:
+  - uv run pytest tests/unit/test_guardia_claude.py -q
+  - make check > make-check.log 2>&1
