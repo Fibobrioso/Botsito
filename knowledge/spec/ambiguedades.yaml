@@ -1317,12 +1317,15 @@ ambiguedades:
     # con la orden limite de hoy RN-011 corre con `ultima_contraria`; la lectura solo actua con la
     # orden stop (A-47) y la caja por operacion (DISENO-ENTRADA-RUPTURA.md §2.4). Sin parametro: el
     # selector `caja_bloque` nace con la rama de codigo que lo consuma (ADR-0054), no aqui.
+    # 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064): nacen `orden_stop_punto` (el
+    # punto: ultimo_pivote_m1 o referencia_de_la_toma) y `caja_bloque` (el 1 de la caja: r6, r4 o
+    # r1 de CAJA-77), los dos DEFAULT_AMBIGUOUS por decision del consultor. Sigue ABIERTA.
     evidencia:
       - ev-v3-010818-010bd2b3
       - ev-v3-011540-5425b533
       - ev-v3-010648-0039e34d
       - ev-v7-002403-8344331d
-    parametros: []
+    parametros: [orden_stop_punto, caja_bloque]
     contradiccion: null
     estado: ABIERTA
     decision: null
@@ -1347,12 +1350,16 @@ ambiguedades:
     # cerrada o en formacion: la base es la medida sobre sus cajas. Se citan los dos items de v7
     # en los que un punto vale ANTES del cierre de la vela -«apenas con una mecha aqui y ya
     # podriamos validar ese punto» (0:22:01) y la vela que cubre con la mecha a la anterior
-    # (0:24:03)-, porque son lo mas cercano que dice en voz, y no dicen mas que eso. NO
-    # bloqueante, por lo mismo que A-48. Sin parametro: el selector `caja_vela` nace con su rama.
+    # (0:24:03)-, porque son lo mas cercano que dice en voz, y no dicen mas que eso.
+    # 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064): nace `caja_se_fija`, cuando se
+    # fija el 1 de la caja de la orden stop (al verse el punto o en cada cierre de M1), un
+    # mecanismo del motor sobre esta pregunta; DEFAULT_AMBIGUOUS. Sigue ABIERTA. NO
+    # bloqueante, por lo mismo que A-48. El selector `caja_vela` (la vela en formacion) sigue sin
+    # nacer: `caja_se_fija` solo decide cuando se recalcula el 1 con velas CERRADAS.
     evidencia:
       - ev-v7-002201-2b2f20aa
       - ev-v7-002403-8344331d
-    parametros: []
+    parametros: [caja_se_fija]
     contradiccion: null
     estado: ABIERTA
     decision: null

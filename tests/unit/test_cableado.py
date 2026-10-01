@@ -685,6 +685,59 @@ def test_la_cuenta_persiste_entre_dias_y_la_estrategia_empieza_de_cero(
     )
 
 
+def test_con_la_cuenta_diaria_cada_dia_empieza_con_el_capital(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """El diagnostico de la revision de F35: con `cuenta_diaria` la cuenta NO se arrastra (al
+    reves que ADR-0053 §6): el dia 2 empieza con el capital inicial, asi que el lote es el mismo
+    que el del dia 1. Por defecto se arrastra (el test de arriba)."""
+    dia2 = date(2030, 1, 21)
+    salto = 6 * 1440
+    m2 = dataclasses.replace(_mercado(RUTA_STOP), caso="caso-x-2030-01-21", dia=dia2)
+    m2 = dataclasses.replace(
+        m2,
+        desde=MinutoUtc(MINUTO_INI + salto),
+        hasta=MinutoUtc(MINUTO_FIN + salto),
+        m1=tuple(dataclasses.replace(v, inicio=MinutoUtc(int(v.inicio) + salto)) for v in m2.m1),
+        ticks=tuple(
+            Tick(
+                MilisegundoUtc(int(k.instante) + salto * MS_POR_MINUTO),
+                k.ask,
+                k.bid,
+                k.volumen_ask,
+                k.volumen_bid,
+            )
+            for k in m2.ticks
+        ),
+    )
+    motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    motor.cuenta_diaria = True
+    motor.mercados = {**motor.mercados, dia2.isoformat(): m2}
+    motor.correr_dia(_dia())
+    lote_1 = next(iter(motor.brokers[DIA.isoformat()].posiciones.values())).lotes
+    predicados, acumuladores = _sinteticas(minuto_zona=MINUTO_ZONA + salto)
+    motor.primitivas_extra = predicados
+    motor.acumuladores_extra = acumuladores
+    motor.correr_dia(DiaDeMercado(dia2, HUSO, SESIONES, DatosMercado(_h4_alcista())))
+    lote_2 = next(iter(motor.brokers[dia2.isoformat()].posiciones.values())).lotes
+    assert lote_2 == lote_1
+    assert motor.cuenta is not None and motor.cuenta.dias_de_trading == 1
+    assert "CUENTA: REINICIADA CADA DIA" in cableado.informe_simulacion(motor)
+
+
+def test_la_etiqueta_de_la_cuenta_diaria() -> None:
+    from botsito.engine.diagnostico import Diagnostico, nombre_etiquetado
+
+    d = Diagnostico(a21="solo_una_zona_de_control", cuenta_diaria=True)
+    assert d.etiquetas == (
+        "DIAGNOSTICO-A21-solo_una_zona_de_control",
+        "DIAGNOSTICO-CUENTA-diaria",
+    )
+    assert nombre_etiquetado(Path("x.txt"), d.etiquetas).name == (
+        "x.DIAGNOSTICO.a21=solo_una_zona_de_control.cuenta=diaria.txt"
+    )
+
+
 def test_las_negativas_por_la_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """`--simular` pasa por la MISMA compuerta que el arnes y el visor (ADR-0053 §8): un mes de
     medida o uno que no es de construccion se niega ANTES de construir el motor y no escribe nada.
