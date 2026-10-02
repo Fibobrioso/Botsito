@@ -54,7 +54,7 @@ las zonas que se ligan en el, y si ha terminado.
   seguir operando» (`ev-v4-004832-6543b551`, v4 0:48:32-0:48:52); y en la sesion 3, a la pregunta
   «¿Cuentan los break-even y las entradas invalidadas?», «no cuentan» (`ev-v9-013117-c683f9b5`,
   confianza media: el hablante se atribuye por contexto).
-- **El tope de escenarios** por sesion lo decide `max_escenarios_por_sesion` (A-46, pregunta 20),
+- **El tope de escenarios** por sesion lo decide `max_escenarios_por_sesion` (A-52, pregunta 20),
   PROVISIONAL `sin_limite`: «eso no lo podemos definir [...] en todas estas 4 se va a dar una
   operación» (`ev-v9-003318-c0503fe5`), que no da un numero; antes habia dicho «como máximo dos
   entradas por día» (`ev-v4-003350-acb03ee7`). Con un tope, la toma que lo pasaria no abre
@@ -83,7 +83,7 @@ trader la elija. Una posicion abierta no entra: la cierra RN-002.
 ### 4 bis. La orden pendiente al abrir otro escenario en la misma sesion
 
 Si una toma de otra liquidez abre un escenario con una orden del anterior sin llenar,
-`abrir_escenario` hace lo que diga `orden_pendiente_al_abrir_escenario` (A-25, pregunta 21),
+`abrir_escenario` hace lo que diga `orden_pendiente_al_abrir_escenario` (A-53, pregunta 21),
 PROVISIONAL `se_mueve`: la orden sigue viva -y se puede llenar- hasta el primer punto de breaker de
 la liquidez nueva, donde RN-006 la reubica. Es lo que hacia el motor, medido con un test sintetico
 (`test_la_orden_viva_cuando_otra_toma_abre_un_escenario`), y no sale de una regla del trader: lo

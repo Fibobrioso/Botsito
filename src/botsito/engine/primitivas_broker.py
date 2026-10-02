@@ -558,7 +558,7 @@ def primitivas_cableadas(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
         """La de RN-004 (`engine/zonas.py`), y con el broker delante: si abre un escenario nuevo y
-        queda una orden pendiente del anterior, `orden_pendiente` (A-25, ADR-0066) dice si se
+        queda una orden pendiente del anterior, `orden_pendiente` (A-53, ADR-0066) dice si se
         retira YA (`se_retira`) o sigue hasta el primer punto de la liquidez nueva, donde la
         reubica RN-006 (`se_mueve`)."""
         antes = escenario_actual(estado, momento.sesion)

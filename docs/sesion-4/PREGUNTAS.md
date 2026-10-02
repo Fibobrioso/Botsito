@@ -272,8 +272,8 @@ ADR-0060 §2.
 - **Pregunta:** «Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba,
   ¿empiezas de nuevo con tres? (a) sí; (b) no, me queda uno.»
 
-**20. Cuántos escenarios puede haber en una sesión como máximo.** · PARCIAL · A-46 (la subpregunta
-que quedó sin número). La añadió el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
+**20. Cuántos escenarios puede haber en una sesión como máximo.** · PARCIAL · A-52 (la subpregunta
+de A-46 que quedó sin número). La añadió el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
 - **Ya dijo**:
   - las dos sesiones son «cada uno un mundo diferente» y «no importa cómo terminó la primera
     operación» (v9 0:32:53–0:33:11);
@@ -289,7 +289,8 @@ que quedó sin número). La añadió el consultor el 2026-10-02 (`feature/escena
   - (b) hasta un número de liquidez por sesión, ¿cuántas?;
   - (c) otra, ¿cuál?»
 
-**21. La orden puesta cuando el precio toma otra liquidez.** · SIN RESPUESTA · A-25 y A-38. La añadió
+**21. La orden puesta cuando el precio toma otra liquidez.** · SIN RESPUESTA · A-53 (lo que A-38 no
+cubre). La añadió
 el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
 - **Ya dijo** que la orden «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de
   breaker» (v9 1:32:07). Eso es dentro de la misma liquidez; no se le preguntó qué pasa si, con la

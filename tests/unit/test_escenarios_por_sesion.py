@@ -587,7 +587,7 @@ def test_la_orden_viva_cuando_otra_toma_abre_un_escenario(tmp_path: Path, valor:
 
 
 def test_el_tope_de_escenarios_por_sesion(tmp_path: Path) -> None:
-    """`max_escenarios_por_sesion` (A-46, pregunta 20): con un tope, una toma nueva de otra
+    """`max_escenarios_por_sesion` (A-52, pregunta 20): con un tope, una toma nueva de otra
     liquidez no abre mas escenarios; con `sin_limite` (el valor PROVISIONAL), si."""
     datos = _Liquidez(
         {M0: _pivote(1100, M0), M0 + 40: _pivote(1150, M0 + 40), M0 + 80: _pivote(1200, M0 + 80)}

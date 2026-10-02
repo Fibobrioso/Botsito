@@ -67,3 +67,24 @@ cual:
 > 0a) consta: cita ev-v4-004832-6543b551 y ev-v9-013117-c683f9b5 en RN-034 y ADR-0066, y lo de seguir tras un break even deja de marcarse como lectura tuya.
 >
 > Sigue con los puntos 1, 3 y 4 de la orden tal cual. El 2 ya está resuelto por 0a).
+
+## Cuarta orden: decisión del consultor sobre a1 (2026-10-02)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Decisión del consultor sobre a1:
+>
+> 1. Regla general (nombra la condición, no el caso): todo parámetro PROVISIONAL cuelga de una ambigüedad ABIERTA. Test nuevo que recorre el registro y falla si un parámetro PROVISIONAL no apunta a una ambigüedad ABIERTA de knowledge/spec/ambiguedades.yaml. Rómpelo a propósito para ver que falla.
+>
+> 2. Abre las ambigüedades que hagan falta para cumplirla, con docs/runbooks/AMBIGUEDADES.md (abrir toca dos sitios, y spec docs --escribir en el mismo commit):
+>    - una para max_escenarios_por_sesion (pregunta 20 de docs/sesion-4/PREGUNTAS.md);
+>    - una para orden_pendiente_al_abrir_escenario (pregunta 21), si tampoco tiene ambigüedad abierta;
+>    - y cualquier otro parámetro PROVISIONAL que el test destape.
+>    Usa los siguientes ids libres y cita cada pregunta en su ambigüedad. No cuelgues nada de A-25 ni de A-46.
+>
+> 3. Next Action: añade una línea nueva: «Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real». No lo implementes en esta rama. Comprueba que PROJECT_STATE sigue por debajo de 25 KB.
+>
+> make check sellado; revisor solo sobre lo que cambie, con su informe pegado.
+> «Rama lista para revisión, NO cerrada.»

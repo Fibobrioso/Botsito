@@ -586,9 +586,71 @@ hallazgos, resumido.
 - **Lo que no pudo comprobar**: `make check` sella este commit (abajo); los «481» están ahora
   nombrados con su bucle en §6.4.
 
+## 7. Cuarta orden del consultor: la decisión sobre a1 (2026-10-02)
+
+Copiada tal cual en el encargo, «Cuarta orden».
+
+### 7.1 La regla, con su test
+
+**Todo parámetro PROVISIONAL cuelga de una ambigüedad ABIERTA.** PROVISIONAL es el estado
+`DEFAULT_AMBIGUOUS` del registro (ADR-0002): un valor por defecto que se lee anotando su ambigüedad
+hasta que el trader conteste. Test nuevo, `tests/contract/test_provisional_cuelga_de_abierta.py`
+(`test_todo_parametro_provisional_cuelga_de_una_ambiguedad_abierta`): recorre el registro entero y
+falla si un `DEFAULT_AMBIGUOUS` apunta a una ambigüedad que no existe o que no está `ABIERTA` en
+`knowledge/spec/ambiguedades.yaml`. Nombra la condición, no un caso.
+
+**Roto a propósito, tres veces:**
+- **Contra el registro de `86a49e6`, antes de abrir nada**, falla con
+  `max_escenarios_por_sesion -> A-46 (RESUELTA)`. Es el único parámetro que el test destapa: los
+  otros catorce `DEFAULT_AMBIGUOUS` cuelgan de ambigüedades abiertas (A-25, A-27, A-29, A-30, A-42,
+  A-43, A-48 y A-49).
+- **En memoria, sin tocar ningún fichero** (script en la carpeta de trabajo, que importa la función
+  del test), con las dos ambigüedades ya abiertas:
+  - `orden_pendiente_al_abrir_escenario` apuntando a A-38 y `max_escenarios_por_sesion` a A-99
+    → `['max_escenarios_por_sesion -> A-99 (no existe)', 'orden_pendiente_al_abrir_escenario -> A-38 (RESUELTA)']`;
+  - A-43 marcada RESUELTA con `toma_antes_de_la_ventana` todavía PROVISIONAL
+    → `['toma_antes_de_la_ventana -> A-43 (RESUELTA)']`. Es el caso que más va a pasar: cerrar una
+    ambigüedad sin fijar su parámetro.
+- Intacto, la lista sale vacía.
+
+### 7.2 Las dos ambigüedades nuevas
+
+Abiertas con `docs/runbooks/AMBIGUEDADES.md`: el YAML, la fila en la tabla «Known Ambiguities» de
+`PROJECT_STATE.md` y `botsito spec docs --escribir` en el mismo commit. Spec 15.4.1 → 15.5.0.
+- **A-52, cuántos escenarios puede abrir una misma sesión como máximo** (pregunta 20, citada en su
+  `pregunta`). Es la subpregunta de A-46 que quedó sin número. Evidencia: `ev-v9-003318-c0503fe5` y
+  `ev-v4-003350-acb03ee7`. Parámetro: `max_escenarios_por_sesion`, que pasa de A-46 a A-52.
+- **A-53, la orden sin llenar cuando el precio toma otra liquidez de M15** (pregunta 21, citada en
+  su `pregunta`). Lo único que dijo el trader de la vida de la orden es de la misma liquidez
+  (`ev-v9-013205-85840dcc`, el ítem de A-38). Parámetro: `orden_pendiente_al_abrir_escenario`, que
+  pasa de A-25 a A-53. Colgaba de una ABIERTA y el test no lo destapaba, pero A-25 es la vida de la
+  marca de liquidez, no la de la orden, y la orden pide no colgar nada de A-25.
+- Las dos son `pregunta`, no bloqueantes. Las preguntas 20 y 21 de `PREGUNTAS.md` ya nombran A-52 y
+  A-53; ADR-0066, los comentarios de `engine/zonas.py` y `engine/primitivas_broker.py` y el test
+  del tope, también.
+
+**Lo que no se toca, y por qué:**
+- **`intentos_tras_toma_nueva` sigue en A-25.** Viene de la Fase 1, no de esta orden: es la
+  pregunta 18, que es la de A-25 (la toma nueva con el escenario vivo es la vida de la marca de
+  liquidez). Si la orden quiere decir que tampoco ese cuelgue de A-25, es mover un parámetro más y
+  abrir otra ambigüedad: lo decide el consultor.
+- **A-46 no se edita.** Está RESUELTA, y su texto («sin tope diario de escenarios», con un registro
+  que no habla de tope; revisor, a1) queda como estaba: el número que faltaba es ahora A-52.
+- **`sesgo_h4_tope_velas` dice «PROVISIONAL» en su descripción y está `CONFIRMED`.** No es un
+  `DEFAULT_AMBIGUOUS` y el registro no le deja llevar `ambiguedad_id`: es una decisión del proyecto
+  (ADR-0044, categoría `ejecucion`), no una pregunta al trader, así que la regla no lo alcanza. Si
+  el consultor quiere que la palabra cuente, la regla tendría que mirar también el texto.
+
+### 7.3 Next Action
+
+Punto K nuevo en `PROJECT_STATE.md`, con el texto de la orden: el freno duro de peticiones al
+servidor, rama propia antes de operar en una cuenta real. No se implementa aquí. El punto F dice
+ahora 21 preguntas, no 19. `PROJECT_STATE.md` pesa 24.106 bytes, por debajo de 25.000 (`wc -c`).
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
 selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Las órdenes 2 y 3 del
-consultor (2026-10-02), hechas en §6, con su revisor (§6.6). Lo que espera a la sesión 4 y lo que
-decide el consultor está en §4 y en la respuesta a a1 de §6.6.
+consultor (2026-10-02), hechas en §6, con su revisor (§6.6). La cuarta (la decisión sobre a1),
+en §7, con su revisor (§7.4). Lo que espera a la sesión 4 está en §4; lo que queda para el
+consultor, en §7.2 («Lo que no se toca»).

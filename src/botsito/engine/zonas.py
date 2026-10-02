@@ -96,8 +96,8 @@ ESCENARIOS = "escenarios"
 INTENTOS_VUELVEN = "vuelven_a_cartuchos_max"
 INTENTOS_SIGUEN = "siguen_los_que_quedan"
 REINICIO_SIGUIENTE_LIQUIDEZ = "siguiente_liquidez_m15"
-# Las opciones de `max_escenarios_por_sesion` (A-46): sin tope, o un numero, que vive en el
-# registro como texto de la opcion; y las de `orden_pendiente_al_abrir_escenario` (A-25).
+# Las opciones de `max_escenarios_por_sesion` (A-52): sin tope, o un numero, que vive en el
+# registro como texto de la opcion; y las de `orden_pendiente_al_abrir_escenario` (A-53).
 SIN_LIMITE = "sin_limite"
 ORDEN_SE_MUEVE = "se_mueve"
 ORDEN_SE_RETIRA = "se_retira"
@@ -311,7 +311,7 @@ def acciones_escenario(registro: Registro) -> dict[str, Any]:
             return []
         abiertos = len(_de_la_sesion(estado, momento.sesion).get(ESCENARIOS) or [])
         if tope is not None and abiertos >= tope:
-            return []  # max_escenarios_por_sesion (A-46): la toma no abre otro
+            return []  # max_escenarios_por_sesion (A-52): la toma no abre otro
         _abrir(estado, momento.sesion, toma)
         if estado.hechos.pop(HECHO_DETENIDO, None) is not None:
             return [(HECHO_DETENIDO, VALOR_APAGADO)]

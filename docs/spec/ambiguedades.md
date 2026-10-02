@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.4.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.5.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (21)
+## ABIERTA (23)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -119,6 +119,18 @@ Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta so
 ### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
 
 Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
+
+### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
+
+En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
+
+Afecta a: `max_escenarios_por_sesion`.
+
+### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
+
+Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la pregunta 21 de docs/sesion-4/PREGUNTAS.md.
+
+Afecta a: `orden_pendiente_al_abrir_escenario`.
 
 ## DECIDIDA (6)
 

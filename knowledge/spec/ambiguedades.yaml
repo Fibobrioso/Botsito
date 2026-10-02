@@ -1424,3 +1424,53 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: true
+  - id: A-52
+    titulo: cuántos escenarios puede abrir una misma sesión como máximo
+    pregunta: >-
+      En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar
+      entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión,
+      ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
+    resuelve_en: [F19, F20]
+    # NACE el 2026-10-02 (rama feature/escenarios-por-sesion, cuarta orden del consultor: todo
+    # parametro PROVISIONAL cuelga de una ambiguedad ABIERTA). Es la subpregunta de A-46 que quedo
+    # sin numero: A-46 esta RESUELTA (las sesiones son independientes), pero a «¿cuántos
+    # escenarios nuevos puede haber en un mismo día como máximo?» el trader contesto «eso no lo
+    # podemos definir [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5),
+    # sin numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7).
+    # Parametro: max_escenarios_por_sesion, PROVISIONAL sin_limite (ADR-0066 §2). NO bloqueante:
+    # el motor corre con el valor por defecto hasta la respuesta.
+    evidencia:
+      - ev-v9-003318-c0503fe5
+      - ev-v4-003350-acb03ee7
+    parametros: [max_escenarios_por_sesion]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false
+  - id: A-53
+    titulo: la orden sin llenar cuando el precio toma otra liquidez de M15
+    pregunta: >-
+      Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces
+      con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la
+      dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la
+      pregunta 21 de docs/sesion-4/PREGUNTAS.md.
+    resuelve_en: [F20, F22]
+    # NACE el 2026-10-02 (rama feature/escenarios-por-sesion, cuarta orden del consultor). Lo unico
+    # que dijo el trader de la vida de una orden sin llenar es que «sigue vivo hasta que se
+    # desarrolle otra próxima, otro posible punto de breaker» (ev-v9-013205-85840dcc, A-38
+    # RESUELTA), y eso es dentro de la misma liquidez; no se le pregunto que pasa si el precio
+    # toma OTRA. Parametro: orden_pendiente_al_abrir_escenario, PROVISIONAL se_mueve, que es lo
+    # que hacia el motor, medido con un test (ADR-0066 §4 bis). Estaba colgado de A-25, que es la
+    # vida de la marca de liquidez y no la de la orden; el consultor pidio no colgar nada nuevo de
+    # A-25. NO bloqueante.
+    evidencia:
+      - ev-v9-013205-85840dcc
+    parametros: [orden_pendiente_al_abrir_escenario]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

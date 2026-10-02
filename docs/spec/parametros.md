@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.4.1` · hash `5821e06b1d6c…`
+`spec_version 15.5.0` · hash `9cc64673745b…`
 
 95 en total: 78 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -56,13 +56,13 @@
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
-| `max_escenarios_por_sesion` | `sin_limite` | DEFAULT_AMBIGUOUS · en revision por A-46 | estrategia | `ev-v9-003318-c0503fe5` | escenarios que puede abrir una sesion como maximo |
+| `max_escenarios_por_sesion` | `sin_limite` | DEFAULT_AMBIGUOUS · en revision por A-52 | estrategia | `ev-v9-003318-c0503fe5` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | DEFAULT_AMBIGUOUS · en revision por A-29 | estrategia | `ev-v7-001457-1fe7fdfe` | cuando se coloca por primera vez la orden limite de una zona |
-| `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-25 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
+| `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-53 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
 | `orden_pendiente_al_abrir_sesion` | `se_retira` | DEFAULT_AMBIGUOUS · en revision por A-30 | estrategia | `fb-2026-09-29-sesion-03-5021677e` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
@@ -403,7 +403,7 @@ Opciones: `order_block_mayor`, `otra`.
 
 ### `max_escenarios_por_sesion`
 
-cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-46). El valor `sin_limite` es el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
+cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46 que quedo sin numero). El valor `sin_limite` es el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
 
 Opciones: `sin_limite`, `1`, `2`, `3`, `4`, `5`.
 
@@ -437,7 +437,7 @@ Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`, `al_aparecer_punto_de
 
 ### `orden_pendiente_al_abrir_escenario`
 
-la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la reubica; es lo que hacia el motor (medido en tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden?», A-25). El valor sale de lo unico que dijo el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el valor es el comportamiento que el motor ya tenia, no una decision
+la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la reubica; es lo que hacia el motor (medido en tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden?», A-53). El valor sale de lo unico que dijo el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el valor es el comportamiento que el motor ya tenia, no una decision
 
 Opciones: `se_mueve`, `se_retira`.
 
