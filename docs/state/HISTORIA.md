@@ -2077,3 +2077,28 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 5 (2026-10-02).
+
+# Next Action HECHA · K · sale de PROJECT_STATE.md en feature/freno-peticiones (2026-10-02)
+
+La hace esta rama (orden de cierre del consultor; `docs/runbooks/RITUAL.md`, punto 3). Su texto
+literal en PROJECT_STATE.md:
+
+K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).
+
+# Registro de cierre · `feature/freno-peticiones` (2026-10-02)
+
+- Orden de cierre de Aleks, tras revisar `e34d536` (`make check` sellado, 1831 pasados). El freno
+  de peticiones vive en el puerto del broker (ADR-0067), con sus umbrales PROVISIONAL bajo A-54.
+- Tag: `stable/F36p-freno-peticiones`. El merge es
+  `git rev-parse "stable/F36p-freno-peticiones^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `91b3291`: apertura: encargo, contrato y Archivo 6;
+  - `ab1367f`: Fase 0: el inventario de peticiones y el diseno del freno, antes del codigo;
+  - `652c75b`: el freno en el puerto del broker (ADR-0067): aviso, corte y bucle; A-54; los tests rotos a proposito;
+  - `e34d536`: tras el revisor: solo el primer movimiento del stop protege (b1); cada negada al log; tests nuevos;
+  - `913b023`: orden de cierre: lo que protege tras el corte por bucle, con su test; A-54 dice de donde sale; la deuda del esquema;
+  - y el de este registro, que saca tambien el contrato y la K de Next Action.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca la plataforma, lo dice la
+  orden de cierre. La primera CI es la de `main` tras el cierre.
+- Informe: `docs/validation/FRENO-PETICIONES.md`. Encargo: `docs/encargos/feature-freno-peticiones.md`.

@@ -39,8 +39,6 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
 
-K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).
-
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
