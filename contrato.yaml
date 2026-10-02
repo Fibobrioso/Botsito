@@ -1,0 +1,28 @@
+rama: trabajo/cerrar-a29-a36
+riesgo: alto  # cierra A-29 y A-36 y puede cambiar cuando nace la orden (spec, registro y quiza motor)
+artefacto: docs/validation/CERRAR-A29-A36.md
+rutas_permitidas:
+  - docs/validation/CERRAR-A29-A36.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+  - knowledge/feedback/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/sesion-4/PREGUNTAS.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - src/botsito/engine/
+  - tests/unit/
+  - tests/contract/
+rutas_protegidas:
+  - knowledge/evidence/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - data/manifests/
+  - .claude/
+  - scripts/git-hooks/
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito spec check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1

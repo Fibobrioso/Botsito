@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/cerrar-a29-a36
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion` (2026-10-02).
+EN CURSO: `trabajo/cerrar-a29-a36` (2026-10-02; encargo docs/encargos/trabajo-cerrar-a29-a36.md, informe docs/validation/CERRAR-A29-A36.md): cerrar A-29 y A-36, que ya tienen respuesta grabada del trader en v9. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion`.
 
 ## Stable Main State
 8346b9b · merge de `feature/escenarios-por-sesion` (tag `stable/F36n-escenarios-por-sesion`): las sesiones son independientes -la toma tiene que ser de la sesion- y cada liquidez nueva abre un escenario con sus intentos; una ganadora termina el escenario y el dia sigue (RN-034 con RN-017, ADR-0066). PROVISIONAL en cinco parametros con su pregunta de la sesion 4 (5, 15, 18, 20 y 21); A-52 y A-53 abiertas, y un test exige que todo parametro PROVISIONAL cuelgue de una ambiguedad ABIERTA. Lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra (RITUAL.md, punto 3). Informe docs/validation/ESCENARIOS-POR-SESION.md; el registro del cierre, al final de HISTORIA.
@@ -196,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 4 (2026-10-01).
+— ninguna desde el Archivo 5 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 4 (2026-10-01).
+— ninguna desde el Archivo 5 (2026-10-02).
