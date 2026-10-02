@@ -234,8 +234,10 @@ que cuenta para la sesion:
   Aleks, en su terminal, y su equivalente en Python solo lo usan las FUNCIONES de `AUTORIZADOS`
   (`tests/unit/test_cuarentena.py`, negar por defecto: nunca un fichero entero; cada una con su
   motivo: la verificacion de citas, `corpus glossary apply`, `corpus transcript check`, la evidencia
-  de kb que copia un segmento oculto y dos funciones de `scripts/transcribir_sesion.py`) y los
-  tests. `kb` oculta tambien la evidencia cuya cita pisa, o cuyo texto copia, un segmento oculto.
+  de kb que copia un tramo no citable y dos funciones de `scripts/transcribir_sesion.py`) y los
+  tests. La EVIDENCIA tiene su propio criterio, porque es un extracto revisado y se lee con Read:
+  `kb` solo oculta el item cuya cita cae en un tramo no citable o cuyo texto lo copia, o el que
+  trae un dia de `casos_ocultos` (decision del consultor del 2026-10-01).
   Un fichero del repositorio que copia texto oculto no se lee: las propuestas de
   `knowledge/_proposals/` con segmentos ocultos y las salidas de medicion con lineas ocultas (lista
   calculada en `.claude/hooks/ficheros_con_ocultos.txt` por `scripts/ficheros_con_ocultos.py`).

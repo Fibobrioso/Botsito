@@ -28,7 +28,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import Counter
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
@@ -504,6 +504,48 @@ def items_ocultos(filtro: Filtro, items: Iterable[tuple[str, int, int]]) -> dict
     return salida
 
 
+def evidencia_a_ocultar(
+    filtro: Filtro,
+    items: Iterable[tuple[str, int, int, str]],
+    visibles: Sequence[SegmentoFiltrable],
+) -> dict[str, Oculto]:
+    """Sexta orden del consultor (2026-10-01): el criterio de la EVIDENCIA, que no es el de la
+    cruda. Un item `(id, t0_ms, t1_ms, texto)` es un extracto REVISADO, y sus ficheros se leen
+    con Read: la sesion en cuarentena (a) y la regla del mes (c), que existen porque la cruda no
+    esta revisada, no lo ocultan. Se oculta SOLO si:
+    - (b) su cita cae en un tramo no citable (pisa el tramo o un segmento que el filtro oculto por
+      el); la copia del texto de un tramo la anade `items_que_copian` con `motivos={"b"}`;
+    - o trae una fecha que es uno de `filtro.dias` (los de `casos_ocultos`): en su propio texto,
+      en un segmento VISIBLE que su cita pisa (`visibles`, la cruda filtrada) o en uno OCULTO que
+      pisa (`Oculto.fecha_vigilada`, que anota el filtro). Ese motivo cuenta como (c), material
+      reservado.
+    Devuelve ids, motivos y el booleano de la fecha; nunca texto ni la fecha."""
+    salida: dict[str, Oculto] = {}
+    for iid, t0_ms, t1_ms, texto in items:
+        pisa = filtro.ocultos_entre(t0_ms, t1_ms)
+        motivos: set[str] = set()
+        if any(o.motivo == MOTIVO_TRAMO for o in pisa) or any(
+            _toca(a, b, t0_ms, t1_ms) for a, b, _ in filtro.tramos
+        ):
+            motivos.add(MOTIVO_TRAMO)
+        fecha = bool(filtro.dias) and (
+            bool(fechas_en(texto) & filtro.dias)
+            or any(o.fecha_vigilada for o in pisa)
+            or any(
+                fechas_en(s.texto) & filtro.dias
+                for s in visibles
+                if _toca(s.t0_ms, s.t1_ms, t0_ms, t1_ms)
+            )
+        )
+        if fecha:
+            motivos.add(MOTIVO_RESERVADO)
+        if motivos:
+            salida[iid] = Oculto(
+                filtro.video_id, -1, t0_ms, t1_ms, min(motivos), fecha, clase="evidencia"
+            )
+    return salida
+
+
 # ------------------------------------------ lo que COPIA el texto de un segmento oculto (quinta)
 # Quinta orden del consultor (2026-10-01): un texto copia un segmento oculto si contiene la mitad
 # o mas de las ventanas de 30 caracteres (cada 10) de su texto, con el espacio normalizado y en
@@ -539,14 +581,16 @@ def items_que_copian(
     filtro: Filtro,
     segmentos: Sequence[SegmentoFiltrable],
     items: Iterable[tuple[str, int, int, str]],
+    motivos: Collection[str] = MOTIVOS,
 ) -> dict[str, Oculto]:
-    """Los items `(id, t0_ms, t1_ms, texto)` cuyo texto COPIA un segmento que `filtro` ya oculto,
-    aunque su cita no lo pise (quinta orden). `segmentos` es la cruda ENTERA del video: solo se
-    miran los que estan en `filtro.ocultos`. Devuelve ids y motivos, nunca texto."""
+    """Los items `(id, t0_ms, t1_ms, texto)` cuyo texto COPIA un segmento que `filtro` ya oculto
+    por alguno de `motivos`, aunque su cita no lo pise (quinta orden). `segmentos` es la cruda
+    ENTERA del video: solo se miran los que estan en `filtro.ocultos`. Devuelve ids y motivos,
+    nunca texto."""
     ocultos = [
         (ventanas_de_copia(s.texto), filtro.ocultos[s.n])
         for s in segmentos
-        if s.n in filtro.ocultos
+        if s.n in filtro.ocultos and filtro.ocultos[s.n].motivo in motivos
     ]
     salida: dict[str, Oculto] = {}
     for iid, t0_ms, t1_ms, texto in items:

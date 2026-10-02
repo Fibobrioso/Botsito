@@ -424,6 +424,9 @@ resto.
 
 ### 12.2 Punto 1b: kb oculta la evidencia cuya cita cae en un segmento oculto
 
+> **CORRECCION (2026-10-01, misma rama, sexta orden).** Este criterio ya no es el vigente: la
+> evidencia tiene el suyo (§16), y hoy `kb` oculta 1 de 437 items, no 79.
+
 `construir_indice` (`src/botsito/retrieval/indice.py`) quita del indice, salvo con la opcion de
 crudo, el item cuyo intervalo pisa un segmento que el filtro oculta (`cuarentena.items_ocultos`, con
 el motivo de mas prioridad de los que pisa). `kb find` y `kb at` lo cuentan en el aviso
@@ -608,6 +611,9 @@ comprobado sin hallazgos y los comandos, resumidos.
 
 ## 15. Estado
 
+> **CORRECCION (2026-10-01, misma rama, sexta orden).** Las cuatro cosas de esta lista las decidio
+> el consultor (§16). El estado vigente es el del final del informe, §18.
+
 **Rama lista para revisión, NO cerrada.** La cuarta y la quinta orden estan hechas, selladas y con la
 CI de Linux (§10). Quedan para el consultor, sin las que la rama no debe cerrarse:
 1. **Confirmar la lectura de la quinta orden** (§13.4.1 y B1): las dos respuestas se aplicaron como
@@ -618,3 +624,163 @@ CI de Linux (§10). Quedan para el consultor, sin las que la rama no debe cerrar
 3. **Lo que kb oculta por defecto** (§12.2 y B2): 79 de 437 items, 69 de ellos de v7, v8 y v9.
 4. **Las dos funciones de `scripts/transcribir_sesion.py` en `AUTORIZADOS`** (§12.4): si las quiere
    fuera, hay que cambiar el script.
+
+## 16. La sexta orden del consultor (2026-10-01)
+
+Copiada tal cual en `docs/encargos/trabajo-cuarentena-por-defecto.md`, «Sexta orden». Decide los
+cuatro puntos de §15: la lectura de la quinta orden, aceptada (1); el criterio de la evidencia,
+cambiado (2); las dos funciones de `scripts/transcribir_sesion.py`, autorizadas (3, y su motivo
+en `AUTORIZADOS` lo cita); A3 y A4 de §14, declarados (4).
+
+### 16.1 Por que la evidencia y la cruda tienen criterios distintos
+
+Las tres reglas de la cuarentena -sesion en cuarentena (a), tramo no citable (b) y mes reservado o
+sin sortear (c)- se escribieron para la **transcripcion cruda**, que es texto SIN REVISAR: nadie ha
+mirado que dice cada segmento, asi que se oculta por lo que podria decir. Un **item de evidencia
+aceptado** es otra cosa: un extracto que alguien leyo, recorto y reviso, con su cita literal, y
+cuyos ficheros de `knowledge/evidence/` se leen directamente con Read. Ocultarlo en `kb find` por
+(a) o por (c) tiene coste -la sesion pierde evidencia revisada al buscar- y no protege nada, porque
+el mismo texto esta a un Read de distancia.
+
+Lo que si sigue ocultando un item son las dos cosas que no dependen de que el texto este revisado:
+- **(b), un tramo no citable**: es un acuerdo sobre el CONTENIDO -esos minutos no se citan-, y un
+  item que los cita, o que copia su texto, lo rompe igual que la cruda;
+- **un dia de `casos_ocultos`**: es la exposicion que el holdout prohibe, la diga la cruda o la diga
+  un extracto revisado.
+
+El criterio de los SEGMENTOS no cambia: siguen ocultos por (a), (b) y (c).
+
+### 16.2 La comprobacion 1a sobre los 79, antes de cambiar nada
+
+`anexos/CUARENTENA-POR-DEFECTO/exposicion_79.py`, ejecutado con el codigo de `bc77e2b`. True si el
+item trae una fecha (dia y mes) que es un dia de `casos_ocultos`, mirada en tres sitios: los
+segmentos OCULTOS que su cita pisa o que su texto copia (el filtro lo anota al ocultar, y solo sale
+el booleano), los segmentos VISIBLES que su cita pisa, y el texto del propio item. Es la 1a de la
+cuarta orden ampliada a lo visible y al item, para no dejar fuera una fecha que el filtro no oculto.
+
+**Los 79 dan False.** Control positivo, con la misma via y TODOS los dias del año como si fueran
+reservados (`--control`, solo el total): 5 de los 79 traen alguna fecha, asi que la via encuentra
+fechas cuando las hay, y ninguna de esas 5 es un dia de `casos_ocultos`. Solo id, motivo y booleano:
+
+| Item | Motivo actual | Dia de `casos_ocultos` |
+|---|---|---|
+| ev-v2-002604-041288d7 | (c) | False |
+| ev-v3-001952-a3276d86 | (c) | False |
+| ev-v3-002026-fa5295fa | (c) | False |
+| ev-v4-000016-8f6862dd | (c) | False |
+| ev-v4-000052-61cf22a9 | (c) | False |
+| ev-v4-000353-9ea3ce94 | (c) | False |
+| ev-v4-004533-14f2b226 | (c) | False |
+| ev-v4-012049-04c922c5 | (c) | False |
+| ev-v6-010927-50b8d873 | (b) | False |
+| ev-v6-014702-2d7096db | (c) | False |
+| ev-v7-000423-01b2c18a | (a) | False |
+| ev-v7-001457-1fe7fdfe | (a) | False |
+| ev-v7-001550-82e5cffc | (a) | False |
+| ev-v7-002201-2b2f20aa | (a) | False |
+| ev-v7-002403-8344331d | (a) | False |
+| ev-v8-003620-12670f0e | (a) | False |
+| ev-v8-003935-0a0b3f8e | (a) | False |
+| ev-v9-000124-d2afa992 | (a) | False |
+| ev-v9-000143-214aacde | (a) | False |
+| ev-v9-000538-4bbf1c16 | (a) | False |
+| ev-v9-000651-6a11b3a1 | (a) | False |
+| ev-v9-000902-25db5bf5 | (a) | False |
+| ev-v9-001312-19e45e4a | (a) | False |
+| ev-v9-001504-72aa462a | (a) | False |
+| ev-v9-001522-8b8c4942 | (a) | False |
+| ev-v9-001529-ac28bb40 | (a) | False |
+| ev-v9-001617-4b47e01a | (a) | False |
+| ev-v9-001915-d03d1565 | (a) | False |
+| ev-v9-002526-6a6579e6 | (a) | False |
+| ev-v9-002735-472432b8 | (a) | False |
+| ev-v9-002807-16d5946b | (a) | False |
+| ev-v9-003026-0445965d | (a) | False |
+| ev-v9-003253-2ac6060a | (a) | False |
+| ev-v9-003303-818a0796 | (a) | False |
+| ev-v9-003318-c0503fe5 | (a) | False |
+| ev-v9-003456-9ef48fb5 | (a) | False |
+| ev-v9-003621-f65f51a0 | (a) | False |
+| ev-v9-003826-740c4d95 | (a) | False |
+| ev-v9-004037-ca58e486 | (a) | False |
+| ev-v9-004217-c014bfdc | (a) | False |
+| ev-v9-004533-d075b080 | (a) | False |
+| ev-v9-004721-2e023ac6 | (a) | False |
+| ev-v9-004919-c6bfb3ee | (a) | False |
+| ev-v9-005219-3b98f54f | (a) | False |
+| ev-v9-005543-1b52290e | (a) | False |
+| ev-v9-005619-27ae7cd3 | (a) | False |
+| ev-v9-005631-c3b42381 | (a) | False |
+| ev-v9-005850-8aae8764 | (a) | False |
+| ev-v9-005916-d6a15b43 | (a) | False |
+| ev-v9-010053-e521e833 | (a) | False |
+| ev-v9-010232-4b049a1e | (a) | False |
+| ev-v9-010311-a13b0a41 | (a) | False |
+| ev-v9-010416-eb674c2f | (a) | False |
+| ev-v9-010541-0c80d5cf | (a) | False |
+| ev-v9-010620-ac899dd8 | (a) | False |
+| ev-v9-010753-063c8cb7 | (a) | False |
+| ev-v9-010809-68e4ea44 | (a) | False |
+| ev-v9-011128-a267338b | (a) | False |
+| ev-v9-011139-a26a5b11 | (a) | False |
+| ev-v9-011206-148fc7f9 | (a) | False |
+| ev-v9-011555-81ec8beb | (a) | False |
+| ev-v9-011655-c20a1c2d | (a) | False |
+| ev-v9-011704-b5ddc3e3 | (a) | False |
+| ev-v9-011714-08536830 | (a) | False |
+| ev-v9-011957-4250c2b4 | (a) | False |
+| ev-v9-012347-eef7627f | (a) | False |
+| ev-v9-012401-3fefa768 | (a) | False |
+| ev-v9-012514-b5b6c84f | (a) | False |
+| ev-v9-012612-d9db2ee8 | (a) | False |
+| ev-v9-012809-4c13a3f4 | (a) | False |
+| ev-v9-013021-ea0db73a | (a) | False |
+| ev-v9-013054-d49a544e | (a) | False |
+| ev-v9-013117-c683f9b5 | (a) | False |
+| ev-v9-013205-85840dcc | (a) | False |
+| ev-v9-013437-ffdd9c87 | (a) | False |
+| ev-v9-013736-463282d5 | (a) | False |
+| ev-v9-013757-e4c639db | (a) | False |
+| ev-v9-013914-9fb86553 | (a) | False |
+| ev-v9-013923-0912f06b | (a) | False |
+
+### 16.3 El criterio nuevo, en el codigo
+
+- **`cuarentena.evidencia_a_ocultar`** (pura): oculta un item solo si su cita pisa un tramo no
+  citable o un segmento oculto por el (b), o si trae un dia de `filtro.dias` en su texto, en un
+  segmento visible que cita o en uno oculto que pisa (motivo c, «material reservado o sin sortear»).
+  Devuelve ids, motivos y el booleano; nunca texto ni la fecha.
+- **La copia** (quinta orden) se queda, con el alcance de la sexta: `items_que_copian` acepta
+  `motivos`, y el indice solo le pasa `{"b"}`. `indice._evidencia_que_copia` ni lee la cruda si el
+  video no tiene ningun segmento oculto por (b).
+- **Los dias**: `retrieval` no puede importar `cases`, asi que `construir_indice` recibe `dias` de
+  quien lo llama; `kb` se los da con `cli._dias_ocultos` (los de `casos_ocultos`). Sin la opcion de
+  crudo, el filtro de cada video los lleva y anota el booleano. `kit build`
+  (`cases/paquete.py`) construye el indice sin `dias`, pero de el solo usa `fotograma_en`, que no
+  depende de lo oculto.
+- **Un video sin transcripcion en la maquina** tambien pasa por el criterio: su fecha se mira en el
+  texto del item.
+- **El recuento y el motivo**, como antes: el aviso dice «N items de evidencia: N por …».
+
+**Medido sobre el repositorio real** (`anexos/CUARENTENA-POR-DEFECTO/kb_ocultos.py --cuarta`): `kb`
+oculta **1 de 437 items**, `ev-v6-010927-50b8d873`, por (b) y por copia. Con el criterio de la
+cuarta orden eran 78 por la cita, mas ese por la copia: los 79 de §16.2.
+
+### 16.4 Tests
+
+Los tres de la orden, sinteticos, con `kb find` y `kb at`:
+- `test_kb_ensena_la_evidencia_de_una_sesion_en_cuarentena_sin_dia_reservado`: v1, puesta en la
+  cuarentena con la fixture, hace de v7; el item del boss SALE, y el aviso cuenta segmentos (a) y
+  ninguna evidencia.
+- `test_kb_oculta_la_evidencia_de_un_tramo_no_citable`: v1 con un tramo sintetico hace de v6; un
+  item que copia el segmento del tramo, y otro cuya cita cae en el, se ocultan por (b), y la opcion
+  de crudo los muestra.
+- `test_kb_oculta_la_evidencia_con_un_dia_reservado`: un item con «31/02» se ve; con ese dia
+  imposible puesto como reservado (sustituyendo `cli._dias_ocultos`) se oculta por (c), el aviso no
+  lo nombra, y la opcion de crudo lo muestra.
+
+Y uno de la funcion pura, `test_evidencia_a_ocultar_solo_por_tramo_o_dia` (pisar (c) no oculta; el
+tramo, el dia en el texto y el dia en el segmento visible citado, si; sin dias, solo el tramo).
+`test_las_funciones_filtran_por_defecto_y_sin_filtro_fallan` cambia su asercion: el item que pisa
+un segmento de (c) ya no cuenta como oculto. Los dos tests de la cuarta y la quinta orden sobre la
+evidencia se sustituyen por estos.

@@ -18,11 +18,12 @@ from pathlib import Path
 from typing import Any
 
 from botsito.corpus.cuarentena import (
+    MOTIVO_TRAMO,
     Filtro,
     Oculto,
     TramosNoCitablesError,
     cargar_tramos_no_citables,
-    items_ocultos,
+    evidencia_a_ocultar,
     items_que_copian,
 )
 from botsito.corpus.fotogramas import nombre_fichero
@@ -115,8 +116,8 @@ class Indice:
     # con `crudo=True`, y `filtros` guarda, por video, lo que oculto (sin su texto).
     crudo: bool = False
     filtros: dict[str, Filtro] = field(default_factory=dict)
-    # Los items de evidencia cuya cita pisa un segmento oculto (cuarta orden) o cuyo texto lo
-    # copia (quinta): tampoco entran.
+    # Los items de evidencia que no entran, con su criterio propio (sexta orden): su cita cae en un
+    # tramo no citable o su texto lo copia, o traen un dia de `casos_ocultos`.
     evidencia_oculta: dict[str, Oculto] = field(default_factory=dict)
 
     @property
@@ -215,10 +216,11 @@ def _texto_del_item(it: EvidenceItem) -> str:
 def _evidencia_que_copia(
     carpeta_datos: Path, t: Transcripcion, filtro: Filtro, items: list[EvidenceItem]
 ) -> dict[str, Oculto]:
-    """Los items de `t.video_id` cuyo texto copia un segmento que `filtro` ya oculto (quinta orden
-    del consultor, 2026-10-01). AUTORIZADA a leer la cruda entera (`AUTORIZADOS` en
-    tests/unit/test_cuarentena.py): la compara y devuelve solo ids y motivos, nunca texto."""
-    if not items or not filtro.ocultos:
+    """Los items de `t.video_id` cuyo texto copia un segmento que `filtro` oculto por un tramo no
+    citable (quinta orden del consultor, 2026-10-01, con el alcance de la sexta: solo (b)).
+    AUTORIZADA a leer la cruda entera (`AUTORIZADOS` en tests/unit/test_cuarentena.py): la compara
+    y devuelve solo ids y motivos, nunca texto."""
+    if not items or not any(o.motivo == MOTIVO_TRAMO for o in filtro.ocultos.values()):
         return {}
     carpeta = carpeta_de(carpeta_datos, t)
     if not (carpeta / FICHERO_CRUDA).is_file():
@@ -228,19 +230,29 @@ def _evidencia_que_copia(
     except TranscripcionError:
         return {}
     return items_que_copian(
-        filtro, enteros, [(it.id, it.t0_ms, it.t1_ms, _texto_del_item(it)) for it in items]
+        filtro,
+        enteros,
+        [(it.id, it.t0_ms, it.t1_ms, _texto_del_item(it)) for it in items],
+        motivos={MOTIVO_TRAMO},
     )
 
 
-def construir_indice(repo: Path, carpeta_datos: Path, *, crudo: bool = False) -> Indice:
+def construir_indice(
+    repo: Path,
+    carpeta_datos: Path,
+    *,
+    crudo: bool = False,
+    dias: frozenset[tuple[int, int]] = frozenset(),
+) -> Indice:
     """Indice completo desde el repo y la carpeta de datos. Crudas o fotogramas ausentes no son
     error: quedan avisos y el indice sirve con lo que hay (solo evidencia, como minimo).
 
     Los segmentos entran FILTRADOS (`botsito.corpus.cuarentena`: sesiones en cuarentena, tramos
-    no citables y material reservado o sin sortear); enteros solo con `crudo=True`. Un item de
-    evidencia cuya cita pisa un segmento oculto tampoco entra (cuarta orden del consultor del
-    2026-10-01), ni el que copia su texto aunque su cita no lo pise (quinta orden): se mira contra
-    la transcripcion ACTIVA de su video."""
+    no citables y material reservado o sin sortear); enteros solo con `crudo=True`. La evidencia
+    tiene su propio criterio (sexta orden del consultor, 2026-10-01;
+    `cuarentena.evidencia_a_ocultar`): no entra el item cuya cita cae en un tramo no citable o
+    cuyo texto lo copia, ni el que trae un dia de `dias` -los (mes, dia) de `casos_ocultos`, que
+    `retrieval` no puede leer y le pasa quien lo llama; sin ellos, esa parte no se mira-."""
     try:
         tramos = cargar_tramos_no_citables(repo)
     except TramosNoCitablesError as exc:
@@ -263,7 +275,9 @@ def construir_indice(repo: Path, carpeta_datos: Path, *, crudo: bool = False) ->
     for t in activos(cargar_todos(repo)):
         transcripciones[t.video_id] = t.id
         activas[t.video_id] = t
-        filtro = filtros.setdefault(t.video_id, Filtro(t.video_id, tramos.get(t.video_id, ())))
+        filtro = filtros.setdefault(
+            t.video_id, Filtro(t.video_id, tramos.get(t.video_id, ()), dias=dias)
+        )
         capas = _capas_de(carpeta_datos, t, avisos, filtro, crudo)
         if capas is None:
             avisos.append(f"cruda de {t.id} ausente en data/: {t.video_id} solo por evidencia")
@@ -278,14 +292,25 @@ def construir_indice(repo: Path, carpeta_datos: Path, *, crudo: bool = False) ->
             )
     evidencia_oculta: dict[str, Oculto] = {}
     if not crudo:
-        for video, filtro in filtros.items():
-            de_video = [(it.id, it.t0_ms, it.t1_ms) for it in items if it.video_id == video]
-            evidencia_oculta.update(items_ocultos(filtro, de_video))
-            # Y los que, sin pisarlo con su cita, COPIAN el texto de un segmento oculto (quinta).
-            resto = [it for it in items if it.video_id == video and it.id not in evidencia_oculta]
+        # La evidencia tiene su propio criterio, que no es el de la cruda (sexta orden): solo un
+        # tramo no citable (b) o un dia de `casos_ocultos` la ocultan. Tambien la de un video sin
+        # transcripcion en la maquina: su fecha se mira en su propio texto.
+        for video in sorted({it.video_id for it in items}):
+            filtro = filtros.get(video) or Filtro(video, tramos.get(video, ()), dias=dias)
+            de_video = [it for it in items if it.video_id == video]
             evidencia_oculta.update(
-                _evidencia_que_copia(carpeta_datos, activas[video], filtro, resto)
+                evidencia_a_ocultar(
+                    filtro,
+                    [(it.id, it.t0_ms, it.t1_ms, _texto_del_item(it)) for it in de_video],
+                    segmentos.get(video, []),
+                )
             )
+            # Y los que, sin pisar el tramo con su cita, COPIAN su texto (quinta orden).
+            resto = [it for it in de_video if it.id not in evidencia_oculta]
+            if video in activas:
+                evidencia_oculta.update(
+                    _evidencia_que_copia(carpeta_datos, activas[video], filtro, resto)
+                )
         documentos = [d for d in documentos if d.fuente not in evidencia_oculta]
     for v in videos:
         if v not in transcripciones:

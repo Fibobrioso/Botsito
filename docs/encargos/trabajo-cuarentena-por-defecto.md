@@ -118,3 +118,27 @@ copiadas tal cual del diálogo de la sesión:
 > **Pregunta 2.** Dos ítems de evidencia, `ev-v3-002130-8617c40b` (3 líneas) y `ev-v4-003451-d750e553` (5), copian texto de líneas que hoy se ocultan, pero su cita no cae en un segmento oculto. Por eso no estaban entre los 9 y el punto 1b no los oculta en kb find ni en kb at. No los he abierto; puede ser texto que el ASR repite en un segmento vecino. knowledge/ no se toca. ¿Qué hago?
 >
 > **Respuesta:** «Ocultar por contenido (Recommended)»: kb find y kb at ocultan también el ítem cuyo texto copia la mitad o más de una línea oculta, con su recuento y su motivo. Con la opción cruda se ven. Se añade un test sintético y se repite la comprobación 1a sobre estos dos (id y True/False).
+
+## Sexta orden: decisiones del consultor sobre §15 (2026-10-01)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Decisiones del consultor (§15):
+>
+> 1. B1, la lectura de la quinta orden: aceptada. Con la medida corregida, los dos informes CLASIFICACION y los ítems ev-v3-002130 y ev-v4-003451 no traen nada oculto: ni se bloquean ni se ocultan. Bien hecho al medir de nuevo antes de aplicar.
+>
+> 2. B2, los 79 ítems ocultos: cambio el criterio para la EVIDENCIA, no para los segmentos.
+>    - La cuarentena (a) y la regla del mes (c) son para la transcripción cruda, que no está revisada. Un ítem de evidencia aceptado es un extracto revisado, y además sus ficheros se leen directamente con Read, así que ocultarlo en kb find tiene coste y no protege nada.
+>    - Nuevo criterio: kb find y kb at ocultan un ítem de evidencia SOLO si (b) su cita cae en un tramo no citable o su texto copia uno, o si contiene un día de casos_ocultos (la comprobación 1a, que da True o False).
+>    - Antes de cambiar nada, pasa la comprobación 1a a los 79 ítems e imprime solo, para cada uno, el id, el motivo actual y True o False. Si alguno da True, se queda oculto y me avisas.
+>    - Mantén el recuento y el motivo de lo oculto. Tests: un ítem de v7 sin día reservado se muestra; uno que copia un tramo no citable de v6 se oculta; uno con un día reservado se oculta.
+>    - Deja escrito en el informe por qué la evidencia y la cruda tienen criterios distintos.
+>
+> 3. Las dos funciones de transcribir_sesion.py (salidas_de y transcribir): autorizadas. La ingesta de una sesión nueva las necesita.
+>
+> 4. A3 y A4: de acuerdo con dejarlos declarados.
+>
+> make check sellado, push como fix/cuarentena-por-defecto, CI de Linux, revisor solo sobre lo que cambie, y su informe pegado.
+> «Rama lista para revisión, NO cerrada.»

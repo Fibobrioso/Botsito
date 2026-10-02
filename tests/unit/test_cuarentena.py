@@ -150,8 +150,9 @@ def test_las_funciones_filtran_por_defecto_y_sin_filtro_fallan(tmp_path: Path) -
     with pytest.raises(RetrievalError, match="filtrado"):
         buscar(filtrado, "calma", crudo=True)
     assert buscar(filtrado, "calma").resultados == []
-    ocultos = buscar(filtrado, "calma").ocultos  # 4 segmentos y el item que cita uno (1b)
-    assert sorted(o.clase for o in ocultos) == ["evidencia"] + ["segmento"] * 4
+    # 4 segmentos; el item que pisa uno de (c) SE VE: la evidencia tiene su criterio (sexta orden)
+    ocultos = buscar(filtrado, "calma").ocultos
+    assert sorted(o.clase for o in ocultos) == ["segmento"] * 4
     entero = construir_indice(repo, repo / "data", crudo=True)
     assert len(buscar(entero, "calma", crudo=True).resultados) == 1
     with pytest.raises(RetrievalError, match="crudo"):
@@ -299,12 +300,13 @@ AUTORIZADOS: dict[tuple[str, str], str] = {
         " y compara la corregida con cruda + glosario (integridad)"
     ),
     ("src/botsito/retrieval/indice.py", "_evidencia_que_copia"): (
-        "kb oculta el item que COPIA el texto de un segmento oculto aunque su cita no lo pise"
-        " (quinta orden): compara con la cruda entera y devuelve solo ids y motivos"
+        "kb oculta el item que COPIA el texto de un tramo no citable aunque su cita no lo pise"
+        " (quinta y sexta orden): compara con la cruda entera y devuelve solo ids y motivos"
     ),
     # scripts/transcribir_sesion.py NO usa `crudo=True`, y desde la cuarta orden no esta
     # autorizado entero: negar por defecto, una funcion concreta cuando lo necesite. Estas dos
-    # son la tuberia de la cuarentena de una sesion nueva, FUERA del repositorio.
+    # son la tuberia de la cuarentena de una sesion nueva, FUERA del repositorio, y las autorizo
+    # el consultor en la sexta orden: «La ingesta de una sesión nueva las necesita».
     ("scripts/transcribir_sesion.py", "salidas_de"): (
         "arma las rutas de la cruda de una sesion (`*.cruda-NO-LEER.*`), fuera del repositorio,"
         " que el script escribe y luego filtra"
@@ -495,64 +497,105 @@ def test_los_recorridos_no_son_decorativos() -> None:
     assert not _autorizado("scripts/transcribir_sesion.py", "procesar")
 
 
-# ------------------------------------------------- la evidencia que cita un segmento oculto
+# ------------------------------------- la evidencia: su propio criterio (sexta orden del consultor)
+# La cruda no esta revisada, y por eso la ocultan la sesion en cuarentena (a) y la regla del mes
+# (c). Un item de evidencia es un extracto REVISADO que ademas se lee con Read: solo lo ocultan un
+# tramo no citable (b) -su cita cae en el o su texto lo copia- o un dia de `casos_ocultos`.
+
+ITEM_SINTETICO = "ev-v1-000035-"
 
 
-@pytest.mark.parametrize("orden", [("kb", "find", "boss"), ("kb", "at", "--video", "v1")])
-def test_kb_oculta_la_evidencia_cuya_cita_cae_en_un_segmento_oculto(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str], orden: tuple[str, ...]
-) -> None:
-    """Cuarta orden, 1b. El item sintetico `el boss rompe la liquidez` (0:00:10-0:00:15) pisa el
-    segmento 2, que la regla (c) oculta como vecino del 3: por defecto no sale y el aviso lo
-    cuenta; con la opcion de crudo, sale."""
-    repo = _repo(tmp_path)
-    args = (*orden, "--t", "0:00:12", "--margen-s", "0") if orden[1] == "at" else orden
-    salida = _cli(capsys, repo, *args)
-    assert "boss" not in salida
-    assert "1 items de evidencia: 1 por material reservado o sin sortear (c)" in salida
-    _sin_fuga(salida)
-    crudo = _cli(capsys, repo, *args, OPCION)
-    assert "boss" in crudo and "OCULTOS" not in crudo
-
-
-ITEM_QUE_COPIA = "ev-v1-000035-"
-
-
-@pytest.mark.parametrize("orden", [("kb", "find", "espejado"), ("kb", "at", "--video", "v1")])
-def test_kb_oculta_la_evidencia_que_copia_un_segmento_oculto(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str], orden: tuple[str, ...]
-) -> None:
-    """Quinta orden. Un item sintetico cuya cita (0:00:35-0:00:40) cae en un segmento VISIBLE pero
-    cuyas notas copian el texto del segmento 3, que la regla (c) oculta: por defecto no sale y el
-    aviso lo cuenta; con la opcion de crudo, sale."""
+def _item_en(repo: Path, notas: str, t0: str = "0:00:35", t1: str = "0:00:40") -> None:
+    """Un item sintetico de v1 con `notas` y la palabra `espejado` en la afirmacion."""
     from botsito.evidence.modelo import escribir_item
     from tests.unit.test_retrieval import _item
 
-    repo = _repo(tmp_path)
     (manifiesto,) = (repo / "knowledge" / "corpus" / "transcripciones").glob("tr-*.yaml")
+    cita = {"0:00:35": "cierre visible final", "0:00:30": "tramo ajeno palabra"}[t0]
     escribir_item(
         repo / "knowledge" / "evidence",
         _item(
             transcripcion=manifiesto.stem,
-            t0="0:00:35",
-            t1="0:00:40",
-            cita_literal="cierre visible final",
+            t0=t0,
+            t1=t1,
+            cita_literal=cita,
             afirmacion="un cierre espejado",
-            notas="contexto: lo vi en mayo con calma",
+            notas=notas,
             tema="salida.cierre",
             valor=None,
         ),
     )
-    args = (*orden, "--t", "0:00:36", "--margen-s", "0") if orden[1] == "at" else orden
-    salida = _cli(capsys, repo, *args)
-    assert ITEM_QUE_COPIA not in salida
-    # kb find cuenta toda la evidencia oculta (tambien la del boss, que la PISA); kb at, la de su
-    # ventana, que es solo la que copia.
-    n = 2 if orden[1] == "find" else 1
-    assert f"{n} items de evidencia: {n} por material reservado o sin sortear (c)" in salida
+
+
+def _args(orden: tuple[str, ...], instante: str) -> tuple[str, ...]:
+    return (*orden, "--t", instante, "--margen-s", "0") if orden[1] == "at" else orden
+
+
+@pytest.mark.parametrize("orden", [("kb", "find", "boss"), ("kb", "at", "--video", "v1")])
+def test_kb_ensena_la_evidencia_de_una_sesion_en_cuarentena_sin_dia_reservado(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    sesion_v1: None,
+    orden: tuple[str, ...],
+) -> None:
+    """Sexta orden: «un ítem de v7 sin día reservado se muestra». v1 hace de v7 (la fixture la
+    pone en la cuarentena): sus segmentos se ocultan por (a), pero el item del boss, que cita uno
+    y tambien pisa un vecino de (c), SALE, y el aviso no cuenta evidencia."""
+    repo = _repo(tmp_path)
+    # 0:00:15: el final de la cita del boss y el principio del segmento 3 (en `at`, un instante
+    # coge el segmento que lo contiene).
+    salida = _cli(capsys, repo, *_args(orden, "0:00:15"))
+    assert "ev-v1-000010-" in salida
+    assert "por sesion en cuarentena (a)" in salida and "items de evidencia" not in salida
     _sin_fuga(salida)
-    crudo = _cli(capsys, repo, *args, OPCION)
-    assert ITEM_QUE_COPIA in crudo and "OCULTOS" not in crudo
+
+
+@pytest.mark.parametrize("orden", [("kb", "find", "espejado"), ("kb", "at", "--video", "v1")])
+@pytest.mark.parametrize("como", ["copia", "cita"])
+def test_kb_oculta_la_evidencia_de_un_tramo_no_citable(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], orden: tuple[str, ...], como: str
+) -> None:
+    """Sexta orden: «uno que copia un tramo no citable de v6 se oculta» (v1 con un tramo
+    sintetico hace de v6). Dos vias: sus notas copian el segmento 6, que cae en el tramo, con la
+    cita en un segmento visible (quinta orden); o su cita cae en el tramo. Por defecto no sale y el
+    aviso lo cuenta por (b); con la opcion de crudo, sale."""
+    repo = _repo(tmp_path)
+    if como == "copia":
+        _item_en(repo, "contexto: tramo ajeno palabra")
+        instante, item = "0:00:36", ITEM_SINTETICO
+    else:
+        _item_en(repo, "sin copia", t0="0:00:30", t1="0:00:31")
+        instante, item = "0:00:30", "ev-v1-000030-"
+    salida = _cli(capsys, repo, *_args(orden, instante))
+    assert item not in salida
+    assert "1 items de evidencia: 1 por tramo no citable (b)" in salida
+    _sin_fuga(salida)
+    crudo = _cli(capsys, repo, *_args(orden, instante), OPCION)
+    assert item in crudo and "OCULTOS" not in crudo
+
+
+@pytest.mark.parametrize("orden", [("kb", "find", "espejado"), ("kb", "at", "--video", "v1")])
+def test_kb_oculta_la_evidencia_con_un_dia_reservado(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+    orden: tuple[str, ...],
+) -> None:
+    """Sexta orden: «uno con un día reservado se oculta». El dia es sintetico e imposible (31 de
+    febrero), puesto como reservado sustituyendo `cli._dias_ocultos`; la misma nota con el dia sin
+    reservar no oculta nada."""
+    repo = _repo(tmp_path)
+    _item_en(repo, "lo cuenta el 31/02 en la revision")
+    libre = _cli(capsys, repo, *_args(orden, "0:00:36"))
+    assert ITEM_SINTETICO in libre
+    monkeypatch.setattr(cli, "_dias_ocultos", lambda _repo: frozenset({(2, 31)}))
+    salida = _cli(capsys, repo, *_args(orden, "0:00:36"))
+    assert ITEM_SINTETICO not in salida
+    assert "1 items de evidencia: 1 por material reservado o sin sortear (c)" in salida
+    _sin_fuga(salida)
+    assert "31" not in next(ln for ln in salida.splitlines() if ln.startswith("OCULTOS"))
+    crudo = _cli(capsys, repo, *_args(orden, "0:00:36"), OPCION)
+    assert ITEM_SINTETICO in crudo and "OCULTOS" not in crudo
 
 
 def test_copia_pide_la_mitad_de_las_ventanas() -> None:
@@ -563,12 +606,34 @@ def test_copia_pide_la_mitad_de_las_ventanas() -> None:
     assert cuarentena.ventanas_de_copia("corto") == []
     filtro = Filtro("v1")
     filtro.aplicar(SEGMENTOS)
-    copian = cuarentena.items_que_copian(
-        filtro,
-        SEGMENTOS,
-        [("ev-copia", 35000, 40000, "x: lo vi en mayo con calma"), ("ev-no", 0, 1, "zona visible")],
-    )
+    items = [("ev-copia", 35000, 40000, "x: lo vi en mayo con calma"), ("ev-no", 0, 1, "zona")]
+    copian = cuarentena.items_que_copian(filtro, SEGMENTOS, items)
     assert {i: (o.motivo, o.clase) for i, o in copian.items()} == {"ev-copia": ("c", "evidencia")}
+    # Con el alcance de la sexta orden (solo b), copiar un segmento de (c) no oculta.
+    assert cuarentena.items_que_copian(filtro, SEGMENTOS, items, motivos={"b"}) == {}
+
+
+def test_evidencia_a_ocultar_solo_por_tramo_o_dia() -> None:
+    """Sexta orden, la funcion pura: (c) y (a) no ocultan evidencia; un tramo, o un dia de los
+    vigilados en el texto del item, en un segmento visible que cita o en uno oculto, si."""
+    filtro = Filtro("v1", ((30000, 31000, "x"),), dias=frozenset({(2, 31)}))
+    visibles = filtro.aplicar([*SEGMENTOS[:7], _seg(7, 35000, "el 31/02 cierre")])
+    items = [
+        ("ev-pisa-c", 10000, 15000, "nada"),  # pisa segmentos de (c): se ve
+        ("ev-tramo", 30000, 30500, "nada"),  # su cita cae en el tramo
+        ("ev-dia-propio", 0, 4000, "dice el 31/02"),  # el dia en su propio texto
+        ("ev-dia-visible", 35000, 36000, "nada"),  # el dia en el segmento visible que cita
+        ("ev-libre", 0, 4000, "dice el 30/02"),  # una fecha que no se vigila
+    ]
+    ocultos = cuarentena.evidencia_a_ocultar(filtro, items, visibles)
+    assert {i: (o.motivo, o.fecha_vigilada) for i, o in ocultos.items()} == {
+        "ev-tramo": ("b", False),
+        "ev-dia-propio": ("c", True),
+        "ev-dia-visible": ("c", True),
+    }
+    sin_dias = Filtro("v1", ((30000, 31000, "x"),))
+    sin_dias.aplicar(SEGMENTOS)
+    assert set(cuarentena.evidencia_a_ocultar(sin_dias, items, [])) == {"ev-tramo"}
 
 
 def test_items_ocultos_toma_el_motivo_de_mas_prioridad() -> None:

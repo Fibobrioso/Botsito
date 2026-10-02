@@ -1297,10 +1297,20 @@ def evidence_list(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def _dias_ocultos(repo: Path) -> frozenset[tuple[int, int]]:
+    """Los (mes, dia) de `casos_ocultos`: la evidencia que trae uno no se ensena en `kb` (sexta
+    orden del consultor, 2026-10-01). Solo los cruza el indice; nunca se imprimen."""
+    from botsito.cases.holdout import casos_ocultos
+    from botsito.corpus.cuarentena import dias_de_casos
+
+    return dias_de_casos(casos_ocultos(repo))
+
+
 def _kb_indice(repo: Path, crudo: bool = False) -> Any:
     from botsito.retrieval.indice import construir_indice
 
-    return construir_indice(repo, _carpeta_datos(repo), crudo=crudo)
+    dias = frozenset() if crudo else _dias_ocultos(repo)
+    return construir_indice(repo, _carpeta_datos(repo), crudo=crudo, dias=dias)
 
 
 def _kb_errores() -> tuple[type[Exception], ...]:
