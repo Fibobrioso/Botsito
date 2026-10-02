@@ -4,6 +4,10 @@ Sexta orden del consultor (2026-10-01), punto 2: «Antes de cambiar nada, pasa l
 los 79 ítems e imprime solo, para cada uno, el id, el motivo actual y True o False». Se ejecuto con
 el codigo de `bc77e2b`, ANTES del cambio de criterio. No escribe nada.
 
+Sigue reproduciendose con el codigo de `0faa9ae`, que restringe `_evidencia_que_copia` a (b):
+el unico de los 79 que entraba por copia es de (b). Medido el 2026-10-01 (revisor, tercera
+pasada, A2): la salida de los dos es identica byte a byte.
+
 Los 79 son los que ocultaba `construir_indice` en `bc77e2b`: su cita pisa un segmento oculto
 (`cuarentena.items_ocultos`) o su texto lo copia (`indice._evidencia_que_copia`). True si trae una
 fecha (dia y mes, `cuarentena.fechas_en`) que es un dia de `casos_ocultos`, mirada en TRES sitios:

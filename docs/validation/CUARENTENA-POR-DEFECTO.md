@@ -332,6 +332,8 @@ Regla de `RITUAL.md` (la rama toca un hook): empujada como `fix/cuarentena-por-d
 | `e30765c` (tercera orden) | `36936326358` | 1 failed, 1768 passed, 8 skipped: solo el fallo esperado, `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/` |
 | `a4d37e8` (hallazgos del revisor, §11) | `36938253913` | 1 failed, 1770 passed, 8 skipped: el mismo fallo esperado y ningun otro |
 | `bc77e2b` (cuarta y quinta orden) | `36944773639` | 1 failed, 1779 passed, 8 skipped: el mismo fallo esperado y ningun otro |
+| `14bb92c` (revisor, segunda pasada) | `36946258608` | 1 failed, 1779 passed, 8 skipped: el mismo fallo esperado y ningun otro |
+| `0faa9ae` (sexta orden) | `36949045836` | 1 failed, 1784 passed, 8 skipped: el mismo fallo esperado y ningun otro |
 
 El run del commit de documentacion que escribe esta fila se apunta en la respuesta: escribirlo aqui
 exigiria otro commit y otro run.
@@ -784,3 +786,57 @@ tramo, el dia en el texto y el dia en el segmento visible citado, si; sin dias, 
 `test_las_funciones_filtran_por_defecto_y_sin_filtro_fallan` cambia su asercion: el item que pisa
 un segmento de (c) ya no cuenta como oculto. Los dos tests de la cuarta y la quinta orden sobre la
 evidencia se sustituyen por estos.
+
+## 17. Informe del revisor, tercera pasada (solo `14bb92c..0faa9ae`)
+
+Subagente `revisor`, sobre `0faa9ae`. Los hallazgos, tal cual; lo comprobado sin hallazgos y la
+tabla de requisitos, resumidos.
+
+> ## Informe del revisor · trabajo/cuarentena-por-defecto · 2026-10-01 (solo `14bb92c..HEAD`, commit 0faa9ae)
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | El informe no acaba en su estado. El recuadro de §15 remite a «el estado vigente es el del final del informe, §18», pero §18 no existe. El último encabezado es `### 16.4 Tests`, sin «Estado», sin «Rama lista para revisión, NO cerrada» y sin el informe del revisor pegado. Puede ser que se añadan después de esta pasada, pero hoy la remisión apunta a nada. | `grep -n "^## "` → último `## 16.`; recuadro de §15 |
+> | A2 | importa | La comprobación 1a sobre los 79 no se puede reproducir con el código actual. `exposicion_79.py` importa `indice._evidencia_que_copia`, que este mismo commit restringe a `{b}`. El docstring lo declara («se ejecutó con el código de `bc77e2b`»), pero el anexo queda roto como evidencia reejecutable. Que se corrió ANTES del cambio solo consta por la palabra del informe (§16.2): el commit es único y yo no puedo ejecutar el anexo porque lee la cruda. | `exposicion_79.py:15-17,33,56`; `indice.py` (diff) |
+> | A3 | menor | El test del día reservado solo cubre el día en el texto del propio ítem y, en el test puro, el día en el segmento visible. No hay test del camino «segmento OCULTO que pisa con `fecha_vigilada`», que es el que importa en sesiones en cuarentena (a). La aserción `"31" not in línea OCULTOS` es débil como prueba de no fuga. | `test_kb_oculta_la_evidencia_con_un_dia_reservado` y `test_evidencia_a_ocultar_solo_por_tramo_o_dia` |
+> | A4 | menor | En `kb_ocultos.py` la «vía» de un ítem con día y tramo a la vez sale «dia» (el booleano manda sobre `en_tramo`). Es solo etiqueta de recuento. | `kb_ocultos.py` (diff) |
+>
+> Comprobado sin hallazgos: el contrato; los tests de cuarentena, retrieval y guardia y `state check`; el recuento 1147 → 1149; las capas de import (`retrieval` no importa `cases`; `cli._dias_ocultos` lo hace desde la capa superior); `CLAUDE.md` coherente con el código; el criterio de los SEGMENTOS no cambia; el de la evidencia es el de la orden (solo (b) o un día de `filtro.dias`, en tres sitios; la copia solo con `{b}`; los vídeos sin cruda también; con la opción de crudo no se oculta nada; `cases/paquete.py` sin `dias`, declarado); los tres tests de la orden prueban lo que dicen; el recuento y el motivo se mantienen; §16.1 explica por qué evidencia y cruda difieren; §16.2 imprime solo id, motivo y booleano.
+>
+> ### Eje (b) · Encargo (Sexta orden)
+> Resumen: 0 bloquea, 1 importa, 0 menor. Requisitos: 8 hechos, 1 parcial (el cierre: estado, revisor pegado, CI), 0 no hechos; el 3 (la 1a antes del cambio), «hecho por declaración».
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | importa | Falta el cierre que la orden pide al final (estado «lista para revisión, NO cerrada», informe del revisor pegado). Es el mismo hecho que A1, visto como requisito del encargo; en el informe es pendiente natural hasta que pase esta revisión. | Encargo, línea final de la Sexta orden; informe sin §17/§18 |
+>
+> ### Lo que no pude comprobar
+> Que la 1a sobre los 79 se corrió antes del cambio y que da False (lee la cruda, y el commit es único); la cifra «1 de 437» y «78 + 1»; `make check`, `knowledge validate`, `lint-imports`, el push y la CI de Linux.
+
+**Respuesta de la sesion, hallazgo a hallazgo:**
+- **A1 y B1, arreglados**: esta seccion y §18.
+- **A2, medido**: el anexo SI se reproduce con el codigo de `0faa9ae`. El unico de los 79 que entraba
+  por copia es de (b), asi que restringir la copia a (b) no cambia nada: la salida de hoy es
+  identica byte a byte a la de antes del cambio (`cmp`). Anotado en el docstring del anexo. Que se
+  corrio antes del cambio sigue constando por la sesion: la salida se guardo antes de editar el
+  codigo, y la de hoy es la misma.
+- **A3, arreglado**: `test_evidencia_a_ocultar_solo_por_tramo_o_dia` cubre ahora el dia en un
+  segmento OCULTO de una sesion en cuarentena (v9, todo oculto por (a)): el item que lo pisa se
+  oculta por (c) y su vecino sin dia, no. La asercion sobre «31» se queda como esta: la prueba de
+  no fuga es `_sin_fuga` (ningun mes ni texto del segmento), y el «31» es un añadido.
+- **A4**: declarado; es la etiqueta de un recuento, y hoy no hay ningun item con dia y tramo a la
+  vez.
+
+## 18. Estado
+
+**Rama lista para revisión, NO cerrada.** Las seis ordenes del consultor estan hechas, selladas y
+con la CI de Linux (§10; el run del commit que escribe esta seccion, en la respuesta). Ninguna
+decision queda abierta: las de §15 las tomo la sexta orden (§16). Lo que la rama deja:
+- la CLI ensena el corpus filtrado por defecto, con el recuento y el motivo de lo oculto, y la
+  opcion que lo ensena todo, solo para Aleks;
+- la evidencia, con su propio criterio: `kb` oculta hoy 1 de 437 items;
+- la guardia bloquea la opcion y su equivalente en Python, y 14 ficheros que copian texto oculto;
+- `AUTORIZADOS`, por funcion y con motivo, vigilado por tests.

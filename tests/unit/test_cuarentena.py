@@ -634,6 +634,15 @@ def test_evidencia_a_ocultar_solo_por_tramo_o_dia() -> None:
     sin_dias = Filtro("v1", ((30000, 31000, "x"),))
     sin_dias.aplicar(SEGMENTOS)
     assert set(cuarentena.evidencia_a_ocultar(sin_dias, items, [])) == {"ev-tramo"}
+    # El dia en un segmento OCULTO que la cita pisa (revisor, tercera pasada, A3): en una sesion
+    # en cuarentena todo esta oculto por (a), y solo lo dice `fecha_vigilada`.
+    sesion = Filtro("v9", dias=frozenset({(2, 31)}))
+    assert sesion.aplicar([_seg(0, 0, "el 31/02 algo"), _seg(1, 5000, "nada aqui")]) == []
+    en_sesion = [("ev-con-dia", 0, 1000, "nada"), ("ev-sin-dia", 5000, 6000, "nada")]
+    ocultos = cuarentena.evidencia_a_ocultar(sesion, en_sesion, [])
+    assert {i: (o.motivo, o.fecha_vigilada) for i, o in ocultos.items()} == {
+        "ev-con-dia": ("c", True)
+    }
 
 
 def test_items_ocultos_toma_el_motivo_de_mas_prioridad() -> None:
