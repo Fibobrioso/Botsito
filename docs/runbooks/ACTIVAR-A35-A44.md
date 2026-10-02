@@ -134,10 +134,10 @@ Los tests que tienen que pasar, por respuesta:
   hoy con `--diagnostico-*` porque a secas se niega; activado, vuelve a correr a secas y la página
   vuelve a llamarse `<caso>.html`.
 
-## 3. Cerrar la ambigüedad: los cuatro sitios, y los dos tests que los congelan
+## 3. Cerrar la ambigüedad: los cinco sitios, y los tests que los congelan
 
-Con el registro `fb-*` sobre la ambigüedad hecho (`CLAUDE.md`, «Cerrar una ambigüedad toca cuatro
-sitios»):
+Con el registro `fb-*` sobre la ambigüedad hecho (`docs/runbooks/AMBIGUEDADES.md`, «Cerrar una
+ambiguedad toca cinco sitios»; el quinto, la hoja de preguntas, va abajo con su test):
 
 1. `knowledge/spec/ambiguedades.yaml`: `estado: RESUELTA` en A-35 (o A-44), y una nota con el
    `fb-*` y el tramo. Los `parametros` ya están listados.
@@ -255,7 +255,7 @@ la compuerta de A-21 es la última). Los tests que tienen que pasar:
   pierde `A-21`) y la hoja de la sesión 02 (`scripts/hoja_preguntas.py`, `ORDEN_SESION_02`, y
   `tests/unit/test_hoja_preguntas.py`), como en §3.
 
-Cerrar la ambigüedad: los cuatro sitios de §3, con la regla de la spec que la citaba en RN-008 y
+Cerrar la ambigüedad: los cinco sitios de §3, con la regla de la spec que la citaba en RN-008 y
 RN-011 (`toca_colocar_orden_limite`) y el glosario si nombra «limpia».
 
 **Lo que la respuesta a A-21 NO fija, y no se ajusta por lo bajo**: la agrupación de varias velas

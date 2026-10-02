@@ -21,6 +21,9 @@ rutas_permitidas:
   # cinco sitios, no cuatro
   - docs/runbooks/AMBIGUEDADES.md
   - CLAUDE.md
+  # Ampliado tras el revisor de la segunda orden (a1): dos runbooks vivos repetian «cuatro»
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
+  - docs/runbooks/ACTIVAR-A35-A44.md
 rutas_protegidas:
   - knowledge/evidence/
   - knowledge/cases/

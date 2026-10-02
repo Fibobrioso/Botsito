@@ -287,12 +287,66 @@ El contrato se amplía a los dos ficheros, con su motivo.
 
 `wc -c`: **22.722 bytes** (la fila de A-36 vuelve), por debajo de 23.000.
 
+### 8.5 Informe del revisor (solo `a7d06c9`)
+
+Subagente `revisor`, sobre `a7d06c9` (`19b09eb..a7d06c9`). Los hallazgos, tal cual; lo comprobado
+sin hallazgos, resumido.
+
+> ## Informe del revisor · trabajo/cerrar-a29-a36 (solo a7d06c9, vs 19b09eb) · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La orden 3 dice «cinco sitios, y donde CLAUDE.md lo repita». Quedan tres sitios que repiten «cuatro sitios» y no se corrigen ni se mencionan en §8.3. El caso más claro es el propio revisor, que dice «cuatro sitios de AMBIGUEDADES.md». | `grep -rn "cuatro sitios\|los cuatro\|toca cuatro" CLAUDE.md docs/runbooks .claude/agents ...` da: `.claude/agents/revisor.md:79` («cuatro sitios de docs/runbooks/AMBIGUEDADES.md»); `docs/runbooks/SESION-DE-PREGUNTAS.md:141` («Cerrar una ambigüedad toca cuatro sitios (CLAUDE.md)»); `docs/runbooks/ACTIVAR-A35-A44.md:137,139,148,258` («los cuatro sitios», citando CLAUDE.md «toca cuatro»). Ni CLAUDE.md ni AMBIGUEDADES.md quedan con «cuatro». En ACTIVAR-A35-A44.md, línea 148, «los cuatro documentos de docs/spec/» es otra cosa y no hay que tocarlo. |
+> | a2 | importa | La rama declara su estado listo, pero §8.5, el recuadro del revisor de la segunda orden, todavía no existe. El «Estado» lo anuncia («está en §8.5»). Es lo esperado, porque este informe es el que se pega ahí, pero hay que pegarlo antes de declarar lista la rama. | `grep -n "8.5" docs/validation/CERRAR-A29-A36.md` solo da la mención del «Estado»; la última sección es §8.4. |
+> | a3 | menor | El registro `a0b61bc9` lleva `fecha: '2026-09-29'` (la sesión), pero es una decisión del consultor del 2026-10-02. `recibido_el` sí es 2026-10-02, así que no hay ambigüedad real. | `knowledge/feedback/2026-09-29-sesion-03/fb-2026-09-29-sesion-03-a0b61bc9.yaml`. No pude comprobar la convención en otros `correccion_consultor` (la guardia bloqueó el comando). |
+> | a4 | menor | El commit se firma «Co-Authored-By: Claude Opus 5.5», y la instrucción vigente de atribución dice Sonnet 5.5. Es el modelo que pidió el consultor («Modelo: Opus»), así que puede ser correcto. | `git log -1 a7d06c9` |
+>
+> Comprobado sin hallazgos: el contrato (32 ficheros, con `AMBIGUEDADES.md` y `CLAUDE.md` añadidos con su motivo); los tests de la hoja, `test_kit`, `test_spec_docs_generados` y `test_project_state`; `state check`, `knowledge validate` (53 ambigüedades, 149 registros, historial intacto, commits con Fuente) y `spec check`; el `Fuente:` (los cuatro ids existen); el feedback solo añade, sin editar `b41ecf9b` ni `626c4dc7`; `PROJECT_STATE.md` 22.722 bytes; `spec_version` 15.6.1 y los docs generados (ABIERTA 22, RESUELTA 25); ningún sitio nuevo con `cita` ni cifra en la forma ejecutable. **El estado neto de A-36 frente a `main`** es el de antes salvo el comentario y la evidencia de v9 en `ambiguedades.yaml`, y la pregunta 22, como declara §8.2; `PROJECT_STATE.md`, `test_kit.py`, la hoja y su test y `docs/spec/ambiguedades.md` solo cambian por A-29; sin parámetro que devolver. Las citas, contrastadas con la extracción y el YAML.
+>
+> ### Eje (b) · Encargo (Segunda orden)
+> Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 11 hechos, 0 parciales, 0 no hechos (el «donde CLAUDE.md lo repita», parcial por a1).
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | menor | La orden 3 pide corregir «donde CLAUDE.md lo repita» y la rama no lo hizo del todo (el detalle está en a1). §8.3 no lo declara. Cuenta como eje (b) solo porque es parte del encargo. | Ver a1 |
+>
+> **Punto especial 1** (¿sostiene `SESION-03-EXTRACCION.md` la afirmación de la orden?): solo en parte, y la rama lo mide y lo declara. §3.4 recoge 01:24, 01:29 y 01:43–01:46; no recoge una pregunta de 0:01:30 con tres lecturas, que solo sostiene `PREGUNTAS.md` §2. El registro y §8.1 lo dicen, y la frase sale de `ambiguedades.yaml` y `parametros.yaml`; la fila de `PREGUNTAS.md` §2 la conserva, declarada, y la decisión es del consultor.
+>
+> **Punto especial 2** (¿sabe el modelo reabrir?): lo que declara §8.2 es cierto. No hay acción de reapertura, y `feedback pending` da `fb-2026-09-29-sesion-03-a0b61bc9 RESOLVE_UNKNOWN ambiguedad:A-36 - A-36 esta ABIERTA` y «1 pendientes de 101 activos».
+>
+> ### Lo que no pude comprobar
+> `make check` y su sello (escribe); el hook `pre-commit`; la convención de `fecha` en otros `correccion_consultor` (la guardia bloqueó su `xargs`); nada de v9, que está en cuarentena.
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **a1 y b1, arreglados en lo que la rama puede tocar.** Dos runbooks vivos repetían «cuatro» y ahora
+  dicen cinco:
+  - `docs/runbooks/SESION-DE-PREGUNTAS.md`, punto 6, nombra la hoja y su test;
+  - `docs/runbooks/ACTIVAR-A35-A44.md`, el título de §3, su cita y la línea que remite a §3. Ya
+    listaba la hoja entre los tests de §3. «Los cuatro documentos de `docs/spec/`» es otra cosa y
+    se queda.
+
+  El contrato se amplía a los dos, con su motivo. **Queda uno sin tocar: `.claude/agents/revisor.md`
+  línea 79** («cuatro sitios de `docs/runbooks/AMBIGUEDADES.md`»). `.claude/` es una ruta protegida
+  de este contrato, así que es para el consultor. Comprobado con Grep: «cuatro sitios», «cerrarla
+  cuatro» y «toca cuatro» ya no salen ni en `docs/runbooks/` ni en `CLAUDE.md`.
+- **a2, arreglado**: este apartado.
+- **a3, declarado: es la convención.** `fecha` es la de la SESIÓN (fecha la pregunta) y
+  `recibido_el` la de la respuesta (`src/botsito/feedback/modelo.py`, comentario de
+  `CAMPOS_OPCIONALES`). El otro `correccion_consultor`, `fb-…-86dc2801`, lleva igual `fecha`
+  2026-09-29 y `recibido_el` 2026-10-01.
+- **a4, no se cambia**: es la línea de atribución que dan las instrucciones de esta sesión, y un
+  commit sellado no se reescribe.
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. A-29 RESUELTA con la
 respuesta grabada de la sesión 3, verificada por la vía autorizada y con la nota del contexto (§8.1).
 A-36 cerrada y reabierta por el consultor: va a la sesión 4 como pregunta 22 (§8.2). El
 comportamiento del motor no cambia, y está medido (§3). Cerrar una ambigüedad toca cinco sitios
-(§8.3). `PROJECT_STATE.md` pesa 22.722 bytes. Para el consultor: que la frase «las tres lecturas»
+(§8.3). `PROJECT_STATE.md` pesa 22.722 bytes. Queda para el consultor `.claude/agents/revisor.md`,
+que todavia dice «cuatro» y esta protegido en este contrato (§8.5, a1). Para el consultor: que la frase «las tres lecturas»
 solo la sostiene `PREGUNTAS.md` (§8.1), y que el modelo de feedback no sabe reabrir (§8.2). El
 revisor de la segunda orden está en §8.5.
