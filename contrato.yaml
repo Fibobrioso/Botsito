@@ -4,6 +4,9 @@ artefacto: docs/validation/ESCENARIOS-POR-SESION.md
 rutas_permitidas:
   - docs/validation/ESCENARIOS-POR-SESION.md
   - docs/validation/anexos/ESCENARIOS-POR-SESION/
+  # Ampliado en la Fase 2 (revisor, a1): la lectura de tres dias dev de agosto se declara el mismo
+  # dia (CLAUDE.md, «Que se puede mirar y que no»)
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

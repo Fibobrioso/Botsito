@@ -25,8 +25,10 @@ de la sesion, con sus zonas -y por ellas, sus intentos-. La sesion guarda la lis
 (`escenarios`) y `toma`, `esquema` y `zona_id` son los del vigente. El primero nace con la primera
 toma de la sesion; los siguientes los abre `abrir_escenario`, la accion de RN-004, con cada toma
 NUEVA -la de otro pivote- cuando el vigente ha terminado, o con el vigente vivo segun
-`intentos_tras_toma_nueva` (A-25). Termina con una ganadora (RN-034, `terminar`) o sin intentos
-(RN-016); un escenario terminado no coloca mas.
+`intentos_tras_toma_nueva` (A-25). Termina con una ganadora (RN-034, `terminar`), y un escenario
+terminado no coloca mas. Sin intentos no se marca terminado: RN-016 deja
+`detenido_por_cartuchos`, que prohibe abrir (RN-001) hasta que la toma de otra liquidez abre el
+escenario siguiente y lo apaga.
 
 `orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): `al_darse_el_esquema` coloca en el cierre del
 breaker, en el 0 del bloque de origen, como siempre; `al_tomarse_la_liquidez` queda NO_IMPLEMENTADA

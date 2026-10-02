@@ -37,6 +37,7 @@ from botsito.engine.motor import DatosMercado
 from botsito.engine.primitivas import primitivas_escritas
 from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 from tests.unit import test_cableado as tc
+from tests.unit import test_orden_stop_pivote as tsp
 from tests.unit import test_preparar_a35 as ta
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -52,6 +53,7 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "intentos_tras_toma_nueva": "    valor: vuelven_a_cartuchos_max\n",
         "orden_pendiente_al_abrir_sesion": "    valor: se_retira\n",
         "cartuchos_max": "    valor: 3\n",
+        "orden_limite_nace": '    valor: "al_aparecer_punto_de_breaker"\n',
     }
     texto = PARAMETROS.read_text(encoding="utf-8")
     for nombre, valor in valores.items():
@@ -306,23 +308,53 @@ def test_abrir_un_escenario_es_el_reinicio_de_los_cartuchos(registro: Registro) 
     assert "detenido_por_cartuchos" not in estado.hechos
 
 
+class _ConVelas(_Liquidez):
+    """Las M1 de `test_orden_stop_pivote` (una venta con dos BAJOS) y la liquidez a medida."""
+
+    def __init__(self, pivotes: Mapping[int, Pivote]) -> None:
+        super().__init__(pivotes)
+        self.velas = tsp._serie(tsp.VENTA_DOS_BAJOS)
+
+    def m1_entre(self, desde: int, hasta: int) -> list[Vela]:
+        return [v for v in self.velas if desde <= int(v.inicio) and int(v.fin) <= hasta]
+
+
 def test_un_escenario_terminado_no_coloca_mas(registro: Registro) -> None:
-    """El productor no liga zona en un escenario terminado, y si en el siguiente."""
+    """El productor no liga zona en un escenario terminado, y si en el siguiente: con la orden en
+    el punto (el valor del registro), sobre las M1 de `test_orden_stop_pivote`."""
     toca = zonas.primitivas_zona(registro, "solo_una_zona_de_control")["toca_colocar_orden_limite"]
+    m0 = tsp.M0
+    datos = _ConVelas({m0: _pivote(1100, m0), m0 + 4: _pivote(1150, m0 + 4)})
     estado = _estado_bajista()
-
-    class _Vacio(_Liquidez):
-        def m1_entre(self, desde: int, hasta: int) -> list[Vela]:
-            return []
-
-    datos = _Vacio({M0: _pivote(1100, M0)})
-    _abrir(registro, datos, estado, M0 + 5, "07-11")
+    _abrir(registro, datos, estado, m0 + 1, "07-11")  # la toma en el cierre de la M1 0
     escenario = zonas.escenario_actual(estado, "07-11")
     assert escenario is not None
     zonas.terminar(estado, "07-11", escenario, zonas.TERMINADO_POR_GANANCIA)
     args = {"momento": "orden_limite_nace", "liga": "Z"}
-    r = toca(args, Momento(MinutoUtc(M0 + 10), "07-11", False, datos), estado)
+    r = toca(args, Momento(MinutoUtc(m0 + 5), "07-11", False, datos), estado)  # ya hay punto
     assert r == Resultado(Tri.NO) and not isinstance(r, NoImplementada)
+    # la toma de una liquidez nueva abre el siguiente, y ese si liga zona en cuanto hay punto
+    _abrir(registro, datos, estado, m0 + 5, "07-11")
+    r2 = toca(args, Momento(MinutoUtc(m0 + 9), "07-11", False, datos), estado)
+    assert isinstance(r2, Resultado) and r2.valor is Tri.SI
+    siguiente = zonas.escenario_actual(estado, "07-11")
+    assert siguiente is not None and r2.ligaduras["Z"] in siguiente["zonas"]
+
+
+def test_con_la_orden_en_el_esquema_el_escenario_tambien_manda(tmp_path: Path) -> None:
+    """Revisor, a2: el escenario es de la sesion, no del productor de la orden, asi que con
+    `orden_limite_nace` = `al_darse_el_esquema` un escenario terminado tampoco liga zona."""
+    reg = _registro(tmp_path, orden_limite_nace='"al_darse_el_esquema"')
+    toca = zonas.primitivas_zona(reg, "solo_una_zona_de_control")["toca_colocar_orden_limite"]
+    datos = _ConVelas({tsp.M0: _pivote(1100, tsp.M0)})
+    estado = _estado_bajista()
+    _abrir(reg, datos, estado, tsp.M0 + 1, "07-11")
+    escenario = zonas.escenario_actual(estado, "07-11")
+    assert escenario is not None
+    zonas.terminar(estado, "07-11", escenario, zonas.TERMINADO_POR_GANANCIA)
+    args = {"momento": "orden_limite_nace", "liga": "Z"}
+    r = toca(args, Momento(MinutoUtc(tsp.M0 + 9), "07-11", False, datos), estado)
+    assert r == Resultado(Tri.NO)
 
 
 # ------------------------------------------------------------ por el cableado: RN-034, RN-016

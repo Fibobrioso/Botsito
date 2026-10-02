@@ -54,7 +54,7 @@ escenarios, sus intentos y que pasa con lo que queda vivo al cambiar de sesion.
 
 | Que | Cita | Fuente |
 |---|---|---|
-| Las dos sesiones son independientes | «tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro, exacto. [...] No, no importa cómo terminó la primera operación.» | `fb-2026-09-29-sesion-03-5021677e` (A-46 RESUELTA), `ev-v9-003253-2ac6060a`, `ev-v9-003303-818a0796` |
+| Las dos sesiones son independientes (lo resume el consultor y el trader lo confirma: «Claro, exacto»; la segunda frase es suya) | «tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro, exacto. [...] No, no importa cómo terminó la primera operación.» | `fb-2026-09-29-sesion-03-5021677e` (A-46 RESUELTA), `ev-v9-003253-2ac6060a`, `ev-v9-003303-818a0796` |
 | Sin tope de escenarios | «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» | `ev-v9-003318-c0503fe5` |
 | Tres intentos por liquidez, no por dia | «Sí, serían tres intentos por liquidez. [...] ¿El máximo es por día? No, no, por liquidez.» | `ev-v9-013054-d49a544e` (A-41 RESUELTA) |
 | El break even y la invalidada no gastan | «¿Cuentan los break-even y las entradas invalidadas? no cuentan» | `ev-v9-013117-c683f9b5` |
@@ -98,7 +98,8 @@ tomado), sus intentos gastados y si ha terminado.
    `abrir_escenario`, que RN-004 hace junto con fijar el hecho; con el mismo pivote no hace nada.
 4. **Termina un escenario**:
    - cuando una operacion suya se cierra en ganancia: «ya aquí está el trade ganador, aquí no
-     buscamos nada, [...] esperar nuevamente a que se desarrolle la liquidez» (`ev-v6-003227`). Lo
+     buscamos nada, [...] pues tenemos que esperar nuevamente a que se desarrolle la liquidez»
+     (`ev-v6-003227`). Lo
      hace una regla nueva, RN-034, con la accion nueva `terminar_escenario`;
    - cuando gasta sus intentos: RN-016 con el acumulador `cartuchos`, que deja de ser un hueco y
      cuenta las perdidas del escenario con el mismo criterio que las dos ramas de RN-016
@@ -132,12 +133,282 @@ tomado), sus intentos gastados y si ha terminado.
 **Lo que no cambia**: el criterio de los segmentos de la sesion, el sesgo (RN-003 al abrir), la caja
 y el punto de la orden (ADR-0064), RN-006, y todo con `orden_limite_nace` = `al_darse_el_esquema`.
 
+> **CORRECCION (2026-10-02, misma rama, revisor a2).** Lo ultimo no es verdad, y no se habia
+> medido: el escenario es de la sesion y no del productor de la orden, asi que con
+> `al_darse_el_esquema` tambien actua -una ganadora termina la liquidez, y cada toma nueva borra el
+> esquema y la zona de la sesion y deja ligar otra-. Es la misma regla para las dos lecturas de A-29;
+> lo que no cambia en esa lectura es como nace la zona (el esquema). Los tests de esa lectura
+> (`test_sesiones_independientes.py`) siguen en verde, y uno nuevo lo fija:
+> `test_con_la_orden_en_el_esquema_el_escenario_tambien_manda`. Hoy el valor de
+> `orden_limite_nace` es `al_aparecer_punto_de_breaker`.
+
 **Las piezas**: un ADR nuevo (el siguiente libre, tras ADR-0065), tres parametros DEFAULT_AMBIGUOUS con su `ambiguedad_id`, un
 predicado nuevo (`la_toma_es_de_la_sesion`, con cita: entra en las tres guardias de
 `spec/modelo.py`, que ya recorren los predicados), dos acciones nuevas (`abrir_escenario`,
 `terminar_escenario`), dos reglas nuevas (RN-034, RN-035), RN-004 con una condicion y una accion mas,
 y `Momento` con el inicio de la sesion y de la ventana.
 
+## 2. Fase 1 · Lo implementado (`066246b`)
+
+El diseño de §1, tal cual, con ADR-0066 (nuevo, ACTIVE y PROVISIONAL en tres parámetros) y
+`spec_version` 15.2.1 → **15.3.0** (se añaden dos reglas y tres parámetros; ninguna regla cambia de
+sentido). El commit lleva `Fuente:` con ADR-0066, `fb-2026-09-29-sesion-03-5021677e`,
+`ev-v9-004533-d075b080`, `ev-v9-013054-d49a544e` y `ev-v6-003227-c4efcf49`.
+
+**Spec** (`knowledge/spec/`, y `docs/spec/` regenerado):
+- **RN-004**: la condición `la_toma_es_de_la_sesion` y la acción `abrir_escenario`; declara
+  `decision: ADR-0066`.
+- **RN-034** (nueva, disparador): una ganadora termina su escenario (`terminar_escenario`).
+  `complementa: [RN-017]`, porque las dos disparan con el mismo cierre y valen en cualquier orden.
+- **RN-035** (nueva, disparador): la orden pendiente al abrir otra sesión, `retirar_orden_limite`
+  según `orden_pendiente_al_abrir_sesion`. La acción gana el argumento `segun`, y la ligadura
+  `ORDEN` entra en los tokens.
+- **RN-016**: sin cambio de forma; sus notas dicen que desde hoy puede disparar.
+- **Hechos y acumulador**: `liquidez_tomada`, `detenido_por_cartuchos`, `orden_limite_pendiente`
+  (consume RN-035) y el acumulador `cartuchos`, con su descripción al día.
+- **Parámetros** (DEFAULT_AMBIGUOUS, `categoria: estrategia`, citados por lo que sostiene el valor):
+
+| Parámetro | Valor PROVISIONAL | Otra opción | Ambigüedad | Pregunta de la sesión 4 | Fuente |
+|---|---|---|---|---|---|
+| `toma_antes_de_la_ventana` | `no_cuenta` | `cuenta` (lo de antes) | A-43 | 15 | `ev-v9-004533-d075b080` |
+| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | `siguen_los_que_quedan` | A-25 | 18 | `ev-v9-013054-d49a544e` |
+| `orden_pendiente_al_abrir_sesion` | `se_retira` | `sigue_hasta_ventana_fin` (lo de antes) | A-30 (y A-39) | 5 | `fb-2026-09-29-sesion-03-5021677e` |
+
+- **Las tres guardias de cita.** El sitio nuevo con `cita` propia es un predicado más, y la de
+  `predicados` ya la recorren `comprobar_contra`, `comprobar_literales` y
+  `comprobar_citas_revocadas` (`botsito spec check`: OK, 35 reglas). Las dos reglas nuevas citan
+  como cualquier regla. Las acciones nuevas no llevan cita, como las demás menos
+  `colocar_orden_limite`.
+
+**Motor** (`src/botsito/engine/`):
+- `interprete.Momento` lleva `desde_sesion` y `desde_ventana`, que ponen `motor.py` y `cableado.py`.
+- `primitivas.py`: el predicado, y la acción `abrir_escenario`, que va con las primitivas escritas
+  haya geometría o no.
+- `zonas.py`: la lista de escenarios por sesión. Un escenario terminado no coloca.
+- `primitivas_broker.py`: el acumulador `cartuchos` (sale de `HUECOS`), `terminar_escenario`,
+  `retirar_orden_limite` con `segun`, y fuera el envoltorio de la DECISION 2 de ADR-0064.
+- `cableado.py`: guarda los cierres del día para contar los intentos de cada escenario.
+- ADR-0064 lleva un recuadro en sus decisiones 2 y 3 que apunta a ADR-0066.
+
+**Dos tests existentes cambian a propósito:**
+- `test_spec_fidelidad.py::test_la_pendiente_a_las_15_esta_declarada_como_ambiguedad_y_no_supuesta`
+  exigía que ninguna regla usara `retirar_orden_limite` hasta que el trader respondiera A-30. Ahora
+  exige que la única que la usa, RN-035, lo haga según un parámetro DEFAULT_AMBIGUOUS de A-30: sigue
+  sin suponerse la respuesta.
+- `test_arnes_motor.py::test_no_implementada_detiene_la_sesion_y_queda_registrada`: sin lectura de
+  «formado», la traza de RN-004 nombra también el predicado nuevo.
+
+## 3. Fase 2 · Comprobación, sin cobertura agregada
+
+### 3.1 Tests sintéticos (`tests/unit/test_escenarios_por_sesion.py`, 13 casos)
+
+Todos sobre días y velas de 2030, con la spec real:
+
+| Lo que pide el encargo | Test |
+|---|---|
+| Dos sesiones independientes | `test_dos_sesiones_independientes_cada_una_con_sus_escenarios`; y los de F33 (`test_sesiones_independientes.py`) siguen en verde |
+| Una toma nueva tras una operación cerrada abre un escenario nuevo | `test_una_toma_nueva_tras_una_ganadora_abre_un_escenario_nuevo` (la misma liquidez no abre nada); por el cableado, `test_por_el_cableado_la_ganadora_termina_su_escenario` |
+| La liquidez de la mañana no vale para la tarde | `test_la_liquidez_de_la_manana_no_vale_para_la_tarde`: el día de §0.2, en el que hasta hoy RN-004 volvía a fijar la toma en la tarde |
+| Una orden viva al cambiar de sesión, según el diseño | `test_la_orden_viva_al_cambiar_de_sesion_segun_el_parametro`: con `se_retira`, cancelada en la apertura de la tarde; con `sigue_hasta_ventana_fin`, al final del día |
+
+Y las piezas:
+- **La toma antes de la ventana.** Con los dos valores, y la M1 que cierra justo en la apertura:
+  `test_la_toma_antes_de_la_ventana_la_decide_el_parametro`. Una toma de la sesión anterior no
+  cuenta con ninguno: `test_una_toma_de_la_sesion_anterior_no_cuenta_nunca`.
+- **La pregunta 18**, con las dos opciones:
+  `test_una_toma_nueva_con_el_escenario_vivo_la_decide_el_parametro`.
+- **El reinicio de los cartuchos**: `test_abrir_un_escenario_es_el_reinicio_de_los_cartuchos`.
+- **Un escenario terminado no coloca**: `test_un_escenario_terminado_no_coloca_mas`.
+- **Por el cableado, tras una pérdida el escenario sigue y gasta un intento.** Con
+  `cartuchos_max` = 1, RN-016 dispara por primera vez y deja `detenido_por_cartuchos`:
+  `test_por_el_cableado_tras_una_perdida_el_escenario_sigue_y_cuenta_el_intento`.
+
+`make check` del commit: 1806 pasados.
+
+### 3.2 Con el visor: tres días de agosto, antes y ahora
+
+**Los días.** El 3, el 7 y el 20 de agosto de 2026: construcción, con operaciones del trader en
+la mañana y en la tarde. Comprobados por la compuerta del visor: `visor.caso_de_construccion` cruza
+cada caso con `casos_ocultos` antes de leerlo, y `casos_ocultos` es `casos_reservados`
+(`cases/holdout.py`). Ningún día se negó.
+
+**Cómo se corrió.**
+- **Ahora**: la rama.
+- **Antes**: `main` (`a093ffb`) en un worktree desechable fuera del repositorio, con
+  `config/settings.local.toml` apuntando a la misma `data/`.
+- Las dos con `botsito motor visor --caso <c> --simular` y las lecturas de diagnóstico de la
+  medida de F35 (A-35 `cierre_vela_contraria`, A-44 `sin_tope`, A-21 `solo_una_zona_de_control`,
+  A-27 a 0). **Es DIAGNÓSTICO: nada de esto cuenta como medida.**
+- El detalle por sesión lo saca `anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que monta el mismo
+  motor cableado. Horas de Madrid.
+
+> **CORRECCION (2026-10-02, misma rama, revisor b1).** Este apartado ponia las horas de las
+> operaciones del trader junto a las del bot y comparaba una direccion, y eso deja emparejar a mano.
+> Ya no las lleva: de cada dia se dice solo que el trader opero en las dos sesiones, y lo que hace
+> el bot.
+
+**3 de agosto.** El trader opera en las dos sesiones.
+- Mañana: el bot no coloca ninguna orden, ni antes ni ahora. Ahora la mañana tiene dos escenarios
+  (tomas a las 07:47 y 09:32), sin ninguna colocación.
+- Tarde, **antes**: una sola vida de orden. Colocada a las 11:48, reubicada a las 11:51, llenada a
+  las 11:51:57 y cerrada a la entrada a las 11:55 (break even). Nada más: la DECISION 2 de ADR-0064
+  cerraba la sesión tras el llenado.
+- Tarde, **ahora**: el mismo comienzo, y la sesión sigue.
+  - Una toma nueva a las 13:02 abre el escenario 2: orden a las 13:04, reubicada a las 13:06,
+    llenada a las 13:06:13 y al stop a las 13:09.
+  - La toma de las 13:49 abre el escenario 3: orden a las 13:56, reubicada a las 14:03, llenada a
+    las 14:03:38 y al stop a las 14:04.
+  - La toma de las 14:17 abre el escenario 4, sin orden.
+
+**7 de agosto.** El trader opera en las dos sesiones.
+- Mañana, **antes**: una toma (07:22) y una orden rechazada a las 07:35 (el precio ya había pasado
+  el punto, ADR-0064 decisión 1); nada más.
+- Mañana, **ahora**:
+  - el mismo rechazo, en el escenario 1;
+  - otra orden rechazada a las 08:44 en el escenario 3 (toma de las 08:42);
+  - en el escenario 4 (toma de las 10:12), una compra llenada a las 10:15 y cerrada a la entrada a
+    las 10:26.
+- Tarde, **antes**: una toma a las 11:01 y ninguna orden.
+- Tarde, **ahora**: cinco escenarios (tomas a las 11:01, 11:47, 13:02, 13:39 y 14:31) y tres
+  órdenes que no se llenan:
+  - colocada a las 13:43 y cancelada a las 13:49;
+  - colocada a las 14:34 y reubicada a las 14:38;
+  - esa reubicada, cancelada a las 14:43 sin otra detrás.
+
+**20 de agosto.** El trader opera en las dos sesiones.
+- Mañana, **antes**: una venta llenada a las 08:02 y al stop a las 08:10; después nada, por la
+  DECISION 2.
+- Mañana, **ahora**:
+  - la misma venta al stop, que gasta un intento del escenario 1;
+  - en el escenario 2 (toma de las 08:46), una venta llenada a las 09:02 que **llega al objetivo a
+    las 09:28**, y RN-034 termina ese escenario;
+  - en el escenario 3 (toma de las 09:42), una venta llenada a las 09:45 y al stop a las 09:59;
+  - en el escenario 4 (toma de las 10:42), una venta llenada a las 10:47 y al stop a las 10:51.
+- Tarde, **antes**: una compra llenada a las 12:50:01 y al stop a las 12:50:32.
+- Tarde, **ahora**:
+  - la misma compra al stop;
+  - en el mismo escenario 1, una orden nueva a las 12:51, cancelada a las 12:57 (el reintento tras
+    la pérdida);
+  - en el escenario 2 (toma de las 13:43), una compra llenada a las 13:49:09 y al stop a las
+    13:50:37, y otra orden a las 13:51 cancelada a las 13:56.
+
+**Lo que se ve en los tres días.**
+- El bot ya no se para tras el primer llenado de la sesión.
+- Cada toma de una liquidez nueva abre un escenario, y en sesiones con mucho movimiento son
+  muchos: cinco en la tarde del 7.
+- Tras una pérdida reintenta en la misma liquidez, y tras la ganadora del 20 espera otra.
+- Ninguna orden quedó pendiente al cambiar de sesión, así que RN-035 no actuó en estos días.
+- Ningún escenario llegó a gastar sus tres intentos.
+
+### 3.3 La cobertura: ni se calculó ni se pega
+
+- **Lo que no se ejecutó**: el arnés sobre construcción, `scripts/embudo_77.py` y cualquier
+  recuento de parejas.
+- **Lo que ya imprime una cifra de cobertura sin pedirlo:**
+  - `docs/validation/NOCTURNO-01OCT.md` §2, un informe ya cerrado, con la cobertura sobre las 77
+    operaciones;
+  - la cabecera de cada página del visor, «parejas del criterio N», por día.
+
+Ninguna de las dos cifras se copia aquí. §3.2 no da las horas ni las direcciones de las operaciones
+del trader, así que no deja emparejar las del bot con las suyas (corregido tras el revisor, b1).
+
+## 4. Lo que queda para después de la sesión 4
+
+- **Pregunta 5** (A-30, A-39): fijar `orden_pendiente_al_abrir_sesion`. Si el trader elige «la dejo
+  y la sigo moviendo en la sesión siguiente», hay que escribir esa opción: hoy no existe.
+- **Pregunta 15** (A-43): fijar `toma_antes_de_la_ventana`.
+- **Pregunta 18** (A-25): fijar `intentos_tras_toma_nueva`. Y lo que A-25 deja aparte, la marca
+  más reciente frente a la anterior («alto nuevo más bajo [...] si no se da entrada, pues seguimos
+  al más alto», `ev-v9-013736-463282d5`): el motor sigue el pivote más reciente (ADR-0045) y no
+  vuelve al anterior.
+- **Para el consultor, no para el trader:**
+  - **Que el escenario siga tras un break even** es lectura nuestra (RN-034, notas).
+  - **Cuántos escenarios abre una sesión movida.** Cada pivote nuevo tomado abre uno, y en la tarde
+    del 7 son cinco. Es lo que dicen la spec y A-46 («sin tope de escenarios»); si se ve demasiado,
+    la pregunta es qué es para el trader una liquidez NUEVA.
+  - **Una liquidez tomada antes de abrir la sesión queda muerta en ella, aunque el precio vuelva
+    dentro y la tome otra vez** (revisor, a3). `la_toma_es_de_la_sesion` mira si ALGUNA M1 cerró
+    pasada la línea entre la formación del pivote y la apertura, porque `cruza` es un estado y no
+    un cruce. Es una decisión de este diseño, no del trader. Con `no_cuenta`, una liquidez tomada a
+    las 6:45 que el precio recupera y vuelve a tomar a las 7:20 no vale, y la frase del trader
+    («si el precio la toma ya dentro») admite leerlo al revés. Va con la pregunta 15. En la tarde,
+    con una toma de la mañana, es lo mismo, y lo sostiene A-46.
+  - **Una orden pendiente cuando una toma nueva abre otro escenario** (revisor, b2). §1.5 dice que
+    la reubica RN-006 en el primer punto de la toma nueva. Es lectura del código (`_punto_nuevo`
+    mira las zonas usadas de la SESIÓN, no del escenario), **no está medido ni tiene test**, y en
+    los tres días de §3.2 no pasó.
+
+## 5. Informe del revisor
+
+Subagente `revisor`, sobre `main..HEAD` (`fad197e`, `ae6c7b3`, `066246b`) más el informe estadiado.
+Los hallazgos, tal cual; lo comprobado sin hallazgos, resumido.
+
+> ## Informe del revisor · feature/escenarios-por-sesion · 2026-10-02
+>
+> Alcance: `main..HEAD` (`fad197e`, `ae6c7b3`, `066246b`) más lo estadiado (informe con Fases 1-2 y `dia_del_bot.py`). Las restricciones del encargo se cumplieron. Una salvedad: al contrastar la cita de `NOCTURNO-01OCT.md` (un `grep` de «cobertura|77») salió impresa una línea con la cobertura de ese informe cerrado, que no calculé ni uso.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 3 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | **bloquea** (por la letra de CLAUDE.md; hay precedente reciente sin fila, decide el consultor) | No hay fila en `HOLDOUT-EXPOSICIONES.md` por la lectura de los días de agosto. El informe (§3.2) cuenta que el visor leyó los días 3, 7 y 20 de agosto y da las horas de las operaciones del trader de cada día (salen del detalle por operación del xlsx de agosto). CLAUDE.md: material de desarrollo «se declara igual el mismo día»; «toda exposición se declara… siempre». | `git diff main...HEAD --stat` no toca `docs/validation/HOLDOUT-EXPOSICIONES.md`; la última fila es del 2026-09-30. Hay filas análogas de lecturas ya vistas el 2026-09-23 y 2026-09-28. Los tres casos NO están en `casos_reservados` (comprobado: los tres `False`). |
+> | a2 | importa | El diseño dice «Lo que no cambia: … todo con `orden_limite_nace` = `al_darse_el_esquema`». El código sí lo cambia para esa opción: `toca_colocar_orden_limite` llama a `_anotar_toma` y devuelve NO si el escenario está terminado antes de ramificar por `momento_orden`; `_abrir` borra `esquema` y `zona_id`, y `_ligar_al_escenario` se llama también en la rama de `al_darse`. Ningún test nuevo lo cubre. La afirmación del informe es falsa o no está medida. | `src/botsito/engine/zonas.py`; informe §1. |
+> | a3 | importa | Decisión de diseño no declarada: `la_toma_es_de_la_sesion` usa «alguna M1 anterior cerró pasada la línea» (`cruza` es un estado, no un cruce). Un pivote que cerró fuera una vez entre su formación y la apertura queda muerto en esa sesión, aunque el precio vuelva dentro y lo tome de nuevo. Mismo efecto con `no_cuenta` antes de las 7 (el trader dice que vale «si el precio la toma ya dentro») y en la tarde. No se declara ni se deja para después de la sesión 4. | `primitivas.py` (diff); el test `_Datos` solo prueba tomas que siguen debajo. |
+> | a4 | importa | `test_un_escenario_terminado_no_coloca_mas` dice «no liga zona en un escenario terminado, y sí en el siguiente» y solo comprueba la primera mitad. No hay test de «intentos agotados» de punta a punta, y la rama de intentos agotados no marca `terminado`: se apoya en el gate de RN-016 y en `HECHO_DETENIDO`. Correcto por lectura del código, pero el docstring de `zonas.py` y el informe dicen «termina … sin intentos». | `tests/unit/test_escenarios_por_sesion.py`; `zonas.py`. |
+> | a5 | menor | La cita de dos sitios nuevos sostiene menos de lo que declaran: el predicado `la_toma_es_de_la_sesion` cita `ev-v9-004533` (solo A-43) y su descripción añade la parte de A-46; RN-035 cita la independencia de sesiones, que no dice «se retira» (las notas lo admiten, PROVISIONAL). | `strategy_spec.yaml` (diff). |
+> | a6 | menor | Las citas del informe y del ADR para RN-034 quitan «pues tenemos que» sin marcarlo; y la tabla §0.3 pone como cita del trader «tú básicamente distingues ambas sesiones…», que es del consultor y el trader confirma («Claro, exacto»). | informe; `ev-v9-003253-2ac6060a.yaml`; ADR-0066 §2. |
+> | a7 | menor | A-30, A-39 y A-43 siguen con `parametros: []` y A-25 solo con `cartuchos_reinicio`, aunque los tres parámetros nuevos llevan su `ambiguedad_id` (patrón de A-29). Nada lo exige hoy. RN-035 está colocada antes de RN-003 en el fichero. | `ambiguedades.yaml`; `strategy_spec.yaml`. |
+>
+> Comprobado sin hallazgos: el contrato (ninguna ruta protegida tocada); `botsito spec check` y `botsito state check`; el `Fuente:` de `066246b` (todos los ids existen); las citas y literales de §0.3, RN-034 y el predicado; las preguntas 5, 15 y 18; el diseño (`ae6c7b3`) commiteado antes que la implementación (`066246b`) y sin cambios entre los dos; los regímenes de cambio (evidence, feedback, manifests, corpus, holdout intactos); los tres parámetros DEFAULT_AMBIGUOUS; `test_no_business_literals`; las tres guardias de cita recorren `predicados`; `spec_version` y `docs/spec/`; ADR-0066 y su índice; la lógica del motor (la identidad del pivote, el acumulador `cartuchos` frente a las ramas de RN-016, `terminar_escenario`, `retirar_orden_limite`, la M1 de la apertura); los dos tests que cambian lo hacen con motivo y sin rebajar.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 12 hechos, 2 parciales (Fase 0 sin A-35 analizada; citas que dicen algo más), 0 no hechos.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | La Fase 2 empareja de hecho: las horas de las operaciones del trader van justo antes de las del bot, y el 20 de agosto compara dirección. No hay una cifra pegada, pero la afirmación de §3.3 es más fuerte que lo que §3.2 hace. | informe §3.2 y §3.3 |
+> | b2 | importa | «En los dos casos la orden pendiente la reubica RN-006 en el primer punto de la toma nueva» (§1.5) no está medida ni probada por ningún test. | informe §1.5 |
+> | b3 | menor | Fase 0 no analiza A-35 ni RN-006 como piezas que «tocan esto» (el encargo los nombra). | informe §0 |
+> | b4 | menor | Que RN-002 cierra la posición «un minuto antes del fin de su vela H4, que en verano es el fin de la sesión» no se midió en esta rama. | informe §1.8; ADR-0066 §4 |
+>
+> ### Lo que no pude comprobar
+> `make check` y el «1806 pasados» (no hay log en el árbol); `puerta_de_atras.py`; las horas, órdenes y escenarios por día de §3.2 (piden correr el motor sobre `data/`); si el consultor da por cubierta con filas anteriores la lectura de hoy; el efecto de a2 con el valor vigente; lo de RN-002 en verano.
+
+**Respuesta de la sesion, hallazgo a hallazgo:**
+- **a1, arreglado**: fila del 2026-10-02 en `HOLDOUT-EXPOSICIONES.md` (los tres días, qué se leyó,
+  la compuerta, y que las «parejas del criterio» del visor no se copian). El contrato se amplía a
+  ese fichero, con su motivo.
+- **a2, arreglado**: recuadro de corrección en §1 y un test nuevo,
+  `test_con_la_orden_en_el_esquema_el_escenario_tambien_manda`. Es la misma regla para las dos
+  lecturas de A-29, a propósito.
+- **a3, declarado**: en §4, como decisión de este diseño que va con la pregunta 15.
+- **a4, arreglado**: el test comprueba ya las dos mitades -el escenario terminado no liga zona y
+  el siguiente sí-, sobre las M1 de `test_orden_stop_pivote`. El docstring de `zonas.py` dice cómo
+  acaba un escenario sin intentos: no se marca terminado; lo para `detenido_por_cartuchos` hasta la
+  toma siguiente. El RN-016 de punta a punta está en
+  `test_por_el_cableado_tras_una_perdida_el_escenario_sigue_y_cuenta_el_intento` (con
+  `cartuchos_max` = 1).
+- **a5, declarado sin tocar la spec**: la parte de A-46 del predicado la sostiene
+  `fb-2026-09-29-sesion-03-5021677e`, que cita RN-004 en sus notas; RN-035 ya se declara
+  PROVISIONAL con su pregunta. Cambiar la descripción obligaba a otra versión de la spec por una
+  redacción.
+- **a6, arreglado**: la cita de RN-034 en el informe y en ADR-0066 lleva «pues tenemos que», y la
+  tabla de §0.3 dice que la primera frase la resume el consultor y el trader la confirma.
+- **a7, declarado**: que A-25, A-30, A-39 y A-43 apunten a su parámetro nuevo es una edición de
+  `ambiguedades.yaml` que queda para la rama que fije sus valores tras la sesión 4.
+- **b1, arreglado**: §3.2 ya no da las horas ni las direcciones de las operaciones del trader, con
+  un recuadro de corrección; §3.3 dice lo que hace ahora.
+- **b2, declarado**: en §4, como lectura del código sin medir.
+- **b3**: A-35 no cambia aquí; es la lectura de «formado» de `liquidez_m15`, y la Fase 2 corre con
+  ella en diagnóstico. RN-006 tampoco: su mecanismo (`_punto_nuevo`, ADR-0064) sigue igual y solo
+  cambia que la orden pendiente de otra sesión ya no llega (RN-035).
+- **b4**: no se midió en esta rama. Lo de verano sale de las notas de RN-001 («la ventana coincide
+  con dos velas H4 completas 337 días al año»), y el cierre al minuto lo prueba
+  `test_rn002_cierra_la_posicion_viva_antes_del_fin_de_su_vela_h4` (`test_cableado.py`).
+
 ## Estado
 
-EN CURSO: Fase 0 escrita (diseño, antes de implementar); falta la Fase 1.
+**Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
+selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Lo que espera a la sesión 4
+y lo que decide el consultor está en §4.

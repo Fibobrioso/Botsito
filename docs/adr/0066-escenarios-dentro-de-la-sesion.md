@@ -36,7 +36,8 @@ las zonas que se ligan en el, y si ha terminado.
   fijar el hecho. RN-004 vuelve a fijar el hecho en cada M1 que cierra pasada la linea, asi que la
   misma liquidez no abre nada.
 - **Termina** cuando una operacion suya se cierra en ganancia -RN-034, nueva: «ya aquí está el trade
-  ganador, aquí no buscamos nada, [...] esperar nuevamente a que se desarrolle la liquidez»
+  ganador, aquí no buscamos nada, [...] pues tenemos que esperar nuevamente a que se desarrolle la
+  liquidez»
   (`ev-v6-003227-c4efcf49`)-, cuando gasta sus intentos (RN-016) y cuando acaba la sesion (A-46).
 - **Tras una perdida, un break even o un equal, SIGUE** con los intentos que le queden: «nuevamente
   tiene todavía un gatillo [...] un cartucho» (`ev-v3-002405-a202dbf6`); el break even y la
