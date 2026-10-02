@@ -14,7 +14,7 @@
 feature/freno-peticiones
 
 ## Current Feature
-EN CURSO: `feature/freno-peticiones` (2026-10-02; encargo docs/encargos/feature-freno-peticiones.md, informe docs/validation/FRENO-PETICIONES.md): la K de Next Action, el freno de peticiones al servidor. Tarea autonoma: no se cierra.
+EN CURSO: `feature/freno-peticiones` (informe docs/validation/FRENO-PETICIONES.md): la K de Next Action.
 
 ## Stable Main State
 34680ba · merge de `trabajo/cerrar-a29-a36` (tag `stable/F36o-cerrar-a29-a36`): A-29 RESUELTA con la respuesta grabada de la sesion 3 (`orden_limite_nace` CONFIRMED, el mismo valor; el motor no cambia, medido); A-36 se cerro y el consultor la reabrio: va a la sesion 4 como pregunta 22. Cerrar una ambiguedad toca cinco sitios (docs/runbooks/AMBIGUEDADES.md, con la hoja de preguntas). Sobre `stable/F36n-escenarios-por-sesion` (8346b9b), las sesiones independientes (ADR-0066). Informe docs/validation/CERRAR-A29-A36.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ EN CURSO: `feature/freno-peticiones` (2026-10-02; encargo docs/encargos/feature-
 34680ba · merge: A-29 RESUELTA y A-36 reabierta como pregunta 22; cerrar una ambiguedad toca cinco sitios · tag stable/F36o-cerrar-a29-a36
 
 ## Tests Currently Passing
-1182 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1183 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,6 +117,7 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
+- El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
 - El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
 - PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).

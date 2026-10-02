@@ -321,3 +321,27 @@ def test_el_dia_y_los_umbrales_salen_del_perfil_y_del_registro() -> None:
     reglas = reglas_broker_de(perfil, REGISTRO)
     assert reglas.huso_corte == PRAGA
     assert reglas.freno == LIMITES
+
+
+def test_tras_el_corte_por_bucle_cancelar_cerrar_y_el_break_even_salen_y_cuentan() -> None:
+    """Orden de cierre del consultor, a): lo que protege sale tras el corte por BUCLE igual que tras
+    el corte diario. Cinco compras iguales cortan el dia por bucle; despues salen la cancelacion
+    de la pendiente, el primer stop a break even y el cierre, y una compra nueva sigue negada."""
+    n = LIMITES.bucle_repeticiones
+    assert n is not None
+    b = _broker()
+    pendiente = _compra(b, 0, _ms(M0, 1))
+    assert isinstance(pendiente, Orden)
+    pos = b.abrir_conocida("p1", "compra", BID, UNO, BID - 200, BID + 600, _ms(M0, 1))
+    for i in range(1, n + 1):
+        _compra(b, i, _ms(M0, 1 + i), precio=BID - 3000)
+    assert b.freno is not None and b.freno.cortado() == MOTIVO_BUCLE
+    enviadas = len(b.traza().peticiones)
+    b.cancelar(pendiente.id, _ms(M0, 20))
+    b.mover_stop(pos.id, BID, _ms(M0, 21))
+    b.cerrar_a_mercado(pos.id, _ms(M0, 22))
+    tipos = [p.tipo for p in b.traza().peticiones]
+    assert tipos[enviadas:] == [PETICION_CANCELAR, PETICION_MODIFICAR, PETICION_CERRAR]
+    assert pendiente.estado == "cancelada" and pos.stop_original == BID - 200 and not pos.abierta
+    assert isinstance(_compra(b, 99, _ms(M0, 23)), Rechazo)
+    assert _negadas(b)[-1] == MOTIVO_BUCLE

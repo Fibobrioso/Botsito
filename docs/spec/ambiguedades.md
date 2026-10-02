@@ -128,7 +128,7 @@ Afecta a: `orden_pendiente_al_abrir_escenario`.
 
 ### A-54 · qué cuenta FTMO como petición al servidor y con qué margen frena el bot · medicion
 
-Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno.
+Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno. Qué cuenta FTMO como mensaje (las rechazadas, las modificaciones, las cancelaciones) está pendiente de la respuesta del soporte de FTMO, que pide Aleks: si cuenta más de lo que cuenta el freno, los umbrales se revisan. Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus habla del límite, y la fuente real es docs/validation/FTMO-REGLAS.md R13.
 
 Afecta a: `freno_peticiones_aviso`, `freno_peticiones_corte`, `freno_bucle_repeticiones`, `freno_bucle_minutos`.
 

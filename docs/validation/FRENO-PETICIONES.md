@@ -310,6 +310,35 @@ comprobado sin hallazgos, resumido.
 - **El recuento 1177 frente a 1178 del `grep`:** `state check` cuenta a su manera y da OK. Con los
   cinco tests nuevos son 1182.
 
+## 5. Orden de cierre del consultor: lo que entra antes de cerrar (2026-10-02)
+
+**a) Lo que protege, tras el corte por BUCLE: faltaba el test.** El código ya lo hacía: en
+`FrenoPeticiones.admitir` lo que protege sale antes de mirar el corte, sea diario o por bucle. Pero
+ningún test lo probaba. Los dos tests de bucle solo miraban lo negado, y lo que protege solo se
+probaba tras el corte diario. Test nuevo,
+`test_tras_el_corte_por_bucle_cancelar_cerrar_y_el_break_even_salen_y_cuentan`:
+- cinco compras iguales cortan el día por bucle;
+- después salen y cuentan la cancelación de la pendiente, el primer stop a break even y el cierre;
+- una compra nueva sigue negada por `freno_bucle`.
+
+**Roto a propósito**, en memoria, con un freno que niega también lo que protege cuando el corte es
+por bucle: el test nuevo FALLA, y el del corte diario (`test_al_llegar_al_corte_…`) sigue pasando.
+Es decir, el test que había no lo habría visto.
+
+**b) A-54 dice de dónde sale.** Su `pregunta` dice que la cita de evidencia es de relleno porque el
+esquema exige una, que ningún ítem del corpus habla del límite y que la fuente real es
+`docs/validation/FTMO-REGLAS.md` R13. `spec docs --escribir` en el mismo commit. Technical Debt
+suma la línea de la orden: el esquema exige una cita de evidencia aunque la fuente sea una regla de
+FTMO (A-27, A-54).
+
+**c) Lo que cuenta FTMO como mensaje** -las rechazadas, las modificaciones, las cancelaciones- está
+pendiente de la **respuesta del soporte de FTMO, que pide Aleks**. Si cuenta más de lo que cuenta
+el freno, los umbrales se revisan. Lo dice A-54 en su `pregunta`, y completa lo de §0.4.
+
+**PROJECT_STATE.md** (`wc -c`): la línea nueva de Technical Debt habría llevado el fichero por
+encima de 23.000 bytes. Para dejarle sitio, la línea de `Current Feature` de esta rama se acorta.
+Esa línea se sustituye al cerrar.
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra.
