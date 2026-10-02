@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/ajustes-cierre
+main
 
 ## Current Feature
-EN CURSO: `trabajo/ajustes-cierre` (2026-10-01; encargo docs/encargos/trabajo-ajustes-cierre.md, informe docs/validation/AJUSTES-CIERRE.md): solo documentacion y la skill cerrar-rama -el comentario de tramos_no_citables.yaml tras F36l, y el registro de cierre en HISTORIA y la fila de ERRORES-RECURRENTES como parte obligatoria de todo cierre-. En `main`, NINGUNA ABIERTA tras `stable/F36l-cuarentena-por-defecto`.
+NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
 
 ## Stable Main State
-8a3b501 · merge de `trabajo/cuarentena-por-defecto` (tag `stable/F36l-cuarentena-por-defecto`), sobre `stable/F36k-dieta-y-skills` (0744ece). La CLI ensena el corpus filtrado por defecto -sesiones en cuarentena, tramos no citables y material reservado o sin sortear, con `src/botsito/corpus/cuarentena.py` como unica fuente- y dice cuanto oculto y por que; la evidencia tiene su propio criterio (solo un tramo no citable o un dia de `casos_ocultos`); la opcion que lo ensena todo y su equivalente en Python, solo para Aleks y para las funciones de `AUTORIZADOS`; la guardia bloquea esa opcion y 14 ficheros que copian texto oculto. Informe docs/validation/CUARENTENA-POR-DEFECTO.md; el registro del cierre, al final de HISTORIA.
+1591737 · merge de `trabajo/ajustes-cierre` (tag `stable/F36m-ajustes-cierre`), sobre `stable/F36l-cuarentena-por-defecto` (8a3b501), que dejo la CLI ensenando el corpus filtrado por defecto (`src/botsito/corpus/cuarentena.py`, la unica fuente; la evidencia con su propio criterio; la guardia bloquea la opcion que lo ensena todo y 14 ficheros que copian texto oculto). Esta rama, solo documentacion: todo cierre lleva, en el commit que saca el contrato, su registro en HISTORIA y su fila en ERRORES-RECURRENTES, y el commit de estado no anade nada a Change Log ni a Completed Features (docs/runbooks/RITUAL.md, skill cerrar-rama); `tramos_no_citables.yaml` y los runbooks dicen lo que hace hoy la CLI. Informe docs/validation/AJUSTES-CIERRE.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8a3b501 · merge: la CLI enseña el corpus filtrado por defecto (cuarentena, tramos no citables y material reservado), la evidencia con su propio criterio y la guardia bloquea el contenido sin filtrar · tag stable/F36l-cuarentena-por-defecto
+1591737 · merge: todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; los documentos dicen que la CLI enseña el corpus filtrado · tag stable/F36m-ajustes-cierre
 
 ## Tests Currently Passing
 1149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -37,7 +37,7 @@ F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del 
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
-I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01).** Queda una sola cosa de lo que decia: el comentario de `knowledge/corpus/tramos_no_citables.yaml` no se cambio, porque el encargo protegia `knowledge/`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.
+I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01)**, y el comentario de `knowledge/corpus/tramos_no_citables.yaml` que quedaba, en `stable/F36m-ajustes-cierre`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.
 
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
 
