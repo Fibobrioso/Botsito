@@ -1149,3 +1149,21 @@ Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli.
 — ninguna desde el Archivo 1 (2026-10-01).
+
+# Registro de cierre · `trabajo/cuarentena-por-defecto` (2026-10-01)
+
+- Orden de cierre de Aleks, tras revisar `0a7bed1`; escrita aqui ANTES del merge, en la propia rama,
+  porque en `main`, tras el tag, solo puede cambiar `PROJECT_STATE.md` (`state check`, regla 5).
+- Tag: `stable/F36l-cuarentena-por-defecto`. El merge es
+  `git rev-parse "stable/F36l-cuarentena-por-defecto^{commit}"`: su sha no existe hasta el merge, y
+  el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama: `b6dd620` (apertura), `d1f144f` (la CLI filtra por defecto), `e30765c`
+  (tercera orden), `a4d37e8` (hallazgos del revisor), `bc77e2b` (cuarta y quinta orden), `14bb92c`
+  (revisor, segunda pasada), `0faa9ae` (sexta orden: la evidencia con su propio criterio), `0a7bed1`
+  (revisor, tercera pasada) y el de este registro, que saca tambien el contrato.
+- CI de Linux, con la rama empujada como `fix/cuarentena-por-defecto`: `36936326358` (`e30765c`),
+  `36938253913` (`a4d37e8`), `36944773639` (`bc77e2b`), `36946258608` (`14bb92c`), `36949045836`
+  (`0faa9ae`) y `36950431596` (`0a7bed1`), cada uno con un solo fallo, el esperado:
+  `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/`.
+- Informe: `docs/validation/CUARENTENA-POR-DEFECTO.md`. Encargo, con sus seis ordenes:
+  `docs/encargos/trabajo-cuarentena-por-defecto.md`.
