@@ -24,12 +24,18 @@ rutas_permitidas:
   # Ampliado tras el revisor de la segunda orden (a1): dos runbooks vivos repetian «cuatro»
   - docs/runbooks/SESION-DE-PREGUNTAS.md
   - docs/runbooks/ACTIVAR-A35-A44.md
+  # Ampliado con la orden de cierre del consultor (2026-10-02): SOLO el revisor, su linea 79
+  - .claude/agents/revisor.md
 rutas_protegidas:
   - knowledge/evidence/
   - knowledge/cases/
   - knowledge/corpus/
   - data/manifests/
-  - .claude/
+  # .claude/ entera, menos .claude/agents/revisor.md (orden de cierre del consultor, 2026-10-02):
+  # las protegidas mandan sobre las permitidas, asi que se nombra todo lo demas
+  - .claude/settings.json
+  - .claude/hooks/
+  - .claude/skills/
   - scripts/git-hooks/
 comprobaciones:
   - uv run botsito state check
