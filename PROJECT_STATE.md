@@ -23,7 +23,7 @@ EN CURSO: `feature/freno-peticiones` (2026-10-02; encargo docs/encargos/feature-
 34680ba · merge: A-29 RESUELTA y A-36 reabierta como pregunta 22; cerrar una ambiguedad toca cinco sitios · tag stable/F36o-cerrar-a29-a36
 
 ## Tests Currently Passing
-1177 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1182 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

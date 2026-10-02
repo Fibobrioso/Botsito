@@ -16,10 +16,12 @@ Tres cosas, con sus umbrales en el registro (ADR-0002), PROVISIONAL bajo A-54:
   IGUALES dentro de la ventana cortan el envio el resto del dia. Igual es la misma `firma` -el
   contenido de la peticion, sin el id-, aunque haya otras en medio.
 
-LO QUE PROTEGE LA CUENTA PASA SIEMPRE, Y CUENTA: cancelar una pendiente, cerrar a mercado y mover
-el stop de una posicion viva hacia el lado que reduce el riesgo (el break even). FTMO no dice que
-no sean «server requests», asi que se cuentan; el corte deja hueco para ellas. Una peticion NEGADA
-no llega al servidor y no se cuenta. Todo lo negado, cada corte y el aviso quedan en `cortes`.
+LO QUE PROTEGE LA CUENTA PASA SIEMPRE, Y CUENTA: cancelar una pendiente, cerrar a mercado y el
+PRIMER movimiento del stop de una posicion viva hacia el lado que reduce el riesgo (el break even).
+Cada una puede darse una sola vez por orden o posicion, asi que lo que protege esta acotado. FTMO
+no dice que no sean «server requests», asi que se cuentan; el corte deja hueco para ellas. Una
+peticion NEGADA no llega al servidor y no se cuenta. El aviso y el corte van al log (WARNING) y
+cada negada al log (INFO); todo, ademas, a `cortes`.
 
 El dia cambia a medianoche en el reloj de la firma, y entonces todo vuelve a cero, tambien un
 corte por bucle.
@@ -121,6 +123,7 @@ class FrenoPeticiones:
             self._cortar(MOTIVO_BUCLE, instante_ms, f"{self.limites.bucle_repeticiones} iguales")
         if self._cortado is not None:
             self.cortes.append(Corte(instante_ms, tipo, id, self._cortado))
+            LOG.info("freno de peticiones: negada %s %s (%s)", tipo, id, self._cortado)
             return self._cortado
         if firma is not None and self.limites.bucle_ms is not None:
             self._recientes.append((instante_ms, firma))

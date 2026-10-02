@@ -5,6 +5,7 @@ Ticks y dias SINTETICOS de 2030; sin cobertura agregada."""
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -36,7 +37,8 @@ from botsito.engine.freno import (
     LimitesFreno,
 )
 from botsito.engine.llenado import Configuracion, Mercado
-from botsito.engine.simulacion import limites_freno_de
+from botsito.engine.perfil_cuenta import cargar_perfil
+from botsito.engine.simulacion import limites_freno_de, reglas_broker_de
 from tests.unit import test_cableado as tc
 from tests.unit import test_escenarios_por_sesion as tes
 
@@ -54,7 +56,11 @@ def _ms(minuto: int, segundo: int = 0) -> int:
     return minuto * MS_POR_MINUTO + segundo * 1000
 
 
-def _broker(limites: LimitesFreno | None = LIMITES, mensajes_dia_max: int = 2000) -> Broker:
+def _broker(
+    limites: LimitesFreno | None = LIMITES,
+    mensajes_dia_max: int = 2000,
+    ticks: list[Tick] | None = None,
+) -> Broker:
     reglas = ReglasBroker(
         volumen_max_lotes=Decimal(10),
         ordenes_simultaneas_max=10_000,
@@ -67,8 +73,12 @@ def _broker(limites: LimitesFreno | None = LIMITES, mensajes_dia_max: int = 2000
         mensajes_dia_max=mensajes_dia_max,
         freno=limites,
     )
-    tick = Tick(MilisegundoUtc(_ms(M0)), Puntos(BID + SPREAD), Puntos(BID), 0, 0)
-    return Broker(reglas, Configuracion(False, 0, lambda _m: SPREAD), Mercado([tick], []), UNO, 1)
+    mercado = Mercado(ticks if ticks is not None else [_tick(M0, 0, BID)], [])
+    return Broker(reglas, Configuracion(False, 0, lambda _m: SPREAD), mercado, UNO, 1)
+
+
+def _tick(minuto: int, segundo: int, bid: int) -> Tick:
+    return Tick(MilisegundoUtc(_ms(minuto, segundo)), Puntos(bid + SPREAD), Puntos(bid), 0, 0)
 
 
 def _compra(b: Broker, i: int, instante_ms: int, precio: int | None = None) -> Orden | Rechazo:
@@ -252,3 +262,62 @@ def test_unos_umbrales_sin_sentido_no_arman_el_freno() -> None:
         LimitesFreno(corte=10, bucle_repeticiones=3)
     with pytest.raises(BrokerError, match="pasa del limite de la firma"):
         _broker(LimitesFreno(corte=2001))
+
+
+# --------------------------------------------- tras el revisor: lo que podia colarse o faltaba
+
+
+def test_un_bucle_que_sube_el_stop_no_se_cuela_por_lo_que_protege() -> None:
+    """Revisor, b1: solo el PRIMER movimiento hacia dentro protege. 5.000 subidas del stop de un
+    punto, con el dia cortado: sale la primera (el break even) y las demas se niegan."""
+    b = _broker(LimitesFreno(corte=3))
+    pos = b.abrir_conocida("p1", "compra", BID, UNO, BID - 5000, BID + 6000, _ms(M0, 1))
+    for i in range(3):
+        _compra(b, i, _ms(M0, 2 + i))
+    for k in range(5000):
+        b.mover_stop(pos.id, BID - 5000 + 1 + k, _ms(M0, 10) + k)
+    assert pos.stop == BID - 4999  # la primera subida, y ninguna mas
+    assert len(b.traza().peticiones) == 4
+    assert _negadas(b) == [MOTIVO_CORTE] * 4999
+
+
+def test_modificar_una_pendiente_negada_la_deja_como_estaba() -> None:
+    b = _broker(LimitesFreno(corte=1))
+    orden = _compra(b, 0, _ms(M0, 1))
+    assert isinstance(orden, Orden)
+    r = b.modificar(orden.id, _ms(M0, 2), precio=orden.precio - 10)
+    assert isinstance(r, Rechazo) and r.motivo == MOTIVO_CORTE
+    assert orden.precio == BID - 1000 and orden.estado == "colocada"
+
+
+def test_el_break_even_al_tick_sale_con_el_dia_cortado() -> None:
+    """El broker mueve el stop al break even al tick (ADR-0065, `_aplicar`): con el dia cortado
+    sale igual, porque es el primer movimiento hacia dentro."""
+    ticks = [_tick(M0, 0, BID), _tick(M0 + 2, 0, BID + 400)]
+    b = _broker(LimitesFreno(corte=1), ticks=ticks)
+    pos = b.abrir_conocida("p1", "compra", BID, UNO, BID - 200, BID + 600, _ms(M0, 1))
+    b.vigilar_break_even(pos.id, BID + 300, _ms(M0, 1))
+    _compra(b, 0, _ms(M0, 2))
+    assert isinstance(_compra(b, 1, _ms(M0, 3)), Rechazo)  # el dia, cortado
+    b.avanzar(_ms(M0 + 3))
+    assert pos.stop == BID and pos.stop_original == BID - 200
+
+
+def test_el_log_dice_el_corte_con_su_motivo_y_cada_negada(caplog: pytest.LogCaptureFixture) -> None:
+    b = _broker(LimitesFreno(corte=1))
+    with caplog.at_level(logging.INFO, logger="botsito.engine.freno"):
+        for i in range(3):
+            _compra(b, i, _ms(M0, 1 + i))
+    avisos = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(avisos) == 1 and MOTIVO_CORTE in avisos[0].getMessage()
+    negadas = [r.getMessage() for r in caplog.records if r.levelno == logging.INFO]
+    assert negadas == [f"freno de peticiones: negada colocar o{i} ({MOTIVO_CORTE})" for i in (1, 2)]
+
+
+def test_el_dia_y_los_umbrales_salen_del_perfil_y_del_registro() -> None:
+    """Revisor, b4: el reloj del dia no se pone a mano en produccion: sale del perfil de FTMO
+    (`firma_huso_corte`), y los umbrales del registro."""
+    perfil = cargar_perfil(RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml")
+    reglas = reglas_broker_de(perfil, REGISTRO)
+    assert reglas.huso_corte == PRAGA
+    assert reglas.freno == LIMITES

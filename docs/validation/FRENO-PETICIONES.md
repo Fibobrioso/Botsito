@@ -61,7 +61,9 @@ el día, el mismo del día de riesgo (ADR-0027). ADR-0063 separó de él el relo
 - «an excessive number of more than 2,000 server requests per day» (Forbidden Trading Practices),
   que es `firma_mensajes_dia_max` = 2.000;
 - y otra FAQ: «200 orders at a time and 2000 max positions per day limitation, just as the limited
-  acceptance of the server messages».
+  acceptance of the server messages». Son OTROS dos límites, de órdenes a la vez y de posiciones
+  al día, que no son el de peticiones; FTMO-REGLAS.md dice que el repo no los recoge
+  (`firma_mensajes_dia_max` solo es el de peticiones), y este freno tampoco (revisor, a4).
 
 **Lo que NO consta, y queda PENDIENTE DE LA DEMO** (o del soporte de FTMO), sin suponerlo:
 - **qué es una «server request»**: si cuenta una petición rechazada, una modificación del stop, una
@@ -98,7 +100,9 @@ Los valores, en §2, con su motivo.
 - **cerrar** a mercado una posición;
 - **mover el stop de una posición viva hacia el lado que reduce el riesgo**: el break even. Lo
   incluyo aunque la orden diga «cerrar o cancelar», porque negarlo deja la posición con más riesgo
-  del que la regla del trader quiere (RN-014), y no puede repetirse: el stop solo sube una vez.
+  del que la regla del trader quiere (RN-014). **Solo el PRIMER movimiento** (corregido tras el
+  revisor, b1: en `652c75b` valía cualquiera, y un bucle de subidas no se frenaba). Así cada cosa
+  que protege se da una vez por orden o posición, y su número está acotado.
 
 Un stop que se alejara del precio no protege y se frena.
 
@@ -119,7 +123,8 @@ nada: una orden negada no llega a existir y no se llena. El freno nunca quita ni
 - **No es una petición**: no llega al servidor y no se cuenta.
 
 Todo corte, cada aviso y cada petición negada quedan en la traza del broker
-(`Traza.cortes`, con instante, tipo, id y motivo) y en el log (`logging`, nivel WARNING). El informe
+(`Traza.cortes`, con instante, tipo, id y motivo) y en el log: el aviso y el corte a nivel WARNING,
+cada negada a nivel INFO (corregido tras el revisor, a3). El informe
 del arnés los imprime por día junto al recuento.
 
 **Peticiones iguales** (el freno contra bucles):
@@ -213,6 +218,8 @@ para ver el borde:
 | ninguna posición sin stop | `test_ninguna_posicion_queda_sin_stop_por_el_freno` | con el día cortado, el stop hacia fuera se niega y la posición conserva el suyo; el break even sale; la orden negada no existe |
 | el día normal no toca ningún umbral | `test_el_dia_de_cinco_escenarios_no_toca_ningun_umbral` y `test_un_dia_de_10_a_13_peticiones_no_toca_ningun_umbral` | el día sintético de cinco escenarios (10 peticiones) por el cableado real, y días de 10 y 13: ni aviso ni nada negado |
 | | `test_los_umbrales_del_registro_van_por_debajo_de_las_2000_con_margen` y `test_unos_umbrales_sin_sentido_no_arman_el_freno` | los umbrales del registro, y que el broker se niega con un corte por encima del límite de la firma |
+| (tras el revisor, §4) | `test_un_bucle_que_sube_el_stop_no_se_cuela_por_lo_que_protege` | 5.000 subidas del stop con el día cortado: sale la primera, se niegan 4.999 |
+| | `test_modificar_una_pendiente_negada_la_deja_como_estaba`, `test_el_break_even_al_tick_sale_con_el_dia_cortado`, `test_el_log_dice_el_corte_con_su_motivo_y_cada_negada` y `test_el_dia_y_los_umbrales_salen_del_perfil_y_del_registro` | la pendiente negada no cambia; el break even al tick sale con el día cortado; el log; el reloj sale del perfil |
 
 **Roto a propósito.** Un script de la carpeta de trabajo hace que el broker deje de preguntar al
 freno: cambia `Broker._admitir` en memoria, sin tocar ningún fichero. Con eso corre el fichero de
@@ -229,6 +236,88 @@ Los otros cinco no miden el freno: el día normal (que no corte nada), los umbra
 `ESCENARIOS-POR-SESION.md` §6.4) no se volvieron a correr: el umbral más bajo, el aviso, está en
 1000. Los representa el test de 10 a 13.
 
+## 4. Informe del revisor
+
+Subagente `revisor`, sobre `91b3291`, `ab1367f` y `652c75b`. Los hallazgos, tal cual; lo
+comprobado sin hallazgos, resumido.
+
+> ## Informe del revisor · feature/freno-peticiones · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 3 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La evidencia que cita A-54 no sostiene la ambigüedad. `ev-v4-012524-0ef85a89` trata de que el trader elige FundedNext con un 5 % diario y un 8 % total. No dice nada de FTMO, de peticiones ni de mensajes al servidor. El comentario de A-54 lo admite a medias («ningún ítem del corpus habla del límite») y la cita va «como en A-27». Es una cita de relleno para cumplir el esquema. | `knowledge/evidence/v4/ev-v4-012524-0ef85a89.yaml`; `knowledge/spec/ambiguedades.yaml:1508-1509`. |
+> | a2 | importa | Dos afirmaciones son falsas para `mover_stop`, y dos documentos las repiten. (1) Informe §1: lo que protege «no puede repetirse: el stop solo sube una vez». (2) `parametros.yaml`, descripción de `freno_peticiones_corte`: el hueco para lo que protege «está acotado por firma_ordenes_simultaneas_max y las posiciones abiertas». `Broker.mover_stop` es público y cada subida de un punto del stop pasa como «protege», sin límite. Ver b1. | `docs/validation/FRENO-PETICIONES.md` §1; `knowledge/spec/parametros.yaml`; `src/botsito/engine/broker.py:543-551` (`protege = stop > p.stop`). |
+> | a3 | importa | El ADR y el informe dicen que «cada petición negada» queda en el log (WARNING). El código solo registra en el log el primer corte del día (`_cortar`) y el aviso (`_contar`). Cada negada posterior solo va a `Traza.cortes`, sin `LOG`. No hay ningún test con `caplog`, así que el log no está probado. | `src/botsito/engine/freno.py`; `docs/adr/0067-…md` §6. |
+> | a4 | menor | Dos erratas de forma. (1) El informe §0.4 cita «otra FAQ» de R13 con «2000 max positions per day», que es un límite distinto del de peticiones, y no lo distingue. (2) La fila 0067 del índice ADR queda colocada antes de la 0037. Se heredó ya antes con la 0066, así que no es de esta rama. | `docs/adr/README.md` (diff); `docs/validation/FTMO-REGLAS.md:60`. |
+>
+> Comprobado sin hallazgos: el contrato (22 ficheros, ninguno protegido); `state check`, `spec check` y `knowledge validate`; el `Fuente:` de `652c75b` (los ids existen); A-54 ABIERTA, `medicion`, no bloqueante, con sus cuatro parámetros, su doc generado y su fila en `PROJECT_STATE.md`; los cuatro DEFAULT_AMBIGUOUS bajo A-54 y `test_provisional_cuelga_de_abierta.py`; `test_no_business_literals`; spec 15.7.0 y los docs generados; ADR-0067 y `test_adr.py`; `PROJECT_STATE.md` 22.904 bytes y la K sin mover a HISTORIA; los regímenes de cambio; la Fase 0 contra el repo (las siete reglas, los días 10/10/13, R13, `MedirDemoFTMO.mq5` solo traduce 10024, lo que no consta queda pendiente); la Fase 0 commiteada antes que el código; nada de plataforma.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 15 hechos, 1 parcial (el log de cada corte, a3), 0 no hechos.
+>
+> Rompiendo el freno en memoria (`Broker._admitir` parcheado), fallan las seis que dice el informe. Negada no cuenta y la que protege sí.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **«Protege la cuenta» deja colar un bucle ilimitado de `mover_stop`.** `_mover` pone `protege=True` a cualquier stop que mejore el actual (`stop > p.stop` en una larga). Las protegidas no pasan ni por el corte ni por el bucle. Un bucle que suba el stop un punto cada vez (stops distintos, así que `bucle` tampoco lo ve) no se frena nunca, y lo medí. Esto contradice el objetivo del encargo («no pueda superar… pase lo que pase en el código que lo llama»). El encargo solo exceptúa «cerrar o cancelar»; el broche del stop lo añade la rama, lo declara y lo justifica con una premisa falsa (a2). Arreglo posible: un tope duro para las protegidas, o dejar pasar el stop solo si es el primer movimiento (`stop_original is None`). | En memoria: `_broker(LimitesFreno(corte=3))`, tres colocar, y 5.000 llamadas a `b.mover_stop(pos.id, BID-5000+1+k, …)` dan «cortado None, total tras 5000 trailing 5003, peticiones 5003, cortes 0». |
+> | b2 | importa | **Los scripts con `reglas_broker_de(perfil)` sin registro caen al límite de la firma en crudo, y las protegidas pueden pasarlo.** Sin umbrales, `Broker.__init__` arma `LimitesFreno(corte=mensajes_dia_max)`, o sea corte = 2.000, sin aviso ni bucle. Las protegidas siguen pasando por encima. «Más de 2.000» es la práctica prohibida, así que ese camino no deja margen. Afecta a `scripts/repeticion_trader.py:80`, `scripts/viabilidad_trader.py:242` y `tests/regression/test_cuenta_7_de_agosto.py:61`. Por su volumen hoy no llegan a 2.000, así que es teórico. | `src/botsito/engine/simulacion.py:99-117`; `broker.py:__init__`. |
+> | b3 | menor | Una colocación negada no se guarda en `broker.ordenes` ni en `_rechazos`, y el cableado asigna id con `f"o{len(ctx.broker.ordenes)+1}"`. Varias negadas seguidas repiten id en `Traza.cortes` y en los eventos «rechazo». No rompe nada, pero hace menos legible el rastro. Además `tb.rechazos` no incluye las negadas por el freno, mientras el cableado emite el evento «rechazo» y marca la zona como rechazada. | `src/botsito/engine/primitivas_broker.py:511,521-524`; `broker.py:_colocar`. |
+> | b4 | menor | Huecos de test. No hay test de `modificar` negado de una pendiente, ni de `_aplicar`/el break even al tick bajo corte, ni de fin de día del cableado bajo corte, ni de log (`caplog`). El «día de la firma» se prueba con Praga puesto a mano en `ReglasBroker`, no leyéndolo del perfil. | `tests/unit/test_freno_peticiones.py`. |
+>
+> ### Lo que no pude comprobar
+> `make check` y su `SELLO` (escribe; no hay `make-check.log`); la CI de Linux (no hace falta); `spec docs --check` (no existe el flag); el recuento 1177 (su `grep` da 1178; `state check` lo acepta); la cobertura, no calculada.
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **b1 y a2, arreglados: el agujero era real.**
+  - **Qué cambia:** protege solo el PRIMER movimiento del stop hacia dentro (`p.stop_original is
+    None`), que es el break even de RN-014. Los siguientes se frenan como lo demás (`_mover`). Así
+    cada cosa que protege se da una vez por orden o posición, y lo de §1 y de la descripción de
+    `freno_peticiones_corte` pasa a ser verdad.
+  - **Test nuevo:** `test_un_bucle_que_sube_el_stop_no_se_cuela_por_lo_que_protege`, el mismo bucle
+    del revisor. Con el día cortado, de 5.000 subidas sale la primera y se niegan 4.999. En
+    `652c75b` salían las 5.000.
+- **a3, arreglado:** cada petición negada va también al log, a nivel INFO, con su motivo. El aviso
+  y el corte siguen en WARNING. Corregidos el ADR §6 y el informe §1, y hay test con `caplog`:
+  `test_el_log_dice_el_corte_con_su_motivo_y_cada_negada`.
+- **b4, arreglado en lo que importa.** Tests nuevos:
+  - `test_modificar_una_pendiente_negada_la_deja_como_estaba`;
+  - `test_el_break_even_al_tick_sale_con_el_dia_cortado` (`_aplicar`);
+  - `test_el_dia_y_los_umbrales_salen_del_perfil_y_del_registro`: Praga sale de `firma_huso_corte`
+    del perfil de FTMO, y los umbrales del registro.
+
+  El fin de día del cableado bajo corte no lleva test propio: llama a `cerrar_a_mercado` y
+  `cancelar`, que ya prueba `test_al_llegar_al_corte_…`.
+- **a4, arreglado en lo de esta rama:** §0.4 dice que «200 orders at a time» y «2000 max positions
+  per day» son otros dos límites, que el freno no recoge. El orden del índice de ADR viene de antes
+  y no se toca.
+- **a1, declarado; lo decide el consultor.** Es verdad: ningún ítem del corpus habla del límite de
+  peticiones, y el esquema exige al menos uno (`cases/ambiguedades.py`: «una ambiguedad cita al
+  menos un item de evidencia»). Se siguió el precedente de A-27, y el comentario de A-54 lo dice.
+  Hay dos salidas, y las dos son de otra rama: que el esquema admita una ambigüedad de la firma sin
+  evidencia del corpus, citando su fuente (FTMO-REGLAS R13), o dejarlo así.
+- **b2, declarado.** Sin umbrales del registro el broker frena en el límite de la firma, sin margen.
+  Lo que protege puede pasar de 2.000 por pocas: ahora, con b1, son a lo sumo una cancelación, un
+  cierre y un break even por orden o posición. Solo lo usan dos scripts de análisis que no operan
+  y un test de regresión. Operar en una cuenta real pasa por el cableado, que siempre trae los
+  umbrales. Cerrarlo del todo es exigir el registro en `reglas_broker_de`, y eso toca `scripts/`,
+  que no está en el contrato.
+- **b3, declarado.** Una colocación negada no existe en `broker.ordenes`, y por eso el id se puede
+  repetir en la traza. Es a propósito, porque nunca llegó al servidor. `tb.rechazos` cuenta los
+  rechazos del servidor; los del freno están en `tb.cortes` y en su sección del informe.
+- **El recuento 1177 frente a 1178 del `grep`:** `state check` cuenta a su manera y da OK. Con los
+  cinco tests nuevos son 1182.
+
 ## Estado
 
-EN CURSO: Fases 0, 1 y 2 hechas; falta el revisor.
+**Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra.
+- Fase 0 (inventario y diseño, commiteada antes del código), Fase 1 (el freno en el puerto) y
+  Fase 2 (los tests, rotos a propósito) hechas.
+- El revisor está pasado, y el agujero que encontró (b1) está cerrado y probado.
+- Para el consultor:
+  - la evidencia de A-54 (a1);
+  - el freno sin umbrales en los scripts (b2);
+  - los umbrales PROVISIONAL, con A-54, en la demo de FTMO.
+- La K de Next Action sigue en `PROJECT_STATE.md` hasta el cierre.

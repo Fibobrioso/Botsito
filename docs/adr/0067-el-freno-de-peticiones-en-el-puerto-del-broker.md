@@ -36,8 +36,10 @@ El margen hasta el límite es para lo que protege la cuenta.
 Pasan siempre:
 - cancelar una pendiente;
 - cerrar a mercado;
-- mover el stop de una posición viva hacia el lado que reduce el riesgo (el break even, RN-014 y
-  ADR-0065).
+- el PRIMER movimiento del stop de una posición viva hacia el lado que reduce el riesgo: el break
+  even, RN-014 y ADR-0065. Solo el primero: así lo que protege queda acotado (una vez por orden o
+  posición), y un bucle que subiera el stop punto a punto no se cuela (revisor, b1). Los siguientes
+  se frenan como lo que no protege.
 
 Cuentan para el límite, porque FTMO no dice que no sean «server requests». Una petición NEGADA no
 llega al servidor y no se cuenta. Colocar y modificar una pendiente negadas devuelven un `Rechazo`
@@ -57,7 +59,7 @@ las sesiones (ADR-0063). Con el día nuevo todo vuelve a cero, también un corte
 
 Cada aviso y cada petición negada, con su motivo:
 - en `Traza.cortes`;
-- en el log (`logging`, WARNING);
+- en el log: el aviso y el corte, a nivel WARNING; cada petición negada, a nivel INFO;
 - en el informe del arnés, «El freno de peticiones».
 
 ### 7. Sin umbrales, el límite de la firma

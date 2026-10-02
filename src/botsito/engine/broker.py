@@ -541,10 +541,13 @@ class Broker:
         p.break_even_desde_ms = instante_ms
 
     def _mover(self, p: Posicion, stop: int, instante_ms: int, fuente: str) -> bool:
-        """Mueve el stop de una posicion viva, si el freno lo deja: hacia el lado que reduce el
-        riesgo (el break even) sale siempre; hacia fuera se frena como lo demas (ADR-0067). Nunca
+        """Mueve el stop de una posicion viva, si el freno lo deja (ADR-0067). PROTEGE -sale
+        siempre- solo el PRIMER movimiento hacia el lado que reduce el riesgo, que es el break even
+        de RN-014: asi lo que protege queda acotado (una vez por posicion) y un bucle que suba el
+        stop punto a punto no se cuela por ahi. Los demas se frenan como lo que no protege. Nunca
         deja la posicion sin stop: si se niega, conserva el que tenia."""
-        protege = stop > p.stop if p.lado == "compra" else stop < p.stop
+        hacia_dentro = stop > p.stop if p.lado == "compra" else stop < p.stop
+        protege = hacia_dentro and p.stop_original is None
         negada = self._admitir(
             instante_ms, PETICION_MODIFICAR, p.id, (PETICION_MODIFICAR, p.id, stop), protege
         )
