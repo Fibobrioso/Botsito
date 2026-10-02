@@ -75,3 +75,46 @@ Copiada tal cual:
 >
 > Después sigue: push como fix/cuarentena-por-defecto, CI de Linux, revisor e informe.
 > «Rama lista para revisión, NO cerrada.»
+
+## Cuarta orden: decisiones del consultor (2026-10-01)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisiones del consultor sobre trabajo/cuarentena-por-defecto:
+>
+> 1. Los 9 ítems de evidencia: knowledge/ no se toca.
+>    a) Para cada ítem, comprueba por código si el segmento citado contiene una fecha que sea un día de casos_ocultos. Imprime solo el id del ítem y True o False, nunca el texto ni la fecha. Si alguno da True, para y avísame antes de seguir: sería una exposición real y hay que declararla.
+>    b) kb find y kb at ocultan por defecto también la evidencia cuya cita cae en un segmento oculto, con el recuento y el motivo, igual que con los segmentos. --crudo la muestra. Test con un ítem sintético.
+>
+> 2. corpus transcript check: autorizado con crudo=True, con su motivo en la lista. Condición: solo imprime el resultado de la comprobación (OK o fallo, y el fichero), nunca contenido. Test que lo comprueba.
+>
+> 3. scripts/a18_buscar.py: se queda filtrado y sin autorizar.
+>    - Sus cuatro salidas commiteadas contienen líneas que hoy se ocultan: añádelas a la lista calculada que bloquea la guardia, como las 10 propuestas.
+>    - Explica en la cabecera del script que desde esta rama sus salidas salen filtradas y no reproducen las viejas.
+>    - Si esas salidas viven en informes ya cerrados, pon un recuadro de corrección; no edites el cuerpo.
+>
+> 4. scripts/transcribir_sesion.py: si hoy no usa crudo=True, quítalo de la lista de autorizados. Negar por defecto: se autoriza cuando una función concreta lo necesite.
+>
+> 5. En CLAUDE.md, «Trampas medidas»: un texto que contenga literalmente la opción cruda o crudo=True (encargos, informes, mensajes de commit) se escribe con Write o Edit, no con un heredoc ni con -m, porque la guardia lo bloquea. Para el mensaje de commit, usa git commit -F con un fichero escrito con Write.
+>
+> 6. Apunta en el informe el run 36938253913, y el run nuevo cuando acabe la CI de Linux.
+>
+> Como vuelve a tocar la guardia: push como fix/cuarentena-por-defecto, CI de Linux, revisor solo sobre lo que cambie, y su informe pegado.
+> «Rama lista para revisión, NO cerrada.»
+
+## Quinta orden: respuestas del consultor a dos preguntas (2026-10-01)
+
+Al hacer el punto 3 de la cuarta orden se midió
+(`docs/validation/anexos/CUARENTENA-POR-DEFECTO/citas_de_salidas.py`, solo cuentas) qué ficheros
+seguidos citan las líneas de las cuatro salidas que hoy se ocultan. Las preguntas y las respuestas,
+copiadas tal cual del diálogo de la sesión:
+
+> **Pregunta 1.** Dos informes cerrados citan líneas que hoy se ocultan, según la medición del anexo `citas_de_salidas.py`, que solo imprime cuentas: `A24-A21-A26-A34-CLASIFICACION.md` cita 3 y `A35-PIVOTE-FORMADO-CLASIFICACION.md` cita 4 (cuentan si coincide la mitad o más de sus ventanas de 30 caracteres). Hoy la guardia los deja leer. ¿Qué hago con ellos?
+>
+> **Respuesta:** «Bloquear y recuadro (Recommended)»: Se añaden a la lista calculada `ficheros_con_ocultos.txt`, que la guardia bloquea. El generador los calcula con el mismo método y el mismo umbral. Además llevan un recuadro de corrección arriba, sin tocar el cuerpo.
+>
+> **Pregunta 2.** Dos ítems de evidencia, `ev-v3-002130-8617c40b` (3 líneas) y `ev-v4-003451-d750e553` (5), copian texto de líneas que hoy se ocultan, pero su cita no cae en un segmento oculto. Por eso no estaban entre los 9 y el punto 1b no los oculta en kb find ni en kb at. No los he abierto; puede ser texto que el ASR repite en un segmento vecino. knowledge/ no se toca. ¿Qué hago?
+>
+> **Respuesta:** «Ocultar por contenido (Recommended)»: kb find y kb at ocultan también el ítem cuyo texto copia la mitad o más de una línea oculta, con su recuento y su motivo. Con la opción cruda se ven. Se añade un test sintético y se repite la comprobación 1a sobre estos dos (id y True/False).

@@ -605,31 +605,75 @@ def test_un_guion_nuevo_con_el_corpus_sin_filtrar_se_bloquea(
     assert motivo is not None and g.R_CRUDO in motivo
 
 
-def test_una_propuesta_con_segmentos_ocultos_no_se_lee(g: ModuleType, repo: Path) -> None:
+def test_un_fichero_con_texto_oculto_no_se_lee(g: ModuleType, repo: Path) -> None:
     """La lista la calcula `botsito.corpus.cuarentena` y la guardia la lee de su fichero
-    (orden del consultor del 2026-10-01); aqui, sintetica."""
-    from botsito.corpus.cuarentena import FICHERO_PROPUESTAS_OCULTAS, texto_de_la_lista
+    (ordenes del consultor del 2026-10-01): propuestas con segmentos ocultos y salidas de medicion
+    que ya no se reproducen. Aqui, sintetica."""
+    from botsito.corpus.cuarentena import FICHERO_OCULTOS, texto_de_la_lista
 
     oculta = _escribir(repo, "knowledge/_proposals/pr-v2-000100-000200-aaaaaaaa.yaml")
     libre = _escribir(repo, "knowledge/_proposals/pr-v2-000300-000400-bbbbbbbb.yaml")
-    _escribir(repo, FICHERO_PROPUESTAS_OCULTAS, texto_de_la_lista([oculta.name]))
-    motivo = _decide(g, repo, "Read", file_path=str(oculta))
-    assert motivo is not None and g.R_PROPUESTA_OCULTA in motivo
+    salida = _escribir(repo, "docs/validation/X-SALIDA.txt")
+    otra = _escribir(repo, "docs/validation/Y-SALIDA.txt")
+    _escribir(
+        repo,
+        FICHERO_OCULTOS,
+        texto_de_la_lista([f"knowledge/_proposals/{oculta.name}", "docs/validation/X-SALIDA.txt"]),
+    )
+    for ruta in (oculta, salida):
+        motivo = _decide(g, repo, "Read", file_path=str(ruta))
+        assert motivo is not None and g.R_FICHERO_OCULTO in motivo, ruta
+        assert _bash(g, repo, f'cat "{ruta}"') is not None, ruta
+        assert _decide(g, repo, "Grep", pattern="x", path=str(ruta)) is not None, ruta
     assert _decide(g, repo, "Read", file_path=str(libre)) is None
-    assert _bash(g, repo, f'cat "{oculta}"') is not None
+    assert _decide(g, repo, "Read", file_path=str(otra)) is None
+
+
+def _guion_de_la_lista() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        "ficheros_con_ocultos", RAIZ / "scripts" / "ficheros_con_ocultos.py"
+    )
+    assert spec is not None and spec.loader is not None
+    guion = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guion)
+    return guion
 
 
 def test_la_lista_de_la_guardia_es_la_que_se_calcula() -> None:
-    """El fichero que lee la guardia es exactamente el que sale de `propuestas_con_ocultos`:
-    nadie lo escribe a mano."""
-    from botsito.corpus.cuarentena import (
-        FICHERO_PROPUESTAS_OCULTAS,
-        propuestas_con_ocultos,
-        texto_de_la_lista,
-    )
+    """El fichero que lee la guardia es exactamente el que sale de
+    `scripts/ficheros_con_ocultos.py`: nadie lo escribe a mano. Sin los datos de las
+    transcripciones (la CI), las salidas y los ficheros que las copian no se recalculan: se
+    comprueba que son de `docs/`."""
+    from botsito.corpus.cuarentena import FICHERO_OCULTOS, texto_de_la_lista
 
-    esperado = texto_de_la_lista(propuestas_con_ocultos(RAIZ))
-    assert (RAIZ / FICHERO_PROPUESTAS_OCULTAS).read_text(encoding="utf-8") == esperado
+    propuestas, otros = _guion_de_la_lista().calcular(RAIZ)
+    actual = (RAIZ / FICHERO_OCULTOS).read_text(encoding="utf-8")
+    if otros is None:
+        listadas = [ln for ln in actual.splitlines() if ln and not ln.startswith("#")]
+        otros = [r for r in listadas if not r.startswith("knowledge/_proposals/")]
+        assert all(r.startswith("docs/") for r in otros), otros
+    assert actual == texto_de_la_lista(propuestas + otros)
+
+
+def test_una_linea_es_oculta_si_su_segmento_lo_esta(tmp_path: Path) -> None:
+    """La definicion EXACTA (quinta orden): cuenta el segmento `n` de la transcripcion del pasaje,
+    no que la linea haya dejado de salir. Sintetico."""
+    from botsito.corpus.cuarentena import Filtro, Oculto
+
+    salida = tmp_path / "docs" / "X-SALIDA.txt"
+    salida.parent.mkdir(parents=True)
+    salida.write_text(
+        "=== A-1 · PASAJE 1 | tr-v1-falso-00000000 | 0:00:00-0:00:10 | x x1\n"
+        "[0:00:00-0:00:05] #0 linea visible\n"
+        "[0:00:05-0:00:10] #1 linea del oculto\n"
+        "=== PASAJE 2 | tr-v2-falso-00000000 | 0:00:00-0:00:05 | x x1\n"
+        "[0:00:00-0:00:05] #1 mismo numero, otra transcripcion\n",
+        encoding="utf-8",
+    )
+    oculto = Filtro("v1", ocultos={1: Oculto("v1", 1, 5000, 10000, "c")})
+    filtros = {"tr-v1-falso-00000000": oculto, "tr-v2-falso-00000000": Filtro("v2")}
+    lineas = _guion_de_la_lista().lineas_ocultas(tmp_path, "docs/X-SALIDA.txt", filtros)
+    assert lineas == ["linea del oculto"]
 
 
 def test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena(g: ModuleType) -> None:

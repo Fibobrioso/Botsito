@@ -1,5 +1,14 @@
 # Sesión 02: los candidatos C-xx en las transcripciones, criterio congelado antes de buscar
 
+> **RECUADRO DE CORRECCIÓN (2026-10-01, rama `trabajo/cuarentena-por-defecto`).** La salida congelada de esta medición, `SESION-02-BUSQUEDA-SALIDA.txt`, trae 11 líneas de
+> segmentos que hoy se ocultan por defecto (sesión en cuarentena, tramo no citable o
+> material reservado o sin sortear: `botsito.corpus.cuarentena`). Desde esa rama,
+> `scripts/buscar_ambiguedades.py` lee la cruda FILTRADA, así que volver a ejecutarlo ya no reproduce la
+> salida commiteada, y la guardia de Claude Code no deja leerla
+> (`.claude/hooks/ficheros_con_ocultos.txt`). El cuerpo de este informe no se toca: lo que
+> dice se hizo sobre la salida commiteada. Detalle y cuentas:
+> `docs/validation/CUARENTENA-POR-DEFECTO.md`.
+
 Rama `trabajo/sesion-02`, 2026-09-25. Sin merge, sin tag y sin push.
 
 Este documento y la lista `TERMINOS_SESION02` de `scripts/buscar_ambiguedades.py` se commitean

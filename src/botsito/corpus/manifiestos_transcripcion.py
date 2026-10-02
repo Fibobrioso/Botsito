@@ -294,10 +294,15 @@ def comprobar(
             continue
         try:
             # LLAMADOR AUTORIZADO de `crudo=True` (`trabajo/cuarentena-por-defecto`): la
-            # integridad recalcula los recuentos del manifiesto sobre la cruda ENTERA.
+            # integridad recalcula los recuentos del manifiesto sobre la cruda ENTERA. Condicion
+            # del consultor: solo imprime el resultado (OK o fallo) y el fichero, nunca contenido;
+            # por eso el error de forma NO lleva el detalle, que puede traer una palabra.
             segmentos = cargar_cruda(carpeta, crudo=True)
-        except (TranscripcionError, UnicodeDecodeError) as exc:
-            errores.append(f"{t.id}: {FICHERO_CRUDA} no se puede leer ({exc})")
+        except (TranscripcionError, UnicodeDecodeError):
+            errores.append(
+                f"{t.id}: {FICHERO_CRUDA} no se puede leer (forma invalida; el detalle no se "
+                "imprime porque puede traer texto de la transcripcion)"
+            )
             continue
         errores += [f"{t.id}: {e}" for e in _recomputar(t.doc, segmentos)]
         if glosario is None:

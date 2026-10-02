@@ -4,13 +4,24 @@ artefacto: docs/validation/CUARENTENA-POR-DEFECTO.md
 rutas_permitidas:
   - docs/validation/CUARENTENA-POR-DEFECTO.md
   - docs/validation/anexos/CUARENTENA-POR-DEFECTO/
+  # Cuarta orden, punto 3: el recuadro de correccion en los informes cerrados que nombran una
+  # salida de medicion (el cuerpo no se toca).
+  - docs/validation/A18-TRANSCRIPCIONES.md
+  - docs/validation/A18-TRANSCRIPCIONES-CRITERIO.md
+  - docs/validation/A18-TRANSCRIPCIONES-CLASIFICACION.md
+  - docs/validation/A24-A21-A26-A34-CRITERIO.md
+  - docs/validation/A24-A21-A26-A34-CLASIFICACION.md
+  - docs/validation/A35-PIVOTE-FORMADO-CRITERIO.md
+  - docs/validation/A35-PIVOTE-FORMADO-CLASIFICACION.md
+  - docs/validation/SESION-02-BUSQUEDA-CRITERIO.md
+  - docs/validation/SESION-02-BUSQUEDA-CLASIFICACION.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - docs/runbooks/
   - PROJECT_STATE.md
   - CLAUDE.md
   - .claude/hooks/guardia.py
-  - .claude/hooks/propuestas_con_ocultos.txt
+  - .claude/hooks/ficheros_con_ocultos.txt
   - .claude/skills/
   - src/botsito/cli.py
   - src/botsito/retrieval/

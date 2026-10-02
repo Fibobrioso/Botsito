@@ -223,14 +223,9 @@ la regla en su fuente nueva.
 
 ## 7. Lo que debe decidir el consultor
 
-1. **Los 9 items de evidencia de §9.3**, que citan un segmento que hoy se oculta por (c). No se ha
-   tocado nada de `knowledge/`.
-2. **`corpus transcript check` en `AUTORIZADOS`** (§2.1 y §9.1): se anadio con su motivo porque la
-   integridad necesita la cruda entera; si no se acepta, hay que decidir como comprueba el
-   manifiesto.
-3. **`scripts/a18_buscar.py` filtrado** (§9.1): con el filtro, las cuatro salidas commiteadas de
-   las busquedas de A-18, A-24, A-35 y la sesion 02 ya no se reproducen byte a byte (mismos
-   pasajes, menos lineas). La alternativa es autorizarlo con `crudo=True`.
+> **CORRECCION (2026-10-01, misma rama, cuarta y quinta orden).** Las tres preguntas que habia aqui
+> estan DECIDIDAS: los 9 items, `corpus transcript check` y `scripts/a18_buscar.py` (§12). Queda
+> una sola cosa para el consultor, que nace de la quinta orden: §13.4.
 
 ## La skill `abrir-rama`, en su primer uso
 
@@ -242,6 +237,9 @@ HISTORIA, como pedia el encargo, lo que quedo fuera del cierre de F36k (el «1 s
 `make check` en `main`).
 
 ## 8. Estado
+
+> **CORRECCION (2026-10-01, misma rama).** Este estado era el de la tercera orden. El vigente es el
+> del final del informe, §15.
 
 **PARADA, por orden del consultor, antes de declarar la rama lista**: la auditoria de §9.3 encontro
 9 items de evidencia vivos que citan un segmento que hoy se oculta por (c). El resto de la tercera
@@ -272,6 +270,11 @@ Copiada tal cual en `docs/encargos/trabajo-cuarentena-por-defecto.md`, «Tercera
   (§2.1), y la lista de autorizados pasa a ser por (fichero, funcion) en vez de por fichero.
 
 ### 9.2 Punto 1: las propuestas con segmentos ocultos no se leen
+
+> **CORRECCION (2026-10-01, misma rama, cuarta orden).** Los nombres de este punto cambiaron: la
+> lista es ahora `.claude/hooks/ficheros_con_ocultos.txt`, la escribe
+> `scripts/ficheros_con_ocultos.py`, va por rutas relativas y la guardia la mira en
+> `motivo_fichero` con `R_FICHERO_OCULTO`, para propuestas y para salidas de medicion (§12.3).
 
 - `cuarentena.propuestas_con_ocultos` CALCULA la lista; `scripts/propuestas_con_ocultos.py
   --escribir` la vuelca a `.claude/hooks/propuestas_con_ocultos.txt`, que lee la guardia (no
@@ -327,9 +330,10 @@ Regla de `RITUAL.md` (la rama toca un hook): empujada como `fix/cuarentena-por-d
 | Commit | Run | Resultado |
 |---|---|---|
 | `e30765c` (tercera orden) | `36936326358` | 1 failed, 1768 passed, 8 skipped: solo el fallo esperado, `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/` |
+| `a4d37e8` (hallazgos del revisor, §11) | `36938253913` | 1 failed, 1770 passed, 8 skipped: el mismo fallo esperado y ningun otro |
 
-El run del commit que trae los arreglos del revisor (§11) se apunta en la respuesta: escribirlo
-aqui exigiria otro commit y otro run.
+El run del commit de la cuarta y la quinta orden se apunta en la respuesta: escribirlo aqui
+exigiria otro commit y otro run.
 
 ## 11. Informe del revisor
 
@@ -389,3 +393,172 @@ requisitos del eje (b), lo comprobado sin hallazgos y la lista de comandos, resu
   fichero entero es la de la lista del consultor; si la quiere por funcion, no hay hoy ninguna que
   la use.
 - **B3 y B4**: declarados; son decisiones del consultor (§7).
+
+## 12. La cuarta orden del consultor (2026-10-01)
+
+Copiada tal cual en `docs/encargos/trabajo-cuarentena-por-defecto.md`, «Cuarta orden».
+
+### 12.1 Punto 1a: ¿el segmento que cita cada uno de los 9 items trae un dia reservado?
+
+`docs/validation/anexos/CUARENTENA-POR-DEFECTO/exposicion_items.py`: lo comprueba el propio filtro
+al ocultar (`Filtro.dias`, con los dias de `casos_ocultos`, y `Oculto.fecha_vigilada`), leyendo la
+cruda FILTRADA; del texto solo sale un booleano. Se imprimio solo el id y True o False:
+
+| Item | Fecha de un dia de `casos_ocultos` |
+|---|---|
+| ev-v2-002604-041288d7 | False |
+| ev-v3-001952-a3276d86 | False |
+| ev-v3-002026-fa5295fa | False |
+| ev-v4-000016-8f6862dd | False |
+| ev-v4-000052-61cf22a9 | False |
+| ev-v4-000353-9ea3ce94 | False |
+| ev-v4-004533-14f2b226 | False |
+| ev-v4-012049-04c922c5 | False |
+| ev-v6-014702-2d7096db | False |
+
+Ninguno da True: no hay exposicion que declarar. La deteccion de fechas (`cuarentena.fechas_en`:
+«N de MES», «MES N», «N/M», tambien con el numero en letras) tiene su control positivo sintetico en
+`test_fechas_en_dice_dia_y_mes_y_nada_mas`, que exige True para una fecha vigilada y False para el
+resto.
+
+### 12.2 Punto 1b: kb oculta la evidencia cuya cita cae en un segmento oculto
+
+`construir_indice` (`src/botsito/retrieval/indice.py`) quita del indice, salvo con la opcion de
+crudo, el item cuyo intervalo pisa un segmento que el filtro oculta (`cuarentena.items_ocultos`, con
+el motivo de mas prioridad de los que pisa). `kb find` y `kb at` lo cuentan en el aviso
+(«N items de evidencia: … por …»), sin id ni texto; `kb at` cuenta solo los de su ventana.
+Test sintetico: `test_kb_oculta_la_evidencia_cuya_cita_cae_en_un_segmento_oculto`.
+
+**Consecuencia que conviene ver: no son solo los 9.** El mismo criterio oculta toda la evidencia de
+las sesiones en cuarentena, porque su cita cae en una sesion entera oculta por (a). Medido con
+`anexos/CUARENTENA-POR-DEFECTO/kb_ocultos.py` (solo cuentas):
+
+| Video | Motivo | Via | Items |
+|---|---|---|---|
+| v2 | (c) | cita | 1 |
+| v3 | (c) | cita | 2 |
+| v4 | (c) | cita | 5 |
+| v6 | (c) | cita | 1 |
+| v6 | (b) | copia | 1 |
+| v7 | (a) | cita | 5 |
+| v8 | (a) | cita | 2 |
+| v9 | (a) | cita | 62 |
+
+79 de 437 items salen ocultos por defecto: los 9 de (c), los 69 de v7, v8 y v9 por (a), y uno de v6
+por (b) que entra por la quinta orden (§13.3). Los de (a) son coherentes con la cuarentena -su cita
+es texto de una sesion que no se lee-, pero hasta hoy `kb find` los ensenaba.
+
+### 12.3 Punto 3: `scripts/a18_buscar.py` y sus cuatro salidas
+
+- **Filtrado y sin autorizar**, como estaba. La cabecera del script dice desde hoy que lee la cruda
+  filtrada, que su salida de hoy no reproduce la commiteada, y que lo mismo vale para
+  `buscar_ambiguedades.py`, que importa de el.
+- **Las cuatro salidas, en la lista que bloquea la guardia**, junto a las 10 propuestas: la lista
+  pasa a llamarse `.claude/hooks/ficheros_con_ocultos.txt` (14 rutas relativas), la escribe
+  `scripts/ficheros_con_ocultos.py --escribir`, y la guardia la mira en `motivo_fichero`
+  (`R_FICHERO_OCULTO`): Read, Grep, Glob y los lectores de Bash. Test sintetico:
+  `test_un_fichero_con_texto_oculto_no_se_lee` (una propuesta y una salida bloqueadas, sus vecinas
+  no). `test_la_lista_de_la_guardia_es_la_que_se_calcula` exige que el fichero sea lo calculado.
+- **Que una salida entre se CALCULA, no se supone**: una salida entra si trae alguna linea
+  `[h:mm:ss-h:mm:ss] #n texto` cuyo segmento `n`, de la transcripcion de su pasaje, esta oculto hoy.
+  La primera version comparaba el sha de la salida de hoy con el de la commiteada, y eso no mide lo
+  mismo (§13.1). Con la definicion exacta, las cuatro entran:
+
+| Salida | Lineas de segmentos ocultos hoy | Lineas que hoy ya no salen (la cuenta vieja) |
+|---|---|---|
+| `A18-TRANSCRIPCIONES-SALIDA.txt` | 27 | 50 |
+| `A24-A21-A26-A34-SALIDA.txt` | 9 | 9 |
+| `A35-PIVOTE-FORMADO-SALIDA.txt` | 9 | 9 |
+| `SESION-02-BUSQUEDA-SALIDA.txt` | 11 | 11 |
+
+- **Recuadros de correccion** en los 9 informes cerrados que nombran una de esas salidas (los
+  `*-CRITERIO.md` y `*-CLASIFICACION.md` de A-18, A-24, A-35 y sesion 02, y
+  `A18-TRANSCRIPCIONES.md`), justo debajo del titulo, con el cuerpo intacto. Los puso
+  `anexos/CUARENTENA-POR-DEFECTO/recuadros.py`, una vez, fuera de `make check`; el diff de cada uno
+  son 9 lineas anadidas y ninguna quitada.
+
+### 12.4 Puntos 2 y 4: la lista de autorizados
+
+- **`corpus transcript check`** (`manifiestos_transcripcion.comprobar`), autorizado con su motivo.
+  Solo imprime el resultado (OK o el fallo) y el fichero: el error de forma ya no arrastra el
+  detalle de la excepcion, que podia traer texto. Test: `test_transcript_check_no_imprime_contenido`,
+  con la cruda sana y con una rota cuyo sha casa; ni el texto del segmento ni la palabra que rompe
+  la forma salen.
+- **`scripts/transcribir_sesion.py`** no usa la opcion de crudo: ya no esta autorizado como fichero
+  entero. Quedan dos funciones concretas, `salidas_de` y `transcribir`, porque arman y escriben las
+  rutas de la cruda de una sesion NUEVA fuera del repositorio (la tuberia de cuarentena), y sin
+  ellas `test_nadie_lee_la_cruda_sin_pasar_por_las_funciones_que_filtran` falla. Es la lectura de
+  «se autoriza cuando una funcion concreta lo necesite»; si el consultor las quiere fuera, hay que
+  cambiar el script. `_autorizado` ya no acepta una entrada por fichero entero, y un test exige que
+  ninguna lo sea.
+
+### 12.5 Punto 5: la trampa en CLAUDE.md
+
+Anadida a «Trampas medidas»: un texto con la opcion o el parametro literal se escribe con Write o
+Edit, y el mensaje de commit con `git commit -F` y un fichero escrito con Write. Este commit se hizo
+asi.
+
+## 13. La quinta orden del consultor, y una medicion que conto mal
+
+Las dos preguntas y sus respuestas, tal cual, en el encargo («Quinta orden»).
+
+### 13.1 El error
+
+Al hacer el punto 3 medi que ficheros seguidos copian lineas de las cuatro salidas que hoy se
+ocultan, y defini «linea oculta» como **la linea que esta en la salida commiteada y no en la de
+hoy**. Esa definicion **cuenta de mas**: si el termino de un pasaje cae en un segmento oculto, el
+pasaje ENTERO deja de salir, con sus vecinos VISIBLES. Con ella salieron 19 ficheros, y con el
+criterio estricto (la mitad o mas de las ventanas) dos informes cerrados -los `*-CLASIFICACION.md`
+de A-24 (3) y de A-35 (4)- y seis items, dos de ellos fuera de los 9: `ev-v3-002130-8617c40b` y
+`ev-v4-003451-d750e553`. **Con esas cifras se hicieron las dos preguntas.**
+
+Al implementar la segunda respuesta, el criterio por contenido no oculto ninguno de esos dos items.
+Buscando por que, se midio (solo numeros y booleanos) que los 8 segmentos que casaban (v3 #241, #243
+y #244; v4 #596 a #600) **no estan ocultos hoy**: eran vecinos visibles de pasajes que desaparecen.
+Las transcripciones eran las mismas (`tr-v3-…-270a4851`, `tr-v4-…-a8d1bccc`).
+
+### 13.2 La medicion corregida
+
+`anexos/CUARENTENA-POR-DEFECTO/citas_de_salidas.py`, reescrito con la definicion EXACTA (una linea
+es oculta si su segmento lo esta) y con la vieja al lado:
+
+- **Ningun informe** copia una linea oculta: los dos `*-CLASIFICACION.md` casaban lineas visibles.
+- **Cuatro items** copian alguna, y los cuatro estan ya entre los 9 de §9.3 (ocultos en kb por su
+  cita): `ev-v2-002604-041288d7`, `ev-v4-000016-8f6862dd`, `ev-v4-000353-9ea3ce94` y
+  `ev-v4-012049-04c922c5`.
+- Control: las lineas VISIBLES de las mismas salidas se encuentran copiadas en 54 a 241 ficheros
+  segun la salida, asi que el metodo encuentra copias cuando las hay.
+
+### 13.3 Lo que se hizo con las dos respuestas
+
+Las dos decisiones son un MECANISMO calculado («el generador los calcula con el mismo metodo y el
+mismo umbral»; «kb oculta el item cuyo texto copia la mitad o mas de una linea oculta»), y se
+implementaron tal cual, con la definicion corregida:
+
+- **Informes**: `scripts/ficheros_con_ocultos.py` anade a la lista los ficheros de `docs/` que copian
+  una linea oculta de una salida (`cuarentena.copia`, ventanas de 30 caracteres cada 10, la mitad o
+  mas). **Hoy no entra ninguno**; la lista sigue en 14 rutas. Test de la definicion:
+  `test_una_linea_es_oculta_si_su_segmento_lo_esta` (un `#1` oculto en una transcripcion y visible
+  en otra). Los 9 recuadros de §12.3 se pusieron igual: lo que corrigen es la salida, no la copia.
+- **Items**: `construir_indice` oculta tambien el item cuyo texto (cita, afirmacion, valor y notas)
+  copia un segmento que el filtro oculta en SU video, aunque su cita no lo pise. Lo hace
+  `indice._evidencia_que_copia`, AUTORIZADA a leer la cruda entera con su motivo (nueva entrada de
+  `AUTORIZADOS`): compara y devuelve ids y motivos, nunca texto. Tests:
+  `test_kb_oculta_la_evidencia_que_copia_un_segmento_oculto` (`kb find` y `kb at`, y la opcion de
+  crudo lo muestra) y `test_copia_pide_la_mitad_de_las_ventanas`. **Sobre el repositorio real oculta
+  uno**, que no es ninguno de los dos de la pregunta: `ev-v6-010927-50b8d873`, motivo (b) -copia el
+  texto de un segmento de un tramo no citable de v6 sin que su cita (1:09:27) caiga en el tramo-.
+- **La 1a repetida** (`anexos/CUARENTENA-POR-DEFECTO/copias_items.py`, id, motivo y True/False):
+  `ev-v6-010927-50b8d873 | b | False`. Los dos items de la pregunta no copian ningun segmento
+  oculto, asi que no hay segmento sobre el que repetirla.
+
+### 13.4 Lo que debe decidir el consultor
+
+1. **Las dos respuestas se dieron sobre cifras que estaban mal** (§13.1). Lo implementado es el
+   mecanismo que se decidio, con la definicion corregida, y hoy no bloquea ningun informe ni oculta
+   los dos items nombrados. Si el consultor queria otra cosa -por ejemplo, bloquear los dos
+   `*-CLASIFICACION.md` aunque no copien nada oculto-, es un cambio de una linea en la lista
+   calculada.
+2. **`ev-v6-010927-50b8d873`** copia texto de un tramo no citable de v6 desde una cita fuera del
+   tramo. `knowledge/` no se ha tocado; kb lo oculta por defecto. Puede ser una frase que el trader
+   repite (no se ha abierto); si no lo es, el item cita algo que no deberia.

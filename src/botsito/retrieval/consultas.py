@@ -87,12 +87,15 @@ def _exigir_modo(indice: Indice, crudo: bool) -> None:
 
 
 def _ocultos_del_alcance(indice: Indice, opciones: Opciones) -> list[Oculto]:
-    if opciones.solo == "evidencia" or opciones.tema:
-        return []
+    """Los segmentos (si la consulta mira la cruda) y los items de evidencia (si mira la
+    evidencia) que la cuarentena dejo fuera, en el video y el intervalo de la consulta."""
+    mira_segmentos = opciones.solo != "evidencia" and not opciones.tema
+    mira_evidencia = opciones.solo != "cruda"
     return [
         o
         for o in indice.ocultos
-        if (opciones.video is None or o.video_id == opciones.video)
+        if (mira_segmentos if o.clase == "segmento" else mira_evidencia)
+        and (opciones.video is None or o.video_id == opciones.video)
         and (opciones.desde_ms is None or o.t1_ms >= opciones.desde_ms)
         and (opciones.hasta_ms is None or o.t0_ms <= opciones.hasta_ms)
     ]
@@ -361,4 +364,9 @@ def en_instante(
     salida.sort(key=lambda r: (_ORDEN_TIPO.get(r.tipo, 9), r.t0_ms, r.fuente))
     salida += sorted(_contradicciones_de(indice, ids, video, t_ms), key=lambda r: r.fuente)
     ocultos = filtro.ocultos_entre(max(t_ms - margen_ms, 0), t_ms + margen_ms)
+    ocultos += [
+        o
+        for o in indice.evidencia_oculta.values()
+        if o.video_id == video and o.t0_ms - margen_ms <= t_ms <= o.t1_ms + margen_ms
+    ]
     return Respuesta(salida, list(indice.avisos), ocultos)

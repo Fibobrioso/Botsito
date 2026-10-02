@@ -9,6 +9,13 @@ salida es cambiar el criterio.
 Lee solo la transcripcion CRUDA (`cruda.jsonl`) de las cinco vigentes de la lista cerrada, despues
 de comprobar que sus bytes son los que fija su manifiesto commiteado (`sha256_cruda`). No clasifica:
 extrae pasajes.
+
+DESDE `trabajo/cuarentena-por-defecto` (cuarta orden del consultor, 2026-10-01) lee la cruda
+FILTRADA (`cuarentena.filtro_de`): los segmentos de sesiones en cuarentena, de tramos no citables y
+de material reservado o sin sortear ya no salen. Por eso su salida de hoy NO reproduce la
+commiteada (`docs/validation/A18-TRANSCRIPCIONES-SALIDA.txt`, que trae lineas que hoy se ocultan y
+la guardia no deja leer: `.claude/hooks/ficheros_con_ocultos.txt`); lo mismo vale para
+`buscar_ambiguedades.py`, que importa de aqui. No esta autorizado a leer sin filtrar, ni lo estara.
 """
 
 from __future__ import annotations

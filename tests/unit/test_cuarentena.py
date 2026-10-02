@@ -9,6 +9,7 @@ una fecha real ni un dia reservado. Lo unico real es `fuentes.yaml`, para cruzar
 from __future__ import annotations
 
 import ast
+import json
 from pathlib import Path
 
 import pytest
@@ -149,7 +150,8 @@ def test_las_funciones_filtran_por_defecto_y_sin_filtro_fallan(tmp_path: Path) -
     with pytest.raises(RetrievalError, match="filtrado"):
         buscar(filtrado, "calma", crudo=True)
     assert buscar(filtrado, "calma").resultados == []
-    assert len(buscar(filtrado, "calma").ocultos) == 4
+    ocultos = buscar(filtrado, "calma").ocultos  # 4 segmentos y el item que cita uno (1b)
+    assert sorted(o.clase for o in ocultos) == ["evidencia"] + ["segmento"] * 4
     entero = construir_indice(repo, repo / "data", crudo=True)
     assert len(buscar(entero, "calma", crudo=True).resultados) == 1
     with pytest.raises(RetrievalError, match="crudo"):
@@ -281,11 +283,11 @@ def test_evidence_propose_oculta_el_vecino_aunque_el_que_dispara_quede_fuera(
 
 # ------------------------------------------------------------ quien puede pedir el crudo
 
-# (fichero, funcion) -> motivo. `None` como funcion: el fichero entero. Decision del consultor del
-# 2026-10-01: la verificacion de citas, scripts/transcribir_sesion.py y los tests; y, por su
-# orden, `corpus glossary apply`. `corpus transcript check` se anade con su motivo en esta rama y
-# queda a su decision (docs/validation/CUARENTENA-POR-DEFECTO.md).
-AUTORIZADOS = {
+# (fichero, funcion) -> motivo. Negar por defecto (cuarta orden del consultor, 2026-10-01): solo
+# funciones concretas, nunca un fichero entero. La verificacion de citas y los tests (segunda
+# orden); `corpus glossary apply` (tercera); `corpus transcript check` (cuarta, punto 2); y la
+# evidencia de kb que copia un segmento oculto (quinta).
+AUTORIZADOS: dict[tuple[str, str], str] = {
     ("src/botsito/validation/contexto_evidencia.py", "crudas"): (
         "la verificacion de citas compara cada cita con la cruda entera y no devuelve su texto"
     ),
@@ -296,7 +298,20 @@ AUTORIZADOS = {
         "corpus transcript check recalcula sobre la cruda entera los recuentos del manifiesto"
         " y compara la corregida con cruda + glosario (integridad)"
     ),
-    ("scripts/transcribir_sesion.py", None): "la cuarentena de una sesion nueva",
+    ("src/botsito/retrieval/indice.py", "_evidencia_que_copia"): (
+        "kb oculta el item que COPIA el texto de un segmento oculto aunque su cita no lo pise"
+        " (quinta orden): compara con la cruda entera y devuelve solo ids y motivos"
+    ),
+    # scripts/transcribir_sesion.py NO usa `crudo=True`, y desde la cuarta orden no esta
+    # autorizado entero: negar por defecto, una funcion concreta cuando lo necesite. Estas dos
+    # son la tuberia de la cuarentena de una sesion nueva, FUERA del repositorio.
+    ("scripts/transcribir_sesion.py", "salidas_de"): (
+        "arma las rutas de la cruda de una sesion (`*.cruda-NO-LEER.*`), fuera del repositorio,"
+        " que el script escribe y luego filtra"
+    ),
+    ("scripts/transcribir_sesion.py", "transcribir"): (
+        "el ASR de una sesion guarda sus parciales de fragmento antes de fusionarlos"
+    ),
 }
 # El modulo que IMPLEMENTA las funciones que filtran: es el unico que lee el fichero sin pasar
 # por ellas.
@@ -304,7 +319,8 @@ IMPLEMENTACION = "src/botsito/corpus/pipeline_transcripcion.py"
 
 
 def _autorizado(rel: str, funcion: str | None) -> bool:
-    return (rel, None) in AUTORIZADOS or (rel, funcion) in AUTORIZADOS
+    """Negar por defecto (cuarta orden): solo una funcion concreta, nunca un fichero entero."""
+    return (rel, funcion) in AUTORIZADOS
 
 
 def _con_funcion(arbol: ast.AST) -> list[tuple[ast.AST, str | None, ast.AST | None]]:
@@ -474,3 +490,137 @@ def test_los_recorridos_no_son_decorativos() -> None:
     )
     assert _autorizado("src/botsito/cli.py", "corpus_glossary_apply")
     assert not _autorizado("src/botsito/cli.py", "kb_find")
+    # Negar por defecto (cuarta orden): ninguna autorizacion por fichero entero.
+    assert all(funcion is not None for _rel, funcion in AUTORIZADOS)
+    assert not _autorizado("scripts/transcribir_sesion.py", "procesar")
+
+
+# ------------------------------------------------- la evidencia que cita un segmento oculto
+
+
+@pytest.mark.parametrize("orden", [("kb", "find", "boss"), ("kb", "at", "--video", "v1")])
+def test_kb_oculta_la_evidencia_cuya_cita_cae_en_un_segmento_oculto(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], orden: tuple[str, ...]
+) -> None:
+    """Cuarta orden, 1b. El item sintetico `el boss rompe la liquidez` (0:00:10-0:00:15) pisa el
+    segmento 2, que la regla (c) oculta como vecino del 3: por defecto no sale y el aviso lo
+    cuenta; con la opcion de crudo, sale."""
+    repo = _repo(tmp_path)
+    args = (*orden, "--t", "0:00:12", "--margen-s", "0") if orden[1] == "at" else orden
+    salida = _cli(capsys, repo, *args)
+    assert "boss" not in salida
+    assert "1 items de evidencia: 1 por material reservado o sin sortear (c)" in salida
+    _sin_fuga(salida)
+    crudo = _cli(capsys, repo, *args, OPCION)
+    assert "boss" in crudo and "OCULTOS" not in crudo
+
+
+ITEM_QUE_COPIA = "ev-v1-000035-"
+
+
+@pytest.mark.parametrize("orden", [("kb", "find", "espejado"), ("kb", "at", "--video", "v1")])
+def test_kb_oculta_la_evidencia_que_copia_un_segmento_oculto(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], orden: tuple[str, ...]
+) -> None:
+    """Quinta orden. Un item sintetico cuya cita (0:00:35-0:00:40) cae en un segmento VISIBLE pero
+    cuyas notas copian el texto del segmento 3, que la regla (c) oculta: por defecto no sale y el
+    aviso lo cuenta; con la opcion de crudo, sale."""
+    from botsito.evidence.modelo import escribir_item
+    from tests.unit.test_retrieval import _item
+
+    repo = _repo(tmp_path)
+    (manifiesto,) = (repo / "knowledge" / "corpus" / "transcripciones").glob("tr-*.yaml")
+    escribir_item(
+        repo / "knowledge" / "evidence",
+        _item(
+            transcripcion=manifiesto.stem,
+            t0="0:00:35",
+            t1="0:00:40",
+            cita_literal="cierre visible final",
+            afirmacion="un cierre espejado",
+            notas="contexto: lo vi en mayo con calma",
+            tema="salida.cierre",
+            valor=None,
+        ),
+    )
+    args = (*orden, "--t", "0:00:36", "--margen-s", "0") if orden[1] == "at" else orden
+    salida = _cli(capsys, repo, *args)
+    assert ITEM_QUE_COPIA not in salida
+    # kb find cuenta toda la evidencia oculta (tambien la del boss, que la PISA); kb at, la de su
+    # ventana, que es solo la que copia.
+    n = 2 if orden[1] == "find" else 1
+    assert f"{n} items de evidencia: {n} por material reservado o sin sortear (c)" in salida
+    _sin_fuga(salida)
+    crudo = _cli(capsys, repo, *args, OPCION)
+    assert ITEM_QUE_COPIA in crudo and "OCULTOS" not in crudo
+
+
+def test_copia_pide_la_mitad_de_las_ventanas() -> None:
+    oculto = cuarentena.ventanas_de_copia("uno dos tres cuatro cinco seis siete ocho nueve diez")
+    assert len(oculto) == 3
+    assert cuarentena.copia(cuarentena.plano("UNO dos  tres cuatro cinco seis siete ocho"), oculto)
+    assert not cuarentena.copia(cuarentena.plano("uno dos tres cuatro cinco seis"), oculto)
+    assert cuarentena.ventanas_de_copia("corto") == []
+    filtro = Filtro("v1")
+    filtro.aplicar(SEGMENTOS)
+    copian = cuarentena.items_que_copian(
+        filtro,
+        SEGMENTOS,
+        [("ev-copia", 35000, 40000, "x: lo vi en mayo con calma"), ("ev-no", 0, 1, "zona visible")],
+    )
+    assert {i: (o.motivo, o.clase) for i, o in copian.items()} == {"ev-copia": ("c", "evidencia")}
+
+
+def test_items_ocultos_toma_el_motivo_de_mas_prioridad() -> None:
+    filtro = Filtro("v1", ((30000, 31000, "x"),))
+    filtro.aplicar(SEGMENTOS)
+    ocultos = cuarentena.items_ocultos(
+        filtro, [("ev-uno", 10000, 15000), ("ev-dos", 30000, 30500), ("ev-tres", 0, 4000)]
+    )
+    assert {i: o.motivo for i, o in ocultos.items()} == {"ev-uno": "c", "ev-dos": "b"}
+    assert all(o.clase == "evidencia" for o in ocultos.values())
+
+
+def test_fechas_en_dice_dia_y_mes_y_nada_mas() -> None:
+    """Datos sinteticos: fechas imposibles o de meses sin dias reservados."""
+    assert cuarentena.fechas_en("el treinta y uno de febrero") == {(2, 31)}
+    assert cuarentena.fechas_en("el 31/02") == {(2, 31)}
+    assert cuarentena.fechas_en("agosto 40 no existe") == set()
+    assert cuarentena.fechas_en("lo vi en mayo con calma") == set()
+    filtro = Filtro("v1", dias=frozenset({(2, 31)}))
+    filtro.aplicar([_seg(0, 0, "nada aqui"), _seg(1, 5000, "el 31/02 entre"), _seg(2, 9000, "y")])
+    assert {n: o.fecha_vigilada for n, o in filtro.ocultos.items()} == {0: False, 1: True, 2: False}
+
+
+# --------------------------------------------- corpus transcript check: solo el resultado
+
+
+def test_transcript_check_no_imprime_contenido(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Cuarta orden, punto 2: autorizado con la cruda entera, con la condicion de imprimir solo
+    el resultado (OK o fallo) y el fichero. Ni con la cruda sana ni con una rota sale texto."""
+    from dataclasses import replace
+
+    from botsito.comun.documentos import sha256_hex
+    from botsito.corpus.glosario import glosario_desde_texto
+    from botsito.corpus.manifiestos_transcripcion import cargar_todos, comprobar
+
+    repo = _repo(tmp_path)
+    glosario = "vocabulario: [otro]\nsustituciones: []\n"
+    (repo / "knowledge" / "corpus" / "glosario_asr.yaml").write_text(glosario, encoding="utf-8")
+    # Por la CLI, con la cruda sana (la del manifiesto no casa: da un fallo de integridad).
+    cli.main(["--repo", str(repo), "corpus", "transcript", "check"])
+    sana = capsys.readouterr()
+    assert not any(s.texto in sana.out + sana.err for s in SEGMENTOS)
+    # Con una cruda ROTA cuyo sha si casa: el fallo de forma no trae la palabra que lo provoca.
+    palabra = {"t0_ms": 0, "t1_ms": 5000, "texto": "PALABRASECRETA", "probabilidad": 0.9}
+    fila = {"n": 0, "t0_ms": 0, "t1_ms": 1000, "texto": "texto ajeno", "palabras": [palabra]}
+    texto = json.dumps(fila) + "\n"  # la palabra acaba DESPUES del segmento: forma invalida
+    (repo / CARPETA_V1 / "cruda.jsonl").write_bytes(texto.encode("utf-8"))
+    (t,) = cargar_todos(repo)
+    t = replace(t, sha256_cruda=sha256_hex(texto.encode("utf-8")))
+    errores, avisos = comprobar([t], repo / "data", glosario_desde_texto(glosario))
+    salida = "\n".join(errores + avisos)
+    assert "cruda.jsonl no se puede leer" in salida
+    assert "PALABRASECRETA" not in salida and "texto ajeno" not in salida

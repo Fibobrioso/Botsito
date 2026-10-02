@@ -201,6 +201,11 @@ tabla de `PROJECT_STATE.md` son exactamente las abiertas) y
   se conserva, pero lo seguro es Write, y lo mismo para Python con comillas y sangrado complicado:
   script a la carpeta de trabajo y ejecutarlo. Guardia: la de Claude Code bloquea el heredoc sin
   comillas con `\`.
+- **Un texto que contenga literalmente la opcion `--crudo` o `crudo=True` (un encargo, un informe,
+  un mensaje de commit) se escribe con Write o Edit, nunca con un heredoc ni con `-m`**: la guardia
+  bloquea cualquier comando de Bash o PowerShell que los lleve. El mensaje de commit va a un fichero
+  escrito con Write, y `git commit -F <fichero>`. Guardia: la de Claude Code
+  (`.claude/hooks/guardia.py`, `exigir_sin_crudo`).
 - **`make check` con la salida a un FICHERO, nunca a `/dev/null`:** `lint-imports` falla al escribir
   ahi y `make` sale con 2 aunque todo este verde. Guardia: la de Claude Code bloquea `make check` sin
   fichero de salida.
@@ -226,13 +231,16 @@ que cuenta para la sesion:
   `corpus frames show` y `evidence propose` ocultan por defecto las sesiones en cuarentena, los
   tramos no citables y el material reservado o sin sortear, y dicen cuantos segmentos ocultaron
   (`src/botsito/corpus/cuarentena.py`, la UNICA fuente). La opcion que lo ensena todo es solo de
-  Aleks, en su terminal, y su equivalente en Python solo lo usan los llamadores de `AUTORIZADOS`
-  (`tests/unit/test_cuarentena.py`: la verificacion de citas, `corpus glossary apply`,
-  `corpus transcript check` y `scripts/transcribir_sesion.py`, cada uno con su motivo) y los
-  tests. Una propuesta de `knowledge/_proposals/` con segmentos ocultos no se lee (lista
-  calculada en `.claude/hooks/propuestas_con_ocultos.txt`). Guardias: la de Claude Code bloquea
-  las dos cosas, y `tests/unit/test_cuarentena.py` falla si aparece otro llamador o alguien lee la
-  cruda sin pasar por las funciones que filtran.
+  Aleks, en su terminal, y su equivalente en Python solo lo usan las FUNCIONES de `AUTORIZADOS`
+  (`tests/unit/test_cuarentena.py`, negar por defecto: nunca un fichero entero; cada una con su
+  motivo: la verificacion de citas, `corpus glossary apply`, `corpus transcript check`, la evidencia
+  de kb que copia un segmento oculto y dos funciones de `scripts/transcribir_sesion.py`) y los
+  tests. `kb` oculta tambien la evidencia cuya cita pisa, o cuyo texto copia, un segmento oculto.
+  Un fichero del repositorio que copia texto oculto no se lee: las propuestas de
+  `knowledge/_proposals/` con segmentos ocultos y las salidas de medicion con lineas ocultas (lista
+  calculada en `.claude/hooks/ficheros_con_ocultos.txt` por `scripts/ficheros_con_ocultos.py`).
+  Guardias: la de Claude Code bloquea las dos cosas, y `tests/unit/test_cuarentena.py` falla si
+  aparece otro llamador o alguien lee la cruda sin pasar por las funciones que filtran.
 - **Una guardia no se rodea.** Si bloquea algo legitimo, se dice en el informe y se corrige la
   guardia en su rama; no se reescribe el comando para que no la vea.
 - **Solo un guion identico al de `main` es codigo revisado.** Uno nuevo o cambiado en la rama en

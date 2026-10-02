@@ -134,11 +134,12 @@ R_BRANCH_D = (
     "docs/runbooks/RITUAL.md: «`-d` y no `-D`: si git se niega, es que algo no esta fusionado»"
 )
 R_REVERT = "docs/runbooks/RITUAL.md, «Si la CI sale roja»: «No se revierte `main`»"
-R_PROPUESTA_OCULTA = (
-    "orden del consultor del 2026-10-01 (`trabajo/cuarentena-por-defecto`): una propuesta de "
-    "`knowledge/_proposals/` que copia segmentos que hoy se ocultan (sesion en cuarentena, tramo "
-    "no citable o material reservado o sin sortear) no se lee; la lista la calcula "
-    "`botsito.corpus.cuarentena` (`.claude/hooks/propuestas_con_ocultos.txt`)"
+R_FICHERO_OCULTO = (
+    "ordenes del consultor del 2026-10-01 (`trabajo/cuarentena-por-defecto`): un fichero del "
+    "repositorio que copia texto que hoy se oculta (sesion en cuarentena, tramo no citable o "
+    "material reservado o sin sortear) no se lee: las propuestas de `knowledge/_proposals/` con "
+    "segmentos ocultos y las salidas de medicion que ya no se reproducen. La lista la calcula "
+    "`botsito.corpus.cuarentena` (`.claude/hooks/ficheros_con_ocultos.txt`)"
 )
 R_CRUDO = (
     "encargo de `trabajo/cuarentena-por-defecto`: los comandos que ensenan el corpus lo filtran "
@@ -201,7 +202,7 @@ MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-08")
 # (ADR-0041, docs/validation/V6-FUERA-DEL-HOLDOUT.md). Desde v7 la cruda no se lee.
 SESIONES_SIN_CUARENTENA = frozenset({"v6"})
 TRAMOS_NO_CITABLES = "knowledge/corpus/tramos_no_citables.yaml"
-PROPUESTAS_OCULTAS = ".claude/hooks/propuestas_con_ocultos.txt"
+FICHEROS_OCULTOS = ".claude/hooks/ficheros_con_ocultos.txt"
 # Lo que hay en la carpeta de una transcripcion y no es texto: se puede abrir aunque tenga tramos.
 SIN_TEXTO = (".wav", ".sha256", ".sha256_video", "huella.txt", "video.sha256")
 # Ficheros de una transcripcion que van por segmentos, una linea cada uno: con tramos, se leen
@@ -366,13 +367,13 @@ class Politica:
         return prohibidas
 
     @cached_property
-    def propuestas_ocultas(self) -> frozenset[str]:
-        """Las propuestas con algun segmento oculto, de la lista CALCULADA por
+    def ficheros_ocultos(self) -> frozenset[str]:
+        """Las rutas (relativas al repo, en minusculas) de la lista CALCULADA por
         `botsito.corpus.cuarentena` (la guardia no importa `botsito`: lee el fichero que genera
-        `scripts/propuestas_con_ocultos.py`, y un test comprueba que coincide). Sin fichero,
+        `scripts/ficheros_con_ocultos.py`, y un test comprueba que coincide). Sin fichero,
         ninguna."""
         try:
-            texto = (self.raiz / PROPUESTAS_OCULTAS).read_text(encoding="utf-8")
+            texto = (self.raiz / FICHEROS_OCULTOS).read_text(encoding="utf-8")
         except OSError:
             return frozenset()
         return frozenset(
@@ -380,8 +381,6 @@ class Politica:
         )
 
     def _motivo_propuesta(self, ruta: str, nombre: str) -> str | None:
-        if nombre in self.propuestas_ocultas:
-            return R_PROPUESTA_OCULTA
         # Segunda capa, la de antes: lo que pisa un tramo, con la copia de la guardia.
         m = re.match(r"^pr-(v\d+)-", nombre)
         if not m or m.group(1) not in self.tramos_vigilados:
@@ -424,6 +423,8 @@ class Politica:
             return self.regla_del_mes(self.mes_de(nombre))
         if rel is None:
             return None
+        if rel in self.ficheros_ocultos:
+            return R_FICHERO_OCULTO
         partes = rel.split("/")
         if rel.startswith(HOLDOUT + "/") and len(partes) > 4 and partes[3] in {"1", "2", "3"}:
             return None if nombre == "readme.md" and len(partes) == 5 else R_HOLDOUT

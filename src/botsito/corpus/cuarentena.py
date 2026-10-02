@@ -298,13 +298,52 @@ S = TypeVar("S", bound=SegmentoFiltrable)
 
 @dataclass(frozen=True, slots=True)
 class Oculto:
-    """Un segmento que no se ensena: donde esta y por que, SIN su texto."""
+    """Un segmento (o un item de evidencia) que no se ensena: donde esta y por que, SIN su texto.
+    `fecha_vigilada` dice si su texto trae una fecha que es uno de los `dias` del filtro (los de
+    `casos_ocultos`, si quien construye el filtro se los pasa): un booleano, nunca la fecha."""
 
     video_id: str
     n: int
     t0_ms: int
     t1_ms: int
     motivo: str  # MOTIVO_SESION | MOTIVO_TRAMO | MOTIVO_RESERVADO
+    fecha_vigilada: bool = False
+    clase: str = "segmento"  # segmento | evidencia
+
+
+# ---------------------------------------------------------- las fechas de un texto (dia y mes)
+
+_MESES_NUM = {
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6, "julio": 7,
+    "agosto": 8, "septiembre": 9, "setiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+}  # fmt: skip
+_RE_NOMBRE_MES = "|".join(_MESES_NUM)
+_RE_DIA_DE_MES = re.compile(rf"\b(\d{{1,2}})\s+(?:de\s+)?({_RE_NOMBRE_MES})\b")
+_RE_MES_DIA = re.compile(rf"\b({_RE_NOMBRE_MES})\s+(\d{{1,2}})\b")
+_RE_DIA_BARRA_MES = re.compile(r"(?<![\d.,])(\d{1,2})\s*[/-]\s*(\d{1,2})(?![\d.,])")
+
+
+def fechas_en(texto: str) -> set[tuple[int, int]]:
+    """Las fechas (mes, dia) que un texto dice con dia Y mes: «4 de mayo», «mayo 4», «4/5»,
+    tambien con el numero en letras. Un mes sin dia, o un dia sin mes, no es una fecha."""
+    t = numeros_a_cifras(normalizar(texto))
+    salida: set[tuple[int, int]] = set()
+    for d, m in _RE_DIA_DE_MES.findall(t):
+        salida.add((_MESES_NUM[m], int(d)))
+    for m, d in _RE_MES_DIA.findall(t):
+        salida.add((_MESES_NUM[m], int(d)))
+    for d, m in _RE_DIA_BARRA_MES.findall(t):
+        salida.add((int(m), int(d)))
+    return {(m, d) for m, d in salida if 1 <= m <= 12 and 1 <= d <= 31}
+
+
+def dias_de_casos(casos: Iterable[str]) -> frozenset[tuple[int, int]]:
+    """(mes, dia) de cada id de caso `caso-<simbolo>-AAAA-MM-DD` (los de `casos_ocultos`)."""
+    salida: set[tuple[int, int]] = set()
+    for c in casos:
+        if m := re.search(r"-\d{4}-(\d{2})-(\d{2})$", c):
+            salida.add((int(m.group(1)), int(m.group(2))))
+    return frozenset(salida)
 
 
 def _toca(t0_ms: int, t1_ms: int, a_ms: int, b_ms: int) -> bool:
@@ -323,6 +362,9 @@ class Filtro:
     video_id: str
     tramos: tuple[tuple[int, int, str], ...] = ()
     ocultos: dict[int, Oculto] = field(default_factory=dict)
+    # Los dias (mes, dia) que se vigilan en el texto de lo oculto: los de `casos_ocultos`, que
+    # `corpus` no puede leer (es la capa `cases`) y le pasa quien construye el filtro.
+    dias: frozenset[tuple[int, int]] = frozenset()
 
     def motivos(self, segmentos: Sequence[SegmentoFiltrable]) -> dict[int, str]:
         """Posicion en `segmentos` -> motivo, con prioridad a > b > c."""
@@ -341,7 +383,10 @@ class Filtro:
         motivos = self.motivos(segmentos)
         for i, motivo in motivos.items():
             s = segmentos[i]
-            self.ocultos.setdefault(s.n, Oculto(self.video_id, s.n, s.t0_ms, s.t1_ms, motivo))
+            vigilada = bool(self.dias) and bool(fechas_en(s.texto) & self.dias)
+            self.ocultos.setdefault(
+                s.n, Oculto(self.video_id, s.n, s.t0_ms, s.t1_ms, motivo, vigilada)
+            )
         return [s for i, s in enumerate(segmentos) if i not in motivos]
 
     def ocultos_entre(self, a_ms: int, b_ms: int) -> list[Oculto]:
@@ -359,10 +404,22 @@ def filtro_de(repo: Path, video_id: str) -> Filtro:
 
 
 DIRECTORIO_PROPUESTAS = "knowledge/_proposals"
-# La lista que lee la guardia de Claude Code: CALCULADA por `propuestas_con_ocultos`, escrita por
-# `scripts/propuestas_con_ocultos.py --escribir` y vigilada por `tests/unit/test_cuarentena.py`,
-# que falla si no coincide con lo que se calcula hoy (orden del consultor del 2026-10-01).
-FICHERO_PROPUESTAS_OCULTAS = ".claude/hooks/propuestas_con_ocultos.txt"
+# La lista que lee la guardia de Claude Code: los ficheros del repositorio que copian texto que hoy
+# se oculta. CALCULADA -las propuestas por `propuestas_con_ocultos`; las salidas de medicion que
+# traen alguna linea de un segmento oculto, y los ficheros de docs/ que copian esas lineas, por
+# `scripts/ficheros_con_ocultos.py`-, escrita por ese guion con `--escribir` y vigilada por
+# `tests/unit/test_guardia_claude.py` (ordenes del consultor del 2026-10-01, tercera a quinta).
+FICHERO_OCULTOS = ".claude/hooks/ficheros_con_ocultos.txt"
+# Las salidas commiteadas de los guiones de medicion que leen transcripciones, con el guion y el
+# conjunto que las regeneraban. Son los CANDIDATOS; cuales entran en la lista lo dice el calculo.
+SALIDAS_DE_MEDICIONES: Mapping[str, tuple[str, str | None]] = MappingProxyType(
+    {
+        "docs/validation/A18-TRANSCRIPCIONES-SALIDA.txt": ("a18_buscar", None),
+        "docs/validation/A24-A21-A26-A34-SALIDA.txt": ("buscar_ambiguedades", "a24"),
+        "docs/validation/A35-PIVOTE-FORMADO-SALIDA.txt": ("buscar_ambiguedades", "a35"),
+        "docs/validation/SESION-02-BUSQUEDA-SALIDA.txt": ("buscar_ambiguedades", "sesion02"),
+    }
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -397,27 +454,108 @@ def propuestas_con_ocultos(repo: Path) -> dict[str, Counter[str]]:
     return salida
 
 
-def texto_de_la_lista(propuestas: Iterable[str]) -> str:
-    """El fichero que lee la guardia: una cabecera que dice de donde sale, y un nombre por linea."""
+def texto_de_la_lista(rutas: Iterable[str]) -> str:
+    """El fichero que lee la guardia: una cabecera que dice de donde sale, y una ruta relativa
+    al repositorio por linea."""
     cabecera = (
-        "# GENERADO por `uv run python scripts/propuestas_con_ocultos.py --escribir` desde\n"
-        "# `botsito.corpus.cuarentena.propuestas_con_ocultos`: las propuestas de\n"
-        "# knowledge/_proposals/ con algun segmento oculto (sesion en cuarentena, tramo no\n"
-        "# citable o material reservado o sin sortear). No se edita a mano:\n"
-        "# tests/unit/test_cuarentena.py falla si no coincide con lo que se calcula. La guardia\n"
-        "# de Claude Code no deja leerlas.\n"
+        "# GENERADO por `uv run python scripts/ficheros_con_ocultos.py --escribir` desde\n"
+        "# `botsito.corpus.cuarentena`: los ficheros del repositorio que copian texto que hoy se\n"
+        "# oculta (sesion en cuarentena, tramo no citable o material reservado o sin sortear):\n"
+        "# las propuestas de knowledge/_proposals/ con algun segmento oculto, las salidas de\n"
+        "# medicion con alguna linea de un segmento oculto y los ficheros de docs/ que copian\n"
+        "# esas lineas. No se edita a mano: tests/unit/test_guardia_claude.py falla si no\n"
+        "# coincide con lo que se calcula. La guardia de Claude Code no deja leerlos.\n"
     )
-    return cabecera + "".join(f"{p}\n" for p in sorted(propuestas))
+    return cabecera + "".join(f"{p}\n" for p in sorted(rutas))
 
 
 def resumen(ocultos: Iterable[Oculto]) -> str:
     """Cuantos se ocultaron y por que, en una linea; vacio si ninguno. Solo numeros y motivos:
     nunca un texto, una fecha ni el mes o el dia que disparo la regla."""
-    cuenta = Counter(o.motivo for o in ocultos)
-    if not cuenta:
+    lista = list(ocultos)
+    if not lista:
         return ""
-    partes = [f"{cuenta[m]} por {MOTIVOS[m]} ({m})" for m in sorted(cuenta)]
+    trozos = []
+    for clase, nombre in (("segmento", "segmentos"), ("evidencia", "items de evidencia")):
+        cuenta = Counter(o.motivo for o in lista if o.clase == clase)
+        if cuenta:
+            partes = [f"{cuenta[m]} por {MOTIVOS[m]} ({m})" for m in sorted(cuenta)]
+            trozos.append(f"{sum(cuenta.values())} {nombre}: {', '.join(partes)}")
     return (
-        f"OCULTOS: {sum(cuenta.values())} segmentos: {', '.join(partes)}. Su contenido no se "
-        "ensena; con --crudo, solo Aleks en su propia terminal."
+        f"OCULTOS: {'; y '.join(trozos)}. Su contenido no se ensena; con --crudo, solo Aleks en "
+        "su propia terminal."
     )
+
+
+def items_ocultos(filtro: Filtro, items: Iterable[tuple[str, int, int]]) -> dict[str, Oculto]:
+    """Los items de evidencia `(id, t0_ms, t1_ms)` de `filtro.video_id` cuya cita pisa un
+    segmento que el filtro oculto, con el motivo de mas prioridad de los que pisa (a > b > c).
+    Cuarta orden del consultor del 2026-10-01: la evidencia cuya cita cae en un segmento oculto se
+    oculta como el segmento."""
+    salida: dict[str, Oculto] = {}
+    for iid, t0_ms, t1_ms in items:
+        pisa = filtro.ocultos_entre(t0_ms, t1_ms)
+        if pisa:
+            motivo = min(o.motivo for o in pisa)
+            vigilada = any(o.fecha_vigilada for o in pisa)
+            salida[iid] = Oculto(
+                filtro.video_id, -1, t0_ms, t1_ms, motivo, vigilada, clase="evidencia"
+            )
+    return salida
+
+
+# ------------------------------------------ lo que COPIA el texto de un segmento oculto (quinta)
+# Quinta orden del consultor (2026-10-01): un texto copia un segmento oculto si contiene la mitad
+# o mas de las ventanas de 30 caracteres (cada 10) de su texto, con el espacio normalizado y en
+# minusculas. Es el metodo con el que se midio
+# (`docs/validation/anexos/CUARENTENA-POR-DEFECTO/citas_de_salidas.py`), y lo usan la evidencia
+# de `kb` y la lista de la guardia.
+VENTANA_COPIA = 30
+PASO_COPIA = 10
+_MINIMO_COPIA = 15  # un segmento mas corto no se busca: casaria con cualquier cosa
+
+
+def plano(texto: str) -> str:
+    return " ".join(texto.split()).lower()
+
+
+def ventanas_de_copia(texto: str) -> list[str]:
+    t = plano(texto)
+    if len(t) <= VENTANA_COPIA:
+        return [t] if len(t) >= _MINIMO_COPIA else []
+    return [t[i : i + VENTANA_COPIA] for i in range(0, len(t) - VENTANA_COPIA + 1, PASO_COPIA)]
+
+
+def copia(texto_plano: str, ventanas: Sequence[str]) -> bool:
+    """`texto_plano` (ya pasado por `plano`) trae la mitad o mas de `ventanas`."""
+    if not ventanas:
+        return False
+    dentro = sum(1 for v in ventanas if v in texto_plano)
+    # La mitad o mas, en enteros: el umbral es la definicion de la quinta orden, no un parametro.
+    return dentro > 0 and 2 * dentro >= len(ventanas)
+
+
+def items_que_copian(
+    filtro: Filtro,
+    segmentos: Sequence[SegmentoFiltrable],
+    items: Iterable[tuple[str, int, int, str]],
+) -> dict[str, Oculto]:
+    """Los items `(id, t0_ms, t1_ms, texto)` cuyo texto COPIA un segmento que `filtro` ya oculto,
+    aunque su cita no lo pise (quinta orden). `segmentos` es la cruda ENTERA del video: solo se
+    miran los que estan en `filtro.ocultos`. Devuelve ids y motivos, nunca texto."""
+    ocultos = [
+        (ventanas_de_copia(s.texto), filtro.ocultos[s.n])
+        for s in segmentos
+        if s.n in filtro.ocultos
+    ]
+    salida: dict[str, Oculto] = {}
+    for iid, t0_ms, t1_ms, texto in items:
+        t = plano(texto)
+        copiados = [o for ventanas, o in ocultos if copia(t, ventanas)]
+        if copiados:
+            motivo = min(o.motivo for o in copiados)
+            vigilada = any(o.fecha_vigilada for o in copiados)
+            salida[iid] = Oculto(
+                filtro.video_id, -1, t0_ms, t1_ms, motivo, vigilada, clase="evidencia"
+            )
+    return salida

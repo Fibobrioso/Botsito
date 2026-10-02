@@ -1,5 +1,14 @@
 # A-24, A-21, A-26 y A-34 en las transcripciones: el criterio, congelado antes de buscar
 
+> **RECUADRO DE CORRECCIÓN (2026-10-01, rama `trabajo/cuarentena-por-defecto`).** La salida congelada de esta medición, `A24-A21-A26-A34-SALIDA.txt`, trae 9 líneas de
+> segmentos que hoy se ocultan por defecto (sesión en cuarentena, tramo no citable o
+> material reservado o sin sortear: `botsito.corpus.cuarentena`). Desde esa rama,
+> `scripts/buscar_ambiguedades.py` lee la cruda FILTRADA, así que volver a ejecutarlo ya no reproduce la
+> salida commiteada, y la guardia de Claude Code no deja leerla
+> (`.claude/hooks/ficheros_con_ocultos.txt`). El cuerpo de este informe no se toca: lo que
+> dice se hizo sobre la salida commiteada. Detalle y cuentas:
+> `docs/validation/CUARENTENA-POR-DEFECTO.md`.
+
 Rama `trabajo/a24-a21-a26-a34`, 2026-09-24. Sin merge, sin tag y sin push.
 
 Este documento y `scripts/buscar_ambiguedades.py` se commitean juntos y **antes** de ejecutar
