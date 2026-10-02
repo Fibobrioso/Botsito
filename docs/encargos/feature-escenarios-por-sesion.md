@@ -88,3 +88,23 @@ Copiada tal cual:
 >
 > make check sellado; revisor solo sobre lo que cambie, con su informe pegado.
 > «Rama lista para revisión, NO cerrada.»
+
+## Quinta orden: decisiones del consultor sobre a1 y b1 de §7.4 (2026-10-02)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Decisiones del consultor:
+>
+> 1. intentos_tras_toma_nueva se queda en A-25: A-25 es la pregunta de los intentos (pregunta 18) y el parámetro le pertenece. Mi «nada en A-25» era no colgar de A-25 parámetros ajenos, como los de las preguntas 20 y 21.
+>
+> 2. sesgo_h4_tope_velas: corrige su descripción para que diga lo que es (CONFIRMED por ADR-0044, decisión del proyecto), sin la palabra PROVISIONAL. Régimen de parametros.yaml: spec docs --escribir en el mismo commit y trailer Fuente: ADR-0044. El test no cambia: sigue mirando solo el estado.
+>
+> 3. PROJECT_STATE está en 24.106 bytes y el cierre puede pasar del tope.
+>    - Regla nueva en RITUAL.md y en docs/state/README.md: una entrada de Next Action que pasa a HECHA se mueve a docs/state/HISTORIA.md en la misma rama que la cierra, y en PROJECT_STATE no queda ni el resumen.
+>    - Aplícala ya: la I (HECHA en F36l y F36m) sale de PROJECT_STATE a HISTORIA, con su texto literal.
+>    - Si con eso no baja de 23.000 bytes, dime qué más ocupa sitio y no recortes nada por tu cuenta.
+>
+> make check sellado; revisor solo sobre lo que cambie, con su informe pegado.
+> «Rama lista para revisión, NO cerrada.»

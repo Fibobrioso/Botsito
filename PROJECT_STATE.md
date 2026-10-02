@@ -37,8 +37,6 @@ F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del 
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
-I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01)**, y el comentario de `knowledge/corpus/tramos_no_citables.yaml` que quedaba, en `stable/F36m-ajustes-cierre`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.
-
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
 
 K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).

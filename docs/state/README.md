@@ -20,6 +20,16 @@ SUSTITUYE, sin «Lo anterior:», porque lo anterior ya esta aqui.
 el `# Registro de cierre · <rama> (<fecha>)` que entra en la propia rama, en el mismo commit que
 saca el contrato (`docs/runbooks/RITUAL.md`, «Antes del merge: el contrato sale de la rama»).
 
+## Lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra
+
+Desde el 2026-10-02 (decision del consultor, `feature/escenarios-por-sesion`): una entrada de Next
+Action que pasa a HECHA se mueve a `HISTORIA.md` EN LA MISMA RAMA QUE LA CIERRA, con su texto
+literal, bajo `# Next Action HECHA · <letra> · sale de PROJECT_STATE.md en <rama> (<fecha>)`, y en
+`PROJECT_STATE.md` no queda ni el resumen. Va en el commit que saca el contrato
+(`docs/runbooks/RITUAL.md`, «Antes del merge: el contrato sale de la rama», punto 3), porque en
+`main` solo cambia `PROJECT_STATE.md` y alli no se archiva. Sin esto, el cierre suma entradas
+HECHAS y `PROJECT_STATE.md` pasa de los 25 KB.
+
 ## Como se archiva
 
 Al ABRIR una rama (skill `abrir-rama`, paso de archivo), en la propia rama y antes de tocar nada:

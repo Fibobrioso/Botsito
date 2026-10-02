@@ -686,10 +686,86 @@ hallazgos, resumido.
 - **b2, arreglado**: la cabecera de la pregunta 21 en dos líneas.
 - **Lo que no pudo comprobar**: `make check` sella el commit `8626711` y el de este apartado.
 
+## 8. Quinta orden del consultor: a1 y b1 de §7.4, y el tamaño de PROJECT_STATE (2026-10-02)
+
+Copiada tal cual en el encargo, «Quinta orden».
+
+### 8.1 `intentos_tras_toma_nueva` se queda en A-25
+
+Decisión del consultor: A-25 es la pregunta de los intentos (la 18) y el parámetro le pertenece;
+«nada en A-25» era no colgar de ella parámetros ajenos, como los de las preguntas 20 y 21. No cambia
+nada.
+
+### 8.2 `sesgo_h4_tope_velas` dice lo que es
+
+Su descripción decía «PROVISIONAL: es una decision del proyecto [...]» con `estado: CONFIRMED`.
+Ahora dice «CONFIRMED por ADR-0044: es una decision del proyecto, no del trader [...]», sin la
+palabra PROVISIONAL. Ni el valor ni el estado cambian. `botsito spec docs --escribir` en el mismo
+commit, spec 15.5.0 → 15.5.1, y el commit lleva `Fuente: ADR-0044`. El test de §7.1 no cambia:
+sigue mirando solo el estado.
+
+### 8.3 Lo HECHO del Next Action sale de PROJECT_STATE
+
+**La regla**, escrita en los dos sitios que pidió el consultor:
+- `docs/runbooks/RITUAL.md`, «Antes del merge: el contrato sale de la rama»: un punto 3 en el commit
+  que saca el contrato -el único del cierre que va en la rama-. Las entradas de Next Action que la
+  rama deja HECHAS salen de `PROJECT_STATE.md` y entran al final de `docs/state/HISTORIA.md`, con su
+  texto literal, bajo `# Next Action HECHA · <letra> · sale de PROJECT_STATE.md en <rama> (<fecha>)`.
+  La puerta de ese commit y el párrafo de la edición en `main` lo dicen también: allí no se marca
+  HECHA ni se resume.
+- `docs/state/README.md`: un apartado nuevo, «Lo HECHO del Next Action sale de PROJECT_STATE en la
+  rama que lo cierra».
+
+El contrato se amplía a esos dos ficheros, con su motivo.
+
+**Aplicada a la I.** Sale de `PROJECT_STATE.md` entera, y entra literal al final de `HISTORIA.md`
+bajo `# Next Action HECHA · I · ...`, con dos líneas que dicen por qué sale ahora. `HISTORIA.md`
+solo se amplía (`tests/unit/test_historia.py` pasa).
+
+**Medido con `wc -c`: 24.106 → 23.232 bytes. No baja de 23.000**, así que no se recorta nada más.
+Lo que ocupa sitio, por sección (bytes, con un script de solo lectura):
+
+| Sección | Bytes |
+|---|---|
+| Technical Debt | 6.589 |
+| Next Action | 5.841 |
+| Reglas vivas | 4.356 |
+| Known Ambiguities | 3.362 |
+| Stable Main State | 814 |
+| Cabecera | 801 |
+| Completed Features | 368 |
+| Current Feature | 351 |
+| Change Log | 257 |
+| Tests Currently Passing | 225 |
+| Last Stable Commit | 209 |
+| Current Branch | 48 |
+
+Dentro de las tres grandes, lo que más pesa:
+- **Next Action:** la lista «Pendientes heredados (sin verificar)», 2.646 bytes, que solo se quita
+  con evidencia o por decisión del consultor; F (las preguntas de la sesión 4), 839; el párrafo que
+  presenta esa lista, 410; E, 395; la línea de «B, C, D y G [...] HECHAS», 335, que es un resumen de
+  HECHAS pero guarda dos pendientes (la revisión de `ev-v7-001550-82e5cffc` y el break even por el
+  ASK de ADR-0065 §6); y K, 311.
+- **Technical Debt:** muchas líneas de 200 a 280 bytes; las mayores, el gap de dos horas antes de un
+  cierre de mercado (282), v5 en Drive (256), los cinco patrones de defecto (255), `data/fotogramas/`
+  fuera de Drive (248).
+- **Reglas vivas:** el holdout en tres particiones (575), marzo por el camino de fidelidad (533), el
+  huso de corte de la firma (491) y la comisión por lado (340).
+
+**Para el consultor, sin tocar:**
+- **A3 b) de «Pendientes heredados» es esta rama** («sesiones independientes y varios escenarios por
+  sesion»). Por la regla nueva, saldría en el commit que saca el contrato si el cierre la da por
+  HECHA; esa lista se quita «con evidencia o por decisión del consultor», así que no se toca sin la
+  orden de cierre.
+- La primera línea de Next Action nombra todavía «el I, 2026-10-01, al cerrar
+  `trabajo/guardias-claude`», que ya no está en `PROJECT_STATE.md`. Es el origen de la lista, no un
+  resumen; no se toca sin decirlo.
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
 selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Las órdenes 2 y 3 del
 consultor (2026-10-02), hechas en §6, con su revisor (§6.6). La cuarta (la decisión sobre a1),
-en §7, con su revisor (§7.4). Lo que espera a la sesión 4 está en §4; lo que queda para el
-consultor, en §7.2 («Lo que no se toca») y en las respuestas a a1 y b1 de §7.4.
+en §7, con su revisor (§7.4). La quinta (a1 y b1 de §7.4, y el tamaño de `PROJECT_STATE.md`), en
+§8, con su revisor (§8.4). Lo que espera a la sesión 4 está en §4; lo que queda para el consultor,
+en §8.3 («Para el consultor, sin tocar»): `PROJECT_STATE.md` se queda en 23.232 bytes.

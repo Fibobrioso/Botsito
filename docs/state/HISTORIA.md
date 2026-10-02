@@ -1590,3 +1590,12 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 3 (2026-10-01).
+
+# Next Action HECHA · I · sale de PROJECT_STATE.md en feature/escenarios-por-sesion (2026-10-02)
+
+Regla del consultor del 2026-10-02 (`docs/runbooks/RITUAL.md` y `docs/state/README.md`): una
+entrada de Next Action que pasa a HECHA se mueve aqui en la misma rama que la cierra. La I se
+cerro en `stable/F36l-cuarentena-por-defecto` y `stable/F36m-ajustes-cierre`, antes de la regla,
+y sale ahora por orden del consultor. Su texto literal en PROJECT_STATE.md:
+
+I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01)**, y el comentario de `knowledge/corpus/tramos_no_citables.yaml` que quedaba, en `stable/F36m-ajustes-cierre`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.

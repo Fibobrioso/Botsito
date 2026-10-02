@@ -396,8 +396,8 @@ parametros:
     descripcion: >-
       tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la
       ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay
-      ninguna, el sesgo es INSUFICIENTE y no se opera. PROVISIONAL: es una decision del
-      proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
+      ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision
+      del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
       `estrategia`, cuyos valores solo los dice el trader
     estado: CONFIRMED
     valor: 60

@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 15.5.0` · hash `9cc64673745b…`
+`spec_version 15.5.1` · hash `4b55c70309bc…`
 
 30 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 

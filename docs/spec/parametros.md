@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.5.0` · hash `9cc64673745b…`
+`spec_version 15.5.1` · hash `4b55c70309bc…`
 
 95 en total: 78 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -549,7 +549,7 @@ Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
 
 ### `sesgo_h4_tope_velas`
 
-tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay ninguna, el sesgo es INSUFICIENTE y no se opera. PROVISIONAL: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
+tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
 
 ### `spread_maximo`
 
