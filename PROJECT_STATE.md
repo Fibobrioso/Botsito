@@ -23,7 +23,7 @@ EN CURSO: `trabajo/cerrar-a29-a36` (2026-10-02; encargo docs/encargos/trabajo-ce
 8346b9b · merge: sesiones independientes y varios escenarios por sesion (ADR-0066), A-52 y A-53, y lo HECHO del Next Action fuera de PROJECT_STATE · tag stable/F36n-escenarios-por-sesion
 
 ## Tests Currently Passing
-1165 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1166 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -89,12 +89,10 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-25 | la vida de la marca de liquidez de M15 | pregunta | no | F19, F20 |
 | A-27 | las especificaciones de EURUSD en FTMO | medicion | no | F17, F33 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
-| A-29 | cuando nace la orden limite | pregunta | no | F20, F22 |
 | A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
 | A-33 | tres ganadoras que cierran por debajo de 3R | pregunta | no | F20, F24, F26 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
-| A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
 | A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
 | A-42 | con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 | pregunta | si | F14, F26 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |

@@ -53,7 +53,7 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "intentos_tras_toma_nueva": "    valor: vuelven_a_cartuchos_max\n",
         "orden_pendiente_al_abrir_sesion": "    valor: se_retira\n",
         "cartuchos_max": "    valor: 3\n",
-        "orden_limite_nace": '    valor: "al_aparecer_punto_de_breaker"\n',
+        "orden_limite_nace": "    valor: al_aparecer_punto_de_breaker\n",
         "max_escenarios_por_sesion": "    valor: sin_limite\n",
         "orden_pendiente_al_abrir_escenario": "    valor: se_mueve\n",
     }

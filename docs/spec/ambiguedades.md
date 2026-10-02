@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.5.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.6.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (23)
+## ABIERTA (21)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -48,12 +48,6 @@ MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por d
 
 Afecta a: `broker_offset_base`, `broker_dst`.
 
-### A-29 · cuando nace la orden limite · pregunta
-
-¿En qué momento pones por primera vez la orden límite en una zona?
-
-Afecta a: `orden_limite_nace`.
-
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
 Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella?
@@ -75,10 +69,6 @@ Afecta a: `parciales`, `objetivo_rr`.
 Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco?
 
 Afecta a: `liquidez_m15_pivote_formado`.
-
-### A-36 · en qué punto de la mecha va la orden límite · pregunta
-
-Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
 
 ### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
 
@@ -166,7 +156,7 @@ el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. 
 
 Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te haga descartar una?
 
-## RESUELTA (24)
+## RESUELTA (26)
 
 ### A-1 · sesgo H4
 
@@ -256,6 +246,12 @@ Afecta a: `zonas_control_max_por_esquema`.
 
 A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿qué haces? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:19:17): «nosotros el sesgo ya nos define qué vamos a buscar, luego nos enfocamos solo en M15, tratar de buscar a favor»: manda el sesgo y en M15 solo se busca a favor (fb-2026-09-29-sesion-03-fc2c5c1f).
 
+### A-29 · cuando nace la orden limite · pregunta
+
+¿En qué momento pones por primera vez la orden límite en una zona? RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 0:01:43), a la pregunta que ofrecia las tres lecturas: «Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker»; es `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-b41ecf9b).
+
+Afecta a: `orden_limite_nace`.
+
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
@@ -263,6 +259,10 @@ Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop
 ### A-34 · vela H4 previa que rompe ambos extremos · pregunta
 
 Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas para la sesión? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:16:19): «si rompe por los dos, como te digo, importa el color de la vela»: con la doble ruptura el sesgo lo decide el color con que cierra la vela (fb-2026-09-29-sesion-03-617f496a).
+
+### A-36 · en qué punto de la mecha va la orden límite · pregunta
+
+Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas? RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 1:17:14-1:17:21): a «el cero de la caja va siempre en el extremo del bloque, mecha incluida, o ese es un poco dentro?», «Mecha incluida, siempre.» (fb-2026-09-29-sesion-03-626c4dc7). Con la orden stop de ADR-0064 la orden nace en el 0 de la caja, asi que va en el extremo, mecha incluida.
 
 ### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
 

@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-626c4dc7
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-36
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Mecha incluida, siempre.
+registrado_por: Aleks · grabacion de la sesion 3 (v9); cita verificada contra la cruda activa por verificar_citas
+  (via autorizada); por orden del consultor del 2026-10-02 (trabajo/cerrar-a29-a36)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: '1:17:14'
+t1: '1:17:21'
+valor_resultante: en el extremo del bloque, mecha incluida
+notas: 'ev-v9-011714-08536830; respuesta a «el cero de la caja va siempre en el extremo del bloque, mecha
+  incluida, o ese es un poco dentro?». La cruda no separa voces: el hablante se atribuye por contexto
+  (confianza media del item). Con la orden stop de ADR-0064 la orden nace en el 0 de la caja'
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

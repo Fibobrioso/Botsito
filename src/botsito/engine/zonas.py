@@ -30,20 +30,18 @@ terminado no coloca mas. Sin intentos no se marca terminado: RN-016 deja
 `detenido_por_cartuchos`, que prohibe abrir (RN-001) hasta que la toma de otra liquidez abre el
 escenario siguiente y lo apaga.
 
-`orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): `al_darse_el_esquema` coloca en el cierre del
-breaker, en el 0 del bloque de origen, como siempre; `al_tomarse_la_liquidez` queda NO_IMPLEMENTADA
-con nombre. `al_aparecer_punto_de_breaker` es LA VIDA DE LA ORDEN STOP (ADR-0056 §7, ADR-0064): tras
-la toma de la sesion, la orden nace en el posible punto de breaker que dice `orden_stop_punto`
--`ultimo_pivote_m1`, el ultimo pivote de M1 contrario a la entrada (la funcion de R5), o
-`referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con la caja que dice
+`orden_limite_nace` (A-29, RESUELTA en `al_aparecer_punto_de_breaker`): `al_darse_el_esquema` coloca
+en el cierre del breaker, en el 0 del bloque de origen, como siempre; `al_tomarse_la_liquidez` queda
+NO_IMPLEMENTADA con nombre. `al_aparecer_punto_de_breaker` es LA VIDA DE LA ORDEN STOP (ADR-0056 §7,
+ADR-0064): tras la toma de la sesion, la orden nace en el posible punto de breaker que dice
+`orden_stop_punto` -`ultimo_pivote_m1`, el ultimo pivote de M1 contrario a la entrada (la funcion de
+R5), o `referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con la caja que dice
 `caja_bloque` (R6, R4 o R1 de CAJA-77), y cada punto nuevo liga una zona nueva (`zona_del_punto`),
 que RN-006 usa para reubicarla. Un punto ya usado -colocado, aceptado o rechazado- no se vuelve a
-colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`). Con
-`caja_se_fija` = `en_cada_cierre_m1` (sensibilidad de ADR-0064, decision 5) el 1 de la caja se
-recalcula en cada cierre de M1 hasta el llenado: un 1 nuevo es una zona nueva del mismo punto, y
-RN-006 la reubica; un punto cuya orden se rechazo no se vuelve a colocar con otra caja
-(`marcar_rechazada`).
-"""
+colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`). Con `caja_se_fija` =
+`en_cada_cierre_m1` (sensibilidad de ADR-0064, decision 5) el 1 de la caja se recalcula en cada
+cierre de M1 hasta el llenado: un 1 nuevo es una zona nueva del mismo punto, y RN-006 la reubica; un
+punto cuya orden se rechazo no se vuelve a colocar con otra caja (`marcar_rechazada`)."""
 
 from __future__ import annotations
 

@@ -14,6 +14,9 @@ rutas_permitidas:
   - src/botsito/engine/
   - tests/unit/
   - tests/contract/
+  # Ampliado el 2026-10-02: la hoja de preguntas se niega a preguntar una RESUELTA, y A-29 y
+  # A-36 salen de su orden (como hizo trabajo/activar-sesion-03 con las nueve de la sesion 3)
+  - scripts/hoja_preguntas.py
 rutas_protegidas:
   - knowledge/evidence/
   - knowledge/cases/

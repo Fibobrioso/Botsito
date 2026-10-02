@@ -316,9 +316,9 @@ docs/validation/REGISTRO-MARZO.md. La añadió el consultor el 2026-09-30: va la
 
 | pregunta (de dónde viene) | respuesta del trader | cita literal | dónde |
 |---|---|---|---|
-| **Cuándo nace la orden** (A-29) | tras la toma, en los posibles puntos de breaker | «Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker» | v9 0:01:43–0:01:52, a la pregunta de 0:01:30 que ofrecía las tres lecturas (`ev-v9-000143-214aacde`) |
+| **Cuándo nace la orden** (A-29) | tras la toma, en los posibles puntos de breaker | «Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker» | v9 0:01:43–0:01:52, a la pregunta de 0:01:30 que ofrecía las tres lecturas (`ev-v9-000143-214aacde`); RESUELTA el 2026-10-02 (`fb-2026-09-29-sesion-03-b41ecf9b`) |
 | **Qué velas forman la caja: R1 o R4** (F, A-48) | la caja va del punto de breaker al punto más alto, que es R6, y el bloque es cualquier número de velas del mismo color | «se traza desde el posible punto de breaker, o sea el punto de breaker hasta el punto más alto»; «es indiferente el número de velas […] tendría que ser del mismo color que la vela anterior» | v9 0:47:21 (`ev-v9-004721-2e023ac6`); v7 0:15:50 (ítem creado en la rama F35, sin integrar); v9 1:15:55–1:16:59 |
-| **En qué punto de la mecha va la orden** (A-36) | en el extremo, mecha incluida | «Mecha incluida, siempre.» | v9 1:17:14–1:17:18 |
+| **En qué punto de la mecha va la orden** (A-36) | en el extremo, mecha incluida | «Mecha incluida, siempre.» | v9 1:17:14–1:17:21 (`ev-v9-011714-08536830`); RESUELTA el 2026-10-02 (`fb-2026-09-29-sesion-03-626c4dc7`) |
 | **Confirmación grabada de A-47** (F) | orden stop en la ruptura | «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto» | v9 0:01:24–0:01:29 (`ev-v9-000124-d2afa992`) |
 | **El break even al tick o al cierre** (F, A-13) | apenas toca, mirado en M1, a la entrada exacta | «Sí, o sea, apenas toca. […] yo siempre lo he estado trabajando, o sea, apenas toca»; «apenas toca, pues se pone en B la entrada» | v6 0:57:01 (`ev-v6-005701-7ae2b8d3`), a la pregunta «¿en el instante en que toca o esperas a que la vela cierre?» (v6 0:53:08); v9 0:55:43 (`fb-2026-09-29-sesion-03-9f506366`) |
 | **Un equal, ¿gasta intento?** (E-2) | no | «una reentrada después de un equal […] no, no es considerado […] reentrada después de equal, tampoco es considerado un intento» | v6 0:52:52–0:53:04 (RN-019, `fb-2026-09-09-sesion-01-060cd801`); en v9 1:29:00 el ASR no se entiende |
@@ -353,12 +353,13 @@ nueve «pendiente de reflejar»). **No son preguntas**: se reflejan en la spec e
 ## 4. Lo que el barrido encontró para el consultor
 
 - **A-29 ya tiene respuesta grabada** (v9 0:01:43, a la pregunta que ofrecía las tres lecturas):
-  `al_aparecer_punto_de_breaker`. Sigue ABIERTA en la spec. Cerrarla es una rama propia, que toca
-  cuatro sitios.
+  `al_aparecer_punto_de_breaker`. **CERRADA el 2026-10-02** en `trabajo/cerrar-a29-a36`
+  (`fb-2026-09-29-sesion-03-b41ecf9b`; docs/validation/CERRAR-A29-A36.md).
 - **La caja de R6 la dijo el trader dos veces** (v9 0:47:21 y v7 0:15:50): «desde el posible punto
   de breaker hasta el punto más alto». Es la lectura que F35 eligió por la medida. «R1 o R4» deja de
   ser la pregunta: es el punto de breaker y el punto más alto.
-- **A-36** («Mecha incluida, siempre», v9 1:17:18) también tiene respuesta y sigue ABIERTA.
+- **A-36** («Mecha incluida, siempre», v9 1:17:18) también tiene respuesta. **CERRADA el
+  2026-10-02** en `trabajo/cerrar-a29-a36` (`fb-2026-09-29-sesion-03-626c4dc7`).
 - **El break even al tocar, dicho como «no al cierre»** (v6 0:57:01, a la pregunta del instante), no
   es lo que hace ADR-0061 §5, que lo pone al cierre de la M1 que toca. Es una diferencia de
   implementación y no de pregunta.

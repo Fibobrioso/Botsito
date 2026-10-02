@@ -258,7 +258,8 @@ predicados:
     # Sustituye a `se_coloca_orden_limite`, que era un evento DEL BOT que ninguna accion producia:
     # leida al pie de la letra, la jornada daba cero colocaciones (auditoria del 2026-09-13). Ahora
     # la colocacion es una accion (`colocar_orden_limite`, RN-015) y esto es la condicion de mercado
-    # que la dispara. CUAL es esa condicion no esta cerrado en el corpus: A-29.
+    # que la dispara. CUAL es esa condicion es A-29, RESUELTA el 2026-10-02: al aparecer el
+    # posible punto de breaker, tras la toma (`al_aparecer_punto_de_breaker`, fb-2026-09-29-sesion-03-b41ecf9b).
     descripcion: >-
       llega el momento de colocar la orden limite en una zona de control, segun `momento`
       (orden_limite_nace): `al_darse_el_esquema`, cuando se da uno de los dos esquemas de entrada
@@ -1262,7 +1263,8 @@ reglas:
       geometria y causa de activacion-; ahora es `activacion_sin_ruptura`. Lo segundo contradecia
       ADR-0028 §5 -la posicion viva la lee el motor del broker- y se quita (ADR-0032); F14b §0, que
       lo habia anadido, queda deshecho. Por que via llega una orden a activarse sin ruptura depende
-      de cuando nace la orden, que no esta cerrado (A-29)
+      de cuando nace la orden: A-29, RESUELTA el 2026-10-02 en `al_aparecer_punto_de_breaker`
+      (fb-2026-09-29-sesion-03-b41ecf9b)
     forma:
       cuando:
         todos_de:
@@ -1311,7 +1313,8 @@ reglas:
       (ADR-0032) esta regla PREPARA la orden y no la da por colocada: su `cuando` era el evento
       `se_coloca_orden_limite`, que ninguna regla producia, asi que la jornada entera daba cero
       colocaciones (auditoria del 2026-09-13). Ahora dispara con la condicion de mercado
-      (`toca_colocar_orden_limite`, cuyo momento es A-29) y deja la zona en `orden_dimensionada`;
+      (`toca_colocar_orden_limite`, cuyo momento es A-29, RESUELTA el 2026-10-02 en
+      `al_aparecer_punto_de_breaker`) y deja la zona en `orden_dimensionada`;
       RN-015 escribe el objetivo y coloca. Son dos reglas para que entre las dos pasen los gates
       -RN-027 redondea el lote- sin depender de un orden entre disparadores que ADR-0028 no da. Tampoco
       fija ya `orden_limite_pendiente`: lo lee del broker (ADR-0028 §5). El `ninguno_de` evita una
@@ -1677,7 +1680,8 @@ reglas:
       eximio nunca: ahora solo la salida en negativo que no cerro ningun stop, que es la que el
       describe ("te saque la entrada, te genera una perdida", v6 1:23:13-1:23:19). Si el stop entero
       de una activacion sin ruptura gasta intento lo pregunta A-31. Cuando se reentra -en cuanto se
-      cierra o al volver a darse la condicion de colocar- depende de A-29
+      cierra o al volver a darse la condicion de colocar- depende de A-29, RESUELTA el 2026-10-02
+      en `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-b41ecf9b)
     forma:
       cuando:
         todos_de:

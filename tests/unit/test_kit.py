@@ -309,13 +309,16 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # de hecho el 2026-09-10 y cerrada con su frase referida el 2026-09-12, como se cerro A-11).
     # Y las diez que el trader responde en la sesion 3 (2026-09-29, rama trabajo/activar-sesion-03):
     # A-26, A-31, A-34, A-37, A-38, A-40, A-41, A-45, A-46 y A-47. A-13 y A-39 siguen ABIERTAS por
-    # los cortes de audio de v9, aunque lo firme de su respuesta ya este en la spec.
+    # los cortes de audio de v9, aunque lo firme de su respuesta ya este en la spec. Y el
+    # 2026-10-02 (rama trabajo/cerrar-a29-a36) A-29 y A-36, que tenian su respuesta grabada en v9.
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
         "A-14",
         "A-20",
         "A-26",
+        "A-29",
         "A-31",
         "A-34",
+        "A-36",
         "A-37",
         "A-38",
         "A-40",

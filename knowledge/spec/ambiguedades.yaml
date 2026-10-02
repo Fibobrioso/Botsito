@@ -684,6 +684,10 @@ ambiguedades:
     titulo: cuando nace la orden limite
     pregunta: >-
       ¿En qué momento pones por primera vez la orden límite en una zona?
+      RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 0:01:43), a la pregunta
+      que ofrecia las tres lecturas: «Lo primero es que primero se desarrolla una toma de liquidez
+      Para recién nosotros poder trazar los posibles puntos de breaker»; es
+      `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-b41ecf9b).
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema
@@ -714,9 +718,10 @@ ambiguedades:
       - ev-v3-002511-b12d67be
       - ev-v7-001457-1fe7fdfe
       - ev-v7-002201-2b2f20aa
+      - ev-v9-000143-214aacde
     parametros: [orden_limite_nace]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -918,6 +923,10 @@ ambiguedades:
     titulo: en qué punto de la mecha va la orden límite
     pregunta: >-
       Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
+      RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 1:17:14-1:17:21): a «el
+      cero de la caja va siempre en el extremo del bloque, mecha incluida, o ese es un poco
+      dentro?», «Mecha incluida, siempre.» (fb-2026-09-29-sesion-03-626c4dc7). Con la orden stop
+      de ADR-0064 la orden nace en el 0 de la caja, asi que va en el extremo, mecha incluida.
     resuelve_en: [F20, F22]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-01 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. CONSTA, en v4 1:06:05-1:06:47 y como respuesta a
@@ -929,9 +938,10 @@ ambiguedades:
     # pueda escribirse sin el precio exacto
     evidencia:
       - ev-v4-010605-a11249c0
+      - ev-v9-011714-08536830
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
