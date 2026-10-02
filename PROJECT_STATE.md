@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-feature/escenarios-por-sesion
+main
 
 ## Current Feature
-EN CURSO: `feature/escenarios-por-sesion` (2026-10-01; encargo docs/encargos/feature-escenarios-por-sesion.md, informe docs/validation/ESCENARIOS-POR-SESION.md): A3 b) de Next Action, sesiones independientes y varios escenarios por sesion. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
+NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion` (2026-10-02).
 
 ## Stable Main State
-1591737 · merge de `trabajo/ajustes-cierre` (tag `stable/F36m-ajustes-cierre`), sobre `stable/F36l-cuarentena-por-defecto` (8a3b501), que dejo la CLI ensenando el corpus filtrado por defecto (`src/botsito/corpus/cuarentena.py`, la unica fuente; la evidencia con su propio criterio; la guardia bloquea la opcion que lo ensena todo y 14 ficheros que copian texto oculto). Esta rama, solo documentacion: todo cierre lleva, en el commit que saca el contrato, su registro en HISTORIA y su fila en ERRORES-RECURRENTES, y el commit de estado no anade nada a Change Log ni a Completed Features (docs/runbooks/RITUAL.md, skill cerrar-rama); `tramos_no_citables.yaml` y los runbooks dicen lo que hace hoy la CLI. Informe docs/validation/AJUSTES-CIERRE.md; el registro del cierre, al final de HISTORIA.
+8346b9b · merge de `feature/escenarios-por-sesion` (tag `stable/F36n-escenarios-por-sesion`): las sesiones son independientes -la toma tiene que ser de la sesion- y cada liquidez nueva abre un escenario con sus intentos; una ganadora termina el escenario y el dia sigue (RN-034 con RN-017, ADR-0066). PROVISIONAL en cinco parametros con su pregunta de la sesion 4 (5, 15, 18, 20 y 21); A-52 y A-53 abiertas, y un test exige que todo parametro PROVISIONAL cuelgue de una ambiguedad ABIERTA. Lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra (RITUAL.md, punto 3). Informe docs/validation/ESCENARIOS-POR-SESION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-1591737 · merge: todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; los documentos dicen que la CLI enseña el corpus filtrado · tag stable/F36m-ajustes-cierre
+8346b9b · merge: sesiones independientes y varios escenarios por sesion (ADR-0066), A-52 y A-53, y lo HECHO del Next Action fuera de PROJECT_STATE · tag stable/F36n-escenarios-por-sesion
 
 ## Tests Currently Passing
 1165 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
