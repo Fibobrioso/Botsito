@@ -1,6 +1,6 @@
 ---
 name: cerrar-rama
-description: Cierra en main una rama de trabajo de Bot v3 siguiendo docs/runbooks/RITUAL.md (contrato fuera, CI de Linux si toca la plataforma, merge, tag, PROJECT_STATE, make check sellado, commit de estado, push atomico, CI en verde y borrado de la rama local y de su fix/<rama> remota). Solo con una orden de cierre explicita de Aleks.
+description: Cierra en main una rama de trabajo de Bot v3 siguiendo docs/runbooks/RITUAL.md (contrato fuera junto con el registro del cierre en HISTORIA y la fila de ERRORES-RECURRENTES, CI de Linux si toca la plataforma, merge, tag, PROJECT_STATE, make check sellado, commit de estado, push atomico, CI en verde y borrado de la rama local y de su fix/<rama> remota). Solo con una orden de cierre explicita de Aleks.
 disable-model-invocation: true
 argument-hint: "<rama> <tag stable/...> [\"mensaje del merge\"]"
 ---
@@ -33,6 +33,9 @@ Si esta skill y el runbook discrepan, gana el runbook y se dice en el informe.
 | Mensaje del merge, una linea | el argumento o el informe de la rama | se propone y se confirma |
 | Numero de commits esperado | `git log --oneline main..<rama>` ANTES de empezar, mas el del contrato | — |
 | Si la rama se empujo como `fix/<x>` | el informe de la rama, o `git ls-remote --heads origin fix/<x>` | — |
+| Commits de la rama y runs de su CI, para el registro de HISTORIA | `git log --oneline main..<rama>`; `gh run list --branch fix/<x>` y el §de la CI del informe | — |
+| Hallazgos del revisor, para ERRORES-RECURRENTES | el informe de la rama (el revisor pegado) | — |
+| Hallazgos del CONSULTOR, para ERRORES-RECURRENTES | la orden de cierre | **se preguntan ANTES del commit del contrato**: no se deducen ni se dejan en «se apunta al cerrar» |
 
 ## Limites
 
@@ -50,7 +53,8 @@ Si esta skill y el runbook discrepan, gana el runbook y se dice en el informe.
 ## Herramientas
 
 Bash (git, `make`, `uv run botsito state check`, `curl` contra la API de GitHub o `gh run`), Read
-para el log de `make check`, Edit para `PROJECT_STATE.md`. Nada mas.
+para el log de `make check`, Edit para `PROJECT_STATE.md` y, en la rama, para
+`docs/state/HISTORIA.md` y `docs/runbooks/ERRORES-RECURRENTES.md`. Nada mas.
 
 ## El recorrido
 
@@ -59,15 +63,22 @@ para el log de `make check`, Edit para `PROJECT_STATE.md`. Nada mas.
 2. `RITUAL.md`, «Antes del merge: la CI de Linux, si la rama toca la plataforma». Si toca hooks,
    rutas, el sistema de archivos o scripts que dependan de la plataforma y la CI de `fix/<rama>`
    no esta ya en verde, se empuja y se espera ANTES de seguir.
-3. `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello. Si la orden pide
-   un registro en `docs/state/HISTORIA.md`, va en ese mismo commit (el mismo apartado del runbook):
-   en `main` ya no se puede.
+3. `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello. **En ese mismo
+   commit, SIEMPRE, aunque la orden de cierre no lo repita** (el mismo apartado del runbook; en
+   `main` ya no se puede):
+   - el registro del cierre al final de `docs/state/HISTORIA.md`, con
+     `stable/<tag>^{commit}`, los commits de la rama y los runs de la CI;
+   - la fila de la rama en la tabla de `docs/runbooks/ERRORES-RECURRENTES.md`, con los hallazgos
+     del revisor y los del consultor. Si la orden no trae los del consultor, se preguntan antes de
+     este commit.
 4. `RITUAL.md`, «Los pasos, con sus puertas», en su orden: `git checkout main`, `status` vacio,
    `log main..<rama>` con el numero esperado, merge `--no-ff` (si `pre-merge-commit` rechaza:
    el bloque de `merge --abort` del runbook), tag anotado, lectura del sha (`branch`, `HEAD` y
    `<tag>^{commit}` coinciden, o se para sin editar).
-5. Edicion de `PROJECT_STATE.md` (la lista de secciones del runbook; si la orden la acota, manda
-   la orden, pero `Current Branch` tiene que decir `main` o `state check` falla), `git add PROJECT_STATE.md`,
+5. Edicion de `PROJECT_STATE.md`: SOLO las lineas de cabecera de la lista del runbook (si la orden
+   la acota, manda la orden, pero `Current Branch` tiene que decir `main` o `state check` falla).
+   **No se anade NADA a Change Log ni a Completed Features**, aunque la orden no lo repita: esa
+   historia es el registro de HISTORIA del paso 3. `git add PROJECT_STATE.md`,
    las dos puertas de una sola linea, y `uv run botsito state check` en la VENTANA C: aqui un ERROR
    es REAL y se para.
 6. `make check > make-check.log 2>&1`, esperar el aviso, leer el log (exit 0, ningun `failed`, la
@@ -86,12 +97,17 @@ dice, se pregunta a Aleks.
 
 ## Artefacto
 
-`main` con el merge, el tag y el commit de estado en `origin`, la CI en verde y la rama borrada. Se
-termina diciendo el sha final de `main`, el tag, el run de la CI y su `conclusion`.
+`main` con el merge, el tag y el commit de estado en `origin`, la CI en verde y la rama borrada; y,
+dentro del merge, el registro del cierre en `docs/state/HISTORIA.md` y la fila de la rama en
+`docs/runbooks/ERRORES-RECURRENTES.md`. Se termina diciendo el sha final de `main`, el tag, el run
+de la CI y su `conclusion`.
 
 ## Verificacion
 
-- `git log --oneline -3 main` = commit de estado, merge, ultimo commit de la rama.
+- `git log --oneline -3 main` = commit de estado, merge, ultimo commit de la rama, que es el
+  `chore(cierre)` con el contrato fuera, el registro de HISTORIA y la fila de ERRORES-RECURRENTES.
+- `git show --stat HEAD` (el commit de estado) = solo `PROJECT_STATE.md`, y su diff no toca
+  Change Log ni Completed Features.
 - `git rev-parse <tag>^{commit}` = el merge, y `Last Stable Commit` de `PROJECT_STATE.md` empieza
   por ese sha.
 - La CI de `HEAD`: `completed` / `success`.

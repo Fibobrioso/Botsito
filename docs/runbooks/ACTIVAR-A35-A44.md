@@ -34,8 +34,11 @@ Los dos selectores viven en `knowledge/spec/parametros.yaml`, los dos `estado: U
 
 ## 1. Qué escribe cada respuesta posible
 
-**Una respuesta, un registro de feedback**, con la cita copiada de la transcripción CRUDA
-(`data/transcripciones/<vN>/<modelo>/cruda.txt`) y su tramo. El registro sobre la AMBIGÜEDAD es el
+**Una respuesta, un registro de feedback**, con la cita copiada de la transcripción FILTRADA de la
+sesión (`<stem>.filtrada.md`, skill `ingerir-sesion`) y su tramo: fuera de los bloques en
+cuarentena es literal de la cruda, y la cruda de una sesión
+(`data/transcripciones/<vN>/<modelo>/cruda.txt`) no la lee nadie más que Aleks (corregido el
+2026-10-01, `trabajo/ajustes-cierre`). El registro sobre la AMBIGÜEDAD es el
 que la cierra (ADR-0022); el registro sobre cada PARÁMETRO es el que `feedback apply` lleva al
 registro (ADR-0012 §7). Los dos van en el mismo commit con `Fuente:` y los ids `fb-*` nuevos.
 
@@ -60,13 +63,13 @@ Los dos registros (la ambigüedad y el parámetro):
 uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
   --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
   --objetivo-tipo ambiguedad --objetivo-id A-35 --accion RESOLVE_UNKNOWN \
-  --respuesta "<literal de la cruda>" --registrado-por Aleks \
+  --respuesta "<literal de la filtrada>" --registrado-por Aleks \
   --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
 
 uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
   --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
   --objetivo-tipo parametro --objetivo-id liquidez_m15_pivote_formado --accion RESOLVE_UNKNOWN \
-  --respuesta "<literal de la cruda>" --valor <inicio_vela_contraria|cierre_vela_contraria> \
+  --respuesta "<literal de la filtrada>" --valor <inicio_vela_contraria|cierre_vela_contraria> \
   --registrado-por Aleks --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
 ```
 
@@ -162,7 +165,7 @@ No se fuerza en la lectura más cercana. Se hace esto, y nada más:
 1. Se registra la respuesta como feedback sobre la ambigüedad (**RESOLVE_UNKNOWN** con la cita
    literal), sin registro sobre ningún parámetro: la ambigüedad sigue ABIERTA con la nota «responde,
    pero con una lectura que la spec no tiene», y el tramo.
-2. Se apunta la lectura nueva **con su fuente** (la cita de la cruda y el tramo) en
+2. Se apunta la lectura nueva **con su fuente** (la cita de la filtrada y el tramo) en
    `docs/validation/PREPARACION-A35-A44.md` §5 como candidata, y en el informe de la sesión.
 3. **Se avisa al consultor.** Añadir una opción al enum (`opciones` del parámetro en
    `parametros.yaml`, y el mecanismo que la lea en `domain/pivotes_m15.py` o
@@ -212,19 +215,19 @@ la compuerta de A-21 es la tercera y va después de las de A-35 y A-44. Con
 | **las dos cosas a la vez** | **NINGUNO: PARAR, §4**. El selector es un enum de UNA opción; combinar es una lectura nueva que decide el consultor (ADR) | — |
 | **otra cosa**: un número de velas, un tamaño del retroceso, una proporción de la caja, «lo veo», la vela del bloque con cuerpo grande, que el impulso sea rápido | **NINGUNO: PARAR, §4** | — |
 
-Los dos registros (la ambigüedad y el parámetro), con la cita de la CRUDA:
+Los dos registros (la ambigüedad y el parámetro), con la cita de la FILTRADA (§1):
 
 ```
 uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
   --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
   --objetivo-tipo ambiguedad --objetivo-id A-21 --accion RESOLVE_UNKNOWN \
-  --respuesta "<literal de la cruda>" --registrado-por Aleks \
+  --respuesta "<literal de la filtrada>" --registrado-por Aleks \
   --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
 
 uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD> --medio video \
   --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
   --objetivo-tipo parametro --objetivo-id zona_control_limpia --accion RESOLVE_UNKNOWN \
-  --respuesta "<literal de la cruda>" \
+  --respuesta "<literal de la filtrada>" \
   --valor <solo_una_zona_de_control|sin_mecha_mas_alla_del_extremo> \
   --registrado-por Aleks --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
 ```

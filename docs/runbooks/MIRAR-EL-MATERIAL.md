@@ -75,4 +75,15 @@ Es lo que mas tiempo hace perder. `knowledge/corpus/transcripciones/` solo tiene
   LOCALIZAR, no para citar literal.
 - **Los segmentos CRUDOS estan copiados dentro de `knowledge/_proposals/*.yaml`**, en
   `contexto.segmentos` (con `n`, `t0_ms`, `t1_ms`, `texto`, `senales`): suele ser la via mas rapida
-  para ver el tramo que rodea a una evidencia.
+  para ver el tramo que rodea a una evidencia. **Salvo las que copian segmentos que hoy se
+  ocultan**: esas no se leen (lista calculada en `.claude/hooks/ficheros_con_ocultos.txt`, junto a
+  las salidas de medicion con lineas ocultas; la guardia las bloquea).
+
+> **Desde `stable/F36l-cuarentena-por-defecto` (2026-10-01), la via para LEER el texto es la CLI,
+> que lo ensena FILTRADO.** `kb find`, `kb at`, `corpus transcript show`, `corpus frames show` y
+> `evidence propose` ocultan por defecto las sesiones en cuarentena (v7 en adelante), los tramos no
+> citables y el material reservado o sin sortear, y dicen cuantos segmentos ocultaron y por que
+> (`docs/validation/CUARENTENA-POR-DEFECTO.md`). La opcion que lo ensena todo es solo de Aleks, en
+> su terminal: la guardia la bloquea. Los ficheros de `data/transcripciones/` NO pasan por ese
+> filtro: las crudas de v7 en adelante las bloquea la guardia, y la de v6 se lee por trozos que no
+> toquen sus tramos (`CLAUDE.md`, «Las guardias de Claude Code»).

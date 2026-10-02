@@ -122,13 +122,16 @@ precondición de ceguera.
    en `knowledge/corpus/tramos_no_citables.yaml` y en `docs/validation/HOLDOUT-EXPOSICIONES.md`
    **el mismo día** (ADR-0021 §4).
 5. **Una respuesta, un registro.** Por cada pregunta respondida, con la cita copiada de la
-   transcripción CRUDA (`data/transcripciones/<vN>/<modelo>/cruda.txt`) y su tramo:
+   transcripción FILTRADA (`<stem>.filtrada.md`, skill `ingerir-sesion`) y su tramo. Fuera de los
+   bloques en cuarentena es literal de la cruda; la cruda de una sesión
+   (`data/transcripciones/<vN>/<modelo>/cruda.txt`) no la lee nadie más que Aleks, y la guardia la
+   bloquea desde v7 (corregido el 2026-10-01, `trabajo/ajustes-cierre`):
 
    ```
    uv run botsito feedback new --sesion <sesion> --fecha <AAAA-MM-DD> --medio video \
      --grabacion "<ruta en el corpus>" --t0 <h:mm:ss> --t1 <h:mm:ss> \
      --objetivo-tipo ambiguedad --objetivo-id A-NN --accion RESOLVE_UNKNOWN \
-     --respuesta "<literal de la cruda>" --registrado-por Aleks \
+     --respuesta "<literal de la filtrada>" --registrado-por Aleks \
      --recibido-el <AAAA-MM-DD> --procedencia trader_grabado
    ```
 

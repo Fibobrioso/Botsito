@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/ajustes-cierre
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36l-cuarentena-por-defecto`.
+EN CURSO: `trabajo/ajustes-cierre` (2026-10-01; encargo docs/encargos/trabajo-ajustes-cierre.md, informe docs/validation/AJUSTES-CIERRE.md): solo documentacion y la skill cerrar-rama -el comentario de tramos_no_citables.yaml tras F36l, y el registro de cierre en HISTORIA y la fila de ERRORES-RECURRENTES como parte obligatoria de todo cierre-. En `main`, NINGUNA ABIERTA tras `stable/F36l-cuarentena-por-defecto`.
 
 ## Stable Main State
 8a3b501 · merge de `trabajo/cuarentena-por-defecto` (tag `stable/F36l-cuarentena-por-defecto`), sobre `stable/F36k-dieta-y-skills` (0744ece). La CLI ensena el corpus filtrado por defecto -sesiones en cuarentena, tramos no citables y material reservado o sin sortear, con `src/botsito/corpus/cuarentena.py` como unica fuente- y dice cuanto oculto y por que; la evidencia tiene su propio criterio (solo un tramo no citable o un dia de `casos_ocultos`); la opcion que lo ensena todo y su equivalente en Python, solo para Aleks y para las funciones de `AUTORIZADOS`; la guardia bloquea esa opcion y 14 ficheros que copian texto oculto. Informe docs/validation/CUARENTENA-POR-DEFECTO.md; el registro del cierre, al final de HISTORIA.
@@ -191,9 +191,11 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
-(regla 4) mira las dos.
-— ninguna desde el Archivo 2 (2026-10-01).
+(regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
+aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
+— ninguna desde el Archivo 3 (2026-10-01).
 
 ## Change Log
-Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli.
-— ninguna desde el Archivo 2 (2026-10-01).
+Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
+una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
+— ninguna desde el Archivo 3 (2026-10-01).
