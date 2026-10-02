@@ -761,6 +761,46 @@ Dentro de las tres grandes, lo que más pesa:
   `trabajo/guardias-claude`», que ya no está en `PROJECT_STATE.md`. Es el origen de la lista, no un
   resumen; no se toca sin decirlo.
 
+### 8.4 Informe del revisor (solo `76be592`)
+
+Subagente `revisor`, sobre el commit `76be592` (`4818e1c..76be592`). Los hallazgos, tal cual; lo
+comprobado sin hallazgos, resumido.
+
+> ## Informe del revisor · feature/escenarios-por-sesion (solo `76be592`, diff `4818e1c..76be592`) · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | importa | El pie «Estado» y §8 afirman que la quinta orden está «con su revisor (§8.4)», pero §8.4 no existe: §8 acaba en §8.3. Es lo esperable antes de pegar este informe, pero la rama no está «lista» hasta pegarlo. Hay que añadirlo antes de declararla lista. | `git diff 4818e1c..76be592 -- docs/validation/ESCENARIOS-POR-SESION.md`: el Estado dice «en §8, con su revisor (§8.4)»; el diff solo añade §8.1 a §8.3. |
+> | 2 | menor | Las cifras por sección de §8.3 coinciden con mi medida salvo ±1 byte en seis secciones, porque la mía cuenta el salto de línea final. Ejemplos: Cabecera 802 frente a 801, Technical Debt 6.590 frente a 6.589, Next Action 5.842 frente a 5.841. No se corrige nada, solo se declara el criterio. | Medición en memoria con `re.split` por `^#{1,2} `. |
+> | 3 | menor | El trailer del commit es `Co-Authored-By: Claude Opus 5.5`. La atribución vigente pide `Claude Sonnet 5.5`. | `git log -1 --format=%B 76be592`. |
+>
+> Comprobado sin hallazgos: el trailer `Fuente: ADR-0044` (existe); la descripción de `sesgo_h4_tope_velas`, sin PROVISIONAL, con `estado` y `valor` sin cambiar; los cuatro docs generados con `spec_version` 15.5.1 y el hash del manifiesto; `spec check` y `state check`; el contrato (32 ficheros, RITUAL.md y `docs/state/README.md` añadidos con su motivo); `test_historia.py`, `test_project_state.py`, `test_adr.py` y `test_spec_docs_generados.py`; ni ambigüedades, ni ADR, ni `src/`, ni `tests/`, ni holdout tocados; el punto 3 de RITUAL.md, coherente con la regla 5 de `state check`, con la puerta del commit del contrato y con el párrafo de la edición en `main`; el apartado nuevo de `docs/state/README.md`, sin contradicción.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 8 hechos, 0 parciales, 0 no hechos (el último, a falta del pegado). Comprobado: la I sale byte a byte (`4818e1c:PROJECT_STATE.md` sin la línea de la I y su línea en blanco es igual al `PROJECT_STATE.md` actual, y esa línea aparece byte a byte en lo añadido a HISTORIA); HISTORIA empieza exactamente por la anterior; `wc -c` 23.232 (874 menos: la I y su blanco), y no se recortó nada más.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | importa | Falta pegar este informe como §8.4. Es el último requisito de la orden y el Estado ya lo da por hecho. | Ver el hallazgo a#1. |
+> | 2 | menor | §8.3 dice que la puerta del commit y el párrafo de `main` «lo dicen también», y es cierto. Pero `HISTORIA.md` usa un encabezado `# Next Action HECHA · …` fuera del patrón `# Archivo N` y `# Registro de cierre`. Pasa `test_historia.py`; solo conviene que quede declarado como formato nuevo (el README ya lo hace). | `docs/state/HISTORIA.md` final; `docs/state/README.md` apartado nuevo. |
+>
+> ### Lo que no pude comprobar
+> `make check` y su `SELLO`/`PICO DE MEMORIA` (escribe; no hay `make-check.log`); `knowledge validate` y `spec docs --escribir` (escriben; sustituidos por los hashes y `spec check`).
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **a1 y b1, arreglados**: este apartado.
+- **a2, declarado**: las cifras de §8.3 cuentan cada sección sin el salto de línea con que acaba;
+  el total (23.232) es el de `wc -c` y coincide.
+- **a3, no se cambia**: la línea `Co-Authored-By` es la que dan las instrucciones de esta sesión
+  (`Claude Opus 5.5`), y un commit sellado no se reescribe (ni `rebase` ni `--amend`).
+- **b2, declarado**: el encabezado `# Next Action HECHA · <letra> · ...` es un formato nuevo de
+  HISTORIA, y lo fijan RITUAL.md (punto 3) y `docs/state/README.md`.
+- **Lo que no pudo comprobar**: `make check` selló `76be592` (1813 pasados, `SELLO` y
+  `PICO DE MEMORIA` 285 MiB) y sella este apartado.
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
