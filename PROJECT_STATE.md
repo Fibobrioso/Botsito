@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/cerrar-a29-a36
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion` (2026-10-02).
+EN CURSO: `trabajo/cerrar-a29-a36` (2026-10-02; encargo docs/encargos/trabajo-cerrar-a29-a36.md, informe docs/validation/CERRAR-A29-A36.md): cerrar A-29 y A-36, que ya tienen respuesta grabada del trader en v9. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion`.
 
 ## Stable Main State
 8346b9b · merge de `feature/escenarios-por-sesion` (tag `stable/F36n-escenarios-por-sesion`): las sesiones son independientes -la toma tiene que ser de la sesion- y cada liquidez nueva abre un escenario con sus intentos; una ganadora termina el escenario y el dia sigue (RN-034 con RN-017, ADR-0066). PROVISIONAL en cinco parametros con su pregunta de la sesion 4 (5, 15, 18, 20 y 21); A-52 y A-53 abiertas, y un test exige que todo parametro PROVISIONAL cuelgue de una ambiguedad ABIERTA. Lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra (RITUAL.md, punto 3). Informe docs/validation/ESCENARIOS-POR-SESION.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion` (2026-10-02).
 8346b9b · merge: sesiones independientes y varios escenarios por sesion (ADR-0066), A-52 y A-53, y lo HECHO del Next Action fuera de PROJECT_STATE · tag stable/F36n-escenarios-por-sesion
 
 ## Tests Currently Passing
-1165 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1166 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -89,7 +89,6 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-25 | la vida de la marca de liquidez de M15 | pregunta | no | F19, F20 |
 | A-27 | las especificaciones de EURUSD en FTMO | medicion | no | F17, F33 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
-| A-29 | cuando nace la orden limite | pregunta | no | F20, F22 |
 | A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
 | A-33 | tres ganadoras que cierran por debajo de 3R | pregunta | no | F20, F24, F26 |
@@ -117,6 +116,7 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
+- El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
 - PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
@@ -196,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 4 (2026-10-01).
+— ninguna desde el Archivo 5 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 4 (2026-10-01).
+— ninguna desde el Archivo 5 (2026-10-02).

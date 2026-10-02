@@ -63,7 +63,7 @@ def registro(tmp_path_factory: pytest.TempPathFactory) -> Registro:
     # `orden_limite_nace` es `al_aparecer_punto_de_breaker` (la vida de la orden stop, que prueba
     # tests/unit/test_orden_stop_pivote.py): aqui se fija la otra lectura, que sigue en pie
     texto = (RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
-    viejo = '    valor: "al_aparecer_punto_de_breaker"\n'
+    viejo = "    valor: al_aparecer_punto_de_breaker\n"
     assert texto.count(viejo) == 1
     ruta = tmp_path_factory.mktemp("registro") / "parametros.yaml"
     ruta.write_text(texto.replace(viejo, '    valor: "al_darse_el_esquema"\n'), encoding="utf-8")

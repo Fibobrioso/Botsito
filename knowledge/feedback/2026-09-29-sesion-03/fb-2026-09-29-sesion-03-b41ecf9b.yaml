@@ -1,0 +1,20 @@
+id: fb-2026-09-29-sesion-03-b41ecf9b
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-29
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder
+  trazar los posibles puntos de breaker
+registrado_por: Aleks · grabacion de la sesion 3 (v9); cita verificada contra la cruda activa por verificar_citas
+  (via autorizada); por orden del consultor del 2026-10-02 (trabajo/cerrar-a29-a36)
+grabacion: Grabación de pantalla 2026-09-29 164102.mp4
+t0: 0:01:43
+t1: 0:01:52
+valor_resultante: al_aparecer_punto_de_breaker
+notas: ev-v9-000143-214aacde; a la pregunta de v9 0:01:30 que ofrecia las tres lecturas (docs/sesion-4/PREGUNTAS.md
+  §2)
+recibido_el: '2026-09-29'
+procedencia: trader_grabado

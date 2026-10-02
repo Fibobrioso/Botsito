@@ -571,15 +571,17 @@ parametros:
       DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064, aceptado en su direccion
       por el consultor) EL VALOR ES `al_aparecer_punto_de_breaker` y el motor la hace: la vida de
       la orden stop de ADR-0056 §7 -nace tras la toma en el punto que dice orden_stop_punto, con la
-      caja que dice caja_bloque, y se reubica con cada punto nuevo (RN-006)-. Sigue
-      DEFAULT_AMBIGUOUS: A-29 no se resuelve, y la cita pasa a la de la orden stop puesta en el
-      punto antes de la ruptura (v7 0:14:57). Con `al_darse_el_esquema` todo sale como antes
-    estado: DEFAULT_AMBIGUOUS
-    valor: "al_aparecer_punto_de_breaker"
-    ambiguedad_id: A-29
+      caja que dice caja_bloque, y se reubica con cada punto nuevo (RN-006)-. Con
+      `al_darse_el_esquema` todo sale como antes. RESUELTA el 2026-10-02 (A-29, rama
+      trabajo/cerrar-a29-a36) con la respuesta grabada de la sesion 3: «primero se desarrolla una
+      toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker» (v9
+      0:01:43, ev-v9-000143-214aacde; el contexto, en docs/validation/SESION-03-EXTRACCION.md
+      §3.4); el valor no cambia
+    estado: CONFIRMED
+    valor: al_aparecer_punto_de_breaker
     fuente:
-      tipo: evidence
-      id: ev-v7-001457-1fe7fdfe
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-755c534e
   - nombre: orden_stop_punto
     categoria: estrategia
     tipo: enum

@@ -57,11 +57,13 @@ VIVOS = (
 # archivo -o las vigila otra guardia- y quedan fuera, cada una con su motivo. HISTORIA.md entera es
 # archivo y no la mira esta guardia.
 SECCIONES_EXENTAS = {
-    "## Completed Features": "una linea por rama cerrada, con las cifras de ese dia",
+    # desde trabajo/ajustes-cierre (2026-10-01) el cierre no les anade nada: lo cerrado va al
+    # registro de cierre de HISTORIA, y aqui solo queda la linea «ninguna desde el Archivo N»
+    "## Completed Features": "archivo: lo cerrado vive en el registro de cierre de HISTORIA",
     "## Stable Main State": "describe `main`, no la rama: sus cifras son las del ultimo tag",
     "## Tests Currently Passing": "la vigila `state check`, que la compara con pytest",
     "## Technical Debt": "describe deudas con las cifras del dia en que se anotaron",
-    "## Change Log": "el archivo por excelencia: cada entrada dice lo que era cierto ese dia",
+    "## Change Log": "archivo: cada entrada dice lo que era cierto ese dia; el cierre no anade",
 }
 
 

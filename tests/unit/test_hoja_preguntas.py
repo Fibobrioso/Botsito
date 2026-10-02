@@ -20,11 +20,12 @@ RAIZ = Path(__file__).resolve().parents[2]
 # la gestion; y al final lo demas. A-43 (ADR-0049, H2) justo despues de A-35: las dos tocan RN-004.
 # A-44 (ADR-0053 §9) justo despues de A-43: RN-020, el siguiente bloqueo tras A-35. El 2026-09-29
 # (rama trabajo/activar-sesion-03) salen las nueve que la sesion 3 dejo RESUELTAS: A-45, A-26,
-# A-37, A-38, A-47, A-31, A-40, A-34 y A-41 (la hoja se niega a preguntar una RESUELTA).
+# A-37, A-38, A-47, A-31, A-40, A-34 y A-41 (la hoja se niega a preguntar una RESUELTA). El
+# 2026-10-02 (rama trabajo/cerrar-a29-a36) sale A-29, RESUELTA por la sesion 3.
 ORDEN = [
     "A-35", "A-21", "A-44", "A-43", "A-24", "A-42",
     "A-25", "A-32",
-    "A-36", "A-29", "A-30", "A-48", "A-49",
+    "A-36", "A-30", "A-48", "A-49",
     "A-18", "A-13", "A-33",
     "A-39",
 ]  # fmt: skip

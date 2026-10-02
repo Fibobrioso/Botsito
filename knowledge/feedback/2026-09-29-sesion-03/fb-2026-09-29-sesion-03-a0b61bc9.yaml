@@ -1,0 +1,18 @@
+id: fb-2026-09-29-sesion-03-a0b61bc9
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-36
+accion: RESOLVE_UNKNOWN
+respuesta_literal: A-36 no se cierra. La pregunta se hizo sobre una orden límite, y desde A-47 la entrada
+  es con orden stop; además está C6 (v7, orden 2 puntos más allá del 0).
+registrado_por: Aleks, consultor · decision sobre trabajo/cerrar-a29-a36 (2026-10-02, segunda orden)
+valor_resultante: 'sin resolver: A-36 vuelve a ABIERTA y va a la sesion 4'
+supersede: fb-2026-09-29-sesion-03-626c4dc7
+notas: 'Retira el cierre de A-36 de fb-2026-09-29-sesion-03-626c4dc7: «Mecha incluida, siempre» (v9 1:17:14-1:17:21,
+  ev-v9-011714-08536830) habla del 0 de la caja, no de donde va la orden. C6 es la candidata de docs/validation/DISENO-ENTRADA-RUPTURA.md
+  §2.8. Pregunta nueva en docs/sesion-4/PREGUNTAS.md, seccion A'
+recibido_el: '2026-10-02'
+procedencia: correccion_consultor

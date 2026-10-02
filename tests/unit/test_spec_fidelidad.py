@@ -442,8 +442,9 @@ def test_las_mediciones_no_entran_en_el_cuestionario() -> None:
     preguntas = generar(registro, ambiguedades, mapa, detectar(vivos), vivos, lambda _v, _t: None)
     en_cuestionario = {o["id"] for p in preguntas for o in p.origenes if o["tipo"] == "ambiguedad"}
     assert not {"A-16", "A-27", "A-28"} & en_cuestionario
-    assert {"A-13", "A-29", "A-30"} <= en_cuestionario
+    # A-29 salio de aqui el 2026-10-02 (trabajo/cerrar-a29-a36): RESUELTA, ya no se pregunta
+    assert {"A-13", "A-30", "A-43"} <= en_cuestionario
 
-    sin_clase = [dataclasses.replace(a, clase=None) if a.id == "A-29" else a for a in ambiguedades]
+    sin_clase = [dataclasses.replace(a, clase=None) if a.id == "A-43" else a for a in ambiguedades]
     (fallo,) = abiertas_sin_clase(sin_clase)
-    assert "A-29" in fallo
+    assert "A-43" in fallo

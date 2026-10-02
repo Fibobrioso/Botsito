@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.5.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.6.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (23)
+## ABIERTA (22)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -47,12 +47,6 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por delante de UTC en horario estandar, y con que calendario cambia de hora: el de Nueva York, el europeo o ninguno? La ficha de FTMO dice "GMT+2 +DST" sin nombrar el calendario, y lo que midio la demo de FundedNext (120 minutos, calendario de Nueva York) no se hereda (ADR-0026). Desde ADR-0027 este reloj ya no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la regla de horario de verano no. VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario- cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
 
 Afecta a: `broker_offset_base`, `broker_dst`.
-
-### A-29 · cuando nace la orden limite · pregunta
-
-¿En qué momento pones por primera vez la orden límite en una zona?
-
-Afecta a: `orden_limite_nace`.
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
@@ -166,7 +160,7 @@ el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. 
 
 Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te haga descartar una?
 
-## RESUELTA (24)
+## RESUELTA (25)
 
 ### A-1 · sesgo H4
 
@@ -255,6 +249,12 @@ Afecta a: `zonas_control_max_por_esquema`.
 ### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
 
 A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contrario. Cuando pasa eso, ¿qué haces? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:19:17): «nosotros el sesgo ya nos define qué vamos a buscar, luego nos enfocamos solo en M15, tratar de buscar a favor»: manda el sesgo y en M15 solo se busca a favor (fb-2026-09-29-sesion-03-fc2c5c1f).
+
+### A-29 · cuando nace la orden limite · pregunta
+
+¿En qué momento pones por primera vez la orden límite en una zona? RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 0:01:43): «Lo primero es que primero se desarrolla una toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker»; es `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-d3063920; el contexto de la pregunta, en docs/validation/SESION-03-EXTRACCION.md §3.4).
+
+Afecta a: `orden_limite_nace`.
 
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 

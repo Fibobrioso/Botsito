@@ -17,7 +17,7 @@ from typing import Any
 
 import pytest
 
-from botsito.config.registro import Registro, cargar_registro
+from botsito.config.registro import Estado, Registro, cargar_registro
 from botsito.data.velas import a_minuto
 from botsito.domain.estructura_m1 import (
     BLOQUE_R1,
@@ -68,7 +68,7 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
     """El registro real con los valores pedidos para los parametros de ADR-0064."""
     texto = PARAMETROS.read_text(encoding="utf-8")
     actuales = {
-        "orden_limite_nace": '    valor: "al_aparecer_punto_de_breaker"\n',
+        "orden_limite_nace": "    valor: al_aparecer_punto_de_breaker\n",
         "orden_stop_punto": "    valor: ultimo_pivote_m1\n",
         "caja_bloque": "    valor: r6\n",
         "caja_se_fija": "    valor: al_verse_el_punto\n",
@@ -251,16 +251,11 @@ def test_rn008_no_frena_con_la_orden_en_el_punto(tmp_path: Path) -> None:
 # ------------------------------------------------------------- de punta a punta, por el cableado
 
 
-def test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado(
-    tmp_path: Path,
-) -> None:
-    """ADR-0056 §7 por el cableado real y la spec real (RN-006, RN-008, RN-011, RN-015): la
-    orden stop nace en el punto A sin esquema (RN-008 no frena), se forma el punto B, RN-006 la
-    cancela y RN-011 y RN-015 la recolocan en B en el MISMO cierre de M1, con su caja; el precio
-    rompe B, se llena y llega al objetivo. El contador de peticiones lo ve: colocar, cancelar,
-    colocar. La geometria de los puntos es sintetica; la marca de usada es la del productor."""
+def _cadena(reg: Registro) -> tuple[Any, Any, dict[str, Any]]:
+    """El dia de la cadena colocada-cancelada-recolocada (abajo), por el cableado real y la spec
+    real, con el registro `reg`. Devuelve el motor ya corrido, el modulo `test_cableado` y los
+    predicados sinteticos, para repetir el dia con otro registro."""
     tc = _cargar_test_cableado()
-    reg = _registro(tmp_path)
     from botsito.spec.modelo import cargar_vocabulario
 
     vocabulario = cargar_vocabulario(tc.SPEC)
@@ -310,6 +305,27 @@ def test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado(
     )
     motor.primitivas_extra = predicados
     motor.correr_dia(tc._dia())
+    return motor, tc, predicados
+
+
+def test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado(
+    tmp_path: Path,
+) -> None:
+    """ADR-0056 §7 por el cableado real y la spec real (RN-006, RN-008, RN-011, RN-015): la
+    orden stop nace en el punto A sin esquema (RN-008 no frena), se forma el punto B, RN-006 la
+    cancela y RN-011 y RN-015 la recolocan en B en el MISMO cierre de M1, con su caja; el precio
+    rompe B, se llena y llega al objetivo. El contador de peticiones lo ve: colocar, cancelar,
+    colocar. La geometria de los puntos es sintetica; la marca de usada es la del productor."""
+    motor, tc, predicados = _cadena(_registro(tmp_path))
+    from botsito.spec.modelo import cargar_vocabulario
+
+    vocabulario = cargar_vocabulario(tc.SPEC)
+    entrada_a, entrada_b = tc.ENTRADA, tc.ENTRADA - 4
+    ruta = {
+        tc.MINUTO_ZONA - 5: tc.ENTRADA - 10,
+        tc.MINUTO_ZONA + 3: tc.ENTRADA + 5,
+        tc.MINUTO_ZONA + 8: tc.ENTRADA + 70,
+    }
     broker = motor.brokers[tc.DIA.isoformat()]
     o1, o2 = broker.ordenes["o1"], broker.ordenes["o2"]
     assert (o1.precio, o1.estado) == (entrada_a, CANCELADA)
@@ -354,3 +370,56 @@ def test_con_la_orden_en_el_esquema_rn006_sigue_sin_escribirse(tmp_path: Path) -
         {"criterio": "zona_control_criterio_completada"}, _momento(_Datos([], M0), 0), EstadoDia()
     )
     assert isinstance(r, NoImplementada)
+
+
+# El bloque de `orden_limite_nace` en parametros.yaml antes y despues de cerrar A-29
+# (rama trabajo/cerrar-a29-a36): el mismo valor; cambian el estado y la fuente.
+A29_DESPUES = (
+    "    estado: CONFIRMED\n"
+    "    valor: al_aparecer_punto_de_breaker\n"
+    "    fuente:\n"
+    "      tipo: feedback\n"
+    "      id: fb-2026-09-29-sesion-03-755c534e\n"
+)
+A29_ANTES = (
+    "    estado: DEFAULT_AMBIGUOUS\n"
+    '    valor: "al_aparecer_punto_de_breaker"\n'
+    "    ambiguedad_id: A-29\n"
+    "    fuente:\n"
+    "      tipo: evidence\n"
+    "      id: ev-v7-001457-1fe7fdfe\n"
+)
+
+
+def test_cerrar_a29_no_cambia_cuando_nace_la_orden(tmp_path: Path) -> None:
+    """trabajo/cerrar-a29-a36, punto 3 del encargo: la cadena de arriba con el registro de ANTES
+    (`orden_limite_nace` DEFAULT_AMBIGUOUS bajo A-29) y el de DESPUES (CONFIRMED por la respuesta
+    de la sesion 3). Las peticiones, las ordenes y los eventos del broker son los mismos, instante
+    a instante: el motor lee el valor, no el estado. Lo unico que cambia es que la lectura deja de
+    anotarse como ambigua."""
+    texto = PARAMETROS.read_text(encoding="utf-8")
+    assert texto.count(A29_DESPUES) == 1
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(texto.replace(A29_DESPUES, A29_ANTES), encoding="utf-8")
+    antes, despues = cargar_registro(ruta), cargar_registro(PARAMETROS)
+    assert antes.parametros["orden_limite_nace"].estado is Estado.DEFAULT_AMBIGUOUS
+    assert despues.parametros["orden_limite_nace"].estado is Estado.CONFIRMED
+    trazas = []
+    for reg in (antes, despues):
+        motor, tc, _ = _cadena(reg)
+        dia = tc.DIA.isoformat()
+        tb = motor.trazas_broker[dia]
+        trazas.append(
+            (
+                [(p.tipo, p.id, p.instante_ms, p.aceptada) for p in tb.peticiones],
+                sorted(
+                    (o.id, o.precio, o.estado, o.colocada_ms, o.ultimo_cambio_ms)
+                    for o in motor.brokers[dia].ordenes.values()
+                ),
+                list(tb.eventos),
+            )
+        )
+    assert trazas[0][0], "la cadena no coloco nada: el test no mide cuando nace la orden"
+    assert trazas[0] == trazas[1]
+    assert "orden_limite_nace" in {lectura.nombre for lectura in antes.lecturas_ambiguas()}
+    assert "orden_limite_nace" not in {lectura.nombre for lectura in despues.lecturas_ambiguas()}

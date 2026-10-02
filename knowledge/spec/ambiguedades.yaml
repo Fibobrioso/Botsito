@@ -684,6 +684,11 @@ ambiguedades:
     titulo: cuando nace la orden limite
     pregunta: >-
       ¿En qué momento pones por primera vez la orden límite en una zona?
+      RESUELTA el 2026-10-02 con la respuesta grabada de la sesion 3 (v9 0:01:43): «Lo primero
+      es que primero se desarrolla una toma de liquidez Para recién nosotros poder trazar los
+      posibles puntos de breaker»; es `al_aparecer_punto_de_breaker`
+      (fb-2026-09-29-sesion-03-d3063920; el contexto de la pregunta, en
+      docs/validation/SESION-03-EXTRACCION.md §3.4).
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿cuando colocas la orden limite por primera vez en una zona: cuando ya se ha dado el esquema
@@ -714,9 +719,10 @@ ambiguedades:
       - ev-v3-002511-b12d67be
       - ev-v7-001457-1fe7fdfe
       - ev-v7-002201-2b2f20aa
+      - ev-v9-000143-214aacde
     parametros: [orden_limite_nace]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -919,6 +925,13 @@ ambiguedades:
     pregunta: >-
       Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
     resuelve_en: [F20, F22]
+    # CERRADA Y REABIERTA EL 2026-10-02 (rama trabajo/cerrar-a29-a36). Se cerro con «Mecha
+    # incluida, siempre» (v9 1:17:14-1:17:21, ev-v9-011714-08536830; fb-2026-09-29-sesion-03-626c4dc7)
+    # y el consultor la reabrio (fb-2026-09-29-sesion-03-a0b61bc9): la pregunta se hizo sobre una
+    # orden limite, desde A-47 la entrada es con orden stop, y esa cita habla del 0 de la caja,
+    # no de donde va la orden; ademas esta la candidata C6 (v7, una orden 2 puntos mas alla del 0;
+    # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8). Va a la sesion 4 como pregunta de la
+    # seccion A de docs/sesion-4/PREGUNTAS.md.
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-01 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. CONSTA, en v4 1:06:05-1:06:47 y como respuesta a
     # "¿la orden va en el borde de arriba en el medio o el borde de abajo?": "Siempre se toma en la
@@ -929,6 +942,7 @@ ambiguedades:
     # pueda escribirse sin el precio exacto
     evidencia:
       - ev-v4-010605-a11249c0
+      - ev-v9-011714-08536830
     parametros: []
     contradiccion: null
     estado: ABIERTA
