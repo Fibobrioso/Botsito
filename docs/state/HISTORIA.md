@@ -1847,3 +1847,26 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 4 (2026-10-01).
+
+# Registro de cierre · `trabajo/cerrar-a29-a36` (2026-10-02)
+
+- Orden de cierre de Aleks, tras revisar `57b24f7` (`make check` sellado, 1814 pasados). A-29
+  queda RESUELTA (`fb-2026-09-29-sesion-03-d3063920`); A-36 se cerro y el consultor la reabrio
+  (`fb-2026-09-29-sesion-03-a0b61bc9`): va a la sesion 4 como pregunta 22.
+- Tag: `stable/F36o-cerrar-a29-a36`. El merge es
+  `git rev-parse "stable/F36o-cerrar-a29-a36^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `e7851f7`: apertura: encargo, contrato y Archivo 5;
+  - `541a4f5`: A-29 y A-36 RESUELTAS con la respuesta grabada de la sesion 3; las citas verificadas por la via autorizada; el test antes/despues de A-29; la hoja de preguntas y SECCIONES_EXENTAS;
+  - `19b09eb`: el revisor pegado y atendido;
+  - `a7d06c9`: segunda orden: A-29 con la nota del contexto (fb-...-d3063920); A-36 reabierta (fb-...-a0b61bc9) y pregunta 22; cerrar una ambiguedad toca cinco sitios (AMBIGUEDADES.md y CLAUDE.md);
+  - `57b24f7`: su revisor, y dos runbooks que decian cuatro;
+  - `824ad9c`: orden de cierre: .claude/agents/revisor.md dice cinco sitios, y la deuda de REABRIR en Technical Debt;
+  - y el de este registro, que saca tambien el contrato.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca hooks ni la plataforma, lo
+  dice la orden de cierre. La primera CI es la de `main` tras el cierre.
+- Ninguna entrada de Next Action queda HECHA por esta rama (`RITUAL.md`, punto 3): no sale nada
+  de `PROJECT_STATE.md` en este commit.
+- Informe: `docs/validation/CERRAR-A29-A36.md`. Encargo, con sus dos ordenes:
+  `docs/encargos/trabajo-cerrar-a29-a36.md`.
