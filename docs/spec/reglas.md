@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 15.6.0` · hash `2ff8956291b2…`
+`spec_version 15.6.1` · hash `626c7a01fba9…`
 
 30 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -401,7 +401,7 @@
 - **Entonces**: se protege y se deja correr segun salida_sin_ruptura, con el stop en su nivel
 - **Parametros**: `salida_sin_ruptura`, `stop_fraccion_caja`
 - **Cita**: `fb-2026-09-09-sesion-01-9626d3dd` — *«se activa la entrada y apenas automáticamente [...] proteger a 0.80 [...] o continúa ya nos saca con menos 0.80»*
-- **Notas**: hasta el 2026-09-16 su forma decia `se_activa_entrada: {por: equal}` y ademas fijaba `operacion_abierta`. Lo primero usaba un token con tres significados -resultado de cierre, geometria y causa de activacion-; ahora es `activacion_sin_ruptura`. Lo segundo contradecia ADR-0028 §5 -la posicion viva la lee el motor del broker- y se quita (ADR-0032); F14b §0, que lo habia anadido, queda deshecho. Por que via llega una orden a activarse sin ruptura depende de cuando nace la orden: A-29, RESUELTA el 2026-10-02 en `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-b41ecf9b)
+- **Notas**: hasta el 2026-09-16 su forma decia `se_activa_entrada: {por: equal}` y ademas fijaba `operacion_abierta`. Lo primero usaba un token con tres significados -resultado de cierre, geometria y causa de activacion-; ahora es `activacion_sin_ruptura`. Lo segundo contradecia ADR-0028 §5 -la posicion viva la lee el motor del broker- y se quita (ADR-0032); F14b §0, que lo habia anadido, queda deshecho. Por que via llega una orden a activarse sin ruptura depende de cuando nace la orden: A-29, RESUELTA el 2026-10-02 en `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-d3063920)
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -752,7 +752,7 @@
 - **Entonces**: se puede volver a entrar segun reentrada_tras_equal, por la via normal de colocacion, y ese cierre no suma al contador
 - **Parametros**: `reentrada_tras_equal`, `cartucho_criterio`
 - **Cita**: `fb-2026-09-09-sesion-01-060cd801` — *«Sí, esto no gasta intentos, me dijiste, ¿no? No»*
-- **Notas**: HASTA EL 2026-09-16 NO PODIA DISPARAR NUNCA, por dos motivos. Su forma pedia `se_cierra_operacion: {resultado: equal}`, y el caso que el trader describe cierra con perdida -"te genera una perdida" (v6 1:23:13-1:23:19)-, asi que llegaba como `perdida`, y encima RN-016 gastaba cartucho. Y unia en un `todos_de` ese cierre, que es un evento del broker, con `vuelve_a_dar_el_esquema`, que se evalua al cierre de M1: con las fases de ADR-0028 los dos pulsos no coinciden nunca. Ahora dispara con el cierre solo, reconocido por COMO se activo la operacion, y la reentrada la hace la colocacion de siempre (RN-011 y RN-015) cuando vuelva a tocar, con los gates delante: `reentrar` ya no envia nada. LECTURA NUESTRA, declarada: el trader habla de una entrada activada sin validar que un equal saca (v6 1:22:25-1:23:19); la spec no tiene forma de reconocer el equal en si. Del 2026-09-16 al 2026-09-17 trataba igual TODO cierre de una operacion activada sin ruptura, incluido el stop entero, que el trader no eximio nunca: ahora solo la salida en negativo que no cerro ningun stop, que es la que el describe ("te saque la entrada, te genera una perdida", v6 1:23:13-1:23:19). Si el stop entero de una activacion sin ruptura gasta intento lo pregunta A-31. Cuando se reentra -en cuanto se cierra o al volver a darse la condicion de colocar- depende de A-29, RESUELTA el 2026-10-02 en `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-b41ecf9b)
+- **Notas**: HASTA EL 2026-09-16 NO PODIA DISPARAR NUNCA, por dos motivos. Su forma pedia `se_cierra_operacion: {resultado: equal}`, y el caso que el trader describe cierra con perdida -"te genera una perdida" (v6 1:23:13-1:23:19)-, asi que llegaba como `perdida`, y encima RN-016 gastaba cartucho. Y unia en un `todos_de` ese cierre, que es un evento del broker, con `vuelve_a_dar_el_esquema`, que se evalua al cierre de M1: con las fases de ADR-0028 los dos pulsos no coinciden nunca. Ahora dispara con el cierre solo, reconocido por COMO se activo la operacion, y la reentrada la hace la colocacion de siempre (RN-011 y RN-015) cuando vuelva a tocar, con los gates delante: `reentrar` ya no envia nada. LECTURA NUESTRA, declarada: el trader habla de una entrada activada sin validar que un equal saca (v6 1:22:25-1:23:19); la spec no tiene forma de reconocer el equal en si. Del 2026-09-16 al 2026-09-17 trataba igual TODO cierre de una operacion activada sin ruptura, incluido el stop entero, que el trader no eximio nunca: ahora solo la salida en negativo que no cerro ningun stop, que es la que el describe ("te saque la entrada, te genera una perdida", v6 1:23:13-1:23:19). Si el stop entero de una activacion sin ruptura gasta intento lo pregunta A-31. Cuando se reentra -en cuanto se cierra o al volver a darse la condicion de colocar- depende de A-29, RESUELTA el 2026-10-02 en `al_aparecer_punto_de_breaker` (fb-2026-09-29-sesion-03-d3063920)
 
 **Forma ejecutable**, tal cual la lee el motor:
 

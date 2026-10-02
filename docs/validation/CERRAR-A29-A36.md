@@ -4,6 +4,11 @@ Rama `trabajo/cerrar-a29-a36`, abierta el 2026-10-02 desde `main` `487c64f` (tag
 `stable/F36n-escenarios-por-sesion`). Encargo, copiado tal cual:
 `docs/encargos/trabajo-cerrar-a29-a36.md`. Tarea autónoma: NO se cierra.
 
+> **CORRECCIÓN (2026-10-02, segunda orden del consultor, §8).** A-29 queda RESUELTA. **A-36 NO**:
+> se cerró en `541a4f5` y el consultor la reabrió. Vuelve a ABIERTA, con un registro nuevo que retira
+> el cierre, y va a la sesión 4 como pregunta 22. Lo que §2 a §7 cuentan de A-36 es el cierre que se
+> deshizo, y queda como estaba.
+
 Cierra dos ambigüedades que ya tenían respuesta grabada del trader en la sesión 3 (v9) y seguían
 ABIERTAS (`docs/sesion-4/PREGUNTAS.md` §4). Sin cobertura agregada: nada de esta rama cuenta
 parejas ni compara con las operaciones del trader.
@@ -213,10 +218,81 @@ hallazgos, resumido.
 - **Lo que no pudo comprobar**: los tramos no citables, en §1; la cruda de v9 no la lee nadie, y la
   verificación de citas la hizo la sesión por la vía autorizada (§1).
 
+## 8. Segunda orden del consultor (2026-10-02)
+
+Copiada tal cual en el encargo, «Segunda orden».
+
+### 8.1 A-29: aceptada, con la nota del contexto
+
+El registro de feedback es inmutable: la nota no se escribe en `fb-…-b41ecf9b`. Va en un registro
+NUEVO que lo sustituye (`supersede`), con el mismo literal, el mismo tramo y el mismo valor:
+**`fb-2026-09-29-sesion-03-d3063920`**. Su `notas` cita `docs/validation/SESION-03-EXTRACCION.md`
+§3.4 y dice que hoy no se puede releer porque v9 está en cuarentena. La spec (RN-010, RN-011,
+RN-019), `ambiguedades.yaml` y `PREGUNTAS.md` citan ahora el registro vigente.
+
+**Lo que la orden afirmaba se midió, y no cuadra entero.** `SESION-03-EXTRACCION.md` §3.4 recoge el
+contexto de la respuesta:
+- 01:24, el consultor: «aquí queda confirmado que se entra siempre por stop»;
+- 01:29, el trader: «Sí, exacto»;
+- 01:43–01:46, la respuesta.
+
+**No recoge una pregunta en 0:01:30 que ofreciera las tres lecturas.** Esa frase solo está en
+`docs/sesion-4/PREGUNTAS.md` §2, escrita en el barrido (`stable/F36e-barrido-sesion-4`), y no hay otro
+documento que la sostenga (Grep en `docs/`). Así lo dice la nota del registro: el contexto, en la
+extracción; las tres lecturas, solo en `PREGUNTAS.md`. `ambiguedades.yaml` y la descripción de
+`orden_limite_nace` ya no dicen «a la pregunta que ofrecía las tres lecturas»: citan la extracción.
+La fila de `PREGUNTAS.md` §2 conserva su frase, que es del barrido, y añade dónde está el contexto.
+
+### 8.2 A-36: reabierta
+
+**El registro que la reabre, `fb-2026-09-29-sesion-03-a0b61bc9`**, sustituye al que la cerró
+(`fb-…-626c4dc7`). Es `escrito`, procedencia `correccion_consultor` -la que «retira lo que otro
+registro afirmaba» y exige `supersede`, como `fb-…-86dc2801`- y su literal es el motivo del
+consultor: la pregunta se hizo sobre una orden límite, desde A-47 la entrada es con orden stop, y
+está C6.
+
+**Lo que se deshace** (el diff contra `main` lo dice: de A-36 solo quedan el comentario, la
+evidencia de v9 en su lista y la pregunta 22):
+- `ambiguedades.yaml`: A-36 vuelve a ABIERTA. Su `pregunta` pierde la línea de RESUELTA, y un
+  comentario cuenta el cierre y la reapertura con los dos registros. `ev-v9-011714-08536830` se
+  queda en su `evidencia`: es lo que el trader dijo del 0 de la caja.
+- La tabla «Known Ambiguities» de `PROJECT_STATE.md`: la fila de A-36 vuelve, en su sitio.
+- `tests/unit/test_kit.py`: A-36 sale de las RESUELTAS.
+- La hoja de preguntas y su test: A-36 vuelve a su sitio en el orden.
+- `spec docs --escribir` en el mismo commit; spec 15.6.0 → 15.6.1.
+- **Parámetros: ninguno cambió de estado por A-36**, que no tiene (`parametros: []`). Nada que
+  devolver.
+
+**La pregunta 22**, en la sección A de `PREGUNTAS.md`, detrás de la 6. Va numerada 22 y no 7 para
+no mover el número de las demás, que la spec y los ADR citan (como se hizo con la 20 y la 21). Es
+la pregunta de la orden, cerrada con «otra, ¿cuál?», y cita A-36 y C6, sin fechas ni resultados.
+El pie dice 22 por preguntar y 14 ya respondidas: A-36 sale de la tabla de §2.
+
+**Lo que el modelo de feedback no sabe hacer.** No hay acción para REABRIR una ambigüedad: sobre
+una ambigüedad solo se admite `RESOLVE_UNKNOWN`. Así que el registro que la reabre es un
+`RESOLVE_UNKNOWN` con valor «sin resolver», y `feedback pending` lo cuenta: «1 pendientes de 101
+activos», `fb-…-a0b61bc9 … A-36 esta ABIERTA`. No rompe nada (`knowledge validate` en verde), y
+desaparecerá cuando la sesión 4 responda la pregunta 22. Arreglarlo es tocar
+`src/botsito/feedback/`, que no está en el contrato: queda para el consultor.
+
+### 8.3 Cerrar toca cinco sitios
+
+`docs/runbooks/AMBIGUEDADES.md` decía «cerrarla, cuatro» en dos sitios: el título de la sección y su
+apartado. Ahora dice cinco: la hoja de preguntas y su test, con lo medido aquí. Las guardias que la
+vigilan pasan de dos a tres, y reabrir toca los mismos cinco al revés. `CLAUDE.md` lo repetía
+(«cerrarla cuatro») y ahora dice cinco; su lista de guardias suma `tests/unit/test_hoja_preguntas.py`.
+El contrato se amplía a los dos ficheros, con su motivo.
+
+### 8.4 PROJECT_STATE
+
+`wc -c`: **22.722 bytes** (la fila de A-36 vuelve), por debajo de 23.000.
+
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. A-29 y A-36 RESUELTAS
-con la respuesta grabada de la sesión 3, verificada por la vía autorizada. El comportamiento del
-motor no cambia, y está medido (§3). `PROJECT_STATE.md` pesa 22.638 bytes. Para el consultor:
-la lectura de A-36 frente a la candidata C6 (§7, a1 y b1), y si «cerrar» suma en
-`AMBIGUEDADES.md` el quinto sitio, la hoja de preguntas (§2).
+**Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. A-29 RESUELTA con la
+respuesta grabada de la sesión 3, verificada por la vía autorizada y con la nota del contexto (§8.1).
+A-36 cerrada y reabierta por el consultor: va a la sesión 4 como pregunta 22 (§8.2). El
+comportamiento del motor no cambia, y está medido (§3). Cerrar una ambigüedad toca cinco sitios
+(§8.3). `PROJECT_STATE.md` pesa 22.722 bytes. Para el consultor: que la frase «las tres lecturas»
+solo la sostiene `PREGUNTAS.md` (§8.1), y que el modelo de feedback no sabe reabrir (§8.2). El
+revisor de la segunda orden está en §8.5.

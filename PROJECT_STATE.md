@@ -93,6 +93,7 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
 | A-33 | tres ganadoras que cierran por debajo de 3R | pregunta | no | F20, F24, F26 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
+| A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
 | A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
 | A-42 | con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 | pregunta | si | F14, F26 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |

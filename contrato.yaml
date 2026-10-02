@@ -17,6 +17,10 @@ rutas_permitidas:
   # Ampliado el 2026-10-02: la hoja de preguntas se niega a preguntar una RESUELTA, y A-29 y
   # A-36 salen de su orden (como hizo trabajo/activar-sesion-03 con las nueve de la sesion 3)
   - scripts/hoja_preguntas.py
+  # Ampliado con la segunda orden del consultor (2026-10-02, punto 3): cerrar una ambiguedad toca
+  # cinco sitios, no cuatro
+  - docs/runbooks/AMBIGUEDADES.md
+  - CLAUDE.md
 rutas_protegidas:
   - knowledge/evidence/
   - knowledge/cases/

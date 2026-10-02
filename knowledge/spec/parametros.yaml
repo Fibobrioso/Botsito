@@ -573,10 +573,10 @@ parametros:
       la orden stop de ADR-0056 §7 -nace tras la toma en el punto que dice orden_stop_punto, con la
       caja que dice caja_bloque, y se reubica con cada punto nuevo (RN-006)-. Con
       `al_darse_el_esquema` todo sale como antes. RESUELTA el 2026-10-02 (A-29, rama
-      trabajo/cerrar-a29-a36) con la respuesta grabada de la sesion 3, a la pregunta que ofrecia
-      las tres lecturas: «primero se desarrolla una toma de liquidez Para recién nosotros poder
-      trazar los posibles puntos de breaker» (v9 0:01:43, ev-v9-000143-214aacde); el valor no
-      cambia
+      trabajo/cerrar-a29-a36) con la respuesta grabada de la sesion 3: «primero se desarrolla una
+      toma de liquidez Para recién nosotros poder trazar los posibles puntos de breaker» (v9
+      0:01:43, ev-v9-000143-214aacde; el contexto, en docs/validation/SESION-03-EXTRACCION.md
+      §3.4); el valor no cambia
     estado: CONFIRMED
     valor: al_aparecer_punto_de_breaker
     fuente:

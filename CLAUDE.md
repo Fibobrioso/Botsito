@@ -169,11 +169,12 @@ desacuerdo por escrito (historia de las tres, en `docs/runbooks/MIRAR-EL-MATERIA
 ## Ambiguedades
 
 **Antes de abrir, editar o cerrar una ambiguedad de `knowledge/spec/ambiguedades.yaml`, se lee
-`docs/runbooks/AMBIGUEDADES.md`**: abrirla toca dos sitios, cerrarla cuatro (y hay dos formas,
+`docs/runbooks/AMBIGUEDADES.md`**: abrirla toca dos sitios, cerrarla cinco (y hay dos formas,
 ADR-0022), y tocar su texto obliga a `botsito spec docs --escribir` en el MISMO commit, igual que
 `parametros.yaml`, `strategy_spec.yaml` y `glossary.yaml`. Guardias: `tests/unit/test_kit.py` (la
-tabla de `PROJECT_STATE.md` son exactamente las abiertas) y
-`tests/contract/test_spec_docs_generados.py`.
+tabla de `PROJECT_STATE.md` son exactamente las abiertas),
+`tests/contract/test_spec_docs_generados.py` y `tests/unit/test_hoja_preguntas.py` (la hoja de
+preguntas no lleva una cerrada).
 
 ## Como se trabaja
 
