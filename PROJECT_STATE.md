@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/escenarios-por-sesion
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
+EN CURSO: `feature/escenarios-por-sesion` (2026-10-01; encargo docs/encargos/feature-escenarios-por-sesion.md, informe docs/validation/ESCENARIOS-POR-SESION.md): A3 b) de Next Action, sesiones independientes y varios escenarios por sesion. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
 
 ## Stable Main State
 1591737 · merge de `trabajo/ajustes-cierre` (tag `stable/F36m-ajustes-cierre`), sobre `stable/F36l-cuarentena-por-defecto` (8a3b501), que dejo la CLI ensenando el corpus filtrado por defecto (`src/botsito/corpus/cuarentena.py`, la unica fuente; la evidencia con su propio criterio; la guardia bloquea la opcion que lo ensena todo y 14 ficheros que copian texto oculto). Esta rama, solo documentacion: todo cierre lleva, en el commit que saca el contrato, su registro en HISTORIA y su fila en ERRORES-RECURRENTES, y el commit de estado no anade nada a Change Log ni a Completed Features (docs/runbooks/RITUAL.md, skill cerrar-rama); `tramos_no_citables.yaml` y los runbooks dicen lo que hace hoy la CLI. Informe docs/validation/AJUSTES-CIERRE.md; el registro del cierre, al final de HISTORIA.
@@ -193,9 +193,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 3 (2026-10-01).
+— ninguna desde el Archivo 4 (2026-10-01).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 3 (2026-10-01).
+— ninguna desde el Archivo 4 (2026-10-01).
