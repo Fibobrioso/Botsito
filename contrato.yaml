@@ -1,0 +1,28 @@
+rama: trabajo/ajustes-cierre
+riesgo: bajo  # solo documentacion y la skill cerrar-rama; no cambia codigo, spec, cifras ni datos
+artefacto: docs/validation/AJUSTES-CIERRE.md
+rutas_permitidas:
+  - docs/validation/AJUSTES-CIERRE.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+  - knowledge/corpus/tramos_no_citables.yaml
+  - .claude/skills/
+  - docs/runbooks/
+  - CLAUDE.md
+rutas_protegidas:
+  - src/
+  - tests/
+  - scripts/
+  - .claude/hooks/
+  - .claude/settings.json
+  - knowledge/spec/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - data/manifests/
+  - docs/adr/
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1
