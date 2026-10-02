@@ -1546,6 +1546,74 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0026
+  - nombre: freno_peticiones_aviso
+    categoria: ejecucion
+    tipo: entero
+    unidad: peticiones al servidor en un dia de la firma
+    descripcion: >-
+      el aviso del freno de peticiones (ADR-0067, engine/freno.py): el dia que el bot llega a este
+      numero de peticiones al servidor, el freno lo apunta en la traza y en el log. No frena, y va
+      por debajo de freno_peticiones_corte. PROVISIONAL bajo A-54: es un margen del proyecto, no una
+      cifra de FTMO, y se revisa cuando la demo diga que cuenta como mensaje. El dia mas cargado
+      medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4)
+    estado: DEFAULT_AMBIGUOUS
+    valor: 1000
+    ambiguedad_id: A-54
+    minimo: 1
+    consumido_por: [ADR-0067]
+    fuente:
+      tipo: decision
+      id: ADR-0067
+  - nombre: freno_peticiones_corte
+    categoria: ejecucion
+    tipo: entero
+    unidad: peticiones al servidor en un dia de la firma
+    descripcion: >-
+      el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega todo lo que no
+      protege la cuenta, y solo deja cancelar, cerrar a mercado y mover el stop hacia el break even,
+      que cuentan igual. Va por debajo de firma_mensajes_dia_max (el broker se niega a armarse si no)
+      y deja ese hueco para lo que protege, que esta acotado por firma_ordenes_simultaneas_max y las
+      posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO
+    estado: DEFAULT_AMBIGUOUS
+    valor: 1500
+    ambiguedad_id: A-54
+    minimo: 1
+    consumido_por: [ADR-0067]
+    fuente:
+      tipo: decision
+      id: ADR-0067
+  - nombre: freno_bucle_repeticiones
+    categoria: ejecucion
+    tipo: entero
+    unidad: peticiones iguales dentro de freno_bucle_minutos
+    descripcion: >-
+      el freno contra bucles (ADR-0067): tantas peticiones IGUALES -el mismo contenido, sin mirar el
+      id: colocar con el mismo lado, precio, stop, objetivo y lote, o modificar lo mismo a los mismos
+      precios- dentro de freno_bucle_minutos cortan el envio el resto del dia, como el corte. Un dia
+      normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54
+    estado: DEFAULT_AMBIGUOUS
+    valor: 5
+    ambiguedad_id: A-54
+    minimo: 2
+    consumido_por: [ADR-0067]
+    fuente:
+      tipo: decision
+      id: ADR-0067
+  - nombre: freno_bucle_minutos
+    categoria: ejecucion
+    tipo: minutos
+    unidad: minutos de la ventana en que se cuentan las peticiones iguales
+    descripcion: >-
+      la ventana del freno contra bucles (ADR-0067): freno_bucle_repeticiones peticiones iguales
+      dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54
+    estado: DEFAULT_AMBIGUOUS
+    valor: 1
+    ambiguedad_id: A-54
+    minimo: 1
+    consumido_por: [ADR-0067]
+    fuente:
+      tipo: decision
+      id: ADR-0067
   - nombre: firma_noticias_restringe
     categoria: prop_firm
     tipo: booleano

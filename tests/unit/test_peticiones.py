@@ -2,7 +2,8 @@
 `feature/contador-peticiones`) sobre ticks SINTETICOS de 2030: cuenta colocar, modificar, cancelar
 y cerrar, aceptadas o rechazadas; no cuenta lo que el servidor hace solo -llenar, expirar, saltar
 el stop o el objetivo- ni `abrir_conocida`; y el dia se corta a medianoche CE(S)T, con su horario
-de verano, como el dia de riesgo (ADR-0027). Solo se mide: nada frena."""
+de verano, como el dia de riesgo (ADR-0027). Desde ADR-0067 el broker tambien frena: el freno
+entero esta en tests/unit/test_freno_peticiones.py."""
 
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ from botsito.engine.broker import (
     ReglasBroker,
     peticiones_por_dia,
 )
+from botsito.engine.freno import MOTIVO_CORTE
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import cargar_perfil
 from botsito.engine.simulacion import reglas_broker_de
@@ -120,14 +122,24 @@ def test_cuenta_cada_peticion_aceptada_o_rechazada_y_nada_de_lo_que_hace_el_serv
     }
 
 
-def test_nada_frena_aunque_se_pase_del_limite() -> None:
-    # con el limite en 1, la segunda, la tercera y la cuarta peticion se aceptan igual
+def test_sin_umbrales_del_registro_frena_en_el_limite_de_la_firma() -> None:
+    """Hasta `feature/freno-peticiones` aqui se fijaba que NADA frenaba. Desde ADR-0067, sin los
+    umbrales del registro el broker frena en `mensajes_dia_max`: con el limite en 1, la primera
+    orden sale, las dos siguientes se niegan -no llegan al servidor ni se cuentan- y la
+    cancelacion, que protege la cuenta, sale igual."""
     b = _broker([_tick(M0, 0, 1000)], mensajes_dia_max=1)
-    for i in range(3):
-        orden = b.colocar_limite(f"o{i}", "compra", 990 - i, UNO, 980, 1020, _ms(M0, 10 + i))
-        assert not isinstance(orden, Rechazo)
+    resultados = [
+        b.colocar_limite(f"o{i}", "compra", 990 - i, UNO, 980, 1020, _ms(M0, 10 + i))
+        for i in range(3)
+    ]
+    assert not isinstance(resultados[0], Rechazo)
+    assert [r.motivo for r in resultados[1:] if isinstance(r, Rechazo)] == [MOTIVO_CORTE] * 2
     b.cancelar("o0", _ms(M0, 20))
-    assert [p.aceptada for p in b.traza().peticiones] == [True] * 4
+    assert _tipos(b) == [(PETICION_COLOCAR, "o0", True), ("cancelar", "o0", True)]
+    assert [(c.id, c.motivo) for c in b.traza().cortes] == [
+        ("o1", MOTIVO_CORTE),
+        ("o2", MOTIVO_CORTE),
+    ]
 
 
 def _en(instante: datetime) -> Peticion:

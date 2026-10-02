@@ -300,7 +300,7 @@ def test_por_el_cableado_la_zona_llega_al_broker_como_una_orden_limite(
         reglas=reglas,
         registro=registro,
         mercados={ta.DIA.isoformat(): _mercado_de(m1)},
-        reglas_broker=reglas_broker_de(perfil),
+        reglas_broker=reglas_broker_de(perfil, registro),
         reglas_fase=reglas_de_fase(perfil, "reto"),
         config_llenado=Configuracion(False, 0, lambda _m: SPREAD),
         contrato=registro.decimal("instrumento_contrato"),

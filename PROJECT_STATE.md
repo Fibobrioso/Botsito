@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/freno-peticiones
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36o-cerrar-a29-a36` (2026-10-02).
+EN CURSO: `feature/freno-peticiones` (informe docs/validation/FRENO-PETICIONES.md): la K de Next Action.
 
 ## Stable Main State
 34680ba · merge de `trabajo/cerrar-a29-a36` (tag `stable/F36o-cerrar-a29-a36`): A-29 RESUELTA con la respuesta grabada de la sesion 3 (`orden_limite_nace` CONFIRMED, el mismo valor; el motor no cambia, medido); A-36 se cerro y el consultor la reabrio: va a la sesion 4 como pregunta 22. Cerrar una ambiguedad toca cinco sitios (docs/runbooks/AMBIGUEDADES.md, con la hoja de preguntas). Sobre `stable/F36n-escenarios-por-sesion` (8346b9b), las sesiones independientes (ADR-0066). Informe docs/validation/CERRAR-A29-A36.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F36o-cerrar-a29-a36` (2026-10-02).
 34680ba · merge: A-29 RESUELTA y A-36 reabierta como pregunta 22; cerrar una ambiguedad toca cinco sitios · tag stable/F36o-cerrar-a29-a36
 
 ## Tests Currently Passing
-1166 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1183 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -38,8 +38,6 @@ F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
-
-K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -104,6 +102,7 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-51 | qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar | pregunta | si | F11, F18 |
 | A-52 | cuántos escenarios puede abrir una misma sesión como máximo | pregunta | no | F19, F20 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
+| A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
@@ -116,6 +115,7 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
+- El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
 - El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
 - PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
@@ -196,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 5 (2026-10-02).
+— ninguna desde el Archivo 6 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 5 (2026-10-02).
+— ninguna desde el Archivo 6 (2026-10-02).
