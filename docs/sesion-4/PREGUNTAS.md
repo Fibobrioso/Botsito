@@ -290,8 +290,7 @@ de A-46 que quedó sin número). La añadió el consultor el 2026-10-02 (`featur
   - (c) otra, ¿cuál?»
 
 **21. La orden puesta cuando el precio toma otra liquidez.** · SIN RESPUESTA · A-53 (lo que A-38 no
-cubre). La añadió
-el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
+cubre). La añadió el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
 - **Ya dijo** que la orden «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de
   breaker» (v9 1:32:07). Eso es dentro de la misma liquidez; no se le preguntó qué pasa si, con la
   orden puesta y sin llenar, el precio toma OTRA liquidez de M15.

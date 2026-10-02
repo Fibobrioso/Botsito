@@ -647,10 +647,49 @@ Punto K nuevo en `PROJECT_STATE.md`, con el texto de la orden: el freno duro de 
 servidor, rama propia antes de operar en una cuenta real. No se implementa aquí. El punto F dice
 ahora 21 preguntas, no 19. `PROJECT_STATE.md` pesa 24.106 bytes, por debajo de 25.000 (`wc -c`).
 
+### 7.4 Informe del revisor (solo `8626711`)
+
+Subagente `revisor`, sobre el commit `8626711`. Los hallazgos, tal cual; lo comprobado sin
+hallazgos, resumido.
+
+> ## Informe del revisor · feature/escenarios-por-sesion (solo 8626711) · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La lectura que el test hace de «PROVISIONAL» (`DEFAULT_AMBIGUOUS`) es correcta y está declarada, pero deja fuera `sesgo_h4_tope_velas`. Ese parámetro dice «PROVISIONAL» en su texto y está `CONFIRMED`. El informe lo declara en §7.2; el consultor decide si la regla también debe mirar el texto. No cuenta como fallo del commit, solo hay que dejarlo visible. | `knowledge/spec/parametros.yaml:399` («PROVISIONAL: es una decision del…»). Salida: `sesgo_h4_tope_velas CONFIRMED None`. Otras menciones de «PROVISIONAL» en el texto de un parámetro: líneas 233 (A-42), 656, 678, 697, 720, 743, y todas son DEFAULT_AMBIGUOUS. |
+> | a2 | menor | El pie «Estado» del informe dice «con su revisor (§7.4)», pero §7 solo tiene 7.1 a 7.3. El revisor debe pegarse como §7.4 antes de declarar la rama lista. | `docs/validation/ESCENARIOS-POR-SESION.md`, pie `## Estado`; `git diff 86a49e6..8626711 -- docs/validation/ESCENARIOS-POR-SESION.md` solo añade §7.1 a §7.3. |
+>
+> Comprobado sin hallazgos: el contrato (30 ficheros, ninguno protegido); `spec check`, `state check` y los tests `test_provisional_cuelga_de_abierta.py`, `test_kit.py` y `test_spec_docs_generados.py` (49 pasan); que el test falla de verdad, reproducido en memoria sin escribir (con el YAML de `86a49e6` leído por `git show` y el registro actual: `['max_escenarios_por_sesion -> A-52 (no existe)', 'orden_pendiente_al_abrir_escenario -> A-53 (no existe)']`; con el actual, `[]`); que recorre el registro entero (los 15 `DEFAULT_AMBIGUOUS` apuntan a ABIERTAS); A-52 y A-53 contra el esquema y el runbook (campos, filas de `PROJECT_STATE.md` con el mismo título, clase, bloqueante y «resuelve en», docs generados con 23 ABIERTAS, los tres sitios en el mismo commit); la evidencia (existe y es pertinente; la de A-53 no sostiene más de lo que A-53 afirma); que nada nuevo cuelga de A-25 ni de A-46; `spec_version` 15.4.1 → 15.5.0 con su hash; el trailer `Fuente:`; `PROJECT_STATE.md` 24.106 bytes y 1165 funciones de test (1164 en `86a49e6`); ADR-0066 solo cambia dos referencias; regímenes de cambio intactos; ninguna cifra fuera del registro.
+>
+> ### Eje (b) · Encargo (cuarta orden)
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 7 hechos, 0 parciales, 0 no hechos.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | `intentos_tras_toma_nueva` sigue PROVISIONAL colgado de A-25 (pregunta 18). La orden dice «No cuelgues nada de A-25». Leída literalmente como «no añadas nuevos cuelgues», no choca, porque el cuelgue viene de la Fase 1. Leída como «que A-25 se quede sin parámetros PROVISIONAL», sí choca. El informe lo declara en §7.2 («Lo que no se toca») y lo deja al consultor, así que el comportamiento está bien declarado, pero la ambigüedad de la orden persiste. | `knowledge/spec/parametros.yaml:685` (`ambiguedad_id: A-25`); `docs/validation/ESCENARIOS-POR-SESION.md` §7.2. |
+> | b2 | menor | En `PREGUNTAS.md` la cabecera de la pregunta 21 queda con un salto de línea feo («…(lo que A-38 no\ncubre). La añadió\nel consultor…»). Es solo forma. | `git diff 86a49e6..8626711 -- docs/sesion-4/PREGUNTAS.md`, hunk de la pregunta 21. |
+>
+> ### Lo que no pude comprobar
+> `make check` (escribe; no hay `make-check.log`, así que ni `SELLO` ni `PICO DE MEMORIA`); `knowledge validate` (escribe un log); los casos «A-43 cerrada» y «A-99» de §7.1, con la misma lógica; Bash no le dejó crear un fichero temporal, así que la rotura la reprodujo en memoria.
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **a1, declarado; lo decide el consultor** (ya en §7.2): la regla mira el estado del registro, no
+  el texto. `sesgo_h4_tope_velas` es una decisión del proyecto (ADR-0044), no una pregunta al
+  trader.
+- **a2, arreglado**: este apartado.
+- **b1, declarado; lo decide el consultor** (ya en §7.2): `intentos_tras_toma_nueva` cuelga de A-25
+  desde la Fase 1, por la pregunta 18. Si la orden quiere A-25 sin parámetros PROVISIONAL, hay que
+  abrir otra ambigüedad para la pregunta 18 y mover el parámetro.
+- **b2, arreglado**: la cabecera de la pregunta 21 en dos líneas.
+- **Lo que no pudo comprobar**: `make check` sella el commit `8626711` y el de este apartado.
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
 selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Las órdenes 2 y 3 del
 consultor (2026-10-02), hechas en §6, con su revisor (§6.6). La cuarta (la decisión sobre a1),
 en §7, con su revisor (§7.4). Lo que espera a la sesión 4 está en §4; lo que queda para el
-consultor, en §7.2 («Lo que no se toca»).
+consultor, en §7.2 («Lo que no se toca») y en las respuestas a a1 y b1 de §7.4.
