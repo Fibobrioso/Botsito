@@ -9,17 +9,25 @@ salida es cambiar el criterio.
 Lee solo la transcripcion CRUDA (`cruda.jsonl`) de las cinco vigentes de la lista cerrada, despues
 de comprobar que sus bytes son los que fija su manifiesto commiteado (`sha256_cruda`). No clasifica:
 extrae pasajes.
+
+DESDE `trabajo/cuarentena-por-defecto` (cuarta orden del consultor, 2026-10-01) lee la cruda
+FILTRADA (`cuarentena.filtro_de`): los segmentos de sesiones en cuarentena, de tramos no citables y
+de material reservado o sin sortear ya no salen. Por eso su salida de hoy NO reproduce la
+commiteada (`docs/validation/A18-TRANSCRIPCIONES-SALIDA.txt`, que trae lineas que hoy se ocultan y
+la guardia no deja leer: `.claude/hooks/ficheros_con_ocultos.txt`); lo mismo vale para
+`buscar_ambiguedades.py`, que importa de aqui. No esta autorizado a leer sin filtrar, ni lo estara.
 """
 
 from __future__ import annotations
 
-import hashlib
-import json
 import re
 import sys
 import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
+
+from botsito.corpus.cuarentena import filtro_de
+from botsito.corpus.pipeline_transcripcion import cargar_cruda, sha256_de_cruda
 
 RAIZ = Path(__file__).resolve().parents[1]
 MANIFIESTOS = RAIZ / "knowledge" / "corpus" / "transcripciones"
@@ -170,22 +178,21 @@ def leer_manifiesto(transcripcion: str) -> tuple[Path, str]:
     sha = re.search(r"^sha256_cruda: ([0-9a-f]{64})$", texto, re.M)
     if carpeta is None or sha is None:
         raise IntegridadError(f"{transcripcion}: el manifiesto no fija carpeta y sha256_cruda")
-    return DATOS / carpeta.group(1).strip() / "cruda.jsonl", sha.group(1)
+    return DATOS / carpeta.group(1).strip(), sha.group(1)
 
 
 def leer(transcripcion: str) -> tuple[list[Segmento], str]:
-    """Solo una de la lista cerrada, y solo si sus bytes son los del manifiesto."""
+    """Solo una de la lista cerrada, y solo si sus bytes son los del manifiesto. FILTRADA desde
+    el 2026-10-01 (`trabajo/cuarentena-por-defecto`): lee por `cargar_cruda` con el filtro de
+    `botsito.corpus.cuarentena`, como la CLI."""
     if transcripcion not in ALCANCE:
         raise IntegridadError(f"fuera de la lista cerrada: {transcripcion}")
-    ruta, esperado = leer_manifiesto(transcripcion)
-    datos = ruta.read_bytes()
-    real = hashlib.sha256(datos).hexdigest()
+    carpeta, esperado = leer_manifiesto(transcripcion)
+    real = sha256_de_cruda(carpeta)
     if real != esperado:
         raise IntegridadError(f"{transcripcion}: cruda.jsonl no es la que fija su manifiesto")
-    filas = [json.loads(x) for x in datos.decode("utf-8").splitlines() if x.strip()]
-    segmentos = [
-        Segmento(int(f["n"]), int(f["t0_ms"]), int(f["t1_ms"]), str(f["texto"])) for f in filas
-    ]
+    filtro = filtro_de(RAIZ, transcripcion.split("-")[1])
+    segmentos = [Segmento(s.n, s.t0_ms, s.t1_ms, s.texto) for s in cargar_cruda(carpeta, filtro)]
     return segmentos, real
 
 

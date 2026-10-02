@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/cuarentena-por-defecto
 
 ## Current Feature
-NINGUNA ABIERTA. `trabajo/dieta-y-skills` quedo VALIDADA y cerrada en `main` el 2026-10-01 por orden de cierre explicita de Aleks tras la revision del consultor: tag `stable/F36k-dieta-y-skills`, informe docs/validation/DIETA-Y-SKILLS.md, sin ADR. LO SIGUIENTE: el I del Next Action.
+EN CURSO: `trabajo/cuarentena-por-defecto` (2026-10-01; encargo docs/encargos/trabajo-cuarentena-por-defecto.md, informe docs/validation/CUARENTENA-POR-DEFECTO.md): el I del Next Action, los comandos que ensenan el corpus respetan por defecto la cuarentena, los tramos no citables y el material reservado. En `main`, NINGUNA ABIERTA tras `stable/F36k-dieta-y-skills`.
 
 ## Stable Main State
 0744ece · merge de `trabajo/dieta-y-skills` (tag `stable/F36k-dieta-y-skills`), sobre `stable/F36j-guardia-linux` (1f597cb). PROJECT_STATE lleva solo el presente y su historia vive en docs/state/HISTORIA.md, que solo se amplia; CLAUDE.md revisado; las skills `abrir-rama`, `cerrar-rama` e `ingerir-sesion`; la guardia deja borrar ramas remotas `trabajo/`, `feature/` y `fix/`. El registro del cierre (commits y runs de la CI de Linux), al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA. `trabajo/dieta-y-skills` quedo VALIDADA y cerrada en `main` el 
 0744ece · merge: la dieta de PROJECT_STATE, CLAUDE.md revisado, las skills del proyecto y el borrado remoto de ramas de trabajo · tag stable/F36k-dieta-y-skills
 
 ## Tests Currently Passing
-1120 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -192,8 +192,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 ## Completed Features
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos.
-— ninguna desde el Archivo 1 (2026-10-01).
+— ninguna desde el Archivo 2 (2026-10-01).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli.
-— ninguna desde el Archivo 1 (2026-10-01).
+— ninguna desde el Archivo 2 (2026-10-01).

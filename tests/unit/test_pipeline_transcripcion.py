@@ -105,9 +105,9 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
     doc = yaml.safe_load(r.manifiesto.read_text(encoding="utf-8"))
     assert doc["segmentos"] == 1 and doc["carpeta"] == "transcripciones/v1/falso"
     assert doc["fragmentos"] == [{"indice": 0, "inicio_m": 0, "fin_m": doc["muestras"]}]
-    cruda = cargar_cruda(r.carpeta)
+    cruda = cargar_cruda(r.carpeta, crudo=True)
     assert cruda[0].t0_ms == 0 and cruda[0].t1_ms == doc["muestras"] * 1000 // 16000
-    assert cargar_corregida(r.carpeta)[0].texto.startswith("texto FALSO")
+    assert cargar_corregida(r.carpeta, crudo=True)[0].texto.startswith("texto FALSO")
     assert (
         (r.carpeta / "cruda.txt")
         .read_text(encoding="utf-8")
@@ -169,7 +169,7 @@ def test_pipeline_con_motor_falso_es_determinista_e_inmutable(tmp_path: Path) ->
     assert r3.carpeta != r.carpeta and r3.carpeta.name.startswith("falso-")
     assert (r3.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == otro_sha
     assert (r.carpeta / "video.sha256").read_text(encoding="utf-8").strip() == sha
-    assert cargar_cruda(r.carpeta) == cruda  # la cruda vieja sigue intacta
+    assert cargar_cruda(r.carpeta, crudo=True) == cruda  # la cruda vieja sigue intacta
     # Reemplazar a un id que no es la activa: error antes del motor.
     with pytest.raises(TranscripcionError, match="la transcripcion activa de v1 es"):
         transcribir_video(

@@ -48,7 +48,10 @@ el contrato, Edit para `PROJECT_STATE.md`.
 4. **Contrato.** `contrato.yaml` en la raiz con la plantilla de `docs/runbooks/CONTRATO-DE-RAMA.md`:
    `rama`, `riesgo` con su motivo en el comentario, `artefacto: docs/validation/<NOMBRE>.md`,
    `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
-   artefacto), `rutas_protegidas` y `comprobaciones`.
+   artefacto), `rutas_protegidas` y `comprobaciones`. **El artefacto tiene que existir y estar
+   estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
+   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Si el encargo pide un inventario antes de
+   tocar codigo, nace con el; si no, con su cabecera y un `## Estado` EN CURSO.
 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
    - `N` = `grep -c '^# Archivo ' docs/state/HISTORIA.md` mas uno;
    - `printf '\n# Archivo N · PROJECT_STATE.md de main en <sha corto> (<AAAA-MM-DD>), al abrir <rama>\n\n' >> docs/state/HISTORIA.md`;
@@ -59,7 +62,7 @@ el contrato, Edit para `PROJECT_STATE.md`.
 6. **Comprobar antes de sellar.** `uv run botsito state check` (rama y recuento de tests fallan al
    FINAL de `make check`: mejor verlo antes) y `uv run python scripts/contrato_rama.py`.
 7. **Sello y commit.** `git add` de los ficheros nombrados (encargo, contrato, `PROJECT_STATE.md`,
-   `docs/state/HISTORIA.md`), `make check > make-check.log 2>&1`, esperar el aviso, leer el log
+   `docs/state/HISTORIA.md` y el artefacto), `make check > make-check.log 2>&1`, esperar el aviso, leer el log
    (exit 0, ningun `failed`, la linea `SELLO`) y commit
    `chore(rama): abre <rama> (encargo, contrato y Archivo N de PROJECT_STATE)`.
 

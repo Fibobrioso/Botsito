@@ -46,12 +46,13 @@ import os
 import re
 import sys
 import time
-import unicodedata
 from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from botsito.corpus.cuarentena import en_cuarentena, normalizar, numeros_a_cifras
 
 RAIZ = Path(__file__).resolve().parents[1]
 CARPETA_AUDIO = Path(r"C:\Users\USER\Desktop\reunion-a35-a44\sesion-02-audio")
@@ -100,123 +101,10 @@ CODIGOS_DE_SESION = tuple(CODIGOS_DE_SESION_TEXTO)
 ORDEN_SESION = ORDEN_SESION_03  # la hoja de la sesion en curso
 
 
-# ------------------------------------------------------------------------------ normalizar
-
-
-def normalizar(texto: str) -> str:
-    """Minusculas y sin tildes; los guiones, barras y puntos se conservan (las fechas los usan)."""
-    plano = unicodedata.normalize("NFD", texto.lower())
-    return "".join(c for c in plano if unicodedata.category(c) != "Mn")
-
-
-_UNIDADES = {
-    "cero": 0, "uno": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5,
-    "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10, "once": 11, "doce": 12,
-    "trece": 13, "catorce": 14, "quince": 15, "dieciseis": 16, "diecisiete": 17,
-    "dieciocho": 18, "diecinueve": 19, "veinte": 20, "veintiun": 21, "veintiuno": 21,
-    "veintiuna": 21, "veintidos": 22, "veintitres": 23, "veinticuatro": 24, "veinticinco": 25,
-    "veintiseis": 26, "veintisiete": 27, "veintiocho": 28, "veintinueve": 29,
-}  # fmt: skip
-_DECENAS = {
-    "treinta": 30, "cuarenta": 40, "cincuenta": 50, "sesenta": 60, "setenta": 70,
-    "ochenta": 80, "noventa": 90,
-}  # fmt: skip
-
-
-def numeros_a_cifras(texto: str) -> str:
-    """«treinta y cinco» -> «35», «veinticinco» -> «25», «trece» -> «13» (de 0 a 99), sobre texto
-    ya normalizado. «un» y «una» NO se convierten: «voy a una zona» no es el codigo A-1."""
-    tokens = re.findall(r"\w+|[^\w\s]|\s+", texto)
-    salida: list[str] = []
-    i = 0
-    while i < len(tokens):
-        t = tokens[i]
-        if t in _DECENAS:
-            valor = _DECENAS[t]
-            # «treinta y cinco»: decena, espacio, «y», espacio, unidad 1-9
-            if (
-                i + 4 < len(tokens)
-                and tokens[i + 1].isspace()
-                and tokens[i + 2] == "y"
-                and tokens[i + 3].isspace()
-                and 1 <= _UNIDADES.get(tokens[i + 4], 0) <= 9
-            ):
-                salida.append(str(valor + _UNIDADES[tokens[i + 4]]))
-                i += 5
-                continue
-            salida.append(str(valor))
-        elif t in _UNIDADES:
-            salida.append(str(_UNIDADES[t]))
-        else:
-            salida.append(t)
-        i += 1
-    return "".join(salida)
-
-
 # ------------------------------------------------------------------------------ cuarentena
 
-# Grafias de los cuatro meses. Medido en las crudas de v1-v6: el ASR escribe «mayo»,
-# «septiembre» y «marzo» bien; «mayo» es PREFIJO de «mayor» y «mayoria», y «siempre» se parece a
-# «setiempre», asi que todo va por palabra entera. Los errores tipicos se anaden por si acaso.
-MESES_FILTRADOS = (
-    r"se[cpt]{0,2}i?e?m[bp]re?s?",  # septiembre, setiembre, setiempre, sectiembre, setembre...
-    r"sept?",  # sep, sept (abreviatura)
-    r"septem[bp]er",
-    r"mar[sz]os?|mar",  # marzo, marso, mar (NO «marco»: ver abajo)
-    r"march",
-    r"ma[yi]o|mallo",  # mayo, maio, mallo (no «malo»)
-    r"may",
-    r"fe[bv]r?e?r?o?s?",  # febrero, febreo, febrer, feb, fevrero
-    r"february",
-)
-# «marco» NO se filtra: es el verbo del trader («lo marco», «marco la liquidez») y el sustantivo
-# de «marco de operativa»; en las crudas de v1-v6 no hay ni un «marco» por «marzo» (medido el
-# 2026-09-27: «marzo» sale bien escrito la unica vez que aparece).
-_RE_MES = re.compile(r"\b(?:" + "|".join(MESES_FILTRADOS) + r")\b")
-_NUM = r"(?:\d{1,2})"
-_RE_FECHA = re.compile(
-    rf"(?<![\d.,]){_NUM}\s*[/-]\s*{_NUM}(?:\s*[/-]\s*\d{{2,4}})?(?![\d.,])"  # 31/02, 31-02-26
-    rf"|(?<![\d.,]){_NUM}\.{_NUM}\.\d{{2,4}}(?![\d.,])"  # 31.02.26 (dos partes: precio)
-    rf"|(?<![\d.,]){_NUM}\s+del?\s+{_NUM}(?![\d.,])"  # «45 del 13», «3 de 9»
-    rf"|\bmes\s+{_NUM}\b"  # «el mes 9»
-)
-_DIAS = r"(?:lunes|martes|miercoles|jueves|viernes|sabado|domingo)"
-_RE_DIA_NUMERO = re.compile(rf"\b{_DIAS}\b(?:\W+\w+)?\W+{_NUM}\b|\b{_NUM}\b(?:\W+\w+)?\W+{_DIAS}\b")
-_RE_BACKTEST = re.compile(r"\b(?:back\s*-?\s*tests?|bac?k?test\w*|vac?k?test\w*)\b")
-_RE_ABREV = re.compile(r"\b(?:sep|sept|set|mar|may|feb)\b")
-
-MOTIVO_MES = "mes"
-MOTIVO_FECHA = "fecha numerica"
-MOTIVO_DIA = "dia de la semana con numero"
-MOTIVO_BACKTEST = "backtest con mes"
-MOTIVO_VECINO = "vecino"
-
-
-def motivos_cuarentena(texto: str) -> list[str]:
-    """Por que un texto va a cuarentena (lista vacia si no va). Sin tildes, sin mayusculas, y con
-    los numeros escritos en letras pasados a cifras."""
-    t = numeros_a_cifras(normalizar(texto))
-    motivos: list[str] = []
-    if _RE_MES.search(t):
-        motivos.append(MOTIVO_MES)
-    if _RE_FECHA.search(t):
-        motivos.append(MOTIVO_FECHA)
-    if _RE_DIA_NUMERO.search(t):
-        motivos.append(MOTIVO_DIA)
-    if _RE_BACKTEST.search(t) and _RE_ABREV.search(t):
-        motivos.append(MOTIVO_BACKTEST)
-    return motivos
-
-
-def en_cuarentena(textos: Sequence[str]) -> dict[int, list[str]]:
-    """Indice -> motivos. Cada segmento con motivo arrastra al anterior y al siguiente."""
-    propios = {i: m for i, t in enumerate(textos) if (m := motivos_cuarentena(t))}
-    salida: dict[int, list[str]] = {i: list(m) for i, m in propios.items()}
-    for i in propios:
-        for j in (i - 1, i + 1):
-            if 0 <= j < len(textos) and j not in propios:
-                salida.setdefault(j, [MOTIVO_VECINO])
-    return salida
+# La regla por segmento vive desde el 2026-10-01 en `botsito.corpus.cuarentena`, que es la UNICA
+# fuente para este script y para la CLI (`trabajo/cuarentena-por-defecto`).
 
 
 # ------------------------------------------------------------------------ codigos de pregunta

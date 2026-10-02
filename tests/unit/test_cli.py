@@ -269,7 +269,7 @@ def _knowledge_con_cruda(tmp_path: Path) -> tuple[Path, str, str]:
         MotorFalso(),
         glosario_desde_texto(glosario),
     )
-    cita = cargar_cruda(r.carpeta)[0].texto
+    cita = cargar_cruda(r.carpeta, crudo=True)[0].texto
     return repo, r.transcripcion_id, cita
 
 

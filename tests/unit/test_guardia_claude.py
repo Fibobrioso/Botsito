@@ -358,7 +358,10 @@ def test_grep_recursivo_en_bash(g: ModuleType, repo: Path) -> None:
         ("uv run botsito corpus frames show --video v9 --t 0:15:29", True),
         ("uv run botsito corpus transcript show --video v7 --desde 0:01:00", True),
         ("uv run botsito kb at --video=v7 --t 0:10:00", True),
-        ("uv run botsito kb find stop", True),
+        # Sin `--video` pasa desde `trabajo/cuarentena-por-defecto` (el indice sale filtrado);
+        # con `--video` de una sesion en cuarentena sigue bloqueado (segunda capa).
+        ("uv run botsito kb find stop", False),
+        ("uv run botsito kb find stop --video v7", True),
         ("uv run botsito kb find stop --video v3", False),
         ("uv run botsito corpus frames show --video v4 --t 1:06:12", False),
         ("uv run botsito motor arnes --salida arnes.txt", False),
@@ -548,6 +551,138 @@ def test_un_guion_seguido_es_codigo_revisado_y_uno_nuevo_se_lee(
 def test_las_operaciones_prohibidas(g: ModuleType, repo: Path, comando: str) -> None:
     motivo = _bash(g, repo, comando)
     assert motivo is not None and "Regla:" in motivo, comando
+
+
+# ------------------------------------ el corpus sin filtrar (`trabajo/cuarentena-por-defecto`)
+OPCION = "--" + "crudo"
+LLAMADA = "cru" + "do=True"
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        f"uv run botsito {OPCION} kb find hola",  # al principio
+        f"uv run botsito kb find hola {OPCION}",  # al final
+        f"uv run botsito kb at --video v1 --t 0:00:01 {OPCION}=1",  # con =
+        f"uv run botsito corpus transcript show --video v1 --t0 0:00:01 --t1 0:00:02 {OPCION} si",
+        "uv run botsito corpus frames show --video v1 --t 0:00:01 --cru",  # abreviada
+        f"uv run python -c 'from botsito.corpus import x; x.f({LLAMADA})'",  # python -c
+        "uv run python - <<'EOF'\nfrom botsito import x\nx.f(" + LLAMADA + ")\nEOF\n",  # heredoc
+        "uv run python -c 'f(**{\"cru" + "do\": True})'",  # por diccionario
+        f"make check {OPCION} > make-check.log 2>&1",  # make check con argumentos extra
+    ],
+)
+def test_la_guardia_bloquea_el_corpus_sin_filtrar(g: ModuleType, repo: Path, comando: str) -> None:
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and g.R_CRUDO in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "uv run botsito kb find hola --video v1",
+        "uv run botsito kb find hola --video v1 --contexto",
+        "uv run botsito kb at --video v1 --t 0:00:01",
+        "uv run botsito corpus transcript show --video v1 --t0 0:00:01 --t1 0:00:02",
+        "uv run botsito corpus frames show --video v1 --t 0:00:01",
+        "uv run python -c 'from botsito.corpus import x; x.f(cru" + "do=False)'",
+        "make check > make-check.log 2>&1",
+        "uv run pytest",
+    ],
+)
+def test_sin_la_opcion_los_mismos_comandos_pasan(g: ModuleType, repo: Path, comando: str) -> None:
+    assert _bash(g, repo, comando) is None, comando
+
+
+def test_un_guion_nuevo_con_el_corpus_sin_filtrar_se_bloquea(
+    g: ModuleType, repo: Path, tmp_path: Path
+) -> None:
+    guion = tmp_path / "nuevo.py"
+    guion.write_text(f"from botsito import x\nx.f({LLAMADA})\n", encoding="utf-8")
+    motivo = _bash(g, repo, f'uv run python "{guion}"')
+    assert motivo is not None and g.R_CRUDO in motivo
+    motivo = _decide(g, repo, "PowerShell", command=f"uv run botsito kb find hola {OPCION}")
+    assert motivo is not None and g.R_CRUDO in motivo
+
+
+def test_un_fichero_con_texto_oculto_no_se_lee(g: ModuleType, repo: Path) -> None:
+    """La lista la calcula `botsito.corpus.cuarentena` y la guardia la lee de su fichero
+    (ordenes del consultor del 2026-10-01): propuestas con segmentos ocultos y salidas de medicion
+    que ya no se reproducen. Aqui, sintetica."""
+    from botsito.corpus.cuarentena import FICHERO_OCULTOS, texto_de_la_lista
+
+    oculta = _escribir(repo, "knowledge/_proposals/pr-v2-000100-000200-aaaaaaaa.yaml")
+    libre = _escribir(repo, "knowledge/_proposals/pr-v2-000300-000400-bbbbbbbb.yaml")
+    salida = _escribir(repo, "docs/validation/X-SALIDA.txt")
+    otra = _escribir(repo, "docs/validation/Y-SALIDA.txt")
+    _escribir(
+        repo,
+        FICHERO_OCULTOS,
+        texto_de_la_lista([f"knowledge/_proposals/{oculta.name}", "docs/validation/X-SALIDA.txt"]),
+    )
+    for ruta in (oculta, salida):
+        motivo = _decide(g, repo, "Read", file_path=str(ruta))
+        assert motivo is not None and g.R_FICHERO_OCULTO in motivo, ruta
+        assert _bash(g, repo, f'cat "{ruta}"') is not None, ruta
+        assert _decide(g, repo, "Grep", pattern="x", path=str(ruta)) is not None, ruta
+    assert _decide(g, repo, "Read", file_path=str(libre)) is None
+    assert _decide(g, repo, "Read", file_path=str(otra)) is None
+
+
+def _guion_de_la_lista() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        "ficheros_con_ocultos", RAIZ / "scripts" / "ficheros_con_ocultos.py"
+    )
+    assert spec is not None and spec.loader is not None
+    guion = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guion)
+    return guion
+
+
+def test_la_lista_de_la_guardia_es_la_que_se_calcula() -> None:
+    """El fichero que lee la guardia es exactamente el que sale de
+    `scripts/ficheros_con_ocultos.py`: nadie lo escribe a mano. Sin los datos de las
+    transcripciones (la CI), las salidas y los ficheros que las copian no se recalculan: se
+    comprueba que son de `docs/`."""
+    from botsito.corpus.cuarentena import FICHERO_OCULTOS, texto_de_la_lista
+
+    propuestas, otros = _guion_de_la_lista().calcular(RAIZ)
+    actual = (RAIZ / FICHERO_OCULTOS).read_text(encoding="utf-8")
+    if otros is None:
+        listadas = [ln for ln in actual.splitlines() if ln and not ln.startswith("#")]
+        otros = [r for r in listadas if not r.startswith("knowledge/_proposals/")]
+        assert all(r.startswith("docs/") for r in otros), otros
+    assert actual == texto_de_la_lista(propuestas + otros)
+
+
+def test_una_linea_es_oculta_si_su_segmento_lo_esta(tmp_path: Path) -> None:
+    """La definicion EXACTA (quinta orden): cuenta el segmento `n` de la transcripcion del pasaje,
+    no que la linea haya dejado de salir. Sintetico."""
+    from botsito.corpus.cuarentena import Filtro, Oculto
+
+    salida = tmp_path / "docs" / "X-SALIDA.txt"
+    salida.parent.mkdir(parents=True)
+    salida.write_text(
+        "=== A-1 · PASAJE 1 | tr-v1-falso-00000000 | 0:00:00-0:00:10 | x x1\n"
+        "[0:00:00-0:00:05] #0 linea visible\n"
+        "[0:00:05-0:00:10] #1 linea del oculto\n"
+        "=== PASAJE 2 | tr-v2-falso-00000000 | 0:00:00-0:00:05 | x x1\n"
+        "[0:00:00-0:00:05] #1 mismo numero, otra transcripcion\n",
+        encoding="utf-8",
+    )
+    oculto = Filtro("v1", ocultos={1: Oculto("v1", 1, 5000, 10000, "c")})
+    filtros = {"tr-v1-falso-00000000": oculto, "tr-v2-falso-00000000": Filtro("v2")}
+    lineas = _guion_de_la_lista().lineas_ocultas(tmp_path, "docs/X-SALIDA.txt", filtros)
+    assert lineas == ["linea del oculto"]
+
+
+def test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena(g: ModuleType) -> None:
+    """La guardia guarda su copia (la deduce de `fuentes.yaml`: `drive_id: null` menos v6) y el
+    modulo tiene la LISTA: tienen que decir lo mismo sobre el repositorio real."""
+    from botsito.corpus import cuarentena
+
+    assert g.Politica(RAIZ).sesiones_en_cuarentena == cuarentena.SESIONES_EN_CUARENTENA
+    assert frozenset(cuarentena.EXCEPCIONES) == g.SESIONES_SIN_CUARENTENA
 
 
 # ------------------------------------------------------------- el borrado de ramas remotas

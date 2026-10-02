@@ -1,5 +1,14 @@
 # A-18 en las transcripciones: el criterio, congelado antes de buscar
 
+> **RECUADRO DE CORRECCIÓN (2026-10-01, rama `trabajo/cuarentena-por-defecto`).** La salida congelada de esta medición, `A18-TRANSCRIPCIONES-SALIDA.txt`, trae 27 líneas de
+> segmentos que hoy se ocultan por defecto (sesión en cuarentena, tramo no citable o
+> material reservado o sin sortear: `botsito.corpus.cuarentena`). Desde esa rama,
+> `scripts/a18_buscar.py` lee la cruda FILTRADA, así que volver a ejecutarlo ya no reproduce la
+> salida commiteada, y la guardia de Claude Code no deja leerla
+> (`.claude/hooks/ficheros_con_ocultos.txt`). El cuerpo de este informe no se toca: lo que
+> dice se hizo sobre la salida commiteada. Detalle y cuentas:
+> `docs/validation/CUARENTENA-POR-DEFECTO.md`.
+
 Rama `trabajo/a18-transcripciones`, 2026-09-23. Next Action 14. Sin merge, sin tag y sin push.
 
 Este documento y `scripts/a18_buscar.py` se commitean JUNTOS y ANTES de ejecutar ninguna búsqueda.

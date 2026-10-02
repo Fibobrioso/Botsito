@@ -27,9 +27,10 @@ reglas viven en `CLAUDE.md`, `docs/runbooks/SESION-DE-PREGUNTAS.md` («Después 
   de v7 en adelante y los tramos no citables de cualquier video: **no se rodea**.
 - Un fotograma se abre solo por instante LOCALIZADO en la filtrada (ADR-0038), nunca la pestana
   Analytics ni el tramo sin audio; de 25 en 25 como mucho, anotando cada lote antes del siguiente.
-- `corpus frames show`, `kb find --solo cruda`, `kb at` y `corpus transcript show` IMPRIMEN texto
-  crudo: cerca de un tramo en cuarentena revelan lo que la cuarentena tapa. No se usan alli
-  (Next Action I de `PROJECT_STATE.md`: la CLI todavia no respeta la cuarentena).
+- `kb find`, `kb at`, `corpus transcript show`, `corpus frames show` y `evidence propose` ensenan
+  el corpus FILTRADO por defecto (`botsito.corpus.cuarentena`: sesiones en cuarentena, tramos no
+  citables y material reservado o sin sortear) y dicen al final cuantos segmentos ocultaron. Su
+  opcion para verlo todo es solo de Aleks, en su terminal: la guardia la bloquea.
 - Si algo trae un dia reservado o un agregado, se declara en
   `docs/validation/HOLDOUT-EXPOSICIONES.md` el MISMO dia.
 - **Esta rama NO resuelve nada**: propone. Los registros de feedback y el cierre de ambiguedades van
@@ -49,8 +50,11 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
 1. **Registro.** Entrada nueva en `knowledge/corpus/fuentes.yaml` (siguiente `video_id`,
    `drive_id: null`, `fecha_grabacion`, y una `naturaleza` que empiece por «sesion»; la procedencia,
    en un comentario encima: el esquema no tiene notas). Ampliar `v1..vN` en
-   `tests/unit/test_inventario.py`. `uv run botsito corpus inventory` (hashea todo: minutos) y
-   `uv run botsito corpus check --hashes`.
+   `tests/unit/test_inventario.py`. **Anadir el video a la lista de cuarentena**,
+   `SESIONES_EN_CUARENTENA` en `src/botsito/corpus/cuarentena.py` (decision del consultor del
+   2026-10-01): sin eso, `tests/unit/test_cuarentena.py` falla en `make check`, porque una sesion
+   con `drive_id: null` tiene que estar en la lista o en sus EXCEPCIONES. Despues,
+   `uv run botsito corpus inventory` (hashea todo: minutos) y `uv run botsito corpus check --hashes`.
 2. **Audio.** No hay comando del repo: se mide con `ffmpeg -af silencedetect` (en v8, -50 dB y 30 s
    minimo; `SESION-02-VIDEO-V8.md`). Un corte de audio entra en
    `knowledge/corpus/tramos_no_citables.yaml` con motivo «SIN AUDIO», en `naturaleza` y en el

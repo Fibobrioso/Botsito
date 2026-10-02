@@ -15,7 +15,7 @@ from typing import Any
 
 from botsito.comun import ids
 from botsito.comun.documentos import activos as _activos
-from botsito.comun.documentos import cargar_directorio, ciclos_de_supersede, sha256_hex
+from botsito.comun.documentos import cargar_directorio, ciclos_de_supersede
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.audio import MUESTRAS_S
 from botsito.corpus.glosario import Glosario, aplicar, correcciones_jsonl
@@ -26,9 +26,11 @@ from botsito.corpus.pipeline_transcripcion import (
     FICHERO_CORREGIDA,
     FICHERO_CRUDA,
     SCHEMA_VERSION,
+    cargar_cruda,
+    sha256_de_cruda,
 )
 from botsito.corpus.trabajo import SUFIJO_CARPETA
-from botsito.corpus.transcripcion import SENALES, TranscripcionError, a_jsonl, desde_jsonl, huecos
+from botsito.corpus.transcripcion import SENALES, TranscripcionError, a_jsonl, huecos
 
 CAMPOS_OBLIGATORIOS = (
     "schema_version",
@@ -284,18 +286,23 @@ def comprobar(
     avisos: list[str] = []
     for t in items:
         carpeta = carpeta_de(carpeta_datos, t)
-        cruda = carpeta / FICHERO_CRUDA
-        if not cruda.is_file():
+        if not (carpeta / FICHERO_CRUDA).is_file():
             avisos.append(f"{t.id}: {FICHERO_CRUDA} no esta en esta maquina ({carpeta})")
             continue
-        datos = cruda.read_bytes()
-        if sha256_hex(datos) != t.sha256_cruda:
+        if sha256_de_cruda(carpeta) != t.sha256_cruda:
             errores.append(f"{t.id}: {FICHERO_CRUDA} alterada (sha256 distinto del manifiesto)")
             continue
         try:
-            segmentos = desde_jsonl(datos.decode("utf-8"))
-        except (TranscripcionError, UnicodeDecodeError) as exc:
-            errores.append(f"{t.id}: {FICHERO_CRUDA} no se puede leer ({exc})")
+            # LLAMADOR AUTORIZADO de `crudo=True` (`trabajo/cuarentena-por-defecto`): la
+            # integridad recalcula los recuentos del manifiesto sobre la cruda ENTERA. Condicion
+            # del consultor: solo imprime el resultado (OK o fallo) y el fichero, nunca contenido;
+            # por eso el error de forma NO lleva el detalle, que puede traer una palabra.
+            segmentos = cargar_cruda(carpeta, crudo=True)
+        except (TranscripcionError, UnicodeDecodeError):
+            errores.append(
+                f"{t.id}: {FICHERO_CRUDA} no se puede leer (forma invalida; el detalle no se "
+                "imprime porque puede traer texto de la transcripcion)"
+            )
             continue
         errores += [f"{t.id}: {e}" for e in _recomputar(t.doc, segmentos)]
         if glosario is None:

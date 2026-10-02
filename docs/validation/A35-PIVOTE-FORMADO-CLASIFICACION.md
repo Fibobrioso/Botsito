@@ -1,5 +1,14 @@
 # A-35 en las transcripciones: la clasificación de los 10 pasajes
 
+> **RECUADRO DE CORRECCIÓN (2026-10-01, rama `trabajo/cuarentena-por-defecto`).** La salida congelada de esta medición, `A35-PIVOTE-FORMADO-SALIDA.txt`, trae 9 líneas de
+> segmentos que hoy se ocultan por defecto (sesión en cuarentena, tramo no citable o
+> material reservado o sin sortear: `botsito.corpus.cuarentena`). Desde esa rama,
+> `scripts/buscar_ambiguedades.py` lee la cruda FILTRADA, así que volver a ejecutarlo ya no reproduce la
+> salida commiteada, y la guardia de Claude Code no deja leerla
+> (`.claude/hooks/ficheros_con_ocultos.txt`). El cuerpo de este informe no se toca: lo que
+> dice se hizo sobre la salida commiteada. Detalle y cuentas:
+> `docs/validation/CUARENTENA-POR-DEFECTO.md`.
+
 Rama `trabajo/a35-pivote-formado`, 2026-09-24. Sin merge, sin tag y sin push.
 
 **Qué se clasifica:** los pasajes de la salida congelada (`A35-PIVOTE-FORMADO-SALIDA.txt`), los 10 y
