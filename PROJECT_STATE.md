@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/freno-peticiones
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36o-cerrar-a29-a36` (2026-10-02).
+EN CURSO: `feature/freno-peticiones` (2026-10-02; encargo docs/encargos/feature-freno-peticiones.md, informe docs/validation/FRENO-PETICIONES.md): la K de Next Action, el freno de peticiones al servidor. Tarea autonoma: no se cierra.
 
 ## Stable Main State
 34680ba · merge de `trabajo/cerrar-a29-a36` (tag `stable/F36o-cerrar-a29-a36`): A-29 RESUELTA con la respuesta grabada de la sesion 3 (`orden_limite_nace` CONFIRMED, el mismo valor; el motor no cambia, medido); A-36 se cerro y el consultor la reabrio: va a la sesion 4 como pregunta 22. Cerrar una ambiguedad toca cinco sitios (docs/runbooks/AMBIGUEDADES.md, con la hoja de preguntas). Sobre `stable/F36n-escenarios-por-sesion` (8346b9b), las sesiones independientes (ADR-0066). Informe docs/validation/CERRAR-A29-A36.md; el registro del cierre, al final de HISTORIA.
@@ -196,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 5 (2026-10-02).
+— ninguna desde el Archivo 6 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 5 (2026-10-02).
+— ninguna desde el Archivo 6 (2026-10-02).

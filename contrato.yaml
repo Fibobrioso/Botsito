@@ -1,0 +1,28 @@
+rama: feature/freno-peticiones
+riesgo: alto  # cambia lo que el bot envia al broker: un freno en el adaptador que puede negar peticiones
+artefacto: docs/validation/FRENO-PETICIONES.md
+rutas_permitidas:
+  - docs/validation/FRENO-PETICIONES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/adr/
+  - tests/unit/
+  - tests/contract/
+rutas_protegidas:
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - data/manifests/
+  - .claude/
+  - scripts/git-hooks/
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito spec check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1
