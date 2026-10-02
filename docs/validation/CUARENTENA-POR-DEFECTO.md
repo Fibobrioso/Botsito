@@ -331,8 +331,9 @@ Regla de `RITUAL.md` (la rama toca un hook): empujada como `fix/cuarentena-por-d
 |---|---|---|
 | `e30765c` (tercera orden) | `36936326358` | 1 failed, 1768 passed, 8 skipped: solo el fallo esperado, `test_state_check_ok_on_real_repo` por el nombre `fix/` frente a `trabajo/` |
 | `a4d37e8` (hallazgos del revisor, §11) | `36938253913` | 1 failed, 1770 passed, 8 skipped: el mismo fallo esperado y ningun otro |
+| `bc77e2b` (cuarta y quinta orden) | `36944773639` | 1 failed, 1779 passed, 8 skipped: el mismo fallo esperado y ningun otro |
 
-El run del commit de la cuarta y la quinta orden se apunta en la respuesta: escribirlo aqui
+El run del commit de documentacion que escribe esta fila se apunta en la respuesta: escribirlo aqui
 exigiria otro commit y otro run.
 
 ## 11. Informe del revisor
@@ -562,3 +563,58 @@ implementaron tal cual, con la definicion corregida:
 2. **`ev-v6-010927-50b8d873`** copia texto de un tramo no citable de v6 desde una cita fuera del
    tramo. `knowledge/` no se ha tocado; kb lo oculta por defecto. Puede ser una frase que el trader
    repite (no se ha abierto); si no lo es, el item cita algo que no deberia.
+
+## 14. Informe del revisor, segunda pasada (solo `a4d37e8..bc77e2b`)
+
+Subagente `revisor`, sobre `bc77e2b`. Los hallazgos, tal cual; la tabla de requisitos, lo
+comprobado sin hallazgos y los comandos, resumidos.
+
+> ## Informe del revisor · trabajo/cuarentena-por-defecto (solo a4d37e8..bc77e2b) · 2026-10-01
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | El informe no acaba en su estado vigente. El «Estado» de la tercera orden (§8, línea 242) remite a «el del final del informe, §15», y esa sección no existe. El informe termina en §13.4. Regla: «el informe de la rama existe y acaba en su estado». | `grep -n "§15\|## 14\|## 15"` solo da la línea 242 |
+> | A2 | importa | El punto 6 de la cuarta orden pide anotar el run 36938253913 «y el run nuevo». El 36938253913 está en §10, pero el run de `bc77e2b` queda diferido a «la respuesta». Mientras no se escriba, el informe queda incompleto en ese punto. | `CUARENTENA-POR-DEFECTO.md:335-336` |
+> | A3 | menor | La primera línea de los recuadros de los 9 informes no está reajustada al ancho del resto. | `git diff a4d37e8 bc77e2b -- docs/validation/A24-A21-A26-A34-CLASIFICACION.md` |
+> | A4 | menor | En la CI (sin `data/`), `test_la_lista_de_la_guardia_es_la_que_se_calcula` solo comprueba que las rutas no-propuesta empiezan por `docs/`, y la lista commiteada se da por buena. Es una comprobación débil, aunque no falla y está declarada en la docstring. | `tests/unit/test_guardia_claude.py`; `scripts/ficheros_con_ocultos.py`, rama `otros is None` |
+>
+> Comprobado sin hallazgos: el contrato; los tests de `test_cuarentena.py` y `test_guardia_claude.py` y `state check`; la lista calculada coincide con la commiteada (14 rutas); la guardia mira la lista por `rel` en `motivo_fichero` y el test cubre Read, `cat` y Grep; ninguna autorización por fichero entero; `transcribir_sesion.py` sin `crudo=True` en ninguna línea; `corpus transcript check` sin el detalle de la excepción; en los 9 recuadros, 0 líneas eliminadas; la trampa en `CLAUDE.md`; `knowledge/` intacto.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 9 hechos, 1 parcial (el 6, ver A2), 0 no hechos; Q1, Q2 y el punto 4, «hechos de otra forma», declarados.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | importa | Las dos respuestas del consultor se dieron sobre una medición que contaba de más, y la implementación aplica el MECANISMO («mismo método y mismo umbral», «mitad o más») con la definición corregida. El resultado práctico es distinto de lo que el consultor creyó decidir: los dos informes no se bloquean y los dos ítems nombrados no se ocultan. Es defendible -las respuestas son mecanismos calculados, y el informe declara el error, la causa, la cuenta corregida y un control-, pero es una reinterpretación unilateral del sentido de «Se añaden a la lista». Recomendación: que el consultor confirme esta lectura antes del cierre, y no tratar la respuesta Q1 como cumplida a la letra. | Informe §13.1, §13.3, §13.4; encargo, «Quinta orden» |
+> | B2 | importa | La quinta orden oculta por defecto un ítem que el consultor no nombró, `ev-v6-010927-50b8d873`; y según §12.2 79 de 437 ítems salen ocultos en kb (69 de v7, v8 y v9 por (a)). Está declarado y es coherente con 1b («cuya cita cae en un segmento oculto» cubre la sesión en cuarentena), pero es un cambio grande de comportamiento de `kb find` que el consultor debe ver. | Informe §12.2 y §13.3 |
+> | B3 | menor | El calculador solo barre ficheros de `docs/` seguidos por git; `knowledge/` no se barre por copias. Es consistente con el encargo («ficheros de docs/»). | `scripts/ficheros_con_ocultos.py`, `_que_copian` |
+>
+> ### Lo que no pude comprobar
+> La guardia con lectores de Bash distintos de `cat` y con Glob (la propia guardia bloqueó el arnés, y no se rodeó); las cuentas 27, 9, 9 y 11 y los recuentos «79 de 437» (no se ejecutaron los anexos, que leen la cruda); la CI de Linux de `bc77e2b` y el log de `make check` de ese commit.
+
+**Respuesta de la sesion, hallazgo a hallazgo:**
+- **A1, arreglado**: §15, abajo.
+- **A2, arreglado**: el run de `bc77e2b`, en §10. El de este commit de documentacion se apunta en la
+  respuesta: escribirlo aqui pediria otro commit y otro run.
+- **A3**: no se toca. Los recuadros los escribio un guion idempotente, y reajustarlos ahora seria
+  otro diff en 9 informes cerrados sin cambiar lo que dicen.
+- **A4**: declarado. En la CI no hay cruda con la que recalcular, y la comprobacion completa corre
+  en `make check` en la maquina, donde si la hay.
+- **B1 y B2**: no se arreglan en la rama; son decisiones del consultor, ya en §13.4, y van a §15.
+- **B3**: es el alcance que se decidio.
+
+## 15. Estado
+
+**Rama lista para revisión, NO cerrada.** La cuarta y la quinta orden estan hechas, selladas y con la
+CI de Linux (§10). Quedan para el consultor, sin las que la rama no debe cerrarse:
+1. **Confirmar la lectura de la quinta orden** (§13.4.1 y B1): las dos respuestas se aplicaron como
+   mecanismo con la definicion corregida, y hoy no bloquean los dos `*-CLASIFICACION.md` ni ocultan
+   los dos items nombrados.
+2. **`ev-v6-010927-50b8d873`** (§13.4.2): kb lo oculta porque copia texto de un tramo no citable
+   de v6; `knowledge/` no se ha tocado.
+3. **Lo que kb oculta por defecto** (§12.2 y B2): 79 de 437 items, 69 de ellos de v7, v8 y v9.
+4. **Las dos funciones de `scripts/transcribir_sesion.py` en `AUTORIZADOS`** (§12.4): si las quiere
+   fuera, hay que cambiar el script.
