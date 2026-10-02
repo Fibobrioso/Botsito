@@ -2,9 +2,17 @@
 # `Fuente:`. Una cita de evidencia que caiga dentro de uno de estos tramos se rechaza, tanto en
 # `evidence propose --check` como en `evidence new`.
 #
-# No es censura: el tramo sigue en la cruda y se puede leer y buscar con `kb find`. Lo que impide
-# es que entre en la cadena evidencia -> spec -> bot, que es donde el proyecto se juega decir que
-# el trader dijo algo que no dijo, o que dijo para la operativa algo que dijo fuera de ella.
+# No es censura: el tramo sigue en la cruda, sin tocar. Lo que impide es que entre en la cadena
+# evidencia -> spec -> bot, que es donde el proyecto se juega decir que el trader dijo algo que no
+# dijo, o que dijo para la operativa algo que dijo fuera de ella.
+#
+# Desde `stable/F36l-cuarentena-por-defecto` (docs/validation/CUARENTENA-POR-DEFECTO.md) tampoco
+# se ENSENA por defecto: `kb find`, `kb at`, `corpus transcript show`, `corpus frames show` y
+# `evidence propose` ocultan sus segmentos y dicen cuantos ocultaron y por que, y `kb` oculta
+# tambien la evidencia cuya cita cae en un tramo o cuyo texto lo copia (y, por otro motivo, la que
+# trae un dia de `casos_ocultos`). La opcion de la CLI que lo
+# ensena todo es solo de Aleks, en su propia terminal: la guardia de Claude Code la bloquea. La
+# lista la lee `botsito.corpus.cuarentena`, la unica fuente.
 #
 # Campos: video_id, t0, t1 (h:mm:ss del video), motivo (por que no cuenta), acordado (como consta).
 

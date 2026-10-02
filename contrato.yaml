@@ -5,6 +5,9 @@ rutas_permitidas:
   - docs/validation/AJUSTES-CIERRE.md
   - docs/encargos/
   - docs/state/HISTORIA.md
+  # Ampliado en el commit de trabajo: decia que PROJECT_STATE lleva lo cerrado en Completed
+  # Features y Change Log, lo contrario del punto 2 del encargo (informe, §2).
+  - docs/state/README.md
   - PROJECT_STATE.md
   - knowledge/corpus/tramos_no_citables.yaml
   - .claude/skills/

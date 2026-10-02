@@ -117,24 +117,39 @@ merge, en la propia rama y con su sello, porque en `main` no se exige y la rama 
 heredaría. Es el único commit que el cierre añade a la rama, y se cuenta en la puerta de
 `git log --oneline main..trabajo/<rama>`.
 
+**TODO cierre lleva, en ESTE MISMO commit, dos cosas más. Son OBLIGATORIAS aunque la orden de cierre
+no las repita** (decisión del consultor del 2026-10-01, `trabajo/ajustes-cierre`; antes solo iban si
+la orden las pedía). Van aquí porque en `main`, tras el tag, solo puede cambiar `PROJECT_STATE.md`
+(`state check`, regla 5):
+
+1. **El registro del cierre en `docs/state/HISTORIA.md`**, al final del fichero, con el encabezado
+   `# Registro de cierre · <rama> (<fecha>)` y, como mínimo:
+   - el tag, y el merge escrito como `git rev-parse "stable/<tag>^{commit}"`: su sha todavía no
+     existe, y el literal queda después en `Last Stable Commit`;
+   - los commits de la rama, con su sha corto y de qué trata cada uno, más este;
+   - los runs de la CI, con el commit de cada uno y su resultado (los de la CI de Linux por
+     `fix/<rama>`, si la rama se empujó así; si no hubo ninguno, se dice).
+2. **La fila de la rama en la tabla de `docs/runbooks/ERRORES-RECURRENTES.md`** («La tabla»), con
+   las cuatro columnas: los hallazgos del revisor (cuántos de cada gravedad, dónde están en el
+   informe y qué se hizo con ellos), los del consultor, y lo que se le escapó al revisor o lo que hay
+   que enseñarle. **Si la orden de cierre no trae los hallazgos del consultor, la sesión los pregunta
+   antes de este commit**: no los deduce ni deja la columna en «se apunta al cerrar».
+
+El commit se llama siempre `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+
 ```
 git branch --show-current
 git rm contrato.yaml
+git add docs/state/HISTORIA.md docs/runbooks/ERRORES-RECURRENTES.md
 make check > make-check.log 2>&1
 grep "SELLO: make check en verde" make-check.log
 rm make-check.log
-git commit -m "chore(contrato): sale de la rama antes del merge"
+git commit -m "chore(cierre): sale el contrato y entra el registro en HISTORIA"
 ```
-→ **Puerta:** la rama es la de trabajo, y `make check` dice `CONTRATO: sin contrato.yaml`. Sin
-contrato, `make check` no comprueba nada del contrato, así que este sello es el de siempre.
-
-**Si la orden de cierre pide un registro en `docs/state/HISTORIA.md`** (tag, runs de la CI, commits),
-va en ESTE commit, al final del fichero y con un encabezado `# Registro de cierre · <rama> (<fecha>)`:
-en `main`, tras el tag, solo puede cambiar `PROJECT_STATE.md` (`state check`, regla 5). El sha del
-merge todavía no existe: se escribe como `git rev-parse "stable/<tag>^{commit}"`, y el literal queda
-en `Last Stable Commit`. Decisión del consultor del 2026-10-01, en el primer cierre con la skill
-`cerrar-rama` (`trabajo/dieta-y-skills`). El commit se llama entonces
-`chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+→ **Puerta:** la rama es la de trabajo; `git status --short` da `D  contrato.yaml`,
+`M  docs/state/HISTORIA.md` y `M  docs/runbooks/ERRORES-RECURRENTES.md` (las tres en la primera
+columna); y `make check` dice `CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
+nada del contrato, así que este sello es el de siempre.
 
 ```
 git checkout main
@@ -181,12 +196,15 @@ git rev-parse --short HEAD
 → Ese sha es el del merge, y es el que va en `PROJECT_STATE.md`.
 → Estamos en la **ventana B**: aquí `state check` también fallaría por diseño. No se corre.
 
-**La sesión edita SOLO `PROJECT_STATE.md`**, **sin estadiar** y sin commitear: Current Branch,
-Current Feature, Stable Main State, Completed Features, la entrada del Change Log, Next Action y Last
+**La sesión edita SOLO `PROJECT_STATE.md`**, **sin estadiar** y sin commitear, y en él SOLO las
+líneas de cabecera: Current Branch (`main`), Current Feature, Stable Main State, Next Action y Last
 Stable Commit. **Desde el 2026-10-01 (`trabajo/dieta-y-skills`) se SUSTITUYE lo que deja de ser
 verdad, sin «Lo anterior:»**: lo de antes ya está en `docs/state/HISTORIA.md`, y la rama siguiente
-archiva allí este `PROJECT_STATE.md` al abrirse (`docs/state/README.md`). Completed Features gana
-una línea y Change Log una entrada; `PROJECT_STATE.md` no pasa de 25 KB
+archiva allí este `PROJECT_STATE.md` al abrirse (`docs/state/README.md`). **En el commit de estado no
+se añade NADA a Change Log ni a Completed Features**, aunque la orden no lo repita: la historia del
+cierre vive en el registro de HISTORIA que entró con el contrato (arriba). Decisión del consultor
+del 2026-10-01 (`trabajo/ajustes-cierre`); hasta entonces este runbook decía que Completed Features
+ganaba una línea y Change Log una entrada. `PROJECT_STATE.md` no pasa de 25 KB
 (`tests/unit/test_project_state.py`, dentro de `make check`): si lo pasara, `make check` sale en
 rojo y no hay sello, así que se acorta lo sustituido, no se archiva en `main` (regla 5).
 
