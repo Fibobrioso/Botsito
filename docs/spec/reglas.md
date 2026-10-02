@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 15.3.0` · hash `e91b43449442…`
+`spec_version 15.4.0` · hash `fd469037e62c…`
 
 30 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -154,7 +154,7 @@
 - **Clase**: `disparador`
 - **Cuando**: el precio alcanza el alto o el bajo de M15 marcado
 - **Entonces**: se da por tomada solo si una vela de M1 cierra con cuerpo al otro lado segun liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
-- **Parametros**: `liquidez_m15_criterio_toma`, `toma_antes_de_la_ventana`, `intentos_tras_toma_nueva`, `cartuchos_reinicio`
+- **Parametros**: `liquidez_m15_criterio_toma`, `toma_antes_de_la_ventana`, `intentos_tras_toma_nueva`, `cartuchos_reinicio`, `max_escenarios_por_sesion`, `orden_pendiente_al_abrir_escenario`
 - **Cita**: `fb-2026-09-09-sesion-01-6e15504f` — *«¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o vale con que la mecha lo perfore? Con cuerpo»*
 - **Decision**: `ADR-0066` — dice mas que su cita, y lo declara
 - **Notas**: solo en M15; en M1 el rompimiento es indiferente. ESTA REGLA NO PUEDE DISPARARSE HOY: su `cuando` lee `liquidez_m15`, y ningun `fijar` de esta spec produce ese token (medido el 2026-09-20). Con ella no se enciende `liquidez_tomada`, del que dependen `se_da_esquema` y `toca_colocar_orden_limite`, asi que RN-008 -que es un `ninguno_de`- prohibe abrir operacion SIEMPRE, y `cartuchos_reinicio: siguiente_liquidez_m15` espera un reinicio que no llega. No se tapa con una regla de marcado inventada. El hueco esta anotado como deuda en PROJECT_STATE e informado en docs/validation/LIQUIDEZ-M15.md. DESDE EL 2026-09-24 A-24 ESTA DECIDIDA (ADR-0045): la liquidez es el pivote de M15 MAS RECIENTE YA FORMADO. El productor sigue sin escribirse porque la spec no define cuando esta formado un pivote, y eso es A-35, bloqueante: no se tapa con un parametro provisional, porque es un mecanismo y no una cifra DESDE EL 2026-09-29 (sesion 3, A-45 RESUELTA; fb-2026-09-29-sesion-03-b2e074e3 y fb-2026-09-29-sesion-03-43e0f90e, ev-v9-004037-ca58e486, ev-v9-004217-c014bfdc): la vela que cierra con cuerpo pasado el nivel de M15 es una vela de M1, no la de 15 minutos; la mecha solo vale para actualizar el punto de breaker en M1. Queda corregido en ese punto lo de «solo en M15; en M1 el rompimiento es indiferente» de estas notas. DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0062, ACEPTADO) EL MOTOR LO HACE: `alcanza_nivel` y `cruza` miran la ultima M1 cerrada, y lo PROVISIONAL de ADR-0054 §4 queda cerrado. SIGUE SIN ACTIVAR que la toma tenga que ocurrir dentro del horario aunque el nivel se formara antes de las 7 (A-43, ev-v9-004533-d075b080): hoy cuenta tambien la M1 que cierra en el instante mismo de la apertura. DESDE EL 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066) la toma tiene que ser DE LA SESION (`la_toma_es_de_la_sesion`): una liquidez que ya estaba tomada al abrirla no cuenta si se tomo en una sesion anterior del dia (A-46: cada sesion es «un mundo diferente», fb-2026-09-29-sesion-03-5021677e), y si se tomo antes de la primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL hasta la pregunta 15 de la sesion 4. Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la apertura de la tarde sobre el mismo pivote si el precio seguia pasado (docs/validation/ESCENARIOS-POR-SESION.md §0.2). Y cada toma de una liquidez nueva abre un ESCENARIO (`abrir_escenario`): RN-004 fija el hecho en cada M1 que cierra pasada la linea, asi que la misma liquidez no abre nada; una toma con el escenario vigente vivo la decide intentos_tras_toma_nueva, PROVISIONAL hasta la pregunta 18. Abrir un escenario es el reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15)
@@ -196,6 +196,8 @@
       {
         "abrir_escenario": {
           "intentos": "intentos_tras_toma_nueva",
+          "maximo": "max_escenarios_por_sesion",
+          "orden_pendiente": "orden_pendiente_al_abrir_escenario",
           "reinicio": "cartuchos_reinicio"
         }
       }
@@ -1203,7 +1205,7 @@
 - **Complementa**: RN-017
 - **Cita**: `ev-v6-003227-c4efcf49` — *«pues trazamos nuevamente liquidez, o sea, ya aquí está el trade ganador, aquí no buscamos nada, [...] pues tenemos que esperar nuevamente a que se desarrolle la liquidez»*
 - **Decision**: `ADR-0066` — dice mas que su cita, y lo declara
-- **Notas**: NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066) y sustituye la DECISION 2 de ADR-0064 -una sola vida de orden por sesion que llega a llenarse-, que se escribio porque los cartuchos no existian. No contradice RN-017: el dia sigue (un ganador no lo apaga), pero en otra liquidez. Tras una perdida, un break even o un equal el escenario SIGUE con los intentos que le queden (ev-v3-002405-a202dbf6: «nuevamente tiene todavía un gatillo [...] un cartucho»; el break even y la invalidada no gastan, ev-v9-013117-c683f9b5): que siga tras un break even es LECTURA NUESTRA del contador por intentos, y queda para despues de la sesion 4. Complementa a RN-017 con el mismo disparador: una sigue el dia, la otra cierra el escenario, y las dos valen en cualquier orden
+- **Notas**: NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066) y sustituye la DECISION 2 de ADR-0064 -una sola vida de orden por sesion que llega a llenarse-, que se escribio porque los cartuchos no existian. No contradice RN-017: el dia sigue (un ganador no lo apaga), pero en otra liquidez. Tras una perdida, un break even o un equal el escenario SIGUE con los intentos que le queden (ev-v3-002405-a202dbf6: «nuevamente tiene todavía un gatillo [...] un cartucho»). Tras un break even lo dijo el trader, dos veces: «los breakeven no se cuenta o sea, si te saca un breakeven es un trade que [...] tienes un cartucho todavía para poder seguir operando» (ev-v4-004832-6543b551, v4 0:48:32-0:48:52) y «¿Cuentan los break-even y las entradas invalidadas? no cuentan» (ev-v9-013117-c683f9b5, sesion 3). Hasta el 2026-10-02 esto se marcaba como lectura nuestra; lo cito por orden del consultor. LA VERSION DE v4 DE QUE EL DIA TERMINA CON LA PRIMERA GANADORA NO ES LA VIGENTE: ev-v4-004936-d7004417 (v4 0:49:36, «apenas tengo el trade positivo ya no opero más») lo rechazo el trader en la sesion 1 (fb-2026-09-09-sesion-01-af02495f, «NO. Que siga operando, pero que respete la regla de los 3 cartuchos de perdida»), y ev-v4-011351-74b8bb39 (v4 1:13:51) y ev-v1-000959-b82650ad los sustituyen ev-v6-000732-f7189541 y ev-v6-000732-5945fd87 («no estamos pausando cuando se dé el trade ganador»). Lo vigente es RN-017 mas esta regla: el dia sigue, en otra liquidez. Complementa a RN-017 con el mismo disparador: una sigue el dia, la otra cierra el escenario, y las dos valen en cualquier orden
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -1348,7 +1350,7 @@
 
 ### acciones (17)
 
-- **`abrir_escenario`** — la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote que el de la toma del escenario vigente- y el vigente ha terminado; con el vigente vivo, lo decide `intentos` (A-25). Con la misma liquidez, que RN-004 vuelve a fijar en cada M1 pasada la linea, no hace nada. Abrir un escenario es el reinicio de los cartuchos (`reinicio`): apaga detenido_por_cartuchos (ADR-0066) Argumentos: `intentos`, `reinicio`.
+- **`abrir_escenario`** — la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote que el de la toma del escenario vigente- y el vigente ha terminado; con el vigente vivo, lo decide `intentos` (A-25). Con la misma liquidez, que RN-004 vuelve a fijar en cada M1 pasada la linea, no hace nada. Abrir un escenario es el reinicio de los cartuchos (`reinicio`): apaga detenido_por_cartuchos. No abre mas de `maximo` escenarios por sesion (A-46). Y si al abrirlo queda una orden pendiente del escenario anterior, `orden_pendiente` dice si se retira en ese momento o sigue hasta el primer punto de la liquidez nueva, donde la reubica RN-006 (ADR-0066) Argumentos: `intentos`, `reinicio`, `maximo`, `orden_pendiente`.
 - **`abstenerse`** — no operar, sin aproximar ni buscar nada adicional Argumentos: `segun`.
 - **`agrupar_estructura`** — mapea como una sola estructura las velas de M1 que forman un order block mayor Argumentos: `criterio`.
 - **`cerrar_a_mercado`** — cierra la posicion al precio de mercado Argumentos: `de`, `si`.

@@ -47,6 +47,7 @@ from botsito.engine.tope_trader import (
     TopeTrader,
 )
 from botsito.engine.zonas import (
+    ORDEN_SE_RETIRA,
     TERMINADO_POR_GANANCIA,
     Zona,
     escenario_actual,
@@ -553,6 +554,26 @@ def primitivas_cableadas(
         estado.broker = ctx.broker.hechos()
         return []
 
+    def abrir_escenario(
+        args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
+    ) -> list[tuple[str, str]]:
+        """La de RN-004 (`engine/zonas.py`), y con el broker delante: si abre un escenario nuevo y
+        queda una orden pendiente del anterior, `orden_pendiente` (A-25, ADR-0066) dice si se
+        retira YA (`se_retira`) o sigue hasta el primer punto de la liquidez nueva, donde la
+        reubica RN-006 (`se_mueve`)."""
+        antes = escenario_actual(estado, momento.sesion)
+        fijados = base.acciones["abrir_escenario"](args, ligaduras, momento, estado)
+        nuevo = escenario_actual(estado, momento.sesion)
+        if (
+            nuevo is not antes
+            and antes is not None
+            and registro.opcion(str(args["orden_pendiente"])) == ORDEN_SE_RETIRA
+        ):
+            for o in _pendientes():
+                ctx.broker.cancelar(o.id, ctx.instante_ms)
+            estado.broker = ctx.broker.hechos()
+        return list(fijados)
+
     def terminar_escenario(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
@@ -635,6 +656,7 @@ def primitivas_cableadas(
             "cerrar_a_mercado": cerrar_a_mercado,
             "retirar_orden_limite": retirar_orden_limite,
             "terminar_escenario": terminar_escenario,
+            "abrir_escenario": abrir_escenario,
             "reubicar_orden_limite": reubicar_orden_limite,
             "mover_stop": mover_stop,
         }

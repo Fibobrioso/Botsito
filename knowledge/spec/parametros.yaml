@@ -686,6 +686,49 @@ parametros:
     fuente:
       tipo: evidence
       id: ev-v9-013054-d49a544e
+  - nombre: max_escenarios_por_sesion
+    categoria: estrategia
+    tipo: enum
+    unidad: escenarios que puede abrir una sesion como maximo
+    opciones: [sin_limite, "1", "2", "3", "4", "5"]
+    descripcion: >-
+      cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion
+      (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro.
+      PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio
+      toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-46). El valor `sin_limite` es el
+      de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una
+      operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos
+      entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
+    estado: DEFAULT_AMBIGUOUS
+    valor: sin_limite
+    ambiguedad_id: A-46
+    fuente:
+      tipo: evidence
+      id: ev-v9-003318-c0503fe5
+  - nombre: orden_pendiente_al_abrir_escenario
+    categoria: estrategia
+    tipo: enum
+    unidad: que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro
+    opciones: [se_mueve, se_retira]
+    descripcion: >-
+      la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo
+      en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede
+      llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la
+      reubica; es lo que hacia el motor (medido en
+      tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se
+      abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL
+      hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio
+      toma otra liquidez de M15. ¿Qué haces con la orden?», A-25). El valor sale de lo unico que dijo
+      el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro
+      posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma
+      liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el
+      valor es el comportamiento que el motor ya tenia, no una decision
+    estado: DEFAULT_AMBIGUOUS
+    valor: se_mueve
+    ambiguedad_id: A-25
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-c7fa3068
   - nombre: orden_pendiente_al_abrir_sesion
     categoria: estrategia
     tipo: enum

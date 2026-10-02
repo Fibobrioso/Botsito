@@ -322,21 +322,27 @@ del trader, así que no deja emparejar las del bot con las suyas (corregido tras
   al más alto», `ev-v9-013736-463282d5`): el motor sigue el pivote más reciente (ADR-0045) y no
   vuelve al anterior.
 - **Para el consultor, no para el trader:**
-  - **Que el escenario siga tras un break even** es lectura nuestra (RN-034, notas).
+  - ~~**Que el escenario siga tras un break even** es lectura nuestra (RN-034, notas).~~ **Ya no
+    (2026-10-02, §6.1):** lo dijo el trader dos veces, `ev-v4-004832-6543b551` y
+    `ev-v9-013117-c683f9b5`, y RN-034 y ADR-0066 lo citan.
   - **Cuántos escenarios abre una sesión movida.** Cada pivote nuevo tomado abre uno, y en la tarde
     del 7 son cinco. Es lo que dicen la spec y A-46 («sin tope de escenarios»); si se ve demasiado,
-    la pregunta es qué es para el trader una liquidez NUEVA.
+    la pregunta es qué es para el trader una liquidez NUEVA. **Desde el 2026-10-02 (§6.2) es un
+    parámetro**, `max_escenarios_por_sesion`, PROVISIONAL `sin_limite`, con la pregunta 20.
   - **Una liquidez tomada antes de abrir la sesión queda muerta en ella, aunque el precio vuelva
     dentro y la tome otra vez** (revisor, a3). `la_toma_es_de_la_sesion` mira si ALGUNA M1 cerró
     pasada la línea entre la formación del pivote y la apertura, porque `cruza` es un estado y no
     un cruce. Es una decisión de este diseño, no del trader. Con `no_cuenta`, una liquidez tomada a
     las 6:45 que el precio recupera y vuelve a tomar a las 7:20 no vale, y la frase del trader
     («si el precio la toma ya dentro») admite leerlo al revés. Va con la pregunta 15. En la tarde,
-    con una toma de la mañana, es lo mismo, y lo sostiene A-46.
+    con una toma de la mañana, es lo mismo, y lo sostiene A-46. **Desde el 2026-10-02 (§6.3) la
+    pregunta 15 lleva una segunda parte con este caso.**
   - **Una orden pendiente cuando una toma nueva abre otro escenario** (revisor, b2). §1.5 dice que
     la reubica RN-006 en el primer punto de la toma nueva. Es lectura del código (`_punto_nuevo`
     mira las zonas usadas de la SESIÓN, no del escenario), **no está medido ni tiene test**, y en
-    los tres días de §3.2 no pasó.
+    los tres días de §3.2 no pasó. **Desde el 2026-10-02 (§6.4) está medido con un test, es un
+    parámetro** (`orden_pendiente_al_abrir_escenario`, PROVISIONAL `se_mueve`) **y va en la
+    pregunta 21.**
 
 ## 5. Informe del revisor
 
@@ -406,6 +412,110 @@ Los hallazgos, tal cual; lo comprobado sin hallazgos, resumido.
 - **b4**: no se midió en esta rama. Lo de verano sale de las notas de RN-001 («la ventana coincide
   con dos velas H4 completas 337 días al año»), y el cierre al minuto lo prueba
   `test_rn002_cierra_la_posicion_viva_antes_del_fin_de_su_vela_h4` (`test_cableado.py`).
+
+## 6. Órdenes 2 y 3 del consultor (2026-10-02)
+
+Las dos están copiadas tal cual en el encargo (`docs/encargos/feature-escenarios-por-sesion.md`,
+«Segunda orden» y «Tercera orden»). Sigue sin cobertura agregada: nada de esta sección cuenta
+parejas ni compara con las operaciones del trader.
+
+### 6.1 Punto 0: dos búsquedas en el registro, y la versión vigente
+
+Con `kb find` y `kb at`, filtrados (nada en cuarentena ni en tramos no citables):
+
+- **a) «los break even no gastan un intento»: está en el registro, dos veces.**
+  - `ev-v4-004832-6543b551` (v4 0:48:32-0:48:52): «los breakeven no se cuenta o sea, si te saca un
+    breakeven es un trade que [...] tienes un cartucho todavía para poder seguir operando»;
+  - `ev-v9-013117-c683f9b5` (sesión 3): «¿Cuentan los break-even y las entradas invalidadas? no
+    cuentan».
+
+  RN-034 (notas) y ADR-0066 §2 los citan, y ya no lo marcan como lectura nuestra.
+- **b) «el día termina con la primera ganadora»: está en el registro, en v4, y NO es lo vigente.**
+  La sesión se paró aquí y lo llevó al consultor, que confirmó la cadena (tercera orden):
+  - `ev-v4-004936-d7004417` (v4 0:49:36, «apenas tengo el trade positivo ya no opero más») lo
+    rechazó el trader en la sesión 1: `fb-2026-09-09-sesion-01-af02495f`, «NO. Que siga operando,
+    pero que respete la regla de los 3 cartuchos de perdida»;
+  - `ev-v4-011351-74b8bb39` (v4 1:13:51) lo sustituye `ev-v6-000732-f7189541`;
+  - `ev-v1-000959-b82650ad` lo sustituye `ev-v6-000732-5945fd87` («no estamos pausando cuando se
+    dé el trade ganador»).
+
+  Lo vigente es la sesión 1: RN-017 (el día sigue) más RN-034 (en otra liquidez). La cadena está
+  escrita en las notas de RN-034 y en ADR-0066 §2.
+
+### 6.2 Punto 1: `max_escenarios_por_sesion`
+
+- Parámetro nuevo, `enum` (`sin_limite`, `"1"` a `"5"`), DEFAULT_AMBIGUOUS, valor `sin_limite`,
+  `ambiguedad_id` A-46, fuente `ev-v9-003318-c0503fe5`.
+- **La subpregunta de la sesión 3 no se contestó con un número**: «eso no lo podemos definir [...]
+  en todas estas 4 se va a dar una operación» (v9 0:33:18-0:33:40). Va como pregunta 20 de
+  `docs/sesion-4/PREGUNTAS.md`, sección D, con la frase anterior de v4 («como máximo dos entradas
+  por día», `ev-v4-003350-acb03ee7`) al lado.
+- `abrir_escenario` lo recibe como `maximo` (RN-004): con el tope alcanzado, una toma de otra
+  liquidez no abre escenario. Test: `test_el_tope_de_escenarios_por_sesion` (con `"2"`, tres tomas
+  abren dos; con `sin_limite`, tres).
+
+### 6.3 Punto 3: la pregunta 15, con la toma que vuelve
+
+La pregunta 15 lleva una segunda parte para el caso de §4 (revisor, a3): la liquidez tomada a las
+6:45, que el precio recupera y vuelve a tomar a las 7:20. Hoy el motor no la vuelve a contar
+(`toma_antes_de_la_ventana` = `no_cuenta`, PROVISIONAL).
+
+### 6.4 Punto 4: la orden viva cuando otra toma abre un escenario
+
+**Lo que hacía el motor, medido.** Test sintético
+`test_la_orden_viva_cuando_otra_toma_abre_un_escenario`, sobre el motor cableado con la spec real:
+una toma a T1 coloca la orden de `zona:1`; una toma de OTRA liquidez a T2 abre el escenario 2 con
+esa orden sin llenar; la liquidez nueva da su primer punto en T2 + 3.
+- **`se_mueve`** (lo que hacía el motor antes de esta orden): la orden sigue viva -y se podía
+  llenar- de T2 a T2 + 3, y en T2 + 3 RN-006 la cancela y RN-015 coloca la nueva en el punto de la
+  liquidez nueva, en el mismo cierre de M1.
+- **`se_retira`**: `abrir_escenario` la cancela en T2, y la liquidez nueva coloca la suya en T2 + 3.
+- **En los dos, nunca hay dos órdenes vivas a la vez** (el test lo comprueba petición a petición),
+  y las peticiones son las mismas cuatro: colocar `o1`, cancelar `o1`, colocar `o2` y cancelar `o2`
+  al abrir la tarde (RN-035). Lo garantiza la spec, no el azar: RN-011 no prepara orden con una
+  pendiente o una posición viva (`ninguno_de`), y `retirar_orden_limite` y
+  `reubicar_orden_limite` se niegan con nombre (`CableadoError`) si hubiera dos.
+
+**No sale de una regla del trader**: lo único que dijo de la vida de la orden («sigue vivo hasta que
+se desarrolle otra próxima, otro posible punto de breaker», A-38, `fb-2026-09-29-sesion-03-c7fa3068`)
+habla de la misma liquidez. Por eso es un parámetro, `orden_pendiente_al_abrir_escenario`
+(`se_mueve` / `se_retira`), DEFAULT_AMBIGUOUS, valor `se_mueve` -lo que hacía el motor, no una
+decisión-, A-25, y la pregunta 21 de la sección D.
+
+**Las peticiones al servidor (R13: 2.000 al día en FTMO).**
+- **Medido, un día de desarrollo** (`caso-eurusd-2026-08-07`, el de la tarde de cinco escenarios;
+  `anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que ahora imprime las peticiones del día: es el
+  recuento de lo que emite el bot ese día, no una cifra de cobertura):
+  - el día entero, con nueve escenarios: **10 peticiones** (6 colocar, 1 modificar, 3 cancelar) y
+    como mucho **una orden pendiente a la vez**;
+  - la tarde de cinco escenarios: **6 peticiones**, entre las 13 y las 15 h;
+  - ese día ninguna toma abrió escenario con una orden viva: el caso del test no se dio.
+  - Los otros dos días de §3.2: 10 (el 3) y 13 (el 20), también con una orden pendiente como mucho.
+- **Lo que dice el código, sin medir un día peor:**
+  - una evaluación por minuto, de la apertura de la primera sesión al cierre de la última (481
+    instantes, `engine/motor.py`), y cada regla dispara como mucho una vez por evaluación (punto
+    fijo con refracción, `interprete.py`);
+  - abrir un escenario emite como mucho UNA petición (la cancelación con `se_retira`) o ninguna
+    (`se_mueve`); llevar la orden al punto de la liquidez nueva son dos (cancelar y colocar), las
+    mismas que una reubicación dentro de un escenario. **El número de escenarios no multiplica las
+    peticiones; las multiplican las reubicaciones.**
+  - **El código no garantiza el tope por sí solo**: siete reglas vigentes emiten peticiones
+    (RN-002, RN-004, RN-006, RN-014, RN-015, RN-030 y RN-035); a una por minuto cada una, la cota
+    trivial pasa de 2.000. El broker solo mide R13 y nada frena por peticiones (`engine/broker.py`,
+    cabecera). No es nuevo de esta rama, y queda anotado aquí.
+
+### 6.5 Lo que cambia en el código y la spec
+
+- `knowledge/spec/parametros.yaml`: los dos parámetros nuevos.
+- `knowledge/spec/strategy_spec.yaml` (15.3.0 → 15.4.0): RN-004 pasa `maximo` y `orden_pendiente` a
+  `abrir_escenario`; las notas de RN-034 citan la cadena y los dos items del break even.
+- `engine/zonas.py`: el tope en `abrir_escenario`; `engine/primitivas_broker.py`: el
+  `abrir_escenario` del cableado, que retira la orden con `se_retira`.
+- `docs/adr/0066-...`: §2 (la cadena, el break even y el tope) y §4 bis (la orden pendiente y las
+  peticiones), y cinco parámetros PROVISIONAL en vez de tres.
+- `docs/sesion-4/PREGUNTAS.md`: la segunda parte de la 15, y la 20 y la 21 (el contrato se amplía a
+  ese fichero, con su motivo).
+- Tests: los dos nuevos de §6.2 y §6.4.
 
 ## Estado
 

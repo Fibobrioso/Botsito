@@ -42,7 +42,10 @@ añade «otra, ¿cuál?».
 - **Nada más**: ningún fotograma, ningún libro xlsx, ningún caso reservado u oculto y ningún
   agregado. No hay exposición nueva que declarar en `HOLDOUT-EXPOSICIONES.md`.
 
-## 1. Las que hay que hacer (19)
+## 1. Las que hay que hacer (21)
+
+> **Añadidas el 2026-10-02** (`feature/escenarios-por-sesion`, orden del consultor): la 20 y la 21 en
+> la sección D, antes de la 19, que sigue yendo la última; y una segunda parte de la 15.
 
 Ordenadas por cuánto destraban:
 - primero, lo que bloquea F35 y la vida de la orden;
@@ -242,6 +245,11 @@ ADR-0060 §2.
   la entrada dentro de las 7» (v9 0:45:40–0:45:44). No se le preguntó por una toma anterior a las 7.
 - **Pregunta:** «Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para
   operar a partir de las 7? (a) sí; (b) no, necesito otra toma dentro del horario.»
+- **Y si contesta (b), una segunda parte** (añadida el 2026-10-02, `feature/escenarios-por-sesion`,
+  orden del consultor): «¿Y si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la vuelve
+  a tomar? (a) esa segunda toma ya vale, es dentro de tu horario; (b) no, esa liquidez ya está
+  gastada y espero otra.» Hoy el motor hace (b), PROVISIONAL (`toma_antes_de_la_ventana`, ADR-0066):
+  una liquidez tomada antes de abrir no vuelve a contar en la sesión aunque el precio la recupere.
 
 **16. Cuál de tus dos backtests de agosto vale.** · PARCIAL · E-1.
 - **Ya dijo** «hay que usar lo último, el último que fue el backtest completo» (v9 1:23:47–1:23:50).
@@ -263,6 +271,37 @@ ADR-0060 §2.
   - con un alto nuevo más bajo, opera primero el más reciente (v9 1:37:20–1:37:47).
 - **Pregunta:** «Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba,
   ¿empiezas de nuevo con tres? (a) sí; (b) no, me queda uno.»
+
+**20. Cuántos escenarios puede haber en una sesión como máximo.** · PARCIAL · A-46 (la subpregunta
+que quedó sin número). La añadió el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
+- **Ya dijo**:
+  - las dos sesiones son «cada uno un mundo diferente» y «no importa cómo terminó la primera
+    operación» (v9 0:32:53–0:33:11);
+  - «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (v9
+    0:33:18–0:33:40, `ev-v9-003318-c0503fe5`): no dio un número.
+- **Antes dijo** «como máximo dos entradas por día» (`ev-v4-003350-acb03ee7`).
+- Hoy el motor no pone tope (`max_escenarios_por_sesion` = `sin_limite`, PROVISIONAL): cada
+  liquidez nueva tomada en la sesión abre un escenario, y en una tarde movida de construcción se
+  abren cinco.
+- **Pregunta:** «En una misma sesión, cada vez que el precio toma una liquidez nueva de M15,
+  ¿vuelves a buscar entrada?
+  - (a) sí, todas las veces, no hay máximo;
+  - (b) hasta un número de liquidez por sesión, ¿cuántas?;
+  - (c) otra, ¿cuál?»
+
+**21. La orden puesta cuando el precio toma otra liquidez.** · SIN RESPUESTA · A-25 y A-38. La añadió
+el consultor el 2026-10-02 (`feature/escenarios-por-sesion`).
+- **Ya dijo** que la orden «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de
+  breaker» (v9 1:32:07). Eso es dentro de la misma liquidez; no se le preguntó qué pasa si, con la
+  orden puesta y sin llenar, el precio toma OTRA liquidez de M15.
+- Hoy el motor la deja viva y la mueve al primer punto de breaker de la liquidez nueva, PROVISIONAL
+  (`orden_pendiente_al_abrir_escenario` = `se_mueve`, ADR-0066). Hasta ese punto, la orden vieja
+  todavía se puede llenar.
+- **Pregunta:** «Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15.
+  ¿Qué haces con la orden?
+  - (a) la quito en ese momento y espero el punto de la liquidez nueva;
+  - (b) la dejo, y la muevo cuando aparezca el punto de la liquidez nueva;
+  - (c) otra, ¿cuál?»
 
 **19. Las 7 capturas que venían con el backtest de marzo.** · SIN RESPUESTA ·
 docs/validation/REGISTRO-MARZO.md. La añadió el consultor el 2026-09-30: va la última.

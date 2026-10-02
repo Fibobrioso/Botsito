@@ -435,8 +435,11 @@ acciones:
       que el de la toma del escenario vigente- y el vigente ha terminado; con el vigente vivo, lo
       decide `intentos` (A-25). Con la misma liquidez, que RN-004 vuelve a fijar en cada M1
       pasada la linea, no hace nada. Abrir un escenario es el reinicio de los cartuchos
-      (`reinicio`): apaga detenido_por_cartuchos (ADR-0066)
-    argumentos: [intentos, reinicio]
+      (`reinicio`): apaga detenido_por_cartuchos. No abre mas de `maximo` escenarios por sesion
+      (A-46). Y si al abrirlo queda una orden pendiente del escenario anterior, `orden_pendiente`
+      dice si se retira en ese momento o sigue hasta el primer punto de la liquidez nueva, donde
+      la reubica RN-006 (ADR-0066)
+    argumentos: [intentos, reinicio, maximo, orden_pendiente]
   terminar_escenario:
     descripcion: >-
       el escenario de la operacion que se cerro no da mas entradas, y se espera otra liquidez de
@@ -1005,7 +1008,7 @@ reglas:
       liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
     parametros:
       [liquidez_m15_criterio_toma, toma_antes_de_la_ventana, intentos_tras_toma_nueva,
-       cartuchos_reinicio]
+       cartuchos_reinicio, max_escenarios_por_sesion, orden_pendiente_al_abrir_escenario]
     cita: fb-2026-09-09-sesion-01-6e15504f
     literal: >-
       ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
@@ -1058,6 +1061,8 @@ reglas:
           - abrir_escenario:
               intentos: intentos_tras_toma_nueva
               reinicio: cartuchos_reinicio
+              maximo: max_escenarios_por_sesion
+              orden_pendiente: orden_pendiente_al_abrir_escenario
     clase: disparador
     estado: VIGENTE
 
@@ -1601,8 +1606,17 @@ reglas:
       los cartuchos no existian. No contradice RN-017: el dia sigue (un ganador no lo apaga), pero
       en otra liquidez. Tras una perdida, un break even o un equal el escenario SIGUE con los
       intentos que le queden (ev-v3-002405-a202dbf6: «nuevamente tiene todavía un gatillo [...] un
-      cartucho»; el break even y la invalidada no gastan, ev-v9-013117-c683f9b5): que siga tras un
-      break even es LECTURA NUESTRA del contador por intentos, y queda para despues de la sesion 4.
+      cartucho»). Tras un break even lo dijo el trader, dos veces: «los breakeven no se cuenta o
+      sea, si te saca un breakeven es un trade que [...] tienes un cartucho todavía para poder
+      seguir operando» (ev-v4-004832-6543b551, v4 0:48:32-0:48:52) y «¿Cuentan los break-even y las
+      entradas invalidadas? no cuentan» (ev-v9-013117-c683f9b5, sesion 3). Hasta el 2026-10-02 esto
+      se marcaba como lectura nuestra; lo cito por orden del consultor. LA VERSION DE v4 DE QUE EL
+      DIA TERMINA CON LA PRIMERA GANADORA NO ES LA VIGENTE: ev-v4-004936-d7004417 (v4 0:49:36,
+      «apenas tengo el trade positivo ya no opero más») lo rechazo el trader en la sesion 1
+      (fb-2026-09-09-sesion-01-af02495f, «NO. Que siga operando, pero que respete la regla de los 3
+      cartuchos de perdida»), y ev-v4-011351-74b8bb39 (v4 1:13:51) y ev-v1-000959-b82650ad los
+      sustituyen ev-v6-000732-f7189541 y ev-v6-000732-5945fd87 («no estamos pausando cuando se dé
+      el trade ganador»). Lo vigente es RN-017 mas esta regla: el dia sigue, en otra liquidez.
       Complementa a RN-017 con el mismo disparador: una sigue el dia, la otra cierra el escenario,
       y las dos valen en cualquier orden
     complementa: [RN-017]

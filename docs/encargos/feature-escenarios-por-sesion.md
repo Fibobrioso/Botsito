@@ -28,3 +28,42 @@ Dado por Aleks (consultor) el 2026-10-01, tras el cierre de `trabajo/ajustes-cie
 > Informe en docs/validation/ESCENARIOS-POR-SESION.md, con el diseño, los parámetros provisionales y sus preguntas, y lo que queda para después de la sesión 4.
 > Ritual normal con make check sellado, sin --no-verify. Si tocas algo dependiente de la plataforma, CI de Linux por fix/. Pasa el revisor y pega su informe.
 > «Rama lista para revisión, NO cerrada.»
+
+## Segunda orden: decisiones del consultor sobre §4 (2026-10-02)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Decisiones del consultor sobre feature/escenarios-por-sesion (§4):
+>
+> 0. Antes de decidir, busca en la evidencia y el feedback (kb find y kb at, filtrados) dos cosas que el consultor recuerda de la entrevista del 30 de agosto (v4) y que NO se dan por buenas sin cita:
+>    a) que los break even no consumen intento;
+>    b) que el día (o la sesión) termina en la primera operación ganadora.
+>    Para cada una: el id del ítem o del registro con su tramo, o «no consta». Si consta b) y contradice que una ganadora solo cierre el escenario (RN-034), para y avísame antes de seguir.
+>
+> 1. Escenarios en una sesión movida: se mantiene A-46 (cada liquidez nueva tomada abre uno), pero el número máximo por sesión pasa a ser un parámetro max_escenarios_por_sesion, PROVISIONAL, con valor «sin_limite» y la pregunta citada. Busca si quedó respondida la subpregunta de la sesión 3 «¿cuántos escenarios nuevos puede haber en un mismo día como máximo?» (A-46). Si no, añádela a docs/sesion-4/PREGUNTAS.md, sección D, con el formato de las demás.
+>
+> 2. Seguir tras un break even: si 0a) consta, cítalo en RN-034 y en ADR-0066 y deja de marcarlo como lectura de la sesión. Si no consta, se queda PROVISIONAL y va a la sesión 4 como pregunta en la sección D.
+>
+> 3. Liquidez tomada antes de abrir la sesión: de acuerdo. Queda dentro de toma_antes_de_la_ventana (PROVISIONAL, pregunta 15); que el texto de la pregunta 15 en PREGUNTAS.md cubra también el caso de que el precio vuelva y la tome otra vez dentro de la sesión.
+>
+> 4. La orden pendiente cuando se abre otro escenario: no se acepta sin medida.
+>    - Test sintético que fije el comportamiento actual (qué pasa con la orden viva del escenario anterior: se retira, se mueve o convive).
+>    - Comprueba que no pueden quedar dos órdenes vivas a la vez.
+>    - Cuenta los mensajes al servidor que genera el caso peor de una tarde de cinco escenarios, frente al tope de 2.000 al día de FTMO.
+>    - Si el comportamiento no sale de una regla del trader, parámetro PROVISIONAL y pregunta en la sección D.
+>
+> Sigue sin cobertura agregada. make check sellado; revisor solo sobre lo que cambie, con su informe pegado.
+> «Rama lista para revisión, NO cerrada.»
+
+## Tercera orden: respuesta del consultor al aviso del punto 0 (2026-10-02)
+
+La sesión paró en el punto 0 porque b) constaba en v4 y contradecía RN-034. La respuesta, copiada tal
+cual:
+
+> Sí: la versión vigente es la de la sesión 1 (fb-2026-09-09-sesion-01-af02495f y ev-v6-000732-f7189541 / ev-v6-000732-5945fd87): tras la ganadora el día sigue y se espera otra liquidez, que es RN-017 + RN-034. No hay contradicción con el diseño. Cita esa cadena (v4 sustituido o rechazado → sesión 1) en ADR-0066 y en el informe, para que nadie vuelva a leer la versión de v4 como vigente.
+>
+> 0a) consta: cita ev-v4-004832-6543b551 y ev-v9-013117-c683f9b5 en RN-034 y ADR-0066, y lo de seguir tras un break even deja de marcarse como lectura tuya.
+>
+> Sigue con los puntos 1, 3 y 4 de la orden tal cual. El 2 ya está resuelto por 0a).

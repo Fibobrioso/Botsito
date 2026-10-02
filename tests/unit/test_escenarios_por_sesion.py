@@ -21,8 +21,8 @@ from botsito.data.velas import a_minuto
 from botsito.domain.pivotes_m15 import ALTO, BAJO, CIERRE_VELA_CONTRARIA, Pivote
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
-from botsito.engine import zonas
-from botsito.engine.broker import CANCELADA
+from botsito.engine import cableado, zonas
+from botsito.engine.broker import CANCELADA, PETICION_CANCELAR, PETICION_COLOCAR
 from botsito.engine.interprete import (
     EstadoDia,
     Momento,
@@ -33,7 +33,7 @@ from botsito.engine.interprete import (
     reglas_ejecutables,
 )
 from botsito.engine.llenado import OBJETIVO, STOP
-from botsito.engine.motor import DatosMercado
+from botsito.engine.motor import DatosMercado, DiaDeMercado
 from botsito.engine.primitivas import primitivas_escritas
 from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 from tests.unit import test_cableado as tc
@@ -54,6 +54,8 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "orden_pendiente_al_abrir_sesion": "    valor: se_retira\n",
         "cartuchos_max": "    valor: 3\n",
         "orden_limite_nace": '    valor: "al_aparecer_punto_de_breaker"\n',
+        "max_escenarios_por_sesion": "    valor: sin_limite\n",
+        "orden_pendiente_al_abrir_escenario": "    valor: se_mueve\n",
     }
     texto = PARAMETROS.read_text(encoding="utf-8")
     for nombre, valor in valores.items():
@@ -227,7 +229,12 @@ def _pivote(nivel: int, formado: int, lado: str = ALTO) -> Pivote:
     return Pivote(lado, nivel, MinutoUtc(formado - 1), MinutoUtc(formado), MinutoUtc(formado))
 
 
-ARGS_ESCENARIO = {"intentos": "intentos_tras_toma_nueva", "reinicio": "cartuchos_reinicio"}
+ARGS_ESCENARIO = {
+    "intentos": "intentos_tras_toma_nueva",
+    "reinicio": "cartuchos_reinicio",
+    "maximo": "max_escenarios_por_sesion",
+    "orden_pendiente": "orden_pendiente_al_abrir_escenario",
+}
 
 
 def _abrir(registro: Registro, datos: Any, estado: EstadoDia, t: int, sesion: str) -> list[Any]:
@@ -445,3 +452,140 @@ def test_la_orden_viva_al_cambiar_de_sesion_segun_el_parametro(
     o1 = motor.brokers[tc.DIA.isoformat()].ordenes["o1"]
     assert o1.estado == CANCELADA and o1.ultimo_cambio_ms == retirada_en
     assert ("RN-035" in r.sesiones["11-15"].disparadas) is True
+
+
+# ----------------------------------- la orden viva cuando se abre otro escenario (orden 2, punto 4)
+
+T1 = tc.MINUTO_ZONA - 2  # la primera toma de la manana
+T2 = tc.MINUTO_ZONA + 10  # la toma de otra liquidez, con la orden de la primera todavia viva
+PUNTO_NUEVO = T2 + 3  # el primer punto de breaker de la liquidez nueva
+
+
+class _DatosConLiquidez(DatosMercado):
+    """Las H4 de `test_cableado` y una liquidez de M15 a medida: un BAJO hasta T2 y otro despues."""
+
+    def liquidez_m15(self, instante: int, lado: str) -> Pivote | None:
+        if lado != BAJO:
+            return None
+        if instante < T2:
+            return _pivote(tc.BASE - 50, T1 - 30, BAJO)
+        return _pivote(tc.BASE - 80, T2 - 30, BAJO)
+
+
+def _motor_dos_tomas(registro: Registro) -> Any:
+    """El motor cableado de `test_cableado` con la spec real: RN-004 dispara en T1 y en T2 (la
+    geometria de la toma es sintetica), y `abrir_escenario` es la real. La orden de zona:1 se
+    coloca en MINUTO_ZONA y el precio no baja a ella; en PUNTO_NUEVO la liquidez nueva da su
+    primer punto, zona:2."""
+    motor = tc._motor(registro, cargar_vocabulario(tc.SPEC), tc._mercado({}))
+    predicados, acumuladores = tc._sinteticas()
+
+    def toma(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
+        return Resultado(Tri.SI if int(momento.instante) in (T1, T2) else Tri.NO)
+
+    def de_la_sesion(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
+        return Resultado(Tri.SI)
+
+    def _ligar(estado: EstadoDia, sesion: str | None, zona: str) -> None:
+        escenario = zonas.escenario_actual(estado, sesion)
+        assert escenario is not None
+        escenario["zonas"].add(zona)
+
+    def toca(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
+        t, usadas = int(momento.instante), zonas.zonas_usadas(estado, momento.sesion)
+        zona = {tc.MINUTO_ZONA: "zona:1", PUNTO_NUEVO: "zona:2"}.get(t)
+        if zona is None or zona in usadas:
+            return Resultado(Tri.NO)
+        _ligar(estado, momento.sesion, zona)
+        return Resultado(Tri.SI, {"Z": zona})
+
+    def completa(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
+        if "posterior_a" in args or int(momento.instante) != PUNTO_NUEVO:
+            return Resultado(Tri.NO)
+        _ligar(estado, momento.sesion, "zona:2")
+        return Resultado(Tri.SI, {"Z": "zona:2"})
+
+    predicados.update(
+        {
+            "alcanza_nivel": toma,
+            "cruza": toma,
+            "la_toma_es_de_la_sesion": de_la_sesion,
+            "toca_colocar_orden_limite": toca,
+            "se_completa_zona_de_control": completa,
+        }
+    )
+    motor.primitivas_extra = predicados
+    motor.acumuladores_extra = acumuladores
+    zona_2 = cableado.zona_sintetica(
+        "zona:2", "compra", tc.ENTRADA - 30, tc.EXTREMO - 30, "primer_esquema"
+    )
+    zona_1 = cableado.zona_sintetica("zona:1", "compra", tc.ENTRADA, tc.EXTREMO, "primer_esquema")
+    motor.zonas_de = lambda md: {"zona:1": zona_1, "zona:2": zona_2}
+    return motor
+
+
+def _dia_dos_tomas() -> Any:
+    return DiaDeMercado(tc.DIA, tc.HUSO, tc.SESIONES, _DatosConLiquidez(tc._h4_alcista()))
+
+
+def _vivas_en_cada_peticion(motor: Any) -> list[int]:
+    """Cuantas ordenes quedan vivas tras cada peticion al servidor, en su orden."""
+    vivas: set[str] = set()
+    salida = []
+    for p in motor.trazas_broker[tc.DIA.isoformat()].peticiones:
+        if p.tipo == PETICION_COLOCAR and p.aceptada:
+            vivas.add(p.id)
+        elif p.tipo == PETICION_CANCELAR:
+            vivas.discard(p.id)
+        salida.append(len(vivas))
+    return salida
+
+
+@pytest.mark.parametrize("valor", ["se_mueve", "se_retira"])
+def test_la_orden_viva_cuando_otra_toma_abre_un_escenario(tmp_path: Path, valor: str) -> None:
+    """Orden 2, punto 4: fija lo que hace hoy el motor con la orden viva del escenario anterior.
+    Con `se_mueve` (el valor PROVISIONAL, lo que hacia el motor) la orden sigue viva al abrirse el
+    escenario nuevo y RN-006 la reubica en el primer punto de la liquidez nueva: cancelar y
+    colocar en el mismo cierre de M1. Con `se_retira` se cancela en la toma, y la liquidez nueva
+    coloca la suya cuando da su punto. En los dos casos NUNCA hay dos ordenes vivas a la vez."""
+    reg = _registro(tmp_path, orden_pendiente_al_abrir_escenario=valor)
+    motor = _motor_dos_tomas(reg)
+    r = motor.correr_dia(_dia_dos_tomas())
+    estado = motor.estados[tc.DIA.isoformat()]
+    escenarios = zonas.memoria_de_sesion(estado, "07-11")[zonas.ESCENARIOS]
+    assert [e["n"] for e in escenarios] == [1, 2]  # la toma de T2 abrio el segundo
+    broker = motor.brokers[tc.DIA.isoformat()]
+    o1, o2 = broker.ordenes["o1"], broker.ordenes["o2"]
+    assert o1.estado == CANCELADA and o2.precio == tc.ENTRADA - 30
+    if valor == "se_mueve":
+        assert o1.ultimo_cambio_ms == PUNTO_NUEVO * 60_000 - 1  # viva hasta el punto nuevo
+        assert "RN-006" in r.sesiones["07-11"].disparadas
+    else:
+        assert o1.ultimo_cambio_ms == T2 * 60_000 - 1  # retirada en la toma
+        assert "RN-006" not in r.sesiones["07-11"].disparadas
+    assert o2.colocada_ms == PUNTO_NUEVO * 60_000 - 1
+    assert max(_vivas_en_cada_peticion(motor)) == 1
+    peticiones = motor.trazas_broker[tc.DIA.isoformat()].peticiones
+    assert [(p.tipo, p.id) for p in peticiones] == [
+        (PETICION_COLOCAR, "o1"),
+        (PETICION_CANCELAR, "o1"),
+        (PETICION_COLOCAR, "o2"),
+        (PETICION_CANCELAR, "o2"),  # RN-035 en la apertura de la tarde (se_retira)
+    ]
+    assert peticiones[-1].instante_ms == tc.FIN_H4 * 60_000 - 1
+
+
+def test_el_tope_de_escenarios_por_sesion(tmp_path: Path) -> None:
+    """`max_escenarios_por_sesion` (A-46, pregunta 20): con un tope, una toma nueva de otra
+    liquidez no abre mas escenarios; con `sin_limite` (el valor PROVISIONAL), si."""
+    datos = _Liquidez(
+        {M0: _pivote(1100, M0), M0 + 40: _pivote(1150, M0 + 40), M0 + 80: _pivote(1200, M0 + 80)}
+    )
+    for valor, esperados in (('"2"', 2), ("sin_limite", 3)):
+        carpeta = tmp_path / valor.strip('"')
+        carpeta.mkdir()
+        reg = _registro(carpeta, max_escenarios_por_sesion=valor)
+        estado = _estado_bajista()
+        for t in (M0 + 5, M0 + 45, M0 + 85):
+            _abrir(reg, datos, estado, t, "07-11")
+        assert len(zonas.memoria_de_sesion(estado, "07-11")[zonas.ESCENARIOS]) == esperados

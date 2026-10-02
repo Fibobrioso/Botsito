@@ -2,7 +2,9 @@
 escenarios. Monta el motor cableado como `botsito motor visor --simular` con las mismas lecturas
 de diagnostico (A-35 cierre_vela_contraria, A-44 sin_tope, A-21 solo_una_zona_de_control, A-27 0)
 y corre en el arbol desde el que se lanza (la rama o el worktree de main). Por la compuerta del
-arnes: un caso oculto se niega antes de leerlo. Imprime por dia, nunca agregados.
+arnes: un caso oculto se niega antes de leerlo. Imprime por dia, nunca agregados; desde la orden 2
+de 2026-10-02, tambien las peticiones al servidor del dia (R13) y cuantas ordenes pendientes hubo
+a la vez como mucho.
 
 Anexo de `docs/validation/ESCENARIOS-POR-SESION.md` §3.2.
 
@@ -24,6 +26,7 @@ from botsito.cases.paquete import cargar_config
 from botsito.cli import _carpeta_datos
 from botsito.config.registro import cargar_registro
 from botsito.engine import cableado, diagnostico, entrada, tope_trader, visor, zonas
+from botsito.engine.broker import RECHAZADA
 from botsito.engine.diagnostico import Diagnostico
 from botsito.engine.interprete import Interprete, reglas_ejecutables
 from botsito.engine.motor import MotorSpec
@@ -102,6 +105,29 @@ def main() -> int:
     print(
         "  hechos al final:", {k: v for k, v in estado.hechos.items() if k.startswith("detenido")}
     )
+    traza = getattr(cab, "trazas_broker", {}).get(dia)
+    if traza is not None:  # orden 2, punto 4: las peticiones al servidor de ESTE dia (R13)
+        tipos: dict[str, int] = {}
+        por_hora: dict[str, int] = {}
+        for p in traza.peticiones:
+            tipos[p.tipo] = tipos.get(p.tipo, 0) + 1
+            h = hora(p.instante_ms)[:2]
+            por_hora[h] = por_hora.get(h, 0) + 1
+        # una orden esta pendiente desde que se coloca hasta que se llena, se cancela o se rechaza
+        tramos = [
+            (o.colocada_ms, o.ultimo_cambio_ms)
+            for o in broker.ordenes.values()
+            if o.estado != RECHAZADA
+        ]
+        max_vivas = max(
+            (sum(1 for a, b in tramos if a <= t < (t + 1 if b is None else b)) for t, _ in tramos),
+            default=0,
+        )
+        print(
+            f"  peticiones al servidor: {len(traza.peticiones)} {dict(sorted(tipos.items()))}, "
+            f"ordenes vivas a la vez como mucho: {max_vivas}"
+        )
+        print(f"  peticiones por hora de Madrid: {dict(sorted(por_hora.items()))}")
     return 0
 
 

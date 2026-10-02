@@ -7,6 +7,8 @@ rutas_permitidas:
   # Ampliado en la Fase 2 (revisor, a1): la lectura de tres dias dev de agosto se declara el mismo
   # dia (CLAUDE.md, «Que se puede mirar y que no»)
   - docs/validation/HOLDOUT-EXPOSICIONES.md
+  # Ampliado con la orden 2 del consultor (2026-10-02, puntos 1, 3 y 4): las preguntas 15, 20 y 21
+  - docs/sesion-4/PREGUNTAS.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

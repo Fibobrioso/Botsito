@@ -96,6 +96,11 @@ ESCENARIOS = "escenarios"
 INTENTOS_VUELVEN = "vuelven_a_cartuchos_max"
 INTENTOS_SIGUEN = "siguen_los_que_quedan"
 REINICIO_SIGUIENTE_LIQUIDEZ = "siguiente_liquidez_m15"
+# Las opciones de `max_escenarios_por_sesion` (A-46): sin tope, o un numero, que vive en el
+# registro como texto de la opcion; y las de `orden_pendiente_al_abrir_escenario` (A-25).
+SIN_LIMITE = "sin_limite"
+ORDEN_SE_MUEVE = "se_mueve"
+ORDEN_SE_RETIRA = "se_retira"
 HECHO_DETENIDO = "detenido_por_cartuchos"
 TERMINADO_POR_GANANCIA = "ganancia"
 LOOKBACK_M1 = (
@@ -279,6 +284,11 @@ def acciones_escenario(registro: Registro) -> dict[str, Any]:
         reinicio = registro.opcion(str(args["reinicio"]))
         if reinicio != REINICIO_SIGUIENTE_LIQUIDEZ:
             raise ValueError(f"{args['reinicio']} = {reinicio!r}: lectura sin contrato")
+        pendiente = registro.opcion(str(args["orden_pendiente"]))
+        if pendiente not in (ORDEN_SE_MUEVE, ORDEN_SE_RETIRA):
+            raise ValueError(f"{args['orden_pendiente']} = {pendiente!r}: lectura sin contrato")
+        maximo = registro.opcion(str(args["maximo"]))
+        tope = None if maximo == SIN_LIMITE else int(maximo)
         toma = _toma_del_momento(momento.datos, momento, estado)
         if toma is None:
             return []
@@ -299,6 +309,9 @@ def acciones_escenario(registro: Registro) -> dict[str, Any]:
             mem.pop("esquema", None)
             mem.pop("zona_id", None)
             return []
+        abiertos = len(_de_la_sesion(estado, momento.sesion).get(ESCENARIOS) or [])
+        if tope is not None and abiertos >= tope:
+            return []  # max_escenarios_por_sesion (A-46): la toma no abre otro
         _abrir(estado, momento.sesion, toma)
         if estado.hechos.pop(HECHO_DETENIDO, None) is not None:
             return [(HECHO_DETENIDO, VALOR_APAGADO)]
