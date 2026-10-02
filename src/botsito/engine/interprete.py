@@ -72,6 +72,11 @@ class Momento:
     sesion: str | None  # la sesion a la que pertenece el evento
     abre_sesion: bool  # el evento es la apertura de `sesion`
     datos: Any  # acceso a lo cerrado hasta `instante`; lo define el motor
+    # El minuto UTC en que abrio `sesion` y en que abrio la primera sesion del dia (la ventana):
+    # una toma de liquidez cuenta solo si ocurre dentro de la sesion (A-46; A-43 antes de la
+    # ventana). Los ponen el motor y el cableado; sin ellos (un Momento hecho a mano) no se mira.
+    desde_sesion: int | None = None
+    desde_ventana: int | None = None
 
 
 @dataclass

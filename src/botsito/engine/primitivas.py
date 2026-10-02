@@ -52,7 +52,7 @@ from botsito.engine.tope_trader import (
     SIN_TOPE,
     TopeTrader,
 )
-from botsito.engine.zonas import primitivas_zona
+from botsito.engine.zonas import acciones_escenario, primitivas_zona
 
 # RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044).
 SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
@@ -88,6 +88,10 @@ HECHO_SESGO = "sesgo"
 # la liquidez de M15 en sesgo alcista, o por debajo de ella en sesgo bajista, es ruido»: la
 # operativa alcista va por debajo de un BAJO tomado; la bajista, por encima de un ALTO tomado).
 LADO_DE_LA_LIQUIDEZ = {"alcista": BAJO, "bajista": ALTO}
+# Las opciones de `toma_antes_de_la_ventana` (A-43): si una toma anterior a la primera sesion del
+# dia cuenta para operar dentro de ella.
+TOMA_PREVIA_NO_CUENTA = "no_cuenta"
+TOMA_PREVIA_CUENTA = "cuenta"
 
 
 def _local(instante: int, huso: str) -> datetime:
@@ -237,6 +241,38 @@ def primitivas_escritas(
         criterio = registro.opcion(str(args["criterio"]))  # lo nombra la forma (ADR-0019 §1)
         return Resultado(Tri.SI if cruza(ultima, pivote, criterio) else Tri.NO)
 
+    def la_toma_es_de_la_sesion(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        """RN-004 (ADR-0066): la liquidez no puede estar tomada ya ANTES de abrir la sesion. Una
+        M1 cerrada pasada la linea con el criterio de la toma, entre la formacion del pivote y la
+        apertura, es una toma previa: si fue antes de la primera sesion del dia, lo decide
+        `antes_de_la_ventana` (A-43, pregunta 15 de la sesion 4); si fue en una sesion anterior
+        del dia, no cuenta (A-46: «cada uno es un mundo diferente»). Sin los limites de la sesion
+        en el Momento (uno hecho a mano), no hay nada que mirar."""
+        r = _liquidez("la_toma_es_de_la_sesion", args, momento, estado)
+        if not isinstance(r, tuple):
+            return r
+        pivote, _ = r
+        criterio = registro.opcion(str(args["criterio"]))
+        antes = registro.opcion(str(args["antes_de_la_ventana"]))
+        if antes not in (TOMA_PREVIA_NO_CUENTA, TOMA_PREVIA_CUENTA):
+            raise ValueError(f"{args['antes_de_la_ventana']} = {antes!r}: lectura sin contrato")
+        desde = momento.desde_sesion
+        if desde is None:
+            return Resultado(Tri.SI)
+        try:
+            previas = momento.datos.m1_entre(int(pivote.formado_en), desde)
+        except AttributeError:
+            return NoImplementada("predicado:la_toma_es_de_la_sesion:sin M1")
+        primera = next((v for v in previas if cruza(v, pivote, criterio)), None)
+        if primera is None:
+            return Resultado(Tri.SI)
+        ventana = momento.desde_ventana
+        if ventana is not None and int(primera.fin) <= ventana:
+            return Resultado(Tri.SI if antes == TOMA_PREVIA_CUENTA else Tri.NO)
+        return Resultado(Tri.NO)
+
     def fijar(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
@@ -281,10 +317,14 @@ def primitivas_escritas(
         "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
         "alcanza_nivel": alcanza_nivel,
         "cruza": cruza_nivel,
+        "la_toma_es_de_la_sesion": la_toma_es_de_la_sesion,
     }
     if limpia is not None:
         predicados.update(primitivas_zona(registro, limpia))
-    return Primitivas(predicados=predicados, acciones={"fijar": fijar}, acumuladores=acumuladores)
+    acciones: dict[str, Any] = {"fijar": fijar}
+    # el escenario lo abre RN-004 al tomar la liquidez, haya geometria o no (ADR-0066)
+    acciones.update(acciones_escenario(registro))
+    return Primitivas(predicados=predicados, acciones=acciones, acumuladores=acumuladores)
 
 
 __all__ = [

@@ -207,12 +207,21 @@ def test_una_accion_que_provoca_un_hecho_del_broker_declara_su_efecto(spec: Any)
 
 def test_la_pendiente_a_las_15_esta_declarada_como_ambiguedad_y_no_supuesta(spec: Any) -> None:
     from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
+    from botsito.config.registro import cargar_registro
 
     reglas, vocabulario, _, _ = spec
     assert "retirar_orden_limite" in vocabulario["acciones"]
-    assert not [
-        r.id for r in reglas if isinstance(r.forma, dict) and "retirar_orden_limite" in _hace(r)
-    ], "ninguna regla la usa hasta que el trader responda A-30"
+    # Hasta ADR-0066 ninguna regla la usaba hasta que el trader respondiera A-30. Desde entonces
+    # la usa RN-035, y solo SEGUN un parametro que sigue declarado como esa ambiguedad
+    # (DEFAULT_AMBIGUOUS, A-30): la respuesta no se supone, se deja PROVISIONAL con su pregunta.
+    registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
+    usan = [r for r in reglas if isinstance(r.forma, dict) and "retirar_orden_limite" in _hace(r)]
+    assert [r.id for r in usan] == ["RN-035"]
+    for r in usan:
+        for paso in r.forma["entonces"]["hace"]:
+            if "retirar_orden_limite" in paso:
+                p = registro.parametros[paso["retirar_orden_limite"]["segun"]]
+                assert (p.estado.value, p.ambiguedad_id) == ("DEFAULT_AMBIGUOUS", "A-30")
     por_id = {a.id: a for a in cargar_ambiguedades(REPO / FICHERO_AMBIGUEDADES)}
     assert por_id["A-30"].estado == "ABIERTA" and por_id["A-30"].clase == "pregunta"
     assert por_id["A-29"].parametros == ("orden_limite_nace",)

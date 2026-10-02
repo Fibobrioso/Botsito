@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/escenarios-por-sesion
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
+EN CURSO: `feature/escenarios-por-sesion` (2026-10-01; encargo docs/encargos/feature-escenarios-por-sesion.md, informe docs/validation/ESCENARIOS-POR-SESION.md): A3 b) de Next Action, sesiones independientes y varios escenarios por sesion. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
 
 ## Stable Main State
 1591737 · merge de `trabajo/ajustes-cierre` (tag `stable/F36m-ajustes-cierre`), sobre `stable/F36l-cuarentena-por-defecto` (8a3b501), que dejo la CLI ensenando el corpus filtrado por defecto (`src/botsito/corpus/cuarentena.py`, la unica fuente; la evidencia con su propio criterio; la guardia bloquea la opcion que lo ensena todo y 14 ficheros que copian texto oculto). Esta rama, solo documentacion: todo cierre lleva, en el commit que saca el contrato, su registro en HISTORIA y su fila en ERRORES-RECURRENTES, y el commit de estado no anade nada a Change Log ni a Completed Features (docs/runbooks/RITUAL.md, skill cerrar-rama); `tramos_no_citables.yaml` y los runbooks dicen lo que hace hoy la CLI. Informe docs/validation/AJUSTES-CIERRE.md; el registro del cierre, al final de HISTORIA.
@@ -23,25 +23,27 @@ NINGUNA ABIERTA tras `stable/F36m-ajustes-cierre`.
 1591737 · merge: todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; los documentos dicen que la CLI enseña el corpus filtrado · tag stable/F36m-ajustes-cierre
 
 ## Tests Currently Passing
-1149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1165 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
-**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`; el I, 2026-10-01, al cerrar `trabajo/guardias-claude`), en este orden:
+**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
 E. **A-42 RESUELTA con el trader en la sesion 4, no por ADR** (orden del consultor del 2026-09-30, docs/validation/REGISTRO-MARZO.md): es la pregunta del reloj de invierno de docs/sesion-4/PREGUNTAS.md, y marzo no se sortea ni se ingiere hasta entonces (PARADA B0, sin cambio). Era: **A-42 decidida antes del 25 de octubre** (el cambio de hora; el mecanismo ya esta: `reloj_sesiones`, ADR-0063).
 
-F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 19 por preguntar -las 17 del barrido y 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
+F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 21 por preguntar -las 17 del barrido, 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima, y la 20 y la 21 de `feature/escenarios-por-sesion`- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
-I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01)**, y el comentario de `knowledge/corpus/tramos_no_citables.yaml` que quedaba, en `stable/F36m-ajustes-cierre`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.
-
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
 
-B, C, D y G de esa lista, HECHAS, estan tal cual en docs/state/HISTORIA.md (Archivo 1, «Next Action»); de ellas sigue pendiente lo que D dice -«El item nuevo ev-v7-001550-82e5cffc espera la revision del consultor»- y lo que G dice: «pendiente para la demo de FTMO, el break even de una venta que salta por el ASK (ADR-0065 §6)».
+K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).
+
+L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
+
+M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
 ### Pendientes heredados (sin verificar)
 
@@ -49,7 +51,6 @@ Los puntos del Next Action viejo (Archivo 1 de docs/state/HISTORIA.md, donde est
 
 - A2. **Aleks ejecuta MedirDemoFTMO en la demo de FTMO** (docs/runbooks/DEMO-FTMO.md), tres ejecuciones: antes…
 - A3. **Ramas de codigo, en este orden** (orden del consultor del 2026-09-29):
-- b) **sesiones independientes y varios escenarios por sesion**: `liquidez_tomada` caduca al abrir la sesion…
 - d) **vida de la orden stop** (RN-006, rama 3 de ADR-0056) y RN-007 (la vela casi plana; falta el umbral);
 - e) **calendario de cierres de mercado** para la regla de gap trading de FTMO (Technical Debt, 2026-09-29).
 - A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El…
@@ -102,6 +103,8 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-49 | si la caja se traza con la vela del bloque cerrada o en formación | pregunta | no | F20, F21 |
 | A-50 | para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera | pregunta | no | F19, F20 |
 | A-51 | qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar | pregunta | si | F11, F18 |
+| A-52 | cuántos escenarios puede abrir una misma sesión como máximo | pregunta | no | F19, F20 |
+| A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
@@ -193,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 3 (2026-10-01).
+— ninguna desde el Archivo 4 (2026-10-01).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 3 (2026-10-01).
+— ninguna desde el Archivo 4 (2026-10-01).

@@ -396,8 +396,8 @@ parametros:
     descripcion: >-
       tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la
       ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay
-      ninguna, el sesgo es INSUFICIENTE y no se opera. PROVISIONAL: es una decision del
-      proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
+      ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision
+      del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
       `estrategia`, cuyos valores solo los dice el trader
     estado: CONFIRMED
     valor: 60
@@ -645,6 +645,111 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0064
+  - nombre: toma_antes_de_la_ventana
+    categoria: estrategia
+    tipo: enum
+    unidad: si una toma de liquidez anterior a la primera sesion del dia cuenta
+    opciones: [no_cuenta, cuenta]
+    descripcion: >-
+      si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de
+      ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`;
+      ADR-0066). PROVISIONAL hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a
+      las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43). El valor es
+      `no_cuenta` por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio
+      «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el
+      2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia
+      pasado, daba la toma. Una toma en una sesion ANTERIOR del dia no la decide este parametro: no
+      cuenta nunca (A-46 RESUELTA)
+    estado: DEFAULT_AMBIGUOUS
+    valor: no_cuenta
+    ambiguedad_id: A-43
+    fuente:
+      tipo: evidence
+      id: ev-v9-004533-d075b080
+  - nombre: intentos_tras_toma_nueva
+    categoria: estrategia
+    tipo: enum
+    unidad: que pasa con los intentos cuando se toma otra liquidez con el escenario vivo
+    opciones: [vuelven_a_cartuchos_max, siguen_los_que_quedan]
+    descripcion: >-
+      cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y
+      con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un
+      escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue
+      sobre la toma nueva con los intentos que le quedaban. PROVISIONAL hasta la pregunta 18 de la
+      sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba,
+      ¿empiezas de nuevo con tres?», A-25). El valor es el de «serían tres intentos por liquidez [...]
+      no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva
+      abre otro siempre
+    estado: DEFAULT_AMBIGUOUS
+    valor: vuelven_a_cartuchos_max
+    ambiguedad_id: A-25
+    fuente:
+      tipo: evidence
+      id: ev-v9-013054-d49a544e
+  - nombre: max_escenarios_por_sesion
+    categoria: estrategia
+    tipo: enum
+    unidad: escenarios que puede abrir una sesion como maximo
+    opciones: [sin_limite, "1", "2", "3", "4", "5"]
+    descripcion: >-
+      cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion
+      (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro.
+      PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio
+      toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46
+      que quedo sin numero). El valor `sin_limite` es el
+      de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una
+      operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos
+      entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
+    estado: DEFAULT_AMBIGUOUS
+    valor: sin_limite
+    ambiguedad_id: A-52
+    fuente:
+      tipo: evidence
+      id: ev-v9-003318-c0503fe5
+  - nombre: orden_pendiente_al_abrir_escenario
+    categoria: estrategia
+    tipo: enum
+    unidad: que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro
+    opciones: [se_mueve, se_retira]
+    descripcion: >-
+      la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo
+      en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede
+      llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la
+      reubica; es lo que hacia el motor (medido en
+      tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se
+      abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL
+      hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio
+      toma otra liquidez de M15. ¿Qué haces con la orden?», A-53). El valor sale de lo unico que dijo
+      el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro
+      posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma
+      liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el
+      valor es el comportamiento que el motor ya tenia, no una decision
+    estado: DEFAULT_AMBIGUOUS
+    valor: se_mueve
+    ambiguedad_id: A-53
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-c7fa3068
+  - nombre: orden_pendiente_al_abrir_sesion
+    categoria: estrategia
+    tipo: enum
+    unidad: que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente
+    opciones: [se_retira, sigue_hasta_ventana_fin]
+    descripcion: >-
+      la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066).
+      `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero.
+      `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta
+      el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de
+      ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). PROVISIONAL hasta la pregunta 5
+      de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué
+      haces con ella?», A-30 y A-39). El valor sale de que cada sesion es «un mundo diferente»
+      (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA)
+    estado: DEFAULT_AMBIGUOUS
+    valor: se_retira
+    ambiguedad_id: A-30
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-29-sesion-03-5021677e
   - nombre: entrada_tipo_orden
     categoria: estrategia
     tipo: enum

@@ -134,6 +134,12 @@ la orden las pedía). Van aquí porque en `main`, tras el tag, solo puede cambia
    informe y qué se hizo con ellos), los del consultor, y lo que se le escapó al revisor o lo que hay
    que enseñarle. **Si la orden de cierre no trae los hallazgos del consultor, la sesión los pregunta
    antes de este commit**: no los deduce ni deja la columna en «se apunta al cerrar».
+3. **Las entradas de Next Action que la rama deja HECHAS salen de `PROJECT_STATE.md`** y entran al
+   final de `docs/state/HISTORIA.md`, con su texto literal, bajo
+   `# Next Action HECHA · <letra> · sale de PROJECT_STATE.md en <rama> (<fecha>)`. En
+   `PROJECT_STATE.md` no queda ni el resumen ni un «HECHA» (decisión del consultor del 2026-10-02,
+   `feature/escenarios-por-sesion`: el cierre no puede pasar de 25 KB). Si la rama no cierra ninguna,
+   este punto no toca nada.
 
 El commit se llama siempre `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
 
@@ -141,6 +147,7 @@ El commit se llama siempre `chore(cierre): sale el contrato y entra el registro 
 git branch --show-current
 git rm contrato.yaml
 git add docs/state/HISTORIA.md docs/runbooks/ERRORES-RECURRENTES.md
+git add PROJECT_STATE.md   # solo si el punto 3 sacó alguna entrada de Next Action
 make check > make-check.log 2>&1
 grep "SELLO: make check en verde" make-check.log
 rm make-check.log
@@ -148,7 +155,8 @@ git commit -m "chore(cierre): sale el contrato y entra el registro en HISTORIA"
 ```
 → **Puerta:** la rama es la de trabajo; `git status --short` da `D  contrato.yaml`,
 `M  docs/state/HISTORIA.md` y `M  docs/runbooks/ERRORES-RECURRENTES.md` (las tres en la primera
-columna); y `make check` dice `CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
+columna), más `M  PROJECT_STATE.md` si el punto 3 sacó algo; y `make check` dice
+`CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
 nada del contrato, así que este sello es el de siempre.
 
 ```
@@ -206,7 +214,9 @@ cierre vive en el registro de HISTORIA que entró con el contrato (arriba). Deci
 del 2026-10-01 (`trabajo/ajustes-cierre`); hasta entonces este runbook decía que Completed Features
 ganaba una línea y Change Log una entrada. `PROJECT_STATE.md` no pasa de 25 KB
 (`tests/unit/test_project_state.py`, dentro de `make check`): si lo pasara, `make check` sale en
-rojo y no hay sello, así que se acorta lo sustituido, no se archiva en `main` (regla 5).
+rojo y no hay sello, así que se acorta lo sustituido, no se archiva en `main` (regla 5). **Una
+entrada de Next Action que esta rama dejó HECHA ya salió en la rama** (punto 3 de arriba): aquí no se
+marca HECHA ni se resume.
 
 **El sha del merge lo LEE la sesión del repositorio; el mensaje que se le pasa NO lleva hueco
 `<SHA>`.** Antes de editar, la sesión ejecuta:

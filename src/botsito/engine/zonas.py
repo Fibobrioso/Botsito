@@ -20,6 +20,16 @@ vale en la siguiente. Por sesion (`memoria_de_sesion`):
 Y del dia entero: `zonas`, las `Zona` ligadas por `toca_colocar_orden_limite`, que las acciones
 del cableado leen; sus ids no se repiten entre sesiones.
 
+**Dentro de la sesion, ESCENARIOS** (ADR-0066): un escenario es una liquidez de M15 tomada dentro
+de la sesion, con sus zonas -y por ellas, sus intentos-. La sesion guarda la lista
+(`escenarios`) y `toma`, `esquema` y `zona_id` son los del vigente. El primero nace con la primera
+toma de la sesion; los siguientes los abre `abrir_escenario`, la accion de RN-004, con cada toma
+NUEVA -la de otro pivote- cuando el vigente ha terminado, o con el vigente vivo segun
+`intentos_tras_toma_nueva` (A-25). Termina con una ganadora (RN-034, `terminar`), y un escenario
+terminado no coloca mas. Sin intentos no se marca terminado: RN-016 deja
+`detenido_por_cartuchos`, que prohibe abrir (RN-001) hasta que la toma de otra liquidez abre el
+escenario siguiente y lo apaga.
+
 `orden_limite_nace` (A-29, DEFAULT_AMBIGUOUS): `al_darse_el_esquema` coloca en el cierre del
 breaker, en el 0 del bloque de origen, como siempre; `al_tomarse_la_liquidez` queda NO_IMPLEMENTADA
 con nombre. `al_aparecer_punto_de_breaker` es LA VIDA DE LA ORDEN STOP (ADR-0056 §7, ADR-0064): tras
@@ -54,7 +64,14 @@ from botsito.domain.estructura_m1 import (
 )
 from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote
 from botsito.domain.velas import Vela
-from botsito.engine.interprete import EstadoDia, Momento, NoImplementada, Resultado, Tri
+from botsito.engine.interprete import (
+    VALOR_APAGADO,
+    EstadoDia,
+    Momento,
+    NoImplementada,
+    Resultado,
+    Tri,
+)
 
 PARAMETRO_A21 = "zona_control_limpia"
 ETIQUETA_A21 = "DIAGNOSTICO-A21"
@@ -73,6 +90,19 @@ EN_CADA_CIERRE_M1 = "en_cada_cierre_m1"
 CUALQUIER_ESQUEMA = "cualquier_esquema"
 PREFIJO_ZONA = "zona:"
 POR_SESION = "por_sesion"
+ESCENARIOS = "escenarios"
+# Las opciones de `intentos_tras_toma_nueva` (A-25) y la unica de `cartuchos_reinicio` que tiene
+# contrato (ADR-0066).
+INTENTOS_VUELVEN = "vuelven_a_cartuchos_max"
+INTENTOS_SIGUEN = "siguen_los_que_quedan"
+REINICIO_SIGUIENTE_LIQUIDEZ = "siguiente_liquidez_m15"
+# Las opciones de `max_escenarios_por_sesion` (A-52): sin tope, o un numero, que vive en el
+# registro como texto de la opcion; y las de `orden_pendiente_al_abrir_escenario` (A-53).
+SIN_LIMITE = "sin_limite"
+ORDEN_SE_MUEVE = "se_mueve"
+ORDEN_SE_RETIRA = "se_retira"
+HECHO_DETENIDO = "detenido_por_cartuchos"
+TERMINADO_POR_GANANCIA = "ganancia"
 LOOKBACK_M1 = (
     240  # minutos de M1 anteriores a la toma con los que se busca la referencia del breaker
 )
@@ -160,13 +190,13 @@ def memoria_de_sesion(estado: EstadoDia, sesion: str) -> Mapping[str, Any]:
     return cast(Mapping[str, Any], mem.get(POR_SESION, {}).get(sesion, {}))
 
 
-def _anotar_toma(datos: DatosDeZona, momento: Momento, estado: EstadoDia) -> dict[str, Any] | None:
-    """La toma de la liquidez de ESTA sesion, registrada la primera vez que el hecho aparece
-    encendido en ella."""
-    mem = _de_la_sesion(estado, momento.sesion)
-    toma = mem.get("toma")
-    if toma is not None:
-        return cast(dict[str, Any], toma)
+def _toma_del_momento(
+    datos: DatosDeZona, momento: Momento, estado: EstadoDia
+) -> dict[str, Any] | None:
+    """La toma que dice el hecho en este instante: el pivote que hoy es la liquidez, del lado del
+    sesgo, con su identidad (`pivote`: lado, nivel e instante de formacion) para distinguir una
+    toma NUEVA de la misma liquidez vista otra vez (RN-004 la vuelve a fijar en cada M1 que cierra
+    pasada la linea)."""
     if estado.hechos.get(HECHO_LIQUIDEZ_TOMADA) != "si":
         return None
     sesgo = str(estado.hechos.get(HECHO_SESGO))
@@ -179,9 +209,126 @@ def _anotar_toma(datos: DatosDeZona, momento: Momento, estado: EstadoDia) -> dic
         return None
     if pivote is None:
         return None
-    toma = {"instante": int(momento.instante), "nivel": pivote.nivel, "lado": lado_entrada}
+    return {
+        "instante": int(momento.instante),
+        "nivel": pivote.nivel,
+        "lado": lado_entrada,
+        "pivote": (pivote.lado, pivote.nivel, int(pivote.formado_en)),
+    }
+
+
+def _abrir(estado: EstadoDia, sesion: str | None, toma: dict[str, Any]) -> dict[str, Any]:
+    """Un escenario nuevo en la sesion (ADR-0066), con la toma que lo abre: lo que el productor
+    guardaba de la sesion (la toma, el esquema y la zona del esquema) pasa a ser el de este."""
+    mem = _de_la_sesion(estado, sesion)
+    escenarios = mem.setdefault(ESCENARIOS, [])
+    escenario = {"n": len(escenarios) + 1, "toma": toma, "zonas": set(), "terminado": None}
+    escenarios.append(escenario)
     mem["toma"] = toma
-    return toma
+    mem.pop("esquema", None)
+    mem.pop("zona_id", None)
+    return escenario
+
+
+def escenario_actual(estado: EstadoDia, sesion: str | None) -> dict[str, Any] | None:
+    """El ultimo escenario abierto en la sesion, o None si todavia no hay toma (ADR-0066)."""
+    escenarios = _de_la_sesion(estado, sesion).get(ESCENARIOS) or []
+    return cast(dict[str, Any], escenarios[-1]) if escenarios else None
+
+
+def escenario_de_zona(estado: EstadoDia, sesion: str | None, zona_id: str) -> dict[str, Any] | None:
+    """El escenario de la sesion en el que se ligo esa zona."""
+    for escenario in _de_la_sesion(estado, sesion).get(ESCENARIOS) or []:
+        if zona_id in escenario["zonas"]:
+            return cast(dict[str, Any], escenario)
+    return None
+
+
+def _anotar_toma(datos: DatosDeZona, momento: Momento, estado: EstadoDia) -> dict[str, Any] | None:
+    """La toma del escenario vigente de ESTA sesion. Si no hay ninguno y el hecho esta encendido,
+    abre el primero con la toma de este instante: es lo que hacia el productor antes de los
+    escenarios, y lo que pasa cuando el hecho se fija sin que RN-004 abra el escenario (un estado
+    hecho a mano). Las tomas siguientes las abre `abrir_escenario` (ADR-0066)."""
+    toma = _de_la_sesion(estado, momento.sesion).get("toma")
+    if toma is not None:
+        return cast(dict[str, Any], toma)
+    nueva = _toma_del_momento(datos, momento, estado)
+    if nueva is None:
+        return None
+    _abrir(estado, momento.sesion, nueva)
+    return nueva
+
+
+def _ligar_al_escenario(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
+    escenario = escenario_actual(estado, sesion)
+    if escenario is not None:
+        escenario["zonas"].add(zona_id)
+
+
+def acciones_escenario(registro: Registro) -> dict[str, Any]:
+    """La accion de RN-004 que abre un escenario (ADR-0066). Va con las primitivas escritas haya
+    geometria o no: el escenario es de la sesion, no del productor de la zona."""
+
+    def abrir_escenario(
+        args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
+    ) -> list[tuple[str, str]]:
+        """RN-004 acaba de fijar `liquidez_tomada`. Si la liquidez es la misma que la del
+        escenario vigente (RN-004 la vuelve a fijar en cada M1 pasada la linea), no hace nada. Si
+        es NUEVA, abre un escenario cuando el vigente ha terminado (ganancia o intentos agotados);
+        con el vigente vivo, lo decide `intentos` (A-25, pregunta 18 de la sesion 4). Abrir un
+        escenario es el reinicio de los cartuchos (`reinicio`, `siguiente_liquidez_m15`): apaga
+        `detenido_por_cartuchos`."""
+        intentos = registro.opcion(str(args["intentos"]))
+        if intentos not in (INTENTOS_VUELVEN, INTENTOS_SIGUEN):
+            raise ValueError(f"{args['intentos']} = {intentos!r}: lectura sin contrato")
+        reinicio = registro.opcion(str(args["reinicio"]))
+        if reinicio != REINICIO_SIGUIENTE_LIQUIDEZ:
+            raise ValueError(f"{args['reinicio']} = {reinicio!r}: lectura sin contrato")
+        pendiente = registro.opcion(str(args["orden_pendiente"]))
+        if pendiente not in (ORDEN_SE_MUEVE, ORDEN_SE_RETIRA):
+            raise ValueError(f"{args['orden_pendiente']} = {pendiente!r}: lectura sin contrato")
+        maximo = registro.opcion(str(args["maximo"]))
+        tope = None if maximo == SIN_LIMITE else int(maximo)
+        toma = _toma_del_momento(momento.datos, momento, estado)
+        if toma is None:
+            return []
+        actual = escenario_actual(estado, momento.sesion)
+        if actual is not None and actual["toma"]["pivote"] == toma["pivote"]:
+            return []
+        vivo = (
+            actual is not None
+            and actual["terminado"] is None
+            and HECHO_DETENIDO not in estado.hechos
+        )
+        if vivo and intentos == INTENTOS_SIGUEN:
+            # la toma nueva sigue el MISMO escenario, con los intentos que le quedaban
+            assert actual is not None
+            actual["toma"] = toma
+            mem = _de_la_sesion(estado, momento.sesion)
+            mem["toma"] = toma
+            mem.pop("esquema", None)
+            mem.pop("zona_id", None)
+            return []
+        abiertos = len(_de_la_sesion(estado, momento.sesion).get(ESCENARIOS) or [])
+        if tope is not None and abiertos >= tope:
+            return []  # max_escenarios_por_sesion (A-52): la toma no abre otro
+        _abrir(estado, momento.sesion, toma)
+        if estado.hechos.pop(HECHO_DETENIDO, None) is not None:
+            return [(HECHO_DETENIDO, VALOR_APAGADO)]
+        return []
+
+    return {"abrir_escenario": abrir_escenario}
+
+
+def terminar(estado: EstadoDia, sesion: str | None, escenario: dict[str, Any], motivo: str) -> None:
+    """El escenario no da mas entradas: se espera otra liquidez (ADR-0066)."""
+    if escenario["terminado"] is None:
+        escenario["terminado"] = motivo
+
+
+def escenario_terminado(estado: EstadoDia, sesion: str | None) -> bool:
+    actual = escenario_actual(estado, sesion)
+    return actual is not None and actual["terminado"] is not None
 
 
 def _esquema(
@@ -261,6 +408,7 @@ def zona_del_punto(registro: Registro, momento: Momento, estado: EstadoDia) -> Z
         id = f"{PREFIJO_ZONA}{len(zonas) + 1}"
         puntos[clave] = id
         mem.setdefault("punto_de_zona", {})[id] = clave_punto
+        _ligar_al_escenario(estado, momento.sesion, id)
         zonas[id] = Zona(
             id, lado, punto.nivel, extremo, PRIMER_ESQUEMA, int(m1[punto.marca].inicio), instante
         )
@@ -327,6 +475,11 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
         momento_orden = registro.opcion(str(args["momento"]))
+        # un escenario terminado -con una ganadora, o sin intentos- no coloca mas: se espera
+        # otra liquidez de M15 (ADR-0066)
+        _anotar_toma(momento.datos, momento, estado)
+        if escenario_terminado(estado, momento.sesion):
+            return Resultado(Tri.NO)
         if momento_orden == AL_APARECER_PUNTO_DE_BREAKER:
             z = zona_del_punto(registro, momento, estado)
             if (
@@ -350,6 +503,8 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         zonas = _memoria(estado).setdefault("zonas", {})
         mem = _de_la_sesion(estado, momento.sesion)
         id = mem.setdefault("zona_id", f"{PREFIJO_ZONA}{len(zonas) + 1}")
+        if id not in zonas:
+            _ligar_al_escenario(estado, momento.sesion, id)
         zonas.setdefault(
             id,
             Zona(
@@ -401,6 +556,15 @@ def zonas_del_dia(estado: EstadoDia) -> dict[str, Zona]:
 
 
 __all__ = [
+    "ESCENARIOS",
+    "INTENTOS_SIGUEN",
+    "INTENTOS_VUELVEN",
+    "TERMINADO_POR_GANANCIA",
+    "acciones_escenario",
+    "escenario_actual",
+    "escenario_de_zona",
+    "escenario_terminado",
+    "terminar",
     "AL_APARECER_PUNTO_DE_BREAKER",
     "AL_DARSE_EL_ESQUEMA",
     "ETIQUETA_A21",

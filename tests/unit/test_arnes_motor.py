@@ -193,7 +193,12 @@ def test_no_implementada_detiene_la_sesion_y_queda_registrada(
     )
     texto = arnes.informe(corrida, _criterio(), vocabulario)
     assert "- predicado:alcanza_nivel: 1 de 1" in texto
-    assert "liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza]" in texto
+    # sin lectura de «formado», los tres predicados de RN-004 quedan sin escribir: desde ADR-0066
+    # tambien el que pide que la toma sea de la sesion
+    assert (
+        "liquidez_tomada:no[predicado:alcanza_nivel, predicado:cruza, "
+        "predicado:la_toma_es_de_la_sesion]" in texto
+    )
 
 
 # ---------------------------------------------------------------------------- la compuerta
