@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/cerrar-a29-a36
+main
 
 ## Current Feature
-EN CURSO: `trabajo/cerrar-a29-a36` (2026-10-02; encargo docs/encargos/trabajo-cerrar-a29-a36.md, informe docs/validation/CERRAR-A29-A36.md): cerrar A-29 y A-36, que ya tienen respuesta grabada del trader en v9. Tarea autonoma: no se cierra. En `main`, NINGUNA ABIERTA tras `stable/F36n-escenarios-por-sesion`.
+NINGUNA ABIERTA tras `stable/F36o-cerrar-a29-a36` (2026-10-02).
 
 ## Stable Main State
-8346b9b · merge de `feature/escenarios-por-sesion` (tag `stable/F36n-escenarios-por-sesion`): las sesiones son independientes -la toma tiene que ser de la sesion- y cada liquidez nueva abre un escenario con sus intentos; una ganadora termina el escenario y el dia sigue (RN-034 con RN-017, ADR-0066). PROVISIONAL en cinco parametros con su pregunta de la sesion 4 (5, 15, 18, 20 y 21); A-52 y A-53 abiertas, y un test exige que todo parametro PROVISIONAL cuelgue de una ambiguedad ABIERTA. Lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra (RITUAL.md, punto 3). Informe docs/validation/ESCENARIOS-POR-SESION.md; el registro del cierre, al final de HISTORIA.
+34680ba · merge de `trabajo/cerrar-a29-a36` (tag `stable/F36o-cerrar-a29-a36`): A-29 RESUELTA con la respuesta grabada de la sesion 3 (`orden_limite_nace` CONFIRMED, el mismo valor; el motor no cambia, medido); A-36 se cerro y el consultor la reabrio: va a la sesion 4 como pregunta 22. Cerrar una ambiguedad toca cinco sitios (docs/runbooks/AMBIGUEDADES.md, con la hoja de preguntas). Sobre `stable/F36n-escenarios-por-sesion` (8346b9b), las sesiones independientes (ADR-0066). Informe docs/validation/CERRAR-A29-A36.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8346b9b · merge: sesiones independientes y varios escenarios por sesion (ADR-0066), A-52 y A-53, y lo HECHO del Next Action fuera de PROJECT_STATE · tag stable/F36n-escenarios-por-sesion
+34680ba · merge: A-29 RESUELTA y A-36 reabierta como pregunta 22; cerrar una ambiguedad toca cinco sitios · tag stable/F36o-cerrar-a29-a36
 
 ## Tests Currently Passing
 1166 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -33,7 +33,7 @@ A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 
 
 E. **A-42 RESUELTA con el trader en la sesion 4, no por ADR** (orden del consultor del 2026-09-30, docs/validation/REGISTRO-MARZO.md): es la pregunta del reloj de invierno de docs/sesion-4/PREGUNTAS.md, y marzo no se sortea ni se ingiere hasta entonces (PARADA B0, sin cambio). Era: **A-42 decidida antes del 25 de octubre** (el cambio de hora; el mecanismo ya esta: `reloj_sesiones`, ADR-0063).
 
-F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 21 por preguntar -las 17 del barrido, 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima, y la 20 y la 21 de `feature/escenarios-por-sesion`- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
+F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 22 por preguntar -las 17 del barrido, 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima, la 20 y la 21 de `feature/escenarios-por-sesion` y la 22 de `trabajo/cerrar-a29-a36`- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
