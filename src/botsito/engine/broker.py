@@ -21,7 +21,11 @@ es la lectura mas estricta de «server requests» hasta que FTMO diga otra cosa.
 hace solo -llenar, expirar, saltar el stop o el objetivo- no es una peticion, y tampoco
 `abrir_conocida`, que repite una operacion del trader y no la emite el bot. Una peticion que el
 broker no admite (`BrokerError`) no se apunta: es un error de quien llama y la corrida se para.
-Solo se mide: ningun limite frena por peticiones.
+Desde `feature/freno-peticiones` (ADR-0067) cada peticion pasa antes por el FRENO
+(`engine/freno.py`): con el corte del dia o un bucle, lo que no protege la cuenta se niega -no
+llega al servidor, no se cuenta y queda en `Traza.cortes`-; cancelar, cerrar a mercado y mover el
+stop de una posicion hacia el break even salen siempre, y cuentan. Sin umbrales del registro el
+broker frena igual en `mensajes_dia_max`, el limite de la firma.
 
 Una orden llenada abre una POSICION con stop y objetivo, que se cierra por stop, por objetivo o a
 mercado (cierre manual); si era una stop, la posicion guarda el deslizamiento de la entrada. Cada
@@ -48,6 +52,7 @@ from zoneinfo import ZoneInfo
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine.cuenta import Cargo, Marca, Operacion
+from botsito.engine.freno import Corte, FrenoPeticiones, LimitesFreno
 from botsito.engine.llenado import (
     RESPALDO_M1,
     TICKS,
@@ -108,8 +113,12 @@ class ReglasBroker:
     swap_corto_puntos: Decimal
     # la distancia minima al precio que admite el broker (A-27): None mientras sea UNKNOWN
     stops_level_puntos: int | None = None
-    # peticiones al servidor por dia de la firma (R13): solo para el informe, no frena nada
+    # peticiones al servidor por dia de la firma (R13): el limite de la firma, y el freno de
+    # ultimo recurso si no llegan umbrales del registro (ADR-0067)
     mensajes_dia_max: int | None = None
+    # los umbrales del freno, leidos del registro (ADR-0067); None: el freno corta en
+    # `mensajes_dia_max`
+    freno: LimitesFreno | None = None
 
 
 @dataclass
@@ -184,6 +193,7 @@ class Traza:
     eventos: tuple[tuple[int, str, str, str], ...]  # (instante_ms, tipo, id, fuente)
     rechazos: tuple[Rechazo, ...]
     peticiones: tuple[Peticion, ...] = ()
+    cortes: tuple[Corte, ...] = ()  # el aviso del dia y lo que el freno nego (ADR-0067)
 
     def por_fuente(self) -> dict[str, int]:
         salida = {TICKS: 0, RESPALDO_M1: 0}
@@ -264,6 +274,31 @@ class Broker:
         self._eventos: list[tuple[int, str, str, str]] = []
         self._cerradas: list[Operacion] = []
         self.ahora_ms: int = 0
+        # el freno (ADR-0067): los umbrales del registro, o el limite de la firma sin ellos
+        limites = reglas.freno
+        if limites is None and reglas.mensajes_dia_max is not None:
+            limites = LimitesFreno(corte=reglas.mensajes_dia_max)
+        if (
+            limites is not None
+            and reglas.mensajes_dia_max is not None
+            and limites.corte > reglas.mensajes_dia_max
+        ):
+            raise BrokerError(
+                f"el corte del freno ({limites.corte}) pasa del limite de la firma "
+                f"({reglas.mensajes_dia_max}): tiene que ir por debajo, con margen"
+            )
+        self.freno: FrenoPeticiones | None = (
+            FrenoPeticiones(limites) if limites is not None else None
+        )
+
+    def _admitir(
+        self, instante_ms: int, tipo: str, id: str, firma: object, protege: bool
+    ) -> str | None:
+        """Pregunta al freno ANTES de enviar: None si sale, o el motivo por el que se niega."""
+        if self.freno is None:
+            return None
+        dia = _dia_local(instante_ms, self.reglas.huso_corte)
+        return self.freno.admitir(dia, instante_ms, tipo, id, firma, protege)
 
     # ------------------------------------------------------------------- el contrato del motor
 
@@ -331,6 +366,11 @@ class Broker:
                 "correr en hipotesis, --diagnostico-a27 <puntos>: ETIQUETADO y sin valor para "
                 "ninguna medida (ADR-0057)"
             )
+        # el freno, antes que el servidor: una orden negada no se envia, no se cuenta y no existe
+        firma = (PETICION_COLOCAR, tipo, lado, precio, stop, objetivo, lotes)
+        negada = self._admitir(instante_ms, PETICION_COLOCAR, id, firma, protege=False)
+        if negada is not None:
+            return Rechazo(instante_ms, id, negada)
         motivo = self._limite_infringido(lotes, instante_ms)
         if motivo is None:
             motivo = self._precio_infringido(tipo, lado, precio, stop, objetivo, instante_ms)
@@ -386,6 +426,10 @@ class Broker:
         nuevo_precio = precio if precio is not None else orden.precio
         nuevo_stop = stop if stop is not None else orden.stop
         nuevo_objetivo = objetivo if objetivo is not None else orden.objetivo
+        firma = (PETICION_MODIFICAR, id, nuevo_precio, nuevo_stop, nuevo_objetivo)
+        negada = self._admitir(instante_ms, PETICION_MODIFICAR, id, firma, protege=False)
+        if negada is not None:
+            return Rechazo(instante_ms, id, negada)  # la orden sigue como estaba
         motivo = self._precio_infringido(
             orden.tipo, orden.lado, nuevo_precio, nuevo_stop, nuevo_objetivo, instante_ms
         )
@@ -406,6 +450,8 @@ class Broker:
     def cancelar(self, id: str, instante_ms: int) -> Orden:
         self._avanza_reloj(instante_ms)
         orden = self._pendiente(id)
+        # protege la cuenta: sale siempre, y cuenta (ADR-0067)
+        self._admitir(instante_ms, PETICION_CANCELAR, id, None, protege=True)
         self._peticiones.append(Peticion(instante_ms, PETICION_CANCELAR, id, True))
         orden.estado = CANCELADA
         orden.ultimo_cambio_ms = instante_ms
@@ -420,6 +466,8 @@ class Broker:
         if p is None or not p.abierta:
             raise BrokerError(f"posicion {posicion_id!r} no esta abierta")
         precio, fuente = self._precio_de_mercado(p.lado, instante_ms)
+        # protege la cuenta: sale siempre, y cuenta (ADR-0067)
+        self._admitir(instante_ms, PETICION_CERRAR, posicion_id, None, protege=True)
         self._peticiones.append(Peticion(instante_ms, PETICION_CERRAR, posicion_id, True))
         self._cerrar(p, instante_ms, precio, MANUAL, fuente)
         return p
@@ -477,7 +525,7 @@ class Broker:
             if self.mercado.ticks_del_minuto(instante_ms // MS_POR_MINUTO) is not None
             else RESPALDO_M1
         )
-        self._mover(p, stop, instante_ms, fuente)
+        self._mover(p, stop, instante_ms, fuente)  # si el freno lo niega, la posicion sigue igual
         return p
 
     def vigilar_break_even(self, posicion_id: str, nivel: int, instante_ms: int) -> None:
@@ -492,7 +540,16 @@ class Broker:
         p.break_even_nivel = nivel
         p.break_even_desde_ms = instante_ms
 
-    def _mover(self, p: Posicion, stop: int, instante_ms: int, fuente: str) -> None:
+    def _mover(self, p: Posicion, stop: int, instante_ms: int, fuente: str) -> bool:
+        """Mueve el stop de una posicion viva, si el freno lo deja: hacia el lado que reduce el
+        riesgo (el break even) sale siempre; hacia fuera se frena como lo demas (ADR-0067). Nunca
+        deja la posicion sin stop: si se niega, conserva el que tenia."""
+        protege = stop > p.stop if p.lado == "compra" else stop < p.stop
+        negada = self._admitir(
+            instante_ms, PETICION_MODIFICAR, p.id, (PETICION_MODIFICAR, p.id, stop), protege
+        )
+        if negada is not None:
+            return False
         self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, p.id, True))
         if p.stop_original is None:
             p.stop_original = p.stop
@@ -500,6 +557,7 @@ class Broker:
         p.stop_movido_ms = instante_ms
         p.break_even_nivel = None
         self._eventos.append((instante_ms, STOP_MOVIDO, p.id, fuente))
+        return True
 
     def hechos(self) -> dict[str, bool]:
         """Los hechos de origen `broker` de la spec, derivados del estado (ADR-0028 §5)."""
@@ -762,7 +820,8 @@ class Broker:
         return tuple(sorted(self._cerradas, key=lambda o: (o.apertura.instante, o.id)))
 
     def traza(self) -> Traza:
-        return Traza(tuple(self._eventos), tuple(self._rechazos), tuple(self._peticiones))
+        cortes = tuple(self.freno.cortes) if self.freno is not None else ()
+        return Traza(tuple(self._eventos), tuple(self._rechazos), tuple(self._peticiones), cortes)
 
 
 def contrato_desde(escala: int, contrato: Decimal) -> tuple[Decimal, int]:

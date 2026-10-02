@@ -188,7 +188,7 @@ def _motor(
         reglas=reglas_ejecutables(cargar_reglas(SPEC)),
         registro=registro,
         mercados={DIA.isoformat(): mercado},
-        reglas_broker=reglas_broker_de(perfil),
+        reglas_broker=reglas_broker_de(perfil, registro),
         reglas_fase=reglas_fase or reglas_de_fase(perfil, "reto"),
         config_llenado=Configuracion(False, 0, lambda _m: SPREAD),
         contrato=registro.decimal("instrumento_contrato"),
@@ -513,6 +513,10 @@ def test_el_informe_da_las_peticiones_por_dia_de_la_firma_junto_al_limite_de_r13
     assert "dia | total | colocar | modificar | cancelar | cerrar | rechazadas" in informe
     assert "2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0" in informe
     assert "maximo diario: 1 (2030-01-15); firma_mensajes_dia_max: 2000" in informe
+    # y el freno (ADR-0067), con los umbrales del registro: ese dia ni avisa ni niega nada
+    assert "### El freno de peticiones (ADR-0067)" in informe
+    assert "umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min" in informe
+    assert "ningun aviso ni ninguna peticion negada" in informe
 
 
 def test_un_dia_corrido_sin_peticiones_sale_con_cero(

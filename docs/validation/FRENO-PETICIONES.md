@@ -143,6 +143,92 @@ cero, incluido un corte por bucle.
 - Sin `mensajes_dia_max` (los tests del broker puro, que no tienen firma) no hay límite que
   defender.
 
+## 2. Fase 1 · El freno, implementado
+
+**Los umbrales**, en `knowledge/spec/parametros.yaml`. Los cuatro son de categoría `ejecucion`,
+DEFAULT_AMBIGUOUS bajo **A-54**, `consumido_por: [ADR-0067]` y fuente ADR-0067:
+
+| Parámetro | Valor | Por qué |
+|---|---|---|
+| `freno_peticiones_aviso` | 1000 | La mitad del límite, y unas 75 veces el día más cargado medido (13 peticiones). Avisa con mucho margen, sin frenar |
+| `freno_peticiones_corte` | 1500 | El 75 % del límite. Deja 500 peticiones para lo que protege la cuenta, acotado por `firma_ordenes_simultaneas_max` y las posiciones abiertas |
+| `freno_bucle_repeticiones` | 5 | Un día normal no repite una petición: reubicar cambia el precio. Cinco iguales es un bucle |
+| `freno_bucle_minutos` | 1 | Cinco iguales en un minuto no las pide ninguna regla, que deciden una vez por cierre de M1 |
+
+Son un margen del proyecto, no una cifra de FTMO, y se revisan con A-54.
+
+**A-54**, ABIERTA, clase `medicion`, no bloqueante, `resuelve_en: [F33]`: qué cuenta FTMO como
+petición al servidor, con qué reloj corta el día y qué pasa al pasarse (§0.4). Cita
+`ev-v4-012524-0ef85a89` como A-27: el trader sobre operar una cuenta de fondeo con sus límites. No
+hay ítem del corpus sobre el límite de peticiones, y su comentario lo dice. Va con su fila en la
+tabla «Known Ambiguities» de `PROJECT_STATE.md`. Los cuatro parámetros PROVISIONAL cuelgan de una
+ABIERTA, como pide `tests/contract/test_provisional_cuelga_de_abierta.py`.
+
+**El código**:
+- `engine/freno.py`, nuevo:
+  - `LimitesFreno`, con la validación de los umbrales;
+  - `FrenoPeticiones.admitir`, que cuenta y niega;
+  - `Corte`, cada entrada del registro;
+  - el log a nivel WARNING en el aviso y en cada corte.
+- `engine/broker.py`:
+  - `ReglasBroker.freno`;
+  - el freno armado en `Broker.__init__`. Sin umbrales, en `mensajes_dia_max`, y se niega si el
+    corte pasa del límite de la firma;
+  - `_admitir`, que llaman los cinco métodos;
+  - `Traza.cortes`;
+  - `_mover` devuelve si movió.
+- `engine/simulacion.py`: `limites_freno_de(registro)` y `reglas_broker_de(perfil, registro=None)`.
+  Los scripts que lo llaman sin registro siguen igual, y frenan en el límite de la firma.
+- `engine/cableado.py`: pasa el registro, guarda `TrazaBroker.cortes`, y el informe del arnés gana
+  la sección «El freno de peticiones» con los umbrales y cada aviso o petición negada por día.
+- `docs/adr/0067-…` y su fila en el índice. Spec 15.6.1 → 15.7.0, con `spec docs --escribir`.
+
+**La decisión de §1, aplicada**:
+- **lo que protege sale siempre y cuenta**: cancelar, cerrar a mercado y el stop de una posición
+  hacia el break even;
+- **lo negado no se cuenta**: colocar y modificar una pendiente devuelven `Rechazo` con
+  `freno_corte` o `freno_bucle`, y un stop hacia fuera negado deja la posición igual.
+
+**Lo que cambia en un test que ya había.** `test_peticiones.py` fijaba que «nada frena aunque se
+pase del límite». Ahora fija lo contrario: sin umbrales del registro, el broker frena en
+`mensajes_dia_max`. `test_cableado.py` y `test_preparar_a21.py` arman el motor con
+`reglas_broker_de(perfil, registro)`, como el cableado real.
+
+**Plataforma.** Nada de la rama toca hooks, rutas ni el sistema de archivos: no hace falta la CI de
+Linux por `fix/`.
+
+## 3. Fase 2 · Los tests, rompiendo la guardia a propósito
+
+`tests/unit/test_freno_peticiones.py`, con los umbrales del registro salvo donde se fija otro corte
+para ver el borde:
+
+| Lo que pide el encargo | Test | Lo que mide |
+|---|---|---|
+| un bucle de 5.000 peticiones no pasa del corte | `test_un_bucle_de_5000_peticiones_distintas_no_pasa_del_corte` | 5.000 compras distintas, una por segundo: salen 1.500 (el corte) y se niegan 3.500, ninguna llega al servidor; un aviso |
+| (y el bucle de iguales) | `test_un_bucle_de_5000_peticiones_iguales_lo_para_el_freno_de_bucles` | 5.000 veces la misma compra: salen 4 y el resto se niega por `freno_bucle` |
+| | `test_el_bucle_cuenta_las_iguales_aunque_haya_otras_en_medio_y_solo_en_su_ventana` | colocar y cancelar la misma orden alternando es un bucle; las mismas, espaciadas más que la ventana, no |
+| al corte, cerrar o cancelar sale | `test_al_llegar_al_corte_cancelar_cerrar_y_el_break_even_salen_y_cuentan` | con el día cortado salen la cancelación, el break even y el cierre, y cuentan |
+| el contador vuelve a cero con el día de FTMO | `test_el_contador_vuelve_a_cero_con_el_dia_de_la_firma_no_con_la_sesion` | cruzar las 11:00 de Madrid (09:00Z) no lo vuelve a cero; cruzar la medianoche de Praga (22:00Z en verano), sí |
+| | `test_el_dia_lo_da_el_broker_y_el_freno_no_lo_supone` | el freno cambia de día con la fecha que le da el broker |
+| ninguna posición sin stop | `test_ninguna_posicion_queda_sin_stop_por_el_freno` | con el día cortado, el stop hacia fuera se niega y la posición conserva el suyo; el break even sale; la orden negada no existe |
+| el día normal no toca ningún umbral | `test_el_dia_de_cinco_escenarios_no_toca_ningun_umbral` y `test_un_dia_de_10_a_13_peticiones_no_toca_ningun_umbral` | el día sintético de cinco escenarios (10 peticiones) por el cableado real, y días de 10 y 13: ni aviso ni nada negado |
+| | `test_los_umbrales_del_registro_van_por_debajo_de_las_2000_con_margen` y `test_unos_umbrales_sin_sentido_no_arman_el_freno` | los umbrales del registro, y que el broker se niega con un corte por encima del límite de la firma |
+
+**Roto a propósito.** Un script de la carpeta de trabajo hace que el broker deje de preguntar al
+freno: cambia `Broker._admitir` en memoria, sin tocar ningún fichero. Con eso corre el fichero de
+tests. **Fallan seis**:
+- los dos bucles de 5.000;
+- el bucle con otras en medio;
+- lo que sale al corte;
+- el día de la firma;
+- ninguna posición sin stop.
+
+Los otros cinco no miden el freno: el día normal (que no corte nada), los umbrales y el freno solo.
+
+**Los días de desarrollo medidos.** Los de agosto (10, 10 y 13 peticiones,
+`ESCENARIOS-POR-SESION.md` §6.4) no se volvieron a correr: el umbral más bajo, el aviso, está en
+1000. Los representa el test de 10 a 13.
+
 ## Estado
 
-EN CURSO: Fase 0 escrita (inventario y diseño). Fase 1 y 2, pendientes.
+EN CURSO: Fases 0, 1 y 2 hechas; falta el revisor.

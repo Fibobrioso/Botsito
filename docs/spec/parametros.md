@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.6.1` · hash `626c7a01fba9…`
+`spec_version 15.7.0` · hash `4be42d51a3b8…`
 
-95 en total: 78 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+99 en total: 82 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -43,6 +43,10 @@
 | `firma_perdida_total_max` | `10 %` | CONFIRMED | prop_firm | `ADR-0026` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
 | `firma_programa` | `2-step` | CONFIRMED | prop_firm | `ADR-0026` | programa del reto |
 | `firma_tipo_cuenta` | `swing` | CONFIRMED | prop_firm | `ADR-0026` | tipo de cuenta elegido en la compra |
+| `freno_bucle_minutos` | `1` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | minutos de la ventana en que se cuentan las peticiones iguales |
+| `freno_bucle_repeticiones` | `5` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones iguales dentro de freno_bucle_minutos |
+| `freno_peticiones_aviso` | `1000` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones al servidor en un dia de la firma |
+| `freno_peticiones_corte` | `1500` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones al servidor en un dia de la firma |
 | `huso_grafico` | `Etc/GMT-2` | CONFIRMED | estrategia | `ev-v4-011425-ae028b78` | nombre IANA del huso configurado en el grafico del trader |
 | `huso_operativa` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0017` | nombre IANA del huso en el que se expresan las horas de la operativa |
 | `instrumento` | `EURUSD` | CONFIRMED | estrategia | `ev-v2-003320-a736fd37` | simbolo del instrumento |
@@ -126,6 +130,10 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `firma_noticias_restringe` → F33
 - `firma_programa` → F33
 - `firma_tipo_cuenta` → F33
+- `freno_bucle_minutos` → ADR-0067
+- `freno_bucle_repeticiones` → ADR-0067
+- `freno_peticiones_aviso` → ADR-0067
+- `freno_peticiones_corte` → ADR-0067
 - `huso_grafico` → ADR-0017, ADR-0063
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
@@ -334,6 +342,22 @@ programa del reto: reto, verificacion y cuenta fondeada, con la perdida maxima E
 tipo de cuenta. Se elige EN LA COMPRA y no se puede cambiar despues ("Change from Standard to Swing: Not allowed"). `swing` no restringe las noticias; `standard` prohibe abrir o cerrar -incluida la ejecucion de un stop o un objetivo- de dos minutos antes a dos despues de noticias seleccionadas en la cuenta fondeada
 
 Opciones: `standard`, `swing`.
+
+### `freno_bucle_minutos`
+
+la ventana del freno contra bucles (ADR-0067): freno_bucle_repeticiones peticiones iguales dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54
+
+### `freno_bucle_repeticiones`
+
+el freno contra bucles (ADR-0067): tantas peticiones IGUALES -el mismo contenido, sin mirar el id: colocar con el mismo lado, precio, stop, objetivo y lote, o modificar lo mismo a los mismos precios- dentro de freno_bucle_minutos cortan el envio el resto del dia, como el corte. Un dia normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54
+
+### `freno_peticiones_aviso`
+
+el aviso del freno de peticiones (ADR-0067, engine/freno.py): el dia que el bot llega a este numero de peticiones al servidor, el freno lo apunta en la traza y en el log. No frena, y va por debajo de freno_peticiones_corte. PROVISIONAL bajo A-54: es un margen del proyecto, no una cifra de FTMO, y se revisa cuando la demo diga que cuenta como mensaje. El dia mas cargado medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4)
+
+### `freno_peticiones_corte`
+
+el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega todo lo que no protege la cuenta, y solo deja cancelar, cerrar a mercado y mover el stop hacia el break even, que cuentan igual. Va por debajo de firma_mensajes_dia_max (el broker se niega a armarse si no) y deja ese hueco para lo que protege, que esta acotado por firma_ordenes_simultaneas_max y las posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO
 
 ### `huso_grafico`
 

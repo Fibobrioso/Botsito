@@ -39,6 +39,7 @@ from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.arnes import DiaTrader
 from botsito.engine.broker import PARAMETRO_STOPS_LEVEL, Broker, ReglasBroker
 from botsito.engine.cuenta import Operacion, ReglasFase, ResultadoFase, evaluar_fase
+from botsito.engine.freno import LimitesFreno
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import PerfilCuenta
 from botsito.engine.relojes import huso_de_las_sesiones
@@ -85,8 +86,20 @@ class Estrategia(Protocol):
     def al_cerrar_la_ventana(self, broker: Broker, instante_ms: int) -> None: ...
 
 
-def reglas_broker_de(perfil: PerfilCuenta) -> ReglasBroker:
-    """Los limites y los costes del perfil de cuenta, leidos por su nombre (ADR-0050)."""
+def limites_freno_de(registro: Registro) -> LimitesFreno:
+    """Los umbrales del freno de peticiones, del registro (ADR-0067, PROVISIONAL bajo A-54)."""
+    return LimitesFreno(
+        corte=registro.entero("freno_peticiones_corte"),
+        aviso=registro.entero("freno_peticiones_aviso"),
+        bucle_repeticiones=registro.entero("freno_bucle_repeticiones"),
+        bucle_ms=registro.minutos("freno_bucle_minutos") * MS_POR_MINUTO,
+    )
+
+
+def reglas_broker_de(perfil: PerfilCuenta, registro: Registro | None = None) -> ReglasBroker:
+    """Los limites y los costes del perfil de cuenta, leidos por su nombre (ADR-0050), y los
+    umbrales del freno del registro si se pasa (ADR-0067). Sin registro, el broker frena igual en
+    `firma_mensajes_dia_max`, sin margen ni aviso."""
     return ReglasBroker(
         volumen_max_lotes=perfil.lotes("firma_volumen_max_lotes"),
         ordenes_simultaneas_max=perfil.entero("firma_ordenes_simultaneas_max"),
@@ -99,8 +112,9 @@ def reglas_broker_de(perfil: PerfilCuenta) -> ReglasBroker:
         # UNKNOWN hasta medirlo en la demo de FTMO (A-27): el broker se niega a colocar una orden
         # stop sin el, salvo en diagnostico (ADR-0057)
         stops_level_puntos=perfil.puntos_o_nada(PARAMETRO_STOPS_LEVEL),
-        # R13: solo para informar junto al recuento de peticiones; no frena nada todavia
+        # R13: el limite de la firma, y el freno de ultimo recurso (ADR-0067)
         mensajes_dia_max=perfil.entero("firma_mensajes_dia_max"),
+        freno=limites_freno_de(registro) if registro is not None else None,
     )
 
 

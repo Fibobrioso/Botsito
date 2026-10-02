@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.6.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.7.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (22)
+## ABIERTA (23)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -125,6 +125,12 @@ Afecta a: `max_escenarios_por_sesion`.
 Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la pregunta 21 de docs/sesion-4/PREGUNTAS.md.
 
 Afecta a: `orden_pendiente_al_abrir_escenario`.
+
+### A-54 · qué cuenta FTMO como petición al servidor y con qué margen frena el bot · medicion
+
+Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno.
+
+Afecta a: `freno_peticiones_aviso`, `freno_peticiones_corte`, `freno_bucle_repeticiones`, `freno_bucle_minutos`.
 
 ## DECIDIDA (6)
 

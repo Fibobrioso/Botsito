@@ -45,6 +45,7 @@ from botsito.engine.broker import (
 )
 from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.diagnostico import DiagnosticoRechazadoError
+from botsito.engine.freno import Corte
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
 from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, Configuracion
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
@@ -90,6 +91,7 @@ class TrazaBroker:
     por_fuente: dict[str, int] = field(default_factory=lambda: {TICKS: 0, RESPALDO_M1: 0})
     huecos: set[str] = field(default_factory=set)
     peticiones: list[Peticion] = field(default_factory=list)  # al servidor, R13
+    cortes: list[Corte] = field(default_factory=list)  # el freno de peticiones (ADR-0067)
     equity_fin: Decimal = Decimal(0)
     saldo_fin: Decimal = Decimal(0)
     depuracion: bool = False
@@ -234,6 +236,7 @@ class MotorCableado:
         tb.huecos |= ctx.huecos
         tb.rechazos = len(broker.traza().rechazos)
         tb.peticiones = list(broker.traza().peticiones)
+        tb.cortes = list(broker.traza().cortes)
         tb.equity_fin = self.cuenta.equity
         tb.saldo_fin = self.cuenta.saldo
         for nombre, traza in trazas.items():
@@ -449,7 +452,7 @@ def construir_motor_cableado(
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
     la primera que declara el perfil (DECISION pendiente de validar). `stops_level_diagnostico`
     es el stops level hipotetico de A-27 (ADR-0057): se rechaza si el perfil ya lo tiene."""
-    reglas_broker = reglas_broker_de(perfil)
+    reglas_broker = reglas_broker_de(perfil, registro)
     if stops_level_diagnostico is not None and reglas_broker.stops_level_puntos is not None:
         raise DiagnosticoRechazadoError(
             f"el perfil {perfil.nombre} ya fija el stops level ({reglas_broker.stops_level_puntos}"
@@ -654,6 +657,26 @@ def _informe_peticiones(motor: MotorCableado) -> list[str]:
         f"maximo diario: {mayor}; firma_mensajes_dia_max: "
         + (str(limite) if limite is not None else "sin leer")
     )
+    return lineas + _informe_freno(motor)
+
+
+def _informe_freno(motor: MotorCableado) -> list[str]:
+    """El freno de peticiones (ADR-0067): sus umbrales y, por dia, cada aviso y cada peticion
+    negada con su motivo. Un dia sin nada que contar no sale."""
+    f = motor.reglas_broker.freno
+    umbrales = (
+        f"aviso {f.aviso}, corte {f.corte}, bucle {f.bucle_repeticiones} iguales en "
+        f"{(f.bucle_ms or 0) // MS_POR_MINUTO} min"
+        if f is not None
+        else f"sin umbrales del registro: corta en firma_mensajes_dia_max "
+        f"({motor.reglas_broker.mensajes_dia_max})"
+    )
+    lineas = ["", "### El freno de peticiones (ADR-0067)", f"umbrales: {umbrales}"]
+    for dia in sorted(motor.trazas_broker):
+        for c in motor.trazas_broker[dia].cortes:
+            lineas.append(f"{dia} | {c.instante_ms} | {c.motivo} | {c.tipo} | {c.id}")
+    if len(lineas) == 3:
+        lineas.append("ningun aviso ni ninguna peticion negada")
     return lineas
 
 
