@@ -26,7 +26,7 @@ from botsito.cases.paquete import cargar_config
 from botsito.cli import _carpeta_datos
 from botsito.config.registro import cargar_registro
 from botsito.engine import cableado, diagnostico, entrada, tope_trader, visor, zonas
-from botsito.engine.broker import RECHAZADA
+from botsito.engine.broker import CANCELADA, LLENADA, RECHAZADA
 from botsito.engine.diagnostico import Diagnostico
 from botsito.engine.interprete import Interprete, reglas_ejecutables
 from botsito.engine.motor import MotorSpec
@@ -113,14 +113,17 @@ def main() -> int:
             tipos[p.tipo] = tipos.get(p.tipo, 0) + 1
             h = hora(p.instante_ms)[:2]
             por_hora[h] = por_hora.get(h, 0) + 1
-        # una orden esta pendiente desde que se coloca hasta que se llena, se cancela o se rechaza
+        # una orden esta pendiente desde que se coloca hasta que se llena o se cancela (entonces
+        # `ultimo_cambio_ms` es ese instante); si sigue pendiente, hasta el final del dia. Una
+        # modificacion tambien mueve `ultimo_cambio_ms`, asi que solo vale como fin en esos dos
+        fin_del_dia = max((p.instante_ms for p in traza.peticiones), default=0) + 1
         tramos = [
-            (o.colocada_ms, o.ultimo_cambio_ms)
+            (o.colocada_ms, o.ultimo_cambio_ms if o.estado in (LLENADA, CANCELADA) else fin_del_dia)
             for o in broker.ordenes.values()
             if o.estado != RECHAZADA
         ]
         max_vivas = max(
-            (sum(1 for a, b in tramos if a <= t < (t + 1 if b is None else b)) for t, _ in tramos),
+            (sum(1 for a, b in tramos if a <= t < b) for t, _ in tramos),
             default=0,
         )
         print(

@@ -365,7 +365,8 @@ nueve «pendiente de reflejar»). **No son preguntas**: se reflejan en la spec e
 
 ## Estado
 
-Barrido hecho y documento escrito. **Por preguntar: 19**: las 17 del barrido y 2 que añadió el consultor el 2026-09-30, la primera y la última. **Ya respondidas: 15**, que son las 6 de
+Barrido hecho y documento escrito. **Por preguntar: 21**: las 17 del barrido, 2 que añadió el consultor el 2026-09-30, la primera y la última, y 2 más (la 20 y la 21) del 2026-10-02 (`feature/escenarios-por-sesion`), con una segunda parte de la 15. **Ya respondidas: 15**, que son las 6 de
 arriba más las 9 de `feedback pending`. **Fuera de la hoja: 6**, que son 3 mediciones, A-32 y los
-2 cortes de audio. **Ninguna** queda solo de memoria. No cambia nada del motor, de la spec, de las ambigüedades ni del
-feedback.
+2 cortes de audio. **Ninguna** queda solo de memoria. Este documento no cambia nada del motor, de la spec, de las
+ambigüedades ni del feedback; los parámetros PROVISIONAL de las preguntas 5, 15, 18, 20 y 21 los
+puso `feature/escenarios-por-sesion` (ADR-0066), y se fijan con la respuesta.

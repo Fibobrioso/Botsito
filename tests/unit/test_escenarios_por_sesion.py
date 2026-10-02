@@ -459,29 +459,37 @@ def test_la_orden_viva_al_cambiar_de_sesion_segun_el_parametro(
 T1 = tc.MINUTO_ZONA - 2  # la primera toma de la manana
 T2 = tc.MINUTO_ZONA + 10  # la toma de otra liquidez, con la orden de la primera todavia viva
 PUNTO_NUEVO = T2 + 3  # el primer punto de breaker de la liquidez nueva
+# el caso peor de la orden 2, punto 4: cinco liquidez distintas tomadas en la misma sesion, cada
+# una con la orden de la anterior todavia viva
+CINCO_TOMAS = (T1, T2, T2 + 12, T2 + 24, T2 + 36)
 
 
 class _DatosConLiquidez(DatosMercado):
-    """Las H4 de `test_cableado` y una liquidez de M15 a medida: un BAJO hasta T2 y otro despues."""
+    """Las H4 de `test_cableado` y una liquidez de M15 a medida: un BAJO distinto desde cada toma
+    (la primera vale tambien antes de ella)."""
+
+    def __init__(self, h4: Any, tomas: tuple[int, ...]) -> None:
+        super().__init__(h4)
+        self.tomas = tomas
 
     def liquidez_m15(self, instante: int, lado: str) -> Pivote | None:
         if lado != BAJO:
             return None
-        if instante < T2:
-            return _pivote(tc.BASE - 50, T1 - 30, BAJO)
-        return _pivote(tc.BASE - 80, T2 - 30, BAJO)
+        k = sum(1 for t in self.tomas[1:] if instante >= t)
+        return _pivote(tc.BASE - 50 - 30 * k, self.tomas[k] - 30, BAJO)
 
 
-def _motor_dos_tomas(registro: Registro) -> Any:
-    """El motor cableado de `test_cableado` con la spec real: RN-004 dispara en T1 y en T2 (la
+def _motor_dos_tomas(registro: Registro, tomas: tuple[int, ...] = (T1, T2)) -> Any:
+    """El motor cableado de `test_cableado` con la spec real: RN-004 dispara en cada toma (la
     geometria de la toma es sintetica), y `abrir_escenario` es la real. La orden de zona:1 se
-    coloca en MINUTO_ZONA y el precio no baja a ella; en PUNTO_NUEVO la liquidez nueva da su
-    primer punto, zona:2."""
+    coloca en MINUTO_ZONA y el precio no baja a ella; tres minutos despues de la toma k (k >= 2)
+    la liquidez nueva da su primer punto, zona:k, 30 puntos por debajo del anterior."""
     motor = tc._motor(registro, cargar_vocabulario(tc.SPEC), tc._mercado({}))
     predicados, acumuladores = tc._sinteticas()
+    puntos = {tc.MINUTO_ZONA: "zona:1"} | {t + 3: f"zona:{k + 1}" for k, t in enumerate(tomas) if k}
 
     def toma(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
-        return Resultado(Tri.SI if int(momento.instante) in (T1, T2) else Tri.NO)
+        return Resultado(Tri.SI if int(momento.instante) in tomas else Tri.NO)
 
     def de_la_sesion(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
         return Resultado(Tri.SI)
@@ -493,17 +501,18 @@ def _motor_dos_tomas(registro: Registro) -> Any:
 
     def toca(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
         t, usadas = int(momento.instante), zonas.zonas_usadas(estado, momento.sesion)
-        zona = {tc.MINUTO_ZONA: "zona:1", PUNTO_NUEVO: "zona:2"}.get(t)
+        zona = puntos.get(t)
         if zona is None or zona in usadas:
             return Resultado(Tri.NO)
         _ligar(estado, momento.sesion, zona)
         return Resultado(Tri.SI, {"Z": zona})
 
     def completa(args: Mapping[str, Any], momento: Momento, estado: EstadoDia) -> Any:
-        if "posterior_a" in args or int(momento.instante) != PUNTO_NUEVO:
+        zona = puntos.get(int(momento.instante))
+        if "posterior_a" in args or zona in (None, "zona:1"):
             return Resultado(Tri.NO)
-        _ligar(estado, momento.sesion, "zona:2")
-        return Resultado(Tri.SI, {"Z": "zona:2"})
+        _ligar(estado, momento.sesion, str(zona))
+        return Resultado(Tri.SI, {"Z": zona})
 
     predicados.update(
         {
@@ -516,16 +525,18 @@ def _motor_dos_tomas(registro: Registro) -> Any:
     )
     motor.primitivas_extra = predicados
     motor.acumuladores_extra = acumuladores
-    zona_2 = cableado.zona_sintetica(
-        "zona:2", "compra", tc.ENTRADA - 30, tc.EXTREMO - 30, "primer_esquema"
-    )
-    zona_1 = cableado.zona_sintetica("zona:1", "compra", tc.ENTRADA, tc.EXTREMO, "primer_esquema")
-    motor.zonas_de = lambda md: {"zona:1": zona_1, "zona:2": zona_2}
+    sinteticas = {
+        f"zona:{k + 1}": cableado.zona_sintetica(
+            f"zona:{k + 1}", "compra", tc.ENTRADA - 30 * k, tc.EXTREMO - 30 * k, "primer_esquema"
+        )
+        for k in range(len(tomas))
+    }
+    motor.zonas_de = lambda md: sinteticas
     return motor
 
 
-def _dia_dos_tomas() -> Any:
-    return DiaDeMercado(tc.DIA, tc.HUSO, tc.SESIONES, _DatosConLiquidez(tc._h4_alcista()))
+def _dia_dos_tomas(tomas: tuple[int, ...] = (T1, T2)) -> Any:
+    return DiaDeMercado(tc.DIA, tc.HUSO, tc.SESIONES, _DatosConLiquidez(tc._h4_alcista(), tomas))
 
 
 def _vivas_en_cada_peticion(motor: Any) -> list[int]:
@@ -589,3 +600,28 @@ def test_el_tope_de_escenarios_por_sesion(tmp_path: Path) -> None:
         for t in (M0 + 5, M0 + 45, M0 + 85):
             _abrir(reg, datos, estado, t, "07-11")
         assert len(zonas.memoria_de_sesion(estado, "07-11")[zonas.ESCENARIOS]) == esperados
+
+
+@pytest.mark.parametrize("valor", ["se_mueve", "se_retira"])
+def test_cinco_escenarios_en_una_sesion_cuestan_dos_peticiones_cada_uno(
+    tmp_path: Path, valor: str
+) -> None:
+    """Orden 2, punto 4, el caso peor que se pidio: cinco liquidez distintas tomadas en una misma
+    sesion, cada una con la orden de la anterior todavia viva. Con las dos opciones de
+    `orden_pendiente_al_abrir_escenario`, cada escenario nuevo cuesta dos peticiones (cancelar la
+    vieja y colocar la suya), mas la primera colocacion y la retirada de RN-035 al abrir la otra
+    sesion: 2 x 5 = 10 en el dia. Nunca hay dos ordenes vivas."""
+    reg = _registro(tmp_path, orden_pendiente_al_abrir_escenario=valor)
+    motor = _motor_dos_tomas(reg, CINCO_TOMAS)
+    motor.correr_dia(_dia_dos_tomas(CINCO_TOMAS))
+    estado = motor.estados[tc.DIA.isoformat()]
+    escenarios = zonas.memoria_de_sesion(estado, "07-11")[zonas.ESCENARIOS]
+    assert [e["n"] for e in escenarios] == [1, 2, 3, 4, 5]
+    peticiones = motor.trazas_broker[tc.DIA.isoformat()].peticiones
+    esperadas = [(PETICION_COLOCAR, "o1")]
+    for k in range(2, 6):
+        esperadas += [(PETICION_CANCELAR, f"o{k - 1}"), (PETICION_COLOCAR, f"o{k}")]
+    esperadas.append((PETICION_CANCELAR, "o5"))  # RN-035 en la apertura de la tarde
+    assert [(p.tipo, p.id) for p in peticiones] == esperadas
+    assert len(peticiones) == 2 * len(CINCO_TOMAS)
+    assert max(_vivas_en_cada_peticion(motor)) == 1

@@ -424,10 +424,12 @@ parejas ni compara con las operaciones del trader.
 Con `kb find` y `kb at`, filtrados (nada en cuarentena ni en tramos no citables):
 
 - **a) «los break even no gastan un intento»: está en el registro, dos veces.**
-  - `ev-v4-004832-6543b551` (v4 0:48:32-0:48:52): «los breakeven no se cuenta o sea, si te saca un
-    breakeven es un trade que [...] tienes un cartucho todavía para poder seguir operando»;
-  - `ev-v9-013117-c683f9b5` (sesión 3): «¿Cuentan los break-even y las entradas invalidadas? no
-    cuentan».
+  - `ev-v4-004832-6543b551` (v4 0:48:32-0:48:52), del trader: «los breakeven no se cuenta o sea, si
+    te saca un breakeven es un trade que [...] tienes un cartucho todavía para poder seguir
+    operando»;
+  - `ev-v9-013117-c683f9b5` (sesión 3), pregunta y respuesta juntas: «¿Cuentan los break-even y las
+    entradas invalidadas?» «no cuentan». El ítem tiene confianza media: la cruda no separa voces y
+    el hablante se atribuye por contexto (revisor, a5).
 
   RN-034 (notas) y ADR-0066 §2 los citan, y ya no lo marcan como lectura nuestra.
 - **b) «el día termina con la primera ganadora»: está en el registro, en v4, y NO es lo vigente.**
@@ -483,6 +485,14 @@ habla de la misma liquidez. Por eso es un parámetro, `orden_pendiente_al_abrir_
 decisión-, A-25, y la pregunta 21 de la sección D.
 
 **Las peticiones al servidor (R13: 2.000 al día en FTMO).**
+- **El caso peor que se pidió, medido con un test sintético**
+  (`test_cinco_escenarios_en_una_sesion_cuestan_dos_peticiones_cada_uno`, añadido tras el revisor,
+  b1): cinco liquidez distintas tomadas en la misma sesión, cada una con la orden de la anterior
+  todavía viva, sobre el mismo motor cableado. Con `se_mueve` y con `se_retira`, la secuencia es la
+  misma: colocar `o1`, y por cada escenario nuevo cancelar la vieja y colocar la suya, y la retirada
+  de RN-035 al abrir la otra sesión. **10 peticiones en el día: dos por escenario**, y nunca dos
+  órdenes vivas. Frente a 2.000, cinco escenarios son el 0,5 %; para llegar al tope por esta vía
+  harían falta unos mil escenarios en un día.
 - **Medido, un día de desarrollo** (`caso-eurusd-2026-08-07`, el de la tarde de cinco escenarios;
   `anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que ahora imprime las peticiones del día: es el
   recuento de lo que emite el bot ese día, no una cifra de cobertura):
@@ -492,9 +502,10 @@ decisión-, A-25, y la pregunta 21 de la sección D.
   - ese día ninguna toma abrió escenario con una orden viva: el caso del test no se dio.
   - Los otros dos días de §3.2: 10 (el 3) y 13 (el 20), también con una orden pendiente como mucho.
 - **Lo que dice el código, sin medir un día peor:**
-  - una evaluación por minuto, de la apertura de la primera sesión al cierre de la última (481
-    instantes, `engine/motor.py`), y cada regla dispara como mucho una vez por evaluación (punto
-    fijo con refracción, `interprete.py`);
+  - una evaluación por minuto, de la apertura de la primera sesión al cierre de la última, ambos
+    incluidos: de 07:00 a 15:00, 481 cierres de M1 (el bucle `while instante <= ultimo` de
+    `MotorSpec.correr_dia`, `engine/motor.py`); y cada regla dispara como mucho una vez por
+    evaluación (punto fijo con refracción, `Interprete.evento`, `engine/interprete.py`);
   - abrir un escenario emite como mucho UNA petición (la cancelación con `se_retira`) o ninguna
     (`se_mueve`); llevar la orden al punto de la liquidez nueva son dos (cancelar y colocar), las
     mismas que una reubicación dentro de un escenario. **El número de escenarios no multiplica las
@@ -507,18 +518,77 @@ decisión-, A-25, y la pregunta 21 de la sección D.
 ### 6.5 Lo que cambia en el código y la spec
 
 - `knowledge/spec/parametros.yaml`: los dos parámetros nuevos.
-- `knowledge/spec/strategy_spec.yaml` (15.3.0 → 15.4.0): RN-004 pasa `maximo` y `orden_pendiente` a
-  `abrir_escenario`; las notas de RN-034 citan la cadena y los dos items del break even.
+- `knowledge/spec/strategy_spec.yaml` (15.3.0 → 15.4.0, y 15.4.1 tras el revisor por la redacción
+  de RN-034): RN-004 pasa `maximo` y `orden_pendiente` a `abrir_escenario`; las notas de RN-034
+  citan la cadena y los dos items del break even.
 - `engine/zonas.py`: el tope en `abrir_escenario`; `engine/primitivas_broker.py`: el
   `abrir_escenario` del cableado, que retira la orden con `se_retira`.
 - `docs/adr/0066-...`: §2 (la cadena, el break even y el tope) y §4 bis (la orden pendiente y las
   peticiones), y cinco parámetros PROVISIONAL en vez de tres.
 - `docs/sesion-4/PREGUNTAS.md`: la segunda parte de la 15, y la 20 y la 21 (el contrato se amplía a
   ese fichero, con su motivo).
-- Tests: los dos nuevos de §6.2 y §6.4.
+- Tests: los tres nuevos de §6.2 y §6.4 (el tercero, el caso peor, tras el revisor).
+
+### 6.6 Informe del revisor (solo `7ab42d6..a43641b`)
+
+Subagente `revisor`, sobre el commit `a43641b`. Los hallazgos, tal cual; lo comprobado sin
+hallazgos, resumido.
+
+> ## Informe del revisor · feature/escenarios-por-sesion (solo a43641b, desde 7ab42d6) · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La pregunta 20 y la 21 cuelgan de A-46 y A-38 como `ambiguedad_id`, pero las dos están RESUELTAS. Los parámetros `max_escenarios_por_sesion` (A-46) y `orden_pendiente_al_abrir_escenario` (A-25 en el yaml, y la fuente es el registro de A-38) son DEFAULT_AMBIGUOUS. La pregunta 20 se rotula «A-46 (la subpregunta que quedó sin número)», pero ninguna ambigüedad abierta recoge esa subpregunta. A-46 dice «sin tope diario de escenarios» y cita `fb-2026-09-29-sesion-03-5021677e`, cuya `respuesta_literal` no habla de tope, y esto ya estaba antes. El informe no declara esta tensión. | `knowledge/spec/ambiguedades.yaml:1226-1235` (A-46 RESUELTA). Registro: `knowledge/feedback/2026-09-29-sesion-03/fb-2026-09-29-sesion-03-5021677e.yaml`. A-38 RESUELTA: `knowledge/spec/ambiguedades.yaml:971-977`. Parámetros: `knowledge/spec/parametros.yaml` (diff de a43641b). |
+> | a2 | importa | El pie «Estado» de `PREGUNTAS.md` quedó desactualizado. Dice «Por preguntar: 19 [...] las 17 del barrido y 2 que añadió el consultor» y «No cambia nada del motor, de la spec, de las ambigüedades ni del feedback». El encabezado sí se actualizó a (21). Con la 20 y la 21 son 21 por preguntar, y la rama sí cambia motor y spec. | `docs/sesion-4/PREGUNTAS.md:45` («(21)») frente al párrafo bajo «## Estado» (~línea 366). |
+> | a3 | menor | `dia_del_bot.py`: la rama `b is None` es código muerto. `ultimo_cambio_ms` vale 0 por defecto, no `None`. Una orden que quede pendiente al final del día sin modificarse cuenta con un tramo vacío, y una modificada sin cerrar cuenta solo hasta la modificación. La cifra «una orden pendiente a la vez» puede quedar corta en ese caso. El día 7 no sufre el defecto, porque sus 6 colocadas acaban en 3 cancelaciones y, por tanto, 3 llenadas. | `src/botsito/engine/broker.py:126` (`ultimo_cambio_ms: int = 0`), `:402`, `:411`, `:585`, `:597`. `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py` (diff): `(t + 1 if b is None else b)`. |
+> | a4 | menor | RN-034 (notas) y ADR-0066 conservan la frase «Hasta el 2026-10-02 esto se marcaba como lectura nuestra». La orden decía que deje de marcarse como lectura. Es historia dentro de la spec y de un ADR. | `knowledge/spec/strategy_spec.yaml` (diff, RN-034). `docs/adr/0066-...md` (diff, §2). |
+> | a5 | menor | Se atribuye «lo dijo el trader, dos veces» a `ev-v9-013117-c683f9b5`. El propio ítem dice «revisión sin humana; la cruda no separa voces y el hablante se atribuye por contexto», con `confianza: media`. La cita es pregunta y respuesta juntas. El de v4 sí es del trader. | `knowledge/evidence/v9/ev-v9-013117-c683f9b5.yaml` (`revisado_por`, `confianza`). `docs/validation/ESCENARIOS-POR-SESION.md` §6.1. |
+>
+> Comprobado sin hallazgos: el contrato (28 ficheros, `PREGUNTAS.md` añadido con su motivo); `state check`, `spec check` y `spec docs`; los tests de `test_escenarios_por_sesion.py`, `test_kit`, `test_adr`, `test_project_state` y `tests/contract`; `spec_version` 15.3.0 → 15.4.0 y los docs generados; 1163 funciones de test; el trailer `Fuente:` (los 9 ids existen); que los ids citados dicen lo que se les atribuye (leídos los yaml, con la salvedad de a5) y la cadena v4 → sesión 1 en RN-034, ADR-0066 §2 y el informe §6.1; holdout y regímenes de cambio intactos, y la fila nueva de `HOLDOUT-EXPOSICIONES.md`; el `## Estado` de ADR-0066; ningún sitio nuevo con `cita`; ninguna cifra en la forma ejecutable; que el test de la orden viva mide lo que dicen el informe y el parámetro («se podía llenar» no lo prueba, porque el precio no baja a ella: menor, no contado aparte); que §6.4 separa lo medido de lo deducido del código.
+>
+> ### Eje (b) · Encargo (Segunda y Tercera orden)
+> Resumen: 0 bloquea, 1 importa, 0 menor. Requisitos: 10 hechos, 1 parcial, 0 no hechos.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | El requisito 10 está parcial: «el caso peor» queda como medida de días reales y cota por lectura del código. El informe lo dice, pero sin una medición de un caso peor (cinco escenarios con cada toma reubicando) no se puede afirmar con evidencia que el número de escenarios no mueve el tope de 2.000. Lo sostiene el razonamiento del código, no una medida. | Informe §6.4 («Lo que dice el código, sin medir un día peor», «El código no garantiza el tope por sí solo»). |
+>
+> ### Lo que no pude comprobar
+> `make check`, `knowledge validate` y el sello (escriben); las cifras de peticiones por día (10, 6, 10, 13), que exigían correr `dia_del_bot.py` sobre días dev; «481 instantes por día», que no encontró escrito en `engine/`; que `se_mueve` coincide con `7ab42d6` ejecutando el test allí (exige `git worktree add`); la suite completa.
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **a1, declarado; lo decide el consultor.** Es verdad: A-46 y A-38 están RESUELTAS, y los dos
+  parámetros nuevos son DEFAULT_AMBIGUOUS. `orden_pendiente_al_abrir_escenario` cuelga de A-25,
+  que está abierta (pregunta 18), y su fuente es el registro de A-38 porque es lo único que dijo el
+  trader de la vida de la orden. `max_escenarios_por_sesion` cuelga de A-46, RESUELTA, sin que
+  ninguna ambigüedad abierta recoja la subpregunta del número. Hay dos salidas: abrir una
+  ambigüedad nueva para el tope (toca `ambiguedades.yaml`, la tabla de `PROJECT_STATE.md` y los
+  docs generados, `docs/runbooks/AMBIGUEDADES.md`) o colgar el parámetro de A-25. No se hace aquí
+  sin la decisión, porque la orden pedía parámetro y pregunta, no una ambigüedad. Que A-46 diga
+  «sin tope diario de escenarios» con una cita que no habla de tope venía de antes, y queda anotado
+  aquí.
+- **a2, arreglado**: el pie de `PREGUNTAS.md` dice 21 por preguntar, de dónde salen la 20 y la 21,
+  y qué parámetros PROVISIONAL dependen de ellas.
+- **a3, arreglado**: el tramo de una orden acaba al llenarse o cancelarse; si sigue pendiente, al
+  final del día, y una modificación ya no lo corta. Vuelto a correr sobre los tres días: las mismas
+  cifras (10, 10 y 13 peticiones, una orden pendiente como mucho).
+- **a4, arreglado**: RN-034 y ADR-0066 ya no cuentan que antes era lectura nuestra; solo citan. La
+  spec pasa a 15.4.1.
+- **a5, arreglado**: la cita de la sesión 3 va como pregunta y respuesta, con su confianza media,
+  en RN-034, en ADR-0066 y en §6.1.
+- **b1, arreglado con una medida**: `test_cinco_escenarios_en_una_sesion_cuestan_dos_peticiones_cada_uno`
+  (§6.4): cinco escenarios con la orden viva en cada toma cuestan 10 peticiones en el día, con las
+  dos opciones. Lo que el código no garantiza -un tope de peticiones por reubicaciones dentro de un
+  escenario- sigue anotado en §6.4, y no es de esta rama.
+- **Lo que no pudo comprobar**: `make check` sella este commit (abajo); los «481» están ahora
+  nombrados con su bucle en §6.4.
 
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. Fases 0, 1 y 2 hechas y
-selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Lo que espera a la sesión 4
-y lo que decide el consultor está en §4.
+selladas, con el revisor pasado y sus hallazgos atendidos o declarados. Las órdenes 2 y 3 del
+consultor (2026-10-02), hechas en §6, con su revisor (§6.6). Lo que espera a la sesión 4 y lo que
+decide el consultor está en §4 y en la respuesta a a1 de §6.6.

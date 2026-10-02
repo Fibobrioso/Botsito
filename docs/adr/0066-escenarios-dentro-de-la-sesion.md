@@ -50,10 +50,10 @@ las zonas que se ligan en el, y si ha terminado.
   confirmada por el consultor el 2026-10-02.
 - **Tras una perdida, un break even o un equal, SIGUE** con los intentos que le queden: «nuevamente
   tiene todavía un gatillo [...] un cartucho» (`ev-v3-002405-a202dbf6`). Tras un break even lo
-  dijo el trader dos veces: «los breakeven no se cuenta [...] tienes un cartucho todavía para poder
-  seguir operando» (`ev-v4-004832-6543b551`, v4 0:48:32-0:48:52) y «¿Cuentan los break-even y las
-  entradas invalidadas? no cuentan» (`ev-v9-013117-c683f9b5`, sesion 3). Hasta el 2026-10-02 se
-  marcaba como lectura nuestra; no lo es.
+  dijo el trader en v4: «los breakeven no se cuenta [...] tienes un cartucho todavía para poder
+  seguir operando» (`ev-v4-004832-6543b551`, v4 0:48:32-0:48:52); y en la sesion 3, a la pregunta
+  «¿Cuentan los break-even y las entradas invalidadas?», «no cuentan» (`ev-v9-013117-c683f9b5`,
+  confianza media: el hablante se atribuye por contexto).
 - **El tope de escenarios** por sesion lo decide `max_escenarios_por_sesion` (A-46, pregunta 20),
   PROVISIONAL `sin_limite`: «eso no lo podemos definir [...] en todas estas 4 se va a dar una
   operación» (`ev-v9-003318-c0503fe5`), que no da un numero; antes habia dicho «como máximo dos
@@ -94,7 +94,8 @@ coloca con una pendiente, y `retirar_orden_limite` y `reubicar_orden_limite` se 
 si hubiera dos. Ninguna de las dos opciones multiplica las peticiones al servidor (R13): abrir un
 escenario emite como mucho una cancelacion (`se_retira`) o ninguna (`se_mueve`); la reubicacion son
 dos peticiones, igual que dentro de un mismo escenario
-(`docs/validation/ESCENARIOS-POR-SESION.md`, §6.4).
+(`docs/validation/ESCENARIOS-POR-SESION.md`, §6.4: cinco escenarios en una sesion, 10
+peticiones en el dia, medido con un test sintetico).
 
 ### 5. Que enmienda
 
