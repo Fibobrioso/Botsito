@@ -1369,3 +1369,20 @@ Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli.
 — ninguna desde el Archivo 2 (2026-10-01).
+
+# Registro de cierre · `trabajo/ajustes-cierre` (2026-10-01)
+
+- Orden de cierre de Aleks, tras revisar `f443eee`. Primer cierre con la regla nueva de `RITUAL.md`
+  («Antes del merge: el contrato sale de la rama»): este registro y la fila de
+  `docs/runbooks/ERRORES-RECURRENTES.md` van en el commit que saca el contrato, y el commit de estado
+  no anade nada a Change Log ni a Completed Features.
+- Tag: `stable/F36m-ajustes-cierre`. El merge es
+  `git rev-parse "stable/F36m-ajustes-cierre^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama: `5cdbddf` (apertura: encargo, contrato y Archivo 3), `f443eee` (el comentario
+  de `tramos_no_citables.yaml`, el registro y la fila obligatorios en todo cierre, y las frases de
+  los runbooks sobre la CLI y la cruda; con el revisor pegado) y el de este registro, que saca
+  tambien el contrato.
+- CI: ninguna de la rama. No toca hooks ni la plataforma, asi que no se empujo como `fix/` (lo dice
+  el encargo); la primera CI es la de `main` tras el cierre.
+- Informe: `docs/validation/AJUSTES-CIERRE.md`. Encargo: `docs/encargos/trabajo-ajustes-cierre.md`.
