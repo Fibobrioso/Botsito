@@ -23,7 +23,7 @@ EN CURSO: `feature/escenarios-por-sesion` (2026-10-01; encargo docs/encargos/fea
 1591737 · merge: todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; los documentos dicen que la CLI enseña el corpus filtrado · tag stable/F36m-ajustes-cierre
 
 ## Tests Currently Passing
-1149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1160 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

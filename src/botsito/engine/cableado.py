@@ -201,7 +201,8 @@ class MotorCableado:
             ctx.instante_ms = hasta_ms
             # 3. estrategia al cierre de M1
             sesion, abre = _sesion(limites, instante)
-            momento = Momento(MinutoUtc(instante), sesion, abre, dia.datos)
+            desde = next((d for n, d, _ in limites if n == sesion), None)
+            momento = Momento(MinutoUtc(instante), sesion, abre, dia.datos, desde, primero)
             ctx.break_even_vigilable = None
             evento = interprete.evento(self.reglas, momento, estado)
             # el break even de RN-014 AL TICK (ADR-0065): el nivel que el predicado vio en este
@@ -304,9 +305,10 @@ class MotorCableado:
                 signo = 1 if p.lado == "compra" else -1
                 bruto = Decimal(signo * (p.precio_cierre - p.entrada))
                 resultado = clasificar_cierre(tipo, p.stop_original is not None, bruto)
-                ctx.eventos.append(
-                    EventoBroker(ms, tipo, id, ctx.por_de_orden.get(p.orden_id), resultado)
-                )
+                por = ctx.por_de_orden.get(p.orden_id)
+                ctx.eventos.append(EventoBroker(ms, tipo, id, por, resultado))
+                # para los intentos de cada escenario (acumulador `cartuchos`, ADR-0066)
+                ctx.cierres.append((p.orden_id, resultado, por))
             else:
                 ctx.eventos.append(EventoBroker(ms, tipo, id))
         vistos = len(eventos)

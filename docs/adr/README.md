@@ -69,4 +69,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
 | 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29) |
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
+| 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18 de la sesión 4) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

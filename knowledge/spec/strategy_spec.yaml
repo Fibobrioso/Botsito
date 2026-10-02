@@ -169,6 +169,20 @@ predicados:
     literal: >-
       ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
       o vale con que la mecha lo perfore? Con cuerpo
+  la_toma_es_de_la_sesion:
+    descripcion: >-
+      la liquidez no estaba tomada ya al abrir la sesion: ninguna M1 cerro pasada la linea, con
+      el `criterio` de la toma, entre la formacion del pivote y la apertura. Una toma previa en
+      una sesion anterior del dia no cuenta (A-46, cada sesion es un mundo diferente); una previa
+      a la primera sesion del dia la decide `antes_de_la_ventana` (A-43). Sin ella, RN-004
+      volvia a fijar la toma de la manana en la apertura de la tarde sobre el mismo pivote si el
+      precio seguia pasado (ADR-0066)
+    argumentos: [que, criterio, antes_de_la_ventana]
+    fuente: mercado
+    cita: ev-v9-004533-d075b080
+    literal: >-
+      si la liquidez se formó antes de las 7, pero el precio la toma ya dentro. Es valio la
+      entrada, sí.
   se_desarrolla_en_el_lado_de_ruido:
     # Hasta el 2026-09-16 se llamaba `esta_al_otro_lado_de` y decia "el precio se desarrolla del
     # lado contrario al sesgo", que es justo la frase cuya traduccion a un lado concreto dependia
@@ -409,10 +423,25 @@ acciones:
       el breaker, o sea, marco mi orden limit y ya está
   retirar_orden_limite:
     descripcion: >-
-      cancela en el broker la orden limite pendiente `de`. DECLARADA Y SIN REGLA que la use: que se
-      hace con una orden pendiente al llegar ventana_fin no lo dice el corpus ni lo cerraba ninguna
-      ambiguedad (A-30). No se supone
-    argumentos: [de]
+      cancela en el broker la orden limite pendiente `de`, si `segun` lo dice. Hasta el 2026-10-01
+      estaba DECLARADA Y SIN REGLA que la usara: que se hace con una orden pendiente al llegar
+      ventana_fin no lo dice el corpus ni lo cierra ninguna ambiguedad (A-30). Desde entonces la
+      usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL
+      hasta la pregunta 5 de la sesion 4 (ADR-0066)
+    argumentos: [de, segun]
+  abrir_escenario:
+    descripcion: >-
+      la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote
+      que el de la toma del escenario vigente- y el vigente ha terminado; con el vigente vivo, lo
+      decide `intentos` (A-25). Con la misma liquidez, que RN-004 vuelve a fijar en cada M1
+      pasada la linea, no hace nada. Abrir un escenario es el reinicio de los cartuchos
+      (`reinicio`): apaga detenido_por_cartuchos (ADR-0066)
+    argumentos: [intentos, reinicio]
+  terminar_escenario:
+    descripcion: >-
+      el escenario de la operacion que se cerro no da mas entradas, y se espera otra liquidez de
+      M15 (RN-034, ADR-0066)
+    argumentos: []
   realizar_perdida:
     descripcion: contabiliza la perdida efectiva cuando el stop salta
     argumentos: [riesgo, sobre]
@@ -446,6 +475,10 @@ acciones:
 tokens:
   OP:
     descripcion: la operacion en curso; sus campos se nombran con punto (`OP.precio_entrada`)
+  ORDEN:
+    descripcion: >-
+      la orden pendiente, ligada al hecho orden_limite_pendiente (RN-035, ADR-0066); como OP, se
+      liga al valor del hecho y la accion la busca en el broker, donde solo puede haber una
   precio_entrada:
     descripcion: campo de OP, el precio al que se lleno la orden
   instante_entrada:
@@ -609,7 +642,7 @@ hechos:
     origen: broker
     decision: ADR-0028
     lo_provoca: [colocar_orden_limite]
-    consume: [RN-006, RN-011]
+    consume: [RN-006, RN-011, RN-035]
   operacion_abierta:
     descripcion: hay una posicion viva
     # Lo fijaban RN-010 y RN-013: al final de una jornada el estado decia `operacion_abierta: si`
@@ -654,7 +687,10 @@ hechos:
   detenido_por_cartuchos:
     descripcion: >-
       los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope
-      porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia
+      porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia. Desde el
+      2026-10-01 (ADR-0066) lo apaga `abrir_escenario`, la accion de RN-004, cuando una toma de una
+      liquidez nueva abre otro escenario: hasta entonces nadie lo apagaba, y si RN-016 hubiera
+      podido disparar habria parado el resto del dia
     origen: regla
     valores: [hasta_cartuchos_reinicio]
     produce: [RN-016]
@@ -670,7 +706,11 @@ hechos:
       trader cada sesion es un escenario propio -«cada uno es un mundo diferente», A-46 RESUELTA,
       fb-2026-09-29-sesion-03-5021677e-, asi que una toma de la primera sesion no vale en la
       segunda. Era la deuda de ADR-0055 §4: con la toma de la manana viva, RN-008 y RN-009 leian
-      esa toma en la segunda sesion y RN-011 no podia disparar, porque su breaker ya habia pasado
+      esa toma en la segunda sesion y RN-011 no podia disparar, porque su breaker ya habia pasado.
+      DESDE EL 2026-10-01 (ADR-0066) la caducidad no basta sola: RN-004 tampoco lo vuelve a fijar
+      sobre una liquidez que ya estaba tomada al abrir la sesion (`la_toma_es_de_la_sesion`), y
+      cada toma de una liquidez nueva abre un ESCENARIO de la sesion (`abrir_escenario`): el hecho
+      dice que hay toma en la sesion, y el escenario, cual es y cuantos intentos le quedan
     origen: regla
     valores: ["si"]
     caduca: al_abrir_sesion
@@ -716,7 +756,12 @@ acumuladores:
     magnitud: firma_magnitud_vigilada
     arrastra: firma_perdida_total_arrastra
   cartuchos:
-    descripcion: perdidas que cuentan como intento
+    descripcion: >-
+      perdidas que cuentan como intento, en el escenario vigente de la sesion: los cierres de las
+      ordenes de sus zonas que nombran las dos ramas de RN-016. Como cada liquidez nueva abre otro
+      escenario (`abrir_escenario`), el contador vuelve a empezar con la siguiente liquidez de M15
+      sin que nadie lo ponga a cero (ADR-0066); hasta el 2026-10-01 era un hueco con nombre y RN-016
+      no podia disparar
     base: cartucho_criterio
     reinicia_con: cartuchos_reinicio
     cita: fb-2026-09-09-sesion-01-e3eedcaa
@@ -813,6 +858,39 @@ reglas:
         hace:
           - cerrar_a_mercado: {de: OP, si: cierre_forzoso_fin_ventana}
     clase: terminal
+    estado: VIGENTE
+
+  - id: RN-035
+    titulo: la orden que sigue pendiente al abrir otra sesion se retira (PROVISIONAL)
+    cuando: abre una sesion operativa y queda una orden de la sesion anterior sin llenar
+    entonces: >-
+      se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario
+    parametros: [orden_pendiente_al_abrir_sesion]
+    cita: fb-2026-09-29-sesion-03-5021677e
+    literal: >-
+      tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro,
+      exacto.
+    decision: ADR-0066
+    notas: >-
+      NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el
+      trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9
+      0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La
+      cita es la de la independencia de las sesiones (A-46 RESUELTA), que es lo que sostiene el
+      valor provisional `se_retira`; la otra opcion, `sigue_hasta_ventana_fin`, es lo que hacia el
+      motor hasta hoy (DECISION 3 de ADR-0064): la orden de la manana no se reubicaba con los
+      puntos de la tarde y, como RN-011 no coloca con una orden pendiente, dejaba la tarde sin
+      operar. Una posicion ABIERTA no entra aqui: la cierra RN-002. La opcion de la pregunta 5 «la
+      dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija
+    forma:
+      cuando:
+        todos_de:
+          - abre_sesion_operativa: {}
+          - hecho: orden_limite_pendiente
+            liga: ORDEN
+      entonces:
+        hace:
+          - retirar_orden_limite: {de: ORDEN, segun: orden_pendiente_al_abrir_sesion}
+    clase: disparador
     estado: VIGENTE
 
   - id: RN-003
@@ -925,11 +1003,14 @@ reglas:
     entonces: >-
       se da por tomada solo si una vela de M1 cierra con cuerpo al otro lado segun
       liquidez_m15_criterio_toma; una mecha que lo perfore no cuenta
-    parametros: [liquidez_m15_criterio_toma]
+    parametros:
+      [liquidez_m15_criterio_toma, toma_antes_de_la_ventana, intentos_tras_toma_nueva,
+       cartuchos_reinicio]
     cita: fb-2026-09-09-sesion-01-6e15504f
     literal: >-
       ¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo,
       o vale con que la mecha lo perfore? Con cuerpo
+    decision: ADR-0066
     notas: >-
       solo en M15; en M1 el rompimiento es indiferente. ESTA REGLA NO PUEDE DISPARARSE HOY: su
       `cuando` lee `liquidez_m15`, y ningun `fijar` de esta spec produce ese token (medido el
@@ -950,15 +1031,33 @@ reglas:
       `cruza` miran la ultima M1 cerrada, y lo PROVISIONAL de ADR-0054 §4 queda cerrado. SIGUE
       SIN ACTIVAR que la toma tenga que ocurrir dentro del horario aunque el nivel se formara
       antes de las 7 (A-43, ev-v9-004533-d075b080): hoy cuenta tambien la M1 que cierra en el
-      instante mismo de la apertura.
+      instante mismo de la apertura. DESDE EL 2026-10-01 (rama feature/escenarios-por-sesion,
+      ADR-0066) la toma tiene que ser DE LA SESION (`la_toma_es_de_la_sesion`): una liquidez que
+      ya estaba tomada al abrirla no cuenta si se tomo en una sesion anterior del dia (A-46: cada
+      sesion es «un mundo diferente», fb-2026-09-29-sesion-03-5021677e), y si se tomo antes de la
+      primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL hasta la pregunta 15 de la
+      sesion 4. Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la
+      apertura de la tarde sobre el mismo pivote si el precio seguia pasado
+      (docs/validation/ESCENARIOS-POR-SESION.md §0.2). Y cada toma de una liquidez nueva abre un
+      ESCENARIO (`abrir_escenario`): RN-004 fija el hecho en cada M1 que cierra pasada la linea,
+      asi que la misma liquidez no abre nada; una toma con el escenario vigente vivo la decide
+      intentos_tras_toma_nueva, PROVISIONAL hasta la pregunta 18. Abrir un escenario es el
+      reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15)
     forma:
       cuando:
         todos_de:
           - alcanza_nivel: {que: liquidez_m15}
           - cruza: {que: liquidez_m15, criterio: liquidez_m15_criterio_toma}
+          - la_toma_es_de_la_sesion:
+              que: liquidez_m15
+              criterio: liquidez_m15_criterio_toma
+              antes_de_la_ventana: toma_antes_de_la_ventana
       entonces:
         hace:
           - fijar: {hecho: liquidez_tomada, a: "si"}
+          - abrir_escenario:
+              intentos: intentos_tras_toma_nueva
+              reinicio: cartuchos_reinicio
     clase: disparador
     estado: VIGENTE
 
@@ -1441,7 +1540,12 @@ reglas:
       fb-2026-09-29-sesion-03-7b87c3ee y fb-2026-09-29-sesion-03-68a21dc0); y el stop entero de
       una activacion sin ruptura SI gasta un intento, que era lectura nuestra y ahora es del
       trader (A-31 RESUELTA, fb-2026-09-29-sesion-03-d36ba0d2). El titulo dice «el dia», pero el
-      contador no es diario.
+      contador no es diario. DESDE EL 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066)
+      ESTA REGLA PUEDE DISPARAR: el acumulador `cartuchos` cuenta los intentos del ESCENARIO
+      vigente de la sesion -la liquidez tomada y sus zonas- en vez de ser un hueco, y
+      detenido_por_cartuchos lo apaga `abrir_escenario` con la siguiente liquidez de M15, que es
+      cartuchos_reinicio. Si una toma nueva con el escenario vivo empieza con los intentos enteros
+      lo decide intentos_tras_toma_nueva (A-25), PROVISIONAL.
     forma:
       cuando:
         cualquiera_de:
@@ -1476,6 +1580,39 @@ reglas:
           - se_cierra_operacion: {resultado: ganancia, por: cualquier_activacion}
       entonces:
         permite: [buscar_entradas]
+    clase: disparador
+    estado: VIGENTE
+
+  - id: RN-034
+    titulo: tras una ganadora, el escenario termina y se espera otra liquidez de M15
+    cuando: la operacion cierra en positivo
+    entonces: >-
+      el escenario de esa operacion -la liquidez tomada que la dio- no da mas entradas; la
+      siguiente sale de otra liquidez de M15 que se tome despues
+    parametros: []
+    cita: ev-v6-003227-c4efcf49
+    literal: >-
+      pues trazamos nuevamente liquidez, o sea, ya aquí está el trade ganador, aquí no buscamos
+      nada, [...] pues tenemos que esperar nuevamente a que se desarrolle la liquidez
+    decision: ADR-0066
+    notas: >-
+      NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066) y sustituye la DECISION 2
+      de ADR-0064 -una sola vida de orden por sesion que llega a llenarse-, que se escribio porque
+      los cartuchos no existian. No contradice RN-017: el dia sigue (un ganador no lo apaga), pero
+      en otra liquidez. Tras una perdida, un break even o un equal el escenario SIGUE con los
+      intentos que le queden (ev-v3-002405-a202dbf6: «nuevamente tiene todavía un gatillo [...] un
+      cartucho»; el break even y la invalidada no gastan, ev-v9-013117-c683f9b5): que siga tras un
+      break even es LECTURA NUESTRA del contador por intentos, y queda para despues de la sesion 4.
+      Complementa a RN-017 con el mismo disparador: una sigue el dia, la otra cierra el escenario,
+      y las dos valen en cualquier orden
+    complementa: [RN-017]
+    forma:
+      cuando:
+        todos_de:
+          - se_cierra_operacion: {resultado: ganancia, por: cualquier_activacion}
+      entonces:
+        hace:
+          - terminar_escenario: {}
     clase: disparador
     estado: VIGENTE
 

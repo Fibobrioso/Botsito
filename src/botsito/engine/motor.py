@@ -205,7 +205,8 @@ class MotorSpec:
         instante: int = primero
         while instante <= ultimo:
             sesion, abre = self._sesion(limites, instante)
-            momento = Momento(MinutoUtc(instante), sesion, abre, dia.datos)
+            desde = next((d for n, d, _ in limites if n == sesion), None)
+            momento = Momento(MinutoUtc(instante), sesion, abre, dia.datos, desde, primero)
             evento = self.interprete.evento(self.reglas, momento, estado)
             if sesion is not None:
                 traza = trazas[sesion]

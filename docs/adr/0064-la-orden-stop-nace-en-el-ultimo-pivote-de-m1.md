@@ -85,6 +85,11 @@ conservadora):
    sesión es un escenario propio). Sigue viva hasta la ventana, el llenado o su propia reubicación.
    La siguiente sesión no coloca otra mientras esa esté pendiente, porque RN-011 lo exige. A-39 y
    A-30 siguen abiertas.
+   > **Enmendadas por ADR-0066 (2026-10-01, `feature/escenarios-por-sesion`).** La decision 2 la
+   > sustituyen el escenario de la sesion y RN-034: una ganadora termina el escenario, y tras una
+   > perdida o un break even la misma liquidez sigue dando intentos (los cartuchos ya existen). La
+   > decision 3 pasa a ser la opcion `sigue_hasta_ventana_fin` de RN-035, que no es la de por
+   > defecto: la PROVISIONAL es `se_retira` (pregunta 5 de la sesion 4).
 4. **RN-005 (el lado de ruido) se aplica a la zona del punto**, y RN-009 (más zonas de control que
    el tope) sigue en pie. Los dos pueden prohibir, y prohibir es lo conservador.
 5. **La caja se fija la primera vez que se ve el punto.** Si un gate retrasa la colocación, la caja

@@ -4,8 +4,8 @@ acumuladores de la firma, mas las acciones que hablan con el broker.
 Se anaden a `primitivas_escritas` (ADR-0048) sin tocarlas. Todas leen un `ContextoDia` que el
 bucle de `engine/cableado.py` rellena en cada minuto: el broker, la cuenta viva, los eventos del
 broker desde el evento anterior, las zonas ligadas y la orden en preparacion. Lo que la spec no da
-sigue NO_IMPLEMENTADA con su nombre (ADR-0053 §3.3): `perdida_dia`, `perdida_semana`, `cartuchos`,
-y toda la geometria.
+sigue NO_IMPLEMENTADA con su nombre (ADR-0053 §3.3): `perdida_dia` y `perdida_semana` sin el tope
+del trader. Los `cartuchos` los cuenta el escenario de la sesion desde ADR-0066.
 
 Ninguna cifra vive aqui (ADR-0002): los argumentos de valor son nombres del registro (ADR-0019 §1)
 y se leen al evaluar; los tokens que se interpretan son los declarados en la spec.
@@ -47,11 +47,15 @@ from botsito.engine.tope_trader import (
     TopeTrader,
 )
 from botsito.engine.zonas import (
+    TERMINADO_POR_GANANCIA,
     Zona,
+    escenario_actual,
+    escenario_de_zona,
     marcar_rechazada,
     marcar_usada,
     orden_nace_en_el_punto,
     punto_rechazado,
+    terminar,
     zona_del_punto,
     zonas_del_dia,
     zonas_usadas,
@@ -73,9 +77,15 @@ PREFIJO_ZONA = "zona:"
 REDONDEO_DEL_STOP = {"hacia_la_entrada": ROUND_DOWN, "alejandose_de_la_entrada": ROUND_UP}
 # Los acumuladores de la firma que la cuenta viva alimenta (ADR-0053 §3); los demas, hueco.
 ACUMULADORES_DE_LA_FIRMA = ("perdida_dia_firma", "perdida_total_firma")
-HUECOS = {
-    "acumulador:cartuchos": "depende de cartucho_criterio y de un cierre con esquema (geometria)",
-}
+# Los huecos con nombre. Hasta ADR-0066 lo era `cartuchos`; ahora lo cuenta el escenario.
+HUECOS: dict[str, str] = {}
+ACUMULADOR_CARTUCHOS = "cartuchos"
+PARAMETRO_CARTUCHO_CRITERIO = "cartucho_criterio"  # lo nombra el acumulador en la spec (`base`)
+SOLO_PERDIDA = "solo_perdida"
+TODO_INTENTO = "todo_intento"
+# Las opciones de `orden_pendiente_al_abrir_sesion` (RN-035, A-30)
+SE_RETIRA = "se_retira"
+SIGUE_HASTA_VENTANA_FIN = "sigue_hasta_ventana_fin"
 # Los dos acumuladores del trader (RN-020) los alimenta el tope del trader (A-44,
 # engine/tope_trader.py) cuando esta fijado o en diagnostico; sin el, siguen siendo hueco.
 ACUMULADORES_DEL_TRADER = (ACUMULADOR_DIA, ACUMULADOR_SEMANA)
@@ -114,6 +124,9 @@ class ContextoDia:
     zonas: dict[str, Zona] = field(default_factory=dict)
     orden: OrdenEnPreparacion | None = None
     eventos: list[EventoBroker] = field(default_factory=list)  # desde el evento anterior
+    # todos los cierres del dia: (orden_id, resultado, por). Los intentos de un escenario
+    # (acumulador `cartuchos`, ADR-0066) son los de las ordenes de sus zonas
+    cierres: list[tuple[str, str | None, str | None]] = field(default_factory=list)
     acumuladores: dict[str, Decimal] = field(default_factory=dict)
     por_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> esquema
     zona_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> zona_id
@@ -212,18 +225,6 @@ def primitivas_cableadas(
         ):
             return None
         return z
-
-    def toca_colocar_orden_limite(
-        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
-    ) -> Resultado | NoImplementada:
-        # DECISION de ADR-0064 (la lectura mas conservadora): con la vida de la orden stop, una
-        # sesion en la que ya se lleno una orden no coloca otra, como la zona de un solo uso
-        if orden_nace_en_el_punto(registro):
-            usadas = zonas_usadas(estado, momento.sesion)
-            ordenes = {o for o, z in ctx.zona_de_orden.items() if z in usadas}
-            if any(p.orden_id in ordenes for p in ctx.broker.posiciones.values()):
-                return Resultado(Tri.NO)
-        return base.predicados["toca_colocar_orden_limite"](args, momento, estado)
 
     def se_completa_zona_de_control(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -338,6 +339,35 @@ def primitivas_cableadas(
             return _tri(valor >= umbral)
 
         return leer
+
+    def _cuenta_como_intento(resultado: str | None, por: str | None) -> bool:
+        """Lo mismo que nombran las dos ramas de RN-016: un cierre en que salto el stop, se
+        activara como se activara, o una perdida de una operacion que vino de un esquema
+        (`cartucho_criterio` = `solo_perdida`); con `todo_intento`, cualquier cierre."""
+        criterio = registro.opcion(PARAMETRO_CARTUCHO_CRITERIO)
+        if criterio == TODO_INTENTO:
+            return True
+        if criterio != SOLO_PERDIDA:
+            raise CableadoError(f"{PARAMETRO_CARTUCHO_CRITERIO} = {criterio!r}: sin contrato")
+        return resultado == SALTO_EL_STOP or (resultado == PERDIDA and por in ESQUEMAS)
+
+    def cartuchos(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        """Los intentos gastados del escenario vigente de la sesion (ADR-0066): los cierres de
+        las ordenes de sus zonas que cuentan como intento, contra `tope`. Las tomas nuevas abren
+        escenarios nuevos, asi que el contador se reinicia con la siguiente liquidez de M15
+        (`cartuchos_reinicio`) sin que nadie lo ponga a cero."""
+        escenario = escenario_actual(estado, momento.sesion)
+        if escenario is None:
+            return Resultado(Tri.NO)
+        gastados = sum(
+            1
+            for orden_id, resultado, por in ctx.cierres
+            if ctx.zona_de_orden.get(orden_id) in escenario["zonas"]
+            and _cuenta_como_intento(resultado, por)
+        )
+        return _tri(gastados >= registro.entero(str(args["tope"])))
 
     def hueco(id: str) -> Any:
         def falta(
@@ -509,12 +539,36 @@ def primitivas_cableadas(
     def retirar_orden_limite(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
-        pendientes = [
-            o for o in ctx.broker.ordenes.values() if o.estado in ("colocada", "modificada")
-        ]
+        # RN-035 (ADR-0066): `segun` dice si la orden se retira o sigue hasta ventana_fin (A-30)
+        segun = registro.opcion(str(args["segun"]))
+        if segun == SIGUE_HASTA_VENTANA_FIN:
+            return []
+        if segun != SE_RETIRA:
+            raise CableadoError(f"retirar_orden_limite: {args['segun']} = {segun!r} sin contrato")
+        pendientes = _pendientes()
         if len(pendientes) != 1:
             raise CableadoError(f"retirar_orden_limite: {len(pendientes)} ordenes pendientes")
         ctx.broker.cancelar(pendientes[0].id, ctx.instante_ms)
+        # los hechos del broker se refrescan para que el resto del evento ya no la vea pendiente
+        estado.broker = ctx.broker.hechos()
+        return []
+
+    def terminar_escenario(
+        args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
+    ) -> list[tuple[str, str]]:
+        """RN-034 (ADR-0066): la ganadora termina el escenario de la orden que la abrio -que no
+        tiene por que ser el vigente: con una posicion viva puede haberse abierto otro-; si la
+        orden no tiene zona del productor (una zona sintetica), el vigente."""
+        for e in ctx.eventos:
+            if e.tipo not in (STOP, OBJETIVO, MANUAL) or e.resultado != GANANCIA:
+                continue
+            p = ctx.broker.posiciones.get(e.id)
+            zona_id = None if p is None else ctx.zona_de_orden.get(p.orden_id)
+            escenario = (
+                None if zona_id is None else escenario_de_zona(estado, momento.sesion, zona_id)
+            ) or escenario_actual(estado, momento.sesion)
+            if escenario is not None:
+                terminar(estado, momento.sesion, escenario, TERMINADO_POR_GANANCIA)
         return []
 
     def reubicar_orden_limite(
@@ -565,8 +619,11 @@ def primitivas_cableadas(
             "no_es_multiplo_de": no_es_multiplo_de,
         }
     )
-    if "toca_colocar_orden_limite" in base.predicados:  # solo con la geometria de A-21
-        predicados["toca_colocar_orden_limite"] = toca_colocar_orden_limite
+    # `toca_colocar_orden_limite` es el del productor tal cual. Hasta ADR-0066 aqui lo envolvia la
+    # DECISION 2 de ADR-0064: una sesion en la que ya se lleno una orden no colocaba otra, porque
+    # los cartuchos no existian. Ahora lo dice el escenario -una ganadora lo termina (RN-034) y los
+    # intentos agotados tambien (RN-016)-, y lo mira el productor: tras una perdida o un break even
+    # la misma liquidez sigue dando intentos.
     acciones = dict(base.acciones)
     acciones.update(
         {
@@ -577,6 +634,7 @@ def primitivas_cableadas(
             "colocar_orden_limite": colocar_orden_limite,
             "cerrar_a_mercado": cerrar_a_mercado,
             "retirar_orden_limite": retirar_orden_limite,
+            "terminar_escenario": terminar_escenario,
             "reubicar_orden_limite": reubicar_orden_limite,
             "mover_stop": mover_stop,
         }
@@ -586,6 +644,7 @@ def primitivas_cableadas(
         acumuladores[nombre] = acumulador_de_la_firma(nombre)
     for nombre in ACUMULADORES_DEL_TRADER:
         acumuladores[nombre] = acumulador_del_trader(nombre)
+    acumuladores[ACUMULADOR_CARTUCHOS] = cartuchos
     for id in HUECOS:
         acumuladores[id.split(":", 1)[1]] = hueco(id)
     return Primitivas(predicados=predicados, acciones=acciones, acumuladores=acumuladores)

@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.2.1` · hash `16ff731ac0ef…`
+`spec_version 15.3.0` · hash `e91b43449442…`
 
-90 en total: 73 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+93 en total: 76 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -51,6 +51,7 @@
 | `instrumento_lote_minimo` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
 | `instrumento_lote_paso` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
 | `instrumento_stops_level` | `0` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | puntos de distancia minima a mercado |
+| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | DEFAULT_AMBIGUOUS · en revision por A-25 | estrategia | `ev-v9-013054-d49a544e` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
@@ -60,6 +61,7 @@
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | DEFAULT_AMBIGUOUS · en revision por A-29 | estrategia | `ev-v7-001457-1fe7fdfe` | cuando se coloca por primera vez la orden limite de una zona |
+| `orden_pendiente_al_abrir_sesion` | `se_retira` | DEFAULT_AMBIGUOUS · en revision por A-30 | estrategia | `fb-2026-09-29-sesion-03-5021677e` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
@@ -77,6 +79,7 @@
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
+| `toma_antes_de_la_ventana` | `no_cuenta` | DEFAULT_AMBIGUOUS · en revision por A-43 | estrategia | `ev-v9-004533-d075b080` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
 | `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
@@ -362,6 +365,12 @@ escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Me
 
 distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27). Y aqui el aviso pesa mas que en los otros cuatro: el stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
 
+### `intentos_tras_toma_nueva`
+
+cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue sobre la toma nueva con los intentos que le quedaban. PROVISIONAL hasta la pregunta 18 de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba, ¿empiezas de nuevo con tres?», A-25). El valor es el de «serían tres intentos por liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva abre otro siempre
+
+Opciones: `vuelven_a_cartuchos_max`, `siguen_los_que_quedan`.
+
 ### `latencia_ms`
 
 latencia que asume `cruce_mas_latencia`; con `al_tocar` no se usa
@@ -417,6 +426,12 @@ cuantas operaciones puede tener abiertas el bot a la vez. Vivia en la prosa de R
 en que momento nace la orden limite (A-29). `al_darse_el_esquema`: cuando se da uno de los dos esquemas de entrada, y la orden se marca en su bloque de origen ("apenas el breaker, o sea, marco mi orden limit", ev-v3-004201). `al_tomarse_la_liquidez`: en cuanto la liquidez de M15 esta tomada, en la primera zona de control que se completa, y desde ahi RN-006 la va moviendo (ev-v1-001358, ev-v3-002511, y la sesion 1 en v6 1:22:14, donde la orden ya esta en la zona de "posible breaker" y se activa sin validar). El corpus sostiene las dos. DEFAULT NUESTRO en la primera, porque es la unica frase que nombra el momento y porque con la segunda RN-008 -que prohibe abrir sin esquema- frenaria la propia colocacion y habria que reescribirla. TERCERA LECTURA, `al_aparecer_punto_de_breaker` (2026-09-28, rama trabajo/preparar-a47, docs/validation/DISENO-ENTRADA-RUPTURA.md §2.7): la orden nace ANTES de la ruptura, en el punto que puede ser breaker, como orden STOP que se activa si el precio lo rompe, y se mueve cuando ese punto se actualiza (v7 0:14:57 y 0:22:01, ev-v7-001457-1fe7fdfe y ev-v7-002201-2b2f20aa); solo tiene sentido con `stop_en_ruptura` (A-47), y hoy deja al motor NO_IMPLEMENTADA con nombre, como la segunda. El valor no cambia. DESDE EL 2026-09-30 (rama feature/F35-orden-stop-pivote, ADR-0064, aceptado en su direccion por el consultor) EL VALOR ES `al_aparecer_punto_de_breaker` y el motor la hace: la vida de la orden stop de ADR-0056 §7 -nace tras la toma en el punto que dice orden_stop_punto, con la caja que dice caja_bloque, y se reubica con cada punto nuevo (RN-006)-. Sigue DEFAULT_AMBIGUOUS: A-29 no se resuelve, y la cita pasa a la de la orden stop puesta en el punto antes de la ruptura (v7 0:14:57). Con `al_darse_el_esquema` todo sale como antes
 
 Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`, `al_aparecer_punto_de_breaker`.
+
+### `orden_pendiente_al_abrir_sesion`
+
+la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor sale de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA)
+
+Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
 
 ### `orden_stop_punto`
 
@@ -563,6 +578,12 @@ parte de la vela a partir de la cual se baja el stop (40 o 50; A-12)
 ### `stop_segundo_esquema`
 
 UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no hay un stop del segundo esquema distinto del primero. El trader dijo que es el MISMO en los dos, asi que un parametro aparte con el mismo valor son dos puertas para el mismo numero -lo que RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo-. Hay un unico esquema de stop y vive en stop_fraccion_caja. Leerlo falla, que es lo que debe pasar
+
+### `toma_antes_de_la_ventana`
+
+si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`; ADR-0066). PROVISIONAL hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43). El valor es `no_cuenta` por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el 2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia pasado, daba la toma. Una toma en una sesion ANTERIOR del dia no la decide este parametro: no cuenta nunca (A-46 RESUELTA)
+
+Opciones: `no_cuenta`, `cuenta`.
 
 ### `ventana_fin`
 
