@@ -27,7 +27,7 @@ EN CURSO: `feature/escenarios-por-sesion` (2026-10-01; encargo docs/encargos/fea
 
 ## Next Action
 
-**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`; el I, 2026-10-01, al cerrar `trabajo/guardias-claude`), en este orden:
+**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
@@ -41,7 +41,9 @@ J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar a
 
 K. **Freno duro de peticiones al servidor: hoy el código solo cuenta las peticiones y nada impide pasar de las 2.000 al día de FTMO (medido en feature/escenarios-por-sesion). Rama propia antes de operar en una cuenta real** (orden del consultor del 2026-10-02; docs/validation/ESCENARIOS-POR-SESION.md §6.4).
 
-B, C, D y G de esa lista, HECHAS, estan tal cual en docs/state/HISTORIA.md (Archivo 1, «Next Action»); de ellas sigue pendiente lo que D dice -«El item nuevo ev-v7-001550-82e5cffc espera la revision del consultor»- y lo que G dice: «pendiente para la demo de FTMO, el break even de una venta que salta por el ASK (ADR-0065 §6)».
+L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
+
+M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
 ### Pendientes heredados (sin verificar)
 
@@ -49,7 +51,6 @@ Los puntos del Next Action viejo (Archivo 1 de docs/state/HISTORIA.md, donde est
 
 - A2. **Aleks ejecuta MedirDemoFTMO en la demo de FTMO** (docs/runbooks/DEMO-FTMO.md), tres ejecuciones: antes…
 - A3. **Ramas de codigo, en este orden** (orden del consultor del 2026-09-29):
-- b) **sesiones independientes y varios escenarios por sesion**: `liquidez_tomada` caduca al abrir la sesion…
 - d) **vida de la orden stop** (RN-006, rama 3 de ADR-0056) y RN-007 (la vela casi plana; falta el umbral);
 - e) **calendario de cierres de mercado** para la regla de gap trading de FTMO (Technical Debt, 2026-09-29).
 - A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El…

@@ -1599,3 +1599,44 @@ cerro en `stable/F36l-cuarentena-por-defecto` y `stable/F36m-ajustes-cierre`, an
 y sale ahora por orden del consultor. Su texto literal en PROJECT_STATE.md:
 
 I. **HECHA, `stable/F36l-cuarentena-por-defecto` (2026-10-01)**, y el comentario de `knowledge/corpus/tramos_no_citables.yaml` que quedaba, en `stable/F36m-ajustes-cierre`. Era: **Rama nueva: la cuarentena y los tramos no citables en la CLI** (orden del consultor del 2026-10-01, al cerrar `trabajo/guardias-claude`; docs/validation/GUARDIAS-CLAUDE.md §0 fila 36 y §7): «kb find, kb at, transcript show y corpus frames show respetan por defecto la cuarentena y tramos_no_citables; la salida cruda exige una opcion explicita que el hook bloquea». Hoy esos cuatro comandos imprimen el segmento crudo de v7, v8 y v9 y los tramos de v6, y solo los para el hook de Claude Code (`.claude/hooks/guardia.py`). En esa rama, tambien el comentario de `knowledge/corpus/tramos_no_citables.yaml` que dice que un tramo «se puede leer y buscar con `kb find`». Mayo queda como esta.
+
+# Next Action HECHA · A3 b) · sale de PROJECT_STATE.md en feature/escenarios-por-sesion (2026-10-02)
+
+La hace esta rama (orden de cierre del consultor; regla de `docs/runbooks/RITUAL.md`, punto 3).
+Su texto literal en «Pendientes heredados (sin verificar)» de PROJECT_STATE.md:
+
+- b) **sesiones independientes y varios escenarios por sesion**: `liquidez_tomada` caduca al abrir la sesion…
+
+# Next Action HECHA · B, C, D y G · sale de PROJECT_STATE.md en feature/escenarios-por-sesion (2026-10-02)
+
+El resumen de lo hecho sale por orden de cierre del consultor; sus dos pendientes quedan en Next
+Action como L (la revision de `ev-v7-001550-82e5cffc`) y M (el break even por el ASK, ADR-0065 §6).
+Su texto literal en PROJECT_STATE.md:
+
+B, C, D y G de esa lista, HECHAS, estan tal cual en docs/state/HISTORIA.md (Archivo 1, «Next Action»); de ellas sigue pendiente lo que D dice -«El item nuevo ev-v7-001550-82e5cffc espera la revision del consultor»- y lo que G dice: «pendiente para la demo de FTMO, el break even de una venta que salta por el ASK (ADR-0065 §6)».
+
+# Registro de cierre · `feature/escenarios-por-sesion` (2026-10-02)
+
+- Orden de cierre de Aleks, tras revisar `32f1175` (`make check` sellado, 1813 pasados). Primer
+  cierre con el punto 3 de `RITUAL.md` («Antes del merge: el contrato sale de la rama»): en este
+  commit salen de PROJECT_STATE.md A3 b) y el resumen de B, C, D y G (arriba), y la primera linea
+  de Next Action deja de nombrar la I.
+- Tag: `stable/F36n-escenarios-por-sesion`. El merge es
+  `git rev-parse "stable/F36n-escenarios-por-sesion^{commit}"`: su sha no existe hasta el merge, y
+  el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `fad197e`: apertura: encargo, contrato y Archivo 4 de PROJECT_STATE;
+  - `ae6c7b3`: Fase 0: lo que hay hoy, medido, y el diseno antes de implementar;
+  - `066246b`: Fase 1: la toma tiene que ser de la sesion y cada liquidez nueva abre un escenario con sus intentos (ADR-0066);
+  - `7ab42d6`: Fase 2: tests y tres dias dev de agosto antes y ahora, sin cobertura, con el revisor;
+  - `a43641b`: ordenes 2 y 3: max_escenarios_por_sesion y orden_pendiente_al_abrir_escenario PROVISIONAL, la cadena v4 -> sesion 1;
+  - `86a49e6`: su revisor, y el caso peor de cinco escenarios medido con un test;
+  - `8626711`: orden 4: todo parametro PROVISIONAL cuelga de una ambiguedad ABIERTA; A-52 y A-53;
+  - `4818e1c`: su revisor;
+  - `76be592`: orden 5: lo HECHO del Next Action sale de PROJECT_STATE en la rama que lo cierra; la I a HISTORIA; sesgo_h4_tope_velas;
+  - `32f1175`: su revisor;
+  - y el de este registro, que saca tambien el contrato.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca hooks ni la plataforma, lo
+  dice la orden de cierre. La primera CI es la de `main` tras el cierre.
+- Informe: `docs/validation/ESCENARIOS-POR-SESION.md`. Encargo, con las cinco ordenes:
+  `docs/encargos/feature-escenarios-por-sesion.md`.
