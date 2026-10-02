@@ -164,6 +164,59 @@ cerrar. Sale de las dos.
 - las dos filas de la tabla, que salen;
 - el recuento de tests, que pasa a 1166.
 
+## 7. Informe del revisor
+
+Subagente `revisor`, sobre `e7851f7` y `541a4f5`. Los hallazgos, tal cual; lo comprobado sin
+hallazgos, resumido.
+
+> ## Informe del revisor · trabajo/cerrar-a29-a36 · 2026-10-02
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | menor | `PROJECT_STATE.md` línea 108 (candidatas C5 y C6) sigue diciendo «toca RN-004, RN-008 y A-29» y «toca A-36». Son notas históricas de candidatas y no contradicen nada, pero nombran como pendientes dos ambigüedades que ya están cerradas. | `grep -n "A-36" PROJECT_STATE.md` → línea 108 |
+> | a2 | menor | El informe de la rama acaba en «EN CURSO: falta el revisor». Es lo esperado antes de pegar este informe, pero el consultor lo verá así. Tampoco hay `make-check.log` en el árbol, así que no pude ver las líneas `SELLO` ni `PICO DE MEMORIA`. El informe cuenta que el primer `make check` salió rojo con 3 fallos y que se arreglaron, pero no cita el sello final. | `ls make-check.log` → no existe; `docs/validation/CERRAR-A29-A36.md` §2 y «Estado» |
+>
+> Comprobado sin hallazgos: el contrato (28 ficheros; la ampliación a `scripts/hoja_preguntas.py` con su motivo); `state check`, `spec check` y `knowledge validate` (53 ambigüedades, 147 registros de feedback con historial intacto y commits con Fuente, 437 ítems); los ocho ficheros de test tocados, que pasan; el trailer `Fuente:` (los tres `fb-*`, los dos `ev-*` y ADR-0022 existen); los regímenes (feedback solo añade, HISTORIA solo se amplía, nada en evidence, cases, corpus ni manifests, ni holdout); los tres registros RESOLVE_UNKNOWN (dos sobre ambigüedad y uno sobre parámetro, como A-47), sin cambiar un valor fijado; A-29 y A-36 en RESUELTA con su esquema, sus docs generados (ABIERTA 23→21, RESUELTA 24→26), sus filas fuera de la tabla y `test_kit.py`; ningún ADR ni informe cerrado tocado; ningún sitio nuevo con `cita`; ninguna cifra en la forma ejecutable; `spec_version` 15.6.0 con su hash (subir la menor por un cierre es discutible, pero coherente con los anteriores); `PROJECT_STATE.md` 22.638 bytes; 1166 funciones de test; `feedback apply` solo cambió `orden_limite_nace`, con el mismo valor; los literales de los registros son los `cita_literal` de los ítems, con sus tramos; los cuatro tests solo cambian la cadena que buscan; la hoja de preguntas y su test; las dos filas de ERRORES-RECURRENTES y el comentario de `SECCIONES_EXENTAS`, con `Change Log`; el docstring de `engine/zonas.py`.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 8 hechos, 1 parcial, 0 no hechos (el parcial: la regla de la spec que cita A-36, que no existe, declarado; y el pegado del revisor, que es esta entrega).
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **La lectura de A-36 es un puente de inferencia.** La pregunta de A-36 es «¿en qué punto de la mecha la colocas?» (orden límite). La respuesta del trader habla del 0 de la caja («el cero de la caja va siempre en el extremo del bloque, mecha incluida, o ese es un poco dentro? Mecha incluida, siempre»). Cerrarla como RESUELTA depende de la premisa de que, con la orden stop de ADR-0064, la orden nace en el 0 de la caja. El informe lo declara con franqueza («con una orden límite la respuesta no diría por sí sola dónde va la orden»), así que el declarado es correcto. Aun así, lo que cierra A-36 es una lectura del equipo apoyada en un ADR, no la cita sola, y A-36 deja de aparecer en la hoja de la sesión 4. El `valor_resultante` del registro («en el extremo del bloque, mecha incluida») es fiel a la cita. Hay una discrepancia menor: la afirmación del ítem de evidencia dice «a la pregunta del consultor», y su `notas` apuntan a A-21 y no a A-36. | `docs/validation/CERRAR-A29-A36.md` «Cómo se lee A-36, y qué afirma de más»; `knowledge/evidence/…/ev-v9-011714-08536830.yaml` (`notas: A-21`, `tema: herramientas.caja.cero_mecha_incluida`); `knowledge/spec/ambiguedades.yaml` (pregunta de A-36) |
+> | b2 | menor | **El test antes/después mide lo que dice, con un límite.** Corre `_cadena` con el bloque antiguo y el nuevo de `orden_limite_nace` (mismo valor, distinto estado y fuente) y compara peticiones (tipo, id, instante, aceptada), órdenes (precio, estado, colocada, último cambio) y eventos. Falla si la cadena no coloca nada o si el estado cambia el comportamiento. Si el valor cambiara en `parametros.yaml`, falla antes por `texto.count(A29_DESPUES) == 1`, no por la comparación. Es una prueba de que el motor lee el valor y no el estado; no prueba por sí sola que `al_aparecer_punto_de_breaker` nazca en el instante «correcto» (eso lo prueba el test anterior, que sí falla con `al_darse_el_esquema`, como el informe dice). | `tests/unit/test_orden_stop_pivote.py:374-425` y `:340-350` |
+>
+> ### Lo que no pude comprobar
+> La salida de `make check` (escribe; no hay `make-check.log`); la localización de las citas en la cruda de v9 (cuarentena), que no reprodujo; que la pregunta de v9 0:01:30 ofrecía las tres lecturas de A-29, y que A-36 no tenga otra lectura; que no haya tramos protegidos en los dos segmentos (no leyó `tramos_no_citables.yaml`).
+
+**Respuesta de la sesión, hallazgo a hallazgo:**
+- **a1, declarado, sin tocar `PROJECT_STATE.md`: y es más que una nota histórica.** La línea es una
+  deuda técnica con siete candidatas a ambigüedad SIN ABRIR, y lo que dice sigue siendo verdad.
+  C5 y C6 «tocan» A-29 y A-36, y ahora tocan dos RESUELTAS. **C6 es la orden puesta 2 puntos más
+  allá del 0 en v7 n.º 3**: algo visto en pantalla que habla justo de dónde va la orden frente al 0.
+  No contradice por sí solo «Mecha incluida, siempre» (el 0 en el extremo con la mecha), pero es lo
+  primero que la lectura de A-36 tiene que mirar (b1). **Para el consultor.**
+- **a2, arreglado**: el estado de abajo, y el sello del commit `541a4f5`: `make check` en verde
+  (1814 pasados) sobre el árbol `167cda21…`, con `PICO DE MEMORIA` 286 MiB. El primer `make check`
+  salió en rojo (3 fallos, §2), y el commit es el del segundo.
+- **b1, declarado; lo decide el consultor.** El cierre de A-36 se apoya en la cita y en ADR-0064, y
+  el informe lo dice (§2). Pesan además dos cosas: la candidata C6 (a1) y las `notas` del ítem, que
+  apuntan a A-21. Si el consultor prefiere preguntarlo en la sesión 4, A-36 vuelve a ABIERTA con un
+  registro que la reabra; en `knowledge/feedback/` solo se añade.
+- **b2, de acuerdo, y declarado**: el test mide que el motor lee el valor y no el estado. Que
+  `al_aparecer_punto_de_breaker` coloque en su instante lo mide el test de al lado
+  (`test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado`), que con
+  `al_darse_el_esquema` no coloca nada.
+- **Lo que no pudo comprobar**: los tramos no citables, en §1; la cruda de v9 no la lee nadie, y la
+  verificación de citas la hizo la sesión por la vía autorizada (§1).
+
 ## Estado
 
-EN CURSO: falta el revisor.
+**Rama lista para revisión, NO cerrada.** Tarea autónoma: no se cierra. A-29 y A-36 RESUELTAS
+con la respuesta grabada de la sesión 3, verificada por la vía autorizada. El comportamiento del
+motor no cambia, y está medido (§3). `PROJECT_STATE.md` pesa 22.638 bytes. Para el consultor:
+la lectura de A-36 frente a la candidata C6 (§7, a1 y b1), y si «cerrar» suma en
+`AMBIGUEDADES.md` el quinto sitio, la hoja de preguntas (§2).
