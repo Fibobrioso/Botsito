@@ -2309,3 +2309,32 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 6 (2026-10-02).
+
+# Next Action HECHA · A3 e) · sale de PROJECT_STATE.md en feature/cierres-de-mercado (2026-10-02)
+
+La hace esta rama (orden de cierre del consultor, punto 2; `docs/runbooks/RITUAL.md`, punto 3). Su
+texto literal en «Pendientes heredados» de PROJECT_STATE.md, bajo «A3. **Ramas de codigo, en este
+orden** (orden del consultor del 2026-09-29):»:
+
+- e) **calendario de cierres de mercado** para la regla de gap trading de FTMO (Technical Debt, 2026-09-29).
+
+# Registro de cierre · `feature/cierres-de-mercado` (2026-10-02)
+
+- Orden de cierre de Aleks, tras revisar `582e4c8` (`make check` sellado, 1860 pasados; sin CI de
+  Linux por `fix/` porque no toca la plataforma). El bot no abre ni coloca en la ventana que R15 de
+  FTMO prohibe antes de un cierre de mercado largo: predicado unico en el puerto del broker
+  (ADR-0068), calendario versionado en `knowledge/cuentas/cierres/`, `cierre_pendientes`
+  PROVISIONAL bajo A-55 y el huso del calendario PROVISIONAL bajo A-28.
+- Tag: `stable/F36q-cierres-de-mercado`. El merge es
+  `git rev-parse "stable/F36q-cierres-de-mercado^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `369d9f8`: apertura: encargo, contrato y Archivo 7;
+  - `94b28ad`: Fase 0: la regla, los cierres de EURUSD en FTMO (API de simbolos y 43 Trading Updates) y el diseno, antes del codigo; el contrato se amplia a `knowledge/cuentas/`;
+  - `227bc5e`: el predicado en el puerto del broker (ADR-0068), el calendario, los parametros de R15, A-55 y los tests, rotos a proposito;
+  - `582e4c8`: tras el revisor: el huso del calendario PROVISIONAL bajo A-28 (a1), la cancelacion por cierre sin evento del servidor (a3), tests por el cableado (b1), la modificacion bajo A-55 (b2); el revisor pegado;
+  - `4df3c5a`: orden de cierre: la renovacion del calendario en Next Action (N) y b2 decidido sin parametro propio;
+  - y el de este registro, que saca tambien el contrato y la A3 e) de PROJECT_STATE.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca la plataforma, lo dice la
+  orden de cierre. La primera CI es la de `main` tras el cierre.
+- Informe: `docs/validation/CIERRES-DE-MERCADO.md`. Encargo: `docs/encargos/feature-cierres-de-mercado.md`.
