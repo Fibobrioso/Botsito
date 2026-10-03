@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-feature/freno-peticiones
+main
 
 ## Current Feature
-EN CURSO: `feature/freno-peticiones` (informe docs/validation/FRENO-PETICIONES.md): la K de Next Action.
+NINGUNA ABIERTA tras `stable/F36p-freno-peticiones` (2026-10-02).
 
 ## Stable Main State
-34680ba · merge de `trabajo/cerrar-a29-a36` (tag `stable/F36o-cerrar-a29-a36`): A-29 RESUELTA con la respuesta grabada de la sesion 3 (`orden_limite_nace` CONFIRMED, el mismo valor; el motor no cambia, medido); A-36 se cerro y el consultor la reabrio: va a la sesion 4 como pregunta 22. Cerrar una ambiguedad toca cinco sitios (docs/runbooks/AMBIGUEDADES.md, con la hoja de preguntas). Sobre `stable/F36n-escenarios-por-sesion` (8346b9b), las sesiones independientes (ADR-0066). Informe docs/validation/CERRAR-A29-A36.md; el registro del cierre, al final de HISTORIA.
+b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticiones`): el freno de peticiones al servidor vive en el puerto del broker (ADR-0067, engine/freno.py): aviso en 1000, corte en 1500 y bucle de 5 iguales en 1 minuto, PROVISIONAL bajo A-54; lo que protege la cuenta (cancelar, cerrar, el primer stop a break even) sale siempre y cuenta. Sobre `stable/F36o-cerrar-a29-a36` (34680ba). Informe docs/validation/FRENO-PETICIONES.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-34680ba · merge: A-29 RESUELTA y A-36 reabierta como pregunta 22; cerrar una ambiguedad toca cinco sitios · tag stable/F36o-cerrar-a29-a36
+b64e675 · merge: el freno de peticiones al servidor en el puerto del broker (ADR-0067), A-54 · tag stable/F36p-freno-peticiones
 
 ## Tests Currently Passing
 1183 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
