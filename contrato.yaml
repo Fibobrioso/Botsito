@@ -9,6 +9,7 @@ rutas_permitidas:
   - src/botsito/engine/
   - src/botsito/domain/
   - knowledge/spec/
+  - knowledge/cuentas/
   - docs/spec/
   - docs/adr/
   - tests/unit/
