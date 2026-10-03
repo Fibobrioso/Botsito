@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-feature/cierres-de-mercado
+main
 
 ## Current Feature
-feature/cierres-de-mercado · ORDEN DE CIERRE 2026-10-02 · docs/validation/CIERRES-DE-MERCADO.md
+NINGUNA ABIERTA tras `stable/F36q-cierres-de-mercado` (2026-10-02).
 
 ## Stable Main State
-b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticiones`): el freno de peticiones al servidor vive en el puerto del broker (ADR-0067, engine/freno.py): aviso en 1000, corte en 1500 y bucle de 5 iguales en 1 minuto, PROVISIONAL bajo A-54; lo que protege la cuenta (cancelar, cerrar, el primer stop a break even) sale siempre y cuenta. Sobre `stable/F36o-cerrar-a29-a36` (34680ba). Informe docs/validation/FRENO-PETICIONES.md; el registro del cierre, al final de HISTORIA.
+aaac17b · merge de `feature/cierres-de-mercado` (tag `stable/F36q-cierres-de-mercado`): el bot no abre ni coloca en la ventana que R15 de FTMO prohibe antes de un cierre de mercado largo (ADR-0068, domain/cierres.py): predicado unico en el puerto del broker, calendario versionado en knowledge/cuentas/cierres/ (cubre hasta el 7-10-2026, Next Action N), `cierre_pendientes` PROVISIONAL bajo A-55. Sobre `stable/F36p-freno-peticiones` (b64e675). Informe docs/validation/CIERRES-DE-MERCADO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-b64e675 · merge: el freno de peticiones al servidor en el puerto del broker (ADR-0067), A-54 · tag stable/F36p-freno-peticiones
+aaac17b · merge: la ventana que FTMO prohibe antes de un cierre de mercado largo, en el puerto del broker (ADR-0068), A-55 · tag stable/F36q-cierres-de-mercado
 
 ## Tests Currently Passing
 1208 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
