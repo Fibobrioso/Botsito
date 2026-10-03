@@ -143,6 +143,14 @@ vivo, la operativa del jueves (desde las 07:00 de Madrid) quedaría negada hasta
 
 ### 0.3 El procedimiento más ligero que cumple el ritual
 
+> **SUSTITUIDO (2026-10-03, decisiones del consultor, abajo; revisor, a2).** Las propuestas de esta
+> sección quedan sustituidas por las decisiones 1 y 3:
+> - las opciones A y B;
+> - el aviso a 3 días;
+> - el comando `botsito cierres check`.
+>
+> Lo que se midió (la regla 5 y el hook) sigue valiendo. Lo vigente está en «Decisiones» y en §1.
+
 **Medido en el clon que tocar el YAML en `main` exige un tag nuevo** (regla 5 de `state check`,
 `cli.py:149-157`: en `main`, `git diff --name-only <último tag>..HEAD` solo puede traer
 `PROJECT_STATE.md`):
@@ -250,13 +258,23 @@ dentro del test. Lanzan `RelojLeidoError` si se leen:
   `engine/cableado` y `engine/simulacion`);
 - `time.time`, `time.time_ns` y `time.localtime`.
 
-La excepción es `logging`, que lee `time.time` para fechar cada registro (medido en §0.1). Fecha el
-log; no decide nada, y se le deja.
+También `time.gmtime()` sin argumento, que es la hora de hoy. Con un instante, `gmtime` solo lo
+convierte. La excepción es `logging`, que lee `time.time` para fechar cada registro (medido en
+§0.1): fecha el log, no decide nada, y se le deja. Solo pasa si el que llama de inmediato es el
+módulo `logging`.
+
+**Lo que NO sabotea, y por qué** (revisor, a1):
+- `time.monotonic` y `time.perf_counter`: miden intervalos y no dan una fecha, así que no pueden
+  hacer que un día se niegue por la fecha de hoy;
+- un `datetime.now` en un módulo fuera de los cinco (por ejemplo, `engine/arnes`): no está en el
+  camino de los cierres.
 
 - `test_con_el_reloj_saboteado_el_calendario_y_el_dia_simulado_salen`, con el reloj saboteado:
-  - carga el calendario real;
-  - simula el día sintético de `test_cableado` por el motor cableado, con una ventana de cierre
-    abierta antes de la colocación, que se niega por el predicado;
+  - carga el calendario REAL;
+  - simula con él el día sintético de `test_cableado` (2030), que cae fuera de lo que cubre: todo
+    se niega con `cierre_sin_calendario`, por la fecha simulada (añadido tras el revisor, a3);
+  - simula el mismo día con una ventana de cierre abierta antes de colocar, que se niega por el
+    predicado (`cierre_mercado`);
   - comprueba que el sabotaje está puesto: leer el reloj desde el broker falla.
 - `test_un_predicado_que_lee_el_reloj_lo_caza_el_sabotaje` es la variante rota a propósito: un
   predicado que mira la hora de hoy, y la simulación falla con `RelojLeidoError`.
@@ -361,7 +379,9 @@ ERROR: 'Tests Currently Passing' dice 1208; hay 1211 funciones de test
 exit=1
 ```
 
-Es el único cambio a `PROJECT_STATE.md` en esta orden. Si el consultor prefiere otra salida, que
+Es el único cambio de esta orden en `PROJECT_STATE.md`. Contra `main`, la rama lleva además los de
+la apertura (skill `abrir-rama`): `Current Branch`, `Current Feature` y los dos «— ninguna desde el
+Archivo 9», como toda rama (revisor, b1). Si el consultor prefiere otra salida para el número, que
 lo diga.
 
 ### 1.8 El contrato
@@ -376,6 +396,116 @@ alto a medio: solo cambian tests y documentos.
 **Sin CI de Linux**: no se tocan rutas ni código del sistema de archivos. Solo tests y documentos;
 el test nuevo usa `tmp_path` y `Path` como los demás.
 
+## 2. Lo que encontró el revisor, y qué se hizo
+
+Su informe, entero, en §3. Ningún hallazgo bloqueaba.
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | menor | **Ampliado.** El sabotaje cubre también `time.gmtime()` sin argumento. `monotonic` y `perf_counter` quedan fuera a propósito, porque no dan fecha, y §1.2 lo dice |
+| a2 | menor | **Marcado.** §0.3 lleva un recuadro SUSTITUIDO arriba; lo medido sigue valiendo |
+| a3 | menor | **Hecho.** El test simula también el día con el calendario REAL (se niega por `cierre_sin_calendario`, por la fecha simulada), además de con la ventana sintética |
+| b1 | menor | **Precisado** en §1.7: qué líneas de `PROJECT_STATE.md` cambia la apertura y cuál esta orden |
+
+Las tres roturas de §1.4 se repitieron sobre la versión final del test: cada una hace fallar el
+suyo, y el código queda restaurado byte a byte.
+
+## 3. Informe del revisor
+
+Pegado tal cual, sobre `9565539`; lo que se hizo con cada hallazgo, en §2.
+
+> ## Informe del revisor · trabajo/renovar-cierres · 2026-10-03
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | menor | El sabotaje del cable trampa solo cubre `datetime`/`date` en 5 módulos y `time.time`/`time_ns`/`localtime`. No cubre `time.gmtime`, `time.monotonic` ni `perf_counter`. Tampoco cubre un `datetime.now` en un módulo fuera de los cinco (p. ej. `engine/arnes`). Hoy no hay ninguna de esas lecturas en los cinco módulos, y el informe lista los 5 módulos y los 3 relojes, así que no afirma más de lo que hace. | `tests/unit/test_renovar_cierres.py:80-89`. `grep` de `.now(`, `utcnow`, `.today(`, `perf_counter` y `monotonic` en los 5 módulos: sin coincidencias. |
+> | 2 | menor | El informe conserva §0.3 con las propuestas A/B, el aviso a 3 días y el comando propio, que las decisiones 1 y 3 sustituyen. Solo lo dice el párrafo de «Decisiones»; §0.3 no lleva marca de «SUSTITUIDO». Un lector que llegue a §0.3 puede tomarlo por vigente. | `docs/validation/RENOVAR-CIERRES.md:144-213` frente a `:215-218`. |
+> | 3 | menor | El «cable trampa» carga el calendario real, pero el día simulado usa un calendario sintético de 2030 (`_cierres_con_ventana_en`). El calendario real solo se carga y se expande. El informe lo dice con precisión (§1.2) y no hay engaño, pero el encargo decía «cargar el calendario y simular un día fijo». | `tests/unit/test_renovar_cierres.py:92-97, 104-108`. `tests/unit/test_cierres_de_mercado.py:455-459`. |
+>
+> **La excepción de `logging`: ¿abre un agujero?** Según la evidencia, no abre uno real. `_time_saboteado` solo deja pasar si el marco inmediato (`sys._getframe(1)`) tiene `__name__ == "logging"` (test:54).
+> - Un `Filter` o un `Formatter` propios de botsito tienen sus propios `f_globals`, así que los caza.
+> - `logging.handlers` tampoco coincide.
+> - Un camino de decisión solo se colaría si el código de decisión viviera dentro del módulo `logging`, o si se llamara a `time.time` con ese marco. No he visto ningún camino así.
+> - Es una excepción de «quién llama», no de «cuándo». Aun así, lo que logging obtiene lo devuelve a quien llama, y ese quien llama es logging, no el código de botsito. Basta con eso.
+>
+> **Comprobado sin hallazgos:**
+> - `uv run python scripts/contrato_rama.py`: «CONTRATO: 8 ficheros dentro del contrato…». Todos los ficheros del diff caen en `rutas_permitidas`, y ninguno en `rutas_protegidas`.
+> - `uv run botsito state check`: «OK: rama 'trabajo/renovar-cierres' … EN CURSO … NO se cierra.»
+> - `make check` no ejecutado (escribe). `make-check.log` existe: `1863 passed in 753.40s`, `SELLO: make check en verde sobre el arbol 995df4256c35976a84a8c16e636f30b0c865c487`, `PICO DE MEMORIA … 286 MiB`. `git rev-parse HEAD^{tree}` = `995df4256c35976a84a8c16e636f30b0c865c487`, idéntico al SELLO. El log es de este árbol.
+> - `uv run pytest tests/unit/test_renovar_cierres.py -p no:cacheprovider`: `3 passed in 1.76s`.
+> - `git diff --name-status main...HEAD`: no hay nada en `knowledge/` ni en `src/`. El YAML de cierres no se tocó (decisión 6). No se tocó `knowledge/spec` ni `knowledge/cases`, así que no aplican `Fuente:`, ambigüedades ni las tres guardias de `cita`.
+> - No hay ADR nuevos ni cambiados. No se tocó ningún informe cerrado de `docs/validation/`; solo se añade `RENOVAR-CIERRES.md`.
+> - HISTORIA solo se amplía: `git diff main...HEAD -- docs/state/HISTORIA.md`, 0 líneas eliminadas (`grep -c '^-[^-]'` = 0). El «Archivo 9» empieza en la línea 2577, con el `PROJECT_STATE` de main en 60d540c.
+> - `docs/runbooks/README.md`: solo se añaden 3 líneas.
+> - Recuento: `uv run pytest --collect-only -q -o addopts="" -p no:cacheprovider` da `1863 tests collected`, y 1863 es lo que pasa en el log. Esto cuadra con 1211 funciones + 652 parametrizados (informe §1.6). No recalculé las 103 funciones parametrizadas ni los 755 casos.
+> - El informe acaba en su estado («EN CURSO … falta el revisor»).
+> - No hay cifras de estrategia nuevas.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 14 hechos, 0 parciales, 0 no hechos (los de la primera orden que la segunda sustituye van como «Sustituido» y no cuentan).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Verificar main 60d540c y el tag stable/F36r-fuentes-ftmo, y abrir con la skill: encargo, contrato y HISTORIA | Hecho | Informe l.3-5 (el informe dice que se comprobó antes de abrir). `git log`: `4344f2f chore(rama): abre…`. Existen el encargo (51 líneas), `contrato.yaml` y el Archivo 9 en HISTORIA. |
+> | 2 | Fase 0.1: medir qué hace el código al caducar, con comandos tal cual | Hecho | Informe §0.1: comandos y salidas (predicado, 3 calendarios con exit 0/2/0, suite con reloj +10 días). |
+> | 3 | Fase 0.2: fuente del 4 al 10 y la siguiente, con URL y fecha de consulta, separando fuente y suposición | Hecho | Informe §0.2: URL, hora de consulta del 2026-10-03 y un bloque «Lo que se supone». |
+> | 4 | Fase 0.3: el procedimiento más ligero, medido (¿regla 5?) | Hecho, y luego sustituido | Informe §0.3 muestra el ERROR de `state check` medido. El aviso, el comando propio y A/B quedan sustituidos por las decisiones 1 a 3 (ver menor 2 del eje a). |
+> | 5 | Decisión 1: no se renueva cada semana | Hecho | Runbook l.9-11; informe l.220. El YAML no se tocó. |
+> | 6 | Decisión 2 a/b: renovar por condición, en rama propia; la rama de tiempo real trae `SymbolInfoSessionTrade` o procedimiento, y sin eso no se cierra | Hecho | `docs/runbooks/RENOVAR-CIERRES.md:14-27`, y «Sin una de las dos, esa rama no se cierra» (l.27). |
+> | 7 | Decisión 3: sin aviso en `state check` ni comando `cierres check` | Hecho | `git diff --stat` no toca `src/` ni `cli.py`. Runbook l.29-30. |
+> | 8 | Decisión 4: el hueco del jueves se acepta | Hecho | Runbook l.22-27; informe l.225. |
+> | 9 | Decisión 5: verificar que la demo no lee `knowledge/cuentas/cierres/` | Hecho (yo lo comprobé) | `grep` en `tools/mql5/MedirDemoFTMO.mq5` de `FileOpen\|FileRead\|#include\|yaml\|knowledge\|cuentas\|cierres`: solo `:756 FileOpen(nombre, FILE_WRITE | FILE_TXT | FILE_ANSI)`, escritura. `scripts/leer_demo_ftmo.py:13-20`: solo `argparse, csv, sys, collections.abc, dataclasses, pathlib`; sin `botsito`, `knowledge`, `cuentas` ni `cierres`. `mql5/` solo tiene `Experts`, `Include`, `Scripts` y `tester` junto a `README.md` (informe §1.1: «solo tiene README.md»). `grep -rl cierres` en `tools`, `mql5` y `scripts` (`.mq5`, `.mqh`, `.py`) da solo `scripts/embudo_77.py`, que no es de la demo. Las únicas piezas que cargan el calendario son `src/botsito/{domain/cierres,engine/cableado,engine/calendario_cierres}.py` y los tests. |
+> | 10 | Decisión 6: el Columbus Day y lo que no tenga fuente quedan fuera, y el YAML no se toca | Hecho | `git diff main...HEAD --name-only \| grep knowledge`: vacío. `knowledge/cuentas/` en `rutas_protegidas`. |
+> | 11 | Fase 1a: el cable trampa permanente, con una variante que lo rompe | Hecho | `tests/unit/test_renovar_cierres.py:100-128` (2 tests, 3 passed). La variante rota (`lee_el_reloj`) lanza `RelojLeidoError`. El test 1 comprueba además que el sabotaje está puesto (l.111-112), así que no pasa en vacío. Las roturas sobre `src/` de §1.4 no las pude repetir (escriben). |
+> | 12 | Fase 1b: simular un día posterior a `hasta` da exit 2 y lo nombra; si ya existe, citarlo y no duplicarlo | Hecho | Informe §1.3 cita `test_el_cableado_no_corre_sin_calendario_ni_fuera_de_lo_que_cubre`, que existe en `test_cierres_de_mercado.py:441`. Ese prueba solo la función `comprobar_que_cubre` (`CableadoError`). El test nuevo (l.160-180) ejercita `cli.main([... "motor","arnes","--simular" ...])`, que usa `construir_motor_cableado` y `comprobar_que_cubre` reales. Solo sustituye `calendario_del_perfil`, `mercado_de_construccion` y `arnes.dias_de_mercado`. Asserts: `r == 2`, el mensaje, `'2026-04-02'` sí y `'2026-04-01'` no, y que no escribe nada. No duplica. Corre sin `data/`: los 3 parches evitan leerla, y el informe lo midió en un clon sin `data/`. Yo no pude repetirlo, porque aquí `data/` existe. |
+> | 13 | Fase 1c: runbook corto con los dos casos, quién, de dónde sale el dato y la condición | Hecho | `docs/runbooks/RENOVAR-CIERRES.md` (55 líneas): quién l.32-37; fuente, URL y fecha de consulta en `fuente` l.39-50. Línea añadida en `docs/runbooks/README.md`. |
+> | 14 | Fase 1d: qué 2 tests fallan y qué 3 se saltan, y 1855 frente a 1208 | Hecho | Informe §1.6, con los nombres. Los 2 fallos son del clon: `settings.local.toml` y la ruta larga. Los 3 saltados son contrato, `fidelidad_marzo` y `tokenizers`. 1863 casos = 1211 funciones + 652 por `parametrize`; el `collect-only` lo confirma (1863). |
+> | 15 | Fase 1e: PROJECT_STATE no se toca; la línea N la fija el consultor | Hecho de otra forma, declarado | `git diff main...HEAD -- PROJECT_STATE.md`: cambia `Current Branch` y `Current Feature` y los dos «ninguna desde el Archivo 9» (esto lo hace la skill `abrir-rama`, no esta orden). También cambia `Tests Currently Passing` de 1208 a 1211. La línea N no cambió (no aparece en el diff). Estaba forzado: el informe §1.7 muestra `ERROR: 'Tests Currently Passing' dice 1208; hay 1211 funciones de test` / exit 1, y sin ese cambio `make check` no sella. Lo declara explícitamente y ofrece otra salida al consultor. Ver menor 1. |
+> | 16 | La CI de Linux solo si se tocan rutas o el sistema de archivos | Hecho | Informe §1.8: solo tests y documentos, con `tmp_path`. No toca la plataforma. |
+> | 17 | Informe con el revisor al final; rama «lista para revisión, NO cerrada» | Pendiente de pegar | El informe acaba en «EN CURSO … falta el revisor». El encargo pide pegarlo al final, así que lo pegas tú. No lo he pegado. |
+> | 18 | Primera orden, Fase 1: renovar el YAML y el aviso de caducidad próxima | Sustituido | Decisiones 1, 3 y 6 de la segunda orden. |
+> | 19 | Tests «caducado falla / a punto de caducar avisa» | Sustituido | Decisión 3. Queda el exit 2 por fecha simulada (req. 12). |
+> | 20 | Decisiones copiadas tal cual y con fecha en el informe | Hecho | Informe l.215-227: las 6 decisiones, con encabezado «(2026-10-03)». Las cotejé con el encargo l.30-38 y el texto es el mismo. |
+> | 21 | Afirmaciones que no deben pasar de lo que consta | Hecho (con un límite) | El recuento 1863/1211/652 coincide con `collect-only` y con el log. Las fuentes web de §0.2 (HTTP 404, listado hasta el 24-9, sha de la API, 26/43 jueves) no las puedo comprobar (no tengo red). Están citadas con URL y hora. |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | menor | La frase «Es el único cambio a `PROJECT_STATE.md` en esta orden» es cierta, pero el diff de la rama contra main toca más líneas, las de `abrir-rama`: `Current Branch`, `Current Feature` y los dos «ninguna desde el Archivo 9». El que lea solo el informe puede creer que el único cambio de la rama es el 1208→1211. | `git diff main...HEAD -- PROJECT_STATE.md`. Informe l.364. |
+>
+> **Lo que la rama hace y el encargo no pide:** nada que `contrato.yaml` no admita. Tocar `contrato.yaml` fue para ampliarlo y mover `knowledge/cuentas/` a protegidas (informe §1.8, declarado). Cambió riesgo de alto a medio, declarado.
+>
+> ### Lo que no pude comprobar
+> - Las roturas a propósito de §1.4, que modifican `src/` y se restauran. Escriben, así que no las ejecuté. Lo que sí vi: el test 1 comprueba el sabotaje y el test 3 comprueba mensaje y día. La parte de que cada test falle con su rotura la declara el informe, pero no la repetí. Una rotura del exit 2 (`if False:` en `comprobar_que_cubre`) debería hacer fallar el test 3, porque exige exit 2 y el mensaje.
+> - Que el test de exit 2 corra sin `data/` en la CI: aquí `data/` existe. Solo hay la medida del informe en un clon sin `data/`.
+> - Las fuentes web de §0.2 (sin red): el 404 de los días 2, 7 y 8-10, el listado hasta el 24-9, el sha de la API y los 26/43 jueves.
+> - `make check` (escribe): solo leí el log y comparé el SELLO con el árbol. Coinciden.
+> - El «clon» de la Fase 0 y su cable trampa (`sitecustomize`) viven fuera del repositorio y no los repetí.
+>
+> ### Comandos ejecutados
+> 1. `git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short && cat docs/encargos/trabajo-renovar-cierres.md && cat contrato.yaml`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `uv run botsito state check`
+> 4. `git diff main...HEAD -- PROJECT_STATE.md`
+> 5. `git diff --name-status main...HEAD`
+> 6. `git diff main...HEAD -- docs/state/HISTORIA.md | grep -c '^-[^-]'`
+> 7. `grep -E 'SELLO|PICO|passed|failed' make-check.log`
+> 8. `git rev-parse 'HEAD^{tree}'`
+> 9. `uv run pytest tests/unit/test_renovar_cierres.py -q -p no:cacheprovider` (y otra vez sin `-q`): `3 passed in 1.76s`
+> 10. `grep` de `MedirDemoFTMO.mq5` (`FileOpen|FileRead|#include|yaml|knowledge|cuentas|cierres`) y de `leer_demo_ftmo.py` (imports y rutas)
+> 11. `grep -rl cierres tools mql5 scripts`
+> 12. `ls mql5`
+> 13. `grep` de relojes (`.now(`, `utcnow`, `.today(`, `perf_counter`, `monotonic`) en los 5 módulos de cierres
+> 14. `uv run pytest --collect-only -q -o addopts="" -p no:cacheprovider`: `1863 tests collected`
+> 15. `git diff main...HEAD -- docs/runbooks/README.md docs/state/HISTORIA.md`
+> 16. `git diff main...HEAD --name-only | grep -E "knowledge|src/"`: vacío
+> 17. Lecturas con `Read` de `test_renovar_cierres.py`, del runbook y del informe
+
 ## Estado
 
-EN CURSO: Fase 1 reducida hecha (§1); falta el revisor.
+**Rama lista para revisión, NO cerrada.** Hechas la Fase 0, las decisiones del consultor y la Fase
+1 reducida. `make check` está sellado, y el revisor ha pasado, con su informe pegado (§3) y sus
+hallazgos atendidos (§2). El YAML del calendario no se tocó (decisión 6). La línea N de Next Action
+la fija el consultor en la orden de cierre.

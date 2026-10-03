@@ -26,7 +26,12 @@ import pytest
 
 from botsito import cli
 from botsito.domain import cierres as dominio_cierres
-from botsito.domain.cierres import MOTIVO_CIERRE, CalendarioCierres
+from botsito.domain.cierres import (
+    MOTIVO_CIERRE,
+    MOTIVO_SIN_CALENDARIO,
+    CalendarioCierres,
+    ReglasCierres,
+)
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine import arnes as modulo_arnes
@@ -87,6 +92,12 @@ def _sabotear_reloj(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(time, "time", _time_saboteado)
     monkeypatch.setattr(time, "time_ns", _prohibido)
     monkeypatch.setattr(time, "localtime", _prohibido)
+    # `gmtime()` sin argumento es la hora de hoy; con un instante, solo lo convierte (revisor, a1).
+    # `monotonic` y `perf_counter` miden intervalos y no dan una fecha: no deciden un dia
+    gmtime_real = time.gmtime
+    monkeypatch.setattr(
+        time, "gmtime", lambda *a: _prohibido() if not a or a[0] is None else gmtime_real(*a)
+    )
 
 
 def _simular_dia_con_cierre() -> cableado.MotorCableado:
@@ -105,6 +116,12 @@ def test_con_el_reloj_saboteado_el_calendario_y_el_dia_simulado_salen(
         calendario_cierres.ruta_calendario(RAIZ, PERFIL)
     ).calendario()
     assert cal.cubre_hasta_ms > cal.cubre_desde_ms
+    # el dia sintetico (2030) con el calendario REAL: cae fuera de lo que cubre y se niega por la
+    # fecha simulada (revisor, a3)
+    real = tcm._corrida(ReglasCierres(cal, tcm.MARGEN, tcm.MINIMO, True))
+    tb_real = real.trazas_broker[tc.DIA.isoformat()]
+    assert tb_real.cierres and {c.motivo for c in tb_real.cierres} == {MOTIVO_SIN_CALENDARIO}
+    # y con una ventana de cierre abierta antes de colocar: se niega por el predicado
     motor = _simular_dia_con_cierre()
     tb = motor.trazas_broker[tc.DIA.isoformat()]
     assert (tb.cierres[0].tipo, tb.cierres[0].motivo) == (PETICION_COLOCAR, MOTIVO_CIERRE)
