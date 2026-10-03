@@ -2782,3 +2782,28 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 8 (2026-10-03).
+
+# Registro de cierre · `trabajo/renovar-cierres` (2026-10-03)
+
+- Orden de cierre de Aleks del 2026-10-03, revisada y aprobada. El calendario de cierres caduca por
+  la FECHA SIMULADA, nunca por la de hoy (medido en un clon con el reloj adelantado), y no se
+  renueva cada semana: se renueva por condicion (`docs/runbooks/RENOVAR-CIERRES.md`). Tests nuevos:
+  el cable trampa del reloj permanente y el exit 2 de un dia posterior a `hasta` por la CLI. El YAML
+  del calendario no se toco. `Tests Currently Passing` paso de 1208 a 1211 en la rama (lo exige
+  `state check`; aceptado en la orden de cierre).
+- Punto 0 de la orden: `git tag -l "stable/F99*"` y `git ls-remote --tags origin "stable/F99*"`
+  salen vacios. El tag de ensayo de la Fase 0 solo existio en el clon desechable.
+- Tag: `stable/F36s-renovar-cierres`. El merge es
+  `git rev-parse "stable/F36s-renovar-cierres^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `4344f2f`: apertura: encargo, contrato y Archivo 9;
+  - `21ffe85`: Fase 0: la caducidad medida (fecha simulada, no la de hoy), la fuente de octubre y el procedimiento;
+  - `9565539`: segunda orden: el cable trampa permanente, el exit 2 por la CLI y el runbook;
+  - `51ca48c`: tras el revisor: `gmtime()` saboteado, el dia con el calendario real, §0.3 marcado SUSTITUIDO; el revisor pegado;
+  - y el de este registro, que saca tambien el contrato.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca rutas ni el sistema de
+  archivos. La primera CI es la de `main` tras el cierre.
+- La linea N de Next Action la sustituye el commit de estado en `main`, con el texto de la orden
+  de cierre.
+- Informe: `docs/validation/RENOVAR-CIERRES.md`. Encargo: `docs/encargos/trabajo-renovar-cierres.md`.
