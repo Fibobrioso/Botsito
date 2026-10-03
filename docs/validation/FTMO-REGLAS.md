@@ -121,6 +121,45 @@ del riesgo.
 > festivos con cierre anticipado-, el bot podría abrir dentro de esas dos horas. Queda como pendiente
 > en `PROJECT_STATE.md`; no se corrige en esta rama.
 
+> **Respuesta LITERAL de soporte de FTMO al ticket VDW-DPMWR-965 (recuadro añadido el 2026-10-03 en
+> la rama `trabajo/fuentes-ftmo`).** CORRIGE el recuadro de arriba donde dice «no hay cita literal en
+> el repositorio»: desde hoy la hay, aquí. Fuente escrita: correo de `support@ftmo.com` recibido el
+> **2026-09-29 a las 14:00:47 UTC**, en respuesta al correo de Aleks del 2026-09-28. El texto lo
+> copia Aleks en el encargo de la rama (`docs/encargos/trabajo-fuentes-ftmo.md`), sin la firma ni las
+> imágenes, y aquí va tal cual, con sus negritas:
+>
+> > Dear Client,
+> >
+> > Thank you for reaching out to us.
+> >
+> > I would like to inform you that FTMO Account Swing allows trading during news releases and
+> > holding positions overnight or over the weekend. However, **gap trading is not permitted** when
+> > major global news, macroeconomic events, or corporate reports or earnings are scheduled and may
+> > affect the relevant market, or within two hours before a relevant market closes for at least
+> > two hours.
+> >
+> > **Commissions are charged differently depending on the platform: on MT4, they are deducted
+> > instantly, while on MT5, cTrader, and TradingView, 50% is charged at order opening and the
+> > remaining 50% at closing.**
+> >
+> > For more information, please visit this page: <https://ftmo.com/en/symbols/>
+> >
+> > If you have any other concerns, feel free to contact us again.
+>
+> **Contra el traslado de arriba**, punto por punto: coincide en Swing (noticias, noche y fin de
+> semana), en el gap trading (las dos mitades de R15: noticias programadas y «within two hours before
+> a relevant market closes for at least two hours») y en la comisión de MT5 (50 % al abrir, 50 % al
+> cerrar). Tampoco da importe de la comisión: remite a la página de símbolos.
+>
+> **Lo que NO contesta.** El correo de Aleks preguntaba tres cosas: noticias y gap trading, tamaño de
+> posición y comisión. **La del tamaño de posición NO se contestó**: si un lote que varía con el stop,
+> con riesgo constante, cuenta como «substantially larger position sizes» (R17, §4 de abajo).
+>
+> **Repreguntado el 2026-10-03.** Aleks reenvió, en el mismo ticket, diez preguntas: los mensajes al
+> servidor (sus P1-P4, para A-54), el gap trading (P1-P3 de `docs/validation/CIERRES-DE-MERCADO.md`
+> §0.6, para A-55) y el tamaño de posición. **Respuesta pendiente.** El texto de ese correo no está en
+> el repositorio (`docs/validation/FUENTES-FTMO.md` §2).
+
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
 **Coinciden:**

@@ -24,6 +24,11 @@ rama cuenta parejas ni compara con las operaciones del trader.
 > instruments potentially impacted by the events); or two hours or less before a relevant financial
 > market is closed for at least two hours;
 
+> **CORRECCIÓN (2026-10-03, rama `trabajo/fuentes-ftmo`).** P0 HECHO: la respuesta literal del
+> ticket VDW-DPMWR-965 ya está en el repositorio, en `docs/validation/FTMO-REGLAS.md`, en el
+> recuadro «Respuesta LITERAL de soporte de FTMO» que sigue al del traslado. Coincide con lo que se
+> dice abajo. El párrafo de abajo queda tal cual.
+
 **El ticket de soporte VDW-DPMWR-965 (29-09-2026) NO está literal en el repositorio.** Lo único que
 hay es lo que Aleks trasladó en su brief de ese día, en el recuadro de `FTMO-REGLAS.md` (líneas
 97-122): «**No se permite el gap trading** cuando hay programadas noticias globales importantes,
@@ -247,6 +252,10 @@ versionado con `unir_cierres`. Lo apunta el ADR nuevo de esta rama.
 
 - **P0 (para Aleks, no para FTMO):** guardar en el repositorio el texto literal de la respuesta del
   ticket VDW-DPMWR-965, como cualquier otra fuente escrita.
+
+  > **CORRECCIÓN (2026-10-03, rama `trabajo/fuentes-ftmo`).** P0 HECHO (recuadro en
+  > `docs/validation/FTMO-REGLAS.md`). P1, P2 y P3 de abajo se ENVIARON el 2026-10-03, en el mismo
+  > ticket, junto con las preguntas de A-54 y la del tamaño de posición. La respuesta está pendiente.
 - **P1 (A-55):** «Regarding the forbidden practice of gap trading "two hours or less before a
   relevant financial market is closed for at least two hours": (a) does it also apply to *placing*
   pending orders (limit or stop) within those two hours, even if they are not filled? (b) If a

@@ -2547,3 +2547,9 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 7 (2026-10-02).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/fuentes-ftmo (2026-10-03)
+
+La paga `stable/F36q-cierres-de-mercado` (ADR-0068: el broker no abre ni coloca en la ventana de R15) y lo que quedaba abierto ya lo llevan A-55 (las preguntas a soporte, enviadas el 2026-10-03 en el ticket VDW-DPMWR-965) y la entrada N de Next Action (la renovacion del calendario). Encargo de `trabajo/fuentes-ftmo`, punto 2; docs/validation/FUENTES-FTMO.md §3. Su texto literal en «Technical Debt»:
+
+- PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).

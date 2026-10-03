@@ -119,7 +119,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
 
 - El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
 - El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
-- PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).
+- PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03 (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
 - LA LECTURA PREVIA DE LA TRANSCRIPCION DE v6, DECLARADA COMO EXPOSICION POSIBLE (2026-09-23, `trabajo/a18-transcripciones`, en `docs/validation/HOLDOUT-EXPOSICIONES.md`).

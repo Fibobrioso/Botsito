@@ -86,8 +86,9 @@ con su motivo. El informe del arnés lleva la sección «Los cierres de mercado 
 ## Problema que resuelve
 
 R15 de `docs/validation/FTMO-REGLAS.md` prohíbe abrir «two hours or less before a relevant financial
-market is closed for at least two hours», y el ticket VDW-DPMWR-965 lo confirma (traslado de Aleks
-del 29-09-2026). El bot no tenía calendario de cierres (A3 e) de «Pendientes heredados»).
+market is closed for at least two hours», y el ticket VDW-DPMWR-965 lo confirma: «within two hours
+before a relevant market closes for at least two hours» (respuesta literal del 29-09-2026, recuadro
+en `docs/validation/FTMO-REGLAS.md` desde el 2026-10-03). El bot no tenía calendario de cierres (A3 e) de «Pendientes heredados»).
 
 ## Alternativas consideradas
 
