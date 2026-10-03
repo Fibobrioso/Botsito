@@ -401,7 +401,7 @@ El informe del revisor, entero, va al final. Ningún hallazgo bloqueaba.
 | a4 | menor | **Corregido** el recuento del barrido (§0.2): 44 jueves, 43 leídas, desglosadas |
 | a5 | menor | **Dicho** en §1: sin calendario el predicado queda apagado, y dónde pasa |
 | b1 | importa | **Hecho.** El código nuevo del cableado sale a dos funciones, `calendario_del_perfil` y `comprobar_que_cubre`, y tres tests nuevos lo prueban, dos de ellos de punta a punta por `MotorCableado` (§2). Con la guardia rota fallan también los dos de punta a punta: 13 de 28 |
-| b2 | importa | **Declarado bajo A-55**, sin parámetro nuevo. Con `cancelar`, el valor de partida, no hay pendiente que modificar dentro de la ventana, porque ya se canceló al empezar, así que el caso solo existe con `mantener`. Negar la modificación es lo más restrictivo. A-55 y la pregunta P1 (d) lo preguntan, y si FTMO dice que modificar no es colocar, se deja de negar. **Para el consultor:** si prefiere un parámetro propio, es una línea en el broker y otra en el registro |
+| b2 | importa | **Declarado bajo A-55**, sin parámetro nuevo. Con `cancelar`, el valor de partida, no hay pendiente que modificar dentro de la ventana, porque ya se canceló al empezar, así que el caso solo existe con `mantener`. Negar la modificación es lo más restrictivo. A-55 y la pregunta P1 (d) lo preguntan, y si FTMO dice que modificar no es colocar, se deja de negar. **DECIDIDO por el consultor** (orden de cierre del 2026-10-02): sin parámetro propio para modificar dentro de la ventana; queda declarado bajo A-55 (P1 d) |
 | b3 | menor | **Declarado** en ADR-0068 §2 como más allá de la letra de R15: el mercado cerrado y fuera del calendario |
 
 **Dos rojos de `make check` en la rama, los dos míos:**
@@ -533,9 +533,12 @@ Pegado tal cual, sobre `227bc5e`; lo que se hizo con cada hallazgo, en §4.
 
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** Fases 0, 1 y 2 hechas. `make check` sellado sobre el
-árbol del último commit y revisor pasado, con su informe pegado y sus hallazgos atendidos (§4).
-Quedan para el consultor:
-- las tres preguntas a soporte de FTMO (§0.6, A-55), y P0, el texto literal del ticket;
-- si la modificación de una pendiente lleva parámetro propio (b2);
-- la orden de cierre.
+**Con orden de cierre del consultor (2026-10-02)**, dada tras revisar `582e4c8`. Antes del
+cierre, en la rama:
+- **a)** la renovación del calendario de cierres entra en Next Action (N): cubre hasta el
+  7-10-2026, se renueva cada semana desde las Trading Updates hasta que el adaptador MT5 lea
+  `SymbolInfoSessionTrade`, y la automatización va en rama propia antes de operar en real;
+- **b)** b2 queda DECIDIDO: sin parámetro propio, declarado bajo A-55 (P1 d).
+
+Siguen abiertas, para Aleks con FTMO: las tres preguntas a soporte (§0.6, A-55) y P0, el texto
+literal del ticket.

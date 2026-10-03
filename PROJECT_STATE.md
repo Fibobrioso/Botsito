@@ -14,7 +14,7 @@
 feature/cierres-de-mercado
 
 ## Current Feature
-feature/cierres-de-mercado · EN CURSO (2026-10-02, desde 5947e55): A3 e), no abrir ni colocar en la ventana que FTMO prohibe antes de un cierre largo. Encargo docs/encargos/feature-cierres-de-mercado.md; informe docs/validation/CIERRES-DE-MERCADO.md. NO se cierra.
+feature/cierres-de-mercado · ORDEN DE CIERRE 2026-10-02 · docs/validation/CIERRES-DE-MERCADO.md
 
 ## Stable Main State
 b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticiones`): el freno de peticiones al servidor vive en el puerto del broker (ADR-0067, engine/freno.py): aviso en 1000, corte en 1500 y bucle de 5 iguales en 1 minuto, PROVISIONAL bajo A-54; lo que protege la cuenta (cancelar, cerrar, el primer stop a break even) sale siempre y cuenta. Sobre `stable/F36o-cerrar-a29-a36` (34680ba). Informe docs/validation/FRENO-PETICIONES.md; el registro del cierre, al final de HISTORIA.
@@ -42,6 +42,8 @@ J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar a
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
+
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026; vencido, el simulador no corre y en vivo el bot no coloca nada. Renovarlo cada semana desde las Trading Updates de FTMO hasta que el adaptador MT5 lea SymbolInfoSessionTrade (ADR-0068 §4); rama propia para automatizarlo antes de operar en real.
 
 ### Pendientes heredados (sin verificar)
 

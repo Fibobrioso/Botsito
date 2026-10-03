@@ -37,6 +37,7 @@ cuenta.
 - **Modificar una pendiente** (RN-006): se niega, y la orden sigue como estaba. Se toma como
   colocarla en otro precio. R15 no lo dice, así que va como pregunta en A-55. Con `cancelar`, el
   valor de partida, no llega a pasar: la pendiente ya se canceló al empezar la ventana (revisor, b2).
+  Sin parámetro propio: lo decide el consultor en la orden de cierre del 2026-10-02.
 - **Una pendiente ya puesta**: lo dice `cierre_pendientes` (`cancelar` | `mantener`), DEFAULT
   `cancelar` bajo A-55. Con `cancelar`, el broker la cancela al empezar la ventana, antes que
   cualquier llenado de ese instante. Es lo que protege la cuenta: sale siempre y cuenta como
