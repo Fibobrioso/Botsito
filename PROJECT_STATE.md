@@ -23,7 +23,7 @@ trabajo/renovar-cierres · EN CURSO (2026-10-03) · docs/validation/RENOVAR-CIER
 36a9801 · merge: las fuentes escritas de FTMO (respuesta y correo del ticket VDW-DPMWR-965), A-54 y A-55 con sus preguntas enviadas · tag stable/F36r-fuentes-ftmo
 
 ## Tests Currently Passing
-1208 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1211 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -20,3 +20,32 @@ Dado por Aleks (consultor) el 2026-10-03. Copiado tal cual:
 > Informe en docs/validation/RENOVAR-CIERRES.md, con el revisor al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Segunda orden: decisiones del consultor sobre la Fase 0 (2026-10-03)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Decisiones del consultor sobre la Fase 0 de trabajo/renovar-cierres (2026-10-03). Cópialas con su fecha al informe docs/validation/RENOVAR-CIERRES.md:
+>
+> 1. No se renueva cada semana: ni la opción A ni la B. Motivo: hoy nadie consume el calendario en tiempo real y no hay fuente para el 8-10. Renovar a ciegas cada semana es coste sin efecto, y meter la renovación en otra rama mezcla un dato ajeno con el contrato de esa rama.
+> 2. La renovación se ata a una condición, no al calendario. Hay dos casos:
+>    a) Una simulación pide días posteriores a hasta: el simulador ya se niega (exit 2, nombrando los días) y en ese momento se renueva hacia atrás, con las Trading Updates archivadas de esas semanas, en una rama propia.
+>    b) Antes de que el bot corra en tiempo real (demo o real): la rama que lo conecte trae la lectura de SymbolInfoSessionTrade (línea N, ADR-0068 §4) o un procedimiento de renovación que cierre el hueco del jueves por la mañana. Sin uno de los dos, esa rama no se cierra.
+> 3. No hay aviso en state check ni comando botsito cierres check. Motivo: leer la fecha de hoy en make check y en la CI es una entrada global que cambia sola (patrón 1 de ERRORES-RECURRENTES), y un aviso que sale todas las semanas deja de leerse. La guardia que vale es la que ya existe: negarse por la fecha simulada.
+> 4. El hueco del jueves se acepta mientras no haya bot en tiempo real. Lo resuelve el punto 2b.
+> 5. Verifica antes de seguir, porque las decisiones 1 a 4 dependen de ello: busca si MedirDemoFTMO.mq5, scripts/leer_demo_ftmo.py o cualquier otra pieza que vaya a correr en la demo de FTMO lee knowledge/cuentas/cierres/. Si alguna lo lee, para y dímelo antes de la Fase 1.
+> 6. El Columbus Day y todo lo que no tenga fuente siguen fuera del YAML. El YAML no se toca en esta rama.
+>
+> FASE 1, reducida:
+> a) Pasa el «cable trampa» a un test permanente: cargar el calendario y simular un día fijo con el reloj del sistema saboteado (que lance una excepción si se lee) tiene que pasar. Rómpelo a propósito con una variante que lea el reloj y comprueba que falla. Así queda vigilado que los cierres dependen solo de la fecha simulada.
+> b) Un test de que simular un día posterior a hasta se niega con exit 2 y nombra ese día. Si ya existe, cita cuál es y no lo dupliques. Rómpelo a propósito y comprueba que falla.
+> c) El runbook docs/runbooks/RENOVAR-CIERRES.md, corto, con los dos casos del punto 2: cuándo se renueva, quién (Claude Code con orden de Aleks, en rama propia), de dónde sale el dato (Trading Updates archivadas, URL y fecha de consulta en el YAML) y la condición que bloquea la rama que conecte el bot en tiempo real.
+> d) En el informe, di qué 2 tests fallan y cuáles 3 se saltan en el clon y por qué. Aclara también por qué cuentas 1855 tests cuando PROJECT_STATE dice 1208 funciones (¿parametrizados?).
+> e) PROJECT_STATE no se toca en la rama: el texto nuevo de la línea N lo fijo yo en la orden de cierre.
+>
+> No hace falta la CI de Linux salvo que toques rutas o el sistema de archivos. Si las tocas, empuja como fix/trabajo-renovar-cierres y dame el número de run.
+> Después, el revisor, con su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.

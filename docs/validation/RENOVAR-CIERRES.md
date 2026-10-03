@@ -212,8 +212,170 @@ dos salidas, y las dos son del consultor:
 - uno a 3 días avisa, y a 4 no;
 - con la guardia rota a propósito, los tests fallan.
 
+## Decisiones del consultor sobre la Fase 0 (2026-10-03)
+
+Copiadas tal cual de la segunda orden (`docs/encargos/trabajo-renovar-cierres.md`, «Segunda orden»).
+Sustituyen a las propuestas de §0.3: ni la opción A ni la B, y ni aviso ni comando propio.
+
+> 1. No se renueva cada semana: ni la opción A ni la B. Motivo: hoy nadie consume el calendario en tiempo real y no hay fuente para el 8-10. Renovar a ciegas cada semana es coste sin efecto, y meter la renovación en otra rama mezcla un dato ajeno con el contrato de esa rama.
+> 2. La renovación se ata a una condición, no al calendario. Hay dos casos:
+>    a) Una simulación pide días posteriores a hasta: el simulador ya se niega (exit 2, nombrando los días) y en ese momento se renueva hacia atrás, con las Trading Updates archivadas de esas semanas, en una rama propia.
+>    b) Antes de que el bot corra en tiempo real (demo o real): la rama que lo conecte trae la lectura de SymbolInfoSessionTrade (línea N, ADR-0068 §4) o un procedimiento de renovación que cierre el hueco del jueves por la mañana. Sin uno de los dos, esa rama no se cierra.
+> 3. No hay aviso en state check ni comando botsito cierres check. Motivo: leer la fecha de hoy en make check y en la CI es una entrada global que cambia sola (patrón 1 de ERRORES-RECURRENTES), y un aviso que sale todas las semanas deja de leerse. La guardia que vale es la que ya existe: negarse por la fecha simulada.
+> 4. El hueco del jueves se acepta mientras no haya bot en tiempo real. Lo resuelve el punto 2b.
+> 5. Verifica antes de seguir, porque las decisiones 1 a 4 dependen de ello: busca si MedirDemoFTMO.mq5, scripts/leer_demo_ftmo.py o cualquier otra pieza que vaya a correr en la demo de FTMO lee knowledge/cuentas/cierres/. Si alguna lo lee, para y dímelo antes de la Fase 1.
+> 6. El Columbus Day y todo lo que no tenga fuente siguen fuera del YAML. El YAML no se toca en esta rama.
+
+## 1. Fase 1, reducida
+
+### 1.1 Antes de seguir: nada de la demo lee el calendario (decisión 5)
+
+- **`tools/mql5/MedirDemoFTMO.mq5`** solo abre un fichero, para ESCRIBIR su CSV
+  (`FileOpen(nombre, FILE_WRITE | FILE_TXT | FILE_ANSI)`, línea 756). No tiene `FileRead` ni
+  `#include`, y no nombra `cierres`, `cuentas`, `knowledge` ni `yaml`.
+- **`scripts/leer_demo_ftmo.py`** importa solo la biblioteca estándar (`argparse`, `csv`, `sys`,
+  `collections.abc`, `dataclasses`, `pathlib`) y no nombra `botsito`, `knowledge`, `cuentas` ni
+  `cierres`.
+- **`mql5/`** solo tiene ficheros `README.md`: el EA del bot todavía no existe.
+
+Ninguna pieza que vaya a correr en la demo lee `knowledge/cuentas/cierres/`. Las decisiones 1 a 4
+siguen en pie.
+
+### 1.2 El cable trampa, permanente (punto a)
+
+`tests/unit/test_renovar_cierres.py`, que sustituye al `sitecustomize` de la Fase 0 por un sabotaje
+dentro del test. Lanzan `RelojLeidoError` si se leen:
+- `datetime.now`, `datetime.utcnow`, `datetime.today` y `date.today`, en los cinco módulos por los
+  que pasan los cierres (`domain/cierres`, `engine/calendario_cierres`, `engine/broker`,
+  `engine/cableado` y `engine/simulacion`);
+- `time.time`, `time.time_ns` y `time.localtime`.
+
+La excepción es `logging`, que lee `time.time` para fechar cada registro (medido en §0.1). Fecha el
+log; no decide nada, y se le deja.
+
+- `test_con_el_reloj_saboteado_el_calendario_y_el_dia_simulado_salen`, con el reloj saboteado:
+  - carga el calendario real;
+  - simula el día sintético de `test_cableado` por el motor cableado, con una ventana de cierre
+    abierta antes de la colocación, que se niega por el predicado;
+  - comprueba que el sabotaje está puesto: leer el reloj desde el broker falla.
+- `test_un_predicado_que_lee_el_reloj_lo_caza_el_sabotaje` es la variante rota a propósito: un
+  predicado que mira la hora de hoy, y la simulación falla con `RelojLeidoError`.
+
+### 1.3 Un día posterior a `hasta`: exit 2 y el día nombrado (punto b)
+
+**Lo que ya existía:** `test_el_cableado_no_corre_sin_calendario_ni_fuera_de_lo_que_cubre`, en
+`tests/unit/test_cierres_de_mercado.py`. Prueba la FUNCIÓN: `comprobar_que_cubre` lanza
+`CableadoError` y nombra `2026-10-09`. No prueba lo que pide el encargo, la salida del comando con
+exit 2, así que no se duplica: se prueba la otra capa.
+
+**`test_simular_un_dia_posterior_a_hasta_sale_con_2_y_lo_nombra`** corre la CLI de verdad,
+`cli.main(["--repo", …, "motor", "arnes", "--simular", "--meses", "2026-04", <los cuatro
+diagnósticos>, "--salida", …])`. Solo sustituye dos cosas:
+- el calendario, recortado para que `hasta` sea el 2026-04-01;
+- lo que lee `data/`: las velas (`arnes.dias_de_mercado`) y el mercado de cada día, sintético con
+  sus límites.
+
+La construcción del motor y `comprobar_que_cubre` son las de verdad. Comprueba:
+- que sale con 2;
+- que el error dice «dias fuera del calendario de cierres»;
+- que nombra `'2026-04-02'` y no `'2026-04-01'`;
+- que no escribe nada.
+
+**Corre sin `data/`, como en la CI**, medido en el clon sin `config/settings.local.toml` (que es
+lo que le daba `data/`):
+
+```
+$ uv run --frozen pytest tests/unit/test_renovar_cierres.py -q -p no:cacheprovider   # clon sin data/
+...                                                                      [100%]
+```
+
+La primera versión no sustituía las velas, y en el clon sin `data/` falló: salía con 2, pero por
+otra causa («falta en disco: ohlc/eurusd-m1-2026-03-…»). El test lo cazó porque comprueba el mensaje
+y no solo el código. Si hubiera mirado solo el código, habría pasado por la razón equivocada.
+
+### 1.4 Cada guardia, rota a propósito
+
+Un guion en la carpeta de trabajo rompe cada guardia en el código REAL, corre
+`uv run pytest tests/unit/test_renovar_cierres.py -q -p no:cacheprovider -rf` y restaura el fichero
+byte a byte. Al final, `git diff --stat src/` sale vacío:
+
+| Rotura | Lo que falla | Restaurado |
+|---|---|---|
+| `calendario()` lee `datetime.now(UTC)` al expandirse (`engine/calendario_cierres.py`) | `test_con_el_reloj_saboteado_el_calendario_y_el_dia_simulado_salen` | sí |
+| `_prohibido_por_cierre` lee `datetime.now(UTC)` antes de preguntar al predicado (`engine/broker.py`) | `test_con_el_reloj_saboteado_el_calendario_y_el_dia_simulado_salen` | sí |
+| `comprobar_que_cubre` deja de negarse (`if False:`, `engine/cableado.py`) | `test_simular_un_dia_posterior_a_hasta_sale_con_2_y_lo_nombra` | sí |
+
+Sin roturas, los tres pasan.
+
+### 1.5 El runbook (punto c)
+
+`docs/runbooks/RENOVAR-CIERRES.md`, con su línea en `docs/runbooks/README.md`. Lleva:
+- los dos casos de la decisión 2 (una simulación que pide días posteriores a `hasta`, y el bot en
+  tiempo real);
+- quién lo hace: Claude Code con orden de Aleks, en rama propia;
+- de dónde sale el dato: Trading Updates archivadas, con la URL y la fecha de consulta en la
+  `fuente` y en el comentario de `cubre`;
+- lo que no entra: nada sin fuente;
+- la condición que bloquea la rama que conecte el bot en tiempo real.
+
+No hay aviso por fecha (decisión 3).
+
+### 1.6 Los 2 fallos, los 3 saltados y el recuento (punto d)
+
+**Los 2 fallos de la suite con el reloj adelantado (§0.1) son del clon, no de la fecha.** Los dos
+fallan igual sin adelantarlo:
+- `tests/contract/test_repository_integrity.py::test_no_unexpected_ignored_paths`: ve
+  `config/settings.local.toml`, el fichero que se le puso al clon para apuntar a `data/`. En el
+  repositorio no existe;
+- `tests/unit/test_rutas_windows.py::test_las_rutas_por_defecto_con_el_rotulo_mas_largo_caben_en_este_repo`:
+  la ruta del clon, dentro de la carpeta de trabajo, es más larga. Con el rótulo de diagnóstico más
+  largo da 270 caracteres, y el límite es 259.
+
+**Los 3 saltados también son del clon:**
+- `tests/unit/test_contrato_rama.py:196`: «sin contrato.yaml en esta rama (en main sale antes del
+  merge)». El clon estaba en `main`;
+- `tests/unit/test_fidelidad_marzo.py:240`: «sin data/». Ese test busca `data/` dentro del clon, no
+  por `settings.local.toml`;
+- `tests/unit/test_motor_prompt.py:135`: «could not import 'tokenizers'». Es un grupo opcional, que
+  el entorno del clon no instaló.
+
+**1855 frente a 1208: casos recogidos frente a funciones.** `state check` cuenta FUNCIONES
+`test_*`, por AST y sin ejecutar nada (`cli.py:82`, `contar_tests`). pytest cuenta CASOS: cada
+combinación de un `parametrize` es uno. Medido con
+`uv run pytest --collect-only -q -o addopts="" -p no:cacheprovider` en esta rama:
+- 1863 casos de 1211 funciones;
+- 103 funciones parametrizadas dan 755 casos, 652 más que funciones;
+- 1211 + 652 = 1863.
+
+En `main`, 1208 funciones dan 1860 casos, y esos 1860 son los del clon: 1855 + 2 + 3.
+
+### 1.7 Lo que se cambió de PROJECT_STATE, y por qué (punto e)
+
+**La línea N no se toca: la fija el consultor en la orden de cierre.** Sí cambió el número de
+`Tests Currently Passing`, de 1208 a 1211. No hay otra manera: con los tres tests nuevos,
+`state check` falla y `make check` no sella (medido):
+
+```
+$ uv run botsito state check
+ERROR: 'Tests Currently Passing' dice 1208; hay 1211 funciones de test
+exit=1
+```
+
+Es el único cambio a `PROJECT_STATE.md` en esta orden. Si el consultor prefiere otra salida, que
+lo diga.
+
+### 1.8 El contrato
+
+Se amplió en esta orden a:
+- `tests/unit/test_renovar_cierres.py`;
+- `docs/runbooks/RENOVAR-CIERRES.md` y `docs/runbooks/README.md`.
+
+`knowledge/cuentas/` pasa a `rutas_protegidas` (decisión 6: el YAML no se toca), y el riesgo baja de
+alto a medio: solo cambian tests y documentos.
+
+**Sin CI de Linux**: no se tocan rutas ni código del sistema de archivos. Solo tests y documentos;
+el test nuevo usa `tmp_path` y `Path` como los demás.
+
 ## Estado
 
-FASE 0 ENTREGADA: falta el visto bueno del consultor para la Fase 1, que depende de dos cosas:
-- la opción A o B de §0.3, y cómo falla el calendario caducado;
-- que salga la Trading Update del 8-10, para poder renovar.
+EN CURSO: Fase 1 reducida hecha (§1); falta el revisor.

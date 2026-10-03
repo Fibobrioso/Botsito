@@ -1,11 +1,14 @@
 rama: trabajo/renovar-cierres
-riesgo: alto  # toca el calendario de la cuenta (knowledge/cuentas/cierres/) que decide cuando el broker niega; la Fase 0 solo mide
+riesgo: medio  # anade tests y un runbook; el calendario (knowledge/cuentas/) queda protegido por la decision 6 del consultor
 artefacto: docs/validation/RENOVAR-CIERRES.md
 rutas_permitidas:
   - docs/validation/RENOVAR-CIERRES.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
+  - docs/runbooks/RENOVAR-CIERRES.md
+  - docs/runbooks/README.md
+  - tests/unit/test_renovar_cierres.py
 rutas_protegidas:
   - src/botsito/engine/
   - src/botsito/domain/
@@ -16,6 +19,7 @@ rutas_protegidas:
   - knowledge/corpus/
   - docs/adr/
   - data/manifests/
+  - knowledge/cuentas/
 comprobaciones:
   - uv run botsito state check
   - make check > make-check.log 2>&1
