@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/renovar-cierres
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36r-fuentes-ftmo` (2026-10-03).
+trabajo/renovar-cierres · EN CURSO (2026-10-03) · docs/validation/RENOVAR-CIERRES.md. NO se cierra.
 
 ## Stable Main State
 36a9801 · merge de `trabajo/fuentes-ftmo` (tag `stable/F36r-fuentes-ftmo`): la respuesta de FTMO del 29-09 y el correo de Aleks del 2026-10-03 (ticket VDW-DPMWR-965), literales en docs/validation/FTMO-REGLAS.md; A-54 y A-55 con sus preguntas enviadas (1-4 y 5-9), R17 en la 10. Sobre `stable/F36q-cierres-de-mercado` (aaac17b). Informe docs/validation/FUENTES-FTMO.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F36r-fuentes-ftmo` (2026-10-03).
 36a9801 · merge: las fuentes escritas de FTMO (respuesta y correo del ticket VDW-DPMWR-965), A-54 y A-55 con sus preguntas enviadas · tag stable/F36r-fuentes-ftmo
 
 ## Tests Currently Passing
-1208 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1211 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 8 (2026-10-03).
+— ninguna desde el Archivo 9 (2026-10-03).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 8 (2026-10-03).
+— ninguna desde el Archivo 9 (2026-10-03).
