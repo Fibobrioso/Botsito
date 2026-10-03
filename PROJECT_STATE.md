@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/cierres-de-mercado
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36p-freno-peticiones` (2026-10-02).
+feature/cierres-de-mercado · EN CURSO (2026-10-02, desde 5947e55): A3 e), no abrir ni colocar en la ventana que FTMO prohibe antes de un cierre largo. Encargo docs/encargos/feature-cierres-de-mercado.md; informe docs/validation/CIERRES-DE-MERCADO.md. NO se cierra.
 
 ## Stable Main State
 b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticiones`): el freno de peticiones al servidor vive en el puerto del broker (ADR-0067, engine/freno.py): aviso en 1000, corte en 1500 y bucle de 5 iguales en 1 minuto, PROVISIONAL bajo A-54; lo que protege la cuenta (cancelar, cerrar, el primer stop a break even) sale siempre y cuenta. Sobre `stable/F36o-cerrar-a29-a36` (34680ba). Informe docs/validation/FRENO-PETICIONES.md; el registro del cierre, al final de HISTORIA.
@@ -196,9 +196,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 6 (2026-10-02).
+— ninguna desde el Archivo 7 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 6 (2026-10-02).
+— ninguna desde el Archivo 7 (2026-10-02).
