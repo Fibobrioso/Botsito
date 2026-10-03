@@ -1497,10 +1497,11 @@ ambiguedades:
       servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la
       respuesta se fijan los umbrales del freno. Qué cuenta FTMO como mensaje (las rechazadas,
       las modificaciones, las cancelaciones) está preguntado al soporte de FTMO: enviado por
-      Aleks el 2026-10-03 en el ticket VDW-DPMWR-965 (docs/validation/FUENTES-FTMO.md),
-      respuesta pendiente. Si cuenta más de lo que cuenta el freno, los umbrales se revisan.
-      Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus
-      habla del límite, y la fuente real es docs/validation/FTMO-REGLAS.md R13.
+      Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 1 a 4 de su correo (literal en
+      docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente.
+      Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Su cita de evidencia
+      es de relleno porque el esquema exige una: ningún ítem del corpus habla del límite, y la
+      fuente real es docs/validation/FTMO-REGLAS.md R13.
     resuelve_en: [F33]
     # NACE el 2026-10-02 (rama feature/freno-peticiones, ADR-0067; la K de Next Action). R13 da la
     # cifra -«more than 2,000 server requests per day»- y no dice que es una «server request», con
@@ -1533,11 +1534,12 @@ ambiguedades:
       antes que se llena dentro es «opening», ni qué mercado es el «relevant financial market»
       de EURUSD (el horario de EURUSD en los servidores de FTMO, o también el cierre de otras
       bolsas). Preguntado a soporte de FTMO, en inglés (docs/validation/CIERRES-DE-MERCADO.md
-      §0.6, P1, P2 y P3): enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965
-      (docs/validation/FUENTES-FTMO.md), respuesta pendiente; y con la respuesta se fija
-      cierre_pendientes (y, si modificar no es colocar, se deja de negar en el broker). Su
-      cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus
-      habla de cierres de mercado, y la fuente real es R15.
+      §0.6, P1, P2 y P3): enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965,
+      preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3 (literal
+      en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta
+      pendiente; y con la respuesta se fija cierre_pendientes (y, si modificar no es colocar,
+      se deja de negar en el broker). Su cita de evidencia es de relleno porque el esquema
+      exige una: ningún ítem del corpus habla de cierres de mercado, y la fuente real es R15.
     resuelve_en: [F33]
     # NACE el 2026-10-02 (rama feature/cierres-de-mercado, ADR-0068; A3 e) de «Pendientes
     # heredados»). Lo que R15 dice por escrito -abrir no, dos horas antes de un cierre de dos o mas-

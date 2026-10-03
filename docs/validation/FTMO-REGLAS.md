@@ -155,10 +155,64 @@ del riesgo.
 > posición y comisión. **La del tamaño de posición NO se contestó**: si un lote que varía con el stop,
 > con riesgo constante, cuenta como «substantially larger position sizes» (R17, §4 de abajo).
 >
-> **Repreguntado el 2026-10-03.** Aleks reenvió, en el mismo ticket, diez preguntas: los mensajes al
-> servidor (sus P1-P4, para A-54), el gap trading (P1-P3 de `docs/validation/CIERRES-DE-MERCADO.md`
-> §0.6, para A-55) y el tamaño de posición. **Respuesta pendiente.** El texto de ese correo no está en
-> el repositorio (`docs/validation/FUENTES-FTMO.md` §2).
+> **Repreguntado el 2026-10-03.** Aleks contestó en el mismo ticket con diez preguntas numeradas: la 1
+> a la 4, los mensajes al servidor (A-54); la 5 a la 9, el gap trading (A-55); y la 10, el tamaño de
+> posición (R17). **Respuesta pendiente.** El correo, literal, en el recuadro siguiente.
+
+> **Correo LITERAL de Aleks a soporte de FTMO, ticket VDW-DPMWR-965 (recuadro añadido el 2026-10-03
+> en la rama `trabajo/fuentes-ftmo`).** Fuente escrita: correo de `abriosotapia@gmail.com` a
+> `support@ftmo.com`, enviado el **2026-10-03** como respuesta en el ticket, con el asunto «Re:
+> Clarification on Swing account rules for an automated EURUSD strategy - [VDW-DPMWR-965]». El texto
+> lo copia Aleks en la segunda orden de la rama (`docs/encargos/trabajo-fuentes-ftmo.md`), y aquí va
+> tal cual:
+>
+> > Hello Guilherme,
+> >
+> > Thank you for your previous answer. I am preparing an FTMO Swing account on MT5 with an Expert
+> > Advisor, and I would like to follow the rules exactly, so I have a few follow-up questions.
+> >
+> > Server messages (2,000 per day)
+> > 1. Do rejected orders or rejected modification requests count towards the limit?
+> > 2. Does each modification of a pending order (price, stop loss or take profit) count as one
+> >    message?
+> > 3. Do cancellations of pending orders and closing of positions count?
+> > 4. At what time, and in which time zone, is the daily count reset?
+> >
+> > Gap trading ("within two hours before a relevant market closes for at least two hours")
+> > 5. Does this also apply to placing pending orders (limit or stop) within those two hours, even if
+> >    they are not filled?
+> > 6. If a pending order was placed before the two-hour window and gets filled within it, is that
+> >    considered opening a trade within the window? Should such orders be cancelled before the window
+> >    starts?
+> > 7. Is modifying the price of an existing pending order within the window treated as placing a new
+> >    one?
+> > 8. For EURUSD, is the "relevant market" only the EURUSD trading session on your servers (as shown
+> >    on the Symbols page and in the Trading Updates), or does the closure of other markets (for
+> >    example, stock exchanges on Good Friday) also count?
+> > 9. Can you confirm that the daily EURUSD break (23:55 to 00:05 server time) does not count as a
+> >    market closure for this rule?
+> >
+> > Position size (question 2 of my previous email, which was not answered)
+> > 10. The EA risks the same fixed percentage on every trade, so the lot size varies with the stop
+> >     distance, and one trade can be up to about 5 times larger in lots than another with the same
+> >     monetary risk. Does this count as "substantially larger position sizes"?
+> >
+> > Thank you in advance.
+> >
+> > Best regards,
+> > Alex
+>
+> **A quién responde cada pregunta:**
+>
+> | Pregunta | Qué | Dónde se usa |
+> |---|---|---|
+> | 1-4 | mensajes al servidor | A-54 |
+> | 5 | colocar una pendiente en la ventana | A-55; P1 (a) de `docs/validation/CIERRES-DE-MERCADO.md` §0.6 |
+> | 6 | la pendiente puesta antes que se llena dentro, y si cancelarla | A-55; P1 (b) y (c) |
+> | 7 | modificar una pendiente en la ventana | A-55; P1 (d) |
+> | 8 | qué mercado es el «relevant market» | A-55; P2 |
+> | 9 | el corte diario de EURUSD | A-55; P3 |
+> | 10 | el tamaño de posición | R17 (§4 de abajo) |
 
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
