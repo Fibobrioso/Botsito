@@ -169,6 +169,10 @@ es un registro de feedback (§0.4 b, «lo que queda fuera»).
   - medio `escrito` y `recibido_el: 2026-10-02` (la decisión). Si el consultor prefiere la fecha en
     que se registra (2026-10-03), es un campo.
 
+  > **DECIDIDO (2026-10-03, decisión 2 del consultor).** `reexpresion_consultor`, con la misma `fecha`
+  > que `a0b61bc9` y `recibido_el: 2026-10-02`, porque no llega nada nuevo. Ningún registro anterior
+  > usa `reexpresion_consultor`, así que no hay otra convención de fechas con la que chocar.
+
   La cadena queda `626c4dc7` ← `a0b61bc9` ← REOPEN. `pending` pasa de 1 pendiente a 0, y A-36 sigue
   `ABIERTA` sin tocar su entrada del YAML.
 
@@ -179,6 +183,15 @@ es un registro de feedback (§0.4 b, «lo que queda fuera»).
 | Formalizar el apaño: `RESOLVE_UNKNOWN` con un `valor_resultante` reservado («ABIERTA») | mínimo | una acción de cerrar que significa abrir; un valor mágico que hay que leer en cada sitio |
 
 #### b) Fuente documental
+
+> **SUSTITUIDO EN PARTE (2026-10-03, decisión 3 del consultor, abajo).** Lo de esta sección que la
+> decisión endurece:
+> - el `ancla` ya no es «un texto que aparece»: es un ENCABEZADO del documento;
+> - el `literal` tiene que estar DENTRO de la sección de ese encabezado;
+> - la ruta se normaliza y se niega si sale de `docs/` (`..`, absoluta o enlace).
+>
+> Lo demás sigue: solo en `medicion`, la evidencia vacía solo con una fuente documental, y negado
+> por defecto.
 
 **Recomendada: un campo nuevo, tipado, en `ambiguedades.yaml`: `fuentes_documentales`.** Es una
 lista de `{documento, ancla, literal}`:
@@ -257,15 +270,158 @@ Los tests que congelan lo que cambia: `tests/unit/test_feedback.py` (acciones y 
 **Sin CI de Linux**, salvo que la guardia de «commiteado» use rutas de git que dependan de la
 plataforma. Si es así, se empuja como `fix/trabajo-reabrir-y-fuente-documental`.
 
+## Decisiones del consultor sobre la Fase 0 (2026-10-03)
+
+Copiadas tal cual de la segunda orden (`docs/encargos/trabajo-reabrir-y-fuente-documental.md`,
+«Segunda orden»). Las de §0.4 que cambian llevan arriba un recuadro.
+
+> 1. REOPEN, aprobado tal como lo propones: solo sobre ambigüedades, supersede obligatorio al último registro de la cadena y sin valor. Un REOPEN activo exige ABIERTA, una RESUELTA exige un cierre activo, y una DECIDIDA solo se reabre con un ADR. Tests añadidos a los que pedía el encargo, cada uno roto a propósito: el ciclo completo cerrar → reabrir → volver a cerrar tiene que funcionar; un REOPEN sobre una ambigüedad que nunca se cerró, o sobre una DECIDIDA, tiene que fallar; y la guardia nueva de RESUELTA tiene que cazar una RESUELTA cuyo único cierre está superseded.
+> 2. Migración de A-36: un registro nuevo con procedencia reexpresion_consultor (modelo.py:113, «sin respuesta nueva: lo mismo, en el tipo que espera el registro»), que supersede a a0b61bc9. Lleva la misma fecha que a0b61bc9 y recibido_el 2026-10-02. Motivo: según knowledge/feedback/README.md, recibido_el es el día en que llegó la respuesta, y aquí no llega nada nuevo: se reescribe la decisión del 2026-10-02. El literal cita a0b61bc9 y su motivo. No se edita ningún registro existente. Antes de escribirlo, comprueba si algún registro reexpresion_consultor anterior sigue otra convención para las fechas; si la hay, para y dímelo.
+> 3. fuentes_documentales, aprobado: solo en ambigüedades de clase medicion, la evidencia solo puede quedar vacía si hay al menos una fuente documental, y por defecto se niega. Además, por ser una lectura de rutas:
+>    - la ruta se normaliza y tiene que quedar dentro de docs/; cualquier «..», ruta absoluta o enlace que salga de docs/ se niega (es el agujero de leer_fichero, patrón 3 de ERRORES-RECURRENTES);
+>    - el ancla tiene que ser un encabezado que exista en el documento, y el literal tiene que aparecer tal cual dentro de la sección de ese ancla, no en cualquier parte del fichero;
+>    - test roto a propósito para cada condición: «..», ruta fuera de docs/, documento sin commitear, ancla que no existe, literal fuera de su sección y fuente documental en una pregunta.
+>    Como lee rutas, push como fix/trabajo-reabrir-y-fuente-documental y CI de Linux en verde antes del merge; dame los números de run.
+> 4. Las cuatro migraciones aprobadas: A-54 (R13), A-55 (R15 y el ticket), A-27 (R11) y A-28 (R10). En A-27 y A-28 solo se cambia el ítem de FundedNext. A-44 queda fuera: su evidencia es del trader (las citas de v4 y v9 que ya tiene), no relleno. Si tras las cuatro el ítem de FundedNext sigue citado en alguna ambigüedad, dime cuál y por qué.
+> 5. PROJECT_STATE: el único tope es el de 25 KB de tests/unit/test_project_state.py. No hay ningún «margen de 23.000» en CLAUDE.md, los runbooks, .claude/ ni el test (lo he buscado). No lo vuelvas a citar; si lo sacaste de algún sitio del repo, dime de cuál.
+
+**Sobre el punto 5:** el «margen de 23.000» no lo inventé. Estaba en el repositorio, en los propios
+encargos del consultor:
+- `docs/encargos/feature-escenarios-por-sesion.md:107`;
+- `docs/encargos/feature-freno-peticiones.md:31`;
+- `docs/encargos/trabajo-cerrar-a29-a36.md:18` y `:41`;
+- `docs/encargos/feature-cierres-de-mercado.md:32`;
+- `docs/encargos/trabajo-fuentes-ftmo.md:30` y `:72` («el margen de 23.000 es mío»).
+
+Y en la memoria de la sesión, que ya se ha corregido. Desde aquí no se cita: el único tope es el de
+25 KB de `tests/unit/test_project_state.py`.
+
+## 1. Fase 1 · Lo hecho, con las decisiones del consultor
+
+### 1.1 `REOPEN` (decision 1)
+
+- `src/botsito/feedback/modelo.py`: `REOPEN` en `ACCIONES`, solo sobre `ambiguedad`
+  (`OBJETIVOS_POR_ACCION`), en `PROHIBEN_VALOR` (sin `valor_resultante` ni `valor_canonico`) y en
+  `EXIGEN_SUPERSEDE`. Contra el contexto: en su cadena de `supersede`, hacia atras, tiene que haber
+  un `RESOLVE_UNKNOWN` sobre la misma ambiguedad; si no, «no hay nada que reabrir». Que supersede
+  al ULTIMO de la cadena ya lo exigia el modelo: un registro solo se supersede una vez.
+- `src/botsito/validation/knowledge.py`, `problemas_de_cierre`, sobre los registros ACTIVOS:
+  una `RESUELTA` exige un `RESOLVE_UNKNOWN` activo (el que un `REOPEN` supersede ya no cuenta);
+  un `REOPEN` activo sobre una `DECIDIDA` falla («solo la reabre otro ADR»); un `REOPEN` activo
+  exige `ABIERTA`. Sustituye a la comprobacion anterior de `RESUELTA`, que contaba tambien los
+  superseded. Medido antes de cambiarla: las 25 `RESUELTA` tienen cierre activo, y la unica
+  ambiguedad `ABIERTA` con un `RESOLVE_UNKNOWN` activo era A-36.
+- `src/botsito/cli.py`, `feedback pending`: un `REOPEN` activo esta reflejado si la ambiguedad esta
+  `ABIERTA` («reabierta, espera respuesta») y pendiente si no.
+
+### 1.2 La migracion de A-36 (decision 2)
+
+Comprobado antes: no habia ningun registro `reexpresion_consultor` (ninguna convencion previa de
+fechas que seguir). Registro nuevo, escrito con la CLI (`botsito feedback new`), sin editar ninguno:
+`knowledge/feedback/2026-09-29-sesion-03/fb-2026-09-29-sesion-03-f3caeb2d.yaml`: `REOPEN` sobre
+A-36, `fecha` 2026-09-29 (la de a0b61bc9), `recibido_el` 2026-10-02, `procedencia`
+`reexpresion_consultor`, `supersede` fb-2026-09-29-sesion-03-a0b61bc9, `respuesta_literal` la de
+a0b61bc9 tal cual, y en `registrado_por` y `notas` que es la reexpresion de a0b61bc9 y por que.
+La cadena queda 626c4dc7 (el cierre) <- a0b61bc9 <- f3caeb2d.
+
+`feedback pending`: antes, 1 pendiente (a0b61bc9); ahora, «0 pendientes de 101 activos; 86
+reflejados». A-36 sigue `ABIERTA` y va a la sesion 4.
+
+### 1.3 `fuentes_documentales` (decision 3)
+
+- `src/botsito/cases/ambiguedades.py`: campo opcional `fuentes_documentales` (cada una con
+  `documento`, `ancla` y `literal`), solo en `clase: medicion`; `evidencia` vacia solo con al menos
+  una. La ruta se niega antes de leer nada (`problema_de_ruta_documental`): barras invertidas,
+  letra de unidad, `/` inicial, partes `..` o `.`, y lo que no empiece por `docs/`.
+- `src/botsito/validation/knowledge.py`, `problemas_fuentes_documentales`: la ruta se resuelve
+  (`Path.resolve`, que sigue los enlaces) y tiene que quedar dentro de `<repo>/docs`; el documento
+  existe y esta en HEAD (`comun.historial.contenido_en_head`); el ancla es un encabezado del
+  documento (fuera de los bloques de codigo); el literal esta dentro de la seccion de ese
+  encabezado, hasta el siguiente de su nivel o superior, comparando sin las marcas de cita `>` y
+  con los espacios de seguido.
+- **Sin git, «commiteado» no se evalua.** La primera version lo negaba tambien sin git, y el primer
+  `make check` de la Fase 1 salio en rojo por eso (1 failed, 1891 passed):
+  `tests/unit/test_kit.py::test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad` pasa
+  `validar` sobre una COPIA del repositorio sin `.git`, y las cuatro migradas salian «no esta
+  commiteado». El resto de las comprobaciones de historial de `validar` no se evalua sin git
+  (`con_git = hay_git(repo)` y sus usos, `src/botsito/validation/knowledge.py`); esta sigue la
+  misma convencion. Con git -`make check`, la CI, `knowledge validate` en el repositorio- se niega
+  igual, y sin git la ruta, el encabezado y el literal se siguen comprobando (el test lo cubre).
+  **Para el consultor:** si prefiere negar tambien sin git, hay que darle `.git` a la copia de
+  `test_kit.py`.
+- `src/botsito/cases/spec_docs.py`: `docs/spec/ambiguedades.md` pinta cada fuente documental debajo
+  de su pregunta, y la introduccion dice las reglas nuevas (regenerado con `spec docs --escribir`).
+
+### 1.4 Las cuatro migraciones (decision 4)
+
+En `knowledge/spec/ambiguedades.yaml`, todas a `docs/validation/FTMO-REGLAS.md`, ancla
+«2. Las reglas, con su fuente», con el literal comprobado dentro de esa seccion:
+
+| Ambigüedad | Regla | Evidencia | Literal |
+|---|---|---|---|
+| A-27 | R11 | sale ev-v4-012524-0ef85a89; quedan ev-v2-003320-a736fd37 y ev-v4-012900-8ef676ed | «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA» |
+| A-28 | R10 | sale ev-v4-012524-0ef85a89; quedan ev-v6-005830-48b30e48 y ev-v6-005810-5cb1ef06 | «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST» y «El calendario del +DST: NO ENCONTRADA» |
+| A-54 | R13 | vacia | «an excessive number of more than 2,000 server requests per day» |
+| A-55 | R15 y el ticket | vacia | «two hours or less before a relevant financial market is closed for at least two hours» y «within two hours before a relevant market closes for at least two hours» |
+
+En A-54 y A-55 sale ademas del texto de la pregunta la frase sobre la cita de relleno. Un comentario
+en cada una dice que citaba antes y por que cambio.
+
+**El item de FundedNext (ev-v4-012524-0ef85a89) tras las cuatro:** en las ambiguedades queda SOLO
+en A-44 (`knowledge/spec/ambiguedades.yaml:1210`), que es una `pregunta` y cuya evidencia es la del
+trader; decision 4: «A-44 queda fuera». Fuera de las ambiguedades lo citan cuatro reglas de
+`knowledge/spec/strategy_spec.yaml` -RN-029, RN-030, RN-031 y RN-032, los frenos y limites de la
+firma-, donde es la cita de lo que el trader dice de operar con los limites de una cuenta de
+fondeo; no son de relleno ni entran en este encargo, y no se tocan.
+
+### 1.5 Los tests, cada uno roto a proposito
+
+`tests/unit/test_reabrir_y_fuente_documental.py`: 19 funciones (29 casos con los parametrizados).
+Cada guardia nueva se rompio en el codigo REAL, se corrio el fichero y se restauro byte a byte
+(guion de la carpeta de trabajo; las 16 restauradas, comprobado):
+
+| Rotura | Tests que fallan |
+|---|---|
+| `REOPEN` sin `supersede` | `test_un_reopen_mal_formado_no_se_escribe[cambio0]` |
+| `REOPEN` con valor | `test_un_reopen_mal_formado_no_se_escribe[cambio1]` |
+| `REOPEN` sobre algo que no es una ambiguedad | `test_un_reopen_mal_formado_no_se_escribe[cambio3]` |
+| `REOPEN` sin cierre en su cadena | `test_un_reopen_sobre_una_ambiguedad_que_nunca_se_cerro_falla` |
+| `RESUELTA` cuenta tambien los superseded | `test_el_ciclo_cerrar_reabrir_volver_a_cerrar_funciona`, `test_una_resuelta_cuyo_unico_cierre_esta_superseded_falla` |
+| `REOPEN` sobre una `DECIDIDA` | `test_un_reopen_sobre_una_decidida_falla` |
+| `REOPEN` activo sin `ABIERTA` | `test_un_reopen_activo_exige_que_este_abierta` |
+| ruta con `..` | `test_una_ruta_que_sale_de_docs_se_niega_antes_de_leer` (2 casos) |
+| ruta fuera de `docs/` | `test_una_ruta_que_sale_de_docs_se_niega_antes_de_leer` (2 casos) |
+| enlace que sale de `docs/` | `test_un_enlace_que_sale_de_docs_se_niega` |
+| documento sin commitear | `test_un_documento_sin_commitear_se_niega` |
+| ancla que no es un encabezado | `test_un_ancla_que_no_es_un_encabezado_se_niega` |
+| literal en cualquier parte del fichero | `test_un_literal_fuera_de_su_seccion_se_niega` |
+| fuente documental en una pregunta | `test_una_fuente_documental_en_una_pregunta_se_niega` (2 casos) |
+| evidencia vacia sin fuente documental | `test_la_evidencia_vacia_solo_con_una_fuente_documental` |
+| `pending` trata el `REOPEN` como respuesta | `test_el_ciclo_cerrar_reabrir_volver_a_cerrar_funciona`, `test_pending_ve_un_reopen_sobre_una_cerrada_como_pendiente`, `test_a36_esta_migrada_y_pending_ya_no_la_cuenta` |
+
+El test del enlace crea un enlace simbolico de verdad; en Windows paso en local, y la CI de Linux
+lo corre (§1.7).
+
+### 1.6 Lo que repite la regla, y `PROJECT_STATE`
+
+Actualizados donde repiten la regla: `CLAUDE.md` («Ambiguedades»), `docs/runbooks/AMBIGUEDADES.md`
+(dos secciones nuevas: «Reabrir una ambiguedad» y «Una fuente documental en vez de evidencia»),
+`docs/runbooks/SESION-DE-PREGUNTAS.md` (punto 6 nuevo), `docs/runbooks/ACTIVAR-A35-A44.md` (aviso en
+§3), `knowledge/feedback/README.md`, `knowledge/spec/README.md` y `.claude/agents/revisor.md`.
+
+`PROJECT_STATE.md`: las dos lineas de Technical Debt se pagan enteras y salen, con su texto literal,
+a `docs/state/HISTORIA.md` («Technical Debt PAGADA · sale de PROJECT_STATE.md en
+trabajo/reabrir-y-fuente-documental»). «Tests Currently Passing» pasa de 1211 a 1230 funciones (las
+19 de este fichero; `state check` lo exige). Ninguna cifra ni regla de la estrategia cambia; el
+motor, los parametros y el corpus no se tocan, y no se abrio nada de v7 en adelante.
+
+### 1.7 La CI de Linux
+
+La guardia de las fuentes documentales lee rutas (decision 3): la rama se empuja como
+`fix/trabajo-reabrir-y-fuente-documental` despues del commit de la Fase 1, y sus runs se anotan
+aqui en el commit siguiente.
+
 ## Estado
 
-FASE 0 ENTREGADA: falta el visto bueno del consultor para la Fase 1. Decisiones para el consultor:
-1. ¿`REOPEN` como §0.4 a)? En particular:
-   - que supersede al último registro de la cadena y no al que la cerró;
-   - que no lleve `valor_resultante`;
-   - que la guardia de `RESUELTA` pase a exigir un cierre activo.
-2. Para la migración de A-36: `recibido_el`, ¿2026-10-02 (la decisión) o 2026-10-03 (cuando se
-   registra)? Y `procedencia`, ¿`reexpresion_consultor`?
-3. ¿`fuentes_documentales` como §0.4 b)? Solo para `medicion`, solo documentos bajo `docs/`, y la
-   evidencia vacía solo con una fuente documental.
-4. Las cuatro migraciones (A-54, A-55, A-27 y A-28), y A-44 fuera.
+Fase 0 entregada y decidida por el consultor el 2026-10-03 (arriba). FASE 1 HECHA (§1); falta la
+CI de Linux de `fix/trabajo-reabrir-y-fuente-documental` (§1.7) y el revisor.

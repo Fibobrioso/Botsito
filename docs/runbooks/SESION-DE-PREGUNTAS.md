@@ -138,7 +138,10 @@ precondición de ceguera.
    El objetivo es **la ambigüedad**, no el parámetro (ADR-0022). Si la respuesta fija un valor del
    registro, va además el registro sobre el parámetro, y `feedback apply` lo lleva al registro
    (ADR-0012 §7).
-6. **Cerrar una ambigüedad toca cinco sitios** (`docs/runbooks/AMBIGUEDADES.md`): el registro de
+6. **Si una respuesta REABRE una ambigüedad cerrada**, el registro es un `REOPEN` que supersede
+   al último de su cadena, no un `RESOLVE_UNKNOWN` con valor «sin resolver»
+   (`docs/runbooks/AMBIGUEDADES.md`, «Reabrir una ambiguedad»).
+7. **Cerrar una ambigüedad toca cinco sitios** (`docs/runbooks/AMBIGUEDADES.md`): el registro de
    parámetros vía `feedback apply`, `ambiguedades.yaml` en `RESUELTA`, la regla de la spec que la
    citaba, la tabla «Known Ambiguities» de `PROJECT_STATE.md` y la hoja de preguntas
    (`scripts/hoja_preguntas.py` y su test, `tests/unit/test_hoja_preguntas.py`), que se niega a

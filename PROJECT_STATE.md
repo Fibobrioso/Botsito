@@ -23,7 +23,7 @@ dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`
 dfd1a6f · merge: el calendario de cierres caduca por la fecha simulada; se renueva por condicion (RENOVAR-CIERRES.md) · tag stable/F36s-renovar-cierres
 
 ## Tests Currently Passing
-1211 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1230 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,8 +117,6 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
-- El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).

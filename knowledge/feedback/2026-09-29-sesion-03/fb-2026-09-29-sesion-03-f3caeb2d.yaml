@@ -1,0 +1,19 @@
+id: fb-2026-09-29-sesion-03-f3caeb2d
+sesion: 2026-09-29-sesion-03
+fecha: '2026-09-29'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-36
+accion: REOPEN
+respuesta_literal: A-36 no se cierra. La pregunta se hizo sobre una orden límite, y desde A-47 la entrada
+  es con orden stop; además está C6 (v7, orden 2 puntos más allá del 0).
+registrado_por: Aleks, consultor · reexpresion de fb-2026-09-29-sesion-03-a0b61bc9 en la accion REOPEN
+  (trabajo/reabrir-y-fuente-documental, decision 2 del consultor del 2026-10-03)
+supersede: fb-2026-09-29-sesion-03-a0b61bc9
+notas: 'Sin respuesta nueva: es la decision del consultor del 2026-10-02 que ya recoge fb-2026-09-29-sesion-03-a0b61bc9,
+  literal, en la accion que la dice. Aquel la expresaba como RESOLVE_UNKNOWN con valor «sin resolver»
+  porque no existia REOPEN, y feedback pending la contaba como respuesta pendiente. La cadena queda fb-2026-09-29-sesion-03-626c4dc7
+  (el cierre: «Mecha incluida, siempre.») <- a0b61bc9 <- este. A-36 sigue ABIERTA y va a la sesion 4'
+recibido_el: '2026-10-02'
+procedencia: reexpresion_consultor

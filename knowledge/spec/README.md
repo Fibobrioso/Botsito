@@ -11,7 +11,11 @@
   cierra cita su fuente: **RESUELTA**, solo con un registro de feedback del trader
   (`RESOLVE_UNKNOWN`), y **DECIDIDA**, cuando lo que decide no es el trader sino el consultor
   -alcance, metodo o herramienta-, con el ADR que la nombra (ADR-0022). `ABIERTA` es la unica que
-  se sigue preguntando: entra en el cuestionario de la sesion siguiente.
+  se sigue preguntando: entra en el cuestionario de la sesion siguiente. Una RESUELTA se reabre con
+  un registro `REOPEN` (y vuelve a `ABIERTA`); una DECIDIDA, solo con otro ADR. Una `medicion` cuya
+  fuente es un documento del repositorio y no el trader cita `fuentes_documentales` (documento en
+  `docs/`, commiteado; ancla, un encabezado; literal, dentro de su seccion) en vez de evidencia de
+  relleno (`docs/runbooks/AMBIGUEDADES.md`, desde el 2026-10-03).
 - `strategy_spec.yaml` (F11, ADR-0013): las reglas de la operativa. **No contienen numeros**:
   nombran parametros del registro, y un test lo comprueba. Cada regla lleva el `literal` tal cual
   del registro o el item que cita, verificado contra el. Normalmente es del trader; cuando lo

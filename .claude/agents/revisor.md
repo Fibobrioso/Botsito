@@ -70,13 +70,18 @@ Recorre, en este orden, y anota lo que compruebas aunque salga bien:
    En el feedback nuevo, **CORRECT frente a RESOLVE**: cambiar un valor que ya estaba fijado por el
    trader es `CORRECT` (con `supersede` si retira otro registro; `correccion_consultor` lo exige),
    no un `RESOLVE_UNKNOWN` encima; cerrar una ambiguedad como `RESUELTA` exige un registro del
-   trader que apunte A LA AMBIGUEDAD, no al parametro; una `DECIDIDA` la cierra el consultor con el
-   ADR que la nombre (ADR-0022). `RESOLVE_UNKNOWN` solo sobre parametro, ambiguedad o evidencia;
+   trader que apunte A LA AMBIGUEDAD, no al parametro, y ACTIVO; una `DECIDIDA` la cierra el
+   consultor con el ADR que la nombre (ADR-0022), y solo la reabre otro ADR. Reabrir una RESUELTA es
+   un `REOPEN` (sin valor, `supersede` al ultimo registro de su cadena) y la ambiguedad vuelve a
+   `ABIERTA`, no un `RESOLVE_UNKNOWN` con valor «sin resolver». `RESOLVE_UNKNOWN` solo sobre
+   parametro, ambiguedad o evidencia;
    `CONFIRM/CORRECT/REJECT` sobre evidencia, regla o parametro (`knowledge/feedback/README.md`).
 5. **Las ambiguedades.** Si cambia `knowledge/spec/ambiguedades.yaml`: en el MISMO commit cambia
    `docs/spec/ambiguedades.md` y, si se abre o se cierra, la tabla «Known Ambiguities» de
    `PROJECT_STATE.md` (solo las abiertas: abrir anade su fila, cerrar la quita); cerrar una toca los
-   cinco sitios de `docs/runbooks/AMBIGUEDADES.md`.
+   cinco sitios de `docs/runbooks/AMBIGUEDADES.md`. Una `evidencia` que cita un item que no habla
+   de la pregunta (de relleno) es un hallazgo: si la fuente es un documento, va en
+   `fuentes_documentales`, y solo en una `medicion`.
 6. **Los ADR.** Cada ADR nuevo o cambiado: su `## Estado` empieza por `ACTIVE` o `SUPERSEDED`
    (primera palabra, sin punto: `tests/unit/test_adr.py`).
 7. **Los informes cerrados.** Todo `docs/validation/*.md` que ya estaba en `main` y la rama cambia:

@@ -99,6 +99,117 @@ def ids_ambiguedades(repo: Path) -> set[str] | None:
     return {a.id for a in cargar_ambiguedades(ruta)}
 
 
+def problemas_de_cierre(ambiguedades: Iterable[Any], registros_fb: Iterable[Any]) -> list[str]:
+    """Lo que el feedback ACTIVO dice de cada ambiguedad, contra su estado en el YAML (rama
+    trabajo/reabrir-y-fuente-documental, decision 1 del consultor del 2026-10-03).
+
+    - Una RESUELTA tiene un RESOLVE_UNKNOWN ACTIVO que la cierra. Hasta esta rama contaban tambien
+      los superseded, y una RESUELTA cuyo unico cierre habia retirado un REOPEN habria pasado.
+    - Un REOPEN activo exige que este ABIERTA: la reabre, y el YAML tiene que decirlo.
+    - Una DECIDIDA la cierra un ADR y solo la reabre otro ADR: un REOPEN sobre ella es error.
+    """
+    from botsito.feedback.modelo import activos
+
+    vivos = activos(list(registros_fb))
+    cerradas_por = {
+        r.objetivo.id
+        for r in vivos
+        if str(r.objetivo.tipo) == "ambiguedad" and str(r.accion) == "RESOLVE_UNKNOWN"
+    }
+    reabiertas = {
+        r.objetivo.id: r.id
+        for r in vivos
+        if str(r.objetivo.tipo) == "ambiguedad" and str(r.accion) == "REOPEN"
+    }
+    problemas: list[str] = []
+    for amb in ambiguedades:
+        if amb.estado == "RESUELTA" and amb.id not in cerradas_por:
+            problemas.append(
+                f"{amb.id} figura RESUELTA y ningun registro de feedback ACTIVO la cierra (hace "
+                f"falta uno con objetivo ambiguedad/{amb.id} y accion RESOLVE_UNKNOWN que no este "
+                f"superseded; un REOPEN que lo supersede la vuelve a abrir)"
+            )
+        quien = reabiertas.get(amb.id)
+        if quien and amb.estado == "DECIDIDA":
+            problemas.append(
+                f"{amb.id} es DECIDIDA y {quien} (REOPEN) la reabre: una DECIDIDA la cierra un ADR "
+                f"y solo la reabre otro ADR"
+            )
+        elif quien and amb.estado != "ABIERTA":
+            problemas.append(
+                f"{amb.id} esta {amb.estado} y {quien} (REOPEN, activo) la reabre: el YAML tiene "
+                f"que decir ABIERTA"
+            )
+    return problemas
+
+
+_ENCABEZADO = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
+_CITA = re.compile(r"^\s*(?:>\s?)+")
+
+
+def seccion_de(texto: str, ancla: str) -> str | None:
+    """El texto de la seccion cuyo ENCABEZADO es `ancla` (sin las almohadillas), hasta el siguiente
+    encabezado de su nivel o de uno mayor; None si no hay ese encabezado. Las lineas dentro de un
+    bloque de codigo no son encabezados."""
+    lineas = texto.splitlines()
+    en_codigo = False
+    inicio, nivel = None, 0
+    for n, linea in enumerate(lineas):
+        if linea.lstrip().startswith("```"):
+            en_codigo = not en_codigo
+            continue
+        m = None if en_codigo else _ENCABEZADO.match(linea)
+        if not m:
+            continue
+        if inicio is not None and len(m.group(1)) <= nivel:
+            return "\n".join(lineas[inicio:n])
+        if inicio is None and m.group(2).strip() == ancla:
+            inicio, nivel = n + 1, len(m.group(1))
+    return "\n".join(lineas[inicio:]) if inicio is not None else None
+
+
+def plano(texto: str) -> str:
+    """El texto sin las marcas de cita (`>`) al principio de cada linea, y con los espacios y los
+    saltos de linea de seguido: asi se compara un literal que el documento parte en lineas."""
+    return " ".join(" ".join(_CITA.sub("", linea) for linea in texto.splitlines()).split())
+
+
+def problemas_fuentes_documentales(
+    repo: Path, ambiguedades: Iterable[Any], con_git: bool
+) -> list[str]:
+    """Cada fuente documental se lee de verdad (decision 3 del consultor del 2026-10-03): la ruta,
+    RESUELTA en el disco, queda dentro de `docs/` (un enlace que salga se niega); el documento
+    existe y esta COMMITEADO en HEAD; tiene el encabezado del `ancla`; y el `literal` esta tal
+    cual DENTRO de esa seccion. Sin git, «commiteado» no se evalua, como el resto de las
+    comprobaciones de historial de `validar` (una copia sin `.git`, la de `test_kit.py`); lo demas
+    se comprueba igual."""
+    from botsito.comun.historial import contenido_en_head
+
+    base = (repo / "docs").resolve()
+    problemas: list[str] = []
+    for a in ambiguedades:
+        for f in a.fuentes_documentales:
+            donde = f"{a.id}: fuente documental {f.documento}"
+            real = (repo / f.documento).resolve()
+            if not real.is_relative_to(base):
+                problemas.append(f"{donde}: resuelta, sale de docs/ ({real})")
+                continue
+            if not real.is_file():
+                problemas.append(f"{donde}: no existe")
+                continue
+            if con_git and contenido_en_head(repo, f.documento) is None:
+                problemas.append(f"{donde}: no esta commiteado (no esta en HEAD)")
+                continue
+            seccion = seccion_de(real.read_text(encoding="utf-8"), f.ancla)
+            if seccion is None:
+                problemas.append(f"{donde}: no tiene el encabezado {f.ancla!r}")
+            elif plano(f.literal) not in plano(seccion):
+                problemas.append(
+                    f"{donde}: el literal no esta dentro de la seccion {f.ancla!r}: {f.literal!r}"
+                )
+    return problemas
+
+
 def problemas_de_spec(
     repo: Path,
     registro: Any,
@@ -457,11 +568,15 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     # registro apuntando al PARAMETRO, que basta para escribir el valor y no para cerrar la
     # pregunta. Lo encontro la auditoria de proceso del 2026-09-12.
     if ambiguedades:
-        cerradas_por = {
-            r.objetivo.id
-            for r in registros_fb
-            if str(r.objetivo.tipo) == "ambiguedad" and str(r.accion) == "RESOLVE_UNKNOWN"
-        }
+        # Desde trabajo/reabrir-y-fuente-documental: solo cuenta el feedback ACTIVO, y un REOPEN
+        # activo exige ABIERTA (`problemas_de_cierre`). Y las fuentes documentales, leidas.
+        fallos_amb += [
+            f"ambiguedades: {p}" for p in problemas_de_cierre(ambiguedades, registros_fb)
+        ]
+        fallos_amb += [
+            f"ambiguedades: {p}"
+            for p in problemas_fuentes_documentales(repo, ambiguedades, con_git)
+        ]
         for amb in ambiguedades:
             # DECIDIDA: la cierra el consultor, y su ADR tiene que EXISTIR y NOMBRARLA. Sin lo
             # segundo, `decision: ADR-0002` pasaria entero -es el mismo defecto que F12 encontro
@@ -492,12 +607,6 @@ def validar(repo: Path) -> tuple[int, list[str]]:
                         f"en su `ambiguedad_id`: el bot corre con un default NUESTRO por culpa de "
                         f"esa pregunta, asi que no la cierra una decision"
                     )
-            if amb.estado == "RESUELTA" and amb.id not in cerradas_por:
-                fallos_amb.append(
-                    f"ambiguedades: {amb.id} figura RESUELTA y ningun registro de feedback la "
-                    f"cierra (hace falta uno con objetivo ambiguedad/{amb.id} y accion "
-                    f"RESOLVE_UNKNOWN)"
-                )
     fallos_fb = fallos_amb + validar_contra_contexto(
         registros_fb,
         {i.id for i in items},

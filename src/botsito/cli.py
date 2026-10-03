@@ -2004,6 +2004,12 @@ def situacion_de(ctx: ContextoPendiente, r: Any) -> tuple[str, str]:
         estado = ctx.estados.get(oid)
         if estado is None:
             return _PENDIENTE, "la ambiguedad no existe"
+        if r.accion == "REOPEN":
+            # Un REOPEN no es una respuesta pendiente: la reabre, y esta reflejado cuando el YAML
+            # dice ABIERTA (rama trabajo/reabrir-y-fuente-documental).
+            if estado == "ABIERTA":
+                return _REFLEJADO, f"{oid} esta ABIERTA: reabierta, espera respuesta"
+            return _PENDIENTE, f"el REOPEN la reabre y {oid} esta {estado}"
         return (_PENDIENTE if estado == "ABIERTA" else _REFLEJADO), f"{oid} esta {estado}"
     if tipo == "contradiccion":
         if oid in ctx.contradicciones_abiertas:
@@ -2079,7 +2085,7 @@ def feedback_pending(repo: Path, todos: bool = False) -> int:
         llevan `supersede`, asi que el criterio es exacto: el parametro ya no cita al registro
         SUPERSEDIDO. Sin `supersede` no se sabe que retira, y entonces es pendiente.
       - `ambiguedad`: cuando deja de estar ABIERTA (RESUELTA por el trader o DECIDIDA por el
-        consultor, ADR-0022).
+        consultor, ADR-0022). Un REOPEN, al reves: cuando esta ABIERTA.
       - `contradiccion`: cuando el tema ya no figura entre las abiertas. `_contradicciones.yaml` se
         DERIVA de los items vivos: un RESOLVE_CONTRADICTION no cierra nada por si mismo.
       - `evidence`: un CONFIRM confirma un item que ya vive y no deja trabajo. Un CORRECT o un

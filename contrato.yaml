@@ -1,11 +1,27 @@
 rama: trabajo/reabrir-y-fuente-documental
-riesgo: alto  # cambiara el modelo de feedback y el esquema de ambiguedades (knowledge/); la Fase 0 solo mide
+riesgo: alto  # cambia el modelo de feedback y el esquema de ambiguedades, migra cinco entradas de knowledge/ y lee rutas
 artefacto: docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md
 rutas_permitidas:
   - docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
+  - src/botsito/feedback/
+  - src/botsito/cases/ambiguedades.py
+  - src/botsito/cases/spec_docs.py
+  - src/botsito/validation/knowledge.py
+  - src/botsito/cli.py
+  - tests/unit/
+  - knowledge/spec/ambiguedades.yaml
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/feedback/README.md
+  - knowledge/spec/README.md
+  - docs/spec/
+  - docs/runbooks/AMBIGUEDADES.md
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
+  - docs/runbooks/ACTIVAR-A35-A44.md
+  - CLAUDE.md
+  - .claude/agents/revisor.md
 rutas_protegidas:
   - src/botsito/engine/
   - src/botsito/domain/
@@ -15,6 +31,7 @@ rutas_protegidas:
   - knowledge/corpus/
   - knowledge/cases/
   - knowledge/cuentas/
+  - knowledge/feedback/2026-09-09-sesion-01/
   - data/manifests/
 comprobaciones:
   - uv run botsito state check

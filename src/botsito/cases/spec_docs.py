@@ -233,10 +233,12 @@ def _ambiguedades(ambiguedades: list[Any], man: dict[str, Any]) -> str:
     for a in ambiguedades:
         por_estado.setdefault(a.estado, []).append(a)
     lineas += [
-        "Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; "
-        "**DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se "
-        "sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si "
-        "es una `medicion` la cierra un dato y no se le pregunta al trader.",
+        "Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader "
+        "(`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); "
+        "**ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el "
+        "cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le "
+        "pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo "
+        "con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.",
         "",
     ]
     for estado in ("ABIERTA", "DECIDIDA", "RESUELTA"):
@@ -251,6 +253,8 @@ def _ambiguedades(ambiguedades: list[Any], man: dict[str, Any]) -> str:
             lineas += [f"### {a.id} · {a.titulo}{marca}{clase}{cierre}", "", a.pregunta, ""]
             if a.parametros:
                 lineas += [f"Afecta a: {', '.join(f'`{p}`' for p in a.parametros)}.", ""]
+            for f in a.fuentes_documentales:
+                lineas += [f"Fuente documental: `{f.documento}`, «{f.ancla}»: «{f.literal}».", ""]
     return "\n".join(lineas).rstrip() + "\n"
 
 

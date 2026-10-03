@@ -14,13 +14,13 @@ rechazan modificarlo o borrarlo. Una correccion es un registro nuevo con `supers
 | `medio` | si | `replay` · `audio` · `video` · `escrito` |
 | `grabacion`, `t0`, `t1` | si, salvo `escrito` | ruta de la grabacion de la sesion en el corpus y minuto exacto de la respuesta |
 | `objetivo` | si | `{tipo, id}` con tipo en `evidence` (`ev-…`) · `regla` (`RN-NNN`) · `parametro` (nombre del registro) · `ambiguedad` (`A-N`) · `caso` (`caso-…`) · `contradiccion` (tema) |
-| `accion` | si | `CONFIRM` · `CORRECT` · `REJECT` · `RESOLVE_UNKNOWN` · `RESOLVE_CONTRADICTION` · `LABEL_CASE` · `MARK_FALSE_POSITIVE` · `MARK_FALSE_NEGATIVE` · `BORDERLINE` |
+| `accion` | si | `CONFIRM` · `CORRECT` · `REJECT` · `RESOLVE_UNKNOWN` · `RESOLVE_CONTRADICTION` · `LABEL_CASE` · `MARK_FALSE_POSITIVE` · `MARK_FALSE_NEGATIVE` · `BORDERLINE` · `REOPEN` |
 | `respuesta_literal` | si | lo que dijo o escribio el trader, tal cual |
 | `valor_resultante` | si para `CORRECT`, `RESOLVE_*`, `LABEL_CASE` | valor normalizado que queda |
 | `registrado_por` | si | quien transcribio la respuesta |
 | `recibido_el` | desde la sesion del 2026-09-13 | `AAAA-MM-DD` en que llego la RESPUESTA; `>= fecha`. `fecha` dice a que SESION pertenece el registro (es la de la sesion); esto dice CUANDO llego |
 | `procedencia` | desde la sesion del 2026-09-13 | `trader_grabado` · `trader_hoja` · `trader_escrito` · `referido_por_consultor` · `reexpresion_consultor` · `correccion_consultor` |
-| `supersede` | no | id del registro que corrige |
+| `supersede` | no, salvo `REOPEN` y `correccion_consultor` | id del registro que corrige |
 | `notas` | no | texto libre |
 
 Los dos ultimos son **opcionales en el esquema y obligatorios por guardia desde la sesion del
@@ -47,7 +47,10 @@ puede ser un video de `fuentes.yaml` y `t1` no supera su `duracion_s`; `LABEL_CA
 de `knowledge/cases/kit/README.md` (`07-11: venta@08:37 e=...; 11-15: no_trade`).
 
 Coherencia exigida: `RESOLVE_CONTRADICTION` solo sobre un tema con contradiccion abierta;
-`RESOLVE_UNKNOWN` sobre parametro, ambiguedad o evidencia; `LABEL_CASE`, `MARK_*` y `BORDERLINE`
+`RESOLVE_UNKNOWN` sobre parametro, ambiguedad o evidencia; `REOPEN` solo sobre una ambiguedad,
+sin valor y con `supersede` al ultimo registro de su cadena, en la que tiene que haber un
+`RESOLVE_UNKNOWN` que la cerrara (`docs/runbooks/AMBIGUEDADES.md`, «Reabrir una ambiguedad»,
+desde el 2026-10-03); `LABEL_CASE`, `MARK_*` y `BORDERLINE`
 solo sobre casos; `CONFIRM/CORRECT/REJECT` sobre evidencia, regla o parametro. Ademas:
 `respuesta_literal` tiene al menos 5 caracteres (no es un placeholder); `t0 < t1`; la `fecha` es
 una fecha real y la de la `sesion`; los ids y tiempos solo admiten digitos ASCII; un campo en
@@ -78,7 +81,9 @@ este orden, y el 2026-09-11 se hizo a ojo porque esto no estaba escrito:
    consultor, el `registrado_por` tiene que decirlo -"REFERIDO por el consultor, no es
    transcripcion"- y la regla que se apoye en el declara `decision`.
 5. **Si cierra una ambiguedad**, hace falta ADEMAS un registro con `objetivo: {tipo: ambiguedad}` y
-   `accion: RESOLVE_UNKNOWN`: el del parametro escribe el valor, pero no cierra la pregunta. Hay
+   `accion: RESOLVE_UNKNOWN`, y ACTIVO (si un `REOPEN` lo supersede, ya no la cierra): el del
+   parametro escribe el valor, pero no cierra la pregunta. Si la REABRE, el registro es un
+   `REOPEN`, no otro `RESOLVE_UNKNOWN` con valor «sin resolver». Hay
    guardia desde el 2026-09-12.
 6. **Si toca un holdout o cambia una convencion de negocio**, se anota en el ADR que corresponda
    ANTES de citarlo en ningun sitio.

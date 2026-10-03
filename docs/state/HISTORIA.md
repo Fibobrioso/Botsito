@@ -3016,3 +3016,10 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 9 (2026-10-03).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/reabrir-y-fuente-documental (2026-10-03)
+
+Las paga `trabajo/reabrir-y-fuente-documental`: la accion `REOPEN` del modelo de feedback (A-36 migrada con fb-2026-09-29-sesion-03-f3caeb2d, y `feedback pending` ya no la cuenta) y `fuentes_documentales` en las ambiguedades de clase `medicion` (A-27, A-28, A-54 y A-55 migradas a FTMO-REGLAS.md R11, R10, R13 y R15). Decisiones 1 a 4 del consultor del 2026-10-03; docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md. Su texto literal en «Technical Debt»:
+
+- El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
+- El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
