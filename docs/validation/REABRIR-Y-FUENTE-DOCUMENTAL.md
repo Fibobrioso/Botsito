@@ -376,9 +376,10 @@ fondeo; no son de relleno ni entran en este encargo, y no se tocan.
 
 ### 1.5 Los tests, cada uno roto a proposito
 
-`tests/unit/test_reabrir_y_fuente_documental.py`: 19 funciones (29 casos con los parametrizados).
+`tests/unit/test_reabrir_y_fuente_documental.py`: 20 funciones (30 casos con los parametrizados;
+la 20, `test_un_reopen_sobre_una_ya_reabierta_falla`, por el hallazgo a1 del revisor, §2).
 Cada guardia nueva se rompio en el codigo REAL, se corrio el fichero y se restauro byte a byte
-(guion de la carpeta de trabajo; las 16 restauradas, comprobado):
+(guion de la carpeta de trabajo; las 17 restauradas, comprobado):
 
 | Rotura | Tests que fallan |
 |---|---|
@@ -386,6 +387,7 @@ Cada guardia nueva se rompio en el codigo REAL, se corrio el fichero y se restau
 | `REOPEN` con valor | `test_un_reopen_mal_formado_no_se_escribe[cambio1]` |
 | `REOPEN` sobre algo que no es una ambiguedad | `test_un_reopen_mal_formado_no_se_escribe[cambio3]` |
 | `REOPEN` sin cierre en su cadena | `test_un_reopen_sobre_una_ambiguedad_que_nunca_se_cerro_falla` |
+| `REOPEN` sobre una ya reabierta (a1) | `test_un_reopen_sobre_una_ya_reabierta_falla` |
 | `RESUELTA` cuenta tambien los superseded | `test_el_ciclo_cerrar_reabrir_volver_a_cerrar_funciona`, `test_una_resuelta_cuyo_unico_cierre_esta_superseded_falla` |
 | `REOPEN` sobre una `DECIDIDA` | `test_un_reopen_sobre_una_decidida_falla` |
 | `REOPEN` activo sin `ABIERTA` | `test_un_reopen_activo_exige_que_este_abierta` |
@@ -411,17 +413,131 @@ Actualizados donde repiten la regla: `CLAUDE.md` («Ambiguedades»), `docs/runbo
 
 `PROJECT_STATE.md`: las dos lineas de Technical Debt se pagan enteras y salen, con su texto literal,
 a `docs/state/HISTORIA.md` («Technical Debt PAGADA · sale de PROJECT_STATE.md en
-trabajo/reabrir-y-fuente-documental»). «Tests Currently Passing» pasa de 1211 a 1230 funciones (las
-19 de este fichero; `state check` lo exige). Ninguna cifra ni regla de la estrategia cambia; el
+trabajo/reabrir-y-fuente-documental»). «Tests Currently Passing» pasa de 1211 a 1231 funciones (las
+20 de este fichero; `state check` lo exige). Ninguna cifra ni regla de la estrategia cambia; el
 motor, los parametros y el corpus no se tocan, y no se abrio nada de v7 en adelante.
 
 ### 1.7 La CI de Linux
 
-La guardia de las fuentes documentales lee rutas (decision 3): la rama se empuja como
-`fix/trabajo-reabrir-y-fuente-documental` despues del commit de la Fase 1, y sus runs se anotan
-aqui en el commit siguiente.
+La guardia de las fuentes documentales lee rutas (decision 3), asi que la rama se empuja para la
+CI de Linux (`docs/runbooks/RITUAL.md`, «Antes del merge: la CI de Linux»).
+
+| Run | Rama remota | Commit | Resultado |
+|---|---|---|---|
+| 195 (37158792667) | `fix/trabajo-reabrir-y-fuente-documental` | 63ab911 | ROJA en `contrato`, antes de correr ningun test |
+| 196 (37158869991) | `fix/reabrir-y-fuente-documental` | 63ab911 | 1 failed, 1883 passed, 8 skipped: el fallo es el UNICO esperado, `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/reabrir-y-fuente-documental'; la rama actual es 'fix/reabrir-y-fuente-documental'») |
+
+- **Run 195, el nombre de la orden no vale.** Con `fix/trabajo-reabrir-y-fuente-documental`,
+  `scripts/contrato_rama.py` (`_sin_prefijo`, que quita SOLO el primer prefijo) compara
+  `trabajo-reabrir-y-fuente-documental` con `reabrir-y-fuente-documental` y para con «un contrato
+  heredado no vale». `RITUAL.md` empuja como `trabajo/<rama>:refs/heads/fix/<rama>`, sin el
+  `trabajo/`: con ese nombre, `fix/reabrir-y-fuente-documental`, el contrato pasa (run 196). La
+  medida contradice el nombre de la orden, y gana la medida (recuadro en el encargo). En `origin`
+  quedan las dos ramas `fix/`; el cierre borra las dos.
+- **Run 196.** Corre el test del enlace simbolico en Linux: no esta entre los 8 skipped (todos son
+  de `data/` o de `tokenizers`), luego paso.
+- **La correccion del hallazgo a1 (§2) va en un commit posterior**, que se empuja igual; su run, en
+  la fila siguiente cuando exista.
+
+## 2. Lo que encontró el revisor, y qué se hizo
+
+Revisor (subagente `revisor`) sobre 63ab911: eje (a) 0 bloquea, 0 importa, 2 menores; eje (b) 0
+bloquea, 1 importa, 1 menor. Su informe, entero, en §3.
+
+| # | Hallazgo | Qué se hizo |
+|---|---|---|
+| a1 | Un `REOPEN` podía superseder a otro `REOPEN`: la cadena solo exigía un `RESOLVE_UNKNOWN` en algún punto hacia atrás | **Corregido.** `validar_contra_contexto` (`feedback/modelo.py`) para en el primer `RESOLVE_UNKNOWN` o `REOPEN` de la misma ambigüedad hacia atrás; si es un `REOPEN`, «ya esta reabierta». Test nuevo `test_un_reopen_sobre_una_ya_reabierta_falla`, roto a propósito y falla (§1.5). A-36 no cambia: lo primero en su cadena es a0b61bc9, un `RESOLVE_UNKNOWN`. `docs/runbooks/AMBIGUEDADES.md` lo dice. |
+| a2 | El ancla de las cuatro migradas es la sección 2 entera de `FTMO-REGLAS.md` (R1 a R17, unas 170 líneas): «el literal dentro de su sección» es una guardia débil ahí | **Se deja, y se dice.** Las reglas son filas de una tabla, sin encabezado propio; un ancla más fina obligaría a reescribir `FTMO-REGLAS.md`, un informe cerrado en `main` (solo admite recuadros) y fuera del encargo. La guardia sí impide citar las secciones 1 y 3 en adelante, y el literal sigue teniendo que estar tal cual. **Para el consultor:** si quiere un ancla por regla, es un documento de reglas nuevo con un encabezado por regla. |
+| b1 | Faltaban el push, la CI de Linux y los números de run | **Hecho:** §1.7 (runs 195 y 196, y el del commit de esta corrección). |
+| b2 | Sin recuadro SUSTITUIDO en el encargo sobre «A-27 y A-54 (y las que salgan…)» | **Corregido:** recuadro en el encargo junto a esa línea (decisión 4), y otro junto al nombre del push (§1.7). Los dos dicen que son de la sesión; el texto citado sigue tal cual. |
+
+Lo que el revisor no pudo comprobar, porque escribe: `make check` y su sello (los dos de la Fase 1:
+el primero rojo, 1 failed y 1891 passed, por la copia sin `.git` de §1.3; el segundo verde, 1892
+passed, `SELLO` sobre el árbol e59bebe0, pico 288 MiB, y con ese sello se hizo 63ab911) y las
+roturas a propósito (17, todas caen: §1.5).
+
+## 3. Informe del revisor
+
+## Informe del revisor · trabajo/reabrir-y-fuente-documental · 2026-10-03
+
+HEAD 63ab911. Commits: 83b6452 (apertura), b54db12 (Fase 0), 63ab911 (Fase 1). `git status --short` limpio. Encargo en `docs/encargos/trabajo-reabrir-y-fuente-documental.md` (original más «Segunda orden» con sus cinco decisiones).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | menor | Un `REOPEN` puede superseder a otro `REOPEN`. El recorrido de la cadena solo exige un `RESOLVE_UNKNOWN` en algún punto hacia atrás (no pide que el registro superseded sea el cierre ni un cierre activo). `problemas_de_cierre` solo pide ABIERTA a un `REOPEN` activo. Un segundo `REOPEN` sobre A-36 ya reabierta pasaría. No rompe la decisión 1; es un agujero de estrechez. | `src/botsito/feedback/modelo.py` (bloque «REOPEN reabre lo que un RESOLVE_UNKNOWN cerró»: el bucle `while` solo sale con `paso.accion == "RESOLVE_UNKNOWN"`); `src/botsito/validation/knowledge.py` `problemas_de_cierre` |
+| a2 | menor | El `ancla` de las cuatro migradas es «2. Las reglas, con su fuente», una sección de unas 170 líneas (`FTMO-REGLAS.md:44` a `:217`) con R1 a R17 dentro. «El literal dentro de la sección» es una guardia débil: cualquier literal de cualquier regla pasa para A-27, A-28, A-54 y A-55. Apuntar a un encabezado más fino (por regla) o a una subsección no es posible hoy porque las reglas son filas de tabla. | `knowledge/spec/ambiguedades.yaml` (las cuatro `fuentes_documentales`); `grep -n "^## " docs/validation/FTMO-REGLAS.md` → `44:## 2. Las reglas…`, `217:## 3. …` |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 21 ficheros dentro del contrato de trabajo/reabrir-y-fuente-documental (riesgo alto, … 4 comprobaciones para el revisor)».
+- **`state check`.** «OK: rama … funcionalidad actual: trabajo/reabrir-y-fuente-documental · EN CURSO».
+- **`feedback pending`.** «0 pendientes de 101 activos; 86 reflejados; 6 confirmaciones…; 9 sin forma mecanica de comprobarlo». A-36 ya no cuenta.
+- **`knowledge validate`.** Ejecutado sin redirigir a fichero (la comprobación del contrato lo redirige; yo no escribo). Salida: «55 ambiguedades registradas», «150 registros de feedback, historial intacto, commits con Fuente».
+- **Tests.** `pytest tests/unit/test_reabrir_y_fuente_documental.py test_hoja_preguntas.py test_project_state.py test_historia.py tests/contract/test_spec_docs_generados.py` → todo pasa (`.` ×49, sin fallos). La corrida con `test_kit.py` también terminó con exit 0 en segundo plano.
+- **Trailer `Fuente:`.** 63ab911 toca `knowledge/spec/` y lleva en el cuerpo `Fuente: fb-2026-09-29-sesion-03-a0b61bc9, fb-2026-09-29-sesion-03-f3caeb2d, ADR-0022, ADR-0067, ADR-0068`. Los ids existen: `knowledge validate` dice «commits con Fuente». b54db12 y 83b6452 no tocan spec ni cases.
+- **Regímenes de cambio.** `git diff --name-status main...HEAD` solo tiene `M` y `A`. El único feedback es la `A` de f3caeb2d. No se tocan evidence, manifests, corpus ni holdout. `HISTORIA.md` es +216 sin borrados.
+- **Ambigüedades.** `docs/spec/ambiguedades.md` regenerado en el mismo commit (`test_spec_docs_generados` pasa). Ninguna se abre ni se cierra, así que no hay cambios en la tabla Known Ambiguities.
+- **Cambios de código de otros ámbitos.** No hay ADR nuevos, ni informes cerrados cambiados, ni sitios nuevos con `cita` (las tres guardias no aplican).
+- **Cifras.** No se cambia ninguna cifra ni parámetro.
+- **Documentos que repiten la regla.** CLAUDE.md, `AMBIGUEDADES.md`, `SESION-DE-PREGUNTAS.md`, `ACTIVAR-A35-A44.md`, los dos README de knowledge/ y `revisor.md` dicen lo mismo que el código (REOPEN solo sobre ambigüedad, sin valor, con supersede; RESUELTA con cierre ACTIVO; DECIDIDA solo por ADR; fuente documental solo en `medicion`). Solo contrasté el texto con el código, no comprobé que todos los sitios que lo repiten estén cubiertos.
+- **`PROJECT_STATE.md`.** 22.774 bytes (tope 25.000). No cita ningún «margen de 23.000» (`grep` sin coincidencias en PROJECT_STATE ni CLAUDE.md). Las dos líneas de Technical Debt salen y su texto literal está al final de HISTORIA, bajo «# Technical Debt PAGADA…».
+- **Citas (tres).** Los literales de A-27 (R11, `FTMO-REGLAS.md:58`), A-28 (R10, `:57`) y A-54 (R13, `:60`) están en la sección 2. Los dos de A-55 están en `:62` y `:138`/`:181`. `knowledge validate` los acepta.
+- **Aviso al informe de la rama.** El informe declara en su §1.3 que sin git «commiteado» no se evalúa (copia sin `.git` de `test_kit.py`). Lo juzgo aceptable: es la misma convención que las demás comprobaciones de historial de `validar`, con git se niega, y el test `test_un_documento_sin_commitear_se_niega` lo cubre. Queda dicho para el consultor, que el informe ya ofrece la alternativa.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 16 hechos, 1 parcial, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Fase 0 entregada antes de escribir código (inventario) | Hecho | Informe §0 y commit b54db12 anterior al de código |
+| 2 | REOPEN: solo ambigüedad | Hecho | `modelo.py` `OBJETIVOS_POR_ACCION["REOPEN"] = ("ambiguedad",)` |
+| 3 | REOPEN sin valor y con supersede obligatorio | Hecho | `PROHIBEN_VALOR` y `EXIGEN_SUPERSEDE` en `modelo.py`; `_validar` |
+| 4 | Un REOPEN activo exige ABIERTA | Hecho | `problemas_de_cierre` (`knowledge.py`) |
+| 5 | Una RESUELTA exige un cierre ACTIVO | Hecho | `problemas_de_cierre`: `cerradas_por` sale de `activos()` |
+| 6 | Una DECIDIDA solo se reabre con un ADR | Hecho | `problemas_de_cierre`, rama `elif quien and amb.estado == "DECIDIDA"` |
+| 7 | `feedback pending` ve el REOPEN | Hecho | `cli.py` `situacion_de`; salida «0 pendientes de 101 activos» |
+| 8 | Migración de A-36 con los datos de la decisión 2 | Hecho | `fb-2026-09-29-sesion-03-f3caeb2d.yaml`: `REOPEN`, `reexpresion_consultor`, `fecha` 2026-09-29, `recibido_el` 2026-10-02, `supersede: …a0b61bc9`. El literal es idéntico al de a0b61bc9 y `notas` cita a0b61bc9 y su motivo. Ningún registro existente editado (solo hay `A`). |
+| 9 | Comprobar antes si hay `reexpresion_consultor` anteriores | Hecho | `grep procedencia: reexpresion_consultor knowledge/feedback` → solo f3caeb2d; informe §1.2 lo declara |
+| 10 | `fuentes_documentales` solo en `medicion`; evidencia vacía solo con ≥1 fuente | Hecho | `ambiguedades.py` `_ambiguedad` |
+| 11 | Ruta normalizada, dentro de `docs/`; se niegan `..`, absolutas y enlaces | Hecho | `problema_de_ruta_documental` y `problemas_fuentes_documentales` (`Path.resolve` + `is_relative_to`); test del enlace simbólico real |
+| 12 | Ancla = encabezado existente; literal dentro de su sección | Hecho | `seccion_de` (ignora bloques de código, cierra en encabezado de nivel igual o superior) y `plano()`; tests `ancla_…`, `literal_fuera_de_su_seccion`, `la_seccion_acaba_en…` |
+| 13 | Tests rotos a propósito (REOPEN sin motivo o sin supersede; sobre no-ambigüedad; sobre ambigüedad nunca cerrada; sobre DECIDIDA; ciclo cerrar→reabrir→cerrar; RESUELTA con único cierre superseded; «..»; fuera de `docs/`; sin commitear; ancla; literal; pregunta) | Hecho | `tests/unit/test_reabrir_y_fuente_documental.py:104-362`; la tabla del informe §1.5 declara 16 roturas con el test que cae. No las repetí (escriben). |
+| 14 | Las cuatro migraciones (A-54 R13, A-55 R15 y ticket, A-27 R11, A-28 R10), solo se cambia FundedNext en A-27 y A-28 | Hecho | Diff de `ambiguedades.yaml`: en A-27 y A-28 solo sale `ev-v4-012524-0ef85a89`; A-54 y A-55 con `evidencia: []`. A-44 no se toca (sigue citando el ítem, `ambiguedades.yaml:1210`); el informe §1.4 responde la pregunta de la decisión 4 y nombra RN-029 a RN-032. |
+| 15 | Documentos generados y sitios que repiten la regla; Technical Debt a HISTORIA; decisión 5 | Hecho | Ver eje (a). |
+| 16 | Decisiones copiadas con fecha al informe y al final del encargo; recuadro SUSTITUIDO donde reemplacen | Parcial | Copiadas en ambos (informe §0 y encargo, «Segunda orden»). El único recuadro «SUSTITUIDO EN PARTE» está en el informe, línea 187 (apartado 4b). No hay ninguno en el encargo ni sobre el punto 3 de Fase 0 (A-27 y A-54 → cuatro migraciones). |
+| 17 | Push como `fix/trabajo-reabrir-y-fuente-documental`, CI de Linux en verde, números de run | Parcial, pendiente | El informe §1.7 y su «Estado» lo declaran pendiente. No hay números de run. |
+| 18 | Informe con el revisor al final y su informe pegado; rama «lista para revisión, NO cerrada» | Pendiente (lo pega el caller) | Informe acaba en `## Estado`; este informe se devuelve, no se pega. |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | Faltan el push a `fix/…`, la CI de Linux en verde y los números de run, que las decisiones 3 y el encargo piden antes del merge. La guardia lee rutas y el test del enlace simbólico solo se ha corrido en Windows. Está declarado, pero no se puede dar por lista hasta tener los runs. | Informe §1.7 («sus runs se anotan aquí en el commit siguiente»); «Estado» («falta la CI de Linux»); `git branch -r` no consultado, no hay runs anotados |
+| b2 | menor | No se puso el recuadro SUSTITUIDO en el encargo ni sobre «A-27 y A-54 (y las que salgan…)» de la Fase 1. La decisión 4 los sustituye por cuatro. Solo está en el informe, y solo para 4b. | `docs/encargos/trabajo-reabrir-y-fuente-documental.md` (sin «SUSTITUIDO»); informe línea 187 |
+
+Hecho fuera del encargo: nada reseñable. `cli.py`, `spec_docs.py` y `revisor.md` están en `rutas_permitidas` del contrato. Lo que el encargo dice que no se toca (motor, estrategia, parámetros, cifras, corpus, nada de v7+) no aparece en el diff: `git diff --stat` solo lista los 21 ficheros del contrato.
+
+### Lo que no pude comprobar
+- **`make check` y su sello.** No existe `make-check.log` en el árbol y `make check` escribe. No tengo la línea `SELLO` ni `PICO DE MEMORIA`. El informe cuenta un primer `make check` en rojo (1 failed, 1891 passed, por `test_kit.py`) y su arreglo, pero no pega el resultado final en verde. Debe constar antes de dar la rama por lista.
+- **Que las 16 roturas a propósito caigan de verdad.** Escriben en el código real. Solo comprobé que los tests existen, cubren cada condición y pasan sobre el código final.
+- **Si el sha o el HEAD estaban sellados.** `git write-tree` escribe; no lo ejecuté.
+- **CI de Linux.** No hay runs todavía (b1).
+- **El tercer fichero de la comprobación del contrato (`knowledge-validate.log`).** Lo sustituí por la ejecución sin redirección (arriba).
+
+### Comandos ejecutados
+1. `git branch --show-current; git log --format='%h %s' main..HEAD; git diff --stat main...HEAD; git status --short; cat docs/encargos/…; cat contrato.yaml`
+2. `uv run python scripts/contrato_rama.py`
+3. `uv run botsito state check`; `uv run botsito feedback pending`; `ls make-check.log knowledge-validate.log` (no existen)
+4. `git diff main...HEAD -- src/botsito/{feedback/modelo.py,cli.py,cases/ambiguedades.py,cases/spec_docs.py,validation/knowledge.py} knowledge/ PROJECT_STATE.md CLAUDE.md .claude/agents/revisor.md docs/runbooks/ docs/state/HISTORIA.md`
+5. `uv run botsito knowledge validate` (segundo plano, exit 0)
+6. `uv run pytest` sobre `test_reabrir_y_fuente_documental.py`, `test_hoja_preguntas.py`, `test_project_state.py`, `test_historia.py`, `tests/contract/test_spec_docs_generados.py` (todo pasa)
+7. `grep` de literales y encabezados en `docs/validation/FTMO-REGLAS.md`, de `ev-v4-012524-0ef85a89` en `ambiguedades.yaml`, de `procedencia: reexpresion_consultor` en `knowledge/feedback`, de «23.000» en PROJECT_STATE, CLAUDE.md y runbooks, y de «SUSTITUIDO» en encargo e informe
+8. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases knowledge/feedback`; `git diff --name-status main...HEAD`; `wc -c PROJECT_STATE.md`
 
 ## Estado
 
-Fase 0 entregada y decidida por el consultor el 2026-10-03 (arriba). FASE 1 HECHA (§1); falta la
-CI de Linux de `fix/trabajo-reabrir-y-fuente-documental` (§1.7) y el revisor.
+Fase 0 entregada y decidida por el consultor el 2026-10-03; FASE 1 HECHA (§1), con el revisor (§2
+y §3) y la CI de Linux (§1.7). Para el consultor, dos cosas que no son de la orden: sin git,
+«commiteado» no se evalúa (§1.3), y el ancla de las cuatro migradas es la sección 2 entera (a2).
+
+Rama lista para revisión, NO cerrada.

@@ -22,9 +22,22 @@ Dado por Aleks (consultor) el 2026-10-03. Copiado tal cual:
 > - Las dos piezas, con sus tests. Cada guardia nueva se rompe a propósito y se comprueba que falla: un REOPEN sin motivo o sin supersede, un REOPEN sobre algo que no es una ambigüedad cerrada, una fuente documental que apunta a un fichero o a una sección que no existe, y una fuente documental en una ambigüedad de clase «pregunta».
 > - A-36 migrada al REOPEN con un registro nuevo, y feedback pending ya sin contarla como pendiente por el apaño.
 > - A-27 y A-54 (y las que salgan en la Fase 0) con su fuente documental en lugar del relleno, con trailer Fuente: válido.
+
+**SUSTITUIDO (2026-10-03, decisión 4 del consultor, «Segunda orden», abajo).** Las que se migran
+son cuatro: A-54 (R13), A-55 (R15 y el ticket), A-27 (R11) y A-28 (R10); en A-27 y A-28 solo
+sale el ítem de FundedNext, y A-44 queda fuera. Recuadro de la sesión, no del consultor: lo
+citado arriba y abajo sigue tal cual.
+
 > - Los documentos generados regenerados, y los runbooks y CLAUDE.md actualizados donde repitan la regla.
 > - Si alguna de las dos deudas se cierra, su línea sale de Technical Debt en la rama, con el texto entero movido a HISTORIA.
 > Si tocas rutas o el sistema de archivos, push como fix/trabajo-reabrir-y-fuente-documental y CI de Linux en verde antes del merge; dame los números de run.
+
+**SUSTITUIDO EN PARTE (2026-10-03, medido; informe §1.7).** Con ese nombre la CI sale roja en
+`contrato` antes de correr un solo test (run 195): `scripts/contrato_rama.py` quita solo el
+primer prefijo, y `trabajo-reabrir-…` no es `reabrir-…`. La rama se empuja con el nombre de
+`docs/runbooks/RITUAL.md` («Antes del merge: la CI de Linux»), `fix/reabrir-y-fuente-documental`.
+Recuadro de la sesión, no del consultor.
+
 > Informe en docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md, con el revisor al final y su informe pegado.
 >
 > Rama lista para revisión, NO cerrada.

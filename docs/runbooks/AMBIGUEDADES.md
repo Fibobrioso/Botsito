@@ -45,7 +45,8 @@ entonces se reabria con otro `RESOLVE_UNKNOWN` de valor «sin resolver» (A-36, 
 - **Solo sobre una ambiguedad**, y sin `valor_resultante` ni `valor_canonico`: reabrir no fija nada.
 - **`supersede` obligatorio, al ULTIMO registro de la cadena** de esa ambiguedad, no al que la
   cerro: un registro solo se supersede una vez (`feedback/modelo.py`). En esa cadena, hacia atras,
-  tiene que haber un `RESOLVE_UNKNOWN` sobre ella; si no, no habia nada que reabrir y
+  tiene que haber un `RESOLVE_UNKNOWN` sobre ella, y es lo primero que se encuentra: si antes
+  aparece otro `REOPEN`, ya esta reabierta. En los dos casos no hay nada que reabrir y
   `knowledge validate` falla.
 - **El YAML pasa a `ABIERTA`** en el mismo commit (con su `clase`), y la tabla de `PROJECT_STATE.md`
   recupera su fila: un `REOPEN` activo exige `ABIERTA`. Y una `RESUELTA` exige un `RESOLVE_UNKNOWN`

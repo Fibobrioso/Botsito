@@ -23,7 +23,7 @@ dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`
 dfd1a6f · merge: el calendario de cierres caduca por la fecha simulada; se renueva por condicion (RENOVAR-CIERRES.md) · tag stable/F36s-renovar-cierres
 
 ## Tests Currently Passing
-1230 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1231 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

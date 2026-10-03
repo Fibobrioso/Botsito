@@ -152,6 +152,19 @@ def test_un_reopen_sobre_una_ambiguedad_que_nunca_se_cerro_falla(tmp_path: Path)
     assert any("no hay nada que reabrir" in p for p in problemas), problemas
 
 
+def test_un_reopen_sobre_una_ya_reabierta_falla(tmp_path: Path) -> None:
+    """Hallazgo a1 del revisor: en la cadena habia un RESOLVE_UNKNOWN mas atras, pero lo ultimo
+    que le paso a la ambiguedad fue otro REOPEN. Lo ya reabierto no se reabre dos veces."""
+    cierre = cargar_registro(escribir_registro(tmp_path, _fb()))
+    primera = cargar_registro(escribir_registro(tmp_path, _reopen(cierre.id)))
+    escribir_registro(
+        tmp_path,
+        _reopen(primera.id, respuesta_literal="tampoco se cierra", recibido_el="2026-09-22"),
+    )
+    problemas = _contexto(cargar_feedback(tmp_path))
+    assert any("ya esta reabierta" in p for p in problemas), problemas
+
+
 def test_un_reopen_sobre_una_decidida_falla(tmp_path: Path) -> None:
     cierre = cargar_registro(escribir_registro(tmp_path, _fb()))
     escribir_registro(tmp_path, _reopen(cierre.id))

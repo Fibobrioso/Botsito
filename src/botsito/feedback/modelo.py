@@ -491,20 +491,26 @@ def validar_contra_contexto(
             )
     # REOPEN reabre lo que un RESOLVE_UNKNOWN cerro: en su cadena hacia atras tiene que haber uno
     # sobre la misma ambiguedad. Si no, no habia nada que reabrir (una ambiguedad que nunca se cerro
-    # por feedback, o una DECIDIDA, que la cierra un ADR y la reabre otro ADR).
+    # por feedback, o una DECIDIDA, que la cierra un ADR y la reabre otro ADR). Y el primero que se
+    # encuentra hacia atras es ese cierre, no otro REOPEN: lo ya reabierto no se reabre dos veces.
     for r in registros:
         if r.accion != "REOPEN":
             continue
         vistos: set[str] = set()
         paso = por_id.get(r.supersede or "")
-        cerrada = False
+        ultimo: str | None = None
         while paso is not None and paso.id not in vistos:
             vistos.add(paso.id)
-            if paso.accion == "RESOLVE_UNKNOWN" and paso.objetivo == r.objetivo:
-                cerrada = True
+            if paso.accion in ("RESOLVE_UNKNOWN", "REOPEN") and paso.objetivo == r.objetivo:
+                ultimo = paso.accion
                 break
             paso = por_id.get(paso.supersede or "")
-        if not cerrada:
+        if ultimo == "REOPEN":
+            problemas.append(
+                f"{r.id}: REOPEN sobre {r.objetivo.tipo}:{r.objetivo.id}, que ya esta reabierta "
+                f"({paso.id if paso else '?'}) y nadie la volvio a cerrar: no hay nada que reabrir"
+            )
+        elif ultimo is None:
             problemas.append(
                 f"{r.id}: REOPEN sobre {r.objetivo.tipo}:{r.objetivo.id}, y en su cadena de "
                 "supersede no hay ningun RESOLVE_UNKNOWN que la cerrara: no hay nada que reabrir"
