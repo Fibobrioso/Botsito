@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/fuentes-ftmo
+main
 
 ## Current Feature
-trabajo/fuentes-ftmo · EN CURSO (2026-10-03) · docs/validation/FUENTES-FTMO.md. NO se cierra.
+NINGUNA ABIERTA tras `stable/F36r-fuentes-ftmo` (2026-10-03).
 
 ## Stable Main State
-aaac17b · merge de `feature/cierres-de-mercado` (tag `stable/F36q-cierres-de-mercado`): el bot no abre ni coloca en la ventana que R15 de FTMO prohibe antes de un cierre de mercado largo (ADR-0068, domain/cierres.py): predicado unico en el puerto del broker, calendario versionado en knowledge/cuentas/cierres/ (cubre hasta el 7-10-2026, Next Action N), `cierre_pendientes` PROVISIONAL bajo A-55. Sobre `stable/F36p-freno-peticiones` (b64e675). Informe docs/validation/CIERRES-DE-MERCADO.md; el registro del cierre, al final de HISTORIA.
+36a9801 · merge de `trabajo/fuentes-ftmo` (tag `stable/F36r-fuentes-ftmo`): la respuesta de FTMO del 29-09 y el correo de Aleks del 2026-10-03 (ticket VDW-DPMWR-965), literales en docs/validation/FTMO-REGLAS.md; A-54 y A-55 con sus preguntas enviadas (1-4 y 5-9), R17 en la 10. Sobre `stable/F36q-cierres-de-mercado` (aaac17b). Informe docs/validation/FUENTES-FTMO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-aaac17b · merge: la ventana que FTMO prohibe antes de un cierre de mercado largo, en el puerto del broker (ADR-0068), A-55 · tag stable/F36q-cierres-de-mercado
+36a9801 · merge: las fuentes escritas de FTMO (respuesta y correo del ticket VDW-DPMWR-965), A-54 y A-55 con sus preguntas enviadas · tag stable/F36r-fuentes-ftmo
 
 ## Tests Currently Passing
 1208 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
