@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/renovar-cierres
+main
 
 ## Current Feature
-trabajo/renovar-cierres · EN CURSO (2026-10-03) · docs/validation/RENOVAR-CIERRES.md. NO se cierra.
+NINGUNA ABIERTA tras `stable/F36s-renovar-cierres` (2026-10-03).
 
 ## Stable Main State
-36a9801 · merge de `trabajo/fuentes-ftmo` (tag `stable/F36r-fuentes-ftmo`): la respuesta de FTMO del 29-09 y el correo de Aleks del 2026-10-03 (ticket VDW-DPMWR-965), literales en docs/validation/FTMO-REGLAS.md; A-54 y A-55 con sus preguntas enviadas (1-4 y 5-9), R17 en la 10. Sobre `stable/F36q-cierres-de-mercado` (aaac17b). Informe docs/validation/FUENTES-FTMO.md; el registro del cierre, al final de HISTORIA.
+dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`): el calendario de cierres caduca por la fecha simulada, nunca por la de hoy (tests del cable trampa del reloj y del exit 2 por la CLI), y se renueva por condicion (docs/runbooks/RENOVAR-CIERRES.md). Sobre `stable/F36r-fuentes-ftmo` (36a9801). Informe docs/validation/RENOVAR-CIERRES.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-36a9801 · merge: las fuentes escritas de FTMO (respuesta y correo del ticket VDW-DPMWR-965), A-54 y A-55 con sus preguntas enviadas · tag stable/F36r-fuentes-ftmo
+dfd1a6f · merge: el calendario de cierres caduca por la fecha simulada; se renueva por condicion (RENOVAR-CIERRES.md) · tag stable/F36s-renovar-cierres
 
 ## Tests Currently Passing
 1211 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -43,7 +43,7 @@ L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item 
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
-N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026; vencido, el simulador no corre y en vivo el bot no coloca nada. Renovarlo cada semana desde las Trading Updates de FTMO hasta que el adaptador MT5 lea SymbolInfoSessionTrade (ADR-0068 §4); rama propia para automatizarlo antes de operar en real.
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y NO se renueva cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres). Se renueva por condición, según docs/runbooks/RENOVAR-CIERRES.md: (1) cuando una simulación pida días posteriores a hasta, porque el simulador sale con exit 2 y los nombra, se renueva hacia atrás con las Trading Updates archivadas, en rama propia; (2) antes de que el bot corra en tiempo real (demo o real), la rama que lo conecte trae la lectura de SymbolInfoSessionTrade (ADR-0068 §4) o un procedimiento que cierre el hueco del jueves por la mañana, y sin una de las dos esa rama no se cierra.
 
 ### Pendientes heredados (sin verificar)
 
