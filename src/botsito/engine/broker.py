@@ -731,7 +731,9 @@ class Broker:
 
     def _cancelar_por_cierre(self, o: Orden, instante: int) -> None:
         """Al empezar una ventana prohibida, la pendiente se cancela (ADR-0068): lo que protege la
-        cuenta, que sale siempre y cuenta (ADR-0067 §3). El motivo lo dice el mismo predicado."""
+        cuenta, que sale siempre y cuenta (ADR-0067 §3). El motivo lo dice el mismo predicado. Como
+        `cancelar`, es una peticion del bot y no un evento del servidor: no va a `Traza.eventos`
+        (revisor, a3), sino a las peticiones, a `Traza.cierres` y al log."""
         c = self.reglas.cierres
         assert c is not None
         p = ventana_prohibida_por_cierre(instante, c.calendario, c.margen_ms, c.minimo_ms)
@@ -742,7 +744,6 @@ class Broker:
         o.estado = CANCELADA
         o.ultimo_cambio_ms = instante
         o.historial.append((instante, CANCELADA))
-        self._eventos.append((instante, CANCELADA, o.id, TICKS))
         self._cierres.append(Corte(instante, PETICION_CANCELAR, o.id, p.motivo))
         LOG.info(
             "cierre de mercado: cancelada la pendiente %s en el instante %d (%s)",

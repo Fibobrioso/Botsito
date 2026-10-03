@@ -6,9 +6,13 @@ phase: post-F14 (rama `feature/cierres-de-mercado`, A3 e) de «Pendientes hereda
 
 # 0068 · La ventana prohibida antes de un cierre de mercado largo vive en el puerto del broker, con un calendario versionado por perfil
 
-> **PROVISIONAL en `cierre_pendientes`**, DEFAULT_AMBIGUOUS bajo A-55: la regla escrita de FTMO
-> no dice qué pasa con una pendiente. Las dos horas de margen y el mínimo de dos horas son de R15 y
-> están CONFIRMED. Es una tarea autónoma: el consultor no lo ha revisado todavía.
+> **PROVISIONAL en dos cosas.** (1) `cierre_pendientes`, DEFAULT_AMBIGUOUS bajo A-55: la regla
+> escrita de FTMO no dice qué pasa con una pendiente. (2) El huso del calendario, `America/New_York`,
+> que supone que el servidor cambia de hora con EE. UU. Lo dice una Trading Update, no una medida, y
+> A-28 (`broker_dst`) sigue abierta (revisor, a1). Con cualquier lectura de A-28 (`us`, `eu` o
+> `ninguno`), el cierre del viernes cae entre las 21:55 y las 23:55 de Madrid, y su ventana nunca
+> toca la operativa. Las dos horas de margen y el mínimo de dos horas son de R15 y están CONFIRMED.
+> Es una tarea autónoma: el consultor no lo ha revisado todavía.
 
 ## Decision
 
@@ -30,7 +34,9 @@ cuenta.
 ### 2. Lo que se hace dentro de la ventana
 
 - **Colocar** (límite o stop): se niega.
-- **Modificar una pendiente** (RN-006): se niega, y la orden sigue como estaba.
+- **Modificar una pendiente** (RN-006): se niega, y la orden sigue como estaba. Se toma como
+  colocarla en otro precio. R15 no lo dice, así que va como pregunta en A-55. Con `cancelar`, el
+  valor de partida, no llega a pasar: la pendiente ya se canceló al empezar la ventana (revisor, b2).
 - **Una pendiente ya puesta**: lo dice `cierre_pendientes` (`cancelar` | `mantener`), DEFAULT
   `cancelar` bajo A-55. Con `cancelar`, el broker la cancela al empezar la ventana, antes que
   cualquier llenado de ese instante. Es lo que protege la cuenta: sale siempre y cuenta como
@@ -38,14 +44,18 @@ cuenta.
 - **Una posición abierta**: nada. R7 permite en Swing mantenerla de noche y el fin de semana.
 - `abrir_conocida` (repetir una operación del trader) no pasa por el predicado, porque no la emite
   el bot.
+- **Más allá de la letra de R15**, y declarado: se niega también con el mercado cerrado (el servidor
+  rechazaría la orden) y fuera de lo que cubre el calendario (abstenerse).
 
 ### 3. Instantes absolutos; el huso, en cada hora declarada
 
 La ventana es una duración antes de un instante, en milisegundos UTC, y nunca depende de un reloj de
 pared. El reloj solo entra al convertir la hora declarada de un cierre en un instante, cada una con
-su huso (como los libros, ADR-0039). El servidor de FTMO cierra EURUSD a las 23:55 de su reloj, y
-ese reloj cambia de hora con EE. UU. (Trading Update del 5-mar-2026), así que se declara como 16:55
-`America/New_York`. No hace falta `broker_offset_base` ni `broker_dst` (A-28 sigue abierta).
+su huso (como los libros, ADR-0039). El servidor de FTMO cierra EURUSD a las 23:55 de su reloj. Según
+la Trading Update del 5-mar-2026, ese reloj cambia de hora con EE. UU., así que se declara como 16:55
+`America/New_York`. Es PROVISIONAL: lo que A-28 mide observando una transición, y sigue abierta.
+Cuando A-28 se cierre, el huso del calendario se revisa con ella. No se leen `broker_offset_base` ni
+`broker_dst`.
 
 ### 4. El calendario: versionado por perfil, unido a la plataforma por la más restrictiva
 

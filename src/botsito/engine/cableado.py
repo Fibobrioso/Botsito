@@ -31,6 +31,7 @@ from botsito.cases.paquete import Config
 from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
 from botsito.data.velas import a_datetime
+from botsito.domain.cierres import CalendarioCierres
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine.arnes import DiaTrader
@@ -463,10 +464,7 @@ def construir_motor_cableado(
     El calendario de cierres del perfil (`knowledge/cuentas/cierres/`, ADR-0068) entra siempre: sin
     el no se corre, y tampoco un dia fuera de lo que cubre, para que un calendario vencido no
     cambie una medida en silencio."""
-    try:
-        calendario = cargar_calendario(ruta_calendario(repo, perfil.nombre)).calendario()
-    except CalendarioError as exc:
-        raise CableadoError(f"el perfil {perfil.nombre} sin calendario de cierres: {exc}") from exc
+    calendario = calendario_del_perfil(repo, perfil.nombre)
     reglas_broker = reglas_broker_de(perfil, registro, calendario)
     if stops_level_diagnostico is not None and reglas_broker.stops_level_puntos is not None:
         raise DiagnosticoRechazadoError(
@@ -478,16 +476,7 @@ def construir_motor_cableado(
         d.dia: mercado_de_construccion(repo, carpeta_datos, criterio, config, registro, d.id)
         for d in dias
     }
-    fuera = sorted(
-        dia
-        for dia, md in mercados.items()
-        if not calendario.cubre_desde_ms <= md.desde_ms < md.hasta_ms <= calendario.cubre_hasta_ms
-    )
-    if fuera:
-        raise CableadoError(
-            f"dias fuera del calendario de cierres de {perfil.nombre} (ADR-0068): {fuera}; se "
-            "alarga `cubre` revisando las Trading Updates de esas semanas"
-        )
+    comprobar_que_cubre(calendario, mercados, perfil.nombre)
     return MotorCableado(
         vocabulario=vocabulario,
         reglas=reglas,
@@ -505,6 +494,32 @@ def construir_motor_cableado(
         stops_level_diagnostico=stops_level_diagnostico,
         tipo_orden=tipo_orden,
     )
+
+
+def calendario_del_perfil(repo: Path, perfil: str) -> CalendarioCierres:
+    """El calendario de cierres del perfil (`knowledge/cuentas/cierres/`, ADR-0068); sin el, el
+    motor no corre."""
+    try:
+        return cargar_calendario(ruta_calendario(repo, perfil)).calendario()
+    except CalendarioError as exc:
+        raise CableadoError(f"el perfil {perfil} sin calendario de cierres: {exc}") from exc
+
+
+def comprobar_que_cubre(
+    calendario: CalendarioCierres, mercados: Mapping[str, MercadoDia], perfil: str
+) -> None:
+    """Cada dia pedido, entero dentro de lo que cubre el calendario; si no, el motor no corre, para
+    que un calendario vencido no cambie una medida en silencio (ADR-0068 §7)."""
+    fuera = sorted(
+        dia
+        for dia, md in mercados.items()
+        if not calendario.cubre_desde_ms <= md.desde_ms < md.hasta_ms <= calendario.cubre_hasta_ms
+    )
+    if fuera:
+        raise CableadoError(
+            f"dias fuera del calendario de cierres de {perfil} (ADR-0068): {fuera}; se alarga "
+            "`cubre` revisando las Trading Updates de esas semanas"
+        )
 
 
 def _instante(ms: int) -> datetime:
@@ -735,6 +750,8 @@ __all__ = [
     "MotorCableado",
     "Sesion",
     "TrazaBroker",
+    "calendario_del_perfil",
+    "comprobar_que_cubre",
     "comprobar_reloj_unico",
     "construir_motor_cableado",
     "curva_de_equity",

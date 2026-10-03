@@ -7,6 +7,7 @@ mira un caso ni una operacion del trader."""
 from __future__ import annotations
 
 import logging
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -29,9 +30,11 @@ from botsito.domain.cierres import (
     unir_cierres,
     ventana_prohibida_por_cierre,
 )
-from botsito.domain.ticks import MilisegundoUtc, Tick
+from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
+from botsito.domain.velas import MinutoUtc
 from botsito.engine import broker as modulo_broker
+from botsito.engine import cableado
 from botsito.engine.broker import (
     CANCELADA,
     LLENADA,
@@ -49,11 +52,14 @@ from botsito.engine.calendario_cierres import (
 )
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import cargar_perfil
-from botsito.engine.simulacion import reglas_broker_de
+from botsito.engine.simulacion import MercadoDia, reglas_broker_de
+from botsito.spec.modelo import cargar_vocabulario
+from tests.unit import test_cableado as tc
 
 RAIZ = Path(__file__).resolve().parents[2]
 PERFIL = RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml"
 REGISTRO = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+VOCABULARIO = cargar_vocabulario(tc.SPEC)
 FTMO = cargar_calendario(ruta_calendario(RAIZ, "ftmo-2step-swing-100k")).calendario()
 PERFIL_FTMO = cargar_perfil(PERFIL)
 MARGEN = PERFIL_FTMO.minutos("firma_gap_margen_minutos") * 60_000
@@ -168,7 +174,9 @@ def test_la_pendiente_puesta_antes_se_cancela_al_empezar_la_ventana() -> None:
     assert isinstance(orden, Orden)
     b.avanzar(VENTANA_VIERNES + 60_000)
     assert orden.estado == CANCELADA and not b.posiciones
-    assert (VENTANA_VIERNES, CANCELADA, "o1") in [(m, t, i) for m, t, i, _ in b.traza().eventos]
+    assert orden.historial[-1] == (VENTANA_VIERNES, CANCELADA)
+    # como `cancelar`, es una peticion del bot, no un evento del servidor (revisor, a3)
+    assert all(t != CANCELADA for _, t, _, _ in b.traza().eventos)
     assert [p.tipo for p in b.traza().peticiones] == [PETICION_COLOCAR, PETICION_CANCELAR]
     assert [(c.tipo, c.motivo) for c in b.traza().cierres] == [(PETICION_CANCELAR, MOTIVO_CIERRE)]
 
@@ -413,6 +421,81 @@ def test_las_reglas_salen_del_perfil_del_registro_y_del_calendario() -> None:
     assert reglas.cierres == ReglasCierres(FTMO, MARGEN, MINIMO, True)
     assert REGISTRO.opcion("cierre_pendientes") == "cancelar"
     assert reglas_broker_de(PERFIL_FTMO, REGISTRO).cierres is None
+
+
+# ------------------------------------------- por el cableado: el motor, de punta a punta (b1)
+
+
+def _md(dia: str, desde_utc: datetime, hasta_utc: datetime) -> MercadoDia:
+    a = MinutoUtc(
+        _ms(desde_utc.year, desde_utc.month, desde_utc.day, desde_utc.hour) // MS_POR_MINUTO
+    )
+    z = MinutoUtc(
+        _ms(hasta_utc.year, hasta_utc.month, hasta_utc.day, hasta_utc.hour) // MS_POR_MINUTO
+    )
+    return MercadoDia(
+        f"caso-{dia}", datetime.fromisoformat(dia).date(), a, z, 100_000, (), (), (), ()
+    )
+
+
+def test_el_cableado_no_corre_sin_calendario_ni_fuera_de_lo_que_cubre(tmp_path: Path) -> None:
+    """Revisor, b1: lo que ADR-0068 §7 promete del cableado, probado."""
+    with pytest.raises(cableado.CableadoError, match="sin calendario de cierres"):
+        cableado.calendario_del_perfil(tmp_path, "ftmo-2step-swing-100k")
+    cal = cableado.calendario_del_perfil(RAIZ, "ftmo-2step-swing-100k")
+    dentro = _md("2026-09-23", datetime(2026, 9, 23, 5), datetime(2026, 9, 23, 13))
+    fuera = _md("2026-10-09", datetime(2026, 10, 9, 5), datetime(2026, 10, 9, 13))
+    cableado.comprobar_que_cubre(cal, {"2026-09-23": dentro}, "ftmo")
+    with pytest.raises(cableado.CableadoError, match=r"fuera del calendario.*2026-10-09"):
+        cableado.comprobar_que_cubre(cal, {"2026-09-23": dentro, "2026-10-09": fuera}, "ftmo")
+
+
+def _corrida(cierres: ReglasCierres | None) -> cableado.MotorCableado:
+    motor = tc._motor(REGISTRO, VOCABULARIO, tc._mercado(tc.RUTA_STOP))
+    motor.reglas_broker = replace(motor.reglas_broker, cierres=cierres)
+    motor.correr_dia(tc._dia())
+    return motor
+
+
+def _cierres_con_ventana_en(ventana_ms: int) -> ReglasCierres:
+    """Un calendario sintetico de 2030 con un solo cierre largo cuya ventana empieza ahi."""
+    c = Cierre(ventana_ms + MARGEN, ventana_ms + MARGEN + MINIMO, "sintetico")
+    cal = CalendarioCierres((c,), _ms(2030, 1, 1), _ms(2030, 2, 1))
+    return ReglasCierres(cal, MARGEN, MINIMO, True)
+
+
+def test_por_el_motor_la_colocacion_en_la_ventana_se_niega_y_sale_en_el_informe() -> None:
+    """El dia sintetico de `test_cableado`: sin cierres, la limite se coloca y se llena; con la
+    ventana abierta ANTES de colocarla, la colocacion se niega, nada se llena y el informe del
+    arnes lo dice con su motivo."""
+    dia = tc.DIA.isoformat()
+    base = _corrida(None)
+    colocada = base.brokers[dia].ordenes["o1"].colocada_ms
+    assert LLENADA in [t for _, t, _, _ in base.trazas_broker[dia].eventos]
+    motor = _corrida(_cierres_con_ventana_en(colocada - 60_000))
+    tb = motor.trazas_broker[dia]
+    assert LLENADA not in [t for _, t, _, _ in tb.eventos]
+    assert (tb.cierres[0].tipo, tb.cierres[0].motivo) == (PETICION_COLOCAR, MOTIVO_CIERRE)
+    informe = cableado.informe_simulacion(motor)
+    assert "### Los cierres de mercado (ADR-0068)" in informe
+    assert f"{dia} | {colocada} | {MOTIVO_CIERRE} | {PETICION_COLOCAR} |" in informe
+    assert "pendientes: se cancelan" in informe
+
+
+def test_por_el_motor_la_pendiente_se_cancela_al_empezar_la_ventana() -> None:
+    """La ventana empieza entre la colocacion y el llenado: el broker cancela la pendiente, nada se
+    llena, la cancelacion es una peticion y el motor sigue sin romperse (revisor, a3)."""
+    dia = tc.DIA.isoformat()
+    base = _corrida(None)
+    colocada = base.brokers[dia].ordenes["o1"].colocada_ms
+    llenada = next(m for m, t, _, _ in base.trazas_broker[dia].eventos if t == LLENADA)
+    ventana = (colocada + llenada) // 2
+    motor = _corrida(_cierres_con_ventana_en(ventana))
+    tb = motor.trazas_broker[dia]
+    assert LLENADA not in [t for _, t, _, _ in tb.eventos]
+    assert motor.brokers[dia].ordenes["o1"].historial[-1] == (ventana, CANCELADA)
+    assert (tb.cierres[0].instante_ms, tb.cierres[0].tipo) == (ventana, PETICION_CANCELAR)
+    assert (PETICION_CANCELAR, True) in [(p.tipo, p.aceptada) for p in tb.peticiones]
 
 
 # ------------------------------------------------- con el predicado desactivado, los tests fallan
