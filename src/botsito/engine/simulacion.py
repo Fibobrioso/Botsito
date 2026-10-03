@@ -34,6 +34,7 @@ from botsito.data.ticks import (
     cargar_ticks,
     manifiestos_ticks,
 )
+from botsito.domain.cierres import CalendarioCierres, ReglasCierres
 from botsito.domain.ticks import MS_POR_MINUTO, Tick
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.arnes import DiaTrader
@@ -96,10 +97,36 @@ def limites_freno_de(registro: Registro) -> LimitesFreno:
     )
 
 
-def reglas_broker_de(perfil: PerfilCuenta, registro: Registro | None = None) -> ReglasBroker:
+# la politica de cierre_pendientes que cancela la pendiente al empezar la ventana (ADR-0068)
+CANCELAR_PENDIENTES = "cancelar"
+OPCIONES_PENDIENTES = (CANCELAR_PENDIENTES, "mantener")
+
+
+def reglas_cierres_de(
+    perfil: PerfilCuenta, registro: Registro, calendario: CalendarioCierres
+) -> ReglasCierres:
+    """La ventana prohibida antes de un cierre largo (ADR-0068): el margen y el minimo de R15, del
+    perfil de la firma; que hacer con una pendiente, del registro (PROVISIONAL bajo A-55)."""
+    politica = registro.opcion("cierre_pendientes")
+    if politica not in OPCIONES_PENDIENTES:
+        raise ValueError(f"cierre_pendientes = {politica!r}: el broker no sabe hacer eso")
+    return ReglasCierres(
+        calendario=calendario,
+        margen_ms=perfil.minutos("firma_gap_margen_minutos") * MS_POR_MINUTO,
+        minimo_ms=perfil.minutos("firma_gap_cierre_minimo_minutos") * MS_POR_MINUTO,
+        cancelar_pendientes=politica == CANCELAR_PENDIENTES,
+    )
+
+
+def reglas_broker_de(
+    perfil: PerfilCuenta,
+    registro: Registro | None = None,
+    calendario: CalendarioCierres | None = None,
+) -> ReglasBroker:
     """Los limites y los costes del perfil de cuenta, leidos por su nombre (ADR-0050), y los
     umbrales del freno del registro si se pasa (ADR-0067). Sin registro, el broker frena igual en
-    `firma_mensajes_dia_max`, sin margen ni aviso."""
+    `firma_mensajes_dia_max`, sin margen ni aviso. Con registro y calendario, la ventana prohibida
+    antes de un cierre de mercado largo (ADR-0068); el cableado siempre los pasa."""
     return ReglasBroker(
         volumen_max_lotes=perfil.lotes("firma_volumen_max_lotes"),
         ordenes_simultaneas_max=perfil.entero("firma_ordenes_simultaneas_max"),
@@ -115,6 +142,11 @@ def reglas_broker_de(perfil: PerfilCuenta, registro: Registro | None = None) -> 
         # R13: el limite de la firma, y el freno de ultimo recurso (ADR-0067)
         mensajes_dia_max=perfil.entero("firma_mensajes_dia_max"),
         freno=limites_freno_de(registro) if registro is not None else None,
+        cierres=(
+            reglas_cierres_de(perfil, registro, calendario)
+            if registro is not None and calendario is not None
+            else None
+        ),
     )
 
 
@@ -261,6 +293,7 @@ __all__ = [
     "ResultadoSimulacion",
     "mercado_de_construccion",
     "reglas_broker_de",
+    "reglas_cierres_de",
     "simular_dia",
     "simular_fase",
 ]

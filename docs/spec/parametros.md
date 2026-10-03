@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.7.0` · hash `4be42d51a3b8…`
+`spec_version 15.8.0` · hash `562077a64255…`
 
-99 en total: 82 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+102 en total: 85 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -23,6 +23,7 @@
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
 | `cierre_forzoso_fin_ventana` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-ffb528d7` | si/no |
 | `cierre_h4_antelacion` | `1` | CONFIRMED | estrategia | `ev-v9-002735-472432b8` | minutos antes del fin de la vela H4 en curso, en la rejilla de anclaje_h4 |
+| `cierre_pendientes` | `cancelar` | DEFAULT_AMBIGUOUS · en revision por A-55 | ejecucion | `ADR-0068` | que hace el broker con una orden pendiente al empezar la ventana previa a un cierre |
 | `comportamiento_sin_regla` | `abstenerse` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-c698bc6a` | abstenerse/regla_mas_parecida |
 | `cuenta_objetivo` | `fondeada` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
 | `cuenta_pruebas` | `demo` | CONFIRMED | prop_firm | `ADR-0012` | tipo de cuenta |
@@ -34,6 +35,8 @@
 | `firma_apalancamiento` | `30` | CONFIRMED | prop_firm | `ADR-0026` | apalancamiento maximo en forex (1:N) |
 | `firma_base_perdida_diaria` | `saldo_corte_diario` | CONFIRMED | prop_firm | `ADR-0026` | sobre que saldo se fija el limite del dia |
 | `firma_cierre_al_tope` | `si` | CONFIRMED | prop_firm | `ADR-0026` | si/no |
+| `firma_gap_cierre_minimo_minutos` | `120` | CONFIRMED | prop_firm | `ADR-0068` | minutos que tiene que durar un cierre de mercado para ser largo |
+| `firma_gap_margen_minutos` | `120` | CONFIRMED | prop_firm | `ADR-0068` | minutos antes de un cierre de mercado largo en los que no se abre |
 | `firma_magnitud_vigilada` | `equity` | CONFIRMED | prop_firm | `ADR-0026` | que magnitud no puede bajar del limite |
 | `firma_margen_seguridad` | `0.5 %` | CONFIRMED | prop_firm | `ADR-0031` | porcentaje del capital simulado inicial (saldo_inicial_cuenta) |
 | `firma_mensajes_dia_max` | `2000` | CONFIRMED | prop_firm | `ADR-0026` | peticiones al servidor por dia |
@@ -120,12 +123,15 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `anclaje_h4` → F15
 - `caja_bloque` → ADR-0064
 - `caja_se_fija` → ADR-0064
+- `cierre_pendientes` → ADR-0068
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
 - `entrada_tipo_orden` → F20, F22
 - `filtro_noticias` → F33
 - `firma` → F33
 - `firma_apalancamiento` → F21, F33
+- `firma_gap_cierre_minimo_minutos` → ADR-0068
+- `firma_gap_margen_minutos` → ADR-0068
 - `firma_mensajes_dia_max` → F23, F24, F31
 - `firma_noticias_restringe` → F33
 - `firma_programa` → F33
@@ -241,6 +247,12 @@ Opciones: `si`, `no`.
 
 con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite
 
+### `cierre_pendientes`
+
+la ventana que R15 prohibe antes de un cierre de mercado largo (ADR-0068): con `cancelar` el broker cancela al empezar la ventana cada pendiente puesta antes, para que no se llene dentro (lo que protege la cuenta: sale y cuenta, ADR-0067); con `mantener` sigue y puede llenarse dentro. R15 dice «opening simulated trades» y no habla de pendientes: PROVISIONAL bajo A-55, en `cancelar`, lo mas restrictivo, hasta que conteste el soporte de FTMO
+
+Opciones: `cancelar`, `mantener`.
+
 ### `comportamiento_sin_regla`
 
 que hace el bot cuando la situacion no encaja con ninguna regla
@@ -302,6 +314,14 @@ Opciones: `saldo_inicial_cuenta`, `saldo_corte_diario`.
 si, al alcanzar un limite de la firma con una posicion viva, el bot la cierra a mercado (RN-030). Nace el 2026-09-14 para sustituir el literal `si: "si"` que RN-029 llevaba en su cierre, donde RN-002 usa cierre_forzoso_fin_ventana: una opcion de una accion es un valor de negocio y vive aqui (ADR-0002). `si` es lo que decide ADR-0026: con el limite ya alcanzado la cuenta esta en infraccion, y dejar correr la posicion solo puede agrandar la perdida
 
 Opciones: `si`, `no`.
+
+### `firma_gap_cierre_minimo_minutos`
+
+R15: «closed for at least two hours». El borde va dentro («at least»). El corte diario de EURUSD en FTMO dura 10 minutos y no llega (docs/validation/CIERRES-DE-MERCADO.md §0.2)
+
+### `firma_gap_margen_minutos`
+
+R15 de docs/validation/FTMO-REGLAS.md: practica prohibida «perform gap trading [...] by opening simulated trades: [...] two hours or less before a relevant financial market is closed for at least two hours». El borde va dentro («or less»). Lo lee el broker por el perfil de cuenta (ADR-0068): ni abre ni coloca desde este margen antes de un cierre de firma_gap_cierre_minimo_minutos o mas hasta que el cierre acaba
 
 ### `firma_magnitud_vigilada`
 

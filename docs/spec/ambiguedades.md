@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.7.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.8.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
 
-## ABIERTA (23)
+## ABIERTA (24)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -131,6 +131,12 @@ Afecta a: `orden_pendiente_al_abrir_escenario`.
 Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno. Qué cuenta FTMO como mensaje (las rechazadas, las modificaciones, las cancelaciones) está pendiente de la respuesta del soporte de FTMO, que pide Aleks: si cuenta más de lo que cuenta el freno, los umbrales se revisan. Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus habla del límite, y la fuente real es docs/validation/FTMO-REGLAS.md R13.
 
 Afecta a: `freno_peticiones_aviso`, `freno_peticiones_corte`, `freno_bucle_repeticiones`, `freno_bucle_minutos`.
+
+### A-55 · qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta · medicion
+
+R15 de docs/validation/FTMO-REGLAS.md prohíbe «perform gap trading [...] by opening simulated trades: [...] two hours or less before a relevant financial market is closed for at least two hours». No dice si colocar una orden pendiente en esas dos horas cuenta, ni si una pendiente puesta antes que se llena dentro es «opening», ni qué mercado es el «relevant financial market» de EURUSD (el horario de EURUSD en los servidores de FTMO, o también el cierre de otras bolsas). Se pregunta a soporte de FTMO, en inglés (docs/validation/CIERRES-DE-MERCADO.md §0.6, P1, P2 y P3), y con la respuesta se fija cierre_pendientes. Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus habla de cierres de mercado, y la fuente real es R15.
+
+Afecta a: `cierre_pendientes`.
 
 ## DECIDIDA (6)
 

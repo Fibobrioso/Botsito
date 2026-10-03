@@ -249,6 +249,107 @@ versionado con `unir_cierres`. Lo apunta el ADR nuevo de esta rama.
   use are the ones in your platform's symbol sessions and Trading Updates (server time, GMT+2/GMT+3
   following US daylight saving time)?»
 
+## 1. Fase 1 · Implementación
+
+Lo escrito en §0.5, con un ajuste que el diseño ya decía: el predicado bloquea también mientras el
+cierre dura.
+
+| Fichero | Qué |
+|---|---|
+| `src/botsito/domain/cierres.py` (nuevo) | `Cierre`, `CalendarioCierres`, `ReglasCierres`, `Prohibicion`; el predicado único **`ventana_prohibida_por_cierre`**; `proxima_prohibicion` (cuándo empieza la próxima ventana, para cancelar pendientes); `cierres_desde_sesiones`, `juntar_cierres` y `unir_cierres` con `FuenteCierres` y `Discrepancia` (gana la más restrictiva). Sin IO, sin reloj y sin cifras |
+| `src/botsito/engine/calendario_cierres.py` (nuevo) | Lee y valida `knowledge/cuentas/cierres/<perfil>.yaml`: claves exactas, `perfil` igual al nombre del fichero, huso IANA en cada hora, fuente en cada extraordinario. Expande la pauta semanal y la diaria día a día en su huso, con una semana de margen a cada lado, y lo une todo |
+| `knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml` (nuevo) | El calendario de FTMO, con lo de §0.2: cubre del 4-12-2025 al 7-10-2026; viernes 16:55 a domingo 17:05 de Nueva York; corte diario 16:55-17:05; Navidad, Año Nuevo y el cambio de hora de EE. UU. del 8-3-2026, cada uno con su Trading Update |
+| `src/botsito/engine/broker.py` | `ReglasBroker.cierres`. `_colocar` y `modificar` preguntan al predicado ANTES que al freno; lo negado es un `Rechazo` con su motivo, no se envía ni se cuenta. La cancelación al empezar la ventana es un evento más de `_proximo_evento`, que en el mismo instante va antes que cualquier llenado. `Traza.cierres` y el log (INFO) |
+| `src/botsito/engine/simulacion.py` | `reglas_cierres_de(perfil, registro, calendario)`, y `reglas_broker_de(perfil, registro, calendario)` lo arma cuando llegan las dos cosas |
+| `src/botsito/engine/perfil_cuenta.py` | El accesor `minutos`, que faltaba: la lectura es estricta por tipo (ADR-0002), y `entero` no lee unos `minutos` |
+| `src/botsito/engine/cableado.py` | Carga el calendario del perfil (sin él, no corre) y se niega a correr un día fuera de `cubre`. `TrazaBroker.cierres`, y la sección «Los cierres de mercado (ADR-0068)» del informe del arnés |
+| `knowledge/spec/parametros.yaml` y el perfil | `firma_gap_margen_minutos` = 120 y `firma_gap_cierre_minimo_minutos` = 120 (CONFIRMED, R15), en los dos con el mismo valor; `cierre_pendientes` = `cancelar` (DEFAULT_AMBIGUOUS, A-55), en el registro. La descripción de `firma_noticias_restringe` en el perfil decía que R15 «no se modela»: ahora dice que la mitad de los cierres sí |
+| `knowledge/spec/ambiguedades.yaml`, `PROJECT_STATE.md` | **A-55**, abierta, clase `medicion`, no bloqueante, con su fila en «Known Ambiguities» |
+| `docs/spec/` | Regenerado con `botsito spec docs --escribir` |
+| `docs/adr/0068-…md` y `docs/adr/README.md` | ADR-0068 y su fila en el índice |
+
+**Lo que NO se ha tocado:** `mql5/` (el EA y `SymbolInfoSessionTrade`). El adaptador real de
+MetaTrader todavía no existe en Python, y su unión con el calendario está escrita en ADR-0068 §4 y
+probada con sesiones sintéticas. Como no se toca nada que dependa de la plataforma, no hace falta la
+CI de Linux por `fix/`. `abrir_conocida` tampoco pasa por el predicado, porque no la emite el bot.
+
+## 2. Fase 2 · Tests, rompiendo la guardia a propósito
+
+`tests/unit/test_cierres_de_mercado.py`: 22 funciones, 25 casos. Los cinco que pide el encargo:
+
+| Encargo | Test | Qué fija |
+|---|---|---|
+| Un viernes: no dentro, sí justo antes | `test_un_viernes_no_se_coloca_dentro_de_la_ventana_y_si_justo_antes` | Con el calendario REAL de FTMO, viernes 25-9-2026: a las 18:54:59.999 UTC la compra sale; a las 18:55:00.000 y a las 20:54:59.999, `Rechazo` `cierre_mercado`; lo negado no existe, no es petición y queda en `Traza.cierres` |
+| Festivo con cierre anticipado sintético | `test_un_cierre_anticipado_mete_la_ventana_en_la_operativa` | Un cierre inventado a las 14:00 de Madrid (2030): la ventana empieza a las 12:00 de Madrid, DENTRO de la operativa; a las 11:59:59.999 sale, a las 12:00 no |
+| El cambio de hora del último domingo de octubre | `test_el_cambio_de_hora_de_octubre_no_mueve_la_ventana_de_mas` y `test_un_cierre_justo_despues_del_cambio_tiene_dos_horas_absolutas` | Con `cubre` alargado (sintético): la ventana del viernes empieza a las 18:55 UTC el 23-10 y el 30-10, y a las 19:55 UTC el 6-11; en Madrid, 20:55, 19:55 y 20:55. Siempre dos horas absolutas. Y un cierre a las 03:30 de Madrid del 25-10 abre su ventana a las 00:30 UTC (02:30 de verano), no a la 01:30 de la pared, que estaría una hora antes |
+| Un día normal no bloquea nada | `test_un_dia_normal_no_bloquea_nada` | Miércoles 23-9-2026, minuto a minuto las 24 horas: nada prohibido; ocho compras de 05:00 a 12:00 UTC, todas salen |
+| Con el predicado desactivado, fallan | `test_sin_el_predicado_el_viernes_se_coloca_dentro` y la medida de abajo | Con el predicado parcheado a «nada prohibido», la compra del viernes dentro de la ventana SALE, y el test del viernes y el del festivo fallan |
+
+Los demás: los bordes de R15 (un cierre de exactamente 2 h cuenta; uno de 2 h menos 1 ms, no), el
+corte diario que no bloquea, el mercado cerrado, la pendiente cancelada al empezar la ventana antes
+que un llenado del mismo instante, `mantener` (se llena dentro), modificar negado, la posición que
+sigue y mueve su stop, el log, fuera del calendario, Navidad y Año Nuevo en el calendario real (y
+que ningún cierre largo empieza antes de las 17:00 de Madrid un día laborable), la unión con
+sesiones y su discrepancia, cuatro calendarios mal escritos, cierres sin unir y las reglas que salen
+del perfil, del registro y del calendario.
+
+**La guardia rota, medido.** Con `return None` en la primera línea útil de
+`ventana_prohibida_por_cierre`, restaurado justo después (el fichero no lleva la marca):
+
+```
+FAILED test_un_viernes_no_se_coloca_dentro_de_la_ventana_y_si_justo_antes
+FAILED test_con_el_mercado_cerrado_tampoco_se_coloca_y_al_abrir_si
+FAILED test_la_pendiente_puesta_antes_se_cancela_al_empezar_la_ventana
+FAILED test_modificar_una_pendiente_dentro_se_niega_y_la_deja_como_estaba
+FAILED test_cada_bloqueo_va_al_log_con_su_motivo
+FAILED test_un_cierre_anticipado_mete_la_ventana_en_la_operativa
+FAILED test_los_bordes_de_r15_van_dentro
+FAILED test_el_cambio_de_hora_de_octubre_no_mueve_la_ventana_de_mas
+FAILED test_un_cierre_justo_despues_del_cambio_tiene_dos_horas_absolutas
+FAILED test_fuera_de_lo_que_cubre_el_calendario_no_se_coloca
+FAILED test_gana_la_mas_restrictiva_y_la_discrepancia_se_dice
+```
+
+Fallan 11 de 25. Pasan los que esperan que NO se prohíba nada (día normal, corte diario, la
+ventana del viernes lejos de la operativa), los que no pasan por el predicado (el calendario y sus
+errores, las reglas, `mantener`, la posición) y el del monkeypatch, que espera justo eso.
+
+**Dos errores míos en los tests, cazados al correrlos.** (1) El tick del llenado no cruzaba el
+precio de la límite. (2) Puse el ejemplo del cambio de hora en la 01:00 UTC del 25-10, que es
+exactamente el salto: ahí la pared y el reloj absoluto dan lo mismo, y el test no probaba nada. Se
+movió a las 03:30 de Madrid, donde la resta en la pared se equivoca en una hora.
+
+## 3. Lo que cambia en el arnés
+
+El arnés simulado se corrió en DIAGNÓSTICO, con las lecturas de `CONTADOR-PETICIONES.md` §4: A-35
+`cierre_vela_contraria`, A-44 `sin_tope`, A-21 `solo_una_zona_de_control` y A-27 a 0. Sin A-35, el
+motor se niega a correr (medido). Se corrió dos veces, sobre los mismos días de construcción:
+- con el código de esta rama;
+- con el de `main` (`5947e55`), en un clon desechable (`git worktree add` en la carpeta de trabajo,
+  con `data` apuntado al del repositorio por `config/settings.local.toml`, sin copiar ni enlazar
+  nada). La guardia de Claude bloqueó un primer intento con `cmd /c mklink` y no se rodeó.
+
+**Sin cobertura agregada:** las salidas no se leyeron. Un guion las comparó línea a línea y solo
+sacó números de línea, hashes y la sección nueva:
+
+| | líneas | sha256 (16) |
+|---|---|---|
+| `main` | 842 | `e9854b6457cbe227` |
+| rama, sin la sección nueva | 842 | `e9854b6457cbe227` |
+
+**Idénticas byte a byte.** La rama solo añade, al final:
+
+```
+### Los cierres de mercado (ADR-0068)
+calendario: cubre 2025-12-04 05:00 a 2026-10-08 04:00 UTC, 228 cierres; margen 120 min, minimo 120 min; pendientes: se cancelan
+ninguna peticion negada ni ninguna pendiente cancelada
+```
+
+(Cada línea lleva delante las etiquetas `[DIAGNOSTICO-…]`, quitadas aquí.) Es lo que decía §0.2:
+ningún cierre largo cae en la operativa de ningún día de construcción, y la guardia no cambia nada
+medido. `cubre` empieza a las 05:00 UTC porque el día se cuenta en el huso del calendario, Nueva
+York.
+
 ## Estado
 
-EN CURSO: Fase 0 escrita. Lo siguiente es la Fase 1.
+EN CURSO: Fases 0, 1 y 2 hechas; falta el arnés, el sello y el revisor.

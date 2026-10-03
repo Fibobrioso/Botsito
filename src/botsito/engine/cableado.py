@@ -43,6 +43,11 @@ from botsito.engine.broker import (
     ReglasBroker,
     peticiones_por_dia,
 )
+from botsito.engine.calendario_cierres import (
+    CalendarioError,
+    cargar_calendario,
+    ruta_calendario,
+)
 from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
 from botsito.engine.diagnostico import DiagnosticoRechazadoError
 from botsito.engine.freno import Corte
@@ -92,6 +97,7 @@ class TrazaBroker:
     huecos: set[str] = field(default_factory=set)
     peticiones: list[Peticion] = field(default_factory=list)  # al servidor, R13
     cortes: list[Corte] = field(default_factory=list)  # el freno de peticiones (ADR-0067)
+    cierres: list[Corte] = field(default_factory=list)  # los cierres de mercado (ADR-0068)
     equity_fin: Decimal = Decimal(0)
     saldo_fin: Decimal = Decimal(0)
     depuracion: bool = False
@@ -237,6 +243,7 @@ class MotorCableado:
         tb.rechazos = len(broker.traza().rechazos)
         tb.peticiones = list(broker.traza().peticiones)
         tb.cortes = list(broker.traza().cortes)
+        tb.cierres = list(broker.traza().cierres)
         tb.equity_fin = self.cuenta.equity
         tb.saldo_fin = self.cuenta.saldo
         for nombre, traza in trazas.items():
@@ -451,8 +458,16 @@ def construir_motor_cableado(
     """El motor cableado sobre los dias de CONSTRUCCION pedidos: el mercado de cada dia (M1 y
     ticks) pasa por la compuerta del arnes caso a caso (ADR-0053 §8). La fase, si no se pide, es
     la primera que declara el perfil (DECISION pendiente de validar). `stops_level_diagnostico`
-    es el stops level hipotetico de A-27 (ADR-0057): se rechaza si el perfil ya lo tiene."""
-    reglas_broker = reglas_broker_de(perfil, registro)
+    es el stops level hipotetico de A-27 (ADR-0057): se rechaza si el perfil ya lo tiene.
+
+    El calendario de cierres del perfil (`knowledge/cuentas/cierres/`, ADR-0068) entra siempre: sin
+    el no se corre, y tampoco un dia fuera de lo que cubre, para que un calendario vencido no
+    cambie una medida en silencio."""
+    try:
+        calendario = cargar_calendario(ruta_calendario(repo, perfil.nombre)).calendario()
+    except CalendarioError as exc:
+        raise CableadoError(f"el perfil {perfil.nombre} sin calendario de cierres: {exc}") from exc
+    reglas_broker = reglas_broker_de(perfil, registro, calendario)
     if stops_level_diagnostico is not None and reglas_broker.stops_level_puntos is not None:
         raise DiagnosticoRechazadoError(
             f"el perfil {perfil.nombre} ya fija el stops level ({reglas_broker.stops_level_puntos}"
@@ -463,6 +478,16 @@ def construir_motor_cableado(
         d.dia: mercado_de_construccion(repo, carpeta_datos, criterio, config, registro, d.id)
         for d in dias
     }
+    fuera = sorted(
+        dia
+        for dia, md in mercados.items()
+        if not calendario.cubre_desde_ms <= md.desde_ms < md.hasta_ms <= calendario.cubre_hasta_ms
+    )
+    if fuera:
+        raise CableadoError(
+            f"dias fuera del calendario de cierres de {perfil.nombre} (ADR-0068): {fuera}; se "
+            "alarga `cubre` revisando las Trading Updates de esas semanas"
+        )
     return MotorCableado(
         vocabulario=vocabulario,
         reglas=reglas,
@@ -657,7 +682,7 @@ def _informe_peticiones(motor: MotorCableado) -> list[str]:
         f"maximo diario: {mayor}; firma_mensajes_dia_max: "
         + (str(limite) if limite is not None else "sin leer")
     )
-    return lineas + _informe_freno(motor)
+    return lineas + _informe_freno(motor) + _informe_cierres(motor)
 
 
 def _informe_freno(motor: MotorCableado) -> list[str]:
@@ -677,6 +702,29 @@ def _informe_freno(motor: MotorCableado) -> list[str]:
             lineas.append(f"{dia} | {c.instante_ms} | {c.motivo} | {c.tipo} | {c.id}")
     if len(lineas) == 3:
         lineas.append("ningun aviso ni ninguna peticion negada")
+    return lineas
+
+
+def _informe_cierres(motor: MotorCableado) -> list[str]:
+    """Los cierres de mercado (ADR-0068): el calendario que se uso y, por dia, cada colocacion o
+    modificacion negada y cada pendiente cancelada, con su motivo. Un dia sin nada no sale."""
+    c = motor.reglas_broker.cierres
+    if c is None:
+        cabecera = "sin calendario: el broker no comprueba los cierres"
+    else:
+        cabecera = (
+            f"cubre {_instante(c.calendario.cubre_desde_ms):%Y-%m-%d %H:%M} a "
+            f"{_instante(c.calendario.cubre_hasta_ms):%Y-%m-%d %H:%M} UTC, "
+            f"{len(c.calendario.cierres)} cierres; margen {c.margen_ms // MS_POR_MINUTO} min, "
+            f"minimo {c.minimo_ms // MS_POR_MINUTO} min; pendientes: "
+            + ("se cancelan" if c.cancelar_pendientes else "se mantienen")
+        )
+    lineas = ["", "### Los cierres de mercado (ADR-0068)", f"calendario: {cabecera}"]
+    for dia in sorted(motor.trazas_broker):
+        for k in motor.trazas_broker[dia].cierres:
+            lineas.append(f"{dia} | {k.instante_ms} | {k.motivo} | {k.tipo} | {k.id}")
+    if len(lineas) == 3:
+        lineas.append("ninguna peticion negada ni ninguna pendiente cancelada")
     return lineas
 
 
