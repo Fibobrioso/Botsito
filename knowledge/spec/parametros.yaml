@@ -1614,6 +1614,55 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0067
+  - nombre: firma_gap_margen_minutos
+    categoria: prop_firm
+    tipo: minutos
+    unidad: minutos antes de un cierre de mercado largo en los que no se abre
+    descripcion: >-
+      R15 de docs/validation/FTMO-REGLAS.md: practica prohibida «perform gap trading [...] by
+      opening simulated trades: [...] two hours or less before a relevant financial market is
+      closed for at least two hours». El borde va dentro («or less»). Lo lee el broker por el
+      perfil de cuenta (ADR-0068): ni abre ni coloca desde este margen antes de un cierre de
+      firma_gap_cierre_minimo_minutos o mas hasta que el cierre acaba
+    estado: CONFIRMED
+    valor: 120
+    minimo: 1
+    consumido_por: [ADR-0068]
+    fuente:
+      tipo: decision
+      id: ADR-0068
+  - nombre: firma_gap_cierre_minimo_minutos
+    categoria: prop_firm
+    tipo: minutos
+    unidad: minutos que tiene que durar un cierre de mercado para ser largo
+    descripcion: >-
+      R15: «closed for at least two hours». El borde va dentro («at least»). El corte diario de
+      EURUSD en FTMO dura 10 minutos y no llega (docs/validation/CIERRES-DE-MERCADO.md §0.2)
+    estado: CONFIRMED
+    valor: 120
+    minimo: 1
+    consumido_por: [ADR-0068]
+    fuente:
+      tipo: decision
+      id: ADR-0068
+  - nombre: cierre_pendientes
+    categoria: ejecucion
+    tipo: enum
+    unidad: que hace el broker con una orden pendiente al empezar la ventana previa a un cierre
+    opciones: [cancelar, mantener]
+    descripcion: >-
+      la ventana que R15 prohibe antes de un cierre de mercado largo (ADR-0068): con `cancelar` el
+      broker cancela al empezar la ventana cada pendiente puesta antes, para que no se llene dentro
+      (lo que protege la cuenta: sale y cuenta, ADR-0067); con `mantener` sigue y puede llenarse
+      dentro. R15 dice «opening simulated trades» y no habla de pendientes: PROVISIONAL bajo A-55,
+      en `cancelar`, lo mas restrictivo, hasta que conteste el soporte de FTMO
+    estado: DEFAULT_AMBIGUOUS
+    valor: "cancelar"
+    ambiguedad_id: A-55
+    consumido_por: [ADR-0068]
+    fuente:
+      tipo: decision
+      id: ADR-0068
   - nombre: firma_noticias_restringe
     categoria: prop_firm
     tipo: booleano

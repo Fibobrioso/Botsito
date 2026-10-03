@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+feature/cierres-de-mercado
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36p-freno-peticiones` (2026-10-02).
+feature/cierres-de-mercado · ORDEN DE CIERRE 2026-10-02 · docs/validation/CIERRES-DE-MERCADO.md
 
 ## Stable Main State
 b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticiones`): el freno de peticiones al servidor vive en el puerto del broker (ADR-0067, engine/freno.py): aviso en 1000, corte en 1500 y bucle de 5 iguales en 1 minuto, PROVISIONAL bajo A-54; lo que protege la cuenta (cancelar, cerrar, el primer stop a break even) sale siempre y cuenta. Sobre `stable/F36o-cerrar-a29-a36` (34680ba). Informe docs/validation/FRENO-PETICIONES.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ b64e675 · merge de `feature/freno-peticiones` (tag `stable/F36p-freno-peticione
 b64e675 · merge: el freno de peticiones al servidor en el puerto del broker (ADR-0067), A-54 · tag stable/F36p-freno-peticiones
 
 ## Tests Currently Passing
-1183 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1208 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -43,6 +43,8 @@ L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item 
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026; vencido, el simulador no corre y en vivo el bot no coloca nada. Renovarlo cada semana desde las Trading Updates de FTMO hasta que el adaptador MT5 lea SymbolInfoSessionTrade (ADR-0068 §4); rama propia para automatizarlo antes de operar en real.
+
 ### Pendientes heredados (sin verificar)
 
 Los puntos del Next Action viejo (Archivo 1 de docs/state/HISTORIA.md, donde esta su texto entero) que no tienen evidencia de estar hechos -commit, tag, ADR o test-, uno por linea con su arranque literal; la evidencia, punto por punto, en docs/validation/DIETA-Y-SKILLS.md §6. Las ramas a), c) y 0) de A3 si la tienen y solo estan en HISTORIA. Se quitan de aqui cuando haya evidencia o lo decida el consultor.
@@ -50,7 +52,6 @@ Los puntos del Next Action viejo (Archivo 1 de docs/state/HISTORIA.md, donde est
 - A2. **Aleks ejecuta MedirDemoFTMO en la demo de FTMO** (docs/runbooks/DEMO-FTMO.md), tres ejecuciones: antes…
 - A3. **Ramas de codigo, en este orden** (orden del consultor del 2026-09-29):
 - d) **vida de la orden stop** (RN-006, rama 3 de ADR-0056) y RN-007 (la vela casi plana; falta el umbral);
-- e) **calendario de cierres de mercado** para la regla de gap trading de FTMO (Technical Debt, 2026-09-29).
 - A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El…
 - A5. **Para la sesion 4 con el trader**: confirmar A-42 (dijo «creo»); las siete ganadoras anotadas de mas de…
 - 2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto…
@@ -103,6 +104,7 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-52 | cuántos escenarios puede abrir una misma sesión como máximo | pregunta | no | F19, F20 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
+| A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
@@ -196,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 6 (2026-10-02).
+— ninguna desde el Archivo 7 (2026-10-02).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 6 (2026-10-02).
+— ninguna desde el Archivo 7 (2026-10-02).

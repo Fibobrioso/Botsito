@@ -334,12 +334,38 @@ parametros:
     unidad: si la cuenta restringe operar alrededor de noticias
     descripcion: >-
       R6: «The Swing account type have no restrictions on trading during news releases». Igual que
-      en parametros.yaml. R15 (gap trading) queda para Aleks con FTMO (Next Action 27) y no se
-      modela. Lo consume el pre-vuelo
+      en parametros.yaml. De R15 (gap trading), la mitad de los cierres de mercado se modela desde
+      ADR-0068 (los dos parametros de abajo); la de las noticias sigue para Aleks con FTMO. Lo
+      consume el pre-vuelo
     estado: CONFIRMED
     valor: false
     consumido_por: [F33]
     fuente: {tipo: decision, id: ADR-0050}
+  - nombre: firma_gap_margen_minutos
+    categoria: prop_firm
+    tipo: minutos
+    unidad: minutos antes de un cierre de mercado largo en los que no se abre
+    descripcion: >-
+      R15: «two hours or less before a relevant financial market is closed for at least two
+      hours». Igual que en parametros.yaml. Lo consume el broker simulado, con el calendario de
+      knowledge/cuentas/cierres/ (ADR-0068)
+    estado: CONFIRMED
+    valor: 120
+    minimo: 1
+    consumido_por: [ADR-0068]
+    fuente: {tipo: decision, id: ADR-0068}
+  - nombre: firma_gap_cierre_minimo_minutos
+    categoria: prop_firm
+    tipo: minutos
+    unidad: minutos que tiene que durar un cierre de mercado para ser largo
+    descripcion: >-
+      R15: «closed for at least two hours». Igual que en parametros.yaml. Lo consume el broker
+      simulado (ADR-0068)
+    estado: CONFIRMED
+    valor: 120
+    minimo: 1
+    consumido_por: [ADR-0068]
+    fuente: {tipo: decision, id: ADR-0068}
 
   # ------------------------------------------------------------------ costes (R12)
   # Son la fila de EURUSD de la API de simbolos: costes de un instrumento EN esta firma. Los

@@ -1,0 +1,53 @@
+# Los cierres de mercado de EURUSD en los servidores de FTMO, para el perfil del mismo nombre
+# (ADR-0068, docs/validation/CIERRES-DE-MERCADO.md §0.2). Lo lee engine/calendario_cierres.py y lo
+# usa el predicado de domain/cierres.py: R15 de docs/validation/FTMO-REGLAS.md prohibe abrir «two
+# hours or less before a relevant financial market is closed for at least two hours».
+#
+# Cada hora declara su huso. El servidor de FTMO cierra EURUSD a las 23:55 y abre a las 00:05 de su
+# reloj. Segun la Trading Update del 5-mar-2026 (el 8 de marzo pasa de GMT+2 a GMT+3 con EE. UU.), su
+# reloj cambia de hora con EE. UU., asi que aqui se escribe en America/New_York. PROVISIONAL: es lo
+# que A-28 (broker_dst) mide observando una transicion, y sigue abierta; se revisa con ella. Con
+# cualquier lectura de A-28 el cierre del viernes cae despues de las 21:55 de Madrid (ADR-0068).
+#
+# Regimen: versionado. Cada cierre que entra cita la Trading Update de FTMO (o la medida) de donde
+# sale, y `cubre` solo se alarga cuando se han revisado las Trading Updates del tramo nuevo. Fuera
+# de `cubre`, el bot no abre ni coloca (cierre_sin_calendario) y el simulador no corre.
+perfil: ftmo-2step-swing-100k
+simbolo: EURUSD
+cubre:
+  # del primer jueves revisado al dia antes del jueves siguiente a la ultima Trading Update leida
+  # (1-oct-2026); revisadas el 2026-10-03 entre las 00:35 y las 01:00 UTC (informe §0.2)
+  desde: "2025-12-04"
+  hasta: "2026-10-07"
+  huso: America/New_York
+semanal:
+  cierre: {dia: viernes, hora: "16:55", huso: America/New_York}
+  apertura: {dia: domingo, hora: "17:05", huso: America/New_York}
+  fuente: >-
+    API de simbolos de FTMO (ftmo.com/wp-json/ftmo/symbols, tradingHours de EUR/USD), leida el
+    2026-10-03 hacia las 00:33 UTC: la semana del 27-sep al 2-oct-2026 abre el domingo a las 21:05
+    UTC y cierra el viernes a las 20:55 UTC (17:05 y 16:55 de Nueva York en verano)
+diario:
+  cierre: {hora: "16:55", huso: America/New_York}
+  apertura: {hora: "17:05", huso: America/New_York}
+  fuente: >-
+    la misma lectura de la API: cada sesion de EUR/USD acaba a las 20:55 UTC y la siguiente empieza
+    a las 21:05 UTC. Son 10 minutos: no es un cierre largo y no bloquea nada
+extraordinarios:
+  - inicio: {fecha: "2025-12-24", hora: "16:55", huso: America/New_York}
+    fin: {fecha: "2025-12-25", hora: "17:05", huso: America/New_York}
+    fuente: >-
+      Trading Update del 18-dic-2025 (y la del 11-dic): tabla «Christmas and New Year's Eve»,
+      fila Forex, «25th December: Closed»; el 24, en blanco (horario normal). El dia 25 se lee
+      como dia del servidor: de las 23:55 del 24 a las 00:05 del 26 en su reloj
+  - inicio: {fecha: "2025-12-31", hora: "16:55", huso: America/New_York}
+    fin: {fecha: "2026-01-01", hora: "17:05", huso: America/New_York}
+    fuente: >-
+      Trading Update del 18-dic-2025 (y la del 11-dic y la del 1-ene-2026): fila Forex,
+      «1st January: Closed»; el 31, en blanco. Leido como el 25 de diciembre
+  - inicio: {fecha: "2026-03-08", hora: "07:00", huso: Etc/GMT-2}
+    fin: {fecha: "2026-03-08", hora: "11:00", huso: Etc/GMT-3}
+    fuente: >-
+      Trading Update del 5-mar-2026: «On Sunday, 8 Mar 2026, the USA will transition to Daylight
+      Saving Time (DST). Therefore, trading on all platforms (MT4, MT5, cTrader, and DXtrade) will
+      be unavailable between 07:00 GMT+2 and 11:00 GMT+3.» Cae dentro del fin de semana

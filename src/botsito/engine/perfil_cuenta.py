@@ -93,6 +93,9 @@ class PerfilCuenta:
     def entero(self, nombre: str) -> int:
         return self._leer(nombre, self.registro.entero)
 
+    def minutos(self, nombre: str) -> int:
+        return self._leer(nombre, self.registro.minutos)
+
     def booleano(self, nombre: str) -> bool:
         return self._leer(nombre, self.registro.booleano)
 

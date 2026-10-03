@@ -27,6 +27,15 @@ llega al servidor, no se cuenta y queda en `Traza.cortes`-; cancelar, cerrar a m
 stop de una posicion hacia el break even salen siempre, y cuentan. Sin umbrales del registro el
 broker frena igual en `mensajes_dia_max`, el limite de la firma.
 
+CIERRES DE MERCADO (R15 de FTMO-REGLAS.md; rama `feature/cierres-de-mercado`, ADR-0068): antes
+que el freno, colocar y modificar una pendiente preguntan al PREDICADO UNICO
+`domain.cierres.ventana_prohibida_por_cierre`. Desde dos horas antes de un cierre largo hasta que
+acaba, y fuera de lo que cubre el calendario, se niegan: un `Rechazo` con su motivo, que no llega
+al servidor ni se cuenta. Una pendiente ya puesta se CANCELA al empezar la ventana si
+`ReglasCierres.cancelar_pendientes` (PROVISIONAL bajo A-55), antes que un llenado de ese instante;
+la cancelacion protege la cuenta y cuenta. Una posicion abierta no se toca (R7). Todo va a
+`Traza.cierres` y al log.
+
 Una orden llenada abre una POSICION con stop y objetivo, que se cierra por stop, por objetivo o a
 mercado (cierre manual); si era una stop, la posicion guarda el deslizamiento de la entrada. Cada
 cierre produce una `cuenta.Operacion` con sus cargos -comision por lado si el perfil lo dice,
@@ -43,12 +52,18 @@ instante en que su condicion se cumple y nada posterior lo cambia.
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
+from botsito.domain.cierres import (
+    ReglasCierres,
+    proxima_prohibicion,
+    ventana_prohibida_por_cierre,
+)
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine.cuenta import Cargo, Marca, Operacion
@@ -93,6 +108,7 @@ PETICION_CANCELAR = "cancelar"
 PETICION_CERRAR = "cerrar"
 TIPOS_PETICION = (PETICION_COLOCAR, PETICION_MODIFICAR, PETICION_CANCELAR, PETICION_CERRAR)
 _EPOCA = datetime(1970, 1, 1, tzinfo=UTC)
+LOG = logging.getLogger(__name__)
 
 
 class BrokerError(ValueError):
@@ -119,6 +135,8 @@ class ReglasBroker:
     # los umbrales del freno, leidos del registro (ADR-0067); None: el freno corta en
     # `mensajes_dia_max`
     freno: LimitesFreno | None = None
+    # la ventana prohibida antes de un cierre de mercado largo (ADR-0068): None, sin calendario
+    cierres: ReglasCierres | None = None
 
 
 @dataclass
@@ -194,6 +212,7 @@ class Traza:
     rechazos: tuple[Rechazo, ...]
     peticiones: tuple[Peticion, ...] = ()
     cortes: tuple[Corte, ...] = ()  # el aviso del dia y lo que el freno nego (ADR-0067)
+    cierres: tuple[Corte, ...] = ()  # lo negado o cancelado por un cierre de mercado (ADR-0068)
 
     def por_fuente(self) -> dict[str, int]:
         salida = {TICKS: 0, RESPALDO_M1: 0}
@@ -273,6 +292,7 @@ class Broker:
         self._peticiones: list[Peticion] = []
         self._eventos: list[tuple[int, str, str, str]] = []
         self._cerradas: list[Operacion] = []
+        self._cierres: list[Corte] = []
         self.ahora_ms: int = 0
         # el freno (ADR-0067): los umbrales del registro, o el limite de la firma sin ellos
         limites = reglas.freno
@@ -299,6 +319,23 @@ class Broker:
             return None
         dia = _dia_local(instante_ms, self.reglas.huso_corte)
         return self.freno.admitir(dia, instante_ms, tipo, id, firma, protege)
+
+    def _prohibido_por_cierre(self, instante_ms: int, tipo: str, id: str) -> str | None:
+        """Pregunta al predicado de los cierres (ADR-0068): None si se puede, o el motivo; lo
+        negado queda en `Traza.cierres` y en el log."""
+        c = self.reglas.cierres
+        if c is None:
+            return None
+        p = ventana_prohibida_por_cierre(instante_ms, c.calendario, c.margen_ms, c.minimo_ms)
+        if p is None:
+            return None
+        self._cierres.append(Corte(instante_ms, tipo, id, p.motivo))
+        LOG.info(
+            "cierre de mercado: negada %s %s en el instante %d (%s%s)",
+            tipo, id, instante_ms, p.motivo,
+            f", cierre desde {p.cierre.inicio_ms} ({p.cierre.fuente})" if p.cierre else "",
+        )  # fmt: skip
+        return p.motivo
 
     # ------------------------------------------------------------------- el contrato del motor
 
@@ -366,7 +403,11 @@ class Broker:
                 "correr en hipotesis, --diagnostico-a27 <puntos>: ETIQUETADO y sin valor para "
                 "ninguna medida (ADR-0057)"
             )
-        # el freno, antes que el servidor: una orden negada no se envia, no se cuenta y no existe
+        # el cierre de mercado y despues el freno, antes que el servidor: una orden negada no se
+        # envia, no se cuenta y no existe (ADR-0068, ADR-0067)
+        cerrado = self._prohibido_por_cierre(instante_ms, PETICION_COLOCAR, id)
+        if cerrado is not None:
+            return Rechazo(instante_ms, id, cerrado)
         firma = (PETICION_COLOCAR, tipo, lado, precio, stop, objetivo, lotes)
         negada = self._admitir(instante_ms, PETICION_COLOCAR, id, firma, protege=False)
         if negada is not None:
@@ -426,6 +467,9 @@ class Broker:
         nuevo_precio = precio if precio is not None else orden.precio
         nuevo_stop = stop if stop is not None else orden.stop
         nuevo_objetivo = objetivo if objetivo is not None else orden.objetivo
+        cerrado = self._prohibido_por_cierre(instante_ms, PETICION_MODIFICAR, id)
+        if cerrado is not None:
+            return Rechazo(instante_ms, id, cerrado)  # la orden sigue como estaba (ADR-0068)
         firma = (PETICION_MODIFICAR, id, nuevo_precio, nuevo_stop, nuevo_objetivo)
         negada = self._admitir(instante_ms, PETICION_MODIFICAR, id, firma, protege=False)
         if negada is not None:
@@ -591,9 +635,12 @@ class Broker:
 
     def _proximo_evento(self, hasta_ms: int) -> tuple[int, str, str, str, Evento | None] | None:
         candidatos: list[tuple[int, str, str, str, Evento | None]] = []
+        ventana = self._proxima_ventana(hasta_ms)
         for o in sorted(self.ordenes.values(), key=lambda x: x.id):
             if o.estado not in (COLOCADA, MODIFICADA):
                 continue
+            if ventana is not None:
+                candidatos.append((ventana, o.id, CANCELADA, o.id, None))
             tope = hasta_ms if o.expira_ms is None else min(hasta_ms, o.expira_ms)
             # el tick en el que se coloco o modifico no cuenta (exclusivo); el tick del ultimo
             # evento procesado SI puede llenar otra orden pendiente (por eso ahora - 1)
@@ -633,13 +680,27 @@ class Broker:
                     candidatos.append((toque.instante_ms, p.id, STOP_MOVIDO, p.id, toque))
         if not candidatos:
             return None
-        # en el mismo tick, primero lo que el servidor hace con lo que YA hay (llenar, saltar el
-        # stop vigente o el objetivo) y despues mover el stop (ADR-0065 §3)
-        return min(candidatos, key=lambda c: (c[0], c[2] == STOP_MOVIDO, c[2], c[1]))
+        # en el mismo instante, primero la cancelacion por un cierre (ADR-0068: que no se llene
+        # dentro de la ventana), despues lo que el servidor hace con lo que YA hay (llenar, saltar
+        # el stop vigente o el objetivo) y al final mover el stop (ADR-0065 §3)
+        return min(
+            candidatos, key=lambda c: (c[0], c[2] != CANCELADA, c[2] == STOP_MOVIDO, c[2], c[1])
+        )
+
+    def _proxima_ventana(self, hasta_ms: int) -> int | None:
+        """El inicio de la proxima ventana prohibida en (ahora, hasta], si hay pendientes que
+        cancelar en ella (ADR-0068, `cancelar_pendientes`)."""
+        c = self.reglas.cierres
+        if c is None or not c.cancelar_pendientes:
+            return None
+        return proxima_prohibicion(self.ahora_ms, hasta_ms, c.calendario, c.margen_ms, c.minimo_ms)
 
     def _aplicar(self, tipo: str, objeto: str, evento: Evento | None, instante: int) -> None:
         self._marcar_hasta(instante)
         self.ahora_ms = instante
+        if tipo == CANCELADA:
+            self._cancelar_por_cierre(self.ordenes[objeto], instante)
+            return
         if tipo == EXPIRADA:
             o = self.ordenes[objeto]
             o.estado = EXPIRADA
@@ -667,6 +728,27 @@ class Broker:
             return
         p = self.posiciones[objeto]
         self._cerrar(p, instante, evento.precio, evento.tipo, evento.fuente)
+
+    def _cancelar_por_cierre(self, o: Orden, instante: int) -> None:
+        """Al empezar una ventana prohibida, la pendiente se cancela (ADR-0068): lo que protege la
+        cuenta, que sale siempre y cuenta (ADR-0067 §3). El motivo lo dice el mismo predicado. Como
+        `cancelar`, es una peticion del bot y no un evento del servidor: no va a `Traza.eventos`
+        (revisor, a3), sino a las peticiones, a `Traza.cierres` y al log."""
+        c = self.reglas.cierres
+        assert c is not None
+        p = ventana_prohibida_por_cierre(instante, c.calendario, c.margen_ms, c.minimo_ms)
+        if p is None:  # el predicado manda: si no prohibe, la orden sigue
+            return
+        self._admitir(instante, PETICION_CANCELAR, o.id, None, protege=True)
+        self._peticiones.append(Peticion(instante, PETICION_CANCELAR, o.id, True))
+        o.estado = CANCELADA
+        o.ultimo_cambio_ms = instante
+        o.historial.append((instante, CANCELADA))
+        self._cierres.append(Corte(instante, PETICION_CANCELAR, o.id, p.motivo))
+        LOG.info(
+            "cierre de mercado: cancelada la pendiente %s en el instante %d (%s)",
+            o.id, instante, p.motivo,
+        )  # fmt: skip
 
     def _cerrar(self, p: Posicion, instante: int, precio: int, motivo: str, fuente: str) -> None:
         p.cerrada_ms = instante
@@ -824,7 +906,13 @@ class Broker:
 
     def traza(self) -> Traza:
         cortes = tuple(self.freno.cortes) if self.freno is not None else ()
-        return Traza(tuple(self._eventos), tuple(self._rechazos), tuple(self._peticiones), cortes)
+        return Traza(
+            tuple(self._eventos),
+            tuple(self._rechazos),
+            tuple(self._peticiones),
+            cortes,
+            tuple(self._cierres),
+        )
 
 
 def contrato_desde(escala: int, contrato: Decimal) -> tuple[Decimal, int]:

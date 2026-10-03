@@ -1522,3 +1522,36 @@ ambiguedades:
     decidida_el: null
     clase: medicion
     bloqueante: false
+  - id: A-55
+    titulo: qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta
+    pregunta: >-
+      R15 de docs/validation/FTMO-REGLAS.md prohíbe «perform gap trading [...] by opening
+      simulated trades: [...] two hours or less before a relevant financial market is closed
+      for at least two hours». No dice si colocar una orden pendiente en esas dos horas
+      cuenta, ni si mover el precio de una ya puesta es colocarla, ni si una pendiente puesta
+      antes que se llena dentro es «opening», ni qué mercado es el «relevant financial market»
+      de EURUSD (el horario de EURUSD en los servidores de FTMO, o también el cierre de otras
+      bolsas). Se pregunta a soporte de FTMO, en inglés (docs/validation/CIERRES-DE-MERCADO.md
+      §0.6, P1, P2 y P3), y con la respuesta se fija cierre_pendientes (y, si modificar no es
+      colocar, se deja de negar en el broker). Su cita de evidencia es de relleno porque el
+      esquema exige una: ningún ítem del corpus habla de cierres de mercado, y la fuente real
+      es R15.
+    resuelve_en: [F33]
+    # NACE el 2026-10-02 (rama feature/cierres-de-mercado, ADR-0068; A3 e) de «Pendientes
+    # heredados»). Lo que R15 dice por escrito -abrir no, dos horas antes de un cierre de dos o mas-
+    # va CONFIRMED en firma_gap_margen_minutos y firma_gap_cierre_minimo_minutos; mantener una
+    # posicion lo permite R7. Lo que no dice queda aqui: con una pendiente ya puesta, el bot la
+    # cancela al empezar la ventana (lo mas restrictivo), y el mercado que cuenta es el horario de
+    # EURUSD en FTMO. Es una pregunta a soporte, no al trader: por eso la clase es `medicion`, como
+    # A-54, y no entra en el cuestionario del trader. NO BLOQUEANTE: el motor corre con el valor
+    # PROVISIONAL.
+    evidencia:
+      - ev-v4-012524-0ef85a89
+    parametros:
+      - cierre_pendientes
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: medicion
+    bloqueante: false

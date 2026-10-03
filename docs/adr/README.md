@@ -71,4 +71,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
 | 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18 de la sesión 4) |
 | 0067 | El freno de peticiones vive en el puerto del broker: aviso, corte y bucle, y lo que protege la cuenta pasa siempre | ACTIVE (PROVISIONAL en sus cuatro umbrales, hasta A-54 en la demo de FTMO) |
+| 0068 | La ventana prohibida antes de un cierre de mercado largo vive en el puerto del broker, con un calendario versionado por perfil | ACTIVE (PROVISIONAL en `cierre_pendientes`, hasta A-55 con el soporte de FTMO) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |
