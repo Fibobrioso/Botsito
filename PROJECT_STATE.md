@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/reabrir-y-fuente-documental
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36s-renovar-cierres` (2026-10-03).
+trabajo/reabrir-y-fuente-documental · EN CURSO (2026-10-03) · docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md. NO se cierra.
 
 ## Stable Main State
 dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`): el calendario de cierres caduca por la fecha simulada, nunca por la de hoy (tests del cable trampa del reloj y del exit 2 por la CLI), y se renueva por condicion (docs/runbooks/RENOVAR-CIERRES.md). Sobre `stable/F36r-fuentes-ftmo` (36a9801). Informe docs/validation/RENOVAR-CIERRES.md; el registro del cierre, al final de HISTORIA.
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 9 (2026-10-03).
+— ninguna desde el Archivo 10 (2026-10-03).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 9 (2026-10-03).
+— ninguna desde el Archivo 10 (2026-10-03).

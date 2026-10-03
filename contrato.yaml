@@ -1,0 +1,23 @@
+rama: trabajo/reabrir-y-fuente-documental
+riesgo: alto  # cambiara el modelo de feedback y el esquema de ambiguedades (knowledge/); la Fase 0 solo mide
+artefacto: docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md
+rutas_permitidas:
+  - docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/evidence/
+  - knowledge/corpus/
+  - knowledge/cases/
+  - knowledge/cuentas/
+  - data/manifests/
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito feedback pending
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1
