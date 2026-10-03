@@ -2553,3 +2553,23 @@ una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al reg
 La paga `stable/F36q-cierres-de-mercado` (ADR-0068: el broker no abre ni coloca en la ventana de R15) y lo que quedaba abierto ya lo llevan A-55 (las preguntas a soporte, enviadas el 2026-10-03 en el ticket VDW-DPMWR-965) y la entrada N de Next Action (la renovacion del calendario). Encargo de `trabajo/fuentes-ftmo`, punto 2; docs/validation/FUENTES-FTMO.md §3. Su texto literal en «Technical Debt»:
 
 - PENDIENTE DE FTMO: EL BOT PUEDE ABRIR DENTRO DE LAS DOS HORAS PREVIAS A UN CIERRE DE MERCADO DE DOS HORAS O MAS, EN UN DIA DE CIERRE ANTICIPADO O FESTIVO (2026-09-29, `trabajo/sesion-03`, docs/validation/FTMO-REGLAS.md, recuadro de la respuesta del soporte, ticket VDW-DPMWR-965).
+
+# Registro de cierre · `trabajo/fuentes-ftmo` (2026-10-03)
+
+- Orden de cierre de Aleks, en la segunda orden de la rama (copiada en
+  `docs/encargos/trabajo-fuentes-ftmo.md`). Solo documentacion y knowledge: la respuesta de FTMO
+  del 29-09-2026 y el correo de Aleks del 2026-10-03 (ticket VDW-DPMWR-965), literales en
+  `docs/validation/FTMO-REGLAS.md`; A-54 y A-55 con sus preguntas enviadas (1-4 y 5-9 del correo);
+  la deuda del gap trading a HISTORIA y la del tamano de posicion (R17, pregunta 10) en su lugar.
+- Tag: `stable/F36r-fuentes-ftmo`. El merge es `git rev-parse "stable/F36r-fuentes-ftmo^{commit}"`:
+  su sha no existe hasta el merge, y el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `c4adb52`: apertura: encargo, contrato y Archivo 8;
+  - `0e69da5`: la respuesta literal del ticket como fuente; recuadros de correccion en CIERRES-DE-MERCADO.md; ADR-0068 con la frase literal; Technical Debt; A-54 y A-55;
+  - `0b9c9a3`: tras el revisor (primera pasada): el sello en §5 del informe; el informe del revisor pegado;
+  - `ecc8307`: segunda orden: el correo del 2026-10-03 como fuente, la numeracion 1-10 y el numero de pregunta en A-54, A-55 y R17;
+  - `b2624ba`: segunda pasada del revisor: el informe recompuesto (§8 y §9 se habian pegado dentro de la cita de §7);
+  - y el de este registro, que saca tambien el contrato.
+- CI: ninguna de la rama. No se empujo nunca (ni como `fix/`): no toca la plataforma. La primera CI
+  es la de `main` tras el cierre.
+- Informe: `docs/validation/FUENTES-FTMO.md`. Encargo: `docs/encargos/trabajo-fuentes-ftmo.md`.
