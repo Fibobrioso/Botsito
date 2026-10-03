@@ -1,0 +1,21 @@
+rama: trabajo/renovar-cierres
+riesgo: alto  # toca el calendario de la cuenta (knowledge/cuentas/cierres/) que decide cuando el broker niega; la Fase 0 solo mide
+artefacto: docs/validation/RENOVAR-CIERRES.md
+rutas_permitidas:
+  - docs/validation/RENOVAR-CIERRES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - knowledge/spec/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - docs/adr/
+  - data/manifests/
+comprobaciones:
+  - uv run botsito state check
+  - make check > make-check.log 2>&1
