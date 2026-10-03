@@ -151,44 +151,7 @@ Pegado tal cual, sobre `0e69da5`; lo que se hizo con cada hallazgo, en §6.
 > - **Spec docs.** `knowledge/spec/ambiguedades.yaml` y `docs/spec/ambiguedades.md` cambian en el mismo commit, con el mismo texto de A-54 y A-55. `spec check` da OK. No se abre ni se cierra ninguna ambigüedad, así que la tabla de `PROJECT_STATE.md` y los cinco sitios del runbook no se tocan. El diff del yaml cambia solo el campo `pregunta`.
 > - **HISTORIA solo se amplía.** `git diff main...HEAD -- docs/state/HISTORIA.md | grep -c '^-[^-]'` da 0. Añade `# Archivo 8` y una sección `# Technical Debt PAGADA` con la línea movida, literal.
 > - **Informes cerrados.** `git diff main...HEAD` sobre `FTMO-REGLAS.md` es un solo hunk de líneas añadidas (+39), un recuadro `>` pegado tras el recuadro del traslado. En `CIERRES-DE-MERCADO.md` son dos recuadros de CORRECCIÓN (+9) con fecha y rama, y el cuerpo queda intacto. Ninguna línea fue eliminada ni editada.
-> - **ADR-0068.** El cambio sustituye la cita «(traslado de Aleks del 29-09-2026)» por la frase literal de FTMO y un puntero. `## 8. Segunda orden del consultor (2026-10-03)
-
-Copiada tal cual al final de `docs/encargos/trabajo-fuentes-ftmo.md`. Lo hecho:
-
-1. **El recuento.** El consultor confirma que el error era del encargo. El correo tiene diez
-   preguntas numeradas del 1 al 10:
-   - la 1 a la 4, mensajes al servidor (A-54);
-   - la 5 a la 9, gap trading (A-55): la 5 a la 7 son P1 (a-d) de `CIERRES-DE-MERCADO.md` §0.6, la 8
-     es P2 y la 9 es P3;
-   - la 10, tamaño de posición (R17).
-
-   Se corrigió «P1-P4» en los textos de esta rama: el recuadro de `FTMO-REGLAS.md` y §2 de este
-   informe, con un recuadro de corrección. El encargo y el informe del revisor pegado en §7 se dejan
-   como estaban: son copias literales de su tiempo.
-2. **El correo, como fuente escrita**, igual que la respuesta del 29-09. Va en `FTMO-REGLAS.md`, en
-   un recuadro después del de la respuesta, con:
-   - el remitente, el destinatario, la fecha, el asunto y el ticket;
-   - el texto tal cual;
-   - una tabla que dice a qué responde cada pregunta: A-54, cada P de `CIERRES-DE-MERCADO.md` §0.6 y
-     R17.
-
-   Del texto solo cambia el ajuste de línea, con las preguntas largas sangradas bajo su número.
-3. **El número de pregunta**, en los tres sitios que lo piden:
-   - A-54: «preguntas 1 a 4 de su correo»;
-   - A-55: «preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3»;
-   - la línea de R17 en Technical Debt: «pregunta 10 del correo».
-
-   `spec docs --escribir` va en el mismo commit.
-4. **PROJECT_STATE**: no se saca nada más. El tope del test es 25.000 y el margen de 23.000 es del
-   consultor. Queda en 22.937 bytes.
-
-**Revisor:** solo sobre lo que cambia en esta orden. Su informe, en §9.
-
-## 9. Informe del revisor, segunda pasada
-
-INFORME_REVISOR_2
-
-## Estado` no se toca. Está permitido por el contrato.
+> - **ADR-0068.** El cambio sustituye la cita «(traslado de Aleks del 29-09-2026)» por la frase literal de FTMO y un puntero. `## Estado` no se toca. Está permitido por el contrato.
 > - **Tres guardias de `cita`, régimen de evidence, feedback, manifiestos y libros, holdout y exposiciones.** No aplican: el diff no toca nada de eso.
 > - **Literalidad del recuadro (pedido especial).** Comparé a mano el texto de `FTMO-REGLAS.md` líneas 124-155 con el del encargo, palabra por palabra: saludo, párrafo de Swing, «**gap trading is not permitted**», el párrafo de comisiones entero en negrita, la URL `<https://ftmo.com/en/symbols/>` y la despedida. Son idénticos. Solo cambia el ajuste de línea.
 > - **Patrón de citas.** `FTMO-REGLAS.md` cita cada regla con texto literal entre comillas más la fuente al lado (URL y día de lectura, líneas 7-8 y tabla de la línea 48 en adelante). El recuadro nuevo hace lo mismo: texto literal más remitente, hora UTC y correo al que responde, porque el correo no tiene URL. Va junto al recuadro del mismo ticket (línea 97), que es el patrón de corrección de un informe cerrado.
@@ -253,6 +216,106 @@ INFORME_REVISOR_2
 > - Lectura de `docs/validation/FTMO-REGLAS.md` líneas 95-123 y de `PROJECT_STATE.md` línea 46
 > - Un primer intento de `grep -r .` sobre todo el repo lo bloqueó la guardia (rozó material protegido); no lo rodeé y lo sustituí por Grep acotado a `docs/`, `knowledge/spec/` y excluyendo `corpus/`, `data/` y `.venv/`.
 
+## 8. Segunda orden del consultor (2026-10-03)
+
+Copiada tal cual al final de `docs/encargos/trabajo-fuentes-ftmo.md`. Lo hecho:
+
+1. **El recuento.** El consultor confirma que el error era del encargo. El correo tiene diez
+   preguntas numeradas del 1 al 10:
+   - la 1 a la 4, mensajes al servidor (A-54);
+   - la 5 a la 9, gap trading (A-55): la 5 a la 7 son P1 (a-d) de `CIERRES-DE-MERCADO.md` §0.6, la 8
+     es P2 y la 9 es P3;
+   - la 10, tamaño de posición (R17).
+
+   Se corrigió «P1-P4» en los textos de esta rama: el recuadro de `FTMO-REGLAS.md` y §2 de este
+   informe, con un recuadro de corrección. El encargo y el informe del revisor pegado en §7 se dejan
+   como estaban: son copias literales de su tiempo.
+2. **El correo, como fuente escrita**, igual que la respuesta del 29-09. Va en `FTMO-REGLAS.md`, en
+   un recuadro después del de la respuesta, con:
+   - el remitente, el destinatario, la fecha, el asunto y el ticket;
+   - el texto tal cual;
+   - una tabla que dice a qué responde cada pregunta: A-54, cada P de `CIERRES-DE-MERCADO.md` §0.6 y
+     R17.
+
+   Del texto solo cambia el ajuste de línea, con las preguntas largas sangradas bajo su número.
+3. **El número de pregunta**, en los tres sitios que lo piden:
+   - A-54: «preguntas 1 a 4 de su correo»;
+   - A-55: «preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3»;
+   - la línea de R17 en Technical Debt: «pregunta 10 del correo».
+
+   `spec docs --escribir` va en el mismo commit.
+4. **PROJECT_STATE**: no se saca nada más. El tope del test es 25.000 y el margen de 23.000 es del
+   consultor. Queda en 22.937 bytes.
+
+**Revisor:** solo sobre lo que cambia en esta orden. Su informe, en §9.
+
+## 9. Informe del revisor, segunda pasada
+
+Pegado tal cual, sobre `ecc8307`; lo que se hizo con cada hallazgo, en la tabla de debajo.
+
+> ## Informe del revisor · trabajo/fuentes-ftmo (segunda pasada, solo ecc8307) · 2026-10-03
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | importa | `docs/validation/FUENTES-FTMO.md` quedó mal armado. ecc8307 pegó §8 y §9 DENTRO del informe del revisor de la primera pasada (§7), en la línea 154. Allí la cita del ADR-0068 decía «`## Estado` no se toca». El texto se partió justo en ese `## Estado`. Resultado: la línea 154 acaba en «`» y empieza «## 8. Segunda orden…»; la línea 187 abre «## 9. Informe del revisor, segunda pasada» con el marcador `INFORME_REVISOR_2`; la línea 191 es «## Estado` no se toca. Está permitido por el contrato.», y el resto del informe de la primera pasada sigue hasta el final. §8 y §9 quedan en mitad de la cita del revisor y la frase «`## Estado` no se toca» queda convertida en un falso encabezado. El diff del commit lo confirma: borra esa línea de la cita (`-> - **ADR-0068.** … `## Estado` no se toca…`). Hay que poner §8 y §9 después de §7 completo, reponer esa línea de §7 y pegar el informe de esta pasada en §9. | `Grep '^## '` sobre el informe: encabezados en 109 (§6), 124 (§7), 187 (§9), 191 («## Estado` no se toca…») y 256 (## Estado). `sed` de las líneas 154-191, y `git diff 0b9c9a3..ecc8307 -- docs/validation/FUENTES-FTMO.md`. |
+> | 2 | menor | El mensaje de ecc8307 acaba en «Co-Authored-By: Claude Opus 5.5», y la atribución indicada para esta sesión es «Claude Sonnet 5.5». | `git show ecc8307 --format=%B` |
+>
+> Comprobado sin hallazgos:
+> - **FTMO-REGLAS.md, cerrado en main.** `git diff main -- docs/validation/FTMO-REGLAS.md` da 0 líneas eliminadas y +93 añadidas (`--stat`: 93 insertions). Respecto a main solo gana líneas. Los textos nuevos van en recuadros `>`.
+> - **Trailer.** El cuerpo de ecc8307 lleva `Fuente: ADR-0068, ADR-0067`. Los dos existen: `docs/adr/0067-el-freno-de-peticiones-en-el-puerto-del-broker.md` y `docs/adr/0068-la-ventana-antes-de-un-cierre-de-mercado-vive-en-el-puerto-del-broker.md`.
+> - **ambiguedades.yaml.** El diff de ecc8307 cambia solo el texto de `pregunta` de A-54 y de A-55. `docs/spec/ambiguedades.md` cambia en el mismo commit (4 líneas), y `make check` pasó, que incluye `test_spec_docs_generados`. No se abre ni se cierra ninguna ambigüedad, así que no toca la tabla de `PROJECT_STATE` ni el runbook.
+> - **PROJECT_STATE.md.** Pesa 22.937 bytes, por debajo de 23.000 y de 25.000. El diff de ecc8307 toca una sola línea (la de R17) y no saca nada.
+> - **Sello.** `make-check.log`: «SELLO: make check en verde sobre el arbol 73259ad83a3db234fc44b756bc573919680ecb3a», y `git rev-parse HEAD^{tree}` da `73259ad83a3db234fc44b756bc573919680ecb3a`. Coinciden. `PICO DE MEMORIA`: 286 MiB. `git status --short` sale vacío.
+> - **Ids citados.** ADR-0067 y ADR-0068 existen. `CIERRES-DE-MERCADO.md` §0.6 existe y tiene P1 con (a)-(d), P2 y P3, en las líneas 259-270.
+> - **Informes cerrados.** No se tocó ningún otro informe cerrado en este commit. `FUENTES-FTMO.md` es el informe de la propia rama, no está en main.
+> - **Estado final.** El informe acaba en «EN CURSO: segunda orden hecha (§8); falta el revisor de la segunda pasada.» Es coherente hasta que se pegue este informe.
+>
+> ### Eje (b) · Segunda orden
+> Resumen: 0 bloquea, 0 importa, 0 menor. Requisitos: 7 hechos, 0 parciales, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Correo guardado como fuente escrita: remitente abriosotapia@gmail.com, destinatario support@ftmo.com, fecha 2026-10-03, respuesta en el ticket, asunto «Re: Clarification on Swing account rules for an automated EURUSD strategy - [VDW-DPMWR-965]» | Hecho | `FTMO-REGLAS.md`, recuadro de las líneas 163-169: los cinco datos están, con el asunto igual al de la orden. |
+> | 2 | Texto LITERAL, palabra por palabra, frente a la segunda orden (solo cambia el ajuste de línea) | Hecho | `diff` de `encargo` líneas 45-68 y `FTMO-REGLAS.md` líneas 169-203, normalizando espacios, saltos de línea, `>` y las comillas «» externas: salida «IGUAL». Saludo, preguntas 1-10, despedida y firma «Alex» coinciden. |
+> | 3 | Numeración 1-10 y reparto (1-4 A-54; 5-7 = P1 a-d; 8 = P2; 9 = P3; 10 = R17) en la tabla del recuadro | Hecho | Tabla de `FTMO-REGLAS.md`: 1-4 A-54; 5 = P1 (a); 6 = P1 (b) y (c); 7 = P1 (d); 8 = P2; 9 = P3; 10 = R17. Coincide con el contenido de cada pregunta frente a `CIERRES-DE-MERCADO.md` líneas 259-270. |
+> | 4 | El mismo reparto en A-54 | Hecho | `ambiguedades.yaml`: «preguntas 1 a 4 de su correo». |
+> | 5 | El mismo reparto en A-55 | Hecho | `ambiguedades.yaml`: «preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3». |
+> | 6 | El mismo reparto en la línea de R17 de PROJECT_STATE | Hecho | `PROJECT_STATE.md:122`: «repreguntado el 2026-10-03, pregunta 10 del correo». |
+> | 7 | «P1-P4» corregido en los textos de la rama (no en el encargo ni en el informe del revisor pegado) | Hecho | `Grep 'P1-P4'`: `FTMO-REGLAS.md` ya no lo dice (línea 158: «la 1 a la 4… la 5 a la 9… la 10»). En `FUENTES-FTMO.md` §2 queda dentro de un recuadro de CORRECCIÓN con fecha (líneas 54-56) y el texto viejo se conserva a propósito, como está permitido. Los otros restos están en la copia del revisor (líneas 206 y 210). `ADR-0041` y `HOLDOUT-EXPOSICIONES` usan «P1 a P4» de otros documentos. `CIERRES-DE-MERCADO.md:484` dice «P1-P3» dentro del informe del revisor pegado. |
+> | 8 | No sacar nada más de PROJECT_STATE | Hecho | El diff de ecc8307 sobre `PROJECT_STATE.md` es de una línea (+1 −1) y no elimina ninguna Technical Debt. |
+>
+> Lo que la rama hace y la orden no pide: nada que no explique el informe. La tabla de «a quién responde cada pregunta» sí la pide la orden en su espíritu: «en A-54, A-55 y la línea de R17, cita el número».
+>
+> Hallazgos del eje (b): sin hallazgos. El único defecto de este commit es el del informe (hallazgo 1 del eje a).
+>
+> ### Lo que no pude comprobar
+> - Que el correo enviado a FTMO sea el que cita la orden. Solo se comprueba contra la copia del consultor en el encargo.
+> - `make check` no lo ejecuté. Me fio de `make-check.log` (sello igual al árbol de HEAD).
+> - No pude leer el `.eml` ni nada fuera del repo.
+>
+> ### Comandos ejecutados
+> - `git show ecc8307 --stat`, `git diff main -- docs/validation/FTMO-REGLAS.md`, `git rev-parse HEAD^{tree}`, `grep` de SELLO y PICO en `make-check.log`, `wc -c PROJECT_STATE.md`.
+> - `git diff 0b9c9a3..ecc8307 -- PROJECT_STATE.md knowledge/spec/ambiguedades.yaml docs/validation/FTMO-REGLAS.md`.
+> - `git status --short`, `ls docs/adr | grep 006[78]`.
+> - `diff <(sed … encargo) <(sed … FTMO-REGLAS)` → «IGUAL».
+> - `Grep` de `P1-P4`, de los encabezados `^##` de `FUENTES-FTMO.md` y de P1/P2/P3 en `CIERRES-DE-MERCADO.md`.
+> - Lecturas con `Read` del encargo y de `FUENTES-FTMO.md`.
+> - `git diff 0b9c9a3..ecc8307 -- docs/validation/FUENTES-FTMO.md`.
+> - Un intento de `grep -rn` sobre todo el repo lo bloqueó la guardia. No lo rodeé: lo sustituí por `Grep` acotado.
+> - Un intento de redirigir a un fichero temporal lo bloqueó `solo_lectura.py`. Lo sustituí por `diff` con sustitución de procesos.
+
+**Lo que se hizo con cada hallazgo:**
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| 1 | importa | **Corregido.** El guion buscó `## Estado` con `index` y encontró antes la mención entre comillas invertidas dentro del informe pegado en §7. Se sacó el bloque, se repuso entera la línea de §7 («… `## Estado` no se toca. Está permitido por el contrato.») y §8 y §9 van ahora entre §7 y el `## Estado` final, el único que empieza una línea. Comprobado: `git diff 0b9c9a3 -- docs/validation/FUENTES-FTMO.md` no quita ninguna línea de §7 |
+| 2 | menor | **Sin defecto.** Esta sesión corre en Claude Opus 5.5, y la atribución que tiene indicada es «Co-Authored-By: Claude Opus 5.5». El revisor la leyó mal |
+
 ## Estado
 
-EN CURSO: segunda orden hecha (§8); falta el revisor de la segunda pasada.
+**Rama lista para revisión, NO cerrada.** El encargo y la segunda orden del consultor están hechos.
+`make check` está sellado, y el revisor ha pasado dos veces, con sus informes pegados (§7 y §9) y sus
+hallazgos atendidos.
