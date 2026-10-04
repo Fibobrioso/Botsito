@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/sesion-04
+main
 
 ## Current Feature
-`trabajo/sesion-04` LISTA PARA REVISION, NO cerrada (2026-10-04): la sesion 4 con el trader ingerida (v10) y el informe de extraccion por pregunta, sin resolver nada; revision del consultor y revisor aplicados. Encargo docs/encargos/trabajo-sesion-04.md; informe docs/validation/SESION-04-EXTRACCION.md.
+NINGUNA ABIERTA tras `stable/F36v-sesion-04` (2026-10-04).
 
 ## Stable Main State
-8e21fd1 · merge de `trabajo/historial-sin-git` (tag `stable/F36u-historial-sin-git`): sin git, o con git y el historial no evaluable, ninguna comprobacion de `knowledge validate` dice «intacto» ni «commits con Fuente»: un AVISO dice que NO se comprobo y por que; con git, la salida es la de antes. La clase `Historial` (validation/knowledge.py) es la unica puerta por la que sale una afirmacion de historial y lo unico de validation/ que lee git (test por ast). Sobre `stable/F36t-reabrir-y-fuente-documental` (c76aaf6). Informe docs/validation/HISTORIAL-SIN-GIT.md; el registro del cierre, al final de HISTORIA.
+eec79a0 · merge de `trabajo/sesion-04` (tag `stable/F36v-sesion-04`): la sesion 4 con el trader entra como v10, en cuarentena (transcripcion, fotogramas, 21 tramos no citables y 64 items ev-v10-*), con su extraccion por pregunta S-1..S-24 (13 resuelven, 11 en parte) y SIN resolver nada en la spec; scripts/transcribir_sesion.py guarda la hoja y los textos de los codigos por sesion (--sesion). Sobre `stable/F36u-historial-sin-git` (8e21fd1). Informe docs/validation/SESION-04-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8e21fd1 · merge: sin historial evaluado, knowledge validate no dice «intacto»; en validation/ solo Historial lee git (HISTORIAL-SIN-GIT.md) · tag stable/F36u-historial-sin-git
+eec79a0 · merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pregunta y la hoja por sesion (SESION-04-EXTRACCION.md) · tag stable/F36v-sesion-04
 
 ## Tests Currently Passing
 1251 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -29,11 +29,13 @@ trabajo/sesion-04
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
+P. **Rama de cuarentena: ocultar todo mes con días en casos_ocultos (§6 del informe), antes de activar la sesión 4** (orden de cierre de `trabajo/sesion-04`, 2026-10-04; docs/validation/SESION-04-EXTRACCION.md §6, pendiente a).
+
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
-E. **A-42 RESUELTA con el trader en la sesion 4, no por ADR** (orden del consultor del 2026-09-30, docs/validation/REGISTRO-MARZO.md): es la pregunta del reloj de invierno de docs/sesion-4/PREGUNTAS.md, y marzo no se sortea ni se ingiere hasta entonces (PARADA B0, sin cambio). Era: **A-42 decidida antes del 25 de octubre** (el cambio de hora; el mecanismo ya esta: `reloj_sesiones`, ADR-0063).
+E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**.
 
-H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
+H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
 
