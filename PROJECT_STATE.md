@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/historial-sin-git
+main
 
 ## Current Feature
-trabajo/historial-sin-git · EN CURSO (2026-10-03) · docs/validation/HISTORIAL-SIN-GIT.md. NO se cierra.
+NINGUNA ABIERTA tras `stable/F36u-historial-sin-git` (2026-10-03).
 
 ## Stable Main State
-c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reabrir-y-fuente-documental`): la accion REOPEN reabre una ambiguedad RESUELTA (A-36 migrada; `feedback pending` ya no la cuenta) y una ambiguedad `medicion` cita una fuente documental -documento en docs/, commiteado, encabezado y fila de tabla- en vez de evidencia de relleno (A-27, A-28, A-54 y A-55 a FTMO-REGLAS.md R11, R10, R13 y R15); sin git, `knowledge validate` lo avisa. Sobre `stable/F36s-renovar-cierres` (dfd1a6f). Informe docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md; el registro del cierre, al final de HISTORIA.
+8e21fd1 · merge de `trabajo/historial-sin-git` (tag `stable/F36u-historial-sin-git`): sin git, o con git y el historial no evaluable, ninguna comprobacion de `knowledge validate` dice «intacto» ni «commits con Fuente»: un AVISO dice que NO se comprobo y por que; con git, la salida es la de antes. La clase `Historial` (validation/knowledge.py) es la unica puerta por la que sale una afirmacion de historial y lo unico de validation/ que lee git (test por ast). Sobre `stable/F36t-reabrir-y-fuente-documental` (c76aaf6). Informe docs/validation/HISTORIAL-SIN-GIT.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-c76aaf6 · merge: REOPEN reabre una ambiguedad; una medicion cita una fuente documental anclada a su fila (REABRIR-Y-FUENTE-DOCUMENTAL.md) · tag stable/F36t-reabrir-y-fuente-documental
+8e21fd1 · merge: sin historial evaluado, knowledge validate no dice «intacto»; en validation/ solo Historial lee git (HISTORIAL-SIN-GIT.md) · tag stable/F36u-historial-sin-git
 
 ## Tests Currently Passing
 1246 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
