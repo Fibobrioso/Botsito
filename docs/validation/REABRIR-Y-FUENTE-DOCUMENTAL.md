@@ -658,18 +658,76 @@ admite fuente documental. No se tocan en esta rama. **Linea nueva en Technical D
 | Run | Rama remota | Commit | Resultado |
 |---|---|---|---|
 | 197 (37160166345) | `fix/reabrir-y-fuente-documental` | 84e2a3c | 1 failed, 1884 passed, 8 skipped: solo el fallo esperado de `state check` |
-| — | `fix/reabrir-y-fuente-documental` | el de esta tercera orden | se anota en el commit siguiente, con el revisor |
+| 198 (37164110797) | `fix/reabrir-y-fuente-documental` | 5966079 | 1 failed, 1894 passed, 8 skipped: solo el fallo esperado de `state check` («PROJECT_STATE declara la rama 'trabajo/reabrir-y-fuente-documental'; la rama actual es 'fix/reabrir-y-fuente-documental'») |
+
+El commit que anota este run y el revisor solo toca el informe; se empuja igual.
 
 ### 4.6 El revisor (punto 6)
 
-Pasada corta sobre los puntos 2 a 5; su informe, en §5.
+Pasada corta sobre los puntos 2 a 5 (commit 5966079): eje (a) 0 bloquea, 0 importa, 1 menor; eje
+(b) 0 bloquea, 0 importa, 1 menor; 8 requisitos hechos de 8. Lo que se hizo con los dos menores:
+- (a) 1, «no volvi a medir sin git las que el informe da por medidas»: no pide cambio; la medida
+  es la de §4.2 (`validar` sobre la copia sin `.git`), y libros y retirados llevan ademas su linea
+  de codigo.
+- (b) 1, el run de 5966079 pendiente: anotado, run 198 (§4.5).
+
+Su informe, entero, en §5.
 
 `PROJECT_STATE.md`: «Tests Currently Passing» pasa de 1231 a 1239 (las 8 funciones nuevas), y la
 linea de Technical Debt de §4.4.
 
+## 5. Informe del revisor, pasada corta de la tercera orden
+
+## Informe del revisor · trabajo/reabrir-y-fuente-documental · 2026-10-03 (pasada corta sobre 5966079, tercera orden, puntos 2 a 5)
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 1 menor.
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| 1 | menor | El informe §4.2 enumera como «medidas» las comprobaciones que dicen «intacto» sin git, con números de línea de `knowledge.py` (792, 795, 797, 481, 496, 917, 927). Las líneas existen y son esos mensajes OK. Lo de `libros.py:156` lo leí solo en parte: ahí vi el retorno anticipado `if historial.historial_evaluable(repo) is not None: return problemas` antes del solo-añadir. No volví a medir sin git las que el informe da por medidas. | `src/botsito/validation/knowledge.py:481,496,792,795,797,917,927`; `src/botsito/corpus/libros.py:155-156` |
+
+Comprobado sin hallazgos:
+- Trailer `Fuente:` de 5966079: está en el cuerpo, con ADR-0026, ADR-0031, ADR-0067 y ADR-0068. No comprobé uno por uno que los cuatro ADR existan en `docs/adr/`.
+- `uv run python scripts/contrato_rama.py` da «22 ficheros dentro del contrato… 4 comprobaciones para el revisor». `uv run botsito knowledge validate` da `OK: 55 ambiguedades registradas` y ningún error de fuentes documentales. Con git no sale el aviso nuevo, como debe.
+- `uv run pytest tests/unit/test_reabrir_y_fuente_documental.py` da 40 passed.
+- `PROJECT_STATE.md` pesa 22.994 bytes (menos de 25.000). El recuento 1239 coincide con las funciones `def test_` que conté en `tests/`.
+- `docs/spec/ambiguedades.md` está regenerado en el mismo commit. `spec_docs.py` pinta «fila». `docs/runbooks/AMBIGUEDADES.md` y `knowledge/spec/README.md` describen `fila` y el aviso sin git, y coinciden con el código.
+- La rama no cambia `docs/validation/FTMO-REGLAS.md`, `knowledge/spec/strategy_spec.yaml` ni `knowledge/evidence/` (`git diff --stat main...HEAD` sobre los tres, vacío). RN-029 a RN-032 siguen intactas.
+- `git status` limpio.
+- No se añade ningún sitio nuevo con `cita`, así que las tres guardias no aplican.
+
+### Eje (b) · La tercera orden (puntos 2 a 5)
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 8 hechos, 0 parciales, 0 no hechos.
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P2: sin git, `validar` avisa de que «commiteado» no se comprobó | Hecho | `aviso_sin_git` (`knowledge.py:194-204`) devuelve el texto si `not con_git` y hay fuentes documentales. `validar` lo añade como `AVISO:` (`knowledge.py:628-630`), dentro del bloque `if ambiguedades:`. `test_kit.py` exige el aviso sobre la copia sin `.git`. Con fuentes documentales y sin git, el aviso sale siempre. |
+| 2 | P2: el informe dice la verdad sobre las otras comprobaciones de historial | Hecho | §4.2 lo declara como deuda para el consultor, sin tocarlo; las líneas citadas existen (menor 1). |
+| 3 | P3: campo `fila`, esquema | Hecho | `ambiguedades.py` admite `fila` opcional. Se niega si no es un texto no vacío, y los tests cubren `""`, `"  "` y `13`. |
+| 4 | P3: guardia sin hueco | Hecho | `filas_con_id` exige la primera celda igual al id, ignora las marcas de cita y los bloques de código. `problemas_fuentes_documentales` niega 0 filas, más de una fila, y un literal que no esté dentro de la fila. Se nombra la condición, no los casos. No encontré un hueco por el que un literal de otra fila, un id repetido o un id inexistente pasen. |
+| 5 | P3: R10, R11, R13 y R15 migradas a su fila | Hecho | `FTMO-REGLAS.md:57,58,60,62`: R10, R11, R13 y R15 son la primera celda de una sola fila cada una. `knowledge validate` pasa con las cuatro ancladas, así que cada literal está en su fila. El literal del ticket de A-55 está en el recuadro `> >` de la línea 138, que no es una fila de tabla, y el YAML lo explica en un comentario. |
+| 6 | P3: tests cubren cada condición | Hecho | Los 8 tests nuevos cubren: literal en su fila, en otra fila, R15 anclada a R13 sobre el FTMO-REGLAS real, id inexistente, id repetido, `fila` vacía o no textual, primera celda y bloque de código, y el aviso sin git. La orden de pasar el literal por `plano` en la fila no tiene test propio con marcas `>`; el test de `filas_con_id` sí cubre la fila con `>`. |
+| 4 | P4: juicio sobre RN-029 a RN-032 y línea nueva en Technical Debt | Hecho | §4.4 explica que es relleno y por qué persiste: `cita` es campo obligatorio de una regla (`spec/modelo.py:36`). La línea nueva en `PROJECT_STATE.md` («RN-029 a RN-032 citan de relleno…») apunta a §4.4. Las reglas no cambian. |
+| 5 | P5: runs anotados | Hecho | §1.7 y §4.5 anotan los runs 195, 196 y 197. El run del commit 5966079 queda declarado como pendiente, en §4.5 y en «Estado». |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| 1 | menor | La tercera orden pide los números de run, y el del commit 5966079 todavía no existe. Está declarado como pendiente, así que la rama no está lista para cierre hasta anotarlo. | Informe §4.5, última fila; «Estado» |
+
+### Lo que no pude comprobar
+- La CI de Linux del commit 5966079: no hay run anotado y no consulto la red.
+- Las 9 roturas a propósito de §4.3: escriben, y no las repito.
+- El sello de `make check`, que no ejecuté.
+- La medida de §4.2 sobre la copia sin `.git`, que no repetí: escribe una copia.
+
+### Comandos ejecutados
+git show --stat 5966079; git diff 84e2a3c 5966079 (src, tests/unit/test_kit.py, knowledge/spec/ambiguedades.yaml, PROJECT_STATE.md, el test nuevo, el runbook y knowledge/spec/README.md); git diff --stat main...HEAD (FTMO-REGLAS.md, strategy_spec.yaml, knowledge/evidence); grep sobre FTMO-REGLAS.md; uv run python scripts/contrato_rama.py; uv run pytest tests/unit/test_reabrir_y_fuente_documental.py -q; uv run botsito knowledge validate; wc -c PROJECT_STATE.md; recuento de `def test_`; lecturas de knowledge.py, libros.py, spec/modelo.py y del informe §1.7 y §4; git status --short; git branch -r.
+
 ## Estado
 
 Fase 0 entregada y decidida por el consultor el 2026-10-03; FASE 1 HECHA (§1), con el revisor (§2
-y §3) y la CI de Linux (§1.7). Tercera orden del consultor (§4) HECHA; falta su run de la CI y la
-pasada corta del revisor, que van en el commit siguiente. Para el consultor: las comprobaciones de
-historial que dicen «intacto» sin git (§4.2).
+y §3) y la CI de Linux (§1.7). Tercera orden del consultor HECHA (§4), con su run de la CI (198,
+solo el fallo esperado) y la pasada corta del revisor (§5). Para el consultor: las comprobaciones
+de historial que dicen «intacto» sin git (§4.2). Al cerrar: la fila de ERRORES-RECURRENTES lleva el
+nombre del push como error del consultor (§4.1), y se borran las dos ramas `fix/` de `origin`.
+
+Rama lista para revisión, NO cerrada.
