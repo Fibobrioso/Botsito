@@ -15,6 +15,7 @@ from types import ModuleType
 
 import pytest
 
+from botsito.cases.holdout import meses_libres
 from botsito.corpus import cuarentena as cu
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -84,7 +85,12 @@ def test_cada_mes_filtrado_y_sus_grafias_van_a_cuarentena(m: ModuleType, texto: 
     ],
 )
 def test_abril_agosto_enero_y_el_lenguaje_normal_no_se_filtran(m: ModuleType, texto: str) -> None:
-    assert cu.motivos_cuarentena(texto) == [], texto
+    """Desde `trabajo/cuarentena-por-condicion` un mes solo se deja ver si esta DEMOSTRADO libre:
+    abril, agosto y enero lo estan en el repositorio real (`meses_libres`), y sin ese dato la
+    regla los taparia (`test_cuarentena_por_condicion.py`)."""
+    libres = meses_libres(RAIZ)
+    assert libres is not None and {1, 4, 8} <= libres
+    assert cu.motivos_cuarentena(texto, libres) == [], texto
 
 
 # -------------------------------------------------------------------- fechas y dias de la semana

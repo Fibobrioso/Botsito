@@ -1,0 +1,29 @@
+# LOS MESES RESERVADOS ENTEROS: la fuente UNICA de la condicion (b) de la cuarentena del texto
+# (rama `trabajo/cuarentena-por-condicion`, decision del consultor del 2026-10-04;
+# docs/validation/CUARENTENA-POR-CONDICION.md).
+#
+# Un mes reservado entero lo esta aunque no tenga ningun caso en un reparto. Los meses con casos ya
+# los da `botsito.cases.holdout.casos_ocultos` / `casos_reservados` (condicion (a)); aqui van SOLO
+# los que no tienen casos y tampoco se pueden leer.
+#
+# SOLO ANADIR: un mes que entra no sale. Si algun dia hiciera falta sacarlo, seria con un ADR, no
+# borrando la entrada (`knowledge validate` lo compara version a version contra el historial).
+# Cada entrada: el mes (AAAA-MM), su motivo, su fuente -un ADR que exista o un fichero del
+# repositorio- y el dia en que se declaro.
+#
+# Si este fichero falta, no se puede leer o no valida, `meses_libres` devuelve None y la cuarentena
+# del texto tapa los doce meses: ningun fallo de lectura deja un mes a la vista.
+meses:
+  "2026-02":
+    motivo: >-
+      el mes limpio que se le pidio al trader y que sigue pendiente: ciego, sin descargar y sin
+      reparto; no se toca ni se descarga hasta su rama propia (pendiente heredado 6 de la Next
+      Action, Archivo 1 de docs/state/HISTORIA.md)
+    fuente: [ADR-0025, ADR-0046]
+    declarado_el: "2026-10-04"
+  "2026-03":
+    motivo: >-
+      recibido el 2026-09-30 y SIN ABRIR: entra por el camino de fidelidad con su reserva, y no se
+      sortea ni se ingiere hasta que A-42 este resuelta (PARADA B0 de docs/runbooks/ENTRADA-MARZO.md)
+    fuente: [ADR-0046, docs/validation/REGISTRO-MARZO.md]
+    declarado_el: "2026-10-04"

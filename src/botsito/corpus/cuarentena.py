@@ -6,10 +6,12 @@ Tres cosas, con su motivo y en este orden de prioridad:
 - (a) **las sesiones en cuarentena**: la transcripcion entera de una sesion con el trader que nadie
   lee (`SESIONES_EN_CUARENTENA`, LISTA EXPLICITA por decision del consultor);
 - (b) **los tramos no citables** de `knowledge/corpus/tramos_no_citables.yaml`;
-- (c) **el material reservado o sin sortear dentro del texto**: un segmento que nombra un mes con
-  dias reservados o sin sortear, una fecha o un dia con numero, con la MISMA regla que aplica
-  `scripts/transcribir_sesion.py` a la cruda de una sesion antes de escribir su version filtrada
-  (`en_cuarentena`, movida aqui desde el script para que la CLI y el script usen la misma).
+- (c) **el material reservado o sin sortear dentro del texto**: un segmento que nombra un mes que
+  no se puede demostrar libre (`cases.holdout.meses_libres`; desde la rama
+  `trabajo/cuarentena-por-condicion`, 2026-10-04), una fecha o un dia con numero, con la MISMA
+  regla que aplica `scripts/transcribir_sesion.py` a la cruda de una sesion antes de escribir su
+  version filtrada (`en_cuarentena`, movida aqui desde el script para que la CLI y el script usen
+  la misma).
 
 `Filtro` aplica las tres a los segmentos de UN video y anota lo que oculta -video, numero de
 segmento, tiempos y motivo, NUNCA el texto ni que mes o dia disparo la regla-, para que quien lo
@@ -30,6 +32,7 @@ import unicodedata
 from collections import Counter
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
+from functools import cache
 from pathlib import Path
 from types import MappingProxyType
 from typing import Protocol, TypeVar
@@ -212,24 +215,71 @@ def numeros_a_cifras(texto: str) -> str:
 
 # ------------------------------------------------------------------------------ cuarentena
 
-# Grafias de los cuatro meses. Medido en las crudas de v1-v6: el ASR escribe «mayo»,
-# «septiembre» y «marzo» bien; «mayo» es PREFIJO de «mayor» y «mayoria», y «siempre» se parece a
-# «setiempre», asi que todo va por palabra entera. Los errores tipicos se anaden por si acaso.
-MESES_FILTRADOS = (
-    r"se[cpt]{0,2}i?e?m[bp]re?s?",  # septiembre, setiembre, setiempre, sectiembre, setembre...
-    r"sept?",  # sep, sept (abreviatura)
-    r"septem[bp]er",
-    r"mar[sz]os?|mar",  # marzo, marso, mar (NO «marco»: ver abajo)
-    r"march",
-    r"ma[yi]o|mallo",  # mayo, maio, mallo (no «malo»)
-    r"may",
-    r"fe[bv]r?e?r?o?s?",  # febrero, febreo, febrer, feb, fevrero
-    r"february",
+# LA REGLA DEL MES (rama `trabajo/cuarentena-por-condicion`, decision del consultor del
+# 2026-10-04): se tapa TODO mes que no se pueda demostrar libre. Que meses son libres no lo decide
+# este modulo -`corpus` no puede leer `cases`-: lo calcula `botsito.cases.holdout.meses_libres`
+# (sin dias en `casos_ocultos` ni en `casos_reservados`, y fuera de `meses_reservados.yaml`) y se lo
+# pasa quien construye el filtro, como los `dias`. Sin ese dato (`libres=None`) se tapan los doce:
+# ningun valor por defecto deja un mes a la vista. Hasta esta rama la regla era una LISTA FIJA de
+# cuatro meses (`MESES_FILTRADOS`), y junio, con dias ocultos, no estaba
+# (docs/validation/SESION-04-EXTRACCION.md §2.4).
+#
+# GRAFIAS_MES es un diccionario de grafias POR MES, no una lista de meses vigilados: para cada mes,
+# su nombre en espanol, en ingles y su abreviatura; y para septiembre, marzo, mayo y febrero ademas
+# las grafias del ASR medidas en las crudas de v1-v6. Todo va por palabra entera: «mayo» es PREFIJO
+# de «mayor» y «mayoria», y «siempre» se parece a «setiempre».
+GRAFIAS_MES: Mapping[int, tuple[str, ...]] = MappingProxyType(
+    {
+        1: ("enero", "january", "ene"),
+        2: (r"fe[bv]r?e?r?o?s?", "february"),  # febrero, febreo, febrer, feb, fevrero
+        3: (r"mar[sz]os?|mar", "march"),  # marzo, marso, mar (NO «marco»: ver abajo)
+        4: ("abril", "april", "abr"),
+        5: (r"ma[yi]o|mallo", "may"),  # mayo, maio, mallo (no «malo»)
+        6: ("junio", "june", "jun"),
+        7: ("julio", "july", "jul"),
+        8: ("agosto", "august", "ago"),
+        # septiembre, setiembre, setiempre, sectiembre, setembre...; sep y sept (abreviatura)
+        9: (r"se[cpt]{0,2}i?e?m[bp]re?s?", r"sept?", r"septem[bp]er"),
+        10: ("octubre", "october", "oct"),
+        11: ("noviembre", "november", "nov"),
+        12: ("diciembre", "december", "dic"),
+    }
 )
+# Las abreviaturas que solo cuentan junto a «backtest» (motivo «backtest con mes»): «set» no se
+# tapa suelta -es una palabra corriente-, pero «el backtest de set» si.
+ABREVIATURAS_MES: Mapping[int, tuple[str, ...]] = MappingProxyType(
+    {
+        1: ("ene",), 2: ("feb",), 3: ("mar",), 4: ("abr",), 5: ("may",), 6: ("jun",),
+        7: ("jul",), 8: ("ago",), 9: ("sep", "sept", "set"), 10: ("oct",), 11: ("nov",),
+        12: ("dic",),
+    }
+)  # fmt: skip
+TODOS_LOS_MESES = frozenset(range(1, 13))
 # «marco» NO se filtra: es el verbo del trader («lo marco», «marco la liquidez») y el sustantivo
 # de «marco de operativa»; en las crudas de v1-v6 no hay ni un «marco» por «marzo» (medido el
 # 2026-09-27: «marzo» sale bien escrito la unica vez que aparece).
-_RE_MES = re.compile(r"\b(?:" + "|".join(MESES_FILTRADOS) + r")\b")
+
+
+def meses_tapados(libres: Collection[int] | None) -> frozenset[int]:
+    """Los meses que tapa la regla: todos menos los DEMOSTRADOS libres; los doce si no hay dato."""
+    if libres is None:
+        return TODOS_LOS_MESES
+    return TODOS_LOS_MESES - frozenset(libres)
+
+
+@cache
+def _patrones(tapados: frozenset[int]) -> tuple[re.Pattern[str] | None, re.Pattern[str] | None]:
+    """(nombres, abreviaturas) de los meses tapados, cada uno None si no hay ninguno."""
+    if not tapados:
+        return None, None
+    nombres = [g for m in sorted(tapados) for g in GRAFIAS_MES[m]]
+    abrev = [a for m in sorted(tapados) for a in ABREVIATURAS_MES[m]]
+    return (
+        re.compile(r"\b(?:" + "|".join(nombres) + r")\b"),
+        re.compile(r"\b(?:" + "|".join(abrev) + r")\b"),
+    )
+
+
 _NUM = r"(?:\d{1,2})"
 _RE_FECHA = re.compile(
     rf"(?<![\d.,]){_NUM}\s*[/-]\s*{_NUM}(?:\s*[/-]\s*\d{{2,4}})?(?![\d.,])"  # 31/02, 31-02-26
@@ -240,7 +290,6 @@ _RE_FECHA = re.compile(
 _DIAS = r"(?:lunes|martes|miercoles|jueves|viernes|sabado|domingo)"
 _RE_DIA_NUMERO = re.compile(rf"\b{_DIAS}\b(?:\W+\w+)?\W+{_NUM}\b|\b{_NUM}\b(?:\W+\w+)?\W+{_DIAS}\b")
 _RE_BACKTEST = re.compile(r"\b(?:back\s*-?\s*tests?|bac?k?test\w*|vac?k?test\w*)\b")
-_RE_ABREV = re.compile(r"\b(?:sep|sept|set|mar|may|feb)\b")
 
 MOTIVO_MES = "mes"
 MOTIVO_FECHA = "fecha numerica"
@@ -249,25 +298,30 @@ MOTIVO_BACKTEST = "backtest con mes"
 MOTIVO_VECINO = "vecino"
 
 
-def motivos_cuarentena(texto: str) -> list[str]:
+def motivos_cuarentena(texto: str, libres: Collection[int] | None = None) -> list[str]:
     """Por que un texto va a cuarentena (lista vacia si no va). Sin tildes, sin mayusculas, y con
-    los numeros escritos en letras pasados a cifras."""
+    los numeros escritos en letras pasados a cifras. `libres`: los meses DEMOSTRADOS libres
+    (`cases.holdout.meses_libres`); sin ellos se tapan los doce."""
     t = numeros_a_cifras(normalizar(texto))
+    re_mes, re_abrev = _patrones(meses_tapados(libres))
     motivos: list[str] = []
-    if _RE_MES.search(t):
+    if re_mes is not None and re_mes.search(t):
         motivos.append(MOTIVO_MES)
     if _RE_FECHA.search(t):
         motivos.append(MOTIVO_FECHA)
     if _RE_DIA_NUMERO.search(t):
         motivos.append(MOTIVO_DIA)
-    if _RE_BACKTEST.search(t) and _RE_ABREV.search(t):
+    if re_abrev is not None and _RE_BACKTEST.search(t) and re_abrev.search(t):
         motivos.append(MOTIVO_BACKTEST)
     return motivos
 
 
-def en_cuarentena(textos: Sequence[str]) -> dict[int, list[str]]:
-    """Indice -> motivos. Cada segmento con motivo arrastra al anterior y al siguiente."""
-    propios = {i: m for i, t in enumerate(textos) if (m := motivos_cuarentena(t))}
+def en_cuarentena(
+    textos: Sequence[str], libres: Collection[int] | None = None
+) -> dict[int, list[str]]:
+    """Indice -> motivos. Cada segmento con motivo arrastra al anterior y al siguiente. `libres`,
+    como en `motivos_cuarentena`: sin ellos se tapan los doce meses."""
+    propios = {i: m for i, t in enumerate(textos) if (m := motivos_cuarentena(t, libres))}
     salida: dict[int, list[str]] = {i: list(m) for i, m in propios.items()}
     for i in propios:
         for j in (i - 1, i + 1):
@@ -365,6 +419,9 @@ class Filtro:
     # Los dias (mes, dia) que se vigilan en el texto de lo oculto: los de `casos_ocultos`, que
     # `corpus` no puede leer (es la capa `cases`) y le pasa quien construye el filtro.
     dias: frozenset[tuple[int, int]] = frozenset()
+    # Los meses DEMOSTRADOS libres para la regla del mes (`cases.holdout.meses_libres`), que le pasa
+    # quien construye el filtro como los `dias`. None: no se demostro ninguno y se tapan los doce.
+    libres: frozenset[int] | None = None
 
     def motivos(self, segmentos: Sequence[SegmentoFiltrable]) -> dict[int, str]:
         """Posicion en `segmentos` -> motivo, con prioridad a > b > c."""
@@ -374,7 +431,7 @@ class Filtro:
         for i, s in enumerate(segmentos):
             if any(s.t1_ms > a and s.t0_ms < b for a, b, _ in self.tramos):
                 salida[i] = MOTIVO_TRAMO
-        for i in en_cuarentena([s.texto for s in segmentos]):
+        for i in en_cuarentena([s.texto for s in segmentos], self.libres):
             salida.setdefault(i, MOTIVO_RESERVADO)
         return salida
 
@@ -393,14 +450,15 @@ class Filtro:
         return [o for o in self.ocultos.values() if _toca(o.t0_ms, o.t1_ms, a_ms, b_ms)]
 
 
-def filtros(repo: Path) -> dict[str, Filtro]:
+def filtros(repo: Path, libres: frozenset[int] | None = None) -> dict[str, Filtro]:
     """Un `Filtro` por video con los tramos del repositorio; el de un video sin tramos se crea al
-    pedirlo con `filtro_de`."""
-    return {v: Filtro(v, ts) for v, ts in cargar_tramos_no_citables(repo).items()}
+    pedirlo con `filtro_de`. `libres` lo calcula `cases.holdout.meses_libres`, que esta capa no
+    puede leer; sin el se tapan los doce meses."""
+    return {v: Filtro(v, ts, libres=libres) for v, ts in cargar_tramos_no_citables(repo).items()}
 
 
-def filtro_de(repo: Path, video_id: str) -> Filtro:
-    return Filtro(video_id, cargar_tramos_no_citables(repo).get(video_id, ()))
+def filtro_de(repo: Path, video_id: str, libres: frozenset[int] | None = None) -> Filtro:
+    return Filtro(video_id, cargar_tramos_no_citables(repo).get(video_id, ()), libres=libres)
 
 
 DIRECTORIO_PROPUESTAS = "knowledge/_proposals"
@@ -430,7 +488,9 @@ class _SegmentoDePropuesta:
     texto: str
 
 
-def propuestas_con_ocultos(repo: Path) -> dict[str, Counter[str]]:
+def propuestas_con_ocultos(
+    repo: Path, libres: frozenset[int] | None = None
+) -> dict[str, Counter[str]]:
     """Fichero de `knowledge/_proposals/` -> cuantos de sus segmentos copiados caen en cada regla,
     solo los que tienen alguno. Lee el YAML de la propuesta (los segmentos estan copiados en
     `contexto.segmentos`) y aplica `Filtro.motivos`, que solo devuelve posiciones y motivos."""
@@ -448,7 +508,8 @@ def propuestas_con_ocultos(repo: Path) -> dict[str, Counter[str]]:
             _SegmentoDePropuesta(int(s["n"]), int(s["t0_ms"]), int(s["t1_ms"]), str(s["texto"]))
             for s in doc["contexto"].get("segmentos") or []
         ]
-        cuenta = Counter(Filtro(video, tramos.get(video, ())).motivos(segmentos).values())
+        filtro = Filtro(video, tramos.get(video, ()), libres=libres)
+        cuenta = Counter(filtro.motivos(segmentos).values())
         if cuenta:
             salida[ruta.name] = cuenta
     return salida

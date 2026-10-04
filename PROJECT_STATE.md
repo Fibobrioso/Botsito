@@ -23,7 +23,7 @@ eec79a0 · merge de `trabajo/sesion-04` (tag `stable/F36v-sesion-04`): la sesion
 eec79a0 · merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pregunta y la hoja por sesion (SESION-04-EXTRACCION.md) · tag stable/F36v-sesion-04
 
 ## Tests Currently Passing
-1251 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1271 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

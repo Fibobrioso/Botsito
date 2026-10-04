@@ -25,6 +25,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from botsito.cases.holdout import meses_libres
 from botsito.cli import _carpeta_datos
 from botsito.corpus.cuarentena import (
     DIRECTORIO_PROPUESTAS,
@@ -47,7 +48,7 @@ LINEA = re.compile(r"^\[[\d:]+-[\d:]+\] #(\d+) (.*)$")
 EXTENSIONES = {".md", ".txt", ".yaml", ".yml", ".json", ".jsonl"}
 
 
-def _filtros(raiz: Path) -> dict[str, Filtro] | None:
+def _filtros(raiz: Path, libres: frozenset[int] | None) -> dict[str, Filtro] | None:
     """Por transcripcion, el filtro que ya paso por su cruda (anota lo que oculta); None si falta
     alguna cruda en la maquina."""
     datos = _carpeta_datos(raiz)
@@ -56,7 +57,7 @@ def _filtros(raiz: Path) -> dict[str, Filtro] | None:
         carpeta = carpeta_de(datos, t)
         if not (carpeta / FICHERO_CRUDA).is_file():
             return None
-        filtro = filtro_de(raiz, t.video_id)
+        filtro = filtro_de(raiz, t.video_id, libres)
         cargar_cruda(carpeta, filtro)
         salida[t.id] = filtro
     return salida
@@ -97,8 +98,11 @@ def _que_copian(raiz: Path, lineas: list[str], excluidos: set[str]) -> list[str]
 def calcular(raiz: Path) -> tuple[list[str], list[str] | None]:
     """(propuestas, salidas y ficheros de docs/ que copian sus lineas ocultas); la segunda es None
     si no hay datos para calcularla."""
-    propuestas = [f"{DIRECTORIO_PROPUESTAS}/{n}" for n in propuestas_con_ocultos(raiz)]
-    filtros = _filtros(raiz)
+    # Los meses DEMOSTRADOS libres para la regla del mes (`trabajo/cuarentena-por-condicion`); None
+    # si no se pueden demostrar, y entonces la regla tapa los doce.
+    libres = meses_libres(raiz)
+    propuestas = [f"{DIRECTORIO_PROPUESTAS}/{n}" for n in propuestas_con_ocultos(raiz, libres)]
+    filtros = _filtros(raiz, libres)
     if filtros is None:
         return propuestas, None
     ocultas = {rel: lineas_ocultas(raiz, rel, filtros) for rel in sorted(SALIDAS_DE_MEDICIONES)}

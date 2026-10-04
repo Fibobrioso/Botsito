@@ -20,13 +20,15 @@ EL ASR ES EL DEL CORPUS (F04, ADR-0007), sin cambiar nada: faster-whisper `large
 
 LA CUARENTENA (se aplica a la cruda ANTES de escribir la version filtrada; ninguna persona ni
 ningun modelo lee la cruda). Un segmento va a `[CUARENTENA mm:ss–mm:ss]` SIN contenido si:
-- nombra septiembre, marzo, mayo o febrero, con las grafias y errores del ASR (`MESES_FILTRADOS`),
-  o sus abreviaturas, o su nombre en ingles, o «el mes 9» y parecidos;
+- nombra un mes que no se puede DEMOSTRAR libre (desde `trabajo/cuarentena-por-condicion`: sin dias
+  en `casos_ocultos` ni en `casos_reservados` y fuera de `knowledge/cases/meses_reservados.yaml`;
+  si no se puede demostrar, todos), por su nombre en espanol o en ingles, su abreviatura o las
+  grafias del ASR (`GRAFIAS_MES`), o «el mes 9» y parecidos;
 - trae una fecha numerica: `dd/mm`, `dd-mm`, `dd.mm.aa(aa)` o «N del M» (con cifras o con letras);
 - trae un dia de la semana con un numero a dos palabras o menos;
-- trae «backtest» (y sus grafias del ASR) con una abreviatura de mes.
-Y tambien el segmento ANTERIOR y el SIGUIENTE. Ante la duda, cuarentena. Abril, agosto y enero
-no se filtran. Con punto y DOS partes no es fecha: son precios («1.17»), medido en v1-v6.
+- trae «backtest» (y sus grafias del ASR) con la abreviatura de un mes tapado («set» incluida).
+Y tambien el segmento ANTERIOR y el SIGUIENTE. Ante la duda, cuarentena. Un mes demostrado libre
+no se filtra. Con punto y DOS partes no es fecha: son precios («1.17»), medido en v1-v6.
 
 LA SEGMENTACION POR PREGUNTA: SOLO «pregunta» seguida del codigo abre una pregunta («Pregunta A
 treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente «pregunta ...» o hasta
@@ -225,13 +227,16 @@ class Linea:
 
 
 def lineas_filtradas(
-    segmentos: Sequence[Seg], validos: Iterable[str]
+    segmentos: Sequence[Seg],
+    validos: Iterable[str],
+    libres: frozenset[int] | None = None,
 ) -> tuple[list[Linea], dict[int, list[str]]]:
     """Cada segmento con su pregunta y, si esta en cuarentena, sin texto; los tramos seguidos de
-    cuarentena de la misma pregunta se funden en una sola linea."""
+    cuarentena de la misma pregunta se funden en una sola linea. `libres`: los meses DEMOSTRADOS
+    libres (`cases.holdout.meses_libres`); sin ellos la regla del mes tapa los doce."""
     validos = tuple(validos)
     textos = [s.texto for s in segmentos]
-    cuarentena = en_cuarentena(textos)
+    cuarentena = en_cuarentena(textos, libres)
     pregunta = SIN_PREGUNTA
     salida: list[Linea] = []
     for i, s in enumerate(segmentos):
@@ -452,7 +457,7 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str) -> 
         ]
     validos = codigos_validos(sesion)
     hoja = HOJAS[sesion]
-    lineas, cuarentena = lineas_filtradas(segmentos, validos)
+    lineas, cuarentena = lineas_filtradas(segmentos, validos, meses_libres_del_repo())
     _escribir(salidas["filtrada"], version_filtrada(lineas, f"Sesion · {audio.stem}", hoja))
     registro += registro_filtro(lineas, cuarentena, validos, hoja)
     registro += [
@@ -462,6 +467,14 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str) -> 
     ]
     _escribir(salidas["registro"], "\n".join(registro) + "\n")
     return registro
+
+
+def meses_libres_del_repo() -> frozenset[int] | None:
+    """Los meses DEMOSTRADOS libres para la regla del mes (rama `trabajo/cuarentena-por-condicion`),
+    o None si no se pueden demostrar: entonces se tapan los doce."""
+    from botsito.cases.holdout import meses_libres
+
+    return meses_libres(RAIZ)
 
 
 def codigos_validos(sesion: str) -> tuple[str, ...]:

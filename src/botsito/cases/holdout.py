@@ -534,3 +534,161 @@ def problemas_de_retirados(repo: Path) -> list[str]:
                     f"ANADIR: una retirada no se deshace ni se reescribe (ADR-0041)"
                 )
     return problemas
+
+
+# ---------------------------------------------------------------------------------------------
+# LOS MESES RESERVADOS ENTEROS (rama `trabajo/cuarentena-por-condicion`, decision del consultor
+# del 2026-10-04): la fuente UNICA de la condicion (b) de la cuarentena del texto. Un mes reservado
+# entero lo esta aunque no tenga ningun caso en un reparto -febrero, ciego y sin descargar; marzo,
+# recibido y sin abrir-, y hasta esta rama solo lo decia la prosa (CLAUDE.md, PROJECT_STATE) y,
+# mezclado con los meses con casos, la lista `MESES_FILTRADOS` de `corpus/cuarentena.py`.
+#
+# SOLO ANADIR, como `retirados.yaml` y `libros.yaml`: un mes que entra no sale, y sacarlo exigiria
+# un ADR. `knowledge validate` exige a cada entrada el formato AAAA-MM y su fuente, y lo compara
+# version a version contra el historial.
+#
+# La cuarentena del texto tapa todo mes que no se pueda DEMOSTRAR libre (`meses_libres`): sin este
+# fichero, o si no se puede leer o no valida, no se demuestra ninguno y se tapan los doce.
+# ---------------------------------------------------------------------------------------------
+
+FICHERO_MESES_RESERVADOS = "knowledge/cases/meses_reservados.yaml"
+CLAVES_MES_RESERVADO = frozenset({"motivo", "fuente", "declarado_el"})
+_MES_AAAA_MM = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$", re.ASCII)
+# El mes de un id de caso `caso-<simbolo>-AAAA-MM-DD`.
+_MES_DE_CASO = re.compile(r"-\d{4}-(0[1-9]|1[0-2])-\d{2}$", re.ASCII)
+TODOS_LOS_MESES = frozenset(range(1, 13))
+
+
+class MesesReservadosError(ValueError):
+    """`meses_reservados.yaml` no tiene la forma declarada: no se sabe que meses hay reservados."""
+
+
+def _entradas_meses(doc: Any, nombre: str) -> dict[str, dict[str, Any]]:
+    if not isinstance(doc, dict) or set(doc) != {"meses"}:
+        raise MesesReservadosError(f"{nombre}: un mapa con la clave `meses` y nada mas")
+    entradas = doc["meses"] or {}
+    if not isinstance(entradas, dict):
+        raise MesesReservadosError(f"{nombre}: `meses` es un mapa AAAA-MM -> entrada")
+    return {str(k): v for k, v in entradas.items()}
+
+
+def _fuente_existe(repo: Path, fuente: str) -> bool:
+    """Una fuente es un ADR que existe (`ADR-NNNN`) o un fichero del repositorio."""
+    if adr := _ADR.match(fuente):
+        return bool(list((repo / "docs" / "adr").glob(f"{adr.group(1)}-*.md")))
+    return (repo / fuente).is_file()
+
+
+def _problemas_de_mes(repo: Path, mes: str, entrada: Any) -> list[str]:
+    donde = f"{FICHERO_MESES_RESERVADOS}: {mes}"
+    if not _MES_AAAA_MM.match(mes):
+        return [f"{FICHERO_MESES_RESERVADOS}: {mes!r} no es un mes AAAA-MM"]
+    if not isinstance(entrada, dict) or set(entrada) != CLAVES_MES_RESERVADO:
+        return [f"{donde}: claves {sorted(CLAVES_MES_RESERVADO)}, exactamente"]
+    problemas: list[str] = []
+    if not str(entrada["motivo"]).strip():
+        problemas.append(f"{donde}: un mes reservado sin motivo no vale")
+    fuentes = entrada["fuente"]
+    if not isinstance(fuentes, list) or not fuentes:
+        problemas.append(f"{donde}: `fuente` es una lista con al menos una fuente")
+    else:
+        problemas += [
+            f"{donde}: la fuente {f!r} no es un ADR ni un fichero que exista"
+            for f in fuentes
+            if not _fuente_existe(repo, str(f))
+        ]
+    if not _FECHA.match(str(entrada["declarado_el"])):
+        problemas.append(f"{donde}: declarado_el no es AAAA-MM-DD")
+    return problemas
+
+
+def cargar_meses_reservados(repo: Path) -> dict[str, dict[str, Any]]:
+    """`AAAA-MM -> entrada`. LANZA si falta, no se puede leer o no valida: quien la usa para tapar
+    no puede recibir una lista a medias (`meses_libres` convierte el error en «ninguno libre»)."""
+    ruta = repo / FICHERO_MESES_RESERVADOS
+    try:
+        doc = leer_yaml(ruta)
+    except (OSError, YamlError) as exc:
+        raise MesesReservadosError(f"{FICHERO_MESES_RESERVADOS}: {exc}") from exc
+    entradas = _entradas_meses(doc, FICHERO_MESES_RESERVADOS)
+    problemas = [p for m, e in entradas.items() for p in _problemas_de_mes(repo, m, e)]
+    if problemas:
+        raise MesesReservadosError("; ".join(problemas))
+    return entradas
+
+
+def meses_libres(repo: Path) -> frozenset[int] | None:
+    """Los meses (1-12) DEMOSTRADOS libres para la cuarentena del texto, o None si no se puede
+    demostrar nada.
+
+    Un mes es libre solo si se comprueban las dos cosas (decision del consultor del 2026-10-04):
+    (a) ningun dia suyo, de ningun ano, esta en `casos_ocultos` NI en `casos_reservados` -se leen
+    los dos aunque hoy coincidan-; (b) no esta en `meses_reservados.yaml`, en ningun ano. Si algo
+    no se puede leer o no valida -el fichero de (b), un reparto, un id de caso sin fecha-, devuelve
+    None, y quien construye el filtro tapa los doce meses: ningun fallo deja un mes a la vista."""
+    try:
+        reservados_enteros = cargar_meses_reservados(repo)
+        casos = set(casos_ocultos(repo)) | set(casos_reservados(repo))
+    except (MesesReservadosError, RepartoIlegibleError, RetiradosError):
+        return None
+    tapados = {int(mes[5:7]) for mes in reservados_enteros}
+    for caso in casos:
+        m = _MES_DE_CASO.search(caso)
+        if m is None:
+            return None  # un caso cuyo mes no se sabe: no se puede comprobar (a)
+        tapados.add(int(m.group(1)))
+    return TODOS_LOS_MESES - frozenset(tapados)
+
+
+def _version_meses(texto: str | None, donde: str) -> dict[str, Any]:
+    if texto is None:
+        return {}
+    try:
+        return _entradas_meses(cargar_yaml(texto), f"{FICHERO_MESES_RESERVADOS}@{donde}")
+    except YamlError as exc:
+        raise MesesReservadosError(f"{FICHERO_MESES_RESERVADOS}@{donde}: {exc}") from exc
+
+
+def problemas_de_meses_reservados(repo: Path) -> list[str]:
+    """Para `knowledge validate`: que exista, su forma (AAAA-MM, motivo, fuente que exista y
+    fecha) y SOLO ANADIR contra el historial, con el mismo mecanismo que `retirados.yaml`."""
+    ruta = repo / FICHERO_MESES_RESERVADOS
+    if not ruta.is_file():
+        return [
+            f"{FICHERO_MESES_RESERVADOS} no existe: sin el no se demuestra ningun mes libre y la "
+            f"cuarentena del texto tapa los doce"
+        ]
+    try:
+        entradas = _entradas_meses(leer_yaml(ruta), FICHERO_MESES_RESERVADOS)
+    except (OSError, YamlError, MesesReservadosError) as exc:
+        return [str(exc)]
+    problemas = [p for m, e in entradas.items() for p in _problemas_de_mes(repo, m, e)]
+    if historial.historial_evaluable(repo) is not None:
+        return problemas
+    pares = historial.versiones_del_fichero(repo, FICHERO_MESES_RESERVADOS)
+    if pares is None:
+        return problemas
+    actual = ruta.read_text(encoding="utf-8")
+    for hijo, padre in [*pares, ("arbol de trabajo", "HEAD")]:
+        texto_hijo = (
+            actual
+            if hijo == "arbol de trabajo"
+            else historial.contenido_en(repo, hijo, FICHERO_MESES_RESERVADOS)
+        )
+        try:
+            antes = _version_meses(
+                historial.contenido_en(repo, padre, FICHERO_MESES_RESERVADOS), padre[:7]
+            )
+            despues = _version_meses(texto_hijo, hijo[:7])
+        except MesesReservadosError as exc:
+            problemas.append(str(exc))
+            continue
+        for mes, entrada in antes.items():
+            if mes not in despues:
+                problemas.append(
+                    f"{hijo[:16]}: saca el mes reservado {mes}. El registro es SOLO ANADIR: un "
+                    f"mes que entra no sale, y sacarlo exigiria un ADR"
+                )
+            elif despues[mes] != entrada:
+                problemas.append(f"{hijo[:16]}: modifica el mes reservado {mes}. SOLO ANADIR")
+    return problemas

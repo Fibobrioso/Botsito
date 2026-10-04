@@ -190,8 +190,108 @@ imprime recuentos, marcas de tiempo e ids, nunca texto ni qué mes.**
    guardia del holdout. Hoy falla cerrado: lo que no está en ella no se lee.
 4. **v7 y v8:** si basta con medirlas al rehacer su filtrada en la fase 2 con el guion de `main`.
 
+## Decisiones tras la fase 0 (2026-10-04)
+
+Decisiones del consultor del 2026-10-04 sobre la fase 0, copiadas tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisiones del consultor sobre la fase 0 de trabajo/cuarentena-por-condicion (2026-10-04). Cópialas tal cual, con su fecha, al informe docs/validation/CUARENTENA-POR-CONDICION.md, en una sección «Decisiones tras la fase 0».
+>
+> 1. Sí: crea knowledge/cases/meses_reservados.yaml como fuente única de (b), con 2026-02 y 2026-03, cada uno con su fuente.
+>    Por qué: (b) hoy solo existe en prosa y mezclado con (a) en la lista. Una condición sin fuente no se puede comprobar.
+>    - Régimen: solo añadir. Un mes que entra no sale; si algún día hiciera falta sacarlo, sería con un ADR.
+>    - knowledge validate exige que cada entrada tenga fuente y formato AAAA-MM.
+>    - Si el fichero falta, no se puede leer o no valida, la función de cases/holdout.py devuelve None y se tapan los 12 meses (escenario A). Ningún fallo de lectura deja un mes a la vista.
+>    - La función que devuelve los meses libres une casos_ocultos, casos_reservados y meses_reservados.yaml. Aunque hoy (a) coincida con casos_reservados, se leen los dos.
+>    - Acepto el diseño del punto 2: la condición se calcula en cases, y Filtro y en_cuarentena la reciben. MESES_FILTRADOS pasa a ser un diccionario de grafías de los 12 meses.
+>
+> 2. Los 7 ítems del escenario A se quedan como están.
+>    Por qué: con la fuente de (b) el escenario que vale es el B, y en él no cae ningún ítem.
+>    - Regla para la fase 2: si al rehacer v7 y v8 algún ítem ev-* cae en un segmento que pasa a ocultarse, para antes de seguir y dame solo el recuento por vídeo. Lo decido yo.
+>
+> 3. La lista blanca MESES_DE_DESARROLLO (guardia.py:199) no se cambia en esta rama, pero entra un test que la cruza con la fuente nueva.
+>    Por qué: una lista blanca sí niega por defecto, pero escrita a mano puede separarse de la fuente sin que nadie lo vea.
+>    - El test falla si algún mes de MESES_DE_DESARROLLO tiene días en casos_ocultos o en casos_reservados, o está en meses_reservados.yaml.
+>    - Mídelo antes de escribirlo. Si hoy fallara, para y dímelo: sería un hallazgo, no algo que se arregla en silencio.
+>    - En el informe, una línea que diga qué protege exactamente esa lista y por qué no la sustituye la condición.
+>
+> 4. Sí: v7 y v8 se miden cuando se rehagan sus filtradas en la fase 2, y siempre con el guion revisado.
+>    - Primero recuentos y marcas de tiempo; ningún texto se muestra antes.
+>    - Las cifras de v7 y v8 entran en la tabla de antes y después del informe, al lado de las demás.
+>
+> 5. El primer intento que contaba «set» suelto en v1 se declara como desviación corregida en el informe. Añade un test: «set» sin «backtest» no se filtra como mes, y con «backtest» sí.
+>
+> Sigue con las fases 1 y 2, con los tests y la CI del encargo. Al final:
+> - push como fix/cuarentena-por-condicion y CI de Linux, con los números de run;
+> - revisor independiente, con su informe pegado al final;
+> - tamaño de PROJECT_STATE.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. Fase 1: la condición, tal cual quedó
+
+### 1.1 La regla
+
+**Un mes se tapa en el texto salvo que esté DEMOSTRADO libre.** Libre quiere decir:
+- (a) ningún día suyo, de ningún año, está en `casos_ocultos` ni en `casos_reservados` (se leen los
+  dos);
+- (b) no está en `knowledge/cases/meses_reservados.yaml`;
+- (c) las dos cosas se pudieron comprobar.
+
+**Dónde vive cada pieza:**
+
+| Pieza | Dónde | Qué hace |
+|---|---|---|
+| La fuente de (b) | `knowledge/cases/meses_reservados.yaml` (nuevo) | `2026-02` (fuente ADR-0025 y ADR-0046) y `2026-03` (ADR-0046 y `docs/validation/REGISTRO-MARZO.md`), con motivo y `declarado_el`. SOLO AÑADIR |
+| La condición | `cases/holdout.py`: `meses_libres(repo) -> frozenset[int] | None` | une (a) y (b). Devuelve **None** si el fichero falta, no se lee o no valida, si un reparto es ilegible o si un id de caso no trae fecha |
+| La validación | `cases/holdout.py`: `problemas_de_meses_reservados`; `validation/knowledge.py` | forma (AAAA-MM, claves exactas, motivo, fuente que exista —ADR o fichero— y fecha) y SOLO AÑADIR contra el historial, igual que `retirados.yaml`. Sin el fichero, `knowledge validate` da un AVISO |
+| La regla del texto | `corpus/cuarentena.py`: `motivos_cuarentena(texto, libres)`, `en_cuarentena(textos, libres)`, `Filtro(..., libres=)`, `filtros`, `filtro_de`, `propuestas_con_ocultos` | tapan `meses_tapados(libres)`. Con **`libres=None` tapan los doce**. `corpus` no importa `cases`: lo comprueba un test por `ast` además de import-linter |
+| Las grafías | `GRAFIAS_MES` (las 12 claves) y `ABREVIATURAS_MES` | un diccionario de grafías por mes, no una lista de meses vigilados. Las del ASR de septiembre, marzo, mayo y febrero no cambian. Cada mes tiene su nombre en español, en inglés y su abreviatura. «set» solo cuenta junto a «backtest» |
+| Quién pasa `libres` | `cli.py` (`_meses_libres`, en `kb` y en los tres `filtro_de`), `retrieval/indice.py` (`construir_indice(..., libres=)`), `scripts/transcribir_sesion.py` (`lineas_filtradas(..., libres)`) y `scripts/ficheros_con_ocultos.py` | calculan `meses_libres` en la capa que puede leer `cases` |
+
+**En el repositorio real** hay 7 meses demostrados libres y se tapan 5: los 3 con casos y los 2
+reservados enteros.
+
+`MESES_FILTRADOS`, `_RE_MES` y `_RE_ABREV` ya no existen.
+
+### 1.2 Lo que sigue igual
+
+«marco» no se tapa, y los límites de palabra («mayor», «mayoría», «siempre», «junto», «hago»)
+tampoco tapan, ni con los doce meses. El test `test_6b` lo comprueba con `libres=None`.
+
+### 1.3 Los tests (`tests/unit/test_cuarentena_por_condicion.py`, 60 casos)
+
+| Encargo | Test | Qué hace |
+|---|---|---|
+| 1 | `test_1_*` | en un repo TEMPORAL, un caso reservado inventado en noviembre tapa noviembre sin tocar ninguna lista (`GRAFIAS_MES` no cambia). También un caso de otro año; uno `dev` no tapa |
+| 2 | `test_2_*` | un `Filtro` sin datos tapa los doce meses (12 casos); y si la fuente de (b) falta, no se lee, tiene un mes mal escrito, no tiene fuente, cita un ADR que no existe o un fichero que no existe, o el reparto es ilegible, o un caso no trae fecha: `meses_libres` da None |
+| 3 | `test_3_*` | un mes reservado entero sin casos se tapa |
+| 4 | `test_4_*` | un mes libre de verdad no se tapa: la guardia puede dejar pasar algo |
+| 5 | `test_5_*` | contra el repo real: **0 sin cubrir**, sin decir qué mes |
+| 6 | `test_6_*` y los de `test_transcribir_sesion.py` | las grafías del ASR siguen tapando, con los meses libres del repo y sin ellos |
+| decisión 5 | `test_set_suelto_no_es_un_mes_y_con_backtest_si` | «set» suelto no se tapa; con «backtest», sí |
+| decisión 3 | `test_la_lista_blanca_de_la_guardia_no_se_separa_de_la_fuente` y `test_el_cruce_*_no_es_decorativo` | `MESES_DE_DESARROLLO` contra (a) y (b). Medido antes de escribirlo: **no fallaba** (2026-01, 2026-04 y 2026-08, ninguno con días en casos ni en la fuente de (b)) |
+| fuente de (b) | `test_la_fuente_*`, `test_sin_la_fuente_*` | valida, y es SOLO AÑADIR: sacar o cambiar un mes es un error en un repo git temporal; añadir uno, no |
+
+**Rotos a propósito, sobre el código y con el fichero restaurado después (mismo sha256):**
+- **(i) `meses_tapados(None)` devuelve vacío en vez de los doce:** caen 36 casos (`test_2` 12,
+  `test_2b` 7, `test_6` 16 y el de «set»).
+- **(ii) `meses_libres` no usa `meses_reservados.yaml`:** caen 10 (`test_3`, `test_4`, `test_5` y 7
+  de `test_6`).
+
+**Un test viejo que cambia.** `test_abril_agosto_enero_y_el_lenguaje_normal_no_se_filtran`
+(`test_transcribir_sesion.py`) daba por hecho que esos tres meses nunca se tapan. Ahora les pasa los
+`meses_libres` del repo real y comprueba primero que los tres están demostrados libres. Sin ese
+dato, la regla los taparía, y eso es lo que pide el encargo.
+
+**Lo que protege la lista blanca de la guardia, y por qué la condición no la sustituye.**
+`MESES_DE_DESARROLLO` decide qué **libros** (los xlsx del trader) se pueden ABRIR enteros, filas de
+operaciones incluidas. La condición decide qué **nombre de mes** se tapa en el TEXTO de una
+transcripción. Que un mes no tenga días reservados no lo hace legible como libro: hace falta además
+que sea material de desarrollo leído y declarado (`CLAUDE.md:139`, ADR-0021 §1). Por eso la lista
+blanca sigue negando por defecto, y el test solo vigila que no contradiga la fuente.
+
 ## Estado
 
-FASE 0 ENTREGADA. Esperando las decisiones del §0.5 antes de escribir código. Rama NO cerrada.
-
-Tamaño de `PROJECT_STATE.md` al abrir: se da en el informe final.
+FASE 1 HECHA; FASE 2 EN CURSO. Rama NO cerrada.

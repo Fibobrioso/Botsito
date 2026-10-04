@@ -243,6 +243,7 @@ def construir_indice(
     *,
     crudo: bool = False,
     dias: frozenset[tuple[int, int]] = frozenset(),
+    libres: frozenset[int] | None = None,
 ) -> Indice:
     """Indice completo desde el repo y la carpeta de datos. Crudas o fotogramas ausentes no son
     error: quedan avisos y el indice sirve con lo que hay (solo evidencia, como minimo).
@@ -252,7 +253,9 @@ def construir_indice(
     tiene su propio criterio (sexta orden del consultor, 2026-10-01;
     `cuarentena.evidencia_a_ocultar`): no entra el item cuya cita cae en un tramo no citable o
     cuyo texto lo copia, ni el que trae un dia de `dias` -los (mes, dia) de `casos_ocultos`, que
-    `retrieval` no puede leer y le pasa quien lo llama; sin ellos, esa parte no se mira-."""
+    `retrieval` no puede leer y le pasa quien lo llama; sin ellos, esa parte no se mira-.
+    `libres` son los meses DEMOSTRADOS libres para la regla del mes (`cases.holdout.meses_libres`,
+    que tampoco puede leer); sin ellos, la regla tapa los doce meses."""
     try:
         tramos = cargar_tramos_no_citables(repo)
     except TramosNoCitablesError as exc:
@@ -276,7 +279,7 @@ def construir_indice(
         transcripciones[t.video_id] = t.id
         activas[t.video_id] = t
         filtro = filtros.setdefault(
-            t.video_id, Filtro(t.video_id, tramos.get(t.video_id, ()), dias=dias)
+            t.video_id, Filtro(t.video_id, tramos.get(t.video_id, ()), dias=dias, libres=libres)
         )
         capas = _capas_de(carpeta_datos, t, avisos, filtro, crudo)
         if capas is None:
@@ -296,7 +299,9 @@ def construir_indice(
         # tramo no citable (b) o un dia de `casos_ocultos` la ocultan. Tambien la de un video sin
         # transcripcion en la maquina: su fecha se mira en su propio texto.
         for video in sorted({it.video_id for it in items}):
-            filtro = filtros.get(video) or Filtro(video, tramos.get(video, ()), dias=dias)
+            filtro = filtros.get(video) or Filtro(
+                video, tramos.get(video, ()), dias=dias, libres=libres
+            )
             de_video = [it for it in items if it.video_id == video]
             evidencia_oculta.update(
                 evidencia_a_ocultar(
