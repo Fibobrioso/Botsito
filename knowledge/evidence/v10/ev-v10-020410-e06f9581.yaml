@@ -1,0 +1,17 @@
+id: ev-v10-020410-e06f9581
+video_id: v10
+t0: '2:04:10'
+t1: '2:04:18'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Pues siempre pongo exactamente en la entrada El stop, o sea cuando llega a cumplirse los
+  criterios que hemos planteado
+afirmacion: el break even pone el stop siempre exactamente en la entrada, cuando se cumplen los criterios
+tema: break_even.nivel_entrada_exacta
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-24 (A-13). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

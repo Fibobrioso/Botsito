@@ -1,0 +1,20 @@
+id: ev-v10-020520-7bdf02b3
+video_id: v10
+t0: '2:05:20'
+t1: '2:05:48'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: el nivel que tiene que tocar es más o menos como que seguir el criterio para validar un
+  posible punto breaker, ¿vale? [...] esperaríamos a que se cierre por debajo, o sea, en este caso, de
+  un lower low, un bajo más bajo. Ahora, en un caso alcista, esperaríamos a que cierre por encima de un
+  higher high.
+afirmacion: 'el nivel del break even sigue el criterio de validar un punto de breaker: esperar a que cierre
+  por debajo del bajo mas bajo (venta) o por encima del alto mas alto (compra)'
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-24 (A-13). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

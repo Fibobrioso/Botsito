@@ -1,0 +1,18 @@
+id: ev-v10-003927-2f6d9f48
+video_id: v10
+t0: 0:39:27
+t1: 0:39:48
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se usa de 0 a 1 para el cálculo de 1 a 3 pero para el cálculo ya de para la toma de la operativa
+  se usa de 0 a 0,8
+afirmacion: 'subpregunta de A-18: el objetivo 1 a 3 se mide sobre la distancia del 0 al 1; para operar
+  (stop y lote) se usa del 0 al 0,8'
+tema: objetivo.base_0_a_1
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-18). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

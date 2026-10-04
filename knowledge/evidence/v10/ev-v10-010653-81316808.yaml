@@ -1,0 +1,17 @@
+id: ev-v10-010653-81316808
+video_id: v10
+t0: '1:06:53'
+t1: '1:07:08'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo. Esto es por
+  la condicional que nos da la cuenta de fondeo.
+afirmacion: la racha maxima de 9 perdidas es por la condicion de la cuenta de fondeo
+tema: riesgo.tope_trader_9_perdidas
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-8 (A-51). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

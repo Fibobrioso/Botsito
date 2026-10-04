@@ -168,7 +168,7 @@ def test_validar_y_comprobar_detectan(tmp_path: Path) -> None:
 
 def test_fuentes_y_manifiesto_reales_coherentes(repo: Path) -> None:
     fuentes = cargar_fuentes(repo / "knowledge" / "corpus" / "fuentes.yaml")
-    esperados = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9"]
+    esperados = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
     assert [v.video_id for v in fuentes.videos] == esperados
     ruta = repo / "knowledge" / "corpus" / "manifest.yaml"
     if not ruta.exists():

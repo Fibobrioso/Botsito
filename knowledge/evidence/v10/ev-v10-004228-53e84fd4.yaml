@@ -1,0 +1,18 @@
+id: ev-v10-004228-53e84fd4
+video_id: v10
+t0: 0:42:28
+t1: 0:42:54
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cálculo correspondiente para poder ubicar el tp lo hago de esta manera uso me apoyo desde
+  el nivel del 0 a 1 y lo ubico a 3
+afirmacion: 'en un ejemplo de enero (desarrollo): el take profit se ubica a 3 veces la distancia del 0
+  al 1'
+tema: objetivo.base_0_a_1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-18). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

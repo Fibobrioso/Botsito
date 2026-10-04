@@ -1,0 +1,18 @@
+id: ev-v10-011957-7ebb3453
+video_id: v10
+t0: '1:19:57'
+t1: '1:20:27'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se alterna de una vela verde a una vela roja, entonces ya allí ya quedaría invalidado ya,
+  o sea quedaría invalidado porque lo está haciendo antes de la ruptura del posible punto de breaker
+afirmacion: si antes de la ruptura del posible punto de breaker las velas se alternan de color, la entrada
+  queda invalidada aunque luego rompa
+tema: zona_control.limpia_sin_alternancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-10 (A-21). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

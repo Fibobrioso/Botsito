@@ -1,0 +1,18 @@
+id: ev-v10-015421-44b43053
+video_id: v10
+t0: '1:54:21'
+t1: '1:54:34'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Y si el alto se va descartando O sea, el más reciente es lo que importa O sea, la liquidez
+  más reciente es lo que importa Y si la marca del alto viejo la sigues usando Paso al nuevo
+afirmacion: 'subpregunta de A-25: importa la liquidez mas reciente; la marca del alto viejo se descarta
+  y pasa al nuevo'
+tema: liquidez.m15.marca_mas_reciente
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18 (A-25). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

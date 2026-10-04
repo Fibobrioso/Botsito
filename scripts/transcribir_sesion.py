@@ -34,8 +34,10 @@ treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente 
 El «a N» suelto no abre nada. Solo cuentan los codigos que se preguntan (ABIERTA o DECIDIDA).
 
 Uso (un solo comando, desde la raiz del repo):
-    uv run python scripts/transcribir_sesion.py [--audio <fichero o carpeta>]
+    uv run python scripts/transcribir_sesion.py [--audio <fichero o carpeta>] [--sesion 04]
     uv run python scripts/transcribir_sesion.py --solo-filtrar   (rehace la filtrada desde la cruda)
+La hoja (orden y codigos de sesion) es la de `--sesion`, por defecto la sesion en curso: cada
+sesion tiene la suya, y un mismo codigo puede significar otra cosa en otra sesion (S-1).
 """
 
 from __future__ import annotations
@@ -85,20 +87,64 @@ ORDEN_SESION_03 = (
     "A-21", "E-1",
     "A-30", "A-31", "E-2", "E-3", "A-41", "A-38", "A-24", "A-25", "A-37",
 )  # fmt: skip
-# Los codigos de sesion, con su texto tal como estaba en la hoja de la sesion 03 (definidos en la
-# revision del consultor del 2026-09-29; hasta entonces E-1, E-2 y E-3 no tenian texto en ningun
-# fichero del repositorio).
-CODIGOS_DE_SESION_TEXTO = {
-    "E-1": "tus dos backtests de los mismos días",
-    "E-2": "cómo operas los equals",
-    "E-3": "cuando la vela cambia de color",
-    "S-1": "cómo decide el sesgo del día",
-    "G-1": "cerrar antes del stop",
-    "G-2": "dejar correr más allá del objetivo",
-    "G-3": "tamaño mínimo de caja",
+# La hoja de la sesion 04 (2026-10-04, decisiones del consultor de los dias 2026-10-03 y
+# 2026-10-04, docs/sesion-4/HOJA-USADA.md): SOLO codigos de sesion, dichos en voz como «pregunta
+# ese siete». S-n es la pregunta n de docs/sesion-4/PREGUNTAS.md, mas S-23 (A-32) y S-24 (A-13).
+ORDEN_SESION_04 = (
+    "S-1", "S-2", "S-3", "S-4", "S-5", "S-6", "S-22",
+    "S-7", "S-8", "S-9", "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
+    "S-18", "S-20", "S-21", "S-23", "S-24", "S-19",
+)  # fmt: skip
+# Los codigos de sesion con su texto, POR SESION: el mismo codigo vuelve con otro texto (S-1 era en
+# la 03 «como decide el sesgo del dia» y en la 04 es la pregunta 1 de PREGUNTAS.md), asi que un
+# diccionario comun se pisaria. Los de la 03 se definieron en la revision del consultor del
+# 2026-09-29 (hasta entonces E-1, E-2 y E-3 no tenian texto en ningun fichero del repositorio); los
+# de la 04 son los titulos de PREGUNTAS.md y del encargo de `trabajo/sesion-04`.
+CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
+    "02": {},
+    "03": {
+        "E-1": "tus dos backtests de los mismos días",
+        "E-2": "cómo operas los equals",
+        "E-3": "cuando la vela cambia de color",
+        "S-1": "cómo decide el sesgo del día",
+        "G-1": "cerrar antes del stop",
+        "G-2": "dejar correr más allá del objetivo",
+        "G-3": "tamaño mínimo de caja",
+    },
+    "04": {
+        "S-1": "cuándo pones la orden, una vez formado el mínimo (o máximo) en M1",
+        "S-2": "cuándo un mínimo de M1 se convierte en tu punto de breaker",
+        "S-3": "el stop al poner la orden: ¿en el 1 o en el 0,8?",
+        "S-4": "si el precio sube más antes de llenarse, ¿se mueve el 1 de la caja?",
+        "S-5": "la orden sin llenar al acabar la sesión o la ventana",
+        "S-6": "«lo mínimo posible» al redondear el stop: ¿un punto o un pip entero?",
+        "S-7": "con qué reloj empiezas a las 7 en invierno",
+        "S-8": "qué corta la racha de 9 pérdidas y cuándo vuelves a operar",
+        "S-9": "el tope de pérdida: ¿porcentaje o 9 seguidas?",
+        "S-10": "zona limpia",
+        "S-11": "el alto de M15 que el precio supera un poco",
+        "S-12": "las salidas por encima de 3 R",
+        "S-13": "la vela de 4 horas que rompe por los dos lados y cierra sin cuerpo",
+        "S-14": "el umbral de la vela casi plana",
+        "S-15": "una liquidez tomada antes de las 7",
+        "S-16": "cuál de tus dos backtests de agosto vale",
+        "S-17": "si solo el 0 de la caja cuenta frente al nivel tomado",
+        "S-18": "los intentos: ¿por marca o por toma?",
+        "S-19": "las 7 capturas que venían con el backtest de marzo",
+        "S-20": "cuántos escenarios puede haber en una sesión como máximo",
+        "S-21": "la orden puesta cuando el precio toma otra liquidez",
+        "S-22": "dónde va la orden de entrada frente al 0 de la caja",
+        "S-23": "el nivel que, roto con mecha, anula la entrada",
+        "S-24": "confirmar el break even tapado por el corte de audio de v9",
+    },
 }
-CODIGOS_DE_SESION = tuple(CODIGOS_DE_SESION_TEXTO)
-ORDEN_SESION = ORDEN_SESION_03  # la hoja de la sesion en curso
+# La hoja con la que se agrupa la version filtrada de cada sesion (`--sesion`).
+HOJAS: dict[str, tuple[str, ...]] = {
+    "02": ORDEN_SESION_02,
+    "03": ORDEN_SESION_03,
+    "04": ORDEN_SESION_04,
+}
+SESION_EN_CURSO = "04"
 
 
 # ------------------------------------------------------------------------------ cuarentena
@@ -205,17 +251,17 @@ def lineas_filtradas(
     return salida, cuarentena
 
 
-def orden_de_preguntas(presentes: Iterable[str]) -> list[str]:
-    """El orden de la hoja de la sesion en curso, luego las demas por letra y numero, y SIN
-    PREGUNTA al final."""
+def orden_de_preguntas(presentes: Iterable[str], hoja: Sequence[str]) -> list[str]:
+    """El orden de la hoja de la sesion, luego las demas por letra y numero, y SIN PREGUNTA al
+    final."""
     presentes = set(presentes)
-    en_hoja = [p for p in ORDEN_SESION if p in presentes]
-    otras = sorted((p for p in presentes if p not in ORDEN_SESION and p != SIN_PREGUNTA),
+    en_hoja = [p for p in hoja if p in presentes]
+    otras = sorted((p for p in presentes if p not in hoja and p != SIN_PREGUNTA),
                    key=lambda p: (p[0], int(p[2:])))  # fmt: skip
     return en_hoja + otras + ([SIN_PREGUNTA] if SIN_PREGUNTA in presentes else [])
 
 
-def version_filtrada(lineas: Sequence[Linea], titulo: str) -> str:
+def version_filtrada(lineas: Sequence[Linea], titulo: str, hoja: Sequence[str]) -> str:
     """La version que se lee: agrupada por pregunta en el orden de la hoja, cronologica dentro de
     cada pregunta, con «…» donde la conversacion volvio a esa pregunta mas tarde."""
     partes = [
@@ -225,7 +271,7 @@ def version_filtrada(lineas: Sequence[Linea], titulo: str) -> str:
         "reconstruyen ni se escuchan. Citas literales con `mm:ss` desde el inicio del audio.",
         "",
     ]
-    for pregunta in orden_de_preguntas(ln.pregunta for ln in lineas):
+    for pregunta in orden_de_preguntas((ln.pregunta for ln in lineas), hoja):
         partes += [f"## {pregunta}", ""]
         ultimo_indice: int | None = None
         for ln in (x for x in lineas if x.pregunta == pregunta):
@@ -241,7 +287,10 @@ def version_filtrada(lineas: Sequence[Linea], titulo: str) -> str:
 
 
 def registro_filtro(
-    lineas: Sequence[Linea], cuarentena: dict[int, list[str]], validos: Iterable[str]
+    lineas: Sequence[Linea],
+    cuarentena: dict[int, list[str]],
+    validos: Iterable[str],
+    hoja: Sequence[str],
 ) -> list[str]:
     """Lo que el registro puede decir del texto: recuentos y codigos, nunca contenido."""
     motivos: Counter[str] = Counter(m for ms in cuarentena.values() for m in ms)
@@ -254,8 +303,8 @@ def registro_filtro(
             tramos[ln.pregunta] += 1
             primeras.setdefault(ln.pregunta, ln.t0_ms)
         anterior = ln.pregunta
-    detectados = [p for p in orden_de_preguntas(primeras) if p != SIN_PREGUNTA]
-    no_detectados = [p for p in ORDEN_SESION if p not in primeras]
+    detectados = [p for p in orden_de_preguntas(primeras, hoja) if p != SIN_PREGUNTA]
+    no_detectados = [p for p in hoja if p not in primeras]
     return [
         f"segmentos: {sum(len(ln.indices) for ln in lineas)}",
         f"segmentos en cuarentena: {len(cuarentena)} en {bloques} bloques",
@@ -358,11 +407,14 @@ def _escribir(ruta: Path, texto: str) -> None:
     ruta.write_text(texto, encoding="utf-8", newline="\n")
 
 
-def procesar(audio: Path, dispositivo: str, solo_filtrar: bool) -> list[str]:
+def procesar(audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str) -> list[str]:
     salidas = salidas_de(audio)
     _comprobar_rutas([*salidas.values(), salidas["trabajo"] / "fragmentos" / "fragmento_000.wav"])
     inicio = time.perf_counter()
-    registro = [f"# registro de {audio.name} (sin contenido del trader)"]
+    registro = [
+        f"# registro de {audio.name} (sin contenido del trader)",
+        f"hoja: la de la sesion {sesion}",
+    ]
     if solo_filtrar:
         if not salidas["cruda"].is_file():
             raise SesionError(f"--solo-filtrar sin cruda: no existe {salidas['cruda']}")
@@ -398,10 +450,11 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool) -> list[str]:
             f"{motor.get('dispositivo')} ({motor.get('gpu')}), faster-whisper "
             f"{motor.get('faster_whisper')}, prompt de {motor.get('initial_prompt_tokens')} tokens",
         ]
-    validos = codigos_validos()
+    validos = codigos_validos(sesion)
+    hoja = HOJAS[sesion]
     lineas, cuarentena = lineas_filtradas(segmentos, validos)
-    _escribir(salidas["filtrada"], version_filtrada(lineas, f"Sesion · {audio.stem}"))
-    registro += registro_filtro(lineas, cuarentena, validos)
+    _escribir(salidas["filtrada"], version_filtrada(lineas, f"Sesion · {audio.stem}", hoja))
+    registro += registro_filtro(lineas, cuarentena, validos, hoja)
     registro += [
         f"tiempo total: {time.perf_counter() - inicio:.1f} s",
         f"version filtrada (la UNICA que se lee): {salidas['filtrada']}",
@@ -411,20 +464,17 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool) -> list[str]:
     return registro
 
 
-def codigos_validos() -> tuple[str, ...]:
+def codigos_validos(sesion: str) -> tuple[str, ...]:
     """Los ids que se pueden preguntar: ABIERTA o DECIDIDA en `knowledge/spec/ambiguedades.yaml`
-    (solo lectura), mas los codigos de sesion de la hoja en curso. Las RESUELTAS (A-1..A-12 y
+    (solo lectura), mas los codigos de sesion de la hoja de ESA sesion. Las RESUELTAS (A-1..A-12 y
     otras) no cuentan: «a dos» no es A-2."""
     from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
 
-    return (
-        tuple(
-            a.id
-            for a in cargar_ambiguedades(RAIZ / FICHERO_AMBIGUEDADES)
-            if a.estado in ("ABIERTA", "DECIDIDA")
-        )
-        + CODIGOS_DE_SESION
-    )
+    return tuple(
+        a.id
+        for a in cargar_ambiguedades(RAIZ / FICHERO_AMBIGUEDADES)
+        if a.estado in ("ABIERTA", "DECIDIDA")
+    ) + tuple(CODIGOS_DE_SESION_TEXTO[sesion])
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -437,6 +487,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--dispositivo", default="cuda", choices=("cuda", "cpu"))
     parser.add_argument(
+        "--sesion",
+        default=SESION_EN_CURSO,
+        choices=tuple(HOJAS),
+        help=f"la hoja con la que se agrupa la filtrada (por defecto, la {SESION_EN_CURSO})",
+    )
+    parser.add_argument(
         "--solo-filtrar",
         action="store_true",
         help="no transcribe: rehace la version filtrada desde la cruda",
@@ -444,7 +500,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         for audio in audios_de(args.audio):
-            print("\n".join(procesar(audio, args.dispositivo, args.solo_filtrar)))
+            print("\n".join(procesar(audio, args.dispositivo, args.solo_filtrar, args.sesion)))
     except SesionError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

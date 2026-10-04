@@ -1,0 +1,18 @@
+id: ev-v10-014823-64248489
+video_id: v10
+t0: '1:48:23'
+t1: '1:48:36'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el último bates e incluyó los break even como mencioné entonces sería el bates ideal porque
+  porque en el otro, en el otro, en el primer mes de agosto no lo incluía,
+afirmacion: el ultimo (el grabado) incluye los break even y es el que vale; el primero de agosto no los
+  incluia
+tema: material.version_valida_la_grabada
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-16 (E-1). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

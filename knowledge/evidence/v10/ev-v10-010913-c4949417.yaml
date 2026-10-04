@@ -1,0 +1,16 @@
+id: ev-v10-010913-c4949417
+video_id: v10
+t0: '1:09:13'
+t1: '1:09:23'
+modalidad: audio
+tipo: PARAMETER
+cita_literal: Ah, no, aquí hay un error No sería un 9% a la semana Sería un 4,5% de pérdida en el día
+afirmacion: 'corrige lo de la sesion 1: el tope es un 4,5 % de perdida en el dia, no un 9 % a la semana'
+tema: riesgo.tope_diario_45
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-9 (A-44). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

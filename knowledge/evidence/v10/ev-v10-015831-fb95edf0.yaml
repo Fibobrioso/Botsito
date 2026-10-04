@@ -1,0 +1,18 @@
+id: ev-v10-015831-fb95edf0
+video_id: v10
+t0: '1:58:31'
+t1: '1:59:01'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si tengo que elegir alguna opción, la dejo y la muevo cuando aparezca el nuevo punto de
+  liquidez
+afirmacion: con la orden sin llenar y el precio tomando otra liquidez de M15, la deja y la mueve cuando
+  aparece el punto de la liquidez nueva (opcion b); en la misma frase dice «La A es verdadera»
+tema: entrada.orden.otra_liquidez_se_mueve
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-21 (A-53). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

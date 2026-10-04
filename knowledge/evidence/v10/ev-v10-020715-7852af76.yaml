@@ -1,0 +1,18 @@
+id: ev-v10-020715-7852af76
+video_id: v10
+t0: '2:07:15'
+t1: '2:07:28'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: o sea, cuantas operativas se hizo al día o sea, son los stats o sea, estadísticas de los
+  trades y demás Así como nos enviabas fotos de las estadísticas Claro
+afirmacion: las 7 capturas que venian con el libro de marzo son estadisticas de las operaciones (stats);
+  el «Claro» responde a la frase del consultor. Sin ninguna cifra
+tema: material.capturas_marzo_son_estadisticas
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-19 (marzo). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

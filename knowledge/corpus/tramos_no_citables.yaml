@@ -136,3 +136,150 @@ tramos:
       precaucion (ADR-0021 §2): despues de terminar las preguntas, el tramo puede contener operaciones y un agregado de un periodo que el audio no identifica. No se cita ni se describe, y ninguna cifra de aqui se usa
     acordado: >-
       regla del brief de la sesion 03 (2026-09-29): un tramo dudoso va aqui y no se cita ni se describe
+  - video_id: v10
+    t0: "0:45:05"
+    t1: "0:46:41"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg silencedetect a -50 dB y 30 s, y volumedetect, 2026-10-04), de 2705,8 s a 2800,5 s. Lo que se dijo ahi no esta en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      skill ingerir-sesion, paso 2 (un corte de audio entra aqui con motivo SIN AUDIO), en la rama trabajo/sesion-04 (encargo del consultor del 2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "1:30:51"
+    t1: "1:35:48"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg silencedetect a -50 dB y 30 s, y volumedetect, 2026-10-04), de 5451,6 s a 5747,7 s. Lo que se dijo ahi no esta en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      skill ingerir-sesion, paso 2 (un corte de audio entra aqui con motivo SIN AUDIO), en la rama trabajo/sesion-04 (encargo del consultor del 2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "1:36:37"
+    t1: "1:38:58"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg silencedetect a -50 dB y 30 s, y volumedetect, 2026-10-04), de 5797,8 s a 5937,6 s. Lo que se dijo ahi no esta en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      skill ingerir-sesion, paso 2 (un corte de audio entra aqui con motivo SIN AUDIO), en la rama trabajo/sesion-04 (encargo del consultor del 2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "1:39:08"
+    t1: "1:39:42"
+    motivo: >-
+      SIN AUDIO: cero digital (-91 dB, ffmpeg silencedetect a -50 dB y 30 s, y volumedetect, 2026-10-04), de 5948,9 s a 5981,6 s. Lo que se dijo ahi no esta en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      skill ingerir-sesion, paso 2 (un corte de audio entra aqui con motivo SIN AUDIO), en la rama trabajo/sesion-04 (encargo del consultor del 2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "0:00:58"
+    t1: "0:01:13"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 00:58–01:12] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "0:01:27"
+    t1: "0:01:37"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 01:27–01:36] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "0:40:08"
+    t1: "0:40:20"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 40:08–40:19] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:03:24"
+    t1: "1:03:39"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 63:24–63:38] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:04:56"
+    t1: "1:05:29"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 64:56–65:28] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:26:34"
+    t1: "1:26:41"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 86:34–86:40] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:26:44"
+    t1: "1:26:51"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 86:44–86:50] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:55:09"
+    t1: "1:55:21"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 115:09–115:20] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:55:58"
+    t1: "1:56:03"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 115:58–116:02] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:56:04"
+    t1: "1:56:08"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 116:04–116:07] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "2:06:42"
+    t1: "2:07:03"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 126:42–127:02] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "2:07:04"
+    t1: "2:07:12"
+    motivo: >-
+      cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 127:04–127:11] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "0:40:20"
+    t1: "0:40:42"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader ensena en pantalla unos datos de una cuenta suya y los comenta en voz sin cifras; es un AGREGADO, y el periodo solo se deduce por el contexto (despues habla de enero). Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:27:44"
+    t1: "1:28:19"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader lee en voz el R de operaciones concretas de sus libros en pantalla, de un periodo que el audio no identifica. Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:43:42"
+    t1: "1:44:21"
+    motivo: >-
+      conversacion personal, ajena a la operativa, con una persona de su casa y con el consultor; no es especificacion y no se cita ni se describe
+    acordado: >-
+      decision de la sesion autonoma, encargo de trabajo/sesion-04 (2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "1:56:07"
+    t1: "1:56:19"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader da un AGREGADO (el maximo de operaciones en un dia) de un periodo que el audio no identifica, entre bloques de cuarentena y justo despues de nombrar un mes con dias ocultos. Se leyo en la filtrada; no se cita y la cifra no se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:55:29"
+    t1: "1:55:32"
+    motivo: >-
+      precaución: mes con días ocultos que la cuarentena mecánica no cubre. El segmento de la version filtrada de 1:55:29 (hasta la linea siguiente, 1:55:32) nombra un mes que tiene dias en casos_ocultos y que MESES_FILTRADOS no filtra; medido el 2026-10-04 imprimiendo solo marcas de tiempo. No se cita ni se describe
+    acordado: >-
+      revision del consultor del 2026-10-04 (trabajo/sesion-04, punto 2): cada segmento de la filtrada que nombre un mes con dias ocultos fuera de MESES_FILTRADOS entra aqui; docs/validation/SESION-04-EXTRACCION.md

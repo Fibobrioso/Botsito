@@ -1,0 +1,18 @@
+id: ev-v10-010214-23a7fc0c
+video_id: v10
+t0: '1:02:14'
+t1: '1:02:28'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: exactamente en el 0 contando la mecha Exactamente, sí Para precisar, si va más allá son
+  siempre los mismos puntos O depende de algo No depende de nada, siempre es la mecha O sea, de mecha
+  a mecha siempre va a ir
+afirmacion: la orden de entrada va exactamente en el 0 de la caja, contando la mecha; no depende de nada
+tema: entrada.orden.en_el_0_con_mecha
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-22 (A-36). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -1,0 +1,17 @@
+id: ev-v10-005056-1a55d5b4
+video_id: v10
+t0: 0:50:56
+t1: 0:51:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si el máximo nuevo queda muy lejos cambia algo es no es indiferente si el máximo es demasiado
+  lejos o no
+afirmacion: que el maximo nuevo quede muy lejos no cambia nada
+tema: herramientas.caja.uno_se_expande_hasta_llenar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

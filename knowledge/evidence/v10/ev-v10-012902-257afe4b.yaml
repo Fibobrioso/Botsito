@@ -1,0 +1,18 @@
+id: ev-v10-012902-257afe4b
+video_id: v10
+t0: '1:29:02'
+t1: '1:29:21'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: todo es 13 o sea fijo es 13 la regla es esa [...] es un modo 3 tomando en cuenta que es
+  de respecto al 1 de la caja no no no no exacto exacto exacto
+afirmacion: el objetivo es fijo, 1 a 3, medido respecto al 1 de la caja; la confirmacion es del trader
+  («exacto») a la frase del consultor
+tema: objetivo.base_0_a_1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-12 (G-2, A-33). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79
