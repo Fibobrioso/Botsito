@@ -33,8 +33,6 @@ A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 
 
 E. **A-42 RESUELTA con el trader en la sesion 4, no por ADR** (orden del consultor del 2026-09-30, docs/validation/REGISTRO-MARZO.md): es la pregunta del reloj de invierno de docs/sesion-4/PREGUNTAS.md, y marzo no se sortea ni se ingiere hasta entonces (PARADA B0, sin cambio). Era: **A-42 decidida antes del 25 de octubre** (el cambio de hora; el mecanismo ya esta: `reloj_sesiones`, ADR-0063).
 
-F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 22 por preguntar -las 17 del barrido, 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima, la 20 y la 21 de `feature/escenarios-por-sesion` y la 22 de `trabajo/cerrar-a29-a36`- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
-
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3).
 
 J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
@@ -117,6 +115,7 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
+- Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).

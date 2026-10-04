@@ -3523,3 +3523,56 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 11 (2026-10-03).
+
+# Next Action HECHA · F · sale de PROJECT_STATE.md en trabajo/sesion-04 (2026-10-04)
+
+La hace esta rama: la sesion 4 se hizo con la hoja y se ingirio (orden de cierre del consultor del
+2026-10-04; `docs/runbooks/RITUAL.md`, punto 3). Su texto literal en PROJECT_STATE.md:
+
+F. **Preguntas para la sesion 4 con el trader** (HOJA HECHA tras el barrido del corpus, 2026-09-30, `stable/F36e-barrido-sesion-4`: docs/sesion-4/PREGUNTAS.md, 22 por preguntar -las 17 del barrido, 2 que anadio el consultor al cerrar `feature/registro-marzo`, la primera y la ultima, la 20 y la 21 de `feature/escenarios-por-sesion` y la 22 de `trabajo/cerrar-a29-a36`- y 15 ya respondidas; lo que sigue es lo que la origino): el bloque, R1 o R4; la caja con la vela en curso; el stop en el 0,8 o en el 1; el umbral de la vela casi plana (RN-007); la doble ruptura sin cuerpo (ADR-0060 §2); el redondeo, un punto o un pip (ADR-0061 §2); el reloj de invierno (A-42); el break even al tick (ADR-0061 §5); la confirmacion grabada de A-47; y «¿pones la orden en el ultimo minimo (o maximo) que se formo en M1 y la vas moviendo cuando se forma uno nuevo?» (CAJA-77 §3.3).
+
+# Registro de cierre · `trabajo/sesion-04` (2026-10-04)
+
+- Orden de cierre del consultor del 2026-10-04, ejecutada a mano siguiendo `RITUAL.md`. La rama
+  ingiere la sesion 4 con el trader como v10 (`drive_id: null`, 2026-10-04, en
+  `SESIONES_EN_CUARENTENA`): transcripcion `tr-v10-large-v3-int8-float16-85e8af79` (1914
+  segmentos), fotogramas `fr-v10-69219820` (7657), 21 tramos no citables de v10 (4 SIN AUDIO, 12 de
+  la cuarentena mecanica, 3 de precaucion, 1 de conversacion personal y 1 de un mes con dias ocultos
+  que la cuarentena no cubre) y 64 items `ev-v10-*`.
+  - El informe da la extraccion por pregunta de S-1..S-24 (13 resuelven, 11 en parte). No resuelve
+    nada en la spec: el destino de cada respuesta lo decide el consultor en la rama de activacion.
+  - `scripts/transcribir_sesion.py` guarda la hoja y los textos de los codigos POR SESION
+    (`--sesion`, `ORDEN_SESION_04`).
+  - `Tests Currently Passing` paso de 1246 a 1251 funciones (1910 -> 1919 casos).
+- Deuda NUEVA: falta un test que exija `Fuente:` en todo commit que toque
+  `tramos_no_citables.yaml` (orden de cierre, decision 2).
+- Pendientes (informe §6):
+  - (a) la rama de cuarentena que oculte todo mes con dias en `casos_ocultos`, antes de activar la
+    sesion 4 (entra como primer punto de Next Action);
+  - (b) con el guion nuevo en `main`, `--solo-filtrar --sesion 03` sobre v9 (sha esperado
+    `f7529459…`) y `--sesion 04` sobre v10.
+- S-14 («12 puntos»): queda como ambiguedad del ASR para la rama de activacion (decision 3).
+- Next Action: F sale aqui (arriba). En el commit de estado se reemplaza E (A-42 respondida en S-7,
+  pendiente de activar antes del 25 de octubre con las horas en UTC), entra un primer punto nuevo
+  (la rama de cuarentena) y H lleva una nota.
+- Letra: la ultima cerrada era la u (`stable/F36u-historial-sin-git`); `v` libre en local y en
+  `origin`.
+- Tag: `stable/F36v-sesion-04`. El merge es `git rev-parse "stable/F36v-sesion-04^{commit}"`: su sha
+  no existe hasta el merge, y el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `536e958`: apertura: encargo, contrato, Archivo 12 y el informe EN CURSO;
+  - `cfec50b`: v10 en el corpus y en la cuarentena, transcripcion, fotogramas y los 16 primeros
+    tramos no citables, antes de leer nada;
+  - `c489685`: la extraccion, los 64 items, la hoja por sesion con su test roto a proposito, la
+    fila de HOLDOUT y la revision del consultor;
+  - `d28e6c7`: la CI 205 y el informe del revisor, con sus hallazgos arreglados;
+  - y el de este registro, que saca tambien el contrato.
+- CI de Linux, empujada como `fix/sesion-04`:
+  - run 205 (37224218115), c489685: 1 failed, 1910 passed, 8 skipped;
+  - run 206 (37226574157), d28e6c7: 1 failed, 1910 passed, 8 skipped.
+  En los dos el fallo es el UNICO esperado (`RITUAL.md`): `state check` en
+  `test_state_check_ok_on_real_repo`. Un primer intento de commit y push se denego en modo
+  automatico; despues Aleks los aprobo a la vista. El cierre borra `fix/sesion-04` de `origin`.
+- Informe: `docs/validation/SESION-04-EXTRACCION.md`, con la revision del consultor, el informe del
+  revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-sesion-04.md`. Hoja usada:
+  `docs/sesion-4/HOJA-USADA.md`.

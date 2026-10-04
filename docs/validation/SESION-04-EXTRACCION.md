@@ -1159,3 +1159,36 @@ Resumen: 0 bloquea, 0 importa, 2 menor. Requisitos: 22 hechos (1 «hecho de otra
 18. `gh run list --branch fix/sesion-04`; `git ls-remote origin refs/heads/fix/sesion-04`; `gh run view 37224218115 --log-failed | grep`.
 19. `cat .claude/skills/ingerir-sesion/SKILL.md`; `grep -n 0021` en `docs/adr`; `git show HEAD:… | sha256sum`; `cat sesion-04.registro.txt`.
 20. `git rev-parse --short main`; `git diff --cached --stat`; `grep naturaleza` en `fuentes.yaml`.
+
+## Orden de cierre (2026-10-04)
+
+Orden de cierre del consultor del 2026-10-04, copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/sesion-04 (consultor, 2026-10-04). Cópiala al informe SESION-04-EXTRACCION.md, sección «Orden de cierre», con su fecha.
+>
+> TAG: stable/F36v-sesion-04. Antes, comprueba en HISTORIA que la última letra es la u (stable/F36u-historial-sin-git). Si no lo es, usa la siguiente libre y dímelo.
+>
+> DECISIONES SOBRE LO QUE ME DEJASTE
+> 1. El cuerpo de c489685 (el 7 junto a junio) se queda: no se reescribe una rama empujada. No añade exposición, porque la cifra está declarada en HOLDOUT-EXPOSICIONES (ADR-0021 §2) y no se usa en nada. Lo mismo para las citas de tramos que llevaba ese commit. Escríbelo en la fila del 2026-10-04 de HOLDOUT-EXPOSICIONES: «el commit c489685, ya empujado, copia la cifra y citas de tramos de precaución; declarado, sin reescritura».
+> 2. El trailer Fuente: que pide tramos_no_citables.yaml y que nada comprueba va a Technical Debt de PROJECT_STATE en una línea: «falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan».
+> 3. S-14 («12 puntos»): queda como ambigüedad del ASR para la rama de activación, que lo resolverá con el trader si hace falta.
+>
+> HALLAZGOS DEL CONSULTOR (para la fila de ERRORES-RECURRENTES.md)
+> - Importa: S-7 se respondió en el reloj del trader y no se fijó en UTC (punto 11 del §4).
+> - Menor: «1251» (funciones) y «1901» (casos) se mezclaron como si fueran la misma métrica de tests.
+> - Error del propio consultor: en la revisión dio el informe por bueno con una cita de un tramo de precaución en el §2.3; la encontró el revisor. Lección para el consultor y el revisor: antes de un push, cruzar TODAS las citas del informe y de HOLDOUT-EXPOSICIONES con tramos_no_citables.yaml, incluidos los márgenes de cada tramo.
+>
+> NEXT ACTION (en el commit de estado solo se reemplaza; no se añade nada a Completed Features ni al Change Log)
+> - F (preguntas de la sesión 4): hecha. Pasa a HISTORIA en el commit de la rama, como manda el ritual.
+> - E se reemplaza por: «A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)».
+> - Nuevo primer punto: «Rama de cuarentena: ocultar todo mes con días en casos_ocultos (§6 del informe), antes de activar la sesión 4».
+> - H y J se quedan, con una nota en H: «respondida en parte en S-14; se decide en la activación».
+>
+> EL RITUAL, como lo manda RITUAL.md: en la rama, contrato fuera + HISTORIA + fila de ERRORES-RECURRENTES en un commit; merge a main; tag; commit de estado; make check sellado; push atómico de main y el tag; CI de main en verde; luego se borra trabajo/sesion-04 y la remota fix/sesion-04. El worktree wt-ci de otra sesión no se toca: solo dime qué es.
+>
+> INFORME FINAL: sha de main, tag, run de la CI de main, ramas que quedan (locales y remotas), worktrees que quedan y tamaño de PROJECT_STATE.md.
+
+Letra comprobada en HISTORIA: la última cerrada era la `u` (`stable/F36u-historial-sin-git`), y
+`stable/F36v-*` no existe. El tag es `stable/F36v-sesion-04`.
