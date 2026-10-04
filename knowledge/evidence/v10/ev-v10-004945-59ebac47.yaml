@@ -1,0 +1,20 @@
+id: ev-v10-004945-59ebac47
+video_id: v10
+t0: 0:49:45
+t1: 0:50:10
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Ahora, si ocurre una vela verde, otra vela verde Pues simplemente lo vamos actualizando
+  la caja Mientras no se desarrolle otro punto breaker Posible punto breaker Pues... nosotros vamos actualizando
+  o sea expandiendo pues el 1 conforme vaya subiendo y aquí en este caso pues mantendríamos nuestro punto
+  breaker aquí y nuestro 0 aquí
+afirmacion: con la orden sin llenar, si el precio sigue subiendo (venta), el 1 de la caja se va expandiendo
+  hasta el maximo nuevo mientras no se forme otro punto de breaker; el 0 y el punto de breaker se mantienen
+tema: herramientas.caja.uno_se_expande_hasta_llenar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

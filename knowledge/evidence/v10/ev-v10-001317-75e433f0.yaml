@@ -1,0 +1,19 @@
+id: ev-v10-001317-75e433f0
+video_id: v10
+t0: 0:13:17
+t1: 0:13:40
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la actualización es la caja iría desde aquí hasta aquí vale pero conforme se va a desarrollar
+  una vez me valide por ejemplo el alto más alto y cierre la vela ya puedo ir actualizando desde este
+  punto hasta este punto
+afirmacion: 'subpregunta de A-49: la caja se va actualizando a medida que se valida el alto mas alto y
+  cierra la vela'
+tema: herramientas.caja.se_actualiza_al_cierre
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

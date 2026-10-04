@@ -248,3 +248,38 @@ tramos:
       cuarentena mecanica de la sesion 04 (scripts/transcribir_sesion.py, el de main): el bloque [CUARENTENA 127:04–127:11] de la version filtrada, con t1 un segundo despues para cubrir el ultimo segmento; los motivos de los 45 segmentos de los 12 bloques son, en total, fecha numerica 2, mes 16 y vecino 27 (el registro no los da por bloque). Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
     acordado: >-
       regla de la skill ingerir-sesion, paso 4, y del encargo de trabajo/sesion-04 (2026-10-04): el filtro se aplica a la cruda antes de que nadie la lea y solo se lee la version filtrada; el informe lleva solo las marcas de tiempo (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "0:40:20"
+    t1: "0:40:42"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader ensena en pantalla unos datos de una cuenta suya y los comenta en voz sin cifras; es un AGREGADO, y el periodo solo se deduce por el contexto (despues habla de enero). Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:27:44"
+    t1: "1:28:19"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader lee en voz el R de operaciones concretas de sus libros en pantalla, de un periodo que el audio no identifica. Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:43:42"
+    t1: "1:44:21"
+    motivo: >-
+      conversacion personal, ajena a la operativa, con una persona de su casa y con el consultor; no es especificacion y no se cita ni se describe
+    acordado: >-
+      decision de la sesion autonoma, encargo de trabajo/sesion-04 (2026-10-04); docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v10
+    t0: "1:56:07"
+    t1: "1:56:19"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader da un AGREGADO (el maximo de operaciones en un dia) de un periodo que el audio no identifica, entre bloques de cuarentena y justo despues de nombrar un mes con dias ocultos. Se leyo en la filtrada; no se cita y la cifra no se usa
+    acordado: >-
+      regla del encargo de trabajo/sesion-04 (2026-10-04) y de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-04-EXTRACCION.md)
+  - video_id: v10
+    t0: "1:55:29"
+    t1: "1:55:32"
+    motivo: >-
+      precaución: mes con días ocultos que la cuarentena mecánica no cubre. El segmento de la version filtrada de 1:55:29 (hasta la linea siguiente, 1:55:32) nombra un mes que tiene dias en casos_ocultos y que MESES_FILTRADOS no filtra; medido el 2026-10-04 imprimiendo solo marcas de tiempo. No se cita ni se describe
+    acordado: >-
+      revision del consultor del 2026-10-04 (trabajo/sesion-04, punto 2): cada segmento de la filtrada que nombre un mes con dias ocultos fuera de MESES_FILTRADOS entra aqui; docs/validation/SESION-04-EXTRACCION.md

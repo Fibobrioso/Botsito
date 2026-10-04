@@ -1,0 +1,18 @@
+id: ev-v10-020308-75b88d40
+video_id: v10
+t0: '2:03:08'
+t1: '2:03:27'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: eso tiene que ver con el contexto en el que estamos analizando. si es en M15 la mecha si
+  es una toma de liquidez con mecha invalida, pero si es en M1 se toma en cuenta
+afirmacion: 'depende del contexto: en M15 una toma con mecha invalida; en M1 se toma en cuenta. No identifica
+  la linea de v4 0:53:10'
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-23 (A-32). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

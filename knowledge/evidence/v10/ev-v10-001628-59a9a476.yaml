@@ -1,0 +1,16 @@
+id: ev-v10-001628-59a9a476
+video_id: v10
+t0: 0:16:28
+t1: 0:16:35
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esperamos a que cierre la vela esa vela y lo trazamos desde allí
+afirmacion: 'subpregunta de A-49: la caja se traza cuando cierra la vela'
+tema: herramientas.caja.trazado_con_vela_cerrada
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -1,0 +1,18 @@
+id: ev-v10-001935-d0f4ce50
+video_id: v10
+t0: 0:19:35
+t1: 0:19:46
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tu cuadro de ganas estaría trazado aquí, o si quieres, pues lo puedes actualizar, porque
+  obviamente se ve el precio, o sea, como avanza lento puedes actualizarlo desde ese punto
+afirmacion: 'subpregunta de A-49: dice tambien que la caja se puede actualizar mientras el precio avanza
+  («si quieres»): no es una regla firme'
+tema: herramientas.caja.actualizable_mientras_avanza
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

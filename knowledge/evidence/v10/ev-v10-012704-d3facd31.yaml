@@ -1,0 +1,18 @@
+id: ev-v10-012704-d3facd31
+video_id: v10
+t0: '1:27:04'
+t1: '1:27:36'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: incrementar tu take profit pero qué pasa después lo hemos dejado así o sea no no vamos a
+  tratar de maximizar [...] pues no no vamos a dejar correr nada por ahora
+afirmacion: 'lo de dejar correr lo dijo en los primeros videos; lo han dejado: no se maximiza y no se
+  deja correr nada, por ahora'
+tema: objetivo.fijo_sin_dejar_correr
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-12 (G-2, A-33). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

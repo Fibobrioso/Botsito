@@ -1,0 +1,19 @@
+id: ev-v10-001059-18a772a5
+video_id: v10
+t0: 0:10:59
+t1: 0:11:14
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: y yo espero que es a que se mitigue pues en caso bajista el lower low y en caso alcista
+  el higher high el mismo comportamiento en compra que en venta exacto y ya
+afirmacion: a la pregunta de si espera a que cierre una vela, el trader dice que espera a que se mitigue
+  el bajo mas bajo (venta) o el alto mas alto (compra), igual en compra y en venta; la linea mezcla la
+  pregunta del consultor y el «exacto» del trader
+tema: entrada.orden.momento_al_mitigar_extremo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

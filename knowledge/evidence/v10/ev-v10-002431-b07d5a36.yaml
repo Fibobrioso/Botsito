@@ -1,0 +1,18 @@
+id: ev-v10-002431-b07d5a36
+video_id: v10
+t0: 0:24:31
+t1: 0:24:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pongo la orden aquí mismo cuando el precio pues tome liquidez o sea en este higher high
+  de aquí en m1 se complete [...] pero que me tome con mecha o
+afirmacion: pone la orden en el minimo nuevo cuando el precio toma, en M1, el alto mas alto anterior (venta),
+  aunque sea con mecha
+tema: entrada.orden.momento_al_mitigar_extremo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

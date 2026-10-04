@@ -1,0 +1,18 @@
+id: ev-v10-003706-5b7055a2
+video_id: v10
+t0: 0:37:06
+t1: 0:37:17
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Es que el stop se actualizaría O sea, se actualizaría a 0.8 No estaría en el 1 Se usa el
+  1 al comienzo Pero no de ejecución, sino como planteamiento
+afirmacion: 'el stop no esta en el 1: el 1 se usa al principio como planteamiento (para el RR), no en
+  la ejecucion; el stop va al 0,8'
+tema: stop.al_poner_la_orden_en_08
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-18). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

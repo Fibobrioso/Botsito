@@ -1,0 +1,16 @@
+id: ev-v10-000742-cd9d76b1
+video_id: v10
+t0: 0:07:42
+t1: 0:07:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Ahora, siempre el punto breaker va a ser el más reciente, el que genere, pues, la ruptura.
+afirmacion: el punto de breaker es siempre el mas reciente, el que genera la ruptura
+tema: entrada.orden.punto_mas_reciente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -23,7 +23,7 @@ trabajo/sesion-04
 8e21fd1 · merge: sin historial evaluado, knowledge validate no dice «intacto»; en validation/ solo Historial lee git (HISTORIAL-SIN-GIT.md) · tag stable/F36u-historial-sin-git
 
 ## Tests Currently Passing
-1246 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1251 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -1,0 +1,17 @@
+id: ev-v10-014040-fb7a153b
+video_id: v10
+t0: '1:40:40'
+t1: '1:41:01'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ahora si es una vela roja entonces nuestro sesgo sería bajista a la siguiente [...] si esta
+  vela termina en color verde entonces nuestro sesgo sería alcista
+afirmacion: si esa vela cierra roja el sesgo siguiente es bajista, y si cierra verde, alcista
+tema: sesgo.h4.doble_ruptura_color
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-13 (ADR-0060). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

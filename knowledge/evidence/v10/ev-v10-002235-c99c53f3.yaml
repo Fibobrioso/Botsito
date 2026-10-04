@@ -1,0 +1,18 @@
+id: ev-v10-002235-c99c53f3
+video_id: v10
+t0: 0:22:35
+t1: 0:22:41
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la B no, porque puede ser de ambos colores O sea, la otra es de ambos colores Tiene que
+  ver la mecha
+afirmacion: 'descarta la opcion (b) de S-2, la vela siguiente de color contrario: puede ser de ambos colores;
+  lo que cuenta es la mecha'
+tema: entrada.orden.sin_vela_de_color_contrario
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

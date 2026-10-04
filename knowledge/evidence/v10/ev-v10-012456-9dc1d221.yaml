@@ -1,0 +1,18 @@
+id: ev-v10-012456-9dc1d221
+video_id: v10
+t0: '1:24:56'
+t1: '1:25:09'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: a marcas un alto en m15 después el precio lo pasa por poco con la mecha y vuelve que haces
+  pues no tiene la regla es que lo tiene que pasar con cuerpo no con mecha
+afirmacion: 'si el precio pasa por poco el alto de M15 con la mecha y vuelve, eso no cuenta: lo tiene
+  que pasar con cuerpo'
+tema: liquidez.m15.alto_superado_con_mecha
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-11 (A-35). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

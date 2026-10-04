@@ -1,0 +1,18 @@
+id: ev-v10-020453-2d41dd25
+video_id: v10
+t0: '2:04:53'
+t1: '2:05:03'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: cae ya apenas cierra por debajo estoy si lo hace con cuerpo mucho mejor entonces nosotros
+  la entrada ya la pondríamos en break even
+afirmacion: 'en su ejemplo pone el break even cuando la vela cierra por debajo del nivel, mejor con cuerpo:
+  al cierre, no al toque. Contradice v6 0:57:01 y v9 0:55:43 («apenas toca»)'
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-24 (A-13). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -229,7 +229,7 @@ def test_la_filtrada_agrupa_por_pregunta_y_no_trae_nada_en_cuarentena(m: ModuleT
     ]
     lineas, cuarentena = m.lineas_filtradas(_segs(m, textos), VALIDOS)
     assert set(cuarentena) == {3, 4, 5}
-    texto = m.version_filtrada(lineas, "prueba")
+    texto = m.version_filtrada(lineas, "prueba", m.ORDEN_SESION_03)
     assert "SECRETO" not in texto and "septiembre" not in texto
     assert "respuesta uno" not in texto and "otra cosa inocua" not in texto
     assert "[CUARENTENA 00:30–00:59]" in texto  # los tres segmentos, en un solo bloque
@@ -250,7 +250,7 @@ def test_un_tramo_sin_codigo_es_sin_pregunta(m: ModuleType) -> None:
 def test_el_registro_no_trae_contenido(m: ModuleType) -> None:
     textos = ["pregunta A-35", "SECRETO en mayo", "algo", "pregunta A-46", "otra"]
     lineas, cuarentena = m.lineas_filtradas(_segs(m, textos), VALIDOS)
-    registro = "\n".join(m.registro_filtro(lineas, cuarentena, VALIDOS))
+    registro = "\n".join(m.registro_filtro(lineas, cuarentena, VALIDOS, m.ORDEN_SESION_02))
     assert "SECRETO" not in registro and "mayo" not in registro
     assert "A-35 00:00" in registro and "A-46 00:30" in registro
     assert "A-21" in registro.split("SIN codigo detectado:")[1]
@@ -361,17 +361,82 @@ def test_el_orden_es_el_de_la_hoja_de_la_sesion_03(m: ModuleType) -> None:
         "A-21", "E-1",
         "A-30", "A-31", "E-2", "E-3", "A-41", "A-38", "A-24", "A-25", "A-37",
     ]  # fmt: skip
-    assert m.ORDEN_SESION is m.ORDEN_SESION_03
-    assert set(m.CODIGOS_DE_SESION) == {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"}
+    assert m.HOJAS["03"] is m.ORDEN_SESION_03
+    assert set(m.CODIGOS_DE_SESION_TEXTO["03"]) == {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"}
     presentes = ["A-99", "G-3", m.SIN_PREGUNTA, "S-1", "A-47", "E-9"]
-    assert m.orden_de_preguntas(presentes) == ["A-47", "S-1", "G-3", "A-99", "E-9", m.SIN_PREGUNTA]
+    assert m.orden_de_preguntas(presentes, m.ORDEN_SESION_03) == [
+        "A-47", "S-1", "G-3", "A-99", "E-9", m.SIN_PREGUNTA,
+    ]  # fmt: skip
 
 
 def test_los_codigos_de_sesion_llevan_el_texto_de_la_hoja(m: ModuleType) -> None:
     """E-1, E-2 y E-3 no tenian texto en ningun fichero hasta la revision del consultor del
     2026-09-29; aqui se fija el de la hoja de la sesion 03, y que todo codigo tiene uno."""
-    assert tuple(m.CODIGOS_DE_SESION_TEXTO) == m.CODIGOS_DE_SESION
-    assert m.CODIGOS_DE_SESION_TEXTO["E-1"] == "tus dos backtests de los mismos días"
-    assert m.CODIGOS_DE_SESION_TEXTO["E-2"] == "cómo operas los equals"
-    assert m.CODIGOS_DE_SESION_TEXTO["E-3"] == "cuando la vela cambia de color"
-    assert all(texto.strip() for texto in m.CODIGOS_DE_SESION_TEXTO.values())
+    textos = m.CODIGOS_DE_SESION_TEXTO["03"]
+    assert textos["E-1"] == "tus dos backtests de los mismos días"
+    assert textos["E-2"] == "cómo operas los equals"
+    assert textos["E-3"] == "cuando la vela cambia de color"
+    for sesion, por_codigo in m.CODIGOS_DE_SESION_TEXTO.items():
+        assert all(texto.strip() for texto in por_codigo.values()), sesion
+
+
+# ------------------------------------------------- la hoja de la sesion 04 (S-1 a S-24, por sesion)
+
+ORDEN_04 = [
+    "S-1", "S-2", "S-3", "S-4", "S-5", "S-6", "S-22",
+    "S-7", "S-8", "S-9", "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
+    "S-18", "S-20", "S-21", "S-23", "S-24", "S-19",
+]  # fmt: skip
+
+
+def test_el_orden_es_el_de_la_hoja_de_la_sesion_04(m: ModuleType) -> None:
+    """El orden del encargo de `trabajo/sesion-04` (docs/sesion-4/HOJA-USADA.md), con todos los
+    S-1..S-24 y cada uno con su texto."""
+    assert list(m.ORDEN_SESION_04) == ORDEN_04
+    assert m.HOJAS["04"] is m.ORDEN_SESION_04
+    assert m.SESION_EN_CURSO == "04"
+    assert sorted(m.ORDEN_SESION_04, key=lambda c: int(c[2:])) == [f"S-{n}" for n in range(1, 25)]
+    assert set(m.CODIGOS_DE_SESION_TEXTO["04"]) == set(m.ORDEN_SESION_04)
+
+
+def test_s1_tiene_un_texto_por_sesion_y_la_hoja_03_no_cambia(m: ModuleType) -> None:
+    """S-1 existe en la 03 y en la 04 con textos distintos: si los textos fueran un unico
+    diccionario, uno pisaria al otro. Y la hoja de la 03 sigue validando y agrupando como antes."""
+    assert m.CODIGOS_DE_SESION_TEXTO["03"]["S-1"] == "cómo decide el sesgo del día"
+    assert m.CODIGOS_DE_SESION_TEXTO["04"]["S-1"] == (
+        "cuándo pones la orden, una vez formado el mínimo (o máximo) en M1"
+    )
+    assert set(m.CODIGOS_DE_SESION_TEXTO["03"]).isdisjoint({"S-2", "S-7", "S-24"})
+    assert set(m.CODIGOS_DE_SESION_TEXTO["04"]).isdisjoint({"E-1", "G-1", "G-3"})
+
+
+def test_los_codigos_validos_son_los_de_la_hoja_de_cada_sesion(m: ModuleType) -> None:
+    v03, v04 = set(m.codigos_validos("03")), set(m.codigos_validos("04"))
+    assert {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"} <= v03
+    assert not {f"S-{n}" for n in range(2, 25)} & v03
+    assert {f"S-{n}" for n in range(1, 25)} <= v04
+    assert not {"E-1", "E-2", "E-3", "G-1", "G-2", "G-3"} & v04
+    assert v03 - {"E-1", "E-2", "E-3", "S-1", "G-1", "G-2", "G-3"} == v04 - set(ORDEN_04)
+
+
+@pytest.mark.parametrize(
+    ("texto", "codigo"),
+    [
+        ("pregunta ese siete", "S-7"),
+        ("Pregunta S veintidós", "S-22"),
+        ("pregunta es 24", "S-24"),
+        ("pregunta S diez", "S-10"),
+        ("pregunta ese diecinueve", "S-19"),
+    ],
+)
+def test_la_sesion_04_abre_con_ese_y_el_numero(m: ModuleType, texto: str, codigo: str) -> None:
+    assert m.codigo_en(texto, (*VALIDOS, *ORDEN_04)) == codigo, texto
+
+
+def test_la_filtrada_de_la_04_agrupa_con_su_hoja(m: ModuleType) -> None:
+    textos = ["pregunta ese uno", "uno", "pregunta ese veintidós", "dos", "pregunta ese siete", "x"]
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("04"))
+    texto = m.version_filtrada(lineas, "prueba", m.HOJAS["04"])
+    assert texto.index("## S-1\n") < texto.index("## S-22") < texto.index("## S-7")
+    registro = "\n".join(m.registro_filtro(lineas, {}, m.codigos_validos("04"), m.HOJAS["04"]))
+    assert "S-24" in registro.split("SIN codigo detectado:")[1]

@@ -1,0 +1,18 @@
+id: ev-v10-011021-02f5dcf3
+video_id: v10
+t0: '1:10:21'
+t1: '1:10:40'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la semana del 9% de pérdida contempla de lunes a viernes. o desde que empezó la racha de
+  pérdidas bueno, sería desde que empezó la racha de pérdidas, ¿no?
+afirmacion: 'a la pregunta de si el 9 % semanal es de lunes a viernes o desde que empezo la racha, contesta
+  «desde que empezo la racha, ¿no?»: dudoso, y antes dijo que el tope es el diario'
+tema: riesgo.tope_semanal_desde_racha
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-9 (A-44). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -1,0 +1,19 @@
+id: ev-v10-015003-dd8ab1bf
+video_id: v10
+t0: '1:50:03'
+t1: '1:50:26'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si la caja queda a nivel de la liquidez que se tomó, ¿descartas la entrada? Eso creo que
+  entonces a lo mejor tiene que ver con el igual, si la caja queda a nivel de la liquidez que se tomó,
+  ¿descartas la entrada? y no me da igual la respuesta es la ve no me da igual
+afirmacion: 'no entendio «a caballo»; con la pregunta reformulada («a nivel de la liquidez») responde
+  «creo» y marca (b): no descarta la entrada, le da igual'
+tema: entrada.caja_a_nivel_de_la_liquidez
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-17 (A-50). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

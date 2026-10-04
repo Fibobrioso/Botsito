@@ -1,0 +1,19 @@
+id: ev-v10-001152-96076e60
+video_id: v10
+t0: 0:11:52
+t1: 0:12:02
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no existe algo que lo invalide, o sea, lo único que invalidaría sería Por ejemplo, en un
+  caso del system no me llega a tomar el higher high y en un caso bajista no me llega a tomar el lower
+  low.
+afirmacion: una vez validado el punto, nada hace que no ponga la orden; lo unico que invalida es que el
+  precio no llegue a tomar el alto mas alto (compra) o el bajo mas bajo (venta)
+tema: entrada.orden.unica_invalidacion_sin_toma
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

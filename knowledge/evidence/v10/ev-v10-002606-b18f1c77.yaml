@@ -1,0 +1,18 @@
+id: ev-v10-002606-b18f1c77
+video_id: v10
+t0: 0:26:06
+t1: 0:26:18
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se llega a tomar el lower load más reciente en M1, como sea, que lo haga, y luego, pues,
+  para poder validar este máximo aquí.
+afirmacion: 'en una compra es lo mismo con el maximo: el maximo se valida cuando se toma el bajo mas bajo
+  mas reciente en M1'
+tema: entrada.orden.momento_al_mitigar_extremo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-49). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79

@@ -1,0 +1,19 @@
+id: ev-v10-010950-7e5543df
+video_id: v10
+t0: '1:09:50'
+t1: '1:10:11'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para parar en un día pues con perder el 4.5 paramos Hasta el día siguiente. Ahora, las dos
+  cosas, lo que llegué antes, bueno, o sea, la respuesta es la, vamos a marcar la D, pero con la condicional
+  de eso, de perder un 4.5 en un día.
+afirmacion: con perder el 4,5 % en un dia para hasta el dia siguiente; marca «las dos cosas, lo que llegue
+  antes» con la condicion del 4,5 % diario
+tema: riesgo.tope_diario_45
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-04 (trabajo/sesion-04) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-9 (A-44). docs/validation/SESION-04-EXTRACCION.md
+transcripcion: tr-v10-large-v3-int8-float16-85e8af79
