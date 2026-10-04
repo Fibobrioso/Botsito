@@ -1,0 +1,22 @@
+rama: trabajo/historial-sin-git
+riesgo: medio  # cambia validation/knowledge.py y sus tests; no la spec, ni el motor, ni knowledge/, ni ninguna cifra
+artefacto: docs/validation/HISTORIAL-SIN-GIT.md
+rutas_permitidas:
+  - docs/validation/HISTORIAL-SIN-GIT.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+  - src/botsito/validation/knowledge.py
+  - tests/unit/test_historial_sin_git.py
+rutas_protegidas:
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - src/botsito/cases/
+  - src/botsito/corpus/
+  - knowledge/
+  - data/manifests/
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run pytest tests/unit/test_historial_sin_git.py tests/unit/test_kit.py tests/unit/test_reabrir_y_fuente_documental.py -q
+  - make check > make-check.log 2>&1

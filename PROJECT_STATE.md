@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/historial-sin-git
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36t-reabrir-y-fuente-documental` (2026-10-03).
+trabajo/historial-sin-git · EN CURSO (2026-10-03) · docs/validation/HISTORIAL-SIN-GIT.md. NO se cierra.
 
 ## Stable Main State
 c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reabrir-y-fuente-documental`): la accion REOPEN reabre una ambiguedad RESUELTA (A-36 migrada; `feedback pending` ya no la cuenta) y una ambiguedad `medicion` cita una fuente documental -documento en docs/, commiteado, encabezado y fila de tabla- en vez de evidencia de relleno (A-27, A-28, A-54 y A-55 a FTMO-REGLAS.md R11, R10, R13 y R15); sin git, `knowledge validate` lo avisa. Sobre `stable/F36s-renovar-cierres` (dfd1a6f). Informe docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md; el registro del cierre, al final de HISTORIA.
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 10 (2026-10-03).
+— ninguna desde el Archivo 11 (2026-10-03).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 10 (2026-10-03).
+— ninguna desde el Archivo 11 (2026-10-03).
