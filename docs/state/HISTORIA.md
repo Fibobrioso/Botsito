@@ -3023,3 +3023,43 @@ Las paga `trabajo/reabrir-y-fuente-documental`: la accion `REOPEN` del modelo de
 
 - El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
 - El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
+
+# Registro de cierre · `trabajo/reabrir-y-fuente-documental` (2026-10-03)
+
+- Orden de cierre de Aleks del 2026-10-03, revisada y aprobada. La rama paga las dos deudas que
+  pedia el encargo: la accion `REOPEN` del modelo de feedback (A-36 migrada con
+  `fb-2026-09-29-sesion-03-f3caeb2d`; `feedback pending` ya no la cuenta) y `fuentes_documentales`
+  en las ambiguedades de clase `medicion`, con ruta dentro de `docs/`, documento commiteado, ancla
+  en un encabezado y, desde la tercera orden, `fila` de tabla. A-27 (R11), A-28 (R10), A-54 (R13) y
+  A-55 (R15) citan `FTMO-REGLAS.md` en vez del item de FundedNext; la respuesta del ticket de A-55
+  queda anclada a la seccion (es un recuadro, no una fila). Sin git, `knowledge validate` avisa de
+  que «commiteado» no se comprobo. `Tests Currently Passing` paso de 1211 a 1239 en la rama.
+- Decisiones de la orden de cierre: aceptados el AVISO sin git, el ancla a la seccion de la
+  respuesta del ticket de A-55 y la linea de deuda de RN-029 a RN-032. Deuda nueva en este commit:
+  las comprobaciones de historial que dicen «intacto» sin git (informe §4.2). Next Action no cambia.
+- Punto 1 de la orden: la ultima letra cerrada era la s (`stable/F36s-renovar-cierres`); `t` libre
+  en local y en `origin`.
+- Tag: `stable/F36t-reabrir-y-fuente-documental`. El merge es
+  `git rev-parse "stable/F36t-reabrir-y-fuente-documental^{commit}"`: su sha no existe hasta el
+  merge, y el literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `83b6452`: apertura: encargo, contrato y Archivo 10;
+  - `b54db12`: Fase 0: el modelo de feedback, el caso de A-36 medido, las citas de relleno y la propuesta;
+  - `63ab911`: Fase 1: `REOPEN`, las fuentes documentales, A-36 migrada, las cuatro migraciones, 19 tests y los documentos que repiten la regla;
+  - `84e2a3c`: tras el revisor: lo ya reabierto no se reabre dos veces; recuadros SUSTITUIDO en el encargo; runs 195 y 196;
+  - `5966079`: tercera orden: `fila` de tabla, el AVISO sin git, la deuda de RN-029 a RN-032;
+  - `ac496fc`: el run 198 y la pasada corta del revisor;
+  - y el de este registro, que saca tambien el contrato.
+- CI de Linux, empujada como `fix/` (la guardia nueva lee rutas):
+  - run 195 (37158792667), `fix/trabajo-reabrir-y-fuente-documental`, 63ab911: ROJA en `contrato`
+    antes de correr ningun test (el nombre de la orden no pasa `contrato_rama.py`; error del
+    consultor, en ERRORES-RECURRENTES);
+  - run 196 (37158869991), `fix/reabrir-y-fuente-documental`, 63ab911: 1 failed, 1883 passed, 8 skipped;
+  - run 197 (37160166345), 84e2a3c: 1 failed, 1884 passed, 8 skipped;
+  - run 198 (37164110797), 5966079: 1 failed, 1894 passed, 8 skipped;
+  - run 199 (37164986983), ac496fc: 1 failed, 1894 passed, 8 skipped.
+  En los cuatro ultimos el fallo es el UNICO esperado (`RITUAL.md`): `state check` en
+  `test_state_check_ok_on_real_repo`, porque `PROJECT_STATE` declara `trabajo/...` y la rama es
+  `fix/...`. El cierre borra las dos ramas `fix/` de `origin`.
+- Informe: `docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md`. Encargo, con la segunda y la tercera
+  orden: `docs/encargos/trabajo-reabrir-y-fuente-documental.md`.
