@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/cuarentena-por-condicion
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36v-sesion-04` (2026-10-04).
+`trabajo/cuarentena-por-condicion` EN CURSO (2026-10-04): el filtro de cuarentena deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre (punto P). Fase 0 entregada, esperando decision del consultor. Encargo docs/encargos/trabajo-cuarentena-por-condicion.md; informe docs/validation/CUARENTENA-POR-CONDICION.md.
 
 ## Stable Main State
 eec79a0 · merge de `trabajo/sesion-04` (tag `stable/F36v-sesion-04`): la sesion 4 con el trader entra como v10, en cuarentena (transcripcion, fotogramas, 21 tramos no citables y 64 items ev-v10-*), con su extraccion por pregunta S-1..S-24 (13 resuelven, 11 en parte) y SIN resolver nada en la spec; scripts/transcribir_sesion.py guarda la hoja y los textos de los codigos por sesion (--sesion). Sobre `stable/F36u-historial-sin-git` (8e21fd1). Informe docs/validation/SESION-04-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -29,7 +29,7 @@ eec79a0 · merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pr
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
-P. **Rama de cuarentena: ocultar todo mes con días en casos_ocultos (§6 del informe), antes de activar la sesión 4** (orden de cierre de `trabajo/sesion-04`, 2026-10-04; docs/validation/SESION-04-EXTRACCION.md §6, pendiente a).
+P. **Rama de cuarentena: ocultar todo mes con días en casos_ocultos (§6 del informe), antes de activar la sesión 4** (orden de cierre de `trabajo/sesion-04`, 2026-10-04; docs/validation/SESION-04-EXTRACCION.md §6, pendiente a). **En revision en trabajo/cuarentena-por-condicion.**
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
@@ -199,9 +199,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 12 (2026-10-04).
+— ninguna desde el Archivo 13 (2026-10-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 12 (2026-10-04).
+— ninguna desde el Archivo 13 (2026-10-04).
