@@ -191,15 +191,81 @@ def filas_con_id(seccion: str, fila: str) -> list[str]:
     return salida
 
 
-def aviso_sin_git(ambiguedades: Iterable[Any], con_git: bool) -> str | None:
-    """Sin git, «commiteado» no se evalua, y se DICE (tercera orden del consultor, 2026-10-03):
-    las otras comprobaciones de historial de `validar` callan sin git, y esta no."""
+# Lo que solo sabe el historial de git; una linea OK de `validar` solo lo afirma por `Historial.ok`.
+AFIRMACIONES_DE_HISTORIAL = ("intacto", "commits con Fuente")
+_QUE_INMUTABLE = (
+    "contra el historial que ningun fichero de {}/ se haya modificado, borrado o renombrado"
+)
+
+
+class Historial:
+    """La UNICA puerta por la que una linea de `validar` afirma algo que solo sabe el historial de
+    git: «historial intacto», «solo-anadir intacto», «commits con Fuente»
+    (trabajo/historial-sin-git, encargo del consultor del 2026-10-03). Si el historial no se
+    evaluo -sin git; con git y `historial_evaluable` diciendo que no se puede (clon superficial,
+    proyecto que no es la raiz); o una pregunta concreta que git no contesto-, la linea sale sin
+    la afirmacion y un AVISO dice que NO se comprobo y por que. Niega por defecto: `validar` da
+    ERROR por cualquier linea OK con una afirmacion de historial que no haya salido de `ok`
+    (`afirmaciones_sueltas`), y `tests/unit/test_historial_sin_git.py` rechaza el literal fuera
+    de una llamada a `ok`."""
+
+    def __init__(self, motivo: str | None) -> None:
+        self.motivo = motivo  # None: el historial se evalua
+        self.afirmadas: list[str] = []
+
+    @classmethod
+    def de(cls, repo: Path) -> Historial:
+        from botsito.comun.historial import hay_git, historial_evaluable
+
+        return cls(historial_evaluable(repo) if hay_git(repo) else "sin git")
+
+    def sin_versiones(self, repo: Path, ruta: str) -> str | None:
+        """El motivo de una guardia de SOLO ANADIR sobre UN fichero que git no contesto aunque el
+        historial sea evaluable (`versiones_del_fichero` None: git fallo)."""
+        from botsito.comun.historial import versiones_del_fichero
+
+        if self.motivo is None and versiones_del_fichero(repo, ruta) is None:
+            return f"git no dio las versiones de {ruta}"
+        return None
+
+    def aviso(self, ambito: str, que: str, motivo: str | None = None) -> list[str]:
+        """El AVISO de que `que` NO se comprobo, o nada si el historial se evaluo."""
+        motivo = motivo or self.motivo
+        return [] if motivo is None else [f"AVISO: {ambito}: {motivo}, NO se comprobo {que}"]
+
+    def ok(
+        self, con: str, sin: str, *no_comprobado: tuple[str, str], motivo: str | None = None
+    ) -> list[str]:
+        """`con` si el historial se evaluo; si no, un AVISO por cada `(ambito, que)` y `sin`, que
+        dice solo lo que si se comprobo."""
+        motivo = motivo or self.motivo
+        if motivo is None:
+            self.afirmadas.append(con)
+            return [con]
+        return [x for ambito, que in no_comprobado for x in self.aviso(ambito, que, motivo)] + [sin]
+
+
+def afirmaciones_sueltas(salida: Iterable[str], afirmadas: Iterable[str]) -> list[str]:
+    """Las lineas OK de `salida` que afirman algo del historial sin salir de `Historial.ok`."""
+    dichas = set(afirmadas)
+    return [
+        x
+        for x in salida
+        if x.startswith("OK:")
+        and x not in dichas
+        and any(a in x for a in AFIRMACIONES_DE_HISTORIAL)
+    ]
+
+
+def que_fuentes_documentales(ambiguedades: Iterable[Any]) -> str | None:
+    """Lo que de las fuentes documentales depende de git -que su documento este commiteado-, para
+    el AVISO de `Historial.aviso` cuando no se evalua (tercera orden del consultor, 2026-10-03)."""
     n = sum(len(a.fuentes_documentales) for a in ambiguedades)
-    if con_git or not n:
+    if not n:
         return None
     return (
-        f"ambiguedades: sin git, NO se comprobo que el documento de las {n} fuentes documentales "
-        "este commiteado (la ruta, el encabezado, la fila y el literal si)"
+        f"que el documento de las {n} fuentes documentales este commiteado (la ruta, el "
+        "encabezado, la fila y el literal si)"
     )
 
 
@@ -211,9 +277,9 @@ def problemas_fuentes_documentales(
     existe y esta COMMITEADO en HEAD; tiene el encabezado del `ancla`; y el `literal` esta tal
     cual DENTRO de esa seccion; con `fila`, dentro de la UNICA fila de tabla de esa seccion
     cuyo id es ese (un id que no esta, o que esta en dos filas, se niega: tercera orden del
-    consultor, 2026-10-03). Sin git, «commiteado» no se evalua, como el resto de las comprobaciones
-    de historial de `validar` (una copia sin `.git`, la de `test_kit.py`), y `aviso_sin_git` lo
-    dice; lo demas se comprueba igual."""
+    consultor, 2026-10-03). Con `con_git` falso -en `validar`, cuando el historial no se evalua
+    (`Historial`)- «commiteado» no se comprueba, como el resto de las comprobaciones de historial, y
+    `Historial.aviso` lo dice; lo demas se comprueba igual."""
     from botsito.comun.historial import contenido_en_head
 
     base = (repo / "docs").resolve()
@@ -392,7 +458,24 @@ def problemas_de_spec(
 
 def validar(repo: Path) -> tuple[int, list[str]]:
     """Valida todo lo que existe en knowledge/: registro, manifiesto, evidencia, feedback,
-    historial de git y trailers `Fuente:` de spec/cases."""
+    historial de git y trailers `Fuente:` de spec/cases. Una linea OK que afirme algo del historial
+    sin pasar por `Historial.ok` es un ERROR (negar por defecto, trabajo/historial-sin-git)."""
+    puerta = Historial.de(repo)
+    codigo, salida = _validar(repo, puerta)
+    sueltas = afirmaciones_sueltas(salida, puerta.afirmadas)
+    if not sueltas:
+        return codigo, salida
+    return 1, [
+        *salida,
+        *(
+            f"ERROR: validar: {x!r} afirma lo que solo sabe el historial de git sin pasar por "
+            f"Historial.ok"
+            for x in sueltas
+        ),
+    ]
+
+
+def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
     salida: list[str] = []
     if not (repo / "knowledge").is_dir():
         salida.append("ERROR: falta knowledge/")
@@ -477,9 +560,12 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         except LibrosError as exc:  # pragma: no cover - ya lo dice problemas_de_libros
             salida.append(f"ERROR: libros: {exc}")
             return 1, salida
-        salida.append(
+        salida += puerta.ok(
             f"OK: {n_libros} libros declarados con formato y huso, solo-anadir intacto, "
-            f"cruzados con cobertura_material"
+            f"cruzados con cobertura_material",
+            f"OK: {n_libros} libros declarados con formato y huso, cruzados con cobertura_material",
+            ("libros", f"contra el historial que {FICHERO_LIBROS} sea solo-anadir"),
+            motivo=puerta.sin_versiones(repo, FICHERO_LIBROS),
         )
     # LOS DIAS RETIRADOS DEL HOLDOUT (ADR-0041): forma, que cada huella sea de un reservado y SOLO
     # ANADIR contra el historial, con el mismo mecanismo que los libros. Nunca imprime un id.
@@ -491,11 +577,16 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             salida.append(f"ERROR: retirados: {p}")
         if problemas_ret:
             return 1, salida
-        salida.append(
-            f"OK: {len(cargar_retirados(repo))} dias retirados del holdout, cada uno de un "
-            f"reservado, solo-anadir intacto"
+        n_retirados = len(cargar_retirados(repo))
+        salida += puerta.ok(
+            f"OK: {n_retirados} dias retirados del holdout, cada uno de un reservado, "
+            f"solo-anadir intacto",
+            f"OK: {n_retirados} dias retirados del holdout, cada uno de un reservado",
+            ("retirados", f"contra el historial que {FICHERO_RETIRADOS} sea solo-anadir"),
+            motivo=puerta.sin_versiones(repo, FICHERO_RETIRADOS),
         )
     from botsito.comun.historial import (
+        DIRECTORIO_EVIDENCIA,
         hay_git,
         historial_evaluable,
         modificaciones_en_historial,
@@ -567,6 +658,7 @@ def validar(repo: Path) -> tuple[int, list[str]]:
     from botsito.comun.historial import (
         ANCLA_FUENTE,
         DIRECTORIO_FEEDBACK,
+        DIRECTORIOS_CON_FUENTE,
         ancla_desviada,
         commits_sin_fuente,
         resolver,
@@ -623,11 +715,11 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         ]
         fallos_amb += [
             f"ambiguedades: {p}"
-            for p in problemas_fuentes_documentales(repo, ambiguedades, con_git)
+            for p in problemas_fuentes_documentales(repo, ambiguedades, puerta.motivo is None)
         ]
-        sin_git = aviso_sin_git(ambiguedades, con_git)
-        if sin_git:
-            salida.append(f"AVISO: {sin_git}")
+        que_fuentes = que_fuentes_documentales(ambiguedades)
+        if que_fuentes:
+            salida += puerta.aviso("ambiguedades", que_fuentes)
         for amb in ambiguedades:
             # DECIDIDA: la cierra el consultor, y su ADR tiene que EXISTIR y NOMBRARLA. Sin lo
             # segundo, `decision: ADR-0002` pasaria entero -es el mismo defecto que F12 encontro
@@ -789,12 +881,22 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         salida.append(f"ERROR: {fallo}")
     if fallos_datos:
         return 1, salida
-    salida.append(f"OK: {len(transcripciones)} transcripciones registradas, historial intacto")
-    salida.append(
-        f"OK: {len(fotogramas)} extracciones de fotogramas registradas, obligatorios presentes, "
-        "historial intacto"
+    salida += puerta.ok(
+        f"OK: {len(transcripciones)} transcripciones registradas, historial intacto",
+        f"OK: {len(transcripciones)} transcripciones registradas",
+        ("transcripciones", _QUE_INMUTABLE.format(DIRECTORIO_TRANSCRIPCIONES)),
     )
-    salida.append(f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto")
+    salida += puerta.ok(
+        f"OK: {len(fotogramas)} extracciones de fotogramas registradas, obligatorios presentes, "
+        "historial intacto",
+        f"OK: {len(fotogramas)} extracciones de fotogramas registradas, obligatorios presentes",
+        ("fotogramas", _QUE_INMUTABLE.format(DIRECTORIO_FOTOGRAMAS)),
+    )
+    salida += puerta.ok(
+        f"OK: {len(rutas_manifiestos)} manifiestos de datos validos, historial intacto",
+        f"OK: {len(rutas_manifiestos)} manifiestos de datos validos",
+        ("manifiestos de datos", _QUE_INMUTABLE.format(DIRECTORIO_MANIFIESTOS)),
+    )
     # Un parametro no puede tener dos registros vigentes que FIJEN su valor: no habria forma de
     # saber cual manda. Lo comprobaba `feedback apply`, que solo se ejecuta cuando alguien lo
     # llama; aqui se vigila siempre. Ojo al matiz: dos REJECT vigentes sobre el mismo parametro no
@@ -913,8 +1015,15 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             f"validos, particiones anteriores al etiquetado{detalle}"
         )
     abiertas = len(contradicciones.detectar(items))
-    salida.append(
-        f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente"
+    salida += puerta.ok(
+        f"OK: {len(registros_fb)} registros de feedback, historial intacto, commits con Fuente",
+        f"OK: {len(registros_fb)} registros de feedback",
+        ("feedback", _QUE_INMUTABLE.format(DIRECTORIO_FEEDBACK)),
+        (
+            "trailers Fuente",
+            f"que los commits que tocan {' y '.join(DIRECTORIOS_CON_FUENTE)} lleven un trailer "
+            f"`Fuente:` con ids que existen, ni el ancla de trazabilidad {tag}",
+        ),
     )
     items_pendientes = sum(
         1
@@ -922,8 +1031,11 @@ def validar(repo: Path) -> tuple[int, list[str]]:
         for it in (p.get("items") or [])
         if isinstance(it, dict) and it.get("decision", "pendiente") == "pendiente"
     )
-    salida.append(
+    salida += puerta.ok(
         f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas, "
-        f"historial intacto; {len(propuestas)} propuestas ({items_pendientes} items pendientes)"
+        f"historial intacto; {len(propuestas)} propuestas ({items_pendientes} items pendientes)",
+        f"OK: {len(items)} items de evidencia, {abiertas} contradicciones abiertas; "
+        f"{len(propuestas)} propuestas ({items_pendientes} items pendientes)",
+        ("evidencia", _QUE_INMUTABLE.format(DIRECTORIO_EVIDENCIA)),
     )
     return 0, salida

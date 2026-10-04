@@ -23,7 +23,7 @@ c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reab
 c76aaf6 · merge: REOPEN reabre una ambiguedad; una medicion cita una fuente documental anclada a su fila (REABRIR-Y-FUENTE-DOCUMENTAL.md) · tag stable/F36t-reabrir-y-fuente-documental
 
 ## Tests Currently Passing
-1239 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1245 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,7 +117,6 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- Las comprobaciones de historial (transcripciones, fotogramas, manifiestos, libros, días retirados, y por el código feedback y evidencia) imprimen "historial intacto" o "solo-añadir intacto" sin git, sin haber evaluado nada: dicen más de lo que comprueban. Rama corta propia para que digan que no se comprobó (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.2).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).

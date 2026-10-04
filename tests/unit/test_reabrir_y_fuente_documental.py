@@ -28,11 +28,12 @@ from botsito.feedback.modelo import (
     validar_contra_contexto,
 )
 from botsito.validation.knowledge import (
-    aviso_sin_git,
+    Historial,
     filas_con_id,
     plano,
     problemas_de_cierre,
     problemas_fuentes_documentales,
+    que_fuentes_documentales,
     seccion_de,
 )
 
@@ -437,11 +438,16 @@ def test_la_primera_celda_es_el_id_y_no_cuentan_los_bloques_de_codigo() -> None:
 
 
 def test_sin_git_se_dice_que_commiteado_no_se_comprobo(tmp_path: Path) -> None:
+    # Desde trabajo/historial-sin-git el aviso sale de `Historial`, con el mismo texto de antes.
     ambs = _cargar_ambs(tmp_path, _medicion())
-    aviso = aviso_sin_git(ambs, con_git=False)
-    assert aviso is not None and "sin git, NO se comprobo" in aviso and "1 fuentes" in aviso
-    assert aviso_sin_git(ambs, con_git=True) is None
-    assert aviso_sin_git(_cargar_ambs(tmp_path, _amb("ABIERTA")), con_git=False) is None
+    que = que_fuentes_documentales(ambs)
+    assert que is not None
+    assert Historial("sin git").aviso("ambiguedades", que) == [
+        "AVISO: ambiguedades: sin git, NO se comprobo que el documento de las 1 fuentes "
+        "documentales este commiteado (la ruta, el encabezado, la fila y el literal si)"
+    ]
+    assert Historial(None).aviso("ambiguedades", que) == []
+    assert que_fuentes_documentales(_cargar_ambs(tmp_path, _amb("ABIERTA"))) is None
 
 
 def test_la_seccion_acaba_en_el_siguiente_encabezado_de_su_nivel() -> None:
