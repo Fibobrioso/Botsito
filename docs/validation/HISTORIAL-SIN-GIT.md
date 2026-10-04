@@ -167,7 +167,8 @@ En los documentos: 302 → 303 en las dos copias, por lo mismo.
 
 ### 1.4 Los tests, cada uno roto a propósito
 
-`tests/unit/test_historial_sin_git.py`, seis funciones (1239 → 1245 en `PROJECT_STATE`). Cada rotura
+`tests/unit/test_historial_sin_git.py`, seis funciones (1239 → 1245 en `PROJECT_STATE`; siete y
+1246 tras la segunda orden, §6.1). Cada rotura
 la hizo un guion de la carpeta de trabajo que muta `knowledge.py`, corre ese test y restaura el
 fichero comprobando su sha256 (`bfa378919a92…` antes y después).
 
@@ -365,7 +366,10 @@ argumentos y en el mismo orden; los ERROR de hoy con git, iguales.
 función de `botsito.comun.historial` (un nombre que no sea de constante, en MAYÚSCULAS), el módulo
 entero (`import botsito.comun.historial`, `from botsito.comun import historial`) o `subprocess`
 (git a mano). Mira las importaciones, no las llamadas: para llamar a una primitiva hay que
-importarla, y así tampoco se escapa la que se pasa como argumento sin llamarla. La lista de
+importarla, y así tampoco se escapa la que se pasa como argumento sin llamarla. **Lo que no ve**
+(lo señaló el revisor en la pasada corta, a2): una importación dinámica (`__import__`,
+`importlib`) y un subpaquete futuro de `validation/`, porque recorre solo sus `*.py` de primer
+nivel; hoy `validation/` son tres ficheros planos y ninguno importa así. La lista de
 excepciones existe (`EXCEPCIONES`, cada entrada `(fichero, nombre)` con su porqué en un comentario)
 y hoy está vacía. Se autoprueba: ve una comprobación falsa con
 `from botsito.comun.historial import DIRECTORIO_FEEDBACK, modificaciones_en_historial` (solo
@@ -395,19 +399,104 @@ lecturas. Y «Tests Currently Passing», 1245 → 1246. **`PROJECT_STATE.md`: 23
 
 ### 6.3 El push y la CI (punto 3)
 
-PENDIENTE.
+`make check` sellado sobre el commit de la segunda orden (`7c5737b`): exit 0, ningún `failed`,
+`1910 passed in 819.53s`, `SELLO: make check en verde sobre el arbol df37bb1d0be7a87fe5ed8e3e545c9f2f1988e1ca`,
+`PICO DE MEMORIA de make check: 289 MiB`.
+
+Empujado con `git push origin trabajo/historial-sin-git:refs/heads/fix/historial-sin-git`, que
+lleva también `ac08b5a` (el informe de la primera vuelta, que no se había empujado).
+**CI de Linux: run 202** (id 37173283083), sobre `7c5737b`: `conclusion: failure` con un solo
+fallo, el esperado -`FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` por
+`ERROR: PROJECT_STATE declara la rama 'trabajo/historial-sin-git'; la rama actual es
+'fix/historial-sin-git'`-. Resumen: `1 failed, 1901 passed, 8 skipped`, uno más que el run 201: el
+test de la condición, que corrió en Linux.
+
+El commit que pega el informe del revisor (§7) se empuja igual, después: su run va en la respuesta
+al consultor, porque un informe no puede llevar el run de su propio commit.
 
 ### 6.4 El revisor (punto 4)
 
-PENDIENTE: se lanza cuando este informe esté terminado, CI incluida. La lección para la fila de
-ERRORES-RECURRENTES de esta rama, al cerrar: el revisor se lanza con el informe terminado, nunca
-antes.
+Pasada corta lanzada con este informe terminado -§6.1 a §6.3, CI incluida- sobre `7c5737b` y el
+informe en el árbol; su informe, entero, en §7. La lección para la fila de ERRORES-RECURRENTES de
+esta rama, al cerrar: el revisor se lanza con el informe terminado, nunca antes.
+
+Lo que encontró (0 bloquea, 0 importa, 3 menores), y qué se hizo:
+- **a1**, «seis funciones» en §1.4 sin decir que tras la segunda orden son siete: anotado en §1.4.
+- **a2**, el test de la condición no ve una importación dinámica ni un subpaquete futuro de
+  `validation/`: declarado en §6.1, «Lo que no ve». No se amplía: hoy no hay ninguna de las dos.
+- **b1**, mira importaciones y no llamadas: ya estaba declarado y justificado en §6.1.
 
 ### 6.5 El clon superficial (punto 5)
 
 Sin cambios: el motivo -copiaría el holdout- ya está en §0.1.
 
+## 7. Informe del revisor, pasada corta de la segunda orden
+
+## Informe del revisor · trabajo/historial-sin-git · 2026-10-03 (pasada corta, segunda orden)
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 2 menor.
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | menor | El informe sigue diciendo «seis funciones» (1239 → 1245) en §1.4 y «Sin rotura, los seis pasan». Es cierto para la primera vuelta, y §6.1 aclara que el nuevo es el séptimo (1246). Una nota «(siete tras §6.1)» evitaría la confusión. | `docs/validation/HISTORIAL-SIN-GIT.md` l. 170 y l. 183, frente a l. 363 |
+| a2 | menor | El test nuevo solo mira IMPORTACIONES y solo los `*.py` de primer nivel de `validation/`. No ve `__import__`, `importlib`, ni un subpaquete futuro (`glob("*.py")`). El informe lo dice para las importaciones (§6.1) pero no menciona los otros dos huecos. Hoy `validation/` son tres ficheros planos. | `tests/unit/test_historial_sin_git.py`, `VALIDATION.glob("*.py")` y `_lecturas_de_git_fuera_de_historial` |
+
+Comprobado sin hallazgos:
+- Contrato: `uv run python scripts/contrato_rama.py` da `CONTRATO: 8 ficheros dentro del contrato de trabajo/historial-sin-git (riesgo medio, …, 4 comprobaciones para el revisor)`. El diff `main...HEAD` solo toca ficheros de `rutas_permitidas` y nada de `rutas_protegidas`.
+- `uv run botsito state check`: OK, rama 'trabajo/historial-sin-git'.
+- `uv run pytest tests/unit/test_historial_sin_git.py -q -p no:cacheprovider`: `.......` 7 tests, `[100%]`. `grep -c "def test_"` da 7, y `git diff main...HEAD -- tests` añade 7 `def test_` (coherente con 1239 → 1246: 1245 más el nuevo).
+- `make-check.log`: `1910 passed in 819.53s`, `All checks passed!`, `SELLO: … df37bb1d0be7a87fe5ed8e3e545c9f2f1988e1ca`, `PICO DE MEMORIA … 289 MiB`. Coincide con §6.3. No comprobé que ese árbol sea el de 7c5737b, porque `git write-tree` escribe en la base de objetos.
+- CI: `gh run view 37173283083 --json headSha,conclusion` da `failure` sobre `7c5737b01418…`, que es el HEAD. `--log-failed`: solo `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` con `ERROR: PROJECT_STATE declara la rama 'trabajo/historial-sin-git'; la rama actual es 'fix/historial-sin-git'`, y `1 failed, 1901 passed, 8 skipped`. Coincide con §6.3.
+- PROJECT_STATE: `wc -c` da 23421 bytes, tanto en el disco como en `git show 7c5737b:PROJECT_STATE.md`, por debajo de 25.000. `git diff HEAD~1 HEAD -- PROJECT_STATE.md` muestra solo 1245 → 1246 y UNA línea nueva en Technical Debt (la de anclas y `spec_version`, que apunta a §3 y §6.1). La línea no lleva «Lo anterior:».
+- `uv run botsito knowledge validate`: exit 0. Las líneas OK son las de siempre («solo-anadir intacto» en libros y retirados, «historial intacto» en transcripciones, fotogramas, manifiestos, feedback con «commits con Fuente» y evidencia). Ninguna «NO se comprobo». Las cifras coinciden con §0.2 (3 libros, 1 retirado, 14, 9, 8, 150, 437, 25), salvo 305 documentos, que el informe ya declara.
+- Medición de §6.1 contra `git show ac08b5a:src/botsito/validation/knowledge.py`. Dentro de `Historial` había 3 llamadas (l. 218-227: `hay_git`, `historial_evaluable`, `versiones_del_fichero`). Fuera había 11: `contenido_en_head` (l. 297), `hay_git` y `historial_evaluable` (l. 646-647), `modificaciones_en_historial` ×5 (l. 648, 762, 814, 841, 870), `resolver` (770), `ancla_desviada` (776) y `commits_sin_fuente` (779). Son 14 en total y 8 primitivas, como dice el informe. `grep` sobre `src/botsito/validation/` no halla `comun.historial` ni `subprocess` fuera de `knowledge.py` (`ids_citados.py` y `contexto_evidencia.py` limpios).
+- El estado nuevo de `knowledge.py`: las primitivas solo se importan dentro de métodos de `Historial` (l. 228-267). Fuera de la clase solo se importan constantes (`DIRECTORIO_EVIDENCIA`, `ANCLA_FUENTE`, `DIRECTORIO_FEEDBACK`, `DIRECTORIOS_CON_FUENTE`, `DIRECTORIO_TRANSCRIPCIONES`, `DIRECTORIO_FOTOGRAMAS`), y las llamadas pasan a `puerta.resolver`, `puerta.ancla_desviada` y `puerta.commits_sin_fuente` (l. 800-809). Las cinco comprobaciones y su orden se mantienen.
+- Trailers `Fuente:`, holdout y material, regímenes de cambio, ambigüedades, ADR e informes cerrados: la rama no toca `knowledge/spec`, `knowledge/cases` ni ningún ADR o informe de `main`, y no abre material. No aplican. No se añade ningún sitio con `cita` ni ninguna cifra.
+- Informe: no hay un §7 todavía. Es el hueco previsto para pegar este informe, y el Estado lo dice («falta pegar la pasada corta del revisor (§7)»). Lo pega quien llama.
+
+### Eje (b) · Encargo (segunda orden)
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 8 hechos, 0 parciales, 0 no hechos (un requisito, el 4, queda a medias por quien me llama; ver su fila).
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P1: medir si las primitivas que leen git en `validation/` están centralizadas | Hecho | §6.1 y la medición de `ac08b5a` (arriba): 14 llamadas, 3 dentro, 11 fuera. Esto es cierto. Incluye las del encargo (`hay_git`, `historial_evaluable`, `contenido_en_head`, `resolver`, `ancla_desviada`) y las que encontró (`versiones_del_fichero`, `modificaciones_en_historial`, `commits_sin_fuente`). |
+| 2 | P1: si lo están (o se puede con solo `validation/`), test con `ast` que falle si se llaman fuera de `Historial`, con lista de excepciones comentada | Hecho | La centralización solo toca `knowledge.py`. `test_en_validation_solo_historial_lee_git`, `EXCEPCIONES` con su comentario (vacía). Variante: mira importaciones en lugar de llamadas, y el informe lo declara y lo justifica (§6.1, «para llamar hay que importarla»). Es «hecho de otra forma» declarada. |
+| 3 | P1: romperlo con una comprobación falsa que llame a una primitiva directamente | Hecho | §6.1: rotura con `modificaciones_en_historial` y «ficheros integros», falla con `knowledge.py:1071`. Contraprueba: la red de palabras no la ve. Además el test se autoprueba con una falsa, un `import subprocess` y la misma importación dentro de `class Historial`. La rotura la hizo el autor y no la repetí: modificar `knowledge.py` es escribir. |
+| 4 | P1: la red de palabras se queda como segunda red | Hecho | `AFIRMACIONES_DE_HISTORIAL` y `afirmaciones_sueltas` siguen en `knowledge.py`. Los tests 2a y 2b pasan. |
+| 5 | P2: no tocar anclas ni `spec_version`; una línea corta en Technical Debt que apunte a §3 | Hecho | La línea nueva de PROJECT_STATE nombra §3 y §6.1. No hay cambios en `cases/` ni en `spec/` (`git diff --name-only main...HEAD`). Hay una sola línea, no varias. |
+| 6 | P2: PROJECT_STATE por debajo de 25 KB y decir su tamaño | Hecho | 23.421 bytes (`wc -c`), dicho en §6.2. |
+| 7 | P3: empujar todo, informe incluido, a `fix/historial-sin-git`, CI con solo el fallo esperado y el número de run | Hecho | Run 202, id 37173283083, solo el fallo de `state check` por el nombre `fix/`. El informe dice que lleva también `ac08b5a`. El commit del informe actual (§6.3/§6.4 y Estado, sin commitear en el disco) y el del revisor se empujan después; el informe lo dice (§6.3, último párrafo). |
+| 8 | P4 y P5: pasada corta con el informe completo, su informe pegado al final; lección «el revisor se lanza con el informe terminado» anotada; clon superficial no montado con su motivo | Hecho / pendiente de quien llama | §6.4 y §6.5 contienen la lección y el motivo (§0.1, l. 29-33). Pegar este informe en §7 lo hace quien llama. `make check` sellado antes de cada commit: el SELLO es de 7c5737b. |
+
+Hallazgos:
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | La segunda orden pedía «una lista explícita de excepciones» sobre llamadas. El test usa importaciones, lo cual es más estricto y no deja pasar una primitiva pasada como argumento. Está declarado y justificado, así que solo lo anoto como diferencia de forma. | `tests/unit/test_historial_sin_git.py`, docstring de `_lecturas_de_git_fuera_de_historial`; informe §6.1 |
+
+Fuera de encargo: no hay nada. El cambio de `knowledge.py` (cinco envoltorios, `SIN_GIT`, `Historial` guarda `con_git` y `no_evaluable`) es el medio de P1. No se tocó nada de lo prohibido (spec, motor, `cases/`, `corpus/`, `knowledge/`).
+
+### Lo que no pude comprobar
+- Las roturas de §6.1 (una comprobación falsa en `knowledge.py`, sha256 `90687b1e…`): modificar el fichero es escribir. Me baso en lo que cuenta el informe y en que el test se autoprueba con el detector ante una falsa y pasa sin rotura.
+- Que el árbol sellado `df37bb1d…` sea el de 7c5737b (`git write-tree` escribe).
+- Las líneas de `knowledge validate` sin git y con proyecto fuera de la raíz: no las reproduje (requieren copias fuera del repositorio). Sí corrió la rama de git completo.
+- La afirmación de §6.1 de que las cinco roturas de la primera vuelta se repitieron sobre el código nuevo con las mismas líneas: no la repetí.
+
+### Comandos ejecutados
+1. `git show 7c5737b --stat`, lectura del encargo y `git status --short`.
+2. Lectura de `docs/validation/HISTORIAL-SIN-GIT.md`.
+3. Un intento de volcar `git show ac08b5a:…` a un fichero temporal, bloqueado por el hook de solo lectura (no escribió nada).
+4. `git show ac08b5a:src/botsito/validation/knowledge.py | grep -nE …`; `grep -rnE "comun.historial|subprocess|import historial" src/botsito/validation/`; `grep -nE …` sobre el `knowledge.py` actual.
+5. `git diff HEAD~1 HEAD -- PROJECT_STATE.md`; `wc -c PROJECT_STATE.md`; `git show 7c5737b:PROJECT_STATE.md | wc -c`; `git show 7c5737b -- tests/unit/test_historial_sin_git.py`; `git diff --name-only main...HEAD`; lectura de `contrato.yaml`.
+6. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`; `uv run botsito knowledge validate` (exit 0); `gh run view 37173283083`.
+7. `gh run view 37173283083 --log-failed | grep …`; `gh run view … --json headSha,conclusion`; `git rev-parse HEAD`; `sed -n 685,700p` de `knowledge.py`; `grep` de SELLO, passed y PICO en `make-check.log`; `git diff HEAD -- docs/validation/HISTORIAL-SIN-GIT.md`.
+8. `uv run pytest tests/unit/test_historial_sin_git.py -q -p no:cacheprovider` (7 passed); `grep -c "def test_"`; `git diff main --stat -- tests`.
+
 ## Estado
 
-EN CURSO (segunda orden): §6.1 y §6.2 hechos; falta la CI (§6.3) y la pasada corta del revisor
-(§6.4). NO se cierra.
+LISTA PARA REVISIÓN, NO CERRADA (2026-10-03). Fases 0 y 1 y la segunda orden hechas: en
+`validation/` solo `Historial` lee git, con su test por `ast` roto a propósito, y las palabras como
+segunda red. `make check` sellado antes de cada commit; CI de Linux run 201 (Fase 1) y run 202
+(segunda orden), los dos con solo el fallo esperado de `state check` por el nombre `fix/`; el run
+del commit de este informe, en la respuesta al consultor. Revisor: pasada completa (§5) y pasada
+corta con el informe terminado (§7), sin bloqueos. Al cerrar: el registro de la deuda pagada en
+HISTORIA, la fila de ERRORES-RECURRENTES (con la lección de §6.4) y el borrado de
+`fix/historial-sin-git`. El cierre en `main` espera la orden de Aleks.
