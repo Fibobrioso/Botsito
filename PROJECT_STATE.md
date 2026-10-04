@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/historial-sin-git
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36t-reabrir-y-fuente-documental` (2026-10-03).
+trabajo/historial-sin-git · EN CURSO (2026-10-03) · docs/validation/HISTORIAL-SIN-GIT.md. NO se cierra.
 
 ## Stable Main State
 c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reabrir-y-fuente-documental`): la accion REOPEN reabre una ambiguedad RESUELTA (A-36 migrada; `feedback pending` ya no la cuenta) y una ambiguedad `medicion` cita una fuente documental -documento en docs/, commiteado, encabezado y fila de tabla- en vez de evidencia de relleno (A-27, A-28, A-54 y A-55 a FTMO-REGLAS.md R11, R10, R13 y R15); sin git, `knowledge validate` lo avisa. Sobre `stable/F36s-renovar-cierres` (dfd1a6f). Informe docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reab
 c76aaf6 · merge: REOPEN reabre una ambiguedad; una medicion cita una fuente documental anclada a su fila (REABRIR-Y-FUENTE-DOCUMENTAL.md) · tag stable/F36t-reabrir-y-fuente-documental
 
 ## Tests Currently Passing
-1239 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1246 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,7 +117,7 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- Las comprobaciones de historial (transcripciones, fotogramas, manifiestos, libros, días retirados, y por el código feedback y evidencia) imprimen "historial intacto" o "solo-añadir intacto" sin git, sin haber evaluado nada: dicen más de lo que comprueban. Rama corta propia para que digan que no se comprobó (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.2).
+- Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 10 (2026-10-03).
+— ninguna desde el Archivo 11 (2026-10-03).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 10 (2026-10-03).
+— ninguna desde el Archivo 11 (2026-10-03).
