@@ -28,6 +28,8 @@ from botsito.feedback.modelo import (
     validar_contra_contexto,
 )
 from botsito.validation.knowledge import (
+    aviso_sin_git,
+    filas_con_id,
     plano,
     problemas_de_cierre,
     problemas_fuentes_documentales,
@@ -229,7 +231,12 @@ Fuera de la seccion: el literal de prueba esta aqui.
 
 ## 2. Las reglas
 
+| # | regla | fuente |
+|---|---|---|
 | R1 | el literal de prueba | fuente |
+| R2 | el literal de otra fila | fuente |
+| R3 | primera | fuente |
+| R3 | segunda | fuente |
 
 > Recuadro que parte
 > > el literal en
@@ -364,6 +371,79 @@ def test_la_evidencia_vacia_solo_con_una_fuente_documental(tmp_path: Path) -> No
         _cargar_ambs(tmp_path, _amb("ABIERTA", clase="medicion", evidencia=[]))
 
 
+# ------------------------------------------------- la fila de tabla (tercera orden, punto 3)
+
+
+def test_un_literal_dentro_de_su_fila_pasa(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    ambs = _cargar_ambs(tmp_path, _medicion(fila="R1"))
+    assert problemas_fuentes_documentales(repo, ambs, con_git=True) == []
+
+
+def test_un_literal_de_otra_fila_se_niega(tmp_path: Path) -> None:
+    """Esta en la seccion, pero en la fila R2, no en la R1 que nombra el ancla."""
+    repo = _repo(tmp_path)
+    ambs = _cargar_ambs(tmp_path, _medicion(fila="R1", literal="el literal de otra fila"))
+    problemas = problemas_fuentes_documentales(repo, ambs, con_git=True)
+    assert any("no esta dentro de la fila 'R1'" in p for p in problemas), problemas
+
+
+def test_un_literal_de_r15_anclado_a_r13_falla_en_ftmo_reglas(tmp_path: Path) -> None:
+    """El caso del consultor, sobre el FTMO-REGLAS.md real: el literal de R15 esta en la seccion 2,
+    asi que sin `fila` pasaba; anclado a la fila R13, no."""
+    ftmo = {
+        "documento": "docs/validation/FTMO-REGLAS.md",
+        "ancla": "2. Las reglas, con su fuente",
+        "literal": "two hours or less before a relevant financial market is closed",
+    }
+    sin_fila = _cargar_ambs(tmp_path, _medicion(**ftmo))
+    assert problemas_fuentes_documentales(REPO, sin_fila, con_git=True) == []
+    en_r13 = _cargar_ambs(tmp_path, _medicion(**ftmo, fila="R13"))
+    problemas = problemas_fuentes_documentales(REPO, en_r13, con_git=True)
+    assert any("no esta dentro de la fila 'R13'" in p for p in problemas), problemas
+    en_r15 = _cargar_ambs(tmp_path, _medicion(**ftmo, fila="R15"))
+    assert problemas_fuentes_documentales(REPO, en_r15, con_git=True) == []
+
+
+def test_un_id_de_fila_que_no_existe_se_niega(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    ambs = _cargar_ambs(tmp_path, _medicion(fila="R9"))
+    problemas = problemas_fuentes_documentales(repo, ambs, con_git=True)
+    assert any("no hay ninguna fila de tabla 'R9'" in p for p in problemas), problemas
+
+
+def test_un_id_de_fila_repetido_se_niega(tmp_path: Path) -> None:
+    """R3 esta en dos filas: se niega aunque el literal este en la primera."""
+    repo = _repo(tmp_path)
+    ambs = _cargar_ambs(tmp_path, _medicion(fila="R3", literal="primera"))
+    problemas = problemas_fuentes_documentales(repo, ambs, con_git=True)
+    assert any("esta en 2 filas" in p for p in problemas), problemas
+
+
+@pytest.mark.parametrize("fila", ["", "  ", 13])
+def test_una_fila_vacia_o_no_textual_no_se_carga(tmp_path: Path, fila: object) -> None:
+    bruto = _medicion()
+    bruto["fuentes_documentales"][0]["fila"] = fila
+    with pytest.raises(AmbiguedadError, match="`fila` es un texto no vacio"):
+        _cargar_ambs(tmp_path, bruto)
+
+
+def test_la_primera_celda_es_el_id_y_no_cuentan_los_bloques_de_codigo() -> None:
+    seccion = "| R1 | a |\n> | R1 | cita |\n```\n| R1 | codigo |\n```\n| x | R1 |"
+    assert filas_con_id(seccion, "R1") == ["| R1 | a |", "| R1 | cita |"]
+
+
+# --------------------------------------------------------- sin git (tercera orden, punto 2)
+
+
+def test_sin_git_se_dice_que_commiteado_no_se_comprobo(tmp_path: Path) -> None:
+    ambs = _cargar_ambs(tmp_path, _medicion())
+    aviso = aviso_sin_git(ambs, con_git=False)
+    assert aviso is not None and "sin git, NO se comprobo" in aviso and "1 fuentes" in aviso
+    assert aviso_sin_git(ambs, con_git=True) is None
+    assert aviso_sin_git(_cargar_ambs(tmp_path, _amb("ABIERTA")), con_git=False) is None
+
+
 def test_la_seccion_acaba_en_el_siguiente_encabezado_de_su_nivel() -> None:
     seccion = seccion_de(TEXTO, "2. Las reglas")
     assert seccion is not None
@@ -378,6 +458,10 @@ def test_las_cuatro_migradas_citan_su_regla_y_el_relleno_solo_queda_en_a44() -> 
     for aid in ("A-27", "A-28", "A-54", "A-55"):
         assert ambs[aid].fuentes_documentales, aid
         assert "ev-v4-012524-0ef85a89" not in ambs[aid].evidencia, aid
+    # cada una anclada a su fila; la respuesta del ticket (A-55) no es una fila: va sin ella
+    filas = {aid: [f.fila for f in ambs[aid].fuentes_documentales] for aid in ambs}
+    assert filas["A-27"] == ["R11"] and filas["A-28"] == ["R10", "R10"]
+    assert filas["A-54"] == ["R13"] and filas["A-55"] == ["R15", None]
     assert ambs["A-54"].evidencia == () and ambs["A-55"].evidencia == ()
     con_relleno = sorted(a for a, x in ambs.items() if "ev-v4-012524-0ef85a89" in x.evidencia)
     assert con_relleno == ["A-44"]  # una pregunta: su evidencia es del trader (decision 4)

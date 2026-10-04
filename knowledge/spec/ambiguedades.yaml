@@ -640,6 +640,7 @@ ambiguedades:
     fuentes_documentales:
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
+        fila: R11
         literal: "Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA"
     parametros:
       - instrumento_digitos
@@ -682,9 +683,11 @@ ambiguedades:
     fuentes_documentales:
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
+        fila: R10
         literal: "Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST"
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
+        fila: R10
         literal: "El calendario del +DST: NO ENCONTRADA"
     parametros: [broker_offset_base, broker_dst]
     contradiccion: null
@@ -1529,6 +1532,7 @@ ambiguedades:
     fuentes_documentales:
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
+        fila: R13
         literal: "an excessive number of more than 2,000 server requests per day"
     parametros:
       - freno_peticiones_aviso
@@ -1571,7 +1575,10 @@ ambiguedades:
     fuentes_documentales:
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
+        fila: R15
         literal: "two hours or less before a relevant financial market is closed for at least two hours"
+      # la respuesta del ticket VDW-DPMWR-965 no es una fila de la tabla sino un recuadro de la
+      # seccion 2, y FTMO-REGLAS.md es un informe cerrado: sin `fila`, anclada a la seccion
       - documento: docs/validation/FTMO-REGLAS.md
         ancla: "2. Las reglas, con su fuente"
         literal: "within two hours before a relevant market closes for at least two hours"

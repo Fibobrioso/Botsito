@@ -80,6 +80,13 @@ corpus mas cercano:
   absolutas y los enlaces que salgan de `docs/`. Y tiene que estar COMMITEADO: primero se commitea
   el documento, despues la fuente que lo cita.
 - **`ancla`:** el texto de un ENCABEZADO del documento, sin las almohadillas.
+- **`fila`** (opcional, desde la tercera orden del consultor del 2026-10-03): el id de UNA fila de
+  tabla de esa seccion, su primera celda (`R13` en `FTMO-REGLAS.md`). Entonces el literal tiene que
+  estar DENTRO DE ESA FILA, no en cualquier parte de la seccion. Un id que no esta en ninguna fila,
+  o que esta en mas de una, se niega. Si la fuente es una tabla, se ancla a su fila; sin `fila`
+  queda lo que no es una fila (la respuesta del ticket de A-55, un recuadro).
 - **`literal`:** tal cual, DENTRO de la seccion de ese encabezado (hasta el siguiente de su nivel).
   Se comparan sin las marcas de cita `>` y con los espacios y los saltos de linea de seguido.
 - Lo comprueba `knowledge validate`, y `docs/spec/ambiguedades.md` la pinta debajo de la pregunta.
+  Sin git (una copia del repositorio sin `.git`), «commiteado» no se comprueba y `knowledge
+  validate` lo DICE con un `AVISO: ambiguedades: sin git, NO se comprobo...`.

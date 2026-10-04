@@ -254,7 +254,11 @@ def _ambiguedades(ambiguedades: list[Any], man: dict[str, Any]) -> str:
             if a.parametros:
                 lineas += [f"Afecta a: {', '.join(f'`{p}`' for p in a.parametros)}.", ""]
             for f in a.fuentes_documentales:
-                lineas += [f"Fuente documental: `{f.documento}`, «{f.ancla}»: «{f.literal}».", ""]
+                fila = f", fila {f.fila}" if f.fila else ""
+                lineas += [
+                    f"Fuente documental: `{f.documento}`, «{f.ancla}»{fila}: «{f.literal}».",
+                    "",
+                ]
     return "\n".join(lineas).rstrip() + "\n"
 
 

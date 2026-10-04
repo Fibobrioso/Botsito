@@ -56,6 +56,9 @@ CAMPOS_OPCIONALES = ("clase", "fuentes_documentales")
 # forma; que el documento exista, este commiteado, tenga el encabezado y el literal dentro, lo
 # comprueba `knowledge validate` (`validation/knowledge.py`), que es quien tiene el repositorio.
 CAMPOS_FUENTE_DOCUMENTAL = ("documento", "ancla", "literal")
+# `fila`, opcional (tercera orden del consultor, 2026-10-03): el id de UNA fila de tabla de la
+# seccion del ancla (su primera celda); entonces el literal tiene que estar dentro de esa fila.
+CAMPOS_FUENTE_DOCUMENTAL_OPCIONALES = ("fila",)
 CARPETA_DOCUMENTAL = "docs"
 CLASE_DOCUMENTAL = "medicion"
 
@@ -69,6 +72,7 @@ class FuenteDocumental:
     documento: str  # ruta relativa a la raiz, con `/`, dentro de `docs/`
     ancla: str  # el texto de un encabezado del documento, sin las almohadillas
     literal: str  # lo citado, tal cual, dentro de la seccion de ese encabezado
+    fila: str | None = None  # el id de una fila de tabla de esa seccion; el literal, en ella
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,10 +116,17 @@ def _fuentes_documentales(bruto: object, aid: str) -> tuple[FuenteDocumental, ..
         raise AmbiguedadError(f"{aid}: fuentes_documentales debe ser una lista")
     salida = []
     for i, f in enumerate(bruto):
-        if not isinstance(f, dict) or set(f) != set(CAMPOS_FUENTE_DOCUMENTAL):
+        if (
+            not isinstance(f, dict)
+            or not set(CAMPOS_FUENTE_DOCUMENTAL) <= set(f)
+            or not set(f) <= set(CAMPOS_FUENTE_DOCUMENTAL + CAMPOS_FUENTE_DOCUMENTAL_OPCIONALES)
+        ):
             raise AmbiguedadError(
-                f"{aid}: fuentes_documentales[{i}] lleva exactamente {CAMPOS_FUENTE_DOCUMENTAL}"
+                f"{aid}: fuentes_documentales[{i}] lleva {CAMPOS_FUENTE_DOCUMENTAL} y, si acaso, "
+                f"{CAMPOS_FUENTE_DOCUMENTAL_OPCIONALES}"
             )
+        if "fila" in f and not (isinstance(f["fila"], str) and f["fila"].strip()):
+            raise AmbiguedadError(f"{aid}: fuentes_documentales[{i}]: `fila` es un texto no vacio")
         if not all(isinstance(f[c], str) and f[c].strip() for c in CAMPOS_FUENTE_DOCUMENTAL):
             raise AmbiguedadError(
                 f"{aid}: fuentes_documentales[{i}]: los tres son textos no vacios"
@@ -124,7 +135,12 @@ def _fuentes_documentales(bruto: object, aid: str) -> tuple[FuenteDocumental, ..
         if problema:
             raise AmbiguedadError(f"{aid}: fuentes_documentales[{i}]: {problema}")
         salida.append(
-            FuenteDocumental(f["documento"], f["ancla"].strip(), " ".join(f["literal"].split()))
+            FuenteDocumental(
+                f["documento"],
+                f["ancla"].strip(),
+                " ".join(f["literal"].split()),
+                f["fila"].strip() if "fila" in f else None,
+            )
         )
     return tuple(salida)
 

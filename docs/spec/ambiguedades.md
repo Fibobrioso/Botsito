@@ -42,7 +42,7 @@ MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo,
 
 Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
 
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
@@ -50,9 +50,9 @@ MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por d
 
 Afecta a: `broker_offset_base`, `broker_dst`.
 
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
 
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «El calendario del +DST: NO ENCONTRADA».
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
@@ -138,7 +138,7 @@ Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/val
 
 Afecta a: `freno_peticiones_aviso`, `freno_peticiones_corte`, `freno_bucle_repeticiones`, `freno_bucle_minutos`.
 
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «an excessive number of more than 2,000 server requests per day».
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R13: «an excessive number of more than 2,000 server requests per day».
 
 ### A-55 · qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta · medicion
 
@@ -146,7 +146,7 @@ R15 de docs/validation/FTMO-REGLAS.md prohíbe «perform gap trading [...] by op
 
 Afecta a: `cierre_pendientes`.
 
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «two hours or less before a relevant financial market is closed for at least two hours».
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R15: «two hours or less before a relevant financial market is closed for at least two hours».
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «within two hours before a relevant market closes for at least two hours».
 

@@ -14,7 +14,8 @@
   se sigue preguntando: entra en el cuestionario de la sesion siguiente. Una RESUELTA se reabre con
   un registro `REOPEN` (y vuelve a `ABIERTA`); una DECIDIDA, solo con otro ADR. Una `medicion` cuya
   fuente es un documento del repositorio y no el trader cita `fuentes_documentales` (documento en
-  `docs/`, commiteado; ancla, un encabezado; literal, dentro de su seccion) en vez de evidencia de
+  `docs/`, commiteado; ancla, un encabezado; literal, dentro de su seccion, o de su `fila` de
+  tabla si la nombra) en vez de evidencia de
   relleno (`docs/runbooks/AMBIGUEDADES.md`, desde el 2026-10-03).
 - `strategy_spec.yaml` (F11, ADR-0013): las reglas de la operativa. **No contienen numeros**:
   nombran parametros del registro, y un test lo comprueba. Cada regla lleva el `literal` tal cual

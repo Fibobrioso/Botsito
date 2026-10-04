@@ -436,8 +436,9 @@ CI de Linux (`docs/runbooks/RITUAL.md`, «Antes del merge: la CI de Linux»).
   quedan las dos ramas `fix/`; el cierre borra las dos.
 - **Run 196.** Corre el test del enlace simbolico en Linux: no esta entre los 8 skipped (todos son
   de `data/` o de `tokenizers`), luego paso.
-- **La correccion del hallazgo a1 (§2) va en un commit posterior**, que se empuja igual; su run, en
-  la fila siguiente cuando exista.
+- **La correccion del hallazgo a1 (§2) va en un commit posterior**, 84e2a3c, que se empuja igual:
+  run 197 (37160166345), 1 failed, 1884 passed, 8 skipped; el fallo, el mismo esperado de `state
+  check`. Los runs de la tercera orden, en §4.5.
 
 ## 2. Lo que encontró el revisor, y qué se hizo
 
@@ -534,10 +535,141 @@ Hecho fuera del encargo: nada reseñable. `cli.py`, `spec_docs.py` y `revisor.md
 7. `grep` de literales y encabezados en `docs/validation/FTMO-REGLAS.md`, de `ev-v4-012524-0ef85a89` en `ambiguedades.yaml`, de `procedencia: reexpresion_consultor` en `knowledge/feedback`, de «23.000» en PROJECT_STATE, CLAUDE.md y runbooks, y de «SUSTITUIDO» en encargo e informe
 8. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases knowledge/feedback`; `git diff --name-status main...HEAD`; `wc -c PROJECT_STATE.md`
 
+## 4. Tercera orden del consultor: respuesta a la Fase 1 (2026-10-03)
+
+Copiada tal cual (tambien al final del encargo):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la Fase 1 de trabajo/reabrir-y-fuente-documental (2026-10-03). Cópiala con su fecha al informe:
+>
+> 1. El nombre del push: lo hiciste bien. fix/reabrir-y-fuente-documental es el que manda RITUAL.md; el de mi orden lo escribí de memoria y estaba mal. Apúntalo en la fila de ERRORES-RECURRENTES de esta rama, al cerrar, como error del consultor (regla 2.8: lo que se cita del repo se lee antes). El cierre borrará las dos ramas fix/ de origin.
+> 2. Sin git, la comprobación de «commiteado» se salta como las demás de historial: aceptado. Pero que no salga en silencio: cuando no hay git, knowledge validate tiene que decir que esa comprobación no se hizo, igual que hagan las otras de historial. Si las otras callan, que esta lo diga de todas formas y lo declaras en el informe.
+> 3. La guardia del literal se refuerza a nivel de fila: el ancla puede nombrar, además del encabezado, el id de una fila de tabla (por ejemplo, la sección 2 de FTMO-REGLAS.md y la fila R13), y entonces el literal tiene que estar dentro de esa fila, no en cualquier parte de la sección. FTMO-REGLAS.md NO se edita: es un informe cerrado. Las cuatro migraciones (A-54 R13, A-55 R15 y el ticket, A-27 R11, A-28 R10) pasan a anclarse a su fila. Tests rotos a propósito: un literal de R15 anclado a R13 tiene que fallar, igual que un id de fila que no existe y un id que aparece en dos filas. Si el id se repite en la tabla, se niega: nombra la condición, no los casos.
+> 4. RN-029 a RN-032: no se tocan en esta rama. Di en el informe si su cita del ítem de FundedNext es relleno, es decir, si lo que de verdad sostiene la regla es la norma de la firma y no lo que dijo el trader. Si lo es, añade una línea corta a Technical Debt que apunte a este informe.
+> 5. Los runs: anota en el informe el 197 y los nuevos. Después de estos cambios, make check sellado, push otra vez a fix/reabrir-y-fuente-documental y CI de Linux con solo el fallo esperado; dame el número de run.
+> 6. El revisor hace una pasada corta solo sobre lo que cambia en esta respuesta (puntos 2 a 5), con su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 4.1 El nombre del push (punto 1)
+
+Nada que cambiar en la rama. Al cerrar, la fila de esta rama en `docs/runbooks/ERRORES-RECURRENTES.md`
+lleva el nombre de push de la orden como error del consultor (regla 2.8: lo que se cita del repo se
+lee antes), y el cierre borra de `origin` las dos ramas `fix/`: `fix/trabajo-reabrir-y-fuente-documental`
+y `fix/reabrir-y-fuente-documental`.
+
+### 4.2 Sin git, se dice (punto 2)
+
+`aviso_sin_git` (`src/botsito/validation/knowledge.py`): si no hay git y hay fuentes documentales,
+`knowledge validate` escribe `AVISO: ambiguedades: sin git, NO se comprobo que el documento de las
+N fuentes documentales este commiteado (la ruta, el encabezado, la fila y el literal si)`. Con git, o
+sin fuentes documentales, no dice nada. Lo prueban un test de la funcion y, en `validar` entero, el
+test de `test_kit.py` que ya pasaba `validar` sobre una copia sin `.git` (ahora exige el aviso).
+
+**Las otras comprobaciones de historial callan sin git, y algunas dicen mas de lo que comprueban.**
+Medido con `validar` sobre una copia sin `.git` (la de `test_kit.py`): ninguna avisa. Peor: las lineas
+OK que siguen afirman «intacto» sin haberlo evaluado (en cada una, el error solo se emite con
+`con_git`, y sin git el OK sale igual):
+- `OK: 14 transcripciones registradas, historial intacto` (medida; `knowledge.py:792`);
+- `OK: 9 extracciones de fotogramas registradas, obligatorios presentes, historial intacto` (medida;
+  `:795`);
+- `OK: 0 manifiestos de datos validos, historial intacto` (medida; `:797`);
+- `OK: 3 libros declarados con formato y huso, solo-anadir intacto, ...` (medida; `:481`; sin git,
+  `problemas_de_libros` sale antes del solo-anadir, `src/botsito/corpus/libros.py:156`);
+- `OK: 1 dias retirados del holdout, cada uno de un reservado, solo-anadir intacto` (medida; `:496`;
+  «con el mismo mecanismo que los libros», dice su comentario);
+- `OK: ... registros de feedback, historial intacto, commits con Fuente` (`:917`) y la de evidencia
+  (`:927`): por el codigo; en la copia medida no se llega a ellas porque `validar` sale antes por los
+  errores del kit (la copia no tiene `data/`).
+
+No se tocan en esta rama (el encargo es la fuente documental). **Para el consultor:** es el patron
+«nada afirma mas de lo que su cita sostiene» en la salida de `knowledge validate`; si quiere, es una
+linea de Technical Debt o una rama corta que haga avisar a todas como esta.
+
+### 4.3 La fila de tabla (punto 3)
+
+- **Esquema** (`src/botsito/cases/ambiguedades.py`): cada fuente documental admite, ademas de
+  `documento`, `ancla` y `literal`, un campo opcional `fila`, texto no vacio: el id de una fila de
+  tabla de la seccion del ancla.
+- **Guardia** (`filas_con_id` y `problemas_fuentes_documentales`, `knowledge.py`). La condicion: **el
+  id de `fila` tiene que ser la PRIMERA celda de exactamente UNA fila de tabla de la seccion** (sin
+  las marcas de cita, fuera de los bloques de codigo). Ninguna fila con ese id se niega; mas de una,
+  se niega; y el literal tiene que estar DENTRO de esa fila. Sin `fila`, como antes: dentro de la
+  seccion.
+- **`FTMO-REGLAS.md` no se edita.** Medido antes: en su seccion 2, R10, R11, R13 y R15 son la
+  primera celda de una sola fila cada una.
+- **Las migraciones**, ancladas a su fila (`knowledge/spec/ambiguedades.yaml`;
+  `docs/spec/ambiguedades.md` regenerado, que pinta la fila):
+
+| Ambigüedad | Fuente | `fila` |
+|---|---|---|
+| A-27 | «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA» | R11 |
+| A-28 | «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST» | R10 |
+| A-28 | «El calendario del +DST: NO ENCONTRADA» | R10 |
+| A-54 | «an excessive number of more than 2,000 server requests per day» | R13 |
+| A-55 | «two hours or less before a relevant financial market is closed for at least two hours» | R15 |
+| A-55 | «within two hours before a relevant market closes for at least two hours» (el ticket) | — |
+
+  **La del ticket de A-55 no tiene fila**: la respuesta del soporte (VDW-DPMWR-965) no es una fila de
+  la tabla sino un recuadro citado dentro de la seccion 2, y el informe no se edita. Queda anclada a
+  la seccion, con un comentario en el YAML que lo dice.
+
+**Tests nuevos, cada guardia rota a proposito** (guion de la carpeta de trabajo, como en §1.5; las 9
+restauradas byte a byte, comprobado):
+
+| Rotura | Tests que fallan |
+|---|---|
+| la `fila` se ignora | `test_un_literal_de_otra_fila_se_niega`, `test_un_literal_de_r15_anclado_a_r13_falla_en_ftmo_reglas`, `test_un_id_de_fila_que_no_existe_se_niega`, `test_un_id_de_fila_repetido_se_niega` |
+| un id de fila que no existe pasa | `test_un_id_de_fila_que_no_existe_se_niega` |
+| un id de fila repetido pasa | `test_un_id_de_fila_repetido_se_niega` |
+| el literal no se mira en la fila | `test_un_literal_de_otra_fila_se_niega`, `test_un_literal_de_r15_anclado_a_r13_falla_en_ftmo_reglas` |
+| una `fila` vacia o no textual se carga | `test_una_fila_vacia_o_no_textual_no_se_carga` (3 casos) |
+| el id vale en cualquier celda | `test_la_primera_celda_es_el_id_y_no_cuentan_los_bloques_de_codigo` |
+| cuentan las filas de un bloque de codigo | `test_la_primera_celda_es_el_id_y_no_cuentan_los_bloques_de_codigo` |
+| sin git no se avisa (la funcion) | `test_sin_git_se_dice_que_commiteado_no_se_comprobo`, `test_kit.py::test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad` |
+| sin git no se avisa (`validar`) | `test_kit.py::test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad` |
+
+`test_un_literal_de_r15_anclado_a_r13_falla_en_ftmo_reglas` es el caso del consultor sobre el
+`FTMO-REGLAS.md` real: sin `fila` el literal de R15 pasa (esta en la seccion 2), anclado a R13 falla y
+anclado a R15 pasa. Y las 17 roturas de §1.5 y §2 se volvieron a correr sobre el codigo nuevo: todas
+siguen cayendo. `test_las_cuatro_migradas_...` exige ahora la fila de cada migrada.
+
+### 4.4 RN-029 a RN-032 y el item de FundedNext (punto 4)
+
+**Es relleno.** Las cuatro reglas (los dos frenos de la firma, el cierre al acercarse a su limite y
+el no abrir lo que no cabe) citan ev-v4-012524-0ef85a89: el trader, de memoria y dudando, recuerda
+los topes de OTRA firma («5% como drawdown máximo de pérdida diaria, creo, y el total es un 7, ¿no?
+O un 10. 8, 8. Un 8, sí»; la `afirmacion` del item: «cuenta de fondeo elegida: FundedNext»). Lo que
+las sostiene es la norma de la firma: el reglamento de FTMO (R2 y R3 de `FTMO-REGLAS.md`) y
+ADR-0026 y ADR-0031, que cada una declara en `decision`. Lo dicen sus propias `notas` (RN-029: «No
+sostiene ni las cifras -el trader las dice de memoria, de otra firma y dudando- ni la base, ni la
+magnitud, ni el corte, ni el margen: eso lo escriben el reglamento de FTMO y ADR-0026, y ADR-0031»;
+RN-030, RN-031 y RN-032: «La cita sostiene lo mismo que en RN-029 y nada mas»). Lo unico que la cita
+aporta -que la cuenta de fondeo tiene topes propios- es tambien norma de la firma.
+
+Por que sigue ahi: en `strategy_spec.yaml`, `cita` es campo obligatorio de una regla
+(`src/botsito/spec/modelo.py:36`) y tiene que ser un id de evidencia o de feedback; una regla no
+admite fuente documental. No se tocan en esta rama. **Linea nueva en Technical Debt** de
+`PROJECT_STATE.md`, que apunta aqui.
+
+### 4.5 Los runs (punto 5)
+
+| Run | Rama remota | Commit | Resultado |
+|---|---|---|---|
+| 197 (37160166345) | `fix/reabrir-y-fuente-documental` | 84e2a3c | 1 failed, 1884 passed, 8 skipped: solo el fallo esperado de `state check` |
+| — | `fix/reabrir-y-fuente-documental` | el de esta tercera orden | se anota en el commit siguiente, con el revisor |
+
+### 4.6 El revisor (punto 6)
+
+Pasada corta sobre los puntos 2 a 5; su informe, en §5.
+
+`PROJECT_STATE.md`: «Tests Currently Passing» pasa de 1231 a 1239 (las 8 funciones nuevas), y la
+linea de Technical Debt de §4.4.
+
 ## Estado
 
 Fase 0 entregada y decidida por el consultor el 2026-10-03; FASE 1 HECHA (§1), con el revisor (§2
-y §3) y la CI de Linux (§1.7). Para el consultor, dos cosas que no son de la orden: sin git,
-«commiteado» no se evalúa (§1.3), y el ancla de las cuatro migradas es la sección 2 entera (a2).
-
-Rama lista para revisión, NO cerrada.
+y §3) y la CI de Linux (§1.7). Tercera orden del consultor (§4) HECHA; falta su run de la CI y la
+pasada corta del revisor, que van en el commit siguiente. Para el consultor: las comprobaciones de
+historial que dicen «intacto» sin git (§4.2).

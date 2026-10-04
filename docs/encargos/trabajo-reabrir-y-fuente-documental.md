@@ -64,3 +64,20 @@ Copiada tal cual:
 > Informe en docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md, con el revisor al final y su informe pegado.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Tercera orden: respuesta del consultor a la Fase 1 (2026-10-03)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la Fase 1 de trabajo/reabrir-y-fuente-documental (2026-10-03). Cópiala con su fecha al informe:
+>
+> 1. El nombre del push: lo hiciste bien. fix/reabrir-y-fuente-documental es el que manda RITUAL.md; el de mi orden lo escribí de memoria y estaba mal. Apúntalo en la fila de ERRORES-RECURRENTES de esta rama, al cerrar, como error del consultor (regla 2.8: lo que se cita del repo se lee antes). El cierre borrará las dos ramas fix/ de origin.
+> 2. Sin git, la comprobación de «commiteado» se salta como las demás de historial: aceptado. Pero que no salga en silencio: cuando no hay git, knowledge validate tiene que decir que esa comprobación no se hizo, igual que hagan las otras de historial. Si las otras callan, que esta lo diga de todas formas y lo declaras en el informe.
+> 3. La guardia del literal se refuerza a nivel de fila: el ancla puede nombrar, además del encabezado, el id de una fila de tabla (por ejemplo, la sección 2 de FTMO-REGLAS.md y la fila R13), y entonces el literal tiene que estar dentro de esa fila, no en cualquier parte de la sección. FTMO-REGLAS.md NO se edita: es un informe cerrado. Las cuatro migraciones (A-54 R13, A-55 R15 y el ticket, A-27 R11, A-28 R10) pasan a anclarse a su fila. Tests rotos a propósito: un literal de R15 anclado a R13 tiene que fallar, igual que un id de fila que no existe y un id que aparece en dos filas. Si el id se repite en la tabla, se niega: nombra la condición, no los casos.
+> 4. RN-029 a RN-032: no se tocan en esta rama. Di en el informe si su cita del ítem de FundedNext es relleno, es decir, si lo que de verdad sostiene la regla es la norma de la firma y no lo que dijo el trader. Si lo es, añade una línea corta a Technical Debt que apunte a este informe.
+> 5. Los runs: anota en el informe el 197 y los nuevos. Después de estos cambios, make check sellado, push otra vez a fix/reabrir-y-fuente-documental y CI de Linux con solo el fallo esperado; dame el número de run.
+> 6. El revisor hace una pasada corta solo sobre lo que cambia en esta respuesta (puntos 2 a 5), con su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.

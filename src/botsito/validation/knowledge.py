@@ -174,15 +174,46 @@ def plano(texto: str) -> str:
     return " ".join(" ".join(_CITA.sub("", linea) for linea in texto.splitlines()).split())
 
 
+def filas_con_id(seccion: str, fila: str) -> list[str]:
+    """Las filas de tabla de `seccion` cuya PRIMERA celda es `fila` (sin las marcas de cita y fuera
+    de los bloques de codigo). Una fuente documental con `fila` exige exactamente una."""
+    salida = []
+    en_codigo = False
+    for linea in seccion.splitlines():
+        if linea.lstrip().startswith("```"):
+            en_codigo = not en_codigo
+            continue
+        celdas = _CITA.sub("", linea).strip()
+        if en_codigo or not celdas.startswith("|"):
+            continue
+        if celdas.strip("|").split("|")[0].strip() == fila:
+            salida.append(celdas)
+    return salida
+
+
+def aviso_sin_git(ambiguedades: Iterable[Any], con_git: bool) -> str | None:
+    """Sin git, «commiteado» no se evalua, y se DICE (tercera orden del consultor, 2026-10-03):
+    las otras comprobaciones de historial de `validar` callan sin git, y esta no."""
+    n = sum(len(a.fuentes_documentales) for a in ambiguedades)
+    if con_git or not n:
+        return None
+    return (
+        f"ambiguedades: sin git, NO se comprobo que el documento de las {n} fuentes documentales "
+        "este commiteado (la ruta, el encabezado, la fila y el literal si)"
+    )
+
+
 def problemas_fuentes_documentales(
     repo: Path, ambiguedades: Iterable[Any], con_git: bool
 ) -> list[str]:
     """Cada fuente documental se lee de verdad (decision 3 del consultor del 2026-10-03): la ruta,
     RESUELTA en el disco, queda dentro de `docs/` (un enlace que salga se niega); el documento
     existe y esta COMMITEADO en HEAD; tiene el encabezado del `ancla`; y el `literal` esta tal
-    cual DENTRO de esa seccion. Sin git, «commiteado» no se evalua, como el resto de las
-    comprobaciones de historial de `validar` (una copia sin `.git`, la de `test_kit.py`); lo demas
-    se comprueba igual."""
+    cual DENTRO de esa seccion; con `fila`, dentro de la UNICA fila de tabla de esa seccion
+    cuyo id es ese (un id que no esta, o que esta en dos filas, se niega: tercera orden del
+    consultor, 2026-10-03). Sin git, «commiteado» no se evalua, como el resto de las comprobaciones
+    de historial de `validar` (una copia sin `.git`, la de `test_kit.py`), y `aviso_sin_git` lo
+    dice; lo demas se comprueba igual."""
     from botsito.comun.historial import contenido_en_head
 
     base = (repo / "docs").resolve()
@@ -203,6 +234,23 @@ def problemas_fuentes_documentales(
             seccion = seccion_de(real.read_text(encoding="utf-8"), f.ancla)
             if seccion is None:
                 problemas.append(f"{donde}: no tiene el encabezado {f.ancla!r}")
+                continue
+            if f.fila is not None:
+                filas = filas_con_id(seccion, f.fila)
+                if len(filas) == 0:
+                    problemas.append(
+                        f"{donde}: no hay ninguna fila de tabla {f.fila!r} en la seccion "
+                        f"{f.ancla!r}"
+                    )
+                elif len(filas) > 1:
+                    problemas.append(
+                        f"{donde}: el id de fila {f.fila!r} esta en {len(filas)} filas de la "
+                        f"seccion {f.ancla!r}: un id de fila tiene que nombrar UNA sola fila"
+                    )
+                elif plano(f.literal) not in plano(filas[0]):
+                    problemas.append(
+                        f"{donde}: el literal no esta dentro de la fila {f.fila!r}: {f.literal!r}"
+                    )
             elif plano(f.literal) not in plano(seccion):
                 problemas.append(
                     f"{donde}: el literal no esta dentro de la seccion {f.ancla!r}: {f.literal!r}"
@@ -577,6 +625,9 @@ def validar(repo: Path) -> tuple[int, list[str]]:
             f"ambiguedades: {p}"
             for p in problemas_fuentes_documentales(repo, ambiguedades, con_git)
         ]
+        sin_git = aviso_sin_git(ambiguedades, con_git)
+        if sin_git:
+            salida.append(f"AVISO: {sin_git}")
         for amb in ambiguedades:
             # DECIDIDA: la cierra el consultor, y su ADR tiene que EXISTIR y NOMBRARLA. Sin lo
             # segundo, `decision: ADR-0002` pasaria entero -es el mismo defecto que F12 encontro
