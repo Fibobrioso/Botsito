@@ -292,6 +292,122 @@ transcripción. Que un mes no tenga días reservados no lo hace legible como lib
 que sea material de desarrollo leído y declarado (`CLAUDE.md:139`, ADR-0021 §1). Por eso la lista
 blanca sigue negando por defecto, y el test solo vigila que no contradiga la fuente.
 
+## 2. Fase 2: la aplicación
+
+### 2.1 Cómo se aplica cada parte
+
+- **v1–v6** no son sesiones en cuarentena. La regla se aplica al leer, en la CLI (`kb`,
+  `corpus transcript show`, `frames show`, `evidence propose`), que desde la fase 1 pasa
+  `meses_libres`. No hay filtrada que regenerar.
+- **v7–v10** son sesiones en cuarentena. La CLI no enseña ningún segmento suyo; lo que se lee son
+  sus filtradas, fuera del repo, que se rehacen con `scripts/transcribir_sesion.py`.
+- **El guion revisado es el de `main`.** El de la rama pasa `libres`, pero la guardia solo deja
+  ejecutar sobre una cruda el guion idéntico al blob de `main`. Se usó el de `main`: el cambio de la
+  rama se apartó con `git restore --source=main --worktree` y se restauró después
+  (`git diff --quiet HEAD` lo confirma).
+- **El de `main` llama a `en_cuarentena(textos)` sin `libres`**, así que, con la librería nueva,
+  **las filtradas de sesión salen en el escenario A (los 12 meses)**, que es un techo de B (B ⊆ A).
+  Taparán solo los 5 meses de B cuando el guion nuevo esté en `main` (pendiente, §5).
+- **Cómo se rehizo cada sesión:**
+  - **v9 y v10:** `--solo-filtrar` sobre su cruda de siempre. Las filtradas de antes se guardaron
+    como `*.filtrada-ANTES-condicion.md`.
+  - **v7 y v8:** ASR completo sobre el audio extraído sin recodificar a `Desktop/sesion-02-v7-audio`
+    y `-v8-audio`. Dan 602 y 229 segmentos, los mismos que sus transcripciones del corpus. Sus
+    filtradas de antes no estaban en la máquina.
+- **Nada se leyó:** solo se miraron los registros (sin texto) y las marcas `[CUARENTENA mm:ss–mm:ss]`.
+
+Guion: `docs/validation/anexos/CUARENTENA-POR-CONDICION/medir_fase2.py`, con su salida en
+`medir_fase2-SALIDA.txt`.
+
+### 2.2 Antes y después, por vídeo
+
+**v1–v6**, con la regla REAL de la librería: el `Filtro` con los meses libres de hoy (escenario B)
+frente al mismo `Filtro` con los libres que equivalen a la lista vieja. Son todos los meses menos
+septiembre, marzo, mayo y febrero: sus grafías y abreviaturas no cambiaron, así que la regla vieja
+es exactamente la nueva con esos libres. Se cuentan los segmentos ocultos por la regla (c):
+
+| Vídeo | Antes (c) | Después (c) | Nuevos | Ítems ev-* en los nuevos |
+|---|---|---|---|---|
+| v1 | 0 | 0 | 0 | 0 |
+| v2 | 3 | 3 | 0 | 0 |
+| v3 | 3 | 3 | 0 | 0 |
+| v4 | 26 | 26 | 0 | 0 |
+| v5 | 0 | 0 | 0 | 0 |
+| v6 | 69 | 72 | **3** (0:01:00, 0:01:02, 2:26:17) | 0 |
+
+**v7–v10**, bloques `[CUARENTENA]` de la filtrada, en el escenario A:
+
+| Sesión | Segmentos en cuarentena antes → después | Bloques antes | Bloques después (A) | Bloques nuevos | Ítems ev-* en los nuevos |
+|---|---|---|---|---|---|
+| v7 | sin filtrada de antes → 9 | 1 (su tramo no citable) | 3 | 2 (0:10:47, 0:32:59) | **0** |
+| v8 | sin filtrada de antes → 0 | 0 | 0 | 0 | **0** |
+| v9 | 29 → 57 | 8 | 15 | 8 | 0 |
+| v10 | 45 → 89 | 12 | 23 | 15 | 2 (`ev-v10-014823-64248489`, `ev-v10-014853-76602fb4`, S-16) |
+
+**Lo que dicen estas cifras:**
+- **La regla de la decisión 2 no salta:** en v7 y v8 no cae ningún ítem ni siquiera con A, así que
+  tampoco con B.
+- **Los 2 ítems de v10** son de los 7 del escenario A que el consultor decidió dejar como están, y
+  en B no caen (fase 0: v9 y v10, 0 segmentos nuevos en B).
+- **v6 da 3 nuevos donde la fase 0 daba 2.** La fase 0 solo miraba los segmentos VISIBLES. Un
+  segmento que ya estaba oculto, como vecino de otro, y que nombra el mes ahora tapado pasa a
+  arrastrar a su otro vecino (2:26:17). La medida de la fase 2 usa el `Filtro` real sobre la
+  transcripción entera, y es la que vale.
+
+### 2.3 Los tramos no citables
+
+**No se añade ningún tramo.**
+- Los bloques nuevos de v9 y v10 son de A, no de B: en B no hay ninguno (fase 0). Registrarlos
+  como tramos taparía de forma permanente, para la evidencia, nombres de meses demostrados libres,
+  y ocultaría por (b) los 2 ítems de S-16 que el consultor decidió dejar.
+- En v7 no se puede saber hoy cuáles de sus 2 bloques nuevos son de B, por la misma razón del
+  guion.
+- La filtrada de A ya los tapa al leer, y no hay ningún ítem que los pise.
+- El tramo manual de v10 1:55:29–1:55:32 se queda como está.
+
+### 2.4 Exposición
+
+**Ninguna exposición nueva.**
+- Las medidas solo imprimieron recuentos, marcas de tiempo e ids.
+- Las filtradas rehechas no se abrieron: solo se miraron sus marcas de cuarentena.
+- No hay fila nueva en `HOLDOUT-EXPOSICIONES.md`.
+
+## 3. Los ítems afectados y qué se hizo con ellos
+
+**Ninguno se tocó** (decisión 2). En el escenario B, el que vale, no cae ningún ítem en v1–v6 ni en
+v9–v10. En v7 y v8 no cae ninguno ni siquiera en A. Los 7 ítems de A (v3: 3, v4: 1, v5: 1 y
+v10: 2) siguen como estaban. Además, la regla del mes no oculta evidencia: lo dice la sexta orden
+del 2026-10-01.
+
+## 4. Desviaciones declaradas
+
+1. **Fase 0, el primer intento contaba «set» suelto como septiembre** (decisión 5). Salían 3
+   segmentos «nuevos» en v1 que eran la palabra «set». Se corrigió antes de entregar las cifras, y
+   desde la fase 1 lo vigila `test_set_suelto_no_es_un_mes_y_con_backtest_si`.
+2. **Las filtradas de sesión, en el escenario A y no en B.** La guardia solo ejecuta sobre una
+   cruda el guion revisado (el de `main`), que no pasa `libres` (§2.1). Por eso las cifras de
+   v7–v10 son un techo, y el «antes» de v7 y v8 sale de sus tramos y no de sus filtradas viejas, que
+   ya no estaban.
+3. **`scripts/a18_buscar.py` sigue construyendo su filtro sin `libres`.** Tapa los 12 meses: falla
+   cerrado. No está en el contrato; su salida commiteada no se regenera en esta rama.
+4. **`test_historial_sin_git.py` entra en el contrato** a mitad de rama. Enumera las líneas OK de
+   `knowledge validate` y los ámbitos con historial; la fuente de (b) es una comprobación de
+   historial más, como `retirados.yaml` (se amplió en el commit de la fase 1).
+5. **`test_abril_agosto_enero_*` cambia** (§1.3): pasa los meses libres del repo real.
+
+## 5. Pendientes que deja la rama
+
+- **Con el guion nuevo ya en `main`:**
+  - rehacer las filtradas de v7–v10 en el escenario B, con `--solo-filtrar --sesion 02/03/04` sobre
+    las crudas que ya están fuera del repo;
+  - registrar como tramo no citable cada bloque nuevo de B, si lo hay (en v9 y v10 la fase 0 dice
+    que ninguno);
+  - comparar la filtrada de v9 con `--sesion 03`: ya NO sale `f7529459…`, porque la regla cambió;
+    el sha nuevo se anota allí.
+- **`a18_buscar.py`**, si algún día se regenera su salida: pasarle `libres`.
+
 ## Estado
 
-FASE 1 HECHA; FASE 2 EN CURSO. Rama NO cerrada.
+FASES 0, 1 y 2 HECHAS. Rama lista para revisión, NO cerrada.
+
+Tamaño de `PROJECT_STATE.md`: 22.998 bytes (el tope del test es 25.000).

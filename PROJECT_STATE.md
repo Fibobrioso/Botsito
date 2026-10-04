@@ -14,7 +14,7 @@
 trabajo/cuarentena-por-condicion
 
 ## Current Feature
-`trabajo/cuarentena-por-condicion` EN CURSO (2026-10-04): el filtro de cuarentena deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre (punto P). Fase 0 entregada, esperando decision del consultor. Encargo docs/encargos/trabajo-cuarentena-por-condicion.md; informe docs/validation/CUARENTENA-POR-CONDICION.md.
+`trabajo/cuarentena-por-condicion` EN CURSO (2026-10-04): el filtro de cuarentena deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre (punto P). Fases 0, 1 y 2 hechas: lista para revision, NO cerrada. Encargo docs/encargos/trabajo-cuarentena-por-condicion.md; informe docs/validation/CUARENTENA-POR-CONDICION.md.
 
 ## Stable Main State
 eec79a0 · merge de `trabajo/sesion-04` (tag `stable/F36v-sesion-04`): la sesion 4 con el trader entra como v10, en cuarentena (transcripcion, fotogramas, 21 tramos no citables y 64 items ev-v10-*), con su extraccion por pregunta S-1..S-24 (13 resuelven, 11 en parte) y SIN resolver nada en la spec; scripts/transcribir_sesion.py guarda la hoja y los textos de los codigos por sesion (--sesion). Sobre `stable/F36u-historial-sin-git` (8e21fd1). Informe docs/validation/SESION-04-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
