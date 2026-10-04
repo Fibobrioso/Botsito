@@ -51,9 +51,10 @@ Ninguna se quedó sin preguntar. El resumen está en la tabla del §5.
      mueve cae en cuarentena.
 3. **S-16: el backtest de agosto que vale es el GRABADO, el del vídeo** (E-1). El primero no
    incluía los break even. La premisa de la hoja («el completo es el original») era la contraria.
-4. **S-14, la vela casi plana (RN-007): se contradice.**
+4. **S-14, la vela casi plana (RN-007): parece contradecirse, sin que se pueda afirmar.**
    - Primero elige la (b): casi plana con 1 o 2 puntos de cuerpo o menos.
-   - Al repetírsela, dice que con 1 o 2 puntos ya hay cuerpo «que se podría tomar en cuenta».
+   - Al repetírsela, la filtrada dice «con **12** puntos ahí sí habría un pequeño cuerpo … que se
+     podría tomar en cuenta». Que sea «1 o 2» es una lectura del ASR, no lo que está escrito.
    - Lo único firme: la vela que abre y cierra en el mismo precio no cuenta.
 5. **S-3 y S-4, la vida de la orden (A-18, A-49).**
    - El stop se pone ya en el 0,8; el 1 solo sirve «como planteamiento» del RR.
@@ -112,6 +113,11 @@ de 2026 tiene días ocultos y la cuarentena mecánica no filtra «junio» (§2.4
 - `codigos_validos(sesion)`, y `orden_de_preguntas`, `version_filtrada` y `registro_filtro` reciben
   la hoja.
 - Opción `--sesion {02,03,04}`, por defecto la en curso; el registro dice con qué hoja se agrupó.
+- **Dos efectos que el cambio trae y conviene saber** (añadidos tras el revisor, B1 y B2):
+  - la hoja 02 queda con `CODIGOS_DE_SESION_TEXTO["02"] = {}`. Antes, el global aceptaba S-1,
+    E-1..E-3 y G-1..G-3 en cualquier sesión; ahora la 02 solo valida las A-xx, que es su hoja;
+  - el defecto pasa a ser la sesión 04. `--solo-filtrar` sobre v9 (u otra sesión) ya no reproduce
+    su filtrada si no se le da su `--sesion` (la 03 para v9).
 
 **Tests** (`tests/unit/test_transcribir_sesion.py`):
 - los de la 03 pasan su hoja explícita;
@@ -159,7 +165,7 @@ Las dos cifras del informe miden cosas distintas.
 
 | Ejecución | passed | skipped | deselected | failed |
 |---|---|---|---|---|
-| `make check` sellado de la rama (Windows, con `data/`; `make-check.log`, línea 64: «1919 passed in 661.94s») | 1919 | 0 | 0 | 0 |
+| `make check` sellado de la rama (Windows, con `data/`; `make-check.log`: «1919 passed») | 1919 | 0 | 0 | 0 |
 | último `make check` de `main` (`48f9701`) | no se conserva: el log de esa máquina se sobrescribe en cada ejecución | | | |
 | último run de CI de `main` que consta en HISTORIA (run 203, `cab9eb1`, Linux, sin `data/`) | 1901 | 8 | 0 | 1 (state check) |
 
@@ -183,10 +189,10 @@ Medidos con `ffmpeg silencedetect` (-50 dB, 30 s) y `volumedetect`: los cuatro s
 
 | Corte | Qué hay alrededor | ¿Tapa una respuesta? |
 |---|---|---|
-| **45:05–46:41** (2705,8–2800,5 s) | 44:42 «Pro, ahora vengo, un minuto»; 44:44 «pregunta S3, cerrada»; 46:40 «Vale, continuamos» | No: cae entre S-3, ya cerrada, y S-4 |
+| **45:05–46:41** (2705,8–2800,5 s) | 44:42 «Pro, ahora vengo, un minuto»; 44:44 «pregunta S3, cerrada»; al volver el audio empieza S-4 (sin cita: las dos primeras líneas caen en el tramo) | No: cae entre S-3, ya cerrada, y S-4 |
 | **1:30:51–1:35:48** (5451,6–5747,7 s) | 90:49 «Ahora vengo, bro, voy a tomar, calentarme.» en mitad de S-13 | Cae en una pausa anunciada; la respuesta de S-13 se da entera al volver (100:05) |
 | **1:36:37–1:38:58** (5797,8–5937,6 s) | dentro de la misma pausa | No se puede saber si se dijo algo |
-| **1:39:08–1:39:42** (5948,9–5981,6 s) | 99:41 «Volví.» | No |
+| **1:39:08–1:39:42** (5948,9–5981,6 s) | el trader dice que ha vuelto en la primera línea tras el corte (dentro del tramo, sin cita) | No |
 
 - **Puerta del ASR:** entre 1:30:49 y 1:39:41 no hay ningún segmento. Tres marcas caen en el borde
   de un corte:
@@ -236,11 +242,11 @@ el trader.
 fotograma para fechar los ejemplos.
 
 **Los tres tramos de precaución (ADR-0021 §2),** marcados al leerlos y declarados:
-- **0:40:20–0:40:42**: «estos datos / es usando lo que te había comentado / solo a 20 días» y
-  «aumenta el número de trades». Es un agregado de una cuenta suya, sin cifra, por el contexto de
-  enero.
-- **1:27:44–1:28:19**: el R de operaciones concretas de sus libros, leído en voz. El trader lo usa
-  para explicar que FX Replay redondea el objetivo. Periodo no identificado.
+- **0:40:20–0:40:42**: un agregado de una cuenta suya, comentado en voz; el periodo se deduce por el
+  contexto de enero. No se cita: lo declarado está en `HOLDOUT-EXPOSICIONES.md` (corregido tras el
+  revisor, A1).
+- **1:27:44–1:28:19**: el R de operaciones concretas de sus libros, leído en voz. Periodo no
+  identificado.
 - **1:56:07–1:56:19**: **el máximo de operaciones en un día de un libro suyo: 7**. Periodo no
   identificado, entre bloques de cuarentena. Las cifras están listadas en
   `HOLDOUT-EXPOSICIONES.md` y ninguna se usa.
@@ -460,6 +466,11 @@ después, el orden de la sesión.
 - **Compra y venta:** no aplica.
 - **Propuesta: resuelve.** Opción (a): la orden sin llenar se quita a las 11 y a las 3. Si a las 11
   cambia el sesgo de H4, también se quita.
+  - **La pregunta fue dirigida** (añadido tras el revisor, A8). Entre «claro, se quita» y la
+    respuesta, la filtrada trae 54:35 «o la dejo» y 54:36 «se quita, ¿no?», que es una pregunta
+    cerrada del consultor, y la subpregunta de A-39 también («Se quita, ¿verdad?»). Lo que sostiene
+    la propuesta es la respuesta del trader con su razón, 54:38 «sí, se quita, porque siempre se va
+    a ir actualizando / la orden».
   - «Un minuto antes» es dudoso: es la frase del consultor y el «sí» puede ser de cualquiera de los
     dos, así que no se propone.
 - **Aparte, no es regla:** 55:12–55:46 «esa vez que me planteaste de si dejar la operativa abierta
@@ -616,7 +627,8 @@ después, el orden de la sesión.
 - **Citas:**
   - 85:55–86:09 «si nunca, el objetivo es fijo, como bien / sabemos, bro, ahora no lo gestionamos
     / es fijo»
-  - 86:40–86:42 «Eso creo que es un planteamiento / O sea, algo que yo he añadido pero a futuro»
+  - (86:40–86:42: sin cita, porque la línea cae en el tramo de cuarentena 1:26:34–1:26:41, que se
+    extiende un segundo más allá del bloque. Corregido tras el revisor, A2.)
   - 86:54 «Claro, esto lo dije en los primeros videos»
   - 87:04–87:32 «incrementar tu take profit pero qué pasa después lo hemos dejado así o sea no no
     vamos a tratar / de maximizar porque hay alguien a veces o no tenemos una regla objetiva para
@@ -624,9 +636,10 @@ después, el orden de la sesión.
   - 89:02–89:15 «todo es 13 o sea fijo es 13 la regla es esa … es un / modo 3 tomando en cuenta que
     es de respecto al 1 de la caja no no no no exacto exacto exacto» (`ev-v10-012902-257afe4b`;
     la confirmación del trader a la frase del consultor)
-- **Regla o ejemplo:** la regla. Las salidas por encima de 3 R de sus libros las atribuye a cómo
-  redondea FX Replay (tramo de precaución, sin citar).
-- **«creo»:** 86:40, sobre lo que dijo antes, que llama «un planteamiento … a futuro».
+- **Regla o ejemplo:** la regla. Lo que dice de las salidas por encima de 3 R de sus libros está en
+  el tramo de precaución 87:44–88:19, que no se cita ni se describe.
+- **«creo»:** sí, en la línea de 86:40, sobre lo que dijo antes. No se cita porque cae en el tramo
+  (A2).
 - **Compra y venta:** no aplica.
 - **Propuesta: resuelve.** Opción (a): nunca deja correr. El objetivo es fijo, 3 veces respecto al 1
   de la caja. Lo de los primeros vídeos lo deja de lado («por ahora»). Coincide con v9 1:00:53.
@@ -671,8 +684,12 @@ después, el orden de la sesión.
 - **Compra y venta:** no aplica.
 - **Propuesta: resuelve en parte, con contradicción.**
   - Firme: la vela que abre y cierra en el mismo precio no cuenta.
-  - Sobre 1 o 2 puntos se contradice: primero (b), casi plana; luego, que con 1 o 2 puntos «hay un
-    pequeño cuerpo … que se podría tomar en cuenta».
+  - Sobre 1 o 2 puntos **parece** contradecirse: primero (b), casi plana; luego, «con 12 puntos ahí
+    sí habría un pequeño cuerpo … que se podría tomar en cuenta». **El literal de la filtrada es
+    «12», no «1 o 2»**: que sea «1 o 2» es una lectura del ASR que hace este informe, por la
+    pregunta y la respuesta anterior (103:17). El ítem `ev-v10-014438-95464201` lleva el literal
+    «12» en la cita, la lectura en la afirmación y `confianza: baja`. La contradicción no es firme:
+    hay que oírla (corregido tras el revisor, A3).
   - Relacionado (102:39): «yo estoy usando / los datos de Oanda». El color de una vela casi plana
     puede cambiar de un proveedor a otro (A-16).
 
@@ -855,7 +872,8 @@ después, el orden de la sesión.
 - **Tramo:** 126:42 (en cuarentena) – 127:29 («se ha acabado el Q&A»). Cuarentena 126:42–127:02 y
   127:04–127:11.
 - **Citas:**
-  - 127:02 «queremos saber que son antes de decidir que hacer con ellas» (lectura)
+  - (127:02: la lectura de la pregunta; sin cita, porque cae en el tramo 2:06:42–2:07:03. Corregido
+    tras el revisor, A2.)
   - 127:15–127:26 «o sea, cuantas operativas se hizo al día / o sea, son los stats / o sea,
     estadísticas de / los trades y demás / Así como nos enviabas fotos de las estadísticas / Claro»
     (`ev-v10-020715-7852af76`)
@@ -870,7 +888,8 @@ después, el orden de la sesión.
 
 1. **El break even al cierre o al toque (S-24).** v6 0:57:01 y v9 0:55:43 dicen «apenas toca»; en
    v10 espera al cierre de la vela más allá del nivel. ADR-0065 lo pone al tick.
-2. **La vela casi plana (S-14).** Opción (b) a las 103:17, y lo contrario a las 104:44.
+2. **La vela casi plana (S-14).** Opción (b) a las 103:17, y lo que parece lo contrario a las
+   104:44, si el «12 puntos» de la filtrada es «1 o 2 puntos». No es firme (A3).
 3. **El backtest de agosto que vale (S-16).** Al revés de la premisa de `PREGUNTAS.md`.
 4. **S-4 contra `caja_se_fija`** (decisión 5 del ADR de F35): el 1 se expande hasta llenar.
 5. **S-21:** «La A es verdadera» y describe la (b).
@@ -906,7 +925,7 @@ después, el orden de la sesión.
 | S-11 | A-35 | 81:49–85:40 | en parte | sí | no | sí |
 | S-12 | G-2, A-33 | 85:40–89:21 | **resuelve**: fijo, 3 × (0→1) | sí | sobre lo de antes | n/a |
 | S-13 | ADR-0060 §2 | 89:29–101:49 | **resuelve**: neutra = mantiene el sesgo | sí | no | solo alcista |
-| S-14 | RN-007 | 101:49–105:50 | en parte, contradictoria | sí, dos versiones | no | n/a |
+| S-14 | RN-007 | 101:49–105:50 | en parte; la contradicción depende de leer «12» como «1 o 2» | sí, dos versiones | no | n/a |
 | S-15 | A-43 | 105:51–108:05 | en parte | sí | no | no lo distingue |
 | S-16 | E-1 | 108:05–109:08 | **resuelve**: el del vídeo | n/a | no | n/a |
 | S-17 | A-50 | 109:10–110:19 | en parte (pregunta reformulada) | no | **sí** | no lo distingue |
@@ -991,3 +1010,152 @@ Decisiones del consultor del 2026-10-04 sobre esta rama, copiadas tal cual:
 
 EXTRACCIÓN HECHA, rama **lista para revisión, NO cerrada**. Nada se resuelve sin el consultor. La CI
 y el informe del revisor van abajo.
+
+**CI de Linux** (push `git push origin trabajo/sesion-04:refs/heads/fix/sesion-04`):
+- **run 205** (37224218115), `c489685`: **1 failed, 1910 passed, 8 skipped**.
+- El único fallo es el esperado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`: la rama
+  no es `main` ni lleva tag.
+- Son las cifras previstas en el §1.3: 1919 casos = 1910 + 8 + 1.
+- El commit que recoge el informe del revisor y sus arreglos tiene su propia CI. Su número de run
+  se le da al consultor en el terminal: escribirlo aquí exigiría otro commit sin CI (revisor, A9).
+
+## Informe del revisor
+
+Lanzado el 2026-10-04 con el informe terminado (CI 205 incluida) sobre `c489685`. Se pega tal cual,
+**salvo 8 retiradas marcadas «[retirado al pegar…]»**: el texto de los tramos no citables que citan
+A1 y A2 (copiarlo aquí volvería a meter lo que A1 y A2 mandan quitar) y la lista de meses con días
+ocultos de su última salvedad.
+
+### Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| A1 | bloquea | **Arreglado.** El §2.3 ya no cita el tramo 0:40:20–0:40:42: lo describe sin texto y remite a `HOLDOUT-EXPOSICIONES.md`. |
+| A2 | importa | **Arreglado.** Se quitan las citas de 86:40 (S-12), 127:02 (S-19), 46:40 y 99:41 (§2.1). Además se cruzaron **todas** las marcas del informe seguidas de una cita (103 líneas) con los 21 tramos de v10: ninguna toca ya un tramo. Los tramos no se estrechan. |
+| A3 | importa | **Arreglado.** El §0, el §3.15, el §4.2 y la tabla dicen que el literal es «12 puntos» y que leerlo como «1 o 2» es una lectura del ASR; la contradicción de S-14 no es firme. La evidencia ya llevaba el literal y `confianza: baja`; no se edita. |
+| A4 | importa | **Arreglado.** La `naturaleza` de v10 en `fuentes.yaml` dice ahora que los esquemas inventados los enseñó el consultor, sin ningún día real por su parte, y que el trader enseñó su replay. |
+| A5 | importa | **No se puede arreglar; se declara.** El cuerpo del commit `c489685`, ya en `fix/sesion-04`, dice «posible exposicion de junio» junto a la cifra 7. Las otras dos copias (la fila de HOLDOUT y los §2.3 y §3.20) las pidió el consultor. Esta no, y no se reescribe la historia de una rama empujada. **Para el consultor:** decidir si basta con esta declaración. Los mensajes de los commits siguientes no repiten la cifra. |
+| A6 | menor | **Arreglado.** El §2.3 y el §3.13 ya no describen el contenido del tramo 1:27:44–1:28:19. |
+| A7 | menor | **Arreglado.** El §1.3 da «1919 passed» sin el tiempo, que cambia en cada ejecución. |
+| A8 | menor | **Arreglado.** El §3.6 dice que la pregunta de S-5 fue dirigida, y en qué respuesta del trader se apoya la propuesta. |
+| A9 | menor | Es el procedimiento: este informe y los arreglos van en un commit nuevo, sellado otra vez, con su propia CI (ver «Estado»). |
+| B1, B2 | menor | **Declarados** en el §1.2: la hoja 02 sin códigos de sesión y el defecto `--sesion 04`. |
+
+**Una observación de la sesión, que el revisor no recoge.** La cabecera de
+`tramos_no_citables.yaml` dice «cada commit cita `Fuente:`». `cfec50b` y `c489685` lo tocan sin ese
+trailer, como antes `0e3ca88` y `b9e7e8a` (la sesión 3). `3718889` (v7) sí lo llevaba. Nada lo
+comprueba: `DIRECTORIOS_CON_FUENTE` solo cubre `knowledge/spec/` y `knowledge/cases/`. El commit que
+recoge este informe lleva `Fuente: ADR-0021` y `Fuente: ADR-0038`. Si hace falta una guardia, es
+una deuda para el consultor.
+
+### El informe, tal cual
+
+**Informe del revisor · trabajo/sesion-04 · 2026-10-04**
+
+Revisada la rama `trabajo/sesion-04` (base `48f9701`, commits `536e958`, `cfec50b`, `c489685`). HEAD es `c489685` y `main` sigue en `48f9701`. En el árbol de trabajo solo cambia, sin commitear, el párrafo de la CI en «Estado» del informe, y no hay nada estadiado. No he leído la cruda, ni ningún tramo no citable, ni fotogramas. De la filtrada solo he mirado marcas de tiempo y las líneas que el informe cita, que están fuera de los tramos no citables.
+
+#### Eje (a) · Reglas de la casa
+
+Resumen: 1 bloquea, 4 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | **bloquea** | El informe **cita texto de un tramo no citable**: [retirado al pegar: texto de un tramo no citable], del tramo de precaución 0:40:20–0:40:42. El motivo del tramo dice «no se cita»; la skill `ingerir-sesion` exige «ninguna cita del informe cae en un tramo»; `HOLDOUT-EXPOSICIONES.md` declara ese tramo «SIN cifra» y solo copia una frase sin cifra. El informe añade dos fragmentos y uno lleva una cifra [retirada al pegar]. Se pasa de la cifra declarada a una cifra copiada. | `docs/validation/SESION-04-EXTRACCION.md:239-241`. Los fragmentos están en las líneas `[40:25]`, `[40:27]` y `[40:36]` de la filtrada (`grep -n` solo con marcas de tiempo). Tramo en `knowledge/corpus/tramos_no_citables.yaml` (v10, `t0: "0:40:20"`, `t1: "0:40:42"`). El contenido parece benigno, pero es copia de un tramo marcado, y el consultor pidió esta búsqueda. |
+| A2 | importa | Otras marcas citadas en el informe caen dentro de la ventana `[t0,t1)` de tramos registrados. `t1` es el final del bloque más 1 s, así que cubre la línea visible que le sigue. **(i)** S-12 cita `86:40–86:42` [retirado al pegar: texto de un tramo no citable]: 86:40 es 5200 s y el tramo 1:26:34–1:26:41 va de 5194 a 5201. **(ii)** S-19 cita `127:02` [retirado al pegar: texto de un tramo no citable]: 7622 s dentro de 2:06:42–2:07:03 (7602–7623). **(iii)** §2.1 cita `46:40` [retirado al pegar: texto de un tramo no citable] (tramo SIN AUDIO 0:45:05–0:46:41) y `99:41` [retirado al pegar: texto de un tramo no citable] (SIN AUDIO 1:39:08–1:39:42). El §2.1 explica que 46:40, 46:41 y 99:41 son el borde del audio que vuelve, pero eso no cubre (i) ni (ii). Son líneas visibles de la filtrada, no texto oculto, pero `evidence new` las rechazaría como evidencia y la skill pide «ninguna cita cae en un tramo». O se citan sin esas marcas o se estrecha `t1`. | Informe líneas 186, 189-190, 621 y 858. En la filtrada, `[86:40]` y `[127:02]` son líneas visibles pegadas al marcador `[CUARENTENA …]` (marcas de tiempo por `sed`). Tramos en `tramos_no_citables.yaml`. |
+| A3 | importa | **«Con 12 puntos» se lee como «1 o 2 puntos» sin avisarlo.** El hallazgo n.º 4 del §0, el §3.15 y el §4.2 (la contradicción de S-14) se apoyan en que a 104:44 el trader dice «1 o 2 puntos». El literal de la filtrada, `[104:49]`, es «casi plana **con 12 puntos**», y la evidencia lleva `cita_literal: …casi plana con 12 puntos…` pero `afirmacion: …con 1 o 2 puntos…`. El informe cita «12» entre comillas (línea 665) y luego dice «1 o 2» sin explicar que es una lectura del ASR. La evidencia va con `confianza: baja`, pero el informe presenta la contradicción como firme. | Informe líneas 54-57, 664-666, 674-676 y 873. `knowledge/evidence/v10/ev-v10-014438-95464201.yaml`. Filtrada `[104:44]` y `[104:49]`; la otra mitad de la contradicción es `[103:17]` «1 o 2 puntos». |
+| A4 | importa | **`fuentes.yaml` afirma lo contrario del informe.** La `naturaleza` de v10 dice «cuatro esquemas inventados y **ningún gráfico de un día real**». El §2.3 del informe cuenta que el trader compartió su pantalla y su replay con operaciones concretas comentadas (09:59 «aquí esta entrada yo la tomé… es un loss»). La frase vale para lo que enseñó Aleks, no para el vídeo, y el campo describe el vídeo. `HOJA-USADA.md §4` copia el encargo y sí es correcta. | `knowledge/corpus/fuentes.yaml:106-109`. Informe línea 220-227 y 09:59 en la filtrada. |
+| A5 | importa | **Un mes con días ocultos junto a una cifra, en tres sitios, uno ya irreversible.** Se nombra «junio» con «el máximo de operaciones en un día: 7» en el informe (244-249), en la fila del 2026-10-04 de `HOLDOUT-EXPOSICIONES.md` y en el **cuerpo del commit `c489685`**: «el maximo de 7 operaciones en un dia (1:56:07) es una posible exposicion de junio». El consultor ordenó escribir «posible exposición de junio» en la fila y en los §2.3 y §3.20, y la declaración con cifras es lo que pide ADR-0021 §2 y §4. En cambio, la copia en el mensaje de commit no se pidió y, ya empujado a `fix/sesion-04`, no se puede quitar. No hay otra mención de junio con cifra (ver búsqueda 2). | `git log --format=%B main..HEAD`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`; informe 244-249. |
+| A6 | menor | El informe **describe contenido de un tramo de precaución** más allá de lo declarado: «El trader lo usa para explicar que FX Replay redondea el objetivo» (§2.3) y «las atribuye a cómo redondea FX Replay» (§3.13). Lo declarado en `HOLDOUT-EXPOSICIONES.md` y en el `motivo` del tramo 1:27:44–1:28:19 es solo «R de operaciones concretas de sus libros» y las cifras. | Informe líneas 242-243 y 627-628; fila de HOLDOUT; tramo 1:27:44–1:28:19. |
+| A7 | menor | §1.3 dice «`make-check.log`, línea 64: 1919 passed in **661.94s**». El log dice **763.70s** en esa línea. El resto del log cuadra. | `make-check.log:64` «1919 passed in 763.70s (0:12:43)»; informe línea 162. |
+| A8 | menor | S-5 se declara «resuelve», pero las elipsis quitan la pregunta del consultor que precede a la respuesta. La cita salta de «… claro, se quita …» a «sí, se quita», y el original trae en medio «o la dejo» y «se quita, ¿no?». La respuesta del trader (54:38 «sí, se quita, porque siempre se va a ir actualizando») sí sostiene la propuesta, pero conviene que se vea que la pregunta iba dirigida. | Filtrada `[54:30]`–`[54:38]`; informe líneas 446-450. |
+| A9 | menor | El párrafo de la CI (run 205) y el informe del revisor irán en un commit nuevo. El sello vigente (`cfd28d02…`, que es `HEAD^{tree}`) no los cubre: habrá que estadiar, hacer `make check` y volver a sellar. Además, la CI 205 es del `c489685` y no del commit final, que será otro: el revisor ya no podrá comprobar que el último commit tenga su CI. | `git rev-parse HEAD^{tree}` = `cfd28d022b1f…` = `SELLO` en `make-check.log:87`; `git diff` solo toca «Estado». |
+
+**Búsquedas expresas del consultor**
+
+1. **Copias de material oculto fuera de su sitio.**
+   - Informe: A1 y A6 son lo único encontrado.
+   - Evidencia: los 64 `ev-v10-*` se comprobaron contra los 21 tramos de v10. Con `t0` y `t1` de cada ítem (Grep sobre `knowledge/evidence/v10`) no hay ningún solape; el más cercano al tramo 1:55:29–1:55:32 acaba a 1:55:04 y el siguiente empieza a 1:56:40. Además, `knowledge validate` pasa con 501 ítems. Ningún ítem lleva `valor`.
+   - Cuarentena: los 12 bloques solo están como marcas de tiempo en `tramos_no_citables.yaml` y no se copia su contenido. El informe solo dice dónde caen, o lo deduce del texto visible de alrededor. Para el segmento de 1:55:29 no hay ninguna cita del informe ni de la evidencia que lo toque (el §3.20 cita 114:49–115:02 y 116:20 en adelante).
+   - La cifra 7 y el R «3,11; 2,8; 4» están declarados en `HOLDOUT-EXPOSICIONES.md` (ADR-0021 §2). El 7 se repite en el informe y en el commit (A5). El R solo está en HOLDOUT, no en el informe.
+   - La evidencia no copia texto de los tramos de precaución. Los 21 tramos son 4+12+3+1+1, como dice el informe.
+2. **Meses con días ocultos que el filtro no cubra.** Confirmado: `casos_ocultos` da 34 casos en **3 meses**. Con `_RE_MES` sobre el nombre en español y en inglés, **2 quedan cubiertos y 1 sin cubrir** (cuenta de True/False, sin imprimir nombres). La comprobación de los meses que el informe dice que no tienen días ocultos (2025-12, 2026-01, 2026-07 y 2026-08) sale False en los cuatro.
+   - En la filtrada, el único segmento que nombra el mes sin cubrir (`junio`, `june`, `jun`) es `[115:29]`. Es el que el informe dice y está registrado como tramo 1:55:29–1:55:32. Con `ju[nl]io` salen además `[26:36]`, `[57:08]`, `[108:58]` y `[01:14]`, que son julio, y julio no tiene días ocultos.
+   - Ningún fichero commiteado de la rama nombra septiembre o mayo junto a una cifra o una operación. El informe y la fila de HOLDOUT los nombran solo para decir que no hubo operaciones concretas, y el único «mayo» y «septiembre» sueltos son del §2.4 y del encargo.
+   - Junio aparece junto a la cifra 7 en tres sitios (A5), y eso es lo único que encuentro.
+
+**Comprobado sin hallazgos**
+- **Contrato:** `scripts/contrato_rama.py` da «82 ficheros dentro del contrato». `corpus check --hashes`, `corpus transcript check` y `corpus frames check` salen OK. `knowledge validate` sale OK, con 501 ítems, 0 contradicciones, `Fuente` e historial intactos, y avisos conocidos.
+- **Regímenes de cambio:** `git diff --name-status` sobre evidence, transcripciones, fotogramas y manifiestos da 66 `A` (64 ítems, 1 transcripción, 1 fotogramas) y ninguna otra letra. No hay `libros.yaml`. Los demás `.md` de `docs/validation/` que cambian no estaban cerrados: la única edición de un fichero previo es una fila añadida en `HOLDOUT-EXPOSICIONES.md`.
+- **Fuentes y regímenes:** ningún commit toca `knowledge/spec/`, `knowledge/cases/` ni `knowledge/feedback/`, así que no aplican los trailers `Fuente:`, ni CORRECT/RESOLVE, ni ambigüedades, ni ADR ni las tres guardias.
+- **Tests:** `pytest` sobre `test_transcribir_sesion`, `test_cuarentena`, `test_inventario` y `test_guardia_claude` da 396 passed.
+- **Sello y CI:** `make-check.log` tiene la línea `SELLO` sobre `cfd28d02…` (= `HEAD^{tree}`), exit 0, 1919 passed y `PICO DE MEMORIA 287 MiB`. La CI del run 205 la confirmé con `gh`: `headSha c489685`, `1 failed, 1910 passed, 8 skipped`, y el único fallo es `test_state_check_ok_on_real_repo`.
+- **Citas contrastadas con la filtrada:** S-3 (37:06–37:21), S-9 (69:13–69:18), S-16 (108:23–108:31), S-17 (110:03–110:19), S-24 (124:53–125:00) y S-7 (63:42–64:34) coinciden, salvo A3 y A8. También cuadran 54:27–54:48 y 05:11, y el recuento 13/11/0 de la tabla.
+- **Resto:** el día `2026-10-04` da `False` en `casos_ocultos` (re-ejecutado). Se verificó el sha256 `a0228b49…` de `transcribir_sesion.py` y que el registro de la filtrada (45 segmentos, 12 bloques, 2/16/27) coincide con el informe. La rama no toca `.claude/` ni `src/botsito/domain|engine`, y `PREGUNTAS.md` queda intacto. Los 64 `revisado_por` repiten la fórmula usada en v9.
+
+#### Eje (b) · Encargo
+
+Resumen: 0 bloquea, 0 importa, 2 menor. Requisitos: 22 hechos (1 «hecho de otra forma», declarado), 1 parcial, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| R1 | Rama desde `48f9701` por la skill `abrir-rama`: encargo con fecha, `contrato.yaml`, Archivo 12 en HISTORIA | Hecho | `git merge-base main HEAD` = `48f9701…`; `docs/encargos/trabajo-sesion-04.md:3`; `contrato.yaml`; `HISTORIA.md` «# Archivo 12 · … al abrir trabajo/sesion-04» |
+| R2 | v10 con `drive_id` null, `fecha_grabacion "2026-10-04"`, en `SESIONES_EN_CUARENTENA` | Hecho | `fuentes.yaml` (v10); `cuarentena.py` línea 48 con `"v10"` |
+| R3 | Comprobar que el día no está reservado (debe dar `False`) | Hecho | Informe §0; re-ejecutada la línea de `SESION-DE-PREGUNTAS.md` con `2026-10-04`: `False` |
+| R4 | Preguntar a Aleks por septiembre/marzo y cifras antes de transcribir; declarar los tramos | Hecho | Informe §0 («No, en ningún momento»); no verificable en el repo, solo en el informe |
+| R5 | `ORDEN_SESION_04` con S-1..S-24 y títulos, en el orden dado | Hecho | `transcribir_sesion.py`, `ORDEN_SESION_04` y `CODIGOS_DE_SESION_TEXTO["04"]` (24 títulos); el orden coincide con el encargo |
+| R6 | Medir `codigos_validos`/`CODIGOS_DE_SESION_TEXTO` y no romper la sesión 3 (textos por sesión) | Hecho | Informe §1.2; diff: dicts `"02"/"03"/"04"`, `codigos_validos(sesion)`, `HOJAS`, `--sesion`; S-1 distinto en 03 y 04 |
+| R7 | Test que lo compruebe, roto a propósito | Hecho | Informe §1.2: 3 tests caen con `["03"].update(["04"])` y el fichero vuelve al mismo sha; los 5 tests nuevos pasan (396 passed). La rotura no se puede reejecutar sin escribir |
+| R8 | `docs/sesion-4/HOJA-USADA.md`: código → título → n.º de PREGUNTAS → ambigüedad, sin citas del trader | Hecho | `HOJA-USADA.md` §1-§4: 24 filas, orden, subpreguntas y esquemas; sin citas |
+| R9 | Informe con el paso 6 de la skill: por código, tramo mm:ss, literal de la filtrada y resuelve/en parte/no resuelve | Hecho | Informe §3.1-§3.24 y tabla §5: 13 resuelve, 11 en parte, 0 no resuelve (verificado); citas contrastadas en la búsqueda; salvedades A1, A2, A3, A8 |
+| R10 | En cada respuesta: regla general o ejemplo, «creo», compra y venta | Hecho | Las 24 secciones traen «Regla o ejemplo», «creo», «Compra y venta» |
+| R11 | S-7 (A-42, reloj de invierno) la primera | Hecho | Informe §3.1 |
+| R12 | Cruda sin leer; fotogramas solo por instante localizado | Hecho | Informe §1.1 y §2.5 (no se abrió ningún fotograma); `HOLDOUT-EXPOSICIONES.md` («ningún fotograma de v10»); la filtrada se hizo con el guion de `main`, declarado en §1.2 |
+| R13 | La rama no resuelve nada: sin `feedback apply`, ambigüedades, spec ni motor | Hecho | `git diff --name-only` sin `knowledge/spec`, `feedback`, `cases`, `engine`, `domain`, ni `PREGUNTAS.md` |
+| R14 | `make check` sellado | Hecho (con salvedad A9) | `make-check.log:87` `SELLO … cfd28d02…` = `HEAD^{tree}`; exit 0; 1919 passed |
+| R15 | Push a `fix/sesion-04` y CI de Linux con solo el fallo de `state check`; dar el número de run | Hecho | `git ls-remote origin refs/heads/fix/sesion-04` = `c489685…`; `gh run view 37224218115`: run 205, `1 failed, 1910 passed, 8 skipped`; único fallo `test_state_check_ok_on_real_repo` |
+| R16 | Revisor lanzado con el informe terminado y su informe pegado al final | Parcial | Es este informe; lo pega el llamador. Falta además el commit que lo recoge (A9) |
+| R17 | Rama «lista para revisión, NO cerrada» | Hecho | `main` sigue en `48f9701`; informe «Estado» lo dice |
+| R18 | Revisión punto 2 (junio, sin tocar `cuarentena.py` ni la guardia): medir, tramo con el motivo pedido, quitar la cita de 115:29, comprobar evidencia y `knowledge validate` | Hecho | Tramo 1:55:29–1:55:32 con el motivo pedido (`tramos_no_citables.yaml`); la medida se reproduce: solo `[115:29]` nombra junio; ningún `ev-v10-*` solapa; `knowledge validate` OK; `cuarentena.py` solo cambia la línea de `v10`; no hay cita de 115:29 en el informe |
+| R19 | Revisión punto 3: fila corregida «posible exposición de junio…», sin usar la cifra; §2.3 y §3.20 | Hecho | Fila de `HOLDOUT-EXPOSICIONES.md`; informe 248-253 y 774-778. Ver A5 para la copia de la cifra en el commit |
+| R20 | Revisión punto 4: no abrir el fotograma de S-7 y añadir §4 punto 11 | Hecho | Informe §2.5 y §4 punto 11 (línea 883) |
+| R21 | Revisión punto 5: passed/skipped/deselected del `make check` sellado y del último de `main` | Hecho de otra forma (declarado) | El log de `main` no se conserva: lo dice §1.3 y recoge los casos de `main` con `--collect-only` en un `git worktree` (1910 = 1901+8+1). Falta la discrepancia A7 |
+| R22 | Revisión punto 6: apuntar en §6 los pendientes (a) y (b) sin hacerlos | Hecho | Informe §6 y §4 |
+| R23 | Revisión punto 1: sin reglas de permiso ni tocar `/permissions` | Hecho | `.claude/` no aparece en `git diff --name-only main...HEAD` |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | menor | Cambios hechos en `transcribir_sesion.py` que el informe no declara: `CODIGOS_DE_SESION_TEXTO["02"] = {}` quita a la hoja 02 los códigos S-1, G-* y E-* que el global `CODIGOS_DE_SESION` aceptaba para cualquier sesión. El informe sí declara `--sesion`, `HOJAS` y `SESION_EN_CURSO = "04"`. | `git diff main...HEAD -- scripts/transcribir_sesion.py`; informe §1.2 |
+| B2 | menor | El `--sesion` por defecto pasa a ser `04`: ejecutar `--solo-filtrar` sobre v9 sin `--sesion 03` ya no reproduce la filtrada de la sesión 3. Está apuntado como pendiente (§6, b), pero no queda dicho que el comportamiento por defecto cambia para los demás vídeos. | Diff de `SESION_EN_CURSO` y `parser.add_argument("--sesion", default=SESION_EN_CURSO …)`; informe §1.2 y §6 |
+
+#### Lo que no pude comprobar
+
+- **Contenido de los tramos no citables y de los bloques de cuarentena.** No lo leí, por orden. Por eso no puedo decir si el segmento de 1:55:29 trae algo más que el mes, ni si algún texto del informe o de la evidencia lo copia de otra forma. Solo comparé marcas de tiempo.
+- **Qué mostró la pantalla del trader.** No hay fotogramas abiertos, así que no sé si su replay enseñó días de un mes con días ocultos. Lo que consta («ningún día reservado identificado») está dicho en `HOLDOUT-EXPOSICIONES.md`. Los ejemplos de replay sin fecha en voz (S-2, S-15, S-21) no tienen mes identificado.
+- **`make check`** (escribe): no lo ejecuté. Verifiqué el sello, `exit 0` y el recuento en `make-check.log`, no el `.hooks`.
+- **El test «roto a propósito»:** repetirlo escribe en el fichero. Solo comprobé que el sha256 de `scripts/transcribir_sesion.py` coincide con el del informe y que los tests nuevos pasan.
+- **La conversación de Aleks** («No, en ningún momento») no está en el repo.
+- **`knowledge validate > knowledge-validate.log`:** lo ejecuté con la salida a la terminal, no al fichero que pide el contrato, porque escribe en el repo.
+- **Una salvedad mía:** en la búsqueda 2, la segunda orden de comprobación imprimió True/False para 11 meses con su `AAAA-MM` (no solo recuentos). Eso muestra qué meses tienen días ocultos [lista de meses retirada al pegar]. Ya es público: junio está en el informe y mayo y septiembre en `CLAUDE.md`, y no se imprimió ninguna fecha ni nombre de caso.
+
+#### Comandos ejecutados
+
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`; `cat contrato.yaml`.
+2. `uv run python scripts/contrato_rama.py`; `wc -l` y `git diff --stat` del informe.
+3. `Read` de `docs/encargos/trabajo-sesion-04.md` y de `docs/validation/SESION-04-EXTRACCION.md` completo.
+4. `git diff main...HEAD -- knowledge/corpus/tramos_no_citables.yaml`.
+5. `git diff main...HEAD -- HOLDOUT-EXPOSICIONES.md cuarentena.py fuentes.yaml manifest.yaml PROJECT_STATE.md`; `git diff -- SESION-04-EXTRACCION.md`; `git log --format='%h%n%B' main..HEAD`.
+6. `uv run botsito corpus check --hashes`; `corpus transcript check`; `corpus frames check`; `git diff --name-status main...HEAD -- knowledge/evidence … data/manifests | awk | sort | uniq -c`.
+7. `uv run botsito knowledge validate | tail -40`; `sed -n 55,70p make-check.log`.
+8. `grep -n 'passed|SELLO|PICO…' make-check.log`; `ls -la make-check.log`; `git rev-parse HEAD^{tree}`; `git diff --name-only main...HEAD`.
+9. `sed -n 1,200p docs/sesion-4/HOJA-USADA.md`; `git diff --stat` y `grep '^-'` de `HISTORIA.md`.
+10. Intentos bloqueados por la guardia: crear un script en scratchpad con `cat >` (bloqueado por `solo_lectura.py`) y un recorrido de directorios con `glob` (bloqueado por `guardia.py`). Sustituidos por `Grep` sobre `^(t0|t1):` en `knowledge/evidence/v10`.
+11. `Grep` sobre `src/botsito` (`MESES_FILTRADOS`, `casos_ocultos`, …); `Read` de `cuarentena.py:200-350` y `holdout.py:440-500`.
+12. `uv run python -c` con `casos_ocultos` y `cuarentena._RE_MES`: recuento de casos, meses distintos y cubiertos; y la segunda comprobación por mes (ver la salvedad).
+13. `Grep -i 'junio|june|jun'` sobre el informe; `git grep -i` sobre `junio|june`, `septiembre|mayo` en evidence, tramos, hoja, encargo, contrato y fuentes; `git log --format=%B main..HEAD | grep`; `git diff … HOLDOUT | grep -o`.
+14. Sobre `C:/Users/USER/Desktop/sesion-04-audio/sesion-04.filtrada.md` (solo marcas de tiempo o líneas citadas): `ls -la`; `grep -n CUARENTENA`; `sed` de las líneas vecinas a cada marcador, reducidas a la marca de tiempo; `grep` de `junio|julio|ju[nl]io` con el texto omitido; `grep -n` de los patrones de las citas de A1; y las líneas de A2, A3, A8 y de las citas contrastadas.
+15. `git diff main...HEAD -- tests/unit/test_{guardia_claude,cuarentena,inventario}.py`; `grep v10 .claude/hooks/guardia.py`; `uv run pytest -p no:cacheprovider` sobre los cuatro ficheros (dos veces, 396 passed).
+16. `git diff main...HEAD -- scripts/transcribir_sesion.py`; `git diff … tests/unit/test_transcribir_sesion.py | grep`.
+17. `uv run python -c` con `casos_ocultos` y `'2026-10-04' in c` → `False`; `sed` de `SESION-DE-PREGUNTAS.md`.
+18. `gh run list --branch fix/sesion-04`; `git ls-remote origin refs/heads/fix/sesion-04`; `gh run view 37224218115 --log-failed | grep`.
+19. `cat .claude/skills/ingerir-sesion/SKILL.md`; `grep -n 0021` en `docs/adr`; `git show HEAD:… | sha256sum`; `cat sesion-04.registro.txt`.
+20. `git rev-parse --short main`; `git diff --cached --stat`; `grep naturaleza` en `fuentes.yaml`.

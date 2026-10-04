@@ -14,7 +14,7 @@
 trabajo/sesion-04
 
 ## Current Feature
-`trabajo/sesion-04` EN CURSO (2026-10-04): ingerir la sesion 4 con el trader (v10) y el informe de extraccion por pregunta, sin resolver nada. Encargo docs/encargos/trabajo-sesion-04.md; informe docs/validation/SESION-04-EXTRACCION.md.
+`trabajo/sesion-04` LISTA PARA REVISION, NO cerrada (2026-10-04): la sesion 4 con el trader ingerida (v10) y el informe de extraccion por pregunta, sin resolver nada; revision del consultor y revisor aplicados. Encargo docs/encargos/trabajo-sesion-04.md; informe docs/validation/SESION-04-EXTRACCION.md.
 
 ## Stable Main State
 8e21fd1 · merge de `trabajo/historial-sin-git` (tag `stable/F36u-historial-sin-git`): sin git, o con git y el historial no evaluable, ninguna comprobacion de `knowledge validate` dice «intacto» ni «commits con Fuente»: un AVISO dice que NO se comprobo y por que; con git, la salida es la de antes. La clase `Historial` (validation/knowledge.py) es la unica puerta por la que sale una afirmacion de historial y lo unico de validation/ que lee git (test por ast). Sobre `stable/F36t-reabrir-y-fuente-documental` (c76aaf6). Informe docs/validation/HISTORIAL-SIN-GIT.md; el registro del cierre, al final de HISTORIA.
