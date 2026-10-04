@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/reabrir-y-fuente-documental
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36s-renovar-cierres` (2026-10-03).
+trabajo/reabrir-y-fuente-documental · EN CURSO (2026-10-03) · docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md. NO se cierra.
 
 ## Stable Main State
 dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`): el calendario de cierres caduca por la fecha simulada, nunca por la de hoy (tests del cable trampa del reloj y del exit 2 por la CLI), y se renueva por condicion (docs/runbooks/RENOVAR-CIERRES.md). Sobre `stable/F36r-fuentes-ftmo` (36a9801). Informe docs/validation/RENOVAR-CIERRES.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`
 dfd1a6f · merge: el calendario de cierres caduca por la fecha simulada; se renueva por condicion (RENOVAR-CIERRES.md) · tag stable/F36s-renovar-cierres
 
 ## Tests Currently Passing
-1211 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1239 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,8 +117,8 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- El esquema de ambigüedades exige una cita de evidencia aunque la fuente sea una regla de FTMO (A-27, A-54): rama propia para admitir una fuente documental.
-- El modelo de feedback no tiene acción para REABRIR una ambigüedad: A-36 se reabrió con RESOLVE_UNKNOWN y valor "sin resolver" (fb-…-a0b61bc9), y feedback pending la cuenta como pendiente. Rama propia para una acción REOPEN. (docs/validation/CERRAR-A29-A36.md §8.2)
+- Las comprobaciones de historial (transcripciones, fotogramas, manifiestos, libros, días retirados, y por el código feedback y evidencia) imprimen "historial intacto" o "solo-añadir intacto" sin git, sin haber evaluado nada: dicen más de lo que comprueban. Rama corta propia para que digan que no se comprobó (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.2).
+- RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 9 (2026-10-03).
+— ninguna desde el Archivo 10 (2026-10-03).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 9 (2026-10-03).
+— ninguna desde el Archivo 10 (2026-10-03).

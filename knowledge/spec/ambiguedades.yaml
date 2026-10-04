@@ -630,12 +630,18 @@ ambiguedades:
       el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y
       el pre-vuelo de F33 aborta si la cuenta real dice otra cosa
     resuelve_en: [F17, F33]
-    # la firma que se eligio entonces (donde se midio), el instrumento leido en pantalla y el
-    # lotaje de la prueba de fondeo, que es lo que estas especificaciones convierten en lotes
+    # el instrumento leido en pantalla y el lotaje de la prueba de fondeo, que es lo que estas
+    # especificaciones convierten en lotes. Hasta el 2026-10-03 citaba tambien la firma que se eligio
+    # entonces (ev-v4-012524-0ef85a89, FundedNext), de relleno: lo sustituye la fuente documental,
+    # R11 de FTMO-REGLAS.md (trabajo/reabrir-y-fuente-documental, decision 4 del consultor)
     evidencia:
-      - ev-v4-012524-0ef85a89
       - ev-v2-003320-a736fd37
       - ev-v4-012900-8ef676ed
+    fuentes_documentales:
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        fila: R11
+        literal: "Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA"
     parametros:
       - instrumento_digitos
       - instrumento_contrato
@@ -668,11 +674,21 @@ ambiguedades:
       cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
     resuelve_en: [F17]
     # la vela H4 que el trader ve abrir a las 23 (la medianoche del servidor que anclaje_h4 supone)
-    # y lo que dice del cambio de hora; la firma elegida entonces, donde se midio lo que no se hereda
+    # y lo que dice del cambio de hora. Hasta el 2026-10-03 citaba tambien la firma elegida entonces
+    # (ev-v4-012524-0ef85a89, FundedNext), de relleno: lo sustituye la fuente documental, R10 de
+    # FTMO-REGLAS.md (trabajo/reabrir-y-fuente-documental, decision 4 del consultor)
     evidencia:
       - ev-v6-005830-48b30e48
       - ev-v6-005810-5cb1ef06
-      - ev-v4-012524-0ef85a89
+    fuentes_documentales:
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        fila: R10
+        literal: "Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST"
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        fila: R10
+        literal: "El calendario del +DST: NO ENCONTRADA"
     parametros: [broker_offset_base, broker_dst]
     contradiccion: null
     estado: ABIERTA
@@ -1499,9 +1515,8 @@ ambiguedades:
       las modificaciones, las cancelaciones) está preguntado al soporte de FTMO: enviado por
       Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 1 a 4 de su correo (literal en
       docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente.
-      Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Su cita de evidencia
-      es de relleno porque el esquema exige una: ningún ítem del corpus habla del límite, y la
-      fuente real es docs/validation/FTMO-REGLAS.md R13.
+      Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Ningún ítem del corpus
+      habla del límite: su fuente es documental, R13 de docs/validation/FTMO-REGLAS.md.
     resuelve_en: [F33]
     # NACE el 2026-10-02 (rama feature/freno-peticiones, ADR-0067; la K de Next Action). R13 da la
     # cifra -«more than 2,000 server requests per day»- y no dice que es una «server request», con
@@ -1509,10 +1524,16 @@ ambiguedades:
     # el codigo 10024 TOO_MANY_REQUESTS de MetaTrader). Hasta medirlo, el freno cuenta TODAS las
     # peticiones, aceptadas o rechazadas y tambien las que protegen la cuenta, en el dia de
     # firma_huso_corte, y frena con margen. Ningun item del corpus habla del limite: es una regla de
-    # la firma. La evidencia citada es la del trader sobre operar una cuenta de fondeo con sus
-    # limites, como en A-27. NO BLOQUEANTE: el motor corre con los umbrales PROVISIONAL.
-    evidencia:
-      - ev-v4-012524-0ef85a89
+    # la firma. Hasta el 2026-10-03 citaba de relleno ev-v4-012524-0ef85a89 (los limites de
+    # FundedNext) porque el esquema exigia un item; desde trabajo/reabrir-y-fuente-documental su
+    # fuente es documental (decision 4 del consultor). NO BLOQUEANTE: el motor corre con los
+    # umbrales PROVISIONAL.
+    evidencia: []
+    fuentes_documentales:
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        fila: R13
+        literal: "an excessive number of more than 2,000 server requests per day"
     parametros:
       - freno_peticiones_aviso
       - freno_peticiones_corte
@@ -1538,8 +1559,8 @@ ambiguedades:
       preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3 (literal
       en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta
       pendiente; y con la respuesta se fija cierre_pendientes (y, si modificar no es colocar,
-      se deja de negar en el broker). Su cita de evidencia es de relleno porque el esquema
-      exige una: ningún ítem del corpus habla de cierres de mercado, y la fuente real es R15.
+      se deja de negar en el broker). Ningún ítem del corpus habla de cierres de mercado: su
+      fuente es documental, R15 y la respuesta literal del ticket en docs/validation/FTMO-REGLAS.md.
     resuelve_en: [F33]
     # NACE el 2026-10-02 (rama feature/cierres-de-mercado, ADR-0068; A3 e) de «Pendientes
     # heredados»). Lo que R15 dice por escrito -abrir no, dos horas antes de un cierre de dos o mas-
@@ -1548,9 +1569,19 @@ ambiguedades:
     # cancela al empezar la ventana (lo mas restrictivo), y el mercado que cuenta es el horario de
     # EURUSD en FTMO. Es una pregunta a soporte, no al trader: por eso la clase es `medicion`, como
     # A-54, y no entra en el cuestionario del trader. NO BLOQUEANTE: el motor corre con el valor
-    # PROVISIONAL.
-    evidencia:
-      - ev-v4-012524-0ef85a89
+    # PROVISIONAL. Hasta el 2026-10-03 citaba de relleno ev-v4-012524-0ef85a89; desde
+    # trabajo/reabrir-y-fuente-documental su fuente es documental (decision 4 del consultor).
+    evidencia: []
+    fuentes_documentales:
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        fila: R15
+        literal: "two hours or less before a relevant financial market is closed for at least two hours"
+      # la respuesta del ticket VDW-DPMWR-965 no es una fila de la tabla sino un recuadro de la
+      # seccion 2, y FTMO-REGLAS.md es un informe cerrado: sin `fila`, anclada a la seccion
+      - documento: docs/validation/FTMO-REGLAS.md
+        ancla: "2. Las reglas, con su fuente"
+        literal: "within two hours before a relevant market closes for at least two hours"
     parametros:
       - cierre_pendientes
     contradiccion: null

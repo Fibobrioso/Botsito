@@ -1481,8 +1481,12 @@ def test_las_tres_guardias_semanticas_de_decidida_saltan_de_verdad(tmp_path: Pat
 
     # Y con el fichero intacto, ninguna de las tres se queja (las demas quejas son de `data/`,
     # que esta copia no tiene a proposito).
-    limpia = [x for x in validar(repo_copia())[1] if "ambiguedades:" in x]
+    salida = validar(repo_copia())[1]
+    limpia = [x for x in salida if "ambiguedades:" in x and not x.startswith("AVISO:")]
     assert not limpia, limpia
+    # y la copia no tiene `.git`: lo que no se pudo comprobar de las fuentes documentales se DICE
+    # (tercera orden del consultor de trabajo/reabrir-y-fuente-documental, 2026-10-03)
+    assert any(x.startswith("AVISO: ambiguedades: sin git") for x in salida), salida
 
 
 def test_una_decidida_no_entra_en_el_cuestionario_de_la_siguiente_sesion() -> None:

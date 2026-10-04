@@ -136,6 +136,9 @@ Los tests que tienen que pasar, por respuesta:
 
 ## 3. Cerrar la ambigüedad: los cinco sitios, y los tests que los congelan
 
+> Si una respuesta, en vez de cerrarla, la reabre, el registro es un `REOPEN`
+> (`docs/runbooks/AMBIGUEDADES.md`, «Reabrir una ambiguedad», desde el 2026-10-03).
+
 Con el registro `fb-*` sobre la ambigüedad hecho (`docs/runbooks/AMBIGUEDADES.md`, «Cerrar una
 ambiguedad toca cinco sitios»; el quinto, la hoja de preguntas, va abajo con su test):
 

@@ -170,11 +170,14 @@ desacuerdo por escrito (historia de las tres, en `docs/runbooks/MIRAR-EL-MATERIA
 
 **Antes de abrir, editar o cerrar una ambiguedad de `knowledge/spec/ambiguedades.yaml`, se lee
 `docs/runbooks/AMBIGUEDADES.md`**: abrirla toca dos sitios, cerrarla cinco (y hay dos formas,
-ADR-0022), y tocar su texto obliga a `botsito spec docs --escribir` en el MISMO commit, igual que
+ADR-0022); una RESUELTA se REABRE con un registro `REOPEN` y una DECIDIDA solo con otro ADR; una
+`medicion` puede citar una fuente documental en vez de evidencia; y tocar su texto obliga a
+`botsito spec docs --escribir` en el MISMO commit, igual que
 `parametros.yaml`, `strategy_spec.yaml` y `glossary.yaml`. Guardias: `tests/unit/test_kit.py` (la
 tabla de `PROJECT_STATE.md` son exactamente las abiertas),
-`tests/contract/test_spec_docs_generados.py` y `tests/unit/test_hoja_preguntas.py` (la hoja de
-preguntas no lleva una cerrada).
+`tests/contract/test_spec_docs_generados.py`, `tests/unit/test_hoja_preguntas.py` (la hoja de
+preguntas no lleva una cerrada) y `tests/unit/test_reabrir_y_fuente_documental.py` (REOPEN y
+fuentes documentales).
 
 ## Como se trabaja
 

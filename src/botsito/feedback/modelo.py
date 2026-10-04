@@ -44,6 +44,11 @@ ACCIONES = (
     "MARK_FALSE_POSITIVE",
     "MARK_FALSE_NEGATIVE",
     "BORDERLINE",
+    # Reabre una ambiguedad que un RESOLVE_UNKNOWN cerro (rama trabajo/reabrir-y-fuente-documental,
+    # 2026-10-03). Hasta entonces se reabria con otro RESOLVE_UNKNOWN de valor «sin resolver»
+    # (A-36, fb-...-a0b61bc9): una accion de cerrar que decia abrir, y que `feedback pending`
+    # contaba como respuesta pendiente.
+    "REOPEN",
 )
 TIPOS_OBJETIVO = (
     "evidence",
@@ -67,8 +72,13 @@ OBJETIVOS_POR_ACCION: dict[str, tuple[str, ...]] = {
     "MARK_FALSE_POSITIVE": ("caso",),
     "MARK_FALSE_NEGATIVE": ("caso",),
     "BORDERLINE": ("caso",),
+    "REOPEN": ("ambiguedad",),
 }
 EXIGEN_VALOR = ("CORRECT", "RESOLVE_UNKNOWN", "RESOLVE_CONTRADICTION", "LABEL_CASE")
+# Reabrir no fija nada: sin valor, para que no vuelva el «sin resolver»; y siempre sobre el ultimo
+# registro de la cadena que la cerro, asi que `supersede` es obligatorio.
+PROHIBEN_VALOR = ("REOPEN",)
+EXIGEN_SUPERSEDE = ("REOPEN",)
 # re.ASCII: sin el, `\d` acepta digitos arabigos u otros Unicode, y un id con ellos no se puede
 # citar desde el registro ni supersederse.
 FORMATO_ID_OBJETIVO: dict[str, re.Pattern[str]] = {t: ids.POR_TIPO[t] for t in TIPOS_OBJETIVO}
@@ -259,6 +269,18 @@ def _validar(campos: dict[str, Any], origen: str) -> None:
         campos.get("valor_resultante") or ""
     ):
         raise FeedbackError(f"{origen}: la accion {campos['accion']} exige valor_resultante")
+    if campos["accion"] in PROHIBEN_VALOR and not all(
+        _vacio(campos.get(c)) for c in ("valor_resultante", "valor_canonico")
+    ):
+        raise FeedbackError(
+            f"{origen}: la accion {campos['accion']} no fija ningun valor: sin valor_resultante "
+            "ni valor_canonico (reabrir no es responder)"
+        )
+    if campos["accion"] in EXIGEN_SUPERSEDE and _vacio(campos.get("supersede")):
+        raise FeedbackError(
+            f"{origen}: la accion {campos['accion']} exige `supersede` al ultimo registro de la "
+            "cadena que cerro la ambiguedad"
+        )
     if len(_normalizar_texto(campos["respuesta_literal"])) < 5:
         raise FeedbackError(f"{origen}: respuesta_literal es obligatoria y literal")
     if not _normalizar_texto(campos["registrado_por"]):
@@ -466,6 +488,32 @@ def validar_contra_contexto(
             problemas.append(
                 f"{r.id} ({cuando_nuevo}) supersede a {previo.id} ({cuando_viejo}), que es "
                 f"POSTERIOR: una correccion no llega antes que lo que corrige"
+            )
+    # REOPEN reabre lo que un RESOLVE_UNKNOWN cerro: en su cadena hacia atras tiene que haber uno
+    # sobre la misma ambiguedad. Si no, no habia nada que reabrir (una ambiguedad que nunca se cerro
+    # por feedback, o una DECIDIDA, que la cierra un ADR y la reabre otro ADR). Y el primero que se
+    # encuentra hacia atras es ese cierre, no otro REOPEN: lo ya reabierto no se reabre dos veces.
+    for r in registros:
+        if r.accion != "REOPEN":
+            continue
+        vistos: set[str] = set()
+        paso = por_id.get(r.supersede or "")
+        ultimo: str | None = None
+        while paso is not None and paso.id not in vistos:
+            vistos.add(paso.id)
+            if paso.accion in ("RESOLVE_UNKNOWN", "REOPEN") and paso.objetivo == r.objetivo:
+                ultimo = paso.accion
+                break
+            paso = por_id.get(paso.supersede or "")
+        if ultimo == "REOPEN":
+            problemas.append(
+                f"{r.id}: REOPEN sobre {r.objetivo.tipo}:{r.objetivo.id}, que ya esta reabierta "
+                f"({paso.id if paso else '?'}) y nadie la volvio a cerrar: no hay nada que reabrir"
+            )
+        elif ultimo is None:
+            problemas.append(
+                f"{r.id}: REOPEN sobre {r.objetivo.tipo}:{r.objetivo.id}, y en su cadena de "
+                "supersede no hay ningun RESOLVE_UNKNOWN que la cerrara: no hay nada que reabrir"
             )
     problemas += ciclos_de_supersede({r.id: r.supersede for r in registros})
     return problemas

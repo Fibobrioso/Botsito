@@ -4,7 +4,7 @@
 
 `spec_version 15.8.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
-Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader; **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader.
+Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
 ## ABIERTA (24)
 
@@ -42,11 +42,17 @@ MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo,
 
 Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
 
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
+
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
 MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por delante de UTC en horario estandar, y con que calendario cambia de hora: el de Nueva York, el europeo o ninguno? La ficha de FTMO dice "GMT+2 +DST" sin nombrar el calendario, y lo que midio la demo de FundedNext (120 minutos, calendario de Nueva York) no se hereda (ADR-0026). Desde ADR-0027 este reloj ya no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la regla de horario de verano no. VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario- cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
 
 Afecta a: `broker_offset_base`, `broker_dst`.
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
@@ -128,15 +134,21 @@ Afecta a: `orden_pendiente_al_abrir_escenario`.
 
 ### A-54 · qué cuenta FTMO como petición al servidor y con qué margen frena el bot · medicion
 
-Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno. Qué cuenta FTMO como mensaje (las rechazadas, las modificaciones, las cancelaciones) está preguntado al soporte de FTMO: enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 1 a 4 de su correo (literal en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente. Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus habla del límite, y la fuente real es docs/validation/FTMO-REGLAS.md R13.
+Para el límite de 2.000 peticiones al servidor al día de FTMO (R13 de docs/validation/FTMO-REGLAS.md): ¿cuenta una petición rechazada, una modificación del stop, una cancelación y un cierre?; ¿con qué reloj corta FTMO ese día?; ¿qué hace el servidor al pasarse? Se mide en la demo (MedirDemoFTMO) o se pregunta al soporte; con la respuesta se fijan los umbrales del freno. Qué cuenta FTMO como mensaje (las rechazadas, las modificaciones, las cancelaciones) está preguntado al soporte de FTMO: enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 1 a 4 de su correo (literal en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente. Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Ningún ítem del corpus habla del límite: su fuente es documental, R13 de docs/validation/FTMO-REGLAS.md.
 
 Afecta a: `freno_peticiones_aviso`, `freno_peticiones_corte`, `freno_bucle_repeticiones`, `freno_bucle_minutos`.
 
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R13: «an excessive number of more than 2,000 server requests per day».
+
 ### A-55 · qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta · medicion
 
-R15 de docs/validation/FTMO-REGLAS.md prohíbe «perform gap trading [...] by opening simulated trades: [...] two hours or less before a relevant financial market is closed for at least two hours». No dice si colocar una orden pendiente en esas dos horas cuenta, ni si mover el precio de una ya puesta es colocarla, ni si una pendiente puesta antes que se llena dentro es «opening», ni qué mercado es el «relevant financial market» de EURUSD (el horario de EURUSD en los servidores de FTMO, o también el cierre de otras bolsas). Preguntado a soporte de FTMO, en inglés (docs/validation/CIERRES-DE-MERCADO.md §0.6, P1, P2 y P3): enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3 (literal en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente; y con la respuesta se fija cierre_pendientes (y, si modificar no es colocar, se deja de negar en el broker). Su cita de evidencia es de relleno porque el esquema exige una: ningún ítem del corpus habla de cierres de mercado, y la fuente real es R15.
+R15 de docs/validation/FTMO-REGLAS.md prohíbe «perform gap trading [...] by opening simulated trades: [...] two hours or less before a relevant financial market is closed for at least two hours». No dice si colocar una orden pendiente en esas dos horas cuenta, ni si mover el precio de una ya puesta es colocarla, ni si una pendiente puesta antes que se llena dentro es «opening», ni qué mercado es el «relevant financial market» de EURUSD (el horario de EURUSD en los servidores de FTMO, o también el cierre de otras bolsas). Preguntado a soporte de FTMO, en inglés (docs/validation/CIERRES-DE-MERCADO.md §0.6, P1, P2 y P3): enviado por Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 5 a 9 de su correo: la 5 a la 7 son P1 (a-d), la 8 es P2 y la 9 es P3 (literal en docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respuesta pendiente; y con la respuesta se fija cierre_pendientes (y, si modificar no es colocar, se deja de negar en el broker). Ningún ítem del corpus habla de cierres de mercado: su fuente es documental, R15 y la respuesta literal del ticket en docs/validation/FTMO-REGLAS.md.
 
 Afecta a: `cierre_pendientes`.
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R15: «two hours or less before a relevant financial market is closed for at least two hours».
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «within two hours before a relevant market closes for at least two hours».
 
 ## DECIDIDA (6)
 
