@@ -117,6 +117,12 @@ Todo en `src/botsito/validation/knowledge.py`; `libros.py` y `holdout.py` no se 
    afirmaciones no va dentro de una llamada a `.ok(…)` (los docstrings y la propia tupla
    `AFIRMACIONES_DE_HISTORIAL` no cuentan).
 
+**Su límite (lo señaló el revisor, b1):** las dos capas reconocen la afirmación por sus PALABRAS
+(«intacto», «commits con Fuente»), no por el hecho de depender del historial. Una comprobación nueva
+que afirme el historial con otra palabra («integro», «sin modificar») no la caza ninguna de las dos.
+Cubre lo que el encargo nombra -que nada imprima «intacto» sin pasar por la puerta- y no más; una
+afirmación nueva con otra palabra se añade a `AFIRMACIONES_DE_HISTORIAL` en la rama que la traiga.
+
 **El nombre `puerta`**: dentro de `_validar` ya había una variable `historial` (el resultado de
 `modificaciones_en_historial` para la evidencia, l. 557 en `main`); llamar `historial` al
 parámetro la habría sombreado y las líneas OK de después habrían llamado `.ok` sobre una lista.
@@ -167,7 +173,7 @@ fichero comprobando su sha256 (`bfa378919a92…` antes y después).
 |---|---|---|---|
 | 1 `test_sin_git_ninguna_linea_dice_intacto_y_cada_comprobacion_avisa` | copia sin `.git` + `data/manifests/`: ninguna línea con «intacto» ni «commits con Fuente», exactamente un aviso «sin git, NO se comprobo» por cada uno de los nueve ámbitos, la línea OK de lo que sí se comprobó, y código 0 | libros vuelve a su OK de antes (`salida.append(…solo-anadir intacto…)`) | FALLA en la aserción de «intacto» (l. 82) |
 | 2a `test_una_afirmacion_de_historial_que_no_pasa_por_historial_hace_fallar_validar` | una comprobación falsa (monkeypatch de `_validar`) añade `OK: 3 ficheros nuevos, historial intacto`: `validar` sale con 1 y el ERROR la nombra | `validar` deja de negar (`if True: return codigo, salida`) | FALLA: `assert 0 == 1` (l. 107) |
-| 2 `test_afirmaciones_sueltas` | la función de la puerta: la línea afirmada pasa, la suelta no, un AVISO o un ERROR no afirman | (la cubre la rotura 2a) | — |
+| 2c `test_afirmaciones_sueltas` | la función de la puerta: la línea afirmada pasa, la suelta no, un AVISO o un ERROR no afirman | (la cubre la rotura 2a) | — |
 | 2b `test_ningun_literal_de_src_afirma_historial_fuera_de_historial_ok` | AST de `src/botsito/`: ningún literal con la afirmación fuera de `.ok(…)`; y el detector ve una falsa escrita a mano y deja pasar una que va por `ok` | una comprobación falsa en `knowledge.py`: `salida.append(f"OK: {len(items)} ficheros nuevos, historial intacto")` | FALLA: el diccionario de sueltos no está vacío (l. 157) |
 | 3 `test_con_git_las_lineas_ok_son_las_de_main` | `validar` sobre el repositorio real con git: código 0, las doce líneas OK en orden y casando con las de `main` (recuentos como `\d+`), y ningún «NO se comprobo» | `transcripciones registradas, historial intacto` → `historial integro` | FALLA: `('OK: 14 transcripciones registradas, historial integro', …)` (l. 175) |
 | 4 `test_con_git_y_el_proyecto_fuera_de_la_raiz_tampoco_dice_intacto` | la copia dentro de un subdirectorio de un repo git con un commit: código 1, el ERROR de la evidencia, ninguna línea con «intacto», y el aviso de libros y retirados con el motivo «el proyecto no es la raiz del repositorio git» | retirados vuelve a su OK de antes | FALLA en la aserción de «intacto» (l. 195) |
@@ -188,7 +194,21 @@ rama; su registro irá a HISTORIA al cerrar, RITUAL.md) y «Tests Currently Pass
 
 ## 2. La CI de Linux y `make check`
 
-PENDIENTE.
+**`make check` sellado** sobre el commit de la Fase 1 (`5740220`): exit 0, ningún `failed`,
+`1909 passed in 804.51s`, `SELLO: make check en verde sobre el arbol 28f92433762eb79830ce68c63c3b250a0776b4dc`,
+`PICO DE MEMORIA de make check: 288 MiB`.
+
+**CI de Linux: run 201** (id 37170620167), el push `git push origin
+trabajo/historial-sin-git:refs/heads/fix/historial-sin-git` de `5740220` (el nombre que manda
+`docs/runbooks/RITUAL.md`, «Antes del merge: la CI de Linux», leído antes de empujar).
+`conclusion: failure` con **un solo fallo, el esperado**:
+`FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` por `ERROR: PROJECT_STATE declara
+la rama 'trabajo/historial-sin-git'; la rama actual es 'fix/historial-sin-git'`. Resumen:
+`1 failed, 1900 passed, 8 skipped`. El run 199 de la rama anterior daba `1 failed, 1894 passed,
+8 skipped`: seis más, los seis de `test_historial_sin_git.py`, que corrieron en Linux sin saltarse
+(el test 3, con el `.git` del checkout de la CI, `fetch-depth: 0`). `make` para en `test`, así que
+en la CI `knowledge validate` como paso suelto no llegó a correr; `validar` sobre el repositorio
+con git sí, dentro del test 3.
 
 ## 3. Para el consultor: lo que depende de git por otra vía
 
@@ -200,6 +220,92 @@ también avisen, es otra rama (y el ancla, a diferencia del historial, se podrí
 árbol sin git, calculando el blob en Python). No se anota en `PROJECT_STATE` porque el encargo lo
 prohíbe; queda aquí.
 
+## 4. Lo que encontró el revisor, y qué se hizo
+
+Ninguno bloquea.
+- **a1 (importa)**, el informe sin la CI, el sello ni el revisor: rellenado (§2, §5 y el estado).
+- **a2 (menor)**, la numeración de los tests: el de `afirmaciones_sueltas` pasa a «2c» en §1.4.
+- **b1 (importa)**, la puerta reconoce la afirmación por sus palabras: declarado en §1.1, «Su
+  límite». No se amplía la lista: el encargo nombra «intacto», y añadir palabras que hoy nadie
+  imprime no caza nada que exista.
+- **b2 (menor)**, el test 3 compara con patrones y no con una salida de `main`: los patrones son
+  las doce líneas OK medidas en `main` (§0.1, montaje `repo`) con los recuentos como `\d+`, para que
+  el test no se rompa cada vez que entra un item; la comparación línea a línea con la salida real de
+  `main`, recuentos incluidos, es la de §1.3 (idéntica salvo el documento de más).
+
+## 5. Informe del revisor
+
+## Informe del revisor · trabajo/historial-sin-git · 2026-10-03
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 1 menor.
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El informe de la rama aun no esta cerrado: §2 dice «PENDIENTE» (CI de Linux y `make check`) y `## Estado` dice «EN CURSO. Falta la CI de Linux, el sello de make check y el revisor». Hay que rellenar el run 201 (id 37170620167), el sello `28f92433…` (1909 passed, PICO 288 MiB) y pegar este informe, y cambiar el estado al final. | `docs/validation/HISTORIAL-SIN-GIT.md` §2 y ultima seccion |
+| a2 | menor | El informe afirma «seis funciones» de test y 1239 a 1245. Es coherente con `PROJECT_STATE.md`, pero la tabla §1.4 usa la numeracion «2», «2a», «2b». Las 6 son: 1, 2a, 2, 2b, 3, 4. Solo forma. | `docs/validation/HISTORIAL-SIN-GIT.md` §1.4 |
+
+Comprobado sin hallazgos:
+- Contrato: `uv run python scripts/contrato_rama.py` da `CONTRATO: 8 ficheros dentro del contrato de trabajo/historial-sin-git (riesgo medio, …, 4 comprobaciones para el revisor)`. Los 8 ficheros del diff estan en `rutas_permitidas`. No se toca nada de `rutas_protegidas`: engine, domain, cases, corpus, knowledge y manifests no aparecen en `git diff --name-status`.
+- `uv run botsito state check`: `OK: rama 'trabajo/historial-sin-git' - funcionalidad actual: …`.
+- `uv run pytest tests/unit/test_historial_sin_git.py tests/unit/test_reabrir_y_fuente_documental.py -q -p no:cacheprovider`: todos los puntos en verde (46 tests, `[100%]`).
+- `make check` (no ejecutado): `make-check.log` trae `1909 passed in 804.51s`, `All checks passed!`, `SELLO: make check en verde sobre el arbol 28f92433762eb79830ce68c63c3b250a0776b4dc` y `PICO DE MEMORIA … 288 MiB`. No comprobe que ese arbol sea el de 5740220 (`git write-tree` escribe).
+- `knowledge validate` con git sobre el repo real: exit 0. Las lineas OK son las de siempre: libros «solo-anadir intacto», retirados «solo-anadir intacto», transcripciones, fotogramas y manifiestos «historial intacto», feedback «historial intacto, commits con Fuente», evidencia «historial intacto; …». Ningun «NO se comprobo». Salvo `304 → 305 documentos`, que el informe declara (el propio informe de la rama).
+- Trailers `Fuente:`: ningun commit de la rama toca `knowledge/spec` ni `knowledge/cases` (`git log … -- knowledge` vacio). No aplica.
+- Holdout y material: no se toca ni se cita. La rama no declara haber abierto libros, imagenes, fotogramas ni transcripciones, y mide con copias sin holdout. No hacia falta fila en `HOLDOUT-EXPOSICIONES`.
+- Regimenes: `evidence`, `feedback`, `manifests`, `transcripciones`, `fotogramas` y `libros.yaml` no cambian. `HISTORIA.md` solo se amplia (`git diff` con 0 lineas borradas, Archivo 11 al final). `PROJECT_STATE.md`: solo presente, sin «Lo anterior:».
+- Ambiguedades y ADR: no cambian `ambiguedades.yaml` ni ADR. No aplica.
+- Informes cerrados: el diff no toca ningun `docs/validation/*.md` previo.
+- Tres guardias de `cita`: la rama no anade ningun sitio con `cita`.
+- Cifras: no se anade ninguna cifra a la forma ejecutable.
+- Ensayos: el informe dice que las mediciones se hicieron con un guion en la carpeta de trabajo, sobre copias de `test_kit.py` y un repo git nuevo, no sobre el repo real.
+- Citas del informe contrastadas con la fuente. (1) §0.2, la linea 1 con git (3 libros, 1 retirado, 14 transcripciones, 9 fotogramas, 8 manifiestos, 150 feedback, 437 evidencia, 25 propuestas): coincide con mi ejecucion. (2) El diff sustituye `aviso_sin_git` por `Historial.aviso` con el mismo texto. (3) La variable `puerta` no sombrea a `historial`: en el diff aparece `puerta.ok`, y la evidencia sigue usando `historial`.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 11 hechos, 1 parcial, 0 no hechos.
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Fase 0: inventario de TODAS las comprobaciones que dependen de `con_git`/`historial_evaluable`, con salida con git, sin git y con historial no evaluable | Hecho | §0.2: 9 filas (las 7 de §4.2 mas trailers `Fuente`/ancla y fuentes documentales). §0.4 anade las que leen git por otra via. Contraste con el codigo: los usos de `con_git`/`historial_evaluable`/`hay_git` en `knowledge.py` quedan cubiertos. Una grep de «intacto» fuera de `knowledge.py` solo da `intacto_desde` (anterioridad/paquete, fallan cerradas), docstrings y un comentario. No encontre una que falte. |
+| 2 | Medir sobre la copia sin `.git` y sobre una con historial no evaluable, o decir que no se puede | Hecho | §0.1: 4 montajes (`repo`, `copia`, `copia_m`, `subdir`). El clon superficial no se monto y se explica (copiaria el holdout). Cubierto por `test_feedback_history.py`. |
+| 3 | Parar si alguna cambia algo mas que un mensaje | Hecho | §0.3 concluye «Solo mensaje». Con `subdir` la evidencia da ERROR, exit 1, antes y despues. No hay parada que justificar. |
+| 4 | Regla: sin historial evaluado (sin git o `historial_evaluable` no) no se imprime «intacto», se imprime AVISO con «NO se comprobo» y el motivo | Hecho | `Historial.de`: `"sin git"` si no hay git, si no `historial_evaluable`. `ok()` emite `AVISO: <ambito>: <motivo>, NO se comprobo <que>`. Libros y retirados cubren ademas el caso `versiones_del_fichero` None (`sin_versiones`). |
+| 5 | Mecanismo comun que niega por defecto | Hecho | Clase `Historial` mas `afirmaciones_sueltas`: `validar` da exit 1 y `ERROR: validar: … sin pasar por Historial.ok` si una linea OK con «intacto»/«commits con Fuente» no salio de `ok`. Ademas, un test AST sobre `src/botsito/`. Limite: lo detecta por texto («intacto», «commits con Fuente»), no por el hecho de depender del historial. Una comprobacion nueva con otra palabra no la caza (ver b1). |
+| 6 | Fase 1: cada comprobacion sin historial emite su aviso y su OK deja de decir «intacto» | Hecho | Diff: 7 llamadas a `puerta.ok` (libros, retirados, transcripciones, fotogramas, manifiestos, feedback+trailers, evidencia) mas el aviso de fuentes documentales. Todas con su linea `sin`. |
+| 7 | Con git, nada cambia: salida y codigo de `knowledge validate` | Hecho | Mi ejecucion: exit 0, las lineas OK textuales de `main`. Las cadenas `con` son las de antes caracter a caracter en el diff. Diferencia declarada: 304 → 305 documentos (el propio informe). |
+| 8 | Sin git, el codigo de salida no cambia | Hecho | §1.3: `copia_m` 0 en las dos, `copia` 1 en las dos. Test 1 afirma exit 0. En el diff, `ok()` solo cambia las lineas, no los codigos; el unico `return 1` nuevo es el de `afirmaciones_sueltas`. |
+| 9 | Test 1: copia sin `.git`, ninguna linea con «intacto», un aviso por comprobacion; roto devolviendo un OK | Hecho | §1.4, test 1, rotura documentada con su fallo (l. 82). Tras mis ejecuciones, los 46 pasan sin la rotura. La rotura la hizo el autor y no la repeti: no escribo. |
+| 10 | Test 2: comprobacion falsa que imprime «intacto» sin pasar por el mecanismo hace fallar un test | Hecho | Tests 2a (monkeypatch de `_validar`, `validar` sale con 1) y 2b (AST de `src/`), cada uno con rotura documentada. |
+| 11 | Test 3: con git, salida igual a main; roto cambiando una palabra de un OK | Hecho | Test 3 compara las 12 lineas OK con patrones y exige 0 «NO se comprobo»; rotura «historial integro» documentada. Observacion: contra patrones escritos en el test, no contra una salida de `main` real (ver b2). |
+| 12 | Test 4: historial no evaluable con su rotura, o decir que no se monto | Hecho | Test 4 (proyecto en un subdirectorio de un repo git): exit 1, ERROR de evidencia, avisos con el motivo de la raiz. Rotura: retirados vuelve a su OK. Clon superficial no montado, dicho. |
+| 13 | CI de Linux: push `fix/historial-sin-git`, dar run | Parcial | Run 201, id 37170620167. `gh run view` a los pocos minutos: `* fix/historial-sin-git ci · 37170620167 … Triggered via push about 2 minutes ago`, job `python` sin terminar. El informe aun dice PENDIENTE (a1). No puedo confirmar el «solo el fallo esperado de state check por el nombre fix/». |
+| 14 | Quitar la linea de Technical Debt de §4.2 y nada mas en PROJECT_STATE | Hecho | `git diff` de `PROJECT_STATE.md`: sale solo esa linea de Technical Debt. Los demas cambios son los propios de abrir la rama: Current Branch, Current Feature, tests 1239 → 1245 (que `make check` exige) y «ninguna desde el Archivo 11». No se anade ninguna linea de deuda ni de estado nueva. |
+| 15 | Informe en `docs/validation/HISTORIAL-SIN-GIT.md` con inventario, cambio, tests con rotura, run de CI y make check sellado; revisor pegado al final | Parcial | Inventario, cambio y tests: presentes. Run de CI y make check sellado: no estan en el informe (a1). El revisor lo pega quien llama, no yo. |
+
+Hallazgos:
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | La puerta «niega por defecto» solo por los literales «intacto» y «commits con Fuente». Una linea OK nueva que dependa del historial y use otra palabra («integro», «sin modificar», «solo-anadir» a secas) no la caza ni `validar` ni el test AST. Esto es mas debil que «una comprobacion de historial nueva no puede imprimir intacto sin pasar por el mismo mecanismo», y el informe lo presenta como cubierta en dos capas sin decir ese limite. No hay que arreglarlo necesariamente, pero conviene declararlo. | `src/botsito/validation/knowledge.py:195` `AFIRMACIONES_DE_HISTORIAL = ("intacto", "commits con Fuente")`; `afirmaciones_sueltas` filtra con `any(a in x …)`; informe §1.1 «Niega por defecto, en dos capas». |
+| b2 | menor | El test 3 («con git, igual que main») compara contra patrones escritos a mano en el propio test, no contra una salida real de `main`. Es suficiente como regresion de texto, pero el nombre promete mas. | informe §1.4, test 3 (`recuentos como \d+`). |
+
+Fuera de encargo (cada cosa): (1) `sin_versiones` / caso `versiones_del_fichero` None con historial evaluable: justificado en §1.1 como «la causa que quedaba suelta» (la regla dice «por la causa que sea»). (2) Cambio en `tests/unit/test_reabrir_y_fuente_documental.py` y su entrada al contrato: justificado en §1.4. (3) `_validar` como envoltorio: justificado. No hay cambio fuera de las rutas permitidas. No se tocan las rutas que el encargo prohibe (motor, spec, knowledge, cifras, ambiguedades).
+
+### Lo que no pude comprobar
+- Resultado de la CI de Linux (run 37170620167): seguia en curso cuando mire; el job `python` no habia terminado. Mirar de nuevo con `gh run view 37170620167`.
+- Que el arbol sellado `28f92433…` sea exactamente el de 5740220: `git write-tree` escribe en la base de objetos.
+- Las roturas de los tests: no las repeti (modificar `knowledge.py` es escribir). Me baso en lo que cuenta el informe y en que los tests pasan sin rotura.
+- Montaje `subdir` y salidas «sin git»: no las reproduje (requieren copiar y escribir fuera del repo). Me baso en el informe y en el diff.
+- Lo que los tests de `test_kit.py` exigen del aviso sin git: no los ejecute (el contrato los lista, pero no estaban en los comandos que me diste). `make check` (1909 passed) los incluye.
+
+### Comandos ejecutados
+1. `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD`, `git status --short`, lectura del encargo y de `contrato.yaml`.
+2. `git diff main...HEAD -- src/botsito/validation/knowledge.py PROJECT_STATE.md tests/unit/test_reabrir_y_fuente_documental.py` y `git diff --name-status main...HEAD`.
+3. Lectura de `docs/validation/HISTORIAL-SIN-GIT.md`.
+4. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`; lectura de `make-check.log` (SELLO, PICO, passed); recuento de lineas borradas en HISTORIA; `git log … -- knowledge`.
+5. `uv run pytest tests/unit/test_historial_sin_git.py tests/unit/test_reabrir_y_fuente_documental.py -q -p no:cacheprovider` (46 passed); `gh run view 37170620167` (en curso).
+6. `uv run botsito knowledge validate` (exit 0, lineas OK identicas a las de siempre); grep de «intacto» en `src/botsito`; `git diff main...HEAD -- docs/state/HISTORIA.md | head`.
+
 ## Estado
 
-EN CURSO. Fases 0 y 1 hechas; falta la CI de Linux, el sello de `make check` y el revisor.
+LISTA PARA REVISIÓN, NO CERRADA (2026-10-03). Fases 0 y 1 hechas; `make check` sellado sobre
+`5740220`; CI de Linux run 201 con solo el fallo esperado de `state check` por el nombre `fix/`;
+revisor pasado, sin bloqueos, y lo suyo anotado en §4. El cierre en `main` espera la orden de Aleks.
+La rama remota `fix/historial-sin-git` queda hasta el cierre (RITUAL.md).
