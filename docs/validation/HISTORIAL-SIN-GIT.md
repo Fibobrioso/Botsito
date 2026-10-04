@@ -167,7 +167,7 @@ En los documentos: 302 → 303 en las dos copias, por lo mismo.
 
 ### 1.4 Los tests, cada uno roto a propósito
 
-`tests/unit/test_historial_sin_git.py`, seis funciones (1239 → 1245 en `PROJECT_STATE`; siete y
+`tests/unit/test_historial_sin_git.py`, seis funciones (siete tras §6.1, 1246) (1239 → 1245 en `PROJECT_STATE`; siete y
 1246 tras la segunda orden, §6.1). Cada rotura
 la hizo un guion de la carpeta de trabajo que muta `knowledge.py`, corre ese test y restaura el
 fichero comprobando su sha256 (`bfa378919a92…` antes y después).
@@ -181,7 +181,7 @@ fichero comprobando su sha256 (`bfa378919a92…` antes y después).
 | 3 `test_con_git_las_lineas_ok_son_las_de_main` | `validar` sobre el repositorio real con git: código 0, las doce líneas OK en orden y casando con las de `main` (recuentos como `\d+`), y ningún «NO se comprobo» | `transcripciones registradas, historial intacto` → `historial integro` | FALLA: `('OK: 14 transcripciones registradas, historial integro', …)` (l. 175) |
 | 4 `test_con_git_y_el_proyecto_fuera_de_la_raiz_tampoco_dice_intacto` | la copia dentro de un subdirectorio de un repo git con un commit: código 1, el ERROR de la evidencia, ninguna línea con «intacto», y el aviso de libros y retirados con el motivo «el proyecto no es la raiz del repositorio git» | retirados vuelve a su OK de antes | FALLA en la aserción de «intacto» (l. 195) |
 
-Sin rotura, los seis pasan. El test 3 tarda ~70 s en esta máquina (verifica las citas contra las
+Sin rotura, los seis pasan (siete tras §6.1, 1246). El test 3 tarda ~70 s en esta máquina (verifica las citas contra las
 crudas de `data/`; en la CI, sin `data/`, menos). El de historial no evaluable se montó con el
 proyecto fuera de la raíz; el clon superficial no (§0.1).
 
@@ -369,7 +369,7 @@ entero (`import botsito.comun.historial`, `from botsito.comun import historial`)
 importarla, y así tampoco se escapa la que se pasa como argumento sin llamarla. **Lo que no ve**
 (lo señaló el revisor en la pasada corta, a2): una importación dinámica (`__import__`,
 `importlib`) y un subpaquete futuro de `validation/`, porque recorre solo sus `*.py` de primer
-nivel; hoy `validation/` son tres ficheros planos y ninguno importa así. La lista de
+nivel (`glob`, no `rglob`); hoy `validation/` son tres ficheros planos y ninguno importa así. La lista de
 excepciones existe (`EXCEPCIONES`, cada entrada `(fichero, nombre)` con su porqué en un comentario)
 y hoy está vacía. Se autoprueba: ve una comprobación falsa con
 `from botsito.comun.historial import DIRECTORIO_FEEDBACK, modificaciones_en_historial` (solo
@@ -490,13 +490,47 @@ Fuera de encargo: no hay nada. El cambio de `knowledge.py` (cinco envoltorios, `
 7. `gh run view 37173283083 --log-failed | grep …`; `gh run view … --json headSha,conclusion`; `git rev-parse HEAD`; `sed -n 685,700p` de `knowledge.py`; `grep` de SELLO, passed y PICO en `make-check.log`; `git diff HEAD -- docs/validation/HISTORIAL-SIN-GIT.md`.
 8. `uv run pytest tests/unit/test_historial_sin_git.py -q -p no:cacheprovider` (7 passed); `grep -c "def test_"`; `git diff main --stat -- tests`.
 
+## 8. Orden de cierre del consultor (2026-10-03)
+
+Copiada tal cual (también al final del encargo):
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/historial-sin-git (consultor, 2026-10-03). Cópiala con su fecha al informe y al final del encargo. Se ejecuta cuando Aleks escriba /cerrar-rama trabajo/historial-sin-git; hasta entonces no hagas nada más.
+>
+> Tag: stable/F36u-historial-sin-git. Antes de usarlo, comprueba en HISTORIA que la última letra cerrada es la t; si no lo es, usa la siguiente libre y dilo.
+>
+> En el commit que saca el contrato, además de lo que manda RITUAL.md:
+> 1. Informe, hallazgo a1 del revisor: en §1.4, donde dice «seis funciones» y «los seis pasan», añade «(siete tras §6.1, 1246)». No reescribas nada más.
+> 2. Informe, hallazgo a2: en §6.1, junto al límite ya declarado, añade que el test tampoco ve __import__ ni importlib, y que solo recorre los *.py de primer nivel de validation/ (glob, no rglob). No se cambia código: es límite declarado.
+> 3. Fila de la rama en ERRORES-RECURRENTES, con los hallazgos del consultor que el revisor no vio:
+>    - importa: en la primera vuelta, el commit del informe (ac08b5a) se quedó sin push a fix/ y sin CI, y el revisor no lo señaló. Lección para el revisor: comprobar que el último commit de la rama, el que se va a fusionar, tiene su run de CI, no solo el commit del código.
+>    - menor: el revisor se lanzó la primera vez con el informe sin terminar. Lección (§6.4): el revisor se lanza con el informe terminado, nunca antes.
+>    - menor: la guardia de la primera vuelta reconocía palabras («intacto») en vez de la condición (leer git). Lo vio el revisor; se apunta como un caso más del patrón «nombra la condición, no los casos».
+> 4. El registro del cierre en HISTORIA, con la deuda de §4.2 de REABRIR-Y-FUENTE-DOCUMENTAL.md como pagada.
+>
+> Después, el ritual completo: merge --no-ff, tag, commit de estado que solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit (Next Action no cambia), state check, make check sellado, push atómico de main y el tag, CI de main en verde y, solo entonces, borrar la rama local y fix/historial-sin-git de origin.
+>
+> Informe final: sha de main, tag, run de la CI de main, ramas que quedan en local y en remoto, y tamaño de PROJECT_STATE.
+
+Hecho en el commit que saca el contrato (`chore(cierre)`):
+- Letra: la última cerrada en HISTORIA es la `t` (`stable/F36t-reabrir-y-fuente-documental`), y
+  `stable/F36u-historial-sin-git` no existía ni en local ni en `origin`: se usa ese tag.
+- Punto 1 (a1): «(siete tras §6.1, 1246)» añadido en §1.4 tras «seis funciones» y tras «los seis
+  pasan». Junto a «seis funciones» ya iba, desde la segunda orden, «siete y 1246 tras la segunda
+  orden, §6.1»; no se reescribe.
+- Punto 2 (a2): en §6.1 ya se declaraban `__import__`, `importlib` y los `*.py` de primer nivel
+  desde la pasada corta; se añade «(`glob`, no `rglob`)». No cambia código.
+- Puntos 3 y 4: la fila de la rama en `docs/runbooks/ERRORES-RECURRENTES.md` y el registro del
+  cierre al final de `docs/state/HISTORIA.md`, con la deuda de
+  `REABRIR-Y-FUENTE-DOCUMENTAL.md` §4.2 como pagada.
+
 ## Estado
 
-LISTA PARA REVISIÓN, NO CERRADA (2026-10-03). Fases 0 y 1 y la segunda orden hechas: en
-`validation/` solo `Historial` lee git, con su test por `ast` roto a propósito, y las palabras como
-segunda red. `make check` sellado antes de cada commit; CI de Linux run 201 (Fase 1) y run 202
-(segunda orden), los dos con solo el fallo esperado de `state check` por el nombre `fix/`; el run
-del commit de este informe, en la respuesta al consultor. Revisor: pasada completa (§5) y pasada
-corta con el informe terminado (§7), sin bloqueos. Al cerrar: el registro de la deuda pagada en
-HISTORIA, la fila de ERRORES-RECURRENTES (con la lección de §6.4) y el borrado de
-`fix/historial-sin-git`. El cierre en `main` espera la orden de Aleks.
+CERRÁNDOSE por la orden de cierre del consultor del 2026-10-03 (§8), como
+`stable/F36u-historial-sin-git`. Fases 0 y 1 y la segunda orden hechas: en `validation/` solo
+`Historial` lee git, con su test por `ast` roto a propósito, y las palabras como segunda red.
+`make check` sellado antes de cada commit; CI de Linux runs 201, 202 y 203 (este último sobre
+`cab9eb1`, el informe con el revisor), los tres con solo el fallo esperado de `state check` por el
+nombre `fix/`. Revisor: pasada completa (§5) y pasada corta con el informe terminado (§7), sin
+bloqueos. El merge, el tag y la CI de `main`, en el registro de HISTORIA y en `PROJECT_STATE.md`.

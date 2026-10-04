@@ -56,3 +56,26 @@ Copiada tal cual:
 > make check sellado antes de cada commit.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Orden de cierre del consultor (2026-10-03)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/historial-sin-git (consultor, 2026-10-03). Cópiala con su fecha al informe y al final del encargo. Se ejecuta cuando Aleks escriba /cerrar-rama trabajo/historial-sin-git; hasta entonces no hagas nada más.
+>
+> Tag: stable/F36u-historial-sin-git. Antes de usarlo, comprueba en HISTORIA que la última letra cerrada es la t; si no lo es, usa la siguiente libre y dilo.
+>
+> En el commit que saca el contrato, además de lo que manda RITUAL.md:
+> 1. Informe, hallazgo a1 del revisor: en §1.4, donde dice «seis funciones» y «los seis pasan», añade «(siete tras §6.1, 1246)». No reescribas nada más.
+> 2. Informe, hallazgo a2: en §6.1, junto al límite ya declarado, añade que el test tampoco ve __import__ ni importlib, y que solo recorre los *.py de primer nivel de validation/ (glob, no rglob). No se cambia código: es límite declarado.
+> 3. Fila de la rama en ERRORES-RECURRENTES, con los hallazgos del consultor que el revisor no vio:
+>    - importa: en la primera vuelta, el commit del informe (ac08b5a) se quedó sin push a fix/ y sin CI, y el revisor no lo señaló. Lección para el revisor: comprobar que el último commit de la rama, el que se va a fusionar, tiene su run de CI, no solo el commit del código.
+>    - menor: el revisor se lanzó la primera vez con el informe sin terminar. Lección (§6.4): el revisor se lanza con el informe terminado, nunca antes.
+>    - menor: la guardia de la primera vuelta reconocía palabras («intacto») en vez de la condición (leer git). Lo vio el revisor; se apunta como un caso más del patrón «nombra la condición, no los casos».
+> 4. El registro del cierre en HISTORIA, con la deuda de §4.2 de REABRIR-Y-FUENTE-DOCUMENTAL.md como pagada.
+>
+> Después, el ritual completo: merge --no-ff, tag, commit de estado que solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit (Next Action no cambia), state check, make check sellado, push atómico de main y el tag, CI de main en verde y, solo entonces, borrar la rama local y fix/historial-sin-git de origin.
+>
+> Informe final: sha de main, tag, run de la CI de main, ramas que quedan en local y en remoto, y tamaño de PROJECT_STATE.

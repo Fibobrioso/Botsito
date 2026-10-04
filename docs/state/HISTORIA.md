@@ -3272,3 +3272,45 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 10 (2026-10-03).
+
+# Registro de cierre · `trabajo/historial-sin-git` (2026-10-03)
+
+- Orden de cierre del consultor del 2026-10-03, ejecutada con `/cerrar-rama`. La rama hace que
+  ninguna comprobacion de `knowledge validate` afirme lo que no evaluo: sin git, o con git y el
+  historial no evaluable (`historial_evaluable`), las nueve comprobaciones de historial (libros,
+  retirados, evidencia, feedback, trailers `Fuente:` con su ancla, manifiestos de datos,
+  transcripciones, fotogramas y fuentes documentales) no dicen «intacto» ni «commits con Fuente»:
+  un AVISO dice que NO se comprobo y por que. Con git la salida y el codigo de salida son los de
+  antes. La clase `Historial` (`src/botsito/validation/knowledge.py`) es la unica puerta: por ella
+  sale toda afirmacion de historial (`validar` da ERROR por una que no salga de `Historial.ok`) y,
+  desde la segunda orden, es lo unico de `validation/` que lee git (un test por `ast` lo exige; las
+  palabras quedan como segunda red). `Tests Currently Passing` paso de 1239 a 1246 en la rama.
+- **Deuda PAGADA**: la de Technical Debt que apuntaba a `docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md`
+  §4.2 («las comprobaciones de historial imprimen "historial intacto" o "solo-añadir intacto" sin
+  git, sin haber evaluado nada»); su linea salio de `PROJECT_STATE.md` en la rama (5740220).
+- Deuda NUEVA, de la segunda orden: las lecturas de git fuera de `validation/` que no pasan por
+  `Historial` -las anclas de paquetes, fidelidad y dev-visto y la subida de `spec_version`- callan
+  sin git (informe §3 y §6.1). Next Action no cambia.
+- Letra: la ultima cerrada era la t (`stable/F36t-reabrir-y-fuente-documental`); `u` libre en local
+  y en `origin`.
+- Tag: `stable/F36u-historial-sin-git`. El merge es
+  `git rev-parse "stable/F36u-historial-sin-git^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `1f29cf5`: apertura: encargo, contrato, Archivo 11 y el inventario de la Fase 0;
+  - `5740220`: Fase 1: `Historial`, los avisos y seis tests, cada uno roto a proposito;
+  - `ac08b5a`: el run 201, el sello y el informe del revisor;
+  - `7c5737b`: segunda orden: en `validation/` solo `Historial` lee git, con su test por `ast`; la
+    linea de deuda nueva;
+  - `cab9eb1`: el run 202 y la pasada corta del revisor sobre el informe terminado;
+  - y el de este registro, que saca tambien el contrato.
+- CI de Linux, empujada como `fix/historial-sin-git` (depende de que haya git o no):
+  - run 201 (37170620167), 5740220: 1 failed, 1900 passed, 8 skipped;
+  - run 202 (37173283083), 7c5737b (lleva tambien ac08b5a, que se habia quedado sin empujar):
+    1 failed, 1901 passed, 8 skipped;
+  - run 203 (37174448798), cab9eb1: 1 failed, 1901 passed, 8 skipped.
+  En los tres el fallo es el UNICO esperado (`RITUAL.md`): `state check` en
+  `test_state_check_ok_on_real_repo`, porque `PROJECT_STATE` declara `trabajo/...` y la rama es
+  `fix/...`. El cierre borra `fix/historial-sin-git` de `origin`.
+- Informe: `docs/validation/HISTORIAL-SIN-GIT.md`. Encargo, con la segunda orden y la orden de
+  cierre: `docs/encargos/trabajo-historial-sin-git.md`.
