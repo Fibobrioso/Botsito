@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/sesion-04
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36u-historial-sin-git` (2026-10-03).
+`trabajo/sesion-04` EN CURSO (2026-10-04): ingerir la sesion 4 con el trader (v10) y el informe de extraccion por pregunta, sin resolver nada. Encargo docs/encargos/trabajo-sesion-04.md; informe docs/validation/SESION-04-EXTRACCION.md.
 
 ## Stable Main State
 8e21fd1 · merge de `trabajo/historial-sin-git` (tag `stable/F36u-historial-sin-git`): sin git, o con git y el historial no evaluable, ninguna comprobacion de `knowledge validate` dice «intacto» ni «commits con Fuente»: un AVISO dice que NO se comprobo y por que; con git, la salida es la de antes. La clase `Historial` (validation/knowledge.py) es la unica puerta por la que sale una afirmacion de historial y lo unico de validation/ que lee git (test por ast). Sobre `stable/F36t-reabrir-y-fuente-documental` (c76aaf6). Informe docs/validation/HISTORIAL-SIN-GIT.md; el registro del cierre, al final de HISTORIA.
@@ -198,9 +198,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 11 (2026-10-03).
+— ninguna desde el Archivo 12 (2026-10-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 11 (2026-10-03).
+— ninguna desde el Archivo 12 (2026-10-04).
