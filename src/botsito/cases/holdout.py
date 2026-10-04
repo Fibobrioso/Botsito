@@ -45,6 +45,7 @@ from typing import Any
 from botsito.comun import historial
 from botsito.comun.historial import blob_en_head, contenido_en_head
 from botsito.comun.yaml_estricto import YamlError, cargar_yaml, leer_yaml
+from botsito.corpus.cuarentena import TODOS_LOS_MESES
 
 PARTICIONES_RESERVADAS = ("holdout-1", "holdout-2", "holdout-3")
 # Las del camino de fidelidad (ADR-0036). ADR-0034 separo DOS cegueras: la DEL TRADER, que
@@ -556,7 +557,6 @@ CLAVES_MES_RESERVADO = frozenset({"motivo", "fuente", "declarado_el"})
 _MES_AAAA_MM = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$", re.ASCII)
 # El mes de un id de caso `caso-<simbolo>-AAAA-MM-DD`.
 _MES_DE_CASO = re.compile(r"-\d{4}-(0[1-9]|1[0-2])-\d{2}$", re.ASCII)
-TODOS_LOS_MESES = frozenset(range(1, 13))
 
 
 class MesesReservadosError(ValueError):
@@ -649,11 +649,31 @@ def _version_meses(texto: str | None, donde: str) -> dict[str, Any]:
         raise MesesReservadosError(f"{FICHERO_MESES_RESERVADOS}@{donde}: {exc}") from exc
 
 
+def meses_reservados_borrado(repo: Path) -> bool:
+    """True si `meses_reservados.yaml` falta del arbol de trabajo y el historial SI lo tuvo: es un
+    borrado, que el regimen SOLO ANADIR no admite (un mes que entra no sale, tampoco borrando el
+    fichero entero). False si existe, si nunca existio o si el historial no se puede evaluar."""
+    if (repo / FICHERO_MESES_RESERVADOS).is_file():
+        return False
+    if historial.historial_evaluable(repo) is not None:
+        return False
+    # Dos senales, porque `versiones_del_fichero` da pares (commit, padre) y un commit raiz no
+    # tiene padre: que HEAD lo tenga (borrado sin commitear) o que algun commit lo tocara.
+    return historial.contenido_en(repo, "HEAD", FICHERO_MESES_RESERVADOS) is not None or bool(
+        historial.versiones_del_fichero(repo, FICHERO_MESES_RESERVADOS)
+    )
+
+
 def problemas_de_meses_reservados(repo: Path) -> list[str]:
     """Para `knowledge validate`: que exista, su forma (AAAA-MM, motivo, fuente que exista y
     fecha) y SOLO ANADIR contra el historial, con el mismo mecanismo que `retirados.yaml`."""
     ruta = repo / FICHERO_MESES_RESERVADOS
     if not ruta.is_file():
+        if meses_reservados_borrado(repo):
+            return [
+                f"{FICHERO_MESES_RESERVADOS} se ha BORRADO y el historial lo tenia: es SOLO "
+                f"ANADIR, un mes que entra no sale, tampoco borrando el fichero (sacarlo exige ADR)"
+            ]
         return [
             f"{FICHERO_MESES_RESERVADOS} no existe: sin el no se demuestra ningun mes libre y la "
             f"cuarentena del texto tapa los doce"

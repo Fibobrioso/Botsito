@@ -283,3 +283,17 @@ tramos:
       precaución: mes con días ocultos que la cuarentena mecánica no cubre. El segmento de la version filtrada de 1:55:29 (hasta la linea siguiente, 1:55:32) nombra un mes que tiene dias en casos_ocultos y que MESES_FILTRADOS no filtra; medido el 2026-10-04 imprimiendo solo marcas de tiempo. No se cita ni se describe
     acordado: >-
       revision del consultor del 2026-10-04 (trabajo/sesion-04, punto 2): cada segmento de la filtrada que nombre un mes con dias ocultos fuera de MESES_FILTRADOS entra aqui; docs/validation/SESION-04-EXTRACCION.md
+  - video_id: v6
+    t0: "0:01:00.72"
+    t1: "0:01:03.16"
+    motivo: >-
+      precaución: mes con días ocultos que la cuarentena mecánica no cubría. Segmentos de la transcripcion activa de v6 que la regla por condicion tapa (escenario B) y la lista vieja de cuatro meses no tapaba; medidos el 2026-10-04 con el Filtro real, imprimiendo solo tiempos. No se citan ni se describen
+    acordado: >-
+      revision del revisor de trabajo/cuarentena-por-condicion (hallazgo A4, 2026-10-04), con el mismo criterio que el tramo de v10 1:55:29 (revision del consultor de trabajo/sesion-04, punto 2); docs/validation/CUARENTENA-POR-CONDICION.md
+  - video_id: v6
+    t0: "2:26:17.201"
+    t1: "2:26:18.341"
+    motivo: >-
+      precaución: mes con días ocultos que la cuarentena mecánica no cubría. Segmentos de la transcripcion activa de v6 que la regla por condicion tapa (escenario B) y la lista vieja de cuatro meses no tapaba; medidos el 2026-10-04 con el Filtro real, imprimiendo solo tiempos. No se citan ni se describen
+    acordado: >-
+      revision del revisor de trabajo/cuarentena-por-condicion (hallazgo A4, 2026-10-04), con el mismo criterio que el tramo de v10 1:55:29 (revision del consultor de trabajo/sesion-04, punto 2); docs/validation/CUARENTENA-POR-CONDICION.md

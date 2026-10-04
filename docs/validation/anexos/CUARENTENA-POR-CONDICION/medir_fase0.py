@@ -1,4 +1,9 @@
-"""Fase 0, punto 4: la regla nueva medida SIN aplicarla. Solo recuentos y marcas de tiempo:
+"""HISTORICO: se ejecuto en `ad4fd75` (fase 0) y su salida es `medir_fase0-SALIDA.txt`. Desde la
+fase 1 NO CORRE: importa `_RE_MES`, que la fase 1 elimino, y sus entradas -las filtradas de v9 y
+v10- se rehicieron en la fase 2. Se conserva como la medida que fue (revisor de la rama, A1); la
+de despues es `medir_fase2.py`.
+
+Fase 0, punto 4: la regla nueva medida SIN aplicarla. Solo recuentos y marcas de tiempo:
 nunca texto, nunca que mes.
 
 Escenarios:

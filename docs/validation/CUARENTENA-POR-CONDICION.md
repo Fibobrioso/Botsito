@@ -126,8 +126,13 @@ ver:**
 ### 0.4 La regla nueva medida sin aplicarla, de v1 a v10
 
 Guion: `docs/validation/anexos/CUARENTENA-POR-CONDICION/medir_fase0.py`, con la salida en
-`medir_fase0-SALIDA.txt`. Se volvió a ejecutar y la salida sale idéntica byte a byte. **Solo
-imprime recuentos, marcas de tiempo e ids, nunca texto ni qué mes.**
+`medir_fase0-SALIDA.txt`. Se volvió a ejecutar en `ad4fd75` y la salida salió idéntica byte a
+byte. **Solo imprime recuentos, marcas de tiempo e ids, nunca texto ni qué mes.**
+
+> **Corrección (2026-10-04, tras el revisor, A1):** desde la fase 1 este guion ya **no corre**.
+> Importa `_RE_MES`, que la fase 1 eliminó, y sus entradas (las filtradas de v9 y v10) se rehicieron
+> en la fase 2. Queda como la medida que fue, marcado HISTÓRICO en su cabecera. El contrato ya no lo
+> lleva como comprobación; lleva `medir_fase2.py`, que es la medida de después y sí se reproduce.
 
 - **Qué se mide:** los segmentos que la regla nueva taparía y que hoy se enseñan, con su vecino
   anterior y siguiente como la regla de hoy, y los ítems `ev-*` cuyo intervalo pisa alguno.
@@ -344,6 +349,27 @@ es exactamente la nueva con esos libres. Se cuentan los segmentos ocultos por la
 | v9 | 29 → 57 | 8 | 15 | 8 | 0 |
 | v10 | 45 → 89 | 12 | 23 | 15 | 2 (`ev-v10-014823-64248489`, `ev-v10-014853-76602fb4`, S-16) |
 
+**Las diez, una al lado de otra** (decisión 4; añadida tras el revisor, R19 y A3).
+- **Qué se cuenta:** los segmentos ocultos por la regla del texto (c) con sus vecinos.
+- **De dónde sale cada cifra:**
+  - v1–v6, de `medir_fase2-SALIDA.txt`;
+  - v7–v10, de los registros de `transcribir_sesion.py`, cuyas líneas de recuento están copiadas, sin
+    texto, en `medir_fase2-REGISTROS.txt`.
+- **Escenarios:** v1–v6 en B, la regla que vale; v7–v10 en A, un techo de B.
+
+| Vídeo | Antes | Después | Escenario del después | Nuevos | Ítems ev-* en los nuevos |
+|---|---|---|---|---|---|
+| v1 | 0 | 0 | B | 0 | 0 |
+| v2 | 3 | 3 | B | 0 | 0 |
+| v3 | 3 | 3 | B | 0 | 0 |
+| v4 | 26 | 26 | B | 0 | 0 |
+| v5 | 0 | 0 | B | 0 | 0 |
+| v6 | 69 | 72 | B | 3 | 0 |
+| v7 | sin filtrada de antes | 9 | A | ≤ 9 (2 bloques nuevos) | 0 |
+| v8 | sin filtrada de antes | 0 | A | 0 | 0 |
+| v9 | 29 | 57 | A | 28 (en B: 0, fase 0) | 0 |
+| v10 | 45 | 89 | A | 44 (en B: 0, fase 0) | 2 (en B: 0) |
+
 **Lo que dicen estas cifras:**
 - **La regla de la decisión 2 no salta:** en v7 y v8 no cae ningún ítem ni siquiera con A, así que
   tampoco con B.
@@ -356,7 +382,19 @@ es exactamente la nueva con esos libres. Se cuentan los segmentos ocultos por la
 
 ### 2.3 Los tramos no citables
 
-**No se añade ningún tramo.**
+> **Corrección (2026-10-04, tras el revisor, A4):** sí se añaden **dos tramos en v6**, los únicos
+> segmentos nuevos del escenario B que vale: `0:01:00.72–0:01:03.16`, que cubre los segmentos de
+> 0:01:00 y 0:01:02, y `2:26:17.201–2:26:18.341`. Los límites son los de los segmentos en
+> milisegundos, sacados del `Filtro` real y sin imprimir texto. El motivo es «precaución: mes con
+> días ocultos que la cuarentena mecánica no cubría», con el mismo criterio que el tramo de v10
+> 1:55:29.
+> - v6 no es una sesión en cuarentena: su cruda se lee por trozos con Read, y la guardia solo
+>   respeta los tramos.
+> - Ningún ítem cae en ellos: `knowledge validate` está en verde y la lista de la guardia coincide.
+>
+> Lo que sigue vale para v7–v10.
+
+**En v7–v10 no se añade ningún tramo.**
 - Los bloques nuevos de v9 y v10 son de A, no de B: en B no hay ninguno (fase 0). Registrarlos
   como tramos taparía de forma permanente, para la evidencia, nombres de meses demostrados libres,
   y ocultaría por (b) los 2 ítems de S-16 que el consultor decidió dejar.
@@ -394,6 +432,35 @@ del 2026-10-01.
    `knowledge validate` y los ámbitos con historial; la fuente de (b) es una comprobación de
    historial más, como `retirados.yaml` (se amplió en el commit de la fase 1).
 5. **`test_abril_agosto_enero_*` cambia** (§1.3): pasa los meses libres del repo real.
+6. **La decisión 4 se cumple en la letra y no en el propósito** (revisor, B1). Las filtradas se
+   rehicieron con el guion revisado, como pide la decisión, pero ese guion no da todavía la regla
+   que entrega la rama. Lo que hay en disco para v7–v10 es A, un techo de B.
+   - La parada de ítems se evaluó con A. Es conservadora y vale: si nada cae en A, nada cae en B.
+   - Dejar la sesión 4 lista para activar con B exige el guion nuevo en `main` (§5).
+7. **Las demás vías que construyen el filtro sin `libres`** (revisor, A7):
+   - `retrieval/consultas.py:345`, cuando un vídeo no tiene filtro en el índice;
+   - `cases/paquete.py`, con `construir_indice` por defecto;
+   - los anexos de `CUARENTENA-POR-DEFECTO/` y `scripts/a18_buscar.py`.
+
+   Todas tapan los 12: fallan cerrado. Las salidas commiteadas de esos anexos ya no se
+   reproducirían igual, y son de una rama cerrada.
+8. **La fuente de febrero** (revisor, A6). Cita ADR-0025 y ADR-0046, que solo dicen que es «el mes
+   limpio pendiente». «Ciego, sin descargar, no se toca» está en el pendiente heredado 6 (Archivo 1
+   de HISTORIA), que el motivo nombra pero la lista de fuentes no cita. **No se corrige:** la entrada
+   ya está commiteada (`8b5b7fc`) y el fichero es SOLO AÑADIR. `knowledge validate` lo vigila y
+   daría ERROR al modificarla, que es justo el régimen pedido.
+9. **El test 5 usa las mismas fuentes que `meses_libres`** (revisor, A8). Si las dos se equivocaran
+   igual, no lo vería. Lo compensa la rotura (ii) del §1.3, que lo hace caer.
+10. **Arreglado en esta rama tras el revisor:**
+    - A1: `medir_fase0.py`, histórico, fuera del contrato;
+    - A2: el borrado del fichero entero da ERROR en `knowledge validate`, con su test
+      `test_borrar_el_fichero_entero_tambien_es_sacar_meses`;
+    - A3: los recuentos de los registros, en un anexo;
+    - A4: los dos tramos de v6. La guardia de Claude los vigila al leer la cruda de v6 por trozos,
+      y `test_guardia_claude.py::test_los_tramos_del_repo_real`, que fija esa lista, los incluye;
+    - A5: `TODOS_LOS_MESES` tiene una sola definición, en `corpus/cuarentena.py`, y `cases` la
+      importa;
+    - B2: el Estado.
 
 ## 5. Pendientes que deja la rama
 
@@ -408,6 +475,174 @@ del 2026-10-01.
 
 ## Estado
 
-FASES 0, 1 y 2 HECHAS. Rama lista para revisión, NO cerrada.
+**Fases 0 y 1, hechas. Fase 2, hecha en lo que hoy se puede.**
+- v1–v6: la regla se aplica en B, y v6 lleva sus dos tramos.
+- Las filtradas de v7–v10 están en A, un techo de B. Su versión en B y sus posibles tramos, en el
+  §5, cuando el guion nuevo esté en `main`.
 
-Tamaño de `PROJECT_STATE.md`: 22.998 bytes (el tope del test es 25.000).
+Rama lista para revisión, NO cerrada.
+
+Tamaño de `PROJECT_STATE.md`: 23.060 bytes (el tope del test es 25.000).
+
+**CI de Linux** (push `git push origin trabajo/cuarentena-por-condicion:refs/heads/fix/cuarentena-por-condicion`):
+- **run 208** (37241039661), `5584d8b`: **1 failed, 1970 passed, 8 skipped**.
+- El único fallo es el esperado: `test_cli.py::test_state_check_ok_on_real_repo`, por el nombre
+  `fix/`.
+- 1979 casos, los mismos que el `make check` sellado en local (1979 passed).
+
+El commit que recoge el informe del revisor tiene su propia CI; su número se da en el terminal.
+
+
+## Informe del revisor
+
+Lanzado el 2026-10-04 con el informe terminado (CI 208 incluida) sobre `5584d8b`. Se pega tal cual.
+
+### Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| A1 | bloquea | **Arreglado.** `medir_fase0.py` queda marcado HISTÓRICO, con su recuadro de corrección en el §0.4, y sale del contrato. La comprobación es ahora `medir_fase2.py`, que sí se reproduce. |
+| A2 | importa | **Arreglado.** `meses_reservados_borrado(repo)`: si el fichero falta y HEAD o algún commit lo tuvo, `knowledge validate` da ERROR. Lo cubre `test_borrar_el_fichero_entero_tambien_es_sacar_meses`. Al escribir el test salió otro caso: un commit raíz no tiene padre, y `versiones_del_fichero` no lo veía. Se mira también HEAD. |
+| A3 | importa | **Arreglado.** Las líneas de recuento de los registros, sin texto, van en `medir_fase2-REGISTROS.txt`. |
+| A4 | importa | **Arreglado.** Dos tramos de precaución en v6 (§2.3), con 0 ítems dentro. |
+| A5 | menor | **Arreglado.** `TODOS_LOS_MESES` tiene una sola definición (`corpus/cuarentena.py`), y `cases/holdout.py` la importa. |
+| A6 | menor | **Declarado** (§4.8). La entrada ya está commiteada y el régimen es SOLO AÑADIR: no se reescribe. |
+| A7 | menor | **Declarado** (§4.7). Todas esas vías fallan cerrado. |
+| A8 | menor | **Declarado** (§4.9). Lo compensa la rotura (ii). |
+| B1 | importa | **Declarado** (§4.6). Es la limitación de la guardia: el guion nuevo no se puede ejecutar sobre una cruda hasta que esté en `main`. |
+| B2 | importa | **Arreglado.** El Estado dice «fase 2 hecha en lo que hoy se puede». |
+| B3 | menor | Ya declarado (§4.4). |
+| R19 | parcial | **Arreglado.** La tabla única de v1 a v10 está en el §2.2. |
+
+### El informe, tal cual
+
+**Informe del revisor · trabajo/cuarentena-por-condicion · 2026-10-04**
+
+Base: `e98815a` (merge-base con `main`). Commits: `ad4fd75`, `8b5b7fc`, `5584d8b`. Único cambio sin commitear: el párrafo de la CI en «Estado» del informe, que he leído. Lo he comprobado todo por lectura y con comandos que no escriben. Los hallazgos de cada eje están separados. Al final hay una sección con las preguntas expresas del consultor, que solo apunta a los hallazgos.
+
+#### Eje (a) · Reglas de la casa
+
+Resumen: 1 bloquea, 3 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | **bloquea** | **El contrato falla.** La primera línea de `comprobaciones` (`medir_fase0.py`) no se ejecuta en HEAD: importa `_RE_MES`, que la fase 1 eliminó. El informe (§0.4) dice «se volvió a ejecutar y la salida sale idéntica byte a byte». Fue cierto en `ad4fd75` y ya no lo es. Aunque se arreglara el import, el guion lee `sesion-03.filtrada.md` y `sesion-04.filtrada.md`, que la fase 2 rehízo en el escenario A. Su `medir_fase0-SALIDA.txt` ya no se reproduciría. | `uv run python docs/validation/anexos/CUARENTENA-POR-CONDICION/medir_fase0.py` → `ImportError: cannot import name '_RE_MES' from 'botsito.corpus.cuarentena'`. Líneas: `medir_fase0.py:19` y `:68`; `contrato.yaml:37`. Salida del guion `scripts/contrato_rama.py` sin ver este fallo, porque solo valida rutas. Arreglos posibles: quitar la línea del contrato y declarar el anexo como histórico, o congelarlo con la regla vieja incluida. |
+| A2 | importa | **El «solo añadir» de `meses_reservados.yaml` no ve que se borre el fichero.** `knowledge validate` solo llama a `problemas_de_meses_reservados` si el fichero existe. Si falta, da `AVISO` y sale sin error, aunque el historial lo tenga. Así, borrar el fichero quita todos los meses sin error. En ejecución la regla falla cerrada (tapa los 12), pero el régimen «un mes que entra no sale» queda sin guardia en ese caso. Lo demás sí se comprueba contra el historial (ver «Comprobado»). Hallazgo por lectura de código; no lo ejecuté, porque habría que borrar el fichero. | `src/botsito/validation/knowledge.py` (diff de `8b5b7fc`): `if (repo / FICHERO_MESES_RESERVADOS).exists(): ... else: salida.append("AVISO: ... no existe ...")`. En cambio `holdout.py:problemas_de_meses_reservados` sí devuelve «no existe» como problema, pero `validate` no lo usa en esa rama. |
+| A3 | importa | **Las cifras de v7–v10 del §2.2 no se reproducen con lo commiteado.** La columna «Segmentos en cuarentena antes → después» (v7: 9, v8: 0, v9: 29→57, v10: 45→89) no sale de `medir_fase2-SALIDA.txt`, que solo imprime bloques y marcas. Salen de registros fuera del repositorio. | `medir_fase2-SALIDA.txt` (sin ninguna de esas cifras); `CUARENTENA-POR-CONDICION.md` §2.2 (tabla de v7–v10). |
+| A4 | importa | **Los 3 segmentos nuevos de v6 no son tramo y §2.3 no los discute.** Es el único vídeo donde el escenario B (el que vale) oculta algo nuevo: 0:01:00, 0:01:02 y 2:26:17. Se ocultan solo por la CLI. La guardia de Claude deja leer la cruda de v6 con `Read` por trozos y solo respeta los tramos. Esos segmentos nombran un mes con días ocultos que la lista vieja no cubría. Hay precedente exacto: el tramo manual de v10 1:55:29, con la regla «cada segmento que nombre un mes con días ocultos fuera de `MESES_FILTRADOS` entra aquí». §2.3 justifica «ningún tramo» solo para v7, v9 y v10. Tapar v6 con un tramo no choca con los ítems: 0 ítems caen ahí. | `medir_fase2-SALIDA.txt` (v6: `3 (0:01:00, 0:01:02, 2:26:17)`); `knowledge/corpus/tramos_no_citables.yaml:279-285` (el precedente); `.claude/hooks/guardia.py:203` (`SESIONES_SIN_CUARENTENA = {"v6"}`); informe §2.3. |
+| A5 | menor | `TODOS_LOS_MESES` está definida dos veces, con el mismo valor: en `cases/holdout.py` y en `corpus/cuarentena.py`. Se podrían separar sin que nada lo avise. | `src/botsito/cases/holdout.py` (junto a `FICHERO_MESES_RESERVADOS`); `src/botsito/corpus/cuarentena.py` (tras `ABREVIATURAS_MES`). |
+| A6 | menor | La `fuente` de `2026-02` cita ADR-0025 y ADR-0046. Ambos solo dicen que febrero es «el mes limpio que sigue pendiente». «Ciego, sin descargar, no se toca» está en HISTORIA Archivo 1 / PROJECT_STATE, que la lista de fuentes no cita. `knowledge validate` solo comprueba que la fuente exista, no que sostenga el motivo. | `docs/adr/0025-*.md:34` y `docs/adr/0046-*.md:20` (los únicos «febrero»); `knowledge/cases/meses_reservados.yaml` (entrada 2026-02). |
+| A7 | menor | Los anexos de `CUARENTENA-POR-DEFECTO/*.py` (`recuento.py`, `exposicion_items.py`, `exposicion_79.py`, `copias_items.py`, `auditoria_knowledge.py`, `citas_de_salidas.py`) y `scripts/a18_buscar.py:194` construyen el `Filtro` sin `libres`. Fallan cerrado (tapan los 12), pero sus salidas commiteadas ya no se reproducirían. El informe lo declara solo para `a18_buscar` (§4.3). | `rg "Filtro\(\|filtro_de\("` sobre `docs/validation/anexos/CUARENTENA-POR-DEFECTO/` y `scripts/a18_buscar.py`. |
+| A8 | menor | El test 5 del encargo («0 sin cubrir») calcula `vigilados` con las mismas fuentes que `meses_libres` (casos ocultos y reservados, más `meses_reservados.yaml`). Por eso casi no puede fallar si `meses_libres` se equivoca igual. La rotura (ii) del informe sí lo hace caer, y eso lo compensa en parte. | `tests/unit/test_cuarentena_por_condicion.py:187-196`. |
+
+**Comprobado sin hallazgos:**
+- **Contrato.**
+  - `scripts/contrato_rama.py`: «CONTRATO: 20 ficheros dentro del contrato… 4 comprobaciones».
+  - `scripts/ficheros_con_ocultos.py` → `OK: .claude/hooks/ficheros_con_ocultos.txt coincide`.
+  - `botsito knowledge validate` → sin ERROR. Incluye `OK: 2 meses reservados enteros, con formato y fuente, solo-anadir intacto`.
+  - `make-check.log`: `1979 passed`, y `SELLO: ... c5fc0454fe97...` es exactamente `git rev-parse HEAD^{tree}`. `PICO DE MEMORIA` 289 MiB.
+  - `make check` no lo lancé.
+- **Trailers `Fuente:`.** Solo `8b5b7fc` toca `knowledge/cases/` (el fichero nuevo). Lleva `Fuente: ADR-0025` y `Fuente: ADR-0046` en el cuerpo, y ambos ADR existen.
+- **Regímenes de cambio.** `git diff --name-status main...HEAD` no toca evidence, feedback, manifests, transcripciones, fotogramas, `libros.yaml`, holdout, spec, engine ni domain. `HISTORIA.md` solo suma (0 líneas borradas), y `tramos_no_citables.yaml` no cambia.
+- **Ambigüedades, ADR e informes cerrados.** No cambia ninguno. No hay sitios nuevos con `cita`, así que no aplican las tres guardias. No hay cifras de negocio nuevas.
+- **Exposición.** `HOLDOUT-EXPOSICIONES.md` sin cambios. Los anexos solo imprimen recuentos, marcas e ids (los dos guiones y sus salidas). Nombran un mes únicamente en comentarios o tests, y que ese mes tiene días ocultos ya es público en `SESION-04-EXTRACCION.md` de `main`.
+- **PROJECT_STATE.** El punto P queda «En revision en trabajo/cuarentena-por-condicion», sin moverlo a HISTORIA. `wc -c` da 22.998 bytes, como dice el informe.
+- **CI.** El run 208 es `37241039661` y su `headSha` es `5584d8b` (mismo que HEAD y que `origin/fix/cuarentena-por-condicion`). `gh run view --log-failed` muestra `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` y `1 failed, 1970 passed, 8 skipped`, que suman 1979. El último commit tiene su CI.
+- **Citas.** Cinco citas del informe contra su fuente: `main:cuarentena.py:218`, `holdout.py:350` y `:455`, `guardia.py:199` y `CLAUDE.md:145-146` y `152`. Las cinco son correctas. La de `vistos.yaml:33` apunta a `meses:`.
+- **Tests.** `pytest tests/unit/test_cuarentena_por_condicion.py tests/unit/test_transcribir_sesion.py -p no:cacheprovider`: todo pasa. Son 60 casos en el fichero nuevo, como dice el informe.
+- **«Solo añadir» contra el historial, en lo que sí cubre.** Hay un test en un repo git temporal (`test_la_fuente_es_solo_anadir`). Detecta sacar un mes, modificar uno (también sin commitear) y deja pasar añadir. Se compara cada versión con cada padre (`versiones_del_fichero`, `--full-history`) más el árbol de trabajo contra HEAD. En el repo real `validate` dice «intacto». La laguna es solo A2.
+
+#### Eje (b) · Encargo
+
+Resumen: 0 bloquea, 2 importa, 1 menor. Requisitos: 20 hechos, 2 parciales, 0 no hechos (más 1 «hecho de otra forma» declarado, el R17).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| R1 | Fase 0.1: fuente de (b), con fichero y línea | Hecho | Informe §0.1 (tabla con 8 sitios). Las citas coinciden. |
+| R2 | Fase 0.2: quién construye el filtro y propuesta de entrada | Hecho | §0.2. Es lo que se implementó. |
+| R3 | Fase 0.3: sitios de `MESES_FILTRADOS`, `_RE_MES` y `_RE_ABREV` | Hecho | §0.3. |
+| R4 | Fase 0.4: medida v1–v10 sin texto ni mes, ítems afectados y propuesta de retirada | Hecho (v7 y v8 «no medible», declarado) | `medir_fase0-SALIDA.txt`; §0.4. (Ver A1: el guion ya no corre.) |
+| R5 | Fase 1: `MESES_FILTRADOS` deja de ser la fuente de verdad y queda un diccionario de grafías | Hecho | `rg MESES_FILTRADOS\|_RE_MES\|_RE_ABREV src scripts` solo da comentarios y prosa. `GRAFIAS_MES` tiene los 12 meses (`test_ningun_mes_queda_sin_grafias`). |
+| R6 | Sin datos se filtran los 12 meses; ningún valor por defecto deja un mes a la vista | Hecho | `meses_tapados(None)` devuelve los 12; `Filtro.libres=None`, `filtros()`, `filtro_de()`, `propuestas_con_ocultos()` y `construir_indice()` tienen `None` por defecto. Tests `test_2_*`, `test_2b`, `test_2c` y `test_2d`. |
+| R7 | El «marco» y los límites de palabra siguen funcionando | Hecho | `test_6b_*`, con `libres=None`. |
+| R8 | Fase 2: filtradas y tramos regenerados con la regla nueva por la vía de su régimen | **Parcial** | v1–v6: la regla se aplica al leer, por la CLI (hecho). v7–v10: se rehicieron en el escenario A, no en el B que entrega la rama (§2.1 y §4.2, declarado). Tramos: ninguno nuevo (§2.3; ver A4 para v6). El rehacer en B queda para §5. |
+| R9 | El tramo manual de v10 1:55:29–1:55:32 se queda | Hecho | `tramos_no_citables.yaml` sin diff. |
+| R10 | Lo que se decida sobre los ítems de la fase 0 | Hecho | §3. Los 7 del escenario A se dejan (decisión 2). En v7 y v8 no cae ninguno ni en A, así que la regla de parada no salta. Reproducido con `medir_fase2.py`. |
+| R11 | Exposición nueva declarada hoy, sin texto ni fechas | Hecho | §2.4: ninguna. `HOLDOUT-EXPOSICIONES.md` sin diff. |
+| R12 | Test 1: caso inventado en un mes que no se filtra, en repo temporal | Hecho | `test_1_*` con `tmp_path`, sin tocar listas. |
+| R13 | Test 2: filtro sin datos filtra todos | Hecho | `test_2_*` (12 casos). |
+| R14 | Test 3: mes reservado entero sin casos se filtra | Hecho | `test_3_*`. |
+| R15 | Test 4: mes libre de verdad no se filtra | Hecho | `test_4_*`. |
+| R16 | Test 5: ningún mes con días queda sin cubrir, «0 sin cubrir» | Hecho (ver A8) | `test_5_*`. |
+| R17 | Test 6: los tests de grafías que ya existían siguen pasando | Hecho de otra forma (declarado) | `test_abril_agosto_enero_*` cambió para pasar los `meses_libres` del repo real (diff de `test_transcribir_sesion.py`; declarado en §1.3 y §4.5, con motivo). El resto no cambia. **Matiz:** los tests viejos de grafías llaman a `motivos_cuarentena(texto)` sin `libres`, así que tapan los 12 y pasan trivialmente. La prueba de que siguen tapando con los libres reales está en `test_6_*` del fichero nuevo. |
+| R18 | CI como `fix/...` con números de run; solo falla el de `state check` | Hecho | Run 208 (`37241039661`); único fallo `test_state_check_ok_on_real_repo`. |
+| R19 | Informe con fase 0, condición, recuentos por vídeo, ítems, desviaciones y tamaño de PROJECT_STATE | **Parcial** | Están todos. El apartado de recuentos tiene dos defectos: v7–v10 salen en una tabla aparte, con otra métrica (bloques) y en el escenario A, no «al lado de las demás» (decisión 4). Ver B1 y A3. |
+| R20 | PROJECT_STATE: el punto P pasa a «en revisión…», sin moverlo | Hecho | Diff de `PROJECT_STATE.md`. |
+| R21 | Decisión 1: `meses_reservados.yaml` con 2026-02 y 2026-03 y su fuente; solo añadir; `validate` exige fuente y AAAA-MM; `None` si falta, no se lee o no valida; la función une `casos_ocultos`, `casos_reservados` y el fichero | Hecho (ver A2 y A6) | `holdout.py:meses_libres`; `knowledge validate`; `test_2b`. Se leen los dos mapas, aunque hoy coincidan. |
+| R22 | Decisión 3: test que cruza `MESES_DE_DESARROLLO` con la fuente, medido antes; línea sobre qué protege la lista | Hecho | `test_la_lista_blanca_de_la_guardia_*` y `test_el_cruce_*_no_es_decorativo`; informe §1.3 («Lo que protege la lista blanca…»). |
+| R23 | Decisión 5: «set» suelto declarado como desviación y con test | Hecho | §4.1; `test_set_suelto_no_es_un_mes_y_con_backtest_si`. |
+| R24 | Qué NO se toca: motor, spec, feedback, ambigüedades, nada de la sesión 4, evidencia y transcripciones inmutables | Hecho | `git diff --name-status` sin esas rutas. |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | importa | **La decisión 4 se cumple en la letra y no en el propósito.** Se usó el guion de `main`. Eso es lo que pide «siempre con el guion revisado», y está declarado. Pero ese guion llama `en_cuarentena(textos)` sin `libres`, así que con la librería de la rama las filtradas de v7–v10 salen tapando los 12 meses. Efectos: (1) lo que hay en disco no es lo que la regla entrega (B). (2) Las cifras «después» de v7–v10 son un techo (A). El B de v7 (2 bloques nuevos en A) no se conoce, y el de v9 y v10 se infiere de la medida de la fase 0 sobre las filtradas viejas. (3) Con v8 no hay duda, porque en A da 0. (4) El propósito de la rama, dejar la sesión 4 lista para activar, no se logra hasta que el guion nuevo esté en `main` (§5). Con el matiz de que la parada de ítems se evaluó con A, que es conservador y válido. | Informe §2.1, §2.2 (v7–v10 «después (A)»), §4.2 y §5. `scripts/transcribir_sesion.py:460` (en la rama pasa `libres`; el de `main` no). |
+| B2 | importa | **El «Estado» afirma más de lo que hay.** Dice «FASES 0, 1 y 2 HECHAS». Pero §5 deja pendiente lo central de la fase 2: rehacer las filtradas de v7–v10 en B y registrar los tramos que salgan. Y A4 deja el tema v6 sin cerrar. Lo honesto sería «fase 2 hecha en lo posible; filtradas de v7–v10 en A, pendiente de B». | Informe «Estado» y §5. |
+| B3 | menor | Fuera del encargo y declarado: `test_historial_sin_git.py` entra en el contrato a mitad de rama (§4.4). Está justificado, porque enumera los OK de `knowledge validate` y la fuente de (b) es un OK nuevo. `validation/knowledge.py` también se toca, y es necesario para la decisión 1. | `contrato.yaml`; informe §4.4. |
+
+#### Preguntas expresas del consultor
+
+**1. ¿Queda una lista de meses escrita a mano que decida qué se tapa en el texto de las transcripciones?** No.
+- **Lo que decide el texto, todo declarado y legítimo:**
+  - `knowledge/cases/meses_reservados.yaml`: la fuente de (b), aprobada, con `fuente`, solo añadir y validada.
+  - `GRAFIAS_MES` y `ABREVIATURAS_MES`: tablas de grafías por mes, con las 12 claves. No eligen qué se vigila. Quién se tapa lo decide `meses_libres(repo)` con los datos.
+  - `TODOS_LOS_MESES`: constante (ver A5).
+- **Lo que parece lista pero no decide qué se tapa:**
+  - `_MESES_NUM` y `_RE_NOMBRE_MES` (`cuarentena.py`): tabla de conversión nombre→número de los 12 meses, para `fechas_en`.
+  - `guardia.py:221` (`MESES`): tabla de conversión, para leer rutas.
+  - `cli.py:2630-2642`: los meses de construcción salen de `criterio_fidelidad.yaml`, no están escritos a mano.
+- **Lo que sí es una lista a mano, y decide libros, no texto:**
+  - `guardia.py:199` `MESES_DE_DESARROLLO`: decide qué libros se leen y no cambia en esta rama. Falla cerrado, y ahora un test la cruza con la fuente. Medido: hoy no choca. La línea del informe (§1.3) explica por qué la condición no la sustituye.
+  - Los guiones de medida de velas (`caja_77`, `embudo_77`, `viabilidad_*`, `sesgo_h4_diagnostico`) acotan velas, no texto.
+- **Una en un anexo, sin efecto sobre el filtro:** `medir_fase2.py:44` (`LIBRES_DE_LA_LISTA_VIEJA = todos − {2,3,5,9}`) es el comparador «antes», una lista explícita para medir. `medir_fase0.py:85` lleva otra igual (`{2, 3, 5, 9}`), en un guion que ya no corre (A1).
+
+**2. Sin datos se tapan los doce, y ningún camino deja meses a la vista.** Comprobado.
+- `meses_libres` devuelve `None` si el fichero falta, no se lee o no valida, si un reparto es ilegible o si un caso no trae fecha (`test_2b`, `test_2c`, `test_2d`).
+- `meses_tapados(None)` devuelve los 12, y `Filtro`, `filtros`, `filtro_de`, `propuestas_con_ocultos` y `construir_indice` tienen `libres=None` por defecto.
+- Rutas que no pasan `libres`: `retrieval/consultas.py:345` (`Filtro(video)`), `cases/paquete.py:708` (`construir_indice` por defecto), `scripts/a18_buscar.py:194`, los anexos de `CUARENTENA-POR-DEFECTO` y la rama del guion de `main`. Todas tapan los 12, es decir, fallan cerrado.
+- `meses_libres` solo captura `MesesReservadosError`, `RepartoIlegibleError` y `RetiradosError`. Otra excepción haría fallar el comando, no dejaría un mes visible.
+- Lo que falta: ningún test recorre los llamadores. Todo se apoya en el valor por defecto. Es una observación, no un hallazgo.
+
+**3. Solo-añadir contra el historial.** Se comprueba de verdad, salvo el borrado del fichero entero (A2).
+
+**4. Medidas.** `medir_fase0-SALIDA.txt` y `medir_fase2-SALIDA.txt` imprimen solo recuentos, marcas de tiempo e ids. Lo mismo hacen los guiones: leen texto, pero nunca lo imprimen. Reproduje `medir_fase2.py` y la salida coincide con la commiteada. El guion de la fase 0 ya no se puede reproducir (A1).
+
+**5. Desviación de las filtradas en el escenario A.** Cumple la letra de la decisión 4 («siempre con el guion revisado»). El guion de la rama habría roto la guardia, y el de `main` es el único que se puede ejecutar. La desviación está declarada (§2.1, §4.2, §5) y es segura: A cubre a B. No cumple el propósito: lo entregado es un techo, no la regla nueva (B1 y B2).
+
+#### Lo que no pude comprobar
+
+- **Las roturas a propósito del §1.3** (36 y 10 tests caen, «mismo sha256»). Exigirían escribir el código. Solo leí que el informe las declara.
+- **Los registros y las filtradas de v7–v10 fuera del repo.** No abrí ninguna filtrada ni registro. Las cifras «602 y 229 segmentos, los mismos que el corpus» y «9, 29→57, 45→89» (A3) quedan sin verificar. De las filtradas solo vi marcas de tiempo, al ejecutar `medir_fase2.py`, que las abre sin imprimir texto.
+- **El procedimiento `git restore --source=main --worktree`** del §2.1 y que «`git diff --quiet HEAD` lo confirme». No lo reconstruí. Sí vi que HEAD y el árbol son consistentes con el sello.
+- **El borrado del fichero en `knowledge validate` (A2).** Lo derivo de leer el código; no lo ejecuté porque habría que borrar o mover un fichero.
+- **Contenido de las crudas v6, v7 y v8.** No lo abrí. Que los 3 segmentos de v6 nombran un mes con días ocultos lo tomo del informe y de las medidas, que cuentan marcas, no texto.
+- **El `make check` local.** No lo lancé. Verifiqué el log (`1979 passed`, `SELLO` igual al árbol de HEAD) y el run 208 de CI.
+
+#### Comandos ejecutados
+
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `git diff main...HEAD` sobre `cuarentena.py`, `indice.py`, `cli.py`, `ficheros_con_ocultos.py` y `transcribir_sesion.py`
+4. `git diff main...HEAD -- src/botsito/cases/holdout.py src/botsito/validation/knowledge.py` y `cat knowledge/cases/meses_reservados.yaml`
+5. `rg` de nombres de meses y de `filtro_de|Filtro(|en_cuarentena|motivos_cuarentena|propuestas_con_ocultos|construir_indice|meses_libres|MESES_FILTRADOS|_RE_MES|_RE_ABREV` en src, scripts, tests y config
+6. `rg` de `MESES_DE_DESARROLLO` y de fechas en `.claude/hooks/*.py`, `cli.py`, `corpus` y `validation`
+7. `uv run python docs/validation/anexos/CUARENTENA-POR-CONDICION/medir_fase0.py` → ImportError
+8. `uv run python scripts/ficheros_con_ocultos.py` → OK
+9. `uv run botsito knowledge validate` → sin ERROR
+10. `uv run python docs/validation/anexos/CUARENTENA-POR-CONDICION/medir_fase2.py` → salida idéntica a la commiteada
+11. `uv run python -m pytest tests/unit/test_cuarentena_por_condicion.py -p no:cacheprovider -q --collect-only` → 60
+12. `uv run python -m pytest tests/unit/test_cuarentena_por_condicion.py tests/unit/test_transcribir_sesion.py -p no:cacheprovider -q` → todo pasa
+13. `git diff main...HEAD -- PROJECT_STATE.md`, `wc -c PROJECT_STATE.md`, `git diff main...HEAD --name-status`, `git diff HEAD -- docs/validation/CUARENTENA-POR-CONDICION.md`
+14. `git log --format='%h%n%B' main..HEAD`, `git show <sha> --stat` (los tres commits)
+15. `gh run list --branch fix/cuarentena-por-condicion`, `gh run view 37241039661 --log-failed`, `git rev-parse origin/fix/cuarentena-por-condicion` y `HEAD` y `HEAD^{tree}`, `grep` de `SELLO|PICO|passed|failed` en `make-check.log`
+16. `git diff main...HEAD -- tests/unit/test_transcribir_sesion.py tests/unit/test_historial_sin_git.py`
+17. `git grep`, `grep` y `sed` para verificar citas (`main:cuarentena.py`, `holdout.py`, `CLAUDE.md`, `HISTORIA.md`, `ADR-0025` y `ADR-0046`, `tramos_no_citables.yaml`), `ls docs/adr`, y la lectura de `historial.py` y del bloque de `holdout.py` sobre `casos_reservados` y `casos_ocultos`

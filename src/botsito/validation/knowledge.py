@@ -629,6 +629,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
     from botsito.cases.holdout import (
         FICHERO_MESES_RESERVADOS,
         cargar_meses_reservados,
+        meses_reservados_borrado,
         problemas_de_meses_reservados,
     )
 
@@ -648,6 +649,11 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             ),
             motivo=puerta.sin_versiones(repo, FICHERO_MESES_RESERVADOS),
         )
+    elif meses_reservados_borrado(repo):
+        # SOLO ANADIR tambien frente al borrado del fichero entero (revisor de la rama, A2).
+        for p in problemas_de_meses_reservados(repo):
+            salida.append(f"ERROR: meses reservados: {p}")
+        return 1, salida
     else:
         salida.append(
             f"AVISO: {FICHERO_MESES_RESERVADOS} no existe: no se demuestra ningun mes libre y la "

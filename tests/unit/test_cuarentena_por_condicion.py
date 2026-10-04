@@ -25,6 +25,7 @@ from botsito.cases.holdout import (
     casos_ocultos,
     casos_reservados,
     meses_libres,
+    meses_reservados_borrado,
     problemas_de_meses_reservados,
 )
 from botsito.corpus import cuarentena as cu
@@ -312,6 +313,20 @@ def _git(repo: Path, *args: str) -> None:
         check=True,
         capture_output=True,
     )
+
+
+def test_borrar_el_fichero_entero_tambien_es_sacar_meses(tmp_path: Path) -> None:
+    """Revisor de la rama, A2: si el fichero falta y el historial lo tuvo, es un borrado (ERROR
+    en `knowledge validate`), no un «no existe» con aviso. Si nunca existio, no es borrado."""
+    repo = _repo(tmp_path)
+    _git(repo, "init", "-q")
+    assert not meses_reservados_borrado(repo)
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "uno")
+    (repo / FICHERO_MESES_RESERVADOS).unlink()
+    assert meses_reservados_borrado(repo)
+    assert any("BORRADO" in p for p in problemas_de_meses_reservados(repo))
+    assert meses_libres(repo) is None  # y en ejecucion se tapan los doce
 
 
 def test_la_fuente_es_solo_anadir(tmp_path: Path) -> None:

@@ -481,9 +481,16 @@ def test_una_propuesta_con_segmentos_de_un_tramo(g: ModuleType, repo: Path) -> N
 
 
 def test_los_tramos_del_repo_real(g: ModuleType) -> None:
-    """v7 y v9 tienen tramos, pero su cruda ya no se lee entera: solo se vigilan los de v6."""
+    """v7 y v9 tienen tramos, pero su cruda ya no se lee entera: solo se vigilan los de v6. Desde
+    `trabajo/cuarentena-por-condicion` (revisor, A4), tambien sus dos tramos de precaucion de la
+    regla del mes por condicion."""
     assert g.Politica(RAIZ).tramos_vigilados == {
-        "v6": [(2_460_000, 3_011_000), (6_810_000, 7_051_000)]
+        "v6": [
+            (2_460_000, 3_011_000),
+            (6_810_000, 7_051_000),
+            (60_720, 63_160),
+            (8_777_201, 8_778_341),
+        ]
     }
 
 
