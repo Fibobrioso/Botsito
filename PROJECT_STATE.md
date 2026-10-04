@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/reabrir-y-fuente-documental
+main
 
 ## Current Feature
-trabajo/reabrir-y-fuente-documental · EN CURSO (2026-10-03) · docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md. NO se cierra.
+NINGUNA ABIERTA tras `stable/F36t-reabrir-y-fuente-documental` (2026-10-03).
 
 ## Stable Main State
-dfd1a6f · merge de `trabajo/renovar-cierres` (tag `stable/F36s-renovar-cierres`): el calendario de cierres caduca por la fecha simulada, nunca por la de hoy (tests del cable trampa del reloj y del exit 2 por la CLI), y se renueva por condicion (docs/runbooks/RENOVAR-CIERRES.md). Sobre `stable/F36r-fuentes-ftmo` (36a9801). Informe docs/validation/RENOVAR-CIERRES.md; el registro del cierre, al final de HISTORIA.
+c76aaf6 · merge de `trabajo/reabrir-y-fuente-documental` (tag `stable/F36t-reabrir-y-fuente-documental`): la accion REOPEN reabre una ambiguedad RESUELTA (A-36 migrada; `feedback pending` ya no la cuenta) y una ambiguedad `medicion` cita una fuente documental -documento en docs/, commiteado, encabezado y fila de tabla- en vez de evidencia de relleno (A-27, A-28, A-54 y A-55 a FTMO-REGLAS.md R11, R10, R13 y R15); sin git, `knowledge validate` lo avisa. Sobre `stable/F36s-renovar-cierres` (dfd1a6f). Informe docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-dfd1a6f · merge: el calendario de cierres caduca por la fecha simulada; se renueva por condicion (RENOVAR-CIERRES.md) · tag stable/F36s-renovar-cierres
+c76aaf6 · merge: REOPEN reabre una ambiguedad; una medicion cita una fuente documental anclada a su fila (REABRIR-Y-FUENTE-DOCUMENTAL.md) · tag stable/F36t-reabrir-y-fuente-documental
 
 ## Tests Currently Passing
 1239 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
