@@ -122,6 +122,8 @@ Todo en `src/botsito/validation/knowledge.py`; `libros.py` y `holdout.py` no se 
 que afirme el historial con otra palabra («integro», «sin modificar») no la caza ninguna de las dos.
 Cubre lo que el encargo nombra -que nada imprima «intacto» sin pasar por la puerta- y no más; una
 afirmación nueva con otra palabra se añade a `AFIRMACIONES_DE_HISTORIAL` en la rama que la traiga.
+*(Segunda orden del consultor, 2026-10-03: la guardia pasa a nombrar la condición -quién lee git-,
+y las palabras quedan como segunda red. §6.1.)*
 
 **El nombre `puerta`**: dentro de `_validar` ya había una variable `historial` (el resultado de
 `modificaciones_en_historial` para la evidencia, l. 557 en `main`); llamar `historial` al
@@ -218,7 +220,8 @@ se comparan y nada lo dice. No afirman nada que no evalúen, así que no entran 
 encargo, y están en `src/botsito/cases/` y `src/botsito/spec/`, fuera del contrato. Si se quiere que
 también avisen, es otra rama (y el ancla, a diferencia del historial, se podría comprobar contra el
 árbol sin git, calculando el blob en Python). No se anota en `PROJECT_STATE` porque el encargo lo
-prohíbe; queda aquí.
+prohíbe; queda aquí. *(Segunda orden del consultor, 2026-10-03: aceptado, no se tocan en esta
+rama, y van a Technical Debt con una línea que apunta aquí. §6.2.)*
 
 ## 4. Lo que encontró el revisor, y qué se hizo
 
@@ -303,9 +306,108 @@ Fuera de encargo (cada cosa): (1) `sin_versiones` / caso `versiones_del_fichero`
 5. `uv run pytest tests/unit/test_historial_sin_git.py tests/unit/test_reabrir_y_fuente_documental.py -q -p no:cacheprovider` (46 passed); `gh run view 37170620167` (en curso).
 6. `uv run botsito knowledge validate` (exit 0, lineas OK identicas a las de siempre); grep de «intacto» en `src/botsito`; `git diff main...HEAD -- docs/state/HISTORIA.md | head`.
 
+## 6. Segunda orden: respuesta del consultor (2026-10-03)
+
+Copiada tal cual (también al final del encargo):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/historial-sin-git (2026-10-03). Cópiala con su fecha al informe y al final del encargo.
+>
+> 1. La guardia nombra la condición, no las palabras. Hoy Historial reconoce la afirmación por su texto («intacto», «commits con Fuente»), y una comprobación nueva que diga «íntegro» se escaparía: lo dejaste escrito como límite y lo vio el revisor. La condición real es «esta comprobación lee el historial de git». Mide primero si las primitivas que leen git en src/botsito/validation/ (las que sean: hay_git, historial_evaluable, contenido_en_head, resolver, ancla_desviada y las que encuentres) están centralizadas. Si lo están, añade un test que recorra src/botsito/validation/ con ast y falle si alguna de esas primitivas se llama fuera de Historial (o de una lista explícita de excepciones, cada una con su porqué en un comentario). Rómpelo a propósito con una comprobación falsa que llame a una primitiva directamente. La comprobación por palabras se queda como segunda red. Si las primitivas NO están centralizadas y hacerlo exige tocar más que validation/, no lo hagas: para, dímelo con lo medido y añade una línea a Technical Debt que apunte al informe.
+> 2. Las dos comprobaciones que callan sin git (las anclas de paquetes, fidelidad y dev-visto, y la subida de spec_version): aceptado, no se tocan en esta rama. No afirman nada, pero el encargo de la rama anterior pedía que sin git nada saliera en silencio. Una línea corta en Technical Debt que apunte a §3 de tu informe. PROJECT_STATE tiene que seguir por debajo de 25 KB: di su tamaño.
+> 3. El push: empuja todo, el informe incluido, a fix/historial-sin-git (git push origin trabajo/historial-sin-git:refs/heads/fix/historial-sin-git). CI de Linux con solo el fallo esperado de state check; dame el número de run. La CI revisa también documentos, así que un commit de solo documentación no se queda fuera.
+> 4. El revisor revisó un informe a medias. Pasada corta del revisor sobre el informe ya completo y sobre lo que cambie por los puntos 1 y 2, con su informe pegado al final. Para el cierre, la lección que irá a la fila de ERRORES-RECURRENTES de esta rama: el revisor se lanza con el informe terminado, nunca antes.
+> 5. El clon superficial no montado para no copiar el holdout: aceptado, con ese motivo escrito en el informe, como ya está.
+>
+> make check sellado antes de cada commit.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 6.1 La condición: quién lee git (punto 1)
+
+**Medido antes de tocar nada** (grep e imports de `src/botsito/validation/`, sobre `ac08b5a`):
+
+- Los tres ficheros de `validation/`: solo `knowledge.py` lee git. `ids_citados.py` y
+  `contexto_evidencia.py` no importan nada de `botsito.comun.historial` ni `subprocess`.
+- Todas las primitivas que lee `knowledge.py` salen de UN módulo, `botsito.comun.historial`. Son
+  ocho: `hay_git`, `historial_evaluable`, `versiones_del_fichero`, `contenido_en_head`,
+  `modificaciones_en_historial` (cinco llamadas: evidencia, feedback, manifiestos, transcripciones,
+  fotogramas), `resolver`, `ancla_desviada` y `commits_sin_fuente`.
+- **No estaban centralizadas en `Historial`**: de catorce llamadas, tres iban dentro de la clase
+  (`hay_git`, `historial_evaluable` y `versiones_del_fichero`) y once fuera: `contenido_en_head` en
+  `problemas_fuentes_documentales`, y en `_validar` `hay_git`, `historial_evaluable`, las cinco de
+  `modificaciones_en_historial`, `resolver`, `ancla_desviada` y `commits_sin_fuente`.
+- **Centralizarlas solo exige tocar `knowledge.py`**: las once están en `validation/`. Así que no
+  hay parada por este lado, y se hizo.
+- **Lo que NO se centraliza sin tocar más que `validation/`**: `validar` llama a siete funciones de
+  otros módulos que leen git por su cuenta (todos importan `botsito.comun.historial`):
+  `problemas_de_libros` (`corpus/libros.py`), `problemas_de_retirados` (`cases/holdout.py`),
+  `validar_paquetes` (`cases/paquete.py`: anclas y `LABEL_CASE`), `problemas_de_anterioridad`
+  (`cases/anterioridad.py`), `validar_artefactos` (`cases/fidelidad.py`: anclas),
+  `camino_visto.problemas` (`cases/visto.py`: anclas) y `comprobar_manifiesto_spec`
+  (`spec/manifiesto.py`: `spec_version`). Libros y retirados ya dicen su línea por `Historial.ok`
+  con el motivo de `Historial` (§1.1); las anclas y `spec_version` callan sin git (§3); anterioridad
+  y `LABEL_CASE` fallan cerrado. Meterlas en `Historial` es tocar `cases/`, `corpus/` y `spec/`:
+  no se hace, y va a Technical Debt (§6.2).
+
+**El cambio** (`knowledge.py`): `Historial` gana cinco envoltorios -`en_head`, `modificaciones`,
+`resolver`, `ancla_desviada`, `commits_sin_fuente`- y guarda `con_git` y `no_evaluable` al
+construirse, con el mismo cálculo que hacía `_validar` (`SIN_GIT = "sin git"` es el motivo cuando no
+hay git). `_validar` y `problemas_fuentes_documentales` ya no importan ninguna función de
+`botsito.comun.historial`: fuera de la clase solo se importan sus constantes (`DIRECTORIO_*`,
+`ANCLA_FUENTE`, `DIRECTORIOS_CON_FUENTE`). Las comprobaciones son las mismas, con los mismos
+argumentos y en el mismo orden; los ERROR de hoy con git, iguales.
+
+**El test** (`test_en_validation_solo_historial_lee_git`, el séptimo de
+`tests/unit/test_historial_sin_git.py`; 1245 → 1246): recorre con `ast` cada `.py` de
+`src/botsito/validation/` y falla si, FUERA del cuerpo de la clase `Historial`, se importa una
+función de `botsito.comun.historial` (un nombre que no sea de constante, en MAYÚSCULAS), el módulo
+entero (`import botsito.comun.historial`, `from botsito.comun import historial`) o `subprocess`
+(git a mano). Mira las importaciones, no las llamadas: para llamar a una primitiva hay que
+importarla, y así tampoco se escapa la que se pasa como argumento sin llamarla. La lista de
+excepciones existe (`EXCEPCIONES`, cada entrada `(fichero, nombre)` con su porqué en un comentario)
+y hoy está vacía. Se autoprueba: ve una comprobación falsa con
+`from botsito.comun.historial import DIRECTORIO_FEEDBACK, modificaciones_en_historial` (solo
+señala la función, no la constante), ve `import subprocess`, y deja pasar la misma importación
+dentro de `class Historial`.
+
+**Rotura** (el guion de §1.4, ahora con siete casos; sha256 de `knowledge.py` igual antes y después,
+`90687b1ea1e8…`): una comprobación falsa al final de `_validar` que importa
+`modificaciones_en_historial` y escribe `OK: N ficheros integros`.
+
+| Test | Resultado |
+|---|---|
+| `test_en_validation_solo_historial_lee_git` | FALLA: `Left contains one more item: 'knowledge.py:1071: modificaciones_en_historial'` (l. 245) |
+| contraprueba: la misma rotura contra `test_ningun_literal_de_src_afirma_historial_fuera_de_historial_ok` | PASA (exit 0): la red de palabras no la ve, porque dice «integros». Es el hueco que señaló el revisor (b1), y ahora lo cierra el test de la condición. |
+
+Las cinco roturas de §1.4 se repitieron sobre el código nuevo: las cinco FALLAN igual que antes
+(mismas líneas, 82, 107, 157, 175 y 195). La red de palabras se queda como segunda red.
+
+### 6.2 Technical Debt y el tamaño de PROJECT_STATE (punto 2)
+
+Una línea nueva en Technical Debt: «Sin git callan, sin aviso, las comprobaciones que leen git
+fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la
+subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1)». Recoge en una sola línea
+lo del punto 2 y lo del punto 1 que exige tocar más que `validation/`, porque son las mismas
+lecturas. Y «Tests Currently Passing», 1245 → 1246. **`PROJECT_STATE.md`: 23.421 bytes**
+(`wc -c`), por debajo del tope de 25.000 de `tests/unit/test_project_state.py`.
+
+### 6.3 El push y la CI (punto 3)
+
+PENDIENTE.
+
+### 6.4 El revisor (punto 4)
+
+PENDIENTE: se lanza cuando este informe esté terminado, CI incluida. La lección para la fila de
+ERRORES-RECURRENTES de esta rama, al cerrar: el revisor se lanza con el informe terminado, nunca
+antes.
+
+### 6.5 El clon superficial (punto 5)
+
+Sin cambios: el motivo -copiaría el holdout- ya está en §0.1.
+
 ## Estado
 
-LISTA PARA REVISIÓN, NO CERRADA (2026-10-03). Fases 0 y 1 hechas; `make check` sellado sobre
-`5740220`; CI de Linux run 201 con solo el fallo esperado de `state check` por el nombre `fix/`;
-revisor pasado, sin bloqueos, y lo suyo anotado en §4. El cierre en `main` espera la orden de Aleks.
-La rama remota `fix/historial-sin-git` queda hasta el cierre (RITUAL.md).
+EN CURSO (segunda orden): §6.1 y §6.2 hechos; falta la CI (§6.3) y la pasada corta del revisor
+(§6.4). NO se cierra.

@@ -197,3 +197,66 @@ def test_con_git_y_el_proyecto_fuera_de_la_raiz_tampoco_dice_intacto(tmp_path: P
     for a in ("libros", "retirados"):
         assert len(avisos[a]) == 1, avisos
         assert "el proyecto no es la raiz del repositorio git" in avisos[a][0], avisos[a]
+
+
+# ------------------ 5. la condicion, no las palabras: quien lee git (segunda orden)
+
+VALIDATION = REPO / "src" / "botsito" / "validation"
+PRIMITIVAS = "botsito.comun.historial"
+# Lo que puede leer git en validation/ fuera de `Historial`, cada cosa con su porque en un
+# comentario: `(fichero, nombre importado)`. Ninguna hoy (HISTORIAL-SIN-GIT.md §6.1).
+EXCEPCIONES: dict[tuple[str, str], str] = {}
+
+
+def _lecturas_de_git_fuera_de_historial(fuente: str, fichero: str) -> list[str]:
+    """Lo que `fuente` importa para leer git fuera de la clase `Historial`: una funcion de
+    `botsito.comun.historial` (sus CONSTANTES si se pueden importar fuera), el modulo entero, o
+    `subprocess` (git a mano)."""
+    arbol = ast.parse(fuente)
+    dentro: set[int] = set()
+    for nodo in ast.walk(arbol):
+        if isinstance(nodo, ast.ClassDef) and nodo.name == "Historial":
+            dentro |= {id(n) for n in ast.walk(nodo)}
+    fuera: list[str] = []
+    for nodo in ast.walk(arbol):
+        if not isinstance(nodo, (ast.Import, ast.ImportFrom)) or id(nodo) in dentro:
+            continue
+        nombres: list[str] = []
+        if isinstance(nodo, ast.ImportFrom) and nodo.module == PRIMITIVAS:
+            nombres = [a.name for a in nodo.names if not a.name.isupper()]
+        elif isinstance(nodo, ast.ImportFrom) and nodo.module == "botsito.comun":
+            nombres = [a.name for a in nodo.names if a.name == "historial"]
+        elif isinstance(nodo, ast.ImportFrom) and nodo.module == "subprocess":
+            nombres = ["subprocess"]
+        elif isinstance(nodo, ast.Import):
+            nombres = [a.name for a in nodo.names if a.name in (PRIMITIVAS, "subprocess")]
+        fuera += [
+            f"{fichero}:{nodo.lineno}: {n}" for n in nombres if (fichero, n) not in EXCEPCIONES
+        ]
+    return fuera
+
+
+def test_en_validation_solo_historial_lee_git() -> None:
+    fuera = [
+        x
+        for f in sorted(VALIDATION.glob("*.py"))
+        for x in _lecturas_de_git_fuera_de_historial(f.read_text(encoding="utf-8"), f.name)
+    ]
+    assert fuera == []
+    # y el detector no es mudo: una comprobacion falsa que llama a una primitiva directamente
+    falsa = (
+        "def comprobar(repo):\n"
+        "    from botsito.comun.historial import DIRECTORIO_FEEDBACK, modificaciones_en_historial\n"
+        "    return modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)\n"
+    )
+    assert _lecturas_de_git_fuera_de_historial(falsa, "f.py") == [
+        "f.py:2: modificaciones_en_historial"
+    ]
+    assert _lecturas_de_git_fuera_de_historial("import subprocess\n", "f.py") != []
+    dentro = (
+        "class Historial:\n"
+        "    def lee(self, repo):\n"
+        "        from botsito.comun.historial import resolver\n"
+        "        return resolver(repo, 'HEAD')\n"
+    )
+    assert _lecturas_de_git_fuera_de_historial(dentro, "f.py") == []

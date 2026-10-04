@@ -38,3 +38,21 @@ Dado por Aleks (consultor) el 2026-10-03. Copiado tal cual:
 > Informe en docs/validation/HISTORIAL-SIN-GIT.md: inventario, el cambio, los tests con su rotura y su resultado, el run de la CI y make check sellado. Después, el subagente revisor, con su informe pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Segunda orden: respuesta del consultor (2026-10-03)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/historial-sin-git (2026-10-03). Cópiala con su fecha al informe y al final del encargo.
+>
+> 1. La guardia nombra la condición, no las palabras. Hoy Historial reconoce la afirmación por su texto («intacto», «commits con Fuente»), y una comprobación nueva que diga «íntegro» se escaparía: lo dejaste escrito como límite y lo vio el revisor. La condición real es «esta comprobación lee el historial de git». Mide primero si las primitivas que leen git en src/botsito/validation/ (las que sean: hay_git, historial_evaluable, contenido_en_head, resolver, ancla_desviada y las que encuentres) están centralizadas. Si lo están, añade un test que recorra src/botsito/validation/ con ast y falle si alguna de esas primitivas se llama fuera de Historial (o de una lista explícita de excepciones, cada una con su porqué en un comentario). Rómpelo a propósito con una comprobación falsa que llame a una primitiva directamente. La comprobación por palabras se queda como segunda red. Si las primitivas NO están centralizadas y hacerlo exige tocar más que validation/, no lo hagas: para, dímelo con lo medido y añade una línea a Technical Debt que apunte al informe.
+> 2. Las dos comprobaciones que callan sin git (las anclas de paquetes, fidelidad y dev-visto, y la subida de spec_version): aceptado, no se tocan en esta rama. No afirman nada, pero el encargo de la rama anterior pedía que sin git nada saliera en silencio. Una línea corta en Technical Debt que apunte a §3 de tu informe. PROJECT_STATE tiene que seguir por debajo de 25 KB: di su tamaño.
+> 3. El push: empuja todo, el informe incluido, a fix/historial-sin-git (git push origin trabajo/historial-sin-git:refs/heads/fix/historial-sin-git). CI de Linux con solo el fallo esperado de state check; dame el número de run. La CI revisa también documentos, así que un commit de solo documentación no se queda fuera.
+> 4. El revisor revisó un informe a medias. Pasada corta del revisor sobre el informe ya completo y sobre lo que cambie por los puntos 1 y 2, con su informe pegado al final. Para el cierre, la lección que irá a la fila de ERRORES-RECURRENTES de esta rama: el revisor se lanza con el informe terminado, nunca antes.
+> 5. El clon superficial no montado para no copiar el holdout: aceptado, con ese motivo escrito en el informe, como ya está.
+>
+> make check sellado antes de cada commit.
+>
+> Rama lista para revisión, NO cerrada.

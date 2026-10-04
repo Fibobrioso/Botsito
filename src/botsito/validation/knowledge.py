@@ -193,6 +193,7 @@ def filas_con_id(seccion: str, fila: str) -> list[str]:
 
 # Lo que solo sabe el historial de git; una linea OK de `validar` solo lo afirma por `Historial.ok`.
 AFIRMACIONES_DE_HISTORIAL = ("intacto", "commits con Fuente")
+SIN_GIT = "sin git"
 _QUE_INMUTABLE = (
     "contra el historial que ningun fichero de {}/ se haya modificado, borrado o renombrado"
 )
@@ -207,17 +208,56 @@ class Historial:
     la afirmacion y un AVISO dice que NO se comprobo y por que. Niega por defecto: `validar` da
     ERROR por cualquier linea OK con una afirmacion de historial que no haya salido de `ok`
     (`afirmaciones_sueltas`), y `tests/unit/test_historial_sin_git.py` rechaza el literal fuera
-    de una llamada a `ok`."""
+    de una llamada a `ok`.
+
+    Y es la UNICA que LEE git en `validation/` (segunda orden del consultor, 2026-10-03: la
+    guardia nombra la condicion, no las palabras): las funciones de `botsito.comun.historial` solo
+    se importan dentro de esta clase -fuera, solo sus constantes-, y el mismo test recorre
+    `validation/` con ast y falla si no. Una comprobacion nueva que lea git entra por aqui, donde
+    su linea OK pasa por `ok`."""
 
     def __init__(self, motivo: str | None) -> None:
         self.motivo = motivo  # None: el historial se evalua
+        self.con_git = motivo != SIN_GIT
+        # con git, por que el historial no se puede evaluar (las guardias lo dan como ERROR)
+        self.no_evaluable = motivo if self.con_git else None
         self.afirmadas: list[str] = []
 
     @classmethod
     def de(cls, repo: Path) -> Historial:
         from botsito.comun.historial import hay_git, historial_evaluable
 
-        return cls(historial_evaluable(repo) if hay_git(repo) else "sin git")
+        return cls(historial_evaluable(repo) if hay_git(repo) else SIN_GIT)
+
+    @staticmethod
+    def en_head(repo: Path, ruta: str) -> str | None:
+        from botsito.comun.historial import contenido_en_head
+
+        return contenido_en_head(repo, ruta)
+
+    @staticmethod
+    def modificaciones(repo: Path, directorio: str) -> list[str] | None:
+        from botsito.comun.historial import modificaciones_en_historial
+
+        return modificaciones_en_historial(repo, directorio)
+
+    @staticmethod
+    def resolver(repo: Path, ref: str) -> str | None:
+        from botsito.comun.historial import resolver
+
+        return resolver(repo, ref)
+
+    @staticmethod
+    def ancla_desviada(repo: Path, tag: str, sha: str) -> str | None:
+        from botsito.comun.historial import ancla_desviada
+
+        return ancla_desviada(repo, tag, sha)
+
+    @staticmethod
+    def commits_sin_fuente(repo: Path, desde: str, ids_validos: set[str]) -> list[str] | None:
+        from botsito.comun.historial import commits_sin_fuente
+
+        return commits_sin_fuente(repo, desde, ids_validos=ids_validos)
 
     def sin_versiones(self, repo: Path, ruta: str) -> str | None:
         """El motivo de una guardia de SOLO ANADIR sobre UN fichero que git no contesto aunque el
@@ -280,8 +320,6 @@ def problemas_fuentes_documentales(
     consultor, 2026-10-03). Con `con_git` falso -en `validar`, cuando el historial no se evalua
     (`Historial`)- «commiteado» no se comprueba, como el resto de las comprobaciones de historial, y
     `Historial.aviso` lo dice; lo demas se comprueba igual."""
-    from botsito.comun.historial import contenido_en_head
-
     base = (repo / "docs").resolve()
     problemas: list[str] = []
     for a in ambiguedades:
@@ -294,7 +332,7 @@ def problemas_fuentes_documentales(
             if not real.is_file():
                 problemas.append(f"{donde}: no existe")
                 continue
-            if con_git and contenido_en_head(repo, f.documento) is None:
+            if con_git and Historial.en_head(repo, f.documento) is None:
                 problemas.append(f"{donde}: no esta commiteado (no esta en HEAD)")
                 continue
             seccion = seccion_de(real.read_text(encoding="utf-8"), f.ancla)
@@ -585,12 +623,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             ("retirados", f"contra el historial que {FICHERO_RETIRADOS} sea solo-anadir"),
             motivo=puerta.sin_versiones(repo, FICHERO_RETIRADOS),
         )
-    from botsito.comun.historial import (
-        DIRECTORIO_EVIDENCIA,
-        hay_git,
-        historial_evaluable,
-        modificaciones_en_historial,
-    )
+    from botsito.comun.historial import DIRECTORIO_EVIDENCIA
     from botsito.evidence import contradicciones
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto
 
@@ -643,9 +676,9 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             salida.append(f"AVISO: {a}")
     except PropuestaError as exc:
         fallos.append(f"propuestas: {exc}")
-    con_git = hay_git(repo)
-    no_evaluable = historial_evaluable(repo) if con_git else None
-    historial = modificaciones_en_historial(repo)
+    con_git = puerta.con_git
+    no_evaluable = puerta.no_evaluable
+    historial = puerta.modificaciones(repo, DIRECTORIO_EVIDENCIA)
     if historial is None and con_git:
         motivo = no_evaluable or "git fallo"
         fallos.append(f"la guardia de historial de evidencia no se pudo evaluar ({motivo})")
@@ -659,9 +692,6 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
         ANCLA_FUENTE,
         DIRECTORIO_FEEDBACK,
         DIRECTORIOS_CON_FUENTE,
-        ancla_desviada,
-        commits_sin_fuente,
-        resolver,
     )
     from botsito.feedback.modelo import FeedbackError, cargar_feedback, validar_contra_contexto
 
@@ -759,7 +789,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
         ids_amb,
         duraciones,
     )
-    historial_fb = modificaciones_en_historial(repo, DIRECTORIO_FEEDBACK)
+    historial_fb = puerta.modificaciones(repo, DIRECTORIO_FEEDBACK)
     if historial_fb is None and con_git:
         motivo = no_evaluable or "git fallo"
         fallos_fb.append(f"la guardia de historial de feedback no se pudo evaluar ({motivo})")
@@ -767,16 +797,16 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
     ids_validos = ids_de_fuente(repo, items, registros_fb)
     # El ancla es el SHA: un tag se puede mover; si el tag existe y no coincide, es un error.
     tag, sha = ANCLA_FUENTE
-    ancla = resolver(repo, sha) if con_git else None
+    ancla = puerta.resolver(repo, sha) if con_git else None
     if con_git and ancla is None:
         fallos_fb.append(
             f"no se resuelve el ancla de trazabilidad {tag} ({sha[:7]}): "
             "clon superficial o sin historial; haz git fetch --unshallow --tags"
         )
-    desviado = ancla_desviada(repo, tag, sha) if con_git else None
+    desviado = puerta.ancla_desviada(repo, tag, sha) if con_git else None
     if desviado:
         fallos_fb.append(desviado)
-    sin_fuente = commits_sin_fuente(repo, ancla, ids_validos=ids_validos) if ancla else None
+    sin_fuente = puerta.commits_sin_fuente(repo, ancla, ids_validos) if ancla else None
     if sin_fuente is None and con_git and ancla is not None:
         motivo = no_evaluable or "git fallo"
         fallos_fb.append(f"la comprobacion de trailers Fuente: no se pudo evaluar ({motivo})")
@@ -811,7 +841,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             cargar_manifiesto_dataset(ruta)
     except DatasetError as exc:
         fallos_datos.append(f"manifiesto de datos: {exc}")
-    historial_datos = modificaciones_en_historial(repo, DIRECTORIO_MANIFIESTOS)
+    historial_datos = puerta.modificaciones(repo, DIRECTORIO_MANIFIESTOS)
     if historial_datos is None and con_git:
         motivo = no_evaluable or "git fallo"
         fallos_datos.append(f"la guardia de historial de manifiestos no se pudo evaluar ({motivo})")
@@ -838,7 +868,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             errores_tr.append("hay transcripciones registradas pero falta glosario_asr.yaml")
     except (GlosarioError, ManifiestoTranscripcionError, TranscripcionError) as exc:
         errores_tr, avisos_tr, transcripciones = [f"transcripciones: {exc}"], [], []
-    historial_tr = modificaciones_en_historial(repo, DIRECTORIO_TRANSCRIPCIONES)
+    historial_tr = puerta.modificaciones(repo, DIRECTORIO_TRANSCRIPCIONES)
     if historial_tr is None and con_git:
         motivo = no_evaluable or "git fallo"
         errores_tr.append(
@@ -867,7 +897,7 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
         )
     except (FotogramasError, ManifiestoFotogramasError) as exc:
         errores_fr, avisos_fr, fotogramas = [f"fotogramas: {exc}"], [], []
-    historial_fr = modificaciones_en_historial(repo, DIRECTORIO_FOTOGRAMAS)
+    historial_fr = puerta.modificaciones(repo, DIRECTORIO_FOTOGRAMAS)
     if historial_fr is None and con_git:
         motivo = no_evaluable or "git fallo"
         errores_fr.append(f"la guardia de historial de fotogramas no se pudo evaluar ({motivo})")
