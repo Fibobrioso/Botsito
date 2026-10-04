@@ -92,6 +92,22 @@ videos:
       trader en voz, con DOS CORTES de audio de cero digital, de 28:49 a 29:53 y de 57:00 a 58:06,
       en los que no se oye nada
 
+  - video_id: v10
+    fichero: "Grabación de pantalla 2026-10-04 105617.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 8001960041
+    fecha_grabacion: "2026-10-04"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): el audio tiene
+    # CUATRO CORTES de cero digital (-91 dB, medido con ffmpeg silencedetect a -50 dB y 30 s, y
+    # volumedetect, el 2026-10-04): de 45:05 a 46:41, de 1:30:51 a 1:35:48, de 1:36:37 a 1:38:58 y
+    # de 1:39:08 a 1:39:42. Lo dicho en ellos no se oye; estan en tramos_no_citables.yaml.
+    # Duracion 2:07:36 (7656,2 s). Hoja de la sesion 04: docs/sesion-4/HOJA-USADA.md.
+    naturaleza: >-
+      sesion 4 con el trader (hoja de la sesion 04, codigos S-1 a S-24): preguntas del consultor
+      y respuestas del trader en voz, con cuatro esquemas inventados y ningun grafico de un dia
+      real, y CUATRO CORTES de audio de cero digital, de 45:05 a 46:41, de 1:30:51 a 1:35:48, de
+      1:36:37 a 1:38:58 y de 1:39:08 a 1:39:42, en los que no se oye nada
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2

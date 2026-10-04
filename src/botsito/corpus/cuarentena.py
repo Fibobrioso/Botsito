@@ -45,7 +45,7 @@ from botsito.comun.yaml_estricto import YamlError, leer_yaml
 # si uno de la lista tiene `drive_id`: asi un video nuevo sin listar rompe `make check` en vez de
 # quedar visible. La guardia de Claude Code guarda su copia (`.claude/hooks/guardia.py`) y
 # `tests/unit/test_guardia_claude.py` comprueba que dice lo mismo.
-SESIONES_EN_CUARENTENA: frozenset[str] = frozenset({"v7", "v8", "v9"})
+SESIONES_EN_CUARENTENA: frozenset[str] = frozenset({"v7", "v8", "v9", "v10"})
 # Sesiones con `drive_id: null` que NO estan en cuarentena, cada una con su motivo.
 EXCEPCIONES: Mapping[str, str] = MappingProxyType(
     {

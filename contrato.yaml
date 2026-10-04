@@ -18,6 +18,7 @@ rutas_permitidas:
   - scripts/transcribir_sesion.py
   - tests/unit/test_inventario.py
   - tests/unit/test_cuarentena.py
+  - tests/unit/test_guardia_claude.py
   - tests/unit/test_transcribir_sesion*.py
   - .claude/hooks/ficheros_con_ocultos.txt
 rutas_protegidas:

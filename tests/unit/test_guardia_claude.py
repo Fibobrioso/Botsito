@@ -146,7 +146,7 @@ def test_contra_el_repo_real_ve_lo_mismo_que_el_codigo(g: ModuleType) -> None:
     p = g.Politica(RAIZ)
     assert p.reservados == casos_reservados(RAIZ)
     assert set(g.PARTICIONES_RESERVADAS) == set(RESERVADAS)
-    assert p.sesiones_en_cuarentena == {"v7", "v8", "v9"}
+    assert p.sesiones_en_cuarentena == {"v7", "v8", "v9", "v10"}
     assert p.meses_legibles == {"2026-01", "2026-04", "2026-08"}
     assert p.meses_reservados >= {"2026-05", "2026-09"}
 
