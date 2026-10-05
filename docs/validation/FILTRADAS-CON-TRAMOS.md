@@ -98,6 +98,134 @@ Ninguna salta:
 - el vídeo se identifica sin ambigüedad con la declaración obligatoria (§0.3);
 - no hace falta tocar `.claude/`, la guardia ni la regla de meses, ni leer material real.
 
+## 1. La regla, como quedó en el guion
+
+`scripts/transcribir_sesion.py`; las funciones nuevas o cambiadas se nombran en cada punto:
+
+- **Qué se tapa** (`tapados_por_tramos`): un segmento se tapa si se solapa **más de 0 ms** con algún
+  tramo de **su** vídeo, es decir, si `s.t1_ms > t0 y s.t0_ms < t1`.
+  - Es la condición de `Filtro.motivos` y de `tramo_no_citable` en la librería.
+  - Un segmento que empieza justo donde termina un tramo, o que termina justo donde empieza, queda
+    visible. Es el caso de borde de v9, 0:34:56, que es lo que pide el texto de Q.
+- **La marca:** `[NO CITABLE mm:ss–mm:ss]`, distinta de `[CUARENTENA mm:ss–mm:ss]`, sin la clase ni
+  el motivo del tramo.
+  - Los tapados seguidos de la misma pregunta **y la misma marca** se funden en un bloque
+    (`lineas_filtradas`, `Linea.marca`).
+  - Un segmento que tapan las dos reglas va al bloque `[NO CITABLE]`, una sola vez, y cuenta en
+    «ambos».
+  - Un bloque de meses y uno de tramos seguidos quedan como dos bloques, cada uno con su marca.
+- **De qué vídeo** (`tramos_del_video`, `--video`):
+  - los tramos son los de `--video vN`, cargados con `cargar_tramos_no_citables`, la función de la
+    librería;
+  - `vN` tiene que ser una sesión (`SESIONES_EN_CUARENTENA` o `EXCEPCIONES`);
+  - `--audio` tiene que dar un solo audio (§0.3).
+- **Falla cerrado.** Sin `--video`, con un vídeo que no es una sesión, con más de un audio, o si
+  `knowledge/corpus/tramos_no_citables.yaml` falta, no se puede leer o no valida, el guion **no
+  escribe nada** y sale con 2.
+  - No escribe ni la cruda: los tramos se cargan lo primero en `procesar`, antes del ASR.
+  - `procesar` es la única función que escribe la filtrada, y su `video` por defecto es `None`,
+    que falla.
+- **El registro** (`registro_filtro`), sin texto:
+  - «video: vN; tramos no citables del video: K»;
+  - «segmentos tapados: solo por meses X, solo por tramos Y, por ambos Z»;
+  - «bloques [NO CITABLE]: B»;
+  - la línea de siempre, «segmentos en cuarentena: N en M bloques», que cuenta los segmentos de la
+    regla de meses (los de «ambos» incluidos) y los bloques `[CUARENTENA]`.
+- **Compatibilidad:**
+  - `lineas_filtradas` y `registro_filtro` conservan sus argumentos de antes; los tramos entran
+    por un argumento nuevo con valor por defecto, y sin él se comportan como antes;
+  - los tests existentes de la cuarentena por meses (`test_transcribir_sesion.py`,
+    `test_cuarentena.py`, `test_cuarentena_por_condicion.py`) pasan **sin cambiarse**, y el
+    contrato los protege;
+  - la regla de meses, `corpus.cuarentena` y `cases.holdout` no cambian.
+
+## 2. Los tests
+
+`tests/unit/test_filtradas_con_tramos.py`: 17 funciones, 27 casos, todo sintético. Los segmentos
+los escribe el test. El fichero de tramos es el de un repositorio de juguete en `tmp_path`, salvo
+un test que comprueba que el guion carga el del repositorio con la librería (solo tramos, ninguna
+cruda). Cada uno con su negativo:
+
+| Lo que pide el encargo | Test | El negativo dentro del test |
+|---|---|---|
+| solape de 1 ms: se tapa | `test_un_solape_de_1_ms_tapa` | — (es el propio negativo de los dos siguientes) |
+| empieza justo en el fin del tramo: visible | `test_empieza_justo_en_el_fin_del_tramo_queda_visible` | el tramo 1 ms más largo sí lo tapa |
+| termina justo en el inicio del tramo: visible | `test_termina_justo_en_el_inicio_del_tramo_queda_visible` | el tramo 1 ms antes sí lo tapa |
+| el caso de borde de v9 (Q) | `test_el_caso_de_borde_de_v9_0_34_56` | el segmento oculto sí se tapa |
+| la marca, sin texto, clase ni motivo; los contiguos se funden | `test_la_marca_no_lleva_texto_ni_clase_ni_motivo_y_los_contiguos_se_funden` | sin tramos, el texto sale |
+| un tramo de otro vídeo no tapa nada | `test_un_tramo_de_otro_video_no_tapa_nada`, `test_main_con_el_video_equivocado_no_tapa_el_tramo_ajeno` | el mismo tramo, en su vídeo, sí tapa |
+| tapado por meses y por tramo: «ambos», un solo bloque | `test_un_segmento_de_las_dos_reglas_cuenta_en_ambos_y_sale_una_vez` | con el tramo lejos del mes, «ambos» es 0 |
+| el registro sin texto | `test_el_registro_no_trae_texto_ni_motivo` | — |
+| fichero ausente, corrupto o que no valida; sin vídeo o con uno que no es sesión | `test_tramos_del_video_falla_cerrado` (7 casos), `test_main_falla_cerrado_y_no_escribe_nada` (5 casos: código distinto de 0 y la carpeta igual que antes) | `test_main_aplica_los_tramos_del_video`: con el fichero bueno, sí escribe |
+| sin tramos no se transcribe ni se escribe la cruda | `test_main_sin_tramos_no_transcribe_ni_escribe_la_cruda` | — |
+| un audio por ejecución | `test_main_se_niega_con_varios_audios` | — |
+| ningún camino escribe sin tramos | `test_procesar_sin_video_falla_cerrado` | — |
+| un vídeo de sesión sin tramos (v8) da una tupla vacía | `test_un_video_de_sesion_sin_tramos_da_una_tupla_vacia` | — |
+| el guion usa la función de la librería | `test_el_repo_real_da_los_tramos_de_sus_sesiones` | — |
+
+Los tests existentes de la cuarentena por meses pasan sin tocarse: los ejecutó la rama con
+`tests/unit/test_transcribir_sesion.py`, `test_cuarentena.py`, `test_cuarentena_por_condicion.py`
+y `test_tramos_de_sesion.py`.
+
+## 3. Las roturas a propósito
+
+Anexo: `docs/validation/anexos/FILTRADAS-CON-TRAMOS/roturas.py`, con la salida en
+`roturas-SALIDA.txt`.
+- Como escribe en el guion, se ejecutó en un **clon desechable** (`git worktree add`, con los dos
+  ficheros sin commitear copiados), con la raíz por argumento y negándose a correr sobre el
+  repositorio (`CLAUDE.md`, «Ensayos aislados»).
+- Cada rotura cambia una línea, corre los tests nuevos, apunta los que caen y restaura el guion,
+  comprobando su sha256 (`364c79e0…`, el del repositorio).
+- El clon se quitó después.
+
+| Rotura | Caen |
+|---|---|
+| 1. no se aplican los tramos | 4 (el borde de v9, la marca, `main`, «ambos») |
+| 2. sin fichero de tramos se sigue | 3 (los dos `sin_fichero` y «sin tramos no transcribe») |
+| 3. el borde se tapa (`>=` en lugar de `>`) | 7 (los dos bordes, el de v9, el registro, `main`, «ambos», el de otro vídeo) |
+| 4. sin `--video` se sigue sin tramos | 3 (los dos `sin_video` y `procesar` sin vídeo) |
+
+Restaurado, los 27 casos pasan, y el sha256 del guion es el de antes en las cuatro.
+
+## 4. Decisiones y desviaciones, para la revisión del consultor
+
+1. **El vídeo, por declaración obligatoria (`--video`)** (§0.3). El encargo pedía parar si el vídeo
+   de una sesión no se podía identificar sin ambigüedad.
+   - Con `--sesion` no se puede: la 02 son v7 y v8.
+   - Con `--video`, comprobado contra la lista de sesiones de la librería y con un solo audio por
+     ejecución, sí.
+   - Lo decidió la sesión autónoma, sin el consultor.
+   - Lo que queda abierto es declarar un vídeo de sesión equivocado. Un test documenta que entonces
+     no se aplica el tramo ajeno.
+2. **Un audio por ejecución.** Antes, `--audio <carpeta>` procesaba todos los audios de la carpeta.
+   Ahora se niega si hay más de uno, porque cada audio lleva los tramos de su vídeo. La carpeta de
+   la sesión 3 tiene, además del `.m4a`, dos `.mp4` de WhatsApp que el guion habría tomado por
+   audios.
+3. **Un segmento de las dos reglas va al bloque `[NO CITABLE]`.** El encargo pide que salga en un
+   solo bloque, sin decir con qué marca. Se elige la de los tramos.
+4. **La skill `ingerir-sesion`** (`.claude/skills/ingerir-sesion/SKILL.md`, paso 4) da el comando
+   sin `--video`. Está en `.claude/`, que esta rama no toca: hay que añadirle `--video <vN>` en
+   otra rama, o que lo haga Aleks. Hasta entonces, ese comando falla cerrado con «falta --video», y
+   no escribe nada.
+
+## 5. Lo que queda para después del merge, sin hacerlo
+
+«En la fase 0 de la rama de activación de la sesión 4, rehacer con --solo-filtrar las filtradas de
+v7–v10 y comprobar contra FILTRADAS-ESCENARIO-B.md que lo tapado es B más los tramos, que nada se
+destapa frente a A dentro de un tramo y que los 12 casos del segundo de margen quedan tapados.»
+
+Con el guion de esta rama hará falta `--video` en cada uno: `--video v7`, `v8`, `v9` y `v10`, con
+`--sesion 02`, `02`, `03` y `04`.
+
 ## Estado
 
-EN CURSO. Fase 0 hecha; sin paradas. Rama NO cerrada.
+**Hecho el trabajo; falta la CI y el revisor.**
+- Fase 0 sin paradas (§0).
+- La regla, en el guion (§1); 17 tests sintéticos con sus negativos (§2) y cuatro roturas a
+  propósito, que caen y se restauran (§3).
+- Decisiones para el consultor (§4) y lo que queda para después del merge (§5).
+- Ningún material real leído ni ejecutado.
+
+**`PROJECT_STATE.md`:** 24.649 bytes, por debajo del tope de 25.000.
+
+Rama NO cerrada.

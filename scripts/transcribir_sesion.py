@@ -30,14 +30,24 @@ ningun modelo lee la cruda). Un segmento va a `[CUARENTENA mm:ss–mm:ss]` SIN c
 Y tambien el segmento ANTERIOR y el SIGUIENTE. Ante la duda, cuarentena. Un mes demostrado libre
 no se filtra. Con punto y DOS partes no es fecha: son precios («1.17»), medido en v1-v6.
 
+LOS TRAMOS NO CITABLES (desde `trabajo/filtradas-con-tramos`, punto Q; FILTRADAS-CON-TRAMOS.md):
+ademas, un segmento va a `[NO CITABLE mm:ss–mm:ss]` SIN contenido si se solapa MAS DE 0 ms con algun
+tramo de `knowledge/corpus/tramos_no_citables.yaml` de SU video (`--video`, obligatorio): el que
+empieza justo donde termina un tramo, o termina justo donde empieza, queda visible. La marca no
+dice la clase ni el motivo del tramo. Un segmento que tapan las dos reglas va al bloque
+`[NO CITABLE]`, y cuenta en «ambos». Falla cerrado: sin `--video`, con un video que no es una
+sesion, con mas de un audio, o si el fichero de tramos falta, no se puede leer o no valida, no
+escribe NADA (ni la cruda) y sale con error.
+
 LA SEGMENTACION POR PREGUNTA: SOLO «pregunta» seguida del codigo abre una pregunta («Pregunta A
 treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente «pregunta ...» o hasta
 «fin de pregunta», que devuelve a SIN PREGUNTA; lo que hay antes de la primera es SIN PREGUNTA.
 El «a N» suelto no abre nada. Solo cuentan los codigos que se preguntan (ABIERTA o DECIDIDA).
 
-Uso (un solo comando, desde la raiz del repo):
-    uv run python scripts/transcribir_sesion.py [--audio <fichero o carpeta>] [--sesion 04]
-    uv run python scripts/transcribir_sesion.py --solo-filtrar   (rehace la filtrada desde la cruda)
+Uso (un solo comando, desde la raiz del repo; un audio por ejecucion):
+    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 [--sesion 04]
+    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 --solo-filtrar
+        (rehace la filtrada desde la cruda)
 La hoja (orden y codigos de sesion) es la de `--sesion`, por defecto la sesion en curso: cada
 sesion tiene la suya, y un mismo codigo puede significar otra cosa en otra sesion (S-1).
 """
@@ -51,12 +61,21 @@ import re
 import sys
 import time
 from collections import Counter
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from botsito.corpus.cuarentena import en_cuarentena, normalizar, numeros_a_cifras
+from botsito.corpus.cuarentena import (
+    EXCEPCIONES,
+    FICHERO_TRAMOS_NO_CITABLES,
+    SESIONES_EN_CUARENTENA,
+    TramosNoCitablesError,
+    cargar_tramos_no_citables,
+    en_cuarentena,
+    normalizar,
+    numeros_a_cifras,
+)
 
 RAIZ = Path(__file__).resolve().parents[1]
 CARPETA_AUDIO = Path(r"C:\Users\USER\Desktop\reunion-a35-a44\sesion-02-audio")
@@ -217,26 +236,47 @@ def mmss(ms: int) -> str:
     return f"{s // 60:02d}:{s % 60:02d}"
 
 
+CUARENTENA = "CUARENTENA"  # la marca de la regla por meses
+NO_CITABLE = "NO CITABLE"  # la marca de los tramos no citables, sin su clase ni su motivo
+
+Tramo = tuple[int, int, str]  # (t0_ms, t1_ms, motivo), como los da `cargar_tramos_no_citables`
+
+
 @dataclass(frozen=True)
 class Linea:
     pregunta: str
     t0_ms: int
     t1_ms: int
-    texto: str | None  # None: cuarentena
+    texto: str | None  # None: tapada, con la marca de `marca`
     indices: tuple[int, ...]
+    marca: str = CUARENTENA
+
+
+def tapados_por_tramos(segmentos: Sequence[Seg], tramos: Iterable[Tramo]) -> frozenset[int]:
+    """Las posiciones de los segmentos que se solapan MAS DE 0 ms con algun tramo: la misma
+    condicion que `Filtro.motivos` y `tramo_no_citable` (`s.t1_ms > a and s.t0_ms < b`). Un
+    segmento que empieza justo donde termina un tramo, o termina justo donde empieza, no se tapa."""
+    tramos = tuple(tramos)
+    return frozenset(
+        i for i, s in enumerate(segmentos) if any(s.t1_ms > a and s.t0_ms < b for a, b, _ in tramos)
+    )
 
 
 def lineas_filtradas(
     segmentos: Sequence[Seg],
     validos: Iterable[str],
     libres: frozenset[int] | None = None,
+    tramos: Iterable[Tramo] = (),
 ) -> tuple[list[Linea], dict[int, list[str]]]:
-    """Cada segmento con su pregunta y, si esta en cuarentena, sin texto; los tramos seguidos de
-    cuarentena de la misma pregunta se funden en una sola linea. `libres`: los meses DEMOSTRADOS
-    libres (`cases.holdout.meses_libres`); sin ellos la regla del mes tapa los doce."""
+    """Cada segmento con su pregunta y, si esta tapado, sin texto; los tapados seguidos de la misma
+    pregunta y la misma marca se funden en una sola linea. `libres`: los meses DEMOSTRADOS libres
+    (`cases.holdout.meses_libres`); sin ellos la regla del mes tapa los doce. `tramos`: los tramos
+    no citables del video de la sesion (`tramos_del_video`); un segmento que tapan las dos reglas
+    lleva la marca `[NO CITABLE]`. Devuelve tambien los segmentos de la regla por meses."""
     validos = tuple(validos)
     textos = [s.texto for s in segmentos]
     cuarentena = en_cuarentena(textos, libres)
+    no_citables = tapados_por_tramos(segmentos, tramos)
     pregunta = SIN_PREGUNTA
     salida: list[Linea] = []
     for i, s in enumerate(segmentos):
@@ -245,12 +285,20 @@ def lineas_filtradas(
         codigo = codigo_en(s.texto, validos)
         if codigo is not None:
             pregunta = codigo
-        if i in cuarentena:
+        if i in cuarentena or i in no_citables:
+            marca = NO_CITABLE if i in no_citables else CUARENTENA
             previa = salida[-1] if salida else None
-            if previa is not None and previa.texto is None and previa.pregunta == pregunta:
-                salida[-1] = Linea(pregunta, previa.t0_ms, s.t1_ms, None, (*previa.indices, i))
+            if (
+                previa is not None
+                and previa.texto is None
+                and previa.pregunta == pregunta
+                and previa.marca == marca
+            ):
+                salida[-1] = Linea(
+                    pregunta, previa.t0_ms, s.t1_ms, None, (*previa.indices, i), marca
+                )
             else:
-                salida.append(Linea(pregunta, s.t0_ms, s.t1_ms, None, (i,)))
+                salida.append(Linea(pregunta, s.t0_ms, s.t1_ms, None, (i,), marca))
         else:
             salida.append(Linea(pregunta, s.t0_ms, s.t1_ms, s.texto.strip(), (i,)))
     return salida, cuarentena
@@ -273,7 +321,9 @@ def version_filtrada(lineas: Sequence[Linea], titulo: str, hoja: Sequence[str]) 
         f"# {titulo} · version FILTRADA",
         "",
         "Cuarentena mecanica aplicada antes de cualquier lectura: los tramos `[CUARENTENA]` no se "
-        "reconstruyen ni se escuchan. Citas literales con `mm:ss` desde el inicio del audio.",
+        "reconstruyen ni se escuchan. Los `[NO CITABLE]` son los tramos no citables del video "
+        "(`knowledge/corpus/tramos_no_citables.yaml`): tampoco se leen ni se citan. Citas "
+        "literales con `mm:ss` desde el inicio del audio.",
         "",
     ]
     for pregunta in orden_de_preguntas((ln.pregunta for ln in lineas), hoja):
@@ -283,7 +333,7 @@ def version_filtrada(lineas: Sequence[Linea], titulo: str, hoja: Sequence[str]) 
             if ultimo_indice is not None and ln.indices[0] != ultimo_indice + 1:
                 partes.append("…")
             if ln.texto is None:
-                partes.append(f"[CUARENTENA {mmss(ln.t0_ms)}–{mmss(ln.t1_ms)}]")
+                partes.append(f"[{ln.marca} {mmss(ln.t0_ms)}–{mmss(ln.t1_ms)}]")
             else:
                 partes.append(f"[{mmss(ln.t0_ms)}] {ln.texto}")
             ultimo_indice = ln.indices[-1]
@@ -296,10 +346,14 @@ def registro_filtro(
     cuarentena: dict[int, list[str]],
     validos: Iterable[str],
     hoja: Sequence[str],
+    no_citables: Collection[int] = frozenset(),
 ) -> list[str]:
-    """Lo que el registro puede decir del texto: recuentos y codigos, nunca contenido."""
+    """Lo que el registro puede decir del texto: recuentos y codigos, nunca contenido.
+    `no_citables`: los segmentos que tapan los tramos (`tapados_por_tramos`)."""
     motivos: Counter[str] = Counter(m for ms in cuarentena.values() for m in ms)
-    bloques = sum(1 for ln in lineas if ln.texto is None)
+    bloques = sum(1 for ln in lineas if ln.texto is None and ln.marca == CUARENTENA)
+    bloques_nc = sum(1 for ln in lineas if ln.texto is None and ln.marca == NO_CITABLE)
+    meses, tramos_nc = set(cuarentena), set(no_citables)
     primeras: dict[str, int] = {}
     tramos: Counter[str] = Counter()
     anterior = None
@@ -313,6 +367,9 @@ def registro_filtro(
     return [
         f"segmentos: {sum(len(ln.indices) for ln in lineas)}",
         f"segmentos en cuarentena: {len(cuarentena)} en {bloques} bloques",
+        f"segmentos tapados: solo por meses {len(meses - tramos_nc)}, solo por tramos "
+        f"{len(tramos_nc - meses)}, por ambos {len(meses & tramos_nc)}",
+        f"bloques [{NO_CITABLE}]: {bloques_nc} (los de «ambos» van aqui)",
         "motivos (un segmento puede tener varios): "
         + ", ".join(f"{m} {n}" for m, n in sorted(motivos.items())),
         "codigos detectados (primera vez, tramos): "
@@ -412,13 +469,42 @@ def _escribir(ruta: Path, texto: str) -> None:
     ruta.write_text(texto, encoding="utf-8", newline="\n")
 
 
-def procesar(audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str) -> list[str]:
+def tramos_del_video(video: str | None, repo: Path) -> tuple[Tramo, ...]:
+    """Los tramos no citables de `video`, o `SesionError`: FALLA CERRADO. Sin video declarado, con
+    un video que no es una sesion (`SESIONES_EN_CUARENTENA` o `EXCEPCIONES`), o si el fichero de
+    tramos falta, no se puede leer o no valida, no hay filtrada. `cargar_tramos_no_citables` (la
+    funcion de la libreria, la misma de `knowledge validate`) devuelve {} si el fichero falta: aqui
+    eso es un error. Un video de sesion sin tramos (v8) da una tupla vacia."""
+    if video is None:
+        raise SesionError("falta --video: sin el video de la sesion no se aplican sus tramos")
+    sesiones = SESIONES_EN_CUARENTENA | frozenset(EXCEPCIONES)
+    if video not in sesiones:
+        raise SesionError(
+            f"--video {video} no es un video de sesion ({', '.join(sorted(sesiones))})"
+        )
+    if not (repo / FICHERO_TRAMOS_NO_CITABLES).is_file():
+        raise SesionError(
+            f"no existe {FICHERO_TRAMOS_NO_CITABLES}: sin tramos no se escribe la filtrada"
+        )
+    try:
+        return cargar_tramos_no_citables(repo).get(video, ())
+    except TramosNoCitablesError as exc:
+        raise SesionError(f"los tramos no citables no se pueden usar: {exc}") from exc
+
+
+def procesar(
+    audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str, video: str | None = None
+) -> list[str]:
+    # Lo primero, antes de escribir nada (tampoco la cruda): sin tramos validos no hay salida.
+    tramos = tramos_del_video(video, RAIZ)
     salidas = salidas_de(audio)
     _comprobar_rutas([*salidas.values(), salidas["trabajo"] / "fragmentos" / "fragmento_000.wav"])
     inicio = time.perf_counter()
     registro = [
         f"# registro de {audio.name} (sin contenido del trader)",
         f"hoja: la de la sesion {sesion}",
+        f"video: {video}; tramos no citables del video: {len(tramos)} "
+        f"({FICHERO_TRAMOS_NO_CITABLES})",
     ]
     if solo_filtrar:
         if not salidas["cruda"].is_file():
@@ -457,9 +543,11 @@ def procesar(audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str) -> 
         ]
     validos = codigos_validos(sesion)
     hoja = HOJAS[sesion]
-    lineas, cuarentena = lineas_filtradas(segmentos, validos, meses_libres_del_repo())
+    lineas, cuarentena = lineas_filtradas(segmentos, validos, meses_libres_del_repo(), tramos)
     _escribir(salidas["filtrada"], version_filtrada(lineas, f"Sesion · {audio.stem}", hoja))
-    registro += registro_filtro(lineas, cuarentena, validos, hoja)
+    registro += registro_filtro(
+        lineas, cuarentena, validos, hoja, tapados_por_tramos(segmentos, tramos)
+    )
     registro += [
         f"tiempo total: {time.perf_counter() - inicio:.1f} s",
         f"version filtrada (la UNICA que se lee): {salidas['filtrada']}",
@@ -510,10 +598,25 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="no transcribe: rehace la version filtrada desde la cruda",
     )
+    parser.add_argument(
+        "--video",
+        default=None,
+        help="el video_id de la sesion (v7, v8, v9, v10...): sus tramos no citables se tapan. "
+        "Obligatorio: sin el no se escribe nada",
+    )
     args = parser.parse_args(argv)
     try:
-        for audio in audios_de(args.audio):
-            print("\n".join(procesar(audio, args.dispositivo, args.solo_filtrar, args.sesion)))
+        audios = audios_de(args.audio)
+        if len(audios) != 1:
+            raise SesionError(
+                f"--audio da {len(audios)} audios: uno por ejecucion, porque cada uno lleva los "
+                "tramos de su video (--video)"
+            )
+        print(
+            "\n".join(
+                procesar(audios[0], args.dispositivo, args.solo_filtrar, args.sesion, args.video)
+            )
+        )
     except SesionError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

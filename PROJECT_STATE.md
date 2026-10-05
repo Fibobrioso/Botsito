@@ -23,7 +23,7 @@ trabajo/filtradas-con-tramos
 5e486dc · merge: tramos de sesion completados, ancla de v9 medida y el hueco de las filtradas documentado (FILTRADAS-ESCENARIO-B.md) · tag stable/F36x-filtradas-escenario-b
 
 ## Tests Currently Passing
-1278 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1295 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
