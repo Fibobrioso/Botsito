@@ -196,3 +196,61 @@ Copiada tal cual:
 > 5. Lo demás sigue como en mis respuestas segunda y tercera: los puntos 3 a 6, el texto de Q con el solapamiento de más de 0 ms, make check sellado, fix/ con la CI de Linux y sus números de run, y el revisor con la pregunta expresa sobre tramos e ítems.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Quinta respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Quinta respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Aleks ha hecho a mano el commit y el push a fix/. Cópiala tal cual al encargo y al informe, en un commit nuevo.
+>
+> 1. Comprueba que el commit que hizo Aleks es el que preparaste: el mensaje es el de msg-tramos.txt, el árbol coincide con el sello 5727c7de… y no se coló ningún fichero más. Comprueba también que fix/filtradas-escenario-b apunta a ese commit. Si algo no cuadra, para.
+>
+> 2. El tramo de 2.084.000 a 2.096.000 ms no se registra, y aceptamos la desviación.
+>    Por qué: es idéntico al original, y duplicarlo no tapa nada. Basta con que el informe explique que ese tramo se queda sin margen por la condición del ancla, nombrando ev-v9-003456-9ef48fb5 y R.
+>
+> 3. El hallazgo para Q: se acepta que Q tape la línea visible que cae en el segundo de margen de esos 9 tramos.
+>    Por qué: tapar de más no expone nada, y ningún ítem tiene su ventana ahí (tramo_no_citable lo garantiza). Aplicar los tramos por los milisegundos reales de los segmentos de cuarentena obligaría a leerlos de la cruda, y eso es otra vía que no hace falta.
+>    Añade al texto de Q en la Next Action: «Se acepta que la regla de más de 0 ms tape el segmento visible que cae en el segundo de margen de un tramo (9 casos, FILTRADAS-ESCENARIO-B.md); el informe de Q da su recuento.»
+>
+> 4. Las tres lecturas de tramos de precaución de v10 durante trabajo/sesion-04 (0:40:20, 1:27:44 y 1:56:07) se declaran hoy en docs/validation/HOLDOUT-EXPOSICIONES.md, como exposición de precaución.
+>    - Por cada una: fecha, quién (sesión o revisor), qué se vio por su clase (un grep, una descripción, una cifra en el cuerpo de c489685) y dónde queda (historia de git, inmutable). Sin copiar el contenido en ningún sitio nuevo.
+>    - Sigue el procedimiento de knowledge/cases/holdout/README.md para una exposición. Con casos_ocultos y casos_reservados, sin abrir nada, dime si el mes al que apunta cada tramo tiene días en alguna partición reservada o en el universo de marzo. Si los tiene, para antes de marcar nada y dame los recuentos (no las fechas). Yo decido si algo queda quemado.
+>    - No se reescribe la historia de git ni se toca c489685.
+>    Por qué: un tramo de precaución existe porque su texto puede tocar un mes con días ocultos, y lo leído ya no se puede deshacer, pero sí declarar.
+>
+> 5. Sigue: CI de Linux sobre el commit de Aleks y sobre el nuevo, con sus números de run (único fallo aceptado: state check por el nombre fix/). Si el push del commit nuevo vuelve a bloquearse, para y dame los comandos con «!», como esta vez. Después, el revisor con su informe pegado al final, más dos preguntas expresas: (a) que ningún tramo nuevo pise la ventana de ningún ítem y que todos pasen el control positivo; (b) que la declaración del punto 4 no copie contenido de los tramos.
+>    La fila de ERRORES-RECURRENTES lleva los hallazgos de mis respuestas segunda, tercera y cuarta.
+>
+> Rama lista para revisión, NO cerrada.
+
+## Sexta respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Sexta respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. Las tres lecturas de tramos de precaución de v10 ya estaban declaradas en la fila del 2026-10-04 de HOLDOUT-EXPOSICIONES.md: la de trabajo/sesion-04, con la corrección del consultor sobre junio y el commit c489685. El grep del revisor y la descripción de su A6 son el mismo contenido.
+>    Mi punto 4 de la quinta respuesta pedía declararlas de nuevo porque escribí sin leer el fichero. Queda así: no hay exposición nueva.
+>
+> 2. En HOLDOUT-EXPOSICIONES.md, por su régimen (solo añadir; la fila del 2026-10-04 no se toca), una fila nueva con fecha de hoy y estas columnas:
+>    - qué: «Complemento a la fila del 2026-10-04 (v10, sesión 4). Recuento por partición del alcance de sus tres tramos de precaución, sin abrir nada (anexo meses_de_los_tramos.py, FILTRADAS-ESCENARIO-B.md): 0:40:20, enero, sin días reservados; 1:56:07, junio, 11 días (holdout-1: 2, holdout-2: 4, holdout-3: 5); 1:27:44, periodo no identificado, que no se puede descartar en ningún mes reservado (fidelidad-1: 10, holdout-1: 8, holdout-2: 8, holdout-3: 8, y febrero y marzo de 2026 enteros). Las lecturas posteriores (grep y A6 del revisor de trabajo/sesion-04, cuerpo de c489685) son el mismo contenido ya declarado.»
+>    - particiones: las que da el recuento.
+>    - quién: la sesión autónoma de trabajo/filtradas-escenario-b; la decisión, del consultor.
+>    - ¿quema?: «No. Decisión del consultor (2026-10-04): lo visto son agregados sin fecha, un máximo de operaciones en un día y tres valores de R, que no identifican ningún día reservado ni permiten ajustar decisiones a un día concreto. Las cifras siguen excluidas de todo uso, como dice la fila del 2026-10-04, y además: ninguna regla ni parámetro sobre el número de operaciones por día o sobre el R de salida puede tener esas cifras como fuente. F26 cita las dos filas.»
+>    No copies las cifras de los tramos en la fila nueva ni en ningún otro fichero nuevo: «un máximo de operaciones en un día» y «tres valores de R» bastan.
+>
+> 3. Para la fila de ERRORES-RECURRENTES, además de mis hallazgos anteriores:
+>    importa · Del consultor: pidió declarar unas lecturas que ya estaban declaradas, porque no leyó HOLDOUT-EXPOSICIONES.md antes de escribir la orden. Lección: antes de ordenar una declaración de exposición, leer la tabla y citar la fila que ya cubre el caso, si la hay.
+>
+> 4. Sigue: make check sellado, commit, y push a fix/filtradas-escenario-b con la CI de Linux y sus números de run (único fallo aceptado: state check por el nombre fix/). Si el commit o el push se bloquean, para y dame los comandos con «!».
+>    Después, el revisor con su informe pegado al final y tres preguntas expresas:
+>    (a) ningún tramo nuevo pisa la ventana de ningún ítem, y todos pasan el control positivo;
+>    (b) la fila nueva de HOLDOUT-EXPOSICIONES no copia contenido ni cifras de los tramos y no modifica la del 2026-10-04;
+>    (c) el texto de Q y de R en la Next Action coincide con mis respuestas.
+>    Y la fila de ERRORES-RECURRENTES.
+>
+> Rama lista para revisión, NO cerrada.
