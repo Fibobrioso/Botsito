@@ -329,6 +329,17 @@ después, el orden de la sesión.
     (`ev-v10-010429-0c93f24a`)
   - 64:38–64:54 «claro, sería de aquí / a 10 y de 10 / a 2, ya no sería a 3 / sino a 2 / la segunda
     sesión / y el cierre también sería 10» (`ev-v10-010438-0d4e6798`)
+
+    > **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`).** `ev-v10-010438-0d4e6798`
+    > está superseded por **`ev-v10-010438-024f76b8`** (ventana 64:38–64:54), cuya cita **ya no
+    > incluye «…y el cierre también sería 10»**.
+    > - **Por qué:** esa parte cae en el segmento 1058, visible, pero que el tramo 1:04:56–1:05:29
+    >   pisa porque se registró con el inicio redondeado al segundo. Con el criterio de Q, el filtro
+    >   lo tapa.
+    > - **Esa parte la cubre ahora** la pregunta escrita al trader del punto E (Next Action), antes
+    >   de activar A-42.
+    >
+    > Detalle: `VENTANA-EV-V9.md`.
 - **Regla o ejemplo:** regla, con fecha de inicio (el 25 de octubre). La sacó mirando su gráfico
   (63:48–64:22) y no de memoria.
 - **«creo»:** no en lo legible. Lo que va antes de 63:38 está en cuarentena.

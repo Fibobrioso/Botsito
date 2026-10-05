@@ -367,3 +367,42 @@ def tramo_no_citable(
         if t0_ms < fin_ms and inicio_ms < t1_ms:
             return f"{formato_ms(inicio_ms)}-{formato_ms(fin_ms)}: {motivo}"
     return None
+
+
+def ventana_no_citable(
+    contexto: ContextoEvidencia,
+    video_id: str,
+    t0_ms: int,
+    t1_ms: int,
+    segmentos: Sequence[SegmentoCitable] | None,
+) -> str | None:
+    """Por que la ventana declarada [t0, t1) de un item no se puede citar, o None si se puede.
+
+    La condicion (decision del consultor del 2026-10-05, docs/validation/VENTANA-EV-V9.md): la
+    ventana no se solapa mas de 0 ms con ningun tramo no citable de su video, ni con ningun segmento
+    de su transcripcion que a su vez solape mas de 0 ms un tramo no citable. Un tramo registrado
+    con su final al segundo puede dejar fuera la cola de su ultimo segmento: esta condicion la
+    cubre.
+
+    De los segmentos solo se usan `t0_ms`, `t1_ms` y `n`: nunca el texto. Con `segmentos=None` (la
+    cruda no esta en esta maquina, o el item no cita audio) solo se mira el tramo, y quien llama
+    tiene que decir que no pudo mirar los segmentos.
+    """
+    fuera = tramo_no_citable(contexto, video_id, t0_ms, t1_ms)
+    if fuera is not None:
+        return f"el tramo no es especificacion, {fuera}"
+    tramos = contexto.tramos_no_citables.get(video_id, ())
+    if not tramos or segmentos is None:
+        return None
+    for s in segmentos:
+        if (
+            s.t1_ms > t0_ms
+            and s.t0_ms < t1_ms
+            and any(s.t1_ms > a and s.t0_ms < b for a, b, _ in tramos)
+        ):
+            solape = min(s.t1_ms, t1_ms) - max(s.t0_ms, t0_ms)
+            return (
+                f"la ventana pisa {solape} ms del segmento {s.n} "
+                f"({formato_ms(s.t0_ms)}-{formato_ms(s.t1_ms)}), que solapa un tramo no citable"
+            )
+    return None

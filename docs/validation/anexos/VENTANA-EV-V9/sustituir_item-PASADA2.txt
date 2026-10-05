@@ -1,0 +1,4 @@
+item viejo: ev-v9-003456-9ef48fb5 (2096000-2100000 ms); t0 nuevo: 0:34:57
+ESCRITO: ev-v9-003457-3e28e325 (2097000-2100000 ms), knowledge/evidence/v9/ev-v9-003457-3e28e325.yaml
+campos distintos del viejo: ['id', 'notas', 'supersede', 't0']
+igual campo a campo salvo ['id', 'notas', 'supersede', 't0']: True

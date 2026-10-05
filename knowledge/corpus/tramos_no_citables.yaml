@@ -353,3 +353,10 @@ tramos:
       precaución: mes con días ocultos que la cuarentena mecánica no cubría. El bloque [CUARENTENA 115:27–115:33] de la version filtrada en el escenario B (regla por condicion, guion de main), que el tramo de 1:55:29-1:55:32 no cubre entero; t0 al segundo y t1 un segundo despues de la marca; medido el 2026-10-04 imprimiendo solo marcas de tiempo. No se cita ni se describe
     acordado: >-
       segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2a), con el criterio de los 12 tramos de cuarentena de v10; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "0:34:44"
+    t1: "0:34:57"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 0:34:44-0:34:56 (segmentos 609-612 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 34:44–34:56] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento (el 612 termina en 2.096.900 ms). Se quedo fuera en FILTRADAS-ESCENARIO-B.md §4.2 porque solapaba la ventana vieja de ev-v9-003456-9ef48fb5, que esta rama corrige. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      decision del consultor del 2026-10-05 (encargo de trabajo/ventana-ev-v9-003456, punto c, y su visto bueno a la fase 0, punto 2); criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/VENTANA-EV-V9.md

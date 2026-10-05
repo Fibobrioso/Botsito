@@ -525,6 +525,15 @@ sus marcas y no por su índice. Las dos vías dan 609-612.
 está mal es solo su ventana declarada, que empieza 2.060 ms antes de su ancla, sobre la cola del
 segmento 612.
 
+> **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`, punto R).** La ventana se
+> corrigió por su régimen. El ítem nuevo **`ev-v9-003457-3e28e325`** (2.097.000–2.100.000 ms)
+> supersede a `ev-v9-003456-9ef48fb5`, que no se toca porque es inmutable. Su cita, su afirmación y
+> su tema son los mismos.
+> - Entró también el tramo de margen 0:34:44–0:34:57, que el §4.2 dejó fuera.
+> - A-46 cita ya el ítem nuevo.
+>
+> Detalle: `VENTANA-EV-V9.md`.
+
 ### 4.2 Lo que se registró (punto 2a de la cuarta respuesta; punto 2 de la segunda)
 
 En `knowledge/corpus/tramos_no_citables.yaml`, solo añadiendo (el diff no quita ninguna línea), hay
@@ -589,6 +598,17 @@ fuera del bloque, el tramo termina en el inicio de la ventana. Si cae dentro, se
   - ningún ítem de v7–v10 solapa un tramo.
 - **La rotura a propósito, en el test:** quitar en memoria un tramo nuevo del repo real hace que la
   comprobación lo nombre.
+
+> **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`).** La frase de arriba («El control ya
+> existía…») no se midió, y es falsa en una mitad.
+> - `tramo_no_citable` solo lo llaman `evidence new` (`cli.py:628` en `main`) y `evidence propose --check`
+>   (`evidence/propuestas.py:404` en `main`), al crear un ítem.
+> - **`knowledge validate` no lo llama**, así que no comprobaba los ítems ya existentes. Sobre ellos
+>   solo había un test, y solo para v7–v10.
+> - Desde esa rama, `knowledge validate` comprueba, para todos los ítems activos de todos los
+>   vídeos, que la ventana no solape más de 0 ms un tramo ni un segmento que solape un tramo.
+>
+> Detalle: `VENTANA-EV-V9.md`.
 
 **La rotura a propósito, en el fichero** (segunda respuesta, punto 2):
 1. Se apuntó el sha256 del yaml, `a7d093cb…`.

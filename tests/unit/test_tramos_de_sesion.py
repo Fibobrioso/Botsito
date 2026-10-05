@@ -93,12 +93,21 @@ def test_la_rotura_a_proposito_cae() -> None:
 
 
 def test_ningun_item_de_las_sesiones_solapa_un_tramo() -> None:
+    """Solo los items ACTIVOS: uno supersedido no se cita (decision del consultor del 2026-10-05,
+    VENTANA-EV-V9.md, punto 4). ev-v9-003456-9ef48fb5, supersedido, si pisa el tramo de margen."""
     tramos = cargar_tramos_no_citables(RAIZ)
     contexto = ContextoEvidencia(tramos_no_citables=tramos)
+    items = cargar_evidencia(RAIZ / "knowledge" / "evidence")
+    supersedidos = {it.supersede for it in items if it.supersede}
     pisan = [
         it.id
-        for it in cargar_evidencia(RAIZ / "knowledge" / "evidence")
+        for it in items
         if it.video_id in {"v7", "v8", "v9", "v10"}
+        and it.id not in supersedidos
         and tramo_no_citable(contexto, it.video_id, it.t0_ms, it.t1_ms) is not None
     ]
     assert pisan == []
+    # El negativo: el supersedido si lo pisa, y por eso hace falta contar solo los activos.
+    viejo = next(it for it in items if it.id == "ev-v9-003456-9ef48fb5")
+    assert viejo.id in supersedidos
+    assert tramo_no_citable(contexto, "v9", viejo.t0_ms, viejo.t1_ms) is not None

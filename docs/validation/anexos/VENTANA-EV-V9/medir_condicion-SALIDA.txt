@@ -1,0 +1,6 @@
+items: 502; activos: 490; supersedidos: ['ev-v1-000448-346d6d90', 'ev-v1-000959-b82650ad', 'ev-v2-003142-beb4ad3c', 'ev-v3-001531-1b12a896', 'ev-v3-002714-742f2589', 'ev-v3-004751-8eb74667', 'ev-v4-001207-0c4ffd4b', 'ev-v4-005319-dee95093', 'ev-v4-005703-4e43180e', 'ev-v4-011351-74b8bb39', 'ev-v4-011951-5fb49e03', 'ev-v9-003456-9ef48fb5']
+videos con tramos no citables: ['v10', 'v6', 'v7', 'v9']
+activos con la cruda ausente (solo se mira el tramo): ninguno
+ACTIVOS QUE INCUMPLEN LA CONDICION: 1
+  ev-v10-010438-0d4e6798 (v10, 3878000-3895500 ms)
+control: el item viejo (supersedido) incumple la condicion: True

@@ -1,0 +1,7 @@
+item viejo: ev-v10-010438-0d4e6798 (3878000-3895500 ms)
+segmento 1058: 3894997-3896537 ms; fin de la ventana nueva: 3894000
+verificar_citas: 0 problemas; apariciones 1; segmentos de la cita [1053, 1054, 1055, 1056, 1057]
+ventana_no_citable (3878000-3894000 ms): pasa
+ESCRITO: ev-v10-010438-024f76b8 (3878000-3894000 ms), knowledge/evidence/v10/ev-v10-010438-024f76b8.yaml
+campos distintos del viejo: ['cita_literal', 'id', 'notas', 'supersede', 't1']
+igual campo a campo salvo ['cita_literal', 'id', 'notas', 'supersede', 't1']: True

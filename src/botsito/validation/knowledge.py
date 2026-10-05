@@ -99,6 +99,42 @@ def ids_ambiguedades(repo: Path) -> set[str] | None:
     return {a.id for a in cargar_ambiguedades(ruta)}
 
 
+def ventanas_no_citables(items: Iterable[Any], contexto: Any) -> tuple[list[str], list[str]]:
+    """(problemas, avisos): la ventana declarada de todo item ACTIVO (que ningun otro supersede),
+    de todos los videos, no se solapa mas de 0 ms con un tramo no citable de su video ni con un
+    segmento de su transcripcion que solape un tramo (`evidence.verificacion.ventana_no_citable`;
+    decision del consultor del 2026-10-05, docs/validation/VENTANA-EV-V9.md). Un supersedido no
+    cuenta: no se cita.
+
+    Sin la cruda en esta maquina hace lo mismo que `verificar_citas`: no es un error, es un AVISO
+    agregado por transcripcion, y el tramo si se comprueba. Nunca pasa en silencio."""
+    from collections import Counter
+
+    from botsito.evidence.verificacion import ventana_no_citable
+
+    items = list(items)
+    supersedidos = {it.supersede for it in items if it.supersede}
+    problemas: list[str] = []
+    sin_cruda: Counter[str] = Counter()
+    for it in items:
+        if it.id in supersedidos:
+            continue
+        segmentos = None
+        if it.cita_de_audio and it.transcripcion is not None:
+            segmentos = contexto.crudas(it.transcripcion) if contexto.crudas else None
+            if segmentos is None and contexto.tramos_no_citables.get(it.video_id):
+                sin_cruda[it.transcripcion] += 1
+        fuera = ventana_no_citable(contexto, it.video_id, it.t0_ms, it.t1_ms, segmentos)
+        if fuera is not None:
+            problemas.append(f"{it.id}: {fuera}")
+    avisos = [
+        f"{n} ventanas sobre {tid} no comprobadas contra sus segmentos (cruda ausente en data/); "
+        "contra los tramos, si"
+        for tid, n in sorted(sin_cruda.items())
+    ]
+    return problemas, avisos
+
+
 def problemas_de_cierre(ambiguedades: Iterable[Any], registros_fb: Iterable[Any]) -> list[str]:
     """Lo que el feedback ACTIVO dice de cada ambiguedad, contra su estado en el YAML (rama
     trabajo/reabrir-y-fuente-documental, decision 1 del consultor del 2026-10-03).
@@ -695,6 +731,10 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
         problemas_citas, avisos_citas, _loc = verificar_citas(items, contexto)
         fallos += problemas_citas
         for a in avisos_citas:
+            salida.append(f"AVISO: {a}")
+        problemas_ventana, avisos_ventana = ventanas_no_citables(items, contexto)
+        fallos += problemas_ventana
+        for a in avisos_ventana:
             salida.append(f"AVISO: {a}")
     fallos += contradicciones.validar_fichero(directorio, items)
     propuestas: list[dict[str, Any]] = []

@@ -356,6 +356,11 @@ Formato: **Citas** (literal de la filtrada) · **Resumen** · **Confirmación** 
 - **Ítems:** `ev-v9-003253-2ac6060a`, `ev-v9-003303-818a0796`, `ev-v9-003318-c0503fe5`,
   `ev-v9-003456-9ef48fb5`.
 
+  > **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`).**
+  > `ev-v9-003456-9ef48fb5` está superseded por **`ev-v9-003457-3e28e325`**, con la misma cita y su
+  > ventana corregida a 0:34:57–0:35:00. La vieja empezaba sobre la cola de un segmento en
+  > cuarentena. A-46 cita ya el nuevo. Detalle: `VENTANA-EV-V9.md`.
+
 ### A-35 · cuándo un pivote de M15 está formado
 
 - **Citas:**

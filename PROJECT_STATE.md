@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/ventana-ev-v9-003456
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36y-filtradas-con-tramos` (2026-10-05).
+`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R: ventanas de ev-v9-003456 y ev-v10-010438 corregidas por su regimen; tramo de margen; la ventana de todo item activo se comprueba en validate. Falta el revisor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
 
 ## Stable Main State
 06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
@@ -23,13 +23,11 @@ NINGUNA ABIERTA tras `stable/F36y-filtradas-con-tramos` (2026-10-05).
 06adac1 · merge: las filtradas de sesion tapan los tramos no citables de su video, comprobado por el sha del audio (FILTRADAS-CON-TRAMOS.md) · tag stable/F36y-filtradas-con-tramos
 
 ## Tests Currently Passing
-1301 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
-
-R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
@@ -166,6 +164,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
 - F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
+- Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).
 
 ## Reglas vivas
 Las que hasta el 2026-10-01 solo estaban en este fichero, copiadas tal cual con su titulo de
@@ -203,9 +202,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 15 (2026-10-05).
+— ninguna desde el Archivo 16 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 15 (2026-10-05).
+— ninguna desde el Archivo 16 (2026-10-05).

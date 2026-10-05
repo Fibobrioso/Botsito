@@ -1,0 +1,5 @@
+item viejo: ev-v10-010438-0d4e6798 (3878000-3895500 ms)
+segmento 1058: 3894997-3896537 ms; fin de la ventana nueva: 3894000
+verificar_citas: 0 problemas; apariciones 1; segmentos de la cita [1053, 1054, 1055, 1056, 1057, 1058]
+ventana_no_citable (3878000-3895500 ms): la ventana pisa 503 ms del segmento 1058 (1:04:54.997-1:04:56.537), que solapa un tramo no citable
+RECHAZADO por la comprobacion de evidence new: <candidato sin escribir>: la ventana pisa 503 ms del segmento 1058 (1:04:54.997-1:04:56.537), que solapa un tramo no citable

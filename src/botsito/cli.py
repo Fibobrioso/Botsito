@@ -621,13 +621,22 @@ class _EntornoEvidencia:
     def comprobar(self, item: EvidenceItem) -> list[str]:
         """Problemas del item nuevo en el contexto real: manifiesto, referencias y cita."""
         from botsito.evidence.modelo import validar_contra_manifiesto, verificar_citas
-        from botsito.evidence.verificacion import comprobar_referencias, tramo_no_citable
+        from botsito.evidence.verificacion import comprobar_referencias, ventana_no_citable
 
         todos = [*self.existentes, item]
         problemas: list[str] = []
-        fuera = tramo_no_citable(self.contexto, item.video_id, item.t0_ms, item.t1_ms)
+        # La ventana no pisa un tramo no citable ni un segmento que lo solape (VENTANA-EV-V9.md).
+        # Sin la cruda solo se mira el tramo; ese caso ya es un problema mas abajo para el audio.
+        # El mismo criterio que `knowledge validate` y `evidence propose --check`: solo una cita de
+        # audio con su transcripcion mira los segmentos (revisor de la rama, B1).
+        segmentos = (
+            self.contexto.crudas(item.transcripcion)
+            if item.cita_de_audio and item.transcripcion and self.contexto.crudas
+            else None
+        )
+        fuera = ventana_no_citable(self.contexto, item.video_id, item.t0_ms, item.t1_ms, segmentos)
         if fuera is not None:
-            problemas.append(f"{item.id}: el tramo no es especificacion, {fuera}")
+            problemas.append(f"{item.id}: {fuera}")
         if self.manifiesto is not None:
             problemas += validar_contra_manifiesto(todos, self.manifiesto, self.contexto)
         elif item.modalidad in ("pantalla", "ambas") or item.fotogramas:
