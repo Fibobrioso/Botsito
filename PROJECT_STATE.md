@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/filtradas-con-tramos
+main
 
 ## Current Feature
-`trabajo/filtradas-con-tramos` EN CURSO (2026-10-05, tarea autonoma): punto Q, que las filtradas de sesion de scripts/transcribir_sesion.py tapen tambien los tramos no citables de su video. Encargo docs/encargos/trabajo-filtradas-con-tramos.md; informe docs/validation/FILTRADAS-CON-TRAMOS.md.
+NINGUNA ABIERTA tras `stable/F36y-filtradas-con-tramos` (2026-10-05).
 
 ## Stable Main State
-5e486dc · merge de `trabajo/filtradas-escenario-b` (tag `stable/F36x-filtradas-escenario-b`): las filtradas de sesion v7-v10 medidas en el escenario B y NO instaladas (siguen en A hasta Q); 8 tramos no citables nuevos (7 de v9 con el segundo de margen, y el bloque de B de v10 de 1:55:27); el ancla de ev-v9-003456-9ef48fb5, medida con la localizacion de validate, fuera del bloque (su ventana se corrige en R); el criterio de los limites de un tramo, en SESION-DE-PREGUNTAS.md; el hueco (las filtradas no aplican los tramos), documentado y llevado a Q. Dos filas en HOLDOUT-EXPOSICIONES que complementan la del 2026-10-04, sin quemar. Sobre `stable/F36w-cuarentena-por-condicion` (44f461d). Informe docs/validation/FILTRADAS-ESCENARIO-B.md; el registro del cierre, al final de HISTORIA.
+06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-5e486dc · merge: tramos de sesion completados, ancla de v9 medida y el hueco de las filtradas documentado (FILTRADAS-ESCENARIO-B.md) · tag stable/F36x-filtradas-escenario-b
+06adac1 · merge: las filtradas de sesion tapan los tramos no citables de su video, comprobado por el sha del audio (FILTRADAS-CON-TRAMOS.md) · tag stable/F36y-filtradas-con-tramos
 
 ## Tests Currently Passing
 1301 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -33,9 +33,11 @@ R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
+T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.
+
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
-E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**.
+E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
