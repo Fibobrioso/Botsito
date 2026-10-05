@@ -213,6 +213,15 @@ def test_el_repo_real_da_los_tramos_de_sus_sesiones(m: ModuleType) -> None:
 # ---------------------------------------------------------------- de punta a punta, con `main`
 
 
+def _tramos_de_juguete(m: ModuleType) -> Path:
+    """El fichero de tramos que los tests de fallo cerrado borran o estropean: SIEMPRE el del repo
+    de juguete. Si el parche de `RAIZ` del fixture faltara, se para aqui y no toca el real
+    (revisor de la rama, A4)."""
+    raiz: Path = m.RAIZ
+    assert raiz != RAIZ, "RAIZ no esta parcheada: no se toca el fichero de tramos real"
+    return raiz / "knowledge" / "corpus" / "tramos_no_citables.yaml"
+
+
 @pytest.fixture
 def sesion(m: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Un repo de juguete con su fichero de tramos (v8: 1-3 s) y una carpeta de audio FUERA de el,
@@ -284,7 +293,7 @@ def test_main_falla_cerrado_y_no_escribe_nada(
     argumentos: list[str],
     error: str,
 ) -> None:
-    fichero = m.RAIZ / "knowledge" / "corpus" / "tramos_no_citables.yaml"
+    fichero = _tramos_de_juguete(m)
     if preparar == "sin_fichero":
         fichero.unlink()
     elif preparar == "corrupto":
@@ -311,7 +320,7 @@ def test_main_sin_tramos_no_transcribe_ni_escribe_la_cruda(
         return [], {}, 0.0
 
     monkeypatch.setattr(m, "transcribir", transcribir)
-    (m.RAIZ / "knowledge" / "corpus" / "tramos_no_citables.yaml").unlink()
+    _tramos_de_juguete(m).unlink()
     m.salidas_de(sesion)["cruda"].unlink()
     antes = _ficheros(sesion.parent)
     assert m.main(["--audio", str(sesion), "--sesion", "02", "--video", "v8"]) != 0
