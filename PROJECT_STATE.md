@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/filtradas-escenario-b
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36w-cuarentena-por-condicion` (2026-10-04).
+`trabajo/filtradas-escenario-b` EN CURSO (2026-10-04): rehacer con el guion de main las filtradas de sesion v7-v10 en el escenario B (punto P). Fase 0 entregada y PARADA: esperando decision del consultor. Encargo docs/encargos/trabajo-filtradas-escenario-b.md; informe docs/validation/FILTRADAS-ESCENARIO-B.md.
 
 ## Stable Main State
 44f461d · merge de `trabajo/cuarentena-por-condicion` (tag `stable/F36w-cuarentena-por-condicion`): la cuarentena del texto deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre -sin dias en casos_ocultos ni en casos_reservados y fuera de knowledge/cases/meses_reservados.yaml (2026-02, 2026-03), la fuente nueva, SOLO ANADIR-; sin datos se tapan los doce (`cases.holdout.meses_libres`). Dos tramos de precaucion en v6; las filtradas de sesion v7-v10, en el escenario A hasta la rama siguiente (P). Sobre `stable/F36v-sesion-04` (eec79a0). Informe docs/validation/CUARENTENA-POR-CONDICION.md; el registro del cierre, al final de HISTORIA.
@@ -199,9 +199,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 13 (2026-10-04).
+— ninguna desde el Archivo 14 (2026-10-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 13 (2026-10-04).
+— ninguna desde el Archivo 14 (2026-10-04).
