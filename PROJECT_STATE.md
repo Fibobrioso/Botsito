@@ -14,7 +14,7 @@
 trabajo/ventana-ev-v9-003456
 
 ## Current Feature
-`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R, la ventana de ev-v9-003456-9ef48fb5 por su regimen; fase 0 hecha, esperando al consultor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
+`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R, la ventana de ev-v9-003456-9ef48fb5 por su regimen; item nuevo ev-v9-003457-3e28e325 y tramo de margen; PARADA en el punto 5 (ev-v10-010438-0d4e6798 incumple la condicion), esperando al consultor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
 
 ## Stable Main State
 06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
@@ -166,6 +166,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
 - F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
+- Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).
 
 ## Reglas vivas
 Las que hasta el 2026-10-01 solo estaban en este fichero, copiadas tal cual con su titulo de

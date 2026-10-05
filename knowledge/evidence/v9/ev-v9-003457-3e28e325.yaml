@@ -1,0 +1,17 @@
+id: ev-v9-003457-3e28e325
+video_id: v9
+t0: 0:34:57
+t1: 0:35:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No, porque son sesiones diferentes.
+afirmacion: no cambia nada, porque son sesiones diferentes
+tema: reentrada.sesgo_distinto_sesiones_diferentes
+confianza: media
+extractor: llm
+revisado_por: consultor, brief y decision del 2026-09-29 (trabajo/sesion-03) · version filtrada leida
+  por la sesion, sin revision humana; la cruda no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v9-003456-9ef48fb5
+notas: ventana corregida por orden del consultor, 2026-10-05, VENTANA-EV-V9.md; la cita no se releyó
+transcripcion: tr-v9-large-v3-int8-float16-dcd6e5bd
