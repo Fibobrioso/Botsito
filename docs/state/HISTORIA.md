@@ -4083,3 +4083,85 @@ los tramos arreglados y el hueco documentado (segunda respuesta del consultor, p
 pasa a Q. Su texto literal en PROJECT_STATE.md:
 
 P. Rama corta: rehacer con el guion de main las filtradas de sesión (v7–v10) en el escenario B. Medir antes con recuentos y marcas de tiempo, sin texto. Si algún ítem ev-* cae en un segmento que pasa a ocultarse, parar y avisar al consultor. Va antes de activar la sesión 4 (CUARENTENA-POR-CONDICION.md §5).
+
+# Registro de cierre · `trabajo/filtradas-escenario-b` (2026-10-04)
+
+- Orden de cierre del consultor del 2026-10-04, ejecutada a mano siguiendo `RITUAL.md`: llegó en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario.
+- **Punto P de la Next Action, con el alcance que fijó el consultor:**
+  - las filtradas de sesión v7–v10 se midieron en el escenario B con el guion de `main`, y B no se
+    instaló (parada P2); A sigue instalada;
+  - v9 en B es byte a byte la de ANTES (`f7529459…a027b`);
+  - se registraron 8 tramos no citables (solo añadir): 7 de v9, que completan los de la sesión 03
+    con el segundo de margen, y el bloque de B de v10 de 1:55:27;
+  - el ancla de `ev-v9-003456-9ef48fb5` se midió con la localización de `knowledge validate` y cae
+    fuera del bloque. El tramo de 0:34:44 se queda sin margen por la condición del ancla, y la
+    ventana del ítem se corrige en R;
+  - quedó escrito el criterio de los límites de un tramo (`SESION-DE-PREGUNTAS.md`);
+  - quedó documentado el hueco: las filtradas no aplican los tramos, y es Q.
+- `HOLDOUT-EXPOSICIONES.md`: dos filas que complementan la del 2026-10-04 (v10), sin exposición nueva
+  y sin quemar.
+- Q y R entran en la Next Action, y P salió en la rama («Next Action HECHA · P», arriba).
+- `Tests Currently Passing`: de 1272 a 1278 funciones (1980 a 1986 casos), con
+  `tests/unit/test_tramos_de_sesion.py`.
+- Deuda: ninguna nueva en Technical Debt; lo pendiente es Q y R.
+- Letra: la última cerrada era la w (`stable/F36w-cuarentena-por-condicion`); `stable/F36x-*` no
+  existe ni en local ni en `origin`.
+- Tag: `stable/F36x-filtradas-escenario-b`. El merge es
+  `git rev-parse "stable/F36x-filtradas-escenario-b^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `bbd2da8`: apertura (encargo, contrato, Archivo 14) con la fase 0;
+  - `dca3101`: B medido en su sitio; parada P2 y método de los tramos de v9;
+  - `819676a`: segunda respuesta, criterio de tramos y parada por un ítem de v9;
+  - `ffc518d`: tercera respuesta; la comprobación por marcas del ancla falla en (b);
+  - `f50b680`: ancla con validate, 8 tramos, criterio, test y hueco (commit y push hechos a mano por
+    Aleks: el clasificador del modo automático los bloqueó);
+  - `e2ee6cc`: quinta y sexta respuestas; fila complementaria en HOLDOUT-EXPOSICIONES;
+  - `c4bf89b`: informe del revisor, sus hallazgos y la fila de ERRORES-RECURRENTES;
+  - `0f70cf1`: séptima respuesta; Q y R corregidos, A3 y A4 en HOLDOUT-EXPOSICIONES;
+  - y el de este registro, que saca también el contrato.
+- CI de Linux, empujada como `fix/filtradas-escenario-b`:
+  - run 211 (37259081415), `f50b680`: 1 failed, 1977 passed, 8 skipped;
+  - run 212 (37260857834), `e2ee6cc`: 1 failed, 1977 passed, 8 skipped;
+  - run 213 (37262859430), `c4bf89b`: 1 failed, 1977 passed, 8 skipped;
+  - run 214 (37265185287), `0f70cf1`: 1 failed, 1977 passed, 8 skipped.
+
+  En todos, el fallo es el ÚNICO esperado (`RITUAL.md`): `state check` en
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`. Los commits anteriores a `f50b680` no se
+  empujaron. El cierre borra `fix/filtradas-escenario-b` de `origin`.
+- Informe: `docs/validation/FILTRADAS-ESCENARIO-B.md`, con las siete respuestas del consultor, el
+  informe del revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-filtradas-escenario-b.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/filtradas-escenario-b (consultor, 2026-10-04). Revisada: último commit 0f70cf1, CI de Linux run 214 (37265185287) con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA.
+  >
+  > TAG: stable/F36x-filtradas-escenario-b. Antes de usarlo, comprueba en HISTORIA que la última letra es la w (stable/F36w-cuarentena-por-condicion) y que stable/F36x-* no existe ni en local ni en origin. Si algo falla, para y dímelo.
+  >
+  > DESVIACIONES ACEPTADAS (ya en el informe; aquí solo se confirman)
+  > 1. B se midió y no se instaló: A se queda en su sitio hasta Q, porque una parada no se relaja después de ver el dato.
+  > 2. El tramo que completa el de 0:34:44 de v9 no se registró: sería idéntico al original, por la condición del ancla. La ventana del ítem se corrige en R.
+  > 3. Q tapará la línea visible del segundo de margen en 12 tramos: tapar de más no expone nada.
+  >
+  > HALLAZGOS PARA ERRORES-RECURRENTES
+  > La fila ya está en la rama, con los hallazgos del consultor y el de la sesión que vio el revisor. Del consultor, nada más que el revisor no viera.
+  >
+  > NEXT ACTION EN EL COMMIT DE ESTADO
+  > Q y R ya entraron con la rama; no los toques. Añade solo este punto, después de R:
+  > «S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.»
+  > Los demás puntos no cambian.
+  >
+  > RITUAL
+  > Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+  > - registro del cierre en HISTORIA en la rama, con stable/<tag>^{commit};
+  > - merge y tag;
+  > - commit de estado: solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit, y añade el punto S;
+  > - make check sellado;
+  > - push atómico de main y el tag, en un solo comando. Si el clasificador lo bloquea, para y dame el comando con «!»;
+  > - CI de main en verde antes de borrar nada;
+  > - borrar trabajo/filtradas-escenario-b en local y fix/filtradas-escenario-b en origin.
+  >
+  > INFORME FINAL
+  > Sha de main, tag y el sha al que apunta, run de la CI de main con su resultado, ramas que quedan y tamaño de PROJECT_STATE.

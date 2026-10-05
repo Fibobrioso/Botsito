@@ -869,6 +869,42 @@ Copiada tal cual:
   escapó»: nada. Frente a `main` sigue siendo una línea añadida.
 - Sin otro revisor, por orden del consultor: son cambios de texto que pidió el propio revisor.
 
+## Orden de cierre del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/filtradas-escenario-b (consultor, 2026-10-04). Revisada: último commit 0f70cf1, CI de Linux run 214 (37265185287) con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA.
+>
+> TAG: stable/F36x-filtradas-escenario-b. Antes de usarlo, comprueba en HISTORIA que la última letra es la w (stable/F36w-cuarentena-por-condicion) y que stable/F36x-* no existe ni en local ni en origin. Si algo falla, para y dímelo.
+>
+> DESVIACIONES ACEPTADAS (ya en el informe; aquí solo se confirman)
+> 1. B se midió y no se instaló: A se queda en su sitio hasta Q, porque una parada no se relaja después de ver el dato.
+> 2. El tramo que completa el de 0:34:44 de v9 no se registró: sería idéntico al original, por la condición del ancla. La ventana del ítem se corrige en R.
+> 3. Q tapará la línea visible del segundo de margen en 12 tramos: tapar de más no expone nada.
+>
+> HALLAZGOS PARA ERRORES-RECURRENTES
+> La fila ya está en la rama, con los hallazgos del consultor y el de la sesión que vio el revisor. Del consultor, nada más que el revisor no viera.
+>
+> NEXT ACTION EN EL COMMIT DE ESTADO
+> Q y R ya entraron con la rama; no los toques. Añade solo este punto, después de R:
+> «S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.»
+> Los demás puntos no cambian.
+>
+> RITUAL
+> Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+> - registro del cierre en HISTORIA en la rama, con stable/<tag>^{commit};
+> - merge y tag;
+> - commit de estado: solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit, y añade el punto S;
+> - make check sellado;
+> - push atómico de main y el tag, en un solo comando. Si el clasificador lo bloquea, para y dame el comando con «!»;
+> - CI de main en verde antes de borrar nada;
+> - borrar trabajo/filtradas-escenario-b en local y fix/filtradas-escenario-b en origin.
+>
+> INFORME FINAL
+> Sha de main, tag y el sha al que apunta, run de la CI de main con su resultado, ramas que quedan y tamaño de PROJECT_STATE.
+
 ## Estado
 
 **Lista para revisión, NO cerrada.** Hecho, con el alcance que fijó el consultor.
