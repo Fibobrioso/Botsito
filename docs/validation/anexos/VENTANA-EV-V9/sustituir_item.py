@@ -1,8 +1,9 @@
 """Sustituye ev-v9-003456-9ef48fb5 por un item nuevo que lo supersede, con la ventana corregida, SIN
 que el texto del item pase por la sesion (decision del consultor del 2026-10-05, punto 1).
 
-Replica `botsito evidence new --supersede` (`src/botsito/cli.py:988-1040`, `evidence_new`): los
-mismos `campos` (cli.py:1014-1032), escritos con la misma funcion,
+Replica `botsito evidence new --supersede` (`evidence_new`; las lineas son las de `main` en
+fffaa03: `src/botsito/cli.py:988-1040`): los mismos `campos` (cli.py:1014-1032), escritos con la
+misma funcion,
 `escribir_item(entorno.directorio, campos, entorno.comprobar)` (cli.py:1034), y la misma
 comprobacion, `_EntornoEvidencia.comprobar` (cli.py:621-662): `tramo_no_citable`, el manifiesto, la
 transcripcion activa y `verificar_citas`. Si la comprobacion encuentra algun problema,

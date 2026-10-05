@@ -627,9 +627,11 @@ class _EntornoEvidencia:
         problemas: list[str] = []
         # La ventana no pisa un tramo no citable ni un segmento que lo solape (VENTANA-EV-V9.md).
         # Sin la cruda solo se mira el tramo; ese caso ya es un problema mas abajo para el audio.
+        # El mismo criterio que `knowledge validate` y `evidence propose --check`: solo una cita de
+        # audio con su transcripcion mira los segmentos (revisor de la rama, B1).
         segmentos = (
             self.contexto.crudas(item.transcripcion)
-            if item.transcripcion and self.contexto.crudas
+            if item.cita_de_audio and item.transcripcion and self.contexto.crudas
             else None
         )
         fuera = ventana_no_citable(self.contexto, item.video_id, item.t0_ms, item.t1_ms, segmentos)

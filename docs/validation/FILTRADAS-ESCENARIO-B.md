@@ -585,17 +585,6 @@ fuera del bloque, el tramo termina en el inicio de la ventana. Si cae dentro, se
 **El control ya existía.** `tramo_no_citable` (`src/botsito/evidence/verificacion.py:358`) hace que
 `knowledge validate` y `evidence new` rechacen un ítem cuya ventana declarada solape un tramo más de
 0 ms. El test nuevo es `tests/unit/test_tramos_de_sesion.py`, con 6 funciones:
-
-> **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`).** La frase de arriba no se
-> midió, y es falsa en una mitad.
-> - `tramo_no_citable` solo lo llaman `evidence new` (`cli.py:628`) y `evidence propose --check`
->   (`evidence/propuestas.py:404`), al crear un ítem.
-> - **`knowledge validate` no lo llama**, así que no comprobaba los ítems ya existentes. Sobre ellos
->   solo había un test, y solo para v7–v10.
-> - Desde esa rama, `knowledge validate` comprueba, para todos los ítems activos de todos los
->   vídeos, que la ventana no solape más de 0 ms un tramo ni un segmento que solape un tramo.
->
-> Detalle: `VENTANA-EV-V9.md`.
 - **Sintéticos contra `tramo_no_citable`:**
   - un tramo que termina justo en el inicio de la ventana de un ítem pasa;
   - uno que se mete 1 ms en ella falla.
@@ -609,6 +598,17 @@ fuera del bloque, el tramo termina en el inicio de la ventana. Si cae dentro, se
   - ningún ítem de v7–v10 solapa un tramo.
 - **La rotura a propósito, en el test:** quitar en memoria un tramo nuevo del repo real hace que la
   comprobación lo nombre.
+
+> **CORRECCIÓN del 2026-10-05 (rama `trabajo/ventana-ev-v9-003456`).** La frase de arriba («El control ya
+> existía…») no se midió, y es falsa en una mitad.
+> - `tramo_no_citable` solo lo llaman `evidence new` (`cli.py:628` en `main`) y `evidence propose --check`
+>   (`evidence/propuestas.py:404` en `main`), al crear un ítem.
+> - **`knowledge validate` no lo llama**, así que no comprobaba los ítems ya existentes. Sobre ellos
+>   solo había un test, y solo para v7–v10.
+> - Desde esa rama, `knowledge validate` comprueba, para todos los ítems activos de todos los
+>   vídeos, que la ventana no solape más de 0 ms un tramo ni un segmento que solape un tramo.
+>
+> Detalle: `VENTANA-EV-V9.md`.
 
 **La rotura a propósito, en el fichero** (segunda respuesta, punto 2):
 1. Se apuntó el sha256 del yaml, `a7d093cb…`.

@@ -4,6 +4,9 @@ Rama `trabajo/ventana-ev-v9-003456`, abierta el 2026-10-05 desde `main` en `fffa
 estado; tag `stable/F36y-filtradas-con-tramos` en `06adac1`). Encargo:
 `docs/encargos/trabajo-ventana-ev-v9-003456.md`. Es el punto R de la Next Action.
 
+**Las líneas de código que cita este informe son las de `main` en `fffaa03`**, salvo que diga otra
+cosa. En la rama, `cli.py` crece unas líneas y se desplazan (revisor, A1).
+
 **v9 es material en cuarentena.**
 - Las medidas usan solo `n`, `t0_ms` y `t1_ms` de los segmentos, por la misma vía que
   `FILTRADAS-ESCENARIO-B/ancla_v9.py`: `construir_contexto`, `contexto.crudas` y `verificar_citas`.
@@ -451,7 +454,11 @@ un borde; el filtro de Q los taparía por ese trozo):
 | v7 | 1 | 127 (630) |
 | v9 | 7 | 403 (10), 437 (680), 1074 (94), 1081 (4); en tramos de precaución, 567 (130), 1178 (1.923) y 1662 (2.696) |
 | v10 | 22 | 25 (860), 650 (50), 1036 (607), 1040 (53), **1058 (537)**, 1358 (672), 1362 (908), 1363 (372), 1367 (588), 1686 (182), 1702 (212), 1708 (188), 1891 (122), 1897 (8 y 932), 1901 (888); en tramos de precaución y sin audio, 664 (270), 705 (270), 1379 (312), 1383 (10.868), 1398 (469), 1724 (28) |
-| **Total** | **32** | |
+| **Total** | **32 filas, 31 segmentos** | el 1897 asoma por los dos lados de dos tramos seguidos |
+
+**Lo que el consultor preguntó** (tramos redondeados al segundo, es decir, de cuarentena mecánica):
+**21 filas** (v7: 1, v9: 4, v10: 16). Las otras **11** son de tramos manuales, de precaución o sin
+audio (v6: 2, v9: 3, v10: 6), cuyos bordes no salen de un redondeo de la filtrada (revisor, A3).
 
 - **Los que asoman por el inicio** de un tramo de cuarentena mecánica son visibles seguros: el tramo
   empieza en el segundo truncado de su primer segmento oculto.
@@ -516,9 +523,25 @@ agregado por transcripción (`evidence/modelo.py:398-399`).
 - **`uv run python scripts/ficheros_con_ocultos.py`:** «OK: .claude/hooks/ficheros_con_ocultos.txt
   coincide».
 
+## 7. Lo que se hizo con los hallazgos del revisor
+
+Resultado: 0 bloquea y 0 importa; 4 menores en el eje (a) y 1 en el (b). Los 24 requisitos del
+encargo, hechos.
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| A1 | menor | **Arreglado.** Las líneas de `cli.py` que citan el informe y los anexos son las de `main` en `fffaa03`, y en la rama se desplazan. El informe lo dice en su cabecera; los dos anexos citan ahora las mismas líneas (621-662) y dicen que son de `main`; el recuadro del §4.3 de FILTRADAS dice «en `main`». |
+| A2 | menor | **Arreglado.** El recuadro del §4.3 de `FILTRADAS-ESCENARIO-B.md` pasa a ir detrás de la lista de los 6 tests, que es donde no corta la lectura. Lo añadió esta rama: el cuerpo del informe cerrado sigue intacto, y frente a `main` el fichero solo gana líneas (+20/−0). |
+| A3 | menor | **Arreglado.** El §5 distingue ya 32 filas de 31 segmentos (el 1897 sale dos veces). Separa también las **21** filas de cuarentena mecánica, las que preguntó el consultor, de las 11 de tramos manuales, de precaución o sin audio. |
+| A4 | menor | **Arreglado.** El Estado da el tamaño frente a la cifra del consultor (24.014, no crece) y frente a `main` (23.567, +410). |
+| B1 | menor | **Arreglado en el código.** `evidence new` decidía si mirar los segmentos con `item.transcripcion`; validate, con `cita_de_audio` y transcripción; propose, con la modalidad. Ahora `evidence new` usa el mismo criterio que validate (`cita_de_audio and transcripcion`), que equivale al de propose. Los 8 tests siguen pasando. Sin la cruda, `evidence new` sigue dando un ERROR, por la comprobación de transcripción que ya existía: es más estricto que el AVISO de validate, y es lo que hacía antes. |
+
+**Para el consultor, del revisor:** confirmar la desviación de A-42 (§4.2). A-42 no citaba el ítem
+viejo de v10, así que no se le ha añadido el nuevo.
+
 ## Estado
 
-**Lista para revisión, NO cerrada.**
+**Lista para revisión, NO cerrada.** El revisor, al final, y lo hecho con sus hallazgos en el §7.
 
 **Encargo frente a lo hecho:**
 
@@ -551,6 +574,95 @@ agregado por transcripción (`evidence/modelo.py:398-399`).
 **CI de Linux: no hace falta.** No se tocan hooks, rutas ni nada que dependa de la plataforma; el
 código nuevo es Python puro sobre milisegundos.
 
-**`PROJECT_STATE.md`:** 23.977 bytes. No crece en esta rama: era de 24.014 y bajó.
+**`PROJECT_STATE.md`:** 23.977 bytes.
+- Frente a la cifra que dio el consultor (24.014, la de la mitad de la rama), no crece.
+- Frente a `main` (23.567), sube 410 bytes: la apertura de la rama y la línea de deuda.
+- Sigue por debajo del tope de 25.000 (revisor, A4).
 
 Rama NO cerrada.
+
+## Informe del revisor
+
+Subagente `revisor` (`.claude/agents/revisor.md`), lanzado con el informe terminado sobre `41be086`.
+Pegado tal cual; lo que se hizo con cada hallazgo está en el §7.
+
+> ## Informe del revisor · trabajo/ventana-ev-v9-003456 · 2026-10-05
+>
+> Rama en `41be086` (3 commits sobre `fffaa03`); `git status` limpio; `make-check.log`: `SELLO: make check en verde sobre el arbol ef3624e3f50367e3073923c643604f075d96a7be` = `git rev-parse HEAD^{tree}`, `2027 passed`, `exit=0`, `PICO DE MEMORIA: 288 MiB`. Regla de lectura respetada: no leí ninguna `cita_literal` ni `afirmacion` de `ev-v9-*`/`ev-v10-*`, ninguna cruda ni filtrada; solo programas que imprimen nombres de campo, booleanos, ids y ms.
+>
+> ### Eje (a) · Reglas de la casa
+>
+> Resumen: 0 bloquea, 0 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | menor | Las referencias de línea a `cli.py` en el informe (§0.a, §1.2) y en los anexos (`sustituir_item.py`, `recortar_item_v10.py`) son las de `main` (`evidence_new` 988-1040, `escribir_item` 1034, `comprobar` 621-662); en la rama `comprobar` crece 7 líneas y quedan desplazadas. Lo mismo en el recuadro de FILTRADAS §4.3 (`cli.py:628`, `propuestas.py:404`). La decisión 1 pedía citar la línea que se replica: conviene decir «en main». | `grep -n "def evidence_new\|escribir_item(" src/botsito/cli.py` → 995 / 1041 (en main 988 / 1034). `recortar_item_v10.py:5` ya dice «621-670», `sustituir_item.py:7` dice «621-662»: inconsistentes entre sí. |
+> | A2 | menor | En FILTRADAS-ESCENARIO-B.md §4.3 el recuadro de corrección quedó insertado entre «con 6 funciones:» y su lista de viñetas, que sigue debajo; el cuerpo está intacto, pero la lectura se parte. | `git diff main -- docs/validation/FILTRADAS-ESCENARIO-B.md`: el recuadro entra justo tras la línea «…con 6 funciones:» y antes de «- **Sintéticos contra `tramo_no_citable`:**». |
+> | A3 | menor | La medida de §5 (punto 4 del consultor) da «Total 32» con dos imprecisiones: (i) cuenta el segmento 1897 dos veces (inicio y fin): 31 segmentos, 32 filas; (ii) mezcla 21 filas de «cuarentena mecánica» (v7 1, v9 4, v10 16) —las que el consultor preguntó (tramo «redondeado al segundo»)— con 11 de tramos manuales, de precaución o sin audio (v6 2, v9 3, v10 6). El informe sí distingue las clases en prosa, pero el total de cabecera no responde a la pregunta tal cual. | `medir_recortados-SALIDA.txt` (reproducida: idéntica salvo CRLF); filas con clase «cuarentena mecanica» = 21; resto = 11. |
+> | A4 | menor | «PROJECT_STATE: 23.977 bytes. No crece: era de 24.014 y bajó.» Respecto de `main` (23.567 bytes) sí crece 410 bytes; 24.014 era el estado intermedio de la propia rama. Por debajo del tope de 25.000 y no rompe la decisión 6, pero la frase puede inducir a error. | `git show fffaa03:PROJECT_STATE.md \| wc -c` = 23567; `3667838` = 23771; `809117b` = 24014; `41be086` = 23977. |
+>
+> Comprobado sin hallazgos: contrato (`contrato_rama.py`: 33 ficheros dentro, 4 comprobaciones; nada en `rutas_protegidas`); comprobaciones del contrato (`medir_ventana.py` idéntica; `knowledge validate` exit 0, 0 `ERROR`, sin AVISO propio de la condición con la cruda presente; `ficheros_con_ocultos.py` OK; sello = `HEAD^{tree}`); trailers `Fuente:` (solo `809117b` toca `knowledge/spec/`, con `Fuente: ev-v9-003457-3e28e325`, que existe; ningún commit toca `knowledge/cases/`); holdout y material (nada en `knowledge/cases/holdout/`; «Exposición: ninguna» justificada; los anexos no usan `.texto`, `cita_literal` ni `afirmacion` salvo para copiarlas, y sus salidas solo traen ids y ms; el único texto impreso es el `motivo` de un tramo, plantilla y no material; el recuadro de SESION-04 repite «…y el cierre también sería 10», que ya estaba en `main` en ese documento y en la decisión del consultor); regímenes (solo dos `A` en evidencia; tramos +7/−0; HISTORIA solo añade el Archivo 16; nada en feedback, ADR, `libros.yaml` ni ERRORES-RECURRENTES); ambigüedades (A-46 +1/−1, `spec docs` coincide, no se abre ni cierra nada); informes cerrados (FILTRADAS §4.1 y §4.3, SESION-03 y SESION-04 §3.1: solo líneas añadidas, en `>`, con fecha y rama; `CUARENTENA-POR-DEFECTO.md`, `anexos/FILTRADAS-ESCENARIO-B/` y encargos anteriores sin diff); sin sitio nuevo con `cita` en la spec; `test_no_business_literals` dentro de `make check`; el informe existe y acaba en su estado; tres citas del informe contra su fuente (`modelo.py:429-435`, `modelo.py:398-399`, `git grep -n tramo_no_citable main -- src`) ✓.
+>
+> ### Eje (b) · Encargo
+>
+> Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 24 hechos, 0 parciales, 0 no hechos (1 «hecho de otra forma», bien declarado).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Rama desde `main` en `fffaa03` con `abrir-rama`: encargo, contrato, Archivo 16 en HISTORIA | Hecho | merge-base `fffaa03`; encargo; `contrato.yaml`; `+# Archivo 16` |
+> | 2 | Corregir la ventana de `ev-v9-003456-9ef48fb5` por supersede, no por edición | Hecho | `ev-v9-003457-3e28e325`: `t0: 0:34:57`, `supersede: ev-v9-003456-9ef48fb5`; el viejo sin cambios |
+> | 3 | No cambia motor, spec de reglas, texto de la cita, otros ítems ni líneas escritas de tramos | Hecho | sin diff en `src/botsito/engine/`, `strategy_spec.yaml`, `parametros.yaml`; tramos +7/−0; campos distintos `['id','notas','supersede','t0']` |
+> | 4 | Material: solo `n`, `t0_ms`, `t1_ms`; sin texto ni longitudes; sin filtradas | Hecho | anexos y salidas revisados; que no se abrió ninguna filtrada no se puede probar desde el diff (lo declara el informe) |
+> | 5 | Fase 0 (a)-(e) entregada antes de escribir | Hecho | §0.a-§0.e; las afirmaciones comprobadas son ciertas |
+> | 6 | (b): 612/613, condiciones, inicio al segundo más temprano; fin 2.100.000 si cumple | Hecho | `medir_ventana.py` reproducido |
+> | 7 | (c): tramo de margen solo añadiendo; 0 ms con la ventana nueva | Hecho | +7/−0 (2.084.000–2.097.000); la ventana nueva empieza en 2.097.000 |
+> | 8 | (d): quién cita el id y por qué régimen | Hecho | §0.d; Grep: spec solo A-46; nada en feedback |
+> | 9 | (e): ¿falla algo hoy? condición y sitio | Hecho | §0.e; la corrección sobre `knowledge validate` es cierta |
+> | 10 | Fase 1 con `Fuente:` y referencia a FILTRADAS §4.1 | Hecho | `809117b` |
+> | 11 | D1: vía autorizada con sus condiciones | Hecho | `sustituir_item.py`; `revisado_por` igual (`True`); `notas` == la del consultor (`True`) |
+> | 12 | D2: tramo primero; dos pasadas; la de 2.096.000 rechazada por `tramo_no_citable` | Hecho | PASADA1 reejecutada: rechazada, exit 1, sin escribir; PASADA2 escribe `ev-v9-003457-3e28e325`. El orden solo lo cuenta el informe |
+> | 13 | D3: A-46 sustituye el id, con `Fuente:` y `spec docs --escribir` | Hecho | +1/−1; `spec docs` coincide |
+> | 14 | D3: ¿avisa algo de ítems supersedidos citados?; si no, línea de deuda | Hecho | ninguna mención de «supersed» en `spec/` ni `validation/`; línea en Technical Debt |
+> | 15 | D4: control sobre ítems ACTIVOS; supersedidos fuera declarados | Hecho | `control_activos.py` reproducido: 0 activos; 2 supersedidos |
+> | 16 | D5: función junto a `tramo_no_citable`, solo ms, la llaman validate, new y propose | Hecho | `ventana_no_citable`; `_validar` vía `ventanas_no_citables`; `_EntornoEvidencia.comprobar`; `propuestas.comprobar` |
+> | 17 | D5: medir antes de activar; 0 o PARADA | Hecho | `medir_condicion-SALIDA.txt` (1 → parada); `SALIDA2` reproducida: 0 |
+> | 18 | D5: sin transcripción, como `verificar_citas`, nunca en silencio | Hecho | simulado sin `data/`: 0 problemas, 4 AVISO agregados por transcripción |
+> | 19 | Tests de rotura (cinco + v10) | Hecho | 8 funciones; 14 passed con `test_tramos_de_sesion` |
+> | 20 | D6: recuadros; lo que no se toca, intacto | Hecho | ver respuesta 5 |
+> | 21 | D7: hallazgo para ERRORES-RECURRENTES en el informe | Hecho | §3 |
+> | 22 | v10-1/2: ítem nuevo, cita y ventana recortadas, dos pasadas, campos listados | Hecho | `ev-v10-010438-024f76b8`: distintos `['cita_literal','id','notas','supersede','t1']`; `t1` 3.894.000; segmentos 1053–1057, 0 problemas, 1 aparición; `vieja` reejecutada: rechazada por `ventana_no_citable` (503 ms del 1058), exit 1 |
+> | 23 | v10-3: A-42 pasa a citar el nuevo; recuadro SESION-04 §3.1; qué más cita el id viejo | **Hecho de otra forma, declarado** | A-42 no citaba el viejo; recuadro hecho; «qué más cita» medido |
+> | 24 | v10-4/5/6: medida de recortados; activar; controles; make check; PS sin crecer | Hecho | §5 (ver A3); PS 23.977 < 24.014 y < 25.000; `state check` OK (1309 = 1301 + 8) |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | menor | Las tres vías que llaman a la condición no pasan los segmentos con el mismo criterio: `evidence new` mira `item.transcripcion` (`cli.py:~629`), `knowledge validate` mira `it.cita_de_audio and it.transcripcion`, `propose` mira `modalidad in ("audio","ambas")`. Hoy no cambia nada (los 156 ítems activos de v6/v7/v9/v10 con tramos son de audio con transcripción, salvo 1 de pantalla sin transcripción en v7), pero es una divergencia latente. Además, sin cruda, `evidence new` da ERROR (por la comprobación de transcripción que ya existía), no el AVISO de validate; el informe solo describe el comportamiento de validate. | `git diff main -- src/botsito/cli.py src/botsito/evidence/propuestas.py src/botsito/validation/knowledge.py`; recuento por (vídeo, modalidad, transcripción) ejecutado. |
+>
+> Lo que la rama hace sin que el encargo lo pida: nada con evidencia en contra. Lo que el encargo dice que no se toca: sin diff en motor, `parametros.yaml`, `strategy_spec.yaml`, hooks, guardia, skills, `scripts/`, feedback, HISTORIA anterior, encargos ni anexos cerrados.
+>
+> ### Respuestas 1-10 (resumen)
+>
+> 1. Ítems nuevos frente a viejos: correcto (v9 difiere en `id`, `notas`, `supersede`, `t0`; v10 en `cita_literal`, `id`, `notas`, `supersede`, `t1`; `revisado_por` igual; `notas` literal; la cita de v10 es prefijo de la vieja; los viejos intactos).
+> 2. Tramo de margen: +7/−0, un solo tramo v9 0:34:44–0:34:57, con `motivo` y `acordado`.
+> 3. Condición: la aprobada, solo ms, llamada por las tres vías; sin cruda, aviso agregado y nunca en silencio (simulado). Las otras dos vías: B1.
+> 4. Tests: 14 passed; cubren los cinco de rotura, el caso v10, sin cruda y el cableado; el cambio de `test_tramos_de_sesion` cuenta solo activos con su negativo.
+> 5. Referencias: A-46 cita el nuevo de v9; A-42 no citaba el viejo de v10 (`main` y HEAD), desviación bien declarada que el consultor debe confirmar; recuadros solo con líneas añadidas; lo que no se toca, intacto.
+> 6. Medidas reproducidas, idénticas salvo CRLF (`medir_ventana`, `medir_condicion` SALIDA2, `control_activos`, `medir_recortados`); los «seguros» de v9 confirmados con los rangos de los motivos.
+> 7. Trailers `Fuente:` correctos.
+> 8. `PROJECT_STATE.md`: 23.977 bytes (A4); 1309 funciones; la línea de deuda está.
+> 9. `knowledge validate` exit 0 sin ERROR; `ficheros_con_ocultos` OK.
+> 10. El hallazgo para ERRORES-RECURRENTES está escrito (§3) y es cierto.
+>
+> CI de Linux «no hace falta»: comprobado; no se tocan hooks, rutas ni scripts; el único comportamiento que depende del entorno es la ausencia de `data/`, que da avisos sin error.
+>
+> ### Lo que no pude comprobar
+> - Que no se abrió ninguna filtrada ni texto de v9/v10 durante la rama (solo que los anexos no lo imprimen y el diff no lo contiene).
+> - El orden real de ejecución de las fases (un commit lo junta todo).
+> - La condición con un `data/` realmente ausente (simulada con una ruta inexistente).
+> - `make check` (me fié del sello = `HEAD^{tree}` y de `2027 passed`).
+> - Que los segmentos «posibles» de v10 sean visibles (exige la filtrada).
+> - Que la cita nueva de v10 sea la más larga posible y completa (no la leí; es prefijo y `verificar_citas` da 0 problemas y 1 aparición).
+>
+> ### Veredicto
+>
+> Lista para revisión del consultor. Eje (a): sin hallazgos que bloqueen ni importen; 4 menores de redacción y referencias. Eje (b): 24 requisitos hechos; una desviación (A-42 sin referencia que mover) declarada y justificada, que conviene que el consultor confirme; un menor latente (B1). Lo medido es reproducible: 0 activos incumplen, 21 de 21 bloques caben, 2 supersedidos fuera. `make check` sellado sobre el árbol de `HEAD`.

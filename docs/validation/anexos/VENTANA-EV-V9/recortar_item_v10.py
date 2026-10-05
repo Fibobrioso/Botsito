@@ -1,9 +1,9 @@
 """Sustituye ev-v10-010438-0d4e6798 por un item nuevo con la cita y la ventana recortadas antes del
 segmento 1058 (decision del consultor del 2026-10-05 sobre ese item), SIN que el texto pase por la
-sesion. Hermano de `sustituir_item.py`: replica igual `botsito evidence new --supersede`
-(`src/botsito/cli.py:988-1040`; los `campos` de cli.py:1014-1032, `escribir_item(entorno.directorio,
-campos, entorno.comprobar)` de cli.py:1034, y `_EntornoEvidencia.comprobar` de cli.py:621-670, que
-desde esta rama llama a `ventana_no_citable`).
+sesion. Hermano de `sustituir_item.py`: replica igual `botsito evidence new --supersede`. Las
+lineas son las de `main` en fffaa03: `src/botsito/cli.py:988-1040`; los `campos` de
+cli.py:1014-1032; `escribir_item(entorno.directorio, campos, entorno.comprobar)` de cli.py:1034; y
+`_EntornoEvidencia.comprobar` de cli.py:621-662, que desde esta rama llama a `ventana_no_citable`.
 
 - La cita nueva es el prefijo MAS LARGO de la vieja (cortada por palabras, sin el separador final)
   cuya localizacion, con `localizar_cita` (la de `verificar_citas`), cae entera antes del segmento
