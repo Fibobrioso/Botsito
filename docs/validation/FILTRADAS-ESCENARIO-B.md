@@ -127,7 +127,163 @@ en B y dentro de un tramo»), **la parada saltaría en v9 y v10 seguro**, y no p
   que lea la filtrada. Arreglarlo exige cambiar el guion (que la filtrada tape también los tramos),
   que esta rama no puede tocar.
 
+## Respuesta del consultor a la fase 0 (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la fase 0 de trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. Cómo se mide B: adelantando la fase 1, en su sitio. Nada de ASR nuevo.
+>    Por qué: escribir una filtrada que nadie lee no expone nada. Un ASR completo crea otra copia de material en cuarentena fuera del repo, cuesta hora y media de GPU y no garantiza los mismos segmentos en v9.
+>    Cómo:
+>    a) Antes de ejecutar nada, copia cada filtrada A a *.filtrada-A-condicion.md y apunta su sha256. Las ANTES no se tocan.
+>    b) Ejecuta uv run python scripts/transcribir_sesion.py --solo-filtrar --sesion NN, con el --audio de cada vídeo, guion de main tal cual.
+>    c) De las filtradas B solo se miran las marcas [CUARENTENA …], los recuentos y los ids. Nadie las abre hasta que yo dé el visto bueno.
+>    d) Si salta una parada, se restaura A desde la copia, se comprueba que el sha256 coincide con el apuntado y me avisas.
+>
+> 2. Límites de los tramos nuevos: mm:ss del bloque, con el inicio al segundo y un segundo de margen al final.
+>    Por qué: es lo único que da la filtrada sin leer la cruda, y el segundo de margen corrige el truncado que tu control positivo detectó.
+>    Antes de usarlo, verifica en tramos_no_citables.yaml y en sus informes que v9 y v10 se registraron así. Si no fue así, para y dime cómo se hizo.
+>    Cada tramo nuevo tiene que pasar tu control positivo: el bloque de B cabe entero dentro del tramo.
+>
+> 3. Las paradas quedan así, y sustituyen a las del encargo:
+>    - algún ev-* cae en un segmento oculto en B que estaba visible en ANTES (o en sus tramos, para v7 y v8);
+>    - algún segmento oculto en A pasa a visible en B y cae, aunque sea en parte, dentro de un tramo no citable;
+>    - algún segmento oculto en ANTES pasa a visible en B. Dame cuántos y de qué vídeo, y no se usa esa filtrada hasta que yo decida.
+>    Por qué: la parada de tramos que escribí presuponía que las filtradas aplicaban los tramos, y no lo hacen. Lo que mide esta rama es lo que B cambia frente a A, no un hueco que ya estaba.
+>
+> 4. El hueco de los tramos no se arregla aquí; se documenta.
+>    Por qué: arreglarlo exige cambiar el guion, y la guardia solo deja ejecutar el de main.
+>    En el informe, una sección propia con:
+>    - para cada tramo de v7–v10: su clase (precaución, conversación personal u otra), el commit y la fecha en que entró, y cuántas líneas de la filtrada A y de la B caen dentro. Todo sin texto;
+>    - qué lecturas de esas filtradas constan en los informes (extracción de las sesiones 3 y 4 y otras) después de la fecha de cada tramo;
+>    - si hay alguna lectura posterior de un tramo de precaución, no la declares tú: me la pasas, y yo decido si va a HOLDOUT-EXPOSICIONES.md.
+>
+> 5. Next Action, en el commit que cierre esta rama: añadir después de P un punto nuevo:
+>    «Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con test sintético que rompa la guardia a propósito; tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10. Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera.»
+>    Por qué: la activación de la sesión 4 lee la filtrada de v10, y hoy esa filtrada enseña tramos de precaución.
+>
+> 6. Hallazgo del consultor para ERRORES-RECURRENTES, que se apunta en la fila de esta rama al cerrarla:
+>    importa · El consultor escribió una parada sobre los tramos dando por hecho, sin medirlo, que las filtradas los aplicaban. Lección: antes de escribir una parada sobre un mecanismo, medir que el mecanismo existe.
+>
+> Lo demás del encargo sigue igual: los sha, v9 frente a f7529459…, los tramos nuevos por su régimen, ficheros_con_ocultos, knowledge validate, el test de tramos con su rotura a propósito, los recuadros en los dos informes cerrados, make check sellado, fix/ con la CI de Linux y sus números de run, y el revisor.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. B medido en su sitio (respuesta del consultor, punto 1), y la parada P2
+
+### 1.1 Lo que se hizo
+
+**a) Las A, apartadas, con su sha256 apuntado ANTES de ejecutar nada.** Cada filtrada A se copió a
+`*.filtrada-A-condicion.md` y su registro a `*.registro-A-condicion.txt`. Los sha256 de las A:
+
+| Vídeo | sha256 de A |
+|---|---|
+| v7 | `8690ce4385106098bdd97ced429a00f558648fd9e7fc4f9c8c37b43b15b99f1e` |
+| v8 | `4e7528034bbafd11e4dfe70c9dcd27170f1d1cb3874c0517e09c39ff1f48bc71` |
+| v9 | `61a084f60d20fe6ebe74a08c072a57b42c4c3cf63221b40f050211909b2b03c0` |
+| v10 | `2952b8f55fa2c5a2bf9c28ca369cc477a18f8a96af862fb44801d2d3468240c4` |
+
+Las ANTES no se tocaron.
+
+**b) El guion de `main`, tal cual.** `git diff --quiet main -- scripts/transcribir_sesion.py` dio
+igual, y el guion pasa `meses_libres_del_repo()`. Se ejecutó uno por vídeo:
+- `uv run python scripts/transcribir_sesion.py --solo-filtrar --sesion 02 --audio "C:/Users/USER/Desktop/sesion-02-v7-audio/sesion-02-v7.m4a"`
+- `uv run python scripts/transcribir_sesion.py --solo-filtrar --sesion 02 --audio "C:/Users/USER/Desktop/sesion-02-v8-audio/sesion-02-v8.m4a"`
+- `uv run python scripts/transcribir_sesion.py --solo-filtrar --sesion 03 --audio "C:/Users/USER/Desktop/sesion-03-audio/sesion-03.m4a"`
+- `uv run python scripts/transcribir_sesion.py --solo-filtrar --sesion 04 --audio "C:/Users/USER/Desktop/sesion-04-audio/sesion-04.m4a"`
+
+De su salida solo se miraron las líneas `hoja`, `segmentos` y `motivos`.
+
+**c) De las B solo se miraron marcas, recuentos e ids.** Anexo:
+`docs/validation/anexos/FILTRADAS-ESCENARIO-B/medir_fase1.py`, con la salida en
+`medir_fase1-SALIDA.txt`. Se reprodujo y la salida es idéntica byte a byte. **Nadie ha abierto
+ninguna B.**
+
+**d) Salta la parada P2, así que se restauró A** (§1.3).
+
+### 1.2 Lo que da B
+
+| Vídeo | ANTES: segmentos / bloques | A | B | sha256 de B |
+|---|---|---|---|---|
+| v7 | sin filtrada; 1 tramo | 9 / 3 | **3 / 1** | `213ecbf2e0bf67500859c27d8b9b2f09bb91c5fd4551ec8ade25c2911a4e8345` |
+| v8 | sin filtrada; 0 tramos | 0 / 0 | **0 / 0** | `4e7528034bbafd11…` (la misma que A) |
+| v9 | 29 / 8 | 57 / 15 | **29 / 8** | `f7529459b4c97d12bb9ad74ef24318d6b7c8b15365f6fafb06e4228c4c4a027b` |
+| v10 | 45 / 12 | 89 / 23 | **48 / 13** | `a07251504287cfba092881ffb5202fb745dae8224471d1e81d758e44e73e59eb` |
+
+- **v9:** su B es **byte a byte** la de ANTES y la de `SESION-04-EXTRACCION.md` §1.2
+  (`f7529459…a027b`). La regla por condicion no cambia nada en v9, porque v9 no nombra el mes que la
+  lista vieja no cubría.
+- **v10:** B tapa 3 segmentos y 1 bloque más que ANTES. El bloque nuevo es el de 1:55:27, junto al
+  tramo manual de 1:55:29.
+
+**Las paradas, medidas a nivel de segmento y sin bordes.** Las tres filtradas de cada vídeo salen de
+la misma cruda. Así, una línea que B destapa es una marca que aparece más veces entre las visibles de
+B que entre las de A (o las de ANTES), contadas como multiconjunto.
+- La primera versión comparaba marcas con rangos de bloques y daba falsos destapados en los bordes,
+  porque la marca trunca al segundo.
+- La delató v9: su B es idéntica a ANTES, y aun así salían 4 destapados. Con el multiconjunto salen
+  0, que es lo correcto.
+
+| Parada | v7 | v8 | v9 | v10 |
+|---|---|---|---|---|
+| P1: ev-* en un bloque de B que no estaba oculto en ANTES (o en sus tramos) | 0 | 0 | 0 | 0 (el bloque nuevo de 1:55:27 no lleva ningún ítem) |
+| P2: segmento oculto en A, visible en B, que cae (aunque sea en parte) en un tramo | 0 | 0 | **3** (1:13:55, 1:14:04, 1:14:05) | **3** (0:01:26, 0:40:20, 0:40:41) |
+| P3: segmento oculto en ANTES y visible en B | 0 | 0 | 0 | 0 |
+
+### 1.3 La parada P2: qué es y qué se hizo
+
+**Salta P2 en v9 y en v10, con 3 segmentos cada una.** Ninguno es nuevo frente a ANTES (P3 = 0):
+estaban visibles en las filtradas de antes de la regla por condicion, y solo A, que tapaba los 12
+meses, los ocultaba.
+
+| Vídeo | Segmentos | Tramo en el que caen |
+|---|---|---|
+| v9 | 1:13:55, 1:14:04, 1:14:05 | el tramo de precaución 1:13:04–1:14:16 |
+| v10 | 0:40:20, 0:40:41 | el tramo de precaución 0:40:20–0:40:42 |
+| v10 | 0:01:26 | empieza en el segundo anterior al tramo de cuarentena 0:01:27–0:01:37 («aunque sea en parte») |
+
+Es el hueco del §0.4 (las filtradas no aplican los tramos), visto desde B.
+
+**Lo que se hizo, por el punto 1d:**
+- Se **restauró A desde la copia** en las cuatro sesiones, con su registro, y los sha256 coinciden con
+  los apuntados (`8690ce43…`, `4e752803…`, `61a084f6…` y `2952b8f5…`).
+- Antes, cada B se guardó como `*.filtrada-B-condicion.md` (y su registro como
+  `*.registro-B-condicion.txt`), sin abrirla, para que el consultor decida sin repetir nada.
+- **No se ha registrado ningún tramo, y la filtrada oficial vuelve a ser A.**
+
+### 1.4 Antes de registrar tramos, el punto 2: v9 y v10 no se registraron igual
+
+Se compararon los tramos de cuarentena de v9 y v10 con las marcas de sus filtradas ANTES, solo con
+tiempos:
+- **v10 (sesión 4):** inicio al segundo y final con un segundo de margen, en los 12 bloques. Es lo que
+  propone el punto 2.
+- **v9 (sesión 3): inicio al segundo y final AL SEGUNDO EXACTO DE LA MARCA, sin margen**, en los 8
+  bloques. Por ejemplo, el bloque `[CUARENTENA 22:11–22:16]` es el tramo `0:22:11`–`0:22:16`.
+  - Según `SESION-03-EXTRACCION.md` §1 y el motivo de cada tramo («segmentos 404-406 de la cruda»),
+    se sacaron de los índices de segmento con un guion que no imprimía texto, antes de que existiera
+    la guardia.
+  - El resultado es que el final de cada tramo de v9 es el segundo truncado del último segmento: la
+    cola de ese último segundo puede quedar fuera del tramo.
+
+**Por el punto 2 («si no fue así, para y dime cómo se hizo») se para aquí también.** El único tramo
+nuevo que pediría B es el de v10, el bloque de 1:55:27, que no cabe en el tramo manual de 1:55:29.
+
+### 1.5 Por tramo: líneas visibles en A y en B (para la sección del hueco, punto 4)
+
+La tabla completa, sin texto, está al final de `medir_fase1-SALIDA.txt`. Lo que más pesa:
+- **v9:** el tramo de precaución de 1:39:43 enseña 67 líneas en A y en B; el de 1:13:04, 9 en A y 12
+  en B.
+- **v10:** el de precaución de 1:56:07, 13 líneas en A y en B; el de conversación personal de 1:43:42,
+  14; el de precaución de 0:40:20, 9 en A y 11 en B.
+
+La sección completa del punto 4 (clase, commit y fecha de cada tramo, y lecturas posteriores) espera a
+que el consultor decida sobre la parada.
+
 ## Estado
 
-FASE 0 ENTREGADA Y PARADA (§0.3 y §0.4): esperando las decisiones del consultor. No se ha escrito
-ninguna filtrada ni ningún tramo; **ninguna exposición**. Rama NO cerrada.
+**FASE 1 PARADA**, por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
+las B, guardadas sin abrir; ningún tramo registrado. **Ninguna exposición.** Esperando al consultor.
+Rama NO cerrada.
