@@ -48,3 +48,19 @@ Dado por el consultor el 2026-10-05, como tarea autónoma (Aleks no está). Copi
 > - Revisor, con su informe pegado al final. Preguntas expresas: (a) que la regla de más de 0 ms es la que dice Q; (b) que no hay ningún camino que escriba una filtrada sin aplicar los tramos; (c) que ningún test lee material real.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor (2026-10-05), parte 1 de una tarea autónoma
+
+Copiada tal cual:
+
+> PARTE 1 · Ajustes a trabajo/filtradas-con-tramos (respuesta del consultor, 2026-10-05; cópiala tal cual al encargo y al informe)
+> 1. --video obligatorio: aceptado, con una comprobación más, como condición y fallando cerrado. Antes de escribir nada, el guion comprueba que el audio corresponde al vídeo declarado:
+>    - si data/manifests o knowledge/corpus/manifest.yaml guardan un sha256 del audio o del vídeo que se pueda recalcular sin abrir contenido, por ese sha;
+>    - si no, comparando sin texto el número de segmentos y las marcas de inicio de los primeros y últimos 5 segmentos con la transcripción del corpus de ese vídeo (tolerancia: la que mida la fase 0 entre la cruda y el corpus en v7, v8 y v10, que ya dieron los mismos segmentos).
+>    Si no cuadra o no se puede comprobar, exit 2 y no se escribe nada. Test sintético con un caso que cuadra y otro que no.
+>    Por qué: con el vídeo equivocado se aplicarían los tramos de otro.
+> 2. La comprobación por duración: no se añade; la del punto 1 la sustituye.
+> 3. Autorizo cambiar en .claude/ SOLO el comando de la skill ingerir-sesion, para que pase --video. Nada más de .claude/. El revisor compara esa skill línea a línea con la de main.
+> 4. make check sellado, commit, push a fix/filtradas-con-tramos, CI de Linux con su run, y una pasada corta del revisor sobre estos tres puntos.
+> Si el clasificador bloquea algo, deja los comandos exactos en el informe y en tu respuesta, y sigue con la PARTE 2, que no depende de eso.
+> Rama lista para revisión, NO cerrada.

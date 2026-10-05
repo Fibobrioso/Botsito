@@ -1,11 +1,12 @@
-guion: sha256 364c79e06bc7a1e3863ae6383514ee22371b75a9331743b9e10e388ab7c23b0b
+guion: sha256 42e3c8828b6ec743777ae1745bbc127f4aee315b3050d670cd80073b99909f7e
 
 1. no se aplican los tramos (lineas_filtradas no tapa ningun segmento por tramo)
   resultado: pytest sale con 1 (0 = todos pasan)
-  caen (4):
+  caen (5):
     - test_el_caso_de_borde_de_v9_0_34_56
     - test_la_marca_no_lleva_texto_ni_clase_ni_motivo_y_los_contiguos_se_funden
     - test_main_aplica_los_tramos_del_video
+    - test_main_con_el_video_equivocado_no_escribe_nada
     - test_un_segmento_de_las_dos_reglas_cuenta_en_ambos_y_sale_una_vez
   restaurado: sha igual
 
@@ -31,10 +32,16 @@ guion: sha256 364c79e06bc7a1e3863ae6383514ee22371b75a9331743b9e10e388ab7c23b0b
 
 4. sin --video se sigue sin tramos (None da una tupla vacia)
   resultado: pytest sale con 1 (0 = todos pasan)
-  caen (3):
-    - test_main_falla_cerrado_y_no_escribe_nada[sin_video]
-    - test_procesar_sin_video_falla_cerrado
+  caen (1):
     - test_tramos_del_video_falla_cerrado[sin_video]
+  restaurado: sha igual
+
+5. no se comprueba que el audio sea del video (respuesta del consultor del 2026-10-05)
+  resultado: pytest sale con 1 (0 = todos pasan)
+  caen (3):
+    - test_main_con_audio_ajeno_no_transcribe
+    - test_main_con_el_video_equivocado_no_escribe_nada
+    - test_main_sin_poder_comprobar_el_audio_no_escribe_nada
   restaurado: sha igual
 
 restaurado, de nuevo: pytest sale con 0 (0 = todos pasan)

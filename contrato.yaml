@@ -10,8 +10,15 @@ rutas_permitidas:
   - docs/runbooks/ERRORES-RECURRENTES.md
   - scripts/transcribir_sesion.py
   - tests/unit/test_filtradas_con_tramos.py
+  # Respuesta del consultor del 2026-10-05, punto 3: SOLO el comando de esta skill, para --video.
+  - .claude/skills/ingerir-sesion/SKILL.md
 rutas_protegidas:
-  - .claude/
+  # .claude/ entero, salvo la skill ingerir-sesion (arriba): cada parte, por su nombre.
+  - .claude/agents/
+  - .claude/hooks/
+  - .claude/settings.json
+  - .claude/skills/abrir-rama/
+  - .claude/skills/cerrar-rama/
   - src/
   - knowledge/
   - tests/unit/test_transcribir_sesion.py

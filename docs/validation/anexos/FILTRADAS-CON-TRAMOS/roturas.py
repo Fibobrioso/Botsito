@@ -43,6 +43,11 @@ ROTURAS = [
         'tramos")\n',
         "        return ()\n",
     ),
+    (
+        "5. no se comprueba que el audio sea del video (respuesta del consultor del 2026-10-05)",
+        "    sha_wav = comprobar_audio_del_video(audio, video, RAIZ)\n",
+        '    sha_wav = "0" * 64\n',
+    ),
 ]
 
 

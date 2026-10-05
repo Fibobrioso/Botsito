@@ -492,11 +492,72 @@ def tramos_del_video(video: str | None, repo: Path) -> tuple[Tramo, ...]:
         raise SesionError(f"los tramos no citables no se pueden usar: {exc}") from exc
 
 
+def sha256_wav_del_video(video: str, repo: Path) -> str:
+    """El `sha256_wav` del manifiesto de la transcripcion ACTIVA de `video`
+    (`knowledge/corpus/transcripciones/`, con las funciones de la libreria): el del WAV que el
+    corpus extrajo del video. `SesionError` si no se puede saber."""
+    from botsito.corpus.manifiestos_transcripcion import (
+        ManifiestoTranscripcionError,
+        activa_de,
+        cargar_todos,
+    )
+
+    try:
+        sha = activa_de(cargar_todos(repo), video).doc.get("sha256_wav")
+    except ManifiestoTranscripcionError as exc:
+        raise SesionError(f"no se puede comprobar el audio contra {video}: {exc}") from exc
+    if not isinstance(sha, str) or not sha:
+        raise SesionError(f"no se puede comprobar el audio contra {video}: su manifiesto sin sha")
+    return sha
+
+
+def sha256_wav_del_audio(audio: Path) -> str:
+    """El sha256 del WAV que `extraer_wav` (la del corpus, bit a bit reproducible) saca de `audio`,
+    en un directorio temporal que se borra: no escribe nada junto al audio ni en el repositorio.
+    Medido el 2026-10-05: para los audios de v7, v8, v9 y v10 da el `sha256_wav` de la
+    transcripcion del corpus de su video (FILTRADAS-CON-TRAMOS.md §7)."""
+    import hashlib
+    import tempfile
+
+    from botsito.corpus.audio import extraer_wav
+
+    with tempfile.TemporaryDirectory(prefix="botsito-comprobar-audio-") as carpeta:
+        wav = extraer_wav(audio, Path(carpeta) / "audio.wav")
+        resumen = hashlib.sha256()
+        with wav.open("rb") as f:
+            for bloque in iter(lambda: f.read(1 << 20), b""):
+                resumen.update(bloque)
+    return resumen.hexdigest()
+
+
+def comprobar_audio_del_video(audio: Path, video: str, repo: Path) -> str:
+    """El audio es del video declarado, o `SesionError`: FALLA CERRADO (respuesta del consultor
+    del 2026-10-05, punto 1). Se compara el sha256 de su WAV con el de la transcripcion del corpus
+    de ese video; si no cuadra o no se puede calcular, no hay salida. Devuelve el sha."""
+    from botsito.corpus.audio import AudioError
+
+    esperado = sha256_wav_del_video(video, repo)
+    try:
+        real = sha256_wav_del_audio(audio)
+    except (AudioError, OSError) as exc:
+        raise SesionError(f"no se puede comprobar que {audio.name} sea de {video}: {exc}") from exc
+    if real != esperado:
+        raise SesionError(
+            f"{audio.name} no es el audio de {video}: el sha256 de su WAV ({real[:12]}...) no es "
+            f"el de la transcripcion del corpus de {video} ({esperado[:12]}...)"
+        )
+    return real
+
+
 def procesar(
     audio: Path, dispositivo: str, solo_filtrar: bool, sesion: str, video: str | None = None
 ) -> list[str]:
-    # Lo primero, antes de escribir nada (tampoco la cruda): sin tramos validos no hay salida.
+    # Lo primero, antes de escribir nada (tampoco la cruda): sin tramos validos no hay salida, y
+    # sin comprobar que el audio es de ese video tampoco (los tramos serian los de otro).
     tramos = tramos_del_video(video, RAIZ)
+    if video is None:  # tramos_del_video ya fallo; esto solo fija el tipo
+        raise SesionError("falta --video")
+    sha_wav = comprobar_audio_del_video(audio, video, RAIZ)
     salidas = salidas_de(audio)
     _comprobar_rutas([*salidas.values(), salidas["trabajo"] / "fragmentos" / "fragmento_000.wav"])
     inicio = time.perf_counter()
@@ -505,6 +566,8 @@ def procesar(
         f"hoja: la de la sesion {sesion}",
         f"video: {video}; tramos no citables del video: {len(tramos)} "
         f"({FICHERO_TRAMOS_NO_CITABLES})",
+        f"audio comprobado: el sha256 de su WAV ({sha_wav[:12]}...) es el de la transcripcion del "
+        f"corpus de {video}",
     ]
     if solo_filtrar:
         if not salidas["cruda"].is_file():

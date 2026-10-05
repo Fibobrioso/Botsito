@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -213,6 +214,9 @@ def test_el_repo_real_da_los_tramos_de_sus_sesiones(m: ModuleType) -> None:
 # ---------------------------------------------------------------- de punta a punta, con `main`
 
 
+SHA_DE_JUGUETE = {v: c * 64 for v, c in (("v7", "7"), ("v8", "8"), ("v9", "9"), ("v10", "a"))}
+
+
 def _tramos_de_juguete(m: ModuleType) -> Path:
     """El fichero de tramos que los tests de fallo cerrado borran o estropean: SIEMPRE el del repo
     de juguete. Si el parche de `RAIZ` del fixture faltara, se para aqui y no toca el real
@@ -230,6 +234,9 @@ def sesion(m: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Pa
     monkeypatch.setattr(m, "RAIZ", repo)
     monkeypatch.setattr(m, "codigos_validos", lambda sesion: VALIDOS)
     monkeypatch.setattr(m, "meses_libres_del_repo", lambda: frozenset(range(1, 13)))
+    # El audio de juguete es el de v8: su WAV tiene el sha del manifiesto de v8 (los dos, falsos).
+    monkeypatch.setattr(m, "sha256_wav_del_video", lambda video, repo: SHA_DE_JUGUETE[video])
+    monkeypatch.setattr(m, "sha256_wav_del_audio", lambda audio: SHA_DE_JUGUETE["v8"])
     carpeta = tmp_path / "audio"
     carpeta.mkdir()
     audio = carpeta / "s.m4a"
@@ -265,13 +272,117 @@ def test_main_aplica_los_tramos_del_video(m: ModuleType, sesion: Path) -> None:
     assert _ficheros(sesion.parent) == antes | {salidas["filtrada"].name, salidas["registro"].name}
 
 
-def test_main_con_el_video_equivocado_no_tapa_el_tramo_ajeno(m: ModuleType, sesion: Path) -> None:
-    """El tramo es de v8: con --video v9 no se aplica (y el texto sale). Es el riesgo declarado de
-    la identificacion por declaracion (FILTRADAS-CON-TRAMOS.md §0.3)."""
-    assert (
-        m.main(["--audio", str(sesion), "--solo-filtrar", "--sesion", "03", "--video", "v9"]) == 0
-    )
-    assert "SECRETO uno" in m.salidas_de(sesion)["filtrada"].read_text(encoding="utf-8")
+def test_main_con_el_video_equivocado_no_escribe_nada(
+    m: ModuleType, sesion: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """El audio es el de v8: con --video v9 se aplicarian los tramos de otro video. Desde la
+    respuesta del consultor del 2026-10-05 (punto 1) el sha de su WAV no cuadra con el de v9, y no
+    se escribe nada (antes de esa respuesta este test documentaba que se escribia sin tapar)."""
+    antes = _ficheros(sesion.parent)
+    codigo = m.main(["--audio", str(sesion), "--solo-filtrar", "--sesion", "03", "--video", "v9"])
+    assert codigo == 2
+    assert "no es el audio de v9" in capsys.readouterr().err
+    assert _ficheros(sesion.parent) == antes
+    # El negativo: con su video, v8, si escribe (y tapa el tramo).
+    assert m.main(["--audio", str(sesion), "--solo-filtrar", "--video", "v8"]) == 0
+    assert "SECRETO" not in m.salidas_de(sesion)["filtrada"].read_text(encoding="utf-8")
+
+
+def test_main_sin_poder_comprobar_el_audio_no_escribe_nada(
+    m: ModuleType, sesion: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def sin_manifiesto(video: str, repo: Path) -> str:
+        raise m.SesionError(f"no se puede comprobar el audio contra {video}: sin manifiesto")
+
+    monkeypatch.setattr(m, "sha256_wav_del_video", sin_manifiesto)
+    antes = _ficheros(sesion.parent)
+    assert m.main(["--audio", str(sesion), "--solo-filtrar", "--video", "v8"]) == 2
+    assert _ficheros(sesion.parent) == antes
+
+
+def test_main_con_audio_ajeno_no_transcribe(
+    m: ModuleType, sesion: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """En el modo con ASR la comprobacion va antes de transcribir: no se escribe ni la cruda."""
+    llamadas: list[Path] = []
+
+    def transcribir(audio: Path, *_: Any) -> tuple[list[Any], dict[str, Any], float]:
+        llamadas.append(audio)
+        return [], {}, 0.0
+
+    monkeypatch.setattr(m, "transcribir", transcribir)
+    m.salidas_de(sesion)["cruda"].unlink()
+    antes = _ficheros(sesion.parent)
+    assert m.main(["--audio", str(sesion), "--sesion", "02", "--video", "v10"]) == 2
+    assert llamadas == []
+    assert _ficheros(sesion.parent) == antes
+
+
+def test_comprobar_audio_del_video_cuadra_y_no_cuadra(
+    m: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(m, "sha256_wav_del_video", lambda video, repo: SHA_DE_JUGUETE[video])
+    monkeypatch.setattr(m, "sha256_wav_del_audio", lambda audio: SHA_DE_JUGUETE["v9"])
+    audio = tmp_path / "a.m4a"
+    assert m.comprobar_audio_del_video(audio, "v9", tmp_path) == SHA_DE_JUGUETE["v9"]
+    with pytest.raises(m.SesionError, match="no es el audio de v10"):
+        m.comprobar_audio_del_video(audio, "v10", tmp_path)
+
+
+def test_sha256_wav_del_video_sin_transcripcion_falla(m: ModuleType, tmp_path: Path) -> None:
+    with pytest.raises(m.SesionError, match="no se puede comprobar el audio contra v9"):
+        m.sha256_wav_del_video("v9", _repo(tmp_path))
+
+
+def test_sha256_wav_del_video_del_repo_real(m: ModuleType) -> None:
+    """Lee solo los manifiestos de transcripcion (knowledge/corpus/transcripciones/): los cuatro
+    sha son los medidos en la fase 0 (FILTRADAS-CON-TRAMOS.md §7) y distintos entre si."""
+    esperados = {
+        "v7": "f0b8007bf7c5da331ef627effd55d1fb48dffecb08dacfa80a68e2b2ffdc3122",
+        "v8": "d30cb4650beafcdaa6f165facf0409e78fac616935321a849241ab79c13962d8",
+        "v9": "93f40543339816fe7396a78c4238accdbcd3fbd0ce89dc1a57209c5ddb751efb",
+        "v10": "549d8c20e932bcd1c4157bed46713b035418eab5af0f45cdb918723fdae57060",
+    }
+    assert {v: m.sha256_wav_del_video(v, RAIZ) for v in esperados} == esperados
+    assert len(set(esperados.values())) == 4
+
+
+def _wav_sintetico(ruta: Path, frecuencia: int) -> Path:
+    import math
+    import struct
+    import wave
+
+    with wave.open(str(ruta), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(16000)
+        w.writeframes(
+            b"".join(
+                struct.pack("<h", int(8000 * math.sin(2 * math.pi * frecuencia * i / 16000)))
+                for i in range(8000)
+            )
+        )
+    return ruta
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="sin ffmpeg")
+def test_comprobar_audio_con_ffmpeg_cuadra_y_no_cuadra(
+    m: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """De punta a punta con la extraccion real (`extraer_wav`), sobre dos audios SINTETICOS: el
+    que cuadra pasa, el otro no, y la carpeta de los audios no cambia."""
+    carpeta = tmp_path / "audios"
+    carpeta.mkdir()
+    bueno = _wav_sintetico(carpeta / "bueno.wav", 440)
+    otro = _wav_sintetico(carpeta / "otro.wav", 880)
+    sha_bueno = m.sha256_wav_del_audio(bueno)
+    assert sha_bueno == m.sha256_wav_del_audio(bueno)  # reproducible
+    monkeypatch.setattr(m, "sha256_wav_del_video", lambda video, repo: sha_bueno)
+    antes = _ficheros(carpeta)
+    assert m.comprobar_audio_del_video(bueno, "v9", tmp_path) == sha_bueno
+    with pytest.raises(m.SesionError, match="no es el audio de v9"):
+        m.comprobar_audio_del_video(otro, "v9", tmp_path)
+    assert _ficheros(carpeta) == antes
 
 
 @pytest.mark.parametrize(

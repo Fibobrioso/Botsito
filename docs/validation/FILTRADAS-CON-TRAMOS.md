@@ -257,25 +257,140 @@ Con el guion de esta rama hará falta `--video` en cada uno: `--video v7`, `v8`,
 Tras el arreglo de A4 no se repitieron las roturas. El guion no cambió (su sha256 sigue siendo
 `364c79e0…`), y los nombres de los tests, tampoco.
 
+## Respuesta del consultor (2026-10-05), parte 1 de una tarea autónoma
+
+Copiada tal cual:
+
+> PARTE 1 · Ajustes a trabajo/filtradas-con-tramos (respuesta del consultor, 2026-10-05; cópiala tal cual al encargo y al informe)
+> 1. --video obligatorio: aceptado, con una comprobación más, como condición y fallando cerrado. Antes de escribir nada, el guion comprueba que el audio corresponde al vídeo declarado:
+>    - si data/manifests o knowledge/corpus/manifest.yaml guardan un sha256 del audio o del vídeo que se pueda recalcular sin abrir contenido, por ese sha;
+>    - si no, comparando sin texto el número de segmentos y las marcas de inicio de los primeros y últimos 5 segmentos con la transcripción del corpus de ese vídeo (tolerancia: la que mida la fase 0 entre la cruda y el corpus en v7, v8 y v10, que ya dieron los mismos segmentos).
+>    Si no cuadra o no se puede comprobar, exit 2 y no se escribe nada. Test sintético con un caso que cuadra y otro que no.
+>    Por qué: con el vídeo equivocado se aplicarían los tramos de otro.
+> 2. La comprobación por duración: no se añade; la del punto 1 la sustituye.
+> 3. Autorizo cambiar en .claude/ SOLO el comando de la skill ingerir-sesion, para que pase --video. Nada más de .claude/. El revisor compara esa skill línea a línea con la de main.
+> 4. make check sellado, commit, push a fix/filtradas-con-tramos, CI de Linux con su run, y una pasada corta del revisor sobre estos tres puntos.
+> Si el clasificador bloquea algo, deja los comandos exactos en el informe y en tu respuesta, y sigue con la PARTE 2, que no depende de eso.
+> Rama lista para revisión, NO cerrada.
+
+## 7. La respuesta del consultor del 2026-10-05: el audio se comprueba contra el vídeo
+
+### 7.1 Fase 0: el sha que se puede recalcular sin abrir contenido
+
+- **`data/manifests/`** son velas (`eurusd-m1-*`), no audio. **`knowledge/corpus/manifest.yaml`**
+  guarda el sha256 del `.mp4` de cada vídeo, que el guion no tiene: recibe el `.m4a`.
+- **El manifiesto de la transcripción de cada vídeo** (`knowledge/corpus/transcripciones/tr-vN-*.yaml`)
+  guarda `sha256_wav`: el del WAV que el corpus extrajo del vídeo con `extraer_wav`, «bit a bit
+  reproducible». No es ninguno de los dos ficheros que nombra la respuesta, pero es el sha del audio
+  que se puede recalcular sin abrir contenido.
+- **Medido el 2026-10-05**, solo con `sha256sum`: el `audio.wav` que el guion extrajo del `.m4a` de
+  cada sesión (`<stem>-trabajo/audio.wav`) tiene **exactamente** el `sha256_wav` de la transcripción
+  de su vídeo, y los cuatro son distintos entre sí.
+
+| Vídeo | `sha256_wav` del manifiesto | sha256 del WAV del guion |
+|---|---|---|
+| v7 | `f0b8007bf7c5da33…` | igual |
+| v8 | `d30cb4650beafcda…` | igual |
+| v9 | `93f40543339816fe…` | igual |
+| v10 | `549d8c20e932bcd1…` | igual |
+
+Así que vale la primera vía de la respuesta, por el sha, y no hace falta la segunda (segmentos y
+marcas contra la transcripción del corpus). La segunda, además, obligaría a leer la cruda del corpus
+de una sesión, que solo pueden leer las funciones autorizadas (`tests/unit/test_cuarentena.py`).
+
+### 7.2 La condición, en el guion
+
+`procesar`, antes de escribir nada y justo después de cargar los tramos, llama a
+`comprobar_audio_del_video(audio, video, RAIZ)`:
+- **`sha256_wav_del_video`:** el `sha256_wav` del manifiesto de la transcripción **activa** del
+  vídeo, con las funciones de la librería (`cargar_todos` y `activa_de`).
+- **`sha256_wav_del_audio`:** extrae el WAV del audio con `extraer_wav`, la del corpus, en un
+  **directorio temporal que se borra**, y lo hashea. No escribe junto al audio ni en el
+  repositorio.
+- **Si no cuadra**, o no se puede saber (vídeo sin transcripción activa, manifiesto sin sha, audio
+  que ffmpeg no lee), sale con 2 y **no escribe nada**, tampoco la cruda en el modo con ASR.
+- **El registro** dice «audio comprobado: el sha256 de su WAV (…) es el de la transcripción del
+  corpus de vN».
+
+Coste: decodificar el audio una vez más, unos segundos por hora de audio. En el modo con ASR se
+decodifica dos veces.
+
+### 7.3 Tests y roturas
+
+6 funciones nuevas, y una cambia de sentido; ahora son 23 funciones y 33 casos:
+
+| Test | Qué comprueba |
+|---|---|
+| `test_main_con_el_video_equivocado_no_escribe_nada` | antes documentaba que con `--video v9` y el audio de v8 se escribía sin tapar; ahora sale 2 y no escribe nada. El negativo: con `--video v8`, escribe y tapa |
+| `test_main_sin_poder_comprobar_el_audio_no_escribe_nada` | sin el sha del vídeo, 2 y nada escrito |
+| `test_main_con_audio_ajeno_no_transcribe` | en el modo con ASR, la comprobación va antes de transcribir: no se escribe ni la cruda |
+| `test_comprobar_audio_del_video_cuadra_y_no_cuadra` | un caso que cuadra y otro que no (sha de juguete) |
+| `test_sha256_wav_del_video_sin_transcripcion_falla` | un repo sin transcripción: no se puede comprobar |
+| `test_sha256_wav_del_video_del_repo_real` | los cuatro sha de la tabla de arriba, leídos de los manifiestos (no toca ningún audio) |
+| `test_comprobar_audio_con_ffmpeg_cuadra_y_no_cuadra` | de punta a punta con `extraer_wav` sobre dos WAV **sintéticos** (440 y 880 Hz): el que cuadra pasa, el otro no, y la carpeta no cambia. Se salta sin ffmpeg |
+
+Los tests de antes llevan, en el fixture, un sha de juguete por vídeo, y el audio de juguete es el
+de v8.
+
+Las roturas se repitieron con una quinta, «no se comprueba el audio»
+(`roturas-SALIDA.txt`, guion `42e3c882…`):
+
+| Rotura | Caen |
+|---|---|
+| 1. no se aplican los tramos | 5 |
+| 2. sin fichero de tramos se sigue | 3 |
+| 3. el borde se tapa | 7 |
+| 4. sin `--video` se sigue sin tramos | 1 (`tramos_del_video[sin_video]`) |
+| 5. no se comprueba el audio | 3 (vídeo equivocado, sin comprobar, ASR con audio ajeno) |
+
+La rotura 4 tumba ahora 1 test y no 3. Sin `--video`, `procesar` vuelve a fallar en la comprobación
+de tipo que va antes de la del audio: es una segunda barrera, y el test de `tramos_del_video` la
+sigue cazando. En las cinco, el guion vuelve a su sha256.
+
+### 7.4 La skill `ingerir-sesion` (punto 3)
+
+Solo cambia la línea del comando del paso 4 de `.claude/skills/ingerir-sesion/SKILL.md`:
+
+```
+- `uv run python scripts/transcribir_sesion.py --audio <carpeta FUERA del repo>`
++ `uv run python scripts/transcribir_sesion.py --audio <audio FUERA del repo> --video <vN>`
+```
+
+Además de `--video`, «carpeta» pasa a «audio», porque desde esta rama el guion se niega con más de
+un audio (§4.2). Es parte del mismo comando.
+
+El contrato deja de proteger `.claude/` entero y protege cada parte por su nombre: `agents/`,
+`hooks/`, `settings.json` y las skills `abrir-rama/` y `cerrar-rama/`. Solo permite ese `SKILL.md`.
+
+### 7.5 Las decisiones del §4 que esta respuesta cierra
+
+- **§4.1, `--video`:** aceptado, con la comprobación del sha.
+- **El riesgo del vídeo equivocado** desaparece: ese caso ya no escribe.
+- **La comprobación por duración** (§0.3, revisor B2) no se añade (punto 2).
+- **§4.4, la skill:** hecho (§7.4).
+
 ## Estado
 
 **Lista para revisión, NO cerrada.**
 - Fase 0 sin paradas (§0).
-- La regla, en el guion (§1); 17 tests sintéticos con sus negativos (§2) y cuatro roturas a
-  propósito, que caen y se restauran (§3).
-- Decisiones para el consultor (§4, y el §6 con la opinión del revisor sobre `--video`); lo que
-  queda para después del merge, con el recuento de Q (§5).
-- El revisor y lo que se hizo con sus hallazgos (§6, «Informe del revisor»).
-- Ningún material real leído ni ejecutado.
+- La regla, en el guion (§1).
+- Tests sintéticos con sus negativos: 23 funciones y 33 casos (§2, §7.3).
+- Cinco roturas a propósito, que caen y se restauran (§3, §7.3).
+- Desde la respuesta del consultor del 2026-10-05 (§7): el audio se comprueba contra el vídeo
+  declarado por el sha256 de su WAV, y la skill `ingerir-sesion` pasa `--video`.
+- El revisor, con su primera pasada y lo hecho con ella (§6, «Informe del revisor»). La pasada
+  corta sobre la respuesta, al final.
+- Ningún material real leído ni ejecutado: la fase 0 del §7 solo hasheó los WAV de trabajo.
 
-**CI de Linux** (`fix/filtradas-con-tramos`): run **216** (`37309388222`) sobre `bece406`. Falla
-solo `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, el aceptado por el nombre `fix/`;
-2004 pasan y 8 se saltan. La del commit de este informe va en la respuesta al consultor.
+**CI de Linux** (`fix/filtradas-con-tramos`), con el único fallo aceptado,
+`test_state_check_ok_on_real_repo`:
+- run 216 (`37309388222`) sobre `bece406`;
+- run 217 (`37312344759`) sobre `245a0fd`.
 
-**Sellos:** `e9ce879` con `77a60a01…`; `bece406` con `6fa06dd6…` (2013 passed, pico 289 MiB).
+La del commit de la respuesta va en la respuesta al consultor.
 
-**`PROJECT_STATE.md`:** 24.649 bytes, por debajo del tope de 25.000 (margen de 351 bytes: el cierre
-tiene que sustituir, no añadir).
+**`PROJECT_STATE.md`:** el tamaño, en la respuesta al consultor (por debajo del tope de 25.000; el
+cierre tiene que sustituir, no añadir).
 
 La fila de ERRORES-RECURRENTES va al cerrar, con los hallazgos del consultor.
 
