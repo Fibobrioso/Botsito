@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/ventana-ev-v9-003456
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36y-filtradas-con-tramos` (2026-10-05).
+`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R, la ventana de ev-v9-003456-9ef48fb5 por su regimen; fase 0 hecha, esperando al consultor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
 
 ## Stable Main State
 06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
@@ -203,9 +203,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 15 (2026-10-05).
+— ninguna desde el Archivo 16 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 15 (2026-10-05).
+— ninguna desde el Archivo 16 (2026-10-05).

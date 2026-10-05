@@ -1,0 +1,18 @@
+== ev-v9-003456-9ef48fb5: ventana declarada hoy 2096000-2100000 ms
+segmento 611: 2092070-2093570 ms; en cuarentena: True
+segmento 612: 2096380-2096900 ms; en cuarentena: True
+segmento 613: 2098060-2100240 ms; en cuarentena: False
+segmento 614: 2100880-2101320 ms; en cuarentena: False
+tramo de margen (punto c): 2084000-2097000 ms
+hoy: problemas 0; apariciones 1; segmentos de la cita [613]; palabras 2098060-2100240 ms
+
+| t0 candidato | solapa segmentos en cuarentena | solapa un tramo | problemas | apariciones | cumple |
+|---|---|---|---|---|---|
+| 2094000 (0:34:54) | [612] | True | 0 | 1 | no |
+| 2095000 (0:34:55) | [612] | True | 0 | 1 | no |
+| 2096000 (0:34:56) | [612] | True | 0 | 1 | no |
+| 2097000 (0:34:57) | ninguno | False | 0 | 1 | SI |
+| 2098000 (0:34:58) | ninguno | False | 0 | 1 | SI |
+
+VENTANA NUEVA: 2097000-2100000 ms (0:34:57-0:35:00)
+solape con el tramo de margen: 0 ms

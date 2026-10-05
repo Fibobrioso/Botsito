@@ -1,0 +1,17 @@
+rama: trabajo/ventana-ev-v9-003456
+riesgo: medio  # sustituye un item de evidencia por su regimen y anade un tramo; la fase 0 solo mide, y las rutas de las fases 1-5 entran con el visto bueno del consultor
+artefacto: docs/validation/VENTANA-EV-V9.md
+rutas_permitidas:
+  - docs/validation/VENTANA-EV-V9.md
+  - docs/validation/anexos/VENTANA-EV-V9/
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+rutas_protegidas:
+  - knowledge/
+  - src/
+  - .claude/
+  - scripts/
+comprobaciones:
+  - uv run python docs/validation/anexos/VENTANA-EV-V9/medir_ventana.py
+  - make check > make-check.log 2>&1
