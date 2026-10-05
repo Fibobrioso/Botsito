@@ -1,0 +1,15 @@
+== 0:40:20-0:40:42 (enero)
+   casos_ocultos, dias por particion: ninguno
+   casos_reservados, dias por particion: ninguno
+   meses reservados enteros con ese mes (universo de marzo incluido): 0
+   TIENE DIAS RESERVADOS U OCULTOS: False
+== 1:56:07-1:56:19 (junio)
+   casos_ocultos, dias por particion: {'holdout-1': 2, 'holdout-2': 4, 'holdout-3': 5}
+   casos_reservados, dias por particion: {'holdout-1': 2, 'holdout-2': 4, 'holdout-3': 5}
+   meses reservados enteros con ese mes (universo de marzo incluido): 0
+   TIENE DIAS RESERVADOS U OCULTOS: True
+== 1:27:44-1:28:19 (no identificado)
+   casos_ocultos, dias por particion: {'fidelidad-1': 10, 'holdout-1': 8, 'holdout-2': 8, 'holdout-3': 8}
+   casos_reservados, dias por particion: {'fidelidad-1': 10, 'holdout-1': 8, 'holdout-2': 8, 'holdout-3': 8}
+   meses reservados enteros (cualquiera): 2
+   TIENE DIAS RESERVADOS U OCULTOS: True

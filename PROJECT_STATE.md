@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/filtradas-escenario-b
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36w-cuarentena-por-condicion` (2026-10-04).
+`trabajo/filtradas-escenario-b` EN CURSO (2026-10-04): rehacer con el guion de main las filtradas de sesion v7-v10 en el escenario B (punto P). B medido y no instalado (P2, desviacion aceptada por el consultor); ancla de ev-v9-003456-9ef48fb5 medida con la localizacion de validate (fuera del bloque); 8 tramos nuevos registrados; criterio de los limites de un tramo en SESION-DE-PREGUNTAS.md; P sale a HISTORIA y entran Q y R; fila complementaria en HOLDOUT-EXPOSICIONES (sin exposicion nueva); revisor pasado; lista para revision, NO cerrada. Encargo docs/encargos/trabajo-filtradas-escenario-b.md; informe docs/validation/FILTRADAS-ESCENARIO-B.md.
 
 ## Stable Main State
 44f461d · merge de `trabajo/cuarentena-por-condicion` (tag `stable/F36w-cuarentena-por-condicion`): la cuarentena del texto deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre -sin dias en casos_ocultos ni en casos_reservados y fuera de knowledge/cases/meses_reservados.yaml (2026-02, 2026-03), la fuente nueva, SOLO ANADIR-; sin datos se tapan los doce (`cases.holdout.meses_libres`). Dos tramos de precaucion en v6; las filtradas de sesion v7-v10, en el escenario A hasta la rama siguiente (P). Sobre `stable/F36v-sesion-04` (eec79a0). Informe docs/validation/CUARENTENA-POR-CONDICION.md; el registro del cierre, al final de HISTORIA.
@@ -23,13 +23,15 @@ NINGUNA ABIERTA tras `stable/F36w-cuarentena-por-condicion` (2026-10-04).
 44f461d · merge: la cuarentena del texto tapa todo mes que no se pueda demostrar libre (CUARENTENA-POR-CONDICION.md) · tag stable/F36w-cuarentena-por-condicion
 
 ## Tests Currently Passing
-1272 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1278 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
-P. Rama corta: rehacer con el guion de main las filtradas de sesión (v7–v10) en el escenario B. Medir antes con recuentos y marcas de tiempo, sin texto. Si algún ítem ev-* cae en un segmento que pasa a ocultarse, parar y avisar al consultor. Va antes de activar la sesión 4 (CUARENTENA-POR-CONDICION.md §5).
+Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con un test sintético que rompa la guardia a propósito. Tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10 en B con los tramos, y comprobar que lo tapado es B más los tramos, y nada destapado frente a A dentro de un tramo (FILTRADAS-ESCENARIO-B.md). Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera. La aplicación de un tramo a la filtrada tapa un segmento solo si se solapa con el tramo más de 0 ms: un segmento que empieza exactamente donde termina un tramo queda visible. Test sintético con ese caso de borde (v9, 0:34:56; FILTRADAS-ESCENARIO-B.md). Se acepta que la regla de más de 0 ms tape el segmento visible que cae en el segundo de margen de un tramo (12 casos (9 de tramos anteriores y 3 de esta rama), FILTRADAS-ESCENARIO-B.md); el informe de Q da su recuento.
+
+R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
@@ -199,9 +201,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 13 (2026-10-04).
+— ninguna desde el Archivo 14 (2026-10-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 13 (2026-10-04).
+— ninguna desde el Archivo 14 (2026-10-04).
