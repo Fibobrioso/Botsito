@@ -11,6 +11,9 @@ rutas_permitidas:
   # Ampliado con el visto bueno del consultor a la fase 0 (2026-10-05):
   - knowledge/corpus/tramos_no_citables.yaml
   - knowledge/evidence/v9/
+  # Ampliado con la decision del consultor sobre ev-v10-010438-0d4e6798 (2026-10-05):
+  - knowledge/evidence/v10/
+  - docs/validation/SESION-04-EXTRACCION.md
   - knowledge/spec/ambiguedades.yaml
   - docs/spec/
   - src/botsito/evidence/verificacion.py

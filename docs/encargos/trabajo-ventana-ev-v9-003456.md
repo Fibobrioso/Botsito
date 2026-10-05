@@ -90,3 +90,42 @@ Copiadas tal cual:
 > - informe completo en VENTANA-EV-V9.md con el revisor al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Decisión del consultor sobre ev-v10-010438-0d4e6798 (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisión sobre ev-v10-010438-0d4e6798 (2026-10-05, consultor). Cópiala al encargo y al informe. CAMBIA lo que dije en la decisión 5 («su arreglo no entra en esta rama»): entra aquí, porque sin él la comprobación no se activa y el procedimiento es el mismo que el de v9.
+>
+> 1. Opción (i): un ítem nuevo que supersede a ev-v10-010438-0d4e6798, con la cita y la ventana recortadas antes del segmento 1058.
+>    Porqué no (ii): que el filtro tape todo segmento que toque un tramo más de 0 ms es el criterio de Q, y falla cerrado a propósito. Acotar la condición solo para que este ítem pase es aflojar una guardia por un caso.
+>    Porqué no se pierde nada que haga falta: el trozo que sale («…y el cierre también sería 10») es justo lo que se le ha preguntado al trader por escrito antes de activar A-42 (punto E). Su respuesta lo sustituye.
+>
+> 2. Cómo, con el mismo anexo sustituir_item.py o uno hermano:
+>    - La cita nueva es la vieja sin la parte que cae en el segmento 1058. El anexo la construye por programa con los límites de los segmentos (vía autorizada) y verificar_citas. No imprimas el texto: solo el id nuevo, el número de segmentos que cubre la cita (se espera 1053–1057) y el resultado de las comprobaciones.
+>    - Ventana nueva: mismo inicio (3.878.000) y fin en el último segundo entero que no solape el segmento 1058 (se espera 3.894.000; mídelo).
+>    - Dos pasadas, como en v9:
+>      · con la cita y la ventana viejas, la comprobación nueva (ventana_no_citable) TIENE que rechazarlo;
+>      · con las nuevas, verificar_citas da 0 problemas y 1 aparición, ventana_no_citable pasa y escribe el ítem.
+>    - revisado_por igual que el viejo. notas: «cita recortada antes del segmento 1058, que el filtro tapa por el tramo 1:04:56–1:05:29; orden del consultor, 2026-10-05, VENTANA-EV-V9.md; la cita no se releyó».
+>    - Lista en el informe los campos que difieren del viejo.
+>
+> 3. Referencias, cada una por su régimen:
+>    - A-42 en ambiguedades.yaml pasa a citar el ítem nuevo, con Fuente:, y se regenera con uv run botsito spec docs --escribir;
+>    - recuadro con fecha en SESION-04-EXTRACCION.md §3.1, que diga que la cita de 64:38–64:54 ya no incluye «…y el cierre también sería 10» y por qué, y que esa parte la cubre la pregunta del punto E;
+>    - mide si algo más cita el id viejo y dímelo.
+>
+> 4. Medida, solo para el informe (no se arregla aquí): cuántos segmentos VISIBLES (no en cuarentena) tapa hoy el filtro solo porque un tramo, registrado con el inicio o el fin redondeado al segundo, les pisa un trozo. Por vídeo, con ids de segmento y ms, sin texto. Ya conocemos v9 1:07:45, v10 0:00:58 y este. Sirve para la fase 0 de la activación de E.
+>
+> 5. Después, lo que quedaba:
+>    - activa ventana_no_citable en knowledge validate, evidence new y evidence propose --check, con los cinco tests de rotura más uno con este caso (una ventana que no toca el tramo, pero cuya cita cae en un segmento que sí lo toca → falla);
+>    - vuelve a medir en todos los vídeos: 0 ítems activos;
+>    - anexo del control de la fase 5 (21 de 21 bloques y 0 ítems activos, más cuántos supersedidos deja fuera: se esperan 2);
+>    - uv run botsito knowledge validate, uv run python scripts/ficheros_con_ocultos.py y make check sellado;
+>    - revisor, con su informe al final de VENTANA-EV-V9.md.
+>
+> 6. PROJECT_STATE va en 24.014 bytes, cerca del tope de 25.000. En esta rama no crece más. Si la línea de deuda de los supersedidos lo empuja, condénsala a una línea que apunte al informe.
+>
+> Rama lista para revisión, NO cerrada.

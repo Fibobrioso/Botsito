@@ -335,30 +335,222 @@ el tramo de margen.
 `evidence new` rechacen» un ítem que pisa un tramo. **No se midió.** `knowledge validate` no lo llama
 (§0.e). Lección: lo que hace una comprobación se mide antes de escribirlo, buscando sus llamadores.
 
+## Decisión del consultor sobre ev-v10-010438-0d4e6798 (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Decisión sobre ev-v10-010438-0d4e6798 (2026-10-05, consultor). Cópiala al encargo y al informe. CAMBIA lo que dije en la decisión 5 («su arreglo no entra en esta rama»): entra aquí, porque sin él la comprobación no se activa y el procedimiento es el mismo que el de v9.
+>
+> 1. Opción (i): un ítem nuevo que supersede a ev-v10-010438-0d4e6798, con la cita y la ventana recortadas antes del segmento 1058.
+>    Porqué no (ii): que el filtro tape todo segmento que toque un tramo más de 0 ms es el criterio de Q, y falla cerrado a propósito. Acotar la condición solo para que este ítem pase es aflojar una guardia por un caso.
+>    Porqué no se pierde nada que haga falta: el trozo que sale («…y el cierre también sería 10») es justo lo que se le ha preguntado al trader por escrito antes de activar A-42 (punto E). Su respuesta lo sustituye.
+>
+> 2. Cómo, con el mismo anexo sustituir_item.py o uno hermano:
+>    - La cita nueva es la vieja sin la parte que cae en el segmento 1058. El anexo la construye por programa con los límites de los segmentos (vía autorizada) y verificar_citas. No imprimas el texto: solo el id nuevo, el número de segmentos que cubre la cita (se espera 1053–1057) y el resultado de las comprobaciones.
+>    - Ventana nueva: mismo inicio (3.878.000) y fin en el último segundo entero que no solape el segmento 1058 (se espera 3.894.000; mídelo).
+>    - Dos pasadas, como en v9:
+>      · con la cita y la ventana viejas, la comprobación nueva (ventana_no_citable) TIENE que rechazarlo;
+>      · con las nuevas, verificar_citas da 0 problemas y 1 aparición, ventana_no_citable pasa y escribe el ítem.
+>    - revisado_por igual que el viejo. notas: «cita recortada antes del segmento 1058, que el filtro tapa por el tramo 1:04:56–1:05:29; orden del consultor, 2026-10-05, VENTANA-EV-V9.md; la cita no se releyó».
+>    - Lista en el informe los campos que difieren del viejo.
+>
+> 3. Referencias, cada una por su régimen:
+>    - A-42 en ambiguedades.yaml pasa a citar el ítem nuevo, con Fuente:, y se regenera con uv run botsito spec docs --escribir;
+>    - recuadro con fecha en SESION-04-EXTRACCION.md §3.1, que diga que la cita de 64:38–64:54 ya no incluye «…y el cierre también sería 10» y por qué, y que esa parte la cubre la pregunta del punto E;
+>    - mide si algo más cita el id viejo y dímelo.
+>
+> 4. Medida, solo para el informe (no se arregla aquí): cuántos segmentos VISIBLES (no en cuarentena) tapa hoy el filtro solo porque un tramo, registrado con el inicio o el fin redondeado al segundo, les pisa un trozo. Por vídeo, con ids de segmento y ms, sin texto. Ya conocemos v9 1:07:45, v10 0:00:58 y este. Sirve para la fase 0 de la activación de E.
+>
+> 5. Después, lo que quedaba:
+>    - activa ventana_no_citable en knowledge validate, evidence new y evidence propose --check, con los cinco tests de rotura más uno con este caso (una ventana que no toca el tramo, pero cuya cita cae en un segmento que sí lo toca → falla);
+>    - vuelve a medir en todos los vídeos: 0 ítems activos;
+>    - anexo del control de la fase 5 (21 de 21 bloques y 0 ítems activos, más cuántos supersedidos deja fuera: se esperan 2);
+>    - uv run botsito knowledge validate, uv run python scripts/ficheros_con_ocultos.py y make check sellado;
+>    - revisor, con su informe al final de VENTANA-EV-V9.md.
+>
+> 6. PROJECT_STATE va en 24.014 bytes, cerca del tope de 25.000. En esta rama no crece más. Si la línea de deuda de los supersedidos lo empuja, condénsala a una línea que apunte al informe.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 4. ev-v10-010438-0d4e6798, por la decisión del consultor
+
+### 4.1 El ítem nuevo, con la cita y la ventana recortadas, en dos pasadas
+
+Anexo: `docs/validation/anexos/VENTANA-EV-V9/recortar_item_v10.py`, hermano de `sustituir_item.py`.
+Usa la misma vía y la misma comprobación de `evidence new` (`cli.py:988-1040`; desde esta rama,
+`_EntornoEvidencia.comprobar` llama a `ventana_no_citable`, §6).
+- **La cita nueva** es el prefijo más largo de la vieja, cortado por palabras y sin el separador
+  final, cuya localización (`localizar_cita`, la de `verificar_citas`) cae entera antes del segmento
+  1058 y aparece una sola vez. La sesión no la ha leído.
+- **La ventana nueva** tiene el mismo inicio y el fin en el último segundo entero que no solapa el
+  1058. **Medido: 3.894.000**, porque el 1058 empieza en 3.894.997.
+
+**Pasada 1, con la cita y la ventana viejas** (`recortar_item_v10-PASADA1.txt`):
+
+```
+item viejo: ev-v10-010438-0d4e6798 (3878000-3895500 ms)
+segmento 1058: 3894997-3896537 ms; fin de la ventana nueva: 3894000
+verificar_citas: 0 problemas; apariciones 1; segmentos de la cita [1053, 1054, 1055, 1056, 1057, 1058]
+ventana_no_citable (3878000-3895500 ms): la ventana pisa 503 ms del segmento 1058 (1:04:54.997-1:04:56.537), que solapa un tramo no citable
+RECHAZADO por la comprobacion de evidence new: <candidato sin escribir>: la ventana pisa 503 ms del segmento 1058 (1:04:54.997-1:04:56.537), que solapa un tramo no citable
+```
+
+**Pasada 2, con la cita y la ventana nuevas** (`recortar_item_v10-PASADA2.txt`):
+
+```
+verificar_citas: 0 problemas; apariciones 1; segmentos de la cita [1053, 1054, 1055, 1056, 1057]
+ventana_no_citable (3878000-3894000 ms): pasa
+ESCRITO: ev-v10-010438-024f76b8 (3878000-3894000 ms), knowledge/evidence/v10/ev-v10-010438-024f76b8.yaml
+campos distintos del viejo: ['cita_literal', 'id', 'notas', 'supersede', 't1']
+igual campo a campo salvo ['cita_literal', 'id', 'notas', 'supersede', 't1']: True
+```
+
+**Los campos que difieren del viejo:**
+
+| Campo | Viejo | Nuevo |
+|---|---|---|
+| `id` | `ev-v10-010438-0d4e6798` | **`ev-v10-010438-024f76b8`** |
+| `t1` | 1:04:55.5 (3.895.500) | **1:04:54** (3.894.000) |
+| `cita_literal` | segmentos 1053–1058 | la misma sin la parte del 1058: segmentos **1053–1057** (no impresa) |
+| `supersede` | — | `ev-v10-010438-0d4e6798` |
+| `notas` | la del viejo | «cita recortada antes del segmento 1058, que el filtro tapa por el tramo 1:04:56–1:05:29; orden del consultor, 2026-10-05, VENTANA-EV-V9.md; la cita no se releyó» |
+
+**Iguales:** `t0`, `afirmacion`, `tema`, `tipo`, `modalidad`, `confianza`, `extractor`,
+`revisado_por` (el del viejo), `provenance`, `fotogramas`, `valor` y `transcripcion`.
+
+### 4.2 Las referencias
+
+- **A-42 no citaba el ítem viejo. Desviación, para el consultor.**
+  - Su `evidencia` en `ambiguedades.yaml` es `ev-v3-000136-6160fcea`, `ev-v4-011425-ae028b78`,
+    `ev-v9-010753-063c8cb7` y `ev-v9-010809-68e4ea44`, sin ningún ítem de v10. No hay referencia
+    que mover.
+  - Que A-42 cite el ítem nuevo sería **añadirle** evidencia, y eso es parte de su activación
+    (punto E). No se ha hecho, y `ambiguedades.yaml` no cambia por v10.
+- **`SESION-04-EXTRACCION.md` §3.1:** recuadro con fecha.
+  - La cita de 64:38–64:54 ya no incluye «…y el cierre también sería 10», porque esa parte cae en
+    el segmento 1058, que el filtro tapa por el tramo 1:04:56–1:05:29.
+  - Esa parte la cubre la pregunta escrita al trader del punto E.
+- **¿Qué más cita el id viejo?** Búsqueda en todo el repo: además del propio ítem y del nuevo (su
+  `supersede`), solo `SESION-04-EXTRACCION.md` (el §3.1, ya con recuadro) y los ficheros de esta
+  rama: encargo, informe, anexos y la línea de `PROJECT_STATE.md`. **Nada en la spec, las
+  ambigüedades ni el feedback.**
+
+## 5. La medida de los segmentos visibles que el filtro tapa por un tramo redondeado (punto 4)
+
+Anexo: `medir_recortados.py`, con la salida en `medir_recortados-SALIDA.txt`. Solo da ids de segmento
+y milisegundos, para la fase 0 de la activación de E. No se arregla aquí.
+
+**a) Segmentos que solapan un tramo pero no caben en la unión de los tramos de su vídeo** (asoman por
+un borde; el filtro de Q los taparía por ese trozo):
+
+| Vídeo | Cuántos | Segmentos (solape en ms) |
+|---|---|---|
+| v6 | 2 | 471 (3), 581 (717): el tramo manual 0:41:00–0:50:11 |
+| v7 | 1 | 127 (630) |
+| v9 | 7 | 403 (10), 437 (680), 1074 (94), 1081 (4); en tramos de precaución, 567 (130), 1178 (1.923) y 1662 (2.696) |
+| v10 | 22 | 25 (860), 650 (50), 1036 (607), 1040 (53), **1058 (537)**, 1358 (672), 1362 (908), 1363 (372), 1367 (588), 1686 (182), 1702 (212), 1708 (188), 1891 (122), 1897 (8 y 932), 1901 (888); en tramos de precaución y sin audio, 664 (270), 705 (270), 1379 (312), 1383 (10.868), 1398 (469), 1724 (28) |
+| **Total** | **32** | |
+
+- **Los que asoman por el inicio** de un tramo de cuarentena mecánica son visibles seguros: el tramo
+  empieza en el segundo truncado de su primer segmento oculto.
+- **Por el fin**, también, cuando el tramo lleva el segundo de margen.
+- **En los de precaución**, el solape puede pasar de un segundo: esos tramos no salen de un bloque y
+  sus bordes se pusieron a mano.
+
+**b) Segmentos visibles que caben enteros dentro de un tramo de cuarentena mecánica**, en su segundo
+redondeado:
+- **v9, seguros** (los motivos dan qué segmentos ocultó el filtro):
+  - **1087** (4.065.344–4.065.824), en 1:07:45–1:07:51: el caso ya conocido de v9 1:07:45;
+  - **1191** (4.435.383–4.435.963), en 1:13:55–1:14:04.
+- **v10, posibles** (sus motivos no dan el rango; distinguirlos de un oculto exige la filtrada):
+  - **12** (58.180–58.540), en 0:00:58–0:01:13: el caso ya conocido de v10 0:00:58;
+  - **1703**, **1707** y **1709**, en los tramos de 1:55:58 y 1:56:04.
+
+Lo que pide la fase 0 de E es medirlo sobre las filtradas rehechas, que es donde se sabe qué tapó el
+filtro.
+
+## 6. La condición, activada, y los controles
+
+**Dónde la llaman ahora** (decisión 5):
+- **`knowledge validate`**, con `ventanas_no_citables(items, contexto)` en
+  `src/botsito/validation/knowledge.py`, llamada justo después de `verificar_citas`, sobre **todos
+  los ítems activos de todos los vídeos**.
+- **`evidence new`**, en `_EntornoEvidencia.comprobar`, `cli.py`, en lugar de `tramo_no_citable`.
+- **`evidence propose --check`**, en `evidence/propuestas.py`, también en lugar de
+  `tramo_no_citable`. Un ítem de pantalla no cita la transcripción: para él solo cuenta el tramo.
+
+**Sin la cruda**, la función hace lo mismo que `verificar_citas`, que no da error: da un AVISO
+agregado por transcripción (`evidence/modelo.py:398-399`).
+- Aquí, «N ventanas sobre tr-… no comprobadas contra sus segmentos (cruda ausente en data/); contra
+  los tramos, sí».
+- No pasa en silencio, y el tramo se comprueba igual.
+- Un vídeo sin tramos no tiene nada que comprobar: ni problema ni aviso.
+
+**Tests:** `tests/unit/test_ventana_no_citable.py`, 8 funciones, todo sintético salvo el último:
+
+| Test | Qué rompe a propósito |
+|---|---|
+| `test_la_ventana_vieja_falla` | la ventana vieja de v9 pisa el tramo de margen → falla |
+| `test_pisar_solo_la_cola_de_un_segmento_que_solapa_un_tramo_falla` | la ventana pisa la cola de un segmento que solapa un tramo, sin tocar el tramo → falla (y sin la cruda no se vería) |
+| `test_la_ventana_que_toca_el_tramo_a_0_ms_pasa` | toca el tramo a 0 ms → pasa; 1 ms dentro → falla |
+| `test_un_item_supersedido_que_pisa_un_tramo_no_cuenta` | el supersedido no cuenta; sin el que lo supersede, sí |
+| `test_la_ventana_nueva_pasa` | v9 con los milisegundos medidos: la nueva pasa y la vieja no |
+| `test_el_caso_de_v10_…` | el caso de este ítem: la ventana no toca el tramo, pero pisa 503 ms del segmento que lo toca → falla; la recortada pasa |
+| `test_sin_la_cruda_no_pasa_en_silencio` | sin la cruda: AVISO, no silencio; el tramo se ve igual |
+| `test_la_llaman_validate_evidence_new_y_propose` | el cableado: los tres caminos la llaman |
+
+**Controles:**
+- **La condición en todos los vídeos, otra vez** (`medir_condicion-SALIDA2.txt`): 503 ítems, 490
+  activos; **0 activos la incumplen**. La primera medida, la de la parada, sigue en
+  `medir_condicion-SALIDA.txt`.
+- **El control de la fase 5** (`control_activos.py`, con su salida): **21 de 21** bloques de B de v9
+  y v10 caben enteros en un tramo.
+  - Los bloques salen de la salida ya commiteada de `FILTRADAS-ESCENARIO-B/tramos_registrados`, así
+    que no se abre ninguna filtrada.
+  - **0 ítems activos** de v7–v10 solapan un tramo más de 0 ms.
+  - **Supersedidos que se dejan fuera: 2**, `ev-v9-003456-9ef48fb5` y `ev-v10-010438-0d4e6798`.
+- **`uv run botsito knowledge validate`:** exit 0, sin ERROR, con la condición activa. Con la cruda
+  presente no sale ningún aviso suyo.
+- **`uv run python scripts/ficheros_con_ocultos.py`:** «OK: .claude/hooks/ficheros_con_ocultos.txt
+  coincide».
+
 ## Estado
 
-**PARADA en el punto 5 de las decisiones del consultor (§2).** Un ítem activo,
-`ev-v10-010438-0d4e6798`, incumple la condición aprobada. No se ha activado y su arreglo no entra en
-esta rama: decide el consultor.
+**Lista para revisión, NO cerrada.**
 
-**Hecho:**
-- el tramo de margen (§1.1);
-- el ítem nuevo `ev-v9-003457-3e28e325`, que supersede al viejo, por la vía autorizada, con su
-  primera pasada rechazada por la guardia (§1.2);
-- A-46 y los tres recuadros (§1.3);
-- la línea de deuda;
-- la función `ventana_no_citable`, sin llamar todavía;
-- el test de tramos contando solo los activos.
+**Encargo frente a lo hecho:**
 
-**`uv run botsito knowledge validate`:** exit 0, sin ERROR. Hay que hacerlo después de la
-corrección del §1.2: con el id del candidato en la salida de la primera pasada daba un ERROR.
+| Pedido | Hecho |
+|---|---|
+| Fase 0 | §0 |
+| Fase 2: tramo de margen | §1.1 (+7/−0) |
+| Fase 1: ítem nuevo de v9, dos pasadas | §1.2: `ev-v9-003457-3e28e325` |
+| Fase 3: referencias de v9 | §1.3: A-46 y tres recuadros; la línea de deuda |
+| Decisión sobre v10 | §4: `ev-v10-010438-024f76b8`, dos pasadas, el recuadro de SESION-04 |
+| Medida de los segmentos visibles recortados | §5: 32 que asoman por un borde; 2 seguros y 4 posibles dentro |
+| Fase 4: la condición, activada, con sus tests | §2 y §6: 8 tests |
+| Fase 5: controles | §6: 0 activos; 21 de 21; 2 supersedidos fuera; validate y ficheros_con_ocultos en verde |
 
-**Exposición en HOLDOUT-EXPOSICIONES.md: ninguna.** No se leyó ningún texto de v9 ni de v10: solo
-milisegundos e índices de segmento, por la vía autorizada. El ítem nuevo copia campos del viejo sin
-que la sesión los lea.
+**Desviaciones declaradas:**
+- **A-42 no citaba el ítem viejo de v10**, así que no se le ha añadido el nuevo (§4.2). Citarlo es
+  parte de su activación.
+- **La primera pasada de v9:** la primera ejecución imprimía el id del candidato no escrito, y
+  `knowledge validate` daba ERROR. El anexo lo sustituye ahora, y la pasada se repitió con la misma
+  salida (§1.2).
+- **La decisión 5** decía que el arreglo del ítem de v10 no entraba aquí. Lo cambió la decisión del
+  consultor sobre ese ítem.
 
-**CI de Linux:** no hace falta. No se tocan hooks, rutas ni nada que dependa de la plataforma.
+**Exposición en HOLDOUT-EXPOSICIONES.md: ninguna.**
+- No se leyó ningún texto de v9 ni de v10: solo índices de segmento y milisegundos, por la vía
+  autorizada.
+- Las citas nuevas se construyeron por programa y no se imprimieron.
+- No se abrió ninguna filtrada: los bloques de B salen de una salida ya commiteada.
 
-**`PROJECT_STATE.md`:** 24.014 bytes, por debajo del tope de 25.000.
+**CI de Linux: no hace falta.** No se tocan hooks, rutas ni nada que dependa de la plataforma; el
+código nuevo es Python puro sobre milisegundos.
+
+**`PROJECT_STATE.md`:** 23.977 bytes. No crece en esta rama: era de 24.014 y bajó.
 
 Rama NO cerrada.

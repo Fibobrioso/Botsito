@@ -14,7 +14,7 @@
 trabajo/ventana-ev-v9-003456
 
 ## Current Feature
-`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R, la ventana de ev-v9-003456-9ef48fb5 por su regimen; item nuevo ev-v9-003457-3e28e325 y tramo de margen; PARADA en el punto 5 (ev-v10-010438-0d4e6798 incumple la condicion), esperando al consultor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
+`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R: ventanas de ev-v9-003456 y ev-v10-010438 corregidas por su regimen; tramo de margen; la ventana de todo item activo se comprueba en validate. Falta el revisor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
 
 ## Stable Main State
 06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ trabajo/ventana-ev-v9-003456
 06adac1 · merge: las filtradas de sesion tapan los tramos no citables de su video, comprobado por el sha del audio (FILTRADAS-CON-TRAMOS.md) · tag stable/F36y-filtradas-con-tramos
 
 ## Tests Currently Passing
-1301 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

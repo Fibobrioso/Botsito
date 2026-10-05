@@ -37,7 +37,7 @@ from botsito.evidence.verificacion import (
     comprobar_referencias,
     localizar_cita,
     tokens,
-    tramo_no_citable,
+    ventana_no_citable,
 )
 
 DIRECTORIO_PROPUESTAS = "knowledge/_proposals"
@@ -401,10 +401,18 @@ def comprobar(
             it["t1"]
         ) > parse_tiempo(doc["t1"]):
             problemas.append(f"{pref}: fuera del tramo de la propuesta")
-        fuera = tramo_no_citable(contexto, video, _ms(it["t0"]), _ms(it["t1"]))
-        if fuera is not None:
-            problemas.append(f"{pref}: el tramo no es especificacion, {fuera}")
         modalidad = it["modalidad"]
+        # La ventana no pisa un tramo no citable ni un segmento que lo solape (VENTANA-EV-V9.md);
+        # un item de pantalla no cita la transcripcion, y para el solo cuenta el tramo.
+        fuera = ventana_no_citable(
+            contexto,
+            video,
+            _ms(it["t0"]),
+            _ms(it["t1"]),
+            segmentos if modalidad in ("audio", "ambas") else None,
+        )
+        if fuera is not None:
+            problemas.append(f"{pref}: {fuera}")
         fotos = list(it.get("fotogramas") or [])
         if modalidad == "audio" and fotos:
             problemas.append(f"{pref}: modalidad audio no admite fotogramas")
