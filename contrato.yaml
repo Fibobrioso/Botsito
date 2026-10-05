@@ -13,6 +13,9 @@ rutas_permitidas:
   - knowledge/corpus/tramos_no_citables.yaml
   - tests/unit/test_guardia_claude.py
   - .claude/hooks/ficheros_con_ocultos.txt
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - tests/unit/test_tramos_de_sesion.py
 rutas_protegidas:
   - src/
   - scripts/

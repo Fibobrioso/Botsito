@@ -14,7 +14,7 @@
 trabajo/filtradas-escenario-b
 
 ## Current Feature
-`trabajo/filtradas-escenario-b` EN CURSO (2026-10-04): rehacer con el guion de main las filtradas de sesion v7-v10 en el escenario B (punto P). Fase 1 PARADA (P2 y metodo de los tramos de v9): A restaurada, esperando al consultor. Encargo docs/encargos/trabajo-filtradas-escenario-b.md; informe docs/validation/FILTRADAS-ESCENARIO-B.md.
+`trabajo/filtradas-escenario-b` EN CURSO (2026-10-04): rehacer con el guion de main las filtradas de sesion v7-v10 en el escenario B (punto P). B medido y no instalado (P2); tramos nuevos PARADOS por un item de v9 en el segundo nuevo; esperando al consultor. Encargo docs/encargos/trabajo-filtradas-escenario-b.md; informe docs/validation/FILTRADAS-ESCENARIO-B.md.
 
 ## Stable Main State
 44f461d · merge de `trabajo/cuarentena-por-condicion` (tag `stable/F36w-cuarentena-por-condicion`): la cuarentena del texto deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre -sin dias en casos_ocultos ni en casos_reservados y fuera de knowledge/cases/meses_reservados.yaml (2026-02, 2026-03), la fuente nueva, SOLO ANADIR-; sin datos se tapan los doce (`cases.holdout.meses_libres`). Dos tramos de precaucion en v6; las filtradas de sesion v7-v10, en el escenario A hasta la rama siguiente (P). Sobre `stable/F36v-sesion-04` (eec79a0). Informe docs/validation/CUARENTENA-POR-CONDICION.md; el registro del cierre, al final de HISTORIA.

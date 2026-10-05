@@ -282,8 +282,97 @@ La tabla completa, sin texto, está al final de `medir_fase1-SALIDA.txt`. Lo que
 La sección completa del punto 4 (clase, commit y fecha de cada tramo, y lecturas posteriores) espera a
 que el consultor decida sobre la parada.
 
+## Segunda respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. P2: B no se instala en esta rama. A se queda donde la has restaurado, y las B siguen apartadas como *.filtrada-B-condicion.md, sin abrir.
+>    Por qué: una parada no se relaja después de ver el resultado. B no empeora nada frente a ANTES (P3 = 0), pero sí frente a A en 6 segmentos de tramos de precaución, y la rama Q rehará las filtradas en todo caso, ya con los tramos aplicados. Instalar B ahora no aporta nada.
+>    El alcance de esta rama queda así: medir B (hecho), arreglar los tramos y documentar el hueco. Declara este cambio de alcance como desviación aceptada por el consultor.
+>
+> 2. Tramos, por su régimen (solo añadir, sin editar los que ya existen):
+>    a) v10, bloque de 1:55:27: tramo nuevo con inicio al segundo y un segundo de margen al final, el criterio de los 12 de v10, y con el motivo de precaución de siempre. Tiene que pasar tu control positivo: el bloque de B cabe entero dentro del tramo.
+>    b) v9: un tramo nuevo por cada uno de los 8 bloques. Cubre el bloque entero con un segundo de margen al final, y el motivo dice que completa el tramo original (nombra cuál), porque ese se registró sin margen. Control positivo igual.
+>    Por qué: con el final sin margen, la cola del último segundo de cada bloque queda fuera de su tramo, y los tramos son los que respeta la guardia.
+>    Parada: si algún ev-* cae en los segundos que cubren los tramos nuevos, para y dime cuál, sin tocar el ítem.
+>    Después: scripts/ficheros_con_ocultos.py, uv run botsito knowledge validate y el test de tramos del repo real, con la rotura a propósito (quitar un tramo nuevo y ver que cae).
+>
+> 3. Termina la sección del hueco (punto 4 de mi respuesta anterior) con las 10 sesiones de tramos que haya en v7–v10: clase, commit y fecha de entrada, líneas visibles dentro en A y en B, y las lecturas de cada filtrada que constan en los informes después de esa fecha. Sin texto. Lo que encuentres sobre lecturas de tramos de precaución me lo pasas, y yo decido si va a HOLDOUT-EXPOSICIONES.md.
+>
+> 4. Recuadros en los dos informes cerrados:
+>    - CUARENTENA-POR-CONDICION.md §5 decía que en v9 «ya NO sale f7529459…». Sí sale: B es idéntica a ANTES. El recuadro lo corrige y remite al informe nuevo.
+>    - SESION-04-EXTRACCION.md §1.2: la comparación pendiente queda hecha (v9 da f7529459…a027b), con remisión al informe nuevo.
+>
+> 5. El punto Q de la Next Action se sustituye por este texto (va en el commit de la rama, para que entre con el merge):
+>    «Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con un test sintético que rompa la guardia a propósito. Tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10 en B con los tramos, y comprobar que lo tapado es B más los tramos, y nada destapado frente a A dentro de un tramo (FILTRADAS-ESCENARIO-B.md). Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera.»
+>    Y P se quita: pasa a HECHO con esta rama.
+>
+> 6. Para la fila de ERRORES-RECURRENTES, además del hallazgo de mi respuesta anterior:
+>    importa · De Claude Code: la comparación por bloques marcaba destapados falsos porque las marcas truncan al segundo, y el criterio de los tramos de v9 (sin margen) era distinto del de v10. Lección: toda comparación de marcas con segundos truncados se valida contra un caso idéntico conocido (aquí, v9 B = ANTES), y los criterios de registro de tramos se fijan por escrito en un solo sitio.
+>    Dime dónde está hoy escrito el criterio de registro de tramos. Si no lo está, añádelo al runbook que corresponda en esta rama.
+>
+> Lo demás del encargo sigue igual: make check sellado, push como fix/filtradas-escenario-b con la CI de Linux y sus números de run (único fallo aceptado: state check por el nombre fix/), revisor con su informe pegado al final, y el tamaño de PROJECT_STATE.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 2. Los tramos nuevos (segunda respuesta, punto 2): la parada salta
+
+### 2.1 El criterio, que no estaba escrito (punto 6)
+
+**El criterio de registro de tramos no estaba escrito en ningún sitio.**
+- La skill `ingerir-sesion` (paso 4) solo dice que los bloques entran «con `motivo` y `acordado`, SIN
+  contenido».
+- La cabecera de `tramos_no_citables.yaml` dice «t0, t1 (h:mm:ss del video)».
+- Ningún runbook fija el inicio, el final ni el margen. Por eso v9 y v10 se hicieron distinto.
+
+Queda escrito en esta rama en `docs/runbooks/SESION-DE-PREGUNTAS.md`, «Después», punto 4, como
+«Los límites de un tramo: el criterio único»:
+- bloque de la filtrada: inicio al segundo y final más un segundo;
+- segmento del `Filtro`: sus milisegundos;
+- corte de audio: inicio por abajo y final por arriba;
+- control positivo de cada tramo nuevo;
+- SOLO AÑADIR, completando con un tramo nuevo que nombra al original.
+
+### 2.2 Los nueve tramos calculados, y la parada
+
+Anexo: `docs/validation/anexos/FILTRADAS-ESCENARIO-B/tramos_nuevos.py`, con la salida en
+`tramos_nuevos-SALIDA.txt`. Solo lee marcas `[CUARENTENA …]` y tiempos.
+
+Los nueve tramos son estos: ocho de v9, cada uno completando al original de la sesión 3, y uno de
+v10, el bloque de B de 1:55:27. **Los nueve pasan el control positivo**: el bloque de B cabe entero
+en el tramo nuevo.
+
+| Vídeo | Tramo nuevo | Completa a | Ítems en los segundos nuevos |
+|---|---|---|---|
+| v9 | 0:22:11–0:22:17 | 0:22:11–0:22:16 | 0 |
+| v9 | 0:24:11–0:24:24 | 0:24:11–0:24:23 | 0 |
+| v9 | **0:34:44–0:34:57** | 0:34:44–0:34:56 | **1: `ev-v9-003456-9ef48fb5`** |
+| v9 | 1:06:38–1:07:33 | 1:06:38–1:07:32 | 0 |
+| v9 | 1:07:34–1:07:40 | 1:07:34–1:07:39 | 0 |
+| v9 | 1:07:45–1:07:52 | 1:07:45–1:07:51 | 0 |
+| v9 | 1:13:25–1:13:40 | 1:13:25–1:13:39 | 0 |
+| v9 | 1:13:55–1:14:05 | 1:13:55–1:14:04 | 0 |
+| v10 | 1:55:27–1:55:34 | (bloque nuevo de B) | 0 |
+
+**Salta la parada del punto 2.** El ítem `ev-v9-003456-9ef48fb5`:
+- va de 0:34:56 a 0:35:00;
+- es de tipo RULE_STATEMENT, con el tema `reentrada.sesgo_distinto_sesiones_diferentes` y la nota
+  «A-46»;
+- entró con `0e3ca88` el 2026-09-29, en la ingesta de la sesión 3.
+
+Empieza en el segundo exacto en que termina el tramo original 0:34:44–0:34:56, y el tramo nuevo, que
+llega a 0:34:57, lo pisa. Con la marca truncada al segundo no se puede saber, sin leer la cruda, si
+el segmento que cita empieza antes o después de que acabe el último segmento del bloque.
+
+**No se ha tocado el ítem y no se ha registrado ningún tramo**, tampoco los otros ocho. Decide el
+consultor.
+
 ## Estado
 
-**FASE 1 PARADA**, por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
+**PARADA en los tramos (§2.2).** Antes, la fase 1 se paró por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
 las B, guardadas sin abrir; ningún tramo registrado. **Ninguna exposición.** Esperando al consultor.
 Rama NO cerrada.

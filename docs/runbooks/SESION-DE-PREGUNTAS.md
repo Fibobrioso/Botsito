@@ -121,6 +121,22 @@ precondición de ceguera.
 4. **Si en la grabación salió algo de septiembre** o cualquier día reservado, ese tramo se declara
    en `knowledge/corpus/tramos_no_citables.yaml` y en `docs/validation/HOLDOUT-EXPOSICIONES.md`
    **el mismo día** (ADR-0021 §4).
+
+   **Los límites de un tramo: el criterio único.** Escrito el 2026-10-04 en
+   `trabajo/filtradas-escenario-b` (FILTRADAS-ESCENARIO-B.md, segunda respuesta del consultor,
+   punto 6). Hasta entonces no estaba escrito en ningún sitio, y v9 y v10 se registraron con
+   criterios distintos.
+   - **Un bloque de la filtrada** (`[CUARENTENA mm:ss–mm:ss]`, lo único que da la filtrada sin leer
+     la cruda): `t0` es el inicio del bloque al segundo; `t1`, el final del bloque **más un
+     segundo**. La marca trunca al segundo: sin ese margen, la cola del último segundo del bloque
+     queda fuera del tramo (v9, sesión 3).
+   - **Un segmento del `Filtro`**, cuando se puede usar (un vídeo que no es sesión en cuarentena,
+     como v6): sus límites en milisegundos, tal cual.
+   - **Un corte de audio**: los segundos de `silencedetect`, con el inicio por abajo y el final por
+     arriba.
+   - **Control positivo de cada tramo nuevo:** el bloque cabe entero dentro del tramo.
+   - **SOLO AÑADIR.** Un tramo ya registrado no se edita. Si se quedó corto, se completa con un tramo
+     nuevo que lo cubra entero, y su motivo nombra el tramo original.
 5. **Una respuesta, un registro.** Por cada pregunta respondida, con la cita copiada de la
    transcripción FILTRADA (`<stem>.filtrada.md`, skill `ingerir-sesion`) y su tramo. Fuera de los
    bloques en cuarentena es literal de la cruda; la cruda de una sesión
