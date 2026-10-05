@@ -1,0 +1,25 @@
+== v9: control positivo de los bloques de B
+    1331000-1337000: cabe
+    1451000-1464000: cabe
+    2084000-2096900: NO CABE (cubierto hasta 2096000)
+    3998000-4053000: cabe
+    4054000-4060000: cabe
+    4065000-4072000: cabe
+    4405000-4420000: cabe
+    4435000-4445000: cabe
+== v10: control positivo de los bloques de B
+    58000-73000: cabe
+    87000-97000: cabe
+    2408000-2420000: cabe
+    3804000-3819000: cabe
+    3896000-3929000: cabe
+    5194000-5201000: cabe
+    5204000-5211000: cabe
+    6909000-6921000: cabe
+    6927000-6934000: cabe
+    6958000-6963000: cabe
+    6964000-6968000: cabe
+    7602000-7623000: cabe
+    7624000-7632000: cabe
+bloques que no caben enteros: 1
+items de v7-v10 que solapan un tramo mas de 0 ms: 0 []

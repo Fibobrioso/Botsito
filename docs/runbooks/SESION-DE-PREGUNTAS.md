@@ -134,6 +134,14 @@ precondición de ceguera.
      como v6): sus límites en milisegundos, tal cual.
    - **Un corte de audio**: los segundos de `silencedetect`, con el inicio por abajo y el final por
      arriba.
+   - **Si el segundo de margen solapa la ventana declarada de un ítem ev-***, se mide el ancla del
+     ítem con la localización de `knowledge validate` (`verificar_citas`), sin texto. Si el ancla
+     está fuera del bloque, el tramo termina en el inicio de la ventana del ítem, y la ventana se
+     corrige por su régimen. Si el ancla cae dentro del bloque, se para y decide el consultor.
+     Queda por escrito: un tramo que termina justo en el inicio de la ventana de un ítem pasa
+     `tramo_no_citable`, y uno que se mete 1 ms en ella no pasa (cuarta respuesta del consultor,
+     punto 4; `tests/unit/test_tramos_de_sesion.py`; el caso de v9 de 0:34:56, en
+     FILTRADAS-ESCENARIO-B.md §4).
    - **Control positivo de cada tramo nuevo:** el bloque cabe entero dentro del tramo.
    - **SOLO AÑADIR.** Un tramo ya registrado no se edita. Si se quedó corto, se completa con un tramo
      nuevo que lo cubra entero, y su motivo nombra el tramo original.

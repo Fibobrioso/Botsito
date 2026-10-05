@@ -297,3 +297,59 @@ tramos:
       precaución: mes con días ocultos que la cuarentena mecánica no cubría. Segmentos de la transcripcion activa de v6 que la regla por condicion tapa (escenario B) y la lista vieja de cuatro meses no tapaba; medidos el 2026-10-04 con el Filtro real, imprimiendo solo tiempos. No se citan ni se describen
     acordado: >-
       revision del revisor de trabajo/cuarentena-por-condicion (hallazgo A4, 2026-10-04), con el mismo criterio que el tramo de v10 1:55:29 (revision del consultor de trabajo/sesion-04, punto 2); docs/validation/CUARENTENA-POR-CONDICION.md
+  - video_id: v9
+    t0: "0:22:11"
+    t1: "0:22:17"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 0:22:11-0:22:16 (segmentos 404-406 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 22:11–22:16] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "0:24:11"
+    t1: "0:24:24"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 0:24:11-0:24:23 (segmentos 438-441 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 24:11–24:23] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "1:06:38"
+    t1: "1:07:33"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 1:06:38-1:07:32 (segmentos 1075-1080 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 66:38–67:32] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "1:07:34"
+    t1: "1:07:40"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 1:07:34-1:07:39 (segmentos 1082-1084 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 67:34–67:39] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "1:07:45"
+    t1: "1:07:52"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 1:07:45-1:07:51 (segmentos 1088-1090 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 67:45–67:51] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "1:13:25"
+    t1: "1:13:40"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 1:13:25-1:13:39 (segmentos 1180-1182 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 73:25–73:39] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v9
+    t0: "1:13:55"
+    t1: "1:14:05"
+    motivo: >-
+      completa el tramo de cuarentena mecanica de la sesion 03 de 1:13:55-1:14:04 (segmentos 1192-1194 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 73:55–74:04] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2b): un tramo nuevo por cada bloque de cuarentena de v9, con un segundo de margen al final, que nombra el tramo original; criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/FILTRADAS-ESCENARIO-B.md
+  - video_id: v10
+    t0: "1:55:27"
+    t1: "1:55:34"
+    motivo: >-
+      precaución: mes con días ocultos que la cuarentena mecánica no cubría. El bloque [CUARENTENA 115:27–115:33] de la version filtrada en el escenario B (regla por condicion, guion de main), que el tramo de 1:55:29-1:55:32 no cubre entero; t0 al segundo y t1 un segundo despues de la marca; medido el 2026-10-04 imprimiendo solo marcas de tiempo. No se cita ni se describe
+    acordado: >-
+      segunda respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04, punto 2a), con el criterio de los 12 tramos de cuarentena de v10; docs/validation/FILTRADAS-ESCENARIO-B.md

@@ -18,3 +18,14 @@
     linea 600 (seccion 1): BLOQUE 34:44–34:56
     linea 601 (seccion 1): VISIBLE 34:58
     linea 602 (seccion 1): VISIBLE 35:00
+== ancla de ev-v9-003456-9ef48fb5 con verificar_citas (la de knowledge validate)
+ventana declarada: 2096000-2100000 ms
+problemas de cita de este item: 0
+apariciones de la cita en la ventana (coincidencias): 1
+avisos de tiempos parciales o de segmento: 0
+segmentos en que caen las palabras citadas (n, t0_ms, t1_ms):
+    613 2098060 2100240
+segmentos con fin en 34:56 seguidos de uno que empieza en 34:58: 1
+bloque en la lista de validate: posiciones 609-612, n 609-612; el primero empieza en el segundo 2084 (34:44 = 2084)
+ultimo segmento del bloque: n 612, t1_ms 2096900
+VEREDICTO: (a) todas las palabras citadas caen despues del bloque

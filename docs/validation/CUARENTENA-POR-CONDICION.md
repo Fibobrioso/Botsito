@@ -471,6 +471,15 @@ del 2026-10-01.
     que ninguno);
   - comparar la filtrada de v9 con `--sesion 03`: ya NO sale `f7529459…`, porque la regla cambió;
     el sha nuevo se anota allí.
+
+  > **CORRECCIÓN del 2026-10-04 (rama `trabajo/filtradas-escenario-b`).** La línea de arriba decía
+  > que en v9 «ya NO sale `f7529459…`». **Sí sale.** Con el guion de `main` y la regla por
+  > condición (escenario B), `--solo-filtrar --sesion 03` sobre v9 da sha256
+  > `f7529459b4c97d12bb9ad74ef24318d6b7c8b15365f6fafb06e4228c4c4a027b`, byte a byte la filtrada
+  > ANTES. v9 no nombra ningún mes que la lista vieja no cubriera, y la regla nueva no cambia nada
+  > en v9. Las filtradas B de v7–v10 se midieron y NO se instalaron (parada P2). Los bloques nuevos
+  > de B (uno en v10, el de 1:55:27) tienen ya su tramo. Detalle: `FILTRADAS-ESCENARIO-B.md` §1.2 y
+  > §4.
 - **`a18_buscar.py`**, si algún día se regenera su salida: pasarle `libres`.
 
 ## Estado

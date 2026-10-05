@@ -161,3 +161,38 @@ Copiada tal cual:
 >    Pregunta expresa para el revisor: que compruebe que ningún tramo nuevo pisa el ancla de ningún ítem ev-* y que todos pasan el control positivo.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Cuarta respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Cuarta respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. Autorizo medir el ancla de ev-v9-003456-9ef48fb5 con la misma localización de citas que usa uv run botsito knowledge validate. Debe ser la misma función, llamada como la llama validate; nada de una vía paralela.
+>    Condiciones:
+>    - la salida es solo: índice y milisegundos de inicio y fin de cada segmento en que caen las palabras citadas, y el índice y los milisegundos de fin del último segmento del bloque [CUARENTENA 34:44-34:56];
+>    - ni texto, ni palabras, ni longitudes de cita;
+>    - el guion va como anexo (ancla_v9.py) con su salida commiteada, y el informe dice qué función llama y que es la de validate.
+>    Por qué: es un control ya autorizado y no expone texto. Lo que decide es si el ítem cita la línea visible o el segmento oculto.
+>
+> 2. Según el resultado:
+>    a) Todas las palabras citadas caen en la línea visible (la de 0:34:58 o posteriores): el ítem no pisa la cuarentena, y lo que está mal es solo su ventana declarada.
+>       - Tramo nuevo de 2.084.000 a 2.096.000 ms, que completa el de 0:34:44. Pasa validate porque no solapa la ventana del ítem.
+>       - Declara en el informe que la cola del segmento oculto, desde 2.096.000 ms hasta su fin real, queda fuera del tramo. La tapará Q, porque ese segmento solapa el tramo más de 0 ms.
+>       - El ítem no se toca en esta rama. Su ventana se corrige por su régimen (evidence new --supersede, con t0 en el inicio real del ancla) en una rama aparte. Añade a la Next Action, tras Q:
+>         «R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §3).»
+>    b) Alguna palabra citada cae en el segmento oculto: para. No registres el tramo, no toques el ítem y no declares nada. Dame solo índices y milisegundos, y yo decido la exposición y qué se hace con el ítem.
+>    c) La localización falla o es ambigua: para y dime por qué, también sin texto.
+>
+> 3. Lección para la fila de ERRORES-RECURRENTES (del consultor):
+>    importa · El consultor dio por hecho, sin medirlo, que la línea visible empezaba en la marca del fin del bloque. La comprobación (b) lo desmintió. Lección: las hipótesis sobre marcas truncadas se escriben como comprobaciones con parada, nunca como premisa de una decisión.
+>
+> 4. El criterio de SESION-DE-PREGUNTAS.md: la condición de mi tercera respuesta («el tramo termina en el inicio del ítem…») se cambia por esta, porque la otra se apoyaba en la premisa que ha fallado:
+>    «Si el segundo de margen solapa la ventana declarada de un ítem ev-*, se mide el ancla del ítem con la localización de validate, sin texto. Si el ancla está fuera del bloque, el tramo termina en el inicio de la ventana del ítem y la ventana se corrige por su régimen. Si el ancla cae dentro del bloque, se para y decide el consultor.»
+>    Test sintético contra tramo_no_citable (verificacion.py:358): un tramo que termina justo en el inicio de la ventana de un ítem pasa, y uno que se mete 1 ms en ella falla.
+>
+> 5. Lo demás sigue como en mis respuestas segunda y tercera: los puntos 3 a 6, el texto de Q con el solapamiento de más de 0 ms, make check sellado, fix/ con la CI de Linux y sus números de run, y el revisor con la pregunta expresa sobre tramos e ítems.
+>
+> Rama lista para revisión, NO cerrada.

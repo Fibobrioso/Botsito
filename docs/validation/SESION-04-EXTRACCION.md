@@ -153,6 +153,13 @@ aquí porque cambia cómo se hizo la filtrada:
 - Al cerrar la rama, o en la siguiente: `--solo-filtrar --sesion 03` sobre v9 (sha esperado
   `f7529459…`) y `--solo-filtrar --sesion 04` sobre v10, que agrupará por S-n.
 
+> **CORRECCIÓN del 2026-10-04 (rama `trabajo/filtradas-escenario-b`).** La comparación pendiente
+> **queda hecha**. Con el guion de `main` (ya con la regla por condición), `--solo-filtrar --sesion
+> 03` sobre v9 da sha256 `f7529459b4c97d12bb9ad74ef24318d6b7c8b15365f6fafb06e4228c4c4a027b`: la
+> misma que la del 2026-09-29. `--sesion 04` sobre v10 se ejecutó también; su resultado (escenario
+> B) se midió solo por marcas y no se instaló (parada P2). La filtrada instalada de v10 sigue siendo
+> la A. Detalle: `FILTRADAS-ESCENARIO-B.md` §1.
+
 ### 1.3 Los tests: no han bajado (revisión del consultor, punto 5)
 
 Las dos cifras del informe miden cosas distintas.

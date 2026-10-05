@@ -4074,3 +4074,12 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 13 (2026-10-04).
+
+# Next Action HECHA · P · sale de PROJECT_STATE.md en trabajo/filtradas-escenario-b (2026-10-04)
+
+La hace esta rama, con el alcance que fijó el consultor: B medido en su sitio y no instalado (P2),
+los tramos arreglados y el hueco documentado (segunda respuesta del consultor, punto 1, y punto 5:
+«Y P se quita: pasa a HECHO con esta rama»; docs/validation/FILTRADAS-ESCENARIO-B.md). Lo que queda
+pasa a Q. Su texto literal en PROJECT_STATE.md:
+
+P. Rama corta: rehacer con el guion de main las filtradas de sesión (v7–v10) en el escenario B. Medir antes con recuentos y marcas de tiempo, sin texto. Si algún ítem ev-* cae en un segmento que pasa a ocultarse, parar y avisar al consultor. Va antes de activar la sesión 4 (CUARENTENA-POR-CONDICION.md §5).

@@ -438,10 +438,262 @@ Lo que dicen las marcas, sin texto:
 
 **No se ha registrado ningún tramo y el ítem no se ha tocado.** Decide el consultor.
 
+## Cuarta respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Cuarta respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. Autorizo medir el ancla de ev-v9-003456-9ef48fb5 con la misma localización de citas que usa uv run botsito knowledge validate. Debe ser la misma función, llamada como la llama validate; nada de una vía paralela.
+>    Condiciones:
+>    - la salida es solo: índice y milisegundos de inicio y fin de cada segmento en que caen las palabras citadas, y el índice y los milisegundos de fin del último segmento del bloque [CUARENTENA 34:44-34:56];
+>    - ni texto, ni palabras, ni longitudes de cita;
+>    - el guion va como anexo (ancla_v9.py) con su salida commiteada, y el informe dice qué función llama y que es la de validate.
+>    Por qué: es un control ya autorizado y no expone texto. Lo que decide es si el ítem cita la línea visible o el segmento oculto.
+>
+> 2. Según el resultado:
+>    a) Todas las palabras citadas caen en la línea visible (la de 0:34:58 o posteriores): el ítem no pisa la cuarentena, y lo que está mal es solo su ventana declarada.
+>       - Tramo nuevo de 2.084.000 a 2.096.000 ms, que completa el de 0:34:44. Pasa validate porque no solapa la ventana del ítem.
+>       - Declara en el informe que la cola del segmento oculto, desde 2.096.000 ms hasta su fin real, queda fuera del tramo. La tapará Q, porque ese segmento solapa el tramo más de 0 ms.
+>       - El ítem no se toca en esta rama. Su ventana se corrige por su régimen (evidence new --supersede, con t0 en el inicio real del ancla) en una rama aparte. Añade a la Next Action, tras Q:
+>         «R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §3).»
+>    b) Alguna palabra citada cae en el segmento oculto: para. No registres el tramo, no toques el ítem y no declares nada. Dame solo índices y milisegundos, y yo decido la exposición y qué se hace con el ítem.
+>    c) La localización falla o es ambigua: para y dime por qué, también sin texto.
+>
+> 3. Lección para la fila de ERRORES-RECURRENTES (del consultor):
+>    importa · El consultor dio por hecho, sin medirlo, que la línea visible empezaba en la marca del fin del bloque. La comprobación (b) lo desmintió. Lección: las hipótesis sobre marcas truncadas se escriben como comprobaciones con parada, nunca como premisa de una decisión.
+>
+> 4. El criterio de SESION-DE-PREGUNTAS.md: la condición de mi tercera respuesta («el tramo termina en el inicio del ítem…») se cambia por esta, porque la otra se apoyaba en la premisa que ha fallado:
+>    «Si el segundo de margen solapa la ventana declarada de un ítem ev-*, se mide el ancla del ítem con la localización de validate, sin texto. Si el ancla está fuera del bloque, el tramo termina en el inicio de la ventana del ítem y la ventana se corrige por su régimen. Si el ancla cae dentro del bloque, se para y decide el consultor.»
+>    Test sintético contra tramo_no_citable (verificacion.py:358): un tramo que termina justo en el inicio de la ventana de un ítem pasa, y uno que se mete 1 ms en ella falla.
+>
+> 5. Lo demás sigue como en mis respuestas segunda y tercera: los puntos 3 a 6, el texto de Q con el solapamiento de más de 0 ms, make check sellado, fix/ con la CI de Linux y sus números de run, y el revisor con la pregunta expresa sobre tramos e ítems.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 4. El ancla medida (cuarta respuesta), los tramos registrados y el criterio
+
+### 4.1 El ancla de `ev-v9-003456-9ef48fb5`: caso (a)
+
+Anexo: `ancla_v9.py`, función `ancla_validate`, con la salida al final de `ancla_v9-SALIDA.txt`.
+
+**Llama a la función de `knowledge validate`, llamada igual que en validate.**
+`src/botsito/validation/knowledge.py`, líneas 668-695, hace esto:
+- `cargar_evidencia` de `knowledge/evidence`;
+- `cargar_manifiesto` de `knowledge/corpus/manifest.yaml`;
+- `construir_contexto(repo, _carpeta_datos(repo), manifiesto)`;
+- `verificar_citas(items, contexto)`, con **todos** los ítems.
+
+El anexo hace lo mismo y toma la `Localizacion` del ítem. De los segmentos solo lee `n`, `t0_ms` y
+`t1_ms`, por el mismo `contexto.crudas` que usa `verificar_citas` (el llamador autorizado de
+`tests/unit/test_cuarentena.py`). No imprime texto, ni palabras, ni longitudes de cita.
+
+| Medida | Valor |
+|---|---|
+| Ventana declarada del ítem | 2.096.000–2.100.000 ms |
+| Problemas de cita del ítem | 0 |
+| Apariciones de la cita en la ventana | 1 (no es ambigua) |
+| Avisos de tiempos parciales | 0 |
+| **Segmento en que caen las palabras citadas** | **n 613, de 2.098.060 a 2.100.240 ms** |
+| **Último segmento del bloque `[CUARENTENA 34:44–34:56]`** | **n 612, termina en 2.096.900 ms** |
+
+**El bloque está bien identificado.** En la lista de validate solo un segmento acaba en el segundo
+34:56 y va seguido de uno que empieza en 34:58. El bloque ocupa las posiciones 609-612 y los
+segmentos n 609-612, y su primer segmento empieza en el segundo 34:44. Coincide con el motivo del
+tramo original («segmentos 609-612 de la cruda»).
+
+La cruda de `data/` que lee validate no es byte a byte la del Escritorio, de la que salió la
+filtrada: tienen sha256 distinto, `dcd6e5bd…` frente a `d7464d30…`. Por eso el bloque se buscó por
+sus marcas y no por su índice. Las dos vías dan 609-612.
+
+**Veredicto: caso (a).** Todas las palabras citadas caen en el segmento visible 613, que empieza
+1.160 ms después de que termine el último segmento del bloque. El ítem no pisa la cuarentena: lo que
+está mal es solo su ventana declarada, que empieza 2.060 ms antes de su ancla, sobre la cola del
+segmento 612.
+
+### 4.2 Lo que se registró (punto 2a de la cuarta respuesta; punto 2 de la segunda)
+
+En `knowledge/corpus/tramos_no_citables.yaml`, solo añadiendo (el diff no quita ninguna línea), hay
+**8 tramos nuevos**:
+
+| Vídeo | Tramo nuevo | Completa a / motivo |
+|---|---|---|
+| v9 | 0:22:11–0:22:17 | 0:22:11–0:22:16 (segmentos 404-406) |
+| v9 | 0:24:11–0:24:24 | 0:24:11–0:24:23 (438-441) |
+| v9 | 1:06:38–1:07:33 | 1:06:38–1:07:32 (1075-1080) |
+| v9 | 1:07:34–1:07:40 | 1:07:34–1:07:39 (1082-1084) |
+| v9 | 1:07:45–1:07:52 | 1:07:45–1:07:51 (1088-1090) |
+| v9 | 1:13:25–1:13:40 | 1:13:25–1:13:39 (1180-1182) |
+| v9 | 1:13:55–1:14:05 | 1:13:55–1:14:04 (1192-1194) |
+| v10 | 1:55:27–1:55:34 | precaución: el bloque de B `[CUARENTENA 115:27–115:33]`, que el tramo de 1:55:29–1:55:32 no cubre entero |
+
+**Desviación, para el consultor: el tramo de 2.084.000 a 2.096.000 ms NO se ha registrado.** Es
+exactamente el tramo original, `0:34:44`–`0:34:56`, que se registró sin margen y termina ya en el
+inicio de la ventana del ítem. Una segunda entrada con los mismos tiempos no tapa nada más y quedaría
+para siempre en un fichero de solo añadir. Si el consultor la quiere para que su motivo nombre el
+ítem, se añade en un commit.
+
+**Declarado (punto 2a): la cola del segmento oculto 612, de 2.096.000 a 2.096.900 ms, queda fuera de
+todo tramo.** La tapará Q, porque el segmento 612 solapa el tramo original más de 0 ms.
+
+**Control positivo, sobre lo ya registrado** (anexo `tramos_registrados.py`, con su salida):
+- Cada bloque de B de v9 y de v10, con su final un segundo después de la marca, cabe entero en un
+  tramo registrado: 20 de 21.
+- El que no cabe es el de 34:44, que se midió con su fin real (2.096.900) y está cubierto hasta
+  2.096.000: es la cola declarada.
+- **Ningún ítem ev-* de v7–v10 solapa un tramo registrado más de 0 ms** (0 ítems).
+
+**Después** (segunda respuesta, punto 2):
+- `uv run python scripts/ficheros_con_ocultos.py`: «OK: .claude/hooks/ficheros_con_ocultos.txt
+  coincide». No hay que regenerar nada.
+- `uv run botsito knowledge validate`: exit 0 y ningún ERROR, con 501 ítems de evidencia e
+  historial intacto.
+
+### 4.3 El criterio y su test (punto 4 de la cuarta respuesta)
+
+En `docs/runbooks/SESION-DE-PREGUNTAS.md`, «Los límites de un tramo: el criterio único», entra la
+condición de la cuarta respuesta, que sustituye a la de la tercera: si el segundo de margen solapa la
+ventana declarada de un ítem, se mide el ancla con la localización de validate. Si el ancla está
+fuera del bloque, el tramo termina en el inicio de la ventana. Si cae dentro, se para.
+
+**El control ya existía.** `tramo_no_citable` (`src/botsito/evidence/verificacion.py:358`) hace que
+`knowledge validate` y `evidence new` rechacen un ítem cuya ventana declarada solape un tramo más de
+0 ms. El test nuevo es `tests/unit/test_tramos_de_sesion.py`, con 6 funciones:
+- **Sintéticos contra `tramo_no_citable`:**
+  - un tramo que termina justo en el inicio de la ventana de un ítem pasa;
+  - uno que se mete 1 ms en ella falla.
+- **El criterio de los límites, sintético:**
+  - un tramo de cuarentena de v9 sin margen y sin compañero se nombra;
+  - con su compañero, o cuando el segundo de margen pisaría la ventana de un ítem, no.
+- **Repo real:**
+  - cada tramo de cuarentena de la sesión 03 tiene su compañero con margen, salvo el de 0:34:44, que
+    se queda en el inicio de la ventana del ítem;
+  - el bloque de v10 de 1:55:27 tiene su tramo;
+  - ningún ítem de v7–v10 solapa un tramo.
+- **La rotura a propósito, en el test:** quitar en memoria un tramo nuevo del repo real hace que la
+  comprobación lo nombre.
+
+**La rotura a propósito, en el fichero** (segunda respuesta, punto 2):
+1. Se apuntó el sha256 del yaml, `a7d093cb…`.
+2. Se quitó la entrada nueva de 0:22:11–0:22:17.
+3. Con eso, `test_los_tramos_de_sesion_del_repo_real` **cae** y nombra `(1331000, 1336000)`, el
+   original sin compañero.
+4. Se restauró el fichero desde la copia: el sha256 vuelve a ser `a7d093cb…` y pasan los 6 tests.
+
+## 5. El hueco: las filtradas de sesión no aplican los tramos (segunda respuesta, punto 3)
+
+Anexo: `hueco.py`, con la salida en `hueco-SALIDA.txt`, que tiene la tabla entera. No hay texto: solo
+la clase de cada tramo (por el comienzo de su motivo), el commit y la fecha en que entró (el primer
+commit del fichero de tramos en que aparece), y las líneas visibles cuya marca cae dentro, en la
+filtrada A (la instalada) y en la B (apartada).
+
+**Cuántos tramos.** La segunda respuesta habla de «10». En v7–v10 había **35 tramos** antes de esta
+rama (v7: 1, v8: 0, v9: 13, v10: 21), y esta rama añade 8, así que son 43. La tabla los da todos.
+
+### 5.1 Clase, entrada y líneas visibles dentro
+
+| Clase | Vídeo: entrada | Tramos | Con líneas visibles dentro (A / B) |
+|---|---|---|---|
+| cuarentena mecánica | v7: `3718889` (2026-09-27) | 1 | ninguno |
+| cuarentena mecánica | v9: `0e3ca88` (2026-09-29) | 8 | 1:07:45 (1 / 1); 1:13:55 (0 / 1) |
+| sin audio (cero digital) | v9: `0e3ca88` | 2 | ninguno |
+| precaución | v9: `0e3ca88` | 3 | 0:32:20 (2 / 2), 1:13:04 (9 / 12), 1:39:43 (67 / 67) |
+| cuarentena mecánica | v10: `cfec50b` (2026-10-04) | 12 | 7 con 1 / 1, todos en el segundo de margen (abajo); 0:00:58 (1 / 1) |
+| sin audio (cero digital) | v10: `cfec50b` | 4 | 0:45:05 y 1:39:08, 1 / 1 cada uno, en el segundo de margen |
+| precaución | v10: `c489685` (2026-10-04) | 4 | 0:40:20 (9 / 11), 1:27:44 (4 / 4), 1:56:07 (13 / 13); 1:55:29 (0 / 0) |
+| conversación personal | v10: `c489685` | 1 | 1:43:42 (14 / 14) |
+| completa (margen), esta rama | v9 | 7 | 1:07:45 (1 / 1), 1:13:25 (1 / 1), 1:13:55 (0 / 2) |
+| precaución, esta rama | v10 | 1 | 1:55:27 (1 / 1), en el segundo de margen |
+
+### 5.2 Hallazgo para Q: el segundo de margen tapa el segmento siguiente
+
+En **9 tramos con margen**, la única línea visible que cae dentro empieza en el **último segundo** del
+tramo, el de margen.
+- Son 7 de cuarentena de v10 (1:03:24, 1:26:34, 1:26:44, 1:55:58, 1:56:04, 2:06:42 y 2:07:04) y 2
+  sin audio de v10 (0:45:05 y 1:39:08).
+- A esos se suman el nuevo de 1:55:27 y los dos completos de v9 de 1:13:25 y 1:13:55, que ya caen
+  dentro del tramo de precaución de 1:13:04.
+
+Por las marcas, esa línea es el segmento que sigue al bloque, visible y citable. Con la regla de Q
+(se tapa todo segmento que solape un tramo más de 0 ms), **Q lo taparía**. Pasa lo mismo al principio
+(v9 1:07:45, v10 0:00:58, B de v9 1:13:55): una línea visible que empieza en el mismo segundo que el
+bloque.
+
+Ningún ítem está afectado: ninguno solapa un tramo (§4.2). Pero el revisor de `trabajo/sesion-04` ya
+encontró citas del informe en esos segundos de margen (su A2). Lo que decide el consultor para Q:
+- o lo tapado de más se acepta y se dice;
+- o Q aplica los tramos de cuarentena mecánica por sus segmentos (los milisegundos reales), y los
+  segundos solo a los demás.
+
+### 5.3 Lecturas de las filtradas en los informes, después de la entrada de cada tramo
+
+Se buscó en `docs/validation/` cada mención de una lectura de la filtrada de v7, v9 o v10, y las
+marcas que caen en los tramos de precaución de v9. Resultado:
+
+- **v7** (tramo del 2026-09-27): su único tramo no tiene ninguna línea visible dentro. Las lecturas de
+  la filtrada de v7 son las de su propia ingesta (`SESION-02-VIDEO.md`, el mismo día).
+- **v9** (tramos del 2026-09-29, `0e3ca88`):
+  - Después de esa fecha no consta ninguna lectura de líneas dentro de sus tramos de precaución.
+  - Lo que aparece son marcas sueltas, en `CUARENTENA-POR-CONDICION/medir_fase2-SALIDA.txt` y en esta
+    rama, y menciones de los rangos de los tramos (`CERRAR-A29-A36.md`).
+  - La lectura con máscara de los segmentos 1075-1080 la ordenó el consultor ese mismo día y la
+    declara el motivo del tramo.
+- **v10** (tramos del 2026-10-04, `cfec50b` y `c489685`): **lecturas de tramos de precaución, para
+  el consultor** (no se declaran aquí; decide si van a `HOLDOUT-EXPOSICIONES.md`):
+  1. **0:40:20–0:40:42 (precaución, `c489685`).** Después de que entrara el tramo:
+     - el revisor de `trabajo/sesion-04` hizo `grep -n` de los patrones de las citas de A1 en la
+       filtrada de v10 y los localizó en `[40:25]`, `[40:27]` y `[40:36]` (`SESION-04-EXTRACCION.md`,
+       su A1 y su búsqueda 14);
+     - el texto citado, con una cifra que la fila de HOLDOUT no declara («SIN cifra»), estaba en el
+       informe en el commit `c489685` y se quitó después (A1, arreglado). Sigue en la historia de ese
+       commit.
+  2. **1:27:44–1:28:19 (precaución, `c489685`).** El informe describía su contenido más allá de lo
+     declarado (A6 de aquel revisor, arreglado). La descripción sigue en la historia de `c489685`.
+  3. **1:56:07–1:56:19 (precaución, `c489685`).** El cuerpo del commit `c489685` nombra «junio» junto
+     a la cifra 7 (A5 de aquel revisor). Se declaró como no reparable, y el consultor decidió entonces.
+  4. **Los segundos de margen (cuarentena y sin audio, `cfec50b`).** El informe citaba las líneas de
+     86:40, 127:02, 46:40 y 99:41, que caen en el segundo de margen de cuatro tramos (A2 de aquel
+     revisor, arreglado). No son de precaución: son el segmento visible que sigue al bloque (§5.2).
+- **Esta rama:** de ninguna filtrada se ha leído texto. Solo marcas, recuentos, ids, sha256 y, para
+  el ítem de v9, índices y milisegundos de segmentos por la localización de validate.
+
+## 6. Recuadros, Next Action y ERRORES-RECURRENTES
+
+- **Recuadros** (segunda respuesta, punto 4), con fecha y rama, junto al pasaje que corrigen:
+  - `CUARENTENA-POR-CONDICION.md` §5: en v9 sí sale `f7529459…a027b`;
+  - `SESION-04-EXTRACCION.md` §1.2: la comparación queda hecha.
+- **Next Action** (segunda respuesta, punto 5; tercera, punto 4; cuarta, punto 2a):
+  - P sale a `docs/state/HISTORIA.md` como «Next Action HECHA · P», con su texto literal.
+  - Entran Q, con el texto de la segunda respuesta más la frase del solapamiento de más de 0 ms, y
+    R.
+  - No había un Q que sustituir: la primera respuesta pedía añadirlo, y no se había hecho. Entra
+    ahora con su texto final.
+- **ERRORES-RECURRENTES:** la fila de la rama va con los tres hallazgos del consultor (primera
+  respuesta, punto 6; segunda, punto 6; cuarta, punto 3) y los del revisor, en el commit que pega su
+  informe.
+
 ## Estado
 
-**PARADA en la comprobación del punto 1 de la tercera respuesta (§3): falla (b)**, porque la línea
-que sigue al bloque lleva la marca 34:58, no 34:56. Antes se paró en los tramos (§2.2), y la fase 1
-por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
-las B, guardadas sin abrir; ningún tramo registrado. **Ninguna exposición.** Esperando al consultor.
-Rama NO cerrada.
+**Hecho, con el alcance que fijó el consultor.**
+
+**Desviaciones aceptadas por el consultor:**
+- B se midió y no se instaló (parada P2, segunda respuesta, punto 1).
+- A sigue instalada, con su sha comprobado, y las B, guardadas sin abrir.
+
+**Desviación para el consultor:** el tramo de 2.084.000 a 2.096.000 ms no se registró, porque es el
+original (§4.2).
+
+**Lo hecho:**
+- El ancla de `ev-v9-003456-9ef48fb5`, medida con la localización de validate: caso (a) (§4.1).
+- 8 tramos nuevos, con su control positivo; `ficheros_con_ocultos`, `knowledge validate`, y el test
+  con su rotura a propósito (§4.2-§4.3).
+- El criterio de los límites de un tramo, escrito (§2.1, §4.3).
+- La sección del hueco, con el hallazgo del segundo de margen para Q y las lecturas de tramos de
+  precaución de v10 para el consultor (§5).
+- Los recuadros, y P, Q y R en la Next Action (§6).
+
+**Ninguna exposición en esta rama:** de ninguna filtrada ni cruda se ha leído texto.
+
+**Pendiente:** la CI de Linux en `fix/filtradas-escenario-b` y el revisor. Rama NO cerrada.
