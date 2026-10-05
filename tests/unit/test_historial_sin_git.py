@@ -22,10 +22,12 @@ from tests.unit.test_kit import _sin_holdout
 
 REPO = Path(__file__).resolve().parents[2]
 
-# Las nueve comprobaciones del inventario (HISTORIAL-SIN-GIT.md §0.2), por el ambito de su aviso.
+# Las nueve comprobaciones del inventario (HISTORIAL-SIN-GIT.md §0.2), por el ambito de su aviso,
+# y la decima, `meses_reservados.yaml` (trabajo/cuarentena-por-condicion, 2026-10-04).
 AMBITOS = (
     "libros",
     "retirados",
+    "meses reservados",
     "evidencia",
     "feedback",
     "trailers Fuente",
@@ -43,6 +45,7 @@ OK_CON_GIT = (
     r"OK: \d+ libros declarados con formato y huso, solo-anadir intacto, cruzados con "
     r"cobertura_material",
     r"OK: \d+ dias retirados del holdout, cada uno de un reservado, solo-anadir intacto",
+    r"OK: \d+ meses reservados enteros, con formato y fuente, solo-anadir intacto",
     r"OK: \d+ documentos: todo id citado existe o esta declarado con motivo",
     r"OK: \d+ transcripciones registradas, historial intacto",
     r"OK: \d+ extracciones de fotogramas registradas, obligatorios presentes, historial intacto",
@@ -194,7 +197,7 @@ def test_con_git_y_el_proyecto_fuera_de_la_raiz_tampoco_dice_intacto(tmp_path: P
     assert any("la guardia de historial de evidencia no se pudo evaluar" in x for x in salida)
     assert not [x for x in salida if "intacto" in x], salida
     avisos = _avisos(salida)
-    for a in ("libros", "retirados"):
+    for a in ("libros", "retirados", "meses reservados"):
         assert len(avisos[a]) == 1, avisos
         assert "el proyecto no es la raiz del repositorio git" in avisos[a][0], avisos[a]
 

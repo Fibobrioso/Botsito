@@ -1,0 +1,26 @@
+# Lineas de recuento de los registros de transcribir_sesion.py (sin texto del trader), copiadas el 2026-10-04.
+# antes = la filtrada vieja; despues = la rehecha en la fase 2 con el guion de main (escenario A).
+## v7 despues
+segmentos: 602
+segmentos en cuarentena: 9 en 3 bloques
+motivos (un segmento puede tener varios): fecha numerica 1, mes 2, vecino 6
+## v8 despues
+segmentos: 229
+segmentos en cuarentena: 0 en 0 bloques
+motivos (un segmento puede tener varios): 
+## v9 antes
+segmentos: 1664
+segmentos en cuarentena: 29 en 8 bloques
+motivos (un segmento puede tener varios): fecha numerica 5, mes 7, vecino 17
+## v9 despues
+segmentos: 1664
+segmentos en cuarentena: 57 en 15 bloques
+motivos (un segmento puede tener varios): fecha numerica 5, mes 19, vecino 33
+## v10 antes
+segmentos: 1914
+segmentos en cuarentena: 45 en 12 bloques
+motivos (un segmento puede tener varios): fecha numerica 2, mes 16, vecino 27
+## v10 despues
+segmentos: 1914
+segmentos en cuarentena: 89 en 23 bloques
+motivos (un segmento puede tener varios): fecha numerica 2, mes 37, vecino 50

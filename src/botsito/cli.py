@@ -432,7 +432,7 @@ def corpus_transcript_show(repo: Path, args: argparse.Namespace) -> int:
     try:
         t = activa_de(cargar_todos(repo), args.video, args.transcripcion)
         carpeta = carpeta_de(_carpeta_datos(repo), t)
-        filtro = filtro_de(repo, t.video_id)
+        filtro = filtro_de(repo, t.video_id, _meses_libres(repo))
         cargar = cargar_cruda if args.capa == "cruda" else cargar_corregida
         segmentos = cargar(carpeta, filtro, crudo=args.crudo)
         t0, t1 = parse_ms(args.t0), parse_ms(args.t1)
@@ -584,7 +584,7 @@ def _segmento_en(repo: Path, video_id: str, t_ms: int, crudo: bool = False) -> s
         carpeta = carpeta_de(_carpeta_datos(repo), tr)
         if not (carpeta / "cruda.jsonl").is_file():
             return f"# transcripcion {tr.id}: cruda no esta en esta maquina"
-        filtro = filtro_de(repo, video_id)
+        filtro = filtro_de(repo, video_id, _meses_libres(repo))
         segmentos = cargar_cruda(carpeta, filtro, crudo=crudo)
         trozo = texto_entre(segmentos, t_ms, t_ms, 0, filtro=filtro, crudo=crudo)
     except TramosNoCitablesError as exc:
@@ -1122,7 +1122,7 @@ def evidence_propose(repo: Path, args: argparse.Namespace) -> int:
     from botsito.corpus.cuarentena import TramosNoCitablesError, filtro_de, resumen
 
     try:
-        filtro = filtro_de(repo, args.video)
+        filtro = filtro_de(repo, args.video, _meses_libres(repo))
     except TramosNoCitablesError as exc:
         print(f"ERROR: {exc}")
         return 1
@@ -1306,11 +1306,22 @@ def _dias_ocultos(repo: Path) -> frozenset[tuple[int, int]]:
     return dias_de_casos(casos_ocultos(repo))
 
 
+def _meses_libres(repo: Path) -> frozenset[int] | None:
+    """Los meses DEMOSTRADOS libres para la regla del mes de la cuarentena (rama
+    `trabajo/cuarentena-por-condicion`): sin dias en `casos_ocultos` ni en `casos_reservados`, y
+    fuera de `meses_reservados.yaml`. None si no se puede demostrar, y entonces se tapan los doce.
+    Nunca se imprimen."""
+    from botsito.cases.holdout import meses_libres
+
+    return meses_libres(repo)
+
+
 def _kb_indice(repo: Path, crudo: bool = False) -> Any:
     from botsito.retrieval.indice import construir_indice
 
     dias = frozenset() if crudo else _dias_ocultos(repo)
-    return construir_indice(repo, _carpeta_datos(repo), crudo=crudo, dias=dias)
+    libres = None if crudo else _meses_libres(repo)
+    return construir_indice(repo, _carpeta_datos(repo), crudo=crudo, dias=dias, libres=libres)
 
 
 def _kb_errores() -> tuple[type[Exception], ...]:

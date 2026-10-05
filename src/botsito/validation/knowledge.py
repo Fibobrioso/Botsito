@@ -623,6 +623,42 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
             ("retirados", f"contra el historial que {FICHERO_RETIRADOS} sea solo-anadir"),
             motivo=puerta.sin_versiones(repo, FICHERO_RETIRADOS),
         )
+    # LOS MESES RESERVADOS ENTEROS (`trabajo/cuarentena-por-condicion`): la fuente de la condicion
+    # (b) de la cuarentena del texto. Formato AAAA-MM, motivo, fuente que exista y SOLO ANADIR
+    # contra el historial. Sin el fichero no se demuestra ningun mes libre (se tapan los doce).
+    from botsito.cases.holdout import (
+        FICHERO_MESES_RESERVADOS,
+        cargar_meses_reservados,
+        meses_reservados_borrado,
+        problemas_de_meses_reservados,
+    )
+
+    if (repo / FICHERO_MESES_RESERVADOS).exists():
+        problemas_mes = problemas_de_meses_reservados(repo)
+        for p in problemas_mes:
+            salida.append(f"ERROR: meses reservados: {p}")
+        if problemas_mes:
+            return 1, salida
+        n_meses = len(cargar_meses_reservados(repo))
+        salida += puerta.ok(
+            f"OK: {n_meses} meses reservados enteros, con formato y fuente, solo-anadir intacto",
+            f"OK: {n_meses} meses reservados enteros, con formato y fuente",
+            (
+                "meses reservados",
+                f"contra el historial que {FICHERO_MESES_RESERVADOS} sea solo-anadir",
+            ),
+            motivo=puerta.sin_versiones(repo, FICHERO_MESES_RESERVADOS),
+        )
+    elif meses_reservados_borrado(repo):
+        # SOLO ANADIR tambien frente al borrado del fichero entero (revisor de la rama, A2).
+        for p in problemas_de_meses_reservados(repo):
+            salida.append(f"ERROR: meses reservados: {p}")
+        return 1, salida
+    else:
+        salida.append(
+            f"AVISO: {FICHERO_MESES_RESERVADOS} no existe: no se demuestra ningun mes libre y la "
+            f"cuarentena del texto tapa los doce meses"
+        )
     from botsito.comun.historial import DIRECTORIO_EVIDENCIA
     from botsito.evidence import contradicciones
     from botsito.evidence.modelo import EvidenciaError, cargar_evidencia, validar_contra_manifiesto

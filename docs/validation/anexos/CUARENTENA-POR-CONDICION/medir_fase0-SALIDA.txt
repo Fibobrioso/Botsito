@@ -1,0 +1,27 @@
+meses con casos: 3; escenario A filtra 12 meses; escenario B filtra 5
+v7 (tr-v7-large-v3-int8-float16-87297562): 0 segmentos visibles (sesion en cuarentena), no medible aqui
+v8 (tr-v8-large-v3-int8-float16-34b7e90f): 0 segmentos visibles (sesion en cuarentena), no medible aqui
+activas: v1=tr-v1-large-v3-int8-float16-bbd8a931, v2=tr-v2-large-v3-int8-float16-28391c2c, v3=tr-v3-large-v3-int8-float16-270a4851, v4=tr-v4-large-v3-int8-float16-a8d1bccc, v5=tr-v5-large-v3-int8-float16-3c6fbb57, v6=tr-v6-large-v3-int8-float16-7718b3f4
+items que citan una transcripcion NO activa (no se cruzan): 4
+v1 A: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 405 visibles; 0 items ev-* dentro
+v1 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 405 visibles; 0 items ev-* dentro
+v2 A: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 803 visibles; 0 items ev-* dentro
+v2 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 803 visibles; 0 items ev-* dentro
+v3 A: [por nombre 16, por abreviatura 0] 16 segmentos nuevos de 1017 visibles; 3 items ev-* dentro
+   items A: 3
+v3 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 1017 visibles; 0 items ev-* dentro
+v4 A: [por nombre 6, por abreviatura 0] 6 segmentos nuevos de 1599 visibles; 1 items ev-* dentro
+   items A: 1
+v4 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 1599 visibles; 0 items ev-* dentro
+v5 A: [por nombre 2, por abreviatura 0] 2 segmentos nuevos de 80 visibles; 1 items ev-* dentro
+   items A: 1
+v5 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 80 visibles; 0 items ev-* dentro
+v6 A: [por nombre 24, por abreviatura 0] 24 segmentos nuevos de 1959 visibles; 0 items ev-* dentro
+v6 B: [por nombre 2, por abreviatura 0] 2 segmentos nuevos de 1959 visibles; 0 items ev-* dentro; en 0:01:00, 0:01:02
+v9 A: [por nombre 24, por abreviatura 0] 24 segmentos nuevos de 1545 visibles; 0 items ev-* dentro
+v9 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 1545 visibles; 0 items ev-* dentro
+v10 A: [por nombre 37, por abreviatura 0] 37 segmentos nuevos de 1806 visibles; 2 items ev-* dentro
+   items A: 2
+v10 B: [por nombre 0, por abreviatura 0] 0 segmentos nuevos de 1806 visibles; 0 items ev-* dentro
+v7: sin filtrada en disco y con la cruda en cuarentena: NO MEDIBLE en esta fase
+v8: sin filtrada en disco y con la cruda en cuarentena: NO MEDIBLE en esta fase
