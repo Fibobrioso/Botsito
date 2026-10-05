@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/ventana-ev-v9-003456
+main
 
 ## Current Feature
-`trabajo/ventana-ev-v9-003456` EN CURSO (2026-10-05): punto R: ventanas de ev-v9-003456 y ev-v10-010438 corregidas por su regimen; tramo de margen; la ventana de todo item activo se comprueba en validate. Falta el revisor. Encargo docs/encargos/trabajo-ventana-ev-v9-003456.md; informe docs/validation/VENTANA-EV-V9.md.
+NINGUNA ABIERTA tras `stable/F36z-ventana-no-citable` (2026-10-05).
 
 ## Stable Main State
-06adac1 · merge de `trabajo/filtradas-con-tramos` (tag `stable/F36y-filtradas-con-tramos`): las filtradas de sesion tapan con [NO CITABLE] los tramos no citables de su video (solape > 0 ms); `--video` obligatorio, comprobado por el sha256 del WAV frente al de la transcripcion; falla cerrado. Sobre `stable/F36x-filtradas-escenario-b` (5e486dc). Informe docs/validation/FILTRADAS-CON-TRAMOS.md; el registro del cierre, al final de HISTORIA.
+f8b291c · merge de `trabajo/ventana-ev-v9-003456` (tag `stable/F36z-ventana-no-citable`): ev-v9-003457 y ev-v10-010438-024f76b8 corrigen por supersede las ventanas que pisaban un tramo no citable o un segmento que lo solapa; la ventana de todo item activo se comprueba en knowledge validate, evidence new y evidence propose --check. Sobre `stable/F36y-filtradas-con-tramos` (06adac1). Informe docs/validation/VENTANA-EV-V9.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-06adac1 · merge: las filtradas de sesion tapan los tramos no citables de su video, comprobado por el sha del audio (FILTRADAS-CON-TRAMOS.md) · tag stable/F36y-filtradas-con-tramos
+f8b291c · merge: la ventana de todo item activo no pisa lo no citable (VENTANA-EV-V9.md) · tag stable/F36z-ventana-no-citable
 
 ## Tests Currently Passing
 1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -35,7 +35,7 @@ T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-1
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
-E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee.
+E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee. La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
