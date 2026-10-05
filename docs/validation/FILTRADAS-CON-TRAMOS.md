@@ -433,6 +433,44 @@ El contrato deja de proteger `.claude/` entero y protege cada parte por su nombr
 > - La reproducibilidad entre máquinas de ffmpeg: si otra versión de ffmpeg extrae un WAV distinto, la comprobación daría un falso rechazo (nunca un falso aceptado, porque falla cerrado).
 > - El resultado de la CI de `dbd0f09`, aún en curso.
 
+## Orden de cierre del consultor (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/filtradas-con-tramos (consultor, 2026-10-05). Revisada: último commit 878b635, CI de Linux run 219 (37319081102) con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA.
+>
+> TAG: stable/F36y-filtradas-con-tramos. Comprueba antes en HISTORIA que la última letra es la x y que stable/F36y-* no existe ni en local ni en origin. Si algo falla, para.
+>
+> DESVIACIONES ACEPTADAS
+> 1. --video obligatorio, comprobado por el sha256 del WAV del manifiesto de transcripción: falla cerrado y lo cubren tests de punta a punta.
+> 2. Cambio en .claude/ limitado al comando de la skill ingerir-sesion, autorizado por el consultor y comparado línea a línea por el revisor.
+> 3. Riesgo declarado: si otra versión de ffmpeg no reprodujera el sha, el guion rechazaría un audio bueno. Nunca aceptaría uno equivocado. Se verá en la fase 0 de la activación.
+>
+> HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+> - importa · Del consultor: afirmó que SESION-04-EXTRACCION.md no tenía §4 por leer por el puente una copia de 861 líneas; en main tiene 1201. Lección: el puente puede dar ficheros viejos; antes de afirmar que falta algo en un fichero, se pide a Claude Code el recuento en git (git show main:<ruta> | wc -l).
+> - Del revisor: nada que el consultor viera y él no.
+>
+> NEXT ACTION EN EL COMMIT DE ESTADO (PROJECT_STATE está a 351 bytes del tope: escribe corto; si aun así se pasa, para y dímelo)
+> - Q sale, porque pasa a HISTORIA con este cierre.
+> - Al punto E (A-42) añade al final: «Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee.»
+> - Añade después de S: «T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.»
+> - Los demás puntos no cambian.
+>
+> RITUAL
+> Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+> - registro y fila de ERRORES-RECURRENTES en la rama;
+> - merge y tag;
+> - commit de estado;
+> - make check sellado;
+> - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+> - CI de main en verde;
+> - borrar trabajo/filtradas-con-tramos en local y fix/filtradas-con-tramos en origin.
+>
+> INFORME FINAL
+> Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
+
 ## Estado
 
 **Lista para revisión, NO cerrada.**

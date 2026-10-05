@@ -4379,3 +4379,95 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 14 (2026-10-04).
+
+# Next Action HECHA · Q · sale de PROJECT_STATE.md en trabajo/filtradas-con-tramos (2026-10-05)
+
+La hace esta rama: las filtradas de sesion tapan los tramos no citables de su video (orden de
+cierre del consultor del 2026-10-05; `docs/runbooks/RITUAL.md`, punto 3). Lo que queda de ella
+(rehacer las filtradas de v7-v10 y comprobarlas) pasa a la fase 0 de la activacion de la sesion
+4, en el punto E. Su texto literal en PROJECT_STATE.md:
+
+Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con un test sintético que rompa la guardia a propósito. Tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10 en B con los tramos, y comprobar que lo tapado es B más los tramos, y nada destapado frente a A dentro de un tramo (FILTRADAS-ESCENARIO-B.md). Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera. La aplicación de un tramo a la filtrada tapa un segmento solo si se solapa con el tramo más de 0 ms: un segmento que empieza exactamente donde termina un tramo queda visible. Test sintético con ese caso de borde (v9, 0:34:56; FILTRADAS-ESCENARIO-B.md). Se acepta que la regla de más de 0 ms tape el segmento visible que cae en el segundo de margen de un tramo (12 casos (9 de tramos anteriores y 3 de esta rama), FILTRADAS-ESCENARIO-B.md); el informe de Q da su recuento.
+
+# Registro de cierre · `trabajo/filtradas-con-tramos` (2026-10-05)
+
+- Orden de cierre del consultor del 2026-10-05, ejecutada a mano siguiendo `RITUAL.md`: llego en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario. Es el punto Q de la Next Action,
+  hecho como tarea autonoma.
+- **Lo que entra:**
+  - `scripts/transcribir_sesion.py` tapa con `[NO CITABLE mm:ss–mm:ss]` todo segmento que se solape
+    mas de 0 ms con un tramo de `tramos_no_citables.yaml` de su video. El borde de v9 (0:34:56)
+    queda visible.
+  - El video se declara con `--video`, obligatorio, y se comprueba por el sha256 del WAV del audio
+    frente al `sha256_wav` de la transcripcion del corpus de ese video. Se midio igual en v7-v10.
+  - Falla cerrado: sin video, con un video que no es sesion, con varios audios, con el fichero de
+    tramos ausente, ilegible o invalido, o con un audio que no es del video, no escribe nada, ni la
+    cruda, y sale con 2.
+  - El registro da, sin texto, lo tapado por meses, por tramos y por ambos.
+  - La skill `ingerir-sesion` pasa `--video` (solo esa linea de `.claude/`, autorizada).
+- **Desviaciones aceptadas** (orden de cierre): `--video` obligatorio con su comprobacion; el cambio
+  en `.claude/` limitado a ese comando; y el riesgo de un ffmpeg que no reprodujera el sha, que daria
+  un falso rechazo y nunca un falso aceptado.
+- `Tests Currently Passing`: de 1278 a 1301 funciones (1986 a 2019 casos), con
+  `tests/unit/test_filtradas_con_tramos.py`.
+- Deuda: ninguna nueva en Technical Debt. Lo que queda (rehacer las filtradas de v7-v10 y
+  comprobarlas contra `FILTRADAS-ESCENARIO-B.md`) va a la fase 0 de la activacion de la sesion 4,
+  en el punto E.
+- Letra: la ultima cerrada era la x (`stable/F36x-filtradas-escenario-b`); `stable/F36y-*` no existe
+  ni en local ni en `origin`.
+- Tag: `stable/F36y-filtradas-con-tramos`. El merge es
+  `git rev-parse "stable/F36y-filtradas-con-tramos^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `e9ce879`: apertura (encargo, contrato, Archivo 15) con la fase 0;
+  - `bece406`: la regla de los tramos en el guion, los tests y las roturas;
+  - `245a0fd`: el informe del revisor y sus hallazgos;
+  - `dbd0f09`: la comprobacion del audio por el sha del WAV y la skill con `--video`;
+  - `878b635`: la pasada corta del revisor;
+  - y el de este registro, que saca tambien el contrato.
+- CI de Linux, empujada como `fix/filtradas-con-tramos`:
+  - run 216 (37309388222), `bece406`: 1 failed, 2004 passed, 8 skipped;
+  - run 217 (37312344759), `245a0fd`: 1 failed, 2004 passed, 8 skipped;
+  - run 218 (37316869724), `dbd0f09`: 1 failed, 2010 passed, 8 skipped;
+  - run 219 (37319081102), `878b635`: 1 failed, 2010 passed, 8 skipped.
+
+  En todos, el fallo es el UNICO esperado (`RITUAL.md`): `state check` en
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`. El cierre borra
+  `fix/filtradas-con-tramos` de `origin`.
+- Informe: `docs/validation/FILTRADAS-CON-TRAMOS.md`, con la respuesta del consultor, los dos
+  informes del revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-filtradas-con-tramos.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/filtradas-con-tramos (consultor, 2026-10-05). Revisada: último commit 878b635, CI de Linux run 219 (37319081102) con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA.
+  >
+  > TAG: stable/F36y-filtradas-con-tramos. Comprueba antes en HISTORIA que la última letra es la x y que stable/F36y-* no existe ni en local ni en origin. Si algo falla, para.
+  >
+  > DESVIACIONES ACEPTADAS
+  > 1. --video obligatorio, comprobado por el sha256 del WAV del manifiesto de transcripción: falla cerrado y lo cubren tests de punta a punta.
+  > 2. Cambio en .claude/ limitado al comando de la skill ingerir-sesion, autorizado por el consultor y comparado línea a línea por el revisor.
+  > 3. Riesgo declarado: si otra versión de ffmpeg no reprodujera el sha, el guion rechazaría un audio bueno. Nunca aceptaría uno equivocado. Se verá en la fase 0 de la activación.
+  >
+  > HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+  > - importa · Del consultor: afirmó que SESION-04-EXTRACCION.md no tenía §4 por leer por el puente una copia de 861 líneas; en main tiene 1201. Lección: el puente puede dar ficheros viejos; antes de afirmar que falta algo en un fichero, se pide a Claude Code el recuento en git (git show main:<ruta> | wc -l).
+  > - Del revisor: nada que el consultor viera y él no.
+  >
+  > NEXT ACTION EN EL COMMIT DE ESTADO (PROJECT_STATE está a 351 bytes del tope: escribe corto; si aun así se pasa, para y dímelo)
+  > - Q sale, porque pasa a HISTORIA con este cierre.
+  > - Al punto E (A-42) añade al final: «Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee.»
+  > - Añade después de S: «T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.»
+  > - Los demás puntos no cambian.
+  >
+  > RITUAL
+  > Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+  > - registro y fila de ERRORES-RECURRENTES en la rama;
+  > - merge y tag;
+  > - commit de estado;
+  > - make check sellado;
+  > - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+  > - CI de main en verde;
+  > - borrar trabajo/filtradas-con-tramos en local y fix/filtradas-con-tramos en origin.
+  >
+  > INFORME FINAL
+  > Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
