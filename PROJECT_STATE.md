@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/filtradas-escenario-b
+main
 
 ## Current Feature
-`trabajo/filtradas-escenario-b` EN CURSO (2026-10-04): rehacer con el guion de main las filtradas de sesion v7-v10 en el escenario B (punto P). B medido y no instalado (P2, desviacion aceptada por el consultor); ancla de ev-v9-003456-9ef48fb5 medida con la localizacion de validate (fuera del bloque); 8 tramos nuevos registrados; criterio de los limites de un tramo en SESION-DE-PREGUNTAS.md; P sale a HISTORIA y entran Q y R; fila complementaria en HOLDOUT-EXPOSICIONES (sin exposicion nueva); revisor pasado; lista para revision, NO cerrada. Encargo docs/encargos/trabajo-filtradas-escenario-b.md; informe docs/validation/FILTRADAS-ESCENARIO-B.md.
+NINGUNA ABIERTA tras `stable/F36x-filtradas-escenario-b` (2026-10-05).
 
 ## Stable Main State
-44f461d · merge de `trabajo/cuarentena-por-condicion` (tag `stable/F36w-cuarentena-por-condicion`): la cuarentena del texto deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre -sin dias en casos_ocultos ni en casos_reservados y fuera de knowledge/cases/meses_reservados.yaml (2026-02, 2026-03), la fuente nueva, SOLO ANADIR-; sin datos se tapan los doce (`cases.holdout.meses_libres`). Dos tramos de precaucion en v6; las filtradas de sesion v7-v10, en el escenario A hasta la rama siguiente (P). Sobre `stable/F36v-sesion-04` (eec79a0). Informe docs/validation/CUARENTENA-POR-CONDICION.md; el registro del cierre, al final de HISTORIA.
+5e486dc · merge de `trabajo/filtradas-escenario-b` (tag `stable/F36x-filtradas-escenario-b`): las filtradas de sesion v7-v10 medidas en el escenario B y NO instaladas (siguen en A hasta Q); 8 tramos no citables nuevos (7 de v9 con el segundo de margen, y el bloque de B de v10 de 1:55:27); el ancla de ev-v9-003456-9ef48fb5, medida con la localizacion de validate, fuera del bloque (su ventana se corrige en R); el criterio de los limites de un tramo, en SESION-DE-PREGUNTAS.md; el hueco (las filtradas no aplican los tramos), documentado y llevado a Q. Dos filas en HOLDOUT-EXPOSICIONES que complementan la del 2026-10-04, sin quemar. Sobre `stable/F36w-cuarentena-por-condicion` (44f461d). Informe docs/validation/FILTRADAS-ESCENARIO-B.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-44f461d · merge: la cuarentena del texto tapa todo mes que no se pueda demostrar libre (CUARENTENA-POR-CONDICION.md) · tag stable/F36w-cuarentena-por-condicion
+5e486dc · merge: tramos de sesion completados, ancla de v9 medida y el hueco de las filtradas documentado (FILTRADAS-ESCENARIO-B.md) · tag stable/F36x-filtradas-escenario-b
 
 ## Tests Currently Passing
 1278 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -32,6 +32,8 @@ trabajo/filtradas-escenario-b
 Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con un test sintético que rompa la guardia a propósito. Tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10 en B con los tramos, y comprobar que lo tapado es B más los tramos, y nada destapado frente a A dentro de un tramo (FILTRADAS-ESCENARIO-B.md). Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera. La aplicación de un tramo a la filtrada tapa un segmento solo si se solapa con el tramo más de 0 ms: un segmento que empieza exactamente donde termina un tramo queda visible. Test sintético con ese caso de borde (v9, 0:34:56; FILTRADAS-ESCENARIO-B.md). Se acepta que la regla de más de 0 ms tape el segmento visible que cae en el segundo de margen de un tramo (12 casos (9 de tramos anteriores y 3 de esta rama), FILTRADAS-ESCENARIO-B.md); el informe de Q da su recuento.
 
 R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
+
+S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
