@@ -646,3 +646,52 @@ Resumen: 0 bloquea, 2 importa, 1 menor. Requisitos: 20 hechos, 2 parciales, 0 no
 15. `gh run list --branch fix/cuarentena-por-condicion`, `gh run view 37241039661 --log-failed`, `git rev-parse origin/fix/cuarentena-por-condicion` y `HEAD` y `HEAD^{tree}`, `grep` de `SELLO|PICO|passed|failed` en `make-check.log`
 16. `git diff main...HEAD -- tests/unit/test_transcribir_sesion.py tests/unit/test_historial_sin_git.py`
 17. `git grep`, `grep` y `sed` para verificar citas (`main:cuarentena.py`, `holdout.py`, `CLAUDE.md`, `HISTORIA.md`, `ADR-0025` y `ADR-0046`, `tramos_no_citables.yaml`), `ls docs/adr`, y la lectura de `historial.py` y del bloque de `holdout.py` sobre `casos_reservados` y `casos_ocultos`
+
+## Orden de cierre (2026-10-04)
+
+Orden de cierre del consultor del 2026-10-04, copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/cuarentena-por-condicion (consultor, 2026-10-04). Revisada: último commit 7120217, CI de Linux run 209 (37244398309) con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA.
+>
+> TAG: stable/F36w-cuarentena-por-condicion. Antes de usarlo, comprueba en HISTORIA que la última letra es la v. Si no lo es, para y dímelo.
+>
+> DECISIONES QUE CIERRAN LA REVISIÓN
+> 1. La fuente de febrero en meses_reservados.yaml se queda como está, sin ADR.
+>    Por qué: no cambia qué se tapa, y «ciego, sin descargar» ya consta en CLAUDE.md. Déjalo declarado en el informe como desviación aceptada.
+> 2. Las filtradas de sesión en el escenario A son aceptables hasta la rama siguiente.
+>    Por qué: tapar de más no expone nada, y rehacerlas en B necesita el guion nuevo en main.
+>
+> HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+> - importa · De Claude Code, no del revisor: en la primera medida de la fase 0, «set» suelto contaba como mes. Lección: toda medida de un filtro nuevo se compara con un caso negativo conocido antes de dar cifras.
+> - importa · Del revisor: el guion de la fase 0 importaba algo que la fase 1 eliminó, y la comprobación del contrato dejó de correr sin avisar. Lección para el revisor: después de cada fase que borra o renombra algo, correr la comprobación del contrato.
+> - Del consultor, nada que el revisor no viera.
+>
+> NEXT ACTION EN EL COMMIT DE ESTADO
+> Sustituye P por:
+> «P. Rama corta: rehacer con el guion de main las filtradas de sesión (v7–v10) en el escenario B. Medir antes con recuentos y marcas de tiempo, sin texto. Si algún ítem ev-* cae en un segmento que pasa a ocultarse, parar y avisar al consultor. Va antes de activar la sesión 4 (CUARENTENA-POR-CONDICION.md §5).»
+> No toques los demás puntos.
+>
+> RITUAL
+> Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+> - registro y fila de ERRORES-RECURRENTES en la rama;
+> - merge y tag;
+> - commit de estado;
+> - make check sellado;
+> - push atómico de main y el tag;
+> - CI de main en verde;
+> - borrar trabajo/cuarentena-por-condicion en local y fix/cuarentena-por-condicion en origin.
+>
+> INFORME FINAL
+> Sha de main, tag y el sha al que apunta, run de la CI de main con su resultado, ramas que quedan y tamaño de PROJECT_STATE.
+
+**Desviaciones aceptadas por el consultor:**
+- **La fuente de febrero (§4.8).** Se queda como está, sin ADR: no cambia qué se tapa, y «ciego, sin
+  descargar» ya consta en `CLAUDE.md`.
+- **Las filtradas de sesión en el escenario A (§4.2 y §4.6).** Valen hasta la rama siguiente: tapar
+  de más no expone nada, y rehacerlas en B exige el guion nuevo en `main`. Es el nuevo punto P de la
+  Next Action.
+
+Letra comprobada en HISTORIA: la última cerrada era la `v` (`stable/F36v-sesion-04`), y
+`stable/F36w-*` no existe ni en local ni en `origin`.
