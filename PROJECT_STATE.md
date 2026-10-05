@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/filtradas-con-tramos
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36x-filtradas-escenario-b` (2026-10-05).
+`trabajo/filtradas-con-tramos` EN CURSO (2026-10-05, tarea autonoma): punto Q, que las filtradas de sesion de scripts/transcribir_sesion.py tapen tambien los tramos no citables de su video. Encargo docs/encargos/trabajo-filtradas-con-tramos.md; informe docs/validation/FILTRADAS-CON-TRAMOS.md.
 
 ## Stable Main State
 5e486dc · merge de `trabajo/filtradas-escenario-b` (tag `stable/F36x-filtradas-escenario-b`): las filtradas de sesion v7-v10 medidas en el escenario B y NO instaladas (siguen en A hasta Q); 8 tramos no citables nuevos (7 de v9 con el segundo de margen, y el bloque de B de v10 de 1:55:27); el ancla de ev-v9-003456-9ef48fb5, medida con la localizacion de validate, fuera del bloque (su ventana se corrige en R); el criterio de los limites de un tramo, en SESION-DE-PREGUNTAS.md; el hueco (las filtradas no aplican los tramos), documentado y llevado a Q. Dos filas en HOLDOUT-EXPOSICIONES que complementan la del 2026-10-04, sin quemar. Sobre `stable/F36w-cuarentena-por-condicion` (44f461d). Informe docs/validation/FILTRADAS-ESCENARIO-B.md; el registro del cierre, al final de HISTORIA.
@@ -23,13 +23,11 @@ NINGUNA ABIERTA tras `stable/F36x-filtradas-escenario-b` (2026-10-05).
 5e486dc · merge: tramos de sesion completados, ancla de v9 medida y el hueco de las filtradas documentado (FILTRADAS-ESCENARIO-B.md) · tag stable/F36x-filtradas-escenario-b
 
 ## Tests Currently Passing
-1278 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1301 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
-
-Q. Rama corta: que las filtradas de sesión apliquen los tramos no citables (scripts/transcribir_sesion.py), con un test sintético que rompa la guardia a propósito. Tras el merge, rehacer con --solo-filtrar las filtradas de v7–v10 en B con los tramos, y comprobar que lo tapado es B más los tramos, y nada destapado frente a A dentro de un tramo (FILTRADAS-ESCENARIO-B.md). Hasta cerrar Q, nadie lee las filtradas de v9 ni de v10, y la activación de la sesión 4 espera. La aplicación de un tramo a la filtrada tapa un segmento solo si se solapa con el tramo más de 0 ms: un segmento que empieza exactamente donde termina un tramo queda visible. Test sintético con ese caso de borde (v9, 0:34:56; FILTRADAS-ESCENARIO-B.md). Se acepta que la regla de más de 0 ms tape el segmento visible que cae en el segundo de margen de un tramo (12 casos (9 de tramos anteriores y 3 de esta rama), FILTRADAS-ESCENARIO-B.md); el informe de Q da su recuento.
 
 R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
 
@@ -203,9 +201,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 14 (2026-10-04).
+— ninguna desde el Archivo 15 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 14 (2026-10-04).
+— ninguna desde el Archivo 15 (2026-10-05).

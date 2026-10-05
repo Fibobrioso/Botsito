@@ -66,7 +66,7 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
 3. **Transcripcion.** `uv run botsito corpus transcribe --video <vN>` (large-v3, ADR-0007; no
    imprime texto). Escribe el manifiesto inmutable `knowledge/corpus/transcripciones/tr-<vN>-...yaml`
    y el texto en `data/transcripciones/<vN>/`. Puerta: `uv run botsito corpus transcript check`.
-4. **Cuarentena.** `uv run python scripts/transcribir_sesion.py --audio <carpeta FUERA del repo>`
+4. **Cuarentena.** `uv run python scripts/transcribir_sesion.py --audio <audio FUERA del repo> --video <vN>`
    (o `--solo-filtrar` sobre una cruda ya hecha): escribe `<stem>.cruda-NO-LEER.*`,
    `<stem>.filtrada.md` (lo UNICO que se lee) y `<stem>.registro.txt`. Los bloques en cuarentena
    entran en `tramos_no_citables.yaml` con `motivo` y `acordado`, SIN contenido, en un commit propio
