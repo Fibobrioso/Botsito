@@ -29,8 +29,6 @@ trabajo/ventana-ev-v9-003456
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
-R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
-
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
 T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.

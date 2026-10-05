@@ -4685,3 +4685,81 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 15 (2026-10-05).
+
+# Next Action HECHA · R · sale de PROJECT_STATE.md en trabajo/ventana-ev-v9-003456 (2026-10-05)
+
+La hace esta rama: la ventana de ev-v9-003456-9ef48fb5 se corrigio por su regimen (orden de
+cierre del consultor del 2026-10-05, punto 4; `docs/runbooks/RITUAL.md`, punto 3). Su texto
+literal en PROJECT_STATE.md:
+
+R. Rama corta: corregir por su régimen la ventana declarada de ev-v9-003456-9ef48fb5 (empieza 2 s antes de su ancla, sobre la cola de un segmento en cuarentena; FILTRADAS-ESCENARIO-B.md §4.1).
+
+# Registro de cierre · `trabajo/ventana-ev-v9-003456` (2026-10-05)
+
+- Orden de cierre del consultor del 2026-10-05, ejecutada a mano siguiendo `RITUAL.md`: llego en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario. Es el punto R de la Next Action.
+- **Lo que entra:**
+  - `ev-v9-003457-3e28e325` supersede a `ev-v9-003456-9ef48fb5`, con la ventana desde 0:34:57;
+  - `ev-v10-010438-024f76b8` supersede a `ev-v10-010438-0d4e6798`, con la cita y la ventana
+    recortadas antes del segmento 1058, que un tramo redondeado al segundo pisa;
+  - los dos, por la via de `evidence new` en un anexo, sin que el texto pase por la sesion, con una
+    primera pasada que la guardia rechazo;
+  - el tramo de margen v9 0:34:44-0:34:57 (solo anadir);
+  - A-46 cita el item nuevo de v9;
+  - la condicion `ventana_no_citable` (la ventana de todo item activo no pisa un tramo ni un
+    segmento que solape un tramo), en `knowledge validate`, `evidence new` y
+    `evidence propose --check`;
+  - recuadros en FILTRADAS-ESCENARIO-B, SESION-03 y SESION-04;
+  - la medida de los segmentos visibles tapados por tramos redondeados (21 de cuarentena
+    mecanica), para la fase 0 de E.
+- Desviacion aceptada: A-42 nunca cito el item viejo de v10; anadirle el nuevo va con su
+  activacion (punto E).
+- `Tests Currently Passing`: de 1301 a 1309 funciones (2019 a 2027 casos).
+- Deuda nueva en Technical Debt: nada avisa cuando la spec o las ambiguedades citan un item
+  supersedido.
+- Letra: la ultima cerrada era la y (`stable/F36y-filtradas-con-tramos`); `stable/F36z-*` no existe ni
+  en local ni en `origin`.
+- Tag: `stable/F36z-ventana-no-citable`. El merge es
+  `git rev-parse "stable/F36z-ventana-no-citable^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `3667838`: apertura (encargo, contrato, Archivo 16) con la fase 0;
+  - `809117b`: el tramo de margen, el item nuevo de v9, A-46, los recuadros y la parada en la
+    condicion;
+  - `41be086`: el item nuevo de v10 y la condicion activada, con sus tests y medidas;
+  - `ce4f488`: el informe del revisor y sus hallazgos;
+  - y el de este registro, que saca tambien el contrato.
+- CI de Linux: ninguna; la rama no se empujo como `fix/`, porque no toca hooks, rutas ni nada que
+  dependa de la plataforma (el informe y el revisor lo comprobaron). La CI corre en `main` tras el
+  push.
+- Informe: `docs/validation/VENTANA-EV-V9.md`, con las decisiones del consultor, el informe del
+  revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-ventana-ev-v9-003456.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/ventana-ev-v9-003456 (consultor, 2026-10-05). Revisada: lista para cerrar.
+  >
+  > 1. Desviación de A-42: ACEPTADA. A-42 nunca citó ev-v10-010438-0d4e6798 (su evidencia es de v3, v4 y v9). Añadirle el ítem nuevo ev-v10-010438-024f76b8 toca al activarla en el punto E, no aquí. El error de la orden fue del consultor.
+  >
+  > 2. Tag: stable/F36z-ventana-no-citable. Antes de crearlo, comprueba en HISTORIA que la última letra cerrada es la y y que stable/F36z-* no existe ni en local ni en origin. Si la z ya está usada, para y dímelo.
+  >
+  > 3. Hallazgos del consultor para la fila de ERRORES-RECURRENTES, cada uno con su lección:
+  >    a) IMPORTA · El consultor escribió en una orden que A-42 citaba el ítem de v10 sin leer ambiguedades.yaml. Claude Code lo midió y no lo aplicó. Lección (consultor): una referencia del repo se lee antes de ordenarla. Si no se puede leer, se escribe «verifica que…».
+  >    b) IMPORTA · Los tramos no citables se registran con el inicio o el fin redondeados al segundo. Desde Q, el filtro tapa entero todo segmento que tocan, así que 21 segmentos visibles quedan tapados (1 en v7, 4 en v9 y 16 en v10), y una cita activa (v10) caía en uno de ellos. Nadie lo vio hasta que existió ventana_no_citable. Lección (revisor): cuando una rama cambia qué tapa un filtro, se mide qué ítems activos citan lo que pasa a quedar tapado.
+  >    c) MENOR · FILTRADAS-ESCENARIO-B §4.3 afirmó sin medirlo que knowledge validate rechazaba esos ítems. Lección (revisor): lo que un informe dice que hace una comprobación se comprueba ejecutándola, no leyendo el informe.
+  >
+  > 4. En HISTORIA (registro del cierre, en la rama): R pasa a «Next Action HECHA · R» con su texto literal.
+  >
+  > 5. Commit de estado en main. Solo reemplaza las cuatro cabeceras y quita R del Next Action. Al punto E añade al final esta frase:
+  >    «La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.»
+  >    No toques Completed Features ni el Change Log. PROJECT_STATE tiene que seguir por debajo de 25.000 bytes.
+  >
+  > 6. Lo de siempre: push atómico de main y el tag, la CI de main en verde antes de borrar la rama, y luego borrar la rama local (no hay fix/ remota).
+  >
+  > 7. Informe final con:
+  >    - sha de main;
+  >    - el tag y a qué commit apunta;
+  >    - el run de la CI de main, con tests pasados y saltados;
+  >    - las ramas que quedan;
+  >    - el tamaño de PROJECT_STATE.

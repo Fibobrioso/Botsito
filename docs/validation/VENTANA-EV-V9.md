@@ -539,6 +539,38 @@ encargo, hechos.
 **Para el consultor, del revisor:** confirmar la desviación de A-42 (§4.2). A-42 no citaba el ítem
 viejo de v10, así que no se le ha añadido el nuevo.
 
+## Orden de cierre del consultor (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/ventana-ev-v9-003456 (consultor, 2026-10-05). Revisada: lista para cerrar.
+>
+> 1. Desviación de A-42: ACEPTADA. A-42 nunca citó ev-v10-010438-0d4e6798 (su evidencia es de v3, v4 y v9). Añadirle el ítem nuevo ev-v10-010438-024f76b8 toca al activarla en el punto E, no aquí. El error de la orden fue del consultor.
+>
+> 2. Tag: stable/F36z-ventana-no-citable. Antes de crearlo, comprueba en HISTORIA que la última letra cerrada es la y y que stable/F36z-* no existe ni en local ni en origin. Si la z ya está usada, para y dímelo.
+>
+> 3. Hallazgos del consultor para la fila de ERRORES-RECURRENTES, cada uno con su lección:
+>    a) IMPORTA · El consultor escribió en una orden que A-42 citaba el ítem de v10 sin leer ambiguedades.yaml. Claude Code lo midió y no lo aplicó. Lección (consultor): una referencia del repo se lee antes de ordenarla. Si no se puede leer, se escribe «verifica que…».
+>    b) IMPORTA · Los tramos no citables se registran con el inicio o el fin redondeados al segundo. Desde Q, el filtro tapa entero todo segmento que tocan, así que 21 segmentos visibles quedan tapados (1 en v7, 4 en v9 y 16 en v10), y una cita activa (v10) caía en uno de ellos. Nadie lo vio hasta que existió ventana_no_citable. Lección (revisor): cuando una rama cambia qué tapa un filtro, se mide qué ítems activos citan lo que pasa a quedar tapado.
+>    c) MENOR · FILTRADAS-ESCENARIO-B §4.3 afirmó sin medirlo que knowledge validate rechazaba esos ítems. Lección (revisor): lo que un informe dice que hace una comprobación se comprueba ejecutándola, no leyendo el informe.
+>
+> 4. En HISTORIA (registro del cierre, en la rama): R pasa a «Next Action HECHA · R» con su texto literal.
+>
+> 5. Commit de estado en main. Solo reemplaza las cuatro cabeceras y quita R del Next Action. Al punto E añade al final esta frase:
+>    «La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.»
+>    No toques Completed Features ni el Change Log. PROJECT_STATE tiene que seguir por debajo de 25.000 bytes.
+>
+> 6. Lo de siempre: push atómico de main y el tag, la CI de main en verde antes de borrar la rama, y luego borrar la rama local (no hay fix/ remota).
+>
+> 7. Informe final con:
+>    - sha de main;
+>    - el tag y a qué commit apunta;
+>    - el run de la CI de main, con tests pasados y saltados;
+>    - las ramas que quedan;
+>    - el tamaño de PROJECT_STATE.
+
 ## Estado
 
 **Lista para revisión, NO cerrada.** El revisor, al final, y lo hecho con sus hallazgos en el §7.
