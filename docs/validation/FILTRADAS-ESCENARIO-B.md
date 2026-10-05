@@ -371,8 +371,77 @@ el segmento que cita empieza antes o después de que acabe el último segmento d
 **No se ha tocado el ítem y no se ha registrado ningún tramo**, tampoco los otros ocho. Decide el
 consultor.
 
+## Tercera respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Tercera respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04). Cópiala tal cual al encargo y al informe.
+>
+> 1. Antes de registrar nada, comprueba solo con marcas, sin texto, en la filtrada ANTES de v9 (o en la A):
+>    a) que el bloque [CUARENTENA …] que completa este tramo termina en la marca 0:34:56;
+>    b) que la línea siguiente es visible y lleva la marca 0:34:56;
+>    c) que el ancla de ev-v9-003456-9ef48fb5 es esa línea visible y no un segmento de dentro del bloque.
+>    Si alguna de las tres falla, para y dímelo sin tocar nada.
+>    Por qué: si se cumplen, el segmento oculto termina antes de que empiece el del ítem, porque la transcripción no solapa segmentos, y el choque es solo del truncado al segundo.
+>
+> 2. Si se cumplen las tres: el tramo nuevo que completa el de 0:34:44 va de 2.084.000 a 2.096.000 ms, es decir, termina en el inicio del ítem. Su motivo nombra el tramo original y el ítem. El ítem no se toca.
+>
+> 3. El criterio de docs/runbooks/SESION-DE-PREGUNTAS.md («Los límites de un tramo: el criterio único») se completa con esta condición, escrita como regla general y no como caso de v9:
+>    «Si el segundo de margen pisa el ancla de un ítem ev-*, el tramo termina en el inicio de ese ítem, siempre que las marcas demuestren que el ítem viene de una línea visible que sigue al bloque. Si no se puede demostrar, se para y decide el consultor.»
+>    Añade un test que lo vigile: con un tramo y un ítem sintéticos, el tramo que pisa el ancla de un ítem tiene que fallar en knowledge validate, o en el control que ya tengas. Si hoy ningún control lo detecta, dilo en el informe y queda como requisito de Q, no de esta rama.
+>
+> 4. El texto de Q en la Next Action (el de mi segunda respuesta) se amplía con esta frase:
+>    «La aplicación de un tramo a la filtrada tapa un segmento solo si se solapa con el tramo más de 0 ms: un segmento que empieza exactamente donde termina un tramo queda visible. Test sintético con ese caso de borde (v9, 0:34:56; FILTRADAS-ESCENARIO-B.md).»
+>    Por qué: si no, la regla de Q taparía el segmento del ítem y lo dejaría sin ancla.
+>
+> 5. Sigue con los puntos 3 a 6 de mi segunda respuesta: la sección del hueco, los recuadros, la Next Action, la fila de ERRORES-RECURRENTES, make check sellado, push como fix/filtradas-escenario-b con la CI de Linux y sus números de run, revisor con su informe pegado al final y el tamaño de PROJECT_STATE.
+>    Pregunta expresa para el revisor: que compruebe que ningún tramo nuevo pisa el ancla de ningún ítem ev-* y que todos pasan el control positivo.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 3. La comprobación de la tercera respuesta (punto 1): falla (b), y se para
+
+Anexo: `docs/validation/anexos/FILTRADAS-ESCENARIO-B/ancla_v9.py`, con la salida en
+`ancla_v9-SALIDA.txt`. Solo lee la clase de cada línea (bloque, visible, «…», sección) y su marca,
+en la filtrada ANTES de v9 y en la A, que dan lo mismo.
+
+Antes, del guion de `main` (`scripts/transcribir_sesion.py`, `version_filtrada`):
+- la marca de una línea visible es el `t0` de su segmento;
+- las dos marcas de un bloque son el `t0` de su primer segmento y el `t1` del último;
+- todas truncadas al segundo.
+
+La filtrada va agrupada por pregunta: solo dentro de una sección, y sin «…» entre medias, la línea
+siguiente del fichero es el segmento siguiente de la cruda.
+
+| Comprobación | ANTES | A | Resultado |
+|---|---|---|---|
+| (a) el bloque termina en la marca 34:56 | línea 611: `[CUARENTENA 34:44–34:56]`, el único | línea 600, igual | **se cumple** |
+| (b) la línea siguiente es visible y lleva la marca 34:56 | línea 612: visible, misma sección, sin «…», **marca 34:58** | línea 601, igual | **FALLA: la marca es 34:58** |
+| (c) el ancla del ítem es esa línea visible | — | — | **no se puede demostrar con marcas** |
+
+Lo que dicen las marcas, sin texto:
+- **El último segmento oculto termina** en algún punto de 0:34:56.000 a 0:34:56.999.
+- **El segmento visible siguiente empieza** en 0:34:58 o después. Entre los dos, en la cruda, no hay
+  ningún segmento.
+- **En la ventana declarada del ítem** (t0 0:34:56, t1 0:35:00) **no empieza ninguna línea visible
+  en los segundos 34:56 y 34:57.** Lo único que hay en esos dos segundos es la cola del segmento
+  oculto. La primera línea visible empieza dos segundos después del t0 del ítem.
+- **La cita del ítem se localiza con 2 s de tolerancia** (`TOLERANCIA_CITA_MS = 2000`), es decir,
+  desde 0:34:54, que cae dentro del bloque. Con marcas no se puede saber si sus palabras están en la
+  línea de 34:58 o en el segmento oculto.
+- **Lo más probable es que el ítem ya solape hoy el bloque.** Su ventana declarada empieza en
+  2.096.000 ms y el segmento oculto termina entre 2.096.000 y 2.096.999 ms: se solapan siempre,
+  salvo que el segmento termine justo en 2.096.000. `knowledge validate` no lo ve porque ningún
+  tramo cubre ese milisegundo.
+
+**No se ha registrado ningún tramo y el ítem no se ha tocado.** Decide el consultor.
+
 ## Estado
 
-**PARADA en los tramos (§2.2).** Antes, la fase 1 se paró por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
+**PARADA en la comprobación del punto 1 de la tercera respuesta (§3): falla (b)**, porque la línea
+que sigue al bloque lleva la marca 34:58, no 34:56. Antes se paró en los tramos (§2.2), y la fase 1
+por P2 (§1.3) y por el punto 2 (§1.4). A está restaurada, con su sha comprobado;
 las B, guardadas sin abrir; ningún tramo registrado. **Ninguna exposición.** Esperando al consultor.
 Rama NO cerrada.

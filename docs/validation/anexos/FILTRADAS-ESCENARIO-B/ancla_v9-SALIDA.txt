@@ -1,0 +1,20 @@
+== ANTES
+(a) bloques [CUARENTENA 34:44–34:56]: 1
+    linea 611: BLOQUE 34:44–34:56
+    linea 612: VISIBLE 34:58
+    linea 613: VISIBLE 35:00
+    linea 614: VISIBLE 35:03
+(c) en la ventana 34:54-35:02 (por marca de inicio; bloques por solape):
+    linea 611 (seccion 1): BLOQUE 34:44–34:56
+    linea 612 (seccion 1): VISIBLE 34:58
+    linea 613 (seccion 1): VISIBLE 35:00
+== A
+(a) bloques [CUARENTENA 34:44–34:56]: 1
+    linea 600: BLOQUE 34:44–34:56
+    linea 601: VISIBLE 34:58
+    linea 602: VISIBLE 35:00
+    linea 603: VISIBLE 35:03
+(c) en la ventana 34:54-35:02 (por marca de inicio; bloques por solape):
+    linea 600 (seccion 1): BLOQUE 34:44–34:56
+    linea 601 (seccion 1): VISIBLE 34:58
+    linea 602 (seccion 1): VISIBLE 35:00
