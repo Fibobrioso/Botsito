@@ -254,3 +254,31 @@ Copiada tal cual:
 >    Y la fila de ERRORES-RECURRENTES.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Séptima respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Séptima respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04), sobre los hallazgos del revisor. Cópiala tal cual al encargo y al informe.
+>
+> 1. A2: en el texto de Q de la Next Action, «9 casos» pasa a «12 casos (9 de tramos anteriores y 3 de esta rama)».
+>    Por qué: el 9 lo copió el consultor de un recuento parcial; el informe ya dice 12.
+>
+> 2. A3 y A4: una fila más en HOLDOUT-EXPOSICIONES.md, solo añadir, sin tocar ni la del 2026-10-04 ni la de esta rama. Fecha de hoy y estas columnas:
+>    - qué: «Dos rastros más de tramos de precaución de v10, sin copiar su contenido. (1) El informe del commit f50b680 (rama trabajo/filtradas-escenario-b, empujado a fix/) copió la cifra del tramo 1:56:07; la quitó e2ee6cc, pero queda en la historia de la rama y entrará en main con el merge. Es la cifra ya declarada en la fila del 2026-10-04. (2) La fila del 2026-10-04 dice que el tramo 0:40:20 fue visto sin cifra, pero el informe de c489685 copió una (revisor de esta rama, A4).»
+>    - particiones: (1) las de junio, ya contadas en la fila anterior de esta rama; (2) ninguna, porque enero no tiene días ocultos ni reservados.
+>    - quién: la sesión autónoma de esta rama y la de trabajo/sesion-04; lo detectó el revisor de esta rama.
+>    - ¿quema?: «No. Decisión del consultor (2026-10-04): (1) es la misma cifra ya declarada y excluida de todo uso; (2) enero no tiene días reservados. La historia de git no se reescribe.»
+>    Sin cifras en la fila.
+>
+> 3. A6: en el texto de R de la Next Action, «FILTRADAS-ESCENARIO-B.md §3» pasa a «FILTRADAS-ESCENARIO-B.md §4.1».
+>
+> 4. Para la fila de ERRORES-RECURRENTES, hallazgo de la sesión (lo detectó el revisor):
+>    importa · Una cifra de un tramo de precaución se coló en un informe commiteado y empujado, aunque la regla era no copiar contenido de los tramos. Lección: antes de commitear un informe que habla de tramos de precaución, buscar en el diff las cifras y palabras del motivo de cada tramo; el revisor lo comprueba en cada pasada.
+>    Del consultor, sin hallazgos que el revisor no viera. Los dos de A2 y A6 son errores de redacción del consultor; anótalos así.
+>
+> 5. make check sellado, commit, push a fix/filtradas-escenario-b y CI de Linux con su número de run (único fallo aceptado: state check por el nombre fix/). Si el commit o el push se bloquean, para y dame los comandos con «!». No hace falta otro revisor: son cambios de texto que pidió el propio revisor. Cuando termines, dame el sha, el run y el tamaño de PROJECT_STATE.
+>
+> Rama lista para revisión, NO cerrada.

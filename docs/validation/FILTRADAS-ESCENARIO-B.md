@@ -828,6 +828,47 @@ Copiada tal cual:
 | B4 | menor | **Declarado.** F1.3 («marcas de B = tabla de B de la fase 0»): la fase 0 no podía producir B sin escribir (§0.3). Por eso las marcas de B se compararon con ANTES y con A, en las paradas P1-P3 (§1.2). |
 | B5 | menor | **Arreglado.** Los sellos, los picos y la CI de cada commit, en el Estado. |
 
+## Séptima respuesta del consultor (2026-10-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Séptima respuesta del consultor a trabajo/filtradas-escenario-b (2026-10-04), sobre los hallazgos del revisor. Cópiala tal cual al encargo y al informe.
+>
+> 1. A2: en el texto de Q de la Next Action, «9 casos» pasa a «12 casos (9 de tramos anteriores y 3 de esta rama)».
+>    Por qué: el 9 lo copió el consultor de un recuento parcial; el informe ya dice 12.
+>
+> 2. A3 y A4: una fila más en HOLDOUT-EXPOSICIONES.md, solo añadir, sin tocar ni la del 2026-10-04 ni la de esta rama. Fecha de hoy y estas columnas:
+>    - qué: «Dos rastros más de tramos de precaución de v10, sin copiar su contenido. (1) El informe del commit f50b680 (rama trabajo/filtradas-escenario-b, empujado a fix/) copió la cifra del tramo 1:56:07; la quitó e2ee6cc, pero queda en la historia de la rama y entrará en main con el merge. Es la cifra ya declarada en la fila del 2026-10-04. (2) La fila del 2026-10-04 dice que el tramo 0:40:20 fue visto sin cifra, pero el informe de c489685 copió una (revisor de esta rama, A4).»
+>    - particiones: (1) las de junio, ya contadas en la fila anterior de esta rama; (2) ninguna, porque enero no tiene días ocultos ni reservados.
+>    - quién: la sesión autónoma de esta rama y la de trabajo/sesion-04; lo detectó el revisor de esta rama.
+>    - ¿quema?: «No. Decisión del consultor (2026-10-04): (1) es la misma cifra ya declarada y excluida de todo uso; (2) enero no tiene días reservados. La historia de git no se reescribe.»
+>    Sin cifras en la fila.
+>
+> 3. A6: en el texto de R de la Next Action, «FILTRADAS-ESCENARIO-B.md §3» pasa a «FILTRADAS-ESCENARIO-B.md §4.1».
+>
+> 4. Para la fila de ERRORES-RECURRENTES, hallazgo de la sesión (lo detectó el revisor):
+>    importa · Una cifra de un tramo de precaución se coló en un informe commiteado y empujado, aunque la regla era no copiar contenido de los tramos. Lección: antes de commitear un informe que habla de tramos de precaución, buscar en el diff las cifras y palabras del motivo de cada tramo; el revisor lo comprueba en cada pasada.
+>    Del consultor, sin hallazgos que el revisor no viera. Los dos de A2 y A6 son errores de redacción del consultor; anótalos así.
+>
+> 5. make check sellado, commit, push a fix/filtradas-escenario-b y CI de Linux con su número de run (único fallo aceptado: state check por el nombre fix/). Si el commit o el push se bloquean, para y dame los comandos con «!». No hace falta otro revisor: son cambios de texto que pidió el propio revisor. Cuando termines, dame el sha, el run y el tamaño de PROJECT_STATE.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 10. La séptima respuesta: los hallazgos del revisor para el consultor, resueltos
+
+- **A2:** Q dice ahora «12 casos (9 de tramos anteriores y 3 de esta rama)».
+- **A6:** R remite ahora al «§4.1».
+- **A3 y A4:** una fila más en `HOLDOUT-EXPOSICIONES.md`, debajo de la primera de esta rama, con los
+  textos de la respuesta y sin cifras. No toca ni la del 2026-10-04 ni la anterior de esta rama:
+  frente a `main`, el fichero tiene dos líneas añadidas y ninguna quitada. No quema, por decisión
+  del consultor.
+- **ERRORES-RECURRENTES:** la fila de la rama lleva el hallazgo de la sesión que vio el revisor (A3,
+  con su lección), los cuatro del consultor y sus dos errores de redacción (A2, A6). En «qué se le
+  escapó»: nada. Frente a `main` sigue siendo una línea añadida.
+- Sin otro revisor, por orden del consultor: son cambios de texto que pidió el propio revisor.
+
 ## Estado
 
 **Lista para revisión, NO cerrada.** Hecho, con el alcance que fijó el consultor.
@@ -851,11 +892,9 @@ Copiada tal cual:
 
 **Ninguna exposición en esta rama:** de ninguna filtrada ni cruda se ha leído texto.
 
-**Para el consultor (§9):**
-- A2: Q dice «9 casos»; son 12.
-- A3: la cifra de 1:56:07 está en la historia de `f50b680`.
-- A4: la cifra de 0:40:20 frente a la fila «SIN cifra».
-- A6: R remite al §3; el ancla está en el §4.1.
+**Lo que el revisor dejó para el consultor (§9), resuelto por la séptima respuesta (§10):**
+- A2 y A6: corregidos en Q y en R.
+- A3 y A4: declarados en una fila más de `HOLDOUT-EXPOSICIONES.md`, sin quemar.
 
 **Sellos y CI** (Linux; el único fallo es el aceptado,
 `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, por el nombre `fix/`):
@@ -864,11 +903,12 @@ Copiada tal cual:
 |---|---|---|---|
 | `f50b680` | `5727c7de…`, 1986 passed | 288 MiB | run 211 (`37259081415`): 1 failed, 1977 passed, 8 skipped |
 | `e2ee6cc` | `4a0ceb23…`, 1986 passed | 290 MiB | run 212 (`37260857834`): 1 failed, 1977 passed, 8 skipped |
+| `c4bf89b` | `a87e03e0…`, 1986 passed | 289 MiB | run 213 (`37262859430`): 1 failed, 1977 passed, 8 skipped |
 
 La CI de este commit, el último, va en el mensaje al consultor: un commit no puede llevar su propia
 CI.
 
-**`PROJECT_STATE.md`:** 24.218 bytes en `e2ee6cc`, y los mismos en este commit, por debajo del tope
+**`PROJECT_STATE.md`:** 24.294 bytes en este commit (24.218 en `e2ee6cc`), por debajo del tope
 de 25.000.
 
 ## Informe del revisor
