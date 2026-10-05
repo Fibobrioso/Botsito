@@ -4,9 +4,16 @@ Rama `trabajo/filtradas-escenario-b`, abierta el 2026-10-04 desde `main` en `f71
 estado sobre el merge `44f461d`, tag `stable/F36w-cuarentena-por-condicion`). Encargo:
 `docs/encargos/trabajo-filtradas-escenario-b.md`. Es el punto P de la Next Action.
 
-**Esta entrega es SOLO la fase 0, y se para en ella**: hay dos cosas del encargo que no se pueden
-hacer como están escritas sin rodear la guardia (§0.3), y una parada que saltaría por diseño
-(§0.4). No se ha escrito ninguna filtrada ni ningún tramo, y no se ha leído ningún texto.
+**Cómo se lee.** El informe va en el orden en que se hizo, con cada respuesta del consultor copiada
+antes de lo que hizo con ella.
+- La fase 0 (§0) se paró sin escribir nada.
+- Después, por orden del consultor:
+  - las B se escribieron fuera del repositorio y no se instalaron (§1);
+  - se registraron 8 tramos nuevos (§4);
+  - se documentó el hueco (§5).
+- El estado final está en «## Estado».
+
+De ninguna filtrada ni cruda se ha leído texto en toda la rama.
 
 ## 0. Fase 0
 
@@ -38,6 +45,9 @@ Guion: `docs/validation/anexos/FILTRADAS-ESCENARIO-B/medir_fase0.py`, con la sal
 - la línea de recuento de cada registro.
 
 Del repo lee los tramos y los intervalos de los ítems. Se ejecutó dos veces y la salida es idéntica.
+**Su salida commiteada es una instantánea de la fase 0** (revisor, A1). Lee los tramos del repo, así
+que desde que entraron los 8 tramos del §4 da v9 20 tramos y v10 22, frente a los 13 y 21 de la
+salida y de la tabla del §0.4. No se regenera, porque documenta lo que se midió entonces.
 
 **Los controles, antes de dar cifras** (lección de la rama anterior):
 - **Caso negativo, v8:** 0 bloques en A y 0 tramos, como se esperaba.
@@ -199,7 +209,9 @@ De su salida solo se miraron las líneas `hoja`, `segmentos` y `motivos`.
 
 **c) De las B solo se miraron marcas, recuentos e ids.** Anexo:
 `docs/validation/anexos/FILTRADAS-ESCENARIO-B/medir_fase1.py`, con la salida en
-`medir_fase1-SALIDA.txt`. Se reprodujo y la salida es idéntica byte a byte. **Nadie ha abierto
+`medir_fase1-SALIDA.txt`. Se reprodujo y la salida es idéntica byte a byte. Después del §4 ya no:
+su tabla por tramo da 8 filas más, una por tramo nuevo. Es una instantánea de la fase 1 y no se
+regenera (revisor, A1). **Nadie ha abierto
 ninguna B.**
 
 **d) Salta la parada P2, así que se restauró A** (§1.3).
@@ -612,12 +624,16 @@ rama (v7: 1, v8: 0, v9: 13, v10: 21), y esta rama añade 8, así que son 43. La 
 
 ### 5.2 Hallazgo para Q: el segundo de margen tapa el segmento siguiente
 
-En **9 tramos con margen**, la única línea visible que cae dentro empieza en el **último segundo** del
-tramo, el de margen.
-- Son 7 de cuarentena de v10 (1:03:24, 1:26:34, 1:26:44, 1:55:58, 1:56:04, 2:06:42 y 2:07:04) y 2
-  sin audio de v10 (0:45:05 y 1:39:08).
-- A esos se suman el nuevo de 1:55:27 y los dos completos de v9 de 1:13:25 y 1:13:55, que ya caen
-  dentro del tramo de precaución de 1:13:04.
+**En 12 tramos con margen hay una línea visible que empieza en el último segundo del tramo**, el de
+margen (`hueco-SALIDA.txt`, «ultimo s»). Hay que separar dos grupos:
+- **9 tramos de antes de esta rama:** 7 de cuarentena de v10 (1:03:24, 1:26:34, 1:26:44, 1:55:58,
+  1:56:04, 2:06:42 y 2:07:04) y 2 sin audio de v10 (0:45:05 y 1:39:08). En cada uno es la única
+  línea visible de dentro.
+- **3 tramos de esta rama:** el nuevo de 1:55:27, y los dos completos de v9 de 1:13:25 y 1:13:55,
+  que ya caen dentro del tramo de precaución de 1:13:04.
+
+La primera versión de este apartado decía «9» y no sumaba los 3 de esta rama. Esa cifra pasó al
+texto de Q (revisor, A2; ver §9).
 
 Por las marcas, esa línea es el segmento que sigue al bloque, visible y citable. Con la regla de Q
 (se tapa todo segmento que solape un tramo más de 0 ms), **Q lo taparía**. Pasa lo mismo al principio
@@ -788,14 +804,33 @@ Copiada tal cual:
 - **Fila nueva en `HOLDOUT-EXPOSICIONES.md`** (punto 2), debajo de la del 2026-10-04, que no se toca:
   el diff es una línea añadida y ninguna quitada. Lleva los textos de «qué» y «¿quema?» literales de
   la respuesta, y la columna de particiones según el recuento del §7.3.
-- **Ninguna cifra de los tramos** en la fila nueva ni en los ficheros de esta rama. Al comprobarlo
-  apareció una en el §5.3 de este informe (la del cuerpo de `c489685`) y se quitó antes del commit.
+- **Ninguna cifra de los tramos** en la fila nueva. Al comprobarlo apareció una en el §5.3 de este
+  informe: la del cuerpo de `c489685`, la misma que ya declara la fila del 2026-10-04. Se quitó en
+  `e2ee6cc`, pero **ya estaba en `f50b680`, empujado a `fix/`**: queda en la historia de la rama, que
+  no se reescribe (revisor, A3; para el consultor, §9). Esta frase decía antes «se quitó antes del
+  commit», y no era cierto.
 - **ERRORES-RECURRENTES:** el hallazgo del punto 3 se suma a los del consultor para la fila de la
   rama.
 
+## 9. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| A1 | importa | **Declarado.** `medir_fase0-SALIDA.txt` y `medir_fase1-SALIDA.txt` son instantáneas de sus fases, de antes de los 8 tramos. Leen los tramos del repo, así que hoy dan más. El §0.2 y el §1.1 lo dicen, y no se regeneran. Los otros 5 anexos se reproducen. |
+| A2 | importa | **Arreglado en el informe, y para el consultor.** El §5.2 da ahora 12: 9 tramos de antes y 3 de esta rama. El texto de Q dice «9 casos», literal de la quinta respuesta, y no se toca sin su orden. El informe de Q dará el recuento real, como pide la misma frase. |
+| A3 | importa | **No se puede arreglar; se declara, para el consultor.** `f50b680`, ya empujado a `fix/`, lleva en el §5.3 del informe la cifra del cuerpo de `c489685` (tramo 1:56:07). `e2ee6cc` la quitó. No se reescribe la historia. Es la misma cifra que ya declara la fila del 2026-10-04, en `main`. El §8 decía «se quitó antes del commit», y está corregido. |
+| A4 | importa | **Para el consultor.** El §5.3.1 dice, citando el A1 del revisor de `trabajo/sesion-04`, que el informe de `c489685` traía una cifra del tramo 0:40:20, mientras que la fila del 2026-10-04 lo declara «SIN cifra». La sexta respuesta concluye «mismo contenido ya declarado» sin esa salvedad. Medido (§7.3): enero no tiene días ocultos ni reservados. |
+| A5 | importa | **Arreglado.** La entrada del informe ya no dice «SOLO la fase 0»: explica cómo se lee el informe. |
+| A6 | menor | **Para el consultor.** R remite a «§3», literal de la cuarta respuesta. La medida del ancla está en el §4.1; el §3 es la comprobación por marcas que falló, la que llevó a medirla. No se toca. |
+| B1 | importa | **Arreglado.** `PROJECT_STATE.md`: 24.218 bytes en `e2ee6cc`, por debajo del tope de 25.000. El de este commit, en el Estado. |
+| B2 | importa | **Declarado.** `test_guardia_claude.py::test_los_tramos_del_repo_real` no cambia y pasa. Fija `tramos_vigilados` de la guardia, que solo vigila tramos de v6, porque desde v7 la cruda de una sesión no se lee entera. Los tramos nuevos son de v9 y v10. El test del repo real que los incluye, con su rotura a propósito, es el nuevo `tests/unit/test_tramos_de_sesion.py` (§4.3). |
+| B3 | menor | **Arreglado.** La columna «qué» de la fila nueva de `HOLDOUT-EXPOSICIONES.md` es ahora literal, sin negritas ni rama; la rama consta en «quién». La fila sigue siendo +1 frente a `main`. |
+| B4 | menor | **Declarado.** F1.3 («marcas de B = tabla de B de la fase 0»): la fase 0 no podía producir B sin escribir (§0.3). Por eso las marcas de B se compararon con ANTES y con A, en las paradas P1-P3 (§1.2). |
+| B5 | menor | **Arreglado.** Los sellos, los picos y la CI de cada commit, en el Estado. |
+
 ## Estado
 
-**Hecho, con el alcance que fijó el consultor.**
+**Lista para revisión, NO cerrada.** Hecho, con el alcance que fijó el consultor.
 
 **Desviaciones aceptadas por el consultor:**
 - B se midió y no se instaló (parada P2, segunda respuesta, punto 1). A sigue instalada, con su sha
@@ -811,10 +846,151 @@ Copiada tal cual:
 - La sección del hueco, con la decisión sobre el segundo de margen en Q (§5).
 - Los recuadros, y P, Q y R en la Next Action (§6, §7.2).
 - La fila complementaria de `HOLDOUT-EXPOSICIONES.md`, sin exposición nueva (§7.3, §8).
+- El revisor y lo hecho con sus hallazgos (§9, «Informe del revisor»).
+- La fila de la rama en `docs/runbooks/ERRORES-RECURRENTES.md`.
 
 **Ninguna exposición en esta rama:** de ninguna filtrada ni cruda se ha leído texto.
 
-**CI de Linux:** run 211 sobre `f50b680`, con el único fallo aceptado (§7.1). La del commit de la
-sexta respuesta y el revisor, abajo.
+**Para el consultor (§9):**
+- A2: Q dice «9 casos»; son 12.
+- A3: la cifra de 1:56:07 está en la historia de `f50b680`.
+- A4: la cifra de 0:40:20 frente a la fila «SIN cifra».
+- A6: R remite al §3; el ancla está en el §4.1.
 
-Rama NO cerrada.
+**Sellos y CI** (Linux; el único fallo es el aceptado,
+`tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, por el nombre `fix/`):
+
+| Commit | Sello de `make check` | Pico de memoria | CI |
+|---|---|---|---|
+| `f50b680` | `5727c7de…`, 1986 passed | 288 MiB | run 211 (`37259081415`): 1 failed, 1977 passed, 8 skipped |
+| `e2ee6cc` | `4a0ceb23…`, 1986 passed | 290 MiB | run 212 (`37260857834`): 1 failed, 1977 passed, 8 skipped |
+
+La CI de este commit, el último, va en el mensaje al consultor: un commit no puede llevar su propia
+CI.
+
+**`PROJECT_STATE.md`:** 24.218 bytes en `e2ee6cc`, y los mismos en este commit, por debajo del tope
+de 25.000.
+
+## Informe del revisor
+
+Subagente `revisor` (`.claude/agents/revisor.md`), lanzado con el informe terminado sobre `e2ee6cc`,
+con las tres preguntas expresas de la sexta respuesta y cuatro más de la sesión. Pegado tal cual,
+salvo las cifras de los tramos de precaución de v10, que se quitan al pegar (sexta respuesta, punto
+2: «No copies las cifras de los tramos … en ningún otro fichero nuevo»).
+
+> ## Informe del revisor · trabajo/filtradas-escenario-b · 2026-10-04
+>
+> Base `f712650`; HEAD `e2ee6cc` (6 commits, árbol limpio). `contrato_rama.py`: «25 ficheros dentro del contrato de trabajo/filtradas-escenario-b (riesgo medio, …, 4 comprobaciones para el revisor)». No se tocan `src/`, `scripts/`, `.claude/`, `knowledge/spec|cases|feedback|evidence`; lo único de `knowledge/` es `tramos_no_citables.yaml` (+56/−0).
+>
+> Veredicto en una línea: **ningún bloquea**; 5 «importa» de eje (a) y 2 de eje (b), todos de informe, no de mecanismo; respuestas (a)-(g) al final.
+>
+> ### Eje (a) · Reglas de la casa
+>
+> Resumen: 0 bloquea, 5 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | La comprobación 1 del contrato (`medir_fase0.py`) y `medir_fase1.py` ya no reproducen su `-SALIDA.txt` commiteada: las SALIDA son instantáneas previas a los 8 tramos añadidos (v9 13→20 tramos, v10 21→22). El informe dice «la salida es idéntica» (§0.2, §1.1c) y su tabla §0.4 cita 13/21 tramos, sin avisar de que es una instantánea previa. | `uv run python …/medir_fase0.py` → `v9: 20 tramos`, `v10: 22 tramos`, `v9 ANTES: 82 lineas en 8 de 20 tramos` frente a la SALIDA commiteada `v9: 13 tramos`, `v10: 21 tramos`, `5 de 13`. `medir_fase1` imprime ahora 8 filas más (0:22:11, 0:24:11, 1:06:38, 1:07:34, 1:07:45, 1:13:25, 1:13:55, 1:55:27). Los otros 5 anexos sí reproducen (solo difiere el EOL; `diff --strip-trailing-cr` = idéntico). |
+> | A2 | importa | «9 casos» / «esos 9 tramos» (§5.2, texto de Q en `PROJECT_STATE.md`) no cuadra con el anexo: hay **12** tramos con una línea visible en su último segundo. El propio §5.2 suma 9 + «el nuevo de 1:55:27» + «los dos completos de v9» pero encabeza «9», y Q fija esa cifra en la Next Action. | `grep -c "ultimo s)" hueco-SALIDA.txt` = 12: 10 de v10 (7 cuarentena + 2 sin audio + 1:55:27) y 2 de v9 (1:13:25, 1:13:55). §5.2: «En **9 tramos con margen**… A esos se suman el nuevo de 1:55:27 y los dos completos de v9». |
+> | A3 | importa | La cifra reservada del tramo 1:56:07 se copió en un fichero nuevo de la rama en el commit `f50b680`, ya empujado a `fix/` (la 6ª respuesta ordena no copiarla). El árbol de HEAD está limpio (`git diff main` no la contiene), pero queda en la historia de la rama; `e2ee6cc` la quitó y lo dice en su mensaje. Esa cifra ya está en la fila del 2026-10-04 (en `main`). Las demás cifras de esa fila no están en ningún commit. | `git log -S"[retirado al pegar]" main..HEAD` → `e2ee6cc`, `f50b680`. `git show f50b680:docs/validation/FILTRADAS-ESCENARIO-B.md` línea 655: «[retirado al pegar] (A5 de aquel revisor)…». Declarar o decidir; no se reescribe historia. |
+> | A4 | importa | El §5.3.1 sigue afirmando que el informe de `c489685` traía, para el tramo 0:40:20, «una cifra que la fila de HOLDOUT no declara («SIN cifra»)». La fila antigua dice «SIN cifra». El §8 y la 6ª respuesta concluyen «mismo contenido ya declarado / no hay exposición nueva» sin reconciliar esa cifra; la fila nueva da 0:40:20 como enero sin días reservados. No abrí el texto de A1 de aquel informe. | `FILTRADAS-ESCENARIO-B.md:656-658` frente a la fila antigua de `HOLDOUT-EXPOSICIONES.md` («comentados SIN cifra»). Pasárselo al consultor expresamente. |
+> | A5 | importa | La entrada del informe sigue diciendo «Esta entrega es SOLO la fase 0, y se para en ella… No se ha escrito ninguna filtrada ni ningún tramo, y no se ha leído ningún texto»: falso en el estado final (se escribieron las B y hay 8 tramos nuevos). Contradice el §1 y el «## Estado». | `FILTRADAS-ESCENARIO-B.md:7-9`. |
+> | A6 | menor | R en la Next Action remite a «FILTRADAS-ESCENARIO-B.md §3»; el texto es literal de la 4ª respuesta, pero la medida del ancla está en §4.1 (el §3 es la comprobación por marcas que falló). | `PROJECT_STATE.md` punto R; el §3 del informe es «La comprobación de la tercera respuesta». |
+>
+> Comprobado sin hallazgos:
+> - Contrato: comprobaciones 2 y 3 en verde (`ficheros_con_ocultos.py`: «OK: .claude/hooks/ficheros_con_ocultos.txt coincide»; `knowledge validate`: exit sin ERROR, 501 ítems, historial intacto). Los 25 ficheros están en `rutas_permitidas`; ninguna ruta protegida tocada.
+> - `make check`: `make-check.log` con `1986 passed in 829.68s`, `SELLO: … sobre el arbol 4a0ceb232860d6ec2bb1efd67f73b994d04171a8` y `PICO DE MEMORIA … 290 MiB`; ese árbol es `HEAD^{tree}`. El `f50b680` tiene árbol `5727c7de…` (el sello citado) y 15 ficheros. `origin/fix/filtradas-escenario-b` = `e2ee6cc` (`ls-remote`).
+> - CI de Linux: run 211 (`37259081415`, `f50b680`) y run 212 (`37260857834`, `e2ee6cc`, ya terminada) — ambos `failure` con un único fallo, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (`1 failed, 1977 passed, 8 skipped`).
+> - Trailers `Fuente:`: ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+> - Regímenes: solo hay `A` en `knowledge/evidence`, `knowledge/feedback`, `data/manifests`, transcripciones y fotogramas; sin cambios en `libros.yaml`. El yaml de tramos: +56/−0. Sin feedback nuevo, ambigüedades, ADR ni las tres guardias de `cita`.
+> - Parámetros y test_adr: no se tocan cifras de parámetros ni ADR.
+> - Informes cerrados: `CUARENTENA-POR-CONDICION.md` (+9/−0) y `SESION-04-EXTRACCION.md` (+7/−0), solo recuadros `>` con fecha y rama.
+> - HOLDOUT: +1/−0; la fila del 2026-10-04 no cambia.
+> - Tests: `test_tramos_de_sesion.py` (6 pasan), `test_project_state.py`, `test_historia.py`, `test_adr.py`, `test_guardia_claude.py -k tramos` (2 pasan) en verde; `state check` OK.
+> - Citas del informe contra su fuente: `knowledge.py:668-695` (validate → `verificar_citas`), `verificacion.py:358` (`tramo_no_citable`), §4.1 del ancla frente a `ancla_v9-SALIDA` (613, 2.098.060–2.100.240; 612 termina en 2.096.900; ventana 2.096.000–2.100.000; 2.060 ms y 1.160 ms), §5.1 frente a `hueco-SALIDA` fila a fila, §7.3 frente a `meses_de_los_tramos-SALIDA`, y los motivos «segmentos 404-406 … 1192-1194» frente a los tramos originales en `main`.
+> - sha256 en disco (`sha256sum`, sin abrir): las cuatro A restauradas coinciden con el informe; `v9 B` = `v9 ANTES` = `f7529459…a027b`.
+>
+> ### Eje (b) · Encargo
+>
+> Resumen: 0 bloquea, 2 importa, 3 menor. Requisitos: 22 hechos (+2 «hecho de otra forma»: R4 declarado, R14 no declarado), 4 parciales, 1 no hecho; R30 (ERRORES-RECURRENTES) pendiente por orden de la 6ª respuesta, no cuenta como fallo.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | main en `f712650` y tag | Hecho | `git merge-base` = `f712650`; cabecera del informe |
+> | 2 | Abrir rama: encargo, contrato, Archivo 14 | Hecho | `docs/encargos/…`, `contrato.yaml`, `HISTORIA.md` «# Archivo 14» |
+> | 3 | Fase 0.1: rutas y hoja por vídeo | Hecho | §0.1 |
+> | 4 | Fase 0.2: tabla B/nuevos/destapados | Hecho de otra forma (declarado: B medido en su sitio, 1ª respuesta) | §0.3, §1.2 |
+> | 5 | Caso negativo v8 | Hecho | `medir_fase0-SALIDA`: «CASO NEGATIVO v8: 0 … (esperado 0 y 0)» |
+> | 6 | Paradas (las de la 1ª respuesta) | Hecho (P2 salta y se honra) | §1.2-§1.3; B no se instala |
+> | 7 | F1.1: A apartadas con sha | Hecho | sha en disco = informe |
+> | 8 | F1.2: `--solo-filtrar` tal cual | Hecho | §1.1b (4 comandos) |
+> | 9 | F1.3: marcas de B = «tabla de B de la fase 0» | Parcial | La fase 0 nunca produjo tabla de B (§0.3); el informe no concilia esa exigencia. |
+> | 10 | F1.4: sha de cada B; v9 frente a `f7529459…` | Hecho | §1.2, verificado en disco |
+> | 11 | F1.5: tramos nuevos por su régimen | Hecho | 8 tramos (7 de v9 + v10 1:55:27); el de 2.084.000–2.096.000 no se registra (5ª), declarado en §4.2 y Estado |
+> | 12 | `ficheros_con_ocultos` + `knowledge validate` | Hecho | ejecutados, OK |
+> | 13 | `test_guardia_claude.py::test_los_tramos_del_repo_real` | Parcial | no se menciona en el informe; pasa sin cambios, pero su lista (`tramos_vigilados`) solo tiene v6, así que no incluye los tramos nuevos |
+> | 14 | Test de la lista de tramos del repo real + rotura a propósito | Hecho de otra forma, **no declarado** | se creó `tests/unit/test_tramos_de_sesion.py`; rotura hecha en el fichero (§4.3) y en memoria; el informe no explica por qué no se amplió el test de la guardia |
+> | 15 | Informe: fase 0, tablas, sha, tramos, desviaciones | Hecho | §0-§5, Estado |
+> | 16 | Informe: tamaño de `PROJECT_STATE.md` (encargo y 2ª, 3ª respuestas) | **No hecho** | no hay «bytes»/«KB» en el informe. Medido aquí: 24.218 B |
+> | 17 | Anexo reproducible, commiteado, sin texto | Parcial | ver A1: dos SALIDA ya no se reproducen, sin aviso |
+> | 18 | Recuadros en los dos informes cerrados | Hecho | solo líneas añadidas, en `>` |
+> | 19 | Exposición ninguna | Hecho | de ninguna filtrada se leyó texto |
+> | 20 | `make check` sellado | Hecho | sello = `HEAD^{tree}`; el informe no lo cita (menor) |
+> | 21 | Push a `fix/` y CI con números de run | Parcial | run 211 en el informe; el 212 (`e2ee6cc`, terminado, mismo único fallo) aún no |
+> | 22 | 2ª.1 desviación «B no se instala» declarada | Hecho | Estado |
+> | 23 | 2ª.2 tramos v10 1:55:27 y v9; parada ev-* | Hecho | §2.2 (salta y se para), §4.2 |
+> | 24 | 2ª.3 sección del hueco | Hecho | §5 (43 tramos, no «10»; explicado) |
+> | 25 | Next Action: P → HISTORIA, Q, R | Hecho | ver (c) |
+> | 26 | 2ª.6 criterio escrito + 4ª.4 test | Hecho | `SESION-DE-PREGUNTAS.md` +24/−0; 2 tests sintéticos contra `tramo_no_citable` |
+> | 27 | 3ª.1 y 4ª.1: ancla con la función de validate | Hecho | `ancla_v9.py`; (b) falla y se para; luego caso (a) |
+> | 28 | 5ª.1 commit de Aleks = el preparado | Hecho | árbol `5727c7de…`, 15 ficheros |
+> | 29 | 6ª.2 fila de HOLDOUT | Hecho (casi literal) | ver menor B3 |
+> | 30 | ERRORES-RECURRENTES | Pendiente por orden | — |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | importa | El encargo (y las respuestas 2ª y 3ª) piden el tamaño de `PROJECT_STATE.md` en el informe; no está. | Grep «bytes\|KB\|tamaño» en el informe: solo citas del encargo. 24.218 B < 25.000. |
+> | B2 | importa | El encargo pide que el test de la lista de tramos del repo real los incluya y correr `test_guardia_claude.py::test_los_tramos_del_repo_real`. La rama hizo otra cosa (test nuevo) sin declararlo ni explicar por qué el de la guardia no cambia (su lista es solo v6). | Requisitos 13-14. |
+> | B3 | menor | La columna «qué» de la fila nueva no es literal de la 6ª respuesta: añade negritas y «, rama `trabajo/filtradas-escenario-b`». «Particiones» y «quién» también llevan texto añadido (estos dos no tenían texto literal exigido). | `git diff main -- docs/validation/HOLDOUT-EXPOSICIONES.md` |
+> | B4 | menor | F1.3 (marcas de B = tabla de B de la fase 0) sin conciliar (requisito 9). | — |
+> | B5 | menor | El informe no cita aún el run 212, el sello de `make check` ni el pico (`PICO DE MEMORIA` 290 MiB). | — |
+>
+> Lo que la rama hace y el encargo no pide: nada fuera de encargo (el test nuevo es el sustituto de B2; la fila de HOLDOUT y los tramos v9 los piden la 2ª/6ª respuesta); los ficheros caen dentro de `rutas_permitidas`.
+>
+> Lo que el encargo dice que no se toca (motor, spec, regla de cuarentena, `meses_reservados.yaml`, guion): sin cambios en el diff.
+>
+> ### Respuestas a las preguntas expresas
+>
+> **(a) Tramos nuevos, ventanas de ítems y control positivo: sí, con la excepción declarada.**
+> - 8 tramos (7 de v9, 1 de v10); el diff solo añade. Límites por tramo coherentes con el control positivo de las SALIDA (p. ej. 1:55:27–1:55:34 = 6.927.000–6.934.000 ms).
+> - Comprobación propia, independiente, sobre el yaml (47 tramos) y todos los ítems de v7 (5), v8 (2), v9 (62) y v10 (64), con `solape = a_t0 < t_fin y t_ini < a_t1`: **0 ítems solapan ningún tramo** (ni nuevos ni viejos). `tramos_registrados` también: `items … que solapan un tramo mas de 0 ms: 0 []`; `test_ningun_item_de_las_sesiones_solapa_un_tramo` pasa.
+> - Control positivo: 20 de 21 bloques de B «cabe». El que no: v9 34:44 (`2084000-2096900: NO CABE (cubierto hasta 2096000)`), la excepción declarada, con su cola 2.096.000–2.096.900 ms. Esa cola cae sobre la ventana del ítem `ev-v9-003456-9ef48fb5` (2.096.000–2.100.000) y no está en ningún tramo; el ancla está en el segmento 613 (2.098.060–2.100.240), fuera del bloque.
+> - El tramo 2.084.000–2.096.000 **no** se registró (ninguno de los 8 empieza en 0:34:44; el diff es solo de añadidos).
+>
+> **(b) Fila nueva de HOLDOUT: sin copia de contenido ni cifras, con una salvedad.**
+> - La fila nueva solo lleva conteos de días por partición y los literales «un máximo de operaciones en un día» y «tres valores de R». La fila antigua del 2026-10-04 tiene +1/−0 de diff, es decir, no cambia.
+> - Cifras prohibidas (las de la fila antigua: [retirado al pegar: las cifras de los tramos 1:27:44 y 1:56:07 y la frase del tramo 0:40:20]): con `git diff main` no aparecen en ninguna línea añadida (las únicas coincidencias son un número de sección de otro documento, en el Archivo 14 de HISTORIA, que no es esa cifra), ni en los mensajes de los 6 commits. Salvedad: la cifra de 1:56:07 sí estuvo en `f50b680` (ver A3).
+> - «qué» y «¿quema?» literales de la 6ª respuesta salvo lo de B3.
+>
+> **(c) Next Action: Q, R y P coinciden.**
+> - Q = texto de la 2ª respuesta + frase de la 3ª + frase de la 5ª; R = texto de la 4ª. Comparé cada frase con las respuestas, línea por línea: coinciden.
+> - P: «Next Action HECHA · P» en `HISTORIA.md` línea 4078, con texto literal (sha256 de la línea de `main` = el de la copia, `c3ab0df2…`); en `PROJECT_STATE.md` ya no hay rastro de P (el diff quita la línea).
+>
+> **(d) Copia de texto de segmentos o tramos: no encontrada.** Revisé los fragmentos entrecomillados «…» de los ficheros cambiados: son todos citas de documentos o plantillas. `ancla_v9.py` solo imprime n, ms y marcas. Los motivos nuevos del yaml solo nombran el tramo original y los índices de segmento ya publicados. La única referencia de contenido es la del A4.
+>
+> **(e) Numéricas del informe frente a las SALIDA:** coinciden §4.1, §5.1 (fila a fila), §7.3 y §1.2 (B v10 48/13, P2 = 3 + 3). Dos discrepancias: A1 (instantáneas viejas) y A2 (9 frente a 12).
+>
+> **(f) Recuadros:** `CUARENTENA-POR-CONDICION.md` §5 (+9/−0) y `SESION-04-EXTRACCION.md` §1.2 (+7/−0): solo líneas añadidas, en `>`, con fecha 2026-10-04 y rama; el cuerpo, intacto. Régimen de informes cerrados cumplido.
+>
+> **(g) `PROJECT_STATE.md`:** 24.218 bytes, 782 por debajo del tope de 25.000 (el test `test_project_state.py` pasa).
+>
+> ### Lo que no pude comprobar
+> - §5.3, ausencia de lecturas posteriores en v9 y v7: me apoyo en el informe; no releí los informes por fecha.
+> - El texto de A1 de `SESION-04-EXTRACCION.md`: no lo abrí para evitar cifras, así que el A4 se apoya solo en lo que dice la frase del informe.
+> - `git write-tree` y `make check`: no los ejecuté; usé el sello de `make-check.log` (`4a0ceb23…` = `HEAD^{tree}`).
+> - La rotura a propósito en el fichero: escribe; no la repetí; la comprobé solo por el test en memoria (`test_la_rotura_a_proposito_cae`, que pasa).
+> - El control positivo de los bloques de B: no lo recalculé yo desde las B apartadas sin escribir un guion nuevo que nombre esa carpeta; reproduje los anexos de la rama (que solo leen marcas), y salieron idénticos.
+> - ERRORES-RECURRENTES: su fila está pendiente por orden de la 6ª respuesta.
+>
+> ### Comandos ejecutados
+> `git branch/merge-base/log/diff/status`; `uv run python scripts/contrato_rama.py`; `uv run python scripts/ficheros_con_ocultos.py`; `uv run python docs/validation/anexos/FILTRADAS-ESCENARIO-B/{medir_fase0,medir_fase1,tramos_registrados,tramos_nuevos,meses_de_los_tramos,hueco,ancla_v9}.py` (comparados con su SALIDA con `diff --strip-trailing-cr`); `uv run botsito knowledge validate`; `uv run botsito state check`; `uv run pytest tests/unit/test_tramos_de_sesion.py tests/unit/test_project_state.py tests/unit/test_historia.py tests/unit/test_adr.py` y `tests/unit/test_guardia_claude.py -k tramos`; un `uv run python -c` de solo lectura que carga el yaml de tramos y los ítems de v7–v10 para el solape; `git diff main` (varios ficheros), `git show`, `git log -S`, `git rev-parse`, `git ls-remote`; `sha256sum` de las filtradas; `gh run list/view`. Dos bloqueos de hooks, ya esperados: redirección a fichero (`solo_lectura.py`) y una variable `$A` en una ruta (guardia); ambos se corrigieron con rutas literales sin rodear nada.
