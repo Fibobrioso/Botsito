@@ -369,6 +369,70 @@ El contrato deja de proteger `.claude/` entero y protege cada parte por su nombr
 - **La comprobación por duración** (§0.3, revisor B2) no se añade (punto 2).
 - **§4.4, la skill:** hecho (§7.4).
 
+### 7.6 La pasada corta del revisor, y lo hecho con ella
+
+0 bloquea, 0 importa, 3 menores:
+
+| # | Qué se hizo |
+|---|---|
+| 1 | **Declarado ya** (§7.1). El sha no está en ninguno de los dos manifiestos que nombra la respuesta, sino en el de la transcripción. El revisor lo da por la misma vía con otro fichero y no pide otra declaración. |
+| 2 | **Arreglado.** El Estado vuelve a tener la tabla de sellos y el tamaño de `PROJECT_STATE.md`. |
+| 3 | **Declarado ya** (§7.4). La skill cambia «carpeta» por «audio» además de añadir `--video`, porque el guion exige un solo audio. Es el mismo comando. |
+
+**Lo que el revisor no pudo comprobar, para el consultor:**
+- Que `extraer_wav` sobre el `.m4a` real reproduzca hoy el sha. Lo medido es el WAV de trabajo ya
+  extraído, y el guion no se ejecuta sobre material real en esta rama.
+- La reproducibilidad entre versiones de ffmpeg. Con otra versión, la comprobación daría un **falso
+  rechazo**, nunca un falso aceptado, porque falla cerrado. Se vería en la fase 0 de la activación,
+  al rehacer las filtradas.
+
+**Informe del revisor, pasada corta** (pegado tal cual):
+
+> ## Informe del revisor · trabajo/filtradas-con-tramos · pasada corta sobre `dbd0f09` · 2026-10-05
+>
+> ### Veredicto
+> **Sin hallazgos que bloqueen ni importantes.** Los tres puntos de la respuesta del consultor están aplicados y dentro del contrato; solo 3 menores. Queda abierta la CI de Linux de `dbd0f09`, que estaba corriendo.
+>
+> ### Hallazgos
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | 1 | menor | El informe §7.1 dice que la vía es la primera de la respuesta, pero el sha no está en ninguno de los dos manifiestos que la respuesta nombra; el informe lo declara con sus palabras (§7.1: «No es ninguno de los dos ficheros que nombra la respuesta»), así que es una desviación declarada, no un defecto. Ver (a). | `docs/validation/FILTRADAS-CON-TRAMOS.md` §7.1 |
+> | 2 | menor | El «Estado» del informe pierde, en esta rama, la línea «Sellos» (la de `e9ce879` y `bece406`) y pone «el tamaño, en la respuesta al consultor» para `PROJECT_STATE.md` en vez de la cifra. | `git diff 245a0fd dbd0f09 -- docs/validation/FILTRADAS-CON-TRAMOS.md`. Tamaño actual: 24.649 bytes (`wc -c PROJECT_STATE.md`), por debajo del tope de 25.000. |
+> | 3 | menor | El mismo cambio de la skill también cambia «carpeta» por «audio»: va más allá de «solo `--video`», pero el informe lo declara (§7.4) y es parte del mismo comando. Ver la comparación abajo. | `git diff main -- .claude/` |
+>
+> ### Respuestas (a)-(f)
+>
+> **(a) La vía elegida es la primera de la respuesta, con desviación de ruta declarada.**
+> - Los cuatro `sha256_wav` de `knowledge/corpus/transcripciones/tr-v7..v10-*.yaml` coinciden con los de `test_sha256_wav_del_video_del_repo_real`: v7 `f0b8007b…3122`, v8 `d30cb465…62d8`, v9 `93f40543…efb`, v10 `549d8c20…7060`.
+> - `sha256sum` de los cuatro `audio.wav` de trabajo (`sesion-02-v7-audio`, `sesion-02-v8-audio`, `sesion-03-audio` = v9, `sesion-04-audio` = v10), sin abrirlos: dan exactamente esos mismos cuatro valores.
+> - Lo medido en el informe §7.1 es el WAV de trabajo ya extraído antes. No he podido comprobar que `extraer_wav` sobre el `.m4a` lo reproduzca hoy (no ejecuté el guion sobre material real).
+> - La respuesta nombra `data/manifests` y `knowledge/corpus/manifest.yaml`. El informe dice que `data/manifests` son velas y que `manifest.yaml` guarda el sha del `.mp4`, no del audio; el sha del WAV está en el manifiesto de transcripción. Encaja con «un sha256 del audio que se pueda recalcular sin abrir contenido»: es la misma vía con otro fichero. No hace falta otra declaración que la que ya hace el informe.
+> - La segunda vía (segmentos y marcas) habría exigido leer una cruda; está bien descartada.
+>
+> **(b) Ningún camino escribe antes de la comprobación.** `procesar` hace `tramos_del_video` → `comprobar_audio_del_video` y solo después `salidas_de`, `_comprobar_rutas`, cruda, filtrada y registro. `sha256_wav_del_audio` extrae a `tempfile.TemporaryDirectory` (se borra al salir) y no escribe junto al audio. `comprobar_audio_del_video` falla cerrado: `sha256_wav_del_video` que falla, `AudioError` u `OSError` (también ffmpeg ausente) → `SesionError` → 2 sin escribir; `FileNotFoundError` cubierto. Tests: `test_main_con_el_video_equivocado_no_escribe_nada` (`_ficheros` idéntico antes y después), `test_main_sin_poder_comprobar_el_audio_no_escribe_nada`, `test_main_con_audio_ajeno_no_transcribe` (en ASR, ni `transcribir` ni cruda).
+>
+> **(c) Tests sintéticos, con caso que cuadra y caso que no.** Ningún test abre audio, cruda ni filtrada reales. `test_sha256_wav_del_video_del_repo_real` solo lee manifiestos del repo. `test_comprobar_audio_con_ffmpeg_cuadra_y_no_cuadra` usa dos WAV generados con `wave` (440 y 880 Hz) y se salta sin ffmpeg; `test_comprobar_audio_del_video_cuadra_y_no_cuadra` usa sha de juguete. El fixture parchea `sha256_wav_del_video` y `sha256_wav_del_audio`, así que los tests de `main` no tocan audio. Recuento: 23 funciones (`grep -c '^def test_'`) y 33 casos (`--collect-only`), como dice el informe; `PROJECT_STATE.md` pasa de 1295 a 1301 (+6, las seis funciones nuevas).
+>
+> **(d) Roturas.** `roturas-SALIDA.txt`: 5, 3, 7, 1 y 3 caídas, que coinciden con la tabla de §7.3; cada rotura termina en «restaurado: sha igual» y el cierre, en «restaurado, de nuevo: pytest sale con 0». El sha de la salida, `42e3c882…9f7e`, es el de `git show dbd0f09:scripts/transcribir_sesion.py | sha256sum` (`42e3c8828b6ec743777ae1745bbc127f4aee315b3050d670cd80073b99909f7e`). La rotura 5 nueva en `roturas.py` sustituye `comprobar_audio_del_video(...)` por un sha falso y cae exactamente en los tres tests esperados.
+>
+> **(e) Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 10 ficheros dentro del contrato de trabajo/filtradas-con-tramos (riesgo medio, …, 2 comprobaciones para el revisor)». `rutas_permitidas` añade solo `.claude/skills/ingerir-sesion/SKILL.md`; `rutas_protegidas` sustituye `.claude/` por `agents/`, `hooks/`, `settings.json`, `skills/abrir-rama/` y `skills/cerrar-rama/`. Con eso se cubren todos los subdirectorios existentes de `.claude/` (por el diff, no listé el directorio). Un fichero nuevo suelto en `.claude/` ya no estaría protegido por nombre: menor y consecuencia de la excepción pedida.
+>
+> **(f) Tests y sello.** `uv run pytest tests/unit/test_filtradas_con_tramos.py tests/unit/test_transcribir_sesion.py -q`: todo en verde (100 %, sin fallos). `make-check.log`: `SELLO: make check en verde sobre el arbol c4ecca2bcea034cd6efd20538a65a274f79457d9`; `git rev-parse HEAD^{tree}` = `c4ecca2bcea034cd6efd20538a65a274f79457d9`, coinciden; `PICO DE MEMORIA` 289 MiB. `git status --short` vacío. `uv run botsito state check` → OK.
+>
+> ### Skill `ingerir-sesion`, línea a línea contra main
+> `git diff main -- .claude/` toca un solo fichero, `.claude/skills/ingerir-sesion/SKILL.md`, con 1 línea cambiada (+1/−1); `git diff main --name-only -- .claude/` lo confirma. Ningún otro fichero de `.claude/` cambia.
+> - main, línea 69: `` 4. **Cuarentena.** `uv run python scripts/transcribir_sesion.py --audio <carpeta FUERA del repo>` ``
+> - rama, línea 69: `` 4. **Cuarentena.** `uv run python scripts/transcribir_sesion.py --audio <audio FUERA del repo> --video <vN>` ``
+> - El resto del hunk (contexto) es idéntico. El cambio es lo pedido (`--video <vN>`), más «carpeta» → «audio» (hallazgo 3). No hay otra invocación del guion en la skill que quede sin `--video`: la línea 44 solo lo nombra como comando permitido y la 70 menciona `--solo-filtrar` en prosa.
+>
+> ### CI de Linux
+> Run `37316869724` sobre `dbd0f09`, rama `fix/filtradas-con-tramos`: **`in_progress`** cuando lo consulté (53 s a las 13:26Z). Los anteriores, `37309388222` (run 216, `bece406`) y `37312344759` (run 217, `245a0fd`), son `failure` con el único fallo aceptado según el informe; no inspeccioné sus logs de fallo. Hay que mirar el de `dbd0f09` cuando termine.
+>
+> ### Lo que no pude comprobar
+> - Que `extraer_wav` sobre el `.m4a` real reproduzca hoy el sha del manifiesto: no ejecuto el guion sobre material real; solo confirmé que los WAV de trabajo ya extraídos coinciden.
+> - La reproducibilidad entre máquinas de ffmpeg: si otra versión de ffmpeg extrae un WAV distinto, la comprobación daría un falso rechazo (nunca un falso aceptado, porque falla cerrado).
+> - El resultado de la CI de `dbd0f09`, aún en curso.
+
 ## Estado
 
 **Lista para revisión, NO cerrada.**
@@ -376,21 +440,29 @@ El contrato deja de proteger `.claude/` entero y protege cada parte por su nombr
 - La regla, en el guion (§1).
 - Tests sintéticos con sus negativos: 23 funciones y 33 casos (§2, §7.3).
 - Cinco roturas a propósito, que caen y se restauran (§3, §7.3).
-- Desde la respuesta del consultor del 2026-10-05 (§7): el audio se comprueba contra el vídeo
-  declarado por el sha256 de su WAV, y la skill `ingerir-sesion` pasa `--video`.
-- El revisor, con su primera pasada y lo hecho con ella (§6, «Informe del revisor»). La pasada
-  corta sobre la respuesta, al final.
-- Ningún material real leído ni ejecutado: la fase 0 del §7 solo hasheó los WAV de trabajo.
+- Desde la respuesta del consultor del 2026-10-05 (§7):
+  - el audio se comprueba contra el vídeo declarado, por el sha256 de su WAV;
+  - la skill `ingerir-sesion` pasa `--video`.
+- El revisor:
+  - primera pasada y lo hecho con ella (§6, «Informe del revisor»);
+  - pasada corta sobre la respuesta, sin hallazgos que bloqueen ni que importen (§7.6, «Informe del
+    revisor, pasada corta»).
+- Ningún material real leído ni ejecutado. La fase 0 del §7 solo hasheó los WAV de trabajo.
 
-**CI de Linux** (`fix/filtradas-con-tramos`), con el único fallo aceptado,
+**Sellos y CI de Linux** (`fix/filtradas-con-tramos`). El único fallo aceptado es
 `test_state_check_ok_on_real_repo`:
-- run 216 (`37309388222`) sobre `bece406`;
-- run 217 (`37312344759`) sobre `245a0fd`.
 
-La del commit de la respuesta va en la respuesta al consultor.
+| Commit | Sello de `make check` | CI |
+|---|---|---|
+| `e9ce879` | `77a60a01…` | sin empujar |
+| `bece406` | `6fa06dd6…`, 2013 passed | run 216 (`37309388222`) |
+| `245a0fd` | `4523f120…`, 2013 passed | run 217 (`37312344759`) |
+| `dbd0f09` | `c4ecca2b…`, 2019 passed, pico 289 MiB | run `37316869724` |
 
-**`PROJECT_STATE.md`:** el tamaño, en la respuesta al consultor (por debajo del tope de 25.000; el
-cierre tiene que sustituir, no añadir).
+La CI de este commit va en la respuesta al consultor.
+
+**`PROJECT_STATE.md`:** 24.649 bytes, por debajo del tope de 25.000. El cierre tiene que sustituir,
+no añadir.
 
 La fila de ERRORES-RECURRENTES va al cerrar, con los hallazgos del consultor.
 
