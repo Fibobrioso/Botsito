@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/cuarentena-por-condicion
+main
 
 ## Current Feature
-`trabajo/cuarentena-por-condicion` EN CURSO (2026-10-04): el filtro de cuarentena deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre (punto P). Fases 0 y 1 hechas; fase 2 en lo posible (filtradas de sesion en A, pendiente de B): lista para revision, NO cerrada. Encargo docs/encargos/trabajo-cuarentena-por-condicion.md; informe docs/validation/CUARENTENA-POR-CONDICION.md.
+NINGUNA ABIERTA tras `stable/F36w-cuarentena-por-condicion` (2026-10-04).
 
 ## Stable Main State
-eec79a0 · merge de `trabajo/sesion-04` (tag `stable/F36v-sesion-04`): la sesion 4 con el trader entra como v10, en cuarentena (transcripcion, fotogramas, 21 tramos no citables y 64 items ev-v10-*), con su extraccion por pregunta S-1..S-24 (13 resuelven, 11 en parte) y SIN resolver nada en la spec; scripts/transcribir_sesion.py guarda la hoja y los textos de los codigos por sesion (--sesion). Sobre `stable/F36u-historial-sin-git` (8e21fd1). Informe docs/validation/SESION-04-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
+44f461d · merge de `trabajo/cuarentena-por-condicion` (tag `stable/F36w-cuarentena-por-condicion`): la cuarentena del texto deja de ser una lista fija de meses y tapa todo mes que no se pueda demostrar libre -sin dias en casos_ocultos ni en casos_reservados y fuera de knowledge/cases/meses_reservados.yaml (2026-02, 2026-03), la fuente nueva, SOLO ANADIR-; sin datos se tapan los doce (`cases.holdout.meses_libres`). Dos tramos de precaucion en v6; las filtradas de sesion v7-v10, en el escenario A hasta la rama siguiente (P). Sobre `stable/F36v-sesion-04` (eec79a0). Informe docs/validation/CUARENTENA-POR-CONDICION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-eec79a0 · merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pregunta y la hoja por sesion (SESION-04-EXTRACCION.md) · tag stable/F36v-sesion-04
+44f461d · merge: la cuarentena del texto tapa todo mes que no se pueda demostrar libre (CUARENTENA-POR-CONDICION.md) · tag stable/F36w-cuarentena-por-condicion
 
 ## Tests Currently Passing
 1272 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
@@ -29,7 +29,7 @@ eec79a0 · merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pr
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
-P. **Rama de cuarentena: ocultar todo mes con días en casos_ocultos (§6 del informe), antes de activar la sesión 4** (orden de cierre de `trabajo/sesion-04`, 2026-10-04; docs/validation/SESION-04-EXTRACCION.md §6, pendiente a). **En revision en trabajo/cuarentena-por-condicion.**
+P. Rama corta: rehacer con el guion de main las filtradas de sesión (v7–v10) en el escenario B. Medir antes con recuentos y marcas de tiempo, sin texto. Si algún ítem ev-* cae en un segmento que pasa a ocultarse, parar y avisar al consultor. Va antes de activar la sesión 4 (CUARENTENA-POR-CONDICION.md §5).
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
