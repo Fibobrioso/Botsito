@@ -43,8 +43,8 @@ from botsito.engine.cuenta import Operacion, ReglasFase, ResultadoFase, evaluar_
 from botsito.engine.freno import LimitesFreno
 from botsito.engine.llenado import Configuracion, Mercado
 from botsito.engine.perfil_cuenta import PerfilCuenta
-from botsito.engine.relojes import huso_de_las_sesiones
-from botsito.engine.visor import _minuto_local, caso_de_construccion
+from botsito.engine.relojes import reloj_de_las_sesiones
+from botsito.engine.visor import caso_de_construccion
 
 
 @dataclass(frozen=True)
@@ -180,9 +180,9 @@ def mercado_de_construccion(
     """El mercado de un dia dev de construccion, por la compuerta del arnes."""
     dt: DiaTrader = caso_de_construccion(repo, criterio, caso)
     dia = date.fromisoformat(dt.dia)
-    huso = huso_de_las_sesiones(registro)  # la ventana del dia, en el reloj de las sesiones
-    desde = _minuto_local(dia, config.ventana_local[0], huso)
-    hasta = _minuto_local(dia, config.ventana_local[1], huso)
+    reloj = reloj_de_las_sesiones(registro)  # la ventana del dia, por la puerta (ADR-0069)
+    desde = reloj.instante(dia, config.ventana_local[0])
+    hasta = reloj.instante(dia, config.ventana_local[1])
     try:
         ruta = buscar_manifiesto(repo, f"{config.dataset_prefijo}{dt.dia[:7]}")
     except DatasetError as exc:

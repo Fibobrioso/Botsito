@@ -23,7 +23,7 @@ trabajo/activacion-a42
 49c3098 · merge: el reloj de invierno, medido; enero UTC en libros.yaml y en enero el trader opera 06-14 UTC (RELOJ-INVIERNO.md) · tag stable/F37c-reloj-invierno
 
 ## Tests Currently Passing
-1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1357 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -98,7 +98,6 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
 | A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
-| A-42 | con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 | pregunta | si | F14, F26 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |

@@ -300,7 +300,10 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
-    assert abiertas == {"A-21", "A-35", "A-42", "A-44", "A-51"}, (
+    # El 2026-10-06 (rama trabajo/activacion-a42, ADR-0069) A-42 queda RESUELTA: las sesiones
+    # son las velas H4 de la rejilla de anclaje_h4, y su bloqueo de los meses de invierno pasa a
+    # cases/ (la rama de entrada de marzo).
+    assert abiertas == {"A-21", "A-35", "A-44", "A-51"}, (
         f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     )
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
@@ -323,6 +326,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-38",
         "A-40",
         "A-41",
+        "A-42",
         "A-45",
         "A-46",
         "A-47",

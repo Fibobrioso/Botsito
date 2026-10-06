@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.8.0` · hash `562077a64255…`
+`spec_version 15.9.0` · hash `666bc158be3d…`
 
-102 en total: 85 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -50,7 +50,7 @@
 | `freno_bucle_repeticiones` | `5` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones iguales dentro de freno_bucle_minutos |
 | `freno_peticiones_aviso` | `1000` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones al servidor en un dia de la firma |
 | `freno_peticiones_corte` | `1500` | DEFAULT_AMBIGUOUS · en revision por A-54 | ejecucion | `ADR-0067` | peticiones al servidor en un dia de la firma |
-| `huso_grafico` | `Etc/GMT-2` | CONFIRMED | estrategia | `ev-v4-011425-ae028b78` | nombre IANA del huso configurado en el grafico del trader |
+| `huso_grafico` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0069` | nombre IANA del huso configurado en el grafico del trader |
 | `huso_operativa` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0017` | nombre IANA del huso en el que se expresan las horas de la operativa |
 | `instrumento` | `EURUSD` | CONFIRMED | estrategia | `ev-v2-003320-a736fd37` | simbolo del instrumento |
 | `instrumento_contrato` | `100000` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | unidades de la divisa base por lote |
@@ -77,7 +77,7 @@
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
-| `reloj_sesiones` | `civil_operativa` | DEFAULT_AMBIGUOUS · en revision por A-42 | ejecucion | `ADR-0063` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
+| `reloj_sesiones` | `rejilla_h4` | CONFIRMED | ejecucion | `ADR-0069` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
 | `reubicacion_cadencia` | `al_romper` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6b29059d` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `riesgo_por_operacion` | `0.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-648ec915` | porcentaje de la cuenta por operacion |
 | `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0026` | USD |
@@ -85,12 +85,13 @@
 | `sesgo_h4_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | que hace falta para dar por rota la vela H4 previa |
 | `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `sesgo_h4_tope_velas` | `60` | CONFIRMED | ejecucion | `ADR-0044` | velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo |
+| `sesiones_primera_vela_h4` | `3` | CONFIRMED | ejecucion | `ADR-0069` | numero de la vela H4 del dia de rejilla (1 = la que abre en el ancla) con la que empieza la ventana |
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
 | `toma_antes_de_la_ventana` | `no_cuenta` | DEFAULT_AMBIGUOUS · en revision por A-43 | estrategia | `ev-v9-004533-d075b080` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
-| `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
-| `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora de reloj de pared, en el reloj que dice reloj_sesiones |
+| `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora NOMINAL, en el reloj que dice reloj_sesiones |
+| `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
 | `zonas_control_max_por_esquema` | `1` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1b2203b0` | zonas de control admitidas dentro de un mismo esquema |
 
@@ -140,7 +141,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `freno_bucle_repeticiones` → ADR-0067
 - `freno_peticiones_aviso` → ADR-0067
 - `freno_peticiones_corte` → ADR-0067
-- `huso_grafico` → ADR-0017, ADR-0063
+- `huso_grafico` → ADR-0017, ADR-0063, ADR-0069
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
@@ -149,13 +150,14 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
+- `sesiones_primera_vela_h4` → ADR-0069
 - `stop_fraccion_redondeo` → F21
 
 ## Que dice cada uno
 
 ### `anclaje_h4`
 
-donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO esta SIN VERIFICAR: se contrasta con su rejilla H4 real al medir A-28, y si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027). El trader lo ve como las 23:00 en su pantalla, y es cierto 337 dias al año; los otros 28 -8 a 28 de marzo y 25 a 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017)
+donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO esta SIN VERIFICAR: se contrasta con su rejilla H4 real al medir A-28, y si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027). El trader lo ve como las 23:00 en su pantalla, que va en Europe/Madrid (huso_grafico), y es cierto 337 dias al año; los otros 28 -en 2026, del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017). DESDE EL 2026-10-06 (ADR-0069, A-42 RESUELTA) las dos sesiones del trader son las velas de ESTA rejilla que empiezan en ancla + 8 h y ancla + 12 h: en su grafico, 07-11 y 11-15 esos 337 dias y 06-10 y 10-14 los otros 28
 
 ### `base_calculo_objetivo`
 
@@ -381,7 +383,7 @@ el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega
 
 ### `huso_grafico`
 
-como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay. Es UTC+2 FIJO, sin horario de verano: lo marca el propio grafico en un fotograma de ENERO de v4 ("14:29:59 UTC+2" sobre "Thu 29 Jan '26", docs/validation/ABRIL-Y-LA-CAJA.md R0), y ADR-0039 lo da por medido ("es UTC+2 fijo"). En la sesion 1 ya se leyo UTC+2 en su pantalla (fr-v6-22982c02/3585000, ADR-0005), pero era verano y no distinguia (ADR-0015); y en v4, preguntado por el horario "en el horario UTC más 2", contesta "De UTC más 2, de 7, claro" (ev-v4-011425-ae028b78). Hasta el 2026-09-25 valia Europe/Madrid (ADR-0017 §4), con la premisa de que la plataforma muestra su hora local; la medida de enero la desmiente, y en verano los dos valores dan la misma hora. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante: 23:00 en su grafico son las 21:00 UTC todo el año. NINGUNA regla cuelga de este parametro; las horas de la operativa cuelgan de huso_operativa, que es OTRO reloj y en invierno va una hora por detras de este, y la rejilla H4 de anclaje_h4. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28), ni el huso de un libro del trader, que se declara por libro (ADR-0039, knowledge/corpus/libros.yaml)
+como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay: Europe/Madrid, CON su cambio de hora (UTC+1 en invierno, UTC+2 en verano). MEDIDO el 2026-10-06 (ADR-0069; docs/validation/RELOJ-INVIERNO.md §5 y ACTIVACION-A42.md §4): en enero el eje de su grafico casa con Dukascopy con UTC+1, mediana 2-4 puntos en tres fotogramas (con UTC+2, 33-151), y sus capturas de graficos H4 de octubre y noviembre de 2024 ponen el ancla de 17:00 America/New_York a las 22:00 y a las 23:00 segun la semana, que es Europe/Madrid y no un UTC+2 fijo. Del 2026-09-25 al 2026-10-06 valio Etc/GMT-2 (ADR-0039) por el "14:29:59 UTC+2" del fotograma de enero de v4 (ABRIL-Y-LA-CAJA.md R0): ese reloj es el del pie, va con el replay y ensena el desfase de hoy, no el del eje. Antes valia Europe/Madrid (ADR-0017 §4), con la premisa de que la plataforma muestra su hora local, que era la buena. El trader lo nombra por su desfase de verano: "De UTC más 2, de 7, claro" (ev-v4-011425-ae028b78) y, por escrito el 2026-10-06, "etc+2 madrid" y "UTC+2"; por eso la fuente es la decision que cita la medida, no su frase (ADR-0069 §3), y por eso es de categoria `ejecucion` desde el 2026-10-06: el registro exige que un valor de estrategia lo diga el trader (tests/unit/test_registro.py), y este lo dice la medida. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante, para nombrar las horas NOMINALES de la ventana (ventana_inicio y ventana_fin declaran este huso) y para pintar las horas como el las ve. NINGUNA regla cuelga de este parametro: las sesiones las fija el reloj que dice reloj_sesiones (desde ADR-0069, la rejilla de anclaje_h4) y el dia de riesgo, huso_operativa. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28), ni el huso de un libro del trader, que se declara por libro (ADR-0039, knowledge/corpus/libros.yaml)
 
 ### `huso_operativa`
 
@@ -555,9 +557,9 @@ Opciones: `servidor`, `civil_operativa`.
 
 ### `reloj_sesiones`
 
-en que reloj caen ventana_inicio y ventana_fin, y con ellas las sesiones del motor. `civil_operativa` es el reloj civil del trader, cuyo huso vive en huso_operativa; `grafico`, el de su grafico, cuyo huso vive en huso_grafico: el huso no se escribe aqui, para no tener dos puertas (ADR-0002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063) para separar este reloj del reloj del dia de riesgo: hasta entonces huso_operativa hacia de los dos y no se podia mover uno sin romper el otro (ADR-0059, desalineacion 9 de docs/validation/ACTIVAR-SESION-03.md). NACE EN `civil_operativa`, LO QUE EL MOTOR YA HACIA, asi que nada cambia todavia. Es un DEFAULT bajo A-42: la lectura PROVISIONAL del consultor (ADR-0059) es que las sesiones van fijas en el reloj del grafico todo el año, y el trader dijo «creo». Cuando se confirme, el valor que cambia es ESTE -a `grafico`-, junto con el `huso` de ventana_inicio y ventana_fin, que un test mantiene iguales al de este reloj; huso_operativa y el corte del dia de la firma no se tocan. La opcion `civil_operativa` se llama igual que la de reloj_dia_riesgo porque es el mismo reloj, leido para otro fin
+en que reloj caen ventana_inicio y ventana_fin, y con ellas las sesiones del motor. `rejilla_h4` (DESDE EL 2026-10-06, ADR-0069, A-42 RESUELTA): las sesiones son velas H4 de la rejilla de anclaje_h4; el reloj marca ventana_inicio en el instante en que abre la vela numero sesiones_primera_vela_h4 del dia de rejilla y corre desde ahi, asi que las horas del registro y del kit son NOMINALES y los instantes salen de la rejilla, con zoneinfo, nunca de un desfase fijo (src/botsito/engine/relojes.py, la unica puerta). `civil_operativa` es el reloj civil del trader, cuyo huso vive en huso_operativa (la hipotesis H2a: lo que el motor hacia hasta ADR-0069); `grafico`, el de su grafico, cuyo huso vive en huso_grafico: el huso no se escribe aqui, para no tener dos puertas (ADR-0002). Las dos se quedan para que los tests calculen H2a y H1 por el mismo camino y demuestren que fallan las semanas del cambio. NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0063) para separar este reloj del reloj del dia de riesgo: hasta entonces huso_operativa hacia de los dos y no se podia mover uno sin romper el otro (ADR-0059, desalineacion 9 de docs/validation/ACTIVAR-SESION-03.md); huso_operativa y el corte del dia de la firma no se tocan. La opcion `civil_operativa` se llama igual que la de reloj_dia_riesgo porque es el mismo reloj, leido para otro fin
 
-Opciones: `civil_operativa`, `grafico`.
+Opciones: `civil_operativa`, `grafico`, `rejilla_h4`.
 
 ### `reubicacion_cadencia`
 
@@ -594,6 +596,10 @@ Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
 ### `sesgo_h4_tope_velas`
 
 tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
+
+### `sesiones_primera_vela_h4`
+
+con `rejilla_h4` en reloj_sesiones, la ventana operativa empieza al abrir ESTA vela H4 del dia de rejilla de anclaje_h4, contando desde el ancla: la tercera es ancla + 8 h, las 07:00 del grafico del trader (Europe/Madrid) casi todo el año y las 06:00 las semanas en que Europa y EE. UU. no coinciden en el horario de verano (ADR-0069 §1). Cada sesion del kit es una vela H4 entera a partir de ahi, y la puerta se niega si no lo es. NACE el 2026-10-06 (rama trabajo/activacion-a42, ADR-0069): la cifra vive aqui y no en el codigo (ADR-0002)
 
 ### `spread_maximo`
 
@@ -645,11 +651,11 @@ Opciones: `no_cuenta`, `cuenta`.
 
 ### `ventana_fin`
 
-hora a la que el trader deja de operar y cierra lo que quede abierto. Es SU horario como persona, igual que ventana_inicio (A-6, ADR-0017)
+hora a la que el trader deja de operar y cierra lo que quede abierto, tal como la nombra: las 3 de su grafico (A-6, ADR-0017). DESDE EL 2026-10-06 (ADR-0069) es una hora NOMINAL, igual que ventana_inicio: el fin de la segunda vela H4 de la ventana, ocho horas despues de la apertura de la primera. El valor y su fuente no cambian; nombra la segunda sesion del kit (11-15)
 
 ### `ventana_inicio`
 
-hora a la que el trader empieza a buscar entradas. Es SU horario como persona y no se mueve con la fecha, asi que en UTC si se mueve con el cambio de hora (ADR-0017)
+hora a la que el trader empieza a buscar entradas, tal como la nombra: las 7 de su grafico (huso_grafico, Europe/Madrid). DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) es una hora NOMINAL: el reloj de la rejilla la marca en el instante en que abre la vela H4 numero sesiones_primera_vela_h4 del dia de rejilla, que es esa hora de su grafico casi todo el año y una hora menos las semanas en que Europa y EE. UU. no coinciden en el horario de verano. El valor y su fuente no cambian; nombra tambien la primera sesion del kit (07-11)
 
 ### `zona_control_criterio_completada`
 

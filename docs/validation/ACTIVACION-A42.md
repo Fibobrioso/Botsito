@@ -612,6 +612,65 @@ Carpeta nueva `knowledge/feedback/2026-10-04-sesion-04/` (los mensajes contestan
   por decisión (ADR-0069), no por `apply`. `feedback pending` lista el `RESOLVE_UNKNOWN` con «A-42
   esta ABIERTA» hasta el paso 4.
 
+### 9.4 Pasos 4 y 5 · La spec y el motor, en UN commit (y por qué)
+
+**Los pasos 4 y 5 van juntos.** D5 (a) pedía A-42 RESUELTA y `huso_grafico` en el paso 4 y el
+selector con el motor en el 5, para que ningún commit quedara en rojo. Medido al preparar el 4:
+`tests/contract/test_provisional_cuelga_de_abierta.py` exige que todo parámetro
+`DEFAULT_AMBIGUOUS` cuelgue de una ambigüedad ABIERTA, y `reloj_sesiones` cuelga de A-42. Con
+A-42 RESUELTA y el selector todavía en `civil_operativa`, el paso 4 solo quedaba en rojo; por el
+motivo mismo de D5 se juntan. Dos desviaciones más, medidas:
+
+- **`huso_grafico` pasa a categoría `ejecucion`.** D3 fija su fuente en ADR-0069, y
+  `tests/unit/test_registro.py::test_fichero_real_cada_valor_de_estrategia_cita_al_trader` exige
+  que un valor de estrategia venga de `feedback` o `evidence`, nunca de un ADR («un numero de la
+  operativa lo dice el trader, no lo decidimos nosotros»). Este no lo dice el trader: lo dice la
+  medida. La descripción del parámetro lo explica.
+- **`sesiones_primera_vela_h4` declara `consumido_por: [ADR-0069]`**: ninguna forma lo lee (lo lee
+  la puerta), y `problemas_de_spec` exige saber quién lo consume.
+
+**La spec** (`spec_version` 15.8.0 → 15.9.0: entra un parámetro):
+- `ambiguedades.yaml`: A-42 `RESUELTA`, con la respuesta, los dos registros y los dos ítems de v10
+  en su evidencia (D6); el comentario de «UTC+2 fijo» queda corregido encima, como historia.
+- `parametros.yaml`: `reloj_sesiones` → opciones `[civil_operativa, grafico, rejilla_h4]`, valor
+  `rejilla_h4`, `CONFIRMED`, sin `ambiguedad_id`, fuente ADR-0069; `sesiones_primera_vela_h4`
+  nuevo (3, `ejecucion`, ADR-0069); `huso_grafico` → `Europe/Madrid`; `ventana_inicio` y
+  `ventana_fin` conservan valor, huso y fuente, y su unidad dice «hora NOMINAL»; la descripción
+  de `anclaje_h4`.
+- `strategy_spec.yaml`: las formas de RN-001 y RN-002 **no cambian**; cambian el título de RN-001
+  («las dos velas H4 del trader»), sus `notas` (lo de «manda SU horario, no la rejilla» queda
+  corregido) y las de RN-002, y su `decision` pasa a ADR-0069.
+- Los cinco sitios de cerrar una ambigüedad: el YAML, la fila de PROJECT_STATE, la hoja
+  (`scripts/hoja_preguntas.py` y su test), `test_kit.py` y `spec docs --escribir`.
+
+**El motor**, todo por `src/botsito/engine/relojes.py`:
+- `RelojSesiones`, la única puerta: `instante(dia, "HH:MM")`, `lectura(instante)`,
+  `limites_de_sesiones(dia, sesiones)`, `apertura(dia)` y `huso_visible`. Con `rejilla_h4` la
+  apertura sale de `limites_del_dia` (`data/agregacion.py`); con `civil_operativa` y `grafico`,
+  hora de pared en su huso; `de_pared(huso)` para los guiones de ramas cerradas que siguen dando
+  `huso_operativa` al arnés (ADR-0063 §5), que así no se rompen.
+- `DiaDeMercado` gana `reloj` (opcional: sin él, hora de pared en `huso`, que es lo que los tests
+  sintéticos construyen) y `limites()`; `motor.py` y `cableado.py` lo usan; `arnes.py`, `cli.py`,
+  `simulacion.py`, `visor.py` y los dos scripts pasan el reloj; `primitivas.py` lee `en_ventana` y
+  `alcanza_hora` por la puerta y pierde el helper `_local`. El visor pinta en `huso_visible`
+  (`huso_grafico`): en el material de hoy, las mismas horas que antes.
+- Guardias de la puerta: una sesión que no sea una vela H4 entera de la rejilla y un día de rejilla
+  con vela irregular fallan con nombre.
+
+**Los tests** (`tests/unit/test_sesiones_rejilla_h4.py`, 15 funciones, 40 casos): las fechas del
+encargo en UTC (apertura, segunda sesión y cierre, y la lectura inversa); H2a y H1 dan otra hora
+exactamente en los días previstos (§5.1); ningún desfase fijo (dos horas UTC en 2024–2027, cada
+apertura es un límite de la rejilla, ningún desfase de UTC reproduce el año, con un ancla sin
+cambio de hora fallan las fechas de verano, y el código de la puerta no lleva `Etc/GMT`, un
+`timezone(` fijo, `timedelta(hours` ni una hora escrita); **el añadido 1 del consultor: ningún día
+laborable de 2024 a 2027 cae en la guardia de la vela irregular** (pasa: no hay PARADA); las
+guardias; `en_ventana` por la rejilla; el motor de punta a punta el lunes 26 de octubre de 2026
+(abre a las 05:00 y 09:00 UTC); el día de riesgo no se mueve; y fuera de los 20 días de §5.1 la
+rejilla es la ventana civil en todo 2026. Los que fijaban el estado anterior se actualizan:
+`test_dos_relojes.py` (el fixture `registro` vuelve el selector a `civil_operativa`, y
+`en_el_grafico` escribe el UTC+2 fijo de H1 como hipótesis), `test_huecos_motor.py` (H2),
+`test_registro.py`, `test_kit.py`, `test_hoja_preguntas.py`.
+
 ## Estado
 
 **EN CURSO: PARADA de la fase 0 (2026-10-06).** Espera la respuesta del consultor al §6.

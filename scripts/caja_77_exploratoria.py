@@ -136,7 +136,7 @@ def tomas_del_productor(raiz: Path) -> dict[tuple[str, str], dict[str, Any]]:
     tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47)
     carpeta = carpeta_datos(raiz)
     mercado = arnes.dias_de_mercado(
-        raiz, carpeta, config, registro, dias, relojes.huso_de_las_sesiones(registro), lectura
+        raiz, carpeta, config, registro, dias, relojes.reloj_de_las_sesiones(registro), lectura
     )
     motor = cableado.construir_motor_cableado(
         raiz, carpeta, criterio, config, registro, vocabulario, reglas, dias, perfil, None, False,

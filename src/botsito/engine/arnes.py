@@ -49,6 +49,7 @@ from botsito.engine.motor import (
     TrazaSesion,
 )
 from botsito.engine.primitivas import ANOTACION_DOBLE_RUPTURA, ANOTACION_SESGO
+from botsito.engine.relojes import RelojSesiones
 
 PARTICION_DEV = "dev"
 _DIA = re.compile(r"(\d{4}-\d{2}-\d{2})$", re.ASCII)
@@ -156,13 +157,15 @@ def dias_de_mercado(
     config: Config,
     registro: Registro,
     dias: Sequence[DiaTrader],
-    huso_sesiones: str,
+    reloj: RelojSesiones | str,
     lectura_pivote: str | None = None,
 ) -> dict[str, DiaDeMercado]:
     """Las H4 de cada mes y del anterior, para el calentamiento del sesgo (como MOTOR-SESGO-H4); y
     las M15 y las M1 del mismo tramo para la liquidez de M15 con la lectura de «formado» que se
     de (A-35). Sin lectura, RN-004 sigue NO_IMPLEMENTADA."""
     anclaje = registro.hora("anclaje_h4")
+    if isinstance(reloj, str):  # un huso de pared: los guiones de ramas cerradas (ADR-0063 §5)
+        reloj = RelojSesiones.de_pared(reloj)
     sesiones = tuple(Sesion(s.nombre, s.desde, s.hasta) for s in config.sesiones)
     por_mes: dict[str, DatosMercado] = {}
     salida: dict[str, DiaDeMercado] = {}
@@ -183,7 +186,7 @@ def dias_de_mercado(
                 lectura_pivote,
             )
         salida[d.dia] = DiaDeMercado(
-            date.fromisoformat(d.dia), huso_sesiones, sesiones, por_mes[mes]
+            date.fromisoformat(d.dia), reloj.huso_visible, sesiones, por_mes[mes], reloj=reloj
         )
     return salida
 

@@ -773,9 +773,9 @@ acumuladores:
 reglas:
   # ---------------------------------------------------------------- marco y sesgo
   - id: RN-001
-    titulo: la ventana operativa es el horario del trader, no el de las velas
+    titulo: la ventana operativa son las dos velas H4 del trader, en el reloj que dice reloj_sesiones
     cuando: >-
-      la hora de pared, en el reloj que dice reloj_sesiones, esta en el intervalo MEDIO ABIERTO que
+      la hora nominal, en el reloj que dice reloj_sesiones, esta en el intervalo MEDIO ABIERTO que
       empieza en ventana_inicio e incluye hasta el instante anterior a ventana_fin, en un dia de
       dias_operables
     entonces: el bot busca entradas; fuera de ese intervalo no opera
@@ -794,8 +794,17 @@ reglas:
       LO ELIGE reloj_sesiones y ya no es huso_operativa, que se queda como reloj del dia de
       riesgo. Nace en `civil_operativa`, asi que NADA CAMBIA todavia: es el mecanismo que
       ADR-0059 pedia para poder aplicar, cuando se confirme, la lectura de A-42 -las sesiones en
-      el reloj del grafico- sin mover el corte del dia de la firma
-    decision: ADR-0017
+      el reloj del grafico- sin mover el corte del dia de la firma.
+      DESDE EL 2026-10-06 (rama trabajo/activacion-a42, ADR-0069, A-42 RESUELTA) reloj_sesiones
+      vale `rejilla_h4`: LAS SESIONES SON LAS VELAS H4 de la rejilla de anclaje_h4 que empiezan en
+      ancla + 8 h y ancla + 12 h, lo que el trader dijo en S-7 («de 6 a 10 después del día 25») y
+      por escrito («1-B)», a las 7 desde el 2 de noviembre). Lo de arriba -«manda SU horario, no la
+      rejilla», los 28 dias en que empieza una hora DENTRO de la vela- queda CORREGIDO: esos dias
+      su grafico (Europe/Madrid) marca 06-10 y 10-14, y el bot abre con la vela. Las horas
+      ventana_inicio y ventana_fin pasan a ser nominales y las formas no cambian: el reloj de la
+      rejilla las traduce a instantes UTC con zoneinfo, nunca con un desfase fijo. huso_operativa
+      sigue siendo el reloj del dia de riesgo
+    decision: ADR-0069
     forma:
       cuando:
         cualquiera_de:
@@ -848,8 +857,12 @@ reglas:
       cierre en punto se conserva como segunda rama. El interruptor es el mismo
       cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela;
       A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por
-      la orden pendiente (A-30).
-    decision: ADR-0017
+      la orden pendiente (A-30). DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
+      dos ramas caen sobre el mismo limite: ventana_fin es el fin de la segunda vela H4 de la
+      ventana, en la misma rejilla de anclaje_h4, y "las 3pm" son las de su grafico casi todo el
+      año (las 2pm las semanas del cambio). `alcanza_hora` lee la hora nominal por la puerta de
+      engine/relojes.py
+    decision: ADR-0069
     forma:
       cuando:
         todos_de:
