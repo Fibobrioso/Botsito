@@ -571,6 +571,13 @@ Veredicto conjunto: no hay indicio de lectura de febrero, marzo ni julio.
   - `uv run botsito state check`
 - `grep` sobre los `.py` del anexo (`xlsx|FEB|MAR|JUL|SEP|Backtest|…` y `febrero|marzo|julio|2026-02|…`), `cat` de `cajas_v4.py`, `cajas_v4.txt` y `lecturas_cajas_antes_del_libro.txt`, `git log --format=%h -n1 -- docs/validation/HOLDOUT-EXPOSICIONES.md`, `ls` del anexo, `grep` de `make-check.log`.
 
+## §12. Respuestas del trader de las 13:44–13:46 (añadido del consultor, 2026-10-06)
+
+- Literal, WhatsApp, 2026-10-06, hora de Lima: 13:44 «1- Si esta configurado UTC+2», con capturas de su gráfico de 4 horas; 13:45 «si es por cuestion horaria se oepra a las 6»; 13:46 «el stop conforme se vaya validando los puntos breaker se va acutalziando». No se registran aquí: se registran en la activación de A-42, con las capturas en «Mensajes del trader».
+- Lectura del consultor de las capturas, A VERIFICAR en la activación: etiquetas del eje «dom 27 Oct '24 22:00», «jue 31 Oct '24 22:00» y velas a las «14:00»; «dom 03 Nov '24 23:00», «jue 07 Nov '24 23:00» y velas a las «15:00». Con la rejilla de 17:00 America/New_York, eso es Europe/Madrid (con Etc/GMT-2 serían las 23:00 y las 00:00). El consultor lo calculó con zoneinfo; la activación lo repite con el guion de M4 sobre esas dos semanas de 2024.
+- Lectura del consultor, no medida: S-7 y la respuesta de las 13:45 apuntan a H2b. Falta que el trader confirme que el lunes 4 de noviembre de 2024 (y el 2 de noviembre de 2026) empieza a las 7 de su gráfico.
+- La respuesta de las 13:46 no contesta cuándo se pone el stop (A-11, punto U): no se interpreta.
+
 ## Estado
 
 LISTA PARA REVISIÓN, NO cerrada (2026-10-06).
