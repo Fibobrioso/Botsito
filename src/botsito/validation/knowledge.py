@@ -1065,6 +1065,19 @@ def _validar(repo: Path, puerta: Historial) -> tuple[int, list[str]]:
     if resumen_spec:
         salida.append(f"OK: {resumen_spec}")
 
+    # G1 (trabajo/guardias-citas): en todo `knowledge/spec/`, un item de evidencia supersedido
+    # solo se nombra junto a su sustituto. Es la guardia de las citas revocadas de feedback de
+    # arriba, para la evidencia, y mira el texto entero: tambien un fichero nuevo. Como
+    # `ventana_no_citable`, solo habla si falla: la lista de lineas OK la congela
+    # `tests/unit/test_historial_sin_git.py` y esta rama no la toca.
+    from botsito.validation.citas_supersedidas import citas_a_supersedidos
+
+    fallos_g1, _vigilados = citas_a_supersedidos(repo, items)
+    for f in fallos_g1:
+        salida.append(f"ERROR: spec: {f}")
+    if fallos_g1:
+        return 1, salida
+
     # Capa kit (F10, ADR-0011): paquetes de sesion y guardia de particiones.
     from botsito.cases.paquete import KitError, sesiones_del_kit, validar_paquetes
 

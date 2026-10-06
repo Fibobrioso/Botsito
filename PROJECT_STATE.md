@@ -14,7 +14,7 @@
 trabajo/guardias-citas
 
 ## Current Feature
-`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. G2 hecha; G1 escrita y sin conectar: PARADA en A-11. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
+`trabajo/guardias-citas` EN CURSO (2026-10-05): G1 (evidencia supersedida) y G2 (Fuente: en los tramos), hechas. Informe docs/validation/GUARDIAS-CITAS.md.
 
 ## Stable Main State
 80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ trabajo/guardias-citas
 80eba7f · merge: la respuesta de FTMO del 2026-10-05 sin copiar el correo, y el tag tras agotar las letras (RESPUESTAS-FTMO.md) · tag stable/F37a-respuestas-ftmo
 
 ## Tests Currently Passing
-1332 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -160,7 +160,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
 - F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
-- Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).
+- A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md §8).
 
 ## Reglas vivas
 Las que hasta el 2026-10-01 solo estaban en este fichero, copiadas tal cual con su titulo de

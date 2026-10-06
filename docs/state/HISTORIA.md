@@ -5285,3 +5285,14 @@ respuesta del consultor a la fase 0, punto 5. No entra otra linea en su lugar. S
 «Technical Debt»:
 
 - Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardias-citas (2026-10-06)
+
+La paga G1: `src/botsito/validation/citas_supersedidas.py`, conectada a `knowledge validate`,
+niega en todo `knowledge/spec/` (tambien un fichero nuevo) un item ev-* supersedido que no comparte
+valor escalar de YAML o linea de comentario con su sustituto. A-10 y A-18 pasaron a citar el item
+vigente y el comentario de A-41 se reajusto; A-11 queda con una excepcion por par en G1 y entra en
+su lugar una linea nueva de Technical Debt (respuesta del consultor del 2026-10-06 a la parada de
+A-11, punto 3; docs/validation/GUARDIAS-CITAS.md §2, §3 y §8). Su texto literal en «Technical Debt»:
+
+- Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).

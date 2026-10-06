@@ -5,9 +5,9 @@ estado de `stable/F37a-respuestas-ftmo`, y su CI de `main` (run 37411332514) est
 comprobado antes de abrir. Encargo: `docs/encargos/trabajo-guardias-citas.md`. Paga dos líneas de
 Technical Debt de `PROJECT_STATE.md`.
 
-**Estado (2026-10-06, tras la respuesta a las paradas, §8): G2 hecha; G1 escrita, probada y SIN
-CONECTAR; PARADA en A-11 (§8.1). El comentario de A-41 ya pasa (§8.2).** Lo de abajo es la historia
-de la primera parada (§6):
+**Estado (2026-10-06, tras la tercera respuesta, §9): G1 y G2 hechas y conectadas; A-11 con UNA
+excepción por par en G1 (§9.1).** El informe sigue el orden en que pasó: fase 0 y primera parada
+(§0-§7), segunda (§8) y tercera (§9). Lo de abajo es la historia de la primera parada:
 - La fase 0 paró porque el recuento de G1 no era cero (§0.a), y el consultor respondió (§1.1).
 - Tres de las cuatro citas pasan a su sustituto (§2).
 - A-11 se para: su sustituto no sostiene lo que la ambigüedad cita.
@@ -539,17 +539,179 @@ nada más ni se construye la comprobación. Lo decide el consultor en otra rama.
 - **falla 1**: A-11.
 - **El recuento no da 0.**
 
+## 9. Respuesta del consultor a la parada de A-11 (2026-10-06), y lo hecho
+
+Copiada tal cual (también al final del encargo):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la parada de A-11 en trabajo/guardias-citas (2026-10-06). Cópiala tal cual al encargo y al informe.
+>
+> CAMBIO DE DECISIÓN, declarado: la condición del punto 1 de la respuesta anterior no se cumplió. Quitar el id dejaría A-11 RESUELTA sin respaldo citable, y sustituirlo tampoco sirve, porque el sustituto no lo dice en su cita. Qué respalda A-11 es una decisión de contenido y no entra en esta rama.
+>
+> 1. G1 se conecta YA con UNA excepción visible en el código: A-11 + el id supersedido que cita hoy, con el motivo «respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06». Tests:
+>    - la guardia pasa con esa excepción y falla con cualquier otro supersedido;
+>    - el test falla si la excepción ya no hace falta (A-11 deja de citar ese id), para que no quede viva sin uso;
+>    - la lista de excluidos de ficheros sigue vacía.
+>    La excepción es por par (ambigüedad, id), no por fichero ni por campo.
+>
+> 2. Búsqueda SOLO DE LECTURA para el informe (§8, «Candidatos para A-11»): con la CLI filtrada (uv run botsito kb find / kb at), busca ítems ACTIVOS cuya cita diga cuándo se pone el stop (al colocar la orden o al llenarse). Material citable solamente: nada de transcripciones en cuarentena ni de tramos no citables. Lista cada candidato con id, vídeo, minuto y su cita literal tal como está en el ítem. No cambies nada con ellos y no elijas ninguno.
+>    Di también, sin opinar, qué dice hoy el repo sobre citar en la spec un registro escrito del trader (busca «fuente documental» en docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md y en CLAUDE.md), y si existe en el repo un registro del trader del 2026-09-10 y dónde.
+>
+> 3. Technical Debt, una línea nueva que apunte a GUARDIAS-CITAS.md §8: «A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor.» Sale a la vez la línea de G1. El saldo de bytes de PROJECT_STATE tiene que seguir siendo menor o igual que cero; si no, para y dímelo.
+>
+> 4. El hallazgo §8.3 queda tal cual: no hay comprobación de afirmación frente a cita, y no se construye aquí.
+>
+> Sigue con el encargo: make check y uv run botsito state check en verde, push de fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final. Que el revisor compruebe aparte que la excepción es exactamente un par y que su test de caducidad falla cuando debe.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 9.1 G1, conectada, con UNA excepción por par
+
+`src/botsito/validation/citas_supersedidas.py`:
+- **`EXCEPCIONES`** es una tupla de `Excepcion(ambiguedad, id, motivo)` y hoy lleva un solo par:
+  - `("A-11", "ev-v4-001207-0c4ffd4b", "respaldo de A-11 pendiente de decisión del consultor,
+    GUARDIAS-CITAS.md §8; 2026-10-06")`.
+- **Qué cubre:** la aparición pasa solo si está en un VALOR cuyo objeto más cercano con `id` es
+  A-11. No cubre un comentario, otra ambigüedad, otro fichero ni otro supersedido.
+- **Caducidad:** una excepción que no cubre ninguna aparición es un FALLO de la guardia («excepcion
+  de G1 sin uso: A-11 ya no cita ...; se quita de EXCEPCIONES»). Si A-11 deja de citar el id,
+  `knowledge validate` falla hasta que se quite.
+- **`EXCLUIDOS`** (ficheros) sigue vacía.
+
+**Conexión:** `src/botsito/validation/knowledge.py`, en `_validar`, justo después de la capa spec:
+- un fallo de G1 es `ERROR: spec: ...` y corta con rc 1;
+- en verde NO escribe una línea `OK:` propia, igual que `ventana_no_citable`.
+
+**Desviación declarada:** la primera versión sí escribía una línea `OK:`, y rompió
+`tests/unit/test_historial_sin_git.py::test_con_git_las_lineas_ok_son_las_de_main`. Esa guardia
+congela la lista exacta de líneas OK de `knowledge validate`, y ampliarla sería tocar una guardia
+existente (decisión 5), así que la línea se quitó. Que G1 corre y falla cuando debe lo prueba
+`test_knowledge_validate_lleva_g1`.
+
+**Medida final** (`medir_g1-SALIDA3.txt`):
+- 4 apariciones en los 6 ficheros vigilados, **0 fallos**;
+- pasan las dos de RN-034 y la de A-41 por la regla, y la de A-11 por la excepción.
+
+**Tests nuevos de esta respuesta** (`tests/unit/test_citas_supersedidas.py`; diez, sobre los 14
+de antes):
+- `test_la_excepcion_es_exactamente_un_par`: `EXCEPCIONES == (ese par,)`, con su motivo literal;
+- `test_la_excepcion_deja_pasar_su_par`;
+- `test_la_excepcion_no_cubre_otro_supersedido_de_a11`;
+- `test_la_excepcion_no_cubre_el_mismo_id_en_otra_ambiguedad`;
+- `test_la_excepcion_no_cubre_el_par_en_otro_fichero_sin_objeto_a11`;
+- `test_la_excepcion_no_cubre_un_comentario`;
+- `test_caducidad_la_excepcion_sin_uso_falla`: en `tmp_path`, A-11 sin el id da el fallo de
+  excepción sin uso;
+- `test_caducidad_en_el_repositorio_real`: G1 sobre el repo real da `[]`, y falla en cuanto A-11
+  deje de citar el id;
+- `test_knowledge_validate_lleva_g1`: con la guardia forzada a fallar (`monkeypatch`),
+  `knowledge.validar` sale con rc 1 y el ERROR;
+- `test_sin_el_item_supersedido_la_excepcion_no_tiene_a_que_aplicarse`.
+
+**Ajuste medido, sin tocar tests existentes.** El primer `make check` con G1 conectada salió en
+rojo con 3 fallos:
+- `test_cli.py::test_feedback_new_valida_contra_el_contexto_antes_de_escribir`;
+- `test_pipeline_transcripcion.py::test_cli_transcribe_glossary_check_show`;
+- `test_fotogramas_ffmpeg.py::test_cli_extract_check_show_y_knowledge_validate`.
+
+Los tres montan un `knowledge/` mínimo, sin evidencia y sin A-11, y G1 daba la excepción por «sin
+uso». En un repo donde el id ni siquiera está supersedido, la excepción no tiene a qué aplicarse.
+Ahora solo puede quedar sin uso si su id está supersedido en ese repo. En el real lo está, así que
+la caducidad sigue cortando en cuanto A-11 deje de citarlo (los dos tests de caducidad). Con el
+ajuste pasan los tres sin cambiarlos.
+
+La lista de ficheros excluidos la sigue vigilando `test_la_lista_de_excluidos_esta_vacia`. Los tests
+anteriores pasan `excepciones=()` a sus fixtures, que no tienen A-11.
+
+### 9.2 Candidatos para A-11 (solo lectura; ninguno elegido, nada cambiado)
+
+**Cómo se buscó:**
+- con la CLI filtrada, `uv run botsito kb find ... --solo evidencia`:
+  - por tema (`--tema stop`);
+  - por las palabras `limite`, `pendiente`, `orden`, `activa`, `apertura`, `inmediatamente` y
+    `apenas`, con `--prefijo`;
+- la cita entera, con `--video --desde --hasta --contexto`.
+
+`kb at` no se usó: la guardia lo bloquea porque imprime la cruda.
+
+**Lo que oculta la CLI:** la búsqueda por tema avisó «OCULTOS: 2 items de evidencia: 2 por tramo no
+citable (b)», y no se ven. Solo se listan ítems ACTIVOS: ninguno lo supersede otro.
+
+**Ítems activos cuya cita habla de cuándo se pone o se protege el stop:**
+
+| Id | Vídeo | Minuto | Cita literal tal como está en el ítem |
+|---|---|---|---|
+| `ev-v1-000620-0f7dea14` | v1 | 0:06:20 | «no olvidarse de poner el cuadro, bueno el cuadro de GAN [...] en 0.75 proteger el trade, a inicio apenas se genere la entrada» |
+| `ev-v3-004527-0e4f4834` | v3 | 0:45:27 | «si tú ya proteges inmediatamente, que es lo que yo también haría en esta entrada, ya tienes 0.25 explícitamente, pues estás guardando» |
+| `ev-v3-010054-27f55634` | v3 | 1:00:54 | «Stop loss va a estar predefinido aquí [...] cuando el precio ya esté desarrollando a veces con 0.50 lo más probable es ir bajando o sea el stop loss» |
+| `ev-v4-000530-c44e3210` | v4 | 0:05:30 | «había comentado a decir en algunos momentos proteger a 0.50 la entrada o sea apenas se dé» |
+| `ev-v4-001221-1e66b5fd` | v4 | 0:12:21 | «la opción que yo te de aquí es que se abra la operación pero que este 0.75 se desplace lo suficiente como para que esté de acuerdo al split del momento [...] con ese porcentaje que igual va a ser el 0.75, ya ahí se calcule el lotaje para arriesgar el porcentaje de la cuenta» |
+| `ev-v5-000312-f5062062` | v5 | 0:03:12 | «me activa la entrada y si yo protejo a 0.80, que es el SL por defecto» |
+| `ev-v10-003559-211855b7` | v10 | 0:35:59 | «O sea, ya cuando tú pones el stop Para calcular el lotaje y todo Sería directamente a 0.8» |
+| `ev-v10-003706-5b7055a2` | v10 | 0:37:06 | «Es que el stop se actualizaría O sea, se actualizaría a 0.8 No estaría en el 1 Se usa el 1 al comienzo Pero no de ejecución, sino como planteamiento» |
+
+**Mirados y no listados**, porque su cita no habla del momento del stop:
+- `ev-v3-002511-b12d67be`: la orden límite predefinida, sin stop;
+- `ev-v4-010759-514b5d7d`: cerrar tras un equal;
+- `ev-v10-010228-868271ee`: el spread al poner la orden;
+- `ev-v3-004329-a16d379b`: dónde se define el stop, no cuándo.
+
+### 9.3 Qué dice hoy el repo sobre citar un registro escrito del trader (sin opinar)
+
+**El campo `evidencia:` de una ambigüedad:**
+- solo admite ids de evidencia `ev-*` (`src/botsito/cases/ambiguedades.py:204-206`: «no es un id de
+  evidencia»);
+- `knowledge validate` exige que existan (`:256-258`).
+
+**Fuente documental:**
+- es el campo `fuentes_documentales`, y se admite solo en ambigüedades de `clase: medicion`;
+- en una `pregunta` se niega («la evidencia de una pregunta es lo que dijo el trader, no un
+  documento», `ambiguedades.py:197`);
+- su `documento` tiene que estar dentro de `docs/` y commiteado, con `ancla` y `literal`;
+- la evidencia puede ir vacía solo si hay al menos una fuente documental;
+- fuentes: `docs/runbooks/AMBIGUEDADES.md`, «Una fuente documental en vez de evidencia»;
+  `docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md` §1.3 y la decisión 3 de su respuesta; y
+  `CLAUDE.md`, «Ambiguedades» («una `medicion` puede citar una fuente documental en vez de
+  evidencia»).
+- A-11 no tiene `clase` en el YAML.
+
+**Un registro de feedback (`fb-*`)** es cita válida en otros sitios:
+- la `cita` de una regla de `strategy_spec.yaml`;
+- la `fuente` de un parámetro;
+- el trailer `Fuente:` (`CLAUDE.md`, «El trailer Fuente:»).
+
+**El registro del trader del 2026-09-10 existe:**
+- **dónde:** `knowledge/feedback/2026-09-09-sesion-01/fb-2026-09-09-sesion-01-76fd91ba.yaml`,
+  `medio: escrito`, `fecha: '2026-09-09'`;
+- **qué registra:** `registrado_por: «Aleks · respuesta del trader del 2026-09-10, REFERIDA por el
+  consultor (no es transcripcion)»`;
+- **sobre qué:** objetivo `parametro/stop_en_orden_pendiente`, `accion: CONFIRM`,
+  `valor_resultante: en_la_orden`;
+- **qué dice:** `respuesta_literal: «el SL se pone junto a la orden limite, no cuando se apertura
+  recien»`;
+- su nota avisa de que la frase es la del consultor refiriendo la respuesta, no las palabras exactas
+  del trader.
+- Ya lo citan `knowledge/spec/parametros.yaml:794` (la `fuente` de `stop_en_orden_pendiente`) y
+  `knowledge/spec/strategy_spec.yaml:1298` (la `cita` de una regla).
+- A-11 no lo cita: su `evidencia:` no admite `fb-*`, y su `pregunta` lo menciona en prosa.
+
+### 9.4 Technical Debt y bytes
+
+- **Sale**, literal a HISTORIA («# Technical Debt PAGADA · ...», segundo bloque de esta rama): «Nada
+  avisa cuando la spec o las ambiguedades citan un item ev-* supersedido ...».
+- **Entra:** «A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del
+  stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md §8).»
+- **El hallazgo §8.3** queda tal cual.
+
+**Bytes de `PROJECT_STATE.md`:** 23.307 en `main` y 23.285 en la rama: un saldo de **−22**.
+- Con las dos líneas cambiadas el saldo daba +135, porque la línea nueva es más larga.
+- La Current Feature de la rama se acortó a «G1 (evidencia supersedida) y G2 (Fuente: en los
+  tramos), hechas. Informe ...».
+- `Tests Currently Passing` pasa de 1309 a 1342 funciones.
+
 ## Estado
 
-PARADA (2026-10-06) en A-11 (§8.1): la cita de `ev-v1-000620-0f7dea14` no sostiene por sí sola el
-stop al armar la operación.
-- **Hecho:** G2, G1 escrita y probada, A-10 y A-18 con su ítem vigente, y el comentario de A-41.
-- **Sin conectar:** G1, porque daría 1 fallo.
-- **Falta:**
-  - la decisión sobre A-11;
-  - conectar G1;
-  - la línea de Technical Debt de G1;
-  - la CI de Linux;
-  - el revisor.
-
-Rama NO lista para revisión.
+G1 y G2 hechas y conectadas (2026-10-06). A-11 queda con una excepción por par en G1 y su línea de
+Technical Debt. Faltan el `make check` de este commit, `fix/guardias-citas` con la CI de Linux y el
+revisor (secciones siguientes).

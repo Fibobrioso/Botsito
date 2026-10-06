@@ -96,3 +96,30 @@ Copiada tal cual:
 > Con eso, el recuento de G1 tiene que dar 0. Conecta G1 a knowledge validate, saca su línea de Technical Debt a HISTORIA y sigue: make check y uv run botsito state check en verde, push de fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final. Saldo de bytes de PROJECT_STATE menor o igual que cero.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la parada de A-11 (2026-10-06)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la parada de A-11 en trabajo/guardias-citas (2026-10-06). Cópiala tal cual al encargo y al informe.
+>
+> CAMBIO DE DECISIÓN, declarado: la condición del punto 1 de la respuesta anterior no se cumplió. Quitar el id dejaría A-11 RESUELTA sin respaldo citable, y sustituirlo tampoco sirve, porque el sustituto no lo dice en su cita. Qué respalda A-11 es una decisión de contenido y no entra en esta rama.
+>
+> 1. G1 se conecta YA con UNA excepción visible en el código: A-11 + el id supersedido que cita hoy, con el motivo «respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06». Tests:
+>    - la guardia pasa con esa excepción y falla con cualquier otro supersedido;
+>    - el test falla si la excepción ya no hace falta (A-11 deja de citar ese id), para que no quede viva sin uso;
+>    - la lista de excluidos de ficheros sigue vacía.
+>    La excepción es por par (ambigüedad, id), no por fichero ni por campo.
+>
+> 2. Búsqueda SOLO DE LECTURA para el informe (§8, «Candidatos para A-11»): con la CLI filtrada (uv run botsito kb find / kb at), busca ítems ACTIVOS cuya cita diga cuándo se pone el stop (al colocar la orden o al llenarse). Material citable solamente: nada de transcripciones en cuarentena ni de tramos no citables. Lista cada candidato con id, vídeo, minuto y su cita literal tal como está en el ítem. No cambies nada con ellos y no elijas ninguno.
+>    Di también, sin opinar, qué dice hoy el repo sobre citar en la spec un registro escrito del trader (busca «fuente documental» en docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md y en CLAUDE.md), y si existe en el repo un registro del trader del 2026-09-10 y dónde.
+>
+> 3. Technical Debt, una línea nueva que apunte a GUARDIAS-CITAS.md §8: «A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor.» Sale a la vez la línea de G1. El saldo de bytes de PROJECT_STATE tiene que seguir siendo menor o igual que cero; si no, para y dímelo.
+>
+> 4. El hallazgo §8.3 queda tal cual: no hay comprobación de afirmación frente a cita, y no se construye aquí.
+>
+> Sigue con el encargo: make check y uv run botsito state check en verde, push de fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final. Que el revisor compruebe aparte que la excepción es exactamente un par y que su test de caducidad falla cuando debe.
+>
+> Rama lista para revisión, NO cerrada.

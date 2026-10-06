@@ -13,6 +13,11 @@ como YAML, no tiene valores escalares: ahi toda aparicion de un supersedido fall
 queda fuera porque es GENERADO desde aqui y `tests/contract/test_spec_docs_generados.py` exige que
 lo reproduzca.
 
+`EXCEPCIONES` son PARES (ambiguedad, id supersedido), cada uno con su motivo, no ficheros ni
+campos: la aparicion pasa solo si esta en un valor del objeto cuyo `id` es esa ambiguedad. Una
+excepcion que ya no se usa es un FALLO, para que no quede viva sin uso (respuesta del consultor del
+2026-10-06 a la parada de A-11).
+
 Lee el sistema de ficheros, no git: en `validation/` solo `Historial` lee git
 (`tests/unit/test_historial_sin_git.py`). Solo ids: no lee ninguna cita ni ninguna transcripcion.
 """
@@ -21,17 +26,41 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+
+@dataclass(frozen=True)
+class Excepcion:
+    ambiguedad: str
+    id: str
+    motivo: str
+
+
 DIRECTORIO = "knowledge/spec"
 # Rutas relativas a la raiz (con `/`) que G1 no mira, cada una con su motivo en un comentario.
 # Vacia desde que nacio: excluir un fichero es una decision que se ve en el diff.
 EXCLUIDOS: tuple[str, ...] = ()
+EXCEPCIONES: tuple[Excepcion, ...] = (
+    Excepcion(
+        "A-11",
+        "ev-v4-001207-0c4ffd4b",
+        "respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06",
+    ),
+)
 ID_EVIDENCIA = re.compile(r"\bev-[a-z0-9]+-\d{6}-[0-9a-f]{8}\b", re.ASCII)
 _EXTENSIONES_YAML = (".yaml", ".yml")
+
+
+@dataclass(frozen=True)
+class _Escalar:
+    inicio: int
+    fin: int
+    valor: str
+    dueno: str | None  # el `id` del objeto mas cercano que lo contiene, si lo tiene
 
 
 def sustitutos(items: Iterable[Any]) -> dict[str, list[str]]:
@@ -63,60 +92,79 @@ def ficheros_vigilados(repo: Path) -> list[Path]:
     )
 
 
-def _escalares(texto: str) -> list[tuple[int, int, str]] | None:
-    """(inicio, fin, valor) de cada escalar del YAML, por posicion en el texto; None si no se
-    puede leer como YAML."""
+def _id_del_objeto(nodo: yaml.MappingNode) -> str | None:
+    for clave, valor in nodo.value:
+        if isinstance(clave, yaml.ScalarNode) and clave.value == "id":
+            return str(valor.value) if isinstance(valor, yaml.ScalarNode) else None
+    return None
+
+
+def _escalares(texto: str) -> list[_Escalar] | None:
+    """Cada escalar del YAML con su posicion en el texto y el `id` del objeto que lo contiene;
+    None si no se puede leer como YAML."""
     try:
         nodos = list(yaml.compose_all(texto, Loader=yaml.SafeLoader))
     except yaml.YAMLError:
         return None
-    escalares: list[tuple[int, int, str]] = []
-    pendientes: list[Any] = [n for n in nodos if n is not None]
+    escalares: list[_Escalar] = []
+    pendientes: list[tuple[Any, str | None]] = [(n, None) for n in nodos if n is not None]
     while pendientes:
-        nodo = pendientes.pop()
+        nodo, dueno = pendientes.pop()
         if isinstance(nodo, yaml.ScalarNode):
-            escalares.append((nodo.start_mark.index, nodo.end_mark.index, str(nodo.value)))
+            escalares.append(
+                _Escalar(nodo.start_mark.index, nodo.end_mark.index, str(nodo.value), dueno)
+            )
         elif isinstance(nodo, yaml.SequenceNode):
-            pendientes.extend(nodo.value)
+            pendientes.extend((hijo, dueno) for hijo in nodo.value)
         elif isinstance(nodo, yaml.MappingNode):
+            propio = _id_del_objeto(nodo) or dueno
             for clave, valor in nodo.value:
-                pendientes.extend((clave, valor))
+                pendientes.extend(((clave, propio), (valor, propio)))
     return escalares
 
 
-def _comentario(texto: str, pos: int, escalares: list[tuple[int, int, str]]) -> str | None:
+def _comentario(texto: str, pos: int, escalares: list[_Escalar]) -> str | None:
     """El comentario de la linea de `pos` si `pos` cae en el: desde el primer `#` de la linea que
     no esta dentro de un escalar hasta el final de la linea."""
     inicio = texto.rfind("\n", 0, pos) + 1
     fin = texto.find("\n", pos)
     fin = len(texto) if fin == -1 else fin
     for i in range(inicio, pos):
-        fuera_de_escalar = not any(a <= i < b for a, b, _ in escalares)
+        fuera_de_escalar = not any(e.inicio <= i < e.fin for e in escalares)
         if texto[i] == "#" and fuera_de_escalar and (i == inicio or texto[i - 1] in " \t"):
             return texto[i:fin]
     return None
 
 
 def problemas_en_texto(
-    ruta: str, texto: str, cadenas: Mapping[str, list[str]], es_yaml: bool
+    ruta: str,
+    texto: str,
+    cadenas: Mapping[str, list[str]],
+    es_yaml: bool,
+    excepciones: Iterable[Excepcion] = (),
+    usadas: set[Excepcion] | None = None,
 ) -> list[str]:
     """Cada aparicion de un supersedido que no comparte valor escalar o linea de comentario con
-    su sustituto, con fichero y linea."""
+    su sustituto, con fichero y linea. Las que cubre una excepcion pasan y se anotan en `usadas`."""
     apariciones = [m for m in ID_EVIDENCIA.finditer(texto) if m.group() in cadenas]
     if not apariciones:
         return []
+    por_par = {(e.ambiguedad, e.id): e for e in excepciones}
     escalares = _escalares(texto) if es_yaml else None
     problemas: list[str] = []
     for m in apariciones:
         viejo, pos = m.group(), m.start()
         cadena = cadenas[viejo]
-        donde: str | None = None
-        for a, b, valor in escalares or []:
-            if a <= pos < b:
-                donde = valor
-                break
-        if donde is None and escalares is not None:
-            donde = _comentario(texto, pos, escalares)
+        escalar = next((e for e in escalares or [] if e.inicio <= pos < e.fin), None)
+        if escalar is not None:
+            donde: str | None = escalar.valor
+            excepcion = por_par.get((escalar.dueno or "", viejo))
+            if excepcion is not None:
+                if usadas is not None:
+                    usadas.add(excepcion)
+                continue
+        else:
+            donde = _comentario(texto, pos, escalares) if escalares is not None else None
         if donde is not None and any(s in donde for s in cadena):
             continue
         linea = texto.count("\n", 0, pos) + 1
@@ -130,14 +178,32 @@ def problemas_en_texto(
     return problemas
 
 
-def citas_a_supersedidos(repo: Path, items: Iterable[Any]) -> tuple[list[str], int]:
-    """(problemas, ficheros mirados) de G1 sobre todo `knowledge/spec/`."""
+def citas_a_supersedidos(
+    repo: Path, items: Iterable[Any], excepciones: Iterable[Excepcion] = EXCEPCIONES
+) -> tuple[list[str], int]:
+    """(problemas, ficheros mirados) de G1 sobre todo `knowledge/spec/`. Una excepcion que no
+    cubre ninguna aparicion es un problema: ya no hace falta y se quita."""
+    excepciones = tuple(excepciones)
     cadenas = sustitutos(items)
     vigilados = ficheros_vigilados(repo)
+    usadas: set[Excepcion] = set()
     problemas: list[str] = []
     for p in vigilados:
         texto = p.read_text(encoding="utf-8", errors="replace")
         problemas += problemas_en_texto(
-            p.relative_to(repo).as_posix(), texto, cadenas, p.suffix in _EXTENSIONES_YAML
+            p.relative_to(repo).as_posix(),
+            texto,
+            cadenas,
+            p.suffix in _EXTENSIONES_YAML,
+            excepciones,
+            usadas,
         )
+    # Sin uso solo puede quedar la de un id que en este repo SI esta supersedido: en un
+    # `knowledge/` sin ese item (los minimos de los tests de la CLI) no hay nada que exceptuar.
+    problemas += [
+        f"excepcion de G1 sin uso: {e.ambiguedad} ya no cita {e.id}; se quita de EXCEPCIONES "
+        f"(src/botsito/validation/citas_supersedidas.py)"
+        for e in excepciones
+        if e not in usadas and e.id in cadenas
+    ]
     return problemas, len(vigilados)
