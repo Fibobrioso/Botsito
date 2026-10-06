@@ -1,0 +1,30 @@
+rama: trabajo/guardias-citas
+riesgo: medio  # codigo de knowledge validate y tests que leen la historia de git; ni spec, ni motor, ni cifras
+artefacto: docs/validation/GUARDIAS-CITAS.md
+rutas_permitidas:
+  - docs/validation/GUARDIAS-CITAS.md
+  - docs/validation/anexos/GUARDIAS-CITAS/
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  - src/botsito/validation/
+  - src/botsito/comun/historial.py
+  - tests/unit/
+  - tests/contract/
+rutas_protegidas:
+  - src/botsito/domain/
+  - src/botsito/engine/
+  - src/botsito/mql5bridge/
+  - .claude/
+  - scripts/git-hooks/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/corpus/
+  - knowledge/spec/
+  - docs/spec/
+  - knowledge/cases/
+comprobaciones:
+  - uv run python docs/validation/anexos/GUARDIAS-CITAS/medir_citas_supersedidas.py
+  - uv run python docs/validation/anexos/GUARDIAS-CITAS/medir_tramos_sin_fuente.py
+  - uv run botsito state check
+  - make check > make-check.log 2>&1

@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/guardias-citas
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37a-respuestas-ftmo` (2026-10-05).
+`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. PARADA en la fase 0. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
 
 ## Stable Main State
 80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
@@ -199,9 +199,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 17 (2026-10-05).
+— ninguna desde el Archivo 18 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 17 (2026-10-05).
+— ninguna desde el Archivo 18 (2026-10-05).
