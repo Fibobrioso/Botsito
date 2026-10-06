@@ -1,0 +1,28 @@
+id: fb-2026-10-04-sesion-04-fb7831cc
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: escrito
+objetivo:
+  tipo: ambiguedad
+  id: A-42
+accion: RESOLVE_UNKNOWN
+respuesta_literal: 1-B) 2-c) la orden se pone y se ejecuta cuando ocurre la mitiga ion
+registrado_por: literal transcrito por el consultor de la captura Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-06-1544-respuestas-1b-2c.png (sha256 0967a72522a21aef5c275d4f1d2c2e35d166f5c4aba978db0a97833064e19267);
+  la sesion no la abrio porque la guardia lo impide (ADR-0038). El trader, desde sus dos numeros, confirmado
+  por Aleks el 2026-10-06. Registrado por Claude Code en la rama trabajo/activacion-a42
+valor_resultante: rejilla_h4
+notas: 'Burbuja entera de las 15:44 (hora de Lima), respuesta al mensaje del consultor de las 15:38, visible
+  en la misma captura, literal: «1) Este año la hora cambia en Europa el domingo 25 de octubre y en EE.
+  UU. el domingo 1 de noviembre. Me dijiste que desde el 25 empiezas a las 6 de tu gráfico. Desde el lunes
+  2 de noviembre, ¿a qué hora empieza tu primera sesión en tu gráfico? a) a las 6 b) a las 7 c) otra,
+  ¿cuál?». «1-B)» es «a las 7» desde el lunes 2 de noviembre: con «de 6 a 10 después del día 25» (S-7,
+  ev-v10-010429-0c93f24a) es la hipótesis H2b de RELOJ-INVIERNO.md: las dos sesiones son las velas H4
+  de la rejilla de anclaje_h4 que empiezan en ancla + 8 h y ancla + 12 h, y en su gráfico (Europe/Madrid)
+  solo cambian las semanas en que Europa y EE. UU. no coinciden en el horario de verano. El valor rejilla_h4
+  es la opción de reloj_sesiones que lo ejecuta (ADR-0069). La parte «2-c)» contesta a otra pregunta,
+  sobre el stop (la 2 del mismo mensaje), y NO se interpreta ni se registra contra A-11 ni contra ningún
+  parámetro: punto U de la Next Action. Captura en corpus: Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-06-1544-respuestas-1b-2c.png'
+recibido_el: '2026-10-06'
+procedencia: trader_escrito

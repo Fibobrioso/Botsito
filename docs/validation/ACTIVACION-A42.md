@@ -587,6 +587,31 @@ estado y su recuadro cambian en el paso 6, con las demás correcciones. A partir
 informe lo cita por su id (hasta este commit no podía: `knowledge validate` rechaza un id que no
 existe).
 
+### 9.3 Paso 3 · Los registros del trader
+
+Carpeta nueva `knowledge/feedback/2026-10-04-sesion-04/` (los mensajes contestan a S-7, de la sesión
+4; `recibido_el: 2026-10-06`, `medio: escrito`, `procedencia: trader_escrito`), creados con
+`botsito feedback new`:
+
+| Id | Objetivo y acción | Literal | Captura (en `notas` y en `registrado_por`, con su sha256) |
+|---|---|---|---|
+| `fb-2026-10-04-sesion-04-fb7831cc` | `ambiguedad` A-42, `RESOLVE_UNKNOWN`, valor `rejilla_h4` | «1-B) 2-c) la orden se pone y se ejecuta cuando ocurre la mitiga ion» | `mensaje-whatsapp-2026-10-06-1544-respuestas-1b-2c.png`; en `notas`, la pregunta de las 15:38 literal (D2) y que «2-c)» no se interpreta |
+| `fb-2026-10-04-sesion-04-af490a3a` | `evidence` `ev-v10-010429-0c93f24a`, `CONFIRM` | «si es por cuestion horaria se oepra a las 6» | `mensaje-whatsapp-2026-10-06-1345-se-opera-a-las-6-y-stop.png`; en `notas`, que el 13:46 de la misma captura no se registra |
+
+- `registrado_por`, como pide D1: «literal transcrito por el consultor de la captura <ruta>
+  (sha256 <hash>); la sesión no la abrió porque la guardia lo impide (ADR-0038). El trader, desde
+  sus dos números, confirmado por Aleks el 2026-10-06».
+- **El salto de línea de la burbuja de las 15:44 queda como un espacio.** El modelo de feedback
+  normaliza todo espacio en blanco (`comun/documentos.normalizar_texto`: `" ".join(split())`), y el
+  id es el hash de ese contenido normalizado: un registro no puede conservar el salto. Las palabras
+  son las de la burbuja, en su orden; la forma la conserva la captura.
+- F2, F4, F5 y F6 no se registran (D3 y D4): están en el corpus, en `fuentes.yaml` y citados
+  literales en ADR-0069 §4.
+- `knowledge validate`: OK. `feedback apply --sesion 2026-10-04-sesion-04 --check`: «la sesion no
+  propone ningun valor de parametro», que es lo esperado: `reloj_sesiones` y `huso_grafico` cambian
+  por decisión (ADR-0069), no por `apply`. `feedback pending` lista el `RESOLVE_UNKNOWN` con «A-42
+  esta ABIERTA» hasta el paso 4.
+
 ## Estado
 
 **EN CURSO: PARADA de la fase 0 (2026-10-06).** Espera la respuesta del consultor al §6.
