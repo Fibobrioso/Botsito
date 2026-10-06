@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/guardias-citas
+main
 
 ## Current Feature
-`trabajo/guardias-citas` EN CURSO (2026-10-05): G1 (evidencia supersedida) y G2 (Fuente: en los tramos), hechas. Informe docs/validation/GUARDIAS-CITAS.md.
+NINGUNA ABIERTA tras `stable/F37b-guardias-citas` (2026-10-06).
 
 ## Stable Main State
-80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
+fe37973 · merge de `trabajo/guardias-citas` (tag `stable/F37b-guardias-citas`): G1, en `knowledge validate`, niega en todo knowledge/spec/ un item ev-* supersedido que no comparte valor o linea de comentario con su sustituto (una excepcion por par, A-11); G2 exige Fuente: en todo commit que toque tramos_no_citables.yaml desde c489685. Sobre `stable/F37a-respuestas-ftmo` (80eba7f). Informe docs/validation/GUARDIAS-CITAS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-80eba7f · merge: la respuesta de FTMO del 2026-10-05 sin copiar el correo, y el tag tras agotar las letras (RESPUESTAS-FTMO.md) · tag stable/F37a-respuestas-ftmo
+fe37973 · merge: G1, ningun item supersedido citado en knowledge/spec/, y G2, Fuente: en los tramos (GUARDIAS-CITAS.md) · tag stable/F37b-guardias-citas
 
 ## Tests Currently Passing
 1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
