@@ -11,6 +11,10 @@ rutas_permitidas:
   - src/botsito/comun/historial.py
   - tests/unit/
   - tests/contract/
+  # ampliado el 2026-10-06 por la respuesta del consultor a la fase 0, punto 1: las citas de A-10
+  # y A-18 pasan a su sustituto, con spec docs --escribir en el mismo commit
+  - knowledge/spec/ambiguedades.yaml
+  - docs/spec/
 rutas_protegidas:
   - src/botsito/domain/
   - src/botsito/engine/
@@ -20,8 +24,10 @@ rutas_protegidas:
   - knowledge/evidence/
   - knowledge/feedback/
   - knowledge/corpus/
-  - knowledge/spec/
-  - docs/spec/
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/glossary.yaml
+  - knowledge/spec/spec_manifest.yaml
   - knowledge/cases/
 comprobaciones:
   - uv run python docs/validation/anexos/GUARDIAS-CITAS/medir_citas_supersedidas.py

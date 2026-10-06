@@ -156,8 +156,8 @@ ambiguedades:
     pregunta: "¿el 0,8 es fijo o \"0,75 mas el spread del momento\"?"
     resuelve_en: [F21]
     evidencia:
-      - ev-v1-000448-346d6d90
-      - ev-v2-003142-beb4ad3c
+      - ev-v6-013508-b4c88d87
+      - ev-v6-021939-1c7cad28
       - ev-v5-000312-f5062062
       - ev-v4-000835-782cf2cc
       - ev-v4-001221-1e66b5fd
@@ -360,7 +360,7 @@ ambiguedades:
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1
-      - ev-v4-011951-5fb49e03
+      - ev-v6-014702-2d7096db
       - ev-v3-003142-607674c3
     parametros: [base_calculo_objetivo, objetivo_rr]
     contradiccion: null

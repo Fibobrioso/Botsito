@@ -290,12 +290,17 @@ def commits_sin_fuente(
     desde: str | None,
     rutas: tuple[str, ...] = DIRECTORIOS_CON_FUENTE,
     ids_validos: set[str] | None = None,
+    que: str = "spec/cases",
 ) -> list[str] | None:
     """Commits (desde `desde`, exclusivo) que tocan `rutas` sin un trailer `Fuente:` valido.
 
     `ids_validos`, si se da, exige ademas que cada id exista: evidencia, feedback y ADR por igual
     (un `ADR-9999` que no existe no es una fuente). None si no hay git, `desde` no existe o el
     historial no es evaluable (clon superficial).
+
+    `que` solo nombra las rutas en el mensaje de un commit sin trailer; no cambia ninguna
+    comprobacion. Con el valor por defecto el mensaje es el de siempre, byte a byte (los tramos no
+    citables lo usan desde `trabajo/guardias-citas`, `tests/contract/test_tramos_fuente.py`).
     """
     rango = f"{desde}..HEAD" if desde else "HEAD"
     if desde and _git(repo, "rev-parse", "--verify", "-q", f"{desde}^{{commit}}") is None:
@@ -315,7 +320,7 @@ def commits_sin_fuente(
             continue
         ids = fuentes_de_mensaje(mensaje)
         if not ids:
-            problemas.append(f"{sha[:7]}: toca spec/cases sin trailer 'Fuente:'")
+            problemas.append(f"{sha[:7]}: toca {que} sin trailer 'Fuente:'")
             continue
         for i in ids:
             if not _ID_FUENTE.match(i):

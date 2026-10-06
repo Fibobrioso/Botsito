@@ -5,8 +5,13 @@ estado de `stable/F37a-respuestas-ftmo`, y su CI de `main` (run 37411332514) est
 comprobado antes de abrir. Encargo: `docs/encargos/trabajo-guardias-citas.md`. Paga dos líneas de
 Technical Debt de `PROJECT_STATE.md`.
 
-**Estado: PARADA en la fase 0, sin código.** El recuento de G1 no es cero (§0.a). Además, la
-fase 0 deja tres preguntas para el consultor (§1).
+**Estado (2026-10-06): G2 hecha; G1 escrita, probada y SIN CONECTAR a `knowledge validate`, por
+dos PARADAS (§6).**
+- La fase 0 paró porque el recuento de G1 no era cero (§0.a), y el consultor respondió (§1.1).
+- Tres de las cuatro citas pasan a su sustituto (§2).
+- A-11 se para: su sustituto no sostiene lo que la ambigüedad cita.
+- El comentario de A-41 no cumple la condición de G1: nombra a su sustituto en la línea de
+  comentario siguiente, no en la misma.
 
 ## 0. Fase 0: inventario sin tocar nada
 
@@ -250,9 +255,221 @@ Con las tres respuestas, el resto de las decisiones se aplica tal cual:
 - las dos líneas de Technical Debt a HISTORIA;
 - `fix/guardias-citas` con su run de la CI de Linux.
 
+### 1.1 La respuesta del consultor a la fase 0 (2026-10-05), copiada tal cual
+
+Llegó el 2026-10-06, en un segundo pegado: el primero llegó cortado y no se aplicó. Está también
+al final del encargo.
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la fase 0 de trabajo/guardias-citas (2026-10-05). Cópiala tal cual al encargo y al informe.
+>
+> 1. Las 4 citas de A-10 (dos), A-11 y A-18: SE SUSTITUYEN por su sustituto, como A-46 en VENTANA-EV-V9.md. Antes de sustituir, compara para cada par (viejo → sustituto) la cita y la afirmación tal como están en los ítems, con la CLI filtrada o leyendo los campos del ítem, nunca transcripciones. Si en algún par el sustituto ya no sostiene lo que la ambigüedad cita (por ejemplo, porque recortó esa parte), para con ese par y dímelo; los demás siguen. Las ambigüedades no cambian de estado. Commit con Fuente:, spec docs --escribir en el mismo commit y el procedimiento de AMBIGUEDADES.md. El contrato se amplía con ambiguedades.yaml y docs/spec/, declarado.
+>    Porqué: la spec cita el ítem vigente; un supersedido solo se nombra para contar la sustitución.
+>
+> 2. Condición de G1, ni A ni B: «En todo fichero versionado bajo knowledge/spec/, un id ev-* supersedido solo puede aparecer dentro del mismo valor escalar de YAML, o de la misma línea de comentario, que nombra su sustituto. Cualquier otra aparición falla.» Se escanea el texto entero, comentarios incluidos, sin lista de campos. Lista de excluidos visible en el código y vacía. docs/spec/ fuera por ser generado, como propones.
+>    Comprueba con la medida que, tras el punto 1, el recuento da 0 y que las 5 menciones en prosa (RN-034 y el comentario de A-41) pasan. Si alguna no nombra a su sustituto en el mismo valor o comentario, para: no se toca strategy_spec.yaml sin decisión.
+>    Tests que rompen la guardia: un supersedido en el campo evidencia: (falla); el mismo id en una nota sin su sustituto (falla); con su sustituto en la misma nota (pasa); en un fichero nuevo bajo knowledge/spec/ (falla).
+>    Porqué: nombrar la condición y negar por defecto; enumerar campos deja escapar el que nadie pensó.
+>
+> 3. commits_sin_fuente: SÍ al parámetro opcional que solo cambia el texto del mensaje. Con el valor por defecto, el mensaje tiene que ser byte a byte el actual: añade un test que lo compruebe, y los tests existentes no se tocan. Nada de un bucle propio en el test.
+>    Porqué: un bucle paralelo que repite la guardia es una segunda vía que puede divergir.
+>
+> 4. Ancla de G2: aceptado c489685, fijado como sha en el test y que el test falle si no existe en la historia. Los tres commits que deja fuera (cfec50b, c489685 y f443eee) se listan en el informe.
+>
+> 5. Las dos líneas de Technical Debt salen de PROJECT_STATE.md cuando las guardias existan, en esta rama, y pasan literales a HISTORIA. El saldo final de bytes tiene que ser menor o igual que cero.
+>
+> Sigue con el encargo: make check y uv run botsito state check en verde, fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 2. Punto 1: los cuatro pares, comparados en el ítem
+
+Se leyeron los campos `cita_literal`, `afirmacion`, `tema` y `valor` de los ocho ítems (Read del
+YAML de cada uno; ninguna transcripción). La pregunta, por par, es si el sustituto sigue
+sosteniendo lo que la ambigüedad cita.
+
+| Ambigüedad | Viejo → sustituto | El viejo dice | El sustituto dice | ¿Lo sostiene? |
+|---|---|---|---|---|
+| A-10 («stop a 0,8: fijo o 0,75 + spread»), RESUELTA | `ev-v1-000448-346d6d90` → `ev-v6-013508-b4c88d87` | tema `stop.nivel`, valor 0,75: «cubrir hasta un 0.75» | mismo tema, valor 0,80: «hay que hablar de 0,80 [...] ya no 0,75» | **Sí.** Es el nivel del stop, la pregunta de A-10, con el valor vigente; nombra el 0,75 que sustituye |
+| A-10, RESUELTA | `ev-v2-003142-beb4ad3c` → `ev-v6-021939-1c7cad28` | tema `stop.nivel`, 0,75: «lo suelo poner en 0.75» | mismo tema, 0,80: «Ahora es a 0.8 No a 0.75» | **Sí**, por lo mismo |
+| A-11 («SL en la orden o tras el llenado»), RESUELTA | `ev-v4-001207-0c4ffd4b` → `ev-v6-021939-b430a110` | tema `stop.introducido_en_operacion_075`. La cita dice cuándo y dónde va el stop: «se arma un trade y el stop loss se pone [...] el stop loss como tal que se va a introducir en la operación es hasta el 0.75»; nota «A-11: el consultor pregunta y el trader responde» | mismo tema, pero la cita es la del par anterior: «Es 0.80 Ya a 0.75 Acá nada más Ahora es a 0.8 No a 0.75». Solo trae el NIVEL | **No: PARADA.** Lo que A-11 cita, el stop que se introduce al armar el trade, está solo en la `afirmacion` del sustituto, no en su cita |
+| A-18 (base de cálculo del objetivo), ABIERTA | `ev-v4-011951-5fb49e03` → `ev-v6-014702-2d7096db` | tema `objetivo.rr_13_margen_tres_perdidas`: mantiene 1:3 porque con pérdidas consecutivas la tercera se cubre | mismo tema: con 0,75 tres perdedores cuestan 2,25 y el cuarto deja 0,75 % de margen; con 0,80, 0,60. Su nota: «el 1:3 se mide sobre la CAJA COMPLETA (A-18)» | **Sí**, y con la cuenta que A-18 pregunta |
+
+**Hecho:** `knowledge/spec/ambiguedades.yaml:159`, `:160` y `:363` citan ahora
+`ev-v6-013508-b4c88d87`, `ev-v6-021939-1c7cad28` y `ev-v6-014702-2d7096db`:
+- ninguna ambigüedad cambia de estado ni de otro campo;
+- el commit lleva `Fuente:` con los tres sustitutos;
+- `botsito spec docs --escribir` corrió en el mismo commit y no cambia ningún fichero, porque
+  `docs/spec/ambiguedades.md` no pinta la evidencia;
+- con ese cambio pasan `knowledge validate` (rc 0), `test_kit`, `test_hoja_preguntas`,
+  `test_spec_docs_generados` y `test_reabrir_y_fuente_documental`.
+
+Como pide la respuesta, el contrato se amplió con `knowledge/spec/ambiguedades.yaml` y `docs/spec/`,
+con un comentario que lo declara, y protege nombrándolos los otros cuatro ficheros de
+`knowledge/spec/`.
+
+**A-11 no se toca (PARADA 1, §6).**
+
+## 3. G1: la condición del consultor, escrita
+
+- **Dónde:** `src/botsito/validation/citas_supersedidas.py`.
+- **Qué mira:** el TEXTO entero de todo fichero bajo `knowledge/spec/`, recursivo, también uno
+  nuevo, menos `EXCLUIDOS`, que es una tupla vacía a la vista.
+- **La regla:** un id ev-* supersedido pasa solo si su sustituto está en el mismo valor escalar de
+  YAML o en la misma línea de comentario.
+  - Los escalares se localizan por posición con `yaml.compose_all`; un `>-` de varias líneas es UN
+    valor.
+  - Un comentario va desde el primer `#` de la línea que no está dentro de un escalar hasta el final
+    de la línea.
+  - Un fichero que no es YAML, o que no se lee como YAML, no tiene escalares: toda aparición falla.
+  - El sustituto vale si es cualquiera de su cadena. El mensaje da el id, su sustituto, el vigente si
+    hay cadena, el fichero y la línea.
+- **Qué no lee:** recorre el sistema de ficheros, no git, porque en `validation/` solo `Historial` lee
+  git, y `test_historial_sin_git` sigue en verde. Solo lee ids y `supersede`.
+- **`docs/spec/` queda fuera** por ser generado.
+
+**La medida pedida** (anexo `medir_g1.py`, salida `medir_g1-SALIDA.txt`):
+- se miran 6 ficheros;
+- tras el punto 1 quedan 4 apariciones de supersedidos en ellos (antes eran 7);
+- las DOS menciones de RN-034 (`strategy_spec.yaml:1620`) PASAN, porque las dos están en el mismo
+  valor `notas` que sus sustitutos;
+- fallan dos:
+  - `ambiguedades.yaml:179`, A-11, es la PARADA 1;
+  - `ambiguedades.yaml:1100`, el comentario de A-41, es la **PARADA 2**: el id viejo está en la línea
+    de comentario 1100 y su sustituto en la 1101.
+- **El recuento NO da 0.**
+
+Sobre las «5 menciones en prosa» de la respuesta: en la fuente hay 3 (las dos de RN-034 y la de
+A-41). Las otras dos son la copia generada de RN-034 en `docs/spec/reglas.md:1208`, que G1 no mira.
+
+**G1 NO está conectada a `knowledge validate`.** Con las dos paradas abiertas daría ERROR y
+`make check` saldría en rojo, y para ponerla en verde habría que tocar A-11 o el comentario sin
+decisión. Conectarla es un cambio de pocas líneas en `_validar`, junto a las comprobaciones de
+citas: va en cuanto el consultor decida. La línea de Technical Debt de G1 sigue en
+`PROJECT_STATE.md` hasta entonces (punto 5: sale cuando la guardia existe, y sin conectar no
+vigila nada).
+
+**Tests (`tests/unit/test_citas_supersedidas.py`, 14, todos en `tmp_path`)**:
+- los cuatro de la respuesta:
+  - un supersedido en `evidencia:` falla;
+  - el mismo id en una nota sin su sustituto falla;
+  - con su sustituto en la misma nota pasa;
+  - en un fichero nuevo bajo `knowledge/spec/` falla;
+- y además:
+  - en una subcarpeta nueva falla;
+  - en un `.md` falla aunque nombre al sustituto;
+  - en un YAML ilegible falla;
+  - en la misma línea de comentario pasa;
+  - en un comentario con el sustituto en la línea siguiente falla;
+  - con el sustituto en OTRO valor falla;
+  - lo vigente pasa;
+  - una cadena de dos supersedes da el vigente en el mensaje;
+  - `EXCLUIDOS == ()`;
+  - sin `knowledge/spec/` no hay nada que mirar.
+
+## 4. G2: hecha
+
+**`commits_sin_fuente`** (`src/botsito/comun/historial.py`) gana el parámetro opcional
+`que: str = "spec/cases"`, que solo nombra las rutas en el mensaje de un commit sin trailer.
+- Ninguna comprobación cambia.
+- Con el valor por defecto, el mensaje es el de antes byte a byte, y lo comprueba
+  `test_el_mensaje_por_defecto_es_el_de_siempre`.
+- Los tests existentes (`tests/contract/test_feedback_history.py`) no se tocan y pasan.
+
+**`tests/contract/test_tramos_fuente.py`:**
+- **Ancla:** `ANCLA_TRAMOS = "c489685f9ef5d1e126f2e3e81872c1f1c5a644fd"`, un sha completo;
+  `test_el_ancla_es_un_sha_completo` lo exige, sin tag ni fecha.
+- **El helper `problemas_tramos`:** convierte en FALLO un ancla que no existe o un historial que no
+  se puede evaluar (`None`). La lectura del trailer es la de `commits_sin_fuente`, sin bucle propio.
+- **`test_repositorio_real`:** pasa sobre el repo real con los ids que existen (`ids_de_fuente`).
+- **Los que rompen la guardia, en repos temporales:**
+  - un commit tras el ancla sin `Fuente:` falla;
+  - con `Fuente:` pasa;
+  - con una `Fuente:` que no existe falla;
+  - el commit del ancla y los anteriores no se miran;
+  - un ancla inexistente falla;
+  - un commit que no toca los tramos no se mira;
+  - y el del mensaje por defecto.
+- 9 tests nuevos en total.
+
+**Los commits anteriores al ancla, que no se tocan:**
+- **sin `Fuente:`:** `cfec50b` (2026-10-04 12:29) y `c489685` (2026-10-04 13:22);
+- **con una ruta en vez de un id:** `f443eee` (2026-10-01 22:06);
+- **con `Fuente:` válida, también anteriores:** `b9e7e8a`, `0e3ca88`, `3718889` y `ed25392`.
+
+La línea de Technical Debt de G2 salió de `PROJECT_STATE.md` y pasó literal a HISTORIA
+(«# Technical Debt PAGADA · ...»).
+
+## 5. Encargo frente a lo hecho
+
+| Encargo / respuesta | Hecho | Dónde |
+|---|---|---|
+| Base `442a948`, CI 37411332514; abrir con `abrir-rama` | Comprobado; rama, encargo, contrato y Archivo 18 | `2c22b15` |
+| Fase 0 a)-d) antes de código | §0, con dos medidas; PARADA | `2c22b15` |
+| Respuesta, copiada al encargo y al informe | §1.1 y el final del encargo | — |
+| R1: sustituir las 4 citas, comparando cada par | 3 sustituidas; **A-11 PARADA** | §2 |
+| R2: G1 con la condición del consultor, texto entero, excluidos vacíos | Escrita y probada; **sin conectar** | §3 |
+| R2: medida tras el punto 1 = 0, y las menciones en prosa pasan | **No da 0**: queda A-11 y falla el comentario de A-41; RN-034 pasa | §3 |
+| R2: los cuatro tests que la rompen | Hechos, más diez | §3 |
+| R3: parámetro opcional y test del mensaje byte a byte | Hecho | §4 |
+| R4: ancla `c489685` como sha; el test falla si no existe; los tres listados | Hecho | §4 |
+| R5 / decisión 4: las dos líneas de Technical Debt a HISTORIA, saldo ≤ 0 | La de G2 hecha; la de G1, al conectarla | §4, §7 |
+| make check y state check, `fix/guardias-citas` con la CI de Linux, revisor | Pendiente de las paradas | §7 |
+
+**Desviaciones declaradas:**
+- G1 está escrita y no conectada (§3).
+- `spec docs --escribir` no cambió ningún fichero (§2).
+
+## 6. PARADAS: dos decisiones del consultor
+
+**PARADA 1 · A-11** (`knowledge/spec/ambiguedades.yaml:179`). Hoy cita `ev-v4-001207-0c4ffd4b`,
+supersedido por `ev-v6-021939-b430a110`, cuya cita no sostiene lo que A-11 cita (§2). Opciones:
+- **(a)** Quitar el id supersedido de la `evidencia:` de A-11 sin poner nada en su lugar. A-11 sigue
+  citando `ev-v1-000620-0f7dea14`, sigue RESUELTA y la respuesta del trader del 2026-09-10 está en su
+  `pregunta` y en el feedback. Es la recomendada: la spec no cita lo que ya no es vigente ni lo que no
+  lo sostiene.
+- **(b)** Sustituirlo de todas formas por `ev-v6-021939-b430a110`, aceptando que solo su `afirmacion`,
+  y no su cita, dice lo del stop introducido en la operación.
+- **(c)** Mantenerlo, con una excepción por id declarada en el código y con motivo. G1 no tiene ese
+  mecanismo, y habría que diseñarlo.
+
+**PARADA 2 · el comentario de A-41** (`knowledge/spec/ambiguedades.yaml:1100-1101`). Nombra
+`ev-v3-002714-742f2589` en una línea y «supersedido por `ev-v6-000732-f9c41d5e`» en la siguiente.
+Opciones:
+- **(a)** Reajustar el corte de ese comentario para que el id viejo y su sustituto queden en la MISMA
+  línea. Es un comentario de YAML: no cambia ningún valor, ni `docs/spec/`, ni el texto de la
+  ambigüedad. Es la recomendada: la condición se queda como la escribió el consultor.
+- **(b)** Leer «línea de comentario» como bloque de líneas de comentario seguidas. Ensancha la
+  condición, y un bloque largo podría nombrar al sustituto lejos del viejo.
+
+Con las dos respuestas:
+1. se aplica el cambio en `ambiguedades.yaml`, con `Fuente:` si toca la evidencia;
+2. G1 se conecta a `knowledge validate`;
+3. la línea de Technical Debt de G1 sale a HISTORIA;
+4. `make check`, `fix/guardias-citas` con la CI de Linux y el revisor.
+
+## 7. Comprobaciones y bytes
+
+**Antes del commit, sobre lo que entra:**
+- `ruff check`, `ruff format --check` y `mypy` de los ficheros nuevos y cambiados, sin problemas;
+- los tests nuevos (14 + 9) y `test_feedback_history.py` (sin tocar) pasan;
+- `knowledge validate` da rc 0;
+- el `make check` del commit va en su mensaje y en la sección siguiente de este informe cuando
+  exista.
+
+**Bytes de `PROJECT_STATE.md`:** 23.307 en `main` y 23.431 aquí, un saldo de **+124**.
+- La Current Feature es más larga que «NINGUNA ABIERTA».
+- La línea de G2 restó.
+- Al sacar la de G1 (unos 150 bytes) el saldo queda por debajo de cero.
+
 ## Estado
 
-PARADA en la fase 0 (2026-10-05). Hay rama, encargo, contrato y el Archivo 18 de `PROJECT_STATE.md`
-en HISTORIA, y las dos medidas con su salida. No hay código, y no se ha tocado `knowledge/` ni
-`docs/spec/`. Las dos líneas de Technical Debt siguen en `PROJECT_STATE.md` hasta que existan las
-guardias. Espera las tres respuestas del §1.
+PARADA (2026-10-06) en A-11 y en el comentario de A-41 (§6).
+- G2 está hecha y probada.
+- G1 está escrita y probada, y sin conectar.
+- Tres de las cuatro citas pasaron a su sustituto.
+- Falta: las dos decisiones, conectar G1, la línea de Technical Debt de G1, la CI de Linux y el
+  revisor.
+
+Rama NO lista para revisión.

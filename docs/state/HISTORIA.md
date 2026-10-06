@@ -5274,3 +5274,14 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 17 (2026-10-05).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardias-citas (2026-10-06)
+
+La paga G2: `tests/contract/test_tramos_fuente.py` exige `Fuente:` en todo commit que toque
+`knowledge/corpus/tramos_no_citables.yaml` desde el ancla `c489685` (un sha, no una fecha), con
+`commits_sin_fuente`; los commits anteriores al ancla no se tocan (`cfec50b`, `c489685` y `f443eee`
+se listan en docs/validation/GUARDIAS-CITAS.md). Encargo de `trabajo/guardias-citas`, decision 4, y
+respuesta del consultor a la fase 0, punto 5. No entra otra linea en su lugar. Su texto literal en
+«Technical Debt»:
+
+- Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).

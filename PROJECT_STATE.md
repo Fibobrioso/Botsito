@@ -14,7 +14,7 @@
 trabajo/guardias-citas
 
 ## Current Feature
-`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. PARADA en la fase 0. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
+`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. G2 hecha; G1 escrita y sin conectar: PARADA en A-11 y el comentario de A-41. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
 
 ## Stable Main State
 80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ trabajo/guardias-citas
 80eba7f · merge: la respuesta de FTMO del 2026-10-05 sin copiar el correo, y el tag tras agotar las letras (RESPUESTAS-FTMO.md) · tag stable/F37a-respuestas-ftmo
 
 ## Tests Currently Passing
-1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1332 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -117,7 +117,6 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
