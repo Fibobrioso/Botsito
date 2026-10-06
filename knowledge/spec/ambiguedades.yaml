@@ -156,8 +156,8 @@ ambiguedades:
     pregunta: "¿el 0,8 es fijo o \"0,75 mas el spread del momento\"?"
     resuelve_en: [F21]
     evidencia:
-      - ev-v1-000448-346d6d90
-      - ev-v2-003142-beb4ad3c
+      - ev-v6-013508-b4c88d87
+      - ev-v6-021939-1c7cad28
       - ev-v5-000312-f5062062
       - ev-v4-000835-782cf2cc
       - ev-v4-001221-1e66b5fd
@@ -360,7 +360,7 @@ ambiguedades:
     resuelve_en: [F11, F26]
     evidencia:
       - ev-v2-003256-0197f4e1
-      - ev-v4-011951-5fb49e03
+      - ev-v6-014702-2d7096db
       - ev-v3-003142-607674c3
     parametros: [base_calculo_objetivo, objetivo_rr]
     contradiccion: null
@@ -1097,8 +1097,9 @@ ambiguedades:
     # RESUELTA con cartuchos_max 3. La frase la propone el interlocutor y el trader asiente. Junto a
     # ella, ev-v2-001615-d96c699f dice "máximo dos entradas" despues del rompimiento de la liquidez
     # de M15, que es por zona. Las notas de RN-020 sostienen que nada acota el dia salvo el tope
-    # porcentual, y RN-017 (sesion 1) revoca el parar tras la ganadora (ev-v3-002714-742f2589 esta
-    # supersedido por ev-v6-000732-f9c41d5e). NO BLOQUEANTE: RN-016 y RN-020 se escriben sin ella
+    # porcentual, y RN-017 (sesion 1) revoca el parar tras la ganadora
+    # (ev-v3-002714-742f2589 esta supersedido por ev-v6-000732-f9c41d5e). NO BLOQUEANTE: RN-016 y
+    # RN-020 se escriben sin ella
     evidencia:
       - ev-v4-003350-acb03ee7
       - ev-v2-001615-d96c699f

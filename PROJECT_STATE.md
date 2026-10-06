@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/guardias-citas
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37a-respuestas-ftmo` (2026-10-05).
+`trabajo/guardias-citas` EN CURSO (2026-10-05): G1 (evidencia supersedida) y G2 (Fuente: en los tramos), hechas. Informe docs/validation/GUARDIAS-CITAS.md.
 
 ## Stable Main State
 80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
@@ -23,13 +23,15 @@ NINGUNA ABIERTA tras `stable/F37a-respuestas-ftmo` (2026-10-05).
 80eba7f · merge: la respuesta de FTMO del 2026-10-05 sin copiar el correo, y el tag tras agotar las letras (RESPUESTAS-FTMO.md) · tag stable/F37a-respuestas-ftmo
 
 ## Tests Currently Passing
-1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
+
+U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3).
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
@@ -117,7 +119,6 @@ cerradas el 2026-10-01 (RESUELTA, CORREGIDA, DECIDIDA, CERRADA, HECHO…) solo e
 la de los cinco patrones de defecto, que es una regla, esta entera en
 docs/runbooks/ERRORES-RECURRENTES.md.
 
-- Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
@@ -161,7 +162,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
 - F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
-- Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).
+- A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md §8).
 
 ## Reglas vivas
 Las que hasta el 2026-10-01 solo estaban en este fichero, copiadas tal cual con su titulo de
@@ -199,9 +200,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 17 (2026-10-05).
+— ninguna desde el Archivo 18 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 17 (2026-10-05).
+— ninguna desde el Archivo 18 (2026-10-05).

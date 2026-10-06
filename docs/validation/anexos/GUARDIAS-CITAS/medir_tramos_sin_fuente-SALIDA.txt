@@ -1,0 +1,34 @@
+== git log -- knowledge/corpus/tramos_no_citables.yaml
+  809117b 2026-10-05 15:30 | ev-v9-003457-3e28e325 | feat(evidencia): ev-v9-003457-3e28e325 supersede a ev-v9-003456-9ef48fb5 con la ventana co
+  f50b680 2026-10-04 22:20 | ADR-0021 | feat(tramos): ancla de v9 medida con validate, 8 tramos nuevos, criterio y test; el hueco 
+  7120217 2026-10-04 18:36 | ADR-0021, ADR-0038 | fix(cuarentena): los hallazgos del revisor; la CI 208 y su informe pegado
+  c489685 2026-10-04 13:22 | SIN Fuente: | docs(sesion-04): la extraccion por pregunta de v10, sus 64 items de evidencia, la hoja por
+  cfec50b 2026-10-04 12:29 | SIN Fuente: | data(corpus): la sesion 4 con el trader entra como v10, en cuarentena, con sus tramos no c
+  f443eee 2026-10-01 22:06 | docs/validation/CUARENTENA-POR-DEFECTO.md | docs(cierre): todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; 
+  b9e7e8a 2026-09-29 19:10 | ev-v9-010753-063c8cb7, ev-v9-010809-68e4ea44, ADR-0021, ADR-0038 | docs(validation): la revision del consultor de la sesion 3 (A-42 con mascara, E-1..E-3, ex
+  0e3ca88 2026-09-29 18:18 | ADR-0011, ADR-0021, ADR-0038 | data(corpus,evidence): la sesion 3 con el trader (v9), su extraccion y la respuesta del so
+  3718889 2026-09-27 12:56 | ADR-0038 | data(corpus): el tramo en cuarentena de v7 entra como no citable (0:15:34-0:15:48)
+  ed25392 2026-09-09 16:50 | ADR-0009 | feat(evidence): un tramo declarado fuera de la operativa ya no puede entrar como regla
+  commits: 10; sin Fuente: 2
+
+== git log -m --full-history -- knowledge/corpus/tramos_no_citables.yaml
+  f8b291c 2026-10-05 17:01 (merge) | SIN Fuente: | merge: la ventana de todo item activo no pisa lo no citable (VENTANA-EV-V9.md)
+  809117b 2026-10-05 15:30 | ev-v9-003457-3e28e325 | feat(evidencia): ev-v9-003457-3e28e325 supersede a ev-v9-003456-9ef48fb5 con la ventana co
+  5e486dc 2026-10-05 00:14 (merge) | SIN Fuente: | merge: tramos de sesion completados, ancla de v9 medida y el hueco de las filtradas docume
+  f50b680 2026-10-04 22:20 | ADR-0021 | feat(tramos): ancla de v9 medida con validate, 8 tramos nuevos, criterio y test; el hueco 
+  44f461d 2026-10-04 19:02 (merge) | SIN Fuente: | merge: la cuarentena del texto tapa todo mes que no se pueda demostrar libre (CUARENTENA-P
+  7120217 2026-10-04 18:36 | ADR-0021, ADR-0038 | fix(cuarentena): los hallazgos del revisor; la CI 208 y su informe pegado
+  eec79a0 2026-10-04 14:39 (merge) | SIN Fuente: | merge: la sesion 4 con el trader (v10) ingerida, su extraccion por pregunta y la hoja por 
+  c489685 2026-10-04 13:22 | SIN Fuente: | docs(sesion-04): la extraccion por pregunta de v10, sus 64 items de evidencia, la hoja por
+  cfec50b 2026-10-04 12:29 | SIN Fuente: | data(corpus): la sesion 4 con el trader entra como v10, en cuarentena, con sus tramos no c
+  1591737 2026-10-01 22:33 (merge) | SIN Fuente: | merge: todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; los doc
+  f443eee 2026-10-01 22:06 | docs/validation/CUARENTENA-POR-DEFECTO.md | docs(cierre): todo cierre lleva su registro en HISTORIA y su fila en ERRORES-RECURRENTES; 
+  00fcced 2026-09-29 19:10 (merge) | SIN Fuente: | merge: la sesion 3 con el trader (v9), su extraccion revisada y la respuesta del soporte d
+  b9e7e8a 2026-09-29 19:10 | ev-v9-010753-063c8cb7, ev-v9-010809-68e4ea44, ADR-0021, ADR-0038 | docs(validation): la revision del consultor de la sesion 3 (A-42 con mascara, E-1..E-3, ex
+  0e3ca88 2026-09-29 18:18 | ADR-0011, ADR-0021, ADR-0038 | data(corpus,evidence): la sesion 3 con el trader (v9), su extraccion y la respuesta del so
+  408b609 2026-09-27 21:37 (merge) | SIN Fuente: | merge: la sesion 02 en video (v7 y v8 en el corpus, sus informes y exposiciones), la tuber
+  3718889 2026-09-27 12:56 | ADR-0038 | data(corpus): el tramo en cuarentena de v7 entra como no citable (0:15:34-0:15:48)
+  1475956 2026-09-09 17:24 (merge) | SIN Fuente: | Merge branch 'feature/F10-hoja-sesion-docx'
+  ed25392 2026-09-09 16:50 | ADR-0009 | feat(evidence): un tramo declarado fuera de la operativa ya no puede entrar como regla
+  commits: 18; sin Fuente: 10
+

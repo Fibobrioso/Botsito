@@ -1,0 +1,114 @@
+items de evidencia: 503; supersedidos: 13
+  ev-v1-000448-346d6d90 -> ev-v6-013508-b4c88d87
+  ev-v1-000959-b82650ad -> ev-v6-000732-5945fd87
+  ev-v10-010438-0d4e6798 -> ev-v10-010438-024f76b8
+  ev-v2-003142-beb4ad3c -> ev-v6-021939-1c7cad28
+  ev-v3-001531-1b12a896 -> ev-v3-001528-87eef4f0
+  ev-v3-002714-742f2589 -> ev-v6-000732-f9c41d5e
+  ev-v3-004751-8eb74667 -> ev-v6-021939-5e7dc0de
+  ev-v4-001207-0c4ffd4b -> ev-v6-021939-b430a110
+  ev-v4-005319-dee95093 -> ev-v4-005310-ce69f8c6
+  ev-v4-005703-4e43180e -> ev-v4-005644-e06ef304
+  ev-v4-011351-74b8bb39 -> ev-v6-000732-f7189541
+  ev-v4-011951-5fb49e03 -> ev-v6-014702-2d7096db
+  ev-v9-003456-9ef48fb5 -> ev-v9-003457-3e28e325
+
+citas a supersedidos por fichero (todos los versionados):
+     2  docs/HANDOFF.md
+     1  docs/adr/0014-base-de-calculo-del-objetivo.md
+     2  docs/adr/0066-escenarios-dentro-de-la-sesion.md
+     4  docs/encargos/trabajo-filtradas-escenario-b.md
+     6  docs/encargos/trabajo-ventana-ev-v9-003456.md
+     1  docs/plan/features/F14b-ciclo-de-vida-de-los-hechos.md
+     2  docs/spec/reglas.md
+    20  docs/state/HISTORIA.md
+     2  docs/validation/ABRIL-Y-LA-CAJA.md
+     5  docs/validation/AUDITORIA-2026-09-13-ultracode.md
+     3  docs/validation/BREAKER-M1.md
+     1  docs/validation/CUARENTENA-POR-DEFECTO.md
+     2  docs/validation/ESCENARIOS-POR-SESION.md
+     2  docs/validation/F07-evidence-extraction.md
+     2  docs/validation/F08-evidence-retrieval.md
+     1  docs/validation/F11-strategy-spec-schema.md
+     1  docs/validation/F14A-INGESTA.md
+    11  docs/validation/FILTRADAS-ESCENARIO-B.md
+    11  docs/validation/GUARDIAS-CITAS.md
+     3  docs/validation/LIQUIDEZ-M15.md
+     1  docs/validation/SESION-01-2026-09-09.md
+     3  docs/validation/SESION-02-BUSQUEDA-CLASIFICACION.md
+     1  docs/validation/SESION-02-DECISIONES.md
+     4  docs/validation/SESION-03-EXTRACCION.md
+     2  docs/validation/SESION-04-EXTRACCION.md
+    22  docs/validation/VENTANA-EV-V9.md
+     1  docs/validation/anexos/FILTRADAS-ESCENARIO-B/ancla_v9-SALIDA.txt
+     2  docs/validation/anexos/FILTRADAS-ESCENARIO-B/ancla_v9.py
+     1  docs/validation/anexos/FILTRADAS-ESCENARIO-B/tramos_nuevos-SALIDA.txt
+    35  docs/validation/anexos/GUARDIAS-CITAS/medir_citas_supersedidas-SALIDA.txt
+     2  docs/validation/anexos/GUARDIAS-CITAS/medir_tramos_sin_fuente-SALIDA.txt
+     2  docs/validation/anexos/VENTANA-EV-V9/control_activos-SALIDA.txt
+    13  docs/validation/anexos/VENTANA-EV-V9/medir_condicion-SALIDA.txt
+    13  docs/validation/anexos/VENTANA-EV-V9/medir_condicion-SALIDA2.txt
+     1  docs/validation/anexos/VENTANA-EV-V9/medir_condicion.py
+     1  docs/validation/anexos/VENTANA-EV-V9/medir_recortados.py
+     1  docs/validation/anexos/VENTANA-EV-V9/medir_ventana-SALIDA.txt
+     2  docs/validation/anexos/VENTANA-EV-V9/medir_ventana.py
+     1  docs/validation/anexos/VENTANA-EV-V9/recortar_item_v10-PASADA1.txt
+     1  docs/validation/anexos/VENTANA-EV-V9/recortar_item_v10-PASADA2.txt
+     2  docs/validation/anexos/VENTANA-EV-V9/recortar_item_v10.py
+     2  docs/validation/anexos/VENTANA-EV-V9/sustituir_item-PASADA1.txt
+     1  docs/validation/anexos/VENTANA-EV-V9/sustituir_item-PASADA2.txt
+     2  docs/validation/anexos/VENTANA-EV-V9/sustituir_item.py
+     2  knowledge/_proposals/pr-v1-000000-001500-467e469a.yaml
+     1  knowledge/_proposals/pr-v2-002400-003830-e923632f.yaml
+     1  knowledge/_proposals/pr-v3-001300-002600-7f79833c.yaml
+     1  knowledge/_proposals/pr-v3-002600-003900-7f79833c.yaml
+     1  knowledge/_proposals/pr-v3-003900-005200-7f79833c.yaml
+     1  knowledge/_proposals/pr-v4-000500-001500-28a0de27.yaml
+     2  knowledge/_proposals/pr-v4-004500-010000-c2b977e5.yaml
+     1  knowledge/_proposals/pr-v4-010000-011500-fee495dc.yaml
+     1  knowledge/_proposals/pr-v4-011500-013336-fee495dc.yaml
+     3  knowledge/cases/kit/2026-09-09-sesion-01/cuestionario.yaml
+     1  knowledge/cases/kit/contexto_preguntas.yaml
+     1  knowledge/cases/kit/vistos.yaml
+     1  knowledge/corpus/tramos_no_citables.yaml
+     1  knowledge/evidence/v1/ev-v1-000448-346d6d90.yaml
+     1  knowledge/evidence/v1/ev-v1-000959-b82650ad.yaml
+     1  knowledge/evidence/v10/ev-v10-010438-024f76b8.yaml
+     1  knowledge/evidence/v10/ev-v10-010438-0d4e6798.yaml
+     1  knowledge/evidence/v2/ev-v2-003142-beb4ad3c.yaml
+     2  knowledge/evidence/v3/ev-v3-001528-87eef4f0.yaml
+     1  knowledge/evidence/v3/ev-v3-001531-1b12a896.yaml
+     1  knowledge/evidence/v3/ev-v3-002714-742f2589.yaml
+     1  knowledge/evidence/v3/ev-v3-004751-8eb74667.yaml
+     1  knowledge/evidence/v4/ev-v4-001207-0c4ffd4b.yaml
+     2  knowledge/evidence/v4/ev-v4-005310-ce69f8c6.yaml
+     1  knowledge/evidence/v4/ev-v4-005319-dee95093.yaml
+     2  knowledge/evidence/v4/ev-v4-005644-e06ef304.yaml
+     1  knowledge/evidence/v4/ev-v4-005703-4e43180e.yaml
+     1  knowledge/evidence/v4/ev-v4-011351-74b8bb39.yaml
+     1  knowledge/evidence/v4/ev-v4-011951-5fb49e03.yaml
+     1  knowledge/evidence/v6/ev-v6-000732-5945fd87.yaml
+     1  knowledge/evidence/v6/ev-v6-000732-f7189541.yaml
+     1  knowledge/evidence/v6/ev-v6-000732-f9c41d5e.yaml
+     1  knowledge/evidence/v6/ev-v6-013508-b4c88d87.yaml
+     1  knowledge/evidence/v6/ev-v6-014702-2d7096db.yaml
+     1  knowledge/evidence/v6/ev-v6-021939-1c7cad28.yaml
+     1  knowledge/evidence/v6/ev-v6-021939-5e7dc0de.yaml
+     1  knowledge/evidence/v6/ev-v6-021939-b430a110.yaml
+     1  knowledge/evidence/v9/ev-v9-003456-9ef48fb5.yaml
+     1  knowledge/evidence/v9/ev-v9-003457-3e28e325.yaml
+     1  knowledge/feedback/2026-09-09-sesion-01/fb-2026-09-09-sesion-01-9deda56d.yaml
+     2  knowledge/spec/ambiguedades.yaml
+     2  knowledge/spec/strategy_spec.yaml
+     2  tests/golden/f08_consultas_referencia.yaml
+     2  tests/unit/test_tramos_de_sesion.py
+     1  tests/unit/test_ventana_no_citable.py
+
+en knowledge/spec/ y docs/spec/, una por linea:
+  docs/spec/reglas.md:1208: ev-v4-011351-74b8bb39 (sustituto ev-v6-000732-f7189541)
+  docs/spec/reglas.md:1208: ev-v1-000959-b82650ad (sustituto ev-v6-000732-5945fd87)
+  knowledge/spec/ambiguedades.yaml:179: ev-v4-001207-0c4ffd4b (sustituto ev-v6-021939-b430a110)
+  knowledge/spec/ambiguedades.yaml:1100: ev-v3-002714-742f2589 (sustituto ev-v6-000732-f9c41d5e)
+  knowledge/spec/strategy_spec.yaml:1620: ev-v4-011351-74b8bb39 (sustituto ev-v6-000732-f7189541)
+  knowledge/spec/strategy_spec.yaml:1620: ev-v1-000959-b82650ad (sustituto ev-v6-000732-5945fd87)
+TOTAL en knowledge/spec/ y docs/spec/: 6
