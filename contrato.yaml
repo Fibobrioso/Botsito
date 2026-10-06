@@ -1,0 +1,34 @@
+rama: trabajo/activacion-a42
+riesgo: alto  # cambia la spec (A-42, reloj_sesiones, huso_grafico) y el motor (la ventana en instantes UTC desde la rejilla H4)
+artefacto: docs/validation/ACTIVACION-A42.md
+# FASE 0: solo el informe, sus anexos y la declaracion de lo leido. El encargo para aqui («espera mi
+# respuesta a la fase 0 antes de cambiar nada fuera del informe»): las rutas de la fase 1 -corpus,
+# ADR nuevo, feedback, spec, motor, tests y las correcciones con recuadro- se anaden en un commit
+# propio tras la respuesta del consultor, con lo que decida (ACTIVACION-A42.md §6).
+rutas_permitidas:
+  - docs/validation/ACTIVACION-A42.md
+  - docs/validation/anexos/ACTIVACION-A42/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+rutas_protegidas:
+  # lo que el encargo dice que no cambia, y lo que esta rama no toca en ninguna fase
+  - .claude/
+  - knowledge/cases/
+  - knowledge/evidence/
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/corpus/libros.yaml
+  - knowledge/corpus/transcripciones/
+  - knowledge/corpus/fotogramas/
+  - knowledge/corpus/tramos_no_citables.yaml
+  - data/manifests/
+  - scripts/transcribir_sesion.py
+comprobaciones:
+  - uv run python docs/validation/anexos/ACTIVACION-A42/medir_filtradas.py
+  - uv run python docs/validation/anexos/ACTIVACION-A42/rejilla_h4_2024.py
+  - uv run python docs/validation/anexos/ACTIVACION-A42/dias_distintos.py
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito state check
+  - make check > make-check.log 2>&1

@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/activacion-a42
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37c-reloj-invierno` (2026-10-06).
+`trabajo/activacion-a42` EN CURSO (2026-10-06): activar A-42 con H2b. Encargo docs/encargos/trabajo-activacion-a42.md; informe docs/validation/ACTIVACION-A42.md.
 
 ## Stable Main State
 49c3098 · merge de `trabajo/reloj-invierno` (tag `stable/F37c-reloj-invierno`): el libro de enero, medido por velas, es UTC y queda declarado en libros.yaml; en enero el trader opera de 06:00 a 14:00 UTC (H2) y el eje de su grafico va en UTC+1, no en UTC+2 fijo. Sobre `stable/F37b-guardias-citas` (fe37973). Informe docs/validation/RELOJ-INVIERNO.md; el registro del cierre, al final de HISTORIA.
@@ -203,9 +203,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 19 (2026-10-06).
+— ninguna desde el Archivo 20 (2026-10-06).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 19 (2026-10-06).
+— ninguna desde el Archivo 20 (2026-10-06).
