@@ -881,6 +881,43 @@ No hay trabajo fuera del encargo sin declarar. Lo único añadido es el parámet
 - **El matiz de la comprobación 4** (la excepción cubre cualquier escalar del objeto A-11 que nombre
   ese id, no solo `evidencia:`) es lo que pide «por par, no por campo». Queda dicho en §9.1.
 
+## 12. Orden de cierre del consultor (2026-10-06)
+
+Copiada tal cual, con los dos runs de la CI de Linux:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/guardias-citas (consultor, 2026-10-06). Revisada: último commit 65c3968, make check sellado con 2060 tests pasados, CI de Linux en fix/guardias-citas run 37481648537 (d69aabd) y run 37490820668 (65c3968), ambos con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA, con los dos runs.
+>
+> TAG: stable/F37b-guardias-citas. Comprueba antes en HISTORIA que el último tag cerrado es stable/F37a-respuestas-ftmo y que stable/F37b-* no existe ni en local ni en origin. Si algo falla, para.
+>
+> DESVIACIONES ACEPTADAS
+> 1. G1 no escribe línea OK propia, solo ERROR, como ventana_no_citable. Ampliar test_historial_sin_git habría sido tocar una guardia existente, y un test aparte comprueba que knowledge validate falla cuando falla G1.
+> 2. La caducidad de la excepción solo cuenta como «sin uso» si el id está supersedido en ese repo, para no tocar los tres tests existentes que montan un knowledge/ mínimo. El test sobre el repo real, reforzado por el revisor, la vigila.
+> 3. Cambio de decisión del consultor sobre A-11, declarado en §9: excepción visible por par en lugar de quitar el id.
+>
+> HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+> - importa · De la rama: A-11 figura RESUELTA y su respaldo citable no contiene el momento del stop; lo que lo decía estaba en un ítem supersedido. Lección: al supersedir un ítem que recorta su cita, se mira qué ambigüedades y reglas lo citan y si el sustituto sigue sosteniéndolas; desde hoy G1 lo hace saltar.
+> - menor · De la rama: la afirmación de un ítem puede decir más que su cita y nada lo mide (§8.3).
+> - Del revisor: nada que el consultor viera y él no.
+>
+> NEXT ACTION (donde lo mande RITUAL.md punto 3)
+> Añade después de S: «U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3).» Los demás puntos no cambian.
+>
+> RITUAL
+> Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+> - registro del cierre y fila de ERRORES-RECURRENTES en la rama;
+> - merge y tag;
+> - commit de estado;
+> - make check sellado;
+> - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+> - CI de main en verde;
+> - borrar trabajo/guardias-citas en local y fix/guardias-citas en origin.
+> No toques .git/REBASE_HEAD.
+>
+> INFORME FINAL
+> Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
+
 ## Estado
 
 **Lista para revisión, NO cerrada (2026-10-06).**

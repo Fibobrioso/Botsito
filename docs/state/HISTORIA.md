@@ -5296,3 +5296,80 @@ su lugar una linea nueva de Technical Debt (respuesta del consultor del 2026-10-
 A-11, punto 3; docs/validation/GUARDIAS-CITAS.md §2, §3 y §8). Su texto literal en «Technical Debt»:
 
 - Nada avisa cuando la spec o las ambiguedades citan un item ev-* supersedido (medido el 2026-10-05, docs/validation/VENTANA-EV-V9.md).
+
+# Registro de cierre · `trabajo/guardias-citas` (2026-10-06)
+
+- Orden de cierre del consultor del 2026-10-06, ejecutada a mano siguiendo `RITUAL.md`: llego en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario. Paga dos lineas de Technical
+  Debt.
+- **Lo que entra:**
+  - G1 (`src/botsito/validation/citas_supersedidas.py`, conectada a `knowledge validate`): en todo
+    `knowledge/spec/`, tambien un fichero nuevo, un item ev-* supersedido solo aparece en el mismo
+    valor escalar de YAML o la misma linea de comentario que su sustituto; `EXCLUIDOS` vacia; UNA
+    excepcion por par, (A-11, `ev-v4-001207-0c4ffd4b`), con caducidad;
+  - G2 (`tests/contract/test_tramos_fuente.py`): `Fuente:` en todo commit que toque
+    `tramos_no_citables.yaml` desde el ancla `c489685` (un sha); `commits_sin_fuente` gana el
+    parametro opcional `que`, solo para el texto del mensaje;
+  - A-10 (dos) y A-18 citan el sustituto de su item supersedido; el comentario de A-41 nombra en una
+    linea al supersedido y a su sustituto;
+  - las dos lineas de Technical Debt salen literales a HISTORIA, entra la de A-11 y el punto U de la
+    Next Action;
+  - la busqueda de candidatos para A-11 y lo que dice el repo de las fuentes documentales y del
+    registro `fb-2026-09-09-sesion-01-76fd91ba` (informe §9.2-§9.3).
+- Desviaciones aceptadas: G1 sin linea OK propia; la caducidad solo cuenta si el id esta
+  supersedido en ese repo; la excepcion por par para A-11 en lugar de quitar el id (cambio de
+  decision del consultor, §9).
+- `Tests Currently Passing`: de 1309 a 1342 funciones (2027 a 2060 casos).
+- Letra: la ultima cerrada era la a de F37 (`stable/F37a-respuestas-ftmo`); `stable/F37b-*` no existe
+  ni en local ni en `origin`.
+- Tag: `stable/F37b-guardias-citas`. El merge es
+  `git rev-parse "stable/F37b-guardias-citas^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `2c22b15`: apertura (encargo, contrato, Archivo 18) con la fase 0;
+  - `f48e912`: G2, G1 escrita sin conectar, A-10 y A-18 con el item vigente;
+  - `44f4336`: el comentario de A-41 y la parada en A-11;
+  - `d69aabd`: G1 conectada con la excepcion por par para A-11;
+  - `65c3968`: el informe del revisor y sus hallazgos;
+  - y el de este registro, que saca tambien el contrato y anade U a la Next Action.
+- CI de Linux, por `fix/guardias-citas` (G2 lee la historia de git):
+  - run 37481648537 sobre `d69aabd`: `failure` con el unico fallo esperado,
+    `test_state_check_ok_on_real_repo` por el nombre `fix/` (1 failed, 2051 passed, 8 skipped);
+  - run 37490820668 sobre `65c3968`: el mismo resultado (1 failed, 2051 passed, 8 skipped).
+  La CI de `main` corre tras el push.
+- Informe: `docs/validation/GUARDIAS-CITAS.md`, con la fase 0, las tres respuestas del consultor, el
+  informe del revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-guardias-citas.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/guardias-citas (consultor, 2026-10-06). Revisada: último commit 65c3968, make check sellado con 2060 tests pasados, CI de Linux en fix/guardias-citas run 37481648537 (d69aabd) y run 37490820668 (65c3968), ambos con el único fallo esperado, el de state check por el nombre fix/. Cópiala tal cual al informe y al registro del cierre en HISTORIA, con los dos runs.
+  >
+  > TAG: stable/F37b-guardias-citas. Comprueba antes en HISTORIA que el último tag cerrado es stable/F37a-respuestas-ftmo y que stable/F37b-* no existe ni en local ni en origin. Si algo falla, para.
+  >
+  > DESVIACIONES ACEPTADAS
+  > 1. G1 no escribe línea OK propia, solo ERROR, como ventana_no_citable. Ampliar test_historial_sin_git habría sido tocar una guardia existente, y un test aparte comprueba que knowledge validate falla cuando falla G1.
+  > 2. La caducidad de la excepción solo cuenta como «sin uso» si el id está supersedido en ese repo, para no tocar los tres tests existentes que montan un knowledge/ mínimo. El test sobre el repo real, reforzado por el revisor, la vigila.
+  > 3. Cambio de decisión del consultor sobre A-11, declarado en §9: excepción visible por par en lugar de quitar el id.
+  >
+  > HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+  > - importa · De la rama: A-11 figura RESUELTA y su respaldo citable no contiene el momento del stop; lo que lo decía estaba en un ítem supersedido. Lección: al supersedir un ítem que recorta su cita, se mira qué ambigüedades y reglas lo citan y si el sustituto sigue sosteniéndolas; desde hoy G1 lo hace saltar.
+  > - menor · De la rama: la afirmación de un ítem puede decir más que su cita y nada lo mide (§8.3).
+  > - Del revisor: nada que el consultor viera y él no.
+  >
+  > NEXT ACTION (donde lo mande RITUAL.md punto 3)
+  > Añade después de S: «U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3).» Los demás puntos no cambian.
+  >
+  > RITUAL
+  > Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+  > - registro del cierre y fila de ERRORES-RECURRENTES en la rama;
+  > - merge y tag;
+  > - commit de estado;
+  > - make check sellado;
+  > - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+  > - CI de main en verde;
+  > - borrar trabajo/guardias-citas en local y fix/guardias-citas en origin.
+  > No toques .git/REBASE_HEAD.
+  >
+  > INFORME FINAL
+  > Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
