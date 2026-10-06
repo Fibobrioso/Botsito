@@ -5,9 +5,10 @@ estado de `stable/F37a-respuestas-ftmo`, y su CI de `main` (run 37411332514) est
 comprobado antes de abrir. Encargo: `docs/encargos/trabajo-guardias-citas.md`. Paga dos líneas de
 Technical Debt de `PROJECT_STATE.md`.
 
-**Estado (2026-10-06, tras la tercera respuesta, §9): G1 y G2 hechas y conectadas; A-11 con UNA
-excepción por par en G1 (§9.1).** El informe sigue el orden en que pasó: fase 0 y primera parada
-(§0-§7), segunda (§8) y tercera (§9). Lo de abajo es la historia de la primera parada:
+**Estado (2026-10-06): lista para revisión, NO cerrada. G1 y G2 hechas y conectadas; A-11 con UNA
+excepción por par en G1 (§9.1); comprobaciones finales y CI de Linux en §10; revisor en §11.** El
+informe sigue el orden en que pasó: fase 0 y primera parada (§0-§7), segunda (§8) y tercera (§9).
+Lo de abajo es la historia de la primera parada:
 - La fase 0 paró porque el recuento de G1 no era cero (§0.a), y el consultor respondió (§1.1).
 - Tres de las cuatro citas pasan a su sustituto (§2).
 - A-11 se para: su sustituto no sostiene lo que la ambigüedad cita.
@@ -710,8 +711,187 @@ citable (b)», y no se ven. Solo se listan ítems ACTIVOS: ninguno lo supersede 
   tramos), hechas. Informe ...».
 - `Tests Currently Passing` pasa de 1309 a 1342 funciones.
 
+## 10. Comprobaciones finales (2026-10-06)
+
+Corrigen lo que §5 y §7 dejaron pendiente o desfasado (hallazgos a1 y b1 del revisor). Esas dos
+secciones se dejan como estaban, como historia de la primera parada.
+
+**`make check > make-check.log 2>&1`**, sobre el árbol de `d69aabd` con todo estadiado:
+- `exit=0`, ninguna línea con `failed`;
+- `CONTRATO: 20 ficheros dentro del contrato de trabajo/guardias-citas (riesgo medio, ...)`;
+- `2060 passed in 900.18s (0:15:00)`;
+- `SELLO: make check en verde sobre el arbol faafa09c2e59374ccf24b8d1ab5fa26b67df78f3`;
+- `PICO DE MEMORIA de make check: 291 MiB en `test``.
+
+El commit de los arreglos del revisor (abajo) pasa por su propio `make check` antes de commitearse,
+porque el hook no deja commitear sin sello, y su salida no puede ir dentro del mismo commit.
+
+**`uv run botsito state check`**, rc 0:
+`OK: rama 'trabajo/guardias-citas' - funcionalidad actual: `trabajo/guardias-citas` EN CURSO
+(2026-10-05): G1 (evidencia supersedida) y G2 (Fuente: en los tramos), hechas. Informe
+docs/validation/GUARDIAS-CITAS.md.`
+
+**CI de Linux:** la rama se empujó como `fix/guardias-citas`.
+- Run **37481648537**, sobre `d69aabd`, `conclusion: failure` con **un solo fallo, el aceptado**:
+  - `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo`;
+  - con `ERROR: PROJECT_STATE declara la rama 'trabajo/guardias-citas'; la rama actual es
+    'fix/guardias-citas'`;
+  - `1 failed, 2051 passed, 8 skipped in 291.37s`.
+- G2 corrió en Linux sobre la historia completa (`fetch-depth: 0`) y pasó.
+
+**Bytes de `PROJECT_STATE.md`:** 23.307 en `main` y 23.285 en la rama, un saldo de **−22** (§9.4).
+
+**Tests nuevos de la rama:** 33 funciones.
+- 24 en `tests/unit/test_citas_supersedidas.py`;
+- 9 en `tests/contract/test_tramos_fuente.py`;
+- `Tests Currently Passing` pasa de 1309 a 1342;
+- no se tocó ningún test existente.
+
+## 11. Informe del revisor
+
+Lanzado con el informe terminado hasta §9 y la CI de `d69aabd` hecha. Se pega tal cual.
+
+## Informe del revisor · trabajo/guardias-citas · 2026-10-06
+
+**Veredicto: lista para la orden del consultor, sin bloqueos.** Ningún hallazgo bloquea. Hay 2 de importancia y 2 menores, todos de forma del informe y no de código. Las cinco comprobaciones aparte salen bien. La base es main en 442a948, la rama lleva 4 commits y HEAD es d69aabd. Ese es el mismo sha de la CI `fix/guardias-citas` (run 37481648537).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El informe está desfasado respecto al estado real. §5 dice «la de G1, al conectarla» y «Pendiente de las paradas» para make check y CI. §7 da +124 bytes, y el saldo real es -22. §7 cuenta «14 + 9» tests. El `## Estado` final dice que «faltan el make check, la CI y el revisor». No consta el run 37481648537, ni la línea `SELLO`, ni los 2060 tests. El consultor puede leer el informe y creer que G1 no está conectada. | `docs/validation/GUARDIAS-CITAS.md:405-466` y `:713-717`. `grep -n "37481648537\|SELLO\|PICO\|2060"` sobre el informe no da ninguna línea. El saldo real está en la sección de PROJECT_STATE más abajo. |
+| a2 | menor | `make-check.log` no existe en el árbol de trabajo. No pude verificar localmente el verde de 2060 tests ni la línea `PICO DE MEMORIA`. Lo que sí consta es la CI: 1 failed, 2051 passed, 8 skipped (suman 2060). | `ls make-check.log` da «No such file». `gh run view 37481648537 --log-failed` da `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` y `1 failed, 2051 passed, 8 skipped`. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da «20 ficheros dentro del contrato». Ningún fichero cae en `rutas_protegidas`. No cambian `strategy_spec.yaml`, `parametros.yaml` ni `knowledge/evidence`, `corpus`, `feedback` o `cases`. `git diff main --stat` sobre `strategy_spec.yaml` sale vacío.
+- **Tests y estado.** Cinco ficheros de test dan 56 pasados: los dos nuevos, `test_historial_sin_git`, `test_feedback_history` y `test_spec_docs_generados`. `uv run botsito state check` da OK con la funcionalidad actual de la rama.
+- **Trailer Fuente:.** Solo `f48e912` y `44f4336` tocan `knowledge/spec`, y ambos llevan `Fuente:` en el cuerpo.
+  - `f48e912` cita `ev-v6-013508-b4c88d87`, `ev-v6-021939-1c7cad28` y `ev-v6-014702-2d7096db`.
+  - `44f4336` cita `ev-v6-000732-f9c41d5e`.
+  - Los cuatro ids existen en `knowledge/evidence/v6/`.
+  - Los pares viejo→nuevo coinciden con el campo `supersede` de cada ítem:
+    - `ev-v1-000448-346d6d90` → `ev-v6-013508-b4c88d87`
+    - `ev-v2-003142-beb4ad3c` → `ev-v6-021939-1c7cad28`
+    - `ev-v4-011951-5fb49e03` → `ev-v6-014702-2d7096db`
+- **Cambios en `ambiguedades.yaml`.** El diff muestra 3 ids sustituidos en `evidencia:` (A-10 dos, A-18 uno) y el comentario de A-41 recortado en otra línea con las mismas palabras. No cambia ningún valor, y `docs/spec/` no cambia.
+- **Citas vigentes.** A-11 sigue citando `ev-v4-001207-0c4ffd4b`, supersedido por `ev-v6-021939-b430a110`, cubierto por la excepción.
+- **Regímenes de cambio.** Solo hay `A` en tests, informe y anexos. No se tocan evidence, feedback, manifests, corpus ni libros. No hay ADR nuevo y no hay informes cerrados modificados. La rama no añade ninguna `cita` a la spec, así que las tres guardias de `modelo.py` no aplican. No se tocó ningún test existente: `git diff main...HEAD -- tests` da 0 líneas eliminadas y solo `A` para los dos ficheros nuevos.
+- **Holdout y material.** No se leyó material protegido. La guardia trabaja con ids.
+- **PROJECT_STATE.**
+  - Pesa 23.307 bytes en main y 23.285 en la rama: saldo **-22**, menor o igual que cero.
+  - Salen las dos líneas de Technical Debt y entra la línea de A-11. Los bytes cuadran con el informe §9.4.
+  - Las dos líneas están LITERALES en `docs/state/HISTORIA.md`, dentro del Archivo 18 (que empieza en la línea 5068), en las líneas 5287 y 5298 («Nada avisa…») y 5287 («Falta un test…» en la línea 5287). HISTORIA solo se amplía: `git diff main...HEAD` no tiene líneas `-`, y hay 1 `# Archivo` nuevo.
+- **Ensayos.** Ningún ensayo de un script que escribe se hizo sobre copias sueltas.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 12 hechos, 0 parciales, 0 no hechos (los dos de verificación externa están hechos con salvedad, ver b1).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Fase 0 a-d entregada antes de código | Hecho | Informe §0; commit `2c22b15` anterior al código. |
+| 2 | Sustituir las 4 citas por su sustituto (resp. 1) | Hecho de otra forma, declarado | Se sustituyen 3. A-11 se deja con excepción por orden del consultor (resp. 3). El informe §8 y §9 lo declaran. |
+| 3 | G1 con la condición del consultor, texto entero, excluidos vacíos (resp. 1, punto 2) | Hecho | `citas_supersedidas.py:46` `EXCLUIDOS = ()`; `:83-92` rglob recursivo. |
+| 4 | Tests que rompen G1 (campo evidencia, nota sin sustituto, con sustituto, fichero nuevo) | Hecho | `test_citas_supersedidas.py:51,64,72,82`, más 10 de bordes. |
+| 5 | G1 en `knowledge validate` con id, sustituto, fichero y línea | Hecho | `knowledge.py:1068-1079`. Mensaje `fichero:línea: nombra X, supersedido por Y`. Test `test_knowledge_validate_lleva_g1`. |
+| 6 | Parada de A-11: UNA excepción por par y su test de caducidad | Hecho | `citas_supersedidas.py:47-53`; tests `test_la_excepcion_*` y `test_caducidad_*`. |
+| 7 | Comentario de A-41 en una línea (resp. 2, punto 2) | Hecho | El diff de `ambiguedades.yaml` junta el id viejo y su sustituto en una línea. |
+| 8 | `commits_sin_fuente` con parámetro `que`; mensaje por defecto byte a byte; los tests existentes no se tocan | Hecho | `historial.py` (diff): solo el f-string cambia a `toca {que} sin trailer`. Test `test_el_mensaje_por_defecto_es_el_de_siempre`. `test_feedback_history.py` sin diff (0 bytes). |
+| 9 | G2 como test en CI con ancla sha `c489685`; falla si no existe; los tres commits listados | Hecho | `test_tramos_fuente.py:35`, `:41-42`. Los tres commits están listados en el docstring (`cfec50b`, `c489685`, `f443eee`). |
+| 10 | Las dos líneas de Technical Debt a HISTORIA, línea de A-11 nueva, saldo ≤ 0 | Hecho | Ver el eje (a). |
+| 11 | §8 «Candidatos para A-11» y el registro del trader (resp. 3, punto 2) | Hecho | Informe §9.2 y §9.3. No leí transcripciones. Sí consta que los candidatos son material citable. |
+| 12 | `make check` y `state check` en verde con su salida en el informe; CI de Linux y su run; revisor al final | Parcial | `state check` OK (lo reejecuté). CI: ver b1. El informe aún no contiene la salida ni el run (hallazgo a1). |
+| 13 | Hallazgo §8.3 sin construir la comprobación | Hecho | §8.3. No hay código nuevo para eso. |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | El número de run de la CI y la salida de `make check` no están en el informe, que es lo que el encargo pide («da el número de run», «con su salida en el informe»). El revisor no puede cerrar ese requisito por sí solo: solo puede confirmarlo por `gh`. | Ver a1. Confirmado: run 37481648537 sobre d69aabd, rama `fix/guardias-citas`, único fallo `test_state_check_ok_on_real_repo` (el fallo aceptado). |
+| b2 | menor | `test_caducidad_en_el_repositorio_real` se llama «caducidad» pero solo comprueba que G1 no da fallos en el repo real. La caducidad la prueba de verdad `test_caducidad_la_excepcion_sin_uso_falla`, y la del repo real se activa por efecto, no por una aserción propia. Es una prueba que dice un poco más de lo que prueba. | `test_citas_supersedidas.py`, final del fichero. |
+
+No hay trabajo fuera del encargo sin declarar. Lo único añadido es el parámetro `que`, que el consultor pidió, y los anexos de medida, que están en `rutas_permitidas`. No se tocaron los protegidos ni `strategy_spec.yaml`.
+
+### Las cinco comprobaciones aparte
+1. **Niega ficheros nuevos de `knowledge/spec/`, también en subcarpeta, y `EXCLUIDOS` vacía: BIEN.**
+   - `citas_supersedidas.py:46` es `EXCLUIDOS: tuple[str, ...] = ()`. `ficheros_vigilados` usa `raiz.rglob("*")`, así que es recursivo.
+   - Los tests pasan: `test_en_un_fichero_nuevo_bajo_knowledge_spec_falla`, `test_un_fichero_nuevo_en_una_subcarpeta_tambien_se_vigila` y `test_la_lista_de_excluidos_esta_vacia`.
+   - Un fichero que no es YAML falla incluso si nombra al sustituto: `test_un_fichero_que_no_es_yaml_…`.
+2. **El ancla de G2 es un sha completo y el test falla si no existe: BIEN.**
+   - `ANCLA_TRAMOS = "c489685f9ef5d1e126f2e3e81872c1f1c5a644fd"`, 40 caracteres hexadecimales, y `test_el_ancla_es_un_sha_completo` lo exige.
+   - `git cat-file -t c489685f…` da `commit`.
+   - `problemas_tramos` devuelve un fallo si `resolver(repo, ancla)` es None. `test_un_ancla_inexistente_falla` lo prueba con `"0"*40`. Tampoco se salta en un clon superficial: devuelve un fallo.
+   - Los tres commits posteriores al ancla que tocan el fichero (`809117b`, `f50b680`, `7120217`) pasan el test del repo real.
+3. **Ningún test nuevo escribe en el repo real: BIEN.**
+   - `grep` de `write_text|mkdir|open|unlink|touch…` sobre los dos ficheros da seis resultados, y todos escriben bajo `tmp_path`:
+     - `test_citas_supersedidas.py:34-35`, helper `_spec(tmp_path, …)`.
+     - `test_tramos_fuente.py:55-56`, `:64`, `:137`, helper `_repo(tmp_path)`.
+   - Los helpers hacen `git init` dentro de `tmp_path`, y `_git` corre con `cwd=repo`, que es `tmp_path`.
+   - Los dos tests que tocan el repo real (`test_repositorio_real` y `test_caducidad_en_el_repositorio_real`) solo leen.
+4. **La excepción es EXACTAMENTE un par (A-11, ev-v4-001207-0c4ffd4b): BIEN.**
+   - `EXCEPCIONES` tiene una sola `Excepcion("A-11", "ev-v4-001207-0c4ffd4b", "respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06")`. El test `test_la_excepcion_es_exactamente_un_par` fija `EXCEPCIONES == (esperada,)`.
+   - Se aplica por par: la clave es `(dueno, viejo)`, donde `dueno` es el `id` del objeto YAML que contiene el escalar. No es por fichero ni por campo.
+   - Quedan fuera, y los tests lo prueban:
+     - otro supersedido de A-11 (`test_la_excepcion_no_cubre_otro_supersedido_de_a11`);
+     - el mismo id en A-12 (`test_la_excepcion_no_cubre_el_mismo_id_en_otra_ambiguedad`);
+     - el par en otro fichero sin objeto A-11;
+     - un comentario.
+   - Matiz: la excepción cubre cualquier escalar dentro del objeto A-11 que nombre ese id, no solo el campo `evidencia:`. Es coherente con «por par, no por campo», y la guardia sigue sin enumerar campos.
+5. **El test de caducidad falla cuando debe: BIEN.**
+   - `test_caducidad_la_excepcion_sin_uso_falla` construye en `tmp_path` un A-11 que cita solo `OTRO`. La guardia devuelve exactamente `excepcion de G1 sin uso: A-11 ya no cita ev-v4-001207-0c4ffd4b; se quita de EXCEPCIONES (src/botsito/validation/citas_supersedidas.py)`.
+   - En el repo real, `test_caducidad_en_el_repositorio_real` pasa hoy porque A-11 aún cita el id (G1 sin fallos). Si A-11 lo deja de citar, `citas_a_supersedidos` añade el problema de excepción sin uso y ese test falla, y también `knowledge validate`.
+   - No repetí el caso por separado en un directorio temporal: la propia función de G1 ya se ejecuta sobre `tmp_path`, y los 56 tests pasan.
+
+### Lo que no pude comprobar
+- **`make check` completo.** No ejecuto cosas que escriben y no hay `make-check.log` en el árbol. Solo cuento con la CI (2051 + 1 fallo aceptado + 8 skipped) y con lo que diga el consultor.
+- **`uv run botsito spec docs --check`.** Esa opción no existe (`unrecognized arguments: --check`). Lo cubrí con `tests/contract/test_spec_docs_generados.py`, que pasa. Que `spec docs --escribir` no cambie nada lo afirma el informe §2.
+- **Si la afirmación de un ítem sostiene su cita (§8.3).** Es el hallazgo del propio informe y no hay comprobación mecánica. No leí citas ni transcripciones.
+- **Las 3 citas del informe contra su fuente.** No comprobé tres citas del informe contra su fuente por esa razón. Solo contrasté los ids y los `supersede`.
+
+### Comandos ejecutados
+- `git branch --show-current`, `git status --short`, `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD`
+- `cat contrato.yaml`, lectura del encargo, `uv run python scripts/contrato_rama.py`
+- Lectura de `citas_supersedidas.py`, `test_citas_supersedidas.py` y `test_tramos_fuente.py`
+- `git diff main...HEAD -- src/botsito/comun/historial.py src/botsito/validation/knowledge.py knowledge/spec/ambiguedades.yaml`
+- `git diff --name-status main...HEAD`
+- `git diff main -- tests/contract/test_feedback_history.py | wc -c` (0)
+- `git log --format='%h%n%B---' main..HEAD -- knowledge/spec`
+- `git diff main --stat -- knowledge/spec/strategy_spec.yaml tests/contract/test_feedback_history.py tests/unit/test_historial_sin_git.py` (vacío)
+- `git diff --name-status main...HEAD -- tests`
+- Grep de `id|supersede` sobre `knowledge/evidence` para los ocho ids
+- `uv run pytest tests/unit/test_citas_supersedidas.py tests/contract/test_tramos_fuente.py tests/unit/test_historial_sin_git.py tests/contract/test_feedback_history.py tests/contract/test_spec_docs_generados.py -q` (56 pasados), `uv run botsito state check` (OK), `uv run botsito spec docs --check` (opción inexistente)
+- `wc -c PROJECT_STATE.md` y `git show main:PROJECT_STATE.md | wc -c`; `git diff main -- PROJECT_STATE.md`
+- `grep` de las dos líneas literales en `docs/state/HISTORIA.md` y de `^# Archivo`
+- `git cat-file -t c489685f…`; `git log c489685..HEAD -- knowledge/corpus/tramos_no_citables.yaml`
+- `git diff main...HEAD -- tests | grep -c '^-[^-]'` (0)
+- Grep de escrituras sobre los dos ficheros de test nuevos
+- `gh run view 37481648537`, `gh run view 37481648537 --log-failed`, `gh run view 37481648537 --json headSha,headBranch` y `git rev-parse HEAD`
+- Dos comandos con `$i` en la ruta fueron bloqueados por la guardia y los reescribí con rutas literales.
+
+### 11.1 Lo hecho con cada hallazgo
+
+- **a1 (importa), arreglado.** Este §10 trae el estado final: la salida de `make check`, el run de la
+  CI, los bytes y los tests. La cabecera y el `## Estado` se actualizaron. §5 y §7 se quedan como
+  historia de la primera parada, y lo dice el principio de §10.
+- **b1 (importa), arreglado.** Igual que a1: el run 37481648537 y la salida de `make check` están en
+  §10.
+- **a2 (menor), sin cambio.** `make-check.log` se borra antes de cada commit por la regla del ritual;
+  sus líneas están copiadas en §10.
+- **b2 (menor), arreglado.** `test_caducidad_en_el_repositorio_real` tiene ahora su propia aserción
+  de caducidad. Sin la excepción, G1 da exactamente un fallo en el repo real, el de A-11 en
+  `ambiguedades.yaml` con `ev-v4-001207-0c4ffd4b`. El día que A-11 deje de citarlo, esa aserción falla.
+- **El matiz de la comprobación 4** (la excepción cubre cualquier escalar del objeto A-11 que nombre
+  ese id, no solo `evidencia:`) es lo que pide «por par, no por campo». Queda dicho en §9.1.
+
 ## Estado
 
-G1 y G2 hechas y conectadas (2026-10-06). A-11 queda con una excepción por par en G1 y su línea de
-Technical Debt. Faltan el `make check` de este commit, `fix/guardias-citas` con la CI de Linux y el
-revisor (secciones siguientes).
+**Lista para revisión, NO cerrada (2026-10-06).**
+- **G1:** conectada a `knowledge validate`, con UNA excepción por par para A-11 y su caducidad.
+- **G2:** test de CI con ancla `c489685`.
+- **Las citas:** A-10 y A-18 citan el ítem vigente, y el comentario de A-41 está en una línea.
+- **Technical Debt:** las dos líneas pasaron a HISTORIA y entró la de A-11.
+- **Comprobaciones:** saldo de bytes −22; `make check` y `state check` en verde; CI de Linux
+  37481648537 con solo el fallo aceptado.
+- **El revisor:** pasado, con 0 bloquea, 2 importa y 2 menores, y lo hecho con cada hallazgo en
+  §11.1.
+- **Para el consultor:**
+  - qué respalda A-11 (§9.2 y §9.3);
+  - el hallazgo §8.3 (afirmación frente a cita), en otra rama.

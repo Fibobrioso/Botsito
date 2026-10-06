@@ -207,14 +207,19 @@ def test_caducidad_la_excepcion_sin_uso_falla(tmp_path: Path) -> None:
 
 
 def test_caducidad_en_el_repositorio_real(repo: Path) -> None:
-    """G1 sobre el repositorio real: sin fallos, y la excepcion de A-11 en uso. Falla en cuanto
-    A-11 deje de citar el id y la excepcion quede viva sin uso."""
+    """G1 sobre el repositorio real: sin fallos con la excepcion, y la excepcion HACE FALTA. Sin
+    ella, la unica aparicion que falla es la de A-11 (`ambiguedades.yaml`); el dia que A-11 deje
+    de citar el id, esa asercion falla y la excepcion se quita (hallazgo b2 del revisor)."""
     from botsito.evidence.modelo import cargar_evidencia
 
     items = cargar_evidencia(repo / "knowledge" / "evidence")
     fallos, vigilados = citas_a_supersedidos(repo, items)
     assert fallos == [], "\n".join(fallos)
     assert vigilados > 0
+    sin_excepcion = citas_a_supersedidos(repo, items, excepciones=())[0]
+    assert len(sin_excepcion) == 1, sin_excepcion
+    assert sin_excepcion[0].startswith("knowledge/spec/ambiguedades.yaml:")
+    assert "nombra ev-v4-001207-0c4ffd4b" in sin_excepcion[0]
 
 
 def test_knowledge_validate_lleva_g1(repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
