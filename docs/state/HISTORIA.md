@@ -5584,3 +5584,65 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 18 (2026-10-05).
+
+# Registro de cierre · `trabajo/reloj-invierno` (2026-10-06)
+
+- Orden de cierre del consultor del 2026-10-06, ejecutada a mano siguiendo `RITUAL.md`: llego en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario.
+- **Lo que entra:**
+  - M1: el libro de enero (`backtesting-analytics ENERO 2026.xlsx`, sha `ee4ade46…`) medido por
+    velas, UTC 58/58 frente a Europe/Madrid 2/58, y declarado en `knowledge/corpus/libros.yaml`;
+    el test del registro real de libros espera tambien enero;
+  - M2, por la regla del encargo: en enero 0 entradas en [05,06) UTC y 11 en [13,14); veredicto H2
+    (el trader opera de 06:00 a 14:00 UTC en invierno);
+  - M3: el reloj del pie de v4 va con el replay; el eje de tres fotogramas de enero casa con
+    Dukascopy con UTC+1 (mediana 2-4 puntos), no con UTC+2;
+  - M4: la rejilla H4 de `anclaje_h4` en las semanas del cambio, con zoneinfo;
+  - una linea de Technical Debt («EL «UTC+2 FIJO» FALLA EN ENERO»), dos filas de
+    HOLDOUT-EXPOSICIONES y el §12 del consultor con las respuestas del trader de las 13:44-13:46.
+- La respuesta del trader NO se registra como feedback: se registra en la activacion de A-42, con
+  sus capturas en «Mensajes del trader» (decision del consultor, RELOJ-INVIERNO.md §2 y §12).
+- Next Action: E se REEMPLAZA y entra V despues de U (orden de cierre). El texto de E que sale,
+  literal:
+
+  > E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Respuesta del trader y medida de enero: RELOJ-INVIERNO.md. La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee. La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.
+
+  Su arranque y su resto, sin la frase de esta rama, estan tambien en el Archivo 19.
+- `Tests Currently Passing`: 1342 funciones, sin cambio (un test renombrado; 2060 casos).
+- Letra: la ultima cerrada era la b de F37 (`stable/F37b-guardias-citas`); `stable/F37c-*` no existe
+  ni en local ni en `origin`.
+- Tag: `stable/F37c-reloj-invierno`. El merge es
+  `git rev-parse "stable/F37c-reloj-invierno^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `10f4980`: apertura (encargo, contrato, Archivo 19) con la fase 0 y la declaracion previa en
+    HOLDOUT-EXPOSICIONES;
+  - `69f9a8b`: M1-M4, la entrada de enero en `libros.yaml`, el test y la deuda;
+  - `0193fe2`: el informe del revisor y sus hallazgos;
+  - `456f4c6`: el §12 del consultor;
+  - y el de este registro, que saca tambien el contrato y cambia E y V en la Next Action.
+- CI: ninguna antes del merge. La rama no toca hooks, rutas ni scripts de la plataforma (`src/`,
+  `scripts/`, `.claude/`, `.github/`), asi que no se empujo como `fix/`. La CI de `main` corre tras
+  el push.
+- Informe: `docs/validation/RELOJ-INVIERNO.md`. Encargo: `docs/encargos/trabajo-reloj-invierno.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/reloj-invierno (consultor, 2026-10-06). Tag: stable/F37c-reloj-invierno.
+  >
+  > ANTES del commit del contrato, un commit propio en la rama con una sección nueva al final del informe, antes del «Estado»: «§12. Respuestas del trader de las 13:44–13:46 (añadido del consultor, 2026-10-06)». Contenido, tal cual:
+  > - Literal, WhatsApp, 2026-10-06, hora de Lima: 13:44 «1- Si esta configurado UTC+2», con capturas de su gráfico de 4 horas; 13:45 «si es por cuestion horaria se oepra a las 6»; 13:46 «el stop conforme se vaya validando los puntos breaker se va acutalziando». No se registran aquí: se registran en la activación de A-42, con las capturas en «Mensajes del trader».
+  > - Lectura del consultor de las capturas, A VERIFICAR en la activación: etiquetas del eje «dom 27 Oct '24 22:00», «jue 31 Oct '24 22:00» y velas a las «14:00»; «dom 03 Nov '24 23:00», «jue 07 Nov '24 23:00» y velas a las «15:00». Con la rejilla de 17:00 America/New_York, eso es Europe/Madrid (con Etc/GMT-2 serían las 23:00 y las 00:00). El consultor lo calculó con zoneinfo; la activación lo repite con el guion de M4 sobre esas dos semanas de 2024.
+  > - Lectura del consultor, no medida: S-7 y la respuesta de las 13:45 apuntan a H2b. Falta que el trader confirme que el lunes 4 de noviembre de 2024 (y el 2 de noviembre de 2026) empieza a las 7 de su gráfico.
+  > - La respuesta de las 13:46 no contesta cuándo se pone el stop (A-11, punto U): no se interpreta.
+  >
+  > Hallazgos del consultor que el revisor no vio o subestimó, para la fila de ERRORES-RECURRENTES:
+  > - IMPORTA (el revisor lo puso como menor, B4): la primera ejecución de M1 pasó por un hueco de la guardia de Claude Code. Lección para el revisor: una guardia rodeada, aunque sea sin querer y con material permitido, es como mínimo «importa» y tiene que salir con dueño en la Next Action, no solo como «queda para su rama».
+  > - MENOR: el inventario listó con `ls` la carpeta del material adicional. Lección: el inventario nombra cada libro por su ruta literal; nunca se lista una carpeta que contiene meses reservados.
+  >
+  > Next Action, en el commit del contrato (punto 3 de RITUAL):
+  > - E se REEMPLAZA por: «E. A-42 MEDIDA (RELOJ-INVIERNO.md): el gráfico del trader va en Europe/Madrid y en enero opera de 06:00 a 14:00 UTC (H2). Pendiente antes del 25 de octubre: H2a frente a H2b (§8.1 y §12; apuntan a H2b, falta la respuesta del trader), y la rama de activación, que corrige huso_grafico y los textos de «UTC+2 FIJO», registra las respuestas del trader con sus capturas y fija las sesiones en instantes UTC (§9).»
+  > - Entra una nueva, después de U: «V. La guardia de Claude Code no inspecciona un guion creado en el mismo comando que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.»
+  >
+  > Luego el ritual tal cual. Informe final: sha de main, tag, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
