@@ -63,6 +63,9 @@ print(f"  {len(ids)} ids; F36 en ellos: {'F36' in ids}; F37 en ellos: {'F37' in 
 
 print("== 4. clon desechable: tag de prueba y state check")
 print(f"  HEAD del clon: {git(CLON, 'rev-parse', '--short', 'HEAD')}")
+# la identidad de git del repo real es local: el clon no la hereda y `git tag -a` la exige
+git(CLON, "config", "user.name", "prueba-fase0")
+git(CLON, "config", "user.email", "prueba@invalid")
 git(CLON, "tag", "-a", TAG, "f8b291c", "-m", "prueba de la fase 0, solo en el clon")
 print("  git tag -l 'stable/*' --sort=-creatordate (3 primeros):")
 for t in git(CLON, "tag", "-l", "stable/*", "--sort=-creatordate").splitlines()[:3]:

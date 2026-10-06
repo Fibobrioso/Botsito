@@ -233,14 +233,17 @@ del riesgo.
 > | 7 | Modificar el precio de una pendiente dentro de la ventana se considera en general gestionar una orden existente, no abrir una operación nueva. | respondida | Nada: el bot sigue negando modificar dentro de la ventana (ADR-0068). Es una restricción ELEGIDA, más estricta que FTMO. |
 > | 8 | Cada instrumento tiene su propio horario de cierre, y remite a la página Symbols, instrumento por instrumento. No menciona bolsas ni otros mercados. | respondida en parte (cuenta el horario del propio instrumento) | Nada: el calendario de EURUSD (`knowledge/cuentas/cierres/`) ya es el mercado relevante. |
 > | 9 | El rollover de lunes a viernes no se considera gap trading. | respondida | Nada: la pausa diaria no es cierre. |
-> | 10 | FTMO no valida estrategias, métodos de tamaño ni patrones de ejecución concretos, y no fija límites numéricos de exposición o de tamaño ni multiplicadores. «Sustancialmente mayor» depende del comportamiento histórico del propio trader. Recomienda evitar aumentos bruscos o desproporcionados del tamaño o del número de operaciones y mantener un tamaño consistente y consciente del riesgo, dentro de las reglas de gestión de riesgo de sus Términos. | respondida sin cifra; no se repregunta | Nada: el riesgo fijo del 0,5 % desde el primer día (ADR-0020) es el patrón histórico de la cuenta, y no hay nada que cambiar. |
+> | 10 | FTMO no valida estrategias, métodos de tamaño ni patrones de ejecución concretos, y no fija límites numéricos de exposición o de tamaño ni multiplicadores. «Sustancialmente mayor» depende del comportamiento histórico del propio trader. Recomienda evitar aumentos bruscos o desproporcionados del tamaño o del número de operaciones y mantener un tamaño consistente y consciente del riesgo, dentro de las reglas de gestión de riesgo de sus Términos. | respondida sin cifra; no se repregunta | Nada. Según el consultor (encargo de `trabajo/respuestas-ftmo`, decisión 1), el riesgo fijo del 0,5 % desde el primer día es el patrón histórico de la cuenta, y no hay nada que cambiar. El 0,5 % medido en el stop lo fija ADR-0020 desde el 2026-09-11. |
 >
 > **Además**, una nota sobre el tipo de cuenta Normal, que no aplica a Swing (ADR-0026): se anota sin
 > efecto.
 >
 > **Lo que eso deja:** A-54 y A-55 siguen ABIERTAS, respondidas en parte (la pregunta 6 sigue sin
 > respuesta); R17 queda contestada sin cifra, y su línea de Technical Debt sale de `PROJECT_STATE.md`
-> a `docs/state/HISTORIA.md`. Los recuadros anteriores no se editan.
+> a `docs/state/HISTORIA.md`. Los recuadros anteriores no se editan. **Dos frases del informe de
+> origen dejan de ser verdad desde este recuadro, y no se editan:** la del Estado («No se ha tocado
+> `ambiguedades.yaml` ni la spec»), porque esta rama cambia el campo `pregunta` de A-54 y A-55; y la
+> del §3 sobre R17 («El repositorio no lo contempla»), porque R17 queda contestada aquí, sin cifra.
 
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
