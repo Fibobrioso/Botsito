@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/respuestas-ftmo
+main
 
 ## Current Feature
-`trabajo/respuestas-ftmo` EN CURSO (2026-10-05): punto T, la respuesta de FTMO del 2026-10-05 sin copiar el correo, y la regla de los tags tras F36z. Lista para revisión. Encargo docs/encargos/trabajo-respuestas-ftmo.md; informe docs/validation/RESPUESTAS-FTMO.md.
+NINGUNA ABIERTA tras `stable/F37a-respuestas-ftmo` (2026-10-05).
 
 ## Stable Main State
-f8b291c · merge de `trabajo/ventana-ev-v9-003456` (tag `stable/F36z-ventana-no-citable`): ev-v9-003457 y ev-v10-010438-024f76b8 corrigen por supersede las ventanas que pisaban un tramo no citable o un segmento que lo solapa; la ventana de todo item activo se comprueba en knowledge validate, evidence new y evidence propose --check. Sobre `stable/F36y-filtradas-con-tramos` (06adac1). Informe docs/validation/VENTANA-EV-V9.md; el registro del cierre, al final de HISTORIA.
+80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-f8b291c · merge: la ventana de todo item activo no pisa lo no citable (VENTANA-EV-V9.md) · tag stable/F36z-ventana-no-citable
+80eba7f · merge: la respuesta de FTMO del 2026-10-05 sin copiar el correo, y el tag tras agotar las letras (RESPUESTAS-FTMO.md) · tag stable/F37a-respuestas-ftmo
 
 ## Tests Currently Passing
 1309 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
