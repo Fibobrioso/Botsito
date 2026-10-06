@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/respuestas-ftmo
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36z-ventana-no-citable` (2026-10-05).
+`trabajo/respuestas-ftmo` EN CURSO (2026-10-05): punto T, la respuesta de FTMO del 2026-10-05 sin copiar el correo, y la regla de los tags tras F36z. Fase 0 entregada. Encargo docs/encargos/trabajo-respuestas-ftmo.md; informe docs/validation/RESPUESTAS-FTMO.md.
 
 ## Stable Main State
 f8b291c · merge de `trabajo/ventana-ev-v9-003456` (tag `stable/F36z-ventana-no-citable`): ev-v9-003457 y ev-v10-010438-024f76b8 corrigen por supersede las ventanas que pisaban un tramo no citable o un segmento que lo solapa; la ventana de todo item activo se comprueba en knowledge validate, evidence new y evidence propose --check. Sobre `stable/F36y-filtradas-con-tramos` (06adac1). Informe docs/validation/VENTANA-EV-V9.md; el registro del cierre, al final de HISTORIA.
@@ -202,9 +202,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 16 (2026-10-05).
+— ninguna desde el Archivo 17 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 16 (2026-10-05).
+— ninguna desde el Archivo 17 (2026-10-05).
