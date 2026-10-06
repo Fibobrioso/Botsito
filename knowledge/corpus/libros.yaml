@@ -50,3 +50,18 @@ libros:
       Controles con el mismo metodo y umbral: agosto (100 % / 2 %) y abril (95 % / 11 %).
     declarado_el: "2026-09-22"
     fuente: [ADR-0039]
+  "ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86":
+    fichero: "Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx"
+    lecturas:
+      - formato: "AAAA/MM/DD HH:MM:SS"
+        huso: UTC
+    medida: >-
+      Velas, 2026-10-06 (RELOJ-INVIERNO M1), sobre TODAS las filas del mes, porque enero no tiene
+      ningun dia en ninguna particion (casos_ocultos y casos_reservados, 0) y la herramienta, que
+      solo mide dias dev de repartos, no tenia nada que medir: entrada dentro de la M1 +-2 puntos,
+      UTC 58 de 58 (100 %), Europe/Madrid 2 de 58 (3 %); Etc/GMT-2, solo como dato, 3 de 58. El
+      formato es el unico del vocabulario que casa con todas las filas. Controles con el mismo
+      metodo y umbral: abril (95 % / 11 %) y agosto (100 % / 2 %), y con la herramienta de main
+      sobre sus dias dev, iguales.
+    declarado_el: "2026-10-06"
+    fuente: [ADR-0039]

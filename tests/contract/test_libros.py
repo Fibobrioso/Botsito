@@ -157,17 +157,20 @@ def test_cobertura_y_libros_se_cruzan(tmp_path: Path) -> None:
 
 
 @pytest.mark.contract
-def test_el_registro_real_declara_mayo_agosto_y_abril_y_nada_mas() -> None:
-    """Enero y septiembre fuera, y es lo correcto: nadie ha medido como se leen (ADR-0039)."""
+def test_el_registro_real_declara_enero_mayo_agosto_y_abril_y_nada_mas() -> None:
+    """Septiembre fuera, y es lo correcto: nadie ha medido como se lee (ADR-0039). Enero entra el
+    2026-10-06, medido por velas (docs/validation/RELOJ-INVIERNO.md, M1): UTC, en el formato de
+    agosto y abril."""
     libros = cargar_libros(REAL)
     manifiesto = yaml.safe_load(
         (REAL / "knowledge/corpus/manifest.yaml").read_text(encoding="utf-8")
     )
     por_sha = {f["sha256"]: f["ruta"] for f in manifiesto["ficheros"]}
     meses = sorted(por_sha[s].rsplit(" ", 2)[-2] for s in libros)
-    assert meses == ["ABRIL", "AGOSTO", "MAYO"]
+    assert meses == ["ABRIL", "AGOSTO", "ENERO", "MAYO"]
     formatos = {por_sha[s].rsplit(" ", 2)[-2]: d.lecturas for s, d in libros.items()}
     assert [(le.formato, le.huso) for le in formatos["MAYO"]] == [(NUEVO, "UTC")]
+    assert [(le.formato, le.huso) for le in formatos["ENERO"]] == [("AAAA/MM/DD HH:MM:SS", "UTC")]
 
 
 @pytest.mark.contract

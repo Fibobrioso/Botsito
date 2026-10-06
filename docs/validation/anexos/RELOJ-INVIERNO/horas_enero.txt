@@ -1,0 +1,21 @@
+
+== 2026-04 (CONTROL): libro 5e5d9b83dc12..., leido en UTC (libros.yaml); entradas: 38
+por hora UTC [h, h+1): 05h 4, 06h 9, 07h 3, 08h 7, 09h 3, 10h 1, 11h 6, 12h 5
+en [05:00, 06:00) UTC: 4
+en [13:00, 14:00) UTC: 0
+fuera de [05:00, 14:00) UTC: 0
+
+== 2026-08 (CONTROL): libro 33a01f1d8124..., leido en UTC (libros.yaml); entradas: 47
+por hora UTC [h, h+1): 05h 7, 06h 9, 07h 3, 08h 6, 09h 4, 10h 1, 11h 11, 12h 6
+en [05:00, 06:00) UTC: 7
+en [13:00, 14:00) UTC: 0
+fuera de [05:00, 14:00) UTC: 0
+
+== 2026-01 (REGLA): libro ee4ade46094c..., leido en UTC (libros.yaml); entradas: 58
+por hora UTC [h, h+1): 06h 5, 07h 10, 08h 13, 09h 3, 10h 2, 11h 7, 12h 7, 13h 11
+en [05:00, 06:00) UTC: 0
+en [13:00, 14:00) UTC: 11
+fuera de [05:00, 14:00) UTC: 0
+
+CONTROL: ninguna entrada en [13:00, 14:00) UTC en abril ni en agosto
+== VEREDICTO M2 (regla del encargo, enero): H2 ([05,06): 0; [13,14): 11; minimo 3)

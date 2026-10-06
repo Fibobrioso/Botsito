@@ -1,0 +1,18 @@
+== fr-v4-9ad0ebb8/1200000 (2026-01-29): 129 minutos con vela en el grafico, de 06:59 a 10:34 del eje; maximos tapados: 0; minimos tapados: 0
+  eje UTC+1, fuera de la caja: 69 minutos; |dif| maximos mediana 2.2 max 34.3; minimos mediana 3.5 max 23.3; todos: mediana 3.2, p90 13.6, max 34.3 puntos
+  eje UTC+1, dentro de la caja: 60 minutos; |dif| maximos mediana 4.6 max 23.8; minimos mediana 7.1 max 33.4; todos: mediana 5.8, p90 15.6, max 33.4 puntos
+  eje UTC+2, fuera de la caja: 69 minutos; |dif| maximos mediana 92.3 max 163.2; minimos mediana 84.6 max 159.1; todos: mediana 90.5, p90 141.6, max 163.2 puntos
+  eje UTC+2, dentro de la caja: 60 minutos; |dif| maximos mediana 107.3 max 203.6; minimos mediana 96.6 max 172.8; todos: mediana 102.0, p90 156.9, max 203.6 puntos
+  barrido 0-180 min, los cuatro mejores (mediana |dif|, desfase, n): 4.0, 60 min, 258; 9.3, 59 min, 258; 9.5, 61 min, 258; 14.7, 58 min, 258
+== fr-v4-9ad0ebb8/1248000 (2026-01-27): 74 minutos con vela en el grafico, de 06:51 a 08:17 del eje; maximos tapados: 1; minimos tapados: 4
+  eje UTC+1, fuera de la caja: 48 minutos; |dif| maximos mediana 2.0 max 10.0; minimos mediana 3.0 max 14.3; todos: mediana 2.3, p90 6.0, max 14.3 puntos
+  eje UTC+1, dentro de la caja: 26 minutos; |dif| maximos mediana 2.1 max 12.9; minimos mediana 3.0 max 13.8; todos: mediana 2.9, p90 7.7, max 13.8 puntos
+  eje UTC+2, fuera de la caja: 48 minutos; |dif| maximos mediana 33.3 max 58.0; minimos mediana 32.6 max 58.9; todos: mediana 33.0, p90 49.1, max 58.9 puntos
+  eje UTC+2, dentro de la caja: 26 minutos; |dif| maximos mediana 28.1 max 65.0; minimos mediana 30.4 max 60.0; todos: mediana 29.3, p90 56.0, max 65.0 puntos
+  barrido 0-180 min, los cuatro mejores (mediana |dif|, desfase, n): 2.8, 60 min, 143; 5.0, 59 min, 143; 5.9, 61 min, 143; 9.0, 58 min, 143
+== fr-v4-9ad0ebb8/1149000 (2026-01-30): 86 minutos con vela en el grafico, de 11:15 a 12:50 del eje; maximos tapados: 0; minimos tapados: 11
+  eje UTC+1, fuera de la caja: 80 minutos; |dif| maximos mediana 2.8 max 14.0; minimos mediana 5.3 max 45.1; todos: mediana 3.8, p90 10.3, max 45.1 puntos
+  eje UTC+1, dentro de la caja: 6 minutos; |dif| maximos mediana 9.0 max 15.0; minimos mediana 6.4 max 20.3; todos: mediana 7.5, p90 15.0, max 20.3 puntos
+  eje UTC+2, fuera de la caja: 80 minutos; |dif| maximos mediana 138.4 max 222.2; minimos mediana 162.2 max 251.1; todos: mediana 151.1, p90 197.9, max 251.1 puntos
+  eje UTC+2, dentro de la caja: 6 minutos; |dif| maximos mediana 152.0 max 174.0; minimos mediana 150.1 max 196.2; todos: mediana 152.0, p90 174.3, max 196.2 puntos
+  barrido 0-180 min, los cuatro mejores (mediana |dif|, desfase, n): 3.9, 60 min, 161; 6.5, 59 min, 161; 7.1, 61 min, 161; 11.2, 58 min, 161
