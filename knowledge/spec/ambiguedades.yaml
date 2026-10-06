@@ -1097,8 +1097,9 @@ ambiguedades:
     # RESUELTA con cartuchos_max 3. La frase la propone el interlocutor y el trader asiente. Junto a
     # ella, ev-v2-001615-d96c699f dice "máximo dos entradas" despues del rompimiento de la liquidez
     # de M15, que es por zona. Las notas de RN-020 sostienen que nada acota el dia salvo el tope
-    # porcentual, y RN-017 (sesion 1) revoca el parar tras la ganadora (ev-v3-002714-742f2589 esta
-    # supersedido por ev-v6-000732-f9c41d5e). NO BLOQUEANTE: RN-016 y RN-020 se escriben sin ella
+    # porcentual, y RN-017 (sesion 1) revoca el parar tras la ganadora
+    # (ev-v3-002714-742f2589 esta supersedido por ev-v6-000732-f9c41d5e). NO BLOQUEANTE: RN-016 y
+    # RN-020 se escriben sin ella
     evidencia:
       - ev-v4-003350-acb03ee7
       - ev-v2-001615-d96c699f

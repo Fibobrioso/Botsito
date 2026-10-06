@@ -1,0 +1,18 @@
+ficheros vigilados (6):
+  knowledge/spec/ambiguedades.yaml
+  knowledge/spec/glossary.yaml
+  knowledge/spec/parametros.yaml
+  knowledge/spec/README.md
+  knowledge/spec/spec_manifest.yaml
+  knowledge/spec/strategy_spec.yaml
+
+apariciones de supersedidos en los vigilados:
+  knowledge/spec/ambiguedades.yaml:179: ev-v4-001207-0c4ffd4b
+  knowledge/spec/ambiguedades.yaml:1101: ev-v3-002714-742f2589
+  knowledge/spec/strategy_spec.yaml:1620: ev-v4-011351-74b8bb39
+  knowledge/spec/strategy_spec.yaml:1620: ev-v1-000959-b82650ad
+  total: 4
+
+G1 sobre 6 ficheros: 1 fallos
+  knowledge/spec/ambiguedades.yaml:179: nombra ev-v4-001207-0c4ffd4b, supersedido por ev-v6-021939-b430a110; un supersedido solo aparece en el mismo valor o la misma linea de comentario que su sustituto
+pasan: 3

@@ -76,3 +76,23 @@ Copiada tal cual:
 > Sigue con el encargo: make check y uv run botsito state check en verde, fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a las paradas 1 y 2 (2026-10-06)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a las paradas 1 y 2 de trabajo/guardias-citas (2026-10-06). Cópiala tal cual al encargo y al informe.
+>
+> 1. A-11: opción (a), CON CONDICIÓN. Antes de quitar el id supersedido, comprueba leyendo solo los campos del ítem (sin transcripciones) que la cita de ev-v1-000620-0f7dea14 sostiene por sí sola lo que A-11 cita: el stop que se introduce al armar la operación.
+>    - Si lo sostiene: quita el id supersedido, A-11 sigue RESUELTA y cita solo ev-v1-000620-0f7dea14. Commit con Fuente:, spec docs --escribir y el procedimiento de AMBIGUEDADES.md.
+>    - Si no lo sostiene: para. A-11 no se queda sin respaldo.
+>    Ni (b), porque el sustituto no lo dice en su cita, ni (c), porque mantenerlo es lo que G1 prohíbe.
+>    HALLAZGO para el informe, sin arreglarlo aquí: la afirmación de ev-v6-021939-b430a110 dice algo (el stop al armar) que su cita no contiene. Choca con «sin inferencias en evidence/». Mide si hay más ítems activos cuya afirmación vaya más allá de su cita solo si existe ya una comprobación que lo haga; si no existe, dilo y no la construyas. Lo decide el consultor en otra rama.
+>
+> 2. Comentario de A-41: opción (a). Reescribe el comentario para que el id viejo y su sustituto queden en la misma línea, sin cambiar lo que dice. Es un comentario de YAML: no cambia ningún valor ni docs/spec/. La (b) no: la condición no se ensancha para que pase un caso.
+>
+> Con eso, el recuento de G1 tiene que dar 0. Conecta G1 a knowledge validate, saca su línea de Technical Debt a HISTORIA y sigue: make check y uv run botsito state check en verde, push de fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final. Saldo de bytes de PROJECT_STATE menor o igual que cero.
+>
+> Rama lista para revisión, NO cerrada.

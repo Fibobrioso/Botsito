@@ -5,8 +5,9 @@ estado de `stable/F37a-respuestas-ftmo`, y su CI de `main` (run 37411332514) est
 comprobado antes de abrir. Encargo: `docs/encargos/trabajo-guardias-citas.md`. Paga dos líneas de
 Technical Debt de `PROJECT_STATE.md`.
 
-**Estado (2026-10-06): G2 hecha; G1 escrita, probada y SIN CONECTAR a `knowledge validate`, por
-dos PARADAS (§6).**
+**Estado (2026-10-06, tras la respuesta a las paradas, §8): G2 hecha; G1 escrita, probada y SIN
+CONECTAR; PARADA en A-11 (§8.1). El comentario de A-41 ya pasa (§8.2).** Lo de abajo es la historia
+de la primera parada (§6):
 - La fase 0 paró porque el recuento de G1 no era cero (§0.a), y el consultor respondió (§1.1).
 - Tres de las cuatro citas pasan a su sustituto (§2).
 - A-11 se para: su sustituto no sostiene lo que la ambigüedad cita.
@@ -463,13 +464,92 @@ Con las dos respuestas:
 - La línea de G2 restó.
 - Al sacar la de G1 (unos 150 bytes) el saldo queda por debajo de cero.
 
+## 8. Respuesta del consultor a las paradas 1 y 2 (2026-10-06), y lo hecho
+
+Copiada tal cual (también al final del encargo):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a las paradas 1 y 2 de trabajo/guardias-citas (2026-10-06). Cópiala tal cual al encargo y al informe.
+>
+> 1. A-11: opción (a), CON CONDICIÓN. Antes de quitar el id supersedido, comprueba leyendo solo los campos del ítem (sin transcripciones) que la cita de ev-v1-000620-0f7dea14 sostiene por sí sola lo que A-11 cita: el stop que se introduce al armar la operación.
+>    - Si lo sostiene: quita el id supersedido, A-11 sigue RESUELTA y cita solo ev-v1-000620-0f7dea14. Commit con Fuente:, spec docs --escribir y el procedimiento de AMBIGUEDADES.md.
+>    - Si no lo sostiene: para. A-11 no se queda sin respaldo.
+>    Ni (b), porque el sustituto no lo dice en su cita, ni (c), porque mantenerlo es lo que G1 prohíbe.
+>    HALLAZGO para el informe, sin arreglarlo aquí: la afirmación de ev-v6-021939-b430a110 dice algo (el stop al armar) que su cita no contiene. Choca con «sin inferencias en evidence/». Mide si hay más ítems activos cuya afirmación vaya más allá de su cita solo si existe ya una comprobación que lo haga; si no existe, dilo y no la construyas. Lo decide el consultor en otra rama.
+>
+> 2. Comentario de A-41: opción (a). Reescribe el comentario para que el id viejo y su sustituto queden en la misma línea, sin cambiar lo que dice. Es un comentario de YAML: no cambia ningún valor ni docs/spec/. La (b) no: la condición no se ensancha para que pase un caso.
+>
+> Con eso, el recuento de G1 tiene que dar 0. Conecta G1 a knowledge validate, saca su línea de Technical Debt a HISTORIA y sigue: make check y uv run botsito state check en verde, push de fix/guardias-citas con la CI de Linux y su número de run, y el revisor con su informe pegado al final. Saldo de bytes de PROJECT_STATE menor o igual que cero.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 8.1 A-11: la condición NO se cumple, PARADA
+
+Campos de `ev-v1-000620-0f7dea14`, leídos con Read del YAML, sin transcripción:
+- tipo `MANAGEMENT`;
+- tema `stop.proteger_al_entrar`;
+- valor 0,75;
+- `cita_literal`: «no olvidarse de poner el cuadro, bueno el cuadro de GAN [...] en 0.75 proteger el
+  trade, a inicio apenas se genere la entrada»;
+- `afirmacion`: «con el cuadro de Gann, proteger el trade en 0,75 apenas se genere la entrada»;
+- ningún ítem lo supersede.
+
+Su cita dice que el trade se protege en 0,75 «a inicio apenas se genere la entrada». **No dice que
+el stop se introduzca al ARMAR la operación.** «Apenas se genere la entrada» admite las dos lecturas
+que A-11 enfrenta: con la orden pendiente, o en cuanto la entrada se llena. Esa es la duda misma de
+A-11, que su `pregunta` dice que se cerró con la respuesta del trader del 2026-09-10 y no con este
+ítem.
+
+Por sí sola no sostiene lo que A-11 cita, así que **el id supersedido no se quita y A-11 no se
+toca**. Por eso G1 sigue dando 1 fallo (`knowledge/spec/ambiguedades.yaml:179`) y **no se conecta**.
+
+Para el consultor quedan tres salidas, sin recomendación porque las tres son de contenido:
+- buscar en el corpus un ítem activo cuya cita diga lo del stop al armar;
+- citar el registro del trader del 2026-09-10 por la vía que admita la spec;
+- o decidir otra cosa.
+
+### 8.2 El comentario de A-41: hecho
+
+El corte del comentario (`knowledge/spec/ambiguedades.yaml:1100-1102`) se movió para que
+`(ev-v3-002714-742f2589 esta supersedido por ev-v6-000732-f9c41d5e)` quede en UNA línea. Medido
+contra `HEAD`:
+- las palabras del fichero entero, uniendo las líneas de comentario, son las mismas;
+- el valor YAML cargado es idéntico;
+- `spec docs --escribir` no cambia ningún fichero.
+
+G1 lo deja pasar.
+
+### 8.3 HALLAZGO, sin arreglarlo aquí
+
+La `afirmacion` de `ev-v6-021939-b430a110` («el stop que se introduce en la operacion es 0,80, ya no
+0,75») dice algo, el stop que se introduce en la operación, que su `cita_literal` («Es 0.80 Ya a 0.75
+Acá nada más Ahora es a 0.8 No a 0.75») no contiene. Choca con «sin inferencias en evidence/».
+
+**No existe ninguna comprobación que mida si una afirmación va más allá de su cita.** La única
+relación que se vigila es la LONGITUD: `src/botsito/evidence/modelo.py:224` rechaza una afirmación
+de más de 2 × la cita + 40 caracteres, y este ítem la cumple. Como pide la respuesta, no se mide
+nada más ni se construye la comprobación. Lo decide el consultor en otra rama.
+
+### 8.4 Medida de G1 tras las dos respuestas
+
+`medir_g1.py`, con su salida en `medir_g1-SALIDA2.txt`:
+- 4 apariciones de supersedidos en los 6 ficheros vigilados;
+- **pasan 3**: las dos de RN-034 y la de A-41;
+- **falla 1**: A-11.
+- **El recuento no da 0.**
+
 ## Estado
 
-PARADA (2026-10-06) en A-11 y en el comentario de A-41 (§6).
-- G2 está hecha y probada.
-- G1 está escrita y probada, y sin conectar.
-- Tres de las cuatro citas pasaron a su sustituto.
-- Falta: las dos decisiones, conectar G1, la línea de Technical Debt de G1, la CI de Linux y el
-  revisor.
+PARADA (2026-10-06) en A-11 (§8.1): la cita de `ev-v1-000620-0f7dea14` no sostiene por sí sola el
+stop al armar la operación.
+- **Hecho:** G2, G1 escrita y probada, A-10 y A-18 con su ítem vigente, y el comentario de A-41.
+- **Sin conectar:** G1, porque daría 1 fallo.
+- **Falta:**
+  - la decisión sobre A-11;
+  - conectar G1;
+  - la línea de Technical Debt de G1;
+  - la CI de Linux;
+  - el revisor.
 
 Rama NO lista para revisión.

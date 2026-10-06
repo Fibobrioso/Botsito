@@ -14,7 +14,7 @@
 trabajo/guardias-citas
 
 ## Current Feature
-`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. G2 hecha; G1 escrita y sin conectar: PARADA en A-11 y el comentario de A-41. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
+`trabajo/guardias-citas` EN CURSO (2026-10-05): G1, ningun item ev-* supersedido citado desde spec y ambiguedades; G2, Fuente: en todo commit que toque tramos_no_citables.yaml. G2 hecha; G1 escrita y sin conectar: PARADA en A-11. Encargo docs/encargos/trabajo-guardias-citas.md; informe docs/validation/GUARDIAS-CITAS.md.
 
 ## Stable Main State
 80eba7f · merge de `trabajo/respuestas-ftmo` (tag `stable/F37a-respuestas-ftmo`): la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965, en un recuadro de FTMO-REGLAS.md sin copiar el correo; A-54 y A-55 la citan y siguen ABIERTAS; R17 sale de Technical Debt; RITUAL.md comprueba el tag antes de crearlo y, agotadas las letras, sigue en el número siguiente con la a. Sobre `stable/F36z-ventana-no-citable` (f8b291c). Informe docs/validation/RESPUESTAS-FTMO.md; el registro del cierre, al final de HISTORIA.
