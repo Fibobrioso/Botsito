@@ -1,0 +1,5 @@
+Lecturas de los fotogramas de v4, escritas ANTES de leer el libro (2026-10-06):
+- 1248000, Tue 27 Jan '26: borde izquierdo de la caja ~07:30 del eje (07:25 en x=648, 07:40 en x=935, 19,1 px/min; caja en x=745). Etiqueta de entrada 1.18754.
+- 1200000, Thu 29 Jan '26: borde izquierdo ~08:41 del eje (08:30 en x=870, 09:15 en x=1155, 6,33 px/min; caja en x=940). Etiqueta de entrada 1.19715.
+- 1149000, Fri 30 Jan '26: borde izquierdo ~12:41 del eje (12:40 en x=1253, 12:45 en x=1318, 13 px/min; caja en x=1268). Etiquetas 1.19395, 1.19376, 1.19323; entrada probable 1.19376.
+Lectura a ojo: +-2 minutos.

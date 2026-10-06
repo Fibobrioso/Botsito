@@ -14,7 +14,7 @@
 trabajo/reloj-invierno
 
 ## Current Feature
-`trabajo/reloj-invierno` EN CURSO (2026-10-06): rama de MEDIDA del reloj del grafico y las horas UTC de invierno con el libro de enero, antes de activar A-42. Encargo docs/encargos/trabajo-reloj-invierno.md; informe docs/validation/RELOJ-INVIERNO.md.
+`trabajo/reloj-invierno` EN CURSO (2026-10-06), medida previa a A-42: docs/validation/RELOJ-INVIERNO.md.
 
 ## Stable Main State
 fe37973 · merge de `trabajo/guardias-citas` (tag `stable/F37b-guardias-citas`): G1, en `knowledge validate`, niega en todo knowledge/spec/ un item ev-* supersedido que no comparte valor o linea de comentario con su sustituto (una excepcion por par, A-11); G2 exige Fuente: en todo commit que toque tramos_no_citables.yaml desde c489685. Sobre `stable/F37a-respuestas-ftmo` (80eba7f). Informe docs/validation/GUARDIAS-CITAS.md; el registro del cierre, al final de HISTORIA.
@@ -35,7 +35,7 @@ U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
-E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Antes de activarla, pregunta al trader a qué hora ve cerrar las velas de 4 horas en invierno (HOJA-ACTIVACION-S4, fuera del repo). La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee. La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.
+E. **A-42 respondida en la sesión 4 (S-7, SESION-04-EXTRACCION.md §3.1), pendiente de activar ANTES del 25 de octubre, con las horas fijadas en UTC (punto 11 del §4)**. Respuesta del trader y medida de enero: RELOJ-INVIERNO.md. La fase 0 de la activación rehace con --solo-filtrar --video las filtradas de v7–v10 y las comprueba contra FILTRADAS-ESCENARIO-B.md; hasta entonces nadie las lee. La fase 0 de la activación parte de la medida de VENTANA-EV-V9.md (21 segmentos visibles tapados por tramos redondeados) y añade a la evidencia de A-42 el ítem ev-v10-010438-024f76b8.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
@@ -128,6 +128,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
 - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
 - NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO CAMBIE (2026-09-22, `trabajo/guardia-ids-docs`).
 - LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril).
+- EL «UTC+2 FIJO» FALLA EN ENERO (2026-10-06, RELOJ-INVIERNO.md).
 - EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
 - `maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS, NO LA EXCURSION MAXIMA (2026-09-21).
 - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
