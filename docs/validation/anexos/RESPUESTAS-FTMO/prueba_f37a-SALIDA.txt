@@ -1,0 +1,27 @@
+== 1. guardia (.claude/hooks/guardia.py, decidir, sobre el repo real)
+  pasa (esperado pasa): git tag -a stable/F37a-respuestas-ftmo -m "resumen"
+  pasa (esperado pasa): git rev-parse --short "stable/F37a-respuestas-ftmo^{commit}"
+  pasa (esperado pasa): git push --atomic origin main stable/F37a-respuestas-ftmo
+  pasa (esperado pasa): git ls-remote --tags origin stable/F37a-respuestas-ftmo
+  pasa (esperado pasa): BOTSITO_ALLOW_MAIN=1 git commit -m "docs(state): trabajo/x, cerrada en main (stable/F37a-respuestas-ftmo)"
+  pasa (esperado pasa): git tag -l "stable/*" --sort=-creatordate
+  BLOQUEA (esperado BLOQUEA): git tag -d stable/F37a-respuestas-ftmo
+  BLOQUEA (esperado BLOQUEA): git tag -f stable/F37a-respuestas-ftmo HEAD
+  BLOQUEA (esperado BLOQUEA): git push origin --delete stable/F37a-respuestas-ftmo
+  BLOQUEA (esperado BLOQUEA): git push origin :refs/tags/stable/F37a-respuestas-ftmo
+== 2. state check, regla 4 (cli.py:166, Completed Features)
+  '- F37a-respuestas-ftmo': no casa
+  '- F36z-ventana-no-citable': no casa
+  '- F37 algo (control)': casa F37
+== 3. knowledge validate: ids_de_funcionalidad (MASTER_PLAN, no tags)
+  35 ids; F36 en ellos: False; F37 en ellos: False
+== 4. clon desechable: tag de prueba y state check
+  HEAD del clon: 54c69fe
+  git tag -l 'stable/*' --sort=-creatordate (3 primeros):
+    stable/F37a-respuestas-ftmo
+    stable/F36z-ventana-no-citable
+    stable/F36y-filtradas-con-tramos
+  _ultimo_tag_estable(clon): ('stable/F37a-respuestas-ftmo', 'f8b291c')
+OK: rama 'main' - funcionalidad actual: NINGUNA ABIERTA tras `stable/F36z-ventana-no-citable` (2026-10-05).
+  state_check(clon) = 0
+== todo como se esperaba

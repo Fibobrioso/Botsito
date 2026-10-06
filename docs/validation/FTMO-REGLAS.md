@@ -214,6 +214,37 @@ del riesgo.
 > | 9 | el corte diario de EURUSD | A-55; P3 |
 > | 10 | el tamaño de posición | R17 (§4 de abajo) |
 
+> **Respuesta de soporte de FTMO a las preguntas 1 a 10 (ticket VDW-DPMWR-965; recuadro añadido el
+> 2026-10-05 en la rama `trabajo/respuestas-ftmo`).** Fuente escrita: correo de `support@ftmo.com`
+> recibido el **2026-10-05 a las 10:29:36 UTC**, en respuesta al correo de Aleks del 2026-10-03 (el
+> de las diez preguntas, literal en el recuadro anterior). **El correo NO se copia**: su pie prohíbe
+> compartirlo sin el consentimiento de FTMO, y el repositorio es público. Lo de abajo es la paráfrasis
+> del consultor del 2026-10-05 (`docs/encargos/trabajo-respuestas-ftmo.md`), por número de pregunta.
+> Las páginas públicas de FTMO que nombra la respuesta son Symbols y Forbidden Trading Practices.
+>
+> | Pregunta | Lo que responde | Estado | Qué cambia en el bot |
+> |---|---|---|---|
+> | 1 | Contesta en bloque a la 1, la 2 y la 3: todo tipo de orden cuenta para el límite de 2.000 órdenes al día. No distingue rechazadas, modificaciones, cancelaciones ni cierres, ni excluye ninguna. | respondida en parte | Nada: el freno (ADR-0067) ya cuenta todo lo que llega al servidor, también lo que el servidor rechaza. Lo que el propio bot niega no sale y no cuenta. |
+> | 2 | La misma respuesta en bloque que la 1. | respondida en parte | Nada: como en la 1. |
+> | 3 | La misma respuesta en bloque que la 1. | respondida en parte | Nada: como en la 1; cancelar y cerrar ya cuentan (ADR-0067 §3). |
+> | 4 | El límite se reinicia a las 00:00 hora de Europa central (CET/CEST) cada día, igual que los objetivos y límites de trading. | respondida | Nada: coincide con `firma_huso_corte` = `Europe/Prague`, medido en las 730 medianoches de 2026 y 2027 (`docs/validation/RESPUESTAS-FTMO.md` §0.b). |
+> | 5 | Colocar pendientes dentro de las dos horas se desaconseja si refleja intención de hacer gap trading y no trading genuino; recuerda que el gap trading está prohibido (Forbidden Trading Practices). No hay prohibición expresa de colocar. | respondida en parte | Nada: el bot sigue negando colocar dentro de la ventana (ADR-0068). Es una restricción ELEGIDA, más estricta que FTMO. |
+> | 6 | Sin respuesta. | sin respuesta | Nada: `cierre_pendientes` sigue en `cancelar` (A-55). |
+> | 7 | Modificar el precio de una pendiente dentro de la ventana se considera en general gestionar una orden existente, no abrir una operación nueva. | respondida | Nada: el bot sigue negando modificar dentro de la ventana (ADR-0068). Es una restricción ELEGIDA, más estricta que FTMO. |
+> | 8 | Cada instrumento tiene su propio horario de cierre, y remite a la página Symbols, instrumento por instrumento. No menciona bolsas ni otros mercados. | respondida en parte (cuenta el horario del propio instrumento) | Nada: el calendario de EURUSD (`knowledge/cuentas/cierres/`) ya es el mercado relevante. |
+> | 9 | El rollover de lunes a viernes no se considera gap trading. | respondida | Nada: la pausa diaria no es cierre. |
+> | 10 | FTMO no valida estrategias, métodos de tamaño ni patrones de ejecución concretos, y no fija límites numéricos de exposición o de tamaño ni multiplicadores. «Sustancialmente mayor» depende del comportamiento histórico del propio trader. Recomienda evitar aumentos bruscos o desproporcionados del tamaño o del número de operaciones y mantener un tamaño consistente y consciente del riesgo, dentro de las reglas de gestión de riesgo de sus Términos. | respondida sin cifra; no se repregunta | Nada. Según el consultor (encargo de `trabajo/respuestas-ftmo`, decisión 1), el riesgo fijo del 0,5 % desde el primer día es el patrón histórico de la cuenta, y no hay nada que cambiar. El 0,5 % medido en el stop lo fija ADR-0020 desde el 2026-09-11. |
+>
+> **Además**, una nota sobre el tipo de cuenta Normal, que no aplica a Swing (ADR-0026): se anota sin
+> efecto.
+>
+> **Lo que eso deja:** A-54 y A-55 siguen ABIERTAS, respondidas en parte (la pregunta 6 sigue sin
+> respuesta); R17 queda contestada sin cifra, y su línea de Technical Debt sale de `PROJECT_STATE.md`
+> a `docs/state/HISTORIA.md`. Los recuadros anteriores no se editan. **Dos frases del informe de
+> origen dejan de ser verdad desde este recuadro, y no se editan:** la del Estado («No se ha tocado
+> `ambiguedades.yaml` ni la spec»), porque esta rama cambia el campo `pregunta` de A-54 y A-55; y la
+> del §3 sobre R17 («El repositorio no lo contempla»), porque R17 queda contestada aquí, sin cifra.
+
 ## 3. Contraste con lo que daba por supuesto el repositorio
 
 **Coinciden:**

@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/respuestas-ftmo
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F36z-ventana-no-citable` (2026-10-05).
+`trabajo/respuestas-ftmo` EN CURSO (2026-10-05): punto T, la respuesta de FTMO del 2026-10-05 sin copiar el correo, y la regla de los tags tras F36z. Lista para revisión. Encargo docs/encargos/trabajo-respuestas-ftmo.md; informe docs/validation/RESPUESTAS-FTMO.md.
 
 ## Stable Main State
 f8b291c · merge de `trabajo/ventana-ev-v9-003456` (tag `stable/F36z-ventana-no-citable`): ev-v9-003457 y ev-v10-010438-024f76b8 corrigen por supersede las ventanas que pisaban un tramo no citable o un segmento que lo solapa; la ventana de todo item activo se comprueba en knowledge validate, evidence new y evidence propose --check. Sobre `stable/F36y-filtradas-con-tramos` (06adac1). Informe docs/validation/VENTANA-EV-V9.md; el registro del cierre, al final de HISTORIA.
@@ -30,8 +30,6 @@ f8b291c · merge: la ventana de todo item activo no pisa lo no citable (VENTANA-
 **AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
-
-T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
@@ -122,7 +120,6 @@ docs/runbooks/ERRORES-RECURRENTES.md.
 - Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
-- PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
 - LA LECTURA PREVIA DE LA TRANSCRIPCION DE v6, DECLARADA COMO EXPOSICION POSIBLE (2026-09-23, `trabajo/a18-transcripciones`, en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
@@ -202,9 +199,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 16 (2026-10-05).
+— ninguna desde el Archivo 17 (2026-10-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 16 (2026-10-05).
+— ninguna desde el Archivo 17 (2026-10-05).

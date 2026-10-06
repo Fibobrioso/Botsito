@@ -1,0 +1,13 @@
+freno de peticiones: CORTE (freno_bucle, 5 iguales) el 2030-07-15 en el instante 1910325601400; desde aqui solo sale lo que protege la cuenta
+== 1. que cuenta el freno
+  compra limite por ENCIMA del ask: Rechazo con motivo precio_invalido
+  peticiones en la traza: 1 (aceptada=[False])
+  freno.total() = 1  -> la rechazada por el servidor CUENTA
+  5 compras iguales: freno.total() = 4, negadas = 1 -> la negada por el bot NO cuenta
+== 2. firma_huso_corte
+  valor en knowledge/cuentas/ftmo-2step-swing-100k.yaml: Europe/Prague
+  730 medianoches (2026-01-01..2027-12-31): 303 a las 23:00 UTC (CET), 427 a las 22:00 UTC (CEST)
+  discrepancias con la regla CET/CEST escrita a mano: 0
+  el freno vuelve a cero en el milisegundo de cada medianoche: si (assert en los 730 dias)
+  2026: verano desde 2026-03-29, invierno desde 2026-10-25
+  2027: verano desde 2027-03-28, invierno desde 2027-10-31
