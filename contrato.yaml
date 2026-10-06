@@ -1,10 +1,10 @@
 rama: trabajo/activacion-a42
 riesgo: alto  # cambia la spec (A-42, reloj_sesiones, huso_grafico) y el motor (la ventana en instantes UTC desde la rejilla H4)
 artefacto: docs/validation/ACTIVACION-A42.md
-# FASE 0: solo el informe, sus anexos y la declaracion de lo leido. El encargo para aqui («espera mi
-# respuesta a la fase 0 antes de cambiar nada fuera del informe»): las rutas de la fase 1 -corpus,
-# ADR nuevo, feedback, spec, motor, tests y las correcciones con recuadro- se anaden en un commit
-# propio tras la respuesta del consultor, con lo que decida (ACTIVACION-A42.md §6).
+# La fase 0 solo permitia el informe, sus anexos y la declaracion de lo leido. Tras la respuesta del
+# consultor a la PARADA (ACTIVACION-A42.md §6.1, 2026-10-06) entran las rutas de la fase 1, paso a
+# paso: corpus (1), ADR nuevo (2), feedback (3), spec (4), motor y tests (5) y las correcciones con
+# recuadro (6).
 rutas_permitidas:
   - docs/validation/ACTIVACION-A42.md
   - docs/validation/anexos/ACTIVACION-A42/
@@ -12,6 +12,36 @@ rutas_permitidas:
   - docs/encargos/
   - PROJECT_STATE.md
   - docs/state/HISTORIA.md
+  # paso 1: el corpus
+  - knowledge/corpus/fuentes.yaml
+  - knowledge/corpus/manifest.yaml
+  # paso 2: el ADR nuevo, el indice y el estado de ADR-0059 (que queda superado)
+  - docs/adr/0069-*.md
+  - docs/adr/README.md
+  - docs/adr/0059-*.md
+  # paso 3: los registros del trader, en la carpeta de la sesion 4 (nueva)
+  - knowledge/feedback/2026-10-04-sesion-04/
+  # paso 4: la spec, sus documentos generados y los cinco sitios de cerrar una ambiguedad
+  - knowledge/spec/
+  - docs/spec/
+  - scripts/hoja_preguntas.py
+  - tests/unit/test_hoja_preguntas.py
+  - tests/unit/test_kit.py
+  # paso 5: el motor, por la puerta de engine/relojes.py, y sus tests
+  - src/botsito/engine/
+  - src/botsito/cli.py
+  - scripts/caja_77_exploratoria.py
+  - scripts/embudo_77.py
+  - tests/unit/
+  - tests/contract/
+  # paso 6: las correcciones con recuadro
+  - docs/adr/0017-*.md
+  - docs/adr/0039-*.md
+  - docs/validation/ABRIL-Y-LA-CAJA.md
+  - docs/runbooks/MIRAR-EL-MATERIAL.md
+  - docs/runbooks/ENTRADA-MARZO.md
+  - docs/runbooks/README.md
+  - CLAUDE.md
 rutas_protegidas:
   # lo que el encargo dice que no cambia, y lo que esta rama no toca en ninguna fase
   - .claude/
@@ -25,10 +55,16 @@ rutas_protegidas:
   - knowledge/corpus/tramos_no_citables.yaml
   - data/manifests/
   - scripts/transcribir_sesion.py
+  - src/botsito/cases/
+  - src/botsito/engine/cuenta.py
+  - src/botsito/engine/broker.py
+  - docs/runbooks/ERRORES-RECURRENTES.md
 comprobaciones:
   - uv run python docs/validation/anexos/ACTIVACION-A42/medir_filtradas.py
   - uv run python docs/validation/anexos/ACTIVACION-A42/rejilla_h4_2024.py
   - uv run python docs/validation/anexos/ACTIVACION-A42/dias_distintos.py
+  - uv run botsito feedback apply --sesion 2026-10-04-sesion-04 --check
   - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
   - uv run botsito state check
   - make check > make-check.log 2>&1

@@ -484,6 +484,56 @@ Y dos cosas de la propuesta que conviene confirmar: el nombre y la categoría de
 (`sesiones_primera_vela_h4`, `ejecucion`, §5.2), y que `civil_operativa` y `grafico` se queden como
 opciones.
 
+### 6.1 Respuesta del consultor a la PARADA (2026-10-06), tal cual
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 (2026-10-06). Cópiala tal cual al informe como §6.1 y sigue con la fase 1.
+>
+> D1 · (a). Vale la lectura del consultor, que abrió las 8 capturas el 2026-10-06. En registrado_por y en el informe: «literal transcrito por el consultor de la captura <ruta> (sha256 <hash>); la sesión no la abrió porque la guardia lo impide (ADR-0038)». La guardia no se toca en esta rama. Porqué: el literal es palabra por palabra, no una paráfrasis como la de A-11, y la captura queda en el corpus con su hash para verificarlo.
+>
+> D2 · (a). «1-B)» no es una burbuja sola: va en la misma burbuja que «2-c)», con una sola hora (15:44). respuesta_literal de F1 = «1-B)\n2-c) la orden se pone y se ejecuta cuando ocurre la mitiga ion». En notas, la pregunta de las 15:38, literal: «1) Este año la hora cambia en Europa el domingo 25 de octubre y en EE. UU. el domingo 1 de noviembre. Me dijiste que desde el 25 empiezas a las 6 de tu gráfico. Desde el lunes 2 de noviembre, ¿a qué hora empieza tu primera sesión en tu gráfico? a) a las 6 b) a las 7 c) otra, ¿cuál?». Y que la parte «2-c)» contesta a otra pregunta, sobre el stop, que no se interpreta (punto U). Porqué: el literal entero es la burbuja; partirla sería editar lo que escribió el trader.
+>
+> D3 · (a), corregida. Fuente de huso_grafico = Europe/Madrid: el ADR nuevo, que cita la medida (RELOJ-INVIERNO §5.4 y M4, y las capturas b y c). F2 (09:53) NO se registra como feedback: pasa al grupo de D4. Porqué: no hay acción sin valor en el modelo, y CORRECT con Europe/Madrid afirmaría más que «etc+2 madrid».
+>
+> D4 · (a). F2, F4, F5 y F6 quedan en el corpus con su captura, en fuentes.yaml y citados literales en el ADR nuevo. F3 (13:45, CONFIRM de ev-v10-010429-0c93f24a) sí se registra.
+>
+> D5 · (a). El paso 4 deja A-42 RESUELTA, huso_grafico y las descripciones. rejilla_h4, el parámetro nuevo y el valor del selector entran en el paso 5 con el motor, con el ADR nuevo en su Fuente:. Porqué: ningún commit queda en rojo.
+>
+> D6 · Los dos: ev-v10-010438-024f76b8 y ev-v10-010429-0c93f24a.
+>
+> D7 · Sí: CLAUDE.md, ENTRADA-MARZO (B0, con la nota de §3.6, sin abrir ni listar nada de marzo), el README de runbooks, ADR-0017 y el índice de ADR. Recuadro donde el documento esté cerrado.
+>
+> Confirmado: sesiones_primera_vela_h4, entero, valor 3, categoría ejecucion, fuente el ADR nuevo; civil_operativa y grafico se quedan como opciones.
+>
+> Añadidos del consultor:
+> 1. Test más: ningún día laborable de 2024 a 2027 lo declara no operable la guardia de la vela irregular. Ella solo puede caer en días de rejilla sin mercado; si cae en uno laborable, PARA y dímelo.
+> 2. Lo de §3.6 (cases/ cuenta la ventana en huso_operativa, y del 9 al 27 de marzo la ventana congelada saldría una hora tarde con H2b) es pendiente con dueño: la rama de entrada de marzo, antes de su paso b. Escríbelo así en el informe; entra en la Next Action en el commit del contrato, al cerrar.
+> 3. Exposiciones del consultor, a la fila del 2026-10-06 de HOLDOUT-EXPOSICIONES, hoy: (a) abrió las 8 capturas de «Mensajes del trader»: texto de WhatsApp del 2026-10-06 y dos gráficos H4 de octubre y noviembre de 2024; ningún día de 2026; (b) listó por el puente, de forma recursiva, «Material adicional de su operativa»: vio nombres y tamaños de los ficheros de las subcarpetas de marzo, mayo y septiembre, sin abrir ninguno; es el mismo error de §1.3.
+> 4. Hallazgos del consultor para la tabla de ERRORES-RECURRENTES en el cierre (no la toques ahora; apúntalos en el informe para que no vivan solo en el chat): (a) el consultor listó una carpeta que contiene meses reservados; (b) el consultor dio un prompt que afirmaba la CI de main en verde con un hueco «<NÚMERO>» sin rellenar, y la rama se borró con esa afirmación (salió bien: run #226 en verde). Lección: un prompt del consultor no afirma un hecho con un hueco; o lo comprueba él, o el prompt manda comprobarlo.
+>
+> Lo demás, como el encargo: commits separados con Fuente:, fix/activacion-a42 y CI de Linux con su número de run, make check y uv run botsito state check en verde, y revisor con su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 6.2 Pendiente con dueño, y hallazgos para el cierre
+
+- **Pendiente con dueño: la rama de entrada de marzo, antes de su paso b.** `cases/` (kit,
+  fidelidad, ingesta y hoja) cuenta la ventana de cada caso en `huso_operativa`; con H2b, del 9 al
+  27 de marzo de 2026 la ventana congelada en `ventanas.yaml` saldría una hora tarde (§3.6). Entra
+  en la Next Action en el commit del contrato, al cerrar (añadido 2 del consultor).
+- **Para la fila de `trabajo/activacion-a42` en ERRORES-RECURRENTES, al cerrar** (añadido 4; esa
+  tabla no se toca en esta rama):
+  - (a) el consultor listó, por el puente y de forma recursiva, una carpeta que contiene meses
+    reservados (nombres y tamaños de las subcarpetas de marzo, mayo y septiembre, sin abrir
+    ninguno); la sesión hizo lo mismo con un `ls` no recursivo (§1.3). Lección, la del cierre de
+    `trabajo/reloj-invierno`: nunca se lista una carpeta que contiene meses reservados; cada
+    fichero se nombra por su ruta literal;
+  - (b) el consultor dio un prompt que afirmaba la CI de `main` en verde con un hueco «<NÚMERO>»
+    sin rellenar, y la rama se borró con esa afirmación (salió bien: run #226 en verde). Lección:
+    un prompt del consultor no afirma un hecho con un hueco; o lo comprueba él, o el prompt manda
+    comprobarlo.
+
 ## 7. Fase 0 f · Declaración de lo leído
 
 Fila del 2026-10-06 en `docs/validation/HOLDOUT-EXPOSICIONES.md`, escrita el mismo día:
@@ -506,6 +556,26 @@ Nada de febrero ni de julio. De marzo, el nombre de su subcarpeta.
 - Una fila en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 
 El contrato solo permite hoy esas rutas. Las de la fase 1 se añaden tras la respuesta.
+
+## 9. Fase 1
+
+Por el orden del encargo, un commit por paso, cada uno con su `Fuente:`. El contrato se amplió con
+las rutas de la fase 1 en el commit del paso 1 (no en uno propio, como decía §5.6: ahorra un
+`make check` y el contrato lo explica en su cabecera).
+
+### 9.1 Paso 1 · El corpus
+
+- **El renombrado lo hizo Aleks, no la sesión.** La guardia bloquea también `mv` sobre una imagen
+  del material adicional («origen de `mv`: a.png», misma regla que §1.2), y no se rodea: Aleks
+  ejecutó los ocho `mv` en su terminal (prefijo `!`), con los nombres del encargo. Los sha256
+  después del renombrado son los de la tabla de §1.1, fichero a fichero.
+- `knowledge/corpus/fuentes.yaml`: la entrada de «Mensajes del trader» crece con las ocho capturas,
+  su fecha de entrega, su papel (entrada de la activación de A-42) y las cautelas: dos números del
+  trader, los dos suyos y confirmados por Aleks, sin ningún nombre ni número en el repo; los
+  literales transcritos por el consultor porque la guardia no deja abrir las imágenes; y los tres
+  mensajes sobre el stop, que no se registran ni se interpretan.
+- `uv run botsito corpus inventory`: «OK: manifiesto escrito»; `material_adicional` pasa de 51 a 59
+  ficheros. Las ocho entradas nuevas de `manifest.yaml` llevan los sha256 de §1.1.
 
 ## Estado
 

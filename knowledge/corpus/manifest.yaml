@@ -115,6 +115,38 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-0208-zonas-de-control.png
   sha256: b119cac7c49fa7df7606927ef750a2e0e248db950fd3f5ea417ebc7ea9003516
+- bytes: 94987
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-0953-reloj-grafico.png
+  sha256: c39e15b541d3e03590da8b2de6325939e077f397ad0816376a58a22b2f9330ed
+- bytes: 70623
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-0959-reloj-grafico.png
+  sha256: a6f82bdd1134cad487f9569abb12dcc8c985b125bccadb53b2fe0f377c9ad55b
+- bytes: 95721
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1344-grafico-h4-nov-2024.jpeg
+  sha256: 1b7b5d3a2410a51c67f707b469e9735c597c385b483bb1b016525fa1d53ec223
+- bytes: 89305
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1344-grafico-h4-oct-2024.jpeg
+  sha256: 46e5ff19554f78fc99f665459e36ad6b8db76aca0acb874861a4aa3a2c4b9a0a
+- bytes: 184056
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1344-graficos-h4-y-utc2.png
+  sha256: 063a20cb667a8494fec2e0a26b3641c9b0b378dbe4b261d4103bdcf95170a082
+- bytes: 229789
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1345-se-opera-a-las-6-y-stop.png
+  sha256: 5ca9c354747dfd41a9dca7c422939b2206c8b9f84d30e1fb3f0f55d42138d27c
+- bytes: 40762
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1536-vela-3-nov-y-mitigacion.png
+  sha256: 3f0c06eb25a24609570be45d8656da8d86ed9da78f5b5a26955f32591f60e531
+- bytes: 377183
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1544-respuestas-1b-2c.png
+  sha256: 0967a72522a21aef5c275d4f1d2c2e35d166f5c4aba978db0a97833064e19267
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2182,8 +2214,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 4403289
-    ficheros: 51
+    bytes: 5585715
+    ficheros: 59
   video_original:
     bytes: 51538675469
     ficheros: 10
