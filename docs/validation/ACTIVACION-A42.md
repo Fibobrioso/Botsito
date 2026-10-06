@@ -577,6 +577,16 @@ las rutas de la fase 1 en el commit del paso 1 (no en uno propio, como decía §
 - `uv run botsito corpus inventory`: «OK: manifiesto escrito»; `material_adicional` pasa de 51 a 59
   ficheros. Las ocho entradas nuevas de `manifest.yaml` llevan los sha256 de §1.1.
 
+### 9.2 Paso 2 · ADR-0069, antes de citarlo en ningún sitio
+
+`docs/adr/0069-a42-las-sesiones-son-velas-h4-de-la-rejilla.md`, con su fila en el índice. Decide
+H2b con el porqué del encargo, la puerta del motor (`rejilla_h4`, `sesiones_primera_vela_h4`, las
+horas nominales), `huso_grafico` = Europe/Madrid por la medida (D3), qué se registra y qué queda
+en el corpus (D2, D4), lo que no cambia y el pendiente de marzo. Deja superado ADR-0059: su
+estado y su recuadro cambian en el paso 6, con las demás correcciones. A partir de aquí el
+informe lo cita por su id (hasta este commit no podía: `knowledge validate` rechaza un id que no
+existe).
+
 ## Estado
 
 **EN CURSO: PARADA de la fase 0 (2026-10-06).** Espera la respuesta del consultor al §6.
