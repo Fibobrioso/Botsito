@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/reloj-invierno
+main
 
 ## Current Feature
-`trabajo/reloj-invierno` LISTA PARA REVISION (2026-10-06), medida previa a A-42: docs/validation/RELOJ-INVIERNO.md.
+NINGUNA ABIERTA tras `stable/F37c-reloj-invierno` (2026-10-06).
 
 ## Stable Main State
-fe37973 · merge de `trabajo/guardias-citas` (tag `stable/F37b-guardias-citas`): G1, en `knowledge validate`, niega en todo knowledge/spec/ un item ev-* supersedido que no comparte valor o linea de comentario con su sustituto (una excepcion por par, A-11); G2 exige Fuente: en todo commit que toque tramos_no_citables.yaml desde c489685. Sobre `stable/F37a-respuestas-ftmo` (80eba7f). Informe docs/validation/GUARDIAS-CITAS.md; el registro del cierre, al final de HISTORIA.
+49c3098 · merge de `trabajo/reloj-invierno` (tag `stable/F37c-reloj-invierno`): el libro de enero, medido por velas, es UTC y queda declarado en libros.yaml; en enero el trader opera de 06:00 a 14:00 UTC (H2) y el eje de su grafico va en UTC+1, no en UTC+2 fijo. Sobre `stable/F37b-guardias-citas` (fe37973). Informe docs/validation/RELOJ-INVIERNO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-fe37973 · merge: G1, ningun item supersedido citado en knowledge/spec/, y G2, Fuente: en los tramos (GUARDIAS-CITAS.md) · tag stable/F37b-guardias-citas
+49c3098 · merge: el reloj de invierno, medido; enero UTC en libros.yaml y en enero el trader opera 06-14 UTC (RELOJ-INVIERNO.md) · tag stable/F37c-reloj-invierno
 
 ## Tests Currently Passing
 1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
