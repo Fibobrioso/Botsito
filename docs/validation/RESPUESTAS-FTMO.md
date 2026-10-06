@@ -424,6 +424,46 @@ Fuera del encargo (cada cosa justificada, sin hallazgo):
 - **Una cifra que el revisor midió cambia tras su pasada:** el saldo de `PROJECT_STATE.md` pasa de
   −63 a −59 (§4), porque la Current Feature dice ahora «Lista para revisión».
 
+## 6. Orden de cierre del consultor (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/respuestas-ftmo (consultor, 2026-10-05). Revisada: último commit 2bc23a1, make check sellado con 2027 tests pasados. La rama solo toca documentación y no lleva fix/ ni CI de Linux. Cópiala tal cual al informe y al registro del cierre en HISTORIA. El diagnóstico tras cerrar la terminal confirmó que no se había ejecutado ningún paso del ritual.
+>
+> TAG: stable/F37a-respuestas-ftmo. Es el primero de la serie F37 (RITUAL.md, las dos líneas de esta rama). Comprueba antes que el último tag cerrado en HISTORIA es stable/F36z-ventana-no-citable y que stable/F37a-* no existe ni en local ni en origin. Si algo falla, para.
+>
+> DESVIACIÓN ACEPTADA
+> 1. En A-54 y A-55 se sustituyó «respuesta pendiente» por la frase nueva en vez de añadirla, porque juntas el campo afirmaría algo falso. El resto del campo no cambia.
+>
+> HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+> - importa · Del consultor (ya en el §3 del informe): dio por existente en RITUAL.md una regla que solo estaba en las órdenes de cierre de F36y y F36z. Lección: antes de escribir en un encargo «junto a la regla X de <fichero>», se lee esa regla en el fichero; si no se puede leer, se escribe «comprueba si existe». La fase 0 lo detectó y paró, como debía.
+> - Del revisor: nada que el consultor viera y él no. Sus a-1, a-2, a-3 y b-1 están arreglados.
+>
+> NEXT ACTION EN EL COMMIT DE ESTADO
+> - T sale, porque pasa a HISTORIA con este cierre.
+> - Los demás puntos no cambian.
+>
+> RITUAL
+> Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+> - registro del cierre y fila de ERRORES-RECURRENTES en la rama;
+> - merge y tag;
+> - commit de estado;
+> - make check sellado;
+> - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+> - CI de main en verde;
+> - borrar trabajo/respuestas-ftmo en local (no hay fix/ remota).
+> No toques .git/REBASE_HEAD: es un resto del 2026-09-23 y no hay ningún rebase en curso.
+>
+> INFORME FINAL
+> Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
+
+T sale de `PROJECT_STATE.md` en el commit del contrato, en la rama, y no en el de estado: así lo
+manda `RITUAL.md` (punto 3 de «el contrato sale de la rama»), porque su texto entra en HISTORIA en el
+mismo commit y en `main`, tras el tag, HISTORIA ya no puede cambiar. El resultado en `main` es el que
+pide la orden. Mismo camino que R en `trabajo/ventana-ev-v9-003456`.
+
 ## Estado
 
 Lista para revisión, NO cerrada (2026-10-05). Fase 0, decisiones 1 a 4 y la respuesta del

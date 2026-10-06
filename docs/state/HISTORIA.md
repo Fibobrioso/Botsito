@@ -4982,3 +4982,85 @@ una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al reg
 La responde FTMO el 2026-10-05 en el ticket VDW-DPMWR-965, pregunta 10, sin cifra: no fija limites numericos de tamano, «sustancialmente mayor» depende del comportamiento historico del propio trader, y el riesgo fijo del 0,5 % desde el primer dia es el patron historico de la cuenta. No se repregunta (parafrasis del consultor; docs/validation/FTMO-REGLAS.md, recuadro del 2026-10-05). Encargo de `trabajo/respuestas-ftmo`, decision 3; docs/validation/RESPUESTAS-FTMO.md. No entra otra linea en su lugar. Su texto literal en «Technical Debt»:
 
 - PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
+
+# Next Action HECHA · T · sale de PROJECT_STATE.md en trabajo/respuestas-ftmo (2026-10-05)
+
+La hace esta rama: la respuesta de FTMO del 2026-10-05 al ticket VDW-DPMWR-965 queda registrada sin
+copiar el correo (orden de cierre del consultor del 2026-10-05, «NEXT ACTION EN EL COMMIT DE
+ESTADO»; `docs/runbooks/RITUAL.md`, punto 3). Su texto literal en PROJECT_STATE.md:
+
+T. Rama corta trabajo/respuestas-ftmo: registrar la respuesta de FTMO del 2026-10-05 (ticket VDW-DPMWR-965) sin copiar el correo literal; prompt del consultor.
+
+# Registro de cierre · `trabajo/respuestas-ftmo` (2026-10-05)
+
+- Orden de cierre del consultor del 2026-10-05, ejecutada a mano siguiendo `RITUAL.md`: llego en un
+  texto pegado, y la skill `cerrar-rama` solo la invoca el usuario. Es el punto T de la Next Action.
+  Un diagnostico previo, tras cerrarse la terminal por error, confirmo que no se habia ejecutado
+  ningun paso del ritual (rama en `2bc23a1`, `main` = `origin/main` en `54c69fe`, sin tag F37a).
+- **Lo que entra:**
+  - en `docs/validation/FTMO-REGLAS.md`, un recuadro fechado con la respuesta de FTMO del
+    2026-10-05 al ticket VDW-DPMWR-965, una fila por pregunta 1-10, en parafrasis del consultor y sin
+    copiar el correo; «que cambia» dice «nada» en las diez;
+  - A-54 y A-55: solo el campo `pregunta`, con su espejo en `docs/spec/ambiguedades.md`; siguen
+    ABIERTAS, con la misma clase y bloqueante;
+  - la linea de R17 sale de Technical Debt y pasa literal a HISTORIA, sin otra en su lugar;
+  - en `docs/runbooks/RITUAL.md`, las dos lineas de antes del tag (mirar en HISTORIA el ultimo tag
+    cerrado y que el nuevo no exista; agotadas las letras, el numero siguiente con la a) y que tras
+    `stable/F36z` la serie sigue en `stable/F37a-<nombre>`;
+  - dos anexos con su salida: `prueba_f37a.py` (el tag F37a frente a cada lector del formato, en un
+    clon desechable) y `medir_freno_huso.py`.
+- Desviacion aceptada: en A-54 y A-55 «respuesta pendiente» se sustituyo por la frase nueva en vez de
+  anadirla, porque juntas el campo afirmaria algo falso; el resto del campo no cambia.
+- `Tests Currently Passing`: no cambia (1309 funciones, 2027 casos).
+- `PROJECT_STATE.md`: de 23.670 bytes en `main` a 23.611 en la rama; con T fuera, menos.
+- Letra: la ultima cerrada era la z (`stable/F36z-ventana-no-citable`, registro de cierre de
+  `trabajo/ventana-ev-v9-003456`); `stable/F37a-*` no existe ni en local ni en `origin`. Es el primer
+  tag de la serie F37.
+- Tag: `stable/F37a-respuestas-ftmo`. El merge es
+  `git rev-parse "stable/F37a-respuestas-ftmo^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `64b6f60`: apertura (encargo, contrato, Archivo 17) con la fase 0;
+  - `0e1457c`: la respuesta en FTMO-REGLAS.md, A-54 y A-55, R17 fuera de Technical Debt y las lineas
+    de RITUAL;
+  - `2bc23a1`: el informe del revisor y sus hallazgos;
+  - y el de este registro, que saca tambien el contrato y T.
+- CI de Linux: ninguna; la rama no se empujo como `fix/`, porque solo toca documentacion (ni
+  `.claude/`, ni hooks, ni rutas). La CI corre en `main` tras el push.
+- Informe: `docs/validation/RESPUESTAS-FTMO.md`, con la fase 0, la respuesta del consultor, el
+  informe del revisor y la orden de cierre. Encargo: `docs/encargos/trabajo-respuestas-ftmo.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/respuestas-ftmo (consultor, 2026-10-05). Revisada: último commit 2bc23a1, make check sellado con 2027 tests pasados. La rama solo toca documentación y no lleva fix/ ni CI de Linux. Cópiala tal cual al informe y al registro del cierre en HISTORIA. El diagnóstico tras cerrar la terminal confirmó que no se había ejecutado ningún paso del ritual.
+  >
+  > TAG: stable/F37a-respuestas-ftmo. Es el primero de la serie F37 (RITUAL.md, las dos líneas de esta rama). Comprueba antes que el último tag cerrado en HISTORIA es stable/F36z-ventana-no-citable y que stable/F37a-* no existe ni en local ni en origin. Si algo falla, para.
+  >
+  > DESVIACIÓN ACEPTADA
+  > 1. En A-54 y A-55 se sustituyó «respuesta pendiente» por la frase nueva en vez de añadirla, porque juntas el campo afirmaría algo falso. El resto del campo no cambia.
+  >
+  > HALLAZGOS PARA ERRORES-RECURRENTES (fila de la rama)
+  > - importa · Del consultor (ya en el §3 del informe): dio por existente en RITUAL.md una regla que solo estaba en las órdenes de cierre de F36y y F36z. Lección: antes de escribir en un encargo «junto a la regla X de <fichero>», se lee esa regla en el fichero; si no se puede leer, se escribe «comprueba si existe». La fase 0 lo detectó y paró, como debía.
+  > - Del revisor: nada que el consultor viera y él no. Sus a-1, a-2, a-3 y b-1 están arreglados.
+  >
+  > NEXT ACTION EN EL COMMIT DE ESTADO
+  > - T sale, porque pasa a HISTORIA con este cierre.
+  > - Los demás puntos no cambian.
+  >
+  > RITUAL
+  > Sigue docs/runbooks/RITUAL.md con la skill cerrar-rama:
+  > - registro del cierre y fila de ERRORES-RECURRENTES en la rama;
+  > - merge y tag;
+  > - commit de estado;
+  > - make check sellado;
+  > - push atómico de main y el tag (si el clasificador lo bloquea, para y dame el comando con «!»);
+  > - CI de main en verde;
+  > - borrar trabajo/respuestas-ftmo en local (no hay fix/ remota).
+  > No toques .git/REBASE_HEAD: es un resto del 2026-09-23 y no hay ningún rebase en curso.
+  >
+  > INFORME FINAL
+  > Sha de main, tag y el sha al que apunta, run de la CI de main, ramas que quedan y tamaño de PROJECT_STATE.
+- T sale de `PROJECT_STATE.md` en este commit, en la rama, y no en el de estado: lo manda
+  `RITUAL.md`, punto 3, porque su texto entra aqui en el mismo commit y en `main`, tras el tag,
+  HISTORIA ya no puede cambiar. El resultado en `main` es el que pide la orden.
