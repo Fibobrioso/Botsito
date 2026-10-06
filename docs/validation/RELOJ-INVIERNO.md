@@ -174,6 +174,12 @@ CONTROL: declarado UTC -> COINCIDE
 DATASETS: eurusd-m1-2026-01-e37291d4, eurusd-m1-2026-04-990211bd, eurusd-m1-2026-08-0d42230e
 ```
 
+> **Nota (revisor, A1).** Esta salida es la de ANTES de declarar enero en `libros.yaml`.
+> Ejecutado hoy, con la entrada ya commiteada, el guion da las mismas cifras (58/58, 2/58, 3/58).
+> Solo cambian dos líneas de enero: `declarado: UTC` y `CONTROL: declarado UTC -> COINCIDE`. Ese
+> control es circular, porque compara el libro con la declaración que salió de esta misma medida. La
+> salida válida es la de arriba.
+
 ### 4.3 El control con la herramienta de `main`, tal cual
 
 `scripts/huso_por_velas.py --libro <ABRIL|AGOSTO> --mes 2026-0X` sobre sus 21 días `dev` cada uno
@@ -379,9 +385,13 @@ en lugar de 7–11 y 11–15.
 ## 8. Veredicto, y lo que esta rama NO decide
 
 **Veredicto por la regla escrita (M2): H2.** En enero el trader opera de 06:00 a 14:00 UTC, no de
-05:00 a 13:00. M3 lo confirma por otra vía, sin depender de la regla: en enero el eje de su
-gráfico va en UTC+1, con mediana 2–4 puntos frente a Dukascopy en tres fotogramas, y el único
-mejor desfase es 60 minutos. **La medida contradice «UTC+2 FIJO»** (huso_grafico, ADR-0039, R0 de
+05:00 a 13:00. M3 lo APOYA por otra vía, sin depender de la regla: en enero el eje de su gráfico
+va en UTC+1, con mediana 2–4 puntos frente a Dukascopy en tres fotogramas, y el único mejor
+desfase es 60 minutos.
+- Es apoyo, no decisión (revisor, B1): una medida por píxeles, calibrada a mano y no
+  pre-registrada (§5.4), que sustituye a la comparación con leyenda O/H/L/C del encargo.
+- Las diferencias MÁXIMAS que pedía el encargo, fuera de la caja: con UTC+1, 34,3, 14,3 y 45,1
+  puntos; con UTC+2, 163,2, 58,9 y 251,1 (revisor, B3; tabla del §5.4). **La medida contradice «UTC+2 FIJO»** (huso_grafico, ADR-0039, R0 de
 ABRIL-Y-LA-CAJA, MIRAR-EL-MATERIAL, el comentario de A-42 y la lectura provisional de ADR-0059):
 - el «UTC+2» del fotograma 1200000 es la hora del replay con una etiqueta que no describe el eje
   de enero;
@@ -446,6 +456,126 @@ Nada de `src/`, `scripts/`, `.claude/`, `knowledge/spec/`, `knowledge/evidence/`
 `knowledge/feedback/` ni `knowledge/cases/`. No se tocan hooks ni rutas de la CI, así que no
 hace falta push de `fix/reloj-invierno`.
 
+## 11. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| A1 | importa | Nota en §4.2: la salida commiteada es la de antes de declarar el libro, y la de hoy solo añade un control circular. No se regenera. |
+| A2 | menor | **No se sostiene.** La fila de la declaración previa entró en 10f4980 (`git show --stat 10f4980` lista `docs/validation/HOLDOUT-EXPOSICIONES.md \| 1 +`), antes de cualquier lectura. En 69f9a8b entró solo la fila complementaria. El revisor miró `git log -1`, que da el último commit que toca el fichero. |
+| A3 | menor | Ya declarado en §8: −5 bytes las ediciones de contenido (comprobado con un recuento de bytes de las dos frases), +54 sobre `main` por `Current Branch` y `Current Feature`. |
+| A4 | menor | Ya declarado en §4.4: la cabecera de `libros.yaml` no se toca en un fichero solo-añadir. |
+| B1 | importa | §8: M3 pasa de «lo confirma» a «lo APOYA», con su motivo. El veredicto es el de la regla de M2. |
+| B2 | importa | Ya declarado en §5.1. No se puede deshacer; la regla de M2 estaba commiteada antes. |
+| B3 | menor | §8 da ahora las diferencias máximas de cada hipótesis. |
+| B4 | menor | Ya declarado en §4.5. El hueco de la guardia queda para su rama. |
+
+## Informe del revisor (subagente `revisor`, 2026-10-06), tal cual
+
+## Informe del revisor · trabajo/reloj-invierno · 2026-10-06
+
+Base `main` 25469ff. Commits: `10f4980` (apertura: encargo, contrato, Archivo 19) y `69f9a8b` (M1-M4).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | La salida commiteada `huso_enero.txt` no es la que hoy da el guion. Se generó antes de añadir enero a `libros.yaml`. Ahora la línea de enero dice `declarado: UTC` y trae `CONTROL: declarado UTC -> COINCIDE`. El .txt y el §4.2 del informe dicen `declarado: NO (sin entrada en libros.yaml)` y no tienen la línea CONTROL. Las cifras (58/58, 2/58, 3/58) son idénticas. El informe no avisa de que son dos estados distintos. Es una comprobación del contrato que no se reproduce literalmente. | `uv run python docs/validation/anexos/RELOJ-INVIERNO/huso_enero.py \| diff - .../huso_enero.txt` da diferencias solo en esas dos líneas de enero. Informe líneas 151-156. |
+| A2 | menor | La fila de HOLDOUT-EXPOSICIONES dice «declarado ANTES de leerlo». Entra en `69f9a8b`, el mismo commit que las salidas, y no en `10f4980`. Git no puede probar el «antes». El requisito de declarar «el mismo día» sí se cumple (ambas filas son del 2026-10-06). | `git log -1 -- docs/validation/HOLDOUT-EXPOSICIONES.md` da `69f9a8b`; el diff de `10f4980` no la toca. |
+| A3 | menor | `PROJECT_STATE.md` queda +54 bytes sobre `main` (23.373 frente a 23.319). El encargo pide saldo ≤ 0. El §8 lo declara: son `Current Branch` y `Current Feature`, que el cierre devuelve. El saldo de las ediciones de contenido (−5) no lo pude recontar. | `wc -c PROJECT_STATE.md` y `git show main:PROJECT_STATE.md \| wc -c`. Informe líneas 389-392. |
+| A4 | menor | La cabecera de `libros.yaml` sigue diciendo «NO ESTAN enero ni septiembre» con enero ya declarado. El informe lo dice (§4.4) y el fichero es solo-añadir. | Informe líneas 194-195. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` dice: «CONTRATO: 23 ficheros dentro del contrato de trabajo/reloj-invierno (riesgo alto, artefacto docs/validation/RELOJ-INVIERNO.md, 8 comprobaciones para el revisor)».
+- **Guiones.** Los cinco, ejecutados sin redirigir, dan la misma salida que su .txt, comparando sin CRLF. Son `horas_enero`, `cajas_v4`, `eje_contra_dukascopy`, `rejilla_h4` y `huso_enero` (este con la salvedad de A1). Las diferencias de `rejilla_h4` y `huso_enero` en la consola de Windows son solo de codificación (`§` y `·`).
+- **Estado y make check.** `uv run botsito state check` sale OK. `make-check.log` trae `2060 passed`, `SELLO: ... arbol 64aa6ce73abfb5bfb35f91b448ca16ed4cc8dc58` y `PICO DE MEMORIA: 290 MiB`. No ejecuté `make check` ni `knowledge validate`.
+- **Regímenes de cambio.** `git diff --name-status main...HEAD` solo da `A` salvo cinco `M`: `PROJECT_STATE.md`, `HISTORIA.md`, `HOLDOUT-EXPOSICIONES.md`, `libros.yaml` y `test_libros.py`. `HISTORIA.md` tiene 0 líneas borradas, así que solo se amplía. `libros.yaml` solo añade líneas. No hay feedback, evidencia, spec ni cases nuevos, así que no aplican `Fuente:`, CORRECT/RESOLVE, ambigüedades, las tres guardias ni ADR.
+- **libros.yaml.** La entrada nueva lleva `fuente: [ADR-0039]` y un método y unas cifras coherentes con `huso_enero.txt`.
+- **Informes cerrados.** No se toca ninguno de `docs/validation/` que ya estuviera en `main`, salvo HOLDOUT-EXPOSICIONES, donde solo se añaden filas.
+- **Hooks y CI.** El diff no toca `.github/`, `.claude/`, `src/`, `scripts/` ni `Makefile`, así que no hace falta CI. Es coherente con el §10.
+- **Cifras.** No se mete ninguna cifra en la forma ejecutable.
+- **Citas.** Las del informe (R0 con «14:29:59 UTC+2» y «Thu 29 Jan '26», S-7 de §3.1, `ev-v4-001909-54ac2edd`) coinciden con el encargo y con los fotogramas abiertos, según la tabla del §5.2 y el .txt. Eso es lo que comprobé de ellas. No rastreé cada cita hasta su fuente primaria.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 17 hechos, 1 parcial, 0 no hechos (1 hecho de otra forma, declarado).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde 25469ff, skill `abrir-rama`: encargo literal, contrato e Historia (Archivo 19) | Hecho | `git log` de la rama. El diff trae `docs/encargos/trabajo-reloj-invierno.md`, `contrato.yaml` y HISTORIA +211 líneas, solo añadidas. |
+| 2 | Hipótesis copiadas sin tocar | Hecho | Informe §1, líneas 10-12, idénticas al encargo. |
+| 3 | Registrar la respuesta del trader como feedback, en commit propio con `Fuente:` | Hecho de otra forma, declarado | Informe §2: se paró, con motivos citados de `modelo.py` y del README de feedback. Decisión literal del consultor, «Aplazarlo». El encargo decía «si el procedimiento pide algo que aquí no está, para y dímelo». |
+| 4 | Fase 0a: `casos_reservados` sobre enero sin días | Hecho | Informe §3.a: `2026-01 reservados 0 ocultos 0`; igual abril y agosto. |
+| 5 | Fase 0b: xlsx, sha, ausencia en `libros.yaml`, dataset completo | Hecho | Informe §3.b: sha `ee4ade46…` igual al del manifiesto, sin entrada, `data check ... OK (hashes)`. |
+| 6 | Fase 0c: fotogramas de v4 y localización en la transcripción | Hecho | Informe §3.c: 100 PNG de `001150000` a `001249000`; la transcripción no localiza ninguna vela de enero con leyenda. |
+| 7 | Fase 0d: declaración en HOLDOUT-EXPOSICIONES el mismo día | Hecho | Dos filas del 2026-10-06 (ver A2 del eje a). |
+| 8 | M1 con el procedimiento de `libros.yaml`: ±2 puntos, UTC frente a Madrid, controles, 90 %/50 %, con Etc/GMT-2 solo como dato | Hecho | `huso_enero.txt`: UTC 100 % y Madrid 3,4 %. Controles abril 94,7 % y agosto 100 %. Etc/GMT-2 5,2 %, fuera del veredicto. Contraste con la herramienta de `main` en los dos `control_herramienta_*.txt`. |
+| 9 | M1: si es concluyente, declarar el libro solo añadiendo | Hecho | Diff de `libros.yaml`: +15 líneas. |
+| 10 | M2: recuento en [05,06) y [13,14), lista de lo que cae fuera, control antes del veredicto y regla del encargo | Hecho | `horas_enero.txt`: enero 0 en [05,06) y 11 en [13,14); abril 4/0 y agosto 7/0; ninguna fuera de [05,14). El control sale antes y no tiene entradas en [13,14). Veredicto H2. Solo horas y recuentos. |
+| 11 | M2 sin interpretar lo que cae fuera | Hecho | Informe líneas 344: no hay ninguna. |
+| 12 | M3: abrir `fr-v4-9ad0ebb8/1200000` con `--n` y medir si el reloj avanza con el vídeo o con el replay | Hecho | Informe §5.1-5.2: cuatro fotogramas, todos «14:29:59 UTC+2», con el día del eje cambiando. Conclusión: va con el replay. |
+| 13 | M3: comparar con Dukascopy (UTC+1 frente a UTC+2) con la diferencia máxima en puntos | Parcial / de otra forma | No hay leyenda O/H/L/C (§5.3, está tapada por la barra del replay). Se sustituyó por una medida por píxeles, que da mediana, p90 y máximo. Los máximos son 34 y 45 puntos con UTC+1, que la tabla reconoce como minutos sueltos en el borde. Está declarada como no pre-registrada (§5.4). Ver B1. |
+| 14 | M4: tabla con zoneinfo de las cuatro semanas, en UTC, Madrid y Etc/GMT-2, con lo que predice cada hipótesis | Hecho | `rejilla_h4.txt` y tabla del §7, que añade además las semanas de 2026 como dato. |
+| 15 | Informe con hipótesis, salidas, veredicto y lo que NO decide | Hecho | Informe §§1, 4-8. |
+| 16 | Contradice «UTC+2 FIJO»: línea nueva de Technical Debt sin borrar la vieja, saldo ≤ 0 | Hecho (ver A3) | La línea nueva está en `PROJECT_STATE.md` y la vieja se conserva. |
+| 17 | Sección para la activación: instantes UTC con zoneinfo y el reloj de FTMO (A-28) solo traduce | Hecho | Informe §9. |
+| 18 | Tocar motor, spec, parámetros, ambigüedades, evidencia o corpus; corregir ABRIL-Y-LA-CAJA, MIRAR-EL-MATERIAL o `huso_grafico` | Respetado | El diff solo toca los cinco ficheros `M` listados arriba. No hay nada en `src/`, `knowledge/spec/` ni `docs/adr/`. |
+| 19 | `make check` y `state check` en verde; rama lista para revisión, no cerrada | Hecho | Ver eje a. El informe acaba en «EN CURSO. M1–M4 hechas; falta el revisor.» |
+
+Hallazgos del eje (b):
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | importa | El eje por píxeles (§5.4) es una medida nueva, hecha a mano, con parámetros calibrados sobre el fotograma del 29. El criterio se fijó «tras mirar el fotograma del 29». Las tablas `LECTURAS` de `eje_contra_dukascopy.py` son manuales. Está declarada. Aun así, el informe lo presenta como «M3 lo confirma por otra vía» (§8). Eso sostiene UTC+1 en tres fotogramas por mediana y por el barrido de desfase (60 min), pero sin leyenda no es la comparación O/H/L/C del encargo. Conviene mantenerlo como apoyo y no como decisión. | Informe líneas 277-310 y 381-384. `eje_contra_dukascopy.py:40,57,70`. |
+| B2 | importa | M3 se ejecutó antes que M2. El informe lo declara con una razón (la regla ya estaba commiteada en `10f4980`). El orden M1, M2, M3, M4 lo pedía el encargo. | Informe líneas 240-242. |
+| B3 | menor | El encargo pedía contrastar «la diferencia máxima en puntos de cada una». La tabla da mediana y p90, y el máximo solo en la columna `máx`, con las cifras 34,3 y 45,1 que el texto relativiza. | Informe líneas 293-297 y 308-309. |
+| B4 | menor | La guardia dejó pasar la primera ejecución de `huso_enero.py` porque el guion se copió y se ejecutó en el mismo comando (§4.5). Lo abierto es lo mismo que en la versión corregida. El informe lo declara como «rodear la guardia» sin intención y deja el hueco para otra rama, que es lo que manda CLAUDE.md. | Informe líneas 199-214. |
+
+#### Comprobación aparte 1: la regla de M2 está commiteada antes que la salida de M2
+**Veredicto: SÍ.**
+- `git show 10f4980:docs/encargos/trabajo-reloj-invierno.md` contiene, en las líneas 32-36, la regla de M2 tal cual: «H2 si hay ≥3 en [13:00, 14:00) y 0 en [05:00, 06:00); H1 si hay ≥3 en [05:00, 06:00) y 0 en [13:00, 14:00); cualquier otra cosa, NO CONCLUYENTE».
+- Los dos commits son del 2026-10-06: `10f4980` a las 12:56:31 -0500 y `69f9a8b` a las 13:40:45 -0500.
+- `10f4980` no contiene `horas_enero.txt` ni ninguna salida de M2. Entra en `69f9a8b`.
+- El encargo no cambia entre los dos commits: `git diff 10f4980 69f9a8b -- docs/encargos/` sale vacío.
+- El §1 del informe copia la regla.
+
+Límite de la prueba: git prueba el orden de los commits, no el de la ejecución. El informe (§5.1) declara que M3 se ejecutó antes que M2. Declara la salida de M2 en el mismo commit que las salidas de M1, M3 y M4. Los umbrales (≥3 y 0) son los del encargo y no hay ninguno nuevo en `horas_enero.py`. Reproduje la salida y da `H2 ([05,06): 0; [13,14): 11; minimo 3)`. No hay indicio de que la regla se moviera tras ver los datos.
+
+#### Comprobación aparte 2: no se leyó nada de febrero, marzo ni julio
+**Veredicto: lo declarado es suficiente.**
+- **Guiones.** `huso_enero.py` y `horas_enero.py` abren solo tres libros por ruta literal: enero, abril y agosto de 2026. Tienen los dos controles de `casos_ocultos`/`casos_reservados` antes de leer. `cajas_v4.py` abre solo el de enero y filtra a tres días de enero. `eje_contra_dukascopy.py` abre solo tres PNG de v4, `001200000`, `001248000` y `001149000`, más la serie 2026-01. `velas_enero.py` trae solo la serie de enero. Una búsqueda de `febrero|marzo|julio|2026-02|2026-03|2026-07|2026-09` en los `.py` del anexo no devuelve nada. Los dos controles de `control_herramienta_*.txt` son de abril y agosto.
+- **Columnas.** Los guiones piden `dateStart` y `entryPrice` (`huso_enero.py`, `cajas_v4.py`) o solo `dateStart` (`horas_enero.py`). Ninguno pide resultado, R, PnL, stop ni objetivo.
+- **Salidas.** Los .txt traen solo horas, recuentos, precios de entrada de 9 filas de enero y estadísticas de píxeles. No hay nada de otro mes.
+- **HOLDOUT-EXPOSICIONES.md.** Las dos filas del 2026-10-06 declaran lo que se lee: enero, abril y agosto, las columnas citadas y los cuatro fotogramas de v4. Dicen «ninguna» partición afectada.
+- **§3.e del informe.** Dos listados mostraron nombres, sin contenido: las subcarpetas `Backtest marzo 2026` y `Backtest septiembre 2026`, y las líneas de ruta de sus libros en `manifest.yaml`. Ni sha, ni tamaño, ni nada de dentro. Una ruta es un nombre ya commiteado en el inventario. La fila de HOLDOUT del mismo día lo recoge. CLAUDE.md prohíbe leer el contenido, y listar o medir está permitido. Es suficiente. No pide más acción que lo ya declarado.
+- Matiz: esa fila es de la propia sesión y no he podido verificar que no se abriera nada de marzo, febrero o julio fuera de lo que los guiones y la declaración enseñan. Es la evidencia disponible.
+
+Veredicto conjunto: no hay indicio de lectura de febrero, marzo ni julio.
+
+### Lo que no pude comprobar
+- `make check` y `knowledge validate`: escriben ficheros y no los ejecuté. Evidencia: el sello `64aa6ce7…` y `2060 passed` en `make-check.log`, y `state check` OK. No pude confirmar que el sello corresponda al árbol estadiado final.
+- El saldo de −5 bytes de las ediciones de contenido de `PROJECT_STATE` (§8): solo verifiqué el total (+54 sobre `main`).
+- Lo que se abrió realmente de v4: no abrí ningún fotograma ni libro, solo reproduje los guiones. Que los PNG son de enero y de un instante localizado lo da el informe y la salida de los guiones.
+- La lectura manual de las posiciones del §5.3 (`lecturas_cajas_antes_del_libro.txt`): no pude fechar si se escribió antes de leer el libro, solo que es un fichero commiteado en `69f9a8b`.
+- Las tres citas contrastadas con su fuente primaria: ver arriba, solo con el informe y los .txt.
+
+### Comandos ejecutados
+- `git branch --show-current`, `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD`, `git status --short`, `cat contrato.yaml`, `cat docs/encargos/trabajo-reloj-invierno.md`
+- `git log --format='%h %ci %s' main..HEAD`; `git show 10f4980:docs/encargos/trabajo-reloj-invierno.md | grep -n "13:00"`; `git diff 10f4980 69f9a8b --stat -- docs/encargos/`; `git diff --name-only main...HEAD | grep -E '^(\.github|\.claude|hooks|scripts|src|Makefile)'` (sin resultado)
+- `uv run python scripts/contrato_rama.py`
+- `git diff main...HEAD -- knowledge/corpus/libros.yaml tests/contract/test_libros.py docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md`; `git diff --name-status main...HEAD | grep -v '^A'`; `git diff main...HEAD -- docs/state/HISTORIA.md | grep -c '^-[^-]'`; `wc -c PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | wc -c`
+- Lectura de `docs/validation/RELOJ-INVIERNO.md`
+- Un primer intento con `$A` y `$TEMP` lo bloqueó la guardia («el guion a ejecutar se construye al ejecutarse») y no se ejecutó. Lo repetí con rutas literales:
+  - `uv run python docs/validation/anexos/RELOJ-INVIERNO/huso_enero.py` (una vez a `/dev/null` y otra con `| diff` contra `huso_enero.txt`)
+  - `.../horas_enero.py`, `.../rejilla_h4.py` y `.../cajas_v4.py`, cada una con `uv run python`, con `| diff` contra su .txt
+  - `python .../eje_contra_dukascopy.py | diff - .../eje_contra_dukascopy.txt`
+  - `uv run botsito state check`
+- `grep` sobre los `.py` del anexo (`xlsx|FEB|MAR|JUL|SEP|Backtest|…` y `febrero|marzo|julio|2026-02|…`), `cat` de `cajas_v4.py`, `cajas_v4.txt` y `lecturas_cajas_antes_del_libro.txt`, `git log --format=%h -n1 -- docs/validation/HOLDOUT-EXPOSICIONES.md`, `ls` del anexo, `grep` de `make-check.log`.
+
 ## Estado
 
-EN CURSO. M1–M4 hechas; falta el revisor.
+LISTA PARA REVISIÓN, NO cerrada (2026-10-06).
+- **Veredicto de M2 por la regla escrita: H2.** En enero el trader opera de 06:00 a 14:00 UTC.
+- **M1:** el libro de enero es UTC y queda declarado.
+- **M3 lo apoya:** el eje de enero es UTC+1 y el reloj del pie va con el replay.
+- **Queda abierto H2a frente a H2b**, que separa la semana del 26 al 30 de octubre.
+- **A-42 sigue ABIERTA.** La respuesta del trader se registra en la activación.

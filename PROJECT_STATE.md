@@ -14,7 +14,7 @@
 trabajo/reloj-invierno
 
 ## Current Feature
-`trabajo/reloj-invierno` EN CURSO (2026-10-06), medida previa a A-42: docs/validation/RELOJ-INVIERNO.md.
+`trabajo/reloj-invierno` LISTA PARA REVISION (2026-10-06), medida previa a A-42: docs/validation/RELOJ-INVIERNO.md.
 
 ## Stable Main State
 fe37973 · merge de `trabajo/guardias-citas` (tag `stable/F37b-guardias-citas`): G1, en `knowledge validate`, niega en todo knowledge/spec/ un item ev-* supersedido que no comparte valor o linea de comentario con su sustituto (una excepcion por par, A-11); G2 exige Fuente: en todo commit que toque tramos_no_citables.yaml desde c489685. Sobre `stable/F37a-respuestas-ftmo` (80eba7f). Informe docs/validation/GUARDIAS-CITAS.md; el registro del cierre, al final de HISTORIA.
