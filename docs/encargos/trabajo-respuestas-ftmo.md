@@ -69,3 +69,29 @@ Dado por el consultor el 2026-10-05. Copiado tal cual:
 > Pasa el revisor y pega su informe al final. Que compruebe aparte la regla de no-literal, la línea de RITUAL tal cual y la prueba de F37a.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la fase 0 (2026-10-05)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a la fase 0 de trabajo/respuestas-ftmo (2026-10-05). Cópiala tal cual al encargo y al informe.
+>
+> 1. Decisión 4: opción B. Justo antes del bloque git tag -a stable/<tag> (RITUAL.md:200), con fecha 2026-10-05 y fuente «decisión del consultor; la comprobación venía de las órdenes de cierre de F36y y F36z», añade estas dos líneas literales:
+>    «Antes del tag, se mira en HISTORIA el último tag cerrado y se comprueba que el nuevo no existe ni en local ni en origin; si algo falla, se para.»
+>    «Agotadas las letras de una serie, se sigue en el número siguiente con la a; un número posterior a F35 es un contador, no una fase del MASTER_PLAN.»
+>    Por qué: esa comprobación ya se ha ejecutado en dos cierres y no estaba escrita en el ritual. Lo que se ejecuta tiene que estar escrito.
+>
+> 2. La línea de R17 pasa literal a HISTORIA (decisión 3). Su frase en inglés sale del texto público de R17, no del correo del 2026-10-05, así que no choca con la regla de no copiar el correo.
+>
+> 3. Que el calendario de cierres llegue solo hasta el 2026-10-07 ya lo cubre el punto N del Next Action (se renueva por condición). Anótalo en el informe como «conocido, punto N» y no cambies nada.
+>
+> 4. Hallazgo del consultor para el informe (irá a la fila de ERRORES-RECURRENTES en el cierre):
+>    importa · El consultor dio por existente en RITUAL.md una regla que solo estaba en las órdenes de cierre de F36y y F36z, citándola de memoria sin leer el fichero.
+>    Lección: antes de escribir en un encargo «junto a la regla X de <fichero>», se lee esa regla en el fichero; si no se puede leer, se escribe «comprueba si existe».
+>    La fase 0 lo detectó y paró, como debía.
+>
+> Sigue con las decisiones 1 a 4 del encargo y las comprobaciones: make check y uv run botsito state check en verde, saldo de bytes de PROJECT_STATE menor o igual que cero, y el diff releído para confirmar que no hay frases del correo ni el nombre de la persona de soporte. No toca .claude/, así que no hace falta fix/. Después, el revisor, con su informe pegado al final del informe de la rama.
+>
+> Rama lista para revisión, NO cerrada.

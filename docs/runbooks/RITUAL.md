@@ -197,6 +197,14 @@ Si `main` se hubiera movido desde que salió la rama, el árbol fusionado no es 
 no basta: se para y se decide con el consultor.
 → Estamos en la **ventana A**: aquí `state check` fallaría por diseño. No se corre.
 
+**Antes del tag** (2026-10-05, `trabajo/respuestas-ftmo`; fuente: decisión del consultor; la
+comprobación venía de las órdenes de cierre de F36y y F36z):
+
+- Antes del tag, se mira en HISTORIA el último tag cerrado y se comprueba que el nuevo no existe ni en local ni en origin; si algo falla, se para.
+- Agotadas las letras de una serie, se sigue en el número siguiente con la a; un número posterior a F35 es un contador, no una fase del MASTER_PLAN.
+
+Tras `stable/F36z` la serie sigue en `stable/F37a-<nombre>`.
+
 ```
 git tag -a stable/<tag> -m "<resumen de una línea>"
 git rev-parse --short HEAD

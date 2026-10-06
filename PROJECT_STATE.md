@@ -14,7 +14,7 @@
 trabajo/respuestas-ftmo
 
 ## Current Feature
-`trabajo/respuestas-ftmo` EN CURSO (2026-10-05): punto T, la respuesta de FTMO del 2026-10-05 sin copiar el correo, y la regla de los tags tras F36z. Fase 0 entregada. Encargo docs/encargos/trabajo-respuestas-ftmo.md; informe docs/validation/RESPUESTAS-FTMO.md.
+`trabajo/respuestas-ftmo` EN CURSO (2026-10-05): punto T, la respuesta de FTMO del 2026-10-05 sin copiar el correo, y la regla de los tags tras F36z. Falta el revisor. Encargo docs/encargos/trabajo-respuestas-ftmo.md; informe docs/validation/RESPUESTAS-FTMO.md.
 
 ## Stable Main State
 f8b291c · merge de `trabajo/ventana-ev-v9-003456` (tag `stable/F36z-ventana-no-citable`): ev-v9-003457 y ev-v10-010438-024f76b8 corrigen por supersede las ventanas que pisaban un tramo no citable o un segmento que lo solapa; la ventana de todo item activo se comprueba en knowledge validate, evidence new y evidence propose --check. Sobre `stable/F36y-filtradas-con-tramos` (06adac1). Informe docs/validation/VENTANA-EV-V9.md; el registro del cierre, al final de HISTORIA.
@@ -122,7 +122,6 @@ docs/runbooks/ERRORES-RECURRENTES.md.
 - Falta un test que exija Fuente: en todo commit que toque tramos_no_citables.yaml; los commits viejos no se tocan (docs/validation/SESION-04-EXTRACCION.md, orden de cierre).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
-- PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
 - LA LECTURA PREVIA DE LA TRANSCRIPCION DE v6, DECLARADA COMO EXPOSICION POSIBLE (2026-09-23, `trabajo/a18-transcripciones`, en `docs/validation/HOLDOUT-EXPOSICIONES.md`).

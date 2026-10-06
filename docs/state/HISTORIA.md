@@ -4976,3 +4976,9 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 16 (2026-10-05).
+
+# Technical Debt RESPONDIDA · sale de PROJECT_STATE.md en trabajo/respuestas-ftmo (2026-10-05)
+
+La responde FTMO el 2026-10-05 en el ticket VDW-DPMWR-965, pregunta 10, sin cifra: no fija limites numericos de tamano, «sustancialmente mayor» depende del comportamiento historico del propio trader, y el riesgo fijo del 0,5 % desde el primer dia es el patron historico de la cuenta. No se repregunta (parafrasis del consultor; docs/validation/FTMO-REGLAS.md, recuadro del 2026-10-05). Encargo de `trabajo/respuestas-ftmo`, decision 3; docs/validation/RESPUESTAS-FTMO.md. No entra otra linea en su lugar. Su texto literal en «Technical Debt»:
+
+- PENDIENTE DE FTMO: SI UN LOTE QUE VARIA CON EL STOP, CON RIESGO CONSTANTE, CUENTA COMO «substantially larger position sizes» (R17): el ticket VDW-DPMWR-965 no lo contesto el 2026-09-29; repreguntado el 2026-10-03, pregunta 10 del correo (docs/validation/FUENTES-FTMO.md).

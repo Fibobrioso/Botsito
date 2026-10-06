@@ -100,7 +100,8 @@ Qué hace hoy el bot dentro de la ventana de dos horas antes de un cierre largo 
   pendiente_puesta_antes or con_mantener or modificar_una_pendiente or posicion_abierta or
   calendario_de_ftmo or fuera_de_lo_que_cubre"` sale con rc 0 (8 tests).
 - **Fuera del encargo, solo se anota:** el calendario cubre hasta el 2026-10-07. Se renueva por
-  condición (`docs/runbooks/RENOVAR-CIERRES.md`).
+  condición (`docs/runbooks/RENOVAR-CIERRES.md`). **Conocido, punto N** del Next Action (respuesta
+  del consultor, punto 3): no se cambia nada.
 
 ### 0.d Dónde vive hoy cada cosa que esta rama actualiza
 
@@ -120,7 +121,8 @@ STOP…» (línea 125 en `main`).
 - **Para el consultor:** esa línea lleva entre comillas una frase en inglés. No es del correo del
   2026-10-05: es el texto público de R17 (la fila 64 del §2), que la pregunta 10 del correo de Aleks
   también cita. La decisión 3 la manda pasar LITERAL a HISTORIA, y así se hará salvo que se diga otra
-  cosa.
+  cosa. **Respondido** (respuesta del consultor, punto 2): pasa literal, porque no choca con la regla
+  de no copiar el correo.
 
 **`knowledge/spec/ambiguedades.yaml`:**
 - A-54 en las líneas 1507-1547, con el campo `pregunta` en 1509-1519;
@@ -165,12 +167,97 @@ la última letra en HISTORIA» (§0.a). Propuesta:
   `stable/<serie><letra>-*` no existe ni en local ni en `origin`. Sería un texto nuevo en RITUAL que
   la decisión 4 no dicta palabra a palabra.
 
-Hasta la respuesta no se escribe nada de las decisiones 1 a 4.
+Hasta la respuesta no se escribió nada de las decisiones 1 a 4.
+
+### 1.1 La respuesta del consultor a la fase 0 (2026-10-05), copiada tal cual
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a la fase 0 de trabajo/respuestas-ftmo (2026-10-05). Cópiala tal cual al encargo y al informe.
+>
+> 1. Decisión 4: opción B. Justo antes del bloque git tag -a stable/<tag> (RITUAL.md:200), con fecha 2026-10-05 y fuente «decisión del consultor; la comprobación venía de las órdenes de cierre de F36y y F36z», añade estas dos líneas literales:
+>    «Antes del tag, se mira en HISTORIA el último tag cerrado y se comprueba que el nuevo no existe ni en local ni en origin; si algo falla, se para.»
+>    «Agotadas las letras de una serie, se sigue en el número siguiente con la a; un número posterior a F35 es un contador, no una fase del MASTER_PLAN.»
+>    Por qué: esa comprobación ya se ha ejecutado en dos cierres y no estaba escrita en el ritual. Lo que se ejecuta tiene que estar escrito.
+>
+> 2. La línea de R17 pasa literal a HISTORIA (decisión 3). Su frase en inglés sale del texto público de R17, no del correo del 2026-10-05, así que no choca con la regla de no copiar el correo.
+>
+> 3. Que el calendario de cierres llegue solo hasta el 2026-10-07 ya lo cubre el punto N del Next Action (se renueva por condición). Anótalo en el informe como «conocido, punto N» y no cambies nada.
+>
+> 4. Hallazgo del consultor para el informe (irá a la fila de ERRORES-RECURRENTES en el cierre):
+>    importa · El consultor dio por existente en RITUAL.md una regla que solo estaba en las órdenes de cierre de F36y y F36z, citándola de memoria sin leer el fichero.
+>    Lección: antes de escribir en un encargo «junto a la regla X de <fichero>», se lee esa regla en el fichero; si no se puede leer, se escribe «comprueba si existe».
+>    La fase 0 lo detectó y paró, como debía.
+>
+> Sigue con las decisiones 1 a 4 del encargo y las comprobaciones: make check y uv run botsito state check en verde, saldo de bytes de PROJECT_STATE menor o igual que cero, y el diff releído para confirmar que no hay frases del correo ni el nombre de la persona de soporte. No toca .claude/, así que no hace falta fix/. Después, el revisor, con su informe pegado al final del informe de la rama.
+>
+> Rama lista para revisión, NO cerrada.
 
 ## 2. Encargo frente a lo hecho
 
-(Se rellena al terminar.)
+| Encargo | Hecho | Dónde |
+|---|---|---|
+| Base `54c69fe`, CI 221 en verde; abrir con `abrir-rama` | Comprobado antes de abrir; abierta con su encargo, `contrato.yaml` (riesgo bajo) y el Archivo 17 de `PROJECT_STATE.md` en HISTORIA | `64b6f60` |
+| Fase 0 a)-e), entregada antes de escribir | §0, con dos anexos ejecutados; PARADA en la decisión 4 | `64b6f60` |
+| Decisión 1: recuadro nuevo en FTMO-REGLAS.md con la cabecera de fuente y una fila por pregunta 1-10 (lo que responde, estado, qué cambia) | Recuadro fechado (2026-10-05, `trabajo/respuestas-ftmo`) detrás del correo de Aleks y su tabla, antes del §3. Cabecera: el ticket, `support@ftmo.com`, 2026-10-05 10:29:36 UTC, que responde al correo del 2026-10-03, y las páginas Symbols y Forbidden Trading Practices. Diez filas con la paráfrasis del consultor; «qué cambia» dice «nada» en las diez, con el motivo de la decisión. Las preguntas 5 y 7 se declaran restricción ELEGIDA, más estricta que FTMO. La nota sobre la cuenta Normal se anota sin efecto. Los recuadros anteriores no se tocan | `docs/validation/FTMO-REGLAS.md` |
+| Decisión 2: A-54 y A-55, solo el campo `pregunta`; siguen ABIERTAS con la misma clase y bloqueante; `spec docs --escribir` en el mismo commit | Hecho. Desviación declarada abajo | `knowledge/spec/ambiguedades.yaml`, `docs/spec/ambiguedades.md` |
+| Decisión 3: la línea de R17 sale de Technical Debt y pasa literal a HISTORIA; no entra otra; saldo de bytes ≤ 0 | Sale y pasa literal bajo «# Technical Debt RESPONDIDA · sale de PROJECT_STATE.md en trabajo/respuestas-ftmo (2026-10-05)». Su frase en inglés es el texto público de R17, no del correo (punto 2 de la respuesta) | `PROJECT_STATE.md`, `docs/state/HISTORIA.md` |
+| Decisión 4, opción B: las dos líneas literales justo antes de `git tag -a stable/<tag>`, con fecha y fuente | Hecho, con la fecha 2026-10-05, la fuente («decisión del consultor; la comprobación venía de las órdenes de cierre de F36y y F36z») y, del encargo, «tras `stable/F36z` la serie sigue en `stable/F37a-<nombre>`». La skill `cerrar-rama` no se toca (§0.a) | `docs/runbooks/RITUAL.md` |
+| Decisión 5: los literales previos no se tocan; una línea que los liste | §0.e | — |
+| Respuesta, punto 3: el calendario hasta el 2026-10-07 | Conocido, punto N del Next Action; no se cambia nada | §0.c |
+| Respuesta, punto 4: el hallazgo del consultor, para el informe | §3 | — |
+
+**Desviación (decisión 2).** La decisión dice que el campo `pregunta` «añade» la frase. El texto de
+las dos decía «respuesta pendiente», que deja de ser verdad. Añadir sin quitar dejaría las dos
+afirmaciones juntas, y una de ellas falsa. Así que «respuesta pendiente» se SUSTITUYE por la frase de
+la decisión, y nada más del campo cambia:
+- A-54: «…, respondida en parte el 2026-10-05 (FTMO-REGLAS.md, recuadro de esa fecha).»
+- A-55: «…, respondida en parte el 2026-10-05 (FTMO-REGLAS.md, recuadro de esa fecha), y la pregunta 6
+  sigue sin respuesta; y con la respuesta se fija cierre_pendientes …».
+
+Estado, clase, bloqueante, parámetros, fuentes y comentarios no cambian.
+
+## 3. Hallazgo del consultor (para la fila de ERRORES-RECURRENTES en el cierre)
+
+**Importa.** El consultor dio por existente en RITUAL.md una regla que solo estaba en las órdenes de
+cierre de F36y y F36z, citándola de memoria sin leer el fichero.
+- **Lección (consultor):** antes de escribir en un encargo «junto a la regla X de <fichero>», se lee
+  esa regla en el fichero; si no se puede leer, se escribe «comprueba si existe».
+- La fase 0 lo detectó y paró, como debía.
+
+## 4. Comprobaciones
+
+- **`uv run botsito state check`** sobre el árbol de este commit:
+  `OK: rama 'trabajo/respuestas-ftmo' - funcionalidad actual: ...`.
+- **`make check > make-check.log 2>&1`:** se corre con todo estadiado antes del commit, y el hook
+  `pre-commit` rechaza el commit sin su sello. El resultado (exit, tests y SELLO) va en el commit del
+  revisor (§5).
+- **Tests de lo que toca la rama**, antes de `make check`: 125 tests, rc 0. Cubren `test_push_atomico`, que
+  lee los pushes de RITUAL; `test_guardia_claude`, cuyo ritual y runbooks pasan; `test_spec_docs_generados`;
+  `test_kit` (la tabla de abiertas); `test_hoja_preguntas`; `test_project_state`; `test_historia`; y
+  `test_reabrir_y_fuente_documental`.
+- **`uv run botsito knowledge validate`:** rc 0 («OK: 55 ambiguedades registradas; ...»), con la `pregunta` nueva de A-54 y A-55.
+- **Bytes de `PROJECT_STATE.md`:** 23.670 en `main` y 23.607 en la rama, un saldo de **−63**.
+  - Al abrir subió 213 (+213): la Current Feature de la rama.
+  - La línea de R17 restó 276.
+- **Fuente:** el commit que toca `knowledge/spec/` lleva `Fuente: ADR-0067, ADR-0068`, la convención
+  de `trabajo/fuentes-ftmo` para A-54 y A-55.
+- **Regla de no-literal**, releyendo el diff entero de la rama frente a `main`:
+  - ninguna línea añadida lleva el nombre de la persona de soporte;
+  - en inglés, la búsqueda de palabras funcionales del inglés solo encuentra:
+    - la cita pública de R15 en la `pregunta` de A-55, que ya estaba y sale en el diff porque cambia
+      ese párrafo (también en su espejo `docs/spec/ambiguedades.md`);
+    - código de los anexos.
+  - La línea de R17 que pasa a HISTORIA lleva el texto público de R17 (punto 2 de la respuesta).
+  - Del correo del 2026-10-05 no hay ninguna frase. Las únicas palabras inglesas del recuadro nuevo son
+    los nombres de las páginas públicas y los términos de la paráfrasis del consultor (gap trading,
+    rollover).
+- **Sin `fix/`:** la rama no toca `.claude/`, ni hooks, ni rutas, ni código de plataforma.
+
+## 5. Informe del revisor
+
+(Se pega al terminar.)
 
 ## Estado
 
-EN CURSO (2026-10-05). Fase 0 entregada; PARADA en la decisión 4 (§1). NO cerrada.
+EN CURSO (2026-10-05). Decisiones 1 a 4 aplicadas; falta el revisor. NO cerrada.
