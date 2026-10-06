@@ -1,0 +1,38 @@
+rama: trabajo/reloj-invierno
+riesgo: alto  # abre material nuevo (el detalle por operacion del libro de enero, dev) y puede declarar un libro en libros.yaml, que es solo anadir
+artefacto: docs/validation/RELOJ-INVIERNO.md
+rutas_permitidas:
+  - docs/validation/RELOJ-INVIERNO.md
+  - docs/validation/anexos/RELOJ-INVIERNO/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  # M1: si el huso del libro de enero sale concluyente, se declara (solo anadir)
+  - knowledge/corpus/libros.yaml
+rutas_protegidas:
+  - src/
+  - scripts/
+  - .claude/
+  - knowledge/spec/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/fuentes.yaml
+  - knowledge/corpus/manifest.yaml
+  - knowledge/corpus/transcripciones/
+  - knowledge/corpus/fotogramas/
+  - knowledge/corpus/tramos_no_citables.yaml
+  - data/manifests/
+  - docs/spec/
+  - docs/adr/
+  - docs/validation/ABRIL-Y-LA-CAJA.md
+  - docs/runbooks/MIRAR-EL-MATERIAL.md
+comprobaciones:
+  - uv run python docs/validation/anexos/RELOJ-INVIERNO/huso_enero.py
+  - uv run python docs/validation/anexos/RELOJ-INVIERNO/horas_enero.py
+  - uv run python docs/validation/anexos/RELOJ-INVIERNO/rejilla_h4.py
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito state check
+  - make check > make-check.log 2>&1

@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/reloj-invierno
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37b-guardias-citas` (2026-10-06).
+`trabajo/reloj-invierno` EN CURSO (2026-10-06): rama de MEDIDA del reloj del grafico y las horas UTC de invierno con el libro de enero, antes de activar A-42. Encargo docs/encargos/trabajo-reloj-invierno.md; informe docs/validation/RELOJ-INVIERNO.md.
 
 ## Stable Main State
 fe37973 · merge de `trabajo/guardias-citas` (tag `stable/F37b-guardias-citas`): G1, en `knowledge validate`, niega en todo knowledge/spec/ un item ev-* supersedido que no comparte valor o linea de comentario con su sustituto (una excepcion por par, A-11); G2 exige Fuente: en todo commit que toque tramos_no_citables.yaml desde c489685. Sobre `stable/F37a-respuestas-ftmo` (80eba7f). Informe docs/validation/GUARDIAS-CITAS.md; el registro del cierre, al final de HISTORIA.
@@ -200,9 +200,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 18 (2026-10-05).
+— ninguna desde el Archivo 19 (2026-10-06).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 18 (2026-10-05).
+— ninguna desde el Archivo 19 (2026-10-06).
