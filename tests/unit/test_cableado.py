@@ -211,7 +211,13 @@ def _criterio() -> Criterio:
     from fractions import Fraction
 
     return Criterio(
-        Tolerancias(3, 15, ESCALA), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+        Tolerancias(3, 15, ESCALA),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        ("2030-01",),
+        ("2030-02",),
+        Fraction(7, 10),
+        Fraction(6, 10),
     )
 
 

@@ -206,7 +206,13 @@ def test_no_implementada_detiene_la_sesion_y_queda_registrada(
 
 def _criterio() -> Criterio:
     return Criterio(
-        Tolerancias(3, 15, 100_000), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+        Tolerancias(3, 15, 100_000),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        ("2030-01",),
+        ("2030-02",),
+        Fraction(7, 10),
+        Fraction(6, 10),
     )
 
 

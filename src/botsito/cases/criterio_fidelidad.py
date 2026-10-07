@@ -64,6 +64,10 @@ class Criterio:
     umbral_precision: Fraction
     construccion: tuple[str, ...]
     medida: tuple[str, ...]
+    # El umbral de CONSTRUCCION que habilita medir (ADR-0070): sobre una corrida del arnes en
+    # todo `construccion`, sin diagnostico.
+    umbral_construccion_para_medir_cobertura: Fraction
+    umbral_construccion_para_medir_precision: Fraction
 
 
 @dataclass(frozen=True)
@@ -193,6 +197,14 @@ def cargar_criterio(repo: Path) -> Criterio:
         umbral_precision=_fraccion(doc.get("umbral_precision"), "umbral_precision"),
         construccion=construccion,
         medida=medida,
+        umbral_construccion_para_medir_cobertura=_fraccion(
+            doc.get("umbral_construccion_para_medir_cobertura"),
+            "umbral_construccion_para_medir_cobertura",
+        ),
+        umbral_construccion_para_medir_precision=_fraccion(
+            doc.get("umbral_construccion_para_medir_precision"),
+            "umbral_construccion_para_medir_precision",
+        ),
     )
 
 

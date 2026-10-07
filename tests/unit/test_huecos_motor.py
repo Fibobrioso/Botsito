@@ -582,7 +582,13 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
     motor: MotorSpec,
 ) -> None:
     criterio = Criterio(
-        Tolerancias(3, 15, 100_000), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+        Tolerancias(3, 15, 100_000),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        ("2030-01",),
+        ("2030-02",),
+        Fraction(7, 10),
+        Fraction(6, 10),
     )
     voc = cargar_vocabulario(SPEC)
     dias = (arnes.DiaTrader("c1", DIA.isoformat(), ()),)

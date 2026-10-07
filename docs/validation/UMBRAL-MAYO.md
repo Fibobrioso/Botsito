@@ -109,6 +109,21 @@ Lo que el ADR añade a D1-D4, dicho como decisión propia y no como del consulto
   y la cuenta diaria), que es lo que `Diagnostico.activo` ya cuenta.
 - **`--depuracion` queda para el consultor** (§0.e, y en el «Impacto» del ADR).
 
+## 2. Fase 2 · Los dos campos en `criterio_fidelidad.yaml`
+
+- `knowledge/cases/criterio_fidelidad.yaml`: `umbral_construccion_para_medir_cobertura: "0.70"` y
+  `umbral_construccion_para_medir_precision: "0.60"`, debajo de los de medida, con un comentario
+  que dice qué son, desde cuándo y que cambiarlos exige un ADR que declare lo visto. **Ningún campo
+  existente cambia** (`git diff`: solo líneas añadidas).
+- `src/botsito/cases/criterio_fidelidad.py`: `Criterio` gana los dos campos y `cargar_criterio`
+  los lee con la misma validación que los de medida (`_fraccion`: un número entre 0 y 1). Sin el
+  campo, el fichero no carga: `_fraccion(None)` no es un número.
+- `Criterio` se construye a mano en cuatro tests (`test_arnes_motor.py`, `test_cableado.py`,
+  `test_huecos_motor.py`, `test_visor.py`): reciben los dos umbrales, con las mismas cifras.
+- `tests/unit/test_umbral_mayo.py` (nuevo): el fichero real lleva 0,70 y 0,60 y son las mismas
+  cifras que el umbral de medida; sin cada campo no carga; con 1,5, −0,1 o un texto no carga.
+- `Tests Currently Passing`: 1359 → 1362.
+
 ## Estado
 
 **EN CURSO (2026-10-07).** Fase 0 hecha; siguen las fases 1 a 3.
