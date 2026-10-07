@@ -5877,3 +5877,80 @@ que decian «UTC+2 FIJO» llevan su recuadro (docs/validation/ACTIVACION-A42.md 
 Oanda y Dukascopy sigue viva la parte de la serie.
 
 - EL «UTC+2 FIJO» FALLA EN ENERO (2026-10-06, RELOJ-INVIERNO.md).
+
+# Next Action HECHA · E · sale de PROJECT_STATE.md en trabajo/activacion-a42 (2026-10-06)
+
+E. A-42 MEDIDA (RELOJ-INVIERNO.md): el gráfico del trader va en Europe/Madrid y en enero opera de 06:00 a 14:00 UTC (H2). Pendiente antes del 25 de octubre: H2a frente a H2b (§8.1 y §12; apuntan a H2b, falta la respuesta del trader), y la rama de activación, que corrige huso_grafico y los textos de «UTC+2 FIJO», registra las respuestas del trader con sus capturas y fija las sesiones en instantes UTC (§9).
+
+La hace `trabajo/activacion-a42` (ADR-0069, docs/validation/ACTIVACION-A42.md): A-42 RESUELTA con
+H2b, `huso_grafico` = Europe/Madrid, las respuestas del trader registradas con sus capturas y las
+sesiones fijadas en instantes UTC desde la rejilla H4.
+
+# Registro de cierre · `trabajo/activacion-a42` (2026-10-06)
+
+- Orden de cierre del consultor del 2026-10-06, ejecutada siguiendo `RITUAL.md`: llego en un texto
+  pegado, y la skill `cerrar-rama` solo la invoca el usuario.
+- **Lo que entra:**
+  - A-42 RESUELTA (ADR-0069, H2b): las dos sesiones son las velas H4 de la rejilla de `anclaje_h4`
+    que empiezan en ancla + 8 h y ancla + 12 h; `reloj_sesiones` = `rejilla_h4`, parametro nuevo
+    `sesiones_primera_vela_h4` = 3, y el motor fija la ventana en instantes UTC con zoneinfo por
+    una sola puerta (`engine/relojes.py`), nunca con un desfase fijo;
+  - `huso_grafico` = Europe/Madrid (categoria `ejecucion`, fuente ADR-0069); ADR-0059 SUPERSEDED;
+    recuadros del «UTC+2 fijo» en ADR-0017, ADR-0039, ADR-0063, R0 de ABRIL-Y-LA-CAJA,
+    MIRAR-EL-MATERIAL, la PARADA B0 de ENTRADA-MARZO, el README de runbooks y `CLAUDE.md`;
+  - las 8 capturas de WhatsApp del 2026-10-06 en el corpus (renombradas por Aleks: la guardia
+    bloquea `mv` sobre ellas) y dos registros de feedback en `2026-10-04-sesion-04`;
+  - `tests/unit/test_sesiones_rejilla_h4.py` (15 funciones, 40 casos); spec 15.8.0 -> 15.9.0;
+  - la deuda «EL «UTC+2 FIJO» FALLA EN ENERO», pagada.
+- En construccion nada cambia: el informe del arnes sale identico byte a byte en `main` y en la
+  rama (ACTIVACION-A42.md §9.5).
+- Next Action (en este commit, por la orden de cierre): sale E, HECHA (arriba); U se sustituye
+  (los mensajes del stop del 2026-10-06 no dicen cuando se pone; decide el consultor); entran W
+  (`cases/` por la rejilla antes del paso b de marzo), X (`scripts/ticks_spread.py`) e Y (RITUAL.md,
+  linea 216).
+- `Tests Currently Passing`: 1357 funciones (2100 casos).
+- Letra: la ultima cerrada era la c de F37 (`stable/F37c-reloj-invierno`); `stable/F37d-*` no
+  existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37d-activacion-a42`. El merge es
+  `git rev-parse "stable/F37d-activacion-a42^{commit}"`: su sha no existe hasta el merge, y el
+  literal queda en `Last Stable Commit` de `PROJECT_STATE.md`.
+- Commits de la rama:
+  - `ae03d5f`: apertura (encargo, contrato, Archivo 20, nota del run #226) con la fase 0;
+  - `9084659`: paso 1, el corpus, y la respuesta del consultor a la PARADA (§6.1);
+  - `1f287f8`: paso 2, ADR-0069;
+  - `3614375`: paso 3, los dos registros de feedback;
+  - `85b3be6`: pasos 4 y 5 juntos, la spec y el motor (§9.4);
+  - `46e62a1`: paso 6, los recuadros y la deuda;
+  - `b8694b6`: el informe del revisor y lo hecho con sus hallazgos;
+  - `b270532`: la anotacion de la CI de Linux;
+  - y el de este registro, que saca tambien el contrato y cambia la Next Action.
+- CI de Linux, por `fix/activacion-a42` (el push lo hizo Aleks: el clasificador de permisos se lo
+  niega a la sesion): run #227 (`37555262568`) sobre `b8694b6`, 1 failed
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`, el aceptado) y 2091 passed.
+  `b270532` solo anade esa anotacion al informe y no se empujo. La CI de `main` corre tras el push.
+- Informe: `docs/validation/ACTIVACION-A42.md`. Encargo: `docs/encargos/trabajo-activacion-a42.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/activacion-a42 (consultor, 2026-10-06). Tag: stable/F37d-activacion-a42 (verifica en HISTORIA que el último es F37c y que F37d no existe).
+  >
+  > CI de la rama: run #227 sobre b8694b6, 1 failed (test_state_check_ok_on_real_repo, por el nombre fix/) y 2091 passed. b270532 solo añade esa anotación al informe.
+  >
+  > Hallazgos del consultor que el revisor no vio: ninguno. Para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+  > 1. (importa) El consultor listó por el puente, de forma recursiva, una carpeta que contiene meses reservados (nombres y tamaños de marzo, mayo y septiembre, sin abrir nada). Lo mismo hizo la sesión con un ls no recursivo (§1.3; el revisor lo vio, b2). Lección: nunca se lista una carpeta que contiene meses reservados; cada fichero se nombra por su ruta literal.
+  > 2. (importa) El consultor dio un prompt que afirmaba la CI de main en verde con un hueco «<NÚMERO>» sin rellenar, y la rama anterior se borró con esa afirmación (salió bien: run #226 en verde). Lección: un prompt del consultor no afirma un hecho con un hueco; o lo comprueba él, o el prompt manda comprobarlo.
+  > 3. (menor) El consultor decidió CONFIRM de ev-v10-010429-0c93f24a con una frase condicional del trader («si es por cuestion horaria…»); lo vio el revisor (a6). Lección: antes de decidir un CONFIRM, leer si el literal es condicional.
+  >
+  > Next Action, en el commit del contrato (punto 3 de RITUAL):
+  > - SALE, HECHA: E (texto literal a HISTORIA bajo «# Next Action HECHA · E · …»).
+  > - U se SUSTITUYE por: «U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3). Los mensajes del trader del 2026-10-06 sobre el stop (13:46, 15:36 y «2-c», en el corpus; ACTIVACION-A42.md §5.4) no dicen cuándo se pone; no se le vuelve a preguntar: decide el consultor.»
+  > - ENTRAN:
+  >   «W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).»
+  >   «X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).»
+  >   «Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.»
+  > En el commit de estado no se toca la Next Action.
+  >
+  > El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag (si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees). CI de main en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual. Si te niegan la consulta, para y dímelo, y la compruebo. Con la CI de main en completed/success, borra trabajo/activacion-a42 (git branch -d) y fix/activacion-a42 en origin.
+  >
+  > Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.

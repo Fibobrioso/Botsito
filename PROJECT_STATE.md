@@ -31,13 +31,17 @@ trabajo/activacion-a42
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
-U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3).
+U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3). Los mensajes del trader del 2026-10-06 sobre el stop (13:46, 15:36 y «2-c», en el corpus; ACTIVACION-A42.md §5.4) no dicen cuándo se pone; no se le vuelve a preguntar: decide el consultor.
 
 V. La guardia de Claude Code no inspecciona un guion creado en el mismo comando que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.
 
-A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
+W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).
 
-E. A-42 MEDIDA (RELOJ-INVIERNO.md): el gráfico del trader va en Europe/Madrid y en enero opera de 06:00 a 14:00 UTC (H2). Pendiente antes del 25 de octubre: H2a frente a H2b (§8.1 y §12; apuntan a H2b, falta la respuesta del trader), y la rama de activación, que corrige huso_grafico y los textos de «UTC+2 FIJO», registra las respuestas del trader con sus capturas y fija las sesiones en instantes UTC (§9).
+X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
+
+Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.
+
+A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
