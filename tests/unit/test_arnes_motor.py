@@ -191,7 +191,7 @@ def test_no_implementada_detiene_la_sesion_y_queda_registrada(
     corrida = arnes.Corrida(
         "spec", ("2030-01",), (arnes.DiaTrader("c", DIA.isoformat(), (op,)),), (r,)
     )
-    texto = arnes.informe(corrida, _criterio(), vocabulario, con_diagnostico=False)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=())
     assert "- predicado:alcanza_nivel: 1 de 1" in texto
     # sin lectura de «formado», los tres predicados de RN-004 quedan sin escribir: desde ADR-0066
     # tambien el que pide que la toma sea de la sesion
@@ -313,7 +313,7 @@ def test_un_motor_que_copia_al_trader_da_cien_por_cien_y_embudo_completo(
     hechos = [h for h, _ in arnes.hechos_de_regla(vocabulario)]
     motor = _Copia({d.dia: d.operaciones for d in dias}, hechos)
     corrida = arnes.correr("copia", ("2030-01",), dias, _mercado(dias), motor)
-    texto = arnes.informe(corrida, _criterio(), vocabulario, con_diagnostico=False)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=())
     assert "cobertura: 3/3 (100.0 %)" in texto
     assert "precision: 3/3 (100.0 %)" in texto
     for h in hechos:
@@ -329,7 +329,7 @@ def test_un_motor_que_no_opera_da_cobertura_cero_y_precision_sin_definir(
     corrida = arnes.correr("quieto", ("2030-01",), dias, _mercado(dias), _Quieto())
     medida = arnes.medida_de(corrida, _criterio())
     assert medida.cobertura == 0 and medida.precision is None
-    texto = arnes.informe(corrida, _criterio(), vocabulario, con_diagnostico=False)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=())
     assert "cobertura: 0/3 (0.0 %)" in texto
     assert "precision: sin definir (cero operaciones del bot puntuables)" in texto
     assert "precision: 0" not in texto and "precision: 100" not in texto
@@ -344,13 +344,13 @@ def test_determinismo_byte_a_byte(
         arnes.correr("spec", ("2030-01",), dias, mercado, motor),
         _criterio(),
         vocabulario,
-        con_diagnostico=False,
+        opciones=(),
     )
     dos = arnes.informe(
         arnes.correr("spec", ("2030-01",), dias, mercado, motor),
         _criterio(),
         vocabulario,
-        con_diagnostico=False,
+        opciones=(),
     )
     assert uno.encode("utf-8") == dos.encode("utf-8")
 

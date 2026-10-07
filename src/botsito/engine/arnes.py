@@ -57,6 +57,13 @@ A_FAVOR = frozenset({("compra", "alcista"), ("venta", "bajista")})
 SIN_ANOTACION = "sin anotacion"
 
 
+# ADR-0070 (enmienda del 2026-10-07): las UNICAS opciones de `motor arnes` con las que una corrida
+# puede habilitar medir el conjunto de medida, porque no cambian lo que el motor decide ni como se
+# llena. Lista CERRADA: cualquier otra opcion presente, conocida o futura, da «no». `--meses` vale
+# solo si cubre todo `construccion`, y eso lo comprueba `habilita_medir` aparte. Unico sitio.
+OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA = frozenset({"--salida", "--tracemalloc", "--meses"})
+
+
 class ConjuntoError(ValueError):
     """El arnes no corre sobre ese conjunto."""
 
@@ -234,13 +241,14 @@ def informe(
     criterio: Criterio,
     vocabulario: Mapping[str, Mapping[str, Any]],
     *,
-    con_diagnostico: bool,
+    opciones: Sequence[str],
 ) -> str:
-    """El informe de una corrida. `con_diagnostico` es obligatorio y lo da el comando: si la
-    corrida lleva alguna opcion --diagnostico-*, el veredicto de ADR-0070 es «no» por eso, llegue
-    o no a los umbrales."""
+    """El informe de una corrida. `opciones` es obligatorio y lo da el comando: las opciones que
+    la corrida uso. Cualquiera fuera de `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` hace que el
+    veredicto de ADR-0070 sea «no», llegue o no a los umbrales."""
     medida = medida_de(corrida, criterio)
-    veredicto = habilita_medir(medida, criterio, corrida.meses, con_diagnostico=con_diagnostico)
+    fuera = sorted(set(opciones) - OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA)
+    veredicto = habilita_medir(medida, criterio, corrida.meses, opciones_fuera=fuera)
     hechos = hechos_de_regla(vocabulario)
     trazas: dict[tuple[str, str], TrazaSesion] = {
         (r.dia, s): t for r in corrida.resultados for s, t in r.sesiones.items()
@@ -370,6 +378,7 @@ def informe(
 
 
 __all__ = [
+    "OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA",
     "ConjuntoError",
     "Corrida",
     "DiaTrader",

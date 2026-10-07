@@ -1,4 +1,4 @@
-con D2 (el codigo tal cual): test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: pasa
-sin D2 (el diagnostico ignorado): test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: FALLA (AssertionError)
-restaurado: test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: pasa
-VEREDICTO: el test falla si se quita D2
+test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+test_depuracion_da_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+VEREDICTO: los tres tests fallan si se quita D2

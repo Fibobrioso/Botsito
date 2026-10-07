@@ -310,16 +310,99 @@ Valoración de las desviaciones declaradas: §0.e (corrida sobre todo `construcc
 5. `sed -n 60,176p tests/unit/test_umbral_mayo.py`; `git diff main...HEAD -- docs/adr/README.md PROJECT_STATE.md`; `git diff main...HEAD --stat -- .claude src/botsito/engine/motor.py knowledge/spec`; grep de `_fraccion`; `git ls-files | grep -i arnes…`
 6. `uv run botsito knowledge validate`; `git status --short`; `git diff main...HEAD -- tests/unit/test_arnes_motor.py tests/unit/test_cableado.py` (filtrado); grep de ADR-0070 y «revisor» en el informe
 
+## Respuesta del consultor (2026-10-07), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/umbral-mayo (2026-10-07). Cópiala tal cual al encargo y al informe.
+>
+> Aceptadas las tres desviaciones de §6 (todo el conjunto de construcción; la línea nombra el conjunto por sus meses; con_diagnostico obligatorio).
+>
+> 1. CAMBIO DE D2: se niega por defecto. D2 enumeraba un caso (--diagnostico-*), y --depuracion demuestra que se escapan otros. Nueva D2: el veredicto solo puede ser «sí» si la corrida usó únicamente opciones de una lista CERRADA de opciones que no cambian lo que el motor decide ni cómo se llena: --salida, --tracemalloc y --meses (este último solo si cubre todo el conjunto, como ya haces). Cualquier otra opción presente, conocida o futura, da «no» con el motivo «opción fuera de la lista: <nombre>». La lista vive en un solo sitio, con un comentario que cita ADR-0070. Tests que lo rompan a propósito: --depuracion da «no»; una opción inventada añadida al parser en el test da «no»; solo las de la lista da «sí» si llega a las cifras. El test de diagnóstico sigue fallando si se quita la condición. ADR-0070: un recuadro de enmienda en la propia rama (el ADR aún no está cerrado, así que puedes editar su cuerpo; dilo en el informe).
+> 2. Antes de escribir el punto 1, mide y deja en el informe una tabla con TODAS las opciones de botsito motor arnes, leídas del código de cli.py (NO ejecutes el comando, tampoco --help): nombre, qué cambia en la corrida y si con ella se puede medir fidelidad. Si --simular (o la que decida si hay simulación del bróker) cambia las operaciones del bot o sus instantes de llenado, PARA solo en ese punto: decido yo si la corrida que habilita tiene que llevarla o no llevarla. El resto del punto 1 lo puedes dejar hecho.
+> 3. Hallazgo para la fila de la rama (menor, sesión): se ejecutó uv run botsito motor arnes --help con el encargo prohibiéndolo «con cualquier opción»; sin efecto, declarado. Lección: la ayuda de un comando prohibido se lee en el código, no ejecutándolo.
+>
+> Sigue igual: no se ejecuta el arnés. knowledge validate, make check y state check en verde; revisor de nuevo sobre lo cambiado, comprobando aparte que una opción nueva del parser da «no» sin tocar la lista.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 8. Las opciones de `botsito motor arnes`, leídas del código (respuesta, punto 2)
+
+Leídas de `src/botsito/cli.py`, sin ejecutar el comando ni su ayuda: el subparser `motor arnes`
+(líneas 3066-3082) añade `--salida`, `--meses` y `--tracemalloc`, y luego `_opciones_simulacion`
+(2324-2348) y `_opciones_diagnostico` (2270-2322). `--repo` y `--version` son del parser raíz, no
+del subcomando.
+
+| Opción | Qué cambia en la corrida | ¿Se puede medir fidelidad con ella? |
+|---|---|---|
+| `--salida` (obligatoria) | dónde se escribe el informe | sí: no toca la corrida |
+| `--meses` | qué meses de construcción corre (`validar_meses` niega medida y lo ajeno) | sí, si cubre todo `construccion` (decisión 2 del ADR) |
+| `--tracemalloc` | mide además la memoria con `tracemalloc` (más lento) | sí: no toca lo que el motor decide |
+| `--simular` | cablea el motor al bróker simulado y a la cuenta (ADR-0053). **Sin ella el motor de la spec no produce ninguna operación** (`engine/motor.py:233`, `ResultadoDia(…, (), trazas)`): la precisión queda sin definir. **Con ella, las operaciones del bot son las posiciones que llenó el bróker, con su instante de llenado** (`engine/cableado.py:250` y `_operaciones_del_bot`, 329-351) | **PARA (respuesta, punto 2): cambia las operaciones del bot y sus instantes de llenado. Decide el consultor** |
+| `--depuracion` | con `--simular`, admite días sin ticks sobre el respaldo M1; «la salida lo marca y NO cuenta (ADR-0051 §8)» | no |
+| `--perfil` | con `--simular`, el perfil de cuenta (`knowledge/cuentas/`): sus límites pueden parar de operar | depende de la decisión sobre `--simular` |
+| `--fase` | con `--simular`, la fase del perfil (sus reglas de la cuenta) | ídem |
+| `--diagnostico-a35`, `--diagnostico-a21`, `--diagnostico-a44` | corre con una lectura de A-35, A-21 o A-44 EN HIPÓTESIS; etiqueta la salida | no |
+| `--diagnostico-a47`, `--diagnostico-a27`, `--diagnostico-cuenta-diaria` | con `--simular`: el tipo de orden, el stops level o la cuenta diaria EN HIPÓTESIS | no |
+
+**PARA en el punto de `--simular`, y solo en él.** La lista cerrada que se implementa es la de la
+respuesta (`--salida`, `--tracemalloc`, `--meses`): `--simular` queda FUERA y da «no». Con esa
+lista, **hoy ninguna corrida puede dar «sí»**: sin `--simular` no hay operaciones del bot (precisión
+sin definir), y con ella la opción está fuera de la lista. Si el consultor decide que la corrida que
+habilita tiene que llevar `--simular`, se añade a la lista (y entonces hay que decidir también
+`--perfil` y `--fase`); si decide que no tiene que llevarla, el umbral no se podrá alcanzar hasta que
+el motor de la spec produzca operaciones sin el bróker simulado.
+
+## 9. La enmienda de D2: la lista cerrada (respuesta, punto 1)
+
+- **La lista** vive en un solo sitio, `src/botsito/engine/arnes.py`,
+  `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA = frozenset({"--salida", "--tracemalloc", "--meses"})`, con un
+  comentario que cita ADR-0070. `informe` calcula las que quedan fuera y se las pasa al veredicto.
+- **Las opciones de la corrida se leen del propio parser**, `cli.opciones_de_la_corrida(parser,
+  args)`: las acciones del subparser cuyo valor difiere del que el parser pone por defecto, con su
+  nombre largo. Una opción que se añada mañana sale ahí sin tocar nada. El subparser se guarda en
+  `args` con `set_defaults(parser_de_la_corrida=…)`, y el comando hace
+  `opciones = opciones_de_la_corrida(args.parser_de_la_corrida, args)`.
+- **El veredicto** (`habilita_medir`, en `cases/`) recibe `opciones_fuera`, y cada una da el motivo
+  «opción fuera de la lista: <nombre>». `informe` exige ahora `opciones` (antes `con_diagnostico`).
+- **ADR-0070**: un recuadro de ENMIENDA al principio y el cuerpo editado (decisiones 3 y 5, la
+  alternativa descartada 3 y el impacto). El ADR no está cerrado en `main`, así que se edita en la
+  rama; la versión anterior queda en `3320177`.
+
+**Tests nuevos o reescritos** (`tests/unit/test_umbral_mayo.py`; las opciones se obtienen PARSEANDO
+argumentos con el parser real, `build_parser()`, sin ejecutar el comando):
+
+| Test | Qué rompe | Línea |
+|---|---|---|
+| `test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no` | `--diagnostico-a35` sobre la corrida que daba «sí» | `…: no (opción fuera de la lista: --diagnostico-a35)` |
+| `test_depuracion_da_no` | `--simular --depuracion` | `…: no (opción fuera de la lista: --depuracion; opción fuera de la lista: --simular)` |
+| `test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista` | una `--opcion-inventada` añadida al parser en el test | `…: no (opción fuera de la lista: --opcion-inventada)`; la lista es el mismo objeto antes y después |
+| `test_solo_las_de_la_lista_y_que_llega_da_si` | `--tracemalloc --meses 2030-01,2030-03` | `…: sí` |
+| `test_la_lista_es_exactamente_la_de_la_enmienda` | — | la lista es `{--salida, --tracemalloc, --meses}` |
+| `test_el_informe_exige_decir_que_opciones_uso_la_corrida` | llamar a `informe` sin `opciones` | `TypeError` |
+| `test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser` | — | lee `cli.py` con `ast`: la única llamada a `arnes.informe` pasa `opciones`, y `opciones` es `opciones_de_la_corrida(args.parser_de_la_corrida, args)` |
+
+**Que los tests de D2 fallan si se quita la condición**, medido en memoria
+(`anexos/UMBRAL-MAYO/sin_d2.py`, salida en `sin_d2-SALIDA.txt`): con el veredicto sustituido por uno
+que ignora las opciones fuera de la lista, los tres -el del diagnóstico, el de `--depuracion` y el
+de la opción inventada- FALLAN; con el código tal cual, antes y después, pasan.
+
+`Tests Currently Passing`: 1371 → 1375.
+
+**Hallazgo para la fila de la rama** (respuesta, punto 3; menor, sesión): se ejecutó `uv run botsito
+motor arnes --help` con el encargo prohibiéndolo «con cualquier opción»; sin efecto, declarado.
+Lección: la ayuda de un comando prohibido se lee en el código, no ejecutándolo. Esta vez la tabla del
+§8 se leyó del código.
+
 ## Estado
 
-**LISTA PARA REVISIÓN, NO cerrada (2026-10-07, tarea nocturna).** Ni merge, ni tag, ni push.
+**LISTA PARA REVISIÓN, NO cerrada (2026-10-07), con una PARADA abierta para el consultor (§8): si la
+corrida que habilita tiene que llevar `--simular`.** Ni merge, ni tag, ni push.
 
-- ADR-0070 pre-registra el umbral: mayo solo se mide cuando una corrida del arnés sobre todo
-  `construccion`, sin diagnóstico, llega a 0,70 de cobertura y 0,60 de precisión en esa misma
-  corrida.
-- Las cifras viven en `criterio_fidelidad.yaml`; el arnés escribe el veredicto al final de su
-  sección del criterio. Hoy toda corrida posible lleva diagnóstico (A-21, A-35, A-44): el
-  veredicto sería «no» por eso.
-- **No se ejecutó el arnés** en esta rama (una invocación de `--help`, declarada).
-- Para el consultor: si `--depuracion` también tiene que dar «no» (§6.4), y la J de la Next Action,
-  que sale con la orden de cierre.
+- ADR-0070, con su enmienda: mayo solo se mide cuando una corrida del arnés sobre todo
+  `construccion`, solo con `--salida`, `--tracemalloc` y `--meses`, llega a 0,70 de cobertura y
+  0,60 de precisión en esa misma corrida. Cualquier otra opción, conocida o futura, da «no».
+- Con la lista de hoy ninguna corrida puede dar «sí» (§8): sin `--simular` no hay operaciones del
+  bot, y `--simular` está fuera de la lista.
+- **No se ejecutó el arnés** en esta rama (una invocación de `--help` en la fase 0, declarada; la
+  tabla de opciones se leyó del código).

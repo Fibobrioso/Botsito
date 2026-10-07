@@ -597,7 +597,7 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
         arnes.correr("x", ("2030-01",), dias, mercado, _ConEmpate()),
         criterio,
         voc,
-        con_diagnostico=False,
+        opciones=(),
     )
     assert "## Avisos de orden dentro de una clase (ADR-0049, H3)" in texto
     assert "- 2030-01-15 07-11: disparador RN-006, RN-014" in texto
@@ -605,7 +605,7 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
         arnes.correr("spec", ("2030-01",), dias, mercado, motor),
         criterio,
         voc,
-        con_diagnostico=False,
+        opciones=(),
     )
     assert "- ninguno: en ninguna sesion dieron SI dos reglas de la misma clase a la vez" in texto
     assert "- RN-003: 2 de 2; 0 de 0" in texto  # reglas disparadas sobre las sesiones corridas

@@ -35,3 +35,19 @@ Dado por Aleks (consultor) el 2026-10-07, como tarea nocturna. Copiado tal cual:
 > Informe en docs/validation/UMBRAL-MAYO.md: fase 0, encargo frente a lo hecho, desviaciones, comandos y salidas, y una línea que diga que no se ejecutó el arnés. Revisor con su informe pegado al final, comprobando aparte que ningún commit de la rama ejecutó el arnés y que el test de «corrida con diagnóstico» falla si se quita la condición D2. Arregla en la rama lo que el revisor marque y que no contradiga este encargo; lo que lo contradiga, déjalo anotado para el consultor.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor (2026-10-07), copiada tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/umbral-mayo (2026-10-07). Cópiala tal cual al encargo y al informe.
+>
+> Aceptadas las tres desviaciones de §6 (todo el conjunto de construcción; la línea nombra el conjunto por sus meses; con_diagnostico obligatorio).
+>
+> 1. CAMBIO DE D2: se niega por defecto. D2 enumeraba un caso (--diagnostico-*), y --depuracion demuestra que se escapan otros. Nueva D2: el veredicto solo puede ser «sí» si la corrida usó únicamente opciones de una lista CERRADA de opciones que no cambian lo que el motor decide ni cómo se llena: --salida, --tracemalloc y --meses (este último solo si cubre todo el conjunto, como ya haces). Cualquier otra opción presente, conocida o futura, da «no» con el motivo «opción fuera de la lista: <nombre>». La lista vive en un solo sitio, con un comentario que cita ADR-0070. Tests que lo rompan a propósito: --depuracion da «no»; una opción inventada añadida al parser en el test da «no»; solo las de la lista da «sí» si llega a las cifras. El test de diagnóstico sigue fallando si se quita la condición. ADR-0070: un recuadro de enmienda en la propia rama (el ADR aún no está cerrado, así que puedes editar su cuerpo; dilo en el informe).
+> 2. Antes de escribir el punto 1, mide y deja en el informe una tabla con TODAS las opciones de botsito motor arnes, leídas del código de cli.py (NO ejecutes el comando, tampoco --help): nombre, qué cambia en la corrida y si con ella se puede medir fidelidad. Si --simular (o la que decida si hay simulación del bróker) cambia las operaciones del bot o sus instantes de llenado, PARA solo en ese punto: decido yo si la corrida que habilita tiene que llevarla o no llevarla. El resto del punto 1 lo puedes dejar hecho.
+> 3. Hallazgo para la fila de la rama (menor, sesión): se ejecutó uv run botsito motor arnes --help con el encargo prohibiéndolo «con cualquier opción»; sin efecto, declarado. Lección: la ayuda de un comando prohibido se lee en el código, no ejecutándolo.
+>
+> Sigue igual: no se ejecuta el arnés. knowledge validate, make check y state check en verde; revisor de nuevo sobre lo cambiado, comprobando aparte que una opción nueva del parser da «no» sin tocar la lista.
+>
+> Rama lista para revisión, NO cerrada.

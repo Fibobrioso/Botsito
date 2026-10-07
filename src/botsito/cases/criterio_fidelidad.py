@@ -167,14 +167,14 @@ def _por_ciento(f: Fraction) -> str:
 
 
 def habilita_medir(
-    medida: Medida, criterio: Criterio, meses: Sequence[str], *, con_diagnostico: bool
+    medida: Medida, criterio: Criterio, meses: Sequence[str], *, opciones_fuera: Sequence[str]
 ) -> Veredicto:
-    """ADR-0070. Habilita solo si la corrida (1) no lleva ninguna opcion de diagnostico, (2) cubre
-    TODO el conjunto de construccion y (3) llega, en esa misma corrida, a los dos umbrales de
-    construccion para medir. Una metrica sin definir no llega."""
-    motivos: list[str] = []
-    if con_diagnostico:
-        motivos.append("corrida con diagnostico: solo cuenta una corrida sin --diagnostico-*")
+    """ADR-0070, con su enmienda del 2026-10-07. Habilita solo si la corrida (1) no uso ninguna
+    opcion fuera de la lista CERRADA de las que no cambian lo que el motor decide ni como se llena
+    (`opciones_fuera` vacia: la lista y el calculo viven en `engine/arnes.py`), (2) cubre TODO el
+    conjunto de construccion y (3) llega, en esa misma corrida, a los dos umbrales de construccion
+    para medir. Una metrica sin definir no llega."""
+    motivos: list[str] = [f"opción fuera de la lista: {o}" for o in opciones_fuera]
     faltan = sorted(set(criterio.construccion) - set(meses))
     if faltan:
         motivos.append(

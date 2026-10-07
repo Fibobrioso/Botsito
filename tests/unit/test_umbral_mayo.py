@@ -4,6 +4,7 @@ la linea de veredicto que el arnes escribe al final de su seccion del criterio."
 
 from __future__ import annotations
 
+import argparse
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from fractions import Fraction
@@ -21,6 +22,7 @@ from botsito.cases.criterio_fidelidad import (
     habilita_medir,
     medir,
 )
+from botsito.cli import build_parser, opciones_de_la_corrida
 from botsito.engine import arnes
 from botsito.engine.motor import ResultadoDia
 
@@ -68,7 +70,8 @@ def test_fuera_de_0_a_1_o_no_numerico_no_carga(tmp_path: Path, campo: str, valor
 
 # --------------------------------------------------- fase 3: la linea de veredicto (ADR-0070)
 # Corridas SINTETICAS: dias, operaciones del trader y del bot escritas a mano, sin motor ni velas.
-# Cada test rompe una condicion a proposito y mira la linea que el arnes escribe.
+# Cada test rompe una condicion a proposito y mira la linea que el arnes escribe. Las opciones de
+# una corrida se obtienen PARSEANDO los argumentos con el parser real: el comando no se ejecuta.
 
 CONSTRUCCION = ("2030-01", "2030-03")
 CRITERIO = Criterio(
@@ -108,8 +111,16 @@ def _corrida(
     )
 
 
-def _linea(corrida: arnes.Corrida, *, con_diagnostico: bool) -> str:
-    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, con_diagnostico=con_diagnostico)
+def _parsear(*argv: str, parser: argparse.ArgumentParser | None = None) -> tuple[str, ...]:
+    """Las opciones que una corrida de `motor arnes` con estos argumentos daria al informe: solo
+    se PARSEAN, el comando no se ejecuta. Con `parser`, el de `build_parser()` ya modificado."""
+    p = parser or build_parser()
+    args = p.parse_args(["motor", "arnes", "--salida", "x.txt", *argv])
+    return opciones_de_la_corrida(args.parser_de_la_corrida, args)
+
+
+def _linea(corrida: arnes.Corrida, opciones: tuple[str, ...] = ("--salida",)) -> str:
+    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, opciones=opciones)
     lineas = [ln for ln in texto.splitlines() if ln.startswith("habilita medir")]
     assert len(lineas) == 1, lineas
     # al final de la seccion del criterio: la linea siguiente es la vacia que la cierra
@@ -120,42 +131,76 @@ def _linea(corrida: arnes.Corrida, *, con_diagnostico: bool) -> str:
 
 def test_llega_a_las_dos_sin_diagnostico_y_sobre_todo_el_conjunto_habilita() -> None:
     # 7/10 de cobertura y 7/11 de precision: justo en los umbrales o por encima
-    linea = _linea(_corrida(10, 7, 4), con_diagnostico=False)
+    linea = _linea(_corrida(10, 7, 4))
     assert linea == "habilita medir el conjunto de medida (2030-02) (ADR-0070): sí"
 
 
 def test_falla_por_cobertura() -> None:
-    linea = _linea(_corrida(10, 6, 0), con_diagnostico=False)  # 6/10 y 6/6
+    linea = _linea(_corrida(10, 6, 0))  # 6/10 y 6/6
     assert linea.endswith(": no (cobertura 60.0 % por debajo de 70.0 %)")
 
 
 def test_falla_por_precision() -> None:
-    linea = _linea(_corrida(10, 8, 6), con_diagnostico=False)  # 8/10 y 8/14
+    linea = _linea(_corrida(10, 8, 6))  # 8/10 y 8/14
     assert linea.endswith(": no (precision 57.1 % por debajo de 60.0 %)")
 
 
 def test_una_metrica_sin_definir_no_llega() -> None:
     # el bot no pone ninguna: cobertura 0/3 y precision sin denominador
-    linea = _linea(_corrida(3, 0, 0), con_diagnostico=False)
+    linea = _linea(_corrida(3, 0, 0))
     assert "precision sin definir" in linea and linea.split(": ", 1)[1].startswith("no (")
     # y sin operaciones del trader, la cobertura tampoco esta definida
     sin_trader = arnes.Corrida("sintetico", CONSTRUCCION, (), ())
-    assert "cobertura sin definir" in _linea(sin_trader, con_diagnostico=False)
+    assert "cobertura sin definir" in _linea(sin_trader)
 
 
 def test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no() -> None:
-    """D2 (ADR-0070): la misma corrida que habilita sin diagnostico, con diagnostico sale «no», y
-    el unico motivo es el diagnostico. Si se quitara esa condicion, este test fallaria."""
+    """D2 (ADR-0070): la misma corrida que habilita con las opciones de la lista, con una opcion de
+    diagnostico sale «no», y el unico motivo es esa opcion. Si se quitara la condicion, este test
+    fallaria (anexo sin_d2.py)."""
     corrida = _corrida(10, 7, 4)
-    assert _linea(corrida, con_diagnostico=False).endswith(": sí")
-    linea = _linea(corrida, con_diagnostico=True)
+    assert _linea(corrida, _parsear()).endswith(": sí")
+    linea = _linea(corrida, _parsear("--diagnostico-a35", "cierre_vela_contraria"))
+    assert linea.endswith(": no (opción fuera de la lista: --diagnostico-a35)")
+
+
+def test_depuracion_da_no() -> None:
+    """--depuracion (y el --simular que exige) estan fuera de la lista: «no», con los dos."""
+    opciones = _parsear("--simular", "--depuracion")
+    assert opciones == ("--depuracion", "--salida", "--simular")
+    linea = _linea(_corrida(10, 7, 4), opciones)
     assert linea.endswith(
-        ": no (corrida con diagnostico: solo cuenta una corrida sin --diagnostico-*)"
+        ": no (opción fuera de la lista: --depuracion; opción fuera de la lista: --simular)"
     )
 
 
+def test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista() -> None:
+    """Una opcion inventada, anadida al parser en el test: sale de `opciones_de_la_corrida` sin
+    tocar nada y da «no». La lista no se toca."""
+    lista_antes = arnes.OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA
+    parser = build_parser()
+    probe = parser.parse_args(["motor", "arnes", "--salida", "x.txt"])
+    probe.parser_de_la_corrida.add_argument("--opcion-inventada", action="store_true")
+    opciones = _parsear("--opcion-inventada", parser=parser)
+    assert "--opcion-inventada" in opciones
+    linea = _linea(_corrida(10, 7, 4), opciones)
+    assert linea.endswith(": no (opción fuera de la lista: --opcion-inventada)")
+    assert arnes.OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA is lista_antes
+
+
+def test_solo_las_de_la_lista_y_que_llega_da_si() -> None:
+    opciones = _parsear("--tracemalloc", "--meses", "2030-01,2030-03")
+    assert opciones == ("--meses", "--salida", "--tracemalloc")
+    assert _linea(_corrida(10, 7, 4), opciones).endswith(": sí")
+
+
+def test_la_lista_es_exactamente_la_de_la_enmienda() -> None:
+    lista = arnes.OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA
+    assert lista == {"--salida", "--tracemalloc", "--meses"}
+
+
 def test_una_corrida_sobre_parte_de_construccion_no_habilita() -> None:
-    linea = _linea(_corrida(10, 7, 4, meses=("2030-01",)), con_diagnostico=False)
+    linea = _linea(_corrida(10, 7, 4, meses=("2030-01",)))
     assert linea.endswith(
         ": no (la corrida no cubre todo el conjunto de construccion (falta 2030-03))"
     )
@@ -163,29 +208,33 @@ def test_una_corrida_sobre_parte_de_construccion_no_habilita() -> None:
 
 def test_los_motivos_se_suman() -> None:
     v = habilita_medir(
-        medir([], [], CRITERIO.tolerancias), CRITERIO, ("2030-01",), con_diagnostico=True
+        medir([], [], CRITERIO.tolerancias),
+        CRITERIO,
+        ("2030-01",),
+        opciones_fuera=("--simular",),
     )
     assert not v.habilita
-    assert len(v.motivos) == 4  # diagnostico, conjunto incompleto, cobertura y precision
+    assert len(v.motivos) == 4  # la opcion, conjunto incompleto, cobertura y precision
 
 
-def test_el_informe_exige_decir_si_hay_diagnostico() -> None:
+def test_el_informe_exige_decir_que_opciones_uso_la_corrida() -> None:
     """Sin el argumento, `informe` no se puede llamar: ningun llamador puede olvidarlo y dejar el
-    veredicto en «sin diagnostico» por defecto."""
-    with pytest.raises(TypeError, match="con_diagnostico"):
+    veredicto sin mirar las opciones."""
+    with pytest.raises(TypeError, match="opciones"):
         arnes.informe(_corrida(1, 1, 0), CRITERIO, VOCABULARIO)  # type: ignore[call-arg]
 
 
-def test_el_comando_pasa_al_informe_si_la_corrida_lleva_diagnostico() -> None:
-    """El comando `motor arnes` le pasa a `informe` `diag.activo`, no una constante: si alguien lo
-    cambiara a `False`, toda corrida con diagnostico diria «sí» (revisor de esta rama, a2).
+def test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser() -> None:
+    """El comando `motor arnes` le pasa a `informe` las opciones que calcula
+    `opciones_de_la_corrida` sobre su propio parser, no una constante (revisor de esta rama, a2).
     Se lee el codigo, sin ejecutar el comando: en esta rama el arnes no se corre."""
     import ast
 
     fuente = (REPO / "src" / "botsito" / "cli.py").read_text(encoding="utf-8")
+    arbol = ast.parse(fuente)
     llamadas = [
         n
-        for n in ast.walk(ast.parse(fuente))
+        for n in ast.walk(arbol)
         if isinstance(n, ast.Call)
         and isinstance(n.func, ast.Attribute)
         and n.func.attr == "informe"
@@ -193,5 +242,12 @@ def test_el_comando_pasa_al_informe_si_la_corrida_lleva_diagnostico() -> None:
         and n.func.value.id == "arnes"
     ]
     assert len(llamadas) == 1, "el comando llama a arnes.informe una sola vez"
-    argumento = next(k.value for k in llamadas[0].keywords if k.arg == "con_diagnostico")
-    assert ast.unparse(argumento) == "diag.activo"
+    argumento = next(k.value for k in llamadas[0].keywords if k.arg == "opciones")
+    assert ast.unparse(argumento) == "opciones"
+    asignaciones = [
+        ast.unparse(n.value)
+        for n in ast.walk(arbol)
+        if isinstance(n, ast.Assign)
+        and any(isinstance(t, ast.Name) and t.id == "opciones" for t in n.targets)
+    ]
+    assert "opciones_de_la_corrida(args.parser_de_la_corrida, args)" in asignaciones

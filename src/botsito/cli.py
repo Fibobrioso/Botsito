@@ -2207,6 +2207,21 @@ def _texto_de_vistos(repo: Path) -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
+def opciones_de_la_corrida(
+    parser: argparse.ArgumentParser, args: argparse.Namespace
+) -> tuple[str, ...]:
+    """Las opciones de `parser` que la corrida uso: las que tienen un valor distinto del que el
+    parser pone por defecto, con su nombre largo. Se leen del parser, no de una lista: una opcion
+    que se anada manana sale aqui sin tocar nada (ADR-0070, enmienda del 2026-10-07)."""
+    salida: list[str] = []
+    for accion in parser._actions:
+        if not accion.option_strings or accion.dest in ("help", "parser_de_la_corrida"):
+            continue
+        if getattr(args, accion.dest, accion.default) != accion.default:
+            salida.append(max(accion.option_strings, key=len))
+    return tuple(sorted(salida))
+
+
 def _diagnostico_de(args: argparse.Namespace) -> Any:
     """Lo pedido con --diagnostico-a35 / --diagnostico-a44 (rama trabajo/preparar-a35-a44), y
     desde la rama trabajo/broker-ordenes-stop --diagnostico-a27, que solo tiene sentido con el
@@ -2421,8 +2436,9 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             )
             nombre = "spec vigente"
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
-        # ADR-0070: el veredicto dice «no» a toda corrida con diagnostico
-        texto = arnes.informe(corrida, criterio, vocabulario, con_diagnostico=diag.activo)
+        # ADR-0070: el veredicto dice «no» a toda corrida con una opcion fuera de su lista
+        opciones = opciones_de_la_corrida(args.parser_de_la_corrida, args)
+        texto = arnes.informe(corrida, criterio, vocabulario, opciones=opciones)
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
@@ -3062,6 +3078,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _opciones_simulacion(mt_arnes)
     _opciones_diagnostico(mt_arnes)
+    # ADR-0070: el comando lee del propio parser que opciones uso la corrida
+    mt_arnes.set_defaults(parser_de_la_corrida=mt_arnes)
     mt_visor = motor_sub.add_parser(
         "visor",
         help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
