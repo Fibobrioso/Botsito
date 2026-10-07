@@ -685,8 +685,200 @@ Opciones:
 2. Mantener lo aceptado en §0.d y declarar B2 como límite, con una entrada de la Next Action.
 3. Otra que decidas.
 
+#### Respuesta del consultor a la PARADA de §1.12 (2026-10-07), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de §1.12 de trabajo/guion-mismo-comando (2026-10-07). Cópiala tal cual en el informe, bajo §1.12.
+>
+> 1. B2: opción 1, y con dos ampliaciones. Revoco lo que acepté en §0.d («un programa desconocido sigue siendo un lector»): enumeraba las ejecuciones en vez de negar por defecto.
+>    a) Ejecución es TODO programa que no esté en una lista cerrada de programas que no ejecutan código. Haz la lista con los programas que aparecen en los 503 comandos reales y no ejecutan código, cada uno con su porqué en una línea. trap sale de los lectores. awk -f y sed -f se tratan como un fichero de lenguaje desconocido: se niegan.
+>    b) Mide también la variante que cierra lo que proponías dejar como límite: un programa que no está en ninguna lista (ni en la de los que no ejecutan código, ni intérprete conocido, ni shell, pytest, make, botsito o git) se niega si alguno de sus argumentos es un fichero que existe y no es idéntico al de main (php x.php, con x.php nuevo). Da su coste sobre los 503 comandos reales y sobre los 32 de RITUAL. Si no niega ninguno de los 32 y las negaciones nuevas de los 503 son todas ejecuciones de verdad (lístalas), adóptala en esta rama. Si niega algo que no es una ejecución, para y dímelo con la lista.
+>    c) Las asignaciones (las que preceden al comando, export y env) solo admiten nombres de una lista cerrada, con valor literal. Lista inicial: los nombres que aparecen en los 503 comandos reales y no hacen cargar código, cada uno con su porqué. Quedan fuera, y se niegan con un test cada una: PYTHONPATH, PYTHONSTARTUP, PYTHONHOME, BASH_ENV, ENV, NODE_OPTIONS, PERL5OPT, RUBYOPT, LD_PRELOAD y LD_LIBRARY_PATH, más cualquier nombre que no esté en la lista. Si alguno de los 32 de RITUAL usa una variable fuera de la lista, para y dímelo.
+>    Porqué: es la condición de la rama («la guardia tiene que poder decidir sobre lo que se ejecuta») aplicada a qué es una ejecución y a lo que la configura; cualquier lista abierta deja pasar el caso que nadie pensó.
+>
+> 2. Rama de la CI: aceptada la desviación (fix/guion-mismo-comando, la forma de RITUAL.md). El error es del encargo, no tuyo.
+>
+> 3. Para la fila de ERRORES-RECURRENTES en el cierre, además del hallazgo 5:
+>    - (importa, consultor; lo vio el revisor como B2) en la PARADA de la fase 0, el consultor aceptó que un programa desconocido es un lector, y con eso enumeraba las ejecuciones en lugar de negar por defecto. Es la segunda vez seguida de la lección de umbral-mayo (una puerta se escribe como lista cerrada de lo admitido). Lección: al revisar una lista cerrada, preguntar también qué es lo que activa la puerta, no solo qué se admite dentro de ella.
+>    - (menor, consultor) el encargo daba la rama de la CI como fix/trabajo-guion-mismo-comando, contra RITUAL.md. Lección: el nombre de la rama de la CI se copia de RITUAL.md.
+>    - (importa, sesión, arreglado) en main, el cuerpo de un heredoc puesto al final de la línea perdía su primera línea al analizarse. Lección: un heredoc se prueba con la ruta protegida en su primera línea.
+>
+> Luego: el cambio, sus tests que rompen la guardia a propósito, ampliar el anexo de mutaciones, make check sellado, push a fix/guion-mismo-comando y número de run, la comparación con main y con los 503 comandos reales actualizada en el informe, y una segunda pasada del revisor sobre todo lo de la rama, con su informe pegado al final. Pídele que compruebe expresamente que tanto lo que activa la condición como lo que se admite dentro de ella son listas cerradas.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 1.13 Lo que activa la condición y lo que la configura, en listas cerradas (respuesta a §1.12)
+
+**De dónde salen las listas** (`anexos/GUION-MISMO-COMANDO/programas_y_nombres.py`, salida en
+`programas_y_nombres-SALIDA.txt`). Los 503 primeros comandos de Bash distintos de la transcripción,
+partidos con el tokenizador de la propia guardia (ninguno sin partir), tras quitar los envoltorios:
+
+- **36 programas.** Ejecutan código `python`, `pytest`, `botsito` y `make`, que ya pasaban por la
+  condición; `for` es una palabra clave del shell, no un programa. Los otros 31 no ejecutan código y
+  forman `NO_EJECUTAN`, cada uno con su porqué en el propio código: `cd`, `git`, `grep`, `sed`,
+  `awk`, `cut`, `head`, `tail`, `echo`, `printf`, `cat`, `wc`, `ls`, `sort`, `uniq`, `tr`, `diff`,
+  `file`, `od`, `sha256sum`, `tee`, `sleep`, `mkdir`, `cp`, `mv`, `rm`, `curl`, `gh`, `ruff`,
+  `mypy`, `lint-imports`, `find` y `xargs` (los dos últimos lanzan otros programas: lo que lanzan
+  pasa por la condición).
+- **Tres más, que piden los tests de la guardia** y no salen en los 503: `stat`, `du` y `certutil`
+  (`test_deja_pasar_stat_tamano_y_sha256`, que lista justo lo que se puede hacer con el material
+  protegido sin abrirlo). Sin ellos ese test, de los que ya existían, fallaba: es una desviación
+  (§1.15).
+- **Nombres de entorno.** En una asignación que precede a un comando: `PYTHONUTF8` (35) y
+  `BOTSITO_ALLOW_MAIN` (3); en `export` y en `env`, ninguno. Sueltas: `S`, `W` y `R`, variables del
+  shell que no se exportan. `NOMBRES_DE_ENTORNO` = `PYTHONUTF8` y `BOTSITO_ALLOW_MAIN`, cada uno con
+  su porqué. **De los 32 de `RITUAL`, el único nombre es `BOTSITO_ALLOW_MAIN`**, que está en la
+  lista: no se da la condición de PARA del punto 1 c.
+
+**Lo hecho** (`.claude/hooks/guardia.py`):
+
+- **(a) Qué activa la condición.** Todo programa que no esté en `NO_EJECUTAN` es una ejecución
+  (`_no_ejecuta`, `_ejecucion_de_un_programa_desconocido`) y pasa por `exigir_ejecucion_verificable`
+  con todo lo de siempre (lo de antes, lo de a la vez, las expansiones). `trap` sale de los lectores
+  de metadatos, y con código se niega: su código corre al final, después de todo lo demás. `awk`,
+  `gawk` y `sed` con un fichero de programa (`-f`, `--file`, y en awk `-E`, `-i`, `-l`) le dan ese
+  fichero a la función como un guion de lenguaje desconocido: se niega salvo que sea el de `main`.
+- **(b) El fichero que recibe un programa desconocido.** Cada argumento suyo que sea un fichero que
+  existe pasa a la función como un guion de lenguaje desconocido: si no es el de `main`, se niega
+  (`php x.php`, con `x.php` nuevo); y un argumento que se construye al ejecutarse, también.
+  **Adoptada** porque su coste medido es nulo (abajo).
+- **(c) Lo que la configura.** Cada nombre de entorno que fija un comando tiene que estar en
+  `NOMBRES_DE_ENTORNO` (`_exigir_nombres_de_entorno`, y la rama `env` de `_envoltorios`): el de una
+  asignación que precede a un comando, el de `export`, `declare -x`/`typeset -x` y `env`. Vale para
+  TODO comando, no solo para las ejecuciones: `PYTHONPATH=x git commit` ejecuta los hooks de git, que
+  son Python. Una asignación suelta (`S=...;`) es una variable del shell y no cambia el entorno de lo
+  que corre después, **salvo** que el nombre ya esté exportado: `PATH=./x; python y.py` sí lo cambia,
+  y por eso una asignación suelta a un nombre ya exportado también tiene que estar en la lista (es la
+  lectura del punto 1 c que se aplica; si querías también las sueltas no exportadas, dímelo: `S`,
+  `W` y `R` entrarían en la lista).
+- **PowerShell, también lista cerrada** (`PS_NO_EJECUTAN`). Su detección era por palabras sueltas, y
+  el revisor (B2) mostró lo que pasaba: `[System.Diagnostics.Process]::Start(...)`, `Start-Job`,
+  `cscript`, `.\x.exe`. Ahora un comando que no está en la lista, al principio de un segmento o
+  dentro de `(...)`, `$(...)` o `@(...)`, es una ejecución (y en PowerShell ninguna se admite), y
+  también una llamada a .NET (`[Tipo]::`) y un bloque `{ ... }`. Ningún comando real de la sesión ni
+  de los runbooks usa PowerShell: la lista sale de lo que piden sus tests (`Get-Content`,
+  `Get-ChildItem`, `Get-Item`, `Get-FileHash`, `Select-String`, `Write-Output`, `Remove-Item`,
+  `git`), cada uno con su porqué. Es una ampliación, declarada (§1.15).
+
+**Dos cosas que encontró la medida**, y que se arreglan aquí:
+
+1. **El lanzador conocido.** Al quitar la regla del «lanzador desconocido» de la fase 1 (que (a)
+   parecía hacer innecesaria), la comparación con las líneas de los runbooks dio 7 casos que antes se
+   negaban y pasaban: `- make check ...`, `- uv run botsito ...` (con `-` como programa). Es decir,
+   `sudo make check` o `winpty botsito ...` habrían pasado: lo que ejecuta `make` no está en sus
+   argumentos. Se devuelve dentro de `_ejecucion_de_un_programa_desconocido`: si un argumento nombra
+   un programa que ejecuta (intérprete, shell, `make`, `pytest`, `botsito`, `uv`...), es
+   `indecidible`. Después, 0 casos al revés en los tres conjuntos.
+2. **Un literal de espacios era una ruta.** `analizar_codigo` resolvía un literal como `"     "` al
+   directorio actual, y un guion con `ast.walk(` y un literal así se negaba como si recorriera el
+   repositorio (le pasó al anexo `medir_b2.py`). Una guardia no se rodea: se corrige aquí, y un
+   literal vacío o solo de espacios ya no es una ruta.
+
+**El coste, medido** (`anexos/GUION-MISMO-COMANDO/medir_b2.py`, salida en `medir_b2-SALIDA.txt`):
+la guardia de la rama antes de esta ronda (`4be52cb`) frente a la de después, y frente a la de
+después sin (b):
+
+| Conjunto | Antes pasan, ahora se niegan | De ellos, solo por (b) | Antes se negaban, ahora pasan |
+|---|---|---|---|
+| Los 503 primeros comandos reales distintos | **0** | 0 | 0 |
+| Los 32 de `RITUAL` | **0** | 0 | 0 |
+| Las 164 líneas de los bloques de código de `docs/runbooks/` y `.claude/skills/` | 7 | 2 | 0 |
+
+Las 7 de los runbooks **no son comandos**: dos son continuaciones de un comando partido en varias
+líneas (`--respuesta "<...>" --valor <...> \`, `--valor <...> \`), dos son elementos de una lista
+(`- PROJECT_STATE.md`, `- tests/unit/test_*.py`, las dos de (b), con `-` como programa) y tres son
+salidas de ejemplo (`CRITERIO: ...`, `FILAS comparables: ...`, `INGESTA: ...`). Así que **(b) se
+adopta**: no niega ninguno de los 32, y en los 503 no niega nada.
+
+### 1.14 Tests, mutaciones y comparación con `main`, tras esta ronda
+
+Las cifras de esta sección **sustituyen** a las de §1.3, §1.4 y §1.9, que quedan como estaban en su
+pasada.
+
+**Tests** (`tests/unit/test_guardia_claude.py`): 13 funciones `test_ejecucion_*` y 133 casos (369
+con los 236 que ya existían, que siguen pasando, los 32 de `RITUAL` incluidos). Las cinco nuevas:
+
+| Test | Casos | Qué rompe |
+|---|---|---|
+| `…lo_que_no_esta_en_la_lista_es_una_ejecucion` | 12 | `php` y `setsid` con un `cp` delante; `php nuevo.php` y un fichero nuevo cualquiera (b); un argumento dinámico; `sudo make check`, `winpty python`; `trap '…' EXIT`; `awk -f`, `awk -fx`, `gawk --file=`, `sed -f` |
+| `…lo_que_si_se_puede_decidir_pasa` | 6 | un programa desconocido sin ficheros ni nada delante; `php` sobre un fichero de `main`; `awk` y `sed` con el programa en el comando; `trap` a secas; `grep -n python` |
+| `…un_nombre_de_entorno_que_carga_codigo_se_niega` | 10 | uno por nombre (`PYTHONPATH`, `PYTHONSTARTUP`, `PYTHONHOME`, `BASH_ENV`, `ENV`, `NODE_OPTIONS`, `PERL5OPT`, `RUBYOPT`, `LD_PRELOAD`, `LD_LIBRARY_PATH`), cada uno en cinco formas: delante de una ejecución, `export`, `env`, `declare -x`, y delante de `git commit` (sin ejecución: los hooks) |
+| `…los_nombres_de_entorno_son_una_lista_cerrada` | 1 | pasan `PYTHONUTF8`, `BOTSITO_ALLOW_MAIN` y una variable suelta no exportada; se niegan un nombre inventado, `PATH=./x;` (suelta sobre un nombre exportado) y `export` de un nombre inventado |
+| `…las_dos_listas_cerradas_dicen_su_porque` | 1 | cada entrada de `NO_EJECUTAN` y `NOMBRES_DE_ENTORNO` con su porqué; `trap` fuera de los lectores; los ejecutores, fuera de la lista |
+
+Y `…powershell_sin_ejecuciones_y_lo_demas_igual` gana los casos de PowerShell (`[Tipo]::`, `{ }`,
+`$(...)`, `cscript`, `.\x.exe`, `Start-Job`, `New-Object`). Cuatro casos de las pasadas anteriores
+se reescribieron para que cada uno rompa UNA pieza: `X=$Y python ...` pasa a `PYTHONUTF8=$Y python
+...` (con `X`, ahora también lo niega la lista de nombres), y `python inocuo.py | inventado` pasa a
+`| cat` (`inventado` es ahora una ejecución por sí mismo). Lo que miden no cambia.
+`Tests Currently Passing`: 1391 → 1396.
+
+**Mutaciones** (`sin_condicion.py`, ampliado; salida en `sin_condicion-SALIDA.txt`):
+
+| Mutación | Fallan | Lo que se exige |
+|---|---|---|
+| ninguna | 0 de 133 | — |
+| «sin la condición» | 98 | **exactamente** los 88 que esperan una negación por la función (siete tests), y además los 10 de los nombres que pasan por `env` (que la función decide); los tests de los nombres van con su mutación: sí |
+| «sin las expansiones» | 3 | los 3 suyos: fallan 3 |
+| «sin lo de antes» | 13 | los 6 suyos: fallan 6 |
+| «sin lo de a la vez» | 5 | los 5 suyos: fallan 5 |
+| «sin la salida ajena» | 1 | el suyo: falla |
+| «sin la existencia» | 2 | los 2 suyos: fallan 2 |
+| «sin lo que activa» (`_no_ejecuta` dice que todo programa no ejecuta) | 8 | los 7 suyos: fallan 7 |
+| «sin los ficheros de un programa desconocido» (sin b) | 3 | los 3 suyos: fallan 3 |
+| «sin los nombres de entorno» (`_nombre_admitido` admite todo) | 11 | los 11 suyos (los 10 nombres y la lista): fallan 11 |
+
+Restaurada cada una, fallan 0. `VEREDICTO: sin la condicion fallan exactamente los que esperan una
+negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+
+**Comparación con `main`**:
+- **Sintética** (`medir_huecos-FASE1-SALIDA.txt`, 58 casos): **0 que `main` niega y la rama deja
+  pasar**; 44 de PASA a NIEGA (los 39 de antes y los 5 de B2: `php`, `setsid`, `trap`, `awk -f` y
+  la llamada a .NET de PowerShell); 14 iguales: los 3 controles y b4, que se niegan en las dos;
+  `inocuo` y `f1-admitido`, que pasan en las dos; `tests-nuevo` (por diseño) y `v-runpy` (límite);
+  y los 6 del hallazgo 5, sin cambio.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 547 distintos ya (incluyen los 503); 442 con
+  la misma decisión; 104 que `main` deja pasar y la rama niega (el mismo desglose que en §1.4: 99 por
+  algo delante fuera de la lista, 2 `pytest` sin rutas en un worktree, 2 un `tee` detrás, 1 una
+  sustitución); y **1 que `main` niega y la rama deja pasar: la ejecución del anexo `medir_b2.py`**.
+  `main` la negaba por el falso positivo del literal de espacios (§1.13, «dos cosas que encontró la
+  medida», 2): es un falso positivo que se va, no un hueco que se abre. El guion no lee material
+  protegido; lo dice su cabecera.
+
+### 1.15 Desviaciones de esta ronda
+
+1. **`stat`, `du` y `certutil` en `NO_EJECUTAN`** sin salir en los 503: los pide un test de la
+   guardia que ya existía y lista lo que se puede hacer con el material protegido sin abrirlo.
+2. **La asignación suelta**: se mira solo si el nombre ya está exportado (§1.13, c). Si el punto 1 c
+   quería todas, se añaden `S`, `W` y `R` a la lista.
+3. **PowerShell, lista cerrada** (`PS_NO_EJECUTAN`): no lo pedía la respuesta con esas palabras, pero
+   es su condición aplicada a lo que el revisor (B2) mostró que pasaba en PowerShell.
+4. **El lanzador conocido, devuelto** dentro de la ejecución de un programa desconocido, y **el
+   falso positivo del literal de espacios**, corregido: los dos los encontró la medida (§1.13).
+
+### 1.16 Límites que quedan, tras esta ronda
+
+Sustituye las filas de §1.6 que esta ronda cierra (programas desconocidos, PowerShell, variables de
+entorno, `trap`, `awk -f`/`sed -f`); las demás siguen como allí.
+
+| Límite | Qué pasa |
+|---|---|
+| Un programa desconocido SIN ficheros ni nada delante (`inventado --version`) | Pasa: es un programa del entorno, y no hay nada de la rama que leer. Lo que ejecuta según su configuración (`npm run`, `tox`, `pre-commit run`) no se ve |
+| `awk` con `system()` y el comando `e` de GNU sed, EN el comando | Pasan: el programa va en el comando (se ve), pero la guardia no lo analiza. Lo dicen sus porqués en `NO_EJECUTAN` |
+| Un plugin de la configuración de `mypy` o una extensión de `gh` | Código que esos programas cargarían; nada en este repositorio lo configura hoy |
+| Lo que importa o ejecuta un guion, y las rutas compuestas por partes | Entradas nuevas de la Next Action en el cierre (respuesta a la fase 0, puntos 4 y 5) |
+| Un proceso de una llamada anterior; los hooks de git; `make` con el `Makefile` de `main` | Como en §1.6 |
+| La suite en un `git worktree` | Como en §1.6: pendiente de tu decisión |
+
+### 1.17 CI de Linux de esta ronda
+
+Pendiente.
+
+### 1.18 Segunda pasada del revisor
+
+Pendiente.
+
 ## Estado
 
-**PARADA (2026-10-07), fase 1 hecha con los arreglos del revisor.** Falta tu respuesta a §1.12
-(qué cuenta como una ejecución, y los nombres de variable); con ella, el cambio que decidas, su
-`make check`, la CI de Linux del último commit y una segunda pasada del revisor. NO cerrada.
+**EN CURSO (2026-10-07)**: hecha la respuesta a §1.12; faltan la CI de Linux del último commit y la segunda pasada del revisor.

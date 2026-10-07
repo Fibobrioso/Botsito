@@ -1,7 +1,7 @@
-Comandos de Bash en la transcripcion: 545; distintos: 502
-Misma decision en main y en la rama: 398
+Comandos de Bash en la transcripcion: 612; distintos: 547
+Misma decision en main y en la rama: 442
 main los deja pasar y la rama los niega: 104
-main los niega y la rama los deja pasar: 0
+main los niega y la rama los deja pasar: 1
 
 == Por motivo
    99  algo delante que no esta en la lista cerrada
@@ -224,3 +224,6 @@ main los niega y la rama los deja pasar: 0
     ejecutar `pytest`: antes, en el mismo comando, va `sed -n 996p tests/unit/test_guardia_claude.py`.
 - cd "C:/Users/USER/Desktop/Bot v3" && sed -i 's/^1383 funciones de test/1391 funciones de test/' PROJECT_STATE.md && uv r
     ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i s/^1383 funciones de test/1391 funciones de test/ PROJECT_STATE.md`.
+
+== main los niega y la rama los deja pasar
+- cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User

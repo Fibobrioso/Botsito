@@ -1022,7 +1022,7 @@ def _ejecucion(repo: Path) -> str:
         "cat > x.py <<'EOF' && python x.py\n{MALO}EOF\n",  # b3'
         "python x.py $(cp a.py x.py)",  # b4
         "echo $(cp a.py x.py); python x.py",  # b4'
-        "X=$(cp a.py x.py) python x.py",  # b4''
+        "PYTHONUTF8=$(cp a.py x.py) python x.py",  # b4''
         "cp a.py x.py & python x.py",  # b5
         "cat a.py | tee x.py && python x.py",  # b5'
         "cat a.py | tee x.py | python x.py",  # b5''
@@ -1075,7 +1075,7 @@ def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
         ("Bash", "xargs python < docs/a.md"),  # via 12, por la funcion (revisor, A1)
         ("Bash", "eval 'python inocuo.py'"),  # via 13
         ("Bash", "cmd /c python inocuo.py"),  # via 14
-        ("Bash", "CMD='!python inocuo.py' git --config-env=alias.x=CMD x"),  # revisor, B3
+        ("Bash", "git --config-env=alias.x=CMD x"),  # revisor, B3
     ],
 )
 def test_ejecucion_cada_via_pasa_por_la_condicion(
@@ -1129,15 +1129,15 @@ def test_ejecucion_lo_de_la_lista_cerrada_pasa(g: ModuleType, repo: Path, comand
         "inventado && python inocuo.py",  # un programa inventado antes
         "grep hola docs/a.md && python inocuo.py",  # un lector antes: tampoco esta en la lista
         "python inocuo.py && python existente.py",  # una ejecucion antes de otra
-        "X=$Y python inocuo.py",  # asignacion no literal
-        "X=$(echo 1) python inocuo.py",
-        "export X=$Y; python inocuo.py",
+        "PYTHONUTF8=$Y python inocuo.py",  # asignacion no literal
+        "PYTHONUTF8=$(echo 1) python inocuo.py",
+        "export PYTHONUTF8=$Y; python inocuo.py",
         "set -x; python inocuo.py",
         "cd docs > f.txt && python ../inocuo.py",  # una redireccion antes
         "python inocuo.py | tee salida.txt",
         "python inocuo.py | sort -o salida.txt",
         "python inocuo.py | uniq - salida.txt",
-        "python inocuo.py | inventado",
+        "python inocuo.py | cat",  # un programa conocido que no es un filtro
         "python",  # sin guion ni codigo
         "python -m json.tool docs/a.md",
         "env -S 'python inocuo.py'",
@@ -1176,8 +1176,122 @@ def test_ejecucion_make_solo_con_el_makefile_de_main(g: ModuleType, repo: Path) 
     assert _bash(g, repo, "make -f otro.mk check > make-check.log 2>&1") is not None
 
 
+# --- que activa la condicion y lo que la configura, en listas cerradas (respuesta del consultor a
+# §1.12, 2026-10-07): todo programa fuera de `NO_EJECUTAN` es una ejecucion; el fichero que recibe
+# un programa desconocido, si no es el de `main`, se niega; y los nombres de entorno, cerrados.
+PROHIBIDOS = [
+    "PYTHONPATH",
+    "PYTHONSTARTUP",
+    "PYTHONHOME",
+    "BASH_ENV",
+    "ENV",
+    "NODE_OPTIONS",
+    "PERL5OPT",
+    "RUBYOPT",
+    "LD_PRELOAD",
+    "LD_LIBRARY_PATH",
+]
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "cp a.py b.php && php b.php",  # (a): un programa desconocido, con algo delante
+        "cp a.py b.py && setsid ./b.py",
+        "php nuevo.php",  # (b): un fichero nuevo que puede ser lo que ejecuta
+        "inventado docs/nuevo.md",  # (b): cualquier fichero que no es el de main
+        "inventado $X",  # un argumento que se construye al ejecutarse
+        "sudo make check > make-check.log 2>&1",  # lanza un programa que ejecuta
+        "winpty python inocuo.py",
+        "trap 'python inocuo.py' EXIT",  # `trap` sale de los lectores
+        "awk -f a.py docs/a.md",  # un fichero de programa: lenguaje desconocido
+        "awk -fa.py docs/a.md",
+        "gawk --file=a.py docs/a.md",
+        "sed -f a.py docs/a.md",
+    ],
+)
+def test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    _escribir(repo, "nuevo.php", "<?php echo 1;")
+    _escribir(repo, "docs/nuevo.md", "x\n")
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "inventado --version",  # un programa desconocido sin ficheros ni nada delante
+        "php scripts/otro.py",  # el fichero es el de main: codigo revisado
+        "awk '{print $1}' docs/a.md",  # el programa va en el comando
+        "sed -n 1p docs/a.md",
+        "trap",
+        "grep -n python docs/a.md",
+    ],
+)
+def test_ejecucion_lo_que_si_se_puede_decidir_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize("nombre", PROHIBIDOS)
+def test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega(
+    g: ModuleType, repo: Path, nombre: str
+) -> None:
+    _ejecucion(repo)
+    for comando in (
+        f"{nombre}=x python inocuo.py",  # el que precede al comando
+        f"export {nombre}=x",
+        f"env {nombre}=x python inocuo.py",
+        f"declare -x {nombre}=x",
+        f"{nombre}=x git commit -m hola",  # tambien sin ejecucion: los hooks de git son codigo
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+    assert nombre not in g.NOMBRES_DE_ENTORNO
+
+
+def test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada(g: ModuleType, repo: Path) -> None:
+    _ejecucion(repo)
+    for comando in (
+        "PYTHONUTF8=1 python inocuo.py",
+        "BOTSITO_ALLOW_MAIN=1 git commit -m hola",
+        "S=hola; python inocuo.py",  # una variable del shell, no exportada
+    ):
+        assert _bash(g, repo, comando) is None, comando
+    for comando in (
+        "MI_NOMBRE_INVENTADO=1 python inocuo.py",  # cualquier nombre fuera de la lista
+        "PATH=./x; python inocuo.py",  # suelta, pero sobre un nombre ya exportado
+        "export MI_NOMBRE_INVENTADO=1",
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+def test_ejecucion_las_dos_listas_cerradas_dicen_su_porque(g: ModuleType) -> None:
+    for lista in (g.NO_EJECUTAN, g.NOMBRES_DE_ENTORNO):
+        assert all(isinstance(v, str) and len(v) > 10 for v in lista.values()), lista
+    assert "trap" not in g.NO_EJECUTAN and "trap" not in g.LECTOR_DE_METADATOS
+    for programa in ("python", "pytest", "make", "botsito", "bash", "php", "sudo", "awk -f"):
+        assert programa not in g.NO_EJECUTAN, programa
+
+
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
-    for comando in ("Start-Process python", ".\\x.ps1", "make check > make-check.log 2>&1"):
+    for comando in (
+        "Start-Process python",
+        ".\\x.ps1",
+        "make check > make-check.log 2>&1",
+        # revisor, B2, y respuesta del consultor a §1.12: tambien en PowerShell, lista cerrada
+        "[System.Diagnostics.Process]::Start('python','a.py')",
+        "Get-ChildItem | ForEach-Object { python $_ }",
+        "Write-Output $(python a.py)",
+        "cscript x.js",
+        ".\\x.exe",
+        "Start-Job { .\\x }",
+        "New-Object -ComObject WScript.Shell",
+    ):
         motivo = _decide(g, repo, "PowerShell", command=comando)
         assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
     for comando in ("git status", "Get-Content docs/a.md -TotalCount 5", "Write-Output hola"):
@@ -1243,6 +1357,8 @@ def test_ejecucion_una_sola_funcion_y_ninguna_via_decide_por_su_cuenta(g: Module
         "_analizar_pytest",
         "_analizar_xargs",
         "_ejecucion_lanzada",
+        "_ejecucion_de_un_programa_desconocido",
+        "_exigir_nombres_de_entorno",
     ):
         assert lanza(via) == [], (via, lanza(via))
     assert all(x.startswith("IndecidibleError(") for x in lanza("_envoltorios"))

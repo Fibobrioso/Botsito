@@ -1,0 +1,26 @@
+== los 503 primeros comandos reales distintos: 503
+   antes pasan y ahora se niegan: 0
+     de ellos, solo por (b): 0
+   antes se negaban y ahora pasan: 0
+== los 32 de RITUAL: 32
+   antes pasan y ahora se niegan: 0
+     de ellos, solo por (b): 0
+   antes se negaban y ahora pasan: 0
+== las lineas de codigo de los runbooks y las skills: 164
+   antes pasan y ahora se niegan: 7
+     de ellos, solo por (b): 2
+   antes se negaban y ahora pasan: 0
+   - --respuesta "<literal de la filtrada>" --valor <inicio_vela_contraria|cierre_vela_contraria> \
+       ejecutar `--respuesta`: detras, en la misma tuberia, va `cierre_vela_contraria`: solo filtros que leen de la entrada estandar y no escriben ningun fichero.
+   - --valor <solo_una_zona_de_control|sin_mecha_mas_alla_del_extremo> \
+       ejecutar `--valor`: detras, en la misma tuberia, va `sin_mecha_mas_alla_del_extremo`: solo filtros que leen de la entrada estandar y no escriben ningun fichero.
+   - (b) - PROJECT_STATE.md
+       ejecutar `-`: la guardia no sabe con que se ejecuta PROJECT_STATE.md (ni extension ni `#!`).
+   - (b) - tests/unit/test_*.py
+       ejecutar `-`: la guardia no sabe con que se ejecuta C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_claude.py (ni extension ni `#!`).
+   - CRITERIO: knowledge/corpus/criterio_huso.yaml (margen 2 puntos; decide >= 0.90 y el otro <= 0.50)
+       ejecutar `margen`: antes, en el mismo comando, va `CRITERIO: knowledge/corpus/criterio_huso.yaml`.
+   - FILAS comparables: <n>; sin entrada numerica: <k>; descartadas por frontera de dia: <si|no>
+       ejecutar `filas`: detras, en la misma tuberia, va `no`: solo filtros que leen de la entrada estandar y no escriben ningun fichero.
+   - INGESTA: <K> casos escritos de <⌊N/3⌋> dias ingeribles; <F> filas leidas; 0 pestanas de agregado abiertas
+       ejecutar `leidas`: antes, en el mismo comando, va `INGESTA: escritos de ingeribles`.

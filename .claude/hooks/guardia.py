@@ -887,7 +887,7 @@ LECTOR_DE_METADATOS = {
     "cksum", "test", "[", "realpath", "readlink", "basename", "dirname", "mkdir", "touch",
     "echo", "printf", "true", "false", "pwd", "export", "unset", "sleep", "date", "which",
     "type", "command", "cd", "rmdir", "ln", "chmod", "tree", "local", "declare", "read",
-    "set", "shift", "return", "exit", "wait", "kill", "jobs", "trap", "env", "uname", "whoami",
+    "set", "shift", "return", "exit", "wait", "kill", "jobs", "env", "uname", "whoami",
     "hostname", "nproc", "seq", "tty", "clear", "hash", "alias", "help", "history",
 }  # fmt: skip
 # No leen el contenido de sus argumentos de ruta (o el del proyecto, que es su puerta).
@@ -1045,6 +1045,7 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
     secuencia = comandos(lex)
     for posicion, cmd in enumerate(secuencia):
         ctx.secuencia, ctx.posicion, ctx.nivel = secuencia, posicion, lex
+        _exigir_nombres_de_entorno(cmd)
         for nombre, valor in cmd.asignaciones.items():
             try:
                 ctx.variables[nombre] = resolver(valor, ctx, lex)
@@ -1191,6 +1192,12 @@ def _envoltorios(argv: list[Palabra]) -> list[Palabra]:
                     raise IndecidibleError(f"`env {t}` parte una cadena en un comando que no ve")
                 if "\x00" in t:
                     raise IndecidibleError("`env` con un valor que se construye al ejecutarse")
+                nombre = t.split("=", 1)[0]
+                if not t.startswith("-") and not _nombre_admitido(nombre):
+                    raise IndecidibleError(
+                        f"`env {nombre}=...`: `{nombre}` no esta en la lista cerrada de nombres "
+                        "de entorno (`NOMBRES_DE_ENTORNO`)"
+                    )
                 argv = argv[2:] if t in {"-u", "--unset", "-C", "--chdir"} else argv[1:]
         elif c in {"uv", "uvx"}:
             resto = _opciones_cerradas(argv[1:], "uv")  # las globales de `uv`
@@ -1310,6 +1317,21 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         lenguaje = _lenguaje_del_fichero(_absoluta(argv[0].texto, ctx.cwd))
         _exigir_guion(argv[0], args, cmd, ctx, lex, lenguaje, argv[0].texto)
         return
+    if prog == "trap" and any(a.texto not in {"-p", "-l"} for a in args):
+        exigir_ejecucion_verificable(
+            ctx,
+            lex,
+            cmd,
+            "trap",
+            indecidible="`trap` guarda codigo que se ejecuta al final del comando, despues de "
+            "todo lo demas",
+        )
+    programa = _fichero_de_programa(prog, args)
+    if programa is not None:  # `awk -f x`, `sed -f x`: un fichero de lenguaje desconocido
+        guiones = [(programa, "desconocido")]
+        exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} {programa.texto}", guiones=guiones)
+    if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
+        _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
         return
     if prog == "wc":
@@ -1334,19 +1356,7 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
                         Palabra(a.texto[1:], a.glob), ctx, lex, "fichero que envia curl"
                     )
         return
-    # Un programa que la guardia no conoce y que lanza otro (`winpty python x`, `sudo bash x`):
-    # no sabe que ejecutara, asi que la ejecucion no es verificable.
-    lanzada = next((a for a in args if _lanza_una_ejecucion(a.texto)), None)
-    if lanzada is not None and prog not in LECTORES_CON_PATRON:
-        exigir_ejecucion_verificable(
-            ctx,
-            lex,
-            cmd,
-            f"{prog} {lanzada.texto}",
-            indecidible=f"`{prog}` lanza `{lanzada.texto}`, y la guardia no conoce `{prog}`: no "
-            "sabe que ejecutara",
-        )
-    # Cualquier otro programa LEE el contenido de sus argumentos de ruta.
+    # Lo que queda LEE el contenido de sus argumentos de ruta.
     textos = [a.texto for a in args]
     flag_r = any(
         re.fullmatch(r"-[a-zA-Z]*[rR][a-zA-Z]*|--(dereference-)?recursive", t) for t in textos
@@ -2004,13 +2014,70 @@ EXT_GUION = (
     ".ps1", ".psm1", ".bat", ".cmd",
 )  # fmt: skip
 EJECUTORES = frozenset({"pytest", "py.test", "make", "botsito", "pwsh", "powershell", "uv", "uvx"})
-# Programas que se sabe que LEEN y no ejecutan, aunque un argumento suyo se llame `python` (un
-# patron de busqueda). Cualquier otro programa que reciba un interprete se toma por un lanzador.
-LECTORES_CON_PATRON = frozenset({
-    "grep", "egrep", "fgrep", "rg", "ag", "ack", "man", "info", "apropos", "whatis", "less",
-    "more", "cat", "head", "tail", "wc", "file", "diff", "sed", "awk", "gawk", "sort", "uniq",
-    "cut", "tr",
-})  # fmt: skip
+# QUE ACTIVA la condicion (respuesta del consultor a §1.12, 2026-10-07: revoca «un programa
+# desconocido sigue siendo un lector», §0.d). Es una ejecucion TODO programa que no este en esta
+# lista cerrada de los que NO ejecutan codigo. La lista sale de los programas de los 503 comandos
+# reales de la sesion que la midio (anexo `programas_y_nombres-SALIDA.txt`) y de los que piden los
+# tests de la guardia y el ritual; cada uno, con su porque.
+NO_EJECUTAN: dict[str, str] = {
+    # de los 503 comandos reales
+    "cd": "cambia de directorio",
+    "git": "control de versiones; sus alias con `!` y `--config-env` pasan por la condicion, y "
+    "sus hooks son un limite declarado",
+    "grep": "busca texto en ficheros",
+    "sed": "transforma texto; su programa va en el comando (`-f`, un fichero de programa, se "
+    "niega aparte); el comando `e` de GNU sed es un limite declarado",
+    "awk": "transforma texto; su programa va en el comando (`-f`, se niega aparte); `system()` "
+    "es un limite declarado",
+    "cut": "corta columnas de texto",
+    "head": "lee el principio de un fichero",
+    "tail": "lee el final de un fichero",
+    "echo": "imprime sus argumentos",
+    "printf": "imprime con formato",
+    "cat": "lee ficheros",
+    "wc": "cuenta lineas, palabras o bytes",
+    "ls": "lista un directorio",
+    "sort": "ordena lineas (`-o`, que escribe, no se admite detras de una ejecucion)",
+    "uniq": "quita lineas repetidas",
+    "tr": "cambia caracteres",
+    "diff": "compara ficheros",
+    "file": "dice el tipo de un fichero",
+    "od": "vuelca bytes",
+    "sha256sum": "calcula un hash",
+    "tee": "copia la entrada a un fichero (detras de una ejecucion no se admite)",
+    "sleep": "espera un tiempo, sin leer ni ejecutar nada",
+    "mkdir": "crea directorios",
+    "cp": "copia ficheros (su origen se mira como una lectura)",
+    "mv": "mueve ficheros (su origen se mira como una lectura)",
+    "rm": "borra ficheros (`rm -rf` sobre data/, corpus/ o knowledge/ se niega aparte)",
+    "curl": "pide por red (un `@fichero` que envia se mira como una lectura)",
+    "gh": "pide a la API de GitHub",
+    "ruff": "analiza el codigo sin ejecutarlo",
+    "mypy": "analiza los tipos sin ejecutar el codigo (un plugin de su configuracion seria "
+    "codigo: limite declarado)",
+    "lint-imports": "analiza los imports leyendo el codigo, sin ejecutarlo",
+    "find": "recorre directorios; lo que lanza `-exec` pasa por la condicion",
+    "xargs": "lanza otro programa: lo que no es un lector de metadatos pasa por la condicion",
+    # de los tests de la guardia y del ritual (`tests/unit/test_guardia_claude.py`)
+    "stat": "dice el tamano y las fechas de un fichero (test de stat, tamano y sha256)",
+    "du": "mide el tamano de un directorio (idem)",
+    "certutil": "calcula un hash en Windows con `-hashfile` (idem)",
+}
+# Los programas que leen un FICHERO DE PROGRAMA con una opcion: ese fichero es codigo de un
+# lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).
+OPCIONES_DE_PROGRAMA: dict[str, set[str]] = {
+    "awk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
+    "gawk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
+    "sed": {"-f", "--file"},
+}
+# LO QUE CONFIGURA la ejecucion: los nombres de entorno que se admiten en una asignacion que
+# precede a un comando, en `export`, `declare -x` y `env`, y en una asignacion suelta a un nombre
+# ya exportado. Lista cerrada: los nombres de los 503 comandos reales que no hacen cargar codigo.
+NOMBRES_DE_ENTORNO: dict[str, str] = {
+    "PYTHONUTF8": "pide a Python UTF-8 en la consola cp1252 de Windows; no carga codigo",
+    "BOTSITO_ALLOW_MAIN": "la llave del ritual para el commit de estado en `main` "
+    "(`RITUAL.md`); la lee el hook `pre-commit`, no carga codigo",
+}
 PS_LANZADORES = frozenset({
     "start-process", "saps", "start", "invoke-item", "ii", "invoke-command", "icm", "cmd",
 })  # fmt: skip
@@ -2032,8 +2099,118 @@ def _nombre_de_programa(texto: str) -> str:
 
 
 def _lanza_una_ejecucion(texto: str) -> bool:
+    """Un argumento que nombra un programa que ejecuta codigo: un interprete, un shell o uno de
+    `EJECUTORES` (`make`, `pytest`, `botsito`, `uv`...)."""
     nombre = _nombre_de_programa(texto)
     return _es_interprete(nombre) or nombre in SHELLS or nombre in EJECUTORES
+
+
+def _no_ejecuta(prog: str) -> bool:
+    """Si el programa esta en la lista cerrada de los que no ejecutan codigo."""
+    return prog in NO_EJECUTAN
+
+
+def _nombre_admitido(nombre: str) -> bool:
+    """Si un nombre de entorno esta en la lista cerrada (`NOMBRES_DE_ENTORNO`)."""
+    return nombre in NOMBRES_DE_ENTORNO
+
+
+def _exigir_nombres_de_entorno(cmd: Comando) -> None:
+    """Cada nombre de entorno que el comando fija, de la lista cerrada: el de una asignacion que
+    precede a un comando, el de `export`, `declare -x`/`typeset -x`, y el de una asignacion suelta
+    o un `declare` a un nombre YA exportado (cambia el entorno de lo que corre despues)."""
+    por = (
+        "el nombre de entorno `{}` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una "
+        "variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, "
+        "`LD_PRELOAD`...)"
+    )
+    como = (
+        "Como reescribirlo: sin esa variable. Si hace falta, el consultor la anade a "
+        "`NOMBRES_DE_ENTORNO` con su porque."
+    )
+    precede = bool(cmd.argv)
+    for nombre in cmd.asignaciones:
+        if (precede or nombre in os.environ) and not _nombre_admitido(nombre):
+            _niega(f"{nombre}=...", por.format(nombre), como)
+    if not cmd.argv:
+        return
+    cabeza = _nombre_de_programa(cmd.argv[0].texto)
+    if cabeza not in {"export", "declare", "typeset", "readonly", "local"}:
+        return
+    opciones = "".join(a.texto for a in cmd.argv[1:] if a.texto.startswith("-"))
+    exporta = cabeza == "export" or "x" in opciones
+    for a in cmd.argv[1:]:
+        if a.texto.startswith("-"):
+            continue
+        nombre = a.texto.split("=", 1)[0]
+        if (exporta or nombre in os.environ) and not _nombre_admitido(nombre):
+            _niega(f"{cabeza} {nombre}", por.format(nombre), como)
+
+
+def _fichero_de_programa(prog: str, args: list[Palabra]) -> Palabra | None:
+    """El fichero de programa de `awk -f x` o `sed -f x` (`--file=x`, `-fx`), o None."""
+    opciones = OPCIONES_DE_PROGRAMA.get(prog)
+    if not opciones:
+        return None
+    for i, a in enumerate(args):
+        clave, igual, valor = a.texto.partition("=")
+        if clave in opciones:
+            if igual:
+                return Palabra(valor)
+            return args[i + 1] if i + 1 < len(args) else Palabra("")
+        corta = next((o for o in opciones if len(o) == 2 and clave.startswith(o)), None)
+        if corta and len(clave) > 2 and not clave.startswith("--"):
+            return Palabra(a.texto[2:])
+    return None
+
+
+def _ficheros_de_un_programa_desconocido(
+    args: list[Palabra], ctx: Contexto, lex: Lexico
+) -> tuple[list[Palabra], bool]:
+    """Los argumentos de un programa desconocido que son ficheros que existen (y si alguno se
+    construye al ejecutarse): cualquiera puede ser el codigo que ejecuta."""
+    ficheros: list[Palabra] = []
+    dinamico = False
+    for a in args:
+        if a.texto.startswith("-") and "=" not in a.texto:
+            continue
+        valores = _valores(a, ctx, lex)
+        if valores is None:
+            dinamico = True
+            continue
+        for v in valores:
+            for candidato in (v, v.split("=", 1)[1] if "=" in v else ""):
+                if candidato and os.path.isfile(_absoluta(candidato, ctx.cwd)):
+                    ficheros.append(Palabra(candidato))
+    return ficheros, dinamico
+
+
+def _ejecucion_de_un_programa_desconocido(
+    prog: str, args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
+) -> None:
+    """Un programa fuera de `NO_EJECUTAN` es una ejecucion: pasa por la condicion, y cada
+    argumento suyo que sea un fichero que existe y no es el de `main` se niega, porque puede ser
+    el codigo que ejecuta (`php x.php`, con `x.php` nuevo)."""
+    ficheros, dinamico = _ficheros_de_un_programa_desconocido(args, ctx, lex)
+    # Y si lanza otro programa que ejecuta (`sudo make check`, `winpty botsito ...`): lo que este
+    # ejecute no se ve por sus argumentos (el `Makefile`, el codigo de `src/`).
+    lanzada = next((a.texto for a in args if _lanza_una_ejecucion(a.texto)), None)
+    indecidible = None
+    if lanzada is not None:
+        indecidible = f"`{prog}` lanza `{lanzada}`, y lo que ejecute no se ve por sus argumentos"
+    elif dinamico:
+        indecidible = (
+            f"`{prog}` recibe un argumento que se construye al ejecutarse, y puede ser el "
+            "fichero que ejecute"
+        )
+    exigir_ejecucion_verificable(
+        ctx,
+        lex,
+        cmd,
+        prog,
+        guiones=[(f, "desconocido") for f in ficheros],
+        indecidible=indecidible,
+    )
 
 
 def _es_fichero_programa(texto: str, ctx: Contexto) -> bool:
@@ -2365,7 +2542,9 @@ def analizar_codigo(codigo: str, ctx: Contexto, es_python: bool) -> None:
     recorre = CODIGO_QUE_RECORRE.search(codigo) is not None
     directorios = 0
     for lit in literales:
-        if not lit or len(lit) > 400 or "\n" in lit:
+        # Un literal vacio o solo de espacios no es una ruta: `_absoluta` lo volvia el directorio
+        # actual (falso positivo medido en `trabajo/guion-mismo-comando`, con un `" " * 7`).
+        if not lit.strip() or len(lit) > 400 or "\n" in lit:
             continue
         ruta = _absoluta(lit, ctx.cwd)
         es_dir = os.path.isdir(ruta)
@@ -2421,14 +2600,40 @@ PS_METADATOS = re.compile(
 )
 
 
+# En PowerShell, QUE ACTIVA la condicion tambien es una lista cerrada (respuesta del consultor a
+# §1.12; revisor, B2): un comando que no esta aqui es una ejecucion, y en PowerShell ninguna se
+# admite. Ningun comando real de la sesion ni de los runbooks usa PowerShell: la lista sale de lo
+# que piden los tests de la guardia, cada uno con su porque.
+PS_NO_EJECUTAN: dict[str, str] = {
+    "get-content": "lee un fichero",
+    "get-childitem": "lista un directorio",
+    "get-item": "dice los datos de un fichero",
+    "get-filehash": "calcula un hash",
+    "select-string": "busca texto",
+    "write-output": "imprime sus argumentos",
+    "remove-item": "borra (el borrado recursivo de data/, corpus/ o knowledge/ se niega aparte)",
+    "git": "control de versiones (lo prohibido de git se niega aparte)",
+}
+
+
 def _ejecucion_en_powershell(texto: str) -> str | None:
-    """Cualquier ejecucion en un texto de PowerShell: un interprete, un shell, pytest, make,
-    botsito, `uv run`, un lanzador (`Start-Process`, `Invoke-Item`...), el operador de llamada `&`
-    o `. x` (dot-source), o un guion como primera palabra. Solo palabras SIN comillas: una cadena
-    entre comillas no se ejecuta salvo tras `&`."""
+    """Cualquier ejecucion en un texto de PowerShell. Niega por defecto: un comando que no esta en
+    `PS_NO_EJECUTAN`, al principio de un segmento o dentro de `(...)`, `$(...)` o `@(...)`; una
+    llamada a .NET (`[Tipo]::Metodo`, puede lanzar un proceso); un bloque `{ ... }`; el operador de
+    llamada `&` o `. x`; y, como antes, cualquier palabra SIN comillas que sea un interprete, un
+    shell, pytest, make, botsito, `uv run`, un lanzador o un guion."""
+    if re.search(r"\[[\w.`]+\]\s*::", texto):
+        return "una llamada a .NET (`[Tipo]::Metodo`)"
+    if "{" in texto:
+        return "un bloque de codigo `{ ... }`"
     for segmento in re.split(r"[;|\n]|&&|\|\|", texto):
         fichas = re.findall(r"'[^']*'|\"[^\"]*\"|[^\s'\"]+", segmento)
         for k, ficha in enumerate(fichas):
+            abre = k == 0 or ficha.startswith(("(", "$(", "@("))
+            limpia_cmd = ficha.lstrip("$@(").lower()
+            es_comando = abre and limpia_cmd and limpia_cmd[0] not in "'\"$-0123456789"
+            if es_comando and limpia_cmd not in PS_NO_EJECUTAN and limpia_cmd not in {"&", "."}:
+                return segmento.strip()[:80]
             if ficha == "&" or (ficha == "." and k == 0):
                 return " ".join(fichas[k : k + 2])
             if ficha[0] in "'\"":

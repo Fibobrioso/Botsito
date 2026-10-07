@@ -40,15 +40,23 @@ NIEGAN = (
     "test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo",
     "test_ejecucion_make_solo_con_el_makefile_de_main",
     "test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual",
+    "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion",
+)
+# Los de los nombres de entorno: esa regla vale para TODO comando (tambien `git commit`, que corre
+# hooks), asi que vive junto a la funcion y no dentro; se miran con su propia mutacion.
+NOMBRES = (
+    "test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega",
+    "test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada",
 )
 CAMBIADA = "test_ejecucion_cambiada_en_el_mismo_comando_se_niega"
+LISTA = "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion"
 FUERA = "test_ejecucion_lo_de_fuera_de_la_lista_se_niega"
 # Lo que SOLO niega cada pieza (el guion existe y lo demas del comando esta en la lista).
 ESPERADOS: dict[str, list[str]] = {
     "_exigir_sin_expansiones": [
         f"{CAMBIADA}[python existente.py <(cp a.py existente.py)]",
-        f"{FUERA}[X=$Y python inocuo.py]",
-        f"{FUERA}[X=$(echo 1) python inocuo.py]",
+        f"{FUERA}[PYTHONUTF8=$Y python inocuo.py]",
+        f"{FUERA}[PYTHONUTF8=$(echo 1) python inocuo.py]",
     ],
     "_exigir_lo_de_antes": [
         f"{CAMBIADA}[cp a.py existente.py && uv run python existente.py]",
@@ -65,9 +73,30 @@ ESPERADOS: dict[str, list[str]] = {
         f"{FUERA}[python inocuo.py | tee salida.txt]",
         f"{FUERA}[python inocuo.py | sort -o salida.txt]",
         f"{FUERA}[python inocuo.py | uniq - salida.txt]",
-        f"{FUERA}[python inocuo.py | inventado]",
+        f"{FUERA}[python inocuo.py | cat]",
     ],
     "_exigir_salida_ajena": [f"{CAMBIADA}[python existente.py > existente.py]"],
+    "_no_ejecuta": [
+        f"{LISTA}[cp a.py b.php && php b.php]",
+        f"{LISTA}[cp a.py b.py && setsid ./b.py]",
+        f"{LISTA}[php nuevo.php]",
+        f"{LISTA}[inventado docs/nuevo.md]",
+        f"{LISTA}[inventado $X]",
+        f"{LISTA}[sudo make check > make-check.log 2>&1]",
+        f"{LISTA}[winpty python inocuo.py]",
+    ],
+    "_ficheros_de_un_programa_desconocido": [
+        f"{LISTA}[php nuevo.php]",
+        f"{LISTA}[inventado docs/nuevo.md]",
+        f"{LISTA}[inventado $X]",
+    ],
+    "_nombre_admitido": [
+        *(f"{NOMBRES[0]}[{n}]" for n in (
+            "PYTHONPATH", "PYTHONSTARTUP", "PYTHONHOME", "BASH_ENV", "ENV", "NODE_OPTIONS",
+            "PERL5OPT", "RUBYOPT", "LD_PRELOAD", "LD_LIBRARY_PATH",
+        )),
+        NOMBRES[1],
+    ],
     "_exigir_guion_legible": [
         f"{FUERA}[python nuevo.py]",
         "test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo",
@@ -117,6 +146,13 @@ def main() -> int:
         ("sin lo de a la vez", "_exigir_lo_de_a_la_vez", nada),
         ("sin la salida ajena", "_exigir_salida_ajena", nada),
         ("sin la existencia", "_exigir_guion_legible", guion_como_en_main),
+        ("sin lo que activa (todo programa no ejecuta)", "_no_ejecuta", lambda _p: True),
+        (
+            "sin los ficheros de un programa desconocido",
+            "_ficheros_de_un_programa_desconocido",
+            lambda *_a, **_k: ([], False),
+        ),
+        ("sin los nombres de entorno", "_nombre_admitido", lambda _n: True),
     ]
     base = correr()
     niegan = {t for t in base if t.split("[", 1)[0] in NIEGAN}
@@ -134,6 +170,7 @@ def main() -> int:
         fallan = {t for t, r in mutado.items() if r != "passed"}
         print(f"\n== {titulo} ({nombre}): fallan {len(fallan)} de {len(mutado)}")
         if nombre == "exigir_ejecucion_verificable":
+            fallan = {t for t in fallan if t.split("[", 1)[0] not in NOMBRES}
             exacto = fallan == niegan
             print(f"   fallan EXACTAMENTE los que esperan una negacion: {'si' if exacto else 'NO'}")
             for t in sorted(fallan ^ niegan):

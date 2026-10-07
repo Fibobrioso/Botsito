@@ -1,0 +1,50 @@
+comandos distintos: 503; sin partir (tokenizador): 0
+
+== Programas (nombre, veces)
+  546  grep
+  502  cd
+  366  git
+  242  sed
+  233  cut
+  229  head
+  209  tail
+  163  python
+  113  echo
+   87  botsito
+   58  cat
+   53  ruff
+   49  wc
+   44  pytest
+   40  ls
+   20  gh
+   20  sort
+   12  mypy
+   11  printf
+   10  rm
+    9  mv
+    9  uniq
+    7  cp
+    7  curl
+    6  diff
+    6  sha256sum
+    6  sleep
+    5  file
+    4  awk
+    4  for
+    3  lint-imports
+    3  make
+    2  tee
+    2  tr
+    2  xargs
+    1  find
+    1  mkdir
+    1  od
+
+== Nombres de las asignaciones, por forma
+-- precede a un comando
+   35  PYTHONUTF8 (exportada en el entorno de la guardia)
+    3  BOTSITO_ALLOW_MAIN
+-- suelta
+   13  S
+    3  W
+    2  R
