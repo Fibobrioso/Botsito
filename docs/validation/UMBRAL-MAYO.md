@@ -167,6 +167,159 @@ con el código tal cual, antes y después, pasa.
 
 `Tests Currently Passing`: 1362 → 1370.
 
+## 4. Encargo frente a lo hecho
+
+| Encargo | Hecho | Dónde |
+|---|---|---|
+| Rama desde 9e4c89a con `abrir-rama`, encargo tal cual | sí | `962c460`; `docs/encargos/trabajo-umbral-mayo.md` |
+| Fase 0 a-d, sin tocar nada, en el informe | sí; ninguna condición de PARA | §0 |
+| Fase 1: ADR con D1-D4, problema, tres alternativas, citas de ADR-0043, ADR-0048 y la decisión del 2026-10-06 | sí | `3320177`; ADR-0070 |
+| Fase 2: dos campos en `criterio_fidelidad.yaml`, cargados y validados entre 0 y 1; `Fuente:` con el ADR | sí | `492e2ca`; §2 |
+| Fase 3: línea de veredicto al final de la sección del criterio; tests de las cinco situaciones | sí, más tres tests y uno del comando | `d16a06e` y el commit del revisor; §3 |
+| Fase 4: J no se toca | sí | la Next Action no cambia |
+| `knowledge validate` antes del primer `make check`; `make check` y `state check` en verde; un commit sellado por fase | sí | §5 |
+| Sin `.claude/` ni la plataforma: sin CI de Linux | sí | el contrato protege `.claude/`; el diff no toca hooks ni rutas |
+| No ejecutar `botsito motor arnes` | sí, salvo una invocación con `--help`, declarada | cabecera del informe |
+| Revisor con su informe y dos comprobaciones aparte | sí | §7 y su informe |
+
+## 5. Comandos y salidas
+
+| Comando | Salida |
+|---|---|
+| `git rev-parse main origin/main` | `9e4c89a4a64f2c717fa7feaf31ea1e3b79d2c6b7` las dos |
+| `uv run botsito knowledge validate` (antes de cada `make check`) | exit 0, ningún `ERROR` |
+| `uv run botsito state check` | `ERROR: 'Tests Currently Passing' dice 1359; hay 1362` en la fase 2 y `… 1362; hay 1370` en la fase 3, cada uno corregido antes de `make check`; después, `OK: rama 'trabajo/umbral-mayo' …` |
+| `uv run python scripts/contrato_rama.py` | en la fase 3, `fuera de rutas_permitidas` para el anexo `UMBRAL-MAYO/`: el contrato se amplió en ese mismo commit, con su motivo; después, `CONTRATO: 18 ficheros dentro del contrato …` |
+| `uv run mypy` y `uv run lint-imports` | `Success: no issues found in 242 source files`; `Contracts: 4 kept, 0 broken` |
+| `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` | `VEREDICTO: el test falla si se quita D2` (§3) |
+| `make check > make-check.log 2>&1`, por commit | apertura `2102 passed` (sello `c84ee21f…`); fase 1 `2102 passed` (`d2c6477a…`); fase 2 `2111 passed` (`a827ef59…`); fase 3 `2119 passed` (`f5858a9a…`); el del commit del revisor, en su mensaje |
+
+**No se ejecutó `botsito motor arnes`** sobre ningún mes; la única invocación fue `--help`
+(cabecera). Ningún fichero de salida de una corrida entró en la rama.
+
+## 6. Desviaciones
+
+1. **La corrida tiene que cubrir todo `construccion`** (§0.e): D1 dice «sobre el conjunto de
+   construcción vigente»; el comando admite `--meses` con una parte. Decidido en el ADR, con test.
+2. **La línea dice `habilita medir el conjunto de medida (2026-05) (ADR-0070)`**, no «habilita medir
+   mayo» (§3): los meses salen del criterio y no hay un nombre de mes en `src/`.
+3. **`informe` exige `con_diagnostico`** (argumento obligatorio, con test): no lo pedía el encargo;
+   impide que un llamador nuevo se quede en «sin diagnóstico» por omisión.
+4. **`--depuracion` queda para el consultor** (§0.e y el «Impacto» del ADR).
+5. **La invocación `motor arnes --help`** (cabecera): contra la letra del encargo, sin efecto.
+
+## 7. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 / b1 | importa | El informe tiene ahora «Encargo frente a lo hecho» (§4), «Comandos y salidas» (§5), «Desviaciones» (§6) y el estado final. |
+| a2 | menor | Test nuevo, `test_el_comando_pasa_al_informe_si_la_corrida_lleva_diagnostico`: lee `cli.py` con `ast` (sin ejecutar el comando) y exige que la única llamada a `arnes.informe` pase `con_diagnostico=diag.activo`. `Tests Currently Passing`: 1371. |
+| a3 | menor | Sin cambio: que el veredicto viva en `cases/` es coherente con ADR-0043 (el criterio es puro y está fuera del motor); el arnés solo lo imprime. |
+
+Las dos comprobaciones aparte dan SÍ: ningún commit ejecutó el arnés (el revisor valora el `--help`
+como infracción formal sin efecto, ya declarada) y el test del diagnóstico falla sin D2.
+
+## Informe del revisor (subagente `revisor`, 2026-10-07), tal cual
+
+## Informe del revisor · trabajo/umbral-mayo · 2026-10-07
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El informe aún no está terminado: su `## Estado` dice «EN CURSO (2026-10-07). Fase 0 hecha; siguen las fases 1 a 3», cuando las fases 1-3 están hechas y commiteadas. Faltan también la sección «comandos y salidas» y el bloque de «desviaciones» que pide el encargo. §0.e y §3 declaran dos desviaciones, pero no hay una sección de desviaciones. CLAUDE.md pide que el informe acabe en su estado. | `docs/validation/UMBRAL-MAYO.md`, últimas líneas (Estado); `grep -c "Revisor\|revisor"` = 0 (aún no se ha pegado el informe del revisor, esperable) |
+| a2 | menor | Ningún test cubre que `cli.py` pase `diag.activo` a `informe`. Un cambio de esa línea a `False` mantendría todo en verde. Lo único que lo sostiene es la lectura del diff. | `git diff main...HEAD -- src/botsito/cli.py` (`con_diagnostico=diag.activo`); `tests/unit/test_umbral_mayo.py` solo llama a `arnes.informe` |
+| a3 | menor | `Veredicto` y `habilita_medir` (lógica del veredicto) viven en `cases/criterio_fidelidad.py` y no en `engine/arnes.py`. Es coherente y está declarado, pero el encargo hablaba de «el arnés imprime». No es un defecto. | `src/botsito/cases/criterio_fidelidad.py` (diff) |
+
+Comprobado sin hallazgos:
+- Contrato: `uv run python scripts/contrato_rama.py` → «CONTRATO: 18 ficheros dentro del contrato de trabajo/umbral-mayo (riesgo medio, …, 6 comprobaciones para el revisor)». Los 18 ficheros del diff están dentro de `rutas_permitidas`. No se tocó nada de `rutas_protegidas`: ni `knowledge/spec`, ni motor/primitivas/cableado/broker, ni evidence/feedback/holdout/kit/corpus/data, ni `.claude/`.
+- `uv run pytest tests/unit/test_umbral_mayo.py -q` → todos pasan (17 puntos).
+- `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` → idéntico a `sin_d2-SALIDA.txt`.
+- `uv run botsito knowledge validate` → OK (feedback «commits con Fuente», evidencia «historial intacto»). El AVISO sobre `eurusd-2026-09` es preexistente.
+- `uv run botsito state check` → OK.
+- `make-check.log` (leído, no ejecutado): `SELLO: make check en verde sobre el arbol f5858a9a…`, `PICO DE MEMORIA … 291 MiB`, `exit=0`. HEAD es d16a06e; `git status --short` está limpio. No pude contrastar el hash del sello con el árbol (`git write-tree` escribe).
+- Trailer `Fuente:` en el único commit que toca `knowledge/cases/` (492e2ca): «Fuente: ADR-0070» en el cuerpo. Ese ADR existe (`docs/adr/0070-…md`) y está en el índice.
+- Regímenes de cambio: no hay evidence, feedback, manifests, transcripciones ni fotogramas tocados. `git diff main...HEAD -- knowledge/cases | grep '^-'` solo da la cabecera `--- a/…`: el yaml solo recibe líneas añadidas.
+- ADR-0070: `## Estado` = `ACTIVE`. Fila 0070 añadida al índice.
+- Ningún informe cerrado se modificó (solo hay `A` en `docs/validation/`). No hay ambigüedades ni sitios con `cita` nuevos, así que las tres guardias de cita no aplican. No se leyó holdout ni material protegido.
+- Las cifras (0.70 y 0.60) viven en el yaml y no en `src/`.
+- Las citas del informe que comprobé son ciertas: `PROJECT_STATE.md` (Archivo 22, 1370 tests), la fila 0070 del índice y la ausencia de `0070-*` en main.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 0 menor. Requisitos: 15 hechos, 0 parciales, 0 no hechos (2 hechos con desviación declarada).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde main 9e4c89a, con encargo copiado | Hecho | `docs/encargos/trabajo-umbral-mayo.md`; commit 962c460 «abre trabajo/umbral-mayo» |
+| 2 | Fase 0.a: mayo nunca medido, con cita del código | Hecho | Informe §0.a, `validar_meses` (`arnes.py:82-96`) |
+| 3 | Fase 0.b: no choca con la cabecera ni con ADR-0043 «Cambios» | Hecho | Informe §0.b |
+| 4 | Fase 0.c: dónde se imprime, cómo se sabe del diagnóstico y qué tests lo cubren | Hecho | Informe §0.c; ningún test compara con un fichero guardado. `ARNES-MOTOR-LINEA-BASE.txt` ya estaba en main y no está en el diff |
+| 5 | Fase 0.d: ADR 0070 libre | Hecho | Informe §0.d y fila 0070 del índice |
+| 6 | D1: umbrales 0,70 / 0,60 sobre construcción, en la misma corrida; métrica sin definir no llega | Hecho | ADR-0070 §1; `habilita_medir` (`valor is None → "sin definir"`); `test_una_metrica_sin_definir_no_llega` |
+| 7 | D2: solo cuenta una corrida sin `--diagnostico-*` | Hecho | ADR §3; `con_diagnostico` → motivo; cli pasa `diag.activo` |
+| 8 | D3: si no llega no se toca mayo, y el umbral no se relaja sin ADR | Hecho | ADR §4 y comentario del yaml |
+| 9 | D4: cifras en el yaml (ADR-0002), con dos campos | Hecho | `umbral_construccion_para_medir_cobertura` y `_precision` en `criterio_fidelidad.yaml`. `cargar_criterio` usa `_fraccion` (entre 0 y 1; `None` da `CriterioError`). Tests `test_fuera_de_0_a_1_o_no_numerico_no_carga` y los de «sin campo no carga» |
+| 10 | D4: línea de veredicto al final de «## Criterio de fidelidad (ADR-0043)», con motivo | Hecho de otra forma (declarado, §3: nombra `(2026-05)` y no «mayo», para no dejar un mes en `src/`) | `arnes.py` diff; `_linea` asserta que es la última línea de la sección |
+| 11 | D4: no se construye comando de medida | Hecho | El diff no añade comando; ADR §6 |
+| 12 | Fase 1: ADR con problema, 3 alternativas y por qué; cita ADR-0043, ADR-0048 y la decisión del 2026-10-06 | Hecho | ADR-0070; la cita a `trabajo-respaldo-a11.md` está en «Problema» |
+| 13 | Fase 2: trailer `Fuente:` con el id del ADR | Hecho | 492e2ca |
+| 14 | Fase 3: tests sintéticos de las cinco situaciones | Hecho | `test_umbral_mayo.py`: llega, cobertura, precisión, sin definir y con diagnóstico, más tres extras |
+| 15 | Fase 4: J no se toca | Hecho | `git diff main...HEAD -- PROJECT_STATE.md` solo cambia rama, feature, tests (1370) y los Archivo 22; Next Action intacto |
+| 16 | Un commit sellado por fase; `make check` y `state check` verdes | Hecho | 4 commits; sello y `state check` OK (el sello solo lo vi para HEAD) |
+| 17 | Informe con fase 0, encargo frente a lo hecho, desviaciones, comandos y salidas, y la línea de «no se ejecutó el arnés» | Hecho de otra forma | La línea está en la cabecera. Faltan comandos/salidas y el estado final (ver a1). Eso cuenta contra el requisito |
+| 18 | El informe lleva el informe del revisor al final | No aplicable aún | Lo pega Claude Code, no yo |
+
+Lo que la rama hace sin pedirlo:
+- La corrida debe cubrir todo `construccion` (§0.e). Está declarado en informe y ADR.
+- `--depuracion` se deja para el consultor (declarado).
+- El argumento `con_diagnostico` es obligatorio y hay un test (`test_el_informe_exige_decir_si_hay_diagnostico`). No es una desviación: es una defensa añadida y declarada.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | El informe aún no tiene estado final, comandos ni salidas. El encargo los pide («comandos y salidas»). Es el mismo defecto que a1, desde el eje del encargo. | Última sección de `UMBRAL-MAYO.md` |
+
+Valoración de las desviaciones declaradas: §0.e (corrida sobre todo `construccion`) y §3 (línea con meses y no «mayo») están bien declaradas y justificadas. `--depuracion` está bien reservada para el consultor.
+
+### Las dos comprobaciones aparte
+
+**1. Ningún commit ejecutó `botsito motor arnes`. Veredicto: SÍ cumplido.**
+- Los mensajes de commit solo dicen «No se ejecuto el arnes». El de fase 1 declara la invocación `motor arnes --help`.
+- La invocación `uv run botsito motor arnes --help` está declarada en la cabecera del informe. `--help` lo resuelve `argparse` y sale antes de entrar en `motor_arnes`. Eso no es «ejecutar el arnés» en el sentido de correrlo. Sí es una invocación literal del comando con una opción, que el encargo prohíbe. Está declarada con honestidad, y la valoro como infracción formal menor sin efecto. No lo cuento como hallazgo.
+- El anexo `sin_d2.py` no llama al arnés. Importa `arnes.informe` y `habilita_medir` y construye una corrida sintética a mano. Su salida es solo 4 líneas de texto.
+- `tests/unit/test_umbral_mayo.py` es sintético. Usa un `Criterio` con meses de 2030, `arnes.Corrida`, `DiaTrader` y `ResultadoDia` escritos a mano, y `VOCABULARIO = {"hechos": {}}`. No importa motor, mercado ni velas, y no usa días reales. Solo llama a `arnes.informe`, no a `arnes.correr`.
+- Los tests antiguos tocados solo reciben `con_diagnostico=False` y los dos campos nuevos del `Criterio`.
+- No entró ningún fichero de salida de corrida. `git diff --name-status` solo tiene los 18 ficheros listados. `ARNES-MOTOR-LINEA-BASE.txt` ya estaba en main.
+- Yo tampoco ejecuté el arnés.
+
+**2. El test del diagnóstico falla si se quita D2. Veredicto: SÍ.**
+- Repetí `sin_d2.py`: con D2 pasa, sin D2 (sustituyendo `arnes.habilita_medir` por una versión que fuerza `con_diagnostico=False`) FALLA con AssertionError, y restaurado pasa.
+- Razonamiento independiente leyendo el test: la misma corrida `_corrida(10, 7, 4)` da `: sí` sin diagnóstico. Con diagnóstico exige que la línea termine en `: no (corrida con diagnostico: …)`. Quitar D2 devolvería `: sí` y la segunda aserción fallaría. El test además comprueba que el único motivo es el diagnóstico, así que no pasa por casualidad.
+- No hice una mutación por otra vía en el repo, porque exigiría escribir.
+
+### Lo que no pude comprobar
+- Que el hash del sello `f5858a9a…` sea el del árbol estadiado: `git write-tree` escribe en la base de objetos. Me apoyé en `make-check.log` (`exit=0`, `SELLO`) y en `git status --short` limpio con HEAD d16a06e.
+- Que `cli.py` pase `diag.activo` en ejecución real: solo lo vi en el diff, porque ejecutarlo requeriría correr el arnés.
+- No ejecuté `make check`.
+
+### Comandos ejecutados
+1. `git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short && uv run python scripts/contrato_rama.py; cat contrato.yaml; cat docs/encargos/trabajo-umbral-mayo.md`
+2. `git log --format='%h%n%B---' main..HEAD -- knowledge/spec knowledge/cases; git diff main...HEAD -- knowledge/cases src/botsito/cases src/botsito/cli.py src/botsito/engine/arnes.py; cat …/sin_d2.py …/sin_d2-SALIDA.txt`
+3. `cat docs/adr/0070-*.md; cat docs/validation/UMBRAL-MAYO.md`
+4. `uv run pytest tests/unit/test_umbral_mayo.py -q`; `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py`; `uv run botsito state check`; `git diff --name-status main...HEAD`; `git diff main...HEAD -- knowledge/cases | grep '^-'`; `tail -5 make-check.log`; `git log -1 --format=%H`; grep de «arnes» en el test y en los mensajes de commit; `ls docs/validation/anexos/UMBRAL-MAYO/`
+5. `sed -n 60,176p tests/unit/test_umbral_mayo.py`; `git diff main...HEAD -- docs/adr/README.md PROJECT_STATE.md`; `git diff main...HEAD --stat -- .claude src/botsito/engine/motor.py knowledge/spec`; grep de `_fraccion`; `git ls-files | grep -i arnes…`
+6. `uv run botsito knowledge validate`; `git status --short`; `git diff main...HEAD -- tests/unit/test_arnes_motor.py tests/unit/test_cableado.py` (filtrado); grep de ADR-0070 y «revisor» en el informe
+
 ## Estado
 
-**EN CURSO (2026-10-07).** Fase 0 hecha; siguen las fases 1 a 3.
+**LISTA PARA REVISIÓN, NO cerrada (2026-10-07, tarea nocturna).** Ni merge, ni tag, ni push.
+
+- ADR-0070 pre-registra el umbral: mayo solo se mide cuando una corrida del arnés sobre todo
+  `construccion`, sin diagnóstico, llega a 0,70 de cobertura y 0,60 de precisión en esa misma
+  corrida.
+- Las cifras viven en `criterio_fidelidad.yaml`; el arnés escribe el veredicto al final de su
+  sección del criterio. Hoy toda corrida posible lleva diagnóstico (A-21, A-35, A-44): el
+  veredicto sería «no» por eso.
+- **No se ejecutó el arnés** en esta rama (una invocación de `--help`, declarada).
+- Para el consultor: si `--depuracion` también tiene que dar «no» (§6.4), y la J de la Next Action,
+  que sale con la orden de cierre.

@@ -174,3 +174,24 @@ def test_el_informe_exige_decir_si_hay_diagnostico() -> None:
     veredicto en «sin diagnostico» por defecto."""
     with pytest.raises(TypeError, match="con_diagnostico"):
         arnes.informe(_corrida(1, 1, 0), CRITERIO, VOCABULARIO)  # type: ignore[call-arg]
+
+
+def test_el_comando_pasa_al_informe_si_la_corrida_lleva_diagnostico() -> None:
+    """El comando `motor arnes` le pasa a `informe` `diag.activo`, no una constante: si alguien lo
+    cambiara a `False`, toda corrida con diagnostico diria «sí» (revisor de esta rama, a2).
+    Se lee el codigo, sin ejecutar el comando: en esta rama el arnes no se corre."""
+    import ast
+
+    fuente = (REPO / "src" / "botsito" / "cli.py").read_text(encoding="utf-8")
+    llamadas = [
+        n
+        for n in ast.walk(ast.parse(fuente))
+        if isinstance(n, ast.Call)
+        and isinstance(n.func, ast.Attribute)
+        and n.func.attr == "informe"
+        and isinstance(n.func.value, ast.Name)
+        and n.func.value.id == "arnes"
+    ]
+    assert len(llamadas) == 1, "el comando llama a arnes.informe una sola vez"
+    argumento = next(k.value for k in llamadas[0].keywords if k.arg == "con_diagnostico")
+    assert ast.unparse(argumento) == "diag.activo"
