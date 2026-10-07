@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/guion-mismo-comando
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37f-umbral-mayo` (2026-10-07).
+`trabajo/guion-mismo-comando` EN CURSO (2026-10-07): la guardia solo deja ejecutar un guion si es seguro que lo que se ejecuta es lo que leyo, negando por defecto (punto V). Encargo docs/encargos/trabajo-guion-mismo-comando.md; informe docs/validation/GUION-MISMO-COMANDO.md.
 
 ## Stable Main State
 9a313e0 · merge de `trabajo/umbral-mayo` (tag `stable/F37f-umbral-mayo`): ADR-0070, mayo solo se mide cuando una corrida del arnes sobre todo construccion, simulada con el perfil de la cuenta real y su primera fase y solo con las opciones de una lista cerrada, llega a 0,70 de cobertura y 0,60 de precision; los umbrales y el perfil en criterio_fidelidad.yaml y la linea de veredicto en el informe del arnes. Sobre `stable/F37e-respaldo-a11` (92312e3). Informe docs/validation/UMBRAL-MAYO.md; el registro del cierre, al final de HISTORIA.
@@ -200,9 +200,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 22 (2026-10-07).
+— ninguna desde el Archivo 23 (2026-10-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 22 (2026-10-07).
+— ninguna desde el Archivo 23 (2026-10-07).

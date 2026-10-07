@@ -1,0 +1,27 @@
+rama: trabajo/guion-mismo-comando
+riesgo: medio  # cambia la guardia de Claude Code (.claude/hooks/guardia.py) y sus tests sinteticos; ni spec, ni motor, ni cifras, ni knowledge/, y no abre material protegido
+artefacto: docs/validation/GUION-MISMO-COMANDO.md
+rutas_permitidas:
+  - docs/validation/GUION-MISMO-COMANDO.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  # fase 1: la condicion unica de la guardia, sus tests y el anexo de mutaciones
+  - .claude/hooks/guardia.py
+  - tests/unit/test_guardia_claude.py
+  - docs/validation/anexos/GUION-MISMO-COMANDO/
+rutas_protegidas:
+  # lo que el encargo dice que no cambia
+  - src/botsito/
+  - knowledge/
+  - CLAUDE.md
+  - data/
+  - corpus/
+  - .claude/settings.json
+  - .claude/agents/
+  - .claude/skills/
+comprobaciones:
+  - git log --format=%H main..HEAD
+  - uv run pytest tests/unit/test_guardia_claude.py -q
+  - uv run botsito state check
+  - make check > make-check.log 2>&1
