@@ -5,7 +5,8 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
   Claude Code solo ante una orden de cierre explicita de Aleks; desde el 2026-10-01, con la skill
   `cerrar-rama`.
 - `MIRAR-EL-MATERIAL.md` · como se abre un fotograma (por instante localizado), donde esta el texto
-  de cada transcripcion, el reloj de FX Replay (UTC+2 fijo) y por que cambio tres veces la regla de
+  de cada transcripcion, el reloj de FX Replay (Europe/Madrid; decia «UTC+2 fijo» hasta el
+  2026-10-06, con su recuadro) y por que cambio tres veces la regla de
   lo que se puede mirar. Mudado de `CLAUDE.md` el 2026-10-01.
 - `AMBIGUEDADES.md` · que toca abrir, editar y cerrar una ambiguedad. Mudado de `CLAUDE.md` el
   2026-10-01.

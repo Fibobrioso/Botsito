@@ -671,12 +671,74 @@ rejilla es la ventana civil en todo 2026. Los que fijaban el estado anterior se 
 `en_el_grafico` escribe el UTC+2 fijo de H1 como hipótesis), `test_huecos_motor.py` (H2),
 `test_registro.py`, `test_kit.py`, `test_hoja_preguntas.py`.
 
+### 9.5 Medido sobre construcción: el arnés sale idéntico byte a byte
+
+Como hizo ADR-0063: `botsito motor arnes` sobre los meses de construcción, con los mismos
+diagnósticos (`--diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope
+--diagnostico-a21 solo_una_zona_de_control`; sin ellos el motor se niega, A-21 y A-35 sin fijar),
+en `main` (e97af27, en un worktree desechable en la carpeta temporal, con `data` apuntando al de
+esta máquina por `settings.local.toml`) y en la rama (85b3be6, con `rejilla_h4`). Los dos informes
+dan el mismo sha256, `4f512303e056795ab53a…`, 175 líneas. Ningún instante de ninguna sesión cambia
+en el material de hoy, que es lo que §5.1 predecía por calendario. Los informes quedan fuera del
+repo (son corridas en hipótesis, sin valor de medida).
+
+### 9.6 Paso 6 · Las correcciones con recuadro, y la deuda
+
+Con el recuadro `CORRECCIÓN (2026-10-06, rama trabajo/activacion-a42, ADR-0069)` donde el documento
+está cerrado, y el cuerpo intacto:
+
+| Documento | Qué corrige |
+|---|---|
+| ADR-0039 | el «es UTC+2 fijo» del problema que resuelve; lo que decide del huso de cada libro no cambia |
+| ADR-0059 | `status: SUPERSEDED`, recuadro con el porqué y `## Estado` «SUPERSEDED por ADR-0069»; el índice de ADR lo dice |
+| ADR-0017 | el punto 4 vuelve a Europe/Madrid; los puntos 1 y 5 quedan corregidos para las sesiones; `huso_operativa` sigue siendo el reloj civil y el del día de riesgo |
+| `ABRIL-Y-LA-CAJA.md` R0 | el «UTC+2 fijo» es el reloj del pie, que va con el replay; lo medido en abril no cambia |
+| `MIRAR-EL-MATERIAL.md` | el reloj de los gráficos es Europe/Madrid; la regla de fijar el huso antes de comparar sigue, y para invierno el desfase es 1 |
+| `ENTRADA-MARZO.md`, PARADA B0 | la condición se cumple pero su motivo no: `cases/` a la rejilla antes del paso b, pendiente con dueño (D7, añadido 2); nada de marzo abierto ni listado |
+| `docs/runbooks/README.md` y `CLAUDE.md` | la frase del reloj de FX Replay (D7); `CLAUDE.md` manda corregirse en el mismo commit que deja de ser cierto |
+| `ambiguedades.yaml`, A-42 | el comentario, ya en el paso 4 (§9.4) |
+
+**Technical Debt:** «EL «UTC+2 FIJO» FALLA EN ENERO» queda pagada por ADR-0069 y sale de
+PROJECT_STATE a HISTORIA (`# Technical Debt PAGADA`). De «LA SERIE DEL TRADER ES OANDA Y LA NUESTRA
+DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO» sigue viva la parte de la serie: la línea lo dice
+y conserva su arranque literal, que es como se busca en HISTORIA.
+
+**Lo que no se toca:** la Next Action (E sale en el commit del contrato, al cierre, con el pendiente
+de marzo del §6.2); `docs/runbooks/ERRORES-RECURRENTES.md` (su fila, al cierre, con los hallazgos
+de §6.2 y los del revisor); `docs/HANDOFF.md` (su mención del 2026-09-21 es historia fechada).
+
+## 10. Lo que cambia esta rama
+
+- **Corpus:** las 8 capturas renombradas (por Aleks), `fuentes.yaml` y `manifest.yaml`.
+- **ADR-0069** nuevo; recuadros en ADR-0017, ADR-0039 y ADR-0059 (SUPERSEDED); el índice.
+- **Feedback:** `knowledge/feedback/2026-10-04-sesion-04/`, dos registros.
+- **Spec** (15.8.0 → 15.9.0): A-42 RESUELTA; `reloj_sesiones` = `rejilla_h4`;
+  `sesiones_primera_vela_h4`; `huso_grafico` = Europe/Madrid (`ejecucion`); descripciones;
+  RN-001 y RN-002 (notas, título, `decision`); `docs/spec/` regenerado.
+- **Motor:** `engine/relojes.py` (la puerta), `primitivas.py`, `motor.py`, `cableado.py`,
+  `arnes.py`, `simulacion.py`, `visor.py`, `cli.py`, dos scripts.
+- **Tests:** `test_sesiones_rejilla_h4.py` nuevo; `test_dos_relojes.py`, `test_huecos_motor.py`,
+  `test_registro.py`, `test_kit.py`, `test_hoja_preguntas.py`; `scripts/hoja_preguntas.py`.
+- **Documentos:** R0 de ABRIL-Y-LA-CAJA, MIRAR-EL-MATERIAL, ENTRADA-MARZO (B0), el README de
+  runbooks, `CLAUDE.md`; una fila de HOLDOUT-EXPOSICIONES; una línea menos y otra ampliada en
+  Technical Debt; HISTORIA (Archivo 20, la nota del run #226 y la deuda pagada); este informe y sus
+  anexos.
+- **Fuera del repo:** las filtradas de v7–v10, rehechas (§2.2).
+
 ## Estado
 
-**EN CURSO: PARADA de la fase 0 (2026-10-06).** Espera la respuesta del consultor al §6.
+**EN CURSO (2026-10-06): fase 1 hecha hasta el paso 6; faltan la CI de Linux (`fix/activacion-a42`)
+y el revisor.**
 
-- Hecho: el inventario (a–d), el pendiente (1) sin ninguna diferencia, la propuesta (e) y la
-  declaración (f).
-- **Sin verificar por la sesión:** los literales de las 8 capturas y las etiquetas del eje de b y
-  c. La guardia bloquea las imágenes.
-- Nada de la fase 1 está hecho. A-42 sigue ABIERTA y el motor, como estaba.
+- A-42 RESUELTA (ADR-0069): las dos sesiones son las velas H4 de la rejilla de `anclaje_h4`; el bot
+  las fija en instantes UTC con zoneinfo, por una sola puerta, nunca con un desfase fijo.
+- `huso_grafico` = Europe/Madrid; los textos de «UTC+2 fijo» llevan su recuadro; la deuda, pagada.
+- En construcción nada cambia (el arnés, byte a byte, §9.5); lo primero que cambia es la semana del
+  26 al 30 de octubre de 2026 (05:00 UTC).
+- **Sin verificar por la sesión:** los literales de las 8 capturas y las etiquetas del eje de b y c:
+  la guardia bloquea las imágenes y vale la lectura del consultor (D1), con la captura y su hash en
+  cada registro.
+- **Pendiente con dueño:** `cases/` por la rejilla, en la rama de entrada de marzo, antes de su
+  paso b (§6.2). La PARADA B0 cumple su condición y no su motivo.
+- Marzo, febrero y julio: nada abierto ni listado (salvo el nombre de la subcarpeta de marzo en el
+  `ls` de §1.3, declarado).

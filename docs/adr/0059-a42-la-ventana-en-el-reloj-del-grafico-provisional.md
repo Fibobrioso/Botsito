@@ -1,11 +1,21 @@
 ---
-status: ACTIVE
+status: SUPERSEDED
 date: 2026-09-29
 phase: post-F14 (rama `trabajo/activar-sesion-03`)
 ---
 
 # 0059 · A-42, PROVISIONAL: la ventana va en el reloj del gráfico, UTC+2 fijo, todo el año
 
+> **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **SUPERSEDED por ADR-0069.** La lectura provisional de este ADR era la hipótesis H1 de
+> `docs/validation/RELOJ-INVIERNO.md`: sesiones fijas en un reloj UTC+2 todo el año (en invierno,
+> 05:00–13:00 UTC). La medida de enero la descarta (M2: el trader opera de 06:00 a 14:00 UTC; M3:
+> el eje de su gráfico va en UTC+1 en enero), y el trader, en S-7 y por escrito el 2026-10-06,
+> describió lo que solo predice H2b: las dos sesiones son las velas H4 de la rejilla de
+> `anclaje_h4` que empiezan en ancla + 8 h y ancla + 12 h, y en su gráfico (Europe/Madrid) solo
+> cambian las semanas en que Europa y EE. UU. no coinciden en el horario de verano. A-42 queda
+> RESUELTA. Lo que este ADR tenía de mecanismo —separar el reloj de las sesiones del reloj del
+> día de riesgo— lo hizo ADR-0063 y sigue en pie; `huso_operativa` no se ha movido.
+>
 > **PROVISIONAL, y SIN CAMBIAR NINGÚN VALOR TODAVÍA.** Decisión del consultor del 2026-09-29, tras
 > revisar la sesión 3. El trader dijo «creo»: se confirma en la próxima sesión. A-42 sigue ABIERTA,
 > y bloqueante, hasta entonces. `huso_operativa` NO cambia: en el motor ese parámetro es a la vez
@@ -77,4 +87,4 @@ lectura y su fuente, no toca el motor y mantiene A-42 en la hoja de la próxima 
 
 ## Estado
 
-ACTIVE
+SUPERSEDED por ADR-0069 (2026-10-06)

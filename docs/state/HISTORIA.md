@@ -5868,3 +5868,12 @@ una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al reg
   success, comprobado por el consultor en la pestana Actions de GitHub el 2026-10-06. No se apunto
   en el cierre porque tras el tag en `main` solo puede cambiar `PROJECT_STATE.md` (regla 5 de
   `state check`); orden del consultor del 2026-10-06. Esta sesion no lo ha vuelto a comprobar.
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/activacion-a42 (2026-10-06)
+
+La paga ADR-0069 (A-42 RESUELTA): el grafico del trader va en Europe/Madrid con su cambio de hora,
+`huso_grafico` lo dice, y las sesiones son las velas H4 de la rejilla de `anclaje_h4`; los textos
+que decian «UTC+2 FIJO» llevan su recuadro (docs/validation/ACTIVACION-A42.md §9.6). De la linea de
+Oanda y Dukascopy sigue viva la parte de la serie.
+
+- EL «UTC+2 FIJO» FALLA EN ENERO (2026-10-06, RELOJ-INVIERNO.md).

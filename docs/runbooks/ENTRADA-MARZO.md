@@ -84,6 +84,17 @@ Tiene que salir sin `ERROR`; `knowledge-validate.log` se borra y no se commitea.
 
 ## Paso b · El sorteo
 
+> **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **A-42 esta RESUELTA desde el 2026-10-06 (ADR-0069), y la condicion de esta parada se
+> cumple; pero su MOTIVO no queda resuelto.** El grafico del trader no es UTC+2 fijo (es
+> Europe/Madrid) y sus sesiones son las velas H4 de la rejilla de `anclaje_h4` que empiezan en
+> ancla + 8 h y ancla + 12 h: del 9 al 27 de marzo de 2026 opera de 06:00 a 14:00 de Madrid
+> (05:00–13:00 UTC), y `cases/` sigue calculando la ventana de cada caso con `ventana_local` en
+> `huso_operativa` (07:00–15:00). **Antes del paso b, la rama de entrada de marzo tiene que
+> llevar `cases/` a la rejilla** (`cases/ventanas.py`, `cases/ingesta.py`, `cases/fidelidad.py`,
+> por la puerta `engine/relojes.py`), o la ventana congelada de esos 15 dias saldra una hora tarde
+> y el sorteo no se repite. Pendiente con dueno: esa rama (`docs/validation/ACTIVACION-A42.md`
+> §3.6 y §6.2). Nada de marzo se ha abierto ni listado para escribir esto.
+>
 > **PARADA B0 (2026-09-25, rama `trabajo/sesion-02`). Si A-42 no esta RESUELTA, marzo se detiene
 > aqui, tras el paso a.** A-42 pregunta con que reloj cuenta el trader su horario de 07:00 a
 > 15:00. El grafico de FX Replay es UTC+2 fijo, `huso_operativa` sigue en Europe/Madrid, y en

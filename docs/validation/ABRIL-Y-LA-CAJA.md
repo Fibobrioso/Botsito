@@ -217,6 +217,14 @@ Los criterios de arriba **no se han tocado**. Lo que sigue es lo que dio cada un
 
 ## R0. El titular: la puerta del paso 3 se abrió por dos pelos, y de paso contestó a A-16
 
+> **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **No es un UTC+2 fijo: el gráfico va en Europe/Madrid, con su cambio de hora.** El
+> «14:29:59 UTC+2» del fotograma es el reloj del pie, que va con el REPLAY (marca lo mismo
+> mientras el trader cambia de día tres veces) y lleva el desfase de hoy, no el del eje. En
+> enero el eje de ese mismo gráfico casa con Dukascopy con UTC+1 (mediana 2–4 puntos en tres
+> fotogramas; con UTC+2, 33–151): `docs/validation/RELOJ-INVIERNO.md` §5. Lo medido aquí en
+> ABRIL no cambia: en verano Europe/Madrid ES UTC+2, y las dos velas casan igual. El cuerpo
+> queda tal cual.
+
 **El reloj del gráfico de FX Replay no es UTC: es UTC+2.** Lo dice el propio FX Replay en el
 fotograma de v4 (`001200000.png`), abajo a la derecha: **`14:29:59 UTC+2`**. Y es un **UTC+2 fijo**,
 no un huso con horario de verano: ese fotograma muestra **enero** —`Thu 29 Jan '26`— y ya marca +2.
