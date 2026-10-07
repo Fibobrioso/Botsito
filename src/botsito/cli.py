@@ -8,7 +8,7 @@ import math
 import re
 import subprocess
 import sys
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -2208,18 +2208,25 @@ def _texto_de_vistos(repo: Path) -> str:
 
 
 def opciones_de_la_corrida(
-    parser: argparse.ArgumentParser, args: argparse.Namespace
+    parsers: Sequence[argparse.ArgumentParser], args: argparse.Namespace
 ) -> tuple[str, ...]:
-    """Las opciones de `parser` que la corrida uso: las que tienen un valor distinto del que el
-    parser pone por defecto, con su nombre largo. Se leen del parser, no de una lista: una opcion
-    que se anada manana sale aqui sin tocar nada (ADR-0070, enmienda del 2026-10-07)."""
-    salida: list[str] = []
-    for accion in parser._actions:
-        if not accion.option_strings or accion.dest in ("help", "parser_de_la_corrida"):
-            continue
-        if getattr(args, accion.dest, accion.default) != accion.default:
-            salida.append(max(accion.option_strings, key=len))
+    """Las opciones de `parsers` -el raiz y el del subcomando- que la corrida uso: las que tienen
+    un valor distinto del que su parser pone por defecto, con su nombre largo. Se leen de los
+    parsers, no de una lista: una opcion que se anada manana, al subcomando o a la raiz (como
+    `--repo`), sale aqui sin tocar nada (ADR-0070, enmienda del 2026-10-07)."""
+    salida: set[str] = set()
+    for parser in parsers:
+        for accion in parser._actions:
+            if not accion.option_strings or accion.dest in _DESTINOS_SIN_OPCION:
+                continue
+            if getattr(args, accion.dest, accion.default) != accion.default:
+                salida.add(max(accion.option_strings, key=len))
     return tuple(sorted(salida))
+
+
+# Lo que no es una opcion de la corrida: la ayuda, la version (las dos salen antes de correr) y los
+# propios parsers que el comando guarda para leerse.
+_DESTINOS_SIN_OPCION = frozenset({"help", "version", "parser_raiz", "parser_de_la_corrida"})
 
 
 def _diagnostico_de(args: argparse.Namespace) -> Any:
@@ -2437,7 +2444,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             nombre = "spec vigente"
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
         # ADR-0070: el veredicto dice «no» a toda corrida con una opcion fuera de su lista
-        opciones = opciones_de_la_corrida(args.parser_de_la_corrida, args)
+        opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
         texto = arnes.informe(corrida, criterio, vocabulario, opciones=opciones)
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
@@ -2905,6 +2912,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="botsito")
     parser.add_argument("--version", action="version", version=f"botsito {__version__}")
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="raiz del repositorio")
+    # ADR-0070: `motor arnes` lee tambien las opciones del parser raiz (`opciones_de_la_corrida`)
+    parser.set_defaults(parser_raiz=parser)
     sub = parser.add_subparsers(dest="cmd")
     state = sub.add_parser("state", help="memoria operativa del proyecto")
     state_sub = state.add_subparsers(dest="state_cmd", required=True)

@@ -4,7 +4,7 @@ date: 2026-10-07
 phase: post-F14 (rama `trabajo/umbral-mayo`)
 ---
 
-# 0070 · Mayo solo se mide cuando una corrida del arnés sobre construcción, sin diagnóstico, llega al umbral de ADR-0043
+# 0070 · Mayo solo se mide cuando una corrida del arnés sobre construcción, solo con las opciones de una lista cerrada, llega al umbral de ADR-0043
 
 Pre-registrado antes de cualquier corrida nueva del arnés (decisión del consultor del 2026-10-07,
 punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.

@@ -6,7 +6,8 @@ origin/main` dio `9e4c89a4a64f2c717fa7feaf31ea1e3b79d2c6b7` las dos). Encargo:
 `docs/encargos/trabajo-umbral-mayo.md`. Es el punto J de la Next Action.
 
 **No se ejecutó `botsito motor arnes` en esta rama**, con ningún mes. Todos los tests nuevos son
-sintéticos. **Una salvedad, declarada:** durante la fase 0 ejecuté una vez `uv run botsito motor
+sintéticos: corridas escritas a mano, y desde la enmienda (§9) argumentos que solo se PARSEAN
+con el parser real (`build_parser()`), sin ejecutar el comando. **Una salvedad, declarada:** durante la fase 0 ejecuté una vez `uv run botsito motor
 arnes --help` (con la salida descartada) para copiar una frase de su ayuda. `--help` lo resuelve
 `argparse` y sale antes de entrar en la función del comando: no carga el criterio, ni días, ni
 velas, ni el motor. Aun así es una invocación del comando con una opción, que el encargo prohíbe
@@ -126,6 +127,10 @@ Lo que el ADR añade a D1-D4, dicho como decisión propia y no como del consulto
 
 ## 3. Fase 3 · La línea de veredicto en el arnés
 
+> **Superado en parte por §9** (respuesta del consultor del 2026-10-07): la condición D2 ya no es
+> «sin `--diagnostico-*`» sino la lista cerrada de opciones, y `informe` recibe `opciones` en vez de
+> `con_diagnostico`. Lo de abajo describe el commit `d16a06e`, tal como se hizo.
+
 - **El veredicto, puro** (`src/botsito/cases/criterio_fidelidad.py`, `habilita_medir` y
   `Veredicto`): habilita solo si la corrida no lleva diagnóstico, cubre todo `construccion` y llega a
   los dos umbrales; si no, un motivo por cada condición que falta («corrida con diagnostico: solo
@@ -191,8 +196,8 @@ con el código tal cual, antes y después, pasa.
 | `uv run botsito state check` | `ERROR: 'Tests Currently Passing' dice 1359; hay 1362` en la fase 2 y `… 1362; hay 1370` en la fase 3, cada uno corregido antes de `make check`; después, `OK: rama 'trabajo/umbral-mayo' …` |
 | `uv run python scripts/contrato_rama.py` | en la fase 3, `fuera de rutas_permitidas` para el anexo `UMBRAL-MAYO/`: el contrato se amplió en ese mismo commit, con su motivo; después, `CONTRATO: 18 ficheros dentro del contrato …` |
 | `uv run mypy` y `uv run lint-imports` | `Success: no issues found in 242 source files`; `Contracts: 4 kept, 0 broken` |
-| `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` | `VEREDICTO: el test falla si se quita D2` (§3) |
-| `make check > make-check.log 2>&1`, por commit | apertura `2102 passed` (sello `c84ee21f…`); fase 1 `2102 passed` (`d2c6477a…`); fase 2 `2111 passed` (`a827ef59…`); fase 3 `2119 passed` (`f5858a9a…`); el del commit del revisor, en su mensaje |
+| `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` | en `d16a06e`, `VEREDICTO: el test falla si se quita D2` (§3); desde la enmienda, `VEREDICTO: los tres tests fallan si se quita D2` (§9) |
+| `make check > make-check.log 2>&1`, por commit | apertura `2102 passed` (sello `c84ee21f…`); fase 1 `2102 passed` (`d2c6477a…`); fase 2 `2111 passed` (`a827ef59…`); fase 3 `2119 passed` (`f5858a9a…`); primer revisor `2120 passed` (`23d950fc…`); enmienda `2124 passed` (`dc7c9b9a…`); el último, en el mensaje al consultor |
 
 **No se ejecutó `botsito motor arnes`** sobre ningún mes; la única invocación fue `--help`
 (cabecera). Ningún fichero de salida de una corrida entró en la rama.
@@ -204,11 +209,16 @@ con el código tal cual, antes y después, pasa.
 2. **La línea dice `habilita medir el conjunto de medida (2026-05) (ADR-0070)`**, no «habilita medir
    mayo» (§3): los meses salen del criterio y no hay un nombre de mes en `src/`.
 3. **`informe` exige `con_diagnostico`** (argumento obligatorio, con test): no lo pedía el encargo;
-   impide que un llamador nuevo se quede en «sin diagnóstico» por omisión.
-4. **`--depuracion` queda para el consultor** (§0.e y el «Impacto» del ADR).
+   impide que un llamador nuevo se quede en «sin diagnóstico» por omisión. *Aceptada; desde la
+   enmienda el argumento obligatorio es `opciones` (§9).*
+4. **`--depuracion` queda para el consultor** (§0.e y el «Impacto» del ADR). *Resuelta por la
+   respuesta del consultor: da «no», como cualquier opción fuera de la lista (§9).*
 5. **La invocación `motor arnes --help`** (cabecera): contra la letra del encargo, sin efecto.
 
 ## 7. Lo que se hizo con los hallazgos del revisor
+
+> Primera pasada, sobre `d16a06e`. El test de a2 se reescribió con la enmienda (§9): ahora comprueba
+> que el comando pasa `opciones`, no `diag.activo`.
 
 | # | Gravedad | Qué se hizo |
 |---|---|---|
@@ -331,7 +341,8 @@ Valoración de las desviaciones declaradas: §0.e (corrida sobre todo `construcc
 Leídas de `src/botsito/cli.py`, sin ejecutar el comando ni su ayuda: el subparser `motor arnes`
 (líneas 3066-3082) añade `--salida`, `--meses` y `--tracemalloc`, y luego `_opciones_simulacion`
 (2324-2348) y `_opciones_diagnostico` (2270-2322). `--repo` y `--version` son del parser raíz, no
-del subcomando.
+del subcomando; desde la segunda pasada del revisor, `--repo` también cuenta como opción fuera de
+la lista (§10).
 
 | Opción | Qué cambia en la corrida | ¿Se puede medir fidelidad con ella? |
 |---|---|---|
@@ -358,11 +369,13 @@ el motor de la spec produzca operaciones sin el bróker simulado.
 - **La lista** vive en un solo sitio, `src/botsito/engine/arnes.py`,
   `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA = frozenset({"--salida", "--tracemalloc", "--meses"})`, con un
   comentario que cita ADR-0070. `informe` calcula las que quedan fuera y se las pasa al veredicto.
-- **Las opciones de la corrida se leen del propio parser**, `cli.opciones_de_la_corrida(parser,
-  args)`: las acciones del subparser cuyo valor difiere del que el parser pone por defecto, con su
-  nombre largo. Una opción que se añada mañana sale ahí sin tocar nada. El subparser se guarda en
-  `args` con `set_defaults(parser_de_la_corrida=…)`, y el comando hace
-  `opciones = opciones_de_la_corrida(args.parser_de_la_corrida, args)`.
+- **Las opciones de la corrida se leen de los propios parsers**, `cli.opciones_de_la_corrida(parsers,
+  args)`: las acciones del parser raíz y del subcomando cuyo valor difiere del que su parser pone
+  por defecto, con su nombre largo. Una opción que se añada mañana, al subcomando o a la raíz, sale
+  ahí sin tocar nada. Los dos parsers se guardan en `args` con `set_defaults(parser_raiz=…)` y
+  `set_defaults(parser_de_la_corrida=…)`, y el comando hace
+  `opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)`. El
+  parser raíz entró en la segunda pasada del revisor (a1, §10): sin él, `--repo` no contaba.
 - **El veredicto** (`habilita_medir`, en `cases/`) recibe `opciones_fuera`, y cada una da el motivo
   «opción fuera de la lista: <nombre>». `informe` exige ahora `opciones` (antes `con_diagnostico`).
 - **ADR-0070**: un recuadro de ENMIENDA al principio y el cuerpo editado (decisiones 3 y 5, la
@@ -380,7 +393,7 @@ argumentos con el parser real, `build_parser()`, sin ejecutar el comando):
 | `test_solo_las_de_la_lista_y_que_llega_da_si` | `--tracemalloc --meses 2030-01,2030-03` | `…: sí` |
 | `test_la_lista_es_exactamente_la_de_la_enmienda` | — | la lista es `{--salida, --tracemalloc, --meses}` |
 | `test_el_informe_exige_decir_que_opciones_uso_la_corrida` | llamar a `informe` sin `opciones` | `TypeError` |
-| `test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser` | — | lee `cli.py` con `ast`: la única llamada a `arnes.informe` pasa `opciones`, y `opciones` es `opciones_de_la_corrida(args.parser_de_la_corrida, args)` |
+| `test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser` | — | lee `cli.py` con `ast`: la única llamada a `arnes.informe` pasa `opciones`, y `opciones` es `opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)` |
 
 **Que los tests de D2 fallan si se quita la condición**, medido en memoria
 (`anexos/UMBRAL-MAYO/sin_d2.py`, salida en `sin_d2-SALIDA.txt`): con el veredicto sustituido por uno
@@ -394,6 +407,110 @@ motor arnes --help` con el encargo prohibiéndolo «con cualquier opción»; sin
 Lección: la ayuda de un comando prohibido se lee en el código, no ejecutándolo. Esta vez la tabla del
 §8 se leyó del código.
 
+## 10. Lo que se hizo con la segunda pasada del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | `opciones_de_la_corrida` lee también el parser raíz: `--repo` (la única opción de la raíz que cambia la corrida; `--version` sale antes de correr) da ahora «no». Test nuevo, `test_una_opcion_del_parser_raiz_tambien_cuenta`. Es lo que pide la respuesta («cualquier otra opción presente, conocida o futura»), así que no contradice el encargo. `Tests Currently Passing`: 1376. |
+| a2 | importa | El informe deja de contradecirse: §3 y §7 llevan una nota de que la enmienda los supera en parte; §5 da la salida de `sin_d2.py` de cada versión y los `make check` de la primera pasada y de la enmienda; §6.3 y §6.4 dicen cómo quedaron (aceptada; resuelta). |
+| a3 | menor | El título de ADR-0070 y su fila del índice dicen ahora «solo con las opciones de una lista cerrada», en vez de «sin diagnóstico». |
+| a4 | menor | La cabecera dice que, desde la enmienda, los tests también PARSEAN argumentos con el parser real. |
+
+Las cuatro comprobaciones aparte dan SÍ, con la excepción de `--repo`, que es a1 y queda arreglada.
+`sin_d2.py`, repetido tras el arreglo: `VEREDICTO: los tres tests fallan si se quita D2`.
+
+## Informe del revisor, segunda pasada (subagente `revisor`, 2026-10-07), tal cual
+
+## Informe del revisor · trabajo/umbral-mayo · segunda pasada (commit 51a92ca) · 2026-10-07
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | `opciones_de_la_corrida` no ve las opciones del parser raíz, y la más relevante es `--repo`, que cambia el repositorio entero (spec, criterio, datos). Una corrida con `--repo OTRO` y solo `--salida` habilitaría «sí» si llegara a las cifras. El encargo dice «cualquier otra opción presente, conocida o futura». Hoy `--repo` es la única opción de ese tipo (la otra es `--version`, que sale antes de correr). El §8 lo dice («`--repo` y `--version` son del parser raíz») pero no lo decide ni lo trata como opción fuera de la lista. | `cli.py:2217-2223` recorre solo `parser._actions` del subparser. `cli.py:2907` define `--repo` en la raíz. Sonda con `parse_args` y sin ejecutar el comando: `['--repo','X:/otro','motor','arnes'] -> ('--salida',)`. Arreglo mínimo, para que lo decida el consultor: pasar también el parser raíz, o dar «no» si `args.repo` difiere del valor por defecto. |
+| a2 | importa | El informe quedó contradictorio tras la enmienda. §9 describe el código nuevo, pero §3, §5, §6 y §7 siguen describiendo el viejo (`con_diagnostico`, `diag.activo`) sin una nota de que quedan superadas. En §5 el comando `sin_d2.py` sigue con la salida vieja `VEREDICTO: el test falla si se quita D2`; la real hoy es `los tres tests fallan si se quita D2`. §6.3 dice «`informe` exige `con_diagnostico`» y §6.4 dice «`--depuracion` queda para el consultor», cuando ya da «no». §5 tampoco lista los comandos de esta pasada, y la fila de `make check` dice «el del commit del revisor, en su mensaje», pero el mensaje de 51a92ca no trae cifras. | `docs/validation/UMBRAL-MAYO.md:63,67,137-141,156,165,194,206-209,216`. La salida real de `sin_d2.py` está en la comprobación 2. |
+| a3 | menor | El título del ADR-0070 y su fila del índice siguen diciendo «sin diagnóstico». La regla ahora es la lista cerrada, y `--depuracion` mostró que «sin diagnóstico» no basta. | `docs/adr/0070-umbral-de-construccion-para-medir-mayo.md:6` y `docs/adr/README.md:76`. |
+| a4 | menor | La cabecera del informe sigue diciendo «Todos los tests nuevos son sintéticos». Es cierto, pero los tests nuevos de la enmienda parsean con `build_parser()`, y esto no se declara ahí (sí en §9). | `UMBRAL-MAYO.md:7-14` frente a `:372-373`. |
+
+Comprobado sin hallazgos:
+- **Contrato:** `uv run python scripts/contrato_rama.py` da `CONTRATO: 18 ficheros dentro del contrato de trabajo/umbral-mayo (riesgo medio …, 6 comprobaciones para el revisor)`.
+- **`make check`:** `make-check.log` tiene `SELLO: … dc7c9b9a1f512556ebe285d6af33e9c419bd963c` y `PICO DE MEMORIA … 290 MiB`. `git rev-parse 51a92ca^{tree}` da ese mismo árbol, así que el sello es del commit revisado. `git status --short` sale limpio.
+- **Otras comprobaciones:**
+  - `state check` da OK.
+  - `knowledge validate` da OK, con 152 registros de feedback y 503 items de evidencia, historial intacto y commits con Fuente.
+  - El commit lleva `Fuente: ADR-0070` en el cuerpo (no toca `knowledge/spec` ni `knowledge/cases`).
+  - El `## Estado` del ADR sigue siendo `ACTIVE`.
+  - `Tests Currently Passing` pasa de 1371 a 1375: son los 4 tests nuevos de `test_umbral_mayo.py`.
+- **Ficheros no tocados por la enmienda:** ningún cambio en `.claude/`, `Makefile`, `src/botsito/domain` ni en `knowledge/`.
+
+### Eje (b) · Encargo (respuesta del consultor del 2026-10-07)
+Resumen: 0 bloquea, 0 importa, 0 menor. Requisitos: 11 hechos, 0 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Lista CERRADA `--salida`, `--tracemalloc`, `--meses`; cualquier otra da «no» | Hecho | `engine/arnes.py:64`; `arnes.informe` calcula `set(opciones) - OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` (`:250`) |
+| 2 | `--meses` solo vale si cubre todo el conjunto | Hecho | `habilita_medir` mantiene la condición de `faltan` (`criterio_fidelidad.py`); `test_una_corrida_sobre_parte_de_construccion_no_habilita` |
+| 3 | Motivo «opción fuera de la lista: <nombre>» | Hecho | `criterio_fidelidad.py`: `f"opción fuera de la lista: {o}"`; los tests lo comprueban literal |
+| 4 | La lista vive en un solo sitio, con comentario que cita ADR-0070 | Hecho | `arnes.py:60-64` (comentario con «ADR-0070 (enmienda del 2026-10-07)»); un solo `grep` de la constante en `src` |
+| 5 | Test: `--depuracion` da «no» | Hecho | `test_depuracion_da_no` |
+| 6 | Test: opción inventada añadida al parser da «no» | Hecho | `test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista` |
+| 7 | Test: solo las de la lista da «sí» si llega a las cifras | Hecho | `test_solo_las_de_la_lista_y_que_llega_da_si` |
+| 8 | El test de diagnóstico sigue fallando si se quita la condición | Hecho | comprobación 2 |
+| 9 | ADR: recuadro de enmienda, cuerpo editado y dicho en el informe | Hecho | ADR líneas 12-20; §9 «ADR-0070: un recuadro de ENMIENDA … la versión anterior queda en `3320177`» |
+| 10 | Tabla de TODAS las opciones leída del código, sin ejecutar el comando | Hecho | §8; comprobación 3 |
+| 11 | PARA solo en `--simular`; el resto del punto 1 hecho; no se ejecuta el arnés | Hecho | §8 «PARA en el punto de `--simular`, y solo en él»; Estado del informe; `--simular` queda fuera de la lista |
+
+Lo que no hay que olvidar: la copia de la respuesta en encargo e informe es literal (diff de encargo vs §«Respuesta del consultor»). Los hallazgos a1 y a2 son del eje (a) y no mezclan.
+
+### Comprobaciones aparte
+1. **Una opción nueva del parser da «no» sin tocar la lista: SÍ en lo pedido, con una excepción (a1).**
+   - `uv run python -m pytest -p no:cacheprovider tests/unit/test_umbral_mayo.py -q` da 22 passed.
+   - **Cómo funciona:** el test añade `--opcion-inventada` a `probe.parser_de_la_corrida` (el mismo subparser, vía `set_defaults`) y parsea con ese parser. `opciones_de_la_corrida` lee `parser._actions` en vivo (`cli.py:2217`), la opción sale, `arnes.informe` la resta de la lista y `habilita_medir` la convierte en motivo. La lista queda como el mismo objeto (`is lista_antes`).
+   - **Valor igual al por defecto:** no hay caso hoy. Las 13 opciones del subparser tienen default `None` o `False`, y las `store_true` tienen default `False`, así que dar la opción siempre difiere. Sondeado: `--meses ""` sale como `--meses`, `--diagnostico-a27 0` sale (0 ≠ None), y los prefijos abreviados `--sim --dep` salen como `--simular` y `--depuracion`. Una opción futura con `default=X` pasada explícitamente como X no se detectaría, pero entonces coincide con la corrida por defecto y no cambia nada.
+   - **`store_true` con default distinto de `False`:** no existe hoy, y el mismo razonamiento cubre un default `True`.
+   - **`--repo` (parser raíz):** NO se detecta, y es el hallazgo a1. Las acciones del subparser no incluyen las de la raíz.
+2. **Los tests de D2 fallan sin la condición: SÍ.** `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` dio, con exit 0:
+   ```
+   test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+   test_depuracion_da_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+   test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
+   VEREDICTO: los tres tests fallan si se quita D2
+   ```
+   El script no ejecuta `motor arnes`: parchea `arnes.habilita_medir` en memoria y llama a las funciones de test. Coincide con `sin_d2-SALIDA.txt`.
+3. **La tabla del §8 corresponde al código: SÍ.**
+   - **Opciones:** el subparser (`cli.py:3066-3082`) tiene `--salida`, `--meses`, `--tracemalloc`; `_opciones_simulacion` (`:2324-2347`) añade `--simular`, `--depuracion`, `--perfil`, `--fase`; `_opciones_diagnostico` (`:2270-2321`) añade `--diagnostico-a35`, `-a21`, `-a44`, `-a47`, `-a27` y `-cuenta-diaria`. Son 13, la tabla tiene 13 y la salida del sondeo da las mismas. `--repo` y `--version` son de la raíz, como dice el §8. Los números de línea citados son correctos.
+   - **`--simular`:** `engine/motor.py:233` es `return ResultadoDia(dia.dia.isoformat(), (), trazas)`, y es el único `ResultadoDia(` de `motor.py`. Sin `--simular`, `motor_arnes` usa `MotorSpec` (`cli.py` ~2425-2431) y no produce operaciones. `engine/cableado.py:250` devuelve `self._operaciones_del_bot(...)`, y esa función (`:329-351`) toma las posiciones del broker con `abierta_ms` y sesión. Lo afirmado es cierto.
+   - **Matices menores del §8:**
+     - «`validar_meses` niega medida y lo ajeno» es correcto (`arnes.py:89-102`).
+     - La afirmación «hoy ninguna corrida puede dar sí» se sostiene: sin `--simular` no hay operaciones del bot, y con ella la opción está fuera de la lista.
+4. **Nadie ejecutó `motor arnes`: SÍ, para este commit.**
+   - `grep` de `motor_arnes`, `main(`, `subprocess`, `os.system` y `--help` en `tests/unit/test_umbral_mayo.py` y en los `.py` de `anexos/UMBRAL-MAYO` solo da `def main` de `sin_d2.py`.
+   - `git log -p -S"motor arnes"` sobre `tests`, `scripts` y anexos solo muestra docstrings que mencionan el comando.
+   - Los tests solo llaman a `build_parser().parse_args(...)` y a `opciones_de_la_corrida`, nunca a `motor_arnes`.
+   - `motor_arnes` solo se llama desde el despacho de `cli.py:3333`.
+   - Lo único de esta pasada que toca el comando real es lo que ejecuté yo: `parse_args` en una sonda. No se ha ejecutado el arnés.
+   - Nota: en el commit 51a92ca no puedo ver qué hizo la sesión de Claude Code, solo su resultado. El `--help` anterior sigue declarado (cabecera) y el consultor ya lo trató.
+
+### Lo que no pude comprobar
+- **Orden de trabajo:** si la tabla del §8 se escribió «antes» del punto 1, como pide el consultor, no se puede saber (todo entra en un solo commit).
+- **Control de la fila de ERRORES-RECURRENTES:** el «hallazgo para la fila de la rama» (punto 3 de la respuesta) está en §9 del informe, pero la fila en `docs/runbooks/ERRORES-RECURRENTES.md` no aparece en este diff. Es del cierre, no de esta pasada.
+- **`make check`:** no lo ejecuté, por encargo. Me apoyé en `make-check.log` (sello `dc7c9b9a…`, igual al árbol de 51a92ca).
+
+### Comandos ejecutados
+1. `git log --format='%h %s' main..HEAD`, `git show --stat 51a92ca`, `git status --short`
+2. `git show 51a92ca -- src tests scripts docs/validation/anexos`
+3. `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py`
+4. `grep` de `_opciones_simulacion`, `_opciones_diagnostico`, `def build_parser` y `mt_arnes` en `cli.py`; lecturas de `cli.py` 2268-2397, 2397-2445, 2900-2920 y 3060-3090
+5. `uv run python -m pytest -p no:cacheprovider tests/unit/test_umbral_mayo.py -q` (22 passed)
+6. `grep` de `motor_arnes`, `parser_de_la_corrida`, `OPCIONES_QUE_NO`, `opciones_de_la_corrida` en `src`, `tests`, `scripts` y anexos
+7. Lecturas de `engine/motor.py` 225-240, `engine/cableado.py` 240-262 y 326-352 y `engine/arnes.py` 89-103
+8. `git diff 1cfc14a 51a92ca -- docs/encargos/trabajo-umbral-mayo.md PROJECT_STATE.md` y `git diff 1cfc14a 51a92ca -- docs/adr/0070-...md`
+9. `grep` de `motor_arnes|main(|subprocess|os.system|--help` en el test y los anexos; `git log -p -S"motor arnes" main..HEAD -- tests scripts docs/validation/anexos Makefile`
+10. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`; `tail`/`grep SELLO|PICO` de `make-check.log`; `git rev-parse 51a92ca^{tree}`; `git diff main...HEAD --stat -- .claude Makefile src/botsito/domain`
+11. `grep` de `con_diagnostico|diag.activo|…` sobre `docs/validation/UMBRAL-MAYO.md`; `uv run botsito knowledge validate`
+12. Sonda con `uv run python -c` (solo `build_parser().parse_args` y `opciones_de_la_corrida`, sin ejecutar el comando); un primer intento con `Write` falló porque la herramienta está deshabilitada, y no escribió nada.
+
 ## Estado
 
 **LISTA PARA REVISIÓN, NO cerrada (2026-10-07), con una PARADA abierta para el consultor (§8): si la
@@ -401,7 +518,8 @@ corrida que habilita tiene que llevar `--simular`.** Ni merge, ni tag, ni push.
 
 - ADR-0070, con su enmienda: mayo solo se mide cuando una corrida del arnés sobre todo
   `construccion`, solo con `--salida`, `--tracemalloc` y `--meses`, llega a 0,70 de cobertura y
-  0,60 de precisión en esa misma corrida. Cualquier otra opción, conocida o futura, da «no».
+  0,60 de precisión en esa misma corrida. Cualquier otra opción, conocida o futura, del subcomando
+  o del parser raíz (como `--repo`), da «no».
 - Con la lista de hoy ninguna corrida puede dar «sí» (§8): sin `--simular` no hay operaciones del
   bot, y `--simular` está fuera de la lista.
 - **No se ejecutó el arnés** en esta rama (una invocación de `--help` en la fase 0, declarada; la

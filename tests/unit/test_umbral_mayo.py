@@ -116,7 +116,7 @@ def _parsear(*argv: str, parser: argparse.ArgumentParser | None = None) -> tuple
     se PARSEAN, el comando no se ejecuta. Con `parser`, el de `build_parser()` ya modificado."""
     p = parser or build_parser()
     args = p.parse_args(["motor", "arnes", "--salida", "x.txt", *argv])
-    return opciones_de_la_corrida(args.parser_de_la_corrida, args)
+    return opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
 
 
 def _linea(corrida: arnes.Corrida, opciones: tuple[str, ...] = ("--salida",)) -> str:
@@ -188,6 +188,16 @@ def test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista() -> None:
     assert arnes.OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA is lista_antes
 
 
+def test_una_opcion_del_parser_raiz_tambien_cuenta() -> None:
+    """`--repo` es del parser raiz y cambia el repositorio entero: tambien esta fuera de la lista
+    (revisor de esta rama, segunda pasada, a1)."""
+    args = build_parser().parse_args(["--repo", "X:/otro", "motor", "arnes", "--salida", "x.txt"])
+    opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
+    assert opciones == ("--repo", "--salida")
+    linea = _linea(_corrida(10, 7, 4), opciones)
+    assert linea.endswith(": no (opción fuera de la lista: --repo)")
+
+
 def test_solo_las_de_la_lista_y_que_llega_da_si() -> None:
     opciones = _parsear("--tracemalloc", "--meses", "2030-01,2030-03")
     assert opciones == ("--meses", "--salida", "--tracemalloc")
@@ -250,4 +260,7 @@ def test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser() -> None:
         if isinstance(n, ast.Assign)
         and any(isinstance(t, ast.Name) and t.id == "opciones" for t in n.targets)
     ]
-    assert "opciones_de_la_corrida(args.parser_de_la_corrida, args)" in asignaciones
+    assert (
+        "opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)"
+        in asignaciones
+    )
