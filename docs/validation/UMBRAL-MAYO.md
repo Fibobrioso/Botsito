@@ -90,7 +90,7 @@ en `docs/adr/`: **el siguiente libre es 0070.**
   conjunto de construcción») y se dice en el ADR.
 - **`--depuracion`** (con `--simular`, corre sin ticks sobre el respaldo M1) no es una opción
   `--diagnostico-*`, y la ayuda del comando dice que «la salida lo marca y NO cuenta (ADR-0051 §8)». D2 no la nombra, así que no se
-  implementa aquí: **queda para el consultor** (§5).
+  implementa aquí: **queda para el consultor** (§5). *(Nota posterior: resuelta; da «no», como cualquier opción fuera de la lista cerrada, §9 y §11.)*
 
 
 ## 1. Fase 1 · ADR-0070
@@ -212,7 +212,7 @@ con el código tal cual, antes y después, pasa.
    impide que un llamador nuevo se quede en «sin diagnóstico» por omisión. *Aceptada; desde la
    enmienda el argumento obligatorio es `opciones` (§9).*
 4. **`--depuracion` queda para el consultor** (§0.e y el «Impacto» del ADR). *Resuelta por la
-   respuesta del consultor: da «no», como cualquier opción fuera de la lista (§9).*
+   respuesta del consultor: da «no», como cualquier opción fuera de la lista (§9); la lista final, con `--simular`, `--perfil` y `--fase`, en §11.*
 5. **La invocación `motor arnes --help`** (cabecera): contra la letra del encargo, sin efecto.
 
 ## 7. Lo que se hizo con los hallazgos del revisor
@@ -619,13 +619,143 @@ nunca «sí» sin simulación, otro perfil y otra fase), y restaurado pasan:
 | `uv run pytest tests/unit/test_umbral_mayo.py -q` | 30 pasan |
 | `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` | `VEREDICTO: los ocho tests fallan si se quita su condicion` |
 | `uv run botsito state check` | `OK` |
+| `make check > make-check.log 2>&1` (commit `071c30f`) | `2132 passed`; `SELLO: make check en verde sobre el arbol adbb6932933506e11eb047444ee91c99e2b39956` (el de `071c30f`); `PICO DE MEMORIA` 291 MiB; `exit=0` |
 
 No se ejecutó `botsito motor arnes` en esta parte, de ninguna forma.
+
+## 12. Lo que se hizo con la tercera pasada del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | menor | Notas posteriores junto a §0.e (`--depuracion`, resuelta) y a §6.4 (la lista final, en §11); las de §8 y la tabla de §9 ya estaban. La fila 11 que señala (`--simular` «queda fuera de la lista») está DENTRO del informe pegado de la segunda pasada, que se deja tal cual: describe el estado de `51a92ca`/`5e46075`, y el estado final es el de §11 y `## Estado`. |
+| a2 | menor | §11.4 recoge el `make check` de `071c30f`: `2132 passed`, el sello del árbol `adbb6932…` (el de `071c30f`), 291 MiB, `exit=0`. |
+| b1 | menor | Sin cambio: es la limitación declarada (el enlace entre el comando y el veredicto se prueba leyendo el código con `ast`, porque probarlo con el comportamiento exigiría ejecutar el arnés, prohibido). Queda para el consultor por si la rama de medida quiere un test que lo ejecute. |
+
+Las tres comprobaciones aparte dan SÍ: sin `--simular` nunca sale «sí» (sin camino en el código y
+con las mutaciones de `sin_d2.py`: `VEREDICTO: los ocho tests fallan si se quita su condicion`), el
+perfil y la fase del veredicto son los efectivos, y ningún commit ejecutó el arnés.
+
+## Informe del revisor, tercera pasada (subagente `revisor`, 2026-10-07), tal cual
+
+## Informe del revisor · trabajo/umbral-mayo · tercera pasada (commit 071c30f) · 2026-10-07
+
+Rama `trabajo/umbral-mayo`, HEAD `071c30f`. `git status --short` limpio. Diff revisado: `git diff 5e46075 071c30f` (15 ficheros). Todos están dentro de `rutas_permitidas` (`contrato_rama.py`: «18 ficheros dentro del contrato»). Ninguna ruta protegida cambia: no hay cambios en `knowledge/spec/`, `engine/motor.py`, `cableado.py`, `broker.py` ni `.claude/`.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | menor | El informe conserva afirmaciones anteriores que la segunda enmienda deja falsas, sin nota junto a ellas. La tabla de tests de §9 sigue diciendo que `test_depuracion_da_no` da `…--depuracion; …--simular` y que la lista es `{--salida, --tracemalloc, --meses}`. §0.e, línea 91 («`--depuracion` … queda para el consultor») y §6.4 solo se corrigen en parte. Hay una nota de §11 en §8 (línea 359) y en la tabla de §9 (línea 387). Faltan en §0.e y en la tabla encargo-frente-a-hecho (fila 11, línea 466: «`--simular` queda fuera de la lista»). Es historia de la rama y no engaña a quien lea hasta §11, pero la fila 11 contradice el estado final. | `docs/validation/UMBRAL-MAYO.md:91`, `:395`, `:396-ss` (tabla §9), `:466`. Notas posteriores solo en `:359` y `:387`. |
+| a2 | menor | §11.4 no recoge el `make check` de este commit. El informe de la rama dice que «el último, en el mensaje al consultor». Lo he comprobado yo: `make-check.log` termina en `2132 passed`, `SELLO … adbb6932933506e11eb047444ee91c99e2b39956`, `PICO DE MEMORIA … 291 MiB`, `exit=0`. Ese árbol es el de `HEAD^{tree}`. Conviene dejar el sello y el recuento en §11.4. | `make-check.log:67`, `git rev-parse HEAD^{tree}` = `adbb6932…`. `docs/validation/UMBRAL-MAYO.md` §11.4 (solo ruff, mypy, pytest, anexo y `state check`). |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da `CONTRATO: 18 ficheros dentro del contrato de trabajo/umbral-mayo (riesgo medio, …, 6 comprobaciones para el revisor)`.
+- **Comprobaciones del contrato que no escriben:**
+  - `pytest tests/unit/test_umbral_mayo.py -q`: 30 puntos, sin fallos.
+  - `sin_d2.py`: `VEREDICTO: los ocho tests fallan si se quita su condicion`.
+  - `botsito state check`: `OK: rama 'trabajo/umbral-mayo'…`.
+  - `knowledge validate` forma parte de `make check`, y `make-check.log` trae `OK: 503 items de evidencia, 0 contradicciones abiertas, historial intacto`. No hay `knowledge-validate.log` suelto.
+- **Calidad.** `ruff check src tests` limpio, `ruff format --check` con 242 ficheros ya formateados, `mypy` sin problemas en 242 ficheros.
+- **Trailer `Fuente:`.** `071c30f` lleva `Fuente: ADR-0070` en el cuerpo. El ADR existe y la rama no toca `knowledge/spec/` ni `knowledge/cases/` de valor: solo añade `perfil_para_medir` a `criterio_fidelidad.yaml` (el trailer lo cubre).
+- **ADR-0002 / ADR-0050.** `git diff 5e46075 071c30f -- src | grep -i ftmo` no devuelve nada, así que no hay nombre de firma en `src/`. El nombre `ftmo-2step-swing-100k` vive solo en `knowledge/cases/criterio_fidelidad.yaml`, y el código lo lee de `Criterio.perfil_para_medir`. Los umbrales siguen en el yaml.
+- **Texto no vacío.** `_texto()` valida el campo, y los cinco constructores de `Criterio` en los tests pasan el campo nuevo.
+- **ADR-0070.** `status: ACTIVE`. La segunda enmienda es un recuadro fechado (2026-10-07) con los puntos 1 a 3 del consultor. La decisión 3 y la 5, «Por qué elegimos» e «Impacto» están coherentes con ella. La fila del índice (`docs/adr/README.md:76`) ya refleja la lista cerrada y sigue en `ACTIVE`.
+- **`Tests Currently Passing`.** El campo pasa de 1376 a 1383, y `state check` da OK. `test_umbral_mayo.py` pasa de 17 a 24 `def test_` (+7), como dice §11.3.
+- **Líneas citadas en §11.1.** Existen y dicen lo que el informe afirma:
+  - `cli.py:2346-2354`: `--perfil` y `--fase` con `default=None`.
+  - `cableado.py:421-435`: `perfil_del_repo`, con el único perfil si no se da nombre.
+  - `cableado.py:470`: `fase_real = fase if fase is not None else perfil.fases()[0]`.
+  - `cableado.py:486-487`: `perfil=perfil.nombre`, `fase=fase_real`.
+  - `perfil_cuenta.py:69-70` y `81-82`.
+  - `knowledge/cuentas/ftmo-2step-swing-100k.yaml:37` (`firma_programa "2-step"`) y `:86` (`firma_fases "reto verificacion fondeada"`).
+  - `ls knowledge/cuentas`: un solo perfil.
+  - ADR-0026 (título «FTMO, reto 2-Step, tipo Swing»).
+  - `engine/motor.py:233` y `cableado.py:250`, citados por el consultor, existen y son lo que se dice.
+- **Afirmación del ADR sobre los diagnósticos.** El ADR y el informe atribuyen al encargo (D2, línea 17) que el motor necesita hoy A-21, A-35 y A-44. Dicen explícitamente que no se midió, y no afirman más de lo que la cita sostiene.
+- **Informe y Estado.** `## Estado` es la última sección, el informe existe y la copia de la respuesta del consultor está en encargo e informe (misma frase, línea a línea).
+- **Rutas del contrato y regímenes.** No se toca `knowledge/evidence/`, `feedback/`, manifests, corpus, holdout ni informes cerrados de `main`. El único `-` en el informe de la rama es el `## Estado` anterior, que es de la rama.
+- No aplican: puntos 5 (ambigüedades), 8 (guardias de citas) ni 10 (evidencia nueva), porque no hay cambios en esos sitios.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 9 hechos, 0 parciales, 0 no hechos (las respuestas anteriores ya estaban cubiertas en pasadas previas).
+
+| # | Requisito (respuesta a la PARADA de `--simular`) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Sin `--simular`, «no» con motivo «sin simulación» | Hecho | `criterio_fidelidad.py:197-198` (`motivos.append("sin simulación")`); `test_sin_simular_da_no` y `test_sin_simulacion_nunca_sale_si` pasan |
+| 2a | Leer en el código los valores por defecto de `--perfil` y `--fase`, y el nombre del perfil y de la fase en `knowledge/cuentas/`, y dejarlo en el informe | Hecho | §11.1, con las líneas citadas verificadas arriba |
+| 2b | Condición sobre los valores EFECTIVOS (dados o por defecto) | Hecho | `cli.py:2441`, `Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])`; `criterio_fidelidad.py:200-206`; ver comprobación aparte 2 |
+| 2c | PARAR si el perfil por defecto no es el de FTMO 2-Step Swing 100k o no hay primera fase clara | Hecho (no se dan las condiciones de parada) | El perfil por defecto es el único de `knowledge/cuentas/`, y `firma_fases` empieza por `reto` (yaml línea 86) |
+| 3 | Lista cerrada: `--salida`, `--tracemalloc`, `--meses`, `--simular`, `--perfil`, `--fase`; todo lo demás, incluidos `--repo` y `--depuracion`, da «no» | Hecho | `arnes.py` (`OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`, seis opciones, con comentario que cita ADR-0070); `test_la_lista_es_exactamente_la_de_la_enmienda`, `test_depuracion_da_no`, `test_una_opcion_del_parser_raiz_tambien_cuenta` |
+| 4a | Test: sin `--simular`, «no» | Hecho | `test_sin_simular_da_no` |
+| 4b | Test: otro perfil o otra fase, «no» | Hecho | `test_simular_con_otro_perfil_da_no`, `test_simular_con_otra_fase_da_no` |
+| 4c | Test: perfil y fase por defecto con las cifras, «sí» | Hecho | `test_simular_con_perfil_y_fase_por_defecto_y_las_cifras_da_si`, `test_perfil_y_fase_dados_con_los_valores_que_cuentan_da_si` |
+| 4d | Los tests anteriores siguen | Hecho | Los reescritos solo pierden el motivo `--simular`. 30 pasan |
+| 4e | ADR-0070 con recuadro de enmienda fechado con 1 a 3 | Hecho | `docs/adr/0070-*.md` líneas 22-40 (`ENMIENDA (2026-10-07 …)`, con los tres puntos) |
+| 5 | Informe `UMBRAL-MAYO.md` §11 y Estado | Hecho | §11 y `## Estado` actualizados |
+| 6 | El arnés sigue sin ejecutarse; `make check`, `state check` y `knowledge validate` en verde | Hecho | Ver comprobación aparte 3 y el sello de a2 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | Lo que pide el encargo, «comprobando aparte que sin --simular nunca sale sí», se cumple en el veredicto. La conexión entre el comando y el veredicto, en cambio, solo la prueba un test sobre el texto del código (`ast` + cadena `Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])`). No hay un test de comportamiento que pase por `motor_arnes`, y no puede haberlo sin ejecutar el arnés. Es una limitación asumida y declarada («se lee el código, sin ejecutar el comando»), no un fallo. | `tests/unit/test_umbral_mayo.py` (`test_el_comando_pasa_al_informe_las_opciones_y_la_simulacion`, últimas líneas) |
+
+Lo que la rama hace y el encargo no pide: nada relevante. El campo `perfil_para_medir` y la clase `Simulacion` son la forma de escribir la condición sin nombre de firma en `src/` (ADR-0050), y el informe lo dice (§11.2). El cambio de `Criterio` obligó a tocar los cinco constructores de test (`test_arnes_motor`, `test_cableado`, `test_huecos_motor`, `test_visor`, `test_umbral_mayo`), y es mecánico. No se tocó nada que el encargo diga que no se toque.
+
+### Comprobaciones aparte
+
+**1. Sin `--simular` nunca sale «sí»: confirmado.**
+- `habilita_medir` (`criterio_fidelidad.py:182-218`) tiene `simulacion` como argumento keyword obligatorio, sin valor por defecto. Con `simulacion is None` añade el motivo «sin simulación». Devuelve `Veredicto(not motivos, …)`, así que con un motivo no puede habilitar, vengan las cifras que vengan.
+- `arnes.informe` (`arnes.py:~250-265`) también exige `simulacion` keyword sin valor por defecto, y se lo pasa tal cual. No hay otro llamador de `informe` ni de `habilita_medir` en `src/` ni en `scripts/` (`grep`).
+- En `motor_arnes` (`cli.py:~2420-2452`): la rama `else` (sin `--simular`) asigna `simulacion = None`. La rama `if args.simular` es la única que construye `Simulacion`. No hay camino con `simulacion` distinto de `None` sin `--simular`, ni un valor por defecto que lo eluda.
+- `--perfil` y `--fase` sin `--simular` están en la lista, pero el veredicto da «no (sin simulación)».
+- `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` (en memoria, sin escribir) dio: `VEREDICTO: los ocho tests fallan si se quita su condicion`. Con la condición quitada fallan los cuatro de la lista y los cuatro de la simulación (`test_sin_simular_da_no`, `test_sin_simulacion_nunca_sale_si`, `test_simular_con_otro_perfil_da_no`, `test_simular_con_otra_fase_da_no`). Restaurados, pasan. La mutación «sin la simulación» sustituye perfil y fase a la vez, y no separa cada una. Se cubre porque cada test rompe una sola.
+
+**2. El perfil y la fase del veredicto son los EFECTIVOS: confirmado.**
+- `cli.py:2441`: `Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])`.
+- `motor` es el `MotorCableado` que devolvió `construir_motor_cableado`. Sus campos son `perfil=perfil.nombre` y `fase=fase_real` (`cableado.py:486-487`), ya con el `None` resuelto (`fase_real = fase if fase is not None else perfil.fases()[0]`, línea 470).
+- `perfil_cuenta` es el mismo objeto que se le pasó al motor. `args.perfil` y `args.fase` crudos no llegan al veredicto.
+- Una `--fase` inexistente la rechaza `reglas_de_fase` antes de llegar al veredicto.
+
+**3. Ningún commit de la rama ejecutó `botsito motor arnes`: no hay evidencia de lo contrario, con una salvedad ya declarada.**
+- Los tests solo hacen `build_parser().parse_args([...])` y `opciones_de_la_corrida`. `grep` de `motor_arnes|subprocess|os.system` en `test_umbral_mayo.py` y en los anexos: sin llamadas. El único `main()` es el de `sin_d2.py`, que parchea `arnes.habilita_medir` y llama a funciones de test.
+- `git log -p -S"motor arnes" main..HEAD -- tests scripts Makefile docs/validation/anexos` solo muestra docstrings y comentarios.
+- Los mensajes de commit dicen «No se ejecuto el arnes». §11.4 lo repite («de ninguna forma»). No hay ficheros de salida de una corrida en la rama.
+- La salvedad es la invocación `motor arnes --help` de la fase 0, declarada en el informe y ya señalada por el consultor. No es de esta pasada. No es comprobable por git que el agente no lo ejecutó fuera de los commits.
+
+### Lo que no pude comprobar
+- Que la copia de la respuesta del consultor en el encargo sea «tal cual» respecto al mensaje original: no tengo el original. Solo comprobé que encargo e informe coinciden entre sí.
+- Que ninguna sesión ejecutara `botsito motor arnes` sin dejar rastro en git: git solo ve commits. Me baso en tests, scripts, mensajes y ausencia de salidas.
+- El comportamiento real del comando `motor arnes` con `--simular`: no puedo ejecutarlo. Eso incluye si el motor necesita los diagnósticos A-21, A-35 y A-44 para correr, que es lo que decide si hoy alguna corrida puede dar «sí». El ADR lo atribuye al encargo y dice que no se midió.
+- La CI de `main` o de Linux: la rama no toca `.claude/` ni la plataforma.
+
+### Comandos ejecutados
+1. `git branch --show-current && git status --short && git log --format='%h %s' main..HEAD && git diff --stat 5e46075 071c30f`
+2. `git diff 5e46075 071c30f -- src knowledge tests PROJECT_STATE.md`
+3. `tail -40 docs/encargos/trabajo-umbral-mayo.md; cat contrato.yaml`
+4. `git log -3 --format='%h%n%B---' 071c30f` y `sed` de `cli.py` 2300-2520
+5. `git diff 5e46075 071c30f -- docs/adr docs/validation/UMBRAL-MAYO.md docs/encargos`
+6. `sed`/`grep` de `cableado.py`, `motor.py`, `perfil_cuenta.py` y `knowledge/cuentas/ftmo-2step-swing-100k.yaml` (solo lectura)
+7. `grep` de `opciones_de_la_corrida` y de los `set_defaults` en `cli.py`
+8. `grep` de `habilita_medir|arnes.informe|Simulacion(` en `src` y `scripts`
+9. Lectura de `docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` y de su `-SALIDA.txt`
+10. `uv run pytest tests/unit/test_umbral_mayo.py -q`
+11. `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py`
+12. `uv run ruff check src tests`
+13. `uv run ruff format --check src tests`
+14. `uv run mypy`
+15. `uv run python scripts/contrato_rama.py`
+16. `tail make-check.log`, `git rev-parse HEAD^{tree}`, `git diff --name-status 5e46075 071c30f`
+17. `uv run botsito state check`
+18. `grep` de `motor arnes` en `UMBRAL-MAYO.md`; `grep` de `motor_arnes|main(|subprocess` en tests y anexos; `git log -p -S"motor arnes" main..HEAD -- tests scripts Makefile docs/validation/anexos`
+19. Lecturas finales de `criterio_fidelidad.py`, `arnes.py` y `UMBRAL-MAYO.md` (líneas 1-20, 86-96, 388-402, 455-470, 196-222)
+
+No ejecuté `botsito motor arnes` (ni `--help`) ni leí material protegido.
 
 ## Estado
 
 **LISTA PARA REVISIÓN, NO cerrada (2026-10-07).** Ni merge, ni tag, ni push. La PARADA de
-`--simular` (§8) está resuelta por el consultor (§11).
+`--simular` (§8) está resuelta por el consultor (§11). Tercera pasada del revisor: 0 bloquea,
+0 importa, 3 menores (dos arreglados, uno declarado; §12).
 
 - ADR-0070, con sus dos enmiendas: mayo solo se mide cuando una corrida del arnés sobre todo
   `construccion`, SIMULADA con el perfil de la cuenta real (`ftmo-2step-swing-100k`) y su primera
