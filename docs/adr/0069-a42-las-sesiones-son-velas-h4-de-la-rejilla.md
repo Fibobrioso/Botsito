@@ -32,8 +32,9 @@ RELOJ-INVIERNO.md §1.
   fuera H1; enero no separa H2a de H2b.
 
 En UTC, con zoneinfo: la ventana es 05:00-13:00 cuando Nueva York va en horario de verano y
-06:00-14:00 cuando no. Frente a lo que el motor hacía (H2a), cambian 20 días laborables al año: en
-2026, del 9 al 27 de marzo y del 26 al 30 de octubre (`anexos/ACTIVACION-A42/dias_distintos.txt`).
+06:00-14:00 cuando no. Frente a lo que el motor hacía (H2a), cambian los días laborables en que un
+lado ya cambió la hora y el otro no: 20 en 2024, 2025 y 2026 (en 2026, del 9 al 27 de marzo y del
+26 al 30 de octubre) y 15 en 2027 (`anexos/ACTIVACION-A42/dias_distintos.txt`).
 
 ### 2. Cómo lo hace el bot: instantes UTC desde la rejilla, con zoneinfo, nunca un desfase fijo
 
@@ -120,7 +121,10 @@ como él las ve.
   `docs/runbooks/ENTRADA-MARZO.md`). Marzo no se abre ni se lista aquí.
 - **Nada sobre el servidor de FTMO** (A-28, `broker_offset_base`, `broker_dst`): solo traduce sus
   marcas de tiempo, y se mide en la demo. La ventana de ticks de un mes de invierno (ADR-0063 §5)
-  queda decidida por §1: 06:00-14:00 UTC, y 05:00-13:00 los 20 días del cambio.
+  queda decidida por §1: 06:00-14:00 UTC, y 05:00-13:00 los días del cambio.
+  `scripts/ticks_spread.py` sigue contando esa ventana en `huso_operativa` (fuera de las rutas de
+  esta rama): **pendiente con dueño, la rama que baje ticks de un mes de invierno**, por la puerta
+  de `engine/relojes.py`.
 
 ## Problema que resuelve
 
@@ -153,7 +157,8 @@ abre a las 05:00, y ningún mes de invierno podía entrar desde el sorteo (B0).
 
 ## Por que descartamos las demas
 
-- La 1 falla 20 días al año frente a lo que el trader dijo y confirmó por escrito.
+- La 1 falla los días del cambio (20 en 2026): en octubre, frente a lo que el trader dijo en S-7 y
+  confirmó por escrito; en marzo, frente a lo que H2b predice y H2a no.
 - La 2 falla 91 días al año: todo el invierno (RELOJ-INVIERNO.md M2 y M3).
 - La 3 separa `ventana_inicio` de su fuente (el trader dijo «7», no «1 de Nueva York»), rompe el
   test que ata las sesiones del kit a la ventana y expresa como hora de pared lo que el trader

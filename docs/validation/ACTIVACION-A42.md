@@ -4,10 +4,11 @@ Rama `trabajo/activacion-a42`, abierta el 2026-10-06 desde `main` en e97af27 (co
 `stable/F37c-reloj-invierno`, merge 49c3098). Encargo: `docs/encargos/trabajo-activacion-a42.md`.
 Parte de la medida de `docs/validation/RELOJ-INVIERNO.md` (Next Action E).
 
-**Este informe llega hasta la PARADA de la fase 0.** Fuera de él, de sus anexos, de la fila de
-HOLDOUT-EXPOSICIONES y de los ficheros de apertura de la rama, no se ha cambiado nada del
-repositorio. Fuera del repositorio se rehicieron las cuatro filtradas de sesión, como pide el punto
-b (§2.2).
+**Cómo se lee.** Los §1 a §8 son la fase 0, tal como se escribió antes de la PARADA (entonces no se
+había cambiado nada del repositorio fuera del informe, sus anexos, la fila de HOLDOUT-EXPOSICIONES y
+los ficheros de apertura; fuera del repositorio se rehicieron las cuatro filtradas, §2.2). La
+respuesta del consultor está en §6.1, la fase 1 en §9, lo que cambia la rama en §10, el revisor en
+§11 y el estado al final.
 
 ## 0. Resumen de la fase 0
 
@@ -522,6 +523,9 @@ opciones.
   fidelidad, ingesta y hoja) cuenta la ventana de cada caso en `huso_operativa`; con H2b, del 9 al
   27 de marzo de 2026 la ventana congelada en `ventanas.yaml` saldría una hora tarde (§3.6). Entra
   en la Next Action en el commit del contrato, al cerrar (añadido 2 del consultor).
+- **Pendiente con dueño: la rama que baje ticks de un mes de invierno.** `scripts/ticks_spread.py`
+  cuenta la ventana de ticks en horas de pared de `huso_operativa`; ADR-0069 §5 la deja en
+  06:00–14:00 UTC y 05:00–13:00 los días del cambio. Fuera de las rutas de esta rama (revisor, b3).
 - **Para la fila de `trabajo/activacion-a42` en ERRORES-RECURRENTES, al cerrar** (añadido 4; esa
   tabla no se toca en esta rama):
   - (a) el consultor listó, por el puente y de forma recursiva, una carpeta que contiene meses
@@ -545,7 +549,7 @@ Fila del 2026-10-06 en `docs/validation/HOLDOUT-EXPOSICIONES.md`, escrita el mis
 
 Nada de febrero ni de julio. De marzo, el nombre de su subcarpeta.
 
-## 8. Lo que cambia esta rama hasta aquí
+## 8. Lo que cambiaba esta rama al llegar a la PARADA (hoy, §10)
 
 - `docs/encargos/trabajo-activacion-a42.md`, `contrato.yaml`, el Archivo 20 de `HISTORIA.md` y
   `PROJECT_STATE.md` (`Current Branch`, `Current Feature` y las dos líneas del archivo).
@@ -555,7 +559,7 @@ Nada de febrero ni de julio. De marzo, el nombre de su subcarpeta.
   sus salidas).
 - Una fila en `docs/validation/HOLDOUT-EXPOSICIONES.md`.
 
-El contrato solo permite hoy esas rutas. Las de la fase 1 se añaden tras la respuesta.
+El contrato solo permitía entonces esas rutas; las de la fase 1 se añadieron tras la respuesta (§9).
 
 ## 9. Fase 1
 
@@ -725,10 +729,147 @@ de §6.2 y los del revisor); `docs/HANDOFF.md` (su mención del 2026-09-21 es hi
   anexos.
 - **Fuera del repo:** las filtradas de v7–v10, rehechas (§2.2).
 
+## 11. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | `dias_distintos.txt` regenerado con el registro de hoy: solo cambiaba su línea 1 (`reloj_sesiones = rejilla_h4`); las cifras de §5.1 son las mismas. |
+| a2 | importa | Recuadro de ENMIENDA en ADR-0063 (§2, §4 y §5), que ADR-0069 anunciaba y no existía; el contrato se amplía a `docs/adr/0063-*.md` en este commit, con su motivo. |
+| a3 | menor | La fila del 2026-10-06 de HOLDOUT-EXPOSICIONES declara ahora la corrida del arnés de §9.5 (velas M1 de los días dev de abril y agosto, por su compuerta). |
+| a4 | menor | La cabecera del informe dice cómo se lee (§1–§8 son la fase 0, tal como se escribió), y §8 pasa a pretérito. El cuerpo de la fase 0 no se reescribe. |
+| a5 | menor | ADR-0069: «20 días laborables al año» → 20 en 2024–2026 y 15 en 2027; y la alternativa 1 distingue lo que el trader dijo (octubre) de lo que H2b predice (marzo). |
+| a6 | menor | **No se puede corregir**: el registro `fb-…-af490a3a` ya está commiteado y es inmutable; el `CONFIRM` es la decisión D4 del consultor. Queda dicho aquí: la frase de las 13:45 es condicional («si es por cuestion horaria») y no repite «desde el 25» ni «de 6 a 10». |
+| b1 | bloquea | La CI de Linux de `fix/activacion-a42` depende del push, que el clasificador de permisos de Claude Code le niega a la sesión: lo hace Aleks con `!`. El run se apunta en cuanto exista. |
+| b2 | importa | Ya declarado (§1.3, HOLDOUT, §6.2): va a la fila de ERRORES-RECURRENTES al cierre. |
+| b3 | importa | `scripts/ticks_spread.py` sigue en `huso_operativa`: pendiente con dueño (la rama que baje ticks de un mes de invierno), añadido a §6.2 y a ADR-0069 §5. Fuera de las rutas de esta rama. |
+
+## Informe del revisor (subagente `revisor`, 2026-10-06), tal cual
+
+## Informe del revisor · trabajo/activacion-a42 · 2026-10-06
+
+Base: `main` = `origin/main` = e97af27 (comprobado con `git rev-parse`). Rama en 46e62a1, `git status` limpio. Tabla de commits y diff leídos entera. `make-check.log` lleva `SELLO … cda4de51ee93…`, que es `git rev-parse HEAD^{tree}` (coincide). Trae `2100 passed` y `PICO DE MEMORIA 290 MiB`. Salida de `contrato_rama.py`, tal cual: `CONTRATO: 51 ficheros dentro del contrato de trabajo/activacion-a42 (riesgo alto, artefacto docs/validation/ACTIVACION-A42.md, 8 comprobaciones para el revisor)`.
+
+### Las cuatro comprobaciones aparte
+
+| # | Veredicto | Evidencia |
+|---|---|---|
+| 1. Ninguna hora de sesión sale de un desfase fijo | **PASA** | `src/botsito/engine/relojes.py:127-150` (`apertura`) y `:120-125` (`instante`): con `rejilla_h4` la apertura sale de `limites_del_dia` sobre el huso del ancla (`anclaje_h4`). Después solo se suman minutos de duración nominal a la apertura, nunca un desfase respecto de UTC. Los tres tests existen (`test_sesiones_rejilla_h4.py:199, 222, 237`). `uv run pytest tests/unit/test_sesiones_rejilla_h4.py` da `40 passed`; los tests nombrados por el encargo dan `6 passed`. **Contraste independiente:** con un guion en memoria (ancla 17:00 America/New_York del día anterior + 8 h, con zoneinfo), la apertura de `RelojSesiones.apertura(d)` coincide con mi cálculo en los 1.045 días laborables de 2024 a 2027 (0 diferencias). Los dos valores UTC son 05:00 y 06:00. |
+| 2. Los tests de las semanas del cambio fallan con H2a y con H1 | **PASA** | `test_h2a_da_otra_hora_justo_donde_el_encargo_dice` y `test_h1_…` comparan el conjunto exacto de días (`assert distintos == FALLA_H2A` / `FALLA_H1`, líneas 175-184). Los fixtures `h2a` (`civil_operativa`) y `h1` (`grafico` con `Etc/GMT-2`) usan el mismo camino. Mi cálculo independiente da que H2a difiere de H2b el 2026-10-26, del 2025-03-10 al 14 y del 2024-10-28 al 11-01 (11 días de la lista), y que H1 difiere el 2026-11-02, el 2026-01-15 y del 2024-11-04 al 08 (7 días). Son los días del encargo. El 2026-10-23 coincide en las tres hipótesis, como debe. |
+| 3. Ningún nombre ni número del trader en el repo | **PASA** | Sobre las 2.816 líneas añadidas de `main...HEAD`: ninguna secuencia de 7 o más dígitos separados por espacio, punto o guion, ningún `+NN`, ningún `9xx xxx xxx` y ningún nombre propio junto a «trader». La única secuencia de 7 dígitos es `bytes: 5585715` (manifest), que es 4.403.289 + 1.182.426, la suma de las 8 capturas. Los dos registros de feedback, `fuentes.yaml` y ADR-0069 §4 solo dicen «desde sus dos números, confirmado por Aleks». «Lima» aparece solo como hora de Lima. |
+| 4. Nada de febrero, marzo ni julio | **PASA, con una incidencia ya declarada** | Los tres anexos solo leen calendario, el registro y marcas de tiempo: `medir_filtradas.py` hace casar `^\[(\d+):(\d\d)\] ` y los bloques, y no guarda ni imprime texto. Los reejecuté (ver comandos) y no imprimen texto. Febrero y julio no aparecen en ningún sitio del diff. De marzo solo el nombre de su subcarpeta, declarado en §1.3, en la fila del 2026-10-06 de HOLDOUT-EXPOSICIONES y en el añadido 3 del consultor. Ver hallazgos (b)-2 y (a)-3. |
+
+Las 8 capturas están en disco con los sha256 del manifest, del informe §1.1 y de `registrado_por` (`sha256sum` sobre las 8 rutas literales de «Mensajes del trader»).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | La comprobación 3 del contrato no reproduce su salida guardada. `dias_distintos.txt` quedó de la fase 0 y su línea 1 dice `reloj_sesiones = civil_operativa`. Desde 85b3be6 el guion imprime `rejilla_h4`. | `PYTHONUTF8=1 uv run python docs/validation/anexos/ACTIVACION-A42/dias_distintos.py \| tr -d '\r' \| diff - …/dias_distintos.txt` → `1c1` y nada más. El `.txt` solo se tocó en ae03d5f (`git log -- …dias_distintos.txt`). El resto de líneas es idéntico. Los otros dos anexos salen IGUAL. |
+| a2 | importa | ADR-0069 declara que enmienda ADR-0063 («§2, §4 y §5», cabecera, línea 11), pero ADR-0063 no se toca. Sigue ACTIVE, con su §2 «Nace en `civil_operativa`, DEFAULT_AMBIGUOUS bajo A-42» y «pasar a `grafico` es aplicar la lectura de A-42» sin recuadro. ADR-0069 «Impacto → Documentos» y el informe §9.6 no lo listan entre los recuadros. | `docs/adr/0063*.md:22-29, 49`; `git diff --stat main...HEAD` no incluye 0063. La enmienda que ADR-0069 anuncia no existe en el ADR enmendado. |
+| a3 | menor | La fila del 2026-10-06 de HOLDOUT-EXPOSICIONES dice «ningún libro, ninguna vela». Eso vale para la fase 0. El informe §9.5 cuenta que `botsito motor arnes` corrió sobre los meses de construcción (abril y agosto, `criterio_fidelidad.yaml:23`) en `main` y en la rama. Eso lee velas de material de desarrollo y no está declarado en la fila (CLAUDE.md: «toda exposición se declara… el mismo día»). El precedente ADR-0063 tampoco lo declaró. | `docs/validation/HOLDOUT-EXPOSICIONES.md` (fila añadida) frente a `ACTIVACION-A42.md` §9.5. El arnés está compuertado (`arnes.py:3-9, 91`). |
+| a4 | menor | El informe conserva el relato de la fase 0 como si fuera lo actual: «Este informe llega hasta la PARADA… no se ha cambiado nada del repositorio» (líneas 7-10) y «El contrato solo permite hoy esas rutas» (§8, línea 558). Es falso desde 9084659. | `ACTIVACION-A42.md:7-10, 548-558` frente a §9 y al contrato actual. |
+| a5 | menor | ADR-0069 dice «cambian 20 días laborables al año» (§1, línea 35) y «La 1 falla 20 días al año frente a lo que el trader dijo y confirmó» (línea 156). En 2027 son 15 (`dias_distintos.txt`). Además el trader solo dijo algo de octubre (5 días); los de marzo son predicción de H2b, no su dicho. | `docs/adr/0069*.md:35, 156`; `dias_distintos.txt` fila 2027: `15 dias laborables`. |
+| a6 | menor | La nota de `fb-2026-10-04-sesion-04-af490a3a` dice que el mensaje «ratifica lo que dijo en S-7». La cita es condicional («si es por cuestion horaria se oepra a las 6») y no dice «desde el 25 de octubre» ni «de 6 a 10», que es lo que afirma `ev-v10-010429-0c93f24a`. El `CONFIRM` es decisión D4 del consultor, así que lo dejo como aviso, no como defecto de la rama. | `knowledge/feedback/2026-10-04-sesion-04/fb-2026-10-04-sesion-04-af490a3a.yaml` (`notas`) frente a `knowledge/evidence/v10/ev-v10-010429-0c93f24a.yaml`. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `contrato_rama.py` OK. `rutas_protegidas` intactas: `git diff` vacío sobre `src/botsito/cases`, `engine/cuenta.py`, `engine/broker.py`, `knowledge/cases`, `knowledge/evidence`. `scripts/transcribir_sesion.py` y `.claude/` iguales a `main`.
+- **Comprobaciones del contrato ejecutadas:**
+  - `feedback apply --sesion 2026-10-04-sesion-04 --check` da el AVISO esperado, «no propone ningún valor de parámetro».
+  - `knowledge validate` (a pantalla, sin redirigir) está todo en OK, incluida la línea «152 registros de feedback, historial intacto, commits con Fuente» (los AVISO son los de siempre).
+  - `spec docs` (sin `--escribir`) da «OK: docs/spec coincide con knowledge/spec/».
+  - `state check` da OK.
+  - `make check`: solo el log (sello y 2100 passed). No lo ejecuté.
+- **Trailers `Fuente:`.** El único commit que toca `knowledge/spec` (85b3be6) lleva en el cuerpo `Fuente: ADR-0069 fb-2026-10-04-sesion-04-fb7831cc fb-…-af490a3a ev-v10-010429-0c93f24a ev-v10-010438-024f76b8`, y todos los ids existen. Los commits 1f287f8, 3614375, 9084659 y 46e62a1 llevan `Fuente:`. 9084659 no cita ADR-0069 (orden del encargo: ADR antes de citarlo).
+- **Regímenes de cambio.** `evidence`, `feedback`, `manifests`, `transcripciones` y `fotogramas`: solo `A` (los dos registros nuevos). `libros.yaml` no se toca. `manifest.yaml` y `fuentes.yaml` solo añaden líneas (8 entradas, y el resumen 51 → 59 ficheros). Feedback nuevo: F1 `RESOLVE_UNKNOWN` sobre ambigüedad A-42 y F3 `CONFIRM` sobre evidencia, acciones correctas. Los ids de feedback coinciden con el hash del contenido normalizado (lo valida `knowledge validate`).
+- **Ambigüedades.** Los cinco sitios de cerrar A-42 viajan en 85b3be6: YAML, `docs/spec/ambiguedades.md`, fila quitada de `PROJECT_STATE.md`, hoja (`scripts/hoja_preguntas.py` y su test) y `test_kit.py`, más `spec docs`. Las dos evidencias de v10 que añade hablan de la pregunta (cita y afirmación leídas). La RESUELTA tiene un `RESOLVE_UNKNOWN` activo sobre la ambigüedad.
+- **ADR.** ADR-0069: `## Estado` = `ACTIVE`. ADR-0059: `SUPERSEDED por ADR-0069 (2026-10-06)` (`awk` sobre el encabezado) y `test_adr` pasa.
+- **Informes cerrados.** Las correcciones de ABRIL-Y-LA-CAJA, ADR-0017, ADR-0039, ADR-0059, MIRAR-EL-MATERIAL y ENTRADA-MARZO son solo líneas `+` dentro de un recuadro `>` con fecha y rama. HISTORIA: 231 líneas añadidas, 0 borradas. `PROJECT_STATE`: Next Action intacta; la deuda del «UTC+2 FIJO FALLA EN ENERO» sale y la de Oanda/Dukascopy se conserva con su arranque literal.
+- **Guardias de `cita`.** El diff no añade ningún sitio con `cita:` en la spec.
+- **Cifras.** `test_no_business_literals` pasa (con `test_registro`, `test_kit`, `test_hoja_preguntas`, `test_dos_relojes`, `test_huecos_motor`, `test_cierre_vela_h4`, `test_provisional_cuelga_de_abierta`, `test_spec_docs_generados`). `sesiones_primera_vela_h4 = 3` vive en el registro.
+- **Citas.** Tres citas del informe y de ADR-0069 contra su fuente:
+  - §2.1: el texto literal de E coincide con HISTORIA.
+  - ADR-0069 §3: «mediana 2-4 puntos, con UTC+2 33-151» coincide con RELOJ-INVIERNO.md:299-303.
+  - Recuadro de ABRIL: «cambia de día tres veces» coincide con RELOJ-INVIERNO.md:259.
+- **Ensayos.** El informe cuenta el ensayo del arnés en un `git worktree` desechable (§9.5).
+
+### Eje (b) · Encargo
+Resumen: 1 bloquea, 2 importa, 0 menor. Requisitos: 20 hechos (4 de ellos «de otra forma» declarada o con límite declarado), 1 parcial, 1 no hecho.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con skill: encargo copiado, `contrato.yaml`, Archivo de PROJECT_STATE en HISTORIA; verificar main y origin/main | Hecho | `docs/encargos/trabajo-activacion-a42.md`, `contrato.yaml`, Archivo 20 (HISTORIA +231); `git rev-parse main origin/main` = e97af27 |
+| 2 | 0a. Listar las 8 capturas con nombre y tamaño; parar si alguna falta o no casa | Hecho / límite declarado | §1.1; sha256 verificados por mí. Los literales no los verificó la sesión (la guardia bloquea las imágenes); resuelto por D1 (§1.2, §6.1) |
+| 3 | 0b(1). Rehacer filtradas v7–v10 con `--solo-filtrar --video` y compararlas con B; parar si hay diferencia | Hecho | §2.2; `medir_filtradas.py` → `DIFERENCIAS: ninguna`; salida idéntica al `.txt` (con `PYTHONUTF8=1` y sin CR) |
+| 4 | 0b(2). Texto literal de los dos pendientes de HISTORIA; el (2) va al paso 4 | Hecho | §2.1 (literal verificado); las dos evidencias de v10 están en `ambiguedades.yaml` |
+| 5 | 0c. Todo lo que depende del reloj (parámetros, RN, motor, tests, ADR-0039/0059/0063, R0, MIRAR, comentario de A-42, las dos deudas) | Hecho | §3.1-3.5 |
+| 6 | 0d. Repetir M4 sobre 2024-10-27/31 y 11-03/07 y comparar con las etiquetas de b y c | Hecho / límite declarado | `rejilla_h4_2024.txt` (reproducido, IGUAL); la comparación con las imágenes la hizo el consultor (§4, D1) |
+| 7 | 0e. Propuesta de cómo meter H2b | Hecho | §5 |
+| 8 | 0f. Declaración en HOLDOUT-EXPOSICIONES el mismo día | Hecho | fila 2026-10-06 (incluye el `ls` y lo del consultor). Ver a3 por §9.5 |
+| 9 | PARADA: no cambiar nada fuera del informe antes de la respuesta | Hecho | ae03d5f (fase 0) precede a 9084659; contrato ampliado solo tras §6.1 |
+| 10 | Paso 1. Renombrado, `fuentes.yaml` (papel, fecha, cautelas), `corpus inventory` | Hecho (renombrado por Aleks, declarado) | 9084659; manifest +8 entradas; sha256 casan |
+| 11 | Paso 2. ADR nuevo con H2b ANTES de citarlo; deja superada la lectura de ADR-0059 | Hecho | 1f287f8 precede a 3614375 y 85b3be6; ADR-0069 (ver a2 por ADR-0063) |
+| 12 | Paso 3. Registros literales, ruta de la captura en notas, `recibido_el` 2026-10-06, `trader_escrito` | Hecho | los dos `fb-2026-10-04-sesion-04-*` (F1 y F3 por D2-D4); el salto de línea queda como espacio por `normalizar_texto` (declarado, §9.3) |
+| 13 | Paso 4. A-42 RESUELTA (cuatro sitios, test, `spec docs --escribir`), `ev-v10-010438-024f76b8`, `huso_grafico` a Europe/Madrid, descripción de `anclaje_h4` | Hecho | 85b3be6; `spec docs` coincide; `huso_grafico` = Europe/Madrid; `anclaje_h4` reescrita |
+| 14 | Paso 4 y paso 5 en commits separados | Hecho de otra forma, declarado | un solo commit 85b3be6; motivo medido en §9.4 (`test_provisional_cuelga_de_abierta`) y apoyado en D5 |
+| 15 | Paso 4 (`huso_grafico`) conserva categoría | Hecho de otra forma, declarado | pasa a `ejecucion` (§9.4, `test_registro`) |
+| 16 | Paso 5. Ventana en instantes UTC desde la rejilla, con zoneinfo | Hecho | `engine/relojes.py`; ver comprobación 1 |
+| 17 | Paso 5. Tests que rompen: 2026-10-23, 10-26, 11-02, enero 2026, 2025-03-10/14, dos semanas de 2024 | Hecho | `ENCARGO` en `test_sesiones_rejilla_h4.py:66-74`; comprobación 2 |
+| 18 | Paso 5. Un test que falle si una hora sale de un desfase fijo | Hecho | `test_ninguna_hora_de_sesion_sale_de_un_desfase_fijo`, `test_con_un_ancla_sin_cambio_…`, `test_el_codigo_del_reloj_no_lleva_ningun_desfase` |
+| 19 | Añadido 1 del consultor. Ningún día laborable 2024-2027 cae en la guardia de la vela irregular | Hecho | `apertura(dia)` sin `RelojError` en los 1.045 días (test y mi contraste); no hay PARADA |
+| 20 | Paso 6. Recuadros en ADR-0039, ADR-0059, R0, MIRAR-EL-MATERIAL; comentario de A-42; D7 (CLAUDE.md, ENTRADA-MARZO, README runbooks, ADR-0017, índice ADR) | Hecho | 46e62a1 y 85b3be6 (comentario «CORREGIDO EL 2026-10-06» sobre el viejo, que queda como historia) |
+| 21 | Paso 6. Deuda «UTC+2 FIJO» borrada; lo vivo de Oanda/Dukascopy se queda | Hecho de otra forma, declarado | la línea de Oanda/Dukascopy conserva «…Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO» en su arranque con la aclaración de que el reloj quedó corregido (§9.6: es como se busca en HISTORIA) |
+| 22 | Next Action no se toca | Hecho | `git diff main...HEAD -- PROJECT_STATE.md`: sin cambios en Next Action |
+| 23 | Añadidos 2-4 del consultor: pendiente con dueño de marzo, exposiciones, hallazgos para ERRORES-RECURRENTES | Hecho | §6.2; fila de HOLDOUT; `ERRORES-RECURRENTES.md` sin tocar (correcto) |
+| 24 | `make check` y `state check` en verde | Hecho | sello sobre el árbol de HEAD, `2100 passed`; `state check` OK (ejecutado) |
+| 25 | Informe en `docs/validation/ACTIVACION-A42.md`, con su estado al final | Hecho | `## Estado` al final, «EN CURSO» |
+| 26 | Push de `fix/activacion-a42` y CI de Linux con su número de run | **No hecho** | no existe `fix/activacion-a42` (`git branch -a` solo muestra `main`, `trabajo/activacion-a42` y `origin/main`); el informe lo declara pendiente en `## Estado`. Lo hace Aleks |
+| 27 | Revisor con su informe pegado al final | Parcial | este informe; **lo pega el agente que me lanzó, yo no lo pego** |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | bloquea | Falta lo que el encargo pide explícitamente: la CI de Linux de `fix/activacion-a42` con su número de run (el encargo da el motivo: zoneinfo depende de la plataforma). El informe lo declara pendiente. Mientras no corra, la rama no está lista. | Requisito 26; `ACTIVACION-A42.md` `## Estado` («faltan la CI de Linux… y el revisor») |
+| b2 | importa | El encargo dice «Febrero, marzo y julio no se tocan ni se listan». La sesión hizo un `ls` de `Material adicional de su operativa`, que enseñó el nombre de la subcarpeta de marzo (y mayo, septiembre, 21 imágenes de septiembre y los libros de enero, abril y agosto). Es el mismo error que el consultor había apuntado al cerrar `reloj-invierno`. Está declarado (§1.3, fila de HOLDOUT, añadido 3), sin contenido de marzo, y el propio consultor lo repitió por el puente. Lo dejo como incidencia ya reconocida, para que entre en la fila de ERRORES-RECURRENTES al cierre. | `ACTIVACION-A42.md:75-93`; fila 2026-10-06 de `HOLDOUT-EXPOSICIONES.md` |
+| b3 | importa | `scripts/ticks_spread.py` sigue contando la ventana en horas locales de `huso_operativa` (líneas 3, 67-73). ADR-0069 §5 dice que «la ventana de ticks de un mes de invierno… queda decidida por §1: 06:00-14:00 UTC, y 05:00-13:00 los 20 días del cambio». El script no lo cumple esos 20 días: da una hora tarde. El informe lo lista en §3.3 pero no lo nombra en «Lo que se toca», ni en «Lo que no se toca», ni en el pendiente con dueño. El script no entra en `rutas_permitidas`, así que no podía cambiarse en esta rama; pero falta anotarlo como pendiente (junto a `cases/`). | `scripts/ticks_spread.py:3, 67-73`; `docs/adr/0069*.md` §5 (última viñeta); `ACTIVACION-A42.md:231` |
+
+Lo que la rama hace y el encargo no pide, todo declarado en el informe (§9.4, §9.6, §8): pasos 4 y 5 en un commit; `huso_grafico` a `ejecucion`; `consumido_por: [ADR-0069]`; `RelojSesiones.de_pared` y `DiaDeMercado.reloj` opcional con vuelta a hora de pared en el huso; `spec_version` 15.8.0 → 15.9.0; la nota del run #226 en HISTORIA (por orden del consultor); las correcciones de D7. Sin hallazgo.
+
+Lo que el encargo dice que NO se toca, comprobado con el diff: `huso_operativa` y el día de riesgo (`comprobar_reloj_unico` sin cambios de lógica, y el test lo confirma), A-11 y el punto U (sin cambio), reglas de entrada, stop, objetivo y gestión (formas de RN-001 y RN-002 sin cambio; solo título y notas), `cases/` (vacío), `.claude/`, `libros.yaml`. Marzo: no se abrió nada de su contenido.
+
+### Lo que no pude comprobar
+- **CI de Linux** de `fix/activacion-a42`: la rama remota no existe, el push lo hace Aleks. Sin run no se sabe si zoneinfo/tzdata en Linux da lo mismo que en Windows.
+- **Literales de las 8 capturas y etiquetas de las imágenes b y c:** la guardia bloquea abrirlas (decisión D1, ya declarada). Verifiqué solo los sha256, no el contenido.
+- **`make check`:** no lo ejecuté (escribe). Me apoyo en `make-check.log` (sello igual al árbol de HEAD, 2100 passed, pico 290 MiB).
+- **§9.5 (arnés byte a byte `4f512303e056…` en `main` y en la rama):** no lo repetí; usa un worktree y `data/`. Apoyo parcial: por calendario, abril y agosto de 2026 no tienen ningún día entre los 20 que difieren.
+- **«Nada de febrero ni de julio» en el `ls` de la carpeta madre:** se apoya en lo que dice el informe; yo no listé esa carpeta.
+- **Que `knowledge validate` a fichero dé lo mismo:** lo corrí a pantalla y sale OK; no escribí `knowledge-validate.log`.
+- **Hablante de las evidencias de v10:** la propia evidencia dice que la transcripción no separa voces y que el hablante se atribuye por contexto; no lo puedo comprobar sin la cruda.
+
+### Comandos ejecutados
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`
+2. `cat contrato.yaml`; `uv run python scripts/contrato_rama.py`
+3. Lectura (Read) de `docs/encargos/trabajo-activacion-a42.md`, `docs/validation/ACTIVACION-A42.md` (completo), `tests/unit/test_sesiones_rejilla_h4.py`, `src/botsito/engine/relojes.py`, ADR-0069, `docs/runbooks/AMBIGUEDADES.md`, los tres anexos `.py`
+4. `git log --format='--- %h %s%n%B' main..HEAD -- knowledge/spec knowledge/cases`; `git diff --name-status main...HEAD | grep …` y `git diff main...HEAD -- knowledge/corpus/libros.yaml`
+5. `uv run botsito state check`; `grep` de `make-check.log` (SELLO, PICO, passed); `git rev-parse HEAD^{tree}`; `git status --short`
+6. `cat` de los dos registros de feedback; `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml`
+7. `uv run pytest tests/unit/test_sesiones_rejilla_h4.py -q -p no:cacheprovider` (40 passed); mismo con `-v -k "desfase or h2a or h1 or irregular or sin_cambio"` (6 passed); `uv run pytest` sobre `test_dos_relojes`, `test_huecos_motor`, `test_registro`, `test_kit`, `test_hoja_preguntas`, `test_cierre_vela_h4`, `test_provisional_cuelga_de_abierta`, `test_spec_docs_generados`, `test_no_business_literals`, `test_adr` (todos en verde)
+8. Dos guiones `uv run python -c` en memoria (solo lectura): fechas del encargo con zoneinfo (H2b, H2a, H1) y comparación de `RelojSesiones.apertura` contra el cálculo independiente en 1.045 días laborables 2024-2027 (0 diferencias)
+9. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`; `grep` de `motor arnes` en HOLDOUT; `grep` en `arnes.py`
+10. Búsquedas sobre las líneas añadidas de `main...HEAD` (`git diff main...HEAD -U0 | grep -E '^\+' | …`): secuencias de 7 o más dígitos, grupos separados, `+NN`, `9xx xxx xxx`, «teléfono/celular/contacto/apodo/…», nombres junto a «trader»; `git diff main...HEAD -- knowledge/corpus/fuentes.yaml` y `-- knowledge/corpus/manifest.yaml`
+11. Intentos bloqueados por las guardias y reformulados sin rodearlas: una redirección a fichero (`solo_lectura.py`); una función con `$VAR` delante de un lector (`guardia.py`); un `git diff-tree` (`solo_lectura.py`). Se rehicieron con pipes y rutas literales.
+12. `PYTHONUTF8=1 uv run python docs/validation/anexos/ACTIVACION-A42/{dias_distintos,rejilla_h4_2024,medir_filtradas}.py | tr -d '\r' | diff - <su .txt>`: IGUAL, DIFIERE (solo línea 1; hallazgo a1) e IGUAL respectivamente
+13. `PYTHONUTF8=1 uv run botsito feedback apply --sesion 2026-10-04-sesion-04 --check`; `uv run botsito spec docs`; `uv run botsito knowledge validate` (a pantalla); `git status --short` tras ellos (limpio)
+14. `sha256sum` de las 8 capturas (rutas literales de «Mensajes del trader»); `git diff --quiet main -- scripts/transcribir_sesion.py` y `-- .claude`; `git diff --stat main -- src/botsito/cases … knowledge/evidence`
+15. `git diff main...HEAD` por separado de: los recuadros (ADR-0017, 0039, 0059, ABRIL-Y-LA-CAJA, MIRAR-EL-MATERIAL, ENTRADA-MARZO, README runbooks, README ADR, CLAUDE.md), `PROJECT_STATE.md`, `strategy_spec.yaml`/`parametros.yaml`, los tests actualizados y las fuentes del motor (`motor`, `primitivas`, `cableado`, `arnes`, `simulacion`, `visor`, `cli`, dos scripts)
+16. `git log -1 --format=%B <commit>` de ae03d5f, 9084659, 1f287f8, 3614375, 46e62a1 (trailers); `git show 85b3be6 -- PROJECT_STATE.md scripts/hoja_preguntas.py tests/unit/test_hoja_preguntas.py tests/unit/test_kit.py`; `git show 9084659 | grep ADR-0069`; `git branch -a`; `git rev-parse main origin/main`
+17. `grep` de `ticks_spread` en ADR-0063, informe y ADR-0069; `grep` de `ventana_inicio|ventana_fin` en `src` y `scripts`; `grep -c "^def test_"` en el fichero nuevo y en `tests/`
+
 ## Estado
 
-**EN CURSO (2026-10-06): fase 1 hecha hasta el paso 6; faltan la CI de Linux (`fix/activacion-a42`)
-y el revisor.**
+**LISTA PARA REVISIÓN, NO cerrada (2026-10-06), a falta de la CI de Linux.** El push de
+`fix/activacion-a42` lo hace Aleks (el clasificador de permisos se lo niega a la sesión); el
+número de run se apunta aquí en cuanto exista, y el del último commit va en el mensaje al
+consultor, porque un commit no puede llevar su propia CI.
 
 - A-42 RESUELTA (ADR-0069): las dos sesiones son las velas H4 de la rejilla de `anclaje_h4`; el bot
   las fija en instantes UTC con zoneinfo, por una sola puerta, nunca con un desfase fijo.
@@ -738,7 +879,10 @@ y el revisor.**
 - **Sin verificar por la sesión:** los literales de las 8 capturas y las etiquetas del eje de b y c:
   la guardia bloquea las imágenes y vale la lectura del consultor (D1), con la captura y su hash en
   cada registro.
-- **Pendiente con dueño:** `cases/` por la rejilla, en la rama de entrada de marzo, antes de su
-  paso b (§6.2). La PARADA B0 cumple su condición y no su motivo.
+- **Pendientes con dueño:** `cases/` por la rejilla, en la rama de entrada de marzo, antes de su
+  paso b (la PARADA B0 cumple su condición y no su motivo); y `scripts/ticks_spread.py`, en la rama
+  que baje ticks de un mes de invierno (§6.2).
 - Marzo, febrero y julio: nada abierto ni listado (salvo el nombre de la subcarpeta de marzo en el
   `ls` de §1.3, declarado).
+- Revisor: 0 bloquea en reglas de la casa (2 importa, 4 menor); en el encargo, 1 bloquea (la CI),
+  2 importa. Lo hecho con cada uno, en §11.

@@ -19,6 +19,8 @@ rutas_permitidas:
   - docs/adr/0069-*.md
   - docs/adr/README.md
   - docs/adr/0059-*.md
+  # ampliado el 2026-10-06 tras el revisor (a2): ADR-0069 enmienda ADR-0063 y le faltaba el recuadro
+  - docs/adr/0063-*.md
   # paso 3: los registros del trader, en la carpeta de la sesion 4 (nueva)
   - knowledge/feedback/2026-10-04-sesion-04/
   # paso 4: la spec, sus documentos generados y los cinco sitios de cerrar una ambiguedad

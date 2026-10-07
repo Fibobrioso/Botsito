@@ -1,4 +1,4 @@
-anclaje_h4 = 17:00 America/New_York; ventana = 07:00-15:00; huso_operativa = Europe/Madrid; reloj_sesiones = civil_operativa
+anclaje_h4 = 17:00 America/New_York; ventana = 07:00-15:00; huso_operativa = Europe/Madrid; reloj_sesiones = rejilla_h4
 
 == 2024: ventanas UTC de H2b que aparecen: [('05:00', '13:00'), ('06:00', '14:00')]
 H2b != hoy (civil_operativa, H2a): 20 dias laborables: 2024-03-11 a 2024-03-29 (15); 2024-10-28 a 2024-11-01 (5)

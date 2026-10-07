@@ -6,6 +6,17 @@ phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 
 # 0063 · El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones`
 
+> **ENMIENDA (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** A-42 queda RESUELTA y el
+> selector gana una tercera opción que NO es un huso: `rejilla_h4`, con la que las sesiones son las
+> velas H4 de la rejilla de `anclaje_h4` que empiezan en ancla + 8 h y ancla + 12 h, y los
+> instantes salen de `limites_del_dia` con zoneinfo. Cambia lo que este ADR daba por venir: §2 (el
+> valor ya no es un default bajo A-42: `rejilla_h4`, `CONFIRMED`), §4 (con la rejilla las dos horas
+> son NOMINALES y declaran el huso del gráfico, en el que se nombran y se pintan) y §5 (el valor lo
+> fijó ADR-0069; `cases/` sigue en `huso_operativa` y pasa a la rama de entrada de marzo; la
+> ventana de ticks de invierno es 06:00–14:00 UTC, y 05:00–13:00 los días del cambio). El
+> mecanismo -separar el reloj de las sesiones del día de riesgo- sigue en pie y es lo que ADR-0069
+> usa; `civil_operativa` y `grafico` se quedan como opciones.
+
 ## Decision
 
 ### 1. Un selector dice con qué reloj se cuentan la ventana y sus sesiones
