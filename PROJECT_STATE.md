@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/umbral-mayo
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37e-respaldo-a11` (2026-10-07).
+`trabajo/umbral-mayo` EN CURSO (2026-10-07, tarea nocturna): el umbral de construccion que habilita medir mayo, como ADR (punto J). Informe docs/validation/UMBRAL-MAYO.md.
 
 ## Stable Main State
 92312e3 · merge de `trabajo/respaldo-a11` (tag `stable/F37e-respaldo-a11`): A-11 sigue RESUELTA por el registro del trader (fb-2026-09-09-sesion-01-69711f67) y ya no cita el item supersedido; G1 sin ninguna excepcion; el revisor comprueba la afirmacion de cada item de evidencia nuevo. Sobre `stable/F37d-activacion-a42` (363f826). Informe docs/validation/RESPALDO-A11.md; el registro del cierre, al final de HISTORIA.
@@ -202,9 +202,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 21 (2026-10-07).
+— ninguna desde el Archivo 22 (2026-10-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 21 (2026-10-07).
+— ninguna desde el Archivo 22 (2026-10-07).

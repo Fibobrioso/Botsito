@@ -1,0 +1,38 @@
+rama: trabajo/umbral-mayo
+riesgo: medio  # cambia el criterio de fidelidad (dos campos nuevos, sin tocar los existentes) y el informe del arnes; ningun valor de la spec ni del motor, ningun dato, y el arnes no se ejecuta
+artefacto: docs/validation/UMBRAL-MAYO.md
+rutas_permitidas:
+  - docs/validation/UMBRAL-MAYO.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  # fase 1: el ADR y su fila en el indice
+  - docs/adr/0070-*.md
+  - docs/adr/README.md
+  # fase 2: los dos campos y su carga
+  - knowledge/cases/criterio_fidelidad.yaml
+  - src/botsito/cases/criterio_fidelidad.py
+  # fase 3: la linea de veredicto en el informe del arnes, su llamada y sus tests sinteticos
+  - src/botsito/engine/arnes.py
+  - src/botsito/cli.py
+  - tests/unit/
+rutas_protegidas:
+  # lo que el encargo dice que no cambia
+  - knowledge/spec/
+  - src/botsito/engine/motor.py
+  - src/botsito/engine/primitivas.py
+  - src/botsito/engine/cableado.py
+  - src/botsito/engine/broker.py
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/holdout/
+  - knowledge/cases/kit/
+  - knowledge/corpus/
+  - data/
+  - .claude/
+comprobaciones:
+  - git log --format=%H main..HEAD
+  - uv run pytest tests/unit/test_umbral_mayo.py -q
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito state check
+  - make check > make-check.log 2>&1
