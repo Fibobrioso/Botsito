@@ -1,7 +1,26 @@
-Comandos de Bash en la transcripcion: 477; distintos: 444
-Misma decision en main y en la rama: 342
-main los deja pasar y la rama los niega: 102
+Comandos de Bash en la transcripcion: 545; distintos: 502
+Misma decision en main y en la rama: 398
+main los deja pasar y la rama los niega: 104
 main los niega y la rama los deja pasar: 0
+
+== Por motivo
+   99  algo delante que no esta en la lista cerrada
+    2  `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros qu
+    2  algo detras, en la tuberia, que no es un filtro
+    1  una sustitucion en el comando
+
+== Lo que va delante (primer programa)
+   34  python
+   19  cat
+   12  git
+   12  uv
+    9  grep
+    6  sed
+    2  rm
+    2  una asignacion
+    1  sha256sum
+    1  printf
+    1  cp
 
 == Los que pasan a negarse (comando, 120 caracteres; y el motivo de la rama)
 - cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/ps_edit.py" <<'EOF' \n import sys \n from pathlib import Path \n p = P
@@ -201,3 +220,7 @@ main los niega y la rama los deja pasar: 0
     ejecutar `python scripts/contrato_rama.py`: antes, en el mismo comando, va `git add docs/validation/GUION-MISMO-COMANDO.md docs/validation/anexos/GUION-M...`.
 - cd "C:/Users/USER/Desktop/Bot v3" && git show main:.claude/hooks/guardia.py > "C:/Users/USER/AppData/Local/Temp/claude/C
     ejecutar `python docs/validation/anexos/GUION-MISMO-COMANDO/medir_huecos.py`: antes, en el mismo comando, va `git show main:.claude/hooks/guardia.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -n 996p tests/unit/test_guardia_claude.py; uv run pytest tests/unit/test_guardi
+    ejecutar `pytest`: antes, en el mismo comando, va `sed -n 996p tests/unit/test_guardia_claude.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -i 's/^1383 funciones de test/1391 funciones de test/' PROJECT_STATE.md && uv r
+    ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i s/^1383 funciones de test/1391 funciones de test/ PROJECT_STATE.md`.

@@ -1,15 +1,21 @@
-........................................................................ [ 88%]
-.........                                                                [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
 
-== con la condicion: 81 tests, fallan 0
-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.......................FFFFFFFFFFFFFF [ 88%]
-FFFFFFFF.                                                                [100%]
-........................................................................ [ 88%]
-.........                                                                [100%]
+== con la condicion: 103 tests, fallan 0
+   esperan una negacion: 76
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 69%]
+.FFFFFFFFFFFFFFFFFFFFFFFFFFFFF.                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
 
-== sin la condicion (exigir_ejecucion_verificable): fallan 57 de 81
+== sin la condicion (exigir_ejecucion_verificable): fallan 76 de 103
+   fallan EXACTAMENTE los que esperan una negacion: si
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-./a.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-/usr/bin/env python a.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-CMD='!python inocuo.py' git --config-env=alias.x=CMD x]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-bash malo.sh]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-cmd /c python inocuo.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-eval 'python inocuo.py']
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-find docs -exec python inocuo.py \\;]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-git -c alias.x='!python inocuo.py' x]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-make x]
@@ -20,9 +26,14 @@ FFFFFFFF.                                                                [100%]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-python < a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-python3.12 a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-timeout -s KILL 5 python a.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-uv --directory . run python a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-uv run a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-uv run pytest suelto]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-uv tool run python a.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-uvx ./a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-winpty python inocuo.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-xargs python < docs/a.md]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-{python,a.py}]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-& ./x.ps1]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-python inocuo.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-uv run botsito state check]
@@ -31,6 +42,9 @@ FFFFFFFF.                                                                [100%]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cat > x.py <<'EOF'\n{MALO}EOF\npython x.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cat a.py | tee x.py && python x.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cat a.py | tee x.py | python x.py]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && /usr/bin/env python b.py]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv --no-cache run python b.py]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv -q run python b.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv run python b.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py existente.py && uv run python existente.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py otros/test_nuevo.py && uv run pytest otros/test_nuevo.py]
@@ -45,6 +59,8 @@ FFFFFFFF.                                                                [100%]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python x.py $(cp a.py x.py)]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$(echo 1) python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$Y python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[cd && python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[cd - && python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[cd docs && uv run pytest]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[cd docs > f.txt && python ../inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[env -S 'python inocuo.py']
@@ -60,48 +76,79 @@ FFFFFFFF.                                                                [100%]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python nuevo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[set -x; python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[timeout $X python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[timeout -n eval python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[uv run --opcion-inventada python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[uv run pytest -c otro.ini tests/unit]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[uv run pytest -n $X tests/unit]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[uv run pytest -o addopts=-pmi_plugin tests/unit]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[uv run pytest -p mi_plugin tests/unit]
    FALLA  test_ejecucion_make_solo_con_el_makefile_de_main
    FALLA  test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual
    FALLA  test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo
    restaurado: fallan 0
-.FF.........FFFFF...............FF........................FFFFFFFFFFFF.. [ 88%]
-.........                                                                [100%]
-........................................................................ [ 88%]
-.........                                                                [100%]
+.............F.......................................................... [ 69%]
+....FF.........................                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
 
-== sin lo de antes (_exigir_comando_verificable): fallan 21 de 81
+== sin las expansiones (_exigir_sin_expansiones): fallan 3 de 103
+   de los 3 que solo niega esta pieza, fallan 3
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py <(cp a.py existente.py)]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$(echo 1) python inocuo.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$Y python inocuo.py]
+   restaurado: fallan 0
+.FF.........F...F..................FF................................... [ 69%]
+.FFF..FFF......................                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
+
+== sin lo de antes (_exigir_lo_de_antes): fallan 12 de 103
+   de los 6 que solo niega esta pieza, fallan 6
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-find docs -exec python inocuo.py \\;]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-git -c alias.x='!python inocuo.py' x]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py existente.py && uv run python existente.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py scripts/otro.py && uv run python scripts/otro.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py tests/unit/test_nuevo.py && uv run pytest tests/unit/test_nuevo.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[echo hola | python existente.py]
-   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py & cp a.py existente.py]
-   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py <(cp a.py existente.py)]
-   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py > existente.py]
-   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$(echo 1) python inocuo.py]
-   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[X=$Y python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[cd docs > f.txt && python ../inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[export X=$Y; python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[grep hola docs/a.md && python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[inventado && python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py && python existente.py]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[set -x; python inocuo.py]
+   restaurado: fallan 0
+..............F......................................................... [ 69%]
+.........FFFF..................                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
+
+== sin lo de a la vez (_exigir_lo_de_a_la_vez): fallan 5 de 103
+   de los 5 que solo niega esta pieza, fallan 5
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py & cp a.py existente.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | inventado]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | sort -o salida.txt]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | tee salida.txt]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | uniq - salida.txt]
-   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[set -x; python inocuo.py]
    restaurado: fallan 0
-........................................................................ [ 88%]
-....FF...                                                                [100%]
-........................................................................ [ 88%]
-.........                                                                [100%]
+...............F........................................................ [ 69%]
+...............................                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
 
-== sin la existencia (_exigir_guion_legible): fallan 2 de 81
+== sin la salida ajena (_exigir_salida_ajena): fallan 1 de 103
+   de los 1 que solo niega esta pieza, fallan 1
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py > existente.py]
+   restaurado: fallan 0
+........................................................................ [ 69%]
+...................F.......F...                                          [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
+
+== sin la existencia (_exigir_guion_legible): fallan 2 de 103
+   de los 2 que solo niega esta pieza, fallan 2
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python nuevo.py]
    FALLA  test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo
    restaurado: fallan 0
 
-VEREDICTO: cada mutacion rompe sus tests y restaurada pasan
+VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa

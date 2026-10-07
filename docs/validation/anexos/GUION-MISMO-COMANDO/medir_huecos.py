@@ -170,6 +170,21 @@ def casos(malo: str) -> list[tuple[str, str, str]]:
         ("f1-a-si-mismo", "Bash", "python inocuo.py > inocuo.py"),
         ("f1-dos", "Bash", "python inocuo.py && python inocuo.py"),
         ("f1-admitido", "Bash", "cd . && PYTHONUTF8=1 python inocuo.py | tail -3"),
+        # Revisor de la rama, B1 y B4: arreglados
+        ("rv-uv-global", "Bash", "cp a.py b.py && uv -q run python b.py"),
+        ("rv-env-ruta", "Bash", "cp a.py b.py && /usr/bin/env python b.py"),
+        ("rv-llaves", "Bash", "{python,a.py}"),
+        ("rv-uvx", "Bash", "uvx ./a.py"),
+        ("rv-cd-solo", "Bash", "cd && python inocuo.py"),
+        ("rv-pytest-o", "Bash", "uv run pytest -o addopts=-pmi_plugin tests/unit"),
+        ("rv-config-env", "Bash", "CMD='!python a.py' git --config-env=alias.x=CMD x"),
+        # Revisor, B2: un programa que la guardia no conoce sigue siendo un lector (decision
+        # aceptada en la fase 0, §0.d); se mide para la decision del consultor
+        ("rv-php", "Bash", "cp a.py b.php && php b.php"),
+        ("rv-setsid", "Bash", "cp a.py b.py && setsid ./b.py"),
+        ("rv-trap", "Bash", "trap 'python a.py' EXIT"),
+        ("rv-awk", "Bash", "awk -f a.py"),
+        ("rv-ps-proceso", "PowerShell", "[System.Diagnostics.Process]::Start('python','a.py')"),
         # Hallazgo 5 del consultor: se mide, no se arregla en esta rama
         ("h5-joinpath", "Bash", "python h5_joinpath.py"),
         ("h5-os.path.join", "Bash", "python h5_os_path_join.py"),

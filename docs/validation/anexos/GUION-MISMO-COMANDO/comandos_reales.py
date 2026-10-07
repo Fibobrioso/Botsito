@@ -67,6 +67,29 @@ def main() -> int:
     print(f"Misma decision en main y en la rama: {iguales}")
     print(f"main los deja pasar y la rama los niega: {len(nuevos_niega)}")
     print(f"main los niega y la rama los deja pasar: {len(malos)}")
+    # El desglose, sobre el motivo ENTERO (no el recortado que se imprime abajo): revisor, A5.
+    motivos: dict[str, int] = {}
+    delante: dict[str, int] = {}
+    for _comando, motivo in nuevos_niega:
+        cuerpo = motivo.split("`: ", 1)[-1]
+        if cuerpo.startswith("antes, en el mismo comando, va `"):
+            clave = "algo delante que no esta en la lista cerrada"
+            programa = cuerpo.split("`", 2)[1].split(" ", 1)[0]
+            programa = "una asignacion" if "=" in programa else programa.rsplit("/", 1)[-1]
+            delante[programa] = delante.get(programa, 0) + 1
+        elif cuerpo.startswith("detras, en la misma tuberia"):
+            clave = "algo detras, en la tuberia, que no es un filtro"
+        elif "sustitucion" in cuerpo:
+            clave = "una sustitucion en el comando"
+        else:
+            clave = cuerpo[:70]
+        motivos[clave] = motivos.get(clave, 0) + 1
+    print("\n== Por motivo")
+    for clave, n in sorted(motivos.items(), key=lambda kv: -kv[1]):
+        print(f"{n:5}  {clave}")
+    print("\n== Lo que va delante (primer programa)")
+    for clave, n in sorted(delante.items(), key=lambda kv: -kv[1]):
+        print(f"{n:5}  {clave}")
     print("\n== Los que pasan a negarse (comando, 120 caracteres; y el motivo de la rama)")
     for comando, motivo in nuevos_niega:
         if any(s in comando.lower() for s in NO_SE_IMPRIME):

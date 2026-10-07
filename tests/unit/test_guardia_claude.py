@@ -1032,6 +1032,10 @@ def _ejecucion(repo: Path) -> str:
         "python existente.py & cp a.py existente.py",  # en segundo plano, a la vez
         "python existente.py > existente.py",  # la salida, a su propio guion
         "echo hola | python existente.py",  # lo que va antes por la tuberia
+        # revisor, B1: el programa, por su NOMBRE y con las opciones globales de `uv`
+        "cp a.py b.py && uv -q run python b.py",
+        "cp a.py b.py && uv --no-cache run python b.py",
+        "cp a.py b.py && /usr/bin/env python b.py",
     ],
 )
 def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
@@ -1063,6 +1067,15 @@ def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
         ("Bash", "find docs -exec python inocuo.py \\;"),  # via 10
         ("Bash", "git -c alias.x='!python inocuo.py' x"),  # via 11
         ("Bash", "python - <<'EOF'\n{MALO}EOF\n"),  # el heredoc, leido entero
+        ("Bash", "/usr/bin/env python a.py"),  # revisor, B1
+        ("Bash", "uv --directory . run python a.py"),  # revisor, B1
+        ("Bash", "uv tool run python a.py"),  # revisor, B1
+        ("Bash", "uvx ./a.py"),  # revisor, B1
+        ("Bash", "{python,a.py}"),  # revisor, B1: expansion de llaves
+        ("Bash", "xargs python < docs/a.md"),  # via 12, por la funcion (revisor, A1)
+        ("Bash", "eval 'python inocuo.py'"),  # via 13
+        ("Bash", "cmd /c python inocuo.py"),  # via 14
+        ("Bash", "CMD='!python inocuo.py' git --config-env=alias.x=CMD x"),  # revisor, B3
     ],
 )
 def test_ejecucion_cada_via_pasa_por_la_condicion(
@@ -1100,6 +1113,9 @@ def test_ejecucion_cada_via_pasa_por_la_condicion(
         "grep python docs/a.md",  # un lector cuyo patron se llama python
         "command -v python",
         "uv run pytest -p no:cacheprovider tests/unit -q",
+        "uv -q run python inocuo.py",  # opcion global de uv
+        "timeout 60 python inocuo.py",
+        "uv --version",
     ],
 )
 def test_ejecucion_lo_de_la_lista_cerrada_pasa(g: ModuleType, repo: Path, comando: str) -> None:
@@ -1129,6 +1145,13 @@ def test_ejecucion_lo_de_la_lista_cerrada_pasa(g: ModuleType, repo: Path, comand
         "uv run pytest -p mi_plugin tests/unit",
         "cd docs && uv run pytest",  # sin rutas fuera de la raiz
         "python nuevo.py",  # no existe
+        "cd && python inocuo.py",  # `cd` a secas va a HOME (revisor, B4)
+        "cd - && python inocuo.py",
+        "uv run pytest -o addopts=-pmi_plugin tests/unit",  # revisor, B3
+        "uv run pytest -c otro.ini tests/unit",  # revisor, B3
+        "uv run pytest -n $X tests/unit",  # revisor, A3
+        "timeout -n eval python inocuo.py",  # revisor, A3: opcion que no conoce
+        "timeout $X python inocuo.py",  # revisor, A3: duracion no literal
     ],
 )
 def test_ejecucion_lo_de_fuera_de_la_lista_se_niega(
@@ -1200,3 +1223,30 @@ def test_ejecucion_una_sola_funcion_y_ninguna_via_decide_por_su_cuenta(g: Module
         if any(isinstance(n, ast.Name) and n.id == "R_EJECUCION" for n in ast.walk(f))
     }
     assert usan_la_regla == {"_niega", "exigir_ejecucion_verificable"}
+
+    def lanza(nombre: str) -> list[str]:
+        return [
+            ast.unparse(n.exc)
+            for n in ast.walk(funciones[nombre])
+            if isinstance(n, ast.Raise) and n.exc
+        ]
+
+    # Ninguna via de ejecucion niega por su cuenta (revisor, A1): no tienen ningun `raise`; los
+    # envoltorios solo dicen que no saben (`IndecidibleError`), y lo decide la funcion; y en
+    # `analizar_comando` el unico `raise` que queda es el de leer recursivamente sin ruta.
+    for via in (
+        "_analizar_interprete",
+        "_analizar_shell",
+        "_sin_guion",
+        "_exigir_guion",
+        "_analizar_pwsh",
+        "_analizar_pytest",
+        "_analizar_xargs",
+        "_ejecucion_lanzada",
+    ):
+        assert lanza(via) == [], (via, lanza(via))
+    assert all(x.startswith("IndecidibleError(") for x in lanza("_envoltorios"))
+    assert all(x.startswith("IndecidibleError(") for x in lanza("_opciones_cerradas"))
+    assert all("recursivo sin ruta" in x for x in lanza("analizar_comando")), lanza(
+        "analizar_comando"
+    )

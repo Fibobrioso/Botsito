@@ -1122,25 +1122,67 @@ class IndecidibleError(Exception):
     """Una via que no sabe que se ejecutara: lo decide `exigir_ejecucion_verificable`."""
 
 
-def _quitar_envoltorios(argv: list[Palabra]) -> list[Palabra]:
-    """`timeout 5 x`, `nice -n 5 x`, `command x`, `env A=1 x`, `uv run [--opciones] x` -> `x`, con
-    sus opciones. Lo que no se sabe quitar con seguridad (`env -S`, una opcion de `uv run` que no
-    conoce, un valor que se construye al ejecutarse) se niega: sin saber que programa corre, la
-    guardia no puede decidir (encargo de `trabajo/guion-mismo-comando`)."""
+# Las opciones de cada envoltorio, cerradas: (las que toman valor, las que no). Una que no esta se
+# niega, porque sin saber si toma valor no se sabe que programa corre (revisor, A3).
+OPCIONES_DE_ENVOLTORIO: dict[str, tuple[set[str], set[str]]] = {
+    "timeout": (
+        {"-s", "--signal", "-k", "--kill-after"},
+        {"--preserve-status", "--foreground", "-v", "--verbose"},
+    ),
+    "nice": ({"-n", "--adjustment"}, set()),
+    "stdbuf": ({"-i", "-o", "-e", "--input", "--output", "--error"}, set()),
+    "exec": ({"-a"}, {"-c", "-l"}),
+    "nohup": (set(), set()),
+    "command": (set(), {"-p"}),
+    "builtin": (set(), set()),
+    "noglob": (set(), set()),
+    "time": (set(), {"-p"}),
+    "uv": (set(UV_RUN_CON_VALOR), set(UV_RUN_SIN_VALOR) | {"--version", "-V", "--help", "-h"}),
+}
+
+
+def _opciones_cerradas(argv: list[Palabra], nombre: str) -> list[Palabra]:
+    con_valor, sin_valor = OPCIONES_DE_ENVOLTORIO[nombre]
+    while argv and argv[0].texto.startswith("-") and argv[0].texto != "-":
+        t = argv[0].texto
+        if t == "--":
+            return argv[1:]
+        clave, igual, _valor = t.partition("=")
+        corta = (nombre == "nice" and re.fullmatch(r"-n?\d+", t)) or (
+            nombre == "stdbuf" and re.fullmatch(r"-[ioe]\S+", t)
+        )
+        if clave in con_valor:
+            argv = argv[1:] if igual else argv[2:]
+        elif t in sin_valor or corta:
+            argv = argv[1:]
+        else:
+            raise IndecidibleError(
+                f"`{nombre} {t}`: una opcion que la guardia no conoce; sin saber si toma valor, "
+                "no sabe que programa ejecuta"
+            )
+    return argv
+
+
+def _envoltorios(argv: list[Palabra]) -> list[Palabra]:
+    """`timeout 5 x`, `nice -n 5 x`, `/usr/bin/env A=1 x`, `uv -q run [--opciones] x`, `uvx x` ->
+    `x`, con sus opciones (por el NOMBRE del programa, no por su texto: revisor, B1). Lo que no se
+    sabe quitar con seguridad lanza `IndecidibleError`, y lo decide `exigir_ejecucion_verificable`
+    (encargo de `trabajo/guion-mismo-comando`)."""
     while argv:
-        c = argv[0].texto
+        if "\x00" in argv[0].texto:
+            break
+        c = _nombre_de_programa(argv[0].texto)
         if c == "timeout":
-            argv = _saltar_opciones(argv[1:], {"-s", "--signal", "-k", "--kill-after"})[1:]
-        elif c == "nice":
-            argv = _saltar_opciones(argv[1:], {"-n", "--adjustment"})
-        elif c == "stdbuf":
-            argv = _saltar_opciones(argv[1:], {"-i", "-o", "-e", "--input", "--output", "--error"})
-        elif c == "exec":
-            argv = _saltar_opciones(argv[1:], {"-a"})
+            argv = _opciones_cerradas(argv[1:], "timeout")
+            if not argv:
+                return []
+            if not re.fullmatch(r"\d+(\.\d+)?[smhd]?", argv[0].texto):
+                raise IndecidibleError(f"`timeout {argv[0].texto}`: no es una duracion literal")
+            argv = argv[1:]
         elif c == "command" and len(argv) > 1 and argv[1].texto in {"-v", "-V"}:
             return []  # `command -v x` busca `x`, no lo ejecuta
-        elif c in {"nohup", "command", "builtin", "noglob", "time"}:
-            argv = _saltar_opciones(argv[1:], set())
+        elif c in {"nice", "stdbuf", "exec", "nohup", "command", "builtin", "noglob", "time"}:
+            argv = _opciones_cerradas(argv[1:], c)
         elif c == "env":
             argv = argv[1:]
             while argv and (argv[0].texto.startswith("-") or "=" in argv[0].texto):
@@ -1150,31 +1192,42 @@ def _quitar_envoltorios(argv: list[Palabra]) -> list[Palabra]:
                 if "\x00" in t:
                     raise IndecidibleError("`env` con un valor que se construye al ejecutarse")
                 argv = argv[2:] if t in {"-u", "--unset", "-C", "--chdir"} else argv[1:]
-        elif c == "uv" and len(argv) > 1 and argv[1].texto == "run":
-            argv = argv[2:]
+        elif c in {"uv", "uvx"}:
+            resto = _opciones_cerradas(argv[1:], "uv")  # las globales de `uv`
+            textos = [a.texto for a in resto[:2]]
+            if c == "uvx":
+                pass
+            elif textos[:1] == ["run"]:
+                resto = resto[1:]
+            elif textos == ["tool", "run"]:
+                resto = resto[2:]
+            else:
+                break  # `uv sync`, `uv pip ...`: no ejecuta un programa de la rama
+            argv = resto
             while argv and argv[0].texto.startswith("-"):
                 t = argv[0].texto
                 clave, igual, valor = t.partition("=")
                 if clave in {"-m", "--module"}:  # `uv run -m x` es `python -m x`
                     modulo = [Palabra(valor)] if igual else []
                     return [Palabra("python"), Palabra("-m"), *modulo, *argv[1:]]
-                if clave in UV_RUN_CON_VALOR:
-                    argv = argv[1:] if igual else argv[2:]
-                elif t in UV_RUN_SIN_VALOR:
-                    argv = argv[1:]
-                else:
-                    raise IndecidibleError(
-                        f"`uv run {t}`: una opcion que la guardia no conoce; sin saber si toma "
-                        "valor, no sabe que programa ejecuta"
-                    )
+                argv = _opciones_cerradas(argv, "uv")
         else:
             break
     return argv
 
 
+def _quitar_envoltorios(argv: list[Palabra]) -> list[Palabra]:
+    """Lo mismo que `_envoltorios`, sin lanzar: para `solo_lectura.py`, que lo importa (revisor,
+    A4). Lo que no se sabe quitar se devuelve tal cual."""
+    try:
+        return _envoltorios(argv)
+    except IndecidibleError:
+        return argv
+
+
 def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
     try:
-        argv = _quitar_envoltorios(cmd.argv)
+        argv = _envoltorios(cmd.argv)
     except IndecidibleError as exc:
         que = " ".join(p.texto for p in cmd.argv[:3])
         exigir_ejecucion_verificable(ctx, lex, cmd, que, indecidible=str(exc))
@@ -1188,6 +1241,15 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
                 ctx, lex, cmd, argv[0].texto, indecidible="el programa se construye al ejecutarse"
             )
         argv = [Palabra((vals or [""])[0]), *argv[1:]]
+    if argv[0].glob or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", argv[0].texto):
+        exigir_ejecucion_verificable(
+            ctx,
+            lex,
+            cmd,
+            argv[0].texto,
+            indecidible="el programa lleva un comodin o una expansion de llaves: se construye al "
+            "ejecutarse",
+        )
     prog = os.path.basename(argv[0].texto).lower()
     for ext in (".exe", ".cmd", ".bat"):
         prog = prog.removesuffix(ext)
@@ -1197,7 +1259,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _exigir_legible(destino, ctx, lex, "redireccion de entrada")
 
     if prog == "cd":
-        if args:
+        if not args:  # `cd` a secas va a HOME (revisor, B4)
+            ctx.cwd = os.path.expanduser("~")
+        else:
             vals = _valores(args[0], ctx, lex)
             if vals and len(vals) == 1:
                 ctx.cwd = _absoluta(vals[0], ctx.cwd)
@@ -1212,11 +1276,11 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _analizar_make(args, cmd, ctx, lex)
         return
     if prog in {"eval", "source", "."}:
-        raise BloqueoError(
-            f"`{prog}` ejecuta texto que solo se conoce al correr. {COMO_REESCRIBIR}"
+        exigir_ejecucion_verificable(
+            ctx, lex, cmd, prog, indecidible=f"`{prog}` ejecuta texto que solo se conoce al correr"
         )
     if prog == "xargs":
-        _analizar_xargs(args, ctx, lex)
+        _analizar_xargs(args, cmd, ctx, lex)
         return
     if prog == "find":
         _analizar_find(args, cmd, ctx, lex)
@@ -1239,7 +1303,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _analizar_pwsh(prog, args, cmd, ctx, lex)
         return
     if prog == "cmd":
-        raise BloqueoError(f"`cmd /c` no se puede analizar. {COMO_REESCRIBIR}")
+        exigir_ejecucion_verificable(
+            ctx, lex, cmd, "cmd", indecidible="`cmd /c` ejecuta un comando que no se puede analizar"
+        )
     if _es_fichero_programa(argv[0].texto, ctx):  # `./x.py`, `uv run x.py`
         lenguaje = _lenguaje_del_fichero(_absoluta(argv[0].texto, ctx.cwd))
         _exigir_guion(argv[0], args, cmd, ctx, lex, lenguaje, argv[0].texto)
@@ -1376,6 +1442,15 @@ def _analizar_git(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico)
     while i < len(args) and args[i].texto.startswith("-"):
         opcion = args[i].texto
         valor = args[i + 1].texto if opcion in GIT_CON_VALOR and i + 1 < len(args) else ""
+        if opcion.startswith("--config-env"):
+            exigir_ejecucion_verificable(
+                ctx,
+                lex,
+                cmd,
+                f"git {opcion}",
+                indecidible="`--config-env` toma el valor de una variable de entorno: puede ser un "
+                "alias con `!` que la guardia no ve",
+            )
         if opcion == "-c" and re.match(r"(?is)alias\.[^=]+=\s*!", valor):
             # El alias ejecuta un shell, lanzado por el propio `git`.
             cuerpo = valor.split("=", 1)[1].strip()[1:]
@@ -1609,7 +1684,7 @@ def _analizar_make(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
     )
 
 
-def _analizar_xargs(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
+def _analizar_xargs(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
     i = 0
     while i < len(args) and args[i].texto.startswith("-"):
         i += 2 if args[i].texto in {"-I", "-n", "-L", "-P", "-d", "-E", "-s"} else 1
@@ -1618,8 +1693,12 @@ def _analizar_xargs(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
     prog = os.path.basename(args[i].texto).lower()
     if prog in LECTOR_DE_METADATOS or prog in {"sha256sum", "stat"}:
         return
-    raise BloqueoError(
-        f"`xargs {prog}` lee ficheros cuyos nombres solo se saben al ejecutar. {COMO_REESCRIBIR}"
+    exigir_ejecucion_verificable(
+        ctx,
+        lex,
+        cmd,
+        f"xargs {prog}",
+        indecidible=f"`xargs {prog}` lee o ejecuta ficheros cuyos nombres se saben al ejecutar",
     )
 
 
@@ -1705,6 +1784,16 @@ def _analizar_pytest(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexi
             clave, igual, valor = t.partition("=")
             if clave == "--pyargs":
                 indecidible = "`--pyargs`: las rutas son paquetes que la guardia no resuelve"
+            if clave in {"-c", "-o", "--override-ini", "--config-file"} or (
+                clave.startswith("-o") and not clave.startswith("--")
+            ):
+                indecidible = (
+                    f"`pytest {clave}` cambia su configuracion, que puede cargar plugins o "
+                    "ficheros que la guardia no lee (revisor, B3)"
+                )
+            valor_dinamico = i + 1 < len(args) and "\x00" in args[i + 1].texto
+            if "\x00" in t or (clave in PYTEST_CON_VALOR and not igual and valor_dinamico):
+                indecidible = f"`pytest {clave}` con un valor que se construye al ejecutarse"
             if clave == "-p" or (clave.startswith("-p") and not clave.startswith("--")):
                 siguiente = args[i + 1].texto if i + 1 < len(args) else ""
                 plugin = valor if igual else (t[2:] or siguiente)
@@ -1715,7 +1804,8 @@ def _analizar_pytest(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexi
         posicionales += 1
         valores = _valores(args[i], ctx, lex)
         if valores is None:
-            raise BloqueoError(f"`pytest` sobre una ruta dinamica. {COMO_REESCRIBIR}")
+            indecidible = "`pytest` sobre una ruta que se construye al ejecutarse"
+            valores = []
         for v in valores:
             fichero = v.split("::", 1)[0]
             rel = ctx.politica.relativa(_absoluta(fichero, ctx.cwd))
@@ -2021,7 +2111,7 @@ def _es_preparacion(cmd: Comando) -> bool:
         return bool(cmd.asignaciones)
     textos = [p.texto for p in cmd.argv]
     if textos[0] == "cd":
-        return len(textos) <= 2
+        return len(textos) == 2 and textos[1] != "-"  # `cd` a secas va a HOME; `cd -`, ?
     if textos[0] == "export":
         return len(textos) > 1 and all(
             re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", t, re.S) for t in textos[1:]
@@ -2069,12 +2159,8 @@ def _niega(que: str, por: str, como: str = COMO_EJECUTAR) -> NoReturn:
     raise BloqueoError(f"ejecutar `{que}`: {por}.\nRegla: {R_EJECUCION}.\n{como}")
 
 
-def _exigir_comando_verificable(
-    ctx: Contexto, lex: Lexico, cmd: Comando, que: str, guiones: list[Palabra]
-) -> None:
-    """Que nada del mismo comando pueda cambiar lo que se ejecuta entre la inspeccion y la
-    ejecucion: lo que va antes y a la vez esta en la lista cerrada, no hay sustituciones, y la
-    ejecucion no redirige su salida a su propio guion."""
+def _exigir_sin_expansiones(ctx: Contexto, lex: Lexico, cmd: Comando, que: str) -> None:
+    """Nada que el shell expanda ANTES de ejecutar: sustituciones y asignaciones no literales."""
     if ctx.en_sustitucion:
         _niega(que, "va dentro de una sustitucion `$(...)`, que corre antes que el resto")
     nivel = ctx.nivel if ctx.nivel is not None else lex
@@ -2087,11 +2173,22 @@ def _exigir_comando_verificable(
     for nombre, valor in cmd.asignaciones.items():
         if not _literal(valor):
             _niega(que, f"la asignacion `{nombre}=...` delante de la ejecucion no es literal")
+
+
+def _exigir_lo_de_antes(ctx: Contexto, cmd: Comando, que: str) -> None:
+    """Todo lo que va antes en el mismo comando, de la lista cerrada (`_es_preparacion`)."""
     secuencia = ctx.secuencia if ctx.secuencia else [cmd]
     i = ctx.posicion if ctx.secuencia else 0
     for otro in secuencia[:i]:
         if not _es_preparacion(otro):
             _niega(que, f"antes, en el mismo comando, va `{_visible(otro)}`")
+
+
+def _exigir_lo_de_a_la_vez(ctx: Contexto, cmd: Comando, que: str) -> None:
+    """Lo que corre a la vez: detras en su tuberia, solo filtros; con un `&`, todo lo demas de la
+    lista cerrada."""
+    secuencia = ctx.secuencia if ctx.secuencia else [cmd]
+    i = ctx.posicion if ctx.secuencia else 0
     fin = i
     while fin + 1 < len(secuencia) and secuencia[fin + 1].tras_tuberia:
         fin += 1
@@ -2109,6 +2206,12 @@ def _exigir_comando_verificable(
                     f"el comando lanza algo en segundo plano (`&`), y `{_visible(otro)}` puede "
                     "correr a la vez",
                 )
+
+
+def _exigir_salida_ajena(
+    ctx: Contexto, lex: Lexico, cmd: Comando, que: str, guiones: list[Palabra]
+) -> None:
+    """La ejecucion no redirige su salida a su propio guion (el shell lo vaciaria antes)."""
     rutas: set[str] = set()
     for palabra in guiones:
         rutas.update(_normcase(_absoluta(v, ctx.cwd)) for v in _valores(palabra, ctx, lex) or [])
@@ -2118,6 +2221,17 @@ def _exigir_comando_verificable(
             _niega(que, "redirige su salida a un fichero que se construye al ejecutarse")
         if any(_normcase(_absoluta(v, ctx.cwd)) in rutas for v in valores):
             _niega(que, "redirige su salida a su propio guion, que el shell vacia antes")
+
+
+def _exigir_comando_verificable(
+    ctx: Contexto, lex: Lexico, cmd: Comando, que: str, guiones: list[Palabra]
+) -> None:
+    """Que nada del mismo comando pueda cambiar lo que se ejecuta entre la inspeccion y la
+    ejecucion: cuatro piezas, cada una con su nombre (y su mutacion en el anexo)."""
+    _exigir_sin_expansiones(ctx, lex, cmd, que)
+    _exigir_lo_de_antes(ctx, cmd, que)
+    _exigir_lo_de_a_la_vez(ctx, cmd, que)
+    _exigir_salida_ajena(ctx, lex, cmd, que, guiones)
 
 
 def _exigir_guion_legible(
