@@ -1,4 +1,4 @@
-# El respaldo de A-11: DECIDIDA por ADR, y G1 sin excepciones
+# El respaldo de A-11: sigue RESUELTA, y G1 sin excepciones
 
 Rama `trabajo/respaldo-a11`, abierta el 2026-10-07 desde `main` en d96b703 (commit de estado sobre
 el merge 363f826, tag `stable/F37d-activacion-a42`; `git rev-parse main origin/main` dio
