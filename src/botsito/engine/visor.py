@@ -59,7 +59,7 @@ from botsito.engine.motor import (
     TrazaSesion,
 )
 from botsito.engine.primitivas import ANOTACION_SESGO
-from botsito.engine.relojes import huso_de_las_sesiones
+from botsito.engine.relojes import RelojSesiones, reloj_de_las_sesiones
 
 CARPETA_SALIDA = Path("data") / "visor"  # ignorada por git (`/data/*`)
 INDICE = "index.html"
@@ -181,12 +181,17 @@ class DiaVisor:
     objetivo_rr: Decimal | None  # el objetivo DERIVADO por regla; el caso no trae objetivo
     motor: str
     broker: DetalleBroker | None = None  # con --simular
+    # La puerta de «HH:MM» a instante (ADR-0069); sin ella, hora de pared en `huso` (tests)
+    reloj: RelojSesiones | None = None
+
+    def instante(self, hhmm: str) -> MinutoUtc:
+        if self.reloj is not None:
+            return self.reloj.instante(self.dia, hhmm)
+        return _minuto_local(self.dia, hhmm, self.huso)
 
     @property
     def ventana_utc(self) -> tuple[MinutoUtc, MinutoUtc]:
-        return _minuto_local(self.dia, self.ventana[0], self.huso), _minuto_local(
-            self.dia, self.ventana[1], self.huso
-        )
+        return self.instante(self.ventana[0]), self.instante(self.ventana[1])
 
 
 def _minuto_local(dia: date, hhmm: str, huso: str) -> MinutoUtc:
@@ -266,8 +271,12 @@ class Preparador:
     _m1_por_mes: dict[str, tuple[tuple[Vela, ...], int]] = field(default_factory=dict)
 
     @property
+    def reloj(self) -> RelojSesiones:
+        return reloj_de_las_sesiones(self.registro)  # la puerta de las sesiones (ADR-0069)
+
+    @property
     def huso(self) -> str:
-        return huso_de_las_sesiones(self.registro)  # el reloj de las sesiones (ADR-0063)
+        return self.reloj.huso_visible  # el reloj de pared en que se pintan las horas
 
     def dias(self, meses: Sequence[str]) -> tuple[DiaTrader, ...]:
         return arnes.dias_de_construccion(self.repo, self.criterio, meses)
@@ -305,12 +314,13 @@ class Preparador:
         datos = DatosMercado(
             h4_todas, agregar(list(m1_mes), MINUTOS_M15, anclaje), m1_mes, self.lectura_pivote
         )
-        mercado = DiaDeMercado(dia, self.huso, sesiones, datos)
+        reloj = self.reloj
+        mercado = DiaDeMercado(dia, self.huso, sesiones, datos, reloj=reloj)
         resultado = self.motor.correr_dia(mercado)
 
         desde, hasta = (
-            _minuto_local(dia, self.config.ventana_local[0], self.huso),
-            _minuto_local(dia, self.config.ventana_local[1], self.huso),
+            reloj.instante(dia, self.config.ventana_local[0]),
+            reloj.instante(dia, self.config.ventana_local[1]),
         )
         m1 = tuple(v for v in m1_mes if desde <= v.inicio < hasta)
         m15 = tuple(agregar(list(m1), MINUTOS_M15, anclaje)) if m1 else ()
@@ -318,7 +328,8 @@ class Preparador:
         tope = self.registro.entero("sesgo_h4_tope_velas")
         criterio_ruptura = self.registro.opcion("sesgo_h4_criterio_ruptura")
         sesgos = tuple(
-            _sesgo_de_sesion(h4_todas, s, dia, self.huso, tope, criterio_ruptura) for s in sesiones
+            _sesgo_de_sesion(h4_todas, s, reloj.instante(dia, s.desde), tope, criterio_ruptura)
+            for s in sesiones
         )
         h4 = _h4_de_contexto(h4_todas, sesgos, hasta)
 
@@ -353,6 +364,7 @@ class Preparador:
             huso=self.huso,
             sesiones=sesiones,
             ventana=self.config.ventana_local,
+            reloj=reloj,
             escala=escala,
             m1=m1,
             m15=m15,
@@ -374,9 +386,8 @@ def _stop_y_objetivo(p: OrdenVisor | None) -> tuple[Decimal | None, Decimal | No
 
 
 def _sesgo_de_sesion(
-    h4: Sequence[Vela], sesion: Sesion, dia: date, huso: str, tope: int, criterio: str
+    h4: Sequence[Vela], sesion: Sesion, apertura: MinutoUtc, tope: int, criterio: str
 ) -> SesgoSesion:
-    apertura = _minuto_local(dia, sesion.desde, huso)
     cerradas = sorted((v for v in h4 if v.fin <= apertura), key=lambda v: v.inicio)
     r = sesgo_h4(cerradas, apertura, tope, criterio)
     decide = anterior = None
@@ -539,7 +550,7 @@ def _eje_precio(lienzo: Lienzo, escala: int, divisiones: int = 6) -> str:
 def _sesiones_svg(d: DiaVisor, lienzo: Lienzo, huso: ZoneInfo) -> str:
     partes: list[str] = []
     for s in d.sesiones:
-        a, b = _minuto_local(d.dia, s.desde, d.huso), _minuto_local(d.dia, s.hasta, d.huso)
+        a, b = d.instante(s.desde), d.instante(s.hasta)
         x0, x1 = lienzo.x(max(a, lienzo.desde)), lienzo.x(min(b, lienzo.hasta))
         partes.append(
             f'<rect class="sesion" x="{_px(x0)}" y="{MARGEN_SUP}" width="{_px(max(x1 - x0, 0))}" '

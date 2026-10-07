@@ -1,0 +1,19 @@
+id: fb-2026-10-04-sesion-04-af490a3a
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: escrito
+objetivo:
+  tipo: evidence
+  id: ev-v10-010429-0c93f24a
+accion: CONFIRM
+respuesta_literal: si es por cuestion horaria se oepra a las 6
+registrado_por: literal transcrito por el consultor de la captura Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-06-1345-se-opera-a-las-6-y-stop.png (sha256 5ca9c354747dfd41a9dca7c422939b2206c8b9f84d30e1fb3f0f55d42138d27c);
+  la sesion no la abrio porque la guardia lo impide (ADR-0038). El trader, desde sus dos numeros, confirmado
+  por Aleks el 2026-10-06. Registrado por Claude Code en la rama trabajo/activacion-a42
+notas: 'Mensaje de las 13:45 (hora de Lima), en la conversación sobre el reloj de invierno: ratifica lo
+  que dijo en S-7 («sería de 6 a 10 [...] después del día 25», ev-v10-010429-0c93f24a). La misma captura
+  lleva el mensaje de las 13:46 sobre el stop, que NO se registra ni se interpreta (punto U). Captura
+  en corpus: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1345-se-opera-a-las-6-y-stop.png'
+recibido_el: '2026-10-06'
+procedencia: trader_escrito

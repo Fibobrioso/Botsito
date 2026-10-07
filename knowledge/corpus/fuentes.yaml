@@ -131,7 +131,17 @@ carpetas:
       Subcarpeta "Mensajes del trader": capturas de respuestas suyas por escrito, fuera de sesion.
       Son sus palabras, no una sintesis del consultor, y por eso el registro de feedback que las
       recoge puede llevarlas como `respuesta_literal`. La primera cierra A-20 (una sola zona de
-      control).
+      control). El 2026-10-06 entran OCHO capturas mas (`mensaje-whatsapp-2026-10-06-*`), de la
+      conversacion por WhatsApp de ese dia (hora de Lima) sobre A-42, el reloj de invierno: el
+      texto de sus mensajes de las 09:53, 09:59, 13:44, 13:45, 13:46, 15:36 y 15:44, y dos graficos
+      H4 suyos de las semanas del 27 de octubre y del 3 de noviembre de 2024 (ningun dia de 2026).
+      Entrada de la activacion de A-42 (docs/validation/ACTIVACION-A42.md). CAUTELAS: el trader
+      escribe desde dos numeros, los dos suyos, confirmado por Aleks el 2026-10-06; ningun nombre
+      ni numero entra al repositorio. Los literales los transcribio el consultor de las capturas,
+      porque la guardia de Claude Code no deja abrir ninguna imagen de esta carpeta (ADR-0038):
+      la captura queda aqui con su hash para verificarlos. Los tres mensajes sobre el stop (13:46,
+      la segunda frase de las 15:36 y la parte «2-c» de las 15:44) NO se registran contra A-11 ni
+      contra ningun parametro y no se interpretan: son contexto para el punto U de la Next Action.
 
   - ruta: "Sesiones"
     papel: material_adicional

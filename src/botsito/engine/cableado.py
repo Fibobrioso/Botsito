@@ -152,11 +152,7 @@ class MotorCableado:
                 f"{clave}: sin dataset de ticks; los ticks son obligatorios (ADR-0051 §8). Con "
                 "--depuracion corre sobre el respaldo M1 y la salida lo dice"
             )
-        huso = huso_canonico(dia.huso)
-        limites = [
-            (s.nombre, _minuto_local(dia.dia, s.desde, huso), _minuto_local(dia.dia, s.hasta, huso))
-            for s in dia.sesiones
-        ]
+        limites = [(n, int(a), int(b)) for n, a, b in dia.limites()]  # por la puerta (ADR-0069)
         primero = min(d for _, d, _ in limites)
         ultimo = max(h for _, _, h in limites)
         if self.cuenta_diaria:

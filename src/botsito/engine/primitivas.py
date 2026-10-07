@@ -21,16 +21,12 @@ las del propio registro.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from datetime import datetime
 from decimal import Decimal
 from typing import Any, Protocol
-from zoneinfo import ZoneInfo
 
 from botsito.cases.ventanas import MINUTOS_H4
-from botsito.comun.husos import huso_canonico
 from botsito.config.registro import Registro
 from botsito.data.agregacion import limites_entre
-from botsito.data.velas import a_datetime
 from botsito.domain.pivotes_m15 import ALTO, BAJO, Pivote, cruza, toca
 from botsito.domain.sesgo import sesgo_h4
 from botsito.domain.valores import HoraLocal
@@ -44,7 +40,12 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
-from botsito.engine.relojes import huso_del_reloj
+from botsito.engine.relojes import (
+    PARAMETRO_RELOJ_SESIONES,
+    RelojError,
+    RelojSesiones,
+    reloj_de_las_sesiones,
+)
 from botsito.engine.tope_trader import (
     ACUMULADOR_DIA,
     ACUMULADOR_SEMANA,
@@ -94,11 +95,6 @@ TOMA_PREVIA_NO_CUENTA = "no_cuenta"
 TOMA_PREVIA_CUENTA = "cuenta"
 
 
-def _local(instante: int, huso: str) -> datetime:
-    zona: ZoneInfo = huso_canonico(huso)
-    return a_datetime(instante).astimezone(zona)
-
-
 def primitivas_escritas(
     registro: Registro, tope: TopeTrader | None = None, limpia: str | None = None
 ) -> Primitivas:
@@ -109,6 +105,18 @@ def primitivas_escritas(
     entrada (`engine/zonas.py`); sin ella, sigue NO_IMPLEMENTADA con nombre."""
 
     tramos_h4: dict[HoraLocal, tuple[int, int]] = {}
+    relojes: dict[str, RelojSesiones] = {}  # el reloj de las sesiones, leido una vez
+
+    def _reloj(selector: str) -> RelojSesiones:
+        # La forma nombra el selector; la puerta (ADR-0069) lee del registro lo que ese reloj
+        # necesita. Hoy el unico selector es `reloj_sesiones`.
+        if selector not in relojes:
+            if selector != PARAMETRO_RELOJ_SESIONES:
+                raise RelojError(
+                    f"{selector}: el unico selector de reloj es {PARAMETRO_RELOJ_SESIONES}"
+                )
+            relojes[selector] = reloj_de_las_sesiones(registro)
+        return relojes[selector]
 
     def _fin_de_la_h4(anclaje: HoraLocal, minuto: int) -> int:
         """El fin de la vela H4 que contiene la M1 que empieza en `minuto`, en la rejilla de
@@ -146,17 +154,16 @@ def primitivas_escritas(
         dias = DIAS_OPERABLES.get(registro.opcion(str(args["dias"])))
         if dias is None:
             return NoImplementada(f"predicado:en_ventana:{args['dias']}")
-        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
-        minuto = local.hour * 60 + local.minute
-        dentro = inicio <= minuto < fin and local.isoweekday() in dias  # [inicio, fin)
+        dia_local, minuto = _reloj(str(args["reloj"])).lectura(int(momento.instante))
+        dentro = inicio <= minuto < fin and dia_local.isoweekday() in dias  # [inicio, fin)
         return Resultado(Tri.SI if dentro else Tri.NO)
 
     def alcanza_hora(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
         hora = registro.hora(str(args["hora"])).minutos_del_dia
-        local = _local(momento.instante, huso_del_reloj(registro, str(args["reloj"])))
-        return Resultado(Tri.SI if local.hour * 60 + local.minute >= hora else Tri.NO)
+        _, minuto = _reloj(str(args["reloj"])).lectura(int(momento.instante))
+        return Resultado(Tri.SI if minuto >= hora else Tri.NO)
 
     def sesgo_h4_al_abrir(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia

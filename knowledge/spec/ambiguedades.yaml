@@ -1116,6 +1116,15 @@ ambiguedades:
     titulo: con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00
     pregunta: >-
       Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno?
+      RESUELTA el 2026-10-06 (ADR-0069): con la REJILLA H4 de anclaje_h4. Sus dos sesiones son
+      las velas H4 que empiezan en ancla + 8 h y ancla + 12 h; en su grafico, que va en
+      Europe/Madrid, son 07-11 y 11-15 casi todo el año y 06-10 y 10-14 las semanas en que
+      Europa y EE. UU. no coinciden en el horario de verano (H2b de RELOJ-INVIERNO.md). Lo dijo
+      en la sesion 4, S-7 («sería de 6 a 10 [...] después del día 25», ev-v10-010429-0c93f24a), y
+      por escrito el 2026-10-06, con las capturas en el corpus: «1-B)», a las 7 desde el lunes 2
+      de noviembre (fb-2026-10-04-sesion-04-fb7831cc), y «si es por cuestion horaria se oepra a las 6» (fb-2026-10-04-sesion-04-af490a3a). En UTC, con
+      zoneinfo: 05:00-13:00 con Nueva York en horario de verano y 06:00-14:00 si no. La lectura
+      provisional de abajo (ADR-0059) era H1, que la medida de enero descarto.
       LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y
       11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a
       06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia
@@ -1127,6 +1136,10 @@ ambiguedades:
       que dice reloj_sesiones -hoy `civil_operativa`, sin cambio-, y aplicar esta lectura sera
       pasarlo a `grafico`; huso_operativa queda como reloj del dia de riesgo.
     resuelve_en: [F14, F26]
+    # CORREGIDO EL 2026-10-06 (ADR-0069): el grafico de FX Replay NO es UTC+2 fijo, es
+    # Europe/Madrid con su cambio de hora (RELOJ-INVIERNO.md §5: el "14:29:59 UTC+2" es el reloj
+    # del pie, que va con el replay); huso_grafico vale Europe/Madrid. Lo de abajo queda como
+    # historia de por que nacio.
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor tras K-07,
     # docs/validation/SESION-02-DECISIONES.md §2 y §8). El grafico de FX Replay es UTC+2 fijo: lo
     # marca un fotograma de ENERO de v4, fr-v4-9ad0ebb8/1200000 ("14:29:59 UTC+2" sobre "Thu 29 Jan
@@ -1146,9 +1159,11 @@ ambiguedades:
       - ev-v4-011425-ae028b78
       - ev-v9-010753-063c8cb7
       - ev-v9-010809-68e4ea44
+      - ev-v10-010429-0c93f24a
+      - ev-v10-010438-024f76b8
     parametros: [reloj_sesiones]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

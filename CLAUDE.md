@@ -115,7 +115,9 @@ abrirlo, y una clase entera de imagenes -las capturas de Analytics- esta prohibi
 AGREGADO, se declara el MISMO DIA con sus cifras listadas y ninguna se usa (ADR-0021 §2). **Antes de
 abrir fotogramas, leer transcripciones o comparar el video con las velas: `docs/runbooks/MIRAR-EL-MATERIAL.md`**
 (como se abre un fotograma, donde esta el texto de cada transcripcion, y que el reloj de los graficos
-de FX Replay es UTC+2 FIJO: antes de comparar dos fuentes se fija el huso de las dos, medido).
+de FX Replay es Europe/Madrid CON cambio de hora -no el «UTC+2 fijo» que se leyo hasta el 2026-10-06
+en el reloj del pie, que va con el replay; ADR-0069-: antes de comparar dos fuentes se fija el huso
+de las dos, medido).
 
 **2. LAS VELAS DE `data/` SE LEEN para recalcular ventanas, y eso NO es abrir un holdout** (ADR-0021
 §1). `kit build` y `kit check` se ejecutan con `data/` presente y declaran en su salida, por RECUENTO y

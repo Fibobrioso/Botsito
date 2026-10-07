@@ -50,6 +50,14 @@ cifras listadas y ninguna se usa (ADR-0021 §2, ADR-0038 §2). Medido el 2026-09
 se abrio la pestana Analytics de agosto; el mismo muestreo sobre v1 o v2 habria caido sobre mayo
 o julio, que SI tienen dias reservados.
 
+> **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **El reloj de los graficos de FX Replay NO es UTC+2 fijo: es Europe/Madrid, con su
+> cambio de hora** (UTC+1 en invierno, UTC+2 en verano). Lo de abajo leyo el reloj del pie, que
+> va con el replay y ensena el desfase de hoy; el EJE de enero casa con Dukascopy con UTC+1
+> (`docs/validation/RELOJ-INVIERNO.md` §5) y las capturas de sus graficos H4 de 2024 ponen el
+> ancla de 17:00 America/New_York a las 22:00 y a las 23:00 segun la semana
+> (`docs/validation/ACTIVACION-A42.md` §4). **La regla sigue valiendo, y mas**: antes de comparar
+> dos fuentes se fija el huso de las dos, medido; y para una captura de invierno, el desfase es 1.
+
 **EL RELOJ DE LOS GRAFICOS DE FX REPLAY ES UTC+2 FIJO.** Medido en el propio grafico de v4 sobre
 un fotograma de ENERO -asi que NO es Europe/Madrid, que en enero es UTC+1-; confirmado porque con
 ese desfase las velas de abril casan a 1 y 2 puntos con las de Dukascopy. Es una propiedad del

@@ -6,6 +6,13 @@ phase: post-F14 (rama `trabajo/mayo-dev-ingerido`)
 
 # 0039 · Ningún libro se lee sin su formato y su huso declarados
 
+> **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** Donde este ADR dice que el eje de FX Replay «es UTC+2 fijo», no lo es: el gráfico del
+> trader va en Europe/Madrid, con su cambio de hora. Medido en `docs/validation/RELOJ-INVIERNO.md`
+> §5.4 (en enero el eje casa con Dukascopy con UTC+1, no con UTC+2; el «14:29:59 UTC+2» del pie
+> es la hora del replay con el desfase de hoy) y en las capturas de sus gráficos H4 de 2024
+> (`docs/validation/ACTIVACION-A42.md` §4). Lo que este ADR decide del HUSO DE CADA LIBRO no
+> cambia: el libro se declara por su propia medida, y el de enero salió UTC igual que los demás.
+
 ## Decision
 
 1. **Ningún libro de backtest del trader se lee sin su formato y su huso declarados, atados a su

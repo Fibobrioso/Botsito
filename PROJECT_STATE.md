@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/activacion-a42
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37c-reloj-invierno` (2026-10-06).
+`trabajo/activacion-a42` EN CURSO (2026-10-06): activar A-42 con H2b. Encargo docs/encargos/trabajo-activacion-a42.md; informe docs/validation/ACTIVACION-A42.md.
 
 ## Stable Main State
 49c3098 · merge de `trabajo/reloj-invierno` (tag `stable/F37c-reloj-invierno`): el libro de enero, medido por velas, es UTC y queda declarado en libros.yaml; en enero el trader opera de 06:00 a 14:00 UTC (H2) y el eje de su grafico va en UTC+1, no en UTC+2 fijo. Sobre `stable/F37b-guardias-citas` (fe37973). Informe docs/validation/RELOJ-INVIERNO.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F37c-reloj-invierno` (2026-10-06).
 49c3098 · merge: el reloj de invierno, medido; enero UTC en libros.yaml y en enero el trader opera 06-14 UTC (RELOJ-INVIERNO.md) · tag stable/F37c-reloj-invierno
 
 ## Tests Currently Passing
-1342 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1357 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -31,13 +31,17 @@ NINGUNA ABIERTA tras `stable/F37c-reloj-invierno` (2026-10-06).
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
-U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3).
+U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3). Los mensajes del trader del 2026-10-06 sobre el stop (13:46, 15:36 y «2-c», en el corpus; ACTIVACION-A42.md §5.4) no dicen cuándo se pone; no se le vuelve a preguntar: decide el consultor.
 
 V. La guardia de Claude Code no inspecciona un guion creado en el mismo comando que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.
 
-A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
+W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).
 
-E. A-42 MEDIDA (RELOJ-INVIERNO.md): el gráfico del trader va en Europe/Madrid y en enero opera de 06:00 a 14:00 UTC (H2). Pendiente antes del 25 de octubre: H2a frente a H2b (§8.1 y §12; apuntan a H2b, falta la respuesta del trader), y la rama de activación, que corrige huso_grafico y los textos de «UTC+2 FIJO», registra las respuestas del trader con sus capturas y fija las sesiones en instantes UTC (§9).
+X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
+
+Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.
+
+A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
@@ -98,7 +102,6 @@ en docs/state/HISTORIA.md (Archivo 1, «Known Ambiguities»).
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
 | A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
-| A-42 | con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 | pregunta | si | F14, F26 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
@@ -129,8 +132,7 @@ docs/runbooks/ERRORES-RECURRENTES.md.
 - `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
 - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
 - NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO CAMBIE (2026-09-22, `trabajo/guardia-ids-docs`).
-- LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril).
-- EL «UTC+2 FIJO» FALLA EN ENERO (2026-10-06, RELOJ-INVIERNO.md).
+- LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril). Sigue viva solo la parte de la serie: el reloj quedó corregido el 2026-10-06 (ADR-0069: Europe/Madrid).
 - EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
 - `maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS, NO LA EXCURSION MAXIMA (2026-09-21).
 - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
@@ -203,9 +205,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 19 (2026-10-06).
+— ninguna desde el Archivo 20 (2026-10-06).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 19 (2026-10-06).
+— ninguna desde el Archivo 20 (2026-10-06).

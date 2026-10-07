@@ -1,6 +1,12 @@
 """Dos relojes (ADR-0063): el de las SESIONES lo elige `reloj_sesiones`; el del DIA DE RIESGO sigue
 en `huso_operativa`.
 
+DESDE ADR-0069 (2026-10-06) el selector real vale `rejilla_h4`
+(tests/unit/test_sesiones_rejilla_h4.py).
+Aqui se prueba el MECANISMO de ADR-0063 con los dos relojes de pared, que siguen siendo opciones:
+el fixture `registro` es el real con el selector devuelto a `civil_operativa` (H2a), y
+`en_el_grafico`, con el selector en `grafico` y el grafico en UTC+2 fijo (H1).
+
 Hoy el selector vale `civil_operativa` y nada cambia. Lo que se prueba es el mecanismo que ADR-0059
 pedia: con el selector en `grafico` -la lectura PROVISIONAL de A-42: las sesiones fijas en el reloj
 del grafico, UTC+2 todo el ano-, en invierno la ventana abre una hora antes en el reloj del trader,
@@ -34,6 +40,7 @@ from botsito.engine.primitivas import primitivas_escritas
 from botsito.engine.relojes import (
     HUSO_DEL_RELOJ,
     PARAMETRO_RELOJ_SESIONES,
+    REJILLA_H4,
     RelojError,
     huso_de_las_sesiones,
     huso_del_reloj,
@@ -56,11 +63,6 @@ VENTANA = {"inicio": "ventana_inicio", "fin": "ventana_fin", "reloj": "reloj_ses
 INVIERNO, VERANO = "2030-01-15", "2030-07-16"  # martes los dos
 
 
-@pytest.fixture(scope="module")
-def registro() -> Registro:
-    return cargar_registro(REAL)
-
-
 def _cambiar(texto: str, tras: str, viejo: str, nuevo: str) -> str:
     """Sustituye la primera aparicion de `viejo` DESPUES de `tras`: dentro de ese parametro."""
     i = texto.index(tras)
@@ -69,13 +71,31 @@ def _cambiar(texto: str, tras: str, viejo: str, nuevo: str) -> str:
 
 
 @pytest.fixture(scope="module")
+def registro(tmp_path_factory: pytest.TempPathFactory) -> Registro:
+    """El registro real con el selector en `civil_operativa`: la ventana en el reloj civil del
+    trader, lo que el motor hacia hasta ADR-0069."""
+    texto = REAL.read_text(encoding="utf-8")
+    texto = _cambiar(
+        texto, "  - nombre: reloj_sesiones\n", 'valor: "rejilla_h4"', 'valor: "civil_operativa"'
+    )
+    ruta = tmp_path_factory.mktemp("civil") / "parametros.yaml"
+    ruta.write_text(texto, encoding="utf-8")
+    return cargar_registro(ruta)
+
+
+@pytest.fixture(scope="module")
 def en_el_grafico(tmp_path_factory: pytest.TempPathFactory) -> Registro:
     """El registro real con las sesiones en el reloj del grafico: el selector en `grafico` y las
     dos horas de la ventana declarando el huso de ese reloj. Nada mas cambia."""
     texto = REAL.read_text(encoding="utf-8")
-    grafico = cargar_registro(REAL).texto("huso_grafico")
+    # El grafico UTC+2 fijo de la lectura provisional (ADR-0059): desde ADR-0069 huso_grafico vale
+    # Europe/Madrid, asi que el huso fijo se escribe aqui, como hipotesis, no se lee del registro.
+    grafico = "Etc/GMT-2"
     texto = _cambiar(
-        texto, "  - nombre: reloj_sesiones\n", 'valor: "civil_operativa"', 'valor: "grafico"'
+        texto, "  - nombre: reloj_sesiones\n", 'valor: "rejilla_h4"', 'valor: "grafico"'
+    )
+    texto = _cambiar(
+        texto, "  - nombre: huso_grafico\n", 'valor: "Europe/Madrid"', f'valor: "{grafico}"'
     )
     for hora in ("ventana_inicio", "ventana_fin"):
         texto = _cambiar(texto, f"  - nombre: {hora}\n", "huso: Europe/Madrid", f"huso: {grafico}")
@@ -98,12 +118,13 @@ def _en_ventana(reg: Registro, utc: str) -> Tri:
 # ---------------------------------------------------------------------------- el registro
 
 
-def test_el_selector_nace_en_el_reloj_civil_y_bajo_a42(registro: Registro) -> None:
+def test_los_dos_relojes_de_pared_siguen_siendo_opciones(registro: Registro) -> None:
+    """ADR-0063 nacio con `civil_operativa` bajo A-42; ADR-0069 lo cierra con `rejilla_h4`, y los
+    dos relojes de pared se quedan como opciones para calcular H2a y H1 por el mismo camino."""
     p = registro.parametros[PARAMETRO_RELOJ_SESIONES]
-    assert p.categoria == "ejecucion" and p.estado.value == "DEFAULT_AMBIGUOUS"
-    assert p.ambiguedad_id == "A-42" and p.opciones == tuple(HUSO_DEL_RELOJ)
-    assert registro.opcion(PARAMETRO_RELOJ_SESIONES) == "civil_operativa"
-    # nace apuntando al reloj que el motor ya usaba: nada cambia todavia
+    assert p.categoria == "ejecucion"
+    assert set(p.opciones or ()) == {*HUSO_DEL_RELOJ, REJILLA_H4}
+    assert registro.opcion(PARAMETRO_RELOJ_SESIONES) == "civil_operativa"  # el fixture
     assert huso_de_las_sesiones(registro) == registro.texto("huso_operativa")
     # y el huso de cada reloj vive en su parametro, no en el selector
     for parametro in HUSO_DEL_RELOJ.values():
@@ -116,7 +137,8 @@ def test_las_horas_de_la_ventana_declaran_el_huso_del_reloj_de_las_sesiones(
     for reg in (registro, en_el_grafico):
         for hora in ("ventana_inicio", "ventana_fin"):
             assert reg.hora(hora).huso == huso_de_las_sesiones(reg), hora
-    assert huso_de_las_sesiones(en_el_grafico) == registro.texto("huso_grafico")
+    # el grafico de H1 es el UTC+2 fijo del fixture, no el huso_grafico real (Europe/Madrid)
+    assert huso_de_las_sesiones(en_el_grafico) == en_el_grafico.texto("huso_grafico")
 
 
 def test_las_formas_de_la_ventana_nombran_el_selector_y_ninguna_lee_huso_operativa(

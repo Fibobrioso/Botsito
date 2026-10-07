@@ -37,6 +37,7 @@ from botsito.engine.interprete import (
     Momento,
     ReglaEjecutable,
 )
+from botsito.engine.relojes import RelojSesiones
 
 
 @dataclass(frozen=True)
@@ -145,9 +146,27 @@ class DatosMercado:
 @dataclass(frozen=True)
 class DiaDeMercado:
     dia: date
-    huso: str  # el del reloj de las sesiones (`engine/relojes.huso_de_las_sesiones`)
+    huso: str  # el reloj de pared en que se PINTAN las horas (`RelojSesiones.huso_visible`)
     sesiones: tuple[Sesion, ...]
     datos: DatosMercado
+    # La puerta que convierte «HH:MM» en instantes (ADR-0069). Sin ella -un dia hecho a mano en
+    # los tests- las horas son de pared en `huso`, que es lo que el motor hacia hasta entonces.
+    reloj: RelojSesiones | None = None
+
+    def limites(self) -> list[tuple[str, MinutoUtc, MinutoUtc]]:
+        """(nombre, desde, hasta) en UTC de cada sesion, por la puerta."""
+        if self.reloj is not None:
+            return self.reloj.limites_de_sesiones(
+                self.dia, [(s.nombre, s.desde, s.hasta) for s in self.sesiones]
+            )
+        return [
+            (
+                s.nombre,
+                _minuto_utc(self.dia, s.desde, self.huso),
+                _minuto_utc(self.dia, s.hasta, self.huso),
+            )
+            for s in self.sesiones
+        ]
 
 
 @dataclass
@@ -191,14 +210,7 @@ class MotorSpec:
     reglas: Sequence[ReglaEjecutable]
 
     def correr_dia(self, dia: DiaDeMercado) -> ResultadoDia:
-        limites = [
-            (
-                s.nombre,
-                _minuto_utc(dia.dia, s.desde, dia.huso),
-                _minuto_utc(dia.dia, s.hasta, dia.huso),
-            )
-            for s in dia.sesiones
-        ]
+        limites = dia.limites()
         estado = EstadoDia()
         trazas = {nombre: TrazaSesion() for nombre, _, _ in limites}
         primero, ultimo = min(d for _, d, _ in limites), max(h for _, _, h in limites)

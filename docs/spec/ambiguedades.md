@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.8.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (24)
+## ABIERTA (23)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -83,12 +83,6 @@ Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha
 ### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
 
 Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta?
-
-### A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 · **BLOQUEANTE** · pregunta
-
-Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno? LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y 11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a 06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»: confirmar en la proxima sesion; hasta entonces sigue ABIERTA. DESDE EL 2026-09-30 (ADR-0063, ACEPTADO) los dos relojes estan separados: la ventana se cuenta con el reloj que dice reloj_sesiones -hoy `civil_operativa`, sin cambio-, y aplicar esta lectura sera pasarlo a `grafico`; huso_operativa queda como reloj del dia de riesgo.
-
-Afecta a: `reloj_sesiones`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
@@ -184,7 +178,7 @@ el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. 
 
 Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te haga descartar una?
 
-## RESUELTA (25)
+## RESUELTA (26)
 
 ### A-1 · sesgo H4
 
@@ -303,6 +297,12 @@ Una vez que la operación está en break even, ¿qué haces con el stop a partir
 ### A-41 · si hay un tope de entradas por día, aparte de los cartuchos · pregunta
 
 ¿Hay algo que limite cuántas entradas haces? ¿Cómo lo cuentas? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:31:00): «Sí, serían tres intentos por liquidez» y «¿El máximo es por día? No, no, por liquidez»: no hay tope por dia, aparte de los tres cartuchos por liquidez (la cifra la propuso el consultor tras un «no sé, dime tú») (fb-2026-09-29-sesion-03-7b87c3ee).
+
+### A-42 · con qué reloj cuenta el trader su horario de operar de 07:00 a 15:00 · **BLOQUEANTE** · pregunta
+
+Tu horario de operar, de 7 a 15, ¿con qué reloj lo cuentas? ¿Cambia algo en invierno? RESUELTA el 2026-10-06 (ADR-0069): con la REJILLA H4 de anclaje_h4. Sus dos sesiones son las velas H4 que empiezan en ancla + 8 h y ancla + 12 h; en su grafico, que va en Europe/Madrid, son 07-11 y 11-15 casi todo el año y 06-10 y 10-14 las semanas en que Europa y EE. UU. no coinciden en el horario de verano (H2b de RELOJ-INVIERNO.md). Lo dijo en la sesion 4, S-7 («sería de 6 a 10 [...] después del día 25», ev-v10-010429-0c93f24a), y por escrito el 2026-10-06, con las capturas en el corpus: «1-B)», a las 7 desde el lunes 2 de noviembre (fb-2026-10-04-sesion-04-fb7831cc), y «si es por cuestion horaria se oepra a las 6» (fb-2026-10-04-sesion-04-af490a3a). En UTC, con zoneinfo: 05:00-13:00 con Nueva York en horario de verano y 06:00-14:00 si no. La lectura provisional de abajo (ADR-0059) era H1, que la medida de enero descarto. LECTURA PROVISIONAL el 2026-09-29 (ADR-0059, decision del consultor): las sesiones 07-11 y 11-15 van fijas en el reloj del grafico (UTC+2) todo el ano; en invierno equivalen a 06:00-14:00 de Madrid. huso_operativa NO cambia: en el motor es tambien el reloj del dia de riesgo, y separar los dos relojes es rama de codigo, requisito previo de toda corrida de invierno. Fuente: la sesion 3, v9 1:07:53 y 1:08:09, y el tramo 1:06:38-1:07:51 solo en su version con mascara (docs/validation/SESION-03-EXTRACCION.md). El trader dijo «creo»: confirmar en la proxima sesion; hasta entonces sigue ABIERTA. DESDE EL 2026-09-30 (ADR-0063, ACEPTADO) los dos relojes estan separados: la ventana se cuenta con el reloj que dice reloj_sesiones -hoy `civil_operativa`, sin cambio-, y aplicar esta lectura sera pasarlo a `grafico`; huso_operativa queda como reloj del dia de riesgo.
+
+Afecta a: `reloj_sesiones`.
 
 ### A-45 · en qué granularidad se evalúa «cierra con cuerpo» en la toma de liquidez de RN-004 · pregunta
 

@@ -466,15 +466,19 @@ def test_la_ventana_y_la_rejilla_h4_no_cuelgan_del_mismo_reloj(repo: Path) -> No
     trader como persona (`huso_operativa`); la rejilla H4 es la medianoche del servidor. Que
     coincidan 337 dias al año no los hace el mismo reloj.
 
-    Desde ADR-0063 el reloj de la ventana lo elige `reloj_sesiones`: hoy es el civil del
-    trader, y si A-42 lo lleva al del grafico, las dos horas tienen que declarar ese huso.
+    Desde ADR-0063 el reloj de la ventana lo elige `reloj_sesiones`, y desde ADR-0069 (A-42
+    RESUELTA) ese reloj ES la rejilla: las sesiones son velas H4 de `anclaje_h4`. Lo que sigue
+    siendo verdad es lo que este test protege: las HORAS del registro no declaran el huso del
+    ancla. Son nominales -las de su grafico- y el ancla sigue en el suyo, que es el que parte las
+    velas; ninguna hora de pared de Madrid vuelve a partir una H4.
     """
-    from botsito.engine.relojes import huso_de_las_sesiones
+    from botsito.engine.relojes import reloj_de_las_sesiones
 
     r = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    operativa = huso_de_las_sesiones(r)
+    reloj = reloj_de_las_sesiones(r)
+    assert reloj.es_rejilla
     for nombre in ("ventana_inicio", "ventana_fin"):
-        assert r.hora(nombre).huso == operativa, nombre
-    assert r.hora("anclaje_h4").huso != operativa, (
+        assert r.hora(nombre).huso == reloj.huso_visible == r.texto("huso_grafico"), nombre
+    assert r.hora("anclaje_h4").huso != reloj.huso_visible, (
         "el ancla H4 volvio a colgar del reloj del trader: en invierno partiria mal las velas"
     )
