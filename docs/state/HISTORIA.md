@@ -6459,3 +6459,65 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 21 (2026-10-07).
+
+# Next Action HECHA · J · sale de PROJECT_STATE.md en trabajo/umbral-mayo (2026-10-07)
+
+J. Umbral para medir mayo (decisión del consultor del 2026-10-06, pre-registrada antes de cualquier corrida nueva): mayo, el conjunto de medida de ADR-0043, solo se mide cuando botsito motor arnes sobre construcción dé una cobertura de al menos 0,70 y una precisión de al menos 0,60, las mismas cifras de ADR-0043. Si no llega, se sigue construyendo y mayo no se toca. Se escribe como ADR en su propia rama, antes de la primera corrida del arnés tras la activación de la sesión 4.
+
+La hace `trabajo/umbral-mayo` (docs/validation/UMBRAL-MAYO.md): ADR-0070, los umbrales y el perfil
+en `criterio_fidelidad.yaml`, y el veredicto del arnes con la lista cerrada de opciones.
+
+# Registro de cierre · `trabajo/umbral-mayo` (2026-10-07)
+
+- Orden de cierre del consultor del 2026-10-07, ejecutada siguiendo `RITUAL.md`. Rama abierta como
+  tarea nocturna; nunca se cerro sin la orden.
+- **Lo que entra:**
+  - ADR-0070 (con dos enmiendas del mismo dia): mayo solo se mide cuando UNA corrida del arnes sobre
+    todo `construccion`, SIMULADA con el perfil de la cuenta real y su primera fase, y solo con
+    `--salida`, `--tracemalloc`, `--meses`, `--simular`, `--perfil` y `--fase`, llega a 0,70 de
+    cobertura y 0,60 de precision; cualquier otra opcion, conocida o futura, da «no»;
+  - tres campos en `knowledge/cases/criterio_fidelidad.yaml`:
+    `umbral_construccion_para_medir_cobertura`, `umbral_construccion_para_medir_precision` y
+    `perfil_para_medir` (`ftmo-2step-swing-100k`), cargados y validados;
+  - `cases/criterio_fidelidad.habilita_medir` y `Simulacion`; en `engine/arnes.py` la lista cerrada
+    (`OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`) y la linea de veredicto al final de la seccion del
+    criterio; en `cli.py`, `opciones_de_la_corrida` (lee el parser raiz y el del subcomando) y la
+    simulacion efectiva del motor cableado;
+  - tests sinteticos en `tests/unit/test_umbral_mayo.py` y el anexo de mutaciones
+    `docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` (los ocho tests de las dos condiciones fallan si
+    se quitan).
+- Next Action (en este commit, por la orden de cierre): sale J, HECHA. No entra nada nuevo.
+- `Tests Currently Passing`: 1383 funciones (2132 casos).
+- Letra: la ultima cerrada era la e de F37 (`stable/F37e-respaldo-a11`); `stable/F37f-*` no existe
+  ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37f-umbral-mayo`. El merge es `git rev-parse "stable/F37f-umbral-mayo^{commit}"`.
+- Commits de la rama: `962c460` (apertura), `3320177` (fase 1, ADR-0070), `492e2ca` (fase 2, los
+  dos umbrales), `d16a06e` (fase 3, el veredicto), `1cfc14a` (el revisor, primera pasada),
+  `51a92ca` (D2 niega por defecto, primera enmienda), `5e46075` (segunda pasada: `--repo`),
+  `071c30f` (`--simular` obligatoria con la cuenta real y su primera fase, segunda enmienda),
+  `0bc0914` (tercera pasada del revisor) y el de este registro.
+- CI: ninguna de Linux (la rama no toca `.claude/` ni la plataforma; la orden lo dice). La CI de
+  `main` corre tras el push.
+- Nadie ejecuto `botsito motor arnes` en esta rama, salvo una invocacion de `--help` en la fase 0,
+  sin efecto y declarada (hallazgo 3 de la orden).
+- Informe: `docs/validation/UMBRAL-MAYO.md`. Encargo: `docs/encargos/trabajo-umbral-mayo.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/umbral-mayo (consultor, 2026-10-07). Tag: stable/F37f-umbral-mayo (verifica en HISTORIA que el último es F37e y que F37f no existe ni en local ni en origin).
+  >
+  > Esta rama no toca .claude/ ni la plataforma: sin CI de Linux; la CI de main tras el push es la que manda.
+  >
+  > Hallazgos para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+  > 1. (importa, consultor; el revisor no lo vio en su primera pasada) La D2 del encargo enumeraba un caso (--diagnostico-*) en vez de negar por defecto, y dejaba pasar --depuracion, --repo y cualquier opción futura; lo destapó la pregunta de la sesión sobre --depuracion, y la condición pasó a lista cerrada a media rama (UMBRAL-MAYO.md §9). Lección (consultor y revisor): una puerta que habilita algo se escribe desde el principio como lista cerrada de lo admitido, y el revisor comprueba en toda puerta si la condición está enumerada o niega por defecto.
+  > 2. (importa, consultor) El encargo no decía si la corrida que habilita lleva --simular, y sin ella el motor no produce operaciones: la puerta, tal como estaba escrita, no podía dar «sí» nunca. Lección: antes de pre-registrar un umbral, comprobar que existe una corrida capaz de alcanzarlo.
+  > 3. (menor, sesión) Se ejecutó uv run botsito motor arnes --help con el encargo prohibiéndolo «con cualquier opción»; sin efecto, declarado (§9). Lección: la ayuda de un comando prohibido se lee en el código.
+  >
+  > Next Action, en el commit del contrato (punto 3 de RITUAL):
+  > - SALE, HECHA: J (texto literal a HISTORIA bajo «# Next Action HECHA · J · …»), la hace esta rama: ADR-0070, los umbrales y el perfil en criterio_fidelidad.yaml, y el veredicto del arnés con la lista cerrada de opciones (UMBRAL-MAYO.md).
+  > No entra nada nuevo. En el commit de estado no se toca la Next Action.
+  >
+  > El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag. Si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. CI de main en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual; si te niegan la consulta, para y dímelo. Con la CI de main en completed/success, borra trabajo/umbral-mayo (git branch -d).
+  >
+  > Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.

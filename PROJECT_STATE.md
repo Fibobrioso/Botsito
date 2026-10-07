@@ -43,8 +43,6 @@ A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
-J. Umbral para medir mayo (decisión del consultor del 2026-10-06, pre-registrada antes de cualquier corrida nueva): mayo, el conjunto de medida de ADR-0043, solo se mide cuando botsito motor arnes sobre construcción dé una cobertura de al menos 0,70 y una precisión de al menos 0,60, las mismas cifras de ADR-0043. Si no llega, se sigue construyendo y mayo no se toca. Se escribe como ADR en su propia rama, antes de la primera corrida del arnés tras la activación de la sesión 4.
-
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
