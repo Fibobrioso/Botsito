@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/respaldo-a11
+main
 
 ## Current Feature
-`trabajo/respaldo-a11` EN CURSO (2026-10-07): A-11 sigue RESUELTA sin el item supersedido, y G1 sin excepciones (punto U). Encargo docs/encargos/trabajo-respaldo-a11.md; informe docs/validation/RESPALDO-A11.md.
+NINGUNA ABIERTA tras `stable/F37e-respaldo-a11` (2026-10-07).
 
 ## Stable Main State
-363f826 · merge de `trabajo/activacion-a42` (tag `stable/F37d-activacion-a42`): A-42 RESUELTA con H2b (ADR-0069); las dos sesiones son las velas H4 de la rejilla de anclaje_h4 y el bot las fija en instantes UTC con zoneinfo (reloj_sesiones = rejilla_h4), y huso_grafico es Europe/Madrid. Sobre `stable/F37c-reloj-invierno` (49c3098). Informe docs/validation/ACTIVACION-A42.md; el registro del cierre, al final de HISTORIA.
+92312e3 · merge de `trabajo/respaldo-a11` (tag `stable/F37e-respaldo-a11`): A-11 sigue RESUELTA por el registro del trader (fb-2026-09-09-sesion-01-69711f67) y ya no cita el item supersedido; G1 sin ninguna excepcion; el revisor comprueba la afirmacion de cada item de evidencia nuevo. Sobre `stable/F37d-activacion-a42` (363f826). Informe docs/validation/RESPALDO-A11.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-363f826 · merge: A-42 RESUELTA con H2b; las sesiones son velas H4 de la rejilla, fijadas en instantes UTC con zoneinfo (ACTIVACION-A42.md, ADR-0069) · tag stable/F37d-activacion-a42
+92312e3 · merge: A-11 sigue RESUELTA por el registro del trader, sin el item supersedido; G1 sin excepciones y D2 en el revisor (RESPALDO-A11.md) · tag stable/F37e-respaldo-a11
 
 ## Tests Currently Passing
 1359 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
