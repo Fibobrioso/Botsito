@@ -1,4 +1,11 @@
-test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
-test_depuracion_da_no: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
-test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista: con D2 pasa; sin D2 FALLA (AssertionError); restaurado pasa
-VEREDICTO: los tres tests fallan si se quita D2
+-- sin la lista
+test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: con la condicion pasa; sin la lista FALLA (AssertionError); restaurado pasa
+test_depuracion_da_no: con la condicion pasa; sin la lista FALLA (AssertionError); restaurado pasa
+test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista: con la condicion pasa; sin la lista FALLA (AssertionError); restaurado pasa
+test_una_opcion_del_parser_raiz_tambien_cuenta: con la condicion pasa; sin la lista FALLA (AssertionError); restaurado pasa
+-- sin la simulacion
+test_sin_simular_da_no: con la condicion pasa; sin la simulacion FALLA (AssertionError); restaurado pasa
+test_sin_simulacion_nunca_sale_si: con la condicion pasa; sin la simulacion FALLA (AssertionError); restaurado pasa
+test_simular_con_otro_perfil_da_no: con la condicion pasa; sin la simulacion FALLA (AssertionError); restaurado pasa
+test_simular_con_otra_fase_da_no: con la condicion pasa; sin la simulacion FALLA (AssertionError); restaurado pasa
+VEREDICTO: los ocho tests fallan si se quita su condicion

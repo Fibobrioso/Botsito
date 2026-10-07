@@ -23,6 +23,11 @@ umbral_precision: "0.60"
 # ADR-0043; cambiarlas exige un ADR que declare lo visto.
 umbral_construccion_para_medir_cobertura: "0.70"
 umbral_construccion_para_medir_precision: "0.60"
+# La corrida que habilita lleva --simular (las operaciones del bot y sus instantes de llenado
+# solo los da el broker simulado) con el perfil de la cuenta real (FTMO 2-Step Swing 100k,
+# ADR-0026) y SU PRIMERA FASE, la que el perfil declara primero (ADR-0070, enmienda del
+# 2026-10-07). El perfil, por su nombre en knowledge/cuentas/; la fase sale del propio perfil.
+perfil_para_medir: ftmo-2step-swing-100k
 # Construccion: donde se ajusta el motor. Medida: se mide una vez por version de la spec; si la
 # spec cambia despues de ver el resultado de mayo, mayo pasa a construccion y queda escrito.
 # Marzo entra en medida cuando llegue, y SOLO con su parte `fidelidad-dev` (ADR-0046): entra por

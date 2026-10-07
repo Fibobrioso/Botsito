@@ -31,7 +31,14 @@ from pathlib import Path
 from typing import Any
 
 from botsito.cases import visto
-from botsito.cases.criterio_fidelidad import Criterio, Medida, Operacion, habilita_medir, medir
+from botsito.cases.criterio_fidelidad import (
+    Criterio,
+    Medida,
+    Operacion,
+    Simulacion,
+    habilita_medir,
+    medir,
+)
 from botsito.cases.holdout import HoldoutCerradoError, casos_ocultos
 from botsito.cases.ingesta import DIRECTORIO_DEV
 from botsito.cases.paquete import Config
@@ -59,9 +66,13 @@ SIN_ANOTACION = "sin anotacion"
 
 # ADR-0070 (enmienda del 2026-10-07): las UNICAS opciones de `motor arnes` con las que una corrida
 # puede habilitar medir el conjunto de medida, porque no cambian lo que el motor decide ni como se
-# llena. Lista CERRADA: cualquier otra opcion presente, conocida o futura, da «no». `--meses` vale
-# solo si cubre todo `construccion`, y eso lo comprueba `habilita_medir` aparte. Unico sitio.
-OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA = frozenset({"--salida", "--tracemalloc", "--meses"})
+# llena. Lista CERRADA: cualquier otra opcion presente, conocida o futura, da «no». Unico sitio.
+# Las que dicen un valor se comprueban aparte en `habilita_medir`: `--meses` solo si cubre todo
+# `construccion`; `--simular` es OBLIGATORIA (sin ella, «sin simulación»), y `--perfil` y `--fase`
+# solo valen si el perfil y la fase EFECTIVOS son `perfil_para_medir` y la primera de ese perfil.
+OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA = frozenset(
+    {"--salida", "--tracemalloc", "--meses", "--simular", "--perfil", "--fase"}
+)
 
 
 class ConjuntoError(ValueError):
@@ -242,13 +253,16 @@ def informe(
     vocabulario: Mapping[str, Mapping[str, Any]],
     *,
     opciones: Sequence[str],
+    simulacion: Simulacion | None,
 ) -> str:
     """El informe de una corrida. `opciones` es obligatorio y lo da el comando: las opciones que
     la corrida uso. Cualquiera fuera de `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` hace que el
     veredicto de ADR-0070 sea «no», llegue o no a los umbrales."""
     medida = medida_de(corrida, criterio)
     fuera = sorted(set(opciones) - OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA)
-    veredicto = habilita_medir(medida, criterio, corrida.meses, opciones_fuera=fuera)
+    veredicto = habilita_medir(
+        medida, criterio, corrida.meses, opciones_fuera=fuera, simulacion=simulacion
+    )
     hechos = hechos_de_regla(vocabulario)
     trazas: dict[tuple[str, str], TrazaSesion] = {
         (r.dia, s): t for r in corrida.resultados for s, t in r.sesiones.items()

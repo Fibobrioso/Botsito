@@ -356,6 +356,8 @@ la lista (§10).
 | `--diagnostico-a35`, `--diagnostico-a21`, `--diagnostico-a44` | corre con una lectura de A-35, A-21 o A-44 EN HIPÓTESIS; etiqueta la salida | no |
 | `--diagnostico-a47`, `--diagnostico-a27`, `--diagnostico-cuenta-diaria` | con `--simular`: el tipo de orden, el stops level o la cuenta diaria EN HIPÓTESIS | no |
 
+*(Nota posterior: el consultor resolvió esta PARADA el mismo día; la corrida que habilita lleva `--simular`, con la cuenta real y su primera fase. Lo hecho, en §11.)*
+
 **PARA en el punto de `--simular`, y solo en él.** La lista cerrada que se implementa es la de la
 respuesta (`--salida`, `--tracemalloc`, `--meses`): `--simular` queda FUERA y da «no». Con esa
 lista, **hoy ninguna corrida puede dar «sí»**: sin `--simular` no hay operaciones del bot (precisión
@@ -381,6 +383,8 @@ el motor de la spec produzca operaciones sin el bróker simulado.
 - **ADR-0070**: un recuadro de ENMIENDA al principio y el cuerpo editado (decisiones 3 y 5, la
   alternativa descartada 3 y el impacto). El ADR no está cerrado en `main`, así que se edita en la
   rama; la versión anterior queda en `3320177`.
+
+*(Nota posterior: la segunda enmienda, §11, añade `--simular`, `--perfil` y `--fase` a la lista; las filas de `--depuracion` y de la lista de esta tabla quedan como dice §11.)*
 
 **Tests nuevos o reescritos** (`tests/unit/test_umbral_mayo.py`; las opciones se obtienen PARSEANDO
 argumentos con el parser real, `build_parser()`, sin ejecutar el comando):
@@ -511,16 +515,125 @@ Lo que no hay que olvidar: la copia de la respuesta en encargo e informe es lite
 11. `grep` de `con_diagnostico|diag.activo|…` sobre `docs/validation/UMBRAL-MAYO.md`; `uv run botsito knowledge validate`
 12. Sonda con `uv run python -c` (solo `build_parser().parse_args` y `opciones_de_la_corrida`, sin ejecutar el comando); un primer intento con `Write` falló porque la herramienta está deshabilitada, y no escribió nada.
 
+## Respuesta del consultor a la PARADA de `--simular` (2026-10-07), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de --simular en trabajo/umbral-mayo (2026-10-07). Cópiala tal cual al encargo y al informe.
+>
+> 1. La corrida que habilita medir el conjunto de medida LLEVA --simular, obligatoriamente. Por qué: sin ella el motor no produce operaciones (engine/motor.py:233), y ADR-0043 compara instantes de LLENADO, que solo da el bróker simulado (cableado.py:250); además es como operará el bot. Una corrida sin --simular da «no» con el motivo «sin simulación».
+> 2. --perfil y --fase: solo se admiten con el perfil de la cuenta real (FTMO 2-Step Swing 100k, ADR-0026) y su PRIMERA fase. Antes de escribir, lee en el código los valores por defecto de las dos y el nombre de ese perfil y esa fase en knowledge/cuentas/, y déjalo en el informe. La regla se escribe como condición: el perfil y la fase EFECTIVOS de la corrida (dados o por defecto) tienen que ser esos dos; cualquier otro valor da «no» con su motivo. Si el perfil por defecto no es el de FTMO 2-Step Swing 100k, o no hay una fase que sea claramente la primera, PARA y dímelo.
+> 3. La lista cerrada queda: --salida, --tracemalloc, --meses (cubriendo todo construcción), --simular (obligatoria), --perfil y --fase (solo con los valores del punto 2). Todo lo demás, incluido --repo, --depuracion y cualquier opción futura, da «no». Lo de los ticks queda cubierto: un día sin ticks exige --depuracion, que da «no».
+> 4. Tests que lo rompan a propósito: sin --simular da «no»; --simular con otro perfil o con otra fase da «no»; --simular con perfil y fase por defecto y con las cifras da «sí»; los anteriores siguen. ADR-0070: su recuadro de enmienda recoge 1 a 3, con fecha.
+>
+> Sigue sin ejecutarse el arnés. knowledge validate, make check y state check en verde, y el revisor sobre lo cambiado, comprobando aparte que sin --simular nunca sale «sí».
+>
+> Rama lista para revisión, NO cerrada.
+
+## 11. La corrida que habilita, simulada con la cuenta real y su primera fase (respuesta a la PARADA)
+
+### 11.1 Los valores por defecto de `--perfil` y `--fase`, leídos del código (punto 2)
+
+Leídos sin ejecutar nada, antes de escribir la regla:
+
+| Qué | Dónde | Valor |
+|---|---|---|
+| `--perfil` por defecto | `cli.py:2346-2349`, `default=None` («por defecto, el unico») | `None` |
+| Qué hace `None` | `engine/cableado.py:421-435`, `perfil_del_repo`: si `knowledge/cuentas/` tiene un solo `*.yaml`, ese; con varios, error que pide `--perfil` | el único perfil |
+| Perfiles en `knowledge/cuentas/` | `ls knowledge/cuentas/`: `README.md`, `cierres/`, `ftmo-2step-swing-100k.yaml` | uno: `ftmo-2step-swing-100k` |
+| Su nombre en el código | `engine/perfil_cuenta.py:69-70`, `PerfilCuenta.nombre = ruta.stem`; `cableado.py:486`, `perfil=perfil.nombre` | `ftmo-2step-swing-100k` |
+| Que es FTMO 2-Step Swing 100k | ADR-0026 («La prop firm es FTMO, reto 2-Step, tipo de cuenta Swing», tamaño 100.000 USD); el yaml, `firma_programa: "2-step"` (R1) | sí |
+| `--fase` por defecto | `cli.py:2351-2354`, `default=None` («por defecto, la primera que declara») | `None` |
+| Qué hace `None` | `cableado.py:470`, `fase_real = fase if fase is not None else perfil.fases()[0]` | la primera del perfil |
+| Las fases del perfil | `perfil_cuenta.py:81-82`, `fases()` = `firma_fases` partido por espacios; el yaml, `firma_fases: "reto verificacion fondeada"`, «las fases del programa, en el orden en que se pasan. R1: reto («FTMO Challenge»), verificacion («Verification») y fondeada» | primera: `reto` |
+
+**El perfil por defecto ES el de FTMO 2-Step Swing 100k, y hay una fase que es claramente la
+primera** (`reto`: el programa declara sus fases en el orden en que se pasan, y R1 lo dice). No se
+dan las condiciones de PARA del punto 2.
+
+### 11.2 Lo que se hizo
+
+- **La regla, como condición sobre los valores EFECTIVOS.** `cases/criterio_fidelidad.py` gana
+  `Simulacion(perfil, fase, primera_fase)`, y `habilita_medir` recibe `simulacion` (obligatorio, sin
+  valor por defecto): `None` da «sin simulación»; un perfil distinto de `perfil_para_medir` da
+  «perfil <nombre>: solo cuenta <perfil_para_medir>»; una fase distinta de la primera del perfil da
+  «fase <nombre>: solo cuenta la primera del perfil, <primera>». Los motivos se suman a los de
+  siempre.
+- **El perfil que cuenta vive en el criterio, no en el código** (ADR-0002; ADR-0050: ningún nombre
+  de firma en el código): campo nuevo `perfil_para_medir: ftmo-2step-swing-100k` en
+  `knowledge/cases/criterio_fidelidad.yaml`, cargado y validado (texto no vacío). La primera fase no
+  es un campo: sale del propio perfil, así que no puede desalinearse de él.
+- **El comando pasa lo efectivo.** `cli.py`, rama `--simular`: `simulacion =
+  Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])`, con el perfil y la fase que el
+  motor cableado usó de verdad (`cableado.py:486-487`, ya resueltos los `None`); sin `--simular`,
+  `simulacion = None`. Una `--fase` que el perfil no tenga no llega al veredicto: el cableado la
+  rechaza antes (`reglas_de_fase`).
+- **La lista cerrada** (`engine/arnes.py`, `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`) queda `--salida`,
+  `--tracemalloc`, `--meses`, `--simular`, `--perfil` y `--fase`, con el comentario que dice cuáles
+  se comprueban aparte. `--repo`, `--depuracion`, los `--diagnostico-*` y cualquier opción futura
+  siguen dando «no». `--perfil` y `--fase` sin `--simular` están en la lista, pero la corrida da «sin
+  simulación».
+- **ADR-0070**: un segundo recuadro de ENMIENDA, fechado, con los puntos 1 a 3, y el cuerpo editado
+  (decisiones 3 y 5, una razón más en «Por que elegimos», el impacto; se quita «queda para el
+  consultor»). El ADR sigue sin estar en `main`; la versión anterior queda en `5e46075`. Al
+  reescribir el impacto, la frase «el motor necesita además los diagnósticos de A-21, A-35 y A-44»
+  pasa a atribuirse al encargo: no se midió en la rama (medirlo exigía correr el arnés).
+
+### 11.3 Tests (`tests/unit/test_umbral_mayo.py`), sintéticos y sin ejecutar el comando
+
+La corrida «buena» de los tests anteriores lleva ahora `--simular` y una `Simulacion` válida (el
+perfil del criterio de prueba y `fase == primera_fase`); los anteriores siguen y siguen pasando.
+
+| Test | Qué rompe | Línea o comprobación |
+|---|---|---|
+| `test_sin_simular_da_no` | la corrida que llega a las cifras, sin `--simular` | `…: no (sin simulación)` |
+| `test_sin_simulacion_nunca_sale_si` | sin simulación, tres medidas (una perfecta, 10/10 y 10/10) por dos juegos de opciones de la lista | nunca «sí»; siempre con «sin simulación» |
+| `test_simular_con_otro_perfil_da_no` | `--simular --perfil otra-cuenta` | `…: no (perfil otra-cuenta: solo cuenta perfil-de-prueba)` |
+| `test_simular_con_otra_fase_da_no` | `--simular --fase verificacion` | `…: no (fase verificacion: solo cuenta la primera del perfil, reto)` |
+| `test_simular_con_perfil_y_fase_por_defecto_y_las_cifras_da_si` | `--simular` solo, con las cifras | `…: sí` |
+| `test_perfil_y_fase_dados_con_los_valores_que_cuentan_da_si` | `--simular --perfil <el que cuenta> --fase reto` | `…: sí` |
+| `test_el_perfil_que_cuenta_es_el_unico_perfil_del_repositorio_y_su_primera_fase_es_reto` | — | sobre el repositorio real: `perfil_para_medir` es el único yaml de `knowledge/cuentas/` y su primera fase es `reto` (lo de §11.1, fijado) |
+| `test_depuracion_da_no` (reescrito) | `--simular --depuracion` | `…: no (opción fuera de la lista: --depuracion)`: `--simular` ya no es motivo |
+| `test_la_lista_es_exactamente_la_de_la_enmienda` (reescrito) | — | las seis opciones |
+| `test_el_informe_exige_decir_que_opciones_uso_la_corrida_y_si_simulo` (renombrado) | llamar a `informe` sin `opciones` o sin `simulacion` | `TypeError` |
+| `test_el_comando_pasa_al_informe_las_opciones_y_la_simulacion` (renombrado) | — | lee `cli.py` con `ast`: la única llamada a `arnes.informe` pasa `opciones=opciones, simulacion=simulacion`, y `simulacion` se asigna `Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])` o `None` |
+
+`test_llega_a_las_dos_sin_diagnostico_y_sobre_todo_el_conjunto_habilita` pasa a llamarse
+`test_llega_a_las_dos_simulada_y_sobre_todo_el_conjunto_habilita`. `Tests Currently Passing`:
+1376 → 1383 (siete funciones nuevas).
+
+**Que los tests fallan si se quita cada condición**, medido en memoria
+(`anexos/UMBRAL-MAYO/sin_d2.py`, ampliado; salida en `sin_d2-SALIDA.txt`): dos mutaciones del
+veredicto que usa el arnés, «sin la lista» (ignora las opciones fuera) y «sin la simulación»
+(recibe siempre una simulación válida). Con cada una fallan sus cuatro tests (los de la lista: el
+diagnóstico, `--depuracion`, la opción inventada y `--repo`; los de la simulación: sin `--simular`,
+nunca «sí» sin simulación, otro perfil y otra fase), y restaurado pasan:
+`VEREDICTO: los ocho tests fallan si se quita su condicion`.
+
+### 11.4 Comandos de esta parte
+
+| Comando | Salida |
+|---|---|
+| `uv run ruff check src tests`, `uv run ruff format --check src tests` | limpio |
+| `uv run mypy` | `Success: no issues found in 242 source files` |
+| `uv run pytest tests/unit/test_umbral_mayo.py -q` | 30 pasan |
+| `uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py` | `VEREDICTO: los ocho tests fallan si se quita su condicion` |
+| `uv run botsito state check` | `OK` |
+
+No se ejecutó `botsito motor arnes` en esta parte, de ninguna forma.
+
 ## Estado
 
-**LISTA PARA REVISIÓN, NO cerrada (2026-10-07), con una PARADA abierta para el consultor (§8): si la
-corrida que habilita tiene que llevar `--simular`.** Ni merge, ni tag, ni push.
+**LISTA PARA REVISIÓN, NO cerrada (2026-10-07).** Ni merge, ni tag, ni push. La PARADA de
+`--simular` (§8) está resuelta por el consultor (§11).
 
-- ADR-0070, con su enmienda: mayo solo se mide cuando una corrida del arnés sobre todo
-  `construccion`, solo con `--salida`, `--tracemalloc` y `--meses`, llega a 0,70 de cobertura y
-  0,60 de precisión en esa misma corrida. Cualquier otra opción, conocida o futura, del subcomando
-  o del parser raíz (como `--repo`), da «no».
-- Con la lista de hoy ninguna corrida puede dar «sí» (§8): sin `--simular` no hay operaciones del
-  bot, y `--simular` está fuera de la lista.
+- ADR-0070, con sus dos enmiendas: mayo solo se mide cuando una corrida del arnés sobre todo
+  `construccion`, SIMULADA con el perfil de la cuenta real (`ftmo-2step-swing-100k`) y su primera
+  fase (`reto`), y solo con `--salida`, `--tracemalloc`, `--meses`, `--simular`, `--perfil` y
+  `--fase`, llega a 0,70 de cobertura y 0,60 de precisión en esa misma corrida. Sin `--simular`,
+  «no» («sin simulación»); otro perfil u otra fase, «no»; cualquier otra opción, conocida o futura,
+  del subcomando o del parser raíz (como `--repo`), «no».
+- Si el motor necesita hoy los diagnósticos de A-21, A-35 y A-44 para correr (lo dice el encargo;
+  no se midió), hoy ninguna corrida puede dar «sí».
 - **No se ejecutó el arnés** en esta rama (una invocación de `--help` en la fase 0, declarada; la
-  tabla de opciones se leyó del código).
+  tabla de opciones y los valores por defecto se leyeron del código).

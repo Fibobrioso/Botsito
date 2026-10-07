@@ -19,6 +19,26 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
 > <nombre>». Las decisiones 3 y 5 de abajo ya están escritas así; la versión anterior, en la
 > historia de git de la rama (commit `3320177`).
 
+> **ENMIENDA (2026-10-07, rama `trabajo/umbral-mayo`, antes del cierre: el cuerpo se edita).**
+> Respuesta del consultor del 2026-10-07 a la PARADA de `--simular` (`UMBRAL-MAYO.md` §8 y §11):
+> 1. **La corrida que habilita LLEVA `--simular`, obligatoriamente.** Sin ella el motor de la spec
+>    no produce operaciones (`engine/motor.py:233`), y ADR-0043 compara instantes de LLENADO, que
+>    solo da el bróker simulado (`engine/cableado.py:250`); además es como operará el bot. Una
+>    corrida sin `--simular` da «no» con el motivo «sin simulación».
+> 2. **`--perfil` y `--fase` solo se admiten con el perfil de la cuenta real (FTMO 2-Step Swing
+>    100k, ADR-0026) y su PRIMERA fase**, como condición sobre los valores EFECTIVOS de la corrida
+>    (dados o por defecto): el perfil tiene que ser `perfil_para_medir` de
+>    `criterio_fidelidad.yaml` (`ftmo-2step-swing-100k`, el único de `knowledge/cuentas/` y el que
+>    `--perfil` da por defecto) y la fase la primera que declara ese perfil (`reto`, la primera de
+>    `firma_fases`, y la que `--fase` da por defecto). Cualquier otro valor da «no» con su motivo.
+> 3. **La lista cerrada queda** `--salida`, `--tracemalloc`, `--meses` (cubriendo todo
+>    `construccion`), `--simular` (obligatoria), `--perfil` y `--fase` (solo con los valores del
+>    punto 2). Todo lo demás, incluido `--repo`, `--depuracion` y cualquier opción futura, da «no».
+>    Un día sin ticks exige `--depuracion`, que da «no».
+>
+> Las decisiones 3 y 5 y el impacto de abajo ya están escritos así; la versión anterior, en la
+> historia de git de la rama (commit `5e46075`).
+
 ## Decision
 
 1. **El umbral.** El conjunto de medida de ADR-0043 (hoy mayo, `medida: ["2026-05"]` en
@@ -31,26 +51,35 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
 2. **Sobre el conjunto entero.** La corrida tiene que cubrir todos los meses de `construccion`. Una
    corrida sobre una parte (el comando admite `--meses`) no habilita: el umbral es de la
    construcción vigente, no de un mes elegido.
-3. **Solo con las opciones de una lista cerrada** (enmienda del 2026-10-07). La corrida solo cuenta
-   si usó únicamente `--salida`, `--tracemalloc` y `--meses`, las que no cambian lo que el motor
-   decide ni cómo se llena. Cualquier otra opción -un `--diagnostico-*` (A-35, A-44, A-21, A-47,
-   A-27 o la cuenta diaria), `--simular`, `--depuracion`, `--perfil`, `--fase` o una que se añada
-   mañana- da «no». La lista vive en un solo sitio, `engine/arnes.py`
-   (`OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`), y las opciones de la corrida se leen del propio parser
-   del comando (`cli.opciones_de_la_corrida`), no de otra lista. Mayo mide la spec, no una
-   hipótesis del consultor: mientras el motor necesite un diagnóstico para correr -hoy A-21, A-35
-   y A-44-, mayo no se mide. **Si la corrida que habilita tiene que llevar `--simular`**, sin la
-   que el motor de la spec no produce operaciones (`UMBRAL-MAYO.md` §8), **lo decide el
-   consultor**: hasta entonces la lista no la incluye.
+3. **Solo con las opciones de una lista cerrada, y simulada con la cuenta real** (enmiendas del
+   2026-10-07). La corrida solo cuenta si usó únicamente `--salida`, `--tracemalloc`, `--meses`,
+   `--simular`, `--perfil` y `--fase`, las que no cambian lo que el motor decide ni cómo se llena
+   más allá de cómo operará el bot. Cualquier otra opción -un `--diagnostico-*` (A-35, A-44, A-21,
+   A-47, A-27 o la cuenta diaria), `--depuracion`, `--repo` o una que se añada mañana- da «no». La
+   lista vive en un solo sitio, `engine/arnes.py` (`OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`), y las
+   opciones de la corrida se leen de los propios parsers del comando, el raíz y el del subcomando
+   (`cli.opciones_de_la_corrida`), no de otra lista. Mayo mide la spec, no una hipótesis del
+   consultor: mientras el motor necesite un diagnóstico para correr -hoy A-21, A-35 y A-44-, mayo
+   no se mide. Además:
+   - **`--simular` es obligatoria.** Sin ella el motor de la spec no produce operaciones, y
+     ADR-0043 compara instantes de llenado, que solo da el bróker simulado. Una corrida sin
+     simulación da «no» con el motivo «sin simulación».
+   - **El perfil y la fase EFECTIVOS** (dados o por defecto) tienen que ser el perfil de la cuenta
+     real, `perfil_para_medir`, y la primera fase que ese perfil declara. Otro perfil da «no»
+     («perfil <nombre>: solo cuenta <perfil_para_medir>»), y otra fase también («fase <nombre>:
+     solo cuenta la primera del perfil, <primera>»).
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
-5. **Dónde viven las cifras y quién lo dice.** Dos campos nuevos en `criterio_fidelidad.yaml`,
-   `umbral_construccion_para_medir_cobertura: "0.70"` y
-   `umbral_construccion_para_medir_precision: "0.60"` (ADR-0002: ninguna cifra en `src/`), cargados
-   y validados (entre 0 y 1) por `cases/criterio_fidelidad.cargar_criterio`. El arnés imprime al
-   final de su sección «## Criterio de fidelidad (ADR-0043)» una línea de veredicto, «habilita
-   medir el conjunto de medida (…): sí» o «… : no», con el motivo de cada condición que falte,
-   incluida cada «opción fuera de la lista: <nombre>».
+5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,
+   `umbral_construccion_para_medir_cobertura: "0.70"`,
+   `umbral_construccion_para_medir_precision: "0.60"` (ADR-0002: ninguna cifra en `src/`) y
+   `perfil_para_medir: ftmo-2step-swing-100k` (ningún nombre de firma en el código, ADR-0050),
+   cargados y validados (los umbrales entre 0 y 1; el perfil, un texto no vacío) por
+   `cases/criterio_fidelidad.cargar_criterio`. La primera fase no es un campo: sale del propio
+   perfil (`firma_fases`). El arnés imprime al final de su sección «## Criterio de fidelidad
+   (ADR-0043)» una línea de veredicto, «habilita medir el conjunto de medida (…): sí» o «… : no»,
+   con el motivo de cada condición que falte, incluida cada «opción fuera de la lista: <nombre>»,
+   «sin simulación» y el perfil o la fase que no son los que cuentan.
 6. **Esto no mide mayo.** No se construye ningún comando de medida: el arnés sigue negándose a
    cualquier mes de `medida` (ADR-0048 §7), y la medida tendrá su propia rama y su propio ADR. Un
    «sí» habilita esa rama; no la sustituye.
@@ -87,6 +116,8 @@ umbral.
   tiene que interpretar un informe para saber si mayo se puede medir.
 - Un bot 100 % automático corre con la spec, no con una lectura que el consultor elige al
   lanzarlo: una corrida en hipótesis no dice nada de lo que la spec hará en mayo.
+- La corrida que habilita es como operará el bot: simulada, con la cuenta real y la fase en la que
+  empieza. Y solo la simulación da los instantes de llenado que ADR-0043 compara.
 
 ## Por que descartamos las demas
 
@@ -104,20 +135,20 @@ umbral.
 
 ## Impacto
 
-- `knowledge/cases/criterio_fidelidad.yaml`: dos campos nuevos; ningún campo existente cambia (ni
-  las tolerancias, ni los umbrales de medida, ni los conjuntos).
-- `src/botsito/cases/criterio_fidelidad.py`: `Criterio` gana los dos umbrales y una función pura que
-  da el veredicto.
+- `knowledge/cases/criterio_fidelidad.yaml`: tres campos nuevos; ningún campo existente cambia
+  (ni las tolerancias, ni los umbrales de medida, ni los conjuntos).
+- `src/botsito/cases/criterio_fidelidad.py`: `Criterio` gana los dos umbrales y el perfil;
+  `Simulacion` (perfil y fase efectivos, y la primera fase del perfil) y una función pura que da
+  el veredicto.
 - `src/botsito/engine/arnes.py`: la lista cerrada y la línea de veredicto; `informe` recibe las
-  opciones que usó la corrida. `src/botsito/cli.py`: `opciones_de_la_corrida` las lee del propio
-  parser del comando.
+  opciones que usó la corrida y su simulación (o `None`). `src/botsito/cli.py`:
+  `opciones_de_la_corrida` las lee de los propios parsers del comando, y la simulación se construye
+  con el perfil y la fase del motor cableado.
 - Tests sintéticos de las situaciones que piden el encargo y la enmienda; las opciones se obtienen
   parseando argumentos, y ninguno corre el arnés.
-- Hoy el veredicto es «no» en toda corrida posible: sin `--simular` el motor de la spec no
-  produce operaciones (precisión sin definir), y con `--simular` la opción está fuera de la lista;
-  y el motor necesita además los diagnósticos de A-21, A-35 y A-44.
-- Queda para el consultor: si la corrida que habilita tiene que llevar `--simular` (decisión 3);
-  `--depuracion` ya da «no» (enmienda).
+- Si, como dice el encargo, el motor necesita hoy los diagnósticos de A-21, A-35 y A-44 para
+  correr, hoy ninguna corrida puede dar «sí»: cualquier `--diagnostico-*` está fuera de la lista.
+  No se midió en la rama (medirlo exigía correr el arnés, prohibido en ella).
 
 ## Fecha / fase
 

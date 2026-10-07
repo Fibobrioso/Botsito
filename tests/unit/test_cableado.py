@@ -218,6 +218,7 @@ def _criterio() -> Criterio:
         ("2030-02",),
         Fraction(7, 10),
         Fraction(6, 10),
+        "perfil-de-prueba",
     )
 
 
@@ -499,7 +500,7 @@ def test_determinismo_byte_a_byte_del_informe(
         dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
         corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
         return arnes.informe(
-            corrida, _criterio(), vocabulario, opciones=()
+            corrida, _criterio(), vocabulario, opciones=(), simulacion=None
         ) + cableado.informe_simulacion(motor)
 
     assert informe().encode("utf-8") == informe().encode("utf-8")
@@ -551,7 +552,7 @@ def test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo(
     dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
     corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
     informe = arnes.informe(
-        corrida, _criterio(), vocabulario, opciones=()
+        corrida, _criterio(), vocabulario, opciones=(), simulacion=None
     ) + cableado.informe_simulacion(motor)
     broker = motor.brokers[DIA.isoformat()]
     orden = next(iter(broker.ordenes.values()))
@@ -612,7 +613,7 @@ def test_con_el_selector_en_limite_sale_lo_mismo_que_sin_selector(
         dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
         corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
         return arnes.informe(
-            corrida, _criterio(), vocabulario, opciones=()
+            corrida, _criterio(), vocabulario, opciones=(), simulacion=None
         ) + cableado.informe_simulacion(motor)
 
     assert informe(LIMITE_EN_RETROCESO).encode("utf-8") == informe(None).encode("utf-8")

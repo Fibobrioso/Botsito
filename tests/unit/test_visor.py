@@ -80,6 +80,7 @@ def _criterio() -> Criterio:
         ("2030-02",),
         Fraction(7, 10),
         Fraction(6, 10),
+        "perfil-de-prueba",
     )
 
 

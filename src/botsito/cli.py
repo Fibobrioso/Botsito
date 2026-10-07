@@ -2365,7 +2365,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     import time
     import tracemalloc
 
-    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.criterio_fidelidad import CriterioError, Simulacion, cargar_criterio
     from botsito.cases.holdout import HoldoutCerradoError
     from botsito.cases.paquete import cargar_config
     from botsito.comun.memoria import pico_del_proceso
@@ -2437,15 +2437,20 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             )
             motor.cuenta_diaria = diag.cuenta_diaria
             nombre = cableado.NOMBRE_MOTOR
+            # ADR-0070: el perfil y la fase EFECTIVOS, y la primera fase de ese perfil
+            simulacion = Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])
         else:
             motor = MotorSpec(
                 Interprete(vocabulario, primitivas_escritas(registro, tope, limpia)), reglas
             )
             nombre = "spec vigente"
+            simulacion = None
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
         # ADR-0070: el veredicto dice «no» a toda corrida con una opcion fuera de su lista
         opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
-        texto = arnes.informe(corrida, criterio, vocabulario, opciones=opciones)
+        texto = arnes.informe(
+            corrida, criterio, vocabulario, opciones=opciones, simulacion=simulacion
+        )
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:

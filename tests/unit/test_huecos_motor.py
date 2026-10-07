@@ -589,6 +589,7 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
         ("2030-02",),
         Fraction(7, 10),
         Fraction(6, 10),
+        "perfil-de-prueba",
     )
     voc = cargar_vocabulario(SPEC)
     dias = (arnes.DiaTrader("c1", DIA.isoformat(), ()),)
@@ -598,6 +599,7 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
         criterio,
         voc,
         opciones=(),
+        simulacion=None,
     )
     assert "## Avisos de orden dentro de una clase (ADR-0049, H3)" in texto
     assert "- 2030-01-15 07-11: disparador RN-006, RN-014" in texto
@@ -606,6 +608,7 @@ def test_el_informe_lista_los_avisos_de_orden_y_el_motor_real_no_deja_ninguno(
         criterio,
         voc,
         opciones=(),
+        simulacion=None,
     )
     assert "- ninguno: en ninguna sesion dieron SI dos reglas de la misma clase a la vez" in texto
     assert "- RN-003: 2 de 2; 0 de 0" in texto  # reglas disparadas sobre las sesiones corridas

@@ -17,6 +17,7 @@ from botsito.cases.criterio_fidelidad import (
     Criterio,
     CriterioError,
     Operacion,
+    Simulacion,
     Tolerancias,
     cargar_criterio,
     habilita_medir,
@@ -74,6 +75,7 @@ def test_fuera_de_0_a_1_o_no_numerico_no_carga(tmp_path: Path, campo: str, valor
 # una corrida se obtienen PARSEANDO los argumentos con el parser real: el comando no se ejecuta.
 
 CONSTRUCCION = ("2030-01", "2030-03")
+PERFIL = "perfil-de-prueba"
 CRITERIO = Criterio(
     Tolerancias(3, 15, 100_000),
     Fraction(7, 10),
@@ -82,7 +84,12 @@ CRITERIO = Criterio(
     ("2030-02",),
     Fraction(7, 10),
     Fraction(6, 10),
+    PERFIL,
 )
+# La simulacion que cuenta: el perfil del criterio y su primera fase (enmienda del 2026-10-07).
+SIMULADA = Simulacion(PERFIL, "reto", "reto")
+# Las opciones de la corrida que habilita: --simular, con perfil y fase por defecto.
+SIMULAR = ("--salida", "--simular")
 VOCABULARIO: dict[str, dict[str, object]] = {"hechos": {}}
 T0 = datetime(2030, 1, 7, 7, 30, tzinfo=UTC)
 
@@ -119,8 +126,12 @@ def _parsear(*argv: str, parser: argparse.ArgumentParser | None = None) -> tuple
     return opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
 
 
-def _linea(corrida: arnes.Corrida, opciones: tuple[str, ...] = ("--salida",)) -> str:
-    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, opciones=opciones)
+def _linea(
+    corrida: arnes.Corrida,
+    opciones: tuple[str, ...] = SIMULAR,
+    simulacion: Simulacion | None = SIMULADA,
+) -> str:
+    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, opciones=opciones, simulacion=simulacion)
     lineas = [ln for ln in texto.splitlines() if ln.startswith("habilita medir")]
     assert len(lineas) == 1, lineas
     # al final de la seccion del criterio: la linea siguiente es la vacia que la cierra
@@ -129,7 +140,7 @@ def _linea(corrida: arnes.Corrida, opciones: tuple[str, ...] = ("--salida",)) ->
     return lineas[0]
 
 
-def test_llega_a_las_dos_sin_diagnostico_y_sobre_todo_el_conjunto_habilita() -> None:
+def test_llega_a_las_dos_simulada_y_sobre_todo_el_conjunto_habilita() -> None:
     # 7/10 de cobertura y 7/11 de precision: justo en los umbrales o por encima
     linea = _linea(_corrida(10, 7, 4))
     assert linea == "habilita medir el conjunto de medida (2030-02) (ADR-0070): sí"
@@ -159,19 +170,17 @@ def test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no() -> None:
     diagnostico sale «no», y el unico motivo es esa opcion. Si se quitara la condicion, este test
     fallaria (anexo sin_d2.py)."""
     corrida = _corrida(10, 7, 4)
-    assert _linea(corrida, _parsear()).endswith(": sí")
-    linea = _linea(corrida, _parsear("--diagnostico-a35", "cierre_vela_contraria"))
+    assert _linea(corrida, _parsear("--simular")).endswith(": sí")
+    linea = _linea(corrida, _parsear("--simular", "--diagnostico-a35", "cierre_vela_contraria"))
     assert linea.endswith(": no (opción fuera de la lista: --diagnostico-a35)")
 
 
 def test_depuracion_da_no() -> None:
-    """--depuracion (y el --simular que exige) estan fuera de la lista: «no», con los dos."""
+    """--depuracion esta fuera de la lista: «no» aunque la corrida este simulada como debe."""
     opciones = _parsear("--simular", "--depuracion")
     assert opciones == ("--depuracion", "--salida", "--simular")
     linea = _linea(_corrida(10, 7, 4), opciones)
-    assert linea.endswith(
-        ": no (opción fuera de la lista: --depuracion; opción fuera de la lista: --simular)"
-    )
+    assert linea.endswith(": no (opción fuera de la lista: --depuracion)")
 
 
 def test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista() -> None:
@@ -181,7 +190,7 @@ def test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista() -> None:
     parser = build_parser()
     probe = parser.parse_args(["motor", "arnes", "--salida", "x.txt"])
     probe.parser_de_la_corrida.add_argument("--opcion-inventada", action="store_true")
-    opciones = _parsear("--opcion-inventada", parser=parser)
+    opciones = _parsear("--simular", "--opcion-inventada", parser=parser)
     assert "--opcion-inventada" in opciones
     linea = _linea(_corrida(10, 7, 4), opciones)
     assert linea.endswith(": no (opción fuera de la lista: --opcion-inventada)")
@@ -191,22 +200,80 @@ def test_una_opcion_nueva_del_parser_da_no_sin_tocar_la_lista() -> None:
 def test_una_opcion_del_parser_raiz_tambien_cuenta() -> None:
     """`--repo` es del parser raiz y cambia el repositorio entero: tambien esta fuera de la lista
     (revisor de esta rama, segunda pasada, a1)."""
-    args = build_parser().parse_args(["--repo", "X:/otro", "motor", "arnes", "--salida", "x.txt"])
+    args = build_parser().parse_args(
+        ["--repo", "X:/otro", "motor", "arnes", "--salida", "x.txt", "--simular"]
+    )
     opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
-    assert opciones == ("--repo", "--salida")
+    assert opciones == ("--repo", "--salida", "--simular")
     linea = _linea(_corrida(10, 7, 4), opciones)
     assert linea.endswith(": no (opción fuera de la lista: --repo)")
 
 
+# ---------------------------- --simular obligatoria, perfil y fase (enmienda del 2026-10-07)
+
+
+def test_sin_simular_da_no() -> None:
+    """Sin --simular el motor de la spec no produce operaciones y la corrida no habilita, aunque
+    los numeros llegaran."""
+    linea = _linea(_corrida(10, 7, 4), _parsear(), simulacion=None)
+    assert linea.endswith(": no (sin simulación)")
+
+
+def test_sin_simulacion_nunca_sale_si() -> None:
+    """Comprobacion aparte del encargo: sin simulacion, ninguna combinacion de cifras ni de
+    opciones de la lista da «sí»."""
+    for corrida in (_corrida(10, 10, 0), _corrida(10, 7, 4), _corrida(1, 1, 0)):
+        for opciones in (("--salida",), _parsear("--tracemalloc", "--meses", "2030-01,2030-03")):
+            linea = _linea(corrida, opciones, simulacion=None)
+            assert linea.split(": ", 1)[1].startswith("no ("), linea
+            assert "sin simulación" in linea
+
+
+def test_simular_con_otro_perfil_da_no() -> None:
+    otro = Simulacion("otra-cuenta", "reto", "reto")
+    linea = _linea(_corrida(10, 7, 4), _parsear("--simular", "--perfil", "otra-cuenta"), otro)
+    assert linea.endswith(f": no (perfil otra-cuenta: solo cuenta {PERFIL})")
+
+
+def test_simular_con_otra_fase_da_no() -> None:
+    otra = Simulacion(PERFIL, "verificacion", "reto")
+    linea = _linea(_corrida(10, 7, 4), _parsear("--simular", "--fase", "verificacion"), otra)
+    assert linea.endswith(": no (fase verificacion: solo cuenta la primera del perfil, reto)")
+
+
+def test_simular_con_perfil_y_fase_por_defecto_y_las_cifras_da_si() -> None:
+    linea = _linea(_corrida(10, 7, 4), _parsear("--simular"), SIMULADA)
+    assert linea.endswith(": sí")
+
+
+def test_perfil_y_fase_dados_con_los_valores_que_cuentan_da_si() -> None:
+    opciones = _parsear("--simular", "--perfil", PERFIL, "--fase", "reto")
+    assert opciones == ("--fase", "--perfil", "--salida", "--simular")
+    assert _linea(_corrida(10, 7, 4), opciones, SIMULADA).endswith(": sí")
+
+
 def test_solo_las_de_la_lista_y_que_llega_da_si() -> None:
-    opciones = _parsear("--tracemalloc", "--meses", "2030-01,2030-03")
-    assert opciones == ("--meses", "--salida", "--tracemalloc")
+    opciones = _parsear("--simular", "--tracemalloc", "--meses", "2030-01,2030-03")
+    assert opciones == ("--meses", "--salida", "--simular", "--tracemalloc")
     assert _linea(_corrida(10, 7, 4), opciones).endswith(": sí")
 
 
 def test_la_lista_es_exactamente_la_de_la_enmienda() -> None:
     lista = arnes.OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA
-    assert lista == {"--salida", "--tracemalloc", "--meses"}
+    assert lista == {"--salida", "--tracemalloc", "--meses", "--simular", "--perfil", "--fase"}
+
+
+def test_el_perfil_que_cuenta_es_el_unico_perfil_del_repositorio_y_su_primera_fase_es_reto() -> (
+    None
+):
+    """Lo que el informe deja medido (§11): `perfil_para_medir` es un perfil que existe, el unico de
+    `knowledge/cuentas/` (el que `--perfil` da por defecto), y su primera fase es `reto`."""
+    from botsito.engine.perfil_cuenta import cargar_perfil
+
+    real = cargar_criterio(REPO)
+    perfiles = sorted((REPO / "knowledge" / "cuentas").glob("*.yaml"))
+    assert [p.stem for p in perfiles] == [real.perfil_para_medir]
+    assert cargar_perfil(perfiles[0]).fases()[0] == "reto"
 
 
 def test_una_corrida_sobre_parte_de_construccion_no_habilita() -> None:
@@ -221,23 +288,27 @@ def test_los_motivos_se_suman() -> None:
         medir([], [], CRITERIO.tolerancias),
         CRITERIO,
         ("2030-01",),
-        opciones_fuera=("--simular",),
+        opciones_fuera=("--depuracion",),
+        simulacion=None,
     )
     assert not v.habilita
-    assert len(v.motivos) == 4  # la opcion, conjunto incompleto, cobertura y precision
+    # la opcion, sin simulacion, conjunto incompleto, cobertura y precision
+    assert len(v.motivos) == 5
 
 
-def test_el_informe_exige_decir_que_opciones_uso_la_corrida() -> None:
-    """Sin el argumento, `informe` no se puede llamar: ningun llamador puede olvidarlo y dejar el
-    veredicto sin mirar las opciones."""
-    with pytest.raises(TypeError, match="opciones"):
+def test_el_informe_exige_decir_que_opciones_uso_la_corrida_y_si_simulo() -> None:
+    """Sin los argumentos, `informe` no se puede llamar: ningun llamador puede olvidarlos."""
+    with pytest.raises(TypeError, match="opciones|simulacion"):
         arnes.informe(_corrida(1, 1, 0), CRITERIO, VOCABULARIO)  # type: ignore[call-arg]
+    with pytest.raises(TypeError, match="simulacion"):
+        arnes.informe(_corrida(1, 1, 0), CRITERIO, VOCABULARIO, opciones=())  # type: ignore[call-arg]
 
 
-def test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser() -> None:
+def test_el_comando_pasa_al_informe_las_opciones_y_la_simulacion() -> None:
     """El comando `motor arnes` le pasa a `informe` las opciones que calcula
-    `opciones_de_la_corrida` sobre su propio parser, no una constante (revisor de esta rama, a2).
-    Se lee el codigo, sin ejecutar el comando: en esta rama el arnes no se corre."""
+    `opciones_de_la_corrida` sobre sus parsers y la simulacion EFECTIVA que construye el motor
+    cableado, no constantes (revisor de esta rama, a2). Se lee el codigo, sin ejecutar el
+    comando."""
     import ast
 
     fuente = (REPO / "src" / "botsito" / "cli.py").read_text(encoding="utf-8")
@@ -252,15 +323,16 @@ def test_el_comando_pasa_al_informe_las_opciones_leidas_del_parser() -> None:
         and n.func.value.id == "arnes"
     ]
     assert len(llamadas) == 1, "el comando llama a arnes.informe una sola vez"
-    argumento = next(k.value for k in llamadas[0].keywords if k.arg == "opciones")
-    assert ast.unparse(argumento) == "opciones"
-    asignaciones = [
+    argumentos = {k.arg: ast.unparse(k.value) for k in llamadas[0].keywords}
+    assert argumentos == {"opciones": "opciones", "simulacion": "simulacion"}
+    asignaciones = {
         ast.unparse(n.value)
         for n in ast.walk(arbol)
         if isinstance(n, ast.Assign)
-        and any(isinstance(t, ast.Name) and t.id == "opciones" for t in n.targets)
-    ]
-    assert (
-        "opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)"
-        in asignaciones
+        and any(isinstance(t, ast.Name) and t.id in ("opciones", "simulacion") for t in n.targets)
+    }
+    assert "opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)" in (
+        asignaciones
     )
+    assert "Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])" in asignaciones
+    assert "None" in asignaciones  # sin --simular

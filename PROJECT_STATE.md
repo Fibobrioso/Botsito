@@ -23,7 +23,7 @@ trabajo/umbral-mayo
 92312e3 · merge: A-11 sigue RESUELTA por el registro del trader, sin el item supersedido; G1 sin excepciones y D2 en el revisor (RESPALDO-A11.md) · tag stable/F37e-respaldo-a11
 
 ## Tests Currently Passing
-1376 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1383 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

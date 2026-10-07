@@ -51,3 +51,18 @@ Dado por Aleks (consultor) el 2026-10-07, como tarea nocturna. Copiado tal cual:
 > Sigue igual: no se ejecuta el arnés. knowledge validate, make check y state check en verde; revisor de nuevo sobre lo cambiado, comprobando aparte que una opción nueva del parser da «no» sin tocar la lista.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de --simular (2026-10-07), copiada tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de --simular en trabajo/umbral-mayo (2026-10-07). Cópiala tal cual al encargo y al informe.
+>
+> 1. La corrida que habilita medir el conjunto de medida LLEVA --simular, obligatoriamente. Por qué: sin ella el motor no produce operaciones (engine/motor.py:233), y ADR-0043 compara instantes de LLENADO, que solo da el bróker simulado (cableado.py:250); además es como operará el bot. Una corrida sin --simular da «no» con el motivo «sin simulación».
+> 2. --perfil y --fase: solo se admiten con el perfil de la cuenta real (FTMO 2-Step Swing 100k, ADR-0026) y su PRIMERA fase. Antes de escribir, lee en el código los valores por defecto de las dos y el nombre de ese perfil y esa fase en knowledge/cuentas/, y déjalo en el informe. La regla se escribe como condición: el perfil y la fase EFECTIVOS de la corrida (dados o por defecto) tienen que ser esos dos; cualquier otro valor da «no» con su motivo. Si el perfil por defecto no es el de FTMO 2-Step Swing 100k, o no hay una fase que sea claramente la primera, PARA y dímelo.
+> 3. La lista cerrada queda: --salida, --tracemalloc, --meses (cubriendo todo construcción), --simular (obligatoria), --perfil y --fase (solo con los valores del punto 2). Todo lo demás, incluido --repo, --depuracion y cualquier opción futura, da «no». Lo de los ticks queda cubierto: un día sin ticks exige --depuracion, que da «no».
+> 4. Tests que lo rompan a propósito: sin --simular da «no»; --simular con otro perfil o con otra fase da «no»; --simular con perfil y fase por defecto y con las cifras da «sí»; los anteriores siguen. ADR-0070: su recuadro de enmienda recoge 1 a 3, con fecha.
+>
+> Sigue sin ejecutarse el arnés. knowledge validate, make check y state check en verde, y el revisor sobre lo cambiado, comprobando aparte que sin --simular nunca sale «sí».
+>
+> Rama lista para revisión, NO cerrada.
