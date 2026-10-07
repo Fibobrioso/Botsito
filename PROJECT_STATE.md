@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/activacion-a42
+main
 
 ## Current Feature
-`trabajo/activacion-a42` EN CURSO (2026-10-06): activar A-42 con H2b. Encargo docs/encargos/trabajo-activacion-a42.md; informe docs/validation/ACTIVACION-A42.md.
+NINGUNA ABIERTA tras `stable/F37d-activacion-a42` (2026-10-06).
 
 ## Stable Main State
-49c3098 · merge de `trabajo/reloj-invierno` (tag `stable/F37c-reloj-invierno`): el libro de enero, medido por velas, es UTC y queda declarado en libros.yaml; en enero el trader opera de 06:00 a 14:00 UTC (H2) y el eje de su grafico va en UTC+1, no en UTC+2 fijo. Sobre `stable/F37b-guardias-citas` (fe37973). Informe docs/validation/RELOJ-INVIERNO.md; el registro del cierre, al final de HISTORIA.
+363f826 · merge de `trabajo/activacion-a42` (tag `stable/F37d-activacion-a42`): A-42 RESUELTA con H2b (ADR-0069); las dos sesiones son las velas H4 de la rejilla de anclaje_h4 y el bot las fija en instantes UTC con zoneinfo (reloj_sesiones = rejilla_h4), y huso_grafico es Europe/Madrid. Sobre `stable/F37c-reloj-invierno` (49c3098). Informe docs/validation/ACTIVACION-A42.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-49c3098 · merge: el reloj de invierno, medido; enero UTC en libros.yaml y en enero el trader opera 06-14 UTC (RELOJ-INVIERNO.md) · tag stable/F37c-reloj-invierno
+363f826 · merge: A-42 RESUELTA con H2b; las sesiones son velas H4 de la rejilla, fijadas en instantes UTC con zoneinfo (ACTIVACION-A42.md, ADR-0069) · tag stable/F37d-activacion-a42
 
 ## Tests Currently Passing
 1357 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
