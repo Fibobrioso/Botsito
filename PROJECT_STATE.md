@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/umbral-mayo
+main
 
 ## Current Feature
-`trabajo/umbral-mayo` EN CURSO (2026-10-07, tarea nocturna): el umbral de construccion que habilita medir mayo, como ADR (punto J). Informe docs/validation/UMBRAL-MAYO.md.
+NINGUNA ABIERTA tras `stable/F37f-umbral-mayo` (2026-10-07).
 
 ## Stable Main State
-92312e3 · merge de `trabajo/respaldo-a11` (tag `stable/F37e-respaldo-a11`): A-11 sigue RESUELTA por el registro del trader (fb-2026-09-09-sesion-01-69711f67) y ya no cita el item supersedido; G1 sin ninguna excepcion; el revisor comprueba la afirmacion de cada item de evidencia nuevo. Sobre `stable/F37d-activacion-a42` (363f826). Informe docs/validation/RESPALDO-A11.md; el registro del cierre, al final de HISTORIA.
+9a313e0 · merge de `trabajo/umbral-mayo` (tag `stable/F37f-umbral-mayo`): ADR-0070, mayo solo se mide cuando una corrida del arnes sobre todo construccion, simulada con el perfil de la cuenta real y su primera fase y solo con las opciones de una lista cerrada, llega a 0,70 de cobertura y 0,60 de precision; los umbrales y el perfil en criterio_fidelidad.yaml y la linea de veredicto en el informe del arnes. Sobre `stable/F37e-respaldo-a11` (92312e3). Informe docs/validation/UMBRAL-MAYO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-92312e3 · merge: A-11 sigue RESUELTA por el registro del trader, sin el item supersedido; G1 sin excepciones y D2 en el revisor (RESPALDO-A11.md) · tag stable/F37e-respaldo-a11
+9a313e0 · merge: mayo solo se mide cuando una corrida simulada del arnes sobre construccion, con la lista cerrada de opciones, llega al umbral de ADR-0043 (ADR-0070, UMBRAL-MAYO.md) · tag stable/F37f-umbral-mayo
 
 ## Tests Currently Passing
 1383 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
