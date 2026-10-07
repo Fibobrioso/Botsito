@@ -1,0 +1,140 @@
+   control            Bash       uv run python a.py                                          
+     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+   inocuo             Bash       uv run python inocuo.py                                     
+     main: PASA
+     rama: PASA
+-> b1                 Bash       cp a.py b.py && uv run python b.py                          
+     main: PASA
+     rama: NIEGA: ejecutar `python b.py`: antes, en el mismo comando, va `cp a.py b.py`.
+-> b1'                Bash       cp a.py existente.py && uv run python existente.py          
+     main: PASA
+     rama: NIEGA: ejecutar `python existente.py`: antes, en el mismo comando, va `cp a.py existente.py`.
+-> b2                 Bash       cp a.py scripts/de_main.py && uv run python scripts/de_main.
+     main: PASA
+     rama: NIEGA: ejecutar `python scripts/de_main.py`: antes, en el mismo comando, va `cp a.py scripts/de_m
+-> b3                 Bash       cat > x.py <<'EOF'\nprint(open('C:\\Users\\USER\\AppData\\Lo
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: antes, en el mismo comando, va `cat`.
+-> b3'                Bash       cat > x.py <<'EOF' && python x.py\nprint(open('C:\\Users\\US
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: antes, en el mismo comando, va `cat`.
+   b4                 Bash       python x.py $(cp a.py x.py)                                 
+     main: NIEGA: el argumento `$0` se construye al ejecutarse y este comando lee contenido: no se puede dec
+     rama: NIEGA: ejecutar `python x.py`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(..
+-> b4'                Bash       echo $(cp a.py x.py); python x.py                           
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(..
+-> b4''               Bash       X=$(cp a.py x.py) python x.py                               
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(..
+-> b5                 Bash       cp a.py x.py & python x.py                                  
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: antes, en el mismo comando, va `cp a.py x.py`.
+-> b5'                Bash       cat a.py | tee x.py && python x.py                          
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: antes, en el mismo comando, va `cat a.py`.
+-> b5''               Bash       cat a.py | tee x.py | python x.py                           
+     main: PASA
+     rama: NIEGA: ejecutar `python x.py`: antes, en el mismo comando, va `cat a.py`.
+-> b6                 Bash       cp a.py otros/test_nuevo.py && uv run pytest otros/test_nuev
+     main: PASA
+     rama: NIEGA: ejecutar `pytest`: antes, en el mismo comando, va `cp a.py otros/test_nuevo.py`.
+   b6-control         Bash       uv run pytest suelto/test_malo.py                           
+     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> b6'                Bash       uv run pytest suelto                                        
+     main: PASA
+     rama: NIEGA: ejecutar `pytest`: suelto es un directorio: la guardia no sabe que ficheros ejecutara.
+-> tests-cp           Bash       cp a.py tests/unit/test_nuevo.py && uv run pytest tests/unit
+     main: PASA
+     rama: NIEGA: ejecutar `pytest`: antes, en el mismo comando, va `cp a.py tests/unit/test_nuevo.py`.
+   tests-nuevo        Bash       uv run pytest tests/unit/test_malo.py                       
+     main: PASA
+     rama: PASA
+-> v-uv-run           Bash       uv run a.py                                                 
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> v-directo          Bash       ./a.py                                                      
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> v-stdin            Bash       python < a.py                                               
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> v-version          Bash       python3.12 a.py                                             
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> v-modulo           Bash       python -m a                                                 
+     main: PASA
+     rama: NIEGA: ejecutar `python -m a`: `-m a`: la guardia no resuelve que fichero ejecuta un modulo (solo
+-> v-nice             Bash       nice -n 5 python a.py                                       
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+   v-runpy            Bash       python -c "import runpy; runpy.run_path('a.py')"            
+     main: PASA
+     rama: PASA
+-> v-bash-guion       Bash       bash malo.sh                                                
+     main: PASA
+     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmp5oy8mx4e/repo/knowledge/cases/hol
+   v-bash-control     Bash       bash malo_entre_comillas.sh                                 
+     main: NIEGA: el codigo nombra C:/Users/USER/AppData/Local/Temp/tmp5oy8mx4e/repo/knowledge/cases/holdout
+     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmp5oy8mx4e/repo/knowledge/cases/hol
+-> v-find             Bash       find docs -exec python a.py \;                              
+     main: PASA
+     rama: NIEGA: ejecutar `python a.py`: antes, en el mismo comando, va `find docs -exec python a.py ;`.
+-> v-make             Bash       make x                                                      
+     main: PASA
+     rama: NIEGA: ejecutar `make x`: C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\Makefile no es el de 
+-> v-git-alias        Bash       git -c alias.x='!python a.py' x                             
+     main: PASA
+     rama: NIEGA: ejecutar `sh -c`: antes, en el mismo comando, va `git -c alias.x=!python a.py x`.
+-> v-pwsh-c           Bash       pwsh -c "python a.py"                                       
+     main: PASA
+     rama: NIEGA: `python a.py` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+-> v-ps               PowerShell python a.py                                                 
+     main: PASA
+     rama: NIEGA: `python a.py` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+-> v-ps-uv            PowerShell uv run python a.py                                          
+     main: PASA
+     rama: NIEGA: `uv run python a.py` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta 
+-> f1-heredoc         Bash       python - <<'EOF'\nprint(open('C:\\Users\\USER\\AppData\\Loca
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> f1-proceso         Bash       python inocuo.py <(cp a.py inocuo.py)                       
+     main: PASA
+     rama: NIEGA: ejecutar `python inocuo.py`: el comando lleva una sustitucion (`$(...)`, acentos graves o 
+-> f1-winpty          Bash       winpty python a.py                                          
+     main: PASA
+     rama: NIEGA: ejecutar `winpty python`: `winpty` lanza `python`, y la guardia no conoce `winpty`: no sab
+-> f1-uv-opcion       Bash       uv run --env-file x.env python a.py                         
+     main: PASA
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmp5oy8mx4e\repo\knowledge\cases\holdout
+-> f1-a-si-mismo      Bash       python inocuo.py > inocuo.py                                
+     main: PASA
+     rama: NIEGA: ejecutar `python inocuo.py`: redirige su salida a su propio guion, que el shell vacia ante
+-> f1-dos             Bash       python inocuo.py && python inocuo.py                        
+     main: PASA
+     rama: NIEGA: ejecutar `python inocuo.py`: antes, en el mismo comando, va `python inocuo.py`.
+   f1-admitido        Bash       cd . && PYTHONUTF8=1 python inocuo.py | tail -3             
+     main: PASA
+     rama: PASA
+   h5-joinpath        Bash       python h5_joinpath.py                                       
+     main: PASA
+     rama: PASA
+   h5-os.path.join    Bash       python h5_os_path_join.py                                   
+     main: PASA
+     rama: PASA
+   h5-barra           Bash       python h5_barra.py                                          
+     main: PASA
+     rama: PASA
+   h5-fstring         Bash       python h5_fstring.py                                        
+     main: NIEGA: el codigo nombra la carpeta knowledge/cases/, que contiene material protegido, y no se pue
+     rama: NIEGA: el codigo nombra la carpeta knowledge/cases/, que contiene material protegido, y no se pue
+   h5-fstring-partes  Bash       python h5_fstring_partes.py                                 
+     main: PASA
+     rama: PASA
+   h5-concatenacion   Bash       python h5_concatenacion.py                                  
+     main: PASA
+     rama: PASA
+
+Casos que main niega y la rama deja pasar: 0

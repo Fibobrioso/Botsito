@@ -104,6 +104,9 @@ def repo(tmp_path: Path) -> Path:
         "scripts/huso_por_velas.py",
         "scripts/otro.py",
         ".gitignore",
+        # `make` es una ejecucion: su `Makefile` tiene que ser el de `main`
+        # (`trabajo/guion-mismo-comando`, decision 3 del consultor).
+        "Makefile",
     ):
         _escribir(r, rel)
     (r / ".gitignore").write_text("/corpus/\n/data/*\n", encoding="utf-8")
@@ -988,3 +991,212 @@ def test_los_ajustes_locales_no_se_versionan() -> None:
         ["git", "check-ignore", "-q", ".claude/settings.json"], cwd=RAIZ, check=False
     )
     assert r.returncode == 1
+
+
+# ---------------------------- la ejecucion verificable (`trabajo/guion-mismo-comando`, 2026-10-07)
+# Una sola condicion, `exigir_ejecucion_verificable`: la guardia solo deja ejecutar codigo si es
+# SEGURO que lo que se ejecuta es lo que ella lee al inspeccionar el comando. Los tests la rompen a
+# proposito: cada caso de la fase 0 (GUION-MISMO-COMANDO.md §0.b), cada via de §0.a, cada elemento
+# de la lista cerrada y lo que queda fuera. El anexo `sin_condicion.py` comprueba que fallan si se
+# quita la condicion.
+def _ejecucion(repo: Path) -> str:
+    """El guion malo `a.py`, NUEVO en la rama (sin seguir): imprime un fichero del holdout del repo
+    sintetico. Y `inocuo.py`, tambien nuevo, que no nombra nada."""
+    holdout = repo / "knowledge" / "cases" / "holdout" / "1" / "etiquetas.yaml"
+    malo = f"print(open(r'{holdout}').read())\n"
+    _escribir(repo, "a.py", malo)
+    _escribir(repo, "inocuo.py", "print('hola')\n")
+    _escribir(repo, "existente.py", "print('inocuo al inspeccionar')\n")
+    _escribir(repo, "suelto/test_malo.py", malo)
+    _escribir(repo, "malo.sh", f"cat {holdout.as_posix()}\n")
+    return malo
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "cp a.py b.py && uv run python b.py",  # b1: el guion no existe al inspeccionar
+        "cp a.py existente.py && uv run python existente.py",  # b1': existe, inocuo
+        "cp a.py scripts/otro.py && uv run python scripts/otro.py",  # b2: el de main
+        "cat > x.py <<'EOF'\n{MALO}EOF\npython x.py",  # b3
+        "cat > x.py <<'EOF' && python x.py\n{MALO}EOF\n",  # b3'
+        "python x.py $(cp a.py x.py)",  # b4
+        "echo $(cp a.py x.py); python x.py",  # b4'
+        "X=$(cp a.py x.py) python x.py",  # b4''
+        "cp a.py x.py & python x.py",  # b5
+        "cat a.py | tee x.py && python x.py",  # b5'
+        "cat a.py | tee x.py | python x.py",  # b5''
+        "cp a.py otros/test_nuevo.py && uv run pytest otros/test_nuevo.py",  # b6
+        "cp a.py tests/unit/test_nuevo.py && uv run pytest tests/unit/test_nuevo.py",
+        "python existente.py <(cp a.py existente.py)",  # sustitucion de proceso
+        "python existente.py & cp a.py existente.py",  # en segundo plano, a la vez
+        "python existente.py > existente.py",  # la salida, a su propio guion
+        "echo hola | python existente.py",  # lo que va antes por la tuberia
+    ],
+)
+def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    motivo = _bash(g, repo, comando.replace("{MALO}", malo))
+    assert motivo is not None and g.R_EJECUCION in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "bash malo.sh"),  # via 2: el guion de shell, leido como bash
+        ("Bash", "python < a.py"),  # via 4: la entrada estandar, leida como guion
+        ("Bash", "python -m a"),  # via 5: `-m` solo para pytest
+        ("Bash", "uv run pytest suelto"),  # via 6: un directorio fuera de tests/
+        ("Bash", "make x"),  # via 7: el Makefile cambiado en la rama (lo cambia el test)
+        ("Bash", 'pwsh -c "python inocuo.py"'),  # via 8, desde Bash
+        ("PowerShell", "python inocuo.py"),  # via 8
+        ("PowerShell", "uv run botsito state check"),  # via 8
+        ("PowerShell", "& ./x.ps1"),  # via 8: el operador de llamada
+        ("Bash", "./a.py"),  # via 9: un fichero como programa
+        ("Bash", "uv run a.py"),  # via 9
+        ("Bash", "python3.12 a.py"),  # via 9: el interprete con version
+        ("Bash", "nice -n 5 python a.py"),  # via 9: el envoltorio con sus opciones
+        ("Bash", "timeout -s KILL 5 python a.py"),  # via 9
+        ("Bash", "winpty python inocuo.py"),  # via 9: un lanzador que la guardia no conoce
+        ("Bash", "find docs -exec python inocuo.py \\;"),  # via 10
+        ("Bash", "git -c alias.x='!python inocuo.py' x"),  # via 11
+        ("Bash", "python - <<'EOF'\n{MALO}EOF\n"),  # el heredoc, leido entero
+    ],
+)
+def test_ejecucion_cada_via_pasa_por_la_condicion(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    _escribir(repo, "Makefile", "x:\n\tpython inocuo.py\n")  # distinto del de main
+    motivo = _decide(g, repo, herramienta, command=comando.replace("{MALO}", malo))
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "uv run python inocuo.py",
+        "cd docs && uv run python ../inocuo.py",  # cd
+        "X=hola; python inocuo.py",  # asignacion literal
+        "PYTHONUTF8=1 python inocuo.py",  # asignacion literal que precede al comando
+        "export PYTHONUTF8=1 && python inocuo.py",  # export literal
+        "set -e; python inocuo.py",
+        "set -u; python inocuo.py",
+        "set -o pipefail; python inocuo.py",
+        "set -euo pipefail; python inocuo.py",  # combinacion
+        "python inocuo.py 2>&1 | head -3",
+        "python inocuo.py | tail -3",
+        "python inocuo.py | grep hola",
+        "python inocuo.py | wc -l",
+        "python inocuo.py | sort",
+        "python inocuo.py | uniq -c",
+        "python inocuo.py | cut -c1-10",
+        "python inocuo.py > salida.txt 2>&1; echo $?",  # lo de despues, en otro comando
+        "python -X utf8 inocuo.py",
+        "uv run --with pyyaml python inocuo.py",
+        "python --version",
+        "grep python docs/a.md",  # un lector cuyo patron se llama python
+        "command -v python",
+        "uv run pytest -p no:cacheprovider tests/unit -q",
+    ],
+)
+def test_ejecucion_lo_de_la_lista_cerrada_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "inventado && python inocuo.py",  # un programa inventado antes
+        "grep hola docs/a.md && python inocuo.py",  # un lector antes: tampoco esta en la lista
+        "python inocuo.py && python existente.py",  # una ejecucion antes de otra
+        "X=$Y python inocuo.py",  # asignacion no literal
+        "X=$(echo 1) python inocuo.py",
+        "export X=$Y; python inocuo.py",
+        "set -x; python inocuo.py",
+        "cd docs > f.txt && python ../inocuo.py",  # una redireccion antes
+        "python inocuo.py | tee salida.txt",
+        "python inocuo.py | sort -o salida.txt",
+        "python inocuo.py | uniq - salida.txt",
+        "python inocuo.py | inventado",
+        "python",  # sin guion ni codigo
+        "python -m json.tool docs/a.md",
+        "env -S 'python inocuo.py'",
+        "uv run --opcion-inventada python inocuo.py",
+        "uv run pytest -p mi_plugin tests/unit",
+        "cd docs && uv run pytest",  # sin rutas fuera de la raiz
+        "python nuevo.py",  # no existe
+    ],
+)
+def test_ejecucion_lo_de_fuera_de_la_lista_se_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+def test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo(g: ModuleType, repo: Path) -> None:
+    motivo = _bash(g, repo, "uv run python nuevo.py")
+    assert motivo is not None and "no existe" in motivo
+    assert "Write" in motivo and "OTRA llamada" in motivo
+
+
+def test_ejecucion_make_solo_con_el_makefile_de_main(g: ModuleType, repo: Path) -> None:
+    assert _bash(g, repo, "make check > make-check.log 2>&1") is None
+    _escribir(repo, "Makefile", "check:\n\tpython inocuo.py\n")
+    motivo = _bash(g, repo, "make check > make-check.log 2>&1")
+    assert motivo is not None and "no es el de `main`" in motivo and "Aleks" in motivo
+    assert _bash(g, repo, "make -f otro.mk check > make-check.log 2>&1") is not None
+
+
+def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
+    for comando in ("Start-Process python", ".\\x.ps1", "make check > make-check.log 2>&1"):
+        motivo = _decide(g, repo, "PowerShell", command=comando)
+        assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
+    for comando in ("git status", "Get-Content docs/a.md -TotalCount 5", "Write-Output hola"):
+        assert _decide(g, repo, "PowerShell", command=comando) is None, comando
+
+
+def test_ejecucion_una_sola_funcion_y_ninguna_via_decide_por_su_cuenta(g: ModuleType) -> None:
+    """Toda via de ejecucion llama a `exigir_ejecucion_verificable` (directamente o por
+    `_exigir_guion`, `_sin_guion` o `_ejecucion_lanzada`, que vuelve a `analizar_comando`), y la
+    regla `R_EJECUCION` solo la escriben la funcion y su `_niega`."""
+    import ast
+
+    arbol = ast.parse(GUARDIA.read_text(encoding="utf-8"))
+    funciones = {n.name: n for n in ast.walk(arbol) if isinstance(n, ast.FunctionDef)}
+
+    def llama(nombre: str) -> set[str]:
+        return {
+            n.func.id
+            for n in ast.walk(funciones[nombre])
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+        }
+
+    puertas = {"exigir_ejecucion_verificable", "_exigir_guion", "_sin_guion"}
+    for via in (
+        "_analizar_interprete",
+        "_analizar_shell",
+        "_analizar_pytest",
+        "_analizar_make",
+        "_analizar_pwsh",
+        "analizar_powershell",
+        "_exigir_guion",
+        "_sin_guion",
+    ):
+        assert llama(via) & puertas, via
+    assert "exigir_ejecucion_verificable" in llama("analizar_comando")  # botsito y los lanzadores
+    assert "_exigir_guion" in llama("analizar_comando")  # el fichero como programa
+    assert "_ejecucion_lanzada" in llama("_analizar_find")
+    assert "_ejecucion_lanzada" in llama("_analizar_git")
+    assert "analizar_comando" in llama("_ejecucion_lanzada")
+    usan_la_regla = {
+        nombre
+        for nombre, f in funciones.items()
+        if any(isinstance(n, ast.Name) and n.id == "R_EJECUCION" for n in ast.walk(f))
+    }
+    assert usan_la_regla == {"_niega", "exigir_ejecucion_verificable"}

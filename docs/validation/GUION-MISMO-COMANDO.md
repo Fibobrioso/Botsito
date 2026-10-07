@@ -206,7 +206,277 @@ cifras de arriba son de esa versión. No es un fallo de la guardia: es la regla 
 protegido: los comandos medidos solo se pasaron a `decidir()`, sobre un repo sintético en un
 directorio temporal.
 
+### Respuesta del consultor a la fase 0
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/guion-mismo-comando (2026-10-07). Cópiala tal cual en el informe, bajo §0, como «Respuesta del consultor a la fase 0».
+>
+> 1. Lista cerrada de 0.d: ACEPTADA con los tres añadidos. Las asignaciones que preceden al comando, solo con valor literal: X=$(…) o X=$Y no entran. Las combinaciones de set -e, -u y -o pipefail. Y botsito cuenta como ejecución. Lo aceptado incluye que python a.py && python b.py se niegue y se haga en dos llamadas. Porqué: es la condición nombrada que niega por defecto; los añadidos son la misma ejecución o la misma opción, no casos nuevos.
+>
+> 2. Vías: entran TODAS en esta rama, llamando a la misma función exigir_ejecucion_verificable. Son: el guion de shell leído con analizar_bash (2), la entrada estándar leída como guion (4), -m negado salvo pytest (5), el fichero como programa y los intérpretes con versión por patrón (9), find -exec de lo que no sea un lector de metadatos (10), el alias de git con ! (11) y PowerShell sin ninguna ejecución (8). Porqué: todas son la misma condición, «la guardia tiene que poder decidir sobre lo que se ejecuta», y dejarlas fuera sería enumerar.
+>
+> 3. make: opción (a). Si el Makefile difiere del de main, make se niega con un mensaje que diga que lo lanza Aleks con «!». Porqué: es la regla que ya rige los guiones («solo el de main es código revisado»). Declara además como límite que un make con el Makefile de main ejecuta código de la rama (src/, tests/, scripts/), igual que la CLI y la suite.
+>
+> 4. Lo que el guion importa o ejecuta a su vez (import local, runpy, exec, subprocess): entrada nueva de la Next Action, que entra en el commit del contrato del cierre. Su texto, tal cual: «La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.»
+>
+> 5. Hallazgo del consultor, que el informe no recoge: medir_huecos.py compone la ruta del fichero sintético con Path(...).joinpath("knowledge", "cases", "holdout", …), y la guardia no lo ve. analizar_codigo solo mira literales enteros, y a lo compuesto solo lo niega si además el código recorre directorios (CODIGO_QUE_RECORRE). Es decir, un guion nuevo puede leer el holdout real componiendo la ruta por partes (joinpath, os.path.join, el operador /, f-strings, concatenación). No fue rodear la guardia: el fichero era sintético y lo declaraste. Pero es un hueco de la puerta de lectura, distinto del de esta rama.
+>    - En esta rama, solo medirlo: añade a medir_huecos.py los casos de joinpath, os.path.join, el operador / y un f-string sobre el fichero sintético, y escribe en el informe cuáles pasan hoy. No lo arregles aquí.
+>    - Entrada nueva de la Next Action, en el mismo commit del contrato del cierre, tal cual: «La guardia no ve una ruta protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /, f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test que lo rompa a propósito.»
+>    - Fila para ERRORES-RECURRENTES en el cierre: (importa, consultor; ni la sesión ni el revisor lo habrían visto, porque el medio de la medida era el hueco) un guion de medida que tuvo que componer una ruta para no chocar con la guardia mostraba otro hueco. Lección: cuando una medida tiene que esquivar una guardia para poder correr, ese esquive se mide como hueco antes de seguir.
+>
+> FASE 1, como dice el encargo, con lo decidido aquí:
+> - Una sola función, exigir_ejecucion_verificable, llamada desde todas las vías de 0.a. Ninguna vía se arregla con código propio.
+> - Tests que rompen la guardia a propósito: uno por cada caso de 0.b (b1 a b6 y sus variantes, y las vías 2, 4, 5, 7, 8, 9, 10 y 11). Uno por cada elemento de la lista cerrada que pasa. Uno con un programa inventado antes de la ejecución, que se niega. Uno de make con un Makefile distinto del de main, que se niega.
+> - El anexo de mutaciones demuestra que esos tests fallan si se quita la condición.
+> - Los 32 comandos de RITUAL en tests/unit/test_guardia_claude.py siguen pasando. Compara caso a caso con la guardia de main: ningún caso que hoy se niega pasa a pasar.
+> - Vuelve a correr medir_huecos.py contra la guardia nueva y guarda la salida junto a la de la fase 0. Todos los casos del encargo deben salir NIEGA, salvo los del hallazgo 5, que siguen como están y se dice así.
+> - CI de Linux: push de fix/trabajo-guion-mismo-comando y número de run.
+> - Informe completo (encargo frente a lo hecho, desviaciones, comandos y salidas, límites, comparación con main) y revisor, con su informe pegado al final. Pídele expresamente que compruebe que la condición niega por defecto y que ninguna vía tiene código propio.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. Fase 1 · La condición, en una sola función
+
+### 1.1 La función y las vías
+
+**`exigir_ejecucion_verificable`** (`.claude/hooks/guardia.py`, definida tras `_exigir_guion_legible`;
+`R_EJECUCION` es su regla) es la ÚNICA que decide si una ejecución pasa. Niega por defecto, en este
+orden:
+
+1. En PowerShell, toda ejecución: su lista cerrada está vacía (respuesta, punto 2).
+2. Lo que la vía no sabe decidir (`indecidible`): un `-m` que no es `pytest`, una opción de `make`,
+   un lanzador que la guardia no conoce, una opción de `uv run` que no conoce...
+3. El comando (`_exigir_comando_verificable`): ninguna sustitución (`$(...)`, acentos graves,
+   `<(...)`) en el comando, ni la ejecución dentro de una; las asignaciones que la preceden,
+   literales; todo lo que va ANTES en el mismo comando, en la lista cerrada (`_es_preparacion`:
+   `cd`, asignaciones literales, `export X=valor` literal, `set -e`/`-u`/`-o pipefail` y sus
+   combinaciones, sin redirecciones); todo lo que va DETRÁS en su tubería, un filtro
+   (`_es_filtro`: `head`, `tail`, `grep`, `wc`, `sort`, `uniq`, `cut`, sin redirigir su salida, sin
+   `sort -o` ni el fichero de salida de `uniq`); si el comando lanza algo en segundo plano (`&`),
+   todo lo demás corre a la vez y tiene que estar también en la lista; y la ejecución no redirige
+   su salida a su propio guion.
+4. Cada guion (`_exigir_guion_legible`): una ruta literal; ni protegido, ni un directorio; que
+   EXISTA al inspeccionar («no existe al inspeccionar el comando», con «el guion, con la
+   herramienta Write, y su ejecución en OTRA llamada»); si es el de `main`, código revisado; si no:
+   un `Makefile` se niega («lo lanza Aleks en su terminal con «!»»), un guion de PowerShell o de
+   lenguaje desconocido se niega, y uno de Python, de shell o de otro intérprete se lee entero.
+5. El código en línea (`-c`, heredoc) se analiza: Python y los intérpretes con `analizar_codigo`,
+   el shell con `analizar_bash` (como un `bash -c`), PowerShell con `analizar_powershell`.
+
+**Quién la llama.** Todas las vías del inventario (§0.a), ninguna con decisión propia:
+
+| Vía (§0.a) | Cómo llega a la función |
+|---|---|
+| 1 intérprete con guion | `_analizar_interprete` → `_exigir_guion` |
+| 2 shell con guion | `_analizar_shell` → `_exigir_guion`; el guion se lee con `analizar_bash` |
+| 3 código en línea y heredoc | `_analizar_interprete` y `_analizar_shell` (`-c`), `_sin_guion` (heredoc) |
+| 4 la entrada estándar | `_sin_guion`: `< x` es el guion |
+| 5 `-m` | `_analizar_interprete`: `-m pytest` → `_analizar_pytest`; otro, `indecidible` |
+| 6 pytest | `_analizar_pytest`: lo de `tests/` sigue sin leerse; lo de fuera, guion; un directorio fuera de `tests/` se niega |
+| 7 make | `_analizar_make`: el `Makefile` (con la grafía real de GNU make) es el guion |
+| 8 PowerShell | `analizar_powershell` (`_ejecucion_en_powershell` encuentra la ejecución) y `_analizar_pwsh` desde Bash |
+| 9 un fichero como programa, intérpretes con versión, envoltorios | `analizar_comando` → `_exigir_guion` (el lenguaje, por la extensión o el `#!`); `_es_interprete` reconoce `pythonX.Y`; `_quitar_envoltorios` quita las opciones de `nice`, `timeout`, `stdbuf`, `exec`, `env` y `uv run`, y lo que no sabe quitar lo pasa como `indecidible` |
+| 10 `find -exec` | `_analizar_find` → `_ejecucion_lanzada`: lo lanzado se analiza como un comando que corre a la vez que `find`, que va delante |
+| 11 alias de git con `!` | `_analizar_git` → `_ejecucion_lanzada` con `sh -c <alias>`, con `git` delante |
+| 15 `botsito` | `analizar_comando`, antes de `_analizar_cli` |
+
+Un test lo comprueba leyendo el código con `ast`
+(`test_ejecucion_una_sola_funcion_y_ninguna_via_decide_por_su_cuenta`): cada vía llama a la función
+o a sus dos puertas (`_exigir_guion`, `_sin_guion`), `find` y `git` pasan por `_ejecucion_lanzada`,
+y `R_EJECUCION` solo la escriben `exigir_ejecucion_verificable` y `_niega`.
+
+### 1.2 Un hueco más, encontrado al implementar: el heredoc perdía su primera línea
+
+El primer test que falló no era de la regla nueva: `cat > f.py <<'EOF'` + salto + cuerpo. Medido: en
+`tokenizar`, el delimitador de un heredoc suele ser la última palabra de la línea, y al llegar al
+salto todavía no estaba cerrado. Sin cerrarlo, **el cuerpo se tokenizaba como comandos de bash y su
+primera línea se perdía del `cuerpo`**. En `main`, `python - <<'EOF'` con la ruta protegida en la
+primera línea PASA (`f1-heredoc` en la comparación de §1.4). Es de la misma familia («lo que se
+ejecuta es lo que se leyó») y la regla nueva lo necesitaba, así que se arregla aquí: el salto cierra
+la palabra abierta si hay un heredoc esperando su delimitador. Ningún test existente cambia.
+
+### 1.3 Los tests (`tests/unit/test_guardia_claude.py`, sobre el repositorio sintético)
+
+Ocho funciones nuevas (81 casos), todas `test_ejecucion_*`:
+
+| Test | Casos | Qué rompe |
+|---|---|---|
+| `…cambiada_en_el_mismo_comando_se_niega` | 17 | b1, b1', b2, b3, b3', b4, b4', b4'', b5, b5', b5'', b6, `tests/` creado en el mismo comando, `<(...)`, una copia en segundo plano a la vez, la salida a su propio guion, algo por la tubería antes |
+| `…cada_via_pasa_por_la_condicion` | 18 | vías 2, 4, 5, 6 (directorio), 7, 8 (Bash y PowerShell, `&`), 9 (`./a.py`, `uv run a.py`, `python3.12`, `nice -n`, `timeout -s`, `winpty`), 10, 11 y el heredoc entero |
+| `…lo_de_la_lista_cerrada_pasa` | 23 | cada elemento de la lista: `cd`, asignación literal suelta y delante del comando, `export`, `set -e`, `-u`, `-o pipefail`, `-euo pipefail`, cada filtro, lo de después en otro comando, `-X utf8`, `uv run --with`, `--version`, un `grep python`, `command -v python`, `pytest -p no:cacheprovider` |
+| `…lo_de_fuera_de_la_lista_se_niega` | 19 | un programa inventado antes, un lector antes, dos ejecuciones, asignaciones y `export` no literales, `set -x`, una redirección antes, `tee`, `sort -o`, `uniq` con fichero, un filtro inventado, `python` solo, `-m json.tool`, `env -S`, una opción inventada de `uv run`, `pytest -p mi_plugin`, `pytest` sin rutas fuera de la raíz, un guion que no existe |
+| `…un_guion_que_no_existe_dice_como_reescribirlo` | 1 | el mensaje: «no existe», «Write», «OTRA llamada» |
+| `…make_solo_con_el_makefile_de_main` | 1 | con el de `main` pasa; cambiado, se niega y nombra a Aleks; `make -f` se niega |
+| `…powershell_sin_ejecuciones_y_lo_demas_igual` | 1 | `Start-Process`, `.\x.ps1`, `make` se niegan; `git status`, `Get-Content`, `Write-Output` pasan |
+| `…una_sola_funcion_y_ninguna_via_decide_por_su_cuenta` | 1 | el `ast` de §1.1 |
+
+**Que fallan si se quita la condición** (`anexos/GUION-MISMO-COMANDO/sin_condicion.py`, salida en
+`sin_condicion-SALIDA.txt`). Carga la guardia como el módulo que usan los tests, cambia una pieza EN
+MEMORIA y corre los 81 casos en el mismo proceso:
+
+| Mutación | Fallan | Restaurada |
+|---|---|---|
+| ninguna | 0 de 81 | — |
+| «sin la condición» (`exigir_ejecucion_verificable` no hace nada) | **57 de 81**: exactamente los 57 que esperan una negación (17 + 18 + 19 + 3) | 0 fallan |
+| «sin lo de antes» (`_exigir_comando_verificable` no hace nada) | 21 de 81 | 0 fallan |
+| «sin la existencia» (un guion que no existe se lee como vacío, como en `main`) | 2 de 81 | 0 fallan |
+
+`VEREDICTO: cada mutacion rompe sus tests y restaurada pasan`. Los 23 de la lista cerrada y el del
+`ast` no dependen de quitar la condición, como debe ser.
+
+**La guardia de antes, intacta:** los 236 casos que ya existían pasan, entre ellos los 32 de `RITUAL`
+contra el repo real (`test_el_ritual_y_los_runbooks_pasan`). Un cambio en el fixture, declarado en
+§1.7: el repo sintético lleva ahora un `Makefile` commiteado en su `main`.
+
+### 1.4 La comparación caso a caso con `main` (`medir_huecos-FASE1-SALIDA.txt`)
+
+`medir_huecos.py` admite ahora dos guardias y las compara: la de `main` (`git show
+main:.claude/hooks/guardia.py`, en la carpeta de trabajo) y la de la rama, sobre los mismos 46 casos
+del repo sintético. **Casos que `main` niega y la rama deja pasar: 0.** 32 pasan de PASA a NIEGA, y
+14 no cambian:
+
+| Caso | `main` | rama | Por qué |
+|---|---|---|---|
+| b1, b1', b2, b3, b3', b4', b4'', b5, b5', b5'', b6, b6', `tests-cp` (13) | PASA | **NIEGA** | lo de antes, la sustitución, el directorio o la existencia |
+| vías 2, 4, 5, 7, 8 (3), 9 (4), 10, 11 (13) | PASA | **NIEGA** | la condición |
+| `f1-heredoc`, `f1-proceso`, `f1-winpty`, `f1-uv-opcion`, `f1-a-si-mismo`, `f1-dos` | PASA | **NIEGA** | el heredoc entero (§1.2), `<(...)`, el lanzador, la opción de `uv run`, la salida al guion, dos ejecuciones |
+| `control`, `b6-control`, `v-bash-control` | NIEGA | NIEGA | el guion se lee y nombra lo protegido |
+| b4 (`python x.py $(cp a.py x.py)`) | NIEGA, por casualidad (el argumento es dinámico) | NIEGA, por la sustitución | |
+| `inocuo`, `f1-admitido` (`cd . && PYTHONUTF8=1 python inocuo.py \| tail -3`) | PASA | PASA | lo admitido |
+| `tests-nuevo` (un test nuevo y malo ya en disco, en `tests/`) | PASA | PASA | **por diseño**: `tests/` no se lee, corre con la guarda del holdout (§1.6) |
+| `v-runpy` (`python -c "import runpy; runpy.run_path('a.py')"`) | PASA | PASA | **límite**: lo que el código ejecuta a su vez (respuesta, punto 4; entrada nueva de la Next Action) |
+| `h5-*` (6) | 5 PASA, 1 NIEGA | igual | **hallazgo 5, solo medido** (§1.5) |
+
+**Todos los casos del encargo salen NIEGA**, salvo los del hallazgo 5. Los dos que siguen pasando y
+no son del hallazgo 5 (`tests-nuevo`, `v-runpy`) no son casos del encargo: son el diseño de `tests/`
+y el límite del punto 4 de la respuesta.
+
+**Y sobre comandos reales** (`comandos_reales.py`, salida en `comandos_reales-SALIDA.txt`): las dos
+guardias sobre los 444 comandos de Bash distintos de la transcripción de esta sesión, contra el repo
+real. 342 con la misma decisión; **0 que `main` niega y la rama deja pasar**; **102 que `main` deja
+pasar y la rama niega**. De esos 102, 7 nombran el material adicional o un backtest y solo se
+cuentan; los otros 95, por su motivo: **90 llevan algo delante que no está en la lista cerrada**
+-por el programa de delante: un `python` (34, casi todos `python - <<'EOF'` de esta sesión), un
+`cat` (16), un `uv run` (12), un `git` (10: `git show ... >` delante de un guion, `git commit`
+delante de un `python`...), un `grep` (7), un `sed` (4, uno `sed -i` delante de `pytest`), una
+asignación seguida de otra ejecución (2), un `printf` (1), un `cp` (1)-; 2 llevan un `tee` detrás; 2
+son `pytest` sin rutas en un `git worktree` (§1.6); y 1 lleva una sustitución de proceso. Ninguno es
+un fallo de la guardia: es la lista cerrada tal como se aceptó, y su coste es partir esos comandos
+en dos llamadas.
+
+### 1.5 El hallazgo 5, medido (no se arregla en esta rama)
+
+Guiones en disco, nuevos en la rama, que leen el fichero sintético con la ruta compuesta por partes,
+relativa a la raíz del repo sintético. Igual en `main` y en la rama:
+
+| Caso | Cómo compone la ruta | Hoy |
+|---|---|---|
+| `h5-joinpath` | `Path('.').joinpath('knowledge', 'cases', 'holdout', '1', 'secreto.yaml')` | **PASA** |
+| `h5-os.path.join` | `os.path.join('knowledge', 'cases', 'holdout', '1', 'secreto.yaml')` | **PASA** |
+| `h5-barra` | `Path('knowledge') / 'cases' / 'holdout' / '1' / 'secreto.yaml'` | **PASA** |
+| `h5-fstring` | `f'knowledge/cases/{zona}/1/secreto.yaml'` | NIEGA, porque su trozo literal `knowledge/cases/` es una carpeta de una zona con material protegido (`motivo_dentro_de_zona`) |
+| `h5-fstring-partes` | `f'{a}/{b}/holdout/1/secreto.yaml'` con `a, b = 'knowledge', 'cases'` | **PASA** |
+| `h5-concatenacion` | `'knowledge' + '/' + 'cases' + '/holdout/1/secreto.yaml'` | **PASA** |
+
+Cinco de seis pasan: el hueco que vio el consultor existe. El único que se niega lo hace porque un
+trozo literal coincide con una carpeta de zona, no porque la guardia entienda la composición.
+
+### 1.6 Límites declarados
+
+| Límite | Qué pasa | Dónde queda |
+|---|---|---|
+| Un proceso en segundo plano de una llamada ANTERIOR | La guardia ve una llamada y el disco de ese instante | Límite (fase 0) |
+| Lo que el guion o el código en línea importan o ejecutan (`import` local, `runpy`, `exec`, `subprocess`) | No se lee (`v-runpy` PASA) | Entrada nueva de la Next Action, con el texto del consultor, en el commit del contrato del cierre |
+| Una ruta protegida compuesta por partes (hallazgo 5) | §1.5 | Entrada nueva de la Next Action, con el texto del consultor, en el cierre |
+| `make` con el `Makefile` de `main` ejecuta código de la rama (`src/`, `tests/`, `scripts/`), igual que la CLI y la suite | Pasa | Límite (respuesta, punto 3) |
+| `tests/` y el código de `src/` que ejecuta la CLI | Lo que ya está en disco no se lee, por diseño; lo creado en el mismo comando lo niega la lista cerrada | Límite |
+| Los hooks de git | Los instala `make hooks` | Límite |
+| **Variables de entorno que cargan código, con valor literal** (`BASH_ENV`, `PYTHONPATH`, `PYTHONSTARTUP`, `NODE_OPTIONS`, `PERL5OPT`, `RUBYOPT`) | La lista admite asignaciones literales, y estas cambian qué se ejecuta: `BASH_ENV=x.sh bash y.sh` ejecuta `x.sh` | Nuevo, encontrado en la fase 1. Propuesta para el consultor: que las asignaciones admitidas sean una lista cerrada de NOMBRES (`PYTHONUTF8`, `PYTHONIOENCODING`, `BOTSITO_ALLOW_MAIN`, `LANG`, `LC_ALL`, `TZ`...), o entrada de la Next Action |
+| **Otras claves de `git -c` que ejecutan un programa** (`core.pager`, `core.editor`, `core.sshCommand`, `diff.external`, `credential.helper`, `filter.*`) | Solo el alias con `!` pasa por la condición | Nuevo. Propuesta: una lista cerrada de claves admitidas en `git -c`, o entrada de la Next Action |
+| Programas que ejecutan según su configuración (`npm run`, `tox`, `pre-commit run`) | Pasan como lectores | Nuevo; ninguno se usa en este proyecto. Límite |
+| PowerShell se analiza por palabras | Un `Select-String python` se niega (falso positivo) | Aceptado: PowerShell no tiene ninguna ejecución admitida y ningún runbook lo usa |
+| **La suite en un `git worktree`** | `uv run pytest` sin rutas fuera de la raíz del repo se niega: el ensayo aislado de CLAUDE.md («un script que escribe archivos se ensaya en un clon desechable creado con `git worktree add`») ya no puede correr la suite allí desde la sesión (2 de los 102 comandos reales) | Decisión del consultor: lo lanza Aleks con `!`, o la exención de `tests/` se extiende al `tests/` de un worktree de este mismo repositorio |
+
+### 1.7 Desviaciones
+
+1. **El fixture del repo sintético lleva un `Makefile` commiteado en `main`.** `make check >
+   make-check.log 2>&1` tenía que seguir pasando en `test_sin_la_opcion_los_mismos_comandos_pasan`, y
+   ahora `make` exige el `Makefile` de `main` (respuesta, punto 3). No cambia ninguna aserción.
+2. **El arreglo del heredoc (§1.2)**, que no pedía el encargo: sin él, la regla nueva negaba heredocs
+   legítimos y `main` no leía la primera línea de un `python - <<'EOF'`.
+3. **Lo que la fase 1 añadió para que cada vía sepa qué se ejecuta**, todo pasando por la función
+   como `indecidible` y no con decisión propia:
+   - los envoltorios se quitan con sus opciones (`nice -n 5`, `timeout -s KILL 5`, `stdbuf -oL`,
+     `exec -a`, `env -u/-C`), y `env -S` se niega: antes, `nice -n 5 python a.py` dejaba `-n` como
+     programa (`v-nice`);
+   - las opciones de `uv run`, en una lista cerrada (las que toman valor y las que no, de uv 0.9);
+     una que no está se niega, porque sin saber si toma valor no se sabe qué programa corre; y
+     `uv run -m x` es `python -m x`;
+   - un programa que la guardia no conoce y recibe el nombre de un intérprete o de un shell
+     (`winpty python x`, `sudo bash x`) se niega, salvo los lectores de `LECTORES_CON_PATRON`
+     (`grep`, `rg`, `sed`... cuyo «python» es un patrón);
+   - el programa escrito como variable (`$PY x.py`) se resuelve si se sabe su valor; si no, se niega;
+   - en `pytest`: `-p <plugin>` que no sea `no:...`, `--pyargs`, y `pytest` sin rutas fuera de la
+     raíz del repo, se niegan; en `make`, una opción o una variable;
+   - un intérprete sin guion ni código solo pasa con `--version`/`--help`;
+   - el código de un heredoc SIN comillas que tenga `$` o acentos graves se niega (el shell lo
+     expande antes);
+   - `<(...)` y `>(...)` cuentan como sustitución.
+4. **Los mensajes** mostraban las marcas internas de las variables (`\x00V…\x00`); `_niega` las
+   escribe como `$VAR`. Lo encontró la comparación con los comandos reales (su salida salía binaria).
+
+### 1.8 Encargo frente a lo hecho
+
+| Lo pedido | Estado | Evidencia |
+|---|---|---|
+| Fase 0 a-d y PARADA | Hecho | §0 y su commit `29bf2c1` |
+| Una sola función, `exigir_ejecucion_verificable`, desde todas las vías; ninguna vía con código propio | Hecho | §1.1; test por `ast` |
+| Guion que no existe o no se lee → niega, diciendo «Write» y «otra llamada» | Hecho | `test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo` |
+| Tests: cada caso de 0.b y variantes; vías 2, 4, 5, 7, 8, 9, 10 y 11; cada elemento de la lista cerrada; un programa inventado; `make` con otro `Makefile` | Hecho | §1.3 |
+| Anexo de mutaciones | Hecho | `sin_condicion.py`: 57 de 81 sin la condición |
+| Los 32 de `RITUAL` pasan; caso a caso, nada de lo que hoy se niega pasa a pasar | Hecho | §1.3 y §1.4: 0 casos NIEGA→PASA en el sintético y en 444 comandos reales |
+| `medir_huecos.py` contra la guardia nueva, todos los casos del encargo NIEGA salvo el hallazgo 5 | Hecho | `medir_huecos-FASE1-SALIDA.txt`, §1.4 |
+| Hallazgo 5: medirlo, sin arreglarlo | Hecho | §1.5 |
+| Lista cerrada con los tres añadidos; `python a.py && python b.py` se niega | Hecho | §1.3 (`…lista_cerrada_pasa`, `…fuera_de_la_lista_se_niega`) |
+| Vías 2, 4, 5, 9, 10, 11 y 8 en esta rama | Hecho | §1.1 |
+| `make` opción (a) y su límite | Hecho | §1.1, §1.6 |
+| Next Action: lo que importa el guion y el hallazgo 5, entradas nuevas | En el commit del contrato del cierre (respuesta, puntos 4 y 5) | — |
+| Fila de ERRORES-RECURRENTES del hallazgo 5 | En el cierre | — |
+| Decisiones registradas (repo público; demo de FTMO) | Hecho, copiadas tal cual en el encargo | `docs/encargos/trabajo-guion-mismo-comando.md`; la Next Action no tiene ninguna entrada sobre el repo público (`grep -n "público\|publico\|privad" PROJECT_STATE.md`: nada), así que en el cierre no sale nada por ese punto |
+| No se toca motor, spec, `knowledge/`, cifras, `criterio_fidelidad.yaml`, `CLAUDE.md` | Hecho | `git diff --stat main`: solo `.claude/hooks/guardia.py`, su test, el informe, el encargo, el contrato, `PROJECT_STATE.md`, `HISTORIA.md` y los anexos |
+| No se ejecuta `botsito motor arnes` ni se abre material protegido | Hecho | ningún comando de la rama lo hace; todos los tests y medidas, sobre rutas sintéticas |
+| CI de Linux por `fix/trabajo-guion-mismo-comando` | §1.10 | — |
+| Revisor, con su informe pegado | §1.11 | — |
+
+### 1.9 Comandos y salidas de la fase 1
+
+| Comando | Salida |
+|---|---|
+| `uv run ruff check .claude/hooks/guardia.py tests/unit/test_guardia_claude.py`; `ruff format` | limpio |
+| `uv run mypy` | `Success: no issues found in 242 source files` |
+| `uv run pytest tests/unit/test_guardia_claude.py -q -p no:cacheprovider` | 317 casos, exit 0 (236 de antes + 81 nuevos) |
+| `PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_huecos.py <guardia de main> .claude/hooks/guardia.py` | 46 casos; `Casos que main niega y la rama deja pasar: 0` |
+| `PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/comandos_reales.py <transcripcion> <guardia de main> .claude/hooks/guardia.py <repo>` | 444 distintos: 342 iguales, 102 PASA→NIEGA, 0 NIEGA→PASA |
+| `uv run python docs/validation/anexos/GUION-MISMO-COMANDO/sin_condicion.py` | `VEREDICTO: cada mutacion rompe sus tests y restaurada pasan` |
+| `uv run botsito state check` | `OK` (`Tests Currently Passing`: 1383 → 1391) |
+
+**Dos medidas corregidas durante la fase 1**, declaradas: (1) `malo.sh` escribía la ruta con `\` de
+Windows y sin comillas, que bash convierte en `C:Users...`: el guion medido no habría leído nada; se
+escribe con `/`, y entonces la rama lo niega y `main` no. (2) La primera salida de
+`comandos_reales.py` era binaria por las marcas de los mensajes (desviación 4). Y la regla nueva se
+aplicó a los comandos de esta misma sesión desde que se escribió: cuatro de ellos se negaron (un
+`git show ... > fichero` antes de un guion, un `sed -n` antes de `pytest`, un `sed -i` antes de
+`botsito state check`) y se partieron en dos llamadas, como dice el mensaje.
+
+### 1.10 CI de Linux
+
+Pendiente.
+
+### 1.11 Revisor
+
+Pendiente.
+
 ## Estado
 
-**PARADA de la fase 0 (2026-10-07).** El inventario está hecho y medido (§0); no se ha escrito
-ninguna línea de la guardia. Espera la respuesta del consultor a las cuatro preguntas de la PARADA.
+**EN CURSO (2026-10-07), fase 1.** Falta la CI de Linux y el revisor.

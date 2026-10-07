@@ -1,0 +1,203 @@
+Comandos de Bash en la transcripcion: 477; distintos: 444
+Misma decision en main y en la rama: 342
+main los deja pasar y la rama los niega: 102
+main los niega y la rama los deja pasar: 0
+
+== Los que pasan a negarse (comando, 120 caracteres; y el motivo de la rama)
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/ps_edit.py" <<'EOF' \n import sys \n from pathlib import Path \n p = P
+    ejecutar `python $TEMP/ps_edit.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git diff --quiet main -- scripts/transcribir_sesion.py && echo "guion identico a ma
+    ejecutar `python scripts/transcribir_sesion.py`: antes, en el mismo comando, va `git diff --quiet main -- scripts/transcribir_sesion.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/fix_doce.py" <<'EOF' \n import sys \n from pathlib import Path \n p = 
+    ejecutar `python $TEMP/fix_doce.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/fix_lineas.py" <<'EOF' \n import sys \n from pathlib import Path \n p 
+    ejecutar `python $TEMP/fix_lineas.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "def a_datetime" -A4 src/botsito/data/velas.py | head -8; uv run ruff forma
+    ejecutar `python docs/validation/anexos/ACTIVACION-A42/rejilla_h4_2024.py`: antes, en el mismo comando, va `grep -n def a_datetime -A4 src/botsito/data/velas.py
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format docs/validation/anexos/ACTIVACION-A42/dias_distintos.py; uv run 
+    ejecutar `python docs/validation/anexos/ACTIVACION-A42/dias_distintos.py`: antes, en el mismo comando, va `uv run ruff format docs/validation/anexos/ACTIVACION-
+- [no se imprime: nombra el material adicional o un backtest]
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/medir_literal.py" <<'EOF' \n from botsito.feedback.modelo import _norm
+    ejecutar `python $TEMP/medir_literal.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git add docs/encargos/trabajo-activacion-a42.md contrato.yaml PROJECT_STATE.md docs
+    ejecutar `botsito state check`: antes, en el mismo comando, va `git add docs/encargos/trabajo-activacion-a42.md contrato.yaml PROJECT_STATE.m...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/sin_adr_futuro.py" <<'EOF' \n import sys \n from pathlib import Path \
+    ejecutar `python $TEMP/sin_adr_futuro.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/envolver.py" <<'EOF' \n import sys \n from pathlib import Path \n p = 
+    ejecutar `python $TEMP/envolver.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -n 100,135p knowledge/corpus/fuentes.yaml && uv run botsito corpus inventory --
+    ejecutar `botsito corpus inventory`: antes, en el mismo comando, va `sed -n 100,135p knowledge/corpus/fuentes.yaml`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/fuentes_edit.py" <<'EOF' \n import sys \n from pathlib import Path \n 
+    ejecutar `python $TEMP/fuentes_edit.py`: antes, en el mismo comando, va `cat`.
+- [no se imprime: nombra el material adicional o un backtest]
+- [no se imprime: nombra el material adicional o un backtest]
+- [no se imprime: nombra el material adicional o un backtest]
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "spec_version" knowledge/spec/strategy_spec.yaml knowledge/spec/parametros.
+    ejecutar `botsito feedback new`: antes, en el mismo comando, va `grep -n spec_version knowledge/spec/strategy_spec.yaml knowledge/spec/paramet...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "id: A-47" -A40 knowledge/spec/ambiguedades.yaml | cut -c1-400 | head -45 &
+    ejecutar `botsito spec manifest`: antes, en el mismo comando, va `grep -n id: A-47 -A40 knowledge/spec/ambiguedades.yaml`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git commit -F "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3
+    ejecutar `python $TEMP/indice.py`: antes, en el mismo comando, va `git commit -F C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-B...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/paso2.py" <<'EOF' \n from pathlib import Path \n rep = Path("docs/vali
+    ejecutar `python $TEMP/paso2.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat knowledge/feedback/2026-10-04-sesion-04/fb-2026-10-04-sesion-04-fb7831cc.yaml &
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `cat knowledge/feedback/2026-10-04-sesion-04/fb-2026-10-04-sesion-04-fb7831cc....`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/paso3.py" <<'EOF' \n from pathlib import Path \n rep = Path("docs/vali
+    ejecutar `python $TEMP/paso3.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3
+    ejecutar `botsito spec docs`: antes, en el mismo comando, va `uv run python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-B...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git diff --stat && git diff docs/spec/glosario.md docs/spec/reglas.md | grep "^[-+]
+    ejecutar `pytest`: antes, en el mismo comando, va `git diff --stat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/fix_t.py" <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/
+    ejecutar `python $TEMP/fix_t.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "^CATEGORIAS" -A3 src/botsito/config/registro.py && cat > "$TEMP/fix_cat.py
+    ejecutar `python $TEMP/fix_cat.py`: antes, en el mismo comando, va `grep -n ^CATEGORIAS -A3 src/botsito/config/registro.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run pytest tests/unit/test_kit.py tests/unit/test_hoja_preguntas.py tests/unit/t
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `uv run pytest tests/unit/test_kit.py tests/unit/test_hoja_preguntas.py tests/...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && S="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d0
+    ejecutar `python $S/paso5_motor.py`: antes, en el mismo comando, va `uv run python $S/paso5_spec.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && S="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d0
+    ejecutar `python $S/paso5_tests_b.py`: antes, en el mismo comando, va `python - $S`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -n 243p tests/unit/test_sesiones_rejilla_h4.py && python - <<'EOF' \n from path
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `sed -n 243p tests/unit/test_sesiones_rejilla_h4.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/test_sesiones_
+    ejecutar `botsito spec manifest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/test_sesiones_
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/test_sesiones_
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("knowledge/spec/parametros
+    ejecutar `botsito spec manifest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git diff --stat | tail -1 && git diff knowledge/spec/spec_manifest.yaml | grep "^[-
+    ejecutar `pytest`: antes, en el mismo comando, va `git diff --stat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/paso45.py" <<'EOF' \n from pathlib import Path \n rep = Path("docs/val
+    ejecutar `python $TEMP/paso45.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- [no se imprime: nombra el material adicional o un backtest]
+- cd "C:/Users/USER/Desktop/Bot v3" && git worktree remove --force "C:/Users/USER/AppData/Local/Temp/botsito-main-wt" && g
+    ejecutar `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad/paso6_recuadros.py`: antes
+- cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/paso6.py" <<'EOF' \n from pathlib import Path \n rep = Path("docs/vali
+    ejecutar `python $TEMP/paso6.py`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && S="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d0
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `PYTHONUTF8=... uv run python docs/validation/anexos/ACTIVACION-A42/dias_disti...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && S="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d0
+    ejecutar `pytest`: antes, en el mismo comando, va `python - $S`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/validation/ACTIVACIO
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `uv run python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-B...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- [no se imprime: nombra el material adicional o un backtest]
+- cd "C:/Users/USER/Desktop/Bot v3" && git worktree remove --force "C:/Users/USER/AppData/Local/Temp/botsito-a11-wt" && py
+    ejecutar `python -c`: antes, en el mismo comando, va `git worktree remove --force C:/Users/USER/AppData/Local/Temp/botsito-a11-wt`.
+- [no se imprime: nombra el material adicional o un backtest]
+- cd "C:/Users/USER/AppData/Local/Temp/botsito-a11-wt" && uv run pytest -q -p no:cacheprovider -n 0 > /c/Users/USER/AppDat
+    ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
+- cd "C:/Users/USER/AppData/Local/Temp/botsito-a11-wt" && uv run pytest -q -p no:cacheprovider > /c/Users/USER/AppData/Loc
+    ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
+- cd "C:/Users/USER/Desktop/Bot v3" && printf '\n# Archivo 21 · PROJECT_STATE.md de main en d96b703 (2026-10-07), al abrir
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `printf \n# Archivo 21 · PROJECT_STATE.md de main en d96b703 (2026-10-07), al ...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat >> docs/validation/RESPALDO-A11.md <<'EOF' \n ## 1. Fase 0 a · A-11 hoy \n  \n 
+    ejecutar `python -c`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n s = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/validation/RESPALDO-
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/encargos/trabajo-res
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "^videos:\|^carpetas:" knowledge/corpus/fuentes.yaml | head; PYTHONUTF8=1 u
+    ejecutar `python docs/validation/anexos/RESPALDO-A11/tramos_del_cierre.py`: antes, en el mismo comando, va `grep -n ^videos:\|^carpetas: knowledge/corpus/fuente
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/test_citas_sup
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format tests/unit/test_citas_supersedidas.py tests/unit/test_kit.py src
+    ejecutar `botsito spec docs`: antes, en el mismo comando, va `uv run ruff format tests/unit/test_citas_supersedidas.py tests/unit/test_kit....`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format docs/validation/anexos/RESPALDO-A11/ -q; uv run ruff check docs/
+    ejecutar `python docs/validation/anexos/RESPALDO-A11/rotura_g1.py`: antes, en el mismo comando, va `uv run ruff format docs/validation/anexos/RESPALDO-A11/ -q`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -n 70,100p tests/unit/test_revisor.py; uv run pytest tests/unit/test_revisor.py
+    ejecutar `pytest`: antes, en el mismo comando, va `sed -n 70,100p tests/unit/test_revisor.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run pytest tests/unit/test_revisor.py -q -p no:cacheprovider 2>&1 | tail -1; pyt
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `uv run pytest tests/unit/test_revisor.py -q -p no:cacheprovider`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run botsito knowledge validate > "$TEMP/kv.log" 2>&1; echo "validate=$?"; uv run
+    ejecutar `python scripts/contrato_rama.py`: antes, en el mismo comando, va `uv run botsito knowledge validate`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git tag -l "stable/F37*"; git ls-remote --tags origin "stable/F37e*"; grep -c "stab
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `git tag -l stable/F37*`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -c "failed" make-check.log; grep -n "SELLO: make\|passed\|exit=" make-check.lo
+    ejecutar `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad/cierre_a11.py`: antes, en 
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/validation/UMBRAL-MA
+    ejecutar `botsito motor arnes`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cp "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `cp C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -c "failed" make-check.log; grep -n "SELLO: make\|passed\|exit=" make-check.lo
+    ejecutar `python $S/fase2_umbral.py`: antes, en el mismo comando, va `grep -c failed make-check.log`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -c "failed" make-check.log; grep -n "SELLO: make\|passed\|exit=" make-check.lo
+    ejecutar `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad/fase3_umbral.py`: antes, e
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format docs/validation/anexos/UMBRAL-MAYO -q; uv run ruff check docs/va
+    ejecutar `python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py`: antes, en el mismo comando, va `uv run ruff format docs/validation/anexos/UMBRAL-MAYO -q`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STATE.md"); t = p
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("contrato.yaml"); t = p.re
+    ejecutar `python scripts/contrato_rama.py`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat >> tests/unit/test_umbral_mayo.py <<'PYEOF' \n  \n  \n def test_el_comando_pasa
+    ejecutar `pytest`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("tests/unit/test_umbral_ma
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format docs/validation/anexos/UMBRAL-MAYO tests/unit/test_umbral_mayo.p
+    ejecutar `python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py`: antes, en el mismo comando, va `uv run ruff format docs/validation/anexos/UMBRAL-MAYO tests/unit
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/adr/0070-umbral-de-c
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -i 's/^from collections.abc import Mapping$/from collections.abc import Mapping
+    ejecutar `pytest`: antes, en el mismo comando, va `sed -i s/^from collections.abc import Mapping$/from collections.abc import Ma...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/validation/UMBRAL-MA
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n S = Path(r"C:\Users\USER\AppData\Lo
+    ejecutar `pytest`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && diff <(git show HEAD:tests/unit/test_umbral_mayo.py | grep -o "^def test_[a-z0-9_]*
+    ejecutar `botsito state check`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(...)`), que corre antes que la ejecucion o a la vez.
+- cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n p = Path("docs/validation/UMBRAL-MA
+    ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git add -A && git status --short | grep -v "^M " ; make check > make-check.log 2>&1
+    ejecutar `make check`: antes, en el mismo comando, va `git add -A`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b71
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && python "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b71
+    ejecutar `botsito state check`: antes, en el mismo comando, va `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "\bJ\b" PROJECT_STATE.md | cut -c1-140; make check > make-check.log 2>&1; e
+    ejecutar `make check`: antes, en el mismo comando, va `grep -n \bJ\b PROJECT_STATE.md`.
+- cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python - <<'EOF' \n from pathlib import Path \n p = Path("PROJECT_STAT
+    ejecutar `botsito state check`: antes, en el mismo comando, va `PYTHONUTF8=... python -`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python scripts/contrato_rama.py 2>&1 | tail -3; uv run botsito state check 2
+    ejecutar `botsito state check`: antes, en el mismo comando, va `uv run python scripts/contrato_rama.py`.
+- cd "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad
+    ejecutar `python medir_huecos.py`: detras, en la misma tuberia, va `tee medir_huecos-SALIDA.txt`: solo filtros que leen de la entrada estandar y no escriben nin
+- cd "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad
+    ejecutar `python medir_huecos.py`: detras, en la misma tuberia, va `tee medir_huecos-SALIDA.txt`: solo filtros que leen de la entrada estandar y no escriben nin
+- cd "C:/Users/USER/Desktop/Bot v3" && S="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d0
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `cat`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git add docs/validation/GUION-MISMO-COMANDO.md docs/validation/anexos/GUION-MISMO-C
+    ejecutar `python scripts/contrato_rama.py`: antes, en el mismo comando, va `git add docs/validation/GUION-MISMO-COMANDO.md docs/validation/anexos/GUION-M...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && git show main:.claude/hooks/guardia.py > "C:/Users/USER/AppData/Local/Temp/claude/C
+    ejecutar `python docs/validation/anexos/GUION-MISMO-COMANDO/medir_huecos.py`: antes, en el mismo comando, va `git show main:.claude/hooks/guardia.py`.
