@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/umbral-mayo
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37e-respaldo-a11` (2026-10-07).
+`trabajo/umbral-mayo` EN CURSO (2026-10-07, tarea nocturna): el umbral de construccion que habilita medir mayo, como ADR (punto J). Informe docs/validation/UMBRAL-MAYO.md.
 
 ## Stable Main State
 92312e3 · merge de `trabajo/respaldo-a11` (tag `stable/F37e-respaldo-a11`): A-11 sigue RESUELTA por el registro del trader (fb-2026-09-09-sesion-01-69711f67) y ya no cita el item supersedido; G1 sin ninguna excepcion; el revisor comprueba la afirmacion de cada item de evidencia nuevo. Sobre `stable/F37d-activacion-a42` (363f826). Informe docs/validation/RESPALDO-A11.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F37e-respaldo-a11` (2026-10-07).
 92312e3 · merge: A-11 sigue RESUELTA por el registro del trader, sin el item supersedido; G1 sin excepciones y D2 en el revisor (RESPALDO-A11.md) · tag stable/F37e-respaldo-a11
 
 ## Tests Currently Passing
-1359 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1383 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -42,8 +42,6 @@ Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, lín
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
-
-J. Umbral para medir mayo (decisión del consultor del 2026-10-06, pre-registrada antes de cualquier corrida nueva): mayo, el conjunto de medida de ADR-0043, solo se mide cuando botsito motor arnes sobre construcción dé una cobertura de al menos 0,70 y una precisión de al menos 0,60, las mismas cifras de ADR-0043. Si no llega, se sigue construyendo y mayo no se toca. Se escribe como ADR en su propia rama, antes de la primera corrida del arnés tras la activación de la sesión 4.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -202,9 +200,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 21 (2026-10-07).
+— ninguna desde el Archivo 22 (2026-10-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 21 (2026-10-07).
+— ninguna desde el Archivo 22 (2026-10-07).

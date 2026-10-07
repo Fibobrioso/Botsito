@@ -191,7 +191,7 @@ def test_no_implementada_detiene_la_sesion_y_queda_registrada(
     corrida = arnes.Corrida(
         "spec", ("2030-01",), (arnes.DiaTrader("c", DIA.isoformat(), (op,)),), (r,)
     )
-    texto = arnes.informe(corrida, _criterio(), vocabulario)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=(), simulacion=None)
     assert "- predicado:alcanza_nivel: 1 de 1" in texto
     # sin lectura de «formado», los tres predicados de RN-004 quedan sin escribir: desde ADR-0066
     # tambien el que pide que la toma sea de la sesion
@@ -206,7 +206,14 @@ def test_no_implementada_detiene_la_sesion_y_queda_registrada(
 
 def _criterio() -> Criterio:
     return Criterio(
-        Tolerancias(3, 15, 100_000), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+        Tolerancias(3, 15, 100_000),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        ("2030-01",),
+        ("2030-02",),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        "perfil-de-prueba",
     )
 
 
@@ -307,7 +314,7 @@ def test_un_motor_que_copia_al_trader_da_cien_por_cien_y_embudo_completo(
     hechos = [h for h, _ in arnes.hechos_de_regla(vocabulario)]
     motor = _Copia({d.dia: d.operaciones for d in dias}, hechos)
     corrida = arnes.correr("copia", ("2030-01",), dias, _mercado(dias), motor)
-    texto = arnes.informe(corrida, _criterio(), vocabulario)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=(), simulacion=None)
     assert "cobertura: 3/3 (100.0 %)" in texto
     assert "precision: 3/3 (100.0 %)" in texto
     for h in hechos:
@@ -323,7 +330,7 @@ def test_un_motor_que_no_opera_da_cobertura_cero_y_precision_sin_definir(
     corrida = arnes.correr("quieto", ("2030-01",), dias, _mercado(dias), _Quieto())
     medida = arnes.medida_de(corrida, _criterio())
     assert medida.cobertura == 0 and medida.precision is None
-    texto = arnes.informe(corrida, _criterio(), vocabulario)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=(), simulacion=None)
     assert "cobertura: 0/3 (0.0 %)" in texto
     assert "precision: sin definir (cero operaciones del bot puntuables)" in texto
     assert "precision: 0" not in texto and "precision: 100" not in texto
@@ -335,10 +342,18 @@ def test_determinismo_byte_a_byte(
     dias = (arnes.DiaTrader("c1", DIA.isoformat(), _dias_trader()[0].operaciones),)
     mercado = {DIA.isoformat(): _dia(registro, _m1(_fin_del_dia()))}
     uno = arnes.informe(
-        arnes.correr("spec", ("2030-01",), dias, mercado, motor), _criterio(), vocabulario
+        arnes.correr("spec", ("2030-01",), dias, mercado, motor),
+        _criterio(),
+        vocabulario,
+        opciones=(),
+        simulacion=None,
     )
     dos = arnes.informe(
-        arnes.correr("spec", ("2030-01",), dias, mercado, motor), _criterio(), vocabulario
+        arnes.correr("spec", ("2030-01",), dias, mercado, motor),
+        _criterio(),
+        vocabulario,
+        opciones=(),
+        simulacion=None,
     )
     assert uno.encode("utf-8") == dos.encode("utf-8")
 

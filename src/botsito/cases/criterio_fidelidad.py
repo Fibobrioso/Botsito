@@ -64,6 +64,13 @@ class Criterio:
     umbral_precision: Fraction
     construccion: tuple[str, ...]
     medida: tuple[str, ...]
+    # El umbral de CONSTRUCCION que habilita medir (ADR-0070): sobre una corrida del arnes en
+    # todo `construccion`, sin diagnostico.
+    umbral_construccion_para_medir_cobertura: Fraction
+    umbral_construccion_para_medir_precision: Fraction
+    # El perfil de cuenta con el que la corrida simulada tiene que correr para habilitar
+    # (ADR-0070, enmienda del 2026-10-07); la fase es la primera de ese perfil.
+    perfil_para_medir: str
 
 
 @dataclass(frozen=True)
@@ -149,6 +156,70 @@ def medir(trader: Sequence[Operacion], bot: Sequence[Operacion], tol: Tolerancia
     )
 
 
+@dataclass(frozen=True)
+class Simulacion:
+    """Con que corrio el broker simulado: el perfil y la fase EFECTIVOS (dados o por defecto) y la
+    primera fase que declara ese perfil. Sin simulacion, la corrida no lleva este objeto."""
+
+    perfil: str
+    fase: str
+    primera_fase: str
+
+
+@dataclass(frozen=True)
+class Veredicto:
+    """Si una corrida de construccion habilita medir el conjunto de medida (ADR-0070), y por que
+    no: un motivo por cada condicion que falta. Sin motivos, habilita."""
+
+    habilita: bool
+    motivos: tuple[str, ...]
+
+
+def _por_ciento(f: Fraction) -> str:
+    return f"{float(f) * 100:.1f} %"
+
+
+def habilita_medir(
+    medida: Medida,
+    criterio: Criterio,
+    meses: Sequence[str],
+    *,
+    opciones_fuera: Sequence[str],
+    simulacion: Simulacion | None,
+) -> Veredicto:
+    """ADR-0070, con su enmienda del 2026-10-07. Habilita solo si la corrida (1) no uso ninguna
+    opcion fuera de la lista CERRADA de las que no cambian lo que el motor decide ni como se llena
+    (`opciones_fuera` vacia: la lista y el calculo viven en `engine/arnes.py`), (2) cubre TODO el
+    conjunto de construccion y (3) llega, en esa misma corrida, a los dos umbrales de construccion
+    para medir. Una metrica sin definir no llega. Y (enmienda del 2026-10-07) la corrida tiene que
+    estar SIMULADA con `perfil_para_medir` y la primera fase de ese perfil."""
+    motivos: list[str] = [f"opción fuera de la lista: {o}" for o in opciones_fuera]
+    if simulacion is None:
+        motivos.append("sin simulación")
+    else:
+        if simulacion.perfil != criterio.perfil_para_medir:
+            motivos.append(f"perfil {simulacion.perfil}: solo cuenta {criterio.perfil_para_medir}")
+        if simulacion.fase != simulacion.primera_fase:
+            motivos.append(
+                f"fase {simulacion.fase}: solo cuenta la primera del perfil, "
+                f"{simulacion.primera_fase}"
+            )
+    faltan = sorted(set(criterio.construccion) - set(meses))
+    if faltan:
+        motivos.append(
+            f"la corrida no cubre todo el conjunto de construccion (falta {', '.join(faltan)})"
+        )
+    for nombre, valor, umbral in (
+        ("cobertura", medida.cobertura, criterio.umbral_construccion_para_medir_cobertura),
+        ("precision", medida.precision, criterio.umbral_construccion_para_medir_precision),
+    ):
+        if valor is None:
+            motivos.append(f"{nombre} sin definir")
+        elif valor < umbral:
+            motivos.append(f"{nombre} {_por_ciento(valor)} por debajo de {_por_ciento(umbral)}")
+    return Veredicto(not motivos, tuple(motivos))
+
+
 def _fraccion(valor: object, campo: str) -> Fraction:
     try:
         f = Fraction(str(valor))
@@ -163,6 +234,13 @@ def _entero(doc: dict[str, object], campo: str) -> int:
     valor = doc.get(campo)
     if isinstance(valor, bool) or not isinstance(valor, int) or valor <= 0:
         raise CriterioError(f"{FICHERO_CRITERIO}: {campo} es un entero positivo")
+    return valor
+
+
+def _texto(doc: dict[str, object], campo: str) -> str:
+    valor = doc.get(campo)
+    if not isinstance(valor, str) or not valor.strip():
+        raise CriterioError(f"{FICHERO_CRITERIO}: {campo} es un texto no vacio")
     return valor
 
 
@@ -193,6 +271,15 @@ def cargar_criterio(repo: Path) -> Criterio:
         umbral_precision=_fraccion(doc.get("umbral_precision"), "umbral_precision"),
         construccion=construccion,
         medida=medida,
+        umbral_construccion_para_medir_cobertura=_fraccion(
+            doc.get("umbral_construccion_para_medir_cobertura"),
+            "umbral_construccion_para_medir_cobertura",
+        ),
+        umbral_construccion_para_medir_precision=_fraccion(
+            doc.get("umbral_construccion_para_medir_precision"),
+            "umbral_construccion_para_medir_precision",
+        ),
+        perfil_para_medir=_texto(doc, "perfil_para_medir"),
     )
 
 
@@ -203,9 +290,12 @@ __all__ = [
     "Medida",
     "Operacion",
     "Pareja",
+    "Simulacion",
     "Tolerancias",
+    "Veredicto",
     "cargar_criterio",
     "compatibles",
     "emparejar",
+    "habilita_medir",
     "medir",
 ]

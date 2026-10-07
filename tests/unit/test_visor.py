@@ -73,7 +73,14 @@ def _m1(desde: datetime, hasta: datetime) -> list[Vela]:
 
 def _criterio() -> Criterio:
     return Criterio(
-        Tolerancias(3, 15, ESCALA), Fraction(7, 10), Fraction(6, 10), ("2030-01",), ("2030-02",)
+        Tolerancias(3, 15, ESCALA),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        ("2030-01",),
+        ("2030-02",),
+        Fraction(7, 10),
+        Fraction(6, 10),
+        "perfil-de-prueba",
     )
 
 

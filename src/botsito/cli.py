@@ -8,7 +8,7 @@ import math
 import re
 import subprocess
 import sys
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -2207,6 +2207,28 @@ def _texto_de_vistos(repo: Path) -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else ""
 
 
+def opciones_de_la_corrida(
+    parsers: Sequence[argparse.ArgumentParser], args: argparse.Namespace
+) -> tuple[str, ...]:
+    """Las opciones de `parsers` -el raiz y el del subcomando- que la corrida uso: las que tienen
+    un valor distinto del que su parser pone por defecto, con su nombre largo. Se leen de los
+    parsers, no de una lista: una opcion que se anada manana, al subcomando o a la raiz (como
+    `--repo`), sale aqui sin tocar nada (ADR-0070, enmienda del 2026-10-07)."""
+    salida: set[str] = set()
+    for parser in parsers:
+        for accion in parser._actions:
+            if not accion.option_strings or accion.dest in _DESTINOS_SIN_OPCION:
+                continue
+            if getattr(args, accion.dest, accion.default) != accion.default:
+                salida.add(max(accion.option_strings, key=len))
+    return tuple(sorted(salida))
+
+
+# Lo que no es una opcion de la corrida: la ayuda, la version (las dos salen antes de correr) y los
+# propios parsers que el comando guarda para leerse.
+_DESTINOS_SIN_OPCION = frozenset({"help", "version", "parser_raiz", "parser_de_la_corrida"})
+
+
 def _diagnostico_de(args: argparse.Namespace) -> Any:
     """Lo pedido con --diagnostico-a35 / --diagnostico-a44 (rama trabajo/preparar-a35-a44), y
     desde la rama trabajo/broker-ordenes-stop --diagnostico-a27, que solo tiene sentido con el
@@ -2343,7 +2365,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
     import time
     import tracemalloc
 
-    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.criterio_fidelidad import CriterioError, Simulacion, cargar_criterio
     from botsito.cases.holdout import HoldoutCerradoError
     from botsito.cases.paquete import cargar_config
     from botsito.comun.memoria import pico_del_proceso
@@ -2415,13 +2437,20 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             )
             motor.cuenta_diaria = diag.cuenta_diaria
             nombre = cableado.NOMBRE_MOTOR
+            # ADR-0070: el perfil y la fase EFECTIVOS, y la primera fase de ese perfil
+            simulacion = Simulacion(motor.perfil, motor.fase, perfil_cuenta.fases()[0])
         else:
             motor = MotorSpec(
                 Interprete(vocabulario, primitivas_escritas(registro, tope, limpia)), reglas
             )
             nombre = "spec vigente"
+            simulacion = None
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
-        texto = arnes.informe(corrida, criterio, vocabulario)
+        # ADR-0070: el veredicto dice «no» a toda corrida con una opcion fuera de su lista
+        opciones = opciones_de_la_corrida((args.parser_raiz, args.parser_de_la_corrida), args)
+        texto = arnes.informe(
+            corrida, criterio, vocabulario, opciones=opciones, simulacion=simulacion
+        )
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
@@ -2888,6 +2917,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="botsito")
     parser.add_argument("--version", action="version", version=f"botsito {__version__}")
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="raiz del repositorio")
+    # ADR-0070: `motor arnes` lee tambien las opciones del parser raiz (`opciones_de_la_corrida`)
+    parser.set_defaults(parser_raiz=parser)
     sub = parser.add_subparsers(dest="cmd")
     state = sub.add_parser("state", help="memoria operativa del proyecto")
     state_sub = state.add_subparsers(dest="state_cmd", required=True)
@@ -3061,6 +3092,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _opciones_simulacion(mt_arnes)
     _opciones_diagnostico(mt_arnes)
+    # ADR-0070: el comando lee del propio parser que opciones uso la corrida
+    mt_arnes.set_defaults(parser_de_la_corrida=mt_arnes)
     mt_visor = motor_sub.add_parser(
         "visor",
         help="una pagina HTML por dia de CONSTRUCCION para depurar reglas: trader, bot y por que",
