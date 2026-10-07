@@ -82,6 +82,8 @@ def test_las_instrucciones_tienen_los_dos_ejes_y_las_tres_gravedades() -> None:
         "HOLDOUT-EXPOSICIONES",
         "contrato_rama.py",
         "recuadro de correccion",
+        # D2 del consultor (2026-10-06, trabajo/respaldo-a11): la afirmacion de cada item nuevo
+        "La afirmacion de cada item de evidencia nuevo",
     ):
         assert fragmento in texto, fragmento
 

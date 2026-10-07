@@ -43,3 +43,27 @@ Dado por Aleks (consultor) el 2026-10-07. Copiado tal cual:
 > 1. Decisión de Aleks (2026-10-06): el bot es 100 % automático. No hay ningún plan con intervención humana. La línea J de la Next Action hablaba de «pasar al plan híbrido», un término que no está definido en ningún fichero del repo, y queda retirada.
 > 2. J se sustituirá en el commit del contrato del cierre de esta rama (lo dirá la orden de cierre) por: «J. Umbral para medir mayo (decisión del consultor del 2026-10-06, pre-registrada antes de cualquier corrida nueva): mayo, el conjunto de medida de ADR-0043, solo se mide cuando botsito motor arnes sobre construcción dé una cobertura de al menos 0,70 y una precisión de al menos 0,60, las mismas cifras de ADR-0043. Si no llega, se sigue construyendo y mayo no se toca. Se escribe como ADR en su propia rama, antes de la primera corrida del arnés tras la activación de la sesión 4.»
 > 3. Hasta que ese ADR esté en main, nadie ejecuta botsito motor arnes, en esta rama ni en ninguna. Si lo necesitas, PARA y dímelo.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-07), copiada tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/respaldo-a11 (2026-10-07). Cópiala tal cual al final del encargo y al informe.
+>
+> CAMBIO DE DECISIÓN, declarado: D1 queda SUSTITUIDA. Tu §1 muestra que A-11 ya está cerrada por el trader: fb-2026-09-09-sesion-01-69711f67 (RESOLVE_UNKNOWN sobre A-11, medio video, sesión 1, 1:43:51-1:44:36, confirmado en 2:00:01), con valor «el stop completo va en la orden». El consultor decidió D1 sin leer ese registro (hallazgo para la fila de la rama, abajo).
+>
+> 1. A-11 sigue RESUELTA. No hay ADR 0070 en esta rama, ni cambio de estado, ni de clase, ni de decision/decidida_el. D-a y D-b desaparecen.
+>    Lo único que cambia en A-11: sale ev-v4-001207-0c4ffd4b de evidencia. Se queda ev-v1-000620-0f7dea14 (D-e: se mantiene, y el informe dice que lo que cierra A-11 es el registro del trader, no ese ítem). El texto de pregunta no se toca.
+>    Antes de escribir, mide y deja en el informe que 1:43:51-1:44:36 y 2:00:01 de ese vídeo no caen en ningún tramo de knowledge/corpus/tramos_no_citables.yaml (léelo del yaml; no abras la transcripción). Si alguno cae dentro, PARA.
+>    Trailer Fuente: fb-2026-09-09-sesion-01-69711f67. spec docs --escribir en el mismo commit si cambia algo generado.
+> 2. D-c: opción (a). EXCEPCIONES = () con el mecanismo conservado, un test que exige que esté vacío, y los tests del mecanismo con una excepción sintética. Más el test que rompe a propósito: cada id supersedido real, citado en una spec temporal, hace fallar G1.
+> 3. D-d: opción (a). test_una_ambiguedad_puede_citar_evidencia_ya_supersedida se reescribe con un YAML sintético en tmp_path.
+> 4. test_ambiguedades_reales_y_esquema no cambia: A-11 sigue en RESUELTAS. Si falla, PARA.
+> 5. D2 (el revisor) y la nota sobre ev-v6-021939-b430a110, como dice el encargo. Toca .claude/: push de fix/respaldo-a11 y CI de Linux con su número de run.
+> 6. Fase 4 igual: la línea de Technical Debt de A-11 sale a HISTORIA bajo «# Technical Debt PAGADA», con saldo de bytes de PROJECT_STATE menor o igual que cero.
+>
+> Hallazgo del consultor para la fila de la rama en ERRORES-RECURRENTES (va en la orden de cierre): importa. El consultor decidió D1 (DECIDIDA por ADR) sin leer el registro RESOLVE_UNKNOWN que ya cerraba A-11, guiándose por la línea de deuda «su respaldo citable no dice el momento del stop». Lección: antes de decidir sobre una ambigüedad cerrada, se lee el registro que la cierra, no solo su campo evidencia.
+>
+> Sigue: knowledge validate antes del primer make check; luego make check y uv run botsito state check en verde, la CI de Linux y el revisor con su informe pegado al final, comprobando aparte que G1 no tiene ninguna excepción y que el test de rotura falla cuando debe.
+>
+> Rama lista para revisión, NO cerrada.

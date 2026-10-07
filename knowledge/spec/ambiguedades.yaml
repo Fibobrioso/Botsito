@@ -176,7 +176,6 @@ ambiguedades:
       fidelidad dejo anotada en la descripcion del parametro
     resuelve_en: [F22, F31]
     evidencia:
-      - ev-v4-001207-0c4ffd4b
       - ev-v1-000620-0f7dea14
     parametros: [stop_en_orden_pendiente]
     contradiccion: null

@@ -1389,7 +1389,7 @@ def test_decidida_exige_un_adr_que_exista_y_que_la_nombre(tmp_path: Path) -> Non
     assert a.estado == "DECIDIDA" and a.decision == "ADR-0022" and a.decidida_el == "2026-09-12"
 
 
-def test_una_ambiguedad_puede_citar_evidencia_ya_supersedida() -> None:
+def test_una_ambiguedad_puede_citar_evidencia_ya_supersedida(tmp_path: Path) -> None:
     """Superseder un item no borra la pregunta que ese item abrio.
 
     `kit check` miraba solo los items VIVOS para comprobar que la evidencia citada existe, y
@@ -1398,29 +1398,38 @@ def test_una_ambiguedad_puede_citar_evidencia_ya_supersedida() -> None:
     sobre evidencia del proyecto: A-10, A-11 y A-18 pasaron a citar evidencia "que no existe".
 
     Existir y seguir vigente no son lo mismo, y una ambiguedad cita lo primero.
+
+    Desde el 2026-10-07 (trabajo/respaldo-a11, D-d) el caso es SINTETICO: G1 ya no deja que una
+    ambiguedad de la spec real cite un supersedido (`validation/citas_supersedidas.py`, sin
+    excepciones), asi que en el repositorio no queda ninguno con el que probarlo. Lo que se vigila
+    -que la existencia se mire sobre TODOS los items- sigue valiendo para `validar_contra_contexto`.
     """
+    from dataclasses import dataclass
+
     from botsito.cases.ambiguedades import cargar_ambiguedades
     from botsito.cases.ambiguedades import validar_contra_contexto as validar_amb
     from botsito.comun.documentos import activos as vivos_de
-    from botsito.config.registro import cargar_registro
-    from botsito.evidence.modelo import cargar_evidencia
 
-    items = list(cargar_evidencia(REPO / "knowledge" / "evidence"))
-    supersedidos = {i.supersede for i in items if i.supersede}
-    assert supersedidos, "sin ningun item supersedido esto no vigilaria nada"
+    @dataclass(frozen=True)
+    class Item:
+        id: str
+        supersede: str | None = None
 
-    ambs = cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
-    citadas = {e for a in ambs for e in a.evidencia}
-    assert citadas & supersedidos, (
-        "ninguna ambiguedad cita un item supersedido: el caso que esto vigila ya no existe en el "
-        "repositorio, asi que hay que revisar si el test sigue teniendo sentido"
-    )
+    viejo, nuevo, otro = (
+        "ev-v1-000100-aaaaaaaa", "ev-v1-000150-cccccccc", "ev-v1-000200-bbbbbbbb"
+    )  # fmt: skip
+    items = [Item(viejo), Item(nuevo, supersede=viejo), Item(otro)]
+    ruta = tmp_path / "amb.yaml"
+    ruta.write_text(AMBIGUEDADES.format(a=viejo, b=otro), encoding="utf-8")
+    ambs = cargar_ambiguedades(ruta)
+    assert viejo in {e for a in ambs for e in a.evidencia}
+    assert viejo not in {i.id for i in vivos_de(items)}
 
-    nombres = set(cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml").nombres())
+    nombres = {"cartuchos_max", "break_even_condicion"}
     con_todos = validar_amb(ambs, {i.id for i in items}, nombres, set())
     solo_vivos = validar_amb(ambs, {i.id for i in vivos_de(items)}, nombres, set())
     assert not [p for p in con_todos if "no existe" in p], con_todos
-    assert [p for p in solo_vivos if "no existe" in p], (
+    assert [p for p in solo_vivos if f"{viejo} no existe" in p], (
         "mirar solo los vivos tendria que fallar; si no falla, el caso se perdio"
     )
 

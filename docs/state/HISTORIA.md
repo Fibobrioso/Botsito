@@ -6170,3 +6170,13 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 20 (2026-10-06).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/respaldo-a11 (2026-10-07)
+
+La paga `trabajo/respaldo-a11` (docs/validation/RESPALDO-A11.md): A-11 sigue RESUELTA por el registro
+del trader que ya la cerraba (fb-2026-09-09-sesion-01-69711f67, v6 1:43:51-1:44:36, confirmado en
+2:00:01, fuera de todo tramo no citable), deja de citar el item supersedido y G1 queda sin ninguna
+excepcion. La premisa de la linea («su respaldo citable no dice el momento del stop») miraba solo el
+campo `evidencia` y no el registro que la cierra (respuesta del consultor del 2026-10-07).
+
+- A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md §8).

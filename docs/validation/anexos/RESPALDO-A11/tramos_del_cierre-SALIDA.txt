@@ -1,0 +1,10 @@
+registro: fb-2026-09-09-sesion-01-69711f67 (RESOLVE_UNKNOWN sobre {'tipo': 'ambiguedad', 'id': 'A-11'})
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4 -> v6
+tramos no citables de v6: 4
+  0:01:00-0:01:03
+  0:41:00-0:50:11
+  1:53:30-1:57:31
+  2:26:17-2:26:18
+respuesta (t0-t1) 1:43:51-1:44:36: tramos que pisa: ninguno
+confirmacion (notas) 2:00:01-2:00:02: tramos que pisa: ninguno
+VEREDICTO: ninguno cae en un tramo

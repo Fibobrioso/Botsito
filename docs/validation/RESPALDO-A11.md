@@ -6,8 +6,10 @@ el merge 363f826, tag `stable/F37d-activacion-a42`; `git rev-parse main origin/m
 Cierra el punto U de la Next Action. Decisiones de partida del consultor (2026-10-06), D1 y D2, en
 el encargo.
 
-**Este informe llega hasta la PARADA de la fase 0.** Fuera de él y de los ficheros de apertura de la
-rama no se ha cambiado nada del repositorio. El ADR nuevo se nombra sin su id hasta que exista
+**Cómo se lee.** Los §0 a §7 son la fase 0, tal como se escribió antes de la PARADA (entonces no
+se había cambiado nada del repositorio fuera del informe y los ficheros de apertura). La respuesta
+del consultor, que SUSTITUYE la decisión D1 y deja A-11 RESUELTA, está en §6.1; la fase 1, en §8;
+la CI y el revisor, en §9 y al final. El ADR nuevo se nombra sin su id hasta que exista
 (`knowledge validate` rechaza la cita de un ADR que no existe). Las medidas se hicieron en un clon desechable
 (`git worktree add` en la carpeta temporal, borrado después; CLAUDE.md, «Ensayos aislados»). Solo se
 leyó YAML de spec, código y docs: ninguna transcripción, ningún libro, ningún fotograma.
@@ -179,13 +181,37 @@ es 0,80, ya no 0,75», excede su `cita_literal`, «Es 0.80 Ya a 0.75 Acá nada m
 `Current Branch` y `Current Feature`, que el cierre devuelve. La línea de deuda que sale mide 177
 bytes, así que el saldo de las ediciones de contenido será −177.
 
-## 7. Lo que cambia esta rama hasta aquí
+### 6.1 Respuesta del consultor a la PARADA (2026-10-07), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/respaldo-a11 (2026-10-07). Cópiala tal cual al final del encargo y al informe.
+>
+> CAMBIO DE DECISIÓN, declarado: D1 queda SUSTITUIDA. Tu §1 muestra que A-11 ya está cerrada por el trader: fb-2026-09-09-sesion-01-69711f67 (RESOLVE_UNKNOWN sobre A-11, medio video, sesión 1, 1:43:51-1:44:36, confirmado en 2:00:01), con valor «el stop completo va en la orden». El consultor decidió D1 sin leer ese registro (hallazgo para la fila de la rama, abajo).
+>
+> 1. A-11 sigue RESUELTA. No hay ADR 0070 en esta rama, ni cambio de estado, ni de clase, ni de decision/decidida_el. D-a y D-b desaparecen.
+>    Lo único que cambia en A-11: sale ev-v4-001207-0c4ffd4b de evidencia. Se queda ev-v1-000620-0f7dea14 (D-e: se mantiene, y el informe dice que lo que cierra A-11 es el registro del trader, no ese ítem). El texto de pregunta no se toca.
+>    Antes de escribir, mide y deja en el informe que 1:43:51-1:44:36 y 2:00:01 de ese vídeo no caen en ningún tramo de knowledge/corpus/tramos_no_citables.yaml (léelo del yaml; no abras la transcripción). Si alguno cae dentro, PARA.
+>    Trailer Fuente: fb-2026-09-09-sesion-01-69711f67. spec docs --escribir en el mismo commit si cambia algo generado.
+> 2. D-c: opción (a). EXCEPCIONES = () con el mecanismo conservado, un test que exige que esté vacío, y los tests del mecanismo con una excepción sintética. Más el test que rompe a propósito: cada id supersedido real, citado en una spec temporal, hace fallar G1.
+> 3. D-d: opción (a). test_una_ambiguedad_puede_citar_evidencia_ya_supersedida se reescribe con un YAML sintético en tmp_path.
+> 4. test_ambiguedades_reales_y_esquema no cambia: A-11 sigue en RESUELTAS. Si falla, PARA.
+> 5. D2 (el revisor) y la nota sobre ev-v6-021939-b430a110, como dice el encargo. Toca .claude/: push de fix/respaldo-a11 y CI de Linux con su número de run.
+> 6. Fase 4 igual: la línea de Technical Debt de A-11 sale a HISTORIA bajo «# Technical Debt PAGADA», con saldo de bytes de PROJECT_STATE menor o igual que cero.
+>
+> Hallazgo del consultor para la fila de la rama en ERRORES-RECURRENTES (va en la orden de cierre): importa. El consultor decidió D1 (DECIDIDA por ADR) sin leer el registro RESOLVE_UNKNOWN que ya cerraba A-11, guiándose por la línea de deuda «su respaldo citable no dice el momento del stop». Lección: antes de decidir sobre una ambigüedad cerrada, se lee el registro que la cierra, no solo su campo evidencia.
+>
+> Sigue: knowledge validate antes del primer make check; luego make check y uv run botsito state check en verde, la CI de Linux y el revisor con su informe pegado al final, comprobando aparte que G1 no tiene ninguna excepción y que el test de rotura falla cuando debe.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 7. Lo que cambiaba esta rama al llegar a la PARADA
 
 - `docs/encargos/trabajo-respaldo-a11.md`, `contrato.yaml`, el Archivo 21 de `HISTORIA.md` y
   `PROJECT_STATE.md` (`Current Branch`, `Current Feature` y las dos líneas del archivo).
 - Este informe.
 
-El contrato solo permite hoy esas rutas; las de las fases 1-4 se añaden tras la respuesta.
+El contrato solo permitía entonces esas rutas; las de la fase 1 se añadieron tras la respuesta (§8).
 
 **Añadido del consultor del 2026-10-06**, copiado al final del encargo: el bot es 100 % automático
 y la línea J de la Next Action queda retirada (se sustituye en el commit del contrato del cierre); y
@@ -193,6 +219,136 @@ hasta que el ADR del umbral de mayo esté en `main`, nadie ejecuta `botsito moto
 no lo necesita. La última vez que se ejecutó fue en `trabajo/activacion-a42` (§9.5 de su informe),
 antes de esta regla.
 
+## 8. Fase 1, tras la respuesta del consultor
+
+### 8.1 Los instantes del registro que cierra A-11, contra los tramos no citables
+
+Anexo `anexos/RESPALDO-A11/tramos_del_cierre.py`, salida en `tramos_del_cierre-SALIDA.txt`. Lee el
+registro `fb-2026-09-09-sesion-01-69711f67`, `knowledge/corpus/fuentes.yaml` (para saber qué vídeo
+es su `grabacion`) y los tramos por el lector único (`botsito.corpus.cuarentena`). Ninguna
+transcripción.
+
+```
+registro: fb-2026-09-09-sesion-01-69711f67 (RESOLVE_UNKNOWN sobre {'tipo': 'ambiguedad', 'id': 'A-11'})
+grabacion: Grabación de pantalla 2026-09-09 151552.mp4 -> v6
+tramos no citables de v6: 4
+  0:01:00-0:01:03
+  0:41:00-0:50:11
+  1:53:30-1:57:31
+  2:26:17-2:26:18
+respuesta (t0-t1) 1:43:51-1:44:36: tramos que pisa: ninguno
+confirmacion (notas) 2:00:01-2:00:02: tramos que pisa: ninguno
+VEREDICTO: ninguno cae en un tramo
+```
+
+Ninguno cae en un tramo: no hay PARADA. La confirmación de las `notas` («Confirmado en 2:00:01») se
+mide como el segundo 2:00:01–2:00:02. Una lectura de más, declarada: para localizar los campos del
+fichero de tramos imprimí sus 30 primeras líneas, que traen el `motivo` y el `acordado` del tramo
+0:41:00–0:50:11 de v6 (las frases con que el trader avisa de que lo que sigue no es la operativa).
+Es el registro de tramos, no una transcripción; no se usa para nada.
+
+### 8.2 A-11 y G1, en el mismo commit
+
+- **A-11** (`knowledge/spec/ambiguedades.yaml`): sale `ev-v4-001207-0c4ffd4b` de `evidencia`; se
+  queda `ev-v1-000620-0f7dea14`. Ni estado, ni clase, ni `decision`/`decidida_el`, ni la `pregunta`
+  cambian. **Lo que cierra A-11 es el registro del trader `fb-2026-09-09-sesion-01-69711f67`**
+  (`RESOLVE_UNKNOWN`, v6 1:43:51–1:44:36, confirmado en 2:00:01, valor «el stop completo va en la
+  orden»), no ese ítem, que admite las dos lecturas (GUARDIAS-CITAS.md §8.1) y se queda como la
+  evidencia que abrió la pregunta (D-e).
+- **G1** (`src/botsito/validation/citas_supersedidas.py`): `EXCEPCIONES = ()`, con el mecanismo
+  conservado y un comentario que dice desde cuándo y por qué está vacía (D-c, opción a). Tiene que
+  salir en el mismo commit: con A-11 sin el id, la excepción quedaría sin uso y G1 fallaría
+  (`test_caducidad_la_excepcion_sin_uso_falla`).
+- **`spec docs --escribir`**: no cambia ningún fichero generado (`docs/spec/ambiguedades.md` no
+  lista la evidencia de cada ambigüedad); `test_spec_docs_generados` pasa.
+
+### 8.3 Los tests
+
+`tests/unit/test_citas_supersedidas.py`:
+- `test_la_lista_real_de_excepciones_esta_vacia`: `EXCEPCIONES == ()` (sustituye a
+  `test_la_excepcion_es_exactamente_un_par`).
+- Los seis del mecanismo pasan una excepción **sintética** explícita, `SINTETICA = Excepcion("A-11",
+  VIEJO, "sintetica: solo prueba el mecanismo de excepciones")`, en un `knowledge/spec/` temporal;
+  y uno nuevo, `test_sin_la_excepcion_el_mismo_par_falla`, prueba que sin ella el mismo par falla.
+- `test_g1_sobre_el_repositorio_real_pasa_sin_ninguna_excepcion` sustituye a
+  `test_caducidad_en_el_repositorio_real`: G1 sobre el repo real da `[]`, con las excepciones reales
+  y con `excepciones=()`.
+- **El test de rotura**, `test_rotura_cada_supersedido_real_citado_en_una_spec_hace_fallar_g1`:
+  con los ítems reales, cada uno de los 13 ids supersedidos, citado solo en el `evidencia` de una
+  ambigüedad de un `knowledge/spec/` temporal, da exactamente un fallo que lo nombra.
+
+**Que el test de rotura falla cuando debe**, medido en memoria sin tocar código ni tests
+(`anexos/RESPALDO-A11/rotura_g1.py`, salida en `rotura_g1-SALIDA.txt`):
+
+```
+EXCEPCIONES reales: ()
+supersedidos reales: 13; con G1 tal cual, fallan 13
+ROTURA 1, una excepcion para (A-11, ev-v1-000448-346d6d90): ese id da 0 fallo(s) -> el test de rotura FALLARIA
+ROTURA 2, G1 sin cadenas de sustitucion: fallan 0 de 13 -> el test de rotura FALLARIA
+VEREDICTO: el test de rotura pasa hoy y falla con las dos roturas
+```
+
+`tests/unit/test_kit.py`:
+- `test_una_ambiguedad_puede_citar_evidencia_ya_supersedida` se reescribe con un YAML sintético en
+  `tmp_path` (D-d): tres ítems sintéticos (uno supersedido por otro), la plantilla `AMBIGUEDADES` del
+  propio test, y la misma comprobación de antes: con todos los ítems la cita existe; con solo los
+  vivos, «no existe».
+- `test_ambiguedades_reales_y_esquema` **no cambia** y pasa: A-11 sigue en las RESUELTAS (punto 4).
+
+### 8.4 D2 en el revisor
+
+`.claude/agents/revisor.md`, eje (a), punto 10 nuevo: «La afirmacion de cada item de evidencia
+nuevo». En cada ítem que la rama añade a `knowledge/evidence/`, el revisor lee `cita_literal` y
+`afirmacion` y comprueba que la afirmación no dice nada que su cita no contenga; si dice más, es un
+hallazgo `importa`. Dice también por qué lo hace él (no hay comprobación automática; es un juicio de
+significado) y que un ítem commiteado no se edita, se supersede. Con fecha y fuente (D2 del
+consultor, 2026-10-06; hallazgo §8.3 de GUARDIAS-CITAS.md).
+
+`tests/unit/test_revisor.py` añade ese título a los fragmentos que exige en las instrucciones, para
+que no se pierda.
+
+Toca `.claude/`: push de `fix/respaldo-a11` y CI de Linux (§9).
+
+### 8.5 La nota sobre `ev-v6-021939-b430a110` (D2)
+
+`ev-v6-021939-b430a110` no se toca: la evidencia es inmutable. **Su `afirmacion` excede su
+`cita_literal`**:
+- `cita_literal`: «Es 0.80 Ya a 0.75 Acá nada más Ahora es a 0.8 No a 0.75»;
+- `afirmacion`: «el stop que se introduce en la operacion es 0,80, ya no 0,75».
+
+La cita dice la cifra (0,80 y no 0,75); «el stop que se introduce en la operación» no está en ella.
+**Y no respalda el momento del stop**: no dice si el stop va en la orden pendiente o se pone tras el
+llenado, que es lo que pregunta A-11. Es el sustituto de `ev-v4-001207-0c4ffd4b`, y por eso A-11 no
+lo cita en su lugar.
+
+### 8.6 PROJECT_STATE y la deuda
+
+- Sale de Technical Debt «A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el
+  momento del stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md
+  §8).» (180 bytes) y entra en `docs/state/HISTORIA.md` bajo «# Technical Debt PAGADA · sale de
+  PROJECT_STATE.md en trabajo/respaldo-a11 (2026-10-07)», con el porqué.
+- **Saldo de bytes:** 23.809 frente a los 23.826 de `main`. **-17 en total**. contando lo que
+  añaden `Current Branch` y `Current Feature`. que el cierre devuelve. Las ediciones de contenido
+  (la línea de deuda y el recuento de tests). −180.
+- La Next Action no se toca: U sale en el commit del contrato del cierre.
+
+### 8.7 El hallazgo del consultor, para el cierre
+
+Para la fila de la rama en ERRORES-RECURRENTES (va en la orden de cierre; esa tabla no se toca
+aquí): importa. El consultor decidió D1 (DECIDIDA por ADR) sin leer el registro `RESOLVE_UNKNOWN`
+que ya cerraba A-11, guiándose por la línea de deuda «su respaldo citable no dice el momento del
+stop». Lección: antes de decidir sobre una ambigüedad cerrada, se lee el registro que la cierra, no
+solo su campo `evidencia`.
+
+Una nota de la sesión, para la misma fila: la fase 0 lo tenía en su §1 (quién cierra A-11) y aun
+así propuso cinco decisiones sobre la vía de DECIDIDA sin preguntar si A-11 necesitaba cambiar de
+estado. La premisa del encargo no se discutió.
+
 ## Estado
 
-**EN CURSO: PARADA de la fase 0 (2026-10-07).** Espera la respuesta del consultor al §6.
+**EN CURSO (2026-10-07): fase 1 hecha; faltan la CI de Linux (`fix/respaldo-a11`) y el revisor.**
+
+- A-11 sigue RESUELTA por el registro del trader que la cierra; deja de citar el ítem supersedido.
+- G1 no tiene ninguna excepción; el test de rotura pasa hoy y falla con las dos roturas medidas.
+- D2 está en el revisor; la nota sobre `ev-v6-021939-b430a110`, en §8.5.
+- La deuda de A-11, pagada; PROJECT_STATE, por debajo de `main` (§8.6).
