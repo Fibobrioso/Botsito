@@ -873,12 +873,273 @@ entorno, `trap`, `awk -f`/`sed -f`); las demás siguen como allí.
 
 ### 1.17 CI de Linux de esta ronda
 
-Pendiente.
+| Run | Rama | Commit | Resultado |
+|---|---|---|---|
+| #234 (`37676051850`) | `fix/guion-mismo-comando` | `4be52cb` | `failure` con **1 failed, 2226 passed, 8 skipped**: el aceptado (`test_state_check_ok_on_real_repo`, por el nombre `fix/`) |
+| #235 (`37685515532`) | `fix/guion-mismo-comando` | `42856e8` | `failure` con **1 failed, 2256 passed, 8 skipped**: el aceptado. Ningún test de la guardia falla en Linux, tampoco los de `PATH` y los nombres de entorno |
 
-### 1.18 Segunda pasada del revisor
+El commit con los arreglos de la segunda pasada tiene su run en el mensaje al consultor y entra en
+este informe con el siguiente commit.
 
-Pendiente.
+### 1.18 Segunda pasada del revisor (subagente `revisor`, 2026-10-07), tal cual
+
+## Informe del revisor · trabajo/guion-mismo-comando · segunda pasada (commit 42856e8) · 2026-10-07
+
+Rama `trabajo/guion-mismo-comando`, HEAD 42856e8 (árbol ed6bcef1…, el que sella `make-check.log`), contra main cbfe4e4. Cambia 18 ficheros, todos dentro del contrato. No toca `src/`, `knowledge/`, `CLAUDE.md`, `.claude/settings.json`, agentes ni skills.
+
+**Veredicto corto.** La condición «de dentro» (lo de antes, lo de a la vez, los nombres de entorno) es de verdad una lista cerrada que niega por defecto. Lo que activa la condición y lo que las listas dejan pasar tiene fugas que he reproducido con `decidir()`:
+- Un caso que `main` niega pasa ahora a pasar. Contradice una afirmación explícita del informe.
+- La lista cerrada de PowerShell se rompe con un espacio.
+- `NO_EJECUTAN` contiene programas que ejecutan código.
+- Varios argumentos de programas conocidos o desconocidos se ejecutan sin leerse.
+
+La rama no está lista.
+
+Todas mis medidas son `decidir()` sobre un repo sintético en un directorio temporal, o sobre scripts inexistentes. No he ejecutado ninguno de los comandos medidos.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | El informe afirma más de lo que sus medidas sostienen. (i) «0 casos que `main` niega y la rama deja pasar» (§1.4, §1.8, §1.14): es falso como propiedad (ver B1). (ii) §1.13: de `find` y `xargs` dice que «lo que lanzan pasa por la condición»: es falso para un segundo `-exec` y para `xargs -a <lector>` (ver B3). (iii) §1.16 dice que un programa desconocido «sin ficheros» pasa porque «no hay nada de la rama que leer»: es falso cuando el argumento es una cadena de comando que nombra un fichero de la rama (ver B4). «Nada afirma más de lo que su cita sostiene.» | `decidir()` en las secciones B1, B3 y B4. |
+| A2 | menor | Cifras de §1.13 que no cuadran. Dice «36 programas… los otros 31 forman `NO_EJECUTAN`». `programas_y_nombres-SALIDA.txt` lista 38 programas, de los que 33 no ejecutan código (los 33 están en `NO_EJECUTAN`, que tiene 36 con `stat`, `du` y `certutil`). La lista nominal del propio informe ya trae 33 nombres. | `programas_y_nombres-SALIDA.txt` líneas 3-41. `len(g.NO_EJECUTAN)` = 36. |
+| A3 | menor | El test por `ast` solo prohíbe `raise` propio en las vías. No prohíbe decisiones de «pasa» por `return`, que también son código propio que decide. | `guardia.py:1941-1942` (`_sin_guion`: `{…} <= SOLO_VERSION: return`); `_analizar_xargs` y `_analizar_find` devuelven sin llamar a la función para los lectores; el test mira solo `ast.Raise`, `test_guardia_claude.py:1341-1368`. |
+| A4 | menor | El anexo de mutaciones no cubre `botsito` como ejecución (ver B8), `_fichero_de_programa` (`awk`/`sed -f`), `_ejecucion_en_powershell`, `_set_admitido` ni `_es_filtro`. Las he mutado yo en memoria: rompen 3, 5, 1 y 4 tests. Es decir, esas piezas tienen test. Falta que el anexo lo demuestre. | Mutación propia con `pytest.main` en proceso. `sin_condicion.py` lista 9 mutaciones, ninguna de esas. |
+| A5 | menor | `LECTOR_DE_METADATOS` (≈60 nombres) y `NO_EJECUTAN` (36) son dos listas solapadas. Lectores inocuos que no están en `NO_EJECUTAN` cuentan ahora como «ejecución» y se niegan cuando reciben cualquier fichero que no sea el de `main`. | `test -f a.py`, `[ -f a.py ]`, `md5sum a.py`, `realpath a.py`, `chmod +x a.py`, `touch a.py`, `jq . a.py`, `xxd a.py`, `tac a.py`, `readlink a.py`: todos NIEGA («la guardia no sabe con que se ejecuta a.py»). `main`: todos PASA. Los 503 comandos reales no usan ninguno, así que la condición (b) del consultor se cumple. |
+
+Comprobado sin hallazgos:
+- Contrato: `CONTRATO: 18 ficheros dentro del contrato… 4 comprobaciones`.
+- `make-check.log`: `2265 passed`, `SELLO … arbol ed6bcef1…` igual a `git rev-parse HEAD^{tree}`, `exit=0`, `PICO DE MEMORIA 291 MiB`.
+- `uv run botsito state check`: OK.
+- `pytest tests/unit/test_guardia_claude.py`: 369 casos, todos pasan. Los 236 de antes y los 32 de `RITUAL` incluidos.
+- Sin trailers `Fuente:` que exigir (no se toca `knowledge/spec` ni `cases`). Sin ADR, ambigüedades ni informes cerrados cambiados.
+- `HISTORIA.md`: 211 líneas añadidas, 0 borradas. `PROJECT_STATE.md`: 5 líneas cambiadas, 23.426 bytes. Todo lo demás de `docs/` es `A`.
+- El informe acaba en «Estado: EN CURSO». §1.17 y §1.18 están «Pendiente», como se avisó.
+- Material protegido: nada se abre. `comandos_reales-SALIDA.txt` oculta las 7 líneas de material adicional o backtest. `grep` de holdout, xlsx, backtest, cruda y analytics sobre las salidas: solo aparecen los marcadores «no se imprime».
+- Cifras de §1.14 contra anexos: 547 distintos = 442 + 104 + 1; 104 = 99 + 2 + 2 + 1. 58 casos sintéticos = 44 PASA→NIEGA + 14 iguales + 0 `!!`: reproducido con `medir_huecos.casos()`. 133 casos = 20+27+26+26+1+1+12+6+10+1+1+1+1 (13 funciones).
+- Referencias remotas: `origin/fix/guion-mismo-comando` = 42856e8. La sobrante `origin/fix/trabajo-guion-mismo-comando` sigue en f22179f, declarada y a borrar en el cierre.
+
+### Eje (b) · Encargo y las dos respuestas del consultor
+Resumen: 2 bloquea, 6 importa, 0 menor. Requisitos: 18 hechos, 5 parciales, 0 no hechos (5 más son del cierre o de esta revisión).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| R1 | Abrir rama: sha de main, tag, CI de main; skill `abrir-rama` (encargo, contrato, HISTORIA) | Hecho | Cabecera del informe, Archivo 23. No pude consultar la CI de main (curl bloqueado para mí). |
+| R2 | Fase 0 a-d y PARADA sin código antes | Hecho | §0; commit 29bf2c1 |
+| R3 | Una sola función `exigir_ejecucion_verificable`, llamada desde todas las vías | Hecho | `guardia.py:2460`; test `ast` |
+| R4 | Guion inexistente o ilegible: se niega con «Write» y «otra llamada» | Hecho | `guardia.py:2428-2429`, `COMO_EJECUTAR`; test `…no_existe_dice_como_reescribirlo` |
+| R5 | Tests que rompen la guardia: b1-b6 y variantes, vías, cada elemento de la lista, programa inventado, make | Parcial | `botsito` como ejecución (tercer añadido aceptado) no tiene test en Bash (B8) |
+| R6 | Anexo de mutaciones | Hecho | VEREDICTO reproducido (comprobación 4) |
+| R7 | Comparación caso a caso: nada que `main` niegue pasa | Parcial | B1 |
+| R8 | Los 32 de `RITUAL` y los 236 antiguos | Hecho | 369 pasan |
+| R9 | `medir_huecos.py` contra la guardia nueva; todo NIEGA salvo hallazgo 5 | Hecho | 58 casos: 44 PASA→NIEGA, 14 iguales, 0 NIEGA→PASA |
+| R10 | Resp. fase 0 #1: lista cerrada con los 3 añadidos; `python a && python b` se niega | Hecho | `_es_preparacion`, `_set_admitido`; test `inocuo && existente` |
+| R11 | Resp. fase 0 #2: todas las vías (2, 4, 5, 8, 9, 10, 11) por la función | Parcial | B2, B3, B5 |
+| R12 | Resp. fase 0 #3: make opción (a) y límite declarado | Hecho | `_analizar_make` 1668-1694; §1.6 |
+| R13 | Resp. fase 0 #4 y #5: Next Action (importa el guion; rutas compuestas) | Del cierre | §1.6 |
+| R14 | Hallazgo 5: medirlo (joinpath, `os.path.join`, `/`, f-string) sin arreglarlo | Hecho | §1.5; 5 de 6 PASAN |
+| R15 | Fila de ERRORES-RECURRENTES, Next Action | Del cierre | — |
+| R16 | Decisiones del encargo copiadas (repo público, demo FTMO) | Hecho | `docs/encargos/…md` |
+| R17 | No tocar motor, spec, knowledge, cifras, `criterio_fidelidad.yaml`, `CLAUDE.md`; no ejecutar `motor arnes` | Hecho | `git diff --name-status` |
+| R18 | CI de Linux: push de `fix/…` y número de run | Parcial | Empujado a `fix/guion-mismo-comando` en 42856e8. El run de esta ronda está en §1.17 «Pendiente». |
+| R19 | Informe completo y revisor pegado | En curso | §1.18 |
+| R20 | Resp. §1.12 #1a: ejecución = todo programa fuera de una lista cerrada de los que no ejecutan código, con porqué; `trap` fuera; `awk -f` y `sed -f` se niegan | Parcial | B3, B7 |
+| R21 | #1b: programa fuera de toda lista que recibe un fichero que existe y no es de `main` se niega; coste sobre 503 y 32 | Hecho, con huecos | Coste: `medir_b2-SALIDA.txt` 0 y 0. Huecos en B4. |
+| R22 | #1c: nombres de entorno cerrados; 10 prohibidos con test cada uno | Hecho, con huecos | `NOMBRES_DE_ENTORNO` = 2; 10×5 formas. Huecos en B6. |
+| R23 | #2: rama de CI aceptada | Hecho | — |
+| R24 | #3: filas de ERRORES-RECURRENTES | Del cierre | — |
+| R25 | Ampliar el anexo de mutaciones | Hecho | 9 mutaciones; A4 |
+| R26 | `make check` sellado | Hecho | Árbol ed6bcef1… |
+| R27 | Comparación con main y con los comandos reales actualizada | Hecho | 547 distintos |
+| R28 | Segunda pasada del revisor | Esta | — |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | **bloquea** | Hay casos que `main` niega y la rama deja pasar, contra el encargo («no se pierde ningún caso que hoy se bloquea») y contra §1.4, §1.8 y §1.14 («0»). Causa: `INTERPRETE_CON_VALOR` es nuevo en la rama. Salta el valor de `-r`, `--require`, `--import` y `--loader` sin leerlo. Ese valor es código que el intérprete carga y ejecuta antes del guion. `main` tomaba ese valor por «el guion» y lo leía, por casualidad. También `bash --rcfile` y `--init-file` (con `-i` ejecutan el fichero; no lo he ejecutado). Con `malo.js` o `malo.rb` que nombran el fichero de mentira del holdout sintético: `node -r ./malo.js inocuo.js`, `node --require ./malo.js inocuo.js`, `node --import ./malo.js inocuo.js`, `node --loader ./malo.js inocuo.js`, `ruby -r ./malo.js inocuo.js` (+ `deno`, `bun`). La cuadrícula completa de intérpretes y shells × opciones con valor da 40 pares (programa, opción) NIEGA→PASA. Los de `-X`, `-W`, `bash -o/-O` son falsos positivos de `main` que se van; los de `--require/-r/--import/--loader` y `--rcfile/--init-file` son pérdida real. Control: `node malo.js` NIEGA en las dos. | `decidir()` sobre el repo sintético: `main=NIEGA («el codigo nombra …/holdout/1/secreto.yaml») rama=PASA` para cada uno. Código: `guardia.py:1862` (`INTERPRETE_CON_VALOR`) y `:1908` (`i += 2 if t in INTERPRETE_CON_VALOR`). `grep INTERPRETE_CON_VALOR` en `main`: nada. La comparación del informe nunca incluyó estos casos: 58 sintéticos y comandos reales sin opciones de ese tipo. |
+| B2 | **bloquea** | La lista cerrada de PowerShell (`PS_NO_EJECUTAN`, §1.13) se rompe con un espacio tras el paréntesis. `_ejecucion_en_powershell` solo mira como comando la ficha que EMPIEZA con `(`, `$(` o `@(` pegada al nombre; con `( php x.php )` la ficha es `(` sola y no se decide. Un programa cualquiera pasa sin ser decidido, justo lo que pidió el consultor evitar. | Herramienta PowerShell, `decidir()`: PASA `Write-Output ( php x.php )`, `Write-Output $( cscript x.js )`, `Write-Output ( ./nx.exe )`, `Write-Output @( php x.php )`, `Write-Output 1 -and ( php x.php )`, `Get-Content a.py; ( php x.php )`. NIEGA `Write-Output (php x.php)`. Código: `guardia.py:2632-2636` (`abre = k == 0 or ficha.startswith(("(", "$(", "@("))`; `limpia_cmd` queda vacío con `(` sola). En PowerShell tampoco se decide `git -c alias.x='!python a.py' x` (PASA; en Bash NIEGA), ni `git bisect run ./a.ps1`. |
+| B3 | importa | Criterio 2 del consultor («ninguna entrada ejecuta código»): `NO_EJECUTAN` contiene programas que sí ejecutan. Algunos los declara el propio porqué (`awk` `system()`, `sed` `e`, `mypy` plugins, hooks de git). Otros no están declarados en ninguna parte y los he medido. (a) `git`: `bisect run`, `submodule foreach`, `-c core.fsmonitor=…`, `-c core.sshCommand=…`, `config alias.x '!…'; git x` PASAN (el alias con `!` de `-c` y `--config-env` sí se niegan). (b) `sort --compress-program=./a.py`. (c) `gh alias set -s x 'python a.py'`. (d) Bug en la vía 10: `_analizar_find` solo examina el primer `-exec`; `find inocuo.py -exec ls {} \; -exec python a.py \;` PASA, y `find inocuo.py -exec python a.py \;` NIEGA. (e) Bug en la vía 12: `xargs -a ls python a.py` y `xargs --arg-file ls python a.py` PASAN (el valor de `-a` se toma por el programa, un lector). (f) Con un `cp a.py b.py &&` delante de cualquiera de estos, la condición ni se activa: `cp a.py b.py && awk 'BEGIN{system("python b.py")}'` PASA. | `decidir()` con `a.py` (nuevo, malo) en disco: todos `rama=PASA` salvo el `find` de un solo `-exec`. `guardia.py:1722-1734` (`for accion in …: textos.index(accion)`, un solo índice); `:1700-1704`; `NO_EJECUTAN` 2022-2065. |
+| B4 | importa | La condición (b) solo mira argumentos que SON un fichero existente (`os.path.isfile` sobre el valor o lo que sigue al primer `=`). Un programa desconocido que recibe una cadena de comando, o un valor con otro `=`, ejecuta un fichero de la rama sin leerlo, aunque exista. Los PASA son los de B2 de la primera pasada y siguen igual. | `decidir()` con `a.py` malo en disco: PASA `watch "python a.py"`, `su -c "python a.py"`, `ssh -o ProxyCommand="python a.py" host`, `fish -c "python a.py"`, `script -qc "python a.py" /dev/null`, `rsync -e "python a.py" inocuo.py dst`, `vim -c '!python a.py'`, `tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py`, `php {a,b}.py`. Control: `watch python a.py` y `php a.py` NIEGAN. Código: `guardia.py:2167-2185`. Contradice §1.16 («no hay nada de la rama que leer»). |
+| B5 | importa | La vía 9 (fichero como programa) no se cierra para un fichero cuyo nombre base coincide con un programa que la guardia trata por su nombre. `analizar_comando` calcula `prog = basename(argv[0])` y despacha por él antes de llegar a `_es_fichero_programa` (`:1316`). Un `./git`, `sub/git`, `./python`, `./botsito`, `./pytest`, `./rm`, `./find` o `./cd` que sea un guion se ejecuta sin leerse. | `decidir()` con ficheros `git`, `python`, … en el repo sintético (shebang python que lee el fichero de mentira): PASA `./git status`, `sub/git status`, `./rm x`, `./find .`, `./botsito`, `./pytest`, `./python inocuo.py`, `./cd`. NIEGAN `./ls`, `./echo`, `./sed`, `./grep x`. Control: `python ./git` NIEGA. Código: `guardia.py:1260` y `:1276-1308` frente a `:1316`. |
+| B6 | importa | «Lo que se lee ≠ lo que se ejecuta» por el directorio de trabajo o por valores de opciones que se saltan sin leer. (a) Directorio: `uv run --directory sub …` y `env -C sub …` consumen el valor sin cambiar el cwd modelado. Se lee `./scripts/de_main.py` (idéntico a `main`) y se ejecutaría `sub/scripts/de_main.py`. Un `CDPATH=sub; cd scripts && python de_main.py` suelto (CDPATH no está exportado) también pasa, porque la asignación suelta solo se mira si el nombre ya está en `os.environ`. (b) Entorno por valor de opción: `uv run --env-file x.env python inocuo.py` (con `x.env` conteniendo `PYTHONSTARTUP=…`) esquiva `NOMBRES_DE_ENTORNO`. `--with ./paquete` construye un paquete local (su backend de build es código). (c) `bash --rcfile rc.sh -i -c true` lee solo el `-c`. | `decidir()` con `sub/scripts/de_main.py` malo y `scripts/de_main.py` de `main`: PASA `uv run --directory sub python scripts/de_main.py`, `env -C sub python scripts/de_main.py`, `CDPATH=sub; cd scripts && python de_main.py`, `uv run --env-file x.env python inocuo.py`, `uv run --with ./paquete python inocuo.py`, `bash --rcfile rc.sh -i -c true`. Control: `python sub/scripts/de_main.py` NIEGA. Código: `guardia.py:1092-1100` (`UV_RUN_CON_VALOR` incluye `--directory`, `--env-file`, `--with`), `:1201` (`-C` consumido), `:2132-2134`. El test solo cubre `uv --directory .`, que es el cwd. |
+| B7 | importa | `awk`/`sed -f` se niega «como fichero de lenguaje desconocido» (respuesta #1a) solo si `-f` va suelto. Las banderas agrupadas lo esquivan: `sed -nf` es la forma más habitual. | `decidir()` con `a.py` existente: PASA `sed -nf a.py docs/a.md` y `sed -sf a.py docs/a.md`. NIEGAN `sed -f …`, `sed -n -f …`, `sed -ne 1p -f …`, `awk -F: -f …`, `awk -vx=1 -f …`, `gawk -nf …`. Código: `_fichero_de_programa`, `guardia.py:2150-2164`: `clave.startswith(o)` solo para el prefijo de la ficha. |
+| B8 | importa | Tercer añadido aceptado («botsito cuenta como ejecución»): ningún test lo rompe. Si se quita la rama de `botsito` de `analizar_comando`, la suite entera sigue en verde. El anexo no la muta. Medida directa: ejecuté la suite (369) con esa rama sustituida en memoria y fallan 0. | Mutación propia en proceso: `sin botsito como ejecucion: fallan 0 []`. Los tests nombran `botsito` solo en PowerShell (`test_guardia_claude.py:1059`) y en `test_ejecucion_las_dos_listas…` (`:1277`). |
+
+### Comprobaciones pedidas
+
+**1. Listas cerradas: qué activa la condición y qué se admite dentro.** Respuesta partida.
+- **Lo admitido dentro niega por defecto.**
+  - `_es_preparacion` y `_es_filtro` solo admiten su lista.
+  - `NOMBRES_DE_ENTORNO` = `PYTHONUTF8` y `BOTSITO_ALLOW_MAIN`. Se aplica a asignaciones delante de un comando, `export`, `declare -x`, `env` y sueltas a nombres ya exportados. Nombres inventados y los 10 prohibidos: NIEGA.
+  - 81.860 comandos aleatorios en Bash y PowerShell: 0 excepciones (la guardia falla abierta si lanza una excepción).
+- **Lo que activa** no es cerrado en la práctica:
+  - Bash: `NO_EJECUTAN` incluye ejecutores (B3). Un fichero con nombre de programa tratado (B5), los argumentos que son cadenas de comando (B4) y las opciones cuyo valor se salta sin leer (B1, B6, B7) pasan sin ser decididos.
+  - PowerShell: B2.
+- **Comandos que ejecutan código recién creado o cambiado y pasan:**
+  - Con algo creado en el mismo comando: `cp a.py b.py && awk 'BEGIN{system("python b.py")}'`, `cp a.py b.py && git bisect run python b.py`, `cp a.py .git/hooks/pre-commit && git commit -m x` (hooks: límite declarado).
+  - Sin nada delante: los de B1, B3, B4, B5 y B6.
+
+**2. Las listas salen de donde dice el informe.**
+- Los 33 programas no ejecutantes de los 503 comandos están en `NO_EJECUTAN`. Los 5 restantes son `python`, `pytest`, `botsito`, `make` y `for`. Las 3 extras (`stat`, `du`, `certutil`) se declaran. Todas tienen porqué: el test las comprueba (`len > 10`).
+- Los nombres son los de la salida: `PYTHONUTF8` (35) y `BOTSITO_ALLOW_MAIN` (3) delante de un comando; `S`, `W`, `R` sueltas, no exportadas; ninguno en `export` ni `env`. De los 32 de `RITUAL`, el único nombre es `BOTSITO_ALLOW_MAIN`.
+- «Ninguna entrada ejecuta código» no se cumple (B3). Cifra de §1.13 errónea (A2).
+
+**3. Condición (b) del consultor antes de adoptarla.** Cumplida.
+- `medir_b2-SALIDA.txt`: 503 → 0 negaciones nuevas (0 solo por b); 32 de `RITUAL` → 0.
+- Las 7 de los runbooks no son comandos: dos continuaciones de línea, dos elementos de lista, tres salidas de ejemplo. Verificado.
+- Además, uní los comandos multilínea de los bloques de `docs/runbooks/` y `.claude/skills/` (155) y los comparé con `main`: 0 NIEGA→PASA y 14 PASA→NIEGA, todas placeholders o salidas de ejemplo.
+
+**4. Ninguna vía con código propio (test por `ast`) y mutaciones.** Parcial.
+- El test existe y pasa, pero solo vigila `raise` (A3).
+- `uv run python docs/validation/anexos/GUION-MISMO-COMANDO/sin_condicion.py` (≈15 min) dio, idéntico a `sin_condicion-SALIDA.txt`:
+  - con la condición, 0 de 133 fallan;
+  - sin la condición, 98 de 133, con «fallan EXACTAMENTE los que esperan una negación: si»;
+  - expansiones 3/3, antes 13 (6 suyos, 6 de 6), a la vez 5/5, salida ajena 1/1, existencia 2/2, `_no_ejecuta` 8 (7 de 7), ficheros 3/3, nombres 11/11;
+  - restaurada cada una, 0;
+  - `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+- Falta la mutación de `botsito` (B8), que no rompe nada.
+
+**5. Ningún caso que `main` niega pasa, y cifras de §1.13-§1.16.**
+- Falso: B1.
+- El único que el informe declara (la ejecución de `medir_b2.py`, por el literal de espacios) está en `comandos_reales-SALIDA.txt:228` y `analizar_codigo` ya ignora `not lit.strip()`.
+- Los 32 de `RITUAL` pasan, igual que los 369.
+- Las cifras de §1.14 coinciden con los anexos. Errata de §1.13 en A2.
+
+**6. Hallazgos de la primera pasada.**
+
+| Hallazgo previo | Estado |
+|---|---|
+| B1 (`uv -q run`, `/usr/bin/env`, `{python,…}`, glob, `uvx`, `uv tool run`) | Resuelto: las 9 formas NIEGAN (incluidas las 5 sin `cp`). |
+| B2 (programas no listados) | Resuelto por la opción 1, con los huecos B3 y B4. Con `cp` delante: `php b.php`, `setsid ./b.py`, `awk -f b.py`, `trap "python b.py" EXIT` NIEGAN. Sin nada delante y fichero inexistente, `php nx.php`, `watch ./nx.py` y similares pasan: límite declarado en §1.16. |
+| B3 (`--config-env`, `GIT_CONFIG_*`, `pytest -o/-c/PYTEST_ADDOPTS`, `export PATH=`, `PYTHONSTARTUP=`) | Resuelto: todos NIEGAN. |
+| B4 (`cd` a secas) | Resuelto: `cd && python scripts/de_main.py` NIEGA. |
+| A1 / B5 (vías 12-14) | Resuelto con salvedad: pasan por la función, pero `xargs -a <lector>` se escapa (B3.e). |
+| A2 (límites en §1.6) | Resuelto con salvedad (B3, B4, B6). |
+| A3 (`timeout`) | Resuelto. |
+| A4 (`solo_lectura`) | Resuelto: `_quitar_envoltorios` ya no lanza. Comprobado con `solo_lectura.motivo('uv run --opcion-rara python x.py')` → `None` y `env -S …` → `None`. |
+| A5 (cifras) | Resuelto: 99+2+2+1 = 104 y 547 = 442+104+1. |
+| A6 / B6 | La referencia sobrante está explicada; el número de run está en §1.17, pendiente. |
+| A7 (veredicto exacto) | Resuelto: ver comprobación 4. |
+
+### Lo que no pude comprobar
+- La CI de Linux (el run de 42856e8 y la CI de main sobre cbfe4e4): mi Bash bloquea `curl`. §1.17 está «Pendiente».
+- `bash -i --rcfile`, `uv --with ./paquete` y `node -r` como ejecuciones reales: lo medido es que la guardia los deja pasar, no que se ejecuten. No ejecuté nada.
+- Que el entorno de la guardia (el hook) coincida con el del shell de Bash, que «se inicializa desde el perfil del usuario». La regla de la asignación suelta (§1.15.2) depende de eso. No pude verlo.
+- `comandos_reales.py` y `programas_y_nombres.py` necesitan la transcripción de la sesión, que vive fuera del repo. Solo contrasté sus salidas commiteadas.
+- Rutas protegidas reales: no probé ningún comando que las nombre. Todo sobre el repo sintético.
+
+### Comandos ejecutados
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`
+2. `uv run python scripts/contrato_rama.py`; `cat contrato.yaml`; `tail -5 make-check.log`; `git rev-parse HEAD^{tree}`; `grep passed|failed make-check.log`
+3. `uv run botsito state check`; `uv run pytest tests/unit/test_guardia_claude.py -q -p no:cacheprovider` (369); `… -k ritual`; `… --co -q`
+4. `uv run python docs/validation/anexos/GUION-MISMO-COMANDO/sin_condicion.py` (en segundo plano); `grep` de su salida frente a `sin_condicion-SALIDA.txt`
+5. `git diff --name-status main...HEAD`; `git diff --numstat main...HEAD -- HISTORIA.md PROJECT_STATE.md`; `git diff main...HEAD -- PROJECT_STATE.md`; `wc -c PROJECT_STATE.md`; `git branch -r`; `git rev-parse HEAD origin/fix/…`
+6. `git show main:.claude/hooks/guardia.py | sed -n 1600,1665p`; `grep INTERPRETE_CON_VALOR` sobre `main`
+7. Varias tandas de `python - <<'EOF'` (también `PYTHONUTF8=1 python -`) que importan `medir_huecos` (repo sintético en directorio temporal), cargan la guardia de la rama y la de `main` (`git show` en memoria) y llaman a `decidir()`:
+   - formas de B1-B7, la lista de 40 pares de B1 y el grid de intérpretes por opciones;
+   - la lista de la primera pasada;
+   - PowerShell;
+   - `sed`/`awk -f`;
+   - la comparación de 58 casos y los comandos multilínea de runbooks;
+   - fuzz diferencial (17.234 secuencias) y fuzz de excepciones (81.860);
+   - `solo_lectura.motivo`.
+8. `uv run python -` con mutaciones en memoria: `_fichero_de_programa`, `_ejecucion_en_powershell`, `_exigir_nombres_de_entorno`, `_set_admitido`, `_es_filtro`, `_es_preparacion`; y la rama `botsito` de `analizar_comando`.
+9. `grep` / `Read` de `docs/validation/GUION-MISMO-COMANDO.md`, `docs/encargos/trabajo-guion-mismo-comando.md`, `.claude/hooks/guardia.py`, `tests/unit/test_guardia_claude.py`, y los anexos `sin_condicion.py`, `medir_b2.py`, `programas_y_nombres.py`, `medir_huecos.py` y sus salidas.
+
+Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_claude.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\GUION-MISMO-COMANDO.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUION-MISMO-COMANDO\`.
+
+### 1.19 Lo que se hizo con la segunda pasada, y la PARADA
+
+**Arreglado** (todo dentro de lo ya decidido; cada arreglo con su test en
+`test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega`, 31 casos, y sus controles en
+`…lo_que_la_segunda_pasada_no_toca_pasa`, 8):
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| B1 | bloquea | **Una pérdida real frente a `main`**: la fase 1 añadió `INTERPRETE_CON_VALOR` para saltarse el valor de `-X`/`-W`, y con él se saltaban `-r`, `--require`, `--import` y `--loader`, cuyo valor es código que el intérprete carga antes del guion (`main` lo leía por casualidad, tomándolo por el guion). Ahora `_codigo_de_opciones` pasa ese valor a la función como un guion más (`OPCIONES_QUE_CARGAN_CODIGO`, también `--rcfile` e `--init-file` de bash): si no existe -un módulo por su nombre, `node -r dotenv/config`- se niega. `node -p`/`--print` es código en línea, como `-e`. Mi comparación con `main` no lo vio porque ningún caso usaba esas opciones: ahora `rv2-node-r` está en ella (NIEGA en las dos) |
+| B2 | bloquea | PowerShell: lo que va tras `(`, `$(` o `@(`, con o sin espacio, es un comando que tiene que estar en `PS_NO_EJECUTAN`; y el alias de git con `!` o `--config-env` se niega también en PowerShell |
+| B3 d | importa | `find`: TODOS los `-exec`, no solo el primero |
+| B3 e | importa | `xargs`: sus opciones, en lista cerrada (`-a`/`--arg-file` toman valor); una que no conoce, `indecidible` |
+| B4 | importa | Un programa desconocido: cada TROZO de cada argumento (partido por espacios, `=`, `,`, `;`, `!` y comillas) que sea un programa que ejecuta o un fichero que existe cuenta, y una expansión de llaves es dinámica: `watch "python a.py"`, `su -c`, `ssh -o ProxyCommand=`, `tar --checkpoint-action=exec=./a.py`, `vim -c '!…'` y `php {a,b}.py` se niegan. §1.16 decía que un programa desconocido sin ficheros «no tiene nada de la rama que leer»: era más de lo que se había medido |
+| B5 | importa | Un fichero de la rama como programa (`./x`, `../x`, o una ruta con `/` dentro del repositorio, salvo `.venv/`) se decide por su contenido ANTES que por su nombre: `./git`, `sub/git`, `./python` se niegan |
+| B6 a-b | importa | `uv run --directory`/`--project`/`--env-file`, `uv run --with <ruta local>` y `env -C` son `indecidible`: cambian el directorio, el entorno o los paquetes de lo que ejecuta (un paquete local se construye con su propio código) |
+| B6 c | importa | `bash --rcfile x -i -c …`: el `rcfile` es un guion más (B1) |
+| B7 | importa | `awk`/`sed`: las banderas agrupadas se recorren letra a letra (`sed -nf x`, `sed -sf x`, `gawk -nf x`); `sed -i.bak` sigue siendo un sufijo |
+| B8 | importa | Un test con `botsito` como ejecución (`cp a.py b.py && uv run botsito state check`), y su mutación en el anexo |
+| A2 | menor | §1.13 decía «36 programas, 31 en la lista»: son 38 programas en `programas_y_nombres-SALIDA.txt` (los 5 que ejecutan o son palabra clave: `python`, `pytest`, `botsito`, `make`, `for`) y 33 en la lista, 36 con `stat`, `du` y `certutil`. El cuerpo de §1.13 queda como estaba; esta fila lo corrige |
+| A3 | menor | `python --version` (`SOLO_VERSION`) pasa también por la función, para lo de antes |
+| A4 | menor | El anexo de mutaciones gana `_fichero_de_programa`, `_ejecucion_en_powershell`, `_set_admitido`, `_es_filtro`, `botsito` como ejecución, `_codigo_de_opciones` y `_es_fichero_de_la_rama`, cada una con los tests que tiene que romper |
+| A1 | importa | Las afirmaciones que el revisor tumbó (el «0» frente a `main` como propiedad; `find`/`xargs` «pasan por la condición»; el programa desconocido «sin nada que leer») están arregladas en el código (B1, B3, B4); §1.20 dice qué afirma ahora el informe y sobre qué |
+
+**El coste de estos arreglos** (`coste_segunda_pasada-SALIDA.txt`: la guardia de `42856e8` frente a
+la de ahora): 0 negaciones nuevas, y 0 al revés, en los 503 comandos reales, en los 32 de `RITUAL` y
+en las 164 líneas de los runbooks y las skills.
+
+### 1.20 Tests, mutaciones y comparación con `main`, tras la segunda pasada
+
+**Tests**: 15 funciones `test_ejecucion_*` y 174 casos (410 con los 236 que ya existían, que
+siguen pasando, los 32 de `RITUAL` incluidos). `Tests Currently Passing`: 1396 → 1398.
+
+**Mutaciones** (`sin_condicion.py`, 16 mutaciones; salida en `sin_condicion-SALIDA.txt`): con la
+condición, 0 de 174 fallan. **Sin la condición, 131: exactamente los 121 que esperan una negación
+por la función (ocho tests), más los 10 de los nombres que pasan por `env`.** Y cada pieza rompe, al
+menos, los casos que solo ella niega: expansiones 3 de 3, lo de antes 6 de 6, lo de a la vez 5 de
+5, la salida ajena 1 de 1, la existencia 2 de 2, lo que activa 7 de 7, los ficheros de un programa
+desconocido 3 de 3, los nombres 11 de 11, `awk`/`sed -f` 5 de 5, PowerShell 8 de 8, la lista de
+`set` 1 de 1, los filtros 4 de 4, `botsito` como ejecución 1 de 1, el código de las opciones 6 de
+6, el fichero de la rama como programa 3 de 3. Restaurada cada una, 0. `VEREDICTO: sin la condicion
+fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+
+**El anexo encontró un fallo más**, que se arregla aquí: en `_analizar_xargs`, la rama de una opción
+que no conoce llamaba a la función y dependía de que esta lanzara para salir del bucle; con la
+mutación «sin la condición» el bucle no avanzaba y la primera ejecución del anexo se quedó colgada
+(se paró a mano). Ahora sale con `return` después de la llamada.
+
+**Comparación con `main`**:
+- **Sintética** (`medir_huecos-FASE1-SALIDA.txt`, 66 casos: los 58 de antes y 8 de la segunda
+  pasada): **0 que `main` niega y la rama deja pasar**; 50 de PASA a NIEGA; 16 iguales. `rv2-node-r`
+  (B1) y `rv2-xargs-a` se niegan en las dos: la pérdida de B1 está cerrada.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 572 distintos (incluyen los 503): 466 con la
+  misma decisión, 104 de PASA a NIEGA, y 2 que `main` niega y la rama deja pasar, **las dos
+  ejecuciones del anexo `medir_b2.py`**: el falso positivo del literal de espacios (§1.13).
+- **El coste de esta ronda** frente a `42856e8`: 0 en los tres conjuntos (§1.19).
+
+**Un ejemplo del coste de A5, en esta misma sesión**: para comprobar que el anexo colgado no había
+dejado un proceso vivo, `tasklist //FI "IMAGENAME eq python.exe"` se negó (`tasklist` no está en la
+lista y un trozo de su argumento nombra un intérprete). No se rodeó: el anexo se paró con la
+herramienta de la sesión.
+
+### 1.21 PARADA: lo que necesita tu decisión
+
+Tres cosas de la segunda pasada no caben en lo que decidiste sin decidir algo nuevo:
+
+1. **B3 a-c: programas de `NO_EJECUTAN` que en algún modo SÍ ejecutan código**, y cuyo porqué no lo
+   dice o lo da como límite: `git` (`bisect run`, `submodule foreach`, `-c core.fsmonitor=…`,
+   `-c core.sshCommand=…`, `config alias.x '!…'` y luego `git x`, además de los hooks), `sort
+   --compress-program=…`, `gh alias set -s`, `awk` con `system()` y el comando `e` de GNU `sed` en
+   el programa del propio comando, y un plugin de `mypy`. Con un `cp` delante, la condición ni se
+   activa (son de la lista). **Propuesta (recomendada)**: cerrar también los modos de esas entradas,
+   igual que decidiste para los programas: para `git`, los subcomandos y las claves de `-c` que
+   aparecen en los 503 comandos reales; para `gh`, sus subcomandos de los 503; para `sort`, sus
+   opciones de los 503; y `awk` y `sed` solo con un programa de la forma que aparece en los 503 (en
+   `sed`, direcciones, `p`, `d` y `s///` sin `e` ni `w`; en `awk`, sin `system`, `|`, `getline` ni
+   `>`). Lo que no esté, se niega. Antes de escribirlo, mido su coste sobre los 503 y los 32, como
+   en (b). Alternativa: declararlo como límite, con una entrada de la Next Action.
+2. **A5: lectores inocuos que no están en la lista** (`test -f`, `[ -f ]`, `md5sum`, `realpath`,
+   `chmod`, `touch`, `jq`, `xxd`, `tac`, `readlink`): ahora cuentan como ejecución y, con un fichero
+   que no es el de `main`, se niegan. En los 503 no aparece ninguno (por eso el coste fue 0), pero
+   `test -f`/`[ -f ]` es habitual en un guion de shell. ¿Se añaden con su porqué, o la lista se
+   queda en lo medido y se amplía cuando un comando real lo pida?
+3. **La asignación suelta a un nombre NO exportado** (§1.15, 2): el revisor (B6 a) mostró
+   `CDPATH=sub; cd scripts && python de_main.py`, que pasa porque `CDPATH` no está exportado y la
+   asignación suelta solo se mira si el nombre ya está en el entorno. Bash interpreta algunos
+   nombres aunque no se exporten (`CDPATH`, `IFS`, `PATH`, `GLOBIGNORE`...). Propuesta: que TODA
+   asignación suelta esté también en `NOMBRES_DE_ENTORNO`, añadiendo `S`, `W` y `R` (las de los 503)
+   con su porqué. Coste medido: 0 en los 503 por construcción; los tests que usan `X=` y `F=`
+   cambiarían de nombre.
 
 ## Estado
 
-**EN CURSO (2026-10-07)**: hecha la respuesta a §1.12; faltan la CI de Linux del último commit y la segunda pasada del revisor.
+**PARADA (2026-10-07).** Hecha la respuesta a §1.12 y arreglado lo que la segunda pasada del revisor
+encontró dentro de lo decidido; faltan tus decisiones de §1.21 (los modos de las entradas de
+`NO_EJECUTAN`, los lectores que no están en la lista, la asignación suelta). NO cerrada.

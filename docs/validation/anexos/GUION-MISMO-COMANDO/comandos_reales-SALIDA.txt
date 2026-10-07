@@ -1,12 +1,13 @@
-Comandos de Bash en la transcripcion: 612; distintos: 547
-Misma decision en main y en la rama: 442
+Comandos de Bash en la transcripcion: 657; distintos: 572
+Misma decision en main y en la rama: 466
 main los deja pasar y la rama los niega: 104
-main los niega y la rama los deja pasar: 1
+main los niega y la rama los deja pasar: 2
 
 == Por motivo
-   99  algo delante que no esta en la lista cerrada
+   98  algo delante que no esta en la lista cerrada
     2  `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros qu
     2  algo detras, en la tuberia, que no es un filtro
+    1  `uv run --project`: cambia el directorio, el entorno o los paquetes de
     1  una sustitucion en el comando
 
 == Lo que va delante (primer programa)
@@ -16,9 +17,9 @@ main los niega y la rama los deja pasar: 1
    12  uv
     9  grep
     6  sed
-    2  rm
     2  una asignacion
     1  sha256sum
+    1  rm
     1  printf
     1  cp
 
@@ -226,4 +227,5 @@ main los niega y la rama los deja pasar: 1
     ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i s/^1383 funciones de test/1391 funciones de test/ PROJECT_STATE.md`.
 
 == main los niega y la rama los deja pasar
+- cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User

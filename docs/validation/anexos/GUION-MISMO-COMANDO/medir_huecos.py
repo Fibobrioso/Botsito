@@ -85,6 +85,8 @@ def preparar(repo: Path, malo: str) -> None:
     escribir(repo, ("suelto", "test_malo.py"), malo)
     escribir(repo, ("tests", "unit", "test_malo.py"), malo)
     escribir(repo, ("Makefile",), f"x:\n\tpython {repo / 'a.py'}\n")  # cambiado en la rama
+    escribir(repo, ("git",), "#!/usr/bin/env python\n" + malo)  # un guion llamado como git
+    escribir(repo, ("sub", "scripts", "de_main.py"), malo)  # el de otro directorio
     os.chmod(repo / "a.py", 0o755)
     # Hallazgo 5 del consultor: la ruta del fichero sintetico, COMPUESTA por partes, relativa a la
     # raiz del repo sintetico (el cwd de los comandos medidos).
@@ -185,6 +187,16 @@ def casos(malo: str) -> list[tuple[str, str, str]]:
         ("rv-trap", "Bash", "trap 'python a.py' EXIT"),
         ("rv-awk", "Bash", "awk -f a.py"),
         ("rv-ps-proceso", "PowerShell", "[System.Diagnostics.Process]::Start('python','a.py')"),
+        # Segunda pasada del revisor: lo que pasaba sin ser decidido (B1 es una perdida frente a
+        # main: el valor de `-r` es codigo, y main lo leia por casualidad)
+        ("rv2-node-r", "Bash", "node -r ./a.py inocuo.py"),
+        ("rv2-ps-espacio", "PowerShell", "Write-Output ( php x.php )"),
+        ("rv2-find-2-exec", "Bash", "find docs -exec ls {} \\; -exec python a.py \\;"),
+        ("rv2-xargs-a", "Bash", "xargs -a docs/a.md python a.py"),
+        ("rv2-watch", "Bash", 'watch "python a.py"'),
+        ("rv2-fichero-git", "Bash", "./git status"),
+        ("rv2-uv-directory", "Bash", "uv run --directory sub python scripts/de_main.py"),
+        ("rv2-sed-nf", "Bash", "sed -nf a.py docs/a.md"),
         # Hallazgo 5 del consultor: se mide, no se arregla en esta rama
         ("h5-joinpath", "Bash", "python h5_joinpath.py"),
         ("h5-os.path.join", "Bash", "python h5_os_path_join.py"),

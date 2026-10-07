@@ -41,6 +41,7 @@ NIEGAN = (
     "test_ejecucion_make_solo_con_el_makefile_de_main",
     "test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual",
     "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion",
+    "test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega",
 )
 # Los de los nombres de entorno: esa regla vale para TODO comando (tambien `git commit`, que corre
 # hooks), asi que vive junto a la funcion y no dentro; se miran con su propia mutacion.
@@ -50,6 +51,8 @@ NOMBRES = (
 )
 CAMBIADA = "test_ejecucion_cambiada_en_el_mismo_comando_se_niega"
 LISTA = "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion"
+SEGUNDA = "test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega"
+VIA = "test_ejecucion_cada_via_pasa_por_la_condicion"
 FUERA = "test_ejecucion_lo_de_fuera_de_la_lista_se_niega"
 # Lo que SOLO niega cada pieza (el guion existe y lo demas del comando esta en la lista).
 ESPERADOS: dict[str, list[str]] = {
@@ -96,6 +99,44 @@ ESPERADOS: dict[str, list[str]] = {
             "PERL5OPT", "RUBYOPT", "LD_PRELOAD", "LD_LIBRARY_PATH",
         )),
         NOMBRES[1],
+    ],
+    "_fichero_de_programa": [
+        f"{LISTA}[awk -f a.py docs/a.md]",
+        f"{LISTA}[awk -fa.py docs/a.md]",
+        f"{LISTA}[sed -f a.py docs/a.md]",
+        f"{SEGUNDA}[Bash-sed -nf a.py docs/a.md]",
+        f"{SEGUNDA}[Bash-sed -sf a.py docs/a.md]",
+    ],
+    "_ejecucion_en_powershell": [
+        f"{SEGUNDA}[PowerShell-Write-Output ( php x.php )]",
+        f"{SEGUNDA}[PowerShell-Write-Output $( cscript x.js )]",
+        f"{SEGUNDA}[PowerShell-Write-Output @( php x.php )]",
+        f"{SEGUNDA}[PowerShell-Get-Content docs/a.md; ( php x.php )]",
+        f"{SEGUNDA}[PowerShell-git -c alias.x='!python a.py' x]",
+        f"{VIA}[PowerShell-python inocuo.py]",
+        f"{VIA}[PowerShell-uv run botsito state check]",
+        "test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual",
+    ],
+    "_set_admitido": [f"{FUERA}[set -x; python inocuo.py]"],
+    "_es_filtro": [
+        f"{FUERA}[python inocuo.py | tee salida.txt]",
+        f"{FUERA}[python inocuo.py | sort -o salida.txt]",
+        f"{FUERA}[python inocuo.py | uniq - salida.txt]",
+        f"{FUERA}[python inocuo.py | cat]",
+    ],
+    "botsito": [f"{CAMBIADA}[cp a.py b.py && uv run botsito state check]"],
+    "_codigo_de_opciones": [
+        f"{SEGUNDA}[Bash-node -r ./a.py inocuo.py]",
+        f"{SEGUNDA}[Bash-node --require=./a.py inocuo.py]",
+        f"{SEGUNDA}[Bash-node --import ./a.py inocuo.py]",
+        f"{SEGUNDA}[Bash-ruby -r ./a.py inocuo.py]",
+        f"{SEGUNDA}[Bash-node -r dotenv/config inocuo.py]",
+        f"{SEGUNDA}[Bash-bash --rcfile malo.sh -i -c true]",
+    ],
+    "_es_fichero_de_la_rama": [
+        f"{SEGUNDA}[Bash-./git status]",
+        f"{SEGUNDA}[Bash-sub/git status]",
+        f"{SEGUNDA}[Bash-./python inocuo.py]",
     ],
     "_exigir_guion_legible": [
         f"{FUERA}[python nuevo.py]",
@@ -153,13 +194,30 @@ def main() -> int:
             lambda *_a, **_k: ([], False),
         ),
         ("sin los nombres de entorno", "_nombre_admitido", lambda _n: True),
+        ("sin awk/sed -f (segunda pasada, A4)", "_fichero_de_programa", lambda *_a: None),
+        ("sin PowerShell (A4)", "_ejecucion_en_powershell", lambda _t: None),
+        ("sin la lista de set (A4)", "_set_admitido", lambda _o: True),
+        ("sin los filtros (A4)", "_es_filtro", lambda _c: True),
+        ("sin botsito como ejecucion (A4, B8)", "botsito", None),
+        ("sin el codigo de las opciones (B1)", "_codigo_de_opciones", lambda *_a: []),
+        ("sin el fichero de la rama como programa (B5)", "_es_fichero_de_la_rama", lambda *_a: False),
     ]
     base = correr()
     niegan = {t for t in base if t.split("[", 1)[0] in NIEGAN}
     print(f"\n== con la condicion: {len(base)} tests, fallan {sum(r != 'passed' for r in base.values())}")
     print(f"   esperan una negacion: {len(niegan)}")
     ok = all(r == "passed" for r in base.values())
+    exigir = g.exigir_ejecucion_verificable
+
+    def sin_botsito(ctx: Any, lex: Any, cmd: Any, que: str, **kw: Any) -> bool:
+        if que.startswith("botsito"):
+            return True
+        resultado: bool = exigir(ctx, lex, cmd, que, **kw)
+        return resultado
+
     for titulo, nombre, sustituta in mutaciones:
+        if nombre == "botsito":  # la rama de `botsito` en `analizar_comando`, sin la funcion
+            nombre, sustituta = "exigir_ejecucion_verificable", sin_botsito
         original = getattr(g, nombre)
         setattr(g, nombre, sustituta)
         try:
@@ -169,6 +227,8 @@ def main() -> int:
         restaurado = correr()
         fallan = {t for t, r in mutado.items() if r != "passed"}
         print(f"\n== {titulo} ({nombre}): fallan {len(fallan)} de {len(mutado)}")
+        if sustituta is sin_botsito:
+            nombre = "botsito"
         if nombre == "exigir_ejecucion_verificable":
             fallan = {t for t in fallan if t.split("[", 1)[0] not in NOMBRES}
             exacto = fallan == niegan

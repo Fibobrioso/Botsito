@@ -1,14 +1,17 @@
-........................................................................ [ 54%]
-.............................................................            [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== con la condicion: 133 tests, fallan 0
-   esperan una negacion: 88
-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
-.FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......FFFFFFFFFF..F.            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+== con la condicion: 174 tests, fallan 0
+   esperan una negacion: 121
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF....................... [ 41%]
+...FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......FFFFFFFFFF..FFFFFFFFFFF [ 82%]
+FFFFFFFFFFFFFFFFFFFF........F.                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin la condicion (exigir_ejecucion_verificable): fallan 98 de 133
+== sin la condicion (exigir_ejecucion_verificable): fallan 131 de 174
    fallan EXACTAMENTE los que esperan una negacion: si
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-./a.py]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-/usr/bin/env python a.py]
@@ -43,8 +46,10 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cat a.py | tee x.py && python x.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cat a.py | tee x.py | python x.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && /usr/bin/env python b.py]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && python --version]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv --no-cache run python b.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv -q run python b.py]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv run botsito state check]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv run python b.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py existente.py && uv run python existente.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py otros/test_nuevo.py && uv run pytest otros/test_nuevo.py]
@@ -95,30 +100,67 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[sudo make check > make-check.log 2>&1]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[trap 'python inocuo.py' EXIT]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[winpty python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-./git status]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-./python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-bash --rcfile malo.sh -i -c true]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-env -C sub python scripts/otro.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-find docs -exec ls {} \\; -exec python a.py \\;]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-gawk -nf a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node --import ./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node --require=./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r ./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r dotenv/config inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-php {a,b}.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-ruby -r ./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sed -nf a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sed -sf a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-ssh -o ProxyCommand="python a.py" host]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-su -c "python a.py"]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sub/git status]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-uv run --directory sub python scripts/otro.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-uv run --env-file x.env python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-uv run --with ./paquete python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-vim -c '!python a.py']
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-watch "python a.py"]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-xargs --arg-file=docs/a.md python a.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-xargs --opcion-inventada python]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-xargs -a docs/a.md python a.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Get-Content docs/a.md; ( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output $( cscript x.js )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output ( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output @( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-git -c alias.x='!python a.py' x]
    FALLA  test_ejecucion_make_solo_con_el_makefile_de_main
    FALLA  test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual
    FALLA  test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo
    restaurado: fallan 0
-.............F.......................................................... [ 54%]
-....FF.......................................................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+.............F.......................................................... [ 41%]
+......FF................................................................ [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin las expansiones (_exigir_sin_expansiones): fallan 3 de 133
+== sin las expansiones (_exigir_sin_expansiones): fallan 3 de 174
    de los 3 que solo niega esta pieza, fallan 3
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py <(cp a.py existente.py)]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[PYTHONUTF8=$(echo 1) python inocuo.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[PYTHONUTF8=$Y python inocuo.py]
    restaurado: fallan 0
-.FF.........F...F..................FF................................... [ 54%]
-.FFF...FF....................FF..............................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+.FF.........F...F...FF...............FF................................. [ 41%]
+...FFF...FF....................FF....................................... [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin lo de antes (_exigir_lo_de_antes): fallan 13 de 133
+== sin lo de antes (_exigir_lo_de_antes): fallan 15 de 174
    de los 6 que solo niega esta pieza, fallan 6
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-find docs -exec python inocuo.py \\;]
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-git -c alias.x='!python inocuo.py' x]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && python --version]
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv run botsito state check]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py existente.py && uv run python existente.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py scripts/otro.py && uv run python scripts/otro.py]
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py tests/unit/test_nuevo.py && uv run pytest tests/unit/test_nuevo.py]
@@ -131,12 +173,14 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[cp a.py b.php && php b.php]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[cp a.py b.py && setsid ./b.py]
    restaurado: fallan 0
-..............F......................................................... [ 54%]
-.........FFFF................................................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+..............F......................................................... [ 41%]
+...........FFFF......................................................... [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin lo de a la vez (_exigir_lo_de_a_la_vez): fallan 5 de 133
+== sin lo de a la vez (_exigir_lo_de_a_la_vez): fallan 5 de 174
    de los 5 que solo niega esta pieza, fallan 5
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py & cp a.py existente.py]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | cat]
@@ -144,31 +188,38 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | tee salida.txt]
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | uniq - salida.txt]
    restaurado: fallan 0
-...............F........................................................ [ 54%]
-.............................................................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+...............F........................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin la salida ajena (_exigir_salida_ajena): fallan 1 de 133
+== sin la salida ajena (_exigir_salida_ajena): fallan 1 de 174
    de los 1 que solo niega esta pieza, fallan 1
    FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[python existente.py > existente.py]
    restaurado: fallan 0
-........................................................................ [ 54%]
-...................F.......F.................................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+........................................................................ [ 41%]
+.....................F.......F...................................F...... [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin la existencia (_exigir_guion_legible): fallan 2 de 133
+== sin la existencia (_exigir_guion_legible): fallan 3 de 174
    de los 2 que solo niega esta pieza, fallan 2
    FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python nuevo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r dotenv/config inocuo.py]
    FALLA  test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo
    restaurado: fallan 0
-..................................F..................................... [ 54%]
-.............................FFFFFFF.........................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+....................................F................................... [ 41%]
+...............................FFFFFFF.................................. [ 82%]
+....FFFFFF....................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin lo que activa (todo programa no ejecuta) (_no_ejecuta): fallan 8 de 133
+== sin lo que activa (todo programa no ejecuta) (_no_ejecuta): fallan 14 de 174
    de los 7 que solo niega esta pieza, fallan 7
    FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-winpty python inocuo.py]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[cp a.py b.php && php b.php]
@@ -178,24 +229,36 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[php nuevo.php]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[sudo make check > make-check.log 2>&1]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[winpty python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-php {a,b}.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-ssh -o ProxyCommand="python a.py" host]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-su -c "python a.py"]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-vim -c '!python a.py']
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-watch "python a.py"]
    restaurado: fallan 0
-........................................................................ [ 54%]
-...............................FFF...........................            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+........................................................................ [ 41%]
+.................................FFF.................................... [ 82%]
+.......F.F....................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin los ficheros de un programa desconocido (_ficheros_de_un_programa_desconocido): fallan 3 de 133
+== sin los ficheros de un programa desconocido (_ficheros_de_un_programa_desconocido): fallan 5 de 174
    de los 3 que solo niega esta pieza, fallan 3
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[inventado $X]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[inventado docs/nuevo.md]
    FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[php nuevo.php]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-php {a,b}.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py]
    restaurado: fallan 0
-........................................................................ [ 54%]
-...............................................FFFFFFFFFFF...            [100%]
-........................................................................ [ 54%]
-.............................................................            [100%]
+........................................................................ [ 41%]
+.................................................FFFFFFFFFFF............ [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
 
-== sin los nombres de entorno (_nombre_admitido): fallan 11 de 133
+== sin los nombres de entorno (_nombre_admitido): fallan 11 de 174
    de los 11 que solo niega esta pieza, fallan 11
    FALLA  test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada
    FALLA  test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega[BASH_ENV]
@@ -208,6 +271,106 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF......................... [ 54%]
    FALLA  test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega[PYTHONPATH]
    FALLA  test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega[PYTHONSTARTUP]
    FALLA  test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega[RUBYOPT]
+   restaurado: fallan 0
+........................................................................ [ 41%]
+.......................................FF.F............................. [ 82%]
+.................FF...........                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin awk/sed -f (segunda pasada, A4) (_fichero_de_programa): fallan 5 de 174
+   de los 5 que solo niega esta pieza, fallan 5
+   FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[awk -f a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[awk -fa.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion[sed -f a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sed -nf a.py docs/a.md]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sed -sf a.py docs/a.md]
+   restaurado: fallan 0
+...........................FFFF......................................... [ 41%]
+...................................................................FFFFF [ 82%]
+............................F.                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin PowerShell (A4) (_ejecucion_en_powershell): fallan 10 de 174
+   de los 8 que solo niega esta pieza, fallan 8
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[Bash-pwsh -c "python inocuo.py"]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-& ./x.ps1]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-python inocuo.py]
+   FALLA  test_ejecucion_cada_via_pasa_por_la_condicion[PowerShell-uv run botsito state check]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Get-Content docs/a.md; ( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output $( cscript x.js )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output ( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-Write-Output @( php x.php )]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[PowerShell-git -c alias.x='!python a.py' x]
+   FALLA  test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual
+   restaurado: fallan 0
+........................................................................ [ 41%]
+.........F.............................................................. [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin la lista de set (A4) (_set_admitido): fallan 1 de 174
+   de los 1 que solo niega esta pieza, fallan 1
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[set -x; python inocuo.py]
+   restaurado: fallan 0
+........................................................................ [ 41%]
+...........FFFF......................................................... [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin los filtros (A4) (_es_filtro): fallan 4 de 174
+   de los 4 que solo niega esta pieza, fallan 4
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | cat]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | sort -o salida.txt]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | tee salida.txt]
+   FALLA  test_ejecucion_lo_de_fuera_de_la_lista_se_niega[python inocuo.py | uniq - salida.txt]
+   restaurado: fallan 0
+....................F................................................... [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin botsito como ejecucion (A4, B8) (exigir_ejecucion_verificable): fallan 1 de 174
+   de los 1 que solo niega esta pieza, fallan 1
+   FALLA  test_ejecucion_cambiada_en_el_mismo_comando_se_niega[cp a.py b.py && uv run botsito state check]
+   restaurado: fallan 0
+........................................................................ [ 41%]
+.............................................................FFFFFF..... [ 82%]
+..............................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin el codigo de las opciones (B1) (_codigo_de_opciones): fallan 6 de 174
+   de los 6 que solo niega esta pieza, fallan 6
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-bash --rcfile malo.sh -i -c true]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node --import ./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node --require=./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r ./a.py inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r dotenv/config inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-ruby -r ./a.py inocuo.py]
+   restaurado: fallan 0
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..........FFF.................                                           [100%]
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+
+== sin el fichero de la rama como programa (B5) (_es_fichero_de_la_rama): fallan 3 de 174
+   de los 3 que solo niega esta pieza, fallan 3
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-./git status]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-./python inocuo.py]
+   FALLA  test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-sub/git status]
    restaurado: fallan 0
 
 VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa

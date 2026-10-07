@@ -1036,6 +1036,8 @@ def _ejecucion(repo: Path) -> str:
         "cp a.py b.py && uv -q run python b.py",
         "cp a.py b.py && uv --no-cache run python b.py",
         "cp a.py b.py && /usr/bin/env python b.py",
+        "cp a.py b.py && uv run botsito state check",  # botsito es una ejecucion (revisor 2, B8)
+        "cp a.py b.py && python --version",  # tambien lo que no corre codigo, por la funcion (A3)
     ],
 )
 def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
@@ -1276,6 +1278,76 @@ def test_ejecucion_las_dos_listas_cerradas_dicen_su_porque(g: ModuleType) -> Non
     assert "trap" not in g.NO_EJECUTAN and "trap" not in g.LECTOR_DE_METADATOS
     for programa in ("python", "pytest", "make", "botsito", "bash", "php", "sudo", "awk -f"):
         assert programa not in g.NO_EJECUTAN, programa
+
+
+# --- segunda pasada del revisor: lo que pasaba sin ser decidido, dentro de lo ya decidido
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "node -r ./a.py inocuo.py"),  # B1: lo que carga una opcion es codigo
+        ("Bash", "node --require=./a.py inocuo.py"),
+        ("Bash", "node --import ./a.py inocuo.py"),
+        ("Bash", "ruby -r ./a.py inocuo.py"),
+        ("Bash", "node -r dotenv/config inocuo.py"),  # un modulo por su nombre: no se resuelve
+        ("Bash", "bash --rcfile malo.sh -i -c true"),  # B6 c
+        ("PowerShell", "Write-Output ( php x.php )"),  # B2: con espacio tras el parentesis
+        ("PowerShell", "Write-Output $( cscript x.js )"),
+        ("PowerShell", "Write-Output @( php x.php )"),
+        ("PowerShell", "Get-Content docs/a.md; ( php x.php )"),
+        ("PowerShell", "git -c alias.x='!python a.py' x"),
+        ("Bash", "find docs -exec ls {} \\; -exec python a.py \\;"),  # B3 d: el segundo -exec
+        ("Bash", "xargs -a docs/a.md python a.py"),  # B3 e: el valor de -a no es el programa
+        ("Bash", "xargs --arg-file=docs/a.md python a.py"),
+        ("Bash", "xargs --opcion-inventada python"),
+        ("Bash", 'watch "python a.py"'),  # B4: una cadena de comando como argumento
+        ("Bash", 'su -c "python a.py"'),
+        ("Bash", 'ssh -o ProxyCommand="python a.py" host'),
+        ("Bash", "tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py"),
+        ("Bash", "vim -c '!python a.py'"),
+        ("Bash", "php {a,b}.py"),
+        ("Bash", "./git status"),  # B5: un fichero con nombre de programa
+        ("Bash", "sub/git status"),
+        ("Bash", "./python inocuo.py"),
+        ("Bash", "uv run --directory sub python scripts/otro.py"),  # B6 a
+        ("Bash", "env -C sub python scripts/otro.py"),
+        ("Bash", "uv run --env-file x.env python inocuo.py"),  # B6 b
+        ("Bash", "uv run --with ./paquete python inocuo.py"),
+        ("Bash", "sed -nf a.py docs/a.md"),  # B7: banderas agrupadas
+        ("Bash", "sed -sf a.py docs/a.md"),
+        ("Bash", "gawk -nf a.py docs/a.md"),
+    ],
+)
+def test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    for rel in ("git", "sub/git", "python"):
+        _escribir(repo, rel, "#!/usr/bin/env python\n" + malo)
+    _escribir(repo, "sub/scripts/otro.py", malo)
+    _escribir(repo, "x.env", "PYTHONSTARTUP=a.py\n")
+    motivo = _decide(g, repo, herramienta, command=comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "sed -n -e 1p docs/a.md"),
+        ("Bash", "sed -i.bak -e 1p docs/a.md"),
+        ("Bash", "awk -F: '{print $1}' docs/a.md"),
+        ("Bash", "find docs -name x -exec ls {} \\;"),
+        ("Bash", "echo docs/a.md | xargs -0 ls"),
+        ("Bash", "node --version"),
+        ("Bash", "uv run --with pyyaml python inocuo.py"),
+        ("PowerShell", "Write-Output (Get-Content docs/a.md)"),
+    ],
+)
+def test_ejecucion_lo_que_la_segunda_pasada_no_toca_pasa(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _decide(g, repo, herramienta, command=comando)
+    assert motivo is None, (comando, motivo)
 
 
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:

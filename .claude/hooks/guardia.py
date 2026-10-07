@@ -1198,7 +1198,12 @@ def _envoltorios(argv: list[Palabra]) -> list[Palabra]:
                         f"`env {nombre}=...`: `{nombre}` no esta en la lista cerrada de nombres "
                         "de entorno (`NOMBRES_DE_ENTORNO`)"
                     )
-                argv = argv[2:] if t in {"-u", "--unset", "-C", "--chdir"} else argv[1:]
+                if t.split("=", 1)[0] in {"-C", "--chdir"}:
+                    raise IndecidibleError(
+                        f"`env {t}`: cambia el directorio de lo que ejecuta, y la guardia leeria "
+                        "otro fichero (revisor, B6)"
+                    )
+                argv = argv[2:] if t in {"-u", "--unset"} else argv[1:]
         elif c in {"uv", "uvx"}:
             resto = _opciones_cerradas(argv[1:], "uv")  # las globales de `uv`
             textos = [a.texto for a in resto[:2]]
@@ -1217,6 +1222,16 @@ def _envoltorios(argv: list[Palabra]) -> list[Palabra]:
                 if clave in {"-m", "--module"}:  # `uv run -m x` es `python -m x`
                     modulo = [Palabra(valor)] if igual else []
                     return [Palabra("python"), Palabra("-m"), *modulo, *argv[1:]]
+                dato = valor if igual else (argv[1].texto if len(argv) > 1 else "")
+                if clave in {"--directory", "--project", "--env-file"} or (
+                    clave in {"--with", "-w", "--with-editable", "--with-requirements"}
+                    and re.search(r"[\\/]|^\.", dato)
+                ):
+                    raise IndecidibleError(
+                        f"`uv run {clave}`: cambia el directorio, el entorno o los paquetes de lo "
+                        "que ejecuta (un paquete local se construye con su propio codigo): "
+                        "revisor, B6"
+                    )
                 argv = _opciones_cerradas(argv, "uv")
         else:
             break
@@ -1261,6 +1276,12 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
     for ext in (".exe", ".cmd", ".bat"):
         prog = prog.removesuffix(ext)
     args = argv[1:]
+    # Un FICHERO de la rama como programa se decide por su contenido, aunque se llame como un
+    # programa que la guardia trata por su nombre (`./git`, `sub/python`: revisor, B5).
+    if _es_fichero_de_la_rama(argv[0].texto, ctx):
+        lenguaje = _lenguaje_del_fichero(_absoluta(argv[0].texto, ctx.cwd))
+        _exigir_guion(argv[0], args, cmd, ctx, lex, lenguaje, argv[0].texto)
+        return
 
     for destino in cmd.entradas:  # `< fichero` lee su contenido
         _exigir_legible(destino, ctx, lex, "redireccion de entrada")
@@ -1695,9 +1716,21 @@ def _analizar_make(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
 
 
 def _analizar_xargs(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
+    con_valor = {"-I", "-n", "-L", "-P", "-d", "-E", "-s", "-a", "--arg-file", "--delimiter"}
+    sin_valor = {"-0", "--null", "-r", "--no-run-if-empty", "-t", "--verbose", "-x", "--exit"}
     i = 0
     while i < len(args) and args[i].texto.startswith("-"):
-        i += 2 if args[i].texto in {"-I", "-n", "-L", "-P", "-d", "-E", "-s"} else 1
+        t = args[i].texto
+        clave = t.split("=", 1)[0]
+        if clave in con_valor:
+            i += 1 if "=" in t else 2
+        elif t in sin_valor or re.fullmatch(r"-[InLPdEsa]\S+", t):
+            i += 1
+        else:  # una opcion que no conoce: no sabe cual es el programa (revisor, B3 e)
+            exigir_ejecucion_verificable(
+                ctx, lex, cmd, f"xargs {t}", indecidible=f"`xargs {t}`: una opcion que no conoce"
+            )
+            return  # la funcion niega; si no lo hiciera, el bucle no avanzaria
     if i >= len(args):
         return
     prog = os.path.basename(args[i].texto).lower()
@@ -1719,32 +1752,36 @@ def _analizar_find(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
         raices.append(args[i])
         i += 1
     textos = [a.texto for a in args[i:]]
-    for accion in ("-exec", "-execdir", "-ok", "-okdir"):
-        if accion in textos:
-            j = textos.index(accion) + 1
-            prog = os.path.basename(textos[j]).lower() if j < len(textos) else ""
-            if (
-                prog in LECTOR_DE_METADATOS
-                or prog in {"sha256sum", "stat"}
-                or (prog == "wc" and "-c" in textos)
-            ):
-                continue
-            # Lo que lanza `-exec`, con el propio `find` corriendo a la vez.
-            k = next((m for m in range(j, len(textos)) if textos[m] in {";", "+"}), len(textos))
-            _ejecucion_lanzada(cmd, args[i + j : i + k], ctx, lex)
-            for r in raices or [Palabra(".")]:
-                valores = _valores(r, ctx, lex)
-                if valores is None:
+    acciones = [
+        (m, accion)
+        for m, accion in enumerate(textos)
+        if accion in {"-exec", "-execdir", "-ok", "-okdir"}
+    ]
+    for m, accion in acciones:  # TODOS los `-exec` (revisor, segunda pasada, B3 d)
+        j = m + 1
+        prog = os.path.basename(textos[j]).lower() if j < len(textos) else ""
+        if (
+            prog in LECTOR_DE_METADATOS
+            or prog in {"sha256sum", "stat"}
+            or (prog == "wc" and "-c" in textos)
+        ):
+            continue
+        # Lo que lanza `-exec`, con el propio `find` corriendo a la vez.
+        k = next((f for f in range(j, len(textos)) if textos[f] in {";", "+"}), len(textos))
+        _ejecucion_lanzada(cmd, args[i + j : i + k], ctx, lex)
+        for r in raices or [Palabra(".")]:
+            valores = _valores(r, ctx, lex)
+            if valores is None:
+                raise BloqueoError(
+                    f"`find ... {accion}` sobre una ruta dinamica. {COMO_REESCRIBIR}"
+                )
+            for v in valores:
+                motivo = ctx.politica.motivo_ruta(_absoluta(v, ctx.cwd), recursivo=True)
+                if motivo:
                     raise BloqueoError(
-                        f"`find ... {accion}` sobre una ruta dinamica. {COMO_REESCRIBIR}"
+                        f"`find {v} {accion} {prog}` lee el contenido de lo que encuentra."
+                        f"\nRegla: {motivo}."
                     )
-                for v in valores:
-                    motivo = ctx.politica.motivo_ruta(_absoluta(v, ctx.cwd), recursivo=True)
-                    if motivo:
-                        raise BloqueoError(
-                            f"`find {v} {accion} {prog}` lee el contenido de lo que encuentra."
-                            f"\nRegla: {motivo}."
-                        )
 
 
 def _analizar_cli(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
@@ -1860,6 +1897,27 @@ def _tramos_en_la_cli(
 
 SHELL_CON_VALOR = {"-o", "+o", "-O", "+O", "--rcfile", "--init-file"}
 INTERPRETE_CON_VALOR = {"-X", "-W", "-r", "--require", "--import", "--loader"}
+# Las opciones cuyo valor es CODIGO que se carga antes del guion (revisor, segunda pasada, B1): su
+# valor es un guion mas de la ejecucion, y pasa por la condicion como tal. Si no es un fichero que
+# exista (un modulo por su nombre), no se resuelve y se niega.
+OPCIONES_QUE_CARGAN_CODIGO = {
+    "-r", "--require", "--import", "--loader", "--experimental-loader", "--rcfile", "--init-file",
+}  # fmt: skip
+
+
+def _codigo_de_opciones(args: list[Palabra], lenguaje: str) -> list[tuple[Palabra, str]]:
+    """El codigo que cargan las opciones (`node -r x`, `bash --rcfile x`), como guiones."""
+    guiones: list[tuple[Palabra, str]] = []
+    for i, a in enumerate(args):
+        clave, igual, valor = a.texto.partition("=")
+        if clave in OPCIONES_QUE_CARGAN_CODIGO:
+            palabra = (
+                Palabra(valor) if igual else (args[i + 1] if i + 1 < len(args) else Palabra(""))
+            )
+            guiones.append((palabra, lenguaje))
+    return guiones
+
+
 # Lo unico que se admite a un interprete o un shell sin guion ni codigo: no ejecuta nada.
 SOLO_VERSION = frozenset({"--version", "-V", "-VV", "--help", "-h"})
 
@@ -1867,10 +1925,15 @@ SOLO_VERSION = frozenset({"--version", "-V", "-VV", "--help", "-h"})
 def _analizar_shell(
     prog: str, args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
 ) -> None:
+    cargados = _codigo_de_opciones(args, "shell")
     codigo = _tras_opcion(args, {"-c", "-lc", "-ic"})
     if codigo is not None:
-        exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} -c", codigo=(codigo, "shell"))
+        exigir_ejecucion_verificable(
+            ctx, lex, cmd, f"{prog} -c", guiones=cargados, codigo=(codigo, "shell")
+        )
         return
+    if cargados:
+        exigir_ejecucion_verificable(ctx, lex, cmd, prog, guiones=cargados)
     resto = _saltar_opciones(args, SHELL_CON_VALOR)
     lee_stdin = any(a.texto == "-s" for a in args[: len(args) - len(resto)])
     if resto and resto[0].texto != "-" and not lee_stdin:
@@ -1883,10 +1946,18 @@ def _analizar_interprete(
     prog: str, args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
 ) -> None:
     lenguaje = "python" if prog.startswith("py") else "otro"
+    cargados = _codigo_de_opciones(args, lenguaje)
+    if cargados:  # `node -r x.js`: lo que carga antes del guion, como un guion mas
+        exigir_ejecucion_verificable(
+            ctx, lex, cmd, f"{prog} {cargados[0][0].texto}", guiones=cargados
+        )
+    eval_ = {"-c", "-e", "--eval"} | (
+        {"-p", "--print"} if prog in {"node", "bun", "deno"} else set()
+    )
     i = 0
     while i < len(args) and args[i].texto.startswith("-") and args[i].texto != "-":
         t = args[i].texto
-        if t in {"-c", "-e", "--eval"}:
+        if t in eval_:
             codigo = args[i + 1].texto if i + 1 < len(args) else ""
             exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} {t}", codigo=(codigo, lenguaje))
             _exigir_args_legibles(args[i + 2 :], ctx, lex, recursivo=False)
@@ -1939,6 +2010,7 @@ def _sin_guion(
         exigir_ejecucion_verificable(ctx, lex, cmd, que, guiones=[(entrada, lenguaje)])
         return
     if args and not cmd.tras_tuberia and {a.texto for a in args} <= SOLO_VERSION:
+        exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} {args[0].texto}")  # lo de antes
         return
     exigir_ejecucion_verificable(
         ctx,
@@ -2152,15 +2224,28 @@ def _fichero_de_programa(prog: str, args: list[Palabra]) -> Palabra | None:
     opciones = OPCIONES_DE_PROGRAMA.get(prog)
     if not opciones:
         return None
+    # Las letras cortas que toman valor (pegado o en la ficha siguiente): las de programa y las
+    # demas, para saber donde acaba un grupo como `-nf x` o `-vx=1` (revisor, B7).
+    con_valor = {"awk": "fEilvF", "gawk": "fEilvF", "sed": "fel"}[prog]
+    de_programa = {o[1] for o in opciones if len(o) == 2}
     for i, a in enumerate(args):
         clave, igual, valor = a.texto.partition("=")
         if clave in opciones:
             if igual:
                 return Palabra(valor)
             return args[i + 1] if i + 1 < len(args) else Palabra("")
-        corta = next((o for o in opciones if len(o) == 2 and clave.startswith(o)), None)
-        if corta and len(clave) > 2 and not clave.startswith("--"):
-            return Palabra(a.texto[2:])
+        if not re.fullmatch(r"-[A-Za-z]\S*", a.texto):
+            continue
+        for k, letra in enumerate(a.texto[1:], start=1):
+            if prog == "sed" and letra == "i":
+                break  # `-i[SUFIJO]`: lo que sigue es el sufijo
+            if letra in con_valor:
+                pegado = a.texto[k + 1 :]
+                if letra in de_programa:
+                    if pegado:
+                        return Palabra(pegado)
+                    return args[i + 1] if i + 1 < len(args) else Palabra("")
+                break
     return None
 
 
@@ -2175,11 +2260,13 @@ def _ficheros_de_un_programa_desconocido(
         if a.texto.startswith("-") and "=" not in a.texto:
             continue
         valores = _valores(a, ctx, lex)
-        if valores is None:
-            dinamico = True
+        if valores is None or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", a.texto):
+            dinamico = True  # tambien una expansion de llaves (`{a,b}.py`): revisor, B4
             continue
         for v in valores:
-            for candidato in (v, v.split("=", 1)[1] if "=" in v else ""):
+            # El argumento entero y cada trozo suyo: una cadena de comando (`watch "python x"`,
+            # `-o ProxyCommand="python x"`, `exec=./x`) nombra lo que ejecutara (revisor, B4).
+            for candidato in {v, *re.split(r"[\s=,;!'\"]+", v)}:
                 if candidato and os.path.isfile(_absoluta(candidato, ctx.cwd)):
                     ficheros.append(Palabra(candidato))
     return ficheros, dinamico
@@ -2194,7 +2281,13 @@ def _ejecucion_de_un_programa_desconocido(
     ficheros, dinamico = _ficheros_de_un_programa_desconocido(args, ctx, lex)
     # Y si lanza otro programa que ejecuta (`sudo make check`, `winpty botsito ...`): lo que este
     # ejecute no se ve por sus argumentos (el `Makefile`, el codigo de `src/`).
-    lanzada = next((a.texto for a in args if _lanza_una_ejecucion(a.texto)), None)
+    trozos = [
+        trozo
+        for a in args
+        for trozo in re.split(r"[\s=,;!'\"]+", a.texto)
+        if trozo and "\x00" not in trozo
+    ]
+    lanzada = next((x for x in trozos if _lanza_una_ejecucion(x)), None)
     indecidible = None
     if lanzada is not None:
         indecidible = f"`{prog}` lanza `{lanzada}`, y lo que ejecute no se ve por sus argumentos"
@@ -2211,6 +2304,17 @@ def _ejecucion_de_un_programa_desconocido(
         guiones=[(f, "desconocido") for f in ficheros],
         indecidible=indecidible,
     )
+
+
+def _es_fichero_de_la_rama(texto: str, ctx: Contexto) -> bool:
+    """`./x`, `../x` o una ruta con `/` dentro del repositorio (salvo `.venv/`, los programas del
+    entorno virtual): es codigo de la rama, se llame como se llame."""
+    if texto.startswith(("./", "../", ".\\", "..\\")):
+        return True
+    if "/" not in texto and "\\" not in texto:
+        return False
+    rel = ctx.politica.relativa(_absoluta(texto, ctx.cwd))
+    return rel is not None and not rel.startswith(".venv/")
 
 
 def _es_fichero_programa(texto: str, ctx: Contexto) -> bool:
@@ -2626,6 +2730,15 @@ def _ejecucion_en_powershell(texto: str) -> str | None:
         return "una llamada a .NET (`[Tipo]::Metodo`)"
     if "{" in texto:
         return "un bloque de codigo `{ ... }`"
+    if re.search(
+        r"(?i)\bgit\b[^;|\n]*(\s-c\s+['\"]?alias\.[^=\s]+=\s*['\"]?\s*!|--config-env)", texto
+    ):
+        return "un alias de git con `!` o `--config-env`"
+    # Lo que va dentro de `(`, `$(` o `@(`, con o sin espacio, es un comando (revisor, B2).
+    for m in re.finditer(r"[$@]?\(\s*([^\s'\"()]+)", texto):
+        palabra = m.group(1).lower()
+        if palabra[0] not in "$-0123456789" and palabra not in PS_NO_EJECUTAN:
+            return m.group(0)[:80]
     for segmento in re.split(r"[;|\n]|&&|\|\|", texto):
         fichas = re.findall(r"'[^']*'|\"[^\"]*\"|[^\s'\"]+", segmento)
         for k, ficha in enumerate(fichas):
