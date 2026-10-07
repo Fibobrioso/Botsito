@@ -95,6 +95,15 @@ Recorre, en este orden, y anota lo que compruebas aunque salga bien:
    ejecutable; el informe de la rama existe y acaba en su estado; ningun ensayo de un script que
    escribe se hizo sobre copias sueltas (si el informe lo cuenta); nada afirma mas de lo que su
    cita sostiene (comprueba al menos tres citas del informe contra su fuente).
+10. **La afirmacion de cada item de evidencia nuevo.** En cada item que la rama ANADE a
+   `knowledge/evidence/` (`git diff --name-status main...HEAD -- knowledge/evidence/`, las `A`),
+   lee su `cita_literal` y su `afirmacion` con Read: la afirmacion no dice nada que su cita no
+   contenga. Si dice mas -un momento, una cifra, una condicion que la cita no trae- es un hallazgo
+   (`importa`), con las dos frases tal cual. No hay comprobacion automatica para esto (es un juicio
+   de significado; la unica relacion mecanica es la LONGITUD, `evidence/modelo.py`): por eso la
+   haces tu. Un item ya commiteado no se corrige editandolo (inmutable): se supersede. Decision del
+   consultor del 2026-10-06 (D2 de `docs/encargos/trabajo-respaldo-a11.md`), sobre el hallazgo §8.3
+   de `docs/validation/GUARDIAS-CITAS.md`.
 
 ## Eje (b) · El encargo
 

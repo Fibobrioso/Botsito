@@ -16,7 +16,7 @@ lo reproduzca.
 `EXCEPCIONES` son PARES (ambiguedad, id supersedido), cada uno con su motivo, no ficheros ni
 campos: la aparicion pasa solo si esta en un valor del objeto cuyo `id` es esa ambiguedad. Una
 excepcion que ya no se usa es un FALLO, para que no quede viva sin uso (respuesta del consultor del
-2026-10-06 a la parada de A-11).
+2026-10-06 a la parada de A-11). Hoy no hay ninguna (`trabajo/respaldo-a11`, 2026-10-07).
 
 Lee el sistema de ficheros, no git: en `validation/` solo `Historial` lee git
 (`tests/unit/test_historial_sin_git.py`). Solo ids: no lee ninguna cita ni ninguna transcripcion.
@@ -44,13 +44,11 @@ DIRECTORIO = "knowledge/spec"
 # Rutas relativas a la raiz (con `/`) que G1 no mira, cada una con su motivo en un comentario.
 # Vacia desde que nacio: excluir un fichero es una decision que se ve en el diff.
 EXCLUIDOS: tuple[str, ...] = ()
-EXCEPCIONES: tuple[Excepcion, ...] = (
-    Excepcion(
-        "A-11",
-        "ev-v4-001207-0c4ffd4b",
-        "respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06",
-    ),
-)
+# Vacia desde el 2026-10-07 (trabajo/respaldo-a11, respuesta del consultor a la fase 0, D-c): A-11
+# dejo de citar ev-v4-001207-0c4ffd4b, la unica excepcion que hubo. El mecanismo se conserva, como
+# EXCLUIDOS: anadir un par vuelve a ser una decision que se ve en el diff, y un test exige que este
+# vacia (tests/unit/test_citas_supersedidas.py).
+EXCEPCIONES: tuple[Excepcion, ...] = ()
 ID_EVIDENCIA = re.compile(r"\bev-[a-z0-9]+-\d{6}-[0-9a-f]{8}\b", re.ASCII)
 _EXTENSIONES_YAML = (".yaml", ".yml")
 

@@ -1,0 +1,18 @@
+EXCEPCIONES reales: ()
+supersedidos reales: 13; con G1 tal cual, fallan 13
+  ev-v1-000448-346d6d90: 1 fallo(s)
+  ev-v1-000959-b82650ad: 1 fallo(s)
+  ev-v10-010438-0d4e6798: 1 fallo(s)
+  ev-v2-003142-beb4ad3c: 1 fallo(s)
+  ev-v3-001531-1b12a896: 1 fallo(s)
+  ev-v3-002714-742f2589: 1 fallo(s)
+  ev-v3-004751-8eb74667: 1 fallo(s)
+  ev-v4-001207-0c4ffd4b: 1 fallo(s)
+  ev-v4-005319-dee95093: 1 fallo(s)
+  ev-v4-005703-4e43180e: 1 fallo(s)
+  ev-v4-011351-74b8bb39: 1 fallo(s)
+  ev-v4-011951-5fb49e03: 1 fallo(s)
+  ev-v9-003456-9ef48fb5: 1 fallo(s)
+ROTURA 1, una excepcion para (A-11, ev-v1-000448-346d6d90): ese id da 0 fallo(s) -> el test de rotura FALLARIA
+ROTURA 2, G1 sin cadenas de sustitucion: fallan 0 de 13 -> el test de rotura FALLARIA
+VEREDICTO: el test de rotura pasa hoy y falla con las dos roturas

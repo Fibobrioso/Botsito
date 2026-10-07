@@ -133,11 +133,15 @@ def test_sin_knowledge_spec_no_hay_nada_que_mirar(tmp_path: Path) -> None:
     assert citas_a_supersedidos(tmp_path, ITEMS, excepciones=()) == ([], 0)
 
 
-# --- La excepcion de A-11 (respuesta del consultor del 2026-10-06 a la parada de A-11) ---
+# --- Las excepciones (respuesta del consultor del 2026-10-06 a la parada de A-11) ---
+# Desde el 2026-10-07 (trabajo/respaldo-a11, D-c) la lista real esta VACIA: A-11 dejo de citar
+# ev-v4-001207-0c4ffd4b. El mecanismo se conserva y se prueba con una excepcion SINTETICA, en un
+# `knowledge/spec/` temporal.
 
 OTRO_VIEJO = "ev-v4-011351-74b8bb39"
 OTRO_NUEVO = "ev-v6-000732-f7189541"
 ITEMS_DOS = [*ITEMS, _Item(OTRO_VIEJO), _Item(OTRO_NUEVO, supersede=OTRO_VIEJO)]
+SINTETICA = Excepcion("A-11", VIEJO, "sintetica: solo prueba el mecanismo de excepciones")
 
 
 def _ambiguedades(tmp_path: Path, a11: list[str], a12: list[str] | None = None) -> Path:
@@ -148,31 +152,33 @@ def _ambiguedades(tmp_path: Path, a11: list[str], a12: list[str] | None = None) 
     return _spec(tmp_path, "ambiguedades.yaml", texto)
 
 
-def test_la_excepcion_es_exactamente_un_par() -> None:
-    esperada = Excepcion(
-        "A-11",
-        VIEJO,
-        "respaldo de A-11 pendiente de decisión del consultor, GUARDIAS-CITAS.md §8; 2026-10-06",
-    )
-    excepciones = citas_supersedidas.EXCEPCIONES
-    assert excepciones == (esperada,)
+def test_la_lista_real_de_excepciones_esta_vacia() -> None:
+    """G1 no tiene ninguna excepcion: anadir una es una decision que se ve en el diff."""
+    assert citas_supersedidas.EXCEPCIONES == ()
 
 
 def test_la_excepcion_deja_pasar_su_par(tmp_path: Path) -> None:
     repo = _ambiguedades(tmp_path, [VIEJO, OTRO])
-    assert citas_a_supersedidos(repo, ITEMS_DOS)[0] == []
+    assert citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0] == []
+
+
+def test_sin_la_excepcion_el_mismo_par_falla(tmp_path: Path) -> None:
+    repo = _ambiguedades(tmp_path, [VIEJO, OTRO])
+    fallos = citas_a_supersedidos(repo, ITEMS_DOS)[0]  # las reales: ninguna
+    assert len(fallos) == 1
+    assert f"nombra {VIEJO}" in fallos[0]
 
 
 def test_la_excepcion_no_cubre_otro_supersedido_de_a11(tmp_path: Path) -> None:
     repo = _ambiguedades(tmp_path, [VIEJO, OTRO_VIEJO])
-    fallos = citas_a_supersedidos(repo, ITEMS_DOS)[0]
+    fallos = citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0]
     assert len(fallos) == 1
     assert f"nombra {OTRO_VIEJO}" in fallos[0]
 
 
 def test_la_excepcion_no_cubre_el_mismo_id_en_otra_ambiguedad(tmp_path: Path) -> None:
     repo = _ambiguedades(tmp_path, [VIEJO], a12=[VIEJO])
-    fallos = citas_a_supersedidos(repo, ITEMS_DOS)[0]
+    fallos = citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0]
     assert fallos == [
         f"knowledge/spec/ambiguedades.yaml:7: nombra {VIEJO}, supersedido por {NUEVO}; un "
         "supersedido solo aparece en el mismo valor o la misma linea de comentario que su "
@@ -183,7 +189,7 @@ def test_la_excepcion_no_cubre_el_mismo_id_en_otra_ambiguedad(tmp_path: Path) ->
 def test_la_excepcion_no_cubre_el_par_en_otro_fichero_sin_objeto_a11(tmp_path: Path) -> None:
     _ambiguedades(tmp_path, [VIEJO])
     repo = _spec(tmp_path, "otro.yaml", f"cita: {VIEJO}\n")
-    fallos = citas_a_supersedidos(repo, ITEMS_DOS)[0]
+    fallos = citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0]
     assert [f.split(":", 1)[0] for f in fallos] == ["knowledge/spec/otro.yaml"]
 
 
@@ -193,33 +199,48 @@ def test_la_excepcion_no_cubre_un_comentario(tmp_path: Path) -> None:
         "ambiguedades.yaml",
         f"ambiguedades:\n  - id: A-11\n    # {VIEJO}\n    evidencia:\n      - {VIEJO}\n",
     )
-    fallos = citas_a_supersedidos(repo, ITEMS_DOS)[0]
+    fallos = citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0]
     assert [f.split(":", 2)[1] for f in fallos] == ["3"]
 
 
 def test_caducidad_la_excepcion_sin_uso_falla(tmp_path: Path) -> None:
-    """Si A-11 deja de citar el id, la excepcion ya no hace falta: G1 falla hasta que se quite."""
+    """Si la ambiguedad deja de citar el id, la excepcion ya no hace falta: G1 falla hasta que se
+    quite. Es lo que obligo a quitar la de A-11 en el mismo commit en que A-11 dejo de citarlo."""
     repo = _ambiguedades(tmp_path, [OTRO])
-    assert citas_a_supersedidos(repo, ITEMS_DOS)[0] == [
+    assert citas_a_supersedidos(repo, ITEMS_DOS, excepciones=(SINTETICA,))[0] == [
         f"excepcion de G1 sin uso: A-11 ya no cita {VIEJO}; se quita de EXCEPCIONES "
         "(src/botsito/validation/citas_supersedidas.py)"
     ]
 
 
-def test_caducidad_en_el_repositorio_real(repo: Path) -> None:
-    """G1 sobre el repositorio real: sin fallos con la excepcion, y la excepcion HACE FALTA. Sin
-    ella, la unica aparicion que falla es la de A-11 (`ambiguedades.yaml`); el dia que A-11 deje
-    de citar el id, esa asercion falla y la excepcion se quita (hallazgo b2 del revisor)."""
+def test_g1_sobre_el_repositorio_real_pasa_sin_ninguna_excepcion(repo: Path) -> None:
+    """G1 sobre el repositorio real: ningun fallo, y no porque lo tape una excepcion (no hay)."""
     from botsito.evidence.modelo import cargar_evidencia
 
     items = cargar_evidencia(repo / "knowledge" / "evidence")
     fallos, vigilados = citas_a_supersedidos(repo, items)
     assert fallos == [], "\n".join(fallos)
     assert vigilados > 0
-    sin_excepcion = citas_a_supersedidos(repo, items, excepciones=())[0]
-    assert len(sin_excepcion) == 1, sin_excepcion
-    assert sin_excepcion[0].startswith("knowledge/spec/ambiguedades.yaml:")
-    assert "nombra ev-v4-001207-0c4ffd4b" in sin_excepcion[0]
+    assert citas_a_supersedidos(repo, items, excepciones=())[0] == []
+
+
+def test_rotura_cada_supersedido_real_citado_en_una_spec_hace_fallar_g1(
+    repo: Path, tmp_path: Path
+) -> None:
+    """Rompe G1 a proposito con los items REALES: cada id supersedido del repositorio, citado solo
+    en un `knowledge/spec/` temporal, da exactamente un fallo que lo nombra. Si alguno pasara,
+    habria una excepcion o un hueco en la condicion."""
+    from botsito.evidence.modelo import cargar_evidencia
+
+    items = cargar_evidencia(repo / "knowledge" / "evidence")
+    supersedidos = sorted({i.supersede for i in items if i.supersede})
+    assert supersedidos, "sin ningun item supersedido esto no vigilaria nada"
+    for n, viejo in enumerate(supersedidos):
+        texto = f"ambiguedades:\n  - id: A-11\n    evidencia:\n      - {viejo}\n"
+        temporal = _spec(tmp_path / str(n), "ambiguedades.yaml", texto)
+        fallos = citas_a_supersedidos(temporal, items)[0]
+        assert len(fallos) == 1, (viejo, fallos)
+        assert f"nombra {viejo}" in fallos[0], (viejo, fallos)
 
 
 def test_knowledge_validate_lleva_g1(repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -238,4 +259,4 @@ def test_knowledge_validate_lleva_g1(repo: Path, monkeypatch: pytest.MonkeyPatch
 def test_sin_el_item_supersedido_la_excepcion_no_tiene_a_que_aplicarse(tmp_path: Path) -> None:
     """Un `knowledge/` minimo (los de los tests de la CLI) no tiene el item: no hay caducidad."""
     repo = _ambiguedades(tmp_path, [OTRO])
-    assert citas_a_supersedidos(repo, [_Item(OTRO)])[0] == []
+    assert citas_a_supersedidos(repo, [_Item(OTRO)], excepciones=(SINTETICA,))[0] == []
