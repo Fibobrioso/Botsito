@@ -92,6 +92,23 @@ en `docs/adr/`: **el siguiente libre es 0070.**
   implementa aquí: **queda para el consultor** (§5).
 
 
+## 1. Fase 1 · ADR-0070
+
+`docs/adr/0070-umbral-de-construccion-para-medir-mayo.md`, con su fila en el índice. Recoge D1 a D4
+del consultor (2026-10-07): el umbral de ADR-0043 sobre construcción, en una misma corrida, con la
+métrica sin definir como «no llega»; solo corridas sin `--diagnostico-*`; no se relaja tras ver una
+corrida; las cifras en `criterio_fidelidad.yaml` y la línea de veredicto en el arnés; y que no se
+construye ningún comando de medida (ADR-0048 §7). Problema, las tres alternativas del encargo y por
+qué. Cita ADR-0043, ADR-0048 y la decisión de Aleks del 2026-10-06 (el bot es 100 % automático,
+`docs/encargos/trabajo-respaldo-a11.md`).
+
+Lo que el ADR añade a D1-D4, dicho como decisión propia y no como del consultor:
+- **La corrida tiene que cubrir todo `construccion`** (§0.e): D1 dice «sobre el conjunto de
+  construcción vigente», y el comando admite `--meses` con una parte.
+- **«Sin diagnóstico» son las seis opciones que etiquetan la salida** (A-35, A-44, A-21, A-47, A-27
+  y la cuenta diaria), que es lo que `Diagnostico.activo` ya cuenta.
+- **`--depuracion` queda para el consultor** (§0.e, y en el «Impacto» del ADR).
+
 ## Estado
 
 **EN CURSO (2026-10-07).** Fase 0 hecha; siguen las fases 1 a 3.
