@@ -33,3 +33,13 @@ Dado por Aleks (consultor) el 2026-10-07. Copiado tal cual:
 > Informe en docs/validation/RESPALDO-A11.md: encargo frente a lo hecho, desviaciones, comandos y salidas. Revisor con su informe pegado al final, comprobando aparte que G1 no tiene ninguna excepción y que su test de rotura falla cuando debe.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Añadido del consultor (2026-10-06), copiado tal cual
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Añadido del consultor al encargo de trabajo/respaldo-a11 (2026-10-06). Cópialo tal cual al final de docs/encargos/trabajo-respaldo-a11.md. No cambia nada de lo que hace esta rama.
+>
+> 1. Decisión de Aleks (2026-10-06): el bot es 100 % automático. No hay ningún plan con intervención humana. La línea J de la Next Action hablaba de «pasar al plan híbrido», un término que no está definido en ningún fichero del repo, y queda retirada.
+> 2. J se sustituirá en el commit del contrato del cierre de esta rama (lo dirá la orden de cierre) por: «J. Umbral para medir mayo (decisión del consultor del 2026-10-06, pre-registrada antes de cualquier corrida nueva): mayo, el conjunto de medida de ADR-0043, solo se mide cuando botsito motor arnes sobre construcción dé una cobertura de al menos 0,70 y una precisión de al menos 0,60, las mismas cifras de ADR-0043. Si no llega, se sigue construyendo y mayo no se toca. Se escribe como ADR en su propia rama, antes de la primera corrida del arnés tras la activación de la sesión 4.»
+> 3. Hasta que ese ADR esté en main, nadie ejecuta botsito motor arnes, en esta rama ni en ninguna. Si lo necesitas, PARA y dímelo.

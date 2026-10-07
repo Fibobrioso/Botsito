@@ -187,6 +187,12 @@ bytes, así que el saldo de las ediciones de contenido será −177.
 
 El contrato solo permite hoy esas rutas; las de las fases 1-4 se añaden tras la respuesta.
 
+**Añadido del consultor del 2026-10-06**, copiado al final del encargo: el bot es 100 % automático
+y la línea J de la Next Action queda retirada (se sustituye en el commit del contrato del cierre); y
+hasta que el ADR del umbral de mayo esté en `main`, nadie ejecuta `botsito motor arnes`. Esta rama
+no lo necesita. La última vez que se ejecutó fue en `trabajo/activacion-a42` (§9.5 de su informe),
+antes de esta regla.
+
 ## Estado
 
 **EN CURSO: PARADA de la fase 0 (2026-10-07).** Espera la respuesta del consultor al §6.
