@@ -6180,3 +6180,69 @@ excepcion. La premisa de la linea («su respaldo citable no dice el momento del 
 campo `evidencia` y no el registro que la cierra (respuesta del consultor del 2026-10-07).
 
 - A-11 RESUELTA cita un ítem supersedido; su respaldo citable no dice el momento del stop; excepción en G1 hasta que decida el consultor (docs/validation/GUARDIAS-CITAS.md §8).
+
+# Next Action HECHA · U · sale de PROJECT_STATE.md en trabajo/respaldo-a11 (2026-10-07)
+
+U. Pendiente del consultor: qué respalda A-11, que hoy va con excepción en G1 (GUARDIAS-CITAS.md §9.2 y §9.3), y si se mide que la afirmación de un ítem no diga más que su cita (§8.3). Los mensajes del trader del 2026-10-06 sobre el stop (13:46, 15:36 y «2-c», en el corpus; ACTIVACION-A42.md §5.4) no dicen cuándo se pone; no se le vuelve a preguntar: decide el consultor.
+
+La hace `trabajo/respaldo-a11` (docs/validation/RESPALDO-A11.md): A-11 sigue RESUELTA por
+fb-2026-09-09-sesion-01-69711f67, sin el item supersedido; G1 sin excepciones; D2 en el revisor.
+
+# Next Action SUSTITUIDA · J · en trabajo/respaldo-a11 (2026-10-07)
+
+Decision de Aleks del 2026-10-06 (anadido del consultor al encargo de la rama): el bot es 100 %
+automatico y no hay plan con intervencion humana; «plan hibrido» no estaba definido en ningun
+fichero. El texto que sale, literal:
+
+J. **Pendiente del consultor: umbral de cobertura tras la sesión 4 para pasar al plan híbrido, pre-registrado antes de medir.** (encargo de `trabajo/dieta-y-skills`, punto 5: el umbral no lo escribe la sesion.)
+
+# Registro de cierre · `trabajo/respaldo-a11` (2026-10-07)
+
+- Orden de cierre del consultor del 2026-10-07, ejecutada siguiendo `RITUAL.md`.
+- **Lo que entra:**
+  - A-11 sigue RESUELTA por el registro del trader `fb-2026-09-09-sesion-01-69711f67` (v6
+    1:43:51-1:44:36, confirmado en 2:00:01, fuera de todo tramo no citable) y deja de citar
+    `ev-v4-001207-0c4ffd4b`; la decision D1 del encargo (DECIDIDA por ADR) la sustituyo el consultor
+    en su respuesta a la fase 0;
+  - G1 sin ninguna excepcion (`EXCEPCIONES = ()`, mecanismo conservado), con un test que exige que
+    este vacia y un test de rotura con los 13 supersedidos reales;
+  - `test_una_ambiguedad_puede_citar_evidencia_ya_supersedida`, sintetico;
+  - D2: punto 10 del revisor (la afirmacion de cada item de evidencia nuevo), y la nota sobre
+    `ev-v6-021939-b430a110` en el informe;
+  - la deuda de A-11, pagada (arriba, en esta misma HISTORIA).
+- Next Action (en este commit, por la orden de cierre): sale U, HECHA; J se sustituye por el texto
+  del anadido del consultor (el umbral para medir mayo).
+- `Tests Currently Passing`: 1359 funciones (2102 casos).
+- Letra: la ultima cerrada era la d de F37 (`stable/F37d-activacion-a42`); `stable/F37e-*` no existe
+  ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37e-respaldo-a11`. El merge es `git rev-parse "stable/F37e-respaldo-a11^{commit}"`.
+- Commits de la rama: `68e9392` (apertura con la fase 0), `553de27` (el anadido del consultor),
+  `2f230fe` (la fase 1), `da082ed` (el revisor), el del titulo del informe y el de este registro.
+- CI de Linux, por `fix/respaldo-a11`: run #229 (`37574263700`) sobre `2f230fe`, 1 failed
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`, el aceptado) y 2093 passed. Lo
+  posterior solo toca el informe y no se empujo. La CI de `main` corre tras el push.
+- Nadie ejecuto `botsito motor arnes` en esta rama.
+- Informe: `docs/validation/RESPALDO-A11.md`. Encargo: `docs/encargos/trabajo-respaldo-a11.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/respaldo-a11 (consultor, 2026-10-07). Tag: stable/F37e-respaldo-a11 (verifica en HISTORIA que el último es F37d y que F37e no existe ni en local ni en origin).
+  >
+  > Antes del cierre, un commit corto en la rama: el título del informe pasa a «# El respaldo de A-11: sigue RESUELTA, y G1 sin excepciones». Nada más. Con make check sellado. No hace falta CI: solo toca el informe.
+  >
+  > CI de la rama: run #229 sobre 2f230fe, 1 failed (test_state_check_ok_on_real_repo, por el nombre fix/) y 2093 passed. Lo posterior solo toca el informe.
+  >
+  > Hallazgos para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+  > 1. (importa, consultor) El consultor decidió D1 (pasar A-11 a DECIDIDA por ADR) sin leer el RESOLVE_UNKNOWN que ya la cerraba (fb-2026-09-09-sesion-01-69711f67), guiándose por la línea de deuda. Lección: antes de decidir sobre una ambigüedad cerrada, se lee el registro que la cierra, no solo su campo evidencia.
+  > 2. (menor, sesión) La fase 0 tenía en su §1 quién cerraba A-11 y aun así propuso cinco decisiones para ejecutar el cambio de estado, sin decir que la premisa del encargo fallaba (RESPALDO-A11.md §8.7). Lección: si la fase 0 encuentra un dato que contradice la premisa del encargo, la PARADA lo dice primero, antes de proponer cómo ejecutarlo.
+  > 3. (menor, el revisor no lo vio) Tras el cambio de decisión, el título del informe y el comentario de riesgo de contrato.yaml seguían describiendo el plan sustituido. Lección para el revisor: cuando una rama cambia de decisión a mitad, comprobar que el título, la cabecera del informe y el contrato describen lo hecho.
+  >
+  > Next Action, en el commit del contrato (punto 3 de RITUAL):
+  > - SALE, HECHA: U (texto literal a HISTORIA bajo «# Next Action HECHA · U · …»), la hace esta rama: A-11 sigue RESUELTA por fb-2026-09-09-sesion-01-69711f67, sin el ítem supersedido; G1 sin excepciones; D2 en el revisor (RESPALDO-A11.md).
+  > - J se SUSTITUYE por el texto literal del punto 2 del añadido del consultor que está en el encargo (docs/encargos/trabajo-respaldo-a11.md), el que empieza por «J. Umbral para medir mayo». Cópialo del encargo, no lo reescribas.
+  > En el commit de estado no se toca la Next Action.
+  >
+  > El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag. Si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. CI de main en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual; si te niegan la consulta, para y dímelo. Con la CI de main en completed/success, borra trabajo/respaldo-a11 (git branch -d) y fix/respaldo-a11 en origin.
+  >
+  > Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
