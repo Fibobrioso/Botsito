@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any
 
 from botsito.cases import visto
-from botsito.cases.criterio_fidelidad import Criterio, Medida, Operacion, medir
+from botsito.cases.criterio_fidelidad import Criterio, Medida, Operacion, habilita_medir, medir
 from botsito.cases.holdout import HoldoutCerradoError, casos_ocultos
 from botsito.cases.ingesta import DIRECTORIO_DEV
 from botsito.cases.paquete import Config
@@ -230,9 +230,17 @@ def medida_de(corrida: Corrida, criterio: Criterio) -> Medida:
 
 
 def informe(
-    corrida: Corrida, criterio: Criterio, vocabulario: Mapping[str, Mapping[str, Any]]
+    corrida: Corrida,
+    criterio: Criterio,
+    vocabulario: Mapping[str, Mapping[str, Any]],
+    *,
+    con_diagnostico: bool,
 ) -> str:
+    """El informe de una corrida. `con_diagnostico` es obligatorio y lo da el comando: si la
+    corrida lleva alguna opcion --diagnostico-*, el veredicto de ADR-0070 es «no» por eso, llegue
+    o no a los umbrales."""
     medida = medida_de(corrida, criterio)
+    veredicto = habilita_medir(medida, criterio, corrida.meses, con_diagnostico=con_diagnostico)
     hechos = hechos_de_regla(vocabulario)
     trazas: dict[tuple[str, str], TrazaSesion] = {
         (r.dia, s): t for r in corrida.resultados for s, t in r.sesiones.items()
@@ -315,6 +323,8 @@ def informe(
             "cero operaciones del bot puntuables",
         ),
         f"parejas en el mismo minuto: {medida.mismo_minuto}",
+        f"habilita medir el conjunto de medida ({', '.join(criterio.medida)}) (ADR-0070): "
+        + ("sí" if veredicto.habilita else f"no ({'; '.join(veredicto.motivos)})"),
         "",
         "## Embudo sobre el grafo de hechos (ADR-0048 §5)",
         "cuantas sesiones con operaciones del trader producen cada hecho:",

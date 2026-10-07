@@ -124,6 +124,49 @@ Lo que el ADR añade a D1-D4, dicho como decisión propia y no como del consulto
   cifras que el umbral de medida; sin cada campo no carga; con 1,5, −0,1 o un texto no carga.
 - `Tests Currently Passing`: 1359 → 1362.
 
+## 3. Fase 3 · La línea de veredicto en el arnés
+
+- **El veredicto, puro** (`src/botsito/cases/criterio_fidelidad.py`, `habilita_medir` y
+  `Veredicto`): habilita solo si la corrida no lleva diagnóstico, cubre todo `construccion` y llega a
+  los dos umbrales; si no, un motivo por cada condición que falta («corrida con diagnostico: solo
+  cuenta una corrida sin --diagnostico-*», «la corrida no cubre todo el conjunto de construccion
+  (falta …)», «cobertura sin definir», «precision 57.1 % por debajo de 60.0 %»…). Una métrica sin
+  definir no llega.
+- **La línea** (`src/botsito/engine/arnes.py`, `informe`): la última de «## Criterio de fidelidad
+  (ADR-0043)», `habilita medir el conjunto de medida (2026-05) (ADR-0070): sí` o `…: no (<motivos>)`.
+  `informe` recibe `con_diagnostico` como argumento **obligatorio** y con nombre: ningún llamador
+  puede olvidarlo y quedarse en «sin diagnóstico» por defecto (hay un test que lo exige).
+- **El comando** (`src/botsito/cli.py`, `motor arnes`) le pasa `diag.activo`.
+- **Las llamadas de los tests** a `informe` (en `test_arnes_motor.py`, `test_cableado.py` y
+  `test_huecos_motor.py`) pasan `con_diagnostico=False`.
+- **Desviación del texto, declarada:** el encargo escribe «habilita medir mayo: sí/no». La línea
+  nombra el conjunto por los meses de `medida` que lee del criterio (`(2026-05)`), no la palabra
+  «mayo», para no dejar en `src/` un nombre de mes que dejaría de ser cierto cuando marzo entre en
+  medida (ADR-0043).
+
+**Tests** (`tests/unit/test_umbral_mayo.py`, sintéticos: un día escrito a mano, sin motor, sin
+velas y sin el arnés):
+
+| Test | Qué rompe | Línea que sale |
+|---|---|---|
+| `test_llega_a_las_dos_sin_diagnostico_y_sobre_todo_el_conjunto_habilita` | nada: 7/10 y 7/11 | `…: sí` |
+| `test_falla_por_cobertura` | 6/10 | `…: no (cobertura 60.0 % por debajo de 70.0 %)` |
+| `test_falla_por_precision` | 8/14 | `…: no (precision 57.1 % por debajo de 60.0 %)` |
+| `test_una_metrica_sin_definir_no_llega` | 0 del bot; 0 del trader | `precision sin definir`; `cobertura sin definir` |
+| `test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no` | la corrida que daba «sí», con diagnóstico | `…: no (corrida con diagnostico: …)` |
+| `test_una_corrida_sobre_parte_de_construccion_no_habilita` | solo un mes de dos | `…: no (la corrida no cubre … (falta 2030-03))` |
+| `test_los_motivos_se_suman` | las cuatro condiciones a la vez | cuatro motivos |
+| `test_el_informe_exige_decir_si_hay_diagnostico` | llamar a `informe` sin el argumento | `TypeError` |
+
+Cada test comprueba además que la línea es la última de la sección del criterio.
+
+**Que el test del diagnóstico falla si se quita D2**, medido en memoria sin tocar código ni tests
+(`anexos/UMBRAL-MAYO/sin_d2.py`, salida en `sin_d2-SALIDA.txt`): con el veredicto sustituido por
+uno que ignora el diagnóstico, `test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no` FALLA;
+con el código tal cual, antes y después, pasa.
+
+`Tests Currently Passing`: 1362 → 1370.
+
 ## Estado
 
 **EN CURSO (2026-10-07).** Fase 0 hecha; siguen las fases 1 a 3.

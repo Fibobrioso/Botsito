@@ -1,0 +1,4 @@
+con D2 (el codigo tal cual): test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: pasa
+sin D2 (el diagnostico ignorado): test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: FALLA (AssertionError)
+restaurado: test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no: pasa
+VEREDICTO: el test falla si se quita D2

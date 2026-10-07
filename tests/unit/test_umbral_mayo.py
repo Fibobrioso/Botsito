@@ -4,12 +4,25 @@ la linea de veredicto que el arnes escribe al final de su seccion del criterio."
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
 
 import pytest
 
-from botsito.cases.criterio_fidelidad import FICHERO_CRITERIO, CriterioError, cargar_criterio
+from botsito.cases.criterio_fidelidad import (
+    FICHERO_CRITERIO,
+    Criterio,
+    CriterioError,
+    Operacion,
+    Tolerancias,
+    cargar_criterio,
+    habilita_medir,
+    medir,
+)
+from botsito.engine import arnes
+from botsito.engine.motor import ResultadoDia
 
 REPO = Path(__file__).resolve().parents[2]
 CAMPOS = ("umbral_construccion_para_medir_cobertura", "umbral_construccion_para_medir_precision")
@@ -51,3 +64,113 @@ def test_sin_el_campo_no_carga(tmp_path: Path, campo: str) -> None:
 def test_fuera_de_0_a_1_o_no_numerico_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
     with pytest.raises(CriterioError, match=campo):
         cargar_criterio(_copia(tmp_path, {campo: valor}))
+
+
+# --------------------------------------------------- fase 3: la linea de veredicto (ADR-0070)
+# Corridas SINTETICAS: dias, operaciones del trader y del bot escritas a mano, sin motor ni velas.
+# Cada test rompe una condicion a proposito y mira la linea que el arnes escribe.
+
+CONSTRUCCION = ("2030-01", "2030-03")
+CRITERIO = Criterio(
+    Tolerancias(3, 15, 100_000),
+    Fraction(7, 10),
+    Fraction(6, 10),
+    CONSTRUCCION,
+    ("2030-02",),
+    Fraction(7, 10),
+    Fraction(6, 10),
+)
+VOCABULARIO: dict[str, dict[str, object]] = {"hechos": {}}
+T0 = datetime(2030, 1, 7, 7, 30, tzinfo=UTC)
+
+
+def _op(dia: str, k: int, desfase_min: int = 0) -> Operacion:
+    return Operacion(
+        dia, "07-11", "venta", T0 + timedelta(minutes=k * 60 + desfase_min), Decimal("1.10000")
+    )
+
+
+def _corrida(
+    n_trader: int, n_iguales: int, n_bot_de_mas: int, meses: tuple[str, ...] = CONSTRUCCION
+) -> arnes.Corrida:
+    """Un dia con `n_trader` operaciones del trader; el bot repite `n_iguales` de ellas y pone
+    `n_bot_de_mas` que no emparejan (dos horas despues de cualquiera del trader)."""
+    dia = "2030-01-07"
+    trader = tuple(_op(dia, k) for k in range(n_trader))
+    bot = tuple(_op(dia, k) for k in range(n_iguales)) + tuple(
+        _op(dia, k, desfase_min=120) for k in range(n_trader, n_trader + n_bot_de_mas)
+    )
+    return arnes.Corrida(
+        "sintetico",
+        meses,
+        (arnes.DiaTrader("caso-sintetico", dia, trader),),
+        (ResultadoDia(dia, bot, {}),),
+    )
+
+
+def _linea(corrida: arnes.Corrida, *, con_diagnostico: bool) -> str:
+    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, con_diagnostico=con_diagnostico)
+    lineas = [ln for ln in texto.splitlines() if ln.startswith("habilita medir")]
+    assert len(lineas) == 1, lineas
+    # al final de la seccion del criterio: la linea siguiente es la vacia que la cierra
+    seccion = texto.split("## Criterio de fidelidad (ADR-0043)\n", 1)[1].split("\n\n", 1)[0]
+    assert seccion.splitlines()[-1] == lineas[0]
+    return lineas[0]
+
+
+def test_llega_a_las_dos_sin_diagnostico_y_sobre_todo_el_conjunto_habilita() -> None:
+    # 7/10 de cobertura y 7/11 de precision: justo en los umbrales o por encima
+    linea = _linea(_corrida(10, 7, 4), con_diagnostico=False)
+    assert linea == "habilita medir el conjunto de medida (2030-02) (ADR-0070): sí"
+
+
+def test_falla_por_cobertura() -> None:
+    linea = _linea(_corrida(10, 6, 0), con_diagnostico=False)  # 6/10 y 6/6
+    assert linea.endswith(": no (cobertura 60.0 % por debajo de 70.0 %)")
+
+
+def test_falla_por_precision() -> None:
+    linea = _linea(_corrida(10, 8, 6), con_diagnostico=False)  # 8/10 y 8/14
+    assert linea.endswith(": no (precision 57.1 % por debajo de 60.0 %)")
+
+
+def test_una_metrica_sin_definir_no_llega() -> None:
+    # el bot no pone ninguna: cobertura 0/3 y precision sin denominador
+    linea = _linea(_corrida(3, 0, 0), con_diagnostico=False)
+    assert "precision sin definir" in linea and linea.split(": ", 1)[1].startswith("no (")
+    # y sin operaciones del trader, la cobertura tampoco esta definida
+    sin_trader = arnes.Corrida("sintetico", CONSTRUCCION, (), ())
+    assert "cobertura sin definir" in _linea(sin_trader, con_diagnostico=False)
+
+
+def test_una_corrida_con_diagnostico_que_llega_a_las_dos_sale_no() -> None:
+    """D2 (ADR-0070): la misma corrida que habilita sin diagnostico, con diagnostico sale «no», y
+    el unico motivo es el diagnostico. Si se quitara esa condicion, este test fallaria."""
+    corrida = _corrida(10, 7, 4)
+    assert _linea(corrida, con_diagnostico=False).endswith(": sí")
+    linea = _linea(corrida, con_diagnostico=True)
+    assert linea.endswith(
+        ": no (corrida con diagnostico: solo cuenta una corrida sin --diagnostico-*)"
+    )
+
+
+def test_una_corrida_sobre_parte_de_construccion_no_habilita() -> None:
+    linea = _linea(_corrida(10, 7, 4, meses=("2030-01",)), con_diagnostico=False)
+    assert linea.endswith(
+        ": no (la corrida no cubre todo el conjunto de construccion (falta 2030-03))"
+    )
+
+
+def test_los_motivos_se_suman() -> None:
+    v = habilita_medir(
+        medir([], [], CRITERIO.tolerancias), CRITERIO, ("2030-01",), con_diagnostico=True
+    )
+    assert not v.habilita
+    assert len(v.motivos) == 4  # diagnostico, conjunto incompleto, cobertura y precision
+
+
+def test_el_informe_exige_decir_si_hay_diagnostico() -> None:
+    """Sin el argumento, `informe` no se puede llamar: ningun llamador puede olvidarlo y dejar el
+    veredicto en «sin diagnostico» por defecto."""
+    with pytest.raises(TypeError, match="con_diagnostico"):
+        arnes.informe(_corrida(1, 1, 0), CRITERIO, VOCABULARIO)  # type: ignore[call-arg]

@@ -153,6 +153,44 @@ def medir(trader: Sequence[Operacion], bot: Sequence[Operacion], tol: Tolerancia
     )
 
 
+@dataclass(frozen=True)
+class Veredicto:
+    """Si una corrida de construccion habilita medir el conjunto de medida (ADR-0070), y por que
+    no: un motivo por cada condicion que falta. Sin motivos, habilita."""
+
+    habilita: bool
+    motivos: tuple[str, ...]
+
+
+def _por_ciento(f: Fraction) -> str:
+    return f"{float(f) * 100:.1f} %"
+
+
+def habilita_medir(
+    medida: Medida, criterio: Criterio, meses: Sequence[str], *, con_diagnostico: bool
+) -> Veredicto:
+    """ADR-0070. Habilita solo si la corrida (1) no lleva ninguna opcion de diagnostico, (2) cubre
+    TODO el conjunto de construccion y (3) llega, en esa misma corrida, a los dos umbrales de
+    construccion para medir. Una metrica sin definir no llega."""
+    motivos: list[str] = []
+    if con_diagnostico:
+        motivos.append("corrida con diagnostico: solo cuenta una corrida sin --diagnostico-*")
+    faltan = sorted(set(criterio.construccion) - set(meses))
+    if faltan:
+        motivos.append(
+            f"la corrida no cubre todo el conjunto de construccion (falta {', '.join(faltan)})"
+        )
+    for nombre, valor, umbral in (
+        ("cobertura", medida.cobertura, criterio.umbral_construccion_para_medir_cobertura),
+        ("precision", medida.precision, criterio.umbral_construccion_para_medir_precision),
+    ):
+        if valor is None:
+            motivos.append(f"{nombre} sin definir")
+        elif valor < umbral:
+            motivos.append(f"{nombre} {_por_ciento(valor)} por debajo de {_por_ciento(umbral)}")
+    return Veredicto(not motivos, tuple(motivos))
+
+
 def _fraccion(valor: object, campo: str) -> Fraction:
     try:
         f = Fraction(str(valor))
@@ -216,8 +254,10 @@ __all__ = [
     "Operacion",
     "Pareja",
     "Tolerancias",
+    "Veredicto",
     "cargar_criterio",
     "compatibles",
     "emparejar",
+    "habilita_medir",
     "medir",
 ]

@@ -3,6 +3,8 @@ riesgo: medio  # cambia el criterio de fidelidad (dos campos nuevos, sin tocar l
 artefacto: docs/validation/UMBRAL-MAYO.md
 rutas_permitidas:
   - docs/validation/UMBRAL-MAYO.md
+  # ampliado en la fase 3: la medida en memoria de que el test del diagnostico falla sin D2
+  - docs/validation/anexos/UMBRAL-MAYO/
   - docs/encargos/
   - PROJECT_STATE.md
   - docs/state/HISTORIA.md
@@ -33,6 +35,7 @@ rutas_protegidas:
 comprobaciones:
   - git log --format=%H main..HEAD
   - uv run pytest tests/unit/test_umbral_mayo.py -q
+  - uv run python docs/validation/anexos/UMBRAL-MAYO/sin_d2.py
   - uv run botsito knowledge validate > knowledge-validate.log 2>&1
   - uv run botsito state check
   - make check > make-check.log 2>&1

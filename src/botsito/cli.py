@@ -2421,7 +2421,8 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             )
             nombre = "spec vigente"
         corrida = arnes.correr(nombre, tuple(sorted(set(meses))), dias, mercado, motor)
-        texto = arnes.informe(corrida, criterio, vocabulario)
+        # ADR-0070: el veredicto dice «no» a toda corrida con diagnostico
+        texto = arnes.informe(corrida, criterio, vocabulario, con_diagnostico=diag.activo)
         if args.simular:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
