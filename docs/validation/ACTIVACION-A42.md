@@ -739,7 +739,7 @@ de §6.2 y los del revisor); `docs/HANDOFF.md` (su mención del 2026-09-21 es hi
 | a4 | menor | La cabecera del informe dice cómo se lee (§1–§8 son la fase 0, tal como se escribió), y §8 pasa a pretérito. El cuerpo de la fase 0 no se reescribe. |
 | a5 | menor | ADR-0069: «20 días laborables al año» → 20 en 2024–2026 y 15 en 2027; y la alternativa 1 distingue lo que el trader dijo (octubre) de lo que H2b predice (marzo). |
 | a6 | menor | **No se puede corregir**: el registro `fb-…-af490a3a` ya está commiteado y es inmutable; el `CONFIRM` es la decisión D4 del consultor. Queda dicho aquí: la frase de las 13:45 es condicional («si es por cuestion horaria») y no repite «desde el 25» ni «de 6 a 10». |
-| b1 | bloquea | La CI de Linux de `fix/activacion-a42` depende del push, que el clasificador de permisos de Claude Code le niega a la sesión: lo hace Aleks con `!`. El run se apunta en cuanto exista. |
+| b1 | bloquea | La CI de Linux de `fix/activacion-a42` dependía del push, que el clasificador de permisos de Claude Code le niega a la sesión: lo hizo Aleks con `!`. Run #227 sobre `b8694b6`: solo el fallo aceptado por el nombre `fix/` (tabla del Estado). |
 | b2 | importa | Ya declarado (§1.3, HOLDOUT, §6.2): va a la fila de ERRORES-RECURRENTES al cierre. |
 | b3 | importa | `scripts/ticks_spread.py` sigue en `huso_operativa`: pendiente con dueño (la rama que baje ticks de un mes de invierno), añadido a §6.2 y a ADR-0069 §5. Fuera de las rutas de esta rama. |
 
@@ -866,10 +866,15 @@ Lo que el encargo dice que NO se toca, comprobado con el diff: `huso_operativa` 
 
 ## Estado
 
-**LISTA PARA REVISIÓN, NO cerrada (2026-10-06), a falta de la CI de Linux.** El push de
-`fix/activacion-a42` lo hace Aleks (el clasificador de permisos se lo niega a la sesión); el
-número de run se apunta aquí en cuanto exista, y el del último commit va en el mensaje al
-consultor, porque un commit no puede llevar su propia CI.
+**LISTA PARA REVISIÓN, NO cerrada (2026-10-06).** El push de `fix/activacion-a42` lo hizo Aleks
+(el clasificador de permisos se lo niega a la sesión).
+
+| Commit | Sello de `make check` (Windows) | CI de Linux (`fix/activacion-a42`) |
+|---|---|---|
+| `b8694b6` | `ecf96675…`, 2100 passed | run **#227** (`37555262568`): 1 failed, 2091 passed, 8 skipped. El único fallo es el aceptado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/activacion-a42'; la rama actual es 'fix/activacion-a42'»). `test_sesiones_rejilla_h4.py` pasa con la tzdata de Linux. |
+
+La CI del commit que trae esta tabla va en el mensaje al consultor: un commit no puede llevar su
+propia CI. El revisor marcó la CI como su único «bloquea» (b1): queda resuelto con el run #227.
 
 - A-42 RESUELTA (ADR-0069): las dos sesiones son las velas H4 de la rejilla de `anclaje_h4`; el bot
   las fija en instantes UTC con zoneinfo, por una sola puerta, nunca con un desfase fijo.
