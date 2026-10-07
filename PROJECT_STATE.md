@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/respaldo-a11
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37d-activacion-a42` (2026-10-06).
+`trabajo/respaldo-a11` EN CURSO (2026-10-07): A-11 DECIDIDA por ADR y sin excepcion en G1 (punto U). Encargo docs/encargos/trabajo-respaldo-a11.md; informe docs/validation/RESPALDO-A11.md.
 
 ## Stable Main State
 363f826 · merge de `trabajo/activacion-a42` (tag `stable/F37d-activacion-a42`): A-42 RESUELTA con H2b (ADR-0069); las dos sesiones son las velas H4 de la rejilla de anclaje_h4 y el bot las fija en instantes UTC con zoneinfo (reloj_sesiones = rejilla_h4), y huso_grafico es Europe/Madrid. Sobre `stable/F37c-reloj-invierno` (49c3098). Informe docs/validation/ACTIVACION-A42.md; el registro del cierre, al final de HISTORIA.
@@ -205,9 +205,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 20 (2026-10-06).
+— ninguna desde el Archivo 21 (2026-10-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 20 (2026-10-06).
+— ninguna desde el Archivo 21 (2026-10-07).

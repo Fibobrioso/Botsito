@@ -1,0 +1,25 @@
+rama: trabajo/respaldo-a11
+riesgo: medio  # cambia el estado de una ambiguedad cerrada, una guardia de validacion y la definicion del revisor; ningun valor, ni motor, ni evidencia
+artefacto: docs/validation/RESPALDO-A11.md
+# FASE 0: solo el informe y los ficheros de apertura. El encargo para aqui («PARADA antes de
+# escribir»): las rutas de las fases 1-4 se anaden en un commit propio tras la respuesta del
+# consultor (RESPALDO-A11.md §7).
+rutas_permitidas:
+  - docs/validation/RESPALDO-A11.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+rutas_protegidas:
+  # lo que el encargo dice que no cambia, y lo que esta rama no lee ni toca
+  - src/botsito/engine/
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - data/
+comprobaciones:
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito state check
+  - make check > make-check.log 2>&1
