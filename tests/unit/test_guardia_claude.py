@@ -1710,6 +1710,14 @@ def test_heredoc_con_parentesis_dobles_pasa(g: ModuleType, repo: Path) -> None:
     assert _bash(g, repo, "cat <<'EOF'\n(( x ))\nEOF") is None
 
 
+def test_read_array_fuera_de_la_lista_niega(g: ModuleType, repo: Path) -> None:
+    """`read -a NOMBRE` fija un array: su nombre pasa por la lista cerrada (revisor séptima pasada,
+    A1). Un nombre de la lista (`read -a d`) pasa."""
+    motivo = _bash(g, repo, "read -a BADARR")
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, motivo
+    assert _bash(g, repo, "read -a d") is None
+
+
 @pytest.mark.parametrize("opcion", ["--", "-P --", "-L --"])
 def test_cd_fin_de_opciones_resuelve_y_bloquea(g: ModuleType, repo: Path, opcion: str) -> None:
     """`cd -- <dir>` (fin de opciones) resuelve el destino; después, leer material reservado se

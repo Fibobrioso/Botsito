@@ -2152,7 +2152,10 @@ negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
   pasar**.
 - **Comandos reales** (`comandos_reales-SALIDA.txt`): las que `main` niega y la rama deja pasar son
   todas ejecuciones de los anexos/sondas; el falso positivo del literal de espacios (§1.13),
-  declarado; ninguna es un comando del proyecto.
+  declarado; ninguna es un comando del proyecto. La septima pasada, sobre las 30 transcripciones
+  (12.274 comandos distintos), anadio 23 mas: los CUERPOS de heredoc (`cat >> ... <<EOF`, `git
+  commit -F - <<EOF`) que `main` tokeniza como comandos y la rama trata como datos (el arreglo del
+  heredoc, §1.2); verificado que no son recortes de proteccion (§1.45). No se arreglan (orden de corte).
 - **El coste de esta ronda** (`142013a` frente al commit de ahora, `coste_sexta-SALIDA.txt`): **0
   negaciones nuevas y 0 al reves en los 572 comandos reales, los 32 de `RITUAL` y las 164 lineas de
   los runbooks y las skills.** Las expansiones que asignan, `read -n`, `[[` y `git pull -s` no
@@ -2178,15 +2181,90 @@ negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
 
 ### 1.44 Septima (ultima) pasada del revisor, acotada
 
-<<REV7>>
+#### Informe de la septima pasada, tal cual
+
+> ## Informe del revisor · trabajo/guion-mismo-comando · septima pasada (commit 817cb4b), acotada a las dos preguntas de §1.43 · 2026-10-08
+>
+> Medido con `decidir()` de HEAD y de `main` (`git show main:...`, en memoria), sobre el repo real. No
+> escribio nada. No ejecuto `make check` ni las mutaciones.
+>
+> **Veredicto:**
+> - **Pregunta 1 (¿esta lo arreglado en la sexta pasada y tiene su test?):** casi todo bien. Falta un
+>   test, el de `read -a BADARR` (A1); el codigo si esta (`_exigir_read_que_fija`).
+> - **Pregunta 2 (¿algun caso que `main` niegue y la rama deje pasar?):** ninguna perdida de proteccion.
+>
+> ### Pregunta 1
+>
+> `uv run pytest tests/unit/test_guardia_claude.py -q` pasa entero. Cada caso de la lista de la orden,
+> medido con `decidir()`, dio lo pedido y tiene test, SALVO uno:
+> - A1 pasa: `read -n 1 d`, `read -s -n 1 d`, `read -p x d` pasan (`...sexta_pasada_admite`).
+> - A1 niega: `read PATH`, `read $S` niegan (con `<<< .`, en los tests de la 4a/5a pasada).
+> - **A1 niega: `read -a BADARR` niega, pero FALTA su test.** El codigo esta; el test no.
+> - E1: `awk '{ print x++ / 2 > "z" }'` niega, `awk '{print x++}'` pasa. Con test.
+> - E2: `git pull -s foo`/`--rebase`/`-r` niegan; `git pull`/`--ff-only` pasan. Con test.
+> - A2: `[[ -f docs/a.md ]]` pasa. Con test.
+> - A3: heredoc con `(( x ))` pasa. Con test.
+> - E3: `echo $((PATH=1))`/`${PATH:=.}` niegan; `$((1+1))`/`$((d+1))` pasan. Con test.
+> - E4: `cd -- <holdout> && cat <protegido>` niega (`--`, `-P --`, `-L --`). Con test.
+>
+> **Lo que falta:** el test de que `read -a BADARR` se niega.
+>
+> ### Pregunta 2
+>
+> Midio los 30 `.jsonl` de la carpeta de sesiones (12.924 comandos de Bash, 12.274 distintos) con
+> `main` y HEAD, mas unas 15 sondas adversarias.
+>
+> - **Ninguna perdida de proteccion.** HEAD sigue negando `bash <<'EOF'\ncat holdout`, `python - <<'EOF'`
+>   que abre un fichero de holdout, la misma ruta construida con `x=" "`, `sh <<'EOF'\n. holdout`, etc.
+>   `Path(...).rglob`/`.glob` pasan en HEAD y en `main` (no es perdida).
+> - **33 comandos reales, fuera de los anexos, que `main` niega y HEAD deja pasar**, y que la orden no
+>   nombra como admitidos: 10 son el falso positivo del literal de espacios (§1.13, admitido); los
+>   otros 23 son que `main` tokeniza el CUERPO de un heredoc (`cat >> ... <<'EOF'`, `git commit -F -
+>   <<'EOF'`) como si fueran comandos y los niega, mientras HEAD lo trata como datos. No son recortes
+>   de proteccion; el informe lo declara en §1.2 (el arreglo del heredoc, «que no pedia el encargo») y
+>   en §1.40 A3. El revisor pide que Aleks o el agente lo valide y, si hace falta, lo anote en §1.2 o
+>   §1.13.
+>
+> ### Candidatas a §1.26
+> No encontro formas nuevas que la guardia no cierre y que `main` si cerrara. Observacion:
+> `os.listdir(" ")` pasa en HEAD (consecuencia del arreglo admitido de §1.13); puede ir a §1.26 como
+> limite si se quiere.
+>
+> ### Lo que no pudo comprobar
+> Las mutaciones (§1.41, escribirian), la CI de `817cb4b` (§1.42/§1.44 pendientes al revisar), y las 33
+> diferencias son un calculo sobre las transcripciones locales, no reproducible por un tercero.
+
+### 1.45 Lo que se hizo con la septima pasada
+
+Por la orden de corte (§1.43), de la septima pasada solo se arregla una perdida frente a `main` o un
+fallo de algo ya hecho; lo demas va a §1.26.
+
+- **Pregunta 1 (un fallo de algo ya hecho):** faltaba el test de que `read -a NOMBRE` fija el array y
+  pasa por la lista cerrada. Se anade `test_read_array_fuera_de_la_lista_niega` (`read -a BADARR`
+  niega; `read -a d` pasa). El codigo ya estaba. `Tests Currently Passing`: 1417 -> 1418.
+- **Pregunta 2 (perdida frente a `main`):** ninguna. El revisor confirmo que la rama sigue negando
+  toda lectura de material protegido via un heredoc que se EJECUTA (`bash <<EOF\ncat holdout`,
+  `python - <<EOF` que abre un fichero reservado, la ruta construida con `x=" "`...). Los 33 comandos
+  reales de otras sesiones que `main` niega y la rama deja pasar NO son recortes de proteccion: 10
+  son el falso positivo del literal de espacios (§1.13, admitido) y 23 son el CUERPO de un heredoc
+  (`cat >> ... <<EOF`, `git commit -F - <<EOF`) que `main` tokeniza como comandos y la rama trata como
+  datos (el arreglo del heredoc, §1.2/§1.40 A3). Se VALIDA como una diferencia intencionada y no una
+  perdida: forzar a la rama a negarlos seria reintroducir el error de `main` y negar un `git commit
+  -F - <<EOF` legitimo. Queda declarado aqui y en §1.13; no se arregla (orden de corte, punto 1).
+- **Candidata a §1.26** que el revisor anoto: `os.listdir(" ")` pasa en HEAD (consecuencia del arreglo
+  admitido de §1.13). Entra en el grupo de limites de forma de §1.26.
+
+Con esto, las dos preguntas de la orden quedan respondidas: lo del punto 1 esta y tiene test, y no hay
+ninguna perdida de proteccion frente a `main`. La rama queda **lista para revision, NO cerrada**.
+
 
 
 ## Estado
 
-**EN CURSO (2026-10-08).** Resueltos los hallazgos de la sexta pasada: la regresion de `read -n`
-(A1), la redireccion de awk tras `++` (E1), `git pull -s`/`--rebase` (E2), `[[` y `read -p` (A2), el
-heredoc con `((` (A3), `cd --` (E4) y las asignaciones por expansion `${:=}`/`$((=))` (E3, cerradas
-en vez de dejarlas como limite). Cada arreglo medido con `decidir()`; coste 0 sobre los 572 reales,
-los 32 de RITUAL y los runbooks; mutaciones verdes; 0 que `main` niega y la rama deja pasar (fuera
-del falso positivo de los anexos, declarado). Falta la CI de Linux de este commit y la septima pasada
-del revisor. **NO cerrada**: el cierre en `main` solo ante una orden explicita de Aleks.
+**LISTA PARA REVISION, NO CERRADA (2026-10-08).** La rama cumple el objetivo del encargo (punto V):
+la guardia solo deja ejecutar codigo si es seguro que lo que se ejecuta es lo que leyo, negando por
+defecto. Siete pasadas del revisor; la ultima, acotada por la orden de corte del consultor (§1.43),
+confirma que lo arreglado esta y tiene test y que no hay ninguna perdida de proteccion frente a
+`main`. Todas las formas raras que quedan abiertas (ninguna aparece en los comandos reales, todas
+cuestan 0) estan agrupadas como limite en §1.26, para una rama propia. El cierre en `main` -merge,
+tag, `PROJECT_STATE`, push, CI, borrado de la rama- solo ante una ORDEN DE CIERRE EXPLICITA de Aleks.

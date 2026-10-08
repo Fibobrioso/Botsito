@@ -23,7 +23,7 @@ trabajo/guion-mismo-comando
 9a313e0 · merge: mayo solo se mide cuando una corrida simulada del arnes sobre construccion, con la lista cerrada de opciones, llega al umbral de ADR-0043 (ADR-0070, UMBRAL-MAYO.md) · tag stable/F37f-umbral-mayo
 
 ## Tests Currently Passing
-1417 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1418 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
