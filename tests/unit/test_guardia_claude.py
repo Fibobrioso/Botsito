@@ -1487,6 +1487,82 @@ def test_ejecucion_la_ultima_ronda_admite(g: ModuleType, repo: Path, comando: st
     assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
 
 
+# --- cuarta pasada del revisor: los huecos del punto 0 (abreviaturas de sort, envoltorios en
+# find/xargs, git reset/revert, unset, printf/read que fijan, la redireccion de awk escondida y
+# git en PowerShell). Cada uno medido con `decidir()` antes de escribirlo (§1.28).
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "sort --compress-pro=scripts/otro.py docs/a.md",  # abreviatura de --compress-program
+        "sort --random-s=scripts/otro.py docs/a.md",  # abreviatura de --random-source
+        "find src -name '*.py' -exec env python scripts/otro.py {} ;",  # envoltorio env
+        "find docs -exec command python scripts/otro.py {} +",  # envoltorio command
+        "echo x | xargs env python scripts/otro.py",
+        "echo x | xargs command sh -c 'echo hi'",
+        "git reset --hard HEAD~1",  # subcomando fuera de la lista cerrada (B5)
+        "git revert --no-edit HEAD",
+        "awk '{print $1/2 > $3/4}' docs/a.md",  # redireccion escondida entre divisiones (B4)
+    ],
+)
+def test_ejecucion_cuarta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "unset PATH",  # quita una variable fuera de la lista cerrada (B2)
+        "printf -vPATH '%s' x",  # `-v` pegado al nombre (B3)
+        "read 'PATH[0]'",  # nombre con indice de array (B3)
+    ],
+)
+def test_ejecucion_cuarta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "[ -f docs/a.md ]",  # `[`/`test` son lectores, no un comodin (B10)
+        "[ -d src ]",
+        "test -f docs/a.md",
+        "cd -P src",  # `-P`/`-L` son opciones de cd, no el destino
+        "cd -L src",
+        "unset S",  # un nombre de la lista cerrada
+        "sort -S 1M docs/a.md",  # `-S` (buffer) no ejecuta
+        "awk '/a|b/{print}' docs/a.md",  # la `|` de una regex, no una tuberia
+        "awk '{print $1/2, $3/4}' docs/a.md",  # divisiones sin redireccion
+        "find . -exec sha256sum {} +",  # un lector sigue exento
+    ],
+)
+def test_ejecucion_cuarta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git reset --hard HEAD~1",  # subcomando fuera de la lista cerrada, tambien en PowerShell
+        "git revert HEAD",
+        "git bisect run ./x.ps1",
+    ],
+)
+def test_ejecucion_cuarta_pasada_powershell_git_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """git en PowerShell pasaba por `PS_NO_EJECUTAN`: ahora su subcomando pasa por la lista
+    cerrada (B1)."""
+    motivo = _decide(g, repo, "PowerShell", command=comando)
+    assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
+
+
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
     for comando in (
         "Start-Process python",

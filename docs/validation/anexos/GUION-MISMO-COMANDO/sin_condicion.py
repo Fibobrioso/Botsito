@@ -44,6 +44,8 @@ NIEGAN = (
     "test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega",
     "test_ejecucion_un_modo_que_ejecuta_se_niega",
     "test_ejecucion_la_ultima_ronda_niega",
+    "test_ejecucion_cuarta_pasada_niega",
+    "test_ejecucion_cuarta_pasada_powershell_git_niega",
 )
 # Los de los nombres de entorno: esa regla vale para TODO comando (tambien `git commit`, que corre
 # hooks), asi que vive junto a la funcion y no dentro; se miran con su propia mutacion.
@@ -51,6 +53,7 @@ NOMBRES = (
     "test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega",
     "test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada",
     "test_ejecucion_la_ultima_ronda_fija_variable_niega",
+    "test_ejecucion_cuarta_pasada_fija_variable_niega",
 )
 CAMBIADA = "test_ejecucion_cambiada_en_el_mismo_comando_se_niega"
 LISTA = "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion"

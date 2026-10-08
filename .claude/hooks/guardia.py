@@ -1265,7 +1265,11 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
                 ctx, lex, cmd, argv[0].texto, indecidible="el programa se construye al ejecutarse"
             )
         argv = [Palabra((vals or [""])[0]), *argv[1:]]
-    if argv[0].glob or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", argv[0].texto):
+    if (
+        argv[0].glob or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", argv[0].texto)
+    ) and _nombre_de_programa(argv[0].texto) not in {"[", "test"}:
+        # `[` (test) lleva el comodin `[` en su nombre pero es un lector de `NO_EJECUTAN`: no se
+        # construye al ejecutarse (revisor cuarta pasada, B10). Un glob real (`[abc]`) no casa.
         exigir_ejecucion_verificable(
             ctx,
             lex,
@@ -1289,10 +1293,12 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _exigir_legible(destino, ctx, lex, "redireccion de entrada")
 
     if prog == "cd":
-        if not args:  # `cd` a secas va a HOME (revisor, B4)
+        # `cd -P`/`-L`/`-e`/`-@` son opciones, no el destino (revisor cuarta pasada, cd -P/-L).
+        destinos = [a for a in args if not re.fullmatch(r"-[PLe@]+", a.texto)]
+        if not destinos:  # `cd` (o solo opciones) a secas va a HOME (revisor, B4)
             ctx.cwd = os.path.expanduser("~")
         else:
-            vals = _valores(args[0], ctx, lex)
+            vals = _valores(destinos[0], ctx, lex)
             if vals and len(vals) == 1:
                 ctx.cwd = _absoluta(vals[0], ctx.cwd)
         return
@@ -1358,9 +1364,12 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} ...", indecidible=modo)
     if prog in BUILTINS_QUE_FIJAN:  # read, declare, let... fijan una variable (§1.27 punto 3)
         _exigir_builtin_que_fija(prog, args, cmd)
-    if prog == "printf" and "-v" in [a.texto for a in args]:  # `printf -v NOMBRE`
-        destino = args[[a.texto for a in args].index("-v") + 1] if len(args) > 1 else Palabra("")
-        _exigir_builtin_que_fija("printf", [destino], cmd)
+    if prog == "printf":  # `printf -v NOMBRE` y `-vNOMBRE` pegado (revisor cuarta pasada, B3)
+        for idx, a in enumerate(args):
+            if a.texto == "-v" and idx + 1 < len(args):
+                _exigir_builtin_que_fija("printf", [args[idx + 1]], cmd)
+            elif a.texto.startswith("-v") and len(a.texto) > 2:
+                _exigir_builtin_que_fija("printf", [Palabra(a.texto[2:])], cmd)
     if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
         _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
@@ -1531,7 +1540,7 @@ def _analizar_git(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico)
     # foreach`...): respuesta del consultor a §1.21. Va DESPUES de lo que ya niega _analizar_git
     # (push, tag, borrados, --no-verify, cherry-pick, rebase), que no se toca; esos subcomandos
     # estan en la lista, asi que su decision especifica manda. `main` niega lo mismo o menos.
-    if sub not in GIT_SUBCOMANDOS and sub not in {"cherry-pick", "rebase", "revert", "reset"}:
+    if sub not in GIT_SUBCOMANDOS and sub not in {"cherry-pick", "rebase"}:
         exigir_ejecucion_verificable(
             ctx,
             lex,
@@ -1772,7 +1781,10 @@ def _analizar_xargs(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexic
             return  # la funcion niega; si no lo hiciera, el bucle no avanzaria
     if i >= len(args):
         return
-    prog = os.path.basename(args[i].texto).lower()
+    # Se quitan los envoltorios (`env`, `command`, `nice`...) para ver el programa real: `xargs env
+    # python x.py` ejecuta python, no `env` (revisor cuarta pasada, find/xargs).
+    lanzado = _quitar_envoltorios(args[i:])
+    prog = _nombre_de_programa(lanzado[0].texto) if lanzado else ""
     if prog in LECTOR_DE_METADATOS or prog in {"sha256sum", "stat"}:
         return
     exigir_ejecucion_verificable(
@@ -1798,7 +1810,11 @@ def _analizar_find(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
     ]
     for m, accion in acciones:  # TODOS los `-exec` (revisor, segunda pasada, B3 d)
         j = m + 1
-        prog = os.path.basename(textos[j]).lower() if j < len(textos) else ""
+        k = next((f for f in range(j, len(textos)) if textos[f] in {";", "+"}), len(textos))
+        # Se quitan los envoltorios (`env`, `command`...) para ver el programa real: `find ... -exec
+        # env python x.py {} ;` ejecuta python, no `env` (revisor cuarta pasada, find/xargs).
+        lanzado = _quitar_envoltorios(args[i + j : i + k])
+        prog = _nombre_de_programa(lanzado[0].texto) if lanzado else ""
         if (
             prog in LECTOR_DE_METADATOS
             or prog in {"sha256sum", "stat"}
@@ -1806,7 +1822,6 @@ def _analizar_find(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
         ):
             continue
         # Lo que lanza `-exec`, con el propio `find` corriendo a la vez.
-        k = next((f for f in range(j, len(textos)) if textos[f] in {";", "+"}), len(textos))
         _ejecucion_lanzada(cmd, args[i + j : i + k], ctx, lex)
         for r in raices or [Palabra(".")]:
             valores = _valores(r, ctx, lex)
@@ -2186,8 +2201,10 @@ NO_EJECUTAN: dict[str, str] = {
 # lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).
 # Un subcomando de git es inocuo solo si esta aqui (respuesta del consultor a §1.21). La lista sale
 # de los que aparecen en los 572 comandos reales, los 32 de RITUAL, los runbooks y los tests de la
-# guardia (`formas-SALIDA.txt`). `cherry-pick`, `rebase`, `revert` y `reset` no estan: los dos
-# primeros ya los niega _analizar_git, y los otros dos ejecutan un editor o no aparecen.
+# guardia (`formas-SALIDA.txt`). `cherry-pick` y `rebase` no estan (los niega _analizar_git con su
+# mensaje); `revert` y `reset` tampoco, y caen en la condicion de subcomando fuera de la lista:
+# `revert` abre un editor y `reset` cambia el arbol sin pasar por los hooks (revisor cuarta pasada,
+# B5).
 GIT_SUBCOMANDOS = {
     "status", "log", "add", "commit", "diff", "rev-parse", "branch", "show", "push", "checkout",
     "switch", "ls-remote", "tag", "grep", "worktree", "merge", "fetch", "rm", "config", "remote",
@@ -2217,6 +2234,17 @@ GH_SUBCOMANDOS = {
 }
 # Las opciones de `sort` que EJECUTAN un programa (de los 503, ninguna): las demas ordenan texto.
 SORT_OPCIONES_QUE_EJECUTAN = ("--compress-program", "--random-source")
+
+
+def _opcion_abreviada(clave: str, largas: Sequence[str]) -> str | None:
+    """La opcion larga de `largas` que `clave` abrevia (GNU admite prefijos: `--compress-pro` =
+    `--compress-program`), o None. Niega por defecto: una abreviatura ambigua tambien casa, porque
+    casa con la primera (revisor cuarta pasada, abreviaturas de `sort`)."""
+    if not clave.startswith("--") or len(clave) < 3:
+        return None
+    return next((o for o in largas if o.startswith(clave)), None)
+
+
 OPCIONES_DE_PROGRAMA: dict[str, set[str]] = {
     "awk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
     "gawk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
@@ -2272,7 +2300,10 @@ def _awk_admitido(programa: str) -> bool:
     una tuberia (`|`) ni una redireccion (`>`/`>>`): el `>` de comparacion si (§1.27 punto 2). Se
     quitan antes las cadenas y las `/regex/` para no confundir su contenido."""
     limpio = re.sub(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", '""', programa)
-    limpio = re.sub(r"/(?:\\.|[^/\\\n])+/", "//", limpio)
+    # Solo una `/` que ABRE una regex (no una division `$1/2`, que va tras un valor) se trata como
+    # tal: si no, `print $1/2 > $3/4` escondia la redireccion entre dos divisiones (revisor cuarta
+    # pasada, B4). El `>` de una regex `/a>b/` se sigue tapando, porque no lleva un `print` delante.
+    limpio = re.sub(r"(?<![\w$)\]])/(?:\\.|[^/\\\n])+/", "//", limpio)
     if re.search(r"\bsystem\s*\(|\bgetline\b|\||>>", limpio):
         return False
     # Un `>` de redireccion va tras un `print`/`printf` en la sentencia; el de comparacion, no.
@@ -2352,7 +2383,15 @@ def _modo_que_ejecuta(prog: str, args: list[Palabra], ctx: Contexto, lex: Lexico
         if sub and sub not in GH_SUBCOMANDOS:
             return f"`gh {sub}`: subcomando fuera de la lista cerrada (`gh alias set -s` ejecuta)"
     elif prog == "sort":
-        mala = next((t for t in textos if t.split("=", 1)[0] in SORT_OPCIONES_QUE_EJECUTAN), None)
+        mala = next(
+            (
+                t
+                for t in textos
+                if t.split("=", 1)[0] in SORT_OPCIONES_QUE_EJECUTAN
+                or _opcion_abreviada(t.split("=", 1)[0], SORT_OPCIONES_QUE_EJECUTAN)
+            ),
+            None,
+        )
         if mala is not None:
             return f"`sort {mala}`: ejecuta un programa externo"
     elif prog in {"awk", "gawk", "sed"}:
@@ -2433,6 +2472,38 @@ def _git_transporte(sub: str, textos: list[str]) -> str | None:
     return f"`git {sub} {opt}` lanza un programa en el otro extremo" if opt else None
 
 
+def _git_ps_ejecuta(palabras: list[str]) -> str | None:
+    """En PowerShell, un segmento con `git` cuyo subcomando o modo ejecuta codigo o esta fuera de la
+    lista cerrada, o None. Reusa las mismas listas que Bash (revisor cuarta pasada, B1): `git`
+    estaba en `PS_NO_EJECUTAN` y `reset`/`revert`/`bisect run`/`-c clave` pasaban en PowerShell."""
+    if "git" not in palabras:
+        return None
+    resto = palabras[palabras.index("git") + 1 :]
+    i = 0
+    while i < len(resto) and resto[i].startswith("-"):
+        if resto[i] == "-c":  # `git -c clave=...`: clave fuera de la lista cerrada (hoy vacia)
+            clave = resto[i + 1].split("=", 1)[0].lower() if i + 1 < len(resto) else ""
+            if "core.hookspath" in clave:
+                return None  # lo niega el manejador de hooksPath con R_NO_VERIFY
+            if clave and clave not in GIT_C_CLAVES:
+                return f"git -c {clave}"
+            i += 2
+        elif resto[i] in GIT_CON_VALOR:
+            i += 2
+        else:
+            i += 1
+    if i >= len(resto):
+        return None
+    sub = resto[i]
+    textos = resto[i + 1 :]
+    modo = _git_transporte(sub, textos) or _modo_git(sub, textos)
+    if modo is not None:
+        return f"git {sub}"
+    if sub not in GIT_SUBCOMANDOS and sub not in {"cherry-pick", "rebase"}:
+        return f"git {sub}"
+    return None
+
+
 def _modo_git(sub: str, textos: list[str]) -> str | None:
     """Por que `git config`, `remote` o `merge` ejecutan en ESTA forma, o None. Solo se admiten las
     formas medidas en los 572 comandos reales, los 32 de RITUAL y los runbooks (§1.27 punto 1):
@@ -2504,11 +2575,12 @@ def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> No
                 "cerrada (`NOMBRES_DE_ENTORNO`)",
             )
         return
-    # read / declare / typeset / local / readonly: cada nombre que fijan, de la lista.
+    # read / declare / typeset / local / readonly: cada nombre que fijan, de la lista. El nombre
+    # base, antes de `[indice]` (`read 'PATH[0]'`: revisor cuarta pasada, B3).
     for a in args:
         if a.texto.startswith("-"):
             continue
-        nombre = a.texto.split("=", 1)[0]
+        nombre = a.texto.split("=", 1)[0].split("[", 1)[0]
         if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
             _niega(
                 f"{prog} {nombre}",
@@ -2548,6 +2620,16 @@ def _exigir_nombres_de_entorno(cmd: Comando) -> None:
     if not cmd.argv:
         return
     cabeza = _nombre_de_programa(cmd.argv[0].texto)
+    # `unset PATH` quita una variable del entorno de lo que corre despues (revisor cuarta pasada,
+    # B2): solo se admite si el nombre esta en la lista cerrada (`unset -f`/`-v` son opciones).
+    if cabeza == "unset":
+        for a in cmd.argv[1:]:
+            if a.texto.startswith("-"):
+                continue
+            nombre = a.texto.split("=", 1)[0].split("[", 1)[0]
+            if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
+                _niega(f"unset {nombre}", por.format(nombre), como)
+        return
     if cabeza not in {"export", "declare", "typeset", "readonly", "local"}:
         return
     for a in cmd.argv[1:]:
@@ -2752,9 +2834,13 @@ def _es_filtro(cmd: Comando) -> bool:
     if textos[0] not in FILTROS_TRAS_LA_EJECUCION:
         return False
     if textos[0] == "sort" and any(
-        t.startswith("--output") or re.fullmatch(r"-[a-zA-Z]*o.*", t) for t in textos[1:]
+        t.split("=", 1)[0] == "--output"
+        or _opcion_abreviada(t.split("=", 1)[0], ("--output", *SORT_OPCIONES_QUE_EJECUTAN))
+        or t.split("=", 1)[0] in SORT_OPCIONES_QUE_EJECUTAN
+        or re.fullmatch(r"-[a-zA-Z]*o.*", t)
+        for t in textos[1:]
     ):
-        return False  # `sort -o f` escribe
+        return False  # `sort -o f`/`--output`/`--compress-program` escribe o ejecuta
     return not (textos[0] == "uniq" and any(not t.startswith("-") for t in textos[1:]))
 
 
@@ -3080,6 +3166,11 @@ def _ejecucion_en_powershell(texto: str) -> str | None:
             return m.group(0)[:80]
     for segmento in re.split(r"[;|\n]|&&|\|\|", texto):
         fichas = re.findall(r"'[^']*'|\"[^\"]*\"|[^\s'\"]+", segmento)
+        # git, que esta en `PS_NO_EJECUTAN`, por la misma lista cerrada de subcomandos que Bash:
+        # `reset`/`revert`/`bisect run`/`-c clave` pasaban en PowerShell (revisor 4a pasada, B1).
+        motivo_git = _git_ps_ejecuta([f.strip("'\"") for f in fichas])
+        if motivo_git is not None:
+            return motivo_git
         for k, ficha in enumerate(fichas):
             abre = k == 0 or ficha.startswith(("(", "$(", "@("))
             limpia_cmd = ficha.lstrip("$@(").lower()

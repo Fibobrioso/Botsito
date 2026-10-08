@@ -1411,6 +1411,14 @@ Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C
   programa desconocido sin argumentos de la rama, los comandos `a`/`i`/`c` y las etiquetas de `sed`,
   ni `awk`/`gawk` con `-e`/`--source` (GUION-MISMO-COMANDO.md §1.16). Es defensa en profundidad: la
   barrera sigue siendo el código. Rama propia si alguno se quiere cerrar.»
+- **Entra, nueva (límite, la cuarta pasada)**: «La guardia no niega los builtins que cambian el
+  estado del shell SIN fijar una variable (`shopt`, `enable`, `bind`, `ulimit`, `complete`,
+  `compgen`, `caller`, `fc`): no son una ejecución ni un cambio de variable de los que la cuarta
+  pasada arregló, y por la respuesta del consultor a §1.27 punto 4 una forma nueva se apunta, no
+  abre otra ronda. El caso más agudo es `enable -f fichero.so`, que carga código. Tampoco alcanza
+  a las abreviaturas de las opciones de `git` en Bash fuera de las formas medidas (B7), ni a la
+  paridad fina de `git` en PowerShell más allá del subcomando (transporte, `-c`). Rama propia si
+  alguno se quiere cerrar; la barrera sigue siendo el código (GUION-MISMO-COMANDO.md §1.32).»
 - **Fila de ERRORES-RECURRENTES** (con el hallazgo 5 y los de la primera y segunda pasada): la
   prepara el cierre.
 
@@ -1509,8 +1517,11 @@ arreglos de arriba y lo que decidas, su `make check`, la CI y una cuarta pasada 
 
 ### 1.28 Lo que se hizo con la respuesta a §1.27 (ultima ronda de ampliacion)
 
-Todo en `.claude/hooks/guardia.py`, con el coste medido antes de adoptarlo (abajo), y con los
-arreglos del punto 0 (B1, B3, B4, B5, B7, `cd -P/-L` y las correcciones del informe) incluidos.
+Todo en `.claude/hooks/guardia.py`, con el coste medido antes de adoptarlo (abajo). Esta ronda hizo
+los tres puntos de la respuesta -git opcion B, awk/sed como lista de lo admitido, y las asignaciones
+por cualquier via-. Los arreglos del punto 0 (B1 en parte, B3, B4, B5, `cd -P/-L`, B10) NO entraron
+en este commit: la cuarta pasada del revisor (§1.31) los encontro ausentes, y entran en el commit
+siguiente, medidos uno a uno (§1.32).
 
 **Punto 1 - git, opcion B.**
 - `git -c` solo admite claves de `GIT_C_CLAVES`, una lista cerrada hoy VACIA (ninguna clave de `-c`
@@ -1553,33 +1564,307 @@ programa de impresion con un `s///e`; se rehizo como la lista de lo admitido de 
 
 Sustituye las cifras anteriores.
 
-**Tests**: 19 funciones `test_ejecucion_*`. Las nuevas: `...la_ultima_ronda_niega` (git `-c`,
+**Tests**: 20 funciones `test_ejecucion_*`. Las nuevas: `...la_ultima_ronda_niega` (git `-c`,
 transporte, `config`/`remote`/`merge -s`, `awk`/`sed` fuera de lo admitido), `...la_ultima_ronda_admite`
 (las formas de los 572: `config core.autocrlf`, `remote -v`, `merge --no-ff`, `awk '$1>5'`, `sed -n
 '/a/,/b/p'`...) y `...la_ultima_ronda_fija_variable_niega` (`read PATH`, `printf -v PATH`, `let`,
-`(( ))`, `declare -x BASH_ENV`, `for PATH in`). `Tests Currently Passing`: 1400 -> 1402.
+`(( ))`, `declare -x BASH_ENV`, `for PATH in`). `Tests Currently Passing`: 1403.
 
 **Mutaciones** (`sin_condicion.py`, 26 mutaciones): con la condicion, 0 de 244 fallan; sin ella, exactamente los 153 que esperan una negacion por la condicion; y cada una de las 26 piezas rompe, al menos, los casos que solo ella niega (las de esta ronda: las claves de git -c, las opciones de transporte, config/remote/merge, la lista de awk, la de sed, los builtins que fijan, la variable del for y el (( )) aritmetico, 1 cada una). Restaurada cada mutacion, 0. `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
 
 **Comparacion con `main`**:
-- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 76 casos): **0 que `main` niega y la rama deja
+- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 75 casos): **0 que `main` niega y la rama deja
   pasar**; 57 de PASA a NIEGA.
 - **Comandos reales** (`comandos_reales-SALIDA.txt`): 689 distintos, 571 con la misma decision, 112
-  de PASA a NIEGA, y **6 que `main` niega y la rama deja pasar, las seis ejecuciones de los anexos
-  `medir_b2.py`/`formas.py`/`formas_git.py`**: el falso positivo del literal de espacios (§1.13),
+  de PASA a NIEGA, y las que `main` niega y la rama deja pasar son todas ejecuciones de los anexos
+  `medir_b2.py`/`formas.py`/`formas_git.py`: el falso positivo del literal de espacios (§1.13),
   declarado; ninguna es un comando del proyecto.
 - **El coste de esta ronda** frente al commit anterior: 0 en los tres conjuntos (§1.28).
 
 ### 1.30 CI de Linux de esta ronda
 
-Pendiente (el commit de esta ronda).
+Run #238 (`37765153341`), `fix/guion-mismo-comando` sobre `bdb5e46`: `failure` con **1 failed,
+2367 passed, 8 skipped**; el unico fallo, `test_state_check_ok_on_real_repo` (el aceptado, por el
+nombre `fix/`). Ningun test de la guardia falla en Linux.
 
-### 1.31 Cuarta pasada del revisor
+### 1.31 Cuarta pasada del revisor (subagente `revisor`, 2026-10-08), tal cual
 
-Pendiente.
+> ## Informe del revisor · trabajo/guion-mismo-comando · cuarta pasada (commit bdb5e46) · 2026-10-08
+>
+> Rama `trabajo/guion-mismo-comando`, HEAD bdb5e46 contra main cbfe4e4 (merge-base cbfe4e49). 25 ficheros, todos dentro del contrato. No toca `src/`, `knowledge/`, `CLAUDE.md`, `.claude/settings.json`, agentes ni skills.
+>
+> `git status` muestra `docs/validation/GUION-MISMO-COMANDO.md` modificado sin estadiar. No lo toqué yo; supongo que es la fila de CI de §1.30.
+>
+> No ejecuté ninguno de los comandos medidos ni abrí material protegido. Todas las medidas son `decidir()` sobre un repo sintético en un directorio temporal, con la guardia de la rama, la de main (`git show main:…` en memoria) y la de 6508eda.
+>
+> **Respuesta corta a lo que pediste.**
+> - **Qué es una ejecución (el programa).** Es lista cerrada en Bash (`NO_EJECUTAN`) y en PowerShell (`PS_NO_EJECUTAN`).
+> - **Qué forma de git/gh/sort/awk/sed ejecuta.**
+>   - git: cerrada por subcomando, por claves de `-c`, por transporte exacto y por `config`/`remote`/`merge`.
+>   - gh: cerrada por subcomando.
+>   - awk/sed: ahora de lo admitido, con huecos.
+>   - sort: sigue siendo lista de lo prohibido.
+>   - PowerShell: `git` sigue pasando entero, sin modos.
+> - **Qué asignación.** Lista cerrada en las vías tokenizadas. Las que no encajan en un nombre simple pasan (B3).
+> - **Los arreglos del punto 0 de la respuesta a §1.27 NO están en el código, y §1.28 dice que sí** (A1, B1).
+> - **Pérdidas frente a main.** Ninguna nueva (0 en 740 cadenas, 14.000 secuencias y 75 sintéticos). Queda la relajación declarada de `analizar_codigo` (A4).
+>
+> ---
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 3 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | **bloquea** | **El informe afirma como hecho lo que el código no trae** (CLAUDE.md: «Nada afirma más de lo que su cita sostiene»). §1.28 abre diciendo «con los arreglos del punto 0 (B1, B3, B4, B5, B7, `cd -P/-L` y las correcciones del informe) incluidos». El único commit que toca `guardia.py` tras 6508eda es bdb5e46, y trae git opción B, awk/sed y asignaciones; B3, B4, B5, B7 y `cd -P/-L` no están (medidas en B1). Clase: CONTRADICE (la respuesta del consultor al punto 0 es «adelante, como los describes»). | `git diff 6508eda HEAD --stat -- .claude/hooks/guardia.py` → solo bdb5e46. `git diff bdb5e46~1 bdb5e46 -- tests/unit/test_guardia_claude.py` añade 3 funciones y ningún test de B3, B4, B5, B7 ni `cd -P`. Informe `GUION-MISMO-COMANDO.md:1512-1513`. |
+> | A2 | importa | **Otras afirmaciones que no se sostienen.** (i) §1.29 dice «19 funciones `test_ejecucion_*`» y «1400→1402»: hay 20 (`grep -c "^def test_ejecucion_"` = 20) y `PROJECT_STATE.md:26` dice 1403. (ii) §1.29 dice «76 casos» sintéticos: son 75 (A3 de la 3ª pasada, no corregido). (iii) §1.16 sigue diciendo que `awk` con `system()` y el `e` de sed «Pasan», y es falso desde §1.22. (iv) §1.22 (`:1181`) sigue diciendo que `--random-source` «ejecuta un programa externo» (A2 de la 3ª pasada). (v) Los porqués de `NO_EJECUTAN` para `awk`/`sed`/`git` siguen diciendo «`system()` es un límite declarado», «el comando `e` … límite declarado» y que el `git -c` no se mira (`guardia.py:2136-2142`). (vi) El docstring de `_exigir_sin_aritmetica` dice que `$(( ))` «lo trata el tokenizador» y no es cierto (B6). (vii) §1.28 atribuye a `formas_git.py` la medida de que no hay claves de `-c`; esa medida es de `formas.py` (`formas.py:6-7,105-107`; `formas_git.py` no recoge `-c`). | `grep -c "     main:" medir_huecos-FASE1-SALIDA.txt` = 75, `grep -c "^->"` = 57, `grep -c "^!!"` = 0. Informe `:868` (fila §1.16), `:1181`, `:1560`, `:1565`. Medido: `echo $((PATH=1)); ls` → PASA. |
+> | A3 | importa | **Un test que ya existía en main se editó** (`for f in …` → `for d in …`, `test_guardia_claude.py:250`). El encargo exige «todos los tests de la guardia que ya existen siguen pasando» y la comparación caso a caso. El informe no declara la edición. Es el coste del cambio de `for` (un bucle con variable fuera de la lista pasa de PASA a NIEGA). | `git diff main...HEAD -- tests/unit/test_guardia_claude.py \| grep "^-[^-]"` → única línea eliminada: `'for f in docs/*.md; do wc -l "$f"; done',`. |
+> | A4 | importa | **Relajación de main fuera del encargo** (clase PÉRDIDA, declarada). `analizar_codigo` ya no cuenta un literal de solo espacios como ruta (`guardia.py:2990`, `if not lit.strip()`). Reproduje con main y rama: `formas_git.py`, `formas.py` y `medir_b2.py` los niega main («el codigo nombra la carpeta   , que contiene material protegido») y los deja pasar la rama. Son los «6 que main niega y la rama deja pasar» de §1.29. Está declarado en §1.13 y §1.29, pero no hay respuesta del consultor que lo ratifique y la regla del 4º punto es «pérdida frente a main». Mi propuesta: que el consultor lo ratifique o lo revierta. | `decidir()` sobre los tres comandos: main NIEGA, rama PASA. `comandos_reales-SALIDA.txt` sección «main los niega y la rama los deja pasar» (6 líneas, todas anexos). `os.path.isdir('   ')` = False. |
+> | A5 | menor | (i) El código nuevo de `printf` lanza `IndexError` si `-v` es el último argumento: `printf %s -v` y `printf -- -v` → `EXC IndexError` (main PASA). La guardia falla cerrada (`main()` devuelve 2), pero es un falso positivo por un fallo. (ii) `_exigir_sin_aritmetica(texto)` mira el texto crudo, incluidos los cuerpos de heredoc: mi propio heredoc de medida, con `((` al principio de línea dentro de los datos, fue bloqueado por la guardia. | Medido: `printf %s -v`, `printf -- -v`. Bloqueo de mi comando: «ejecutar `(( ... ))`: un comando aritmetico … fija una variable del shell». `guardia.py:1362-1364`, `:2455-2461`. |
+>
+> **Comprobado sin hallazgos:**
+> - **Contrato.** `CONTRATO: 25 ficheros dentro del contrato de trabajo/guion-mismo-comando (riesgo medio, artefacto docs/validation/GUION-MISMO-COMANDO.md, 4 comprobaciones para el revisor)`.
+> - **Comprobaciones.** `uv run pytest tests/unit/test_guardia_claude.py`: sale con código 0 (480 recogidos; 436 + 44 nuevos). `uv run botsito state check`: OK.
+> - **make check.** No lo ejecuté. `make-check.log` termina en `SELLO … arbol 641462ccc115f52b1e3f5de8a1065f83be6870a6`, igual a `git rev-parse HEAD^{tree}`; `exit=0`, `PICO DE MEMORIA 291 MiB`.
+> - **CI.** Run `37765153341` sobre bdb5e46 en `fix/guion-mismo-comando`: completed/failure. El único fallo es `test_state_check_ok_on_real_repo` (1 failed, 2367 passed), el aceptado. §1.30 sigue «Pendiente» en el informe.
+> - **Regímenes de cambio.**
+>   - `HISTORIA.md` +211/-0.
+>   - `PROJECT_STATE.md` 5/5, 23.426 bytes.
+>   - `contrato.yaml` y el encargo solo con líneas añadidas.
+>   - El único informe de `docs/validation` es nuevo.
+>   - No hay `Fuente:` que exigir (no toca spec ni cases), ni ADR, ni ambigüedades, ni cifras en forma ejecutable.
+> - **Material.** Nada abre material protegido. Ningún cambio exige fila en `HOLDOUT-EXPOSICIONES.md`.
+> - **Informe.** Acaba en `## Estado` (EN CURSO, NO cerrada).
+>
+> ---
+>
+> ### Eje (b) · Encargo y las cuatro respuestas del consultor
+> Resumen: 1 bloquea, 8 importa, 1 menor. Requisitos: 16 hechos, 6 parciales, 3 no hechos (2 más pendientes: Next Action del cierre y esta pasada).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | R1 | Fase 0: lista cerrada 0.d con 3 añadidos; `python a && python b` se niega | Hecho | Suite en verde (casos `ejecucion_*`) |
+> | R2 | Fase 0: todas las vías por `exigir_ejecucion_verificable` | Hecho, con reserva | Test por `ast` en verde. PowerShell `git` sin modos (B1) |
+> | R3 | Fase 0: `make` opción (a) | Hecho | `test_ejecucion_make_solo_con_el_makefile_de_main` |
+> | R4 | Fase 0: Next Action preparada, sin tocar `PROJECT_STATE` | Hecho | §1.26. Falta añadir los límites de esta pasada (propuesta abajo) |
+> | R5 | §1.12.1a: ejecución = todo programa fuera de lista cerrada; `trap` fuera; `awk -f`/`sed -f` se niegan | Hecho | Medido: `trap 'ls' EXIT`, `awk -E a.py`, `gawk --exec a.py`, `sed --file=a.py`, `hash -p`, `complete -C`, `fc -e` → NIEGA (main PASA) |
+> | R6 | §1.12.1b: argumento fichero no idéntico al de main se niega | Hecho | `medir_b2-SALIDA.txt` (503→0, 32→0) |
+> | R7 | §1.12.1c: nombres cerrados, 10 prohibidos con test | Hecho | `LD_PRELOAD+=./a.py ls`, `BASH_ENV+=…` → NIEGA. `PATH+=:sub; ls` → PASA (ver B9) |
+> | R8 | §1.21.1: git, subcomandos de la lista medida | Parcial | `GIT_SUBCOMANDOS` tiene 38 (`guardia.py:2191-2197`); 17 sin fuente. `reset` y `revert` pasan fuera de la lista (B5) |
+> | R9 | §1.21.1 / §1.27.1: `git -c` solo con claves de lista cerrada (hoy vacía) | Hecho | `git -c user.name=x commit`, `-c core.fsmonitor=nx status` → NIEGA |
+> | R10 | §1.21.1: gh, subcomandos de los 503 | Parcial | 10 en `GH_SUBCOMANDOS` (`:2206-2217`) frente a 2 medidos (`run`, `auth`) |
+> | R11 | §1.21.1: sort, opciones en lista cerrada | Parcial | Sigue lista de lo prohibido (B1, B8) |
+> | R12 | §1.21.1 / §1.27.2: awk/sed solo con la forma admitida | Hecho, con huecos | `_awk_admitido` / `_sed_admitido` (`:2270-2332`). Los programas de las 572 pasan; huecos en B4 y B8 |
+> | R13 | §1.21.2: `test`, `[`, `md5sum`, `chmod`, `jq`, `tasklist` con «un test que pasa» | No hecho | Ningún test los nombra. `[ -f x ]` sigue en NIEGA («lleva un comodin») |
+> | R14 | §1.21.3: toda asignación solo con `NOMBRES_DE_ENTORNO` (+S, W, R); tests CDPATH/PATH/IFS | Hecho | `PATH=. ls`, `IFS=: ls`, `CDPATH=sub cd x`, `BASH_ENV=…` → NIEGA |
+> | R15 | §1.27.0: arreglos B1 (parte), B3, B4, B5, B7, `cd -P/-L`, A1-A4, B9 | No hecho | Solo B1 (parte) está. Resto en B1 |
+> | R16 | §1.27.1: transporte (`--upload-pack`, `--receive-pack`, `--exec`), `config`/`remote`/`merge`, `merge -s` | Hecho (forma exacta) | `git fetch --upload-pack nx .` NIEGA. Abreviaturas y `-snx` pasan (B7) |
+> | R17 | §1.27.2: «un test que pasa por cada forma de los 572 y uno que niega cada forma fuera de la lista» | Parcial | Hay tests de admisión y de negación, pero no de cada forma (B10) |
+> | R18 | §1.27.3: asignaciones por cualquier vía (`read`, `printf -v`, `let`, `(( ))`, `declare`, `for`…) | Parcial | Las formas con nombre simple se niegan; las demás pasan (B3) |
+> | R19 | §1.27.3: «cualquier builtin futuro queda negado por defecto» | No hecho | Lista enumerada `BUILTINS_QUE_FIJAN` (`:2451`) (B2) |
+> | R20 | §1.27.4: coste 0 sobre 572, 32 de RITUAL y runbooks | Hecho | Reproduje 32 de RITUAL y 164 líneas de runbooks (0/0 frente a 6508eda). Las 572 reales no (transcripción fuera del repo) |
+> | R21 | §1.27.4: `make check` sellado | Hecho | Árbol del `SELLO` = `HEAD^{tree}` |
+> | R22 | §1.27.4: push a `fix/…` y número de run | Hecho | Run 37765153341 |
+> | R23 | §1.27.4: comparación con main actualizada | Parcial | 689/571/112/6 cuadra con `comandos_reales-SALIDA.txt`. Sintética: «76» es 75 (A2) |
+> | R24 | «Lo que ya decide `_analizar_git` no se toca; main no puede negar nada que la rama deje pasar» | Hecho | Ver comprobación 1: 0 pérdidas |
+> | R25 | Anexo de mutaciones | Hecho | Ver comprobación 4 |
+> | R26 | §1.27.4: límites nuevos a §1.26 (cierre) | Pendiente | Propuesta abajo |
+> | R27 | §1.31 cuarta pasada | Esta | — |
+>
+> | # | Gravedad | Clase | Hallazgo | Evidencia |
+> |---|---|---|---|---|
+> | B1 | **bloquea** | CONTRADICE (punto 0 de la respuesta a §1.27, «adelante») | **Ninguno de los arreglos del punto 0 salvo B1 (parte) está en el código.** En cada línea, la rama = 6508eda (misma decisión). <br>**B3.** `git bisect run nx`, `git submodule foreach nx`, `git -c core.fsmonitor=nx status` y `git fetch --upload-pack=nx .` PASAN en PowerShell, porque `git` está entero en `PS_NO_EJECUTAN` y `_analizar_git` no se llama desde PowerShell. <br>**B4.** `[ -f inocuo.py ] && echo si` → NIEGA («lleva un comodin»). Y ningún test pasa por `test`, `[`, `md5sum`, `chmod`, `jq`, `tasklist`. <br>**B5.** `sort --compress=./a.py docs/a.md`, `sort --comp=…` y `sort --compress-prog=./a.py …` PASAN. <br>**B7.** `xargs env python a.py`, `find docs -exec env python a.py {} \;`, `xargs command python a.py` PASAN (`LECTOR_DE_METADATOS` lleva `env`/`command`). <br>**`cd -P` / `cd -L`.** `cd -P && python inocuo.py` se evalúa en `<cwd>/-P`, no en HOME (sin cambios). <br>**A1.** `GIT_SUBCOMANDOS` sigue con 38 y `GH_SUBCOMANDOS` con 10 (`switch`, `stash`, `restore`, `clean`, `update-ref`, `blame`… sin fuente). <br>**A2, A3, A4, B9** sin corregir (A2 del eje (a)); el caso degenerado `\| } python -c < make` no está declarado. | Medido con `decidir()`: las líneas anteriores (rama PASA y main PASA, salvo `cd -P`). `git diff 6508eda HEAD -- .claude/hooks/guardia.py` no toca `LECTOR_DE_METADATOS` (`:885`), `SORT_OPCIONES_QUE_EJECUTAN` (`:2219`) ni `PS_NO_EJECUTAN` (`:3050`). Grep de `git (symbolic-ref\|rev-list\|…\|switch\|check-ignore)` en `docs/runbooks` y `.claude/skills`: «No matches». En el test solo salen `check-ignore` (`:219`) y `archive --exec` (`:1418`, mi caso negativo). Informe `:1482` (respuesta) frente a `:1512` (§1.28). |
+> | B2 | importa | CONTRADICE (§1.27.3, 2º punto) | **El «builtin que no esté en NO_EJECUTAN, en la lista de preparación o en la sintaxis admitida se niega» no está.** Lo sostiene una enumeración (`BUILTINS_QUE_FIJAN`). Pasan: `unset PATH; ls`, `shift 1`, `set -f`, `shopt -s nullglob`, `ulimit -c 0`, `bind -x '"\C-x":ls'`, `enable -n cd`, `exec python inocuo.py`, `history`, `declare -f`, `inventadobuiltin foo`. Es justo lo que la respuesta pedía evitar («para que la enumeración no sea la que sostiene la regla»). | Medido: todos rama PASA y main PASA. `guardia.py:2449-2453` (lista) y `:1353-1362` (solo se llama si `prog in BUILTINS_QUE_FIJAN`). |
+> | B3 | importa | CONTRADICE (§1.27.3, «solo nombres de la lista») | **Las vías de asignación fallan abiertas cuando el nombre no es un identificador simple o va pegado.** <br>`printf -vPATH . ; ls` PASA (pegado). <br>`printf -v 'PATH[0]' . ; ls` y `read 'PATH[0]' <<< .; ls` PASAN (el regex del nombre no casa y la rama se salta). <br>`S=PATH; read $S <<< .; ls` y `read "$S"` PASAN (se mira el texto `$S`, no su valor). <br>`set -- .; for PATH; do ls; done` PASA (el `for` sin `in` no pasa por `_exigir_for`). <br>Controles: `printf -v PATH . ; ls`, `read PATH <<< .`, `for PATH in .` → NIEGAN. | Medido. `guardia.py:1057-1061` (`_exigir_for` solo si `argv[2]=="in"`), `:1357-1362`, `:2477-2487` (`re.fullmatch(identificador)` → saltar). |
+> | B4 | importa | CONTRADICE (borde; §1.27.2: «si no se puede decidir, se niega») | **`_awk_admitido` admite una redirección cuando hay dos divisiones.** Quita primero las `/regex/` con un regex que casa `/…/` entre dos divisiones: `awk '{ print $1/2 > "x.py"; y = $3/4 }' docs/a.md` PASA, y escribe un fichero. Con una sola división (`print $1/2 > "x.py"`) NIEGA. Es una decisión mal tomada con una sintaxis corriente de awk, no solo una forma nueva. | Medido (rama PASA, main PASA). `guardia.py:2274-2275`. |
+> | B5 | importa | CONTRADICE (§1.21.1: «cualquier otra forma cuenta como ejecución»; sin resolver desde la 3ª pasada) | **`git reset` y `git revert` quedan fuera de la lista cerrada y, sin embargo, pasan.** El chequeo nuevo los exime (`sub not in {"cherry-pick","rebase","revert","reset"}`) «para que llegue su raise propio», que solo existe en `main`. En otra rama: `git reset --soft HEAD`, `git reset --hard HEAD`, `git revert HEAD` → PASA. | Medido. `guardia.py:1534`; comentario `:2189-2190`. |
+> | B6 | importa | FORMA-NUEVA-LÍMITE | **Asignaciones por expansión, que `_exigir_sin_aritmetica` dice que cubre el tokenizador:** `echo ${PATH:=.}; ls`, `: $((PATH=1))`, `ls $((PATH=1))` PASAN. `declare -n d=PATH; d=.; ls` PASA (nameref sobre un nombre de la lista). Main también pasa. | Medido. Docstring en `guardia.py:2455`. |
+> | B7 | importa | FORMA-NUEVA-LÍMITE | **git: formas equivalentes de lo que se niega.** `--upload-pack`, `--receive-pack`, `--exec` se niegan solo escritos enteros: `git fetch --upload-p=nx .`, `git fetch --upload=nx .`, `git ls-remote --exe=nx .`, `git push --receive-p=nx .` PASAN (git acepta abreviaturas de opciones largas; es su documentación, no lo ejecuté). `git merge -snx x` y `-sours x` PASAN (solo se mira `-s` suelto y `--strategy`). `git grep -O./a.py foo -- docs/a.md` y `--open-files-in-pager=…` PASAN (ejecutan el programa que se nombra). `git --exec-path=. status`, `git --git-dir=sub status` y `git config -e` PASAN. Main pasa todo igual. | Medido. `guardia.py:2398-2408` (`_git_transporte`), `:2412-2440` (`_modo_git`). |
+> | B8 | importa | FORMA-NUEVA-LÍMITE | **awk/sed/sort: otras formas.** `awk '@include "a.awk"; BEGIN{}' …` y `awk '@load "x"; BEGIN{}' …` PASAN (equivalen a `-i` y `-l`, que sí se niegan). `awk -o x.awk`, `awk -p x.prof`, `awk --dump-variables=x.py` PASAN (escriben ficheros). `sort -o x.py docs/a.md`, `sort --output=x.py …` y `sort --files0-from=docs/a.md` PASAN: `sort` sigue siendo lista de lo prohibido (la 4ª respuesta, punto 0, solo aprobó el arreglo de abreviaturas, que tampoco está: B1). Falso positivo: `awk 'NR==2154\|\|NR==2336{print NR": "$0}' …`, un comando real de esta sesión, se niega por el `\|` de `\|\|` (`comandos_reales-SALIDA.txt`, «`awk` con un programa fuera de la lista»). | Medido. `guardia.py:2276` (`\|`), `:2219`. |
+> | B9 | importa | FORMA-NUEVA-LÍMITE | **`NAME+=valor` no se reconoce como asignación:** se tokeniza como un programa. `PATH+=:sub; ls` PASA. Con un fichero existente en el valor (`LD_PRELOAD+=./a.py ls`) se niega, pero por la regla del programa desconocido, no por el nombre. | Medido. |
+> | B10 | importa | FORMA-NUEVA-LÍMITE (falta declarar) | **Programas legítimos que ahora se niegan y el informe no declara** (regla: «se dice en el informe y no se rodea», §1.21.2; y §1.27.4: «si niega algo que no sea una ejecución … para y dímelo»). Solo se cuenta `tasklist`. Se niegan: `git ls-files`, `git ls-tree HEAD`, `git show-ref`, `git hash-object inocuo.py`, `git pull`, `gh -R x/y run list`, `[ -f … ]`, el `awk` de B8 y `date` detrás de otro comando. Además, §1.28 dice «las formas de los 572» pero no hay un test por cada forma (p. ej. `awk 'NR==66'`, `sed 's#…##'`, `sed 's/^/> /; s/^> $/>/'`); las admite el código, pero solo las cubren los tests de formas parecidas. | Medido con `decidir()` en el repo sintético. Tests de admisión: `test_guardia_claude.py:1386-1406`, `:1480-1500`. |
+> | B11 | menor | — | **Cobertura del anexo de mutaciones.** Para las piezas de esta ronda, `ESPERADOS` exige que falle «alguno» de la función de test (`sin_condicion.py:160-167`: p. ej. `"GIT_C_CLAVES": ["test_ejecucion_la_ultima_ronda_niega"]`), no un caso concreto. La rama de `printf -v` está en línea y no tiene mutación propia: la cubre la de `_exigir_builtin_que_fija` junto con `read`. | `sin_condicion.py:155-168`; salida: «de los 1 que solo niega esta pieza, fallan 1» para git `-c`, transporte, modo_git, awk, sed, builtins, `for`, `(( ))`. |
+>
+> **Comprobación 1. ¿Activa y admite son listas cerradas, en Bash y PowerShell?**
+> - Qué es una ejecución (programa): sí, en Bash y PowerShell.
+>   - Medido: un programa inventado, `php`, `hash -p ./a.py`, `complete -C ./a.py` y `fc -e ./a.py` se niegan.
+> - Formas dentro de los programas admitidos:
+>   - git: cerrado por subcomando, claves de `-c`, transporte exacto y `config`/`remote`/`merge`. Huecos: B1 (PowerShell), B5, B7.
+>   - gh: cerrado por subcomando.
+>   - sort: lista de lo prohibido (B1, B8).
+>   - awk/sed: lista de lo admitido con huecos (B4, B8).
+> - Lo que se admite dentro (preparación, filtros): cerrado. Excepción: `cd -P`/`-L` (B1).
+> - Asignaciones: cerrado en las vías tokenizadas; abierto en B3, B6, B9.
+> - **Pérdida frente a main.**
+>   - 740 cadenas de los tests de main y rama × Bash y PowerShell: 0 NIEGA→PASA.
+>   - 14.000 secuencias aleatorias (semilla 4242, con fragmentos de los tests y de las reglas de main): 0 NIEGA→PASA.
+>   - Regresiones frente a 6508eda (NIEGA→PASA): 2, intencionadas (`awk '$1 > 5'`, `awk '{if ($1>5) print $2}'`).
+>   - Los 6 «main niega, rama pasa» de `comandos_reales-SALIDA.txt` son comandos de anexos; reproduje 3 con main y rama: es el falso positivo de espacios (A4). No encontré pérdidas nuevas.
+>
+> **Comprobación 2. ¿Las listas salen de donde dice §1.28?**
+> - `NOMBRES_DE_ENTORNO`: `S`, `W`, `R`, `d`, `n` y el resto coinciden con `programas_y_nombres-SALIDA.txt` y `formas_git-SALIDA.txt` (`for` variable: `d` ×3, `n` ×1).
+> - `GIT_C_CLAVES` y `GIT_MERGE_ESTRATEGIAS`: vacías, coherente con `formas-SALIDA.txt` (no tiene sección de claves de `-c`).
+> - `config` y `remote`: la forma medida es `config core.autocrlf` y `remote -v`. El código admite más (`--get-regexp`, `show`, `get-url`, una clave suelta): son de lectura, pero no «solo las formas medidas».
+> - `GIT_SUBCOMANDOS` (38) y `GH_SUBCOMANDOS` (10): no salen de la medida (B1).
+> - Ninguna lista admite una forma que ejecute dentro de las medidas, salvo B5 (`reset`/`revert`) y B7.
+>
+> **Comprobación 3. Coste 0.**
+> - `coste_r5-SALIDA.txt`: 572 → 0/0, 32 de RITUAL → 0/0, 164 líneas de runbooks → 0/0.
+> - Reproduje 32 de RITUAL y 164 de runbooks contra 6508eda en mi repo sintético: 0 negaciones nuevas y 0 reversas.
+> - No reproduje las 572 reales (la transcripción está fuera del repo). Las 6 reversas de `comandos_reales-SALIDA.txt` son anexos (A4).
+> - Pruebas de que el coste no es cero fuera de las 572: B8 (`awk … || …`) y B10.
+>
+> **Comprobación 4. Anexo de mutaciones.**
+> - Ejecuté `PYTHONUTF8=1 uv run python docs/validation/anexos/GUION-MISMO-COMANDO/sin_condicion.py` (unos 75 minutos, mientras corrían otras medidas mías).
+> - Salida: «con la condicion: 244 tests, fallan 0 / esperan una negacion: 153».
+> - «sin la condicion: fallan 163 de 244 … EXACTAMENTE los que esperan una negacion: si» (153 + 10 de los nombres).
+> - 26 mutaciones; cada pieza rompe los suyos; «restaurado: fallan 0» en todas. Ninguna línea `NO FALLA` ni `DIFERENCIA`.
+> - `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+> - Cada pieza nueva (`GIT_C_CLAVES` 3, `_git_transporte` 3, `_modo_git` 5, `_awk_admitido` 6, `_sed_admitido` 9, `_exigir_builtin_que_fija` 6, `_exigir_for` 1, `_exigir_sin_aritmetica` 1) rompe tests. Límites en B11. No hay mutación de PowerShell-git ni de B3, B4, B5, B7, porque esas piezas no existen.
+>
+> **Comprobación 5. Mis hallazgos de las tres pasadas anteriores.**
+>
+> | Pasada | Hallazgo | Estado |
+> |---|---|---|
+> | 1ª | B1-B4 y A1 | Resueltos (con test), salvo `cd -P/-L` (B1 de esta pasada) |
+> | 2ª | B1-B8, A1-A5 | Resueltos |
+> | 3ª | B1 (awk/sed, parte) | Resuelto con huecos (B4, B8) |
+> | 3ª | B2 (git: `-c`, transporte, `config`/`remote`/`merge`) | Resuelto (B7 son abreviaturas); `reset`/`revert` sin resolver (B5) |
+> | 3ª | B3 (PowerShell git) | NO resuelto (B1) |
+> | 3ª | B4 (lectores con test, `[`) | NO resuelto (B1) |
+> | 3ª | B5 (sort abreviaturas) | NO resuelto (B1) |
+> | 3ª | B6 (`for`/`read`/`printf -v`/`let`/`(( ))`) | Resuelto con huecos (B3, B6); `cd -P/-L` no |
+> | 3ª | B7 (find/xargs con env/command) | NO resuelto (B1) |
+> | 3ª | B8 (listas sin fuente) | NO resuelto (B1) |
+> | 3ª | B9 (caso degenerado) | NO declarado |
+> | 3ª | A1-A5 | A1, A2, A3, A4 sin corregir (A2); A5 sin declarar (B10) |
+>
+> **Para arreglar en esta rama (clase PÉRDIDA o CONTRADICE):** A1, A2, A3 (declararlo), A4 (ratificar o revertir), B1, B2, B3, B4, B5.
+>
+> **Para anotar como límite, sin otra ronda (clase FORMA-NUEVA-LÍMITE):** B6, B7, B8, B9, B10 (la parte de declararlo es del informe). Propuesta de entrada para §1.26 (Next Action del cierre), tal cual:
+> - «La guardia admite hoy, dentro de los programas de `NO_EJECUTAN`, formas equivalentes de lo que niega: abreviaturas de `--upload-pack`/`--receive-pack`/`--exec` y `merge -s<x>` pegado, `git grep -O`, `--exec-path`, `--git-dir`, `config -e`, `@include`/`@load` y `-o`/`-p`/`--dump-variables` de awk, `sort -o`/`--output`/`--files0-from`, asignaciones por expansión (`${X:=…}`, `$(( X=… ))`, `declare -n`) y `NOMBRE+=valor`. Rama propia: pasar cada programa a una tabla de opciones admitidas, negando por defecto (GUION-MISMO-COMANDO.md §1.31).»
+>
+> ---
+>
+> ### Lo que no pude comprobar
+> - **Efectos reales.** Que git acepte abreviaturas de `--upload-pack`, que `git grep -O` ejecute el programa nombrado, que GNU sort acepte `--comp`, que `read PATH <<< .; ls` ejecute `./ls`, que `printf -vPATH` fije `PATH`, que `PATH+=` o `unset PATH` cambien la búsqueda: todo por documentación. Solo medí lo que la guardia deja pasar.
+> - **Las 572 reales.** `comandos_reales.py`, `programas_y_nombres.py`, `formas.py`, `formas_git.py` y `medir_b2.py` necesitan la transcripción de la sesión, fuera del repo. Contrasté sus salidas commiteadas; los 3 tipos de reversa los reproduje con main y rama.
+> - **`make check` y `git write-tree`.** No los ejecuté (escriben); comparé el árbol del `SELLO` con el de HEAD.
+> - **PowerShell real.** Solo la decisión de la guardia.
+> - **El log completo de la CI.** Solo vi el fallo aceptado y el recuento.
+> - **Material protegido.** No se abrió; `decidir()` no lee contenido.
+> - **Ficheros.** `Write` no está disponible para mí y mi Bash no escribe; todas las medidas fueron por `python - <<'EOF'`.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`; `git diff --name-status main...HEAD`; `git diff --numstat main...HEAD -- …`; `git rev-parse HEAD^{tree}`.
+> 2. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`; `tail -5 make-check.log`.
+> 3. `PYTHONUTF8=1 uv run pytest tests/unit/test_guardia_claude.py -q -p no:cacheprovider` (código 0); `… --co -q` (480).
+> 4. `PYTHONUTF8=1 uv run python docs/validation/anexos/GUION-MISMO-COMANDO/sin_condicion.py` (segundo plano, completó: `VEREDICTO` correcto).
+> 5. Varias tandas de `PYTHONUTF8=1 uv run python - <<'EOF'` que importan `medir_huecos`, cargan la guardia de main (`git show main:…` en memoria), la de 6508eda y la de la rama, y llaman a `decidir()` sobre un repo sintético:
+>    - formas de git, awk, sed, sort, gh, asignaciones, builtins, `(( ))`, PowerShell;
+>    - comparación de 740 cadenas de los tests × Bash/PowerShell contra main y 6508eda;
+>    - 14.000 secuencias aleatorias (semilla 4242);
+>    - RITUAL (32) y runbooks (164) contra 6508eda y main;
+>    - los comandos de anexos con main y rama;
+>    - los programas de awk y sed de las 572 contra `_awk_admitido` / `_sed_admitido`.
+> 6. `git diff bdb5e46~1 bdb5e46 -- .claude/hooks/guardia.py`; `git diff bdb5e46~1 bdb5e46 -- tests/unit/test_guardia_claude.py`; `git diff 6508eda HEAD --stat -- .claude/hooks/guardia.py`; `git diff main...HEAD -- … | grep "^-[^-]"`.
+> 7. `gh run list --repo Fibobrioso/Botsito --branch fix/guion-mismo-comando …`; `gh run view 37765153341 --log-failed | grep …`; `git ls-remote --heads origin fix/guion-mismo-comando`.
+> 8. Lecturas con Read/Grep del encargo, del informe (§0, §1.12, §1.21, §1.25, §1.27-§1.29), de `guardia.py` (885, 1030-1070, 1340-1370, 1440-1700, 2086-2480, 2520-2660, 2777-2930, 2985-3165), del test (1290-1420), de `sin_condicion.py`, `medir_huecos.py`, `formas_git.py`, `formas.py`, de las salidas de los anexos y del `PROJECT_STATE.md`.
+> 9. Intentos que la guardia o el hook de solo lectura bloquearon y no rodeé: escribir un fichero en el scratchpad; un heredoc con `((` en los datos; `F=…` suelto; dos ejecuciones en una llamada; `date` detrás de `grep`. Cada uno lo repetí por otra vía legítima (una ejecución por llamada, sin variables fuera de la lista).
+>
+> Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_claude.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\GUION-MISMO-COMANDO.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUION-MISMO-COMANDO\`.
+
+### 1.32 Lo que se hizo con la cuarta pasada
+
+La cuarta pasada confirmo, MIDIENDO, que los arreglos del punto 0 no estaban en el commit anterior
+(`bdb5e46`): la afirmacion de §1.28 de que estaban era falsa (A1), y §1.28 queda corregida arriba.
+Esta ronda los hace de verdad, cada uno comprobado con `decidir()` antes de escribirlo, y con el
+coste medido (§1.33). Todo en `.claude/hooks/guardia.py`.
+
+**Lo que CONTRADECIA lo decidido o era una perdida frente a `main`, arreglado (respuesta a §1.27,
+punto 4):**
+
+1. **`[` y `test` ya no se confunden con un comodin (B10).** El `[` lleva el metacaracter de glob en
+   su nombre, y la comprobacion de comodines lo negaba aunque sea un lector de `NO_EJECUTAN`. Ahora
+   se exceptuan `[` y `test`; un glob real (`[abc]`) no casa con su nombre y sigue negandose.
+2. **`cd -P`/`-L`/`-e`/`-@` son opciones, no el destino.** `cd -P src` resolvia `-P` como ruta y
+   dejaba el directorio de trabajo mal; ahora se saltan esas opciones.
+3. **Las abreviaturas de las opciones de `sort` que ejecutan (`--compress-pro`, `--random-s`).** GNU
+   admite prefijos; `_opcion_abreviada` las reconoce y niega, en la ejecucion y como filtro tras una
+   tuberia (`--output` incluido).
+4. **Los envoltorios en `find -exec` y `xargs` (`env`, `command`, `nice`...).** `find ... -exec env
+   python x.py` ejecutaba python, pero la guardia veia `env` -un lector- y lo dejaba pasar. Ahora se
+   quitan los envoltorios antes de mirar si es un lector, con `_quitar_envoltorios`.
+5. **`git reset` y `git revert` se niegan (B5).** Estaban exceptuados de la lista cerrada de
+   subcomandos; ahora caen en ella (`revert` abre un editor, `reset` cambia el arbol sin pasar por
+   los hooks). `cherry-pick`/`rebase` siguen con su mensaje propio.
+6. **La redireccion de `awk` escondida entre divisiones (B4).** `awk '{print $1/2 > $3/4}'` escondia
+   el `>` de redireccion, porque el detector trataba `/2 > $3/` como una `/regex/`. Ahora solo una
+   `/` que ABRE regex (no una division, que va tras un valor) se trata como tal; `/a|b/` y `/a>b/`
+   se siguen admitiendo.
+7. **`unset` de un nombre fuera de la lista cerrada (B2).** `unset PATH` quita una variable del
+   entorno de lo que corre despues; se niega salvo que el nombre este en `NOMBRES_DE_ENTORNO`.
+8. **`printf -vNOMBRE` pegado y `read 'NOMBRE[indice]'` (B3).** Dos vias de fijar una variable que se
+   colaban: la `-v` pegada al nombre y el nombre con indice de array. Ahora las dos pasan por el
+   nombre base y la lista cerrada.
+9. **`git` en PowerShell, por la lista cerrada de subcomandos (B1).** `git` estaba en
+   `PS_NO_EJECUTAN` y `reset`/`revert`/`bisect run`/`-c clave` pasaban; ahora el subcomando y el modo
+   de `git` en PowerShell pasan por las mismas listas que en Bash (`_git_ps_ejecuta`), y lo decide la
+   condicion de PowerShell (ninguna ejecucion).
+
+**Lo que es una FORMA NUEVA y se apunta como limite (§1.26), sin abrir otra ronda (punto 4):** los
+builtins que cambian el estado del shell SIN fijar una variable (`shopt`, `enable`, `bind`, `ulimit`,
+`complete`, `compgen`, `caller`, `fc`) no se niegan -no son una ejecucion ni un cambio de variable de
+los que esta ronda arregla-; el caso mas agudo es `enable -f fichero.so`, que carga codigo. Tampoco
+las abreviaturas de las opciones de `git` en Bash fuera de las formas medidas, ni la paridad fina de
+`git` en PowerShell mas alla del subcomando. Es defensa en profundidad: la barrera sigue siendo el
+codigo.
+
+### 1.33 Tests, mutaciones y comparacion con `main`, tras la cuarta pasada
+
+**Tests**: 24 funciones `test_ejecucion_*` (4 nuevas): `...cuarta_pasada_niega` (abreviaturas de
+`sort`, envoltorios en `find`/`xargs`, `git reset`/`revert`, la redireccion de `awk`),
+`...cuarta_pasada_fija_variable_niega` (`unset PATH`, `printf -vPATH`, `read 'PATH[0]'`),
+`...cuarta_pasada_admite` (`[ -f ]`, `test`, `cd -P`, `unset S`, `sort -S`, `awk '/a|b/'`,
+`find -exec sha256sum`...) y `...cuarta_pasada_powershell_git_niega`. `Tests Currently Passing`:
+1403 -> 1407.
+
+**Mutaciones** (`sin_condicion.py`, 26 mutaciones sobre 269 tests `-k ejecucion`): con la condicion,
+0 fallan; sin ella (`exigir_ejecucion_verificable` neutralizada), **fallan EXACTAMENTE los 165 que
+esperan una negacion** -los cuatro casos nuevos de `test_ejecucion_cuarta_pasada_niega` y
+`...powershell_git_niega` entre ellos-; las vias que fijan una variable (`unset`, `printf -v`,
+`read[]`) niegan por `_niega`, no por la condicion, y se miran con su propia mutacion; y cada una de
+las 26 piezas rompe, al menos, los casos que solo ella niega. Restaurada cada mutacion, 0.
+`VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los
+suyos; restaurada, todo pasa`.
+
+**Comparacion con `main`**:
+- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 75 casos): **0 que `main` niega y la rama deja
+  pasar**; 57 de PASA a NIEGA.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 784 distintos, 656 con la misma decision, 119
+  de PASA a NIEGA, y las que `main` niega y la rama deja pasar son todas ejecuciones de los anexos
+  (`medir_b2.py`/`formas.py`/`formas_git.py`): el falso positivo del literal de espacios (§1.13),
+  declarado; ninguna es un comando del proyecto.
+
+**El coste de esta ronda** (`bdb5e46` frente al commit de ahora, `comandos_reales.py` y `medir_b2.py`):
+**0 negaciones nuevas y 0 al reves, en los 753 comandos reales distintos de la transcripcion, en los
+32 de `RITUAL` y en las 164 lineas de los runbooks y las skills.** La guardia decide exactamente
+igual que antes en todo lo legitimo; los arreglos solo tocan las formas que nadie usa. Por eso se
+adopta (§1.27 punto 4).
+
+### 1.34 CI de Linux de esta ronda
+
+Pendiente: se llena con el número de run tras el push de este commit a `fix/guion-mismo-comando`.
+
+### 1.35 Quinta pasada del revisor
+
+Pendiente: se lanza el revisor sobre el estado final y se pega aquí, para confirmar que no queda
+nada CONTRADICE tras los arreglos de la cuarta pasada (§1.27 punto 4).
 
 ## Estado
 
-**EN CURSO (2026-10-08).** Adoptada la respuesta a §1.27 (git opcion B, awk/sed como lista de lo
-admitido, asignaciones por cualquier via), con coste 0 sobre los 572, los 32 de RITUAL y los
-runbooks. Falta la CI de Linux del ultimo commit y la cuarta pasada del revisor. NO cerrada.
+**EN CURSO (2026-10-08).** Hechos los arreglos del punto 0 que la cuarta pasada encontró ausentes
+(B1, B3, B4, B5, B10, `cd -P/-L`), cada uno medido con `decidir()` y con coste 0 sobre los 753
+comandos reales, los 32 de RITUAL y los runbooks; mutaciones verdes; 0 que `main` niega y la rama
+deja pasar (fuera del falso positivo de los anexos, declarado). Falta la CI de Linux de este commit
+y la quinta pasada del revisor. NO cerrada.

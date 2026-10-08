@@ -1,29 +1,31 @@
-Comandos de Bash en la transcripcion: 806; distintos: 689
-Misma decision en main y en la rama: 571
-main los deja pasar y la rama los niega: 112
-main los niega y la rama los deja pasar: 6
+Comandos de Bash en la transcripcion: 913; distintos: 784
+Misma decision en main y en la rama: 656
+main los deja pasar y la rama los niega: 119
+main los niega y la rama los deja pasar: 9
 
 == Por motivo
-  104  algo delante que no esta en la lista cerrada
+  109  algo delante que no esta en la lista cerrada
+    3  algo detras, en la tuberia, que no es un filtro
     2  `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros qu
-    2  algo detras, en la tuberia, que no es un filtro
     1  `uv run --project`: cambia el directorio, el entorno o los paquetes de
     1  una sustitucion en el comando
     1  el bucle `for` fija `p`, que no esta en la lista (`NOMBRES_DE_ENTORNO`
     1  `awk` con un programa fuera de la lista de lo admitido (sin system, ge
+    1  el nombre de entorno `SP` no esta en la lista cerrada (`NOMBRES_DE_ENT
 
 == Lo que va delante (primer programa)
    34  python
    19  cat
-   15  uv
+   18  uv
    14  git
    10  grep
-    6  sed
+    7  sed
     2  una asignacion
     1  sha256sum
     1  rm
     1  printf
     1  cp
+    1  echo
 
 == Los que pasan a negarse (comando, 120 caracteres; y el motivo de la rama)
 - cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/ps_edit.py" <<'EOF' \n import sys \n from pathlib import Path \n p = P
@@ -119,9 +121,9 @@ main los niega y la rama los deja pasar: 6
     ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
 - cd "C:/Users/USER/AppData/Local/Temp/botsito-a11-wt" && uv run pytest -q -p no:cacheprovider > /c/Users/USER/AppData/Loc
     ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
-- cd "C:/Users/USER/Desktop/Bot v3" && printf '\n# Archivo 21 Â· PROJECT_STATE.md de main en d96b703 (2026-10-07), al abrir
-    ejecutar `python <<EOF`: antes, en el mismo comando, va `printf \n# Archivo 21 Â· PROJECT_STATE.md de main en d96b703 (2026-10-07), al ...`.
-- cd "C:/Users/USER/Desktop/Bot v3" && cat >> docs/validation/RESPALDO-A11.md <<'EOF' \n ## 1. Fase 0 a Â· A-11 hoy \n  \n 
+- cd "C:/Users/USER/Desktop/Bot v3" && printf '\n# Archivo 21 · PROJECT_STATE.md de main en d96b703 (2026-10-07), al abrir
+    ejecutar `python <<EOF`: antes, en el mismo comando, va `printf \n# Archivo 21 · PROJECT_STATE.md de main en d96b703 (2026-10-07), al ...`.
+- cd "C:/Users/USER/Desktop/Bot v3" && cat >> docs/validation/RESPALDO-A11.md <<'EOF' \n ## 1. Fase 0 a · A-11 hoy \n  \n 
     ejecutar `python -c`: antes, en el mismo comando, va `cat`.
 - cd "C:/Users/USER/Desktop/Bot v3" && python - <<'EOF' \n from pathlib import Path \n s = Path(r"C:\Users\USER\AppData\Lo
     ejecutar `botsito knowledge validate`: antes, en el mismo comando, va `python -`.
@@ -243,6 +245,20 @@ main los niega y la rama los deja pasar: 6
     ejecutar `pytest`: antes, en el mismo comando, va `uv run ruff format tests/unit/test_guardia_claude.py`.
 - cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff format tests/unit/test_guardia_claude.py; uv run pytest tests/unit/test
     ejecutar `pytest`: antes, en el mismo comando, va `uv run ruff format tests/unit/test_guardia_claude.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && sed -i 's/^1400 funciones de test/1403 funciones de test/' PROJECT_STATE.md; uv run
+    ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i s/^1400 funciones de test/1403 funciones de test/ PROJECT_STATE.md`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff check .claude/hooks/guardia.py --output-format concise; uv run pytest t
+    ejecutar `pytest`: antes, en el mismo comando, va `uv run ruff check .claude/hooks/guardia.py --output-format concise`.
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python scripts/contrato_rama.py | tail -1; uv run botsito state check 2>&1 |
+    ejecutar `botsito state check`: antes, en el mismo comando, va `uv run python scripts/contrato_rama.py`.
+- cd "C:/Users/USER/Desktop/Bot v3" && echo "=== probe.py ==="; uv run python "C:/Users/USER/AppData/Local/Temp/claude/C--
+    ejecutar `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad/probe.py`: antes, en el mi
+- cd "C:/Users/USER/Desktop/Bot v3" && SP="C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d
+    ejecutar `SP=...`: el nombre de entorno `SP` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYT
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/comandos_reales.py "C:/Use
+    ejecutar `python docs/validation/anexos/GUION-MISMO-COMANDO/comandos_reales.py`: detras, en la misma tuberia, va `sed -n /main los niega y la rama los deja pasa
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run ruff check .claude/hooks/guardia.py 2>&1 | tail -3 && uv run pytest tests/un
+    ejecutar `pytest`: antes, en el mismo comando, va `uv run ruff check .claude/hooks/guardia.py`.
 
 == main los niega y la rama los deja pasar
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
@@ -251,3 +267,6 @@ main los niega y la rama los deja pasar: 6
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/formas_git.py .claud
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
+- cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
+- cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/formas_git.py .claud
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/Users/USER
