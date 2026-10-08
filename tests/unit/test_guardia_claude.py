@@ -1563,6 +1563,93 @@ def test_ejecucion_cuarta_pasada_powershell_git_niega(
     assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
 
 
+# --- quinta pasada del revisor: builtins negados por defecto (§1.27.3), awk entre divisiones con
+# espacios, mas vias de fijar una variable, y las perdidas de git frente a main.
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "shopt -s extglob",  # un builtin fuera de la lista cerrada (B1)
+        "enable -n printf",
+        "ulimit -n 10",
+        "bind -x ':ls'",
+        "complete -A function foo",
+        "compgen -A function",
+        "caller 0",
+        "fc -l",
+        "umask 022",
+        "pushd .",
+        "popd",
+        "awk '{ print $1 / 2 > $3 / 4 }' docs/a.md",  # redireccion entre divisiones con espacios
+        "awk '{ print (a) / 2 > \"out\" }' docs/a.md",
+    ],
+)
+def test_ejecucion_quinta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "for PATH; do ls; done",  # `for` sin `in` fija la variable igual (B3)
+        "declare -n d=PATH",  # un nameref apunta a otra variable (B3)
+        "PATH+=:x",  # `NOMBRE+=` suelto, fuera de la lista (B3/B9)
+        "read $S <<< .",  # un nombre que se construye al ejecutarse (B3)
+    ],
+)
+def test_ejecucion_quinta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git ls-files",  # lectores de git que `main` deja pasar (B5)
+        "git ls-tree HEAD",
+        "git show-ref",
+        "git hash-object docs/a.md",
+        "git pull",
+        "type ls",  # builtins lectores, admitidos
+        "hash -r",
+        "shift",
+        "awk '/a|b/{print}' docs/a.md",  # la `|` de una regex, no una tuberia (B2, sin regresion)
+        "S+=x echo hola",  # `NOMBRE+=` de un nombre de la lista
+    ],
+)
+def test_ejecucion_quinta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize("opcion", ["-P", "-L"])
+def test_cd_fisico_resuelve_el_destino_y_bloquea_la_lectura(
+    g: ModuleType, repo: Path, opcion: str
+) -> None:
+    """`cd -P`/`-L <dir>` resuelve el destino (no toma `-P` como ruta): despues, leer material
+    reservado se niega (revisor quinta pasada, A4). Con el bug, `cd -P` dejaba el cwd en `-P` y la
+    lectura pasaba."""
+    comando = f"cd {opcion} knowledge/cases/holdout/1 && cat etiquetas.yaml"
+    assert _bash(g, repo, comando) is not None, comando
+
+
+def test_lectores_que_nombro_el_revisor_pasan(g: ModuleType, repo: Path) -> None:
+    """Los lectores que entraron en `NO_EJECUTAN` por §1.21 punto 2 (revisor quinta pasada, R2)."""
+    for comando in (
+        "md5sum docs/a.md",
+        "chmod +x scripts/otro.py",
+        "jq '.x' docs/a.md",
+        "tasklist",
+        "test -f docs/a.md",
+        "[ -f docs/a.md ]",
+    ):
+        assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
     for comando in (
         "Start-Process python",

@@ -865,7 +865,7 @@ entorno, `trap`, `awk -f`/`sed -f`); las demás siguen como allí.
 | Límite | Qué pasa |
 |---|---|
 | Un programa desconocido SIN ficheros ni nada delante (`inventado --version`) | Pasa: es un programa del entorno, y no hay nada de la rama que leer. Lo que ejecuta según su configuración (`npm run`, `tox`, `pre-commit run`) no se ve |
-| `awk` con `system()` y el comando `e` de GNU sed, EN el comando | Pasan: el programa va en el comando (se ve), pero la guardia no lo analiza. Lo dicen sus porqués en `NO_EJECUTAN` |
+| ~~`awk` con `system()` y el comando `e` de GNU sed, EN el comando~~ | **Superado en §1.28** (respuesta a §1.27 punto 2): `awk`/`sed` solo pasan en la lista de lo admitido (`_awk_admitido`/`_sed_admitido`); `system()` y el `e` de sed ya se **niegan** |
 | Un plugin de la configuración de `mypy` o una extensión de `gh` | Código que esos programas cargarían; nada en este repositorio lo configura hoy |
 | Lo que importa o ejecuta un guion, y las rutas compuestas por partes | Entradas nuevas de la Next Action en el cierre (respuesta a la fase 0, puntos 4 y 5) |
 | Un proceso de una llamada anterior; los hooks de git; `make` con el `Makefile` de `main` | Como en §1.6 |
@@ -1178,8 +1178,10 @@ Todo en `.claude/hooks/guardia.py`, con el coste medido antes de adoptarlo (abaj
 - **`gh`**: `GH_SUBCOMANDOS` = `run`, `auth` (de los 503) más los de solo lectura habituales
   (`api`, `pr`, `issue`, `repo`, `release`, `search`, `status`, `browse`). `gh alias set -s` queda
   fuera: ejecuta (revisor, B3 c).
-- **`sort`**: `--compress-program` y `--random-source` ejecutan un programa externo; ninguna de los
-  503 (que usan `-rn`, `-k2`, `-n`, `-r`, `-t:`). Las demás ordenan texto.
+- **`sort`**: `--compress-program` ejecuta un programa externo y `--random-source` lee una fuente de
+  bytes (un fichero) en vez de la del sistema; las dos se niegan (y desde §1.32 también sus
+  abreviaturas). Ninguna aparece en los 503 (que usan `-rn`, `-k2`, `-n`, `-r`, `-t:`). Las demás
+  ordenan texto.
 - **`awk`/`sed`**: un programa que ejecute o escriba se niega. `awk`: `system(`, `getline`, una
   tubería o una redirección (`print > fichero`). `sed`: los comandos `e`, `r`, `R`, `w`, `W` o un
   `s///` con flag `e`/`w`, detectados con un recorrido que salta los bloques `s<d>…<d>…<d>`,
@@ -1411,14 +1413,16 @@ Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C
   programa desconocido sin argumentos de la rama, los comandos `a`/`i`/`c` y las etiquetas de `sed`,
   ni `awk`/`gawk` con `-e`/`--source` (GUION-MISMO-COMANDO.md §1.16). Es defensa en profundidad: la
   barrera sigue siendo el código. Rama propia si alguno se quiere cerrar.»
-- **Entra, nueva (límite, la cuarta pasada)**: «La guardia no niega los builtins que cambian el
-  estado del shell SIN fijar una variable (`shopt`, `enable`, `bind`, `ulimit`, `complete`,
-  `compgen`, `caller`, `fc`): no son una ejecución ni un cambio de variable de los que la cuarta
-  pasada arregló, y por la respuesta del consultor a §1.27 punto 4 una forma nueva se apunta, no
-  abre otra ronda. El caso más agudo es `enable -f fichero.so`, que carga código. Tampoco alcanza
-  a las abreviaturas de las opciones de `git` en Bash fuera de las formas medidas (B7), ni a la
-  paridad fina de `git` en PowerShell más allá del subcomando (transporte, `-c`). Rama propia si
-  alguno se quiere cerrar; la barrera sigue siendo el código (GUION-MISMO-COMANDO.md §1.32).»
+- **Entra, nueva (límite, la quinta pasada)**: «Quedan formas nuevas que la guardia no cierra, y por
+  la respuesta del consultor a §1.27 punto 4 se apuntan sin abrir otra ronda (la barrera sigue siendo
+  el código, GUION-MISMO-COMANDO.md §1.36): (a) las asignaciones por EXPANSIÓN `${NOMBRE:=...}` y
+  `$((NOMBRE=...))`, que cambian una variable y hoy pasan -el `(( ))` comando sí se niega-; (b) `cd --
+  <dir>`, que no actualiza el directorio de trabajo (vecino del arreglo de `cd -P/-L`); (c) las formas
+  y abreviaturas de `git`/`sort`/`awk` fuera de lo medido (`git grep -O`, `--exec-path`, `config -e`,
+  `merge -snx` pegado, `sort --files0-from`/`--output` abreviado, awk `@include`/`@load`/`-o`/`-p`), y
+  la paridad fina de `git` en PowerShell más allá del subcomando; (d) un builtin que la guardia no
+  conoce (fuera de `BUILTINS_SHELL`) parece un programa del entorno y pasa, como cualquier programa
+  desconocido sin argumentos de la rama. Rama propia si alguno se quiere cerrar.»
 - **Fila de ERRORES-RECURRENTES** (con el hallazgo 5 y los de la primera y segunda pasada): la
   prepara el cierre.
 
@@ -1525,7 +1529,7 @@ siguiente, medidos uno a uno (§1.32).
 
 **Punto 1 - git, opcion B.**
 - `git -c` solo admite claves de `GIT_C_CLAVES`, una lista cerrada hoy VACIA (ninguna clave de `-c`
-  aparece en los 572, los 32 de RITUAL ni los runbooks: `formas_git.py` -> `formas_git-SALIDA.txt`): con
+  aparece en los 572, los 32 de RITUAL ni los runbooks: `formas.py` -> `formas-SALIDA.txt`): con
   una clave, `git -c` se niega. `core.hooksPath` sigue con su mensaje propio (`R_NO_VERIFY`).
 - `--upload-pack`, `--receive-pack` y `--exec`, en cualquier subcomando, se niegan (`_git_transporte`).
 - `config`, `remote` y `merge` solo en las formas medidas (`_modo_git`): `config` de lectura (la
@@ -1830,11 +1834,12 @@ codigo.
 1403 -> 1407.
 
 **Mutaciones** (`sin_condicion.py`, 26 mutaciones sobre 269 tests `-k ejecucion`): con la condicion,
-0 fallan; sin ella (`exigir_ejecucion_verificable` neutralizada), **fallan EXACTAMENTE los 165 que
+0 fallan; sin ella (`exigir_ejecucion_verificable` neutralizada) fallan 175 en bruto, de los que 10
+son las vias que fijan una variable por `_niega` (`unset`, `printf -v`, `read[]`), que la comparacion
+excluye porque niegan al margen de la condicion; con ellas fuera, **fallan EXACTAMENTE los 165 que
 esperan una negacion** -los cuatro casos nuevos de `test_ejecucion_cuarta_pasada_niega` y
-`...powershell_git_niega` entre ellos-; las vias que fijan una variable (`unset`, `printf -v`,
-`read[]`) niegan por `_niega`, no por la condicion, y se miran con su propia mutacion; y cada una de
-las 26 piezas rompe, al menos, los casos que solo ella niega. Restaurada cada mutacion, 0.
+`...powershell_git_niega` entre ellos-; y cada una de las 26 piezas rompe, al menos, los casos que
+solo ella niega. Restaurada cada mutacion, 0.
 `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los
 suyos; restaurada, todo pasa`.
 
@@ -1846,25 +1851,191 @@ suyos; restaurada, todo pasa`.
   (`medir_b2.py`/`formas.py`/`formas_git.py`): el falso positivo del literal de espacios (§1.13),
   declarado; ninguna es un comando del proyecto.
 
-**El coste de esta ronda** (`bdb5e46` frente al commit de ahora, `comandos_reales.py` y `medir_b2.py`):
-**0 negaciones nuevas y 0 al reves, en los 753 comandos reales distintos de la transcripcion, en los
-32 de `RITUAL` y en las 164 lineas de los runbooks y las skills.** La guardia decide exactamente
-igual que antes en todo lo legitimo; los arreglos solo tocan las formas que nadie usa. Por eso se
-adopta (§1.27 punto 4).
+**El coste de esta ronda** (`bdb5e46` frente al commit `9b1fc99`, `medir_b2.py`): **0 negaciones
+nuevas y 0 al reves, en los 572 primeros comandos reales distintos, en los 32 de `RITUAL` y en las
+164 lineas de los runbooks y las skills** (la evidencia de la ronda siguiente, con el mismo
+resultado, queda en `coste_quinta-SALIDA.txt`). La guardia decide exactamente igual que antes en todo
+lo legitimo; los arreglos solo tocan las formas que nadie usa. Por eso se adopta (§1.27 punto 4).
 
 ### 1.34 CI de Linux de esta ronda
 
 Pendiente: se llena con el número de run tras el push de este commit a `fix/guion-mismo-comando`.
 
-### 1.35 Quinta pasada del revisor
+### 1.35 Quinta pasada del revisor (subagente `revisor`, 2026-10-08), tal cual
 
-Pendiente: se lanza el revisor sobre el estado final y se pega aquí, para confirmar que no queda
-nada CONTRADICE tras los arreglos de la cuarta pasada (§1.27 punto 4).
+> ## Informe del revisor · trabajo/guion-mismo-comando · quinta pasada (commit 9b1fc99) · 2026-10-08
+>
+> Rama `trabajo/guion-mismo-comando`, HEAD 9b1fc99 contra main cbfe4e4. `git status` limpio. Todas las
+> medidas son `decidir()` sobre un repo sintetico en un directorio temporal, con la guardia de main, la
+> de bdb5e46 y la de HEAD. No abri material protegido ni ejecute `make check`, el anexo de mutaciones ni
+> `git write-tree`.
+>
+> **Respuesta corta a las tres preguntas:**
+> 1. ¿Queda algun CONTRADICE? Si. Uno que bloquea (B1) y cuatro que importan (eje (b), B1 a B5). El de
+>    awk (B2) es ademas una afirmacion de §1.32 que el codigo no sostiene.
+> 2. ¿El informe sostiene lo que afirma? En parte. §1.28 ya no hace la afirmacion falsa; los 9 arreglos
+>    de §1.32 estan en `guardia.py`; las cifras de §1.33 se sostienen salvo la de «753», que no tiene
+>    evidencia; siguen sin corregir afirmaciones falsas que §1.27 prometio corregir (eje (a), A1).
+> 3. ¿Son «limites razonables» los builtins? No tal como se declaran. Son justo lo que la respuesta del
+>    consultor a §1.27 punto 3 mando negar. Que la amenaza practica sea baja es una razon para que el
+>    consultor lo ratifique por escrito, no para reclasificarlo en el informe.
+>
+> ### Eje (a) · Reglas de la casa (0 bloquea, 5 importa, 1 menor)
+>
+> - **A1 (importa).** Afirmaciones falsas que §1.27 punto 0 prometio corregir siguen en el informe y en
+>   el codigo: (i) §1.16 dice que `awk` con `system()` y el `e` de sed «Pasan», falso desde §1.22; (ii)
+>   §1.22 dice que `--random-source` «ejecuta un programa externo» (es un fichero de bytes); (iii) §1.28
+>   atribuye a `formas_git.py` la medida de que no hay claves de `-c` (es de `formas.py`); (iv) los
+>   porques de `NO_EJECUTAN` para `sed`/`awk` dicen que `system()` y el `e` de sed son «limite
+>   declarado», y ya se niegan; (v) el docstring de `_exigir_sin_aritmetica` dice que `$(( ))` «la trata
+>   el tokenizador», y no es cierto.
+> - **A2 (importa).** §1.32 punto 6 afirma que «solo una `/` que ABRE regex se trata como tal». Falso
+>   para una division con espacios: el lookbehind no salta el espacio, y `awk '{ print $1 / 2 > "x.py";
+>   y = $3 / 4 }'` escondia la redireccion (main PASA, HEAD PASA). (Ver B2.)
+> - **A3 (importa).** La cifra «0/0 en los 753 comandos reales distintos» de §1.33 no tiene evidencia
+>   commiteada. `coste_r5-SALIDA.txt` dice 572; `comandos_reales-SALIDA.txt` dice 784; ningun fichero
+>   contiene «753». Si reproducido: 32 de RITUAL y 164 lineas de runbooks, 0/0.
+> - **A4 (importa).** El arreglo de `cd -P`/`-L` no tiene test que lo pruebe: las dos pruebas nuevas
+>   (`cd -P src`, `cd -L src`) pasan igual con bdb5e46. El arreglo es real (`cd -P <holdout> && cat
+>   secreto` pasa de PASA a NIEGA), pero falta un test que lo rompa a proposito.
+> - **A5 (importa).** Dos puntos de la 4a pasada sin resolver: (i) un test de main se edito (`for f` ->
+>   `for d`) sin declararlo; (ii) la relajacion de `analizar_codigo` (literal de solo espacios) sigue
+>   sin ratificacion del consultor.
+> - **A6 (menor).** (i) §1.33 dice «EXACTAMENTE los 165»; la salida dice «fallan 175 de 269» (165 + 10
+>   de los nombres). (ii) Rotulos B10/B1 mezclados.
+>
+> Comprobado sin hallazgos: contrato (25 ficheros), suite (codigo 0), `state check` OK (1407), `SELLO` =
+> `HEAD^{tree}`, regimenes de cambio, 24 funciones `test_ejecucion_*`, 75 sinteticos / 57 -> / 0, el
+> `VEREDICTO` de las mutaciones, §1.28 corregido, 0 perdidas frente a main en 757 cadenas + 12.000
+> secuencias aleatorias.
+>
+> ### Eje (b) · Encargo y respuestas del consultor (1 bloquea, 5 importa)
+>
+> - **B1 (bloquea, CONTRADICE).** Los builtins que no son ejecucion ni cambio de variable se
+>   reclasifican como «forma nueva» en §1.32, y la respuesta a §1.27.3 los mando negar: «un comando
+>   interno del shell (builtin o palabra clave) que no este en NO_EJECUTAN, en la lista de preparacion
+>   ni en la sintaxis ya admitida ... se niega ... cualquier builtin futuro queda negado por defecto».
+>   En el codigo la condicion sigue enumerada (`BUILTINS_QUE_FIJAN`); `shopt`, `enable`, `bind`,
+>   `ulimit`, `complete`, `compgen`, `caller`, `fc`, `umask`, `pushd`, etc. pasan. La lista del informe
+>   no los incluye todos, y no se midio el coste de negarlos, que la regla 4 exigia antes de declarar
+>   limite.
+> - **B2 (importa, CONTRADICE).** B4 de la 4a pasada solo esta a medias: `_awk_admitido` sigue
+>   escondiendo una redireccion entre dos divisiones con espacios. Incumple §1.27.2 («si no se puede
+>   decidir, se niega»).
+> - **B3 (importa, CONTRADICE sin declarar).** Siguen pasando asignaciones de un nombre fuera de la
+>   lista: `read $S` (nombre dinamico) y `for PATH; do ...; done` (el `for` sin `in` no pasa por
+>   `_exigir_for`). Tambien `${PATH:=.}`, `$((PATH=1))`, `declare -n d=PATH; d=.` y `PATH+=:x` (B6/B9 de
+>   la 4a pasada, que eran limite pero no se apuntaron).
+> - **B4 (importa).** El Estado afirma los arreglos de B4 «cada uno medido» y falta su test.
+> - **B5 (importa).** §1.26 no recoge las formas nuevas que la 4a pasada pidio apuntar: `sort
+>   -o`/`--output`/`--files0-from`, awk `@include`/`@load`/`-o`/`-p`/`--dump-variables`, `git grep -O`,
+>   `--exec-path`, `config -e`, `merge -snx` pegado, asignaciones por expansion y `NOMBRE+=valor`.
+>   Tampoco los comandos legitimos que la rama ahora niega frente a main (`git ls-files`, `git pull`,
+>   `ls-tree`, `show-ref`, `hash-object`).
+> - **B6 (importa, FORMA-NUEVA preexistente).** `cd -- <dir>` sigue sin actualizar el directorio de
+>   trabajo (vecino del arreglo de `cd -P/-L`). No es perdida frente a main (main PASA igual).
+>
+> Requisitos: R1 hecho (awk parcial), R2 parcial (faltan tests de `md5sum`/`chmod`/`jq`/`tasklist`), R3
+> no hecho (A1/A5), R4 hecho, R5 parcial (B2), R6 parcial (B1/B3), R7 parcial (A3), R8 hecho, R9 hecho,
+> R10 hecho, R11 parcial (B5), R12 pendiente (CI y 5a pasada).
+
+### 1.36 Lo que se hizo con la quinta pasada
+
+La quinta pasada encontro un CONTRADICE que bloquea (B1) y varios que importan. Por §1.27 punto 4, lo
+que es una perdida frente a `main` o contradice lo decidido se arregla en esta rama; lo que es una
+forma nueva se apunta como limite. Todo medido con `decidir()` antes de escribirlo.
+
+**Arreglado (CONTRADICE / perdida):**
+
+1. **Builtins negados por defecto, como CONDICION (B1, el que bloqueaba).** La decision de §1.27.3 era
+   que un comando interno del shell que no este admitido -en `NO_EJECUTAN`, en los lectores
+   (`LECTOR_DE_METADATOS`), en los que fijan una variable (`BUILTINS_QUE_FIJAN`) o en lo que ya maneja
+   `analizar_comando` (`set`, `export`, `unset`, `eval`, `source`, `.`, `trap`, `command`, `builtin`,
+   `exec`, `time`)- se niega. Se anade `BUILTINS_SHELL` (todos los builtins y palabras clave que la
+   guardia conoce) y `BUILTINS_NO_ADMITIDOS` (los que no estan admitidos por ninguna via); un builtin
+   de ese conjunto pasa por la condicion y se niega. Asi `shopt`, `enable`, `bind`, `ulimit`,
+   `complete`, `compgen`, `compopt`, `caller`, `fc`, `umask`, `pushd`, `popd`, `dirs`, `disown`, `bg`,
+   `fg`, `suspend`, `times` se niegan; los lectores (`type`, `hash`, `history`, `shift`, `wait`,
+   `jobs`, `kill`...) siguen pasando por estar en `LECTOR_DE_METADATOS`.
+2. **La redireccion de `awk` escondida entre divisiones CON ESPACIOS (B2/A2).** `_awk_admitido` se
+   rehizo con un escaner (`_awk_sin_cadenas_ni_regex`) que recorre el programa y distingue una
+   `/regex/` de una division mirando el contexto (una `/` abre regex solo cuando se espera un
+   operando, no tras un valor), saltando espacios. Asi `print $1 / 2 > $3 / 4` deja a la vista la
+   redireccion y se niega, mientras `/a|b/` y `/a>b/` se siguen admitiendo.
+3. **Mas vias de fijar una variable (B3).** `for NOMBRE; do ...` (sin `in`) pasa por `_exigir_for`;
+   `NOMBRE+=valor` suelto lo reconoce el tokenizador (antes solo veia `NOMBRE=`); `read`/`declare`
+   con un nombre dinamico (`read $S`) o un nameref (`-n`) se niegan, porque el nombre no se puede atar
+   a la lista cerrada.
+4. **Lectores de git que `main` deja pasar (perdida, B5).** `ls-files`, `ls-tree`, `show-ref`,
+   `hash-object`, `show-branch`, `verify-pack` y `pull` entran en `GIT_SUBCOMANDOS`. Negarlos era una
+   perdida de usabilidad frente a `main`; `pull` ejecuta un merge, como `merge`, y sus hooks son el
+   mismo limite declarado que los de cualquier git.
+5. **Las correcciones del informe (A1, A3, A4, A6).** §1.16 marca superado lo de `awk system`/`sed e`;
+   §1.22 describe bien `--random-source` (lee un fichero de bytes, no ejecuta); §1.28 cita `formas.py`
+   (no `formas_git.py`); los porques de `NO_EJECUTAN` para `awk`/`sed` y el docstring de
+   `_exigir_sin_aritmetica` dicen lo que el codigo hace; §1.33 cita la evidencia commiteada del coste
+   (`coste_quinta-SALIDA.txt`, 572+32+164 a 0/0) en vez de un «753» sin anexo; y la cifra de las
+   mutaciones distingue los 175 en bruto de los 165 de la comparacion. Se anade un test que rompe el
+   arreglo de `cd -P` a proposito (A4) y tests de los lectores `md5sum`/`chmod`/`jq`/`tasklist` (R2).
+
+**Apuntado como limite (forma nueva, §1.26; no abre otra ronda, §1.27 punto 4):**
+- Las asignaciones por EXPANSION: `${NOMBRE:=...}` y `$(( NOMBRE = ... ))` cambian una variable y hoy
+  pasan; el `(( ... ))` comando si se niega. No aparecen en los 572.
+- `cd -- <dir>` no actualiza el directorio de trabajo (vecino del arreglo de `cd -P/-L`); no es
+  perdida frente a `main` (B6).
+- Las abreviaturas y formas de `git`/`sort`/`awk` fuera de lo medido (`git grep -O`, `--exec-path`,
+  `config -e`, `merge -snx` pegado, `sort --files0-from`, awk `@include`/`@load`/`-o`/`-p`), y la
+  paridad fina de `git` en PowerShell mas alla del subcomando (B5).
+- Los builtins que la guardia no conoce (fuera de `BUILTINS_SHELL`) parecen un programa del entorno y
+  pasan, como cualquier programa desconocido sin argumentos de la rama (limite de §1.16).
+
+**Declarado (A5):** el test de `main` que se edito es `for f in docs/*.md` -> `for d in docs/*.md`
+(un nombre de bucle de la lista cerrada); y la relajacion de `analizar_codigo` ante un literal de solo
+espacios (§1.13) sigue a la espera de que el consultor la ratifique o la revierta.
+
+### 1.37 Tests, mutaciones y comparacion con `main`, tras la quinta pasada
+
+**Tests**: 27 funciones `test_ejecucion_*` (3 nuevas: `...quinta_pasada_niega` -builtins y la
+redireccion de awk con espacios-, `...quinta_pasada_fija_variable_niega` -`for PATH`, `declare -n`,
+`PATH+=`, `read $S`- y `...quinta_pasada_admite` -lectores de git, builtins lectores, `/a|b/`-), mas
+los tests fuera de `-k ejecucion` de `cd -P` y de los lectores. `Tests Currently Passing`: 1407 -> 1412.
+
+**Mutaciones** (`sin_condicion.py`, 26 mutaciones sobre 296 tests `-k ejecucion`): con la condicion,
+0 fallan; sin ella, **fallan EXACTAMENTE los 178 que esperan una negacion** (las nuevas piezas de la
+ronda -los builtins negados, la redireccion de awk, el `for` sin `in`, `declare -n`, `PATH+=`- entre
+ellos); cada una de las 26 piezas rompe, al menos, los casos que solo ella niega; restaurada cada
+mutacion, 0. `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza
+rompe los suyos; restaurada, todo pasa`.
+
+**Comparacion con `main`**:
+- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 75 casos): **0 que `main` niega y la rama deja
+  pasar**.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 863 distintos; las que `main` niega y la rama
+  deja pasar son todas ejecuciones de los anexos/sondas (`medir_b2.py`/`formas*.py`/`sin_condicion.py`
+  /sondas de medida): el falso positivo del literal de espacios (§1.13), declarado; ninguna es un
+  comando del proyecto.
+- **El coste de esta ronda** (`9b1fc99` frente al commit de ahora, `coste_quinta-SALIDA.txt`): **0
+  negaciones nuevas y 0 al reves en los 572 comandos reales, los 32 de `RITUAL` y las 164 lineas de
+  los runbooks y las skills.** Los builtins negados (`shopt`, `ulimit`...) y las vias nuevas no
+  aparecen en ninguno de los tres conjuntos.
+
+### 1.38 CI de Linux de esta ronda
+
+<<CI>>
+
+### 1.39 Sexta pasada del revisor
+
+<<REV6>>
 
 ## Estado
 
-**EN CURSO (2026-10-08).** Hechos los arreglos del punto 0 que la cuarta pasada encontró ausentes
-(B1, B3, B4, B5, B10, `cd -P/-L`), cada uno medido con `decidir()` y con coste 0 sobre los 753
-comandos reales, los 32 de RITUAL y los runbooks; mutaciones verdes; 0 que `main` niega y la rama
-deja pasar (fuera del falso positivo de los anexos, declarado). Falta la CI de Linux de este commit
-y la quinta pasada del revisor. NO cerrada.
+**EN CURSO (2026-10-08).** Resueltos los hallazgos de la quinta pasada: el CONTRADICE que bloqueaba
+(B1, los builtins negados por defecto como condición, §1.27.3), el de `awk` entre divisiones con
+espacios (B2), las vías de fijar una variable `for NOMBRE`/`declare -n`/`NOMBRE+=`/`read $S` (B3), y
+la pérdida de los lectores de `git` frente a `main` (B5). Corregidas las afirmaciones del informe
+(A1, A3, A4, A6) y declaradas las formas nuevas como límite en §1.26 (expansiones `${:=}`/`$((=))`,
+`cd --`, abreviaturas de `git`/`sort`/`awk`, paridad de `git` en PowerShell). Cada arreglo medido con
+`decidir()`; coste 0 sobre los 572 reales, los 32 de RITUAL y los runbooks; mutaciones verdes (178
+negaciones, exactas); 0 que `main` niega y la rama deja pasar (fuera del falso positivo de los anexos,
+declarado). Falta la CI de Linux de este commit y la sexta pasada del revisor. **NO cerrada**: el
+cierre en `main` solo ante una orden explícita de Aleks.

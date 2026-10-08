@@ -864,9 +864,11 @@ def comandos(lex: Lexico) -> list[Comando]:
                 actual.salidas.append((p.texto, destino))
             i += 2
             continue
-        if not actual.argv and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", p.texto) and not p.op:
+        if not actual.argv and re.match(r"^[A-Za-z_][A-Za-z0-9_]*\+?=", p.texto) and not p.op:
+            # `NAME=` y tambien `NAME+=` (append): el nombre es el base, sin el `+` (revisor quinta
+            # pasada, B3/B9). Asi `PATH+=:x` pasa por `_exigir_nombres_de_entorno`.
             nombre, valor = p.texto.split("=", 1)
-            actual.asignaciones[nombre] = Palabra(valor, glob=False)
+            actual.asignaciones[nombre.rstrip("+")] = Palabra(valor, glob=False)
             i += 1
             continue
         if not actual.argv and p.texto in PALABRAS_CLAVE:
@@ -1067,6 +1069,10 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
                 ctx.variables.pop(bucle, None)
             continue
         if cabeza == "for":
+            # `for NAME; do ...` (sin `in`) itera los posicionales y fija NAME igual (revisor
+            # quinta pasada, B3): su variable pasa por la lista cerrada como la del `for ... in`.
+            if len(cmd.argv) >= 2 and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", cmd.argv[1].texto):
+                _exigir_for(cmd.argv[1].texto)
             continue
         analizar_comando(cmd, ctx, lex)
 
@@ -1370,6 +1376,19 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
                 _exigir_builtin_que_fija("printf", [args[idx + 1]], cmd)
             elif a.texto.startswith("-v") and len(a.texto) > 2:
                 _exigir_builtin_que_fija("printf", [Palabra(a.texto[2:])], cmd)
+    if (
+        prog in BUILTINS_NO_ADMITIDOS
+    ):  # un builtin fuera de la lista cerrada (§1.27.3; revisor 5a B1)
+        exigir_ejecucion_verificable(
+            ctx,
+            lex,
+            cmd,
+            prog,
+            indecidible=f"`{prog}` es un comando interno del shell fuera de la lista cerrada "
+            "(no esta en `NO_EJECUTAN`, ni es un lector, ni fija una variable de la lista, ni es "
+            "sintaxis admitida): puede cambiar el estado del shell o cargar codigo (`enable -f`, "
+            "`shopt`, `ulimit`, `bind`...)",
+        )
     if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
         _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
@@ -2152,9 +2171,9 @@ NO_EJECUTAN: dict[str, str] = {
     "sus hooks son un limite declarado",
     "grep": "busca texto en ficheros",
     "sed": "transforma texto; su programa va en el comando (`-f`, un fichero de programa, se "
-    "niega aparte); el comando `e` de GNU sed es un limite declarado",
-    "awk": "transforma texto; su programa va en el comando (`-f`, se niega aparte); `system()` "
-    "es un limite declarado",
+    "niega aparte); solo las formas de la lista admitida (`_sed_admitido`), el resto se niega",
+    "awk": "transforma texto; su programa va en el comando (`-f`, se niega aparte); solo si no "
+    "tiene system/getline/tuberia/redireccion (`_awk_admitido`), el resto se niega",
     "cut": "corta columnas de texto",
     "head": "lee el principio de un fichero",
     "tail": "lee el final de un fichero",
@@ -2211,6 +2230,10 @@ GIT_SUBCOMANDOS = {
     "check-ignore", "symbolic-ref", "rev-list", "cat-file", "describe", "merge-base", "stash",
     "restore", "clean", "blame", "shortlog", "reflog", "name-rev", "whatchanged", "annotate",
     "archive", "update-ref", "for-each-ref",
+    # Lectores y operaciones corrientes que `main` deja pasar; negarlos era una perdida frente a
+    # main (revisor quinta pasada, B5). `pull` ejecuta un merge, como `merge`, y sus hooks son el
+    # mismo limite declarado que los de cualquier git.
+    "ls-files", "ls-tree", "show-ref", "hash-object", "pull", "show-branch", "verify-pack",
 }  # fmt: skip
 # Un subcomando de gh es inocuo solo si su primera palabra esta aqui (de los 503: `run`, `auth`;
 # `gh alias set -s` ejecuta, revisor B3 c). `api` lee, pero su `--jq` no ejecuta codigo del repo.
@@ -2295,15 +2318,45 @@ def _lanza_una_ejecucion(texto: str) -> bool:
 # Un programa de awk que ejecuta o escribe: `system(`, `getline`, una tuberia (`| "..."` o
 # `"..." |`), o redirigir (`print > fichero`). Los programas de los 503 (`{print $1}`, `NR==66`) no
 # casan.
+def _awk_sin_cadenas_ni_regex(programa: str) -> str:
+    """Devuelve el programa de `awk` con las cadenas y las `/regex/` en blanco (`""`, `//`),
+    distinguiendo una `/regex/` de una division `$1/2`: una `/` abre regex solo cuando se espera un
+    operando (al principio o tras un operador, `{`, `(`, `,`, `;`, `~`, `!`...), no tras un valor
+    (identificador, numero, `$campo`, `)`, `]`). Asi `/a|b/` se vacia pero `$1 / 2 > $3 / 4` deja a
+    la vista la redireccion (revisor quinta pasada, B2)."""
+    salida: list[str] = []
+    i, n, espera_operando = 0, len(programa), True
+    while i < n:
+        c = programa[i]
+        if c in "\"'":
+            j = i + 1
+            while j < n and programa[j] != c:
+                j += 2 if programa[j] == "\\" else 1
+            salida.append('""')
+            i, espera_operando = j + 1, False
+        elif c == "/" and espera_operando:
+            j = i + 1
+            while j < n and programa[j] != "/":
+                j += 2 if programa[j] == "\\" else 1
+            salida.append("//")
+            i, espera_operando = j + 1, False
+        elif c.isspace():
+            salida.append(c)
+            i += 1
+        elif c.isalnum() or c in "_$)]":
+            salida.append(c)
+            i, espera_operando = i + 1, False
+        else:  # un operador o puntuacion: lo que sigue es un operando (una `/` abriria regex)
+            salida.append(c)
+            i, espera_operando = i + 1, True
+    return "".join(salida)
+
+
 def _awk_admitido(programa: str) -> bool:
     """Un programa de `awk` se admite solo si se puede decidir que no tiene `system`, `getline`,
     una tuberia (`|`) ni una redireccion (`>`/`>>`): el `>` de comparacion si (§1.27 punto 2). Se
     quitan antes las cadenas y las `/regex/` para no confundir su contenido."""
-    limpio = re.sub(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", '""', programa)
-    # Solo una `/` que ABRE una regex (no una division `$1/2`, que va tras un valor) se trata como
-    # tal: si no, `print $1/2 > $3/4` escondia la redireccion entre dos divisiones (revisor cuarta
-    # pasada, B4). El `>` de una regex `/a>b/` se sigue tapando, porque no lleva un `print` delante.
-    limpio = re.sub(r"(?<![\w$)\]])/(?:\\.|[^/\\\n])+/", "//", limpio)
+    limpio = _awk_sin_cadenas_ni_regex(programa)
     if re.search(r"\bsystem\s*\(|\bgetline\b|\||>>", limpio):
         return False
     # Un `>` de redireccion va tras un `print`/`printf` en la sentencia; el de comparacion, no.
@@ -2538,6 +2591,34 @@ def _modo_git(sub: str, textos: list[str]) -> str | None:
 BUILTINS_QUE_FIJAN = {
     "read", "declare", "typeset", "local", "readonly", "mapfile", "readarray", "getopts", "let",
 }  # fmt: skip
+# Todos los comandos internos (builtins) y palabras clave del shell que la guardia conoce. La
+# decision del consultor a §1.27 punto 3 es una CONDICION, no una enumeracion de los que se niegan:
+# un builtin que no este admitido -en `NO_EJECUTAN`, en los lectores, en los que fijan una variable
+# o en lo que ya maneja `analizar_comando` (`set`, `export`, `unset`, `eval`, `source`, `.`, `trap`,
+# `command`, `builtin`, `exec`, `time`)- se NIEGA, porque puede cambiar el estado del shell o cargar
+# codigo (revisor quinta pasada, B1). Las palabras clave de sintaxis (`for`, `if`...) las ve el
+# tokenizador. Un builtin FUTURO que no este aqui parece un programa del entorno (limite de §1.16).
+BUILTINS_SHELL = {
+    "alias", "bg", "bind", "break", "builtin", "caller", "cd", "command", "compgen", "complete",
+    "compopt", "continue", "declare", "dirs", "disown", "echo", "enable", "eval", "exec", "exit",
+    "export", "false", "fc", "fg", "getopts", "hash", "help", "history", "jobs", "kill", "let",
+    "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly",
+    "return", "set", "shift", "shopt", "source", "suspend", "test", "times", "trap", "true", "type",
+    "typeset", "ulimit", "umask", "unalias", "unset", "wait", ".", ":", "[",
+}  # fmt: skip
+_BUILTINS_MANEJADOS = {
+    "set", "export", "unset", "eval", "source", ".", "trap", "command", "builtin", "exec", "time",
+    "cd", "printf", "alias", "unalias", "true", "false", ":", "break", "continue", "return", "exit",
+    "logout",
+}  # fmt: skip
+# Un builtin que NO esta admitido por ninguna via: se niega por defecto (la condicion de §1.27.3).
+BUILTINS_NO_ADMITIDOS = (
+    BUILTINS_SHELL
+    - set(NO_EJECUTAN)
+    - LECTOR_DE_METADATOS
+    - BUILTINS_QUE_FIJAN
+    - _BUILTINS_MANEJADOS
+)
 
 
 def _exigir_for(bucle: str) -> None:
@@ -2550,8 +2631,9 @@ def _exigir_for(bucle: str) -> None:
 
 
 def _exigir_sin_aritmetica(texto: str) -> None:
-    """Un comando aritmetico `(( ... ))` fija variables del shell (§1.27 punto 3); `$(( ... ))` es
-    una expansion y la trata el tokenizador."""
+    """Un comando aritmetico `(( ... ))` fija variables del shell (§1.27 punto 3) y se niega entero.
+    La expansion aritmetica `$(( NOMBRE = ... ))` y `${NOMBRE:=...}`, que tambien asignan, son un
+    limite declarado (§1.26; revisor quinta pasada)."""
     if re.search(r"(?:^|[;&|\n]|\bdo\b|\bthen\b|\belse\b)\s*\(\(", texto):
         _niega(
             "(( ... ))",
@@ -2579,7 +2661,21 @@ def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> No
     # base, antes de `[indice]` (`read 'PATH[0]'`: revisor cuarta pasada, B3).
     for a in args:
         if a.texto.startswith("-"):
+            if a.texto in {"-n", "--nameref"}:  # un nameref apunta a otra variable (revisor 5a, B3)
+                _niega(
+                    f"{prog} -n",
+                    f"`{prog} -n` crea una referencia a otra variable, y lo que fija no se puede "
+                    "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
+                )
             continue
+        if (
+            "\x00" in a.texto
+        ):  # un nombre que se construye al ejecutarse (`read $S`): revisor 5a, B3
+            _niega(
+                f"{prog} {_visible(Comando([a], [], [], {}, []))}",
+                f"`{prog}` fija una variable cuyo nombre se construye al ejecutarse, y no se puede "
+                "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
+            )
         nombre = a.texto.split("=", 1)[0].split("[", 1)[0]
         if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
             _niega(
