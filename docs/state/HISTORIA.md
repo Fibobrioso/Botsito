@@ -6732,3 +6732,93 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 22 (2026-10-07).
+
+# Next Action HECHA · V · sale de PROJECT_STATE.md en trabajo/guion-mismo-comando (2026-10-08)
+
+V. La guardia de Claude Code no inspecciona un guion creado en el mismo comando que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.
+
+La hace `trabajo/guion-mismo-comando` (docs/validation/GUION-MISMO-COMANDO.md): la condicion
+`exigir_ejecucion_verificable` en `.claude/hooks/guardia.py` deja ejecutar solo si es seguro que lo
+que corre es lo que la guardia leyo al inspeccionar el comando; si no, niega por defecto.
+
+# Registro de cierre · `trabajo/guion-mismo-comando` (2026-10-08)
+
+- Orden de cierre del consultor del 2026-10-08, ejecutada siguiendo `RITUAL.md`. Rama lista para
+  revision tras siete pasadas del revisor y una orden de corte; nunca se cerro sin la orden.
+- **Lo que entra** (todo en `.claude/hooks/guardia.py`, con tests sinteticos y anexos de medida):
+  - la condicion `exigir_ejecucion_verificable` (negar por defecto): una ejecucion pasa solo si lo que
+    corre es lo que la guardia leyo; con sus piezas (`_exigir_sin_expansiones`, `_exigir_lo_de_antes`,
+    `_exigir_lo_de_a_la_vez`, `_exigir_salida_ajena`, `_exigir_guion_legible`);
+  - un programa interno del shell que no este admitido (`NO_EJECUTAN`, lectores, los que fijan una
+    variable, o lo que ya maneja `analizar_comando`) se niega, como CONDICION (`BUILTINS_SHELL`,
+    `BUILTINS_NO_ADMITIDOS`); toda via que fije o cambie una variable (suelta, `+=`, `export`/`env`,
+    `for` con o sin `in`, `read`/`declare`/`let`/`getopts`/`mapfile`/`printf -v`/`declare -n`, `(( ))`,
+    `$(( NOMBRE=... ))`, `${NOMBRE:=...}`) solo admite nombres de `NOMBRES_DE_ENTORNO`;
+  - git opcion B (`git -c` con lista cerrada de claves hoy vacia; `--upload-pack`/`--receive-pack`/
+    `--exec`; `config`/`remote` de lectura; `merge`/`pull` sin `-s` fuera de la lista y `pull` sin
+    `--rebase`; lectores `ls-files`/`ls-tree`/`show-ref`/`hash-object`/`show-branch`/`verify-pack`/
+    `pull` admitidos), `awk`/`sed` con su lista de lo admitido (escaner que distingue regex de
+    division), abreviaturas de `sort` que ejecutan, envoltorios en `find`/`xargs`, `cd -P/-L/-e/-@/--`,
+    `[`/`[[`/`test` como lectores, y `git` en PowerShell por la lista cerrada de subcomandos;
+  - 30 funciones `test_ejecucion_*` y mas tests de `cd`, lectores, heredoc y `read -a`; los anexos de
+    medida (`medir_huecos.py`, `comandos_reales.py`, `medir_b2.py`, `coste_*`, `formas*.py`,
+    `sin_condicion.py`).
+- Next Action (en este commit del contrato, por la orden de cierre): sale V, HECHA; entran B (lo que
+  el guion importa o ejecuta a su vez), C (rutas protegidas compuestas por partes) y D (endurecer la
+  guardia por formas raras, la barrera real sigue siendo el codigo); cambia A con una frase sobre la
+  prueba gratuita de la ejecucion 1.
+- `Tests Currently Passing`: 1418 funciones.
+- Mutaciones (`sin_condicion.py`): sin la condicion fallan EXACTAMENTE los que esperan una negacion;
+  cada pieza rompe los suyos; restaurada, todo pasa. Comparacion con `main`: 0 que `main` niega y la
+  rama deja pasar (sintetica, 75 casos), salvo el falso positivo del literal de espacios (§1.13) y los
+  cuerpos de heredoc que `main` tokeniza como comandos y la rama trata como datos (§1.2/§1.45,
+  declarados, no son perdida de proteccion). Coste 0 cada ronda sobre los 572 reales, los 32 de
+  RITUAL y los runbooks.
+- Letra: la ultima cerrada era la f de F37 (`stable/F37f-umbral-mayo`); `stable/F37g-*` no existe ni
+  en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37g-guion-mismo-comando`. El merge es `git rev-parse "stable/F37g-guion-mismo-comando^{commit}"`.
+- Commits de la rama: `55b4a37` (apertura), `29bf2c1` (fase 0, inventario), `f22179f` (fase 1,
+  `exigir_ejecucion_verificable`), `4be52cb` (primera pasada), `42856e8` (respuesta a §1.12),
+  `c66ffb4` (segunda pasada), `6508eda` (respuesta a §1.21), `d7a0a9c` (tercera pasada), `bdb5e46`
+  (respuesta a §1.27), `9b1fc99` (punto 0 ausente, cuarta pasada), `142013a` (quinta pasada),
+  `817cb4b` (sexta pasada), `aa1384a` (septima pasada acotada), `44047b8` (nº de run en §1.42) y el
+  de este registro.
+- CI de Linux por `fix/guion-mismo-comando` (todas `failure` con solo el fallo aceptado de
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`): run 37807756421 (`9b1fc99`), 37827286451
+  (`142013a`), 37843956323 (`817cb4b`), 37849485286 (`aa1384a`) y 37852718039 (`44047b8`). La CI de
+  `main` corre tras el push.
+- El encargo pedia que nadie ejecutara `uv run botsito motor arnes`: no se ejecuto en esta rama. Una
+  medida (`medir_huecos.py`) tuvo que componer una ruta por partes para no chocar con la guardia, y
+  eso destapo un hueco (rutas compuestas por partes, hoy C).
+- Informe: `docs/validation/GUION-MISMO-COMANDO.md`. Encargo: `docs/encargos/trabajo-guion-mismo-comando.md`.
+- La orden de cierre, tal cual:
+
+  > Modelo: el que tengas · Esfuerzo: medio
+  >
+  > Orden de cierre de trabajo/guion-mismo-comando (consultor, 2026-10-08). Tag: stable/F37g-guion-mismo-comando (verifica en HISTORIA que el último es F37f y que F37g no existe ni en local ni en origin).
+  >
+  > La rama toca .claude/ y pasó la CI de Linux: run 37849485286 sobre aa1384a, con solo el fallo aceptado de state check por el nombre fix/. El commit 44047b8 solo añade el número de run al informe.
+  >
+  > Hallazgos para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+  > 1. (importa, consultor; ni la sesión ni el revisor lo habrían visto, porque el medio de la medida era el hueco) medir_huecos.py tuvo que componer una ruta por partes para no chocar con la guardia, y eso mostraba otro hueco: una ruta protegida compuesta por partes no se ve. Lección: cuando una medida tiene que esquivar una guardia para poder correr, ese esquive se mide como hueco antes de seguir.
+  > 2. (importa, consultor; lo vio el revisor) en la PARADA de la fase 0 el consultor aceptó que un programa desconocido es un lector, y así enumeraba las ejecuciones. Y la lección de lista cerrada se aplicó un nivel cada vez (qué se admite, qué activa la puerta, las formas dentro de cada programa), así que cada pasada del revisor bajó un nivel. Lección: al escribir una puerta se recorren todos sus niveles de una vez (qué la activa, qué la configura, qué se admite dentro de cada cosa admitida) antes de la primera pasada del revisor.
+  > 3. (importa, consultor) el criterio de corte de la respuesta a §1.27 no decía qué hacer con las pasadas siguientes del revisor, y su excepción («lo que contradiga lo decidido») era tan amplia que casi toda forma nueva entraba; la rama encadenó siete pasadas. Lección: toda orden de corte fija el alcance de la pasada final del revisor, y su excepción se limita a las pérdidas frente a main.
+  > 4. (menor, consultor) el encargo daba la rama de la CI como fix/trabajo-guion-mismo-comando, contra RITUAL.md. Lección: el nombre de la rama de la CI se copia de RITUAL.md.
+  > 5. (importa, sesión, arreglado) en main, el cuerpo de un heredoc puesto al final de la línea perdía su primera línea al analizarse. Lección: un heredoc se prueba con la ruta protegida en su primera línea.
+  > 6. (menor, sesión; el consultor lo vio) los builtins sin variable (shopt, enable…) se clasificaron como forma nueva y se dejaron como límite, aunque la condición decidida ya los cubría; se arregló en la quinta pasada. Lección: antes de llamar «nueva» a una forma, comprobar si una condición decidida ya la cubre.
+  > 7. (menor, sesión; lo vio el revisor en la cuarta pasada) §1.28 afirmaba hechos unos arreglos que no estaban en el commit. Lección: lo que el informe da por hecho se comprueba contra el commit antes de escribirlo.
+  >
+  > Next Action, en el commit del contrato (punto 3 de RITUAL):
+  > - SALE, HECHA: V (texto literal a HISTORIA bajo «# Next Action HECHA · V · …»). La hace esta rama: la guardia solo deja ejecutar lo que puede decidir, como condición que niega por defecto (GUION-MISMO-COMANDO.md).
+  > - ENTRAN, con estas letras (comprueba antes que B, C y D no están vivas en la Next Action):
+  >   B. el texto de §1.26 sobre lo que el guion importa o ejecuta a su vez;
+  >   C. el texto de §1.26 sobre las rutas protegidas compuestas por partes;
+  >   D. el texto de §1.26 que agrupa los límites de forma («Endurecer la guardia por formas raras… la barrera real sigue siendo el código»).
+  > - CAMBIA A, y solo esta frase, que se añade al final de su texto actual: «La prueba gratuita de la ejecución 1 se creó el 2026-10-08 (2-Step, Swing, USD, 100k, MT5) y vence hacia el 22 de octubre: la ejecución 1 va antes de esa fecha. Las ejecuciones 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro (decisión del consultor en docs/encargos/trabajo-guion-mismo-comando.md).»
+  > Comprueba que PROJECT_STATE sigue por debajo de 25 KB con estas entradas; si no, para y dímelo antes del commit.
+  > En el commit de estado no se toca la Next Action.
+  >
+  > El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag. Si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. CI de main en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual. Con la CI de main en completed/success, borra trabajo/guion-mismo-comando (git branch -d) y las dos ramas remotas de CI, fix/guion-mismo-comando y fix/trabajo-guion-mismo-comando.
+  >
+  > Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
+
