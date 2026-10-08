@@ -43,12 +43,14 @@ NIEGAN = (
     "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion",
     "test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega",
     "test_ejecucion_un_modo_que_ejecuta_se_niega",
+    "test_ejecucion_la_ultima_ronda_niega",
 )
 # Los de los nombres de entorno: esa regla vale para TODO comando (tambien `git commit`, que corre
 # hooks), asi que vive junto a la funcion y no dentro; se miran con su propia mutacion.
 NOMBRES = (
     "test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega",
     "test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada",
+    "test_ejecucion_la_ultima_ronda_fija_variable_niega",
 )
 CAMBIADA = "test_ejecucion_cambiada_en_el_mismo_comando_se_niega"
 LISTA = "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion"
@@ -155,6 +157,14 @@ ESPERADOS: dict[str, list[str]] = {
         "test_ejecucion_un_modo_que_ejecuta_se_niega[git submodule foreach 'python a.py']",
         "test_ejecucion_un_modo_que_ejecuta_se_niega[git filter-branch --tree-filter 'python a.py']",  # noqa: E501
     ],
+    "GIT_C_CLAVES": ["test_ejecucion_la_ultima_ronda_niega"],
+    "_git_transporte": ["test_ejecucion_la_ultima_ronda_niega"],
+    "_modo_git": ["test_ejecucion_la_ultima_ronda_niega"],
+    "_awk_admitido": ["test_ejecucion_la_ultima_ronda_niega"],
+    "_sed_admitido": ["test_ejecucion_la_ultima_ronda_niega"],
+    "_exigir_builtin_que_fija": ["test_ejecucion_la_ultima_ronda_fija_variable_niega"],
+    "_exigir_for": ["test_ejecucion_la_ultima_ronda_fija_variable_niega"],
+    "_exigir_sin_aritmetica": ["test_ejecucion_la_ultima_ronda_fija_variable_niega"],
     "_modo_que_ejecuta": [
         "test_ejecucion_un_modo_que_ejecuta_se_niega[gh alias set -s x 'python a.py']",
         "test_ejecucion_un_modo_que_ejecuta_se_niega[sort --compress-program=./a.py docs/a.md]",
@@ -244,6 +254,14 @@ def main() -> int:
         ),
         ("sin la lista de subcomandos de git (§1.21)", "GIT_SUBCOMANDOS", _TodoDentro()),
         ("sin los modos que ejecutan (§1.21)", "_modo_que_ejecuta", lambda *_a: None),
+        ("sin las claves de git -c (§1.27)", "GIT_C_CLAVES", _TodoDentro()),
+        ("sin las opciones de transporte de git (§1.27)", "_git_transporte", lambda *_a: None),
+        ("sin config/remote/merge de git (§1.27)", "_modo_git", lambda *_a: None),
+        ("sin la lista de awk (§1.27)", "_awk_admitido", lambda *_a: True),
+        ("sin la lista de sed (§1.27)", "_sed_admitido", lambda *_a: True),
+        ("sin los builtins que fijan (§1.27)", "_exigir_builtin_que_fija", lambda *_a, **_k: None),
+        ("sin la variable del for (§1.27)", "_exigir_for", lambda *_a: None),
+        ("sin el (( )) aritmetico (§1.27)", "_exigir_sin_aritmetica", lambda *_a: None),
     ]
     base = correr()
     niegan = {t for t in base if t.split("[", 1)[0] in NIEGAN}
@@ -282,7 +300,11 @@ def main() -> int:
                 print(f"   DIFERENCIA  {t}")
             ok = ok and exacto
         else:
-            faltan = [t for t in ESPERADOS[nombre] if t not in fallan]
+            faltan = [
+                e
+                for e in ESPERADOS[nombre]
+                if not any(f == e or f.split("[", 1)[0] == e for f in fallan)
+            ]
             print(
                 f"   de los {len(ESPERADOS[nombre])} que solo niega esta pieza, fallan "
                 f"{len(ESPERADOS[nombre]) - len(faltan)}"

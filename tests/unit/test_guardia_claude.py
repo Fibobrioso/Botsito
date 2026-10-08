@@ -247,7 +247,7 @@ def test_lo_indecidible_que_no_puede_leer_nada_pasa(g: ModuleType, repo: Path) -
     for comando in (
         'echo "$HOME" && git log -1 --format=%H',
         'git commit -m "$(printf x)"',
-        'for f in docs/*.md; do wc -l "$f"; done',
+        'for d in docs/*.md; do wc -l "$d"; done',  # `d` es una variable de bucle de la lista
         'cd src && grep -rn "def " botsito',
     ):
         assert _bash(g, repo, comando) is None, comando
@@ -1402,6 +1402,87 @@ def test_ejecucion_un_modo_que_ejecuta_se_niega(g: ModuleType, repo: Path, coman
     ],
 )
 def test_ejecucion_una_forma_inocua_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+# --- respuesta a §1.27: git opcion B, awk/sed como lista admitida, asignaciones por cualquier via
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git -c core.sshCommand=nx fetch",  # clave de -c fuera de la lista (vacia)
+        "git -c core.pager=nx log",
+        "git -c core.fsmonitor=nx status",
+        "git fetch --upload-pack=nx .",  # opciones de transporte
+        "git push --receive-pack=nx .",
+        "git archive --remote=. --exec=nx HEAD",
+        "git config core.sshCommand nx",  # config que fija
+        "git config core.pager nx",
+        "git remote add x ext::nx",  # remote que no es de lectura
+        "git remote set-url x ext::nx",
+        "git merge -s nx rama",  # estrategia fuera de la lista (vacia)
+        "awk -F , 'BEGIN{system(\"python a.py\")}' docs/a.md",  # system tras -F (B1)
+        "awk -v x=1 'BEGIN{system(\"python a.py\")}' docs/a.md",
+        "awk '{c=\"python a.py\"; print | c}' docs/a.md",  # tuberia a comando
+        "sed -e p -e 'w x.py' docs/a.md",  # -e con w (B1)
+        "sed --expression='w x.py' docs/a.md",
+        "sed -e 1d -e 'e nx' docs/a.md",  # -e con e
+        "sed '1a\\\\ texto' docs/a.md",  # comando a (append), fuera de la lista
+        "sed '1r /etc/passwd' docs/a.md",
+    ],
+)
+def test_ejecucion_la_ultima_ronda_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    """git/awk/sed, por la condicion (`exigir_ejecucion_verificable`)."""
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "read PATH <<< .",  # builtin que fija un nombre fuera de la lista
+        "read ruta <<< x",
+        "printf -v PATH .",
+        "declare -x BASH_ENV=x.sh",
+        "let x=1",  # let: se niega entero
+        "getopts o v",
+        "mapfile -t lineas < docs/a.md",
+        "(( PATH = 1 ))",  # aritmetico
+        "i=0; (( i++ )); echo $i",
+        "for PATH in .; do ls; done",  # la variable de bucle, fuera de la lista
+    ],
+)
+def test_ejecucion_la_ultima_ronda_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """Asignaciones por otras vias (builtins, `(( ))`, `for`), por `_niega` directo."""
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git config core.autocrlf",  # la forma medida (get)
+        "git config --get core.autocrlf",
+        "git remote -v",
+        "git remote show origin",
+        "git merge --no-ff rama -m x",  # merge sin -s, como el ritual
+        "git merge --abort",
+        "awk -F , '{print $1}' docs/a.md",  # programa inocuo con -F
+        "awk -v x=1 '{print x, $1}' docs/a.md",
+        "awk '$1 > 5' docs/a.md",  # el > de comparacion
+        "awk '{if ($1>5) print $2}' docs/a.md",
+        "sed -n -e 1p -e 3p docs/a.md",  # varios -e inocuos
+        "sed -ne '1,5p' docs/a.md",  # cluster -ne
+        "sed 's/a/b/g; 3d' docs/a.md",
+        "read d <<< x",  # un nombre de bucle de la lista
+        'for d in docs/*.md; do wc -l "$d"; done',
+    ],
+)
+def test_ejecucion_la_ultima_ronda_admite(g: ModuleType, repo: Path, comando: str) -> None:
     _ejecucion(repo)
     assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
 

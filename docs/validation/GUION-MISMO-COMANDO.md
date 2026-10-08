@@ -1473,8 +1473,113 @@ Mi recomendación: 1A, 2 sí (allowlist), 3 como límite declarado (las formas `
 aparecen y complican el tokenizador; la barrera real es el código). Con tu respuesta hago los
 arreglos de arriba y lo que decidas, su `make check`, la CI y una cuarta pasada del revisor.
 
+#### Respuesta del consultor a la PARADA de §1.27 (2026-10-08), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de §1.27 de trabajo/guion-mismo-comando (2026-10-08). Cópiala tal cual en el informe, bajo §1.27.
+>
+> 0. Los arreglos que propones dentro de lo decidido (B1 en parte, B3, B4, B5, B7, cd -P/-L y las correcciones del informe A1-A4, B9): adelante, como los describes.
+>
+> 1. git: opción B, no A.
+>    - git -c solo admite claves de una lista cerrada; hoy está vacía porque no aparece ninguna en los comandos reales, así que se niega todo git -c con clave.
+>    - Se niegan --upload-pack, --receive-pack y --exec en cualquier subcomando.
+>    - config, remote y merge solo se admiten en las formas medidas en los 572 comandos reales, los 32 de RITUAL y los runbooks. Si no aparece ninguna, se niegan enteros. merge sin -s, que es como lo usa el ritual, sigue pasando. merge -s solo con las estrategias de git de una lista cerrada; si no aparece ninguna, se niega -s.
+>    Lo que ya decide _analizar_git no se toca, y main no puede negar nada que la rama deje pasar.
+>    Porqué: el coste es 0 y una lista cerrada que deja abierto un nivel inferior no está cerrada; «la barrera real es el código» vale para lo que no se puede medir, no para lo que cuesta 0.
+>
+> 2. awk y sed: sí, la lista de lo admitido.
+>    - sed: solo direcciones con p, d, =, q, n, y s/// e y/// sin las banderas e ni w; se niega cualquier otra cosa, incluidos r, R, W y e.
+>    - awk: el programa se admite solo si se puede decidir que no tiene system, getline, |, ni > o >> como redirección (el > de comparación sí se admite); si no se puede decidir, se niega.
+>    Un test que pasa por cada forma de los 572 y uno que niega cada forma fuera de la lista.
+>    Porqué: es lo que corresponde a una lista cerrada; si cuesta algo, los 572 lo dirán.
+>
+> 3. Asignaciones por otras vías: entran, como condición y no como lista de casos.
+>    - Todo comando que fije o cambie una variable del shell solo puede fijar nombres de NOMBRES_DE_ENTORNO (con S, W y R), y con valor literal.
+>    - Y para que la enumeración no sea la que sostiene la regla: un comando interno del shell (builtin o palabra clave) que no esté en NO_EJECUTAN, en la lista de preparación ni en la sintaxis ya admitida (for con un nombre de la lista, if, while…) se niega. Así read, printf -v, let, (( )), declare, typeset, local, readonly, mapfile, readarray y getopts se niegan si fijan un nombre fuera de la lista o si no están admitidos, y cualquier builtin futuro queda negado por defecto.
+>    Tests: read PATH <<< .; ls, printf -v PATH ., let, (( )) y declare se niegan; for S in a b; do …; done pasa si está en los 572.
+>    Porqué: si se puede fijar PATH por cualquier camino, el nombre de un programa deja de decir qué se ejecuta.
+>
+> 4. Cuándo se para (decisión de alcance): esta es la última ronda de ampliación. Mide primero el coste de 1 a 3 sobre los 572 comandos reales, los 32 de RITUAL y los runbooks. Si niega algo que no sea una ejecución o un cambio de variable de verdad, para y dímelo con la lista; si no, adóptalo sin esperar. Después: make check sellado, push a fix/guion-mismo-comando con su número de run, la comparación con main actualizada y la cuarta pasada del revisor. De lo que encuentre el revisor:
+>    - lo que sea una pérdida frente a main o contradiga lo decidido en las cuatro respuestas se arregla en esta rama;
+>    - cualquier otra forma nueva se apunta en el informe como límite, con su propuesta de entrada en la Next Action (en §1.26, para el cierre), y NO abre otra ronda.
+>    Si con eso no queda nada abierto: rama lista para revisión, NO cerrada. Solo para si hay algo del primer tipo que no puedas arreglar.
+>
+> 5. Para la fila de ERRORES-RECURRENTES en el cierre: (importa, consultor y sesión) la lección de lista cerrada se aplicó tres veces seguidas a un solo nivel (qué se admite, después qué activa la puerta, después las formas dentro de cada programa), y cada pasada del revisor bajó un nivel. Lección: al escribir una puerta, se recorren todos sus niveles de una vez (qué la activa, qué la configura, qué se admite dentro de cada cosa admitida) antes de la primera pasada del revisor.
+
+### 1.28 Lo que se hizo con la respuesta a §1.27 (ultima ronda de ampliacion)
+
+Todo en `.claude/hooks/guardia.py`, con el coste medido antes de adoptarlo (abajo), y con los
+arreglos del punto 0 (B1, B3, B4, B5, B7, `cd -P/-L` y las correcciones del informe) incluidos.
+
+**Punto 1 - git, opcion B.**
+- `git -c` solo admite claves de `GIT_C_CLAVES`, una lista cerrada hoy VACIA (ninguna clave de `-c`
+  aparece en los 572, los 32 de RITUAL ni los runbooks: `formas_git.py` -> `formas_git-SALIDA.txt`): con
+  una clave, `git -c` se niega. `core.hooksPath` sigue con su mensaje propio (`R_NO_VERIFY`).
+- `--upload-pack`, `--receive-pack` y `--exec`, en cualquier subcomando, se niegan (`_git_transporte`).
+- `config`, `remote` y `merge` solo en las formas medidas (`_modo_git`): `config` de lectura (la
+  forma medida es `config core.autocrlf`, un get), `remote` de lectura (`-v`, `show`, `get-url`; la
+  medida es `remote -v`), y `merge` sin `-s`; `merge -s` solo con una estrategia de
+  `GIT_MERGE_ESTRATEGIAS`, hoy vacia. Lo que ya decide `_analizar_git` (push, tag, borrados,
+  `--no-verify`, `cherry-pick`, `rebase`) no se toca, y va antes.
+
+**Punto 2 - awk y sed, la lista de lo admitido** (`_awk_admitido`, `_sed_admitido`):
+- `sed`: solo direcciones con `p`, `d`, `=`, `q`, `n`, y `s///`/`y///` sin las banderas `e` ni `w`;
+  cualquier otra cosa (`r`, `R`, `w`, `W`, `e`, `a`, `i`, `c`, etiquetas...) se niega. Se reunen
+  TODAS las piezas del programa -el operando y cada `-e`/`--expression`, tambien en clusters `-ne`-
+  y cada una se resuelve: un programa que se construye al ejecutarse no se puede decidir y se niega.
+- `awk`: el programa se admite solo si se puede decidir que no tiene `system`, `getline`, una
+  tuberia ni una redireccion (`>`/`>>`); el `>` de comparacion si. `-F`/`-v` no son el programa.
+
+**Punto 3 - las asignaciones por cualquier via, como condicion.** Toda via que fije una variable del
+shell solo puede fijar un nombre de `NOMBRES_DE_ENTORNO` (que gana `d` y `n`, las variables de bucle
+`for` de los 572): la suelta, la que precede a un comando y `export`/`env` (`_exigir_nombres_de_entorno`),
+la variable de un `for` (`_exigir_for`), los builtins `read`, `declare`, `typeset`, `local`,
+`readonly`, `mapfile`, `readarray`, `getopts` y `printf -v` (`_exigir_builtin_que_fija`; `let` y
+`getopts` se niegan enteros), y el comando aritmetico `(( ... ))` (`_exigir_sin_aritmetica`). Asi
+`read PATH`, `for PATH in`, `printf -v PATH`, `(( PATH=1 ))`, `declare -x BASH_ENV` y cualquier
+nombre fuera de la lista se niegan.
+
+**El coste** (`coste_r5`, el commit anterior frente al de ahora): **0 negaciones nuevas, y 0 al
+reves, en los 572 comandos reales, en los 32 de `RITUAL` y en las 164 lineas de los runbooks y las
+skills.** Las variables de bucle `for` de los runbooks (`c`, `f`, `ruta`...) no aparecen como
+comandos de una sola linea, asi que no se niegan; solo las de los 572 (`d`, `n`) estan en la lista.
+Por eso se adopta (§1.27 punto 4).
+
+**Una medida corregida**: la primera version del detector de `sed` era un denylist que confundia un
+programa de impresion con un `s///e`; se rehizo como la lista de lo admitido de arriba.
+
+### 1.29 Tests, mutaciones y comparacion con `main`, tras la respuesta a §1.27
+
+Sustituye las cifras anteriores.
+
+**Tests**: 19 funciones `test_ejecucion_*`. Las nuevas: `...la_ultima_ronda_niega` (git `-c`,
+transporte, `config`/`remote`/`merge -s`, `awk`/`sed` fuera de lo admitido), `...la_ultima_ronda_admite`
+(las formas de los 572: `config core.autocrlf`, `remote -v`, `merge --no-ff`, `awk '$1>5'`, `sed -n
+'/a/,/b/p'`...) y `...la_ultima_ronda_fija_variable_niega` (`read PATH`, `printf -v PATH`, `let`,
+`(( ))`, `declare -x BASH_ENV`, `for PATH in`). `Tests Currently Passing`: 1400 -> 1402.
+
+**Mutaciones** (`sin_condicion.py`, 26 mutaciones): con la condicion, 0 de 244 fallan; sin ella, exactamente los 153 que esperan una negacion por la condicion; y cada una de las 26 piezas rompe, al menos, los casos que solo ella niega (las de esta ronda: las claves de git -c, las opciones de transporte, config/remote/merge, la lista de awk, la de sed, los builtins que fijan, la variable del for y el (( )) aritmetico, 1 cada una). Restaurada cada mutacion, 0. `VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+
+**Comparacion con `main`**:
+- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 76 casos): **0 que `main` niega y la rama deja
+  pasar**; 57 de PASA a NIEGA.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 689 distintos, 571 con la misma decision, 112
+  de PASA a NIEGA, y **6 que `main` niega y la rama deja pasar, las seis ejecuciones de los anexos
+  `medir_b2.py`/`formas.py`/`formas_git.py`**: el falso positivo del literal de espacios (§1.13),
+  declarado; ninguna es un comando del proyecto.
+- **El coste de esta ronda** frente al commit anterior: 0 en los tres conjuntos (§1.28).
+
+### 1.30 CI de Linux de esta ronda
+
+Pendiente (el commit de esta ronda).
+
+### 1.31 Cuarta pasada del revisor
+
+Pendiente.
+
 ## Estado
 
-**PARADA (2026-10-07), tras la tercera pasada del revisor.** El revisor encontró hallazgos
-bloqueantes; unos los arreglo dentro de lo decidido (§1.27) y otros piden tu decisión de
-alcance (git, awk/sed, asignaciones por for/read). NO cerrada; espero tu respuesta.
+**EN CURSO (2026-10-08).** Adoptada la respuesta a §1.27 (git opcion B, awk/sed como lista de lo
+admitido, asignaciones por cualquier via), con coste 0 sobre los 572, los 32 de RITUAL y los
+runbooks. Falta la CI de Linux del ultimo commit y la cuarta pasada del revisor. NO cerrada.

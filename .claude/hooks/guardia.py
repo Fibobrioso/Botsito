@@ -1031,6 +1031,7 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
     if ctx.profundidad > 4:
         raise BloqueoError("demasiados niveles de `bash -c` o `$(...)` anidados para decidir")
     exigir_sin_crudo(texto, "el comando")
+    _exigir_sin_aritmetica(texto)
     lex = tokenizar(texto)
     for h in lex.heredocs:
         if not h.con_comillas and "\\" in h.cuerpo:
@@ -1056,6 +1057,7 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
         cabeza = cmd.argv[0].texto
         if cabeza == "for" and len(cmd.argv) >= 3 and cmd.argv[2].texto == "in":
             bucle = cmd.argv[1].texto
+            _exigir_for(bucle)
             valores: list[str] = []
             try:
                 for p in cmd.argv[3:]:
@@ -1351,9 +1353,14 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
     if programa is not None:  # `awk -f x`, `sed -f x`: un fichero de lenguaje desconocido
         guiones = [(programa, "desconocido")]
         exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} {programa.texto}", guiones=guiones)
-    modo = _modo_que_ejecuta(prog, args)
+    modo = _modo_que_ejecuta(prog, args, ctx, lex)
     if modo is not None:  # gh, sort, awk o sed en una forma que ejecuta codigo (§1.21)
         exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} ...", indecidible=modo)
+    if prog in BUILTINS_QUE_FIJAN:  # read, declare, let... fijan una variable (§1.27 punto 3)
+        _exigir_builtin_que_fija(prog, args, cmd)
+    if prog == "printf" and "-v" in [a.texto for a in args]:  # `printf -v NOMBRE`
+        destino = args[[a.texto for a in args].index("-v") + 1] if len(args) > 1 else Palabra("")
+        _exigir_builtin_que_fija("printf", [destino], cmd)
     if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
         _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
@@ -1498,12 +1505,28 @@ def _analizar_git(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico)
             raise BloqueoError(
                 f"`git -c core.hooksPath=...` salta los hooks.\nRegla: {R_NO_VERIFY}."
             )
+        if opcion == "-c":
+            clave = valor.split("=", 1)[0].lower()
+            if clave not in GIT_C_CLAVES:  # lista cerrada, hoy vacia (ninguna en los 572)
+                exigir_ejecucion_verificable(
+                    ctx,
+                    lex,
+                    cmd,
+                    f"git -c {clave}",
+                    indecidible=f"`git -c {clave}=...`: clave fuera de la lista cerrada; muchas "
+                    "ejecutan un programa (`core.sshCommand`, `core.pager`, `core.fsmonitor`...)",
+                )
         i += 2 if opcion in GIT_CON_VALOR else 1
     if i >= len(args):
         return
     sub = args[i].texto
     resto = args[i + 1 :]
     textos = [a.texto for a in resto]
+    # Las opciones de transporte que lanzan un programa, y las formas de config/remote/merge que
+    # ejecutan: solo las medidas (§1.27 punto 1).
+    modo_git = _git_transporte(sub, textos) or _modo_git(sub, textos)
+    if modo_git is not None:
+        exigir_ejecucion_verificable(ctx, lex, cmd, f"git {sub}", indecidible=modo_git)
     # Un subcomando fuera de la lista cerrada es una ejecucion (`git bisect run`, `submodule
     # foreach`...): respuesta del consultor a §1.21. Va DESPUES de lo que ya niega _analizar_git
     # (push, tag, borrados, --no-verify, cherry-pick, rebase), que no se toca; esos subcomandos
@@ -2174,6 +2197,12 @@ GIT_SUBCOMANDOS = {
 }  # fmt: skip
 # Un subcomando de gh es inocuo solo si su primera palabra esta aqui (de los 503: `run`, `auth`;
 # `gh alias set -s` ejecuta, revisor B3 c). `api` lee, pero su `--jq` no ejecuta codigo del repo.
+# Las claves de `git -c` admitidas: lista cerrada, hoy vacia (ninguna en los 572, los 32 de RITUAL
+# ni los runbooks). Con una clave, `git -c` se niega (§1.27 punto 1, opcion B).
+GIT_C_CLAVES: set[str] = set()
+# Las estrategias de `git merge -s` admitidas: lista cerrada, hoy vacia (el ritual usa `merge` sin
+# `-s`). Con `-s`, se niega.
+GIT_MERGE_ESTRATEGIAS: set[str] = set()
 GH_SUBCOMANDOS = {
     "run",
     "auth",
@@ -2205,6 +2234,8 @@ NOMBRES_DE_ENTORNO: dict[str, str] = {
     "S": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
     "W": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
     "R": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
+    "d": "variable de iteracion de un bucle `for` de los 572",
+    "n": "variable de iteracion de un bucle `for` de los 572",
 }
 PS_LANZADORES = frozenset({
     "start-process", "saps", "start", "invoke-item", "ii", "invoke-command", "icm", "cmd",
@@ -2236,23 +2267,46 @@ def _lanza_una_ejecucion(texto: str) -> bool:
 # Un programa de awk que ejecuta o escribe: `system(`, `getline`, una tuberia (`| "..."` o
 # `"..." |`), o redirigir (`print > fichero`). Los programas de los 503 (`{print $1}`, `NR==66`) no
 # casan.
-_AWK_EJECUTA = re.compile(r"\bsystem\s*\(|\bgetline\b|\|\s*[\"']|[\"']\s*\||(?<![<>=!])>")
+def _awk_admitido(programa: str) -> bool:
+    """Un programa de `awk` se admite solo si se puede decidir que no tiene `system`, `getline`,
+    una tuberia (`|`) ni una redireccion (`>`/`>>`): el `>` de comparacion si (§1.27 punto 2). Se
+    quitan antes las cadenas y las `/regex/` para no confundir su contenido."""
+    limpio = re.sub(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", '""', programa)
+    limpio = re.sub(r"/(?:\\.|[^/\\\n])+/", "//", limpio)
+    if re.search(r"\bsystem\s*\(|\bgetline\b|\||>>", limpio):
+        return False
+    # Un `>` de redireccion va tras un `print`/`printf` en la sentencia; el de comparacion, no.
+    for sentencia in re.split(r"[;{}\n]", limpio):
+        m = re.search(r"\b(print|printf)\b", sentencia)
+        if m and re.search(r"(?<![<>=!])>(?!=)", sentencia[m.end() :]):
+            return False
+    return True
 
 
-def _sed_ejecuta(programa: str) -> bool:
-    """Si un programa de `sed` ejecuta (`e`) o lee/escribe un fichero (`r`/`R`/`w`/`W`), o un `s///`
-    con el flag `e` o `w`. Se recorre el programa saltando los bloques `s<d>...<d>...<d>flags`,
-    `y<d>...<d>...<d>` y las direcciones `/regex/`, para no confundir el texto con un comando. Los
-    programas de los 503 (`s/\\r$//`, `1,60p`, `/a/,/b/p`) no ejecutan. Los comandos `a`/`i`/`c` con
-    texto y las etiquetas (`:`, `b`, `t`) son un limite declarado: no aparecen en los 503."""
-    i, n, resto = 0, len(programa), []
+def _sed_admitido(programa: str) -> bool:
+    """Un programa de `sed` se admite solo si cada comando es una direccion con `p`, `d`, `=`, `q`
+    o `n`, o un `s///`/`y///` sin las banderas `e` ni `w` (§1.27 punto 2). Cualquier otro comando
+    -`e`, `r`, `R`, `w`, `W`, `a`, `i`, `c`, etiquetas...- se niega. Se recorre saltando los bloques
+    `s<d>...<d>...<d>` y `y<d>...<d>...<d>` y las direcciones `/regex/`."""
+    i, n = 0, len(programa)
     while i < n:
         ch = programa[i]
-        if (
+        if ch in " \t\n;{}!":
+            i += 1
+        elif ch.isdigit() or ch in "$,~+":
+            i += 1  # una direccion numerica o de rango
+        elif ch == "/":  # una direccion /regex/
+            j = i + 1
+            while j < n and programa[j] != "/":
+                j += 2 if programa[j] == "\\" else 1
+            if j >= n:
+                return False
+            i = j + 1
+        elif (
             ch in "sy"
             and i + 1 < n
             and not programa[i + 1].isalnum()
-            and not programa[i + 1].isspace()
+            and programa[i + 1] not in " \t"
         ):
             d, j, partes = programa[i + 1], i + 2, 0
             while j < n and partes < 2:
@@ -2266,29 +2320,32 @@ def _sed_ejecuta(programa: str) -> bool:
             while j < n and programa[j].isalpha():
                 flags += programa[j]
                 j += 1
-            if ch == "s" and ("e" in flags or "w" in flags):
-                return True
+            if partes < 2 or (ch == "s" and ("e" in flags or "w" in flags)):
+                return False
             i = j
-        elif ch == "/":  # una direccion /regex/
-            j = i + 1
-            while j < n and programa[j] != "/":
-                j += 2 if programa[j] == "\\" else 1
-            i = j + 1
-        else:
-            resto.append(ch)
+        elif ch in "pdq=n":
             i += 1
-    return re.search(r"[eErRwW]", "".join(resto)) is not None
+        else:
+            return False  # cualquier otro comando (e, r, R, w, W, a, i, c, b, t, :, l...)
+    return True
 
 
 def _programa_awk_sed_ejecuta(prog: str, programa: str) -> bool:
+    """True si el programa NO esta en la lista de lo admitido (§1.27 punto 2)."""
     if prog == "sed":
-        return _sed_ejecuta(programa)
-    return _AWK_EJECUTA.search(programa) is not None
+        return not _sed_admitido(programa)
+    return not _awk_admitido(programa)
 
 
-def _modo_que_ejecuta(prog: str, args: list[Palabra]) -> str | None:
+# Las opciones de awk/sed con VALOR que no es el programa (se saltan para hallar el operando).
+_AWK_OPCION_VALOR = {"-F", "--field-separator", "-v", "--assign"}
+_SED_OPCION_VALOR = {"-l", "--line-length"}
+_INLINE = {"-e", "--expression", "--source"}  # su valor es un programa EN LINEA
+
+
+def _modo_que_ejecuta(prog: str, args: list[Palabra], ctx: Contexto, lex: Lexico) -> str | None:
     """Por que `gh`, `sort`, `awk` o `sed` -en NO_EJECUTAN- ejecutan codigo en ESTA forma, o None.
-    La forma admitida es una lista cerrada sacada de los 503 comandos reales (§1.21)."""
+    La forma admitida es una lista cerrada (§1.21, §1.27)."""
     textos = [a.texto for a in args]
     if prog == "gh":
         sub = next((t for t in textos if not t.startswith("-")), "")
@@ -2299,13 +2356,164 @@ def _modo_que_ejecuta(prog: str, args: list[Palabra]) -> str | None:
         if mala is not None:
             return f"`sort {mala}`: ejecuta un programa externo"
     elif prog in {"awk", "gawk", "sed"}:
-        programa = next((t for t in textos if not t.startswith("-")), None)
-        if programa is not None and _programa_awk_sed_ejecuta(prog, programa):
-            accion = (
-                "`system()`, `getline` o una redireccion" if prog != "sed" else "`e`, `r` o `w`"
-            )
-            return f"`{prog}` con un programa que ejecuta o escribe ({accion})"
+        for palabra in _piezas_de_programa(prog, args):
+            valores = _valores(palabra, ctx, lex)
+            if valores is None:
+                return (
+                    f"`{prog}` con un programa que se construye al ejecutarse: no se puede decidir"
+                )
+            for programa in valores:
+                if _programa_awk_sed_ejecuta(prog, programa):
+                    admitido = (
+                        "direcciones con p/d/=/q/n y s///, y/// sin e ni w"
+                        if prog == "sed"
+                        else "sin system, getline, tuberia ni redireccion"
+                    )
+                    return f"`{prog}` con un programa fuera de la lista de lo admitido ({admitido})"
     return None
+
+
+def _piezas_de_programa(prog: str, args: list[Palabra]) -> list[Palabra]:
+    """Las piezas de programa de un `awk`/`sed`: el operando y cada `-e`/`--expression`/`--source`.
+    Los `-f`/`--file` son ficheros, y los niega `_fichero_de_programa` aparte."""
+    valor_opts = _AWK_OPCION_VALOR if prog != "sed" else _SED_OPCION_VALOR
+    piezas: list[Palabra] = []
+    visto_programa = False  # tras un `-e`/`-f` o el operando, lo que sigue es un fichero de entrada
+    i = 0
+    while i < len(args):
+        tx = args[i].texto
+        clave, igual, valor = tx.partition("=")
+        if clave in _INLINE:
+            piezas.append(
+                Palabra(valor) if igual else (args[i + 1] if i + 1 < len(args) else Palabra(""))
+            )
+            visto_programa = True
+            i += 1 if igual else 2
+            continue
+        if clave in {"-f", "--file"}:  # el programa viene del fichero (lo niega _fichero_de_prog.)
+            visto_programa = True
+            i += 1 if igual else 2
+            continue
+        if clave in valor_opts:  # `-F`/`-v`/`-l`: un valor que NO es el programa
+            i += 1 if igual else 2
+            continue
+        if tx.startswith("-") and tx != "-":
+            if prog == "sed" and re.fullmatch(r"-[A-Za-z]+", tx):  # cluster corto (`-ne`, `-nf`)
+                letra = next((ch for ch in tx[1:] if ch in "ef"), None)
+                if letra is not None:
+                    pegado = tx[tx.index(letra) + 1 :]
+                    if letra == "e":
+                        piezas.append(
+                            Palabra(pegado)
+                            if pegado
+                            else (args[i + 1] if i + 1 < len(args) else Palabra(""))
+                        )
+                    visto_programa = True
+                    i += 1 if pegado else 2
+                    continue
+            i += 1
+            continue
+        if not visto_programa:
+            piezas.append(args[i])
+            visto_programa = True
+        i += 1
+    return piezas
+
+
+def _git_transporte(sub: str, textos: list[str]) -> str | None:
+    """`--upload-pack`/`--receive-pack`/`--exec` lanzan un programa en el otro extremo (§1.27)."""
+    opt = next(
+        (
+            t.split("=", 1)[0]
+            for t in textos
+            if t.split("=", 1)[0] in {"--upload-pack", "--receive-pack", "--exec"}
+        ),
+        None,
+    )
+    return f"`git {sub} {opt}` lanza un programa en el otro extremo" if opt else None
+
+
+def _modo_git(sub: str, textos: list[str]) -> str | None:
+    """Por que `git config`, `remote` o `merge` ejecutan en ESTA forma, o None. Solo se admiten las
+    formas medidas en los 572 comandos reales, los 32 de RITUAL y los runbooks (§1.27 punto 1):
+    `config` y `remote` de solo lectura, y `merge` sin `-s`."""
+    posicionales = [x for x in textos if not x.startswith("-")]
+    if sub == "config":
+        if any("core.hookspath" in x.lower() for x in textos):
+            return None  # lo niega el manejador especifico con R_NO_VERIFY
+        lee = any(
+            o in textos
+            for o in ("--get", "--get-all", "--get-regexp", "--get-urlmatch", "--list", "-l")
+        )
+        # Una sola clave y sin valor es un `get` (la forma medida, `config core.autocrlf`); fijar
+        # una clave (dos posicionales o `--add`/`--replace-all`/`--unset`) se niega.
+        if lee or (len(posicionales) <= 1 and not (set(textos) & {"--add", "--replace-all"})):
+            return None
+        return "`git config` que fija un valor: solo se admite leer la configuracion"
+    if sub == "remote":
+        if not posicionales or posicionales[0] in {"show", "get-url", "-v", "--verbose"}:
+            return None
+        return f"`git remote {posicionales[0]}`: solo se admite leer los remotos (`-v`, `show`)"
+    if sub == "merge":
+        estrategia = _tras_opcion([Palabra(x) for x in textos], {"-s", "--strategy"})
+        if estrategia is not None and estrategia not in GIT_MERGE_ESTRATEGIAS:
+            return f"`git merge -s {estrategia}`: estrategia fuera de la lista cerrada"
+    return None
+
+
+# Los builtins del shell que FIJAN una variable (§1.27 punto 3): se niegan si fijan un nombre fuera
+# de `NOMBRES_DE_ENTORNO`. `let`, `(( ))` y `getopts` se niegan enteros (fijan nombres que la
+# guardia no puede atar a la lista con seguridad); ninguno aparece en los 572.
+BUILTINS_QUE_FIJAN = {
+    "read", "declare", "typeset", "local", "readonly", "mapfile", "readarray", "getopts", "let",
+}  # fmt: skip
+
+
+def _exigir_for(bucle: str) -> None:
+    """La variable de un bucle `for` solo puede ser un nombre de la lista (§1.27 punto 3)."""
+    if not _nombre_admitido(bucle):
+        _niega(
+            f"for {bucle}",
+            f"el bucle `for` fija `{bucle}`, que no esta en la lista (`NOMBRES_DE_ENTORNO`)",
+        )
+
+
+def _exigir_sin_aritmetica(texto: str) -> None:
+    """Un comando aritmetico `(( ... ))` fija variables del shell (§1.27 punto 3); `$(( ... ))` es
+    una expansion y la trata el tokenizador."""
+    if re.search(r"(?:^|[;&|\n]|\bdo\b|\bthen\b|\belse\b)\s*\(\(", texto):
+        _niega(
+            "(( ... ))",
+            "un comando aritmetico `(( ... ))` fija una variable del shell que la guardia no puede "
+            "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
+        )
+
+
+def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> None:
+    textos = [a.texto for a in args]
+    if prog in {"let", "getopts"} or prog == "mapfile" or prog == "readarray":
+        # `let x=1`, `getopts o v`, `mapfile -t x`: el nombre puede no ser literal o venir de una
+        # expresion; se niega salvo que TODOS los nombres que se vean esten en la lista.
+        nombres = [
+            x.split("=", 1)[0] for x in textos if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(=.*)?", x)
+        ]
+        if prog in {"let"} or any(not _nombre_admitido(n) for n in nombres) or not nombres:
+            _niega(
+                f"{prog} {' '.join(textos[:2])}",
+                f"`{prog}` fija una variable del shell, y su nombre no se puede atar a la lista "
+                "cerrada (`NOMBRES_DE_ENTORNO`)",
+            )
+        return
+    # read / declare / typeset / local / readonly: cada nombre que fijan, de la lista.
+    for a in args:
+        if a.texto.startswith("-"):
+            continue
+        nombre = a.texto.split("=", 1)[0]
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
+            _niega(
+                f"{prog} {nombre}",
+                f"`{prog}` fija `{nombre}`, que no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`)",
+            )
 
 
 def _no_ejecuta(prog: str) -> bool:
