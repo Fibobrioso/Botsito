@@ -2163,7 +2163,11 @@ negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
 
 ### 1.42 CI de Linux de esta ronda
 
-<<CI6>>
+La sexta ronda (commit `817cb4b`): run 37843956323, `failure` con **1 failed, 2444 passed, 8
+skipped**; el unico fallo, `test_state_check_ok_on_real_repo` (el aceptado, por el nombre `fix/`). La
+septima, con la finalizacion (commit `aa1384a`): run 37849485286, `failure` con **1 failed, 2445
+passed, 8 skipped**, el mismo fallo aceptado. Ningun test de la guardia falla en Linux en ninguna de
+las dos.
 
 ### 1.43 Orden de corte del consultor (2026-10-08), tal cual
 
