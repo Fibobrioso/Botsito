@@ -11,16 +11,16 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-trabajo/guion-mismo-comando
+main
 
 ## Current Feature
-`trabajo/guion-mismo-comando` EN CURSO (2026-10-07): la guardia solo deja ejecutar un guion si es seguro que lo que se ejecuta es lo que leyo, negando por defecto (punto V). Encargo docs/encargos/trabajo-guion-mismo-comando.md; informe docs/validation/GUION-MISMO-COMANDO.md.
+`main` en `stable/F37g-guion-mismo-comando` (8d1578d): la guardia de Claude Code solo deja ejecutar lo que puede decidir, negando por defecto (`exigir_ejecucion_verificable`); punto V hecho. Sin ramas abiertas; manda la Next Action. Informe docs/validation/GUION-MISMO-COMANDO.md.
 
 ## Stable Main State
-9a313e0 · merge de `trabajo/umbral-mayo` (tag `stable/F37f-umbral-mayo`): ADR-0070, mayo solo se mide cuando una corrida del arnes sobre todo construccion, simulada con el perfil de la cuenta real y su primera fase y solo con las opciones de una lista cerrada, llega a 0,70 de cobertura y 0,60 de precision; los umbrales y el perfil en criterio_fidelidad.yaml y la linea de veredicto en el informe del arnes. Sobre `stable/F37e-respaldo-a11` (92312e3). Informe docs/validation/UMBRAL-MAYO.md; el registro del cierre, al final de HISTORIA.
+8d1578d · merge de `trabajo/guion-mismo-comando` (tag `stable/F37g-guion-mismo-comando`): la guardia de Claude Code deja ejecutar solo si es seguro que lo que corre es lo que leyo, negando por defecto (`exigir_ejecucion_verificable`); un builtin no admitido, una via que fija una variable, y las formas de git/awk/sed/sort que ejecutan se niegan por lista cerrada o condicion. Sobre `stable/F37f-umbral-mayo` (9a313e0). Informe docs/validation/GUION-MISMO-COMANDO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-9a313e0 · merge: mayo solo se mide cuando una corrida simulada del arnes sobre construccion, con la lista cerrada de opciones, llega al umbral de ADR-0043 (ADR-0070, UMBRAL-MAYO.md) · tag stable/F37f-umbral-mayo
+8d1578d · merge: la guardia solo deja ejecutar lo que puede decidir, negando por defecto (GUION-MISMO-COMANDO.md) · tag stable/F37g-guion-mismo-comando
 
 ## Tests Currently Passing
 1418 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
