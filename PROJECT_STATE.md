@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/guion-mismo-comando
 
 ## Current Feature
-NINGUNA ABIERTA tras `stable/F37f-umbral-mayo` (2026-10-07).
+`trabajo/guion-mismo-comando` EN CURSO (2026-10-07): la guardia solo deja ejecutar un guion si es seguro que lo que se ejecuta es lo que leyo, negando por defecto (punto V). Encargo docs/encargos/trabajo-guion-mismo-comando.md; informe docs/validation/GUION-MISMO-COMANDO.md.
 
 ## Stable Main State
 9a313e0 · merge de `trabajo/umbral-mayo` (tag `stable/F37f-umbral-mayo`): ADR-0070, mayo solo se mide cuando una corrida del arnes sobre todo construccion, simulada con el perfil de la cuenta real y su primera fase y solo con las opciones de una lista cerrada, llega a 0,70 de cobertura y 0,60 de precision; los umbrales y el perfil en criterio_fidelidad.yaml y la linea de veredicto en el informe del arnes. Sobre `stable/F37e-respaldo-a11` (92312e3). Informe docs/validation/UMBRAL-MAYO.md; el registro del cierre, al final de HISTORIA.
@@ -23,7 +23,7 @@ NINGUNA ABIERTA tras `stable/F37f-umbral-mayo` (2026-10-07).
 9a313e0 · merge: mayo solo se mide cuando una corrida simulada del arnes sobre construccion, con la lista cerrada de opciones, llega al umbral de ADR-0043 (ADR-0070, UMBRAL-MAYO.md) · tag stable/F37f-umbral-mayo
 
 ## Tests Currently Passing
-1383 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1418 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -31,7 +31,11 @@ NINGUNA ABIERTA tras `stable/F37f-umbral-mayo` (2026-10-07).
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
-V. La guardia de Claude Code no inspecciona un guion creado en el mismo comando que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.
+B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
+
+C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /, f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test que lo rompa a propósito.
+
+D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).
 
@@ -39,7 +43,7 @@ X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a l
 
 Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.
 
-A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27.
+A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27. La prueba gratuita de la ejecución 1 se creó el 2026-10-08 (2-Step, Swing, USD, 100k, MT5) y vence hacia el 22 de octubre: la ejecución 1 va antes de esa fecha. Las ejecuciones 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro (decisión del consultor en docs/encargos/trabajo-guion-mismo-comando.md).
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
@@ -200,9 +204,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 22 (2026-10-07).
+— ninguna desde el Archivo 23 (2026-10-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 22 (2026-10-07).
+— ninguna desde el Archivo 23 (2026-10-07).

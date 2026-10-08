@@ -1,0 +1,22 @@
+comandos: 768
+
+== builtin que fija
+   11  'printf'
+
+== for (variable)
+    3  'd'
+    1  'n'
+
+== git config
+    1  'config core.autocrlf'
+
+== git merge
+    2  'merge --abort'
+    1  'merge --no-ff trabajo/ merge: <qué entra, en una línea>'
+    1  'merge --no-ff trabajo/activacion-a42 -m'
+    1  'merge --no-ff trabajo/guardias-claude -m'
+    1  'merge --no-ff trabajo/respaldo-a11 -m'
+    1  'merge --no-ff trabajo/umbral-mayo -m'
+
+== git remote
+    1  'remote -v'

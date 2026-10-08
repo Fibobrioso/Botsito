@@ -104,6 +104,9 @@ def repo(tmp_path: Path) -> Path:
         "scripts/huso_por_velas.py",
         "scripts/otro.py",
         ".gitignore",
+        # `make` es una ejecucion: su `Makefile` tiene que ser el de `main`
+        # (`trabajo/guion-mismo-comando`, decision 3 del consultor).
+        "Makefile",
     ):
         _escribir(r, rel)
     (r / ".gitignore").write_text("/corpus/\n/data/*\n", encoding="utf-8")
@@ -244,7 +247,7 @@ def test_lo_indecidible_que_no_puede_leer_nada_pasa(g: ModuleType, repo: Path) -
     for comando in (
         'echo "$HOME" && git log -1 --format=%H',
         'git commit -m "$(printf x)"',
-        'for f in docs/*.md; do wc -l "$f"; done',
+        'for d in docs/*.md; do wc -l "$d"; done',  # `d` es una variable de bucle de la lista
         'cd src && grep -rn "def " botsito',
     ):
         assert _bash(g, repo, comando) is None, comando
@@ -988,3 +991,826 @@ def test_los_ajustes_locales_no_se_versionan() -> None:
         ["git", "check-ignore", "-q", ".claude/settings.json"], cwd=RAIZ, check=False
     )
     assert r.returncode == 1
+
+
+# ---------------------------- la ejecucion verificable (`trabajo/guion-mismo-comando`, 2026-10-07)
+# Una sola condicion, `exigir_ejecucion_verificable`: la guardia solo deja ejecutar codigo si es
+# SEGURO que lo que se ejecuta es lo que ella lee al inspeccionar el comando. Los tests la rompen a
+# proposito: cada caso de la fase 0 (GUION-MISMO-COMANDO.md §0.b), cada via de §0.a, cada elemento
+# de la lista cerrada y lo que queda fuera. El anexo `sin_condicion.py` comprueba que fallan si se
+# quita la condicion.
+def _ejecucion(repo: Path) -> str:
+    """El guion malo `a.py`, NUEVO en la rama (sin seguir): imprime un fichero del holdout del repo
+    sintetico. Y `inocuo.py`, tambien nuevo, que no nombra nada."""
+    holdout = repo / "knowledge" / "cases" / "holdout" / "1" / "etiquetas.yaml"
+    malo = f"print(open(r'{holdout}').read())\n"
+    _escribir(repo, "a.py", malo)
+    _escribir(repo, "inocuo.py", "print('hola')\n")
+    _escribir(repo, "existente.py", "print('inocuo al inspeccionar')\n")
+    _escribir(repo, "suelto/test_malo.py", malo)
+    _escribir(repo, "malo.sh", f"cat {holdout.as_posix()}\n")
+    return malo
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "cp a.py b.py && uv run python b.py",  # b1: el guion no existe al inspeccionar
+        "cp a.py existente.py && uv run python existente.py",  # b1': existe, inocuo
+        "cp a.py scripts/otro.py && uv run python scripts/otro.py",  # b2: el de main
+        "cat > x.py <<'EOF'\n{MALO}EOF\npython x.py",  # b3
+        "cat > x.py <<'EOF' && python x.py\n{MALO}EOF\n",  # b3'
+        "python x.py $(cp a.py x.py)",  # b4
+        "echo $(cp a.py x.py); python x.py",  # b4'
+        "PYTHONUTF8=$(cp a.py x.py) python x.py",  # b4''
+        "cp a.py x.py & python x.py",  # b5
+        "cat a.py | tee x.py && python x.py",  # b5'
+        "cat a.py | tee x.py | python x.py",  # b5''
+        "cp a.py otros/test_nuevo.py && uv run pytest otros/test_nuevo.py",  # b6
+        "cp a.py tests/unit/test_nuevo.py && uv run pytest tests/unit/test_nuevo.py",
+        "python existente.py <(cp a.py existente.py)",  # sustitucion de proceso
+        "python existente.py & cp a.py existente.py",  # en segundo plano, a la vez
+        "python existente.py > existente.py",  # la salida, a su propio guion
+        "echo hola | python existente.py",  # lo que va antes por la tuberia
+        # revisor, B1: el programa, por su NOMBRE y con las opciones globales de `uv`
+        "cp a.py b.py && uv -q run python b.py",
+        "cp a.py b.py && uv --no-cache run python b.py",
+        "cp a.py b.py && /usr/bin/env python b.py",
+        "cp a.py b.py && uv run botsito state check",  # botsito es una ejecucion (revisor 2, B8)
+        "cp a.py b.py && python --version",  # tambien lo que no corre codigo, por la funcion (A3)
+    ],
+)
+def test_ejecucion_cambiada_en_el_mismo_comando_se_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    motivo = _bash(g, repo, comando.replace("{MALO}", malo))
+    assert motivo is not None and g.R_EJECUCION in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "bash malo.sh"),  # via 2: el guion de shell, leido como bash
+        ("Bash", "python < a.py"),  # via 4: la entrada estandar, leida como guion
+        ("Bash", "python -m a"),  # via 5: `-m` solo para pytest
+        ("Bash", "uv run pytest suelto"),  # via 6: un directorio fuera de tests/
+        ("Bash", "make x"),  # via 7: el Makefile cambiado en la rama (lo cambia el test)
+        ("Bash", 'pwsh -c "python inocuo.py"'),  # via 8, desde Bash
+        ("PowerShell", "python inocuo.py"),  # via 8
+        ("PowerShell", "uv run botsito state check"),  # via 8
+        ("PowerShell", "& ./x.ps1"),  # via 8: el operador de llamada
+        ("Bash", "./a.py"),  # via 9: un fichero como programa
+        ("Bash", "uv run a.py"),  # via 9
+        ("Bash", "python3.12 a.py"),  # via 9: el interprete con version
+        ("Bash", "nice -n 5 python a.py"),  # via 9: el envoltorio con sus opciones
+        ("Bash", "timeout -s KILL 5 python a.py"),  # via 9
+        ("Bash", "winpty python inocuo.py"),  # via 9: un lanzador que la guardia no conoce
+        ("Bash", "find docs -exec python inocuo.py \\;"),  # via 10
+        ("Bash", "git -c alias.x='!python inocuo.py' x"),  # via 11
+        ("Bash", "python - <<'EOF'\n{MALO}EOF\n"),  # el heredoc, leido entero
+        ("Bash", "/usr/bin/env python a.py"),  # revisor, B1
+        ("Bash", "uv --directory . run python a.py"),  # revisor, B1
+        ("Bash", "uv tool run python a.py"),  # revisor, B1
+        ("Bash", "uvx ./a.py"),  # revisor, B1
+        ("Bash", "{python,a.py}"),  # revisor, B1: expansion de llaves
+        ("Bash", "xargs python < docs/a.md"),  # via 12, por la funcion (revisor, A1)
+        ("Bash", "eval 'python inocuo.py'"),  # via 13
+        ("Bash", "cmd /c python inocuo.py"),  # via 14
+        ("Bash", "git --config-env=alias.x=CMD x"),  # revisor, B3
+    ],
+)
+def test_ejecucion_cada_via_pasa_por_la_condicion(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    _escribir(repo, "Makefile", "x:\n\tpython inocuo.py\n")  # distinto del de main
+    motivo = _decide(g, repo, herramienta, command=comando.replace("{MALO}", malo))
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "uv run python inocuo.py",
+        "cd docs && uv run python ../inocuo.py",  # cd
+        "S=hola; python inocuo.py",  # asignacion suelta con un nombre de la lista
+        "PYTHONUTF8=1 python inocuo.py",  # asignacion literal que precede al comando
+        "export PYTHONUTF8=1 && python inocuo.py",  # export literal
+        "set -e; python inocuo.py",
+        "set -u; python inocuo.py",
+        "set -o pipefail; python inocuo.py",
+        "set -euo pipefail; python inocuo.py",  # combinacion
+        "python inocuo.py 2>&1 | head -3",
+        "python inocuo.py | tail -3",
+        "python inocuo.py | grep hola",
+        "python inocuo.py | wc -l",
+        "python inocuo.py | sort",
+        "python inocuo.py | uniq -c",
+        "python inocuo.py | cut -c1-10",
+        "python inocuo.py > salida.txt 2>&1; echo $?",  # lo de despues, en otro comando
+        "python -X utf8 inocuo.py",
+        "uv run --with pyyaml python inocuo.py",
+        "python --version",
+        "grep python docs/a.md",  # un lector cuyo patron se llama python
+        "command -v python",
+        "uv run pytest -p no:cacheprovider tests/unit -q",
+        "uv -q run python inocuo.py",  # opcion global de uv
+        "timeout 60 python inocuo.py",
+        "uv --version",
+    ],
+)
+def test_ejecucion_lo_de_la_lista_cerrada_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "inventado && python inocuo.py",  # un programa inventado antes
+        "grep hola docs/a.md && python inocuo.py",  # un lector antes: tampoco esta en la lista
+        "python inocuo.py && python existente.py",  # una ejecucion antes de otra
+        "PYTHONUTF8=$Y python inocuo.py",  # asignacion no literal
+        "PYTHONUTF8=$(echo 1) python inocuo.py",
+        "export PYTHONUTF8=$Y; python inocuo.py",
+        "set -x; python inocuo.py",
+        "cd docs > f.txt && python ../inocuo.py",  # una redireccion antes
+        "python inocuo.py | tee salida.txt",
+        "python inocuo.py | sort -o salida.txt",
+        "python inocuo.py | uniq - salida.txt",
+        "python inocuo.py | cat",  # un programa conocido que no es un filtro
+        "python",  # sin guion ni codigo
+        "python -m json.tool docs/a.md",
+        "env -S 'python inocuo.py'",
+        "uv run --opcion-inventada python inocuo.py",
+        "uv run pytest -p mi_plugin tests/unit",
+        "cd docs && uv run pytest",  # sin rutas fuera de la raiz
+        "python nuevo.py",  # no existe
+        "cd && python inocuo.py",  # `cd` a secas va a HOME (revisor, B4)
+        "cd - && python inocuo.py",
+        "uv run pytest -o addopts=-pmi_plugin tests/unit",  # revisor, B3
+        "uv run pytest -c otro.ini tests/unit",  # revisor, B3
+        "uv run pytest -n $X tests/unit",  # revisor, A3
+        "timeout -n eval python inocuo.py",  # revisor, A3: opcion que no conoce
+        "timeout $X python inocuo.py",  # revisor, A3: duracion no literal
+    ],
+)
+def test_ejecucion_lo_de_fuera_de_la_lista_se_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+def test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo(g: ModuleType, repo: Path) -> None:
+    motivo = _bash(g, repo, "uv run python nuevo.py")
+    assert motivo is not None and "no existe" in motivo
+    assert "Write" in motivo and "OTRA llamada" in motivo
+
+
+def test_ejecucion_make_solo_con_el_makefile_de_main(g: ModuleType, repo: Path) -> None:
+    assert _bash(g, repo, "make check > make-check.log 2>&1") is None
+    _escribir(repo, "Makefile", "check:\n\tpython inocuo.py\n")
+    motivo = _bash(g, repo, "make check > make-check.log 2>&1")
+    assert motivo is not None and "no es el de `main`" in motivo and "Aleks" in motivo
+    assert _bash(g, repo, "make -f otro.mk check > make-check.log 2>&1") is not None
+
+
+# --- que activa la condicion y lo que la configura, en listas cerradas (respuesta del consultor a
+# §1.12, 2026-10-07): todo programa fuera de `NO_EJECUTAN` es una ejecucion; el fichero que recibe
+# un programa desconocido, si no es el de `main`, se niega; y los nombres de entorno, cerrados.
+PROHIBIDOS = [
+    "PYTHONPATH",
+    "PYTHONSTARTUP",
+    "PYTHONHOME",
+    "BASH_ENV",
+    "ENV",
+    "NODE_OPTIONS",
+    "PERL5OPT",
+    "RUBYOPT",
+    "LD_PRELOAD",
+    "LD_LIBRARY_PATH",
+]
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "cp a.py b.php && php b.php",  # (a): un programa desconocido, con algo delante
+        "cp a.py b.py && setsid ./b.py",
+        "php nuevo.php",  # (b): un fichero nuevo que puede ser lo que ejecuta
+        "inventado docs/nuevo.md",  # (b): cualquier fichero que no es el de main
+        "inventado $X",  # un argumento que se construye al ejecutarse
+        "sudo make check > make-check.log 2>&1",  # lanza un programa que ejecuta
+        "winpty python inocuo.py",
+        "trap 'python inocuo.py' EXIT",  # `trap` sale de los lectores
+        "awk -f a.py docs/a.md",  # un fichero de programa: lenguaje desconocido
+        "awk -fa.py docs/a.md",
+        "gawk --file=a.py docs/a.md",
+        "sed -f a.py docs/a.md",
+    ],
+)
+def test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    _escribir(repo, "nuevo.php", "<?php echo 1;")
+    _escribir(repo, "docs/nuevo.md", "x\n")
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "inventado --version",  # un programa desconocido sin ficheros ni nada delante
+        "php scripts/otro.py",  # el fichero es el de main: codigo revisado
+        "awk '{print $1}' docs/a.md",  # el programa va en el comando
+        "sed -n 1p docs/a.md",
+        "trap",
+        "grep -n python docs/a.md",
+    ],
+)
+def test_ejecucion_lo_que_si_se_puede_decidir_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize("nombre", PROHIBIDOS)
+def test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega(
+    g: ModuleType, repo: Path, nombre: str
+) -> None:
+    _ejecucion(repo)
+    for comando in (
+        f"{nombre}=x python inocuo.py",  # el que precede al comando
+        f"export {nombre}=x",
+        f"env {nombre}=x python inocuo.py",
+        f"declare -x {nombre}=x",
+        f"{nombre}=x git commit -m hola",  # tambien sin ejecucion: los hooks de git son codigo
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+    assert nombre not in g.NOMBRES_DE_ENTORNO
+
+
+def test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada(g: ModuleType, repo: Path) -> None:
+    _ejecucion(repo)
+    for comando in (
+        "PYTHONUTF8=1 python inocuo.py",
+        "BOTSITO_ALLOW_MAIN=1 git commit -m hola",
+        "S=hola; python inocuo.py",  # una variable del shell de la lista (S, W, R)
+        "W=x; R=y; python inocuo.py",
+    ):
+        assert _bash(g, repo, comando) is None, comando
+    # Respuesta del consultor a §1.21, punto 3: TODA asignacion, tambien la suelta a un nombre no
+    # exportado, solo admite los nombres de la lista.
+    for comando in (
+        "MI_NOMBRE_INVENTADO=1 python inocuo.py",  # cualquier nombre fuera de la lista
+        "X=hola; python inocuo.py",  # suelta, no exportada: antes pasaba, ahora se niega
+        "CDPATH=sub; cd scripts && python de_main.py",  # bash interpreta CDPATH sin exportarla
+        "IFS=x python inocuo.py",
+        "PATH=.; python x.py",  # con PATH cambiado, `python` podria ser un fichero de la carpeta
+        "PATH=. python x.py",
+        "export MI_NOMBRE_INVENTADO=1",
+        "declare -x BASH_ENV=x.sh",
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+def test_ejecucion_las_dos_listas_cerradas_dicen_su_porque(g: ModuleType) -> None:
+    for lista in (g.NO_EJECUTAN, g.NOMBRES_DE_ENTORNO):
+        assert all(isinstance(v, str) and len(v) > 10 for v in lista.values()), lista
+    assert "trap" not in g.NO_EJECUTAN and "trap" not in g.LECTOR_DE_METADATOS
+    for programa in ("python", "pytest", "make", "botsito", "bash", "php", "sudo", "awk -f"):
+        assert programa not in g.NO_EJECUTAN, programa
+
+
+# --- segunda pasada del revisor: lo que pasaba sin ser decidido, dentro de lo ya decidido
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "node -r ./a.py inocuo.py"),  # B1: lo que carga una opcion es codigo
+        ("Bash", "node --require=./a.py inocuo.py"),
+        ("Bash", "node --import ./a.py inocuo.py"),
+        ("Bash", "ruby -r ./a.py inocuo.py"),
+        ("Bash", "node -r dotenv/config inocuo.py"),  # un modulo por su nombre: no se resuelve
+        ("Bash", "bash --rcfile malo.sh -i -c true"),  # B6 c
+        ("PowerShell", "Write-Output ( php x.php )"),  # B2: con espacio tras el parentesis
+        ("PowerShell", "Write-Output $( cscript x.js )"),
+        ("PowerShell", "Write-Output @( php x.php )"),
+        ("PowerShell", "Get-Content docs/a.md; ( php x.php )"),
+        ("PowerShell", "git -c alias.x='!python a.py' x"),
+        ("Bash", "find docs -exec ls {} \\; -exec python a.py \\;"),  # B3 d: el segundo -exec
+        ("Bash", "xargs -a docs/a.md python a.py"),  # B3 e: el valor de -a no es el programa
+        ("Bash", "xargs --arg-file=docs/a.md python a.py"),
+        ("Bash", "xargs --opcion-inventada python"),
+        ("Bash", 'watch "python a.py"'),  # B4: una cadena de comando como argumento
+        ("Bash", 'su -c "python a.py"'),
+        ("Bash", 'ssh -o ProxyCommand="python a.py" host'),
+        ("Bash", "tar --checkpoint=1 --checkpoint-action=exec=./a.py -cf out.tar inocuo.py"),
+        ("Bash", "vim -c '!python a.py'"),
+        ("Bash", "php {a,b}.py"),
+        ("Bash", "./git status"),  # B5: un fichero con nombre de programa
+        ("Bash", "sub/git status"),
+        ("Bash", "./python inocuo.py"),
+        ("Bash", "uv run --directory sub python scripts/otro.py"),  # B6 a
+        ("Bash", "env -C sub python scripts/otro.py"),
+        ("Bash", "uv run --env-file x.env python inocuo.py"),  # B6 b
+        ("Bash", "uv run --with ./paquete python inocuo.py"),
+        ("Bash", "sed -nf a.py docs/a.md"),  # B7: banderas agrupadas
+        ("Bash", "sed -sf a.py docs/a.md"),
+        ("Bash", "gawk -nf a.py docs/a.md"),
+    ],
+)
+def test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    malo = _ejecucion(repo)
+    for rel in ("git", "sub/git", "python"):
+        _escribir(repo, rel, "#!/usr/bin/env python\n" + malo)
+    _escribir(repo, "sub/scripts/otro.py", malo)
+    _escribir(repo, "x.env", "PYTHONSTARTUP=a.py\n")
+    motivo = _decide(g, repo, herramienta, command=comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    ("herramienta", "comando"),
+    [
+        ("Bash", "sed -n -e 1p docs/a.md"),
+        ("Bash", "sed -i.bak -e 1p docs/a.md"),
+        ("Bash", "awk -F: '{print $1}' docs/a.md"),
+        ("Bash", "find docs -name x -exec ls {} \\;"),
+        ("Bash", "echo docs/a.md | xargs -0 ls"),
+        ("Bash", "node --version"),
+        ("Bash", "uv run --with pyyaml python inocuo.py"),
+        ("PowerShell", "Write-Output (Get-Content docs/a.md)"),
+    ],
+)
+def test_ejecucion_lo_que_la_segunda_pasada_no_toca_pasa(
+    g: ModuleType, repo: Path, herramienta: str, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _decide(g, repo, herramienta, command=comando)
+    assert motivo is None, (comando, motivo)
+
+
+# --- respuesta a §1.21, punto 1: un programa de NO_EJECUTAN solo es inocuo en una forma de la lista
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git bisect run python a.py",  # subcomando fuera de la lista: ejecuta
+        "git submodule foreach 'python a.py'",
+        "git filter-branch --tree-filter 'python a.py'",
+        "gh alias set -s x 'python a.py'",  # gh: subcomando fuera de la lista
+        "sort --compress-program=./a.py docs/a.md",  # sort: opcion que ejecuta
+        "sort --random-source=./a.py docs/a.md",
+        "awk 'BEGIN{system(\"python a.py\")}' docs/a.md",  # awk: system()
+        "awk '{print > \"out\"}' docs/a.md",  # awk: redirige
+        "awk '{while((getline x)>0) y=x}' docs/a.md",  # awk: getline
+        "sed 's/x/y/e' docs/a.md",  # sed: s///e ejecuta
+        "sed '1e python a.py' docs/a.md",  # sed: comando e
+        "sed 'w salida.txt' docs/a.md",  # sed: comando w escribe
+        "sed '1r /etc/passwd' docs/a.md",  # sed: comando r lee
+    ],
+)
+def test_ejecucion_un_modo_que_ejecuta_se_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git status",
+        "git log --oneline",
+        "git worktree add /tmp/x",  # subcomando de la lista: pasa (lo que escribe no es ejecucion)
+        "gh run view 123",
+        "gh auth status",
+        "sort -rn docs/a.md",
+        "sort -k2 -t: docs/a.md",
+        "awk '{print $1}' docs/a.md",  # programa inocuo
+        "awk 'NR==66{print $5, $8}' docs/a.md",
+        "sed -n '1,60p' docs/a.md",  # rango + p
+        "sed -n '/inicio/,/fin/p' docs/a.md",  # direcciones regex + p
+        "sed 's/\\r$//' docs/a.md",  # s/// sin e ni w
+        "sed -i 's#a#b#g' docs/a.md",  # s/// con flag g
+    ],
+)
+def test_ejecucion_una_forma_inocua_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+# --- respuesta a §1.27: git opcion B, awk/sed como lista admitida, asignaciones por cualquier via
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git -c core.sshCommand=nx fetch",  # clave de -c fuera de la lista (vacia)
+        "git -c core.pager=nx log",
+        "git -c core.fsmonitor=nx status",
+        "git fetch --upload-pack=nx .",  # opciones de transporte
+        "git push --receive-pack=nx .",
+        "git archive --remote=. --exec=nx HEAD",
+        "git config core.sshCommand nx",  # config que fija
+        "git config core.pager nx",
+        "git remote add x ext::nx",  # remote que no es de lectura
+        "git remote set-url x ext::nx",
+        "git merge -s nx rama",  # estrategia fuera de la lista (vacia)
+        "awk -F , 'BEGIN{system(\"python a.py\")}' docs/a.md",  # system tras -F (B1)
+        "awk -v x=1 'BEGIN{system(\"python a.py\")}' docs/a.md",
+        "awk '{c=\"python a.py\"; print | c}' docs/a.md",  # tuberia a comando
+        "sed -e p -e 'w x.py' docs/a.md",  # -e con w (B1)
+        "sed --expression='w x.py' docs/a.md",
+        "sed -e 1d -e 'e nx' docs/a.md",  # -e con e
+        "sed '1a\\\\ texto' docs/a.md",  # comando a (append), fuera de la lista
+        "sed '1r /etc/passwd' docs/a.md",
+    ],
+)
+def test_ejecucion_la_ultima_ronda_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    """git/awk/sed, por la condicion (`exigir_ejecucion_verificable`)."""
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "read PATH <<< .",  # builtin que fija un nombre fuera de la lista
+        "read ruta <<< x",
+        "printf -v PATH .",
+        "declare -x BASH_ENV=x.sh",
+        "let x=1",  # let: se niega entero
+        "getopts o v",
+        "mapfile -t lineas < docs/a.md",
+        "(( PATH = 1 ))",  # aritmetico
+        "i=0; (( i++ )); echo $i",
+        "for PATH in .; do ls; done",  # la variable de bucle, fuera de la lista
+    ],
+)
+def test_ejecucion_la_ultima_ronda_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """Asignaciones por otras vias (builtins, `(( ))`, `for`), por `_niega` directo."""
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git config core.autocrlf",  # la forma medida (get)
+        "git config --get core.autocrlf",
+        "git remote -v",
+        "git remote show origin",
+        "git merge --no-ff rama -m x",  # merge sin -s, como el ritual
+        "git merge --abort",
+        "awk -F , '{print $1}' docs/a.md",  # programa inocuo con -F
+        "awk -v x=1 '{print x, $1}' docs/a.md",
+        "awk '$1 > 5' docs/a.md",  # el > de comparacion
+        "awk '{if ($1>5) print $2}' docs/a.md",
+        "sed -n -e 1p -e 3p docs/a.md",  # varios -e inocuos
+        "sed -ne '1,5p' docs/a.md",  # cluster -ne
+        "sed 's/a/b/g; 3d' docs/a.md",
+        "read d <<< x",  # un nombre de bucle de la lista
+        'for d in docs/*.md; do wc -l "$d"; done',
+    ],
+)
+def test_ejecucion_la_ultima_ronda_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+# --- cuarta pasada del revisor: los huecos del punto 0 (abreviaturas de sort, envoltorios en
+# find/xargs, git reset/revert, unset, printf/read que fijan, la redireccion de awk escondida y
+# git en PowerShell). Cada uno medido con `decidir()` antes de escribirlo (§1.28).
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "sort --compress-pro=scripts/otro.py docs/a.md",  # abreviatura de --compress-program
+        "sort --random-s=scripts/otro.py docs/a.md",  # abreviatura de --random-source
+        "find src -name '*.py' -exec env python scripts/otro.py {} ;",  # envoltorio env
+        "find docs -exec command python scripts/otro.py {} +",  # envoltorio command
+        "echo x | xargs env python scripts/otro.py",
+        "echo x | xargs command sh -c 'echo hi'",
+        "git reset --hard HEAD~1",  # subcomando fuera de la lista cerrada (B5)
+        "git revert --no-edit HEAD",
+        "awk '{print $1/2 > $3/4}' docs/a.md",  # redireccion escondida entre divisiones (B4)
+    ],
+)
+def test_ejecucion_cuarta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "unset PATH",  # quita una variable fuera de la lista cerrada (B2)
+        "printf -vPATH '%s' x",  # `-v` pegado al nombre (B3)
+        "read 'PATH[0]'",  # nombre con indice de array (B3)
+    ],
+)
+def test_ejecucion_cuarta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "[ -f docs/a.md ]",  # `[`/`test` son lectores, no un comodin (B10)
+        "[ -d src ]",
+        "test -f docs/a.md",
+        "cd -P src",  # `-P`/`-L` son opciones de cd, no el destino
+        "cd -L src",
+        "unset S",  # un nombre de la lista cerrada
+        "sort -S 1M docs/a.md",  # `-S` (buffer) no ejecuta
+        "awk '/a|b/{print}' docs/a.md",  # la `|` de una regex, no una tuberia
+        "awk '{print $1/2, $3/4}' docs/a.md",  # divisiones sin redireccion
+        "find . -exec sha256sum {} +",  # un lector sigue exento
+    ],
+)
+def test_ejecucion_cuarta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git reset --hard HEAD~1",  # subcomando fuera de la lista cerrada, tambien en PowerShell
+        "git revert HEAD",
+        "git bisect run ./x.ps1",
+    ],
+)
+def test_ejecucion_cuarta_pasada_powershell_git_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """git en PowerShell pasaba por `PS_NO_EJECUTAN`: ahora su subcomando pasa por la lista
+    cerrada (B1)."""
+    motivo = _decide(g, repo, "PowerShell", command=comando)
+    assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
+
+
+# --- quinta pasada del revisor: builtins negados por defecto (§1.27.3), awk entre divisiones con
+# espacios, mas vias de fijar una variable, y las perdidas de git frente a main.
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "shopt -s extglob",  # un builtin fuera de la lista cerrada (B1)
+        "enable -n printf",
+        "ulimit -n 10",
+        "bind -x ':ls'",
+        "complete -A function foo",
+        "compgen -A function",
+        "caller 0",
+        "fc -l",
+        "umask 022",
+        "pushd .",
+        "popd",
+        "awk '{ print $1 / 2 > $3 / 4 }' docs/a.md",  # redireccion entre divisiones con espacios
+        "awk '{ print (a) / 2 > \"out\" }' docs/a.md",
+    ],
+)
+def test_ejecucion_quinta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "for PATH; do ls; done",  # `for` sin `in` fija la variable igual (B3)
+        "declare -n d=PATH",  # un nameref apunta a otra variable (B3)
+        "PATH+=:x",  # `NOMBRE+=` suelto, fuera de la lista (B3/B9)
+        "read $S <<< .",  # un nombre que se construye al ejecutarse (B3)
+    ],
+)
+def test_ejecucion_quinta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git ls-files",  # lectores de git que `main` deja pasar (B5)
+        "git ls-tree HEAD",
+        "git show-ref",
+        "git hash-object docs/a.md",
+        "git pull",
+        "type ls",  # builtins lectores, admitidos
+        "hash -r",
+        "shift",
+        "awk '/a|b/{print}' docs/a.md",  # la `|` de una regex, no una tuberia (B2, sin regresion)
+        "S+=x echo hola",  # `NOMBRE+=` de un nombre de la lista
+    ],
+)
+def test_ejecucion_quinta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize("opcion", ["-P", "-L"])
+def test_cd_fisico_resuelve_el_destino_y_bloquea_la_lectura(
+    g: ModuleType, repo: Path, opcion: str
+) -> None:
+    """`cd -P`/`-L <dir>` resuelve el destino (no toma `-P` como ruta): despues, leer material
+    reservado se niega (revisor quinta pasada, A4). Con el bug, `cd -P` dejaba el cwd en `-P` y la
+    lectura pasaba."""
+    comando = f"cd {opcion} knowledge/cases/holdout/1 && cat etiquetas.yaml"
+    assert _bash(g, repo, comando) is not None, comando
+
+
+def test_lectores_que_nombro_el_revisor_pasan(g: ModuleType, repo: Path) -> None:
+    """Los lectores que entraron en `NO_EJECUTAN` por §1.21 punto 2 (revisor quinta pasada, R2)."""
+    for comando in (
+        "md5sum docs/a.md",
+        "chmod +x scripts/otro.py",
+        "jq '.x' docs/a.md",
+        "tasklist",
+        "test -f docs/a.md",
+        "[ -f docs/a.md ]",
+    ):
+        assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+# --- sexta pasada del revisor: awk con `++`/`--` (E1), `git pull -s`/`--rebase` (E2), las
+# expansiones que asignan (E3), y `read -n`/`[[`/heredoc/`cd --` que no deben negarse (A1/A2/A3/E4).
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "awk '{ print x++ / 2 > \"z\" }' docs/a.md",  # redireccion escondida tras `++` (E1)
+        "git pull -s foo",  # estrategia de pull fuera de la lista (E2)
+        "git pull --strategy=foo",
+        "git pull --rebase",  # pull que ejecuta un rebase (E2)
+        "git pull -r",
+    ],
+)
+def test_ejecucion_sexta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "echo $((PATH=1))",  # asignacion en una expansion aritmetica (E3)
+        "echo ${PATH:=.}",  # asignacion por defecto en una expansion (E3)
+        "echo ${BASH_ENV=x}",
+    ],
+)
+def test_ejecucion_sexta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "read -n 1 d",  # `-n` de read cuenta caracteres, no es un nameref (A1)
+        "read -s -n 1 d",
+        "read -p x d",  # `-p` es el prompt, no un nombre (A1)
+        "[[ -f docs/a.md ]]",  # el condicional del shell (A2)
+        "[[ -f docs/a.md ]] && echo si",
+        "git pull",  # pull corriente, como main (E2)
+        "git pull --ff-only",
+        "echo $((1+1))",  # aritmetica sin asignar (E3)
+        "echo $((d+1))",
+        "awk '{print x++}' docs/a.md",  # `++` sin redireccion (E1)
+    ],
+)
+def test_ejecucion_sexta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+def test_heredoc_con_parentesis_dobles_pasa(g: ModuleType, repo: Path) -> None:
+    """El CUERPO de un heredoc es datos: una línea con `((` no se toma por aritmética (revisor
+    sexta pasada, A3)."""
+    assert _bash(g, repo, "cat <<'EOF'\n(( x ))\nEOF") is None
+
+
+def test_read_array_fuera_de_la_lista_niega(g: ModuleType, repo: Path) -> None:
+    """`read -a NOMBRE` fija un array: su nombre pasa por la lista cerrada (revisor séptima pasada,
+    A1). Un nombre de la lista (`read -a d`) pasa."""
+    motivo = _bash(g, repo, "read -a BADARR")
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, motivo
+    assert _bash(g, repo, "read -a d") is None
+
+
+@pytest.mark.parametrize("opcion", ["--", "-P --", "-L --"])
+def test_cd_fin_de_opciones_resuelve_y_bloquea(g: ModuleType, repo: Path, opcion: str) -> None:
+    """`cd -- <dir>` (fin de opciones) resuelve el destino; después, leer material reservado se
+    niega (revisor sexta pasada, E4)."""
+    comando = f"cd {opcion} knowledge/cases/holdout/1 && cat etiquetas.yaml"
+    assert _bash(g, repo, comando) is not None, comando
+
+
+def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
+    for comando in (
+        "Start-Process python",
+        ".\\x.ps1",
+        "make check > make-check.log 2>&1",
+        # revisor, B2, y respuesta del consultor a §1.12: tambien en PowerShell, lista cerrada
+        "[System.Diagnostics.Process]::Start('python','a.py')",
+        "Get-ChildItem | ForEach-Object { python $_ }",
+        "Write-Output $(python a.py)",
+        "cscript x.js",
+        ".\\x.exe",
+        "Start-Job { .\\x }",
+        "New-Object -ComObject WScript.Shell",
+    ):
+        motivo = _decide(g, repo, "PowerShell", command=comando)
+        assert motivo is not None and "PowerShell" in motivo, (comando, motivo)
+    for comando in ("git status", "Get-Content docs/a.md -TotalCount 5", "Write-Output hola"):
+        assert _decide(g, repo, "PowerShell", command=comando) is None, comando
+
+
+def test_ejecucion_una_sola_funcion_y_ninguna_via_decide_por_su_cuenta(g: ModuleType) -> None:
+    """Toda via de ejecucion llama a `exigir_ejecucion_verificable` (directamente o por
+    `_exigir_guion`, `_sin_guion` o `_ejecucion_lanzada`, que vuelve a `analizar_comando`), y la
+    regla `R_EJECUCION` solo la escriben la funcion y su `_niega`."""
+    import ast
+
+    arbol = ast.parse(GUARDIA.read_text(encoding="utf-8"))
+    funciones = {n.name: n for n in ast.walk(arbol) if isinstance(n, ast.FunctionDef)}
+
+    def llama(nombre: str) -> set[str]:
+        return {
+            n.func.id
+            for n in ast.walk(funciones[nombre])
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+        }
+
+    puertas = {"exigir_ejecucion_verificable", "_exigir_guion", "_sin_guion"}
+    for via in (
+        "_analizar_interprete",
+        "_analizar_shell",
+        "_analizar_pytest",
+        "_analizar_make",
+        "_analizar_pwsh",
+        "analizar_powershell",
+        "_exigir_guion",
+        "_sin_guion",
+    ):
+        assert llama(via) & puertas, via
+    assert "exigir_ejecucion_verificable" in llama("analizar_comando")  # botsito y los lanzadores
+    assert "_exigir_guion" in llama("analizar_comando")  # el fichero como programa
+    assert "_ejecucion_lanzada" in llama("_analizar_find")
+    assert "_ejecucion_lanzada" in llama("_analizar_git")
+    assert "analizar_comando" in llama("_ejecucion_lanzada")
+    usan_la_regla = {
+        nombre
+        for nombre, f in funciones.items()
+        if any(isinstance(n, ast.Name) and n.id == "R_EJECUCION" for n in ast.walk(f))
+    }
+    assert usan_la_regla == {"_niega", "exigir_ejecucion_verificable"}
+
+    def lanza(nombre: str) -> list[str]:
+        return [
+            ast.unparse(n.exc)
+            for n in ast.walk(funciones[nombre])
+            if isinstance(n, ast.Raise) and n.exc
+        ]
+
+    # Ninguna via de ejecucion niega por su cuenta (revisor, A1): no tienen ningun `raise`; los
+    # envoltorios solo dicen que no saben (`IndecidibleError`), y lo decide la funcion; y en
+    # `analizar_comando` el unico `raise` que queda es el de leer recursivamente sin ruta.
+    for via in (
+        "_analizar_interprete",
+        "_analizar_shell",
+        "_sin_guion",
+        "_exigir_guion",
+        "_analizar_pwsh",
+        "_analizar_pytest",
+        "_analizar_xargs",
+        "_ejecucion_lanzada",
+        "_ejecucion_de_un_programa_desconocido",
+        "_exigir_nombres_de_entorno",
+    ):
+        assert lanza(via) == [], (via, lanza(via))
+    assert all(x.startswith("IndecidibleError(") for x in lanza("_envoltorios"))
+    assert all(x.startswith("IndecidibleError(") for x in lanza("_opciones_cerradas"))
+    assert all("recursivo sin ruta" in x for x in lanza("analizar_comando")), lanza(
+        "analizar_comando"
+    )
