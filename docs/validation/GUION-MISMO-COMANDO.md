@@ -1413,18 +1413,25 @@ Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C
   programa desconocido sin argumentos de la rama, los comandos `a`/`i`/`c` y las etiquetas de `sed`,
   ni `awk`/`gawk` con `-e`/`--source` (GUION-MISMO-COMANDO.md §1.16). Es defensa en profundidad: la
   barrera sigue siendo el código. Rama propia si alguno se quiere cerrar.»
-- **Entra, nueva (límite, la quinta pasada)**: «Quedan formas nuevas que la guardia no cierra, y por
+- **Entra, nueva (límite, la sexta pasada)**: «Quedan formas nuevas que la guardia no cierra, y por
   la respuesta del consultor a §1.27 punto 4 se apuntan sin abrir otra ronda (la barrera sigue siendo
-  el código, GUION-MISMO-COMANDO.md §1.36): (a) las asignaciones por EXPANSIÓN `${NOMBRE:=...}` y
-  `$((NOMBRE=...))`, que cambian una variable y hoy pasan -el `(( ))` comando sí se niega-; (b) `cd --
-  <dir>`, que no actualiza el directorio de trabajo (vecino del arreglo de `cd -P/-L`); (c) las formas
-  y abreviaturas de `git`/`sort`/`awk` fuera de lo medido (`git grep -O`, `--exec-path`, `config -e`,
-  `merge -snx` pegado, `sort --files0-from`/`--output` abreviado, awk `@include`/`@load`/`-o`/`-p`), y
-  la paridad fina de `git` en PowerShell más allá del subcomando; (d) un builtin que la guardia no
-  conoce (fuera de `BUILTINS_SHELL`) parece un programa del entorno y pasa, como cualquier programa
-  desconocido sin argumentos de la rama. Rama propia si alguno se quiere cerrar.»
-- **Fila de ERRORES-RECURRENTES** (con el hallazgo 5 y los de la primera y segunda pasada): la
-  prepara el cierre.
+  el código, GUION-MISMO-COMANDO.md §1.40): (a) las formas y abreviaturas de `git`/`sort`/`awk` fuera
+  de lo medido (`git grep -O`, `--exec-path`, `config -e`, `merge -snx` pegado, `sort
+  --files0-from`/`--output` abreviado, awk `@include`/`@load`/`-o`/`-p`), y la paridad fina de `git`
+  en PowerShell más allá del subcomando; (b) un builtin que la guardia no conoce (fuera de
+  `BUILTINS_SHELL`, que hoy cubre los 61 de Bash 5.2) parece un programa del entorno y pasa, como
+  cualquier programa desconocido sin argumentos de la rama (límite ya aceptado de §1.16). Las
+  asignaciones por expansión (`${NOMBRE:=...}`, `$((NOMBRE=...))`) y `cd -- <dir>`, que la quinta
+  pasada dejó como límite, se CIERRAN en esta ronda (§1.40). Rama propia si alguno se quiere cerrar.»
+- **Entra, nueva (orden de corte del consultor, 2026-10-08)** — una entrada que AGRUPA todos los
+  límites de forma, tal cual la dicta la orden: «Endurecer la guardia por formas raras de bash, git,
+  awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia,
+  sin prisa: la barrera real sigue siendo el código.»
+- **Fila de ERRORES-RECURRENTES** (con el hallazgo 5, los de la primera y segunda pasada, y la
+  lección de la orden de corte): la prepara el cierre. De la orden de corte (importa, consultor): el
+  criterio de corte del punto 4 de la respuesta a §1.27 no decía qué hacer con las pasadas siguientes
+  del revisor, y la rama encadenó siete. Lección: toda orden de corte fija también el alcance de la
+  pasada final del revisor (qué comprueba y qué hace con lo nuevo).
 
 
 ### 1.27 Lo que la tercera pasada deja, y la PARADA
@@ -2021,21 +2028,165 @@ rompe los suyos; restaurada, todo pasa`.
 
 ### 1.38 CI de Linux de esta ronda
 
-<<CI>>
+Run 37827286451 (`fix/guion-mismo-comando` sobre `142013a`): `failure` con **1 failed, 2422 passed, 8 skipped**; el unico fallo es `test_state_check_ok_on_real_repo` (el aceptado, porque `PROJECT_STATE.md` dice la rama `trabajo/...` y la CI corre sobre `fix/...`). Ningun test de la guardia falla en Linux.
 
 ### 1.39 Sexta pasada del revisor
 
-<<REV6>>
+#### Informe de la sexta pasada, tal cual
+
+> ## Informe del revisor · trabajo/guion-mismo-comando · sexta pasada (commit 142013a) · 2026-10-08
+>
+> Todas las medidas son `decidir()` cargando `.claude/hooks/guardia.py` de HEAD y la de `main`, y para
+> atribuir una regresion tambien la de `9b1fc99`. Solo decide sobre texto, no abre nada. No ejecute
+> `make check` ni las mutaciones. `git status` limpio.
+>
+> **Respuesta corta a los 6 puntos:**
+> 1. B1 resuelto: los 12 builtins pedidos y tambien `disown`/`bg`/`fg`/`suspend`/`times`/`compopt` se
+>    niegan, tambien envueltos (`command`/`builtin`/`time`/`nice`/`env`/`eval`/`sh -c`, `( )`, `{ }`,
+>    `if`, funciones, tuberias, tras `&&`/`;`); `main` los dejaba pasar. Los lectores (`type`, `hash
+>    -r`, `history`, `shift`, `wait`, `jobs`, `kill -0`) siguen pasando; `hash -p` se niega.
+> 2. B2 resuelto para la forma reportada; queda una forma hermana (E1).
+> 3. B3 resuelto.
+> 4. B5 resuelto; entran dos incoherencias, `git pull` (E2) y `read -n` (A1).
+> 5. El informe se sostiene casi entero, con un fallo en las mutaciones (A4).
+> 6. Los limites de §1.26 son razonables salvo `cd --`, que abre material protegido (E4); las
+>    expansiones son una lectura literal del punto 3 que convendria ratificar (E3/L2).
+>
+> ### Eje (a) · Reglas de la casa (0 bloquea, 3 importa, 1 menor)
+>
+> - **A1 (importa).** Perdida frente a `main` introducida por este commit: `read -n 1 d` y `read -s -n
+>   1 d` se niegan. La regla de `-n`/`--nameref` de `_exigir_builtin_que_fija` se aplica tambien a
+>   `read`, donde `-n` es «leer N caracteres». El motivo mostrado es falso. (HEAD=NIEGA,
+>   9b1fc99=PASA, main=PASA.)
+> - **A2 (importa).** Perdidas frente a `main` no declaradas, previas a este commit: (i) `[[ -f
+>   docs/a.md ]]`, solo o en `if`, se niega con el motivo del comodin (la decision trata `[[` como
+>   palabra clave no admitida, pero no esta en `BUILTINS_SHELL`; se niega de rebote). `[ -f ]` y `test
+>   -f` pasan. (ii) `read -p x d` (prompt de una palabra) se niega porque `x` se toma por un nombre.
+> - **A3 (importa).** Perdida frente a `main`: un heredoc cuyo cuerpo tiene una linea que empieza por
+>   `((` se niega. `_exigir_sin_aritmetica` mira el texto crudo, cuerpos de heredoc incluidos.
+> - **A4 (menor).** §1.37 dice «fallan EXACTAMENTE los 178»; la salida dice «fallan 188 de 296» (los 10
+>   de diferencia son los de los nombres). Ademas, el bloque `BUILTINS_NO_ADMITIDOS` (B1) no es una de
+>   las 26 mutaciones por pieza: solo lo rompe la mutacion global.
+>
+> Comprobado sin hallazgos: contrato (26 ficheros), suite exit 0, `state check` OK (1412), `SELLO` =
+> `HEAD^{tree}` (`b50c5850`, 2431 passed, pico 294 MiB), regimenes de cambio, 27 funciones
+> `test_ejecucion_*`, `coste_quinta-SALIDA.txt` (572/32/164 a 0/0), 75 sinteticos / 57 / 0, §1.16/§1.22/
+> §1.28 corregidos, los porques de `NO_EJECUTAN` y el docstring, «753» ya no aparece, `BUILTINS_SHELL`
+> cubre Bash 5.2, `hash -p`/`alias`/`export -n`/`printf %s -v` sin perdidas.
+>
+> ### Eje (b) · Encargo y las cuatro respuestas (0 bloquea, 3 importa, 2 menor)
+>
+> - **E1 (importa, CONTRADICE §1.27.2, hermana de B2).** El escaner de awk sigue escondiendo una
+>   redireccion tras `++`/`--` postfijos: `awk '{ print x++ / 2 > "z" }'` pasa (main tambien). El `+`
+>   pone `espera_operando = True` y el `/` se toma por regex. No es perdida frente a main.
+> - **E2 (importa, incoherencia con §1.27.1, nueva por B5).** `git pull` entro en `GIT_SUBCOMANDOS`
+>   «porque ejecuta un merge», pero `_modo_git` solo cierra `-s`/`--strategy` para `merge`. `git pull
+>   -s foo` ejecuta `git-merge-foo`, y `--rebase` ejecuta un `rebase` que `_analizar_git` niega. Frente
+>   a main no es perdida (main tambien pasa).
+> - **E3 (importa, decision).** §1.26 declara `${NOMBRE:=...}` y `$((NOMBRE=...))` como limite, pero la
+>   respuesta a §1.27.3 dice «toda via que fije o cambie una variable». Es defendible («comando» ≠
+>   «expansion»), pero es el mismo desacuerdo que con los builtins: conviene ratificarlo por escrito o
+>   cerrarlo. `$((PATH=1))` asigna siempre y deja `PATH=1`.
+> - **E4 (menor).** `cd -- <dir>` es el unico limite que abre material protegido (mismo mecanismo que
+>   `cd -P/-L`): `cd -- knowledge/cases/holdout/1 && cat etiquetas.yaml` pasa en HEAD y main. Cerrarlo
+>   cuesta lo mismo; recomiendo no dejarlo solo como Next Action.
+> - **E5 (menor, proceso).** `<<CI>>` (§1.38) y `<<REV6>>` (§1.39) sin rellenar; el Estado dice EN
+>   CURSO. Hay que pushear este commit y pegar el informe antes de declarar la rama lista.
+>
+> Requisitos de la ronda: R1 hecho (12/12 NIEGA, envueltos tambien), R2 hecho (lectores pasan), R3
+> parcial (E1), R4 hecho (17/17 NIEGA), R5 parcial (A1/A2/A3), R6 parcial (E2).
+>
+> **Veredicto sobre «¿queda un CONTRADICE?»:** Ninguno bloqueante. Quedan A1 (perdida real de este
+> commit) y E1/E2 como CONTRADICE de menor calado; por §1.27.4 los tres se arreglan en la rama. A2, A3
+> y E3 son decisiones que conviene que tome Aleks o que se declaren.
+
+### 1.40 Lo que se hizo con la sexta pasada
+
+La sexta pasada no dejo ningun CONTRADICE que bloquee, pero si varios que importan; por §1.27 punto 4
+se arreglan en la rama. Cada arreglo medido con `decidir()`.
+
+**Arreglado (CONTRADICE / perdida):**
+- **A1 (regresion de este proyecto).** `read -n`/`-p`/`-t`/`-u` llevan un VALOR que no es un nombre;
+  la regla de `-n`/`--nameref` se aplicaba tambien a `read` y negaba `read -n 1 d`. Se separa el
+  manejo de `read` (`_exigir_read_que_fija`): salta los valores de `-d`/`-i`/`-n`/`-N`/`-p`/`-t`/`-u`,
+  mira `-a NOMBRE` como nombre, y el `-n`/`--nameref` solo se niega en `declare`/`typeset`/`local`/
+  `readonly`.
+- **E1 (CONTRADICE §1.27.2, hermana de B2).** El escaner de awk trataba `++`/`--` como dos
+  operadores y tomaba la `/` siguiente por regex, escondiendo `print x++ / 2 > "z"`. Ahora `++`/`--`
+  se consumen como una unidad sin cambiar si se espera un operando.
+- **E2 (incoherencia con §1.27.1).** `_modo_git` cierra `-s`/`--strategy` tambien para `pull` (como
+  `merge`) y niega `git pull --rebase`/`-r` (ejecuta un rebase, que `_analizar_git` niega).
+- **A2 (perdida).** `[[` entra en `NO_EJECUTAN` (es el condicional del shell, un lector como `[`) y
+  se exceptua del comodin; `read -p x` ya no toma el prompt por un nombre (A1).
+- **A3 (perdida).** `_exigir_sin_aritmetica` se aplica al texto SIN los cuerpos de los heredoc (son
+  datos): un heredoc con `((` en una linea ya no se niega.
+- **E3 (lectura literal de §1.27.3).** En vez de dejarlas como limite, se CIERRAN las asignaciones
+  por expansion: `${NOMBRE:=...}`/`${NOMBRE=...}` y `$(( NOMBRE = ... ))` (y `++`/`--`/`+=`) se
+  niegan si el nombre no esta en la lista cerrada; la aritmetica sin asignar (`$((1+1))`,
+  `$((d+1))`) pasa. Asi queda alineado con como se cerro B1, sin dejar el desacuerdo por escrito.
+- **E4 (abre material protegido).** `cd -- <dir>` trata `--` como fin de opciones, no como destino:
+  `cd -- <holdout> && cat <protegido>` se niega.
+- **A4 (informe).** §1.41 distingue los 188 en bruto de los 178 de la comparacion y anota que el
+  bloque de builtins solo lo rompe la mutacion global.
+
+**Apuntado como limite (forma nueva, §1.26; no abre otra ronda):** las formas y abreviaturas de
+`git`/`sort`/`awk` fuera de lo medido y la paridad fina de `git` en PowerShell; y un builtin fuera de
+`BUILTINS_SHELL` (que hoy cubre los 61 de Bash 5.2), que parece un programa del entorno (limite ya
+aceptado de §1.16).
+
+### 1.41 Tests, mutaciones y comparacion con `main`, tras la sexta pasada
+
+**Tests**: 30 funciones `test_ejecucion_*` (3 nuevas: `...sexta_pasada_niega` -awk `++`, `git pull
+-s`/`--rebase`-, `...sexta_pasada_fija_variable_niega` -las expansiones que asignan- y
+`...sexta_pasada_admite`), mas los tests fuera de `-k ejecucion` del heredoc con `((` y de `cd --`.
+`Tests Currently Passing`: 1412 -> 1417.
+
+**Mutaciones** (`sin_condicion.py`, 26 mutaciones sobre 314 tests `-k ejecucion`): con la condicion,
+0 fallan; sin ella, **fallan EXACTAMENTE los 183 que esperan una negacion** (las piezas nuevas de la
+ronda entre ellas); cada una de las 26 piezas rompe, al menos, los casos que solo ella niega;
+restaurada cada mutacion, 0. `VEREDICTO: sin la condicion fallan exactamente los que esperan una
+negacion; cada pieza rompe los suyos; restaurada, todo pasa`.
+
+**Comparacion con `main`**:
+- **Sintetica** (`medir_huecos-FASE1-SALIDA.txt`, 75 casos): **0 que `main` niega y la rama deja
+  pasar**.
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): las que `main` niega y la rama deja pasar son
+  todas ejecuciones de los anexos/sondas; el falso positivo del literal de espacios (§1.13),
+  declarado; ninguna es un comando del proyecto.
+- **El coste de esta ronda** (`142013a` frente al commit de ahora, `coste_sexta-SALIDA.txt`): **0
+  negaciones nuevas y 0 al reves en los 572 comandos reales, los 32 de `RITUAL` y las 164 lineas de
+  los runbooks y las skills.** Las expansiones que asignan, `read -n`, `[[` y `git pull -s` no
+  aparecen en ninguno de los tres conjuntos; `read -n`/`[[` ademas dejan de negarse (arreglo A1/A2).
+
+### 1.42 CI de Linux de esta ronda
+
+<<CI6>>
+
+### 1.43 Orden de corte del consultor (2026-10-08), tal cual
+
+> Modelo: el que tengas · Esfuerzo: alto
+>
+> Orden de corte del consultor para trabajo/guion-mismo-comando (2026-10-08). Cópiala tal cual en el informe.
+>
+> La rama ya cumple su objetivo con margen. Desde la quinta pasada, cada ronda encuentra formas cada vez más raras, ninguna aparece en los comandos reales y todas cuestan 0. Con la séptima pasada termina la ampliación:
+> 1. De la séptima pasada, arregla en esta rama SOLO lo que sea una pérdida frente a main (algo que main niega y la rama deja pasar) o un fallo de algo ya hecho (un test o una mutación que no comprueba lo que dice). Todo lo demás, aunque sea fácil, va a §1.26 como límite, sin arreglarlo.
+> 2. En §1.26, además de las dos entradas ya decididas (lo que importa el guion y las rutas compuestas), una entrada nueva que agrupe todos los límites de forma, tal cual: «Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.»
+> 3. Después: make check sellado, push a fix/guion-mismo-comando con su número de run y una última pasada del revisor, acotada a dos preguntas: que lo arreglado en el punto 1 está y tiene su test, y que no hay ningún caso que main niegue y la rama deje pasar. Cualquier otra forma que encuentre va a §1.26 y no se arregla.
+> 4. Deja el Estado del informe como «lista para revisión, NO cerrada», y resúmeme en la respuesta final: commits, CI, tests y mutaciones, comparación con main y la lista de lo que el cierre hará con la Next Action (§1.26).
+>
+> Para la fila de ERRORES-RECURRENTES en el cierre: (importa, consultor) el criterio de corte del punto 4 de la respuesta a §1.27 no decía qué hacer con las pasadas siguientes del revisor, y la rama encadenó siete. Lección: toda orden de corte fija también el alcance de la pasada final del revisor (qué comprueba y qué hace con lo nuevo).
+
+### 1.44 Septima (ultima) pasada del revisor, acotada
+
+<<REV7>>
+
 
 ## Estado
 
-**EN CURSO (2026-10-08).** Resueltos los hallazgos de la quinta pasada: el CONTRADICE que bloqueaba
-(B1, los builtins negados por defecto como condición, §1.27.3), el de `awk` entre divisiones con
-espacios (B2), las vías de fijar una variable `for NOMBRE`/`declare -n`/`NOMBRE+=`/`read $S` (B3), y
-la pérdida de los lectores de `git` frente a `main` (B5). Corregidas las afirmaciones del informe
-(A1, A3, A4, A6) y declaradas las formas nuevas como límite en §1.26 (expansiones `${:=}`/`$((=))`,
-`cd --`, abreviaturas de `git`/`sort`/`awk`, paridad de `git` en PowerShell). Cada arreglo medido con
-`decidir()`; coste 0 sobre los 572 reales, los 32 de RITUAL y los runbooks; mutaciones verdes (178
-negaciones, exactas); 0 que `main` niega y la rama deja pasar (fuera del falso positivo de los anexos,
-declarado). Falta la CI de Linux de este commit y la sexta pasada del revisor. **NO cerrada**: el
-cierre en `main` solo ante una orden explícita de Aleks.
+**EN CURSO (2026-10-08).** Resueltos los hallazgos de la sexta pasada: la regresion de `read -n`
+(A1), la redireccion de awk tras `++` (E1), `git pull -s`/`--rebase` (E2), `[[` y `read -p` (A2), el
+heredoc con `((` (A3), `cd --` (E4) y las asignaciones por expansion `${:=}`/`$((=))` (E3, cerradas
+en vez de dejarlas como limite). Cada arreglo medido con `decidir()`; coste 0 sobre los 572 reales,
+los 32 de RITUAL y los runbooks; mutaciones verdes; 0 que `main` niega y la rama deja pasar (fuera
+del falso positivo de los anexos, declarado). Falta la CI de Linux de este commit y la septima pasada
+del revisor. **NO cerrada**: el cierre en `main` solo ante una orden explicita de Aleks.

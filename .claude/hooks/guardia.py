@@ -1033,8 +1033,15 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
     if ctx.profundidad > 4:
         raise BloqueoError("demasiados niveles de `bash -c` o `$(...)` anidados para decidir")
     exigir_sin_crudo(texto, "el comando")
-    _exigir_sin_aritmetica(texto)
     lex = tokenizar(texto)
+    # La comprobacion de `(( ... ))` mira el texto, pero el CUERPO de un heredoc es datos, no codigo
+    # se le quita antes para no negar un heredoc que lleve `((` en una linea (revisor sexta pasada,
+    # A3; cuarta pasada A5).
+    sin_heredocs = texto
+    for h in lex.heredocs:
+        if h.cuerpo:
+            sin_heredocs = sin_heredocs.replace(h.cuerpo, "")
+    _exigir_sin_aritmetica(sin_heredocs)
     for h in lex.heredocs:
         if not h.con_comillas and "\\" in h.cuerpo:
             raise BloqueoError(
@@ -1273,9 +1280,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         argv = [Palabra((vals or [""])[0]), *argv[1:]]
     if (
         argv[0].glob or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", argv[0].texto)
-    ) and _nombre_de_programa(argv[0].texto) not in {"[", "test"}:
-        # `[` (test) lleva el comodin `[` en su nombre pero es un lector de `NO_EJECUTAN`: no se
-        # construye al ejecutarse (revisor cuarta pasada, B10). Un glob real (`[abc]`) no casa.
+    ) and _nombre_de_programa(argv[0].texto) not in {"[", "[[", "test"}:
+        # `[`/`[[` (test, condicional) llevan el comodin `[` en su nombre pero son lectores: no se
+        # construyen al ejecutarse (revisor cuarta/sexta pasada, B10/A2). Un glob real no casa.
         exigir_ejecucion_verificable(
             ctx,
             lex,
@@ -1299,8 +1306,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _exigir_legible(destino, ctx, lex, "redireccion de entrada")
 
     if prog == "cd":
-        # `cd -P`/`-L`/`-e`/`-@` son opciones, no el destino (revisor cuarta pasada, cd -P/-L).
-        destinos = [a for a in args if not re.fullmatch(r"-[PLe@]+", a.texto)]
+        # `cd -P`/`-L`/`-e`/`-@` son opciones, no el destino (revisor cuarta pasada, cd -P/-L); `--`
+        # marca el fin de las opciones y tampoco es el destino (revisor sexta pasada, E4).
+        destinos = [a for a in args if not re.fullmatch(r"-[PLe@]+|--", a.texto)]
         if not destinos:  # `cd` (o solo opciones) a secas va a HOME (revisor, B4)
             ctx.cwd = os.path.expanduser("~")
         else:
@@ -2211,6 +2219,7 @@ NO_EJECUTAN: dict[str, str] = {
     # del consultor a §1.21, punto 2). La lista solo crece en una rama cuando un comando la pida.
     "test": "evalua una condicion sobre un fichero (`-f`, `-d`); no lee su contenido ni ejecuta",
     "[": "lo mismo que `test`, en su forma con corchete",
+    "[[": "el condicional del shell (`[[ -f x ]]`); evalua, no lee el contenido ni ejecuta",
     "md5sum": "calcula un hash, no ejecuta",
     "chmod": "cambia los permisos de un fichero, no lo lee ni lo ejecuta",
     "jq": "filtra JSON con su propio lenguaje, sin ejecutar programas del sistema",
@@ -2346,6 +2355,12 @@ def _awk_sin_cadenas_ni_regex(programa: str) -> str:
         elif c.isalnum() or c in "_$)]":
             salida.append(c)
             i, espera_operando = i + 1, False
+        elif c in "+-" and i + 1 < n and programa[i + 1] == c:
+            # `++`/`--`: no cambia si se espera un operando. Postfijo (`x++`) deja un valor, asi que
+            # la `/` que sigue es division; sin esto, `print x++ / 2 > "z"` escondia la redireccion
+            # (revisor sexta pasada, E1).
+            salida.append(c * 2)
+            i += 2
         else:  # un operador o puntuacion: lo que sigue es un operando (una `/` abriria regex)
             salida.append(c)
             i, espera_operando = i + 1, True
@@ -2578,10 +2593,16 @@ def _modo_git(sub: str, textos: list[str]) -> str | None:
         if not posicionales or posicionales[0] in {"show", "get-url", "-v", "--verbose"}:
             return None
         return f"`git remote {posicionales[0]}`: solo se admite leer los remotos (`-v`, `show`)"
-    if sub == "merge":
+    if sub in {"merge", "pull"}:
+        # `pull` hace un merge (o un rebase): cierra `-s`/`--strategy` igual que `merge`, y el
+        # `--rebase` ejecuta un rebase que `_analizar_git` niega como subcomando (revisor 6a, E2).
         estrategia = _tras_opcion([Palabra(x) for x in textos], {"-s", "--strategy"})
         if estrategia is not None and estrategia not in GIT_MERGE_ESTRATEGIAS:
-            return f"`git merge -s {estrategia}`: estrategia fuera de la lista cerrada"
+            return f"`git {sub} -s {estrategia}`: estrategia fuera de la lista cerrada"
+        if sub == "pull" and any(
+            t == "--rebase" or t.startswith("--rebase=") or t == "-r" for t in textos
+        ):
+            return "`git pull --rebase` ejecuta un rebase, que se niega como subcomando"
     return None
 
 
@@ -2604,7 +2625,7 @@ BUILTINS_SHELL = {
     "export", "false", "fc", "fg", "getopts", "hash", "help", "history", "jobs", "kill", "let",
     "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly",
     "return", "set", "shift", "shopt", "source", "suspend", "test", "times", "trap", "true", "type",
-    "typeset", "ulimit", "umask", "unalias", "unset", "wait", ".", ":", "[",
+    "typeset", "ulimit", "umask", "unalias", "unset", "wait", ".", ":", "[", "[[",
 }  # fmt: skip
 _BUILTINS_MANEJADOS = {
     "set", "export", "unset", "eval", "source", ".", "trap", "command", "builtin", "exec", "time",
@@ -2631,15 +2652,36 @@ def _exigir_for(bucle: str) -> None:
 
 
 def _exigir_sin_aritmetica(texto: str) -> None:
-    """Un comando aritmetico `(( ... ))` fija variables del shell (§1.27 punto 3) y se niega entero.
-    La expansion aritmetica `$(( NOMBRE = ... ))` y `${NOMBRE:=...}`, que tambien asignan, son un
-    limite declarado (§1.26; revisor quinta pasada)."""
+    """Toda via que fije o cambie una variable del shell solo admite nombres de `NOMBRES_DE_ENTORNO`
+    (§1.27 punto 3): el comando aritmetico `(( ... ))` se niega entero; la expansion aritmetica
+    `$(( NOMBRE = ... ))` y la expansion `${NOMBRE:=...}`/`${NOMBRE=...}`, si el nombre no esta en
+    la lista (revisor sexta pasada, E3)."""
     if re.search(r"(?:^|[;&|\n]|\bdo\b|\bthen\b|\belse\b)\s*\(\(", texto):
         _niega(
             "(( ... ))",
             "un comando aritmetico `(( ... ))` fija una variable del shell que la guardia no puede "
             "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
         )
+    # `${NOMBRE:=...}` / `${NOMBRE=...}`: asigna por defecto (no `:-`/`:?`/`:+`).
+    for nombre in re.findall(r"\$\{\s*([A-Za-z_]\w*)\s*:?=", texto):
+        if not _nombre_admitido(nombre):
+            _niega(
+                f"${{{nombre}:=...}}",
+                f"la expansion `${{{nombre}:=...}}` fija `{nombre}`, fuera de la lista cerrada "
+                "(`NOMBRES_DE_ENTORNO`)",
+            )
+    # `$(( ... NOMBRE = ... ))`: una asignacion (`=`, `+=`, `++`...) dentro de una expansion
+    # aritmetica; no `==`/`>=`/`<=`/`!=`.
+    for interior in re.findall(r"\$\(\((.*?)\)\)", texto, re.S):
+        for nombre in re.findall(
+            r"(?<![<>=!+\-*/%&|^])\b([A-Za-z_]\w*)\s*(?:\+\+|--|[+\-*/%&|^]?=(?!=))", interior
+        ):
+            if not _nombre_admitido(nombre):
+                _niega(
+                    f"$(( {nombre}=... ))",
+                    f"la expansion aritmetica fija `{nombre}`, que no esta en la lista cerrada "
+                    "(`NOMBRES_DE_ENTORNO`)",
+                )
 
 
 def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> None:
@@ -2657,8 +2699,11 @@ def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> No
                 "cerrada (`NOMBRES_DE_ENTORNO`)",
             )
         return
-    # read / declare / typeset / local / readonly: cada nombre que fijan, de la lista. El nombre
-    # base, antes de `[indice]` (`read 'PATH[0]'`: revisor cuarta pasada, B3).
+    if prog == "read":  # read lleva opciones con valor (`-n`, `-p`...) que no son nombres (B3/A1)
+        _exigir_read_que_fija(args)
+        return
+    # declare / typeset / local / readonly: cada nombre que fijan, de la lista. El nombre base,
+    # antes de `[indice]` (`read 'PATH[0]'`: revisor cuarta pasada, B3).
     for a in args:
         if a.texto.startswith("-"):
             if a.texto in {"-n", "--nameref"}:  # un nameref apunta a otra variable (revisor 5a, B3)
@@ -2668,20 +2713,44 @@ def _exigir_builtin_que_fija(prog: str, args: list[Palabra], cmd: Comando) -> No
                     "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
                 )
             continue
-        if (
-            "\x00" in a.texto
-        ):  # un nombre que se construye al ejecutarse (`read $S`): revisor 5a, B3
-            _niega(
-                f"{prog} {_visible(Comando([a], [], [], {}, []))}",
-                f"`{prog}` fija una variable cuyo nombre se construye al ejecutarse, y no se puede "
-                "atar a la lista cerrada (`NOMBRES_DE_ENTORNO`)",
-            )
-        nombre = a.texto.split("=", 1)[0].split("[", 1)[0]
-        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
-            _niega(
-                f"{prog} {nombre}",
-                f"`{prog}` fija `{nombre}`, que no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`)",
-            )
+        _exigir_un_nombre_que_fija(prog, a)
+
+
+def _exigir_un_nombre_que_fija(prog: str, a: Palabra) -> None:
+    """Un nombre que un builtin fija: dinamico (`$S`) o fuera de la lista cerrada se niega."""
+    if "\x00" in a.texto:  # un nombre que se construye al ejecutarse (`read $S`): revisor 5a, B3
+        _niega(
+            f"{prog} {_visible(Comando([a], [], [], {}, []))}",
+            f"`{prog}` fija una variable cuyo nombre se construye al ejecutarse, fuera de la lista "
+            "cerrada (`NOMBRES_DE_ENTORNO`)",
+        )
+    nombre = a.texto.split("=", 1)[0].split("[", 1)[0]
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", nombre) and not _nombre_admitido(nombre):
+        _niega(
+            f"{prog} {nombre}",
+            f"`{prog}` fija `{nombre}`, que no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`)",
+        )
+
+
+# Opciones de `read` con un VALOR que no es un nombre de variable (`-n` cuenta caracteres, `-p` es
+# el prompt...); `-a NOMBRE` si es un nombre (el array). Las demas (`-r`, `-s`, `-e`) son banderas.
+_READ_OPCION_VALOR = {"-d", "-i", "-n", "-N", "-p", "-t", "-u"}
+
+
+def _exigir_read_que_fija(args: list[Palabra]) -> None:
+    i = 0
+    while i < len(args):
+        t = args[i].texto
+        if t == "-a" and i + 1 < len(args):  # `-a NOMBRE`: el array es un nombre de la lista
+            _exigir_un_nombre_que_fija("read", args[i + 1])
+            i += 2
+        elif t in _READ_OPCION_VALOR:  # su valor (el siguiente) no es un nombre
+            i += 2
+        elif t.startswith("-"):  # una bandera o un cluster (`-rn1`, `-rs`): no es un nombre
+            i += 1
+        else:
+            _exigir_un_nombre_que_fija("read", args[i])
+            i += 1
 
 
 def _no_ejecuta(prog: str) -> bool:

@@ -1,10 +1,10 @@
-Comandos de Bash en la transcripcion: 1002; distintos: 863
-Misma decision en main y en la rama: 729
-main los deja pasar y la rama los niega: 122
-main los niega y la rama los deja pasar: 12
+Comandos de Bash en la transcripcion: 1066; distintos: 917
+Misma decision en main y en la rama: 779
+main los deja pasar y la rama los niega: 125
+main los niega y la rama los deja pasar: 13
 
 == Por motivo
-  110  algo delante que no esta en la lista cerrada
+  112  algo delante que no esta en la lista cerrada
     4  algo detras, en la tuberia, que no es un filtro
     2  `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros qu
     1  `uv run --project`: cambia el directorio, el entorno o los paquetes de
@@ -13,13 +13,14 @@ main los niega y la rama los deja pasar: 12
     1  `awk` con un programa fuera de la lista de lo admitido (sin system, ge
     1  el nombre de entorno `SP` no esta en la lista cerrada (`NOMBRES_DE_ENT
     1  el comando lanza algo en segundo plano (`&`), y `echo make check lanza
+    1  el bucle `for` fija `ln`, que no esta en la lista (`NOMBRES_DE_ENTORNO
 
 == Lo que va delante (primer programa)
    34  python
    19  cat
    18  uv
    15  git
-   10  grep
+   11  grep
     7  sed
     2  una asignacion
     1  sha256sum
@@ -27,6 +28,7 @@ main los niega y la rama los deja pasar: 12
     1  printf
     1  cp
     1  echo
+    1  gh
 
 == Los que pasan a negarse (comando, 120 caracteres; y el motivo de la rama)
 - cd "C:/Users/USER/Desktop/Bot v3" && cat > "$TEMP/ps_edit.py" <<'EOF' \n import sys \n from pathlib import Path \n p = P
@@ -266,6 +268,12 @@ main los niega y la rama los deja pasar: 12
     ejecutar `make check`: antes, en el mismo comando, va `git add -A`.
 - cd "C:/Users/USER/Desktop/Bot v3" && uv run python "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3
     ejecutar `python C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/d95b7121-d05a-4ff0-b07a-9407af9c1e67/scratchpad/probe5.py`: detras, en la 
+- cd "C:/Users/USER/Desktop/Bot v3" && grep -n "<<" docs/validation/GUION-MISMO-COMANDO.md; echo "--- CRLF test ---"; uv r
+    ejecutar `pytest`: antes, en el mismo comando, va `grep -n << docs/validation/GUION-MISMO-COMANDO.md`.
+- cd "C:/Users/USER/Desktop/Bot v3" && for ln in 1037 2597 2657 2670 2724; do echo "--- $ln ---"; sed -n "${ln}p" .claude/
+    ejecutar `for ln`: el bucle `for` fija `ln`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+- cd "C:/Users/USER/Desktop/Bot v3" && gh run view 37827286451 --json status,conclusion 2>&1 | head -2; echo "--- failed j
+    ejecutar `python -c`: antes, en el mismo comando, va `gh run view 37827286451 --json status,conclusion`.
 
 == main los niega y la rama los deja pasar
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
@@ -276,6 +284,7 @@ main los niega y la rama los deja pasar: 12
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/User
 - cd "C:/Users/USER/Desktop/Bot v3" && PYTHONUTF8=1 python docs/validation/anexos/GUION-MISMO-COMANDO/formas_git.py .claud
+- cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/Users/USER
 - cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/Users/USER
 - cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/Users/USER
 - cd "C:/Users/USER/Desktop/Bot v3" && uv run python docs/validation/anexos/GUION-MISMO-COMANDO/medir_b2.py "C:/Users/USER

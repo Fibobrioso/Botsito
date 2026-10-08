@@ -1,0 +1,12 @@
+== los 572 primeros comandos reales distintos: 572
+   antes pasan y ahora se niegan: 0
+     de ellos, solo por (b): 0
+   antes se negaban y ahora pasan: 0
+== los 32 de RITUAL: 32
+   antes pasan y ahora se niegan: 0
+     de ellos, solo por (b): 0
+   antes se negaban y ahora pasan: 0
+== las lineas de codigo de los runbooks y las skills: 164
+   antes pasan y ahora se niegan: 0
+     de ellos, solo por (b): 0
+   antes se negaban y ahora pasan: 0

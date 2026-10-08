@@ -1650,6 +1650,74 @@ def test_lectores_que_nombro_el_revisor_pasan(g: ModuleType, repo: Path) -> None
         assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
 
 
+# --- sexta pasada del revisor: awk con `++`/`--` (E1), `git pull -s`/`--rebase` (E2), las
+# expansiones que asignan (E3), y `read -n`/`[[`/heredoc/`cd --` que no deben negarse (A1/A2/A3/E4).
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "awk '{ print x++ / 2 > \"z\" }' docs/a.md",  # redireccion escondida tras `++` (E1)
+        "git pull -s foo",  # estrategia de pull fuera de la lista (E2)
+        "git pull --strategy=foo",
+        "git pull --rebase",  # pull que ejecuta un rebase (E2)
+        "git pull -r",
+    ],
+)
+def test_ejecucion_sexta_pasada_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "echo $((PATH=1))",  # asignacion en una expansion aritmetica (E3)
+        "echo ${PATH:=.}",  # asignacion por defecto en una expansion (E3)
+        "echo ${BASH_ENV=x}",
+    ],
+)
+def test_ejecucion_sexta_pasada_fija_variable_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "read -n 1 d",  # `-n` de read cuenta caracteres, no es un nameref (A1)
+        "read -s -n 1 d",
+        "read -p x d",  # `-p` es el prompt, no un nombre (A1)
+        "[[ -f docs/a.md ]]",  # el condicional del shell (A2)
+        "[[ -f docs/a.md ]] && echo si",
+        "git pull",  # pull corriente, como main (E2)
+        "git pull --ff-only",
+        "echo $((1+1))",  # aritmetica sin asignar (E3)
+        "echo $((d+1))",
+        "awk '{print x++}' docs/a.md",  # `++` sin redireccion (E1)
+    ],
+)
+def test_ejecucion_sexta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+def test_heredoc_con_parentesis_dobles_pasa(g: ModuleType, repo: Path) -> None:
+    """El CUERPO de un heredoc es datos: una línea con `((` no se toma por aritmética (revisor
+    sexta pasada, A3)."""
+    assert _bash(g, repo, "cat <<'EOF'\n(( x ))\nEOF") is None
+
+
+@pytest.mark.parametrize("opcion", ["--", "-P --", "-L --"])
+def test_cd_fin_de_opciones_resuelve_y_bloquea(g: ModuleType, repo: Path, opcion: str) -> None:
+    """`cd -- <dir>` (fin de opciones) resuelve el destino; después, leer material reservado se
+    niega (revisor sexta pasada, E4)."""
+    comando = f"cd {opcion} knowledge/cases/holdout/1 && cat etiquetas.yaml"
+    assert _bash(g, repo, comando) is not None, comando
+
+
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:
     for comando in (
         "Start-Process python",
