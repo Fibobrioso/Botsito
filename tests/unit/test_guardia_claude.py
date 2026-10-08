@@ -1094,7 +1094,7 @@ def test_ejecucion_cada_via_pasa_por_la_condicion(
     [
         "uv run python inocuo.py",
         "cd docs && uv run python ../inocuo.py",  # cd
-        "X=hola; python inocuo.py",  # asignacion literal
+        "S=hola; python inocuo.py",  # asignacion suelta con un nombre de la lista
         "PYTHONUTF8=1 python inocuo.py",  # asignacion literal que precede al comando
         "export PYTHONUTF8=1 && python inocuo.py",  # export literal
         "set -e; python inocuo.py",
@@ -1260,13 +1260,21 @@ def test_ejecucion_los_nombres_de_entorno_son_una_lista_cerrada(g: ModuleType, r
     for comando in (
         "PYTHONUTF8=1 python inocuo.py",
         "BOTSITO_ALLOW_MAIN=1 git commit -m hola",
-        "S=hola; python inocuo.py",  # una variable del shell, no exportada
+        "S=hola; python inocuo.py",  # una variable del shell de la lista (S, W, R)
+        "W=x; R=y; python inocuo.py",
     ):
         assert _bash(g, repo, comando) is None, comando
+    # Respuesta del consultor a §1.21, punto 3: TODA asignacion, tambien la suelta a un nombre no
+    # exportado, solo admite los nombres de la lista.
     for comando in (
         "MI_NOMBRE_INVENTADO=1 python inocuo.py",  # cualquier nombre fuera de la lista
-        "PATH=./x; python inocuo.py",  # suelta, pero sobre un nombre ya exportado
+        "X=hola; python inocuo.py",  # suelta, no exportada: antes pasaba, ahora se niega
+        "CDPATH=sub; cd scripts && python de_main.py",  # bash interpreta CDPATH sin exportarla
+        "IFS=x python inocuo.py",
+        "PATH=.; python x.py",  # con PATH cambiado, `python` podria ser un fichero de la carpeta
+        "PATH=. python x.py",
         "export MI_NOMBRE_INVENTADO=1",
+        "declare -x BASH_ENV=x.sh",
     ):
         motivo = _bash(g, repo, comando)
         assert motivo is not None and "NOMBRES_DE_ENTORNO" in motivo, (comando, motivo)
@@ -1348,6 +1356,54 @@ def test_ejecucion_lo_que_la_segunda_pasada_no_toca_pasa(
     _ejecucion(repo)
     motivo = _decide(g, repo, herramienta, command=comando)
     assert motivo is None, (comando, motivo)
+
+
+# --- respuesta a §1.21, punto 1: un programa de NO_EJECUTAN solo es inocuo en una forma de la lista
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git bisect run python a.py",  # subcomando fuera de la lista: ejecuta
+        "git submodule foreach 'python a.py'",
+        "git filter-branch --tree-filter 'python a.py'",
+        "gh alias set -s x 'python a.py'",  # gh: subcomando fuera de la lista
+        "sort --compress-program=./a.py docs/a.md",  # sort: opcion que ejecuta
+        "sort --random-source=./a.py docs/a.md",
+        "awk 'BEGIN{system(\"python a.py\")}' docs/a.md",  # awk: system()
+        "awk '{print > \"out\"}' docs/a.md",  # awk: redirige
+        "awk '{while((getline x)>0) y=x}' docs/a.md",  # awk: getline
+        "sed 's/x/y/e' docs/a.md",  # sed: s///e ejecuta
+        "sed '1e python a.py' docs/a.md",  # sed: comando e
+        "sed 'w salida.txt' docs/a.md",  # sed: comando w escribe
+        "sed '1r /etc/passwd' docs/a.md",  # sed: comando r lee
+    ],
+)
+def test_ejecucion_un_modo_que_ejecuta_se_niega(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "Regla:" in motivo, (comando, motivo)
+
+
+@pytest.mark.parametrize(
+    "comando",
+    [
+        "git status",
+        "git log --oneline",
+        "git worktree add /tmp/x",  # subcomando de la lista: pasa (lo que escribe no es ejecucion)
+        "gh run view 123",
+        "gh auth status",
+        "sort -rn docs/a.md",
+        "sort -k2 -t: docs/a.md",
+        "awk '{print $1}' docs/a.md",  # programa inocuo
+        "awk 'NR==66{print $5, $8}' docs/a.md",
+        "sed -n '1,60p' docs/a.md",  # rango + p
+        "sed -n '/inicio/,/fin/p' docs/a.md",  # direcciones regex + p
+        "sed 's/\\r$//' docs/a.md",  # s/// sin e ni w
+        "sed -i 's#a#b#g' docs/a.md",  # s/// con flag g
+    ],
+)
+def test_ejecucion_una_forma_inocua_pasa(g: ModuleType, repo: Path, comando: str) -> None:
+    _ejecucion(repo)
+    assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
 
 
 def test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual(g: ModuleType, repo: Path) -> None:

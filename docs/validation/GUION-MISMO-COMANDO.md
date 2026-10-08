@@ -1138,8 +1138,139 @@ Tres cosas de la segunda pasada no caben en lo que decidiste sin decidir algo nu
    con su porqué. Coste medido: 0 en los 503 por construcción; los tests que usan `X=` y `F=`
    cambiarían de nombre.
 
+#### Respuesta del consultor a la PARADA de §1.21 (2026-10-07), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de §1.21 de trabajo/guion-mismo-comando (2026-10-07). Cópiala tal cual en el informe, bajo §1.21.
+>
+> 1. Programas de NO_EJECUTAN con modos que ejecutan: se acepta tu recomendación. Un programa de NO_EJECUTAN solo es inocuo en una lista cerrada de sus formas, sacada de los 503 comandos reales: subcomandos y claves de git -c, subcomandos de gh, opciones de sort, y una forma admitida de programa para awk y sed. Cualquier otra forma cuenta como ejecución y pasa por exigir_ejecucion_verificable. Antes de escribirlo, mide su coste sobre los 572 comandos reales y sobre los 32 de RITUAL, y añade los comandos de los runbooks. Si niega alguno de los 32 o algo que no sea una ejecución, para y dímelo con la lista. Si no, adóptalo sin esperar. Lo que ya decide _analizar_git (push, tag, borrados, --no-verify, cherry-pick y rebase) no se toca ni se mueve: la lista cerrada de subcomandos va antes, y main tiene que negar lo mismo o menos que la rama, caso a caso.
+>    Porqué: un programa «que no ejecuta código» con un modo que lo ejecuta es otra vez una lista abierta.
+>
+> 2. Lectores inocuos que faltan: entran ya en NO_EJECUTAN los que ha pedido un comando real o has nombrado (test, [, md5sum, sha256sum, chmod, jq y tasklist), cada uno con su porqué en una línea y un test que pasa. Si alguno tiene un modo que ejecuta o escribe código, se le aplica el punto 1. Desde aquí, la lista solo crece en una rama, cuando un comando real la pida, con su porqué y su test. Si un programa legítimo se niega, se dice en el informe y no se rodea.
+>    Porqué: añadir lo ya nombrado cuesta poco y está medido; añadir «por si acaso» volvería a abrir la lista.
+>
+> 3. Asignaciones sueltas: se aceptan. Toda asignación (suelta, la que precede al comando, export, env) solo admite los nombres de NOMBRES_DE_ENTORNO, con valor literal, y se añaden S, W y R, que son las de los 503, cada una con su porqué. Tests que rompen la guardia a propósito, uno por cada caso: CDPATH=sub; cd scripts && python … se niega; PATH=.; python x.py y PATH=. python x.py se niegan (con PATH cambiado, python podría ser un fichero de la carpeta); IFS=… y cualquier nombre fuera de la lista se niegan.
+>    Porqué: es la condición de §1.12 c) aplicada a todas las asignaciones, no solo a las que preceden al comando.
+>
+> Luego: el cambio, sus tests, ampliar el anexo de mutaciones, make check sellado, push a fix/guion-mismo-comando y número de run, la comparación con main y con los 572 comandos reales actualizada, y una tercera pasada del revisor sobre todo lo de la rama, con su informe pegado al final. Además, prepara en el informe, sin tocar todavía PROJECT_STATE, la lista de lo que el cierre tendrá que hacer con la Next Action: sale V, HECHA; entran las dos entradas nuevas de mi respuesta a la fase 0 (lo que importa el guion y las rutas compuestas) y lo que la rama deje como límite con dueño.
+>
+> Si el revisor no encuentra nada bloqueante que caiga fuera de lo decidido: rama lista para revisión, NO cerrada. Si encuentra algo que pida otra decisión mía, PARADA.
+
+### 1.22 Lo que se hizo con la respuesta a §1.21
+
+Todo en `.claude/hooks/guardia.py`, con el coste medido antes de adoptarlo (abajo).
+
+**Punto 1 — un programa de `NO_EJECUTAN` solo es inocuo en una forma de una lista cerrada.** De los
+572 comandos reales, los 32 de `RITUAL`, los runbooks y los tests salen las formas
+(`programas_y_nombres.py` → `formas.py`, salida en `formas-SALIDA.txt`):
+
+- **`git`**: `GIT_SUBCOMANDOS`, los subcomandos que aparecen (`status`, `log`, `add`, `commit`,
+  `diff`, `rev-parse`, `branch`, `show`, `push`, `checkout`, `switch`, `ls-remote`, `tag`, `grep`,
+  `worktree`, `merge`, `fetch`, `rm`, `config`, `remote`, `check-ignore`) y los de plumbing de solo
+  lectura que usan los runbooks (`symbolic-ref`, `rev-list`, `cat-file`, `describe`, `merge-base`,
+  `stash`, `restore`, `clean`, `blame`, `shortlog`, `reflog`, `name-rev`, `whatchanged`, `annotate`,
+  `archive`, `update-ref`, `for-each-ref`). Un subcomando fuera -`bisect run`, `submodule foreach`,
+  `filter-branch`- es una ejecución. Va DESPUÉS de lo que ya decide `_analizar_git` (push, tag,
+  borrados, `--no-verify`, `cherry-pick`, `rebase`), que no se toca; esos subcomandos están en la
+  lista, así que su decisión específica manda, y `cherry-pick`/`rebase`/`revert`/`reset` quedan
+  excluidos del nuevo chequeo para que llegue su raise propio. `main` niega lo mismo o menos.
+- **`gh`**: `GH_SUBCOMANDOS` = `run`, `auth` (de los 503) más los de solo lectura habituales
+  (`api`, `pr`, `issue`, `repo`, `release`, `search`, `status`, `browse`). `gh alias set -s` queda
+  fuera: ejecuta (revisor, B3 c).
+- **`sort`**: `--compress-program` y `--random-source` ejecutan un programa externo; ninguna de los
+  503 (que usan `-rn`, `-k2`, `-n`, `-r`, `-t:`). Las demás ordenan texto.
+- **`awk`/`sed`**: un programa que ejecute o escriba se niega. `awk`: `system(`, `getline`, una
+  tubería o una redirección (`print > fichero`). `sed`: los comandos `e`, `r`, `R`, `w`, `W` o un
+  `s///` con flag `e`/`w`, detectados con un recorrido que salta los bloques `s<d>…<d>…<d>`,
+  `y<d>…<d>…<d>` y las direcciones `/regex/`, para no confundir el texto con un comando (los
+  programas de los 503 -`s/\r$//`, `1,60p`, `/a/,/b/p`- no ejecutan). Los comandos `a`/`i`/`c` con
+  texto y las etiquetas de `sed`, que no aparecen en los 503, quedan como límite declarado.
+
+**Punto 2 — los lectores que faltaban.** Entran en `NO_EJECUTAN`, cada uno con su porqué: `test`,
+`[`, `md5sum`, `chmod`, `jq`, `tasklist` (`sha256sum` ya estaba). Ninguno tiene un modo que ejecute.
+Desde aquí la lista solo crece en una rama, cuando un comando real la pida.
+
+**Punto 3 — todas las asignaciones, cerradas.** `_exigir_nombres_de_entorno` ya no mira si el nombre
+está exportado: TODA asignación -suelta, la que precede a un comando, `export`, `env`, `declare`-
+solo admite un nombre de `NOMBRES_DE_ENTORNO`, que gana `S`, `W` y `R` (las asignaciones sueltas de
+los 503), cada una con su porqué. Así `CDPATH=sub; cd scripts && python …`, `IFS=…`, `PATH=.;
+python …` y cualquier nombre fuera de la lista se niegan.
+
+**Una medida corregida**: la primera versión del detector de `sed` era un regex que confundía el
+texto de un programa de impresión (`/a/,/b/p`) con un `s///…e` y negaba 8 comandos reales de esta
+sesión; `medir_b2` lo destapó y se cambió por el recorrido de arriba. Una guardia no se rodea: se
+corrigió el detector.
+
+**El coste** (`coste_formas-SALIDA.txt`, la guardia de `c66ffb4` frente a la de ahora): **0
+negaciones nuevas, y 0 al revés, en los 572 comandos reales, en los 32 de `RITUAL` y en las 164
+líneas de los runbooks y las skills.** Por eso se adopta sin esperar (§1.21, punto 1).
+
+### 1.23 Tests, mutaciones y comparación con `main`, tras la respuesta a §1.21
+
+Sustituye las cifras de §1.20.
+
+**Tests**: 17 funciones `test_ejecucion_*` y 200 (la `-k ejecucion`) casos. Las nuevas:
+`…un_modo_que_ejecuta_se_niega` (13: `git bisect run`, `submodule foreach`, `filter-branch`, `gh
+alias`, `sort --compress-program`/`--random-source`, `awk` con `system`/`>`/`getline`, `sed` con
+`s///e`/`e`/`w`/`r`) y `…una_forma_inocua_pasa` (13: `git status`/`log`/`worktree`, `gh run`/`auth`,
+`sort -rn`/`-k2`, `awk '{print $1}'`, `sed -n '1,60p'`/`/a/,/b/p`/`s/\r$//`). Las de los nombres de
+entorno ganan `CDPATH`, `IFS`, `PATH` suelta y no exportada, `declare -x BASH_ENV`, y `S`/`W`/`R`
+pasan. `Tests Currently Passing`: 1398 → 1400.
+
+**Mutaciones** (`sin_condicion.py`, 18): con la condición, 0 fallan. Sin la condición, 144 de 200: exactamente los 134 que esperan una negación por la función (nueve tests) más los 10 de los nombres que pasan por `env`. Cada pieza rompe los suyos: expansiones 3, lo de antes 6, lo de a la vez 5, salida ajena 1, existencia 2, lo que activa 7, los ficheros de un programa desconocido 3, los nombres 11, `awk`/`sed -f` 5, PowerShell 8, la lista de `set` 1, los filtros 4, `botsito` 1, el código de las opciones 6, el fichero de la rama 3, la lista de subcomandos de git 3, los modos que ejecutan 10. Restaurada cada una, 0.
+`VEREDICTO: sin la condicion fallan exactamente los que esperan una negacion; cada pieza rompe los
+suyos; restaurada, todo pasa`.
+
+**Comparación con `main`**:
+- **Sintética** (`medir_huecos-FASE1-SALIDA.txt`, 76 casos): **0 que `main` niega y la rama deja
+  pasar**; 57 de PASA a NIEGA (los 50 de antes y 7 de esta ronda: `git bisect`, `gh alias`, `sort
+  --compress-program`, `awk system`, `sed s///e`, `CDPATH`, `IFS`); 18 iguales (las formas inocuas
+  `sed`/`awk` pasan en las dos).
+- **Comandos reales** (`comandos_reales-SALIDA.txt`): 619 distintos: 509 con la misma decisión, 106
+  de PASA a NIEGA (el mismo reparto: 100 por algo delante fuera de la lista, 2 `pytest` sin rutas, 2
+  `tee` detrás, 1 `uv run --project`, 1 sustitución), y **4 que `main` niega y la rama deja pasar,
+  las cuatro ejecuciones de los anexos `medir_b2.py` y `formas.py`**: el falso positivo del literal
+  de espacios que esta rama corrigió (§1.13), declarado.
+- **El coste de esta ronda** frente a `c66ffb4`: 0 en los tres conjuntos (§1.22).
+
+### 1.24 CI de Linux de esta ronda
+
+Pendiente.
+
+### 1.25 Tercera pasada del revisor
+
+Pendiente.
+
+### 1.26 Lo que el cierre tendrá que hacer con la Next Action
+
+(Preparado aquí, sin tocar `PROJECT_STATE.md`, como pidió el consultor.)
+
+- **Sale V, HECHA**: «La guardia de Claude Code no inspecciona un guion creado en el mismo comando
+  que lo ejecuta (RELOJ-INVIERNO.md §4.5). Rama propia: negar por defecto la ejecución de un guion
+  que no existe cuando la guardia mira el comando, con test que lo rompa a propósito.» Lo hace esta
+  rama: `exigir_ejecucion_verificable`.
+- **Entra, nueva** (respuesta del consultor a la fase 0, punto 4): «La guardia lee el guion pero no
+  lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro
+  guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia:
+  decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.»
+- **Entra, nueva** (respuesta del consultor a la fase 0, punto 5): «La guardia no ve una ruta
+  protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /,
+  f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo
+  si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama
+  propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test
+  que lo rompa a propósito.»
+- **Entra, nueva (límite con dueño de esta rama)**: «La guardia no analiza lo que ejecutan a su vez
+  `make` con el Makefile de `main`, la CLI (`src/`), la suite (`tests/`), los hooks de git, un
+  programa desconocido sin argumentos de la rama, los comandos `a`/`i`/`c` y las etiquetas de `sed`,
+  ni `awk`/`gawk` con `-e`/`--source` (GUION-MISMO-COMANDO.md §1.16). Es defensa en profundidad: la
+  barrera sigue siendo el código. Rama propia si alguno se quiere cerrar.»
+- **Fila de ERRORES-RECURRENTES** (con el hallazgo 5 y los de la primera y segunda pasada): la
+  prepara el cierre.
+
 ## Estado
 
-**PARADA (2026-10-07).** Hecha la respuesta a §1.12 y arreglado lo que la segunda pasada del revisor
-encontró dentro de lo decidido; faltan tus decisiones de §1.21 (los modos de las entradas de
-`NO_EJECUTAN`, los lectores que no están en la lista, la asignación suelta). NO cerrada.
+**LISTA PARA REVISIÓN tras la tercera pasada, NO cerrada (2026-10-07).** Hecha la
+respuesta a §1.21 (las formas de `NO_EJECUTAN`, los lectores, las asignaciones), con coste 0
+sobre los comandos reales, RITUAL y los runbooks. Falta la CI de Linux del último commit y la
+tercera pasada del revisor; la lista de lo que el cierre hará con la Next Action, en §1.26.

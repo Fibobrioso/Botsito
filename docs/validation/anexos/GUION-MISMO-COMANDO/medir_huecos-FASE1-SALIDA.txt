@@ -1,6 +1,6 @@
    control            Bash       uv run python a.py                                          
-     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
    inocuo             Bash       uv run python inocuo.py                                     
      main: PASA
      rama: PASA
@@ -41,8 +41,8 @@
      main: PASA
      rama: NIEGA: ejecutar `pytest`: antes, en el mismo comando, va `cp a.py otros/test_nuevo.py`.
    b6-control         Bash       uv run pytest suelto/test_malo.py                           
-     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     main: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> b6'                Bash       uv run pytest suelto                                        
      main: PASA
      rama: NIEGA: ejecutar `pytest`: suelto es un directorio: la guardia no sabe que ficheros ejecutara.
@@ -54,37 +54,37 @@
      rama: PASA
 -> v-uv-run           Bash       uv run a.py                                                 
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> v-directo          Bash       ./a.py                                                      
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> v-stdin            Bash       python < a.py                                               
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> v-version          Bash       python3.12 a.py                                             
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> v-modulo           Bash       python -m a                                                 
      main: PASA
      rama: NIEGA: ejecutar `python -m a`: `-m a`: la guardia no resuelve que fichero ejecuta un modulo (solo
 -> v-nice             Bash       nice -n 5 python a.py                                       
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
    v-runpy            Bash       python -c "import runpy; runpy.run_path('a.py')"            
      main: PASA
      rama: PASA
 -> v-bash-guion       Bash       bash malo.sh                                                
      main: PASA
-     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmpj5h7yplq/repo/knowledge/cases/hol
+     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmphvzis1se/repo/knowledge/cases/hol
    v-bash-control     Bash       bash malo_entre_comillas.sh                                 
-     main: NIEGA: el codigo nombra C:/Users/USER/AppData/Local/Temp/tmpj5h7yplq/repo/knowledge/cases/holdout
-     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmpj5h7yplq/repo/knowledge/cases/hol
+     main: NIEGA: el codigo nombra C:/Users/USER/AppData/Local/Temp/tmphvzis1se/repo/knowledge/cases/holdout
+     rama: NIEGA: leer el contenido de C:/Users/USER/AppData/Local/Temp/tmphvzis1se/repo/knowledge/cases/hol
 -> v-find             Bash       find docs -exec python a.py \;                              
      main: PASA
      rama: NIEGA: ejecutar `python a.py`: antes, en el mismo comando, va `find docs -exec python a.py ;`.
 -> v-make             Bash       make x                                                      
      main: PASA
-     rama: NIEGA: ejecutar `make x`: C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\Makefile no es el de 
+     rama: NIEGA: ejecutar `make x`: C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\Makefile no es el de 
 -> v-git-alias        Bash       git -c alias.x='!python a.py' x                             
      main: PASA
      rama: NIEGA: ejecutar `sh -c`: antes, en el mismo comando, va `git -c alias.x=!python a.py x`.
@@ -99,7 +99,7 @@
      rama: NIEGA: `uv run python a.py` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta 
 -> f1-heredoc         Bash       python - <<'EOF'\nprint(open('C:\\Users\\USER\\AppData\\Loca
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> f1-proceso         Bash       python inocuo.py <(cp a.py inocuo.py)                       
      main: PASA
      rama: NIEGA: ejecutar `python inocuo.py`: el comando lleva una sustitucion (`$(...)`, acentos graves o 
@@ -129,7 +129,7 @@
      rama: NIEGA: ejecutar `{python,a.py}`: el programa lleva un comodin o una expansion de llaves: se const
 -> rv-uvx             Bash       uvx ./a.py                                                  
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> rv-cd-solo         Bash       cd && python inocuo.py                                      
      main: PASA
      rama: NIEGA: ejecutar `python inocuo.py`: antes, en el mismo comando, va `cd`.
@@ -155,8 +155,8 @@
      main: PASA
      rama: NIEGA: `una llamada a .NET (`[Tipo]::Metodo`)` en PowerShell: no se admite ninguna ejecucion (su 
    rv2-node-r         Bash       node -r ./a.py inocuo.py                                    
-     main: NIEGA: el codigo nombra C:\\Users\\USER\\AppData\\Local\\Temp\\tmpj5h7yplq\\repo\\knowledge\\case
-     rama: NIEGA: el codigo nombra C:\\Users\\USER\\AppData\\Local\\Temp\\tmpj5h7yplq\\repo\\knowledge\\case
+     main: NIEGA: el codigo nombra C:\\Users\\USER\\AppData\\Local\\Temp\\tmphvzis1se\\repo\\knowledge\\case
+     rama: NIEGA: el codigo nombra C:\\Users\\USER\\AppData\\Local\\Temp\\tmphvzis1se\\repo\\knowledge\\case
 -> rv2-ps-espacio     PowerShell Write-Output ( php x.php )                                  
      main: PASA
      rama: NIEGA: `( php` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
@@ -171,13 +171,40 @@
      rama: NIEGA: ejecutar `watch`: `watch` lanza `python`, y lo que ejecute no se ve por sus argumentos.
 -> rv2-fichero-git    Bash       ./git status                                                
      main: PASA
-     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmpj5h7yplq\repo\knowledge\cases\holdout
+     rama: NIEGA: el codigo nombra C:\Users\USER\AppData\Local\Temp\tmphvzis1se\repo\knowledge\cases\holdout
 -> rv2-uv-directory   Bash       uv run --directory sub python scripts/de_main.py            
      main: PASA
      rama: NIEGA: ejecutar `uv run --directory`: `uv run --directory`: cambia el directorio, el entorno o lo
 -> rv2-sed-nf         Bash       sed -nf a.py docs/a.md                                      
      main: PASA
      rama: NIEGA: ejecutar `sed a.py`: la guardia no sabe con que se ejecuta a.py (ni extension ni `#!`).
+-> r4-git-bisect      Bash       git bisect run python a.py                                  
+     main: PASA
+     rama: NIEGA: ejecutar `git bisect`: `git bisect`: subcomando fuera de la lista cerrada; puede ejecutar 
+-> r4-gh-alias        Bash       gh alias set -s x 'python a.py'                             
+     main: PASA
+     rama: NIEGA: ejecutar `gh ...`: `gh alias`: subcomando fuera de la lista cerrada (`gh alias set -s` eje
+-> r4-sort-compress   Bash       sort --compress-program=./a.py docs/a.md                    
+     main: PASA
+     rama: NIEGA: ejecutar `sort ...`: `sort --compress-program=./a.py`: ejecuta un programa externo.
+-> r4-awk-system      Bash       awk 'BEGIN{system("python a.py")}' docs/a.md                
+     main: PASA
+     rama: NIEGA: ejecutar `awk ...`: `awk` con un programa que ejecuta o escribe (`system()`, `getline` o u
+-> r4-sed-e           Bash       sed 's/x/y/e' docs/a.md                                     
+     main: PASA
+     rama: NIEGA: ejecutar `sed ...`: `sed` con un programa que ejecuta o escribe (`e`, `r` o `w`).
+-> r4-cdpath          Bash       CDPATH=sub; cd scripts && python de_main.py                 
+     main: PASA
+     rama: NIEGA: ejecutar `CDPATH=...`: el nombre de entorno `CDPATH` no esta en la lista cerrada (`NOMBRES
+-> r4-ifs             Bash       IFS=x python inocuo.py                                      
+     main: PASA
+     rama: NIEGA: ejecutar `IFS=...`: el nombre de entorno `IFS` no esta en la lista cerrada (`NOMBRES_DE_EN
+   r4-sed-ok          Bash       sed -n '/inicio/,/fin/p' docs/a.md                          
+     main: PASA
+     rama: PASA
+   r4-awk-ok          Bash       awk '{print $1}' docs/a.md                                  
+     main: PASA
+     rama: PASA
    h5-joinpath        Bash       python h5_joinpath.py                                       
      main: PASA
      rama: PASA

@@ -1351,6 +1351,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
     if programa is not None:  # `awk -f x`, `sed -f x`: un fichero de lenguaje desconocido
         guiones = [(programa, "desconocido")]
         exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} {programa.texto}", guiones=guiones)
+    modo = _modo_que_ejecuta(prog, args)
+    if modo is not None:  # gh, sort, awk o sed en una forma que ejecuta codigo (§1.21)
+        exigir_ejecucion_verificable(ctx, lex, cmd, f"{prog} ...", indecidible=modo)
     if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
         _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
@@ -1501,6 +1504,19 @@ def _analizar_git(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico)
     sub = args[i].texto
     resto = args[i + 1 :]
     textos = [a.texto for a in resto]
+    # Un subcomando fuera de la lista cerrada es una ejecucion (`git bisect run`, `submodule
+    # foreach`...): respuesta del consultor a §1.21. Va DESPUES de lo que ya niega _analizar_git
+    # (push, tag, borrados, --no-verify, cherry-pick, rebase), que no se toca; esos subcomandos
+    # estan en la lista, asi que su decision especifica manda. `main` niega lo mismo o menos.
+    if sub not in GIT_SUBCOMANDOS and sub not in {"cherry-pick", "rebase", "revert", "reset"}:
+        exigir_ejecucion_verificable(
+            ctx,
+            lex,
+            cmd,
+            f"git {sub}",
+            indecidible=f"`git {sub}`: subcomando fuera de la lista cerrada; puede ejecutar codigo "
+            "(`bisect run`, `submodule foreach`...)",
+        )
     if "--no-verify" in textos or (sub == "commit" and _flag_corta(textos, "n", "mFCct")):
         raise BloqueoError(f"`git {sub} --no-verify`.\nRegla: {R_NO_VERIFY}.")
     if sub == "config" and any("core.hookspath" in t.lower() for t in textos):
@@ -2134,9 +2150,44 @@ NO_EJECUTAN: dict[str, str] = {
     "stat": "dice el tamano y las fechas de un fichero (test de stat, tamano y sha256)",
     "du": "mide el tamano de un directorio (idem)",
     "certutil": "calcula un hash en Windows con `-hashfile` (idem)",
+    # Lectores que el revisor nombro (A5) o pide un comando real: entran con su porque (respuesta
+    # del consultor a §1.21, punto 2). La lista solo crece en una rama cuando un comando la pida.
+    "test": "evalua una condicion sobre un fichero (`-f`, `-d`); no lee su contenido ni ejecuta",
+    "[": "lo mismo que `test`, en su forma con corchete",
+    "md5sum": "calcula un hash, no ejecuta",
+    "chmod": "cambia los permisos de un fichero, no lo lee ni lo ejecuta",
+    "jq": "filtra JSON con su propio lenguaje, sin ejecutar programas del sistema",
+    "tasklist": "lista los procesos de Windows, no lee ficheros ni ejecuta",
 }
 # Los programas que leen un FICHERO DE PROGRAMA con una opcion: ese fichero es codigo de un
 # lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).
+# Un subcomando de git es inocuo solo si esta aqui (respuesta del consultor a §1.21). La lista sale
+# de los que aparecen en los 572 comandos reales, los 32 de RITUAL, los runbooks y los tests de la
+# guardia (`formas-SALIDA.txt`). `cherry-pick`, `rebase`, `revert` y `reset` no estan: los dos
+# primeros ya los niega _analizar_git, y los otros dos ejecutan un editor o no aparecen.
+GIT_SUBCOMANDOS = {
+    "status", "log", "add", "commit", "diff", "rev-parse", "branch", "show", "push", "checkout",
+    "switch", "ls-remote", "tag", "grep", "worktree", "merge", "fetch", "rm", "config", "remote",
+    "check-ignore", "symbolic-ref", "rev-list", "cat-file", "describe", "merge-base", "stash",
+    "restore", "clean", "blame", "shortlog", "reflog", "name-rev", "whatchanged", "annotate",
+    "archive", "update-ref", "for-each-ref",
+}  # fmt: skip
+# Un subcomando de gh es inocuo solo si su primera palabra esta aqui (de los 503: `run`, `auth`;
+# `gh alias set -s` ejecuta, revisor B3 c). `api` lee, pero su `--jq` no ejecuta codigo del repo.
+GH_SUBCOMANDOS = {
+    "run",
+    "auth",
+    "api",
+    "pr",
+    "issue",
+    "repo",
+    "release",
+    "search",
+    "status",
+    "browse",
+}
+# Las opciones de `sort` que EJECUTAN un programa (de los 503, ninguna): las demas ordenan texto.
+SORT_OPCIONES_QUE_EJECUTAN = ("--compress-program", "--random-source")
 OPCIONES_DE_PROGRAMA: dict[str, set[str]] = {
     "awk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
     "gawk": {"-f", "--file", "-E", "--exec", "-i", "--include", "-l", "--load"},
@@ -2149,6 +2200,11 @@ NOMBRES_DE_ENTORNO: dict[str, str] = {
     "PYTHONUTF8": "pide a Python UTF-8 en la consola cp1252 de Windows; no carga codigo",
     "BOTSITO_ALLOW_MAIN": "la llave del ritual para el commit de estado en `main` "
     "(`RITUAL.md`); la lee el hook `pre-commit`, no carga codigo",
+    # Variables del shell de los 503 (asignaciones sueltas), que guardan una ruta o un valor y no
+    # hacen cargar codigo (respuesta del consultor a §1.21, punto 3).
+    "S": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
+    "W": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
+    "R": "variable del shell con una ruta de trabajo (asignacion suelta de los 503)",
 }
 PS_LANZADORES = frozenset({
     "start-process", "saps", "start", "invoke-item", "ii", "invoke-command", "icm", "cmd",
@@ -2177,6 +2233,81 @@ def _lanza_una_ejecucion(texto: str) -> bool:
     return _es_interprete(nombre) or nombre in SHELLS or nombre in EJECUTORES
 
 
+# Un programa de awk que ejecuta o escribe: `system(`, `getline`, una tuberia (`| "..."` o
+# `"..." |`), o redirigir (`print > fichero`). Los programas de los 503 (`{print $1}`, `NR==66`) no
+# casan.
+_AWK_EJECUTA = re.compile(r"\bsystem\s*\(|\bgetline\b|\|\s*[\"']|[\"']\s*\||(?<![<>=!])>")
+
+
+def _sed_ejecuta(programa: str) -> bool:
+    """Si un programa de `sed` ejecuta (`e`) o lee/escribe un fichero (`r`/`R`/`w`/`W`), o un `s///`
+    con el flag `e` o `w`. Se recorre el programa saltando los bloques `s<d>...<d>...<d>flags`,
+    `y<d>...<d>...<d>` y las direcciones `/regex/`, para no confundir el texto con un comando. Los
+    programas de los 503 (`s/\\r$//`, `1,60p`, `/a/,/b/p`) no ejecutan. Los comandos `a`/`i`/`c` con
+    texto y las etiquetas (`:`, `b`, `t`) son un limite declarado: no aparecen en los 503."""
+    i, n, resto = 0, len(programa), []
+    while i < n:
+        ch = programa[i]
+        if (
+            ch in "sy"
+            and i + 1 < n
+            and not programa[i + 1].isalnum()
+            and not programa[i + 1].isspace()
+        ):
+            d, j, partes = programa[i + 1], i + 2, 0
+            while j < n and partes < 2:
+                if programa[j] == "\\":
+                    j += 2
+                    continue
+                if programa[j] == d:
+                    partes += 1
+                j += 1
+            flags = ""
+            while j < n and programa[j].isalpha():
+                flags += programa[j]
+                j += 1
+            if ch == "s" and ("e" in flags or "w" in flags):
+                return True
+            i = j
+        elif ch == "/":  # una direccion /regex/
+            j = i + 1
+            while j < n and programa[j] != "/":
+                j += 2 if programa[j] == "\\" else 1
+            i = j + 1
+        else:
+            resto.append(ch)
+            i += 1
+    return re.search(r"[eErRwW]", "".join(resto)) is not None
+
+
+def _programa_awk_sed_ejecuta(prog: str, programa: str) -> bool:
+    if prog == "sed":
+        return _sed_ejecuta(programa)
+    return _AWK_EJECUTA.search(programa) is not None
+
+
+def _modo_que_ejecuta(prog: str, args: list[Palabra]) -> str | None:
+    """Por que `gh`, `sort`, `awk` o `sed` -en NO_EJECUTAN- ejecutan codigo en ESTA forma, o None.
+    La forma admitida es una lista cerrada sacada de los 503 comandos reales (§1.21)."""
+    textos = [a.texto for a in args]
+    if prog == "gh":
+        sub = next((t for t in textos if not t.startswith("-")), "")
+        if sub and sub not in GH_SUBCOMANDOS:
+            return f"`gh {sub}`: subcomando fuera de la lista cerrada (`gh alias set -s` ejecuta)"
+    elif prog == "sort":
+        mala = next((t for t in textos if t.split("=", 1)[0] in SORT_OPCIONES_QUE_EJECUTAN), None)
+        if mala is not None:
+            return f"`sort {mala}`: ejecuta un programa externo"
+    elif prog in {"awk", "gawk", "sed"}:
+        programa = next((t for t in textos if not t.startswith("-")), None)
+        if programa is not None and _programa_awk_sed_ejecuta(prog, programa):
+            accion = (
+                "`system()`, `getline` o una redireccion" if prog != "sed" else "`e`, `r` o `w`"
+            )
+            return f"`{prog}` con un programa que ejecuta o escribe ({accion})"
+    return None
+
+
 def _no_ejecuta(prog: str) -> bool:
     """Si el programa esta en la lista cerrada de los que no ejecutan codigo."""
     return prog in NO_EJECUTAN
@@ -2200,22 +2331,22 @@ def _exigir_nombres_de_entorno(cmd: Comando) -> None:
         "Como reescribirlo: sin esa variable. Si hace falta, el consultor la anade a "
         "`NOMBRES_DE_ENTORNO` con su porque."
     )
-    precede = bool(cmd.argv)
+    # TODA asignacion -suelta, la que precede a un comando, `export`, `env` y `declare`- solo admite
+    # un nombre de la lista (respuesta del consultor a §1.21, punto 3): bash interpreta algunos
+    # nombres aunque no se exporten (`CDPATH`, `IFS`, `PATH`...), asi que no se mira el entorno.
     for nombre in cmd.asignaciones:
-        if (precede or nombre in os.environ) and not _nombre_admitido(nombre):
+        if not _nombre_admitido(nombre):
             _niega(f"{nombre}=...", por.format(nombre), como)
     if not cmd.argv:
         return
     cabeza = _nombre_de_programa(cmd.argv[0].texto)
     if cabeza not in {"export", "declare", "typeset", "readonly", "local"}:
         return
-    opciones = "".join(a.texto for a in cmd.argv[1:] if a.texto.startswith("-"))
-    exporta = cabeza == "export" or "x" in opciones
     for a in cmd.argv[1:]:
         if a.texto.startswith("-"):
             continue
         nombre = a.texto.split("=", 1)[0]
-        if (exporta or nombre in os.environ) and not _nombre_admitido(nombre):
+        if not _nombre_admitido(nombre):
             _niega(f"{cabeza} {nombre}", por.format(nombre), como)
 
 

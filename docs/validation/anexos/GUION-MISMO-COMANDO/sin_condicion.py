@@ -42,6 +42,7 @@ NIEGAN = (
     "test_ejecucion_powershell_sin_ejecuciones_y_lo_demas_igual",
     "test_ejecucion_lo_que_no_esta_en_la_lista_es_una_ejecucion",
     "test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega",
+    "test_ejecucion_un_modo_que_ejecuta_se_niega",
 )
 # Los de los nombres de entorno: esa regla vale para TODO comando (tambien `git commit`, que corre
 # hooks), asi que vive junto a la funcion y no dentro; se miran con su propia mutacion.
@@ -94,10 +95,21 @@ ESPERADOS: dict[str, list[str]] = {
         f"{LISTA}[inventado $X]",
     ],
     "_nombre_admitido": [
-        *(f"{NOMBRES[0]}[{n}]" for n in (
-            "PYTHONPATH", "PYTHONSTARTUP", "PYTHONHOME", "BASH_ENV", "ENV", "NODE_OPTIONS",
-            "PERL5OPT", "RUBYOPT", "LD_PRELOAD", "LD_LIBRARY_PATH",
-        )),
+        *(
+            f"{NOMBRES[0]}[{n}]"
+            for n in (
+                "PYTHONPATH",
+                "PYTHONSTARTUP",
+                "PYTHONHOME",
+                "BASH_ENV",
+                "ENV",
+                "NODE_OPTIONS",
+                "PERL5OPT",
+                "RUBYOPT",
+                "LD_PRELOAD",
+                "LD_LIBRARY_PATH",
+            )
+        ),
         NOMBRES[1],
     ],
     "_fichero_de_programa": [
@@ -138,11 +150,36 @@ ESPERADOS: dict[str, list[str]] = {
         f"{SEGUNDA}[Bash-sub/git status]",
         f"{SEGUNDA}[Bash-./python inocuo.py]",
     ],
+    "GIT_SUBCOMANDOS": [
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[git bisect run python a.py]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[git submodule foreach 'python a.py']",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[git filter-branch --tree-filter 'python a.py']",  # noqa: E501
+    ],
+    "_modo_que_ejecuta": [
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[gh alias set -s x 'python a.py']",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sort --compress-program=./a.py docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sort --random-source=./a.py docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[awk 'BEGIN{system(\"python a.py\")}' docs/a.md]",  # noqa: E501
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[awk '{print > \"out\"}' docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[awk '{while((getline x)>0) y=x}' docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sed 's/x/y/e' docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sed '1e python a.py' docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sed 'w salida.txt' docs/a.md]",
+        "test_ejecucion_un_modo_que_ejecuta_se_niega[sed '1r /etc/passwd' docs/a.md]",
+    ],
     "_exigir_guion_legible": [
         f"{FUERA}[python nuevo.py]",
         "test_ejecucion_un_guion_que_no_existe_dice_como_reescribirlo",
     ],
 }
+
+
+class _TodoDentro:
+    """Un conjunto de mentira para la mutacion de `GIT_SUBCOMANDOS`: todo subcomando esta dentro,
+    asi que la guardia nunca lo trata como ejecucion."""
+
+    def __contains__(self, _x: object) -> bool:
+        return True
 
 
 class Resultados:
@@ -200,11 +237,19 @@ def main() -> int:
         ("sin los filtros (A4)", "_es_filtro", lambda _c: True),
         ("sin botsito como ejecucion (A4, B8)", "botsito", None),
         ("sin el codigo de las opciones (B1)", "_codigo_de_opciones", lambda *_a: []),
-        ("sin el fichero de la rama como programa (B5)", "_es_fichero_de_la_rama", lambda *_a: False),
+        (
+            "sin el fichero de la rama como programa (B5)",
+            "_es_fichero_de_la_rama",
+            lambda *_a: False,
+        ),
+        ("sin la lista de subcomandos de git (§1.21)", "GIT_SUBCOMANDOS", _TodoDentro()),
+        ("sin los modos que ejecutan (§1.21)", "_modo_que_ejecuta", lambda *_a: None),
     ]
     base = correr()
     niegan = {t for t in base if t.split("[", 1)[0] in NIEGAN}
-    print(f"\n== con la condicion: {len(base)} tests, fallan {sum(r != 'passed' for r in base.values())}")
+    print(
+        f"\n== con la condicion: {len(base)} tests, fallan {sum(r != 'passed' for r in base.values())}"  # noqa: E501
+    )
     print(f"   esperan una negacion: {len(niegan)}")
     ok = all(r == "passed" for r in base.values())
     exigir = g.exigir_ejecucion_verificable
@@ -238,8 +283,10 @@ def main() -> int:
             ok = ok and exacto
         else:
             faltan = [t for t in ESPERADOS[nombre] if t not in fallan]
-            print(f"   de los {len(ESPERADOS[nombre])} que solo niega esta pieza, fallan "
-                  f"{len(ESPERADOS[nombre]) - len(faltan)}")
+            print(
+                f"   de los {len(ESPERADOS[nombre])} que solo niega esta pieza, fallan "
+                f"{len(ESPERADOS[nombre]) - len(faltan)}"
+            )
             for t in faltan:
                 print(f"   NO FALLA  {t}")
             ok = ok and not faltan

@@ -197,6 +197,17 @@ def casos(malo: str) -> list[tuple[str, str, str]]:
         ("rv2-fichero-git", "Bash", "./git status"),
         ("rv2-uv-directory", "Bash", "uv run --directory sub python scripts/de_main.py"),
         ("rv2-sed-nf", "Bash", "sed -nf a.py docs/a.md"),
+        # Respuesta del consultor a §1.21: las formas de NO_EJECUTAN que ejecutan
+        ("r4-git-bisect", "Bash", "git bisect run python a.py"),
+        ("r4-gh-alias", "Bash", "gh alias set -s x 'python a.py'"),
+        ("r4-sort-compress", "Bash", "sort --compress-program=./a.py docs/a.md"),
+        ("r4-awk-system", "Bash", "awk 'BEGIN{system(\"python a.py\")}' docs/a.md"),
+        ("r4-sed-e", "Bash", "sed 's/x/y/e' docs/a.md"),
+        ("r4-cdpath", "Bash", "CDPATH=sub; cd scripts && python de_main.py"),
+        ("r4-ifs", "Bash", "IFS=x python inocuo.py"),
+        # Formas inocuas que tienen que seguir pasando
+        ("r4-sed-ok", "Bash", "sed -n '/inicio/,/fin/p' docs/a.md"),
+        ("r4-awk-ok", "Bash", "awk '{print $1}' docs/a.md"),
         # Hallazgo 5 del consultor: se mide, no se arregla en esta rama
         ("h5-joinpath", "Bash", "python h5_joinpath.py"),
         ("h5-os.path.join", "Bash", "python h5_os_path_join.py"),
