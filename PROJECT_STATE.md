@@ -20,7 +20,7 @@ trabajo/adelgazar-estado
 
 ## Next Action
 
-**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:
+**AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
 
 S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
@@ -34,7 +34,7 @@ W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, inge
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.
+Z. CLAUDE.md (párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR») dice que marzo no se sortea ni se ingiere hasta que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42 (ADR-0069). La rama de entrada de marzo, en su primer commit, mide contra docs/runbooks/ENTRADA-MARZO.md (PARADA B0) y ACTIVACION-A42.md qué sigue bloqueando y corrige ese párrafo; W va antes de su paso b (ADELGAZAR-ESTADO.md §0).
 
 A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27. La prueba gratuita de la ejecución 1 se creó el 2026-10-08 (2-Step, Swing, USD, 100k, MT5) y vence hacia el 22 de octubre: la ejecución 1 va antes de esa fecha. Las ejecuciones 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro (decisión del consultor en docs/encargos/trabajo-guion-mismo-comando.md). Lo que declara Aleks de esta prueba: docs/runbooks/DEMO-FTMO.md, «La prueba de octubre de 2026».
 

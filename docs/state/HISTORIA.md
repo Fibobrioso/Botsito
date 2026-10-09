@@ -7126,3 +7126,73 @@ seccion 3. Las dos se preguntaron en la sesion 4 como S-5 (A-30, A-39) y S-24 (A
 (docs/validation/SESION-04-EXTRACCION.md §3.6 y §3.23), asi que la condicion (a) se sostiene. Lo
 vio el revisor (hallazgo a1, docs/validation/ADELGAZAR-ESTADO.md, «Informe del revisor»). El bloque
 de arriba no se toca: este fichero solo se amplia.
+
+# Next Action HECHA · Y · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)
+
+Y. La próxima rama de ritual corrige RITUAL.md (paso del commit de estado, línea 216), que nombra la Next Action entre lo que se edita ahí: la Next Action cambia en el commit del contrato (punto 3) y en el de estado solo si la orden de cierre lo pide.
+
+La hace `trabajo/adelgazar-estado` (docs/validation/ADELGAZAR-ESTADO.md §4): RITUAL.md (punto 3 del
+commit del contrato, comentario del `git add`, la puerta y el paso del commit de estado), la skill
+`cerrar-rama` (pasos 3 y 5) y docs/state/README.md.
+
+# Registro de cierre · `trabajo/adelgazar-estado` (2026-10-08)
+
+- Orden de cierre del consultor del 2026-10-08, ejecutada siguiendo `RITUAL.md`, ya con el punto 3
+  nuevo de esta rama. Rama lista para revision tras una pasada del revisor y un arreglo pedido por el
+  consultor (a2); nunca se cerro sin la orden.
+- **Lo que entra** (solo documentos):
+  - `PROJECT_STATE.md` de 24.362 a 19.976 bytes en la rama: salen 12 lineas por el criterio (a)-(d)
+    del consultor, literales en HISTORIA con su condicion y su evidencia, y las introducciones
+    apuntan a `docs/state/README.md`;
+  - `docs/state/README.md`: el criterio (a)-(d) con negacion por defecto, las clases de salida, el
+    punto Y, las dos reglas vigentes de Technical Debt y Known Ambiguities como texto operativo, y
+    lo que decian las introducciones, tal cual;
+  - `docs/runbooks/RITUAL.md` y `.claude/skills/cerrar-rama/SKILL.md`: el punto Y;
+  - `docs/runbooks/DEMO-FTMO.md`: «La prueba de octubre de 2026» (fuente: Aleks), sin numero de
+    cuenta.
+- Decisiones del consultor sobre lo abierto: A4 se queda en «Pendientes heredados» (la propuesta de
+  adelantar la negativa de A-27, ADR-0057 §5, la decide la rama de ADR-0057 y A-27 con el primer CSV
+  de la demo, y entonces sale); se acepta la salida de la decision del 2026-09-30 sobre marzo (vive
+  en REGISTRO-MARZO.md, «Estado» y §4, y en CLAUDE.md); a3 y a4, sin cambio.
+- Next Action (en este commit del contrato, por la orden de cierre): sale Y, HECHA (arriba); entra Z
+  (el parrafo de marzo de CLAUDE.md, que espera a una A-42 ya RESUELTA); cambia la cabecera de
+  «AHORA» («El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende»).
+  `PROJECT_STATE.md` queda en 20.164 bytes, por debajo de 25.000 (comprobado antes del commit).
+- `Tests Currently Passing`: 1418 funciones, sin cambio.
+- Letra: la ultima cerrada era la g de F37 (`stable/F37g-guion-mismo-comando`); `stable/F37h-*` no
+  existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37h-adelgazar-estado`. El merge es `git rev-parse "stable/F37h-adelgazar-estado^{commit}"`.
+- Commits de la rama: `623b43b` (apertura), `01b8405` (fases 1 a 4), `c56b01e` (informe del revisor
+  y nota de A5), `8d8f0df` (a2, las dos reglas como texto operativo) y el de este registro.
+- CI: ninguna de la rama; no toca hooks, rutas ni plataforma (encargo y orden de cierre). La CI de
+  `main` corre tras el push.
+- Nadie ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/ADELGAZAR-ESTADO.md`. Encargo: `docs/encargos/trabajo-adelgazar-estado.md`.
+- La orden de cierre, tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/adelgazar-estado (consultor, 2026-10-08). Tag: stable/F37h-adelgazar-estado (verifica en HISTORIA que el último es F37g y que F37h no existe ni en local ni en origin).
+>
+> La rama no toca hooks, rutas ni plataforma: no hay CI de Linux.
+>
+> Decisiones del consultor sobre lo que la rama dejó abierto:
+> - A4 se queda en Pendientes heredados: la propuesta de adelantar la negativa de A-27 (ADR-0057 §5) la decide la rama de ADR-0057 y A-27, con el primer CSV de la demo, y entonces sale.
+> - La salida de la decisión del 2026-09-30 sobre marzo se acepta: vive en REGISTRO-MARZO.md («Estado» y §4) y en CLAUDE.md.
+> - Menores a3 y a4: sin cambio.
+>
+> Hallazgos para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+> 1. (importa, consultor; lo vio el revisor como a2) El encargo pedía pasar a README «tal cual» lo que decían las introducciones, sin distinguir la regla vigente de la cita histórica, y dos reglas vigentes quedaron solo dentro de una cita. Lección: al mover texto, lo que sigue mandando se escribe como texto operativo, y la cita queda solo como historia.
+> 2. (importa, sesión; lo vio la sesión, no el revisor) CLAUDE.md:154-158 sigue diciendo que marzo espera a que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42; ni esa rama ni su revisor lo vieron. Lección: la rama que resuelve una ambigüedad busca con grep en CLAUDE.md y docs/runbooks/ quién la espera, y lo actualiza o lo apunta en la Next Action.
+> 3. (importa, sesión; arreglado; lo vio el revisor como a1) La evidencia de A5 decía que A-13 y A-39 estaban en la hoja de la sesión 4, y no estaban. Lección: la evidencia de una salida se cita con la sección donde está, no solo con el fichero.
+>
+> Next Action, en el commit del contrato (punto 3 de RITUAL, ya con el texto nuevo de esta rama):
+> - SALE, HECHA: Y (texto literal a HISTORIA bajo «# Next Action HECHA · Y · …»). La hace esta rama: RITUAL.md, la skill cerrar-rama y docs/state/README.md (ADELGAZAR-ESTADO.md §4).
+> - ENTRA, con la letra Z (comprueba antes que no está viva): «Z. CLAUDE.md (párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR») dice que marzo no se sortea ni se ingiere hasta que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42 (ADR-0069). La rama de entrada de marzo, en su primer commit, mide contra docs/runbooks/ENTRADA-MARZO.md (PARADA B0) y ACTIVACION-A42.md qué sigue bloqueando y corrige ese párrafo; W va antes de su paso b (ADELGAZAR-ESTADO.md §0).»
+> - CAMBIA la línea de cabecera «**AHORA** (2026-09-30, orden de cierre de `feature/nocturno-01oct`), en este orden:» por: «**AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.» Por qué: el orden escrito ya no es el real (S depende de entradas que están detrás).
+> Comprueba que PROJECT_STATE sigue por debajo de 25.000 bytes con estos cambios; si no, para antes del commit.
+> En el commit de estado no se toca la Next Action.
+>
+> El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag. Si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. La CI de main tiene que estar en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual. Con la CI de main en completed/success, borra trabajo/adelgazar-estado (git branch -d).
+>
+> Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
