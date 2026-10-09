@@ -7115,3 +7115,14 @@ evidencia:
   la PARADA B0 sin cambios y las 7 imagenes sin abrir y preguntadas al trader) y §4 (lineas
   119-128: los cupos y la semilla `AAAAMMDD` del consultor), y en CLAUDE.md:154-158; y su parte
   de A-42 ya se cumplio: A-42 RESUELTA con el trader (ADR-0069, `stable/F37d-activacion-a42`).
+
+# Nota a la salida de A5 · trabajo/adelgazar-estado (2026-10-08), tras el revisor
+
+En el bloque «# Pendiente heredado SALE» de arriba, la evidencia de A5 dice que todo lo que lista
+«entro en la hoja de la sesion 4» y cita `A-13:337`. No es exacto para A-13 y A-39: en
+docs/sesion-4/PREGUNTAS.md no estaban en «Las que hay que hacer»; la linea 337 esta en «Las que ya
+estan respondidas: no se vuelven a preguntar», y lo que tapaban los cortes de audio de v9, en la
+seccion 3. Las dos se preguntaron en la sesion 4 como S-5 (A-30, A-39) y S-24 (A-13)
+(docs/validation/SESION-04-EXTRACCION.md §3.6 y §3.23), asi que la condicion (a) se sostiene. Lo
+vio el revisor (hallazgo a1, docs/validation/ADELGAZAR-ESTADO.md, «Informe del revisor»). El bloque
+de arriba no se toca: este fichero solo se amplia.

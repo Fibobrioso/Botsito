@@ -69,7 +69,7 @@ Condiciones del encargo: (a) HECHA o PAGADA, (b) REPETIDA, (c) SUSTITUIDA, (d) N
 | A3 (ramas de codigo, en este orden) | **(a) sale** | Sus ramas a, b, c y 0, HECHAS en `stable/F36-nocturno-01oct` (HISTORIA, «LO QUE DECIA NEXT ACTION HASTA EL 2026-09-30»); la d), abajo |
 | d) vida de la orden stop y RN-007 | **(a)+(b) sale** | RN-006: merge cf6b1bf, tag `stable/F36d-orden-stop-pivote`, ADR-0064, docs/validation/F35-ORDEN-STOP-PIVOTE.md. RN-007: entrada H de la Next Action |
 | A4 (memoria de la suite) | **se queda** | La memoria SI esta hecha (`stable/F31c-memoria-suite`, `stable/F31d-ci-linux-memoria`; HISTORIA:656), pero la linea lleva la propuesta PENDIENTE de ADR-0057 §5 y MEMORIA-SUITE.md:97-99 la remite a esta linea; ADR-0057 §5 sigue igual. Niega por defecto |
-| A5 (para la sesion 4) | **(a) sale** | Todo lo que lista entro en docs/sesion-4/PREGUNTAS.md (A-42:37, A-39:120, A-51:177, A-21:199, G-2:222, E-1:269, A-50:277, A-13:337) y se pregunto (`stable/F36v-sesion-04`, SESION-04-EXTRACCION.md §3) |
+| A5 (para la sesion 4) | **(a) sale** | Se pregunto todo en la sesion 4 (`stable/F36v-sesion-04`): A-42, A-51, A-21, G-2, E-1 y A-50 estan en la hoja, «Las que hay que hacer» (docs/sesion-4/PREGUNTAS.md, seccion 1), y en SESION-04-EXTRACCION.md §3.1, §3.9, §3.11, §3.13, §3.17 y §3.18; A-39 y A-13 no estaban en esa seccion (PREGUNTAS.md:337 esta en «Las que ya estan respondidas», y lo de los cortes de audio en la seccion 3), pero se preguntaron en la sesion como S-5 y S-24 (SESION-04-EXTRACCION.md §3.6 y §3.23). Corregido tras el revisor (a1); la nota, al final de HISTORIA |
 | 2 (marzo interrumpe; entrega) | se queda | docs/runbooks/ENTRADA-MARZO.md:32 remite a «Next Action 2 y 12» para la entrega (`vistos.yaml`, confirmacion escrita del trader); no vive en otro sitio |
 | 6 (febrero no se toca ni se descarga) | se queda | CLAUDE.md no lo dice (solo «febrero o marzo vienen detras», CLAUDE.md:147); ningun runbook |
 | 7 (junio, la guardia y los once dias) | se queda | Sin evidencia de arreglo |
@@ -242,10 +242,94 @@ Lo registra. No se cambia el script.
   `grep -cF` de cada una sobre lo anadido.
 - `uv run pytest tests/unit/test_project_state.py tests/unit/test_historia.py -q`, con `tests/unit/test_kit.py` (la tabla de ambiguedades): **47 passed**; `uv run botsito
   state check`: OK.
-- `make check > make-check.log 2>&1` sobre el arbol de este commit: exit 0, ningun `failed`, linea
-  `SELLO` (el resultado de la corrida final, con el informe del revisor pegado, va en «Informe del
-  revisor»).
+- `make check > make-check.log 2>&1`:
+  - sobre el arbol de 623b43b (apertura): exit 0, 0 `failed`, 2454 passed, `SELLO: make check en
+    verde sobre el arbol ebdeb4b2bb2f4727533528df52e710c3c8483f56`, pico 293 MiB;
+  - sobre el arbol de 01b8405 (fases 1 a 4): exit 0, 0 `failed`, 2454 passed, `SELLO: make check en
+    verde sobre el arbol 0cf6956c2d4ffb3eb560b0a7ba89d31ab69a10a6`, pico 293 MiB;
+  - sobre el arbol final (este informe con el del revisor pegado y la nota de A5 en HISTORIA): se
+    lee en su log antes del ultimo commit, que no existiria sin el sello (el hook `pre-commit` lo
+    exige).
 - No hay CI de Linux: la rama no toca hooks, rutas ni plataforma (encargo).
+
+## 7. Informe del revisor
+
+Subagente `revisor`, sobre 623b43b y 01b8405, con el alcance del encargo. No ejecuto `make check`
+(ya estaba en verde y tarda 20 minutos); si el resto de comprobaciones del contrato. Pegado con sus
+tablas y hallazgos tal cual; sus listas «Comprobado sin hallazgos», «Evidencia de las salidas» y
+«Comandos ejecutados» van condensadas en parrafo (la ultima, omitida salvo su linea final), sin
+quitar ninguna comprobacion ni cambiar lo que dicen:
+
+> ## Informe del revisor · trabajo/adelgazar-estado · 2026-10-08
+>
+> Alcance: commits 623b43b y 01b8405 sobre main 8cfd479. No ejecuté `make check`, como pediste. Sí ejecuté `scripts/contrato_rama.py`, el pytest de `test_project_state.py` y `test_historia.py`, `state check` y `wc -c`.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | En la salida de A5 se dice que lo que listaba «entró en la hoja de la sesión 4», y para A-13 y A-39 eso es inexacto. En `PREGUNTAS.md`, A-13 y A-39 figuran fuera de la hoja («Lo que tapan los cortes de audio de v9»). La fila de la línea 337, citada como evidencia de A-13, está en la sección «Las que ya están respondidas: no se vuelven a preguntar». Las dos sí se preguntaron después en la sesión: S-5 (A-30/A-39) y S-24 (A-13), en `SESION-04-EXTRACCION.md` §3.6 y §3.23. La condición (a) se sostiene. Lo que falla es la cita `A-13:337` y la frase «todo entró en la hoja». | `docs/sesion-4/PREGUNTAS.md:337` y las líneas 352-366 (sección 3). `SESION-04-EXTRACCION.md:466, 860, 937, 954`. Texto de HISTORIA en la línea 7060 y de ADELGAZAR-ESTADO.md línea 72. |
+> | a2 | menor | Dos reglas de operación de las introducciones viejas quedaron solo dentro de la cita «Lo que decían las introducciones… hasta el 2026-10-08». Son «una deuda nueva entra con una línea que apunte a su informe; una pagada se borra de aquí» y «abrir una ambigüedad añade su fila; cerrarla la quita». El encargo lo permite, porque pide pasar la cita literal a README. Aun así, la regla vigente queda como cita histórica y no como texto operativo. | `docs/state/README.md:76-116`. La intro nueva de «Technical Debt» en `PROJECT_STATE.md` solo dice «texto entero y criterio de salida: README». |
+> | a3 | menor | REGISTRO-MARZO §4 sigue titulado «Propuesta, SIN APLICAR». Que fue aceptada consta solo en «Estado» (líneas 160-167). La salida de la decisión del 2026-09-30 cita ambos sitios, así que es correcta. Basta con saber que el §4 solo no basta. | `REGISTRO-MARZO.md:115` frente a `:160-167`. |
+> | a4 | menor | La salida de la línea 22 («sesión 02 con A-35 y A-44 como PRIORIDAD») es legítima por (a), porque la sesión se hizo. A-35 y A-44 siguen ABIERTAS y sus consecuencias quedan en 25, 30 y 35, que se quedan. No hay pérdida de información. Lo anoto por si el consultor prefiere que la prioridad siga visible. | `PROJECT_STATE.md:63, 65, 67`. |
+>
+> Comprobado sin hallazgos: el contrato (`contrato_rama.py`: 9 ficheros dentro; 7 tests de `test_project_state.py` y `test_historia.py` pasan; `state check` OK; `wc -c` 19976 frente a 24362 en main; ningún fichero de `rutas_protegidas` en el diff); los 12 textos que salen, literales en los cuatro bloques nuevos de HISTORIA (igualdad exacta de línea, script de solo lectura), tras el «# Archivo 24»; HISTORIA solo suma (`numstat 293 0`); lo que se queda no cambia (solo son nuevas las introducciones, Current Branch y Current Feature, la frase de la entrada A y las dos «— ninguna desde el Archivo 24»); las introducciones viejas, literales en `docs/state/README.md:76-116`; sin `Fuente:` que comprobar, sin ADR, evidencia, feedback, ambigüedades ni informes cerrados cambiados. RITUAL tras el punto Y: el punto 3 (137-145), el comentario del `git add` (153), la puerta (161) y el paso del commit de estado (219-223) dicen lo mismo; la 232 sigue coherente; `cerrar-rama/SKILL.md:74-76` y `:83`, y `README.md:23-33` y `:68-71`, alineados; `abrir-rama` y `CLAUDE.md` no hablan de la Next Action; `ERRORES-RECURRENTES.md:51, 54, 66` son filas históricas; `ENTRADA-MARZO.md:32` y `RENOVAR-CIERRES.md:22` remiten a entradas que se quedan; ningún otro sitio dice lo contrario. Fase 4 (`DEMO-FTMO.md:101-119`): sin número de cuenta (grep de 6 o más dígitos); `zoneinfo` da 03:00→10:00 CEST, 07:30→14:30 y 08:00→15:00 el 12-oct, y el 25-oct 03:00 ya da 09:00 CET; la franja 9-18 en `DEMO-FTMO.md:41`; `ventana_inicio` "07:00" (`parametros.yaml:351`) y `ventana_fin` "15:00" (`:367`); las 08:00 de Lima en el borde, y el texto lo dice.
+>
+> Evidencia de las salidas, comprobada contra el repositorio: **marzo del 2026-09-30** se sostiene por (d) y (c): `REGISTRO-MARZO.md` «Estado» (160-167) trae literal el camino de fidelidad con `eurusd-2026-03`, A-42 RESUELTA por el trader y no por ADR, «la PARADA B0 no cambia» y las 7 imágenes sin abrir y preguntadas (la 19); §4 (119-128) los cupos y la semilla; `ENTRADA-MARZO.md:98-107` la PARADA B0 y la semilla; `CLAUDE.md:154-158` el camino y las imágenes; A-42 RESUELTA (`ambiguedades.yaml:1118`, ADR-0069). Matiz: la decisión sigue «Estado: ACTIVE» y sus consecuencias (semilla antes del sorteo, cupos) viven ahora solo en un informe y un runbook, no en CLAUDE.md; es (d) válido, pero es la salida con más peso, y la decisión es del consultor. **23**: (b), `ENTRADA-MARZO.md:46, 98-107`. **`firma_comision_por_lado`**: (c), `ftmo-2step-swing-100k.yaml:386-398` (`CONFIRMED`, `true`, ADR-0050), ba28a82 ancestro de `stable/F24-ticks-llenado`, lo de FTMO en el 27. **v6**: (a), `stable/F14-v6-fuera-del-holdout` → 286c113, ADR-0041, `V6-FUERA-DEL-HOLDOUT.md`, `retirados.yaml`. **RN-006 y d)**: `stable/F36d-orden-stop-pivote` → cf6b1bf, `F35-ORDEN-STOP-PIVOTE.md`, RN-007 en la H. **22**: `stable/F19-sesion-02-videos` → 408b609, `SESION-02-VIDEO.md`, `SESION-02-EXTRACCION.md`, tags de las sesiones 3 y 4. **36 y A2**: (b), `DEMO-FTMO.md:90-96` (d1-d4 y §5), `--diagnostico-a27` en `ADR-0057:67`, fechas en `DEMO-FTMO.md:75-79`. **Cinco patrones**: `ERRORES-RECURRENTES.md:35-41`. **v5**: `fuentes.yaml:35`, `manifest.yaml:2273`; la nota 09-07 frente a 09-06 es correcta. **A4 se queda**: `MEMORIA-SUITE.md:97-99` la remite a A4 y la propuesta de A-27 no vive en otro sitio.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 12 hechos, 0 parciales, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Verificar con git la base (main en 8cfd479, tag en 8d1578d) y abrir con la skill | Hecho | ADELGAZAR-ESTADO.md línea 3. `git log` muestra 623b43b sobre 8cfd479. |
+> | 2 | PROJECT_STATE a 20.000 bytes o menos | Hecho | `wc -c` da 19976. |
+> | 3 | Fase 0: tabla por línea con condición y evidencia, más bytes antes y después | Hecho | ADELGAZAR-ESTADO.md §1.1-1.4. A4, 6 y 10 comprobadas: A4 y 10 se quedan, y 6 se queda porque CLAUDE.md no lo dice. |
+> | 4 | Comprobar `firma_comision_por_lado` | Hecho | §1.3 y el yaml de la cuenta. |
+> | 5 | Fase 1: un bloque por clase al final de HISTORIA, con texto literal, condición y evidencia | Hecho | HISTORIA desde la línea 7041: cuatro bloques con los nombres exactos del encargo. |
+> | 6 | Fase 2: introducciones a 1-2 líneas que apunten a README; lo que decían pasa a README | Hecho | Diff de `PROJECT_STATE.md` y `README.md:76-116`. |
+> | 7 | README: párrafo con las clases y el criterio (a)-(d), con fecha y rama | Hecho | `README.md:46-71`. |
+> | 8 | Fase 3: paso del commit de estado, punto 3, comentario del `git add` y puerta | Hecho | `RITUAL.md:137-145, 153, 161, 219-223`. |
+> | 9 | Fase 3: grep en skills, README, CLAUDE.md y runbooks, y lista de sitios con antes y después | Hecho | ADELGAZAR-ESTADO.md §4 (tabla y «Sin cambio, revisados»). Coincide con mi grep. |
+> | 10 | Fase 4: sección en DEMO-FTMO.md sin número de cuenta, husos medidos | Hecho | Verificado en el eje (a). |
+> | 11 | Informe: ¿registra `MedirDemoFTMO.mq5` el modo de cuenta? | Hecho | `tools/mql5/MedirDemoFTMO.mq5:370` escribe `modo_margen` con `ACCOUNT_MARGIN_MODE`. El informe lo dice bien, en §0 y en §5. El script no se cambió. |
+> | 12 | Una frase en la entrada A; Y sin marcar HECHA; nadie ejecuta `motor arnes` | Hecho | `PROJECT_STATE.md:39` tiene la frase y la entrada Y sigue en la línea 36. El informe lo declara. |
+>
+> Lo que NO se toca, comprobado con el diff: hooks, tests, spec, knowledge, `src/`, `tools/`, `scripts/` y CLAUDE.md quedan intactos. Los ficheros tocados están dentro de `rutas_permitidas`.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | Falta la comprobación que el encargo pide para el cierre. El informe dice (§6) que `make check` queda «sobre el árbol de este commit», pero la línea del resultado final (exit 0, ningún failed, SELLO) se remite a «Informe del revisor», que aún no existe. Cuando se pegue este informe, hay que añadir también el resultado del `make check` y mover el «Estado» para que siga al final. Eso lo hace quien pega. | ADELGAZAR-ESTADO.md líneas 245-247 y 250-253. |
+> | b2 | menor | El informe cita bien que `CLAUDE.md:154-158` ha envejecido. Esa línea sigue siendo coherente como condicional («hasta que A-42 esté RESUELTA»), y la condición ya se cumple. No se corrige aquí, pues el encargo no abre CLAUDE.md para eso. Conviene que el consultor lo decida. | ADELGAZAR-ESTADO.md §0, punto 3, y `CLAUDE.md:154-158`. |
+>
+> ### Lo que no pude comprobar
+> - `make check` y su `SELLO` sobre 01b8405 (fuera por instrucción).
+> - Que el trader respondiera de hecho en la sesión 4 a las preguntas de A5: solo vi que `SESION-04-EXTRACCION.md` las trata; no abrí material de la sesión.
+> - `stable/F31c-memoria-suite` y `stable/F31d-ci-linux-memoria` apuntan a 1cca80e y 99ea2f5; no comprobé su contenido, porque A4 se queda.
+>
+> ### Lo que quizá debería salir o quedarse (sin cambiar nada)
+> - A4 se queda, y es correcto (~125 bytes si el consultor da la propuesta de ADR-0057 §5 por decidida).
+> - Punto 10 («no comprar todavía», unos 120 bytes): lo decide el consultor.
+> - «Candidatas a ambigüedad sin abrir»: C2 y C3 ya son A-48 y A-49; fuera de alcance, ya apuntado.
+> - Technical Debt «Hook local…»: candidata a (b) parcial (`RITUAL.md:348`: «Hay que ejecutarlo cada vez que cambia un hook»), pero le falta la nota del 2026-09-07; niega por defecto es lo correcto.
+> - Transcripciones heredadas: medio en `MIRAR-EL-MATERIAL.md:81`; se queda bien (falta «F07 cita solo sobre `tr-*`»).
+> - Ninguna otra línea que se quedó debería salir con la evidencia que hay, y ninguna de las que salen debería haberse quedado.
+>
+> La guardia me bloqueó tres veces (redirección a fichero, `git tag -l`, `for` y comandos encadenados), y reescribí en llamadas separadas.
+
+**Que se hizo con cada hallazgo:**
+
+- **a1 (importa), arreglado:** la fila de A5 en §1.1 dice ahora donde estaba cada pregunta; en
+  HISTORIA, que solo se amplia, una nota al final («# Nota a la salida de A5») corrige la cita sin
+  tocar el bloque.
+- **b1 (importa), arreglado:** §6 lleva el resultado de los dos `make check` y como se sella el
+  ultimo; el «Estado» va al final.
+- **a2, a3, a4 y b2 (menores), declarados para el consultor:** a2, las dos reglas de operacion
+  («una deuda nueva entra con una linea que apunte a su informe; una pagada se borra de aqui» y
+  «abrir una ambiguedad anade su fila; cerrarla la quita») quedan en README solo dentro de la cita;
+  si el consultor las quiere como texto operativo, es una linea en README. a3 y a4, sin cambio. b2
+  es el punto 3 de §0 (CLAUDE.md:154-158).
 
 ## Estado
 
