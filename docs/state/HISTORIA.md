@@ -7037,3 +7037,81 @@ aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
 — ninguna desde el Archivo 23 (2026-10-07).
+
+# Pendiente heredado SALE · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)
+
+Por el criterio del consultor del 2026-10-08 (encargo de `trabajo/adelgazar-estado`; condiciones
+(a) a (d) en docs/state/README.md), con la evidencia de cada linea en
+docs/validation/ADELGAZAR-ESTADO.md §1. Su texto entero sigue en el Archivo 1. Su texto literal en
+«Pendientes heredados (sin verificar)», cada una con su condicion y su evidencia:
+
+- A2. **Aleks ejecuta MedirDemoFTMO en la demo de FTMO** (docs/runbooks/DEMO-FTMO.md), tres ejecuciones: antes…
+  (b) REPETIDA: entera en la entrada A de la Next Action (tres ejecuciones, la primera antes del 25
+  de octubre, «Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27») y en
+  docs/runbooks/DEMO-FTMO.md:74-80 (las tres fechas).
+- A3. **Ramas de codigo, en este orden** (orden del consultor del 2026-09-29):
+  (a) HECHA: de sus ramas solo quedaba la d) (las a, b, c y 0 HECHAS en `stable/F36-nocturno-01oct`,
+  HISTORIA, «LO QUE DECIA NEXT ACTION HASTA EL 2026-09-30»), y la d) sale tambien (abajo).
+- d) **vida de la orden stop** (RN-006, rama 3 de ADR-0056) y RN-007 (la vela casi plana; falta el umbral);
+  (a) HECHA la vida de la orden stop: merge cf6b1bf, tag `stable/F36d-orden-stop-pivote`, ADR-0064,
+  docs/validation/F35-ORDEN-STOP-PIVOTE.md («RN-006 la cancela, y RN-011 y RN-015 la vuelven a
+  colocar»); y (b) REPETIDA la parte de RN-007: entrada H de la Next Action.
+- A5. **Para la sesion 4 con el trader**: confirmar A-42 (dijo «creo»); las siete ganadoras anotadas de mas de…
+  (a) HECHA: todo lo que lista entro en la hoja de la sesion 4 (docs/sesion-4/PREGUNTAS.md: A-42,
+  G-2, A-51, A-50, A-21, E-1, A-39 y A-13) y se pregunto en ella (`stable/F36v-sesion-04`,
+  docs/validation/SESION-04-EXTRACCION.md §3.1, §3.9, §3.11, §3.13, §3.17, §3.18, §3.6 y §3.23).
+- 22. **SIGUIENTE: la sesion 02 con el trader, con A-35 y A-44 como PRIORIDAD** (desde ADR-0049 A-43 va en la…
+  (a) HECHA: la sesion 02 se grabo y entro en el corpus (merge 408b609, tag
+  `stable/F19-sesion-02-videos`, docs/validation/SESION-02-VIDEO.md y SESION-02-EXTRACCION.md); y
+  despues, las sesiones 3 y 4 (`stable/F31-activar-sesion-03`, `stable/F36v-sesion-04`).
+- 23. **MARZO: RECIBIDO el 2026-09-30 y SIN ABRIR** (`stable/F36f-registro-marzo`,…
+  (b) REPETIDA: CLAUDE.md:154-158 («Marzo de 2026 esta RECIBIDO y SIN ABRIR», la PARADA B0, la
+  columna de fechas por el consultor y las 7 imagenes sin abrir) y docs/runbooks/ENTRADA-MARZO.md
+  (paso a y PARADA B0).
+- 36. **EN MARCHA (el script existe desde `stable/F26-demo-ftmo-script`; lo ejecuta Aleks, punto A2): MEDIR EN…
+  (b) REPETIDA: la entrada A de la Next Action (la rama de ADR-0057 y A-27 con el primer CSV),
+  docs/runbooks/DEMO-FTMO.md:86-96 (los pasos 1 a 7 miden las cuatro decisiones de ADR-0057 y el
+  stops level de A-27) y ADR-0057 §5 (que `instrumento_stops_level` lleve el mismo valor que
+  `firma_stops_level_puntos` cuando se mida).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)
+
+La paga la retirada del dia de v6 del holdout: merge 286c113, tag `stable/F14-v6-fuera-del-holdout`,
+ADR-0041, docs/validation/V6-FUERA-DEL-HOLDOUT.md (el dia va a `knowledge/cases/retirados.yaml` y
+la puerta lo rechaza siempre). La deuda pedia «decidir en rama propia, ANTES de usar el holdout, si
+ese dia se retira del holdout» (Archivo 1, «Technical Debt»). Condicion (a). Su texto literal en
+«Technical Debt»:
+
+- LA LECTURA PREVIA DE LA TRANSCRIPCION DE v6, DECLARADA COMO EXPOSICION POSIBLE (2026-09-23, `trabajo/a18-transcripciones`, en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
+
+# Technical Debt RECLASIFICADA · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)
+
+No son deudas, y viven literales en otro sitio. Condicion (d) o (b). Su texto literal en
+«Technical Debt», cada una con su evidencia:
+
+- LOS CINCO PATRONES DE DEFECTO QUE SE COMPRUEBAN EN CADA RAMA (el tercero, anadido el 2026-09-21 en la rama F14a; el cuarto y el quinto, el 2026-09-22, en la rama de la caja y en la del runbook). Entera, tal cual, en docs/runbooks/ERRORES-RECURRENTES.md.
+  (b) y (d): es una regla, y esta entera en docs/runbooks/ERRORES-RECURRENTES.md:35-41, «Los cinco
+  patrones de defecto», como dice su propia linea.
+- v5 (`corpus/Estrategia del trader/2026-09-05 21-03-59.mkv`, 121,5 MB) en Drive desde el 2026-09-06 (`drive_id` `1VP1ATfgqkkYf88blLeax1Ir2WaXycWcS`, en la subcarpeta de transcripciones, no en la raiz de "Estrategia del trader"; anotado en `fuentes.yaml`).
+  (d): es un hecho, y esta en knowledge/corpus/fuentes.yaml:35 (el `drive_id` y la subcarpeta) y en
+  knowledge/corpus/manifest.yaml:2273. Nota: `fuentes.yaml` dice «subido por el usuario el
+  2026-09-07», no el 2026-09-06; se apunta y no se corrige aqui.
+
+# Regla viva SUSTITUIDA · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)
+
+Su texto literal en «Reglas vivas», «Decisions and Rationale», cada una con su condicion y su
+evidencia:
+
+- 2026-09-25 · `firma_comision_por_lado` toma el SUPUESTO CONSERVADOR: la comision se cobra en cada lado (apertura y cierre), con fuente decision del consultor, hasta que FTMO confirme si es por lado o por operacion completa (R12, NO ENCONTRADA). PENDIENTE DE IMPLEMENTAR en la proxima rama: hoy el perfil lo lleva UNKNOWN. Estado: ACTIVE.
+  (c) SUSTITUIDA: implementada en ba28a82 (2026-09-26, `feat(cuentas): firma_comision_por_lado toma
+  el supuesto conservador, por lado`, que entro en `main` con `stable/F24-ticks-llenado`); hoy
+  knowledge/cuentas/ftmo-2step-swing-100k.yaml:386-398 lleva `estado: CONFIRMED`, `valor: true` y
+  `fuente: {tipo: decision, id: ADR-0050}`, con la decision y su condicion («hasta que FTMO lo
+  confirme») en la `descripcion`. Lo que FTMO no ha contestado sigue en el punto 27 de
+  «Pendientes heredados».
+- 2026-09-30 · Marzo entra por el camino de fidelidad (ADR-0036, ADR-0046) como mes reservado para medir fidelidad, con el artefacto `eurusd-2026-03`, los cupos de la regla y la semilla AAAAMMDD fijada por el consultor antes del sorteo (REGISTRO-MARZO.md §4, aceptada). A-42 se cierra como RESUELTA con el trader en la sesion 4 y NO como DECIDIDA por ADR: la PARADA B0 de ENTRADA-MARZO.md queda como esta. Las 7 imagenes del backtest de marzo no se abren y quedan fuera del protocolo; se pregunta al trader que son. Estado: ACTIVE.
+  (d) y (c): la decision vive literal en docs/validation/REGISTRO-MARZO.md, «Estado» (lineas
+  160-167: el camino de fidelidad con `eurusd-2026-03`, A-42 RESUELTA por el trader y no por ADR,
+  la PARADA B0 sin cambios y las 7 imagenes sin abrir y preguntadas al trader) y §4 (lineas
+  119-128: los cupos y la semilla `AAAAMMDD` del consultor), y en CLAUDE.md:154-158; y su parte
+  de A-42 ya se cumplio: A-42 RESUELTA con el trader (ADR-0069, `stable/F37d-activacion-a42`).

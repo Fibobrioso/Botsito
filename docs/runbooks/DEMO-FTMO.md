@@ -97,3 +97,23 @@ recalcula el límite de pérdida diaria**: a medianoche de España o a medianoch
 
 **Importante para leerlo:** la hora GMT sale del reloj de este ordenador. Si el ordenador no está en
 hora, el desfase sale mal: comprueba que la hora de Windows está sincronizada antes de lanzarlo.
+
+## La prueba de octubre de 2026
+
+Lo que declara Aleks (fuente: Aleks, 2026-10-08; anotado en `trabajo/adelgazar-estado`). El número
+de la cuenta no se escribe aquí: el repositorio es público.
+
+- **La cuenta.** Prueba gratuita creada el 2026-10-08: 2-Step, Swing, USD, 100.000, MetaTrader 5,
+  servidor FTMO-Demo. Vence hacia el 22 de octubre, así que la ejecución 1 va antes. El script se
+  copió y se compiló con 0 errores el 2026-10-08.
+- **La ejecución 1**, entre las 03:00 y las 08:00 hora de Lima, evitando las 07:30 de Lima. Medido
+  con `zoneinfo` (America/Lima, UTC−5 sin cambio de hora, frente a Europe/Madrid, UTC+2 hasta el 25
+  de octubre) para cualquier día anterior al 25 de octubre: **de 10:00 a 15:00 hora de España, y las
+  07:30 de Lima son las 14:30 de España**. Cae dentro de la franja de 9:00 a 18:00 de «Cada vez:
+  ejecutarlo» y dentro de la ventana del bot, de 07:00 a 15:00 Europe/Madrid (`ventana_inicio` y
+  `ventana_fin`, `knowledge/spec/parametros.yaml`); las 08:00 de Lima son justo las 15:00, el
+  final de esa ventana.
+- **Netting o hedging: SIN COMPROBAR.** MetaTrader 5 muestra la cuenta de prueba como «Netting».
+  Si la cuenta Swing de verdad es netting o hedging no se supone: lo comprueba la rama de ADR-0057
+  y A-27, con el CSV. El script ya lo registra: la fila `contexto`, `modo_margen`
+  (`ACCOUNT_MARGIN_MODE`, `tools/mql5/MedirDemoFTMO.mq5`).

@@ -134,12 +134,15 @@ la orden las pedía). Van aquí porque en `main`, tras el tag, solo puede cambia
    informe y qué se hizo con ellos), los del consultor, y lo que se le escapó al revisor o lo que hay
    que enseñarle. **Si la orden de cierre no trae los hallazgos del consultor, la sesión los pregunta
    antes de este commit**: no los deduce ni deja la columna en «se apunta al cerrar».
-3. **Las entradas de Next Action que la rama deja HECHAS salen de `PROJECT_STATE.md`** y entran al
-   final de `docs/state/HISTORIA.md`, con su texto literal, bajo
+3. **TODO cambio de la Next Action que mande la orden de cierre se hace aquí, en este commit**
+   (punto Y, decisión del consultor del 2026-10-08, `trabajo/adelgazar-estado`): salen las entradas
+   que la rama deja HECHAS, entran las nuevas y cambian las que la orden diga. Las HECHAS salen de
+   `PROJECT_STATE.md` y entran al final de `docs/state/HISTORIA.md`, con su texto literal, bajo
    `# Next Action HECHA · <letra> · sale de PROJECT_STATE.md en <rama> (<fecha>)`. En
    `PROJECT_STATE.md` no queda ni el resumen ni un «HECHA» (decisión del consultor del 2026-10-02,
-   `feature/escenarios-por-sesion`: el cierre no puede pasar de 25 KB). Si la rama no cierra ninguna,
-   este punto no toca nada.
+   `feature/escenarios-por-sesion`: el cierre no puede pasar de 25 KB). Con la Next Action ya
+   cambiada, `wc -c PROJECT_STATE.md` tiene que dar menos de 25.000 bytes; si no, se para ANTES de
+   este commit y se pregunta. Si la orden no cambia la Next Action, este punto no toca nada.
 
 El commit se llama siempre `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
 
@@ -147,7 +150,7 @@ El commit se llama siempre `chore(cierre): sale el contrato y entra el registro 
 git branch --show-current
 git rm contrato.yaml
 git add docs/state/HISTORIA.md docs/runbooks/ERRORES-RECURRENTES.md
-git add PROJECT_STATE.md   # solo si el punto 3 sacó alguna entrada de Next Action
+git add PROJECT_STATE.md   # solo si el punto 3 cambió la Next Action
 make check > make-check.log 2>&1
 grep "SELLO: make check en verde" make-check.log
 rm make-check.log
@@ -155,7 +158,7 @@ git commit -m "chore(cierre): sale el contrato y entra el registro en HISTORIA"
 ```
 → **Puerta:** la rama es la de trabajo; `git status --short` da `D  contrato.yaml`,
 `M  docs/state/HISTORIA.md` y `M  docs/runbooks/ERRORES-RECURRENTES.md` (las tres en la primera
-columna), más `M  PROJECT_STATE.md` si el punto 3 sacó algo; y `make check` dice
+columna), más `M  PROJECT_STATE.md` si el punto 3 cambió la Next Action; y `make check` dice
 `CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
 nada del contrato, así que este sello es el de siempre.
 
@@ -213,8 +216,11 @@ git rev-parse --short HEAD
 → Estamos en la **ventana B**: aquí `state check` también fallaría por diseño. No se corre.
 
 **La sesión edita SOLO `PROJECT_STATE.md`**, **sin estadiar** y sin commitear, y en él SOLO las
-líneas de cabecera: Current Branch (`main`), Current Feature, Stable Main State, Next Action y Last
-Stable Commit. **Desde el 2026-10-01 (`trabajo/dieta-y-skills`) se SUSTITUYE lo que deja de ser
+líneas de cabecera: Current Branch (`main`), Current Feature, Stable Main State y Last Stable
+Commit. **La Next Action ya cambió en la rama, en el commit del contrato (punto 3 de arriba): aquí
+solo cambia si la orden de cierre lo pide expresamente**, y solo en lo que pida (punto Y, decisión
+del consultor del 2026-10-08; hasta entonces este paso la nombraba entre las líneas que se editan
+aquí). **Desde el 2026-10-01 (`trabajo/dieta-y-skills`) se SUSTITUYE lo que deja de ser
 verdad, sin «Lo anterior:»**: lo de antes ya está en `docs/state/HISTORIA.md`, y la rama siguiente
 archiva allí este `PROJECT_STATE.md` al abrirse (`docs/state/README.md`). **En el commit de estado no
 se añade NADA a Change Log ni a Completed Features**, aunque la orden no lo repita: la historia del

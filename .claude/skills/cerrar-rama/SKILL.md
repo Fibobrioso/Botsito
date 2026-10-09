@@ -70,13 +70,17 @@ para el log de `make check`, Edit para `PROJECT_STATE.md` y, en la rama, para
      `stable/<tag>^{commit}`, los commits de la rama y los runs de la CI;
    - la fila de la rama en la tabla de `docs/runbooks/ERRORES-RECURRENTES.md`, con los hallazgos
      del revisor y los del consultor. Si la orden no trae los del consultor, se preguntan antes de
-     este commit.
+     este commit;
+   - todo cambio de la Next Action que mande la orden (punto 3 del runbook: salen las HECHAS a
+     HISTORIA, entran las nuevas y cambian las que diga), con `PROJECT_STATE.md` por debajo de
+     25.000 bytes; si no, se para antes del commit.
 4. `RITUAL.md`, «Los pasos, con sus puertas», en su orden: `git checkout main`, `status` vacio,
    `log main..<rama>` con el numero esperado, merge `--no-ff` (si `pre-merge-commit` rechaza:
    el bloque de `merge --abort` del runbook), tag anotado, lectura del sha (`branch`, `HEAD` y
    `<tag>^{commit}` coinciden, o se para sin editar).
 5. Edicion de `PROJECT_STATE.md`: SOLO las lineas de cabecera de la lista del runbook (si la orden
    la acota, manda la orden, pero `Current Branch` tiene que decir `main` o `state check` falla).
+   La Next Action no: ya cambio en el paso 3, y aqui solo si la orden lo pide expresamente.
    **No se anade NADA a Change Log ni a Completed Features**, aunque la orden no lo repita: esa
    historia es el registro de HISTORIA del paso 3. `git add PROJECT_STATE.md`,
    las dos puertas de una sola linea, y `uv run botsito state check` en la VENTANA C: aqui un ERROR
