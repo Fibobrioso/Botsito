@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/demo-ejecucion-1
 
 ## Current Feature
-`main` en `stable/F37h-adelgazar-estado` (f6d3117): PROJECT_STATE adelgazado por el criterio (a)-(d) del consultor, punto Y en RITUAL y la prueba de octubre de la demo de FTMO. Sin ramas abiertas; manda la Next Action. Informe docs/validation/ADELGAZAR-ESTADO.md.
+`trabajo/demo-ejecucion-1` EN CURSO: la ejecución 1 de MedirDemoFTMO (punto A de la Next Action): congelar el CSV, inventario medida → decisión con PARADA, y después fijar los valores de ADR-0057 y A-27 que decida el consultor. Encargo docs/encargos/trabajo-demo-ejecucion-1.md; informe docs/validation/DEMO-EJECUCION-1.md.
 
 ## Stable Main State
 f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estado`): salen de PROJECT_STATE 12 lineas por el criterio (a)-(d), literales en HISTORIA con su evidencia; las introducciones apuntan a docs/state/README.md; la Next Action cambia entera en el commit del contrato (punto Y); DEMO-FTMO.md lleva la prueba de octubre de 2026. Sobre `stable/F37g-guion-mismo-comando` (8d1578d). Informe docs/validation/ADELGAZAR-ESTADO.md; el registro del cierre, al final de HISTORIA.
@@ -174,8 +174,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 24 (2026-10-08).
+— ninguna desde el Archivo 25 (2026-10-09).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 24 (2026-10-08).
+— ninguna desde el Archivo 25 (2026-10-09).

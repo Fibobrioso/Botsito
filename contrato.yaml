@@ -1,0 +1,29 @@
+rama: trabajo/demo-ejecucion-1
+riesgo: alto  # la fase 1 cambia cifras de la cuenta y del broker (ADR-0057, A-27, perfil de FTMO) con una medida nueva; la fase 0 solo congela el CSV y hace inventario
+artefacto: docs/validation/DEMO-EJECUCION-1.md
+rutas_permitidas:
+  - docs/validation/DEMO-EJECUCION-1.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  # fase 0 a): el manifiesto inmutable del CSV de la ejecucion 1
+  - data/manifests/demo_ftmo/
+  # fase 0 c) e i): la linea de netting/hedging y la duracion medida
+  - docs/runbooks/DEMO-FTMO.md
+  # la fase 1 amplia esta lista en su propio commit, con lo que decida la PARADA
+rutas_protegidas:
+  # lo que el encargo dice que no cambia: motor, estrategia, corpus, holdout y el script
+  - src/botsito/engine/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/feedback/
+  - corpus/
+  - tools/mql5/
+  - data/manifests/eurusd-*.yaml
+  - data/manifests/ticks/
+comprobaciones:
+  - git log --format=%H main..HEAD
+  - uv run python scripts/leer_demo_ftmo.py data/demo_ftmo
+  - sha256sum data/demo_ftmo/MedirDemoFTMO_20261009_153552.csv
+  - uv run botsito state check
+  - make check > make-check.log 2>&1
