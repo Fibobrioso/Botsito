@@ -7380,3 +7380,31 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 24 (2026-10-08).
+
+# Pendiente heredado SALE · sale de PROJECT_STATE.md en trabajo/demo-ejecucion-1 (2026-10-09)
+
+Por orden del consultor del 2026-10-09 (respuesta a la PARADA de `trabajo/demo-ejecucion-1`, punto
+3; docs/validation/DEMO-EJECUCION-1.md §2), con el criterio de docs/state/README.md. Su texto entero
+sigue en el Archivo 1. Su texto literal en «Pendientes heredados (sin verificar)», con su condicion y
+su evidencia:
+
+- A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El…
+  (c) SUSTITUIDA: lo que quedaba pendiente era adelantar la negativa por A-27 (ADR-0057 §5,
+  docs/validation/MEMORIA-SUITE.md:97-99), y esa negativa solo se da con `firma_stops_level_puntos`
+  UNKNOWN (`engine/broker.py`, `_colocar`). ADR-0071 §2 la fija en 0 con la fila 4 del CSV de la
+  ejecucion 1 (`stops_level_puntos` 0, manifiesto
+  `data/manifests/demo_ftmo/demo-ftmo-2026-10-09-86f0df8b.yaml`): con el unico perfil que hay, la
+  negativa no se da nunca y adelantarla no tiene objeto. La negativa del codigo sigue probada con un
+  perfil sintetico en UNKNOWN (docs/validation/DEMO-EJECUCION-1.md §3).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/demo-ejecucion-1 (2026-10-09)
+
+La paga la medida en la demo de FTMO (ADR-0071 §4; docs/validation/DEMO-EJECUCION-1.md §0.d): MT5
+RECHAZA con 10015 INVALID_PRICE una limite colocada con el precio ya pasado su nivel, y no la llena:
+filas 36 y 37 del CSV de la ejecucion 1 (sell limit 20 puntos por debajo del bid, buy limit 20 por
+encima del ask) y filas 45 y 46 (un punto pasadas). Es lo que hace el simulador desde ADR-0057. La
+deuda decia «Sigue PENDIENTE medir en la demo lo que hace MT5» (Archivo 1, «Technical Debt»).
+Condicion (a). Por orden del consultor (respuesta a la PARADA, punto 8). Su texto literal en
+«Technical Debt»:
+
+- EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).

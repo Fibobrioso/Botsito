@@ -441,7 +441,88 @@ es 50 / stop en pips, y el tope de 50 corta todo stop de menos de 1 pip; con 1 p
 (`broker.py:857`, `lotes > volumen_max_lotes`). El contrato se amplía en este commit con lo que toca
 la fase 1 (y `src/` entero pasa a protegido: nada de la fase 1 lo toca).
 
+### 3.2 Los valores, A-27 y los tests (commit propio, `Fuente: ADR-0071`)
+
+**Cada valor, con su fila del CSV** (puntos 2, 3, 4, 5 y 7 de la respuesta):
+
+| fichero | parámetro | antes | después | fila |
+|---|---|---|---|---|
+| `knowledge/spec/parametros.yaml` | `instrumento_digitos` | 5, DEFAULT_AMBIGUOUS, ADR-0026, A-27 | 5, CONFIRMED, ADR-0071 | 6 |
+| ídem | `instrumento_contrato` | 100000, ídem | 100000, CONFIRMED, ADR-0071 | 8 |
+| ídem | `instrumento_lote_minimo` | 0.01, ídem | 0.01, CONFIRMED, ADR-0071 | 9 |
+| ídem | `instrumento_lote_paso` | 0.01, ídem | 0.01, CONFIRMED, ADR-0071 | 11 |
+| ídem | `instrumento_stops_level` | 0, ídem | 0, CONFIRMED, ADR-0071 | 4 |
+| `knowledge/cuentas/ftmo-2step-swing-100k.yaml` | `firma_stops_level_puntos` | UNKNOWN | **0**, CONFIRMED, ADR-0071 | 4 |
+| ídem | `firma_volumen_max_lotes` | **100**, ADR-0050 (la web) | **50**, ADR-0071 | 10 |
+| ídem | `firma_comision_por_lado` | true, supuesto conservador, ADR-0050 | true, MEDIDO, ADR-0071 (solo la descripción) | 53, 54 |
+| ídem | `firma_comision_usd_por_lote` | 5, ADR-0050 | **sin cambio** (5, ADR-0050); la descripción dice que la medida excluye 5 por lado y que queda como supuesto conservador | 53, 54 |
+
+`spec_version` 15.9.0 → **15.9.1** (parche: solo cambian estado y fuente, `knowledge validate` lo
+exige al cambiar el hash) y `spec manifest --escribir`; `spec docs --escribir` regenera
+`docs/spec/ambiguedades.md` y `docs/spec/parametros.md`. El contrato añade
+`knowledge/spec/spec_manifest.yaml` en este commit.
+
+**A-27 DECIDIDA por ADR-0071**, en los cinco sitios de `AMBIGUEDADES.md`:
+1. el registro: los cinco de arriba;
+2. `knowledge/spec/ambiguedades.yaml`: `estado: DECIDIDA`, `decision: ADR-0071`, `decidida_el:
+   '2026-10-09'`, y la pregunta dice con qué filas y que las ejecuciones 2 y 3 y el pre-vuelo de F33
+   vuelven a leer la ficha (una diferencia la reabre con otro ADR); sigue `clase: medicion` y su fuente
+   documental (R11);
+3. la regla de la spec que la cita: **ninguna** (medido: `grep A-27 knowledge/spec/strategy_spec.yaml`
+   no da nada). RN-026 usa `instrumento_stops_level`, pero no cita A-27, y su nota («hay que volver
+   a medirlo en la cuenta fondeada») sigue siendo verdad (F33); no se toca la spec de reglas;
+4. `PROJECT_STATE.md`, «Known Ambiguities»: sale la fila de A-27;
+5. la hoja de preguntas: no la llevaba (`scripts/hoja_preguntas.py`, sin A-27; es una medición).
+Más `tests/unit/test_kit.py`: A-27 entra en el conjunto de DECIDIDAS, y el test de A-27 y A-28 dice
+DECIDIDA (con `decision` ADR-0071 y `clase` medicion) y ABIERTA. **A-28 sigue ABIERTA.**
+
+**`PROJECT_STATE.md` y HISTORIA** (puntos 3, 4 y 8): sale de Technical Debt la deuda «EL BROKER
+SIMULADO LLENA AL INSTANTE...» (PAGADA, condición (a), filas 36, 37, 45 y 46); sale A4 de
+Pendientes heredados (condición (c), SUSTITUIDA, ADR-0071 y fila 4); las dos, literales, al final de
+HISTORIA con su evidencia. El pendiente 37 añade, tras su arranque literal, el máximo nuevo y la
+cuenta: «Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %)
+sobre 100.000 y 10 USD por lote y pip, corta todo stop de menos de 1 pip (ADR-0071 §2)». `Tests
+Currently Passing`: 1418 → 1420. La Next Action no se toca (punto 10).
+
+**Los tests cambiados por P3** (punto 3 de la respuesta). Con `firma_stops_level_puntos` = 0 en el
+perfil real, un `stops_level_diagnostico` sobre ese perfil lo rechaza el bróker («ya esta fijado»), y
+la negativa por defecto ya no salta con él. Ningún test de la negativa se borra:
+
+| test | antes | después | por qué sigue protegiendo lo mismo |
+|---|---|---|---|
+| `test_cableado.py::test_sin_stops_level_la_orden_stop_no_se_coloca_y_lo_dice` | perfil real (stops level UNKNOWN): la stop no se coloca y el error nombra A-27 | **perfil sintético** con el stops level en UNKNOWN (`tests/unit/perfil_stops_level_unknown.py`): la misma aserción, `BrokerError` con «A-27» | la negativa es del código (`Broker._colocar`), no del perfil: se prueba con un perfil que no tiene el valor, por el mismo camino (`_motor` → `reglas_broker_de` → `Broker`) |
+| `test_selector_orden_stop.py::test_la_cli_con_a47_fijada_pasa_a_pedir_a27` | CLI real con el perfil real: exit 2 y «A-27» al colocar la primera stop | la CLI carga el **perfil sintético** en lugar del real (`monkeypatch` de `cableado.cargar_perfil`, como `_registro_con_a47_unknown` con el registro): la misma aserción. La salida se pide en una subcarpeta para comprobar que no escribe nada | sigue probando que, con A-47 fijada, la puerta siguiente es la del stops level, por la CLI de verdad y con las velas reales; solo el perfil es otro. Con el perfil real la corrida ya no se pararía ahí: correría el mes entero |
+| `test_perfil_cuenta.py::test_lo_que_no_esta_en_la_fuente_no_tiene_valor` | `sin_valor()` incluía `firma_stops_level_puntos` y `puntos_o_nada` daba None | sin él en `sin_valor()`, y `puntos_o_nada` da 0 | dice lo que el perfil tiene hoy |
+| `test_perfil_cuenta.py::test_con_el_stops_level_unknown_puntos_o_nada_da_none` | — (nuevo) | con el perfil sintético, `puntos_o_nada` da None y el parámetro está en `sin_valor()` | la mitad del perfil de la negativa: el UNKNOWN llega al bróker como None, no como error |
+| `test_perfil_cuenta.py::test_la_comision_por_lado_...` | `..._toma_el_supuesto_conservador`: la descripción decía NO ENCONTRADA y CONSERVADOR | `..._esta_medida_y_su_importe_sigue_conservador`: true, fuente ADR-0071, «MEDIDO» y las filas 53 y 54; el importe sigue en 5 y su descripción dice CONSERVADOR | lo mismo que antes (el valor es true y el importe es el conservador), con la fuente nueva |
+| `test_cableado.py::test_con_el_stops_level_del_perfil_el_diagnostico_de_a27_se_rechaza` | — (nuevo) | con el perfil real y un diagnóstico de 2, `BrokerError` «ya esta fijado en 0» | la otra mitad de ADR-0057 §5: con valor fijado, no hay diagnóstico |
+| `test_cableado.py::test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo` | perfil real y `stops_level_diagnostico = 2` | perfil real, sin diagnóstico (0 del perfil) | no prueba la negativa: prueba una operación stop de punta a punta, y ahora por la vía real. Mismas aserciones, en verde |
+| `test_cableado.py::test_rn011_con_el_selector_en_stop_de_punta_a_punta_por_el_arnes` | ídem, diagnóstico 2 | ídem, sin diagnóstico | ídem |
+| `test_cableado.py::test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_se_rechaza` | diagnóstico 0 | sin diagnóstico (el 0 del perfil) | el mismo 0, ahora medido; mismo rechazo por `precio_invalido` |
+| `test_orden_stop_pivote.py::_cadena` y `test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado` | diagnóstico 2 en los dos motores | sin diagnóstico | no prueban la negativa (la cadena de la orden stop, ADR-0064); mismas aserciones, en verde |
+| `test_renovar_cierres.py::test_simular_un_dia_posterior_a_hasta_sale_con_2_y_lo_nombra` | `--diagnostico-a27 0` en la CLI | sin esa opción | con el perfil real la opción se rechaza; el test prueba el calendario de cierres, que se niega antes |
+
+**Dos tests más, que el primer `make check` de este commit dio en rojo** (2 fallidos de 2456):
+
+| test | antes | después | por qué |
+|---|---|---|---|
+| `test_spec_fidelidad.py::test_las_mediciones_no_entran_en_el_cuestionario` | leía la clase de A-16, A-27 y A-28 solo entre las ABIERTAS (`KeyError: 'A-27'`) | la lee de todas | A-27 está DECIDIDA y sigue siendo una medición; lo que el test protege (que las mediciones no lleguen al cuestionario) no cambia, y la aserción de que ninguna de las tres entra en él sigue igual |
+| `tests/regression/test_cuenta_7_de_agosto.py` | el bróker con las reglas del perfil real | el bróker con las reglas del perfil real **salvo** `volumen_max_lotes`, que se fija en 100, el tope del perfil hasta hoy, declarado en el test (`VOLUMEN_MAX_DE_LA_REGRESION`) | ver el hallazgo de abajo: la regresión es del corte de la cuenta en el tick del pico (`trabajo/corregir-evaluar-fase`), no del volumen; con el tope de antes vuelve a probar exactamente lo mismo, con las mismas aserciones |
+
+> **HALLAZGO para el consultor: el volumen máximo de 50 rechaza una operación real del trader.**
+> Esa regresión repite por el bróker, con `abrir_conocida`, las cuatro operaciones del trader del
+> 2026-08-07 (agosto es material de DESARROLLO, `CLAUDE.md`), dimensionadas al 0,5 % de 100.000
+> hasta el stop inicial. Con el perfil nuevo, el bróker rechazó la primera: `BrokerError: t1: el
+> perfil no admite esta posicion (volumen_max_lotes)`. Por la cuenta de ADR-0071 §2, su stop queda
+> por debajo de 1 pip. Es justo el caso que el pendiente 37 tiene que resolver (qué hace el bot
+> cuando el lote pasa del máximo: A-18), y ya no es hipotético. No se ha medido nada más de esa
+> operación (ni su stop ni su lote); el dato es el mensaje del test.
+
+Los tests del bróker que usan reglas sintéticas (`test_broker_ordenes_stop.py`: sin stops level la
+stop no se coloca; con uno en diagnóstico se exige la distancia; con uno fijado no se admite
+diagnóstico) no cambian: construyen `ReglasBroker` a mano y no leen el perfil.
+
 ## Estado
 
-EN CURSO: fase 1. Hecho: ADR-0071. Siguen los valores (registro, perfil, A-27), los tests, el script
-1.1 y su lector, y el revisor.
+EN CURSO: fase 1. Hecho: ADR-0071; los valores, A-27 y los tests. Siguen el script 1.1 y su lector,
+y el revisor.

@@ -19,6 +19,9 @@ rutas_permitidas:
   # puntos 2, 3, 4, 5 y 7: los valores, A-27 y los documentos generados
   - knowledge/spec/parametros.yaml
   - knowledge/spec/ambiguedades.yaml
+  # el parche de spec_version (15.9.0 -> 15.9.1) que exige knowledge validate (anadido en el commit
+  # de los valores: solo cambian estado y fuente)
+  - knowledge/spec/spec_manifest.yaml
   - knowledge/cuentas/ftmo-2step-swing-100k.yaml
   - docs/spec/
   # punto 3: la negativa con el stops level UNKNOWN, pasada a un perfil sintetico; y test_kit (punto 7)
@@ -29,6 +32,10 @@ rutas_permitidas:
   - tests/unit/test_renovar_cierres.py
   - tests/unit/test_perfil_cuenta.py
   - tests/unit/test_kit.py
+  # anadidos en el commit de los valores, tras el primer make check: A-27 DECIDIDA sigue siendo
+  # medicion, y la regresion del 7 de agosto choca con el volumen maximo medido (informe §3.2)
+  - tests/unit/test_spec_fidelidad.py
+  - tests/regression/test_cuenta_7_de_agosto.py
   # punto 5: el script 1.1, su lector y su test
   - tools/mql5/MedirDemoFTMO.mq5
   - scripts/leer_demo_ftmo.py

@@ -436,7 +436,9 @@ def test_las_mediciones_no_entran_en_el_cuestionario() -> None:
 
     _config, registro, ambiguedades, mapa, _meses, _dias, items = _cargar_todo(REPO)
     assert abiertas_sin_clase(ambiguedades) == []
-    clases = {a.id: a.clase for a in ambiguedades if a.estado == "ABIERTA"}
+    # A-27 esta DECIDIDA desde ADR-0071 (2026-10-09) y sigue siendo una medicion: la clase se lee
+    # de todas, no solo de las abiertas
+    clases = {a.id: a.clase for a in ambiguedades}
     assert {clases[x] for x in ("A-16", "A-27", "A-28")} == {"medicion"}
     vivos = activos(list(items))
     preguntas = generar(registro, ambiguedades, mapa, detectar(vivos), vivos, lambda _v, _t: None)

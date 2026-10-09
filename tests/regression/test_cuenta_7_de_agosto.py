@@ -9,10 +9,17 @@ cierre se procesaba despues del cierre y reabria la posicion: ese dia la cuenta 
 seguia por encima del limite (VIABILIDAD-TRADER.md §6).
 
 Necesita los ticks y las M1 de `data/`, que viven fuera de git: sin ellos (la CI), se salta.
+
+Desde ADR-0071 (2026-10-09) el perfil de FTMO lleva el volumen maximo medido en la demo, 50 lotes,
+y la primera operacion de ese dia pasa de 50 (su stop queda por debajo de 1 pip, ADR-0071 §2): el
+broker la rechaza por `volumen_max_lotes`. Esta regresion es del corte de la cuenta, no del volumen,
+asi que se repite con el tope que tenia el perfil hasta ese dia, 100, DECLARADO aqui
+(`VOLUMEN_MAX_DE_LA_REGRESION`); lo que hace el bot con ese rechazo es el pendiente 37 (A-18).
 """
 
 from __future__ import annotations
 
+import dataclasses
 from datetime import UTC, datetime
 from decimal import ROUND_DOWN, Decimal
 from pathlib import Path
@@ -33,6 +40,8 @@ from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llena
 RAIZ = Path(__file__).resolve().parents[2]
 CASO = "caso-eurusd-2026-08-07"
 DESFASE_PUNTOS = 2  # OANDA - Dukascopy (BLOQUE-DE-LA-CAJA.md §2.3)
+# el tope del perfil hasta ADR-0071 (la web de FTMO); el medido, 50, rechaza la primera operacion
+VOLUMEN_MAX_DE_LA_REGRESION = Decimal(100)
 
 
 def _mercado() -> simulacion.MercadoDia:
@@ -58,7 +67,10 @@ def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
     reglas_fase = cuenta.reglas_de_fase(perfil, "reto")
     contrato = registro.decimal("instrumento_contrato")
     cfg = cargar_config_llenado(RAIZ / FICHERO_LLENADO).configuracion()
-    b = Broker(simulacion.reglas_broker_de(perfil), cfg, md.mercado(), contrato, md.escala)
+    reglas_broker = dataclasses.replace(
+        simulacion.reglas_broker_de(perfil), volumen_max_lotes=VOLUMEN_MAX_DE_LA_REGRESION
+    )
+    b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
     assert md.operaciones_trader is not None and len(md.operaciones_trader) == 4
     for i, op in enumerate(md.operaciones_trader, 1):
         entrada = int((op.apertura.precio * md.escala).to_integral_value()) - DESFASE_PUNTOS

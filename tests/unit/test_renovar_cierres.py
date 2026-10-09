@@ -186,7 +186,7 @@ def test_simular_un_dia_posterior_a_hasta_sale_con_2_y_lo_nombra(
         [
             "--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", "2026-04",
             "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
-            "--diagnostico-a21", "solo_una_zona_de_control", "--diagnostico-a27", "0",
+            "--diagnostico-a21", "solo_una_zona_de_control",
             "--salida", str(tmp_path / "arnes.txt"),
         ]
     )  # fmt: skip

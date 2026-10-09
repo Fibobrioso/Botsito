@@ -269,8 +269,7 @@ def _cadena(reg: Registro) -> tuple[Any, Any, dict[str, Any]]:
     }
     motor = tc._motor(reg, vocabulario, tc._mercado(ruta))
     motor.limpia = "solo_una_zona_de_control"
-    motor.tipo_orden = "stop_en_ruptura"
-    motor.stops_level_diagnostico = 2
+    motor.tipo_orden = "stop_en_ruptura"  # stops level: el del perfil, 0 (ADR-0071)
     motor.zonas_de = lambda md: {"zona:1": a, "zona:2": b}
     predicados, _ = tc._sinteticas()
     nuevo = tc.MINUTO_ZONA + 1
@@ -342,11 +341,7 @@ def test_la_cadena_colocada_cancelada_recolocada_y_llenada_por_el_cableado(
     antes = tc._motor(
         _registro(tmp_path, orden_limite_nace="al_darse_el_esquema"), vocabulario, tc._mercado(ruta)
     )
-    antes.limpia, antes.tipo_orden, antes.stops_level_diagnostico = (
-        motor.limpia,
-        motor.tipo_orden,
-        2,
-    )
+    antes.limpia, antes.tipo_orden = (motor.limpia, motor.tipo_orden)
     antes.zonas_de = motor.zonas_de
     antes.primitivas_extra = predicados
     antes.correr_dia(tc._dia())

@@ -48,6 +48,7 @@ from botsito.engine.motor import DatosMercado, DiaDeMercado, Sesion
 from botsito.engine.perfil_cuenta import cargar_perfil
 from botsito.engine.simulacion import MercadoDia, reglas_broker_de
 from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
+from tests.unit.perfil_stops_level_unknown import perfil_con_stops_level_unknown
 
 RAIZ = Path(__file__).resolve().parents[2]
 SPEC = RAIZ / "knowledge" / "spec" / "strategy_spec.yaml"
@@ -180,8 +181,9 @@ def _motor(
     mercado: MercadoDia,
     reglas_fase: ReglasFase | None = None,
     depuracion: bool = False,
+    ruta_perfil: Path = PERFIL,
 ) -> MotorCableado:
-    perfil = cargar_perfil(PERFIL)
+    perfil = cargar_perfil(ruta_perfil)
     predicados, acumuladores = _sinteticas()
     motor = MotorCableado(
         vocabulario=vocabulario,
@@ -545,10 +547,10 @@ def test_una_orden_stop_por_el_arnes_real_salta_al_romper_y_cierra_por_objetivo(
     """ADR-0056 §8, rama 1: una operacion completa con orden STOP de punta a punta, por
     `arnes.correr` con la spec real (RN-011 y RN-015). La estrategia sigue colocando limites (el
     selector de A-47 no existe todavia): aqui la accion que coloca se desvia a la orden stop del
-    broker, que es lo unico que esta rama le da. El stops level va en diagnostico (A-27)."""
+    broker, que es lo unico que esta rama le da. El stops level es el del perfil de FTMO, 0, medido
+    en la demo (ADR-0071); hasta el 2026-10-09 iba en diagnostico (2) porque era UNKNOWN."""
     monkeypatch.setattr(Broker, "colocar_limite", Broker.colocar_stop)
     motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
-    motor.stops_level_diagnostico = 2
     dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
     corrida = arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
     informe = arnes.informe(
@@ -580,10 +582,9 @@ def test_rn011_con_el_selector_en_stop_de_punta_a_punta_por_el_arnes(
     campo del motor, como lo pone la CLI con --diagnostico-a47), RN-011 y RN-015 dimensionan y la
     entrada va al broker como COMPRA STOP en el 0 de la caja, en el cierre del breaker. Sin
     desviar nada: es la via real. Sale una operacion completa, llenada al romper y cerrada por
-    objetivo."""
+    objetivo. El stops level, el del perfil (0, ADR-0071); hasta el 2026-10-09, en diagnostico."""
     motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
     motor.tipo_orden = STOP_EN_RUPTURA
-    motor.stops_level_diagnostico = 2
     dias = (arnes.DiaTrader("caso-x-2030-01-15", DIA.isoformat(), ()),)
     arnes.correr("cableado", ("2030-01",), dias, {DIA.isoformat(): _dia()}, motor)
     broker = motor.brokers[DIA.isoformat()]
@@ -626,8 +627,7 @@ def test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_se_rechaza(
     de la entrada en el cierre del breaker, asi que una compra stop alli queda del lado
     equivocado, y el broker la rechaza (ADR-0057); la limite, en cambio, espera y se llena."""
     motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
-    motor.tipo_orden = STOP_EN_RUPTURA
-    motor.stops_level_diagnostico = 0
+    motor.tipo_orden = STOP_EN_RUPTURA  # stops level: el del perfil, 0 (antes, diagnostico 0)
     motor.correr_dia(_dia())
     tb = motor.trazas_broker[DIA.isoformat()]
     broker = motor.brokers[DIA.isoformat()]
@@ -636,11 +636,29 @@ def test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_se_rechaza(
 
 
 def test_sin_stops_level_la_orden_stop_no_se_coloca_y_lo_dice(
+    registro: Registro,
+    vocabulario: dict[str, dict[str, Any]],
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """La negativa por defecto de ADR-0057 §5. Desde ADR-0071 el perfil de FTMO fija el stops
+    level, asi que se prueba con un perfil SINTETICO que lo tiene en UNKNOWN."""
+    monkeypatch.setattr(Broker, "colocar_limite", Broker.colocar_stop)
+    sin_stops_level = perfil_con_stops_level_unknown(tmp_path)
+    motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP), ruta_perfil=sin_stops_level)
+    with pytest.raises(BrokerError, match="A-27"):
+        motor.correr_dia(_dia())
+
+
+def test_con_el_stops_level_del_perfil_el_diagnostico_de_a27_se_rechaza(
     registro: Registro, vocabulario: dict[str, dict[str, Any]], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """ADR-0057 §5 y ADR-0071: con el valor fijado en el perfil de FTMO (0), una corrida no admite
+    un stops level en diagnostico; cuenta con el medido."""
     monkeypatch.setattr(Broker, "colocar_limite", Broker.colocar_stop)
     motor = _motor(registro, vocabulario, _mercado(RUTA_ORDEN_STOP))
-    with pytest.raises(BrokerError, match="A-27"):
+    motor.stops_level_diagnostico = 2
+    with pytest.raises(BrokerError, match="ya esta fijado en 0"):
         motor.correr_dia(_dia())
 
 

@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.0` · hash `666bc158be3d…`
+`spec_version 15.9.1` · hash `b00cbf2459a6…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -53,11 +53,11 @@
 | `huso_grafico` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0069` | nombre IANA del huso configurado en el grafico del trader |
 | `huso_operativa` | `Europe/Madrid` | CONFIRMED | ejecucion | `ADR-0017` | nombre IANA del huso en el que se expresan las horas de la operativa |
 | `instrumento` | `EURUSD` | CONFIRMED | estrategia | `ev-v2-003320-a736fd37` | simbolo del instrumento |
-| `instrumento_contrato` | `100000` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | unidades de la divisa base por lote |
-| `instrumento_digitos` | `5` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | decimales de la cotizacion |
-| `instrumento_lote_minimo` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
-| `instrumento_lote_paso` | `0.01` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | lotes |
-| `instrumento_stops_level` | `0` | DEFAULT_AMBIGUOUS · en revision por A-27 | instrumento | `ADR-0026` | puntos de distancia minima a mercado |
+| `instrumento_contrato` | `100000` | CONFIRMED | instrumento | `ADR-0071` | unidades de la divisa base por lote |
+| `instrumento_digitos` | `5` | CONFIRMED | instrumento | `ADR-0071` | decimales de la cotizacion |
+| `instrumento_lote_minimo` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
+| `instrumento_lote_paso` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
+| `instrumento_stops_level` | `0` | CONFIRMED | instrumento | `ADR-0071` | puntos de distancia minima a mercado |
 | `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | DEFAULT_AMBIGUOUS · en revision por A-25 | estrategia | `ev-v9-013054-d49a544e` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
@@ -395,23 +395,23 @@ instrumento sobre el que opera la primera version. Sale de la evidencia, no de u
 
 ### `instrumento_contrato`
 
-tamano del contrato; con el se convierte el riesgo en lotes. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
+tamano del contrato; con el se convierte el riesgo en lotes. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 8 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
 
 ### `instrumento_digitos`
 
-digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
+digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 6 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
 
 ### `instrumento_lote_minimo`
 
-lote minimo que admite el broker; por debajo, la operacion se rechaza. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
+lote minimo que admite el broker; por debajo, la operacion se rechaza. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 9 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
 
 ### `instrumento_lote_paso`
 
-escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27).
+escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 11 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
 
 ### `instrumento_stops_level`
 
-distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en FTMO (A-27). Y aqui el aviso pesa mas que en los otros cuatro: el stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
+distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 4 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer. El stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
 
 ### `intentos_tras_toma_nueva`
 
