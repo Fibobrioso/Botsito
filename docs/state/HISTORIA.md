@@ -7408,3 +7408,44 @@ Condicion (a). Por orden del consultor (respuesta a la PARADA, punto 8). Su text
 «Technical Debt»:
 
 - EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
+
+# Registro de cierre · `trabajo/demo-ejecucion-1` (2026-10-09)
+
+- Orden de cierre del consultor del 2026-10-09 (segunda respuesta, tras los puntos 1 a 4, commit
+  `db53ea5`), ejecutada con `/cerrar-rama` de Aleks y siguiendo `RITUAL.md`. Rama lista para revision
+  tras una pasada del revisor; nunca se cerro sin la orden.
+- **Lo que entra:**
+  - `data/manifests/demo_ftmo/demo-ftmo-2026-10-09-86f0df8b.yaml`: el CSV de la ejecucion 1 de
+    MedirDemoFTMO congelado (sha256 `86f0df8b…3c6e`; Aleks comprobo con `certutil` que es el del
+    original), y su esquema en `data/manifests/README.md`;
+  - ADR-0071: lo que fija la ejecucion 1, fila a fila; la cuenta del volumen maximo (50 lotes cortan
+    todo stop de menos de 1 pip) y las tres salidas que decide el pendiente 37;
+  - `knowledge/spec/parametros.yaml`: los cinco de A-27 a CONFIRMED con el mismo valor;
+    `spec_version` 15.9.1; A-27 DECIDIDA por ADR-0071 (A-28 sigue ABIERTA);
+  - `knowledge/cuentas/ftmo-2step-swing-100k.yaml`: `firma_stops_level_puntos` 0,
+    `firma_volumen_max_lotes` 50, `firma_comision_por_lado` MEDIDO (el importe por lote, 5, no cambia);
+  - la negativa del broker con el stops level UNKNOWN, en un perfil sintetico
+    (`tests/unit/perfil_stops_level_unknown.py`), y el test hermano de la regresion del 7 de agosto
+    con el perfil real (la primera operacion se rechaza por volumen maximo);
+  - `tools/mql5/MedirDemoFTMO.mq5` 1.1 (comision con 1,00 lote, margen libre, OBSERVACION) y su
+    lector 1.0/1.1; `docs/runbooks/DEMO-FTMO.md` (44 s, HEDGING, el script 1.1 antes de la ejecucion 2);
+  - `PROJECT_STATE.md`: sale la deuda «LLENA AL INSTANTE» (PAGADA) y A4 (SUSTITUIDA), literales mas
+    arriba en este fichero; el pendiente 37 lleva el maximo nuevo; 1425 funciones de test.
+- Next Action (en este commit del contrato, por la orden de cierre): cambia A (las ejecuciones 2 y 3,
+  con el script 1.1 y su CSV en 1.1); cambia S (la condicion de la primera ejecucion de la demo,
+  cumplida); entran O (P-D1 para Aleks con FTMO) y K (el falso positivo de la guardia). Letras
+  comprobadas antes: ninguna de las dos estaba viva en `PROJECT_STATE.md` (O nunca se habia usado; K
+  se uso y se cerro). `PROJECT_STATE.md` queda en 20.965 bytes, por debajo de 25.000 (comprobado
+  antes del commit).
+- Letra del tag: la ultima cerrada era la h de F37 (`stable/F37h-adelgazar-estado`);
+  `stable/F37i-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37i-demo-ejecucion-1`. El merge es `git rev-parse "stable/F37i-demo-ejecucion-1^{commit}"`.
+- Commits de la rama: `a59408b` (apertura), `e99ad4b` (fase 0: CSV congelado, inventario y PARADA),
+  `d5a31d1` (ADR-0071), `e5c549d` (valores, A-27 DECIDIDA y la negativa en un perfil sintetico),
+  `d48150e` (script 1.1 y lector), `8979bc4` (informe terminado y revisor), `db53ea5` (puntos 1 a 4
+  de la segunda respuesta) y el de este registro.
+- CI: ninguna de la rama; no toca `src/`, hooks, rutas ni plataforma (informe §5 y orden de cierre).
+  La CI de `main` corre tras el push.
+- Nadie ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/DEMO-EJECUCION-1.md` (la orden de cierre, tal cual, en su §7).
+  Encargo: `docs/encargos/trabajo-demo-ejecucion-1.md`.
