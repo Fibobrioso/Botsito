@@ -19,6 +19,11 @@ cual a `data/demo_ftmo/` sin abrirlo con Excel. El CSV CONFIRMA la hora (fila 30
 
 ## 0. Fase 0: inventario sin tocar knowledge ni código
 
+> **Nota (fase 1, revisor a2).** Las referencias `MedirDemoFTMO.mq5:NNN` de esta fase 0 (y de la
+> nota del §0.a) son del script **1.0**, el de `main` en e5a2261 y el que corrió en la ejecución 1.
+> La 1.1 de esta rama mueve las líneas: por ejemplo, `FileOpen` pasa de la 756 a la 809 y
+> `InpEsperaStopSeg` de la 30 a la 36. Para leerlas: `git show main:tools/mql5/MedirDemoFTMO.mq5`.
+
 ### 0.a El CSV congelado
 
 | campo | valor |
@@ -480,7 +485,7 @@ DECIDIDA (con `decision` ADR-0071 y `clase` medicion) y ABIERTA. **A-28 sigue AB
 SIMULADO LLENA AL INSTANTE...» (PAGADA, condición (a), filas 36, 37, 45 y 46); sale A4 de
 Pendientes heredados (condición (c), SUSTITUIDA, ADR-0071 y fila 4); las dos, literales, al final de
 HISTORIA con su evidencia. El pendiente 37 añade, tras su arranque literal, el máximo nuevo y la
-cuenta: «Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %)
+cuenta: «· Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %)
 sobre 100.000 y 10 USD por lote y pip, corta todo stop de menos de 1 pip (ADR-0071 §2)». `Tests
 Currently Passing`: 1418 → 1420. La Next Action no se toca (punto 10).
 
@@ -542,6 +547,13 @@ tools/mql5/MedirDemoFTMO.mq5`):
   verdad;
 - los comentarios de la cabecera: qué trae la 1.1 y la línea de SEGURIDAD («solo el volumen mínimo»
   ya no era exacta).
+**Lo que va más allá de la letra del punto 5, y por qué** (revisor, a3): la comprobación de que el
+volumen sea admisible (`VolumenAdmitido`) y la fila `volumen_comision`. La respuesta pide el input y
+la comprobación del margen; sin la primera, un volumen mal escrito en la ventana de Aceptar llegaría
+al servidor y volvería con un retcode de volumen en vez de un «no abre» explicado; sin la segunda, el
+lector no sabría con cuántos lotes se midió la comisión (la 1.0 no lo escribía). Las dos sirven a lo
+autorizado y no tocan ningún otro paso; si el consultor no las quiere, se quitan en una línea cada una.
+
 Nada más: los pasos 1-5 y 7, la limpieza y las comprobaciones de arranque no cambian. **El script no
 se compila en el repositorio** (MetaEditor solo está en la máquina de Aleks): la comprobación es el
 F7 con «0 errors» que pide `DEMO-FTMO.md`.
@@ -577,7 +589,222 @@ con CSV sintéticos; la tabla de la ejecución 1 del §0.a es la del lector 1.0.
 se renombra esa variable en una rama (y así el lector deja de parecer lo que no es), o se afina el
 patrón de la guardia en la suya. Aleks puede ejecutarlo en su terminal con `!`.
 
+## 4. La Next Action, propuesta para la orden de cierre (punto 10: no se toca ahora)
+
+Literal, para el commit del contrato (RITUAL punto 3), si la orden de cierre lo manda:
+
+- **A, reescrita:** «A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks;
+  docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del
+  2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md;
+  A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro,
+  con el script 1.1 (copiarlo, compilarlo con F7 y comprobar que el CSV dice 1.1): la 2 entre el 26 y
+  el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el
+  calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas
+  39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3).
+  Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se
+  reabre con otro ADR.»
+- **S, una frase añadida al final:** «La ejecución 1 de la demo de FTMO está hecha (2026-10-09,
+  ADR-0071).»
+- **Nueva, para Aleks con FTMO (la letra la elige el consultor):** «**Pregunta P-D1 a FTMO, la manda
+  Aleks** (el repositorio guarda la paráfrasis de la respuesta, como RESPUESTAS-FTMO): la cuenta FTMO
+  Challenge 2-Step Swing en MT5, ¿es de cobertura (hedging), como la prueba gratuita, o de
+  compensación (netting)? Y en EURUSD, ¿el volumen máximo por orden es de 50 lotes, como en la
+  prueba, o de 100, como dice la tabla de símbolos de la web? (docs/validation/DEMO-EJECUCION-1.md
+  §0.c, ADR-0071 §2 y §7).»
+- **M** se queda como está (§0.h). A4 y la deuda de la límite ya salieron en esta rama (§3.2).
+- **Para decidir (no es propuesta de texto):** la guardia que niega ejecutar el lector cambiado
+  (§3.3), y el rechazo por volumen máximo de la operación del 7 de agosto (§3.2, HALLAZGO), que
+  concreta el pendiente 37.
+
+## 5. Comprobaciones
+
+- **Commits de la rama** (`git log --format=%h main..HEAD`): a59408b (apertura), e99ad4b (fase 0),
+  d5a31d1 (ADR-0071), e5c549d (valores, A-27 y tests), d48150e (script 1.1 y lector), y el de este
+  informe con el del revisor. Cada uno con `make check` en verde y su línea SELLO antes del commit:
+  2454, 2454, 2454, 2456 y 2460 tests pasados.
+- **Los `make check` en rojo, y por qué** (ninguno se commiteó): el primero de la fase 0, por citar
+  `ADR-0071` antes de que existiera (5 tests, §1); en el commit de los valores, uno por `ruff` (una
+  línea larga y el formato de dos líneas de `test_cableado.py`) y otro con 2 tests (los del §3.2,
+  «Dos tests más»); y uno que se paró a mano porque la guardia había bloqueado el `git add` que iba
+  delante en el mismo comando y corría sin los ficheros estadiados.
+- **El CSV:** `sha256sum data/demo_ftmo/MedirDemoFTMO_20261009_153552.csv` da
+  `86f0df8b24f632102f0207b62a298a7776a164868e9a2d820ceb133c144b3c6e`, el del manifiesto.
+- **`src/` no cambia** (`git diff --stat main -- src/` vacío): solo knowledge, docs, tests, el
+  script y el lector. **Por eso no se empuja como `fix/demo-ejecucion-1` ni hace falta la CI de
+  Linux** (respuesta del consultor, «Cierre de la rama»).
+- **Nadie ejecutó `botsito motor arnes`** en esta rama, ni para medir. Los tests que ya lo hacían
+  (`test_selector_orden_stop.py`, `test_preparar_a35.py`) corren dentro de `make check`, como
+  siempre; el de la CLI con A-47 fijada sigue parándose en la primera orden stop porque lleva el
+  perfil sintético.
+- **`knowledge validate`** sin errores y **`state check`** en verde (1424 funciones de test).
+
+### 5.1 Lo hecho con cada hallazgo del revisor
+
+| # | gravedad | lo hecho |
+|---|---|---|
+| a1 | importa | Sin arreglo en esta rama: corregir la guardia o renombrar la variable del lector es una decisión del consultor (§3.3, y §4 «Para decidir»). La comprobación del contrato que la guardia niega se queda listada tal cual, para que quede a la vista; su evidencia sustituta son los nueve tests del lector. |
+| a2 | menor | Nota al principio del §0: las líneas del script que cita la fase 0 son de la 1.0, y cómo leerlas. |
+| a3 | menor | El §3.3 dice qué va más allá de la letra del punto 5 (`VolumenAdmitido` y la fila `volumen_comision`) y por qué. |
+| a4 | menor | ADR-0071 §3 dice que las dos exclusiones suponen una comisión proporcional y sin mínimo, que lo comprueba la ejecución 2, y que la conclusión práctica no depende de ello. |
+| a5 | menor | La fila de ADR-0057 en `docs/adr/README.md` anota qué partes quedan medidas por ADR-0071 y cuál sigue PROVISIONAL. El ADR no se edita. |
+| a6 | menor | El pendiente 37 separa con «·» su arranque truncado del texto nuevo. |
+| b1 | menor | Sin cambio: P-D1 entra en la Next Action con la orden de cierre (punto 10), y el texto está en el §4. Hasta entonces vive en el informe y en la descripción de `firma_volumen_max_lotes`. |
+
+## 6. Informe del revisor
+
+Pegado tal cual (subagente `revisor`, sobre HEAD d48150e más este informe estadiado):
+
+## Informe del revisor · trabajo/demo-ejecucion-1 · 2026-10-09
+
+Base: merge-base con main = e5a2261. HEAD = d48150e. Sobre el árbol de HEAD (95eeb8c) hay un `make-check.log` con SELLO, `2460 passed` y `exit=0`. Estadiado y sin commitear solo está `docs/validation/DEMO-EJECUCION-1.md`, que no está en ese sello.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 5 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **El contrato lista una comprobación que la guardia niega ejecutar.** `contrato.yaml` incluye `uv run python scripts/leer_demo_ftmo.py data/demo_ftmo`, pero con el lector cambiado la guardia la bloquea. No la rodeé. El informe §3.3 lo explica y lo deja al consultor. Hasta que se renombre `crudo = ruta.read_bytes()` o se afine `CRUDO_PYTHON`, ninguna sesión puede ejecutar esa comprobación del contrato. | `contrato.yaml:57`. Mi ejecución: «GUARDIA … bloquea: el codigo que se ejecuta pide el corpus SIN FILTRAR». `scripts/leer_demo_ftmo.py:97`: `crudo = ruta.read_bytes()`. `.claude/hooks/guardia.py:162`: `CRUDO_PYTHON`. En main la línea es la 84 y es idéntica. |
+| a2 | menor | **Las referencias `MedirDemoFTMO.mq5:NNN` del informe son del script 1.0 y no lo dicen.** Con la 1.1 ya no apuntan a lo citado. El informe cita `:756`, `:118`, `:132`, `:30`, `:66`, `:267`, `:111` y `:684-688`. En la 1.1 son `:809` (FileOpen), `:36` (`InpEsperaStopSeg`), `:73` (`TextoRetcode(0)`) y `:275` (`req.position`). | `grep -n` sobre el fichero de la rama frente a `git show main:…`. |
+| a3 | menor | **El script 1.1 añade algo que la respuesta no lista.** Es la comprobación `VolumenAdmitido` (mínimo, máximo y paso) y la fila nueva `volumen_comision`. La respuesta pedía margen libre y «no toques nada más». El informe §3.3 lo describe pero no lo señala como añadido ni dice por qué. Es coherente con lo autorizado: el lector necesita la fila, y sin la comprobación un input mal puesto daría un retcode. | `git diff main -- tools/mql5/MedirDemoFTMO.mq5`, hunks `VolumenAdmitido` y `MedirComision`. Informe §3.3. |
+| a4 | menor | **ADR-0071 §3 «excluye como hecho los 5 USD por lado» supone, sin decirlo, que la comisión es lineal en el volumen y sin mínimo por deal.** Con 0,01 lotes y 0,03 USD no se puede distinguir. La ejecución 2 (1,00 lote) lo comprueba. La conclusión práctica (el 5 sigue siendo conservador) no se ve afectada. | ADR-0071 §3. Filas 53 y 54 del CSV: `-0.03` con volumen mínimo. |
+| a5 | menor | **El índice de ADR no recoge que ADR-0057 pasa en parte a medido.** ADR-0071 §4 declara §3 MEDIDO. La fila de ADR-0057 sigue diciendo «PROVISIONAL hasta la demo de FTMO», y su cabecera igual. Es coherente con que un ADR no se edita, pero el índice sí admite anotaciones, como la de 0037. | `docs/adr/README.md:63`. ADR-0071 §4. |
+| a6 | menor | **La línea del pendiente 37 en `PROJECT_STATE.md` queda con el texto nuevo pegado tras el «…» de truncado**, lo que se lee como una línea cortada. | `PROJECT_STATE.md:67`. |
+
+**Comprobado sin hallazgos:**
+- **Contrato.** `uv run python scripts/contrato_rama.py`: «CONTRATO: 30 ficheros dentro del contrato de trabajo/demo-ejecucion-1 (riesgo alto, artefacto docs/validation/DEMO-EJECUCION-1.md, 8 comprobaciones para el revisor)».
+- **Comprobaciones del contrato.** `sha256sum` del CSV da `86f0df8b…3c6e`, igual al manifiesto (9.907 bytes, 59 filas). `pytest` de los seis ficheros de tests: todo en verde, sin saltos. `knowledge validate` sin errores; los AVISO son los de siempre y ninguno es de esta rama. `state check`: OK. `git log` y `git diff main -- tools/mql5/MedirDemoFTMO.mq5` ejecutados.
+- **`make check`.** `make-check.log`: línea 96 `SELLO … árbol 95eeb8c…`, que es `HEAD^{tree}`; línea 72 `2460 passed`; línea 97 `PICO DE MEMORIA 294 MiB`; `exit=0`.
+- **Trailer `Fuente:`.** El único commit que toca `knowledge/spec/` (e5c549d) lleva `Fuente: ADR-0071` en el cuerpo. El ADR existe y se commiteó antes (d5a31d1).
+- **Material protegido.** Ni holdout, ni libros, ni fotogramas, ni transcripciones en la rama. No hay filas nuevas en `HOLDOUT-EXPOSICIONES`, porque no se abrió nada.
+- **Regímenes de cambio.** `data/manifests/`: solo `A` para el `.yaml` y `M` para `README.md`, que no es protegido. `knowledge/evidence`, `feedback`, `cases`, `corpus` y `simulador` sin tocar. `HISTORIA.md`: 212 líneas añadidas y 0 borradas. `libros.yaml` no se toca.
+- **Ambigüedades (cinco sitios).**
+  - El YAML pasa A-27 a DECIDIDA, con `decision: ADR-0071` y `decidida_el`.
+  - El registro lleva los cinco parámetros.
+  - Ninguna regla cita A-27 (`grep` en `strategy_spec.yaml` sin resultados).
+  - `PROJECT_STATE` sin la fila de A-27.
+  - La hoja de preguntas no lleva A-27.
+  - `docs/spec/ambiguedades.md` va en el mismo commit (ABIERTA 22, DECIDIDA 7).
+  - `test_kit` actualizado. A-28 intacta: `estado: ABIERTA`.
+- **ADR.** `## Estado` = `ACTIVE`.
+- **Informes cerrados.** Ninguno cambia; `DEMO-EJECUCION-1.md` es nuevo.
+- **Guardias de `cita`.** Sin sitios nuevos con `cita`.
+- **Cifras.** El perfil es el sitio de las cifras de la firma. No hay literales de negocio nuevos.
+- **Evidencia nueva.** No hay ítems nuevos en `knowledge/evidence/`; el punto 10 no aplica.
+- **Informe.** Existe y acaba en `## Estado` (EN CURSO).
+- **Tres citas del informe contra su fuente.** `broker.py:857`, `:449` y `:270-275` coinciden. HISTORIA línea 538 coincide con el texto de la deuda. `strategy_spec.yaml:1353-1355` coincide con `ninguno_de`.
+- **Cifras del CSV citadas en el ADR.** Todas casan con su fila: 4, 5, 6, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21-23, 25, 31, 34-37, 39-46, 49, 51, 53, 54, 56-59.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 16 hechos, 0 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde el `main` actual, con `abrir-rama`: encargo, contrato y archivo en HISTORIA | Hecho | `a59408b`. El encargo existe. El contrato pasa. HISTORIA tiene el Archivo 25. |
+| 2 | 0.a Congelar el CSV en un manifiesto con el procedimiento del repo, y pegar la tabla del lector | Hecho | Manifiesto `data/manifests/demo_ftmo/demo-ftmo-2026-10-09-86f0df8b.yaml`. Sha, bytes y filas verificados. El sha del `.mq5` (`28d58110…`) coincide con el de main. Tabla pegada en el informe §0.a. Esquema documentado en `data/manifests/README.md`. |
+| 3 | 0.b Tabla medida → decisión, fila a fila, con los mínimos pedidos | Hecho | Informe §0.b. Contrasté contra el CSV las filas 4-19, 24, 25 y 34-57. |
+| 4 | 0.c Corregir «Netting o hedging» y medir qué supone el simulador | Hecho | `DEMO-FTMO.md` ahora dice «HEDGING … medido». Informe §0.c: posiciones independientes, `ninguno_de` en RN-011, y la pregunta P-D1 a FTMO. |
+| 5 | 0.d Comparar la fila 41 con la deuda «LLENA AL INSTANTE» | Hecho | Informe §0.d: la paga entera con las filas 36, 37, 45 y 46, y la 41 se trata como otro caso. Verificado en el CSV. |
+| 6 | 0.e Explicar la fila 57 (retcode 0 «SIN_RESPUESTA») | Hecho | Informe §0.e: es lo esperado. |
+| 7 | 0.f Anotar el desfase de 180 min como primera de tres medidas, sin cerrar A-28 | Hecho | Informe §0.f. A-28 sigue ABIERTA. |
+| 8 | 0.g Decidir sobre el pendiente heredado A4 | Hecho | Informe §0.g. A4 sale por la condición (c) con ADR-0071 y la fila 4 (punto 3 de la respuesta). |
+| 9 | 0.h Decir si se mide la Next Action M | Hecho | Informe §0.h: no se mide, M se queda. |
+| 10 | 0.i Propuesta de valores, ambigüedades, deudas, Next Action y texto de `DEMO-FTMO.md`, y PARADA | Hecho | Informe §0.i y §1. |
+| 11 | Fase 1, puntos 0, 1 y 2 de la respuesta: nota del hash del original, ADR nuevo con la cuenta de 1 pip, y los cinco del registro a CONFIRMED | Hecho | Informe §0.a (nota añadida) y §1 (nota «ADR-D1»). ADR-0071 §2 con la cuenta 50/stop. Diff de `parametros.yaml`. |
+| 12 | Puntos 3 y 4: stops level a 0, volumen máximo a 50, negativa probada con un perfil sintético, A4 a HISTORIA, pendiente 37 y P-D1 | Hecho | Perfil: `firma_stops_level_puntos` pasa a CONFIRMED 0 y `firma_volumen_max_lotes` a 50. Existe `tests/unit/perfil_stops_level_unknown.py`. A4 va a HISTORIA. El pendiente 37 en `PROJECT_STATE` lleva el 50 y la cuenta. P-D1 queda en el informe §4 para la orden de cierre. |
+| 13 | Punto 5: el importe de la comisión no cambia y solo cambia la descripción de `firma_comision_por_lado` | Hecho | `firma_comision_usd_por_lote` sigue en 5 con fuente ADR-0050. Solo cambia su descripción, que dice «excluye 5 por lado». |
+| 14 | Punto 5, script 1.1: input por defecto 1.00, versión 1.1, margen libre y no abrir, etiqueta OBSERVACION; lector que lee 1.0 y 1.1 con test sintético; `DEMO-FTMO.md` | Hecho | Diff del script y del lector. `test_leer_demo_ftmo.py` tiene 4 tests nuevos (1.1 con 1,00 lote, 1.1 sin margen, 1.0 con etiqueta nueva, versión ajena o mezcla). `DEMO-FTMO.md` «Antes de la ejecución 2». |
+| 15 | Puntos 6, 7, 8 y 9: P6, P7 y P8 sin cambio; A-27 DECIDIDA en los cinco sitios con `spec docs --escribir`; deuda PAGADA; correcciones de `DEMO-FTMO.md` | Hecho | Swaps, `llenado.yaml` y ADR-0057 sin tocar. El ADR los anota. Cinco sitios y docs regenerados en el mismo commit. Deuda en HISTORIA. |
+| 16 | Punto 10: la Next Action no se toca y la propuesta va al informe | Hecho | `git diff -U0 -- PROJECT_STATE.md`: ningún hunk entre las líneas 23 y 50. El informe §4 tiene la propuesta literal. |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | **P-D1 no queda en ningún sitio durable de la rama.** La respuesta (punto 4) dice que la pregunta «entra como pendiente para Aleks», y el punto 10 la manda a la Next Action en la orden de cierre. Entre tanto solo vive en el informe §0.c y §4, y en la descripción del perfil. Sigue lo ordenado; conviene tenerlo presente al cerrar. | Informe §4; `ftmo-2step-swing-100k.yaml` (descripción de `firma_volumen_max_lotes`). |
+
+**Nada fuera del encargo sin justificar.** Lo extra está declarado en el informe: `test_spec_fidelidad.py` y la regresión del 7 de agosto (§3.2, «Dos tests más», con el contrato ampliado), el parche de `spec_version` 15.9.1, y las correcciones de `DEMO-FTMO.md`. `src/` entero sin cambios (`git diff --stat main -- src/` vacío). La rama no toca `strategy_spec.yaml`, `knowledge/simulador/`, corpus, holdout, evidencia ni feedback.
+
+### Los seis puntos de alcance
+
+**1. Cada valor cambiado sale de una fila del CSV.** Sin hallazgos.
+
+| Parámetro | Valor nuevo | Fila del CSV |
+|---|---|---|
+| `instrumento_digitos` | 5 | 6 (`digits` 5) |
+| `instrumento_contrato` | 100000 | 8 (100000.00) |
+| `instrumento_lote_minimo` | 0.01 | 9 |
+| `instrumento_lote_paso` | 0.01 | 11 |
+| `instrumento_stops_level` | 0 | 4 |
+| `firma_stops_level_puntos` | 0 | 4 |
+| `firma_volumen_max_lotes` | 50 | 10 (50.00) |
+| `firma_comision_por_lado` | true (solo la descripción) | 53 y 54 (−0.03 y −0.03) |
+
+Las filas que citan las descripciones del perfil y del registro, y las de ADR-0071, casan con el CSV. `firma_comision_usd_por_lote` queda en 5; solo cambia su descripción.
+
+**2. Nada que dependa de la fecha se cierra.** Sin hallazgos.
+- A-28 sigue `ABIERTA` en `ambiguedades.yaml:699`.
+- `firma_swap_largo_puntos` y `firma_swap_corto_puntos` no cambian.
+- `knowledge/simulador/llenado.yaml` (DN-3) no se toca.
+- ADR-0057 no se toca, y el nivel exacto (§2) queda «SIGUE PROVISIONAL» en ADR-0071 §4.
+- El desfase de 180 min se anota como primera de tres medidas.
+
+**3. La negativa del bróker con el stops level UNKNOWN sigue probada.** Sin hallazgos.
+- `git diff main -- tests/` no borra ninguna función de test. La única que desaparece es `test_la_comision_por_lado_toma_el_supuesto_conservador`, renombrada y con aserciones nuevas; el informe lo declara en su tabla.
+- `test_sin_stops_level_la_orden_stop_no_se_coloca_y_lo_dice` conserva su nombre y su aserción (`BrokerError` con «A-27») sobre el perfil sintético.
+- `test_la_cli_con_a47_fijada_pasa_a_pedir_a27` conserva `exit 2` y «A-27» con el perfil sintético inyectado. Esa inyección funciona porque `cableado.py:429` llama a `cargar_perfil` por el global del módulo.
+- `test_con_el_stops_level_unknown_puntos_o_nada_da_none` es nuevo.
+- `test_broker_ordenes_stop.py` (reglas sintéticas) no cambia.
+- Los demás cambios están en la tabla del informe §3.2 y coinciden con el diff. Los antes y después son fieles.
+- Los tests que usaban un diagnóstico de 2 sobre el perfil real ya no ejercitan el rechazo por distancia al stops level de punta a punta. Ese camino sigue en `test_broker_ordenes_stop.py`.
+
+**4. El script 1.1 solo cambia lo autorizado.** Cambia lo siguiente.
+- `VERSION_SCRIPT` a 1.1 y `#property version` a 1.10.
+- El input `InpVolumenComision = 1.00`; el paso 6 abre con él.
+- `VolumenAdmitido` y `MargenAlcanza`; si no alcanza, la fila `apertura_compra_mercado` lleva `no_abre` y el paso termina sin error.
+- La etiqueta OBSERVACION en las dos filas de `buy_stop_llenado`.
+- Los comentarios de cabecera.
+
+No cambian el paso 7 (`g_volumen`, línea 694), `CerrarPosicion` (usa `POSITION_VOLUME`), la limpieza ni las comprobaciones de arranque. Lo no listado en la respuesta es lo de a3. El script no se compila en el repositorio, así que el F7 con «0 errors» lo hace Aleks.
+
+**5. El lector lee 1.0 y 1.1.** Sin hallazgos. Los cuatro tests nuevos pasan: 1.1 con 1,00 lote y OBSERVACION, 1.1 sin margen, 1.0 con la etiqueta nueva y el volumen mínimo, y versión ajena o mezcla rechazadas. Los cinco antiguos conservan sus aserciones. No pude ejecutar el lector sobre el CSV real por la guardia (a1). La tabla pegada en §0.a la hizo el lector 1.0, y el código de lectura 1.0 está cubierto por los tests sintéticos.
+
+**6. La entrada A sigue en pie para las ejecuciones 2 y 3.** Sin hallazgos.
+- `PROJECT_STATE.md:39` conserva A tal cual, con «Las ejecuciones 2 y 3, en una segunda prueba creada el 26 de octubre».
+- La propuesta de reescritura está en el informe §4.
+- La Next Action no se tocó: ningún hunk entre las líneas 23 y 50.
+- Cambian Current Branch y Current Feature, el recuento de tests (1424), el pendiente 37 y la fila de A-27, que sale.
+
+### Lo que no pude comprobar
+- **El lector 1.1 sobre el CSV real**, por la guardia (a1). Evidencia sustituta: los nueve tests del lector, todos en verde.
+- **Que el `.mq5` compile.** MetaEditor solo está en la máquina de Aleks.
+- **Lo que declara Aleks:** el sha `certutil` del original, la hora, los 45 s, el balance de 99.999,75 USD y el título «Hedge». El CSV confirma la hora, el «completo», los 44 s y el cero de abiertas; el balance no está en el CSV.
+- **Por qué el CSV sale con LF si el script escribe `\r\n`.** El informe lo deja como hecho medido, y yo no tengo acceso a la documentación de MQL5 que cita.
+- **Los `make check` de los commits anteriores a d48150e.** Solo existe el log del último.
+- **Si el árbol del sello coincide con el estadiado en su momento.** El árbol del sello es el de HEAD, pero el informe estadiado es posterior.
+- **Si la regresión del 7 de agosto rechaza por una operación con stop de menos de 1 pip.** El código del test (`lotes = 500/(distancia/escala*contrato)`) respalda la inferencia del informe, pero no ejecuté ni medí esa operación, y el informe tampoco.
+- **No ejecuté `make check` ni `botsito motor arnes`.** Una nota: el test de la CLI `test_la_cli_con_a47_fijada_pasa_a_pedir_a27` invoca `cli.main(... motor arnes --simular ...)` internamente. Salió en verde al ejecutar los seis ficheros del contrato; con el perfil sintético se para en la primera orden stop.
+
+### Comandos ejecutados
+1. `git branch --show-current`, `git merge-base main HEAD`, `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD`, `git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `sha256sum` del CSV; `wc -c` del CSV; `git show 6460dee:…/MedirDemoFTMO.mq5 | sha256sum`, y lo mismo sobre main
+4. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases knowledge/cuentas`
+5. `git diff main...HEAD` sobre knowledge, tests, script, lector, `PROJECT_STATE.md`, `docs/spec/*.md`, `docs/adr/README.md`, `HISTORIA.md`, `DEMO-FTMO.md` y `data/manifests/README.md`
+6. `git diff main -- tools/mql5/MedirDemoFTMO.mq5`; `git diff main -- scripts/leer_demo_ftmo.py`; `git diff main -- tests/ | grep …`
+7. `uv run pytest tests/unit/test_leer_demo_ftmo.py tests/unit/test_cableado.py tests/unit/test_selector_orden_stop.py tests/unit/test_perfil_cuenta.py tests/unit/test_orden_stop_pivote.py tests/unit/test_renovar_cierres.py -q -rs -p no:cacheprovider`
+8. `uv run botsito knowledge validate`; `uv run botsito state check`
+9. `uv run python scripts/leer_demo_ftmo.py data/demo_ftmo`: **bloqueado por la guardia**, no rodeado
+10. `grep` y `sed` sobre `make-check.log`, `broker.py`, `guardia.py`, `HISTORIA.md`, `strategy_spec.yaml` y `mq5`; `git rev-parse HEAD^{tree}`
+11. `git diff --cached` y `git status --short`, que sigue siendo solo el informe estadiado
+12. Dos comandos compuestos que la guardia bloqueó por la forma (`sha256sum` con `python <<EOF` detrás, y un `grep -rn` sobre una carpeta protegida); los rehice en llamadas separadas.
+
+Fichero revisado: `C:\Users\USER\Desktop\Bot v3\docs\validation\DEMO-EJECUCION-1.md`.
+
 ## Estado
 
-EN CURSO: fase 1. Hecho: ADR-0071; los valores, A-27 y los tests; el script 1.1, su lector y
-`DEMO-FTMO.md`. Sigue el revisor.
+LISTA PARA REVISIÓN, NO CERRADA. Fase 0 (CSV congelado, inventario y PARADA) y fase 1 (ADR-0071;
+los cinco de A-27 a CONFIRMED y A-27 DECIDIDA; stops level 0 y volumen máximo 50 en el perfil de
+FTMO; la negativa A-27 en un perfil sintético; la deuda de la límite PAGADA y A4 SUSTITUIDA; el
+script 1.1 y su lector) hechas, con `make check` en verde antes de cada commit; revisor pasado (0
+bloquea, 1 importa, 6 menor; lo hecho con cada uno, §5.1). Sin cambios en `src/`: no hace falta la
+CI de Linux. A-28 sigue ABIERTA y la entrada A, en pie para las ejecuciones 2 y 3. Para decidir: la
+guardia que niega ejecutar el lector (§3.3) y el rechazo por volumen máximo de la operación del 7 de
+agosto (§3.2). Espera la orden de cierre de Aleks.

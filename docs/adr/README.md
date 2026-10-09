@@ -60,7 +60,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0054 | RN-004 y RN-020, listas para activarse con la respuesta del trader | ACTIVE |
 | 0055 | RN-011 y la zona de entrada: preparada para A-21, con el selector de «limpia» PROVISIONAL | ACTIVE |
 | 0056 | La entrada con la ruptura: RN-011 con orden stop, preparada con selectores UNKNOWN | ACTIVE |
-| 0057 | Órdenes stop y rechazo de pendientes en el bróker simulado (PROVISIONAL hasta la demo de FTMO) | ACTIVE |
+| 0057 | Órdenes stop y rechazo de pendientes en el bróker simulado (PROVISIONAL hasta la demo de FTMO) | ACTIVE (desde el 2026-10-09, ADR-0071: §3 y §5 MEDIDOS en la ejecución 1 de la demo; §1 coincide con una observación; §2 sigue PROVISIONAL) |
 | 0058 | El selector de A-47 en la rama 2: la orden stop en el instante de la límite, para medirla (PROVISIONAL) | ACTIVE |
 | 0059 | A-42, PROVISIONAL: la ventana va en el reloj del gráfico, UTC+2 fijo, todo el año | SUPERSEDED por ADR-0069 |
 | 0060 | El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 | ACTIVE |

@@ -82,7 +82,10 @@ pendiente heredado 37 (los rechazos por volumen máximo, A-18).
   descripción.
 - **Lo que no fija:** la tarifa por lote. La comisión de un deal va en céntimos, y 0,03 con 0,01
   lotes sale de cualquier tarifa de 2,01 a 3,99 USD por lote y lado, según redondee MT5. **Excluye
-  como hecho los 5 USD por lado** del perfil (darían 0,05) y los 1,50 por lado (0,02). El valor del
+  como hecho los 5 USD por lado** del perfil (darían 0,05) y los 1,50 por lado (0,02). Las dos
+  exclusiones suponen que la comisión es proporcional al volumen y sin mínimo por operación; con
+  0,01 lotes no se puede distinguir, y la ejecución 2, con 1,00 lote, lo comprueba (revisor, a4). La
+  conclusión práctica no depende de ello: el 5 por lado del perfil no es más barato que la medida. El valor del
   perfil, `firma_comision_usd_por_lote` = 5 con cobro en cada lado, **no cambia en esta rama**:
   queda como supuesto CONSERVADOR, más caro que cualquier tarifa compatible con la medida.
 - **La tarifa se mide en la ejecución 2**, con 1,00 lote en el paso 6 (script 1.1, rama
