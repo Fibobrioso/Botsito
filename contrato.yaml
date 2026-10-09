@@ -8,24 +8,49 @@ rutas_permitidas:
   - docs/state/HISTORIA.md
   # fase 0 a): el manifiesto inmutable del CSV de la ejecucion 1
   - data/manifests/demo_ftmo/
-  # y su esquema, en una seccion nueva (anadido en el commit de la fase 0)
-  - data/manifests/README.md
   # fase 0 c) e i): la linea de netting/hedging y la duracion medida
   - docs/runbooks/DEMO-FTMO.md
-  # la fase 1 amplia esta lista en su propio commit, con lo que decida la PARADA
+  # y su esquema, en una seccion nueva (anadido en el commit de la fase 0)
+  - data/manifests/README.md
+  # fase 1 (respuesta del consultor del 2026-10-09), anadido en el commit del ADR:
+  # punto 1, el ADR nuevo y su fila en el indice
+  - docs/adr/0071-lo-que-fija-la-ejecucion-1-de-la-demo-de-ftmo.md
+  - docs/adr/README.md
+  # puntos 2, 3, 4, 5 y 7: los valores, A-27 y los documentos generados
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/ambiguedades.yaml
+  - knowledge/cuentas/ftmo-2step-swing-100k.yaml
+  - docs/spec/
+  # punto 3: la negativa con el stops level UNKNOWN, pasada a un perfil sintetico; y test_kit (punto 7)
+  - tests/unit/perfil_stops_level_unknown.py
+  - tests/unit/test_cableado.py
+  - tests/unit/test_orden_stop_pivote.py
+  - tests/unit/test_selector_orden_stop.py
+  - tests/unit/test_renovar_cierres.py
+  - tests/unit/test_perfil_cuenta.py
+  - tests/unit/test_kit.py
+  # punto 5: el script 1.1, su lector y su test
+  - tools/mql5/MedirDemoFTMO.mq5
+  - scripts/leer_demo_ftmo.py
+  - tests/unit/test_leer_demo_ftmo.py
 rutas_protegidas:
-  # lo que el encargo dice que no cambia: motor, estrategia, corpus, holdout y el script
-  - src/botsito/engine/
+  # lo que el encargo y la respuesta dicen que no cambia: codigo, motor, estrategia, corpus y holdout
+  - src/
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/simulador/
   - knowledge/cases/
   - knowledge/corpus/
   - knowledge/feedback/
+  - knowledge/evidence/
   - corpus/
-  - tools/mql5/
   - data/manifests/eurusd-*.yaml
   - data/manifests/ticks/
 comprobaciones:
   - git log --format=%H main..HEAD
   - uv run python scripts/leer_demo_ftmo.py data/demo_ftmo
   - sha256sum data/demo_ftmo/MedirDemoFTMO_20261009_153552.csv
+  - git diff main -- tools/mql5/MedirDemoFTMO.mq5
+  - uv run pytest tests/unit/test_leer_demo_ftmo.py tests/unit/test_cableado.py tests/unit/test_selector_orden_stop.py tests/unit/test_perfil_cuenta.py tests/unit/test_orden_stop_pivote.py tests/unit/test_renovar_cierres.py -q
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
   - uv run botsito state check
   - make check > make-check.log 2>&1

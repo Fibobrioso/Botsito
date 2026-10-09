@@ -48,6 +48,24 @@ si Aleks quiere comprobar que la copia es la de `MQL5\Files`, basta `certutil -h
 <fichero> SHA256` sobre el original y compararlo con el de arriba. Para las ejecuciones 2 y 3, lo
 mismo antes de copiar.
 
+> **Añadido en la fase 1 (2026-10-09, respuesta del consultor, punto 0).** **Los bytes congelados
+> son los del original:** Aleks pasó `certutil -hashfile` sobre
+> `MQL5\Files\MedirDemoFTMO_20261009_153552.csv` y da `86f0df8b…3c6e`, el mismo sha256 (lo declara
+> Aleks, 2026-10-09). Así que el LF no cambió en la copia: **lo escribió MetaTrader**, y el LF frente
+> al `\r\n` del código queda como hecho medido.
+>
+> **Por qué sale LF, leyendo el script: el script no lo explica.** Abre el fichero con
+> `FileOpen(nombre, FILE_WRITE | FILE_TXT | FILE_ANSI)` (`MedirDemoFTMO.mq5:756`): texto, de un
+> byte por carácter. Escribe cada línea con `FileWriteString(g_csv, linea + "\r\n")` (`:118`) y la
+> cabecera igual (`:132`). Nada en el script quita el `\r`. La documentación de MQL5 tampoco lo
+> explica: la de `FILE_TXT` y `FILE_ANSI` no dice nada de fines de línea, y la de `FileWriteString`
+> dice lo contrario, que en un fichero CSV o TXT añade el `\r` que falte delante de un `\n`
+> (consultada el 2026-10-09: <https://www.mql5.com/en/docs/files/filewritestring> y
+> <https://www.mql5.com/en/docs/constants/io_constants/fileflags>). Lo que haga el terminal (build
+> 6230, fila 26) con el `\r\n` en modo texto no se puede medir desde el repositorio. **No se cambia
+> nada por ello**: el lector parte las líneas con `str.splitlines()` y lee las dos formas
+> (`scripts/leer_demo_ftmo.py:89`).
+
 **La tabla del lector** (`uv run python scripts/leer_demo_ftmo.py data/demo_ftmo`, con
 `PYTHONUTF8=1` para que el «·» salga bien en la consola de Windows), tal cual:
 
@@ -266,7 +284,7 @@ mientras `firma_stops_level_puntos` sea UNKNOWN** (`broker.py:399-405`). La fila
 
 **Propuesta: descartarla si la fase 1 fija `firma_stops_level_puntos` = 0** (P3): con el valor en el
 único perfil que hay, la negativa no se da nunca, y adelantarla no tiene objeto; A4 sale de
-`PROJECT_STATE.md` a HISTORIA por la condición (c), SUSTITUIDA, citando ADR-D1 y la fila 4. **Si el
+`PROJECT_STATE.md` a HISTORIA por la condición (c), SUSTITUIDA, citando ADR-0071 y la fila 4. **Si el
 consultor prefiere esperar a las ejecuciones 2 y 3 para fijar el stops level**, A4 se queda tal cual
 hasta entonces: no hay razón para aplicarla, porque solo adelantaría una negativa que desaparecerá. En
 ningún caso propongo aplicarla.
@@ -285,9 +303,8 @@ el trader lo pone en la entrada exacta. **M se queda.**
 **Cómo citar.** El trailer `Fuente:` solo admite `ev-*`, `fb-*` o `ADR-NNNN` que existan
 (`comun/historial.py`, `DIRECTORIOS_CON_FUENTE`), y el campo `fuente` del registro, `{tipo: decision,
 id: ADR-NNNN}` para lo que no es estrategia (ADR-0004; cabecera de `parametros.yaml`). Un manifiesto
-no cabe en ninguno. Propongo un ADR nuevo, que este informe llama **ADR-D1** porque un id que todavía
-no existe rompe `knowledge validate` (al crearlo toma el número libre siguiente, hoy el 71), **«Lo que
-fija la ejecución 1 de la demo de FTMO»**: cita el
+no cabe en ninguno. Propongo un ADR nuevo, **ADR-0071, «Lo que fija la ejecución 1 de la demo de
+FTMO»**: cita el
 manifiesto (id y sha256) y, por cada valor, la fila del CSV; dice qué partes de ADR-0057 pasan a
 MEDIDAS y cuáles no; y es la `fuente` de cada parámetro y el `Fuente:` de cada commit. Se commitea
 ANTES que los valores que lo citan (`docs/runbooks/AMBIGUEDADES.md`: «primero se commitea el
@@ -299,36 +316,36 @@ evidencia documental (`ev-*`) no sirve: `knowledge/evidence/` es para items del 
 
 | | qué | de → a | fila | efecto | mi propuesta |
 |---|---|---|---|---|---|
-| P1 | ADR-D1 | nuevo | todas las de abajo | ninguno por sí solo | **aplicar** |
-| P2 | `instrumento_digitos`, `_contrato`, `_lote_minimo`, `_lote_paso`, `_stops_level` (registro) | DEFAULT_AMBIGUOUS (FundedNext, ADR-0026) → **CONFIRMED** con el MISMO valor (5, 100000, 0.01, 0.01, 0), fuente ADR-D1, sin `ambiguedad_id` | 6, 8, 9, 11, 4 | ningún valor cambia: ni la estrategia ni las corridas. RN-026 sigue sin activarse nunca (con 0, su nota ya lo dice) | **aplicar** |
-| P3 | `firma_stops_level_puntos` (perfil) | UNKNOWN → **CONFIRMED 0**, fuente ADR-D1 | 4 | el bróker simulado coloca órdenes stop SIN `--diagnostico-a27`, que con el valor fijado se rechaza (`broker.py:270-275`); las límites no cambian (`if minimo:` con 0 no juzga nada, `broker.py:449`). Desaparece uno de los diagnósticos que hoy impiden un «sí» de ADR-0070 (quedan A-21, A-35 y A-44). Tests que usan `--diagnostico-a27` o que esperan el UNKNOWN con el perfil real tendrán que cambiar (al menos `test_perfil_cuenta.py:85-88`, `test_cableado.py:638`, `test_renovar_cierres.py:189`; se miden en la fase 1). Ningún cambio en `src/` | **aplicar** |
+| P1 | ADR-0071 | nuevo | todas las de abajo | ninguno por sí solo | **aplicar** |
+| P2 | `instrumento_digitos`, `_contrato`, `_lote_minimo`, `_lote_paso`, `_stops_level` (registro) | DEFAULT_AMBIGUOUS (FundedNext, ADR-0026) → **CONFIRMED** con el MISMO valor (5, 100000, 0.01, 0.01, 0), fuente ADR-0071, sin `ambiguedad_id` | 6, 8, 9, 11, 4 | ningún valor cambia: ni la estrategia ni las corridas. RN-026 sigue sin activarse nunca (con 0, su nota ya lo dice) | **aplicar** |
+| P3 | `firma_stops_level_puntos` (perfil) | UNKNOWN → **CONFIRMED 0**, fuente ADR-0071 | 4 | el bróker simulado coloca órdenes stop SIN `--diagnostico-a27`, que con el valor fijado se rechaza (`broker.py:270-275`); las límites no cambian (`if minimo:` con 0 no juzga nada, `broker.py:449`). Desaparece uno de los diagnósticos que hoy impiden un «sí» de ADR-0070 (quedan A-21, A-35 y A-44). Tests que usan `--diagnostico-a27` o que esperan el UNKNOWN con el perfil real tendrán que cambiar (al menos `test_perfil_cuenta.py:85-88`, `test_cableado.py:638`, `test_renovar_cierres.py:189`; se miden en la fase 1). Ningún cambio en `src/` | **aplicar** |
 | P4 | `firma_volumen_max_lotes` (perfil) | 100 (API de la web) → **50** | 10 | más rechazos por `volumen_max_lotes` en la línea base, donde ya los hay con 100 (pendiente heredado 37, `BROKER-ORDENES-STOP.md` §3). La plataforma manda sobre la web (R11: «The account specification can be seen directly in the trading platform») | **aplicar**, y P-D1 a FTMO por si la cuenta de verdad dice otra cosa |
-| P5 | `firma_comision_usd_por_lote` (perfil) | 5 «por lado» (10 ida y vuelta, supuesto conservador) → ? | 53, 54 | la medida es 0,03 por lado CON 0,01 LOTES, y no fija la tarifa por lote: la comisión de un deal va en céntimos, y 0,03 sale de cualquier tarifa entre 2,50 y 3,49 por lado si redondea al más cercano, de 2,01 a 3,00 si redondea hacia arriba, o de 3,00 a 3,99 si trunca; el CSV no dice cuál. Excluye las dos del perfil y de `VIABILIDAD-COMISION.md` que no son 5 ida y vuelta: 5 por lado (daría 0,05) y 1,50 por lado (0,015 → 0,02). Casa con la tarifa publicada de 2,50 por lado (FTMO-REGLAS, recuadro del 2026-09-28) solo si redondea 0,025 hacia arriba | **no cambiar el importe en esta rama**: el 5 por lado es MÁS caro que cualquier tarifa compatible (a lo sumo 3,99), así que sigue siendo conservador; se anota en ADR-D1 que la medida lo excluye como hecho. **Y medir la comisión con 1,00 lote** en la ejecución 2: hace falta un cambio del script (una entrada de volumen para el paso 6), en una rama corta antes del 26 de octubre. `firma_comision_por_lado` = true: la medida lo CONFIRMA (se cobra en los dos lados, como dijo FTMO el 29-09); sin cambio de valor, solo la descripción |
-| P6 | `firma_swap_largo_puntos`, `firma_swap_corto_puntos` | −9.49 / 0.36 (API, 2026-09-25) | 16, 17 | −9.41 / 0.10 el 2026-10-09: el swap **cambia con la fecha** (los tipos de interés), y el encargo no cierra nada que dependa de ella. Sin efecto mientras el bot cierre a las 15:00 | **no cambiar**; las tres ejecuciones dan tres lecturas; se anota en ADR-D1. Lo mismo el triple del miércoles (fila 19), que el simulador no cobra: deuda de una línea si el consultor quiere |
-| P7 | `deslizamiento_fijo_puntos` (DN-3, `knowledge/simulador/llenado.yaml`) | 0, PROVISIONAL | 53, 54, 57 | tres muestras: +2, −2 y +1 (media +0,3). Ninguna cifra fija se sostiene con tres muestras de un minuto | **no cambiar**; se anota en ADR-D1 y suman las ejecuciones 2 y 3 |
+| P5 | `firma_comision_usd_por_lote` (perfil) | 5 «por lado» (10 ida y vuelta, supuesto conservador) → ? | 53, 54 | la medida es 0,03 por lado CON 0,01 LOTES, y no fija la tarifa por lote: la comisión de un deal va en céntimos, y 0,03 sale de cualquier tarifa entre 2,50 y 3,49 por lado si redondea al más cercano, de 2,01 a 3,00 si redondea hacia arriba, o de 3,00 a 3,99 si trunca; el CSV no dice cuál. Excluye las dos del perfil y de `VIABILIDAD-COMISION.md` que no son 5 ida y vuelta: 5 por lado (daría 0,05) y 1,50 por lado (0,015 → 0,02). Casa con la tarifa publicada de 2,50 por lado (FTMO-REGLAS, recuadro del 2026-09-28) solo si redondea 0,025 hacia arriba | **no cambiar el importe en esta rama**: el 5 por lado es MÁS caro que cualquier tarifa compatible (a lo sumo 3,99), así que sigue siendo conservador; se anota en ADR-0071 que la medida lo excluye como hecho. **Y medir la comisión con 1,00 lote** en la ejecución 2: hace falta un cambio del script (una entrada de volumen para el paso 6), en una rama corta antes del 26 de octubre. `firma_comision_por_lado` = true: la medida lo CONFIRMA (se cobra en los dos lados, como dijo FTMO el 29-09); sin cambio de valor, solo la descripción |
+| P6 | `firma_swap_largo_puntos`, `firma_swap_corto_puntos` | −9.49 / 0.36 (API, 2026-09-25) | 16, 17 | −9.41 / 0.10 el 2026-10-09: el swap **cambia con la fecha** (los tipos de interés), y el encargo no cierra nada que dependa de ella. Sin efecto mientras el bot cierre a las 15:00 | **no cambiar**; las tres ejecuciones dan tres lecturas; se anota en ADR-0071. Lo mismo el triple del miércoles (fila 19), que el simulador no cobra: deuda de una línea si el consultor quiere |
+| P7 | `deslizamiento_fijo_puntos` (DN-3, `knowledge/simulador/llenado.yaml`) | 0, PROVISIONAL | 53, 54, 57 | tres muestras: +2, −2 y +1 (media +0,3). Ninguna cifra fija se sostiene con tres muestras de un minuto | **no cambiar**; se anota en ADR-0071 y suman las ejecuciones 2 y 3 |
 | P8 | ADR-0057 §2 (el nivel exacto) | se acepta y espera | 39-42 | 3 de 4 discrepan, con una sola observación por tipo y una explicación por latencia que el CSV no puede descartar (§0.d) | **no cambiar**; esperar a las ejecuciones 2 y 3 |
 
-**Ambigüedades.** **A-27 se cierra con esta ejecución**, como **DECIDIDA por ADR-D1** (ADR-0022,
+**Ambigüedades.** **A-27 se cierra con esta ejecución**, como **DECIDIDA por ADR-0071** (ADR-0022,
 la segunda forma: una `medicion` no la contesta el trader). Sus cinco parámetros no dependen de la
 fecha (son la ficha del símbolo, que `SymbolInfo*` lee igual cualquier día), y las ejecuciones 2 y 3
 los vuelven a leer con el mismo script: si alguno difiriera, se reabre con otro ADR. La cuenta de
 verdad la sigue comprobando el pre-vuelo de F33 (`resuelve_en: [F17, F33]`). Cerrarla toca los cinco
-sitios de `AMBIGUEDADES.md`: el YAML (`estado: DECIDIDA`, `decision: ADR-D1`, `decidida_el`), los
+sitios de `AMBIGUEDADES.md`: el YAML (`estado: DECIDIDA`, `decision: ADR-0071`, `decidida_el`), los
 cinco parámetros (P2), la regla que la cita (RN-026: su nota dice «vale 0 en la demo medida [...] hay
-que volver a medirlo en la cuenta fondeada»; propongo añadir que en FTMO también es 0, ADR-D1), la
+que volver a medirlo en la cuenta fondeada»; propongo añadir que en FTMO también es 0, ADR-0071), la
 fila de `PROJECT_STATE.md` («Known Ambiguities») que sale, y la hoja de preguntas, que no la lleva
 (`scripts/hoja_preguntas.py`, sin A-27). Más `tests/unit/test_kit.py:353-355`, que congela A-27 en
 ABIERTA, y `botsito spec docs --escribir` en el mismo commit. **A-28 no se cierra** (§0.f).
 
 **Deudas.** Se paga «EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO
 EL NIVEL»: sale de Technical Debt a HISTORIA por la condición (a), con las filas 36, 37, 45 y 46 y
-ADR-D1 (§0.d). Si el consultor quiere, entra una línea por el swap triple que el simulador no
+ADR-0071 (§0.d). Si el consultor quiere, entra una línea por el swap triple que el simulador no
 cobra (P6). La discrepancia del nivel exacto (P8) no es deuda todavía: es una medida que repetir, y va
 en la entrada A.
 
 **Entradas de la Next Action** (cambian en el commit del contrato, con la orden de cierre, RITUAL
 punto 3; aquí solo la propuesta):
-- **A** sigue en pie, reescrita: la ejecución 1 se hizo el 2026-10-09 (DEMO-EJECUCION-1.md, ADR-D1);
+- **A** sigue en pie, reescrita: la ejecución 1 se hizo el 2026-10-09 (DEMO-EJECUCION-1.md, ADR-0071);
   las ejecuciones 2 y 3, en la segunda prueba desde el 26 de octubre, miden A-28 (desfase y
   calendario), repiten el nivel exacto (P8), los deslizamientos y los swaps, y, si se cambia el
   script, la comisión con 1,00 lote (P5).
@@ -356,12 +373,75 @@ El «como mucho unos tres» sale de los 44 s más los 120 de espera del paso 7 (
 
 ## 1. PARADA
 
+> **Nota (fase 1, 2026-10-09).** Hasta la respuesta del consultor este informe llamaba «ADR-D1» al
+> ADR nuevo: era su nombre provisional, porque citar un id que todavía no existe rompe `knowledge
+> validate` (el primer `make check` de la fase 0 salió en rojo por eso, con 5 tests fallidos). Al
+> crearlo tomó el número libre siguiente, **ADR-0071**, y desde la fase 1 el informe lo nombra así
+> en todas partes salvo en la respuesta del consultor, que va tal cual.
+
 Fase 0 entregada. **No se ha cambiado ningún valor**: ni `knowledge/`, ni `src/`, ni tests, ni el
 script. En la rama solo hay: la apertura (encargo, contrato, Archivo 25), el manifiesto del CSV, la
 sección «Demo de FTMO» de `data/manifests/README.md`, las tres correcciones de `DEMO-FTMO.md` y este
 informe. Para seguir, el consultor decide P1-P8, el cierre de A-27, la deuda, A4 y si hay rama del
 script para la comisión.
 
+## 2. Respuesta del consultor a la PARADA
+
+Dada el 2026-10-09. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/demo-ejecucion-1 (2026-10-09). Cópiala tal cual en DEMO-EJECUCION-1.md, sección «Respuesta del consultor a la PARADA».
+>
+> 0. Hash del original: Aleks pasó certutil -hashfile sobre MQL5\Files\MedirDemoFTMO_20261009_153552.csv y coincide con 86f0df8b…3c6e (lo declara Aleks, 2026-10-09). Anótalo en §0.a: los bytes congelados son los del original. El LF frente al \r\n del código queda como hecho medido. Explica en el informe, leyendo el script (modo de FileOpen), por qué sale LF, sin cambiar nada por ello.
+>
+> 1. P1, ADR nuevo: APLICAR. Toma el número libre siguiente al crearlo y sustituye «ADR-D1» por el id real en todo lo commiteado desde ahora. En el informe, una nota dice que ADR-D1 era el nombre provisional. Se commitea antes que los valores que lo citan. Además de lo que propones, el ADR lleva, como consecuencia medida y calculada con los parámetros del registro (sin medir nada sobre trades): con riesgo_por_operacion sobre 100.000 y el valor del pip de EURUSD, el tope de 50 lotes corta todo stop por debajo de 1 pip. Es la cuenta que tiene que usar el pendiente heredado 37 (rechazos por volumen máximo, A-18).
+>
+> 2. P2, los cinco del registro a CONFIRMED con el mismo valor: APLICAR.
+>
+> 3. P3, firma_stops_level_puntos = 0: APLICAR. Condición: la negación por defecto del bróker con el stops level UNKNOWN sigue cubierta por tests con un perfil sintético UNKNOWN. Ningún test que hoy compruebe esa negativa se borra: se pasa al perfil sintético. Lista en el informe cada test cambiado, con su antes y después, y por qué sigue protegiendo lo mismo.
+>    A4 sale de Pendientes heredados a HISTORIA por la condición (c), SUSTITUIDA, citando el ADR y la fila 4.
+>
+> 4. P4, firma_volumen_max_lotes = 50: APLICAR. La pregunta P-D1 a FTMO entra como pendiente para Aleks (la manda él; el repo guarda la paráfrasis de la respuesta). Cambia el texto del pendiente 37 con el máximo nuevo (50) y la cuenta del punto 1.
+>
+> 5. P5, la comisión: el importe NO cambia en esta rama; el ADR anota que la medida excluye 5 por lado como hecho y que sigue siendo conservador. firma_comision_por_lado = true, CONFIRMADO por la medida: solo cambia su descripción.
+>    Además, EN ESTA RAMA, y lo autorizo pese a que el encargo decía no cambiar el script en el punto e: el script mide la comisión con 1,00 lote en la ejecución 2.
+>    - Añade un input para el volumen del paso 6, por defecto 1.00, y súbelo a version_script 1.1.
+>    - El paso 6 sigue abriendo y cerrando enseguida con su stop de protección. Comprueba el margen libre antes de abrir y, si no alcanza, que no abra y lo escriba.
+>    - El lector reconoce las dos versiones, con un test del lector sobre un CSV sintético 1.1.
+>    - DEMO-FTMO.md dice que antes de la ejecución 2 Aleks vuelve a copiar y compilar el script (F7, 0 errors) y comprueba que el CSV dice 1.1.
+>    - Mientras haces esto, cambia la etiqueta «SIN_RESPUESTA» de las observaciones por «OBSERVACION» (0.e), en el script y en el lector, sin romper la lectura de los CSV 1.0.
+>    - No toques nada más del script.
+>
+> 6. P6 (swaps), P7 (deslizamiento) y P8 (el nivel exacto): NO CAMBIAR. Esperan a las ejecuciones 2 y 3 y se anotan en el ADR. Sin deuda nueva por el triple del miércoles: el bot cierra a las 15:00.
+>
+> 7. A-27: se cierra como DECIDIDA por el ADR nuevo (ADR-0022), con los cinco sitios de AMBIGUEDADES.md, test_kit.py y botsito spec docs --escribir en el mismo commit. El ADR dice expresamente que las ejecuciones 2 y 3 y el pre-vuelo de F33 vuelven a leer la ficha, y que una diferencia la reabre con otro ADR. A-28 sigue ABIERTA.
+>
+> 8. La deuda «EL BROKER SIMULADO LLENA AL INSTANTE…»: sale PAGADA a HISTORIA, con las filas 36, 37, 45 y 46 y el ADR.
+>
+> 9. DEMO-FTMO.md: acepto las tres correcciones de la fase 0. Añade lo del punto 5.
+>
+> 10. Next Action: la propuesta va al informe, para la orden de cierre, y no se toca ahora. A queda reescrita como propones; S anota que la ejecución 1 está hecha; entra la pregunta P-D1 para Aleks.
+>
+> Cierre de la rama:
+> - make check > make-check.log 2>&1, con el exit 0, ningún failed y la línea SELLO, antes de cada commit.
+> - Si tocas algo de src/, empuja como fix/demo-ejecucion-1 y pasa la CI de Linux. Si solo cambian knowledge, tests, el script y el lector, dilo y no hace falta.
+> - Pasa el revisor (subagente revisor), con este alcance: cada valor cambiado sale de una fila del CSV; nada que dependa de la fecha se cierra; la negativa con el stops level UNKNOWN sigue probada; el script 1.1 solo cambia lo autorizado; el lector lee 1.0 y 1.1. Pega su informe al final del tuyo.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 3. Fase 1
+
+### 3.1 ADR-0071 (commit propio, antes que los valores)
+
+`docs/adr/0071-lo-que-fija-la-ejecucion-1-de-la-demo-de-ftmo.md` y su fila en `docs/adr/README.md`.
+Lleva lo propuesto en §0.i y, por el punto 1 de la respuesta, la cuenta del volumen máximo (su §2):
+con `riesgo_por_operacion` 0,5 % sobre 100.000 (500 USD) y 10 USD por lote y pip de EURUSD, el lote
+es 50 / stop en pips, y el tope de 50 corta todo stop de menos de 1 pip; con 1 pip exacto pasa
+(`broker.py:857`, `lotes > volumen_max_lotes`). El contrato se amplía en este commit con lo que toca
+la fase 1 (y `src/` entero pasa a protegido: nada de la fase 1 lo toca).
+
 ## Estado
 
-EN CURSO: fase 0 entregada; PARADA, esperando la respuesta del consultor.
+EN CURSO: fase 1. Hecho: ADR-0071. Siguen los valores (registro, perfil, A-27), los tests, el script
+1.1 y su lector, y el revisor.
