@@ -73,6 +73,15 @@ operaciones.** El lote se dimensiona con `riesgo_por_operacion` (0,5 %) sobre `b
 saldo: 1 pip × saldo / 100.000 (0,9 pips con 90.000, 1,1 con 110.000). Es la cuenta que usa el
 pendiente heredado 37 (los rechazos por volumen máximo, A-18).
 
+**Y lo que deja abierto para esa rama** (añadido por el consultor el 2026-10-09, antes del merge):
+`volumen_limite` = 0 (fila 12, `SYMBOL_VOLUME_LIMIT`) dice que el servidor no pone tope a la suma
+de órdenes y posiciones del símbolo, solo a cada orden. Así que la rama del pendiente 37 decide entre
+tres salidas cuando el lote pasa de 50: **recortar el lote a 50** (con un riesgo menor que el de
+`riesgo_por_operacion`), **partir la operación en varias órdenes** de 50 como mucho, o **no
+operar**. No se decide aquí. Ya hay un caso real: la primera operación del trader del 2026-08-07
+(construcción) pasa de 50 lotes, y el bróker la rechaza
+(`tests/regression/test_cuenta_7_de_agosto.py`).
+
 ### 3. La comisión: el importe no cambia; cobrarla en cada lado queda CONFIRMADO
 
 - **Medido** (filas 53 y 54): −0,03 USD en la apertura y −0,03 en el cierre de una compra de 0,01

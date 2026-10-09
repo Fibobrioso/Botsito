@@ -33,7 +33,7 @@ from botsito.config.registro import cargar_registro
 from botsito.data.velas import a_minuto
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.engine import cuenta, simulacion
-from botsito.engine.broker import Broker
+from botsito.engine.broker import Broker, BrokerError
 from botsito.engine.perfil_cuenta import cargar_perfil
 from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
 
@@ -60,6 +60,43 @@ def _mercado() -> simulacion.MercadoDia:
     return md
 
 
+def _orden(
+    op: cuenta.Operacion, escala: int, contrato: Decimal
+) -> tuple[cuenta.Direccion, int, Decimal, int, int, int]:
+    """(lado, entrada, lotes, stop, objetivo, instante_ms) de una operacion del trader: precios
+    desplazados DESFASE_PUNTOS, objetivo de 3R y 0,5 % de 100 000 hasta el stop inicial."""
+    entrada = int((op.apertura.precio * escala).to_integral_value()) - DESFASE_PUNTOS
+    stop = int((op.marcas[0].precio * escala).to_integral_value()) - DESFASE_PUNTOS
+    distancia = abs(entrada - stop)
+    objetivo = entrada + (3 if op.direccion == "compra" else -3) * distancia
+    lotes = (Decimal(500) / (Decimal(distancia) / escala * contrato)).quantize(
+        Decimal("0.01"), rounding=ROUND_DOWN
+    )
+    t = op.apertura.instante
+    ms = int(a_minuto(t.replace(second=0, microsecond=0))) * MS_POR_MINUTO + t.second * 1000
+    return op.direccion, entrada, lotes, stop, objetivo, ms
+
+
+def test_con_el_perfil_real_la_primera_operacion_se_rechaza_por_volumen_maximo() -> None:
+    """El hermano de la regresion de abajo, con el perfil REAL: el volumen maximo medido en la demo
+    de FTMO (50 lotes, ADR-0071 §2) rechaza la primera operacion del trader del 7 de agosto (dia
+    de construccion), porque su stop queda por debajo de 1 pip con el 0,5 % de 100 000. Es la
+    consecuencia que declara el informe de `trabajo/demo-ejecucion-1` (§3.2) y el caso que tiene
+    que resolver el pendiente 37 (A-18): recortar el lote, partir la orden o no operar."""
+    md = _mercado()
+    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+    perfil = cargar_perfil(RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml")
+    contrato = registro.decimal("instrumento_contrato")
+    cfg = cargar_config_llenado(RAIZ / FICHERO_LLENADO).configuracion()
+    reglas_broker = simulacion.reglas_broker_de(perfil)
+    b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
+    assert md.operaciones_trader is not None
+    lado, entrada, lotes, stop, objetivo, ms = _orden(md.operaciones_trader[0], md.escala, contrato)
+    assert lotes > reglas_broker.volumen_max_lotes
+    with pytest.raises(BrokerError, match="volumen_max_lotes"):
+        b.abrir_conocida("t1", lado, entrada, lotes, stop, objetivo, ms, "caso")
+
+
 def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
     md = _mercado()
     registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
@@ -73,16 +110,7 @@ def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
     b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
     assert md.operaciones_trader is not None and len(md.operaciones_trader) == 4
     for i, op in enumerate(md.operaciones_trader, 1):
-        entrada = int((op.apertura.precio * md.escala).to_integral_value()) - DESFASE_PUNTOS
-        stop = int((op.marcas[0].precio * md.escala).to_integral_value()) - DESFASE_PUNTOS
-        distancia = abs(entrada - stop)
-        objetivo = entrada + (3 if op.direccion == "compra" else -3) * distancia
-        lotes = (Decimal(500) / (Decimal(distancia) / md.escala * contrato)).quantize(
-            Decimal("0.01"), rounding=ROUND_DOWN
-        )
-        t = op.apertura.instante
-        ms = int(a_minuto(t.replace(second=0, microsecond=0))) * MS_POR_MINUTO + t.second * 1000
-        b.abrir_conocida(f"t{i}", op.direccion, entrada, lotes, stop, objetivo, ms, "caso")
+        b.abrir_conocida(f"t{i}", *_orden(op, md.escala, contrato), "caso")
     b.avanzar(md.hasta_ms - 1)
     for p in list(b.posiciones.values()):
         if p.abierta:

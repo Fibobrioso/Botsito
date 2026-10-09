@@ -798,13 +798,153 @@ No cambian el paso 7 (`g_volumen`, línea 694), `CerrarPosicion` (usa `POSITION_
 
 Fichero revisado: `C:\Users\USER\Desktop\Bot v3\docs\validation\DEMO-EJECUCION-1.md`.
 
+## 7. Segunda respuesta del consultor y orden de cierre (2026-10-09)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a trabajo/demo-ejecucion-1 (2026-10-09). Primero los puntos 1 a 4, con commit sellado; después, la orden de cierre de abajo, que ejecutas cuando Aleks escriba /cerrar-rama.
+>
+> 1. Aleks acaba de ejecutar con «!» el lector cambiado sobre el CSV real (salida arriba). Compárala con la tabla de §0.a, que se sacó con el lector de main. Solo pueden cambiar la etiqueta OBSERVACION y lo que diga la versión 1.0; cualquier otra diferencia, para y dímelo. Pega la salida y la comparación en el informe.
+> 2. Regresión del 7 de agosto: se queda con el tope 100 declarado en el propio test, porque prueba el corte de la cuenta. Añade un test hermano con el perfil real (50) que compruebe que esa operación se rechaza por volumen máximo, nombrando el pendiente 37 y ADR-0071, sin fechas reservadas (agosto es construcción).
+> 3. En ADR-0071 (aún no está en main, se puede completar en la rama), en sus consecuencias: volumen_limite = 0 (fila 12) dice que no hay tope sumado entre órdenes, así que la rama del pendiente 37 decide entre recortar el lote a 50 (riesgo menor que el del parámetro), partir la operación en varias órdenes o no operar. No se decide aquí.
+> 4. La guardia (exigir_sin_crudo) da un falso positivo con la asignación «crudo = ruta.read_bytes()» del lector, que ya estaba en main. No se renombra la variable: eso sería rodear la guardia. Va a la Next Action (abajo). Déjalo dicho en el informe.
+>
+> Orden de cierre de trabajo/demo-ejecucion-1 (consultor, 2026-10-09). Tag: stable/F37i-demo-ejecucion-1 (verifica en HISTORIA que el último es F37h y que F37i no existe ni en local ni en origin).
+>
+> No toca src/: no hay CI de Linux, como declara el informe.
+>
+> Hallazgos para la fila de la rama en ERRORES-RECURRENTES, con su lección:
+> 1. (importa, consultor) El perfil mantenía la comisión en 5 USD por lote y lado, «supuesto conservador hasta que FTMO confirme», y FTMO-REGLAS ya traía desde el 2026-09-28 la tarifa publicada de 2,50 por lado. Nadie revisó el supuesto, y duplicaba el coste de cada operación en las simulaciones. Lección: un supuesto con condición de caducidad («hasta que…») se revisa en la rama que trae esa condición; el revisor busca en knowledge/ los supuestos cuya condición ya se cumplió.
+> 2. (importa, sesión; lo vio la sesión) El volumen máximo medido (50) rechaza una operación real del trader en una regresión. Lección: cuando un valor medido cambia un límite, se pasan las regresiones con el perfil real y lo que rompe se declara como consecuencia, no se esconde con el valor viejo.
+> 3. (menor, consultor) El consultor repitió a Aleks los «unos cinco minutos» y el «Netting» sin medirlos; el CSV dio 44 segundos y HEDGING. Lección: lo que el consultor le dice a Aleks sobre un mecanismo también se mide o se cita.
+> 4. (menor, sesión) La guardia exigir_sin_crudo confunde una variable llamada «crudo» con la opción prohibida. Lección: una guardia de texto sobre código nombra la forma de la opción, no la palabra suelta.
+>
+> Next Action, en el commit del contrato (punto 3 de RITUAL):
+> - CAMBIA A, con la propuesta de §4 del informe. Debe decir, además, que antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors) y que el CSV de la ejecución 2 tiene que decir 1.1.
+> - CAMBIA S: su condición de la primera ejecución de la demo está cumplida (DEMO-EJECUCION-1.md).
+> - ENTRA, con una letra libre (compruébalo antes): «Para Aleks, con FTMO: la pregunta P-D1 (DEMO-EJECUCION-1.md §0.c): si la cuenta 2-Step Swing real es hedging como la prueba y si su volumen máximo en EURUSD es 50 o 100. La respuesta se registra parafraseada (RESPUESTAS-FTMO).»
+> - ENTRA, con otra letra libre: «La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos.»
+> Comprueba que PROJECT_STATE sigue por debajo de 25.000 bytes; si no, para antes del commit.
+> En el commit de estado no se toca la Next Action.
+>
+> El resto, según RITUAL: merge, tag, commit de estado, make check sellado y push atómico de main y el tag. Si el clasificador te niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. La CI de main tiene que estar en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual. Con la CI de main en completed/success, borra trabajo/demo-ejecucion-1 (git branch -d).
+>
+> Informe final: sha de main, tag, número de run y conclusión de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
+
+### 7.1 El lector cambiado sobre el CSV real (punto 1)
+
+Aleks lo ejecutó en su terminal el 2026-10-09 con `! PYTHONUTF8=1 uv run python
+scripts/leer_demo_ftmo.py data/demo_ftmo` (desde esta sesión la guardia lo niega, §3.3). La salida,
+tal cual:
+
+```text
+# Demo de FTMO: lo medido (1 fichero(s))
+
+Solo lee: ningun valor pasa a los parametros ni cierra ninguna decision desde aqui.
+
+- MedirDemoFTMO_20261009_153552.csv: completo (script 1.0)
+
+## Decision a decision
+
+| decision | que se mide | MedirDemoFTMO_20261009_153552.csv |
+|---|---|---|
+| ADR-0057 d1 | llenado de una buy stop: precio - nivel | 1.0 puntos (nivel 1.11999, llenado 1.12000) |
+| FTMO-REGLAS R12 | lotes de la compra a mercado | 0.01 (la 1.0 usa el volumen minimo) |
+| ADR-0057 d1 · DN-3 | compra a mercado | comision -0.03; deslizamiento 2.0 puntos |
+| ADR-0057 d1 · DN-3 | cierre a mercado | comision -0.03; deslizamiento -2.0 puntos |
+| ADR-0057 d2 | pendiente en el nivel exacto | sell_stop si (10009 DONE); buy_stop no (10015 INVALID_PRICE); sell_limit llenada (10009 DONE) a 1.11993; buy_limit no (10015 INVALID_PRICE) |
+| ADR-0057 d2 · d3 | sell stop por encima del bid | no (10015 INVALID_PRICE) |
+| ADR-0057 d2 · d3 | buy stop por debajo del ask | no (10015 INVALID_PRICE) |
+| ADR-0057 d2 · d3 | sell limit por debajo del bid | no (10015 INVALID_PRICE) |
+| ADR-0057 d2 · d3 | buy limit por encima del ask | no (10015 INVALID_PRICE) |
+| ADR-0057 d3 | modificar una sell stop al lado equivocado | si_sin_cambios (10015 INVALID_PRICE) |
+| ADR-0057 d3 | modificar una buy limit al lado equivocado | si_sin_cambios (10015 INVALID_PRICE) |
+| ADR-0057 d4 | cotizacion al enviar (bid/ask en cada fila del CSV) | en el CSV, fila a fila |
+| ADR-0057 d5 · A-27 | stops level (puntos) | 0 |
+| ADR-0057 d5 · A-27 | a la distancia del stops level | sin medir |
+| ADR-0057 d5 · A-27 | un punto dentro del stops level | sell_stop no (10015 INVALID_PRICE); buy_stop no (10015 INVALID_PRICE); sell_limit no (10015 INVALID_PRICE); buy_limit no (10015 INVALID_PRICE) |
+| ADR-0057 d5 | freeze level (puntos) | 0 |
+| A-27 | digits | 5 |
+| A-27 | point | 0.00001000 |
+| A-27 | contrato | 100000.00 |
+| A-27 | volumen minimo | 0.01 |
+| A-27 | paso de volumen | 0.01 |
+| A-27 | modos de llenado | FOK IOC (bits 3) |
+| A-27 | modo de ejecucion | SYMBOL_TRADE_EXECUTION_MARKET |
+| FTMO-REGLAS R11 | volumen maximo | 50.00 |
+| FTMO-REGLAS R12 | swap largo | -9.4100 |
+| FTMO-REGLAS R12 | swap corto | 0.1000 |
+| FTMO-REGLAS R12 | modo de swap | SYMBOL_SWAP_MODE_POINTS |
+| FTMO-REGLAS R12 | dia del triple swap | WEDNESDAY |
+
+## A-28: desfase del servidor frente a GMT, por fecha
+
+| fecha (servidor) | desfase (min) | hora del servidor | hora GMT | fichero |
+|---|---|---|---|---|
+| 2026.10.09 | 180 | 2026.10.09 15:35:52 | 2026.10.09 12:35:52 | MedirDemoFTMO_20261009_153552.csv |
+
+## Retcodes INESPERADOS: esas filas no miden lo que dicen
+
+- ninguno
+
+## Avisos de seguridad
+
+- ninguno: el script no dejo nada abierto
+```
+
+**La comparación, con `diff --strip-trailing-cr`** entre la salida del lector de `main` (la del
+§0.a) y esta: dos diferencias, y nada más.
+
+```text
+5c5
+< - MedirDemoFTMO_20261009_153552.csv: completo
+---
+> - MedirDemoFTMO_20261009_153552.csv: completo (script 1.0)
+11a12
+> | FTMO-REGLAS R12 | lotes de la compra a mercado | 0.01 (la 1.0 usa el volumen minimo) |
+```
+
+Las dos son de lo que el punto 1 admite, «lo que diga la versión 1.0»: la versión junto al fichero,
+y la fila de los lotes, que dice el volumen con que midió la 1.0 (la fila es nueva, pero su
+contenido es exactamente eso; §3.3 la anunciaba). Las 28 celdas de valores de la tabla de
+decisiones, la de A-28, los retcodes inesperados y los avisos son idénticas byte a byte. La etiqueta
+OBSERVACION no aparece en la tabla: el lector no imprime el retcode de una observación (la fila 57
+sale como «1.0 puntos …»), así que en la salida no cambia nada por ella. Sin el fin de línea: la
+salida del §0.a se guardó en un fichero de Windows con CRLF y la de Aleks se copió con LF, por eso
+el `diff` sin `--strip-trailing-cr` marca todas las líneas.
+
+### 7.2 El test hermano de la regresión del 7 de agosto (punto 2)
+
+`tests/regression/test_cuenta_7_de_agosto.py::test_con_el_perfil_real_la_primera_operacion_se_rechaza_por_volumen_maximo`:
+con las reglas del bróker del perfil REAL (50), la primera operación del trader del 2026-08-07 (día
+de construcción) tiene un lote mayor que el máximo, y `abrir_conocida` la rechaza con
+`BrokerError` por `volumen_max_lotes`. Su docstring nombra ADR-0071 §2 y el pendiente 37 (A-18).
+La conversión de una operación del trader en orden pasa a una función, `_orden`, que usan los dos
+tests; la regresión original se queda con el tope de 100 declarado y sus aserciones intactas. Los
+dos pasan en esta máquina (con `data/`); en la CI se saltan, como el original. 1425 funciones de
+test.
+
+### 7.3 ADR-0071 (punto 3)
+
+ADR-0071 §2 añade, como consecuencia y sin decidir nada: `volumen_limite` = 0 (fila 12) dice que
+no hay tope sumado entre órdenes, así que la rama del pendiente 37 elige entre recortar el lote a 50
+(con riesgo menor que el del parámetro), partir la operación en varias órdenes o no operar; y cita
+el caso real (la regresión del 7 de agosto).
+
+### 7.4 La guardia (punto 4)
+
+La guardia (`exigir_sin_crudo`, patrón `CRUDO_PYTHON`) da un falso positivo con la asignación a la
+variable local del lector, que ya estaba en `main` (§3.3). **No se renombra la variable**: sería
+rodear la guardia. Va a la Next Action con la orden de cierre, como entrada nueva: que la guardia
+nombre la forma de la opción, con un test que rompa a propósito los dos sentidos.
+
 ## Estado
 
-LISTA PARA REVISIÓN, NO CERRADA. Fase 0 (CSV congelado, inventario y PARADA) y fase 1 (ADR-0071;
-los cinco de A-27 a CONFIRMED y A-27 DECIDIDA; stops level 0 y volumen máximo 50 en el perfil de
-FTMO; la negativa A-27 en un perfil sintético; la deuda de la límite PAGADA y A4 SUSTITUIDA; el
-script 1.1 y su lector) hechas, con `make check` en verde antes de cada commit; revisor pasado (0
-bloquea, 1 importa, 6 menor; lo hecho con cada uno, §5.1). Sin cambios en `src/`: no hace falta la
-CI de Linux. A-28 sigue ABIERTA y la entrada A, en pie para las ejecuciones 2 y 3. Para decidir: la
-guardia que niega ejecutar el lector (§3.3) y el rechazo por volumen máximo de la operación del 7 de
-agosto (§3.2). Espera la orden de cierre de Aleks.
+LISTA PARA REVISIÓN, NO CERRADA. Fase 0 y fase 1 hechas (§0-§3); revisor pasado (§5.1, §6); los
+puntos 1 a 4 de la segunda respuesta del consultor, hechos (§7): la salida del lector cambiado
+sobre el CSV real solo difiere en lo que dice la versión 1.0; el test hermano con el perfil real
+(50) prueba el rechazo; ADR-0071 dice qué decide la rama del pendiente 37; la guardia va a la Next
+Action. `make check` en verde antes de cada commit; sin cambios en `src/`. La orden de cierre (§7)
+se ejecuta cuando Aleks escriba /cerrar-rama.
