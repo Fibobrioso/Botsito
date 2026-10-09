@@ -15,6 +15,15 @@ vigente, las ambiguedades abiertas, la deuda abierta (una linea cada una) y las 
 vivian alli. No pasa de 25 KB (`tests/unit/test_project_state.py`). Lo que deja de ser verdad se
 SUSTITUYE, sin «Lo anterior:», porque lo anterior ya esta aqui.
 
+Dos reglas vigentes de sus secciones (hasta el 2026-10-08 solo las decian sus introducciones;
+pasadas aqui como texto operativo por decision del consultor en `trabajo/adelgazar-estado`):
+
+- **Technical Debt:** una deuda nueva entra con una linea que apunte a su informe; una pagada se
+  borra de aqui (y va a `HISTORIA.md` por «Que sale de PROJECT_STATE, y con que criterio»).
+- **Known Ambiguities:** abrir una ambiguedad anade su fila; cerrarla (RESUELTA o DECIDIDA) la
+  quita. Guardia: `tests/unit/test_kit.py`, que exige que la tabla tenga exactamente los ids
+  `ABIERTA` de `knowledge/spec/ambiguedades.yaml`, con el mismo titulo, clase y bloqueante.
+
 `Completed Features` y `Change Log` siguen en `PROJECT_STATE.md`, pero desde el 2026-10-01
 (`trabajo/ajustes-cierre`) el cierre de una rama NO les anade nada: lo cerrado se apunta aqui, en
 el `# Registro de cierre · <rama> (<fecha>)` que entra en la propia rama, en el mismo commit que

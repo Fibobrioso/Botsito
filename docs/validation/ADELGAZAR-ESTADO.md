@@ -325,11 +325,31 @@ quitar ninguna comprobacion ni cambiar lo que dicen:
   tocar el bloque.
 - **b1 (importa), arreglado:** §6 lleva el resultado de los dos `make check` y como se sella el
   ultimo; el «Estado» va al final.
-- **a2, a3, a4 y b2 (menores), declarados para el consultor:** a2, las dos reglas de operacion
-  («una deuda nueva entra con una linea que apunte a su informe; una pagada se borra de aqui» y
-  «abrir una ambiguedad anade su fila; cerrarla la quita») quedan en README solo dentro de la cita;
-  si el consultor las quiere como texto operativo, es una linea en README. a3 y a4, sin cambio. b2
-  es el punto 3 de §0 (CLAUDE.md:154-158).
+- **a2 (menor), arreglado tras la revision del consultor (2026-10-08):** las dos reglas pasan a
+  `docs/state/README.md`, «Que va en cada sitio», como texto operativo, fuera de la cita: «una deuda
+  nueva entra con una linea que apunte a su informe; una pagada se borra de aqui» (Technical Debt) y
+  «abrir una ambiguedad anade su fila; cerrarla (RESUELTA o DECIDIDA) la quita» (Known
+  Ambiguities, con `tests/unit/test_kit.py` como guardia). Matiz de literalidad: la cita dice
+  «abrir una anade su fila», con «ambiguedad» sobrentendida; se escribe con la palabra, como la
+  dio el consultor. La cita no cambia.
+  Revisadas las demas frases de la cita, por si alguna es una regla vigente sin texto operativo en
+  otro sitio:
+  - cabecera: «una sesion nueva lee este fichero y `CLAUDE.md`...» (CLAUDE.md, «Por donde se
+    empieza»), SUSTITUIR sin «Lo anterior:» y el tope de 25 KB (README, «Que va en cada sitio»),
+    archivar al abrir rama (README, «Como se archiva»); la lista de lo que vive en HISTORIA es
+    descriptiva. Ninguna sin texto operativo;
+  - Pendientes heredados: «uno por linea con su arranque literal» describe una lista heredada a la
+    que no entra nada, y «se quitan de aqui cuando haya evidencia o lo decida el consultor» queda
+    sustituida por el criterio (a)-(d) de README. Ninguna;
+  - Known Ambiguities: la fuente y la exigencia de `test_kit.py` van ahora en la regla nueva (y en
+    CLAUDE.md, «Ambiguedades»); dónde esta la pregunta entera es descriptivo. Ninguna mas;
+  - Technical Debt: «una linea por deuda ABIERTA» ya estaba (README, «la deuda abierta (una linea
+    cada una)»). Ninguna mas;
+  - Reglas vivas: descriptiva. Ninguna;
+  - Completed Features y Change Log: «el cierre no anade nada» ya estaba en README; «`state check`
+    (regla 4) mira las dos» lo hace el codigo (`src/botsito/cli.py`), no una persona. Ninguna.
+- **a3, a4 y b2 (menores), declarados para el consultor:** a3 y a4, sin cambio. b2 es el punto 3
+  de §0 (CLAUDE.md:154-158).
 
 ## Estado
 
