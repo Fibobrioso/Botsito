@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/demo-ejecucion-1
+main
 
 ## Current Feature
-`trabajo/demo-ejecucion-1` EN CURSO: la ejecución 1 de MedirDemoFTMO (punto A de la Next Action): congelar el CSV, inventario medida → decisión con PARADA, y después fijar los valores de ADR-0057 y A-27 que decida el consultor. Encargo docs/encargos/trabajo-demo-ejecucion-1.md; informe docs/validation/DEMO-EJECUCION-1.md.
+`main` en `stable/F37i-demo-ejecucion-1` (0b1c8ef): la ejecución 1 de la demo de FTMO fija lo que no depende de la fecha (ADR-0071, A-27 DECIDIDA) y el script 1.1 queda listo para la ejecución 2. Sin ramas abiertas; manda la Next Action. Informe docs/validation/DEMO-EJECUCION-1.md.
 
 ## Stable Main State
-f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estado`): salen de PROJECT_STATE 12 lineas por el criterio (a)-(d), literales en HISTORIA con su evidencia; las introducciones apuntan a docs/state/README.md; la Next Action cambia entera en el commit del contrato (punto Y); DEMO-FTMO.md lleva la prueba de octubre de 2026. Sobre `stable/F37g-guion-mismo-comando` (8d1578d). Informe docs/validation/ADELGAZAR-ESTADO.md; el registro del cierre, al final de HISTORIA.
+0b1c8ef · merge de `trabajo/demo-ejecucion-1` (tag `stable/F37i-demo-ejecucion-1`): el CSV de la ejecución 1 congelado en data/manifests/demo_ftmo/; ADR-0071; los cinco de A-27 CONFIRMED y A-27 DECIDIDA; perfil de FTMO con stops level 0 y volumen máximo 50; la negativa A-27 en un perfil sintético; MedirDemoFTMO 1.1 (comisión con 1,00 lote) y su lector 1.0/1.1. Sobre `stable/F37h-adelgazar-estado` (f6d3117). Informe docs/validation/DEMO-EJECUCION-1.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-f6d3117 · merge: PROJECT_STATE adelgazado, punto Y en RITUAL y la prueba de octubre de FTMO (ADELGAZAR-ESTADO.md) · tag stable/F37h-adelgazar-estado
+0b1c8ef · merge: la ejecución 1 de la demo de FTMO, ADR-0071, A-27 DECIDIDA, stops level 0, volumen máximo 50 y el script 1.1 (DEMO-EJECUCION-1.md) · tag stable/F37i-demo-ejecucion-1
 
 ## Tests Currently Passing
 1425 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
