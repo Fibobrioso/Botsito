@@ -7,6 +7,12 @@ decisión; eso se hace en otra rama, con los CSV reales delante. Un retcode fuer
 medición puede devolver se MARCA como inesperado en su celda y en una lista aparte, y nunca se
 oculta: esa fila no mide lo que dice. El runbook es `docs/runbooks/DEMO-FTMO.md`.
 
+Lee las dos versiones del script (rama `trabajo/demo-ejecucion-1`, 2026-10-09, ADR-0071): la 1.0, la
+de la ejecucion 1, y la 1.1, que abre el paso 6 con `InpVolumenComision` lotes y escribe ese volumen
+en la fila `volumen_comision` (o `no_abre` en la apertura si el volumen no se admite o no hay
+margen). En la 1.0 una fila de observacion llevaba el texto SIN_RESPUESTA; desde la 1.1 lleva
+OBSERVACION, y el lector da OBSERVACION en las dos. Otra version se rechaza.
+
     uv run python scripts/leer_demo_ftmo.py <csv o carpeta>... [--salida <fichero>]
 """
 
@@ -52,6 +58,12 @@ ESPERADOS = {
 }
 # filas que no son una peticion al servidor sino una observacion: su retcode no se juzga
 OBSERVACIONES = frozenset({"buy_stop_llenado"})
+OBSERVACION = "OBSERVACION"
+TEXTO_OBSERVACION_1_0 = "SIN_RESPUESTA"  # lo que escribia la 1.0 en una observacion
+VERSIONES = ("1.0", "1.1")
+# la 1.0 abria el paso 6 con el volumen minimo del simbolo; la 1.1 escribe el suyo
+VOLUMEN_1_0 = "volumen_min"
+NO_ABRE = "no_abre"
 TIPOS = ("sell_stop", "buy_stop", "sell_limit", "buy_limit")
 
 
@@ -62,6 +74,7 @@ class LecturaError(ValueError):
 @dataclass(frozen=True)
 class Fila:
     fichero: str
+    version: str
     medicion: str
     responde: str
     clave: str
@@ -99,15 +112,25 @@ def leer_csv(ruta: Path) -> list[Fila]:
                 f"{ruta.name}, linea {n}: {len(campos)} columnas, no {len(COLUMNAS)}"
             )
         d = dict(zip(COLUMNAS, campos, strict=True))
+        version = d["version_script"]
+        if version not in VERSIONES:
+            raise LecturaError(
+                f"{ruta.name}, linea {n}: version_script {version!r}; este lector lee "
+                + " y ".join(VERSIONES)
+            )
+        texto_retcode = d["retcode_texto"]
+        if d["clave"] in OBSERVACIONES and texto_retcode == TEXTO_OBSERVACION_1_0:
+            texto_retcode = OBSERVACION  # la etiqueta de la 1.0, con el nombre de la 1.1
         filas.append(
             Fila(
                 fichero=ruta.name,
+                version=version,
                 medicion=d["medicion"],
                 responde=d["responde"],
                 clave=d["clave"],
                 valor=d["valor"],
                 retcode=int(d["retcode"]) if d["retcode"].strip() else None,
-                retcode_texto=d["retcode_texto"],
+                retcode_texto=texto_retcode,
                 colocada=d["colocada"],
                 tipo_orden=d["tipo_orden"],
                 precio_pedido=d["precio_pedido"],
@@ -120,6 +143,8 @@ def leer_csv(ruta: Path) -> list[Fila]:
                 nota=d["nota"],
             )
         )
+    if len({f.version for f in filas}) > 1:
+        raise LecturaError(f"{ruta.name}: mezcla versiones del script")
     return filas
 
 
@@ -183,15 +208,29 @@ def _mercado(clave: str) -> Callable[[Sequence[Fila]], str]:
         f = _busca(filas, clave)
         if f is None:
             return "sin medir"
+        if f.valor == NO_ABRE:  # 1.1: volumen no admitido o sin margen
+            return f"no abrio: {f.nota}"
         texto = f"comision {f.valor}; deslizamiento {f.distancia_puntos} puntos"
         return f"INESPERADO: {texto} ({f.retcode} {f.retcode_texto})" if es_inesperado(f) else texto
 
     return celda
 
 
+def _volumen_comision(filas: Sequence[Fila]) -> str:
+    """Los lotes de la compra del paso 6: los escribe la 1.1; la 1.0 usaba el minimo del simbolo."""
+    f = _busca(filas, "volumen_comision")
+    if f is not None:
+        return f.valor
+    minimo = _busca(filas, VOLUMEN_1_0)
+    if filas and filas[0].version == "1.0" and minimo is not None:
+        return f"{minimo.valor} (la 1.0 usa el volumen minimo)"
+    return "sin medir"
+
+
 # (decision, que se mide, como se lee de las filas de un fichero)
 TABLA: tuple[tuple[str, str, Callable[[Sequence[Fila]], str]], ...] = (
     ("ADR-0057 d1", "llenado de una buy stop: precio - nivel", _llenado_stop),
+    ("FTMO-REGLAS R12", "lotes de la compra a mercado", _volumen_comision),
     ("ADR-0057 d1 · DN-3", "compra a mercado", _mercado("apertura_compra_mercado")),
     ("ADR-0057 d1 · DN-3", "cierre a mercado", _mercado("cierre_compra_mercado")),
     ("ADR-0057 d2", "pendiente en el nivel exacto", _varias("nivel_exacto_")),
@@ -251,7 +290,10 @@ def informe(ficheros: dict[str, list[Fila]]) -> str:
     ]
     for n in nombres:
         fin = _busca(ficheros[n], "terminado")
-        lineas.append(f"- {n}: {fin.valor if fin else 'SIN LA FILA DE FIN (cortado)'}")
+        version = ficheros[n][0].version if ficheros[n] else "?"
+        lineas.append(
+            f"- {n}: {fin.valor if fin else 'SIN LA FILA DE FIN (cortado)'} (script {version})"
+        )
     lineas += [
         "",
         "## Decision a decision",

@@ -6,14 +6,19 @@ comisión y el reloj del servidor (ADR-0057, A-27, A-28 y `docs/validation/FTMO-
 ejecutas tres veces; el repositorio lee lo que sale. **No cambia nada de la estrategia ni de los
 parámetros**: los valores entran después, en otra rama, con los ficheros delante.
 
-El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda unos cinco minutos.
+El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda menos de un minuto si la orden del paso 7 salta
+enseguida (44 segundos en la ejecución 1, el 2026-10-09) y como mucho unos tres si no salta: el paso 7
+la espera hasta 120 segundos.
 
 ## Lo que hace, y lo que no hace nunca
 
 - **Se niega a correr si la cuenta no es de prueba (DEMO).** En una cuenta real no hace nada.
-- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta).
+- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo el
+  paso 6: desde la versión 1.1 abre y cierra enseguida una compra de **1,00 lote**, con su stop de
+  protección, para medir la comisión por lote (ADR-0071 §3). Antes de abrir comprueba el margen
+  libre; si no alcanza, no abre y lo escribe en el fichero.
 - Pone unas veinte órdenes de prueba y **las borra todas**; abre como mucho unas pocas posiciones
-  pequeñas y **las cierra**.
+  pequeñas (y, desde la 1.1, la de 1,00 lote del paso 6) y **las cierra**.
   Toda orden de prueba caduca sola a los 15 minutos, y toda posición lleva un stop de protección.
 - Al empezar y al terminar busca cualquier orden o posición suya que siga abierta y la quita. Si
   algo se quedara abierto, sale un aviso en pantalla y queda escrito en el fichero.
@@ -46,7 +51,7 @@ El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda unos cinco minutos.
    **EURUSD → Ventana de gráfico**.
 4. **Lanzarlo.** Menú **Ver → Navegador** (*View → Navigator*); despliega **Scripts**, arrastra **MedirDemoFTMO** encima
    del gráfico de EURUSD y pulsa **Aceptar** sin cambiar nada.
-5. **Esperar** unos cinco minutos, sin tocar nada, hasta que salga una ventana que diga
+5. **Esperar** de uno a tres minutos, sin tocar nada, hasta que salga una ventana que diga
    **«MedirDemoFTMO: terminado (completo)»**.
 6. **Comprobar.** Abajo, en la caja de herramientas (**Ctrl+T**), pestaña **Trading** (*Trade*), no
    tiene que quedar ninguna orden ni posición. Si la ventana dijera **«ATENCIÓN: quedan…»**, en esa pestaña clic derecho
@@ -79,6 +84,19 @@ personales.
 | 2 | entre el **lunes 26 y el viernes 30 de octubre** | Europa ya cambió de hora (el 25) y Nueva York todavía no: el desfase dice qué calendario sigue el servidor (A-28) |
 | 3 | después del **domingo 1 de noviembre** | Nueva York ya cambió: confirma el horario de invierno |
 
+**Antes de la ejecución 2: el script 1.1.** La ejecución 1 (2026-10-09) usó la versión 1.0. Para la
+2 hay una versión nueva, la 1.1 (rama `trabajo/demo-ejecucion-1`, ADR-0071), que mide la comisión
+con 1,00 lote. Antes de lanzarla:
+1. vuelve a copiar `tools/mql5/MedirDemoFTMO.mq5` del repositorio a **MQL5 → Scripts**, encima del
+   que hay (paso 4 de «Una vez»);
+2. compílalo otra vez: **F4**, doble clic en **MedirDemoFTMO.mq5**, **F7**, y abajo tiene que decir
+   **0 errors** (paso 5 de «Una vez»);
+3. ejecútalo como siempre, sin cambiar nada en la ventana de **Aceptar** (el volumen del paso 6 ya
+   viene en 1,00);
+4. al terminar, **comprueba que el fichero dice 1.1**: la primera columna de cada fila,
+   `version_script`, tiene que ser `"1.1"`. El lector lo dice también: «(script 1.1)» junto al
+   nombre del fichero. Si dice 1.0, el terminal sigue con la versión vieja: repite 1 y 2.
+
 Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
 recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,
 «verificación explícita»). Apúntalo con la fecha.
@@ -92,7 +110,7 @@ recalcula el límite de pérdida diaria**: a medianoche de España o a medianoch
 | 3 | cuatro pendientes del lado equivocado: si se rechazan, se colocan o se llenan, y a qué precio | ADR-0057 d2, d3 y d4 |
 | 4 | las cuatro pendientes en el nivel exacto, a la distancia del stops level y un punto dentro | ADR-0057 d2 y §5, A-27 |
 | 5 | una pendiente buena, movida al lado equivocado: si se acepta y si la original sigue viva | ADR-0057 d3 |
-| 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento | FTMO-REGLAS R12, DN-3 |
+| 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento (con 1,00 lote desde la 1.1; la 1.0 usaba el lote mínimo) | FTMO-REGLAS R12, DN-3 |
 | 7 | una buy stop muy cerca del precio: a qué precio se llena frente a su nivel | ADR-0057 d1 |
 
 **Importante para leerlo:** la hora GMT sale del reloj de este ordenador. Si el ordenador no está en
@@ -113,7 +131,10 @@ de la cuenta no se escribe aquí: el repositorio es público.
   ejecutarlo» y dentro de la ventana del bot, de 07:00 a 15:00 Europe/Madrid (`ventana_inicio` y
   `ventana_fin`, `knowledge/spec/parametros.yaml`); las 08:00 de Lima son justo las 15:00, el
   final de esa ventana.
-- **Netting o hedging: SIN COMPROBAR.** MetaTrader 5 muestra la cuenta de prueba como «Netting».
-  Si la cuenta Swing de verdad es netting o hedging no se supone: lo comprueba la rama de ADR-0057
-  y A-27, con el CSV. El script ya lo registra: la fila `contexto`, `modo_margen`
-  (`ACCOUNT_MARGIN_MODE`, `tools/mql5/MedirDemoFTMO.mq5`).
+- **Netting o hedging: HEDGING en la prueba, medido.** La ejecución 1 (2026-10-09) da `modo_margen`
+  = `ACCOUNT_MARGIN_MODE_RETAIL_HEDGING` (fila 25 del CSV, congelado en
+  `data/manifests/demo_ftmo/demo-ftmo-2026-10-09-86f0df8b.yaml`), y Aleks declara que la barra de
+  título de MT5 dice «Hedge»; lo de «Netting» que se anotó aquí el 2026-10-08 no casa con lo medido.
+  Para el simulador no cambia nada: la estrategia nunca tiene dos posiciones a la vez
+  (`docs/validation/DEMO-EJECUCION-1.md` §0.c). Si la cuenta Swing de verdad es también de hedging
+  no se supone: es una pregunta para FTMO (la misma sección).

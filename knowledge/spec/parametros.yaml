@@ -55,72 +55,70 @@ parametros:
   # MEDICION: los cinco del instrumento se quedan como default declarado bajo A-27 y los dos del
   # reloj del servidor pasan a UNKNOWN bajo A-28. El pre-vuelo de F33 los comprueba contra
   # SymbolInfo*/AccountInfo* y aborta si el broker dice otra cosa. No se preguntan al trader: son
-  # del entorno (ADR-0004).
+  # del entorno (ADR-0004). Desde ADR-0071 (2026-10-09) los cinco del instrumento son CONFIRMED con
+  # la medida en la prueba gratuita de FTMO (mismo valor) y A-27 esta DECIDIDA; los dos del reloj
+  # siguen UNKNOWN bajo A-28.
   - nombre: instrumento_digitos
     categoria: instrumento
     tipo: entero
     unidad: decimales de la cotizacion
     descripcion: >-
       digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos.
-      Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD
-      tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en
-      FTMO (A-27).
-    estado: DEFAULT_AMBIGUOUS
+      Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila
+      6 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27
+      DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+    estado: CONFIRMED
     valor: 5
-    ambiguedad_id: A-27
     minimo: 0
     maximo: 8
     fuente:
       tipo: decision
-      id: ADR-0026
+      id: ADR-0071
   - nombre: instrumento_contrato
     categoria: instrumento
     tipo: decimal
     unidad: unidades de la divisa base por lote
     descripcion: >-
       tamano del contrato; con el se convierte el riesgo en lotes.
-      Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD
-      tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en
-      FTMO (A-27).
-    estado: DEFAULT_AMBIGUOUS
+      Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila
+      8 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27
+      DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+    estado: CONFIRMED
     valor: "100000"
-    ambiguedad_id: A-27
     minimo: "1"
     fuente:
       tipo: decision
-      id: ADR-0026
+      id: ADR-0071
   - nombre: instrumento_lote_minimo
     categoria: instrumento
     tipo: lotes
     unidad: lotes
     descripcion: >-
       lote minimo que admite el broker; por debajo, la operacion se rechaza.
-      Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD
-      tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en
-      FTMO (A-27).
-    estado: DEFAULT_AMBIGUOUS
+      Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila
+      9 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27
+      DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+    estado: CONFIRMED
     valor: "0.01"
-    ambiguedad_id: A-27
     minimo: "0"
     fuente:
       tipo: decision
-      id: ADR-0026
+      id: ADR-0071
   - nombre: instrumento_lote_paso
     categoria: instrumento
     tipo: lotes
     unidad: lotes
     descripcion: >-
       escalon del lote; el lotaje calculado se redondea a un multiplo de este paso.
-      Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD
-      tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en
-      FTMO (A-27).
-    estado: DEFAULT_AMBIGUOUS
+      Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila
+      11 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27
+      DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+    estado: CONFIRMED
     valor: "0.01"
-    ambiguedad_id: A-27
     minimo: "0"
     fuente:
       tipo: decision
-      id: ADR-0026
+      id: ADR-0071
   - nombre: instrumento_stops_level
     categoria: instrumento
     tipo: puntos
@@ -128,16 +126,15 @@ parametros:
     descripcion: >-
       distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas
       cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2).
-      Medido en una demo de FundedNext el 2026-09-05; se conserva como default porque EURUSD
-      tiene las mismas especificaciones en casi cualquier bróker, pero NO está verificado en
-      FTMO (A-27). Y aqui el aviso pesa mas que en los otros cuatro: el stops level SI cambia de un
+      Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila
+      4 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27
+      DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer. El stops level SI cambia de un
       broker a otro, y con 0 RN-026 no se activa nunca
-    estado: DEFAULT_AMBIGUOUS
+    estado: CONFIRMED
     valor: 0
-    ambiguedad_id: A-27
     fuente:
       tipo: decision
-      id: ADR-0026
+      id: ADR-0071
   - nombre: broker_offset_base
     categoria: broker
     tipo: minutos

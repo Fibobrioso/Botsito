@@ -23,6 +23,7 @@ from botsito.engine.perfil_cuenta import (
     PerfilError,
     cargar_perfil,
 )
+from tests.unit.perfil_stops_level_unknown import perfil_con_stops_level_unknown
 
 RAIZ = Path(__file__).resolve().parents[2]
 FTMO = RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml"
@@ -77,20 +78,28 @@ def test_cada_cifra_del_perfil_cita_una_regla_de_ftmo_reglas_que_existe(
 
 def test_lo_que_no_esta_en_la_fuente_no_tiene_valor(ftmo: PerfilCuenta) -> None:
     """Los NO ENCONTRADA de FTMO-REGLAS y lo que no aplica a la fondeada (ADR-0012 §2)."""
-    # el stops level entra UNKNOWN el 2026-09-28 (rama trabajo/broker-ordenes-stop, ADR-0057): R11
-    # lo da por NO ENCONTRADA y se mide en la demo de FTMO (A-27)
+    # el stops level entro UNKNOWN el 2026-09-28 (rama trabajo/broker-ordenes-stop, ADR-0057): R11
+    # lo daba por NO ENCONTRADA. Desde el 2026-10-09 vale 0, medido en la demo de FTMO (ADR-0071,
+    # A-27 DECIDIDA); su forma UNKNOWN se prueba con el perfil sintetico de abajo
     assert ftmo.sin_valor() == (
         "firma_fondeada_dias_minimos",
         "firma_fondeada_objetivo",
-        "firma_stops_level_puntos",
         "firma_tamano_posicion_ratio_aviso",
     )
-    assert ftmo.puntos_o_nada("firma_stops_level_puntos") is None
+    assert ftmo.puntos_o_nada("firma_stops_level_puntos") == 0
     with pytest.raises(ParametroSinValorError) as exc:
         ftmo.decimal("firma_tamano_posicion_ratio_aviso")
     assert "firma_tamano_posicion_ratio_aviso" in str(exc.value)
     assert "ftmo-2step-swing-100k" in str(exc.value)
     assert "no puede correr" in str(exc.value)
+
+
+def test_con_el_stops_level_unknown_puntos_o_nada_da_none(tmp_path: Path) -> None:
+    """La forma que el perfil de FTMO tuvo hasta ADR-0071, en un perfil SINTETICO: el stops level
+    sin valor sale como None, no como error, para que el broker decida (ADR-0057 §5)."""
+    sintetico = cargar_perfil(perfil_con_stops_level_unknown(tmp_path))
+    assert "firma_stops_level_puntos" in sintetico.sin_valor()
+    assert sintetico.puntos_o_nada("firma_stops_level_puntos") is None
 
 
 def test_un_nombre_que_coincide_con_parametros_yaml_lleva_el_mismo_valor(
@@ -192,10 +201,16 @@ def test_un_fichero_que_no_pasa_el_registro_no_es_un_perfil(tmp_path: Path) -> N
         cargar_perfil(ruta)
 
 
-def test_la_comision_por_lado_toma_el_supuesto_conservador(ftmo: PerfilCuenta) -> None:
-    """Decision del consultor (2026-09-25): se cobra en CADA lado hasta que FTMO lo confirme. El
-    simulador ya no se niega a correr por ella; la descripcion sigue citando R12 NO ENCONTRADA."""
+def test_la_comision_por_lado_esta_medida_y_su_importe_sigue_conservador(
+    ftmo: PerfilCuenta,
+) -> None:
+    """Hasta el 2026-10-09 se cobraba en CADA lado por decision del consultor (2026-09-25), como
+    supuesto conservador. Desde ADR-0071 esta MEDIDO en la demo de FTMO (filas 53 y 54): sigue en
+    true, cita su ADR, y el importe por lote (5) no cambia: es el supuesto conservador."""
     assert ftmo.booleano("firma_comision_por_lado") is True
     p = ftmo.registro.parametros["firma_comision_por_lado"]
-    assert "NO ENCONTRADA" in " ".join(p.descripcion.split())
-    assert "CONSERVADOR" in p.descripcion and "confirme" in p.descripcion
+    assert p.fuente is not None and p.fuente.id == "ADR-0071"
+    assert "MEDIDO" in p.descripcion and "53 y 54" in " ".join(p.descripcion.split())
+    assert ftmo.decimal("firma_comision_usd_por_lote") == 5
+    importe = ftmo.registro.parametros["firma_comision_usd_por_lote"]
+    assert "CONSERVADOR" in importe.descripcion

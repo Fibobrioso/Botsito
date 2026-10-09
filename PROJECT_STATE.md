@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/demo-ejecucion-1
 
 ## Current Feature
-`main` en `stable/F37h-adelgazar-estado` (f6d3117): PROJECT_STATE adelgazado por el criterio (a)-(d) del consultor, punto Y en RITUAL y la prueba de octubre de la demo de FTMO. Sin ramas abiertas; manda la Next Action. Informe docs/validation/ADELGAZAR-ESTADO.md.
+`trabajo/demo-ejecucion-1` EN CURSO: la ejecución 1 de MedirDemoFTMO (punto A de la Next Action): congelar el CSV, inventario medida → decisión con PARADA, y después fijar los valores de ADR-0057 y A-27 que decida el consultor. Encargo docs/encargos/trabajo-demo-ejecucion-1.md; informe docs/validation/DEMO-EJECUCION-1.md.
 
 ## Stable Main State
 f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estado`): salen de PROJECT_STATE 12 lineas por el criterio (a)-(d), literales en HISTORIA con su evidencia; las introducciones apuntan a docs/state/README.md; la Next Action cambia entera en el commit del contrato (punto Y); DEMO-FTMO.md lleva la prueba de octubre de 2026. Sobre `stable/F37g-guion-mismo-comando` (8d1578d). Informe docs/validation/ADELGAZAR-ESTADO.md; el registro del cierre, al final de HISTORIA.
@@ -16,13 +16,13 @@ f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estad
 f6d3117 · merge: PROJECT_STATE adelgazado, punto Y en RITUAL y la prueba de octubre de FTMO (ADELGAZAR-ESTADO.md) · tag stable/F37h-adelgazar-estado
 
 ## Tests Currently Passing
-1418 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1425 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
 
-S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
+S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos. La condición de la primera ejecución de la demo de FTMO está cumplida (2026-10-09, DEMO-EJECUCION-1.md).
 
 B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
 
@@ -36,7 +36,11 @@ X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a l
 
 Z. CLAUDE.md (párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR») dice que marzo no se sortea ni se ingiere hasta que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42 (ADR-0069). La rama de entrada de marzo, en su primer commit, mide contra docs/runbooks/ENTRADA-MARZO.md (PARADA B0) y ACTIVACION-A42.md qué sigue bloqueando y corrige ese párrafo; W va antes de su paso b (ADELGAZAR-ESTADO.md §0).
 
-A. **Demo de FTMO: tres ejecuciones de MedirDemoFTMO**, la primera antes del 25 de octubre (las hace Aleks; docs/runbooks/DEMO-FTMO.md). Con el primer CSV, rama para fijar los valores de ADR-0057 y A-27. La prueba gratuita de la ejecución 1 se creó el 2026-10-08 (2-Step, Swing, USD, 100k, MT5) y vence hacia el 22 de octubre: la ejecución 1 va antes de esa fecha. Las ejecuciones 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro (decisión del consultor en docs/encargos/trabajo-guion-mismo-comando.md). Lo que declara Aleks de esta prueba: docs/runbooks/DEMO-FTMO.md, «La prueba de octubre de 2026».
+A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del 2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md; A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro, con el script 1.1: antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors), y el CSV de la ejecución 2 tiene que decir 1.1. La 2 entre el 26 y el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas 39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3). Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se reabre con otro ADR.
+
+O. Para Aleks, con FTMO: la pregunta P-D1 (DEMO-EJECUCION-1.md §0.c): si la cuenta 2-Step Swing real es hedging como la prueba y si su volumen máximo en EURUSD es 50 o 100. La respuesta se registra parafraseada (RESPUESTAS-FTMO).
+
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
 
@@ -51,7 +55,6 @@ N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-202
 Del Next Action viejo, sin evidencia de estar hechos; texto entero y criterio de salida:
 `docs/state/README.md`.
 
-- A4. **La memoria de la suite: EN REVISION en `trabajo/memoria-suite`** (docs/validation/MEMORIA-SUITE.md). El…
 - 2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto…
 - 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es…
 - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
@@ -65,7 +68,7 @@ Del Next Action viejo, sin evidencia de estar hechos; texto entero y criterio de
 - 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor…
 - 34. **PENDIENTES QUE DEJA `trabajo/ticks-llenado`, con dueno** (ADR-0051 §7): (a) la VENTANA DE TICKS DE…
 - 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje…
-- 37. **PENDIENTE: LOS RECHAZOS POR VOLUMEN MAXIMO, EN LA RAMA DE STOP Y LOTE (A-18)** (2026-09-28, orden de…
+- 37. **PENDIENTE: LOS RECHAZOS POR VOLUMEN MAXIMO, EN LA RAMA DE STOP Y LOTE (A-18)** (2026-09-28, orden de… · Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %) sobre 100.000 y 10 USD por lote y pip, corta todo stop de menos de 1 pip (ADR-0071 §2).
 
 ## Known Ambiguities
 Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/state/README.md`.
@@ -77,7 +80,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-18 | base sobre la que se mide el objetivo 1:3 | pregunta | no | F11, F26 |
 | A-21 | que es una zona de control limpia, sin ruido | pregunta | si | F12, F20, F26 |
 | A-25 | la vida de la marca de liquidez de M15 | pregunta | no | F19, F20 |
-| A-27 | las especificaciones de EURUSD en FTMO | medicion | no | F17, F33 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
@@ -104,7 +106,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
-- EL BROKER SIMULADO LLENA AL INSTANTE UNA LIMITE COLOCADA CON EL PRECIO YA PASADO EL NIVEL (2026-09-28, `trabajo/orden-stop-o-limite`, docs/validation/ORDEN-STOP-O-LIMITE.md §8 y §10c).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
 - `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
 - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
@@ -174,8 +175,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 24 (2026-10-08).
+— ninguna desde el Archivo 25 (2026-10-09).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 24 (2026-10-08).
+— ninguna desde el Archivo 25 (2026-10-09).

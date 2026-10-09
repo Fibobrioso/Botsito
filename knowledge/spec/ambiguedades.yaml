@@ -627,7 +627,13 @@ ambiguedades:
       medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba
       RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con
       el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y
-      el pre-vuelo de F33 aborta si la cuenta real dice otra cosa
+      el pre-vuelo de F33 aborta si la cuenta real dice otra cosa.
+      DECIDIDA el 2026-10-09 por ADR-0071 con la ejecucion 1 de MedirDemoFTMO en la prueba
+      gratuita de FTMO (CSV congelado en data/manifests/demo_ftmo/, sha256 86f0df8b): digits 5,
+      contrato 100000, lote minimo 0.01, paso 0.01 y stops level 0 (filas 6, 8, 9, 11 y 4), los
+      mismos valores que se conservaban de FundedNext. El freeze level es 0, el lote maximo 50 y
+      los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 y el pre-vuelo de F33 vuelven a leer
+      la ficha; una diferencia la reabre con otro ADR
     resuelve_en: [F17, F33]
     # el instrumento leido en pantalla y el lotaje de la prueba de fondeo, que es lo que estas
     # especificaciones convierten en lotes. Hasta el 2026-10-03 citaba tambien la firma que se eligio
@@ -648,9 +654,9 @@ ambiguedades:
       - instrumento_lote_paso
       - instrumento_stops_level
     contradiccion: null
-    estado: ABIERTA
-    decision: null
-    decidida_el: null
+    estado: DECIDIDA
+    decision: ADR-0071
+    decidida_el: '2026-10-09'
     clase: medicion
     bloqueante: false
   - id: A-28

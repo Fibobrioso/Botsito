@@ -27,9 +27,12 @@ from botsito.engine.entrada import (
     SinTipoDeOrdenError,
     lectura_tipo_orden,
 )
+from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
+from tests.unit.perfil_stops_level_unknown import perfil_con_stops_level_unknown
 
 RAIZ = Path(__file__).resolve().parents[2]
 REGISTRO_REAL = RAIZ / "knowledge" / "spec" / "parametros.yaml"
+PERFIL_REAL = RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml"
 
 
 def _registro_con_a47_unknown(tmp_path: Path) -> Path:
@@ -148,7 +151,7 @@ def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
 
 
 def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Con el registro real, A-47 ya no para la corrida: la siguiente puerta es la de la orden stop,
     que no se coloca sin stops level (A-27, ADR-0057).
@@ -157,12 +160,25 @@ def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
     comprueba el broker al colocar la PRIMERA orden stop (ADR-0057 §5), despues de leer las velas y
     los ticks del mes y de correr el motor hasta esa orden. Por eso necesita `data/`, y sin las
     velas en la maquina (la CI) se salta, como `test_preparar_a35.py`; la CI de e7df30b fallo por
-    eso."""
+    eso.
+
+    Desde ADR-0071 (2026-10-09) el perfil de FTMO fija el stops level en 0 y la corrida real ya no
+    se para ahi: la negativa se prueba con el perfil SINTETICO en UNKNOWN, que la CLI carga en lugar
+    del real (como `_registro_con_a47_unknown` hace con el registro)."""
     from botsito import cli
     from botsito.cases.criterio_fidelidad import cargar_criterio
+    from botsito.engine import cableado
 
+    (tmp_path / "perfil").mkdir()
+    copia = perfil_con_stops_level_unknown(tmp_path / "perfil")
+
+    def con_stops_level_unknown(ruta: Path) -> PerfilCuenta:
+        return cargar_perfil(copia if Path(ruta) == PERFIL_REAL else ruta)
+
+    monkeypatch.setattr(cableado, "cargar_perfil", con_stops_level_unknown)
     real = cargar_criterio(RAIZ)
-    salida = tmp_path / "informe.txt"
+    (tmp_path / "salida").mkdir()
+    salida = tmp_path / "salida" / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
          "--salida", str(salida), "--diagnostico-a35", "cierre_vela_contraria",
@@ -172,4 +188,4 @@ def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
     if codigo == 2 and "falta en disco" in err:
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 2 and "A-27" in err and "A-47" not in err
-    assert not list(tmp_path.iterdir())
+    assert not list((tmp_path / "salida").iterdir())

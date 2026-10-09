@@ -284,14 +284,18 @@ parametros:
     tipo: lotes
     unidad: lotes por operacion
     descripcion: >-
-      R11: API de simbolos, «maxTradeVolume: 100» en la fila de EURUSD; FTMO avisa de que «The
-      account specification can be seen directly in the trading platform». Va aqui como firma_*
-      por decision (c) del consultor (Next Action 26). Lo consume el broker simulado
+      R11: la API de simbolos daba «maxTradeVolume: 100» en la fila de EURUSD, y FTMO avisa de que
+      «The account specification can be seen directly in the trading platform». La plataforma da
+      50: SYMBOL_VOLUME_MAX en la prueba gratuita de FTMO el 2026-10-09 (fila 10 del CSV de la
+      ejecucion 1, ADR-0071). Con riesgo_por_operacion sobre 100.000, corta todo stop de menos de
+      1 pip (ADR-0071 §2). Si la cuenta Swing de verdad dice otra cosa, es la pregunta P-D1 a
+      FTMO. Va aqui como firma_* por decision (c) del consultor (Next Action 26). Lo consume el
+      broker simulado
     estado: CONFIRMED
-    valor: "100"
+    valor: "50"
     minimo: "0"
     consumido_por: [F24]
-    fuente: {tipo: decision, id: ADR-0050}
+    fuente: {tipo: decision, id: ADR-0071}
   - nombre: firma_ordenes_simultaneas_max
     categoria: prop_firm
     tipo: entero
@@ -376,8 +380,12 @@ parametros:
     tipo: decimal
     unidad: USD por lote
     descripcion: >-
-      R12: API «commission: 5, commissionType: flat_USD»; la web lo muestra como «USD/LOT*». Si
-      es por lado o por operacion completa lo dice firma_comision_por_lado, que no tiene valor
+      R12: API «commission: 5, commissionType: flat_USD»; la web lo muestra como «USD/LOT*». Se
+      cobra en cada lado (firma_comision_por_lado), asi que este perfil carga 5 por lado. La demo
+      de FTMO (2026-10-09, ADR-0071 §3) EXCLUYE 5 por lado como hecho: cobro 0,03 por lado con
+      0,01 lotes, de una tarifa entre 2,01 y 3,99 segun el redondeo. El valor no cambia: queda
+      como supuesto CONSERVADOR, mas caro que cualquier tarifa compatible, hasta medirla con 1,00
+      lote en la ejecucion 2
     estado: CONFIRMED
     valor: "5"
     minimo: "0"
@@ -388,14 +396,16 @@ parametros:
     tipo: booleano
     unidad: si los USD por lote se cobran en cada lado (apertura y cierre) o una vez
     descripcion: >-
-      R12: «Si la comision es por lado o por operacion completa, y que aclara el asterisco: NO
-      ENCONTRADA». SUPUESTO CONSERVADOR por decision del consultor (2026-09-25, PROJECT_STATE
-      Decisions and Rationale): se cobra en CADA lado, apertura y cierre, hasta que FTMO lo
-      confirme (Next Action 27). Hasta el 2026-09-26 estaba UNKNOWN. Lo consume el broker simulado
+      R12: se cobra en CADA lado, apertura y cierre: MEDIDO en la prueba gratuita de FTMO el
+      2026-10-09, -0,03 USD en la apertura y -0,03 en el cierre de 0,01 lotes (filas 53 y 54 del
+      CSV de la ejecucion 1, ADR-0071 §3), como dijo FTMO el 2026-09-29 (50 % al abrir y 50 % al
+      cerrar en MT5). Hasta entonces era un supuesto conservador del consultor (2026-09-25); hasta
+      el 2026-09-26, UNKNOWN. La tarifa por lote NO la fija esa medida (firma_comision_usd_por_lote).
+      Lo consume el broker simulado
     estado: CONFIRMED
     valor: true
     consumido_por: [F24]
-    fuente: {tipo: decision, id: ADR-0050}
+    fuente: {tipo: decision, id: ADR-0071}
   - nombre: firma_swap_largo_puntos
     categoria: prop_firm
     tipo: decimal
@@ -423,14 +433,16 @@ parametros:
     tipo: puntos
     unidad: puntos de distancia minima al precio que el servidor admite para una pendiente, su stop o su objetivo
     descripcion: >-
-      R11: la especificacion de EURUSD en FTMO trae contractSize, digits, maxTradeVolume y
-      marginPercent, y el stops level es NO ENCONTRADA. Se mide en la demo de FTMO con
-      SymbolInfo (A-27). Sin valor, el broker simulado se niega a colocar una orden stop y solo
-      corre en diagnostico, etiquetado (ADR-0057, PROVISIONAL). No es instrumento_stops_level
-      de la estrategia (RN-026, DEFAULT 0 de otra firma): este es la fidelidad del broker a esta
-      firma, y cuando se mida los dos tienen que llevar el mismo valor
-    estado: UNKNOWN
+      R11: la especificacion de EURUSD en la web de FTMO no lo trae (NO ENCONTRADA). MEDIDO con
+      SymbolInfo en la prueba gratuita de FTMO el 2026-10-09: 0 (fila 4 del CSV de la ejecucion
+      1, ADR-0071; el freeze level tambien es 0, fila 5). Con valor, el broker simulado coloca
+      ordenes stop sin diagnostico, y --diagnostico-a27 se rechaza con este perfil; sin valor (un
+      perfil que no lo tenga) se niega a colocarlas (ADR-0057 §5). No es instrumento_stops_level
+      de la estrategia (RN-026), pero es la misma magnitud y lleva el mismo valor, 0
+    estado: CONFIRMED
+    valor: 0
     consumido_por: [F24]
+    fuente: {tipo: decision, id: ADR-0071}
 
   # ------------------------------------------------------------------ la guardia de tamano (R17)
   - nombre: firma_tamano_posicion_aviso_aplica

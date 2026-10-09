@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (23)
+## ABIERTA (22)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -35,14 +35,6 @@ Afecta a: `zona_control_limpia`.
 Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
 
 Afecta a: `cartuchos_reinicio`.
-
-### A-27 · las especificaciones de EURUSD en FTMO · medicion
-
-MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo, paso de lote y stops level tiene EURUSD en la cuenta de FTMO? Los cinco se midieron el 2026-09-05 en una demo de FundedNext, la firma que ADR-0026 descarta, y se conservan como DEFAULT declarado porque EURUSD tiene las mismas especificaciones en casi cualquier broker: no se heredan como medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y el pre-vuelo de F33 aborta si la cuenta real dice otra cosa
-
-Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
-
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
@@ -144,7 +136,7 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «within two hours before a relevant market closes for at least two hours».
 
-## DECIDIDA (6)
+## DECIDIDA (7)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
 
@@ -177,6 +169,14 @@ el trader decide sobre velas de Oanda (FX Replay) y el bot se mide sobre otras. 
 ### A-24 · que hace que marques un pivote de M15 y no otro · cerrada por `ADR-0045` el 2026-09-24
 
 Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? ¿Hay algo que te haga descartar una?
+
+### A-27 · las especificaciones de EURUSD en FTMO · medicion · cerrada por `ADR-0071` el 2026-10-09
+
+MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo, paso de lote y stops level tiene EURUSD en la cuenta de FTMO? Los cinco se midieron el 2026-09-05 en una demo de FundedNext, la firma que ADR-0026 descarta, y se conservan como DEFAULT declarado porque EURUSD tiene las mismas especificaciones en casi cualquier broker: no se heredan como medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y el pre-vuelo de F33 aborta si la cuenta real dice otra cosa. DECIDIDA el 2026-10-09 por ADR-0071 con la ejecucion 1 de MedirDemoFTMO en la prueba gratuita de FTMO (CSV congelado en data/manifests/demo_ftmo/, sha256 86f0df8b): digits 5, contrato 100000, lote minimo 0.01, paso 0.01 y stops level 0 (filas 6, 8, 9, 11 y 4), los mismos valores que se conservaban de FundedNext. El freeze level es 0, el lote maximo 50 y los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 y el pre-vuelo de F33 vuelven a leer la ficha; una diferencia la reabre con otro ADR
+
+Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
 ## RESUELTA (26)
 

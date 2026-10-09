@@ -33,10 +33,12 @@ def _cargar() -> ModuleType:
 def _linea(n: int, medicion: str, clave: str, valor: str = "", retcode: str = "",
            texto: str = "", colocada: str = "", tipo: str = "", pedido: str = "",
            resultado: str = "", distancia: str = "", servidor: str = "2030-01-15 10:00:00",
-           gmt: str = "2030-01-15 08:00:00", nota: str = "") -> str:  # fmt: skip
+           gmt: str = "2030-01-15 08:00:00", nota: str = "",
+           version: str = "1.0") -> str:  # fmt: skip
     campos = [
-        '"1.0"', str(n), f'"{medicion}"', '"x"', f'"{clave}"', f'"{valor}"', retcode, f'"{texto}"',
-        f'"{colocada}"', f'"{tipo}"', pedido, "1.10000", "1.10002", resultado, f'"{distancia}"',
+        f'"{version}"', str(n), f'"{medicion}"', '"x"', f'"{clave}"', f'"{valor}"', retcode,
+        f'"{texto}"', f'"{colocada}"', f'"{tipo}"', pedido, "1.10000", "1.10002", resultado,
+        f'"{distancia}"',
         f'"{servidor}"', f'"{gmt}"', f'"{nota}"',
     ]  # fmt: skip
     return ",".join(campos)
@@ -196,6 +198,89 @@ def test_lo_que_queda_abierto_y_un_corte_se_avisan(tmp_path: Path) -> None:
     texto = m.informe(m.ficheros_de([_csv(tmp_path / "MedirDemoFTMO_20300115_100000.csv", lineas)]))
     assert "SIN LA FILA DE FIN (cortado)" in texto
     assert "quedan_abiertas_al_terminar = 1" in texto
+
+
+def _version_1_1(apertura: str = "-3.00", nota_volumen: str = "") -> list[str]:
+    """El CSV de la 1.1 (ADR-0071): el paso 6 escribe sus lotes en `volumen_comision` y la
+    observacion del llenado lleva OBSERVACION. Cifras inventadas."""
+    ls = [
+        ln.replace('"1.0"', '"1.1"', 1)
+        for ln in _completo()
+        if '"apertura_compra_mercado"' not in ln
+        and '"cierre_compra_mercado"' not in ln
+        and '"buy_stop_llenado"' not in ln
+    ]
+    ls.insert(-2, _linea(20, "6_comision", "volumen_comision", "1.00", nota=nota_volumen,
+                         version="1.1"))  # fmt: skip
+    if apertura == "no_abre":
+        ls.insert(-2, _linea(21, "6_comision", "apertura_compra_mercado", "no_abre",
+                             nota=nota_volumen, version="1.1"))  # fmt: skip
+    else:
+        ls.insert(-2, _linea(21, "6_comision", "apertura_compra_mercado", apertura, "10009",
+                             "DONE", "llenada", "buy", "1.10002", "1.10003", "1.0",
+                             version="1.1"))  # fmt: skip
+        ls.insert(-2, _linea(22, "6_comision", "cierre_compra_mercado", "-3.00", "10009", "DONE",
+                             "llenada", "sell", "1.10000", "1.10000", "0.0",
+                             version="1.1"))  # fmt: skip
+    ls.insert(-2, _linea(23, "7_llenado_stop", "buy_stop_llenado", "1.0", "0", "OBSERVACION",
+                         "llenada", "buy_stop", "1.10004", "1.10005", "2",
+                         version="1.1"))  # fmt: skip
+    return ls
+
+
+def test_un_csv_1_1_da_los_lotes_del_paso_6_y_la_observacion(tmp_path: Path) -> None:
+    m = _cargar()
+    ruta = _csv(tmp_path / "MedirDemoFTMO_20301027_100000.csv", _version_1_1())
+    filas = m.ficheros_de([ruta])
+    texto = m.informe(filas)
+    assert "- MedirDemoFTMO_20301027_100000.csv: completo (script 1.1)" in texto
+    assert "| FTMO-REGLAS R12 | lotes de la compra a mercado | 1.00 |" in texto
+    assert (
+        "| ADR-0057 d1 · DN-3 | compra a mercado | comision -3.00; deslizamiento 1.0 puntos |"
+        in texto
+    )
+    assert "| ADR-0057 d1 · DN-3 | cierre a mercado | comision -3.00;" in texto
+    observacion = next(f for f in filas[ruta.name] if f.clave == "buy_stop_llenado")
+    assert observacion.retcode_texto == "OBSERVACION" and not m.es_inesperado(observacion)
+    assert "## Retcodes INESPERADOS: esas filas no miden lo que dicen\n\n- ninguno" in texto
+
+
+def test_un_csv_1_1_sin_margen_no_abre_y_lo_dice(tmp_path: Path) -> None:
+    m = _cargar()
+    nota = "margen libre insuficiente: margen necesario 3700.00; margen libre 100.00"
+    ruta = _csv(
+        tmp_path / "MedirDemoFTMO_20301027_100000.csv",
+        _version_1_1(apertura="no_abre", nota_volumen=nota),
+    )
+    texto = m.informe(m.ficheros_de([ruta]))
+    assert f"| ADR-0057 d1 · DN-3 | compra a mercado | no abrio: {nota} |" in texto
+    assert "| ADR-0057 d1 · DN-3 | cierre a mercado | sin medir |" in texto
+    assert "## Retcodes INESPERADOS: esas filas no miden lo que dicen\n\n- ninguno" in texto
+
+
+def test_la_1_0_se_sigue_leyendo_con_la_etiqueta_nueva(tmp_path: Path) -> None:
+    """La 1.0 (la ejecucion 1) escribia SIN_RESPUESTA en la observacion y no escribia sus lotes:
+    usaba el volumen minimo del simbolo. El lector da OBSERVACION y el volumen minimo."""
+    m = _cargar()
+    lineas = [*_completo()]
+    lineas.insert(2, _linea(12, "1_especificacion", "volumen_min", "0.01"))
+    ruta = _csv(tmp_path / "MedirDemoFTMO_20300115_100000.csv", lineas)
+    filas = m.ficheros_de([ruta])
+    texto = m.informe(filas)
+    assert "completo (script 1.0)" in texto
+    assert "| lotes de la compra a mercado | 0.01 (la 1.0 usa el volumen minimo) |" in texto
+    observacion = next(f for f in filas[ruta.name] if f.clave == "buy_stop_llenado")
+    assert observacion.retcode_texto == "OBSERVACION"
+
+
+def test_otra_version_o_una_mezcla_se_rechazan(tmp_path: Path) -> None:
+    m = _cargar()
+    otra = [ln.replace('"1.0"', '"2.0"', 1) for ln in _completo()]
+    with pytest.raises(m.LecturaError, match="version_script '2.0'"):
+        m.ficheros_de([_csv(tmp_path / "MedirDemoFTMO_20300115_100000.csv", otra)])
+    mezcla = [*_completo()[:-1], _linea(11, "9_fin", "terminado", "completo", version="1.1")]
+    with pytest.raises(m.LecturaError, match="mezcla versiones"):
+        m.ficheros_de([_csv(tmp_path / "MedirDemoFTMO_20300115_100001.csv", mezcla)])
 
 
 def test_un_csv_que_no_es_del_script_se_rechaza(tmp_path: Path) -> None:
