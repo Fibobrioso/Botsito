@@ -11,10 +11,10 @@
 > `main` (docs/state/README.md, skill `abrir-rama`). Tope: 25 KB (`tests/unit/test_project_state.py`).
 
 ## Current Branch
-main
+trabajo/adelgazar-estado
 
 ## Current Feature
-`main` en `stable/F37g-guion-mismo-comando` (8d1578d): la guardia de Claude Code solo deja ejecutar lo que puede decidir, negando por defecto (`exigir_ejecucion_verificable`); punto V hecho. Sin ramas abiertas; manda la Next Action. Informe docs/validation/GUION-MISMO-COMANDO.md.
+`trabajo/adelgazar-estado` EN CURSO: PROJECT_STATE a 20.000 bytes o menos, punto Y de RITUAL y la prueba de octubre de la demo de FTMO. Encargo docs/encargos/trabajo-adelgazar-estado.md; informe docs/validation/ADELGAZAR-ESTADO.md.
 
 ## Stable Main State
 8d1578d · merge de `trabajo/guion-mismo-comando` (tag `stable/F37g-guion-mismo-comando`): la guardia de Claude Code deja ejecutar solo si es seguro que lo que corre es lo que leyo, negando por defecto (`exigir_ejecucion_verificable`); un builtin no admitido, una via que fija una variable, y las formas de git/awk/sed/sort que ejecutan se niegan por lista cerrada o condicion. Sobre `stable/F37f-umbral-mayo` (9a313e0). Informe docs/validation/GUION-MISMO-COMANDO.md; el registro del cierre, al final de HISTORIA.
@@ -204,9 +204,9 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 Las cerradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. `state check`
 (regla 4) mira las dos. Desde `trabajo/ajustes-cierre` (2026-10-01) el cierre de una rama NO anade
 aqui nada: lo cerrado va al `# Registro de cierre` de HISTORIA, en la rama (docs/runbooks/RITUAL.md).
-— ninguna desde el Archivo 23 (2026-10-07).
+— ninguna desde el Archivo 24 (2026-10-08).
 
 ## Change Log
 Las entradas desde el ultimo archivo de docs/state/HISTORIA.md; las anteriores, alli. El cierre de
 una rama no anade ninguna desde `trabajo/ajustes-cierre` (2026-10-01): va al registro de HISTORIA.
-— ninguna desde el Archivo 23 (2026-10-07).
+— ninguna desde el Archivo 24 (2026-10-08).

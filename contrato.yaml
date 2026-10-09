@@ -1,0 +1,33 @@
+rama: trabajo/adelgazar-estado
+riesgo: bajo  # solo documentos: PROJECT_STATE, HISTORIA, README de estado, RITUAL y runbooks; ni codigo, ni tests, ni spec, ni knowledge, ni cifras, y no abre material
+artefacto: docs/validation/ADELGAZAR-ESTADO.md
+rutas_permitidas:
+  - docs/validation/ADELGAZAR-ESTADO.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  # fase 2: las clases de salida y el criterio (a)-(d)
+  - docs/state/README.md
+  # fase 3 (punto Y): RITUAL y los sitios que digan lo mismo
+  - docs/runbooks/
+  - .claude/skills/cerrar-rama/
+  - .claude/skills/abrir-rama/
+  - CLAUDE.md
+rutas_protegidas:
+  # lo que el encargo dice que no cambia
+  - src/
+  - knowledge/
+  - tests/
+  - tools/
+  - scripts/
+  - data/
+  - corpus/
+  - .claude/hooks/
+  - .claude/settings.json
+  - .claude/agents/
+comprobaciones:
+  - git log --format=%H main..HEAD
+  - uv run pytest tests/unit/test_project_state.py tests/unit/test_historia.py -q
+  - uv run botsito state check
+  - wc -c PROJECT_STATE.md
+  - make check > make-check.log 2>&1
