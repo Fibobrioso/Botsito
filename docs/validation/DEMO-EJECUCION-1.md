@@ -522,7 +522,62 @@ Los tests del bróker que usan reglas sintéticas (`test_broker_ordenes_stop.py`
 stop no se coloca; con uno en diagnóstico se exige la distancia; con uno fijado no se admite
 diagnóstico) no cambian: construyen `ReglasBroker` a mano y no leen el perfil.
 
+### 3.3 El script 1.1, su lector y `DEMO-FTMO.md` (punto 5 y 9; commit propio)
+
+**`tools/mql5/MedirDemoFTMO.mq5`, 1.0 → 1.1. Solo lo autorizado** (`git diff main --
+tools/mql5/MedirDemoFTMO.mq5`):
+- `VERSION_SCRIPT` "1.1" y `#property version` "1.10";
+- un input nuevo, `InpVolumenComision = 1.00`, y el paso 6 abre con él (`req.volume = volumen`; antes
+  `g_volumen`, el mínimo). El cierre ya cerraba el volumen de la posición (`CerrarPosicion` usa
+  `POSITION_VOLUME`) y no cambia. El stop de protección (200 puntos) y la apertura y el cierre
+  enseguida (3 s) siguen igual;
+- **antes de abrir**: que el volumen sea admisible (mínimo, máximo y paso del símbolo,
+  `VolumenAdmitido`) y que el margen alcance (`OrderCalcMargin` frente a `ACCOUNT_MARGIN_FREE`,
+  `MargenAlcanza`). Una fila nueva, `volumen_comision`, escribe el volumen y, en su nota, el margen
+  necesario y el libre (o por qué no se admite). **Si no alcanza, no abre**: la fila
+  `apertura_compra_mercado` lleva `no_abre` y el motivo, y el paso termina sin error;
+- las dos filas de observación (`buy_stop_llenado`, llenada o «no_salto») escriben «OBSERVACION» en
+  `retcode_texto` en vez de «SIN_RESPUESTA», con un parámetro nuevo de `Fila` (`observacion`, falso
+  por defecto). `TextoRetcode(0)` sigue diciendo SIN_RESPUESTA para una petición sin respuesta de
+  verdad;
+- los comentarios de la cabecera: qué trae la 1.1 y la línea de SEGURIDAD («solo el volumen mínimo»
+  ya no era exacta).
+Nada más: los pasos 1-5 y 7, la limpieza y las comprobaciones de arranque no cambian. **El script no
+se compila en el repositorio** (MetaEditor solo está en la máquina de Aleks): la comprobación es el
+F7 con «0 errors» que pide `DEMO-FTMO.md`.
+
+**`scripts/leer_demo_ftmo.py`**: lee la 1.0 y la 1.1 y rechaza cualquier otra versión, o un
+fichero que mezcle dos; dice la versión junto a cada fichero; una fila nueva de la tabla, «lotes de
+la compra a mercado» (el de `volumen_comision` en la 1.1; en la 1.0, el volumen mínimo, que es lo que
+usaba); la compra que no abre sale como «no abrio: <motivo>»; y la etiqueta de las observaciones de
+la 1.0 (SIN_RESPUESTA) se lee como OBSERVACION. La tabla de la 1.0 no cambia salvo esas dos cosas
+(la versión y la fila de los lotes).
+
+**`tests/unit/test_leer_demo_ftmo.py`**: los cinco tests de antes, sin tocar sus aserciones (el
+generador de filas gana un parámetro `version`, por defecto "1.0"), y cuatro nuevos sobre CSV
+sintéticos: la 1.1 con 1,00 lote y la observación; la 1.1 sin margen (no abre y lo dice, sin
+retcode inesperado); la 1.0 con la etiqueta nueva y el volumen mínimo; y otra versión o una mezcla,
+rechazadas. 1424 funciones de test.
+
+**`docs/runbooks/DEMO-FTMO.md`** (punto 9): las tres correcciones de la fase 0 se quedan; se añade
+que el paso 6 va con 1,00 lote desde la 1.1 (en «Lo que hace» y en la tabla de pasos) y, en «Cuándo»,
+lo que Aleks hace antes de la ejecución 2: copiar otra vez el script, compilarlo con F7 hasta «0
+errors» y comprobar que el CSV dice 1.1.
+
+**La guardia de Claude Code bloquea ejecutar el lector nuevo, y es un falso positivo.** Al lanzar
+`uv run python scripts/leer_demo_ftmo.py data/demo_ftmo` con el lector cambiado, la guardia lo niega:
+«el codigo que se ejecuta pide el corpus SIN FILTRAR». Su patrón (`CRUDO_PYTHON`,
+`.claude/hooks/guardia.py:162`, `\bcrudo\s*=\s*(?!False\b)\S`) casa con la línea
+`crudo = ruta.read_bytes()` del lector, que está en `main` desde `trabajo/demo-ftmo-script`: una
+variable local con los bytes del CSV, no la opción de la CLI que enseña el corpus. Mientras el lector
+era idéntico al de `main` la guardia lo daba por revisado; al cambiar en esta rama, lo lee y salta.
+**No se rodea** (`CLAUDE.md`, «Una guardia no se rodea»): ni se renombra la variable para que no la
+vea ni se ejecuta el lector por otro camino. El lector nuevo lo prueban los nueve tests del lector
+con CSV sintéticos; la tabla de la ejecución 1 del §0.a es la del lector 1.0. Para el consultor: o
+se renombra esa variable en una rama (y así el lector deja de parecer lo que no es), o se afina el
+patrón de la guardia en la suya. Aleks puede ejecutarlo en su terminal con `!`.
+
 ## Estado
 
-EN CURSO: fase 1. Hecho: ADR-0071; los valores, A-27 y los tests. Siguen el script 1.1 y su lector,
-y el revisor.
+EN CURSO: fase 1. Hecho: ADR-0071; los valores, A-27 y los tests; el script 1.1, su lector y
+`DEMO-FTMO.md`. Sigue el revisor.

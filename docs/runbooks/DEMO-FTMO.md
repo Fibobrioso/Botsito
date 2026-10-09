@@ -13,9 +13,12 @@ la espera hasta 120 segundos.
 ## Lo que hace, y lo que no hace nunca
 
 - **Se niega a correr si la cuenta no es de prueba (DEMO).** En una cuenta real no hace nada.
-- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta).
+- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo el
+  paso 6: desde la versión 1.1 abre y cierra enseguida una compra de **1,00 lote**, con su stop de
+  protección, para medir la comisión por lote (ADR-0071 §3). Antes de abrir comprueba el margen
+  libre; si no alcanza, no abre y lo escribe en el fichero.
 - Pone unas veinte órdenes de prueba y **las borra todas**; abre como mucho unas pocas posiciones
-  pequeñas y **las cierra**.
+  pequeñas (y, desde la 1.1, la de 1,00 lote del paso 6) y **las cierra**.
   Toda orden de prueba caduca sola a los 15 minutos, y toda posición lleva un stop de protección.
 - Al empezar y al terminar busca cualquier orden o posición suya que siga abierta y la quita. Si
   algo se quedara abierto, sale un aviso en pantalla y queda escrito en el fichero.
@@ -81,6 +84,19 @@ personales.
 | 2 | entre el **lunes 26 y el viernes 30 de octubre** | Europa ya cambió de hora (el 25) y Nueva York todavía no: el desfase dice qué calendario sigue el servidor (A-28) |
 | 3 | después del **domingo 1 de noviembre** | Nueva York ya cambió: confirma el horario de invierno |
 
+**Antes de la ejecución 2: el script 1.1.** La ejecución 1 (2026-10-09) usó la versión 1.0. Para la
+2 hay una versión nueva, la 1.1 (rama `trabajo/demo-ejecucion-1`, ADR-0071), que mide la comisión
+con 1,00 lote. Antes de lanzarla:
+1. vuelve a copiar `tools/mql5/MedirDemoFTMO.mq5` del repositorio a **MQL5 → Scripts**, encima del
+   que hay (paso 4 de «Una vez»);
+2. compílalo otra vez: **F4**, doble clic en **MedirDemoFTMO.mq5**, **F7**, y abajo tiene que decir
+   **0 errors** (paso 5 de «Una vez»);
+3. ejecútalo como siempre, sin cambiar nada en la ventana de **Aceptar** (el volumen del paso 6 ya
+   viene en 1,00);
+4. al terminar, **comprueba que el fichero dice 1.1**: la primera columna de cada fila,
+   `version_script`, tiene que ser `"1.1"`. El lector lo dice también: «(script 1.1)» junto al
+   nombre del fichero. Si dice 1.0, el terminal sigue con la versión vieja: repite 1 y 2.
+
 Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
 recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,
 «verificación explícita»). Apúntalo con la fecha.
@@ -94,7 +110,7 @@ recalcula el límite de pérdida diaria**: a medianoche de España o a medianoch
 | 3 | cuatro pendientes del lado equivocado: si se rechazan, se colocan o se llenan, y a qué precio | ADR-0057 d2, d3 y d4 |
 | 4 | las cuatro pendientes en el nivel exacto, a la distancia del stops level y un punto dentro | ADR-0057 d2 y §5, A-27 |
 | 5 | una pendiente buena, movida al lado equivocado: si se acepta y si la original sigue viva | ADR-0057 d3 |
-| 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento | FTMO-REGLAS R12, DN-3 |
+| 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento (con 1,00 lote desde la 1.1; la 1.0 usaba el lote mínimo) | FTMO-REGLAS R12, DN-3 |
 | 7 | una buy stop muy cerca del precio: a qué precio se llena frente a su nivel | ADR-0057 d1 |
 
 **Importante para leerlo:** la hora GMT sale del reloj de este ordenador. Si el ordenador no está en

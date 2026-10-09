@@ -16,7 +16,7 @@ f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estad
 f6d3117 · merge: PROJECT_STATE adelgazado, punto Y en RITUAL y la prueba de octubre de FTMO (ADELGAZAR-ESTADO.md) · tag stable/F37h-adelgazar-estado
 
 ## Tests Currently Passing
-1420 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1424 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

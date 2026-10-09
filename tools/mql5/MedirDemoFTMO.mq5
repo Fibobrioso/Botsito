@@ -8,9 +8,15 @@
 //| scripts/leer_demo_ftmo.py. Instrucciones: docs/runbooks/         |
 //| DEMO-FTMO.md.                                                    |
 //|                                                                  |
+//| 1.1 (rama trabajo/demo-ejecucion-1, 2026-10-09, ADR-0071): el    |
+//| paso 6 abre con InpVolumenComision lotes (1.00), si el volumen   |
+//| es admisible y el margen libre alcanza; y las filas de           |
+//| observacion dicen OBSERVACION y no SIN_RESPUESTA.                |
+//|                                                                  |
 //| SEGURIDAD:                                                       |
 //| - se niega a correr si la cuenta no es DEMO;                     |
-//| - solo EURUSD, solo el volumen minimo, numero magico propio;     |
+//| - solo EURUSD, solo el volumen minimo (salvo el paso 6, con      |
+//|   InpVolumenComision desde 1.1), numero magico propio;           |
 //| - toda pendiente lleva caducidad (si el simbolo la admite) y     |
 //|   toda posicion lleva stop de proteccion;                        |
 //| - al empezar y al terminar, y tambien si un paso falla, borra    |
@@ -18,17 +24,18 @@
 //|   comprueba que no queda ninguna.                                |
 //+------------------------------------------------------------------+
 #property copyright "Bot v3"
-#property version   "1.00"
+#property version   "1.10"
 #property description "Mide especificacion, reloj, pendientes mal colocadas, stops level, modificacion y comision en una cuenta DEMO. Solo EURUSD."
 #property script_show_inputs
 
-#define VERSION_SCRIPT "1.0"
+#define VERSION_SCRIPT "1.1"
 #define SIMBOLO        "EURUSD"
 #define MAGICO         57057000
 
 input bool InpMedirLlenadoStop = true; // medir el llenado de una orden stop (paso 7)
 input int  InpEsperaStopSeg    = 120;  // segundos maximos esperando a que salte la stop del paso 7
 input int  InpPausaMs          = 1500; // pausa entre peticiones al servidor
+input double InpVolumenComision = 1.00; // lotes de la compra y el cierre del paso 6 (comision)
 
 int    g_csv    = INVALID_HANDLE;
 int    g_fila   = 0;
@@ -105,11 +112,12 @@ string TextoRetcode(const uint r)
 void Fila(const string medicion, const string responde, const string clave, const string valor,
           const uint retcode, const string colocada, const string tipo, const double pedido,
           const double bid, const double ask, const double resultado, const string distancia,
-          const string nota)
+          const string nota, const bool observacion = false)
   {
    g_fila++;
    string r = (retcode == 0 && StringLen(tipo) == 0) ? "" : IntegerToString(retcode);
-   string rt = (StringLen(r) == 0) ? "" : TextoRetcode(retcode);
+   // una observacion no es una peticion: no hay retcode del servidor (1.1; en 1.0, SIN_RESPUESTA)
+   string rt = (StringLen(r) == 0) ? "" : (observacion ? "OBSERVACION" : TextoRetcode(retcode));
    string linea = Campo(VERSION_SCRIPT) + "," + IntegerToString(g_fila) + "," + Campo(medicion) + "," +
                   Campo(responde) + "," + Campo(clave) + "," + Campo(valor) + "," + r + "," +
                   Campo(rt) + "," + Campo(colocada) + "," + Campo(tipo) + "," + Precio(pedido) + "," +
@@ -567,6 +575,41 @@ bool MedirModificacion()
 //+------------------------------------------------------------------+
 //| 6. Comision por lado, spread y deslizamiento a mercado           |
 //+------------------------------------------------------------------+
+// 1.1: el volumen del paso 6 tiene que ser uno que el simbolo admite (minimo, maximo y paso).
+bool VolumenAdmitido(const double volumen, string &motivo)
+  {
+   double minimo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MIN);
+   double maximo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MAX);
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   if(volumen < minimo || volumen > maximo || paso <= 0.0 ||
+      MathAbs(volumen / paso - MathRound(volumen / paso)) > 1e-6)
+     {
+      motivo = "volumen no admitido: minimo " + DoubleToString(minimo, 2) + ", maximo " +
+               DoubleToString(maximo, 2) + ", paso " + DoubleToString(paso, 2);
+      return false;
+     }
+   return true;
+  }
+
+// 1.1: antes de abrir, el margen que pide la compra frente al margen libre de la cuenta.
+bool MargenAlcanza(const double volumen, const MqlTick &t, string &motivo)
+  {
+   double margen = 0.0;
+   if(!OrderCalcMargin(ORDER_TYPE_BUY, SIMBOLO, volumen, t.ask, margen))
+     {
+      motivo = "no se pudo calcular el margen (error " + IntegerToString(GetLastError()) + ")";
+      return false;
+     }
+   double libre = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   motivo = "margen necesario " + DoubleToString(margen, 2) + "; margen libre " + DoubleToString(libre, 2);
+   if(margen > libre)
+     {
+      motivo = "margen libre insuficiente: " + motivo;
+      return false;
+     }
+   return true;
+  }
+
 bool MedirComision()
   {
    string m = "6_comision";
@@ -574,6 +617,16 @@ bool MedirComision()
    MqlTick t;
    if(!Cotizacion(t))
       return false;
+   double volumen = InpVolumenComision;
+   string motivo = "";
+   bool admitido = VolumenAdmitido(volumen, motivo) && MargenAlcanza(volumen, t, motivo);
+   Dato(m, resp, "volumen_comision", DoubleToString(volumen, 2), motivo);
+   if(!admitido)
+     {
+      // no abre: lo escribe en la fila de la apertura y el paso termina sin error
+      Dato(m, resp, "apertura_compra_mercado", "no_abre", motivo);
+      return true;
+     }
    MqlTradeRequest req;
    MqlTradeResult res;
    ZeroMemory(req);
@@ -582,7 +635,7 @@ bool MedirComision()
    req.action = TRADE_ACTION_DEAL;
    req.symbol = SIMBOLO;
    req.magic = MAGICO;
-   req.volume = g_volumen;
+   req.volume = volumen;
    req.type = ORDER_TYPE_BUY;
    req.price = t.ask;
    req.sl = NormalizeDouble(t.bid - proteccion * g_point, g_digits);
@@ -685,14 +738,14 @@ bool MedirLlenadoStop()
      {
       Fila(m, "ADR-0057 d1", "buy_stop_llenado", DoubleToString((lleno - nivel) / g_point, 1), 0, "llenada",
            "buy_stop", nivel, a.bid, a.ask, lleno, IntegerToString(d),
-           "valor = precio del llenado menos el nivel, en puntos (+ en contra)");
+           "valor = precio del llenado menos el nivel, en puntos (+ en contra)", true);
       MqlTradeResult rc;
       CerrarPosicion(posicion, rc);
      }
    else
      {
       Fila(m, "ADR-0057 d1", "buy_stop_llenado", "no_salto", 0, "no", "buy_stop", nivel, a.bid, a.ask, 0,
-           IntegerToString(d), "no salto en " + IntegerToString(InpEsperaStopSeg) + " s; se borra");
+           IntegerToString(d), "no salto en " + IntegerToString(InpEsperaStopSeg) + " s; se borra", true);
       BorrarPendiente(res.order);
      }
    return true;
