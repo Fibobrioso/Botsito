@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/adelgazar-estado
+main
 
 ## Current Feature
-`trabajo/adelgazar-estado` EN CURSO: PROJECT_STATE a 20.000 bytes o menos, punto Y de RITUAL y la prueba de octubre de la demo de FTMO. Encargo docs/encargos/trabajo-adelgazar-estado.md; informe docs/validation/ADELGAZAR-ESTADO.md.
+`main` en `stable/F37h-adelgazar-estado` (f6d3117): PROJECT_STATE adelgazado por el criterio (a)-(d) del consultor, punto Y en RITUAL y la prueba de octubre de la demo de FTMO. Sin ramas abiertas; manda la Next Action. Informe docs/validation/ADELGAZAR-ESTADO.md.
 
 ## Stable Main State
-8d1578d · merge de `trabajo/guion-mismo-comando` (tag `stable/F37g-guion-mismo-comando`): la guardia de Claude Code deja ejecutar solo si es seguro que lo que corre es lo que leyo, negando por defecto (`exigir_ejecucion_verificable`); un builtin no admitido, una via que fija una variable, y las formas de git/awk/sed/sort que ejecutan se niegan por lista cerrada o condicion. Sobre `stable/F37f-umbral-mayo` (9a313e0). Informe docs/validation/GUION-MISMO-COMANDO.md; el registro del cierre, al final de HISTORIA.
+f6d3117 · merge de `trabajo/adelgazar-estado` (tag `stable/F37h-adelgazar-estado`): salen de PROJECT_STATE 12 lineas por el criterio (a)-(d), literales en HISTORIA con su evidencia; las introducciones apuntan a docs/state/README.md; la Next Action cambia entera en el commit del contrato (punto Y); DEMO-FTMO.md lleva la prueba de octubre de 2026. Sobre `stable/F37g-guion-mismo-comando` (8d1578d). Informe docs/validation/ADELGAZAR-ESTADO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8d1578d · merge: la guardia solo deja ejecutar lo que puede decidir, negando por defecto (GUION-MISMO-COMANDO.md) · tag stable/F37g-guion-mismo-comando
+f6d3117 · merge: PROJECT_STATE adelgazado, punto Y en RITUAL y la prueba de octubre de FTMO (ADELGAZAR-ESTADO.md) · tag stable/F37h-adelgazar-estado
 
 ## Tests Currently Passing
 1418 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
