@@ -52,3 +52,27 @@ espera creciente-; `ticks`: total y cotizaciones cruzadas). La cache cruda va a
 `raw/<SIMBOLO>/ticks/<AAAA-MM-DD>/<HH>.bi5`. El comando SE NIEGA a cualquier mes que no sea de
 construccion (`criterio_fidelidad.yaml`). `botsito data check-ticks --dataset <id> --hashes`
 compara con el disco. Commit del manifiesto con Fuente: ADR-0051.
+
+## Demo de FTMO (`demo_ftmo/`, rama `trabajo/demo-ejecucion-1`)
+
+Cada CSV de `tools/mql5/MedirDemoFTMO.mq5` que se use para fijar un valor se congela aqui
+(`docs/runbooks/DEMO-FTMO.md`, «Dónde queda el fichero y a dónde va»). El CSV vive en
+`data/demo_ftmo/`, fuera de git, con el nombre que le da MetaTrader; el manifiesto
+`data/manifests/demo_ftmo/<dataset_id>.yaml` es INMUTABLE como los demas (misma guardia: todo `.yaml`
+bajo `data/manifests/`). No hay comando que lo genere: se escribe a mano con `sha256sum` y el lector
+(`scripts/leer_demo_ftmo.py`) delante, y `knowledge validate` no lo carga como dataset de velas
+(solo lee la raiz). Esquema (`schema_demo_ftmo: 1`):
+
+| Campo | Contenido |
+|---|---|
+| `dataset_id` | `demo-ftmo-<AAAA-MM-DD del servidor>-<8 hex>`: el sufijo son los 8 primeros del sha256 del CSV |
+| `ejecucion` | 1, 2 o 3 (`DEMO-FTMO.md`, «Cuándo: tres veces») |
+| `fichero` | `ruta` (relativa a `data/`), `bytes`, `sha256`, `filas` de datos sin la cabecera y `fin_de_linea` |
+| `script` | `ruta`, `version` (la columna `version_script`), `sha256` del `.mq5` y el `commit` que lo trajo |
+| `cuenta` | `servidor`, `empresa`, `moneda`, `tipo` y `build_terminal`, de las filas de contexto |
+| `hora_servidor_primera`, `hora_servidor_ultima`, `hora_gmt_primera` | de la primera y la ultima fila |
+| `terminado`, `quedan_abiertas_al_terminar` | las filas `terminado` y `quedan_abiertas_al_terminar` |
+| `declarado_por`, `congelado_el`, `rama`, `informe` | quien lo copio y como, cuando y donde se congelo |
+
+El valor que salga de un CSV entra en `knowledge/` citando el ADR que cita su manifiesto y su fila
+(el trailer `Fuente:` no admite un manifiesto).

@@ -1,0 +1,31 @@
+# Escrito a mano en la rama trabajo/demo-ejecucion-1 (2026-10-09): no hay comando que lo genere.
+# INMUTABLE: no editar; otro CSV es otro manifiesto. Esquema: data/manifests/README.md, «Demo de FTMO».
+schema_demo_ftmo: 1
+dataset_id: demo-ftmo-2026-10-09-86f0df8b
+ejecucion: 1
+fichero:
+  ruta: demo_ftmo/MedirDemoFTMO_20261009_153552.csv
+  bytes: 9907
+  sha256: 86f0df8b24f632102f0207b62a298a7776a164868e9a2d820ceb133c144b3c6e
+  filas: 59
+  fin_de_linea: LF
+script:
+  ruta: tools/mql5/MedirDemoFTMO.mq5
+  version: '1.0'
+  sha256: 28d58110d3a5d3b56dc602657d6514d921ab13c73b2d60ddc1203ecee56e7540
+  commit: 6460dee21be2044a5ad54511e5700e8aa6843e8d
+cuenta:
+  servidor: FTMO-Demo
+  empresa: FTMO Global Markets Ltd
+  moneda: USD
+  tipo: prueba gratuita creada el 2026-10-08 (2-Step, Swing, 100.000, MT5)
+  build_terminal: 6230
+hora_servidor_primera: '2026.10.09 15:35:52'
+hora_servidor_ultima: '2026.10.09 15:36:36'
+hora_gmt_primera: '2026.10.09 12:35:52'
+terminado: completo
+quedan_abiertas_al_terminar: 0
+declarado_por: Aleks, 2026-10-09 (copiado tal cual de MQL5/Files, sin abrir con Excel)
+congelado_el: '2026-10-09'
+rama: trabajo/demo-ejecucion-1
+informe: docs/validation/DEMO-EJECUCION-1.md

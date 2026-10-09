@@ -8,6 +8,8 @@ rutas_permitidas:
   - docs/state/HISTORIA.md
   # fase 0 a): el manifiesto inmutable del CSV de la ejecucion 1
   - data/manifests/demo_ftmo/
+  # y su esquema, en una seccion nueva (anadido en el commit de la fase 0)
+  - data/manifests/README.md
   # fase 0 c) e i): la linea de netting/hedging y la duracion medida
   - docs/runbooks/DEMO-FTMO.md
   # la fase 1 amplia esta lista en su propio commit, con lo que decida la PARADA

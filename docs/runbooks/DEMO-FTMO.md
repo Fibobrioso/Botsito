@@ -6,7 +6,9 @@ comisión y el reloj del servidor (ADR-0057, A-27, A-28 y `docs/validation/FTMO-
 ejecutas tres veces; el repositorio lee lo que sale. **No cambia nada de la estrategia ni de los
 parámetros**: los valores entran después, en otra rama, con los ficheros delante.
 
-El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda unos cinco minutos.
+El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda menos de un minuto si la orden del paso 7 salta
+enseguida (44 segundos en la ejecución 1, el 2026-10-09) y como mucho unos tres si no salta: el paso 7
+la espera hasta 120 segundos.
 
 ## Lo que hace, y lo que no hace nunca
 
@@ -46,7 +48,7 @@ El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda unos cinco minutos.
    **EURUSD → Ventana de gráfico**.
 4. **Lanzarlo.** Menú **Ver → Navegador** (*View → Navigator*); despliega **Scripts**, arrastra **MedirDemoFTMO** encima
    del gráfico de EURUSD y pulsa **Aceptar** sin cambiar nada.
-5. **Esperar** unos cinco minutos, sin tocar nada, hasta que salga una ventana que diga
+5. **Esperar** de uno a tres minutos, sin tocar nada, hasta que salga una ventana que diga
    **«MedirDemoFTMO: terminado (completo)»**.
 6. **Comprobar.** Abajo, en la caja de herramientas (**Ctrl+T**), pestaña **Trading** (*Trade*), no
    tiene que quedar ninguna orden ni posición. Si la ventana dijera **«ATENCIÓN: quedan…»**, en esa pestaña clic derecho
@@ -113,7 +115,10 @@ de la cuenta no se escribe aquí: el repositorio es público.
   ejecutarlo» y dentro de la ventana del bot, de 07:00 a 15:00 Europe/Madrid (`ventana_inicio` y
   `ventana_fin`, `knowledge/spec/parametros.yaml`); las 08:00 de Lima son justo las 15:00, el
   final de esa ventana.
-- **Netting o hedging: SIN COMPROBAR.** MetaTrader 5 muestra la cuenta de prueba como «Netting».
-  Si la cuenta Swing de verdad es netting o hedging no se supone: lo comprueba la rama de ADR-0057
-  y A-27, con el CSV. El script ya lo registra: la fila `contexto`, `modo_margen`
-  (`ACCOUNT_MARGIN_MODE`, `tools/mql5/MedirDemoFTMO.mq5`).
+- **Netting o hedging: HEDGING en la prueba, medido.** La ejecución 1 (2026-10-09) da `modo_margen`
+  = `ACCOUNT_MARGIN_MODE_RETAIL_HEDGING` (fila 25 del CSV, congelado en
+  `data/manifests/demo_ftmo/demo-ftmo-2026-10-09-86f0df8b.yaml`), y Aleks declara que la barra de
+  título de MT5 dice «Hedge»; lo de «Netting» que se anotó aquí el 2026-10-08 no casa con lo medido.
+  Para el simulador no cambia nada: la estrategia nunca tiene dos posiciones a la vez
+  (`docs/validation/DEMO-EJECUCION-1.md` §0.c). Si la cuenta Swing de verdad es también de hedging
+  no se supone: es una pregunta para FTMO (la misma sección).
