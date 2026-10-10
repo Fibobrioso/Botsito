@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/cases-rejilla
+main
 
 ## Current Feature
-`trabajo/cases-rejilla` EN CURSO (puntos W y Z de la Next Action): cases/ cuenta la ventana de cada caso por la rejilla H4 de ADR-0069, por la puerta del reloj de las sesiones (cases/relojes.py, que engine/relojes.py reexporta). Encargo docs/encargos/trabajo-cases-rejilla.md; informe docs/validation/CASES-REJILLA.md.
+`main` en `stable/F37j-cases-rejilla` (f472e06): cases/ cuenta la ventana de cada caso por la puerta del reloj de las sesiones (rejilla H4, ADR-0069) y los artefactos nuevos congelan reloj_sesiones. Sin ramas abiertas; manda la Next Action (F primero). Informe docs/validation/CASES-REJILLA.md.
 
 ## Stable Main State
-0b1c8ef · merge de `trabajo/demo-ejecucion-1` (tag `stable/F37i-demo-ejecucion-1`): el CSV de la ejecución 1 congelado en data/manifests/demo_ftmo/; ADR-0071; los cinco de A-27 CONFIRMED y A-27 DECIDIDA; perfil de FTMO con stops level 0 y volumen máximo 50; la negativa A-27 en un perfil sintético; MedirDemoFTMO 1.1 (comisión con 1,00 lote) y su lector 1.0/1.1. Sobre `stable/F37h-adelgazar-estado` (f6d3117). Informe docs/validation/DEMO-EJECUCION-1.md; el registro del cierre, al final de HISTORIA.
+f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): la puerta del reloj en src/botsito/cases/relojes.py (engine/relojes.py la reexporta); la ventana de cada caso por la puerta, el día que no decide fuera del universo; reloj_sesiones congelado en ventanas.yaml y leído negando por defecto por kit check y fidelidad check; hojas con las horas del gráfico; la ingesta asigna la sesión por la puerta; Z en CLAUDE.md y ENTRADA-MARZO (PARADA B0 sin motivo). Sobre `stable/F37i-demo-ejecucion-1` (0b1c8ef). Informe docs/validation/CASES-REJILLA.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-0b1c8ef · merge: la ejecución 1 de la demo de FTMO, ADR-0071, A-27 DECIDIDA, stops level 0, volumen máximo 50 y el script 1.1 (DEMO-EJECUCION-1.md) · tag stable/F37i-demo-ejecucion-1
+f472e06 · merge: cases/ cuenta la ventana de cada caso por la puerta del reloj (rejilla H4, ADR-0069), reloj_sesiones congelado y Z (CASES-REJILLA.md) · tag stable/F37j-cases-rejilla
 
 ## Tests Currently Passing
 1444 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
