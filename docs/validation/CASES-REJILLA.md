@@ -282,7 +282,63 @@ Lo que decide el consultor antes de escribir código:
 5. **La mecánica de la regresión (0.f)**, con la sesión sintética y los manifiestos de los otros
    meses borrados en los dos clones.
 
+## 2. Respuesta del consultor a la PARADA (2026-10-10), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/cases-rejilla (2026-10-10). Cópiala tal cual en docs/validation/CASES-REJILLA.md, en «Respuesta del consultor a la PARADA», con su fecha.
+>
+> 0. Dónde vive la puerta: ACEPTADO, cases/relojes.py, sin cambiar una línea de lógica, y engine/relojes.py la reexporta con los mismos nombres. Porqué: spec tiene prohibido importar data (contrato «spec no depende del motor ni de los datos», pyproject.toml:90-93) y la puerta usa data.agregacion; una excepción en pyproject rodearía la guardia de capas. Un solo camino: test que falla si engine/relojes.py define una función o una clase propia. Los tests del motor no se tocan: si alguno parchea atributos del módulo engine.relojes y deja de pasar, para y dímelo antes de cambiarlo. Toda la suite en verde sin tocar ningún test del motor; el arnés no se ejecuta.
+>
+> 1. Qué se congela: NO como propones. Corrección: hoy huso_operativa SÍ se congela, como clave de primer nivel de ventanas.yaml (fidelidad.py:299, paquete.py:765), no solo se lee del registro. Decisión: los artefactos nuevos (kit y fidelidad) congelan también el reloj, en una clave de primer nivel reloj_sesiones con el valor del selector y, si es rejilla_h4, los parámetros que la puerta lee (anclaje_h4, sesiones_primera_vela_h4, ventana_inicio). huso_operativa se queda como está. Lectura, negando por defecto: un artefacto con la clave se comprueba con el reloj congelado, nunca con el del registro de hoy; un artefacto sin la clave se calculó en huso_operativa, y kit check y fidelidad check lo tratan así. Antes de escribirlo, mide que ningún artefacto congelado tiene hoy esa clave, con grep -c o grep -L y sin imprimir contenido (los ventanas.yaml listan casos de días reservados). Un valor de la clave que la puerta no reconoce es un error con nombre. Regresión: en enero, abril y agosto, el bloque casos, universo, excluidos, datasets y todos los demás ficheros salen idénticos byte a byte a main; ventanas.yaml difiere solo en la clave nueva, y el informe lo enseña con el diff. Porqué: el sorteo no se repite (ADR-0046 §5) y el artefacto tiene que decir con qué reloj se calculó, como ya lo dice del huso.
+>
+> 2. Día no operable: ACEPTADO. El motivo de exclusión lo da la puerta y nombra el día y la razón. El ancla sintética (Asia/Jerusalem) vive solo en los tests, nunca en el registro.
+>
+> 3. Ingesta: ACEPTADO. corpus/libro.py no se toca, porque el huso con que se lee un libro lo fija libros.yaml y no puede cambiar (CLAUDE.md, régimen de libros.yaml). La guardia nueva (si el día de la fila y el día operativo de la puerta no coinciden, la ingesta para) lleva un test que la rompe a propósito.
+>
+> 4. Hoja: ACEPTADO. Tests: un día de desfase con el texto nuevo y un día normal idéntico byte a byte al de main.
+>
+> 5. Mecánica de la regresión: ACEPTADA, con estas condiciones: todo ocurre en los dos worktrees temporales; la sesión 2026-01-02-sesion-99 y el borrado de manifiestos de los demás meses no salen de ellos; antes de ejecutar, comprueba leyendo el código (no ejecutando) que kit build y kit check no escriben en data/, y si escriben, para y dímelo; al acabar, git worktree remove de los dos, y git status del repo real igual antes y después. No listes data/ ni ninguna carpeta que contenga meses reservados.
+>
+> 6. Z, corrección del consultor: en el encargo escribí «paso a con la columna de fechas por el consultor», y es un error mío. ENTRADA-MARZO.md:20 y :46 y ADR-0046 §6a dicen que la columna de fechas de marzo la lee Aleks. CLAUDE.md dice en general «QUIEN: el consultor». Antes de escribir Z, mide ADR-0046 §6a y ADR-0021 §1: si marzo es una excepción acotada del ADR-0046 a la regla general, el párrafo de marzo de CLAUDE.md dice que la lee Aleks y cita ADR-0046 §6a; si los dos ADR se contradicen de verdad, para y dímelo. Cualquier otra regla de CLAUDE.md que Z toque se contrasta igual con su ADR.
+>
+> Sigue con la fase 1. Lo demás del encargo, sin cambios: make check sellado antes de cada commit, fix/cases-rejilla con la CI de Linux y sus números de run, informe y revisor con el alcance del encargo, al que añades: que la clave reloj_sesiones se lee negando por defecto y que engine/relojes.py no define nada propio.
+>
+> Rama lista para revisión, NO cerrada.
+
+La corrección del punto 1 es cierta, y se dice con su nombre: la fase 0 (§0.d) escribió que el
+`huso_operativa` congelado era «solo informativo» porque `kit check` no lo lee; pero sí se congela
+como clave de primer nivel, y lo que el artefacto dice de sí mismo es parte de lo congelado.
+
+## 3. Fase 1
+
+### 3.1 Medidas previas
+
+- **Ningún artefacto congelado tiene la clave `reloj_sesiones`** (punto 1): `grep -c
+  "reloj_sesiones"` sobre las dos rutas literales,
+  `knowledge/cases/kit/2026-09-09-sesion-01/ventanas.yaml` y
+  `knowledge/cases/fidelidad/eurusd-2026-09/ventanas.yaml`, da `0` y `0`. Son los dos únicos
+  `ventanas.yaml` commiteados (§0.c; los repartos de `visto/` no tienen).
+- **Z, ADR-0046 §6a contra ADR-0021 §1** (punto 6). ADR-0046 §6 se declara a sí mismo «excepción
+  acotada a ADR-0039 §1» y su apartado a dice: «Aleks lee SOLO la columna de fechas, UNA vez,
+  antes del sorteo» (líneas 64-76); «la excepción cubre solo la columna de fechas, en una sola
+  lectura, hecha por Aleks». ADR-0021 §1 define qué es abrir un holdout (leer etiquetas o el detalle
+  por operación; medir una cifra del bot) y **no nombra a nadie** que lea la columna de fechas. No
+  se contradicen: marzo es una excepción acotada que fija quién, y la regla general no lo fija. El
+  «QUIEN: el consultor» del párrafo general de CLAUDE.md no sale de ADR-0021 §1; queda anotado
+  como hallazgo para el consultor (Z solo toca el párrafo de marzo).
+
+### 3.2 PARADA 2 · Un test del motor lee el fuente de `engine/relojes.py`
+
+Antes de mover la puerta se midió qué tests tocan `engine.relojes`. Ninguno parchea atributos del
+módulo (`grep` de `relojes` en `tests/`: solo imports y llamadas). Pero uno **lee el fichero
+fuente**: `tests/unit/test_sesiones_rejilla_h4.py:237-253`,
+`test_el_codigo_del_reloj_no_lleva_ningun_desfase`, abre `src/botsito/engine/relojes.py`, quita
+comentarios y docstrings, y exige que no haya `Etc/GMT`, `timezone(`, `timedelta(hours` ni una hora
+escrita, y que aparezca `limites_del_dia`. Con la puerta en `cases/relojes.py` y `engine/relojes.py`
+reducido a reexportar, la última aserción falla: el código que el test vigila ya no está en el
+fichero que abre. Se para aquí, como manda el punto 0, sin tocar el test.
+
 ## Estado
 
-EN CURSO. Fase 0 entregada; **PARADA** a la espera de la respuesta del consultor. No se ha escrito
-código.
+EN CURSO. Fase 1 empezada; **PARADA 2** (§3.2) a la espera del consultor. No se ha escrito código.
