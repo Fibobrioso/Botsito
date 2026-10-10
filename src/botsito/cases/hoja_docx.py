@@ -18,10 +18,8 @@ from __future__ import annotations
 
 import re
 import zipfile
-from datetime import datetime
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from botsito.cases.paquete import (
     DIRECTORIO_KIT,
@@ -29,8 +27,11 @@ from botsito.cases.paquete import (
     esquema_paquete,
     sesiones_del_kit,
 )
+from botsito.cases.relojes import RelojError, RelojSesiones
+from botsito.cases.ventanas import dias_con_otras_horas, hora_en_pantalla, reloj_de_ventanas
 from botsito.comun.yaml_estricto import cargar_yaml
 from botsito.config.registro import cargar_registro
+from botsito.data.velas import parse_ts
 from botsito.evidence.modelo import cargar_evidencia
 from botsito.feedback.modelo import TIPOS_OBJETIVO
 
@@ -184,8 +185,9 @@ def ciudad(huso: str) -> str:
     return str(huso).split("/")[-1].replace("_", " ")
 
 
-def hora_local(iso: str, huso: ZoneInfo) -> str:
-    return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(huso).strftime("%H:%M")
+def hora_local(iso: str, reloj: RelojSesiones) -> str:
+    """La hora que el trader ve en su grafico en el instante `iso`, por la puerta del reloj."""
+    return hora_en_pantalla(reloj, parse_ts(iso))
 
 
 def _cuerpo(
@@ -392,14 +394,14 @@ def bloque_etiquetado(
     casos: list[dict[str, Any]],
     asignacion: dict[str, str],
     config: Any,
-    huso: ZoneInfo,
+    reloj: RelojSesiones,
     ref_anclaje: str,
     instrumento: str,
 ) -> str:
     dev = sorted((c for c in casos if asignacion.get(c["id"]) == "dev"), key=lambda c: c["dia"])
     anclaje = next(a for a in config.anclajes if a.coincide_con_sesiones)
     rejillas = {
-        tuple(hora_local(t, huso) for t in c["limites_h4"].get(anclaje.etiqueta, [])) for c in dev
+        tuple(hora_local(t, reloj) for t in c["limites_h4"].get(anclaje.etiqueta, [])) for c in dev
     }
     if not dev:
         raise HojaError(
@@ -427,6 +429,23 @@ def bloque_etiquetado(
             f"dos sesiones: {sesiones}."
         )
     )
+    # Los dias de desfase: el grafico del trader marca otras horas, y se le dicen las de ese dia.
+    # Sin ninguno, la hoja no cambia ni un byte.
+    for o in dias_con_otras_horas(
+        reloj,
+        [(str(c["dia"]), str(c["desde_utc"]), str(c["hasta_utc"])) for c in dev],
+        config.ventana_local,
+        [(s.nombre, s.desde, s.hasta) for s in config.sesiones],
+    ):
+        vispera = " de la víspera" if o.desde_la_vispera else ""
+        en_ese_dia = ", ".join(f"{n} de {a} a {b}" for n, a, b in o.sesiones)
+        partes.append(
+            vineta(
+                f"El {o.dia} es distinto: Estados Unidos y Europa no coinciden ese día en el "
+                f"horario de verano, y tu gráfico va de {o.desde}{vispera} a {o.hasta}; tus "
+                f"sesiones ese día: {en_ese_dia}."
+            )
+        )
     if len(rejillas) == 1:
         horas = " · ".join(next(iter(rejillas)))
         partes.append(
@@ -477,7 +496,11 @@ def documento(repo: Path, sesion: str) -> str:
         (repo / DIRECTORIO_KIT / "contexto_preguntas.yaml").read_text(encoding="utf-8")
     )
     registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
-    huso = ZoneInfo(registro.texto("huso_operativa"))
+    # Las horas se pintan con el reloj CONGELADO del paquete, no con el del registro de hoy.
+    try:
+        reloj = reloj_de_ventanas(ventanas, f"{sesion}/ventanas.yaml").reloj
+    except RelojError as exc:
+        raise HojaError(str(exc)) from exc
     casos = ventanas["casos"]
     meses = sorted({str(c["dia"])[:7] for c in casos})
     preguntas = cuestionario["preguntas"]
@@ -595,7 +618,7 @@ def documento(repo: Path, sesion: str) -> str:
             casos,
             particiones["asignacion"],
             config,
-            huso,
+            reloj,
             ref_anclaje,
             # El simbolo lo dice el registro. Estuvo horneado como literal mientras esto vivia en
             # `scripts/`, fuera del alcance del contrato que lo habria denunciado (F13, D3).

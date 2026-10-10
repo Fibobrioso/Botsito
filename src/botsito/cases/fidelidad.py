@@ -61,7 +61,17 @@ from botsito.cases.paquete import (
     problemas_de_ancla,
 )
 from botsito.cases.particiones import PARTICIONES_FIDELIDAD, ParticionError, asignar
-from botsito.cases.ventanas import Caso, Excluido, VentanaError, universo
+from botsito.cases.relojes import RelojError
+from botsito.cases.ventanas import (
+    CLAVE_RELOJ,
+    Caso,
+    Excluido,
+    RelojDelArtefacto,
+    VentanaError,
+    reloj_de_ventanas,
+    reloj_del_registro,
+    universo,
+)
 from botsito.comun import ids
 from botsito.comun.historial import commit_que_anadio
 from botsito.comun.husos import HusoDesconocidoError, huso_canonico
@@ -242,12 +252,14 @@ def construir(
     seed: int,
     datasets: Sequence[str] | None = None,
     config: Config | None = None,
+    reloj: RelojDelArtefacto | None = None,
 ) -> Artefacto:
     """Construye el artefacto en memoria. Exige los datos de sus datasets en `data/`.
 
-    `datasets` y `config` son lo CONGELADO de un artefacto existente, con el mismo contrato que en
-    el kit (ADR-0035 y su enmienda): `None` lee el disco -lo que un artefacto NUEVO tiene que
-    hacer- y no-`None` usa lo congelado.
+    `datasets`, `config` y `reloj` son lo CONGELADO de un artefacto existente, con el mismo
+    contrato que en el kit (ADR-0035 y su enmienda; `trabajo/cases-rejilla` para el reloj): `None`
+    lee el disco -lo que un artefacto NUEVO tiene que hacer, y congela el reloj del registro en
+    `reloj_sesiones`- y no-`None` usa lo congelado.
     """
     if not ARTEFACTO.match(artefacto):
         raise FidelidadError(f"id de artefacto invalido {artefacto!r} (a-z, 0-9 y guion)")
@@ -265,6 +277,10 @@ def construir(
     except HusoDesconocidoError as exc:
         raise FidelidadError(f"huso_operativa: {exc}") from exc
     try:
+        reloj = reloj or reloj_del_registro(registro)
+    except (RelojError, LookupError, TypeError) as exc:
+        raise FidelidadError(f"el reloj de las sesiones: {exc}") from exc
+    try:
         manif = manifiestos_del_prefijo(repo, config, datasets)
         if not manif:
             raise FidelidadError(
@@ -276,8 +292,9 @@ def construir(
             manif,
             carpeta_datos,
             config.simbolo,
-            huso,
+            reloj.reloj,
             config.ventana_local,
+            [(s.nombre, s.desde, s.hasta) for s in config.sesiones],
             list(config.anclajes),
             config.min_velas_ventana,
             set(),
@@ -298,6 +315,7 @@ def construir(
                 "artefacto": artefacto,
                 "config": config.doc,
                 "huso_operativa": huso,
+                **({} if reloj.congelado is None else {CLAVE_RELOJ: reloj.congelado}),
                 "casos": [c.como_dict() for c in elegidos],
                 "datasets": sorted(str(m["dataset_id"]) for m in manif),
                 "universo": len(casos),
@@ -387,9 +405,19 @@ def comprobar(repo: Path, carpeta_datos: Path, artefacto: str) -> tuple[list[str
             f"esquema"
         )
         return problemas, avisos
+    # El reloj CONGELADO, negando por defecto; nunca el del registro de hoy (como el kit).
     try:
-        nuevo = construir(repo, carpeta_datos, artefacto, seed, datasets=congelados, config=config)
-    except FidelidadError as exc:
+        reloj = reloj_de_ventanas(ventanas, f"{artefacto}/ventanas.yaml")
+        nuevo = construir(
+            repo,
+            carpeta_datos,
+            artefacto,
+            seed,
+            datasets=congelados,
+            config=config,
+            reloj=reloj,
+        )
+    except (FidelidadError, RelojError) as exc:
         problemas.append(str(exc))
         return problemas, avisos
     carpeta = repo / DIRECTORIO_FIDELIDAD / artefacto

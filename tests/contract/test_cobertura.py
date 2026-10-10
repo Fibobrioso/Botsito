@@ -27,7 +27,7 @@ from botsito.cases.ingesta import IngestaError, dias_ingeribles, ingerir
 from botsito.cases.paquete import KitError, _cobertura_desde_doc
 from botsito.cases.ventanas import motivo_de_cobertura
 
-from .test_ingesta import CABECERA, SESIONES, _declarar, _repo, _xlsx
+from .test_ingesta import CABECERA, RELOJ, SESIONES, _declarar, _repo, _xlsx
 
 MAYO = {"2026-05": (("2026-05-01", "2026-05-31"),)}
 MAYO_Y_JUNIO_VACIO: dict[str, tuple[tuple[str, str], ...]] = {**MAYO, "2026-06": ()}
@@ -93,14 +93,23 @@ def test_los_dos_ceros_se_distinguen(tmp_path: Path) -> None:
     _declarar(repo, material)
 
     # (a) el 12 esta cubierto y no tiene operaciones: NO es error, y se cuenta.
-    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08", "2026-05-12"])
+    r = ingerir(
+        repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08", "2026-05-12"], reloj=RELOJ
+    )
     assert r.sin_operaciones == 1, "el dia sin operaciones se CUENTA"
     assert [d for d, ops in r.casos.items() if ops] == ["2026-05-08"]
 
     # (b) el mismo libro, pidiendole un mes en el que ninguno de los dias pedidos tiene filas:
     # ERROR con el MES, y el TEXTO EXACTO -solo lo que la regla sabe, sin sujeto humano-.
     with pytest.raises(IngestaError) as exc:
-        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08", "2026-06-01"])
+        ingerir(
+            repo,
+            material,
+            "Europe/Madrid",
+            SESIONES,
+            dias=["2026-05-08", "2026-06-01"],
+            reloj=RELOJ,
+        )
     assert str(exc.value) == (
         "ninguno de los dias pedidos de 2026-06 tiene filas en este material: o el libro no es de "
         "2026-06 (revisa a que tramo de cobertura_material esta atado su sha), o esos dias no "

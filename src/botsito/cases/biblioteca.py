@@ -32,8 +32,9 @@ forma NECESITA:
   es el contenido) y `fuente` (de que libro sale y cuando: `knowledge/cases/` es versionado y cada
   valor cita su origen).
 - operacion: `instante_utc` (el momento de la decision, en el huso del fichero), `sesion` (la
-  unidad de fidelidad; depende de `huso_operativa`, que es un parametro, asi que se fija al
-  ingerir y no se recalcula en silencio), `direccion`, `entrada` y `stop` (la decision completa:
+  unidad de fidelidad; depende del reloj de las sesiones -la puerta de `cases/relojes.py`, desde
+  `trabajo/cases-rejilla`-, que sale de parametros, asi que se fija al ingerir y no se recalcula
+  en silencio), `direccion`, `entrada` y `stop` (la decision completa:
   una fila sin stop no produce caso). NADA de resultado: ni cierre, ni PnL, ni RR.
 - fuente: `tipo`, `fichero`, `sha256` (identifica el libro exacto; es el que declara el mes en
   `cobertura_material`) e `ingerido_el`.

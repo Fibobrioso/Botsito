@@ -55,6 +55,16 @@ PARAMETROS = """parametros:
     estado: CONFIRMED
     valor: "Europe/Madrid"
     fuente: {tipo: decision, id: ADR-0001}
+  - nombre: reloj_sesiones
+    categoria: ejecucion
+    tipo: enum
+    unidad: reloj
+    opciones: ["civil_operativa", "grafico", "rejilla_h4"]
+    descripcion: reloj de las sesiones (aqui la pared de huso_operativa; la rejilla, en
+      test_cases_rejilla.py)
+    estado: CONFIRMED
+    valor: "civil_operativa"
+    fuente: {tipo: decision, id: ADR-0001}
   - nombre: anclaje_h4
     categoria: estrategia
     tipo: hora
@@ -762,6 +772,7 @@ def test_validar_paquetes_sin_git(tmp_path: Path) -> None:
 
 def test_ventana_en_invierno(tmp_path: Path) -> None:
     """Con hora de invierno (UTC+1) la ventana [00:00, 15:00) Madrid es [23:00Z, 14:00Z)."""
+    from botsito.cases.relojes import RelojSesiones
     from botsito.cases.ventanas import Anclaje, Caso, construir_caso
     from botsito.domain.valores import Puntos
     from botsito.domain.velas import MinutoUtc, SerieVelas, Vela
@@ -777,8 +788,11 @@ def test_ventana_en_invierno(tmp_path: Path) -> None:
         serie,
         date(2026, 1, 13),
         "xxxyyy",
-        "Europe/Madrid",
+        # la pared de Madrid, por la puerta (`trabajo/cases-rejilla`); la rejilla da lo mismo en
+        # invierno, y la diferencia de los dias de desfase la prueba test_cases_rejilla.py
+        RelojSesiones.de_pared("Europe/Madrid"),
         ("00:00", "15:00"),
+        [("07-11", "07:00", "11:00"), ("11-15", "11:00", "15:00")],
         [Anclaje("ny-17", "17:00", "America/New_York", True)],
         850,
     )

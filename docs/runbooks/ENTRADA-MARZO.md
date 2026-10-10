@@ -84,6 +84,17 @@ Tiene que salir sin `ERROR`; `knowledge-validate.log` se borra y no se commitea.
 
 ## Paso b · El sorteo
 
+> **CORRECCIÓN (2026-10-10, rama `trabajo/cases-rejilla`, CASES-REJILLA.md).** **La PARADA B0
+> deja de tener motivo.** Su condicion (A-42 `RESUELTA`) se cumple desde el 2026-10-06, y el motivo
+> que dejaba abierto el recuadro siguiente esta resuelto: `cases/` (kit, fidelidad, ingesta y hoja)
+> cuenta la ventana de cada caso por la puerta del reloj de las sesiones (`cases/relojes.py`, la
+> misma que usa el motor), con la rejilla H4 de ADR-0069, y `fidelidad build` congela ese reloj
+> en `ventanas.yaml`, en la clave `reloj_sesiones`, junto a `huso_operativa`. Los dias de desfase
+> salen con la ventana a la hora a la que opera el trader. Antes de este paso siguen haciendo
+> falta los de antes: del paso 0, marzo en `vistos.yaml` y la confirmacion escrita del trader
+> (REGISTRO-MARZO.md §2), y el paso a. Y donde este runbook dice que la columna de fechas la lee
+> Aleks, es lo que dice ADR-0046 §6a. Nada de marzo se ha abierto ni listado para escribir esto.
+>
 > **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **A-42 esta RESUELTA desde el 2026-10-06 (ADR-0069), y la condicion de esta parada se
 > cumple; pero su MOTIVO no queda resuelto.** El grafico del trader no es UTC+2 fijo (es
 > Europe/Madrid) y sus sesiones son las velas H4 de la rejilla de `anclaje_h4` que empiezan en

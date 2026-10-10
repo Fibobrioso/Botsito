@@ -23,7 +23,20 @@ from botsito.cases.ambiguedades import validar_contra_contexto as validar_ambigu
 from botsito.cases.cuestionario import CuestionarioError, EntradaMapa, Pregunta, generar
 from botsito.cases.kappa import EtiquetaError
 from botsito.cases.particiones import PARTICIONES, ParticionError, asignar
-from botsito.cases.ventanas import Anclaje, Caso, Excluido, VentanaError, universo
+from botsito.cases.relojes import RelojError, RelojSesiones
+from botsito.cases.ventanas import (
+    CLAVE_RELOJ,
+    Anclaje,
+    Caso,
+    Excluido,
+    RelojDelArtefacto,
+    VentanaError,
+    dias_con_otras_horas,
+    hora_en_pantalla,
+    reloj_de_ventanas,
+    reloj_del_registro,
+    universo,
+)
 from botsito.comun import ids
 from botsito.comun.documentos import activos
 from botsito.comun.historial import (
@@ -436,12 +449,6 @@ def _dump(doc: Any) -> str:
     return yaml.safe_dump(doc, allow_unicode=True, sort_keys=True, width=100)
 
 
-def _hora_local(iso: str, huso: ZoneInfo) -> str:
-    from botsito.data.velas import a_datetime
-
-    return a_datetime(parse_ts(iso)).astimezone(huso).strftime("%H:%M")
-
-
 def meses_del_paquete(casos: list[Caso]) -> list[str]:
     """Meses (AAAA-MM) de los dias del paquete: lo que el trader debe confirmar que no ha visto."""
     return sorted({c.dia[:7] for c in casos})
@@ -455,10 +462,12 @@ def hoja_trader(
     casos: list[Caso],
     asignacion: dict[str, str],
     meses: set[str],
+    reloj: RelojSesiones,
 ) -> str:
     """Lo que el consultor lleva a la sesion: preguntas (bloqueantes primero, sin ids `ev-*`)
-    y solo los casos `dev` con las dos rejillas H4 en hora del trader."""
-    huso = ZoneInfo(huso_operativa)
+    y solo los casos `dev` con las dos rejillas H4 en la hora que el trader ve en su grafico
+    (`huso_visible` de la puerta). Si algun dia `dev` es de desfase, la hoja lo nombra con las
+    horas de ese dia; sin ninguno, el texto es el de siempre, byte a byte."""
     lineas = [
         f"# Sesion {sesion} · hoja del trader",
         "",
@@ -503,11 +512,30 @@ def hoja_trader(
     for c in dev:
         rejillas = []
         for a in config.anclajes:
-            horas = [_hora_local(x, huso) for x in c.limites_h4.get(a.etiqueta, [])]
+            horas = [hora_en_pantalla(reloj, parse_ts(x)) for x in c.limites_h4.get(a.etiqueta, [])]
             rejillas.append(" ".join(horas))
         lineas.append(
             f"| {c.id} | {c.dia} | {c.desde_utc}-{c.hasta_utc} | " + " | ".join(rejillas) + " |"
         )
+    otras = dias_con_otras_horas(
+        reloj,
+        [(c.dia, c.desde_utc, c.hasta_utc) for c in dev],
+        config.ventana_local,
+        [(s.nombre, s.desde, s.hasta) for s in config.sesiones],
+    )
+    if otras:
+        lineas += [
+            "",
+            "Dias en que el grafico del trader marca otras horas (EE. UU. y Europa no coinciden "
+            "en el horario de verano; el reloj de las sesiones es la rejilla H4, ADR-0069):",
+            "",
+        ]
+        for o in otras:
+            vispera = " de la vispera" if o.desde_la_vispera else ""
+            sesiones = ", ".join(f"{n} de {a} a {b}" for n, a, b in o.sesiones)
+            lineas.append(
+                f"- {o.dia}: dia operativo de {o.desde}{vispera} a {o.hasta}; sesiones: {sesiones}."
+            )
     lineas += [
         "",
         f"{len(dev)} casos dev de {len(casos)} del paquete (los holdout no se muestran).",
@@ -671,6 +699,7 @@ def construir(
     indice: Indice | None = None,
     datasets: Sequence[str] | None = None,
     config: Config | None = None,
+    reloj: RelojDelArtefacto | None = None,
 ) -> Paquete:
     """Construye el paquete completo en memoria. Exige los datos de los datasets en `data/`.
 
@@ -680,6 +709,10 @@ def construir(
     contrato: por omision -`None`- se lee el disco, que es lo que un paquete NUEVO tiene que
     hacer, porque `kit build` se construye con lo que hay y congelar tambien este camino dejaria
     al proyecto sin poder hacer ningun paquete.
+
+    `reloj` sigue el mismo contrato (`trabajo/cases-rejilla`): `None` es el reloj de las sesiones
+    del registro, que un paquete NUEVO congela en `reloj_sesiones`; uno congelado se recompone
+    con el SUYO (`reloj_de_ventanas`), nunca con el del registro de hoy.
     """
     if not SESION.match(sesion):
         raise KitError(f"sesion invalida {sesion!r} (AAAA-MM-DD-sesion-NN)")
@@ -692,6 +725,10 @@ def construir(
         huso_canonico(huso)
     except HusoDesconocidoError as exc:
         raise KitError(f"huso_operativa: {exc}") from exc
+    try:
+        reloj = reloj or reloj_del_registro(registro)
+    except (RelojError, LookupError, TypeError) as exc:
+        raise KitError(f"el reloj de las sesiones: {exc}") from exc
     vivos = activos(list(items))
     abiertas = contradicciones.detectar(vivos)
     # TODOS los items para la EXISTENCIA de la cita, y solo los vivos para la contradiccion: una
@@ -727,8 +764,9 @@ def construir(
             manif,
             carpeta_datos,
             config.simbolo,
-            huso,
+            reloj.reloj,
             config.ventana_local,
+            [(s.nombre, s.desde, s.hasta) for s in config.sesiones],
             list(config.anclajes),
             config.min_velas_ventana,
             meses,
@@ -763,6 +801,9 @@ def construir(
                 "sesion": sesion,
                 "config": config.doc,
                 "huso_operativa": huso,
+                # el reloj con que se calcularon las ventanas; un paquete de antes de la clave
+                # no la lleva y se recompone sin ella (`reloj_de_ventanas`)
+                **({} if reloj.congelado is None else {CLAVE_RELOJ: reloj.congelado}),
                 "casos": [c.como_dict() for c in elegidos],
                 "datasets": sorted(str(m["dataset_id"]) for m in manif),
                 "universo": len(casos),
@@ -777,7 +818,9 @@ def construir(
                 "asignacion": {c.id: asignacion[c.id] for c in elegidos},
             }
         ),
-        "hoja_trader.md": hoja_trader(sesion, config, huso, preguntas, elegidos, asignacion, meses),
+        "hoja_trader.md": hoja_trader(
+            sesion, config, huso, preguntas, elegidos, asignacion, meses, reloj.reloj
+        ),
     }
     return Paquete(sesion, seed, ficheros, elegidos, excluidos, preguntas, asignacion, len(casos))
 
@@ -1077,7 +1120,16 @@ def comprobar(
             f"esquema"
         )
         return problemas, avisos
-    nuevo = construir(repo, carpeta_datos, sesion, seed, datasets=congelados, config=config)
+    # El reloj CONGELADO del paquete, negando por defecto: con `reloj_sesiones`, ese; sin ella, la
+    # pared de su `huso_operativa`; nunca el del registro de hoy (CASES-REJILLA.md, punto 1).
+    try:
+        reloj = reloj_de_ventanas(ventanas, f"{sesion}/ventanas.yaml")
+    except RelojError as exc:
+        problemas.append(str(exc))
+        return problemas, avisos
+    nuevo = construir(
+        repo, carpeta_datos, sesion, seed, datasets=congelados, config=config, reloj=reloj
+    )
     carpeta = repo / DIRECTORIO_KIT / sesion
     for nombre, texto in nuevo.ficheros.items():
         if _leer(carpeta, nombre) == texto:

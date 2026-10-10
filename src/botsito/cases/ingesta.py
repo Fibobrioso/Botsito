@@ -78,7 +78,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 from botsito.cases.holdout import (
     DIRECTORIO_FIDELIDAD,
@@ -87,11 +86,13 @@ from botsito.cases.holdout import (
     casos_ocultos,
     repartos_commiteables,
 )
+from botsito.cases.relojes import RelojError, RelojSesiones
 from botsito.comun.historial import blob_en_arbol, blob_en_head, commit_que_anadio
 from botsito.comun.yaml_estricto import YamlError, leer_yaml
 from botsito.corpus.inventario import InventarioError, cargar_manifiesto
 from botsito.corpus.libro import PESTANA_OPERACIONES, LibroError, filas_de_los_dias
 from botsito.corpus.libros import LibrosError, declaracion_de
+from botsito.data.velas import a_minuto
 
 DIRECTORIO_DEV = "knowledge/cases/dev"
 MANIFIESTO_CORPUS = "knowledge/corpus/manifest.yaml"
@@ -365,10 +366,29 @@ def mensaje_mes_sin_filas(meses: Sequence[str]) -> str:
 
 
 def _sesion_de(
-    instante_utc: str, huso: str, sesiones: Sequence[tuple[str, str, str]]
+    dia: str, instante_utc: str, reloj: RelojSesiones, sesiones: Sequence[tuple[str, str, str]]
 ) -> str | None:
-    local = datetime.fromisoformat(instante_utc).astimezone(ZoneInfo(huso))
-    hhmm = local.strftime("%H:%M")
+    """La sesion nominal de una operacion, por la PUERTA del reloj (`reloj.lectura`): con la
+    rejilla, una entrada a las 06:30 de Madrid de un dia de desfase cae en `07-11`, que es la vela
+    en que opero el trader. Nunca pasando el instante a un huso aqui.
+
+    `dia` es el de la fila en el libro, que fija el lector con el huso de `libros.yaml` y que esta
+    rama no toca. Si la puerta lo pone en OTRO dia operativo, la ingesta para: la fila se leyo como
+    de un dia y la sesion seria de otro. Una operacion dentro de las sesiones nunca lo dispara.
+    `IngestaError` sin instante ni precios: quien llama nombra el caso."""
+    instante = datetime.fromisoformat(instante_utc).replace(second=0, microsecond=0)
+    try:
+        dia_operativo, minuto = reloj.lectura(int(a_minuto(instante)))
+    except RelojError as exc:
+        raise IngestaError(
+            "la puerta del reloj no sabe a que dia operativo pertenece su apertura"
+        ) from exc
+    if dia_operativo.isoformat() != dia:
+        raise IngestaError(
+            "el dia de la fila en el libro no es el dia operativo de su apertura segun la puerta "
+            "del reloj: la fila se leyo como de un dia y su sesion seria de otro"
+        )
+    hhmm = f"{minuto // 60:02d}:{minuto % 60:02d}"
     for nombre, desde, hasta in sesiones:
         if desde <= hhmm < hasta:
             return nombre
@@ -381,11 +401,16 @@ def ingerir(
     huso_operativa: str,
     sesiones: Sequence[tuple[str, str, str]],
     dias: Mapping[str, str] | Iterable[str] | None = None,
+    *,
+    reloj: RelojSesiones,
 ) -> Resultado:
     """Las operaciones de los dias ingeribles, agrupadas por dia. No escribe nada.
 
     `dias` es `dia -> id de caso` (o solo los dias, en tests); si no se pasa, se derivan con
     `dias_ingeribles`.
+
+    `huso_operativa` decide el DIA de cada fila (el filtro por dia del lector, que no cambia) y
+    `reloj` -la puerta del reloj de las sesiones- su SESION (`trabajo/cases-rejilla`).
 
     **LOS MENSAJES DE ERROR NOMBRAN EL CASO Y LA COMPROBACION, NUNCA EL INSTANTE NI LOS PRECIOS**
     (2026-09-22). Con el lector filtrando en el huso correcto, lo que se imprimiria seria de un dia
@@ -465,7 +490,10 @@ def ingerir(
                 f"es el que se cree"
             )
         instante = str(fila["_instante_utc"])
-        sesion = _sesion_de(instante, huso_operativa, sesiones)
+        try:
+            sesion = _sesion_de(dia, instante, reloj, sesiones)
+        except IngestaError as exc:
+            raise IngestaError(f"{n}: {exc}") from exc
         if sesion is None:
             raise IngestaError(
                 f"{n}: su apertura no cae en ninguna sesion declarada. La asignacion a sesion "
