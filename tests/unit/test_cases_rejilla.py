@@ -122,7 +122,8 @@ def test_un_dia_de_rejilla_con_vela_irregular_no_entra_en_el_universo() -> None:
     """Con el ancla del registro esto NUNCA le pasa a un laborable (de 2000 a 2035 la puerta no
     decide 72 dias, todos domingos: CASES-REJILLA.md §0.e). Se fuerza con un ancla SINTETICA en un
     huso que cambia de hora en viernes -Israel, el viernes 29 de marzo de 2024-, que vive solo
-    aqui y nunca en el registro. Con `main` falla: el viernes entra como cualquier otro dia."""
+    aqui y nunca en el registro. Con `main` falla: el viernes entra como `Caso` (medido con un
+    minimo de 150 velas; con 200 lo excluia, pero por tener 180, no por la puerta)."""
     reloj = RelojSesiones(
         "rejilla_h4",
         "Asia/Jerusalem",
@@ -131,8 +132,8 @@ def test_un_dia_de_rejilla_con_vela_irregular_no_entra_en_el_universo() -> None:
         inicio_nominal=0,
     )
     sesiones = (("s1", "00:00", "04:00"),)
-    viernes = _caso(date(2024, 3, 29), reloj, sesiones, ("00:00", "04:00"), 200)
-    jueves = _caso(date(2024, 3, 28), reloj, sesiones, ("00:00", "04:00"), 200)
+    viernes = _caso(date(2024, 3, 29), reloj, sesiones, ("00:00", "04:00"), 150)
+    jueves = _caso(date(2024, 3, 28), reloj, sesiones, ("00:00", "04:00"), 150)
     assert isinstance(jueves, Caso)
     assert isinstance(viernes, Excluido)
     assert viernes.motivo.startswith("la puerta del reloj no decide el dia: 2024-03-29")
