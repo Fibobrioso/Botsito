@@ -749,9 +749,45 @@ Ficheros relevantes (rutas absolutas):
 - `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\fidelidad.py`
 - `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\ingesta.py`
 
+## 7. Orden de cierre del consultor (2026-10-10), tal cual
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/cases-rejilla (consultor, 2026-10-10). Tag: stable/F37j-cases-rejilla (verifica en HISTORIA que el último es F37i y que F37j no existe ni en local ni en origin).
+>
+> Hallazgos del consultor para la fila de la rama en ERRORES-RECURRENTES (la fila ya existe: complétala, no la dupliques):
+> 1. (importa, consultor) El encargo decía que la columna de fechas de marzo la lee el consultor, copiado de CLAUDE.md sin contrastarlo con ADR-0046 §6a (la lee Aleks). Lo detectó un auditor independiente del consultor antes de la fase 1. Lección: toda regla que cite un encargo se contrasta con su ADR (patrón 2); desde trabajo/entorno-code lo hará el agente auditor-encargo al empezar cada rama.
+> 2. (menor, consultor) El encargo situaba huso_operativa dentro del bloque config de ventanas.yaml; es una clave de primer nivel. Lección: una afirmación sobre la estructura de un fichero se lee, no se recuerda.
+> 3. (importa, consultor) En la respuesta a la PARADA, el consultor aceptó borrar manifiestos en los clones de la regresión sin medir que kit check falla si faltan datasets congelados; se corrigió con un añadido antes de la regresión. Lección: una comparación que falla igual en los dos lados no es una regresión superada; se anota el código de salida de cada comando en cada clon (skill comparar-con-main).
+> 4. (importa, sesión; el revisor lo vio, a1) Listado de la carpeta madre del holdout con un filtro detrás, tercera rama seguida. Lección: deja de ser una advertencia y pasa a ser regla de la skill fase-cero (trabajo/entorno-code): las rutas se nombran literales en el propio comando.
+> El revisor no dejó escapar nada que el consultor encontrara.
+>
+> Next Action, en el commit del contrato (comprueba antes que las letras nuevas no están vivas):
+> - SALEN, HECHAS: W y Z, con su texto literal a HISTORIA (punto 3 de RITUAL).
+> - S: sustituye «DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO» por «DESPUÉS de la activación de la sesión 4 (E)», y quita la frase final sobre la condición ya cumplida de la demo.
+> - O: sustituye su texto por «O. Para Aleks, con FTMO: P-D1 (DEMO-EJECUCION-1.md §0.c), enviada a support@ftmo.com el 2026-10-09 con un punto 3: si la cuenta 2-Step Swing real es hedging, si su volumen máximo en EURUSD es 50 o 100 lotes y si hay tope de volumen sumado entre varias órdenes. La respuesta se registra parafraseada (RESPUESTAS-FTMO) y decide el heredado 37: recortar a 50, partir en varias órdenes o no operar.»
+> - A: añade al final «La prueba del 2026-10-08 vence hacia el 2026-10-22.»
+> - ENTRA E: «E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q). Va después de F.»
+> - ENTRA F: «F. Orden tras W (consultor, 2026-10-10): trabajo/hoja-de-ruta (docs/plan/HOJA-DE-RUTA.md, un test que la cuadra con la Next Action, el tramo en contrato.yaml), después trabajo/entorno-code (skills y agente del consultor, hook de arranque, medida de make check), y después E. Los encargos los da el consultor.»
+> - ENTRA G: «G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-18) y A-16.»
+> - ENTRA I: «I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X, S y E, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).»
+> - ENTRA J: «J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.»
+> - ENTRA P: «P. La regla general de CLAUDE.md sobre la columna de fechas («QUIEN: el consultor») no sale de ADR-0021 §1 (CASES-REJILLA.md); ADR-0046 §6a da a Aleks la de marzo. Se busca de qué ADR sale; si de ninguno, se corrige CLAUDE.md o se escribe el ADR (en trabajo/hoja-de-ruta).»
+> - Technical Debt, una línea nueva: «La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).»
+> Si con todo esto PROJECT_STATE.md pasa de 24.000 bytes, para antes del commit y dímelo.
+>
+> Informe final: sha de main, tag y a qué merge apunta, run de la CI de main y su resultado, ramas que quedan en local y en origin (fix/cases-rejilla borrada), y tamaño de PROJECT_STATE.md.
+
+Hecho en el commit del contrato (`chore(cierre)`): las comprobaciones del tag y de las letras, la
+Next Action y la deuda (PROJECT_STATE.md en 22.730 bytes; dos textos ajustados por dos guardias de `make check`: E lleva una exención `cifra-congelada` por el recuento de 17, de un informe cerrado, y F dice «HOJA-DE-RUTA.md, nueva en docs/plan/» porque la ruta aún no existe), W y Z con su texto literal y el registro
+de cierre en HISTORIA, y la fila completa en ERRORES-RECURRENTES. Una nota sobre el punto 3 del
+consultor: en la regresión, `kit check` de la sesión 1 y `fidelidad check` de septiembre se
+ejecutaron en los dos clones ANTES de quitar ningún manifiesto, con exit 0 en los cuatro (§3.6).
+
 ## Estado
 
-**LISTA PARA REVISIÓN, NO CERRADA.** Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
+**CERRADA con la orden de cierre del consultor del 2026-10-10 (§7)**, en
+`stable/F37j-cases-rejilla`. Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
 (§2); PARADA 2 y su respuesta (§3.2, §3.3); fase 1 hecha (§3.4 a §3.8): `cases/` cuenta la ventana
 de cada caso por la puerta del reloj, que vive en `cases/relojes.py` y `engine/relojes.py`
 reexporta; los artefactos nuevos congelan `reloj_sesiones` y los congelados se comprueban con el

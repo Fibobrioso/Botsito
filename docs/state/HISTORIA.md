@@ -7634,3 +7634,58 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 25 (2026-10-09).
+
+# Next Action HECHA · W · sale de PROJECT_STATE.md en trabajo/cases-rejilla (2026-10-10)
+
+W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).
+
+La hace `trabajo/cases-rejilla` (docs/validation/CASES-REJILLA.md §3.4 a §3.6): `cases/` cuenta la ventana de cada caso por la puerta del reloj de las sesiones, que vive en `cases/relojes.py` y `engine/relojes.py` reexporta; los artefactos nuevos congelan `reloj_sesiones` en `ventanas.yaml`.
+
+# Next Action HECHA · Z · sale de PROJECT_STATE.md en trabajo/cases-rejilla (2026-10-10)
+
+Z. CLAUDE.md (párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR») dice que marzo no se sortea ni se ingiere hasta que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42 (ADR-0069). La rama de entrada de marzo, en su primer commit, mide contra docs/runbooks/ENTRADA-MARZO.md (PARADA B0) y ACTIVACION-A42.md qué sigue bloqueando y corrige ese párrafo; W va antes de su paso b (ADELGAZAR-ESTADO.md §0).
+
+La hace `trabajo/cases-rejilla` (docs/validation/CASES-REJILLA.md §3.7): el parrafo de marzo de CLAUDE.md ya no espera a A-42 y dice que la columna de fechas la lee Aleks (ADR-0046 §6a); recuadro de correccion en docs/runbooks/ENTRADA-MARZO.md (la PARADA B0 deja de tener motivo).
+
+# Registro de cierre · `trabajo/cases-rejilla` (2026-10-10)
+
+- Orden de cierre del consultor del 2026-10-10, tras la revision del informe, ejecutada siguiendo
+  `RITUAL.md` (la orden, tal cual, en CASES-REJILLA.md §7). Rama lista para revision tras una
+  pasada del revisor; nunca se cerro sin la orden.
+- **Lo que entra:**
+  - la puerta del reloj de las sesiones se mueve a `src/botsito/cases/relojes.py` sin cambiar su
+    logica (el contrato de capas no deja a `cases/` importar de `engine/`); `engine/relojes.py` la
+    reexporta y no define nada propio;
+  - `cases/ventanas.py`: la ventana de cada caso por `reloj.instante`; un dia que la puerta no
+    decide sale de `excluidos` con su motivo; el reloj congelado en la clave `reloj_sesiones` de
+    `ventanas.yaml` (artefactos nuevos), leido negando por defecto; `kit check` y
+    `fidelidad check` recomponen con el congelado, y sin la clave con la pared de su
+    `huso_operativa`;
+  - las dos hojas pintan las horas del grafico del trader y nombran los dias de desfase; la ingesta
+    asigna la sesion por `reloj.lectura` y para si el dia de la fila no es el operativo;
+  - Z: el parrafo de marzo de CLAUDE.md (la columna de fechas la lee Aleks, ADR-0046 §6a) y el
+    recuadro de correccion de `docs/runbooks/ENTRADA-MARZO.md` (la PARADA B0 deja de tener motivo);
+  - tests: `tests/unit/test_cases_rejilla.py` y `tests/contract/test_ingesta_rejilla.py`; la linea
+    de `test_sesiones_rejilla_h4.py` que ordeno el consultor; firmas nuevas en los tests de ingesta
+    y del kit; 1444 funciones de test;
+  - ningun fichero congelado cambia (regresion de enero, abril y agosto en CASES-REJILLA.md §3.6).
+- Next Action (en este commit del contrato, por la orden de cierre): salen W y Z, HECHAS (literales
+  mas arriba en este fichero); cambian S (despues de la activacion de la sesion 4, E), O (P-D1
+  enviada con su punto 3) y A (la prueba del 2026-10-08 vence hacia el 2026-10-22); entran F, E, G,
+  I, J y P. Letras comprobadas antes: ninguna de las seis estaba viva en `PROJECT_STATE.md`.
+  Technical Debt gana una linea (la ingesta con el reloj del registro). `PROJECT_STATE.md` queda en
+  22.730 bytes, por debajo de 24.000 (comprobado antes del commit). Dos textos de la orden, ajustados
+  por dos guardias de `make check`: E lleva `<!-- cifra-congelada: ... -->` (el recuento de 17 es de
+  un informe cerrado; `test_documentos_vivos.py`), y F nombra «HOJA-DE-RUTA.md, nueva en docs/plan/»
+  en vez de la ruta, que aun no existe (`test_project_state_rutas.py`).
+- Letra del tag: la ultima cerrada era la i de F37 (`stable/F37i-demo-ejecucion-1`);
+  `stable/F37j-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37j-cases-rejilla`. El merge es `git rev-parse "stable/F37j-cases-rejilla^{commit}"`.
+- Commits de la rama: `f8237bd` (apertura), `69537fe` (fase 0 y PARADA), `ba44908` (respuesta del
+  consultor, medidas previas y PARADA 2), `b0e8742` (codigo, tests y Z), `8151730` (fase 1 en el
+  informe y regresion), `5ae4a58` (revisor pegado y hallazgos atendidos) y el de este registro.
+- CI de Linux por `fix/cases-rejilla`: run 38087137947 (8151730) y run 38089516045 (5ae4a58), los
+  dos con un solo fallo, el esperado de `state check` por el nombre `fix/`
+  (`test_state_check_ok_on_real_repo`); 2474 y 2476 pasados. La CI de `main` corre tras el push.
+- Nadie ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/CASES-REJILLA.md`. Encargo: `docs/encargos/trabajo-cases-rejilla.md`.

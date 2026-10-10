@@ -22,7 +22,7 @@ trabajo/cases-rejilla
 
 **AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
 
-S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de Q, de la activación de la sesión 4 y de la primera ejecución de la demo de FTMO. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos. La condición de la primera ejecución de la demo de FTMO está cumplida (2026-10-09, DEMO-EJECUCION-1.md).
+S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de la activación de la sesión 4 (E). Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
 B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
 
@@ -30,15 +30,23 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
-W. Antes del paso b de la rama de entrada de marzo: cases/ (kit, fidelidad, ingesta y hoja) cuenta la ventana de cada caso por la rejilla y no en huso_operativa; si no, del 9 al 27 de marzo la ventana congelada en ventanas.yaml sale una hora tarde (ACTIVACION-A42.md §3.6 y §6.2, ADR-0069).
-
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-Z. CLAUDE.md (párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR») dice que marzo no se sortea ni se ingiere hasta que A-42 esté RESUELTA, y lo está desde stable/F37d-activacion-a42 (ADR-0069). La rama de entrada de marzo, en su primer commit, mide contra docs/runbooks/ENTRADA-MARZO.md (PARADA B0) y ACTIVACION-A42.md qué sigue bloqueando y corrige ese párrafo; W va antes de su paso b (ADELGAZAR-ESTADO.md §0).
+F. Orden tras W (consultor, 2026-10-10): trabajo/hoja-de-ruta (HOJA-DE-RUTA.md, nueva en docs/plan/; un test que la cuadra con la Next Action, el tramo en contrato.yaml), después trabajo/entorno-code (skills y agente del consultor, hook de arranque, medida de make check), y después E. Los encargos los da el consultor.
 
-A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del 2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md; A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro, con el script 1.1: antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors), y el CSV de la ejecución 2 tiene que decir 1.1. La 2 entre el 26 y el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas 39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3). Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se reabre con otro ADR.
+E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q). Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
 
-O. Para Aleks, con FTMO: la pregunta P-D1 (DEMO-EJECUCION-1.md §0.c): si la cuenta 2-Step Swing real es hedging como la prueba y si su volumen máximo en EURUSD es 50 o 100. La respuesta se registra parafraseada (RESPUESTAS-FTMO).
+G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-18) y A-16.
+
+I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X, S y E, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
+
+J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
+
+P. La regla general de CLAUDE.md sobre la columna de fechas («QUIEN: el consultor») no sale de ADR-0021 §1 (CASES-REJILLA.md); ADR-0046 §6a da a Aleks la de marzo. Se busca de qué ADR sale; si de ninguno, se corrige CLAUDE.md o se escribe el ADR (en trabajo/hoja-de-ruta).
+
+A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del 2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md; A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro, con el script 1.1: antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors), y el CSV de la ejecución 2 tiene que decir 1.1. La 2 entre el 26 y el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas 39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3). Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se reabre con otro ADR. La prueba del 2026-10-08 vence hacia el 2026-10-22.
+
+O. Para Aleks, con FTMO: P-D1 (DEMO-EJECUCION-1.md §0.c), enviada a support@ftmo.com el 2026-10-09 con un punto 3: si la cuenta 2-Step Swing real es hedging, si su volumen máximo en EURUSD es 50 o 100 lotes y si hay tope de volumen sumado entre varias órdenes. La respuesta se registra parafraseada (RESPUESTAS-FTMO) y decide el heredado 37: recortar a 50, partir en varias órdenes o no operar.
 
 K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos.
 
@@ -104,6 +112,7 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 
+- La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
