@@ -29,10 +29,18 @@ from botsito.cases.ingesta import (
     dias_ingeribles,
     ingerir,
 )
+from botsito.cases.relojes import reloj_de_las_sesiones
+from botsito.config.registro import cargar_registro
 from botsito.corpus.libro import LibroError, filas_de_los_dias
 from botsito.corpus.libros import FICHERO_LIBROS, Declaracion, Lectura, sha256_de
 
 SESIONES = [("07-11", "07:00", "11:00"), ("11-15", "11:00", "15:00")]
+# La sesion de cada operacion sale de la puerta del reloj de las sesiones (`trabajo/cases-rejilla`):
+# el reloj del registro real, la rejilla H4 de ADR-0069. Fuera de los dias de desfase da las mismas
+# sesiones que la pared de Madrid con que se escribieron estos tests.
+RELOJ = reloj_de_las_sesiones(
+    cargar_registro(Path(__file__).resolve().parents[2] / "knowledge" / "spec" / "parametros.yaml")
+)
 COLS = ["dateStart", "side", "entryPrice", "initialSL"]
 # El agregado: una pestana de totales del mes. Se escribe con bytes que NO son XML valido, asi que
 # si la ingesta la tocara REVENTARIA SOLA. El cinturon es no leerla; esto son los tirantes.
@@ -149,7 +157,7 @@ def test_la_ingesta_abre_de_verdad_y_produce_casos(tmp_path: Path) -> None:
     pedidos = dias_ingeribles(repo).dias
     assert set(pedidos) == {"2026-05-08", "2026-05-12"}, "el dia reservado no se deriva"
 
-    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=list(pedidos))
+    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=list(pedidos), reloj=RELOJ)
     assert r.filas_leidas == 2, "solo se leen las filas de los dias pedidos"
     assert sorted(d for d, ops in r.casos.items() if ops) == ["2026-05-08", "2026-05-12"]
     op = r.casos["2026-05-08"][0]
@@ -169,14 +177,14 @@ def test_un_dia_reservado_no_se_ingiere_ni_se_nombra(tmp_path: Path) -> None:
     """Y no por una excepcion: por DERIVACION. Pedirlo no es posible desde el comando."""
     repo = _repo(tmp_path, {"caso-eurusd-2026-05-07": "holdout-2"})
     with pytest.raises(IngestaError, match="no hay ningun dia ingerible"):
-        ingerir(repo, tmp_path / "no-hace-falta.xlsx", "Europe/Madrid", SESIONES)
+        ingerir(repo, tmp_path / "no-hace-falta.xlsx", "Europe/Madrid", SESIONES, reloj=RELOJ)
 
     # Y si alguien fuerza el dia por la via interna, la escritura lo rechaza: aqui hay PRECIOS.
     repo2 = _repo(tmp_path / "dos", {"caso-eurusd-2026-05-07": "holdout-2"})
     material = tmp_path / "dos" / "libro.xlsx"
     _xlsx(material, FILAS)
     _declarar(repo2, material)
-    r = ingerir(repo2, material, "Europe/Madrid", SESIONES, dias=["2026-05-07"])
+    r = ingerir(repo2, material, "Europe/Madrid", SESIONES, dias=["2026-05-07"], reloj=RELOJ)
     docs = [
         como_documento("caso-eurusd-2026-05-07", "2026-05-07", "EURUSD", ops, FUENTE)
         for d, ops in r.casos.items()
@@ -198,7 +206,7 @@ def test_el_agregado_no_se_lee_aunque_viva_en_el_mismo_fichero(tmp_path: Path) -
     material = tmp_path / "libro.xlsx"
     _xlsx(material, FILAS, con_agregado=True)
     _declarar(repo, material)
-    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
     assert len(r.casos["2026-05-08"]) == 1
 
     # Y el agregado no es alcanzable desde el camino soportado: `ingerir` NO tiene con que
@@ -235,7 +243,7 @@ def test_el_invariante_geometrico_aborta_nombrando_la_fila(tmp_path: Path) -> No
     _xlsx(material, [CABECERA, ["2026/05/08 07:30:00", "buy", "1.1000", "1.1010", "", "1.1"]])
     _declarar(repo, material)
     with pytest.raises(IngestaError, match="del lado equivocado"):
-        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
 
 
 @pytest.mark.contract
@@ -245,7 +253,7 @@ def test_una_fila_sin_stop_no_produce_caso_y_se_cuenta(tmp_path: Path) -> None:
     material = tmp_path / "libro.xlsx"
     _xlsx(material, [CABECERA, ["2026/05/08 07:30:00", "buy", "1.1000", "", "", "1.1"]])
     _declarar(repo, material)
-    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
     assert r.sin_stop == 1 and r.casos["2026-05-08"] == []
 
 
@@ -304,20 +312,20 @@ def test_ningun_numero_de_la_salida_cuenta_el_libro_entero(tmp_path: Path) -> No
         ],
     )
     _declarar(repo, material)
-    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+    r = ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
     assert (r.filas_leidas, r.sin_stop) == (2, 1), "cuentan las PEDIDAS, no las 17 del libro"
 
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["2026/05/08 07:30:00", "hold", "1.1", "1.0"]])
     _declarar(repo, material)
     with pytest.raises(IngestaError) as exc:
-        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
     assert "el caso del dia 2026-05-08, operacion 1: `side`" in str(exc.value)
     assert "12" not in str(exc.value) and "07:30" not in str(exc.value)
 
     _xlsx(material, [CABECERA, *[no_pedida] * 10, ["ayer", "buy", "1.1", "1.0"]])
     _declarar(repo, material)
     with pytest.raises(IngestaError) as exc:
-        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"])
+        ingerir(repo, material, "Europe/Madrid", SESIONES, dias=["2026-05-08"], reloj=RELOJ)
     assert "no casa con ningun formato declarado" in str(exc.value)
     assert "12" not in str(exc.value) and "ayer" not in str(exc.value)
 
@@ -382,7 +390,7 @@ def _ingerir_filas(
     _xlsx(material, [CABECERA, *filas])
     _declarar(repo, material)
     try:
-        return ingerir(repo, material, MADRID, SESIONES, dias=dias), ""
+        return ingerir(repo, material, MADRID, SESIONES, dias=dias, reloj=RELOJ), ""
     except IngestaError as exc:
         return None, str(exc)
 
@@ -442,7 +450,14 @@ def test_b_c_la_madrugada_de_un_dia_pedido_si_entra_en_verano_y_en_invierno(
     # Y la ingesta la ve como del dia pedido: la rechaza por SESION (00:30 no cae en ninguna),
     # nombrando el caso y no el instante ni los precios.
     with pytest.raises(IngestaError) as exc:
-        ingerir(repo, material, MADRID, SESIONES, dias={dia_madrid: f"caso-eurusd-{dia_madrid}"})
+        ingerir(
+            repo,
+            material,
+            MADRID,
+            SESIONES,
+            dias={dia_madrid: f"caso-eurusd-{dia_madrid}"},
+            reloj=RELOJ,
+        )
     msg = str(exc.value)
     assert msg.startswith(f"caso-eurusd-{dia_madrid}, operacion 1: su apertura no cae")
     assert "1.1000" not in msg and "1.0990" not in msg and ":30" not in msg

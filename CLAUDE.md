@@ -152,11 +152,14 @@ o marzo vienen detras. Con tres ataduras:
 - **QUE:** solo la columna de fechas. Ni resultados, ni PnL, ni una fila de operaciones.
 
 **Marzo de 2026 esta RECIBIDO y SIN ABRIR** (`docs/validation/REGISTRO-MARZO.md`, decision del
-consultor del 2026-09-30): entra por el camino de fidelidad como mes reservado, y no se sortea ni se
-ingiere hasta que A-42 este RESUELTA con el trader en la sesion 4 (PARADA B0 de
-`docs/runbooks/ENTRADA-MARZO.md`); lo unico que se lee antes es la columna de fechas, por el
-consultor (arriba), y sus 7 imagenes no se abren. Guardia: la de Claude Code bloquea su carpeta
-`Backtest marzo 2026`.
+consultor del 2026-09-30): entra por el camino de fidelidad como mes reservado, en el orden de
+`docs/runbooks/ENTRADA-MARZO.md`. A-42 esta RESUELTA (ADR-0069) y `cases/` cuenta la ventana de cada
+caso por la rejilla H4 desde `trabajo/cases-rejilla` (CASES-REJILLA.md), asi que la PARADA B0 ya no
+lo detiene; no se sortea ni se ingiere hasta cumplir lo que queda antes del paso b: del paso 0,
+marzo en `vistos.yaml` y la confirmacion escrita del trader (REGISTRO-MARZO.md §2), y el paso a.
+Lo unico que se lee antes es la columna de fechas, UNA vez y antes del sorteo, y **la lee Aleks**
+(ADR-0046 §6a, excepcion acotada a ADR-0039 §1); sus 7 imagenes no se abren. Guardia: la de Claude
+Code bloquea su carpeta `Backtest marzo 2026`.
 
 **Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre**
 (ADR-0021 §4).

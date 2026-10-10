@@ -1634,6 +1634,7 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     from botsito.cases.biblioteca import como_documento, escribir
     from botsito.cases.ingesta import (
         Ingeribles,
+        IngestaError,
         aviso_de_meses_sin_libro,
         aviso_de_otro_camino,
         dias_de_fidelidad,
@@ -1643,6 +1644,7 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
         meses_sin_libro,
     )
     from botsito.cases.paquete import cargar_config
+    from botsito.cases.relojes import RelojError, reloj_de_las_sesiones
     from botsito.comun.documentos import sha256_hex
     from botsito.config.registro import cargar_registro
 
@@ -1659,6 +1661,12 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
         registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
         huso = registro.texto("huso_operativa")
         sesiones = [(s.nombre, s.desde, s.hasta) for s in config.sesiones]
+        # La SESION de cada operacion, por la puerta del reloj de las sesiones (ADR-0069); el
+        # DIA de cada fila sigue en `huso_operativa` (`trabajo/cases-rejilla`).
+        try:
+            reloj = reloj_de_las_sesiones(registro)
+        except (RelojError, LookupError, TypeError) as exc:
+            raise IngestaError(f"el reloj de las sesiones: {exc}") from exc
         if artefacto is None:
             ingeribles = dias_ingeribles(repo, config.cobertura)
             if ingeribles.de_otro_camino:
@@ -1676,7 +1684,7 @@ def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
                 sha,
                 camino=f"de fidelidad ({artefacto})",
             )
-        resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos))
+        resultado = ingerir(repo, material, huso, sesiones, dias=list(pedidos), reloj=reloj)
     except errores as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

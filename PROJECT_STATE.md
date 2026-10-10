@@ -16,7 +16,7 @@ trabajo/cases-rejilla
 0b1c8ef · merge: la ejecución 1 de la demo de FTMO, ADR-0071, A-27 DECIDIDA, stops level 0, volumen máximo 50 y el script 1.1 (DEMO-EJECUCION-1.md) · tag stable/F37i-demo-ejecucion-1
 
 ## Tests Currently Passing
-1425 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1442 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

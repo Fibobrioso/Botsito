@@ -1,25 +1,36 @@
 """Ventanas de replay para el etiquetado ciego (F10, ADR-0011).
 
-Un caso es el dia operativo del trader (`ventana_local` de `config.yaml` en `huso_operativa`)
-sobre un dataset congelado (F15): `dataset_id`, ventana UTC `[desde, hasta)`, velas M1 con su
+Un caso es el dia operativo del trader (`ventana_local` de `config.yaml`, en horas NOMINALES
+contadas por la puerta del reloj de las sesiones, `cases/relojes.py`; desde ADR-0069, la rejilla
+H4) sobre un dataset congelado (F15): `dataset_id`, ventana UTC `[desde, hasta)`, velas M1 con su
 hash (recomputable con `cargar_ventana`) y los limites de las velas H4 con cada anclaje candidato
 (`limites_entre`, ADR-0005). El universo son los dias laborables NO vistos por el trader cuya
-ventana completa cae dentro del dataset y tiene suficientes velas.
+ventana completa cae dentro del dataset, tiene suficientes velas y la puerta sabe decidir.
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import date, timedelta
 from pathlib import Path
-from typing import Any
-from zoneinfo import ZoneInfo
+from typing import Any, cast
 
+from botsito.cases.relojes import (
+    HUSO_DEL_RELOJ,
+    PARAMETRO_RELOJ_SESIONES,
+    PARAMETROS_DE_LA_REJILLA,
+    REJILLA_H4,
+    RelojError,
+    RelojSesiones,
+    reloj_de_las_sesiones,
+)
 from botsito.comun.documentos import sha256_hex
+from botsito.comun.husos import HusoDesconocidoError, huso_canonico
+from botsito.config.registro import Registro
 from botsito.data.agregacion import limites_entre
 from botsito.data.dataset import cargar_serie
-from botsito.data.velas import a_minuto, escribir_csv, formato_ts
+from botsito.data.velas import a_datetime, escribir_csv, formato_ts, parse_ts
 from botsito.domain.valores import HoraLocal
 from botsito.domain.velas import MinutoUtc, SerieVelas
 
@@ -72,12 +83,6 @@ class Excluido:
     motivo: str
 
 
-def _minuto(dia: date, hora: str, huso: ZoneInfo) -> MinutoUtc:
-    hh, mm = (int(x) for x in hora.split(":"))
-    local = datetime.combine(dia, time(hh, mm), tzinfo=huso)
-    return a_minuto(local.astimezone(UTC))
-
-
 def id_caso(simbolo: str, dia: date) -> str:
     return f"caso-{simbolo.lower()}-{dia.isoformat()}"
 
@@ -106,15 +111,24 @@ def construir_caso(
     serie: SerieVelas,
     dia: date,
     simbolo: str,
-    huso_operativa: str,
+    reloj: RelojSesiones,
     ventana_local: tuple[str, str],
+    sesiones: Sequence[tuple[str, str, str]],
     anclajes: list[Anclaje],
     min_velas: int,
 ) -> Caso | Excluido:
-    """El caso del dia, o el motivo por el que queda fuera del universo."""
-    huso = ZoneInfo(huso_operativa)
-    desde = _minuto(dia, ventana_local[0], huso)
-    hasta = _minuto(dia, ventana_local[1], huso)
+    """El caso del dia, o el motivo por el que queda fuera del universo.
+
+    La ventana sale de la PUERTA (`reloj.instante`), nunca de pasar una hora a un huso aqui. Y la
+    puerta tiene que poder decidir el dia: si sus guardias saltan -la vela que abre la ventana no
+    es una H4 entera, o una sesion no es una vela de la rejilla-, el dia no es operable y sale del
+    universo con el motivo que da la puerta, que nombra el dia y la razon (negar por defecto)."""
+    try:
+        reloj.limites_de_sesiones(dia, sesiones)
+        desde = reloj.instante(dia, ventana_local[0])
+        hasta = reloj.instante(dia, ventana_local[1])
+    except RelojError as exc:
+        return Excluido(dia.isoformat(), f"la puerta del reloj no decide el dia: {exc}")
     if hasta <= desde:
         raise VentanaError("la ventana local debe acabar despues de empezar")
     if not serie.velas:
@@ -164,8 +178,9 @@ def universo(
     manifiestos: list[dict[str, Any]],
     carpeta_datos: Path,
     simbolo: str,
-    huso_operativa: str,
+    reloj: RelojSesiones,
     ventana_local: tuple[str, str],
+    sesiones: Sequence[tuple[str, str, str]],
     anclajes: list[Anclaje],
     min_velas: int,
     meses_vistos: set[str],
@@ -250,7 +265,7 @@ def universo(
                 )
                 continue
             resultado = construir_caso(
-                serie, dia, simbolo, huso_operativa, ventana_local, anclajes, min_velas
+                serie, dia, simbolo, reloj, ventana_local, sesiones, anclajes, min_velas
             )
             if isinstance(resultado, Caso):
                 casos.append(resultado)
@@ -266,7 +281,187 @@ def recomputar_hash(
     manifiesto: dict[str, Any], carpeta_datos: Path, desde_utc: str, hasta_utc: str
 ) -> tuple[int, str]:
     """Para `kit check` y F14: (n_velas, sha256) de una ventana ya escrita."""
-    from botsito.data.velas import parse_ts
-
     serie = cargar_serie(manifiesto, carpeta_datos)
     return hash_ventana(serie, parse_ts(desde_utc), parse_ts(hasta_utc))
+
+
+# ------------------------------------------------------------------ el reloj del caso (ADR-0069)
+#
+# La ventana de un caso se cuenta por la PUERTA del reloj de las sesiones (`cases/relojes.py`), la
+# misma que usa el motor: con `rejilla_h4`, las horas nominales del kit (00:00, 07:00, 15:00) caen
+# donde abre la vela H4 de la rejilla, y no en la pared de `huso_operativa`. Fuera de los dias de
+# desfase las dos dan los mismos instantes; en ellos la rejilla va una hora antes, que es la hora a
+# la que opera el trader (ACTIVACION-A42.md §3.6, CASES-REJILLA.md).
+#
+# EL RELOJ SE CONGELA en el artefacto, en la clave de primer nivel `reloj_sesiones`, igual que ya
+# se congelaba `huso_operativa`: el sorteo no se repite (ADR-0046 §5), y el artefacto tiene que
+# decir con que reloj se calculo. Se lee NEGANDO POR DEFECTO (respuesta del consultor del
+# 2026-10-10, punto 1): con la clave, el reloj congelado y nunca el del registro de hoy; sin ella,
+# el artefacto se calculo en la pared de su `huso_operativa`; un valor que la puerta no reconoce,
+# o una clave de mas o de menos, es un error con nombre.
+
+CLAVE_RELOJ = PARAMETRO_RELOJ_SESIONES
+CLAVE_HUSO = "huso_operativa"
+
+
+@dataclass(frozen=True)
+class RelojDelArtefacto:
+    """El reloj con que se calcula un artefacto, y lo que se congela de el en `ventanas.yaml`.
+
+    `congelado` es None en un artefacto de antes de la clave: se recompone en la pared de su
+    `huso_operativa` y no se le escribe una clave que no tenia (sus bytes no cambian)."""
+
+    reloj: RelojSesiones
+    congelado: dict[str, Any] | None
+
+
+def _parametros_del_reloj(opcion: str) -> tuple[str, ...]:
+    """Los parametros que la puerta lee con cada opcion del selector (su tabla, no una copia)."""
+    if opcion == REJILLA_H4:
+        return tuple(PARAMETROS_DE_LA_REJILLA.values())
+    return (HUSO_DEL_RELOJ[opcion],)
+
+
+def reloj_del_registro(registro: Registro) -> RelojDelArtefacto:
+    """El reloj de un artefacto NUEVO: el del registro, por la puerta, y su forma congelada (el
+    valor del selector y los parametros que la puerta lee con el)."""
+    reloj = reloj_de_las_sesiones(registro)
+    congelado: dict[str, Any] = {PARAMETRO_RELOJ_SESIONES: reloj.opcion}
+    for nombre in _parametros_del_reloj(reloj.opcion):
+        tipo = registro.parametros[nombre].tipo
+        if tipo == "hora":
+            h = registro.hora(nombre)
+            congelado[nombre] = {"hora": h.hora, "huso": h.huso}
+        elif tipo == "entero":
+            congelado[nombre] = registro.entero(nombre)
+        else:
+            congelado[nombre] = registro.texto(nombre)
+    return RelojDelArtefacto(reloj, congelado)
+
+
+class _RegistroCongelado:
+    """Lo que `reloj_de_las_sesiones` lee de un registro, servido desde la clave congelada: la
+    puerta construye el reloj congelado por el MISMO camino, y con las mismas guardias, que el del
+    registro."""
+
+    def __init__(self, doc: Mapping[str, Any], donde: str) -> None:
+        self._doc = doc
+        self._donde = donde
+
+    def _valor(self, nombre: str, tipo: type) -> Any:
+        valor = self._doc.get(nombre)
+        if isinstance(valor, bool) or not isinstance(valor, tipo):
+            raise RelojError(
+                f"{self._donde}: {CLAVE_RELOJ}.{nombre} = {valor!r}: no es un {tipo.__name__}"
+            )
+        return valor
+
+    def opcion(self, nombre: str) -> str:
+        return str(self._valor(nombre, str))
+
+    def texto(self, nombre: str) -> str:
+        huso = str(self._valor(nombre, str))
+        try:
+            huso_canonico(huso)
+        except HusoDesconocidoError as exc:
+            raise RelojError(f"{self._donde}: {CLAVE_RELOJ}.{nombre}: {exc}") from exc
+        return huso
+
+    def entero(self, nombre: str) -> int:
+        return int(self._valor(nombre, int))
+
+    def hora(self, nombre: str) -> HoraLocal:
+        valor = self._valor(nombre, dict)
+        if set(valor) != {"hora", "huso"}:
+            raise RelojError(f"{self._donde}: {CLAVE_RELOJ}.{nombre} necesita hora y huso")
+        try:
+            huso_canonico(valor["huso"])
+            return HoraLocal(str(valor["hora"]), str(valor["huso"]))
+        except (HusoDesconocidoError, ValueError) as exc:
+            raise RelojError(f"{self._donde}: {CLAVE_RELOJ}.{nombre}: {exc}") from exc
+
+
+def reloj_congelado(doc: object, donde: str) -> RelojSesiones:
+    """El reloj de la clave `reloj_sesiones` de un artefacto. Niega por defecto."""
+    if not isinstance(doc, dict):
+        raise RelojError(f"{donde}: {CLAVE_RELOJ} debe ser un mapa")
+    opcion = doc.get(PARAMETRO_RELOJ_SESIONES)
+    if not isinstance(opcion, str) or (opcion != REJILLA_H4 and opcion not in HUSO_DEL_RELOJ):
+        relojes = ", ".join((*HUSO_DEL_RELOJ, REJILLA_H4))
+        raise RelojError(
+            f"{donde}: {CLAVE_RELOJ}.{PARAMETRO_RELOJ_SESIONES} = {opcion!r}: no es un reloj que "
+            f"la puerta reconozca ({relojes})"
+        )
+    esperadas = {PARAMETRO_RELOJ_SESIONES, *_parametros_del_reloj(opcion)}
+    if set(doc) != esperadas:
+        raise RelojError(
+            f"{donde}: {CLAVE_RELOJ} con {opcion} lleva exactamente {sorted(esperadas)}, no "
+            f"{sorted(doc)}"
+        )
+    return reloj_de_las_sesiones(cast(Registro, _RegistroCongelado(doc, donde)))
+
+
+def reloj_de_ventanas(ventanas: Mapping[str, Any], donde: str) -> RelojDelArtefacto:
+    """El reloj con que se calculo un artefacto YA CONGELADO. Nunca el del registro de hoy."""
+    if CLAVE_RELOJ in ventanas:
+        crudo = ventanas[CLAVE_RELOJ]
+        return RelojDelArtefacto(reloj_congelado(crudo, donde), dict(crudo))
+    huso = ventanas.get(CLAVE_HUSO)
+    try:
+        huso_canonico(huso)
+    except HusoDesconocidoError as exc:
+        raise RelojError(
+            f"{donde}: sin {CLAVE_RELOJ} y sin un {CLAVE_HUSO} valido: no se sabe con que reloj "
+            f"se calculo ({exc})"
+        ) from exc
+    return RelojDelArtefacto(RelojSesiones.de_pared(str(huso)), None)
+
+
+# ------------------------------------------------------------------ lo que el trader ve
+
+
+def _en_pantalla(reloj: RelojSesiones, minuto: MinutoUtc | int) -> tuple[str, str]:
+    """(fecha, «HH:MM») que el grafico del trader marca en `minuto`: el `huso_visible` de la
+    puerta (`huso_grafico` con la rejilla). Es lo UNICO de cases/, fuera de la puerta, que pasa un
+    instante a un huso, y solo para PINTARLO: ninguna ventana se calcula con esto."""
+    local = a_datetime(minuto).astimezone(huso_canonico(reloj.huso_visible))
+    return local.date().isoformat(), local.strftime("%H:%M")
+
+
+def hora_en_pantalla(reloj: RelojSesiones, minuto: MinutoUtc | int) -> str:
+    return _en_pantalla(reloj, minuto)[1]
+
+
+@dataclass(frozen=True)
+class OtrasHoras:
+    """Un dia cuyo grafico no marca las horas nominales del kit (los dias de desfase)."""
+
+    dia: str
+    desde: str
+    hasta: str
+    desde_la_vispera: bool
+    sesiones: tuple[tuple[str, str, str], ...]
+
+
+def dias_con_otras_horas(
+    reloj: RelojSesiones,
+    casos: Sequence[tuple[str, str, str]],
+    ventana_local: tuple[str, str],
+    sesiones: Sequence[tuple[str, str, str]],
+) -> list[OtrasHoras]:
+    """De los casos `(dia, desde_utc, hasta_utc)`, los que en el grafico del trader NO van de
+    `ventana_local` con las sesiones en sus horas nominales. Vacio fuera de los dias de desfase,
+    asi que la hoja de un paquete sin ellos sale igual byte a byte."""
+    nominales = tuple((n, a, b) for n, a, b in sesiones)
+    salida: list[OtrasHoras] = []
+    for dia, desde_utc, hasta_utc in casos:
+        fecha_desde, desde = _en_pantalla(reloj, parse_ts(desde_utc))
+        hasta = hora_en_pantalla(reloj, parse_ts(hasta_utc))
+        en_pantalla = tuple(
+            (n, hora_en_pantalla(reloj, a), hora_en_pantalla(reloj, b))
+            for n, a, b in reloj.limites_de_sesiones(date.fromisoformat(dia), sesiones)
+        )
+        if (desde, hasta) == tuple(ventana_local) and en_pantalla == nominales:
+            continue
+        salida.append(OtrasHoras(dia, desde, hasta, fecha_desde != dia, en_pantalla))
+    return salida

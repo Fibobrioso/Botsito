@@ -24,7 +24,7 @@ import yaml
 from botsito import cli
 from botsito.cases.ingesta import IngestaError, ingerir
 
-from .test_ingesta import SESIONES, _declarar, _xlsx
+from .test_ingesta import RELOJ, SESIONES, _declarar, _xlsx
 
 REAL = Path(__file__).resolve().parents[2]
 FID = "knowledge/cases/fidelidad"
@@ -191,7 +191,7 @@ def test_la_centinela_esta_viva(tmp_path: Path) -> None:
     esto, que la centinela no salga no probaria nada: podria no salir porque nunca se leyo."""
     repo, libros = _repo(tmp_path)
     with pytest.raises(IngestaError) as exc:
-        ingerir(repo, libros["marzo"], "Europe/Madrid", SESIONES, dias=["2026-03-03"])
+        ingerir(repo, libros["marzo"], "Europe/Madrid", SESIONES, dias=["2026-03-03"], reloj=RELOJ)
     assert "`side` no es buy ni sell" in str(exc.value)
     assert CENTINELA not in str(exc.value)
 

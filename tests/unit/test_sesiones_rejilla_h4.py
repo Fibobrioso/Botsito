@@ -15,6 +15,7 @@ H2b y fallan donde el encargo dice.
 from __future__ import annotations
 
 import ast
+import inspect
 import re
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
@@ -237,7 +238,7 @@ def test_con_un_ancla_sin_cambio_de_hora_las_fechas_de_verano_fallan(
 def test_el_codigo_del_reloj_no_lleva_ningun_desfase() -> None:
     """Ni un huso fijo, ni una suma de horas a UTC, ni una hora escrita: todo sale del registro
     y de `limites_del_dia`."""
-    fuente = (RAIZ / "src" / "botsito" / "engine" / "relojes.py").read_text(encoding="utf-8")
+    fuente = Path(str(inspect.getsourcefile(reloj_de_las_sesiones))).read_text(encoding="utf-8")
     cuerpo = "\n".join(linea for linea in fuente.splitlines() if not linea.lstrip().startswith("#"))
     arbol = ast.parse(fuente)
     docstrings = {

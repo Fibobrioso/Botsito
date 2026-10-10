@@ -339,6 +339,20 @@ escrita, y que aparezca `limites_del_dia`. Con la puerta en `cases/relojes.py` y
 reducido a reexportar, la última aserción falla: el código que el test vigila ya no está en el
 fichero que abre. Se para aquí, como manda el punto 0, sin tocar el test.
 
+### 3.3 Respuesta del consultor a la PARADA 2 (2026-10-10), tal cual
+
+> Respuesta del consultor (2026-10-10), cópiala tal cual en el informe junto a la PARADA 2 (§3.2).
+>
+> (a), con un ajuste: test_el_codigo_del_reloj_no_lleva_ningun_desfase no escribe ninguna ruta fija; abre el fichero donde vive de verdad el código, sacado con inspect.getsourcefile(reloj_de_las_sesiones) importado desde botsito.engine.relojes. Así vigila la puerta esté donde esté y no se queda vacío si se vuelve a mover. Lo demás del test no cambia. El test nuevo de un solo camino (engine/relojes.py no define funciones ni clases propias) se queda como está. La (b) queda descartada: meter limites_del_dia en el fichero de reexportación para que el test pase sería rodearlo.
+>
+> Z: conforme con lo medido. El párrafo de marzo de CLAUDE.md dice que la columna de fechas la lee Aleks y cita ADR-0046 §6a. El hallazgo aparte (el «QUIEN: el consultor» de la regla general no sale de ADR-0021 §1) no se toca en esta rama: apúntalo en el informe como pendiente para el consultor.
+>
+> Sigue con la fase 1 cuando make check selle el commit en curso.
+
+**Pendiente para el consultor (no se toca en esta rama):** el «QUIEN: el consultor» de la regla
+general de CLAUDE.md («Lo minimo para fijar el universo SI se lee») no sale de ADR-0021 §1, que no
+nombra a nadie (§3.1).
+
 ## Estado
 
-EN CURSO. Fase 1 empezada; **PARADA 2** (§3.2) a la espera del consultor. No se ha escrito código.
+EN CURSO. Fase 1 en marcha tras la respuesta a la PARADA 2.
