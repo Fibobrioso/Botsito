@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/cases-rejilla
 
 ## Current Feature
-`main` en `stable/F37i-demo-ejecucion-1` (0b1c8ef): la ejecución 1 de la demo de FTMO fija lo que no depende de la fecha (ADR-0071, A-27 DECIDIDA) y el script 1.1 queda listo para la ejecución 2. Sin ramas abiertas; manda la Next Action. Informe docs/validation/DEMO-EJECUCION-1.md.
+`trabajo/cases-rejilla` EN CURSO (puntos W y Z de la Next Action): cases/ cuenta la ventana de cada caso por la rejilla H4 de ADR-0069, por la puerta de engine/relojes.py. Encargo docs/encargos/trabajo-cases-rejilla.md; informe docs/validation/CASES-REJILLA.md.
 
 ## Stable Main State
 0b1c8ef · merge de `trabajo/demo-ejecucion-1` (tag `stable/F37i-demo-ejecucion-1`): el CSV de la ejecución 1 congelado en data/manifests/demo_ftmo/; ADR-0071; los cinco de A-27 CONFIRMED y A-27 DECIDIDA; perfil de FTMO con stops level 0 y volumen máximo 50; la negativa A-27 en un perfil sintético; MedirDemoFTMO 1.1 (comisión con 1,00 lote) y su lector 1.0/1.1. Sobre `stable/F37h-adelgazar-estado` (f6d3117). Informe docs/validation/DEMO-EJECUCION-1.md; el registro del cierre, al final de HISTORIA.
@@ -175,8 +175,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 25 (2026-10-09).
+— ninguna desde el Archivo 26 (2026-10-10).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 25 (2026-10-09).
+— ninguna desde el Archivo 26 (2026-10-10).

@@ -1,0 +1,31 @@
+rama: trabajo/cases-rejilla
+riesgo: alto  # cambia el reloj con que cases/ calcula la ventana de cada caso (kit, fidelidad, ingesta y hoja); el motor, la spec y lo congelado no se tocan
+artefacto: docs/validation/CASES-REJILLA.md
+rutas_permitidas:
+  - src/botsito/cases/
+  - src/botsito/engine/relojes.py
+  - src/botsito/cli.py
+  - tests/unit/
+  - tests/contract/
+  - CLAUDE.md
+  - docs/runbooks/ENTRADA-MARZO.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/validation/CASES-REJILLA.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - knowledge/
+  - config/
+  - data/manifests/
+  - scripts/ticks_spread.py
+  - src/botsito/engine/motor.py
+  - src/botsito/engine/simulacion.py
+  - src/botsito/engine/cableado.py
+  - src/botsito/domain/
+  - docs/adr/
+comprobaciones:
+  - uv run pytest tests/unit -q -k "rejilla or ventanas or kit"
+  - uv run botsito kit check
+  - make check > make-check.log 2>&1
