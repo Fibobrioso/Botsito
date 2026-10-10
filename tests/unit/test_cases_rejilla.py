@@ -12,7 +12,9 @@ from __future__ import annotations
 
 import ast
 import inspect
+from collections.abc import Callable
 from datetime import UTC, date, datetime, timedelta
+from functools import partial
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -140,6 +142,40 @@ def test_un_dia_de_rejilla_con_vela_irregular_no_entra_en_el_universo() -> None:
     assert "no es entera" in viernes.motivo
 
 
+def test_la_semana_sintetica_entra_en_el_universo_sin_el_viernes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Lo mismo por `universo()`, el camino de `kit build` y `fidelidad build`: de la semana del
+    25 al 29 de marzo de 2024, con el ancla sintetica, entran los cuatro primeros dias y el
+    viernes sale en `excluidos` con el motivo de la puerta (revisor, b1). Las velas no salen de
+    `data/`: `cargar_serie` devuelve una serie sintetica que cubre la semana entera."""
+    reloj = RelojSesiones(
+        "rejilla_h4",
+        "Asia/Jerusalem",
+        anclaje=HoraLocal("00:00", "Asia/Jerusalem"),
+        primera_vela=1,
+        inicio_nominal=0,
+    )
+    serie = _serie(datetime(2024, 3, 23, tzinfo=UTC), 24 * 8)
+    monkeypatch.setattr(ventanas, "cargar_serie", lambda manifiesto, carpeta: serie)
+    manifiesto = {"dataset_id": "prueba-1", "desde": "2024-03-25", "hasta": "2024-03-29"}
+    casos, excluidos = ventanas.universo(
+        [manifiesto],
+        Path("sin-datos"),
+        "xxxyyy",
+        reloj,
+        ("00:00", "04:00"),
+        (("s1", "00:00", "04:00"),),
+        ANCLAJES,
+        150,
+        set(),
+        set(),
+    )
+    assert [c.dia for c in casos] == ["2024-03-25", "2024-03-26", "2024-03-27", "2024-03-28"]
+    assert [e.dia for e in excluidos] == ["2024-03-29"]
+    assert excluidos[0].motivo.startswith("la puerta del reloj no decide el dia: 2024-03-29")
+
+
 # ------------------------------------------------------------------- un solo camino de calculo
 
 
@@ -202,10 +238,9 @@ def test_engine_relojes_no_define_nada_propio() -> None:
     fuente = inspect.getsource(relojes_del_motor)
     arbol = ast.parse(fuente)
     propias = [
-        n.name
+        n.name if not isinstance(n, ast.Lambda) else "lambda"
         for n in ast.walk(arbol)
         if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Lambda)
-        and not isinstance(n, ast.Lambda)
     ]
     assert propias == []
     from botsito.cases import relojes
@@ -284,6 +319,78 @@ def test_una_vela_fuera_de_la_rejilla_en_la_clave_es_un_error_con_nombre(
     congelado["sesiones_primera_vela_h4"] = 9
     with pytest.raises(RelojError, match="sesiones_primera_vela_h4 = 9"):
         reloj_congelado(congelado, "x")
+
+
+class _ParadaError(Exception):
+    """Corta `comprobar` en cuanto pide la recomposicion: lo que se mira es con que reloj."""
+
+
+def _reloj_con_que_recompone(
+    monkeypatch: pytest.MonkeyPatch,
+    modulo: Any,
+    ruta: Path,
+    clave: dict[str, Any] | None,
+    huso: str,
+) -> list[RelojDelArtefacto]:
+    """Reescribe la clave (o la quita) y el `huso_operativa` del `ventanas.yaml` congelado de un
+    artefacto sintetico, y devuelve el reloj que `comprobar` le pasa a `construir`."""
+    import yaml
+
+    doc = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    doc.pop("reloj_sesiones", None)
+    if clave is not None:
+        doc["reloj_sesiones"] = clave
+    doc["huso_operativa"] = huso
+    ruta.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=True), encoding="utf-8")
+    vistos: list[RelojDelArtefacto] = []
+
+    def espia(*args: Any, **kwargs: Any) -> Any:
+        vistos.append(kwargs["reloj"])
+        raise _ParadaError
+
+    monkeypatch.setattr(modulo, "construir", espia)
+    return vistos
+
+
+def test_kit_check_y_fidelidad_check_recomponen_con_el_reloj_congelado(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """El cableado (revisor, a2): `kit check` y `fidelidad check` pasan a `construir` el reloj
+    del `ventanas.yaml` congelado, y nunca el del registro de hoy. El registro sintetico de
+    `test_kit.py` dice `civil_operativa` en Europe/Madrid; lo congelado dice OTRA cosa, y es lo
+    congelado lo que llega: con la clave, su reloj; sin ella, la pared de SU `huso_operativa`."""
+    from botsito.cases import fidelidad, paquete
+    from tests.unit.test_kit import _repo_fidelidad
+
+    repo = _repo_fidelidad(tmp_path)
+    datos = repo / "data"
+    sesion = "2026-09-15-sesion-01"
+    paquete.escribir(repo, paquete.construir(repo, datos, sesion, 3))
+    fidelidad.escribir(repo, fidelidad.construir(repo, datos, "xxxyyy-2026-05", 3))
+    kit = repo / paquete.DIRECTORIO_KIT / sesion / "ventanas.yaml"
+    fid = repo / "knowledge" / "cases" / "fidelidad" / "xxxyyy-2026-05" / "ventanas.yaml"
+    # lo que escribe un artefacto nuevo: el reloj del registro sintetico
+    import yaml
+
+    for ruta in (kit, fid):
+        assert yaml.safe_load(ruta.read_text(encoding="utf-8"))["reloj_sesiones"] == {
+            "reloj_sesiones": "civil_operativa",
+            "huso_operativa": "Europe/Madrid",
+        }
+    otra = {"reloj_sesiones": "grafico", "huso_grafico": "Europe/Lisbon"}
+    comprobaciones: tuple[tuple[Any, Path, Callable[[], object]], ...] = (
+        (paquete, kit, partial(paquete.comprobar, repo, datos, sesion)),
+        (fidelidad, fid, partial(fidelidad.comprobar, repo, datos, "xxxyyy-2026-05")),
+    )
+    for modulo, ruta, comprobar in comprobaciones:
+        vistos = _reloj_con_que_recompone(monkeypatch, modulo, ruta, otra, "Europe/Madrid")
+        with pytest.raises(_ParadaError):
+            comprobar()
+        assert vistos[0] == RelojDelArtefacto(RelojSesiones("grafico", "Europe/Lisbon"), otra)
+        vistos = _reloj_con_que_recompone(monkeypatch, modulo, ruta, None, "Europe/Lisbon")
+        with pytest.raises(_ParadaError):
+            comprobar()
+        assert vistos[0] == RelojDelArtefacto(RelojSesiones.de_pared("Europe/Lisbon"), None)
 
 
 # ------------------------------------------------------------------------------- las hojas

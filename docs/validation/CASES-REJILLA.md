@@ -204,7 +204,7 @@ calendario puro; fechas de 2024, ninguna de 2026):
 Los tests que ya existen y llaman a `ingerir` o a `universo` con un huso (`tests/contract/
 test_ingesta.py`, `test_cobertura.py`, `test_ingesta_fidelidad.py`, `tests/unit/test_kit.py`) se
 adaptan a la nueva firma sin cambiar lo que comprueban. Uno trae días sintéticos de marzo de 2026
-que la condición del desfase alcanza (`test_ensayo_marzo.py`, tramo del 2 al 13): se mira en la
+que la condición del desfase alcanza (`test_ensayo_marzo.py`): se mira en la
 fase 1 si su resultado cambia y, si cambia, se dice.
 
 **La ingesta, una decisión que se pide (PARADA, punto 3).** La SESIÓN de cada operación sale de
@@ -406,12 +406,18 @@ cada operación sale de `reloj.lectura(instante)`; el día de la fila sigue sali
 `huso_operativa` (`corpus/libro.py` no se toca). Si los dos días no coinciden, la ingesta para
 nombrando el caso, sin instante ni precios. La CLI (`casos ingerir`) pasa el reloj del registro.
 
-**Un solo camino.** Fuera de la puerta, en `cases/` solo quedan dos llamadas que tocan un huso, las
-dos nombradas en `test_un_solo_camino_ningun_sitio_de_cases_convierte_horas_con_un_huso`:
+**Un solo camino.** Fuera de la puerta, en `cases/` solo quedan dos llamadas de conversión con un
+huso, las dos nombradas en `test_un_solo_camino_ningun_sitio_de_cases_convierte_horas_con_un_huso`:
 `ventanas._en_pantalla` (pintar una hora del gráfico; ninguna ventana se calcula con ella) y
 `paquete.config_desde_doc` (validar que existe el huso de un anclaje candidato). Cualquier otro
 `astimezone`, `ZoneInfo`, `combine`, `localize`, `fromtimestamp` o argumento `tzinfo=` en
-`src/botsito/cases/` hace fallar el test.
+`src/botsito/cases/` hace fallar el test. **Lo que el test no mira** (revisor, a3): `ingesta.py`
+pasa `huso_operativa` al lector (`filas_de_los_dias(..., huso_de_los_dias=huso_operativa)`), que
+con él decide el DÍA de cada fila del libro. Es la excepción que decidió el punto 3 (el lector y
+`libros.yaml` no se tocan), no un cálculo de ventana ni de sesión, y la guardia nueva para la
+ingesta si ese día no es el operativo de la puerta. El plan de §0.f nombraba también
+`huso_canonico(`; el test no lo cuenta porque solo valida un nombre (devuelve el `ZoneInfo`, pero
+convertir con él exigiría un `astimezone` o un `tzinfo=`, que sí cuenta).
 
 **Los tests que ya existían.** Se adaptaron a las firmas nuevas sin cambiar lo que comprueban:
 `tests/unit/test_kit.py` (el registro sintético gana `reloj_sesiones` = `civil_operativa`, la pared
@@ -423,7 +429,7 @@ condición del desfase alcanza, usa ese registro sintético, así que sigue en l
 
 ### 3.5 Los tests nuevos, y lo que hace `main` en cada uno (medido)
 
-`tests/unit/test_cases_rejilla.py` (14 funciones) y `tests/contract/test_ingesta_rejilla.py` (3).
+`tests/unit/test_cases_rejilla.py` (16 funciones; dos, añadidas tras el revisor, §5) y `tests/contract/test_ingesta_rejilla.py` (3).
 Con el código de `main` el módulo de la rama ni siquiera importa (`ImportError: cannot import name
 'RelojDelArtefacto' from 'botsito.cases.ventanas'`, salida de pytest en el clon de `main`), así que
 se midió con la API de `main`, en su clon, lo que comprueba cada test que rompe a propósito
@@ -527,7 +533,11 @@ dos `ventanas.yaml` es solo la clave nueva:
 
 `kit check` del paquete nuevo en la rama lo recompone con el reloj de esa clave y sale `OK`, así que
 la clave se escribe y se vuelve a leer sin perder nada. Las ventanas calculadas (los `casos`, el
-`universo` y los `excluidos`) son las de `main`.
+`universo` y los `excluidos`) son las de `main`. **Un cambio sobre §0.f** (revisor, b2): el
+«tercer hash» prometido, el YAML de `universo()` en cada clon con un guion propio, se sustituyó por
+este, el de `ventanas.yaml` sin la clave: `ventanas.yaml` ES el volcado de `universo()` (sus
+`casos`, `universo` y `excluidos`) que hace `kit build`, y comparar el del comando real evita un
+guion distinto en cada clon (la firma de `universo` cambia entre `main` y la rama).
 
 **La hoja Word no se pudo comparar:** `kit hoja --sesion 2026-01-02-sesion-99` sale con exit 1 en
 LOS DOS clones, con el mismo error (`0073477f…` las dos salidas): «ninguna pregunta del paquete nace
@@ -580,7 +590,174 @@ declara el paquete sintético `2026-01-02-sesion-99` son de su propio sorteo, en
 que ya no existe: días de enero, abril y agosto, ningún reparto commiteado. Ninguna etiqueta, ningún
 libro, ningún fotograma, nada de marzo.
 
+## 5. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Hecho |
+|---|---|---|
+| a1 | importa | Ya estaba declarado el mismo día (§0.g, HOLDOUT-EXPOSICIONES). La repetición entra en `docs/runbooks/ERRORES-RECURRENTES.md`, fila de esta rama: tercera rama seguida que lista la carpeta madre del holdout; un `grep -v` filtra después de listar. |
+| a2 | importa | Test nuevo `test_kit_check_y_fidelidad_check_recomponen_con_el_reloj_congelado`: construye un paquete del kit y un artefacto de fidelidad sintéticos (el registro dice `civil_operativa` en Madrid), cambia en su `ventanas.yaml` la clave por OTRO reloj (`grafico` en `Europe/Lisbon`) o la quita con OTRO `huso_operativa` (Lisboa), y comprueba que `paquete.comprobar` y `fidelidad.comprobar` le pasan a `construir` ese reloj y no el del registro. |
+| a3 | menor | Dicho en §3.4: el test no mira el `huso_operativa` que la ingesta pasa al lector como día de la fila (la excepción del punto 3), ni `huso_canonico`, y por qué. |
+| a4 | menor | El filtro de `test_engine_relojes_no_define_nada_propio` ahora cuenta también las `lambda`. |
+| a5 | menor | `PROJECT_STATE.md`, Current Feature: la puerta del reloj de las sesiones es `cases/relojes.py`, que `engine/relojes.py` reexporta. |
+| a6 | menor | Quitado de §0.f el rango de días sintéticos de marzo. Queda en la historia de la rama (el commit 69537fe); son días de un test que ya estaba en `main`, no de un reparto. |
+| b1 | importa | Test nuevo `test_la_semana_sintetica_entra_en_el_universo_sin_el_viernes`: `universo()` sobre la semana del 25 al 29 de marzo de 2024 con el ancla sintética (velas sintéticas, `cargar_serie` sustituido): entran del lunes al jueves y el viernes sale en `excluidos` con el motivo de la puerta. |
+| b2 | menor | Dicho en §3.6: el tercer hash de §0.f se sustituyó por el de `ventanas.yaml` sin la clave, y por qué. |
+| b3 | bloquea | La CI de Linux, §6. |
+
+Los dos tests nuevos pasan; `mypy` y `ruff` en verde.
+
+## 6. La CI de Linux
+
+`git push origin trabajo/cases-rejilla:refs/heads/fix/cases-rejilla` (como dice RITUAL.md).
+
+- **Run 38087137947**, sobre 8151730 (el código de la fase 1 y la regresión): `conclusion:
+  failure` con **un solo fallo, el esperado**: `FAILED
+  tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama
+  'trabajo/cases-rejilla'; la rama actual es 'fix/cases-rejilla'»). `1 failed, 2474 passed, 9
+  skipped in 322.55s`. El estado se leyó de la API de check-runs con el sha literal, y el log con
+  `gh run view 38087137947 --log-failed`.
+- El commit que cierra la rama (este informe, los dos tests de §5 y la fila de
+  ERRORES-RECURRENTES) se empuja igual; su run no puede ir dentro de él, y se da en el
+  mensaje de entrega al consultor.
+
+## Informe del revisor (subagente `revisor`, 2026-10-10), tal cual
+
+Pasada sobre 8151730, antes de §5 y §6. Copiado sin tocar, salvo UNA cosa: cinco fechas de 2026 que el revisor cita de fixtures de tests que ya estaban en `main` se omiten aquí, porque este informe no lleva fechas de días que puedan ser reservados (encargo, «Holdout»).
+
+## Informe del revisor · trabajo/cases-rejilla · 2026-10-10
+
+Base 26326b2, HEAD 8151730. La rama tiene 5 commits y 24 ficheros cambiados. `git status --short` sale vacío. El `SELLO` de `make-check.log` es el árbol `ee194199d6c180db7d0378ba68df58fe1c16f6ff`, igual que `git rev-parse HEAD^{tree}`. La línea de pytest dice `2484 passed`, y el pico de memoria fue 294 MiB.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | Se listó una carpeta que contiene el holdout, y el encargo lo prohíbe expresamente («Nunca se lista una carpeta que contenga meses reservados; cada fichero se nombra por su ruta literal»). Es la tercera vez que se repite la lección de `reloj-invierno` y `activacion-a42`. La declaración es honesta y suficiente: el mismo día (2026-10-10), en `CASES-REJILLA.md` §0.g y en la fila nueva de `HOLDOUT-EXPOSICIONES.md`. Dice que el `grep -v '^knowledge/cases/holdout/'` filtró antes de la salida y que solo se vieron rutas de `dev/`, `fidelidad/`, `kit/` y los README. Pero la regla se rompió, y la rama no apunta la repetición en `docs/runbooks/ERRORES-RECURRENTES.md` (está en `rutas_permitidas` del contrato y no se tocó). | `docs/validation/CASES-REJILLA.md:255-260`. `git diff 26326b2 HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md` añade la fila del 2026-10-10 con el mismo texto. `git diff --name-status 26326b2 HEAD` no lista `ERRORES-RECURRENTES.md`. |
+| a2 | importa | «Con la clave, el reloj congelado y nunca el del registro» no tiene ningún test en el cableado de `paquete.comprobar` ni de `fidelidad.comprobar`. Sí lo tiene en las funciones sueltas (`reloj_de_ventanas`, `reloj_congelado`, 7 casos negados). En todos los tests, y en la regresión, el reloj congelado es igual al del registro. Si `comprobar` volviera a usar el del registro, ni la suite ni la regresión lo notarían. | `src/botsito/cases/paquete.py:1123-1132` y `fidelidad.py:408-420`. `grep -rn "reloj_sesiones\|reloj_de_ventanas\|CLAVE_RELOJ" tests` fuera de los tests de reloj da solo `tests/unit/test_kit.py:58`, el registro sintético con `civil_operativa`. La ejecución real del cableado es solo `kit check` de los hashes de §3.6, que no distingue los dos relojes. |
+| a3 | menor | El test de «un solo camino» es más estrecho que el plan de §0.f y que lo que dice §3.4. El plan nombraba `huso_canonico(` y `huso_operativa`. `_CONVERSIONES` solo tiene `astimezone`, `ZoneInfo`, `combine`, `localize`, `fromtimestamp` y `tzinfo=`. `ingesta.py:435` pasa `huso_operativa` al lector (`huso_de_los_dias=`), que convierte horas en días, y ni lo ve el test ni está entre las excepciones. §3.4 dice «solo quedan dos llamadas que tocan un huso». Las dos de `_PERMITIDAS` sí son lo que dicen: `ventanas._en_pantalla` solo pinta (lo usan `hora_en_pantalla` y `dias_con_otras_horas`), y `paquete.config_desde_doc:292` solo valida que el huso existe. | `tests/unit/test_cases_rejilla.py:146-153`. `src/botsito/cases/ingesta.py:435`. `CASES-REJILLA.md:409-411`. |
+| a4 | menor | En `test_engine_relojes_no_define_nada_propio` el filtro `isinstance(n, ... \| ast.Lambda) and not isinstance(n, ast.Lambda)` es código muerto. Una `X = lambda ...` en `engine/relojes.py` pasaría sin ser detectada. | `tests/unit/test_cases_rejilla.py:204-209`. |
+| a5 | menor | `PROJECT_STATE.md` («Current Feature») dice «por la puerta de engine/relojes.py», pero la puerta vive ahora en `cases/relojes.py`. `engine/relojes.py` solo reexporta. | `git diff 26326b2 HEAD -- PROJECT_STATE.md`, línea de Current Feature. |
+| a6 | menor | El informe, en el inventario, cita «test_ensayo_marzo.py, tramo del 2 al 13» de marzo de 2026. Son días sintéticos de un test que ya estaba en `main`, no los de ningún reparto. Aun así es un rango de días de un mes reservado en un texto commiteado. No encontré ninguna fecha reservada en los tests nuevos, en `CLAUDE.md` ni en `ENTRADA-MARZO.md`. | `docs/validation/CASES-REJILLA.md:207-208`. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` dice: `CONTRATO: 24 ficheros dentro del contrato de trabajo/cases-rejilla (riesgo alto, artefacto docs/validation/CASES-REJILLA.md, 3 comprobaciones para el revisor)`. Ningún fichero cambiado cae en `rutas_protegidas`.
+- **Tests.** `uv run pytest tests/unit/test_cases_rejilla.py tests/contract/test_ingesta_rejilla.py tests/unit/test_sesiones_rejilla_h4.py -q -p no:cacheprovider` sale verde, y `uv run pytest tests/unit -q -p no:cacheprovider -k "rejilla or ventanas or kit"` también. `make check` no lo ejecuté. Su evidencia es el `SELLO` sobre el árbol de HEAD.
+- **Un solo camino (alcance 1).** `git diff 26326b2:src/botsito/engine/relojes.py HEAD:src/botsito/cases/relojes.py` solo añade un párrafo de docstring, así que `cases/relojes.py` es la puerta antigua sin cambio de lógica. `engine/relojes.py` queda con docstring, imports y `__all__`, sin `def` ni `class`. `__all__` crece en tres nombres (`DE_PARED`, `MINUTOS_H4`, `MINUTOS_POR_DIA`), lo que no cambia comportamiento. El motor, `simulacion`, `visor`, `arnes`, `primitivas` y `cli:2386` siguen importando de `engine.relojes`. Ningún test del motor se tocó salvo la línea de `test_sesiones_rejilla_h4.py` que ordenó el consultor (`inspect.getsourcefile(reloj_de_las_sesiones)`). `grep` de `huso_operativa|ZoneInfo|astimezone|tzinfo|timezone|huso_canonico|fromtimestamp|combine(|localize` en `src/botsito/cases` fuera de `relojes.py` da solo lo que describe el informe.
+- **Ficheros congelados (alcance 2).** `git diff --name-status 26326b2 HEAD` no lista nada bajo `knowledge/`, `data/` ni `config/`. Tampoco hay ningún `ventanas.yaml`, `particiones.yaml`, kit, ancla, autorización o preregistro. Ni `docs/adr/`, ni `motor.py`, `simulacion.py`, `cableado.py`, `domain/` o `scripts/ticks_spread.py`. El modo de `HISTORIA.md` es solo añadir: 0 líneas borradas, con el Archivo 26 de 182 líneas, igual que `PROJECT_STATE.md` de `main`.
+- **Lectura de `reloj_sesiones` (alcance 3).**
+  - `reloj_congelado` niega por defecto: exige un mapa, un selector que la puerta reconozca, claves exactamente las de esa opción, tipos propios y husos IANA. Además construye el reloj por la misma `reloj_de_las_sesiones` y con sus mismas guardias.
+  - `reloj_de_ventanas` devuelve el congelado si hay clave y la pared de `huso_operativa` si no la hay. Sin ninguna de las dos o con un huso inexistente, lanza `RelojError` con nombre. Nunca usa el registro.
+  - `paquete.comprobar` y `fidelidad.comprobar` pasan `reloj=reloj_de_ventanas(...)` y convierten el error en problema. `hoja_docx.documento` usa el reloj congelado.
+  - Un artefacto sin clave se recompone sin escribírsela. Faltaría el test del cableado (a2).
+- **Día no operable.** Medí con la puerta real, solo lectura: de 2000 a 2035 hay 9.391 laborables y 0 que la puerta no decida. Eso coincide con §0.e (los 72 días no decidibles son domingos), así que el test tiene que forzarlo con el ancla de Jerusalén, como hace.
+- **Citas del informe contra su fuente (tres o más).**
+  - `ventanas._minuto` usaba `datetime.combine(... tzinfo=huso)` + `astimezone(UTC)` (`git show 26326b2:...ventanas.py` líneas 75-78).
+  - `data/dataset.py:398-433`: `cargar_serie` y `cargar_ventana` solo leen.
+  - Contrato de capas `pyproject.toml:95-117`: `engine` está por encima de `cases`.
+  - ADR-0046 líneas 66 y 75 (lee Aleks, una vez, antes del sorteo).
+  - Commits: 04f1ed9 es del 2026-09-24, 5facde9 del 2026-09-20 y 394a18e del 2026-09-21.
+  - `knowledge/spec/ambiguedades.yaml:1171`: A-42 `RESUELTA`.
+  - `grep -c "2026-03" knowledge/cases/kit/vistos.yaml` da 0. En `knowledge/cases/fidelidad/config.yaml` el único `"2026-03"` es el de `cupos_por_mes` (línea 103); `cobertura_material` está en la 55 sin ese mes.
+  - `REGISTRO-MARZO.md` líneas 46-51: la confirmación escrita del trader está en el §2.
+- **Regímenes y reglas varias.** No hay trailers `Fuente:` que comprobar (nada toca `knowledge/spec` ni `knowledge/cases`). No hay evidencia, feedback, manifiestos, libros ni ADR nuevos. No hay sitios con `cita` nuevos, así que no aplican las tres guardias. No hay informes cerrados editados. `HOLDOUT-EXPOSICIONES.md` solo gana dos filas y `ENTRADA-MARZO.md` solo gana 11 líneas (el recuadro).
+- **Holdout (alcance 4).**
+  - Las dos filas de exposición son del 2026-10-10. La segunda declara por recuento los días reservados cuyas velas leen `kit check` (24) y `fidelidad check` (10), sin fechas, y lo apoya en ADR-0021 §1 / ADR-0033.
+  - Los tests nuevos usan solo fechas de 2024. Las fechas de 2026 que aparecen en el diff de tests son reformateos de llamadas de tests ya existentes ([cinco fechas de 2026 de los fixtures que ya estaban en `main`, omitidas al pegar; ver la nota de arriba]), no tests nuevos.
+  - Los textos nuevos de `CLAUDE.md` y de `ENTRADA-MARZO.md` no llevan días de 2026, solo meses.
+  - Yo no abrí nada de `knowledge/cases/holdout/`, ni `ventanas.yaml` o `particiones.yaml` de `kit/`, `fidelidad/` o `visto/`, ni `data/`.
+- **Que los tests fallen con `main` (alcance 5).**
+  - Contra el código de `main` leído con `git show`, la tabla de §3.5 cuadra. Las 11 llamadas suman 3 (`_minuto`) + 1 (`construir_caso`) + 2 (`_sesion_de`) + 1 (`_hora_local`) + 1 (`hoja_trader`) + 1 (`hora_local`) + 1 (`documento`) + 1 (`config_desde_doc`). Las horas de la ventana de desfase (23:00Z-14:00Z en `main` contra 22:00Z-13:00Z por la rejilla) salen de la aritmética del ancla (17:00 NY en EDT = 21:00Z, la vela 3 abre a las 05:00Z, y 00:00 nominal = 05:00Z menos 7 h).
+  - Los guiones de medida (`medir_main*.py`) están en la carpeta de trabajo, fuera del repo, así que no pude rehacer esa medida.
+  - Los tests que pasarían con la API de `main` son los que lo prometen: el control, la hoja de un día normal, la sesión de ingesta de la semana de control y `test_las_semanas...` (calendario puro). Los demás prueban API que en `main` no existe.
+  - La corrección que el informe cuenta (mínimo de 150 velas, porque con 200 `main` ya excluía el viernes por las velas) es honesta y la verifiqué leyendo el docstring del test.
+- **Z (alcance 6).**
+  - `CLAUDE.md` dice A-42 RESUELTA (ADR-0069), `cases/` por la rejilla, la PARADA B0 ya no detiene, lo que falta del paso 0 (marzo en `vistos.yaml`, confirmación del trader) y el paso a. La columna de fechas la lee Aleks y cita ADR-0046 §6a. Todo cuadra con las medidas anteriores.
+  - El «QUIEN: el consultor» de la regla general queda sin tocar y anotado como pendiente (`CASES-REJILLA.md:352-354`).
+  - El recuadro de `ENTRADA-MARZO.md` está encima del de `activacion-a42`, con fecha y rama, y el cuerpo intacto (`git diff` solo añade 11 líneas).
+- **Informe de la rama.** Existe y acaba en `## Estado: EN CURSO`. Lo declarado como hallazgos del consultor está en §3.8 (`kit hoja` roto en `main` por A-9, y la ingesta con el reloj del registro). No pude comprobar que `kit hoja` falle igual en `main` porque exige ejecutar y escribir.
+
+### Eje (b) · Encargo
+Resumen: 1 bloquea (pendiente de la CI), 1 importa, 1 menor. Requisitos: 15 hechos, 3 parciales, 1 no hecho.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Verificar con git `main`=26326b2, el tag y que no hay otra rama | Hecho | Informe líneas 7-9. `git rev-parse "stable/F37i-demo-ejecucion-1^{commit}"` da 0b1c8ef…; `git branch -a` da `main`, `trabajo/cases-rejilla` y los remotos. |
+| 2 | Abrir con la skill: encargo, `contrato.yaml`, Archivo 26 | Hecho | f8237bd; `docs/encargos/trabajo-cases-rejilla.md`; `contrato.yaml`; `HISTORIA.md` +185 líneas, 0 borradas. |
+| 3 | Fase 0 a) a f) en el informe y PARADA | Hecho | `CASES-REJILLA.md` §0.a a §0.f y §1. |
+| 4 | Holdout: no listar carpetas con meses reservados; rutas literales | Parcial | Se listó `git ls-files knowledge/cases` filtrado con `grep -v` (hallazgo a1). Declarado el mismo día. |
+| 5 | Los tests usan 2024 o 2025, nunca días de 2026 de meses reservados | Hecho | `test_cases_rejilla.py` y `test_ingesta_rejilla.py` usan solo fechas de 2024. |
+| 6 | Declaración por recuento de lo que leen `kit build` y `kit check`, y exposición declarada el mismo día | Hecho | Filas del 2026-10-10 en `HOLDOUT-EXPOSICIONES.md`; informe §4. |
+| 7 | `cases/` calcula toda ventana por la puerta, con un solo camino y test que falle si aparece otro | Hecho | `ventanas.construir_caso` usa `reloj.instante`; `test_un_solo_camino_...` (`test_cases_rejilla.py:178`); `_minuto` desaparece. Matiz en a3. |
+| 8 | Test del día de desfase de 2024: la ventana por la rejilla una hora antes | Hecho | `test_un_dia_de_desfase_abre_una_hora_antes_que_la_pared` (`:90-104`), con `main` en 23:00Z-14:00Z. |
+| 9 | Test del día de rejilla con vela irregular, que no entra en el universo, forzado como dice la fase 0 (§0.e) | Parcial | `test_un_dia_de_rejilla_con_vela_irregular_...` (`:121-140`) prueba `construir_caso` con un viernes y un jueves, y no `universo()`. §0.e prometía construir el universo de una semana sintética, con el viernes excluido y los otros cuatro días dentro. Eso no se hizo ni se declara como cambio (hallazgo b1). |
+| 10 | Test de la semana de control, idéntica a `main` | Hecho | `test_un_dia_de_control_sale_identico_al_de_main` (`:107`); `test_en_la_semana_de_control_la_sesion_es_la_de_main`. |
+| 11 | Regresión en enero, abril y agosto de 2026, por hash, con dos worktrees, `kit build`, `kit check` y ventanas, con la condición del desfase y `casos_reservados` comprobada antes | Hecho | §0.f y §3.6. Dan 22, 22 y 21 laborables, 0 días de desfase y 0 casos en `casos_reservados`. Hashes idénticos salvo `ventanas.yaml`, que difiere solo en la clave nueva (diff mostrado, y el hash sin la clave coincide con el de `main`). Código sin cambios entre la regresión (b0e8742) y HEAD (solo un test y docs). El «tercer hash» de `universo()` se cubre con `ventanas.yaml` sin la clave (hallazgo b2). |
+| 12 | Respuesta del consultor a la PARADA, punto 0: la puerta en `cases/relojes.py` sin cambio de lógica, `engine/relojes.py` reexporta, un test de que no define nada propio, y los tests del motor no se tocan | Hecho | Lo verifiqué arriba. El único test del motor tocado es el de la PARADA 2, que el consultor autorizó (`CASES-REJILLA.md:342-350`). |
+| 13 | Punto 1: el reloj congelado en una clave de primer nivel, `reloj_reloj` leída negando por defecto, medida previa con `grep -c` | Hecho | `grep -c` da 0 y 0 (§3.1 del informe). Clave y lectura en `ventanas.py` y `paquete.py`. Declara el cuarto parámetro, `huso_grafico`, que el consultor no nombró y que justifica porque la puerta también lo lee (hojas). Falta el test del cableado (a2). |
+| 14 | Puntos 2 a 5 (día no operable por la puerta; guardia de ingesta con test que la rompe; hoja con test de desfase y día normal byte a byte; mecánica de regresión sin escribir en `data/` y con los worktrees retirados) | Hecho | Test de la guardia: `test_si_el_dia_de_la_fila_no_es_el_dia_operativo_la_ingesta_para`. Hoja: `test_la_hoja_de_un_dia_de_desfase...` y `test_la_hoja_de_un_dia_normal...`. Los worktrees se retiraron (§3.6). Lo declara el informe: la hoja Word no se pudo comparar porque `kit hoja` sale con exit 1 también en `main`, y la cubren los dos tests. |
+| 15 | Z: párrafo de `CLAUDE.md` y recuadro de `ENTRADA-MARZO.md` con fecha y rama, sin tocar el cuerpo | Hecho | Ver arriba. |
+| 16 | `make check` en verde con el `SELLO` antes de cada commit | Hecho | `make-check.log`: `SELLO` sobre el árbol de HEAD; `2484 passed`. |
+| 17 | Empujar como `fix/cases-rejilla`, pasar la CI de Linux y dar los números de run | Parcial | Existe `origin/fix/cases-rejilla`. El informe todavía no trae números de run ni resultado (`## Estado` dice «Faltan la CI de Linux y el revisor»). No pude consultar la CI (hallazgo b3). |
+| 18 | Lo que no se toca: motor y su puerta (salvo exponer), spec, knowledge, parámetros, huso_operativa del día de riesgo, `ticks_spread.py`, congelados, marzo, `motor arnes` | Hecho | `git diff --name-status` (arriba). No hay ninguna ejecución de `motor arnes` en el informe. Marzo: ni abierto, ni listado, ni sorteado, ni ingerido. |
+| 19 | Pasar el revisor y pegar su informe al final del informe de la rama | No hecho | Pendiente: este informe es el que hay que pegar. Lo pega quien lo recibe, no yo. |
+| | Lo que la rama hace y el encargo no pide | Declarado | La reexportación de tres nombres más (`DE_PARED`, `MINUTOS_H4`, `MINUTOS_POR_DIA`) en `engine/relojes.py`. El registro sintético de `test_kit.py` gana `reloj_sesiones = civil_operativa` (§3.4 y §3.8, punto 3). Nada sin declarar. |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | Del requisito 9 sale una prueba más débil que la prometida. El encargo pide que el día irregular «no entre en el universo» y la fase 0 prometía el universo de una semana sintética. El test llama a `construir_caso` y no a `universo()`, y el informe no lo declara. Ningún test ejecuta el camino `universo() -> excluidos` con la rejilla y las `sesiones` nuevas; solo la regresión con datos reales, donde la puerta nunca excluye. El informe tampoco lo dice. | `tests/unit/test_cases_rejilla.py:121-140`; `CASES-REJILLA.md:173-177` y `:438`. |
+| b2 | menor | La regresión sustituye el «tercer hash» de §0.f (el YAML de `universo()` por clon) por el hash de `ventanas.yaml` sin la clave, sin decir que lo sustituye. El contenido es el mismo (casos, universo y excluidos). | `CASES-REJILLA.md:240-243` contra `:491`. |
+| b3 | bloquea (pendiente, no defecto) | El encargo exige que pase la CI de Linux de `fix/cases-rejilla` y los números de run en el informe. Hasta que el run 38087137947 termine en verde y entre en el informe, la rama no está lista. El único fallo aceptado es el de `state check` por el nombre `fix/`. | `CASES-REJILLA.md:585-586`. No pude consultar la CI (ver abajo). |
+
+### Lo que no pude comprobar
+- **Estado de la CI** (run 38087137947, commit 81517308ab…): el `curl` lo bloquea el hook de solo lectura (`curl escribe`). Hay que mirarlo aparte.
+- **`uv run botsito kit check`** (la segunda comprobación del contrato) y `make check`: leen velas de días reservados, o escriben. La evidencia de `make check` es el `SELLO`; la de `kit check` es lo que cuenta el informe (§3.6: los dos hashes iguales en `main` y en la rama).
+- **Los hashes de la regresión y los guiones de medida** (`medir_fase0*.py`, `medir_main*.py`, en la carpeta de trabajo): no existen en el repo y la regresión escribe en worktrees. Verifiqué por lectura que el código no cambió desde b0e8742 y que las tablas son coherentes con el código de `main`.
+- **Qué salió exactamente en pantalla del `git ls-files knowledge/cases | grep -v holdout`**: me fío de la declaración (nombres de `dev/`, `fidelidad/`, `kit/` y README; ningún nombre de `holdout/`).
+- **Que las dos respuestas del consultor estén copiadas «tal cual»**: leí §2 y §3.3 y son coherentes, pero no tengo el original.
+- **`kit hoja` roto en `main`**: ejecutarlo escribe.
+
+### Comandos ejecutados
+1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %s' main..HEAD; git diff --stat main...HEAD; git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `uv run pytest tests/unit/test_cases_rejilla.py tests/contract/test_ingesta_rejilla.py tests/unit/test_sesiones_rejilla_h4.py -q -p no:cacheprovider`
+4. `uv run pytest tests/unit -q -p no:cacheprovider -k "rejilla or ventanas or kit"`
+5. `git diff 26326b2 --stat -- knowledge data config docs/adr` (bloqueado por la guardia por nombrar `data`); en su lugar `git diff --name-status 26326b2 HEAD`
+6. `git rev-parse HEAD^{tree}; git log -3 ...; ls -l make-check.log; grep -n "failed\|passed" make-check.log; tail -4 make-check.log`
+7. `git diff 26326b2 HEAD -- src/botsito/engine/relojes.py`; `git diff 26326b2:src/botsito/engine/relojes.py HEAD:src/botsito/cases/relojes.py`; `git show HEAD:src/botsito/engine/relojes.py | tail -20`
+8. `git grep -n "engine.relojes" HEAD -- tests`; `grep -rnE "engine\.relojes|..." src scripts tests pyproject.toml`; `grep -n "def \|^class " src/botsito/cases/relojes.py`; `grep -n "relojes\.[A-Za-z_]*" -o ...`; `grep -rn "relojes.py\|getsource" tests`
+9. `git diff 26326b2 HEAD -- src/botsito/cases/ventanas.py`, `paquete.py` y `fidelidad.py`, `ingesta.py`, `hoja_docx.py`, `biblioteca.py` y `cli.py`
+10. `git diff 26326b2 HEAD -- tests/unit/test_sesiones_rejilla_h4.py tests/unit/test_kit.py tests/contract/test_cobertura.py tests/contract/test_ingesta.py tests/contract/test_ingesta_fidelidad.py`
+11. `git diff 26326b2 HEAD -- CLAUDE.md docs/runbooks/ENTRADA-MARZO.md docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md`
+12. `ls src/botsito/cases/; grep -rnE "huso_operativa|ZoneInfo|astimezone|tzinfo|timezone|huso_canonico|fromtimestamp|combine\(|localize|\bUTC\b" src/botsito/cases --include=*.py`
+13. `grep -noE "2026-(0[1-9]|1[0-2])-[0-9]{2}..." docs/validation/CASES-REJILLA.md`; el mismo patrón sobre las líneas añadidas del diff de tests, src, `CLAUDE.md` y `docs/runbooks`
+14. `grep -c "marzo" knowledge/corpus/manifest.yaml` (da 8); `grep -c "2026-03" knowledge/cases/kit/vistos.yaml` (da 0); `grep -n '"2026-03"' knowledge/cases/fidelidad/config.yaml`; `grep -n "cupos_por_mes\|cobertura_material" ...`; `sed -n 96,108p knowledge/cases/fidelidad/config.yaml`; `grep -n "§6\|6a\|columna de fechas\|Aleks" docs/adr/0046*.md`
+15. `awk` sobre `knowledge/spec/ambiguedades.yaml` (A-42); `grep -n "estado: RESUELTA" ...`
+16. `uv run python -c` (solo lectura): reloj del registro sobre los laborables 2000-2035; da 9391 laborables y 0 que la puerta no decida. El primer intento falló por pasar `str` en lugar de `Path`; el segundo corrió.
+17. `git show 26326b2:src/botsito/cases/ventanas.py | sed -n 75,78p`; `sed` de `src/botsito/data/dataset.py` 396-434; `sed` de `pyproject.toml` 92-118; `git log -1` de 04f1ed9, 5facde9 y 394a18e
+18. `git show 26326b2:PROJECT_STATE.md | wc -l`; `git diff ... -- docs/state/HISTORIA.md` contado y mostrado; `git rev-parse "stable/F37i-demo-ejecucion-1^{commit}"`; `git branch -a`
+19. `git diff --stat b0e8742 HEAD`; `git diff --stat ba44908 b0e8742`
+20. `grep` de `reloj_sesiones|reloj_de_ventanas|CLAVE_RELOJ` y de `hoja_docx|documento(` sobre `tests`
+21. `grep -n "def esquema_paquete" ...` y `grep -n "ANCLAJE_H4|'A-9'" ...`
+22. `curl` a la API de check-runs (bloqueado por la guardia de solo lectura)
+
+Ficheros relevantes (rutas absolutas):
+- `C:\Users\USER\Desktop\Bot v3\docs\validation\CASES-REJILLA.md`
+- `C:\Users\USER\Desktop\Bot v3\tests\unit\test_cases_rejilla.py`
+- `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\ventanas.py`
+- `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\paquete.py`
+- `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\fidelidad.py`
+- `C:\Users\USER\Desktop\Bot v3\src\botsito\cases\ingesta.py`
+
 ## Estado
 
-EN CURSO. Fase 1 hecha (§3.4 a §3.8): código, tests, regresión y Z. Faltan la CI de Linux
-(`fix/cases-rejilla`) y el revisor.
+**LISTA PARA REVISIÓN, NO CERRADA.** Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
+(§2); PARADA 2 y su respuesta (§3.2, §3.3); fase 1 hecha (§3.4 a §3.8): `cases/` cuenta la ventana
+de cada caso por la puerta del reloj, que vive en `cases/relojes.py` y `engine/relojes.py`
+reexporta; los artefactos nuevos congelan `reloj_sesiones` y los congelados se comprueban con el
+suyo; la regresión de enero, abril y agosto sale idéntica a `main` salvo la clave nueva; Z en
+CLAUDE.md y ENTRADA-MARZO. Revisor pasado y sus hallazgos atendidos (§5). CI de Linux: run
+38087137947 con solo el fallo esperado de `state check` (§6); el run del último commit, en el
+mensaje de entrega. Exposiciones: las dos filas del 2026-10-10 (§4). Pendientes para el consultor:
+§3.3 (el «QUIEN» de la regla general) y §3.8. La rama remota `fix/cases-rejilla` se borra en el
+cierre.
