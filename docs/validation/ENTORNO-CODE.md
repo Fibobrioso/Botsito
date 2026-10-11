@@ -274,6 +274,333 @@ reloj-invierno, guardias-citas):
 
 > Añadido para esta noche (consultor, 2026-10-11): Aleks no está hasta mañana. Cópialo al final del encargo y en el informe. Trabaja sin esperarme toda la fase 1 y la entrega (skill entregar-rama cuando esté instalada), hasta «Rama lista para revisión, NO cerrada». Si una pieza choca con algo medido y necesita decisión, NO pares la rama: apunta esa pieza como PARADA en el informe con sus opciones y tu recomendación, déjala sin hacer, y sigue con las demás. Nunca cierres ni toques main. Si una ejecución larga muere por memoria, no la relances: apúntalo y sigue con lo que no dependa de ella. Si el clasificador niega un push, deja el comando exacto en el informe para que Aleks lo lance por la mañana. Al terminar, el resumen final para Aleks de entregar-rama.
 
+## 3. Fase 1 · Lo hecho
+
+Commits de la fase 1: `248d8df` (las piezas, E1, E2, E4, E5, E6, E7 y la duración de E3) y
+`efe7f92` (E3, la ejecución compartida de `knowledge validate`), cada uno con `make check` en
+verde y su línea `SELLO`. El `Makefile` NO cambia: es la PARADA de §4.
+
+### 3.1 Las piezas del paquete, instaladas con las correcciones de 0.a
+
+Las cinco skills y el agente se copiaron del paquete (versión 2, sin CRLF) y se corrigieron solo
+en lo que 0.a midió falso o en conflicto (respuesta 5: «aceptadas todas»). Cada corrección:
+
+| Pieza | Corrección | Sale de |
+|---|---|---|
+| `auditor-encargo.md` | los heredados también en «Pendientes heredados» de `PROJECT_STATE.md` y como `HER:n` en la hoja de ruta | 0.a, fila auditor :41-42 |
+| `auditor-encargo.md` | «pendiente con due» (el repo escribe «dueño») | 0.a, :43-44 |
+| `auditor-encargo.md` | el «Nunca `--help`» cita su fuente (`UMBRAL-MAYO.md`, cabecera) | 0.a, :46-47 |
+| `auditor-encargo.md` | el tramo es el `## `; la entrada es el `###` con la `NA:` del encargo; «Depende de» HECHO y la siguiente según la hoja y la F (no «camino crítico») | 0.a, :48-50 |
+| `fase-cero` | la columna de fechas la lee Aleks (ADR-0072); si la fase 0 la necesita, PARADA | 0.a, fase-cero :29-41 |
+| `activar-sesion` | el ejemplo de herencia es el heredado 15 (A-18, R1.1), no el refiltrado HECHO; la hoja entre las fuentes | 0.a, :24 |
+| `activar-sesion` | el arnés: la corrida de R3.1 y ADR-0070 («Decision», punto 3) | 0.a, :44-46 |
+| `activar-sesion` | el grep de «quién la espera» incluye `docs/plan/HOJA-DE-RUTA.md` | 0.a, :55 |
+| `activar-sesion` | `feedback new` con todas sus opciones obligatorias (`cli.py`), y `--valor-canonico` | 0.a, :61-63 |
+| `entregar-rama` | zoneinfo citado de los encargos, no de RITUAL | 0.a, :20 |
+| `entregar-rama` | sin el «23.000»: el tope es el del test y el saldo el del encargo | 0.a, :55-56 |
+| `entregar-rama` | el paso 4 prepara las líneas de la Next Action y de la hoja para el commit del contrato | 0.a, paso 4 |
+| `entregar-rama` | la CI por la API de check-runs con el sha literal; el log con `gh run view --log-failed` | 0.a, :38 y :63 |
+| `entregar-rama` | **añadido, medido en esta rama:** si la rama cambia el `Makefile`, la guardia no deja ejecutar `make` y el `make check` lo lanza Aleks con «!» (§4) | medida de §4 |
+| `retomar-rama` | el tramo y su entrada de la hoja; remite a «Por donde se empieza» y al hook de E1 | 0.a, :14-28 |
+| `comparar-con-main` | los clones en una ruta corta, con el test que lo provoca y su motivo | respuesta 5 |
+
+### 3.2 E1 · El hook de arranque
+
+`.claude/hooks/estado_sesion.py` y su entrada `SessionStart` en `.claude/settings.json` (matcher
+`startup|resume|clear|compact`, junto al `PreToolUse`, que no cambia). Imprime la rama y su
+último commit; el contrato (artefacto, riesgo y tramo; respuesta 7: solo el tramo, sin título);
+el encargo; la línea de `## Estado` del informe o «sin informe»; «ESPERANDO al consultor» si la
+última PARADA del informe no tiene respuesta después y no hay tantas respuestas en el encargo; un
+AVISO si las respuestas no están en los dos; en `main`, las letras vivas de la Next Action y «sin
+rama abierta»; y «Para retomar: skill retomar-rama».
+
+Cómo se vigila a sí mismo: solo `leer` abre ficheros, y solo los de `lista_cerrada`
+(`contrato.yaml`, `PROJECT_STATE.md`, el encargo de la rama y el artefacto); cada uno pasa antes
+por `guardia.Politica(raiz).motivo_fichero(ruta absoluta)` (0.b); si la guardia da motivo o
+falla, no se lee y se dice. Git solo de lectura. Cualquier error es una línea y sale con 0.
+Medido sobre el repo real: 0,16 s. `mypy --strict` pasa sobre él (`uv run mypy --strict` con las
+otras dos guardias), pero la línea `types` del `Makefile` no lo incluye todavía (§4).
+
+Tests (`tests/unit/test_estado_sesion.py`, 11): rama con contrato; `main`; PARADA sin respuesta
+(y con ella copiada en los dos, ya no espera); respuesta copiada solo al encargo; sin informe (sin
+fichero y sin `artefacto`); un fichero que la guardia bloquea (un caso del holdout sintético en un
+repo temporal: no se abre, y su contenido no sale); la lista cerrada y `leer` negando fuera de
+ella; un test por AST que falla si cualquier otra función del hook abre un fichero; nunca
+bloquea (repo real en menos de 2 s, fuera de un repo, raíz inexistente, error interno); y la
+entrada de `settings.json`.
+
+### 3.3 E2 · El revisor con opus
+
+`.claude/agents/revisor.md`: `model: opus`. La justificación, con la cifra MEDIDA (respuesta,
+«Y E2»): en la tabla de `ERRORES-RECURRENTES.md` hay hallazgos del consultor sin constancia de que
+el revisor los viera en **20 de sus 28 filas**, y en **4 de las 7 últimas** (0.b). La tabla no
+registraba el modelo; desde esta rama, «Como se rellena» pide anotarlo en cada fila, para medir el
+cambio en las siguientes.
+
+### 3.4 E3 · El tiempo de `make check`
+
+**La duración en `make check`.** `scripts/pico_memoria.py medir` apunta ahora también los
+segundos de cada orden, e `informe` imprime una línea `DURACION de make check: N s en total; por
+paso (s): ...` y DESPUÉS, como última línea del log, la del pico, que no cambia
+(`tests/unit/test_memoria.py`, dos tests). Es lo único de E3 que entra por ese camino: el
+`Makefile` no cambia.
+
+**`pytest-xdist`**: no entra (respuesta 1). `pyproject.toml` y `uv.lock`, sin cambios.
+
+**Los cinco tests de `knowledge validate` (respuesta 1).** En `tests/conftest.py`, un fixture de
+sesión, `validacion_del_repo`, ejecuta `knowledge.validar(REPO)` una vez y guarda
+`(codigo, tupla de lineas)`; como los fixtures de sesión se crean antes que `holdout_guard`,
+enciende la guarda del holdout a mano, la vigila igual (si ve una lectura, falla) y la deja como
+estaba. Otro, `knowledge_validate_compartido`, de función, sustituye durante el test
+`botsito.validation.knowledge.validar` por una que, SOLO para el repositorio real, devuelve ese
+resultado (una lista nueva cada vez: ningún test puede cambiárselo a otro); con cualquier otra raíz
+llama a la de verdad. `cli.knowledge_validate` importa `validar` al llamarla, así que la CLI recibe
+el resultado sin cambiar nada de `src/`.
+
+| Test | Usa el resultado compartido | Cambio en el fichero |
+|---|---|---|
+| `test_cli.py::test_knowledge_validate_real_repo` | sí | el `usefixtures` |
+| `test_cli.py::test_cli_entrypoint_runs` | sí | el `usefixtures` |
+| `test_retirados.py::test_el_repo_real_retira_uno_y_ninguna_salida_lo_nombra` | sí (solo su `knowledge validate`; sus otros comandos corren igual) | el `usefixtures` |
+| `test_historial_sin_git.py::test_con_git_las_lineas_ok_son_las_de_main` | sí | el `usefixtures`, y `validar(REPO)` pasa a `knowledge.validar(REPO)` (el nombre importado al cargar el módulo no ve el fixture) |
+| `test_citas_supersedidas.py::test_knowledge_validate_lleva_g1` | **no: se queda como está** | ninguno |
+
+Por qué G1 se queda: ese test sustituye `citas_a_supersedidos` por una que falla y comprueba que
+`validar` sale con ERROR; vigila que G1 esté CONECTADA a `validar`, y eso solo lo enseña una
+ejecución con la pieza cambiada. Un resultado compartido, calculado con la pieza de verdad, no
+puede mostrarlo.
+
+Las condiciones de la respuesta, medidas en dos clones `--detach` de ruta corta (`C:\ecA` en
+`248d8df`, antes del fixture; `C:\ecB` en `efe7f92`, después), cada uno con su `.venv`
+(`uv sync --locked --group dev`; los dos importan su propio `botsito`):
+
+- **(a) Las aserciones, tal cual.** El diff de los cuatro ficheros (`git diff 248d8df efe7f92 --
+  tests/unit`) solo añade los `usefixtures` y cambia la llamada de `test_con_git`; ninguna línea
+  `assert` cambia.
+- **(b) El mismo resultado por nombre.** La suite entera en los dos clones a la vez, con JUnit XML:
+  2.545 passed, 10 skipped y 0 failed en los dos, y la comparación nombre a nombre
+  (`classname::name` y su estado) da **cero diferencias**. Los dos clones, sin cambios tras correr
+  (`git status --porcelain` vacío). En la ruta corta, el test de las rutas de Windows que falló en
+  la fase 0 pasa.
+- **(c) Cada uno sigue fallando si se rompe lo que vigila**, en `C:\ecB` (con el fixture), un caso
+  por test y el clon restaurado tras cada uno:
+
+| Rotura a propósito (en el clon) | Test | Resultado |
+|---|---|---|
+| ninguna | los cinco | 5 passed (exit 0) |
+| G1 desconectada: `fallos_g1, _vigilados = [], 0` en `validar` | G1 | 1 failed (exit 1) |
+| el repo deja de validar: se borra el ADR-0071, que la spec cita | `test_knowledge_validate_real_repo` y `test_cli_entrypoint_runs` | 2 failed (exit 1) |
+| `validar` añade a su salida el id del caso retirado | el del retirado | 1 failed (exit 1) |
+| `validar` añade una línea «NO se comprobo» | el de las líneas OK con git | 1 failed (exit 1) |
+
+  Las roturas están en `scratchpad/e3/e3c_romper.py` de la sesión (fuera del repo). La del
+  retirado corrió con `pytest -q --tb=no -rN` y solo se guardó la última línea: el id del caso,
+  que es de un día reservado, no salió a ningún log ni a la pantalla.
+
+- **(d) Duración y pico de `make check`**, del propio `make-check.log` (la línea `DURACION`
+  nueva), en el repo real, en la misma máquina:
+
+| `make check` del commit | Total | `test` | `knowledge` | Pico |
+|---|---:|---:|---:|---:|
+| `248d8df` (antes) | 1.209 s | 1.121 s | 84 s | 294 MiB |
+| `efe7f92` (después) | 952 s | 870 s | 79 s | 295 MiB |
+
+Baja 257 s (un 21 %), con el mismo pico. Los cinco tests, en los clones: 370,7 s antes
+(72,5 + 72,0 + 72,8 + 78,1 + 75,3) y 149,3 s después (G1 72,4; el primero que pide el fixture,
+72,8; los otros tres, 0,0 + 0,0 + 4,1). El paso `knowledge` (84 s) sigue aparte: es el de
+`make check`, no un test.
+
+### 3.5 E4 · `tests/unit/test_skills.py`
+
+Falla si una skill o un agente nombra entre comillas invertidas una ruta de `docs/`, `src/`,
+`scripts/`, `tests/`, `knowledge/` o `.claude/` que no existe (plantillas fuera: `<`, `>`, `{`,
+`*`, `0N` y `NN`, respuesta 3; el primer término del código, sin `:línea`); si nombra una skill o
+un agente que no existe (junto a «skill», «subagente» o «agente»); si a una skill le falta `name`
+igual a su carpeta o `description`; o si a un agente le falta `name`, `description`, `tools` o
+`model`. Pasa sobre el repo real con las diez piezas. Tests del test: una ruta inexistente, un
+`name` que no casa, una skill y un subagente que no existen, una skill sin `description`, una sin
+cabecera y un agente sin `model` fallan, cada uno con un solo problema; cinco plantillas y una
+ruta con `:línea` no fallan.
+
+Dos cosas que la especificación no dice, declaradas: (1) la cabecera se lee como YAML y, si no lo
+es, línea a línea `clave: valor`, como Claude Code: la `description` de `abrir-rama` (en `main`)
+lleva «: » sin comillas y `yaml.safe_load` la rechaza; (2) el `name` de un agente tiene que ser su
+fichero, como el de una skill su carpeta.
+
+### 3.6 E5 · Lo nuevo, nombrado
+
+- `CLAUDE.md`, «Por donde se empieza»: la lista completa de skills en el orden de una rama, las
+  dos aparte y los dos agentes, una línea cada uno con cuándo se usa. La frase que
+  `tests/unit/test_revisor.py` exige literal («Antes de declarar una rama lista para revisión: …»)
+  no se tocó.
+- `.claude/agents/revisor.md`, eje (b), punto 5 nuevo: si el encargo pedía FASE 0, «Lo que
+  necesito que decidas» y cada respuesta tal cual en el informe y en el encargo; y «El encargo,
+  punto por punto». `test_revisor.py` exige los dos fragmentos.
+- `docs/runbooks/ERRORES-RECURRENTES.md`, «Como se rellena» (respuesta 4, sin recuadro): la fila
+  del revisor se apunta al CERRAR, en el commit del contrato, como `RITUAL.md` y `cerrar-rama`;
+  el texto dice qué decía antes, con fecha y rama. Y anota el modelo del revisor (E2).
+
+### 3.7 E6 · `abrir-rama` comprueba la base entera
+
+Paso 1: `git fetch origin`; `main` igual al sha del encargo y a `origin/main`; el último
+`- Tag: ` de HISTORIA con `stable/<tag>^{commit}` = `main^1` y presente en origin; la CI de `main`
+en `success` por la API de check-runs con el sha literal; ninguna otra rama local (`trabajo/*`,
+`feature/*` ni `fix/*`, respuesta 6) ni `fix/*` en origin; si algo no cuadra, se para. Además,
+alineado con 0.c y 0.a: el artefacto nace con su cabecera y EN CURSO (la fase 0 la escribe
+`fase-cero` en su commit), y la Verificación incluye el artefacto. Ninguna puerta que tenía se
+quitó (`git diff 9fe3d44 248d8df -- .claude/skills/abrir-rama/SKILL.md`: solo amplía el paso 1,
+Herramientas y Verificación, y cambia la frase del inventario).
+
+### 3.8 E7 · `solo_lectura.py`
+
+Además de lo que ya negaba: `--salida` en cualquier subcomando de `botsito`, y `arnes`, `visor`,
+`hoja`, `visto`, `download` (también `download-ticks`), `contradictions` y `reject`, también con
+`--check` (ninguno lo tiene); y `--incluir-holdout`, con su propio motivo («abre el holdout»). El
+mensaje nombra a los dos agentes que lo usan. Tests en `tests/unit/test_revisor.py`: quince
+comandos que tienen que bloquearse (uno por forma, más `arnes` sin `--salida` y `--check` que no
+salva), cinco lecturas de `botsito` que siguen pasando, el motivo de `--incluir-holdout`, y que el
+auditor tiene solo herramientas de lectura y su Bash pasa por `solo_lectura.py`.
+
+### 3.9 Los tests nuevos, con el código de `main`
+
+Skill `comparar-con-main`, «Para probar un test con el codigo de main»: en el clon `C:\ecB`, puesto
+en `main` (d32db01), con `tests/unit/test_revisor.py`, `test_estado_sesion.py` y `test_skills.py`
+de la rama copiados dentro: **21 failed, 55 passed, 8 errors**. Fallan las dos frases nuevas del
+revisor, catorce de las quince formas de E7, el auditor, `--incluir-holdout`, la entrada de
+`settings.json`, el test por AST y el de «nunca bloquea» (el hook no existe), y el de las piezas;
+los 8 errores son los tests de E1 que cargan el hook. Pasan los tests antiguos, los tests
+sintéticos de E4 (prueban el test, no el repo), el de las skills del repo (las tres de `main` no
+señalan a la nada) y una forma de E7, `evidence propose --salida`, que `main` ya bloqueaba por
+`propose`. Después, el clon se restauró y se retiró con los dos (`git worktree list` sin ellos).
+
+### 3.10 Desviaciones declaradas
+
+1. **El `Makefile` no cambia** (§4): `make rapido` y la línea de `mypy --strict` del hook quedan
+   preparados, sin hacer.
+2. `tests/unit/test_memoria.py`, `test_medir_apunta_cada_paso_y_el_informe_da_el_mayor_y_limpia`:
+   el informe tiene ahora dos líneas, así que lee la ÚLTIMA (la del pico, igual que antes) y
+   comprueba además la de la duración. La línea del pico sigue siendo la última de
+   `make-check.log` y mide lo mismo.
+3. `abrir-rama`, «el artefacto nace con el inventario» pasa a «nace EN CURSO y el inventario lo
+   escribe `fase-cero`» (0.c, solape aceptado con la respuesta 5).
+4. Lo de E4 de §3.5 (cabecera tolerante y `name` del agente).
+5. `entregar-rama` lleva un límite que el paquete no traía (§3.1, última fila de `entregar-rama`).
+
+## 4. PARADA de esta noche: el `Makefile` (pieza sin hacer)
+
+Lo medido: con el `Makefile` cambiado, la guardia de Claude Code niega TODO `make`, también
+`make check`: «ejecutar `make rapido`: …\Makefile no es el de `main`: sus recetas son código de la
+rama sin revisar. … Como reescribirlo: no se reescribe; lo lanza Aleks en su terminal con «!»».
+Sin `make check` no hay sello y sin sello no hay commit, y Aleks no está esta noche. Por el
+añadido, la pieza queda sin hacer y la rama sigue.
+
+Lo que falta, preparado (diff contra `248d8df`):
+
+```
+-.PHONY: sync hooks check lint types ...
++.PHONY: sync hooks check rapido lint types ...
+ types:
+ 	$(MEDIR) types -- mypy
+-	$(MEDIR) types -- mypy --strict .claude/hooks/guardia.py .claude/hooks/solo_lectura.py scripts/contrato_rama.py
++	$(MEDIR) types -- mypy --strict .claude/hooks/guardia.py .claude/hooks/solo_lectura.py .claude/hooks/estado_sesion.py scripts/contrato_rama.py
++# Para iterar SIN SELLAR (E3, punto 0): lint, tipos y contratos, sin `desellar` ni `sellar` ni
++# variables; los tests concretos, con `uv run pytest <fichero>`.
++rapido: lint types contracts
+```
+
+Y un test que falle si `rapido` llega a `desellar`, `sellar` o `check`, o si alguna de sus recetas
+nombra `sello_make_check`.
+
+**Lo que necesito que decidas:**
+0. Opciones: (a) Aleks estadía el cambio y lanza `! make check > make-check.log 2>&1`; la sesión
+   lee el log y commitea; (b) sin `make rapido`, y `mypy --strict` del hook por un test que lo
+   ejecute (el `Makefile` no cambia y la sesión sella sola); (c) se deja para otra rama.
+   Recomiendo (a): es la letra de E1 y de la respuesta 0, y es un solo `make check`. Coste de (b):
+   un test lento más y una guardia de tipos fuera del sitio donde viven las otras dos.
+
+## 5. Lo que no cambia
+
+`git diff --stat main...HEAD` (27 ficheros): `.claude/` (las piezas, el hook, `settings.json`,
+`solo_lectura.py`, `revisor.md`, `abrir-rama`), `CLAUDE.md`, `PROJECT_STATE.md`, `contrato.yaml`,
+el encargo, `ERRORES-RECURRENTES.md`, HISTORIA (solo el Archivo 28), este informe,
+`scripts/pico_memoria.py`, `tests/conftest.py` y siete ficheros de `tests/unit/`. Nada de `src/`,
+`knowledge/`, `config/`, `data/manifests/`, ni de `cerrar-rama` o `ingerir-sesion`
+(`rutas_protegidas`; `scripts/contrato_rama.py` en verde). Ningún informe cerrado ni fichero
+congelado. `ESPECIFICACION.md` no se copió.
+
+- **Lo que sella `make check` no cambia**: el `Makefile` es el de `main`, y `pico_memoria.py`
+  solo añade una línea (la de la duración) ANTES de la del pico, que sigue siendo la última y
+  mide lo mismo. `sello_make_check.py` y los hooks de git no se tocan.
+- **Las puertas de `abrir-rama`**: las líneas que quita el diff de su `SKILL.md` son las del paso
+  1, Herramientas, la frase del inventario y la Verificación, y cada una vuelve ampliada (el
+  `checkout`, el `status` vacío, el sha del encargo y «se para y se pregunta» siguen). `cerrar-rama`
+  e `ingerir-sesion` no cambian.
+- **PROJECT_STATE.md**: 21.942 bytes frente a 21.959 de `main`: saldo −17 (solo cambian la rama,
+  la funcionalidad actual y el recuento de tests, 1462 → 1485).
+
+## 6. Preparado para el commit del contrato del cierre
+
+En la rama no se tocan (RITUAL, puntos 3 y 4).
+
+- **Next Action, F** (sustituye a la de hoy): si §4 se hace antes del cierre:
+  `F. Orden de trabajo: E (R1.1 de la hoja de ruta) es lo siguiente; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.`
+  Si no: `F. Orden de trabajo: el Makefile de trabajo/entorno-code (make rapido y mypy --strict del hook de arranque, PARADA de ENTORNO-CODE.md §4) y después E; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.`
+- **Hoja de ruta, R0.2**: se añade `- **Estado:** HECHA (\`stable/F37l-entorno-code\`; docs/validation/ENTORNO-CODE.md).`
+  (con §4 hecho; si no, la línea dice qué queda).
+- **Hoja de ruta, carril «guardias y deuda»** (respuesta 8), una entrada nueva:
+  `### G.4 · Las tareas repetidas que ninguna skill cubre` con `Refs: NA:F`; `Qué es:` los huecos
+  de 0.c (escribir un ADR nuevo; sacar líneas de PROJECT_STATE a HISTORIA con saldo ≤ 0; material
+  escrito del trader al corpus; registrar respuestas de FTMO o de Aleks; congelar un CSV de la
+  demo; demostrar un test por mutación; comparar reglas con main caso a caso; recuadros de
+  corrección; las notas del consultor para la orden de cierre) y volver a medir `pytest-xdist` con
+  la cifra nueva de E3 (respuesta 1); `Depende de: R0.2`; `Quién: la sesión, con el encargo del
+  consultor`; `Hecho cuando: cada hueco tiene skill o se decide que no la necesita`.
+- **ERRORES-RECURRENTES**, la fila de la rama, con el modelo del revisor: `opus` (§3.3).
+
+## 7. El encargo, punto por punto
+
+| # | Requisito (encargo, respuesta del 2026-10-11 y añadido) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Verificar la base antes de abrir; abrir con `abrir-rama`, `tramo: R0` | Hecho | cabecera; `bb3e3fd` |
+| 2 | Paquete versión 2 («5. **El tramo**») | Hecho | cabecera |
+| 3 | Fase 0 (a), (b), (c) en el informe, y PARADA | Hecho | §0 y §1; `9fe3d44` |
+| 4 | Fase 0 sin escribir en el repo; E3 en un clon `--detach`; xdist fuera del repo | Hecho | §0.b; `pyproject.toml` y `uv.lock` sin cambios |
+| 5 | Respuesta y añadido copiados tal cual al encargo y al informe | Hecho | §2 y §2.1; comparación por programa: iguales |
+| 6 | Piezas TAL CUAL salvo lo corregido, cada corrección declarada | Hecho | §3.1 |
+| 7 | `ESPECIFICACION.md` no se copia | Hecho | §5 |
+| 8 | E1, con sus tests (incluidos los que rompen a propósito) | Hecho, salvo la línea del `Makefile` | §3.2; §4 |
+| 9 | E2, justificado con la cifra medida (20 de 28; 4 de 7) | Hecho | §3.3 |
+| 10 | E3, punto 0: `make rapido` sin variables; la guardia no se toca | **No hecho: PARADA** | §4 (la guardia no se tocó) |
+| 11 | E3, punto 1: xdist no entra; los cinco tests comparten una ejecución, con (a)-(d) | Hecho (cuatro de cinco; G1 se queda, con su porqué) | §3.4 |
+| 12 | E3: `pico_memoria.py medir` apunta la duración; la línea del pico mide lo mismo | Hecho | §3.4; `make-check.log` |
+| 13 | E4, con `NN` en las plantillas y sus tests del test | Hecho | §3.5 |
+| 14 | E5: `CLAUDE.md`, el revisor y ERRORES-RECURRENTES:13 sin recuadro, declarado | Hecho | §3.6 |
+| 15 | E6: la base entera, con `feature/*` y `fix/*` locales | Hecho | §3.7 |
+| 16 | E7: la lista medida y `--incluir-holdout`, cada forma con su test | Hecho | §3.8 |
+| 17 | Respuesta 5: clones en ruta corta en `comparar-con-main`, con el test y su motivo | Hecho | §3.1; las medidas de §3.4 en `C:\ecA` y `C:\ecB` |
+| 18 | Respuesta 8: los huecos de 0.c, preparados para la hoja, no hechos | Hecho | §6 |
+| 19 | NO cambia: `src/`, spec, knowledge, parámetros, informes cerrados, lo que sella `make check`, las puertas de las skills | Hecho | §5 |
+| 20 | Nada de holdout; saldo de PROJECT_STATE ≤ 0 | Hecho | §8; §5 (−17) |
+| 21 | `make check` sellado antes de cada commit | Hecho | `9fe3d44`, `248d8df`, `efe7f92` y los siguientes |
+| 22 | Push como `fix/entorno-code` y CI de Linux, con sus run | Pendiente al escribir esto | §9 |
+| 23 | Informe con fase 0, PARADA, respuesta, lo hecho, estado y las líneas de F y R0.2 | Hecho | este informe; §6 |
+| 24 | Revisor con el alcance del encargo, pegado al final | Pendiente al escribir esto | §10 |
+| 25 | Desde la fase 1, con sus propias skills; entrega con `entregar-rama` | Hecho | este recorrido es el de `entregar-rama` |
+| 26 | Añadido: trabajar sin parar; lo que choca, PARADA en el informe y seguir; nunca tocar `main` | Hecho | §4; `main` sin tocar |
+
+## 8. Exposiciones
+
+Ninguna. Nada de holdout, `data/`, crudas, propuestas ni material del trader. El caso del holdout
+de `test_estado_sesion.py` es sintético, en un repositorio temporal. La rotura de E3 que hace
+imprimir el id del caso retirado corrió en el clon con `--tb=no -rN` y solo se guardó la última
+línea de pytest: el id no salió a ningún log ni a la pantalla.
+
+## 9. CI de Linux
+
+La rama toca `.claude/` y hooks: se empuja como `fix/entorno-code` (`RITUAL.md`). Runs: se anotan
+aquí al tenerlos.
+
 ## Estado
 
-FASE 1 EN CURSO (respuesta del consultor del 2026-10-11 copiada tal cual en el encargo y en §2).
+FASE 1 HECHA salvo el `Makefile` (PARADA de §4, sin hacer); falta la entrega: CI de Linux (§9) y
+el revisor (§10).
