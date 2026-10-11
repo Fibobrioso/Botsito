@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/hoja-de-ruta
+main
 
 ## Current Feature
-`trabajo/hoja-de-ruta` EN CURSO (entradas F y P): la hoja de ruta viva y las guardias que la cuadran con la Next Action. Encargo docs/encargos/trabajo-hoja-de-ruta.md; informe docs/validation/HOJA-DE-RUTA.md.
+`main` en `stable/F37k-hoja-de-ruta` (7823568): el orden y el estado vivos del trabajo están en docs/plan/HOJA-DE-RUTA.md, cuadrada con la Next Action por un test. Sin ramas abiertas; manda la Next Action (F). Informe docs/validation/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): la puerta del reloj en src/botsito/cases/relojes.py (engine/relojes.py la reexporta); la ventana de cada caso por la puerta, el día que no decide fuera del universo; reloj_sesiones congelado en ventanas.yaml y leído negando por defecto por kit check y fidelidad check; hojas con las horas del gráfico; la ingesta asigna la sesión por la puerta; Z en CLAUDE.md y ENTRADA-MARZO (PARADA B0 sin motivo). Sobre `stable/F37i-demo-ejecucion-1` (0b1c8ef). Informe docs/validation/CASES-REJILLA.md; el registro del cierre, al final de HISTORIA.
+7823568 · merge de `trabajo/hoja-de-ruta` (tag `stable/F37k-hoja-de-ruta`): la hoja de ruta y tests/unit/test_hoja_de_ruta.py; el campo `tramo` del contrato, obligatorio desde la rama siguiente; RITUAL y las skills la actualizan en el cierre; ADR-0072 (la columna de fechas la lee Aleks; los tres papeles). Sobre `stable/F37j-cases-rejilla` (f472e06). Informe docs/validation/HOJA-DE-RUTA.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-f472e06 · merge: cases/ cuenta la ventana de cada caso por la puerta del reloj (rejilla H4, ADR-0069), reloj_sesiones congelado y Z (CASES-REJILLA.md) · tag stable/F37j-cases-rejilla
+7823568 · merge: la hoja de ruta viva y su test, el tramo del contrato y ADR-0072 (HOJA-DE-RUTA.md) · tag stable/F37k-hoja-de-ruta
 
 ## Tests Currently Passing
 1462 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
