@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/hoja-de-ruta
 
 ## Current Feature
-`main` en `stable/F37j-cases-rejilla` (f472e06): cases/ cuenta la ventana de cada caso por la puerta del reloj de las sesiones (rejilla H4, ADR-0069) y los artefactos nuevos congelan reloj_sesiones. Sin ramas abiertas; manda la Next Action (F primero). Informe docs/validation/CASES-REJILLA.md.
+`trabajo/hoja-de-ruta` EN CURSO (entradas F y P): la hoja de ruta viva y las guardias que la cuadran con la Next Action. Encargo docs/encargos/trabajo-hoja-de-ruta.md; informe docs/validation/HOJA-DE-RUTA.md.
 
 ## Stable Main State
 f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): la puerta del reloj en src/botsito/cases/relojes.py (engine/relojes.py la reexporta); la ventana de cada caso por la puerta, el día que no decide fuera del universo; reloj_sesiones congelado en ventanas.yaml y leído negando por defecto por kit check y fidelidad check; hojas con las horas del gráfico; la ingesta asigna la sesión por la puerta; Z en CLAUDE.md y ENTRADA-MARZO (PARADA B0 sin motivo). Sobre `stable/F37i-demo-ejecucion-1` (0b1c8ef). Informe docs/validation/CASES-REJILLA.md; el registro del cierre, al final de HISTORIA.
@@ -184,8 +184,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 26 (2026-10-10).
+— ninguna desde el Archivo 27 (2026-10-10).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 26 (2026-10-10).
+— ninguna desde el Archivo 27 (2026-10-10).

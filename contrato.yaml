@@ -1,0 +1,32 @@
+rama: trabajo/hoja-de-ruta
+riesgo: medio  # cambia tests, herramientas (contrato_rama), RITUAL y las skills; no la spec, el motor ni ningun dato
+artefacto: docs/validation/HOJA-DE-RUTA.md
+rutas_permitidas:
+  - docs/plan/HOJA-DE-RUTA.md
+  - docs/plan/MASTER_PLAN.md
+  - docs/plan/README.md
+  - docs/validation/HOJA-DE-RUTA.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - tests/unit/test_hoja_de_ruta.py
+  - tests/unit/test_contrato_rama.py
+  - tests/contract/test_documentos_vivos.py
+  - scripts/contrato_rama.py
+  - docs/runbooks/CONTRATO-DE-RAMA.md
+  - docs/runbooks/RITUAL.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - .claude/skills/abrir-rama/
+  - .claude/skills/cerrar-rama/
+  - CLAUDE.md
+  - docs/adr/
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - knowledge/
+  - config/
+  - data/manifests/
+comprobaciones:
+  - uv run pytest tests/unit/test_hoja_de_ruta.py tests/unit/test_contrato_rama.py tests/contract/test_documentos_vivos.py -q
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
