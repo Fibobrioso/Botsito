@@ -125,6 +125,7 @@ def test_contar_tests(tmp_path: Path) -> None:
     assert cli.contar_tests(_repo_tmp(tmp_path)) == 2
 
 
+@pytest.mark.usefixtures("knowledge_validate_compartido")  # una ejecucion por sesion (E3)
 def test_knowledge_validate_real_repo(repo: Path) -> None:
     assert cli.knowledge_validate(repo) == 0
 
@@ -137,6 +138,7 @@ def test_knowledge_validate_detecta_registro_roto(tmp_path: Path) -> None:
     assert cli.knowledge_validate(tmp_path) == 1
 
 
+@pytest.mark.usefixtures("knowledge_validate_compartido")  # una ejecucion por sesion (E3)
 def test_cli_entrypoint_runs(repo: Path) -> None:
     assert cli.main(["--repo", str(repo), "knowledge", "validate"]) == 0
 
