@@ -4,6 +4,13 @@ Rama `trabajo/septiembre-entra`, desde `4f571ac` (tag `stable/F13-liquidez`). Si
 merge, sin tag, sin push. **Sin abrir el xlsx ni las capturas**, sin tocar velas, `config.yaml`, el
 paquete de la sesión 1 ni `knowledge/spec/` (12.1.1, mismo hash).
 
+> **CORRECCIÓN (2026-10-10, rama `trabajo/hoja-de-ruta`, ADR-0072).** La regla de §2b dice que la
+> columna de fechas la lee «el consultor, no una sesión ni un agente», y no salía de ningún ADR.
+> Desde ADR-0072 la lee **Aleks**, para todo backtest: el consultor es Claude en el chat, un agente,
+> y de un backtest recibe de Aleks solo la lista de fechas, nunca el fichero; la sesión ejecuta.
+> Donde este informe nombra al consultor como quien lee las fechas, rige ADR-0072. El cuerpo no se
+> toca.
+
 ## 1. La exposición del 2026-09-20, declarada el mismo día
 
 El consultor abrió `backtesting-analytics SEPTIEMBRE 2026.xlsx` en Excel y leyó **la columna de

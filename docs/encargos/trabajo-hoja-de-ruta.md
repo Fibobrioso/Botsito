@@ -37,3 +37,17 @@ Dado por Aleks (consultor) el 2026-10-10. Copiado tal cual:
 > - Pasa el revisor (subagente revisor), con este alcance: cada línea de la hoja de ruta tiene una fuente que existe, los tests fallan de verdad en los cuatro sentidos, no se pierde ninguna puerta de RITUAL, de cerrar-rama ni de abrir-rama, el saldo de bytes de PROJECT_STATE es ≤ 0, y nada de holdout. Pega su informe al final del tuyo.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-10), tal cual
+
+> Respuesta del consultor a la PARADA de trabajo/hoja-de-ruta (2026-10-10). Cópiala tal cual al final del encargo y en el informe.
+>
+> 1. P: ADR nuevo, y QUIEN es Aleks para todo backtest, como ya fija ADR-0046 §6a para marzo. Porqué: la regla de CLAUDE.md no sale de ningún ADR (SEPTIEMBRE-ENTRA.md §2b) y dice «no una sesión, no un agente»; el consultor es Claude en el chat, un agente también. El ADR define los tres papeles: Aleks (el usuario: decide, ordena los cierres y lee la columna de fechas de un backtest, una vez y antes del sorteo); el consultor (Claude en el chat: revisa, decide lo técnico y escribe los encargos; no ejecuta en el repo; recibe de Aleks solo la lista de fechas, nunca el fichero); y la sesión (Claude Code: ejecuta). CLAUDE.md se alinea con el ADR (QUIEN: Aleks) y lo cita. SEPTIEMBRE-ENTRA.md es un informe cerrado y no se toca; si contradice al ADR, un recuadro de corrección con fecha y rama.
+> 2. F: sí, con la línea del encargo, preparada para el commit del contrato del cierre.
+> 3. El refiltrado de v7–v10 está HECHO (ACTIVACION-A42.md §2.2): la coletilla de E fue un error del consultor, que la copió de HISTORIA sin medirla. La hoja de ruta lo da por hecho, y para el cierre se prepara E sin «Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q).».
+> 4. Heredados 2, 10, 15, 27 y 34: lo HECHO de cada uno sale a HISTORIA con su evidencia (punto 3 de RITUAL), y lo vivo se reescribe en una línea con su dueño (una letra de la Next Action o un carril de la hoja de ruta). El 15 queda ligado a E y sale cuando E cierre A-18. Todo, preparado para el commit del contrato, con el saldo de bytes de PROJECT_STATE ≤ 0.
+> 5. PROJECT_STATE.md:63: se corrige aquí la remisión a docs/state/HISTORIA.md. La descripción de firma_tamano_posicion_ratio_aviso no se toca en esta rama (knowledge/ queda fuera); va a la hoja de ruta, carril de deuda, con dueño: la próxima rama que toque el perfil de FTMO.
+> 6. Tramo: vale. Obligatorio solo si la hoja de ruta existe en el merge-base con main, con un test que lo rompa en los dos sentidos.
+> 7. Copia de seguridad: la hace Aleks; el consultor no tiene acceso a su máquina ni a su Drive. Va al carril de Aleks de la hoja de ruta, con fecha límite: antes de grabar la próxima sesión con el trader.
+>
+> Sigue con la fase 1.

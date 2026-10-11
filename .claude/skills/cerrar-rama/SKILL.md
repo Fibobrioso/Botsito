@@ -73,7 +73,10 @@ para el log de `make check`, Edit para `PROJECT_STATE.md` y, en la rama, para
      este commit;
    - todo cambio de la Next Action que mande la orden (punto 3 del runbook: salen las HECHAS a
      HISTORIA, entran las nuevas y cambian las que diga), con `PROJECT_STATE.md` por debajo de
-     25.000 bytes; si no, se para antes del commit.
+     25.000 bytes; si no, se para antes del commit;
+   - junto a la Next Action, `docs/plan/HOJA-DE-RUTA.md` (punto 4 del runbook): lo que sale pasa a
+     `**Estado:** HECHA` con su evidencia y lo que entra va a su tramo; `test_hoja_de_ruta.py`,
+     dentro de `make check`, es la puerta.
 4. `RITUAL.md`, «Los pasos, con sus puertas», en su orden: `git checkout main`, `status` vacio,
    `log main..<rama>` con el numero esperado, merge `--no-ff` (si `pre-merge-commit` rechaza:
    el bloque de `merge --abort` del runbook), tag anotado, lectura del sha (`branch`, `HEAD` y
@@ -109,7 +112,8 @@ de la CI y su `conclusion`.
 ## Verificacion
 
 - `git log --oneline -3 main` = commit de estado, merge, ultimo commit de la rama, que es el
-  `chore(cierre)` con el contrato fuera, el registro de HISTORIA y la fila de ERRORES-RECURRENTES.
+  `chore(cierre)` con el contrato fuera, el registro de HISTORIA y la fila de ERRORES-RECURRENTES
+  (y la Next Action y la hoja de ruta, si la orden las cambia).
 - `git show --stat HEAD` (el commit de estado) = solo `PROJECT_STATE.md`, y su diff no toca
   Change Log ni Completed Features.
 - `git rev-parse <tag>^{commit}` = el merge, y `Last Stable Commit` de `PROJECT_STATE.md` empieza

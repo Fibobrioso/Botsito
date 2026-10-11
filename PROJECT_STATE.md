@@ -16,7 +16,7 @@ f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): l
 f472e06 · merge: cases/ cuenta la ventana de cada caso por la puerta del reloj (rejilla H4, ADR-0069), reloj_sesiones congelado y Z (CASES-REJILLA.md) · tag stable/F37j-cases-rejilla
 
 ## Tests Currently Passing
-1444 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1459 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -32,7 +32,7 @@ D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden tras W (consultor, 2026-10-10): trabajo/hoja-de-ruta (HOJA-DE-RUTA.md, nueva en docs/plan/; un test que la cuadra con la Next Action, el tramo en contrato.yaml), después trabajo/entorno-code (skills y agente del consultor, hook de arranque, medida de make check), y después E. Los encargos los da el consultor.
+F. Orden de trabajo: trabajo/entorno-code y después E; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
 
 E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q). Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
 
@@ -60,8 +60,8 @@ N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-202
 
 ### Pendientes heredados (sin verificar)
 
-Del Next Action viejo, sin evidencia de estar hechos; texto entero y criterio de salida:
-`docs/state/README.md`.
+Del Next Action viejo, sin evidencia de estar hechos; texto entero: `docs/state/HISTORIA.md`;
+criterio de salida: `docs/state/README.md`.
 
 - 2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto…
 - 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es…

@@ -145,9 +145,11 @@ con `casos_reservados(repo)`, no se supone, y se declara igual el mismo dia.
 **Lo minimo para fijar el universo SI se lee, y no es abrir.** De un backtest del trader se puede
 leer QUE DIAS CUBRE EL MATERIAL -la columna de fechas- porque eso no es leer una etiqueta ni medir
 una cifra del bot (ADR-0021 §1), y sin universo no hay sorteo. Vale para CUALQUIER backtest, no solo el de septiembre: febrero
-o marzo vienen detras. Con tres ataduras:
+o marzo vienen detras. Con tres ataduras (ADR-0072, que fija tambien los tres papeles: Aleks, el
+consultor -Claude en el chat- y la sesion):
 
-- **QUIEN:** el consultor. No una sesion, no un agente.
+- **QUIEN:** Aleks. Ni el consultor ni la sesion, que son agentes; el consultor recibe de Aleks solo
+  la lista de fechas, nunca el fichero.
 - **CUANDO:** una sola vez, ANTES del sorteo. Nunca despues.
 - **QUE:** solo la columna de fechas. Ni resultados, ni PnL, ni una fila de operaciones.
 
@@ -158,7 +160,7 @@ caso por la rejilla H4 desde `trabajo/cases-rejilla` (CASES-REJILLA.md), asi que
 lo detiene; no se sortea ni se ingiere hasta cumplir lo que queda antes del paso b: del paso 0,
 marzo en `vistos.yaml` y la confirmacion escrita del trader (REGISTRO-MARZO.md §2), y el paso a.
 Lo unico que se lee antes es la columna de fechas, UNA vez y antes del sorteo, y **la lee Aleks**
-(ADR-0046 §6a, excepcion acotada a ADR-0039 §1); sus 7 imagenes no se abren. Guardia: la de Claude
+(ADR-0072; para marzo, ADR-0046 §6a, excepcion acotada a ADR-0039 §1); sus 7 imagenes no se abren. Guardia: la de Claude
 Code bloquea su carpeta `Backtest marzo 2026`.
 
 **Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre**

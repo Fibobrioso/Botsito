@@ -1,5 +1,12 @@
 # Master Development Plan · Botsito
 
+> **NOTA (2026-10-10, rama `trabajo/hoja-de-ruta`).** El ORDEN y el ESTADO vivos del trabajo están en
+> `docs/plan/HOJA-DE-RUTA.md`, que un test cuadra con la Next Action de `PROJECT_STATE.md`. Este plan
+> no se mantiene desde el 2026-09-16: §A sigue siendo la definición de cada funcionalidad (F01-F35,
+> que la hoja de ruta cita como `F:Fnn` con su estado medido), y **§E queda como historia**. Desde
+> F16 los tags `stable/F16..F37` son un contador, no la funcionalidad del plan con ese número. El
+> cuerpo no se toca.
+
 Version Markdown del plan (la version completa con detalle de cada funcionalidad esta en
 `MASTER_PLAN.html`, instantanea congelada del 2026-09-03; este Markdown manda cuando difieren). Deriva del informe de investigacion
 `docs/research/2026-09-03-del-corpus-al-bot.html` y no redefine el metodo: lo convierte en

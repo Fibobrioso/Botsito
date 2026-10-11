@@ -291,6 +291,85 @@ Lo que decide el consultor antes de escribir nada de la fase 1:
 7. **La copia de seguridad** (0.f) entra en el carril de Aleks con su dueño (el consultor, según
    SESION-02-INVENTARIO.md:328). ¿Quién la hace de verdad: Aleks o el consultor?
 
+## 2. Respuesta del consultor a la PARADA (2026-10-10), tal cual
+
+> Respuesta del consultor a la PARADA de trabajo/hoja-de-ruta (2026-10-10). Cópiala tal cual al final del encargo y en el informe.
+>
+> 1. P: ADR nuevo, y QUIEN es Aleks para todo backtest, como ya fija ADR-0046 §6a para marzo. Porqué: la regla de CLAUDE.md no sale de ningún ADR (SEPTIEMBRE-ENTRA.md §2b) y dice «no una sesión, no un agente»; el consultor es Claude en el chat, un agente también. El ADR define los tres papeles: Aleks (el usuario: decide, ordena los cierres y lee la columna de fechas de un backtest, una vez y antes del sorteo); el consultor (Claude en el chat: revisa, decide lo técnico y escribe los encargos; no ejecuta en el repo; recibe de Aleks solo la lista de fechas, nunca el fichero); y la sesión (Claude Code: ejecuta). CLAUDE.md se alinea con el ADR (QUIEN: Aleks) y lo cita. SEPTIEMBRE-ENTRA.md es un informe cerrado y no se toca; si contradice al ADR, un recuadro de corrección con fecha y rama.
+> 2. F: sí, con la línea del encargo, preparada para el commit del contrato del cierre.
+> 3. El refiltrado de v7–v10 está HECHO (ACTIVACION-A42.md §2.2): la coletilla de E fue un error del consultor, que la copió de HISTORIA sin medirla. La hoja de ruta lo da por hecho, y para el cierre se prepara E sin «Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q).».
+> 4. Heredados 2, 10, 15, 27 y 34: lo HECHO de cada uno sale a HISTORIA con su evidencia (punto 3 de RITUAL), y lo vivo se reescribe en una línea con su dueño (una letra de la Next Action o un carril de la hoja de ruta). El 15 queda ligado a E y sale cuando E cierre A-18. Todo, preparado para el commit del contrato, con el saldo de bytes de PROJECT_STATE ≤ 0.
+> 5. PROJECT_STATE.md:63: se corrige aquí la remisión a docs/state/HISTORIA.md. La descripción de firma_tamano_posicion_ratio_aviso no se toca en esta rama (knowledge/ queda fuera); va a la hoja de ruta, carril de deuda, con dueño: la próxima rama que toque el perfil de FTMO.
+> 6. Tramo: vale. Obligatorio solo si la hoja de ruta existe en el merge-base con main, con un test que lo rompa en los dos sentidos.
+> 7. Copia de seguridad: la hace Aleks; el consultor no tiene acceso a su máquina ni a su Drive. Va al carril de Aleks de la hoja de ruta, con fecha límite: antes de grabar la próxima sesión con el trader.
+>
+> Sigue con la fase 1.
+
+## 3. Fase 1
+
+### 3.1 Lo hecho, punto por punto
+
+| Encargo / respuesta | Hecho | Dónde |
+|---|---|---|
+| 1, P: ADR nuevo y QUIEN es Aleks | ADR-0072: los tres papeles (Aleks, el consultor -Claude en el chat-, la sesión) y la columna de fechas la lee Aleks para todo backtest; ADR-0046 §6a es su caso de marzo. CLAUDE.md: «QUIEN: Aleks», con ADR-0072, y el párrafo de marzo lo cita. SEPTIEMBRE-ENTRA.md: recuadro de corrección al principio, cuerpo intacto (el contrato gana esa ruta, solo para el recuadro) | `docs/adr/0072-…`, `docs/adr/README.md`, `CLAUDE.md`, `docs/validation/SEPTIEMBRE-ENTRA.md` |
+| La hoja de ruta | R0 a R7, los tres carriles, la tabla F01-F35 y las fechas fijas; cada entrada con `Refs:` y sus cuatro campos; ids, nunca recuentos | `docs/plan/HOJA-DE-RUTA.md` |
+| La hoja entra en los documentos vivos | sí | `tests/contract/test_documentos_vivos.py` (`VIVOS`) |
+| El test, en cuatro sentidos | (a) lo vivo está; (b) cada referencia existe y ninguna HECHA sigue viva; (c) ninguna dependencia de la Next Action apunta a una letra muerta; (d) toda ABIERTA que una tabla final da por respondida está en R1 o R4. Más uno que comprueba que las tablas de las sesiones se leen (sin él, (d) podría pasar sin leer nada). Sintéticos que rompen cada sentido | `tests/unit/test_hoja_de_ruta.py` |
+| (c) falla con el `main` de hoy por F | medido: sobre `git show 2a007b7:PROJECT_STATE.md` da «F depende («tras W (consultor, 2026-10-10)») de W, que no esta viva»; sobre la rama, nada | guion `c_contra_main.py` de la carpeta de trabajo |
+| El campo `tramo` | clave opcional en la carga; obligatoria si `docs/plan/HOJA-DE-RUTA.md` está en el merge-base con `main`; su valor, el título o el id de un `## ` de la hoja. Tests en los dos sentidos: sin hoja en la base no se exige; con hoja en la base falta y falla, y con un tramo válido pasa; un tramo que no está en la hoja falla | `scripts/contrato_rama.py`, `tests/unit/test_contrato_rama.py`, `docs/runbooks/CONTRATO-DE-RAMA.md`, `abrir-rama` |
+| RITUAL y `cerrar-rama` | punto 4 nuevo del commit del contrato: la hoja de ruta junto a la Next Action; el `git add` y la puerta de `git status` la nombran | `docs/runbooks/RITUAL.md`, `.claude/skills/cerrar-rama/SKILL.md` |
+| MASTER_PLAN | recuadro al principio, con fecha y rama; el cuerpo, intacto | `docs/plan/MASTER_PLAN.md`, y `docs/plan/README.md` |
+| 5, la remisión de `PROJECT_STATE.md:63` | «texto entero: `docs/state/HISTORIA.md`; criterio de salida: `docs/state/README.md`» | `PROJECT_STATE.md` |
+| 5, `firma_tamano_posicion_ratio_aviso` | en la hoja de ruta, carril de deuda (G.3), dueño: la próxima rama que toque el perfil de FTMO | `docs/plan/HOJA-DE-RUTA.md` |
+| 7, la copia de seguridad | carril de Aleks (A.4), fecha límite: antes de grabar la próxima sesión con el trader | `docs/plan/HOJA-DE-RUTA.md` |
+
+**Las puertas de RITUAL, `cerrar-rama` y `abrir-rama`, caso a caso contra `main`.** `git diff main`
+sobre los tres ficheros quita cuatro líneas, y las cuatro vuelven en el mismo sitio, reescritas
+para añadir: la línea de `rutas_permitidas` de `abrir-rama` (ahora tras `tramo`), la de los 25.000
+bytes de `cerrar-rama` (punto y coma en vez de punto, y sigue la hoja de ruta), la de la
+verificación de `cerrar-rama` (añade la Next Action y la hoja) y la puerta de `git status` de
+RITUAL (añade la línea de la hoja). Ninguna puerta sale.
+
+### 3.2 Una desviación, y por qué
+
+**F se reescribe YA en la rama, no en el commit del contrato.** El encargo pide preparar la F nueva
+para el cierre, y también un test (c) que falle mientras la Next Action dependa de una letra que no
+está viva. Las dos cosas juntas dejan `make check` en rojo en todos los commits de la rama hasta el
+cierre, sin sello posible. Se aplicó la línea que el consultor aprobó en el punto 2, tal cual:
+«F. Orden de trabajo: trabajo/entorno-code y después E; la hoja de ruta
+(docs/plan/HOJA-DE-RUTA.md) manda el orden.». El commit del contrato ya no tiene que tocarla.
+
+### 3.3 Bytes de PROJECT_STATE
+
+`main` (2a007b7): 22.799 bytes. La rama: 22.548 (−251): la Current Feature, más corta; la F nueva,
+más corta; la remisión de la línea 63, más larga. Las líneas del cierre de §4 restan más.
+
+## 4. Para el commit del contrato del cierre (preparado; NO aplicado en la Next Action)
+
+Lo que el consultor manda en su respuesta, listo para la orden de cierre:
+
+- **P sale HECHA**, con su texto literal, a HISTORIA:
+  `# Next Action HECHA · P · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (<fecha>)`; evidencia:
+  ADR-0072, CLAUDE.md («QUIEN: Aleks») y el recuadro de SEPTIEMBRE-ENTRA.md. En la hoja de ruta,
+  R0.1 pasa a `- **Estado:** HECHA (stable/<tag>)`.
+- **F**: ya reescrita en la rama (§3.2).
+- **E sin la coletilla**: se quita «Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada
+  Q).». El refiltrado está HECHO (ACTIVACION-A42.md §2.2).
+- **Los heredados 2, 10, 15, 27 y 34**: lo HECHO de cada uno sale a HISTORIA con su evidencia, bajo
+  `# Pendiente heredado SALE · <n> (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta
+  (<fecha>)`, y lo vivo se reescribe en una línea con su dueño:
+
+| N.º | Sale a HISTORIA (lo HECHO, con evidencia) | Queda en PROJECT_STATE |
+|---|---|---|
+| 2 | el xlsx de marzo al corpus (REGISTRO-MARZO.md §2, punto 1) | `- 2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).` |
+| 10 | la prueba gratuita de FTMO abierta y medida; A-27 DECIDIDA (ADR-0071) | `- 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).` |
+| 15 | la respuesta del trader: S-3 de la sesión 4, «resuelve» (SESION-04-EXTRACCION.md §3.4 y §5) | `- 15. A-18: la responde S-3 de la sesion 4; sale cuando E cierre A-18.` |
+| 27 | noticias y gap trading respondidas (FTMO-REGLAS.md, respuestas 1-9 del 2026-10-05); el tamaño, respondido sin cifra (respuesta 10); la comisión por lado, CONFIRMADA (ADR-0071 §3); A-27 DECIDIDA (ADR-0071) | `- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.` |
+| 34 | ninguna parte hecha: se reescribe con sus dueños | `- 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).` |
+
+  Con estas líneas, las de P y la coletilla de E fuera, el saldo de la rama sobre PROJECT_STATE
+  sigue por debajo de cero; se mide con `wc -c` antes del commit del contrato.
+
 ## Estado
 
-EN CURSO. Fase 0 entregada (§0); **PARADA** (§1) a la espera del consultor. No se ha escrito nada de la fase 1.
+EN CURSO. Fase 1 hecha (§3), con lo preparado para el cierre (§4). Faltan la CI de Linux (`fix/hoja-de-ruta`) y el revisor.

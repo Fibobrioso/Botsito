@@ -7,6 +7,7 @@ rutas_permitidas:
   - docs/plan/README.md
   - docs/validation/HOJA-DE-RUTA.md
   - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/SEPTIEMBRE-ENTRA.md  # solo el recuadro de correccion por ADR-0072 (respuesta del consultor, punto 1)
   - tests/unit/test_hoja_de_ruta.py
   - tests/unit/test_contrato_rama.py
   - tests/contract/test_documentos_vivos.py
