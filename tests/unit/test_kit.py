@@ -325,6 +325,8 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # los cortes de audio de v9, aunque lo firme de su respuesta ya este en la spec. Y el
     # 2026-10-02 (rama trabajo/cerrar-a29-a36) A-29, con su respuesta grabada en v9; A-36 se cerro
     # y el consultor la reabrio el mismo dia (fb-2026-09-29-sesion-03-a0b61bc9).
+    # Y las que el trader responde en la sesion 4 (2026-10-04, rama trabajo/activar-sesion-04,
+    # respuesta del consultor a la PARADA del 2026-10-11): A-52 (S-20, sin maximo de escenarios).
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
         "A-14",
         "A-20",
@@ -340,6 +342,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-45",
         "A-46",
         "A-47",
+        "A-52",
     }
     # DECIDIDA nace con ADR-0022 (A-22, no operar noticias) y ADR-0024 le suma las dos que
     # llevaban decididas y abiertas desde el 2026-09-09: A-15 (la ventana no se amplia a Nueva

@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (22)
+## ABIERTA (21)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -106,12 +106,6 @@ Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta so
 
 Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
 
-### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
-
-En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
-
-Afecta a: `max_escenarios_por_sesion`.
-
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
 Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la pregunta 21 de docs/sesion-4/PREGUNTAS.md.
@@ -178,7 +172,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (26)
+## RESUELTA (27)
 
 ### A-1 · sesgo H4
 
@@ -319,3 +313,9 @@ Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en l
 Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
 
 Afecta a: `entrada_tipo_orden`.
+
+### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
+
+En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md. RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:56:55): opcion (a), sin maximo; «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
+
+Afecta a: `max_escenarios_por_sesion`.

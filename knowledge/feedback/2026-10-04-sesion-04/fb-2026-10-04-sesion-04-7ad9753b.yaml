@@ -1,0 +1,20 @@
+id: fb-2026-10-04-sesion-04-7ad9753b
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: max_escenarios_por_sesion
+accion: CONFIRM
+respuesta_literal: Sí, o sea, en una sesión como digo Mientras se cumplen Los criterios para detener O
+  sea, de pérdida en general Que sería una pérdida de 4,5 O sea, 9 rachas De pérdida, pues normal
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:54:49'
+t1: '1:55:04'
+valor_resultante: sin_limite
+notas: 'S-20: el valor PROVISIONAL sin_limite (ADR-0066 §2) lo confirma el trader; ev-v10-015449-8a41513d
+  y ev-v10-015640-d35c5552'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

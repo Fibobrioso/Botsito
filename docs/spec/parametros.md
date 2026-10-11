@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.1` · hash `b00cbf2459a6…`
+`spec_version 15.9.2` · hash `f32426d0b677…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -63,7 +63,7 @@
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
-| `max_escenarios_por_sesion` | `sin_limite` | DEFAULT_AMBIGUOUS · en revision por A-52 | estrategia | `ev-v9-003318-c0503fe5` | escenarios que puede abrir una sesion como maximo |
+| `max_escenarios_por_sesion` | `sin_limite` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-7ad9753b` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
@@ -449,7 +449,7 @@ Opciones: `order_block_mayor`, `otra`.
 
 ### `max_escenarios_por_sesion`
 
-cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46 que quedo sin numero). El valor `sin_limite` es el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
+cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. Fue PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46 que quedo sin numero). El valor `sin_limite` era el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02. CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-20, v10 1:54:49-1:56:55): sin maximo, «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión» hasta que salta el tope de perdida (ev-v10-015449-8a41513d, ev-v10-015640-d35c5552). A-52 RESUELTA
 
 Opciones: `sin_limite`, `1`, `2`, `3`, `4`, `5`.
 

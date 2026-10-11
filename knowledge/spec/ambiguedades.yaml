@@ -1481,6 +1481,10 @@ ambiguedades:
       En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar
       entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión,
       ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
+      RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:56:55): opcion (a), sin maximo;
+      «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que
+      salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda
+      CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
     resuelve_en: [F19, F20]
     # NACE el 2026-10-02 (rama feature/escenarios-por-sesion, cuarta orden del consultor: todo
     # parametro PROVISIONAL cuelga de una ambiguedad ABIERTA). Es la subpregunta de A-46 que quedo
@@ -1495,7 +1499,7 @@ ambiguedades:
       - ev-v4-003350-acb03ee7
     parametros: [max_escenarios_por_sesion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
