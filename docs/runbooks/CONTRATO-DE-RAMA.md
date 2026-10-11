@@ -18,7 +18,12 @@ y lo ESTADIADO, que es el arbol que se va a sellar- y sale en ROJO, sin sello, n
 - un contrato mal escrito (claves de mas o de menos, un `riesgo` fuera de bajo/medio/alto, un
   `artefacto` que no sea `docs/validation/<NOMBRE>.md`);
 - un contrato HEREDADO: su `rama` no es la rama actual. Se compara sin el prefijo, porque el cierre
-  puede llevar `trabajo/x` a `feature/x`.
+  puede llevar `trabajo/x` a `feature/x`;
+- el `tramo` (desde `trabajo/hoja-de-ruta`, 2026-10-10): la entrada de `docs/plan/HOJA-DE-RUTA.md`
+  a la que pertenece la rama, por el titulo de su `## ` (entero, o su id: `R1`,
+  `Carril: lo de Aleks`). Falla si falta o si no es un tramo de la hoja. **Es obligatorio solo si
+  la hoja de ruta existe en el merge-base con `main`**: rige desde la rama siguiente a la que la
+  trajo, sin tocar ningun contrato anterior. Si el titulo lleva `: `, va entre comillas.
 
 `contrato.yaml` se permite siempre a si mismo. **Sin contrato no se comprueba nada**, asi que una
 rama vieja sin contrato sigue funcionando igual.
@@ -44,6 +49,7 @@ cuelga de esa carpeta. Mayusculas y minusculas cuentan.
 rama: trabajo/<nombre>
 riesgo: medio  # bajo, medio o alto, y en el comentario por que
 artefacto: docs/validation/<NOMBRE>.md
+tramo: R1  # el `## ` de docs/plan/HOJA-DE-RUTA.md al que pertenece la rama
 rutas_permitidas:
   - docs/validation/<NOMBRE>.md
   - docs/encargos/

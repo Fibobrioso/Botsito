@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/hoja-de-ruta
 
 ## Current Feature
-`main` en `stable/F37j-cases-rejilla` (f472e06): cases/ cuenta la ventana de cada caso por la puerta del reloj de las sesiones (rejilla H4, ADR-0069) y los artefactos nuevos congelan reloj_sesiones. Sin ramas abiertas; manda la Next Action (F primero). Informe docs/validation/CASES-REJILLA.md.
+`trabajo/hoja-de-ruta` EN CURSO (entradas F y P): la hoja de ruta viva y las guardias que la cuadran con la Next Action. Encargo docs/encargos/trabajo-hoja-de-ruta.md; informe docs/validation/HOJA-DE-RUTA.md.
 
 ## Stable Main State
 f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): la puerta del reloj en src/botsito/cases/relojes.py (engine/relojes.py la reexporta); la ventana de cada caso por la puerta, el día que no decide fuera del universo; reloj_sesiones congelado en ventanas.yaml y leído negando por defecto por kit check y fidelidad check; hojas con las horas del gráfico; la ingesta asigna la sesión por la puerta; Z en CLAUDE.md y ENTRADA-MARZO (PARADA B0 sin motivo). Sobre `stable/F37i-demo-ejecucion-1` (0b1c8ef). Informe docs/validation/CASES-REJILLA.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): l
 f472e06 · merge: cases/ cuenta la ventana de cada caso por la puerta del reloj (rejilla H4, ADR-0069), reloj_sesiones congelado y Z (CASES-REJILLA.md) · tag stable/F37j-cases-rejilla
 
 ## Tests Currently Passing
-1444 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1462 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -32,17 +32,15 @@ D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden tras W (consultor, 2026-10-10): trabajo/hoja-de-ruta (HOJA-DE-RUTA.md, nueva en docs/plan/; un test que la cuadra con la Next Action, el tramo en contrato.yaml), después trabajo/entorno-code (skills y agente del consultor, hook de arranque, medida de make check), y después E. Los encargos los da el consultor.
+F. Orden de trabajo: trabajo/entorno-code y después E; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
 
-E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Hereda el refiltrado de las filtradas v7–v10 (HISTORIA, entrada Q). Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
+E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
 
 G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-18) y A-16.
 
 I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X, S y E, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
-
-P. La regla general de CLAUDE.md sobre la columna de fechas («QUIEN: el consultor») no sale de ADR-0021 §1 (CASES-REJILLA.md); ADR-0046 §6a da a Aleks la de marzo. Se busca de qué ADR sale; si de ninguno, se corrige CLAUDE.md o se escribe el ADR (en trabajo/hoja-de-ruta).
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del 2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md; A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro, con el script 1.1: antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors), y el CSV de la ejecución 2 tiene que decir 1.1. La 2 entre el 26 y el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas 39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3). Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se reabre con otro ADR. La prueba del 2026-10-08 vence hacia el 2026-10-22.
 
@@ -60,21 +58,21 @@ N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-202
 
 ### Pendientes heredados (sin verificar)
 
-Del Next Action viejo, sin evidencia de estar hechos; texto entero y criterio de salida:
-`docs/state/README.md`.
+Del Next Action viejo, sin evidencia de estar hechos; texto entero: `docs/state/HISTORIA.md`;
+criterio de salida: `docs/state/README.md`.
 
-- 2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto…
+- 2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).
 - 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es…
 - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
 - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
-- 10. EL DUEÑO, EN PARALELO: no comprar todavia -confirmar en el panel de FTMO que el tipo Swing existe para…
+- 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
 - 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
-- 15. **EN ESPERA: A-18: pregunta de reserva enviada al trader el 2026-09-23** (lo declara el consultor; es la…
+- 15. A-18: S-3 de la sesion 4 contesta el stop y el objetivo; sale cuando E cierre A-18.
 - 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): A-21 es la zona…
-- 27. **PENDIENTE PARA ALEKS, CON FTMO:** donde esta la linea entre operar con noticias en Swing y el gap…
+- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
 - 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor…
-- 34. **PENDIENTES QUE DEJA `trabajo/ticks-llenado`, con dueno** (ADR-0051 §7): (a) la VENTANA DE TICKS DE…
+- 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
 - 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje…
 - 37. **PENDIENTE: LOS RECHAZOS POR VOLUMEN MAXIMO, EN LA RAMA DE STOP Y LOTE (A-18)** (2026-09-28, orden de… · Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %) sobre 100.000 y 10 USD por lote y pip, corta todo stop de menos de 1 pip (ADR-0071 §2).
 
@@ -184,8 +182,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 26 (2026-10-10).
+— ninguna desde el Archivo 27 (2026-10-10).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 26 (2026-10-10).
+— ninguna desde el Archivo 27 (2026-10-10).

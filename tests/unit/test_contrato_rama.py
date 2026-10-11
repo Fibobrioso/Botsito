@@ -166,6 +166,55 @@ def test_un_contrato_mal_escrito_falla(
     assert len(problemas) == 1 and problemas[0].startswith("contrato.yaml:"), problemas
 
 
+HOJA = "# Hoja\n\n## R1 · Activar la sesion 4\n\n### R1.1 · Algo\n\n## Carril: lo de Aleks\n"
+
+
+def _hoja_en_main(repo: Path) -> None:
+    """La hoja de ruta entra en `main` y la rama se rehace sobre ella: el merge-base ya la tiene."""
+    git(repo, "checkout", "-q", "main")
+    escribir(repo, "docs/plan/HOJA-DE-RUTA.md", HOJA)
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "hoja de ruta")
+    git(repo, "checkout", "-q", "trabajo/prueba")
+    git(repo, "merge", "-q", "main", "-m", "trae la hoja")
+
+
+def test_sin_hoja_de_ruta_en_la_base_el_tramo_no_se_exige(c: ModuleType, repo: Path) -> None:
+    """La rama que trae la hoja de ruta (`trabajo/hoja-de-ruta`) no lleva tramo: su base no la
+    tiene. Un contrato sin `tramo` sigue valiendo ahi."""
+    escribir(repo, "docs/plan/HOJA-DE-RUTA.md", HOJA)
+    escribir(
+        repo, "contrato.yaml", CONTRATO.replace("  - docs/validation/PRUEBA.md\n", "  - docs/\n", 1)
+    )
+    git(repo, "add", "-A")
+    assert c.comprobar(repo)[0] == []
+
+
+def test_con_hoja_de_ruta_en_la_base_el_tramo_es_obligatorio(c: ModuleType, repo: Path) -> None:
+    _hoja_en_main(repo)
+    problemas, _ = c.comprobar(repo)
+    assert len(problemas) == 1 and problemas[0].startswith("falta `tramo` en contrato.yaml"), (
+        problemas
+    )
+    for tramo in ("R1", "R1 · Activar la sesion 4", "Carril: lo de Aleks"):
+        escribir(repo, "contrato.yaml", CONTRATO + f'tramo: "{tramo}"\n')
+        git(repo, "add", "-A")
+        assert c.comprobar(repo)[0] == [], tramo
+
+
+def test_un_tramo_que_no_esta_en_la_hoja_falla(c: ModuleType, repo: Path) -> None:
+    _hoja_en_main(repo)
+    escribir(repo, "contrato.yaml", CONTRATO + "tramo: R9\n")
+    git(repo, "add", "-A")
+    assert c.comprobar(repo)[0] == [
+        "`tramo` 'R9' no es un tramo (`## `) de docs/plan/HOJA-DE-RUTA.md"
+    ]
+    # y un tramo que nombra una hoja que la rama no tiene, tambien
+    assert c.problemas_de_tramo("R1", False, None) == [
+        "`tramo` 'R1' nombra docs/plan/HOJA-DE-RUTA.md, que no existe en esta rama"
+    ]
+
+
 @pytest.mark.parametrize(
     ("patron", "ruta", "casa"),
     [

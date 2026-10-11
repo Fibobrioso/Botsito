@@ -18,6 +18,7 @@ orden y las puertas.
 | Base: `main` y su sha (y tag) | el encargo («desde main (df6aa2c, tag ...)») | se usa `main` y se dice |
 | El texto del encargo, ENTERO | el mensaje de Aleks | sin el, no se abre: «el encargo guardado es copia literal del prompt» |
 | Riesgo (bajo / medio / alto) | se elige con `CONTRATO-DE-RAMA.md`, «Como elegir el riesgo» | — |
+| Tramo (el `## ` de `docs/plan/HOJA-DE-RUTA.md` al que pertenece la rama) | el encargo, o la entrada de la hoja de ruta que cita la letra de la Next Action que la origina | se pregunta; obligatorio si la hoja de ruta esta en `main` |
 
 ## Limites
 
@@ -47,7 +48,8 @@ el contrato, Edit para `PROJECT_STATE.md`.
    (ejemplo: `docs/encargos/trabajo-dieta-y-skills.md`).
 4. **Contrato.** `contrato.yaml` en la raiz con la plantilla de `docs/runbooks/CONTRATO-DE-RAMA.md`:
    `rama`, `riesgo` con su motivo en el comentario, `artefacto: docs/validation/<NOMBRE>.md`,
-   `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
+   `tramo` (desde que `docs/plan/HOJA-DE-RUTA.md` esta en `main`: el titulo, o el id, de su `## `;
+   entre comillas si lleva `: `; `make check` falla si falta o no existe en la hoja), `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
    artefacto), `rutas_protegidas` y `comprobaciones`. **El artefacto tiene que existir y estar
    estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
    2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Si el encargo pide un inventario antes de

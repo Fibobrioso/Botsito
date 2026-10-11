@@ -50,6 +50,8 @@ VIVOS = (
     "knowledge/evidence/README.md",
     "knowledge/feedback/README.md",
     "knowledge/cases/kit/README.md",
+    # el orden y el estado vivos del trabajo (`trabajo/hoja-de-ruta`): nombra ids, nunca recuentos
+    "docs/plan/HOJA-DE-RUTA.md",
 )
 
 # PROJECT_STATE lleva el presente y, hasta que la rama siguiente lo archive, lo cerrado desde el

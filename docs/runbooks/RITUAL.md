@@ -143,6 +143,12 @@ la orden las pedía). Van aquí porque en `main`, tras el tag, solo puede cambia
    `feature/escenarios-por-sesion`: el cierre no puede pasar de 25 KB). Con la Next Action ya
    cambiada, `wc -c PROJECT_STATE.md` tiene que dar menos de 25.000 bytes; si no, se para ANTES de
    este commit y se pregunta. Si la orden no cambia la Next Action, este punto no toca nada.
+4. **Junto a la Next Action, la hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`, desde
+   `trabajo/hoja-de-ruta`, 2026-10-10): la entrada de cada letra o heredado que sale pasa a
+   `**Estado:** HECHA` con su evidencia, entran las letras nuevas en su tramo o carril, y lo que la
+   rama deja hecho se marca. `tests/unit/test_hoja_de_ruta.py`, dentro de `make check`, falla si
+   una letra viva no está en la hoja, si una entrada HECHA sigue viva o si la Next Action depende de
+   una letra que ya no está: el sello de este commit es la puerta.
 
 El commit se llama siempre `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
 
@@ -151,6 +157,7 @@ git branch --show-current
 git rm contrato.yaml
 git add docs/state/HISTORIA.md docs/runbooks/ERRORES-RECURRENTES.md
 git add PROJECT_STATE.md   # solo si el punto 3 cambió la Next Action
+git add docs/plan/HOJA-DE-RUTA.md   # solo si el punto 4 la cambió
 make check > make-check.log 2>&1
 grep "SELLO: make check en verde" make-check.log
 rm make-check.log
@@ -158,7 +165,8 @@ git commit -m "chore(cierre): sale el contrato y entra el registro en HISTORIA"
 ```
 → **Puerta:** la rama es la de trabajo; `git status --short` da `D  contrato.yaml`,
 `M  docs/state/HISTORIA.md` y `M  docs/runbooks/ERRORES-RECURRENTES.md` (las tres en la primera
-columna), más `M  PROJECT_STATE.md` si el punto 3 cambió la Next Action; y `make check` dice
+columna), más `M  PROJECT_STATE.md` si el punto 3 cambió la Next Action y
+`M  docs/plan/HOJA-DE-RUTA.md` si el punto 4 cambió la hoja de ruta; y `make check` dice
 `CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
 nada del contrato, así que este sello es el de siempre.
 
