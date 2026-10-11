@@ -1362,6 +1362,9 @@ reglas:
       S-3; ADR-0073, 2026-10-11) A-18 ESTA RESUELTA: el stop va ya en el 0,8 al poner la orden,
       el 1 solo plantea el RR y no hay stop en dos tiempos en la ejecucion
       (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material contradice es A-56, una medicion.
+      Y A-36 RESUELTA (sesion 4, S-22, fb-2026-10-04-sesion-04-bbfb5c98): la orden de entrada va
+      exactamente en el 0 de la caja, contando la mecha y sin sumar el spread, que es donde
+      `zona_del_punto` ya la pone (ADR-0064 §2; tests/unit/test_orden_en_el_0_con_mecha.py).
     decision: ADR-0020
     forma:
       cuando:

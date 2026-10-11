@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.6` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (17)
+## ABIERTA (16)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -45,10 +45,6 @@ Afecta a: `breaker_m1_criterio_ruptura`.
 Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco?
 
 Afecta a: `liquidez_m15_pivote_formado`.
-
-### A-36 · en qué punto de la mecha va la orden límite · pregunta
-
-Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
@@ -156,7 +152,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (32)
+## RESUELTA (33)
 
 ### A-1 · sesgo H4
 
@@ -283,6 +279,10 @@ Afecta a: `parciales`, `objetivo_rr`.
 ### A-34 · vela H4 previa que rompe ambos extremos · pregunta
 
 Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas para la sesión? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:16:19): «si rompe por los dos, como te digo, importa el color de la vela»: con la doble ruptura el sesgo lo decide el color con que cierra la vela (fb-2026-09-29-sesion-03-617f496a).
+
+### A-36 · en qué punto de la mecha va la orden límite · pregunta
+
+Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas? RESUELTA el 2026-10-04 en la sesion 4 (S-22, v10 1:02:14-1:02:37): «exactamente en el 0 contando la mecha [...] No depende de nada, siempre es la mecha», y sin tener en cuenta el spread («No, no tengo en cuenta el split al ponerla»). La pregunta hablaba de orden LIMITE; desde A-47 la entrada es con orden STOP, y la respuesta vale para esa orden, que es la que el trader pone hoy. El motor ya lo hace: el 0 de la caja es el extremo con mecha del ultimo pivote de M1 (ADR-0064 §2) y la stop se coloca en ese precio sin sumar el spread (tests/unit/test_orden_en_el_0_con_mecha.py lo congela). Registro fb-2026-10-04-sesion-04-bbfb5c98, que supersede al REOPEN fb-2026-09-29-sesion-03-f3caeb2d. C6 (v7 n.o 3, la orden 2 puntos mas alla del 0) sigue sin explicar, anotada en las candidatas sin abrir.
 
 ### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
 

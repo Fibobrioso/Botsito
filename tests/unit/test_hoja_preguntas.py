@@ -26,7 +26,7 @@ RAIZ = Path(__file__).resolve().parents[2]
 ORDEN = [
     "A-35", "A-21", "A-44", "A-43", "A-24",
     "A-32",
-    "A-36", "A-48", "A-49",
+    "A-48", "A-49",
     "A-13",
 ]  # fmt: skip
 

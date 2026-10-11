@@ -975,6 +975,16 @@ ambiguedades:
     titulo: en qué punto de la mecha va la orden límite
     pregunta: >-
       Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-22, v10 1:02:14-1:02:37): «exactamente en el 0
+      contando la mecha [...] No depende de nada, siempre es la mecha», y sin tener en cuenta el
+      spread («No, no tengo en cuenta el split al ponerla»). La pregunta hablaba de orden LIMITE;
+      desde A-47 la entrada es con orden STOP, y la respuesta vale para esa orden, que es la que
+      el trader pone hoy. El motor ya lo hace: el 0 de la caja es el extremo con mecha del ultimo
+      pivote de M1 (ADR-0064 §2) y la stop se coloca en ese precio sin sumar el spread
+      (tests/unit/test_orden_en_el_0_con_mecha.py lo congela). Registro
+      fb-2026-10-04-sesion-04-bbfb5c98, que supersede al REOPEN fb-2026-09-29-sesion-03-f3caeb2d.
+      C6 (v7 n.o 3, la orden 2 puntos mas alla del 0) sigue sin explicar, anotada en las
+      candidatas sin abrir.
     resuelve_en: [F20, F22]
     # CERRADA Y REABIERTA EL 2026-10-02 (rama trabajo/cerrar-a29-a36). Se cerro con «Mecha
     # incluida, siempre» (v9 1:17:14-1:17:21, ev-v9-011714-08536830; fb-2026-09-29-sesion-03-626c4dc7)
@@ -996,7 +1006,7 @@ ambiguedades:
       - ev-v9-011714-08536830
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

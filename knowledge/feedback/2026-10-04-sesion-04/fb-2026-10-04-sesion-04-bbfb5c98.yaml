@@ -1,0 +1,27 @@
+id: fb-2026-10-04-sesion-04-bbfb5c98
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-36
+accion: RESOLVE_UNKNOWN
+respuesta_literal: exactamente en el 0 contando la mecha Exactamente, sí Para precisar, si va más allá
+  son siempre los mismos puntos O depende de algo No depende de nada, siempre es la mecha O sea, de mecha
+  a mecha siempre va a ir [...] ¿Tienes en cuenta el split al ponerla? No, no tengo en cuenta el split
+  al ponerla
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:02:14'
+t1: '1:02:37'
+valor_resultante: exactamente en el 0 de la caja, contando la mecha, sin tener en cuenta el spread
+supersede: fb-2026-09-29-sesion-03-f3caeb2d
+notas: 'S-22 (pregunta 22): la orden de entrada va exactamente en el 0 de la caja contando la mecha (ev-v10-010214-23a7fc0c)
+  y sin tener en cuenta el spread (ev-v10-010228-868271ee). Vuelve a cerrar A-36 superseding su REOPEN
+  (fb-2026-09-29-sesion-03-f3caeb2d): la pregunta hablaba de orden limite y la respuesta vale para la
+  orden stop con que se entra desde A-47. El motor ya lo hace (el 0 es el extremo con mecha del ultimo
+  pivote de M1, ADR-0064 §2; la stop se coloca en ese precio sin sumar spread). C6 (v7 n.o 3, la orden
+  2 puntos mas alla del 0) sigue sin explicar'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado
