@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.4` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (19)
+## ABIERTA (17)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -34,10 +34,6 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
-### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
-
-Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella?
-
 ### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
 
 En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
@@ -53,10 +49,6 @@ Afecta a: `liquidez_m15_pivote_formado`.
 ### A-36 · en qué punto de la mecha va la orden límite · pregunta
 
 Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
-
-### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
-
-Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta?
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
@@ -164,7 +156,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (30)
+## RESUELTA (32)
 
 ### A-1 · sesgo H4
 
@@ -272,6 +264,12 @@ A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contr
 
 Afecta a: `orden_limite_nace`.
 
+### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
+
+Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+
+Afecta a: `orden_pendiente_al_abrir_sesion`.
+
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
@@ -293,6 +291,12 @@ Dijiste que el stop se define desde el punto más bajo donde se genera la vela c
 ### A-38 · cuándo se da por anulada una orden límite que el precio deja sin llenar · pregunta
 
 Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:32:07): «sigue vivo hasta que se desarrolle otro posible punto de breaker», y entonces la orden se actualiza; que el precio se aleje no la anula (fb-2026-09-29-sesion-03-c7fa3068).
+
+### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
+
+Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:56:03-0:56:15): la orden puesta se quita al abrir la segunda sesion, cambie o no el sesgo («Sí, se quita»; fb-2026-10-04-sesion-04-dd888b55; orden_pendiente_al_abrir_sesion = se_retira, CONFIRMED, RN-035); la operacion ABIERTA ya la cerraba RN-002 un minuto antes del fin de su vela H4 (sesion 3, S-1, ADR-0060). RESERVA: pregunta dirigida («Se quita, ¿verdad?»); coincide con la regla general de 54:38 y con la independencia de las sesiones (A-46). Lo que el corte de audio de v9 0:28:49-0:29:53 dejo sin oir queda contestado aqui.
+
+Afecta a: `orden_pendiente_al_abrir_sesion`.
 
 ### A-40 · qué se hace con el stop después del break even · pregunta
 

@@ -1,9 +1,11 @@
 """El motor de un dia: el interprete de ADR-0030 recorrido evento a evento (ADR-0048).
 
 **LA UNIDAD DE EJECUCION ES EL DIA** (ADR-0048 §3). Un `EstadoDia` nace al empezar el dia y cruza
-sus sesiones: un hecho que fija la primera sigue vivo en la segunda. Lo que A-39 deja abierto -que
-pasa con lo pendiente o lo abierto al cambiar de sesion- es PROVISIONAL: aqui no se cierra ni se
-retira nada al cambiar de sesion. Y cada dia empieza de cero, tambien PROVISIONAL (H6).
+sus sesiones: un hecho que fija la primera sigue vivo en la segunda. Lo pendiente y lo abierto al
+cambiar de sesion no lo decide este modulo sino las reglas: RN-035 retira la orden sin llenar al
+abrir la sesion siguiente (A-30 y A-39, RESUELTAS en la sesion 4; `primitivas_broker.py`) y RN-002
+cierra la posicion antes del fin de su vela H4 (ADR-0060). Y cada dia empieza de cero, PROVISIONAL
+(H6).
 
 **LOS EVENTOS.** Uno por cada cierre de M1 entre la apertura de la primera sesion y el cierre de la
 ultima, ambos incluidos: es la fase de estrategia de ADR-0028 §2. No hay ticks ni bróker simulado

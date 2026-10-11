@@ -426,9 +426,12 @@ acciones:
     descripcion: >-
       cancela en el broker la orden limite pendiente `de`, si `segun` lo dice. Hasta el 2026-10-01
       estaba DECLARADA Y SIN REGLA que la usara: que se hace con una orden pendiente al llegar
-      ventana_fin no lo dice el corpus ni lo cierra ninguna ambiguedad (A-30). Desde entonces la
+      ventana_fin no lo decia el corpus ni lo cerraba ninguna ambiguedad (A-30). Desde entonces la
       usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL
-      hasta la pregunta 5 de la sesion 4 (ADR-0066)
+      hasta la pregunta 5 de la sesion 4 (ADR-0066) y CONFIRMADO desde el 2026-10-04 (S-5: la
+      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). A ventana_fin la
+      retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de
+      trabajo/activar-sesion-04-motor
     argumentos: [de, segun]
   abrir_escenario:
     descripcion: >-
@@ -855,9 +858,11 @@ reglas:
       ventana-, y tambien en el propio limite, para que nada llenado en el ultimo minuto cruce a
       la vela siguiente. No se toca ventana_fin, que tambien decide que sesiones se operan, y su
       cierre en punto se conserva como segunda rama. El interruptor es el mismo
-      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela;
-      A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por
-      la orden pendiente (A-30). DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
+      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela.
+      Eso lo hace RN-035 al abrir la sesion siguiente (A-30 y A-39, RESUELTAS el 2026-10-04 en la
+      sesion 4, S-5: la orden sin llenar se quita a las 11 y a las 3, cambie o no el sesgo;
+      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin, el
+      cableado al terminar el dia (ADR-0053 §6), sin regla de la spec todavia. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
       dos ramas caen sobre el mismo limite: ventana_fin es el fin de la segunda vela H4 de la
       ventana, en la misma rejilla de anclaje_h4, y "las 3pm" son las de su grafico casi todo el
       año (las 2pm las semanas del cambio). `alcanza_hora` lee la hora nominal por la puerta de
@@ -878,7 +883,7 @@ reglas:
     estado: VIGENTE
 
   - id: RN-035
-    titulo: la orden que sigue pendiente al abrir otra sesion se retira (PROVISIONAL)
+    titulo: la orden que sigue pendiente al abrir otra sesion se retira
     cuando: abre una sesion operativa y queda una orden de la sesion anterior sin llenar
     entonces: >-
       se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario
@@ -897,7 +902,16 @@ reglas:
       motor hasta hoy (DECISION 3 de ADR-0064): la orden de la manana no se reubicaba con los
       puntos de la tarde y, como RN-011 no coloca con una orden pendiente, dejaba la tarde sin
       operar. Una posicion ABIERTA no entra aqui: la cierra RN-002. La opcion de la pregunta 5 «la
-      dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija
+      dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija.
+      DESDE EL 2026-10-04 (sesion 4, S-5; activada el 2026-10-11, trabajo/activar-sesion-04) YA NO
+      ES PROVISIONAL: el trader dice que la orden sin llenar se quita a las 11 y a las 3, «porque
+      siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
+      ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
+      fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija. LO QUE
+      ESTA REGLA NO HACE TODAVIA: retirar la orden a ventana_fin (las 3): eso lo hace el cableado al
+      terminar el dia (ADR-0053 §6) sin regla; la rama ventana_fin de esta regla va a
+      trabajo/activar-sesion-04-motor (respuesta del consultor del 2026-10-11, punto 4)
     forma:
       cuando:
         todos_de:

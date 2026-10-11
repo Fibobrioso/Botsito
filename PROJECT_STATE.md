@@ -85,11 +85,9 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
 | A-21 | que es una zona de control limpia, sin ruido | pregunta | si | F12, F20, F26 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
-| A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
-| A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |

@@ -1,0 +1,21 @@
+id: fb-2026-10-04-sesion-04-45e624c5
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: orden_pendiente_al_abrir_sesion
+accion: CONFIRM
+respuesta_literal: sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea,
+  no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: 0:54:27
+t1: 0:54:51
+valor_resultante: se_retira
+notas: 'S-5: el valor PROVISIONAL se_retira (RN-035, ADR-0066 §4) lo confirma el trader; ev-v10-005427-1a0867af.
+  La fuente anterior era la independencia de las sesiones (fb-2026-09-29-sesion-03-5021677e), no una respuesta
+  a la pregunta'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

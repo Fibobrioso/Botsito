@@ -1,0 +1,23 @@
+id: fb-2026-10-04-sesion-04-dd888b55
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-39
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Si a las 11 el sesgo de 4 horas cambia ¿Qué haces con la orden que traes en la primera
+  sesión? Se quita, ¿verdad? Si a las 11 el sesgo de 4 horas Sí, se quita
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04, punto 10 de su respuesta)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: 0:56:03
+t1: 0:56:15
+valor_resultante: la orden pendiente de la primera sesion se quita al abrir la segunda, cambie o no el
+  sesgo; la posicion abierta la cierra RN-002 antes del fin de su vela H4
+notas: 'S-5, subpregunta de A-39 (ev-v10-005603-6a62fca7). RESERVA: pregunta dirigida («Se quita, ¿verdad?»);
+  la respuesta coincide con la regla general que dio a 54:38 y con la independencia de las sesiones (A-46).
+  La operacion ABIERTA ya la cerraba RN-002 un minuto antes del fin de su vela H4 (sesion 3, S-1; ADR-0060).
+  Lo que A-39 dejaba abierto por el corte de audio de v9 0:28:49-0:29:53 queda contestado aqui'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

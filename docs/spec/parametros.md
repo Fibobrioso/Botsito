@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.4` · hash `6bf4d1931ecb…`
+`spec_version 15.9.5` · hash `52e22e498bf0…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -70,7 +70,7 @@
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-755c534e` | cuando se coloca por primera vez la orden limite de una zona |
 | `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-53 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
-| `orden_pendiente_al_abrir_sesion` | `se_retira` | DEFAULT_AMBIGUOUS · en revision por A-30 | estrategia | `fb-2026-09-29-sesion-03-5021677e` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
+| `orden_pendiente_al_abrir_sesion` | `se_retira` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-45e624c5` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
@@ -489,7 +489,7 @@ Opciones: `se_mueve`, `se_retira`.
 
 ### `orden_pendiente_al_abrir_sesion`
 
-la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor sale de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA)
+la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin sigue siendo el cableado al terminar el dia (ADR-0053 §6), sin regla: rama de motor
 
 Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
 

@@ -781,16 +781,18 @@ parametros:
       `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero.
       `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta
       el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de
-      ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). PROVISIONAL hasta la pregunta 5
-      de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué
-      haces con ella?», A-30 y A-39). El valor sale de que cada sesion es «un mundo diferente»
-      (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA)
-    estado: DEFAULT_AMBIGUOUS
+      ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la
+      pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha
+      llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo
+      diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el
+      2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando
+      la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin sigue
+      siendo el cableado al terminar el dia (ADR-0053 §6), sin regla: rama de motor
+    estado: CONFIRMED
     valor: se_retira
-    ambiguedad_id: A-30
     fuente:
       tipo: feedback
-      id: fb-2026-09-29-sesion-03-5021677e
+      id: fb-2026-10-04-sesion-04-45e624c5
   - nombre: entrada_tipo_orden
     categoria: estrategia
     tipo: enum

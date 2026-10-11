@@ -205,15 +205,20 @@ def test_una_accion_que_provoca_un_hecho_del_broker_declara_su_efecto(spec: Any)
     )
 
 
-def test_la_pendiente_a_las_15_esta_declarada_como_ambiguedad_y_no_supuesta(spec: Any) -> None:
+def test_la_pendiente_al_abrir_sesion_la_dijo_el_trader_y_la_de_las_15_sigue_sin_regla(
+    spec: Any,
+) -> None:
+    """Cambia de sentido A PROPOSITO el 2026-10-11 (trabajo/activar-sesion-04): hasta entonces
+    exigia que la retirada fuera una ambiguedad declarada (DEFAULT_AMBIGUOUS, A-30) y no un valor
+    supuesto. En la sesion 4 (S-5) el trader la contesto -se quita a las 11 y a las 3- y A-30 y
+    A-39 quedaron RESUELTAS: el parametro es CONFIRMED con un registro de la sesion 4. Lo que sigue
+    sin regla es la retirada a ventana_fin, que hace el cableado (ADR-0053 §6): solo RN-035 usa la
+    accion, y RN-002 no la lleva (la rama de motor la escribira)."""
     from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
     from botsito.config.registro import cargar_registro
 
     reglas, vocabulario, _, _ = spec
     assert "retirar_orden_limite" in vocabulario["acciones"]
-    # Hasta ADR-0066 ninguna regla la usaba hasta que el trader respondiera A-30. Desde entonces
-    # la usa RN-035, y solo SEGUN un parametro que sigue declarado como esa ambiguedad
-    # (DEFAULT_AMBIGUOUS, A-30): la respuesta no se supone, se deja PROVISIONAL con su pregunta.
     registro = cargar_registro(REPO / "knowledge" / "spec" / "parametros.yaml")
     usan = [r for r in reglas if isinstance(r.forma, dict) and "retirar_orden_limite" in _hace(r)]
     assert [r.id for r in usan] == ["RN-035"]
@@ -221,9 +226,16 @@ def test_la_pendiente_a_las_15_esta_declarada_como_ambiguedad_y_no_supuesta(spec
         for paso in r.forma["entonces"]["hace"]:
             if "retirar_orden_limite" in paso:
                 p = registro.parametros[paso["retirar_orden_limite"]["segun"]]
-                assert (p.estado.value, p.ambiguedad_id) == ("DEFAULT_AMBIGUOUS", "A-30")
+                assert (p.estado.value, p.valor, p.ambiguedad_id) == (
+                    "CONFIRMED",
+                    "se_retira",
+                    None,
+                )
+                assert p.fuente is not None and p.fuente.id.startswith("fb-2026-10-04-sesion-04-")
     por_id = {a.id: a for a in cargar_ambiguedades(REPO / FICHERO_AMBIGUEDADES)}
-    assert por_id["A-30"].estado == "ABIERTA" and por_id["A-30"].clase == "pregunta"
+    for aid in ("A-30", "A-39"):
+        assert por_id[aid].estado == "RESUELTA", aid
+        assert "orden_pendiente_al_abrir_sesion" in por_id[aid].parametros, aid
     assert por_id["A-29"].parametros == ("orden_limite_nace",)
 
 
@@ -444,8 +456,10 @@ def test_las_mediciones_no_entran_en_el_cuestionario() -> None:
     preguntas = generar(registro, ambiguedades, mapa, detectar(vivos), vivos, lambda _v, _t: None)
     en_cuestionario = {o["id"] for p in preguntas for o in p.origenes if o["tipo"] == "ambiguedad"}
     assert not {"A-16", "A-27", "A-28"} & en_cuestionario
-    # A-29 salio de aqui el 2026-10-02 (trabajo/cerrar-a29-a36): RESUELTA, ya no se pregunta
-    assert {"A-13", "A-30", "A-43"} <= en_cuestionario
+    # A-29 salio de aqui el 2026-10-02 (trabajo/cerrar-a29-a36): RESUELTA, ya no se pregunta; y
+    # A-30 el 2026-10-11 (trabajo/activar-sesion-04): RESUELTA en la sesion 4
+    assert {"A-13", "A-43"} <= en_cuestionario
+    assert "A-30" not in en_cuestionario
 
     sin_clase = [dataclasses.replace(a, clase=None) if a.id == "A-43" else a for a in ambiguedades]
     (fallo,) = abiertas_sin_clase(sin_clase)

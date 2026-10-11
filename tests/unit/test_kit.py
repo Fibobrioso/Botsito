@@ -329,7 +329,8 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # respuesta del consultor a la PARADA del 2026-10-11): A-52 (S-20, sin maximo de escenarios);
     # A-18 (S-3, el stop en el 0,8 y el objetivo sobre el 0->1) y A-33 (S-12, el objetivo es fijo),
     # las dos por ADR-0073, que enmienda ADR-0040 y abre A-56 (medicion); A-25 (S-18, la marca pasa
-    # al pivote mas reciente y la toma nueva reinicia los tres intentos).
+    # al pivote mas reciente y la toma nueva reinicia los tres intentos); A-30 y A-39 (S-5, la orden
+    # sin llenar se quita a las 11 y a las 3, cambie o no el sesgo).
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
         "A-14",
         "A-18",
@@ -337,11 +338,13 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-25",
         "A-26",
         "A-29",
+        "A-30",
         "A-31",
         "A-33",
         "A-34",
         "A-37",
         "A-38",
+        "A-39",
         "A-40",
         "A-41",
         "A-42",
