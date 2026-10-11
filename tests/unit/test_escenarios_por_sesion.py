@@ -49,7 +49,7 @@ TARDE = M0 + 240  # 11:00 Madrid
 def _registro(tmp_path: Path, **valores: str) -> Registro:
     """El registro real con los valores pedidos (en la linea `valor:` de cada parametro)."""
     actuales = {
-        "toma_antes_de_la_ventana": "    valor: no_cuenta\n",
+        "toma_antes_de_la_ventana": "    valor: cuenta\n",  # S-15, sesion 4 (2026-10-11)
         "intentos_tras_toma_nueva": "    valor: vuelven_a_cartuchos_max\n",
         "orden_pendiente_al_abrir_sesion": "    valor: se_retira\n",
         "cartuchos_max": "    valor: 3\n",
@@ -178,14 +178,17 @@ def _de_la_sesion(registro: Registro, datos: _Datos, instante: int, desde: int) 
 
 def test_la_toma_antes_de_la_ventana_la_decide_el_parametro(tmp_path: Path) -> None:
     """Pivote formado a las 06:30 Madrid; el precio lo toma a las 06:45 y sigue debajo a las 07:05
-    (A-43, pregunta 15 de la sesion 4). Con `no_cuenta` (el valor PROVISIONAL) no es toma de la
-    sesion; con `cuenta`, si. Una toma DENTRO de la sesion vale con los dos."""
+    (A-43, pregunta 15 de la sesion 4). Con `no_cuenta` (el valor PROVISIONAL hasta el 2026-10-11)
+    no es toma de la sesion; con `cuenta` (lo que el trader dijo en S-15, el registro real), si.
+    Una toma DENTRO de la sesion vale con los dos. Cambia de sentido A PROPOSITO: el registro real
+    da `cuenta` y `no_cuenta` pasa a pedirse expresamente."""
     antes = _Datos({M0 - 15: 990, M0 + 4: 985}, formado=M0 - 30)
     dentro = _Datos({M0 - 15: 1010, M0 + 4: 985}, formado=M0 - 30)
     (tmp_path / "a").mkdir()
     (tmp_path / "b").mkdir()
-    no_cuenta = _registro(tmp_path / "a")
-    cuenta = _registro(tmp_path / "b", toma_antes_de_la_ventana="cuenta")
+    no_cuenta = _registro(tmp_path / "a", toma_antes_de_la_ventana="no_cuenta")
+    cuenta = _registro(tmp_path / "b")
+    assert _de_la_sesion(cargar_registro(PARAMETROS), antes, M0 + 5, M0) == Resultado(Tri.SI)
     assert _de_la_sesion(no_cuenta, antes, M0 + 5, M0) == Resultado(Tri.NO)
     assert _de_la_sesion(cuenta, antes, M0 + 5, M0) == Resultado(Tri.SI)
     for r in (no_cuenta, cuenta):

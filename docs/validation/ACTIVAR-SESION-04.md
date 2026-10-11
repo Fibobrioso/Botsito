@@ -664,7 +664,23 @@ parámetros de esa respuesta (su salida va en cada punto).
   propósito: la caja fija deja de ser el registro real y pasa a pedirse expresamente.
 - `spec_version` 15.9.6 → 15.9.7. Entra la copia de la respuesta del consultor al final del encargo y
   de este informe (§1.1).
-- **El testimonio de S-4 como registro sobre A-49 es la PARADA 2 (abajo).**
+- **El testimonio de S-4 como registro sobre A-49 es la PARADA 2 (abajo).** Commit 490b97a.
+
+### 1.7 Punto 9 · DESVIACIÓN declarada: `toma_antes_de_la_ventana` → `cuenta` con A-43 ABIERTA (S-15)
+
+- **DESVIACIÓN** de la regla de E («las en parte van a la sesión 5»), por decisión del consultor
+  (punto 9): el valor PROVISIONAL `no_cuenta` decía lo contrario de lo firme de S-15 («¿lo usas para
+  operar a partir de las 7? Sí.», con la operativa dentro de su horario).
+- Registro: `fb-2026-10-04-sesion-04-c3d0c855` (CORRECT sobre `toma_antes_de_la_ventana`,
+  1:46:13–1:46:20, `ev-v10-014613-6cf002b2`). `apply --check`: `~ toma_antes_de_la_ventana
+  'cuenta'`, 1 cambia, 3 ya estaban. DEFAULT_AMBIGUOUS → CONFIRMED, el `ambiguedad_id` sale (el
+  registro no lo admite fuera de DEFAULT_AMBIGUOUS). **A-43 sigue ABIERTA** por la segunda parte
+  (la toma de las 6:45 y la de las 7:20, §0.e.5) y su lista gana el parámetro (hallazgo del auditor).
+- El motor cambia lo que hace: una liquidez tomada antes de `ventana_inicio` vale desde la apertura
+  (`la_toma_es_de_la_sesion`, ADR-0066). `tests/unit/test_escenarios_por_sesion.py` cambia de sentido
+  a propósito: el registro real da `cuenta` y `no_cuenta` pasa a pedirse expresamente; el test
+  comprueba además con el registro real que la toma anterior a la ventana es de la sesión. Notas de
+  RN-004 y descripción del parámetro; `spec_version` 15.9.7 → 15.9.8.
 
 ## PARADA 2 · La forma del registro de S-4 sobre A-49 (punto 2)
 

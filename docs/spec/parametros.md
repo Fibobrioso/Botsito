@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.7` · hash `f0c480dc16fb…`
+`spec_version 15.9.8` · hash `b7cb9c290f31…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -89,7 +89,7 @@
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
-| `toma_antes_de_la_ventana` | `no_cuenta` | DEFAULT_AMBIGUOUS · en revision por A-43 | estrategia | `ev-v9-004533-d075b080` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
+| `toma_antes_de_la_ventana` | `cuenta` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-c3d0c855` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
@@ -645,7 +645,7 @@ UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no h
 
 ### `toma_antes_de_la_ventana`
 
-si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`; ADR-0066). PROVISIONAL hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43). El valor es `no_cuenta` por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el 2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia pasado, daba la toma. Una toma en una sesion ANTERIOR del dia no la decide este parametro: no cuenta nunca (A-46 RESUELTA)
+si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`; ADR-0066). Fue PROVISIONAL `no_cuenta` hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43), por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el 2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia pasado, daba la toma. CORREGIDO POR EL TRADER el 2026-10-04 (sesion 4, S-15, v10 1:46:13): «¿lo usas para operar a partir de las 7? Sí.», con la operativa dentro de su horario (ev-v10-014613-6cf002b2, ev-v10-014705-718c5f4e): el valor es `cuenta`, activado el 2026-10-11 como DESVIACION declarada de «las en parte van a la sesion 5» porque el valor provisional decia lo contrario de lo firme; A-43 sigue ABIERTA por su segunda parte (la toma de las 6:45 y la de las 7:20). Una toma en una sesion ANTERIOR del dia no la decide este parametro: no cuenta nunca (A-46 RESUELTA)
 
 Opciones: `no_cuenta`, `cuenta`.
 

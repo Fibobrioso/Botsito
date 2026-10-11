@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.7` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.8` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -48,7 +48,9 @@ Afecta a: `liquidez_m15_pivote_formado`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
-Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
+Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma. LO FIRME, ACTIVADO el 2026-10-11 (sesion 4, S-15, v10 1:46:13-1:47:16) como DESVIACION declarada de la regla «las en parte van a la sesion 5» (decision del consultor, punto 9): una liquidez tomada antes de las 7 SI la usa, siempre que la operacion se de desde las 7 («¿lo usas para operar a partir de las 7? Sí.»; «la operativa se tiene que dar dentro de la zona horaria, a partir de las 7»): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL, que decia lo contrario) a cuenta, CONFIRMED (fb-2026-10-04-sesion-04-c3d0c855). SIGUE ABIERTA por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»; contesto que la liquidez se va actualizando y se toma «la más reciente». Va a la sesion 5.
+
+Afecta a: `toma_antes_de_la_ventana`.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 

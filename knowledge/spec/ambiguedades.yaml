@@ -1227,6 +1227,15 @@ ambiguedades:
       ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de
       hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la
       sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
+      LO FIRME, ACTIVADO el 2026-10-11 (sesion 4, S-15, v10 1:46:13-1:47:16) como DESVIACION
+      declarada de la regla «las en parte van a la sesion 5» (decision del consultor, punto 9):
+      una liquidez tomada antes de las 7 SI la usa, siempre que la operacion se de desde las 7
+      («¿lo usas para operar a partir de las 7? Sí.»; «la operativa se tiene que dar dentro de la
+      zona horaria, a partir de las 7»): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL,
+      que decia lo contrario) a cuenta, CONFIRMED (fb-2026-10-04-sesion-04-c3d0c855). SIGUE ABIERTA
+      por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la
+      vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»;
+      contesto que la liquidez se va actualizando y se toma «la más reciente». Va a la sesion 5.
     resuelve_en: [F19, F20]
     # NACE EL 2026-09-25 (rama trabajo/huecos-motor, ADR-0049 H2, decision del consultor). El motor
     # solo tiene eventos entre ventana_inicio y ventana_fin (ADR-0048; las sesiones salen de
@@ -1246,7 +1255,7 @@ ambiguedades:
     evidencia:
       - ev-v3-000138-567dc5d7
       - ev-v3-000157-b26147c7
-    parametros: []
+    parametros: [toma_antes_de_la_ventana]
     contradiccion: null
     estado: ABIERTA
     decision: null

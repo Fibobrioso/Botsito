@@ -1066,8 +1066,10 @@ reglas:
       ADR-0066) la toma tiene que ser DE LA SESION (`la_toma_es_de_la_sesion`): una liquidez que
       ya estaba tomada al abrirla no cuenta si se tomo en una sesion anterior del dia (A-46: cada
       sesion es «un mundo diferente», fb-2026-09-29-sesion-03-5021677e), y si se tomo antes de la
-      primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL hasta la pregunta 15 de la
-      sesion 4. Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la
+      primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL no_cuenta hasta la pregunta 15
+      de la sesion 4 y `cuenta` desde el 2026-10-11 (S-15: una liquidez tomada antes de las 7 SI la
+      usa, con la operativa desde las 7; fb-2026-10-04-sesion-04-c3d0c855; A-43 sigue ABIERTA por su
+      segunda parte). Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la
       apertura de la tarde sobre el mismo pivote si el precio seguia pasado
       (docs/validation/ESCENARIOS-POR-SESION.md §0.2). Y cada toma de una liquidez nueva abre un
       ESCENARIO (`abrir_escenario`): RN-004 fija el hecho en cada M1 que cierra pasada la linea,
