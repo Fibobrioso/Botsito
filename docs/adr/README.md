@@ -43,7 +43,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0036 | El material ya visto se reparte por su propio camino, con nombres propios y con puerta | ACTIVE |
 | 0038 | Un fotograma se abre por instante localizado, nunca por muestreo | ACTIVE |
 | 0039 | Ningun libro se lee sin su formato y su huso declarados | ACTIVE |
-| 0040 | La combinacion CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos | ACTIVE |
+| 0040 | La combinacion CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos | ACTIVE (con enmienda de ADR-0073) |
 | 0041 | Un dia reservado expuesto sale del holdout y no se sustituye | ACTIVE |
 | 0042 | Material ya visto entra por un reparto dev-visto, sin sorteo y sin holdout | ACTIVE |
 | 0043 | Criterio de fidelidad en desarrollo | ACTIVE |
@@ -76,4 +76,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0070 | Mayo solo se mide cuando una corrida del arnés sobre construcción, solo con las opciones de una lista cerrada, llega al umbral de ADR-0043 | ACTIVE |
 | 0071 | Lo que fija la ejecución 1 de la demo de FTMO: la ficha de EURUSD, el stops level 0 y el volumen máximo 50; A-27 DECIDIDA | ACTIVE |
 | 0072 | Quién lee la columna de fechas de un backtest (Aleks, para todo backtest) y los tres papeles: Aleks, el consultor y la sesión | ACTIVE |
+| 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

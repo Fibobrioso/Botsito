@@ -1,0 +1,22 @@
+id: fb-2026-10-04-sesion-04-df162e6e
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-33
+accion: RESOLVE_UNKNOWN
+respuesta_literal: todo es 13 o sea fijo es 13 la regla es esa [...] es un modo 3 tomando en cuenta que
+  es de respecto al 1 de la caja no no no no exacto exacto exacto
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04, ADR-0073)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:29:02'
+t1: '1:29:21'
+valor_resultante: 'nunca cierra antes del objetivo: fijo, 3 veces respecto al 1 de la caja'
+notas: 'S-12 (pregunta 12, G-2 de la sesion 3): nunca deja correr ni cierra antes; el objetivo es fijo
+  (ev-v10-012902-257afe4b). RESERVA LITERAL: «no vamos a dejar correr nada por ahora» (ev-v10-012704-d3facd31).
+  Las ganadoras del material por debajo de 3R que esta respuesta no explica pasan a A-56 (ADR-0073). Ningun
+  valor cambia'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

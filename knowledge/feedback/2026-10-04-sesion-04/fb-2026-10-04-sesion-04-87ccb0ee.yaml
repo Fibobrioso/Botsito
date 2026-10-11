@@ -1,0 +1,23 @@
+id: fb-2026-10-04-sesion-04-87ccb0ee
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-18
+accion: RESOLVE_UNKNOWN
+respuesta_literal: se usa de 0 a 1 para el cálculo de 1 a 3 pero para el cálculo ya de para la toma de
+  la operativa se usa de 0 a 0,8
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04, ADR-0073)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: 0:39:27
+t1: 0:39:48
+valor_resultante: stop en el 0,8 al poner la orden; objetivo 3 veces la distancia 0->1; lote sobre 0->0,8
+notas: 'S-3 (pregunta 3 y su subpregunta): el stop va ya en el 0,8 al poner la orden (ev-v10-003559-211855b7);
+  el 1 se usa al comienzo como planteamiento, no de ejecucion (ev-v10-003706-5b7055a2); el objetivo se
+  mide del 0 al 1 (ev-v10-003927-2f6d9f48). Tercera vez que lo dice (sesion 3: fb-2026-09-29-sesion-03-f572f1a0,
+  fb-2026-09-29-sesion-03-d62c788a). Ningun valor cambia. Lo que el material contradice (ADR-0040) pasa
+  a A-56 por ADR-0073'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

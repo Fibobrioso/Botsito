@@ -16,7 +16,7 @@ trabajo/activar-sesion-04
 11a63ad · merge: entorno de Claude Code: skills, agentes, hook de arranque, make rapido y guardias del paquete (R0.2) · tag stable/F37l-entorno-code
 
 ## Tests Currently Passing
-1498 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1501 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -83,13 +83,11 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 |---|---|---|---|---|
 | A-13 | break even al toque o con cuerpo | pregunta | no | F11, F23, F26 |
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
-| A-18 | base sobre la que se mide el objetivo 1:3 | pregunta | no | F11, F26 |
 | A-21 | que es una zona de control limpia, sin ruido | pregunta | si | F12, F20, F26 |
 | A-25 | la vida de la marca de liquidez de M15 | pregunta | no | F19, F20 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
-| A-33 | tres ganadoras que cierran por debajo de 3R | pregunta | no | F20, F24, F26 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
 | A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
@@ -102,6 +100,7 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
+| A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.

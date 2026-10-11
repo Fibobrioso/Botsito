@@ -1340,7 +1340,10 @@ parametros:
       NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015).
       CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0,
       ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es
-      la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1
+      la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1.
+      RATIFICADO el 2026-10-04 (sesion 4, S-3, v10 0:39:27: «se usa de 0 a 1 para el cálculo de 1 a
+      3»): A-18 RESUELTA por ADR-0073 (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material
+      contradice (ADR-0040, enmendado) es A-56, una medicion para F26
     estado: CONFIRMED
     valor: "caja_completa"
     fuente:

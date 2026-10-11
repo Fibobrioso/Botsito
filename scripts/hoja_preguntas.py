@@ -54,7 +54,7 @@ ORDEN_SESION_02: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Lo primero", ("A-35", "A-21", "A-44", "A-43", "A-24")),
     ("La liquidez de M15", ("A-25", "A-32")),
     ("La orden y el stop", ("A-36", "A-30", "A-48", "A-49")),
-    ("La gestión de la operación", ("A-18", "A-13", "A-33")),
+    ("La gestión de la operación", ("A-13",)),
     ("Para terminar", ("A-39",)),
 )
 ESTADOS_QUE_SE_PREGUNTAN = ("ABIERTA", "DECIDIDA")

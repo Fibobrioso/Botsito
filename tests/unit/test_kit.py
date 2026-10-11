@@ -326,13 +326,17 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # 2026-10-02 (rama trabajo/cerrar-a29-a36) A-29, con su respuesta grabada en v9; A-36 se cerro
     # y el consultor la reabrio el mismo dia (fb-2026-09-29-sesion-03-a0b61bc9).
     # Y las que el trader responde en la sesion 4 (2026-10-04, rama trabajo/activar-sesion-04,
-    # respuesta del consultor a la PARADA del 2026-10-11): A-52 (S-20, sin maximo de escenarios).
+    # respuesta del consultor a la PARADA del 2026-10-11): A-52 (S-20, sin maximo de escenarios);
+    # A-18 (S-3, el stop en el 0,8 y el objetivo sobre el 0->1) y A-33 (S-12, el objetivo es fijo),
+    # las dos por ADR-0073, que enmienda ADR-0040 y abre A-56 (medicion).
     assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
         "A-14",
+        "A-18",
         "A-20",
         "A-26",
         "A-29",
         "A-31",
+        "A-33",
         "A-34",
         "A-37",
         "A-38",

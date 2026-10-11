@@ -331,6 +331,14 @@ ambiguedades:
     pregunta: >-
       ¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop
       en dos tiempos: ¿cómo funciona eso?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-3, v10 0:35:59-0:39:48; ADR-0073): el stop va ya en
+      el 0,8 al poner la orden («Sería directamente a 0.8»); el 1 «se usa al comienzo pero no de
+      ejecución, sino como planteamiento»; el objetivo se mide del 0 al 1 y el lote del 0 al 0,8
+      («se usa de 0 a 1 para el cálculo de 1 a 3 [...] para la toma de la operativa se usa de 0 a
+      0,8»). No hay stop en dos tiempos en la ejecucion. Ningun valor cambia: base_calculo_objetivo,
+      objetivo_rr, stop_fraccion_caja y lotaje_base ya estaban CONFIRMED con lo mismo desde la
+      sesion 3. Lo que el material contradice (ADR-0040, enmendado por ADR-0073) es una medicion y
+      va en A-56 (fb-2026-10-04-sesion-04-87ccb0ee).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para
@@ -363,7 +371,7 @@ ambiguedades:
       - ev-v3-003142-607674c3
     parametros: [base_calculo_objetivo, objetivo_rr]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -836,6 +844,13 @@ ambiguedades:
     titulo: tres ganadoras que cierran por debajo de 3R
     pregunta: >-
       ¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:29:21; ADR-0073): nunca; «todo es
+      13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin
+      dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora»
+      (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras
+      del material que cierran por debajo de 3R, que esta respuesta no explica, pasan a A-56
+      (medicion). Ningun valor cambia: parciales, objetivo_rr y base_calculo_objetivo ya estaban
+      CONFIRMED (fb-2026-10-04-sesion-04-df162e6e).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo.
@@ -865,7 +880,7 @@ ambiguedades:
       - ev-v4-011112-17178b38
     parametros: [parciales, objetivo_rr]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1611,6 +1626,41 @@ ambiguedades:
         literal: "within two hours before a relevant market closes for at least two hours"
     parametros:
       - cierre_pendientes
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: medicion
+    bloqueante: false
+  - id: A-56
+    titulo: la regla del objetivo dicha por el trader frente a lo que mide su material
+    pregunta: >-
+      El trader dice, tres veces, que el stop va en el 0,8 y que el objetivo es 3 veces la
+      distancia del 0 al 1 (A-18 y A-33, RESUELTAS por ADR-0073). Con esa combinacion el RR
+      implicito de sus ganadoras sobre entrada-stop tendria que caer fuera de [3,00, 3,75), y en
+      tres meses de sus libros cae dentro en 26 filas de 38 (ADR-0040). ¿Que explica la
+      diferencia: donde queda el stop en sus backtests, como redondea FX Replay, otra cosa? Y las
+      ganadoras de esos libros que cierran por debajo de 3R (una en agosto, dos en abril, una en
+      mayo), que «nunca cierro antes del objetivo» no explica. NO SE LE PREGUNTA AL TRADER: ya
+      contesto; se MIDE. La fila de agosto de ADR-0040 sale del xlsx del backtest de agosto, y en
+      S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno el backtest de agosto grabado en
+      video, no ese xlsx; sin agosto la region sigue poblada con abril y mayo. Lo que la
+      resolveria lo dice ADR-0040 §2: un material que traiga la caja; y un libro de agosto que sea
+      el que el trader da por bueno. F26 lee la diferencia como conocida.
+    resuelve_en: [F26]
+    # NACE el 2026-10-11 (rama trabajo/activar-sesion-04, ADR-0073, decision del consultor): es la
+    # contradiccion que ADR-0040 llamaba «refutacion» y que mantenia A-18 abierta. Clase medicion y
+    # NO bloqueante: una medicion nunca va al trader y un bloqueante no se cierra como DECIDIDA.
+    # Sus fuentes son documentales (ADR-0040), como las de A-54 y A-55.
+    evidencia: []
+    fuentes_documentales:
+      - documento: docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md
+        ancla: "Decision"
+        literal: "Una fila dentro basta, y hay 26 en 38."
+      - documento: docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md
+        ancla: "Impacto"
+        literal: "Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00."
+    parametros: [base_calculo_objetivo, objetivo_rr, stop_fraccion_caja]
     contradiccion: null
     estado: ABIERTA
     decision: null

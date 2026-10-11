@@ -1342,7 +1342,10 @@ reglas:
       fb-2026-09-29-sesion-03-11910e0a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct,
       ADR-0061, ACEPTADO) LA FORMA NOMBRA stop_fraccion_redondeo y el motor lo lee: la distancia
       de la entrada al stop se redondea al punto entero siguiente, el stop queda un poco mas
-      lejos y el lote, que sale de esa distancia, un poco menor.
+      lejos y el lote, que sale de esa distancia, un poco menor. DESDE EL 2026-10-04 (sesion 4,
+      S-3; ADR-0073, 2026-10-11) A-18 ESTA RESUELTA: el stop va ya en el 0,8 al poner la orden,
+      el 1 solo plantea el RR y no hay stop en dos tiempos en la ejecucion
+      (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material contradice es A-56, una medicion.
     decision: ADR-0020
     forma:
       cuando:
@@ -1494,7 +1497,10 @@ reglas:
       leer esa diferencia como un fallo del bot: es la mecanica. ev-v4-011951 empuja al otro
       lado -el trader dice que un ganador cubre "2 o 3" perdidas, que cuadra mejor con medir
       sobre el riesgo real-, pero es una estimacion redonda hablando de margenes, no una
-      descripcion del calculo; A-18 lo deja a la vista hasta ratificarlo. LA BASE, ANOTADA Y NO
+      descripcion del calculo; A-18 lo dejo a la vista hasta ratificarlo, y el trader lo ratifico
+      en la sesion 4 (S-3 y S-12: fijo, 3 veces respecto al 1 de la caja, sin dejar correr «por
+      ahora»; A-18 y A-33 RESUELTAS por ADR-0073, fb-2026-10-04-sesion-04-87ccb0ee y
+      fb-2026-10-04-sesion-04-df162e6e; la diferencia con el material es A-56). LA BASE, ANOTADA Y NO
       CAMBIADA (2026-09-16): las dos premisas con las que ADR-0014 eligio la caja completa estan
       revocadas -que el stop se mueve tras el llenado (A-11) y que el lote se dimensiona sobre la caja
       (ADR-0020)-, asi que el argumento "en el instante de trazar la orden solo existe la caja

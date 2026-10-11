@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.2` · hash `f32426d0b677…`
+`spec_version 15.9.3` · hash `6cee5cb2b55e…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -161,7 +161,7 @@ donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion d
 
 ### `base_calculo_objetivo`
 
-distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015). CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0, ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1
+distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015). CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0, ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1. RATIFICADO el 2026-10-04 (sesion 4, S-3, v10 0:39:27: «se usa de 0 a 1 para el cálculo de 1 a 3»): A-18 RESUELTA por ADR-0073 (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material contradice (ADR-0040, enmendado) es A-56, una medicion para F26
 
 Opciones: `caja_completa`, `riesgo_real`.
 

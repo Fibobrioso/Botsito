@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.3` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (21)
+## ABIERTA (20)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -17,12 +17,6 @@ Afecta a: `break_even_criterio_ruptura`.
 ### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
-
-### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
-
-¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop en dos tiempos: ¿cómo funciona eso?
-
-Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
@@ -55,12 +49,6 @@ Si se acaba tu horario de operar y tienes una orden límite puesta que todavía 
 En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
 
 Afecta a: `breaker_m1_criterio_ruptura`.
-
-### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
-
-¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
-
-Afecta a: `parciales`, `objetivo_rr`.
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
@@ -130,6 +118,16 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «within two hours before a relevant market closes for at least two hours».
 
+### A-56 · la regla del objetivo dicha por el trader frente a lo que mide su material · medicion
+
+El trader dice, tres veces, que el stop va en el 0,8 y que el objetivo es 3 veces la distancia del 0 al 1 (A-18 y A-33, RESUELTAS por ADR-0073). Con esa combinacion el RR implicito de sus ganadoras sobre entrada-stop tendria que caer fuera de [3,00, 3,75), y en tres meses de sus libros cae dentro en 26 filas de 38 (ADR-0040). ¿Que explica la diferencia: donde queda el stop en sus backtests, como redondea FX Replay, otra cosa? Y las ganadoras de esos libros que cierran por debajo de 3R (una en agosto, dos en abril, una en mayo), que «nunca cierro antes del objetivo» no explica. NO SE LE PREGUNTA AL TRADER: ya contesto; se MIDE. La fila de agosto de ADR-0040 sale del xlsx del backtest de agosto, y en S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno el backtest de agosto grabado en video, no ese xlsx; sin agosto la region sigue poblada con abril y mayo. Lo que la resolveria lo dice ADR-0040 §2: un material que traiga la caja; y un libro de agosto que sea el que el trader da por bueno. F26 lee la diferencia como conocida.
+
+Afecta a: `base_calculo_objetivo`, `objetivo_rr`, `stop_fraccion_caja`.
+
+Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Decision»: «Una fila dentro basta, y hay 26 en 38.».
+
+Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
+
 ## DECIDIDA (7)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
@@ -172,7 +170,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (27)
+## RESUELTA (29)
 
 ### A-1 · sesgo H4
 
@@ -252,6 +250,12 @@ del 8 al 28 de marzo y del 25 al 31 de octubre, la UE y EE.UU. no cambian la hor
 
 Afecta a: `ventana_inicio`, `ventana_fin`.
 
+### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
+
+¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop en dos tiempos: ¿cómo funciona eso? RESUELTA el 2026-10-04 en la sesion 4 (S-3, v10 0:35:59-0:39:48; ADR-0073): el stop va ya en el 0,8 al poner la orden («Sería directamente a 0.8»); el 1 «se usa al comienzo pero no de ejecución, sino como planteamiento»; el objetivo se mide del 0 al 1 y el lote del 0 al 0,8 («se usa de 0 a 1 para el cálculo de 1 a 3 [...] para la toma de la operativa se usa de 0 a 0,8»). No hay stop en dos tiempos en la ejecucion. Ningun valor cambia: base_calculo_objetivo, objetivo_rr, stop_fraccion_caja y lotaje_base ya estaban CONFIRMED con lo mismo desde la sesion 3. Lo que el material contradice (ADR-0040, enmendado por ADR-0073) es una medicion y va en A-56 (fb-2026-10-04-sesion-04-87ccb0ee).
+
+Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
+
 ### A-20 · cuantas zonas de control invalidan un esquema
 
 RN-009 afirma que con mas de una zona de control no hay trade, pero el literal que la sostiene dice "por lo general solo buscamos uno", que no es una prohibicion dura. ¿es regla o es tendencia? ¿dos zonas invalidan SIEMPRE el esquema, o hay casos en que opera igual? El valor 1 es un default nuestro hasta que lo diga. RESPONDIDA por escrito el 2026-09-11: es REGLA -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica tambien el descarte, no solo el numero (fb-2026-09-09-sesion-01-1b2203b0)
@@ -271,6 +275,12 @@ Afecta a: `orden_limite_nace`.
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
+
+### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
+
+¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos? RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:29:21; ADR-0073): nunca; «todo es 13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora» (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras del material que cierran por debajo de 3R, que esta respuesta no explica, pasan a A-56 (medicion). Ningun valor cambia: parciales, objetivo_rr y base_calculo_objetivo ya estaban CONFIRMED (fb-2026-10-04-sesion-04-df162e6e).
+
+Afecta a: `parciales`, `objetivo_rr`.
 
 ### A-34 · vela H4 previa que rompe ambos extremos · pregunta
 
