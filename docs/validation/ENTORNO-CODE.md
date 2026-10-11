@@ -450,7 +450,8 @@ en `success` por la API de check-runs con el sha literal; ninguna otra rama loca
 `feature/*` ni `fix/*`, respuesta 6) ni `fix/*` en origin; si algo no cuadra, se para. Además,
 por 0.a, la Verificación incluye el artefacto. (La frase del inventario del paso 4 se cambió en
 `248d8df` por el solape de 0.c y se devolvió a la de `main` tras el hallazgo b2 del revisor: ese
-solape no se puso a decisión; queda como punto 1 de §4.) Ninguna puerta que tenía se
+solape no se puso a decisión; queda como punto 1 de §4, y la respuesta (a) la cambia: §4.2.)
+Ninguna puerta que tenía se
 quitó (`git diff 9fe3d44 248d8df -- .claude/skills/abrir-rama/SKILL.md`: solo amplía el paso 1,
 Herramientas y Verificación, y cambia la frase del inventario).
 
@@ -478,8 +479,9 @@ señalan a la nada) y una forma de E7, `evidence propose --salida`, que `main` y
 
 ### 3.10 Desviaciones declaradas
 
-1. **El `Makefile` no cambia** (§4): `make rapido` y la línea de `mypy --strict` del hook quedan
-   preparados, sin hacer.
+1. **El `Makefile` no cambió hasta la respuesta de §4.1** (§4): `make rapido` y la línea de
+   `mypy --strict` del hook entran en el último commit, sellado por un `make check` que lanza
+   Aleks (§4.2).
 2. `tests/unit/test_memoria.py`, `test_medir_apunta_cada_paso_y_el_informe_da_el_mayor_y_limpia`:
    el informe tiene ahora dos líneas, así que lee la ÚLTIMA (la del pico, igual que antes) y
    comprueba además la de la duración. La línea del pico sigue siendo la última de
@@ -487,11 +489,12 @@ señalan a la nada) y una forma de E7, `evidence propose --salida`, que `main` y
 3. (Retirada.) `abrir-rama`, «el artefacto nace con el inventario» pasó en `248d8df` a «nace EN
    CURSO y el inventario lo escribe `fase-cero`»; el revisor (b2) vio que la respuesta 5 acepta
    las correcciones de 0.a y este cambio salía de 0.c, que no se puso a decisión. Se devolvió a
-   la frase de `main` y va a §4, punto 1.
+   la frase de `main` y va a §4, punto 1. Con la respuesta (a), entra la frase del consultor
+   (§4.2).
 4. Lo de E4 de §3.5 (cabecera tolerante y `name` del agente).
 5. `entregar-rama` lleva un límite que el paquete no traía (§3.1, última fila de `entregar-rama`).
 
-## 4. PARADA de esta noche: el `Makefile` (pieza sin hacer)
+## 4. PARADA de esta noche: el `Makefile` (sin hacer hasta la respuesta de §4.1)
 
 Lo medido: con el `Makefile` cambiado, la guardia de Claude Code niega TODO `make`, también
 `make check`: «ejecutar `make rapido`: …\Makefile no es el de `main`: sus recetas son código de la
@@ -529,41 +532,187 @@ nombra `sello_make_check`.
    commit»; (b) dejarla. Recomiendo (a): la frase describe un orden que la skill `fase-cero` ya no
    sigue. Coste de (b): dos skills que dicen dos cosas sobre el mismo paso.
 
+### 4.1 Respuesta del consultor a la PARADA de §4 (2026-10-11), tal cual
+
+> Respuesta del consultor a la PARADA de ENTORNO-CODE.md §4 (2026-10-11). Cópiala tal cual al final del encargo y en el informe.
+>
+> 0. Makefile: (a). El consultor revisó el diff de §4 y lo aprueba tal cual: rapido = lint types contracts, sin desellar, sellar ni variables, y estado_sesion.py en mypy --strict. Aplícalo, añade el test que falla si rapido llega a desellar, sellar o check o si una de sus recetas nombra sello_make_check, y estadía todo. Después dime exactamente cuándo lanzar yo «! make check > make-check.log 2>&1»; cuando acabe, lee el log (exit 0, ningún failed, SELLO) y commitea. No reescribas el comando para que la guardia no lo vea.
+> 1. abrir-rama, paso 4: (a): «nace con su cabecera y EN CURSO; la fase 0 la escribe fase-cero en su commit».
+> Con los dos hechos: push a fix/entorno-code, CI de Linux con su número de run, y prepara §6 con la variante de F «E es lo siguiente» y R0.2 HECHA. Rama lista para revisión, NO cerrada.
+
+### 4.2 Lo hecho con la respuesta
+
+- **0, el `Makefile`**: el diff de §4, tal cual: `rapido` en `.PHONY`,
+  `.claude/hooks/estado_sesion.py` en la línea de `mypy --strict` de `types`, y
+  `rapido: lint types contracts` con su comentario, sin recetas propias ni variables. La línea
+  `check:` no cambia. `uv run mypy --strict .claude/hooks/estado_sesion.py`: «Success: no issues
+  found in 1 source file». Test nuevo, `tests/unit/test_make_rapido.py` (11 tests, tras el
+  segundo revisor, §10.3): lee el `Makefile`, recorre lo que alcanza `rapido` por sus
+  prerrequisitos (también los de una regla con varios objetivos) y por cualquier `make` o
+  `$(MAKE)` de sus recetas (también la receta en línea tras `;`), con las variables expandidas
+  (`+=` incluido), y falla si llega a `desellar`, `sellar` o `check` o si una receta nombra
+  `sello_make_check`; lo que no sabe seguir (`include`, `define`, `!=`) es un problema, no un
+  silencio. Comprueba además que `rapido` sea exactamente `lint types contracts` sin recetas y
+  que el hook esté en `mypy --strict`. Se prueba contra roturas sintéticas: sin `rapido`; `rapido`
+  con `sellar`, `desellar` o `check` de prerrequisito; a través de otro objetivo; por una regla
+  con varios objetivos; con `$(MAKE) check`, `${MAKE} -f Makefile check`, `make check` y
+  `$(UV) run make check` en una receta (y `> make-check.log` no cuenta como `make`); con una
+  receta en línea; con `include`, `-include`, `define` y `!=`; y con `sello_make_check` en una
+  receta, directo, escondido en una variable y sumado con `+=`. Con el `Makefile` de `main` falla
+  (`no existe el objetivo rapido`). `rapido` corre sus pasos dentro de `medir`, que apunta en el
+  acumulador del pico, en el directorio de git y no en el árbol: ni lo ve la huella ni es el
+  sello, y el `empezar` de `desellar` lo borra al principio de cada `make check`. La sesión no ha
+  lanzado `make rapido` ni `make check`: con este `Makefile` la guardia los niega, y el
+  `make check` que sella este commit lo lanza Aleks con «!».
+- **1, `abrir-rama`, paso 4**: la frase de la respuesta, literal salvo la mayúscula inicial:
+  «Nace con su cabecera y EN CURSO; la fase 0 la escribe fase-cero en su commit», en lugar de «Si
+  el encargo pide un inventario antes de tocar codigo, nace con el; si no, con su cabecera y un
+  `## Estado` EN CURSO». (La primera versión añadía «(un `## Estado` EN CURSO)»; el segundo
+  revisor, b3, vio que no era literal, y se quitó.)
+- La respuesta, copiada al final del encargo y aquí; `PROJECT_STATE.md`, 1486 → 1494 funciones de
+  test (mismos bytes; 1498 al final, §4.5 y §10.3).
+- **El revisor** pasó antes de esta respuesta (§10), cuando `rapido` no existía. Lo que su
+  alcance pide de él («que make rapido, si existe, no selle») lo comprueba ahora
+  `test_make_rapido.py` dentro de `make check`. Tras la respuesta de §4.4 se pasó otra vez sobre
+  todo lo de la tarde (§10.2).
+
+### 4.3 PARADA: con el `Makefile` cambiado, `make check` no puede salir en verde
+
+Lo medido: el `make check` que lanzó Aleks (2026-10-11, con todo lo de §4.2 estadiado) salió con
+exit 2 y sin `SELLO`: «2 failed, 2562 passed in 1065.21s». Los dos fallos son
+`tests/unit/test_guardia_claude.py::test_el_ritual_y_los_runbooks_pasan[make check > make-check.log 2>&1]`
+y `[make hooks]`: ese test pasa los comandos del ritual por la guardia CONTRA EL REPO REAL y exige
+que no los niegue, y la guardia niega todo `make` si el `Makefile` no es el de `main`
+(`_igual_que_en_main`, la vía de `exigir_ejecucion_verificable` desde `f22179f`, 2026-10-07). Así
+que ninguna rama que cambie el `Makefile` puede sellar, lo lance quien lo lance; desde esa fecha
+ninguna lo había cambiado (`git log main -- Makefile`: el último, `3027599`, del 2026-10-01). No
+hay commit: lo de §4.2 sigue estadiado, intacto.
+
+**Lo que necesito que decidas:**
+0. Opciones: (a) en ese test, para los dos comandos `make`, si el `Makefile` del repo no es el de
+   `main` (la misma `_igual_que_en_main` de la guardia), exigir que la guardia los NIEGUE con
+   «lo lanza Aleks en su terminal con «!»»; si es el de `main`, exigir que pasen, como hoy. La
+   guardia no se toca; el test pasa a comprobar las dos caras. (b) Sacar los dos `make` de
+   `RITUAL` y probarlos en un repo temporal con el `Makefile` igual al de `main` (ya hay tests así,
+   `test_guardia_claude.py:1087` y `:1175`). (c) El `Makefile` vuelve al de `main` y `rapido` y la
+   línea de `mypy --strict` pasan a otra rama, que chocará con lo mismo.
+   Recomiendo (a): en `main` el test sigue igual de estricto, y en una rama que cambia el
+   `Makefile` comprueba lo que la guardia tiene que hacer, que es negar. Coste de (b): el test deja
+   de mirar el `Makefile` real. Coste de (c): no resuelve nada. Con (a) o (b), otro `make check`
+   lanzado por Aleks (unos 18 minutos).
+
+Hallazgo: el test del ritual suponía el Makefile de main; la primera rama que lo cambia lo rompe;
+corregido en el test, la guardia sigue igual.
+
+### 4.4 Respuesta del consultor a la PARADA §4.3 (2026-10-11), tal cual
+
+> Modelo: Opus · Esfuerzo: alto (misma sesión, rama trabajo/entorno-code)
+>
+> Respuesta del consultor a la PARADA §4.3 (2026-10-11). Cópiala TAL CUAL al final del encargo y en el informe, y aplícala.
+>
+> Decisión: (a), con estas precisiones.
+>
+> 1. En tests/unit/test_guardia_claude.py, solo para los comandos de RITUAL cuyo programa es `make` ("make check > make-check.log 2>&1" y "make hooks"), la expectativa depende de si el Makefile del repo real es el de main:
+>    - La condición la calcula el test con git, NO con `_igual_que_en_main` ni con otra función de la guardia: `git rev-parse --verify -q main:Makefile`, o si no `origin/main:Makefile`, frente a `git hash-object -- Makefile`, con cwd=RAIZ.
+>    - Si coinciden: la guardia no niega (como hoy).
+>    - Si difieren: la guardia niega, y el motivo contiene «lo lanza Aleks en su terminal con «!»».
+>    - Si no hay ni main ni origin/main: el test FALLA con un mensaje que lo diga. No se salta.
+>    - El resto de comandos de RITUAL no cambia. Si es más limpio, sepáralo en un test aparte para los dos `make`, pero el parametrizado de los demás sigue igual de estricto.
+> 2. La guardia NO se toca.
+> 3. El test que rompe a propósito, demostrado en el informe con comando y salida: con el Makefile de la rama, el test nuevo pasa y el actual falla (los 2 fallos del log). Y `uv run pytest tests/unit/test_guardia_claude.py -q` en verde. Es pytest, no make, así que lo puedes lanzar tú.
+> 4. Al informe, en §4.3, una línea de hallazgo: «el test del ritual suponía el Makefile de main; la primera rama que lo cambia lo rompe; corregido en el test, la guardia sigue igual». En §6 añade a G.1: «el test del ritual quedó ciego al caso del Makefile cambiado hasta entorno-code (corregido)».
+> 5. Después: git add de lo tocado, y me pasas a mí (Aleks) la línea exacta para lanzar `! make check > make-check.log 2>&1`. Cuando termine, lees el log (exit 0, ningún failed, la línea SELLO), haces el commit, push a fix/entorno-code, esperas la CI del ÚLTIMO commit (único fallo aceptado: state check por el nombre fix/) y dejas la rama «lista para revisión, NO cerrada». No hace falta otra pasada del revisor salvo que el diff vaya más allá del test y del informe. Si va más allá, la pasas y lo dices.
+
+### 4.5 Lo hecho con la respuesta de §4.4
+
+- **1, el test.** En `tests/unit/test_guardia_claude.py`, los dos `make` salen de `RITUAL` a
+  `RITUAL_MAKE`, con su propio test,
+  `test_los_make_del_ritual_pasan_si_el_makefile_es_el_de_main_y_si_no_los_lanza_aleks`. La
+  condición la calcula `_makefile_es_el_de_main()` del test con git y `cwd=RAIZ`:
+  `git rev-parse --verify -q main:Makefile`, si no `origin/main:Makefile`, frente a
+  `git hash-object -- Makefile`. Si coinciden, la guardia no niega; si difieren, niega y el motivo
+  contiene «lo lanza Aleks en su terminal con «!»»; si no hay ni `main` ni `origin/main`,
+  `pytest.fail` con un mensaje que lo dice (no se salta). Los demás comandos de `RITUAL`, en el
+  parametrizado de siempre, sin cambios. `test_ninguna_denegacion_toca_el_ritual`, que también
+  recorría `RITUAL`, pasa a recorrer `RITUAL + RITUAL_MAKE`, para no perder los dos `make`. En la CI
+  hay `origin/main`: `.github/workflows/ci.yml` hace el checkout con `fetch-depth: 0`.
+- **2, la guardia**: sin tocar (`git diff --cached --stat main -- .claude/hooks/guardia.py`, vacío).
+- **3, el test que rompe a propósito.** Con el `Makefile` de la rama:
+  - el test ACTUAL falla. Hasta esta respuesta la rama no había tocado `test_guardia_claude.py`
+    (`git log --oneline main..4b80c58 -- tests/unit/test_guardia_claude.py`: ningún commit; sin
+    cambios estadiados en el `make check` de §4.3), así que el `make-check.log` de §4.3 es el test
+    de `main` contra el `Makefile` de la rama: `make check > make-check.log 2>&1`, exit 2,
+    «FAILED tests/unit/test_guardia_claude.py::test_el_ritual_y_los_runbooks_pasan[make check > make-check.log 2>&1]»,
+    «FAILED tests/unit/test_guardia_claude.py::test_el_ritual_y_los_runbooks_pasan[make hooks]»,
+    «2 failed, 2562 passed in 1065.21s».
+  - el test NUEVO pasa, por la rama de «difieren» (`git rev-parse --verify -q main:Makefile`:
+    `d0cbc2428b694c16ec23deb445385e997dcb3564`; `git hash-object -- Makefile`:
+    `0cb536c0be4ce57d08e009248214773910863384`):
+    `uv run pytest tests/unit/test_guardia_claude.py -k "make_del_ritual" -vv` →
+    «…[make check > make-check.log 2>&1] PASSED», «…[make hooks] PASSED»,
+    «2 passed, 556 deselected in 0.58s».
+  - El fichero entero: `uv run pytest tests/unit/test_guardia_claude.py` → «558 passed in
+    173.12s» (con `-q` además de los `addopts = "-q -ra"` de `pyproject.toml`, pytest no imprime
+    la línea del recuento; por eso, sin `-q`).
+  - Intenté además correr los tests en un clon `--detach` de `main` (`C:\ecA`), para ver la cara
+    de «coinciden». La guardia de Claude Code niega ejecutar desde la sesión ese fichero fuera del
+    repo real, el de `main` incluido: lleva `crudo=True` (prueba esa regla) y fuera del repo no
+    cuenta como test. Con `cd C:/ecA && uv run pytest tests/unit/test_guardia_claude.py -k
+    "ritual_y_los_runbooks and make"` (el fichero de `main`, sin copiar nada): «GUARDIA
+    (.claude/hooks/guardia.py) bloquea: el codigo que se ejecuta pide el corpus SIN FILTRAR.»; lo
+    mismo en el primer intento, que llevaba además una copia del de la rama. No se rodeó: el clon se retiró (`git worktree remove --force`, solo quedaba
+    su `.venv` ignorado) y no hubo más medida. La cara de «coinciden» es la aserción de siempre
+    (`motivo is None`), la misma que pasaba en `main`; en esta rama no se puede ejercitar sin
+    devolver el `Makefile` al de `main`.
+- **4**: el hallazgo, al final de §4.3; la línea de G.1, en §6.
+- `PROJECT_STATE.md`: 1494 → 1495 funciones de test (mismos bytes); 1498 tras §10.3.
+
 ## 5. Lo que no cambia
 
-`git diff --stat main...HEAD` (27 ficheros): `.claude/` (las piezas, el hook, `settings.json`,
-`solo_lectura.py`, `revisor.md`, `abrir-rama`), `CLAUDE.md`, `PROJECT_STATE.md`, `contrato.yaml`,
-el encargo, `ERRORES-RECURRENTES.md`, HISTORIA (solo el Archivo 28), este informe,
-`scripts/pico_memoria.py`, `tests/conftest.py` y siete ficheros de `tests/unit/`. Nada de `src/`,
+`git diff --cached --stat main` con el último commit estadiado (31 ficheros): `.claude/` (las
+piezas, el hook, `settings.json`, `solo_lectura.py`, `revisor.md`, `abrir-rama`), `CLAUDE.md`,
+`Makefile`, `PROJECT_STATE.md`, `contrato.yaml`, el encargo, `ERRORES-RECURRENTES.md`,
+`HOLDOUT-EXPOSICIONES.md`, HISTORIA (solo el Archivo 28), este informe, `scripts/pico_memoria.py`,
+`tests/conftest.py` y nueve ficheros de `tests/unit/` (entre ellos `test_guardia_claude.py`, solo
+el test de los `make` del ritual: §4.5). Nada de `src/`,
 `knowledge/`, `config/`, `data/manifests/`, ni de `cerrar-rama` o `ingerir-sesion`
 (`rutas_protegidas`; `scripts/contrato_rama.py` en verde). Ningún informe cerrado ni fichero
 congelado. `ESPECIFICACION.md` no se copió.
 
-- **Lo que sella `make check` no cambia**: el `Makefile` es el de `main`, y `pico_memoria.py`
-  solo añade una línea (la de la duración) ANTES de la del pico, que sigue siendo la última y
-  mide lo mismo. `sello_make_check.py` y los hooks de git no se tocan.
+- **Lo que sella `make check` no cambia**: en el `Makefile`, la línea `check:`, `desellar` y
+  `sellar` son las de `main`; `types` comprueba un fichero más con `mypy --strict` (el hook) y
+  `rapido` no llega al sello (`test_make_rapido.py`). `pico_memoria.py` solo añade una línea (la
+  de la duración) ANTES de la del pico, que sigue siendo la última y mide lo mismo.
+  `sello_make_check.py` y los hooks de git no se tocan.
 - **Las puertas de `abrir-rama`**: las líneas que quita el diff de su `SKILL.md` son las del paso
   1, Herramientas, la frase del inventario y la Verificación, y cada una vuelve ampliada (el
   `checkout`, el `status` vacío, el sha del encargo y «se para y se pregunta» siguen). `cerrar-rama`
   e `ingerir-sesion` no cambian.
 - **PROJECT_STATE.md**: 21.942 bytes frente a 21.959 de `main`: saldo −17 (solo cambian la rama,
-  la funcionalidad actual y el recuento de tests, 1462 → 1486).
+  la funcionalidad actual y el recuento de tests, 1462 → 1498).
 
 ## 6. Preparado para el commit del contrato del cierre
 
 En la rama no se tocan (RITUAL, puntos 3 y 4).
 
-- **Next Action, F** (sustituye a la de hoy): si §4 se hace antes del cierre:
+**Aviso para el cierre (segundo revisor, a1):** los `make check` del cierre que corren EN ESTA
+RAMA llevan su `Makefile`, que no es el de `main`, y la guardia los niega a la sesión: los lanza
+Aleks con «! make check > make-check.log 2>&1». Son el del commit del contrato
+(`docs/runbooks/RITUAL.md:161`) y, si `pre-merge-commit` rechaza el merge, el de la vuelta a la
+rama (`:201`). El del commit de estado en `main` (`:278`) ya corre con el `Makefile` de `main` tras
+el merge, y lo puede lanzar la sesión. `cerrar-rama` no lo dice y no se toca en esta rama
+(`rutas_protegidas`).
+
+- **Next Action, F** (sustituye a la de hoy; §4 hecho, §4.2):
   `F. Orden de trabajo: E (R1.1 de la hoja de ruta) es lo siguiente; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.`
-  Si no: `F. Orden de trabajo: el Makefile de trabajo/entorno-code (make rapido y mypy --strict del hook de arranque, PARADA de ENTORNO-CODE.md §4) y después E; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.`
-- **Hoja de ruta, R0.2** (con §4 hecho): se añade `- **Estado:** HECHA (\`stable/F37l-entorno-code\`; docs/validation/ENTORNO-CODE.md).`,
+- **Hoja de ruta, R0.2**: se añade `- **Estado:** HECHA (\`stable/F37l-entorno-code\`; docs/validation/ENTORNO-CODE.md).`,
   y como la F sigue viva y una entrada HECHA no puede llevar una letra viva
   (`tests/unit/test_hoja_de_ruta.py`, sentido b; hallazgo b1 del revisor), su `- **Refs:** NA:F`
   pasa a `- **Refs:** —`, la `NA:F` entra en R1.1 (`- **Refs:** NA:F · NA:E · HER:15 · …`) y el
   «Depende de: R0.2 (NA:F).» de R1.1 pasa a «Depende de: R0.2.». Simulado en memoria con las
   funciones del test sobre `PROJECT_STATE.md` y la hoja de hoy más estas líneas y la F nueva:
-  a, b y c, sin problemas (`scratchpad/simular_cierre.py` de la sesión, que no escribe). Si §4
-  no se hace, R0.2 no se marca HECHA y su `NA:F` se queda.
+  a, b y c, sin problemas (`scratchpad/simular_cierre.py` de la sesión, que no escribe; vuelto
+  a correr tras §4.2).
 - **Hoja de ruta, carril «guardias y deuda»** (respuesta 8), una entrada nueva:
   `### G.4 · Las tareas repetidas que ninguna skill cubre` con `Refs: NA:F` (viva: no es
   HECHA); `Qué es:` los huecos
@@ -573,12 +722,20 @@ En la rama no se tocan (RITUAL, puntos 3 y 4).
   corrección; las notas del consultor para la orden de cierre) y volver a medir `pytest-xdist` con
   la cifra nueva de E3 (respuesta 1); `Depende de: R0.2`; `Quién: la sesión, con el encargo del
   consultor`; `Hecho cuando: cada hueco tiene skill o se decide que no la necesita`.
-- **Hoja de ruta, G.1 (la guardia de Claude Code)**, dos cosas medidas en esta rama, para su
+- **Hoja de ruta, G.1 (la guardia de Claude Code)**, cuatro cosas medidas en esta rama, para su
   `Qué es`: la guardia no niega `git ls-files knowledge/cases | grep ...` (listar la carpeta madre
-  del holdout con un filtro detrás; §10.1); y `solo_lectura.py` niega `git worktree list`, que solo
-  lee.
-- **ERRORES-RECURRENTES**, la fila de la rama, con el modelo del revisor: `opus` (§3.3). Revisor:
-  3 importa (a1, b1, b2) y 5 menor (a2, a3, a4, b3, b4), todos atendidos (§10.1).
+  del holdout con un filtro detrás; §10.1); `solo_lectura.py` niega `git worktree list`, que solo
+  lee; la de la respuesta de §4.4, punto 4: «el test del ritual quedó ciego al caso del Makefile
+  cambiado hasta entorno-code (corregido)»; y la guardia niega ejecutar desde la sesión, en un
+  clon fuera del repo real, un test que lleve `crudo=True`, aunque sea el de `main` (§4.5): «probar
+  un test con el código de `main`», de `comparar-con-main`, no sirve para esos tests.
+- **ERRORES-RECURRENTES**, la fila de la rama, con el modelo del revisor: `opus` (§3.3). Revisor,
+  primera pasada: 3 importa (a1, b1, b2) y 5 menor (a2, a3, a4, b3, b4), todos atendidos (§10.1);
+  segunda pasada, sobre lo de la tarde: 3 importa (a1, a2, b1) y 3 menor (a3, b2, b3), todos
+  atendidos (§10.3). Y el hallazgo de §4.3, que no vio ningún revisor sino el `make check`: el
+  test del ritual suponía el `Makefile` de `main`.
+- **G.1 o cerrar-rama**, para una rama siguiente: que `cerrar-rama` diga que, si la rama cambia el
+  `Makefile`, los `make check` en la rama los lanza Aleks (aviso de arriba).
 
 ## 7. El encargo, punto por punto
 
@@ -591,9 +748,9 @@ En la rama no se tocan (RITUAL, puntos 3 y 4).
 | 5 | Respuesta y añadido copiados tal cual al encargo y al informe | Hecho | §2 y §2.1; comparación por programa: iguales |
 | 6 | Piezas TAL CUAL salvo lo corregido, cada corrección declarada | Hecho | §3.1 |
 | 7 | `ESPECIFICACION.md` no se copia | Hecho | §5 |
-| 8 | E1, con sus tests (incluidos los que rompen a propósito) | Hecho, salvo la línea del `Makefile` | §3.2; §4 |
+| 8 | E1, con sus tests (incluidos los que rompen a propósito) | Hecho; la línea del `Makefile`, tras la respuesta de §4.1 | §3.2; §4.2 |
 | 9 | E2, justificado con la cifra medida (20 de 28; 4 de 7) | Hecho | §3.3 |
-| 10 | E3, punto 0: `make rapido` sin variables; la guardia no se toca | **No hecho: PARADA** | §4 (la guardia no se tocó) |
+| 10 | E3, punto 0: `make rapido` sin variables; la guardia no se toca | Hecho tras la PARADA y su respuesta | §4, §4.1, §4.2 (la guardia no se tocó) |
 | 11 | E3, punto 1: xdist no entra; los cinco tests comparten una ejecución, con (a)-(d) | Hecho (cuatro de cinco; G1 se queda, con su porqué) | §3.4 |
 | 12 | E3: `pico_memoria.py medir` apunta la duración; la línea del pico mide lo mismo | Hecho | §3.4; `make-check.log` |
 | 13 | E4, con `NN` en las plantillas y sus tests del test | Hecho | §3.5 |
@@ -604,12 +761,20 @@ En la rama no se tocan (RITUAL, puntos 3 y 4).
 | 18 | Respuesta 8: los huecos de 0.c, preparados para la hoja, no hechos | Hecho | §6 |
 | 19 | NO cambia: `src/`, spec, knowledge, parámetros, informes cerrados, lo que sella `make check`, las puertas de las skills | Hecho | §5 |
 | 20 | Nada de holdout; saldo de PROJECT_STATE ≤ 0 | Hecho | §8; §5 (−17) |
-| 21 | `make check` sellado antes de cada commit | Hecho | `9fe3d44`, `248d8df`, `efe7f92` y los siguientes |
+| 21 | `make check` sellado antes de cada commit | Hecho | `9fe3d44`, `248d8df`, `efe7f92` y los siguientes; el último, con el `make check` que lanza Aleks |
 | 22 | Push como `fix/entorno-code` y CI de Linux, con sus run | Hecho (el run del último commit, en el mensaje final) | §9 |
 | 23 | Informe con fase 0, PARADA, respuesta, lo hecho, estado y las líneas de F y R0.2 | Hecho | este informe; §6 |
 | 24 | Revisor con el alcance del encargo, pegado al final | Hecho; sus hallazgos, atendidos | §10 y §10.1 |
 | 25 | Desde la fase 1, con sus propias skills; entrega con `entregar-rama` | Hecho | este recorrido es el de `entregar-rama` |
 | 26 | Añadido: trabajar sin parar; lo que choca, PARADA en el informe y seguir; nunca tocar `main` | Hecho | §4; `main` sin tocar |
+| 27 | Respuesta de §4.1, 0: el diff tal cual, el test de `rapido` (desellar, sellar, check, `sello_make_check`), todo estadiado y el `make check` lo lanza Aleks; sin reescribir el comando | Hecho | §4.2; `tests/unit/test_make_rapido.py` |
+| 28 | Respuesta de §4.1, 1: la frase del paso 4 de `abrir-rama` | Hecho | §4.2 |
+| 29 | Respuesta de §4.1: push a `fix/entorno-code` con su run, y §6 con «E es lo siguiente» y R0.2 HECHA | Hecho (el run del último commit, en el mensaje final) | §6; §9 |
+| 30 | Respuesta de §4.4, 1: el test de los dos `make` del ritual, con la condición calculada con git (main, si no origin/main), que FALLA sin ninguno; el resto de `RITUAL`, igual de estricto | Hecho | §4.5 |
+| 31 | Respuesta de §4.4, 2: la guardia no se toca | Hecho | §4.5 |
+| 32 | Respuesta de §4.4, 3: con el `Makefile` de la rama, el test nuevo pasa y el actual falla, con comando y salida; `test_guardia_claude.py` en verde | Hecho | §4.5 |
+| 33 | Respuesta de §4.4, 4: el hallazgo en §4.3 y la línea de G.1 en §6 | Hecho | §4.3; §6 |
+| 34 | Respuesta de §4.4, 5: estadiar, `make check` por Aleks, commit, push, CI del ÚLTIMO commit; revisor solo si el diff va más allá del test y del informe | Hecho; el revisor, ver §10.2 | §9; §10.2 |
 
 ## 8. Exposiciones
 
@@ -629,6 +794,7 @@ La rama toca `.claude/` y hooks: se empuja como `fix/entorno-code` (`RITUAL.md`)
 | Run | Commit | Resultado |
 |---|---|---|
 | 38122720438 | `0c2cb22` | `failure` solo por el fallo aceptado: `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, «PROJECT_STATE declara la rama 'trabajo/entorno-code'; la rama actual es 'fix/entorno-code'». 1 failed, 2.545 passed, 9 skipped (`gh run view 38122720438 --log-failed`) |
+| 38124850342 | `4b80c58` | `failure` solo por el mismo fallo aceptado: 1 failed, 2.546 passed, 9 skipped |
 
 Como en las ramas anteriores, ese fallo para `make` en el paso `test`, así que en Linux no
 corren `state`, `config` ni `knowledge` (en Windows, verdes en cada `make check` de la rama). El
@@ -787,11 +953,161 @@ encargo. Su informe, tal cual (no cita ningún tramo no citable: cero retiradas)
 | … 4 | — | `solo_lectura.py` niega `git worktree list` porque `worktree` no está en `GIT_LEE` (ya en `main`). No es de esta rama: anotado para la hoja, carril de guardias |
 | … 5 | — | Arreglado en `entregar-rama`: ya no dice que el clasificador niegue `gh run list` (en otras ramas pasó: `GUION-MISMO-COMANDO.md:1782`); usa `gh run list` o, si se niega, la API con el sha escrito tal cual |
 
+### 10.2 El revisor, segunda pasada (lo de la tarde), tal cual
+
+El diff de las dos respuestas de la tarde va más allá del test y del informe (`Makefile`,
+`test_make_rapido.py`, `abrir-rama`), así que, por la respuesta de §4.4 (punto 5), se pasó el
+revisor otra vez, sobre `git diff --cached 4b80c58` con todo estadiado y el informe terminado
+salvo esta sección. Su informe, tal cual (nada de tramos no citables: ninguna retirada):
+
+> ## Informe del revisor · trabajo/entorno-code (segunda pasada, solo el delta estadiado frente a 4b80c58) · 2026-10-11
+>
+> Alcance: `git diff --cached 4b80c58` (7 ficheros: Makefile, tests/unit/test_make_rapido.py, tests/unit/test_guardia_claude.py, .claude/skills/abrir-rama/SKILL.md, PROJECT_STATE.md, docs/encargos/trabajo-entorno-code.md, docs/validation/ENTORNO-CODE.md). No repito la primera pasada (§10).
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | Lo preparado para el cierre (§6) no dice que el `make check` del commit del contrato tampoco lo puede lanzar la sesión. Ese commit se hace EN LA RAMA, con el `Makefile` de la rama, que no es el de `main`, así que la guardia lo niega igual que ahora. Lo tiene que lanzar Aleks con «!». `cerrar-rama` no lo dice y no se puede cambiar en esta rama (`rutas_protegidas`). Solo lo dice `entregar-rama`. Tras el merge, el `make check` del commit de estado en `main` sí pasa, porque entonces el `Makefile` ya es el de `main`. | `docs/runbooks/RITUAL.md:157-164` (`git rm contrato.yaml` … `make check > make-check.log 2>&1` en la rama de trabajo); `.claude/hooks/guardia.py:3125-3132` (si el fichero no es igual al de `main` y el lenguaje es `make`, niega con «lo lanza Aleks en su terminal con «!»»); `ENTORNO-CODE.md:684-715` (§6 no lo menciona); Grep `Makefile\|«!»` en `.claude/skills`: solo `entregar-rama/SKILL.md:33-35`. |
+> | a2 | importa | El informe remite a un §10.2 que no existe. La fila 34 dice «Hecho; el revisor, ver §10.2» y el Estado dice «otra pasada sobre lo de la tarde (§10.2)». La respuesta de §4.4, punto 5, pide pasar al revisor «y decirlo» si el diff va más allá del test y del informe. Aquí va más allá: entran el `Makefile`, `test_make_rapido.py` y `abrir-rama`, que nunca se commitearon. Mientras no esté pegado, el Estado afirma algo que no está. | Grep `^#{2,4} \|10\.2` en `ENTORNO-CODE.md`: encabezados hasta `### 10.1` (línea 915) y `## Estado` (933), ninguno `10.2`; menciones en las líneas 754 y 940. |
+> | a3 | menor | La fila de ERRORES-RECURRENTES preparada en §6 solo cuenta la primera pasada del revisor («3 importa … y 5 menor, todos atendidos (§10.1)»). Hay que añadir esta. | `ENTORNO-CODE.md:714-715`. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 31 ficheros dentro del contrato de trabajo/entorno-code (riesgo medio, artefacto docs/validation/ENTORNO-CODE.md, tramo 'R0', 3 comprobaciones para el revisor)». Coincide con los «31 ficheros» de §5.
+> - **Comprobación 1 del contrato.** `uv run pytest tests/unit -k "skills or estado_sesion or solo_lectura or revisor or pico" -p no:cacheprovider` → «90 passed, 2263 deselected in 78.42s».
+> - **Comprobación 3 (`make check`), sin ejecutar.** La evidencia es `make-check.log` (11-10, 09:23), que es el de §4.3:
+>   - línea 6: CONTRATO con 30 ficheros;
+>   - línea 14: `mypy --strict` con `estado_sesion.py` en «Success: no issues found in 4 source files»;
+>   - líneas 103-105: los dos FAILED de `test_el_ritual_y_los_runbooks_pasan[...]` y «2 failed, 2562 passed in 1065.21s»;
+>   - línea 106: «make: *** [Makefile:51: test] Error 1»;
+>   - sin línea SELLO ni PICO DE MEMORIA.
+>
+>   Es lo que dice §4.3. El `make check` que sellará el commit todavía no existe.
+> - **La guardia no se toca.** `git diff --cached --name-status main` no lista `.claude/hooks/guardia.py`.
+> - **Lo que sella `make check`.** `git diff main -- Makefile`: solo tres cambios, que son `.PHONY`, la línea de `mypy --strict` y `rapido:` con su comentario. Las líneas `check:` (82), `desellar` (75-77) y `sellar` (79-80) son las de `main`.
+> - **El acumulador de `rapido`.** Vive en el directorio de git (`scripts/pico_memoria.py:4`, `git rev-parse --git-path botsito-pico`) y `empezar` lo borra (`:7`, `:126`). §4.2 dice lo mismo.
+> - **Sin knowledge/spec ni cases en el delta**, así que no aplican los trailers `Fuente:` ni las tres guardias de `cita`. Sin ADR, sin ambigüedades, sin evidencia nueva y sin informe cerrado tocado: ENTORNO-CODE.md es nuevo en la rama.
+> - **PROJECT_STATE.md.**
+>   - Tamaño: `wc -c` 21942, igual que `4b80c58` (21942). `main` tiene 21959, saldo −17.
+>   - Recuento: 1486 → 1495, que son 8 de `test_make_rapido.py` y 1 nuevo en `test_guardia_claude.py`.
+>   - `uv run botsito state check` → OK.
+> - **Forma de los dos tests.**
+>   - `uv run ruff check --no-cache` y `ruff format --check --no-cache` sobre los dos tests: «All checks passed!» y «2 files already formatted».
+>   - `uv run mypy --cache-dir=nul` sobre los dos: «Success: no issues found in 2 source files».
+> - **Las dos respuestas del consultor, copiadas.** Comparadas por programa entre el encargo y el informe: las dos idénticas (5/5 y 16/16 líneas).
+> - **Afirmaciones del informe, medidas.**
+>   - §4.3 «desde esa fecha ninguna lo había cambiado»: `git log main -- Makefile` → `3027599 2026-10-01`, y `f22179f` es del 2026-10-07.
+>   - §4.5, los blobs `d0cbc24…` y `0cb536c…`: coinciden con la línea `index d0cbc24..0cb536c` del diff.
+>   - §4.5 «558»: `collected 558 items`.
+>   - §4.5, CI con `fetch-depth: 0`: `.github/workflows/ci.yml:22`.
+>   - §4.2 «Con el Makefile de main falla»: `problemas(git show main:Makefile)` → `['no existe el objetivo `rapido`']`.
+>   - §9, run 38124850342: `gh run view` da headSha `4b80c587…`, failure, y el único FAILED es `test_cli.py::test_state_check_ok_on_real_repo` con «1 failed, 2546 passed, 9 skipped».
+> - **Contradicciones con runbooks, RITUAL, CLAUDE.md, la hoja de ruta o un ADR.** Ninguna, salvo lo de a1. La frase nueva de `abrir-rama` cuadra con `fase-cero` (su `description` es la que escribe el inventario). `CONTRATO-DE-RAMA.md` no dice nada contrario.
+> - **Holdout.** No listé `knowledge/cases` ni nada de `data/`, `corpus/`, crudas o propuestas.
+>
+> ### Eje (b) · Encargo (las dos respuestas del consultor de la tarde)
+> Resumen: 0 bloquea, 1 importa, 2 menor. Requisitos: 13 hechos (uno de otra forma, declarado), 1 parcial, 0 no hechos y 3 pendientes por secuencia: el `make check` de Aleks, el commit y el push/CI, que van después de esta pasada.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | §4.1-0: el diff del `Makefile` tal cual: `rapido = lint types contracts`, sin desellar, sellar ni variables, y `estado_sesion.py` en `--strict` | Hecho | `Makefile:5,41,45`; `git diff main -- Makefile` (tres cambios) |
+> | 2 | §4.1-0: un test que falla si `rapido` llega a desellar, sellar o check, o si una receta nombra `sello_make_check` | Hecho, con huecos (b1, b2) | `tests/unit/test_make_rapido.py`; `uv run pytest tests/unit/test_make_rapido.py -v` → «8 passed in 0.42s» |
+> | 3 | §4.1-0: estadiar todo | Hecho | `git status --short`: los 7 en la primera columna, nada sin seguir |
+> | 4 | §4.1-0: Aleks lanza `make check` y después se lee el log y se commitea | Pendiente (secuencia) | el único log es el rojo de §4.3 |
+> | 5 | §4.1-0: no reescribir el comando para que la guardia no lo vea | Hecho, según lo que alcanzo a ver | §4.2: la sesión no lanzó `make`; §4.5: el clon `C:\ecA` se retiró sin rodear la guardia |
+> | 6 | §4.1-1: la frase del paso 4 de `abrir-rama` | Hecho (b3) | `.claude/skills/abrir-rama/SKILL.md:72-73` |
+> | 7 | §4.1: push a `fix/entorno-code` con su run | Pendiente para el último commit; el de `4b80c58` está verificado | run 38124850342 |
+> | 8 | §4.1: §6 con «E es lo siguiente» y R0.2 HECHA | Hecho | `ENTORNO-CODE.md:688-697` |
+> | 9 | §4.4-1: la condición la calcula el test con git (`main:Makefile`, si no `origin/main:Makefile`, frente a `hash-object -- Makefile`, con cwd=RAIZ), no con la guardia | Hecho | `test_guardia_claude.py:846-865`; Grep `_igual_que_en_main` en el test: 0 apariciones. Misma semántica que `guardia.py:3210-3213` |
+> | 10 | §4.4-1: si coinciden, no niega; si difieren, niega con «lo lanza Aleks en su terminal con «!»» | Hecho | `:872-879`; `uv run pytest tests/unit/test_guardia_claude.py -k make_del_ritual -vv` → los dos PASSED, «2 passed, 556 deselected in 2.19s» |
+> | 11 | §4.4-1: sin `main` ni `origin/main`, FALLA (no se salta) | Hecho | `:858-862`, `pytest.fail` en el `else` del `for` |
+> | 12 | §4.4-1: el resto de RITUAL, igual de estricto, y ningún otro test pierde los dos `make` | Hecho | De `RITUAL` (`:793-829`) solo salen las dos líneas `make`, y el parametrizado `:832-835` no cambia. Los únicos usos de `RITUAL` son `:832` y `:1021`, y `:1021` pasa a `RITUAL + RITUAL_MAKE` |
+> | 13 | §4.4-2: la guardia no se toca | Hecho | `git diff --cached --name-status main`, sin `guardia.py` |
+> | 14 | §4.4-3: con el `Makefile` de la rama, el nuevo pasa y el actual falla, con comando y salida | Hecho | `make-check.log:103-105` y el `-k make_del_ritual` de arriba |
+> | 15 | §4.4-3: `uv run pytest tests/unit/test_guardia_claude.py -q` en verde | Hecho de otra forma, declarado: sin `-q` | §4.5 lo explica. Medido: `uv run pytest tests/unit/test_make_rapido.py -q` solo imprime los puntos, sin la línea de recuento (`addopts = "-q -ra"`, `pyproject.toml:39`) |
+> | 16 | §4.4-4: la línea de hallazgo en §4.3 y la de G.1 en §6 | Hecho, literales | `ENTORNO-CODE.md:597-598` y `:710-711` |
+> | 17 | §4.4-5: estadiar, línea para Aleks, `make check`, commit, push, CI del ÚLTIMO commit | Pendiente (secuencia) | — |
+> | 18 | §4.4-5: si el diff va más allá, pasar el revisor y decirlo | Parcial: esta pasada existe, pero el §10.2 donde va no (a2) | `ENTORNO-CODE.md:754,940` |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | `test_make_rapido.py` no ve una regla con dos objetivos. Su docstring dice que `rapido` no llega al sello «ni por sus prerrequisitos», pero `rapido otro: sellar`, o `lint types: sellar`, añade `sellar` a `rapido` en GNU make y el test no lo ve. La causa es que `OBJETIVO` solo casa un nombre antes de `:`. La aserción de igualdad exacta sobre el `Makefile` real (`["lint","types","contracts"]`) tampoco lo caza, porque esa línea no se lee como de `rapido`. Así que esa rotura pasa los dos tests. | `tests/unit/test_make_rapido.py:1-4` (docstring) y `:14` (`OBJETIVO = re.compile(r"^([A-Za-z_][A-Za-z0-9_.-]*)\s*:(?!=)\s*(.*)$")`). Medido con `problemas()`: `"rapido otro: sellar\nrapido: lint\n"` → `[]` y `_leer(...)["rapido"]` → `(['lint'], [])`. |
+> | b2 | menor | Otras formas que el detector no ve, aunque ninguna sale del `rapido` del `Makefile` real: `make check` escrito literal, o `$(UV) run make sellar`, en una receta (solo mira `$(MAKE)`); `include extra.mk`; y la ruta del sello escondida en una variable con `+=` o `define`. Con la igualdad exacta de `rapido`, solo cuentan si entran en las recetas de `lint`, `types` o `contracts`. Las ve el consultor al revisar, y la guardia no deja a la sesión ejecutar un `Makefile` cambiado. §4.2 describe bien el alcance («por cualquier `$(MAKE)`»). | Medido con `problemas(BASE + ...)`: `"\tmake check"` → `[]`; `"\t$(UV) run make sellar"` → `[]`; `"include extra.mk"` → `[]`; `"S += scripts/sello_make_check.py"` con `python $(S) sellar` → `[]`; `define S … endef` → `[]`. Las que sí ve: `$(MAKE) -f Makefile check` → `['`rapido` llega a `check`']`, y la receta en línea `rapido: ; python scripts/sello_make_check.py sellar` → `['`rapido` llega a `sellar`']`. |
+> | b3 | menor | La frase del paso 4 no es literal: la respuesta dice «nace con su cabecera y EN CURSO; la fase 0 la escribe fase-cero en su commit», y la skill añade «(un `## Estado` EN CURSO)» y empieza con mayúscula. El sentido es el mismo y no se pierde ninguna puerta, pero §4.2 copia la frase de la skill sin decir que difiere de la de la respuesta. | `.claude/skills/abrir-rama/SKILL.md:72-73`; `docs/encargos/trabajo-entorno-code.md`, sección «Respuesta del consultor a la PARADA de ENTORNO-CODE.md §4», punto 1. |
+>
+> Lo que el delta hace y las respuestas no piden: nada fuera de ellas. `PROJECT_STATE.md` solo cambia el recuento de tests, la §5 y la §3.10 del informe se actualizan, y la tabla de §7 se amplía (filas 27-34).
+>
+> ### Lo que no pude comprobar
+> - **El `make check` que sellará el commit.** No existe todavía, la guardia niega `make` con este `Makefile` y además escribe. Su evidencia será `make-check.log` (exit 0, ningún failed, la línea SELLO y la de PICO DE MEMORIA).
+> - **La CI de Linux del último commit**, que aún no existe. En concreto, si en Linux la guardia niega `make` con el mismo motivo que espera el test nuevo: en Windows pasa, y la guardia ya ha divergido entre plataformas otras veces.
+> - **La cara «coinciden» del test nuevo** (`motivo is None`). Con este `Makefile` no se ejercita; la ejercitará la CI de `main` tras el merge.
+> - **La afirmación de §4.5 y §6** de que la guardia niega ejecutar desde la sesión, en un clon fuera del repo, un test que lleve `crudo=True`. No la reproduje, porque haría falta crear un clon (escribe). El código la hace plausible: fuera del repo `relativa()` no da ruta, el guion se analiza y `analizar_codigo` llama a `exigir_sin_crudo` (`guardia.py:3124-3141`, `:3234`). Pero el informe no cita la salida de la denegación.
+> - **`uv run pytest tests/unit/test_guardia_claude.py` entero** («558 passed in 173.12s»). No lo relancé; solo vi «collected 558 items».
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git status --short && git diff --cached --stat 4b80c58`
+> 2. `git diff --cached 4b80c58 -- Makefile tests/unit/test_make_rapido.py tests/unit/test_guardia_claude.py .claude/skills/abrir-rama/SKILL.md`
+> 3. `git diff --cached 4b80c58 -- PROJECT_STATE.md docs/encargos/trabajo-entorno-code.md`
+> 4. `git diff --cached 4b80c58 -- docs/validation/ENTORNO-CODE.md`
+> 5. `git diff main -- Makefile; git diff 4b80c58 main --stat -- Makefile; git log --oneline -3 main; git merge-base main HEAD`
+> 6. Grep y Read de `.claude/hooks/guardia.py` (líneas 158-172 y 3100-3240), Read de `Makefile` y Grep de `scripts/pico_memoria.py`
+> 7. `grep -n "fetch-depth\|make check\|run: make" .github/workflows/ci.yml; grep -n addopts pyproject.toml; ls -la make-check.log; wc -c PROJECT_STATE.md; git show main:PROJECT_STATE.md | wc -c; git show 4b80c58:PROJECT_STATE.md | wc -c`
+> 8. Grep de `FAILED|passed|SELLO|PICO DE MEMORIA|make: \*\*\*` y de `Success|CONTRATO|estado_sesion|Contracts` en `make-check.log` (una primera forma con `; date` la negó la guardia)
+> 9. `uv run pytest tests/unit/test_make_rapido.py -v`
+> 10. `uv run pytest tests/unit/test_guardia_claude.py -k make_del_ritual -vv`
+> 11. `uv run pytest tests/unit/test_make_rapido.py -q`
+> 12. Tres `uv run python -c` de solo lectura, que importan `problemas`/`_leer` de `tests/unit/test_make_rapido.py` sobre `Makefile` sintéticos (las formas de b1 y b2)
+> 13. Grep de `RITUAL\b|RITUAL_MAKE` en `tests/` y Read de `test_guardia_claude.py:780-879` y `:1000-1030`
+> 14. Grep y Read de `docs/runbooks/RITUAL.md` (líneas 150-299)
+> 15. Grep de `ENTORNO-CODE.md` (encabezados, `«!»`, `10.2`, «Hallazgo:») y Read de `:684-718`
+> 16. Grep de `Makefile|«!»` en `.claude/skills`; Grep en `fase-cero/SKILL.md` y en `CONTRATO-DE-RAMA.md`; Read de `abrir-rama/SKILL.md:60-79`
+> 17. `uv run python scripts/contrato_rama.py`
+> 18. `cat contrato.yaml; git diff --cached --name-status main`
+> 19. `uv run pytest tests/unit -k "skills or estado_sesion or solo_lectura or revisor or pico" -p no:cacheprovider`
+> 20. `uv run botsito state check`
+> 21. Dos `uv run python -c` de solo lectura que comparan los bloques citados de las dos respuestas entre el encargo y el informe
+> 22. Grep de `rapido|E3` en el encargo y Read de sus líneas 12-36
+> 23. `uv run python -c` que aplica `problemas()` a `git show main:Makefile`, leído por subprocess (la forma con tubería la negó la guardia)
+> 24. Grep de `make rapido` en CLAUDE.md, runbooks, skills y la hoja de ruta: ninguna mención
+> 25. `git log -2 --format=... main -- Makefile; git log -1 ... f22179f`
+> 26. `gh run view 38124850342 --json headSha,conclusion,headBranch`
+> 27. `gh run view 38124850342 --log-failed | grep -E "FAILED|passed|failed"`
+> 28. `uv run ruff check --no-cache ... && uv run ruff format --check --no-cache ...` sobre los dos tests
+> 29. `uv run mypy --cache-dir=nul tests/unit/test_guardia_claude.py tests/unit/test_make_rapido.py`
+> 30. `git status --short`, para confirmar que no quedó nada escrito
+> 31. Grep de `_igual_que_en_main` en `test_guardia_claude.py`
+>
+> Ficheros relevantes:
+> - C:\Users\USER\Desktop\Bot v3\tests\unit\test_make_rapido.py
+> - C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_claude.py
+> - C:\Users\USER\Desktop\Bot v3\Makefile
+> - C:\Users\USER\Desktop\Bot v3\docs\validation\ENTORNO-CODE.md
+> - C:\Users\USER\Desktop\Bot v3\docs\runbooks\RITUAL.md
+> - C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py
+
+### 10.3 Lo que se hizo con los hallazgos de la segunda pasada
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Arreglado en §6: un aviso para el cierre (los `make check` en la rama, `RITUAL.md:161` y `:201`, los lanza Aleks; el de `:278`, en `main`, no), y una línea para que `cerrar-rama` lo diga en una rama siguiente (aquí está en `rutas_protegidas`) |
+| a2 | importa | Arreglado: esta sección y la anterior |
+| a3 | menor | Arreglado: la fila de ERRORES-RECURRENTES de §6 cuenta las dos pasadas y el hallazgo de §4.3 |
+| b1 | importa | Arreglado: `_leer` reparte los prerrequisitos de una regla con varios objetivos entre todos ellos. Test nuevo, `test_falla_si_una_regla_con_varios_objetivos_le_anade_el_sello` (`rapido otro: sellar` y `lint otro: check`), que con el lector de antes daba `[]` (medido por el revisor) |
+| b2 | menor | Arreglado: `make` sin `$(...)` también cuenta (y `make-check.log` no), la receta en línea tras `;` se lee, `+=` suma, y `include`, `-include`, `sinclude`, `define` y `!=` son un problema («el test no sabe seguir»), no un silencio. Tests: `test_falla_si_una_receta_lanza_make_check` (cuatro formas y `> make-check.log`), `test_falla_si_una_receta_en_linea_sella`, `test_lo_que_no_sabe_seguir_es_un_problema` y la variante con `+=`. `uv run pytest tests/unit/test_make_rapido.py -vv` → «11 passed in 0.34s» |
+| b3 | menor | Arreglado: la frase de la skill es la de la respuesta, literal salvo la mayúscula inicial; §4.2 lo dice |
+| Lo que no pudo comprobar, 1-3 | — | Quedan para el `make check` de Aleks, la CI del último commit (en Linux se verá si la guardia niega `make` con el mismo motivo: si no, la CI falla en el test nuevo y se dice) y la CI de `main` tras el merge |
+| … 4 | — | Arreglado: §4.5 cita ahora el comando y la salida de la denegación |
+| … 5 | — | Medido por la sesión: «558 passed in 173.12s» (§4.5); se vuelve a ver en el `make check` |
+
 ## Estado
 
-FASE 1 HECHA salvo el `Makefile` (`make rapido` y la línea de `mypy --strict` del hook), que es
-la PARADA de §4, sin hacer y con dos puntos para el consultor. CI de Linux por `fix/entorno-code`
-con solo el fallo aceptado (§9); revisor pasado, pegado y atendido (§10). Lo preparado para el
-commit del contrato, en §6.
+FASE 1 HECHA, con las dos PARADAS de la tarde respondidas y aplicadas: el `Makefile` (`make
+rapido` sin sellar y el hook en `mypy --strict`) y la frase de `abrir-rama` (§4.1, §4.2), y el test
+de los `make` del ritual, que suponía el `Makefile` de `main` (§4.3 a §4.5); la guardia, sin tocar.
+El último commit lo sella un `make check` lanzado por Aleks. CI de Linux por `fix/entorno-code`
+con solo el fallo aceptado (§9; el run del último commit, en el mensaje final); revisor pasado,
+pegado y atendido (§10), y otra pasada sobre lo de la tarde, pegada y atendida (§10.2, §10.3). Lo preparado para el commit
+del contrato, en §6, con «E es lo siguiente» y R0.2 HECHA.
 
 Rama lista para revisión, NO cerrada.

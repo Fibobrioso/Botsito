@@ -45,3 +45,30 @@ Dado por Aleks (consultor) el 2026-10-10. Copiado tal cual:
 ## Añadido del consultor para esta noche (2026-10-11), tal cual
 
 > Añadido para esta noche (consultor, 2026-10-11): Aleks no está hasta mañana. Cópialo al final del encargo y en el informe. Trabaja sin esperarme toda la fase 1 y la entrega (skill entregar-rama cuando esté instalada), hasta «Rama lista para revisión, NO cerrada». Si una pieza choca con algo medido y necesita decisión, NO pares la rama: apunta esa pieza como PARADA en el informe con sus opciones y tu recomendación, déjala sin hacer, y sigue con las demás. Nunca cierres ni toques main. Si una ejecución larga muere por memoria, no la relances: apúntalo y sigue con lo que no dependa de ella. Si el clasificador niega un push, deja el comando exacto en el informe para que Aleks lo lance por la mañana. Al terminar, el resumen final para Aleks de entregar-rama.
+
+## Respuesta del consultor a la PARADA de ENTORNO-CODE.md §4 (2026-10-11), tal cual
+
+> Respuesta del consultor a la PARADA de ENTORNO-CODE.md §4 (2026-10-11). Cópiala tal cual al final del encargo y en el informe.
+>
+> 0. Makefile: (a). El consultor revisó el diff de §4 y lo aprueba tal cual: rapido = lint types contracts, sin desellar, sellar ni variables, y estado_sesion.py en mypy --strict. Aplícalo, añade el test que falla si rapido llega a desellar, sellar o check o si una de sus recetas nombra sello_make_check, y estadía todo. Después dime exactamente cuándo lanzar yo «! make check > make-check.log 2>&1»; cuando acabe, lee el log (exit 0, ningún failed, SELLO) y commitea. No reescribas el comando para que la guardia no lo vea.
+> 1. abrir-rama, paso 4: (a): «nace con su cabecera y EN CURSO; la fase 0 la escribe fase-cero en su commit».
+> Con los dos hechos: push a fix/entorno-code, CI de Linux con su número de run, y prepara §6 con la variante de F «E es lo siguiente» y R0.2 HECHA. Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA §4.3 (2026-10-11), tal cual
+
+> Modelo: Opus · Esfuerzo: alto (misma sesión, rama trabajo/entorno-code)
+>
+> Respuesta del consultor a la PARADA §4.3 (2026-10-11). Cópiala TAL CUAL al final del encargo y en el informe, y aplícala.
+>
+> Decisión: (a), con estas precisiones.
+>
+> 1. En tests/unit/test_guardia_claude.py, solo para los comandos de RITUAL cuyo programa es `make` ("make check > make-check.log 2>&1" y "make hooks"), la expectativa depende de si el Makefile del repo real es el de main:
+>    - La condición la calcula el test con git, NO con `_igual_que_en_main` ni con otra función de la guardia: `git rev-parse --verify -q main:Makefile`, o si no `origin/main:Makefile`, frente a `git hash-object -- Makefile`, con cwd=RAIZ.
+>    - Si coinciden: la guardia no niega (como hoy).
+>    - Si difieren: la guardia niega, y el motivo contiene «lo lanza Aleks en su terminal con «!»».
+>    - Si no hay ni main ni origin/main: el test FALLA con un mensaje que lo diga. No se salta.
+>    - El resto de comandos de RITUAL no cambia. Si es más limpio, sepáralo en un test aparte para los dos `make`, pero el parametrizado de los demás sigue igual de estricto.
+> 2. La guardia NO se toca.
+> 3. El test que rompe a propósito, demostrado en el informe con comando y salida: con el Makefile de la rama, el test nuevo pasa y el actual falla (los 2 fallos del log). Y `uv run pytest tests/unit/test_guardia_claude.py -q` en verde. Es pytest, no make, así que lo puedes lanzar tú.
+> 4. Al informe, en §4.3, una línea de hallazgo: «el test del ritual suponía el Makefile de main; la primera rama que lo cambia lo rompe; corregido en el test, la guardia sigue igual». En §6 añade a G.1: «el test del ritual quedó ciego al caso del Makefile cambiado hasta entorno-code (corregido)».
+> 5. Después: git add de lo tocado, y me pasas a mí (Aleks) la línea exacta para lanzar `! make check > make-check.log 2>&1`. Cuando termine, lees el log (exit 0, ningún failed, la línea SELLO), haces el commit, push a fix/entorno-code, esperas la CI del ÚLTIMO commit (único fallo aceptado: state check por el nombre fix/) y dejas la rama «lista para revisión, NO cerrada». No hace falta otra pasada del revisor salvo que el diff vaya más allá del test y del informe. Si va más allá, la pasas y lo dices.

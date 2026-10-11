@@ -69,8 +69,8 @@ para `PROJECT_STATE.md`.
    entre comillas si lleva `: `; `make check` falla si falta o no existe en la hoja), `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
    artefacto), `rutas_protegidas` y `comprobaciones`. **El artefacto tiene que existir y estar
    estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
-   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Si el encargo pide un inventario antes de
-   tocar codigo, nace con el; si no, con su cabecera y un `## Estado` EN CURSO.
+   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Nace con su cabecera y EN CURSO; la
+   fase 0 la escribe fase-cero en su commit.
 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
    - `N` = `grep -c '^# Archivo ' docs/state/HISTORIA.md` mas uno;
    - `printf '\n# Archivo N · PROJECT_STATE.md de main en <sha corto> (<AAAA-MM-DD>), al abrir <rama>\n\n' >> docs/state/HISTORIA.md`;

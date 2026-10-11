@@ -2,7 +2,7 @@
 UV ?= uv
 export PYTHONHASHSEED = 0
 
-.PHONY: sync hooks check lint types test contracts regress state config corpus knowledge contrato desellar sellar
+.PHONY: sync hooks check rapido lint types test contracts regress state config corpus knowledge contrato desellar sellar
 
 # El orden de `check` importa: `desellar` primero y `sellar` el ultimo, y `make` para en el primer
 # objetivo que falla, asi que el sello solo se escribe con todo en verde. Sin paralelismo: con
@@ -38,7 +38,11 @@ lint:
 
 types:
 	$(MEDIR) types -- mypy
-	$(MEDIR) types -- mypy --strict .claude/hooks/guardia.py .claude/hooks/solo_lectura.py scripts/contrato_rama.py
+	$(MEDIR) types -- mypy --strict .claude/hooks/guardia.py .claude/hooks/solo_lectura.py .claude/hooks/estado_sesion.py scripts/contrato_rama.py
+
+# Para iterar SIN SELLAR (E3, punto 0): lint, tipos y contratos, sin `desellar` ni `sellar` ni
+# variables; los tests concretos, con `uv run pytest <fichero>`.
+rapido: lint types contracts
 
 contracts:
 	$(MEDIR) contracts -- lint-imports
