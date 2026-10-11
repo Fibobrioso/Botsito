@@ -50,8 +50,11 @@ para `PROJECT_STATE.md`.
      cierre) apunta al merge sobre el que esta `main`: `git rev-parse "stable/<tag>^{commit}"` igual
      a `git rev-parse main^1` (`main` es el commit de estado sobre el merge), y esta en origin
      (`git ls-remote --tags origin stable/<tag>` no sale vacio);
-   - la CI de `main` sobre ese sha en `completed` / `success`, por la API de check-runs con el sha
-     LITERAL (`RITUAL.md`);
+   - la CI de `main` sobre su HEAD (el commit de estado, no el merge: `RITUAL.md`, «La CI que
+     cuenta es la del `docs(state)`, que es `HEAD`») en `completed` / `success`, por la API de check-runs
+     con el sha de 40 caracteres escrito tal cual (las ordenes de cierre del consultor,
+     `docs/state/HISTORIA.md`; la orden de `RITUAL.md` lo monta con `$(git rev-parse HEAD)`, y
+     el clasificador puede negarla);
    - ninguna otra rama: `git branch --list` solo da `main` (ni `trabajo/*`, ni `feature/*`, ni
      `fix/*`), y `git ls-remote --heads origin "fix/*"` sale vacio.
 
@@ -66,9 +69,8 @@ para `PROJECT_STATE.md`.
    entre comillas si lleva `: `; `make check` falla si falta o no existe en la hoja), `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
    artefacto), `rutas_protegidas` y `comprobaciones`. **El artefacto tiene que existir y estar
    estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
-   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Nace con su cabecera y un `## Estado` EN
-   CURSO; si el encargo pide una FASE 0, el inventario lo escribe despues la skill `fase-cero`, en
-   su propio commit.
+   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Si el encargo pide un inventario antes de
+   tocar codigo, nace con el; si no, con su cabecera y un `## Estado` EN CURSO.
 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
    - `N` = `grep -c '^# Archivo ' docs/state/HISTORIA.md` mas uno;
    - `printf '\n# Archivo N · PROJECT_STATE.md de main en <sha corto> (<AAAA-MM-DD>), al abrir <rama>\n\n' >> docs/state/HISTORIA.md`;

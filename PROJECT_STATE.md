@@ -16,7 +16,7 @@ trabajo/entorno-code
 7823568 · merge: la hoja de ruta viva y su test, el tramo del contrato y ADR-0072 (HOJA-DE-RUTA.md) · tag stable/F37k-hoja-de-ruta
 
 ## Tests Currently Passing
-1485 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1486 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

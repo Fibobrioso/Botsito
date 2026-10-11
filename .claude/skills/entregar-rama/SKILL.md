@@ -38,9 +38,8 @@ de Linux») y `.claude/agents/revisor.md`; aqui solo el orden y las puertas. La 
 
 ## Herramientas
 
-Bash (git, `make check`, la API de check-runs de GitHub con el sha LITERAL y
-`gh run view <run> --log-failed`; en esta maquina el clasificador niega `gh run list`), Read, Edit
-para el informe, y el subagente `revisor`.
+Bash (git, `make check`, `gh run list` / `gh run view <run> --log-failed` o la API de check-runs
+de GitHub con el sha escrito tal cual), Read, Edit para el informe, y el subagente `revisor`.
 
 ## El recorrido
 
@@ -65,8 +64,9 @@ para el informe, y el subagente `revisor`.
    se toco `knowledge/`, `make check > make-check.log 2>&1`, esperar, leer el log (exit 0, ningun
    `failed`, la linea `SELLO`), commit.
 7. **CI de Linux, si toca la plataforma** (`RITUAL.md`): `git push origin trabajo/<x>:refs/heads/fix/<x>`,
-   esperar el run y anotar numero, commit y resultado. El estado se lee por la API de check-runs
-   con el sha literal del commit (un sha montado a trozos en la URL lo niega el clasificador); el
+   esperar el run y anotar numero, commit y resultado: con `gh run list --branch fix/<x>`, o por
+   la API de check-runs con el sha de 40 caracteres escrito tal cual (las ordenes de cierre del
+   consultor, `docs/state/HISTORIA.md`), que vale tambien si el clasificador niega lo otro; el
    log de un fallo, con `gh run view <run> --log-failed`. Unico fallo aceptado: `state check` por
    el nombre `fix/`. Cualquier otro se arregla en la rama y se vuelve al paso 6. Un run cancelado
    por tiempo no es resultado: `gh run rerun <run>`. El run que cuenta es el del ULTIMO commit.

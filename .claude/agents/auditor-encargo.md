@@ -52,8 +52,8 @@ material protegido como a cualquiera.
 5. **El tramo**: el `tramo` de `contrato.yaml` es un `## ` de `docs/plan/HOJA-DE-RUTA.md` (R0,
    R1...); la entrada de la rama es el `###` de ese tramo cuyas `Refs` llevan la `NA:` del encargo.
    Di si esa entrada existe, si lo que pone en su «Depende de» esta HECHO y si es la siguiente
-   segun la hoja y la entrada F de la Next Action, que es la que fija el orden de trabajo. Si no
-   lo es, que el encargo diga por que se adelanta.
+   segun la hoja, que manda el orden (lo dicen la propia hoja y la entrada F de la Next Action).
+   Si no lo es, que el encargo diga por que se adelanta.
 6. **Las respuestas ya dadas**: si el encargo trae al final respuestas o añadidos del consultor,
    cada afirmacion de ellos se comprueba igual.
 

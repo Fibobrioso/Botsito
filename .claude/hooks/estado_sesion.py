@@ -24,8 +24,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import guardia  # noqa: E402  # la misma decision que la guardia de PreToolUse
-
 RAIZ = Path(__file__).resolve().parents[2]
 CABECERA = re.compile(r"^#{1,6}\s+(.*)$")
 PARADA = re.compile(r"PARADA|Lo que necesito que decidas")
@@ -52,6 +50,10 @@ def leer(raiz: Path, rel: str, permitidas: tuple[str, ...]) -> str:
         raise NoSeLeeError(f"{rel}: fuera de la lista cerrada del hook")
     ruta = raiz / rel
     try:
+        # la misma decision que la guardia de PreToolUse; importada aqui, y no al cargar el
+        # modulo, para que tampoco un fallo al importarla saque al hook de «una linea y 0»
+        import guardia
+
         motivo = guardia.Politica(raiz).motivo_fichero(str(ruta))
     except Exception as exc:  # negar por defecto: si la guardia no decide, no se lee
         raise NoSeLeeError(f"{rel}: la guardia no pudo decidir ({type(exc).__name__})") from exc

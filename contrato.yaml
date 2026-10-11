@@ -4,6 +4,8 @@ artefacto: docs/validation/ENTORNO-CODE.md
 tramo: R0
 rutas_permitidas:
   - docs/validation/ENTORNO-CODE.md
+  # ampliado tras el revisor (2026-10-11): su listado de knowledge/cases se declara el mismo dia
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
   - .claude/skills/fase-cero/
   - .claude/skills/activar-sesion/
   - .claude/skills/comparar-con-main/

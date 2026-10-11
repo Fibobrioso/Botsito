@@ -228,6 +228,20 @@ def test_nunca_bloquea_y_es_rapido(tmp_path: Path) -> None:
         assert r.stdout.strip(), r.stderr
 
 
+def test_si_la_guardia_no_se_puede_importar_no_se_lee_nada(
+    e: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo = _repo(tmp_path)
+    _informe(repo, "## 0. Fase 0\n")
+    monkeypatch.setitem(sys.modules, "guardia", None)  # `import guardia` da ImportError
+    salida = e.estado(repo)
+    no_decide = "la guardia no pudo decidir (ModuleNotFoundError)"
+    assert f"Encargo: docs/encargos/trabajo-x.md: {no_decide}" in salida
+    assert f"Contrato: contrato.yaml: {no_decide}" in salida
+    assert not [x for x in salida if x.startswith(("Contrato: artefacto", "Estado del informe"))]
+    assert salida[-1] == "Para retomar: skill retomar-rama"
+
+
 def test_un_error_dentro_es_una_linea_y_sale_con_0(
     e: ModuleType, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:

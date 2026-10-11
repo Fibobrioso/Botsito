@@ -30,11 +30,14 @@ desde `trabajo/entorno-code`):
 - `entregar-rama`: al terminar, hasta «Rama lista para revisión, NO cerrada».
 - `cerrar-rama`: solo con orden de cierre de Aleks.
 
-Aparte, `ingerir-sesion` (una sesion grabada con el trader) y `retomar-rama` (tras una sesion
-nueva o una conversacion compactada; el hook de arranque `.claude/hooks/estado_sesion.py` ya
-ensena la rama, el contrato y si se espera al consultor). Y dos agentes de solo lectura en
-`.claude/agents/`: `auditor-encargo` (al empezar la fase 0: contrasta el encargo con el repo) y
-`revisor` (antes de declarar la rama lista).
+Aparte:
+- `ingerir-sesion`: una sesion grabada con el trader, hasta su extraccion.
+- `retomar-rama`: tras una sesion nueva o una conversacion compactada (el hook de arranque
+  `.claude/hooks/estado_sesion.py` ya ensena la rama, el contrato y si se espera al consultor).
+
+Y dos agentes de solo lectura en `.claude/agents/`:
+- `auditor-encargo`: al empezar la fase 0, contrasta el encargo con el repo.
+- `revisor`: antes de declarar la rama lista.
 
 ## Se trabaja en una rama: main no se toca
 
