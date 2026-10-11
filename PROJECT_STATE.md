@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/entorno-code
 
 ## Current Feature
-`main` en `stable/F37k-hoja-de-ruta` (7823568): el orden y el estado vivos del trabajo están en docs/plan/HOJA-DE-RUTA.md, cuadrada con la Next Action por un test. Sin ramas abiertas; manda la Next Action (F). Informe docs/validation/HOJA-DE-RUTA.md.
+`trabajo/entorno-code` EN CURSO (R0.2, entrada F): el entorno de trabajo de Claude Code (skills, agente, hook de arranque, E1-E7). Encargo docs/encargos/trabajo-entorno-code.md; informe docs/validation/ENTORNO-CODE.md.
 
 ## Stable Main State
 7823568 · merge de `trabajo/hoja-de-ruta` (tag `stable/F37k-hoja-de-ruta`): la hoja de ruta y tests/unit/test_hoja_de_ruta.py; el campo `tramo` del contrato, obligatorio desde la rama siguiente; RITUAL y las skills la actualizan en el cierre; ADR-0072 (la columna de fechas la lee Aleks; los tres papeles). Sobre `stable/F37j-cases-rejilla` (f472e06). Informe docs/validation/HOJA-DE-RUTA.md; el registro del cierre, al final de HISTORIA.
@@ -182,8 +182,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 27 (2026-10-10).
+— ninguna desde el Archivo 28 (2026-10-10).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 27 (2026-10-10).
+— ninguna desde el Archivo 28 (2026-10-10).
