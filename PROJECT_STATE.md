@@ -32,7 +32,7 @@ D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden de trabajo: trabajo/entorno-code y después E; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
+F. Orden de trabajo: E (R1.1 de la hoja de ruta) es lo siguiente; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
 
 E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
 

@@ -8173,3 +8173,53 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 27 (2026-10-10).
+
+# Registro de cierre · `trabajo/entorno-code` (2026-10-11)
+
+- Orden de cierre de Aleks del 2026-10-11, revisada por el consultor, ejecutada siguiendo
+  `RITUAL.md` con la skill `cerrar-rama`. Rama lista para revision tras dos pasadas del revisor (ya
+  con `model: opus`); nunca se cerro sin la orden. El consultor ACEPTA lo hecho a medias de §7 (el
+  test de G1 no comparte la ejecucion de `knowledge validate`) por el motivo declarado.
+- **Lo que entra:**
+  - el paquete del consultor: las skills `fase-cero`, `activar-sesion`, `comparar-con-main`,
+    `entregar-rama` y `retomar-rama`, y el agente de solo lectura `auditor-encargo`, con las
+    correcciones medidas en la fase 0 (ENTORNO-CODE.md §3.1); `ESPECIFICACION.md` no se copio;
+  - E1: el hook de arranque `.claude/hooks/estado_sesion.py` (SessionStart; lista cerrada de
+    ficheros, cada lectura por `Politica.motivo_fichero` de la guardia, nunca bloquea), en
+    `mypy --strict`;
+  - E2: el revisor pasa a `model: opus`; E4: `tests/unit/test_skills.py`; E5: CLAUDE.md con todas
+    las skills y los dos agentes, y ERRORES-RECURRENTES:13 corregido; E6: `abrir-rama` comprueba la
+    base entera (main, origin, el tag, la CI, ninguna otra rama); E7: `solo_lectura.py` niega la
+    lista medida de escrituras de `botsito` y `--incluir-holdout`;
+  - E3: cuatro tests comparten una sola ejecucion de `knowledge validate` (fixture de sesion):
+    `make check` de 1209 s a 952 s con el mismo pico; `pico_memoria.py` apunta la duracion;
+    `make rapido` (lint, tipos y contratos, sin sellar) con `tests/unit/test_make_rapido.py`;
+  - `abrir-rama`, paso 4: el artefacto nace con su cabecera y EN CURSO, y la fase 0 la escribe
+    `fase-cero`;
+  - `tests/unit/test_guardia_claude.py`: los dos `make` del ritual, en su propio test, que mide con
+    git si el `Makefile` es el de `main` (si no lo es, la guardia tiene que negarlos); la guardia,
+    sin tocar;
+  - en este commit: la F de la Next Action («E es lo siguiente»), y en la hoja de ruta R0.2 HECHA
+    (su NA:F pasa a R1.1), G.4 nueva y cinco notas medidas en G.1, una de ellas prioritaria (el
+    listado filtrado de la carpeta madre del holdout, 4.a vez); 1498 funciones de test.
+- Letras y saldo: ninguna letra nueva ni ninguna HECHA (F cambia de texto y sigue viva).
+  `PROJECT_STATE.md` queda en 21.952 bytes, 7 menos que `main` (21.959), comprobado antes de este
+  commit. La hoja de ruta, al dia: R0.2 HECHA.
+- Letra del tag: la ultima cerrada era la k de F37 (`stable/F37k-hoja-de-ruta`);
+  `stable/F37l-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37l-entorno-code`. El merge es `git rev-parse "stable/F37l-entorno-code^{commit}"`.
+- Commits de la rama: `bb3e3fd` (apertura), `9fe3d44` (fase 0 y PARADA), `248d8df` (piezas del
+  paquete, hook de arranque, E2, E4-E7), `efe7f92` (E3: knowledge validate compartido), `0c2cb22`
+  (informe de la fase 1 y PARADA del `Makefile`), `4b80c58` (revisor pegado y hallazgos
+  atendidos), `3b40860` (`make rapido`, el hook en `mypy --strict`, la frase de `abrir-rama` y el
+  test del ritual con el `Makefile` cambiado; sellado por un `make check` de Aleks) y el de este
+  registro.
+- CI de Linux por `fix/entorno-code`: run 38122720438 (0c2cb22), run 38124850342 (4b80c58) y run
+  38150454147 (3b40860), los tres con un solo fallo, el esperado de `state check` por el nombre
+  `fix/`; 2545, 2546 y 2557 pasados. La CI de `main` corre tras el push.
+- Con el `Makefile` de la rama, la guardia niega todo `make` a la sesion: los `make check` de
+  `3b40860` y de este commit los lanzo Aleks con «!» (ENTORNO-CODE.md §4.3 y §6).
+- Una exposicion, la del revisor (listado de `knowledge/cases` con un `grep` detras; solo salio
+  `retirados.yaml`), declarada el mismo dia en `docs/validation/HOLDOUT-EXPOSICIONES.md`. Nadie
+  ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/ENTORNO-CODE.md`. Encargo: `docs/encargos/trabajo-entorno-code.md`.

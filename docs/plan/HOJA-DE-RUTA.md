@@ -28,18 +28,19 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Estado:** HECHA (`stable/F37k-hoja-de-ruta`; docs/validation/HOJA-DE-RUTA.md).
 
 ### R0.2 · El entorno de trabajo del consultor y de la sesión
-- **Refs:** NA:F
+- **Refs:** —
 - **Qué es:** `trabajo/entorno-code`: skills y agente del consultor (entre ellos el auditor del
   encargo y las skills fase-cero y comparar-con-main, ERRORES-RECURRENTES), hook de arranque y la
   medida de `make check`.
 - **Depende de:** R0.1.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la rama se cierra en `main`.
+- **Estado:** HECHA (`stable/F37l-entorno-code`; docs/validation/ENTORNO-CODE.md).
 
 ## R1 · Activar la sesión 4
 
 ### R1.1 · Las respuestas de la sesión 4 entran en la spec
-- **Refs:** NA:E · HER:15 · ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
+- **Refs:** NA:F · NA:E · HER:15 · ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
   ID:A-35 · ID:A-36 · ID:A-39 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 · ID:A-51 · ID:A-52 ·
   ID:A-53 · NA:H · ID:RN-007
 - **Qué es:** las ambigüedades que SESION-04-EXTRACCION.md §5 (y SESION-03-EXTRACCION.md §5) dan
@@ -50,7 +51,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   espera el umbral de «casi plana» (S-14, en parte). El heredado 15 (la pregunta de A-18) sale
   cuando se cierre A-18. El refiltrado de las filtradas v7–v10 que E citaba está HECHO
   (ACTIVACION-A42.md §2.2).
-- **Depende de:** R0.2 (NA:F).
+- **Depende de:** R0.2.
 - **Quién:** la sesión, con el encargo del consultor; cada cierre toca los cinco sitios de
   `docs/runbooks/AMBIGUEDADES.md`.
 - **Hecho cuando:** cada «resuelve» está RESUELTA y cada «en parte» está en la hoja de la sesión 5.
@@ -209,7 +210,18 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ### G.1 · La guardia de Claude Code
 - **Refs:** NA:B · NA:C · NA:D · NA:K
 - **Qué es:** lo que importa o ejecuta un guion (B); las rutas compuestas (C); las formas raras (D);
-  el falso positivo de `exigir_sin_crudo` (K, junto a B o C si cabe).
+  el falso positivo de `exigir_sin_crudo` (K, junto a B o C si cabe). Y lo medido en
+  `trabajo/entorno-code` (ENTORNO-CODE.md §6):
+  - **Prioritario dentro de G.1** (consultor, 2026-10-11): la guardia no niega
+    `git ls-files knowledge/cases | grep ...`, listar la carpeta madre del holdout con un filtro
+    detrás (§10.1). Es la 4.ª vez que alguien lo hace, esta vez el propio revisor.
+  - `solo_lectura.py` niega `git worktree list`, que solo lee.
+  - El test del ritual quedó ciego al caso del Makefile cambiado hasta entorno-code (corregido).
+  - La guardia niega ejecutar desde la sesión, en un clon fuera del repo real, un test que lleve
+    `crudo=True`, aunque sea el de `main` (§4.5): «probar un test con el código de `main`», de
+    `comparar-con-main`, no sirve para esos tests.
+  - Que `cerrar-rama` diga que, si la rama cambia el `Makefile`, los `make check` en la rama los
+    lanza Aleks con «!» (§6, aviso para el cierre).
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.
@@ -232,6 +244,17 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** nada.
 - **Quién:** la próxima rama que toque el perfil de FTMO.
 - **Hecho cuando:** la descripción dice lo que respondió FTMO.
+
+### G.4 · Las tareas repetidas que ninguna skill cubre
+- **Refs:** NA:F
+- **Qué es:** los huecos de ENTORNO-CODE.md §0.c: escribir un ADR nuevo; sacar líneas de
+  PROJECT_STATE a HISTORIA con saldo ≤ 0; material escrito del trader al corpus; registrar
+  respuestas de FTMO o de Aleks; congelar un CSV de la demo; demostrar un test por mutación;
+  comparar reglas con main caso a caso; recuadros de corrección; las notas del consultor para la
+  orden de cierre. Y volver a medir `pytest-xdist` con la cifra nueva de E3 (respuesta 1).
+- **Depende de:** R0.2.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** cada hueco tiene skill o se decide que no la necesita.
 
 ## Carril: material reservado que no se toca
 
