@@ -317,7 +317,7 @@ Lo que decide el consultor antes de escribir nada de la fase 1:
 | El test, en cuatro sentidos | (a) lo vivo está; (b) cada referencia existe y ninguna HECHA sigue viva; (c) ninguna dependencia de la Next Action apunta a una letra muerta; (d) toda ABIERTA que una tabla final da por respondida está en R1 o R4. Más uno que comprueba que las tablas de las sesiones se leen (sin él, (d) podría pasar sin leer nada). Sintéticos que rompen cada sentido | `tests/unit/test_hoja_de_ruta.py` |
 | (c) falla con el `main` de hoy por F | medido: sobre `git show 2a007b7:PROJECT_STATE.md` da «F depende («tras W (consultor, 2026-10-10)») de W, que no esta viva»; sobre la rama, nada | guion `c_contra_main.py` de la carpeta de trabajo |
 | El campo `tramo` | clave opcional en la carga; obligatoria si `docs/plan/HOJA-DE-RUTA.md` está en el merge-base con `main`; su valor, el título o el id de un `## ` de la hoja. Tests en los dos sentidos: sin hoja en la base no se exige; con hoja en la base falta y falla, y con un tramo válido pasa; un tramo que no está en la hoja falla | `scripts/contrato_rama.py`, `tests/unit/test_contrato_rama.py`, `docs/runbooks/CONTRATO-DE-RAMA.md`, `abrir-rama` |
-| RITUAL y `cerrar-rama` | punto 4 nuevo del commit del contrato: la hoja de ruta junto a la Next Action; el `git add` y la puerta de `git status` la nombran | `docs/runbooks/RITUAL.md`, `.claude/skills/cerrar-rama/SKILL.md` |
+| RITUAL y `cerrar-rama` | punto 4 nuevo del commit del contrato: la hoja de ruta junto a la Next Action. En RITUAL, el `git add` y la puerta de `git status` la nombran; en `cerrar-rama`, una viñeta en el paso 3 y la «Verificación» | `docs/runbooks/RITUAL.md`, `.claude/skills/cerrar-rama/SKILL.md` |
 | MASTER_PLAN | recuadro al principio, con fecha y rama; el cuerpo, intacto | `docs/plan/MASTER_PLAN.md`, y `docs/plan/README.md` |
 | 5, la remisión de `PROJECT_STATE.md:63` | «texto entero: `docs/state/HISTORIA.md`; criterio de salida: `docs/state/README.md`» | `PROJECT_STATE.md` |
 | 5, `firma_tamano_posicion_ratio_aviso` | en la hoja de ruta, carril de deuda (G.3), dueño: la próxima rama que toque el perfil de FTMO | `docs/plan/HOJA-DE-RUTA.md` |
@@ -363,13 +363,173 @@ Lo que el consultor manda en su respuesta, listo para la orden de cierre:
 |---|---|---|
 | 2 | el xlsx de marzo al corpus (REGISTRO-MARZO.md §2, punto 1) | `- 2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).` |
 | 10 | la prueba gratuita de FTMO abierta y medida; A-27 DECIDIDA (ADR-0071) | `- 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).` |
-| 15 | la respuesta del trader: S-3 de la sesión 4, «resuelve» (SESION-04-EXTRACCION.md §3.4 y §5) | `- 15. A-18: la responde S-3 de la sesion 4; sale cuando E cierre A-18.` |
-| 27 | noticias y gap trading respondidas (FTMO-REGLAS.md, respuestas 1-9 del 2026-10-05); el tamaño, respondido sin cifra (respuesta 10); la comisión por lado, CONFIRMADA (ADR-0071 §3); A-27 DECIDIDA (ADR-0071) | `- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.` |
-| 34 | ninguna parte hecha: se reescribe con sus dueños | `- 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).` |
+| 15 | la respuesta del trader a A-18 en la sesión 4: S-3, «resuelve» (SESION-04-EXTRACCION.md §3.4 y §5). El informe no la vincula con la pregunta de reserva del 2026-09-23 (V5-INSTANTES.md), que pregunta lo mismo: stop y objetivo | `- 15. A-18: S-3 de la sesion 4 contesta el stop y el objetivo; sale cuando E cierre A-18.` |
+| 27 | noticias y gap trading: respondidas las 4, 7 y 9, en parte las 1, 2, 3, 5 y 8, y SIN respuesta la 6 (FTMO-REGLAS.md, recuadro del 2026-10-05; A-54 y A-55 siguen ABIERTA, hoja de ruta A.2); el tamaño, respondido sin cifra (respuesta 10); la comisión por lado, CONFIRMADA (ADR-0071 §3); A-27 DECIDIDA (ADR-0071) | `- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.` |
+| 34 | ninguna parte hecha; las tres tienen ya dueño (en §0.a, «superado en parte» quería decir eso: cubierto por X y por A, no hecho) | `- 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).` |
 
   Con estas líneas, las de P y la coletilla de E fuera, el saldo de la rama sobre PROJECT_STATE
   sigue por debajo de cero; se mide con `wc -c` antes del commit del contrato.
 
+## 5. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Hecho |
+|---|---|---|
+| a1 | importa | `problemas_b` valida también lo que está FUERA de las entradas (la tabla F01-F35, las fechas fijas): un `F:F99`, un `NA:Z` o un `ID:A-99` ahí fallan. Sintético nuevo, `test_b_valida_tambien_lo_que_esta_fuera_de_las_entradas` |
+| a2 | importa | `problemas_a` solo cuenta las referencias de la línea `- **Refs:**` de una entrada, no las que se nombran de paso («Depende de», el texto). Sintético nuevo, `test_a_no_basta_con_nombrar_la_letra_de_paso`. La hoja real pasa con el criterio estricto |
+| a3 | importa | La línea preparada del heredado 27 (§4) dice ya lo que dice la fuente: respondidas las 4, 7 y 9, en parte las 1, 2, 3, 5 y 8, sin respuesta la 6. La hoja de ruta (A.2) gana `ID:A-54` e `ID:A-55` y la pregunta 6 |
+| a4 | importa | R3.1 dice que la corrida solo CUENTA sin ningún `--diagnostico-*` (ADR-0070 §3), y que hoy lo necesita para A-21, A-35 y A-44, cuyos valores van a R1.1 o a R4.1; hasta entonces es diagnóstico y no habilita R5.2. R5.2 depende de una corrida que cuente. R7.1 recoge la condición 2 de NA:N (SymbolInfoSessionTrade, ADR-0068 §4) |
+| a5 | menor | La reserva de §0.d (F14, F22 y F23 PARCIAL sin revisar cada informe a fondo) pasa a la tabla F01-F35 de la hoja |
+| a6 | menor | §3.1 dice ya qué nombra cada uno: RITUAL, el `git add` y la puerta de `git status`; `cerrar-rama`, una viñeta y la «Verificación» |
+| a7 | menor | El encargo dice que el plan maestro no se mantiene «desde el 2026-09-14»; la medida da **2026-09-16** (`5c49127`, «lo que encontro la auditoria de cierre de la rama de fidelidad»); el 2026-09-14 es el commit anterior (`469db7d`). Gana la medida: el recuadro de MASTER_PLAN y §0.d dicen 2026-09-16 |
+| a8 | menor | Sintético nuevo para la rama `HER` de una entrada HECHA, `test_b_se_rompe_si_un_heredado_hecho_sigue_vivo` |
+| a9 | menor | (i) La línea del heredado 15 ya no dice que S-3 «la responde»: dice que S-3 contesta el stop y el objetivo, y §4 anota que el informe no la vincula con la pregunta de reserva. (ii) A.4: «el texto de la deuda no dice nada de v7–v10». (iii) El 34: §4 explica que «superado en parte» en §0.a quería decir cubierto por X y por A, no hecho |
+| b1 | menor | Queda dicho: el guion que midió (c) contra `main` (`c_contra_main.py`) está en la carpeta de trabajo, no en el repo; su resultado, en §3.1, lo reprodujo el revisor. El test sintético de (c) lleva la frase exacta del `main` de hoy; uno que leyera el PROJECT_STATE de `main` dejaría de valer en cuanto `main` cambie |
+
+Con los cambios: 15 funciones en `tests/unit/test_hoja_de_ruta.py`; la suite de la hoja y la de los
+documentos vivos, en verde.
+
+## 6. La CI de Linux
+
+`git push origin trabajo/hoja-de-ruta:refs/heads/fix/hoja-de-ruta` (como dice RITUAL.md).
+
+- **Run 38102562925**, sobre 9285237 (la fase 1): `failure` con **un solo fallo, el esperado**,
+  `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/hoja-de-ruta'; la rama
+  actual es 'fix/hoja-de-ruta'»). `1 failed, 2492 passed, 9 skipped`. Estado por la API de
+  check-runs con el sha literal; el log, con `gh run view --log-failed`.
+- El commit de este cierre de revisión (los hallazgos atendidos y este informe) se empuja igual; su
+  run va en el mensaje de entrega, porque no puede ir dentro de él.
+
+## Informe del revisor (subagente `revisor`, 2026-10-10), tal cual
+
+Pasada sobre 9285237, antes de §5 y §6. Copiado sin tocar.
+
+## Informe del revisor · trabajo/hoja-de-ruta · 2026-10-10
+
+Base 2a007b7. HEAD 928523791c61 (commits 6bcea23, 93e9260, 9285237). `git status --short` vacío. No he abierto holdout, ventanas.yaml/particiones.yaml, data/, crudas ni _proposals. Lo único protegido que toqué fue `grep -c "2026-03"` sobre `knowledge/cases/kit/vistos.yaml`, que dio 0 y es un recuento, no una lectura.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 5 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El test (b) no valida las referencias que están fuera de un `### `. Quedan sin comprobar las `F:Fnn` de la tabla F01-F35 y las `NA:` de «Fechas fijas». Un `F:F99` en la tabla o un `NA:Z` en las fechas pasa. El encargo pide que (b) falle si «una referencia NA:, HER:, ID: o F: de la hoja no existe». | Guion de solo lectura que importa `tests/unit/test_hoja_de_ruta.py` y muta la hoja real. `problemas_b` con `F:F99` en la tabla da `[]` (changed True). Con `NA:Z` en «Fechas fijas» da `[]`. Con `ID:A-99` en una entrada sí falla. Refs fuera de `###`: `[F01, F13, F14, F15, F16, F18, F19, F20, F21, F22, F23, F24, F25]`. La causa está en `test_hoja_de_ruta.py:64-73` y `:126`: `entradas_de_la_hoja` solo devuelve bloques `### `. |
+| a2 | importa | El test (a) se cumple con cualquier mención de `NA:X` o `HER:n` en cualquier parte de la hoja, no con una entrada que lo lleve en `Refs:`. Quitar `NA:E` solo de `Refs` de R1.1 no lo detecta, porque E sigue citada en `Depende de` de R2.1 y R5.4. | Mutación: `problemas_a(ps, hoja.replace("NA:E ·",""))` da `[]`. Conteo de menciones: A=4, E=3, J=3, X=3, F=2, H=2, M=2, N=2, S=2. Código en `test_hoja_de_ruta.py:109-113`, que usa `referencias(hoja)` sobre el texto entero. Los sintéticos (`:317-321`) no lo ven porque `NA:E` solo aparece una vez. |
+| a3 | importa | La línea preparada para el heredado 27 (informe §4, fila 27) dice que noticias y gap trading están «respondidas (FTMO-REGLAS.md, respuestas 1-9 del 2026-10-05)». La fuente dice que la pregunta 6 está «Sin respuesta» y que las 1, 2, 3, 5 y 8 son «respondida en parte». El propio §0.a del informe anota «queda la pregunta 6 de A-55 sin respuesta». La hoja no lleva A-54 ni A-55 (ABIERTAS) ni esa pregunta en ningún sitio: A.2 solo cubre la `maximum capital allocation rule` y el asterisco. | `docs/validation/FTMO-REGLAS.md:227-232` y `:241` («A-54 y A-55 siguen ABIERTAS … la pregunta 6 sigue sin respuesta»). `docs/validation/HOJA-DE-RUTA.md:70` y el §4, fila 27. `grep "A-54\|A-55" docs/plan/HOJA-DE-RUTA.md` no da nada. Mandar a HISTORIA «respondidas 1-9» afirma más de lo que sostiene la cita. |
+| a4 | importa | Dependencias de R3.1 y R5.2 que contradicen lo que la propia hoja cita. R3.1 lleva `HER:25`, `HER:30`, `HER:35`, `ID:A-35`, `ID:A-44` y ADR-0070, pero «Depende de: R1.1 y R2». R1.1 dice que A-35 y A-44 «tienen el código y les falta el valor», y esos valores van a R4.1, posterior. ADR-0070 §3 dice que mientras el motor necesite un diagnóstico (A-21, A-35, A-44) «mayo no se mide». R5.2 (Mayo) depende solo de R3.1. La fase 0 no mide estas dependencias; vienen del orden del encargo, pero la hoja no declara la tensión. Tampoco R7.1 («Depende de: R6.1») recoge la condición 2 de la letra N, que dice que la rama que conecte el bot en tiempo real (demo o real) no se cierra sin la lectura de SymbolInfoSessionTrade o un procedimiento equivalente. La hoja cita NA:N solo en R5.4 y G.2. | `docs/plan/HOJA-DE-RUTA.md:79-86`, `:44-49`, `:91-96`, `:111-117`, `:157-163`. `docs/adr/0070-umbral-de-construccion-para-medir-mayo.md:62-63`. `PROJECT_STATE.md:59` (N, condición 2). |
+| a5 | menor | La reserva del §0.d («F14, F22 y F23 se clasifican PARCIAL … sin revisar cada informe a fondo») no pasó a la tabla F01-F35 de la hoja. La hoja la presenta como «Medido por el contenido». | `docs/validation/HOJA-DE-RUTA.md:153-154`. `docs/plan/HOJA-DE-RUTA.md:239-240` y `:246-250`. |
+| a6 | menor | El informe §3.1 dice que en RITUAL y en `cerrar-rama` «el `git add` y la puerta de `git status` la nombran». La skill solo gana una viñeta («Verificación» y el punto 3) y no nombra ni `git add` ni `git status`; eso está solo en RITUAL. No se pierde ninguna puerta, pero la frase es inexacta. | `git diff 2a007b7 -- .claude/skills/cerrar-rama/SKILL.md`: +1 viñeta y 1 ampliación de «Verificación». `RITUAL.md:158-169` sí lo nombra. |
+| a7 | menor | La fecha del último cambio del plan maestro contradice la del encargo y no se dice con su nombre. El encargo dice «no se mantiene desde el 2026-09-14»; la medida da 2026-09-16 (`5c49127`). El recuadro de MASTER_PLAN usa 09-16 correctamente, pero CLAUDE.md pide nombrar la contradicción. | `git log -3 2a007b7 -- docs/plan/MASTER_PLAN.md`: `5c49127 2026-09-16`, `469db7d 2026-09-14`. Encargo, línea 9. |
+| a8 | menor | La rama `HER` de `problemas_b` (heredado HECHO que sigue vivo) no tiene sintético. El código funciona: HER:34 en una entrada HECHA da «esta HECHA y el heredado sigue vivo». El test `test_b_se_rompe_si_una_entrada_hecha_sigue_viva` (`:337-342`) solo prueba `NA`. | `test_hoja_de_ruta.py:137-142` frente a `:337-342`. |
+| a9 | menor | Dos frases de las líneas del cierre dicen algo que la fase 0 no midió. (i) Heredado 15: «la responde S-3» da por hecho que S-3 es la pregunta de reserva del 2026-09-23. `SESION-04-EXTRACCION.md` no menciona esa pregunta (grep de `reserva` y `2026-09-23`: sin resultados). (ii) A.4 dice «no cuenta v7–v10», y la fuente solo dice que el texto de la deuda no las menciona. (iii) El §0.a llama al heredado 34 «superado en parte» y el §4 «ninguna parte hecha». | `docs/validation/HOJA-DE-RUTA.md:58`, `:366`, `:368`. `docs/plan/HOJA-DE-RUTA.md:194`. `docs/validation/V5-INSTANTES.md:95-102` (la pregunta de reserva es sobre el stop y el TP, parecida a S-3, pero sin vínculo escrito). |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da `CONTRATO: 20 ficheros dentro del contrato de trabajo/hoja-de-ruta (riesgo medio, artefacto docs/validation/HOJA-DE-RUTA.md, 3 comprobaciones para el revisor)`.
+- **Tests.** `uv run pytest tests/unit/test_hoja_de_ruta.py tests/unit/test_contrato_rama.py tests/contract/test_documentos_vivos.py -q -p no:cacheprovider` pasa, 47 puntos.
+- **Sello de `make check`.** `make-check.log`: `2502 passed`, `SELLO: make check en verde sobre el arbol 90f5c916515eeca049f141ba3bf501b68511c2ba`, `PICO DE MEMORIA 294 MiB`. `git rev-parse HEAD^{tree}` da 90f5c916515eeca049f141ba3bf501b68511c2ba, el mismo árbol.
+- **Trailers `Fuente:`.** La rama no toca `knowledge/spec` ni `knowledge/cases` (`git diff --name-status`). No procede.
+- **Regímenes.** Cero cambios en `knowledge/evidence`, `knowledge/feedback`, `data/manifests`, `libros.yaml`, transcripciones y fotogramas. HISTORIA solo gana líneas (194 añadidas, 0 `-`). Archivo 27 es el PROJECT_STATE de `main`.
+- **ADR-0072.** `## Estado` es `ACTIVE`. Está en el índice `docs/adr/README.md`.
+- **SEPTIEMBRE-ENTRA.md** (informe cerrado). Solo +7 líneas, un recuadro `>` con fecha y rama, al principio, y el cuerpo intacto. La cita «el consultor, no una sesión ni un agente» existe en §2b (líneas 81-82). MASTER_PLAN.md tiene +7 líneas de recuadro y el cuerpo intacto.
+- **Tres guardias de una `cita`, ids de ambigüedades e ítems de evidencia nuevos.** No procede: la rama no añade citas en la spec, no toca `ambiguedades.yaml` y no añade evidencia.
+- **Saldo de bytes de PROJECT_STATE.md.** `git show 2a007b7:PROJECT_STATE.md | wc -c` = 22799. `wc -c PROJECT_STATE.md` = 22548. Saldo −251, cumple ≤ 0. El diff de PROJECT_STATE solo toca rama, Current Feature, recuento de tests, F, la remisión de la línea 63 y los Archivo 26→27.
+- **Punto 3, puertas.** `git diff 2a007b7` sobre RITUAL, cerrar-rama y abrir-rama quita exactamente cuatro líneas y las cuatro vuelven ampliadas en el mismo sitio. No se pierde ninguna puerta:
+  - `abrir-rama`: la línea de `rutas_permitidas`, ahora tras `tramo`.
+  - `cerrar-rama`: la de los 25.000 bytes, ahora con `;`.
+  - `cerrar-rama`: la de «Verificación».
+  - RITUAL: la puerta de `git status` del commit del contrato.
+- **Punto 1, citas.** Comprobé contra su fuente:
+  - `ambiguedades.yaml` líneas 280 (A-16), 329 (A-18), 620 (A-27 DECIDIDA), 662 (A-28), 704 (A-29), 905 (A-35), 944 (A-36), 1209 (A-44), todas con el estado dicho.
+  - `SESION-04-EXTRACCION.md` §5 (:928-958): las 13 «resuelve» y las 11 «en parte» cuadran con `respondidas()`.
+  - `SESION-04-EXTRACCION.md:413-437` (S-3).
+  - `SESION-03-EXTRACCION.md` §5, incluido A-50 «no resuelve».
+  - `ACTIVACION-A42.md:18` y §2.2 (refiltrado HECHO).
+  - `FTMO-REGLAS.md:61`, `:309`, `:310` y `:236`.
+  - ADR-0071 §3, y `ftmo-2step-swing-100k.yaml:458-466` («PENDIENTE PARA ALEKS … Next Action 27»).
+  - `REGISTRO-MARZO.md` §2 punto 1.
+  - ADR-0069 :37 y :123-126; ADR-0070; ADR-0051 :117; ADR-0021 §3 y ADR-0046 §6a.
+  - Existen todos los ficheros que la hoja cita, y los tags `stable/F01`..`F13` y `stable/F15`.
+  - `ev-v7-001550-82e5cffc` no la revisa ningún informe.
+- **Holdout.** Las fechas de la hoja son solo 2026-10-10, 2026-09-09, 2026-10-08 y 2026-10-22 (más «26 al 30 de octubre», futuras). Ninguna es de un día reservado. No hay ningún resultado, y el informe y el ADR no traen fechas reservadas. No se leyó libro, imagen, fotograma ni transcripción, así que no hacía falta fila en `HOLDOUT-EXPOSICIONES.md`.
+- **Punto 6, ADR-0072 y P.**
+  - El ADR dice lo que decidió el consultor (punto 1 de su respuesta): los tres papeles, la columna la lee Aleks para todo backtest, ADR-0046 §6a como su caso de marzo, y el recuadro de SEPTIEMBRE-ENTRA.
+  - Añade dos cosas ya vigentes y coherentes: la declaración el mismo día (ADR-0021 §4) y el origen en `52c0220`. Ese commit existe, es de 2026-09-20 y es el que introdujo «QUIEN» (`git log -S "QUIEN" -- CLAUDE.md`).
+  - CLAUDE.md :151 y :162 dicen «QUIEN: Aleks», citan ADR-0072 y ADR-0046 §6a, y no queda un «por el consultor».
+  - Los dos pasajes del ADR sobre `ERRORES-RECURRENTES.md` (fila de `trabajo/cases-rejilla`) existen.
+- **Desviación declarada del §3.2 (F reescrita ya en la rama).** Está declarada, razonada y es mínima. Aplica literalmente la línea que el consultor aprobó. Sin ella, (c) deja `make check` rojo en todos los commits de la rama. Con el PROJECT_STATE de `main`, `problemas_c` da `['F depende (tras W (consultor, 2026-10-10)) de W, que no esta viva']`. Sobre la rama da `[]`. La juzgo aceptable; contradice la letra del encargo («no en la Next Action de la rama»), pero el consultor debe saber que la F nueva ya está en la rama y que el §4 ya no la lleva.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 17 hechos, 1 hecho de otra forma (declarado), 2 parciales (CI y revisor, pendientes por orden).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Fase 0 (a)-(h) en el informe, con PARADA | Hecho | `HOJA-DE-RUTA.md` §0.a-§0.h y §1 |
+| 2 | Respuesta del consultor copiada tal cual en el encargo y en el informe | Hecho | Comparación por programa: `True`, 2307 caracteres iguales |
+| 3 | Hoja: R0…R7, referencias `NA:/HER:/ID:/F:`, cuatro campos, ids sin recuentos | Hecho | 21 entradas `###`, ninguna sin `Refs`, `Qué es`, `Depende de`, `Quién` y `Hecho cuando`. `test_documentos_vivos.py` pasa |
+| 4 | Contenido: R1 (NA:E con las ambigüedades de 0.c como ID: y el refiltrado) | Hecho | `HOJA:40-55`; el refiltrado como HECHO con ACTIVACION-A42 §2.2 |
+| 5 | R2 (julio NA:S con ticks, NA:X y ADR-0051 §8), R3 (ADR-0070), R4, R5 (G, e, mayo, marzo, I, F26, F27), R6, R7 | Hecho | `HOJA:57-163` (ver a4 sobre las dependencias) |
+| 6 | Tres carriles (Aleks, guardias y deuda, material reservado), tabla F01-F35 y fechas fijas sin días reservados | Hecho | `HOJA:165-264` |
+| 7 | La hoja entra en `VIVOS` | Hecho | `tests/contract/test_documentos_vivos.py` (+2 líneas) |
+| 8 | Test negando por defecto, que falle en (a), (b), (c) y (d), con sintéticos | Hecho, con la debilidad de a1/a2 | Falla en los cuatro sentidos sobre la hoja real: (a) sin HER:15 / sin todas las menciones de una letra; (b) `ID:A-99` y entrada HECHA viva; (c) `Despues de W`, `Espera a Q`, `Junto a Q y R`; (d) sin `ID:A-36` y sin `ID:A-18`. El de «plantilla sin tabla» levanta `AssertionError`. Pero (a) y (b) no son tan estrictos como dice el informe (a1, a2) |
+| 9 | (c) falla con el `main` de hoy por F | Hecho | `problemas_c(PS de 2a007b7)` da el fallo de F→W; sobre la rama `[]` |
+| 10 | Campo `tramo`: lo admite `contrato_rama.py`, obligatorio solo si la hoja está en el merge-base, valor = título o id de un `##`, con test en los dos sentidos | Hecho | `scripts/contrato_rama.py` (`problemas_de_tramo`, `tramos_de_la_hoja`); tres tests nuevos (sin hoja en la base no se exige, con hoja falta y falla, un tramo inexistente falla); el contrato de esta rama no lo lleva, como pide |
+| 11 | `abrir-rama` lo pide; CONTRATO-DE-RAMA.md lo documenta | Hecho | Fila nueva en la tabla de `abrir-rama` y viñeta en el punto 4; viñeta y plantilla en CONTRATO-DE-RAMA.md |
+| 12 | RITUAL y `cerrar-rama`: en el commit del contrato, junto a la Next Action, se actualiza la hoja; revisión caso a caso contra `main` | Hecho | RITUAL punto 4, `git add` y puerta; `cerrar-rama` punto 3 y «Verificación». Ver a6 sobre la frase del informe |
+| 13 | MASTER_PLAN: recuadro al principio, con fecha y rama, que diga que el orden vivo está en la hoja y que §E queda como historia | Hecho | `MASTER_PLAN.md`, +7 líneas. También se edita `docs/plan/README.md`, no pedido pero declarado en §3.1 |
+| 14 | P: lo decidido en la PARADA sobre «QUIEN» | Hecho | ADR-0072, CLAUDE.md y el recuadro de SEPTIEMBRE-ENTRA (todo verificado arriba). La ruta de SEPTIEMBRE-ENTRA se añadió al contrato con comentario |
+| 15 | Respuesta 5: corregir la remisión de `PROJECT_STATE.md:63`; `firma_tamano_posicion_ratio_aviso` a la hoja (carril de deuda), sin tocar `knowledge/` | Hecho | `PROJECT_STATE.md:63-64`; hoja G.3. `knowledge/` intacto |
+| 16 | Respuesta 7: la copia de seguridad en el carril de Aleks, con fecha límite | Hecho | Hoja A.4, «antes de grabar la próxima sesión con el trader» |
+| 17 | Para el cierre, preparado en el informe y no en la Next Action de la rama: P HECHA, F, E sin la coletilla, y los heredados 2, 10, 15, 27 y 34 | Hecho de otra forma (F) | P, E y los cinco heredados preparados en el §4. F se aplicó ya en la rama (§3.2, declarado). Las cinco líneas dicen lo que la fase 0 midió, salvo a3 (27) y a9 (15 y 34). 2, 10 y 34 cuadran con 0.a: faltan `vistos.yaml` (recuento 0), la prueba abierta y A-27 DECIDIDA, y X más NA:A para el 34 |
+| 18 | Saldo de bytes de PROJECT_STATE ≤ 0 | Hecho | 22.799 → 22.548 (−251). Las líneas del cierre del §4 restan más (P y la coletilla de E salen) |
+| 19 | Informe con fase 0, PARADA, respuesta, lo hecho y estado al final | Hecho | Acaba en `## Estado`: «EN CURSO … Faltan la CI de Linux y el revisor» |
+| 20 | `make check` con sello antes de cada commit | Hecho (HEAD) | SELLO sobre el árbol de HEAD. No pude comprobar el sello de los dos commits anteriores |
+| 21 | `fix/hoja-de-ruta` y CI de Linux, con números de run | Parcial | El informe dice que falta. No pude consultar la CI (ver abajo) |
+| 22 | Pasar el revisor y pegar su informe al final del informe de la rama | Parcial | Lo pega quien lanza el revisor; este texto está listo para pegarlo |
+| 23 | No cambia: `src/`, spec, `knowledge/`, parámetros, informe cerrado, fichero congelado | Hecho | `git diff --name-status`: ningún `src/`, `knowledge/`, `config/` ni `data/manifests/`. Los únicos informes cerrados tocados son SEPTIEMBRE-ENTRA y MASTER_PLAN, solo con recuadro |
+| 24 | Nada de holdout: ninguna fecha reservada ni resultado en la hoja | Hecho | Comprobado arriba |
+
+Lo que la rama hace y el encargo no pide: la edición de `docs/plan/README.md` (declarada en §3.1) y el test extra `test_las_tablas_finales_de_las_sesiones_se_leen` (declarado en §3.1, y útil para que (d) no pase sin leer nada). Ninguna cosa sin justificar.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | El informe cuenta F01-F35 y las líneas del cierre, pero no dice que el guion `c_contra_main.py` con el que midió que (c) falla con `main` no está commiteado: queda solo la frase de §3.1. Lo reproduje yo con el PROJECT_STATE de 2a007b7 y da lo que dice. Además, ningún test commiteado usa el PROJECT_STATE real de `main`; solo el sintético con la misma frase. | `HOJA-DE-RUTA.md:318`; `test_hoja_de_ruta.py:345-350`. Mi medida: `C con main: ['F depende (tras W …) de W, que no esta viva']` |
+
+### Lo que no pude comprobar
+- **CI de Linux de `fix/hoja-de-ruta` sobre 928523791c613fff8ef96e21483e19863b0367b2.** `curl` está bloqueado por el hook de solo lectura («`curl` escribe»), así que no pude consultar `check-runs`. Habrá que mirarlo con `!` de Aleks. El informe todavía no trae el número de run.
+- **El sello de `make check` de los commits 6bcea23 y 93e9260.** Solo el log de HEAD (árbol 90f5c91) está disponible; `git write-tree` y las comprobaciones que escriben no se ejecutan.
+- **Heredado 10, partes «región» del panel de FTMO.** El apalancamiento sí está medido (`DEMO-EJECUCION-1.md:159`, COINCIDE) y Swing, 100.000 y MT5 constan en ADR-0071:21. La región no la encontré en ninguna fuente que pueda abrir. La línea del cierre («quedan A-28 y el grabador») no la nombra.
+- **Valores de ticks y datos de `data/`, material reservado y crudas**, que no abrí por mandato.
+- **`git tag -l`.** El hook de solo lectura lo bloquea; usé `git for-each-ref refs/tags/stable/F0* F1*`.
+
+### Comandos ejecutados
+1. `git branch --show-current`; `git log --format='%h %s' 2a007b7..HEAD`; `git diff --stat 2a007b7...HEAD`; `git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `uv run pytest tests/unit/test_hoja_de_ruta.py tests/unit/test_contrato_rama.py tests/contract/test_documentos_vivos.py -q -p no:cacheprovider`
+4. `git diff 2a007b7 -- PROJECT_STATE.md`; `git show 2a007b7:PROJECT_STATE.md | wc -c`; `wc -c PROJECT_STATE.md`
+5. `git diff 2a007b7 -- .claude/skills docs/runbooks/RITUAL.md docs/runbooks/CONTRATO-DE-RAMA.md CLAUDE.md`
+6. `git diff 2a007b7 -- docs/validation/SEPTIEMBRE-ENTRA.md docs/plan/MASTER_PLAN.md docs/plan/README.md docs/adr/README.md tests/contract/test_documentos_vivos.py`
+7. `git diff 2a007b7 -- scripts/contrato_rama.py tests/unit/test_contrato_rama.py`
+8. `git diff 2a007b7 -- docs/state/HISTORIA.md` (más el recuento de líneas `-`); `git diff --name-status 2a007b7...HEAD`; `git diff 2a007b7 -- <RITUAL, cerrar-rama, abrir-rama> | grep '^-[^-]'`
+9. `git log -S "QUIEN" -- CLAUDE.md`; `git show 52c0220 --stat`; `git log -3 2a007b7 -- docs/plan/MASTER_PLAN.md`; `git for-each-ref refs/tags/stable/F0* F1*`
+10. `git rev-parse HEAD^{tree} HEAD`; lectura de `make-check.log`
+11. Varios guiones `uv run python -` de solo lectura:
+    - mutación en memoria sobre la hoja real y el PROJECT_STATE de `main`;
+    - cobertura de menciones por letra y heredado;
+    - comparación del bloque de la respuesta del consultor entre encargo e informe;
+    - comprobación de los campos de las 21 entradas;
+    - prueba de la rama HER de `problemas_b`.
+12. `grep -c "2026-03" knowledge/cases/kit/vistos.yaml` (da 0); `grep -n` sobre `ambiguedades.yaml`; `sed -n` sobre HISTORIA, `GUION-MISMO-COMANDO.md`, `ACTIVACION-A42.md`, `SESION-02-INVENTARIO.md`, `ERRORES-RECURRENTES.md`, `SESION-03-EXTRACCION.md`
+13. Intentos bloqueados por los hooks: `for f in …`, `git tag -l`, `curl … check-runs`.
+
+Ficheros de referencia: `C:\Users\USER\Desktop\Bot v3\docs\plan\HOJA-DE-RUTA.md`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_hoja_de_ruta.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\HOJA-DE-RUTA.md`, `C:\Users\USER\Desktop\Bot v3\docs\adr\0072-quien-lee-la-columna-de-fechas-y-los-tres-papeles.md`.
+
 ## Estado
 
-EN CURSO. Fase 1 hecha (§3), con lo preparado para el cierre (§4). Faltan la CI de Linux (`fix/hoja-de-ruta`) y el revisor.
+**LISTA PARA REVISIÓN, NO CERRADA.** Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
+(§2); fase 1 hecha (§3): la hoja de ruta, su test en cuatro sentidos, el `tramo` del contrato,
+RITUAL y las skills, MASTER_PLAN, ADR-0072 (P) y la remisión de PROJECT_STATE; la desviación de F,
+declarada (§3.2). Preparado para el commit del contrato del cierre (§4): P HECHA, E sin la
+coletilla y los heredados 2, 10, 15, 27 y 34. Revisor pasado y sus hallazgos atendidos (§5). CI de
+Linux: run 38102562925 con solo el fallo esperado de `state check` (§6); el run del último commit,
+en el mensaje de entrega. Saldo de PROJECT_STATE frente a `main`: −251 bytes. Exposiciones:
+ninguna (no se leyó ningún libro, imagen, fotograma ni transcripción). La rama remota
+`fix/hoja-de-ruta` se borra en el cierre.

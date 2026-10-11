@@ -76,12 +76,14 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R3 · Una corrida del arnés sobre toda la construcción
 
 ### R3.1 · La corrida de ADR-0070 y las diferencias clasificadas
-- **Refs:** ID:ADR-0070 · ID:ADR-0043 · HER:25 · HER:30 · HER:35 · ID:A-35 · ID:A-44 ·
-  ID:RN-004 · ID:RN-020
+- **Refs:** ID:ADR-0070 · ID:ADR-0043 · HER:25 · HER:30 · HER:35 · ID:A-21 · ID:A-35 ·
+  ID:A-44 · ID:RN-004 · ID:RN-020
 - **Qué es:** una corrida del arnés sobre la construcción simulada, con las opciones de la lista
   cerrada de ADR-0070, y la clasificación de las diferencias por el consultor. RN-004 está bloqueada
   por A-35 (heredados 25 y 30) y RN-020 por A-44 (heredado 35).
-- **Depende de:** R1.1 y R2.
+- **Depende de:** R1.1 y R2; y, para que la corrida CUENTE (ADR-0070 §3), que el motor corra sin
+  ningún `--diagnostico-*`: hoy lo necesita para A-21, A-35 y A-44, y sus valores van a R1.1 o, si
+  la sesión 4 no basta, a R4.1. Hasta entonces la corrida es diagnóstico y no habilita R5.2.
 - **Quién:** la corrida, la sesión; la clasificación, el consultor.
 - **Hecho cuando:** la corrida está en un informe y cada diferencia tiene su clase.
 
@@ -112,7 +114,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** ID:ADR-0070 · ID:ADR-0043
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
-- **Depende de:** R3.1.
+- **Depende de:** R3.1, con una corrida que cuente (sin diagnóstico; ADR-0070 §3).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -155,10 +157,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R7 · Demo y sombra
 
 ### R7.1 · Demo, reconciliación y decisión
-- **Refs:** F:F33 · F:F34 · F:F35
+- **Refs:** F:F33 · F:F34 · F:F35 · NA:N
 - **Qué es:** pre-vuelo y despliegue en la demo, la reconciliación demo-backtest y el memorando de
   decisión. De F33 ya existen el entorno de la demo, el calendario de cierres y el freno.
-- **Depende de:** R6.1.
+- **Depende de:** R6.1; y la rama que conecte el bot en tiempo real (demo o real) no se cierra sin
+  la lectura de SymbolInfoSessionTrade o un procedimiento que cierre el hueco del jueves
+  (NA:N, condición 2; ADR-0068 §4).
 - **Quién:** la sesión; el despliegue y la decisión, Aleks.
 - **Hecho cuando:** F35 tiene su memorando.
 
@@ -174,10 +178,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
 
 ### A.2 · Las preguntas a FTMO
-- **Refs:** NA:O · HER:27 · HER:37 · ID:ADR-0068 · ID:ADR-0071
-- **Qué es:** P-D1 (hedging, volumen máximo, tope sumado; decide el heredado 37); y lo que queda del
-  heredado 27: la «maximum capital allocation rule» y el asterisco de «USD/LOT*». La comisión por
-  lado ya está confirmada (ADR-0071 §3).
+- **Refs:** NA:O · HER:27 · HER:37 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
+- **Qué es:** P-D1 (hedging, volumen máximo, tope sumado; decide el heredado 37); lo que queda del
+  heredado 27: la «maximum capital allocation rule» y el asterisco de «USD/LOT*»; y lo que FTMO
+  no contestó del ticket: la pregunta 6 (A-55, sin respuesta) y las respondidas solo en parte
+  (A-54 y A-55; FTMO-REGLAS.md, recuadro del 2026-10-05). La comisión por lado ya está confirmada
+  (ADR-0071 §3).
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
 - **Hecho cuando:** las respuestas están registradas y el heredado 37 decidido.
@@ -191,7 +197,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### A.4 · La copia de seguridad
 - **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad … INCOMPLETA desde el 2026-09-09»)
-- **Qué es:** las crudas y los WAV fuera de la máquina: falta v6 (la sesión 1) y no cuenta v7–v10.
+- **Qué es:** las crudas y los WAV fuera de la máquina: falta v6 (la sesión 1), y el texto de la
+  deuda no dice nada de v7–v10.
 - **Depende de:** nada. **Fecha límite: antes de grabar la próxima sesión con el trader.**
 - **Quién:** Aleks (el consultor no tiene acceso a su máquina ni a su Drive).
 - **Hecho cuando:** v6 a v10 están en Drive con su SHA256SUMS.
@@ -237,7 +244,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## F01-F35 · Estado medido (MASTER_PLAN §A)
 
 Medido por el contenido, no por el número del tag (inventario en `docs/validation/HOJA-DE-RUTA.md`
-§0.d).
+§0.d). Reserva de esa medida: F14, F22 y F23 se clasifican PARCIAL por sus módulos, sus fichas y
+sus ambigüedades, sin revisar cada informe a fondo.
 
 | Funcionalidad | Estado | Prueba |
 |---|---|---|

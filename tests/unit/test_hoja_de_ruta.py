@@ -77,6 +77,18 @@ def referencias(texto: str) -> set[tuple[str, str]]:
     return {(m.group(1), m.group(2)) for m in REF.finditer(texto)}
 
 
+def refs_de_la_entrada(bloque: str) -> set[tuple[str, str]]:
+    """Las referencias de la linea `- **Refs:**` de una entrada (con sus continuaciones), y no las
+    que la entrada nombra de paso en «Depende de» o en el texto (revisor, a2)."""
+    m = re.search(r"^- \*\*Refs:\*\*(.*?)(?=^- \*\*|\Z)", bloque, re.M | re.S)
+    return referencias(m.group(1)) if m else set()
+
+
+def fuera_de_las_entradas(hoja: str) -> str:
+    """Lo que la hoja dice fuera de sus `### `: cabeceras, la tabla F01-F35 y las fechas fijas."""
+    return "".join(t for t in re.split(r"(?m)^(?=#{2,3} )", hoja) if not t.startswith("### "))
+
+
 def respondidas(extraccion: str, nombre: str) -> set[str]:
     """Las `A-nn` que la tabla FINAL de un informe de extraccion da como «resuelve» o «en parte».
 
@@ -107,7 +119,8 @@ def respondidas(extraccion: str, nombre: str) -> set[str]:
 
 
 def problemas_a(ps: str, hoja: str) -> list[str]:
-    refs = referencias(hoja)
+    """Cada letra viva y cada heredado vivo tiene que estar en el `Refs:` de alguna entrada."""
+    refs = {r for _, _, bloque in entradas_de_la_hoja(hoja) for r in refs_de_la_entrada(bloque)}
     faltan = [f"NA:{x}" for x in sorted(entradas_vivas(ps)) if ("NA", x) not in refs]
     faltan += [f"HER:{n}" for n in sorted(heredados_vivos(ps)) if ("HER", str(n)) not in refs]
     return [f"vivo en PROJECT_STATE y ausente de la hoja de ruta: {r}" for r in faltan]
@@ -144,6 +157,17 @@ def problemas_b(
                 problemas.append(f"{donde} no existe")
             elif tipo == "F" and valor not in funcionalidades:
                 problemas.append(f"{donde} no es una funcionalidad de MASTER_PLAN §A")
+    # Y fuera de las entradas -la tabla F01-F35, las fechas fijas-: que exista (revisor, a1).
+    for tipo, valor in sorted(referencias(fuera_de_las_entradas(hoja))):
+        donde = f"fuera de las entradas: {tipo}:{valor}"
+        if tipo == "NA" and valor not in vivas | hechas:
+            problemas.append(f"{donde} no es una letra viva ni una HECHA en HISTORIA")
+        elif tipo == "HER" and int(valor) not in heredados:
+            problemas.append(f"{donde} no es un heredado vivo")
+        elif tipo == "ID" and valor not in ids_existentes:
+            problemas.append(f"{donde} no existe")
+        elif tipo == "F" and valor not in funcionalidades:
+            problemas.append(f"{donde} no es una funcionalidad de MASTER_PLAN §A")
     return problemas
 
 
@@ -368,3 +392,34 @@ def test_d_niega_un_informe_sin_tabla_final_que_no_es_plantilla() -> None:
     with pytest.raises(AssertionError, match="sin tabla final"):
         respondidas("# Sesion\n\n## 1. Algo\n", "x.md")
     assert respondidas("# PLANTILLA\n\n## 1. Algo\n", "p.md") == set()
+
+
+def test_a_no_basta_con_nombrar_la_letra_de_paso() -> None:
+    """Revisor, a2: una letra que solo sale en «Depende de» de otra entrada no tiene entrada."""
+    hoja = HOJA_BIEN.replace("NA:E · HER:15 · ID:A-18", "HER:15 · ID:A-18").replace(
+        "- **Refs:** NA:F · ID:ADR-0072 · F:F26",
+        "- **Refs:** NA:F · ID:ADR-0072 · F:F26\n- **Depende de:** NA:E",
+    )
+    assert problemas_a(PS, hoja) == ["vivo en PROJECT_STATE y ausente de la hoja de ruta: NA:E"]
+
+
+def test_b_valida_tambien_lo_que_esta_fuera_de_las_entradas() -> None:
+    """Revisor, a1: la tabla F01-F35 y las fechas fijas viven fuera de los `### `."""
+    for mala, motivo in (
+        ("| F:F99 | HECHA |", "no es una funcionalidad"),
+        ("- La ejecucion 2 (NA:Z).", "no es una letra viva ni una HECHA"),
+        ("- Algo (ID:A-99).", "no existe"),
+    ):
+        hoja = HOJA_BIEN + f"\n## Fechas fijas\n\n{mala}\n"
+        problemas = problemas_b(PS, hoja, HISTORIA, IDS, FUNCIONES)
+        assert len(problemas) == 1 and motivo in problemas[0], (mala, problemas)
+    # una letra ya HECHA en HISTORIA si puede citarse fuera de las entradas
+    hoja = HOJA_BIEN + "\n## Fechas fijas\n\n- Lo que hizo W (NA:W).\n"
+    assert problemas_b(PS, hoja, HISTORIA, IDS, FUNCIONES) == []
+
+
+def test_b_se_rompe_si_un_heredado_hecho_sigue_vivo() -> None:
+    """Revisor, a8: la rama HER de una entrada HECHA."""
+    hoja = HOJA_BIEN.replace("- **Refs:** NA:W", "- **Refs:** NA:W · HER:15")
+    problemas = problemas_b(PS, hoja, HISTORIA, IDS, FUNCIONES)
+    assert problemas == ["Carril: hecho «H.1 · W»: HER:15 esta HECHA y el heredado sigue vivo"]

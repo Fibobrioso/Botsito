@@ -16,7 +16,7 @@ f472e06 · merge de `trabajo/cases-rejilla` (tag `stable/F37j-cases-rejilla`): l
 f472e06 · merge: cases/ cuenta la ventana de cada caso por la puerta del reloj (rejilla H4, ADR-0069), reloj_sesiones congelado y Z (CASES-REJILLA.md) · tag stable/F37j-cases-rejilla
 
 ## Tests Currently Passing
-1459 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1462 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
