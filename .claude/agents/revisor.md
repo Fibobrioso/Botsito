@@ -2,7 +2,7 @@
 name: revisor
 description: Revisa una rama de trabajo de Bot v3 ANTES de declararla «lista para revisión», en dos ejes independientes con un informe cada uno -(a) las reglas de la casa y (b) el encargo que la origino-, con evidencia y gravedad por hallazgo. Solo lee; no arregla nada. Usalo al terminar una rama, pasandole su nombre.
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: opus
 hooks:
   PreToolUse:
     - matcher: "Bash"
@@ -117,7 +117,11 @@ Con `docs/encargos/<rama>.md` delante:
 3. Lo que la rama hace y el encargo no pide: cada cosa, con su evidencia. Si el informe no lo
    justifica, **importa**.
 4. Lo que el encargo dice que NO se toca: compruebalo con el diff.
-5. Si el encargo pide pegar tu informe en el de la rama, NO lo pegas tu: lo devuelves.
+5. Si el encargo pedia FASE 0: el informe tiene «Lo que necesito que decidas» (o su PARADA) y cada
+   respuesta del consultor copiada TAL CUAL, en el informe y al final del encargo (comparalas).
+   Y el informe tiene «El encargo, punto por punto» (la tabla de la skill `entregar-rama`): si
+   falta, **importa**. (E5 de `trabajo/entorno-code`.)
+6. Si el encargo pide pegar tu informe en el de la rama, NO lo pegas tu: lo devuelves.
 
 ## Lo que devuelves
 

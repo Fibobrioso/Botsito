@@ -169,8 +169,9 @@ def test_ningun_literal_de_src_afirma_historial_fuera_de_historial_ok() -> None:
 
 
 @pytest.mark.skipif(not (REPO / ".git").exists(), reason="sin el .git del repositorio")
+@pytest.mark.usefixtures("knowledge_validate_compartido")  # una ejecucion por sesion (E3)
 def test_con_git_las_lineas_ok_son_las_de_main() -> None:
-    codigo, salida = validar(REPO)
+    codigo, salida = knowledge.validar(REPO)  # por el modulo: asi la recibe del fixture
     assert codigo == 0, [x for x in salida if x.startswith("ERROR")]
     oks = [x for x in salida if x.startswith("OK:")]
     assert len(oks) == len(OK_CON_GIT), oks

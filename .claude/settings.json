@@ -52,6 +52,18 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PYTHONUTF8=1 python \"$CLAUDE_PROJECT_DIR/.claude/hooks/estado_sesion.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Read|Grep|Glob|Bash|PowerShell",

@@ -803,7 +803,6 @@ RITUAL = [
     "git add PROJECT_STATE.md",
     "git diff --cached --name-only",
     "uv run botsito state check",
-    "make check > make-check.log 2>&1",
     'grep "SELLO: make check en verde" make-check.log',
     "rm make-check.log",
     'BOTSITO_ALLOW_MAIN=1 git commit -m "docs(state): trabajo/x, cerrada en main (stable/F37)"',
@@ -816,7 +815,6 @@ RITUAL = [
     "git branch -d trabajo/guardias-claude",
     "git push origin trabajo/guardia-linux:refs/heads/fix/guardia-linux",
     "git push origin --delete fix/guardia-linux",
-    "make hooks",
     "uv run botsito knowledge validate > knowledge-validate.log 2>&1",
     "uv run botsito fidelidad build --artefacto eurusd-2026-03 --seed 20261001",
     "uv run python scripts/huso_por_velas.py --libro "
@@ -835,6 +833,50 @@ RITUAL = [
 def test_el_ritual_y_los_runbooks_pasan(g: ModuleType, comando: str) -> None:
     """Contra el repo REAL: lo que hoy ejecuta el ritual (RITUAL.md) y los runbooks."""
     assert _bash(g, RAIZ, comando) is None, comando
+
+
+# Los `make` del ritual, aparte: la guardia niega todo `make` si el `Makefile` no es el de `main`,
+# asi que lo que se espera de ellos depende del `Makefile` del repo REAL. El test suponia el de
+# `main` y la primera rama que lo cambio lo rompio (`trabajo/entorno-code`, respuesta del consultor
+# a la PARADA §4.3 de ENTORNO-CODE.md, 2026-10-11). La condicion la calcula el test con git, no con
+# la guardia.
+RITUAL_MAKE = ["make check > make-check.log 2>&1", "make hooks"]
+
+
+def _makefile_es_el_de_main() -> bool:
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+
+    def git(*args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["git", *args], cwd=RAIZ, capture_output=True, encoding="utf-8", check=False, env=env
+        )
+
+    for ref in ("main", "origin/main"):
+        en_main = git("rev-parse", "--verify", "-q", f"{ref}:Makefile")
+        if en_main.returncode == 0:
+            break
+    else:
+        pytest.fail(
+            "ni `main` ni `origin/main` tienen un Makefile en el repo real: sin ellos no se sabe "
+            "si la guardia tiene que dejar pasar `make` o negarlo"
+        )
+    actual = git("hash-object", "--", "Makefile")
+    assert actual.returncode == 0, actual.stderr
+    return actual.stdout.strip() == en_main.stdout.strip()
+
+
+@pytest.mark.parametrize("comando", RITUAL_MAKE)
+def test_los_make_del_ritual_pasan_si_el_makefile_es_el_de_main_y_si_no_los_lanza_aleks(
+    g: ModuleType, comando: str
+) -> None:
+    motivo = _bash(g, RAIZ, comando)
+    if _makefile_es_el_de_main():
+        assert motivo is None, comando
+    else:
+        assert motivo is not None, (
+            f"{comando}: el Makefile no es el de main y la guardia no lo niega"
+        )
+        assert "lo lanza Aleks en su terminal con «!»" in motivo, motivo
 
 
 # ------------------------------------------------------------------------------- PowerShell
@@ -976,7 +1018,7 @@ def test_el_push_a_main_pide_confirmacion() -> None:
         assert not any(_casa_regla(r, comando) for r in ask), comando
 
 
-@pytest.mark.parametrize("comando", RITUAL)
+@pytest.mark.parametrize("comando", RITUAL + RITUAL_MAKE)
 def test_ninguna_denegacion_toca_el_ritual(comando: str) -> None:
     deny = json.loads(AJUSTES.read_text(encoding="utf-8"))["permissions"]["deny"]
     assert not [r for r in deny if _casa_regla(r, comando)], comando

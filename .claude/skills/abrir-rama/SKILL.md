@@ -35,13 +35,30 @@ orden y las puertas.
 
 ## Herramientas
 
-Bash (git, `printf`, `grep -c`, `make check`, `uv run botsito state check`), Write para el encargo y
-el contrato, Edit para `PROJECT_STATE.md`.
+Bash (git, `git fetch` y `git ls-remote`, la API de check-runs con el sha literal, `printf`,
+`grep -c`, `make check`, `uv run botsito state check`), Write para el encargo y el contrato, Edit
+para `PROJECT_STATE.md`.
 
 ## El recorrido
 
-1. **Base.** `git checkout main`, `git status --short` vacio, y `git rev-parse --short main` igual al
-   sha del encargo. Si no coincide, se para y se pregunta.
+1. **Base.** `git fetch origin`, `git checkout main`, `git status --short` vacio, y la base entera
+   comprobada con git, no de memoria (lo que cada encargo repetia a mano; E6 de
+   `trabajo/entorno-code`):
+   - `git rev-parse --short main` igual al sha del encargo, y `main` = `origin/main`
+     (`git rev-parse main origin/main` da dos veces el mismo);
+   - el ultimo tag de `docs/state/HISTORIA.md` (la ultima linea `- Tag: ` de sus registros de
+     cierre) apunta al merge sobre el que esta `main`: `git rev-parse "stable/<tag>^{commit}"` igual
+     a `git rev-parse main^1` (`main` es el commit de estado sobre el merge), y esta en origin
+     (`git ls-remote --tags origin stable/<tag>` no sale vacio);
+   - la CI de `main` sobre su HEAD (el commit de estado, no el merge: `RITUAL.md`, «La CI que
+     cuenta es la del `docs(state)`, que es `HEAD`») en `completed` / `success`, por la API de check-runs
+     con el sha de 40 caracteres escrito tal cual (las ordenes de cierre del consultor,
+     `docs/state/HISTORIA.md`; la orden de `RITUAL.md` lo monta con `$(git rev-parse HEAD)`, y
+     el clasificador puede negarla);
+   - ninguna otra rama: `git branch --list` solo da `main` (ni `trabajo/*`, ni `feature/*`, ni
+     `fix/*`), y `git ls-remote --heads origin "fix/*"` sale vacio.
+
+   Si algo no cuadra, se para y se pregunta.
 2. **Rama.** `git checkout -b <rama>`.
 3. **Encargo.** `docs/encargos/<rama con - en lugar de />.md`: un titulo `# Encargo · <rama>`, una
    linea con la fecha y quien lo da, y el prompt entero citado con `>` linea a linea, sin tocarlo
@@ -52,8 +69,8 @@ el contrato, Edit para `PROJECT_STATE.md`.
    entre comillas si lleva `: `; `make check` falla si falta o no existe en la hoja), `rutas_permitidas` (siempre `docs/encargos/`, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
    artefacto), `rutas_protegidas` y `comprobaciones`. **El artefacto tiene que existir y estar
    estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
-   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Si el encargo pide un inventario antes de
-   tocar codigo, nace con el; si no, con su cabecera y un `## Estado` EN CURSO.
+   2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Nace con su cabecera y EN CURSO; la
+   fase 0 la escribe fase-cero en su commit.
 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
    - `N` = `grep -c '^# Archivo ' docs/state/HISTORIA.md` mas uno;
    - `printf '\n# Archivo N · PROJECT_STATE.md de main en <sha corto> (<AAAA-MM-DD>), al abrir <rama>\n\n' >> docs/state/HISTORIA.md`;
@@ -78,4 +95,6 @@ nuevo al final de `docs/state/HISTORIA.md` y `PROJECT_STATE.md` apuntando a la r
 - `git branch --show-current` es la rama, y `git log --oneline main..HEAD` tiene un commit.
 - `make-check.log` con `CONTRATO:` en verde y la linea `SELLO`.
 - `tests/unit/test_historia.py` en verde dentro de `make check` (HISTORIA solo se amplio).
-- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md` y `docs/state/HISTORIA.md`, nada mas.
+- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
+  artefacto, nada mas.
+- Las cuatro comprobaciones de la base (paso 1), con su salida, en el informe de la rama.

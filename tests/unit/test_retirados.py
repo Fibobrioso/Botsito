@@ -148,6 +148,7 @@ def test_una_entrada_mal_formada_cierra_la_puerta(tmp_path: Path) -> None:
     assert problemas_de_retirados(repo)
 
 
+@pytest.mark.usefixtures("knowledge_validate_compartido")  # una ejecucion por sesion (E3)
 def test_el_repo_real_retira_uno_y_ninguna_salida_lo_nombra(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
