@@ -522,9 +522,39 @@ Lo que la rama hace y el encargo no pide: la edición de `docs/plan/README.md` (
 
 Ficheros de referencia: `C:\Users\USER\Desktop\Bot v3\docs\plan\HOJA-DE-RUTA.md`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_hoja_de_ruta.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\HOJA-DE-RUTA.md`, `C:\Users\USER\Desktop\Bot v3\docs\adr\0072-quien-lee-la-columna-de-fechas-y-los-tres-papeles.md`.
 
+## 7. Orden de cierre del consultor (2026-10-10), tal cual
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/hoja-de-ruta (consultor, 2026-10-10). Tag: stable/F37k-hoja-de-ruta (verifica en HISTORIA que el último es F37j y que F37k no existe ni en local ni en origin).
+>
+> La desviación de §3.2 (F reescrita ya en la rama) queda ACEPTADA: el test (c) que pidió el consultor dejaba make check en rojo mientras F dependiera de W; la causa es del encargo, no de la sesión.
+>
+> Hallazgos del consultor para la fila de la rama en ERRORES-RECURRENTES (si ya existe, complétala; no la dupliques):
+> 1. (importa, consultor) El consultor metió en E «hereda el refiltrado de las filtradas v7–v10» copiándolo de una nota antigua de HISTORIA sin medirlo, y el refiltrado estaba hecho desde trabajo/activacion-a42 (ACTIVACION-A42.md §2.2); un auditor del propio consultor lo repitió. Lección: un pendiente que sale de una nota antigua se mide contra el informe de la rama que pudo cerrarlo antes de entrar en la Next Action.
+> 2. (menor, consultor) El consultor redactó F dependiendo de W, que ya estaba hecha. Desde esta rama lo caza mecánicamente test_hoja_de_ruta.py (c).
+> 3. (menor, consultor) El encargo daba el 2026-09-14 como fecha del último mantenimiento del plan maestro (la última entrada de su Change Log); la medida con git da 2026-09-16 (5c49127). Lección: la fecha de un fichero se mide con git log, no se lee de su Change Log.
+> El revisor no dejó escapar nada que el consultor encontrara.
+>
+> En el commit del contrato, lo preparado en §4 del informe, tal cual:
+> - P sale HECHA, con su texto literal a HISTORIA (punto 3 de RITUAL).
+> - E pierde la frase del refiltrado.
+> - Los heredados 2, 10, 15, 27 y 34: lo hecho sale a HISTORIA con su evidencia y lo vivo queda en una línea con su dueño.
+> - La hoja de ruta, al día con lo anterior (R0.1 hecha).
+> Saldo de bytes de PROJECT_STATE frente a main ≤ 0; si no, para antes del commit y dímelo.
+>
+> Informe final: sha de main, tag y a qué merge apunta, run de la CI de main y su resultado, ramas que quedan en local y en origin (fix/hoja-de-ruta borrada) y tamaño de PROJECT_STATE.md.
+
+Hecho en el commit del contrato (`chore(cierre)`): las comprobaciones del tag; P HECHA a HISTORIA;
+E sin la coletilla; los heredados 2, 10, 15, 27 y 34 con lo hecho en HISTORIA (bloques «Pendiente
+heredado SALE … (en parte)», con su texto entero) y lo vivo en una línea con su dueño; R0.1 de la
+hoja de ruta, HECHA; la fila de la rama en ERRORES-RECURRENTES (no existía: entra completa); y el
+registro de cierre. PROJECT_STATE.md: 22.163 bytes, 636 menos que `main`.
+
 ## Estado
 
-**LISTA PARA REVISIÓN, NO CERRADA.** Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
+**CERRADA con la orden de cierre del consultor del 2026-10-10 (§7)**, en
+`stable/F37k-hoja-de-ruta`. Fase 0 con su PARADA (§0, §1) y la respuesta del consultor
 (§2); fase 1 hecha (§3): la hoja de ruta, su test en cuatro sentidos, el `tramo` del contrato,
 RITUAL y las skills, MASTER_PLAN, ADR-0072 (P) y la remisión de PROJECT_STATE; la desviación de F,
 declarada (§3.2). Preparado para el commit del contrato del cierre (§4): P HECHA, E sin la

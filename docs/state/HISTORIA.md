@@ -7883,3 +7883,101 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 26 (2026-10-10).
+
+# Next Action HECHA · P · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+P. La regla general de CLAUDE.md sobre la columna de fechas («QUIEN: el consultor») no sale de ADR-0021 §1 (CASES-REJILLA.md); ADR-0046 §6a da a Aleks la de marzo. Se busca de qué ADR sale; si de ninguno, se corrige CLAUDE.md o se escribe el ADR (en trabajo/hoja-de-ruta).
+
+La hace `trabajo/hoja-de-ruta` (docs/validation/HOJA-DE-RUTA.md §0.g, §2 y §3.1): la regla no salia de ningun ADR (la introdujo 52c0220, a partir de SEPTIEMBRE-ENTRA.md §2b). ADR-0072 fija los tres papeles (Aleks, el consultor -Claude en el chat- y la sesion) y que la columna de fechas de todo backtest la lee Aleks; CLAUDE.md dice «QUIEN: Aleks» y cita ADR-0072; SEPTIEMBRE-ENTRA.md lleva un recuadro de correccion.
+
+# Pendiente heredado SALE · 2 (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+Texto entero (HISTORIA, linea 684):
+
+2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto febrero NI marzo, y backtestea MARZO (lo declara el consultor; no hay captura en el corpus). Al entregarlo: el xlsx al corpus, marzo a `vistos.yaml` con `visto_el` = la fecha en que lo backtesteo citando el commit de entrega, y su `cobertura_material` declarada. Es material del CAMINO DE FIDELIDAD (ADR-0036), para `fidelidad-2` y `fidelidad-3`. La confirmacion por escrito se registra en F09 como CONFIRM sobre el objetivo `paquete <sesion>`: **sin sus palabras, no vale**.
+
+**Condicion (a), en parte, HECHO:** el xlsx de marzo esta en el corpus (docs/validation/REGISTRO-MARZO.md §2, punto 1).
+
+**Queda en PROJECT_STATE, con su dueno:** `2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).`
+
+Orden de cierre del consultor del 2026-10-10 (docs/validation/HOJA-DE-RUTA.md §4).
+
+# Pendiente heredado SALE · 10 (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+Texto entero (HISTORIA, linea 702):
+
+10. EL DUEÑO, EN PARALELO: no comprar todavia -confirmar en el panel de FTMO que el tipo Swing existe para 100.000 y su region, con su apalancamiento-; abrir la prueba gratuita de FTMO y medir A-27 y A-28 (digits, contrato, lote minimo, paso y maximo, stops y freeze level, modos de llenado, desfase del servidor, rejilla H4 real); grabar spread y ticks de esa demo desde el primer dia.
+
+**Condicion (a), en parte, HECHO:** la prueba gratuita de FTMO se abrio y se midio; A-27 DECIDIDA (ADR-0071).
+
+**Queda en PROJECT_STATE, con su dueno:** `10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).`
+
+Orden de cierre del consultor del 2026-10-10 (docs/validation/HOJA-DE-RUTA.md §4).
+
+# Pendiente heredado SALE · 15 (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+Texto entero (HISTORIA, linea 707):
+
+15. **EN ESPERA: A-18: pregunta de reserva enviada al trader el 2026-09-23** (lo declara el consultor; es la de `docs/validation/V5-INSTANTES.md`). Su respuesta entra como `fb-*` por su regimen, y con ella se decide si A-18 se replantea: en v1-v4 el stop se describe en DOS tiempos (lote sobre la caja entera, stop protegido a 0,75 tras la entrada) y las dos hipotesis vigentes suponen uno solo.
+
+**Condicion (a), en parte, HECHO:** el trader contesto A-18 en la sesion 4: S-3, «resuelve» (docs/validation/SESION-04-EXTRACCION.md §3.4 y §5). El informe no la vincula con la pregunta de reserva del 2026-09-23 (docs/validation/V5-INSTANTES.md), que pregunta lo mismo: stop y objetivo.
+
+**Queda en PROJECT_STATE, con su dueno:** `15. A-18: S-3 de la sesion 4 contesta el stop y el objetivo; sale cuando E cierre A-18.`
+
+Orden de cierre del consultor del 2026-10-10 (docs/validation/HOJA-DE-RUTA.md §4).
+
+# Pendiente heredado SALE · 27 (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+Texto entero (HISTORIA, linea 719):
+
+27. **PENDIENTE PARA ALEKS, CON FTMO:** donde esta la linea entre operar con noticias en Swing y el gap trading prohibido; si un lote que varia con riesgo constante cuenta como «posiciones mucho mayores»; que es la «maximum capital allocation rule»; que significa el asterisco de «USD/LOT*»; y, si hay cuenta de prueba, medir A-27 y A-28 en la plataforma. Desde ADR-0050 (2026-09-25), dos mas que hoy son parametros SIN VALOR del perfil `knowledge/cuentas/ftmo-2step-swing-100k.yaml`: **si la comision de EURUSD se cobra por lado o por operacion completa** (`firma_comision_por_lado`; mientras tanto, supuesto conservador por lado, Decisions and Rationale) y **la cifra de la guardia de tamano de posicion**, que «substantially larger» no da (`firma_tamano_posicion_ratio_aviso`; mientras tanto la guardia queda NO EVALUABLE y lo dice).
+
+**Condicion (a), en parte, HECHO:** noticias y gap trading: respondidas las 4, 7 y 9, en parte las 1, 2, 3, 5 y 8, y SIN respuesta la 6 (docs/validation/FTMO-REGLAS.md, recuadro del 2026-10-05; A-54 y A-55 siguen ABIERTA, hoja de ruta A.2); el tamano, respondido sin cifra (respuesta 10); la comision por lado, CONFIRMADA (ADR-0071 §3); A-27 DECIDIDA (ADR-0071).
+
+**Queda en PROJECT_STATE, con su dueno:** `27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.`
+
+Orden de cierre del consultor del 2026-10-10 (docs/validation/HOJA-DE-RUTA.md §4).
+
+# Pendiente heredado SALE · 34 (en parte) · sale de PROJECT_STATE.md en trabajo/hoja-de-ruta (2026-10-10)
+
+Texto entero (HISTORIA, linea 726):
+
+34. **PENDIENTES QUE DEJA `trabajo/ticks-llenado`, con dueno** (ADR-0051 §7): (a) la VENTANA DE TICKS DE INVIERNO, 06:00-14:00 UTC cuando el trader esta en CET, ligada a A-42 (con que reloj cuenta la sesion): los ticks de construccion de hoy cubren solo 05-13 UTC, la ventana de verano; (b) el DESLIZAMIENTO, sin cifra hasta medirlo en la demo de MetaTrader (DN-3; entra por knowledge/simulador/llenado.yaml); (c) el SWAP, que hoy se cobra al corte de medianoche del huso del perfil hasta medir el corte real en la plataforma (DN-6, A-28). Y de ADR-0051 §8: cada mes que se vaya a medir necesita sus ticks descargados con el mismo procedimiento ANTES de medir; sin ticks no cuenta.
+
+**Condicion (a), en parte, HECHO:** ninguna parte hecha; las tres tienen ya dueno: (a) es NA:X (ADR-0069 §5), (b) y (c) las miden las ejecuciones 2 y 3 de la demo (NA:A).
+
+**Queda en PROJECT_STATE, con su dueno:** `34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).`
+
+Orden de cierre del consultor del 2026-10-10 (docs/validation/HOJA-DE-RUTA.md §4).
+
+# Registro de cierre · `trabajo/hoja-de-ruta` (2026-10-10)
+
+- Orden de cierre del consultor del 2026-10-10, tras la revision del informe, ejecutada siguiendo
+  `RITUAL.md` (la orden, tal cual, en HOJA-DE-RUTA.md §7). Rama lista para revision tras una
+  pasada del revisor; nunca se cerro sin la orden. La desviacion de §3.2 (F reescrita ya en la
+  rama) queda ACEPTADA por el consultor.
+- **Lo que entra:**
+  - `docs/plan/HOJA-DE-RUTA.md`: el orden y el estado vivos (R0-R7, tres carriles, F01-F35 medidas,
+    fechas fijas), con referencias NA:/HER:/ID:/F:; entra en los documentos vivos;
+  - `tests/unit/test_hoja_de_ruta.py`: falla en cuatro sentidos (lo vivo sin entrada, referencias
+    que no existen o HECHAS vivas, dependencias de letras muertas, respondidas ABIERTA fuera de R1/R4);
+  - `contrato.yaml` gana `tramo` (`scripts/contrato_rama.py`), obligatorio desde la rama siguiente;
+    RITUAL (punto 4 del commit del contrato), `cerrar-rama`, `abrir-rama` y CONTRATO-DE-RAMA.md;
+  - ADR-0072 (los tres papeles; la columna de fechas la lee Aleks); CLAUDE.md lo cita; recuadros en
+    SEPTIEMBRE-ENTRA.md y MASTER_PLAN.md (§E queda como historia);
+  - `PROJECT_STATE.md`: F sin depender de W, la remision de los heredados a HISTORIA, y en este
+    commit P fuera (HECHA), E sin la coletilla del refiltrado y los heredados 2, 10, 15, 27 y 34 en
+    una linea con su dueno (lo hecho, mas arriba en este fichero); 1462 funciones de test.
+- Letras y saldo: ninguna letra nueva; sale P. `PROJECT_STATE.md` queda en 22.163 bytes, 636 menos
+  que `main` (22.799), comprobado antes del commit. La hoja de ruta, al dia: R0.1 HECHA.
+- Letra del tag: la ultima cerrada era la j de F37 (`stable/F37j-cases-rejilla`);
+  `stable/F37k-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37k-hoja-de-ruta`. El merge es `git rev-parse "stable/F37k-hoja-de-ruta^{commit}"`.
+- Commits de la rama: `6bcea23` (apertura), `93e9260` (fase 0 y PARADA), `9285237` (fase 1:
+  hoja, test, tramo, ADR-0072), `1fc3b90` (revisor pegado y hallazgos atendidos) y el de este
+  registro.
+- CI de Linux por `fix/hoja-de-ruta`: run 38102562925 (9285237) y run 38104487178 (1fc3b90), los
+  dos con un solo fallo, el esperado de `state check` por el nombre `fix/`; 2492 y 2495 pasados. La
+  CI de `main` corre tras el push.
+- Nadie ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/HOJA-DE-RUTA.md`. Encargo: `docs/encargos/trabajo-hoja-de-ruta.md`.

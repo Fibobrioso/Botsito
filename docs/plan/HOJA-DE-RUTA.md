@@ -25,6 +25,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** nada.
 - **Quién:** la sesión, con el encargo del consultor (`trabajo/hoja-de-ruta`).
 - **Hecho cuando:** la rama se cierra en `main` con la hoja, el test y ADR-0072.
+- **Estado:** HECHA (`stable/F37k-hoja-de-ruta`; docs/validation/HOJA-DE-RUTA.md).
 
 ### R0.2 · El entorno de trabajo del consultor y de la sesión
 - **Refs:** NA:F
