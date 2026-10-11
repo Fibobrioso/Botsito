@@ -1,10 +1,15 @@
-"""Bash SIN ESCRITURA para el subagente revisor (`.claude/agents/revisor.md`).
+"""Bash SIN ESCRITURA para los agentes que solo leen: el revisor (`.claude/agents/revisor.md`) y,
+desde `trabajo/entorno-code`, el auditor de encargos (`.claude/agents/auditor-encargo.md`).
 
-Rama `trabajo/guardias-claude` (2026-10-01). El revisor solo tiene Read, Grep, Glob y Bash; este
-hook, declarado en su frontmatter, le quita a Bash lo que escribe: redirecciones a fichero, `tee`,
-los comandos que crean, mueven o borran, los `git` que cambian el repo o sus referencias, `make`,
-`sed -i`, y los `botsito` que escriben. La guardia del proyecto (`guardia.py`) sigue corriendo
-ademas para todo, tambien para el revisor.
+Rama `trabajo/guardias-claude` (2026-10-01). Esos agentes solo tienen Read, Grep, Glob y Bash;
+este hook, declarado en su frontmatter, le quita a Bash lo que escribe: redirecciones a fichero,
+`tee`, los comandos que crean, mueven o borran, los `git` que cambian el repo o sus referencias,
+`make`, `sed -i`, y los `botsito` que escriben. Desde `trabajo/entorno-code` (E7, respuesta del
+consultor del 2026-10-11, punto 2) tambien los que escriben por un camino que la lista no veia
+-`--salida`, `motor arnes`, `motor visor`, `kit hoja`, `casos visto`, `data download` y
+`download-ticks`, `evidence contradictions` y `evidence reject`- y `--incluir-holdout`, que no
+escribe pero ABRE el holdout. La guardia del proyecto (`guardia.py`) sigue corriendo ademas para
+todo, tambien para estos agentes.
 
 Es una lista de lo que escribe, no de lo que lee: lo que no esta aqui pasa. No ve lo que escribe un
 guion de Python por dentro; por eso `python` solo pasa con `-c` sin `open(..., "w")` o con un guion
@@ -38,9 +43,16 @@ BOTSITO_ESCRIBE = re.compile(
     r"--escribir|\b(new|apply|ingerir|build|anclar|inventory|transcribe|extract|propose|accept"
     r"|sellar|desellar)\b"
 )
+# Escriben siempre, tambien con `--check` (ninguno de estos subcomandos lo tiene): medido en
+# `src/botsito/cli.py` en la fase 0 de `trabajo/entorno-code` (ENTORNO-CODE.md §0.a, E7).
+BOTSITO_ESCRIBE_SIEMPRE = re.compile(
+    r"--salida|\b(arnes|visor|hoja|visto|download|contradictions|reject)\b"
+)
+BOTSITO_ABRE_HOLDOUT = "--incluir-holdout"
 R_SOLO_LECTURA = (
-    ".claude/agents/revisor.md: el revisor «No arregla nada» y su Bash es «sin escritura» "
-    "(encargo de trabajo/guardias-claude, fase 3)"
+    ".claude/agents/revisor.md y .claude/agents/auditor-encargo.md: «Solo lees: no arreglas, no "
+    "editas, no commiteas», y su Bash es «sin escritura» (encargo de trabajo/guardias-claude, "
+    "fase 3; E7 de trabajo/entorno-code)"
 )
 
 
@@ -75,6 +87,10 @@ def motivo(comando: str) -> str | None:
             if sub == "diff" and "--output" in " ".join(textos):
                 return "`git diff --output` escribe un fichero"
         en_seco = "--check" in textos or "--dry-run" in textos
+        if prog == "botsito" and any(t.startswith(BOTSITO_ABRE_HOLDOUT) for t in textos):
+            return f"`{BOTSITO_ABRE_HOLDOUT}` abre el holdout (ADR-0021 §3, ADR-0033)"
+        if prog == "botsito" and BOTSITO_ESCRIBE_SIEMPRE.search(" ".join(textos)):
+            return "ese subcomando u opcion de `botsito` escribe"
         if prog == "botsito" and BOTSITO_ESCRIBE.search(" ".join(textos)) and not en_seco:
             return "ese subcomando de `botsito` escribe"
         if prog == "uv" and textos[:1] != ["run"]:

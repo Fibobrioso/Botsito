@@ -18,8 +18,23 @@ esa guardia, y lo que solo se usa en algunas tareas vive en `docs/runbooks/` con
 
 Si `Current Feature` esta en WAITING_FOR_USER_VALIDATION, se pregunta antes de avanzar.
 
-Las tareas repetidas tienen skill en `.claude/skills/`: `abrir-rama`, `cerrar-rama` (solo con orden
-de cierre de Aleks) e `ingerir-sesion`.
+Las tareas repetidas tienen skill en `.claude/skills/`, en el orden de una rama (lista completa
+desde `trabajo/entorno-code`):
+- `abrir-rama`: al abrirla; comprueba la base entera (main, origin, el tag, la CI, ninguna otra
+  rama) y escribe encargo, contrato y Archivo de `PROJECT_STATE.md`.
+- `fase-cero`: si el encargo pide FASE 0, un inventario o una PARADA; y al llegar la respuesta del
+  consultor, que se copia tal cual y se aplica punto por punto.
+- `activar-sesion`: para llevar a la spec y al motor las respuestas del trader ya extraidas.
+- `comparar-con-main`: para una regresion contra `main` o probar un test con el codigo de `main`,
+  en clones desechables.
+- `entregar-rama`: al terminar, hasta «Rama lista para revisión, NO cerrada».
+- `cerrar-rama`: solo con orden de cierre de Aleks.
+
+Aparte, `ingerir-sesion` (una sesion grabada con el trader) y `retomar-rama` (tras una sesion
+nueva o una conversacion compactada; el hook de arranque `.claude/hooks/estado_sesion.py` ya
+ensena la rama, el contrato y si se espera al consultor). Y dos agentes de solo lectura en
+`.claude/agents/`: `auditor-encargo` (al empezar la fase 0: contrasta el encargo con el repo) y
+`revisor` (antes de declarar la rama lista).
 
 ## Se trabaja en una rama: main no se toca
 

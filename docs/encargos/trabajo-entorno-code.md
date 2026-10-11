@@ -24,3 +24,24 @@ Dado por Aleks (consultor) el 2026-10-10. Copiado tal cual:
 > - Pasa el revisor (subagente revisor), con este alcance: que ninguna pieza contradiga un runbook, RITUAL, CLAUDE.md, la hoja de ruta o un ADR; que no se pierda ninguna puerta de las skills existentes; que el hook de arranque no lea nada que la guardia bloquee y nunca bloquee la sesión; que make rapido, si existe, no selle; y nada de holdout. Pega su informe al final del tuyo.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-11), tal cual
+
+> Respuesta del consultor a la PARADA de trabajo/entorno-code (2026-10-11). Cópiala tal cual al final del encargo y en el informe.
+>
+> 0. make rapido: aceptado, sin variables, y los tests concretos con uv run pytest aparte. La guardia no se toca.
+> 1. xdist: aceptado que no entra por ahora (el pico de memoria sube de unos 243 a unos 1.150 MiB). CAMBIO: la otra palanca medida entra EN ESTA RAMA y no en otra, porque es el objetivo de E3. Los cinco tests que ejecutan cada uno knowledge validate sobre el repo real pasan a compartir una sola ejecución (fixture de sesión, de solo lectura), con estas condiciones medidas en el informe: (a) cada test conserva sus aserciones tal cual; (b) la suite da el mismo resultado por nombre de test antes y después (passed, skipped y failed); (c) cada uno de los cinco sigue fallando si se rompe lo que vigila (un caso roto a propósito por test, en un clon --detach); (d) la duración de make check antes y después, y su pico de memoria. Si alguno de los cinco no puede compartir la ejecución sin perder lo que vigila, se queda como está y se dice por qué. Con la nueva cifra, xdist se vuelve a medir más adelante, en su propia rama si compensa.
+> 2. E7: aceptado: se bloquea la lista medida (con --salida como marca de escritura) y se niega --incluir-holdout, no solo arnes. Cada forma, con un test que la rompe.
+> 3. E4: aceptado: NN entra en las marcas de plantilla.
+> 4. ERRORES-RECURRENTES.md:13: aceptado: se corrige directamente, porque un runbook es un texto vivo y no un informe cerrado. La corrección se dice en el informe.
+> 5. Las correcciones de 0.a: aceptadas todas. Además, en comparar-con-main: los clones van en una ruta corta (por ejemplo, una carpeta de un solo nivel en la raíz del disco), porque en el clon de la medida un test falló por pasar del límite de 259 caracteres de Windows (263), y un fallo que solo existe en el clon no es una regresión. Si hay un test que lo provoque, va con su motivo en la skill.
+> 6. E6: aceptado: «ninguna otra rama» cuenta también feature/* y fix/* locales, además de las trabajo/* y de fix/* en origin.
+> 7. E1: aceptado: el hook muestra solo el tramo, sin el título.
+> 8. Los huecos de 0.c: aceptado: se preparan para la hoja de ruta en el commit del contrato del cierre; no entran en esta rama.
+> Y E2: la justificación del cambio del revisor a opus usa la cifra medida (20 de 28 filas; 4 de las 7 últimas), no la de la especificación.
+>
+> Sigue con la fase 1.
+
+## Añadido del consultor para esta noche (2026-10-11), tal cual
+
+> Añadido para esta noche (consultor, 2026-10-11): Aleks no está hasta mañana. Cópialo al final del encargo y en el informe. Trabaja sin esperarme toda la fase 1 y la entrega (skill entregar-rama cuando esté instalada), hasta «Rama lista para revisión, NO cerrada». Si una pieza choca con algo medido y necesita decisión, NO pares la rama: apunta esa pieza como PARADA en el informe con sus opciones y tu recomendación, déjala sin hacer, y sigue con las demás. Nunca cierres ni toques main. Si una ejecución larga muere por memoria, no la relances: apúntalo y sigue con lo que no dependa de ella. Si el clasificador niega un push, deja el comando exacto en el informe para que Aleks lo lance por la mañana. Al terminar, el resumen final para Aleks de entregar-rama.

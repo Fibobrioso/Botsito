@@ -2,8 +2,10 @@
 
 Cada paso de `make check` corre dentro de `medir`, que ejecuta la orden y apunta su pico en un
 acumulador dentro del directorio de git (`git rev-parse --git-path botsito-pico`), como el sello:
-git nunca lo sigue y no entra en la huella de la guardia. `informe` imprime UNA linea con el pico
-mayor y el paso que lo dio, y borra el acumulador; `empezar` lo borra al principio.
+git nunca lo sigue y no entra en la huella de la guardia. `informe` imprime una linea con la
+duracion de cada paso y, la ULTIMA, la del pico mayor y el paso que lo dio, y borra el
+acumulador; `empezar` lo borra al principio. La duracion (reloj de pared de la orden, desde
+`trabajo/entorno-code`, E3) no cambia lo que mide la linea del pico.
 
 QUE SE MIDE, que no es lo mismo en los dos sistemas y la linea lo dice:
 - Windows: un Job Object al que se asigna este proceso ANTES de lanzar la orden, asi que todos sus
@@ -18,7 +20,7 @@ Barato: ni muestreo ni hilos; el sistema lleva la cuenta y se lee una vez al aca
 Uso:
     python scripts/pico_memoria.py empezar
     python scripts/pico_memoria.py medir <paso> -- <orden> [args...]
-    python scripts/pico_memoria.py informe
+    python scripts/pico_memoria.py informe      (la duracion por paso y, la ultima, el pico)
     python scripts/pico_memoria.py ejecutar -- <orden> [args...]   (mide una orden suelta)
 """
 
@@ -26,6 +28,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 NOMBRE = "botsito-pico"
@@ -127,30 +130,45 @@ def empezar(repo: Path) -> None:
 
 
 def medir(repo: Path, paso: str, orden: list[str]) -> int:
+    inicio = time.perf_counter()
     codigo, pico, que = correr(orden)
+    segundos = time.perf_counter() - inicio
     ruta = ruta_acumulador(repo)
     if ruta is not None:
         with ruta.open("a", encoding="utf-8", newline="\n") as f:
-            f.write(f"{paso}\t{pico}\t{que}\n")
+            f.write(f"{paso}\t{pico}\t{segundos:.1f}\t{que}\n")
     return codigo
 
 
-def linea_de_informe(filas: list[tuple[str, int, str]]) -> str:
+def linea_de_informe(filas: list[tuple[str, int, float, str]]) -> str:
     if not filas:
         return "PICO DE MEMORIA de make check: sin medida (ningun paso apunto su pico)"
-    paso, pico, que = max(filas, key=lambda f: f[1])
+    paso, pico, _, que = max(filas, key=lambda f: f[1])
     return f"PICO DE MEMORIA de make check: {pico / MIB:.0f} MiB en `{paso}` ({que})"
+
+
+def linea_de_duracion(filas: list[tuple[str, int, float, str]]) -> str:
+    """La suma de cada paso (un paso puede tener varias ordenes) y el total, de mayor a menor."""
+    if not filas:
+        return "DURACION de make check: sin medida"
+    por_paso: dict[str, float] = {}
+    for paso, _, segundos, _ in filas:
+        por_paso[paso] = por_paso.get(paso, 0.0) + segundos
+    pasos = ", ".join(
+        f"{p} {s:.0f}" for p, s in sorted(por_paso.items(), key=lambda x: (-x[1], x[0]))
+    )
+    return f"DURACION de make check: {sum(por_paso.values()):.0f} s en total; por paso (s): {pasos}"
 
 
 def informe(repo: Path) -> str:
     ruta = ruta_acumulador(repo)
-    filas: list[tuple[str, int, str]] = []
+    filas: list[tuple[str, int, float, str]] = []
     if ruta is not None and ruta.exists():
         for linea in ruta.read_text(encoding="utf-8").splitlines():
-            paso, pico, que = linea.split("\t", 2)
-            filas.append((paso, int(pico), que))
+            paso, pico, segundos, que = linea.split("\t", 3)
+            filas.append((paso, int(pico), float(segundos), que))
         ruta.unlink()
-    return linea_de_informe(filas)
+    return f"{linea_de_duracion(filas)}\n{linea_de_informe(filas)}"
 
 
 def main(argv: list[str]) -> int:

@@ -95,11 +95,31 @@ def test_medir_apunta_cada_paso_y_el_informe_da_el_mayor_y_limpia(tmp_path: Path
     pesado = _script("medir", "pesado", "--", sys.executable, "-c", RESERVA, cwd=tmp_path)
     assert ligero.returncode == 0 and pesado.returncode == 0, ligero.stderr + pesado.stderr
     informe = _script("informe", cwd=tmp_path)
-    linea = informe.stdout.strip()
+    # dos lineas desde trabajo/entorno-code (E3): la duracion, y la ULTIMA la del pico
+    duracion, linea = informe.stdout.strip().splitlines()
     assert linea.startswith("PICO DE MEMORIA de make check: ") and "en `pesado`" in linea, linea
     assert _mib(linea) >= 64
+    assert re.fullmatch(
+        r"DURACION de make check: \d+ s en total; por paso \(s\): "
+        r"(pesado \d+, ligero \d+|ligero \d+, pesado \d+)",
+        duracion,
+    ), duracion
     # el acumulador se consume: un segundo informe no tiene medidas
     assert "sin medida" in _script("informe", cwd=tmp_path).stdout
+
+
+def test_la_duracion_suma_las_ordenes_de_un_paso_y_ordena_de_mayor_a_menor() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("pico_memoria", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    filas = [("lint", 1, 1.4, "x"), ("test", 2, 1084.2, "x"), ("lint", 1, 0.2, "x")]
+    assert modulo.linea_de_duracion(filas) == (
+        "DURACION de make check: 1086 s en total; por paso (s): test 1084, lint 2"
+    )
+    assert modulo.linea_de_duracion([]) == "DURACION de make check: sin medida"
 
 
 def test_medir_devuelve_el_codigo_del_paso(tmp_path: Path) -> None:

@@ -10,7 +10,11 @@ hay que mirar, y se corrige su lista (eje a) o la forma de partir el encargo (ej
 ## Como se rellena
 
 - **Hallazgos del revisor**: los del informe que se pego, por gravedad (bloquea / importa / menor),
-  ANTES de arreglarlos. Se apunta al declarar la rama lista, en el mismo commit que el informe.
+  ANTES de arreglarlos. Se apunta al CERRAR la rama, en el commit del contrato, como dicen
+  `RITUAL.md` y la skill `cerrar-rama` (corregido el 2026-10-11 en `trabajo/entorno-code`: decia
+  «al declarar la rama lista, en el mismo commit que el informe»). Desde esa rama, la fila anota
+  tambien el modelo con que corrio el revisor (el `model` de `.claude/agents/revisor.md`), para
+  medir si el cambio de `sonnet` a `opus` reduce los hallazgos que el consultor encuentra despues.
 - **Hallazgos del consultor despues**: los que el consultor senala en su revision y que NO estaban en
   el informe del revisor, por gravedad. Se apunta al cerrar la rama, o en la rama siguiente si se
   cerro sin apuntarlo. Un hallazgo del consultor que el revisor SI vio no cuenta aqui.
