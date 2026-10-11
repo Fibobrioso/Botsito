@@ -709,6 +709,154 @@ que nadie puede reflejar hasta la sesión 5. Coste de (c): el testimonio no entr
 
 **Espero tu respuesta a la PARADA 2** para el registro; todo lo demás del punto 2 está en el commit.
 
+## 2. Tests que rompen a propósito, con el código de `main`
+
+Skill `comparar-con-main`, «Para probar un test con el código de main»: un clon `--detach` de
+`main` (11df2c4) en el directorio de trabajo de la sesión, los tests de la rama copiados dentro y
+ejecutados allí; nunca un checkout en el repo real. El clon se retiró con `git worktree remove
+--force` (llevaba los dos ficheros copiados, sin seguir) y `git worktree prune`; `git worktree list`
+deja solo el repo real y el `wt-ci` de otra sesión, que no se toca.
+
+| Test | Con `main` | Con la rama |
+|---|---|---|
+| `tests/unit/test_caja_hasta_el_llenado.py` (ADR-0074) | 3 failed: `assert 'al_verse_el_punto' == 'en_cada_cierre_m1'` (:30); `len(set(extremos)) > 1` falso, todos los extremos iguales (:52); `1 >= 5` falso, una sola zona (:...) | 3 passed |
+| `tests/unit/test_escenarios_por_sesion.py::test_la_toma_antes_de_la_ventana_la_decide_el_parametro` (S-15) | failed: `assert cabeza.count(actuales[nombre]) == 1` → `toma_antes_de_la_ventana`, `0 == 1` (la línea `valor: cuenta` no existe en el registro de `main`) | passed |
+| `tests/unit/test_en_parte_no_se_cierra.py` | pasa también en `main` (nada estaba RESUELTA de más): su rotura es la mutación sintética del propio fichero | 4 passed |
+| `tests/unit/test_orden_en_el_0_con_mecha.py` (A-36) | pasa también en `main`: congela lo que el motor ya hacía, y se dice | 2 passed |
+
+Los que cambian de sentido a propósito (ya existían en `main` con el otro sentido): `test_kit.py`
+(RESUELTAS y la tabla), `test_hoja_preguntas.py` (ORDEN), `test_spec_fidelidad.py` (la pendiente a
+las 15 y el cuestionario), `test_reabrir_y_fuente_documental.py` (A-36), `test_orden_stop_pivote.py`
+(la caja fija pasa a pedirse) y `test_escenarios_por_sesion.py` (`no_cuenta` pasa a pedirse).
+Ningún test de esta rama necesita `data/`: ninguno se salta en la CI de Linux.
+
+## 3. El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde 11df2c4 con `abrir-rama`: base comprobada, contrato R1 riesgo alto, artefacto | Hecho | cabecera de este informe; d77938c; `contrato.yaml` |
+| 2 | Recorrido por las skills activar-sesion, fase-cero y entregar-rama | Hecho | §0 (fase-cero), §1 (paso 3 de activar-sesion), §2–§9 (entregar-rama) |
+| 3 | OBJETIVO: cada «resuelve» RESUELTA en spec y, si hace falta, motor con test; lo demás a la sesión 5 | Parcial, por decisión del consultor | RESUELTAS aquí: A-18, A-25, A-30, A-33, A-36, A-39, A-52 (7 de 9 «resuelve»); A-21 y A-51 van a `trabajo/activar-sesion-04-motor` (respuesta, punto 11); las «en parte», en §0.e y §5 |
+| 4 | Nada fijado se pisa; contradicción → PARADA y régimen propio | Hecho | b.1 → ADR-0073 (enmienda, sin tocar datos); b.3 → ADR-0074 (enmienda de la decisión 5); b.5 escritas sin tocar ningún CONFIRMED |
+| 5 | Ninguna «en parte» se cierra | Hecho, con una DESVIACIÓN declarada | `test_en_parte_no_se_cierra.py`; A-43 sigue ABIERTA y solo cambia su parámetro (punto 9 del consultor, §1.7) |
+| 6 | Ninguna cifra en forma ejecutable (ADR-0002) | Hecho | la rama no toca ninguna forma; `test_no_business_literals` en verde en cada `make check` |
+| 7 | Sin arnés ni medidas agregadas sobre material; tests sintéticos | Hecho | ningún `motor arnes`; los tests nuevos son sintéticos de 2030 |
+| 8 | Nada de material; citas solo las citables, cruzadas con los tramos | Hecho | §0 («Exposiciones: ninguna»); cada cita con su ítem `ev-v10-*` fuera de los 21 tramos; la de 116:20 se evitó (§0.a) |
+| 9 | Next Action y hoja de ruta sin tocar en la rama | Hecho | `git diff main --stat`: ni `docs/plan/` ni la Next Action de `PROJECT_STATE.md` (solo la tabla de Known Ambiguities, `Current Branch`/`Current Feature` y el recuento de tests) |
+| 10 | Makefile, `.claude/` y la guardia sin tocar | Hecho | `git diff main --stat`; `contrato.yaml` los protege |
+| 11 | FASE 0 a–f y PARADA | Hecho | §0 y «Lo que necesito que decidas» (13 puntos) |
+| 12 | «Lo que necesito que decidas» con b.1–b.5, A-36, parámetro de A-51, `--diagnostico-a21`, S-14 y cada «creo» | Hecho | puntos 0–12 de la PARADA |
+| 13 | Respuesta copiada tal cual y aplicada punto por punto; un commit por respuesta con el paso 3 entero | Hecho en lo de esta rama (puntos 0, 2, 4, 5, 9, 10, 11, 12, 13); los puntos 1, 3, 6 y 7 son de la rama de motor por decisión del consultor; el registro de S-4 (punto 2) está en PARADA 2 | §1; la copia entró en 490b97a por los ids futuros (§1.1) |
+| 14 | ADR nuevos con la plantilla, número libre, índice | Hecho | ADR-0073 y ADR-0074 (números comprobados libres); `docs/adr/README.md` |
+| 15 | Test que falla en `main` por cada cambio de motor | Hecho | §2 |
+| 16 | Test de que una «en parte» no entra en RESUELTAS | Hecho | `tests/unit/test_en_parte_no_se_cierra.py` |
+| 17 | Tests con `data/` se saltan en CI | No aplica | ningún test nuevo lee `data/` |
+| 18 | HOLDOUT: ningún listado filtrado de `knowledge/cases`; exposiciones el mismo día; sin fechas reservadas ni resultados | Hecho | §0: `git ls-files knowledge/cases/dev/caso-eurusd-2026-08-*.yaml` con la ruta literal; ninguna exposición; la regla va también al revisor (§9) |
+| 19 | CI de Linux por `fix/activar-sesion-04` con su run; solo se acepta `state check` | ver §8 | §8 |
+| 20 | Revisor (opus) con los dos alcances más el tercero (recuadro y fila del índice de cada ADR enmendado), pegado al final | ver §9 | §9 |
+| 21 | Líneas del cierre: E, H, S, heredados 15 y 37, R1.1, R4.1, NA:P de R0.1, más las de §0.g.2 y los puntos 0, 7, 8 y 13 de la respuesta, y la tabla con A-56 | Hecho | §4 |
+| 22 | Lista para la sesión 5 con los cambios del consultor | Hecho | §0.e con la corrección de §5 |
+| 23 | Rama lista para revisión, NO cerrada | Hecho | `## Estado` |
+
+**Desviaciones declaradas:** (1) la copia de la respuesta no fue al primer commit sino al de
+ADR-0074, por los ids futuros (§1.1); (2) el test «en parte» (commit 7 del plan) entró en el commit
+de ADR-0073 (§1.2); (3) `toma_antes_de_la_ventana` cambia con A-43 ABIERTA, por decisión del
+consultor y con esa palabra (§1.7); (4) el registro de S-4 sobre A-49 queda en PARADA 2; (5) el
+`make check` de ADR-0073 se relanzó por 3 `MemoryError` de `lzma` ajenos a la rama (§1.2), y el
+primero de A-36 cayó en el lint por una línea de comentario (§1.5); (6) la ratificación de
+`cartuchos_reinicio` tuvo que reexpresarse sin valor (§1.3).
+
+## 4. Las líneas para el commit del contrato del cierre
+
+Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la rama). Las comprueba
+`tests/unit/test_hoja_de_ruta.py` en el cierre.
+
+**Next Action (PROJECT_STATE.md):**
+
+- **E** sigue viva, reescrita (punto 12, opción (a)): «Activar la sesión 4. HECHO en
+  `trabajo/activar-sesion-04`: A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56
+  abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`);
+  `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta (DESVIACIÓN declarada). QUEDA para
+  `trabajo/activar-sesion-04-motor` (encargo del consultor tras este cierre): A-21 con la opción
+  `sin_alternancia_de_colores` y la retirada de `--diagnostico-a21`; S-13 (ADR que enmienda ADR-0060
+  §2: la H4 neutra mantiene el sesgo); A-51 (cuatro parámetros, RN-036 y ADR); la rama `ventana_fin`
+  de RN-035; y el registro de S-4 sobre A-49 según la PARADA 2. Las «en parte» (A-13, A-32, A-35, la
+  segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la hoja de la sesión 5 (R4.1), con las
+  preguntas de ACTIVAR-SESION-04.md §0.e y §5.»
+- **F**: «Orden de trabajo: lo siguiente es `trabajo/activar-sesion-04-motor` (E); la hoja de ruta
+  manda el orden.»
+- **H**: se queda, con la nota «respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o
+  «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del 2026-10-11); S-14 va a
+  la sesión 5 (R4.1)». Si Aleks lo lee antes del cierre, su respuesta entra aquí.
+- **S** (julio): no cambia de texto; va después de la rama de motor (E sigue viva).
+- **I**: no cambia (punto 12). **G**: donde dice «y A-18» pasa a decir «y A-56 (la regla del
+  objetivo frente al material, ADR-0073)».
+- **Nueva entrada** (punto 13), con la letra que elija el consultor (Q está libre): «El trader da
+  por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su
+  exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra
+  por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Lo mismo dijo el
+  trader de julio, que ya está en S.»
+- **Pendientes heredados**: sale el **15** (A-18 cerrada; su texto a HISTORIA); el **37** se queda
+  tal cual (lo decide O, fuera de esta rama).
+- **Technical Debt**: «F26 NO PUEDE PUNTUAR EL OBJETIVO HASTA QUE A-18 ESTE CERRADA» pasa a «F26 lee
+  la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073,
+  ADR-0040)». «LA PRIMERA MEDIDA DE A-18 SALE DEL MATERIAL…» se queda (es la historia de A-56).
+- **Known Ambiguities**: ya en la rama (salen A-18, A-25, A-30, A-33, A-36, A-39 y A-52; entra A-56).
+
+**Hoja de ruta (docs/plan/HOJA-DE-RUTA.md):**
+
+- **R1.1**: sus Refs pierden HER:15 (los ID:A-nn pueden quedarse: existen, y el test (d) solo exige
+  que una respondida ABIERTA esté en R1 o R4). Sigue EN CURSO: «Hecha la parte de spec en
+  `trabajo/activar-sesion-04` (ACTIVAR-SESION-04.md); queda `trabajo/activar-sesion-04-motor` (A-21,
+  S-13, A-51, RN-035 `ventana_fin`). HECHA cuando la rama de motor cierre y cada «en parte» esté en
+  la hoja de la sesión 5.»
+- **R4.1**: sus Refs ganan ID:RN-007 (S-14) y su «Qué es» añade «la segunda parte de A-43, S-14 y la
+  confirmación del caso bajista de S-13».
+- **R5.1**: cambia ID:A-18 por ID:A-56; «A-18 cerrada para puntuar el objetivo» pasa a «A-56 medida,
+  o declarada conocida, para puntuar el objetivo»; «Depende de: R1.1 (A-18) y la decisión del
+  consultor…» pasa a «Depende de: la decisión del consultor sobre cuántos días reservados necesita
+  F26».
+- **R2.1** y **R5.4**: «(NA:E)» sigue válido mientras E siga viva (punto 12).
+- **R0.1**: su Ref NA:P es una HECHA registrada en HISTORIA («# Next Action HECHA · P · … (2026-10-10)»);
+  `test_hoja_de_ruta.py:143-147` la admite. No conviene tocarla: hay dos P HECHAS en HISTORIA porque
+  las letras se reutilizan, y el test busca la letra, no la fecha.
+- **G.2** (punto 7): gana «`--diagnostico-a47` (A-47 RESUELTA) y `--diagnostico-a27` (A-27 DECIDIDA)
+  siguen en la CLI sin deuda que los recoja; se retiran con `--diagnostico-a21` o en G.1».
+
+## 5. La lista para la sesión 5, corregida por el consultor
+
+La de §0.e con sus cambios: sale el 10 (S-6: la spec ya dice un punto, y él se corrigió a un
+punto) y el 12; el 11 queda solo para A-21 si la rama de motor no la cierra (A-18 y A-33 ya están
+RESUELTAS); entra la confirmación del caso bajista de S-13 («Si la vela de 4 horas sin color viene
+con un sesgo bajista, ¿también se mantiene el bajista?»); el fotograma de v4 del punto 8 (A-32) no se
+abre sin decisión del consultor en R4.1; y A-43 queda solo con su segunda parte (§0.e.5). Va en este
+informe hasta que exista la hoja de la sesión 5 (R4.1).
+
+## 6. Exposiciones
+
+Ninguna. Lo que se leyó está en §0; después de la fase 0 no se leyó material: solo el repositorio,
+los ítems `ev-v10-*` ya citables y los registros nuevos. `HOLDOUT-EXPOSICIONES.md` no cambia.
+
+## 7. Lo que NO cambia, medido
+
+`git diff main --stat`: ningún fichero de `docs/plan/`, `Makefile`, `.claude/`, `knowledge/cases/`,
+`knowledge/corpus/`, `knowledge/evidence/`, `knowledge/cuentas/`, `config/` ni `data/manifests/`;
+de `src/` solo el docstring de `engine/motor.py`. `scripts/contrato_rama.py` en verde en cada
+`make check`. `PROJECT_STATE.md`: 21.734 bytes (tope 25.000; en `main`, 20.149): la tabla de Known
+Ambiguities pierde siete filas y gana una, y suben `Current Feature` y el recuento de tests.
+
+## 8. CI de Linux
+
+PENDIENTE_CI
+
+## 9. Informe del revisor
+
+PENDIENTE_REVISOR
+
 ## Estado
 
-FASE 0 HECHA; respuesta del consultor recibida el 2026-10-11 y en aplicación.
+Activación de la sesión 4, parte de spec: HECHA. Siete ambigüedades RESUELTAS (A-18, A-25, A-30,
+A-33, A-36, A-39, A-52), A-56 abierta, ADR-0073 y ADR-0074 escritos con sus enmiendas, `caja_se_fija`
+y `toma_antes_de_la_ventana` cambiados por decisión. Pendiente del consultor: la PARADA 2 (el
+registro de S-4 sobre A-49). Lo demás de la respuesta, en `trabajo/activar-sesion-04-motor`.
+**Rama lista para revisión, NO cerrada.**
